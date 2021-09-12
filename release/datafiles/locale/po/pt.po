@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -2867,14 +2867,6 @@ msgstr "Afetar a posição"
 
 msgid "The brush affects the position of the point"
 msgstr "O pincel afeta a posição dos pontos."
-
-
-msgid "Affect Pressure"
-msgstr "Afetar a pressão"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Afeta os valores de pressão tanto quanto a suavização dos traços."
 
 
 msgid "Affect Strength"
@@ -8920,6 +8912,10 @@ msgstr "Ambiente"
 
 msgid "Icon ID"
 msgstr "Identificador de ícone"
+
+
+msgid "Relative Path"
+msgstr "Diretórios relativos"
 
 
 msgid "Which ID types to show/hide, when browsing a library"
@@ -30885,10 +30881,6 @@ msgid "Filter text files"
 msgstr "Filtra por ficheiros de texto"
 
 
-msgid "Relative Path"
-msgstr "Diretórios relativos"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleciona o ficheiro relativo ao ficheiro Blender."
 
@@ -51280,10 +51272,6 @@ msgstr "Mostra na janela de seleção de imagens, somente os ficheiros com exten
 
 msgid "Load user interface setup when loading .blend files"
 msgstr "Carrega as definições de interface de utilizador ao carregar ficheiros .blend."
-
-
-msgid "Save Preview Images"
-msgstr "Guardar imagens de pré-visualização"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"

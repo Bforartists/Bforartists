@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-01 15:12+0700\n"
@@ -3495,14 +3495,6 @@ msgstr "Mempengaruhi Posisi"
 
 msgid "The brush affects the position of the point"
 msgstr "Kuas mempengaruhi posisi titik"
-
-
-msgid "Affect Pressure"
-msgstr "Mempengaruhi Tekanan"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Mempengaruhi nilai tekanan dan juga saat penghalusan garis luar"
 
 
 msgid "Affect Strength"

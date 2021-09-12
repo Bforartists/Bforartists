@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -3936,14 +3936,6 @@ msgstr "Влиять на положение"
 
 msgid "The brush affects the position of the point"
 msgstr "Эта кисть влияет на положение точки"
-
-
-msgid "Affect Pressure"
-msgstr "По давлению"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Применять значения давления при сглаживании штрихов"
 
 
 msgid "Affect Strength"
@@ -11902,6 +11894,10 @@ msgstr "Идентификатор значка"
 
 msgid "Unique integer identifying the preview of this file as an icon (zero means invalid)"
 msgstr "Уникальное число для идентификации иконки предпросмотра файла (0 означает некорректный идентификатор)"
+
+
+msgid "Relative Path"
+msgstr "Относительный путь"
 
 
 msgid "File Select ID Filter"
@@ -41064,10 +41060,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "Свернуть область, отображающую настройки оператора"
 
 
-msgid "Relative Path"
-msgstr "Относительный путь"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Выбрать файл относительно текущего blend-файла"
 
@@ -67701,10 +67693,6 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "Загружать настройки интерфейса при загрузке файлов .blend"
 
 
-msgid "Save Preview Images"
-msgstr "Сохранять предпросмотры"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Разрешить автоматический запуск скриптов в любых .blend-файлах (опасно при использовании файлов .blend из непроверенных источников)"
 
@@ -93534,10 +93522,6 @@ msgstr "Проверка текущего .blend-файла *ПЕРЕД* шаг�
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Проверка текущего .blend-файла *ПОСЛЕ* шага отмены"
-
-
-msgid "Undo disabled at startup"
-msgstr "Отмена отключена при запуске"
 
 
 msgid "Unpack File"

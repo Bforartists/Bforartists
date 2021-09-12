@@ -369,8 +369,10 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                         val = fbx_prop.props[4]
                         if settings.use_custom_props_enum_as_string and fbx_prop.props[5]:
                             enum_items = fbx_prop.props[5].decode('utf-8', 'replace').split('~')
-                            assert(val >= 0 and val < len(enum_items))
-                            blen_obj[prop_name] = enum_items[val]
+                            if val >= 0 and val < len(enum_items):
+                                blen_obj[prop_name] = enum_items[val]
+                            else:
+                                print ("WARNING: User property '%s' has wrong enum value, skipped" % prop_name)
                         else:
                             blen_obj[prop_name] = val
                     else:

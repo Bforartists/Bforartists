@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-08-25 09:24+0200\n"
+"PO-Revision-Date: 2021-08-30 13:38+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -812,11 +812,11 @@ msgstr "Interaktívna programová konzola pre pokročilé úpravy a vývoj skrip
 
 
 msgid "Info"
-msgstr "Info"
+msgstr "Informácie"
 
 
 msgid "Log of operations, warnings and error messages"
-msgstr "Denník operácií, upozornení a chybových hlásení"
+msgstr "Záznam operácií, upozornení a chybových hlásení"
 
 
 msgid "Top Bar"
@@ -3937,14 +3937,6 @@ msgstr "Ovplyvniť pozíciu"
 
 msgid "The brush affects the position of the point"
 msgstr "Štetec ovplyvňuje polohu bodu"
-
-
-msgid "Affect Pressure"
-msgstr "Ovplyvniť tlak"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Ovplyvní hodnoty tlaku priamo pri vyhladzovaní ťahov"
 
 
 msgid "Affect Strength"
@@ -7545,7 +7537,7 @@ msgstr "Použiť polomer krivky"
 
 
 msgid "Average radius of the endpoints is used to tweak the X and Z Scaling of the bones, on top of XZ Scale mode"
-msgstr "Priemerný polomer koncových bodov použitý na vyladenie X a Z zmeny veľkosti kostí, v hornej časti režimu mierky XZ"
+msgstr "Priemerný polomer koncových bodov použitý na krútenie X a Z zmeny veľkosti kostí, v hornej časti režimu mierky XZ"
 
 
 msgid "Even Divisions"
@@ -11905,6 +11897,10 @@ msgid "Unique integer identifying the preview of this file as an icon (zero mean
 msgstr "Jedinečné celé číslo identifikujúce náhľad tohto súboru ako ikonu (nula znamená neplatný)"
 
 
+msgid "Relative Path"
+msgstr "Relatívna cesta"
+
+
 msgid "File Select ID Filter"
 msgstr "Filter ID výberu súboru"
 
@@ -15459,15 +15455,15 @@ msgstr "Index tretieho vrcholu trojuholníka"
 
 msgctxt "Operator"
 msgid "Gizmo"
-msgstr "Manipulačný prvok"
+msgstr "Manipulátor polohy"
 
 
 msgid "Collection of gizmos"
-msgstr "Kolekcia manipulačných prvkov"
+msgstr "Kolekcia manipulátorov polohy"
 
 
 msgid "Gizmo group this gizmo is a member of"
-msgstr "Skupina manipulačných prvkov, ktorej členom je tento manipulačný prvok"
+msgstr "Skupina manipulátorov polohy, ktorej členom je tento manipulátor polohy"
 
 
 msgid "Hide Keymap"
@@ -15475,7 +15471,7 @@ msgstr "Skryť priradenie kláves"
 
 
 msgid "Ignore the key-map for this gizmo"
-msgstr "Ignoruje priradenie kláves pre tento manipulačný prvok"
+msgstr "Ignoruje priradenie kláves pre tento manipulátor polohy"
 
 
 msgid "Hide Select"
@@ -15583,12 +15579,12 @@ msgstr "Použiť popis"
 
 
 msgid "Use tooltips when hovering over this gizmo"
-msgstr "Pri vznášaní kurzora nad týmto manipulačným prvkom použije tipy nástrojov"
+msgstr "Pri vznášaní kurzora nad týmto manipulátorom polohy použije tipy nástrojov"
 
 
 msgctxt "Operator"
 msgid "GizmoGroup"
-msgstr "Skupina manipulačných prvkov"
+msgstr "Skupina manipulátorov polohy"
 
 
 msgid "Storage of an operator being executed, or registered after execution"
@@ -15648,7 +15644,7 @@ msgstr "Prekreslenia VR"
 
 
 msgid "The gizmos are made for use with virtual reality sessions and require special redraw management"
-msgstr "Manipulačné prvky sú určené na použitie pri reláciách virtuálnej reality a vyžadujú špeciálnu správu prekreslenia"
+msgstr "Manipulátory polohy sú určené na použitie pri reláciách virtuálnej reality a vyžadujú špeciálnu správu prekreslenia"
 
 
 msgid "Region Type"
@@ -15708,11 +15704,11 @@ msgstr "Priestor použitia panelu"
 
 
 msgid "Gizmos"
-msgstr "Manipulačné prvky"
+msgstr "Manipulátory polohy"
 
 
 msgid "List of gizmos in the Gizmo Map"
-msgstr "Zoznam manipulačných prvkov na mape manipulačných prvkov"
+msgstr "Zoznam manipulátorov polohy prvkov na mape manipulátorov polohy"
 
 
 msgid "Has Reports"
@@ -15720,7 +15716,7 @@ msgstr "Má správy"
 
 
 msgid "GizmoGroup has a set of reports (warnings and errors) from last execution"
-msgstr "Skupina manipulačných prvkov má nastavené správy (varovania a chyby) od posledného vykonania"
+msgstr "Skupina manipulátorov polohy má nastavené správy (varovania a chyby) od posledného vykonania"
 
 
 msgid "VR Landmark Indicators"
@@ -15732,19 +15728,19 @@ msgstr "Indikátor pózy VR diváka"
 
 
 msgid "Gizmo Group Properties"
-msgstr "Vlastnosti skupiny manipulačných prvkov"
+msgstr "Vlastnosti skupiny manipulátorov polohy"
 
 
 msgid "Input properties of a Gizmo Group"
-msgstr "Vstupné vlastnosti skupiny manipulačných prvkov"
+msgstr "Vstupné vlastnosti skupiny manipulátorov polohy"
 
 
 msgid "Gizmo Properties"
-msgstr "Vlastnosti prvku manipulácie"
+msgstr "Vlastnosti manipulátorov polohy"
 
 
 msgid "Input properties of an Gizmo"
-msgstr "Vstupné vlastnosti manipulačných prvkov"
+msgstr "Vstupné vlastnosti manipulátorov polohy"
 
 
 msgid "Modifier affecting the Grease Pencil object"
@@ -31888,7 +31884,7 @@ msgstr "Šablóny"
 
 
 msgid "Open Shading Language"
-msgstr "Jazyk otvoreného tieňovania"
+msgstr "Jazyk otvoreného tieňovania (OSL)"
 
 
 msgid "Python"
@@ -34877,6 +34873,10 @@ msgstr "Použije vrcholy, ktoré nie sú súčasťou definovanej oblasti"
 
 msgid "Weights over this threshold remain"
 msgstr "Váhy nad týmto prahom zostávajú"
+
+
+msgid "Use vertex group weights to cut faces at the weight contour"
+msgstr "Použije váhy skupiny vrcholov na rezanie plôšok na obryse váhy"
 
 
 msgid "Cache Modifier"
@@ -38812,7 +38812,7 @@ msgstr "Synchronizácia dĺžky akcie"
 
 
 msgid "Update range of frames referenced from action after tweaking strip and its keyframes"
-msgstr "Aktualizácia rozsahu snímok odkazovaných na akciu po ladení pásu a jeho kľúčovej snímky"
+msgstr "Aktualizácia rozsahu snímok odkazovaných na akciu po potiahnutí pásu a jeho kľúčovej snímky"
 
 
 msgid "NLA-Strip F-Curves"
@@ -41632,6 +41632,14 @@ msgid "Curve Endpoints"
 msgstr "Koncové body krivky"
 
 
+msgid "Curve Fill"
+msgstr "Výplň krivky"
+
+
+msgid "N-gons"
+msgstr "N-uholník"
+
+
 msgid "Curve Length"
 msgstr "Dĺžka krivky"
 
@@ -44366,7 +44374,7 @@ msgstr "Odpočíta existujúci výber"
 
 
 msgid "Operator has been activated using a tweak event"
-msgstr "Operátor bol aktivovaný použitím udalosti vyladenia"
+msgstr "Operátor bol aktivovaný použitím udalosti potiahnutia"
 
 
 msgid "Wait for Input"
@@ -44543,7 +44551,7 @@ msgstr "Odpojiť akciu"
 
 
 msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
-msgstr "Odpojí túto akciu od aktívnej zásuvky akcie (a/alebo ukončí režim ladenia)"
+msgstr "Odpojí túto akciu od aktívnej zásuvky akcie (a/alebo ukončí režim potiahnutia)"
 
 
 msgid "Force Delete"
@@ -44551,7 +44559,7 @@ msgstr "Vynútené odstránenie"
 
 
 msgid "Clear Fake User and remove copy stashed in this data-block's NLA stack"
-msgstr "Vymaže falošného užívateľa a odstráni kópiu uchovanú v tomto bloku údajov zásobníka NLA"
+msgstr "Zmaže falošného užívateľa a odstráni kópiu uchovanú v tomto bloku údajov zásobníka NLA"
 
 
 msgctxt "Operator"
@@ -46061,10 +46069,6 @@ msgstr "Skryť vlastnosti operátora"
 
 msgid "Collapse the region displaying the operator settings"
 msgstr "Zbalí oblasť zobrazujúcu nastavenia operátora"
-
-
-msgid "Relative Path"
-msgstr "Relatívna cesta"
 
 
 msgid "Select the file relative to the blend file"
@@ -50566,7 +50570,7 @@ msgstr "Odstráni atribút z geometrie"
 
 msgctxt "Operator"
 msgid "Gizmo Select"
-msgstr "Výber manipulačného prvku"
+msgstr "Výber manipulátora polohy"
 
 
 msgid "Select the currently highlighted gizmo"
@@ -50587,11 +50591,11 @@ msgstr "Prepne výber"
 
 msgctxt "Operator"
 msgid "Gizmo Tweak"
-msgstr "Doladiť prvok manipulácie"
+msgstr "Ťahanie manipulátorom polohy"
 
 
 msgid "Tweak the active gizmo"
-msgstr "Doladenie aktívneho manipulačného prvku"
+msgstr "Ťahanie aktívneho manipulátora polohy"
 
 
 msgctxt "Operator"
@@ -57101,7 +57105,7 @@ msgstr "Zarovná osi transformácie na priemerný normál vybraných prvkov (kos
 
 
 msgid "Gimbal"
-msgstr "Guľový kĺb"
+msgstr "Manipulátor rotácie"
 
 
 msgid "Align each axis to the Euler rotation axis as used for input"
@@ -58197,11 +58201,11 @@ msgstr "Pridá  pás prechodu medzi dvomi susednými vybranými pásmi"
 
 msgctxt "Operator"
 msgid "Enter Tweak Mode"
-msgstr "Vstúpiť do režimu ladenia"
+msgstr "Vstúpiť do režimu potiahnutia"
 
 
 msgid "Enter tweaking mode for the action referenced by the active strip to edit its keyframes"
-msgstr "Spustí režim ladenia pre akciu, na ktorú odkazuje aktívny pás a upraví jeho kľúčové snímky"
+msgstr "Spustí režim potiahnutia pre akciu, na ktorú odkazuje aktívny pás a upraví jeho kľúčové snímky"
 
 
 msgid "Isolate Action"
@@ -58214,15 +58218,15 @@ msgstr "Povolí 'sólo' NLA stopu obsahujúcu aktívny pás, na úpravu bez toho
 
 msgctxt "Operator"
 msgid "Exit Tweak Mode"
-msgstr "Skončiť režim ladenia"
+msgstr "Skončiť režim potiahnutia"
 
 
 msgid "Exit tweaking mode for the action referenced by the active strip"
-msgstr "Ukončí režim ladenia akcie, na ktorú odkazoval aktívny pás"
+msgstr "Ukončí režim potiahnutia akcie, na ktorú odkazoval aktívny pás"
 
 
 msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get things back to normal"
-msgstr "Zakáže 'sólo' na niektorú NLA stopu po ukončení režimu ladenia na návrat do normálu"
+msgstr "Zakáže 'sólo' na niektorú NLA stopu po ukončení režimu potiahnutia na návrat do normálu"
 
 
 msgid "Reset viewable area to show full strips range"
@@ -58687,6 +58691,14 @@ msgid "Width of the zone in UI units where speed increases with distance from th
 msgstr "Šírka zóny v jednotkách užívateľského rozhrania, kde sa rýchlosť zvyšuje vzdialenosťou od okraja"
 
 
+msgid "Zoom Influence"
+msgstr "Vplyv priblíženia"
+
+
+msgid "Influence of the zoom factor on scroll speed"
+msgstr "Vplyv faktora priblíženia na rýchlosť posúvania"
+
+
 msgctxt "Operator"
 msgid "Make Links"
 msgstr "Vytvoriť prepojenia"
@@ -58903,7 +58915,7 @@ msgstr "Použije výber poľa na výber uzlov"
 
 
 msgid "Only activate when mouse is not over a node (useful for tweak gesture)"
-msgstr "Aktivovať, len keď myš nie je nad uzlom (užitočné pre ladenie výrazu)"
+msgstr "Aktivovať, len keď myš nie je nad uzlom (užitočné pre potiahnutie výrazu)"
 
 
 msgid "Use circle selection to select nodes"
@@ -62961,7 +62973,7 @@ msgstr "Použiť výber poľom na výber prvkov stromu"
 
 
 msgid "Tweak gesture from empty space for box selection"
-msgstr "Vyladenie výrazu prázdneho priestoru pre výber poľom"
+msgstr "Potiahnutie gesta prázdneho priestoru pre výber poľom"
 
 
 msgctxt "Operator"
@@ -68170,7 +68182,7 @@ msgstr "Vybrať manipulátory"
 
 
 msgid "Select gizmo handles on the sides of the selected strip"
-msgstr "Vyberie manipulátor manipulačného prvku po stranách vybraného pásu"
+msgstr "Vyberie manipulátor manipulátora polohy po stranách vybraného pásu"
 
 
 msgid "The side of the handle that is selected"
@@ -69460,6 +69472,14 @@ msgstr "Strihá vybranými prvkami pozdĺž vodorovnej osi obrazovky"
 
 msgid "Axis Ortho"
 msgstr "Ortografická os"
+
+
+msgid "Edge Pan"
+msgstr "Posúvanie hrany"
+
+
+msgid "Enable edge panning in 2D view"
+msgstr "Povolí posúvania hrany v 2D zobrazení"
 
 
 msgctxt "Operator"
@@ -71173,11 +71193,11 @@ msgstr "Presunie kurzor 3D na vybraný bod VR"
 
 msgctxt "Operator"
 msgid "Dolly View"
-msgstr "Pridržanie zobrazenia (dolly)"
+msgstr "Dolly zobrazenie"
 
 
 msgid "Dolly in/out in the view"
-msgstr "Pridrží priblíženie/oddialenie zobrazenia"
+msgstr "Dolly priblíženie/oddialenie zobrazenia"
 
 
 msgid "Region Position X"
@@ -72527,7 +72547,7 @@ msgstr "Zachovať kľúčové snímky"
 
 
 msgid "Use existing keyframes as additional sample points (this helps when you want to keep manual tweaks)"
-msgstr "Použije existujúce kľúčové snímky ako ďalšie body snímky (to pomôže pri manuálnom ladení)"
+msgstr "Použije existujúce kľúčové snímky ako ďalšie body snímky (to pomôže pri manuálnom potiahnutí)"
 
 
 msgid "Keep Smooth curves"
@@ -73561,7 +73581,7 @@ msgstr "Sekundárna textúra"
 
 
 msgid "Tweak brush secondary/mask texture"
-msgstr "Textúra ladenia sekundárneho štetca/masky"
+msgstr "Textúra potiahnutia sekundárneho štetca/masky"
 
 
 msgid "Use Secondary"
@@ -76169,7 +76189,7 @@ msgstr "Stupňovitosť farieb"
 
 
 msgid "Gizmo"
-msgstr "Manipulačný prvok"
+msgstr "Manipulátor polohy"
 
 
 msgid "Brush Presets"
@@ -78630,14 +78650,6 @@ msgid "Default relative path option for the file selector, when no path is defin
 msgstr "Predvolená relatívna cesta pre výber súboru, ak ešte cesta nie je definovaná"
 
 
-msgid "Save Preview Images"
-msgstr "Uložiť ukážky obrázkov"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr "Povolí automatické ukladanie náhľadu obrázkov ako aj miniatúr do .blend súboru"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Povolí každému .blend súboru automatické spúšťanie skriptov (nebezpečné pri .blend súboroch z nedôveryhodných zdrojov)"
 
@@ -78663,7 +78675,7 @@ msgstr "Prah pretiahnutia myšou"
 
 
 msgid "Number of pixels to drag before a tweak/drag event is triggered for mouse/trackpad input (otherwise click events are detected)"
-msgstr "Počet pixelov na pretiahnutie pred spustením udalosti ladiť/pretiahnuť vstupu pre myš/track-pad (inak je zistený po udalosti kliknutia)"
+msgstr "Počet pixelov na pretiahnutie pred spustením udalosti potiahnuť/pretiahnuť vstupu pre myš/track-pad (inak je zistený po udalosti kliknutia)"
 
 
 msgid "Tablet Drag Threshold"
@@ -78671,7 +78683,7 @@ msgstr "Prah pretiahnutia tabletom"
 
 
 msgid "Number of pixels to drag before a tweak/drag event is triggered for tablet input (otherwise click events are detected)"
-msgstr "Počet pixelov na pretiahnutie pred spustením udalosti ladiť/pretiahnuť vstupu pre tablet (inak je zistený po udalosti kliknutia)"
+msgstr "Počet pixelov na pretiahnutie pred spustením udalosti potiahnuť/pretiahnuť vstupu pre tablet (inak je zistený po udalosti kliknutia)"
 
 
 msgid "Invert Zoom Direction"
@@ -79031,7 +79043,7 @@ msgstr "Kontinuálne približovanie. Smer a rýchlosť približovania závisia o
 
 
 msgid "Dolly"
-msgstr "Pridržanie (dolly)"
+msgstr "Dolly"
 
 
 msgid "Zoom in and out based on mouse movement along the set Zoom Axis"
@@ -79471,11 +79483,11 @@ msgstr "Zobrazí oblasti nástrojov/vlastností nad hlavnou oblasťou"
 
 
 msgid "OpenGL Depth Picking"
-msgstr "Zbieranie hĺbky OpenGL"
+msgstr "Naberanie hĺbky OpenGL"
 
 
 msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Použije zásobník hĺbky na zbieranie výberu 3D zobrazenia (bez toho, aby sa celkom predný objekt nemohol vybrať prvý)"
+msgstr "Použije zásobník hĺbky na naberanie výberu 3D zobrazenia (bez toho, aby sa celkom predný objekt nemohol vybrať prvý)"
 
 
 msgid "Use Disk Cache"
@@ -84865,7 +84877,7 @@ msgstr "Zásobník zložených"
 
 
 msgid "Cache intermediate composited images, for faster tweaking of stacked strips at the cost of memory usage"
-msgstr "Prechodný zásobník zložených obrázkov, pre rýchlejšie ladenie uložených pásov na úkor využitia pamäte"
+msgstr "Prechodný zásobník zložených obrázkov, pre rýchlejšie potiahnutie uložených pásov na úkor využitia pamäte"
 
 
 msgid "Cache Preprocessed"
@@ -84873,7 +84885,7 @@ msgstr "Zásobník predbežne spracovaných"
 
 
 msgid "Cache preprocessed images, for faster tweaking of effects at the cost of memory usage"
-msgstr "Zásobník predspracovaných obrázkov, pre rýchlejšie ladenie efektov na úkor využitia pamäte"
+msgstr "Zásobník predspracovaných obrázkov, pre rýchlejšie potiehnutie efektov na úkor využitia pamäte"
 
 
 msgid "Cache Raw"
@@ -84881,7 +84893,7 @@ msgstr "Zásobník nespracovaných"
 
 
 msgid "Cache raw images read from disk, for faster tweaking of strip parameters at the cost of memory usage"
-msgstr "Zásobník nespracovaných obrázkov načítaných z disku, pre rýchlejšie ladenie parametrov pásu na úkor využitia pamäte"
+msgstr "Zásobník nespracovaných obrázkov načítaných z disku, pre rýchlejšie potiahnutie parametrov pásu na úkor využitia pamäte"
 
 
 msgid "Use Default Fade"
@@ -85722,7 +85734,7 @@ msgstr "Zásobník predspracovaných"
 
 
 msgid "Cache pre-processed images, for faster tweaking of effects at the cost of memory usage"
-msgstr "Zásobník predspracovaných obrázkov, pre rýchlejšie ladenie efektov na úkor využitia pamäte"
+msgstr "Zásobník predspracovaných obrázkov, pre rýchlejšie potiahnutie efektov na úkor využitia pamäte"
 
 
 msgid "Overlay Lock"
@@ -85991,6 +86003,30 @@ msgstr "Meniť veľkosť pozdĺž osi Y"
 
 msgid "Sequencer Tool Settings"
 msgstr "Nastavenia nástroja radiča sekvencií"
+
+
+msgid "Overlap Mode"
+msgstr "Režim prekrytia"
+
+
+msgid "How to resolve overlap after transformation"
+msgstr "Určuje vyriešenie prekrytia po transformácii"
+
+
+msgid "Move strips so transformed strips fits"
+msgstr "Presunie pásy tak, aby sa prispôsobili transformovaným pásom"
+
+
+msgid "Trim or split strips to resolve overlap"
+msgstr "Orezanie alebo rozdelenie pásov na vyriešenie prekrytia"
+
+
+msgid "Shuffle"
+msgstr "Náhodný výber"
+
+
+msgid "Move transformed strips to nearest free space to resolve overlap"
+msgstr "Presunie transformované pásy na najbližšie voľné miesto, aby sa vyriešilo prekrytie"
 
 
 msgid "Snapping Distance"
@@ -86610,7 +86646,7 @@ msgstr "Odhadovaná matrica mierky"
 
 
 msgid "Tweak timing for physics to control frequency and speed"
-msgstr "Vyrovná časovanie pre fyziku na kontrolu frekvencie a rýchlosti"
+msgstr "Potiahne časovanie pre fyziku na kontrolu frekvencie a rýchlosti"
 
 
 msgid "Alter spring length to shrink/blow up (unit %) 0 to disable"
@@ -88872,11 +88908,11 @@ msgstr "Ukáže rekonštruovanú dráhu kamery"
 
 
 msgid "Show Gizmo"
-msgstr "Zobraziť manipulačný prvok"
+msgstr "Zobraziť manipulátor polohy"
 
 
 msgid "Show gizmos of all types"
-msgstr "Ukáže manipulačné prvky všetkých typov"
+msgstr "Ukáže manipulátory polohy všetkých typov"
 
 
 msgid "Show Camera Focus Distance"
@@ -88884,7 +88920,7 @@ msgstr "Zobraziť vzdialenosť zaostrenia kamery"
 
 
 msgid "Gizmo to adjust camera focus distance (depends on limits display)"
-msgstr "Manipulačný prvok upraví vzdialenosť zaostrenia kamery (záleží na limitoch zobrazenia)"
+msgstr "Manipulátor polohy upraví vzdialenosť zaostrenia kamery (záleží na limitoch zobrazenia)"
 
 
 msgid "Show Camera Lens"
@@ -88892,15 +88928,15 @@ msgstr "Zobraziť objektív kamery"
 
 
 msgid "Gizmo to adjust camera focal length or orthographic scale"
-msgstr "Manipulačný prvok na úpravu ohniskovej vzdialenosti kamery alebo ortografickej mierky"
+msgstr "Manipulátor polohy na úpravu ohniskovej vzdialenosti kamery alebo ortografickej mierky"
 
 
 msgid "Context Gizmo"
-msgstr "Kontext manipulačného prvku"
+msgstr "Kontext manipulátora polohy"
 
 
 msgid "Context sensitive gizmos for the active item"
-msgstr "Kontext citlivosti manipulačného prvku pre aktívnu položku"
+msgstr "Kontext citlivosti manipulátora polohy pre aktívnu položku"
 
 
 msgid "Show Empty Force Field"
@@ -88908,7 +88944,7 @@ msgstr "Ukáže prázdne silové pole"
 
 
 msgid "Gizmo to adjust the force field"
-msgstr "Manipulačný prvok pre nastavenie silového poľa"
+msgstr "Manipulátor polohy pre nastavenie silového poľa"
 
 
 msgid "Show Empty Image"
@@ -88916,7 +88952,7 @@ msgstr "Ukáže prázdny obrázok"
 
 
 msgid "Gizmo to adjust image size and position"
-msgstr "Manipulačný prvok pre nastavenie veľkosti obrazu a polohy"
+msgstr "Manipulátor polohy pre nastavenie veľkosti obrazu a polohy"
 
 
 msgid "Show Light Look-At"
@@ -88924,7 +88960,7 @@ msgstr "Ukáže Pozrieť na svetlo"
 
 
 msgid "Gizmo to adjust the direction of the light"
-msgstr "Manipulačný prvok na nastavenie smeru svetla"
+msgstr "Manipulátor polohy na nastavenie smeru svetla"
 
 
 msgid "Show Light Size"
@@ -88932,7 +88968,7 @@ msgstr "Ukáže veľkosť svetla"
 
 
 msgid "Gizmo to adjust spot and area size"
-msgstr "Manipulačný prvok upraví lokalitu a veľkosť oblasti"
+msgstr "Manipulátor polohy upraví lokalitu a veľkosť oblasti"
 
 
 msgid "Navigate Gizmo"
@@ -90832,15 +90868,15 @@ msgstr "Vybraný pás prechodu"
 
 
 msgid "Color for strip/action being \"tweaked\" or edited"
-msgstr "Farba pre 'vylepšený' alebo upravený pás/akciu"
+msgstr "Farba pre 'vylepšený' alebo potiahnutý pás/akciu"
 
 
 msgid "Tweak Duplicate Flag"
-msgstr "Príznak duplicitného doladenia"
+msgstr "Príznak duplicitného potiahnutia"
 
 
 msgid "Warning/error indicator color for strips referencing the strip being tweaked"
-msgstr "Farba indikátora upozornenia/chyby pre pásy odkazujúce na vylepšovaný pás"
+msgstr "Farba indikátora upozornenia/chyby pre pásy odkazujúce na potiahnutý pás"
 
 
 msgid "Theme Node Editor"
@@ -91232,27 +91268,27 @@ msgstr "Farba obrysov editorov a ich zaoblenia rohov"
 
 
 msgid "Gizmo A"
-msgstr "Manipulačný prvok A"
+msgstr "Manipulátor polohy A"
 
 
 msgid "Gizmo B"
-msgstr "Manipulačný prvok B"
+msgstr "Manipulátor polohy B"
 
 
 msgid "Gizmo Highlight"
-msgstr "Zvýraznenie manipulačného prvku"
+msgstr "Zvýraznenie manipulátora polohy"
 
 
 msgid "Gizmo Primary"
-msgstr "Prvotný manipulačný prvok"
+msgstr "Prvotný manipulátor polohy"
 
 
 msgid "Gizmo Secondary"
-msgstr "Druhotný manipulačný prvok"
+msgstr "Druhotný manipulátor polohy"
 
 
 msgid "Gizmo View Align"
-msgstr "Zarovnať zobrazenie manipulačného prvku"
+msgstr "Zarovnať zobrazenie manipulátora polohy"
 
 
 msgid "Icon Alpha"
@@ -92153,7 +92189,7 @@ msgstr "Vrstvené"
 
 
 msgid "Add a new NLA Track + Strip for every loop/pass made over the animation to allow non-destructive tweaking"
-msgstr "Pridá novú NLA stopu + pás pre každú vytvorenú slučku/prechod pred animáciou na umožnenie nedeštruktívneho ladenia"
+msgstr "Pridá novú NLA stopu + pás pre každú vytvorenú slučku/prechod pred animáciou na umožnenie nedeštruktívneho potiahnutia"
 
 
 msgid "Snap during transform"
@@ -93105,7 +93141,7 @@ msgstr "Ukáže zvýraznenie obrysov okolo vybraných objektov"
 
 
 msgid "Display overlays like gizmos and outlines"
-msgstr "Zobrazí prekrytia ako manipulačný prvok a obrysy"
+msgstr "Zobrazí prekrytia ako manipulátor polohy a obrysy"
 
 
 msgid "Show Wire"
@@ -94634,7 +94670,7 @@ msgstr "Geometria:"
 
 msgctxt "Operator"
 msgid "Gizmogroup:"
-msgstr "Skupina manipulačných prvkov:"
+msgstr "Skupina manipulátorov polohy:"
 
 
 msgctxt "Operator"
@@ -95124,37 +95160,37 @@ msgstr "Netypický objekt"
 
 msgctxt "WindowManager"
 msgid "View3D Placement Modal"
-msgstr "Typické 3D zobrazenie umiestnenia"
+msgstr "Typické premiestnenie 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Walk Modal"
-msgstr "Typické 3D zobrazenie chôdze"
+msgstr "Typická chôdza 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Fly Modal"
-msgstr "Typické 3Dzobrazenie lietania"
+msgstr "Typické lietanie 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Rotate Modal"
-msgstr "Typické 3D zobrazenie rotácie"
+msgstr "Typická rotácia 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Move Modal"
-msgstr "Typické 3D zobrazenie presunu"
+msgstr "Typický presun 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Zoom Modal"
-msgstr "Typické 3D zobrazenie priblíženia"
+msgstr "Typické priblíženie 3D zobrazenia"
 
 
 msgctxt "WindowManager"
 msgid "View3D Dolly Modal"
-msgstr "Typické 3D zobrazenie pridržania"
+msgstr "Typické dolly 3D zobrazenie"
 
 
 msgctxt "WindowManager"
@@ -95294,7 +95330,7 @@ msgstr "Tlačidlo vyhľadávača súborov"
 
 msgctxt "WindowManager"
 msgid "Info"
-msgstr "Info"
+msgstr "Informácie"
 
 
 msgctxt "WindowManager"
@@ -99732,12 +99768,12 @@ msgstr "Prepojená kópia"
 
 msgctxt "Operator"
 msgid "Stop Tweaking Strip Actions"
-msgstr "Zastaviť ladenie pásu akcií"
+msgstr "Zastaviť potiahnutie akcií pásu"
 
 
 msgctxt "Operator"
 msgid "Start Tweaking Strip Actions"
-msgstr "Začať ladenie pásu akcií"
+msgstr "Spustiť potiahnutie akcií pásu"
 
 
 msgctxt "Operator"
@@ -102316,7 +102352,7 @@ msgstr "Zobraziť vybrané"
 
 
 msgid "Show Gizmos"
-msgstr "Zobraziť manipulačné prvky polohy"
+msgstr "Zobraziť manipulátory polohy"
 
 
 msgid "Toggle Overlays"
@@ -106299,7 +106335,7 @@ msgstr "Máte vybraný príliš veľký reťazec pripojených vrcholov"
 
 
 msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick), Thickness: %s, Depth (Ctrl to tweak): %s (%s), Outset (O): (%s), Boundary (B): (%s), Individual (I): (%s)"
-msgstr "Potvrdiť: Enter/Ľ-klik, Zrušiť: (Esc/R-klik), Hrúbka: %s, Hĺbka (Ctrl vyladiť): %s (%s), Začiatok (O): (%s), Okraj (B): ( %s), Samostatné (I): (%s)"
+msgstr "Potvrdiť: Enter/Ľ-klik, Zrušiť: (Esc/R-klik), Hrúbka: %s, Hĺbka (Ctrl pre potiahnutie): %s (%s), Začiatok (O): (%s), Okraj (B): ( %s), Samostatné (I): (%s)"
 
 
 msgid "Compiled without GMP, using fast solver"
@@ -109075,7 +109111,7 @@ msgstr "Vnútorná chyba – blok údajov animácie je neplatný"
 
 
 msgid "Cannot push down actions while tweaking a strip's action, exit tweak mode first"
-msgstr "Nemožno pretlačiť akcie nadol počas ladenia pásu akcie, skôr než ukončíte režim ladenia"
+msgstr "Nemožno pretlačiť akcie nadol počas potiahnutie akcií pásu, skôr než ukončíte režim potiahnutia"
 
 
 msgid "No active action to push down"
@@ -109095,15 +109131,15 @@ msgstr "Kanál animácie v indexe %d nie je kanálom 'aktívnej akcie' NLA"
 
 
 msgid "No AnimData blocks to enter tweak mode for"
-msgstr "Chýba blok údajov animácie pre vstup do režimu ladenia"
+msgstr "Chýba blok údajov animácie pre vstup do režimu potiahnutia"
 
 
 msgid "No active strip(s) to enter tweak mode on"
-msgstr "Chýba aktívny pás(y) pre vstup do režimu ladenia"
+msgstr "Chýba aktívny pás(y) pre vstup do režimu potiahnutia"
 
 
 msgid "No AnimData blocks in tweak mode to exit from"
-msgstr "Chýba blok údajov animácie pre ukončenie režimu ladenia"
+msgstr "Chýba blok údajov animácie pre ukončenie režimu potiahnutia"
 
 
 msgid "No valid action to add"
@@ -110056,7 +110092,7 @@ msgstr "sním/s: %i"
 
 
 msgid "Cannot dolly when the view offset is locked"
-msgstr "Nemožno použiť pridržanie, keď je uzamknutý posuv zobrazenia"
+msgstr "Nemožno použiť dolly, keď je uzamknutý posuv zobrazenia"
 
 
 msgid "Depth too large"
@@ -110068,7 +110104,7 @@ msgstr "Röntgen je v aktuálnom režime nedostupný"
 
 
 msgid "Gizmos hidden in this view"
-msgstr "Skrytý manipulačný prvok v tomto zobrazení"
+msgstr "Skrytý manipulátor polohy v tomto zobrazení"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
@@ -110383,6 +110419,10 @@ msgid "Crease: %.3f %s"
 msgstr "Záhyb: %.3f %s"
 
 
+msgid "Sequence Slide: %s%s"
+msgstr "Posunutie sekvencie: %s%s"
+
+
 msgid "Edge Slide: "
 msgstr "Posunutie hrany: "
 
@@ -110524,7 +110564,7 @@ msgstr "globálne"
 
 
 msgid "gimbal"
-msgstr "guľový kĺb"
+msgstr "manipulátor rotácie"
 
 
 msgid "normal"
@@ -110578,10 +110618,6 @@ msgstr "Kontrolné ošetrenie aktuálneho .blend súboru *PRED* vrátením kroku
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Kontrolné ošetrenie aktuálneho .blend súboru *PO* vrátení kroku"
-
-
-msgid "Undo disabled at startup"
-msgstr "Späť zakázané pri štarte"
 
 
 msgid "[E] - Disable overshoot"
@@ -111771,11 +111807,11 @@ msgstr "Podporovaný iba jeden znak"
 
 
 msgid "Gizmo group type '%s' not found!"
-msgstr "Typ skupiny manipulačného prvku '%s ' nebol nájdený!"
+msgstr "Typ skupiny manipulátora polohy '%s ' nebol nájdený!"
 
 
 msgid "Gizmo group '%s' has 'PERSISTENT' option set!"
-msgstr "Skupina manipulačného prvku '%s' má 'TRVALÚ' voľbu nastavenia!"
+msgstr "Skupina manipulátora polohy '%s' má 'TRVALÚ' voľbu nastavenia!"
 
 
 msgid "KeyMapItem '%s' cannot be removed from '%s'"
@@ -111791,27 +111827,27 @@ msgstr "Konfiguráciu klávesy '%s' nemožno odstrániť"
 
 
 msgid "Area type does not support gizmos"
-msgstr "Typ oblasti nepodporuje manipulačné prvky"
+msgstr "Typ oblasti nepodporuje manipulátory polohy"
 
 
 msgid "Registering gizmo class: '%s' is too long, maximum length is %d"
-msgstr "Registrácia triedy manipulačného prvku: '%s' je príliš dlhá, maximálna dĺžka je %d"
+msgstr "Registrácia triedy manipulátora polohy: '%s' je príliš dlhá, maximálna dĺžka je %d"
 
 
 msgid "GizmoType '%s' not known"
-msgstr "Typ manipulačného prvku '%s' nie je známy"
+msgstr "Typ manipulátora polohy '%s' nie je známy"
 
 
 msgid "GizmoType '%s' is for a 3D gizmo-group. The 'draw_select' callback is set where only 'test_select' will be used"
-msgstr "GizmoType '%s' je pre skupinu 3D skupinu manipulačného prvku (gizmo). Je nastavené spätné volanie 'draw_select', kde sa použije iba 'test_select'"
+msgstr "GizmoType '%s' je pre skupinu 3D skupinu manipulátora polohy (gizmo). Je nastavené spätné volanie 'draw_select', kde sa použije iba 'test_select'"
 
 
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"
-msgstr "Registrácia triedy skupiny manipulačných prvkov: '%s' je príliš dlhá, maximálna dĺžka je %d"
+msgstr "Registrácia triedy skupiny manipulátorov polohy: '%s' je príliš dlhá, maximálna dĺžka je %d"
 
 
 msgid "Gizmo target property '%s.%s' not found"
-msgstr "Cieľová vlastnosť manipulačného prvku '%s.%s\" sa nenašla"
+msgstr "Cieľová vlastnosť manipulátora polohy '%s.%s\" sa nenašla"
 
 
 msgid "Property '%s.%s' not found"
@@ -111819,19 +111855,19 @@ msgstr "Vlastnosť '%s.%s' sa nenašla"
 
 
 msgid "Gizmo target '%s.%s' expects '%s', '%s.%s' is '%s'"
-msgstr "Cieľový manipulačný prvok '%s.%s' očakáva '%s', '%s.%s' je '%s'"
+msgstr "Cieľový manipulátor polohy '%s.%s' očakáva '%s', '%s.%s' je '%s'"
 
 
 msgid "Gizmo target property '%s.%s' expects an array of length %d, found %d"
-msgstr "Cieľová vlastnosť manipulačného prvku '%s.%s' očakáva pole dĺžky %d, bolo nájdené %d"
+msgstr "Cieľová vlastnosť manipulátora polohy '%s.%s' očakáva pole dĺžky %d, bolo nájdené %d"
 
 
 msgid "Gizmo target property '%s.%s' expects an array of length %d"
-msgstr "Cieľová vlastnosť manipulačného prvku '%s.%s' očakáva pole dĺžky %d"
+msgstr "Cieľová vlastnosť manipulátora polohy '%s.%s' očakáva pole dĺžky %d"
 
 
 msgid "Gizmo target property '%s.%s', index %d must be below %d"
-msgstr "Cieľová vlastnosť manipulačného prvku '%s.%s', index %d musí byť nižší ako %d"
+msgstr "Cieľová vlastnosť manipulátora polohy '%s.%s', index %d musí byť nižší ako %d"
 
 
 msgid "%s '%s'"
@@ -111847,7 +111883,7 @@ msgstr "Operátor '%s' sa nenašiel!"
 
 
 msgid "Gizmo group '%s' not found!"
-msgstr "Skupina manipulačného prvku '%s' nebola nájdená!"
+msgstr "Skupina manipulátora polohy '%s' nebola nájdená!"
 
 
 msgid "ActionMapBinding '%s' cannot be removed from '%s'"
@@ -112816,11 +112852,11 @@ msgstr "Knižnica %s potrebuje opätovnú synchronizáciu prepisov"
 
 
 msgid "%d libraries and %d linked data-blocks are missing (including %d ObjectData and %d Proxies), please check the Info and Outliner editors for details"
-msgstr "Chýbajú %d knižnice a %d prepojené bloky údajov (vrátane %d ObjectData a %d náhrady), podrobnosti nájdete v editoroch Info a Líniový prehľad"
+msgstr "Chýbajú %d knižnice a %d prepojené bloky údajov (vrátane %d ObjectData a %d náhrady), podrobnosti nájdete v editoroch Informácie a Líniový prehľad"
 
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"
-msgstr "%d knižnice majú prepisy vyžadujúce opätovnú synchronizáciu (automatická opätovná synchronizácia v %.0fm%.2fs),  kvôli detailom skontrolujte, prosím, editor Info"
+msgstr "%d knižnice majú prepisy vyžadujúce opätovnú synchronizáciu (automatická opätovná synchronizácia v %.0fm%.2fs),  kvôli detailom skontrolujte, prosím, editor Informácie"
 
 
 msgid "Cannot read file '%s': %s"

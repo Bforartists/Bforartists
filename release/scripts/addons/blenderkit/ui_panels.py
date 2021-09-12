@@ -1836,8 +1836,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
 
             row.emboss = 'NONE'
             op = row.operator('wm.blenderkit_tooltip', text=str(s), icon_value=pcoll['trophy'].icon_id)
-            op.tooltip = 'Asset score calculated from averaged user ratings. \n\n' \
-                         'Score = quality × complexity × 10*\n\n *Happiness multiplier'
+            op.tooltip = 'Asset score calculated from user ratings. \n\n' \
+                         'Score = average quality × median complexity × 10*\n\n *Happiness multiplier'
             row.label(text='   ')
 
             tooltip_extension = f'.\n\nRatings results are shown for assets with more than {show_rating_threshold} ratings'
@@ -1847,7 +1847,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             row.label(text='   ')
 
             op = row.operator('wm.blenderkit_tooltip', text=str(c), icon_value=pcoll['dumbbell'].icon_id)
-            op.tooltip = f"Complexity, average from {rc['workingHours']} ratings" \
+            op.tooltip = f"Complexity, median from {rc['workingHours']} ratings" \
                          f"{tooltip_extension if rcount <= show_rating_threshold else ''}"
 
             if rcount <= show_rating_prompt_threshold:
@@ -2029,9 +2029,9 @@ class SetCategoryOperator(bpy.types.Operator):
 
 
 class ClosePopupButton(bpy.types.Operator):
-    """Visit subcategory"""
+    """Close popup window"""
     bl_idname = "view3d.close_popup_button"
-    bl_label = "BlenderKit close popup"
+    bl_label = "Close popup"
     bl_options = {'REGISTER', 'INTERNAL'}
 
     @classmethod

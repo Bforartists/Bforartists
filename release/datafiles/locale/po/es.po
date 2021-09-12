@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3848,14 +3848,6 @@ msgstr "Afectar posición"
 
 msgid "The brush affects the position of the point"
 msgstr "El pincel afecta a la posición del punto"
-
-
-msgid "Affect Pressure"
-msgstr "Afectar presión"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "También se afectan los valores de presión al suavizar los trazos"
 
 
 msgid "Affect Strength"
@@ -11702,6 +11694,10 @@ msgstr "ID de ícono"
 
 msgid "Unique integer identifying the preview of this file as an icon (zero means invalid)"
 msgstr "Entero único que identifica a la previsualización de este archivo como un ícono (cero significa inválido)"
+
+
+msgid "Relative Path"
+msgstr "Ruta relativa"
 
 
 msgid "File Select ID Filter"
@@ -45200,10 +45196,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "Colapsa la región que muestra las opciones del operador"
 
 
-msgid "Relative Path"
-msgstr "Ruta relativa"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleccionar el archivo, en relación al archivo .blend"
 
@@ -77377,14 +77369,6 @@ msgid "Default relative path option for the file selector, when no path is defin
 msgstr "Ruta relativa predefinida para el selector de archivos, cuando aún no se hubiera definido una ruta"
 
 
-msgid "Save Preview Images"
-msgstr "Guardar imágenes de previsualización"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr "Habilita el guardado automático de imágenes de previsualización en el archivo .blend, así como una miniatura del mismo"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Permite que cualquier archivo .blend ejecute scripts automáticamente (es inseguro usarlo con archivos .blend de orígenes no confiables)"
 
@@ -108354,10 +108338,6 @@ msgstr "Comprobando la sanidad del archivo .blend actual *ANTES* de deshacer"
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Comprobando la sanidad del archivo .blend actual *DESPUÉS* de deshacer"
-
-
-msgid "Undo disabled at startup"
-msgstr "Deshacer deshabilitado al inicio"
 
 
 msgid "[E] - Disable overshoot"
