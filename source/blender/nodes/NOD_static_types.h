@@ -225,7 +225,7 @@ DefNode(CompositorNode, CMP_NODE_CRYPTOMATTE_LEGACY, def_cmp_cryptomatte_legacy,
 DefNode(CompositorNode, CMP_NODE_DENOISE,        def_cmp_denoise,        "DENOISE",        Denoise,          "Denoise",           "Add a Denoise Compositor node\nDenoises the image"              )
 DefNode(CompositorNode, CMP_NODE_EXPOSURE,       0,                      "EXPOSURE",       Exposure,         "Exposure",          "Add a Exposure Compositor node\nMake areas of an image brighter or dimmer"              )
 DefNode(CompositorNode, CMP_NODE_ANTIALIASING,   def_cmp_antialiasing,   "ANTIALIASING",   AntiAliasing,     "Anti-Aliasing",     "Add a Anti-Aliasing Compositor node\nAnti-alias an image"              )
-DefNode(CompositorNode, CMP_NODE_POSTERIZE,      0,                      "POSTERIZE",      Posterize,        "Posterize",         "Add a Posterize Node\Posterize reduces the number of colors"              )
+DefNode(CompositorNode, CMP_NODE_POSTERIZE,      0,                      "POSTERIZE",      Posterize,        "Posterize",         "Add a Posterize Node\nPosterize reduces the number of colors"              )
 
 DefNode(TextureNode,    TEX_NODE_OUTPUT,         def_tex_output,         "OUTPUT",         Output,           "Output",            "Add a Output Texture node\nOutput for node textures"              )
 DefNode(TextureNode,    TEX_NODE_CHECKER,        0,                      "CHECKER",        Checker,          "Checker",           "Add a Checker Texture node\nAdds a procedural checkerboard texture"              )
