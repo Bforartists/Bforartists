@@ -148,6 +148,8 @@ bNodeSocket &Vector::build(bNodeTree &ntree, bNode &node, eNodeSocketInOut in_ou
       &ntree, &node, in_out, SOCK_VECTOR, subtype_, identifier_.c_str(), name_.c_str());
   bNodeSocketValueVector &value = *(bNodeSocketValueVector *)socket.default_value;
   copy_v3_v3(value.value, default_value_);
+  value.min = soft_min_value_;
+  value.max = soft_max_value_;
   return socket;
 }
 
@@ -274,7 +276,7 @@ bNodeSocket &build_id_socket(bNodeTree &ntree,
                              StringRefNull identifier)
 {
   bNodeSocket &socket = *nodeAddSocket(
-      &ntree, &node, in_out, data.idname, name.c_str(), identifier.c_str());
+      &ntree, &node, in_out, data.idname, identifier.c_str(), name.c_str());
   if (data.hide_label) {
     socket.flag |= SOCK_HIDE_LABEL;
   }
