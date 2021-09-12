@@ -306,7 +306,7 @@ DefNode(GeometryNode, GEO_NODE_LEGACY_SELECT_BY_MATERIAL, 0, "LEGACY_SELECT_BY_M
 
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_CAPTURE, def_geo_attribute_capture, "ATTRIBUTE_CAPTURE", AttributeCapture, "Attribute Capture", "Add a attribute capture node\nCapture an attribute")
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_REMOVE, 0,                                         "ATTRIBUTE_REMOVE", AttributeRemove, "Attribute Remove",                        "Add a Attribute Remove Geometry node\nRemove temporary attributes")
-DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_VECTOR_ROTATE, def_geo_attribute_vector_rotate,    "ATTRIBUTE_VECTOR_ROTATE", AttributeVectorRotate, "Attribute Vector Rotate",    "Add a Attribute Vector Rotate Geometry node\nRotates the vector values")
+DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_VECTOR_ROTATE, def_geo_attribute_vector_rotate, "LEGACY_ATTRIBUTE_VECTOR_ROTATE", LegacyAttributeVectorRotate, "Attribute Vector Rotate",    "Add a Attribute Vector Rotate Geometry node\nRotates the vector values")
 
 DefNode(GeometryNode, GEO_NODE_BOOLEAN, def_geo_boolean,                                    "BOOLEAN", Boolean, "Boolean",                                                  "Add a Boolean Geometry node\nAllows you to cut, subtract, and join the geometry of two inputs")
 DefNode(GeometryNode, GEO_NODE_BOUNDING_BOX, 0,                                             "BOUNDING_BOX", BoundBox, "Bounding Box",                                       "Add a Bounding Box Geometry node\nAllows you to work with the values of a bounding box")
