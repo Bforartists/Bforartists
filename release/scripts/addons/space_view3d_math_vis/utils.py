@@ -23,11 +23,14 @@ import bpy
 
 def console_namespace():
     import console_python
-    get_consoles = console_python.get_console
-    consoles = getattr(get_consoles, "consoles", None)
-    if consoles:
-        for console, stdout, stderr in get_consoles.consoles.values():
-            return console.locals
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type == 'CONSOLE':
+                for region in area.regions:
+                    if region.type == 'WINDOW':
+                        console = console_python.get_console(hash(region))
+                        if console:
+                            return console[0].locals
     return {}
 
 

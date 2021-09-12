@@ -692,7 +692,12 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
                 bpy.ops.object.material_slot_select()
 
             scale = (scale.x + scale.y + scale.z) / 3.0
+
+            if tex_size == 0:# prevent division by zero, it's possible to have 0 in tex size by unskilled uploaders
+                tex_size = 1
+
             if not just_scale:
+
                 bpy.ops.uv.cube_project(
                     cube_size=scale * 2.0 / (tex_size),
                     correct_aspect=False)  # it's * 2.0 because blender can't tell size of a unit cube :)

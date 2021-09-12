@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3174,6 +3174,10 @@ msgstr "Pencere Yöneticisi"
 
 msgid "World"
 msgstr "Dünya"
+
+
+msgid "Relative Path"
+msgstr "Dosya yolu"
 
 
 msgid "Environment"
@@ -10289,10 +10293,6 @@ msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli d
 
 msgid "Filter text files"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Relative Path"
-msgstr "Dosya yolu"
 
 
 msgid "Path to file"
@@ -18719,10 +18719,6 @@ msgstr "Dosya Uzantılarını Filtrele"
 
 msgid "Display only files with extensions in the image select window"
 msgstr "Resim seçim penceresinde dosyaları yalnız uzantıları ile görüntüle"
-
-
-msgid "Save Preview Images"
-msgstr "Önizleme Biçimi: Küp"
 
 
 msgid "Tabs as Spaces"

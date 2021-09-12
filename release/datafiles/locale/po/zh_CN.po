@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3939,14 +3939,6 @@ msgstr "影响位置"
 
 msgid "The brush affects the position of the point"
 msgstr "笔刷影响点的位置"
-
-
-msgid "Affect Pressure"
-msgstr "影响压力"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "当开启平滑绘画时影响压感值"
 
 
 msgid "Affect Strength"
@@ -11905,6 +11897,10 @@ msgstr "图标ID"
 
 msgid "Unique integer identifying the preview of this file as an icon (zero means invalid)"
 msgstr "将该文件的预览标识为某个图标的唯一整数(零表示无效)"
+
+
+msgid "Relative Path"
+msgstr "相对路径"
 
 
 msgid "File Select ID Filter"
@@ -34881,6 +34877,10 @@ msgid "Weights over this threshold remain"
 msgstr "保留高于此阈值的权重值"
 
 
+msgid "Use vertex group weights to cut faces at the weight contour"
+msgstr "使用顶点组权重在权重轮廓处切割面"
+
+
 msgid "Cache Modifier"
 msgstr "缓存修改器"
 
@@ -41634,6 +41634,14 @@ msgid "Curve Endpoints"
 msgstr "曲线端点"
 
 
+msgid "Curve Fill"
+msgstr "曲线填充"
+
+
+msgid "N-gons"
+msgstr "多边形"
+
+
 msgid "Curve Length"
 msgstr "曲线长度"
 
@@ -46063,10 +46071,6 @@ msgstr "隐藏操作属性"
 
 msgid "Collapse the region displaying the operator settings"
 msgstr "收起显示操作设置的区块"
-
-
-msgid "Relative Path"
-msgstr "相对路径"
 
 
 msgid "Select the file relative to the blend file"
@@ -58689,6 +58693,14 @@ msgid "Width of the zone in UI units where speed increases with distance from th
 msgstr "速度随边缘距离而增加的区域宽度，单位为UI单位"
 
 
+msgid "Zoom Influence"
+msgstr "缩放影响"
+
+
+msgid "Influence of the zoom factor on scroll speed"
+msgstr "滚动速度对缩放因子的影响"
+
+
 msgctxt "Operator"
 msgid "Make Links"
 msgstr "生成连接"
@@ -69464,6 +69476,14 @@ msgid "Axis Ortho"
 msgstr "正交轴向"
 
 
+msgid "Edge Pan"
+msgstr "视图边平移"
+
+
+msgid "Enable edge panning in 2D view"
+msgstr "在 2D视图中启用对象超出视图边后自动平移"
+
+
 msgctxt "Operator"
 msgid "Shrink/Fatten"
 msgstr "法向缩放"
@@ -78632,14 +78652,6 @@ msgid "Default relative path option for the file selector, when no path is defin
 msgstr "在未定义路径前，文件选择器的默认相对路径选项"
 
 
-msgid "Save Preview Images"
-msgstr "保存预览图像"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr "开启自动保存 .blend文件中的预览图片以及该文件的缩略图"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "允许任意工程均可自动执行脚本(如果是对未授权源则可能导致错误问题)"
 
@@ -85997,6 +86009,30 @@ msgid "Sequencer Tool Settings"
 msgstr "序列编辑器工具设置"
 
 
+msgid "Overlap Mode"
+msgstr "重叠模式"
+
+
+msgid "How to resolve overlap after transformation"
+msgstr "解决变换后的重叠的方法"
+
+
+msgid "Move strips so transformed strips fits"
+msgstr "移动片段，以使被变换片段匹配"
+
+
+msgid "Trim or split strips to resolve overlap"
+msgstr "修剪或拆分片段以解决重叠"
+
+
+msgid "Shuffle"
+msgstr "挪位"
+
+
+msgid "Move transformed strips to nearest free space to resolve overlap"
+msgstr "将变换后的片段移到最近的空白位置以解决重叠问题"
+
+
 msgid "Snapping Distance"
 msgstr "吸附距离"
 
@@ -86534,7 +86570,7 @@ msgstr "边弹簧摩擦"
 
 
 msgid "Error Limit"
-msgstr "错误限额"
+msgstr "误差限制"
 
 
 msgid "The Runge-Kutta ODE solver error limit, low value gives more precision, high values speed"
@@ -110387,6 +110423,10 @@ msgid "Crease: %.3f %s"
 msgstr "折痕: %.3f %s"
 
 
+msgid "Sequence Slide: %s%s"
+msgstr "序列滑移: %s%s"
+
+
 msgid "Edge Slide: "
 msgstr "滑移边线: "
 
@@ -110582,10 +110622,6 @@ msgstr "检查当前 .blend 文件的健全性撤消步骤 *之前*"
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "检查当前 .blend 文件的完整性撤消步骤 *之后*"
-
-
-msgid "Undo disabled at startup"
-msgstr "取消启动时禁用"
 
 
 msgid "[E] - Disable overshoot"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -2856,10 +2856,6 @@ msgstr "Influenza Posizione"
 
 msgid "The brush affects the position of the point"
 msgstr "Il pennello influenza la posizione del punto"
-
-
-msgid "Affect Pressure"
-msgstr "Influenza Pressione"
 
 
 msgid "Affect Strength"
@@ -8499,6 +8495,10 @@ msgstr "Mondo"
 
 msgid "Icon ID"
 msgstr "ID Icona"
+
+
+msgid "Relative Path"
+msgstr "Percorso Relativo"
 
 
 msgid "Which ID types to show/hide, when browsing a library"
@@ -26666,10 +26666,6 @@ msgstr "Filtra i file di suoni"
 
 msgid "Filter text files"
 msgstr "Filtra i file di testo"
-
-
-msgid "Relative Path"
-msgstr "Percorso Relativo"
 
 
 msgid "Select the file relative to the blend file"
@@ -45152,10 +45148,6 @@ msgstr "Mostra solo i file con estensioni nella finestra di selezione immagini"
 
 msgid "Load user interface setup when loading .blend files"
 msgstr "Carica anche le impostazioni di interfaccia utente quando carica il file .blend"
-
-
-msgid "Save Preview Images"
-msgstr "Salva Anteprima"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
