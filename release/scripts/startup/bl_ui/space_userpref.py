@@ -1483,7 +1483,7 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
-        flow.prop(paths, "use_save_preview_images")
+        flow.prop(paths, "file_preview_type")
         flow.prop(paths, "use_tabs_as_spaces")
         flow.prop(view, "use_save_prompt")
 
@@ -1525,8 +1525,8 @@ class USERPREF_PT_saveload_file_browser(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(paths, "use_filter_files")
         flow.prop(paths, "show_hidden_files_datablocks")
-        flow.prop(paths, "hide_recent_locations")
-        flow.prop(paths, "hide_system_bookmarks")
+        flow.prop(paths, "show_recent_locations")
+        flow.prop(paths, "show_system_bookmarks")
 
 
 # -----------------------------------------------------------------------------

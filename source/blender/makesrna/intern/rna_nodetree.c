@@ -9293,6 +9293,11 @@ static void def_geo_point_instance(StructRNA *srna)
        ICON_NONE,
        "Collection",
        "Instance an entire collection on all points"},
+      {GEO_NODE_POINT_INSTANCE_TYPE_GEOMETRY,
+       "GEOMETRY",
+       ICON_NONE,
+       "Geometry",
+       "Copy geometry to all points"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -10084,6 +10089,12 @@ static void def_geo_curve_resample(StructRNA *srna)
   PropertyRNA *prop;
 
   static EnumPropertyItem mode_items[] = {
+      {GEO_NODE_CURVE_SAMPLE_EVALUATED,
+       "EVALUATED",
+       0,
+       "Evaluated",
+       "Output the input spline's evaluated points, based on the resolution attribute for NURBS "
+       "and Bezier splines. Poly splines are unchanged"},
       {GEO_NODE_CURVE_SAMPLE_COUNT,
        "COUNT",
        0,
@@ -10274,6 +10285,26 @@ static void def_geo_curve_fill(StructRNA *srna)
   RNA_def_property_enum_sdna(prop, NULL, "mode");
   RNA_def_property_enum_items(prop, mode_items);
   RNA_def_property_ui_text(prop, "Mode", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_geo_attribute_capture(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryAttributeCapture", "storage");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_type_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_GeometryNodeAttributeFill_type_itemf");
+  RNA_def_property_enum_default(prop, CD_PROP_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "Type of data stored in attribute");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_GeometryNode_socket_update");
+
+  prop = RNA_def_property(srna, "domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
+  RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
+  RNA_def_property_ui_text(prop, "Domain", "Which domain to store the data in");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -12798,68 +12829,68 @@ static int node_type_to_icon(int type)
     case GEO_NODE_BOOLEAN:
       icon = ICON_MOD_BOOLEAN;
       break;
-    case GEO_NODE_POINT_DISTRIBUTE:
+    case GEO_NODE_LEGACY_POINT_DISTRIBUTE:
       icon = ICON_POINT_DISTRIBUTE;
       break;
-    case GEO_NODE_POINT_INSTANCE:
+    case GEO_NODE_LEGACY_POINT_INSTANCE:
       icon = ICON_POINT_INSTANCE;
       break;
     case GEO_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
       break;
       /*attribute nodes*/
-    case GEO_NODE_ATTRIBUTE_RANDOMIZE:
+    case GEO_NODE_LEGACY_ATTRIBUTE_RANDOMIZE:
       icon = ICON_ATTRIBUTE_RANDOMIZE;
       break;
-    case GEO_NODE_ATTRIBUTE_MATH:
+    case GEO_NODE_LEGACY_ATTRIBUTE_MATH:
       icon = ICON_ATTRIBUTE_MATH;
       break;
-    case GEO_NODE_ATTRIBUTE_TRANSFER:
+    case GEO_NODE_LEGACY_ATTRIBUTE_TRANSFER:
       icon = ICON_ATTRIBUTE_TRANSFER;
       break;
-    case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
+    case GEO_NODE_LEGACY_ATTRIBUTE_VECTOR_MATH:
       icon = ICON_ATTRIBUTE_VECTORMATH;
       break;
     case GEO_NODE_ATTRIBUTE_VECTOR_ROTATE:
       icon = ICON_ATTRIBUTE_VECTOR_ROTATE;
       break;
-    case GEO_NODE_ATTRIBUTE_FILL:
+    case GEO_NODE_LEGACY_ATTRIBUTE_FILL:
       icon = ICON_ATTRIBUTE_FILL;
       break;
-    case GEO_NODE_ATTRIBUTE_MIX:
+    case GEO_NODE_LEGACY_ATTRIBUTE_MIX:
       icon = ICON_ATTRIBUTE_MIX;
       break;
-    case GEO_NODE_ATTRIBUTE_COLOR_RAMP:
+    case GEO_NODE_LEGACY_ATTRIBUTE_COLOR_RAMP:
       icon = ICON_ATTRIBUTE_COLORRAMP;
       break;
-    case GEO_NODE_ATTRIBUTE_COMPARE:
+    case GEO_NODE_LEGACY_ATTRIBUTE_COMPARE:
       icon = ICON_ATTRIBUTE_COMPARE;
       break;
-    case GEO_NODE_ATTRIBUTE_CONVERT:
+    case GEO_NODE_LEGACY_ATTRIBUTE_CONVERT:
       icon = ICON_ATTRIBUTE_CONVERT;
       break;
-    case GEO_NODE_ATTRIBUTE_CURVE_MAP:
+    case GEO_NODE_LEGACY_ATTRIBUTE_CURVE_MAP:
       icon = ICON_ATTRIBUTE_CURVEMAP;
       break;
-    case GEO_NODE_ATTRIBUTE_SAMPLE_TEXTURE:
+    case GEO_NODE_LEGACY_ATTRIBUTE_SAMPLE_TEXTURE:
       icon = ICON_ATTRIBUTE_TEXTURE;
       break;
-    case GEO_NODE_ATTRIBUTE_PROXIMITY:
+    case GEO_NODE_LEGACY_ATTRIBUTE_PROXIMITY:
       icon = ICON_ATTRIBUTE_PROXIMITY;
       break;
-    case GEO_NODE_ATTRIBUTE_COMBINE_XYZ:
+    case GEO_NODE_LEGACY_ATTRIBUTE_COMBINE_XYZ:
       icon = ICON_ATTRIBUTE_COMBINE_XYZ;
       break;
-    case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
+    case GEO_NODE_LEGACY_ATTRIBUTE_SEPARATE_XYZ:
       icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
       break;
     case GEO_NODE_ATTRIBUTE_REMOVE:
       icon = ICON_ATTRIBUTE_REMOVE;
       break;
-    case GEO_NODE_ATTRIBUTE_MAP_RANGE:
+    case GEO_NODE_LEGACY_ATTRIBUTE_MAP_RANGE:
       icon = ICON_ATTRIBUTE_MAPRANGE;
       break;
-    case GEO_NODE_ATTRIBUTE_CLAMP:
+    case GEO_NODE_LECAGY_ATTRIBUTE_CLAMP:
       icon = ICON_ATTRIBUTE_CLAMP;
       break;
     case GEO_NODE_BOUNDING_BOX:
@@ -12868,28 +12899,28 @@ static int node_type_to_icon(int type)
     case GEO_NODE_JOIN_GEOMETRY:
       icon = ICON_JOIN;
       break;
-    case GEO_NODE_POINT_SEPARATE:
+    case GEO_NODE_LEGACY_POINT_SEPARATE:
       icon = ICON_POINT_SEPARATE;
       break;
     case GEO_NODE_VOLUME_TO_MESH:
       icon = ICON_VOLUME_TO_MESH;
       break;
-    case GEO_NODE_POINT_ROTATE:
+    case GEO_NODE_LEGACY_POINT_ROTATE:
       icon = ICON_POINT_ROTATE;
       break;
-    case GEO_NODE_ALIGN_ROTATION_TO_VECTOR:
+    case GEO_NODE_LEGACY_ALIGN_ROTATION_TO_VECTOR:
       icon = ICON_ALIGN_ROTATION_TO_VECTOR;
       break;
-    case GEO_NODE_POINT_SCALE:
+    case GEO_NODE_LEGACY_POINT_SCALE:
       icon = ICON_POINT_SCALE;
       break;
-    case GEO_NODE_POINT_TRANSLATE:
+    case GEO_NODE_LEGACY_POINT_TRANSLATE:
       icon = ICON_POINT_TRANSLATE;
       break;
-    case GEO_NODE_POINTS_TO_VOLUME:
+    case GEO_NODE_LEGACY_POINTS_TO_VOLUME:
       icon = ICON_POINT_TO_VOLUME;
       break;
-    case GEO_NODE_RAYCAST:
+    case GEO_NODE_LEGACY_RAYCAST:
       icon = ICON_RAYCAST;
       break;
     case GEO_NODE_SEPARATE_COMPONENTS:
@@ -12913,7 +12944,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_MATERIAL:
       icon = ICON_NODE_MATERIAL;
       break;
-    case GEO_NODE_MATERIAL_ASSIGN:
+    case GEO_NODE_LEGACY_MATERIAL_ASSIGN:
       icon = ICON_MATERIAL_ADD;
       break;
     case GEO_NODE_MATERIAL_REPLACE:
@@ -12923,7 +12954,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CONVEX_HULL:
       icon = ICON_CONVEXHULL;
       break;
-    case GEO_NODE_SELECT_BY_MATERIAL:
+    case GEO_NODE_LEGACY_SELECT_BY_MATERIAL:
       icon = ICON_SELECT_BY_MATERIAL;
       break;
 
@@ -13004,28 +13035,28 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TRIM:
       icon = ICON_CURVE_TRIM;
       break;
-    case GEO_NODE_DELETE_GEOMETRY:
+    case GEO_NODE_LEGACY_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;
-    case GEO_NODE_MESH_TO_CURVE:
+    case GEO_NODE_LEGACY_MESH_TO_CURVE:
       icon = ICON_OUTLINER_OB_CURVE;
       break;
-    case GEO_NODE_CURVE_SUBDIVIDE:
+    case GEO_NODE_LEGACY_CURVE_SUBDIVIDE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
     case GEO_NODE_CURVE_RESAMPLE:
       icon = ICON_CURVE_RESAMPLE;
       break;
-    case GEO_NODE_CURVE_SET_HANDLES:
+    case GEO_NODE_LEGACY_CURVE_SET_HANDLES:
       icon = ICON_HANDLE_AUTO;
       break;
-    case GEO_NODE_CURVE_SELECT_HANDLES:
+    case GEO_NODE_LEGACY_CURVE_SELECT_HANDLES:
       icon = ICON_SELECT_HANDLETYPE;
       break;
-    case GEO_NODE_CURVE_SPLINE_TYPE:
+    case GEO_NODE_LEGACY_CURVE_SPLINE_TYPE:
       icon = ICON_SPLINE_TYPE;
       break;
-    case GEO_NODE_CURVE_REVERSE:
+    case GEO_NODE_LEGACY_CURVE_REVERSE:
       icon = ICON_SWITCH_DIRECTION;
       break;
     case GEO_NODE_CURVE_TO_POINTS:

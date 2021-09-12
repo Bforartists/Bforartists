@@ -406,7 +406,15 @@ static void lib_id_copy_ensure_local(Main *bmain, const ID *old_id, ID *new_id)
  */
 void BKE_lib_id_make_local_generic(Main *bmain, ID *id, const int flags)
 {
+  if (!ID_IS_LINKED(id)) {
+    return;
+  }
+
   const bool lib_local = (flags & LIB_ID_MAKELOCAL_FULL_LIBRARY) != 0;
+  bool force_local = (flags & LIB_ID_MAKELOCAL_FORCE_LOCAL) != 0;
+  bool force_copy = (flags & LIB_ID_MAKELOCAL_FORCE_COPY) != 0;
+  BLI_assert(force_copy == false || force_copy != force_local);
+
   bool is_local = false, is_lib = false;
 
   /* - only lib users: do nothing (unless force_local is set)
@@ -416,46 +424,50 @@ void BKE_lib_id_make_local_generic(Main *bmain, ID *id, const int flags)
    * we always want to localize, and we skip remapping (done later).
    */
 
-  if (!ID_IS_LINKED(id)) {
-    return;
+  if (!force_copy && !force_local) {
+    BKE_library_ID_test_usages(bmain, id, &is_local, &is_lib);
+    if (lib_local || is_local) {
+      if (!is_lib) {
+        force_local = true;
+      }
+      else {
+        force_copy = true;
+      }
+    }
   }
 
-  BKE_library_ID_test_usages(bmain, id, &is_local, &is_lib);
+  if (force_local) {
+    BKE_lib_id_clear_library_data(bmain, id);
+    BKE_lib_id_expand_local(bmain, id);
+  }
+  else if (force_copy) {
+    ID *id_new = BKE_id_copy(bmain, id);
 
-  if (lib_local || is_local) {
-    if (!is_lib) {
-      BKE_lib_id_clear_library_data(bmain, id);
-      BKE_lib_id_expand_local(bmain, id);
-    }
-    else {
-      ID *id_new = BKE_id_copy(bmain, id);
+    /* Should not fail in expected use cases,
+     * but a few ID types cannot be copied (LIB, WM, SCR...). */
+    if (id_new != NULL) {
+      id_new->us = 0;
 
-      /* Should not fail in expected use cases,
-       * but a few ID types cannot be copied (LIB, WM, SCR...). */
-      if (id_new != NULL) {
-        id_new->us = 0;
+      /* setting newid is mandatory for complex make_lib_local logic... */
+      ID_NEW_SET(id, id_new);
+      Key *key = BKE_key_from_id(id), *key_new = BKE_key_from_id(id);
+      if (key && key_new) {
+        ID_NEW_SET(key, key_new);
+      }
+      bNodeTree *ntree = ntreeFromID(id), *ntree_new = ntreeFromID(id_new);
+      if (ntree && ntree_new) {
+        ID_NEW_SET(ntree, ntree_new);
+      }
+      if (GS(id->name) == ID_SCE) {
+        Collection *master_collection = ((Scene *)id)->master_collection,
+                   *master_collection_new = ((Scene *)id_new)->master_collection;
+        if (master_collection && master_collection_new) {
+          ID_NEW_SET(master_collection, master_collection_new);
+        }
+      }
 
-        /* setting newid is mandatory for complex make_lib_local logic... */
-        ID_NEW_SET(id, id_new);
-        Key *key = BKE_key_from_id(id), *key_new = BKE_key_from_id(id);
-        if (key && key_new) {
-          ID_NEW_SET(key, key_new);
-        }
-        bNodeTree *ntree = ntreeFromID(id), *ntree_new = ntreeFromID(id_new);
-        if (ntree && ntree_new) {
-          ID_NEW_SET(ntree, ntree_new);
-        }
-        if (GS(id->name) == ID_SCE) {
-          Collection *master_collection = ((Scene *)id)->master_collection,
-                     *master_collection_new = ((Scene *)id_new)->master_collection;
-          if (master_collection && master_collection_new) {
-            ID_NEW_SET(master_collection, master_collection_new);
-          }
-        }
-
-        if (!lib_local) {
-          BKE_libblock_remap(bmain, id, id_new, ID_REMAP_SKIP_INDIRECT_USAGE);
-        }
+      if (!lib_local) {
+        BKE_libblock_remap(bmain, id, id_new, ID_REMAP_SKIP_INDIRECT_USAGE);
       }
     }
   }

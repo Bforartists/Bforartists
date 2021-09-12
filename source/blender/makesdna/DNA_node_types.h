@@ -1441,6 +1441,13 @@ typedef struct NodeGeometryCurveFill {
   uint8_t mode;
 } NodeGeometryCurveFill;
 
+typedef struct NodeGeometryAttributeCapture {
+  /* CustomDataType. */
+  int8_t data_type;
+  /* AttributeDomain. */
+  int8_t domain;
+} NodeGeometryAttributeCapture;
+
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
 #define NODE_SCRIPT_EXTERNAL 1
@@ -1889,6 +1896,7 @@ typedef enum GeometryNodeTriangulateQuads {
 typedef enum GeometryNodePointInstanceType {
   GEO_NODE_POINT_INSTANCE_TYPE_OBJECT = 0,
   GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION = 1,
+  GEO_NODE_POINT_INSTANCE_TYPE_GEOMETRY = 2,
 } GeometryNodePointInstanceType;
 
 typedef enum GeometryNodePointInstanceFlag {

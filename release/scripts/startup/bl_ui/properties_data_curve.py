@@ -122,17 +122,9 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
 
             col.separator()
 
-
             sub = col.column()
             sub.active = (curve.dimensions == '2D' or (curve.bevel_mode != 'OBJECT' and curve.dimensions == '3D'))
             sub.prop(curve, "fill_mode")
-
-            row = sub.row()
-            row = sub.row() # two ones, no bug, using this as a separator
-
-            row.use_property_split = False
-            row.prop(curve, "use_fill_deform")
-            row.prop_decorator(curve, "use_fill_deform")
 
         if is_curve:
 
