@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4359,6 +4359,10 @@ msgstr "Upravljač prozorima"
 
 msgid "World"
 msgstr "Svet"
+
+
+msgid "Relative Path"
+msgstr "Relativna putanja"
 
 
 msgid "Environment"
@@ -13174,10 +13178,6 @@ msgstr "Filtriraj zvučne datoteke"
 
 msgid "Filter text files"
 msgstr "Filtriraj tekstualne datoteke"
-
-
-msgid "Relative Path"
-msgstr "Relativna putanja"
 
 
 msgid "Select the file relative to the blend file"

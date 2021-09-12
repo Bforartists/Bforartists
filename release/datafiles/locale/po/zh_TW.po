@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -8832,6 +8832,10 @@ msgstr "工作空間"
 
 msgid "Icon ID"
 msgstr "圖示 ID"
+
+
+msgid "Relative Path"
+msgstr "相對路徑"
 
 
 msgid "Environment"
@@ -27348,10 +27352,6 @@ msgid "Filter text files"
 msgstr "過濾文字檔案"
 
 
-msgid "Relative Path"
-msgstr "相對路徑"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "選取相對於該 blend 檔的檔案"
 
@@ -45442,10 +45442,6 @@ msgstr "在影像選取視窗中僅選取該副檔名的檔案"
 
 msgid "Load user interface setup when loading .blend files"
 msgstr "載入 .blend 檔案時載入使用者介面設置"
-
-
-msgid "Save Preview Images"
-msgstr "儲存預覽影像"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"

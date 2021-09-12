@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2856,10 +2856,6 @@ msgstr "Výchozí guma"
 
 msgid "Affect Position"
 msgstr "Ovlivnit pozici"
-
-
-msgid "Affect Pressure"
-msgstr "Ovlivnit Tlak"
 
 
 msgid "Affect Thickness"
@@ -7194,6 +7190,10 @@ msgstr "Pracovní prostor"
 
 msgid "Icon ID"
 msgstr "ID Ikony"
+
+
+msgid "Relative Path"
+msgstr "Relativní cesta"
 
 
 msgid "Animations"
@@ -20726,10 +20726,6 @@ msgstr "Filtr zvukových souborů"
 
 msgid "Filter text files"
 msgstr "Filtr textových souborů"
-
-
-msgid "Relative Path"
-msgstr "Relativní cesta"
 
 
 msgid "Path to file"
@@ -35871,10 +35867,6 @@ msgstr "Povolit komprimaci souboru"
 
 msgid "Filter File Extensions"
 msgstr "Fonetická rozšířená"
-
-
-msgid "Save Preview Images"
-msgstr "Uložit obrázek náhledu"
 
 
 msgid "Drag Threshold"

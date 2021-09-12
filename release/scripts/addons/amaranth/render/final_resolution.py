@@ -46,8 +46,8 @@ def render_final_resolution_ui(self, context):
 
 
 def register():
-    bpy.types.RENDER_PT_dimensions.append(render_final_resolution_ui)
+    bpy.types.RENDER_PT_format.append(render_final_resolution_ui)
 
 
 def unregister():
-    bpy.types.RENDER_PT_dimensions.remove(render_final_resolution_ui)
+    bpy.types.RENDER_PT_format.remove(render_final_resolution_ui)

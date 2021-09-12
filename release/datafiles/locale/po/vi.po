@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -3924,14 +3924,6 @@ msgstr "Ảnh Hưởng Vị Trí"
 
 msgid "The brush affects the position of the point"
 msgstr "Bút sẽ ảnh hướng vị trí của điểm"
-
-
-msgid "Affect Pressure"
-msgstr "Ảnh Hưởng Áp Suất"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Cùng ảnh hưởng giá trị áp suất khi đang mịn hóa nét"
 
 
 msgid "Affect Strength"
@@ -11862,6 +11854,10 @@ msgstr "Số Biểu Tượng"
 
 msgid "Unique integer identifying the preview of this file as an icon (zero means invalid)"
 msgstr "Số nguyên độc đáo cho phát hiện dự khán của tập tin này bằng một biểu tượng (số không nghĩa là không hợp lệ)"
+
+
+msgid "Relative Path"
+msgstr "Đường Dần Tương Đối"
 
 
 msgid "File Select ID Filter"
@@ -45889,10 +45885,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "Tóp vùng đang hiển thị cài đặt thao tác"
 
 
-msgid "Relative Path"
-msgstr "Đường Dần Tương Đối"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Chọn tập tin tương đối với tập tin .blend"
 
@@ -78271,14 +78263,6 @@ msgid "Default relative path option for the file selector, when no path is defin
 msgstr "Đường dẫn tương đối mặc định cho bộ lựa chọn tập tin, khi đường dẫn chưa được chỉ định"
 
 
-msgid "Save Preview Images"
-msgstr "Lưu Ảnh Dự Khán"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr "Bật tự động lưu ảnh dự khán trong tập tin .blend và một ảnh tem của .blend"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Cho bắt cư tập tin .blend phép chạy văn thảo tự động (khôn an toàn với tập tin .blend từ nguồn gốc không tin tưởng)"
 
@@ -109664,10 +109648,6 @@ msgstr "Đang kiểm tra sự hợp lệ của tập tin .blend *TRƯỚC* hủy
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Đang kiểm ta sự hợp lệ của tập tin .blend *SAU* hủy bước"
-
-
-msgid "Undo disabled at startup"
-msgstr "Hủy bước được tắt khi khởi động"
 
 
 msgid "[E] - Disable overshoot"
