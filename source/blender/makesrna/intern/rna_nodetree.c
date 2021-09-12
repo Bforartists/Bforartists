@@ -12435,6 +12435,9 @@ static int node_type_to_icon(int type)
     case SH_NODE_CURVE_RGB:
       icon = ICON_NODE_RGBCURVE;
       break;
+    case CMP_NODE_POSTERIZE:
+      icon = ICON_POSTERIZE;
+      break;
     /* bfa - Vector */
     case SH_NODE_BUMP:
       icon = ICON_NODE_BUMP;
