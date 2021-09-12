@@ -1,4 +1,4 @@
-keyconfig_version = (3, 0, 19)
+keyconfig_version = (3, 0, 22)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -4438,7 +4438,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
-       ("deselect_all", False),
+       ("deselect_all", True),
        ],
       },
      ),
