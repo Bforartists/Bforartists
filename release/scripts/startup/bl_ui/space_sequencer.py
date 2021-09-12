@@ -1674,13 +1674,9 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
         if sound is not None:
             col = layout.column()
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(sound, "use_mono")
+            col.prop(sound, "use_mono")
             if st.waveform_display_type == 'DEFAULT_WAVEFORMS':
-                split = col.split(factor=0.4)
-                split.label(text="")
-                split.prop(strip, "show_waveform")
+                col.prop(strip, "show_waveform")
 
             col = layout.column()
 
