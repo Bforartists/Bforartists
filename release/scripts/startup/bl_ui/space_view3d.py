@@ -7820,17 +7820,13 @@ class VIEW3D_PT_quad_view(Panel):
 
         region = view.region_quadviews[2]
         col = layout.column()
-        row = col.row()
-        row.prop(region, "lock_rotation")
+        col.prop(region, "lock_rotation")
         row = col.row()
         row.enabled = region.lock_rotation
-        row.separator()    
         row.prop(region, "show_sync_view")
         row = col.row()
 
         row.enabled = region.lock_rotation and region.show_sync_view
-        row.separator()
-        row.separator()
         row.prop(region, "use_box_clip")
 
 
