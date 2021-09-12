@@ -1566,9 +1566,9 @@ class TOOLBAR_MT_animation(Menu):
 
 
 class VIEW3D_MT_object_apply_location(bpy.types.Operator):
-    """Apply Location\nApplies the current location"""
+    """Applies the current location"""
     bl_idname = "view3d.tb_apply_location"
-    bl_label = "Apply Move"
+    bl_label = "Apply Location"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -1576,9 +1576,9 @@ class VIEW3D_MT_object_apply_location(bpy.types.Operator):
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
-    """Apply Rotation\nApplies the current rotation"""
+    """Applies the current rotation"""
     bl_idname = "view3d.tb_apply_rotate"
-    bl_label = "Apply Rotate"
+    bl_label = "Apply Rotation"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -1586,7 +1586,7 @@ class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
-    """Apply Scale\nApplies the current scale"""
+    """Applies the current scale"""
     bl_idname = "view3d.tb_apply_scale"
     bl_label = "Apply Scale"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1596,7 +1596,7 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_all(bpy.types.Operator):
-    """Apply All\nApplies the current location, rotation and scale"""
+    """Applies the current location, rotation and scale"""
     bl_idname = "view3d.tb_apply_all"
     bl_label = "Apply All"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1606,9 +1606,9 @@ class VIEW3D_MT_object_apply_all(bpy.types.Operator):
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
-    """Apply Rotation & Scale\nApplies the current rotation and scale"""
+    """Applies the current rotation and scale"""
     bl_idname = "view3d.tb_apply_rotscale"
-    bl_label = "Apply Rotate Scale"
+    bl_label = "Apply Rotation & Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -1734,19 +1734,19 @@ class TOOLBAR_MT_edit(Menu):
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
                     myvar.mode = 'LOC'
-                    myvar.arg = 'Apply Location to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
                     myvar.mode = 'ROT'
-                    myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
                     myvar.mode = 'SCALE'
-                    myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
                     myvar.mode = 'ALL'
-                    myvar.arg = 'Apply all Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
 
 
