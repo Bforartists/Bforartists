@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -3808,14 +3808,6 @@ msgstr "Задіяти позицію"
 
 msgid "The brush affects the position of the point"
 msgstr "Пензель задіює позицію точки"
-
-
-msgid "Affect Pressure"
-msgstr "Задіяти натиск"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Значення натиску впливу ніби при згладжуванні штрихів"
 
 
 msgid "Affect Strength"
@@ -11626,6 +11618,10 @@ msgstr "ID іконки"
 
 msgid "Unique integer identifying the preview of this file as an icon (zero means invalid)"
 msgstr "Унікальне цілочислове значення, що ідентифікує передогляд цього файлу як іконку (нуль означає помилку)"
+
+
+msgid "Relative Path"
+msgstr "Відносний шлях"
 
 
 msgid "File Select ID Filter"
@@ -44156,10 +44152,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "Згорнути регіон, що показує устави оператора"
 
 
-msgid "Relative Path"
-msgstr "Відносний шлях"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Вибрати файли відносно .blend-файлу"
 
@@ -75551,10 +75543,6 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "Завантажувати параметри інтерфейсу користувача при відкритті .blend-файлу"
 
 
-msgid "Save Preview Images"
-msgstr "Зберегти перегляди"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Дозволити всім .blend-файлам автоматично запускати скрипти (небезпечно для файлів з неперевірених джерел)"
 
@@ -105878,10 +105866,6 @@ msgstr "Перевірка справності кроку касування *B
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Перевірка справності кроку касування *AFTER* для поточного .blend файлу"
-
-
-msgid "Undo disabled at startup"
-msgstr "Касування вимкнене при запуску"
 
 
 msgid "Unpack File"

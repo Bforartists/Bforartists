@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3644,14 +3644,6 @@ msgstr "Affecte la position"
 
 msgid "The brush affects the position of the point"
 msgstr "La brosse affecte la position du point"
-
-
-msgid "Affect Pressure"
-msgstr "Affecter pression"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Également affecter les valeurs de pression lors du lissage des traits"
 
 
 msgid "Affect Strength"
@@ -11204,6 +11196,10 @@ msgstr "Monde"
 
 msgid "Icon ID"
 msgstr "ID d’icône"
+
+
+msgid "Relative Path"
+msgstr "Chemin relatif"
 
 
 msgid "File Select ID Filter"
@@ -37671,10 +37667,6 @@ msgid "Filter text files"
 msgstr "Filtrer fichier texte"
 
 
-msgid "Relative Path"
-msgstr "Chemin relatif"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Sélectionner le fichier relatif au .blend"
 
@@ -60657,10 +60649,6 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "Charge l'interface utilisateur lors du chargement du .blend"
 
 
-msgid "Save Preview Images"
-msgstr "Enregistrer images de prévisualisation"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Permettre à n’importe quel fichier .blend de lancer automatiquement des scripts (risqué avec des fichiers .blend provenant de sources non fiables)"
 
@@ -79742,10 +79730,6 @@ msgstr "Validation du fichier .blend actuel *AVANT* l’étape d’annulation"
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "Validation du fichier .blend actuel *APRÈS* l’étape d’annulation"
-
-
-msgid "Undo disabled at startup"
-msgstr "Annulation désactivée au démarrage"
 
 
 msgid "Unpack File"
