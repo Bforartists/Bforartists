@@ -45,15 +45,20 @@ namespace blender::ed::spreadsheet {
 void GeometryDataSource::foreach_default_column_ids(
     FunctionRef<void(const SpreadsheetColumnID &)> fn) const
 {
-  component_->attribute_foreach([&](StringRefNull name, const AttributeMetaData &meta_data) {
-    if (meta_data.domain != domain_) {
-      return true;
-    }
-    SpreadsheetColumnID column_id;
-    column_id.name = (char *)name.c_str();
-    fn(column_id);
-    return true;
-  });
+  component_->attribute_foreach(
+      [&](const bke::AttributeIDRef &attribute_id, const AttributeMetaData &meta_data) {
+        if (meta_data.domain != domain_) {
+          return true;
+        }
+        if (attribute_id.is_anonymous()) {
+          return true;
+        }
+        SpreadsheetColumnID column_id;
+        std::string name = attribute_id.name();
+        column_id.name = (char *)name.c_str();
+        fn(column_id);
+        return true;
+      });
 }
 
 std::unique_ptr<ColumnValues> GeometryDataSource::get_column_values(
@@ -330,6 +335,11 @@ std::unique_ptr<ColumnValues> InstancesDataSource::get_column_values(
             case InstanceReference::Type::Collection: {
               Collection &collection = reference.collection();
               r_cell_value.value_collection = CollectionCellValue{&collection};
+              break;
+            }
+            case InstanceReference::Type::GeometrySet: {
+              const GeometrySet &geometry_set = reference.geometry_set();
+              r_cell_value.value_geometry_set = GeometrySetCellValue{&geometry_set};
               break;
             }
             case InstanceReference::Type::None: {
