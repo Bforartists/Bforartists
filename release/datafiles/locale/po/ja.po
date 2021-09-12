@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -3958,14 +3958,6 @@ msgstr "位置に影響"
 
 msgid "The brush affects the position of the point"
 msgstr "ブラシがポイントの位置に影響します"
-
-
-msgid "Affect Pressure"
-msgstr "筆圧を使用"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "ストロークのスムージング同様、筆圧値を影響させます"
 
 
 msgid "Affect Strength"
@@ -11961,6 +11953,10 @@ msgstr ""
 "他と重複しない整数値（0で無効）"
 
 
+msgid "Relative Path"
+msgstr "相対パス"
+
+
 msgid "File Select ID Filter"
 msgstr "ファイル選択IDフィルター"
 
@@ -19680,6 +19676,14 @@ msgstr ""
 "フレームの代わりにカスタムフレームを使用するかどうか"
 
 
+msgid "Prefetch Cache Size"
+msgstr "プリフェッチキャッシュサイズ"
+
+
+msgid "Memory usage limit in megabytes for the Cycles Procedural cache, if the data does not fit within the limit, rendering is aborted"
+msgstr "Cycles プロシージャルキャッシュ用の最大メモリ使用量（MB）。データが収まらない場合、レンダリングを中止します"
+
+
 msgid "Value by which to enlarge or shrink the object with respect to the world's origin (only applicable through a Transform Cache constraint)"
 msgstr ""
 "ワールド原点に対してオブジェクトを拡大または縮小する値\n"
@@ -19688,6 +19692,18 @@ msgstr ""
 
 msgid "Up"
 msgstr "上"
+
+
+msgid "Use Prefetch"
+msgstr "プリフェッチを使用"
+
+
+msgid "When enabled, the Cycles Procedural will preload animation data for faster updates"
+msgstr "有効時、Cycles プロシージャルがアニメーションデータをプリロードすることで更新を高速化します"
+
+
+msgid "Use Render Engine Procedural"
+msgstr "レンダーエンジンプロシージャルを使用"
 
 
 msgid "Velocity Attribute"
@@ -41917,6 +41933,14 @@ msgid "Curve Endpoints"
 msgstr "カーブの両端"
 
 
+msgid "Curve Fill"
+msgstr "カーブフィル"
+
+
+msgid "N-gons"
+msgstr "Nゴン"
+
+
 msgid "Curve Length"
 msgstr "カーブの長さ"
 
@@ -46373,10 +46397,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "オペレーター設定を表示する領域を折り畳みます"
 
 
-msgid "Relative Path"
-msgstr "相対パス"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "blendファイルへの相対パスにします"
 
@@ -50468,10 +50488,6 @@ msgstr ".blend ファイルにパックされたすべてのファイルを、�
 
 msgid "How to unpack"
 msgstr "パック方法"
-
-
-msgid "Use files in current directory (create when necessary)"
-msgstr "現在のディレクトリに（必要があれば作成して）保存します"
 
 
 msgid "Write files to current directory (overwrite existing files)"
@@ -59099,6 +59115,10 @@ msgstr "加速領域"
 
 msgid "Width of the zone in UI units where speed increases with distance from the edge"
 msgstr "端からの距離で加速する領域の広さ（UI 単位）"
+
+
+msgid "Influence of the zoom factor on scroll speed"
+msgstr "スクロール速度でのズーム係数の影響力"
 
 
 msgctxt "Operator"
@@ -69936,6 +69956,14 @@ msgid "Axis Ortho"
 msgstr "平行の軸"
 
 
+msgid "Edge Pan"
+msgstr "エッジパン"
+
+
+msgid "Enable edge panning in 2D view"
+msgstr "2Dビューでエッジパンを有効にします"
+
+
 msgctxt "Operator"
 msgid "Shrink/Fatten"
 msgstr "収縮/膨張"
@@ -72659,6 +72687,10 @@ msgstr "Alembicをインポート"
 
 msgid "Load an Alembic archive"
 msgstr "Alembic アーカイブを読み込みます"
+
+
+msgid "Always Add Cache Reader"
+msgstr "常にキャッシュリーダーを追加"
 
 
 msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
@@ -79168,14 +79200,6 @@ msgstr "blendファイル読み込み時にUI配置を読み込みます"
 
 msgid "Default relative path option for the file selector, when no path is defined yet"
 msgstr "ファイルセレクターでまだパスが指定されていない時の、デフォルトの相対パスオプション"
-
-
-msgid "Save Preview Images"
-msgstr "プレビュー画像を保存"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr ".blend ファイルのサムネイル同様、プレビュー画像を .blend ファイルに自動保存します"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -86628,6 +86652,26 @@ msgstr "Y 軸に沿って拡大縮小"
 
 msgid "Sequencer Tool Settings"
 msgstr "シーケンサーツール設定"
+
+
+msgid "How to resolve overlap after transformation"
+msgstr "トランスフォーム後の重複を解決する方法"
+
+
+msgid "Move strips so transformed strips fits"
+msgstr "ストリップを移動し、トランスフォームしたストリップを収めます"
+
+
+msgid "Trim or split strips to resolve overlap"
+msgstr "重複を防ぐため、ストリップをトリムまたは分割します"
+
+
+msgid "Shuffle"
+msgstr "シャッフル"
+
+
+msgid "Move transformed strips to nearest free space to resolve overlap"
+msgstr "重複を防ぐため、トランスフォームしたストリップを近くの空いた場所に移動します"
 
 
 msgid "Snapping Distance"
@@ -94774,6 +94818,10 @@ msgid "XR Action Map"
 msgstr "XRアクションマップ"
 
 
+msgid "Items in the action map, mapping an XR event to an operator, pose, or haptic output"
+msgstr "アクションマップ内のアイテム。XR イベントをオペレーターやポーズ、触覚の出力にマップします"
+
+
 msgid "Name of the action map"
 msgstr "アクションマップの名前"
 
@@ -94862,6 +94910,10 @@ msgid "XR Action Map Item"
 msgstr "XRアクションマップアイテム"
 
 
+msgid "Bimanual"
+msgstr "両手"
+
+
 msgid "The action depends on the states/poses of both user paths"
 msgstr "両ユーザーパスの状態・ポーズを元にしたアクション"
 
@@ -94896,6 +94948,14 @@ msgstr "触覚の周波数"
 
 msgid "Frequency of the haptic vibration in hertz. 0.0 specifies the OpenXR runtime's default frequency"
 msgstr "触覚の振動の周波数(Hz)。0.0で OpenXR ランタイムのデフォルト周波数"
+
+
+msgid "Haptic Match User Paths"
+msgstr "触覚にマッチするユーザーパス"
+
+
+msgid "Apply haptics to the same user paths for the haptic action and this action"
+msgstr "触覚アクションと、このアクションで、同じユーザーパスに触覚を適用します"
 
 
 msgid "Haptic mode"
@@ -96857,6 +96917,11 @@ msgstr "言語データを初期化できませんでした！"
 
 msgid "Please edit the preferences of the UI Translate add-on"
 msgstr "UI Translateアドオンの設定を編集してください"
+
+
+msgctxt "Operator"
+msgid "Init Settings"
+msgstr "設定を初期化"
 
 
 msgctxt "Operator"
@@ -104213,6 +104278,10 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "書き込み失敗、画像に「%s」と「%s」ビューがありません"
 
 
+msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
+msgstr "タイル画像の保存時、パス「%s」に UDIM のタイル番号「%d」を入れてください"
+
+
 msgid "Key %d"
 msgstr "キー %d"
 
@@ -109577,6 +109646,10 @@ msgid "Invalid UDIM index range was specified"
 msgstr "指定されたUDIMインデックス範囲は無効です"
 
 
+msgid "No UDIM tiles were created"
+msgstr "UDIM タイルが作成されていません"
+
+
 msgid "Packed to memory image \"%s\""
 msgstr "画像「%s」をメモリにパックしました"
 
@@ -111030,6 +111103,10 @@ msgid "Crease: %.3f %s"
 msgstr "クリース: %.3f %s"
 
 
+msgid "Sequence Slide: %s%s"
+msgstr "シーケンススライド: %s%s"
+
+
 msgid "Edge Slide: "
 msgstr "辺をスライド: "
 
@@ -111225,10 +111302,6 @@ msgstr "現在の .blend ファイルのステップ取り消し「前に」正�
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "現在の .blend ファイルのステップ取り消し「後に」正当性チェックをします"
-
-
-msgid "Undo disabled at startup"
-msgstr "起動時は「取り消し」できません"
 
 
 msgid "[E] - Disable overshoot"

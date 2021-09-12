@@ -64,7 +64,7 @@ del properties_view_layer
 from bl_ui import properties_render
 
 # DEPRECATED#properties_render.RENDER_PT_render.COMPAT_ENGINES.add('POVRAY_RENDER')
-# DEPRECATED#properties_render.RENDER_PT_dimensions.COMPAT_ENGINES.add('POVRAY_RENDER')
+# DEPRECATED#properties_render.RENDER_PT_format.COMPAT_ENGINES.add('POVRAY_RENDER')
 # properties_render.RENDER_PT_antialiasing.COMPAT_ENGINES.add('POVRAY_RENDER')
 # TORECREATE##DEPRECATED#properties_render.RENDER_PT_shading.COMPAT_ENGINES.add('POVRAY_RENDER')
 # DEPRECATED#properties_render.RENDER_PT_output.COMPAT_ENGINES.add('POVRAY_RENDER')

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -3309,14 +3309,6 @@ msgstr "위치에 주는 영향"
 
 msgid "The brush affects the position of the point"
 msgstr "포인트의 위치에 영향을 주는 브러시"
-
-
-msgid "Affect Pressure"
-msgstr "압력에 주는 영향"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "스트로크를 부드럽게 할 때 압력 값에도 영향을 줍니다"
 
 
 msgid "Affect Strength"
@@ -10715,6 +10707,10 @@ msgstr "작업공간"
 
 msgid "Icon ID"
 msgstr "아이콘 ID"
+
+
+msgid "Relative Path"
+msgstr "상대적인 경로"
 
 
 msgid "Which ID types to show/hide, when browsing a library"
@@ -38431,10 +38427,6 @@ msgid "Collapse the region displaying the operator settings"
 msgstr "오퍼레이터 설정을 표시하는 영역을 축소"
 
 
-msgid "Relative Path"
-msgstr "상대적인 경로"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Blend 파일에 상대적인 파일을 선택"
 
@@ -65173,10 +65165,6 @@ msgid "Load user interface setup when loading .blend files"
 msgstr ".blend 파일을 불러올 때 사용자 인터페이스 설정을 불러오기"
 
 
-msgid "Save Preview Images"
-msgstr "미리보기 이미지를 저장"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "자동으로 .blend 파일이 스크립트를 실행하도록 허용 (신뢰할 수 없는 소스의 블렌드 파일로 부터 안전하지 않음)"
 
@@ -90627,10 +90615,6 @@ msgstr "현재 .blend 파일의 온전성 검사 *이전* 단계를 실행 취�
 
 msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "현재 .blend 파일의 온전성 검사 *이후* 단계를 실행 취소"
-
-
-msgid "Undo disabled at startup"
-msgstr "시작시 실행 취소가 해제되었습니다"
 
 
 msgid "Unpack File"
