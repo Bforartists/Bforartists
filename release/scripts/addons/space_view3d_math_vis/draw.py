@@ -149,8 +149,12 @@ def draw_callback_view():
         bgl.glDepthFunc(bgl.GL_LESS)
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
-    active_index = settings.index
-    active_key = prop_states[active_index].name if active_index >= 0 else None
+    if settings.index in range(0,len(prop_states)):
+        active_index = settings.index
+        active_key = prop_states[active_index].name
+    else:
+        active_index = -1
+        active_key = None
 
     if data_vector:
         coords = [tuple(vec.to_3d()) for vec in data_vector.values()]

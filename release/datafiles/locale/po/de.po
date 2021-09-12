@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3824,14 +3824,6 @@ msgstr "Position beeinflussen"
 
 msgid "The brush affects the position of the point"
 msgstr "Der Pinsel beeinflusst die Position des Punktes"
-
-
-msgid "Affect Pressure"
-msgstr "Druck beeinflussen"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Beeinflusset die Druckwerte beim Glätten von Strichen"
 
 
 msgid "Affect Strength"
@@ -9650,6 +9642,10 @@ msgstr "Fensterverwaltung"
 
 msgid "World"
 msgstr "Welt"
+
+
+msgid "Relative Path"
+msgstr "Relativer Pfad"
 
 
 msgid "Animations"
@@ -27554,10 +27550,6 @@ msgid "Hide Operator Properties"
 msgstr "Verstecke Auswahleisntellungen"
 
 
-msgid "Relative Path"
-msgstr "Relativer Pfad"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Wähle die Datei relativ zur blend Datei aus"
 
@@ -43658,14 +43650,6 @@ msgstr "Nur Dateien mit einer Erweiterung im Bildauswahlfenster anzeigen"
 
 msgid "Load user interface setup when loading .blend files"
 msgstr "Benutzeroberfläche-Einstellungen laden, wenn eine .blend-Datei geladen wird"
-
-
-msgid "Save Preview Images"
-msgstr "Vorschaubilder speichern"
-
-
-msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
-msgstr "Aktiviert das automatische Speichern von Vorschaubildern in der .blend-Datei sowie einer Miniaturansicht der .blend"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"

@@ -178,7 +178,7 @@ class camera_overscan_props(PropertyGroup):
 def register():
     bpy.utils.register_class(CODuplicateCamera)
     bpy.utils.register_class(camera_overscan_props)
-    bpy.types.RENDER_PT_dimensions.append(RO_Menu)
+    bpy.types.RENDER_PT_format.append(RO_Menu)
     bpy.types.Scene.camera_overscan = PointerProperty(
                                         type=camera_overscan_props
                                         )
@@ -187,7 +187,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(CODuplicateCamera)
     bpy.utils.unregister_class(camera_overscan_props)
-    bpy.types.RENDER_PT_dimensions.remove(RO_Menu)
+    bpy.types.RENDER_PT_format.remove(RO_Menu)
     del bpy.types.Scene.camera_overscan
 
 
