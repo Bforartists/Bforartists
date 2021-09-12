@@ -102,6 +102,8 @@ class Int : public SocketDeclaration {
 class Vector : public SocketDeclaration {
  private:
   float3 default_value_ = {0, 0, 0};
+  float soft_min_value_ = -FLT_MAX;
+  float soft_max_value_ = FLT_MAX;
   PropertySubType subtype_ = PROP_NONE;
 
  public:
@@ -114,6 +116,18 @@ class Vector : public SocketDeclaration {
   Vector &subtype(PropertySubType subtype)
   {
     subtype_ = subtype;
+    return *this;
+  }
+
+  Vector &min(const float min)
+  {
+    soft_min_value_ = min;
+    return *this;
+  }
+
+  Vector &max(const float max)
+  {
+    soft_max_value_ = max;
     return *this;
   }
 
@@ -198,6 +212,20 @@ template<typename Subtype> class IDSocketDeclaration : public SocketDeclaration 
   bool matches(const bNodeSocket &socket) const override
   {
     return matches_id_socket(socket, data_, name_, identifier_);
+  }
+
+  bNodeSocket &update_or_build(bNodeTree &ntree, bNode &node, bNodeSocket &socket) const override
+  {
+    if (StringRef(socket.idname) != data_.idname) {
+      return this->build(ntree, node, (eNodeSocketInOut)socket.in_out);
+    }
+    if (data_.hide_label) {
+      socket.flag |= SOCK_HIDE_LABEL;
+    }
+    else {
+      socket.flag &= ~SOCK_HIDE_LABEL;
+    }
+    return socket;
   }
 };
 }  // namespace detail
