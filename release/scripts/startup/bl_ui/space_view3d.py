@@ -1171,6 +1171,15 @@ class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class VIEW3D_MT_view_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("view3d.cursor3d", text="Set 3D Cursor", icon='CURSOR')
+
+
 class VIEW3D_MT_view(Menu):
     bl_label = "View"
 
@@ -1184,6 +1193,10 @@ class VIEW3D_MT_view(Menu):
         layout.prop(view, "show_region_tool_header")
         layout.prop(view, "show_region_hud")
         layout.prop(overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs") # bfa - the toolshelf tabs.
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_view_legacy")
 
         layout.separator()
 
@@ -8469,6 +8482,7 @@ classes = (
     VIEW3D_MT_uv_map_clear_seam,
     VIEW3D_MT_uv_map,
     VIEW3D_MT_switchactivecamto,
+    VIEW3D_MT_view_legacy,
     VIEW3D_MT_view,
     VIEW3D_MT_view_pie_menus,
     VIEW3D_MT_view_navigation,
