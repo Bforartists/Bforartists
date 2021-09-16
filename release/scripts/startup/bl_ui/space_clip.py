@@ -1406,6 +1406,15 @@ class CLIP_MT_view_zoom(Menu):
             ).ratio = a / b
 
 
+class CLIP_MT_view_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("clip.cursor_set", text="Set 2D Cursor", icon='CURSOR')
+
+
 class CLIP_MT_view(Menu):
     bl_label = "View"
 
@@ -1418,6 +1427,10 @@ class CLIP_MT_view(Menu):
             layout.prop(sc, "show_region_ui")
             layout.prop(sc, "show_region_toolbar")
             layout.prop(sc, "show_region_hud")
+
+            layout.separator()
+
+            layout.menu("CLIP_MT_view_legacy")
 
             layout.separator()
 
@@ -2042,6 +2055,7 @@ classes = (
     CLIP_PT_annotation,
     CLIP_PT_tools_grease_pencil_draw,
     CLIP_MT_view_zoom,
+    CLIP_MT_view_legacy,
     CLIP_MT_view,
     CLIP_MT_view_pie_menus,
     CLIP_MT_clip,
