@@ -5532,12 +5532,12 @@ class VIEW3D_PT_gp_posetab_constraints(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
-            col.operator("object.constraints_copy", icon = "COPYDOWN")
+            col.operator("pose.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
+            col.operator("pose.constraints_copy", icon = "COPYDOWN")
 
             col.separator(factor = 0.5)
 
-            col.operator("object.constraints_clear", icon = "CLEAR_CONSTRAINT")
+            col.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
         # icon buttons
         else:
@@ -5549,28 +5549,28 @@ class VIEW3D_PT_gp_posetab_constraints(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("object.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
-                row.operator("object.constraints_copy", text = "", icon = "COPYDOWN")
-                row.operator("object.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
+                row.operator("pose.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
+                row.operator("pose.constraints_copy", text = "", icon = "COPYDOWN")
+                row.operator("pose.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("object.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
-                row.operator("object.constraints_copy", text = "", icon = "COPYDOWN")
+                row.operator("pose.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
+                row.operator("pose.constraints_copy", text = "", icon = "COPYDOWN")
 
                 row = col.row(align=True)
-                row.operator("object.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
+                row.operator("pose.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
 
 
             elif column_count == 1:
 
-                col.operator("object.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
-                col.operator("object.constraints_copy", text = "", icon = "COPYDOWN")
+                col.operator("pose.constraint_add_with_targets", text = "", icon = "CONSTRAINT_DATA")
+                col.operator("pose.constraints_copy", text = "", icon = "COPYDOWN")
 
                 col.separator(factor = 0.5)
 
-                col.operator("object.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
+                col.operator("pose.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
 
 
 class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
