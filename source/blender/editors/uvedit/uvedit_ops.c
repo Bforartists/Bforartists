@@ -1785,7 +1785,7 @@ static void UV_OT_cursor_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set 2D Cursor";
-  ot->description = "Set 2D cursor location\nThe mesh needs to be in edit mode\nHotkey Only Tool! Please use the hotkey!";
+  ot->description = "Set 2D cursor location\nHotkey Only Tool! Please use the hotkey!";
   ot->idname = "UV_OT_cursor_set";
 
   /* api callbacks */
