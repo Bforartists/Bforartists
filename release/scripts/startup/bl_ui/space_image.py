@@ -74,6 +74,15 @@ class IMAGE_PT_active_tool(Panel, ToolActivePanelHelper):
     bl_category = "Tool"
 
 
+class IMAGE_MT_view_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("uv.cursor_set", text="Set 2D Cursor", icon='CURSOR')
+
+
 class IMAGE_MT_view(Menu):
     bl_label = "View"
 
@@ -88,6 +97,10 @@ class IMAGE_MT_view(Menu):
         layout.prop(sima, "show_region_ui")
         layout.prop(sima, "show_region_tool_header")
         layout.prop(sima, "show_region_hud")
+
+        layout.separator()
+
+        layout.menu("IMAGE_MT_view_legacy")
 
         layout.separator()
 
@@ -1800,6 +1813,7 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
 
 classes = (
     ALL_MT_editormenu,
+    IMAGE_MT_view_legacy,
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
