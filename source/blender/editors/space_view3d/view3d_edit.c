@@ -5244,7 +5244,7 @@ void VIEW3D_OT_cursor3d(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set 3D Cursor";
-  ot->description = "Set the location of the 3D cursor";
+  ot->description = "Set the location of the 3D cursor\nHotkey Only Tool! Please use the hotkey!";
   ot->idname = "VIEW3D_OT_cursor3d";
 
   /* api callbacks */
