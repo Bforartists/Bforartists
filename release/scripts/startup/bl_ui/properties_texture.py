@@ -236,16 +236,16 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
         col.prop(tex, "noise_basis_2", text="Second Basis")
 
         col = col.column()
-        col.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
-        col.prop(tex, "noise_type", text="Type")
+        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
+            col.prop(tex, "noise_type", text="Type")
 
         col.separator()
 
         sub = flow.column()
-        sub.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
-        sub.prop(tex, "noise_scale", text="Size")
-        sub.prop(tex, "turbulence")
-        sub.prop(tex, "nabla")
+        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
+            sub.prop(tex, "noise_scale", text="Size")
+            sub.prop(tex, "turbulence")
+            sub.prop(tex, "nabla")
 
 
 class TEXTURE_PT_marble(TextureTypePanel, Panel):
@@ -319,8 +319,8 @@ class TEXTURE_PT_blend(TextureTypePanel, Panel):
         col.separator()
 
         col = flow.column()
-        col.active = (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'})
-        col.prop(tex, "use_flip_axis", text="Orientation")
+        if (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'}):
+            col.prop(tex, "use_flip_axis", text="Orientation")
 
 
 class TEXTURE_PT_stucci(TextureTypePanel, Panel):
@@ -459,10 +459,10 @@ class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
         tex = context.texture
 
         col = layout.column()
-        col.active = bool(tex.image and tex.image.alpha_mode != 'NONE')
-        col.use_property_split = False
-        col.prop(tex, "use_calculate_alpha", text="Calculate")
-        col.prop(tex, "invert_alpha", text="Invert")
+        if bool(tex.image and tex.image.alpha_mode != 'NONE'):
+            col.use_property_split = False
+            col.prop(tex, "use_calculate_alpha", text="Calculate")
+            col.prop(tex, "invert_alpha", text="Invert")
 
 
 class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
@@ -613,8 +613,8 @@ class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
         col.prop(tex, "distance_metric")
 
         sub = col.column()
-        sub.active = tex.distance_metric == 'MINKOVSKY'
-        sub.prop(tex, "minkovsky_exponent", text="Exponent")
+        if tex.distance_metric == 'MINKOVSKY':
+            sub.prop(tex, "minkovsky_exponent", text="Exponent")
 
         sub.separator()
 
