@@ -107,12 +107,12 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Tools
 
-    tools_parent : BoolProperty(name="Parent", default=True, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
+    tools_parent : BoolProperty(name="Parent", default=False, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
     tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Toolbar\nDisplay is mode and content dependant", )
     tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
-    tools_linked_objects : BoolProperty(name="Linked Objects", default=True, description = "Display the Linked objects Toolbar\nDisplay is mode and content dependant", )
+    tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked objects Toolbar\nDisplay is mode and content dependant", )
     tools_join : BoolProperty(name="Join", default=True, description = "Display the Join Toolbar\nDisplay is mode and content dependant", )
-    tools_origin : BoolProperty(name="Origin", default=True, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
+    tools_origin : BoolProperty(name="Origin", default=False, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
     tools_shading : BoolProperty(name="Shading", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
     tools_datatransfer : BoolProperty(name="Data Transfer", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
     tools_relations : BoolProperty(name="Relations", default=False, description = "Display the Relations Toolbar\nDisplay is mode and content dependant", )
@@ -128,11 +128,11 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # edit
 
-    edit_edit : BoolProperty(name="Edit", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
-    edit_weightinedit : BoolProperty(name="Weight in Edit", default=True, description = "Display the Weight in Edit Toolbar\nDisplay is mode and content dependant", )
+    edit_edit : BoolProperty(name="Edit", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
+    edit_weightinedit : BoolProperty(name="Weight in Edit", default=False, description = "Display the Weight in Edit Toolbar\nDisplay is mode and content dependant", )
     edit_objectapply : BoolProperty(name="Object Apply", default=True, description = "Display the Object Apply Toolbar\nDisplay is mode and content dependant", )
     edit_objectapplydeltas : BoolProperty(name="Object Apply Deltas", default=False, description = "Display the Object Apply Deltas Toolbar\nDisplay is mode and content dependant", )
-    edit_objectclear : BoolProperty(name="Object Clear", default=True, description = "Display the Object Clear Toolbar\nDisplay is mode and content dependant", )
+    edit_objectclear : BoolProperty(name="Object Clear", default=False, description = "Display the Object Clear Toolbar\nDisplay is mode and content dependant", )
 
     # misc
 
