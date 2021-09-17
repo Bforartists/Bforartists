@@ -1355,8 +1355,6 @@ class TOOLBAR_MT_tools(Menu):
 
                     obj_type = obj.type
 
-                    row = layout.row(align=True)
-
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
 
                         row = layout.row(align=True)
@@ -1370,8 +1368,6 @@ class TOOLBAR_MT_tools(Menu):
 
                     obj_type = obj.type
 
-                    row = layout.row(align=True)
-
                     if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
 
                         row = layout.row(align=True)
@@ -1381,8 +1377,6 @@ class TOOLBAR_MT_tools(Menu):
                 if addon_prefs.tools_datatransfer:
 
                     obj_type = obj.type
-
-                    row = layout.row(align=True)
 
                     if obj_type == 'MESH':
 
@@ -1642,6 +1636,9 @@ class TOOLBAR_PT_menu_edit(Panel):
         row.prop(addon_prefs, "edit_objectapply")
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "edit_objectapply2")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "edit_objectapplydeltas")
         row = col.row()
         row.separator()
@@ -1721,6 +1718,12 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
                     row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
                     row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
+
+            if addon_prefs.edit_objectapply2:
+
+                mode = obj.mode
+
+                if mode == 'OBJECT':
 
                     row = layout.row(align=True)
                     row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
