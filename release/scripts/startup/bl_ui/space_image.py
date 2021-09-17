@@ -100,7 +100,13 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_view_legacy")
+        # bfa - the view menu is shared between uv and image editor
+        # and uv editor has a 3d cursor tool in the shelf. So legacy ...
+        if sima.mode != 'UV':
+            if sima.ui_mode == 'MASK':
+                layout.operator("uv.cursor_set", text="Set 2D Cursor", icon='CURSOR')
+        else:
+            layout.menu("IMAGE_MT_view_legacy")
 
         layout.separator()
 
