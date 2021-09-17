@@ -1059,9 +1059,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
         obj = context.object
         if obj is None:
             return
-        elif obj.type == 'MESH':
-            pass
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT'} and obj.type in {'MESH', 'CURVE', 'SURFACE'}
 
     def draw(self, _context):
         layout = self.layout
