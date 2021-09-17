@@ -3684,7 +3684,7 @@ void OBJECT_OT_join(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Join";
-  ot->description = "Join selected objects into active object";
+  ot->description = "Join selected objects into active object\nSelect first object, hold down shift, select second object\nThen perform the join tool";
   ot->idname = "OBJECT_OT_join";
 
   /* api callbacks */
