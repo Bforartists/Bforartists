@@ -1187,6 +1187,7 @@ class VIEW3D_MT_view(Menu):
         layout = self.layout
         view = context.space_data
         overlay = view.overlay
+        engine = context.engine
 
         layout.prop(view, "show_region_toolbar")
         layout.prop(view, "show_region_ui")
@@ -1210,8 +1211,10 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
-        layout.operator("view3d.render_border", icon = "RENDERBORDER")
-        layout.operator("view3d.clear_render_border", icon = "RENDERBORDER_CLEAR")
+
+        if engine == 'CYCLES':
+            layout.operator("view3d.render_border", icon = "RENDERBORDER")
+            layout.operator("view3d.clear_render_border", icon = "RENDERBORDER_CLEAR")
 
         layout.separator()
 
