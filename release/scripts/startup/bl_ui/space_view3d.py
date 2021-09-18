@@ -1282,12 +1282,27 @@ class VIEW3D_MT_view_pie_menus(Menu):
         layout.operator("view3d.object_mode_pie_or_toggle", text = "Modes", icon = "MENU_PANEL")
 
 
+class VIEW3D_MT_view_navigation_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        layout.operator("transform.translate", text= "Move", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", text= "Rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text= "Scale", icon = "TRANSFORM_SCALE")
+
+
 class VIEW3D_MT_view_navigation(Menu):
     bl_label = "Navi"
 
     def draw(self, _context):
         from math import pi
         layout = self.layout
+
+        layout.menu('VIEW3D_MT_view_navigation_legacy')
 
         layout.operator("view3d.view_orbit", text= "Orbit Down", icon = "ORBIT_DOWN").type='ORBITDOWN'
         layout.operator("view3d.view_orbit", text= "Orbit Up", icon = "ORBIT_UP").type='ORBITUP'
@@ -8488,6 +8503,7 @@ classes = (
     VIEW3D_MT_view_legacy,
     VIEW3D_MT_view,
     VIEW3D_MT_view_pie_menus,
+    VIEW3D_MT_view_navigation_legacy,
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
