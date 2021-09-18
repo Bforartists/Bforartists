@@ -6793,6 +6793,8 @@ keyconfig_data = \
     ("AUTOCONSTRAIN", {"type": 'S', "value": 'PRESS'}, None),
     ("AUTOCONSTRAINPLANE", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "alt": True}, None),
     ("AUTOCONSTRAINPLANE", {"type": 'S', "value": 'PRESS', "alt": True}, None),
+    ("PRECISION", {"type": 'LEFT_SHIFT', "value": 'ANY', "any": True}, None),
+    ("PRECISION", {"type": 'RIGHT_SHIFT', "value": 'ANY', "any": True}, None),
     ],
    },
   ),
