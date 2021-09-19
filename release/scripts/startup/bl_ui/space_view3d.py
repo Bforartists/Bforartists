@@ -4526,7 +4526,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.menu ("VIEW3D_MT_edit_mesh_vertices_legacy")
-        layout.operator("mesh.dupli_extrude_cursor").rotate_source = True
+        layout.operator("mesh.dupli_extrude_cursor", icon = "EXTRUDE_REGION").rotate_source = True
 
         layout.separator()
 
@@ -5019,7 +5019,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
         if edit_object.type in {'CURVE', 'SURFACE'}:
             layout.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
-            layout.operator("curve.vertex_add")
+            layout.operator("curve.vertex_add", icon = 'EXTRUDE_REGION')
 
             layout.separator()
 
@@ -5385,7 +5385,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
-        layout.operator("armature.click_extrude")
+        layout.operator("armature.click_extrude", icon = 'EXTRUDE_REGION')
 
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked", icon = "EXTRUDE_REGION")
