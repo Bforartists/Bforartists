@@ -5269,7 +5269,7 @@ void GPENCIL_OT_stroke_cutter(wmOperatorType *ot)
   ot->cancel = WM_gesture_lasso_cancel;
 
   /* flag */
-  ot->flag = OPTYPE_UNDO;
+  ot->flag = OPTYPE_UNDO | OPTYPE_DEPENDS_ON_CURSOR;
 
   /* properties */
   WM_operator_properties_gesture_lasso(ot);
