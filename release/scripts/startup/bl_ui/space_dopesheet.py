@@ -494,14 +494,16 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("action.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
-
         layout.separator()
+
         layout.operator("action.select_box", icon='BORDER_RECT').axis_range = False
         layout.operator("action.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT').axis_range = True
 
         layout.operator("action.select_circle", icon='CIRCLE_SELECT')
+        layout.operator_menu_enum("action.select_lasso", "mode")
 
         layout.separator()
+
         layout.operator("action.select_column", text="Columns on Selected Keys", icon="COLUMNS_KEYS").mode = 'KEYS'
         layout.operator("action.select_column", text="Column on Current Frame", icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
 

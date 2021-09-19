@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1042,16 +1042,8 @@ msgid "3D vector with floating-point values"
 msgstr "3D Vektor mit Fließkomma Variable"
 
 
-msgid "RGBA color with floating-point precisions"
-msgstr "RGBA Farbe mit Fließkommagenauigkeit"
-
-
 msgid "Byte Color"
 msgstr "Byte Farbe"
-
-
-msgid "RGBA color with 8-bit precision"
-msgstr "RGBA Farbe mit 8-Bit Genauigkeit"
 
 
 msgid "String"
@@ -1126,16 +1118,8 @@ msgid "Byte Color Attribute"
 msgstr "Byte Farben Einstellung"
 
 
-msgid "Color geometry attribute, with 8-bit precision"
-msgstr "Geometriefarben Einstellung, mit 8-Bit Genauigkeit"
-
-
 msgid "Float2 Attribute"
 msgstr "Float2 Eigenschaft"
-
-
-msgid "2D vector geometry attribute, with floating-point precision"
-msgstr "2D Vektorgeometrie Einstellung, mit Fließkommazahl Genauigkeit"
 
 
 msgid "Float Attribute"
@@ -1150,16 +1134,8 @@ msgid "Float Color Attribute"
 msgstr "Fließkomma Farben Einstellung"
 
 
-msgid "Color geometry attribute, with floating-point precision"
-msgstr "Geometriefarben Einstellung, mit Fließkommazahl Genauigkeit"
-
-
 msgid "Float Vector Attribute"
 msgstr "Fließkomma Vektor Eigenschaft"
-
-
-msgid "Vector geometry attribute, with floating-point precision"
-msgstr "Vektorgeometrie Einstellung, mit Fließkommazahl Genauigkeit"
 
 
 msgid "Int Attribute"
@@ -10590,14 +10566,6 @@ msgstr "Negativer Exponent für den Viskositätswert (um die Eingabe kleiner Wer
 
 msgid "Amount of turbulence and rotation in smoke"
 msgstr "Menge der Turbulenzen und Rotation im Rauch"
-
-
-msgid "Fluid Mesh Velocity"
-msgstr "Flüssigkeit-Masche-Geschwindigkeit"
-
-
-msgid "Velocity of a simulated fluid mesh"
-msgstr "Geschwindigkeit eines simulierten Flüssigkeitsmasche"
 
 
 msgid "Smoke collision settings"
@@ -25145,6 +25113,30 @@ msgid "Geometry Node"
 msgstr "Geometrieknoten"
 
 
+msgid "Attribute Remove"
+msgstr "Attribut entfernen"
+
+
+msgid "Collection Info"
+msgstr "Sammlungsinfo"
+
+
+msgid "Original"
+msgstr "Original"
+
+
+msgid "Convex Hull"
+msgstr "Konvexe Hülse"
+
+
+msgid "Is Viewport"
+msgstr "Ist Ansichtsfenster"
+
+
+msgid "Join Geometry"
+msgstr "Geometrie verbinden"
+
+
 msgid "Align the X axis with the vector"
 msgstr "Ausrichten der X-Achse am Vektor"
 
@@ -25249,10 +25241,6 @@ msgid "Replace/Create"
 msgstr "Ersetzen/Erstellen"
 
 
-msgid "Attribute Remove"
-msgstr "Attribut entfernen"
-
-
 msgid "Input Type"
 msgstr "Eingabetyp"
 
@@ -25325,48 +25313,8 @@ msgid "Rotate a point using XYZ order"
 msgstr "Drehen eines Punktes mit XYZ-Reihenfolge"
 
 
-msgid "Collection Info"
-msgstr "Sammlungsinfo"
-
-
-msgid "Original"
-msgstr "Original"
-
-
-msgid "Convex Hull"
-msgstr "Konvexe Hülse"
-
-
 msgid "Delete Geometry"
 msgstr "Geometrie löschen"
-
-
-msgid "Is Viewport"
-msgstr "Ist Ansichtsfenster"
-
-
-msgid "Join Geometry"
-msgstr "Geometrie verbinden"
-
-
-msgid "Fill Type"
-msgstr "Fülltyp"
-
-
-msgid "Count Mode"
-msgstr "Zählmodus"
-
-
-msgid "End Points"
-msgstr "Endpunkte"
-
-
-msgid "UV Sphere"
-msgstr "UV Kugel"
-
-
-msgid "Object Info"
-msgstr "Objektinformation"
 
 
 msgid "Distribution Method"
@@ -25391,6 +25339,26 @@ msgstr "Radius-Eingabetyp"
 
 msgid "Point Rotate"
 msgstr "Punktrotation"
+
+
+msgid "Fill Type"
+msgstr "Fülltyp"
+
+
+msgid "Count Mode"
+msgstr "Zählmodus"
+
+
+msgid "End Points"
+msgstr "Endpunkte"
+
+
+msgid "UV Sphere"
+msgstr "UV Kugel"
+
+
+msgid "Object Info"
+msgstr "Objektinformation"
 
 
 msgctxt "NodeTree"
@@ -41815,16 +41783,8 @@ msgid "FFMPEG Presets"
 msgstr "FFMPEG-Voreinstellungen"
 
 
-msgid "Time Remapping"
-msgstr "Zeitneuzuordnung"
-
-
 msgid "Views"
 msgstr "Ansichten"
-
-
-msgid "Render Presets"
-msgstr "Render-Voreinstellungen"
 
 
 msgid "Metadata"
@@ -43532,22 +43492,6 @@ msgid "The default directory to search for loading fonts"
 msgstr "Das Vorgabeverzeichnis, um nach Schriften zu suchen, die geladen werden sollen"
 
 
-msgid "Hide Recent Locations"
-msgstr "Zuletzt verwendete Orte ausblenden"
-
-
-msgid "Hide recent locations in the file selector"
-msgstr "Zuletzt verwendete Orte in der Dateiauswahl ausblenden"
-
-
-msgid "Hide System Bookmarks"
-msgstr "Lesezeichen löschen"
-
-
-msgid "Hide system bookmarks in the file selector"
-msgstr "Zuletzt verwendete Orte in der Dateiauswahl ausblenden"
-
-
 msgid "Translation Branches Directory"
 msgstr "Verschieben"
 
@@ -43596,14 +43540,6 @@ msgid "Python Scripts Directory"
 msgstr "Python-Skriptverzeichnis"
 
 
-msgid "Hide Dot Files/Data-Blocks"
-msgstr "Ausblenden von Punkt Dateien/Datenblöcken"
-
-
-msgid "Hide files and data-blocks if their name start with a dot (.*)"
-msgstr "Ausblenden von Dateien und Datenblöcke, die mit einem Punkt beginnen (.*)"
-
-
 msgid "Sounds Directory"
 msgstr "Klang-Verzeichnis"
 
@@ -43638,14 +43574,6 @@ msgstr "Datei komprimieren"
 
 msgid "Enable file compression when saving .blend files"
 msgstr "Dateikompression erlauben, wenn .blend-Dateien gespeichert werden"
-
-
-msgid "Filter File Extensions"
-msgstr "Dateierweiterungen filtern"
-
-
-msgid "Display only files with extensions in the image select window"
-msgstr "Nur Dateien mit einer Erweiterung im Bildauswahlfenster anzeigen"
 
 
 msgid "Load user interface setup when loading .blend files"
@@ -45558,10 +45486,6 @@ msgstr "Ist Achsenorientiert"
 
 msgid "Is Perspective"
 msgstr "Ist Perspektive"
-
-
-msgid "Lock view rotation in side views"
-msgstr "Ansichtsrotation in Seitenansichten sperren"
 
 
 msgid "Camera Offset"
@@ -56645,14 +56569,6 @@ msgstr "Standardmäßig zu"
 
 msgid "Timer (Minutes)"
 msgstr "Timer (Minuten)"
-
-
-msgid "Dot File & Data-Blocks"
-msgstr "Punkt Datei & Datenblock"
-
-
-msgid "Recent Locations"
-msgstr "Zuletzt verwendete Orte"
 
 
 msgid "Double Click Speed"

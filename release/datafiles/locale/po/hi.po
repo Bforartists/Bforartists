@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -4776,10 +4776,6 @@ msgstr "रंग प्रबंधन"
 
 msgid "Audio"
 msgstr "श्रव्य"
-
-
-msgid "Render Presets"
-msgstr "पूर्वनिश्चित  प्रतिपादन"
 
 
 msgid "Note"

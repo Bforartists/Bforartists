@@ -37,7 +37,7 @@
  *    use is to compose multiple existing fields into new fields.
  *
  * When fields are evaluated, they are converted into a multi-function procedure which allows
- * efficient compution. In the future, we might support different field evaluation mechanisms for
+ * efficient computation. In the future, we might support different field evaluation mechanisms for
  * e.g. the following scenarios:
  *  - Latency of a single evaluation is more important than throughput.
  *  - Evaluation should happen on other hardware like GPUs.
@@ -151,12 +151,14 @@ template<typename NodePtr> class GFieldBase {
 
   friend bool operator==(const GFieldBase &a, const GFieldBase &b)
   {
-    return &*a.node_ == &*b.node_ && a.node_output_index_ == b.node_output_index_;
+    /* Two nodes can compare equal even when their pointer is not the same. For example, two
+     * "Position" nodes are the same. */
+    return *a.node_ == *b.node_ && a.node_output_index_ == b.node_output_index_;
   }
 
   uint64_t hash() const
   {
-    return get_default_hash_2(node_, node_output_index_);
+    return get_default_hash_2(*node_, node_output_index_);
   }
 
   const fn::CPPType &cpp_type() const
@@ -379,7 +381,7 @@ class FieldEvaluator : NonMovable, NonCopyable {
   /** Same as #add_with_destination but typed. */
   template<typename T> int add_with_destination(Field<T> field, VMutableArray<T> &dst)
   {
-    GVMutableArray &varray = scope_.construct<GVMutableArray_For_VMutableArray<T>>(__func__, dst);
+    GVMutableArray &varray = scope_.construct<GVMutableArray_For_VMutableArray<T>>(dst);
     return this->add_with_destination(GField(std::move(field)), varray);
   }
 
@@ -399,7 +401,7 @@ class FieldEvaluator : NonMovable, NonCopyable {
    */
   template<typename T> int add_with_destination(Field<T> field, MutableSpan<T> dst)
   {
-    GVMutableArray &varray = scope_.construct<GVMutableArray_For_MutableSpan<T>>(__func__, dst);
+    GVMutableArray &varray = scope_.construct<GVMutableArray_For_MutableSpan<T>>(dst);
     return this->add_with_destination(std::move(field), varray);
   }
 
@@ -415,10 +417,10 @@ class FieldEvaluator : NonMovable, NonCopyable {
   {
     const int field_index = fields_to_evaluate_.append_and_get_index(std::move(field));
     dst_varrays_.append(nullptr);
-    output_pointer_infos_.append(OutputPointerInfo{
-        varray_ptr, [](void *dst, const GVArray &varray, ResourceScope &scope) {
-          *(const VArray<T> **)dst = &*scope.construct<GVArray_Typed<T>>(__func__, varray);
-        }});
+    output_pointer_infos_.append(
+        OutputPointerInfo{varray_ptr, [](void *dst, const GVArray &varray, ResourceScope &scope) {
+                            *(const VArray<T> **)dst = &*scope.construct<GVArray_Typed<T>>(varray);
+                          }});
     return field_index;
   }
 
@@ -441,7 +443,7 @@ class FieldEvaluator : NonMovable, NonCopyable {
   template<typename T> const VArray<T> &get_evaluated(const int field_index)
   {
     const GVArray &varray = this->get_evaluated(field_index);
-    GVArray_Typed<T> &typed_varray = scope_.construct<GVArray_Typed<T>>(__func__, varray);
+    GVArray_Typed<T> &typed_varray = scope_.construct<GVArray_Typed<T>>(varray);
     return *typed_varray;
   }
 

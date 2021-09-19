@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -4235,14 +4235,6 @@ msgstr "Dupliceer Mesh"
 
 msgid "Duplicate Text"
 msgstr "Dupliceer Tekst"
-
-
-msgid "Hide Recent Locations"
-msgstr "Verberg Recente Lokaties"
-
-
-msgid "Hide System Bookmarks"
-msgstr "Verberg Systeem Boekenleggers"
 
 
 msgid "Image Editor"
