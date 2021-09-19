@@ -1835,8 +1835,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.separator()
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("curve.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
