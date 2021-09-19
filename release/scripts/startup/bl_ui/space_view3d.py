@@ -1446,6 +1446,9 @@ class VIEW3D_MT_select_object(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("object.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("object.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1551,6 +1554,9 @@ class VIEW3D_MT_select_pose(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("pose.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1598,6 +1604,9 @@ class VIEW3D_MT_select_particle(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1693,6 +1702,10 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
+
         # primitive
         layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mesh.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1762,6 +1775,10 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
+
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
@@ -1813,6 +1830,9 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -1875,6 +1895,9 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("mball.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mball.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1925,6 +1948,9 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("lattice.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1952,6 +1978,9 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -2018,6 +2047,9 @@ class VIEW3D_MT_select_gpencil(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_gpencil_legacy")
+        layout.operator_menu_enum("gpencil.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("gpencil.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -2071,6 +2103,9 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("paint.face_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -2090,6 +2125,9 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout = self.layout
 
         layout.menu ("VIEW3D_MT_select_object_legacy")
+        layout.operator_menu_enum("view3d.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -4488,6 +4526,9 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.menu ("VIEW3D_MT_edit_mesh_vertices_legacy")
+        layout.operator("mesh.dupli_extrude_cursor").rotate_source = True
+
+        layout.separator()
 
         layout.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
         layout.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
@@ -4978,6 +5019,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
         if edit_object.type in {'CURVE', 'SURFACE'}:
             layout.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+            layout.operator("curve.vertex_add")
 
             layout.separator()
 
@@ -5343,6 +5385,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
+        layout.operator("armature.click_extrude")
 
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked", icon = "EXTRUDE_REGION")

@@ -29,8 +29,8 @@ namespace blender::nodes {
 static void geo_node_point_instance_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>("Geometry");
-  b.add_input<decl::Object>("Object").hide_label(true);
-  b.add_input<decl::Collection>("Collection").hide_label(true);
+  b.add_input<decl::Object>("Object").hide_label();
+  b.add_input<decl::Collection>("Collection").hide_label();
   b.add_input<decl::Geometry>("Instance Geometry");
   b.add_input<decl::Int>("Seed").min(-10000).max(10000);
   b.add_output<decl::Geometry>("Geometry");
@@ -259,7 +259,8 @@ void register_node_type_geo_point_instance()
 {
   static bNodeType ntype;
 
-  geo_node_type_base(&ntype, GEO_NODE_LEGACY_POINT_INSTANCE, "Point Instance", NODE_CLASS_GEOMETRY, 0);
+  geo_node_type_base(
+      &ntype, GEO_NODE_LEGACY_POINT_INSTANCE, "Point Instance", NODE_CLASS_GEOMETRY, 0);
   node_type_init(&ntype, blender::nodes::geo_node_point_instance_init);
   node_type_storage(
       &ntype, "NodeGeometryPointInstance", node_free_standard_storage, node_copy_standard_storage);

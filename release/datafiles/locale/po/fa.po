@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5937,12 +5937,12 @@ msgid "Expand from 9 places"
 msgstr "ﺝﻭﺮﺧ ﯼﺍﺮﺑ ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
-
-
 msgid "Original"
 msgstr "ﯽﻠﺻﺍ"
+
+
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
 
 
 msgid "Fill Type"
@@ -11775,10 +11775,6 @@ msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
 
 msgid "Built-in animation player"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ ﻒﻗﻮﺗ"
-
-
-msgid "Hide System Bookmarks"
-msgstr "ﯽﻧﺎﻬﺟ ﺢﻄﺳ ﺭﺩ ﻑﺬﺣ"
 
 
 msgid "Translation Branches Directory"

@@ -559,7 +559,7 @@ static Mesh *delete_mesh_selection(const Mesh &mesh_in,
       mesh_in, *result, vertex_map, edge_map, selected_poly_indices, new_loop_starts);
   BKE_mesh_calc_edges_loose(result);
   /* Tag to recalculate normals later. */
-  result->runtime.cd_dirty_vert |= CD_MASK_NORMAL;
+  BKE_mesh_normals_tag_dirty(result);
 
   return result;
 }
@@ -668,7 +668,8 @@ void register_node_type_geo_delete_geometry()
 {
   static bNodeType ntype;
 
-  geo_node_type_base(&ntype, GEO_NODE_LEGACY_DELETE_GEOMETRY, "Delete Geometry", NODE_CLASS_GEOMETRY, 0);
+  geo_node_type_base(
+      &ntype, GEO_NODE_LEGACY_DELETE_GEOMETRY, "Delete Geometry", NODE_CLASS_GEOMETRY, 0);
 
   ntype.declare = blender::nodes::geo_node_delete_geometry_declare;
   ntype.geometry_node_execute = blender::nodes::geo_node_delete_geometry_exec;
