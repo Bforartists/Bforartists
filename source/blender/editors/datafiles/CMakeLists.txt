@@ -711,7 +711,7 @@ select_handletype
 spline_type
 curve_fill
 posterize
-#~ DEF_ICON_BLANK(730)
+mod_dash
 #~ DEF_ICON_BLANK(731)
 
 # ------------------------- row 11 --------------------------*/

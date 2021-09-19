@@ -1100,7 +1100,8 @@ static int graphkeys_sound_bake_exec(bContext *C, wmOperator *op)
                                     RNA_boolean_get(op->ptr, "use_square"),
                                     RNA_float_get(op->ptr, "sthreshold"),
                                     FPS,
-                                    &sbi.length);
+                                    &sbi.length,
+                                    0);
 
   if (sbi.samples == NULL) {
     BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");

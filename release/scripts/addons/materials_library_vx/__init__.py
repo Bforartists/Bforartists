@@ -1082,7 +1082,7 @@ def list_materials():
   return sorted(list)
 
 def get_material(name, link=False):
-  with bpy.data.libraries.load("{0}", link, False) as (data_from, data_to):
+  with bpy.data.libraries.load("{0}", link=link, relative=False) as (data_from, data_to):
     data_to.materials = [name]
   if link:
     print(name + " linked.")

@@ -291,6 +291,7 @@ class GRAPH_MT_select(Menu):
         props = layout.operator("graph.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT')
 
         layout.operator("graph.select_circle", icon = 'CIRCLE_SELECT')
+        layout.operator_menu_enum("graph.select_lasso", "mode")
 
         layout.separator()
 
