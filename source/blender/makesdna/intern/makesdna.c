@@ -141,6 +141,7 @@ static const char *includefiles[] = {
     "DNA_volume_types.h",
     "DNA_simulation_types.h",
     "DNA_pointcache_types.h",
+    "DNA_uuid_types.h",
     "DNA_asset_types.h",
 
     /* see comment above before editing! */
@@ -1133,7 +1134,7 @@ static int calculate_struct_sizes(int firststruct, FILE *file_verify, const char
              * to the struct to resolve the problem. */
             if ((size_64 % max_align_64 == 0) && (size_32 % max_align_32 == 4)) {
               fprintf(stderr,
-                      "Sizeerror in 32 bit struct: %s (add paddding pointer)\n",
+                      "Sizeerror in 32 bit struct: %s (add padding pointer)\n",
                       types[structtype]);
             }
             else {
@@ -1678,6 +1679,7 @@ int main(int argc, char **argv)
 #include "DNA_texture_types.h"
 #include "DNA_tracking_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_uuid_types.h"
 #include "DNA_vec_types.h"
 #include "DNA_vfont_types.h"
 #include "DNA_view2d_types.h"

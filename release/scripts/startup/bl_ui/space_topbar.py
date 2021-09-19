@@ -603,6 +603,7 @@ class TOPBAR_MT_window(Menu):
         layout.separator()
 
         layout.operator("screen.screenshot", icon='MAKE_SCREENSHOT')
+        layout.operator("screen.screenshot_area")
 
         if sys.platform[:3] == "win":
             layout.separator()

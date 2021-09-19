@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3384,10 +3384,6 @@ msgid "Radius"
 msgstr "Yarıçap"
 
 
-msgid "Fluid Mesh Vertices"
-msgstr "Noktaları Göster/Gizle"
-
-
 msgid "Time"
 msgstr "Zaman"
 
@@ -4381,10 +4377,6 @@ msgstr "Doku Alanını Taşı"
 
 
 msgid "Fill Caps"
-msgstr "Güzelce Kapla"
-
-
-msgid "Fill Deformed"
 msgstr "Güzelce Kapla"
 
 
@@ -9167,16 +9159,16 @@ msgid "Expand from 9 places"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
 
+msgid "Original"
+msgstr "Orijinali Koru"
+
+
 msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
 msgid "Z Axis"
 msgstr "Z Eks"
-
-
-msgid "Original"
-msgstr "Orijinali Koru"
 
 
 msgid "Fill Type"
@@ -17930,10 +17922,6 @@ msgid "FFMPEG Presets"
 msgstr "Kaydet FFMpeg"
 
 
-msgid "Render Presets"
-msgstr "Blender Sunum"
-
-
 msgid "Note"
 msgstr "Not"
 
@@ -18637,14 +18625,6 @@ msgid "The default directory to search for loading fonts"
 msgstr "Yazıtipi yüklemek için aranacak varsayılan dizin"
 
 
-msgid "Hide Recent Locations"
-msgstr "Menüyü Göster/Gizle"
-
-
-msgid "Hide System Bookmarks"
-msgstr "Kare Sil"
-
-
 msgid "Translation Branches Directory"
 msgstr "Varsayılan yazıtipi dizini seçin"
 
@@ -18711,14 +18691,6 @@ msgstr "Geçici dosyaları otomatik kaydet"
 
 msgid "Compress File"
 msgstr "Dosyayı Sıkıştır"
-
-
-msgid "Filter File Extensions"
-msgstr "Dosya Uzantılarını Filtrele"
-
-
-msgid "Display only files with extensions in the image select window"
-msgstr "Resim seçim penceresinde dosyaları yalnız uzantıları ile görüntüle"
 
 
 msgid "Tabs as Spaces"

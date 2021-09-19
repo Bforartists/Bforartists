@@ -31,6 +31,7 @@
 
 #include "BLT_translation.h"
 
+#include "ED_asset.h"
 #include "ED_screen.h"
 
 #include "MEM_guardedalloc.h"
@@ -216,7 +217,18 @@ static void uilist_filter_items_default(struct uiList *ui_list,
     RNA_PROP_BEGIN (dataptr, itemptr, prop) {
       bool do_order = false;
 
-      char *namebuf = RNA_struct_name_get_alloc(&itemptr, nullptr, 0, nullptr);
+      char *namebuf;
+      if (RNA_struct_is_a(itemptr.type, &RNA_AssetHandle)) {
+        /* XXX The AssetHandle design is hacky and meant to be temporary. It can't have a proper
+         * name property, so for now this hardcoded exception is needed. */
+        AssetHandle *asset_handle = (AssetHandle *)itemptr.data;
+        const char *asset_name = ED_asset_handle_get_name(asset_handle);
+        namebuf = BLI_strdup(asset_name);
+      }
+      else {
+        namebuf = RNA_struct_name_get_alloc(&itemptr, nullptr, 0, nullptr);
+      }
+
       const char *name = namebuf ? namebuf : "";
 
       if (filter[0]) {
@@ -944,9 +956,15 @@ static void ui_template_list_layout_draw(bContext *C,
       /* For scrollbar. */
       row = uiLayoutRow(glob, false);
 
+      const bool show_names = (flags & UI_TEMPLATE_LIST_NO_NAMES) == 0;
+
       /* TODO ED_fileselect_init_layout(). Share somehow? */
       float size_x = (96.0f / 20.0f) * UI_UNIT_X;
       float size_y = (96.0f / 20.0f) * UI_UNIT_Y;
+
+      if (!show_names) {
+        size_y -= UI_UNIT_Y;
+      }
 
       const int cols_per_row = MAX2((uiLayoutGetWidth(box) - V2D_SCROLL_WIDTH) / size_x, 1);
       uiLayout *grid = uiLayoutGridFlow(row, true, cols_per_row, true, true, true);
@@ -1033,7 +1051,8 @@ static void ui_template_list_layout_draw(bContext *C,
       break;
   }
 
-  if (glob) {
+  const bool add_filters_but = (flags & UI_TEMPLATE_LIST_NO_FILTER_OPTIONS) == 0;
+  if (glob && add_filters_but) {
     const bool add_grip_but = (flags & UI_TEMPLATE_LIST_NO_GRIP) == 0;
 
     /* About #UI_BTYPE_GRIP drag-resize:

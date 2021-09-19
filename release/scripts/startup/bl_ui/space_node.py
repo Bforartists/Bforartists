@@ -420,6 +420,9 @@ class NODE_MT_select(Menu):
         layout = self.layout
 
         layout.menu("NODE_MT_select_legacy")
+        layout.operator_menu_enum("node.select_lasso", "mode")
+
+        layout.separator()
 
         layout.operator("node.select_all",text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("node.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'

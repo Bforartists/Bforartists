@@ -37,6 +37,8 @@
 #include "DNA_constraint_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_genfile.h"
+#include "DNA_gpencil_modifier_types.h"
+#include "DNA_lineart_types.h"
 #include "DNA_listBase.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
@@ -237,6 +239,16 @@ static void do_versions_idproperty_bones_recursive(Bone *bone)
   }
 }
 
+static void do_versions_idproperty_seq_recursive(ListBase *seqbase)
+{
+  LISTBASE_FOREACH (Sequence *, seq, seqbase) {
+    version_idproperty_ui_data(seq->prop);
+    if (seq->type == SEQ_TYPE_META) {
+      do_versions_idproperty_seq_recursive(&seq->seqbase);
+    }
+  }
+}
+
 /**
  * For every data block that supports them, initialize the new IDProperty UI data struct based on
  * the old more complicated storage. Assumes only the top level of IDProperties below the parent
@@ -297,9 +309,7 @@ static void do_versions_idproperty_ui_data(Main *bmain)
   /* Sequences. */
   LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
     if (scene->ed != NULL) {
-      LISTBASE_FOREACH (Sequence *, seq, &scene->ed->seqbase) {
-        version_idproperty_ui_data(seq->prop);
-      }
+      do_versions_idproperty_seq_recursive(&scene->ed->seqbase);
     }
   }
 }
@@ -685,7 +695,7 @@ static bool geometry_node_is_293_legacy(const short node_type)
     case GEO_NODE_COLLECTION_INFO:
       return false;
 
-    /* Maybe legacy: Transfered *all* attributes before, will not transfer all built-ins now. */
+    /* Maybe legacy: Transferred *all* attributes before, will not transfer all built-ins now. */
     case GEO_NODE_CURVE_ENDPOINTS:
     case GEO_NODE_CURVE_TO_POINTS:
       return false;
@@ -732,7 +742,7 @@ static bool geometry_node_is_293_legacy(const short node_type)
       return true;
 
     /* Legacy: More complex attribute inputs or outputs. */
-    case GEO_NODE_LEGACY_DELETE_GEOMETRY:    /* Needs field input, domain dropdown. */
+    case GEO_NODE_LEGACY_DELETE_GEOMETRY:    /* Needs field input, domain drop-down. */
     case GEO_NODE_LEGACY_CURVE_SUBDIVIDE:    /* Needs field count input. */
     case GEO_NODE_LEGACY_POINTS_TO_VOLUME:   /* Needs field radius input. */
     case GEO_NODE_LEGACY_SELECT_BY_MATERIAL: /* Output anonymous attribute. */
@@ -1225,6 +1235,19 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         version_geometry_nodes_change_legacy_names(ntree);
       }
     }
+    if (!DNA_struct_elem_find(
+            fd->filesdna, "LineartGpencilModifierData", "bool", "use_crease_on_smooth")) {
+      LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+        if (ob->type == OB_GPENCIL) {
+          LISTBASE_FOREACH (GpencilModifierData *, md, &ob->greasepencil_modifiers) {
+            if (md->type == eGpencilModifierType_Lineart) {
+              LineartGpencilModifierData *lmd = (LineartGpencilModifierData *)md;
+              lmd->calculation_flags |= LRT_USE_CREASE_ON_SMOOTH_SURFACES;
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -1238,5 +1261,18 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_FILE) {
+            SpaceFile *sfile = (SpaceFile *)sl;
+            if (sfile->asset_params) {
+              sfile->asset_params->base_params.recursion_level = FILE_SELECT_MAX_RECURSIONS;
+            }
+          }
+        }
+      }
+    }
   }
 }

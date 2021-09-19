@@ -429,6 +429,7 @@ class MASK_MT_select(Menu):
 
         layout.operator("mask.select_box", icon = 'BORDER_RECT')
         layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
+        layout.operator_menu_enum("mask.select_lasso", "mode")
 
         layout.separator()
 

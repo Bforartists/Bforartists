@@ -30,6 +30,64 @@ from git_log import GitCommit, GitCommitIter
 import unicodedata as ud
 
 # -----------------------------------------------------------------------------
+# Lookup Table to clean up the credits
+#
+# This is a combination of unifying git logs as well as
+# name change requested by the authors.
+
+AuthorLookup = {
+    "Aaron": "Aaron Carlisle",
+    "Your Name": "Aaron Carlisle",
+    "Alan": "Alan Troth",
+    "andreas atteneder": "Andreas Atteneder",
+    "Ankit": "Ankit Meel",
+    "Antonioya": "Antonio Vazquez",
+    "Antonio  Vazquez": "Antonio Vazquez",
+    "Antony Ryakiotakis": "Antony Riakiotakis",
+    "bastien": "Bastien Montagne",
+    "mont29": "Bastien Montagne",
+    "bjornmose": "Bjorn Mose",
+    "meta-androcto": "Brendon Murphy",
+    "Brecht van Lommel": "Brecht Van Lommel",
+    "Brecht Van Lömmel": "Brecht Van Lommel",
+    "ClÃ©ment Foucault": "Clément Foucault",
+    "Clément": "Clément Foucault",
+    "fclem": "Clément Foucault",
+    "christian brinkmann": "Christian Brinkmann",
+    "ZanQdo": "Daniel Salazar",
+    "unclezeiv": "Davide Vercelli",
+    "gaiaclary": "Gaia Clary",
+    "Diego Hernan Borghetti": "Diego Borghetti",
+    "Dotsnov Valentin": "Dontsov Valentin",
+    "Eitan": "Eitan Traurig",
+    "EitanSomething": "Eitan Traurig",
+    "Germano": "Germano Cavalcante",
+    "Germano Cavalcantemano-wii": "Germano Cavalcante",
+    "mano-wii": "Germano Cavalcante",
+    "gsr": "Guillermo S. Romero",
+    "howardt": "Howard Trickey",
+    "Inês Almeida": "Ines Almeida",
+    "brita": "Ines Almeida",
+    "Ivan": "Ivan Perevala",
+    "jensverwiebe": "Jens Verwiebe",
+    "julianeisel": "Julian Eisel",
+    "Severin": "Julian Eisel",
+    "Alex Strand": "Kenzie Strand",
+    "Kevin Dietrich": "Kévin Dietrich",
+    "Mikhail": "Mikhail Matrosov",
+    "lazydodo": "Ray Molenkamp",
+    "Ray molenkamp": "Ray Molenkamp",
+    "Author Name": "Robert Guetzkow",
+    "Sybren A. StÃÂ¼vel": "Sybren A. Stüvel",
+    "Simon": "Simon G",
+    "Stephan": "Stephan Seitz",
+    "blender": "Sergey Sharybin",
+    "Vuk GardaÅ¡eviÄ": "Vuk Gardašević",
+    "ianwill": "Willian Padovani Germano",
+    }
+
+
+# -----------------------------------------------------------------------------
 # Class for generating credits
 
 class CreditUser:
@@ -54,6 +112,7 @@ class Credits:
     def process_commit(self, c):
         # Normalize author string into canonical form, prevents duplicate credit users
         author = ud.normalize('NFC', c.author)
+        author = AuthorLookup.get(author, author)
         year = c.date.year
         cu = self.users.get(author)
         if cu is None:
@@ -156,7 +215,7 @@ def main():
         "<b>Adidas</b> - Principled BSDF shader in Cycles",
         "<b>AMD</b> - Cycles OpenCL rendering",
         "<b>Intel</b> - Cycles ray-tracing optimization",
-        "<b>NVidia</b> - Cycles Optix rendering",
+        "<b>NVidia</b> - Cycles Optix rendering, USD importer",
     )
 
     credits = Credits()

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'5eed7cdc8c17')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4587,10 +4587,6 @@ msgstr "Pregled"
 
 msgid "Radius"
 msgstr "Radius"
-
-
-msgid "Fluid Mesh Vertices"
-msgstr "Temena meša tečnosti"
 
 
 msgid "Strength of noise"
@@ -11862,12 +11858,12 @@ msgid "Equal"
 msgstr "Jednako"
 
 
-msgid "Z Axis"
-msgstr "Z osa"
-
-
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Z Axis"
+msgstr "Z osa"
 
 
 msgid "Fill Type"
@@ -22052,18 +22048,6 @@ msgid "The default directory to search for loading fonts"
 msgstr "Osnovni direktorijum sa fontovima"
 
 
-msgid "Hide Recent Locations"
-msgstr "Sakrij skorašnje lokacije"
-
-
-msgid "Hide recent locations in the file selector"
-msgstr "Sakriva skorašnje lokacije u izborniku datoteka"
-
-
-msgid "Hide system bookmarks in the file selector"
-msgstr "Sakriva skorašnje lokacije u izborniku datoteka"
-
-
 msgid "Translation Branches Directory"
 msgstr "Jedinice pomeranja"
 
@@ -22126,14 +22110,6 @@ msgstr "Kompresuj datoteku"
 
 msgid "Enable file compression when saving .blend files"
 msgstr "Koristi kompresovanje prilikom čuvanja .blend datoteka"
-
-
-msgid "Filter File Extensions"
-msgstr "Filtriraj nastavke datoteka"
-
-
-msgid "Display only files with extensions in the image select window"
-msgstr "Prikaži samo datoteke sa nastavkom u dialogu izbora slika"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"

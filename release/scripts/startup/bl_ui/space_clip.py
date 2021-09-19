@@ -1709,6 +1709,7 @@ class CLIP_MT_select(Menu):
 
         layout.operator("clip.select_box", icon = 'BORDER_RECT')
         layout.operator("clip.select_circle", icon = 'CIRCLE_SELECT')
+        layout.operator_menu_enum("clip.select_lasso", "mode")
 
         layout.separator()
 
