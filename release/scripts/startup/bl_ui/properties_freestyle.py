@@ -164,6 +164,7 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
 
         col = layout.column(align=True)
         col.prop(freestyle, "mode", text="Control Mode")
+        col.use_property_split = False
         col.prop(freestyle, "use_view_map_cache", text="View Map Cache")
         col.prop(freestyle, "as_render_pass", text="As Render Pass")
 
@@ -185,6 +186,7 @@ class VIEWLAYER_PT_freestyle_edge_detection(ViewLayerFreestyleButtonsPanel, Pane
 
         col = layout.column()
         col.prop(freestyle, "crease_angle")
+        col.use_property_split = False
         col.prop(freestyle, "use_culling")
         col.prop(freestyle, "use_smoothness")
 
@@ -194,6 +196,8 @@ class VIEWLAYER_PT_freestyle_edge_detection(ViewLayerFreestyleButtonsPanel, Pane
         if freestyle.mode == 'SCRIPT':
             col.prop(freestyle, "use_ridges_and_valleys")
             col.prop(freestyle, "use_suggestive_contours")
+
+        col.use_property_split = True
         col.prop(freestyle, "sphere_radius")
         col.prop(freestyle, "kr_derivative_epsilon")
 
@@ -290,10 +294,10 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
         if lineset:
             layout.template_ID(lineset, "linestyle", new="scene.freestyle_linestyle_new")
             layout.separator()
-            col = layout.column(heading="Select by")
-            col.use_property_split = True
+            col = layout.column()
+            col.use_property_split = False
             col.use_property_decorate = False
-            col.prop(lineset, "select_by_image_border", text="Image Border")
+            col.prop(lineset, "select_by_image_border", text="Select by Image Border")
 
 
 # Freestyle Lineset Sub Panels
@@ -366,19 +370,42 @@ class VIEWLAYER_PT_freestyle_lineset_edgetype(ViewLayerFreestyleLineStyle, Panel
         lineset = freestyle.linesets.active
 
         layout.active = lineset.select_by_edge_types
+
         layout.row().prop(lineset, "edge_type_negation", expand=True, text="Negation")
         layout.row().prop(lineset, "edge_type_combination", expand=True, text="Combination")
 
-        col = layout.column(heading="Type")
-        self.draw_edge_type_buttons(col, lineset, "silhouette")
-        self.draw_edge_type_buttons(col, lineset, "crease")
-        self.draw_edge_type_buttons(col, lineset, "border")
-        self.draw_edge_type_buttons(col, lineset, "edge_mark")
-        self.draw_edge_type_buttons(col, lineset, "contour")
-        self.draw_edge_type_buttons(col, lineset, "external_contour")
-        self.draw_edge_type_buttons(col, lineset, "material_boundary")
-        self.draw_edge_type_buttons(col, lineset, "suggestive_contour")
-        self.draw_edge_type_buttons(col, lineset, "ridge_valley")
+        layout.use_property_split = False
+        layout.label(text = "Type:")
+
+        col = layout.column(align = True)
+
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "silhouette")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "crease")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "border")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "edge_mark")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "contour")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "external_contour")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "material_boundary")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "suggestive_contour")
+        row = col.row()
+        row.separator()
+        self.draw_edge_type_buttons(row, lineset, "ridge_valley")
 
 
 class VIEWLAYER_PT_freestyle_lineset_facemarks(ViewLayerFreestyleLineStyle, Panel):
@@ -559,6 +586,7 @@ class VIEWLAYER_PT_freestyle_linestyle_strokes_chaining(ViewLayerFreestyleLinest
         layout.row().prop(linestyle, "chaining", expand=True, text="Method")
         if linestyle.chaining == 'SKETCHY':
             layout.prop(linestyle, "rounds")
+        layout.use_property_split = False
         layout.prop(linestyle, "use_same_object")
 
 
@@ -568,27 +596,27 @@ class VIEWLAYER_PT_freestyle_linestyle_strokes_splitting(ViewLayerFreestyleLines
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         view_layer = context.view_layer
         lineset = view_layer.freestyle_settings.linesets.active
         linestyle = lineset.linestyle
 
-        row = layout.row(align=False, heading="Min 2D Angle")
-        row.prop(linestyle, "use_angle_min", text="")
+        row = layout.row(align=False)
+        row.prop(linestyle, "use_angle_min", text="Min 2D Angle")
         sub = row.row()
         sub.active = linestyle.use_angle_min
         sub.prop(linestyle, "angle_min", text="")
 
-        row = layout.row(align=False, heading="Max 2D Angle")
-        row.prop(linestyle, "use_angle_max", text="")
+        row = layout.row(align=False)
+        row.prop(linestyle, "use_angle_max", text="Max 2D Angle")
         sub = row.row()
         sub.active = linestyle.use_angle_max
         sub.prop(linestyle, "angle_max", text="")
 
-        row = layout.row(align=False, heading="2D Length")
-        row.prop(linestyle, "use_split_length", text="")
+        row = layout.row(align=False)
+        row.prop(linestyle, "use_split_length", text="2D Length")
         sub = row.row()
         sub.active = linestyle.use_split_length
         sub.prop(linestyle, "split_length", text="")
@@ -677,30 +705,31 @@ class VIEWLAYER_PT_freestyle_linestyle_strokes_selection(ViewLayerFreestyleLines
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         view_layer = context.view_layer
         lineset = view_layer.freestyle_settings.linesets.active
         linestyle = lineset.linestyle
 
-        row = layout.row(align=False, heading="Min 2D Length")
-        row.prop(linestyle, "use_length_min", text="")
+        row = layout.row(align=False)
+        row.prop(linestyle, "use_length_min", text="Min 2D Length")
         sub = row.row()
         sub.active = linestyle.use_length_min
         sub.prop(linestyle, "length_min", text="")
 
-        row = layout.row(align=False, heading="Max 2D Length")
-        row.prop(linestyle, "use_length_max", text="")
+        row = layout.row(align=False)
+        row.prop(linestyle, "use_length_max", text="Max 2D Length")
         sub = row.row()
         sub.active = linestyle.use_length_max
         sub.prop(linestyle, "length_max", text="")
 
-        row = layout.row(align=False, heading="Chain Count")
+        row = layout.row(align=False)
         row.prop(linestyle, "use_chain_count", text="")
         sub = row.row()
         sub.active = linestyle.use_chain_count
-        sub.prop(linestyle, "chain_count", text="")
+        sub.use_property_split = True
+        sub.prop(linestyle, "chain_count", text="Chain Count")
 
 
 class VIEWLAYER_PT_freestyle_linestyle_strokes_dashedline(ViewLayerFreestyleLinestyleStrokesSubPanel, Panel):
@@ -1218,7 +1247,9 @@ class VIEWLAYER_PT_freestyle_linestyle_texture(ViewLayerFreestyleLineStyle, Pane
         row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
         row.label(text=linestyle.name)
 
+        layout.use_property_split = False
         layout.prop(linestyle, "use_nodes")
+        layout.use_property_split = True
         layout.prop(linestyle, "texture_spacing", text="Spacing Along Stroke")
 
         row = layout.row()
