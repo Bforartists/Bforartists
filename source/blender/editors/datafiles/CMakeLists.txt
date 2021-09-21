@@ -771,8 +771,8 @@ shading_bbox
 shading_rendered
 shading_solid
 
-#~ DEF_ICON_BLANK(790)
-#~ DEF_ICON_BLANK(791)
+make_screenshot_area
+new_window_main
 #~ DEF_ICON_BLANK(792)
 #~ DEF_ICON_BLANK(793)
 #~ DEF_ICON_BLANK(794)
