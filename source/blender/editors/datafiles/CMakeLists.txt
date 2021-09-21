@@ -712,7 +712,7 @@ spline_type
 curve_fill
 posterize
 mod_dash
-#~ DEF_ICON_BLANK(731)
+search_menu
 
 # ------------------------- row 11 --------------------------*/
 

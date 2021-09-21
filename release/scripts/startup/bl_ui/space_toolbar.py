@@ -1875,7 +1875,7 @@ class TOOLBAR_MT_misc(Menu):
         if addon_prefs.misc_operatorsearch:
 
             row = layout.row(align=True)
-            row.operator("wm.search_menu", text="", icon='VIEWZOOM')
+            row.operator("wm.search_menu", text="", icon='SEARCH_MENU')
             row.operator("wm.search_operator", text="", icon='VIEWZOOM')
 
         if addon_prefs.misc_info:
