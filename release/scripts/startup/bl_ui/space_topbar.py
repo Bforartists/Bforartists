@@ -585,7 +585,7 @@ class TOPBAR_MT_window(Menu):
         layout = self.layout
 
         layout.operator("wm.window_new", icon = "NEW_WINDOW")
-        layout.operator("wm.window_new_main", icon = "NEW_WINDOW")
+        layout.operator("wm.window_new_main", icon = "NEW_WINDOW_MAIN")
 
         layout.separator()
 
@@ -603,7 +603,7 @@ class TOPBAR_MT_window(Menu):
         layout.separator()
 
         layout.operator("screen.screenshot", icon='MAKE_SCREENSHOT')
-        layout.operator("screen.screenshot_area")
+        layout.operator("screen.screenshot_area", icon = "MAKE_SCREENSHOT_AREA")
 
         if sys.platform[:3] == "win":
             layout.separator()
