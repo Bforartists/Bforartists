@@ -26,11 +26,11 @@ from bpy.props import FloatProperty, PointerProperty
 
 bl_info = {
     "name": "Mesh Tools - Bforartists version",
-    "author": "Jake Dube",
-    "version": (1, 1, 1),
-    "blender": (2, 80, 0),
-    "location": "View3D > Mesh > Transform > Set Dimensions",
-    "description": "Sets dimensions for selected vertices.",
+    "author": "Jake Dube, Reiner Prokein",
+    "version": (1, 1, 2),
+    "blender": (2, 90, 0),
+    "location": "Edit Mode > Mesh menu > Transform > Set Dimensions",
+    "description": "Sets dimensions for selected vertices in world coordinates.",
     "category": "Mesh"}
 
 
@@ -42,28 +42,30 @@ def calc_bounds():
 
     mesh = bpy.context.object.data
     verts = [v for v in mesh.vertices if v.select]
+	#bfa - check for selected vertices
+    if True in [x.select for x in bpy.context.object.data.vertices]:
 
-    # [+x, -x, +y, -y, +z, -z]
-    v = verts[0].co
-    bounds = [v.x, v.x, v.y, v.y, v.z, v.z]
+        # [+x, -x, +y, -y, +z, -z]
+        v = verts[0].co
+        bounds = [v.x, v.x, v.y, v.y, v.z, v.z]
 
-    for v in verts:
-        if bounds[0] < v.co.x:
-            bounds[0] = v.co.x
-        if bounds[1] > v.co.x:
-            bounds[1] = v.co.x
-        if bounds[2] < v.co.y:
-            bounds[2] = v.co.y
-        if bounds[3] > v.co.y:
-            bounds[3] = v.co.y
-        if bounds[4] < v.co.z:
-            bounds[4] = v.co.z
-        if bounds[5] > v.co.z:
-            bounds[5] = v.co.z
+        for v in verts:
+            if bounds[0] < v.co.x:
+                bounds[0] = v.co.x
+            if bounds[1] > v.co.x:
+                bounds[1] = v.co.x
+            if bounds[2] < v.co.y:
+                bounds[2] = v.co.y
+            if bounds[3] > v.co.y:
+                bounds[3] = v.co.y
+            if bounds[4] < v.co.z:
+                bounds[4] = v.co.z
+            if bounds[5] > v.co.z:
+                bounds[5] = v.co.z
 
-    bpy.ops.object.mode_set(mode=mode)
+        bpy.ops.object.mode_set(mode=mode)
 
-    return bounds
+        return bounds
 
 
 def safe_divide(a, b):
@@ -83,14 +85,18 @@ class ED_OT_SetDimensions(Operator):
     new_y : FloatProperty(name="Y", min=0, default=1, unit='LENGTH')
     new_z : FloatProperty(name="Z", min=0, default=1, unit='LENGTH')
 
-
-
     def invoke(self, context, event):
         bounds = calc_bounds()
-        self.new_x = bounds[0] - bounds[1]
-        self.new_y = bounds[2] - bounds[3]
-        self.new_z = bounds[4] - bounds[5]
-        return {'FINISHED'}
+	# bfa - added if else. The else is when nothing is selected
+        if bounds is not None:
+            self.new_x = bounds[0] - bounds[1]
+            self.new_y = bounds[2] - bounds[3]
+            self.new_z = bounds[4] - bounds[5]
+            return {'FINISHED'}
+        else:
+            self.report({'INFO'},"No geometry selected" ) # bfa - display an info message that there is no geometry selected.
+            bpy.ops.object.mode_set(mode='EDIT')
+            return {'FINISHED'}
 
     def execute(self, context):
         bounds = calc_bounds()
