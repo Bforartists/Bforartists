@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -8359,6 +8359,18 @@ msgid "Active curve spline"
 msgstr "Активный сплайн кривой"
 
 
+msgid "Dash"
+msgstr "Штрихи"
+
+
+msgid "Material Index"
+msgstr "Индекс материала"
+
+
+msgid "Radius"
+msgstr "Радиус"
+
+
 msgid "Dependency Graph"
 msgstr "Граф зависимостей"
 
@@ -13004,10 +13016,6 @@ msgid "Use union particle level set (faster but lower quality)"
 msgstr "Использовать объединённый уровень частиц (быстрее, но качество хуже)"
 
 
-msgid "Radius"
-msgstr "Радиус"
-
-
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
 msgstr "Множитель радиуса частиц (чем выше значение, тем крупнее меш-частицы). Требует настройки после изменения масштаба меша"
 
@@ -14336,10 +14344,6 @@ msgid "Select hidden feature edges"
 msgstr "Отбирать невидимые места для штрихов"
 
 
-msgid "QI Range"
-msgstr "Диапазон видимости"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "Отбирать места для штрихов внутри диапазона значений количественной невидимости (QI)"
 
@@ -14420,16 +14424,8 @@ msgid "Select the Freestyle control mode"
 msgstr "Режим управления Freestyle"
 
 
-msgid "Python Scripting Mode"
-msgstr "Режим Python-скриптов"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Расширенный режим для использования стилевых модулей на Python"
-
-
-msgid "Parameter Editor Mode"
-msgstr "Режим редактора параметров"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -14442,14 +14438,6 @@ msgstr "Радиус сфер"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "Радиус сфер, используемых для расчёта кривых"
-
-
-msgid "Advanced Options"
-msgstr "Расширенные настройки"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "Включить расширенные параметры обнаружения краёв"
 
 
 msgid "Culling"
@@ -15268,10 +15256,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "Толщина штриха (в пикселях)"
 
 
-msgid "Material Index"
-msgstr "Индекс материала"
-
-
 msgid "Material slot index of this stroke"
 msgstr "Индекс слота материала этого штриха"
 
@@ -15584,10 +15568,6 @@ msgstr "Постоянно"
 
 msgid "Show Modal All"
 msgstr "Модально отображать все"
-
-
-msgid "Show all while interacting"
-msgstr "Показывать все при взаимодействии"
 
 
 msgid "Tool Init"
@@ -36561,6 +36541,10 @@ msgid "Denoise"
 msgstr "Шумоподавление"
 
 
+msgid "Accurate"
+msgstr "Точно"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -40343,8 +40327,8 @@ msgstr "Оси вида"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Экструдировать нажатием мыши"
+msgid "Extrude to Cursor"
+msgstr "Экструдировать к курсору"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -43039,11 +43023,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Очистить наклон выделенных контрольных точек"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Добавить вершину"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Добавить новую контрольную точку (и связать с единственной выделенной кривой, если таковая имеется)"
 
@@ -45717,6 +45696,14 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "Войти/выйти из режима скульптинга штрихов Grease Pencil"
 
 
+msgid "Modifier"
+msgstr "Модификатор"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Имя редактируемого модификатора"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "Выделить штрихи Grease Pencil и/или точки штрихов"
 
@@ -47831,6 +47818,11 @@ msgid "Slide control points"
 msgstr "Сдвинуть контрольные точки"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Добавить вершину"
+
+
 msgid "Add vertex to active spline"
 msgstr "Добавить вершину к активному сплайну"
 
@@ -48652,11 +48644,6 @@ msgstr "Разрывать на границах"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Разделять углы граней, а не объединять грани"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "Дублировать или экструдировать к курсору"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -49554,10 +49541,6 @@ msgstr "Пропорциональный размер"
 
 msgid "Always confirm operation when releasing button"
 msgstr "Всегда подтверждать операцию при отпускании кнопки"
-
-
-msgid "Accurate"
-msgstr "Точно"
 
 
 msgid "Use accurate transformation"
@@ -52084,14 +52067,6 @@ msgstr "Привязать для корректирующего сглажив�
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "Привязать основную позу для модификатора корректирующего сглаживания"
-
-
-msgid "Modifier"
-msgstr "Модификатор"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Имя редактируемого модификатора"
 
 
 msgctxt "Operator"
@@ -57892,18 +57867,6 @@ msgstr "Переключиться по циклу между доступным
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Сохранить скриншот"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Захватить изображение активной области или всего окна Blender"
-
-
-msgid "Full Screen"
-msgstr "Во весь экран"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "Захватывать всё окно (в противном случае, захватывать только активную область)"
 
 
 msgctxt "Operator"
@@ -65617,11 +65580,6 @@ msgid "Bone Envelope"
 msgstr "Оболочка кости"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "Экструдировать к курсору"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "Свободно экструдировать по осям"
 
@@ -65923,6 +65881,10 @@ msgstr "Ориентации осей"
 
 msgid "View Lock"
 msgstr "Блокировка вида"
+
+
+msgid "Face Marks"
+msgstr "Метки граней"
 
 
 msgid "Filter Add-ons"
@@ -67147,6 +67109,14 @@ msgstr "Окна и элементы управления"
 
 msgid "Preferences related to viewing data"
 msgstr "Настройки, относящиеся к просмотру данных"
+
+
+msgid "Corner Splitting"
+msgstr "Разделение от углов"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "Разъединять и объединять редакторы путём перетаскивания за угол"
 
 
 msgid "Auto Keying Mode"
@@ -68671,14 +68641,6 @@ msgstr "Показывать опции для разработчиков (ре�
 
 msgid "Use transform gizmos by default"
 msgstr "Показать манипулятор по умолчанияю"
-
-
-msgid "Editor Corner Splitting"
-msgstr "Разделение редакторов от углов"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "Разъединять и объединять редакторы путём перетаскивания за угол"
 
 
 msgid "Navigation Controls"
@@ -74855,10 +74817,6 @@ msgstr "Обводка"
 
 msgid "Display white edges with black outline"
 msgstr "Отображать границы белыми с чёрной обводкой"
-
-
-msgid "Dash"
-msgstr "Штрихи"
 
 
 msgid "Display dashed black-white edges"
@@ -82730,110 +82688,6 @@ msgid "Detail"
 msgstr "Детальность"
 
 
-msgid "Edge Detection Options:"
-msgstr "Параметры выделения краёв:"
-
-
-msgid "Priority"
-msgstr "Приоритет"
-
-
-msgid "Selection By:"
-msgstr "Критерии отбора:"
-
-
-msgid "Edge Types"
-msgstr "Тип штрихов"
-
-
-msgid "Face Marks"
-msgstr "Метки граней"
-
-
-msgid "Image Border"
-msgstr "Края изображений"
-
-
-msgid "Chaining:"
-msgstr "Сцепление:"
-
-
-msgid "Splitting:"
-msgstr "Разделение:"
-
-
-msgid "D1"
-msgstr "Ш1"
-
-
-msgid "G1"
-msgstr "Р1"
-
-
-msgid "D2"
-msgstr "Ш2"
-
-
-msgid "G2"
-msgstr "Р2"
-
-
-msgid "D3"
-msgstr "Ш3"
-
-
-msgid "G3"
-msgstr "Р3"
-
-
-msgid "Sorting:"
-msgstr "Сортировка:"
-
-
-msgid "Selection:"
-msgstr "Отбор:"
-
-
-msgid "Caps:"
-msgstr "Концы:"
-
-
-msgid "Dashed Line:"
-msgstr "Пунктирная линия:"
-
-
-msgid "Visibility:"
-msgstr "Видимость:"
-
-
-msgid "Edge Types:"
-msgstr "Типы рёбер:"
-
-
-msgid "Face Marks:"
-msgstr "Метки граней:"
-
-
-msgid "Collection:"
-msgstr "Коллекция:"
-
-
-msgid "Base Color:"
-msgstr "Основной цвет:"
-
-
-msgid "Modifiers:"
-msgstr "Модификаторы:"
-
-
-msgid "Base Transparency:"
-msgstr "Основная прозрачность:"
-
-
-msgid "Base Thickness:"
-msgstr "Основная толщина:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "Расстояния вдоль штрихов"
 
@@ -82841,6 +82695,14 @@ msgstr "Расстояния вдоль штрихов"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "Перейти к свойствам текстур стилей линий"
+
+
+msgid "Priority"
+msgstr "Приоритет"
+
+
+msgid "Image Border"
+msgstr "Края изображений"
 
 
 msgid "Draw:"
@@ -85486,10 +85348,6 @@ msgstr "Хинтинг"
 
 msgid "New Data"
 msgstr "Новые данные"
-
-
-msgid "Corner Splitting"
-msgstr "Разделение от углов"
 
 
 msgid "Render In"

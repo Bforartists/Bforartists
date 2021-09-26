@@ -480,7 +480,7 @@ bool ntreeHasType(const struct bNodeTree *ntree, int type);
 bool ntreeHasTree(const struct bNodeTree *ntree, const struct bNodeTree *lookup);
 void ntreeUpdateTree(struct Main *main, struct bNodeTree *ntree);
 void ntreeUpdateAllNew(struct Main *main);
-void ntreeUpdateAllUsers(struct Main *main, struct ID *id);
+void ntreeUpdateAllUsers(struct Main *main, struct ID *id, int tree_update_flag);
 
 void ntreeGetDependencyList(struct bNodeTree *ntree,
                             struct bNode ***r_deplist,
@@ -1493,6 +1493,15 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_ATTRIBUTE_CAPTURE 1080
 #define GEO_NODE_MATERIAL_SELECTION 1081
 #define GEO_NODE_MATERIAL_ASSIGN 1082
+#define GEO_NODE_REALIZE_INSTANCES 1083
+#define GEO_NODE_ATTRIBUTE_STATISTIC 1084
+#define GEO_NODE_CURVE_SAMPLE 1085
+#define GEO_NODE_INPUT_TANGENT 1086
+#define GEO_NODE_STRING_JOIN 1087
+#define GEO_NODE_CURVE_PARAMETER 1088
+#define GEO_NODE_CURVE_FILLET 1089
+#define GEO_NODE_DISTRIBUTE_POINTS_ON_FACES 1090
+#define GEO_NODE_STRING_TO_CURVES 1091
 
 /** \} */
 
@@ -1502,10 +1511,15 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 
 #define FN_NODE_BOOLEAN_MATH 1200
 #define FN_NODE_FLOAT_COMPARE 1202
-#define FN_NODE_RANDOM_FLOAT 1206
+#define FN_NODE_LEGACY_RANDOM_FLOAT 1206
 #define FN_NODE_INPUT_VECTOR 1207
 #define FN_NODE_INPUT_STRING 1208
 #define FN_NODE_FLOAT_TO_INT 1209
+#define FN_NODE_VALUE_TO_STRING 1210
+#define FN_NODE_STRING_LENGTH 1211
+#define FN_NODE_STRING_SUBSTRING 1212
+#define FN_NODE_INPUT_SPECIAL_CHARACTERS 1213
+#define FN_NODE_RANDOM_VALUE 1214
 
 /** \} */
 

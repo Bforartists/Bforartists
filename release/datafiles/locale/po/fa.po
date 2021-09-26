@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -7326,11 +7326,6 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﮓﻧﺭ ﻒﻗﻮﺗ ﺖﯿﻌﻗﻮﻣ �
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "ﺱﺃﺭ"
-
-
-msgctxt "Operator"
 msgid "Dynamic Paint Bake"
 msgstr "ﺎﯾﻮﭘ ﯽﺷﺎﻘﻧ"
 
@@ -8069,6 +8064,11 @@ msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
 
 msgid "Slide control points"
 msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "ﺱﺃﺭ"
 
 
 msgid "Add vertex to active spline"
@@ -10421,10 +10421,6 @@ msgstr "ﻪﻨﺤﺻ"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "ﺖﺴﺨﻧ ﻪﺤﻔﺻ"
-
-
-msgid "Full Screen"
-msgstr "ﻪﺤﻔﺻ ﻡﺎﻤﺗ"
 
 
 msgctxt "Operator"

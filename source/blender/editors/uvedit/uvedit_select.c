@@ -2145,7 +2145,9 @@ static int uv_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &co[0], &co[1]);
   RNA_float_set_array(op->ptr, "location", co);
 
-  return uv_select_exec(C, op);
+  const int retval = uv_select_exec(C, op);
+
+  return WM_operator_flag_only_pass_through_on_press(retval, event);
 }
 
 void UV_OT_select(wmOperatorType *ot)
@@ -2304,7 +2306,9 @@ static int uv_select_loop_invoke(bContext *C, wmOperator *op, const wmEvent *eve
   UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &co[0], &co[1]);
   RNA_float_set_array(op->ptr, "location", co);
 
-  return uv_select_loop_exec(C, op);
+  const int retval = uv_select_loop_exec(C, op);
+
+  return WM_operator_flag_only_pass_through_on_press(retval, event);
 }
 
 void UV_OT_select_loop(wmOperatorType *ot)
@@ -2364,7 +2368,9 @@ static int uv_select_edge_ring_invoke(bContext *C, wmOperator *op, const wmEvent
   UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &co[0], &co[1]);
   RNA_float_set_array(op->ptr, "location", co);
 
-  return uv_select_edge_ring_exec(C, op);
+  const int retval = uv_select_edge_ring_exec(C, op);
+
+  return WM_operator_flag_only_pass_through_on_press(retval, event);
 }
 
 void UV_OT_select_edge_ring(wmOperatorType *ot)

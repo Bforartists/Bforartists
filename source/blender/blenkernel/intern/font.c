@@ -160,7 +160,7 @@ IDTypeInfo IDType_ID_VF = {
     .name = "Font",
     .name_plural = "fonts",
     .translation_context = BLT_I18NCONTEXT_ID_VFONT,
-    .flags = IDTYPE_FLAGS_NO_ANIMDATA,
+    .flags = IDTYPE_FLAGS_NO_ANIMDATA | IDTYPE_FLAGS_APPEND_IS_REUSABLE,
 
     .init_data = vfont_init_data,
     .copy_data = vfont_copy_data,
@@ -490,15 +490,15 @@ static void build_underline(Curve *cu,
   mul_v2_fl(bp[3].vec, font_size);
 }
 
-static void buildchar(Curve *cu,
-                      ListBase *nubase,
-                      unsigned int character,
-                      CharInfo *info,
-                      float ofsx,
-                      float ofsy,
-                      float rot,
-                      int charidx,
-                      const float fsize)
+void BKE_vfont_build_char(Curve *cu,
+                          ListBase *nubase,
+                          unsigned int character,
+                          CharInfo *info,
+                          float ofsx,
+                          float ofsy,
+                          float rot,
+                          int charidx,
+                          const float fsize)
 {
   VFontData *vfd = vfont_get_data(which_vfont(cu, info));
   if (!vfd) {
@@ -1525,7 +1525,7 @@ static bool vfont_to_curve(Object *ob,
       }
       /* We do not want to see any character for \n or \r */
       if (cha != '\n') {
-        buildchar(cu, r_nubase, cha, info, ct->xof, ct->yof, ct->rot, i, font_size);
+        BKE_vfont_build_char(cu, r_nubase, cha, info, ct->xof, ct->yof, ct->rot, i, font_size);
       }
 
       if ((info->flag & CU_CHINFO_UNDERLINE) && (cha != '\n')) {
