@@ -34,8 +34,8 @@ from .archipack_gl import (
     ThumbHandle, Screen, GlRect,
     GlPolyline, GlPolygon, GlText, GlHandle
 )
-preset_paths = bpy.utils.script_paths(subdir="presets")
-addons_paths = bpy.utils.script_paths(subdir="addons")
+preset_paths = [os.path.join(path, "presets") for path in bpy.utils.script_paths()]
+addons_paths = [os.path.join(path, "addons") for path in bpy.utils.script_paths()]
 
 
 class CruxHandle(GlHandle):

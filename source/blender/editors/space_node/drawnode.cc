@@ -2865,6 +2865,8 @@ static void node_composit_buts_denoise(uiLayout *layout, bContext *UNUSED(C), Po
 #  endif
 #endif
 
+  uiItemL(layout, IFACE_("Prefilter:"), ICON_NONE);
+  uiItemR(layout, ptr, "prefilter", DEFAULT_FLAGS, nullptr, ICON_NONE);
   uiItemR(layout, ptr, "use_hdr", DEFAULT_FLAGS, nullptr, ICON_NONE);
 }
 
@@ -4278,6 +4280,13 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
       /* Invalid link. */
       th_col1 = th_col2 = th_col3 = TH_REDALERT;
       // th_col3 = -1; /* no shadow */
+    }
+  }
+  /* Links from field to non-field sockets are not allowed. */
+  if (snode->edittree->type == NTREE_GEOMETRY && !(link->flag & NODE_LINK_DRAGGED)) {
+    if ((link->fromsock && link->fromsock->display_shape == SOCK_DISPLAY_SHAPE_DIAMOND) &&
+        (link->tosock && link->tosock->display_shape == SOCK_DISPLAY_SHAPE_CIRCLE)) {
+      th_col1 = th_col2 = th_col3 = TH_REDALERT;
     }
   }
 

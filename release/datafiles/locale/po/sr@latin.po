@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -2984,6 +2984,18 @@ msgid "Active Spline"
 msgstr "Aktivna kriva"
 
 
+msgid "Dash"
+msgstr "Isprekidano"
+
+
+msgid "Material Index"
+msgstr "Indeks materijala"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
 msgid "Render"
 msgstr "Rendering"
 
@@ -4585,10 +4597,6 @@ msgid "Preview"
 msgstr "Pregled"
 
 
-msgid "Radius"
-msgstr "Radius"
-
-
 msgid "Strength of noise"
 msgstr "Jačina šuma"
 
@@ -4805,10 +4813,6 @@ msgid "Hidden"
 msgstr "Sakriveno"
 
 
-msgid "QI Range"
-msgstr "QI opseg"
-
-
 msgid "Freestyle Module"
 msgstr "Slobodoručni modul"
 
@@ -4995,10 +4999,6 @@ msgstr "Slobodoručna kriva kao deo skice"
 
 msgid "End Cap"
 msgstr "Poslednji poklopac"
-
-
-msgid "Material Index"
-msgstr "Indeks materijala"
 
 
 msgid "Stroke Points"
@@ -12831,11 +12831,6 @@ msgstr "Ose pogleda"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Klik-izvuci"
-
-
-msgctxt "Operator"
 msgid "Delete Selected Bone(s)"
 msgstr "Izbriši izabranu kost/i"
 
@@ -14190,11 +14185,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Čisti uvrtanje izabranih kontrolnih tačaka"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Dodaj tačku"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Dodaje novu kontrolnu tačku (povezanu sa izabranim delom krive, ukoliko postoji)"
 
@@ -15075,6 +15065,14 @@ msgid "Show all Grease Pencil layers"
 msgstr "Pirkaži sve slojeve skice"
 
 
+msgid "Modifier"
+msgstr "Modifikator"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Ime modifikatora za uređenje"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "Izaberi poteze i/ili tačke skice"
 
@@ -15583,6 +15581,11 @@ msgstr "Klizaj tačku"
 
 msgid "Slide control points"
 msgstr "Klizaj kontrolne tačke"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Dodaj tačku"
 
 
 msgid "Add vertex to active spline"
@@ -17173,14 +17176,6 @@ msgstr "Očisti ograničenja objekta"
 
 msgid "Convert selected objects to another type"
 msgstr "Pretvori izabrane objekte u drugi tip"
-
-
-msgid "Modifier"
-msgstr "Modifikator"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Ime modifikatora za uređenje"
 
 
 msgid "Delete selected objects"
@@ -19069,10 +19064,6 @@ msgstr "Ponavlja poslednju akciju"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Sačuvaj snimak ekrana"
-
-
-msgid "Full Screen"
-msgstr "Preko celog ekrana"
 
 
 msgid "Menu ID Name"
@@ -21464,6 +21455,10 @@ msgid "Transform Orientations"
 msgstr "Transformacija orijentacija"
 
 
+msgid "Face Marks"
+msgstr "Oznake stranica"
+
+
 msgid "Particle in a particle system"
 msgstr "Čestice u sistemu čestica"
 
@@ -23637,10 +23632,6 @@ msgid "2D cursor location for this view"
 msgstr "Lokacija 2D kursora u ovom pogledu"
 
 
-msgid "Dash"
-msgstr "Isprekidano"
-
-
 msgid "Alpha Channel"
 msgstr "Alfa kanal"
 
@@ -25710,70 +25701,6 @@ msgstr "Detaljnost"
 
 msgid "Priority"
 msgstr "Prioritet"
-
-
-msgid "Selection By:"
-msgstr "Izaberi pomoću:"
-
-
-msgid "Edge Types"
-msgstr "Tipovi ivica"
-
-
-msgid "Face Marks"
-msgstr "Oznake stranica"
-
-
-msgid "Chaining:"
-msgstr "Uvezivanje:"
-
-
-msgid "Splitting:"
-msgstr "Razdvajanje:"
-
-
-msgid "Sorting:"
-msgstr "Sortiranje:"
-
-
-msgid "Selection:"
-msgstr "Izbor:"
-
-
-msgid "Caps:"
-msgstr "Krajevi:"
-
-
-msgid "Dashed Line:"
-msgstr "Isprekidana linija:"
-
-
-msgid "Visibility:"
-msgstr "Vidljivost:"
-
-
-msgid "Edge Types:"
-msgstr "Vrsta ivice:"
-
-
-msgid "Face Marks:"
-msgstr "Oznake stranice:"
-
-
-msgid "Base Color:"
-msgstr "Osnovna boja:"
-
-
-msgid "Modifiers:"
-msgstr "Modifikatori:"
-
-
-msgid "Base Transparency:"
-msgstr "Osnovna providnost"
-
-
-msgid "Base Thickness:"
-msgstr "Osnovna debljina"
 
 
 msgid "Draw:"

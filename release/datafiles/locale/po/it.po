@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -5903,6 +5903,18 @@ msgid "Active Spline"
 msgstr "Spline Attiva"
 
 
+msgid "Dash"
+msgstr "Tratteggiato"
+
+
+msgid "Material Index"
+msgstr "Indice Materiale"
+
+
+msgid "Radius"
+msgstr "Raggio"
+
+
 msgid "Dependency Graph"
 msgstr "Grafico Dipendenze"
 
@@ -8917,10 +8929,6 @@ msgid "Preview"
 msgstr "Anteprima"
 
 
-msgid "Radius"
-msgstr "Raggio"
-
-
 msgid "Strength of noise"
 msgstr "Forza del rumore"
 
@@ -9297,10 +9305,6 @@ msgid "Hidden"
 msgstr "Nascosto"
 
 
-msgid "QI Range"
-msgstr "Intervallo QI"
-
-
 msgid "Freestyle Module"
 msgstr "Modulo Freestyle"
 
@@ -9333,20 +9337,8 @@ msgid "Control Mode"
 msgstr "Modalità Controllo"
 
 
-msgid "Python Scripting Mode"
-msgstr "Modo Scripting Python"
-
-
-msgid "Parameter Editor Mode"
-msgstr "Modo Modifica Parametri"
-
-
 msgid "Sphere Radius"
 msgstr "Raggio Sfera"
-
-
-msgid "Advanced Options"
-msgstr "Opzioni Avanzate"
 
 
 msgid "Culling"
@@ -9651,10 +9643,6 @@ msgstr "Elemento di Fine"
 
 msgid "Thickness of stroke (in pixels)"
 msgstr "Spessore del tratto (in pixels)"
-
-
-msgid "Material Index"
-msgstr "Indice Materiale"
 
 
 msgid "Stroke Points"
@@ -23424,6 +23412,10 @@ msgid "Denoise"
 msgstr "Riduzione Rumore"
 
 
+msgid "Accurate"
+msgstr "Accuratezza"
+
+
 msgid "Despeckle"
 msgstr "Smacchiatura"
 
@@ -26065,8 +26057,8 @@ msgstr "Mostra Assi"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Click-Estrudi"
+msgid "Extrude to Cursor"
+msgstr "Estrudi a Cursore"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -28222,11 +28214,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Cancella la torsione dei punti di controllo selezionati"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Aggiungi Vertice"
-
-
 msgid "Location to add new vertex at"
 msgstr "Posizione in cui aggiungere un nuovo vertice"
 
@@ -29767,6 +29754,14 @@ msgid "Stroke Sculpt"
 msgstr "Scultura Tratto"
 
 
+msgid "Modifier"
+msgstr "Modificatore"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Nome del modificatore da modificare"
+
+
 msgid "Entire Strokes"
 msgstr "Intero Tratto"
 
@@ -31054,6 +31049,11 @@ msgid "Slide control points"
 msgstr "Scorri punti di controllo"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Aggiungi Vertice"
+
+
 msgid "Add vertex to active spline"
 msgstr "Imposta il tipo della spline attiva"
 
@@ -31649,11 +31649,6 @@ msgid "Tear Boundary"
 msgstr "Strappa Confini"
 
 
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "Duplica o Estrude al Cursore"
-
-
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
 msgstr "Duplica e estrude i vertici, spigoli o facce selezionate verso il cursore del mouse"
 
@@ -32243,10 +32238,6 @@ msgstr "Dimensione Proporzionale"
 
 msgid "Always confirm operation when releasing button"
 msgstr "Conferma sempre l'operazione quando rilasci il bottone"
-
-
-msgid "Accurate"
-msgstr "Accuratezza"
 
 
 msgid "Use accurate transformation"
@@ -34204,14 +34195,6 @@ msgstr "Mantiene gli oggetti originali invece che rimpiazzarli"
 
 msgid "Type of object to convert to"
 msgstr "Tipo di oggetto da convertire a"
-
-
-msgid "Modifier"
-msgstr "Modificatore"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Nome del modificatore da modificare"
 
 
 msgctxt "Operator"
@@ -38549,18 +38532,6 @@ msgstr "Passa attraverso gli schermi disponibili"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Cattura Schermata"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Cattura una schermata dell'area attiva o dell'intera finestra di Blender"
-
-
-msgid "Full Screen"
-msgstr "Schermo Intero"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "Cattura l'intera finestra (altrimenti cattura solo quella attiva)"
 
 
 msgctxt "Operator"
@@ -43622,11 +43593,6 @@ msgstr "Misura"
 
 
 msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "Estrudi a Cursore"
-
-
-msgctxt "Operator"
 msgid "Extrude Along Normals"
 msgstr "Estrudi Facce Lungo Le Normali"
 
@@ -43768,6 +43734,10 @@ msgstr "Opzioni Posa"
 
 msgid "Transform Orientations"
 msgstr "Assi (Orientamenti Trasformazione)"
+
+
+msgid "Face Marks"
+msgstr "Marcatori Faccia"
 
 
 msgid "Filter Add-ons"
@@ -49132,10 +49102,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Dash"
-msgstr "Tratteggiato"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -53914,110 +53880,6 @@ msgid "Detail"
 msgstr "Dettaglio"
 
 
-msgid "Edge Detection Options:"
-msgstr "Opzioni Rilevamento Spigoli:"
-
-
-msgid "Priority"
-msgstr "Priorità"
-
-
-msgid "Selection By:"
-msgstr "Selezione Per:"
-
-
-msgid "Edge Types"
-msgstr "Tipi Spigolo"
-
-
-msgid "Face Marks"
-msgstr "Marcatori Faccia"
-
-
-msgid "Image Border"
-msgstr "Bordo Immagine"
-
-
-msgid "Chaining:"
-msgstr "Concatenamento:"
-
-
-msgid "Splitting:"
-msgstr "Suddivisione:"
-
-
-msgid "D1"
-msgstr "T1"
-
-
-msgid "G1"
-msgstr "S1"
-
-
-msgid "D2"
-msgstr "T2"
-
-
-msgid "G2"
-msgstr "S2"
-
-
-msgid "D3"
-msgstr "T3"
-
-
-msgid "G3"
-msgstr "S3"
-
-
-msgid "Sorting:"
-msgstr "Ordinamento:"
-
-
-msgid "Selection:"
-msgstr "Selezione:"
-
-
-msgid "Caps:"
-msgstr "Terminali:"
-
-
-msgid "Dashed Line:"
-msgstr "Linea Tratteggiata:"
-
-
-msgid "Visibility:"
-msgstr "Visibilità:"
-
-
-msgid "Edge Types:"
-msgstr "Tipi Spigolo:"
-
-
-msgid "Face Marks:"
-msgstr "Marcatori Faccia:"
-
-
-msgid "Collection:"
-msgstr "Raccolta:"
-
-
-msgid "Base Color:"
-msgstr "Colore Base:"
-
-
-msgid "Modifiers:"
-msgstr "Modificatori:"
-
-
-msgid "Base Transparency:"
-msgstr "Trasparenza Base:"
-
-
-msgid "Base Thickness:"
-msgstr "Spessore Base:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "Spaziatura Lungo il Tratto"
 
@@ -54025,6 +53887,14 @@ msgstr "Spaziatura Lungo il Tratto"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "Vai alle Proprietà Texture Stile Linea"
+
+
+msgid "Priority"
+msgstr "Priorità"
+
+
+msgid "Image Border"
+msgstr "Bordo Immagine"
 
 
 msgid "Draw:"

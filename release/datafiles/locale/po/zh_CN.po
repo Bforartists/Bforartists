@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Language: zh_CN\n"
 "=====X-Generator: Poedit 1.6.9\n"
 "Language: zh_CN>>>>>> .r306\n"
-"X-Generator: Poedit 2.4.3"
+"X-Generator: Poedit 3.0"
 
 
 msgid "Shader AOV"
@@ -1053,8 +1053,16 @@ msgid "3D vector with floating-point values"
 msgstr "以浮点数值表示的三维矢量"
 
 
+msgid "RGBA color with floating-point values"
+msgstr "以浮点数值表示的RGB颜色"
+
+
 msgid "Byte Color"
 msgstr "字节颜色"
+
+
+msgid "RGBA color with 8-bit values"
+msgstr "8位精度的RGBA颜色"
 
 
 msgid "String"
@@ -1145,8 +1153,16 @@ msgid "Byte Color Attribute"
 msgstr "字节颜色属性"
 
 
+msgid "Color geometry attribute, with 8-bit values"
+msgstr "颜色几何属性，8位精度"
+
+
 msgid "Float2 Attribute"
 msgstr "二维浮点属性"
+
+
+msgid "2D vector geometry attribute, with floating-point values"
+msgstr "浮点精度的二维矢量几何属性"
 
 
 msgid "Float Attribute"
@@ -1161,8 +1177,16 @@ msgid "Float Color Attribute"
 msgstr "浮点颜色属性"
 
 
+msgid "Color geometry attribute, with floating-point values"
+msgstr "浮点数值表示的颜色几何属性"
+
+
 msgid "Float Vector Attribute"
 msgstr "浮点矢量属性"
+
+
+msgid "Vector geometry attribute, with floating-point values"
+msgstr "浮点精度的矢量几何属性"
 
 
 msgid "Int Attribute"
@@ -8362,6 +8386,18 @@ msgid "Active curve spline"
 msgstr "活动曲线样条"
 
 
+msgid "Dash"
+msgstr "混合"
+
+
+msgid "Material Index"
+msgstr "材质编号"
+
+
+msgid "Radius"
+msgstr "半径"
+
+
 msgid "Dependency Graph"
 msgstr "依赖关系图"
 
@@ -13011,10 +13047,6 @@ msgid "Use union particle level set (faster but lower quality)"
 msgstr "使用联合粒子水平集(更快但质量较低)"
 
 
-msgid "Radius"
-msgstr "半径"
-
-
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
 msgstr "粒子半径因子(值越高，(网格化)粒子越大)。修改网格缩放后需要调整"
 
@@ -14343,10 +14375,6 @@ msgid "Select hidden feature edges"
 msgstr "选择隐藏的特征边"
 
 
-msgid "QI Range"
-msgstr "QI 范围"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "选择定量不可见性(QI)值范围内的特征边"
 
@@ -14427,16 +14455,8 @@ msgid "Select the Freestyle control mode"
 msgstr "选择 Freestyle 的控制模式"
 
 
-msgid "Python Scripting Mode"
-msgstr "Python 脚本编写模式"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "用于使用 Python 样式模块的高级模式"
-
-
-msgid "Parameter Editor Mode"
-msgstr "参数编辑器模式"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -14449,14 +14469,6 @@ msgstr "球半径"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "球面半径, 用于计算曲率"
-
-
-msgid "Advanced Options"
-msgstr "高级选项"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "启用高级边线检测选项 (球面半径及 极小 Kr 导数)"
 
 
 msgid "Culling"
@@ -14812,7 +14824,7 @@ msgstr "禁用材质编辑"
 
 
 msgid "List of Masking Layers"
-msgstr "遮蔽层列表"
+msgstr "遮罩层列表"
 
 
 msgid "Parent inverse transformation matrix"
@@ -15279,10 +15291,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "笔画宽度(单位像素)"
 
 
-msgid "Material Index"
-msgstr "材质编号"
-
-
 msgid "Material slot index of this stroke"
 msgstr "此笔画的材质槽编号"
 
@@ -15595,10 +15603,6 @@ msgstr "持续"
 
 msgid "Show Modal All"
 msgstr "显示全部模态"
-
-
-msgid "Show all while interacting"
-msgstr "相互作用时显示全部"
 
 
 msgid "Tool Init"
@@ -18965,7 +18969,7 @@ msgstr "当此项禁用时, 将在绘画时锁定alpha"
 
 
 msgid "Mesh Boundary Auto-Masking"
-msgstr "网格边界自动遮蔽"
+msgstr "网格边界自动遮罩"
 
 
 msgid "Do not affect non manifold boundary edges"
@@ -18973,7 +18977,7 @@ msgstr "不影响非流形边界边"
 
 
 msgid "Face Sets Boundary Automasking"
-msgstr "面组边界自动遮蔽"
+msgstr "面组边界自动遮罩"
 
 
 msgid "Do not affect vertices that belong to a Face Set boundary"
@@ -18981,7 +18985,7 @@ msgstr "不影响属于面组边界的顶点"
 
 
 msgid "Face Sets Auto-Masking"
-msgstr "面组自动遮蔽"
+msgstr "面组自动遮罩"
 
 
 msgid "Affect only vertices that share Face Sets with the active vertex"
@@ -18989,7 +18993,7 @@ msgstr "仅影响与活动顶点共享面组的顶点"
 
 
 msgid "Topology Auto-Masking"
-msgstr "拓扑自动遮蔽"
+msgstr "拓扑自动遮罩"
 
 
 msgid "Affect only vertices connected to the active vertex under the brush"
@@ -19097,7 +19101,7 @@ msgstr "抓取剪影"
 
 
 msgid "Grabs trying to automask the silhouette of the object"
-msgstr "试图自动遮蔽该物体轮廓的抓取"
+msgstr "试图自动遮罩该物体轮廓的抓取"
 
 
 msgid "Use Pressure for Hardness"
@@ -19957,7 +19961,7 @@ msgstr "使用交叉遮罩"
 
 
 msgid "Use custom intersection mask for faces in this collection"
-msgstr "在此集合中使用自定义交叉遮罩进行遮蔽"
+msgstr "在此集合中使用自定义交叉遮罩进行遮罩"
 
 
 msgid "Objects that are directly in this collection"
@@ -34917,6 +34921,10 @@ msgid "Control playback using a value between 0 and 1"
 msgstr "使用数值控制回放, 区间为 [0, 1]"
 
 
+msgid "Name of the Vertex Group which determines the influence of the modifier per point"
+msgstr "顶点组的名称, 用于确定各点的修改器影响量"
+
+
 msgid "MeshDeform Modifier"
 msgstr "网格形变修改器"
 
@@ -39865,6 +39873,10 @@ msgid "Denoise"
 msgstr "降噪"
 
 
+msgid "Accurate"
+msgstr "精确"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -41138,6 +41150,14 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
+msgid "Attribute Capture"
+msgstr "属性捕获"
+
+
+msgid "Which domain to store the data in"
+msgstr "在哪个域存储数据"
+
+
 msgid "Attribute Remove"
 msgstr "属性删除"
 
@@ -41276,6 +41296,10 @@ msgstr "如何指定采样数量"
 
 msgid "Evaluated"
 msgstr "已解算"
+
+
+msgid "Output the input spline's evaluated points, based on the resolution attribute for NURBS and Bezier splines. Poly splines are unchanged"
+msgstr "基于NURBS 和贝塞尔样条线的精度属性，输出该输入样条线的解算点。多段线样条线保持不变。"
 
 
 msgid "Sample the specified number of points along each spline"
@@ -41878,6 +41902,10 @@ msgid "Instance an entire collection on all points"
 msgstr "在所有点上实例化整个集合"
 
 
+msgid "Copy geometry to all points"
+msgstr "复制几何体到所有点"
+
+
 msgid "Instance entire collection on each point"
 msgstr "在各点上实例化整个集合"
 
@@ -42044,6 +42072,10 @@ msgstr "将输入物体几何体、位置、旋转和比例引入修改后的物
 
 msgid "Separate Components"
 msgstr "分离元素"
+
+
+msgid "Set Position"
+msgstr "设置位置"
 
 
 msgctxt "NodeTree"
@@ -45232,8 +45264,8 @@ msgstr "查看轴向"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "点击 - 挤出"
+msgid "Extrude to Cursor"
+msgstr "挤出至光标"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -48285,11 +48317,6 @@ msgstr "清空倾斜量"
 
 msgid "Clear the tilt of selected control points"
 msgstr "清除所选控制点的控制柄角度"
-
-
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "添加顶点"
 
 
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
@@ -51524,7 +51551,7 @@ msgstr "添加新遮罩层"
 
 
 msgid "Add new layer as masking"
-msgstr "添加用于遮蔽的新层"
+msgstr "添加用于遮罩的新层"
 
 
 msgid "Name of the layer"
@@ -51879,6 +51906,14 @@ msgstr "笔画雕刻模式切换"
 
 msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "进入/退出蜡笔笔画的雕刻模式"
+
+
+msgid "Modifier"
+msgstr "修改器"
+
+
+msgid "Name of the modifier to edit"
+msgstr "要编辑的修改器名称"
 
 
 msgid "Select Grease Pencil strokes and/or stroke points"
@@ -54516,6 +54551,11 @@ msgid "Slide control points"
 msgstr "移动控制点"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "添加顶点"
+
+
 msgid "Add vertex to active spline"
 msgstr "添加顶点至为活动样条线"
 
@@ -54613,7 +54653,7 @@ msgstr "添加遮罩层"
 
 
 msgid "Add new mask layer for masking"
-msgstr "添加用于遮蔽的遮罩层"
+msgstr "添加用于遮罩的遮罩层"
 
 
 msgid "Name of new mask layer"
@@ -55424,11 +55464,6 @@ msgstr "撕裂面拐角，而非将其合并"
 
 msgid "Dissolve vertices, merge edges and faces"
 msgstr "融并顶点，合并边或面"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "复制或挤出到游标"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -56475,10 +56510,6 @@ msgstr "衰减编辑区大小"
 
 msgid "Always confirm operation when releasing button"
 msgstr "始终在松开按键时确认操作"
-
-
-msgid "Accurate"
-msgstr "精确"
 
 
 msgid "Use accurate transformation"
@@ -59356,14 +59387,6 @@ msgstr "矫正平滑绑定"
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "在矫正平滑修改器中绑定基础姿势"
-
-
-msgid "Modifier"
-msgstr "修改器"
-
-
-msgid "Name of the modifier to edit"
-msgstr "要编辑的修改器名称"
 
 
 msgctxt "Operator"
@@ -66291,18 +66314,6 @@ msgid "Save Screenshot"
 msgstr "保存屏幕截图"
 
 
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "对激活区域或者全部 Blender 窗口截图"
-
-
-msgid "Full Screen"
-msgstr "全屏"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "整个窗口截屏 (否则仅对活动区域截屏)"
-
-
 msgctxt "Operator"
 msgid "Cycle Space Context"
 msgstr "循环空间上下文"
@@ -66777,11 +66788,11 @@ msgstr "创建新的面组"
 
 
 msgid "Face Set from Masked"
-msgstr "从被遮蔽面创建面组"
+msgstr "从被遮罩面创建面组"
 
 
 msgid "Create a new Face Set from the masked faces"
-msgstr "从被遮蔽面创建新的面组"
+msgstr "从被遮罩面创建新的面组"
 
 
 msgid "Face Set from Visible"
@@ -66913,7 +66924,7 @@ msgstr "将活动循环颜色层复制到顶点色"
 
 msgctxt "Operator"
 msgid "Mask by Color"
-msgstr "按颜色遮蔽"
+msgstr "按颜色遮罩"
 
 
 msgid "Creates a mask based on the sculpt vertex colors"
@@ -66925,7 +66936,7 @@ msgstr "连续"
 
 
 msgid "Mask only contiguous color areas"
-msgstr "仅遮蔽连续颜色区域"
+msgstr "仅遮罩连续颜色区域"
 
 
 msgid "Invert the generated mask"
@@ -67324,7 +67335,7 @@ msgstr "设置轴心点为雕刻原点"
 
 
 msgid "Unmasked"
-msgstr "未遮蔽"
+msgstr "未遮罩"
 
 
 msgid "Sets the pivot position to the average position of the unmasked vertices"
@@ -74713,7 +74724,7 @@ msgstr "对称操作项的源和目标"
 
 
 msgid "Face Sets Boundary Auto-Masking"
-msgstr "面组边界自动遮蔽"
+msgstr "面组边界自动遮罩"
 
 
 msgid "Use Deform Only"
@@ -75769,6 +75780,10 @@ msgid "FFMPEG Presets"
 msgstr "FFMPEG 编码预设"
 
 
+msgid "Format Presets"
+msgstr "格式预设"
+
+
 msgid "Views"
 msgstr "视图"
 
@@ -75783,6 +75798,10 @@ msgstr "刻录至图像"
 
 msgid "Note"
 msgstr "说明"
+
+
+msgid "Time Stretching"
+msgstr "时间拉伸"
 
 
 msgid "Keyframing Settings"
@@ -76167,7 +76186,7 @@ msgstr "权重绘制上下文菜单"
 
 
 msgid "Masking"
-msgstr "遮蔽"
+msgstr "遮罩"
 
 
 msgid "View Object Types"
@@ -76255,11 +76274,6 @@ msgstr "骨骼尺寸"
 msgctxt "Operator"
 msgid "Bone Envelope"
 msgstr "骨骼封套"
-
-
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "挤出至光标"
 
 
 msgid "Extrude freely or along an axis"
@@ -76662,6 +76676,10 @@ msgstr "VR 会话"
 
 msgid "Viewport Feedback"
 msgstr "视口反馈"
+
+
+msgid "Face Marks"
+msgstr "面标记"
 
 
 msgid "Filter Add-ons"
@@ -77960,6 +77978,14 @@ msgid "Preferences related to viewing data"
 msgstr "与视图数据相关的设置"
 
 
+msgid "Corner Splitting"
+msgstr "拐角拆分"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "拖拽窗口的角来拆分和合并编辑器"
+
+
 msgid "Auto Keying Mode"
 msgstr "自动更新关键帧模式"
 
@@ -78344,6 +78370,14 @@ msgid "Enable compositor full frame execution mode option (no tiling, reduces ex
 msgstr "启用合成器全画幅执行模式选项(无分块，降低执行时间和内存使用）"
 
 
+msgid "Geometry Nodes Fields"
+msgstr "几何节点文本框"
+
+
+msgid "Enable field nodes in geometry nodes"
+msgstr "在几何节点中启用文本框节点"
+
+
 msgid "New Hair Type"
 msgstr "新毛发类型"
 
@@ -78536,6 +78570,30 @@ msgid "Alternate script path, matching the default layout with subdirectories: s
 msgstr "备用脚本路径，匹配默认布局与子路径：启动、插件、模块和预设(需要重新启动)"
 
 
+msgid "Show Hidden Files/Data-Blocks"
+msgstr "隐藏点文件/数据块"
+
+
+msgid "Show files and data-blocks that are normally hidden"
+msgstr "显示通常隐藏的文件和数据块"
+
+
+msgid "Show Recent Locations"
+msgstr "显示最近的位置"
+
+
+msgid "Show Recent locations list in the File Browser"
+msgstr "在文件浏览器中显示最近的位置列表"
+
+
+msgid "Show System Locations"
+msgstr "显示系统位置"
+
+
+msgid "Show System locations list in the File Browser"
+msgstr "在文件浏览器中显示系统位置列表"
+
+
 msgid "Sounds Directory"
 msgstr "音频文件库"
 
@@ -78578,6 +78636,10 @@ msgstr "压缩文件"
 
 msgid "Enable file compression when saving .blend files"
 msgstr "保存时压缩 .blend 文件"
+
+
+msgid "Enable filtering of files in the File Browser"
+msgstr "启用文件浏览器中的文件过滤"
 
 
 msgid "Load user interface setup when loading .blend files"
@@ -79840,14 +79902,6 @@ msgid "Use transform gizmos by default"
 msgstr "默认使用变换Gizmo"
 
 
-msgid "Editor Corner Splitting"
-msgstr "编辑器拐角拆分"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "拖拽窗口的角来拆分和合并编辑器"
-
-
 msgid "Navigation Controls"
 msgstr "漫游控件"
 
@@ -80748,6 +80802,10 @@ msgstr "用于自适应采样的最小AA采样数，在停止采样前发现噪�
 
 msgid "Adaptive Sampling Threshold"
 msgstr "自适应采样阈值"
+
+
+msgid "Noise level step to stop sampling at, lower values reduce noise at the cost of render time. Zero for automatic setting based on number of AA samples"
+msgstr "停止采样的噪点级别，调低数值会减少噪点，但会延长渲染时间。基于AA采样数自动设置为0"
 
 
 msgid "AO Bounces"
@@ -82218,6 +82276,10 @@ msgid "Is Perspective"
 msgstr "是否透视"
 
 
+msgid "Lock view rotation of side views to Top/Front/Right"
+msgstr "将侧视图的视图旋转锁定到顶部/正面/右侧"
+
+
 msgid "Perspective Matrix"
 msgstr "透视矩阵"
 
@@ -82226,8 +82288,20 @@ msgid "Current perspective matrix (``window_matrix * view_matrix``)"
 msgstr "当前透视矩阵 (``窗口_矩阵 * 视图_矩阵``)"
 
 
+msgid "Sync Zoom/Pan"
+msgstr "同步缩放/平移"
+
+
 msgid "Sync view position between side views"
 msgstr "同步侧视图的平移及缩放操作"
+
+
+msgid "Clip Contents"
+msgstr "钳制内容"
+
+
+msgid "Clip view contents based on what is visible in other side views"
+msgstr "基于其他侧视图中的可见范围来钳制视图内容"
 
 
 msgid "Use Clip Planes"
@@ -86761,10 +86835,6 @@ msgstr "轮廓"
 
 msgid "Display white edges with black outline"
 msgstr "绘制黑色轮廓的白边"
-
-
-msgid "Dash"
-msgstr "混合"
 
 
 msgid "Display dashed black-white edges"
@@ -91649,6 +91719,10 @@ msgstr "时间步长"
 
 msgid "Stroke Placement (2D View)"
 msgstr "笔画放置(2D视图)"
+
+
+msgid "Stick stroke to the image"
+msgstr "将笔画粘在图像上"
 
 
 msgid "Stick stroke to the view"
@@ -96761,6 +96835,10 @@ msgid "Operator not found: bpy.ops.%s"
 msgstr "未找到操作: bpy.ops.%s"
 
 
+msgid "Could not evaluate number from default value"
+msgstr "无法从默认值中解算数字"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "手册"
@@ -97372,114 +97450,6 @@ msgid "Failed to load volume:"
 msgstr "载入体积失败:"
 
 
-msgid "Edge Detection Options:"
-msgstr "边缘检测选项:"
-
-
-msgid "Priority"
-msgstr "优先级"
-
-
-msgid "Style Modules:"
-msgstr "样式模块:"
-
-
-msgid "Selection By:"
-msgstr "选取依据:"
-
-
-msgid "Edge Types"
-msgstr "边类型"
-
-
-msgid "Face Marks"
-msgstr "面标记"
-
-
-msgid "Image Border"
-msgstr "图像边界"
-
-
-msgid "Chaining:"
-msgstr "链连:"
-
-
-msgid "Splitting:"
-msgstr "拆分:"
-
-
-msgid "D1"
-msgstr "D1"
-
-
-msgid "G1"
-msgstr "G1"
-
-
-msgid "D2"
-msgstr "D2"
-
-
-msgid "G2"
-msgstr "G2"
-
-
-msgid "D3"
-msgstr "D3"
-
-
-msgid "G3"
-msgstr "G3"
-
-
-msgid "Sorting:"
-msgstr "排序:"
-
-
-msgid "Selection:"
-msgstr "选中项:"
-
-
-msgid "Caps:"
-msgstr "端点样式:"
-
-
-msgid "Dashed Line:"
-msgstr "虚线:"
-
-
-msgid "Visibility:"
-msgstr "可见性:"
-
-
-msgid "Edge Types:"
-msgstr "边类型:"
-
-
-msgid "Face Marks:"
-msgstr "面标记:"
-
-
-msgid "Collection:"
-msgstr "集合:"
-
-
-msgid "Base Color:"
-msgstr "基础色:"
-
-
-msgid "Modifiers:"
-msgstr "修改器:"
-
-
-msgid "Base Transparency:"
-msgstr "基线透明度:"
-
-
-msgid "Base Thickness:"
-msgstr "基线宽度:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "沿笔画的间隔"
 
@@ -97487,6 +97457,14 @@ msgstr "沿笔画的间隔"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "转到线型纹理属性"
+
+
+msgid "Priority"
+msgstr "优先级"
+
+
+msgid "Image Border"
+msgstr "图像边界"
 
 
 msgid "Draw:"
@@ -100895,10 +100873,6 @@ msgid "New Data"
 msgstr "新建数据"
 
 
-msgid "Corner Splitting"
-msgstr "拐角拆分"
-
-
 msgid "Render In"
 msgstr "渲染在"
 
@@ -101836,17 +101810,17 @@ msgstr "按法向展开遮罩"
 
 msgctxt "Operator"
 msgid "Mask Slice and Fill Holes"
-msgstr "遮蔽切片并填充孔"
+msgstr "遮罩切片并填充孔"
 
 
 msgctxt "Operator"
 msgid "Mask Slice to New Object"
-msgstr "遮蔽切片到新物体"
+msgstr "遮罩切片到新物体"
 
 
 msgctxt "Operator"
 msgid "Face Set from Masked"
-msgstr "从被遮蔽面创建面组"
+msgstr "从被遮罩面创建面组"
 
 
 msgctxt "Operator"
@@ -110548,6 +110522,10 @@ msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "检查当前 .blend 文件的完整性撤消步骤 *之后*"
 
 
+msgid "Undo disabled at startup in background-mode (call `ed.undo_push()` to explicitly initialize the undo-system)"
+msgstr "在后台模式下启动时撤消禁用。(调用 `ed.undo_push()` ，显式初始化该撤消系统)"
+
+
 msgid "[E] - Disable overshoot"
 msgstr "[E] - 禁用过冲"
 
@@ -111064,12 +111042,12 @@ msgid "Groups: No groups for this stroke"
 msgstr "组: 此笔画无分组"
 
 
-msgid "Groups: index out of range"
-msgstr "组: 编号超出范围"
-
-
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: 编号超出范围"
+
+
+msgid "Groups: index out of range"
+msgstr "组: 编号超出范围"
 
 
 msgid "Stroke not found in grease pencil frame"

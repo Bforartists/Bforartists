@@ -259,7 +259,7 @@ IDTypeInfo IDType_ID_MA = {
     .name = "Material",
     .name_plural = "materials",
     .translation_context = BLT_I18NCONTEXT_ID_MATERIAL,
-    .flags = 0,
+    .flags = IDTYPE_FLAGS_APPEND_IS_REUSABLE,
 
     .init_data = material_init_data,
     .copy_data = material_copy_data,
@@ -473,7 +473,7 @@ bool BKE_object_material_slot_used(ID *id, short actcol)
     case ID_CU:
       return BKE_curve_material_index_used((Curve *)id, actcol - 1);
     case ID_MB:
-      /* meta-elems don't have materials atm */
+      /* Meta-elements don't support materials at the moment. */
       return false;
     case ID_GD:
       return BKE_gpencil_material_index_used((bGPdata *)id, actcol - 1);
