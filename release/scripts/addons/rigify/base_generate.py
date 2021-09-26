@@ -189,6 +189,8 @@ class LegacyRig(base_rig.BaseRig):
 class BaseGenerator:
     """Base class for the main generator object. Contains rig and plugin management code."""
 
+    instance = None
+
     def __init__(self, context, metarig):
         self.context = context
         self.scene = context.scene

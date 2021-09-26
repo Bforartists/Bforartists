@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5319,6 +5319,14 @@ msgid "Active Spline"
 msgstr "Aktivní Křivka"
 
 
+msgid "Material Index"
+msgstr "Index Materiálu"
+
+
+msgid "Radius"
+msgstr "Poloměr"
+
+
 msgid "Viewport"
 msgstr "Zobrazení"
 
@@ -7648,10 +7656,6 @@ msgid "Use union particle level set (faster but lower quality)"
 msgstr "Použití sady úrovní částic sjednocení (rychlejší, ale nižší kvalita)"
 
 
-msgid "Radius"
-msgstr "Poloměr"
-
-
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
 msgstr "Faktor poloměru částic (vyšší hodnota má za následek větší (okované) částice). Po změně měřítka sítě je třeba upravit"
 
@@ -8066,10 +8070,6 @@ msgstr "Přidat obrázek"
 
 msgid "End Cap"
 msgstr "Poslední frame"
-
-
-msgid "Material Index"
-msgstr "Index Materiálu"
 
 
 msgid "Stroke Points"
@@ -20230,8 +20230,8 @@ msgstr "Zobrazení osy"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Tažení"
+msgid "Extrude to Cursor"
+msgstr "Vysunutí ke Kurzoru"
 
 
 msgctxt "Operator"
@@ -22068,11 +22068,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Vyrovná úhly označených plošek"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Přidat UVkouly"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Vybrat nový font pro uživatelské rozhraní"
 
@@ -23438,6 +23433,14 @@ msgid "Recalculate internal geometry"
 msgstr "Přepočítat vnitřek geometrie"
 
 
+msgid "Modifier"
+msgstr "Modifikátory"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Jméno skriptu"
+
+
 msgid "Mouse location"
 msgstr "Původni pozice"
 
@@ -24305,6 +24308,11 @@ msgstr "Válec"
 
 msgid "Slide control points"
 msgstr "Vyrovná úhly označených plošek"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Přidat UVkouly"
 
 
 msgid "Add vertex to active spline"
@@ -26793,14 +26801,6 @@ msgstr "Síť z Křivek, Povrchu, Meta objektu, Textu, nebo z Bodového Mraku"
 
 msgid "Point Cloud from Mesh objects"
 msgstr "Bodový Mrak ze Síťových objektů"
-
-
-msgid "Modifier"
-msgstr "Modifikátory"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Jméno skriptu"
 
 
 msgid "Exact Match"
@@ -30122,14 +30122,6 @@ msgstr "Odstranit pruh"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Uložit snímek obrazovky"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Duplikovat současné Blender okno"
-
-
-msgid "Full Screen"
-msgstr "Celá obrazovka"
 
 
 msgctxt "Operator"
@@ -34560,11 +34552,6 @@ msgid "Bone Envelope"
 msgstr "Kostní obálka"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "Vysunutí ke Kurzoru"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "Vysunutí volně nebo podél osy"
 
@@ -35609,6 +35596,14 @@ msgid "View & Controls"
 msgstr "Pohled & Ovládání"
 
 
+msgid "Corner Splitting"
+msgstr "Rozdělení rohů"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "Oddělit a spojit editory tažením od rohu"
+
+
 msgid "Auto Keying Mode"
 msgstr "Další klíč"
 
@@ -36235,10 +36230,6 @@ msgstr "Doplňky pro vývojáře"
 
 msgid "Show options for developers (edit source in context menu, geometry indices)"
 msgstr "Zobrazit možnosti pro vývojáře (upravit zdroj v nabídce kontextu, indexy geometrie)"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "Oddělit a spojit editory tažením od rohu"
 
 
 msgid "Navigation Controls"
@@ -42742,34 +42733,6 @@ msgid "Priority"
 msgstr "Přednost"
 
 
-msgid "Selection:"
-msgstr "Výběr:"
-
-
-msgid "Visibility:"
-msgstr "Viditelnost:"
-
-
-msgid "Collection:"
-msgstr "Kolekce:"
-
-
-msgid "Base Color:"
-msgstr "Základní Barva:"
-
-
-msgid "Modifiers:"
-msgstr "Modifikátory:"
-
-
-msgid "Base Transparency:"
-msgstr "Základní průhlednost:"
-
-
-msgid "Base Thickness:"
-msgstr "Základní tloušťka:"
-
-
 msgid "Draw:"
 msgstr "Kreslit:"
 
@@ -44722,10 +44685,6 @@ msgstr "Uživatelská Nápověda"
 
 msgid "New Data"
 msgstr "Nová data"
-
-
-msgid "Corner Splitting"
-msgstr "Rozdělení rohů"
 
 
 msgid "Render In"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1048,6 +1048,10 @@ msgid "Steps"
 msgstr "कदम"
 
 
+msgid "Radius"
+msgstr "त्रिज्या"
+
+
 msgid "Render"
 msgstr " प्रतिपादन"
 
@@ -1571,10 +1575,6 @@ msgstr "पूर्ण नमूना"
 
 msgid "Final"
 msgstr "समाप्तिम"
-
-
-msgid "Radius"
-msgstr "त्रिज्या"
 
 
 msgid "Time"
@@ -3744,11 +3744,6 @@ msgstr "चयनित क्षेत्रों के प्रितभा
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "शिरोबिन्दु जोडें"
-
-
-msgctxt "Operator"
 msgid "Redo"
 msgstr "फिर से करें"
 
@@ -3868,6 +3863,10 @@ msgid "Subdivisions"
 msgstr "उप विभाजन"
 
 
+msgid "Modifier"
+msgstr "संशोधक"
+
+
 msgid "Black"
 msgstr "कृष्ण"
 
@@ -3894,6 +3893,11 @@ msgstr "सापेक्ष पथ"
 
 msgid "Select the camera"
 msgstr "प्रतिबिंबक का चयन करें"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "शिरोबिन्दु जोडें"
 
 
 msgctxt "Operator"
@@ -4112,10 +4116,6 @@ msgid "Add Camera"
 msgstr "प्रतिबिंबक जोडें"
 
 
-msgid "Modifier"
-msgstr "संशोधक"
-
-
 msgid "Add an empty image type to scene with data"
 msgstr "डेटा के साथ दृश्य के लिए एक रिक्त छवि प्रकार जोड़ें"
 
@@ -4292,10 +4292,6 @@ msgstr "नई चित्रपट"
 msgctxt "Operator"
 msgid "Repeat Last"
 msgstr "पिछला दोहराएँ"
-
-
-msgid "Full Screen"
-msgstr "पूर्ण चित्रपट"
 
 
 msgctxt "Operator"
@@ -5685,18 +5681,6 @@ msgstr "सभी समूह हटाएँ"
 
 msgid "Priority"
 msgstr "प्राथमिकता"
-
-
-msgid "Selection:"
-msgstr "चयन"
-
-
-msgid "Visibility:"
-msgstr "दृश्यता:"
-
-
-msgid "Modifiers:"
-msgstr "संशोधक"
 
 
 msgid "Draw:"

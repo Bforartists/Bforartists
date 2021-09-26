@@ -459,14 +459,17 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
   }
 
   /*bfa - removed the empty keymap warning*/
-  //  if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
-  //    /* Empty key-maps may be missing more there may be a typo in the name.
-  //     * Warn early to avoid losing time investigating each case.
-    // * When developing a customized Blender though you may want empty keymaps. */
-    //if (!U.app_template[0]) {
+  //if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
+  //  /* Empty key-maps may be missing more there may be a typo in the name.
+  //   * Warn early to avoid losing time investigating each case.
+  //   * When developing a customized Blender though you may want empty keymaps. */
+  //  if (!U.app_template[0] &&
+  //      /* Fallback key-maps may be intentionally empty, don't flood the output. */
+  //      !BLI_str_endswith(keymap->idname, " (fallback)")) {
   //    CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
-   // }
   //  }
+  //}
+
 
   if (keymap->poll != NULL) {
     return keymap->poll(C);
@@ -1403,15 +1406,19 @@ static wmKeyMapItem *wm_keymap_item_find_handlers(const bContext *C,
   LISTBASE_FOREACH (wmEventHandler *, handler_base, handlers) {
     if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {
       wmEventHandler_Keymap *handler = (wmEventHandler_Keymap *)handler_base;
-      wmKeyMap *keymap = WM_event_get_keymap_from_handler(wm, handler);
-      if (keymap && WM_keymap_poll((bContext *)C, keymap)) {
-        wmKeyMapItem *kmi = wm_keymap_item_find_in_keymap(
-            keymap, opname, properties, is_strict, params);
-        if (kmi != NULL) {
-          if (r_keymap) {
-            *r_keymap = keymap;
+      wmEventHandler_KeymapResult km_result;
+      WM_event_get_keymaps_from_handler(wm, handler, &km_result);
+      for (int km_index = 0; km_index < km_result.keymaps_len; km_index++) {
+        wmKeyMap *keymap = km_result.keymaps[km_index];
+        if (WM_keymap_poll((bContext *)C, keymap)) {
+          wmKeyMapItem *kmi = wm_keymap_item_find_in_keymap(
+              keymap, opname, properties, is_strict, params);
+          if (kmi != NULL) {
+            if (r_keymap) {
+              *r_keymap = keymap;
+            }
+            return kmi;
           }
-          return kmi;
         }
       }
     }

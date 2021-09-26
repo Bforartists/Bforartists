@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7859,6 +7859,18 @@ msgid "Active curve spline"
 msgstr "Spline (segment) de courbe actif"
 
 
+msgid "Dash"
+msgstr "Pointillés"
+
+
+msgid "Material Index"
+msgstr "Indice de matériau"
+
+
+msgid "Radius"
+msgstr "Rayon"
+
+
 msgid "Dependency Graph"
 msgstr "Graphe de dépendance"
 
@@ -12130,10 +12142,6 @@ msgid "Use union particle level set (faster but lower quality)"
 msgstr "Utiliser l’ensemble de niveaux de particules union (plus rapide mais de moins bonne qualité)"
 
 
-msgid "Radius"
-msgstr "Rayon"
-
-
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
 msgstr "Facteur de rayon de particule (de plus hautes valeurs donnent de plus grandes particules “meshées”). À ajuster après changement de la taille du mesh"
 
@@ -13354,10 +13362,6 @@ msgid "Select hidden feature edges"
 msgstr "Sélectionner les arêtes fonctionnelles cachées"
 
 
-msgid "QI Range"
-msgstr "Intervalle QI"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "Sélectionner les arêtes fonctionnelles dans un intervalle de valeurs d’invisibilité quantitative (QI)"
 
@@ -13438,16 +13442,8 @@ msgid "Select the Freestyle control mode"
 msgstr "Sélectionner le mode de contrôle de Freestyle"
 
 
-msgid "Python Scripting Mode"
-msgstr "Mode scripting Python"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Mode avancé pour utiliser les modules de style écris en Python"
-
-
-msgid "Parameter Editor Mode"
-msgstr "Mode éditeur de paramètres"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -13460,14 +13456,6 @@ msgstr "Rayon de sphère"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "Rayon de la sphère pour calculer les courbures"
-
-
-msgid "Advanced Options"
-msgstr "Options avancées"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "Activer les options avancées de détection des arêtes (rayon de sphère et epsilon dérivatif Kr)"
 
 
 msgid "Culling"
@@ -14190,10 +14178,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "Épaisseur du trait (en pixels)"
 
 
-msgid "Material Index"
-msgstr "Indice de matériau"
-
-
 msgid "Stroke Points"
 msgstr "Points de trait"
 
@@ -14470,10 +14454,6 @@ msgstr "Persistant"
 
 msgid "Show Modal All"
 msgstr "Afficher tout modal"
-
-
-msgid "Show all while interacting"
-msgstr "Tout afficher durant l’interaction"
 
 
 msgid "Tool Init"
@@ -33598,6 +33578,10 @@ msgid "Scale the Z input when not using a z-buffer, controls maximum blur design
 msgstr "Redimensionner l’entrée Z lorsque qu’un tampon Z n’est pas utilisé, contrôle le flou maximum défini par la couleur blanche ou la valeur d’entrée 1"
 
 
+msgid "Accurate"
+msgstr "Précis"
+
+
 msgid "Despeckle"
 msgstr "Despeckle"
 
@@ -36993,11 +36977,6 @@ msgid "View Axis"
 msgstr "Axe vue"
 
 
-msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Cliquer-extruder"
-
-
 msgid "Create a new bone going from the last selected joint to the mouse position"
 msgstr "Créer un nouvel os allant de la dernière jointure sélectionnée à la position de la souris"
 
@@ -39552,11 +39531,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Effacer l’inclinaison des points de contrôle sélectionnés"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Ajouter vertex"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Ajouter un nouveau point de contrôle (lié au seul point d’extrémité de courbe sélectionné, si présent)"
 
@@ -41682,6 +41656,14 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "Entrer/sortir du mode de sculpture pour les traits de crayon gras"
 
 
+msgid "Modifier"
+msgstr "Modificateur"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Nom du modificateur à éditer"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "Sélectionner des traits de crayon gras et/ou des points de traits"
 
@@ -43424,6 +43406,11 @@ msgid "Slide control points"
 msgstr "Faire glisser les points de contrôle"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Ajouter vertex"
+
+
 msgid "Add vertex to active spline"
 msgstr "Ajouter un vertex à la courbe active"
 
@@ -44148,11 +44135,6 @@ msgstr "Déchirer limite"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Diviser les coins de face au lieu de fusionner les faces"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "Dupliquer ou extruder au curseur"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -44882,10 +44864,6 @@ msgstr "Taille proportionnelle"
 
 msgid "Always confirm operation when releasing button"
 msgstr "Toujours confirmer l’opération quand le bouton est relâché"
-
-
-msgid "Accurate"
-msgstr "Précis"
 
 
 msgid "Use accurate transformation"
@@ -47165,14 +47143,6 @@ msgstr "Lier adoucissement correctif"
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "Lier la pose de base au modificateur d’adoucissement correctif"
-
-
-msgid "Modifier"
-msgstr "Modificateur"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Nom du modificateur à éditer"
 
 
 msgctxt "Operator"
@@ -52261,18 +52231,6 @@ msgstr "Boucler dans les dispositions d’écran disponibles"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Enregistrer capture d’écran"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Capturer une image de la zone active ou de toute la fenêtre Blender"
-
-
-msgid "Full Screen"
-msgstr "Plein écran"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "Capturer toute la fenêtre (sinon seule l’“area” active est capturée)"
 
 
 msgctxt "Operator"
@@ -58963,6 +58921,10 @@ msgstr "Orientations de transformation"
 
 msgid "View Lock"
 msgstr "Verrouillage de vue"
+
+
+msgid "Face Marks"
+msgstr "Marques de faces"
 
 
 msgid "Filter Add-ons"
@@ -66097,10 +66059,6 @@ msgid "Outline"
 msgstr "Contour"
 
 
-msgid "Dash"
-msgstr "Pointillés"
-
-
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -71885,110 +71843,6 @@ msgid "Failed to load volume:"
 msgstr "Échec de chargement du volume :"
 
 
-msgid "Edge Detection Options:"
-msgstr "Options de détection d’arête :"
-
-
-msgid "Priority"
-msgstr "Priorité"
-
-
-msgid "Selection By:"
-msgstr "Sélection par :"
-
-
-msgid "Edge Types"
-msgstr "Types d’arêtes"
-
-
-msgid "Face Marks"
-msgstr "Marques de faces"
-
-
-msgid "Image Border"
-msgstr "Bord d’image"
-
-
-msgid "Chaining:"
-msgstr "Chaînage :"
-
-
-msgid "Splitting:"
-msgstr "Séparation :"
-
-
-msgid "D1"
-msgstr "T1"
-
-
-msgid "G1"
-msgstr "E1"
-
-
-msgid "D2"
-msgstr "T2"
-
-
-msgid "G2"
-msgstr "E2"
-
-
-msgid "D3"
-msgstr "T3"
-
-
-msgid "G3"
-msgstr "E3"
-
-
-msgid "Sorting:"
-msgstr "Tri :"
-
-
-msgid "Selection:"
-msgstr "Sélection :"
-
-
-msgid "Caps:"
-msgstr "Extrémités :"
-
-
-msgid "Dashed Line:"
-msgstr "Ligne brisée :"
-
-
-msgid "Visibility:"
-msgstr "Visibilité :"
-
-
-msgid "Edge Types:"
-msgstr "Types d’arête :"
-
-
-msgid "Face Marks:"
-msgstr "Marques de faces :"
-
-
-msgid "Collection:"
-msgstr "Collection :"
-
-
-msgid "Base Color:"
-msgstr "Couleur de base :"
-
-
-msgid "Modifiers:"
-msgstr "Modificateurs :"
-
-
-msgid "Base Transparency:"
-msgstr "Transparence de base :"
-
-
-msgid "Base Thickness:"
-msgstr "Épaisseur de base :"
-
-
 msgid "Spacing Along Stroke"
 msgstr "Espacement le long du trait"
 
@@ -71996,6 +71850,14 @@ msgstr "Espacement le long du trait"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "Aller aux propriétés des textures de style de ligne"
+
+
+msgid "Priority"
+msgstr "Priorité"
+
+
+msgid "Image Border"
+msgstr "Bord d’image"
 
 
 msgid "Draw:"

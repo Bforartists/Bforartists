@@ -64,6 +64,7 @@
 #include "MEM_guardedalloc.h"
 #include "readfile.h"
 
+#include "SEQ_iterator.h"
 #include "SEQ_sequencer.h"
 
 #include "RNA_access.h"
@@ -109,7 +110,8 @@ static void version_idproperty_move_data_int(IDPropertyUIDataInt *ui_data,
   if (default_value != NULL) {
     if (default_value->type == IDP_ARRAY) {
       if (default_value->subtype == IDP_INT) {
-        ui_data->default_array = MEM_dupallocN(IDP_Array(default_value));
+        ui_data->default_array = MEM_malloc_arrayN(default_value->len, sizeof(int), __func__);
+        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(int) * default_value->len);
         ui_data->default_array_len = default_value->len;
       }
     }
@@ -151,9 +153,18 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
   IDProperty *default_value = IDP_GetPropertyFromGroup(prop_ui_data, "default");
   if (default_value != NULL) {
     if (default_value->type == IDP_ARRAY) {
-      if (ELEM(default_value->subtype, IDP_FLOAT, IDP_DOUBLE)) {
-        ui_data->default_array = MEM_dupallocN(IDP_Array(default_value));
-        ui_data->default_array_len = default_value->len;
+      const int size = default_value->len;
+      ui_data->default_array_len = size;
+      if (default_value->subtype == IDP_FLOAT) {
+        ui_data->default_array = MEM_malloc_arrayN(size, sizeof(double), __func__);
+        const float *old_default_array = IDP_Array(default_value);
+        for (int i = 0; i < ui_data->default_array_len; i++) {
+          ui_data->default_array[i] = (double)old_default_array[i];
+        }
+      }
+      else if (default_value->subtype == IDP_DOUBLE) {
+        ui_data->default_array = MEM_malloc_arrayN(size, sizeof(double), __func__);
+        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(double) * size);
       }
     }
     else if (ELEM(default_value->type, IDP_DOUBLE, IDP_FLOAT)) {
@@ -507,6 +518,29 @@ void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
   {
     /* Keep this block, even when empty. */
     do_versions_idproperty_ui_data(bmain);
+
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *tool_settings = scene->toolsettings;
+      ImagePaintSettings *imapaint = &tool_settings->imapaint;
+      if (imapaint->canvas != NULL &&
+          ELEM(imapaint->canvas->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+        imapaint->canvas = NULL;
+      }
+      if (imapaint->stencil != NULL &&
+          ELEM(imapaint->stencil->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+        imapaint->stencil = NULL;
+      }
+      if (imapaint->clone != NULL &&
+          ELEM(imapaint->clone->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+        imapaint->clone = NULL;
+      }
+    }
+    LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+      if (brush->clone.image != NULL &&
+          ELEM(brush->clone.image->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+        brush->clone.image = NULL;
+      }
+    }
   }
 }
 
@@ -772,6 +806,70 @@ static void version_geometry_nodes_change_legacy_names(bNodeTree *ntree)
                    "GeometryNodeLegacy%s",
                    temp_idname + strlen("GeometryNode"));
     }
+  }
+}
+
+static bool seq_transform_origin_set(Sequence *seq, void *UNUSED(user_data))
+{
+  StripTransform *transform = seq->strip->transform;
+  if (seq->strip->transform != NULL) {
+    transform->origin[0] = transform->origin[1] = 0.5f;
+  }
+  return true;
+}
+
+static void do_version_subsurface_methods(bNode *node)
+{
+  if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
+    if (node->custom1 != SHD_SUBSURFACE_RANDOM_WALK) {
+      node->custom1 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    }
+  }
+  else if (node->type == SH_NODE_BSDF_PRINCIPLED) {
+    if (node->custom2 != SHD_SUBSURFACE_RANDOM_WALK) {
+      node->custom2 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    }
+  }
+}
+
+static void version_geometry_nodes_add_attribute_input_settings(NodesModifierData *nmd)
+{
+  /* Before versioning the properties, make sure it hasn't been done already. */
+  LISTBASE_FOREACH (const IDProperty *, property, &nmd->settings.properties->data.group) {
+    if (strstr(property->name, "_use_attribute") || strstr(property->name, "_attribute_name")) {
+      return;
+    }
+  }
+
+  LISTBASE_FOREACH_MUTABLE (IDProperty *, property, &nmd->settings.properties->data.group) {
+    if (!ELEM(property->type, IDP_FLOAT, IDP_INT, IDP_ARRAY)) {
+      continue;
+    }
+
+    if (strstr(property->name, "_use_attribute") || strstr(property->name, "_attribute_name")) {
+      continue;
+    }
+
+    char use_attribute_prop_name[MAX_IDPROP_NAME];
+    BLI_snprintf(use_attribute_prop_name,
+                 sizeof(use_attribute_prop_name),
+                 "%s%s",
+                 property->name,
+                 "_use_attribute");
+
+    IDPropertyTemplate idprop = {0};
+    IDProperty *use_attribute_prop = IDP_New(IDP_INT, &idprop, use_attribute_prop_name);
+    IDP_AddToGroup(nmd->settings.properties, use_attribute_prop);
+
+    char attribute_name_prop_name[MAX_IDPROP_NAME];
+    BLI_snprintf(attribute_name_prop_name,
+                 sizeof(attribute_name_prop_name),
+                 "%s%s",
+                 property->name,
+                 "_attribute_name");
+
+    IDProperty *attribute_prop = IDP_New(IDP_STRING, &idprop, attribute_name_prop_name);
+    IDP_AddToGroup(nmd->settings.properties, attribute_prop);
   }
 }
 
@@ -1076,7 +1174,7 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
           if (sl->spacetype == SPACE_SEQ) {
             SpaceSeq *sseq = (SpaceSeq *)sl;
-            sseq->flag |= SEQ_SHOW_GRID;
+            sseq->flag |= SEQ_TIMELINE_SHOW_GRID;
           }
         }
       }
@@ -1250,6 +1348,102 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 23)) {
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_FILE) {
+            SpaceFile *sfile = (SpaceFile *)sl;
+            if (sfile->asset_params) {
+              sfile->asset_params->base_params.recursion_level = FILE_SELECT_MAX_RECURSIONS;
+            }
+          }
+        }
+      }
+    }
+
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_SEQ) {
+            SpaceSeq *sseq = (SpaceSeq *)sl;
+            int seq_show_safe_margins = (sseq->flag & SEQ_PREVIEW_SHOW_SAFE_MARGINS);
+            int seq_show_gpencil = (sseq->flag & SEQ_PREVIEW_SHOW_GPENCIL);
+            int seq_show_fcurves = (sseq->flag & SEQ_TIMELINE_SHOW_FCURVES);
+            int seq_show_safe_center = (sseq->flag & SEQ_PREVIEW_SHOW_SAFE_CENTER);
+            int seq_show_metadata = (sseq->flag & SEQ_PREVIEW_SHOW_METADATA);
+            int seq_show_strip_name = (sseq->flag & SEQ_TIMELINE_SHOW_STRIP_NAME);
+            int seq_show_strip_source = (sseq->flag & SEQ_TIMELINE_SHOW_STRIP_SOURCE);
+            int seq_show_strip_duration = (sseq->flag & SEQ_TIMELINE_SHOW_STRIP_DURATION);
+            int seq_show_grid = (sseq->flag & SEQ_TIMELINE_SHOW_GRID);
+            int show_strip_offset = (sseq->draw_flag & SEQ_TIMELINE_SHOW_STRIP_OFFSETS);
+            sseq->preview_overlay.flag = (seq_show_safe_margins | seq_show_gpencil |
+                                          seq_show_safe_center | seq_show_metadata);
+            sseq->timeline_overlay.flag = (seq_show_fcurves | seq_show_strip_name |
+                                           seq_show_strip_source | seq_show_strip_duration |
+                                           seq_show_grid | show_strip_offset);
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 24)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      SequencerToolSettings *sequencer_tool_settings = SEQ_tool_settings_ensure(scene);
+      sequencer_tool_settings->pivot_point = V3D_AROUND_CENTER_MEDIAN;
+
+      if (scene->ed != NULL) {
+        SEQ_for_each_callback(&scene->ed->seqbase, seq_transform_origin_set, NULL);
+      }
+    }
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_SEQ) {
+            SpaceSeq *sseq = (SpaceSeq *)sl;
+            sseq->preview_overlay.flag |= SEQ_PREVIEW_SHOW_OUTLINE_SELECTED;
+          }
+        }
+      }
+    }
+
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_SEQ) {
+            ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                   &sl->regionbase;
+            LISTBASE_FOREACH (ARegion *, region, regionbase) {
+              if (region->regiontype == RGN_TYPE_WINDOW) {
+                region->v2d.min[1] = 4.0f;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 25)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_SHADER) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          do_version_subsurface_methods(node);
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+
+    enum {
+      R_EXR_TILE_FILE = (1 << 10),
+      R_FULL_SAMPLE = (1 << 15),
+    };
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      scene->r.scemode &= ~(R_EXR_TILE_FILE | R_FULL_SAMPLE);
+    }
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -1261,17 +1455,54 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+        if (md->type == eModifierType_Nodes) {
+          version_geometry_nodes_add_attribute_input_settings((NodesModifierData *)md);
+        }
+      }
+    }
 
-    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
         LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
-          if (sl->spacetype == SPACE_FILE) {
-            SpaceFile *sfile = (SpaceFile *)sl;
-            if (sfile->asset_params) {
-              sfile->asset_params->base_params.recursion_level = FILE_SELECT_MAX_RECURSIONS;
+          switch (sl->spacetype) {
+            case SPACE_FILE: {
+              SpaceFile *sfile = (SpaceFile *)sl;
+              if (sfile->params) {
+                sfile->params->flag &= ~(FILE_PARAMS_FLAG_UNUSED_1 | FILE_PARAMS_FLAG_UNUSED_2 |
+                                         FILE_PARAMS_FLAG_UNUSED_3 | FILE_PARAMS_FLAG_UNUSED_4);
+              }
+              break;
             }
+            default:
+              break;
           }
         }
+      }
+    }
+
+    /* Deprecate the random float node in favor of the random float node. */
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type != NTREE_GEOMETRY) {
+        continue;
+      }
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type != FN_NODE_LEGACY_RANDOM_FLOAT) {
+          continue;
+        }
+        if (strstr(node->idname, "Legacy")) {
+          /* Make sure we haven't changed this idname already. */
+          continue;
+        }
+
+        char temp_idname[sizeof(node->idname)];
+        BLI_strncpy(temp_idname, node->idname, sizeof(node->idname));
+
+        BLI_snprintf(node->idname,
+                     sizeof(node->idname),
+                     "FunctionNodeLegacy%s",
+                     temp_idname + strlen("FunctionNode"));
       }
     }
   }

@@ -83,7 +83,7 @@ class MatLib():
         """
         try:
             # print("MatLib.load_mat(%s) linked:%s" % (name, link))
-            with bpy.data.libraries.load(self.path, link, False) as (data_from, data_to):
+            with bpy.data.libraries.load(self.path, link=link, relative=False) as (data_from, data_to):
                 data_to.materials = [name]
         except:
             pass
