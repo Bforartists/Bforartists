@@ -53,7 +53,7 @@ struct Options {
   SessionParams session_params;
   bool quiet;
   bool show_help, interactive, pause;
-  string output_path;
+  string output_filepath;
 } options;
 
 static void session_print(const string &str)
@@ -126,7 +126,7 @@ static BufferParams &session_buffer_params()
 
 static void scene_init()
 {
-  options.scene = new Scene(options.scene_params, options.session->device);
+  options.scene = options.session->scene;
 
   /* Read XML */
   xml_read_file(options.scene, options.filepath.c_str());
@@ -148,7 +148,7 @@ static void scene_init()
 static void session_init()
 {
   options.session_params.write_render_cb = write_render;
-  options.session = new Session(options.session_params);
+  options.session = new Session(options.session_params, options.scene_params);
 
   if (options.session_params.background && !options.quiet)
     options.session->progress.set_update_callback(function_bind(&session_print_status));
@@ -159,9 +159,8 @@ static void session_init()
 
   /* load scene */
   scene_init();
-  options.session->scene = options.scene;
 
-  options.session->reset(session_buffer_params(), options.session_params.samples);
+  options.session->reset(options.session_params, session_buffer_params());
   options.session->start();
 }
 
@@ -223,9 +222,7 @@ static void display_info(Progress &progress)
 
 static void display()
 {
-  static DeviceDrawParams draw_params = DeviceDrawParams();
-
-  options.session->draw(session_buffer_params(), draw_params);
+  options.session->draw();
 
   display_info(options.session->progress);
 }
@@ -255,7 +252,7 @@ static void motion(int x, int y, int button)
     options.session->scene->camera->need_flags_update = true;
     options.session->scene->camera->need_device_update = true;
 
-    options.session->reset(session_buffer_params(), options.session_params.samples);
+    options.session->reset(options.session_params, session_buffer_params());
   }
 }
 
@@ -272,7 +269,7 @@ static void resize(int width, int height)
     options.session->scene->camera->need_flags_update = true;
     options.session->scene->camera->need_device_update = true;
 
-    options.session->reset(session_buffer_params(), options.session_params.samples);
+    options.session->reset(options.session_params, session_buffer_params());
   }
 }
 
@@ -284,7 +281,7 @@ static void keyboard(unsigned char key)
 
   /* Reset */
   else if (key == 'r')
-    options.session->reset(session_buffer_params(), options.session_params.samples);
+    options.session->reset(options.session_params, session_buffer_params());
 
   /* Cancel */
   else if (key == 27)  // escape
@@ -321,7 +318,7 @@ static void keyboard(unsigned char key)
     options.session->scene->camera->need_flags_update = true;
     options.session->scene->camera->need_device_update = true;
 
-    options.session->reset(session_buffer_params(), options.session_params.samples);
+    options.session->reset(options.session_params, session_buffer_params());
   }
 
   /* Set Max Bounces */
@@ -347,7 +344,7 @@ static void keyboard(unsigned char key)
 
     options.session->scene->integrator->set_max_bounce(bounce);
 
-    options.session->reset(session_buffer_params(), options.session_params.samples);
+    options.session->reset(options.session_params, session_buffer_params());
   }
 }
 #endif
@@ -362,11 +359,13 @@ static int files_parse(int argc, const char *argv[])
 
 static void options_parse(int argc, const char **argv)
 {
-  options.width = 0;
-  options.height = 0;
+  options.width = 1024;
+  options.height = 512;
   options.filepath = "";
   options.session = NULL;
   options.quiet = false;
+  options.session_params.use_auto_tile = false;
+  options.session_params.tile_size = 0;
 
   /* device names */
   string device_names = "";
@@ -412,7 +411,7 @@ static void options_parse(int argc, const char **argv)
              &options.session_params.samples,
              "Number of samples to render",
              "--output %s",
-             &options.output_path,
+             &options.output_filepath,
              "File path to write output image",
              "--threads %d",
              &options.session_params.threads,
@@ -423,12 +422,9 @@ static void options_parse(int argc, const char **argv)
              "--height %d",
              &options.height,
              "Window height in pixel",
-             "--tile-width %d",
-             &options.session_params.tile_size.x,
-             "Tile width in pixels",
-             "--tile-height %d",
-             &options.session_params.tile_size.y,
-             "Tile height in pixels",
+             "--tile-size %d",
+             &options.session_params.tile_size,
+             "Tile size in pixels",
              "--list-devices",
              &list,
              "List information about all available devices",
@@ -490,8 +486,9 @@ static void options_parse(int argc, const char **argv)
   options.session_params.background = true;
 #endif
 
-  /* Use progressive rendering */
-  options.session_params.progressive = true;
+  if (options.session_params.tile_size > 0) {
+    options.session_params.use_auto_tile = true;
+  }
 
   /* find matching device */
   DeviceType device_type = Device::type_from_string(devicename.c_str());
@@ -527,9 +524,6 @@ static void options_parse(int argc, const char **argv)
     fprintf(stderr, "No file path specified\n");
     exit(EXIT_FAILURE);
   }
-
-  /* For smoother Viewport */
-  options.session_params.start_resolution = 64;
 }
 
 CCL_NAMESPACE_END

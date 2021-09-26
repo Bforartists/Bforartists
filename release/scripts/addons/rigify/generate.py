@@ -25,7 +25,7 @@ import time
 from .utils.errors import MetarigError
 from .utils.bones import new_bone
 from .utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
-from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name
+from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name, change_name_side, get_name_side, Side
 from .utils.widgets import WGT_PREFIX
 from .utils.widgets_special import create_root_widget
 from .utils.mechanism import refresh_all_drivers
@@ -165,27 +165,44 @@ class Generator(base_generate.BaseGenerator):
                 for obj in list(old_collection.objects):
                     bpy.data.objects.remove(obj)
 
-            # Rename widgets and collection if renaming
-            if self.rig_old_name:
-                old_prefix = WGT_PREFIX + self.rig_old_name + "_"
-                new_prefix = WGT_PREFIX + self.obj.name + "_"
-
-                for obj in list(old_collection.objects):
-                    if obj.name.startswith(old_prefix):
-                        new_name = new_prefix + obj.name[len(old_prefix):]
-                    elif obj.name == wgts_group_name:
-                        new_name = new_group_name
-                    else:
-                        continue
-
-                    obj.data.name = new_name
-                    obj.name = new_name
-
-                old_collection.name = new_group_name
+            # Rename the collection
+            old_collection.name = new_group_name
 
         # Create/find widget collection
         self.widget_collection = ensure_widget_collection(self.context, new_group_name)
-        self.wgts_group_name = new_group_name
+        self.use_mirror_widgets = self.metarig.data.rigify_mirror_widgets
+
+        # Build tables for existing widgets
+        self.old_widget_table = {}
+        self.new_widget_table = {}
+        self.widget_mirror_mesh = {}
+
+        if not self.metarig.data.rigify_force_widget_update and self.obj.pose:
+            # Find all widgets from the collection referenced by the old rig
+            known_widgets = set(obj.name for obj in self.widget_collection.objects)
+
+            for bone in self.obj.pose.bones:
+                if bone.custom_shape and bone.custom_shape.name in known_widgets:
+                    self.old_widget_table[bone.name] = bone.custom_shape
+
+            # Rename widgets in case the rig was renamed
+            name_prefix = WGT_PREFIX + self.obj.name + "_"
+
+            for bone_name, widget in self.old_widget_table.items():
+                old_data_name = change_name_side(widget.name, get_name_side(widget.data.name))
+
+                widget.name = name_prefix + bone_name
+
+                # If the mesh name is the same as the object, rename it too
+                if widget.data.name == old_data_name:
+                    widget.data.name = change_name_side(widget.name, get_name_side(widget.data.name))
+
+            # Find meshes for mirroring
+            if self.use_mirror_widgets:
+                for bone_name, widget in self.old_widget_table.items():
+                    mid_name = change_name_side(bone_name, Side.MIDDLE)
+                    if bone_name != mid_name:
+                        self.widget_mirror_mesh[mid_name] = widget.data
 
 
     def __duplicate_rig(self):
@@ -373,6 +390,11 @@ class Generator(base_generate.BaseGenerator):
         # Assign shapes to bones
         # Object's with name WGT-<bone_name> get used as that bone's shape.
         for bone in self.obj.pose.bones:
+            # First check the table built by create_widget
+            if bone.name in self.new_widget_table:
+                bone.custom_shape = self.new_widget_table[bone.name]
+                continue
+
             # Object names are limited to 63 characters... arg
             wgt_name = (WGT_PREFIX + self.obj.name + '_' + bone.name)[:63]
 
@@ -574,6 +596,14 @@ class Generator(base_generate.BaseGenerator):
         refresh_all_drivers()
 
         #----------------------------------
+        # Execute the finalize script
+
+        if metarig.data.rigify_finalize_script:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            exec(metarig.data.rigify_finalize_script.as_string(), {})
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        #----------------------------------
         # Restore active collection
         view_layer.active_layer_collection = self.layer_collection
 
@@ -587,7 +617,11 @@ def generate_rig(context, metarig):
     metarig.data.pose_position = 'REST'
 
     try:
-        Generator(context, metarig).generate()
+        generator = Generator(context, metarig)
+
+        base_generate.BaseGenerator.instance = generator
+
+        generator.generate()
 
         metarig.data.pose_position = rest_backup
 
@@ -600,6 +634,9 @@ def generate_rig(context, metarig):
 
         # Continue the exception
         raise e
+
+    finally:
+        base_generate.BaseGenerator.instance = None
 
 
 def create_selection_set_for_rig_layer(

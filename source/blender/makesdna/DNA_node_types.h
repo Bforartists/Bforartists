@@ -445,6 +445,7 @@ typedef struct bNodeLink {
 #define NODE_LINK_TEST (1 << 2)           /* free test flag, undefined */
 #define NODE_LINK_TEMP_HIGHLIGHT (1 << 3) /* Link is highlighted for picking. */
 #define NODE_LINK_MUTED (1 << 4)          /* Link is muted. */
+#define NODE_LINK_DRAGGED (1 << 5)        /* Node link is being dragged by the user. */
 
 /* tree->edit_quality/tree->render_quality */
 #define NTREE_QUALITY_HIGH 0
@@ -458,6 +459,8 @@ typedef struct bNodeLink {
 #define NTREE_CHUNKSIZE_256 256
 #define NTREE_CHUNKSIZE_512 512
 #define NTREE_CHUNKSIZE_1024 1024
+
+struct FieldInferencingInterface;
 
 /* the basis for a Node tree, all links and nodes reside internal here */
 /* only re-usable node trees are in the library though,
@@ -481,6 +484,8 @@ typedef struct bNodeTree {
   float view_center[2];
 
   ListBase nodes, links;
+  /** Information about how inputs and outputs of the node group interact with fields. */
+  struct FieldInferencingInterface *field_inferencing_interface;
 
   /** Set init on fileread. */
   int type, init;
@@ -575,6 +580,9 @@ typedef enum eNodeTreeUpdate {
   NTREE_UPDATE_NODES = (1 << 1),     /* nodes or sockets have been added or removed */
   NTREE_UPDATE_GROUP_IN = (1 << 4),  /* group inputs have changed */
   NTREE_UPDATE_GROUP_OUT = (1 << 5), /* group outputs have changed */
+  /* The field interface has changed. So e.g. an output that was always a field before is not
+   * anymore. This implies that the field type inferencing has to be done again. */
+  NTREE_UPDATE_FIELD_INFERENCING = (1 << 6),
   /* group has changed (generic flag including all other group flags) */
   NTREE_UPDATE_GROUP = (NTREE_UPDATE_GROUP_IN | NTREE_UPDATE_GROUP_OUT),
 } eNodeTreeUpdate;
@@ -1032,6 +1040,11 @@ typedef struct NodeShaderTexPointDensity {
   char _pad2[4];
 } NodeShaderTexPointDensity;
 
+typedef struct NodeShaderPrincipled {
+  char use_subsurface_auto_radius;
+  char _pad[3];
+} NodeShaderPrincipled;
+
 /* TEX_output */
 typedef struct TexNodeOutput {
   char name[64];
@@ -1167,6 +1180,7 @@ typedef struct NodeCryptomatte {
 
 typedef struct NodeDenoise {
   char hdr;
+  char prefilter;
 } NodeDenoise;
 
 typedef struct NodeAttributeClamp {
@@ -1215,6 +1229,11 @@ typedef struct NodeAttributeMix {
   uint8_t input_type_a;
   uint8_t input_type_b;
 } NodeAttributeMix;
+
+typedef struct NodeRandomValue {
+  /* CustomDataType. */
+  uint8_t data_type;
+} NodeRandomValue;
 
 typedef struct NodeAttributeRandomize {
   /* CustomDataType. */
@@ -1441,6 +1460,11 @@ typedef struct NodeGeometryCurveSubdivide {
   uint8_t cuts_type;
 } NodeGeometryCurveSubdivide;
 
+typedef struct NodeGeometryCurveFillet {
+  /* GeometryNodeCurveFilletMode. */
+  uint8_t mode;
+} NodeGeometryCurveFillet;
+
 typedef struct NodeGeometryCurveTrim {
   /* GeometryNodeCurveSampleMode. */
   uint8_t mode;
@@ -1450,6 +1474,11 @@ typedef struct NodeGeometryCurveToPoints {
   /* GeometryNodeCurveResampleMode. */
   uint8_t mode;
 } NodeGeometryCurveToPoints;
+
+typedef struct NodeGeometryCurveSample {
+  /* GeometryNodeCurveSampleMode. */
+  uint8_t mode;
+} NodeGeometryCurveSample;
 
 typedef struct NodeGeometryAttributeTransfer {
   /* AttributeDomain. */
@@ -1477,6 +1506,16 @@ typedef struct NodeGeometryAttributeCapture {
   /* AttributeDomain. */
   int8_t domain;
 } NodeGeometryAttributeCapture;
+
+typedef struct NodeGeometryStringToCurves {
+  /* GeometryNodeStringToCurvesOverflowMode */
+  uint8_t overflow;
+  /* GeometryNodeStringToCurvesAlignXMode */
+  uint8_t align_x;
+  /* GeometryNodeStringToCurvesAlignYMode */
+  uint8_t align_y;
+  char _pad[1];
+} NodeGeometryStringToCurves;
 
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
@@ -1797,11 +1836,12 @@ enum {
 enum {
 #ifdef DNA_DEPRECATED_ALLOW
   SHD_SUBSURFACE_COMPATIBLE = 0, /* Deprecated */
-#endif
   SHD_SUBSURFACE_CUBIC = 1,
   SHD_SUBSURFACE_GAUSSIAN = 2,
-  SHD_SUBSURFACE_BURLEY = 3,
-  SHD_SUBSURFACE_RANDOM_WALK = 4,
+#endif
+  SHD_SUBSURFACE_DIFFUSION = 3,
+  SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS = 4,
+  SHD_SUBSURFACE_RANDOM_WALK = 5,
 };
 
 /* blur node */
@@ -1839,6 +1879,14 @@ typedef enum CMPNodeSetAlphaMode {
   CMP_NODE_SETALPHA_MODE_APPLY = 0,
   CMP_NODE_SETALPHA_MODE_REPLACE_ALPHA = 1,
 } CMPNodeSetAlphaMode;
+
+/* Denoise Node. */
+/* `NodeDenoise.prefilter` */
+typedef enum CMPNodeDenoisePrefilter {
+  CMP_NODE_DENOISE_PREFILTER_FAST = 0,
+  CMP_NODE_DENOISE_PREFILTER_NONE = 1,
+  CMP_NODE_DENOISE_PREFILTER_ACCURATE = 2
+} CMPNodeDenoisePrefilter;
 
 #define CMP_NODE_PLANETRACKDEFORM_MBLUR_SAMPLES_MAX 64
 
@@ -1947,6 +1995,11 @@ typedef enum GeometryNodePointDistributeMode {
   GEO_NODE_POINT_DISTRIBUTE_POISSON = 1,
 } GeometryNodePointDistributeMode;
 
+typedef enum GeometryNodeDistributePointsOnFacesMode {
+  GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_RANDOM = 0,
+  GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON = 1,
+} GeometryNodeDistributePointsOnFacesMode;
+
 typedef enum GeometryNodeRotatePointsType {
   GEO_NODE_POINT_ROTATE_TYPE_EULER = 0,
   GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE = 1,
@@ -2030,15 +2083,20 @@ typedef enum GeometryNodeCurvePrimitiveBezierSegmentMode {
 } GeometryNodeCurvePrimitiveBezierSegmentMode;
 
 typedef enum GeometryNodeCurveResampleMode {
-  GEO_NODE_CURVE_SAMPLE_COUNT = 0,
-  GEO_NODE_CURVE_SAMPLE_LENGTH = 1,
-  GEO_NODE_CURVE_SAMPLE_EVALUATED = 2,
+  GEO_NODE_CURVE_RESAMPLE_COUNT = 0,
+  GEO_NODE_CURVE_RESAMPLE_LENGTH = 1,
+  GEO_NODE_CURVE_RESAMPLE_EVALUATED = 2,
 } GeometryNodeCurveResampleMode;
 
 typedef enum GeometryNodeCurveSampleMode {
-  GEO_NODE_CURVE_INTERPOLATE_FACTOR = 0,
-  GEO_NODE_CURVE_INTERPOLATE_LENGTH = 1,
+  GEO_NODE_CURVE_SAMPLE_FACTOR = 0,
+  GEO_NODE_CURVE_SAMPLE_LENGTH = 1,
 } GeometryNodeCurveSampleMode;
+
+typedef enum GeometryNodeCurveFilletMode {
+  GEO_NODE_CURVE_FILLET_BEZIER = 0,
+  GEO_NODE_CURVE_FILLET_POLY = 1,
+} GeometryNodeCurveFilletMode;
 
 typedef enum GeometryNodeAttributeTransferMapMode {
   GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED = 0,
@@ -2054,6 +2112,28 @@ typedef enum GeometryNodeCurveFillMode {
   GEO_NODE_CURVE_FILL_MODE_TRIANGULATED = 0,
   GEO_NODE_CURVE_FILL_MODE_NGONS = 1,
 } GeometryNodeCurveFillMode;
+
+typedef enum GeometryNodeStringToCurvesOverflowMode {
+  GEO_NODE_STRING_TO_CURVES_MODE_OVERFLOW = 0,
+  GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT = 1,
+  GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE = 2,
+} GeometryNodeStringToCurvesOverflowMode;
+
+typedef enum GeometryNodeStringToCurvesAlignXMode {
+  GEO_NODE_STRING_TO_CURVES_ALIGN_X_LEFT = 0,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_X_CENTER = 1,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_X_RIGHT = 2,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_X_JUSTIFY = 3,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_X_FLUSH = 4,
+} GeometryNodeStringToCurvesAlignXMode;
+
+typedef enum GeometryNodeStringToCurvesAlignYMode {
+  GEO_NODE_STRING_TO_CURVES_ALIGN_Y_TOP_BASELINE = 0,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_Y_TOP = 1,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_Y_MIDDLE = 2,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_Y_BOTTOM_BASELINE = 3,
+  GEO_NODE_STRING_TO_CURVES_ALIGN_Y_BOTTOM = 4,
+} GeometryNodeStringToCurvesAlignYMode;
 
 #ifdef __cplusplus
 }

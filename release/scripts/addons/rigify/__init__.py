@@ -140,6 +140,11 @@ from bpy.props import (
 )
 
 
+def get_generator():
+    """Returns the currently active generator instance."""
+    return base_generate.BaseGenerator.instance
+
+
 class RigifyFeatureSets(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     module_name: bpy.props.StringProperty()
@@ -525,6 +530,10 @@ def register():
         description="Forces Rigify to delete and rebuild all the rig widgets. if unset, only missing widgets will be created",
         default=False)
 
+    bpy.types.Armature.rigify_mirror_widgets = BoolProperty(name="Mirror Widgets",
+        description="Make widgets for left and right side bones linked duplicates with negative X scale for the right side, based on bone name symmetry",
+        default=True)
+
     bpy.types.Armature.rigify_target_rig = PointerProperty(type=bpy.types.Object,
         name="Rigify Target Rig",
         description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
@@ -533,6 +542,10 @@ def register():
     bpy.types.Armature.rigify_rig_ui = PointerProperty(type=bpy.types.Text,
         name="Rigify Target Rig UI",
         description="Defines the UI to overwrite. If unset, 'rig_ui.py' will be used")
+
+    bpy.types.Armature.rigify_finalize_script = PointerProperty(type=bpy.types.Text,
+        name="Finalize Script",
+        description="Run this script after generation to apply user-specific changes")
 
     bpy.types.Armature.rigify_rig_basename = StringProperty(name="Rigify Rig Name",
         description="Defines the name of the Rig. If unset, in 'new' mode 'rig' will be used, in 'overwrite' mode the target rig name will be used",

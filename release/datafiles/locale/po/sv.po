@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2774,6 +2774,18 @@ msgid "Active Spline"
 msgstr "Aktiv spline"
 
 
+msgid "Dash"
+msgstr "Streckad"
+
+
+msgid "Material Index"
+msgstr "Spara som"
+
+
+msgid "Radius"
+msgstr "Radie"
+
+
 msgid "Viewport"
 msgstr "Visa"
 
@@ -4155,10 +4167,6 @@ msgid "Preview"
 msgstr "Förhandsgranska"
 
 
-msgid "Radius"
-msgstr "Radie"
-
-
 msgid "Strength of noise"
 msgstr "Styrka"
 
@@ -4457,10 +4465,6 @@ msgstr "Bild Zoom"
 
 msgid "End Cap"
 msgstr "Aktivera alla Nyckelbilder"
-
-
-msgid "Material Index"
-msgstr "Spara som"
 
 
 msgid "Stroke Points"
@@ -12751,11 +12755,6 @@ msgstr "Visa Alla"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Extrudera"
-
-
-msgctxt "Operator"
 msgid "Delete Selected Bone(s)"
 msgstr "Markera Länkad"
 
@@ -14305,11 +14304,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Vektor Måla"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Markera Länkad"
 
@@ -15161,6 +15155,14 @@ msgid "Subdivisions"
 msgstr "Uppdelningar"
 
 
+msgid "Modifier"
+msgstr "Radera Allt"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Sökväg till Pythonfilen som skall köras"
+
+
 msgid "Mouse location"
 msgstr "Rensa Placering"
 
@@ -15805,6 +15807,11 @@ msgstr "Fast punkt"
 
 msgid "Slide control points"
 msgstr "Markera Länkad"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Vektor Måla"
 
 
 msgid "Add vertex to active spline"
@@ -17742,14 +17749,6 @@ msgstr "Göm Markerad"
 
 msgid "Type of object to convert to"
 msgstr "Bild Displist"
-
-
-msgid "Modifier"
-msgstr "Radera Allt"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Sökväg till Pythonfilen som skall köras"
 
 
 msgid "Exact Match"
@@ -20313,10 +20312,6 @@ msgstr "Flytta Till Lager"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Skapa Förälder"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Duplicera aktivt Blenderfönster"
 
 
 msgid "Remove unused settings for invisible editors"
@@ -25439,10 +25434,6 @@ msgstr "Markera Länkad"
 
 msgid "Outline"
 msgstr "Kontur"
-
-
-msgid "Dash"
-msgstr "Streckad"
 
 
 msgid "Length of displaying path, in frames"

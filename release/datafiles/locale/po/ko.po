@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -7432,6 +7432,18 @@ msgid "Active curve spline"
 msgstr "활성 커브 스플라인"
 
 
+msgid "Dash"
+msgstr "돌진"
+
+
+msgid "Material Index"
+msgstr "매테리얼 인댁스"
+
+
+msgid "Radius"
+msgstr "반경"
+
+
 msgid "Dependency Graph"
 msgstr "의존 그래프"
 
@@ -11369,10 +11381,6 @@ msgid "Preview"
 msgstr "미리보기"
 
 
-msgid "Radius"
-msgstr "반경"
-
-
 msgid "Mesh scale"
 msgstr "메쉬 축적"
 
@@ -12385,10 +12393,6 @@ msgid "Select hidden feature edges"
 msgstr "숨겨진 특성 에지를 선택"
 
 
-msgid "QI Range"
-msgstr "QI 범위"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "양적 투명성(QI) 값의 범위 내에서 특성 에지를 선택"
 
@@ -12461,16 +12465,8 @@ msgid "Select the Freestyle control mode"
 msgstr "프리스타일 컨트롤 모드를 선택"
 
 
-msgid "Python Scripting Mode"
-msgstr "Python 스크립팅 모드"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Python으로 작성된 스타일 모듈을 사용하기위한 고급 모드"
-
-
-msgid "Parameter Editor Mode"
-msgstr "매개 변수 에디터 모드"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -12483,14 +12479,6 @@ msgstr "구체 반경"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "컴퓨팅 곡률에 대한 구체 반경"
-
-
-msgid "Advanced Options"
-msgstr "고급 옵션"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "고급의 에지 감지 옵션을 사용 (구체 반지름 및 디리버티브 엡실론)"
 
 
 msgid "Culling"
@@ -13145,10 +13133,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "스트로크의 두께 (픽셀 단위)"
 
 
-msgid "Material Index"
-msgstr "매테리얼 인댁스"
-
-
 msgid "Stroke Points"
 msgstr "스트로크 포인트"
 
@@ -13373,10 +13357,6 @@ msgstr "지속적"
 
 msgid "Show Modal All"
 msgstr "모든 모달을 표시"
-
-
-msgid "Show all while interacting"
-msgstr "상호 작용하는 동안 모두 표시"
 
 
 msgid "Tool Init"
@@ -33841,6 +33821,10 @@ msgid "Denoise"
 msgstr "디노이즈"
 
 
+msgid "Accurate"
+msgstr "정확한"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -37734,8 +37718,8 @@ msgstr "뷰 축"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "클릭-돌출"
+msgid "Extrude to Cursor"
+msgstr "커서로 돌출"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -40432,11 +40416,6 @@ msgstr "기울기를 지우기"
 
 msgid "Clear the tilt of selected control points"
 msgstr "선택된 컨트롤 포인트의 기울기를 지우기"
-
-
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "버텍스를 추가"
 
 
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
@@ -43164,6 +43143,14 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "그리스 펜슬 스트로크의 스컬프트 모드를 들어가기/나가기"
 
 
+msgid "Modifier"
+msgstr "모디파이어"
+
+
+msgid "Name of the modifier to edit"
+msgstr "편집하는 모디파이어의 이름"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "그리스 펜슬 스트로크 및/또는 스트로크 포인트를 선택"
 
@@ -45334,6 +45321,11 @@ msgid "Slide control points"
 msgstr "슬라이드 컨트롤 포인트"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "버텍스를 추가"
+
+
 msgid "Add vertex to active spline"
 msgstr "활성 스플라인에 버텍스를 추가"
 
@@ -46159,11 +46151,6 @@ msgstr "눈물 경계"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "페이스를 병합하는 대신 페이스 코너를 분할합니다"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "커서로 돌출 또는 복제"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -47082,10 +47069,6 @@ msgstr "비례 크기"
 
 msgid "Always confirm operation when releasing button"
 msgstr "버튼을 해제할 때 작업을 항상 확인"
-
-
-msgid "Accurate"
-msgstr "정확한"
 
 
 msgid "Use accurate transformation"
@@ -49602,14 +49585,6 @@ msgstr "코렉티브 스무스 결속"
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "코렉티브 스무스 모디파이어에서 기본 포즈를 결속"
-
-
-msgid "Modifier"
-msgstr "모디파이어"
-
-
-msgid "Name of the modifier to edit"
-msgstr "편집하는 모디파이어의 이름"
 
 
 msgctxt "Operator"
@@ -55406,18 +55381,6 @@ msgstr "이용 가능한 화면을 통해 사이클"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "스크린샷을 저장"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "활성 영역 또는 전체 블렌더 창의 이미지를 캡처"
-
-
-msgid "Full Screen"
-msgstr "전체 화면"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "전체 창을 캡처 (그렇지 않으면 활성 영역 만 캡처)"
 
 
 msgctxt "Operator"
@@ -63132,11 +63095,6 @@ msgid "Bone Envelope"
 msgstr "본 엔벨로프"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "커서로 돌출"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "자유롭게 또는 축을 따라 돌출"
 
@@ -63427,6 +63385,10 @@ msgstr "변환 오리엔테이션"
 
 msgid "View Lock"
 msgstr "뷰 잠금"
+
+
+msgid "Face Marks"
+msgstr "페이스 마크"
 
 
 msgid "Filter Add-ons"
@@ -64655,6 +64617,14 @@ msgstr "뷰 & 컨트롤"
 
 msgid "Preferences related to viewing data"
 msgstr "데이터 뷰에 관련된 환경 설정"
+
+
+msgid "Corner Splitting"
+msgstr "코너 분할"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "모서리에서 드래그하여 에디터를 분할하고 결합합니다"
 
 
 msgid "Auto Keying Mode"
@@ -66167,14 +66137,6 @@ msgstr "개발자를 위한 옵션 표시 (컨텍스트 메뉴의 소스 편집,
 
 msgid "Use transform gizmos by default"
 msgstr "기본적으로 변형 기즈모를 사용"
-
-
-msgid "Editor Corner Splitting"
-msgstr "에디터 모서리 분할하기"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "모서리에서 드래그하여 에디터를 분할하고 결합합니다"
 
 
 msgid "Navigation Controls"
@@ -72259,10 +72221,6 @@ msgstr "윤곽선"
 
 msgid "Display white edges with black outline"
 msgstr "블랙 윤곽선과 함께 화이트 에지를 표시"
-
-
-msgid "Dash"
-msgstr "돌진"
 
 
 msgid "Display dashed black-white edges"
@@ -80035,110 +79993,6 @@ msgid "Detail"
 msgstr "디테일"
 
 
-msgid "Edge Detection Options:"
-msgstr "에지 감지 옵션:"
-
-
-msgid "Priority"
-msgstr "우선권"
-
-
-msgid "Selection By:"
-msgstr "다음으로 선택:"
-
-
-msgid "Edge Types"
-msgstr "에지 유형"
-
-
-msgid "Face Marks"
-msgstr "페이스 마크"
-
-
-msgid "Image Border"
-msgstr "이미지 경계"
-
-
-msgid "Chaining:"
-msgstr "연쇄:"
-
-
-msgid "Splitting:"
-msgstr "분할:"
-
-
-msgid "D1"
-msgstr "D1"
-
-
-msgid "G1"
-msgstr "G1"
-
-
-msgid "D2"
-msgstr "D2"
-
-
-msgid "G2"
-msgstr "G2"
-
-
-msgid "D3"
-msgstr "D3"
-
-
-msgid "G3"
-msgstr "G3"
-
-
-msgid "Sorting:"
-msgstr "분류:"
-
-
-msgid "Selection:"
-msgstr "선택:"
-
-
-msgid "Caps:"
-msgstr "캡:"
-
-
-msgid "Dashed Line:"
-msgstr "점선:"
-
-
-msgid "Visibility:"
-msgstr "가시성:"
-
-
-msgid "Edge Types:"
-msgstr "에지 유형:"
-
-
-msgid "Face Marks:"
-msgstr "페이스 마크:"
-
-
-msgid "Collection:"
-msgstr "컬렉션:"
-
-
-msgid "Base Color:"
-msgstr "베이스 컬러:"
-
-
-msgid "Modifiers:"
-msgstr "모디파이어:"
-
-
-msgid "Base Transparency:"
-msgstr "베이스 투명도:"
-
-
-msgid "Base Thickness:"
-msgstr "베이스 두께:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "스트로크를 따라 간격"
 
@@ -80146,6 +80000,14 @@ msgstr "스트로크를 따라 간격"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "라인스타일 택스처 속성으로 이동"
+
+
+msgid "Priority"
+msgstr "우선권"
+
+
+msgid "Image Border"
+msgstr "이미지 경계"
 
 
 msgid "Draw:"
@@ -82866,10 +82728,6 @@ msgstr "힌팅"
 
 msgid "New Data"
 msgstr "새로운 데이터"
-
-
-msgid "Corner Splitting"
-msgstr "코너 분할"
 
 
 msgid "Top Level"

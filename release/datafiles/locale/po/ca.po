@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2355,6 +2355,10 @@ msgid "Active Spline"
 msgstr "Moure a Capa"
 
 
+msgid "Material Index"
+msgstr "Guardar com"
+
+
 msgid "Viewport"
 msgstr "Esborrar Rotació"
 
@@ -3782,10 +3786,6 @@ msgstr "Zoom d'Imatge"
 
 msgid "End Cap"
 msgstr "Mostrar tots els fotogrames"
-
-
-msgid "Material Index"
-msgstr "Guardar com"
 
 
 msgid "Stroke Points"
@@ -11055,11 +11055,6 @@ msgstr "Mostrar Tot"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Extrusionar"
-
-
-msgctxt "Operator"
 msgid "Delete Selected Bone(s)"
 msgstr "Seleccionar connectats"
 
@@ -12393,11 +12388,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "Seleccionar connectats"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Pintura Vectorial"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Seleccionar connectats"
 
@@ -13095,6 +13085,14 @@ msgid "Remove Mask Layer"
 msgstr "Moure a Capa"
 
 
+msgid "Modifier"
+msgstr "Esborrar tot"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Image Displist"
+
+
 msgid "Mouse location"
 msgstr "Esborrar Posició"
 
@@ -13657,6 +13655,11 @@ msgstr "Partir"
 
 msgid "Slide control points"
 msgstr "Seleccionar connectats"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Pintura Vectorial"
 
 
 msgid "Add vertex to active spline"
@@ -15417,14 +15420,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Copy constraints to other selected objects"
 msgstr "Seleccionar connectats"
-
-
-msgid "Modifier"
-msgstr "Esborrar tot"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Image Displist"
 
 
 msgid "Exact Match"
@@ -17569,10 +17564,6 @@ msgstr "Esborrar Str"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Emparentar"
-
-
-msgid "Full Screen"
-msgstr "Pantalla completa"
 
 
 msgctxt "Operator"

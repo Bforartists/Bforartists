@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -1886,11 +1886,6 @@ msgid "Spin"
 msgstr "Буроо"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Чокуну кошуу"
-
-
 msgid "Output A"
 msgstr "Чыгыш A"
 
@@ -2085,6 +2080,11 @@ msgstr "Көлөкөлөөсүз"
 
 msgid "Image Search"
 msgstr "Сүрөттөрдү издөө"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Чокуну кошуу"
 
 
 msgctxt "Operator"
@@ -2436,10 +2436,6 @@ msgstr "Акыркы аракетти кайталоо"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Скриншотту сактоо"
-
-
-msgid "Full Screen"
-msgstr "Толук экран"
 
 
 msgctxt "Operator"
