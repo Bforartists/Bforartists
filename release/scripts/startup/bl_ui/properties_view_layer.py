@@ -278,10 +278,7 @@ class ViewLayerCryptomattePanel(ViewLayerButtonsPanel, Panel):
             row = col.row()
             row.separator()
             row.prop(view_layer, "pass_cryptomatte_depth", text="Levels")
-            row = col.row()
-            row.separator()
-            row.use_property_split = False
-            row.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
+
         else:
             split = layout.split()
             row = split.row()

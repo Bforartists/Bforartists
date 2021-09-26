@@ -177,6 +177,9 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
                 if armature_id_store.rigify_generate_mode == 'new':
                     row.enabled = False
 
+                col.prop(armature_id_store, "rigify_mirror_widgets")
+                col.prop(armature_id_store, "rigify_finalize_script", text="Run Script")
+
         elif obj.mode == 'EDIT':
             # Build types list
             build_type_list(context, id_store.rigify_types)

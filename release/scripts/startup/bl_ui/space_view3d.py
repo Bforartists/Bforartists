@@ -2444,8 +2444,6 @@ class VIEW3D_MT_object_relations(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.proxy_make", text="Make Proxy", icon='MAKE_PROXY')
-
         layout.operator("object.make_override_library", text="Make Library Override", icon = "LIBRARY_DATA_OVERRIDE")
 
         layout.operator("object.convert_proxy_to_override", icon='PROXY_OVERRIDE')
@@ -3945,6 +3943,7 @@ class VIEW3D_MT_pose_slide(Menu):
         layout.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
         layout.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
+        layout.operator("pose.blend_to_neighbour")
 
 
 class VIEW3D_MT_pose_propagate(Menu):
@@ -4103,6 +4102,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.operator("pose.push", icon = 'PUSH_POSE')
         layout.operator("pose.relax", icon = 'RELAX_POSE')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
+        layout.operator("pose.blend_to_neighbour")
 
         layout.separator()
 

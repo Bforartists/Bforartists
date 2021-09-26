@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -5056,6 +5056,18 @@ msgid "Active Spline"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
 
 
+msgid "Dash"
+msgstr "ﻑﺬﻗﺍ"
+
+
+msgid "Material Index"
+msgstr "ﺔﻣﺎﺧ ﺮﺷﺆﻣ"
+
+
+msgid "Radius"
+msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
+
+
 msgid "Dependency Graph"
 msgstr "ﺩﺎﻤﺘﻋﻹ﻿ﺍ ﻞﺴﻠﺴﺗ ﻢﺳﺭ"
 
@@ -7897,10 +7909,6 @@ msgid "Preview"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ"
 
 
-msgid "Radius"
-msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
-
-
 msgid "Time"
 msgstr "ﻦﻣﺰﻟﺍ"
 
@@ -8385,10 +8393,6 @@ msgid "Select hidden feature edges"
 msgstr "ﺔﻴﻔﺨﻤﻟﺍ ﺔﻴﺴﻴﺋﺮﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺮﺘﺧﺍ"
 
 
-msgid "QI Range"
-msgstr "QI ﻯﺪﻣ"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "ﺔﻴﻤﻜﻟﺍ ﺔﻳﺮﻫﺎﻈﻟﺍ ﻡﺪﻋ ﻢﻴﻗ ﻯﺪﻣ ﻦﻤﺿ ﻲﺘﻟﺍ ﺔﻴﺴﻴﺋﺮﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺮﺘﺧﺍ"
 
@@ -8457,16 +8461,8 @@ msgid "Select the Freestyle control mode"
 msgstr "ﻞﻳﺎﺘﺴﻳﺮﻔﻟ ﻢﻜﺤﺘﻟﺍ ﻊﺿﻭ ﺮﺘﺧﺍ"
 
 
-msgid "Python Scripting Mode"
-msgstr "ﻥﻮﺜﻳﺎﺒﻟﺍ ﺺﻧ ﻊﺿﻭ"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "ﻥﻮﺜﻳﺎﺑ ﻲﻓ ﺔﺑﻮﺘﻜﻤﻟﺍ ﻂﻤﻨﻟﺍ ﺕﺍﺪﺣﻭ ﻡﺍﺪﺨﺘﺳﻹ﻿ ﻡﺪﻘﺘﻣ ﻊﺿﻭ"
-
-
-msgid "Parameter Editor Mode"
-msgstr "ﻞﻣﺍﻮﻌﻟﺍ ﺭﺮﺤﻣ ﻊﺿﻭ"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -8479,14 +8475,6 @@ msgstr "ﺓﺮﻜﻟﺍ ﺮﻄﻗ ﻒﺼﻧ"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "ﺕﺎﻴﻨﺤﻨﻤﻟﺍ ﺏﺎﺴﺤﻟ ﺓﺮﻜﻟﺍ ﺮﻄﻗ ﻒﺼﻧ"
-
-
-msgid "Advanced Options"
-msgstr "ﺔﻣﺪﻘﺘﻣ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "(ﻥﻮﻠﻴﺴﺑﺍ ﺭﺍ ﻲﻛ ﺔﻘﺘﺸﻣ ﻭ ﺓﺮﻜﻟﺍ ﺮﻄﻗ ﻒﺼﻧ) ﺔﻣﺪﻘﺘﻤﻟﺍ ﺔﻓﺎﺤﻟﺍ ﻱﺮّﺤﺗ ﺕﺍﺭﺎﻴﺧ ﻞﻌّﻓ"
 
 
 msgid "Culling"
@@ -8747,10 +8735,6 @@ msgstr "(ﺓﺭﻮﺼﻠﻟ ﺹﺎﺧ ﻢﻴﺠﺤﺗ ﻊﻣ ﻦﻜﻟ) ﻲﺋ�
 
 msgid "End Cap"
 msgstr "ﺔﻳﺎﻬﻨﻟﺍ ﺓﺮﻴﻜﺴﺗ"
-
-
-msgid "Material Index"
-msgstr "ﺔﻣﺎﺧ ﺮﺷﺆﻣ"
 
 
 msgid "Stroke Points"
@@ -22251,11 +22235,6 @@ msgstr "ﻲﻤﻟﺎﻋ Z- ﺭﻮﺤﻣ"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "ﻖﺜﺑﺍ-ﻂﻐﺿﺍ"
-
-
-msgctxt "Operator"
 msgid "Delete Selected Bone(s)"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻑﺬﺣﺍ"
 
@@ -23597,11 +23576,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻢﻜﺤﺘﻟﺍ ﻂﻘﻧ ﻥﻼ﻿ﻴﻣ �
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "ﺔﻄﻘﻧ ﻒﺿﺍ"
-
-
-msgctxt "Operator"
 msgid "Use Nodes"
 msgstr "ﺪﻘﻌﻟﺍ ﻡﺪﺨﺘﺳﺇ"
 
@@ -24857,6 +24831,11 @@ msgid "Slide control points"
 msgstr "ﻢﻜﺤﺘﻟﺍ ﻂﻘﻧ ﻙﺮّﺣ"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "ﺔﻄﻘﻧ ﻒﺿﺍ"
+
+
 msgid "Add vertex to active spline"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﻰﻨﺤﻨﻤﻠﻟ ﺔﻄﻘﻧ ﻒﺿﺍ"
 
@@ -25235,11 +25214,6 @@ msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻞﻠّﺣ"
 
 msgid "Tear Boundary"
 msgstr "ﻕﺰﻤﺘﻟﺍ ﺪﺣ"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "ﺔﻟﺍﺪﻠﻟ ﻖﺜﺑﺇ ﻭﺃ ﺭﺮﻛ"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -28724,14 +28698,6 @@ msgid "Save Screenshot"
 msgstr "ﺔﺷﺎﺸﻟﺍ ﺓﺭﻮﺻ ﻆﻔﺣﺍ"
 
 
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "ﺭﺪﻨﻠﺑ ﺓﺬﻓﺎﻧ ﻞﻣﺎﻛ ﻭﺍ ﺔﻟﺎﻌﻔﻟﺍ ﺔﻘﻄﻨﻤﻠﻟ ﺓﺭﻮﺻ ﻂﻘﺘﻟﺍ"
-
-
-msgid "Full Screen"
-msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ"
-
-
 msgid "Remove unused settings for invisible editors"
 msgstr "ﺔﻴﻔﺨﻤﻟﺍ ﺕﺍﺭﺮﺤﻤﻠﻟ ﺔﻣﺪﺨﺘﺴﻣ ﺮﻴﻐﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺬﺣﺍ"
 
@@ -31201,6 +31167,10 @@ msgstr "ﺔﻔﻗﻮﻟﺍ ﺕﺍﺭﺎﻴﺧ"
 
 msgid "Transform Orientations"
 msgstr "ﻝﻮﺤﺘﻟﺍ ﺕﺎﻫﺎﺠﺗﺍ"
+
+
+msgid "Face Marks"
+msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻣﻼ﻿ﻋ"
 
 
 msgid "Particle in a particle system"
@@ -35189,10 +35159,6 @@ msgid "Outline"
 msgstr "ﺭﺎﻃﺍ"
 
 
-msgid "Dash"
-msgstr "ﻑﺬﻗﺍ"
-
-
 msgid "Overlay Mode"
 msgstr "ﺔﻴﻄﻐﺘﻟﺍ ﻊﺿﻭ"
 
@@ -37809,46 +37775,6 @@ msgstr "ﻞﻴﺼﻔﺘﻟﺍ"
 
 msgid "Priority"
 msgstr "ﺔﻳﻮﻟﻭﻷ﻿ﺍ"
-
-
-msgid "Face Marks"
-msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻣﻼ﻿ﻋ"
-
-
-msgid "Chaining:"
-msgstr ":ﻊﺑﺎﺘﺘﻟﺍ"
-
-
-msgid "Splitting:"
-msgstr ":ﻞﺼﻔﻟﺍ"
-
-
-msgid "Sorting:"
-msgstr ":ﺐﻴﺗﺮﺘﻟﺍ"
-
-
-msgid "Selection:"
-msgstr ":ﺭﺎﻴﺘﺧﻹ﻿ﺍ"
-
-
-msgid "Visibility:"
-msgstr ":ﺔﻳﺮﻫﺎﻈﻟﺍ"
-
-
-msgid "Face Marks:"
-msgstr ":ﻪﺟﻮﻟﺍ ﺕﺎﻣﻼ﻿ﻋ"
-
-
-msgid "Modifiers:"
-msgstr ":ﺕﺍﺮﻴّﻐﻤﻟﺍ"
-
-
-msgid "Base Transparency:"
-msgstr ":ﺔﻴﺳﺎﺳﻻ﻿ﺍ ﺔﻴﻓﺎﻔﺸﻟﺍ"
-
-
-msgid "Base Thickness:"
-msgstr ":ﺔﻴﺳﺎﺳﻻ﻿ﺍ ﺔﻛﺎﻤﺴﻟﺍ"
 
 
 msgid "Draw:"

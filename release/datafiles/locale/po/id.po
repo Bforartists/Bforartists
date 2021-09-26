@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-01 15:12+0700\n"
@@ -8259,10 +8259,6 @@ msgid "Hidden"
 msgstr "Tersembunyi"
 
 
-msgid "QI Range"
-msgstr "Kisaran QI"
-
-
 msgid "Use"
 msgstr "Gunakan"
 
@@ -15654,11 +15650,6 @@ msgstr "Orientasi Transformasi"
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
 msgid "Remove Surface Slot"
 msgstr "Induk"
 
@@ -15943,6 +15934,14 @@ msgstr "Hanya Aktif"
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Warna Standar"
+
+
+msgid "Modifier"
+msgstr "Pengubah"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Nama pengubah untuk diedit"
 
 
 msgid "Select Mode"
@@ -16418,6 +16417,11 @@ msgstr "Warna Standar"
 
 msgid "Slide control points"
 msgstr "Material"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Warna Standar"
 
 
 msgctxt "Operator"
@@ -17271,14 +17275,6 @@ msgstr "Tambah Pembatas"
 
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Pensil Grease dari Kurva atau objek Mesh"
-
-
-msgid "Modifier"
-msgstr "Pengubah"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Nama pengubah untuk diedit"
 
 
 msgctxt "Operator"
@@ -18517,10 +18513,6 @@ msgstr "Gerakan"
 msgctxt "Operator"
 msgid "Set Screen"
 msgstr "Adegan"
-
-
-msgid "Full Screen"
-msgstr "Layar Penuh"
 
 
 msgctxt "Operator"
@@ -23399,84 +23391,16 @@ msgid "Failed to load volume:"
 msgstr "Gagal memuat volume:"
 
 
+msgid "Spacing Along Stroke"
+msgstr "Spasi Sepanjang Garis Luar"
+
+
 msgid "Priority"
 msgstr "Prioritas"
 
 
-msgid "Style Modules:"
-msgstr "Modul Gaya:"
-
-
-msgid "Selection By:"
-msgstr "Seleksi Oleh:"
-
-
-msgid "Edge Types"
-msgstr "Tipe Ujung"
-
-
 msgid "Image Border"
 msgstr "Border Gambar"
-
-
-msgid "D1"
-msgstr "D1"
-
-
-msgid "G1"
-msgstr "G1"
-
-
-msgid "D2"
-msgstr "D2"
-
-
-msgid "G2"
-msgstr "G2"
-
-
-msgid "D3"
-msgstr "D3"
-
-
-msgid "G3"
-msgstr "G3"
-
-
-msgid "Sorting:"
-msgstr "Penyortiran:"
-
-
-msgid "Selection:"
-msgstr "Seleksi:"
-
-
-msgid "Visibility:"
-msgstr "Penampakan:"
-
-
-msgid "Collection:"
-msgstr "Koleksi:"
-
-
-msgid "Base Color:"
-msgstr "Warna Dasar:"
-
-
-msgid "Modifiers:"
-msgstr "Pengubah:"
-
-
-msgid "Base Transparency:"
-msgstr "Transparansi Dasar:"
-
-
-msgid "Base Thickness:"
-msgstr "Ketebalan Dasar:"
-
-
-msgid "Spacing Along Stroke"
-msgstr "Spasi Sepanjang Garis Luar"
 
 
 msgid "Draw:"

@@ -24,12 +24,16 @@
 #include "DNA_collection_types.h"
 
 #include "BKE_geometry_set.hh"
+#include "BKE_geometry_set_instances.hh"
+
+#include "attribute_access_intern.hh"
 
 using blender::float4x4;
 using blender::Map;
 using blender::MutableSpan;
 using blender::Set;
 using blender::Span;
+using blender::VectorSet;
 
 /* -------------------------------------------------------------------- */
 /** \name Geometry Component Implementation
@@ -118,6 +122,52 @@ blender::Span<int> InstancesComponent::instance_ids() const
 }
 
 /**
+ * If references have a collection or object type, convert them into geometry instances. This
+ * will join geometry components from nested instances if necessary. After that, the geometry
+ * sets can be edited.
+ */
+void InstancesComponent::ensure_geometry_instances()
+{
+  VectorSet<InstanceReference> new_references;
+  new_references.reserve(references_.size());
+  for (const InstanceReference &reference : references_) {
+    if (reference.type() == InstanceReference::Type::Object) {
+      GeometrySet geometry_set;
+      InstancesComponent &instances = geometry_set.get_component_for_write<InstancesComponent>();
+      const int handle = instances.add_reference(reference.object());
+      instances.add_instance(handle, float4x4::identity());
+      new_references.add_new(geometry_set);
+    }
+    else if (reference.type() == InstanceReference::Type::Collection) {
+      GeometrySet geometry_set;
+      InstancesComponent &instances = geometry_set.get_component_for_write<InstancesComponent>();
+      const int handle = instances.add_reference(reference.collection());
+      instances.add_instance(handle, float4x4::identity());
+      new_references.add_new(geometry_set);
+    }
+    else {
+      new_references.add_new(reference);
+    }
+  }
+  references_ = std::move(new_references);
+}
+
+/**
+ * With write access to the instances component, the data in the instanced geometry sets can be
+ * changed. This is a function on the component rather than each reference to ensure `const`
+ * correctness for that reason.
+ */
+GeometrySet &InstancesComponent::geometry_set_from_reference(const int reference_index)
+{
+  /* If this assert fails, it means #ensure_geometry_instances must be called first. */
+  BLI_assert(references_[reference_index].type() == InstanceReference::Type::GeometrySet);
+
+  /* The const cast is okay because the instance's hash in the set
+   * is not changed by adjusting the data inside the geometry set. */
+  return const_cast<GeometrySet &>(references_[reference_index].geometry_set());
+}
+
+/**
  * Returns a handle for the given reference.
  * If the reference exists already, the handle of the existing reference is returned.
  * Otherwise a new handle is added.
@@ -135,6 +185,11 @@ blender::Span<InstanceReference> InstancesComponent::references() const
 int InstancesComponent::instances_amount() const
 {
   return instance_transforms_.size();
+}
+
+int InstancesComponent::references_amount() const
+{
+  return references_.size();
 }
 
 bool InstancesComponent::is_empty() const
@@ -223,6 +278,87 @@ blender::Span<int> InstancesComponent::almost_unique_ids() const
     almost_unique_ids_ = generate_unique_instance_ids(instance_ids_);
   }
   return almost_unique_ids_;
+}
+
+int InstancesComponent::attribute_domain_size(const AttributeDomain domain) const
+{
+  if (domain != ATTR_DOMAIN_POINT) {
+    return 0;
+  }
+  return this->instances_amount();
+}
+
+namespace blender::bke {
+
+static float3 get_transform_position(const float4x4 &transform)
+{
+  return transform.translation();
+}
+
+static void set_transform_position(float4x4 &transform, const float3 position)
+{
+  copy_v3_v3(transform.values[3], position);
+}
+
+class InstancePositionAttributeProvider final : public BuiltinAttributeProvider {
+ public:
+  InstancePositionAttributeProvider()
+      : BuiltinAttributeProvider(
+            "position", ATTR_DOMAIN_POINT, CD_PROP_FLOAT3, NonCreatable, Writable, NonDeletable)
+  {
+  }
+
+  GVArrayPtr try_get_for_read(const GeometryComponent &component) const final
+  {
+    const InstancesComponent &instances_component = static_cast<const InstancesComponent &>(
+        component);
+    Span<float4x4> transforms = instances_component.instance_transforms();
+    return std::make_unique<fn::GVArray_For_DerivedSpan<float4x4, float3, get_transform_position>>(
+        transforms);
+  }
+
+  GVMutableArrayPtr try_get_for_write(GeometryComponent &component) const final
+  {
+    InstancesComponent &instances_component = static_cast<InstancesComponent &>(component);
+    MutableSpan<float4x4> transforms = instances_component.instance_transforms();
+    return std::make_unique<fn::GVMutableArray_For_DerivedSpan<float4x4,
+                                                               float3,
+                                                               get_transform_position,
+                                                               set_transform_position>>(
+        transforms);
+  }
+
+  bool try_delete(GeometryComponent &UNUSED(component)) const final
+  {
+    return false;
+  }
+
+  bool try_create(GeometryComponent &UNUSED(component),
+                  const AttributeInit &UNUSED(initializer)) const final
+  {
+    return false;
+  }
+
+  bool exists(const GeometryComponent &UNUSED(component)) const final
+  {
+    return true;
+  }
+};
+
+static ComponentAttributeProviders create_attribute_providers_for_instances()
+{
+  static InstancePositionAttributeProvider position;
+
+  return ComponentAttributeProviders({&position}, {});
+}
+}  // namespace blender::bke
+
+const blender::bke::ComponentAttributeProviders *InstancesComponent::get_attribute_providers()
+    const
+{
+  static blender::bke::ComponentAttributeProviders providers =
+      blender::bke::create_attribute_providers_for_instances();
+  return &providers;
 }
 
 /** \} */

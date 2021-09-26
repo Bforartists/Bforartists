@@ -106,6 +106,9 @@ def addColorCorrectors(material):
 
 
 def modelProxy():
+    utils.p('No proxies in Blender anymore')
+    return False
+    
     s = bpy.context.scene
     ao = bpy.context.active_object
     if utils.is_linked_asset(ao):
@@ -128,7 +131,7 @@ def modelProxy():
             new_ao.empty_display_type = 'SPHERE'
             new_ao.empty_display_size *= 0.1
 
-            bpy.ops.object.proxy_make(object=rigs[0].name)
+            # bpy.ops.object.proxy_make(object=rigs[0].name)
             proxy = bpy.context.active_object
             bpy.context.view_layer.objects.active = ao
             ao.select_set(True)

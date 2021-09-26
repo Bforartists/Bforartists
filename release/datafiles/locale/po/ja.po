@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1053,8 +1053,16 @@ msgid "3D vector with floating-point values"
 msgstr "浮動小数点数値の3Dベクトル"
 
 
+msgid "RGBA color with floating-point values"
+msgstr "浮動小数点数値の RGBA カラー"
+
+
 msgid "Byte Color"
 msgstr "Byteカラー"
+
+
+msgid "RGBA color with 8-bit values"
+msgstr "8ビット数値の RGBA カラー"
 
 
 msgid "String"
@@ -1145,8 +1153,16 @@ msgid "Byte Color Attribute"
 msgstr "Byteカラー属性"
 
 
+msgid "Color geometry attribute, with 8-bit values"
+msgstr "8ビット数値のカラージオメトリ属性"
+
+
 msgid "Float2 Attribute"
 msgstr "Float2属性"
+
+
+msgid "2D vector geometry attribute, with floating-point values"
+msgstr "浮動小数点数値の2Dベクトルジオメトリ属性"
 
 
 msgid "Float Attribute"
@@ -1161,8 +1177,16 @@ msgid "Float Color Attribute"
 msgstr "Floatカラー属性"
 
 
+msgid "Color geometry attribute, with floating-point values"
+msgstr "浮動小数点数値のカラージオメトリ属性"
+
+
 msgid "Float Vector Attribute"
 msgstr "Floatベクトル属性"
+
+
+msgid "Vector geometry attribute, with floating-point values"
+msgstr "浮動小数点数値のベクトルジオメトリ属性"
 
 
 msgid "Int Attribute"
@@ -8399,6 +8423,18 @@ msgid "Active curve spline"
 msgstr "アクティブなカーブスプライン"
 
 
+msgid "Dash"
+msgstr "点線"
+
+
+msgid "Material Index"
+msgstr "マテリアルインデックス"
+
+
+msgid "Radius"
+msgstr "半径"
+
+
 msgid "Dependency Graph"
 msgstr "依存グラフ"
 
@@ -11933,6 +11969,10 @@ msgid "Relative Path"
 msgstr "相対パス"
 
 
+msgid "Path relative to the directory currently displayed in the File Browser (includes the file name)"
+msgstr "現在ファイルブラウザー内に表示されているディレクトリと相対的なパス（ファイル名も含む）"
+
+
 msgid "File Select ID Filter"
 msgstr "ファイル選択IDフィルター"
 
@@ -13091,10 +13131,6 @@ msgstr "プレビュー"
 
 msgid "Use union particle level set (faster but lower quality)"
 msgstr "融合パーティクルレベルセットを使用します（高速だが低品質）"
-
-
-msgid "Radius"
-msgstr "半径"
 
 
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
@@ -14479,10 +14515,6 @@ msgid "Select hidden feature edges"
 msgstr "隠れている特徴エッジを選択します"
 
 
-msgid "QI Range"
-msgstr "QI範囲"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "定量的不可視(QI)値の範囲内の特徴エッジを選択します"
 
@@ -14565,16 +14597,8 @@ msgid "Select the Freestyle control mode"
 msgstr "Freestyleのコントロールモードを選択します"
 
 
-msgid "Python Scripting Mode"
-msgstr "Pythonスクリプトモード"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Pythonで書かれたスタイルモジュールを使用する上級者モード"
-
-
-msgid "Parameter Editor Mode"
-msgstr "パラメーター編集モード"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -14587,14 +14611,6 @@ msgstr "球半径"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "曲率計算用の球半径"
-
-
-msgid "Advanced Options"
-msgstr "詳細オプション"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "詳細なエッジ検知オプション（球半径とKr派生イプシロン）を有効にします"
 
 
 msgid "Culling"
@@ -14851,6 +14867,10 @@ msgstr "前方フレーム数"
 
 msgid "Maximum number of frames to show before current frame"
 msgstr "現在のフレームより前に表示する最大フレーム数"
+
+
+msgid "Annotation Layer Opacity"
+msgstr "アノテーションレイヤー不透明度"
 
 
 msgid "Blend Mode"
@@ -15419,10 +15439,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "ストロークの幅 (ピクセル)"
 
 
-msgid "Material Index"
-msgstr "マテリアルインデックス"
-
-
 msgid "Material slot index of this stroke"
 msgstr "このストロークのマテリアルスロットインデックス"
 
@@ -15737,10 +15753,6 @@ msgstr "持続"
 
 msgid "Show Modal All"
 msgstr "モーダル時全表示"
-
-
-msgid "Show all while interacting"
-msgstr "操作中、すべて表示します"
 
 
 msgid "Tool Init"
@@ -35184,6 +35196,10 @@ msgid "Control playback using a value between 0 and 1"
 msgstr "0から1の値で再生をコントロールします"
 
 
+msgid "Name of the Vertex Group which determines the influence of the modifier per point"
+msgstr "ポイント毎のモディファイアーの影響を決める頂点グループ名"
+
+
 msgid "MeshDeform Modifier"
 msgstr "メッシュ変形モディファイアー"
 
@@ -40154,6 +40170,10 @@ msgid "Denoise"
 msgstr "デノイズ"
 
 
+msgid "Accurate"
+msgstr "高精度"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -40953,6 +40973,10 @@ msgid "Plane Track Deform"
 msgstr "平面トラック変形"
 
 
+msgid "Posterize"
+msgstr "ポスタライズ"
+
+
 msgid "Alpha Convert"
 msgstr "アルファ変換"
 
@@ -41425,6 +41449,10 @@ msgid "Geometry Node"
 msgstr "ジオメトリノード"
 
 
+msgid "Attribute Capture"
+msgstr "属性キャプチャ"
+
+
 msgid "Attribute Remove"
 msgstr "属性削除"
 
@@ -41554,7 +41582,7 @@ msgstr "二次ベジエ"
 
 
 msgid "Resample Curve"
-msgstr "カーブを再取得"
+msgstr "カーブ再取得"
 
 
 msgid "How to specify the amount of samples"
@@ -41931,6 +41959,12 @@ msgid "Faceforward"
 msgstr "面の前方"
 
 
+msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
+msgstr ""
+"ベクトル A を法線 C で定義された、表面 B から離れる方向に合わせます\n"
+"(dot(B, C) < 0) ? A : -A を返します"
+
+
 msgid "Dot Product"
 msgstr "内積"
 
@@ -42165,6 +42199,10 @@ msgstr "全ポイントに単一オブジェクトをインスタンス化（複
 
 msgid "Instance an entire collection on all points"
 msgstr "全ポイントにコレクションの内容をインスタンス化（複製）します"
+
+
+msgid "Copy geometry to all points"
+msgstr "全ポイントにジオメトリをコピーします"
 
 
 msgid "Instance entire collection on each point"
@@ -45537,8 +45575,8 @@ msgstr "ビューの軸"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "クリック押し出し"
+msgid "Extrude to Cursor"
+msgstr "押し出し（カーソル方向）"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -48608,11 +48646,6 @@ msgstr "傾きをクリア"
 
 msgid "Clear the tilt of selected control points"
 msgstr "選択した制御点の傾きをクリア"
-
-
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "頂点を追加"
 
 
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
@@ -52266,6 +52299,14 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "グリースペンシルストロークのスカルプトモードを切り替えます"
 
 
+msgid "Modifier"
+msgstr "モディファイアー"
+
+
+msgid "Name of the modifier to edit"
+msgstr "編集するモディファイアーの名前"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "グリースペンシルストロークやストロークポイントを選択します"
 
@@ -54918,6 +54959,11 @@ msgid "Slide control points"
 msgstr "制御点のスライド"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "頂点を追加"
+
+
 msgid "Add vertex to active spline"
 msgstr "アクティブスプラインに頂点を追加"
 
@@ -55826,11 +55872,6 @@ msgstr "面を統合する代わりに面の隅を引き裂きます"
 
 msgid "Dissolve vertices, merge edges and faces"
 msgstr "頂点を溶解し、辺や面を統合します"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "カーソル位置に複製/押し出し"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -56883,10 +56924,6 @@ msgstr "プロポーションのサイズ"
 
 msgid "Always confirm operation when releasing button"
 msgstr "ボタンを離したら常に操作を確定"
-
-
-msgid "Accurate"
-msgstr "高精度"
 
 
 msgid "Use accurate transformation"
@@ -59768,14 +59805,6 @@ msgstr "修正スムーズバインド"
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "ベースポーズを修正スムーズモディファイアーにバインドします"
-
-
-msgid "Modifier"
-msgstr "モディファイアー"
-
-
-msgid "Name of the modifier to edit"
-msgstr "編集するモディファイアーの名前"
 
 
 msgctxt "Operator"
@@ -66749,18 +66778,6 @@ msgid "Save Screenshot"
 msgstr "スクリーンショットを保存"
 
 
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "アクティブなエリアまたはBlenderのウィンドウ全体をキャプチャします"
-
-
-msgid "Full Screen"
-msgstr "全画面"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "アクティブエリアだけでなく、ウィンドウ全体をキャプチャーします"
-
-
 msgctxt "Operator"
 msgid "Cycle Space Context"
 msgstr "スペースコンテクストを循環"
@@ -72629,6 +72646,10 @@ msgid "Always Add Cache Reader"
 msgstr "常にキャッシュリーダーを追加"
 
 
+msgid "Add cache modifiers and constraints to imported objects even if they are not animated so that they can be updated when reloading the Alembic archive"
+msgstr "インポートしたオブジェクトに、アニメーションしていなくてもキャッシュモディファイアーとコンストレイントを追加し、Alembic アーカイブのリロード時に更新できるようにします"
+
+
 msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr ""
 "有効時はバックグラウンドでエクスポートを実行し、無効時はエクスポート中に Blender を止めます\n"
@@ -76293,6 +76314,10 @@ msgid "FFMPEG Presets"
 msgstr "FFMPEG プリセット"
 
 
+msgid "Format Presets"
+msgstr "フォーマットプリセット"
+
+
 msgid "Views"
 msgstr "マルチビュー"
 
@@ -76307,6 +76332,10 @@ msgstr "画像に焼き付け"
 
 msgid "Note"
 msgstr "メモ"
+
+
+msgid "Time Stretching"
+msgstr "タイムストレッチ"
 
 
 msgid "Keyframing Settings"
@@ -76781,11 +76810,6 @@ msgid "Bone Envelope"
 msgstr "ボーンエンベロープ"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "押し出し（カーソル方向）"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "フリー、または軸に沿って押し出します"
 
@@ -77186,6 +77210,10 @@ msgstr "VRセッション"
 
 msgid "Viewport Feedback"
 msgstr "ビューポートフィードバック"
+
+
+msgid "Face Marks"
+msgstr "面マーク"
 
 
 msgid "Filter Add-ons"
@@ -78486,6 +78514,14 @@ msgid "Preferences related to viewing data"
 msgstr "データ表示に関連する設定"
 
 
+msgid "Corner Splitting"
+msgstr "コーナーで分割"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "コーナーのドラッグで、エディターを分割・統合します"
+
+
 msgid "Auto Keying Mode"
 msgstr "自動キーイングモード"
 
@@ -78878,6 +78914,14 @@ msgid "Enable compositor full frame execution mode option (no tiling, reduces ex
 msgstr "コンポジターのフルフレーム処理モードオプションを有効にします（タイリングなし。実行時間とメモリ消費量が減ります）"
 
 
+msgid "Geometry Nodes Fields"
+msgstr "ジオメトリノードフィールド"
+
+
+msgid "Enable field nodes in geometry nodes"
+msgstr "ジオメトリノード中でフィールドノードを有効にします"
+
+
 msgid "New Hair Type"
 msgstr "新しいヘアータイプ"
 
@@ -78980,6 +79024,34 @@ msgid "The time (in minutes) to wait between automatic temporary saves"
 msgstr "保存する間隔 (分)"
 
 
+msgid "File Preview Type"
+msgstr "ファイルプレビュータイプ"
+
+
+msgid "What type of blend preview to create"
+msgstr "作成する blend プレビューのタイプ"
+
+
+msgid "Do not create blend previews"
+msgstr "blend プレビューを作成しません"
+
+
+msgid "Screenshot"
+msgstr "スクリーンショット"
+
+
+msgid "Capture the entire window"
+msgstr "ウィンドウ全体のキャプチャ"
+
+
+msgid "Camera View"
+msgstr "カメラビュー"
+
+
+msgid "Workbench render of scene"
+msgstr "Workbench によるシーンのレンダー"
+
+
 msgid "Fonts Directory"
 msgstr "フォントディレクトリ"
 
@@ -79046,6 +79118,26 @@ msgstr ""
 "レイアウト構造と一致する、代替のスクリプトパス（要再起動）"
 
 
+msgid "Show Hidden Files/Data-Blocks"
+msgstr "ドットファイル/データブロックを表示"
+
+
+msgid "Show files and data-blocks that are normally hidden"
+msgstr "通常は非表示のファイルとデータブロックを表示します"
+
+
+msgid "Show Recent Locations"
+msgstr "最近利用した場所を表示"
+
+
+msgid "Show Recent locations list in the File Browser"
+msgstr "ファイルブラウザーに最近利用した場所のリストを表示します"
+
+
+msgid "Show System Locations"
+msgstr "システムディレクトリを表示"
+
+
 msgid "Sounds Directory"
 msgstr "音声ディレクトリ"
 
@@ -79088,6 +79180,10 @@ msgstr "ファイルを圧縮"
 
 msgid "Enable file compression when saving .blend files"
 msgstr ".blendファイル保存時に圧縮を有効にします"
+
+
+msgid "Enable filtering of files in the File Browser"
+msgstr "ファイルブラウザーでファイルのフィルタリングを有効にします"
 
 
 msgid "Load user interface setup when loading .blend files"
@@ -80378,14 +80474,6 @@ msgid "Use transform gizmos by default"
 msgstr "デフォルトでトランスフォームギズモを使用します"
 
 
-msgid "Editor Corner Splitting"
-msgstr "エディターのコーナーで分割"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "コーナーのドラッグで、エディターを分割・統合します"
-
-
 msgid "Navigation Controls"
 msgstr "ナビゲーションコントロール"
 
@@ -81307,6 +81395,13 @@ msgstr ""
 
 msgid "Adaptive Sampling Threshold"
 msgstr "適応サンプリングのしきい値"
+
+
+msgid "Noise level step to stop sampling at, lower values reduce noise at the cost of render time. Zero for automatic setting based on number of AA samples"
+msgstr ""
+"サンプリングを止めるノイズレベルステップ\n"
+"小さい値でレンダリング時間と引き換えにノイズを減らします\n"
+"0 で AA サンプル数を元に自動設定します"
 
 
 msgid "AO Bounces"
@@ -82804,6 +82899,10 @@ msgid "Is Perspective"
 msgstr "透視投影かどうか"
 
 
+msgid "Lock view rotation of side views to Top/Front/Right"
+msgstr "他のビューの回転をトップ/フロント/ライトに固定します"
+
+
 msgid "Perspective Matrix"
 msgstr "透視変換行列"
 
@@ -82812,8 +82911,16 @@ msgid "Current perspective matrix (``window_matrix * view_matrix``)"
 msgstr "現在の透視変換行列 (``window_matrix * view_matrix``)"
 
 
+msgid "Sync Zoom/Pan"
+msgstr "ズーム/パンを同期"
+
+
 msgid "Sync view position between side views"
 msgstr "ビュー位置をサイドビューと同期します"
+
+
+msgid "Clip view contents based on what is visible in other side views"
+msgstr "他のビューから見える部分を元に、ビューの内容をクリッピングします"
 
 
 msgid "Use Clip Planes"
@@ -87359,10 +87466,6 @@ msgstr "アウトライン"
 
 msgid "Display white edges with black outline"
 msgstr "黒で縁取られた白いエッジを表示します"
-
-
-msgid "Dash"
-msgstr "点線"
 
 
 msgid "Display dashed black-white edges"
@@ -92261,6 +92364,10 @@ msgstr "タイムステップ"
 
 msgid "Stroke Placement (2D View)"
 msgstr "ストロークの配置（2Dビュー）"
+
+
+msgid "Stick stroke to the image"
+msgstr "画像にストロークを貼り付けます"
 
 
 msgid "Stick stroke to the view"
@@ -97392,6 +97499,10 @@ msgid "Operator not found: bpy.ops.%s"
 msgstr "オペレーターがありません：bpy.ops.%s"
 
 
+msgid "Could not evaluate number from default value"
+msgstr "デフォルト値から数値を評価できませんでした"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "マニュアル"
@@ -98003,114 +98114,6 @@ msgid "Failed to load volume:"
 msgstr "ボリュームの読み込み失敗:"
 
 
-msgid "Edge Detection Options:"
-msgstr "エッジ探知オプション:"
-
-
-msgid "Priority"
-msgstr "優先度"
-
-
-msgid "Style Modules:"
-msgstr "スタイルモジュール:"
-
-
-msgid "Selection By:"
-msgstr "選択条件:"
-
-
-msgid "Edge Types"
-msgstr "エッジタイプ"
-
-
-msgid "Face Marks"
-msgstr "面マーク"
-
-
-msgid "Image Border"
-msgstr "画像の境界"
-
-
-msgid "Chaining:"
-msgstr "チェーン:"
-
-
-msgid "Splitting:"
-msgstr "分割:"
-
-
-msgid "D1"
-msgstr "■"
-
-
-msgid "G1"
-msgstr "□"
-
-
-msgid "D2"
-msgstr "■"
-
-
-msgid "G2"
-msgstr "□"
-
-
-msgid "D3"
-msgstr "■"
-
-
-msgid "G3"
-msgstr "□"
-
-
-msgid "Sorting:"
-msgstr "ソート"
-
-
-msgid "Selection:"
-msgstr "選択:"
-
-
-msgid "Caps:"
-msgstr "端:"
-
-
-msgid "Dashed Line:"
-msgstr "破線:"
-
-
-msgid "Visibility:"
-msgstr "可視性:"
-
-
-msgid "Edge Types:"
-msgstr "エッジタイプ:"
-
-
-msgid "Face Marks:"
-msgstr "面マーク:"
-
-
-msgid "Collection:"
-msgstr "コレクション:"
-
-
-msgid "Base Color:"
-msgstr "ベースカラー:"
-
-
-msgid "Modifiers:"
-msgstr "モディファイアー:"
-
-
-msgid "Base Transparency:"
-msgstr "ベース透過度:"
-
-
-msgid "Base Thickness:"
-msgstr "ベース幅:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "ストローク方向の間隔"
 
@@ -98118,6 +98121,14 @@ msgstr "ストローク方向の間隔"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "ラインスタイルテクスチャプロパティへ"
+
+
+msgid "Priority"
+msgstr "優先度"
+
+
+msgid "Image Border"
+msgstr "画像の境界"
 
 
 msgid "Draw:"
@@ -99026,6 +99037,10 @@ msgstr "表面張力"
 
 msgid "Velocity Source"
 msgstr "速度のソース"
+
+
+msgid "Is Resumable"
+msgstr "リジューム可"
 
 
 msgid "Format Volumes"
@@ -101520,10 +101535,6 @@ msgstr "ヒンティング"
 
 msgid "New Data"
 msgstr "新規データ"
-
-
-msgid "Corner Splitting"
-msgstr "コーナーで分割"
 
 
 msgid "Render In"
@@ -104223,6 +104234,10 @@ msgstr ""
 
 msgid "Proxy lost from  object %s lib %s"
 msgstr "プロキシがロスト：オブジェクト「%s」ライブラリ「%s」"
+
+
+msgid "Proxy lost from  object %s lib <NONE>"
+msgstr "プロキシがロスト：オブジェクト「%s」ライブラリ「なし」"
 
 
 msgid "Can't find object data of %s lib %s"
@@ -108541,6 +108556,14 @@ msgid "Blender Info Log"
 msgstr "Blender情報ログ"
 
 
+msgid "Area not found in the active screen"
+msgstr "アクティブスクリーンにエリアがありません"
+
+
+msgid "Unable to close area"
+msgstr "エリアを閉じることができません"
+
+
 msgid "Can only scale region size from an action zone"
 msgstr "アクションゾーンからのみ領域サイズが変更できます"
 
@@ -108562,11 +108585,11 @@ msgstr "最後の領域のみが4分割できます"
 
 
 msgid "No fullscreen areas were found"
-msgstr "フルスクリーン領域がありません"
+msgstr "フルスクリーンエリアがありません"
 
 
 msgid "Removed amount of editors: %d"
-msgstr "%d個のエディターが削除されました"
+msgstr "%d 個のエディターが削除されました"
 
 
 msgid "expected a view3d region"
@@ -108574,7 +108597,7 @@ msgstr "3Dビュー領域用です"
 
 
 msgid "expected a timeline/animation area to be active"
-msgstr "タイムライン/アニメーション領域がアクティブでないといけません"
+msgstr "タイムライン/アニメーションエリアがアクティブでないといけません"
 
 
 msgid "Context missing active object"
@@ -111173,6 +111196,10 @@ msgid "Checking sanity of current .blend file *AFTER* undo step"
 msgstr "現在の .blend ファイルのステップ取り消し「後に」正当性チェックをします"
 
 
+msgid "Undo disabled at startup in background-mode (call `ed.undo_push()` to explicitly initialize the undo-system)"
+msgstr "バックグラウンドモード起動時は「元に戻す」が無効です（明示的に Undo システムを初期化するには `ed.undo_push()` を呼び出してください）"
+
+
 msgid "[E] - Disable overshoot"
 msgstr "[E] - オーバーシュート無効"
 
@@ -111689,12 +111716,12 @@ msgid "Groups: No groups for this stroke"
 msgstr "グループ：このストローク用のグループがありません"
 
 
-msgid "Groups: index out of range"
-msgstr "グループ：インデックスが範囲外です"
-
-
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: インデックスが範囲外です"
+
+
+msgid "Groups: index out of range"
+msgstr "グループ：インデックスが範囲外です"
 
 
 msgid "Stroke not found in grease pencil frame"

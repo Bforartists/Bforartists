@@ -28,6 +28,7 @@ from itertools import count
 
 from .errors import MetarigError
 from .collections import ensure_widget_collection
+from .naming import change_name_side, get_name_side, Side
 
 WGT_PREFIX = "WGT-"  # Prefix for widget objects
 
@@ -56,46 +57,112 @@ def obj_to_bone(obj, rig, bone_name, bone_transform_name=None):
     elif bone.custom_shape_transform:
         bone = bone.custom_shape_transform
 
-    shape_mat = Matrix.Translation(loc) @ (Euler(rot).to_matrix() @ Matrix.Diagonal(scale)).to_4x4()
+    shape_mat = Matrix.LocRotScale(loc, Euler(rot), scale)
 
     obj.rotation_mode = 'XYZ'
     obj.matrix_basis = rig.matrix_world @ bone.bone.matrix_local @ shape_mat
 
 
-def create_widget(rig, bone_name, bone_transform_name=None, *, widget_name=None, widget_force_new=False):
+def create_widget(rig, bone_name, bone_transform_name=None, *, widget_name=None, widget_force_new=False, subsurf=0):
     """ Creates an empty widget object for a bone, and returns the object.
     """
     assert rig.mode != 'EDIT'
 
-    obj_name = widget_name or WGT_PREFIX + rig.name + '_' + bone_name
+    from ..base_generate import BaseGenerator
+
     scene = bpy.context.scene
-    collection = ensure_widget_collection(bpy.context, 'WGTS_' + rig.name)
+    bone = rig.pose.bones[bone_name]
+
+    # Access the current generator instance when generating (ugh, globals)
+    generator = BaseGenerator.instance
+
+    if generator:
+        collection = generator.widget_collection
+    else:
+        collection = ensure_widget_collection(bpy.context, 'WGTS_' + rig.name)
+
+    use_mirror = generator and generator.use_mirror_widgets
+
+    if use_mirror:
+        bone_mid_name = change_name_side(bone_name, Side.MIDDLE)
+
+    obj_name = widget_name or WGT_PREFIX + rig.name + '_' + bone_name
     reuse_mesh = None
 
     # Check if it already exists in the scene
     if not widget_force_new:
-        if obj_name in scene.objects:
+        obj = None
+
+        if generator:
+            # Check if the widget was already generated
+            if bone_name in generator.new_widget_table:
+                return None
+
+            # If re-generating, check widgets used by the previous rig
+            obj = generator.old_widget_table.get(bone_name)
+
+        if not obj:
+            # Search the scene by name
+            obj = scene.objects.get(obj_name)
+
+        if obj:
+            # Record the generated widget
+            if generator:
+                generator.new_widget_table[bone_name] = obj
+
+            # Re-add to the collection if not there for some reason
+            if obj.name not in collection.objects:
+                collection.objects.link(obj)
+
+            # Flip scale for originally mirrored widgets
+            if obj.scale.x < 0 and bone.custom_shape_scale_xyz.x > 0:
+                bone.custom_shape_scale_xyz.x *= -1
+
             # Move object to bone position, in case it changed
-            obj = scene.objects[obj_name]
             obj_to_bone(obj, rig, bone_name, bone_transform_name)
 
             return None
 
-        # Delete object if it exists in blend data but not scene data.
-        # This is necessary so we can then create the object without
-        # name conflicts.
-        if obj_name in bpy.data.objects:
-            bpy.data.objects.remove(bpy.data.objects[obj_name])
-
         # Create a linked duplicate of the widget assigned in the metarig
         reuse_widget = rig.pose.bones[bone_name].custom_shape
         if reuse_widget:
+            subsurf = 0
             reuse_mesh = reuse_widget.data
 
-    # Create mesh object
-    mesh = reuse_mesh or bpy.data.meshes.new(obj_name)
+        # Create a linked duplicate with the mirror widget
+        if not reuse_mesh and use_mirror and bone_mid_name != bone_name:
+            reuse_mesh = generator.widget_mirror_mesh.get(bone_mid_name)
+
+    # Create an empty mesh datablock if not linking
+    if reuse_mesh:
+        mesh = reuse_mesh
+
+    elif use_mirror and bone_mid_name != bone_name:
+        # When mirroring, untag side from mesh name, and remember it
+        mesh = bpy.data.meshes.new(change_name_side(obj_name, Side.MIDDLE))
+
+        generator.widget_mirror_mesh[bone_mid_name] = mesh
+
+    else:
+        mesh = bpy.data.meshes.new(obj_name)
+
+    # Create the object
     obj = bpy.data.objects.new(obj_name, mesh)
     collection.objects.link(obj)
+
+    # Add the subdivision surface modifier
+    if subsurf > 0:
+        mod = obj.modifiers.new("subsurf", 'SUBSURF')
+        mod.levels = subsurf
+
+    # Record the generated widget
+    if generator:
+        generator.new_widget_table[bone_name] = obj
+
+    # Flip scale for right side if mirroring widgets
+    if use_mirror and get_name_side(bone_name) == Side.RIGHT:
+        if bone.custom_shape_scale_xyz.x > 0:
+            bone.custom_shape_scale_xyz.x *= -1
 
     # Move object to bone position and set layers
     obj_to_bone(obj, rig, bone_name, bone_transform_name)
@@ -187,7 +254,7 @@ def widget_generator(generate_func=None, *, register=None, subsurf=0):
     """
     @functools.wraps(generate_func)
     def wrapper(rig, bone_name, bone_transform_name=None, widget_name=None, widget_force_new=False, **kwargs):
-        obj = create_widget(rig, bone_name, bone_transform_name, widget_name=widget_name, widget_force_new=widget_force_new)
+        obj = create_widget(rig, bone_name, bone_transform_name, widget_name=widget_name, widget_force_new=widget_force_new, subsurf=subsurf)
         if obj is not None:
             geom = GeometryData()
 
@@ -196,10 +263,6 @@ def widget_generator(generate_func=None, *, register=None, subsurf=0):
             mesh = obj.data
             mesh.from_pydata(geom.verts, geom.edges, geom.faces)
             mesh.update()
-
-            if subsurf:
-                mod = obj.modifiers.new("subsurf", 'SUBSURF')
-                mod.levels = subsurf
 
             return obj
         else:
