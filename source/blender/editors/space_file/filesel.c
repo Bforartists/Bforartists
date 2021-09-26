@@ -440,7 +440,8 @@ static void fileselect_refresh_asset_params(FileAssetSelectParams *asset_params)
       BLI_strncpy(base_params->dir, user_library->path, sizeof(base_params->dir));
       break;
   }
-  base_params->type = (library->type == ASSET_LIBRARY_LOCAL) ? FILE_MAIN_ASSET : FILE_LOADLIB;
+  base_params->type = (library->type == ASSET_LIBRARY_LOCAL) ? FILE_MAIN_ASSET :
+                                                               FILE_ASSET_LIBRARY;
 }
 
 void fileselect_refresh_params(SpaceFile *sfile)
@@ -1271,7 +1272,7 @@ void file_params_rename_end(wmWindowManager *wm,
   /* Ensure smooth-scroll timer is active, even if not needed, because that way rename state is
    * handled properly. */
   file_params_invoke_rename_postscroll(wm, win, sfile);
-  /* Also always activate the rename file, even if renaming was cancelled. */
+  /* Also always activate the rename file, even if renaming was canceled. */
   file_params_renamefile_activate(sfile, params);
 }
 

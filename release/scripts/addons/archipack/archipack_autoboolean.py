@@ -108,12 +108,6 @@ class ArchipackBoolManager(ArchipackCollectionManager):
         hole.hide_render = True
         hole.hide_select = True
         hole.select_set(state=True)
-        hole.cycles_visibility.camera = False
-        hole.cycles_visibility.diffuse = False
-        hole.cycles_visibility.glossy = False
-        hole.cycles_visibility.shadow = False
-        hole.cycles_visibility.scatter = False
-        hole.cycles_visibility.transmission = False
 
     def get_child_hole(self, o):
         for hole in o.children:

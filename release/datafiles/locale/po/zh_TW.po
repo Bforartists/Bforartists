@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -6037,6 +6037,18 @@ msgid "Active Spline"
 msgstr "作用中樣條"
 
 
+msgid "Dash"
+msgstr "虛線"
+
+
+msgid "Material Index"
+msgstr "材質索引"
+
+
+msgid "Radius"
+msgstr "半徑"
+
+
 msgid "Dependency Graph"
 msgstr "依賴圖表"
 
@@ -9190,10 +9202,6 @@ msgid "Preview"
 msgstr "預覽"
 
 
-msgid "Radius"
-msgstr "半徑"
-
-
 msgid "Strength of noise"
 msgstr "噪訊的強度"
 
@@ -9726,10 +9734,6 @@ msgid "Select hidden feature edges"
 msgstr "選取隱藏特徵邊線"
 
 
-msgid "QI Range"
-msgstr "QI 範圍"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "在量性不可見 (qunantitative invisibility, QI) 值的範圍內之特徵邊線"
 
@@ -9798,16 +9802,8 @@ msgid "Select the Freestyle control mode"
 msgstr "選取 Freestyle 控制模式"
 
 
-msgid "Python Scripting Mode"
-msgstr "Python 指令稿模式"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "使用 Python 撰寫的樣式模組使用進階模式"
-
-
-msgid "Parameter Editor Mode"
-msgstr "參數編輯器模式"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -9820,14 +9816,6 @@ msgstr "球體半徑"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "計算彎曲時使用的球體半徑"
-
-
-msgid "Advanced Options"
-msgstr "進階選項"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "啟用進階邊線偵測選項 (球體半徑與 Kr 衍生性 epsilon)"
 
 
 msgid "Culling"
@@ -10124,10 +10112,6 @@ msgstr "筆觸位於 2D 空間 (但含有特殊「影像」縮放)"
 
 msgid "End Cap"
 msgstr "終末蓋帽"
-
-
-msgid "Material Index"
-msgstr "材質索引"
 
 
 msgid "Stroke Points"
@@ -26755,11 +26739,6 @@ msgid "View Axis"
 msgstr "檢視軸"
 
 
-msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "點擊-擠出"
-
-
 msgid "Create a new bone going from the last selected joint to the mouse position"
 msgstr "在上一個所選關節與滑鼠位置之間建立一段新骨骼"
 
@@ -29103,11 +29082,6 @@ msgid "Clear the tilt of selected control points"
 msgstr "清除所選控制點的傾斜"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "添加頂點"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "添加新的控制點 (僅連結至選取的終端曲線項，如果有的話)"
 
@@ -30603,6 +30577,14 @@ msgid "Subdivisions"
 msgstr "細分"
 
 
+msgid "Modifier"
+msgstr "修改器"
+
+
+msgid "Name of the modifier to edit"
+msgstr "要編輯的修改器名稱"
+
+
 msgid "Mouse location"
 msgstr "滑鼠位置"
 
@@ -31561,6 +31543,11 @@ msgstr "滑動點"
 
 msgid "Slide control points"
 msgstr "滑動控制點"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "添加頂點"
 
 
 msgid "Add vertex to active spline"
@@ -34668,14 +34655,6 @@ msgstr "保留原始物體，而不是替換掉"
 
 msgid "Type of object to convert to"
 msgstr "要轉換為何物體類型"
-
-
-msgid "Modifier"
-msgstr "修改器"
-
-
-msgid "Name of the modifier to edit"
-msgstr "要編輯的修改器名稱"
 
 
 msgctxt "Operator"
@@ -38904,18 +38883,6 @@ msgstr "在可用螢幕之間循環"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "儲存螢幕快照"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "捕捉作用中區域或整個 Blender 視窗的圖片"
-
-
-msgid "Full Screen"
-msgstr "全螢幕"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "抓取整個視窗 (否則僅抓取作用中區域)"
 
 
 msgid "Remove unused settings for invisible editors"
@@ -43970,6 +43937,10 @@ msgstr "變換方向"
 
 msgid "VR Session"
 msgstr "VR 作業階段"
+
+
+msgid "Face Marks"
+msgstr "面標記"
 
 
 msgid "Particle in a particle system"
@@ -49349,10 +49320,6 @@ msgid "Outline"
 msgstr "外框"
 
 
-msgid "Dash"
-msgstr "虛線"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -54309,106 +54276,6 @@ msgid "Detail"
 msgstr "細節"
 
 
-msgid "Edge Detection Options:"
-msgstr "邊線偵測選項："
-
-
-msgid "Priority"
-msgstr "優先度"
-
-
-msgid "Selection By:"
-msgstr "選取條件："
-
-
-msgid "Edge Types"
-msgstr "邊線類型"
-
-
-msgid "Face Marks"
-msgstr "面標記"
-
-
-msgid "Image Border"
-msgstr "影像邊緣"
-
-
-msgid "Chaining:"
-msgstr "鏈結處理："
-
-
-msgid "Splitting:"
-msgstr "分裂處理："
-
-
-msgid "D1"
-msgstr "D1"
-
-
-msgid "G1"
-msgstr "G1"
-
-
-msgid "D2"
-msgstr "D2"
-
-
-msgid "G2"
-msgstr "G2"
-
-
-msgid "D3"
-msgstr "D3"
-
-
-msgid "G3"
-msgstr "G3"
-
-
-msgid "Sorting:"
-msgstr "排序："
-
-
-msgid "Selection:"
-msgstr "選取項："
-
-
-msgid "Caps:"
-msgstr "蓋帽："
-
-
-msgid "Dashed Line:"
-msgstr "虛線線條："
-
-
-msgid "Visibility:"
-msgstr "可見性："
-
-
-msgid "Edge Types:"
-msgstr "邊線類型："
-
-
-msgid "Face Marks:"
-msgstr "面標記："
-
-
-msgid "Base Color:"
-msgstr "基礎色彩："
-
-
-msgid "Modifiers:"
-msgstr "修改器："
-
-
-msgid "Base Transparency:"
-msgstr "基礎透明度："
-
-
-msgid "Base Thickness:"
-msgstr "基礎厚度："
-
-
 msgid "Spacing Along Stroke"
 msgstr "沿筆觸間距"
 
@@ -54416,6 +54283,14 @@ msgstr "沿筆觸間距"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "前往線條樣式紋理屬性"
+
+
+msgid "Priority"
+msgstr "優先度"
+
+
+msgid "Image Border"
+msgstr "影像邊緣"
 
 
 msgid "Draw:"

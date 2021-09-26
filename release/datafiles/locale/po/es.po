@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8175,6 +8175,18 @@ msgid "Active curve spline"
 msgstr "Curva activa"
 
 
+msgid "Dash"
+msgstr "Punteado"
+
+
+msgid "Material Index"
+msgstr "Identificador de material"
+
+
+msgid "Radius"
+msgstr "Radio"
+
+
 msgid "Dependency Graph"
 msgstr "Gráfica de dependencias"
 
@@ -12804,10 +12816,6 @@ msgid "Use union particle level set (faster but lower quality)"
 msgstr "Usa un nivel de partículas básico (más rápido pero de menor calidad)"
 
 
-msgid "Radius"
-msgstr "Radio"
-
-
 msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
 msgstr "Factor de radio de partículas (valores mayores producirán partículas de mayor tamaño, usadas para la creación de la malla). Necesitará ser ajustado luego de cambiar la escala de la malla"
 
@@ -14136,10 +14144,6 @@ msgid "Select hidden feature edges"
 msgstr "Seleccionar rasgos ocultos"
 
 
-msgid "QI Range"
-msgstr "Rango de IC"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "Seleccionar rasgos comprendidos dentro de un rango de valores de invisibilidad cuantitativa (IC)"
 
@@ -14220,16 +14224,8 @@ msgid "Select the Freestyle control mode"
 msgstr "Selecciona el modo de control de Freestyle"
 
 
-msgid "Python Scripting Mode"
-msgstr "Scripts Python"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Modo avanzado para usar módulos de estilo escritos en Python"
-
-
-msgid "Parameter Editor Mode"
-msgstr "Editor de parámetros"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -14242,14 +14238,6 @@ msgstr "Radio de esfera"
 
 msgid "Sphere radius for computing curvatures"
 msgstr "Radio de esfera para calcular las curvaturas"
-
-
-msgid "Advanced Options"
-msgstr "Opciones avanzadas"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "Habilita opciones avanzadas de detección de bordes (radio de esfera y epsilon de la derivada de la curvatura radial Kr)"
 
 
 msgid "Culling"
@@ -15064,10 +15052,6 @@ msgid "Thickness of stroke (in pixels)"
 msgstr "Grosor del trazo (en píxeles)"
 
 
-msgid "Material Index"
-msgstr "Identificador de material"
-
-
 msgid "Material slot index of this stroke"
 msgstr "Identificador del contenedor de material de este trazo"
 
@@ -15380,10 +15364,6 @@ msgstr "Persistente"
 
 msgid "Show Modal All"
 msgstr "Mostrar al interactuar"
-
-
-msgid "Show all while interacting"
-msgstr "Mostrar todo mientras se interactúa"
 
 
 msgid "Tool Init"
@@ -39312,6 +39292,10 @@ msgid "Denoise"
 msgstr "Reducción de ruido"
 
 
+msgid "Accurate"
+msgstr "Preciso"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -44375,8 +44359,8 @@ msgstr "Eje de la vista"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Clic-Extruir"
+msgid "Extrude to Cursor"
+msgstr "Extruir hacia cursor"
 
 
 msgid "Create a new bone going from the last selected joint to the mouse position"
@@ -47369,11 +47353,6 @@ msgstr "Eliminar inclinación"
 
 msgid "Clear the tilt of selected control points"
 msgstr "Elimina la inclinación de los puntos de control seleccionados"
-
-
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Agregar vértices"
 
 
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
@@ -50941,6 +50920,14 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "Ingresar/Salir del modo de escultura de trazos de lápiz de cera"
 
 
+msgid "Modifier"
+msgstr "Modificador"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Nombre del modificador a editar"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "Permite seleccionar trazos y/o puntos de un trazo de lápiz de cera"
 
@@ -53563,6 +53550,11 @@ msgid "Slide control points"
 msgstr "Permite deslizar los puntos de control"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Agregar vértices"
+
+
 msgid "Add vertex to active spline"
 msgstr "Agrega un vértice a la curva activa"
 
@@ -54471,11 +54463,6 @@ msgstr "Divide las esquinas de las caras"
 
 msgid "Dissolve vertices, merge edges and faces"
 msgstr "Disuelve vértices; fusiona bordes y caras"
-
-
-msgctxt "Operator"
-msgid "Duplicate or Extrude to Cursor"
-msgstr "Duplicar o extruir al cursor 3D"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -55522,10 +55509,6 @@ msgstr "Radio"
 
 msgid "Always confirm operation when releasing button"
 msgstr "Siempre confirmar la operación al soltar el botón"
-
-
-msgid "Accurate"
-msgstr "Preciso"
 
 
 msgid "Use accurate transformation"
@@ -58358,14 +58341,6 @@ msgstr "Enlazar suavizado correctivo"
 
 msgid "Bind base pose in Corrective Smooth modifier"
 msgstr "Enlaza la pose base en el modificador Suavizado correctivo"
-
-
-msgid "Modifier"
-msgstr "Modificador"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Nombre del modificador a editar"
 
 
 msgctxt "Operator"
@@ -65183,18 +65158,6 @@ msgstr "Permite recorrer cíclicamente las pantallas disponibles"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Guardar captura de pantalla"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Captura una imagen del área activa o de toda la ventana de Blender"
-
-
-msgid "Full Screen"
-msgstr "Pantalla completa"
-
-
-msgid "Capture the whole window (otherwise only capture the active area)"
-msgstr "Captura toda la pantalla (de otro modo sólo se capturará el área activa)"
 
 
 msgctxt "Operator"
@@ -74974,11 +74937,6 @@ msgid "Bone Envelope"
 msgstr "Envolvente de hueso"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "Extruir hacia cursor"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "Extruir libremente o a lo largo de un eje"
 
@@ -75379,6 +75337,10 @@ msgstr "Sesión de RV"
 
 msgid "Viewport Feedback"
 msgstr "Respuesta del visor"
+
+
+msgid "Face Marks"
+msgstr "Caras marcadas"
 
 
 msgid "Filter Add-ons"
@@ -76675,6 +76637,14 @@ msgstr "Vista y controles"
 
 msgid "Preferences related to viewing data"
 msgstr "Preferencias relativas a la visualización de datos"
+
+
+msgid "Corner Splitting"
+msgstr "División desde esquinas"
+
+
+msgid "Split and join editors by dragging from corners"
+msgstr "Permite la división y unión de editores arrastrando desde las esquinas"
 
 
 msgid "Auto Keying Mode"
@@ -78519,14 +78489,6 @@ msgstr "Muestra opciones para desarrolladores (menú contextual para edición de
 
 msgid "Use transform gizmos by default"
 msgstr "Usar manipuladores de transformación de forma predefinida"
-
-
-msgid "Editor Corner Splitting"
-msgstr "División de editores desde esquinas"
-
-
-msgid "Split and join editors by dragging from corners"
-msgstr "Permite la división y unión de editores arrastrando desde las esquinas"
 
 
 msgid "Navigation Controls"
@@ -85288,10 +85250,6 @@ msgstr "Contorno"
 
 msgid "Display white edges with black outline"
 msgstr "Dibuja bordes blancos con un contorno negro"
-
-
-msgid "Dash"
-msgstr "Punteado"
 
 
 msgid "Display dashed black-white edges"
@@ -95346,114 +95304,6 @@ msgid "Failed to load volume:"
 msgstr "Falla al cargar volumen:"
 
 
-msgid "Edge Detection Options:"
-msgstr "Opciones de detección de bordes:"
-
-
-msgid "Priority"
-msgstr "Prioridad"
-
-
-msgid "Style Modules:"
-msgstr "Módulos de estilo:"
-
-
-msgid "Selection By:"
-msgstr "Selección por:"
-
-
-msgid "Edge Types"
-msgstr "Tipo de borde"
-
-
-msgid "Face Marks"
-msgstr "Caras marcadas"
-
-
-msgid "Image Border"
-msgstr "Límite de imagen"
-
-
-msgid "Chaining:"
-msgstr "Encadenamiento:"
-
-
-msgid "Splitting:"
-msgstr "División:"
-
-
-msgid "D1"
-msgstr "L1"
-
-
-msgid "G1"
-msgstr "E1"
-
-
-msgid "D2"
-msgstr "L2"
-
-
-msgid "G2"
-msgstr "E2"
-
-
-msgid "D3"
-msgstr "L3"
-
-
-msgid "G3"
-msgstr "E3"
-
-
-msgid "Sorting:"
-msgstr "Ordenamiento:"
-
-
-msgid "Selection:"
-msgstr "Selección:"
-
-
-msgid "Caps:"
-msgstr "Extremos:"
-
-
-msgid "Dashed Line:"
-msgstr "Linea discontinua:"
-
-
-msgid "Visibility:"
-msgstr "Visibilidad:"
-
-
-msgid "Edge Types:"
-msgstr "Tipo de bordes:"
-
-
-msgid "Face Marks:"
-msgstr "Caras marcadas:"
-
-
-msgid "Collection:"
-msgstr "Colección:"
-
-
-msgid "Base Color:"
-msgstr "Color base:"
-
-
-msgid "Modifiers:"
-msgstr "Modificadores:"
-
-
-msgid "Base Transparency:"
-msgstr "Transparencia base:"
-
-
-msgid "Base Thickness:"
-msgstr "Grosor base:"
-
-
 msgid "Spacing Along Stroke"
 msgstr "Espaciado a lo largo del trazo"
 
@@ -95461,6 +95311,14 @@ msgstr "Espaciado a lo largo del trazo"
 msgctxt "Operator"
 msgid "Go to Linestyle Textures Properties"
 msgstr "Ir a las propiedades de texturas de estilo de línea"
+
+
+msgid "Priority"
+msgstr "Prioridad"
+
+
+msgid "Image Border"
+msgstr "Límite de imagen"
 
 
 msgid "Draw:"
@@ -98827,10 +98685,6 @@ msgstr "Definición"
 
 msgid "New Data"
 msgstr "Nuevos datos"
-
-
-msgid "Corner Splitting"
-msgstr "División desde esquinas"
 
 
 msgid "Render In"
@@ -108696,12 +108550,12 @@ msgid "Groups: No groups for this stroke"
 msgstr "Grupos: No existen grupos para este trazo"
 
 
-msgid "Groups: index out of range"
-msgstr "Grupos: Identificador fuera de rango"
-
-
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: Identificador fuera de rango"
+
+
+msgid "Groups: index out of range"
+msgstr "Grupos: Identificador fuera de rango"
 
 
 msgid "Stroke not found in grease pencil frame"

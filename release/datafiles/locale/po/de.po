@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7283,6 +7283,18 @@ msgid "Active curve spline"
 msgstr "Aktiver Kurvenspline"
 
 
+msgid "Dash"
+msgstr "Gepunktet"
+
+
+msgid "Material Index"
+msgstr "Material-Index"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
 msgid "IDs"
 msgstr "IDs"
 
@@ -10300,10 +10312,6 @@ msgid "Preview"
 msgstr "Vorschau"
 
 
-msgid "Radius"
-msgstr "Radius"
-
-
 msgid "Mesh scale"
 msgstr "Maschenskalierung"
 
@@ -10980,10 +10988,6 @@ msgid "Select hidden feature edges"
 msgstr "Wählt versteckte, besondere Kanten aus"
 
 
-msgid "QI Range"
-msgstr "QI Bereich"
-
-
 msgid "Select feature edges within a range of quantitative invisibility (QI) values"
 msgstr "Wählt besondere Kanten innerhalb eine Spanne von quantitative Unsichtbarkeitswerte (QI) aus"
 
@@ -11020,16 +11024,8 @@ msgid "Select the Freestyle control mode"
 msgstr "Wählt den Freistil-Kontrollmodus"
 
 
-msgid "Python Scripting Mode"
-msgstr "Python-Skriptmodus"
-
-
 msgid "Advanced mode for using style modules written in Python"
 msgstr "Erweiterter Modus für die Verwendung von Stilmodulen, die in Python geschrieben wurden"
-
-
-msgid "Parameter Editor Mode"
-msgstr "Parameter-Editor-Modus"
 
 
 msgid "Basic mode for interactive style parameter editing"
@@ -11038,14 +11034,6 @@ msgstr "Basismodus für interaktive Stil-Parameter Bearbeitung"
 
 msgid "Sphere Radius"
 msgstr "Kugelradius"
-
-
-msgid "Advanced Options"
-msgstr "Erweiterte Optionen"
-
-
-msgid "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)"
-msgstr "Aktiviert erweiterte Kantenerkennungsoptionen (Kugelradius und Kr abgeleitetes Epsilon)"
 
 
 msgid "Culling"
@@ -11382,10 +11370,6 @@ msgstr "Abgerundet"
 
 msgid "Thickness of stroke (in pixels)"
 msgstr "Dicke des Striches (in Pixel)"
-
-
-msgid "Material Index"
-msgstr "Material-Index"
 
 
 msgid "Stroke Points"
@@ -24252,6 +24236,10 @@ msgid "Denoise"
 msgstr "Entrauschen"
 
 
+msgid "Accurate"
+msgstr "Genau"
+
+
 msgid "HDR"
 msgstr "HDR"
 
@@ -27075,8 +27063,8 @@ msgstr "Achsenansicht"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Klick-Extrudieren"
+msgid "Extrude to Cursor"
+msgstr "Zum Cursor extrudieren"
 
 
 msgctxt "Operator"
@@ -29036,11 +29024,6 @@ msgid "Switch direction of selected splines"
 msgstr "Richtung der ausgewählten Splines wechseln"
 
 
-msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Punkt hinzufügen"
-
-
 msgid "Location to add new vertex at"
 msgstr "Position, an der ein neuer Punkt hinzugefügt wird"
 
@@ -30670,6 +30653,14 @@ msgid "Strokes Sculpt Mode Toggle"
 msgstr "Strichskulpturmodus umschalten"
 
 
+msgid "Modifier"
+msgstr "Modifikator"
+
+
+msgid "Name of the modifier to edit"
+msgstr "Name des zu bearbeitenden Modifikators"
+
+
 msgid "Entire Strokes"
 msgstr "Ganze Striche"
 
@@ -31891,6 +31882,11 @@ msgid "Slide control points"
 msgstr "Versteckte Punkt-Dateien zeigen"
 
 
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Punkt hinzufügen"
+
+
 msgid "Add vertex to active spline"
 msgstr "Punkt zu aktivem Spline hinzufügen"
 
@@ -32732,10 +32728,6 @@ msgstr "Proportionale Größe"
 
 msgid "Always confirm operation when releasing button"
 msgstr "Immer Operation bestätigen, wenn Knopf ausgelöst wird"
-
-
-msgid "Accurate"
-msgstr "Genau"
 
 
 msgid "Proportional Editing"
@@ -34333,14 +34325,6 @@ msgstr "Ursprüngliche Objekte beibehalten, anstatt sie zu ersetzen"
 
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Wachsstift von Kurven oder Maschenobjekten"
-
-
-msgid "Modifier"
-msgstr "Modifikator"
-
-
-msgid "Name of the modifier to edit"
-msgstr "Name des zu bearbeitenden Modifikators"
 
 
 msgctxt "Operator"
@@ -37581,14 +37565,6 @@ msgstr "Bildschirmlayout festlegen"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Bildschirmfoto speichern"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Bild des aktiven Bereichs oder des gesamten Blender-Fensters aufnehmen"
-
-
-msgid "Full Screen"
-msgstr "Vollbild"
 
 
 msgctxt "Operator"
@@ -42150,11 +42126,6 @@ msgid "Bone Envelope"
 msgstr "Knochen umhüllen"
 
 
-msgctxt "Operator"
-msgid "Extrude to Cursor"
-msgstr "Zum Cursor extrudieren"
-
-
 msgid "Extrude freely or along an axis"
 msgstr "Frei oder entlang einer Achse extrudieren"
 
@@ -42438,6 +42409,10 @@ msgstr "VR"
 
 msgid "VR Session"
 msgstr "VR Sitzung"
+
+
+msgid "Face Marks"
+msgstr "Flächenmarke"
 
 
 msgid "Filter Add-ons"
@@ -47867,10 +47842,6 @@ msgstr "Kantenanzeigetyp"
 
 msgid "Outline"
 msgstr "Umrandung"
-
-
-msgid "Dash"
-msgstr "Gepunktet"
 
 
 msgid "Display dashed black-white edges"
@@ -53676,104 +53647,12 @@ msgid "Failed to load volume:"
 msgstr "Volumen konnte nicht geladen werden:"
 
 
-msgid "Edge Detection Options:"
-msgstr "Kantenerkennungsoptionen:"
-
-
 msgid "Priority"
 msgstr "Priorität"
 
 
-msgid "Selection By:"
-msgstr "Auswahl durch:"
-
-
-msgid "Edge Types"
-msgstr "Kantentyp"
-
-
-msgid "Face Marks"
-msgstr "Flächenmarke"
-
-
 msgid "Image Border"
 msgstr "Bildrand"
-
-
-msgid "Chaining:"
-msgstr "Verbindung:"
-
-
-msgid "Splitting:"
-msgstr "Aufteilung:"
-
-
-msgid "D1"
-msgstr "S1"
-
-
-msgid "G1"
-msgstr "A1"
-
-
-msgid "D2"
-msgstr "S2"
-
-
-msgid "G2"
-msgstr "A2"
-
-
-msgid "D3"
-msgstr "S3"
-
-
-msgid "G3"
-msgstr "A3"
-
-
-msgid "Sorting:"
-msgstr "Sortieren:"
-
-
-msgid "Selection:"
-msgstr "Auswahl:"
-
-
-msgid "Dashed Line:"
-msgstr "Gestrichelte Linie:"
-
-
-msgid "Visibility:"
-msgstr "Sichtbarkeit:"
-
-
-msgid "Edge Types:"
-msgstr "Kantetyp:"
-
-
-msgid "Face Marks:"
-msgstr "Flächenmarken:"
-
-
-msgid "Collection:"
-msgstr "Sammlung:"
-
-
-msgid "Base Color:"
-msgstr "Grundfarbe:"
-
-
-msgid "Modifiers:"
-msgstr "Modifikatoren:"
-
-
-msgid "Base Transparency:"
-msgstr "Grundtransparenz:"
-
-
-msgid "Base Thickness:"
-msgstr "Grunddicke:"
 
 
 msgid "Draw:"

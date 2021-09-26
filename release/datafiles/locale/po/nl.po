@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -2094,11 +2094,6 @@ msgstr "Glad"
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Voeg Punt Toe"
-
-
-msgctxt "Operator"
 msgid "Use Nodes"
 msgstr "Gebruik Nodes"
 
@@ -2626,6 +2621,11 @@ msgstr "Voeg Punt van Veer Toe"
 
 msgid "Slide Point"
 msgstr "Glij Punt"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Voeg Punt Toe"
 
 
 msgctxt "Operator"
@@ -3640,10 +3640,6 @@ msgstr "Zet Scherm"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Sla screenshot op"
-
-
-msgid "Capture a picture of the active area or whole Blender window"
-msgstr "Maak een afbeelding van het actieve gedeelte of het hele Blender scherm"
 
 
 msgctxt "Operator"
@@ -4736,64 +4732,8 @@ msgid "Delete All Groups"
 msgstr "Verwijder Alle Groepen"
 
 
-msgid "Edge Detection Options:"
-msgstr "Rand Detectie Opties:"
-
-
 msgid "Priority"
 msgstr "Prioriteit"
-
-
-msgid "D1"
-msgstr "D1"
-
-
-msgid "G1"
-msgstr "G1"
-
-
-msgid "D2"
-msgstr "D2"
-
-
-msgid "G2"
-msgstr "G2"
-
-
-msgid "D3"
-msgstr "D3"
-
-
-msgid "G3"
-msgstr "G3"
-
-
-msgid "Sorting:"
-msgstr "Volgorde:"
-
-
-msgid "Selection:"
-msgstr "Selectie:"
-
-
-msgid "Dashed Line:"
-msgstr "Gestreepte Lijn:"
-
-
-msgid "Visibility:"
-msgstr "Zichtbaarheid:"
-
-
-msgid "Edge Types:"
-msgstr "Type Rand:"
-
-
-msgid "Base Color:"
-msgstr "Basis Kleur:"
-
-
-msgid "Base Transparency:"
-msgstr "Basis Transparantie:"
 
 
 msgid "Draw:"

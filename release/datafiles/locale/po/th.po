@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -762,6 +762,10 @@ msgid "Segments"
 msgstr "ส่วน"
 
 
+msgid "Radius"
+msgstr "รัศมี"
+
+
 msgid "Viewport"
 msgstr "วิวพอร์ต"
 
@@ -1212,10 +1216,6 @@ msgid "Preview"
 msgstr "ดูตัวอย่าง"
 
 
-msgid "Radius"
-msgstr "รัศมี"
-
-
 msgid "Zip"
 msgstr "Zip"
 
@@ -1246,10 +1246,6 @@ msgstr "เส้นขอบ"
 
 msgid "Use"
 msgstr "ใช้"
-
-
-msgid "Advanced Options"
-msgstr "การตั้งค่าขั้นสูง"
 
 
 msgid "Keyframe"
@@ -2641,11 +2637,6 @@ msgstr "แรเงาแบบราบเรียบ"
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "เพิ่มจุดยอด"
-
-
-msgctxt "Operator"
 msgid "Redo"
 msgstr "ทำอีกครั้ง"
 
@@ -2832,6 +2823,11 @@ msgstr "ซูมรูปภาพออก (ใช้ศูนย์กลา�
 
 msgid "Track Camera"
 msgstr "ตามกล้อง"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "เพิ่มจุดยอด"
 
 
 msgid "Add Vertex"
@@ -4196,22 +4192,6 @@ msgstr "ออฟเซต X"
 
 msgid "Detail"
 msgstr "รายละเอียด"
-
-
-msgid "Selection By:"
-msgstr "เลือกโดย:"
-
-
-msgid "Sorting:"
-msgstr "เรียงตาม:"
-
-
-msgid "Selection:"
-msgstr "เลือก:"
-
-
-msgid "Dashed Line:"
-msgstr "เส้นประ:"
 
 
 msgid "Data Source:"

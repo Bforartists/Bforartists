@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'410dc76177af')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -2179,6 +2179,14 @@ msgid "Active Spline"
 msgstr "Aktif Kamera"
 
 
+msgid "Material Index"
+msgstr "Malzeme Endeksi"
+
+
+msgid "Radius"
+msgstr "Yarıçap"
+
+
 msgid "Render"
 msgstr "Sunum"
 
@@ -3380,10 +3388,6 @@ msgid "Preview"
 msgstr "Önizleme"
 
 
-msgid "Radius"
-msgstr "Yarıçap"
-
-
 msgid "Time"
 msgstr "Zaman"
 
@@ -3622,10 +3626,6 @@ msgstr "Resim Ekle"
 
 msgid "End Cap"
 msgstr "Bitiş Zamanı"
-
-
-msgid "Material Index"
-msgstr "Malzeme Endeksi"
 
 
 msgid "Stroke Points"
@@ -10037,11 +10037,6 @@ msgstr "Yatay Eksen"
 
 
 msgctxt "Operator"
-msgid "Click-Extrude"
-msgstr "Ekstrüzyon Boyutu"
-
-
-msgctxt "Operator"
 msgid "Delete Selected Bone(s)"
 msgstr "Aktif Kemik Yok"
 
@@ -11261,11 +11256,6 @@ msgstr "Seçili yüzeylerin açılarını düzleştirir"
 
 
 msgctxt "Operator"
-msgid "Add Vertex"
-msgstr "Nokta Boyama"
-
-
-msgctxt "Operator"
 msgid "Dynamic Paint Bake"
 msgstr "Bake Render Meshes"
 
@@ -12000,6 +11990,10 @@ msgid "Remove Mask Layer"
 msgstr "Katman Sil"
 
 
+msgid "Modifier"
+msgstr "Değiştirici Ekle"
+
+
 msgid "Mouse location"
 msgstr "Konum Kısıtlamaları"
 
@@ -12513,6 +12507,11 @@ msgstr "Nokta Ekle"
 
 msgid "Slide control points"
 msgstr "Düzeltilmiş koordinatları görüntüler"
+
+
+msgctxt "Operator"
+msgid "Add Vertex"
+msgstr "Nokta Boyama"
 
 
 msgid "Add vertex to active spline"
@@ -13961,10 +13960,6 @@ msgstr "Görüntüyü Seçili Olana Hizala"
 
 msgid "Type of object to convert to"
 msgstr "Nurbs Yüzeyi buna çevir"
-
-
-msgid "Modifier"
-msgstr "Değiştirici Ekle"
 
 
 msgid "Exact Match"
@@ -15905,10 +15900,6 @@ msgstr "Tam Ekran Resim Al"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Otomatik Kayıt"
-
-
-msgid "Full Screen"
-msgstr "Tam Ekran"
 
 
 msgctxt "Operator"

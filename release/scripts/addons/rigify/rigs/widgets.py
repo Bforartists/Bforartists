@@ -97,7 +97,7 @@ def create_ikarrow_widget(rig, bone_name, size=1.0, bone_transform_name=None, ro
 
 def create_hand_widget(rig, bone_name, size=1.0, bone_transform_name=None):
     # Create hand widget
-    obj = create_widget(rig, bone_name, bone_transform_name)
+    obj = create_widget(rig, bone_name, bone_transform_name, subsurf=2)
     if obj is not None:
         verts = [(0.0*size, 1.5*size, -0.7000000476837158*size), (1.1920928955078125e-07*size, -0.25*size, -0.6999999284744263*size), (0.0*size, -0.25*size, 0.7000000476837158*size), (-1.1920928955078125e-07*size, 1.5*size, 0.6999999284744263*size), (5.960464477539063e-08*size, 0.7229999899864197*size, -0.699999988079071*size), (-5.960464477539063e-08*size, 0.7229999899864197*size, 0.699999988079071*size), (1.1920928955078125e-07*size, -2.9802322387695312e-08*size, -0.699999988079071*size), (0.0*size, 2.9802322387695312e-08*size, 0.699999988079071*size), ]
         edges = [(1, 2), (0, 3), (0, 4), (3, 5), (4, 6), (1, 6), (5, 7), (2, 7)]
@@ -107,8 +107,6 @@ def create_hand_widget(rig, bone_name, size=1.0, bone_transform_name=None):
         mesh.from_pydata(verts, edges, faces)
         mesh.update()
 
-        mod = obj.modifiers.new("subsurf", 'SUBSURF')
-        mod.levels = 2
         return obj
     else:
         return None
@@ -116,7 +114,7 @@ def create_hand_widget(rig, bone_name, size=1.0, bone_transform_name=None):
 
 def create_foot_widget(rig, bone_name, size=1.0, bone_transform_name=None):
     # Create hand widget
-    obj = create_widget(rig, bone_name, bone_transform_name)
+    obj = create_widget(rig, bone_name, bone_transform_name, subsurf=2)
     if obj is not None:
         verts = [(-0.6999998688697815*size, -0.5242648720741272*size, 0.0*size), (-0.7000001072883606*size, 1.2257349491119385*size, 0.0*size), (0.6999998688697815*size, 1.2257351875305176*size, 0.0*size), (0.7000001072883606*size, -0.5242648720741272*size, 0.0*size), (-0.6999998688697815*size, 0.2527350187301636*size, 0.0*size), (0.7000001072883606*size, 0.2527352571487427*size, 0.0*size), (-0.7000001072883606*size, 0.975735068321228*size, 0.0*size), (0.6999998688697815*size, 0.9757352471351624*size, 0.0*size), ]
         edges = [(1, 2), (0, 3), (0, 4), (3, 5), (4, 6), (1, 6), (5, 7), (2, 7), ]
@@ -126,8 +124,6 @@ def create_foot_widget(rig, bone_name, size=1.0, bone_transform_name=None):
         mesh.from_pydata(verts, edges, faces)
         mesh.update()
 
-        mod = obj.modifiers.new("subsurf", 'SUBSURF')
-        mod.levels = 2
         return obj
     else:
         return None
