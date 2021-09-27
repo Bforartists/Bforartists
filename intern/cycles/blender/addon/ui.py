@@ -143,6 +143,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
     bl_label = "Viewport"
     bl_parent_id = "CYCLES_RENDER_PT_sampling"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header_preset(self, context):
         CYCLES_PT_viewport_sampling_presets.draw_panel_header(self.layout)
