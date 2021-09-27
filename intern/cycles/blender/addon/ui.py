@@ -153,20 +153,28 @@ class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
-
-        heading = layout.column(align=True, heading="Noise Threshold")
-        row = heading.row(align=True)
-        row.prop(cscene, "use_preview_adaptive_sampling", text="")
-        sub = row.row()
-        sub.active = cscene.use_preview_adaptive_sampling
-        sub.prop(cscene, "preview_adaptive_threshold", text="")
+        
+        split = layout.split(factor = 0.425)
+        col = split.column()
+        col.prop(cscene, "use_preview_adaptive_sampling", text="Noise Threshold")
+        col = split.column()
+        if cscene.use_preview_adaptive_sampling:
+            col.prop(cscene, "preview_adaptive_threshold", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')       
+        
+        layout.use_property_split = True
 
         if cscene.use_preview_adaptive_sampling:
             col = layout.column(align=True)
-            col.prop(cscene, "preview_samples", text=" Max Samples")
-            col.prop(cscene, "preview_adaptive_min_samples", text="Min Samples")
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "preview_samples", text="Max Samples")
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "preview_adaptive_min_samples", text="Min Samples")
         else:
             layout.prop(cscene, "preview_samples", text="Samples")
 
@@ -215,20 +223,28 @@ class CYCLES_RENDER_PT_sampling_render(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
-        heading = layout.column(align=True, heading="Noise Threshold")
-        row = heading.row(align=True)
-        row.prop(cscene, "use_adaptive_sampling", text="")
-        sub = row.row()
-        sub.active = cscene.use_adaptive_sampling
-        sub.prop(cscene, "adaptive_threshold", text="")
+        split = layout.split(factor = 0.425)
+        col = split.column()
+        col.prop(cscene, "use_adaptive_sampling", text="Noise Threshold")
+        col = split.column()
+        if cscene.use_adaptive_sampling:
+            col.prop(cscene, "adaptive_threshold", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')       
+        
+        layout.use_property_split = True
 
         col = layout.column(align=True)
         if cscene.use_adaptive_sampling:
-            col.prop(cscene, "samples", text=" Max Samples")
-            col.prop(cscene, "adaptive_min_samples", text="Min Samples")
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "samples", text="Max Samples")
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "adaptive_min_samples", text="Min Samples")
         else:
             col.prop(cscene, "samples", text="Samples")
         col.prop(cscene, "time_limit")
