@@ -201,23 +201,25 @@ class SEQUENCER_PT_sequencer_overlay(Panel):
 
     def draw(self, context):
         st = context.space_data
+        overlay_settings = st.timeline_overlay
         layout = self.layout
 
         layout.active = st.show_strip_overlay
 
-        layout.prop(st, "show_strip_name", text="Name")
-        layout.prop(st, "show_strip_source", text="Source")
-        layout.prop(st, "show_strip_duration", text="Duration")
+        layout.prop(overlay_settings, "show_strip_name", text="Name")
+        layout.prop(overlay_settings, "show_strip_source", text="Source")
+        layout.prop(overlay_settings, "show_strip_duration", text="Duration")
 
         layout.separator()
 
-        layout.prop(st, "show_strip_offset", text="Offsets")
-        layout.prop(st, "show_fcurves", text="F-Curves")
-        layout.prop(st, "show_grid", text="Grid")
+        layout.prop(overlay_settings, "show_strip_offset", text="Offsets")
+        layout.prop(overlay_settings, "show_fcurves", text="F-Curves")
+        layout.prop(overlay_settings, "show_thumbnails", text="Thumbnails")
+        layout.prop(overlay_settings, "show_grid", text="Grid")
 
         layout.separator()
 
-        layout.prop_menu_enum(st, "waveform_display_type")
+        layout.prop_menu_enum(overlay_settings, "waveform_display_type")
 
 
 # bfa - show hide the editormenu
