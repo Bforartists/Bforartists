@@ -155,7 +155,7 @@ class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
 
         layout.use_property_split = False
         layout.use_property_decorate = False
-        
+
         split = layout.split(factor = 0.425)
         col = split.column()
         col.prop(cscene, "use_preview_adaptive_sampling", text="Noise Threshold")
@@ -163,8 +163,8 @@ class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
         if cscene.use_preview_adaptive_sampling:
             col.prop(cscene, "preview_adaptive_threshold", text="")
         else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')       
-        
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
         layout.use_property_split = True
 
         if cscene.use_preview_adaptive_sampling:
@@ -233,8 +233,8 @@ class CYCLES_RENDER_PT_sampling_render(CyclesButtonsPanel, Panel):
         if cscene.use_adaptive_sampling:
             col.prop(cscene, "adaptive_threshold", text="")
         else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')       
-        
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
         layout.use_property_split = True
 
         col = layout.column(align=True)
@@ -654,11 +654,19 @@ class CYCLES_RENDER_PT_performance_memory(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        col = layout.column()
+        split = layout.split(factor = 0.4)
+        col = split.column()
+        col.use_property_split = False
         col.prop(cscene, "use_auto_tile")
-        sub = col.column()
-        sub.active = cscene.use_auto_tile
-        sub.prop(cscene, "tile_size")
+        col = split.column()
+        if cscene.use_auto_tile:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+            col = layout.column()
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "tile_size")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Panel):
