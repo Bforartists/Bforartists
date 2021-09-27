@@ -638,8 +638,10 @@ class CYCLES_RENDER_PT_performance_threads(CyclesButtonsPanel, Panel):
 
         col.prop(rd, "threads_mode")
         sub = col.column(align=True)
-        sub.enabled = rd.threads_mode == 'FIXED'
-        sub.prop(rd, "threads")
+        if rd.threads_mode == 'FIXED':
+            row = sub.row()
+            row.separator()
+            row.prop(rd, "threads")
 
 
 class CYCLES_RENDER_PT_performance_memory(CyclesButtonsPanel, Panel):
