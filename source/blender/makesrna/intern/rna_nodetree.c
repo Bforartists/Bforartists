@@ -13071,8 +13071,20 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_TO_INT:
       icon = ICON_FLOAT_TO_INT;
       break;
+    case FN_NODE_INPUT_SPECIAL_CHARACTERS:
+      icon = ICON_SPECIAL;
+      break;
     case FN_NODE_INPUT_VECTOR:
       icon = ICON_NODE_VECTOR;
+      break;
+    case FN_NODE_VALUE_TO_STRING:
+      icon = ICON_VALUE_TO_STRING;
+      break;
+    case FN_NODE_STRING_LENGTH:
+      icon = ICON_STRING_LENGTH;
+      break;
+    case FN_NODE_STRING_SUBSTRING:
+      icon = ICON_STRING_SUBSTRING;
       break;
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
@@ -13185,6 +13197,12 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_SEPARATE_COMPONENTS:
       icon = ICON_SEPARATE;
+      break;
+    case GEO_NODE_STRING_JOIN:
+      icon = ICON_STRING_JOIN;
+      break;
+    case GEO_NODE_STRING_TO_CURVES:
+      icon = ICON_STRING_TO_CURVE;
       break;
     case GEO_NODE_COLLECTION_INFO:
       icon = ICON_COLLECTION_INFO;
