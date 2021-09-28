@@ -5193,6 +5193,8 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             col.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
             col.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
             col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
+            col.operator("pose.blend_to_neighbour", icon = 'BLEND_TO_NEIGHBOUR')
+        
 
         # icon buttons
         else:
@@ -5211,6 +5213,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+                row.operator("pose.blend_to_neighbour", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
             elif column_count == 2:
 
@@ -5224,6 +5227,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+                row.operator("pose.blend_to_neighbour", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
             elif column_count == 1:
 
@@ -5232,6 +5236,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
                 col.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
                 col.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 col.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+                col.operator("pose.blend_to_neighbour", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
 
 class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):

@@ -3943,7 +3943,7 @@ class VIEW3D_MT_pose_slide(Menu):
         layout.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
         layout.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
-        layout.operator("pose.blend_to_neighbour")
+        layout.operator("pose.blend_to_neighbour", icon = 'BLEND_TO_NEIGHBOUR')
 
 
 class VIEW3D_MT_pose_propagate(Menu):
