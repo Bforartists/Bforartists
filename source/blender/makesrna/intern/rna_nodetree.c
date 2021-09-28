@@ -13062,6 +13062,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
       break;
+    case FN_NODE_LEGACY_RANDOM_FLOAT:
+      icon = ICON_RANDOM_FLOAT;
+      break;
     case FN_NODE_FLOAT_COMPARE:
       icon = ICON_FLOAT_COMPARE;
       break;
