@@ -774,12 +774,12 @@ shading_solid
 make_screenshot_area
 new_window_main
 blend_to_neighbour
-#~ DEF_ICON_BLANK(793)
-#~ DEF_ICON_BLANK(794)
-#~ DEF_ICON_BLANK(795)
-#~ DEF_ICON_BLANK(796)
-#~ DEF_ICON_BLANK(797)
-#~ DEF_ICON_BLANK(798)
+special
+string_join
+string_length
+string_substring
+string_to_curve
+value_to_string
 #~ DEF_ICON_BLANK(799)
 
 # ------------------------- row 12 --------------------------*/
