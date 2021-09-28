@@ -773,7 +773,7 @@ shading_solid
 
 make_screenshot_area
 new_window_main
-#~ DEF_ICON_BLANK(792)
+blend_to_neighbour
 #~ DEF_ICON_BLANK(793)
 #~ DEF_ICON_BLANK(794)
 #~ DEF_ICON_BLANK(795)
