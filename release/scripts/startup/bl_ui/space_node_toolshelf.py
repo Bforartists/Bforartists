@@ -1203,7 +1203,7 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Posterize     ", icon = "POSTERIZE")
             props.use_transform = True
             props.type = "CompositorNodePosterize"
-            
+
             props = col.operator("node.add_node", text=" RGB Curves     ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "CompositorNodeCurveRGB"
@@ -1239,7 +1239,7 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
             props.use_transform = True
             props.type = "CompositorNodeHueSat"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "POSTERIZE")
             props.use_transform = True
             props.type = "CompositorNodePosterize"
@@ -4365,6 +4365,93 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.type = "GeometryNodeLegacyPointTranslate"
 
 
+#add text panel
+class NODES_PT_geom_add_text(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Text"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Special Characters", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
+
+            props = col.operator("node.add_node", text=" String Join               ", icon = "STRING_JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeStringJoin"
+
+            props = col.operator("node.add_node", text=" String Length           ", icon = "STRING_LENGTH")
+            props.use_transform = True
+            props.type = "FunctionNodeStringLength"
+
+            props = col.operator("node.add_node", text=" String Substring       ", icon = "STRING_SUBSTRING")
+            props.use_transform = True
+            props.type = "FunctionNodeStringSubstring"
+
+            props = col.operator("node.add_node", text=" String to Curves       ", icon = "STRING_TO_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeStringToCurves"
+
+            props = col.operator("node.add_node", text=" Value to String         ", icon = "VALUE_TO_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeValueToString"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
+
+            props = flow.operator("node.add_node", text="", icon = "STRING_JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeStringJoin"
+
+            props = flow.operator("node.add_node", text = "", icon = "STRING_LENGTH")
+            props.use_transform = True
+            props.type = "FunctionNodeStringLength"
+
+            props = flow.operator("node.add_node", text="", icon = "STRING_SUBSTRING")
+            props.use_transform = True
+            props.type = "FunctionNodeStringSubstring"
+
+            props = flow.operator("node.add_node", text = "", icon = "STRING_TO_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeStringToCurves"
+
+            props = flow.operator("node.add_node", text="", icon = "VALUE_TO_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeValueToString"
+
+
 #add volume panel
 class NODES_PT_geom_add_volume(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -4738,6 +4825,7 @@ classes = (
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
+    NODES_PT_geom_add_text,
     NODES_PT_geom_add_point,
     NODES_PT_geom_add_volume,
     NODES_PT_geom_add_utilities,
