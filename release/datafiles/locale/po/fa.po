@@ -2570,12 +2570,12 @@ msgid "Edit Mode"
 msgstr "ﯽﺸﯾﺍﺮﯾﻭ ﺖﻟﺎﺣ"
 
 
-msgid "Mirror"
-msgstr "ﻪﻨﯾﺁ"
-
-
 msgid "Time Offset"
 msgstr "X ﺖﺴﻓﺍ"
+
+
+msgid "Mirror"
+msgstr "ﻪﻨﯾﺁ"
 
 
 msgid "Armature Modifier"
@@ -9437,11 +9437,6 @@ msgstr "ﺖﺳﮊ ﺖﻟﺎﺣ"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "ﯽﺴﮐﻭﺮﭘ ﻦﺘﺧﺎﺳ..."
-
-
-msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "ﻊﯾﺮﺳ ﺶﯾﺍﺮﯾﻭ"
 
@@ -11849,52 +11844,12 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "X ﻞﺤﻣ ﻥﺩﺮﮐ ﻥﻭﺭﺍﻭ"
 
 
-msgid "Diffuse Direct"
-msgstr "ﺕﻭﺎﻔﺗ"
-
-
-msgid "Diffuse Indirect"
-msgstr "ﺕﻭﺎﻔﺗ"
-
-
-msgid "Glossy Direct"
-msgstr "ﺖﻬﺟ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgid "Transmission Direct"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
-msgid "Transmission Indirect"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
-msgid "AA Samples"
-msgstr "AA ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
-
-
 msgid "Filter Glossy"
 msgstr "ﯽﻓﺎﺻ"
 
 
 msgid "Dynamic BVH"
 msgstr "BVH ﺎﯾﻮﭘ"
-
-
-msgid "Cancel timeout"
-msgstr "ﻑﺍﺮﺼﻧﺍ"
-
-
-msgid "Reset timeout"
-msgstr "ﺶﯾﺎﻤﻧ ﯽﻧﺎﺸﻧﺯﺎﺑ"
-
-
-msgid "Text timeout"
-msgstr "ﻦﺘﻣ ﺶﯾﺍﺮﯾ:"
-
-
-msgid "Tile Size"
-msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 
 msgid "Device"
@@ -11907,10 +11862,6 @@ msgstr "ﺭﺪﻧﺭ ﯼﺍﺮﺑ CPU ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 msgid "GPU Compute"
 msgstr "GPU ﺎﺑ ﻪﺒﺳﺎﺤﻣ"
-
-
-msgid "Diffuse Samples"
-msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 
 msgid "Feature Set"
@@ -11929,52 +11880,36 @@ msgid "Filter Width"
 msgstr "ﯼﺪﻌﺑ 2 ﺮﺘﻠﯿﻓ"
 
 
-msgid "Glossy Samples"
-msgstr "AA ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
-
-
-msgid "Mesh Light Samples"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
-
-
 msgid "Pause Preview"
 msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ ﺚﮑﻣ"
 
 
-msgid "Start Resolution"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
+msgid "Tile Size"
+msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 
-msgid "Tile order for rendering"
-msgstr "ﺭﺪﻧﺭ ﯼﺍﺮﺑ CPU ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
+msgid "Diffuse Direct"
+msgstr "ﺕﻭﺎﻔﺗ"
 
 
-msgid "Right to Left"
-msgstr "ﺱﻭﺎﻣ ﺖﺳﺍﺭ ﺪﯿﻠﮐ"
+msgid "Diffuse Indirect"
+msgstr "ﺕﻭﺎﻔﺗ"
 
 
-msgid "Left to Right"
-msgstr "ﻥﺯﻭ ﻦﯿﯿﻌﺗ"
-
-
-msgid "Top to Bottom"
-msgstr "ﻦﯿﯾﺎﭘ"
-
-
-msgid "Bottom to Top"
-msgstr "ﻦﯿﯾﺎﭘ"
-
-
-msgid "Transmission Samples"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
-msgid "Progressive Refine"
-msgstr "ﺖﻓﺮﺸﯿﭘ"
+msgid "Glossy Direct"
+msgstr "ﺖﻬﺟ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 
 msgid "Glossy Color"
 msgstr "ﮓﻧﺭ ﯽﭙﮐ"
+
+
+msgid "Transmission Direct"
+msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
+
+
+msgid "Transmission Indirect"
+msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
 msgid "Map Resolution"
@@ -12659,14 +12594,6 @@ msgstr "ﺎﻫ‌ﻝﺎﻣﺮﻧ:"
 
 msgid "Use linear progression"
 msgstr "ﯽﻄﺧ ﺖﻓﺮﺸﯿﭘ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
-
-
-msgid "Mesh Light"
-msgstr "ﯽﻄﺧ ﺭﻮﻧ"
-
-
-msgid "Tiles X"
-msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 
 msgctxt "Operator"
@@ -13503,11 +13430,6 @@ msgstr "ﯽﻟﺎﺧ"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "ﻮﮔﺪﻨﻠﺑ"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "ﯽﺴﮐﻭﺮﭘ ﻦﺘﺧﺎﺳ..."
 
 
 msgctxt "Operator"
@@ -14506,16 +14428,16 @@ msgid "Constructive modifier cannot be applied to multi-res data in sculpt mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "OK?"
-msgstr "؟ﺪﯿﯾﺄﺗ"
-
-
 msgid "Set Parent To"
 msgstr "ﻊﺒﻨﻣ"
 
 
 msgid "Object (Keep Transform)"
 msgstr "ﻞﯾﺪﺒﺗ:"
+
+
+msgid "OK?"
+msgstr "؟ﺪﯿﯾﺄﺗ"
 
 
 msgid "Loop in parents"
@@ -14962,16 +14884,16 @@ msgid "Relationship"
 msgstr "ﻂﺑﺍﻭﺭ"
 
 
+msgid "Modify"
+msgstr "ﺪﻣﺎﺟ"
+
+
 msgid "Image not packed"
 msgstr "ﺮﯾﻮﺼﺗ"
 
 
 msgid "unable to load text"
 msgstr "ﺖﺴﯿﻧ ﺮﯾﺬﭘ ﻥﺎﮑﻣﺍ ﻞﯾﺎﻓ ﻥﺩﺮﮐ‌ﺯﺎﺑ"
-
-
-msgid "Modify"
-msgstr "ﺪﻣﺎﺟ"
 
 
 msgid "Unable to create new strip"

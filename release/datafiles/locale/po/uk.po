@@ -1290,10 +1290,6 @@ msgid "None"
 msgstr "Немає"
 
 
-msgid "Ambient Occlusion"
-msgstr "Вплив оточення (АО)"
-
-
 msgid "Emit"
 msgstr "Випромінювання"
 
@@ -1388,10 +1384,6 @@ msgstr "Зчистити"
 
 msgid "Clear Images before baking (internal only)"
 msgstr "Зчистити зображення перед запіканням (лише внутрішнє)"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "Додати внесок навколишнього перекриття"
 
 
 msgid "Color the pass"
@@ -15358,6 +15350,26 @@ msgid "Display modifier in viewport"
 msgstr "Показати модифікатор у вікні перегляду"
 
 
+msgid "Texture Mapping"
+msgstr "Розкладання текстури"
+
+
+msgid "Change stroke uv texture values"
+msgstr "Змінити значення uv текстури штриха"
+
+
+msgid "Time Offset"
+msgstr "Часовий зсув"
+
+
+msgid "Offset keyframes"
+msgstr "Зсув ключкадрів"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "Близкість вагомостей вершин"
+
+
 msgid "Array"
 msgstr "Масив"
 
@@ -15402,10 +15414,6 @@ msgid "Subdivide stroke adding more control points"
 msgstr "Підподіляє штрих, додаючи більше керувальних точок"
 
 
-msgid "Vertex Weight"
-msgstr "Вагомість вершини"
-
-
 msgid "Deform stroke points using armature object"
 msgstr "Деформує точки штриха, використовуючи об'єкт арматури"
 
@@ -15438,14 +15446,6 @@ msgid "Change stroke thickness"
 msgstr "Змінює товщину штриха"
 
 
-msgid "Time Offset"
-msgstr "Часовий зсув"
-
-
-msgid "Offset keyframes"
-msgstr "Зсув ключкадрів"
-
-
 msgid "Hue/Saturation"
 msgstr "Відтінок/насиченість"
 
@@ -15456,14 +15456,6 @@ msgstr "Застосовує зміни до кольорів штрихів"
 
 msgid "Opacity of the strokes"
 msgstr "Безпрозорість штрихів"
-
-
-msgid "Texture Mapping"
-msgstr "Розкладання текстури"
-
-
-msgid "Change stroke uv texture values"
-msgstr "Змінити значення uv текстури штриха"
 
 
 msgid "Tint"
@@ -15926,6 +15918,10 @@ msgstr "Об'єкт-ґратка, яким деформувати"
 
 msgid "Strength of modifier effect"
 msgstr "Сила ефекту модифікатора"
+
+
+msgid "Point Density"
+msgstr "Щільність точок"
 
 
 msgid "Overscan"
@@ -16456,8 +16452,16 @@ msgid "Space"
 msgstr "Пропуск"
 
 
-msgid "Blend"
-msgstr "Змішання"
+msgid "Highest"
+msgstr "Верхній"
+
+
+msgid "Lowest"
+msgstr "Нижній"
+
+
+msgid "Target Object"
+msgstr "Цільовий об'єкт"
 
 
 msgid "Vertex Group Element"
@@ -16470,6 +16474,10 @@ msgstr "Значення вагомості вершини у групі вер�
 
 msgid "Group Index"
 msgstr "Індекс групи"
+
+
+msgid "Vertex Weight"
+msgstr "Вагомість вершини"
 
 
 msgid "Grid and Canvas Settings"
@@ -25192,6 +25200,10 @@ msgid "Node tree for node-based textures"
 msgstr "Дерево вузлів для текстури на основі дерева вузлів"
 
 
+msgid "Blend"
+msgstr "Змішання"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "Процедурна - створює градієнтну текстуру"
 
@@ -31712,10 +31724,6 @@ msgid "Mix the weights of two vertex groups"
 msgstr "Мішати вагомості двох груп вершин"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "Близкість вагомостей вершин"
-
-
 msgid "Set the vertex group weights based on the distance to another target object"
 msgstr "Установити вагомості групи вершин на основі відстані до іншої цілі"
 
@@ -35600,16 +35608,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "Установити вагомості вершин групи за відстанню до цільового об'єкта"
 
 
-msgid "Highest"
-msgstr "Верхній"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "Відстань розкладання на вагомість 1,0"
-
-
-msgid "Lowest"
-msgstr "Нижній"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -35650,10 +35650,6 @@ msgstr "Використати відстань між задіяними та �
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "Використати відстань між задіяними вершинами та цільовим об'єктом або його геометрією"
-
-
-msgid "Target Object"
-msgstr "Цільовий об'єкт"
 
 
 msgid "Object to calculate vertices distances from"
@@ -39757,6 +39753,26 @@ msgid "Convex Hull"
 msgstr "Опукла оболонка"
 
 
+msgid "Distribution Method"
+msgstr "Метод Розподілу"
+
+
+msgid "Method to use for scattering points"
+msgstr "Метод для використання для розсіювання точок"
+
+
+msgid "Distribute points randomly on the surface"
+msgstr "Розподілити точки випадково на поверхні"
+
+
+msgid "Poisson Disk"
+msgstr "Диск Пуассона"
+
+
+msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
+msgstr "Розподілити точки випадково на поверхні, водночас враховуючи мінімальну відстань між точками"
+
+
 msgid "Is Viewport"
 msgstr "Є Оглядвікном"
 
@@ -40113,26 +40129,6 @@ msgid "Point Distribute"
 msgstr "Розподіл Точок"
 
 
-msgid "Distribution Method"
-msgstr "Метод Розподілу"
-
-
-msgid "Method to use for scattering points"
-msgstr "Метод для використання для розсіювання точок"
-
-
-msgid "Distribute points randomly on the surface"
-msgstr "Розподілити точки випадково на поверхні"
-
-
-msgid "Poisson Disk"
-msgstr "Диск Пуассона"
-
-
-msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
-msgstr "Розподілити точки випадково на поверхні, водночас враховуючи мінімальну відстань між точками"
-
-
 msgid "Point Instance"
 msgstr "Примірник Точки"
 
@@ -40241,6 +40237,18 @@ msgid "Bring the input object geometry, location, rotation and scale into the mo
 msgstr "Внести геометрію, локацію, обертання та масштаб об'єкта уводу у модифікований об'єкт, підтримуючи відносну позицію між цими двома об'єктами у сцені"
 
 
+msgid "Align X"
+msgstr "Вирівняти за X"
+
+
+msgid "Align Y"
+msgstr "Вирівняти за Y"
+
+
+msgid "Font of the text. Falls back to the UI font by default"
+msgstr "Шрифт тексту. Стандартно падає назад до шрифту Інтерфейсу Користувача"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Кадр"
@@ -40284,6 +40292,10 @@ msgstr "Вузол відтінювача матеріалу"
 
 msgid "Add Shader"
 msgstr "Сумований тонувач"
+
+
+msgid "Ambient Occlusion"
+msgstr "Вплив оточення (АО)"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -40426,20 +40438,8 @@ msgid "Method for rendering subsurface scattering"
 msgstr "Метод для рендерингу підповерхневого розсіювання"
 
 
-msgid "Christensen-Burley"
-msgstr "Крістенсен-Берлі"
-
-
-msgid "Approximation to physically based volume scattering"
-msgstr "Наближене до фізично-правильного підповерхневе розсіювання на основі розсіювання світла об'ємом"
-
-
 msgid "Random Walk"
 msgstr "Випадкове блукання"
-
-
-msgid "Volumetric approximation to physically based volume scattering"
-msgstr "Наближене до фізично-правильного об'ємне підповерхневе розсіювання на основі розсіювання світла об'ємом"
 
 
 msgid "Refraction BSDF"
@@ -40730,18 +40730,6 @@ msgid "Subsurface Scattering"
 msgstr "Підповерхневе розсіювання"
 
 
-msgid "Function to determine how much light nearby points contribute based on their distance to the shading point"
-msgstr "Функція, що визначає, скільки світла дають точки об'єкта, близькі до відтінюваної, залежно від відстані"
-
-
-msgid "Simple cubic falloff function"
-msgstr "Проста кубічна функція спаду"
-
-
-msgid "Normal distribution, multiple can be combined to fit more complex profiles"
-msgstr "Нормальний розподіл; може об'єднуватися з іншими для отримання складніших профілів"
-
-
 msgid "Axis for radial tangents"
 msgstr "Осі для радіальних дотичних"
 
@@ -40944,10 +40932,6 @@ msgstr "Вжити 4D вектор (x, y, z, w) як увід"
 
 msgid "The dimensions of the space to evaluate the noise in"
 msgstr "Розмірності простору для обчислення шуму у ньому"
-
-
-msgid "Point Density"
-msgstr "Щільність точок"
 
 
 msgid "Object to take point data from"
@@ -53775,6 +53759,10 @@ msgid "Only cut the front most geometry"
 msgstr "Різати лише на передньому плані"
 
 
+msgid "X-Ray"
+msgstr "Просвічення"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "Мультивибір петель"
@@ -58342,23 +58330,6 @@ msgstr "Увімкнути/вимкнути позування/вибір кіс
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Зробити замісник"
-
-
-msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "Додати порожній об'єкт для локальної заміни даних зв'язаного бібліотечного об'єкта"
-
-
-msgid "Proxy Object"
-msgstr "Об'єкт замісника"
-
-
-msgid "Name of library-linked/collection object to make a proxy for"
-msgstr "Назва об'єкта пов'язаної бібліотеки/колекції, для якого слід зробити замісник"
-
-
-msgctxt "Operator"
 msgid "QuadriFlow Remesh"
 msgstr "Перебудова Потоком Чотирибічників"
 
@@ -61585,15 +61556,6 @@ msgid "Only apply the selected bones (with propagation to children)"
 msgstr "Застосувати лише вибрані кістки (з поширенням до нащадків)"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Розбивник пози"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "Створити підхожу розбивку пози на поточному кадрі"
-
-
 msgid "Axis Lock"
 msgstr "Блокувати вісь"
 
@@ -61672,6 +61634,15 @@ msgstr "Попередній ключовий кадр"
 
 msgid "Frame number of keyframe immediately before the current frame"
 msgstr "Номер кадру або ключовий кадр безпосередньо перед поточним кадром"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "Розбивник пози"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
+msgstr "Створити підхожу розбивку пози на поточному кадрі"
 
 
 msgid "Add a constraint to the active bone"
@@ -67364,16 +67335,8 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Автоматично вибрати вісь, за якою вже вирівняно більшість вершин"
 
 
-msgid "Align X"
-msgstr "Вирівняти за X"
-
-
 msgid "Align UVs on X axis"
 msgstr "Вирівняти UV за віссю Х"
-
-
-msgid "Align Y"
-msgstr "Вирівняти за Y"
 
 
 msgid "Align UVs on Y axis"
@@ -70422,14 +70385,6 @@ msgid "Edit Property"
 msgstr "Редагувати властивість"
 
 
-msgid "Edit the attributes of the property"
-msgstr "Змінити атрибути властивості"
-
-
-msgid "Default value of the property. Important for NLA mixing"
-msgstr "Стандартне значення властивості. Важливо для мішання НЛА"
-
-
 msgid "Is Library Overridable"
 msgstr "Є заміщуваноздатною бібліотекою"
 
@@ -70438,20 +70393,16 @@ msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "Дозволити властивості бути заміщеною, коли блок даних пов'язаний"
 
 
-msgid "Maximum value of the property"
-msgstr "Найбільше значення властивості"
-
-
-msgid "Minimum value of the property"
-msgstr "Найменше значення властивості"
-
-
 msgid "Property Name"
 msgstr "Назва властивості"
 
 
 msgid "Property name edit"
 msgstr "Редагувати назву властивості"
+
+
+msgid "Soft Min"
+msgstr "М'яко Мін"
 
 
 msgid "Subtype"
@@ -70464,10 +70415,6 @@ msgstr "Вжити м'які ліміти"
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
 msgstr "Лімітує повзунок Значення Властивості діапазоном; значення за межами діапазону потрібно вводити вручну"
-
-
-msgid "Property value edit"
-msgstr "Редагувати значення властивості"
 
 
 msgctxt "Operator"
@@ -71981,10 +71928,6 @@ msgid "Sampling Presets"
 msgstr "Передустави Відбору"
 
 
-msgid "Denoising"
-msgstr "Знешумлення"
-
-
 msgid "Film"
 msgstr "Фільм"
 
@@ -72035,18 +71978,6 @@ msgstr "Фінальний Рендер"
 
 msgid "Threads"
 msgstr "Потоки"
-
-
-msgid "Tiles"
-msgstr "Плитки"
-
-
-msgid "Adaptive Sampling"
-msgstr "Адаптивний Відбір"
-
-
-msgid "Sub Samples"
-msgstr "Під Вибірки"
 
 
 msgid "Subdivision"
@@ -72155,10 +72086,6 @@ msgstr "Розширений фільтр"
 
 msgid "Bookmarks"
 msgstr "Закладки"
-
-
-msgid "Favorites"
-msgstr "Фаворити"
 
 
 msgid "Recent"
@@ -77121,10 +77048,6 @@ msgid "Maximum number of bounces the light will contribute to the render"
 msgstr "Максимальна кількість відскоків світла, що буде брати участь при рендері"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Кількість вибірок освітлення для рендера для кожної вибірки загладжування"
-
-
 msgid "Multiple Importance Sample"
 msgstr "Багаторазова вибірка за значимістю"
 
@@ -77289,128 +77212,12 @@ msgid "Use motion blur for this object"
 msgstr "Використати для цього об'єкта розмиття рухом"
 
 
-msgid "Diffuse Direct"
-msgstr "Розсіяння Пряме"
-
-
-msgid "Denoise the direct diffuse lighting"
-msgstr "Знешумити пряме розсіяне освітлення"
-
-
-msgid "Diffuse Indirect"
-msgstr "Розсіяння Побічне"
-
-
-msgid "Denoise the indirect diffuse lighting"
-msgstr "Знешумити побічне розсіяне освітлення"
-
-
-msgid "Denoising Feature Strength"
-msgstr "Сила функції знешумлення"
-
-
-msgid "Controls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)"
-msgstr "Керує вилученням шуму по проходах зображення (нижчі значення зберігають більше деталей, але менш загладжуються)"
-
-
-msgid "Glossy Direct"
-msgstr "Глянцеве пряме"
-
-
-msgid "Denoise the direct glossy lighting"
-msgstr "Знешумити пряме глянцеве освітлення"
-
-
-msgid "Glossy Indirect"
-msgstr "Глянцеве побічне"
-
-
-msgid "Denoise the indirect glossy lighting"
-msgstr "Знешумити побічне глянцеве освітлення"
-
-
-msgid "Neighbor Frames"
-msgstr "Сусідні Кадри"
-
-
-msgid "Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)"
-msgstr "Кількість сусідніх кадрів для вживання для знешумлення анімацій (більше кадрів продукують згладженіші результати ціною продуктивності)"
-
-
-msgid "Input Passes"
-msgstr "Проходи Уводу"
-
-
-msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
-msgstr "Проходи, що використовуються знешумником для відрізнення шуму від деталей шейдерів та геометрії"
-
-
-msgid "Use only color as input"
-msgstr "Вжити лише колір як увід"
-
-
-msgid "Color + Albedo"
-msgstr "Колір + Альбедо"
-
-
-msgid "Use color and albedo data as input"
-msgstr "Вжити дані кольору та альбедо як увід"
-
-
-msgid "Color + Albedo + Normal"
-msgstr "Колір + Альбедо + Нормаль"
-
-
-msgid "Use color, albedo and normal data as input"
-msgstr "Вжити дані кольору, альбедо та нормалі як увід"
-
-
-msgid "Denoising Radius"
-msgstr "Радіус знешумлення"
-
-
-msgid "Size of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)"
-msgstr "Розмір ділянки зображення, що буде використовуватися для знешумлення пікселя (вищі значення дають більше загладжування, але можуть давати втрату деталей та уповільнювати обробку)"
-
-
-msgid "Relative Filter"
-msgstr "Відносний Фільтр"
-
-
-msgid "When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)"
-msgstr "При вилученні пікселів, що не несуть інформації, використовується відносний поріг замість абсолютного (може допомогти скоротити артефакти, але може спричинити втрату деталей навколо країв)"
-
-
 msgid "Store Denoising Passes"
 msgstr "Зберігати Проходи Знешумлення"
 
 
 msgid "Store the denoising feature passes and the noisy image. The passes adapt to the denoiser selected for rendering"
 msgstr "Зберігати проходи вирізнення знешумлювання та шумне зображення. Ці проходи пристосовуються до знешумника, вибраного для рендерингу"
-
-
-msgid "Denoising Strength"
-msgstr "Сила знешумлення"
-
-
-msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
-msgstr "Керує вагуванням сусіднього пікселя для фільтру знешумлення (нижчі значення дають збереження більше деталей, але менш загладжуються)"
-
-
-msgid "Transmission Direct"
-msgstr "Пропускання прямих"
-
-
-msgid "Denoise the direct transmission lighting"
-msgstr "Знешумити пряме пропускуваного освітлення"
-
-
-msgid "Transmission Indirect"
-msgstr "Пропускання непрямих"
-
-
-msgid "Denoise the indirect transmission lighting"
-msgstr "Знешумити побічне пропускуване освітлення"
 
 
 msgid "Debug Render Time"
@@ -77453,20 +77260,8 @@ msgid "Deliver indirect volumetric scattering pass"
 msgstr "Подає прохід побічного об'ємного розсіювання"
 
 
-msgid "AA Samples"
-msgstr "Вибірки згладж."
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Кількість вибірок загладжування, що рендеряться для кожного пікселя"
-
-
 msgid "Adaptive Min Samples"
 msgstr "Адаптивне Мін Вибірок"
-
-
-msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on number of AA samples"
-msgstr "Мінімум вибірок загладжування для адаптивного відбору, для розкриття шумних областей перед зупиненням відбору. Нуль для автоматичної устави базується на кількості вибірок загладжування"
 
 
 msgid "Adaptive Sampling Threshold"
@@ -77479,14 +77274,6 @@ msgstr "Відскоки Навколишнього Перекриття"
 
 msgid "AO Bounces Render"
 msgstr "Рендер з Відскоками Загороди Оточення"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Вибірки впливу оточення (АО)"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "Кількість вибірок загороди оточення (АО), що рендеряться для кожної вибірки загладжування"
 
 
 msgid "Bake Type"
@@ -77569,64 +77356,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "Будь-яка модифікація об'єкта вимагає повної перебудови BVH, але рендер проходить швидше"
 
 
-msgid "Cancel timeout"
-msgstr "Межа часу скасування"
-
-
-msgid "OpenCL Device Type"
-msgstr "Тип пристрою OpenCL"
-
-
-msgid "Accelerator"
-msgstr "Прискорювач"
-
-
-msgid "OpenCL Kernel Type"
-msgstr "Тип ядра OpenCL"
-
-
-msgid "Mega"
-msgstr "Мега"
-
-
-msgid "Memory limit"
-msgstr "Обмеження пам'яті"
-
-
-msgid "Artificial limit on OpenCL memory usage in MB (0 to disable limit)"
-msgstr "Штучне обмеження використання пам'яті OpenCL у МБ (0 - без обмежень)"
-
-
-msgid "CUDA Streams"
-msgstr "Потоки CUDA"
-
-
-msgid "Native OptiX Curve Primitive"
-msgstr "Рідний Примітив Кривої OptiX"
-
-
-msgid "Reset timeout"
-msgstr "Ліміт часу скидання"
-
-
-msgid "Text timeout"
-msgstr "Ліміт часу тексту"
-
-
-msgid "Tile Size"
-msgstr "Розмір плитки"
-
-
 msgid "AVX"
 msgstr "AVX"
 
 
 msgid "AVX2"
 msgstr "AVX2"
-
-
-msgid "Split Kernel"
-msgstr "Розділити ядро"
 
 
 msgid "SSE2"
@@ -77653,10 +77388,6 @@ msgid "Use special type BVH optimized for hair (uses more ram but renders faster
 msgstr "Використати спеціальний тип BVH, що оптимізований для волосся (використовує більше оперативної пам'яті але рендер здійснюється швидше)"
 
 
-msgid "Debug OpenCL"
-msgstr "Зневадження OpenCL"
-
-
 msgid "Use Spatial Splits"
 msgstr "Вжити просторові поділи"
 
@@ -77669,8 +77400,12 @@ msgid "Denoiser"
 msgstr "Знешумник"
 
 
-msgid "Denoise the image with the selected denoiser. For denoising the image after rendering, denoising data render passes also adapt to the selected denoiser"
-msgstr "Знешумити зображення за допомогою вибраного знешумника. Для знешумлювання зображення після рендерингу, проходи рендера даних знешумлювання також пристосовуються до вибраного знешумника"
+msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
+msgstr "Проходи, що використовуються знешумником для відрізнення шуму від деталей шейдерів та геометрії"
+
+
+msgid "Albedo"
+msgstr "Альбедо"
 
 
 msgid "Device"
@@ -77715,14 +77450,6 @@ msgstr "Відскоки Розсіяння"
 
 msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "Найбільша кількість відскоків відбивання розсіяння; обмежена загальним максимумом"
-
-
-msgid "Diffuse Samples"
-msgstr "Вибірки Розсіяння"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Кількість вибірок відскоків розсіяння, що рендеряться для кожної вибірки загладжування"
 
 
 msgid "Cull Distance"
@@ -77809,14 +77536,6 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "Найбільша кількість відбиттів дзеркального відбивання; обмежена загальним максимумом"
 
 
-msgid "Glossy Samples"
-msgstr "Вибірки глянцю"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "Кількість вибірок відскоків глянцю, що рендеряться для кожної вибірки загладжування"
-
-
 msgid "Light Sampling Threshold"
 msgstr "Поріг вибірок світла"
 
@@ -77835,14 +77554,6 @@ msgstr "Мак підподілів"
 
 msgid "Stop subdividing when this level is reached even if the dice rate would produce finer tessellation"
 msgstr "Зупинити підподілення, коли цей рівень досягнути навіть, якщо частота нарізання продовжить продукувати краще трикутникування"
-
-
-msgid "Mesh Light Samples"
-msgstr "Вибірки Світної Сіті"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "Кількість вибірок емісії освітлення із сіті, що рендеряться для кожної вибірки загладжування"
 
 
 msgid "Min Light Bounces"
@@ -77901,20 +77612,12 @@ msgid "Multiplier for dicing rate of geometry outside of the camera view. The di
 msgstr "Множник для норми нарізання геометрії поза оглядом камери. Ця норма нарізання об'єктів поступово збільшується з відстанню, коли вони є поза оглядом камери. Нижчі значення забезпечують відбиття та тіні з вищою якістю для поза екранних об'єктів, тоді як вищі значення використовують менше пам'яті"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Кількість вибірок згладжування для рендера у вікні передогляду; якщо 0 - необмежена"
-
-
 msgid "Viewport Denoiser"
 msgstr "Знешумник Оглядвікна"
 
 
 msgid "Denoise the image after each preview update with the selected denoiser"
 msgstr "Знешумлювати зображення після кожного оновлення передогляду за допомогою вибраного знешумника"
-
-
-msgid "Viewport Input Passes"
-msgstr "Проходи Уводу Оглядвікна"
 
 
 msgid "Start Denoising"
@@ -77949,38 +77652,6 @@ msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "Кількість вибірок для рендера у вікні передогляду; якщо 0 - необмежена"
 
 
-msgid "Start Resolution"
-msgstr "Початкова роздільність"
-
-
-msgid "Resolution to start rendering preview at, progressively increasing it to the full viewport size"
-msgstr "Початкова роздільність передогляду рендерингу; поступово збільшується до повного розміру області передогляду"
-
-
-msgid "Integrator"
-msgstr "Інтегратор"
-
-
-msgid "Method to sample lights and materials"
-msgstr "Метод вибірки світла та матеріалів"
-
-
-msgid "Branched Path Tracing"
-msgstr "Розгалуджене простеження шляхів"
-
-
-msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "Інтегратор з простеженням шляхів променів, які розгалуджуються при першому світловідкоку, що полегшує контроль над кількістю джерел світла та вибірками матеріалів"
-
-
-msgid "Path Tracing"
-msgstr "Простеження шляхів"
-
-
-msgid "Pure path tracing integrator"
-msgstr "Інтегратор з чистим простеженням шляхів променів"
-
-
 msgid "Rolling Shutter Duration"
 msgstr "Прокручуваний Затвор Тривалість"
 
@@ -78003,22 +77674,6 @@ msgstr "Не використовувати ефект прокручувано�
 
 msgid "Sensor is being scanned from top to bottom"
 msgstr "Сенсор сканується згори донизу"
-
-
-msgid "Sample All Direct Lights"
-msgstr "Вибірка всього прямого світла"
-
-
-msgid "Sample all lights (for direct samples), rather than randomly picking one"
-msgstr "Вибирати все світло (при прямій вибірці), а не випадковим чином"
-
-
-msgid "Sample All Indirect Lights"
-msgstr "Вибірка всього побічного світла"
-
-
-msgid "Sample all lights (for indirect samples), rather than randomly picking one"
-msgstr "Вибирати все світло (при непрямій вибірці), а не випадковим чином"
 
 
 msgid "Clamp Direct"
@@ -78057,14 +77712,6 @@ msgid "Use Sobol random sampling pattern"
 msgstr "Вжити патерн відбору випадковостей на основі методу Соболя"
 
 
-msgid "Correlated Multi-Jitter"
-msgstr "Корельовано багато-коливно"
-
-
-msgid "Use Correlated Multi-Jitter random sampling pattern"
-msgstr "Вжити патерн відбору випадковостей на основі Корельованого Багато-Коливного методу"
-
-
 msgid "Progressive Multi-Jitter"
 msgstr "Прогресивно Багато-Коливно"
 
@@ -78079,14 +77726,6 @@ msgstr "Початкове значення для інтегратора, що�
 
 msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "Вжити Open Shading Language (лише для рендерингу з ЦП)"
-
-
-msgid "Subsurface Samples"
-msgstr "Вибірки Підповерхні"
-
-
-msgid "Number of subsurface scattering samples to render for each AA sample"
-msgstr "Кількість вибірок підповерхневого розсіювання, що рендеряться для кожної вибірки згладжування"
 
 
 msgid "Viewport Texture Limit"
@@ -78141,52 +77780,8 @@ msgid "Limit texture size used by final rendering"
 msgstr "Ліміт розміру текстур, використовуваний фінальним рендерингом"
 
 
-msgid "Tile order for rendering"
-msgstr "Порядок плиток для рендерингу"
-
-
-msgid "Render from center to the edges"
-msgstr "Рендерити від центра до країв"
-
-
-msgid "Right to Left"
-msgstr "Справа наліво"
-
-
-msgid "Render from right to left"
-msgstr "Рендерити справа наліво"
-
-
-msgid "Left to Right"
-msgstr "Зліва направо"
-
-
-msgid "Render from left to right"
-msgstr "Рендерити зліва направо"
-
-
-msgid "Top to Bottom"
-msgstr "Згори донизу"
-
-
-msgid "Render from top to bottom"
-msgstr "Рендерити згори донизу"
-
-
-msgid "Bottom to Top"
-msgstr "Знизу вгору"
-
-
-msgid "Render from bottom to top"
-msgstr "Рендерити знизу вгору"
-
-
-msgid "Hilbert Spiral"
-msgstr "Спіраль Гільберта"
-
-
-msgid "Render in a Hilbert Spiral"
-msgstr "Рендер у Спіралі Гільберта"
+msgid "Tile Size"
+msgstr "Розмір плитки"
 
 
 msgid "Transmission Bounces"
@@ -78195,14 +77790,6 @@ msgstr "Відскоки Пропускання"
 
 msgid "Maximum number of transmission bounces, bounded by total maximum"
 msgstr "Найбільша кількість пропускуваних світловідскоків, обмежена загальним максимумом"
-
-
-msgid "Transmission Samples"
-msgstr "Вибірки пропускання"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "Кількість вибірок відскоків пропускання, що рендеряться для кожної вибірки загладжування"
 
 
 msgid "Transparent Max Bounces"
@@ -78265,22 +77852,6 @@ msgid "Denoise the image in the 3D viewport"
 msgstr "Знешумити зображення в 3D оглядвікні"
 
 
-msgid "Progressive Refine"
-msgstr "Прогресивне покращення"
-
-
-msgid "Instead of rendering each tile until it is finished, refine the whole image progressively (this renders somewhat slower, but time can be saved by manually stopping the render when the noise is low enough)"
-msgstr "Замість рендерингу кожної плитки до завершення, очищувати поступово все зображення (це дещо сповільнить рендер, проте дозволить зупинити процес, коли шум стане достатньо низьким)"
-
-
-msgid "Square Samples"
-msgstr "Вибірки до квадрату"
-
-
-msgid "Square sampling values for easier artist control"
-msgstr "Піднести значення відбору до квадрату, щоб спростити налаштування"
-
-
 msgid "Volume Bounces"
 msgstr "Об'ємні відбиття"
 
@@ -78299,14 +77870,6 @@ msgstr "Максимальна кількість кроків крізь об'�
 
 msgid "Globally adjust detail for volume rendering, on top of automatically estimated step size. Higher values reduce render time, lower values render with more detail"
 msgstr "Глобально наладнати детальність для рендерингу об'єму, поверх автоматично оціненого розміру кроку. Вищі значення зменшують час на рендерення, нижчі значення дають рендер з більшою детальністю"
-
-
-msgid "Volume Samples"
-msgstr "Вибірки об'єму"
-
-
-msgid "Number of volume scattering samples to render for each AA sample"
-msgstr "Кількість вибірок об'ємного розсіювання, що рендеряться для кожної вибірки загладжування"
 
 
 msgid "Render pass to show in the 3D Viewport"
@@ -78329,8 +77892,16 @@ msgid "Show the Ambient Occlusion render pass"
 msgstr "Показ проходу рендера Загорода Оточення"
 
 
+msgid "Diffuse Direct"
+msgstr "Розсіяння Пряме"
+
+
 msgid "Show the Diffuse Direct render pass"
 msgstr "Показ проходу рендера Пряме Розсіяння"
+
+
+msgid "Diffuse Indirect"
+msgstr "Розсіяння Побічне"
 
 
 msgid "Show the Diffuse Indirect render pass"
@@ -78341,8 +77912,16 @@ msgid "Show the Diffuse Color render pass"
 msgstr "Показ проходу рендера Колір Розсіяння"
 
 
+msgid "Glossy Direct"
+msgstr "Глянцеве пряме"
+
+
 msgid "Show the Glossy Direct render pass"
 msgstr "Показ проходу рендера Прямий Глянець"
+
+
+msgid "Glossy Indirect"
+msgstr "Глянцеве побічне"
 
 
 msgid "Show the Glossy Indirect render pass"
@@ -78357,8 +77936,16 @@ msgid "Show the Glossy Color render pass"
 msgstr "Показ проходу рендера Колір Глянцю"
 
 
+msgid "Transmission Direct"
+msgstr "Пропускання прямих"
+
+
 msgid "Show the Transmission Direct render pass"
 msgstr "Показ проходу рендера Пряме Пропускання"
+
+
+msgid "Transmission Indirect"
+msgstr "Пропускання непрямих"
 
 
 msgid "Show the Transmission Indirect render pass"
@@ -78391,6 +77978,10 @@ msgstr "Показ проходу рендера UV"
 
 msgid "Show the Mist render pass"
 msgstr "Показ проходу рендера Імла"
+
+
+msgid "Sample Count"
+msgstr "Рахунок Вибірок"
 
 
 msgid "Object visibility for camera rays"
@@ -79557,14 +79148,6 @@ msgid "Manually determine the number of threads"
 msgstr "Вручну вказати число потоків"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Горизонтальний розмір плитки при рендерингу"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Вертикальний розмір плитки при рендерингу"
-
-
 msgid "Clear Images before baking"
 msgstr "Зчистити зображення перед запіканням"
 
@@ -79625,10 +79208,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Малювати стилізовані штрихи за допомогою Freestyle"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "Зберегти для кожної вибірки загладжування всі результати шару рендера (це вирішує проблеми загладжування при компонуванні)"
-
-
 msgid "Use high quality tangent space at the cost of lower performance"
 msgstr "Вжити простір тангенса високої якості ціною нижчої продуктивності"
 
@@ -79671,14 +79250,6 @@ msgstr "Кешувати результат"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "Зберігати кеш рендера у файли EXR (корисно при складній композиції; примітка: впливає на побічно рендерені сцени)"
-
-
-msgid "Save Buffers"
-msgstr "Зберегти буфери"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "Зберегти плитки для всіх шарів рендера та вузлів сцени до файлів у тимчасовому каталозі (економія пам'яті, необхідно для повної вибірки)"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -81811,10 +81382,6 @@ msgid "Text color"
 msgstr "Колір тексту"
 
 
-msgid "Font of the text. Falls back to the UI font by default"
-msgstr "Шрифт тексту. Стандартно падає назад до шрифту Інтерфейсу Користувача"
-
-
 msgid "Size of the text"
 msgstr "Розмір тексту"
 
@@ -82556,8 +82123,84 @@ msgid "Scale along Y axis"
 msgstr "Масштабувати уздовж осі Y"
 
 
+msgid "Show Annotation"
+msgstr "Показ Анотацій"
+
+
+msgid "Show annotations for this view"
+msgstr "Показувати анотації для цього огляду"
+
+
+msgid "Show Metadata"
+msgstr "Показати метадані"
+
+
+msgid "Show metadata of first visible strip"
+msgstr "Показати метадані першої видимої смужки"
+
+
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "Показати область титрів та область сюжету ТБ у передогляді"
+
+
+msgid "Show F-Curves"
+msgstr "Показ Ф-Кривих"
+
+
+msgid "Display strip opacity/volume curve"
+msgstr "Показувати криву безпрозорості/гучності на смужці"
+
+
+msgid "Show Grid"
+msgstr "Показати сітку"
+
+
+msgid "Show Duration"
+msgstr "Показ Тривалості"
+
+
+msgid "Show Offsets"
+msgstr "Показати зміщення"
+
+
+msgid "Display strip in/out offsets"
+msgstr "Показувати зміщення початку/кінця смужки"
+
+
+msgid "Show Source"
+msgstr "Показ Джерела"
+
+
+msgid "Display path to source file, or name of source datablock"
+msgstr "Показувати шлях до файлу джерела або імені блоку даних джерела"
+
+
+msgid "Waveform Display"
+msgstr "Показ Хвилеформи"
+
+
+msgid "Waveforms Off"
+msgstr "Вимкнути форму хвилі"
+
+
+msgid "Waveforms On"
+msgstr "Увімкнути форму хвилі"
+
+
+msgid "Use Strip Option"
+msgstr "Вжити опцію смужки"
+
+
 msgid "Sequencer Tool Settings"
 msgstr "Устави Засобу Секвенсера"
+
+
+msgid "Median Point"
+msgstr "Серединна точка"
+
+
+msgid "Individual Origins"
+msgstr "Індивідуальні опорні точки"
 
 
 msgid "Collection of Sequences"
@@ -83378,16 +83021,8 @@ msgid "Pivot around the 2D cursor"
 msgstr "Обертати навколо 2D-курсора"
 
 
-msgid "Individual Origins"
-msgstr "Індивідуальні опорні точки"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "Обертати навколо власних опорних точок кожного об'єкта"
-
-
-msgid "Median Point"
-msgstr "Серединна точка"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -83396,14 +83031,6 @@ msgstr "Обертати навколо серединної точки виді
 
 msgid "Scopes to visualize movie clip statistics"
 msgstr "Області для показу статистики відеокліпу"
-
-
-msgid "Show Annotation"
-msgstr "Показ Анотацій"
-
-
-msgid "Show annotations for this view"
-msgstr "Показувати анотації для цього огляду"
 
 
 msgid "Show Blue Channel"
@@ -83470,10 +83097,6 @@ msgid "Show green channel in the frame"
 msgstr "Показати канал зеленого в кадрі"
 
 
-msgid "Show Grid"
-msgstr "Показати сітку"
-
-
 msgid "Show grid showing lens distortion"
 msgstr "Показати сітку, що демонструє спотворення об'єктиву"
 
@@ -83500,10 +83123,6 @@ msgstr "Показ Накладання Маски"
 
 msgid "Display Smooth Splines"
 msgstr "Показ Згладжених Сплайнів"
-
-
-msgid "Show Metadata"
-msgstr "Показати метадані"
 
 
 msgid "Show metadata of clip"
@@ -84854,24 +84473,12 @@ msgid "Display result under strips"
 msgstr "Показати результат над смужками"
 
 
-msgid "Show F-Curves"
-msgstr "Показ Ф-Кривих"
-
-
-msgid "Display strip opacity/volume curve"
-msgstr "Показувати криву безпрозорості/гучності на смужці"
-
-
 msgid "Display Frames"
 msgstr "Показ Кадрів"
 
 
 msgid "Display frames rather than seconds"
 msgstr "Показувати кадри, а не секунди"
-
-
-msgid "Show metadata of first visible strip"
-msgstr "Показати метадані першої видимої смужки"
 
 
 msgid "Show Overexposed"
@@ -84882,36 +84489,12 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Позначити переекспоновані ділянки смужками зебри"
 
 
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "Показати область титрів та область сюжету ТБ у передогляді"
-
-
 msgid "Separate Colors"
 msgstr "Відокремити Кольори"
 
 
 msgid "Separate color channels in preview"
 msgstr "Окремі колірні канали в режимі попереднього перегляду"
-
-
-msgid "Show Duration"
-msgstr "Показ Тривалості"
-
-
-msgid "Show Offsets"
-msgstr "Показати зміщення"
-
-
-msgid "Display strip in/out offsets"
-msgstr "Показувати зміщення початку/кінця смужки"
-
-
-msgid "Show Source"
-msgstr "Показ Джерела"
-
-
-msgid "Display path to source file, or name of source datablock"
-msgstr "Показувати шлях до файлу джерела або імені блоку даних джерела"
 
 
 msgid "Transform markers as well as strips"
@@ -84932,22 +84515,6 @@ msgstr "Тип Огляду"
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Тип вигляду Відеорядника (відеорядник, передогляд або обидва)"
-
-
-msgid "Waveform Display"
-msgstr "Показ Хвилеформи"
-
-
-msgid "Waveforms Off"
-msgstr "Вимкнути форму хвилі"
-
-
-msgid "Waveforms On"
-msgstr "Увімкнути форму хвилі"
-
-
-msgid "Use Strip Option"
-msgstr "Вжити опцію смужки"
 
 
 msgid "Columns"
@@ -89823,14 +89390,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Рендерити стилізовані штрихи у цьому шарі"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Точність Cryptomatte"
-
-
-msgid "Generate a more accurate cryptomatte pass"
-msgstr "Генерувати більш точний прохід cryptomatte"
-
-
 msgid "Cryptomatte Asset"
 msgstr "Актив Cryptomatte"
 
@@ -91377,28 +90936,8 @@ msgid "Cycles will render on the CPU"
 msgstr "Cycles буде рендерити на центральному процесорі"
 
 
-msgid "Total Samples:"
-msgstr "Усього Вибірок:"
-
-
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Mesh Light"
-msgstr "Світна Сіть"
-
-
-msgid "Subsurface"
-msgstr "Підповерхневе"
-
-
 msgid "Noise Threshold"
 msgstr "Поріг Шуму"
-
-
-msgid "Min Samples"
-msgstr "Мін Вибірок"
 
 
 msgid "Start Sample"
@@ -91441,16 +90980,12 @@ msgid "Roughness Threshold"
 msgstr "Поріг Шорсткості"
 
 
-msgid "Tiles X"
-msgstr "Плитки X"
-
-
-msgid "Start Pixels"
-msgstr "Стартові Пікселі"
-
-
 msgid "Surfaces"
 msgstr "Поверхні"
+
+
+msgid "Denoising"
+msgstr "Знешумлення"
 
 
 msgid "Denoising Data"
@@ -91463,14 +90998,6 @@ msgstr "Індекси"
 
 msgid "Render Time"
 msgstr "Час Рендера"
-
-
-msgid "Sample Count"
-msgstr "Рахунок Вибірок"
-
-
-msgid "Feature Strength"
-msgstr "Сила Вирізнення"
 
 
 msgid "Pipeline"
@@ -91509,10 +91036,6 @@ msgid "OptiX Flags:"
 msgstr "Стяги OptiX:"
 
 
-msgid "OpenCL Flags:"
-msgstr "Стяги OpenCL:"
-
-
 msgid "Max Subdivision"
 msgstr "Макс Підподілення"
 
@@ -91533,16 +91056,8 @@ msgid "Distance Culling"
 msgstr "Відкидання Відстані"
 
 
-msgid "%s AA"
-msgstr "%s Загладжування"
-
-
-msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
-msgstr "%s Загладжування, %s Розсіяння, %s Глянець, %s Пропускання"
-
-
-msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
-msgstr "%s Загорода Оточення, %s Світна Сіть, %s Підповерхня, %s Об'єм"
+msgid "Min Samples"
+msgstr "Мін Вибірок"
 
 
 msgid "Curve Subdivisions"
@@ -91555,10 +91070,6 @@ msgstr "Несумісний вузол виводу"
 
 msgid "Portal"
 msgstr "Портал"
-
-
-msgid "Baking is performed using CUDA instead of OptiX"
-msgstr "Запікання здійснюється за допомогою CUDA замість OptiX"
 
 
 msgid "Swizzle R"
@@ -92331,10 +91842,6 @@ msgstr "Немає активної грані"
 
 msgid "No mesh object"
 msgstr "Немає об'єкта сіті"
-
-
-msgid "Soft Min"
-msgstr "М'яко Мін"
 
 
 msgid "See OperatorList.txt text block"
@@ -94318,10 +93825,6 @@ msgid "Use for Rendering"
 msgstr "Вжити для Рендерингу"
 
 
-msgid "Accurate Mode"
-msgstr "Точний Режим"
-
-
 msgid "Conflicts with another render pass with the same name"
 msgstr "Конфліктує з іншим проходом рендера з такою ж назвою"
 
@@ -95860,6 +95363,10 @@ msgid "Fractional Preview Zoom"
 msgstr "Фракційний Зум Передогляду"
 
 
+msgid "Show Separate Color Channels"
+msgstr "Показ Каналів Кольорів Окремо"
+
+
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Сцена"
@@ -95899,10 +95406,6 @@ msgstr "Оригінальний Діапазон Кадрів"
 
 msgid "Custom Proxy"
 msgstr "Власний замісник"
-
-
-msgid "Show Separate Color Channels"
-msgstr "Показ Каналів Кольорів Окремо"
 
 
 msgid "Add Transition"
@@ -97063,11 +96566,6 @@ msgstr "Орієнтир"
 msgctxt "Operator"
 msgid "Background"
 msgstr "Фон"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Зробити Замісник..."
 
 
 msgctxt "Operator"
@@ -98323,10 +97821,6 @@ msgstr "Перемкнути Просвічення"
 
 msgid "To 3D Cursor"
 msgstr "До 3D Курсора"
-
-
-msgid "X-Ray"
-msgstr "Просвічення"
 
 
 msgid "Fade Inactive Geometry"
@@ -101579,10 +101073,6 @@ msgid "No intersections found"
 msgstr "Перетинів не знайдено"
 
 
-msgid "%s: confirm, %s: cancel, %s: start/define cut, %s: close cut, %s: new cut, %s: midpoint snap (%s), %s: ignore snap (%s), %s: angle constraint (%s), %s: cut through (%s), %s: panning"
-msgstr "%s: підтвердити, %s: відміна, %s: старт/визначити наріз, %s: закрити наріз, %s: новий наріз, %s: підхоп середточки (%s), %s: ігнорувати підхоп (%s), %s: примус кута (%s), %s: наріз через (%s), %s: панорамування"
-
-
 msgid "Selected faces required"
 msgstr "Слід вибрати грані"
 
@@ -102003,10 +101493,6 @@ msgstr "Запікання до зображення непідтримуван�
 
 msgid "No objects found to bake from"
 msgstr "Не знайдено об'єктів з яких запікати"
-
-
-msgid "Combined bake pass Ambient Occlusion contribution requires an enabled light pass (bake the Ambient Occlusion pass type instead)"
-msgstr "Внесок Навколишнього Перекриття в прохід запікання Комбіноване вимагає увімкнення проходу освітлення (інакше буде запечено тип проходу Навколишнє Перекриття)"
 
 
 msgid "Combined bake pass requires Emit, or a light pass with Direct or Indirect contributions enabled"
@@ -102465,10 +101951,6 @@ msgid "Object type of source object is not supported"
 msgstr "Тип об'єкта для джерельного об'єкта не підтримується"
 
 
-msgid "OK?"
-msgstr "Гаразд?"
-
-
 msgid "Set Parent To"
 msgstr "Встановити приріднення до"
 
@@ -102481,24 +101963,16 @@ msgid "Object (Without Inverse)"
 msgstr "Об'єкт (Без Інверсії)"
 
 
+msgid "OK?"
+msgstr "Гаразд?"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "Виберіть 1 або 3 вершини для приріднення до них"
 
 
 msgid "Loop in parents"
 msgstr "Петля в прирідненні"
-
-
-msgid "Can only make proxy for a referenced object or collection"
-msgstr "Зроблення замісника можливе лише для орієнтованих об'єкта або колекції"
-
-
-msgid "Unable to assign proxy"
-msgstr "Неможливо призначити замісник"
-
-
-msgid "No object to make proxy for"
-msgstr "Немає об'єкта, для якого слід створити замісник"
 
 
 msgid "No active bone"
@@ -106018,6 +105492,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "Кадр з номером %d вже є"
 
 
+msgid "Modify"
+msgstr "Змінити"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Неможливо отримати буфер з зображення"
 
@@ -106189,10 +105667,6 @@ msgstr "Кількість власних нормалей не відповід
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "Метакуля '%s' не містить даного сплайну"
-
-
-msgid "Modify"
-msgstr "Змінити"
 
 
 msgid "Negative vertex index in vertex_indices_set"
@@ -106970,10 +106444,6 @@ msgid "Lower Right"
 msgstr "Нижній правий"
 
 
-msgid "Albedo"
-msgstr "Альбедо"
-
-
 msgid "Image 1"
 msgstr "Зображення 1"
 
@@ -107054,6 +106524,10 @@ msgid "Shader Editor"
 msgstr "Редактор Відтінювачів"
 
 
+msgid "AO"
+msgstr "AO"
+
+
 msgid "Anisotropy"
 msgstr "Анізотропія"
 
@@ -107096,6 +106570,10 @@ msgstr "Випадковий Колір"
 
 msgid "Random Roughness"
 msgstr "Випадкова Шорсткість"
+
+
+msgid "Subsurface"
+msgstr "Підповерхневе"
 
 
 msgid "Subsurface Radius"
@@ -107282,10 +106760,6 @@ msgid "Alpha Fac"
 msgstr "Коефіцієнт альфа"
 
 
-msgid "Texture Blur"
-msgstr "Розмив текстури"
-
-
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -107446,10 +106920,6 @@ msgid "No border area selected"
 msgstr "Не вибрано область межі"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "Неможливо зберегти буфери рендера, перевірте стандартний шлях до тимчасової теки"
-
-
 msgid "Border rendering is not supported by sequencer"
 msgstr "Рендеринг у границях не підтримується секвенсером"
 
@@ -107460,10 +106930,6 @@ msgstr "Сцена не має дерева вузлів"
 
 msgid "No render output node in scene"
 msgstr "У сцені немає вузла виводу рендера"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "Загладжування з повною вибіркою не підтримується без 3D рендерингу"
 
 
 msgid "All render layers are disabled"
