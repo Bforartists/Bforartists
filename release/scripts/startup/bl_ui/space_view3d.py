@@ -153,8 +153,6 @@ class VIEW3D_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
-        show_region_tool_header = view.show_region_tool_header
-
         obj = context.active_object
         # mode_string = context.mode
         object_mode = 'OBJECT' if obj is None else obj.mode
@@ -291,7 +289,7 @@ class VIEW3D_HT_header(Header):
                         sub.separator(factor=0.4)
                         sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
-        elif not show_region_tool_header:
+        else:
             # Transform settings depending on tool header visibility
             VIEW3D_HT_header.draw_xform_template(layout, context)
 
@@ -364,8 +362,6 @@ class VIEW3D_HT_tool_header(Header):
         self.draw_tool_settings(context)
 
         layout.separator_spacer()
-
-        VIEW3D_HT_header.draw_xform_template(layout, context)
 
         self.draw_mode_settings(context)
 

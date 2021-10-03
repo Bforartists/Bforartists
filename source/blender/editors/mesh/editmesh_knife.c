@@ -333,6 +333,9 @@ enum {
   KNF_MODAL_SHOW_DISTANCE_ANGLE_TOGGLE,
   KNF_MODAL_DEPTH_TEST_TOGGLE,
   KNF_MODAL_PANNING,
+  KNF_MODAL_X_AXIS,
+  KNF_MODAL_Y_AXIS,
+  KNF_MODAL_Z_AXIS,
   KNF_MODAL_ADD_CUT_CLOSED,
 };
 
@@ -366,7 +369,6 @@ enum {
 /** \name Drawing
  * \{ */
 
-#if 1
 static void knifetool_raycast_planes(const KnifeTool_OpData *kcd, float r_v1[3], float r_v2[3])
 {
   float planes[4][4];
@@ -380,10 +382,6 @@ static void knifetool_raycast_planes(const KnifeTool_OpData *kcd, float r_v1[3],
     float lambda_best[2] = {-FLT_MAX, FLT_MAX};
     int i;
 
-    /* We (sometimes) need the lines to be at the same depth before projecting. */
-#  if 0
-    sub_v3_v3v3(ray_dir, kcd->curr.cage, kcd->prev.cage);
-#  else
     {
       float curr_cage_adjust[3];
       float co_depth[3];
@@ -393,7 +391,6 @@ static void knifetool_raycast_planes(const KnifeTool_OpData *kcd, float r_v1[3],
 
       sub_v3_v3v3(ray_dir, curr_cage_adjust, kcd->prev.cage);
     }
-#  endif
 
     for (i = 0; i < 4; i++) {
       float ray_hit[3];
@@ -480,7 +477,6 @@ static void knifetool_draw_orientation_locking(const KnifeTool_OpData *kcd)
     immUnbindProgram();
   }
 }
-#endif
 
 static void knifetool_draw_visible_distances(const KnifeTool_OpData *kcd)
 {
@@ -1112,7 +1108,7 @@ static void knife_update_header(bContext *C, wmOperator *op, KnifeTool_OpData *k
            "%s: start/define cut, %s: close cut, %s: new cut, "
            "%s: midpoint snap (%s), %s: ignore snap (%s), "
            "%s: angle constraint %.2f(%.2f) (%s%s%s%s), %s: cut through (%s), "
-           "%s: panning, XYZ: orientation lock (%s), "
+           "%s: panning, %s%s%s: orientation lock (%s), "
            "%s: distance/angle measurements (%s), "
            "%s: x-ray (%s), "
             "Rotate: Alt + MMB"), /* bfa, added hardcoded tooltip for rotation*/
@@ -1145,6 +1141,9 @@ static void knife_update_header(bContext *C, wmOperator *op, KnifeTool_OpData *k
       WM_MODALKEY(KNF_MODAL_CUT_THROUGH_TOGGLE),
       WM_bool_as_string(kcd->cut_through),
       WM_MODALKEY(KNF_MODAL_PANNING),
+      WM_MODALKEY(KNF_MODAL_X_AXIS),
+      WM_MODALKEY(KNF_MODAL_Y_AXIS),
+      WM_MODALKEY(KNF_MODAL_Z_AXIS),
       (kcd->axis_constrained ? kcd->axis_string : WM_bool_as_string(kcd->axis_constrained)),
       WM_MODALKEY(KNF_MODAL_SHOW_DISTANCE_ANGLE_TOGGLE),
       WM_bool_as_string(kcd->show_dist_angle),
@@ -3901,71 +3900,69 @@ static void knifetool_undo(KnifeTool_OpData *kcd)
   KnifeUndoFrame *undo;
   BLI_mempool_iter iterkfe;
 
-  if (!BLI_stack_is_empty(kcd->undostack)) {
-    undo = BLI_stack_peek(kcd->undostack);
+  undo = BLI_stack_peek(kcd->undostack);
 
-    /* Undo edge splitting. */
-    for (int i = 0; i < undo->splits; i++) {
-      BLI_stack_pop(kcd->splitstack, &newkfe);
-      BLI_stack_pop(kcd->splitstack, &kfe);
-      knife_join_edge(newkfe, kfe);
-    }
-
-    for (int i = 0; i < undo->cuts; i++) {
-
-      BLI_mempool_iternew(kcd->kedges, &iterkfe);
-      for (kfe = BLI_mempool_iterstep(&iterkfe); kfe; kfe = BLI_mempool_iterstep(&iterkfe)) {
-        if (!kfe->is_cut || kfe->is_invalid || kfe->splits) {
-          continue;
-        }
-        lastkfe = kfe;
-      }
-
-      if (lastkfe) {
-        lastkfe->is_invalid = true;
-
-        /* TODO: Are they always guaranteed to be in this order? */
-        v1 = lastkfe->v1;
-        v2 = lastkfe->v2;
-
-        /* Only remove first vertex if it is the start segment of the cut. */
-        if (!v1->is_invalid && !v1->is_splitting) {
-          v1->is_invalid = true;
-          /* If the first vertex is touching any other cut edges don't remove it. */
-          for (ref = v1->edges.first; ref; ref = ref->next) {
-            kfe = ref->ref;
-            if (kfe->is_cut && !kfe->is_invalid) {
-              v1->is_invalid = false;
-              break;
-            }
-          }
-        }
-
-        /* Only remove second vertex if it is the end segment of the cut. */
-        if (!v2->is_invalid && !v2->is_splitting) {
-          v2->is_invalid = true;
-          /* If the second vertex is touching any other cut edges don't remove it. */
-          for (ref = v2->edges.first; ref; ref = ref->next) {
-            kfe = ref->ref;
-            if (kfe->is_cut && !kfe->is_invalid) {
-              v2->is_invalid = false;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    if (kcd->mode == MODE_DRAGGING) {
-      /* Restore kcd->prev. */
-      kcd->prev = undo->pos;
-    }
-
-    /* Restore data for distance and angle measurements. */
-    kcd->mdata = undo->mdata;
-
-    BLI_stack_discard(kcd->undostack);
+  /* Undo edge splitting. */
+  for (int i = 0; i < undo->splits; i++) {
+    BLI_stack_pop(kcd->splitstack, &newkfe);
+    BLI_stack_pop(kcd->splitstack, &kfe);
+    knife_join_edge(newkfe, kfe);
   }
+
+  for (int i = 0; i < undo->cuts; i++) {
+
+    BLI_mempool_iternew(kcd->kedges, &iterkfe);
+    for (kfe = BLI_mempool_iterstep(&iterkfe); kfe; kfe = BLI_mempool_iterstep(&iterkfe)) {
+      if (!kfe->is_cut || kfe->is_invalid || kfe->splits) {
+        continue;
+      }
+      lastkfe = kfe;
+    }
+
+    if (lastkfe) {
+      lastkfe->is_invalid = true;
+
+      /* TODO: Are they always guaranteed to be in this order? */
+      v1 = lastkfe->v1;
+      v2 = lastkfe->v2;
+
+      /* Only remove first vertex if it is the start segment of the cut. */
+      if (!v1->is_invalid && !v1->is_splitting) {
+        v1->is_invalid = true;
+        /* If the first vertex is touching any other cut edges don't remove it. */
+        for (ref = v1->edges.first; ref; ref = ref->next) {
+          kfe = ref->ref;
+          if (kfe->is_cut && !kfe->is_invalid) {
+            v1->is_invalid = false;
+            break;
+          }
+        }
+      }
+
+      /* Only remove second vertex if it is the end segment of the cut. */
+      if (!v2->is_invalid && !v2->is_splitting) {
+        v2->is_invalid = true;
+        /* If the second vertex is touching any other cut edges don't remove it. */
+        for (ref = v2->edges.first; ref; ref = ref->next) {
+          kfe = ref->ref;
+          if (kfe->is_cut && !kfe->is_invalid) {
+            v2->is_invalid = false;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if (kcd->mode == MODE_DRAGGING) {
+    /* Restore kcd->prev. */
+    kcd->prev = undo->pos;
+  }
+
+  /* Restore data for distance and angle measurements. */
+  kcd->mdata = undo->mdata;
+
+  BLI_stack_discard(kcd->undostack);
 }
 
 /** \} */
@@ -4308,6 +4305,9 @@ wmKeyMap *knifetool_modal_keymap(wmKeyConfig *keyconf)
       {KNF_MODAL_ADD_CUT, "ADD_CUT", 0, "Add Cut", ""},
       {KNF_MODAL_ADD_CUT_CLOSED, "ADD_CUT_CLOSED", 0, "Add Cut Closed", ""},
       {KNF_MODAL_PANNING, "PANNING", 0, "Panning", ""},
+      {KNF_MODAL_X_AXIS, "X_AXIS", 0, "X Axis Locking", ""},
+      {KNF_MODAL_Y_AXIS, "Y_AXIS", 0, "Y Axis Locking", ""},
+      {KNF_MODAL_Z_AXIS, "Z_AXIS", 0, "Z Axis Locking", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -4405,6 +4405,12 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
         return OPERATOR_FINISHED;
       case KNF_MODAL_UNDO:
+        if (BLI_stack_is_empty(kcd->undostack)) {
+          ED_region_tag_redraw(kcd->region);
+          knifetool_exit(op);
+          ED_workspace_status_text(C, NULL);
+          return OPERATOR_CANCELLED;
+        }
         knifetool_undo(kcd);
         knife_update_active(C, kcd);
         ED_region_tag_redraw(kcd->region);
@@ -4615,52 +4621,58 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
     if (kcd->num.str_cur >= 2) {
       knife_reset_snap_angle_input(kcd);
     }
-    /* Modal numinput inactive, try to handle numeric inputs last... */
-    if (!handled && event->val == KM_PRESS && handleNumInput(C, &kcd->num, event)) {
-      applyNumInput(&kcd->num, &snapping_increment_temp);
-      /* Restrict number key input to 0 - 90 degree range. */
-      if (snapping_increment_temp > KNIFE_MIN_ANGLE_SNAPPING_INCREMENT &&
-          snapping_increment_temp < KNIFE_MAX_ANGLE_SNAPPING_INCREMENT) {
-        kcd->angle_snapping_increment = snapping_increment_temp;
+    if (event->type != EVT_MODAL_MAP) {
+      /* Modal number-input inactive, try to handle numeric inputs last. */
+      if (!handled && event->val == KM_PRESS && handleNumInput(C, &kcd->num, event)) {
+        applyNumInput(&kcd->num, &snapping_increment_temp);
+        /* Restrict number key input to 0 - 90 degree range. */
+        if (snapping_increment_temp > KNIFE_MIN_ANGLE_SNAPPING_INCREMENT &&
+            snapping_increment_temp < KNIFE_MAX_ANGLE_SNAPPING_INCREMENT) {
+          kcd->angle_snapping_increment = snapping_increment_temp;
+        }
+        knife_update_active(C, kcd);
+        knife_update_header(C, op, kcd);
+        ED_region_tag_redraw(kcd->region);
+        return OPERATOR_RUNNING_MODAL;
       }
-      knife_update_active(C, kcd);
-      knife_update_header(C, op, kcd);
-      ED_region_tag_redraw(kcd->region);
-      return OPERATOR_RUNNING_MODAL;
     }
   }
 
   /* Constrain axes with X,Y,Z keys. */
-  if (event->val == KM_PRESS && ELEM(event->type, EVT_XKEY, EVT_YKEY, EVT_ZKEY)) {
-    if (event->type == EVT_XKEY && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_X) {
-      kcd->constrain_axis = KNF_CONSTRAIN_AXIS_X;
-      kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
-      kcd->axis_string[0] = 'X';
-    }
-    else if (event->type == EVT_YKEY && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_Y) {
-      kcd->constrain_axis = KNF_CONSTRAIN_AXIS_Y;
-      kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
-      kcd->axis_string[0] = 'Y';
-    }
-    else if (event->type == EVT_ZKEY && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_Z) {
-      kcd->constrain_axis = KNF_CONSTRAIN_AXIS_Z;
-      kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
-      kcd->axis_string[0] = 'Z';
-    }
-    else {
-      /* Cycle through modes with repeated key presses. */
-      if (kcd->constrain_axis_mode != KNF_CONSTRAIN_AXIS_MODE_LOCAL) {
-        kcd->constrain_axis_mode++;
-        kcd->axis_string[0] += 32; /* Lower case. */
+  if (event->type == EVT_MODAL_MAP) {
+    if (ELEM(event->val, KNF_MODAL_X_AXIS, KNF_MODAL_Y_AXIS, KNF_MODAL_Z_AXIS)) {
+      if (event->val == KNF_MODAL_X_AXIS && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_X) {
+        kcd->constrain_axis = KNF_CONSTRAIN_AXIS_X;
+        kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
+        kcd->axis_string[0] = 'X';
+      }
+      else if (event->val == KNF_MODAL_Y_AXIS && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_Y) {
+        kcd->constrain_axis = KNF_CONSTRAIN_AXIS_Y;
+        kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
+        kcd->axis_string[0] = 'Y';
+      }
+      else if (event->val == KNF_MODAL_Z_AXIS && kcd->constrain_axis != KNF_CONSTRAIN_AXIS_Z) {
+        kcd->constrain_axis = KNF_CONSTRAIN_AXIS_Z;
+        kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_GLOBAL;
+        kcd->axis_string[0] = 'Z';
       }
       else {
-        kcd->constrain_axis = KNF_CONSTRAIN_AXIS_NONE;
-        kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_NONE;
+        /* Cycle through modes with repeated key presses. */
+        if (kcd->constrain_axis_mode != KNF_CONSTRAIN_AXIS_MODE_LOCAL) {
+          kcd->constrain_axis_mode++;
+          kcd->axis_string[0] += 32; /* Lower case. */
+        }
+        else {
+          kcd->constrain_axis = KNF_CONSTRAIN_AXIS_NONE;
+          kcd->constrain_axis_mode = KNF_CONSTRAIN_AXIS_MODE_NONE;
+        }
       }
+      kcd->axis_constrained = (kcd->constrain_axis != KNF_CONSTRAIN_AXIS_NONE);
+      knifetool_disable_angle_snapping(kcd);
+      knife_update_header(C, op, kcd);
+      ED_region_tag_redraw(kcd->region);
+      do_refresh = true;
     }
-    kcd->axis_constrained = (kcd->constrain_axis != KNF_CONSTRAIN_AXIS_NONE);
-    knifetool_disable_angle_snapping(kcd);
-    knife_update_header(C, op, kcd);
   }
 
   if (kcd->mode == MODE_DRAGGING) {

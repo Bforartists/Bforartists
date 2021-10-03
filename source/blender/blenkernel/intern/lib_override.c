@@ -1000,6 +1000,18 @@ bool BKE_lib_override_library_proxy_convert(Main *bmain,
 
   DEG_id_tag_update(&ob_proxy->id, ID_RECALC_COPY_ON_WRITE);
 
+  /* In case of proxy conversion, remap all local ID usages to linked IDs to their newly created
+   * overrides.
+   * While this might not be 100% the desired behavior, it is likely to be the case most of the
+   * time. Ref: T91711. */
+  ID *id_iter;
+  FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
+    if (!ID_IS_LINKED(id_iter)) {
+      id_iter->tag |= LIB_TAG_DOIT;
+    }
+  }
+  FOREACH_MAIN_ID_END;
+
   return BKE_lib_override_library_create(bmain, scene, view_layer, id_root, id_reference, NULL);
 }
 
@@ -2958,6 +2970,31 @@ void BKE_lib_override_library_main_update(Main *bmain)
   FOREACH_MAIN_ID_END;
 
   G_MAIN = orig_gmain;
+}
+
+/** In case an ID is used by another liboverride ID, user may not be allowed to delete it. */
+bool BKE_lib_override_library_id_is_user_deletable(struct Main *bmain, struct ID *id)
+{
+  if (!(ID_IS_LINKED(id) || ID_IS_OVERRIDE_LIBRARY(id))) {
+    return true;
+  }
+
+  /* The only strong known case currently are objects used by override collections. */
+  /* TODO: There are most likely other cases... This may need to be addressed in a better way at
+   * some point. */
+  if (GS(id->name) != ID_OB) {
+    return true;
+  }
+  Object *ob = (Object *)id;
+  LISTBASE_FOREACH (Collection *, collection, &bmain->collections) {
+    if (!ID_IS_OVERRIDE_LIBRARY(collection)) {
+      continue;
+    }
+    if (BKE_collection_has_object(collection, ob)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

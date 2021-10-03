@@ -20,6 +20,8 @@
 
 #include "DNA_userdef_types.h"
 
+#include "BLT_translation.h"
+
 #include "interface_intern.h"
 
 #include "UI_interface.h"
@@ -123,7 +125,7 @@ AbstractTreeViewItem *AbstractTreeView::find_matching_child(
     const AbstractTreeViewItem &lookup_item, const TreeViewItemContainer &items)
 {
   for (const auto &iter_item : items.children_) {
-    if (lookup_item.label_ == iter_item->label_) {
+    if (lookup_item.matches(*iter_item)) {
       /* We have a matching item! */
       return iter_item.get();
     }
@@ -139,10 +141,33 @@ void AbstractTreeViewItem::on_activate()
   /* Do nothing by default. */
 }
 
+bool AbstractTreeViewItem::on_drop(const wmDrag & /*drag*/)
+{
+  /* Do nothing by default. */
+  return false;
+}
+
+bool AbstractTreeViewItem::can_drop(const wmDrag & /*drag*/) const
+{
+  return false;
+}
+
+std::string AbstractTreeViewItem::drop_tooltip(const bContext & /*C*/,
+                                               const wmDrag & /*drag*/,
+                                               const wmEvent & /*event*/) const
+{
+  return TIP_("Drop into/onto tree item");
+}
+
 void AbstractTreeViewItem::update_from_old(const AbstractTreeViewItem &old)
 {
   is_open_ = old.is_open_;
   is_active_ = old.is_active_;
+}
+
+bool AbstractTreeViewItem::matches(const AbstractTreeViewItem &other) const
+{
+  return label_ == other.label_;
 }
 
 const AbstractTreeView &AbstractTreeViewItem::get_tree_view() const
@@ -309,8 +334,48 @@ uiBut *BasicTreeViewItem::button()
 
 using namespace blender::ui;
 
-bool UI_tree_view_item_is_active(uiTreeViewItemHandle *item_)
+bool UI_tree_view_item_is_active(const uiTreeViewItemHandle *item_handle)
+{
+  const AbstractTreeViewItem &item = reinterpret_cast<const AbstractTreeViewItem &>(*item_handle);
+  return item.is_active();
+}
+
+bool UI_tree_view_item_matches(const uiTreeViewItemHandle *a_handle,
+                               const uiTreeViewItemHandle *b_handle)
+{
+  const AbstractTreeViewItem &a = reinterpret_cast<const AbstractTreeViewItem &>(*a_handle);
+  const AbstractTreeViewItem &b = reinterpret_cast<const AbstractTreeViewItem &>(*b_handle);
+  return a.matches(b);
+}
+
+bool UI_tree_view_item_can_drop(const uiTreeViewItemHandle *item_, const wmDrag *drag)
+{
+  const AbstractTreeViewItem &item = reinterpret_cast<const AbstractTreeViewItem &>(*item_);
+  return item.can_drop(*drag);
+}
+
+char *UI_tree_view_item_drop_tooltip(const uiTreeViewItemHandle *item_,
+                                     const bContext *C,
+                                     const wmDrag *drag,
+                                     const wmEvent *event)
+{
+  const AbstractTreeViewItem &item = reinterpret_cast<const AbstractTreeViewItem &>(*item_);
+  return BLI_strdup(item.drop_tooltip(*C, *drag, *event).c_str());
+}
+
+/**
+ * Let a tree-view item handle a drop event.
+ * \return True if the drop was handled by the tree-view item.
+ */
+bool UI_tree_view_item_drop_handle(uiTreeViewItemHandle *item_, const ListBase *drags)
 {
   AbstractTreeViewItem &item = reinterpret_cast<AbstractTreeViewItem &>(*item_);
-  return item.is_active();
+
+  LISTBASE_FOREACH (const wmDrag *, drag, drags) {
+    if (item.can_drop(*drag)) {
+      return item.on_drop(*drag);
+    }
+  }
+
+  return false;
 }

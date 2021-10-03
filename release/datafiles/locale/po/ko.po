@@ -1075,10 +1075,6 @@ msgid "None"
 msgstr "None"
 
 
-msgid "Ambient Occlusion"
-msgstr "주변 폐색 (AO)"
-
-
 msgid "Emit"
 msgstr "방출"
 
@@ -1153,10 +1149,6 @@ msgstr "지우기"
 
 msgid "Clear Images before baking (internal only)"
 msgstr "배이킹 이전에 이미지를 지우기 (내부 전용)"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "주변 폐색 기여를 추가"
 
 
 msgid "Color the pass"
@@ -13479,6 +13471,22 @@ msgid "Display modifier in viewport"
 msgstr "뷰포트에서 모디파이어를 표시합니다"
 
 
+msgid "Texture Mapping"
+msgstr "텍스처 맵핑"
+
+
+msgid "Time Offset"
+msgstr "타임 오프셋"
+
+
+msgid "Offset keyframes"
+msgstr "오프셋 키 프레임"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "버텍스 웨이트 근접"
+
+
 msgid "Array"
 msgstr "배열"
 
@@ -13523,10 +13531,6 @@ msgid "Subdivide stroke adding more control points"
 msgstr "더 많은 제어점을 추가하는 스트로크 분할"
 
 
-msgid "Vertex Weight"
-msgstr "버텍스 웨이트"
-
-
 msgid "Deform stroke points using armature object"
 msgstr "아마튜어 오브젝트를 사용하여 스트로크 포인트를 변형"
 
@@ -13559,14 +13563,6 @@ msgid "Change stroke thickness"
 msgstr "스트로크 두께를 변경"
 
 
-msgid "Time Offset"
-msgstr "타임 오프셋"
-
-
-msgid "Offset keyframes"
-msgstr "오프셋 키 프레임"
-
-
 msgid "Hue/Saturation"
 msgstr "색조/채도"
 
@@ -13577,10 +13573,6 @@ msgstr "스트로크 컬러에 변경 사항을 적용"
 
 msgid "Opacity of the strokes"
 msgstr "스트로크의 불투명도"
-
-
-msgid "Texture Mapping"
-msgstr "텍스처 맵핑"
 
 
 msgid "Tint"
@@ -13997,6 +13989,10 @@ msgid "Strength of modifier effect"
 msgstr "모디파이어 이펙트의 강도"
 
 
+msgid "Point Density"
+msgstr "포인트 밀도"
+
+
 msgid "Overscan"
 msgstr "오버스캔"
 
@@ -14293,8 +14289,16 @@ msgid "Space"
 msgstr "공간"
 
 
-msgid "Blend"
-msgstr "혼합"
+msgid "Highest"
+msgstr "최고"
+
+
+msgid "Lowest"
+msgstr "최저"
+
+
+msgid "Target Object"
+msgstr "대상 오브젝트"
 
 
 msgid "Vertex Group Element"
@@ -14307,6 +14311,10 @@ msgstr "버텍스 그룹에서 버텍스의 웨이트 값"
 
 msgid "Group Index"
 msgstr "그룹 인덱스"
+
+
+msgid "Vertex Weight"
+msgstr "버텍스 웨이트"
 
 
 msgid "Grid and Canvas Settings"
@@ -21825,6 +21833,10 @@ msgid "Node tree for node-based textures"
 msgstr "노드 기반 텍스처에 대한 노드 트리"
 
 
+msgid "Blend"
+msgstr "혼합"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "절차 - 램프 텍스처를 만듬"
 
@@ -27897,10 +27909,6 @@ msgid "Mix the weights of two vertex groups"
 msgstr "두 개의 버텍스 그룹의 웨이트를 조합"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "버텍스 웨이트 근접"
-
-
 msgid "Set the vertex group weights based on the distance to another target object"
 msgstr "다른 대상 오브젝트까지의 거리를 기준으로 버텍스 그룹 웨이트를 설정합니다"
 
@@ -31189,16 +31197,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "대상 오브젝트의 거리로부터 그룹에 버텍스의 웨이트를 설정"
 
 
-msgid "Highest"
-msgstr "최고"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "웨이트 1.0로 거리 맵핑"
-
-
-msgid "Lowest"
-msgstr "최저"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -31239,10 +31239,6 @@ msgstr "대상 오브젝트 및 영향을 준 사이의 거리를 사용"
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "영향을 받는 오브젝트의 버텍스와 대상 오브젝트 또는 대상 오브젝트의 지오메트리 사이의 거리를 사용"
-
-
-msgid "Target Object"
-msgstr "대상 오브젝트"
 
 
 msgid "Object to calculate vertices distances from"
@@ -34998,6 +34994,18 @@ msgid "Object Info"
 msgstr "오브젝트 정보"
 
 
+msgid "Align X"
+msgstr "정렬 X"
+
+
+msgid "Align Y"
+msgstr "정렬 Y"
+
+
+msgid "Font of the text. Falls back to the UI font by default"
+msgstr "텍스트의 폰트. 기본적으로 UI폰트로 돌아갑니다"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "프레임"
@@ -35041,6 +35049,10 @@ msgstr "매테리얼 셰이더 노드"
 
 msgid "Add Shader"
 msgstr "추가 셰이더"
+
+
+msgid "Ambient Occlusion"
+msgstr "주변 폐색 (AO)"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -35139,20 +35151,8 @@ msgid "Method for rendering subsurface scattering"
 msgstr "서브 표면 산란 렌더링 방법"
 
 
-msgid "Christensen-Burley"
-msgstr "크리스텐슨-벌리"
-
-
-msgid "Approximation to physically based volume scattering"
-msgstr "피직스적 기반 산란에 대한 근사"
-
-
 msgid "Random Walk"
 msgstr "랜덤 웨이크"
-
-
-msgid "Volumetric approximation to physically based volume scattering"
-msgstr "피직스으로 산란된 볼륨 산란에 대한 볼륨 근사법"
 
 
 msgid "Refraction BSDF"
@@ -35443,18 +35443,6 @@ msgid "Subsurface Scattering"
 msgstr "서브 표면 산란 (SSS)"
 
 
-msgid "Function to determine how much light nearby points contribute based on their distance to the shading point"
-msgstr "주위의 포인트가 얼마나 많은 라이트를 해당 쉐이딩 포인트까지의 거리에 따라 기여하는지 결정하는 기능"
-
-
-msgid "Simple cubic falloff function"
-msgstr "심플 큐빅 감소 함수"
-
-
-msgid "Normal distribution, multiple can be combined to fit more complex profiles"
-msgstr "노멀 분포, 더 복잡한 단면에 맞추기 위해 여러 개를 결합할 수 있습니다"
-
-
 msgid "Axis for radial tangents"
 msgstr "방사형의 탄젠트에 대한 축"
 
@@ -35649,10 +35637,6 @@ msgstr "4D 벡터 (x, y, z, w)를 입력으로 사용"
 
 msgid "The dimensions of the space to evaluate the noise in"
 msgstr "다음의 노이즈를 평가할 공간의 크기"
-
-
-msgid "Point Density"
-msgstr "포인트 밀도"
 
 
 msgid "Object to take point data from"
@@ -46645,6 +46629,10 @@ msgid "Only cut the front most geometry"
 msgstr "앞쪽 지오메트리 절단 만"
 
 
+msgid "X-Ray"
+msgstr "X-Ray"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "다중 선택 루프"
@@ -50692,19 +50680,6 @@ msgstr "포즈/선택하는 본을 사용 또는 중지합니다"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "프록시를 만들기"
-
-
-msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "라이브러리 연결된 오브젝트의 로컬 대체 데이터가 될 엠프티 오브젝트를 추가"
-
-
-msgid "Proxy Object"
-msgstr "프록시 오브젝트"
-
-
-msgctxt "Operator"
 msgid "QuadriFlow Remesh"
 msgstr "쿼드플로우 리메쉬"
 
@@ -53448,15 +53423,6 @@ msgid "Only apply the selected bones (with propagation to children)"
 msgstr "선택한 본만 적용 (자식에게 전파)"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "포즈 브렉다우너"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "현재 프레임에 적당한 브렉다운 포즈를 생성"
-
-
 msgid "Axis Lock"
 msgstr "축 잠금"
 
@@ -53535,6 +53501,15 @@ msgstr "이전 키 프레임"
 
 msgid "Frame number of keyframe immediately before the current frame"
 msgstr "현재 프레임 바로 앞의 키 프레임의 프레임 번호"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "포즈 브렉다우너"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
+msgstr "현재 프레임에 적당한 브렉다운 포즈를 생성"
 
 
 msgid "Add a constraint to the active bone"
@@ -58146,16 +58121,8 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "대부분은 정렬이 이미 되어있는 축을 자동으로 선택하기"
 
 
-msgid "Align X"
-msgstr "정렬 X"
-
-
 msgid "Align UVs on X axis"
 msgstr "UV를 X 축에 정렬"
-
-
-msgid "Align Y"
-msgstr "정렬 Y"
 
 
 msgid "Align UVs on Y axis"
@@ -60729,10 +60696,6 @@ msgid "Edit Property"
 msgstr "속성을 편집"
 
 
-msgid "Default value of the property. Important for NLA mixing"
-msgstr "속성의 기본값입니다. NLA 믹싱에 중요"
-
-
 msgid "Is Library Overridable"
 msgstr "Is 라이브러리 재정의성"
 
@@ -60751,10 +60714,6 @@ msgstr "하위 유형"
 
 msgid "Use Soft Limits"
 msgstr "소프트 제한을 사용"
-
-
-msgid "Property value edit"
-msgstr "속성 값을 편집"
 
 
 msgctxt "Operator"
@@ -62006,10 +61965,6 @@ msgid "Sampling Presets"
 msgstr "샘플링 프리셋"
 
 
-msgid "Denoising"
-msgstr "노이즈 제거"
-
-
 msgid "Film"
 msgstr "필름"
 
@@ -62060,14 +62015,6 @@ msgstr "최종 렌더"
 
 msgid "Threads"
 msgstr "스레드"
-
-
-msgid "Tiles"
-msgstr "타일"
-
-
-msgid "Sub Samples"
-msgstr "하위 샘플"
 
 
 msgid "Subdivision"
@@ -62168,10 +62115,6 @@ msgstr "고급 필터"
 
 msgid "Bookmarks"
 msgstr "북마크"
-
-
-msgid "Favorites"
-msgstr "즐겨 찾기"
 
 
 msgid "Directory Path"
@@ -66583,10 +66526,6 @@ msgid "Maximum number of bounces the light will contribute to the render"
 msgstr "라이트가 렌더에 기여하는 바운스의 최대 횟수"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "각 AA 샘플에 렌더링 할 라이트 샘플 수"
-
-
 msgid "Multiple Importance Sample"
 msgstr "다중의 임포션스 샘플"
 
@@ -66739,96 +66678,8 @@ msgid "Use motion blur for this object"
 msgstr "이 오브젝트에 대해 모션 블러를 사용"
 
 
-msgid "Diffuse Direct"
-msgstr "직접 확산"
-
-
-msgid "Denoise the direct diffuse lighting"
-msgstr "직접 확산 라이트닝을 디노이즈"
-
-
-msgid "Diffuse Indirect"
-msgstr "확산 간접"
-
-
-msgid "Denoise the indirect diffuse lighting"
-msgstr "간접 확산 라이트닝을 디노이즈"
-
-
-msgid "Denoising Feature Strength"
-msgstr "노이즈 제거 특성 강도"
-
-
-msgid "Controls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)"
-msgstr "노이즈 이미지 특성 패스 제거를 제어합니다 (값이 작을수록 세부 묘사는 유지되지만 부드럽지 않음)"
-
-
-msgid "Glossy Direct"
-msgstr "광택 직접"
-
-
-msgid "Denoise the direct glossy lighting"
-msgstr "직접 광택 라이트닝을 디노이즈"
-
-
-msgid "Glossy Indirect"
-msgstr "광택 간접"
-
-
-msgid "Denoise the indirect glossy lighting"
-msgstr "간접 광택 라이트닝을 디노이즈"
-
-
-msgid "Neighbor Frames"
-msgstr "이웃 프레임"
-
-
-msgid "Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)"
-msgstr "애니메이션 노이즈 제거에 사용할 인접 프레임 수 (성능 저하로 인해 더 많은 프레임이 더 매끄러운 결과를 생성함)"
-
-
-msgid "Denoising Radius"
-msgstr "노이즈 제거 반경"
-
-
-msgid "Size of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)"
-msgstr "픽셀의 노이즈를 제거하는 데 사용되는 이미지 영역의 크기입니다 (값이 높을수록 매끄럽지 만 디테일이 떨어지고 느려질 수 있음)"
-
-
-msgid "Relative Filter"
-msgstr "상대적인 필터"
-
-
-msgid "When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)"
-msgstr "정보를 전달하지 않는 픽셀을 제거 할 때는 절대적인 임계 값 대신 상대적인 임계 값을 사용하십시오 (부자연스러움을 줄이는 데 도움이 되지만 가장자리 주위에 세부적인 손실이 발생할 수 있음)"
-
-
 msgid "Store Denoising Passes"
 msgstr "노이즈 제거 패스를 저장"
-
-
-msgid "Denoising Strength"
-msgstr "노이즈 제거 강도"
-
-
-msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
-msgstr "노이즈 제거 필터의 인접 픽셀 웨이트를 조정 (낮은 값은 디테일을 그대로 유지하지만 부드럽 지 않음)"
-
-
-msgid "Transmission Direct"
-msgstr "전달 직접"
-
-
-msgid "Denoise the direct transmission lighting"
-msgstr "직접 전송 라이트닝을 디노이즈"
-
-
-msgid "Transmission Indirect"
-msgstr "전달 간접"
-
-
-msgid "Denoise the indirect transmission lighting"
-msgstr "간접 전송 라이트닝을 디노이즈"
 
 
 msgid "Debug Render Time"
@@ -66863,28 +66714,12 @@ msgid "Deliver indirect volumetric scattering pass"
 msgstr "간접 볼륨메트릭 산란 패스를 제공"
 
 
-msgid "AA Samples"
-msgstr "AA 샘플"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "각 픽셀에 대해 렌더하는 안티엘리어싱 샘플의 수"
-
-
 msgid "AO Bounces"
 msgstr "AO 바운스"
 
 
 msgid "AO Bounces Render"
 msgstr "AO 바운스 렌더"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "주변 폐색 샘플"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "각 AA 샘플에 대해 렌더하는 주변 폐색 샘플의 수"
 
 
 msgid "Bake Type"
@@ -66963,60 +66798,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "모든 오브젝트를 수정하려면 완전한 BVH 재작성이 필요하지만 더 빨리 렌더됩니다"
 
 
-msgid "Cancel timeout"
-msgstr "타임아웃을 취소"
-
-
-msgid "OpenCL Device Type"
-msgstr "OpenCL 장치 유형"
-
-
-msgid "Accelerator"
-msgstr "가속기"
-
-
-msgid "OpenCL Kernel Type"
-msgstr "OpenCL 커널 유형"
-
-
-msgid "Mega"
-msgstr "메가"
-
-
-msgid "Memory limit"
-msgstr "메모리 제한"
-
-
-msgid "Artificial limit on OpenCL memory usage in MB (0 to disable limit)"
-msgstr "OpenCL 메모리 사용량에 대해 MB 단위로 인위적인 제한 (제한을 해제하려면 0)"
-
-
-msgid "CUDA Streams"
-msgstr "CUDA 스트림"
-
-
-msgid "Reset timeout"
-msgstr "재설정 타임아웃"
-
-
-msgid "Text timeout"
-msgstr "텍스트 타임아웃"
-
-
-msgid "Tile Size"
-msgstr "타일 크기"
-
-
 msgid "AVX"
 msgstr "AVX"
 
 
 msgid "AVX2"
 msgstr "AVX2"
-
-
-msgid "Split Kernel"
-msgstr "커널을 분할"
 
 
 msgid "SSE2"
@@ -67043,16 +66830,16 @@ msgid "Use special type BVH optimized for hair (uses more ram but renders faster
 msgstr "헤어에 최적화된 특수 유형 BVH를 사용 (램을 더 많이 사용하지만 렌더링은 더 빠름)"
 
 
-msgid "Debug OpenCL"
-msgstr "디버그 OpenCL"
-
-
 msgid "Use Spatial Splits"
 msgstr "공간의 분할을 사용"
 
 
 msgid "Use BVH spatial splits: longer builder time, faster render"
 msgstr "BVH 공간 분할을 사용: 빌더 시간은 증가, 빠른 렌더링"
+
+
+msgid "Albedo"
+msgstr "알베도"
 
 
 msgid "Device"
@@ -67097,14 +66884,6 @@ msgstr "확산 바운스"
 
 msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "확산 반사 바운스의 최대 횟수, 합계 최대치로 한정됨"
-
-
-msgid "Diffuse Samples"
-msgstr "확산 샘플"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "각 AA 샘플에 대한 렌더에 확산 산란 샘플의 수"
 
 
 msgid "Cull Distance"
@@ -67191,14 +66970,6 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "광택 반사 바운스의 최대 횟수, 합계 최대치로 한정됨"
 
 
-msgid "Glossy Samples"
-msgstr "광택 샘플"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "각 AA 샘플에 대해 렌더할 광택 산란 샘플의 수"
-
-
 msgid "Light Sampling Threshold"
 msgstr "라이트 샘플링 임계 값"
 
@@ -67217,14 +66988,6 @@ msgstr "최대 섭디비젼"
 
 msgid "Stop subdividing when this level is reached even if the dice rate would produce finer tessellation"
 msgstr "주사위 비율이 더 미세한 테셀레이션을 생성하더라도 이 레벨에 도달하면 세분화를 중단"
-
-
-msgid "Mesh Light Samples"
-msgstr "메쉬 라이트 샘플"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "각 AA 샘플에 대해 렌더하는 메쉬 방출 샘플의 수"
 
 
 msgid "Min Light Bounces"
@@ -67283,10 +67046,6 @@ msgid "Multiplier for dicing rate of geometry outside of the camera view. The di
 msgstr "카메라 뷰 외부의 형상 비율을 다이 싱하는 배율입니다. 오브젝트의 다이 싱 속도는 카메라 뷰 바깥 쪽을 향해 점차 증가합니다. 값이 낮을수록 오프 스크린 오브젝트의 경우 더 높은 수준의 반사 및 섀도우를 제공하지만 값이 클수록 메모리가 적게 사용됩니다"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "뷰 포트에서 렌더하는 안티엘리어싱 샘플의 수, 0의 경우 제한 없음"
-
-
 msgid "Size of a micropolygon in pixels during preview render"
 msgstr "미리보기 렌더 동안 픽셀 단위의 마이크로 폴리곤의 크기"
 
@@ -67305,38 +67064,6 @@ msgstr "뷰포트 샘플"
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "뷰포트에서 렌더하는 샘플들 수, 0의 경우 재한 없음"
-
-
-msgid "Start Resolution"
-msgstr "시작 해상도"
-
-
-msgid "Resolution to start rendering preview at, progressively increasing it to the full viewport size"
-msgstr "렌더링 미리보기를 시작하는 해상도, 전체 뷰포트 크기로 점진적으로 늘립니다"
-
-
-msgid "Integrator"
-msgstr "적분기"
-
-
-msgid "Method to sample lights and materials"
-msgstr "라이트 및 매테리얼을 샘플링하는 방법"
-
-
-msgid "Branched Path Tracing"
-msgstr "분기 경로 트레이싱"
-
-
-msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "첫 번째 산란에서 분기하는 경로 추적 통합 자로 광원 및 재료 샘플 수를보다 효과적으로 제어 할 수 있습니다"
-
-
-msgid "Path Tracing"
-msgstr "경로 트레이싱"
-
-
-msgid "Pure path tracing integrator"
-msgstr "순수 경로 트레이싱 적분기"
 
 
 msgid "Rolling Shutter Duration"
@@ -67361,22 +67088,6 @@ msgstr "사용된 롤링 셔터 효과가 없음"
 
 msgid "Sensor is being scanned from top to bottom"
 msgstr "센서는 위에서 아래로 스캔합니다"
-
-
-msgid "Sample All Direct Lights"
-msgstr "모든 직접 라이트 샘플"
-
-
-msgid "Sample all lights (for direct samples), rather than randomly picking one"
-msgstr "샘플을 무작위로 선택하는 대신 모든 광원(직접 샘플)을 샘플링합니다"
-
-
-msgid "Sample All Indirect Lights"
-msgstr "모든 간접 라이트 샘플"
-
-
-msgid "Sample all lights (for indirect samples), rather than randomly picking one"
-msgstr "샘플을 무작위로 선택하는 대신 모든 광원(간접 샘플)을 샘플링합니다"
 
 
 msgid "Clamp Direct"
@@ -67415,28 +67126,12 @@ msgid "Use Sobol random sampling pattern"
 msgstr "소볼 랜덤 샘플링 패턴을 사용"
 
 
-msgid "Correlated Multi-Jitter"
-msgstr "상호 연관된 다중 지터"
-
-
-msgid "Use Correlated Multi-Jitter random sampling pattern"
-msgstr "상호 연관된 다중 지터 무작위 샘플링 패턴을 사용"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "다른 노이즈 패턴을 얻는 적분기에 대한 씨드 값"
 
 
 msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "오픈 셰이딩 언어를 사용 (단 CPU 렌더링)"
-
-
-msgid "Subsurface Samples"
-msgstr "서브 표면 샘플"
-
-
-msgid "Number of subsurface scattering samples to render for each AA sample"
-msgstr "각 AA 샘플에 대한 렌더하는 서브 표면 산란 샘플의 수"
 
 
 msgid "Viewport Texture Limit"
@@ -67491,52 +67186,8 @@ msgid "Limit texture size used by final rendering"
 msgstr "최종 렌더링에서 사용되는 텍스처 크기를 제한"
 
 
-msgid "Tile order for rendering"
-msgstr "렌더링에 대한 타일 순서"
-
-
-msgid "Render from center to the edges"
-msgstr "에지에 센터에서 렌더링"
-
-
-msgid "Right to Left"
-msgstr "오른쪽에서 왼쪽"
-
-
-msgid "Render from right to left"
-msgstr "오른쪽에서 왼쪽으로 부터 렌더"
-
-
-msgid "Left to Right"
-msgstr "왼쪽에서 오른쪽"
-
-
-msgid "Render from left to right"
-msgstr "왼쪽에서 오른쪽으로 부터 렌더"
-
-
-msgid "Top to Bottom"
-msgstr "위에서 아래로"
-
-
-msgid "Render from top to bottom"
-msgstr "위에서 아래로 부터 렌더"
-
-
-msgid "Bottom to Top"
-msgstr "아래쪽에서 위쪽"
-
-
-msgid "Render from bottom to top"
-msgstr "아래쪽에서 위쪽으로 렌더"
-
-
-msgid "Hilbert Spiral"
-msgstr "힐버트 나선형"
-
-
-msgid "Render in a Hilbert Spiral"
-msgstr "힐버트 나선형에서 렌더"
+msgid "Tile Size"
+msgstr "타일 크기"
 
 
 msgid "Transmission Bounces"
@@ -67545,14 +67196,6 @@ msgstr "전달 바운스"
 
 msgid "Maximum number of transmission bounces, bounded by total maximum"
 msgstr "전달 반송 최대 횟수, 합계 최대치로 한정됨"
-
-
-msgid "Transmission Samples"
-msgstr "전달 샘플"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "각 AA 샘플에 대해 렌더하는 전달 산란 샘플의 수"
 
 
 msgid "Transparent Max Bounces"
@@ -67599,22 +67242,6 @@ msgid "Ignore per render layer number of samples"
 msgstr "샘플의 레이어 번호를 렌더 당 무시"
 
 
-msgid "Progressive Refine"
-msgstr "진행 개선"
-
-
-msgid "Instead of rendering each tile until it is finished, refine the whole image progressively (this renders somewhat slower, but time can be saved by manually stopping the render when the noise is low enough)"
-msgstr "타일이 완성 될 때까지 각 타일을 렌더링하는 대신 점진적으로 전체 이미지를 개선합니다. (렌더링 속도가 약간 느려지지만 노이즈가 충분히 낮 으면 렌더링을 수동으로 중지하여 시간을 절약할 수 있습니다)"
-
-
-msgid "Square Samples"
-msgstr "제곱 샘플"
-
-
-msgid "Square sampling values for easier artist control"
-msgstr "비교적 쉬운 아티스트 컨트롤을 위해 샘플링 값을 제곱"
-
-
 msgid "Volume Bounces"
 msgstr "볼륨 바운스"
 
@@ -67629,14 +67256,6 @@ msgstr "최대 단계"
 
 msgid "Maximum number of steps through the volume before giving up, to avoid extremely long render times with big objects or small step sizes"
 msgstr "포기하기 전에 볼륨을 통과하는 최대 단계 수로서 큰 오브젝트 또는 작은 단계 크기로 렌더링 시간이 매우 길어지는 것을 방지합니다"
-
-
-msgid "Volume Samples"
-msgstr "볼륨 샘플"
-
-
-msgid "Number of volume scattering samples to render for each AA sample"
-msgstr "각 AA 샘플에 대해 렌더하는 볼륨 산란 샘플의 수"
 
 
 msgid "Render pass to show in the 3D Viewport"
@@ -67659,8 +67278,16 @@ msgid "Show the Ambient Occlusion render pass"
 msgstr "앰비언트 오클루전 렌더 패스를 표시합니다"
 
 
+msgid "Diffuse Direct"
+msgstr "직접 확산"
+
+
 msgid "Show the Diffuse Direct render pass"
 msgstr "확산 직접 렌더 패스를 표시합니다"
+
+
+msgid "Diffuse Indirect"
+msgstr "확산 간접"
 
 
 msgid "Show the Diffuse Indirect render pass"
@@ -67671,8 +67298,16 @@ msgid "Show the Diffuse Color render pass"
 msgstr "확산 컬러 렌더 패스를 표시합니다"
 
 
+msgid "Glossy Direct"
+msgstr "광택 직접"
+
+
 msgid "Show the Glossy Direct render pass"
 msgstr "광택 직접 렌더 패스를 표시합니다"
+
+
+msgid "Glossy Indirect"
+msgstr "광택 간접"
 
 
 msgid "Show the Glossy Indirect render pass"
@@ -67687,8 +67322,16 @@ msgid "Show the Glossy Color render pass"
 msgstr "광택 컬러 렌더 패스를 표시합니다"
 
 
+msgid "Transmission Direct"
+msgstr "전달 직접"
+
+
 msgid "Show the Transmission Direct render pass"
 msgstr "전달 직접 렌더 패스를 표시합니다"
+
+
+msgid "Transmission Indirect"
+msgstr "전달 간접"
 
 
 msgid "Show the Transmission Indirect render pass"
@@ -68763,14 +68406,6 @@ msgid "Manually determine the number of threads"
 msgstr "스레드들의 수를 수동으로 결정하기"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "렌더링하는 동안 사용하는 수평 타일 크기"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "렌더링하는 동안 사용하는 수직 타일 크기"
-
-
 msgid "Clear Images before baking"
 msgstr "배이킹 이전에 이미지를 지우기"
 
@@ -68831,10 +68466,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "프리스타일을 사용하여 스타일화된 스트로크를 그리기"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "모든 안티앨리어스 샘플에 대해 전체 렌더 레이어 결과를 저장합니다 (이로 인해 컴포지팅시 안티앨리어싱 문제를 솔브)"
-
-
 msgid "Lock Interface"
 msgstr "인터페이스를 잠금"
 
@@ -68873,14 +68504,6 @@ msgstr "캐시 결과"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "EXR 파일로 렌더 캐시를 저장, (무거운 컴포지팅에 유용합니다, 참고: 간접적으로 렌더된 씬에 영향을 줍니다)"
-
-
-msgid "Save Buffers"
-msgstr "버퍼를 저장"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "모든 렌더 레이어 및 씬 노드에 대한 타일을 임시 디렉토리에 있는 파일로 저장합니다 (전체 샘플에 필요한 메모리 저장)"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -70837,10 +70460,6 @@ msgid "Text color"
 msgstr "텍스트 컬러"
 
 
-msgid "Font of the text. Falls back to the UI font by default"
-msgstr "텍스트의 폰트. 기본적으로 UI폰트로 돌아갑니다"
-
-
 msgid "Size of the text"
 msgstr "텍스트의 크기"
 
@@ -71524,6 +71143,58 @@ msgstr "시퀀스 변환"
 
 msgid "Transform parameters for a sequence strip"
 msgstr "시퀀스 스트립에 대한 매개 변수를 변환"
+
+
+msgid "Show Annotation"
+msgstr "주석을 표시"
+
+
+msgid "Show annotations for this view"
+msgstr "이 뷰에 대한 주석을 표시"
+
+
+msgid "Show Metadata"
+msgstr "메타데이터를 표시"
+
+
+msgid "Show metadata of first visible strip"
+msgstr "첫 번째 보이는 스트립의 메타데이터를 표시"
+
+
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "미리보기에서 TV 타이틀 안전 및 액션 안전 영역을 표시"
+
+
+msgid "Show Grid"
+msgstr "격자를 표시"
+
+
+msgid "Show Offsets"
+msgstr "오프셋을 표시"
+
+
+msgid "Display strip in/out offsets"
+msgstr "스트립 인/아웃 오프셋을 표시"
+
+
+msgid "Waveforms Off"
+msgstr "파형 Off"
+
+
+msgid "Waveforms On"
+msgstr "파형 On"
+
+
+msgid "Use Strip Option"
+msgstr "스트립 옵션을 사용"
+
+
+msgid "Median Point"
+msgstr "평균 포인트"
+
+
+msgid "Individual Origins"
+msgstr "개별 오리진"
 
 
 msgid "Collection of Sequences"
@@ -72279,16 +71950,8 @@ msgid "Pivot around the 2D cursor"
 msgstr "2D 커서 주위에 피벗"
 
 
-msgid "Individual Origins"
-msgstr "개별 오리진"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "각 오브젝트의 자체 오리진 주위에 피벗"
-
-
-msgid "Median Point"
-msgstr "평균 포인트"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -72297,14 +71960,6 @@ msgstr "선택된 오브젝트의 중간 포인트 주위에 피벗"
 
 msgid "Scopes to visualize movie clip statistics"
 msgstr "무비 클립 통계를 시각화 하는 범위"
-
-
-msgid "Show Annotation"
-msgstr "주석을 표시"
-
-
-msgid "Show annotations for this view"
-msgstr "이 뷰에 대한 주석을 표시"
 
 
 msgid "Show Blue Channel"
@@ -72371,10 +72026,6 @@ msgid "Show green channel in the frame"
 msgstr "프레임에서 그린 채널을 표시"
 
 
-msgid "Show Grid"
-msgstr "격자를 표시"
-
-
 msgid "Show grid showing lens distortion"
 msgstr "렌즈 왜곡을 보여주는 격자를 표시"
 
@@ -72401,10 +72052,6 @@ msgstr "마스크 오버레이를 표시"
 
 msgid "Display Smooth Splines"
 msgstr "스무스 스플라인을 표시"
-
-
-msgid "Show Metadata"
-msgstr "메타데이터를 표시"
 
 
 msgid "Show metadata of clip"
@@ -73670,10 +73317,6 @@ msgid "Display frames rather than seconds"
 msgstr "초 단위 대신 프레임을 표시"
 
 
-msgid "Show metadata of first visible strip"
-msgstr "첫 번째 보이는 스트립의 메타데이터를 표시"
-
-
 msgid "Show Overexposed"
 msgstr "과다 노출을 표시"
 
@@ -73682,24 +73325,12 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "얼룩말 줄무늬 과다 노출 영역을 표시"
 
 
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "미리보기에서 TV 타이틀 안전 및 액션 안전 영역을 표시"
-
-
 msgid "Separate Colors"
 msgstr "컬러를 분리"
 
 
 msgid "Separate color channels in preview"
 msgstr "미리보기에서 컬러 채널을 분리"
-
-
-msgid "Show Offsets"
-msgstr "오프셋을 표시"
-
-
-msgid "Display strip in/out offsets"
-msgstr "스트립 인/아웃 오프셋을 표시"
 
 
 msgid "Transform markers as well as strips"
@@ -73712,18 +73343,6 @@ msgstr "뷰 유형"
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "시퀀서 뷰의 유형 (시퀀서, 미리보기 또는 둘 다)"
-
-
-msgid "Waveforms Off"
-msgstr "파형 Off"
-
-
-msgid "Waveforms On"
-msgstr "파형 On"
-
-
-msgid "Use Strip Option"
-msgstr "스트립 옵션을 사용"
 
 
 msgid "Space Text Editor"
@@ -77903,10 +77522,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "이 레이어에서 스타일화된 스트로크를 렌더"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "크립토매트 정확"
-
-
 msgid "Cryptomatte Asset"
 msgstr "크립토매트 에셋"
 
@@ -79027,22 +78642,6 @@ msgid "Cycles will render on the CPU"
 msgstr "사이클이 CPU에서 렌더링됩니다"
 
 
-msgid "Total Samples:"
-msgstr "전체 샘플:"
-
-
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Mesh Light"
-msgstr "메쉬 라이트"
-
-
-msgid "Subsurface"
-msgstr "서브 표면"
-
-
 msgid "Dicing Rate Render"
 msgstr "다이싱 레이트 렌더"
 
@@ -79067,16 +78666,12 @@ msgid "Roughness Threshold"
 msgstr "거칠기 임계 값"
 
 
-msgid "Tiles X"
-msgstr "타일 X"
-
-
-msgid "Start Pixels"
-msgstr "시작 픽셀"
-
-
 msgid "Surfaces"
 msgstr "표면"
+
+
+msgid "Denoising"
+msgstr "노이즈 제거"
 
 
 msgid "Denoising Data"
@@ -79085,10 +78680,6 @@ msgstr "노이즈 제거 데이터"
 
 msgid "Render Time"
 msgstr "렌더 시간"
-
-
-msgid "Feature Strength"
-msgstr "특성 강도"
 
 
 msgid "No output node"
@@ -79111,28 +78702,12 @@ msgid "OptiX Flags:"
 msgstr "OptiX 플래그:"
 
 
-msgid "OpenCL Flags:"
-msgstr "OpenCL 플래그:"
-
-
 msgid "Max Subdivision"
 msgstr "최대 섭디비젼"
 
 
 msgid "Texture Limit"
 msgstr "텍스처 제한"
-
-
-msgid "%s AA"
-msgstr "%s AA"
-
-
-msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
-msgstr "%s AA, %s 확산, %s 광택, %s 전달"
-
-
-msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
-msgstr "%s AO, %s 메쉬 라이트, %s 서브 표면, %s 볼륨"
 
 
 msgid "Incompatible output node"
@@ -81073,10 +80648,6 @@ msgid "Use for Rendering"
 msgstr "렌더링에 사용"
 
 
-msgid "Accurate Mode"
-msgstr "정확한 모드"
-
-
 msgid "Unknown add-ons"
 msgstr "알 수없는 애드온"
 
@@ -82327,6 +81898,10 @@ msgid "Fractional Preview Zoom"
 msgstr "분수적 미리보기 줌"
 
 
+msgid "Show Separate Color Channels"
+msgstr "별도의 색상 채널을 표시"
+
+
 msgctxt "Operator"
 msgid "Scene"
 msgstr "씬"
@@ -82362,10 +81937,6 @@ msgstr "%dx%d"
 
 msgid "Original Frame Range"
 msgstr "원본 프레임 범위"
-
-
-msgid "Show Separate Color Channels"
-msgstr "별도의 색상 채널을 표시"
 
 
 msgid "Add Transition"
@@ -83262,11 +82833,6 @@ msgstr "참조"
 msgctxt "Operator"
 msgid "Background"
 msgstr "배경"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "플록시를 만들기..."
 
 
 msgctxt "Operator"
@@ -84253,10 +83819,6 @@ msgstr "비활성 레이어를 숨기기"
 
 msgid "Toggle X-Ray"
 msgstr "X-Ray를 토글"
-
-
-msgid "X-Ray"
-msgstr "X-Ray"
 
 
 msgid "Marker Names"
@@ -86981,10 +86543,6 @@ msgid "No intersections found"
 msgstr "교차점을 찾을 수 없습니다"
 
 
-msgid "%s: confirm, %s: cancel, %s: start/define cut, %s: close cut, %s: new cut, %s: midpoint snap (%s), %s: ignore snap (%s), %s: angle constraint (%s), %s: cut through (%s), %s: panning"
-msgstr "%s: 확인, %s: 취소, %s: 시작/정의 자르기, %s: 닫기 자르기, %s: 새로운 자르기, %s: 중간 지점 스냅 (%s), %s: 무시 스냅 (%s), %s: 각도 제약 (%s), %s: (%s)을 통해 자르기, %s: 패닝"
-
-
 msgid "Selected faces required"
 msgstr "선택된 페이스 필요한"
 
@@ -87323,10 +86881,6 @@ msgid "No objects found to bake from"
 msgstr "다음에서 베이크하는 오브젝트를 찾을 수 없음"
 
 
-msgid "Combined bake pass Ambient Occlusion contribution requires an enabled light pass (bake the Ambient Occlusion pass type instead)"
-msgstr "결합된 베이크 패스 주변 폐색 기여는 활성화된 라이트 패스가 필요합니다 (주변 폐색 패스 유형을 대신 베이크)"
-
-
 msgid "Combined bake pass requires Emit, or a light pass with Direct or Indirect contributions enabled"
 msgstr "결합된 베이크 패스에는 방출 또는 직접 또는 간접 기여하는 활성화된 라이트 패스가 필요합니다"
 
@@ -87663,10 +87217,6 @@ msgid "This modifier operation is not allowed from Edit mode"
 msgstr "이 모디파이어 조작은 에디트 모드에서 허용되지 않습니다"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Set Parent To"
 msgstr "다음으로 부모를 설정"
 
@@ -87679,20 +87229,16 @@ msgid "Object (Without Inverse)"
 msgstr "오브젝트 (반전 없음)"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "다음으로 부모될 1개 또는 3개의 버텍스를 선택"
 
 
 msgid "Loop in parents"
 msgstr "부모에서 루프"
-
-
-msgid "Can only make proxy for a referenced object or collection"
-msgstr "참조된 오브젝트 또는 컬렉션에 대해서만 프록시를 만들 수 있습니다"
-
-
-msgid "No object to make proxy for"
-msgstr "다음에 대해 플록시를 만드는 오브젝트가 없음"
 
 
 msgid "No active bone"
@@ -90755,6 +90301,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "이 프레임 번호 %d 에 이미 프레임이 존재합니다"
 
 
+msgid "Modify"
+msgstr "수정"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "이미지에서 버퍼를 얻을 수 없음"
 
@@ -90902,10 +90452,6 @@ msgstr "커스텀 노멀의 수는 버텍스의 수가 아닙니다 (%f / %d)"
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "메타볼 '%s'에 스플라인이 없습니다"
-
-
-msgid "Modify"
-msgstr "수정"
 
 
 msgid "Negative vertex index in vertex_indices_set"
@@ -91433,10 +90979,6 @@ msgid "Lower Right"
 msgstr "오른쪽 하위"
 
 
-msgid "Albedo"
-msgstr "알베도"
-
-
 msgid "Image 1"
 msgstr "이미지 1"
 
@@ -91517,6 +91059,10 @@ msgid "Shader Editor"
 msgstr "셰이더 에디터"
 
 
+msgid "AO"
+msgstr "AO"
+
+
 msgid "Anisotropy"
 msgstr "비등방성"
 
@@ -91559,6 +91105,10 @@ msgstr "랜덤 컬러"
 
 msgid "Random Roughness"
 msgstr "렌덤 거칠기"
+
+
+msgid "Subsurface"
+msgstr "서브 표면"
 
 
 msgid "Subsurface Radius"
@@ -91745,10 +91295,6 @@ msgid "Alpha Fac"
 msgstr "알파 팩터"
 
 
-msgid "Texture Blur"
-msgstr "텍스처 블러"
-
-
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -91893,10 +91439,6 @@ msgid "No border area selected"
 msgstr "선택된 경계 영역 없음"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "렌더 버퍼를 저장 할 수 없음, 임시 기본 경로를 확인해 보세요"
-
-
 msgid "Border rendering is not supported by sequencer"
 msgstr "시퀀서에서 경계 렌더링을 지원하지 않습니다"
 
@@ -91907,10 +91449,6 @@ msgstr "씬에 노드 트리 없음"
 
 msgid "No render output node in scene"
 msgstr "씬에 렌더 출력 노드 없음"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "전체 샘플 AA는 3D 렌더링 없이 지원되지 않음"
 
 
 msgid "All render layers are disabled"

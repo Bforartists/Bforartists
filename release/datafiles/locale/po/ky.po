@@ -2126,6 +2126,10 @@ msgid "Fill"
 msgstr "Толтуруу"
 
 
+msgid "X-Ray"
+msgstr "Рентген"
+
+
 msgctxt "Operator"
 msgid "Merge"
 msgstr "Бириктирүү"
@@ -2280,15 +2284,6 @@ msgstr "Бөлүкчөлөр системасын кошуу"
 
 msgid "Remove the selected particle system"
 msgstr "Тандалган бөлүкчөлөр системасын өчүрүү"
-
-
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Проксини жаратуу"
-
-
-msgid "Proxy Object"
-msgstr "Прокси объекти"
 
 
 msgctxt "Operator"
@@ -3239,10 +3234,6 @@ msgid "Animation"
 msgstr "Анимация"
 
 
-msgid "AO"
-msgstr "AO"
-
-
 msgctxt "Operator"
 msgid "Volume"
 msgstr "Көлөм"
@@ -3628,10 +3619,6 @@ msgid "Lattice"
 msgstr "Решётка"
 
 
-msgid "X-Ray"
-msgstr "Рентген"
-
-
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Тез оңдоо"
@@ -3991,18 +3978,22 @@ msgid "(Smooth)"
 msgstr "(тегиз)"
 
 
+msgid "Modify"
+msgstr "Өзгөртүү"
+
+
 msgctxt "Key"
 msgid "Key"
 msgstr "Ачкыч"
 
 
-msgid "Modify"
-msgstr "Өзгөртүү"
-
-
 msgctxt "Armature"
 msgid "Group"
 msgstr "Топ"
+
+
+msgid "AO"
+msgstr "AO"
 
 
 msgid "Anisotropy"

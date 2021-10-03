@@ -831,10 +831,6 @@ msgid "None"
 msgstr "ءﻲﺷ ﻻ﻿"
 
 
-msgid "Ambient Occlusion"
-msgstr "ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻹ﻿ﺍ"
-
-
 msgid "Emit"
 msgstr "ﺪﻟّﻭ"
 
@@ -8837,6 +8833,14 @@ msgid "Display modifier in viewport"
 msgstr "ﺽﺮﻌﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺮﻴﻐّﻤﻟﺍ ﺽﺮﻋﺇ"
 
 
+msgid "Time Offset"
+msgstr "ﺖﻗﻮﻟﺍ ﺔﺣﺍﺯﺍ"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ ﺐﻳﺮﻘﺗ"
+
+
 msgid "Array"
 msgstr "ﻒﻴﻔﺻ"
 
@@ -8849,16 +8853,8 @@ msgid "Mirror"
 msgstr "ﻞﺛﺎﻣ"
 
 
-msgid "Vertex Weight"
-msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ"
-
-
 msgid "Hook"
 msgstr "ﻑﺎﻄﺨﻟﺍ"
-
-
-msgid "Time Offset"
-msgstr "ﺖﻗﻮﻟﺍ ﺔﺣﺍﺯﺍ"
 
 
 msgid "Hue/Saturation"
@@ -9003,6 +8999,10 @@ msgid "Strength of modifier effect"
 msgstr "ﺮﻴﻐﻤﻟﺍ ﺮﻴﺛﺎﺗ ﺓﺪﺷ"
 
 
+msgid "Point Density"
+msgstr "ﺔﻄﻘﻨﻟﺍ ﺔﻓﺎﺜﻛ"
+
+
 msgid "Boundaries"
 msgstr "ﺩﻭﺪﺤﻟﺍ"
 
@@ -9055,8 +9055,16 @@ msgid "Space"
 msgstr "ءﺎﻀﻓ"
 
 
-msgid "Blend"
-msgstr "ﻂﻠﺧﺇ"
+msgid "Highest"
+msgstr "ﻰﻠﻋﻷ﻿ﺍ"
+
+
+msgid "Lowest"
+msgstr "ﻰﻧﺩﻻ﻿ﺍ"
+
+
+msgid "Target Object"
+msgstr "ﻑﺪﻬﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
 
 msgid "Vertex Group Element"
@@ -9069,6 +9077,10 @@ msgstr "ﻂﻘﻧ ﺔﻋﻮﻤﺠﻣ ﻲﻓ ﺔﻄﻘﻨﻟ ﻥﺯﻮﻟﺍ ﺔ�
 
 msgid "Group Index"
 msgstr "ﺔﻋﻮﻤﺠﻣ ﺮﺷﺆﻣ"
+
+
+msgid "Vertex Weight"
+msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ"
 
 
 msgid "Active Layer"
@@ -14309,6 +14321,10 @@ msgid "Node tree for node-based textures"
 msgstr "ﺪﻘﻌﻟﺍ ﻰﻠﻋ ﻢﺋﺎﻘﻟﺍ ﺞﻴﺴﻨﻠﻟ ﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ"
 
 
+msgid "Blend"
+msgstr "ﻂﻠﺧﺇ"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "ﻲﻤﻠﺳ ﺞﻴﺴﻧ ﺊﺸﻧﺍ - ﻲﺋﺍﺮﺟﺇ"
 
@@ -17747,10 +17763,6 @@ msgid "Vertex Weight Mix"
 msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ ﺝﺰﻣ"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ ﺐﻳﺮﻘﺗ"
-
-
 msgid "Bevel"
 msgstr "ﺔﻔﻄﺷ"
 
@@ -19082,14 +19094,6 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "ﺔﻋﻮﻤﺠﻣ ﻲﻓ ﻑﺪﻬﻟﺍ ﻦﺋﺎﻛ ﺔﻓﺎﺴﻣ ﻦﻣ ﻂﻘﻨﻟﺍ ﻥﺍﺯﻭﺍ ﻊﺿ"
 
 
-msgid "Highest"
-msgstr "ﻰﻠﻋﻷ﻿ﺍ"
-
-
-msgid "Lowest"
-msgstr "ﻰﻧﺩﻻ﻿ﺍ"
-
-
 msgid "Proximity Geometry"
 msgstr "ﺐﻳﺮﻘﺘﻟﺍ ﻢﺴﺠﻣ"
 
@@ -19104,10 +19108,6 @@ msgstr "ﺐﻳﺮﻘﺘﻟﺍ ﻂﻤﻧ"
 
 msgid "Use distance between affected and target objects"
 msgstr "ﻑﺪﻬﻟﺍ ﻭ ﺮﺛﺄﺘﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ ﻦﻴﺑ ﺔﻓﺎﺴﻤﻟﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Target Object"
-msgstr "ﻑﺪﻬﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
 
 msgid "Warp Modifier"
@@ -21067,6 +21067,10 @@ msgid "Add Shader"
 msgstr "ﺔﻓﺎﺿﺍ ﻞﻠﻈﻣ"
 
 
+msgid "Ambient Occlusion"
+msgstr "ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻹ﻿ﺍ"
+
+
 msgid "Attribute Name"
 msgstr "ﺔﻤﺴﻟﺍ ﻢﺳﺍ"
 
@@ -21325,10 +21329,6 @@ msgstr "ﻑﺎﻀﻤﻟﺍ ﺏﺮﻄﻀﻤﻟﺍ ﺞﻴﺠﻀﻟﺍ ﻲﻓ ﻞ�
 
 msgid "Musgrave Texture"
 msgstr "ﻑﺍﺮﻐﺳﻮﻣ ﺞﻴﺴﻧ"
-
-
-msgid "Point Density"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﺔﻓﺎﺜﻛ"
 
 
 msgid "Object to take point data from"
@@ -25425,6 +25425,10 @@ msgid "Only cut selected geometry"
 msgstr "ﻂﻘﻓ ﺭﺎﺘﺨﻤﻟﺍ ﻢﺴﺠﻟﺍ ﻊﻄﻗﺍ"
 
 
+msgid "X-Ray"
+msgstr "ﺔﻴﻨﻴﺴﻟﺍ ﺔﻌﺷﻷ﻿ﺍ"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "ﺓﺩﺪﻌﺘﻣ ﺕﻼ﻿ﺴﻠﺴﺗ ﺭﺎﺘﺧﺍ"
@@ -26952,11 +26956,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺕﺍﺭﺎﺴﻤﻟ�
 msgctxt "Operator"
 msgid "Toggle Pose Mode"
 msgstr "ﺔﻔﻗﻮﻟﺍ ﻊﺿﻭ ﺐﻠﻗﺍ"
-
-
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "ﺏﻭﺪﻨﻣ ﺊﺸﻧﺍ"
 
 
 msgid "Edge Length"
@@ -30460,10 +30459,6 @@ msgid "Use Soft Limits"
 msgstr "ﺔﻴﺧﺍﺮﺘﻣ ﺩﻭﺪﺣ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Property value edit"
-msgstr "ﺔﻤﺴﻟﺍ ﺔﻤﻴﻗ ﻞﻳﺪﻌﺗ"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "ﺔﻤﺴﻟﺍ ﻑﺬﺣﺍ"
@@ -30880,10 +30875,6 @@ msgstr "ءﺍﺩﺍ"
 
 msgid "Threads"
 msgstr "ﺐﻌﺷ"
-
-
-msgid "Tiles"
-msgstr "ﺕﺎﻨﺒﻟ"
 
 
 msgid "Subdivision"
@@ -33269,10 +33260,6 @@ msgid "Cast Shadow"
 msgstr "ﻞﻈﻟﺍ ﻲﻘﻟﺍ"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺓﺮﻴّﺼﻤﻟﺍ ءﻮﻀﻟﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
 msgid "Displacement Method"
 msgstr "ﻖﺜﺒﻟﺍ ﺔﻘﻳﺮﻃ"
 
@@ -33305,46 +33292,6 @@ msgid "Use Motion Blur"
 msgstr "ﺔﻛﺮﺣ ﺔﻴﺑﺎﺒﺿ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Diffuse Direct"
-msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺭﺎﺸﺘﻧﻻ﻿ﺍ"
-
-
-msgid "Diffuse Indirect"
-msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻐﻟﺍ ﺭﺎﺸﺘﻧﻻ﻿ﺍ"
-
-
-msgid "Glossy Direct"
-msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﻥﺎﻌﻤﻠﻟﺍ"
-
-
-msgid "Glossy Indirect"
-msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻐﻟﺍ ﻥﺎﻌﻤﻠﻟﺍ"
-
-
-msgid "Transmission Direct"
-msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺙﺎﻌﺒﻧﻹ﻿ﺍ"
-
-
-msgid "Transmission Indirect"
-msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺮﻴﻐﻟﺍ ﺙﺎﻌﺒﻧﻻ﻿ﺍ"
-
-
-msgid "AA Samples"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "ﻞﺴﻜﺑ ﻞﻜﻟ ﺓﺮﻴّﺼﻤﻟﺍ ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻹ﻿ﺍ ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻻ﻿ﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
 msgid "Bake Type"
 msgstr "ﺰﺒﺨﻟﺍ ﻉﻮﻧ"
 
@@ -33359,22 +33306,6 @@ msgstr "BVH ﻱﻮﻴﺣ"
 
 msgid "Static BVH"
 msgstr "BVH ﺖﺑﺎﺛ"
-
-
-msgid "Cancel timeout"
-msgstr "ﺝﻭﺮﺨﻟﺍ ﻦﻣﺯ ﻲﻐﻟﺃ"
-
-
-msgid "Reset timeout"
-msgstr "ﺝﻭﺮﺨﻟﺍ ﻦﻣﺯ ﻂﺒﺿ ﺪﻋﺃ"
-
-
-msgid "Text timeout"
-msgstr "ﺺﻨﻠﻟ ﺝﻭﺮﺨﻟﺍ ﻦﻣﺯ"
-
-
-msgid "Tile Size"
-msgstr "ﺔﻨﺒﻠﻟﺍ ﻢﺠﺣ"
 
 
 msgid "Use Spatial Splits"
@@ -33403,14 +33334,6 @@ msgstr "ﺔﺻﺮﻔﻟﺍ ﻝﺪﻌﻣ"
 
 msgid "Diffuse Bounces"
 msgstr "ﺭﺎﺸﺘﻧﻹ﻿ﺍ ﺕﺍﺩﺍﺪﺗﺭﺍ"
-
-
-msgid "Diffuse Samples"
-msgstr "ﺭﺎﺸﺘﻧﻻ﻿ﺍ ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﺭﺎﺸﺘﻧﻻ﻿ﺍ ﺩﺍﺪﺗﺭﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
 
 
 msgid "Feature Set"
@@ -33453,22 +33376,6 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "   ﻲﻟﺎﻤﺟﺇ ﻰﺼﻗﺃ ﺪﺤﺑ ﺓﺩﺪﺤﻣ ،ﻥﺎﻌﻤﻠﻟﺍ ﺱﺎﻜﻌﻧﺍ ﺕﺍﺩﺍﺪﺗﺭﺍ ﺩﺪﻋ ﻰﺼﻗﺃ"
 
 
-msgid "Glossy Samples"
-msgstr "ﻥﺎﻌﻤﻠﻟﺍ ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻥﺎﻌﻤﻠﻟﺍ ﺩﺍﺪﺗﺭﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
-msgid "Mesh Light Samples"
-msgstr "ﻢﺴﺠﻤﻟﺍ ءﻮﺿ ءﺎﻨﻴﻋ"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻢﺴﺠﻤﻟﺍ ءﻮﺿ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
 msgid "Start on Frame"
 msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺪﻨﻋ ﺃﺪﺑﺇ"
 
@@ -33481,24 +33388,8 @@ msgid "End on Frame"
 msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺪﻨﻋ ﻲﻬﻧﺍ"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "0 ﺖﻧﺎﻛ ﺍﺫﺍ ﺓﺩﺪﺤﻣ ﺮﻴﻏ ,ﺽﺮﻌﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺮﻴﻴﺼﺘﻠﻟ ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
 msgid "Pause Preview"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﻒﻗﻭﺍ"
-
-
-msgid "Start Resolution"
-msgstr "ﺔﻄﻳﺮﺨﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Integrator"
-msgstr "ﻞﻣﺎﻜﻤﻟﺍ"
-
-
-msgid "Path Tracing"
-msgstr "ﻱﺭﺎﺴﻣ ﺐﻘﻌﺗ"
 
 
 msgid "Number of samples to render for each pixel"
@@ -33513,44 +33404,12 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "ﺔﻔﻠﺘﺨﻣ ﺔﻴﺋﺍﻮﺸﻋ ﻁﺎﻤﻧﺍ ﻰﻠﻋ ﻝﻮﺼﺤﻠﻟ ﻞﻣﺎﻜﻤﻟﺍ ﺓﺭﺬﺑ ﺔﻤﻴﻗ"
 
 
-msgid "Number of subsurface scattering samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻲﺤﻄﺳ-ﺖﺤﺘﻟﺍ ﺭﺎﺸﺘﻧﻹ﻿ﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
-
-
-msgid "Tile order for rendering"
-msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﺕﺎﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
-
-
-msgid "Render from center to the edges"
-msgstr "ﻑﺍﻮﺤﻟ ﻰﻟﺇ ﻂﺳﻮﻟﺍ ﻦﻣ ﺮﻴّﺻ"
-
-
-msgid "Right to Left"
-msgstr "Right Mouse"
-
-
-msgid "Left to Right"
-msgstr "ﻑﺪﻬﻟﺍ ﻥﺯﻭ ﻊﺿ"
-
-
-msgid "Top to Bottom"
-msgstr "NDOF ﻞﻔﺳﺃ"
-
-
-msgid "Bottom to Top"
-msgstr "ﻰﻠﻋﻷ﻿ ﻞﻔﺳﻷ﻿ﺍ ﻦﻣ"
+msgid "Tile Size"
+msgstr "ﺔﻨﺒﻠﻟﺍ ﻢﺠﺣ"
 
 
 msgid "Transmission Bounces"
 msgstr "ﺙﺎﻌﺒﻧﻻ﻿ﺍ ﺕﺍﺩﺍﺪﺗﺭﺍ"
-
-
-msgid "Transmission Samples"
-msgstr "ﺙﺎﻌﺒﻧﻻ﻿ﺍ ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﺙﺎﻌﺒﻧﻻ﻿ﺍ ﺩﺍﺪﺗﺭﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
 
 
 msgid "Transparent Max Bounces"
@@ -33569,24 +33428,36 @@ msgid "Bounded"
 msgstr "ﺩﻭﺪﺤﻣ"
 
 
-msgid "Progressive Refine"
-msgstr "ﻲﻣﺪﻘﺗ"
-
-
-msgid "Square Samples"
-msgstr "ﺔﻴﻌﻴﺑﺮﺗ ﺕﺎﻨﻴﻋ"
-
-
 msgid "Max Steps"
 msgstr "ﺕﺍﻮﻄﺧ ﺮﺒﻛﺍ"
 
 
-msgid "Number of volume scattering samples to render for each AA sample"
-msgstr "ﺭﻮﻠﺒﺗ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻢﺠﺤﻟﺍ ﺭﺎﺸﺘﻧﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
+msgid "Diffuse Direct"
+msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺭﺎﺸﺘﻧﻻ﻿ﺍ"
+
+
+msgid "Diffuse Indirect"
+msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻐﻟﺍ ﺭﺎﺸﺘﻧﻻ﻿ﺍ"
+
+
+msgid "Glossy Direct"
+msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﻥﺎﻌﻤﻠﻟﺍ"
+
+
+msgid "Glossy Indirect"
+msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻐﻟﺍ ﻥﺎﻌﻤﻠﻟﺍ"
 
 
 msgid "Glossy Color"
 msgstr "ﻥﺎﻌﻤﻠﻟﺍ ﻥﻮﻟ"
+
+
+msgid "Transmission Direct"
+msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺙﺎﻌﺒﻧﻹ﻿ﺍ"
+
+
+msgid "Transmission Indirect"
+msgstr "ﺮﺷﺎﺒﻤﻟﺍ ﺮﻴﻐﻟﺍ ﺙﺎﻌﺒﻧﻻ﻿ﺍ"
 
 
 msgid "Transmission Color"
@@ -34117,14 +33988,6 @@ msgid "Manually determine the number of threads"
 msgstr "ﺐﻌﺸﻟﺍ ﺩﺪﻌﻟ ﻱﻭﺪﻳ ﺪﻳﺪﺤﺗ"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻝﻼ﻿ﺧ ﻝﺎﻤﻌﺘﺳﻺ﻿ﻟ ﺔﻴﻘﻓﻷ﻿ﺍ ﺕﺎﻨﺒﻠﻟﺍ ﺩﺪﻋ"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻝﻼ﻿ﺧ ﻝﺎﻤﻌﺘﺳﻺ﻿ﻟ ﺔﻳﺩﻮﻤﻌﻟﺍ ﺕﺎﻨﺒﻠﻟﺍ ﺩﺪﻋ"
-
-
 msgid "Clear Images before baking"
 msgstr "ﻦﻳﺰﺨﺘﻟﺍ ﻞﺒﻗ ﺭﻮﺼﻟﺍ ﺢﺴﻣﺇ"
 
@@ -34157,10 +34020,6 @@ msgid "Add the file format extensions to the rendered file name (eg: filename + 
 msgstr " (jpg. + ﻒﻠﻣ_ﻢﺳﺇ :ﻝﺎﺜﻣ) ﺮﻴّﺼﻤﻟﺍ ﻒﻠﻤﻟﺍ ﻢﺳﺇ ﻰﻟﺇ ﻒﻠﻤﻟﺍ ﺔﺌﻴﻫ ﻒﺿﺃ"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "(ﺐﻴﻛﺮﺘﻟﺍ ﺔﻴﻠﻤﻋ ﻲﻓ ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﻞﻛﺎﺸﻣ ﻞﺤﻳ ﺍﺬﻫ) ﺔﻠﻣﺎﻛ ﺮﻴﻴﺼﺘﻟﺍ ﺔﻘﺒﻃ ﺔﺠﻴﺘﻧ ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﺒﻴﻋ ﻞﻜﻟ ﻞﺠﺳ"
-
-
 msgid "Use multi-sampled 3D scene motion blur"
 msgstr " ﺕﺎﻨﻴﻌﻟﺍ ﺩﺪﻌﺘﻤﻟﺍ ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺜﻟﺍ ﺪﻬﺸﻤﻟﺍ ﺔﻛﺮﺣ ﺔﻴﺑﺎﺒﺿ ﻞﻤﻌﺘﺳﺇ"
 
@@ -34179,14 +34038,6 @@ msgstr "ﺐﺋﺎﻧ ﺺﻧ"
 
 msgid "Create empty placeholder files while rendering frames (similar to Unix 'touch')"
 msgstr "('touch' ﺲﻜﻨﻴﻟ ﻪﺑﺎﺸﻣ) ﺮﻴﻴﺼﺘﻟﺍ ﺔﻴﻠﻤﻋ ءﺎﻨﺛﺃ ﺕﺎﻔﻠﻤﻟﺍ ءﺎﻤﺳﻷ﻿ ﻍﺭﺎﻓ ﺺﻧ ﺐﺋﺎﻧ ﻊﻨﺻﺇ"
-
-
-msgid "Save Buffers"
-msgstr "ﺕﺎﻧﺍﺰﺨﻟﺍ ﻞﺠﺳ"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "(ﺔﻠﻣﺎﻜﻟﺍ-ﺕﺎﻨﻴﻌﻠﻟ ﻱﺭﻭﺮﺿ ،ﺓﺮﻛﺍﺬﻟﺍ ﻞﺠﺴﻳ) ﺖﻗﺆﻤﻟﺍ ﺪﻠﺠﻤﻟﺍ ﻲﻓ ﺕﺎﻔﻠﻣ ﻰﻟﺇ ﺪﻬﺸﻤﻟﺍ ﺪﻘﻋ ﻭ ﺮﻴﻴﺼﺘﻟﺍ ﺕﺎﻘﺒﻃ ﻞﻜﻟ ﺕﺎﻨﺒﻠﻟﺍ ﻞﻴﺠﺴﺗ"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -35038,6 +34889,30 @@ msgid "Use a custom directory to store data"
 msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻦﻳﺰﺨﺘﻟ ﺺﺼﺨﻣ ﺪﻠﺠﻣ ﻡﺪﺨﺘﺳﺍ"
 
 
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﻲﻓ ﺙﺪﺤﻟﺍ ﻥﺎﻣﺍ ﻭ ﻥﺍﻮﻨﻌﻟﺍ ﻥﺎﻣﺍ ﺔﻘﻄﻨﻣ ﺮﻬﻇﺃ"
+
+
+msgid "Show Grid"
+msgstr "ﺔﻜﺒﺸﻟﺍ ﺮﻬﻇﺃ"
+
+
+msgid "Show Offsets"
+msgstr "ﺕﺎﺣﺍﺯﻻ﻿ﺍ ﺮﻬﻇﺍ"
+
+
+msgid "Waveforms Off"
+msgstr "ﻲﺟﻮﻤﻟﺍ ﻞﻜﺸﻟﺍ ﺊﻔﻃﺃ "
+
+
+msgid "Waveforms On"
+msgstr "ﻲﺟﻮﻤﻟﺍ ﻞﻜﺸﻟﺍ ﻞﻌّﻓ "
+
+
+msgid "Median Point"
+msgstr "ﻂﺳّﻮﺘﻟﺍ ﺔﻄﻘﻧ"
+
+
 msgid "Gray Scale"
 msgstr "ﻲﻨﻜﺳ ﺝﺭﺪﺗ"
 
@@ -35175,10 +35050,6 @@ msgid "Pivot around bounding box center of selected object(s)"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ (ﺕﺍ)ﻦﺋﺎﻜﻠﻟ ﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﺰﻛﺮﻣ ﻝﻮﺣ ﺭﻭﺎﺣ"
 
 
-msgid "Median Point"
-msgstr "ﻂﺳّﻮﺘﻟﺍ ﺔﻄﻘﻧ"
-
-
 msgid "Show Blue Channel"
 msgstr "ءﺎﻗﺭﺰﻟﺍ ﺓﺎﻨﻘﻟﺍ ﺮﻬﻇﺍ"
 
@@ -35221,10 +35092,6 @@ msgstr "ءﺍﺮﻀﺨﻟﺍ ﺓﺎﻨﻘﻟﺍ ﺮﻬﻇﺍ"
 
 msgid "Show green channel in the frame"
 msgstr "ﺭﺎﻃﻻ﻿ﺍ ﻲﻓ ءﺍﺮﻀﺨﻟﺍ ﺓﺎﻨﻘﻟﺍ ﺮﻬﻇﺍ"
-
-
-msgid "Show Grid"
-msgstr "ﺔﻜﺒﺸﻟﺍ ﺮﻬﻇﺃ"
 
 
 msgid "Show Marker Pattern"
@@ -35493,16 +35360,8 @@ msgid "Show current frame only"
 msgstr "ﻂﻘﻓ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﺮﻬﻇﺍ"
 
 
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﻲﻓ ﺙﺪﺤﻟﺍ ﻥﺎﻣﺍ ﻭ ﻥﺍﻮﻨﻌﻟﺍ ﻥﺎﻣﺍ ﺔﻘﻄﻨﻣ ﺮﻬﻇﺃ"
-
-
 msgid "Separate Colors"
 msgstr "ﻥﺍﻮﻟﻻ﻿ﺍ ﻞﺼﻓﺍ"
-
-
-msgid "Show Offsets"
-msgstr "ﺕﺎﺣﺍﺯﻻ﻿ﺍ ﺮﻬﻇﺍ"
 
 
 msgid "View Type"
@@ -35511,14 +35370,6 @@ msgstr "ﺽﺮﻌﻟﺍ ﻉﻮﻧ"
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "(ﺎﻌﻣ ﻭﺃ ﺔﻨﻳﺎﻌﻣ ،ﻞﺴﻠﺴﻣ) ﻂﺋﺍﺮﺸﻟﺍ ﺭﺮﺤﻣ ﺮﻈﻨﻣ ﻉﻮﻧ"
-
-
-msgid "Waveforms Off"
-msgstr "ﻲﺟﻮﻤﻟﺍ ﻞﻜﺸﻟﺍ ﺊﻔﻃﺃ "
-
-
-msgid "Waveforms On"
-msgstr "ﻲﺟﻮﻤﻟﺍ ﻞﻜﺸﻟﺍ ﻞﻌّﻓ "
 
 
 msgid "Margin Column"
@@ -37429,22 +37280,6 @@ msgid "Transform Modal Map"
 msgstr "ﺔﻃﻭﺮﺸﻣ ﺔﻟﻮّﺤﺘﻣ ﺔﻄﻳﺮﺧ"
 
 
-msgid "AO"
-msgstr "ﻡ.ﺇ"
-
-
-msgid "Mesh Light"
-msgstr "ﻢﺴﺠﻤﻟﺍ ءﻮﺿ"
-
-
-msgid "Subsurface"
-msgstr "ﻲﺤﻄﺳ-ﺖﺤﺗ"
-
-
-msgid "Tiles X"
-msgstr "X ﺕﺎﻨﺒﻟ"
-
-
 msgid "No output node"
 msgstr "ﺝﺮﺧ ﺓﺪﻘﻋ ﺪﺟﻮﺗ ﻻ﻿"
 
@@ -38962,11 +38797,6 @@ msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
 
 
 msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "...ﺏﻭﺪﻨﻣ ﻞﻌﺟﺍ"
-
-
-msgctxt "Operator"
 msgid "Make Local..."
 msgstr "...ﻲﻠﺤﻣ ﻞﻌﺟﺍ"
 
@@ -39380,10 +39210,6 @@ msgstr "ﺓﺮﻴﻐﺼﻟﺍ ﻁﻮﻄﺨﻟﺍ ﺐﻠﻗ"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "ﺔﻔﻠﻟﺍ ﺩﺪﺣ"
-
-
-msgid "X-Ray"
-msgstr "ﺔﻴﻨﻴﺴﻟﺍ ﺔﻌﺷﻷ﻿ﺍ"
 
 
 msgctxt "Operator"
@@ -40526,10 +40352,6 @@ msgid "Constructive modifier cannot be applied to multi-res data in sculpt mode"
 msgstr "ﺕﺎﻴﻨﺤﻨﻤﻟﺍ ﻂﻘﻧ ﻰﻠﻋ ﻂﻘﻓ ﻖﺒﻄﻳ ﻥﺃ ﻦﻜﻤﻳ ﺮﻴﻐﻤﻟﺍ ﺍﺬﻫ"
 
 
-msgid "OK?"
-msgstr "؟ﺎﻨﺴﺣ"
-
-
 msgid "Set Parent To"
 msgstr "ـﻟ ﻞﺻﻻ﻿ﺍ ﻊﺿ"
 
@@ -40538,16 +40360,16 @@ msgid "Object (Keep Transform)"
 msgstr "ﻲﺋﺮﻤﻟﺍ ﻞﻳﻮﺤﺘﻟﺍ"
 
 
+msgid "OK?"
+msgstr "؟ﺎﻨﺴﺣ"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "ﻦﺋﺎﻜﻠﻟ ءﻲﻄﺒﻟﺍ ﻞﺻﻷ﻿ﺍ ﺩﺪﺣ"
 
 
 msgid "Loop in parents"
 msgstr "ﻞﺴﻠﺴﺘﻟﺍ ﺔﻳﺍﺪﺑ"
-
-
-msgid "No object to make proxy for"
-msgstr "ﻪﻟ ﺏﻭﺪﻨﻣ ءﺎﺸﻧﻹ﻿ ﻊﻤّﺠﻤﻟﺍ/ﺔﺒﺘﻜﻣ-ﻦﻣ-ﻂﺒﺗﺮﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ ﻢﺳﺍ"
 
 
 msgid "No active bone"
@@ -41296,6 +41118,10 @@ msgid "Stroke not found in grease pencil frame"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﻲﺗﺄﻳ ﻦﻳﺍ ﻦﻣ"
 
 
+msgid "Modify"
+msgstr "ﻝﺪﻋ"
+
+
 msgid "Image not packed"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻢﺳﺍ"
 
@@ -41315,10 +41141,6 @@ msgstr "ﻪﻨﻣ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻄﻘﻧ ﺬﺧﺃ ﺐﺠﻳ ﻱ�
 
 msgid "Mtex not found for this type"
 msgstr "ﺔﻘﺒﻄﻟﺍ ﻩﺬﻬﻟ ﻞﻴﺻﺎﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Modify"
-msgstr "ﻝﺪﻋ"
 
 
 msgid "Unable to create new strip"
@@ -41494,6 +41316,10 @@ msgid "Val"
 msgstr "ﺔﻤﻴﻘﻟﺍ"
 
 
+msgid "AO"
+msgstr "ﻡ.ﺇ"
+
+
 msgid "Anisotropy"
 msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ ﻞﻜﺸﺗ"
 
@@ -41512,6 +41338,10 @@ msgstr "U ﺔﻧﻮﺸﺧ"
 
 msgid "RoughnessV"
 msgstr "V ﺔﻧﻮﺸﺧ"
+
+
+msgid "Subsurface"
+msgstr "ﻲﺤﻄﺳ-ﺖﺤﺗ"
 
 
 msgid "Anisotropic"
@@ -41612,10 +41442,6 @@ msgstr "ﻥﻮﻠﻟﺍ ﻞﻣﺎﻌﻣ"
 
 msgid "Alpha Fac"
 msgstr "ﺎﻔﻟﺃ ﻞﻣﺎﻌﻣ"
-
-
-msgid "Texture Blur"
-msgstr "ﺞﻴﺴﻨﻟﺍ ﺔﻴﺑﺎﺒﺿ"
 
 
 msgid "BSSRDF"

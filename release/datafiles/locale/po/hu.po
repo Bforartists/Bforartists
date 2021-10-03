@@ -4720,10 +4720,6 @@ msgid "None"
 msgstr "Semmi"
 
 
-msgid "Ambient Occlusion"
-msgstr "Környezeti elnyelődés"
-
-
 msgid "Emit"
 msgstr "Emisszió"
 
@@ -7994,6 +7990,14 @@ msgid "Display modifier in viewport"
 msgstr "Módosító megjelenítése a 3D nézetben"
 
 
+msgid "Time Offset"
+msgstr "Idő eltolás"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "Csúcspont-súly közelség"
+
+
 msgid "Array"
 msgstr "Sorozat"
 
@@ -8008,10 +8012,6 @@ msgstr "Tükrözés"
 
 msgid "Hook"
 msgstr "Kampó"
-
-
-msgid "Time Offset"
-msgstr "Idő eltolás"
 
 
 msgid "Armature Modifier"
@@ -8223,8 +8223,16 @@ msgid "Space"
 msgstr "Térköz"
 
 
-msgid "Blend"
-msgstr "Keverés"
+msgid "Highest"
+msgstr "Legmagasabb"
+
+
+msgid "Lowest"
+msgstr "Legalacsonyabb"
+
+
+msgid "Target Object"
+msgstr "Célobjektum"
 
 
 msgid "Active Layer"
@@ -9595,6 +9603,10 @@ msgid "Register"
 msgstr "Regisztrálás"
 
 
+msgid "Blend"
+msgstr "Keverés"
+
+
 msgid "Quadratic"
 msgstr "Négyzetes"
 
@@ -10764,10 +10776,6 @@ msgstr "Csúcspont-súly keverés"
 
 msgid "Mix the weights of two vertex groups"
 msgstr "Két csúcspot-csoport súlyainak keverése"
-
-
-msgid "Vertex Weight Proximity"
-msgstr "Csúcspont-súly közelség"
 
 
 msgid "Bevel"
@@ -12729,16 +12737,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "Csúcspontok súlyának beállítása egy csoportban a célobjektumtól való távolságuk alapján"
 
 
-msgid "Highest"
-msgstr "Legmagasabb"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "Távolság-letérképezés 1.0 súlyra"
-
-
-msgid "Lowest"
-msgstr "Legalacsonyabb"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -12779,10 +12779,6 @@ msgstr "A befolyásolt- és a célobjektum közötti távolság használata"
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "A befolyásolt objektum csúcspontjai és a célobjektum, vagy a célobjektum geometriája közötti távolság használata"
-
-
-msgid "Target Object"
-msgstr "Célobjektum"
 
 
 msgid "Object to calculate vertices distances from"
@@ -13119,6 +13115,10 @@ msgstr "Z tengely"
 
 msgid "Object Info"
 msgstr "Objektum infó"
+
+
+msgid "Ambient Occlusion"
+msgstr "Környezeti elnyelődés"
 
 
 msgid "Background"
@@ -14630,6 +14630,10 @@ msgstr "Felület lapos megjelenítése"
 
 msgid "Display faces smooth (using vertex normals)"
 msgstr "Felület simított megjelenítése (csúcspontok normálisát használva)"
+
+
+msgid "X-Ray"
+msgstr "Röntgen"
 
 
 msgid "Object Index"
@@ -16901,10 +16905,6 @@ msgid "Threads"
 msgstr "Szálak"
 
 
-msgid "Tiles"
-msgstr "Csempék"
-
-
 msgid "Subdivision"
 msgstr "Felosztás"
 
@@ -17839,6 +17839,10 @@ msgid "Minimum number of pixels between each gridline in 2D Viewports"
 msgstr "Minimum pixelszám minden rácsvonal között a 2D-s nézetekben"
 
 
+msgid "Layer Samples"
+msgstr "Réteg minták"
+
+
 msgid "Diffuse Direct"
 msgstr "Diffúz direkt"
 
@@ -17855,24 +17859,16 @@ msgid "Glossy Indirect"
 msgstr "Fényes indirekt"
 
 
+msgid "Glossy Color"
+msgstr "Fényes szín"
+
+
 msgid "Transmission Direct"
 msgstr "Áteresztés direkt"
 
 
 msgid "Transmission Indirect"
 msgstr "Áteresztés indirekt"
-
-
-msgid "Tile order for rendering"
-msgstr "Csempesorrend rendereléshez"
-
-
-msgid "Layer Samples"
-msgstr "Réteg minták"
-
-
-msgid "Glossy Color"
-msgstr "Fényes szín"
 
 
 msgid "Quad Split"
@@ -18135,14 +18131,6 @@ msgid "Manually determine the number of threads"
 msgstr "A szálak számának manuális meghatározása"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "A rendereléshez használt vízszintes csempeméret"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "A rendereléshez használt függőleges csempeméret"
-
-
 msgid "Clear Images before baking"
 msgstr "Képek tisztára törlése sütés előtt"
 
@@ -18179,10 +18167,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Stilizált vonalak rajzolása Freestyle-al"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "Az egész RenderRéteg végeredmény mentése minden élsimítási mintához"
-
-
 msgid "Use multi-sampled 3D scene motion blur"
 msgstr "Többszörösen mintavételezett 3D jelenet mozgás-elmosás használata"
 
@@ -18197,14 +18181,6 @@ msgstr "Helyőrzők"
 
 msgid "Create empty placeholder files while rendering frames (similar to Unix 'touch')"
 msgstr "Üres helyőrzőfájl készítése a képkockák renderelésének ideje alatt (hasonló a Unix 'touch'-hoz)"
-
-
-msgid "Save Buffers"
-msgstr "Pufferek mentése"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "Csempék mentése minden RenderRéteghez és JelenetCsomóponthoz a temp (ideiglenes) könyvtárban fájlokba (memóriát spórol, Teljes mintához szükséges)"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -19523,10 +19499,6 @@ msgid "Animation"
 msgstr "Animáció"
 
 
-msgid "AO"
-msgstr "KE"
-
-
 msgctxt "Operator"
 msgid "Assign"
 msgstr "Hozzárendelés"
@@ -20439,10 +20411,6 @@ msgid "Add Passive"
 msgstr "Passzív hozzáadása"
 
 
-msgid "X-Ray"
-msgstr "Röntgen"
-
-
 msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Törlés mindenhonnan"
@@ -21184,6 +21152,10 @@ msgid "Relationship"
 msgstr "Kapcsolat"
 
 
+msgid "Modify"
+msgstr "Módosítás"
+
+
 msgid "Image not packed"
 msgstr "Kép nincs csomagolva"
 
@@ -21191,10 +21163,6 @@ msgstr "Kép nincs csomagolva"
 msgctxt "Key"
 msgid "Key"
 msgstr "Kulcs"
-
-
-msgid "Modify"
-msgstr "Módosítás"
 
 
 msgctxt "Armature"
@@ -21240,6 +21208,10 @@ msgstr "Eltolás Y"
 
 msgid "On"
 msgstr "Bekapcsolás"
+
+
+msgid "AO"
+msgstr "KE"
 
 
 msgid "Transparency"
