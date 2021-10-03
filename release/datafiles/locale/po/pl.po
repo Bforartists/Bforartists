@@ -6204,8 +6204,8 @@ msgid "Fixed"
 msgstr "Stałe"
 
 
-msgid "Blend"
-msgstr "Mieszanie"
+msgid "Target Object"
+msgstr "Obiekt docelowy"
 
 
 msgid "Groups"
@@ -6293,6 +6293,10 @@ msgid "Pitch"
 msgstr "Wysokość"
 
 
+msgid "Blend"
+msgstr "Mieszanie"
+
+
 msgid "Filter"
 msgstr "Filtr"
 
@@ -6371,10 +6375,6 @@ msgstr "Gładkie Cieniowanie"
 
 msgid "Limits"
 msgstr "Ograniczenia"
-
-
-msgid "Target Object"
-msgstr "Obiekt docelowy"
 
 
 msgid "Display Hidden"
@@ -8778,10 +8778,6 @@ msgid "Mesh '%s' has no skin vertex data"
 msgstr "Siatka '%s' nie posiada danych powłoki wierzchołków"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Set Parent To"
 msgstr "Ustaw rodzica"
 
@@ -8790,16 +8786,16 @@ msgid "Object (Keep Transform)"
 msgstr "Obiekt (Zachowaj transformację)"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "Zaznacz 1 lub 3 wierzchołki, z których chcesz utworzyć rodzica"
 
 
 msgid "Loop in parents"
 msgstr "Pętla w rodzicach"
-
-
-msgid "No object to make proxy for"
-msgstr "Brak obiektu dla którego można utworzyć zastępcę"
 
 
 msgid "No active bone"
@@ -10860,6 +10856,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "Klatka już znajduje się na tym numerze klatki %d"
 
 
+msgid "Modify"
+msgstr "Modyfikuj"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Nie można było uzyskać bufora obrazu"
 
@@ -10983,10 +10983,6 @@ msgstr "Liczba dostosowanych normalnych (custom normals) nie jest liczbą wierzc
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "Metaball '%s' nie posiada podanego splajna"
-
-
-msgid "Modify"
-msgstr "Modyfikuj"
 
 
 msgid "Unable to create new strip"
@@ -11466,10 +11462,6 @@ msgid "Alpha Fac"
 msgstr "Współczynnik Alfa"
 
 
-msgid "Texture Blur"
-msgstr "Rozmycie tekstury"
-
-
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -11558,20 +11550,12 @@ msgid "No border area selected"
 msgstr "Nie zaznaczono obramowania"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "Zapis bufora renderowania nie powiodło się, sprawdź domyślną ścieżkę temp"
-
-
 msgid "No node tree in scene"
 msgstr "Brak node tree w scenie"
 
 
 msgid "No render output node in scene"
 msgstr "Brak output node w scenie"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "Pełne próbkowanie AA nie obsługiwane bez renderu 3D"
 
 
 msgid "All render layers are disabled"

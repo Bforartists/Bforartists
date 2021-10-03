@@ -1104,10 +1104,6 @@ msgid "None"
 msgstr "無"
 
 
-msgid "Ambient Occlusion"
-msgstr "周遭遮擋"
-
-
 msgid "Emit"
 msgstr "發射"
 
@@ -1182,10 +1178,6 @@ msgstr "清除"
 
 msgid "Clear Images before baking (internal only)"
 msgstr "烘培之前清除影像 (僅用於內部)"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "添加週遭遮蔽貢獻"
 
 
 msgid "Color the pass"
@@ -10226,6 +10218,18 @@ msgid "Display modifier in viewport"
 msgstr "在視接口中顯示修改器"
 
 
+msgid "Texture Mapping"
+msgstr "紋理映射處理"
+
+
+msgid "Time Offset"
+msgstr "時間偏移"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "頂點權重鄰近"
+
+
 msgid "Array"
 msgstr "陣列"
 
@@ -10238,24 +10242,12 @@ msgid "Mirror"
 msgstr "鏡像"
 
 
-msgid "Vertex Weight"
-msgstr "頂點權重"
-
-
 msgid "Hook"
 msgstr "鉤"
 
 
-msgid "Time Offset"
-msgstr "時間偏移"
-
-
 msgid "Hue/Saturation"
 msgstr "色調/飽和度"
-
-
-msgid "Texture Mapping"
-msgstr "紋理映射處理"
 
 
 msgid "Armature Modifier"
@@ -10444,6 +10436,10 @@ msgid "Strength of modifier effect"
 msgstr "修改器效果的強度"
 
 
+msgid "Point Density"
+msgstr "點密度"
+
+
 msgid "Boundaries"
 msgstr "邊界"
 
@@ -10532,8 +10528,16 @@ msgid "Space"
 msgstr "空格"
 
 
-msgid "Blend"
-msgstr "混合"
+msgid "Highest"
+msgstr "最高"
+
+
+msgid "Lowest"
+msgstr "最低"
+
+
+msgid "Target Object"
+msgstr "目標物體"
 
 
 msgid "Vertex Group Element"
@@ -10546,6 +10550,10 @@ msgstr "頂點群組中一個頂點的權重值"
 
 msgid "Group Index"
 msgstr "群組索引"
+
+
+msgid "Vertex Weight"
+msgstr "頂點權重"
 
 
 msgid "Grid Subdivisions"
@@ -15864,6 +15872,10 @@ msgid "Node tree for node-based textures"
 msgstr "基於節點的紋理之節點樹"
 
 
+msgid "Blend"
+msgstr "混合"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "程序性 - 建立漸變紋理"
 
@@ -19310,10 +19322,6 @@ msgid "Mix the weights of two vertex groups"
 msgstr "混合兩個頂點群組的權重"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "頂點權重鄰近"
-
-
 msgid "Bevel"
 msgstr "倒角"
 
@@ -21593,16 +21601,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "以與目標物體間的距離設定群組中頂點的權重"
 
 
-msgid "Highest"
-msgstr "最高"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "距離映射至權重 1.0"
-
-
-msgid "Lowest"
-msgstr "最低"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -21643,10 +21643,6 @@ msgstr "受影響物體與目標物體之間的使用距離"
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "影響物體頂點與目標物體或與目標物體幾何之間的使用距離"
-
-
-msgid "Target Object"
-msgstr "目標物體"
 
 
 msgid "Object to calculate vertices distances from"
@@ -24686,6 +24682,14 @@ msgid "Object Info"
 msgstr "物體資訊"
 
 
+msgid "Align X"
+msgstr "對齊 X"
+
+
+msgid "Align Y"
+msgstr "對齊 Y"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "框幀"
@@ -24729,6 +24733,10 @@ msgstr "材質著色器節點"
 
 msgid "Add Shader"
 msgstr "添加著色器"
+
+
+msgid "Ambient Occlusion"
+msgstr "周遭遮擋"
 
 
 msgid "Attribute Name"
@@ -24987,10 +24995,6 @@ msgid "Subsurface Scattering"
 msgstr "次表面散射"
 
 
-msgid "Simple cubic falloff function"
-msgstr "簡單立方衰落函式"
-
-
 msgid "Axis for radial tangents"
 msgstr "輻射切線的軸"
 
@@ -25129,10 +25133,6 @@ msgstr "添加的擾動噪訊詳細等級"
 
 msgid "Musgrave Texture"
 msgstr "馬斯格雷夫紋理"
-
-
-msgid "Point Density"
-msgstr "點密度"
 
 
 msgid "Object to take point data from"
@@ -32496,6 +32496,10 @@ msgid "Only cut the front most geometry"
 msgstr "僅切割最前方的幾何形狀"
 
 
+msgid "X-Ray"
+msgstr "X 光"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "多選取迴圈"
@@ -35394,19 +35398,6 @@ msgid "Enable or disable posing/selecting bones"
 msgstr "啟用或停用骨骼姿勢調整/選取骨骼"
 
 
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "建立代理"
-
-
-msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "添加空物體以作為庫連結物體的區域替換資料"
-
-
-msgid "Proxy Object"
-msgstr "代理物體"
-
-
 msgid "Edge Length"
 msgstr "邊線長"
 
@@ -37219,15 +37210,6 @@ msgid "Apply the current pose as the new rest pose"
 msgstr "將目前的姿勢套用為新的靜止姿勢"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "姿勢分解器"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "於目前的框幀上建立合適的分解姿勢"
-
-
 msgid "Axis Lock"
 msgstr "軸向鎖"
 
@@ -37290,6 +37272,15 @@ msgstr "上一鍵幀"
 
 msgid "Frame number of keyframe immediately before the current frame"
 msgstr "與目前框幀緊鄰的前一個鍵幀幀號"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "姿勢分解器"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
+msgstr "於目前的框幀上建立合適的分解姿勢"
 
 
 msgid "Add a constraint to the active bone"
@@ -40938,16 +40929,8 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "自動選擇目前最對齊的軸"
 
 
-msgid "Align X"
-msgstr "對齊 X"
-
-
 msgid "Align UVs on X axis"
 msgstr "對齊 UV 至 X 軸"
-
-
-msgid "Align Y"
-msgstr "對齊 Y"
 
 
 msgid "Align UVs on Y axis"
@@ -42605,10 +42588,6 @@ msgid "Property name edit"
 msgstr "屬性名稱編輯"
 
 
-msgid "Property value edit"
-msgstr "屬性值編輯"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "移除屬性"
@@ -43379,10 +43358,6 @@ msgstr "最終算繪"
 
 msgid "Threads"
 msgstr "執行緒"
-
-
-msgid "Tiles"
-msgstr "鋪排"
 
 
 msgid "Subdivision"
@@ -46211,10 +46186,6 @@ msgid "Cast Shadow"
 msgstr "投射陰影"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的光照取樣數"
-
-
 msgid "Displacement Method"
 msgstr "錯置方法"
 
@@ -46259,46 +46230,6 @@ msgid "Use motion blur for this object"
 msgstr "此物體使用運動模糊"
 
 
-msgid "Diffuse Direct"
-msgstr "漫射直接"
-
-
-msgid "Diffuse Indirect"
-msgstr "漫射間接"
-
-
-msgid "Glossy Direct"
-msgstr "光澤直接"
-
-
-msgid "Glossy Indirect"
-msgstr "光澤間接"
-
-
-msgid "Transmission Direct"
-msgstr "穿透直接"
-
-
-msgid "Transmission Indirect"
-msgstr "穿透間接"
-
-
-msgid "AA Samples"
-msgstr "AA 樣本數"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "每個像素要算繪的抗鋸齒樣本數"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "周遭遮擋樣本數"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的周操遮擋樣本數"
-
-
 msgid "Bake Type"
 msgstr "烘焙類型"
 
@@ -46339,22 +46270,6 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "任何物體修改都需要完整的 BVH 重建，但是算繪較快"
 
 
-msgid "Cancel timeout"
-msgstr "取消時限"
-
-
-msgid "Reset timeout"
-msgstr "重設時限"
-
-
-msgid "Text timeout"
-msgstr "文字逾時"
-
-
-msgid "Tile Size"
-msgstr "鋪排大小"
-
-
 msgid "Use Spatial Splits"
 msgstr "使用空間分割"
 
@@ -46393,14 +46308,6 @@ msgstr "漫射反彈數"
 
 msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "漫射反射反彈的最大次數，以總最大數為界"
-
-
-msgid "Diffuse Samples"
-msgstr "漫射樣本數"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的漫射反彈樣本數"
 
 
 msgid "Feature Set"
@@ -46455,28 +46362,8 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "光澤反射反彈的最大次數，以總最大數為界"
 
 
-msgid "Glossy Samples"
-msgstr "光澤樣本數"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的光澤反彈樣本數"
-
-
 msgid "Total maximum number of bounces"
 msgstr "總最大反彈數"
-
-
-msgid "Mesh Light Samples"
-msgstr "網格光照樣本數"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的網格發射光照樣本數"
-
-
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "視接口中要算繪的抗鋸齒樣本數，如果 0 則為無限制"
 
 
 msgid "Pause Preview"
@@ -46489,46 +46376,6 @@ msgstr "暫停所有視接口的預覽算繪"
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "視接口中要算繪的樣本數，如果 0 則為無限制"
-
-
-msgid "Start Resolution"
-msgstr "起始解析度"
-
-
-msgid "Resolution to start rendering preview at, progressively increasing it to the full viewport size"
-msgstr "算繪預覽的起始解析度，漸進提升解析度至完整視接口大小"
-
-
-msgid "Integrator"
-msgstr "整合器"
-
-
-msgid "Method to sample lights and materials"
-msgstr "取樣光照與材質的方法"
-
-
-msgid "Branched Path Tracing"
-msgstr "分支式路徑追蹤"
-
-
-msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "路徑追蹤整合器可以根據第一次反彈作分支，可以控制更多光照與材質的樣本數"
-
-
-msgid "Path Tracing"
-msgstr "路徑追蹤"
-
-
-msgid "Pure path tracing integrator"
-msgstr "純路徑追蹤整合器"
-
-
-msgid "Sample All Direct Lights"
-msgstr "取樣所有直接光照"
-
-
-msgid "Sample All Indirect Lights"
-msgstr "取樣所有間接光照"
 
 
 msgid "Clamp Direct"
@@ -46555,48 +46402,8 @@ msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "使用 Open Shading Language (僅適用 CPU 算繪)"
 
 
-msgid "Subsurface Samples"
-msgstr "次表面樣本數"
-
-
-msgid "Tile order for rendering"
-msgstr "算繪的鋪排順序"
-
-
-msgid "Render from center to the edges"
-msgstr "從中央往邊緣算繪"
-
-
-msgid "Right to Left"
-msgstr "右至左"
-
-
-msgid "Render from right to left"
-msgstr "從右向左算繪"
-
-
-msgid "Left to Right"
-msgstr "左至右"
-
-
-msgid "Render from left to right"
-msgstr "從左向右算繪"
-
-
-msgid "Top to Bottom"
-msgstr "頂至底"
-
-
-msgid "Render from top to bottom"
-msgstr "從上向下算繪"
-
-
-msgid "Bottom to Top"
-msgstr "底至頂"
-
-
-msgid "Render from bottom to top"
-msgstr "從下向上算繪"
+msgid "Tile Size"
+msgstr "鋪排大小"
 
 
 msgid "Transmission Bounces"
@@ -46607,32 +46414,12 @@ msgid "Maximum number of transmission bounces, bounded by total maximum"
 msgstr "穿透反彈的最大次數，以總最大數為界"
 
 
-msgid "Transmission Samples"
-msgstr "穿透樣本數"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "每個 AA 樣本要算繪的穿透反彈樣本數"
-
-
 msgid "Transparent Max Bounces"
 msgstr "透明最大反彈數"
 
 
 msgid "Layer Samples"
 msgstr "層樣本數"
-
-
-msgid "Progressive Refine"
-msgstr "漸進精修"
-
-
-msgid "Square Samples"
-msgstr "平方取樣"
-
-
-msgid "Square sampling values for easier artist control"
-msgstr "平方取樣值可得到最簡單的藝術師控制"
 
 
 msgid "Volume Bounces"
@@ -46643,12 +46430,32 @@ msgid "Max Steps"
 msgstr "最大步數"
 
 
-msgid "Volume Samples"
-msgstr "體積樣本數"
+msgid "Diffuse Direct"
+msgstr "漫射直接"
+
+
+msgid "Diffuse Indirect"
+msgstr "漫射間接"
+
+
+msgid "Glossy Direct"
+msgstr "光澤直接"
+
+
+msgid "Glossy Indirect"
+msgstr "光澤間接"
 
 
 msgid "Glossy Color"
 msgstr "光澤色彩"
+
+
+msgid "Transmission Direct"
+msgstr "穿透直接"
+
+
+msgid "Transmission Indirect"
+msgstr "穿透間接"
 
 
 msgid "Transmission Color"
@@ -47291,14 +47098,6 @@ msgid "Manually determine the number of threads"
 msgstr "手動決定執行緒數目"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "當算繪時要使用的水平鋪排大小"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "當算繪時要使用的垂直鋪排大小"
-
-
 msgid "Clear Images before baking"
 msgstr "烘培之前清除影像"
 
@@ -47333,10 +47132,6 @@ msgstr "為算繪的檔案添加副檔名 (例如：檔案名稱 + .jpg)"
 
 msgid "Draw stylized strokes using Freestyle"
 msgstr "使用 Freestyle 描繪樣式化筆觸"
-
-
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "儲存整個算繪分層結果的每個抗鋸齒樣本 (這可以解決合成處理時的抗鋸問題)"
 
 
 msgid "Lock Interface"
@@ -47377,14 +47172,6 @@ msgstr "快取結果"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "將算繪快取儲存至 EXR 檔案 (對於大量合成來說很有用，注意：會間接影響算繪的場景)"
-
-
-msgid "Save Buffers"
-msgstr "儲存緩衝"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "將所有算繪分層和場景節點的鋪排儲存至暫存目錄中 (可節省記憶體，「完整取樣」需要使用)"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -48903,6 +48690,42 @@ msgid "Transform parameters for a sequence strip"
 msgstr "序段片段的變換參數"
 
 
+msgid "Show Metadata"
+msgstr "顯示中介資料"
+
+
+msgid "Show metadata of first visible strip"
+msgstr "顯示第一個可見片段的中介資料"
+
+
+msgid "Show Grid"
+msgstr "顯示格線"
+
+
+msgid "Show Offsets"
+msgstr "顯示偏移"
+
+
+msgid "Waveforms Off"
+msgstr "波形關"
+
+
+msgid "Waveforms On"
+msgstr "波形開"
+
+
+msgid "Use Strip Option"
+msgstr "使用片段選項"
+
+
+msgid "Median Point"
+msgstr "中間點"
+
+
+msgid "Individual Origins"
+msgstr "個別原點"
+
+
 msgid "Factor of Blur"
 msgstr "模糊的係數"
 
@@ -49360,16 +49183,8 @@ msgid "Pivot around the 2D cursor"
 msgstr "圍繞 2D 游標的樞紐"
 
 
-msgid "Individual Origins"
-msgstr "個別原點"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "圍繞每一個物體自身原點的樞紐"
-
-
-msgid "Median Point"
-msgstr "中間點"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -49444,10 +49259,6 @@ msgid "Show green channel in the frame"
 msgstr "顯示框幀中的綠色通道"
 
 
-msgid "Show Grid"
-msgstr "顯示格線"
-
-
 msgid "Show grid showing lens distortion"
 msgstr "顯示鏡頭扭曲的格線"
 
@@ -49470,10 +49281,6 @@ msgstr "顯示標記的搜尋邊界框"
 
 msgid "Show Mask Overlay"
 msgstr "顯示遮罩疊層"
-
-
-msgid "Show Metadata"
-msgstr "顯示中介資料"
 
 
 msgid "Show Names"
@@ -50351,10 +50158,6 @@ msgid "Display result under strips"
 msgstr "在片段之下顯示結果"
 
 
-msgid "Show metadata of first visible strip"
-msgstr "顯示第一個可見片段的中介資料"
-
-
 msgid "Show Overexposed"
 msgstr "顯示過曝"
 
@@ -50371,10 +50174,6 @@ msgid "Separate color channels in preview"
 msgstr "在預覽中分離色彩通道"
 
 
-msgid "Show Offsets"
-msgstr "顯示偏移"
-
-
 msgid "Transform markers as well as strips"
 msgstr "如同片段一般也變換標記"
 
@@ -50385,18 +50184,6 @@ msgstr "視圖類型"
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "序段編輯器視圖的類型 (序段編輯器、預覽，或兩者)"
-
-
-msgid "Waveforms Off"
-msgstr "波形關"
-
-
-msgid "Waveforms On"
-msgstr "波形開"
-
-
-msgid "Use Strip Option"
-msgstr "使用片段選項"
 
 
 msgid "Space Text Editor"
@@ -53737,44 +53524,12 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "無法寫入外部 .osl 檔案旁的 .oso 檔案於"
 
 
-msgid "Total Samples:"
-msgstr "總計樣本數："
-
-
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Mesh Light"
-msgstr "網格光照"
-
-
-msgid "Subsurface"
-msgstr "次表面"
-
-
-msgid "Tiles X"
-msgstr "鋪排 X"
-
-
 msgid "No output node"
 msgstr "無輸出節點"
 
 
 msgid "Homogeneous"
 msgstr "同質"
-
-
-msgid "%s AA"
-msgstr "%s AA"
-
-
-msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
-msgstr "%s AA，%s 漫射，%s 光澤, %s 穿透"
-
-
-msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
-msgstr "%s AO，%s 網格光照，%s 次表面，%s 體積"
 
 
 msgid "Portal"
@@ -55629,11 +55384,6 @@ msgstr "喇叭"
 
 
 msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "設為代理..."
-
-
-msgctxt "Operator"
 msgid "Make Local..."
 msgstr "設為區域..."
 
@@ -56213,10 +55963,6 @@ msgstr "隱藏作用中分層"
 msgctxt "Operator"
 msgid "Hide Inactive Layers"
 msgstr "隱藏非作用中分層"
-
-
-msgid "X-Ray"
-msgstr "X 光"
 
 
 msgctxt "Operator"
@@ -58114,16 +57860,16 @@ msgid "Modifier is disabled"
 msgstr "修改器已停用"
 
 
-msgid "OK?"
-msgstr "確定？"
-
-
 msgid "Set Parent To"
 msgstr "設定親代為"
 
 
 msgid "Object (Keep Transform)"
 msgstr "物體 (保持變換)"
+
+
+msgid "OK?"
+msgstr "確定？"
 
 
 msgid "Loop in parents"
@@ -60065,6 +59811,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "這幀號 %d 上已經存在框幀"
 
 
+msgid "Modify"
+msgstr "修改"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "無法從影像獲取緩衝"
 
@@ -60176,10 +59926,6 @@ msgstr "找不到頂點色彩「%s」"
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "變幻球「%s」不含給定樣條"
-
-
-msgid "Modify"
-msgstr "修改"
 
 
 msgid "Unable to create new strip"
@@ -60536,6 +60282,10 @@ msgid "Shader Editor"
 msgstr "著色器編輯器"
 
 
+msgid "AO"
+msgstr "AO"
+
+
 msgid "Anisotropy"
 msgstr "各向異性"
 
@@ -60554,6 +60304,10 @@ msgstr "粗糙度U"
 
 msgid "RoughnessV"
 msgstr "粗糙度V"
+
+
+msgid "Subsurface"
+msgstr "次表面"
 
 
 msgid "Subsurface Radius"
@@ -60682,10 +60436,6 @@ msgstr "色彩係數"
 
 msgid "Alpha Fac"
 msgstr "Alpha 係數"
-
-
-msgid "Texture Blur"
-msgstr "紋理模糊"
 
 
 msgid "BSSRDF"
@@ -60828,20 +60578,12 @@ msgid "No border area selected"
 msgstr "無選取的邊緣區域"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "無法儲存算繪緩衝，檢查暫存預設路徑"
-
-
 msgid "No node tree in scene"
 msgstr "場景中無節點樹"
 
 
 msgid "No render output node in scene"
 msgstr "場景中無算繪輸出節點"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "無 3D 算繪時不支援完整取樣 AA"
 
 
 msgid "All render layers are disabled"

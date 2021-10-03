@@ -2856,6 +2856,10 @@ msgid "Cut"
 msgstr "ตัด"
 
 
+msgid "X-Ray"
+msgstr "มองผ่าน"
+
+
 msgid "Ring"
 msgstr "แหวน"
 
@@ -3419,10 +3423,6 @@ msgid "Filters"
 msgstr "ตัวกรอง"
 
 
-msgid "Favorites"
-msgstr "ล่าสุด"
-
-
 msgid "Overlays"
 msgstr "วางซ้อน"
 
@@ -3685,10 +3685,6 @@ msgid "Panorama Type"
 msgstr "ชนิดทัศนียภาพ"
 
 
-msgid "Right to Left"
-msgstr "ขวาไปซ้าย"
-
-
 msgid "View layer name"
 msgstr "แสดงชื่อชั้น"
 
@@ -3788,6 +3784,14 @@ msgid "Text color"
 msgstr "สีข้อความ"
 
 
+msgid "Median Point"
+msgstr "จุดมัธยฐาน"
+
+
+msgid "Individual Origins"
+msgstr "จุดกำเนิดของวัตถุนั้น ๆ"
+
+
 msgid "Mask Color"
 msgstr "สีหน้ากาก"
 
@@ -3809,16 +3813,8 @@ msgid "Pivot around bounding box center of selected object(s)"
 msgstr "หมุนรอบ ๆ ขอบเขตของวัตถุที่เลือก"
 
 
-msgid "Individual Origins"
-msgstr "จุดกำเนิดของวัตถุนั้น ๆ"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "หมุนรอบ ๆ จุดกำเนิดของวัตถุนั้น ๆ"
-
-
-msgid "Median Point"
-msgstr "จุดมัธยฐาน"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -4115,10 +4111,6 @@ msgstr "การแก้ไขหน้ากาก"
 msgctxt "WindowManager"
 msgid "Animation"
 msgstr "แอนิเมชัน"
-
-
-msgid "Total Samples:"
-msgstr "ตัวอย่างรวม:"
 
 
 msgid "Orientation:"
@@ -5168,10 +5160,6 @@ msgstr "ยึดจุดยอด"
 msgctxt "Operator"
 msgid "Copyright"
 msgstr "ลิขสิทธิ์"
-
-
-msgid "X-Ray"
-msgstr "มองผ่าน"
 
 
 msgctxt "Operator"

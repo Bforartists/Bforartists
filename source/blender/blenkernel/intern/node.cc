@@ -104,6 +104,7 @@ using blender::Span;
 using blender::Stack;
 using blender::Vector;
 using blender::VectorSet;
+using blender::nodes::FieldInferencingInterface;
 using blender::nodes::InputSocketFieldType;
 using blender::nodes::NodeDeclaration;
 using blender::nodes::OutputFieldDependency;
@@ -537,7 +538,7 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
     if (node->storage) {
       /* could be handlerized at some point, now only 1 exception still */
       if (ELEM(ntree->type, NTREE_SHADER, NTREE_GEOMETRY) &&
-          ELEM(node->type, SH_NODE_CURVE_VEC, SH_NODE_CURVE_RGB)) {
+          ELEM(node->type, SH_NODE_CURVE_VEC, SH_NODE_CURVE_RGB, SH_NODE_CURVE_FLOAT)) {
         BKE_curvemapping_blend_write(writer, (const CurveMapping *)node->storage);
       }
       else if ((ntree->type == NTREE_GEOMETRY) &&
@@ -713,6 +714,7 @@ void ntreeBlendReadData(BlendDataReader *reader, bNodeTree *ntree)
       switch (node->type) {
         case SH_NODE_CURVE_VEC:
         case SH_NODE_CURVE_RGB:
+        case SH_NODE_CURVE_FLOAT:
         case CMP_NODE_TIME:
         case CMP_NODE_CURVE_VEC:
         case CMP_NODE_CURVE_RGB:
@@ -822,6 +824,11 @@ void ntreeBlendReadData(BlendDataReader *reader, bNodeTree *ntree)
 
   /* TODO: should be dealt by new generic cache handling of IDs... */
   ntree->previews = nullptr;
+
+  if (ntree->type == NTREE_GEOMETRY) {
+    /* Update field referencing for the geometry nodes modifier. */
+    ntree->update |= NTREE_UPDATE_FIELD_INFERENCING;
+  }
 
   /* type verification is in lib-link */
 }
@@ -4456,24 +4463,6 @@ void ntreeUpdateAllNew(Main *main)
   FOREACH_NODETREE_END;
 }
 
-/**
- * Information about how a node interacts with fields.
- */
-struct FieldInferencingInterface {
-  Vector<InputSocketFieldType> inputs;
-  Vector<OutputFieldDependency> outputs;
-
-  friend bool operator==(const FieldInferencingInterface &a, const FieldInferencingInterface &b)
-  {
-    return a.inputs == b.inputs && a.outputs == b.outputs;
-  }
-
-  friend bool operator!=(const FieldInferencingInterface &a, const FieldInferencingInterface &b)
-  {
-    return !(a == b);
-  }
-};
-
 static FieldInferencingInterface *node_field_inferencing_interface_copy(
     const FieldInferencingInterface &field_inferencing_interface)
 {
@@ -4513,6 +4502,9 @@ static InputSocketFieldType get_interface_input_field_type(const NodeRef &node,
     /* Outputs always support fields when the data type is correct. */
     return InputSocketFieldType::IsSupported;
   }
+  if (node.is_undefined()) {
+    return InputSocketFieldType::None;
+  }
 
   const NodeDeclaration *node_decl = node.declaration();
 
@@ -4546,6 +4538,9 @@ static OutputFieldDependency get_interface_output_field_dependency(const NodeRef
   if (node.is_group_input_node()) {
     /* Input nodes get special treatment in #determine_group_input_states. */
     return OutputFieldDependency::ForDependentField();
+  }
+  if (node.is_undefined()) {
+    return OutputFieldDependency::ForDataSource();
   }
 
   const NodeDeclaration *node_decl = node.declaration();
@@ -5580,6 +5575,7 @@ static void registerShaderNodes()
   register_node_type_sh_shadertorgb();
   register_node_type_sh_normal();
   register_node_type_sh_mapping();
+  register_node_type_sh_curve_float();
   register_node_type_sh_curve_vec();
   register_node_type_sh_curve_rgb();
   register_node_type_sh_map_range();
@@ -5713,11 +5709,17 @@ static void registerGeometryNodes()
 {
   register_node_type_geo_group();
 
+  register_node_type_geo_legacy_curve_set_handles();
+  register_node_type_geo_legacy_attribute_proximity();
   register_node_type_geo_legacy_attribute_randomize();
   register_node_type_geo_legacy_material_assign();
   register_node_type_geo_legacy_select_by_material();
+  register_node_type_geo_legacy_curve_spline_type();
+  register_node_type_geo_legacy_curve_reverse();
+  register_node_type_geo_legacy_curve_subdivide();
 
   register_node_type_geo_align_rotation_to_vector();
+  register_node_type_geo_attribute_capture();
   register_node_type_geo_attribute_clamp();
   register_node_type_geo_attribute_color_ramp();
   register_node_type_geo_attribute_combine_xyz();
@@ -5725,11 +5727,9 @@ static void registerGeometryNodes()
   register_node_type_geo_attribute_convert();
   register_node_type_geo_attribute_curve_map();
   register_node_type_geo_attribute_fill();
-  register_node_type_geo_attribute_capture();
   register_node_type_geo_attribute_map_range();
   register_node_type_geo_attribute_math();
   register_node_type_geo_attribute_mix();
-  register_node_type_geo_attribute_proximity();
   register_node_type_geo_attribute_remove();
   register_node_type_geo_attribute_separate_xyz();
   register_node_type_geo_attribute_statistic();
@@ -5740,9 +5740,9 @@ static void registerGeometryNodes()
   register_node_type_geo_bounding_box();
   register_node_type_geo_collection_info();
   register_node_type_geo_convex_hull();
-  register_node_type_geo_curve_sample();
   register_node_type_geo_curve_endpoints();
   register_node_type_geo_curve_fill();
+  register_node_type_geo_curve_fillet();
   register_node_type_geo_curve_length();
   register_node_type_geo_curve_parameter();
   register_node_type_geo_curve_primitive_bezier_segment();
@@ -5754,10 +5754,10 @@ static void registerGeometryNodes()
   register_node_type_geo_curve_primitive_star();
   register_node_type_geo_curve_resample();
   register_node_type_geo_curve_reverse();
+  register_node_type_geo_curve_sample();
   register_node_type_geo_curve_set_handles();
   register_node_type_geo_curve_spline_type();
   register_node_type_geo_curve_subdivide();
-  register_node_type_geo_curve_fillet();
   register_node_type_geo_curve_to_mesh();
   register_node_type_geo_curve_to_points();
   register_node_type_geo_curve_trim();
@@ -5769,10 +5769,13 @@ static void registerGeometryNodes()
   register_node_type_geo_input_normal();
   register_node_type_geo_input_position();
   register_node_type_geo_input_tangent();
+  register_node_type_geo_input_spline_length();
+  register_node_type_geo_instance_on_points();
   register_node_type_geo_is_viewport();
   register_node_type_geo_join_geometry();
   register_node_type_geo_material_assign();
   register_node_type_geo_material_replace();
+  register_node_type_geo_material_selection();
   register_node_type_geo_mesh_primitive_circle();
   register_node_type_geo_mesh_primitive_cone();
   register_node_type_geo_mesh_primitive_cube();
@@ -5783,6 +5786,7 @@ static void registerGeometryNodes()
   register_node_type_geo_mesh_primitive_uv_sphere();
   register_node_type_geo_mesh_subdivide();
   register_node_type_geo_mesh_to_curve();
+  register_node_type_geo_mesh_to_points();
   register_node_type_geo_object_info();
   register_node_type_geo_point_distribute();
   register_node_type_geo_point_instance();
@@ -5790,15 +5794,16 @@ static void registerGeometryNodes()
   register_node_type_geo_point_scale();
   register_node_type_geo_point_separate();
   register_node_type_geo_point_translate();
+  register_node_type_geo_points_to_vertices();
   register_node_type_geo_points_to_volume();
+  register_node_type_geo_proximity();
   register_node_type_geo_raycast();
   register_node_type_geo_realize_instances();
   register_node_type_geo_sample_texture();
   register_node_type_geo_select_by_handle_type();
-  register_node_type_geo_string_join();
-  register_node_type_geo_material_selection();
   register_node_type_geo_separate_components();
   register_node_type_geo_set_position();
+  register_node_type_geo_string_join();
   register_node_type_geo_string_to_curves();
   register_node_type_geo_subdivision_surface();
   register_node_type_geo_switch();
@@ -5819,6 +5824,7 @@ static void registerFunctionNodes()
   register_node_type_fn_input_string();
   register_node_type_fn_input_vector();
   register_node_type_fn_random_value();
+  register_node_type_fn_rotate_euler();
   register_node_type_fn_string_length();
   register_node_type_fn_string_substring();
   register_node_type_fn_value_to_string();

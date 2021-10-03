@@ -1142,6 +1142,25 @@ class USERPREF_PT_theme_collection_colors(ThemePanel, CenterAlignMixIn, Panel):
             flow.prop(ui, "color", text=iface_("Color %d") % i, translate=False)
 
 
+class USERPREF_PT_theme_strip_colors(ThemePanel, CenterAlignMixIn, Panel):
+    bl_label = "Strip Colors"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, _context):
+        layout = self.layout
+
+        layout.label(icon='SEQ_STRIP_DUPLICATE')
+
+    def draw_centered(self, context, layout):
+        theme = context.preferences.themes[0]
+
+        layout.use_property_split = True
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        for i, ui in enumerate(theme.strip_color, 1):
+            flow.prop(ui, "color", text=iface_("Color %d") % i, translate=False)
+
+
 # Base class for dynamically defined theme-space panels.
 # This is not registered.
 class PreferenceThemeSpacePanel:
@@ -2371,6 +2390,7 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
                 ({"property": "override_auto_resync"}, "T83811"),
                 ({"property": "proxy_to_override_auto_conversion"}, "T91671"),
                 ({"property": "use_cycles_debug"}, None),
+                ({"property": "use_geometry_nodes_legacy"}, "T91274"),
             ),
         )
 
@@ -2435,6 +2455,7 @@ classes = (
     USERPREF_PT_theme_text_style,
     USERPREF_PT_theme_bone_color_sets,
     USERPREF_PT_theme_collection_colors,
+    USERPREF_PT_theme_strip_colors,
 
     USERPREF_PT_file_paths_data,
     USERPREF_PT_file_paths_render,

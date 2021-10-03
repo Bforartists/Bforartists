@@ -1758,10 +1758,6 @@ msgid "Space"
 msgstr "रिक्त स्थान"
 
 
-msgid "Blend"
-msgstr "मिश्रण"
-
-
 msgid "Grid Scale"
 msgstr "जालक प्रंमाण"
 
@@ -2573,6 +2569,10 @@ msgstr "लाइनों"
 
 msgid "Register"
 msgstr "पंजीकृत करें"
+
+
+msgid "Blend"
+msgstr "मिश्रण"
 
 
 msgid "Magic"
@@ -3983,6 +3983,10 @@ msgid "Knife Project"
 msgstr "चाकू प्रक्षेपण"
 
 
+msgid "X-Ray"
+msgstr "एक्स-रे"
+
+
 msgid "Ring"
 msgstr "वलय"
 
@@ -4732,10 +4736,6 @@ msgid "Threads"
 msgstr "धागे"
 
 
-msgid "Tiles"
-msgstr "खण्ड"
-
-
 msgid "Fluid Presets"
 msgstr "पूर्वनिश्चित द्रव"
 
@@ -5456,14 +5456,6 @@ msgstr "OSO bytecode %r पर नोड में संग्रहीत क�
 
 msgid "Failed to write .oso file next to external .osl file at "
 msgstr ".Oso संचिका में बाह्य .oslसंचिकाल में आगे लिखने में विफल "
-
-
-msgid "AO"
-msgstr "ए ओ"
-
-
-msgid "Tiles X"
-msgstr "खण्ड x"
 
 
 msgctxt "Operator"
@@ -6228,10 +6220,6 @@ msgstr "निष्क्रिय जोड़ें"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "स्थापित पंजी"
-
-
-msgid "X-Ray"
-msgstr "एक्स-रे"
 
 
 msgctxt "Operator"
@@ -7167,6 +7155,10 @@ msgid "On"
 msgstr "आरंभ"
 
 
+msgid "AO"
+msgstr "ए ओ"
+
+
 msgid "BSDF"
 msgstr "बीएसडीएफ़"
 
@@ -7205,10 +7197,6 @@ msgstr "डब्ल्यु३"
 
 msgid "W4"
 msgstr "डब्ल्यु4"
-
-
-msgid "Cannot save render buffers, check the temp default path"
-msgstr " प्रतिपादन बफ़र्स सहेजें, अस्थायी मूलभूत पथ की जाँच नहीं कर सकता"
 
 
 msgid "Strips must be the same length"

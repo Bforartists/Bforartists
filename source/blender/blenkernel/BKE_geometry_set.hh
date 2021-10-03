@@ -281,6 +281,8 @@ struct GeometrySet {
     return this->remove(Component::static_type);
   }
 
+  void keep_only(const blender::Span<GeometryComponentType> component_types);
+
   void add(const GeometryComponent &component);
 
   blender::Vector<const GeometryComponent *> get_components_for_read() const;
@@ -309,6 +311,10 @@ struct GeometrySet {
       bool include_instances,
       blender::Map<blender::bke::AttributeIDRef, AttributeKind> &r_attributes) const;
 
+  using ForeachSubGeometryCallback = blender::FunctionRef<void(GeometrySet &geometry_set)>;
+
+  void modify_geometry_sets(ForeachSubGeometryCallback callback);
+
   /* Utility methods for creation. */
   static GeometrySet create_with_mesh(
       Mesh *mesh, GeometryOwnershipType ownership = GeometryOwnershipType::Owned);
@@ -323,6 +329,8 @@ struct GeometrySet {
   bool has_instances() const;
   bool has_volume() const;
   bool has_curve() const;
+  bool has_realized_data() const;
+  bool is_empty() const;
 
   const Mesh *get_mesh_for_read() const;
   const PointCloud *get_pointcloud_for_read() const;
@@ -497,11 +505,38 @@ class InstanceReference {
   {
   }
 
-  InstanceReference(const InstanceReference &src) : type_(src.type_), data_(src.data_)
+  InstanceReference(const InstanceReference &other) : type_(other.type_), data_(other.data_)
   {
-    if (src.type_ == Type::GeometrySet) {
-      geometry_set_ = std::make_unique<GeometrySet>(*src.geometry_set_);
+    if (other.geometry_set_) {
+      geometry_set_ = std::make_unique<GeometrySet>(*other.geometry_set_);
     }
+  }
+
+  InstanceReference(InstanceReference &&other)
+      : type_(other.type_), data_(other.data_), geometry_set_(std::move(other.geometry_set_))
+  {
+    other.type_ = Type::None;
+    other.data_ = nullptr;
+  }
+
+  InstanceReference &operator=(const InstanceReference &other)
+  {
+    if (this == &other) {
+      return *this;
+    }
+    this->~InstanceReference();
+    new (this) InstanceReference(other);
+    return *this;
+  }
+
+  InstanceReference &operator=(InstanceReference &&other)
+  {
+    if (this == &other) {
+      return *this;
+    }
+    this->~InstanceReference();
+    new (this) InstanceReference(std::move(other));
+    return *this;
   }
 
   Type type() const
@@ -595,6 +630,7 @@ class InstancesComponent : public GeometryComponent {
   void add_instance(int instance_handle, const blender::float4x4 &transform, const int id = -1);
 
   blender::Span<InstanceReference> references() const;
+  void remove_unused_references();
 
   void ensure_geometry_instances();
   GeometrySet &geometry_set_from_reference(const int reference_index);
@@ -684,6 +720,13 @@ class AttributeFieldInput : public fn::FieldInput {
   AttributeFieldInput(std::string name, const CPPType &type)
       : fn::FieldInput(type, name), name_(std::move(name))
   {
+  }
+
+  template<typename T> static fn::Field<T> Create(std::string name)
+  {
+    const CPPType &type = CPPType::get<T>();
+    auto field_input = std::make_shared<AttributeFieldInput>(std::move(name), type);
+    return fn::Field<T>{field_input};
   }
 
   StringRefNull attribute_name() const
