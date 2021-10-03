@@ -665,31 +665,6 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
         layout.operator("file.select_box")
 
 
-class ASSETBROWSER_PT_navigation_bar(asset_utils.AssetBrowserPanel, Panel):
-    bl_label = "Asset Navigation"
-    bl_region_type = 'TOOLS'
-    bl_category = "Asset Category"
-    bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        return (
-            asset_utils.AssetBrowserPanel.poll(context) and
-            context.preferences.experimental.use_extended_asset_browser
-        )
-
-    def draw(self, context):
-        layout = self.layout
-
-        space_file = context.space_data
-
-        col = layout.column()
-
-        col.scale_x = 1.3
-        col.scale_y = 1.3
-        col.prop(space_file.params, "asset_category", expand=True)
-
-
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
     bl_region_type = 'TOOL_PROPS'
     bl_label = "Asset Metadata"
@@ -804,9 +779,10 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
         layout.separator()
 
-        sub = layout.row()
+        sub = layout.column()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("asset.clear", text="Clear Asset")
+        sub.operator("asset.clear", text="Clear Asset").set_fake_user = False
+        sub.operator("asset.clear", text="Clear Asset (Set Fake User)").set_fake_user = True
 
         layout.separator()
 
@@ -839,7 +815,6 @@ classes = (
     ASSETBROWSER_MT_editor_menus,
     ASSETBROWSER_MT_view,
     ASSETBROWSER_MT_select,
-    ASSETBROWSER_PT_navigation_bar,
     ASSETBROWSER_PT_metadata,
     ASSETBROWSER_PT_metadata_preview,
     ASSETBROWSER_PT_metadata_details,

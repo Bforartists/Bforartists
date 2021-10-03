@@ -417,7 +417,7 @@ typedef struct bNodeTreeType {
   void (*local_sync)(struct bNodeTree *localtree, struct bNodeTree *ntree);
   void (*local_merge)(struct Main *bmain, struct bNodeTree *localtree, struct bNodeTree *ntree);
 
-  /* Tree update. Overrides nodetype->updatetreefunc! */
+  /* Tree update. Overrides `nodetype->updatetreefunc` ! */
   void (*update)(struct bNodeTree *ntree);
 
   bool (*validate_link)(struct bNodeTree *ntree, struct bNodeLink *link);
@@ -443,7 +443,7 @@ void ntreeTypeFreeLink(const struct bNodeTreeType *nt);
 bool ntreeIsRegistered(struct bNodeTree *ntree);
 struct GHashIterator *ntreeTypeGetIterator(void);
 
-/* helper macros for iterating over tree types */
+/* Helper macros for iterating over tree types. */
 #define NODE_TREE_TYPES_BEGIN(ntype) \
   { \
     GHashIterator *__node_tree_type_iter__ = ntreeTypeGetIterator(); \
@@ -548,7 +548,7 @@ void nodeUnregisterType(struct bNodeType *ntype);
 bool nodeTypeUndefined(struct bNode *node);
 struct GHashIterator *nodeTypeGetIterator(void);
 
-/* helper macros for iterating over node types */
+/* Helper macros for iterating over node types. */
 #define NODE_TYPES_BEGIN(ntype) \
   { \
     GHashIterator *__node_type_iter__ = nodeTypeGetIterator(); \
@@ -574,7 +574,7 @@ const char *nodeStaticSocketType(int type, int subtype);
 const char *nodeStaticSocketInterfaceType(int type, int subtype);
 const char *nodeStaticSocketLabel(int type, int subtype);
 
-/* helper macros for iterating over node types */
+/* Helper macros for iterating over node types. */
 #define NODE_SOCKET_TYPES_BEGIN(stype) \
   { \
     GHashIterator *__node_socket_type_iter__ = nodeSocketTypeGetIterator(); \
@@ -746,7 +746,8 @@ int BKE_node_clipboard_get_type(void);
 
 /* Node Instance Hash */
 typedef struct bNodeInstanceHash {
-  GHash *ghash; /* XXX should be made a direct member, GHash allocation needs to support it */
+  /** XXX should be made a direct member, #GHash allocation needs to support it */
+  GHash *ghash;
 } bNodeInstanceHash;
 
 typedef void (*bNodeInstanceValueFP)(void *value);
@@ -1102,6 +1103,7 @@ void BKE_nodetree_remove_layer_n(struct bNodeTree *ntree,
 #define SH_NODE_VERTEX_COLOR 706
 #define SH_NODE_OUTPUT_AOV 707
 #define SH_NODE_VECTOR_ROTATE 708
+#define SH_NODE_CURVE_FLOAT 709
 
 /* custom defines options for Material node */
 // #define SH_NODE_MAT_DIFF 1
@@ -1346,7 +1348,7 @@ void ntreeCompositCryptomatteLayerPrefix(const Scene *scene,
                                          const bNode *node,
                                          char *r_prefix,
                                          size_t prefix_len);
-/* Update the runtime layer names with the cryptomatte layer names of the references
+/* Update the runtime layer names with the crypto-matte layer names of the references
  * render layer or image. */
 void ntreeCompositCryptomatteUpdateLayerNames(const Scene *scene, bNode *node);
 struct CryptomatteSession *ntreeCompositCryptomatteSession(const Scene *scene, bNode *node);
@@ -1411,12 +1413,12 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
  * \{ */
 
 #define GEO_NODE_TRIANGULATE 1000
-#define GEO_NODE_EDGE_SPLIT 1001
+#define GEO_NODE_LEGACY_EDGE_SPLIT 1001
 #define GEO_NODE_TRANSFORM 1002
 #define GEO_NODE_BOOLEAN 1003
 #define GEO_NODE_LEGACY_POINT_DISTRIBUTE 1004
 #define GEO_NODE_LEGACY_POINT_INSTANCE 1005
-#define GEO_NODE_SUBDIVISION_SURFACE 1006
+#define GEO_NODE_LEGACY_SUBDIVISION_SURFACE 1006
 #define GEO_NODE_OBJECT_INFO 1007
 #define GEO_NODE_LEGACY_ATTRIBUTE_RANDOMIZE 1008
 #define GEO_NODE_LEGACY_ATTRIBUTE_MATH 1009
@@ -1451,14 +1453,14 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_MESH_PRIMITIVE_LINE 1038
 #define GEO_NODE_MESH_PRIMITIVE_GRID 1039
 #define GEO_NODE_LEGACY_ATTRIBUTE_MAP_RANGE 1040
-#define GEO_NODE_LECAGY_ATTRIBUTE_CLAMP 1041
+#define GEO_NODE_LEGACY_ATTRIBUTE_CLAMP 1041
 #define GEO_NODE_BOUNDING_BOX 1042
 #define GEO_NODE_SWITCH 1043
 #define GEO_NODE_LEGACY_ATTRIBUTE_TRANSFER 1044
 #define GEO_NODE_CURVE_TO_MESH 1045
 #define GEO_NODE_LEGACY_ATTRIBUTE_CURVE_MAP 1046
 #define GEO_NODE_CURVE_RESAMPLE 1047
-#define GEO_NODE_ATTRIBUTE_VECTOR_ROTATE 1048
+#define GEO_NODE_LEGACY_ATTRIBUTE_VECTOR_ROTATE 1048
 #define GEO_NODE_LEGACY_MATERIAL_ASSIGN 1049
 #define GEO_NODE_INPUT_MATERIAL 1050
 #define GEO_NODE_MATERIAL_REPLACE 1051
@@ -1467,7 +1469,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_CURVE_LENGTH 1054
 #define GEO_NODE_LEGACY_SELECT_BY_MATERIAL 1055
 #define GEO_NODE_CONVEX_HULL 1056
-#define GEO_NODE_CURVE_TO_POINTS 1057
+#define GEO_NODE_LEGACY_CURVE_TO_POINTS 1057
 #define GEO_NODE_LEGACY_CURVE_REVERSE 1058
 #define GEO_NODE_SEPARATE_COMPONENTS 1059
 #define GEO_NODE_LEGACY_CURVE_SUBDIVIDE 1060
@@ -1479,7 +1481,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_CURVE_PRIMITIVE_CIRCLE 1066
 #define GEO_NODE_VIEWER 1067
 #define GEO_NODE_CURVE_PRIMITIVE_LINE 1068
-#define GEO_NODE_CURVE_ENDPOINTS 1069
+#define GEO_NODE_LEGACY_CURVE_ENDPOINTS 1069
 #define GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL 1070
 #define GEO_NODE_CURVE_TRIM 1071
 #define GEO_NODE_LEGACY_CURVE_SET_HANDLES 1072
@@ -1502,7 +1504,15 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_CURVE_FILLET 1089
 #define GEO_NODE_DISTRIBUTE_POINTS_ON_FACES 1090
 #define GEO_NODE_STRING_TO_CURVES 1091
-
+#define GEO_NODE_INSTANCE_ON_POINTS 1092
+#define GEO_NODE_MESH_TO_POINTS 1093
+#define GEO_NODE_POINTS_TO_VERTICES 1094
+#define GEO_NODE_CURVE_REVERSE 1095
+#define GEO_NODE_PROXIMITY 1096
+#define GEO_NODE_CURVE_SUBDIVIDE 1097
+#define GEO_NODE_INPUT_SPLINE_LENGTH 1098
+#define GEO_NODE_CURVE_SPLINE_TYPE 1099
+#define GEO_NODE_CURVE_SET_HANDLES 1100
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1520,6 +1530,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define FN_NODE_STRING_SUBSTRING 1212
 #define FN_NODE_INPUT_SPECIAL_CHARACTERS 1213
 #define FN_NODE_RANDOM_VALUE 1214
+#define FN_NODE_ROTATE_EULER 1215
 
 /** \} */
 

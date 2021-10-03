@@ -1353,10 +1353,6 @@ msgid "None"
 msgstr "なし"
 
 
-msgid "Ambient Occlusion"
-msgstr "アンビエントオクルージョン(AO)"
-
-
 msgid "Emit"
 msgstr "放射"
 
@@ -1453,10 +1449,6 @@ msgstr "クリア"
 
 msgid "Clear Images before baking (internal only)"
 msgstr "ベイクする前に画像をクリアします(内部のみ)"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "アンビエントオクルージョン（AO）の寄与(影響)を付与します"
 
 
 msgid "Color the pass"
@@ -15897,6 +15889,26 @@ msgid "Display modifier in viewport"
 msgstr "ビューにモディファイアーを表示"
 
 
+msgid "Texture Mapping"
+msgstr "テクスチャマッピング"
+
+
+msgid "Change stroke uv texture values"
+msgstr "ストロークの UV テクスチャ値を変更します"
+
+
+msgid "Time Offset"
+msgstr "タイムオフセット"
+
+
+msgid "Offset keyframes"
+msgstr "キーフレームをずらします"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "頂点ウェイト近傍"
+
+
 msgid "Array"
 msgstr "配列"
 
@@ -15911,6 +15923,10 @@ msgstr "ビルド"
 
 msgid "Create duplication of strokes"
 msgstr "ストロークのコピーを作成します"
+
+
+msgid "Extend or shrink strokes"
+msgstr "ストロークを延長・縮小します"
 
 
 msgid "Line Art"
@@ -15949,14 +15965,6 @@ msgid "Subdivide stroke adding more control points"
 msgstr "ストロークを分割し、コントロールポイントを追加します"
 
 
-msgid "Vertex Weight"
-msgstr "頂点ウェイト"
-
-
-msgid "Generate Vertex Weights"
-msgstr "頂点ウェイトを生成"
-
-
 msgid "Deform stroke points using armature object"
 msgstr "アーマチュアオブジェクトストロークポイントを変形します"
 
@@ -15971,10 +15979,6 @@ msgstr "オブジェクトを使用しストロークポイントを変形しま
 
 msgid "Deform strokes using lattice"
 msgstr "ラティスを使用しストロークを変形します"
-
-
-msgid "Extend or shrink strokes"
-msgstr "ストロークを延長・縮小します"
 
 
 msgid "Add noise to strokes"
@@ -15993,14 +15997,6 @@ msgid "Change stroke thickness"
 msgstr "ストローク幅を変更します"
 
 
-msgid "Time Offset"
-msgstr "タイムオフセット"
-
-
-msgid "Offset keyframes"
-msgstr "キーフレームをずらします"
-
-
 msgid "Hue/Saturation"
 msgstr "色相/彩度"
 
@@ -16011,14 +16007,6 @@ msgstr "ストロークカラーを変更します"
 
 msgid "Opacity of the strokes"
 msgstr "ストロークの透過度"
-
-
-msgid "Texture Mapping"
-msgstr "テクスチャマッピング"
-
-
-msgid "Change stroke uv texture values"
-msgstr "ストロークの UV テクスチャ値を変更します"
 
 
 msgid "Tint"
@@ -16497,10 +16485,6 @@ msgid "End Factor"
 msgstr "終了の係数"
 
 
-msgid "Length difference for each segment"
-msgstr "各セグメントの長さの違い"
-
-
 msgid "Mode to define length"
 msgstr "長さを決めるモード"
 
@@ -16513,12 +16497,8 @@ msgid "Length in geometry space"
 msgstr "形状の空間での長さ"
 
 
-msgid "Overshoot Factor"
-msgstr "オーバーシュート係数"
-
-
-msgid "Defines how precise must follow the stroke trajectory for the overshoot extremes"
-msgstr "エクストリームのオーバーシュート時、ストロークの軌跡に追従する精度"
+msgid "Point Density"
+msgstr "点密度"
 
 
 msgid "Start Factor"
@@ -17365,44 +17345,12 @@ msgid "Use a custom curve to define vertex color effect along the strokes"
 msgstr "カスタムカーブを、ストロークに沿った頂点カラーエフェクトの設定に使用します"
 
 
-msgid "Weight Modifier"
-msgstr "ウェイトモディファイアー"
-
-
 msgid "Calculate Vertex Weight dynamically"
 msgstr "頂点ウェイトを動的に計算します"
 
 
-msgid "Distance End"
-msgstr "距離の終了"
-
-
-msgid "End value for distance calculation"
-msgstr "距離計算終了の値"
-
-
-msgid "Distance Start"
-msgstr "距離の開始"
-
-
-msgid "Start value for distance calculation"
-msgstr "距離計算開始の値"
-
-
 msgid "Minimum value for vertex weight"
 msgstr "頂点ウェイトの最小値"
-
-
-msgid "Calculate weights depending on the distance to the target object"
-msgstr "ターゲットオブジェクトとの距離によりウェイトを計算します"
-
-
-msgid "Calculate weights depending on the stroke orientation"
-msgstr "ストロークの方向によりウェイトを計算します"
-
-
-msgid "Object used as distance reference"
-msgstr "距離の参照に使用するオブジェクト"
 
 
 msgid "Space"
@@ -17417,16 +17365,20 @@ msgid "Output Vertex group"
 msgstr "出力頂点グループ"
 
 
-msgid "Blend"
-msgstr "ブレンド"
+msgid "Highest"
+msgstr "最高"
 
 
-msgid "Blend results with existing weights in output weight group"
-msgstr "出力のウェイトグループで既存のウェイトと結果をブレンドします"
+msgid "Lowest"
+msgstr "最低"
 
 
-msgid "Invert weight values"
-msgstr "ウェイト値を反転します"
+msgid "Target Object"
+msgstr "ターゲットオブジェクト"
+
+
+msgid "Object used as distance reference"
+msgstr "距離の参照に使用するオブジェクト"
 
 
 msgid "Vertex Group Element"
@@ -17439,6 +17391,10 @@ msgstr "頂点グループ内での頂点のウェイト値"
 
 msgid "Group Index"
 msgstr "グループインデックス"
+
+
+msgid "Vertex Weight"
+msgstr "頂点ウェイト"
 
 
 msgid "Grid and Canvas Settings"
@@ -26575,6 +26531,10 @@ msgid "Node tree for node-based textures"
 msgstr "ノードベースのテクスチャ用ノードツリー"
 
 
+msgid "Blend"
+msgstr "ブレンド"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "プロシージャル - グラデーション(ランプ)テクスチャを作成"
 
@@ -33218,10 +33178,6 @@ msgid "Mix the weights of two vertex groups"
 msgstr "2つの頂点グループのウェイトをミックスします"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "頂点ウェイト近傍"
-
-
 msgid "Set the vertex group weights based on the distance to another target object"
 msgstr ""
 "他のターゲットオブジェクトとの距離を元に、\n"
@@ -37186,16 +37142,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "ターゲットとなるオブジェクトの距離から頂点のウェイトを設定します"
 
 
-msgid "Highest"
-msgstr "最高"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "ウェイトが1.0になる距離"
-
-
-msgid "Lowest"
-msgstr "最低"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -37236,10 +37184,6 @@ msgstr "ターゲットオブジェクトまでの距離を使用します"
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "効果を与えるオブジェクトの頂点からターゲットオブジェクト、もしくはターゲットオブジェクトの形状までの距離を使用します"
-
-
-msgid "Target Object"
-msgstr "ターゲットオブジェクト"
 
 
 msgid "Object to calculate vertices distances from"
@@ -41659,6 +41603,26 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Python ノード用のカスタムジオメトリグループノード"
 
 
+msgid "Distribution Method"
+msgstr "配置方法"
+
+
+msgid "Method to use for scattering points"
+msgstr "ポイント配置に使用される方法"
+
+
+msgid "Distribute points randomly on the surface"
+msgstr "サーフェス上にポイントをランダムに配置します"
+
+
+msgid "Poisson Disk"
+msgstr "ポアソンディスク"
+
+
+msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
+msgstr "各ポイント間で最低距離を取りつつ、ポイントをサーフェス上にランダムに配置します"
+
+
 msgid "Is Viewport"
 msgstr "ビューポート判定"
 
@@ -42169,26 +42133,6 @@ msgid "Point Distribute"
 msgstr "ポイント配置"
 
 
-msgid "Distribution Method"
-msgstr "配置方法"
-
-
-msgid "Method to use for scattering points"
-msgstr "ポイント配置に使用される方法"
-
-
-msgid "Distribute points randomly on the surface"
-msgstr "サーフェス上にポイントをランダムに配置します"
-
-
-msgid "Poisson Disk"
-msgstr "ポアソンディスク"
-
-
-msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
-msgstr "各ポイント間で最低距離を取りつつ、ポイントをサーフェス上にランダムに配置します"
-
-
 msgid "Point Instance"
 msgstr "ポイントインスタンス"
 
@@ -42373,6 +42317,18 @@ msgid "Separate Components"
 msgstr "成分分離"
 
 
+msgid "Align X"
+msgstr "X軸揃え"
+
+
+msgid "Align Y"
+msgstr "Y軸揃え"
+
+
+msgid "Font of the text. Falls back to the UI font by default"
+msgstr "このテキストのフォント。デフォルトでは UI フォント"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "フレーム"
@@ -42416,6 +42372,10 @@ msgstr "マテリアルのシェーダーノード"
 
 msgid "Add Shader"
 msgstr "シェーダー加算"
+
+
+msgid "Ambient Occlusion"
+msgstr "アンビエントオクルージョン(AO)"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -42564,20 +42524,8 @@ msgid "Method for rendering subsurface scattering"
 msgstr "サブサーフェススキャッタリングをレンダリングする方法"
 
 
-msgid "Christensen-Burley"
-msgstr "Christensen-Burley"
-
-
-msgid "Approximation to physically based volume scattering"
-msgstr "物理ベースのボリューム散乱の近似"
-
-
 msgid "Random Walk"
 msgstr "ランダムウォーク"
-
-
-msgid "Volumetric approximation to physically based volume scattering"
-msgstr "物理ベースボリュームスキャッタリングのボリューメトリックな近似"
 
 
 msgid "Refraction BSDF"
@@ -42872,18 +42820,6 @@ msgid "Subsurface Scattering"
 msgstr "SSS"
 
 
-msgid "Function to determine how much light nearby points contribute based on their distance to the shading point"
-msgstr "シェーディングポイントまでの距離を元に、ポイント近くの光源がどれぐらい影響するかを決める関数"
-
-
-msgid "Simple cubic falloff function"
-msgstr "シンプルな三次減衰関数"
-
-
-msgid "Normal distribution, multiple can be combined to fit more complex profiles"
-msgstr "正規分布。もっと複雑な輪郭に合うよう、複数を組み合わせ可能"
-
-
 msgid "Axis for radial tangents"
 msgstr "放射タンジェントの軸"
 
@@ -43090,10 +43026,6 @@ msgstr "4Dベクトル (x, y, z, w) を入力として使用します"
 
 msgid "The dimensions of the space to evaluate the noise in"
 msgstr "ノイズを評価する次元数"
-
-
-msgid "Point Density"
-msgstr "点密度"
 
 
 msgid "Object to take point data from"
@@ -43938,6 +43870,10 @@ msgstr "ノードソケットテンプレート"
 
 msgid "Parameters to define node sockets"
 msgstr "ノードソケットを定義するパラメーター"
+
+
+msgid "Attribute Domain"
+msgstr "属性ドメイン"
 
 
 msgid "Hide the socket input value even when the socket is not connected"
@@ -56482,6 +56418,10 @@ msgid "Only cut the front most geometry"
 msgstr "最も前の形状のみカットします"
 
 
+msgid "X-Ray"
+msgstr "透過"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "マルチループ選択"
@@ -61263,23 +61203,6 @@ msgstr "ポージング/ボーン選択を有効または無効にします"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "プロキシを作成"
-
-
-msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "ライブラリにリンクされたオブジェクトの交換用データになる、空オブジェクトを追加します"
-
-
-msgid "Proxy Object"
-msgstr "プロキシオブジェクト"
-
-
-msgid "Name of library-linked/collection object to make a proxy for"
-msgstr "プロキシを作る、ライブラリリンクまたはコレクション内のオブジェクト名"
-
-
-msgctxt "Operator"
 msgid "QuadriFlow Remesh"
 msgstr "QuadriFlowリメッシュ"
 
@@ -64676,15 +64599,6 @@ msgid "Only apply the selected bones (with propagation to children)"
 msgstr "選択中のボーンにのみ適用します（子にも伝播）"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "ポーズの中割"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "現在のフレームに適した中割（ブレイクダウン）ポーズを作成します"
-
-
 msgid "Axis Lock"
 msgstr "軸を制限"
 
@@ -64763,6 +64677,15 @@ msgstr "前のキーフレーム"
 
 msgid "Frame number of keyframe immediately before the current frame"
 msgstr "現在のフレームの直前のキーフレームのフレーム番号"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "ポーズの中割"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
+msgstr "現在のフレームに適した中割（ブレイクダウン）ポーズを作成します"
 
 
 msgid "Add a constraint to the active bone"
@@ -70706,16 +70629,8 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "すでに一番整列している軸を自動的に選択します"
 
 
-msgid "Align X"
-msgstr "X軸揃え"
-
-
 msgid "Align UVs on X axis"
 msgstr "X軸でUVを揃えます"
-
-
-msgid "Align Y"
-msgstr "Y軸揃え"
 
 
 msgid "Align UVs on Y axis"
@@ -73910,14 +73825,6 @@ msgid "Edit Property"
 msgstr "プロパティの編集"
 
 
-msgid "Edit the attributes of the property"
-msgstr "プロパティの属性を編集します"
-
-
-msgid "Default value of the property. Important for NLA mixing"
-msgstr "プロパティのデフォルト値。NLAのミックスに重要です"
-
-
 msgid "Is Library Overridable"
 msgstr "ライブラリオーバーライドを許可"
 
@@ -73926,20 +73833,16 @@ msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "データブロックのリンク時、プロパティのオーバーライドを許可します"
 
 
-msgid "Maximum value of the property"
-msgstr "プロパティの最大値"
-
-
-msgid "Minimum value of the property"
-msgstr "プロパティの最小値"
-
-
 msgid "Property Name"
 msgstr "プロパティ名"
 
 
 msgid "Property name edit"
 msgstr "プロパティ名の編集"
+
+
+msgid "Soft Min"
+msgstr "ソフト最小"
 
 
 msgid "Subtype"
@@ -73954,10 +73857,6 @@ msgid "Limits the Property Value slider to a range, values outside the range mus
 msgstr ""
 "プロパティ値のスライダーを範囲制限します\n"
 "範囲外の値は数値入力する必要があります"
-
-
-msgid "Property value edit"
-msgstr "プロパティ値の編集"
 
 
 msgctxt "Operator"
@@ -75608,10 +75507,6 @@ msgid "Sampling Presets"
 msgstr "サンプリングプリセット"
 
 
-msgid "Denoising"
-msgstr "デノイズ"
-
-
 msgid "Film"
 msgstr "フィルム"
 
@@ -75662,18 +75557,6 @@ msgstr "最終レンダー"
 
 msgid "Threads"
 msgstr "スレッド"
-
-
-msgid "Tiles"
-msgstr "タイル"
-
-
-msgid "Adaptive Sampling"
-msgstr "適応サンプリング"
-
-
-msgid "Sub Samples"
-msgstr "サブサンプル"
 
 
 msgid "Subdivision"
@@ -75786,10 +75669,6 @@ msgstr "詳細なフィルタリング"
 
 msgid "Bookmarks"
 msgstr "ブックマーク"
-
-
-msgid "Favorites"
-msgstr "お気に入り"
 
 
 msgid "Recent"
@@ -81008,10 +80887,6 @@ msgid "Maximum number of bounces the light will contribute to the render"
 msgstr "レンダリングに寄与する光の最大バウンス数"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "AAサンプル毎の光のサンプル数"
-
-
 msgid "Multiple Importance Sample"
 msgstr "多重重点的サンプル"
 
@@ -81199,106 +81074,6 @@ msgid "Use motion blur for this object"
 msgstr "このオブジェクトにモーションブラーを使用します"
 
 
-msgid "Diffuse Direct"
-msgstr "直接ディフューズ"
-
-
-msgid "Denoise the direct diffuse lighting"
-msgstr "直接ディフューズライティングのノイズを除去します"
-
-
-msgid "Diffuse Indirect"
-msgstr "間接ディフューズ"
-
-
-msgid "Denoise the indirect diffuse lighting"
-msgstr "間接ディフューズライティングのノイズを除去します"
-
-
-msgid "Denoising Feature Strength"
-msgstr "特徴部分のデノイズ強度"
-
-
-msgid "Controls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)"
-msgstr ""
-"ノイズのある画像の特徴パスの削除をコントロールします\n"
-"（低い値でディテールを維持しますが、スムーズにはなりません）"
-
-
-msgid "Glossy Direct"
-msgstr "直接光沢"
-
-
-msgid "Denoise the direct glossy lighting"
-msgstr "直接光沢ライティングのノイズを除去します"
-
-
-msgid "Glossy Indirect"
-msgstr "間接光沢"
-
-
-msgid "Denoise the indirect glossy lighting"
-msgstr "間接光沢ライティングのノイズを除去します"
-
-
-msgid "Neighbor Frames"
-msgstr "隣接フレーム"
-
-
-msgid "Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)"
-msgstr ""
-"アニメーションのデノイズに使用する隣接フレーム数\n"
-"（フレーム数が多いとパフォーマンスと引き換えに滑らかになります）"
-
-
-msgid "Input Passes"
-msgstr "入力パス"
-
-
-msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
-msgstr "デノイザーが、シェーダーのノイズと形状の細部を区別するのに使用するパス"
-
-
-msgid "Use only color as input"
-msgstr "カラーのみ入力として使用します"
-
-
-msgid "Color + Albedo"
-msgstr "カラー＋アルベド"
-
-
-msgid "Use color and albedo data as input"
-msgstr "カラーとアルベドを入力として使用します"
-
-
-msgid "Color + Albedo + Normal"
-msgstr "カラー＋アルベド＋法線"
-
-
-msgid "Use color, albedo and normal data as input"
-msgstr "カラー、アルベド、法線データを入力として使用します"
-
-
-msgid "Denoising Radius"
-msgstr "デノイズ範囲"
-
-
-msgid "Size of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)"
-msgstr ""
-"一つのピクセルに対して使用する画像領域の大きさ\n"
-"（大きい値でスムーズになりますが、細部が潰れ、遅くなる可能性があります）"
-
-
-msgid "Relative Filter"
-msgstr "相対フィルター"
-
-
-msgid "When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)"
-msgstr ""
-"情報を運ばないピクセルを削除する時、絶対的なしきい値ではなく、相対的なしきい値を使用します\n"
-"（アーティファクトを減らすのに便利ですが、端の周りのディテールが消える可能性があります）"
-
-
 msgid "Store Denoising Passes"
 msgstr "デノイズパスを格納"
 
@@ -81307,32 +81082,6 @@ msgid "Store the denoising feature passes and the noisy image. The passes adapt 
 msgstr ""
 "デノイズの特徴パスとノイズのある画像を格納します\n"
 "これらのパスはデノイザーに合わせてレンダリング用に選択されます"
-
-
-msgid "Denoising Strength"
-msgstr "デノイズの強さ"
-
-
-msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
-msgstr ""
-"ノイズ除去フィルター用の近接ピクセルの重み付けをコントロールします\n"
-"（小さな値でディテールを残しますが、滑らかになりません）"
-
-
-msgid "Transmission Direct"
-msgstr "直接伝播"
-
-
-msgid "Denoise the direct transmission lighting"
-msgstr "直接伝播ライティングのノイズを除去します"
-
-
-msgid "Transmission Indirect"
-msgstr "間接伝播"
-
-
-msgid "Denoise the indirect transmission lighting"
-msgstr "間接伝播ライティングのノイズを除去します"
 
 
 msgid "Debug Render Time"
@@ -81375,22 +81124,8 @@ msgid "Deliver indirect volumetric scattering pass"
 msgstr "間接ボリュームスキャッタリングパスを出力します"
 
 
-msgid "AA Samples"
-msgstr "AAサンプル数"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "各ピクセルをレンダリングするためのアンチエイリアシングサンプル数"
-
-
 msgid "Adaptive Min Samples"
 msgstr "最小適応サンプル数"
-
-
-msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on number of AA samples"
-msgstr ""
-"サンプリング停止までにノイズの多い特徴点を発見する適応サンプリングの最小 AA サンプル数\n"
-"0 で AA サンプル数を元に自動設定します"
 
 
 msgid "Adaptive Sampling Threshold"
@@ -81414,14 +81149,6 @@ msgstr "このライトバウンス数の後は近似グローバルイルミネ
 
 msgid "AO Bounces Render"
 msgstr "AOバウンス数（レンダー）"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "AOサンプル数"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎のAOサンプル数"
 
 
 msgid "Bake Type"
@@ -81504,64 +81231,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "何かオブジェクトに変更があると BVH を完全に再構築する必要がありますが、レンダリングは高速です"
 
 
-msgid "Cancel timeout"
-msgstr "キャンセル タイムアウト"
-
-
-msgid "OpenCL Device Type"
-msgstr "OpenCLデバイスタイプ"
-
-
-msgid "Accelerator"
-msgstr "アクセラレーター"
-
-
-msgid "OpenCL Kernel Type"
-msgstr "OpenCLカーネルタイプ"
-
-
-msgid "Mega"
-msgstr "Mega"
-
-
-msgid "Memory limit"
-msgstr "メモリー制限"
-
-
-msgid "Artificial limit on OpenCL memory usage in MB (0 to disable limit)"
-msgstr "OpenCLのメモリ使用を人為的にMB単位で制限します（0で制限無効）"
-
-
-msgid "CUDA Streams"
-msgstr "CUDA Stream"
-
-
-msgid "Native OptiX Curve Primitive"
-msgstr "ネイティブOptiXカーブプリミティブ"
-
-
-msgid "Reset timeout"
-msgstr "リセットタイムアウト"
-
-
-msgid "Text timeout"
-msgstr "テキストタイムアウト"
-
-
-msgid "Tile Size"
-msgstr "タイルのサイズ"
-
-
 msgid "AVX"
 msgstr "AVX"
 
 
 msgid "AVX2"
 msgstr "AVX2"
-
-
-msgid "Split Kernel"
-msgstr "分割カーネル"
 
 
 msgid "SSE2"
@@ -81590,10 +81265,6 @@ msgstr ""
 "（RAMを多く消費しますが、高速です）"
 
 
-msgid "Debug OpenCL"
-msgstr "OpenCLのデバッグ"
-
-
 msgid "Use Spatial Splits"
 msgstr "空間分離を使用"
 
@@ -81606,10 +81277,12 @@ msgid "Denoiser"
 msgstr "デノイザー"
 
 
-msgid "Denoise the image with the selected denoiser. For denoising the image after rendering, denoising data render passes also adapt to the selected denoiser"
-msgstr ""
-"選択中のデノイザーで画像をデノイズします\n"
-"レンダリング後の画像のデノイズでは、デノイズデータ・レンダーパスも選択中のデノイザーに合わせます"
+msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
+msgstr "デノイザーが、シェーダーのノイズと形状の細部を区別するのに使用するパス"
+
+
+msgid "Albedo"
+msgstr "アルベド"
 
 
 msgid "Device"
@@ -81658,14 +81331,6 @@ msgstr "ディフューズバウンス数"
 
 msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "全体の最大数を限界とした、最大ディフューズ反射バウンス数"
-
-
-msgid "Diffuse Samples"
-msgstr "ディフューズサンプル"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎のディフューズバウンスサンプル数"
 
 
 msgid "Cull Distance"
@@ -81752,14 +81417,6 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "全体の最大数を限界とした、最大光沢反射バウンス数"
 
 
-msgid "Glossy Samples"
-msgstr "光沢サンプル数"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎の光沢バウンスサンプル数"
-
-
 msgid "Light Sampling Threshold"
 msgstr "光のサンプリングしきい値"
 
@@ -81782,14 +81439,6 @@ msgid "Stop subdividing when this level is reached even if the dice rate would p
 msgstr ""
 "もっと細かいテッセレーションを生成するダイス率でも\n"
 "このレベルに到達した時はサブディビジョンを打ち切ります"
-
-
-msgid "Mesh Light Samples"
-msgstr "メッシュライトサンプル"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎のメッシュ放射光のサンプル数"
 
 
 msgid "Min Light Bounces"
@@ -81854,10 +81503,6 @@ msgstr ""
 "低い値で、スクリーン外のオブジェクトの反射と影の品質が上がり、一方、高い値ではメモリ消費量が減ります"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "ビューポートにレンダリングするアンチエイリアシングサンプル数。0なら無制限"
-
-
 msgid "Viewport Denoiser"
 msgstr "ビューポートデノイザー"
 
@@ -81866,10 +81511,6 @@ msgid "Denoise the image after each preview update with the selected denoiser"
 msgstr ""
 "選択したデノイザーで各プレビューを更新した後、\n"
 "画像をデノイズします"
-
-
-msgid "Viewport Input Passes"
-msgstr "ビューポート入力パス"
 
 
 msgid "Start Denoising"
@@ -81904,38 +81545,6 @@ msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "ビューポートにレンダリングするサンプル数。0なら無制限"
 
 
-msgid "Start Resolution"
-msgstr "開始解像度"
-
-
-msgid "Resolution to start rendering preview at, progressively increasing it to the full viewport size"
-msgstr "レンダリングプレビューを開始する解像度。フルビューポートサイズに段階的に進行します"
-
-
-msgid "Integrator"
-msgstr "インテグレータ"
-
-
-msgid "Method to sample lights and materials"
-msgstr "光とマテリアルをサンプリングする方法"
-
-
-msgid "Branched Path Tracing"
-msgstr "分岐パストレーシング"
-
-
-msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "最初のバウンスで分岐するパストレーシングインテグレータ。光とマテリアルのサンプル数をもっと細かく設定できます"
-
-
-msgid "Path Tracing"
-msgstr "パストレーシング"
-
-
-msgid "Pure path tracing integrator"
-msgstr "純粋なパストレーシングインテグレータ"
-
-
 msgid "Rolling Shutter Duration"
 msgstr "ローリングシャッター期間"
 
@@ -81958,22 +81567,6 @@ msgstr "ローリングシャッター効果なし"
 
 msgid "Sensor is being scanned from top to bottom"
 msgstr "センサーを上から下にスキャンします"
-
-
-msgid "Sample All Direct Lights"
-msgstr "全直接光源のサンプル"
-
-
-msgid "Sample all lights (for direct samples), rather than randomly picking one"
-msgstr "ランダムに拾い上げず、(直接サンプル用の)すべての光源をサンプリングします"
-
-
-msgid "Sample All Indirect Lights"
-msgstr "全間接光源のサンプル"
-
-
-msgid "Sample all lights (for indirect samples), rather than randomly picking one"
-msgstr "ランダムに拾い上げず、(間接サンプル用の)すべての光源をサンプリングします"
 
 
 msgid "Clamp Direct"
@@ -82012,14 +81605,6 @@ msgid "Use Sobol random sampling pattern"
 msgstr "ソボルランダムサンプリングパターンを使用します"
 
 
-msgid "Correlated Multi-Jitter"
-msgstr "相関性マルチジッター"
-
-
-msgid "Use Correlated Multi-Jitter random sampling pattern"
-msgstr "相関性マルチジッターランダムサンプリングパターンを使用します"
-
-
 msgid "Progressive Multi-Jitter"
 msgstr "プログレッシブマルチジッター"
 
@@ -82034,14 +81619,6 @@ msgstr "異なるノイズパターンを得るインテギュレーターのシ
 
 msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "Open Shading Languageを使用(CPUレンダリングのみ)"
-
-
-msgid "Subsurface Samples"
-msgstr "SSSサンプル"
-
-
-msgid "Number of subsurface scattering samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎のサブサーフェススキャッタリングサンプル数"
 
 
 msgid "Viewport Texture Limit"
@@ -82096,52 +81673,8 @@ msgid "Limit texture size used by final rendering"
 msgstr "最終レンダリングで使用するテクスチャサイズを制限します"
 
 
-msgid "Tile order for rendering"
-msgstr "レンダリングするタイルの順序"
-
-
-msgid "Render from center to the edges"
-msgstr "中心から端にレンダリングしていきます"
-
-
-msgid "Right to Left"
-msgstr "右から左"
-
-
-msgid "Render from right to left"
-msgstr "右から左にレンダリングします"
-
-
-msgid "Left to Right"
-msgstr "左から右"
-
-
-msgid "Render from left to right"
-msgstr "左から右にレンダリングします"
-
-
-msgid "Top to Bottom"
-msgstr "上から下"
-
-
-msgid "Render from top to bottom"
-msgstr "上から下にレンダリングします"
-
-
-msgid "Bottom to Top"
-msgstr "下から上"
-
-
-msgid "Render from bottom to top"
-msgstr "下から上にレンダリングします"
-
-
-msgid "Hilbert Spiral"
-msgstr "ヒルベルト曲線"
-
-
-msgid "Render in a Hilbert Spiral"
-msgstr "ヒルベルト曲線でレンダリングします"
+msgid "Tile Size"
+msgstr "タイルのサイズ"
 
 
 msgid "Transmission Bounces"
@@ -82150,14 +81683,6 @@ msgstr "伝播バウンス数"
 
 msgid "Maximum number of transmission bounces, bounded by total maximum"
 msgstr "全体の最大数を限界とした、最大伝播バウンス数"
-
-
-msgid "Transmission Samples"
-msgstr "伝播サンプル数"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "レンダリング時の各AAサンプルの伝播バウンスサンプル数"
 
 
 msgid "Transparent Max Bounces"
@@ -82231,22 +81756,6 @@ msgid "Denoise the image in the 3D viewport"
 msgstr "3Dビューポートで画像をデノイズします"
 
 
-msgid "Progressive Refine"
-msgstr "プログレッシブリファイン"
-
-
-msgid "Instead of rendering each tile until it is finished, refine the whole image progressively (this renders somewhat slower, but time can be saved by manually stopping the render when the noise is low enough)"
-msgstr "各タイルが完了するまでレンダリングする代わりに、画像全体を徐々にリファインします（レンダリングが若干遅くなりますが、ノイズが十分に低いと思った時にレンダリングを自分で止めることで時間短縮できます）"
-
-
-msgid "Square Samples"
-msgstr "二乗サンプル"
-
-
-msgid "Square sampling values for easier artist control"
-msgstr "アーティストが簡単に操作できる二乗サンプリング"
-
-
 msgid "Volume Bounces"
 msgstr "ボリュームバウンス数"
 
@@ -82269,14 +81778,6 @@ msgstr ""
 "大きな値でレンダリング時間が減り、小さな値でより細かくレンダリングします"
 
 
-msgid "Volume Samples"
-msgstr "ボリュームサンプル数"
-
-
-msgid "Number of volume scattering samples to render for each AA sample"
-msgstr "レンダリング時のAAサンプル毎のボリュームの散乱サンプル数"
-
-
 msgid "Render pass to show in the 3D Viewport"
 msgstr "3Dビューポートに表示するレンダーパス"
 
@@ -82297,8 +81798,16 @@ msgid "Show the Ambient Occlusion render pass"
 msgstr "アンビエントオクルージョンレンダーパスを表示"
 
 
+msgid "Diffuse Direct"
+msgstr "直接ディフューズ"
+
+
 msgid "Show the Diffuse Direct render pass"
 msgstr "直接ディフューズレンダーパスを表示"
+
+
+msgid "Diffuse Indirect"
+msgstr "間接ディフューズ"
 
 
 msgid "Show the Diffuse Indirect render pass"
@@ -82309,8 +81818,16 @@ msgid "Show the Diffuse Color render pass"
 msgstr "ディフューズカラーレンダーパスを表示"
 
 
+msgid "Glossy Direct"
+msgstr "直接光沢"
+
+
 msgid "Show the Glossy Direct render pass"
 msgstr "直接光沢レンダーパスを表示"
+
+
+msgid "Glossy Indirect"
+msgstr "間接光沢"
 
 
 msgid "Show the Glossy Indirect render pass"
@@ -82325,8 +81842,16 @@ msgid "Show the Glossy Color render pass"
 msgstr "光沢カラーレンダーパスを表示"
 
 
+msgid "Transmission Direct"
+msgstr "直接伝播"
+
+
 msgid "Show the Transmission Direct render pass"
 msgstr "直接伝播レンダーパスを表示"
+
+
+msgid "Transmission Indirect"
+msgstr "間接伝播"
 
 
 msgid "Show the Transmission Indirect render pass"
@@ -82359,6 +81884,10 @@ msgstr "UVレンダーパスを表示"
 
 msgid "Show the Mist render pass"
 msgstr "ミストレンダーパスを表示"
+
+
+msgid "Sample Count"
+msgstr "サンプル数"
 
 
 msgid "Object visibility for camera rays"
@@ -83559,14 +83088,6 @@ msgid "Manually determine the number of threads"
 msgstr "手動でスレッド数を設定します"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "レンダリング中に使用する横のタイルサイズ"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "レンダリング中に使用される縦のタイルサイズ"
-
-
 msgid "Clear Images before baking"
 msgstr "ベイクする前に画像をクリアします"
 
@@ -83627,10 +83148,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Freestyleを使用し、ストロークを描画します"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "全レンダーレイヤー結果のすべてのアンチエイリアスサンプルを保存します(これによりコンポジットでのアンチエイリアスの問題を回避します)"
-
-
 msgid "Use high quality tangent space at the cost of lower performance"
 msgstr "パフォーマンスを犠牲にして高品質なタンジェント空間を使用します"
 
@@ -83677,14 +83194,6 @@ msgstr "結果をキャッシュ"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "レンダーキャッシュをEXRファイルに保存します（重い合成に便利です。注意：間接的にレンダリングシーンに影響します）"
-
-
-msgid "Save Buffers"
-msgstr "バッファー保存"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "全レンダーレイヤーとシーンノードのタイルをTempディレクトリにファイル保存する（メモリ節約、要フルサンプル）"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -85863,10 +85372,6 @@ msgid "Text color"
 msgstr "テキストカラー"
 
 
-msgid "Font of the text. Falls back to the UI font by default"
-msgstr "このテキストのフォント。デフォルトでは UI フォント"
-
-
 msgid "Size of the text"
 msgstr "テキストのサイズ"
 
@@ -86638,6 +86143,94 @@ msgid "Scale along Y axis"
 msgstr "Y 軸に沿って拡大縮小"
 
 
+msgid "Show Annotation"
+msgstr "アノテーションを表示"
+
+
+msgid "Show annotations for this view"
+msgstr "このビュー用のアノテーションを表示します"
+
+
+msgid "Show Metadata"
+msgstr "メタデータを表示"
+
+
+msgid "Show metadata of first visible strip"
+msgstr "最初の可視ストリップのメタデータを表示します"
+
+
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "プレビューにTVタイトルセーフとアクションセーフゾーンを表示します"
+
+
+msgid "Show F-Curves"
+msgstr "Fカーブを表示"
+
+
+msgid "Display strip opacity/volume curve"
+msgstr "ストリップの不透明度・ボリュームのカーブを表示します"
+
+
+msgid "Show Grid"
+msgstr "グリッドを表示"
+
+
+msgid "Show vertical grid lines"
+msgstr "縦のグリッドラインを表示します"
+
+
+msgid "Show Duration"
+msgstr "期間を表示"
+
+
+msgid "Show Offsets"
+msgstr "オフセットを表示"
+
+
+msgid "Display strip in/out offsets"
+msgstr "ストリップのイン・アウトオフセットを表示します"
+
+
+msgid "Show Source"
+msgstr "ソースを表示"
+
+
+msgid "Display path to source file, or name of source datablock"
+msgstr "ソースファイルへのパス、またはソースデータブロックの名前を表示します"
+
+
+msgid "Waveform Display"
+msgstr "波形の表示方法"
+
+
+msgid "How Waveforms are displayed"
+msgstr "波形を表示する方法"
+
+
+msgid "Waveforms Off"
+msgstr "波形OFF"
+
+
+msgid "Don't display waveforms for any sound strips"
+msgstr "どの音声ストリップの波形も表示しません"
+
+
+msgid "Waveforms On"
+msgstr "波形ON"
+
+
+msgid "Display waveforms for all sound strips"
+msgstr "すべての音声ストリップの波形を表示します"
+
+
+msgid "Use Strip Option"
+msgstr "ストリップ設定を使用"
+
+
+msgid "Display waveforms depending on strip setting"
+msgstr "ストリップ設定に応じて波形を表示します"
+
+
 msgid "Sequencer Tool Settings"
 msgstr "シーケンサーツール設定"
 
@@ -86660,6 +86253,14 @@ msgstr "シャッフル"
 
 msgid "Move transformed strips to nearest free space to resolve overlap"
 msgstr "重複を防ぐため、トランスフォームしたストリップを近くの空いた場所に移動します"
+
+
+msgid "Median Point"
+msgstr "中点"
+
+
+msgid "Individual Origins"
+msgstr "それぞれの原点"
 
 
 msgid "Snapping Distance"
@@ -87524,16 +87125,8 @@ msgid "Pivot around the 2D cursor"
 msgstr "2Dカーソルを中心に操作します"
 
 
-msgid "Individual Origins"
-msgstr "それぞれの原点"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "各オブジェクトの原点がそれぞれ基準点になります"
-
-
-msgid "Median Point"
-msgstr "中点"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -87542,14 +87135,6 @@ msgstr "選択したオブジェクトの中点を中心に操作します"
 
 msgid "Scopes to visualize movie clip statistics"
 msgstr "動画クリップの統計を視覚化するスコープ"
-
-
-msgid "Show Annotation"
-msgstr "アノテーションを表示"
-
-
-msgid "Show annotations for this view"
-msgstr "このビュー用のアノテーションを表示します"
 
 
 msgid "Show Blue Channel"
@@ -87616,10 +87201,6 @@ msgid "Show green channel in the frame"
 msgstr "フレーム内の緑チャンネルを表示します"
 
 
-msgid "Show Grid"
-msgstr "グリッドを表示"
-
-
 msgid "Show grid showing lens distortion"
 msgstr "レンズ歪みを表すグリッドを表示します"
 
@@ -87646,10 +87227,6 @@ msgstr "マスクオーバーレイを表示"
 
 msgid "Display Smooth Splines"
 msgstr "スムーズスプラインを表示"
-
-
-msgid "Show Metadata"
-msgstr "メタデータを表示"
 
 
 msgid "Show metadata of clip"
@@ -89054,28 +88631,12 @@ msgid "Display result under strips"
 msgstr "ストリップの下に結果を表示します"
 
 
-msgid "Show F-Curves"
-msgstr "Fカーブを表示"
-
-
-msgid "Display strip opacity/volume curve"
-msgstr "ストリップの不透明度・ボリュームのカーブを表示します"
-
-
 msgid "Display Frames"
 msgstr "フレームを表示"
 
 
 msgid "Display frames rather than seconds"
 msgstr "秒数ではなくフレーム数で表示します"
-
-
-msgid "Show vertical grid lines"
-msgstr "縦のグリッドラインを表示します"
-
-
-msgid "Show metadata of first visible strip"
-msgstr "最初の可視ストリップのメタデータを表示します"
 
 
 msgid "Show Overexposed"
@@ -89086,36 +88647,12 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "露出オーバーの領域をゼブラストライプ付で表示"
 
 
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "プレビューにTVタイトルセーフとアクションセーフゾーンを表示します"
-
-
 msgid "Separate Colors"
 msgstr "色の分離"
 
 
 msgid "Separate color channels in preview"
 msgstr "プレビューでカラーチャンネルを分離"
-
-
-msgid "Show Duration"
-msgstr "期間を表示"
-
-
-msgid "Show Offsets"
-msgstr "オフセットを表示"
-
-
-msgid "Display strip in/out offsets"
-msgstr "ストリップのイン・アウトオフセットを表示します"
-
-
-msgid "Show Source"
-msgstr "ソースを表示"
-
-
-msgid "Display path to source file, or name of source datablock"
-msgstr "ソースファイルへのパス、またはソースデータブロックの名前を表示します"
 
 
 msgid "Transform Preview"
@@ -89158,48 +88695,12 @@ msgid "Sequencer & Preview"
 msgstr "シーケンサーとプレビュー"
 
 
-msgid "Waveform Display"
-msgstr "波形の表示方法"
-
-
-msgid "How Waveforms are displayed"
-msgstr "波形を表示する方法"
-
-
-msgid "Waveforms Off"
-msgstr "波形OFF"
-
-
-msgid "Don't display waveforms for any sound strips"
-msgstr "どの音声ストリップの波形も表示しません"
-
-
-msgid "Waveforms On"
-msgstr "波形ON"
-
-
-msgid "Display waveforms for all sound strips"
-msgstr "すべての音声ストリップの波形を表示します"
-
-
-msgid "Use Strip Option"
-msgstr "ストリップ設定を使用"
-
-
-msgid "Display waveforms depending on strip setting"
-msgstr "ストリップ設定に応じて波形を表示します"
-
-
 msgid "Space Spreadsheet"
 msgstr "スプレッドシートスペース"
 
 
 msgid "Spreadsheet space data"
 msgstr "スプレッドシートスペースデータ"
-
-
-msgid "Attribute Domain"
-msgstr "属性ドメイン"
 
 
 msgid "Attribute domain to display"
@@ -94379,14 +93880,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "このレイヤーのFreesyleストロークをレンダリングします"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Cryptomatteの精度"
-
-
-msgid "Generate a more accurate cryptomatte pass"
-msgstr "より正確な Cryptomatte パスを生成します"
-
-
 msgid "Cryptomatte Asset"
 msgstr "Cryptomatteアセット"
 
@@ -96270,28 +95763,8 @@ msgid "Cycles will render on the CPU"
 msgstr "Cycles は CPU でレンダリングします"
 
 
-msgid "Total Samples:"
-msgstr "総サンプル数:"
-
-
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Mesh Light"
-msgstr "メッシュライト"
-
-
-msgid "Subsurface"
-msgstr "サブサーフェス"
-
-
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
-
-
-msgid "Min Samples"
-msgstr "最小サンプル数"
 
 
 msgid "Start Sample"
@@ -96342,16 +95815,12 @@ msgid "Roughness Threshold"
 msgstr "粗さのしきい値"
 
 
-msgid "Tiles X"
-msgstr "タイル X"
-
-
-msgid "Start Pixels"
-msgstr "開始ピクセル数"
-
-
 msgid "Surfaces"
 msgstr "サーフェス"
+
+
+msgid "Denoising"
+msgstr "デノイズ"
 
 
 msgid "Denoising Data"
@@ -96364,14 +95833,6 @@ msgstr "インデックス"
 
 msgid "Render Time"
 msgstr "レンダリング時間"
-
-
-msgid "Sample Count"
-msgstr "サンプル数"
-
-
-msgid "Feature Strength"
-msgstr "特徴の強さ"
 
 
 msgid "Pipeline"
@@ -96418,10 +95879,6 @@ msgid "OptiX Flags:"
 msgstr "OptiXフラグ:"
 
 
-msgid "OpenCL Flags:"
-msgstr "OpenCLフラグ:"
-
-
 msgid "Max Subdivision"
 msgstr "最大細分化数"
 
@@ -96442,16 +95899,8 @@ msgid "Distance Culling"
 msgstr "距離カリング"
 
 
-msgid "%s AA"
-msgstr "%s AA"
-
-
-msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
-msgstr "%s AA、%s ディフューズ、%s 光沢、%s 伝播"
-
-
-msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
-msgstr "%s AO、%s メッシュライト、%s SSS、%s ボリューム"
+msgid "Min Samples"
+msgstr "最小サンプル数"
 
 
 msgid "Curve Subdivisions"
@@ -96468,10 +95917,6 @@ msgstr "非互換出力ノード"
 
 msgid "Portal"
 msgstr "ポータル"
-
-
-msgid "Baking is performed using CUDA instead of OptiX"
-msgstr "OptiX の代わりに CUDA でベイクを実行します"
 
 
 msgid "Swizzle R"
@@ -97339,10 +96784,6 @@ msgid "No mesh object"
 msgstr "メッシュオブジェクトがありません"
 
 
-msgid "Soft Min"
-msgstr "ソフト最小"
-
-
 msgid "See OperatorList.txt text block"
 msgstr "OperatorList.txt テキストブロックを参照してください"
 
@@ -97497,10 +96938,6 @@ msgstr "割り当て"
 
 msgid "Operator not found: bpy.ops.%s"
 msgstr "オペレーターがありません：bpy.ops.%s"
-
-
-msgid "Could not evaluate number from default value"
-msgstr "デフォルト値から数値を評価できませんでした"
 
 
 msgctxt "Operator"
@@ -99371,10 +98808,6 @@ msgid "Use for Rendering"
 msgstr "レンダリングに使用"
 
 
-msgid "Accurate Mode"
-msgstr "高精度モード"
-
-
 msgid "Conflicts with another render pass with the same name"
 msgstr "他に同じ名前のレンダーパスがあります"
 
@@ -100950,6 +100383,10 @@ msgid "Fractional Preview Zoom"
 msgstr "フラクタルプレビューズーム"
 
 
+msgid "Show Separate Color Channels"
+msgstr "各カラーチャンネルを表示"
+
+
 msgctxt "Operator"
 msgid "Scene"
 msgstr "シーン"
@@ -100993,10 +100430,6 @@ msgstr "元のフレーム範囲"
 
 msgid "Custom Proxy"
 msgstr "カスタムプロキシ"
-
-
-msgid "Show Separate Color Channels"
-msgstr "各カラーチャンネルを表示"
 
 
 msgid "Add Transition"
@@ -102193,11 +101626,6 @@ msgstr "参照"
 msgctxt "Operator"
 msgid "Background"
 msgstr "背景"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "プロキシを作成..."
 
 
 msgctxt "Operator"
@@ -103526,10 +102954,6 @@ msgstr "透過表示を切替え"
 
 msgid "To 3D Cursor"
 msgstr "3Dカーソルを注視"
-
-
-msgid "X-Ray"
-msgstr "透過"
 
 
 msgid "Fade Inactive Geometry"
@@ -106910,10 +106334,6 @@ msgid "No intersections found"
 msgstr "交点が見つかりません"
 
 
-msgid "%s: confirm, %s: cancel, %s: start/define cut, %s: close cut, %s: new cut, %s: midpoint snap (%s), %s: ignore snap (%s), %s: angle constraint (%s), %s: cut through (%s), %s: panning"
-msgstr "%s:決定、%s:キャンセル、%s:カット開始/設定、%s:カット終了、%s:新規カット、%s:中点にスナップ(%s)、%s:スナップ無視(%s)、%s:角度制限(%s)、%s:透過カット(%s)、%s:パン"
-
-
 msgid "Selected faces required"
 msgstr "選択された面が必要です"
 
@@ -107334,10 +106754,6 @@ msgstr "ベイク未対応の画像タイプです"
 
 msgid "No objects found to bake from"
 msgstr "ベイク元のオブジェクトがありません"
-
-
-msgid "Combined bake pass Ambient Occlusion contribution requires an enabled light pass (bake the Ambient Occlusion pass type instead)"
-msgstr "統合ベイクパスでの AO の寄与にはライトパスが有効でないといけません（代わりにAOベイクパスをベイクしてください）"
 
 
 msgid "Combined bake pass requires Emit, or a light pass with Direct or Indirect contributions enabled"
@@ -107828,10 +107244,6 @@ msgid "Object type of source object is not supported"
 msgstr "ソースオブジェクトが未対応のオブジェクトタイプです"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Set Parent To"
 msgstr "ペアレント対象"
 
@@ -107842,6 +107254,10 @@ msgstr "オブジェクト(トランスフォーム維持)"
 
 msgid "Object (Without Inverse)"
 msgstr "オブジェクト(逆行列なし)"
+
+
+msgid "OK?"
+msgstr "OK?"
 
 
 msgid "Drop %s on %s (slot %d, replacing %s)"
@@ -107858,18 +107274,6 @@ msgstr "ペアレントする頂点を1つまたは3つ選択してください"
 
 msgid "Loop in parents"
 msgstr "親がループしています"
-
-
-msgid "Can only make proxy for a referenced object or collection"
-msgstr "プロキシは参照元のオブジェクトまたはコレクション用にのみ作成可能です"
-
-
-msgid "Unable to assign proxy"
-msgstr "プロキシを割り当てられません"
-
-
-msgid "No object to make proxy for"
-msgstr "プロキシを作るオブジェクトがありません"
 
 
 msgid "No active bone"
@@ -111324,10 +110728,6 @@ msgid "Use Factor"
 msgstr "係数を使用"
 
 
-msgid "Overshoot"
-msgstr "オーバーシュート"
-
-
 msgid "Material Borders"
 msgstr "マテリアル境界"
 
@@ -111744,6 +111144,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "このフレーム番号%dにはすでにフレームがあります"
 
 
+msgid "Modify"
+msgstr "変更"
+
+
 msgid "Cannot assign material '%s', it has to be used by the grease pencil object already"
 msgstr "マテリアル「%s」を割り当てできません。グリースペンシルオブジェクトで使用されている必要があります"
 
@@ -111919,10 +111323,6 @@ msgstr "カスタム法線の数が頂点数と合いません (%f / %d)"
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "メタボール「%s」に与えられたスプラインはありません"
-
-
-msgid "Modify"
-msgstr "変更"
 
 
 msgid "Negative vertex index in vertex_indices_set"
@@ -112735,10 +112135,6 @@ msgid "Lower Right"
 msgstr "右下"
 
 
-msgid "Albedo"
-msgstr "アルベド"
-
-
 msgid "Image 1"
 msgstr "画像1"
 
@@ -112819,6 +112215,10 @@ msgid "Shader Editor"
 msgstr "シェーダーエディター"
 
 
+msgid "AO"
+msgstr "AO"
+
+
 msgid "Anisotropy"
 msgstr "異方性"
 
@@ -112861,6 +112261,10 @@ msgstr "ランダムカラー"
 
 msgid "Random Roughness"
 msgstr "ランダムな粗さ"
+
+
+msgid "Subsurface"
+msgstr "サブサーフェス"
 
 
 msgid "Subsurface Radius"
@@ -113047,10 +112451,6 @@ msgid "Alpha Fac"
 msgstr "アルファ係数"
 
 
-msgid "Texture Blur"
-msgstr "テクスチャぼかし"
-
-
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -113211,10 +112611,6 @@ msgid "No border area selected"
 msgstr "範囲が選択されていません"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "レンダーバッファが保存できません。デフォルトテンポラリパスをチェックしてください"
-
-
 msgid "Border rendering is not supported by sequencer"
 msgstr "レンダーボーダーはシーケンサーに未対応です"
 
@@ -113225,10 +112621,6 @@ msgstr "シーンにノードツリーがありません"
 
 msgid "No render output node in scene"
 msgstr "シーンにレンダー出力ノードがありません"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "3Dレンダリングがない場合フルサンプルAAは使用できません"
 
 
 msgid "All render layers are disabled"

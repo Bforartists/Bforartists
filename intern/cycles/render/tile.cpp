@@ -420,6 +420,11 @@ const Tile &TileManager::get_current_tile() const
   return tile_state_.current_tile;
 }
 
+const int2 TileManager::get_size() const
+{
+  return make_int2(buffer_params_.width, buffer_params_.height);
+}
+
 bool TileManager::open_tile_output()
 {
   write_state_.filename = path_temp_get("cycles-tile-buffer-" + tile_file_unique_part_ + "-" +
@@ -436,7 +441,12 @@ bool TileManager::open_tile_output()
     return false;
   }
 
-  write_state_.tile_out->open(write_state_.filename, write_state_.image_spec);
+  if (!write_state_.tile_out->open(write_state_.filename, write_state_.image_spec)) {
+    LOG(ERROR) << "Error opening tile file: " << write_state_.tile_out->geterror();
+    write_state_.tile_out = nullptr;
+    return false;
+  }
+
   write_state_.num_tiles_written = 0;
 
   VLOG(3) << "Opened tile file " << write_state_.filename;
@@ -497,6 +507,7 @@ bool TileManager::write_tile(const RenderBuffers &tile_buffers)
                                           TypeDesc::FLOAT,
                                           pixels)) {
     LOG(ERROR) << "Error writing tile " << write_state_.tile_out->geterror();
+    return false;
   }
 
   ++write_state_.num_tiles_written;
