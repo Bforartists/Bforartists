@@ -1314,10 +1314,6 @@ msgid "None"
 msgstr "Ninguno"
 
 
-msgid "Ambient Occlusion"
-msgstr "Oclusión ambiental"
-
-
 msgid "Emit"
 msgstr "Emisión"
 
@@ -1412,10 +1408,6 @@ msgstr "Restablecer"
 
 msgid "Clear Images before baking (internal only)"
 msgstr "Eliminar imágenes antes de capturar (sólo motor Interno)"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "Agrega la contribución de la oclusión ambiental"
 
 
 msgid "Color the pass"
@@ -15502,6 +15494,26 @@ msgid "Display modifier in viewport"
 msgstr "Mostrar el modificador en las vistas"
 
 
+msgid "Texture Mapping"
+msgstr "Mapeo de textura"
+
+
+msgid "Change stroke uv texture values"
+msgstr "Permite cambiar los valores de UV de la textura del trazo"
+
+
+msgid "Time Offset"
+msgstr "Desplazar tiempo"
+
+
+msgid "Offset keyframes"
+msgstr "Desplaza los fotogramas clave"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "Influenciar vértices por proximidad"
+
+
 msgid "Array"
 msgstr "Repetir"
 
@@ -15516,6 +15528,10 @@ msgstr "Construir"
 
 msgid "Create duplication of strokes"
 msgstr "Crea una duplicación de trazos"
+
+
+msgid "Extend or shrink strokes"
+msgstr "Extiende o contrae trazos"
 
 
 msgid "Line Art"
@@ -15554,10 +15570,6 @@ msgid "Subdivide stroke adding more control points"
 msgstr "Subdivide el trazo agregando más puntos de control"
 
 
-msgid "Vertex Weight"
-msgstr "Influencia de vértice"
-
-
 msgid "Deform stroke points using armature object"
 msgstr "Deforma puntos del trazo usando un esqueleto"
 
@@ -15572,10 +15584,6 @@ msgstr "Deforma puntos del trazo usando objetos"
 
 msgid "Deform strokes using lattice"
 msgstr "Deforma trazos usando una jaula"
-
-
-msgid "Extend or shrink strokes"
-msgstr "Extiende o contrae trazos"
 
 
 msgid "Add noise to strokes"
@@ -15594,14 +15602,6 @@ msgid "Change stroke thickness"
 msgstr "Cambia el grosor del trazo"
 
 
-msgid "Time Offset"
-msgstr "Desplazar tiempo"
-
-
-msgid "Offset keyframes"
-msgstr "Desplaza los fotogramas clave"
-
-
 msgid "Hue/Saturation"
 msgstr "Tono / Saturación"
 
@@ -15612,14 +15612,6 @@ msgstr "Aplica cambios a los colores del trazo"
 
 msgid "Opacity of the strokes"
 msgstr "Opacidad de los trazos"
-
-
-msgid "Texture Mapping"
-msgstr "Mapeo de textura"
-
-
-msgid "Change stroke uv texture values"
-msgstr "Permite cambiar los valores de UV de la textura del trazo"
 
 
 msgid "Tint"
@@ -16096,10 +16088,6 @@ msgid "End Factor"
 msgstr "Factor final"
 
 
-msgid "Length difference for each segment"
-msgstr "Diferencia de longitud para cada segento"
-
-
 msgid "Mode to define length"
 msgstr "Modo de definir la longitud"
 
@@ -16112,12 +16100,8 @@ msgid "Length in geometry space"
 msgstr "Longitud en espacio de la geometría"
 
 
-msgid "Overshoot Factor"
-msgstr "Factor de extensión"
-
-
-msgid "Defines how precise must follow the stroke trajectory for the overshoot extremes"
-msgstr "Define qué tan precisamente debe continuarse la trayectoria del trazo al extender los extremos"
+msgid "Point Density"
+msgstr "Densidad de puntos"
 
 
 msgid "Start Factor"
@@ -16848,16 +16832,24 @@ msgid "Use a custom curve to define vertex color effect along the strokes"
 msgstr "Usar una curva personalizada para definir el efecto de color de vértices a lo largo de los trazos"
 
 
-msgid "Object used as distance reference"
-msgstr "Objeto usado como referencia de distancia"
-
-
 msgid "Space"
 msgstr "Espacio"
 
 
-msgid "Blend"
-msgstr "Fundido"
+msgid "Highest"
+msgstr "Mayor"
+
+
+msgid "Lowest"
+msgstr "Menor"
+
+
+msgid "Target Object"
+msgstr "Objetivo"
+
+
+msgid "Object used as distance reference"
+msgstr "Objeto usado como referencia de distancia"
 
 
 msgid "Vertex Group Element"
@@ -16870,6 +16862,10 @@ msgstr "Valor de influencia de un vértice en un grupo de vértices"
 
 msgid "Group Index"
 msgstr "Identificador del grupo"
+
+
+msgid "Vertex Weight"
+msgstr "Influencia de vértice"
 
 
 msgid "Grid and Canvas Settings"
@@ -25816,6 +25812,10 @@ msgid "Node tree for node-based textures"
 msgstr "Árbol de nodos para texturas basadas en nodos"
 
 
+msgid "Blend"
+msgstr "Fundido"
+
+
 msgid "Procedural - create a ramp texture"
 msgstr "Generada - crea una textura tipo rampa"
 
@@ -32388,10 +32388,6 @@ msgid "Mix the weights of two vertex groups"
 msgstr "Permite mezclar las influencias de dos grupos de vértices"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "Influenciar vértices por proximidad"
-
-
 msgid "Set the vertex group weights based on the distance to another target object"
 msgstr "Permite definir las influencias del grupo de vértices basándose en la distancia a otro objeto objetivo"
 
@@ -36324,16 +36320,8 @@ msgid "Set the weights of vertices in a group from a target object's distance"
 msgstr "Define la influencia de los vértices de un grupo usando la distancia desde un objetivo"
 
 
-msgid "Highest"
-msgstr "Mayor"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "Distancia mapeada a la influencia 1.0"
-
-
-msgid "Lowest"
-msgstr "Menor"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -36374,10 +36362,6 @@ msgstr "Usa la distancia entre el objetivo y el objeto afectado"
 
 msgid "Use distance between affected object's vertices and target object, or target object's geometry"
 msgstr "Usa la distancia entre los vértices del objeto afectado y el objetivo o la geometría del mismo"
-
-
-msgid "Target Object"
-msgstr "Objetivo"
 
 
 msgid "Object to calculate vertices distances from"
@@ -40593,6 +40577,26 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Nodo de grupo personalizado de geometría para nodos Python"
 
 
+msgid "Distribution Method"
+msgstr "Método de distribución"
+
+
+msgid "Method to use for scattering points"
+msgstr "Método a usar para distribuir puntos"
+
+
+msgid "Distribute points randomly on the surface"
+msgstr "Distribuye puntos de forma aleatoria sobre la superficie"
+
+
+msgid "Poisson Disk"
+msgstr "Disco de Poisson"
+
+
+msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
+msgstr "Distribuye los puntos de forma aleatoria sobre la superficie, manteniendo una distancia mínima entre ellos"
+
+
 msgid "Is Viewport"
 msgstr "Es vista"
 
@@ -41029,26 +41033,6 @@ msgid "Point Distribute"
 msgstr "Distribuir puntos"
 
 
-msgid "Distribution Method"
-msgstr "Método de distribución"
-
-
-msgid "Method to use for scattering points"
-msgstr "Método a usar para distribuir puntos"
-
-
-msgid "Distribute points randomly on the surface"
-msgstr "Distribuye puntos de forma aleatoria sobre la superficie"
-
-
-msgid "Poisson Disk"
-msgstr "Disco de Poisson"
-
-
-msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
-msgstr "Distribuye los puntos de forma aleatoria sobre la superficie, manteniendo una distancia mínima entre ellos"
-
-
 msgid "Point Instance"
 msgstr "Instanciar en puntos"
 
@@ -41189,6 +41173,18 @@ msgid "Bring the input object geometry, location, rotation and scale into the mo
 msgstr "Trae la geometría, posición, rotación y escala del objeto de entrada al objeto modificado, manteniendo la posición relativa entre ambos objetos en la escena"
 
 
+msgid "Align X"
+msgstr "Alinear X"
+
+
+msgid "Align Y"
+msgstr "Alinear Y"
+
+
+msgid "Font of the text. Falls back to the UI font by default"
+msgstr "Tipografía del texto. Regresa a la tipografía de la IU de forma predefinida"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Marco"
@@ -41232,6 +41228,10 @@ msgstr "Nodo sombreador de material"
 
 msgid "Add Shader"
 msgstr "Sumar sombreadores"
+
+
+msgid "Ambient Occlusion"
+msgstr "Oclusión ambiental"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -41374,20 +41374,8 @@ msgid "Method for rendering subsurface scattering"
 msgstr "Método de procesar la transluminiscencia"
 
 
-msgid "Christensen-Burley"
-msgstr "Christensen-Burley"
-
-
-msgid "Approximation to physically based volume scattering"
-msgstr "Una aproximación a la transluminiscencia volumétrica real"
-
-
 msgid "Random Walk"
 msgstr "Camino aleatorio"
-
-
-msgid "Volumetric approximation to physically based volume scattering"
-msgstr "Una aproximación volumétrica a la transluminiscencia volumétrica real"
 
 
 msgid "Refraction BSDF"
@@ -41678,18 +41666,6 @@ msgid "Subsurface Scattering"
 msgstr "Transluminiscencia"
 
 
-msgid "Function to determine how much light nearby points contribute based on their distance to the shading point"
-msgstr "Función para determinar cuánta luz contribuyen los puntos cercanos, basándose en su distancia al punto que está siendo sombreado"
-
-
-msgid "Simple cubic falloff function"
-msgstr "Función de decaimiento cúbico simple"
-
-
-msgid "Normal distribution, multiple can be combined to fit more complex profiles"
-msgstr "Distribución normal, pueden combinarse varios para ajustarse a perfiles más complejos"
-
-
 msgid "Axis for radial tangents"
 msgstr "Eje para tangentes radiales"
 
@@ -41892,10 +41868,6 @@ msgstr "Usa un vector 4D (x, y, z, w) como entrada"
 
 msgid "The dimensions of the space to evaluate the noise in"
 msgstr "Las dimensiones del espacio en el cual calcular el ruido"
-
-
-msgid "Point Density"
-msgstr "Densidad de puntos"
 
 
 msgid "Object to take point data from"
@@ -42732,6 +42704,10 @@ msgstr "Plantilla de conector de nodo"
 
 msgid "Parameters to define node sockets"
 msgstr "Parámetro para definir los conectores de un nodo"
+
+
+msgid "Attribute Domain"
+msgstr "Dominio del atributo"
 
 
 msgid "Hide the socket input value even when the socket is not connected"
@@ -55069,6 +55045,10 @@ msgid "Only cut the front most geometry"
 msgstr "Sólo corta geometría que apunta hacia el frente"
 
 
+msgid "X-Ray"
+msgstr "Rayos X"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "Selec. múltiples bucles"
@@ -59773,23 +59753,6 @@ msgstr "Habilita o deshabilita la posibilidad de posar y seleccionar huesos"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Hacer reemplazo"
-
-
-msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "Agrega un objeto vacío que se convertirá en reemplazo local de un objeto vinculado desde una biblioteca"
-
-
-msgid "Proxy Object"
-msgstr "Objeto de reemplazo"
-
-
-msgid "Name of library-linked/collection object to make a proxy for"
-msgstr "Nombre del objeto vinculado desde una biblioteca o colección del cual crear un reemplazo"
-
-
-msgctxt "Operator"
 msgid "QuadriFlow Remesh"
 msgstr "Rehacer malla usando cuadriláteros"
 
@@ -63077,15 +63040,6 @@ msgid "Only apply the selected bones (with propagation to children)"
 msgstr "Sólo aplicar los huesos seleccionados (con propagación a sus subordinados)"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Intermediador de pose"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "Crea una pose intermedia apropiada en el fotograma actual"
-
-
 msgid "Axis Lock"
 msgstr "Bloquear eje"
 
@@ -63164,6 +63118,15 @@ msgstr "F. clave anterior"
 
 msgid "Frame number of keyframe immediately before the current frame"
 msgstr "Número de fotograma del fotograma clave inmediatamente anterior al fotograma actual"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "Intermediador de pose"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
+msgstr "Crea una pose intermedia apropiada en el fotograma actual"
 
 
 msgid "Add a constraint to the active bone"
@@ -69016,16 +68979,8 @@ msgid "Automatically choose the axis on which there is most alignment already"
 msgstr "Seleccionar automáticamente el eje donde actualmente existe la mayor alineación"
 
 
-msgid "Align X"
-msgstr "Alinear X"
-
-
 msgid "Align UVs on X axis"
 msgstr "Alinear los UV en el eje X"
-
-
-msgid "Align Y"
-msgstr "Alinear Y"
 
 
 msgid "Align UVs on Y axis"
@@ -72176,14 +72131,6 @@ msgid "Edit Property"
 msgstr "Editar propiedad"
 
 
-msgid "Edit the attributes of the property"
-msgstr "Permite editar los atributos de la propiedad"
-
-
-msgid "Default value of the property. Important for NLA mixing"
-msgstr "Valor predefinido de la propiedad. Importante para la mezcla con ANL"
-
-
 msgid "Is Library Overridable"
 msgstr "Es redefinible"
 
@@ -72192,20 +72139,16 @@ msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "Permite que la propiedad sea redefinida, cuando el bloque de datos se encuentre vinculado desde una biblioteca"
 
 
-msgid "Maximum value of the property"
-msgstr "Valor máximo de la propiedad"
-
-
-msgid "Minimum value of the property"
-msgstr "Valor mínimo de la propiedad"
-
-
 msgid "Property Name"
 msgstr "Nombre"
 
 
 msgid "Property name edit"
 msgstr "Editar nombre de propiedad"
+
+
+msgid "Soft Min"
+msgstr "Límite difuso  Mín"
 
 
 msgid "Subtype"
@@ -72218,10 +72161,6 @@ msgstr "Usar límites difusos"
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
 msgstr "Limita el deslizador de valores de la propiedad a un rango, los valores que se encuentren por fuera del mismo deberán ser ingresados manualmente"
-
-
-msgid "Property value edit"
-msgstr "Edita el valor de la propiedad"
 
 
 msgctxt "Operator"
@@ -73751,10 +73690,6 @@ msgid "Sampling Presets"
 msgstr "Ajustes de muestreo"
 
 
-msgid "Denoising"
-msgstr "Reducción de ruidos"
-
-
 msgid "Film"
 msgstr "Opciones de película"
 
@@ -73805,18 +73740,6 @@ msgstr "Procesamiento final"
 
 msgid "Threads"
 msgstr "Hilos"
-
-
-msgid "Tiles"
-msgstr "Repeticiones"
-
-
-msgid "Adaptive Sampling"
-msgstr "Muestreo adaptativo"
-
-
-msgid "Sub Samples"
-msgstr "Sub muestras"
 
 
 msgid "Subdivision"
@@ -73925,10 +73848,6 @@ msgstr "Filtro avanzado"
 
 msgid "Bookmarks"
 msgstr "Marcadores"
-
-
-msgid "Favorites"
-msgstr "Favoritos"
 
 
 msgid "Recent"
@@ -78999,10 +78918,6 @@ msgid "Maximum number of bounces the light will contribute to the render"
 msgstr "Cantidad máxima de rebotes de luz que contribuirán a la imagen procesada"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Cantidad de muestras de luz a procesar por cada muestra de suavizado de bordes"
-
-
 msgid "Multiple Importance Sample"
 msgstr "Muestreo de importancia múltiple"
 
@@ -79171,128 +79086,12 @@ msgid "Use motion blur for this object"
 msgstr "Usa desenfoque por movimiento para este objeto"
 
 
-msgid "Diffuse Direct"
-msgstr "Difusión directa"
-
-
-msgid "Denoise the direct diffuse lighting"
-msgstr "Reducir ruidos en la iluminación difusa directa"
-
-
-msgid "Diffuse Indirect"
-msgstr "Difusión indirecta"
-
-
-msgid "Denoise the indirect diffuse lighting"
-msgstr "Reducir ruidos en la iluminación difusa indirecta"
-
-
-msgid "Denoising Feature Strength"
-msgstr "Intensidad de reducción de ruidos"
-
-
-msgid "Controls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)"
-msgstr "Permite controlar la intensidad de cada pasada de reducción de ruidos (valores menores preservarán más detalle, pero el resultado no será tan suave)"
-
-
-msgid "Glossy Direct"
-msgstr "Reflectividad directa"
-
-
-msgid "Denoise the direct glossy lighting"
-msgstr "Reducir ruidos en la iluminación reflejada directa"
-
-
-msgid "Glossy Indirect"
-msgstr "Reflectividad indirecta"
-
-
-msgid "Denoise the indirect glossy lighting"
-msgstr "Reducir ruidos en la iluminación reflejada indirecta"
-
-
-msgid "Neighbor Frames"
-msgstr "Fotogramas vecinos"
-
-
-msgid "Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)"
-msgstr "Cantidad de fotogramas cercanos a usar al reducir el ruido en animaciones (más fotogramas producen un resultado más suave, a costa de un menor rendimiento)"
-
-
-msgid "Input Passes"
-msgstr "Pasadas a considerar"
-
-
-msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
-msgstr "Pasadas usadas por el reductor de ruidos para distinguir entre el ruido y los detalles del sombreador y la geometría"
-
-
-msgid "Use only color as input"
-msgstr "Usa sólo datos de color como entrada"
-
-
-msgid "Color + Albedo"
-msgstr "Color + Albedo"
-
-
-msgid "Use color and albedo data as input"
-msgstr "Usa datos de color y albedo como entrada"
-
-
-msgid "Color + Albedo + Normal"
-msgstr "Color + Albedo + Normales"
-
-
-msgid "Use color, albedo and normal data as input"
-msgstr "Usa datos de color, albedo y normales como entrada"
-
-
-msgid "Denoising Radius"
-msgstr "Radio de reducción"
-
-
-msgid "Size of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)"
-msgstr "Tamaño del área de imagen que será usado para reducir el ruido de cada píxel (valores mayores producirán resultados más suaves, sin embargo posiblemente se pierdan detalles y el proceso será más lento)"
-
-
-msgid "Relative Filter"
-msgstr "Filtro relativo"
-
-
-msgid "When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)"
-msgstr "Permite usar un umbral relativo al eliminar píxeles que no contengan información, en vez de uno absoluto (puede ayudar a reducir defectos, pero también ocasionar pérdida de detalle alrededor de los bordes)"
-
-
 msgid "Store Denoising Passes"
 msgstr "Almacenar pasadas de reducción"
 
 
 msgid "Store the denoising feature passes and the noisy image. The passes adapt to the denoiser selected for rendering"
 msgstr "Almacena las pasadas de reducción de ruido y la imagen con ruido. Las pasadas se adaptan al tipo de reducción seleccionado para el procesamiento"
-
-
-msgid "Denoising Strength"
-msgstr "Intensidad de la reducción"
-
-
-msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
-msgstr "Controla la influencia de los píxeles cercanos en el filtro de reducción de ruidos (valores menores preservarán más detalles, pero no serán tan suaves)"
-
-
-msgid "Transmission Direct"
-msgstr "Transmisión directa"
-
-
-msgid "Denoise the direct transmission lighting"
-msgstr "Reducir ruidos en la iluminación transmitida directa"
-
-
-msgid "Transmission Indirect"
-msgstr "Transmisión indirecta"
-
-
-msgid "Denoise the indirect transmission lighting"
-msgstr "Reducir ruidos en la iluminación transmitida indirecta"
 
 
 msgid "Debug Render Time"
@@ -79335,20 +79134,8 @@ msgid "Deliver indirect volumetric scattering pass"
 msgstr "Produce una pasada de transluminiscencia volumétrica indirecta"
 
 
-msgid "AA Samples"
-msgstr "Muestras de suavizado de bordes"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Suavizado de bordes, muestras por píxel durante el procesamiento final"
-
-
 msgid "Adaptive Min Samples"
 msgstr "Muestras adaptativas mín"
-
-
-msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on number of AA samples"
-msgstr "Cantidad mínima de muestras de suavizado de bordes para el muestreo adaptativo, para detectar las regiones ruidosas antes de detener el muestreo. Usar cero para definirlo automáticamente, basado en la cantidad de muestras de suavizado de bordes"
 
 
 msgid "Adaptive Sampling Threshold"
@@ -79365,14 +79152,6 @@ msgstr "Luego de alcanzar esta cantidad de rebotes de luz, usar una aproximació
 
 msgid "AO Bounces Render"
 msgstr "Rebotes de OA en procesamiento"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Muestras de oclusión ambiental"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "Oclusión ambiental, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Bake Type"
@@ -79455,64 +79234,12 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "Cualquier modificación de un objeto requiere una reconstrucción completa de la BVH, pero se procesará más rápidamente"
 
 
-msgid "Cancel timeout"
-msgstr "Tiempo de espera de cancelar"
-
-
-msgid "OpenCL Device Type"
-msgstr "Tipo de dispositivo OpenCL"
-
-
-msgid "Accelerator"
-msgstr "Acelerador"
-
-
-msgid "OpenCL Kernel Type"
-msgstr "Tipo de núcleo OpenCL"
-
-
-msgid "Mega"
-msgstr "Mega"
-
-
-msgid "Memory limit"
-msgstr "Límite de memoria"
-
-
-msgid "Artificial limit on OpenCL memory usage in MB (0 to disable limit)"
-msgstr "Límite impuesto para el uso de memoria por parte de OpenCL, en MB (0 para deshabilitar la limitación)"
-
-
-msgid "CUDA Streams"
-msgstr "Hilos CUDA"
-
-
-msgid "Native OptiX Curve Primitive"
-msgstr "Primitiva de curvas nativa de OptiX"
-
-
-msgid "Reset timeout"
-msgstr "Tiempo de espera de restablecer"
-
-
-msgid "Text timeout"
-msgstr "Tiempo de espera de texto"
-
-
-msgid "Tile Size"
-msgstr "Tamaño de celdas"
-
-
 msgid "AVX"
 msgstr "AVX"
 
 
 msgid "AVX2"
 msgstr "AVX2"
-
-
-msgid "Split Kernel"
-msgstr "Núcleo dividido"
 
 
 msgid "SSE2"
@@ -79539,10 +79266,6 @@ msgid "Use special type BVH optimized for hair (uses more ram but renders faster
 msgstr "Usa un tipo especial de BVH optimizado para pelo (usa más RMA pero se procesa más rápido)"
 
 
-msgid "Debug OpenCL"
-msgstr "Depurar OpenCL"
-
-
 msgid "Use Spatial Splits"
 msgstr "Usar divisiones espaciales"
 
@@ -79555,8 +79278,12 @@ msgid "Denoiser"
 msgstr "Método de reducción de ruido"
 
 
-msgid "Denoise the image with the selected denoiser. For denoising the image after rendering, denoising data render passes also adapt to the selected denoiser"
-msgstr "Reduce el ruido de la imagen usando el método de reducción seleccionado. Para poder reducir el ruido de la imagen luego de ser procesada, las pasadas de datos de reducción de ruido también se adaptarán al método de reducción seleccionado"
+msgid "Passes used by the denoiser to distinguish noise from shader and geometry detail"
+msgstr "Pasadas usadas por el reductor de ruidos para distinguir entre el ruido y los detalles del sombreador y la geometría"
+
+
+msgid "Albedo"
+msgstr "Albedo"
 
 
 msgid "Device"
@@ -79601,14 +79328,6 @@ msgstr "Rebotes de difusión"
 
 msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "Cantidad máxima de rebotes de reflectividad difusa, restringida por el máximo total"
-
-
-msgid "Diffuse Samples"
-msgstr "Muestras de difusión"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Difusión, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Cull Distance"
@@ -79695,14 +79414,6 @@ msgid "Maximum number of glossy reflection bounces, bounded by total maximum"
 msgstr "Cantidad máxima de rebotes de reflectividad, restringida por el máximo total"
 
 
-msgid "Glossy Samples"
-msgstr "Muestras de reflectividad"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "Cantidad de muestras de reflectividad por cada muestra de suavizado de bordes"
-
-
 msgid "Light Sampling Threshold"
 msgstr "Umbral de muestreo de luz"
 
@@ -79721,14 +79432,6 @@ msgstr "Subdivisiones máx"
 
 msgid "Stop subdividing when this level is reached even if the dice rate would produce finer tessellation"
 msgstr "Dejar de subdividir al alcanzar este nivel, aún en caso de que, por el nivel de subdivisión, se debiera producir una teselación más fina"
-
-
-msgid "Mesh Light Samples"
-msgstr "Muestras de luz de mallas"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "Luz emitida desde mallas, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Min Light Bounces"
@@ -79787,20 +79490,12 @@ msgid "Multiplier for dicing rate of geometry outside of the camera view. The di
 msgstr "Multiplicador para el factor de subdivisión de la geometría que se encuentra fuera del encuadre de la cámara. La tasa de subdivisión se incrementa gradualmente cuanto más lejos se encuentren del encuadre de la cámara. Valores menores producen mejores reflejos y sombras de objetos que se encuentran fuera de la vista, mientras que valores mayores utilizan menos memoria"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Suavizado de bordes, muestras por píxel durante la previsualización, ilimitado si es 0"
-
-
 msgid "Viewport Denoiser"
 msgstr "Reducir ruido en vistas"
 
 
 msgid "Denoise the image after each preview update with the selected denoiser"
 msgstr "Reduce el ruido de la imagen luego de cada actualización de la vista, usando el método de reducción de ruido seleccionado"
-
-
-msgid "Viewport Input Passes"
-msgstr "Pasadas de entrada en vistas"
 
 
 msgid "Start Denoising"
@@ -79835,38 +79530,6 @@ msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "Muestras por píxel durante la previsualización, ilimitado si es 0"
 
 
-msgid "Start Resolution"
-msgstr "Resolución inicial"
-
-
-msgid "Resolution to start rendering preview at, progressively increasing it to the full viewport size"
-msgstr "Resolución a la cual comenzar a procesar la previsualización, aumentándola progresivamente hasta el tamaño completo de la vista"
-
-
-msgid "Integrator"
-msgstr "Integrador"
-
-
-msgid "Method to sample lights and materials"
-msgstr "Método de muestrear luces las luces y materiales"
-
-
-msgid "Branched Path Tracing"
-msgstr "Trazado ramificado de trayectorias"
-
-
-msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "Integrador de trazado de trayectorias que se ramifica luego del primer rebote, dando más control sobre la cantidad de muestras de luces y materiales"
-
-
-msgid "Path Tracing"
-msgstr "Trazado de trayectorias"
-
-
-msgid "Pure path tracing integrator"
-msgstr "Integrador puro de trazado de trayectorias"
-
-
 msgid "Rolling Shutter Duration"
 msgstr "Duración del obturador progresivo"
 
@@ -79889,22 +79552,6 @@ msgstr "Ningún efecto de obturación progresiva usado"
 
 msgid "Sensor is being scanned from top to bottom"
 msgstr "El sensor está siendo escaneado desde arriba hacia abajo"
-
-
-msgid "Sample All Direct Lights"
-msgstr "Todas las luces directas"
-
-
-msgid "Sample all lights (for direct samples), rather than randomly picking one"
-msgstr "Muestrea todas las luces (muestras directas), en vez de escoger una aleatoriamente"
-
-
-msgid "Sample All Indirect Lights"
-msgstr "Todas las luces indirectas"
-
-
-msgid "Sample all lights (for indirect samples), rather than randomly picking one"
-msgstr "Muestrea todas las luces (muestras indirectas), en vez de escoger una aleatoriamente"
 
 
 msgid "Clamp Direct"
@@ -79943,14 +79590,6 @@ msgid "Use Sobol random sampling pattern"
 msgstr "Usa el patrón de muestreo aleatorio Sobol"
 
 
-msgid "Correlated Multi-Jitter"
-msgstr "Alteración múltiple correlativa"
-
-
-msgid "Use Correlated Multi-Jitter random sampling pattern"
-msgstr "Usa el patrón de muestreo aleatorio Alteración múltiple correlativa"
-
-
 msgid "Progressive Multi-Jitter"
 msgstr "Alteración múltiple progresiva"
 
@@ -79965,14 +79604,6 @@ msgstr "Valor semilla para que el integrador obtenga distintos patrones de ruido
 
 msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "Usar Open Shading Language (sólo procesamiento por CPU)"
-
-
-msgid "Subsurface Samples"
-msgstr "Muestras de transluminiscencia"
-
-
-msgid "Number of subsurface scattering samples to render for each AA sample"
-msgstr "Transluminiscencia, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Viewport Texture Limit"
@@ -80027,52 +79658,8 @@ msgid "Limit texture size used by final rendering"
 msgstr "Permite limitar el tamaño de las texturas usadas durante el procesamiento final"
 
 
-msgid "Tile order for rendering"
-msgstr "Orden de procesamiento de las celdas"
-
-
-msgid "Render from center to the edges"
-msgstr "Procesar desde el centro a los bordes"
-
-
-msgid "Right to Left"
-msgstr "Derecha a izquierda"
-
-
-msgid "Render from right to left"
-msgstr "Procesar de derecha a izquierda"
-
-
-msgid "Left to Right"
-msgstr "Izquierda a derecha"
-
-
-msgid "Render from left to right"
-msgstr "Procesar de izquierda a derecha"
-
-
-msgid "Top to Bottom"
-msgstr "Arriba a abajo"
-
-
-msgid "Render from top to bottom"
-msgstr "Procesar de arriba a abajo"
-
-
-msgid "Bottom to Top"
-msgstr "Abajo a arriba"
-
-
-msgid "Render from bottom to top"
-msgstr "Procesar de abajo a arriba"
-
-
-msgid "Hilbert Spiral"
-msgstr "Espiral de Hilbert"
-
-
-msgid "Render in a Hilbert Spiral"
-msgstr "Procesar siguiendo una espiral de Hilbert"
+msgid "Tile Size"
+msgstr "Tamaño de celdas"
 
 
 msgid "Transmission Bounces"
@@ -80081,14 +79668,6 @@ msgstr "Rebotes de transmisión"
 
 msgid "Maximum number of transmission bounces, bounded by total maximum"
 msgstr "Cantidad máxima de rebotes de transmisión, restringida por el máximo total"
-
-
-msgid "Transmission Samples"
-msgstr "Muestras de transmisión"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "Transmisión, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Transparent Max Bounces"
@@ -80155,22 +79734,6 @@ msgid "Denoise the image in the 3D viewport"
 msgstr "Reduce el ruido de la imagen en la vista 3D"
 
 
-msgid "Progressive Refine"
-msgstr "Refinamiento progresivo"
-
-
-msgid "Instead of rendering each tile until it is finished, refine the whole image progressively (this renders somewhat slower, but time can be saved by manually stopping the render when the noise is low enough)"
-msgstr "En vez de procesar cada celda hasta que esté completa, refina progresivamente la imagen completa (esto se procesa más lento, pero es posible ahorrar tiempo deteniendo manualmente el procesamiento cuando el ruido ya sea suficientemente bajo)"
-
-
-msgid "Square Samples"
-msgstr "Muestras al cuadrado"
-
-
-msgid "Square sampling values for easier artist control"
-msgstr "Eleva los valores de muestreo al cuadrado para un mejor control artístico"
-
-
 msgid "Volume Bounces"
 msgstr "Rebotes de volumetría"
 
@@ -80189,14 +79752,6 @@ msgstr "Cantidad máxima de intervalos a través del volumen antes de finalizar 
 
 msgid "Globally adjust detail for volume rendering, on top of automatically estimated step size. Higher values reduce render time, lower values render with more detail"
 msgstr "Ajusta globalmente el detalle del procesamiento volumétrico, por encima del tamaño de intervalo estimado automáticamente. Valores mayores reducen el tiempo de procesamiento, valores menores producen una imagen con más detalle"
-
-
-msgid "Volume Samples"
-msgstr "Muestras de volumetría"
-
-
-msgid "Number of volume scattering samples to render for each AA sample"
-msgstr "Dispersión volumétrica, cantidad de muestras por cada muestra de suavizado de bordes"
 
 
 msgid "Render pass to show in the 3D Viewport"
@@ -80219,8 +79774,16 @@ msgid "Show the Ambient Occlusion render pass"
 msgstr "Mostrar la pasada de procesamiento de Oclusión ambiental"
 
 
+msgid "Diffuse Direct"
+msgstr "Difusión directa"
+
+
 msgid "Show the Diffuse Direct render pass"
 msgstr "Mostrar la pasada de procesamiento de Difusión Directa"
+
+
+msgid "Diffuse Indirect"
+msgstr "Difusión indirecta"
 
 
 msgid "Show the Diffuse Indirect render pass"
@@ -80231,8 +79794,16 @@ msgid "Show the Diffuse Color render pass"
 msgstr "Mostrar la pasada de procesamiento de Color de Difusión"
 
 
+msgid "Glossy Direct"
+msgstr "Reflectividad directa"
+
+
 msgid "Show the Glossy Direct render pass"
 msgstr "Mostrar la pasada de procesamiento de Reflectividad Directa"
+
+
+msgid "Glossy Indirect"
+msgstr "Reflectividad indirecta"
 
 
 msgid "Show the Glossy Indirect render pass"
@@ -80247,8 +79818,16 @@ msgid "Show the Glossy Color render pass"
 msgstr "Mostrar la pasada de procesamiento de Color de Reflectividad"
 
 
+msgid "Transmission Direct"
+msgstr "Transmisión directa"
+
+
 msgid "Show the Transmission Direct render pass"
 msgstr "Mostrar la pasada de procesamiento de Transmisión Directa"
+
+
+msgid "Transmission Indirect"
+msgstr "Transmisión indirecta"
 
 
 msgid "Show the Transmission Indirect render pass"
@@ -80281,6 +79860,10 @@ msgstr "Mostrar la pasada de procesamiento de UV"
 
 msgid "Show the Mist render pass"
 msgstr "Mostrar la pasada de procesamiento de Niebla"
+
+
+msgid "Sample Count"
+msgstr "Cantidad de muestras"
 
 
 msgid "Object visibility for camera rays"
@@ -81455,14 +81038,6 @@ msgid "Manually determine the number of threads"
 msgstr "Determinar manualmente la cantidad de hilos"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Tamaño horizontal de las celdas de procesamiento"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Tamaño vertical de las celdas de procesamiento"
-
-
 msgid "Clear Images before baking"
 msgstr "Eliminar imágenes antes de capturar"
 
@@ -81523,10 +81098,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Dibuja trazos estilizados usando Freestyle"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "Guarda el resultado completo de la capa de procesamiento para cada muestra de suavizado de bordes (esto resuelve problemas con este suavizado durante la composición)"
-
-
 msgid "Use high quality tangent space at the cost of lower performance"
 msgstr "Usa un espacio tangencial de alta calidad, a costa de un menor rendimiento"
 
@@ -81573,14 +81144,6 @@ msgstr "Resultado a caché"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "Guarda el caché de procesamiento en arcivos EXR (útil en composiciones pesadas, Nota: afecta a escenas procesadas de forma indirecta)"
-
-
-msgid "Save Buffers"
-msgstr "Guardar buffers"
-
-
-msgid "Save tiles for all RenderLayers and SceneNodes to files in the temp directory (saves memory, required for Full Sample)"
-msgstr "Almacena las celdas para todas las capas de procesamiento y los nodos de escena en el directorio temporal (ahorra memoria, es requerido por el Muestreo completo)"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -83713,10 +83276,6 @@ msgid "Text color"
 msgstr "Color del texto"
 
 
-msgid "Font of the text. Falls back to the UI font by default"
-msgstr "Tipografía del texto. Regresa a la tipografía de la IU de forma predefinida"
-
-
 msgid "Size of the text"
 msgstr "Tamaño del texto"
 
@@ -84486,8 +84045,100 @@ msgid "Scale along Y axis"
 msgstr "Escalar en el eje Y"
 
 
+msgid "Show Annotation"
+msgstr "Mostrar anotación"
+
+
+msgid "Show annotations for this view"
+msgstr "Muestra anotaciones en esta vista"
+
+
+msgid "Show Metadata"
+msgstr "Mostrar metadatos"
+
+
+msgid "Show metadata of first visible strip"
+msgstr "Muestra los metadatos del primer clip visible"
+
+
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "Muestra zonas de seguridad de títulos y acción para TV en la vista previa"
+
+
+msgid "Show F-Curves"
+msgstr "Mostrar curvas-f"
+
+
+msgid "Display strip opacity/volume curve"
+msgstr "Muestra las curvas de opacidad y volumen del clip"
+
+
+msgid "Show Grid"
+msgstr "Mostrar cuadrícula"
+
+
+msgid "Show Duration"
+msgstr "Mostrar duración"
+
+
+msgid "Show Offsets"
+msgstr "Mostrar desplazamientos"
+
+
+msgid "Display strip in/out offsets"
+msgstr "Permite mostrar los desplazamientos de entrada/salida de los clips"
+
+
+msgid "Show Source"
+msgstr "Mostrar origen"
+
+
+msgid "Display path to source file, or name of source datablock"
+msgstr "Muestra la ruta hasta el archivo o el nombre del bloque de datos de origen"
+
+
+msgid "Waveform Display"
+msgstr "Formas de onda"
+
+
+msgid "How Waveforms are displayed"
+msgstr "Método de visualización de formas de onda"
+
+
+msgid "Waveforms Off"
+msgstr "No mostrar"
+
+
+msgid "Don't display waveforms for any sound strips"
+msgstr "No mostrar formas de onda para ningún clip de sonido"
+
+
+msgid "Waveforms On"
+msgstr "Mostrar"
+
+
+msgid "Display waveforms for all sound strips"
+msgstr "Mostrar formas de onda para todos los clips de sonido"
+
+
+msgid "Use Strip Option"
+msgstr "Usar opciones del clip"
+
+
+msgid "Display waveforms depending on strip setting"
+msgstr "Mostrar formas de onda dependiendo de las opciones del clip"
+
+
 msgid "Sequencer Tool Settings"
 msgstr "Editor de video - Opciones de herramientas"
+
+
+msgid "Median Point"
+msgstr "Punto medio"
+
+
+msgid "Individual Origins"
+msgstr "Orígenes individuales"
 
 
 msgid "Collection of Sequences"
@@ -85308,16 +84959,8 @@ msgid "Pivot around the 2D cursor"
 msgstr "Pivotar alrededor del cursor 2D"
 
 
-msgid "Individual Origins"
-msgstr "Orígenes individuales"
-
-
 msgid "Pivot around each object's own origin"
 msgstr "Pivotar alrededor del origen de cada objeto"
-
-
-msgid "Median Point"
-msgstr "Punto medio"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -85326,14 +84969,6 @@ msgstr "Pivotar alrededor del punto medio de los objetos seleccionados"
 
 msgid "Scopes to visualize movie clip statistics"
 msgstr "Instrumentos para visualizar estadísticas del clip de película"
-
-
-msgid "Show Annotation"
-msgstr "Mostrar anotación"
-
-
-msgid "Show annotations for this view"
-msgstr "Muestra anotaciones en esta vista"
 
 
 msgid "Show Blue Channel"
@@ -85400,10 +85035,6 @@ msgid "Show green channel in the frame"
 msgstr "Muestra el canal verde del fotograma"
 
 
-msgid "Show Grid"
-msgstr "Mostrar cuadrícula"
-
-
 msgid "Show grid showing lens distortion"
 msgstr "Muestra una rejilla mostrando la distorsión de la lente"
 
@@ -85430,10 +85061,6 @@ msgstr "Superponer máscara"
 
 msgid "Display Smooth Splines"
 msgstr "Mostrar curvas suaves"
-
-
-msgid "Show Metadata"
-msgstr "Mostrar metadatos"
 
 
 msgid "Show metadata of clip"
@@ -86820,24 +86447,12 @@ msgid "Display result under strips"
 msgstr "Mostrar resultado bajo los clips"
 
 
-msgid "Show F-Curves"
-msgstr "Mostrar curvas-f"
-
-
-msgid "Display strip opacity/volume curve"
-msgstr "Muestra las curvas de opacidad y volumen del clip"
-
-
 msgid "Display Frames"
 msgstr "Mostrar fotogramas"
 
 
 msgid "Display frames rather than seconds"
 msgstr "Muestra fotogramas en vez de segundos"
-
-
-msgid "Show metadata of first visible strip"
-msgstr "Muestra los metadatos del primer clip visible"
 
 
 msgid "Show Overexposed"
@@ -86848,36 +86463,12 @@ msgid "Show overexposed areas with zebra stripes"
 msgstr "Muestra las áreas sobre expuestas con barras tipo cebra"
 
 
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "Muestra zonas de seguridad de títulos y acción para TV en la vista previa"
-
-
 msgid "Separate Colors"
 msgstr "Separar colores"
 
 
 msgid "Separate color channels in preview"
 msgstr "Separar canales de color en la previsualización"
-
-
-msgid "Show Duration"
-msgstr "Mostrar duración"
-
-
-msgid "Show Offsets"
-msgstr "Mostrar desplazamientos"
-
-
-msgid "Display strip in/out offsets"
-msgstr "Permite mostrar los desplazamientos de entrada/salida de los clips"
-
-
-msgid "Show Source"
-msgstr "Mostrar origen"
-
-
-msgid "Display path to source file, or name of source datablock"
-msgstr "Muestra la ruta hasta el archivo o el nombre del bloque de datos de origen"
 
 
 msgid "Transform Preview"
@@ -86916,48 +86507,12 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Tipo de vista del editor de video (editor de video, previsualización o ambas)"
 
 
-msgid "Waveform Display"
-msgstr "Formas de onda"
-
-
-msgid "How Waveforms are displayed"
-msgstr "Método de visualización de formas de onda"
-
-
-msgid "Waveforms Off"
-msgstr "No mostrar"
-
-
-msgid "Don't display waveforms for any sound strips"
-msgstr "No mostrar formas de onda para ningún clip de sonido"
-
-
-msgid "Waveforms On"
-msgstr "Mostrar"
-
-
-msgid "Display waveforms for all sound strips"
-msgstr "Mostrar formas de onda para todos los clips de sonido"
-
-
-msgid "Use Strip Option"
-msgstr "Usar opciones del clip"
-
-
-msgid "Display waveforms depending on strip setting"
-msgstr "Mostrar formas de onda dependiendo de las opciones del clip"
-
-
 msgid "Space Spreadsheet"
 msgstr "Espacio de la Planilla"
 
 
 msgid "Spreadsheet space data"
 msgstr "Datos del espacio de la planilla"
-
-
-msgid "Attribute Domain"
-msgstr "Dominio del atributo"
 
 
 msgid "Attribute domain to display"
@@ -92009,14 +91564,6 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Procesar trazos estilizados en esta capa"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Cryptomatte - Preciso"
-
-
-msgid "Generate a more accurate cryptomatte pass"
-msgstr "Genera una pasada cryptomatte más precisa"
-
-
 msgid "Cryptomatte Asset"
 msgstr "Cryptomatte - Recurso"
 
@@ -93577,28 +93124,8 @@ msgid "Cycles will render on the CPU"
 msgstr "Cycles realizará el procesamiento con la CPU"
 
 
-msgid "Total Samples:"
-msgstr "Total de muestras:"
-
-
-msgid "AO"
-msgstr "Oclusión ambiental"
-
-
-msgid "Mesh Light"
-msgstr "Luz de mallas"
-
-
-msgid "Subsurface"
-msgstr "Transluminiscencia"
-
-
 msgid "Noise Threshold"
 msgstr "Umbral de ruido"
-
-
-msgid "Min Samples"
-msgstr "Muestras mín"
 
 
 msgid "Start Sample"
@@ -93649,16 +93176,12 @@ msgid "Roughness Threshold"
 msgstr "Umbral de rugosidad"
 
 
-msgid "Tiles X"
-msgstr "Repetición en  X"
-
-
-msgid "Start Pixels"
-msgstr "Píxeles iniciales"
-
-
 msgid "Surfaces"
 msgstr "Superficies"
+
+
+msgid "Denoising"
+msgstr "Reducción de ruidos"
 
 
 msgid "Denoising Data"
@@ -93671,14 +93194,6 @@ msgstr "Identificadores"
 
 msgid "Render Time"
 msgstr "Tiempo procesamiento"
-
-
-msgid "Sample Count"
-msgstr "Cantidad de muestras"
-
-
-msgid "Feature Strength"
-msgstr "Intensidad de reducción"
 
 
 msgid "Pipeline"
@@ -93717,10 +93232,6 @@ msgid "OptiX Flags:"
 msgstr "Indicadores OptiX:"
 
 
-msgid "OpenCL Flags:"
-msgstr "Indicadores OpenCL:"
-
-
 msgid "Max Subdivision"
 msgstr "Subdivisiones máx"
 
@@ -93741,16 +93252,8 @@ msgid "Distance Culling"
 msgstr "Descartar por distancia"
 
 
-msgid "%s AA"
-msgstr "%s SB"
-
-
-msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
-msgstr "%s SB, %s Difusión, %s Reflectividad, %s Transmisión"
-
-
-msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
-msgstr "%s OA, %s Luz de mallas, %s Translum, %s Volumetría"
+msgid "Min Samples"
+msgstr "Muestras mín"
 
 
 msgid "Curve Subdivisions"
@@ -93767,10 +93270,6 @@ msgstr "Nodo de salida incompatible"
 
 msgid "Portal"
 msgstr "Portal"
-
-
-msgid "Baking is performed using CUDA instead of OptiX"
-msgstr "La captura se realizará usando CUDA en vez de OptiX"
 
 
 msgid "Swizzle R"
@@ -94543,10 +94042,6 @@ msgstr "Ninguna cara activa"
 
 msgid "No mesh object"
 msgstr "Ningún objeto poligonal"
-
-
-msgid "Soft Min"
-msgstr "Límite difuso  Mín"
 
 
 msgid "See OperatorList.txt text block"
@@ -96549,10 +96044,6 @@ msgid "Use for Rendering"
 msgstr "Procesar"
 
 
-msgid "Accurate Mode"
-msgstr "Modo preciso"
-
-
 msgid "Conflicts with another render pass with the same name"
 msgstr "En conflicto con otra pasada de procesamiento con el mismo nombre"
 
@@ -98104,6 +97595,10 @@ msgid "Fractional Preview Zoom"
 msgstr "Zoom fraccional previsualiz"
 
 
+msgid "Show Separate Color Channels"
+msgstr "Mostrar canales de color separados"
+
+
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Escena"
@@ -98147,10 +97642,6 @@ msgstr "Velocidad de fotogramas original"
 
 msgid "Custom Proxy"
 msgstr "Reemplazo personalizado"
-
-
-msgid "Show Separate Color Channels"
-msgstr "Mostrar canales de color separados"
 
 
 msgid "Add Transition"
@@ -99334,11 +98825,6 @@ msgstr "Referencia"
 msgctxt "Operator"
 msgid "Background"
 msgstr "Fondo"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Hacer reemplazo..."
 
 
 msgctxt "Operator"
@@ -100662,10 +100148,6 @@ msgstr "Alternar rayos X"
 
 msgid "To 3D Cursor"
 msgstr "A cursor 3D"
-
-
-msgid "X-Ray"
-msgstr "Rayos X"
 
 
 msgid "Fade Inactive Geometry"
@@ -103972,10 +103454,6 @@ msgid "No intersections found"
 msgstr "No se encontraron intersecciones"
 
 
-msgid "%s: confirm, %s: cancel, %s: start/define cut, %s: close cut, %s: new cut, %s: midpoint snap (%s), %s: ignore snap (%s), %s: angle constraint (%s), %s: cut through (%s), %s: panning"
-msgstr "%s: confirmar, %s: cancelar, %s: inicio/definir corte, %s: cerrar corte, %s: nuevo corte, %s: adherir a pto. medio (%s), %s: ignorar adherencia (%s), %s: restricción de ángulo (%s), %s: cortar a través (%s), %s: desplazamiento"
-
-
 msgid "Selected faces required"
 msgstr "Se requieren caras seleccionadas"
 
@@ -104396,10 +103874,6 @@ msgstr "Capturando a tipo de imagen no soportado"
 
 msgid "No objects found to bake from"
 msgstr "No se encontraron objetos desde donde capturar"
-
-
-msgid "Combined bake pass Ambient Occlusion contribution requires an enabled light pass (bake the Ambient Occlusion pass type instead)"
-msgstr "La contribución de la oclusión ambiental a la pasada de captura Combinada requiere tener habilitada una pasada de luz (alternativamente capturar la pasada Oclusión ambiental)"
 
 
 msgid "Combined bake pass requires Emit, or a light pass with Direct or Indirect contributions enabled"
@@ -104862,10 +104336,6 @@ msgid "Object type of source object is not supported"
 msgstr "El tipo de objeto del objeto de origen no es soportado"
 
 
-msgid "OK?"
-msgstr "¿Aceptar?"
-
-
 msgid "Set Parent To"
 msgstr "Definir como superior"
 
@@ -104878,24 +104348,16 @@ msgid "Object (Without Inverse)"
 msgstr "Sin compensación"
 
 
+msgid "OK?"
+msgstr "¿Aceptar?"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "Seleccionar 1 o 3 vértices a los cuales subordinar"
 
 
 msgid "Loop in parents"
 msgstr "Bucle en superiores"
-
-
-msgid "Can only make proxy for a referenced object or collection"
-msgstr "Sólo es posible hacer un reemplazo de un objeto o colección referenciados"
-
-
-msgid "Unable to assign proxy"
-msgstr "No fue posible asignar un reemplazo"
-
-
-msgid "No object to make proxy for"
-msgstr "Ningún objeto del cual hacer un reemplazo"
 
 
 msgid "No active bone"
@@ -108190,10 +107652,6 @@ msgid "Use Factor"
 msgstr "Usar factor"
 
 
-msgid "Overshoot"
-msgstr "Extender"
-
-
 msgid "Material Borders"
 msgstr "Límites de materiales"
 
@@ -108578,6 +108036,10 @@ msgid "Frame already exists on this frame number %d"
 msgstr "Ya existe un fotograma en este número de fotograma %d"
 
 
+msgid "Modify"
+msgstr "Modificar"
+
+
 msgid "Cannot assign material '%s', it has to be used by the grease pencil object already"
 msgstr "No es posible asignar el material '%s', debería estar siendo usado de antemano por el objeto de lápiz de cera"
 
@@ -108753,10 +108215,6 @@ msgstr "La cantidad de normales personalizadas no es igual la cantidad de vérti
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "La metabola '%s' no contiene la curva indicada"
-
-
-msgid "Modify"
-msgstr "Modificar"
 
 
 msgid "Negative vertex index in vertex_indices_set"
@@ -109546,10 +109004,6 @@ msgid "Lower Right"
 msgstr "Inferior derecha"
 
 
-msgid "Albedo"
-msgstr "Albedo"
-
-
 msgid "Image 1"
 msgstr "Imagen 1"
 
@@ -109630,6 +109084,10 @@ msgid "Shader Editor"
 msgstr "Editor de sombreado"
 
 
+msgid "AO"
+msgstr "Oclusión ambiental"
+
+
 msgid "Anisotropy"
 msgstr "Anisotropía"
 
@@ -109672,6 +109130,10 @@ msgstr "Color aleatorio"
 
 msgid "Random Roughness"
 msgstr "Rugosidad aleatoria"
+
+
+msgid "Subsurface"
+msgstr "Transluminiscencia"
 
 
 msgid "Subsurface Radius"
@@ -109858,10 +109320,6 @@ msgid "Alpha Fac"
 msgstr "Fact de alfa"
 
 
-msgid "Texture Blur"
-msgstr "Desenfoque de textura"
-
-
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -110022,10 +109480,6 @@ msgid "No border area selected"
 msgstr "Ningún área fronteriza seleccionada"
 
 
-msgid "Cannot save render buffers, check the temp default path"
-msgstr "No es posible guardar los buffers de procesamiento, comprobar la ruta temporal predefinida"
-
-
 msgid "Border rendering is not supported by sequencer"
 msgstr "El marco de procesamiento no es soportado por el editor de video"
 
@@ -110036,10 +109490,6 @@ msgstr "Ningún árbol de nodos en la escena"
 
 msgid "No render output node in scene"
 msgstr "Ningún nodo de salida de procesamiento en la escena"
-
-
-msgid "Full sample AA not supported without 3D rendering"
-msgstr "Suavizado de bordes con muestreo completo, no soportado sin procesamiento 3D"
 
 
 msgid "All render layers are disabled"

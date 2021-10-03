@@ -2928,6 +2928,11 @@ def load(operator, context, filepath="",
                             mod = parent.bl_obj.modifiers.new('subsurf', 'SUBSURF')
                             mod.levels = preview_levels
                             mod.render_levels = render_levels
+                            boundary_rule = elem_prop_first(elem_find_first(fbx_sdata, b'BoundaryRule'), default=1)
+                            if boundary_rule == 2:
+                                mod.boundary_smooth = "PRESERVE_CORNERS"
+                            else:
+                                mod.boundary_smooth = "ALL"
 
         _(); del _
 

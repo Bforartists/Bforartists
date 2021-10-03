@@ -16,16 +16,21 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import bpy
 from blenderkit import paths
 
 import requests, os, json, threading
 
 
 def get_addon_version():
-    import blenderkit
-    ver = blenderkit.bl_info['version']
+    # should return addon version, but since Blender 3.0 this is synced with Blender version
+    ver = bpy.app.version
     return '%i.%i.%i' % (ver[0], ver[1], ver[2])
+
+
+    # import blenderkit
+    # ver = blenderkit.bl_info['version']
+    # return '%i.%i.%i' % (ver[0], ver[1], ver[2])
 
 
 def check_version(url, api_key, module):

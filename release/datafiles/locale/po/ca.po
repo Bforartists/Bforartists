@@ -3848,24 +3848,20 @@ msgid "Edit Mode"
 msgstr "Mode d'Edició"
 
 
-msgid "Mirror"
-msgstr "Seleccionar fila"
-
-
-msgid "Vertex Weight"
-msgstr "Dreta"
+msgid "Texture Mapping"
+msgstr "Texte"
 
 
 msgid "Time Offset"
 msgstr "Joc"
 
 
+msgid "Mirror"
+msgstr "Seleccionar fila"
+
+
 msgid "Hue/Saturation"
 msgstr "Esborrar Rotació"
-
-
-msgid "Texture Mapping"
-msgstr "Texte"
 
 
 msgid "Armature Modifier"
@@ -3964,6 +3960,10 @@ msgid "Strength of modifier effect"
 msgstr "Seleccionar connectats"
 
 
+msgid "Point Density"
+msgstr "Seleccionar fila"
+
+
 msgid "Mirror Modifier"
 msgstr "Esborrar tot"
 
@@ -4000,6 +4000,10 @@ msgid "Space"
 msgstr "Seleccionar fila"
 
 
+msgid "Target Object"
+msgstr "Comprimir Dades"
+
+
 msgid "Vertex Group Element"
 msgstr "Pintura Vectorial"
 
@@ -4010,6 +4014,10 @@ msgstr "Afegir Tira"
 
 msgid "Group Index"
 msgstr "Seleccionar fila"
+
+
+msgid "Vertex Weight"
+msgstr "Dreta"
 
 
 msgid "Grid Scale"
@@ -8652,10 +8660,6 @@ msgid "Use distance between affected and target objects"
 msgstr "Esborrar"
 
 
-msgid "Target Object"
-msgstr "Comprimir Dades"
-
-
 msgid "Warp Modifier"
 msgstr "Esborrar tot"
 
@@ -10084,6 +10088,14 @@ msgid "Object Info"
 msgstr "Comprimir Dades"
 
 
+msgid "Align X"
+msgstr "Duplicar"
+
+
+msgid "Align Y"
+msgstr "Duplicar"
+
+
 msgid "Label Font Size"
 msgstr "Duplicar"
 
@@ -10286,10 +10298,6 @@ msgstr "Esborrar Posició"
 
 msgid "Musgrave Texture"
 msgstr "Texte"
-
-
-msgid "Point Density"
-msgstr "Seleccionar fila"
 
 
 msgid "Color Source"
@@ -15901,15 +15909,6 @@ msgstr "Seleccionar amb límit"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Emparentar"
-
-
-msgid "Proxy Object"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Image Displist"
 
@@ -18535,15 +18534,7 @@ msgid "Align Auto"
 msgstr "Duplicar"
 
 
-msgid "Align X"
-msgstr "Duplicar"
-
-
 msgid "Align UVs on X axis"
-msgstr "Duplicar"
-
-
-msgid "Align Y"
 msgstr "Duplicar"
 
 
@@ -19310,10 +19301,6 @@ msgid "Property name edit"
 msgstr "Image Displist"
 
 
-msgid "Property value edit"
-msgstr "Image Displist"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Seleccionar fila"
@@ -19629,10 +19616,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Threads"
 msgstr "Llustrós"
-
-
-msgid "Tiles"
-msgstr "Arxiu"
 
 
 msgid "Render Pass"
@@ -20691,10 +20674,6 @@ msgid "Cast Shadow"
 msgstr "Corba"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
 msgid "Displacement Method"
 msgstr "Mostrar propietats de les arestes"
 
@@ -20707,46 +20686,6 @@ msgid "Transparent Shadows"
 msgstr "Esborrar Rotació"
 
 
-msgid "Diffuse Direct"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Diffuse Indirect"
-msgstr "Seleccionar fila"
-
-
-msgid "Glossy Direct"
-msgstr "Seleccionar connectats"
-
-
-msgid "Glossy Indirect"
-msgstr "Centre"
-
-
-msgid "Transmission Direct"
-msgstr "Seleccionar connectats"
-
-
-msgid "Transmission Indirect"
-msgstr "Esborrar Rotació"
-
-
-msgid "AA Samples"
-msgstr "Esborrar"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Seleccionar connectats"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Esborrar Rotació"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
 msgid "Filter Glossy"
 msgstr "Texte"
 
@@ -20757,22 +20696,6 @@ msgstr "Arxiu"
 
 msgid "Static BVH"
 msgstr "Rotar"
-
-
-msgid "Cancel timeout"
-msgstr "Finestra de Render"
-
-
-msgid "Reset timeout"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Text timeout"
-msgstr "Reduir"
-
-
-msgid "Tile Size"
-msgstr "Duplicar"
 
 
 msgid "Use Spatial Splits"
@@ -20803,14 +20726,6 @@ msgid "Diffuse Bounces"
 msgstr "Comprimir Dades"
 
 
-msgid "Diffuse Samples"
-msgstr "Comprimir Dades"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
 msgid "Feature Set"
 msgstr "Dreta"
 
@@ -20839,80 +20754,52 @@ msgid "Glossy Bounces"
 msgstr "Centre"
 
 
-msgid "Glossy Samples"
-msgstr "Esborrar Rotació"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
-msgid "Mesh Light Samples"
-msgstr "Esborrar Rotació"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Esborrar"
-
-
 msgid "Pause Preview"
 msgstr "Anterior"
-
-
-msgid "Start Resolution"
-msgstr "Seleccionar connectats"
 
 
 msgid "Number of samples to render for each pixel"
 msgstr "Seleccionar connectats"
 
 
-msgid "Tile order for rendering"
-msgstr "Guardar com"
-
-
-msgid "Right to Left"
-msgstr "Dreta"
-
-
-msgid "Left to Right"
-msgstr "Dreta"
-
-
-msgid "Top to Bottom"
-msgstr "Arxiu"
-
-
-msgid "Bottom to Top"
-msgstr "Arxiu"
+msgid "Tile Size"
+msgstr "Duplicar"
 
 
 msgid "Transmission Bounces"
 msgstr "Esborrar Rotació"
 
 
-msgid "Transmission Samples"
-msgstr "Esborrar Rotació"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "Seleccionar connectats"
-
-
 msgid "Transparent Max Bounces"
 msgstr "Seleccionar connectats"
 
 
-msgid "Progressive Refine"
-msgstr "Render"
+msgid "Diffuse Direct"
+msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Diffuse Indirect"
+msgstr "Seleccionar fila"
+
+
+msgid "Glossy Direct"
+msgstr "Seleccionar connectats"
+
+
+msgid "Glossy Indirect"
+msgstr "Centre"
 
 
 msgid "Glossy Color"
 msgstr "Comprimir Dades"
+
+
+msgid "Transmission Direct"
+msgstr "Seleccionar connectats"
+
+
+msgid "Transmission Indirect"
+msgstr "Esborrar Rotació"
 
 
 msgid "Map Resolution"
@@ -21155,14 +21042,6 @@ msgid "Threads Mode"
 msgstr "Pintura Vectorial"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Guardar com"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Guardar com"
-
-
 msgid "Low Resolution Mesh"
 msgstr "Seleccionar connectats"
 
@@ -21177,10 +21056,6 @@ msgstr "Seleccionar fila"
 
 msgid "Placeholders"
 msgstr "Marcadors de posició"
-
-
-msgid "Save Buffers"
-msgstr "Buffer Z"
 
 
 msgid "Stamp Camera"
@@ -21827,6 +21702,10 @@ msgid "Transform parameters for a sequence strip"
 msgstr "Començar a renderitzar una seqüència"
 
 
+msgid "Show Grid"
+msgstr "Moure a Capa"
+
+
 msgid "Gray Scale"
 msgstr "Desparentar"
 
@@ -22025,10 +21904,6 @@ msgstr "Arxiu"
 
 msgid "Show Green Channel"
 msgstr "Finestra de Render"
-
-
-msgid "Show Grid"
-msgstr "Moure a Capa"
 
 
 msgid "Show Marker Pattern"
@@ -23839,14 +23714,6 @@ msgid "Overall minimum intensity of the mist effect"
 msgstr "Seleccionar connectats"
 
 
-msgid "Mesh Light"
-msgstr "Dreta"
-
-
-msgid "Tiles X"
-msgstr "Arxiu"
-
-
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Seleccionar fila"
@@ -24790,11 +24657,6 @@ msgstr "Buit"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Corba de Bezier"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Emparentar"
 
 
 msgctxt "Operator"
@@ -26193,6 +26055,10 @@ msgid "Stroke not found in grease pencil frame"
 msgstr "Seleccionar connectats"
 
 
+msgid "Modify"
+msgstr "Esborrar tot"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Amagar Seleccionats"
 
@@ -26207,10 +26073,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Mtex not found for this type"
 msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Modify"
-msgstr "Esborrar tot"
 
 
 msgid "Unable to locate link in node tree"

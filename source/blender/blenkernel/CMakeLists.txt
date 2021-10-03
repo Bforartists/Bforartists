@@ -83,9 +83,10 @@ set(SRC
   intern/armature_pose.cc
   intern/armature_selection.cc
   intern/armature_update.c
-  intern/asset_catalog.cc
-  intern/asset_library.cc
   intern/asset.cc
+  intern/asset_catalog.cc
+  intern/asset_catalog_path.cc
+  intern/asset_library.cc
   intern/attribute.c
   intern/attribute_access.cc
   intern/attribute_math.cc
@@ -304,10 +305,11 @@ set(SRC
   BKE_appdir.h
   BKE_armature.h
   BKE_armature.hh
+  BKE_asset.h
   BKE_asset_catalog.hh
+  BKE_asset_catalog_path.hh
   BKE_asset_library.h
   BKE_asset_library.hh
-  BKE_asset.h
   BKE_attribute.h
   BKE_attribute_access.hh
   BKE_attribute_math.hh
@@ -789,6 +791,7 @@ if(WITH_GTESTS)
     intern/action_test.cc
     intern/armature_test.cc
     intern/asset_catalog_test.cc
+    intern/asset_catalog_path_test.cc
     intern/asset_library_test.cc
     intern/asset_test.cc
     intern/cryptomatte_test.cc

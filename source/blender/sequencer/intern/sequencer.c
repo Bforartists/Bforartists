@@ -144,6 +144,8 @@ Sequence *SEQ_sequence_alloc(ListBase *lb, int timeline_frame, int machine, int 
   seq->strip = seq_strip_alloc(type);
   seq->stereo3d_format = MEM_callocN(sizeof(Stereo3dFormat), "Sequence Stereo Format");
 
+  seq->color_tag = SEQUENCE_COLOR_NONE;
+
   SEQ_relations_session_uuid_generate(seq);
 
   return seq;
@@ -636,6 +638,18 @@ void SEQ_sequence_base_dupli_recursive(const Scene *scene_src,
     seq_new_fix_links_recursive(seq);
   }
 }
+
+bool SEQ_valid_strip_channel(Sequence *seq)
+{
+  if (seq->machine < 1) {
+    return false;
+  }
+  if (seq->machine > MAXSEQ) {
+    return false;
+  }
+  return true;
+}
+
 /* r_prefix + [" + escaped_name + "] + \0 */
 #define SEQ_RNAPATH_MAXSTR ((30 + 2 + (SEQ_NAME_MAXSTR * 2) + 2) + 1)
 

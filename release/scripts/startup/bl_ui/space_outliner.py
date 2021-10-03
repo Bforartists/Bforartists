@@ -378,7 +378,8 @@ class OUTLINER_MT_asset(Menu):
         space = context.space_data
 
         layout.operator("asset.mark", icon = "ASSIGN")
-        layout.operator("asset.clear", icon = "CLEAR")
+        layout.operator("asset.clear", text="Clear Asset", icon = "CLEAR").set_fake_user = False
+        layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
 
 
 class OUTLINER_PT_filter(Panel):

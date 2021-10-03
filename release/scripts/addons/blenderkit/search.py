@@ -1313,6 +1313,15 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
     bk_logger.info(f'retrieved {len(results)} assets from elastic search')
     return results
 
+def get_single_asset(asset_base_id):
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    params = {
+        'asset_base_id': asset_base_id
+    }
+    results = get_search_simple(params, api_key=preferences.api_key)
+    if len(results)>0:
+        return results[0]
+    return None
 
 def search(category='', get_next=False, author_id=''):
     ''' initialize searching'''

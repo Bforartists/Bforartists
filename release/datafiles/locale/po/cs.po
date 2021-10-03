@@ -1238,10 +1238,6 @@ msgid "None"
 msgstr "Žádný"
 
 
-msgid "Ambient Occlusion"
-msgstr "Okolní Okluze"
-
-
 msgid "Emit"
 msgstr "Vydávat"
 
@@ -1300,10 +1296,6 @@ msgstr "Klec"
 
 msgid "Clear"
 msgstr "Vyčistit"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "Přidat příspěvek ambient occlusion"
 
 
 msgid "Selected to Active"
@@ -8166,6 +8158,18 @@ msgid "Edit Mode"
 msgstr "Režim úprav"
 
 
+msgid "Texture Mapping"
+msgstr "Mapování textur"
+
+
+msgid "Change stroke uv texture values"
+msgstr "Změna hodnot uv textury tahu"
+
+
+msgid "Time Offset"
+msgstr "Časové odsazení"
+
+
 msgid "Array"
 msgstr "Řada"
 
@@ -8186,28 +8190,12 @@ msgid "Subdivide"
 msgstr "Rozdělit"
 
 
-msgid "Vertex Weight"
-msgstr "Nastavit váhu"
-
-
 msgid "Hook"
 msgstr "Hák"
 
 
-msgid "Time Offset"
-msgstr "Časové odsazení"
-
-
 msgid "Hue/Saturation"
 msgstr "Odstín/sytost"
-
-
-msgid "Texture Mapping"
-msgstr "Mapování textur"
-
-
-msgid "Change stroke uv texture values"
-msgstr "Změna hodnot uv textury tahu"
 
 
 msgid "Tint"
@@ -8380,6 +8368,10 @@ msgid "Strength of modifier effect"
 msgstr "Velikost štětce"
 
 
+msgid "Point Density"
+msgstr "Hustota bodů"
+
+
 msgid "Mirror Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -8452,8 +8444,8 @@ msgid "Space"
 msgstr "Rozestup"
 
 
-msgid "Blend"
-msgstr "Přechod"
+msgid "Target Object"
+msgstr "Cílový objekt"
 
 
 msgid "Vertex Group Element"
@@ -8466,6 +8458,10 @@ msgstr "Vytvořit novou skupinu vertexů"
 
 msgid "Group Index"
 msgstr "Název skupiny vertexů"
+
+
+msgid "Vertex Weight"
+msgstr "Nastavit váhu"
 
 
 msgid "Grid and Canvas Settings"
@@ -12305,6 +12301,10 @@ msgstr "Činitel"
 
 msgid "Factor Red"
 msgstr "Činitel"
+
+
+msgid "Blend"
+msgstr "Přechod"
 
 
 msgid "Clouds"
@@ -16618,10 +16618,6 @@ msgid "Use distance between affected and target objects"
 msgstr "Vzdálenost mezi dvěmi kostmi nebo objekty"
 
 
-msgid "Target Object"
-msgstr "Cílový objekt"
-
-
 msgid "Warp Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -18422,6 +18418,10 @@ msgid "Original"
 msgstr "Originální"
 
 
+msgid "Distribution Method"
+msgstr "Metoda Distribuce"
+
+
 msgid "Is Viewport"
 msgstr "Je 3D Zobrazení"
 
@@ -18542,10 +18542,6 @@ msgid "Point Distribute"
 msgstr "Distribuovat Bod"
 
 
-msgid "Distribution Method"
-msgstr "Metoda Distribuce"
-
-
 msgid "Point Instance"
 msgstr "Bod Instance"
 
@@ -18586,6 +18582,14 @@ msgid "The transformation of the vector and geometry outputs"
 msgstr "Transformace vektoru a výstupy geometrie"
 
 
+msgid "Align X"
+msgstr "Zarovnat X"
+
+
+msgid "Align Y"
+msgstr "Zarovnat Y"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Rám"
@@ -18617,6 +18621,10 @@ msgstr "Materiálové uzly"
 
 msgid "Add Shader"
 msgstr "Přidat shader"
+
+
+msgid "Ambient Occlusion"
+msgstr "Okolní Okluze"
 
 
 msgid "Only Local"
@@ -18949,10 +18957,6 @@ msgstr "Prolnutí projekce"
 
 msgid "Musgrave Texture"
 msgstr "Musgrave textura"
-
-
-msgid "Point Density"
-msgstr "Hustota bodů"
 
 
 msgid "Color Source"
@@ -25043,6 +25047,10 @@ msgid "Occlude Geometry"
 msgstr "Uzavřít Geometrii"
 
 
+msgid "X-Ray"
+msgstr "X-Ray"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "Vybrat řádek"
@@ -27534,15 +27542,6 @@ msgid "Enable or disable posing/selecting bones"
 msgstr "Mód vybírání hran"
 
 
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Vytvořit Proxy"
-
-
-msgid "Proxy Object"
-msgstr "Vytvořit proxy objekt"
-
-
 msgid "Edge Length"
 msgstr "Délky hran"
 
@@ -29122,15 +29121,6 @@ msgid "Selected Only"
 msgstr "Pouze Vybrané"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Pózy kostí"
-
-
-msgid "Create a suitable breakdown pose on the current frame"
-msgstr "Vložit zrcadlenou pózu z bufferu"
-
-
 msgid "All Properties"
 msgstr "Všechny Vlastnosti"
 
@@ -29160,6 +29150,15 @@ msgstr "Předchozí klíč"
 
 
 msgid "Frame number of keyframe immediately before the current frame"
+msgstr "Vložit zrcadlenou pózu z bufferu"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "Pózy kostí"
+
+
+msgid "Create a suitable breakdown pose on the current frame"
 msgstr "Vložit zrcadlenou pózu z bufferu"
 
 
@@ -31633,14 +31632,6 @@ msgid "Align Auto"
 msgstr "Automatické zarovnání"
 
 
-msgid "Align X"
-msgstr "Zarovnat X"
-
-
-msgid "Align Y"
-msgstr "Zarovnat Y"
-
-
 msgid "Align UVs on Y axis"
 msgstr "Zarovnat"
 
@@ -32957,10 +32948,6 @@ msgid "Edit Property"
 msgstr "Upravit Vlastnost"
 
 
-msgid "Edit the attributes of the property"
-msgstr "Upravit atributy vlastnosti"
-
-
 msgid "Is Library Overridable"
 msgstr "Je Knihovna Přepsatelná"
 
@@ -33705,10 +33692,6 @@ msgid "Sampling Presets"
 msgstr "Přednastavení vzorkování"
 
 
-msgid "Denoising"
-msgstr "Odstranění šumu"
-
-
 msgid "Film"
 msgstr "Film"
 
@@ -33759,18 +33742,6 @@ msgstr "Konečné vykreslení"
 
 msgid "Threads"
 msgstr "Vlákna"
-
-
-msgid "Tiles"
-msgstr "Dlaždice"
-
-
-msgid "Adaptive Sampling"
-msgstr "Adaptivní Vzorkování"
-
-
-msgid "Sub Samples"
-msgstr "Dílčí vzorky"
 
 
 msgid "Subdivision"
@@ -33851,10 +33822,6 @@ msgstr "Rozšířený filtr"
 
 msgid "Bookmarks"
 msgstr "Záložky"
-
-
-msgid "Favorites"
-msgstr "Oblíbené položky"
 
 
 msgid "Recent"
@@ -36460,10 +36427,6 @@ msgid "Cast Shadow"
 msgstr "Stín"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Počet snímků renderovaných předem během přehrávání"
-
-
 msgid "Displacement Method"
 msgstr "Displacement metoda"
 
@@ -36484,30 +36447,6 @@ msgid "Use Motion Blur"
 msgstr "Použít rozostření pohybu"
 
 
-msgid "Diffuse Direct"
-msgstr "Diffuse Direct"
-
-
-msgid "Diffuse Indirect"
-msgstr "Zrcadlit UV"
-
-
-msgid "Transmission Direct"
-msgstr "Překlad"
-
-
-msgid "Transmission Indirect"
-msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
-
-
-msgid "AA Samples"
-msgstr "AA Vzorky"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Počet snímků renderovaných předem během přehrávání"
-
-
 msgid "Adaptive Min Samples"
 msgstr "Adaptivní Min Počet Vzorků"
 
@@ -36518,14 +36457,6 @@ msgstr "Práh Adaptivního Vzorkování"
 
 msgid "AO Bounces"
 msgstr "Odrazy AO"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Vzorky Okolní Okluze"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "Počet snímků renderovaných předem během přehrávání"
 
 
 msgid "Filter Glossy"
@@ -36546,30 +36477,6 @@ msgstr "Dynamický"
 
 msgid "Static BVH"
 msgstr "Rotace"
-
-
-msgid "Cancel timeout"
-msgstr "Zrušit animaci"
-
-
-msgid "Accelerator"
-msgstr "Urychlovač"
-
-
-msgid "Memory limit"
-msgstr "Omezení paměti"
-
-
-msgid "Reset timeout"
-msgstr "Obnovit pohled"
-
-
-msgid "Text timeout"
-msgstr "Text timeout"
-
-
-msgid "Tile Size"
-msgstr "Velikost dlaždice"
 
 
 msgid "Use Hair BVH"
@@ -36602,14 +36509,6 @@ msgstr "GPU Výpočet"
 
 msgid "Diffuse Bounces"
 msgstr "Difúzní odrazy"
-
-
-msgid "Diffuse Samples"
-msgstr "Aktuální barva"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Počet snímků renderovaných předem během přehrávání"
 
 
 msgid "Feature Set"
@@ -36656,14 +36555,6 @@ msgid "Glossy Bounces"
 msgstr "Odrazy Lesklosti"
 
 
-msgid "Glossy Samples"
-msgstr "Vzorky Lesklosti"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "Počet snímků renderovaných předem během přehrávání"
-
-
 msgid "Total maximum number of bounces"
 msgstr "Celkový maximální počet odrazý"
 
@@ -36700,10 +36591,6 @@ msgid "The shutter closes at the current frame"
 msgstr "Závěrka se zavře na aktuálním snímku"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Počet dělení plošek v 3D pohledu"
-
-
 msgid "Viewport Denoiser"
 msgstr "Odšumění 3D Výřezu"
 
@@ -36714,22 +36601,6 @@ msgstr "Náhled obrázku"
 
 msgid "Viewport Samples"
 msgstr "Vzorkování v zobrazení"
-
-
-msgid "Start Resolution"
-msgstr "Rozlišení"
-
-
-msgid "Integrator"
-msgstr "Integrátor"
-
-
-msgid "Branched Path Tracing"
-msgstr "Rozvětvené Trasování Cest"
-
-
-msgid "Path Tracing"
-msgstr "Trasování Cest"
 
 
 msgid "Rolling Shutter Duration"
@@ -36756,32 +36627,8 @@ msgid "Render Texture Limit"
 msgstr "Omezení Textury ve Vykreslení"
 
 
-msgid "Tile order for rendering"
-msgstr "Engine použitý pro render"
-
-
-msgid "Render from center to the edges"
-msgstr "Konečný frame pro zobrazení rozsahu Přízraku"
-
-
-msgid "Right to Left"
-msgstr "Zprava do Leva"
-
-
-msgid "Left to Right"
-msgstr "Zleva do Prava"
-
-
-msgid "Top to Bottom"
-msgstr "Shora Dolů"
-
-
-msgid "Bottom to Top"
-msgstr "Zespoda Nahoru"
-
-
-msgid "Hilbert Spiral"
-msgstr "Hilbertova Spirála"
+msgid "Tile Size"
+msgstr "Velikost dlaždice"
 
 
 msgid "Use Adaptive Sampling"
@@ -36796,20 +36643,28 @@ msgid "Denoise the image in the 3D viewport"
 msgstr "Odšumění obrázku ve 3D okně"
 
 
-msgid "Progressive Refine"
-msgstr "Postupné Vylepšování"
-
-
-msgid "Square Samples"
-msgstr "Čtvercové Vzorky"
-
-
 msgid "Max Steps"
 msgstr "Max Počet Kroků"
 
 
+msgid "Diffuse Direct"
+msgstr "Diffuse Direct"
+
+
+msgid "Diffuse Indirect"
+msgstr "Zrcadlit UV"
+
+
 msgid "Glossy Color"
 msgstr "Barva Lesklosti"
+
+
+msgid "Transmission Direct"
+msgstr "Překlad"
+
+
+msgid "Transmission Indirect"
+msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
 
 
 msgid "Map Resolution"
@@ -37356,14 +37211,6 @@ msgid "Auto-Detect"
 msgstr "Auto-Detekce"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Počet dělení plošek během renderování"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Počet dělení plošek během renderování"
-
-
 msgid "Low Resolution Mesh"
 msgstr "Jemnost dělení"
 
@@ -37422,10 +37269,6 @@ msgstr "Zástupné složky"
 
 msgid "Cache Result"
 msgstr "Uložit do mezipaměti"
-
-
-msgid "Save Buffers"
-msgstr "Uložit Buffer"
 
 
 msgid "Use Simplify"
@@ -38587,6 +38430,42 @@ msgid "Transform parameters for a sequence strip"
 msgstr "První frame animace"
 
 
+msgid "Show Metadata"
+msgstr "Zobrazit Metadata"
+
+
+msgid "Show TV title safe and action safe areas in preview"
+msgstr "Zobrazit TV název bezpečně a bezpečné oblasti akcí v náhledu"
+
+
+msgid "Show F-Curves"
+msgstr "Zobrazit F-Křivky"
+
+
+msgid "Show Grid"
+msgstr "Zobrazit skryté"
+
+
+msgid "Show Duration"
+msgstr "Zobrazit Dobu Trvání"
+
+
+msgid "Show Offsets"
+msgstr "Zobrazit Odsazení"
+
+
+msgid "Show Source"
+msgstr "Zobrazit Zdroj"
+
+
+msgid "Median Point"
+msgstr "Středový Bod"
+
+
+msgid "Individual Origins"
+msgstr "Jednotlivé Původní Body"
+
+
 msgid "Gray Scale"
 msgstr "Stupnice šedi"
 
@@ -38857,14 +38736,6 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Střed pivotu pro otáčení/změnu velikosti"
 
 
-msgid "Individual Origins"
-msgstr "Jednotlivé Původní Body"
-
-
-msgid "Median Point"
-msgstr "Středový Bod"
-
-
 msgid "Pivot around the median point of selected objects"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
 
@@ -38909,20 +38780,12 @@ msgid "Show green channel in the frame"
 msgstr "Ukáže nabídky v záhlaví"
 
 
-msgid "Show Grid"
-msgstr "Zobrazit skryté"
-
-
 msgid "Show Marker Pattern"
 msgstr "Druh rohového řezu"
 
 
 msgid "Show Marker Search"
 msgstr "Vybrat klíče"
-
-
-msgid "Show Metadata"
-msgstr "Zobrazit Metadata"
 
 
 msgid "Show Names"
@@ -39597,28 +39460,8 @@ msgid "Scene size"
 msgstr "Velikost scény"
 
 
-msgid "Show F-Curves"
-msgstr "Zobrazit F-Křivky"
-
-
-msgid "Show TV title safe and action safe areas in preview"
-msgstr "Zobrazit TV název bezpečně a bezpečné oblasti akcí v náhledu"
-
-
 msgid "Separate Colors"
 msgstr "Oddělit"
-
-
-msgid "Show Duration"
-msgstr "Zobrazit Dobu Trvání"
-
-
-msgid "Show Offsets"
-msgstr "Zobrazit Odsazení"
-
-
-msgid "Show Source"
-msgstr "Zobrazit Zdroj"
 
 
 msgid "View Type"
@@ -42101,20 +41944,8 @@ msgid "Cycles will render on the CPU"
 msgstr "Cycles bude vykreslovat s CPU"
 
 
-msgid "Total Samples:"
-msgstr "Celkový počet Vzorků:"
-
-
-msgid "Mesh Light"
-msgstr "Světlo"
-
-
 msgid "Noise Threshold"
 msgstr "Práh Šumu"
-
-
-msgid "Min Samples"
-msgstr "Min Vzorků"
 
 
 msgid "Start Sample"
@@ -42145,16 +41976,12 @@ msgid "Roughness Threshold"
 msgstr "Práh Průhlednosti"
 
 
-msgid "Tiles X"
-msgstr "Dlaždice X"
-
-
-msgid "Start Pixels"
-msgstr "Začínající Obrazové Body"
-
-
 msgid "Surfaces"
 msgstr "Povrchy"
+
+
+msgid "Denoising"
+msgstr "Odstranění šumu"
 
 
 msgid "Render Time"
@@ -42191,6 +42018,10 @@ msgstr "Omezení Kamery"
 
 msgid "Distance Culling"
 msgstr "Omezení Vzdálenosti"
+
+
+msgid "Min Samples"
+msgstr "Min Vzorků"
 
 
 msgid "Curve Subdivisions"
@@ -45126,11 +44957,6 @@ msgstr "Pozadí"
 
 
 msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Přiřadit rodiče..."
-
-
-msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Vytvořit lokální..."
 
@@ -45914,10 +45740,6 @@ msgstr "Vybrat řádek"
 
 msgid "Toggle X-Ray"
 msgstr "Přepnout X-Ray"
-
-
-msgid "X-Ray"
-msgstr "X-Ray"
 
 
 msgid "Marker Names"
@@ -47749,12 +47571,12 @@ msgid "No selected object is active"
 msgstr "Není aktivní žádný vybraný objekt"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Object (Keep Transform)"
 msgstr "Viditelné transformace"
+
+
+msgid "OK?"
+msgstr "OK?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -48782,6 +48604,10 @@ msgid "Keyframe not in F-Curve"
 msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 
+msgid "Modify"
+msgstr "Modifikátory"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Přiblíží/oddálí pohled"
 
@@ -48805,10 +48631,6 @@ msgstr "není možné načíst text"
 
 msgid "Mtex not found for this type"
 msgstr "Smínek současně zobrazovaný pro tuto vrstvu"
-
-
-msgid "Modify"
-msgstr "Modifikátory"
 
 
 msgid "Unable to create new strip"

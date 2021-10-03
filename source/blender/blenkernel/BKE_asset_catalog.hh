@@ -26,9 +26,12 @@
 
 #include "BLI_function_ref.hh"
 #include "BLI_map.hh"
+#include "BLI_set.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_uuid.h"
 #include "BLI_vector.hh"
+
+#include "BKE_asset_catalog_path.hh"
 
 #include <map>
 #include <memory>
@@ -38,7 +41,6 @@
 namespace blender::bke {
 
 using CatalogID = bUUID;
-using CatalogPath = std::string;
 using CatalogPathComponent = std::string;
 /* Would be nice to be able to use `std::filesystem::path` for this, but it's currently not
  * available on the minimum macOS target version. */
@@ -47,12 +49,12 @@ using CatalogFilePath = std::string;
 class AssetCatalog;
 class AssetCatalogDefinitionFile;
 class AssetCatalogTree;
+class AssetCatalogFilter;
 
 /* Manages the asset catalogs of a single asset library (i.e. of catalogs defined in a single
  * directory hierarchy). */
 class AssetCatalogService {
  public:
-  static const char PATH_SEPARATOR;
   static const CatalogFilePath DEFAULT_CATALOG_FILENAME;
 
  public:
@@ -65,13 +67,23 @@ class AssetCatalogService {
   void load_from_disk(const CatalogFilePath &file_or_directory_path);
 
   /**
-   * Write the catalog definitions to disk.
-   * The provided directory path is only used when there is no CDF loaded from disk yet but assets
-   * still have to be saved.
+   * Write the catalog definitions to disk in response to the blend file being saved.
    *
-   * Return true on success, which either means there were no in-memory categories to save, or the
-   * save was successful. */
-  bool write_to_disk(const CatalogFilePath &directory_for_new_files);
+   * The location where the catalogs are saved is variable, and depends on the location of the
+   * blend file. The first matching rule wins:
+   *
+   * - Already loaded a CDF from disk?
+   *    -> Always write to that file.
+   * - The directory containing the blend file has a blender_assets.cats.txt file?
+   *    -> Merge with & write to that file.
+   * - The directory containing the blend file is part of an asset library, as per
+   *   the user's preferences?
+   *    -> Merge with & write to ${ASSET_LIBRARY_ROOT}/blender_assets.cats.txt
+   * - Create a new file blender_assets.cats.txt next to the blend file.
+   *
+   * Return true on success, which either means there were no in-memory categories to save,
+   * or the save was successful. */
+  bool write_to_disk_on_blendfile_save(const CatalogFilePath &blend_file_path);
 
   /**
    * Merge on-disk changes into the in-memory asset catalogs.
@@ -84,16 +96,33 @@ class AssetCatalogService {
   void merge_from_disk_before_writing();
 
   /** Return catalog with the given ID. Return nullptr if not found. */
-  AssetCatalog *find_catalog(CatalogID catalog_id);
+  AssetCatalog *find_catalog(CatalogID catalog_id) const;
+
+  /** Return first catalog with the given path. Return nullptr if not found. This is not an
+   * efficient call as it's just a linear search over the catalogs. */
+  AssetCatalog *find_catalog_by_path(const AssetCatalogPath &path) const;
+
+  /**
+   * Create a filter object that can be used to determine whether an asset belongs to the given
+   * catalog, or any of the catalogs in the sub-tree rooted at the given catalog.
+   *
+   * \see #AssetCatalogFilter
+   */
+  AssetCatalogFilter create_catalog_filter(CatalogID active_catalog_id) const;
 
   /** Create a catalog with some sensible auto-generated catalog ID.
    * The catalog will be saved to the default catalog file.*/
-  AssetCatalog *create_catalog(const CatalogPath &catalog_path);
+  AssetCatalog *create_catalog(const AssetCatalogPath &catalog_path);
 
   /**
    * Soft-delete the catalog, ensuring it actually gets deleted when the catalog definition file is
    * written. */
   void delete_catalog(CatalogID catalog_id);
+
+  /**
+   * Update the catalog path, also updating the catalog path of all sub-catalogs.
+   */
+  void update_catalog_path(CatalogID catalog_id, const AssetCatalogPath &new_catalog_path);
 
   AssetCatalogTree *get_catalog_tree();
 
@@ -105,7 +134,7 @@ class AssetCatalogService {
   Map<CatalogID, std::unique_ptr<AssetCatalog>> catalogs_;
   Map<CatalogID, std::unique_ptr<AssetCatalog>> deleted_catalogs_;
   std::unique_ptr<AssetCatalogDefinitionFile> catalog_definition_file_;
-  std::unique_ptr<AssetCatalogTree> catalog_tree_;
+  std::unique_ptr<AssetCatalogTree> catalog_tree_ = std::make_unique<AssetCatalogTree>();
   CatalogFilePath asset_library_root_;
 
   void load_directory_recursive(const CatalogFilePath &directory_path);
@@ -120,52 +149,92 @@ class AssetCatalogService {
   std::unique_ptr<AssetCatalogDefinitionFile> construct_cdf_in_memory(
       const CatalogFilePath &file_path);
 
+  /**
+   * Find a suitable path to write a CDF to.
+   *
+   * This depends on the location of the blend file, and on whether a CDF already exists next to it
+   * or whether the blend file is saved inside an asset library.
+   */
+  static CatalogFilePath find_suitable_cdf_path_for_writing(
+      const CatalogFilePath &blend_file_path);
+
   std::unique_ptr<AssetCatalogTree> read_into_tree();
   void rebuild_tree();
+
+  /**
+   * For every catalog, ensure that its parent path also has a known catalog.
+   */
+  void create_missing_catalogs();
 };
 
+/**
+ * Representation of a catalog path in the #AssetCatalogTree.
+ */
 class AssetCatalogTreeItem {
-  friend class AssetCatalogService;
+  friend class AssetCatalogTree;
 
  public:
+  /** Container for child items. Uses a #std::map to keep items ordered by their name (i.e. their
+   * last catalog component). */
   using ChildMap = std::map<std::string, AssetCatalogTreeItem>;
-  using ItemIterFn = FunctionRef<void(const AssetCatalogTreeItem &)>;
+  using ItemIterFn = FunctionRef<void(AssetCatalogTreeItem &)>;
 
-  AssetCatalogTreeItem(StringRef name, const AssetCatalogTreeItem *parent = nullptr);
+  AssetCatalogTreeItem(StringRef name,
+                       CatalogID catalog_id,
+                       const AssetCatalogTreeItem *parent = nullptr);
 
+  CatalogID get_catalog_id() const;
   StringRef get_name() const;
   /** Return the full catalog path, defined as the name of this catalog prefixed by the full
    * catalog path of its parent and a separator. */
-  CatalogPath catalog_path() const;
+  AssetCatalogPath catalog_path() const;
   int count_parents() const;
+  bool has_children() const;
 
-  static void foreach_item_recursive(const ChildMap &children_, const ItemIterFn callback);
+  /** Iterate over children calling \a callback for each of them, but do not recurse into their
+   * children. */
+  void foreach_child(const ItemIterFn callback);
 
  protected:
   /** Child tree items, ordered by their names. */
   ChildMap children_;
   /** The user visible name of this component. */
   CatalogPathComponent name_;
+  CatalogID catalog_id_;
 
   /** Pointer back to the parent item. Used to reconstruct the hierarchy from an item (e.g. to
    * build a path). */
   const AssetCatalogTreeItem *parent_ = nullptr;
+
+ private:
+  static void foreach_item_recursive(ChildMap &children_, ItemIterFn callback);
 };
 
 /**
  * A representation of the catalog paths as tree structure. Each component of the catalog tree is
- * represented by a #AssetCatalogTreeItem.
+ * represented by an #AssetCatalogTreeItem. The last path component of an item is used as its name,
+ * which may also be shown to the user.
+ * An item can not have multiple children with the same name. That means the name uniquely
+ * identifies an item within its parent.
+ *
  * There is no single root tree element, the #AssetCatalogTree instance itself represents the root.
  */
 class AssetCatalogTree {
-  friend class AssetCatalogService;
+  using ChildMap = AssetCatalogTreeItem::ChildMap;
+  using ItemIterFn = AssetCatalogTreeItem::ItemIterFn;
 
  public:
-  void foreach_item(const AssetCatalogTreeItem::ItemIterFn callback) const;
+  /** Ensure an item representing \a path is in the tree, adding it if necessary. */
+  void insert_item(const AssetCatalog &catalog);
+
+  void foreach_item(const AssetCatalogTreeItem::ItemIterFn callback);
+  /** Iterate over root items calling \a callback for each of them, but do not recurse into their
+   * children. */
+  void foreach_root_item(const ItemIterFn callback);
 
  protected:
   /** Child tree items, ordered by their names. */
-  AssetCatalogTreeItem::ChildMap children_;
+  ChildMap root_items_;
 };
 
 /** Keeps track of which catalogs are defined in a certain file on disk.
@@ -177,6 +246,7 @@ class AssetCatalogDefinitionFile {
    * Later versioning code may be added to handle older files. */
   const static int SUPPORTED_VERSION;
   const static std::string VERSION_MARKER;
+  const static std::string HEADER;
 
   CatalogFilePath file_path;
 
@@ -225,10 +295,10 @@ class AssetCatalogDefinitionFile {
 class AssetCatalog {
  public:
   AssetCatalog() = default;
-  AssetCatalog(CatalogID catalog_id, const CatalogPath &path, const std::string &simple_name);
+  AssetCatalog(CatalogID catalog_id, const AssetCatalogPath &path, const std::string &simple_name);
 
   CatalogID catalog_id;
-  CatalogPath path;
+  AssetCatalogPath path;
   /**
    * Simple, human-readable name for the asset catalog. This is stored on assets alongside the
    * catalog ID; the catalog ID is a UUID that is not human-readable,
@@ -248,12 +318,11 @@ class AssetCatalog {
    * NOTE: the given path will be cleaned up (trailing spaces removed, etc.), so the returned
    * `AssetCatalog`'s path differ from the given one.
    */
-  static std::unique_ptr<AssetCatalog> from_path(const CatalogPath &path);
-  static CatalogPath cleanup_path(const CatalogPath &path);
+  static std::unique_ptr<AssetCatalog> from_path(const AssetCatalogPath &path);
 
  protected:
   /** Generate a sensible catalog ID for the given path. */
-  static std::string sensible_simple_name_for_path(const CatalogPath &path);
+  static std::string sensible_simple_name_for_path(const AssetCatalogPath &path);
 };
 
 /** Comparator for asset catalogs, ordering by (path, UUID). */
@@ -271,5 +340,21 @@ struct AssetCatalogPathCmp {
  * Set that stores catalogs ordered by (path, UUID).
  * Being a set, duplicates are removed. The catalog's simple name is ignored in this. */
 using AssetCatalogOrderedSet = std::set<const AssetCatalog *, AssetCatalogPathCmp>;
+
+/**
+ * Filter that can determine whether an asset should be visible or not, based on its catalog ID.
+ *
+ * \see AssetCatalogService::create_filter()
+ */
+class AssetCatalogFilter {
+ public:
+  bool contains(CatalogID asset_catalog_id) const;
+
+ protected:
+  friend AssetCatalogService;
+  const Set<CatalogID> matching_catalog_ids;
+
+  explicit AssetCatalogFilter(Set<CatalogID> &&matching_catalog_ids);
+};
 
 }  // namespace blender::bke
