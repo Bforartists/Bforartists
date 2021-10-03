@@ -4527,6 +4527,14 @@ msgid "Edit Mode"
 msgstr "Redigerings Läge"
 
 
+msgid "Texture Mapping"
+msgstr "Text"
+
+
+msgid "Time Offset"
+msgstr "Tidsförskjutning:"
+
+
 msgid "Build"
 msgstr "Bygg upp"
 
@@ -4535,20 +4543,8 @@ msgid "Mirror"
 msgstr "Spegel"
 
 
-msgid "Vertex Weight"
-msgstr "Höger"
-
-
-msgid "Time Offset"
-msgstr "Tidsförskjutning:"
-
-
 msgid "Hue/Saturation"
 msgstr "Mättnad"
-
-
-msgid "Texture Mapping"
-msgstr "Text"
 
 
 msgid "Armature Modifier"
@@ -4647,6 +4643,10 @@ msgid "Strength of modifier effect"
 msgstr "Markera Länkad"
 
 
+msgid "Point Density"
+msgstr "Intensitet"
+
+
 msgid "Mirror Modifier"
 msgstr "Radera Allt"
 
@@ -4687,8 +4687,8 @@ msgid "Space"
 msgstr "Markera Rad"
 
 
-msgid "Blend"
-msgstr "Blanda"
+msgid "Target Object"
+msgstr "Packa Data"
 
 
 msgid "Vertex Group Element"
@@ -4701,6 +4701,10 @@ msgstr "Viktningsvärde för en verte i en vertexgrupp"
 
 msgid "Group Index"
 msgstr "Gruppinstans"
+
+
+msgid "Vertex Weight"
+msgstr "Höger"
 
 
 msgid "Grid Subdivisions"
@@ -7429,6 +7433,10 @@ msgid "Factor Red"
 msgstr "Zooma Ut"
 
 
+msgid "Blend"
+msgstr "Blanda"
+
+
 msgid "Distorted Noise"
 msgstr "Markera Länkad"
 
@@ -10035,10 +10043,6 @@ msgid "Use distance between affected and target objects"
 msgstr "Radera"
 
 
-msgid "Target Object"
-msgstr "Packa Data"
-
-
 msgid "Warp Modifier"
 msgstr "Radera Allt"
 
@@ -11587,6 +11591,14 @@ msgid "Object Info"
 msgstr "Packa Data"
 
 
+msgid "Align X"
+msgstr "Duplicera"
+
+
+msgid "Align Y"
+msgstr "Duplicera"
+
+
 msgid "Label Font Size"
 msgstr "Textstorlek"
 
@@ -11813,10 +11825,6 @@ msgstr "Rensa Placering"
 
 msgid "Musgrave Texture"
 msgstr "Text"
-
-
-msgid "Point Density"
-msgstr "Intensitet"
 
 
 msgid "Color Source"
@@ -18306,15 +18314,6 @@ msgid "Enable or disable posing/selecting bones"
 msgstr "Ram Markering"
 
 
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Skapa Förälder"
-
-
-msgid "Proxy Object"
-msgstr "Packa Data"
-
-
 msgid "Edge Length"
 msgstr "Markera Rad"
 
@@ -19529,17 +19528,17 @@ msgid "Apply Pose as Rest Pose"
 msgstr "Applicera Deformering"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Packa Data"
-
-
 msgid "Next Keyframe"
 msgstr "Radera"
 
 
 msgid "Previous Keyframe"
 msgstr "Spara Bild"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "Packa Data"
 
 
 msgid "Add a constraint to the active bone"
@@ -21523,15 +21522,7 @@ msgid "Align Auto"
 msgstr "Duplicera"
 
 
-msgid "Align X"
-msgstr "Duplicera"
-
-
 msgid "Align UVs on X axis"
-msgstr "Duplicera"
-
-
-msgid "Align Y"
 msgstr "Duplicera"
 
 
@@ -22518,10 +22509,6 @@ msgid "Property name edit"
 msgstr "Redigera egenskapens namn"
 
 
-msgid "Property value edit"
-msgstr "Redigera egenskapens värde"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Markera Rad"
@@ -22869,10 +22856,6 @@ msgstr "Rensa Rotation"
 
 msgid "Threads"
 msgstr "Trådar"
-
-
-msgid "Tiles"
-msgstr "Arkiv"
 
 
 msgid "Subdivision"
@@ -24028,10 +24011,6 @@ msgid "Cast Shadow"
 msgstr "Skugga"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Bild Displist"
-
-
 msgid "Displacement Method"
 msgstr "Visa inställningar för kant"
 
@@ -24044,46 +24023,6 @@ msgid "Transparent Shadows"
 msgstr "Rensa Rotation"
 
 
-msgid "Diffuse Direct"
-msgstr "Visa inställningar för kant"
-
-
-msgid "Diffuse Indirect"
-msgstr "Intensitet"
-
-
-msgid "Glossy Direct"
-msgstr "Glansighet:"
-
-
-msgid "Glossy Indirect"
-msgstr "Mitten"
-
-
-msgid "Transmission Direct"
-msgstr "Markera Länkad"
-
-
-msgid "Transmission Indirect"
-msgstr "Transformationsläge"
-
-
-msgid "AA Samples"
-msgstr "Samplar"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Bild Displist"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Rörelsesamplingar"
-
-
-msgid "Number of ambient occlusion samples to render for each AA sample"
-msgstr "Bild Displist"
-
-
 msgid "Filter Glossy"
 msgstr "Text"
 
@@ -24094,22 +24033,6 @@ msgstr "Visningstyp"
 
 msgid "Static BVH"
 msgstr "Rotera"
-
-
-msgid "Cancel timeout"
-msgstr "Arkiv"
-
-
-msgid "Reset timeout"
-msgstr "Versionshistorik"
-
-
-msgid "Text timeout"
-msgstr "Zooma Ut"
-
-
-msgid "Tile Size"
-msgstr "Duplicera"
 
 
 msgid "Use Spatial Splits"
@@ -24138,14 +24061,6 @@ msgstr "Rotera"
 
 msgid "Diffuse Bounces"
 msgstr "Diffus färg"
-
-
-msgid "Diffuse Samples"
-msgstr "Diffus"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Bild Displist"
 
 
 msgid "Feature Set"
@@ -24184,32 +24099,8 @@ msgid "Glossy Bounces"
 msgstr "Mitten"
 
 
-msgid "Glossy Samples"
-msgstr "Glanssamplingar"
-
-
-msgid "Number of glossy bounce samples to render for each AA sample"
-msgstr "Bild Displist"
-
-
-msgid "Mesh Light Samples"
-msgstr "Rörelsesamplingar"
-
-
-msgid "Number of mesh emission light samples to render for each AA sample"
-msgstr "Bild Displist"
-
-
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Antal uppdelningar mellan rutnätets linjer"
-
-
 msgid "Pause Preview"
 msgstr "Förhandsvisa bild"
-
-
-msgid "Start Resolution"
-msgstr "Upplösning"
 
 
 msgid "Number of samples to render for each pixel"
@@ -24220,48 +24111,44 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Frövärde för slumpgeneratorn"
 
 
-msgid "Tile order for rendering"
-msgstr "Renderingsmotor"
-
-
-msgid "Right to Left"
-msgstr "Höger"
-
-
-msgid "Left to Right"
-msgstr "Höger"
-
-
-msgid "Top to Bottom"
-msgstr "Arkiv"
-
-
-msgid "Bottom to Top"
-msgstr "Slutet av filen"
+msgid "Tile Size"
+msgstr "Duplicera"
 
 
 msgid "Transmission Bounces"
 msgstr "Transformationsläge"
 
 
-msgid "Transmission Samples"
-msgstr "Transformationsläge"
-
-
-msgid "Number of transmission bounce samples to render for each AA sample"
-msgstr "Bild Displist"
-
-
 msgid "Transparent Max Bounces"
 msgstr "Genomskinlighet"
 
 
-msgid "Progressive Refine"
-msgstr "Rendera"
+msgid "Diffuse Direct"
+msgstr "Visa inställningar för kant"
+
+
+msgid "Diffuse Indirect"
+msgstr "Intensitet"
+
+
+msgid "Glossy Direct"
+msgstr "Glansighet:"
+
+
+msgid "Glossy Indirect"
+msgstr "Mitten"
 
 
 msgid "Glossy Color"
 msgstr "Packa Data"
+
+
+msgid "Transmission Direct"
+msgstr "Markera Länkad"
+
+
+msgid "Transmission Indirect"
+msgstr "Transformationsläge"
 
 
 msgid "Map Resolution"
@@ -24536,14 +24423,6 @@ msgid "Threads Mode"
 msgstr "Vektor Måla"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Renderingsmotor"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Renderingsmotor"
-
-
 msgid "Low Resolution Mesh"
 msgstr "Lågupplöst mesh"
 
@@ -24558,10 +24437,6 @@ msgstr "Filändelse"
 
 msgid "Persistent Data"
 msgstr "Markera Rad"
-
-
-msgid "Save Buffers"
-msgstr "Z-Buffer"
 
 
 msgid "Stamp Camera"
@@ -25260,6 +25135,14 @@ msgid "Transform parameters for a sequence strip"
 msgstr "Starta rendering av sekvens"
 
 
+msgid "Show Grid"
+msgstr "Flytta Till Lager"
+
+
+msgid "Median Point"
+msgstr "Medianpunkt"
+
+
 msgid "Gray Scale"
 msgstr "Rensa Förälder"
 
@@ -25440,10 +25323,6 @@ msgid "Length of displaying path, in frames"
 msgstr "Längd i antal rutor:"
 
 
-msgid "Median Point"
-msgstr "Medianpunkt"
-
-
 msgid "Pivot around the median point of selected objects"
 msgstr "Markera Länkad"
 
@@ -25482,10 +25361,6 @@ msgstr "Bildrutenummer"
 
 msgid "Show Green Channel"
 msgstr "Renderings Fönster"
-
-
-msgid "Show Grid"
-msgstr "Flytta Till Lager"
 
 
 msgid "Show Marker Pattern"
@@ -27356,14 +27231,6 @@ msgid "Use Mist"
 msgstr "Använd dimma"
 
 
-msgid "Mesh Light"
-msgstr "Ljus"
-
-
-msgid "Tiles X"
-msgstr "Arkiv"
-
-
 msgctxt "Operator"
 msgid "Assign"
 msgstr "Tilldela"
@@ -28512,11 +28379,6 @@ msgstr "Tomobjekt"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Högtalare"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Spara kopia…"
 
 
 msgctxt "Operator"
@@ -30015,6 +29877,10 @@ msgid "Stroke not found in grease pencil frame"
 msgstr "Markera Länkad"
 
 
+msgid "Modify"
+msgstr "Radera Allt"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Göm Markerad"
 
@@ -30029,10 +29895,6 @@ msgstr "Bild Displist"
 
 msgid "Mtex not found for this type"
 msgstr "Vektor Måla"
-
-
-msgid "Modify"
-msgstr "Radera Allt"
 
 
 msgid "Unable to locate link in node tree"

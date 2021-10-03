@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-08-01 15:12+0700\n"
+"PO-Revision-Date: 2021-09-24 00:34-0700\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
@@ -1181,10 +1181,6 @@ msgid "None"
 msgstr "Kosong"
 
 
-msgid "Ambient Occlusion"
-msgstr "Oklusi ambien"
-
-
 msgid "Emit"
 msgstr "Pancarkan"
 
@@ -1251,10 +1247,6 @@ msgstr "Transmisikan sinar ke objek aktif dari sebuah kadang"
 
 msgid "Clear"
 msgstr "Kosongkan"
-
-
-msgid "Add ambient occlusion contribution"
-msgstr "Tambahkan kontribusi oklusi ambien"
 
 
 msgid "Color the pass"
@@ -3441,6 +3433,18 @@ msgid "Random factor to modify original saturation"
 msgstr "Faktor acak untuk modifikasi saturasi asli"
 
 
+msgid "Strength Randomness"
+msgstr "Keacakan Kekuatan"
+
+
+msgid "Randomness factor strength in new strokes"
+msgstr "Kekuatan faktor keacakan di garis luar baru"
+
+
+msgid "Random factor to modify original value"
+msgstr "Faktor diacak memodifikasi nilai asli"
+
+
 msgid "Show Fill"
 msgstr "Tampilkan Isi"
 
@@ -3815,6 +3819,14 @@ msgstr "Kanan"
 
 msgid "Center"
 msgstr "Tengah"
+
+
+msgid "Collision Collection"
+msgstr "Koleksi Tabrakan"
+
+
+msgid "Collision Quality"
+msgstr "Kualitas Tabrakan"
 
 
 msgid "Restitution"
@@ -4369,6 +4381,14 @@ msgid "Contrast"
 msgstr "Kontras"
 
 
+msgid "Color Mode"
+msgstr "Mode Warna"
+
+
+msgid "Set color mode to use for interpolation"
+msgstr "Set mode warna digunakan untuk interpolasi"
+
+
 msgid "Elements"
 msgstr "Elemen"
 
@@ -4401,6 +4421,14 @@ msgid "Interpolation"
 msgstr "Interpolasi"
 
 
+msgid "Set interpolation between color stops"
+msgstr "Set interpolasi antara stop warna"
+
+
+msgid "Ease"
+msgstr "Permudah"
+
+
 msgid "Cardinal"
 msgstr "Kardinal"
 
@@ -4413,8 +4441,20 @@ msgid "Alpha"
 msgstr "Alpha"
 
 
+msgid "Set alpha of selected color stop"
+msgstr "Set alpha stop warna yang terseleksi"
+
+
+msgid "Set color of selected color stop"
+msgstr "Set warna stop warna yang terseleksi"
+
+
 msgid "Position"
 msgstr "Posisi"
+
+
+msgid "Set position of selected color stop"
+msgstr "Set posisi stop warna yang terseleksi"
 
 
 msgid "File Output Slots"
@@ -4458,6 +4498,10 @@ msgid "Influence"
 msgstr "Pengaruh"
 
 
+msgid "Proxy Local"
+msgstr "Proxy Lokal"
+
+
 msgid "Disable"
 msgstr "Matikan"
 
@@ -4472,6 +4516,18 @@ msgstr "Ruang Pemilik"
 
 msgid "World Space"
 msgstr "Ruang Dunia"
+
+
+msgid "Custom Space"
+msgstr "Ruang Kustom"
+
+
+msgid "Pose Space"
+msgstr "Ruang Pose"
+
+
+msgid "Local With Parent"
+msgstr "Lokal Dengan Induk"
 
 
 msgid "Local Space"
@@ -4882,6 +4938,18 @@ msgid "Invert the Z location"
 msgstr "Balikkan lokasi Z"
 
 
+msgid "Follow B-Bone"
+msgstr "Ikuti B-Tulang"
+
+
+msgid "Follow shape of B-Bone segments when calculating Head/Tail position"
+msgstr "Ikuti bentuk segmen B-Tulang saat kalkulasi posisi Kepala/Ekor"
+
+
+msgid "Add original location into copied location"
+msgstr "Tambah lokasi asli ke lokasi tersalin"
+
+
 msgid "Copy X"
 msgstr "Salin X"
 
@@ -5126,6 +5194,14 @@ msgid "Use 3D position of track to parent to"
 msgstr "Gunakan posisi 3D untuk melacak ke induk ke"
 
 
+msgid "Chain Length"
+msgstr "Panjang Rantai"
+
+
+msgid "How many bones are included in the IK effect - 0 uses all bones"
+msgstr "Berapa tulang yang terkandung di efek IK - 0 menggunakan semua tulang"
+
+
 msgid "IK Type"
 msgstr "Tipe IK"
 
@@ -5218,6 +5294,10 @@ msgid "Bone"
 msgstr "Tulang"
 
 
+msgid "Use Tail"
+msgstr "Gunakan Ekor"
+
+
 msgid "Include bone's tail as last element in chain"
 msgstr "Muatkan tulang ekor sebagai elemen terakhir di rantai"
 
@@ -5302,16 +5382,28 @@ msgid "Use the minimum Z value"
 msgstr "Gunakan nilai minimum Z"
 
 
+msgid "Transform tools are affected by this constraint as well"
+msgstr "Alat transformasi terpengaruh oleh pembatas ini juga"
+
+
+msgid "Limit Rotation Constraint"
+msgstr "Batasi Pembatas Rotasi"
+
+
+msgid "Limit the rotation of the constrained object"
+msgstr "Batasi rotasi objek yang terbatas"
+
+
 msgid "Limit X"
-msgstr "Batas X"
+msgstr "Batasi X"
 
 
 msgid "Limit Y"
-msgstr "Batas Y"
+msgstr "Batasi Y"
 
 
 msgid "Limit Z"
-msgstr "Batas Z"
+msgstr "Batasi Z"
 
 
 msgid "Point toward the target along the track axis, while locking the other axis"
@@ -5346,6 +5438,10 @@ msgid "Strict"
 msgstr "Ketat"
 
 
+msgid "Uniform"
+msgstr "Seragam"
+
+
 msgid "Single Axis"
 msgstr "Sumbu Tunggal"
 
@@ -5360,6 +5456,10 @@ msgstr "Volume tulang saat istirahat"
 
 msgid "Object Solver Constraint"
 msgstr "Data Objek"
+
+
+msgid "Movie tracking object to follow"
+msgstr "Objek pelacak film untuk diikuti"
 
 
 msgid "Always"
@@ -5390,16 +5490,32 @@ msgid "Use the pivot point in the positive rotation range around the Z-axis"
 msgstr "Gunakan titik pivot di jarak rotasi positif sekitar sumbu-Z"
 
 
+msgid "Use Relative Offset"
+msgstr "Gunakan Offset Relatif"
+
+
 msgid "Python Constraint"
 msgstr "Batasan Python"
+
+
+msgid "Use Python script for constraint evaluation"
+msgstr "Gunakan skrip Python untuk evaluasi pembatas"
 
 
 msgid "Script Error"
 msgstr "Skrip Error"
 
 
+msgid "The linked Python script has thrown an error"
+msgstr "Skrip Python yang terkoneksi telah melempar error"
+
+
 msgid "Number of Targets"
 msgstr "Jumlah Target"
+
+
+msgid "Usually only 1 to 3 are needed"
+msgstr "Biasanya hanya 1 sampai 3 yang diperlukan"
 
 
 msgid "Target Objects"
@@ -5540,6 +5656,10 @@ msgstr "Modus Pahat"
 
 msgid "Bone Original"
 msgstr "Tulang Asli"
+
+
+msgid "Use the original scaling of the bones"
+msgstr "Gunakan penskalaan asli tulang"
 
 
 msgid "Inverse Scale"
@@ -8727,6 +8847,10 @@ msgid "Edit Mode"
 msgstr "Modus Sunting"
 
 
+msgid "Time Offset"
+msgstr "Kamera"
+
+
 msgid "Array"
 msgstr "Larik"
 
@@ -8741,10 +8865,6 @@ msgstr "Cermin"
 
 msgid "Hook"
 msgstr "Kait"
-
-
-msgid "Time Offset"
-msgstr "Kamera"
 
 
 msgid "Constant Offset"
@@ -8937,6 +9057,18 @@ msgstr "Offset UV"
 
 msgid "Reverse"
 msgstr "Membalik"
+
+
+msgid "Highest"
+msgstr "Tertinggi"
+
+
+msgid "Lowest"
+msgstr "Terendah"
+
+
+msgid "Target Object"
+msgstr "Objek Target"
 
 
 msgid "Group Index"
@@ -12598,16 +12730,8 @@ msgid "WeightVG Proximity Modifier"
 msgstr "Pengubah Kedekatan BebanKV"
 
 
-msgid "Highest"
-msgstr "Tertinggi"
-
-
 msgid "Distance mapping to weight 1.0"
 msgstr "Jarak pemetaan ke beban 1.0"
-
-
-msgid "Lowest"
-msgstr "Terendah"
 
 
 msgid "Distance mapping to weight 0.0"
@@ -12620,10 +12744,6 @@ msgstr "Kedekatan Geometri"
 
 msgid "Proximity Mode"
 msgstr "Mode Kedekatan"
-
-
-msgid "Target Object"
-msgstr "Objek Target"
 
 
 msgid "Object to calculate vertices distances from"
@@ -14399,6 +14519,14 @@ msgid "Geometry Custom Group"
 msgstr "Kelompok Kustom Geometri"
 
 
+msgid "Distribution Method"
+msgstr "Metode Distribusi"
+
+
+msgid "Method to use for scattering points"
+msgstr "Metode yang digunakan untuk menyebarkan titik"
+
+
 msgid "Is Viewport"
 msgstr "Adalah Viewport"
 
@@ -14459,14 +14587,6 @@ msgid "Length of A"
 msgstr "Panjang A"
 
 
-msgid "Distribution Method"
-msgstr "Metode Distribusi"
-
-
-msgid "Method to use for scattering points"
-msgstr "Metode yang digunakan untuk menyebarkan titik"
-
-
 msgid "Fill Type"
 msgstr "Tipe Isi"
 
@@ -14497,6 +14617,10 @@ msgstr "Warna Standar"
 
 msgid "Add Shader"
 msgstr "Tambah Shader"
+
+
+msgid "Ambient Occlusion"
+msgstr "Oklusi ambien"
 
 
 msgid "Component"
@@ -17632,11 +17756,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Sunting Cepat"
 
@@ -20552,26 +20671,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Saluran"
 
 
-msgid "Color + Albedo"
-msgstr "Warna + Albedo"
-
-
-msgid "Color + Albedo + Normal"
-msgstr "Warna + Albedo + Normal"
-
-
-msgid "Relative Filter"
-msgstr "Filter Relatif"
-
-
-msgid "Transmission Direct"
-msgstr "Orientasi Transformasi"
-
-
-msgid "Transmission Indirect"
-msgstr "Orientasi Transformasi"
-
-
 msgid "AO Bounces"
 msgstr "AO Memantul"
 
@@ -20588,40 +20687,12 @@ msgid "Adaptively blur glossy shaders after blurry bounces, to reduce noise at t
 msgstr "Secara adaptif blur shader glossy setelah blur memantul, untuk mengurangi noise dengan mengorbankan akurasi"
 
 
-msgid "Cancel timeout"
-msgstr "Batal"
-
-
-msgid "Accelerator"
-msgstr "Akselerator"
-
-
-msgid "Text timeout"
-msgstr "Penyunting Teks"
-
-
-msgid "Tile Size"
-msgstr "Ukurang"
-
-
 msgid "GPU Compute"
 msgstr "Tipe"
 
 
-msgid "Diffuse Samples"
-msgstr "Gerakan"
-
-
 msgid "Feature Set"
 msgstr "Warna Standar"
-
-
-msgid "Glossy Samples"
-msgstr "Gerakan"
-
-
-msgid "Start Resolution"
-msgstr "Gerakan"
 
 
 msgid "No Limit"
@@ -20632,48 +20703,24 @@ msgid "No texture size limit"
 msgstr "Tidak ada batas ukuran tekstur"
 
 
-msgid "Right to Left"
-msgstr "Kanan ke Kiri"
-
-
-msgid "Render from right to left"
-msgstr "Render dari kanan ke kiri"
-
-
-msgid "Left to Right"
-msgstr "Kiri ke Kanan"
-
-
-msgid "Render from left to right"
-msgstr "Render dari kiri ke kanan"
-
-
-msgid "Top to Bottom"
-msgstr "Atas ke Bawah"
-
-
-msgid "Render from top to bottom"
-msgstr "Render dari atas ke bawah"
-
-
-msgid "Bottom to Top"
-msgstr "Bawah ke Atas"
-
-
-msgid "Render from bottom to top"
-msgstr "Render dari bawah ke atas"
-
-
-msgid "Transmission Samples"
-msgstr "Orientasi Transformasi"
-
-
-msgid "Progressive Refine"
-msgstr "Proses"
+msgid "Tile Size"
+msgstr "Ukurang"
 
 
 msgid "Glossy Color"
 msgstr "Warna"
+
+
+msgid "Transmission Direct"
+msgstr "Orientasi Transformasi"
+
+
+msgid "Transmission Indirect"
+msgstr "Orientasi Transformasi"
+
+
+msgid "Sample Count"
+msgstr "Hitungan Sampel"
 
 
 msgid "Map Resolution"
@@ -22627,18 +22674,6 @@ msgid "Cycles will render on the CPU"
 msgstr "Cycles akan render di CPU"
 
 
-msgid "Total Samples:"
-msgstr "Total sampel:"
-
-
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Min Samples"
-msgstr "Sampel Min"
-
-
 msgid "Start Sample"
 msgstr "Sampel Mulai"
 
@@ -22659,14 +22694,6 @@ msgid "Refractive"
 msgstr "Refraktif"
 
 
-msgid "Tiles X"
-msgstr "Ukurang"
-
-
-msgid "Start Pixels"
-msgstr "Pixel Mulai"
-
-
 msgid "Surfaces"
 msgstr "Permukaan"
 
@@ -22677,14 +22704,6 @@ msgstr "Indeks"
 
 msgid "Render Time"
 msgstr "Waktu Render"
-
-
-msgid "Sample Count"
-msgstr "Hitungan Sampel"
-
-
-msgid "Feature Strength"
-msgstr "Kekuatan Fitur"
 
 
 msgid "Renders"
@@ -22711,12 +22730,12 @@ msgid "OptiX Flags:"
 msgstr "Bendera OptiX:"
 
 
-msgid "OpenCL Flags:"
-msgstr "Bendera OpenCL:"
-
-
 msgid "Texture Limit"
 msgstr "Batas Tekstur"
+
+
+msgid "Min Samples"
+msgstr "Sampel Min"
 
 
 msgid "Portal"
@@ -23998,10 +24017,6 @@ msgstr "Memetakan X"
 
 msgid "Map"
 msgstr "Map"
-
-
-msgid "Accurate Mode"
-msgstr "Mode Akuraat"
 
 
 msgid "Unknown add-ons"
@@ -26296,16 +26311,16 @@ msgid "Constructive modifier cannot be applied to multi-res data in sculpt mode"
 msgstr "Penyunting Teks"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Set Parent To"
 msgstr "Induk"
 
 
 msgid "Object (Keep Transform)"
 msgstr "Orientasi Transformasi"
+
+
+msgid "OK?"
+msgstr "OK?"
 
 
 msgid "Operation cannot be performed in edit mode"
@@ -26869,6 +26884,10 @@ msgid "Relationship"
 msgstr "Rotasi"
 
 
+msgid "Modify"
+msgstr "Sunting Objek"
+
+
 msgid "Image not packed"
 msgstr "Gambar tidak terkemas"
 
@@ -26940,10 +26959,6 @@ msgstr "Map wajah tidak di mesh"
 
 msgid "Metaball '%s' does not contain spline given"
 msgstr "Metabola '%s' tidak mengandung spline yang diberikan"
-
-
-msgid "Modify"
-msgstr "Sunting Objek"
 
 
 msgid "Unable to create new strip"
@@ -27101,6 +27116,10 @@ msgstr "RGBA"
 
 msgid "Val"
 msgstr "Val"
+
+
+msgid "AO"
+msgstr "AO"
 
 
 msgid "Random Color"

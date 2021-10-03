@@ -3684,6 +3684,18 @@ msgid "Edit Mode"
 msgstr "Düzenleme Modu"
 
 
+msgid "Texture Mapping"
+msgstr "UV "
+
+
+msgid "Time Offset"
+msgstr "Bitiş Zamanı"
+
+
+msgid "Vertex Weight Proximity"
+msgstr "Ebeveyn Nokta Oluştur"
+
+
 msgid "Array"
 msgstr "Dizi"
 
@@ -3692,20 +3704,8 @@ msgid "Mirror"
 msgstr "Yansıtma"
 
 
-msgid "Vertex Weight"
-msgstr "Ağırlık Ortalaması:"
-
-
 msgid "Hook"
 msgstr "Kanca Ekle"
-
-
-msgid "Time Offset"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Texture Mapping"
-msgstr "UV "
 
 
 msgid "Armature Modifier"
@@ -3764,6 +3764,10 @@ msgid "Strength of modifier effect"
 msgstr "Fark Değiştirici Ekle"
 
 
+msgid "Point Density"
+msgstr "Nokta Ekle"
+
+
 msgid "Mirror Modifier"
 msgstr "Değiştirici Ekle"
 
@@ -3796,12 +3800,20 @@ msgid "Space"
 msgstr "Boşluk"
 
 
+msgid "Target Object"
+msgstr "Nesne Kısıtlamaları"
+
+
 msgid "Vertex Group Element"
 msgstr "Yeni bir nokta grubu oluşturur"
 
 
 msgid "Group Index"
 msgstr "Yeni Gurup"
+
+
+msgid "Vertex Weight"
+msgstr "Ağırlık Ortalaması:"
 
 
 msgid "Grid Subdivisions"
@@ -7067,10 +7079,6 @@ msgid "Vertex Weight Mix"
 msgstr "Ebeveyn Nokta Oluştur"
 
 
-msgid "Vertex Weight Proximity"
-msgstr "Ebeveyn Nokta Oluştur"
-
-
 msgid "Bevel"
 msgstr "Pah "
 
@@ -7901,10 +7909,6 @@ msgstr "Fark Değiştirici Ekle"
 
 msgid "Proximity Mode"
 msgstr "Düzenleme Modu"
-
-
-msgid "Target Object"
-msgstr "Nesne Kısıtlamaları"
 
 
 msgid "Warp Modifier"
@@ -9179,6 +9183,14 @@ msgid "Object Info"
 msgstr "Nesne Bilgisi"
 
 
+msgid "Align X"
+msgstr "Düzen"
+
+
+msgid "Align Y"
+msgstr "Düzen"
+
+
 msgid "Label Font Size"
 msgstr "Yazıtipi boyutu:"
 
@@ -9353,10 +9365,6 @@ msgstr "Hareket Editörü "
 
 msgid "Musgrave Texture"
 msgstr "Doku Boyama"
-
-
-msgid "Point Density"
-msgstr "Nokta Ekle"
 
 
 msgid "Color Source"
@@ -12936,6 +12944,10 @@ msgid "Only cut selected geometry"
 msgstr "Seçili İşaretler arasında"
 
 
+msgid "X-Ray"
+msgstr "Işın İzleme"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "Anahtarları Seç"
@@ -14408,15 +14420,6 @@ msgid "Toggle Pose Mode"
 msgstr "Kamera Uçuş Modu"
 
 
-msgctxt "Operator"
-msgid "Make Proxy"
-msgstr "Vekil Yap..."
-
-
-msgid "Proxy Object"
-msgstr "Nesne Kısıtlamaları"
-
-
 msgid "Edge Length"
 msgstr "Kenar Uzunluğu"
 
@@ -15335,17 +15338,17 @@ msgid "Unlink Pose Library"
 msgstr "Kütüphaneye Ekle"
 
 
-msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Poz Ekle..."
-
-
 msgid "Next Keyframe"
 msgstr "Sonraki Anahtarkare"
 
 
 msgid "Previous Keyframe"
 msgstr "Önceki Anahtarkare"
+
+
+msgctxt "Operator"
+msgid "Pose Breakdowner"
+msgstr "Poz Ekle..."
 
 
 msgctxt "Operator"
@@ -16769,16 +16772,8 @@ msgid "Align Auto"
 msgstr "Otomatik Normalleştir"
 
 
-msgid "Align X"
-msgstr "Düzen"
-
-
 msgid "Align UVs on X axis"
 msgstr "Eksenlerde Taşı"
-
-
-msgid "Align Y"
-msgstr "Düzen"
 
 
 msgid "Align UVs on Y axis"
@@ -17587,10 +17582,6 @@ msgstr "Dosya adı"
 
 msgid "Property name edit"
 msgstr "İşareti (Tekrar) Adlandır"
-
-
-msgid "Property value edit"
-msgstr "ID Özellik Gezgini"
 
 
 msgctxt "Operator"
@@ -19016,22 +19007,6 @@ msgid "Transparent Shadows"
 msgstr "Şeffaflık kullan"
 
 
-msgid "Diffuse Direct"
-msgstr "Nesnenin genel rengi."
-
-
-msgid "Diffuse Indirect"
-msgstr "Nesnenin genel rengi."
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Y ekseninde ki parça sayısı.(Görüntü işlenirken parçalara ayrılarak işlenir)"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Arkaplan Resmi Kullan"
-
-
 msgid "Filter Glossy"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
@@ -19042,18 +19017,6 @@ msgstr "Nesne Tipini Değiştir..."
 
 msgid "Dynamic BVH"
 msgstr "Dinamik Runtime Kaydet..."
-
-
-msgid "Reset timeout"
-msgstr "Eğriyi Sıfırla"
-
-
-msgid "Text timeout"
-msgstr "Metni Düzenle:"
-
-
-msgid "Tile Size"
-msgstr "Ekstrüzyon Boyutu"
 
 
 msgid "Use Spatial Splits"
@@ -19077,10 +19040,6 @@ msgstr "GPU Hesaplama"
 
 
 msgid "Diffuse Bounces"
-msgstr "Nesnenin genel rengi."
-
-
-msgid "Diffuse Samples"
 msgstr "Nesnenin genel rengi."
 
 
@@ -19116,60 +19075,32 @@ msgid "Pixel filter width"
 msgstr "Dosya Uzantılarını Filtrele"
 
 
-msgid "Glossy Samples"
-msgstr "Parçacık Hareketi"
-
-
 msgid "Total maximum number of bounces"
 msgstr "En fazla dahili konsol satır sayısı"
-
-
-msgid "Mesh Light Samples"
-msgstr "Parçacık Hareketi"
 
 
 msgid "Pause Preview"
 msgstr "Birleşik Önizleme..."
 
 
-msgid "Start Resolution"
-msgstr "Çözünürlük"
-
-
 msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "Arabirim Dil'i seçin"
 
 
-msgid "Tile order for rendering"
-msgstr "Sunumda kullanılacak hesaplama aygıtı"
-
-
-msgid "Right to Left"
-msgstr "Sağ Fare"
-
-
-msgid "Left to Right"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgid "Top to Bottom"
-msgstr "Alta Taşı"
-
-
-msgid "Bottom to Top"
-msgstr "Alt "
-
-
-msgid "Transmission Samples"
-msgstr "Ekran Rengi:"
+msgid "Tile Size"
+msgstr "Ekstrüzyon Boyutu"
 
 
 msgid "Transparent Max Bounces"
 msgstr "Şeffaflık kullan"
 
 
-msgid "Progressive Refine"
-msgstr "İlerleme"
+msgid "Diffuse Direct"
+msgstr "Nesnenin genel rengi."
+
+
+msgid "Diffuse Indirect"
+msgstr "Nesnenin genel rengi."
 
 
 msgid "Glossy Color"
@@ -19396,14 +19327,6 @@ msgid "Threads Mode"
 msgstr "Düzenleme Modu"
 
 
-msgid "Horizontal tile size to use while rendering"
-msgstr "Sunumda kullanılacak hesaplama aygıtı"
-
-
-msgid "Vertical tile size to use while rendering"
-msgstr "Sunumda kullanılacak hesaplama aygıtı"
-
-
 msgid "Low Resolution Mesh"
 msgstr "Mesh Gölgesini Çiz"
 
@@ -19418,10 +19341,6 @@ msgstr "Dosya Uzantılarını Filtrele"
 
 msgid "Persistent Data"
 msgstr "Kesit Sınırı Oluştur"
-
-
-msgid "Save Buffers"
-msgstr "Otomatik Kayıt"
 
 
 msgid "Use Simplify"
@@ -19972,6 +19891,18 @@ msgid "Sequence Transform"
 msgstr "Görsel Dönüşüm"
 
 
+msgid "Show Grid"
+msgstr "Izgara Ekle"
+
+
+msgid "Median Point"
+msgstr "Merkez Nokta "
+
+
+msgid "Individual Origins"
+msgstr "Bireysel Merkezler "
+
+
 msgid "Gray Scale"
 msgstr "Döndürme & Ölçek"
 
@@ -20132,14 +20063,6 @@ msgid "Bounding Box Center"
 msgstr "Kutusal Sınır Merkezi "
 
 
-msgid "Individual Origins"
-msgstr "Bireysel Merkezler "
-
-
-msgid "Median Point"
-msgstr "Merkez Nokta "
-
-
 msgid "Show Blue Channel"
 msgstr "Tüm Katmanları Göster"
 
@@ -20162,10 +20085,6 @@ msgstr "Kare Numaralarını göster"
 
 msgid "Show Green Channel"
 msgstr "Tüm Katmanları Göster"
-
-
-msgid "Show Grid"
-msgstr "Izgara Ekle"
 
 
 msgid "Show Marker Pattern"
@@ -21756,10 +21675,6 @@ msgid "Use Mist"
 msgstr "Kırpma Kullan"
 
 
-msgid "Mesh Light"
-msgstr "Doğrusal Bozulma"
-
-
 msgctxt "Operator"
 msgid "Assign"
 msgstr "Ata"
@@ -22810,11 +22725,6 @@ msgstr "Değiştirici Ekle"
 
 
 msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Vekil Yap..."
-
-
-msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Yerel Yap..."
 
@@ -23091,10 +23001,6 @@ msgstr "Küçük Harf Yap"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Özellik Seti"
-
-
-msgid "X-Ray"
-msgstr "Işın İzleme"
 
 
 msgctxt "Operator"
@@ -23914,16 +23820,16 @@ msgid "Reshape can work only with higher levels of subdivisions"
 msgstr "Yeni Ekle (Şimdiki Kareye)"
 
 
-msgid "OK?"
-msgstr "TAMAM?"
-
-
 msgid "Set Parent To"
 msgstr "Ayarlanan boyutun %50 si ölçeğinde işle"
 
 
 msgid "Object (Keep Transform)"
 msgstr "Görsel Dönüşüm"
+
+
+msgid "OK?"
+msgstr "TAMAM?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -24378,6 +24284,10 @@ msgid "Relationship"
 msgstr "Relationship"
 
 
+msgid "Modify"
+msgstr "Değiştirici"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Ön Görünümde Olmalısınız (NumPad1)"
 
@@ -24392,10 +24302,6 @@ msgstr "Dosya kaydı olanaksız"
 
 msgid "Mtex not found for this type"
 msgstr "Durağan saç-iplik tarzındaki parçacıklar için boyut ve şekil ayarları."
-
-
-msgid "Modify"
-msgstr "Değiştirici"
 
 
 msgid "Unable to create new strip"

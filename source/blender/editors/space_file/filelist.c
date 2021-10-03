@@ -50,6 +50,7 @@
 #include "BLI_task.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
+#include "BLI_uuid.h"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -369,6 +370,9 @@ typedef struct FileListFilter {
   char filter_glob[FILE_MAXFILE];
   char filter_search[66]; /* + 2 for heading/trailing implicit '*' wildcards. */
   short flags;
+
+  eFileSel_Params_AssetCatalogVisibility asset_catalog_visibility;
+  bUUID asset_catalog_id;
 } FileListFilter;
 
 /* FileListFilter.flags */
@@ -893,6 +897,39 @@ static bool is_filtered_id_file(const FileListInternEntry *file,
   return is_filtered;
 }
 
+/**
+ * Get the asset metadata of a file, if it represents an asset. This may either be of a local ID
+ * (ID in the current #Main) or read from an external asset library.
+ */
+static AssetMetaData *filelist_file_internal_get_asset_data(const FileListInternEntry *file)
+{
+  const ID *local_id = file->local_data.id;
+  return local_id ? local_id->asset_data : file->imported_asset_data;
+}
+
+static bool is_filtered_asset(FileListInternEntry *file, FileListFilter *filter)
+{
+  const AssetMetaData *asset_data = filelist_file_internal_get_asset_data(file);
+  bool is_visible = false;
+
+  switch (filter->asset_catalog_visibility) {
+    case FILE_SHOW_ASSETS_WITHOUT_CATALOG:
+      is_visible = BLI_uuid_is_nil(asset_data->catalog_id);
+      break;
+    case FILE_SHOW_ASSETS_FROM_CATALOG:
+      /* TODO show all assets that are in child catalogs of the selected catalog. */
+      is_visible = !BLI_uuid_is_nil(filter->asset_catalog_id) &&
+                   BLI_uuid_equal(filter->asset_catalog_id, asset_data->catalog_id);
+      break;
+    case FILE_SHOW_ASSETS_ALL_CATALOGS:
+      /* All asset files should be visible. */
+      is_visible = true;
+      break;
+  }
+
+  return is_visible;
+}
+
 static bool is_filtered_lib(FileListInternEntry *file, const char *root, FileListFilter *filter)
 {
   bool is_filtered;
@@ -910,6 +947,13 @@ static bool is_filtered_lib(FileListInternEntry *file, const char *root, FileLis
   return is_filtered;
 }
 
+static bool is_filtered_asset_library(FileListInternEntry *file,
+                                      const char *root,
+                                      FileListFilter *filter)
+{
+  return is_filtered_lib(file, root, filter) && is_filtered_asset(file, filter);
+}
+
 static bool is_filtered_main(FileListInternEntry *file,
                              const char *UNUSED(dir),
                              FileListFilter *filter)
@@ -922,7 +966,8 @@ static bool is_filtered_main_assets(FileListInternEntry *file,
                                     FileListFilter *filter)
 {
   /* "Filtered" means *not* being filtered out... So return true if the file should be visible. */
-  return is_filtered_id_file(file, file->relpath, file->name, filter);
+  return is_filtered_id_file(file, file->relpath, file->name, filter) &&
+         is_filtered_asset(file, filter);
 }
 
 static void filelist_filter_clear(FileList *filelist)
@@ -1033,6 +1078,33 @@ void filelist_setfilter_options(FileList *filelist,
 
   if (update) {
     /* And now, free filtered data so that we know we have to filter again. */
+    filelist_filter_clear(filelist);
+  }
+}
+
+/**
+ * \param catalog_id: The catalog that should be filtered by if \a catalog_visibility is
+ *                    #FILE_SHOW_ASSETS_FROM_CATALOG. May be NULL otherwise.
+ */
+void filelist_set_asset_catalog_filter_options(
+    FileList *filelist,
+    eFileSel_Params_AssetCatalogVisibility catalog_visibility,
+    const bUUID *catalog_id)
+{
+  bool update = false;
+
+  if (filelist->filter_data.asset_catalog_visibility != catalog_visibility) {
+    filelist->filter_data.asset_catalog_visibility = catalog_visibility;
+    update = true;
+  }
+
+  if (filelist->filter_data.asset_catalog_visibility == FILE_SHOW_ASSETS_FROM_CATALOG &&
+      catalog_id && !BLI_uuid_equal(filelist->filter_data.asset_catalog_id, *catalog_id)) {
+    filelist->filter_data.asset_catalog_id = *catalog_id;
+    update = true;
+  }
+
+  if (update) {
     filelist_filter_clear(filelist);
   }
 }
@@ -1732,7 +1804,7 @@ void filelist_settype(FileList *filelist, short type)
     case FILE_ASSET_LIBRARY:
       filelist->check_dir_fn = filelist_checkdir_lib;
       filelist->read_job_fn = filelist_readjob_asset_library;
-      filelist->filter_fn = is_filtered_lib;
+      filelist->filter_fn = is_filtered_asset_library;
       break;
     case FILE_MAIN_ASSET:
       filelist->check_dir_fn = filelist_checkdir_main_assets;
@@ -1807,6 +1879,11 @@ void filelist_free(struct FileList *filelist)
   memset(&filelist->filter_data, 0, sizeof(filelist->filter_data));
 
   filelist->flags &= ~(FL_NEED_SORTING | FL_NEED_FILTERING);
+}
+
+AssetLibrary *filelist_asset_library(FileList *filelist)
+{
+  return filelist->asset_library;
 }
 
 void filelist_freelib(struct FileList *filelist)
@@ -3398,15 +3475,34 @@ static void filelist_readjob_lib(FileListReadJob *job_params,
   filelist_readjob_do(true, job_params, stop, do_update, progress);
 }
 
+static void filelist_asset_library_path(const FileListReadJob *job_params,
+                                        char r_library_root_path[FILE_MAX])
+{
+  if (job_params->filelist->type == FILE_MAIN_ASSET) {
+    /* For the "Current File" library (#FILE_MAIN_ASSET) we get the asset library root path based
+     * on main. */
+    BKE_asset_library_find_suitable_root_path_from_main(job_params->current_main,
+                                                        r_library_root_path);
+  }
+  else {
+    BLI_strncpy(r_library_root_path, job_params->tmp_filelist->filelist.root, FILE_MAX);
+  }
+}
+
+/**
+ * Load asset library data, which currently means loading the asset catalogs for the library.
+ */
 static void filelist_readjob_load_asset_library_data(FileListReadJob *job_params, short *do_update)
 {
   FileList *tmp_filelist = job_params->tmp_filelist; /* Use the thread-safe filelist queue. */
 
-  /* Check whether assets catalogs need to be loaded. */
   if (job_params->filelist->asset_library_ref != NULL) {
+    char library_root_path[FILE_MAX];
+    filelist_asset_library_path(job_params, library_root_path);
+
     /* Load asset catalogs, into the temp filelist for thread-safety.
      * #filelist_readjob_endjob() will move it into the real filelist. */
-    tmp_filelist->asset_library = BKE_asset_library_load(tmp_filelist->filelist.root);
+    tmp_filelist->asset_library = BKE_asset_library_load(library_root_path);
     *do_update = true;
   }
 }

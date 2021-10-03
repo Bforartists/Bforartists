@@ -523,10 +523,6 @@ msgid "Manual"
 msgstr "ינדי"
 
 
-msgid "Progressive Refine"
-msgstr "תומדקתה"
-
-
 msgid "MO File Path"
 msgstr ":ץבוק ביתנ"
 

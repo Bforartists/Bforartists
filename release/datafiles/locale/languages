@@ -15,7 +15,6 @@
 9:Spanish (Español):es
 2:Japanese (日本語):ja_JP
 47:Slovak (Slovenčina):sk_SK
-18:Ukrainian (Український):uk_UA
 41:Vietnamese (tiếng Việt):vi_VN
 13:Simplified Chinese (简体中文):zh_CN
 #
@@ -29,6 +28,7 @@
 32:Brazilian Portuguese (Português do Brasil):pt_BR
 12:Portuguese (Português):pt_PT
 15:Russian (Русский):ru_RU
+18:Ukrainian (Український):uk_UA
 14:Traditional Chinese (繁體中文):zh_TW
 #
 0:Starting:

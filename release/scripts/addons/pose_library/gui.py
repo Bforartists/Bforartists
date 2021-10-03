@@ -33,20 +33,24 @@ from bpy.types import (
 from bpy_extras import asset_utils
 
 
-class VIEW3D_PT_pose_library(Panel):
+class PoseLibraryPanel:
+    @classmethod
+    def pose_library_panel_poll(cls, context: Context) -> bool:
+        return bool(
+            context.object
+            and context.object.mode == 'POSE'
+        )
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return cls.pose_library_panel_poll(context);
+
+
+class VIEW3D_PT_pose_library(PoseLibraryPanel, Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Animation"
     bl_label = "Pose Library"
-
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        exp_prefs =  context.preferences.experimental
-        try:
-            return exp_prefs.use_asset_browser
-        except AttributeError:
-            # The 'use_asset_browser' experimental option was removed from Blender.
-            return True
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -124,10 +128,17 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
         layout.operator("asset.open_containing_blend_file")
 
 
-class ASSETBROWSER_PT_pose_library_usage(asset_utils.AssetBrowserSpecificCategoryPanel, Panel):
+class ASSETBROWSER_PT_pose_library_usage(PoseLibraryPanel, asset_utils.AssetBrowserPanel, Panel):
     bl_region_type = "TOOLS"
     bl_label = "Pose Library"
     asset_categories = {'ANIMATIONS'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return (
+            cls.pose_library_panel_poll(context)
+            and cls.asset_browser_panel_poll(context)
+        )
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -149,10 +160,17 @@ class ASSETBROWSER_PT_pose_library_usage(asset_utils.AssetBrowserSpecificCategor
         props.select = False
 
 
-class ASSETBROWSER_PT_pose_library_editing(asset_utils.AssetBrowserSpecificCategoryPanel, Panel):
+class ASSETBROWSER_PT_pose_library_editing(PoseLibraryPanel, asset_utils.AssetBrowserPanel, Panel):
     bl_region_type = "TOOL_PROPS"
     bl_label = "Pose Library"
     asset_categories = {'ANIMATIONS'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return (
+            cls.pose_library_panel_poll(context)
+            and cls.asset_browser_panel_poll(context)
+        )
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -169,20 +187,11 @@ class ASSETBROWSER_PT_pose_library_editing(asset_utils.AssetBrowserSpecificCateg
         col.operator("poselib.paste_asset", icon="PASTEDOWN")
 
 
-class DOPESHEET_PT_asset_panel(Panel):
+class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
     bl_space_type = "DOPESHEET_EDITOR"
     bl_region_type = "UI"
     bl_label = "Create Pose Asset"
     bl_category = "Pose Library"
-
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        exp_prefs =  context.preferences.experimental
-        try:
-            return exp_prefs.use_asset_browser
-        except AttributeError:
-            # The 'use_asset_browser' experimental option was removed from Blender.
-            return True
 
     def draw(self, context: Context) -> None:
         layout = self.layout

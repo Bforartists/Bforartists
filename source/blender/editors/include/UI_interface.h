@@ -2593,6 +2593,7 @@ typedef struct uiDragColorHandle {
 
 void ED_operatortypes_ui(void);
 void ED_keymap_ui(struct wmKeyConfig *keyconf);
+void ED_dropboxes_ui(void);
 void ED_uilisttypes_ui(void);
 
 void UI_drop_color_copy(struct wmDrag *drag, struct wmDropBox *drop);
@@ -2761,7 +2762,16 @@ void UI_interface_tag_script_reload(void);
 /* Support click-drag motion which presses the button and closes a popover (like a menu). */
 #define USE_UI_POPOVER_ONCE
 
-bool UI_tree_view_item_is_active(uiTreeViewItemHandle *item_);
+bool UI_tree_view_item_is_active(const uiTreeViewItemHandle *item);
+bool UI_tree_view_item_matches(const uiTreeViewItemHandle *a, const uiTreeViewItemHandle *b);
+bool UI_tree_view_item_can_drop(const uiTreeViewItemHandle *item_, const struct wmDrag *drag);
+bool UI_tree_view_item_drop_handle(uiTreeViewItemHandle *item_, const struct ListBase *drags);
+char *UI_tree_view_item_drop_tooltip(const uiTreeViewItemHandle *item,
+                                     const struct bContext *C,
+                                     const struct wmDrag *drag,
+                                     const struct wmEvent *event);
+
+uiTreeViewItemHandle *UI_block_tree_view_find_item_at(const struct ARegion *region, int x, int y);
 
 #ifdef __cplusplus
 }

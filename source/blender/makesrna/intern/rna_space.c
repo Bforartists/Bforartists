@@ -39,6 +39,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_math.h"
+#include "BLI_uuid.h"
 
 #include "DNA_action_types.h"
 #include "DNA_gpencil_types.h"
@@ -885,6 +886,14 @@ static void rna_Space_view2d_sync_set(PointerRNA *ptr, bool value)
   ARegion *region;
 
   area = rna_area_from_space(ptr); /* can be NULL */
+  if ((area != NULL) && !UI_view2d_area_supports_sync(area)) {
+    BKE_reportf(NULL,
+                RPT_ERROR,
+                "'show_locked_time' is not supported for the '%s' editor",
+                area->type->name);
+    return;
+  }
+
   region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
   if (region) {
     View2D *v2d = &region->v2d;
@@ -935,7 +944,7 @@ static void rna_GPencil_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *UN
 static void rna_SpaceView3D_camera_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
   View3D *v3d = (View3D *)(ptr->data);
-  if (v3d->scenelock) {
+  if (v3d->scenelock && scene != NULL) {
     wmWindowManager *wm = bmain->wm.first;
 
     scene->camera = v3d->camera;
@@ -1569,7 +1578,9 @@ static PointerRNA rna_SpaceImageEditor_uvedit_get(PointerRNA *ptr)
 
 static void rna_SpaceImageEditor_mode_update(Main *bmain, Scene *scene, PointerRNA *UNUSED(ptr))
 {
-  ED_space_image_paint_update(bmain, bmain->wm.first, scene);
+  if (scene != NULL) {
+    ED_space_image_paint_update(bmain, bmain->wm.first, scene);
+  }
 }
 
 static void rna_SpaceImageEditor_show_stereo_set(PointerRNA *ptr, int value)
@@ -2633,18 +2644,6 @@ static void rna_FileAssetSelectParams_asset_library_set(PointerRNA *ptr, int val
   params->asset_library_ref = ED_asset_library_reference_from_enum_value(value);
 }
 
-static void rna_FileAssetSelectParams_asset_category_set(PointerRNA *ptr, uint64_t value)
-{
-  FileSelectParams *params = ptr->data;
-  params->filter_id = value;
-}
-
-static uint64_t rna_FileAssetSelectParams_asset_category_get(PointerRNA *ptr)
-{
-  FileSelectParams *params = ptr->data;
-  return params->filter_id;
-}
-
 static PointerRNA rna_FileBrowser_FileSelectEntry_asset_data_get(PointerRNA *ptr)
 {
   const FileDirEntry *entry = ptr->data;
@@ -3210,6 +3209,17 @@ static void rna_SpaceSpreadsheet_context_path_guess(SpaceSpreadsheet *sspreadshe
   WM_main_add_notifier(NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
 }
 
+static void rna_FileAssetSelectParams_catalog_id_get(PointerRNA *ptr, char *value)
+{
+  const FileAssetSelectParams *params = ptr->data;
+  BLI_uuid_format(value, params->catalog_id);
+}
+
+static int rna_FileAssetSelectParams_catalog_id_length(PointerRNA *UNUSED(ptr))
+{
+  return UUID_STRING_LEN - 1;
+}
+
 #else
 
 static const EnumPropertyItem dt_uv_items[] = {
@@ -3499,6 +3509,19 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_SpaceUVEditor_tile_grid_shape_set", NULL);
   RNA_def_property_ui_text(
       prop, "Tile Grid Shape", "How many tiles will be shown in the background");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
+
+  prop = RNA_def_property(srna, "use_custom_grid", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", SI_CUSTOM_GRID);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop, "Custom Grid", "Use a grid with a user-defined number of steps");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
+
+  prop = RNA_def_property(srna, "custom_grid_subdivisions", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, NULL, "custom_grid_subdiv");
+  RNA_def_property_range(prop, 1, 5000);
+  RNA_def_property_ui_text(
+      prop, "Dynamic Grid Size", "Number of grid units in UV space that make one UV Unit");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
 
   prop = RNA_def_property(srna, "uv_opacity", PROP_FLOAT, PROP_FACTOR);
@@ -5040,7 +5063,7 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_box_clip", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "viewlock", RV3D_BOXCLIP);
   RNA_def_property_ui_text(
-      prop, "ClipContents", "Clip objects based on what is visible in other side views");
+      prop, "Clip Contents", "Clip view contents based on what is visible in other side views");
   RNA_def_property_update(
       prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_RegionView3D_quadview_clip_update");
 
@@ -5532,6 +5555,12 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_thumbnails", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SEQ_TIMELINE_SHOW_THUMBNAILS);
   RNA_def_property_ui_text(prop, "Show Thumbnails", "Show strip thumbnails");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, NULL);
+
+  prop = RNA_def_property(srna, "show_strip_tag_color", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG);
+  RNA_def_property_ui_text(
+      prop, "Show Color Tags", "Display the strip color tags in the sequencer");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, NULL);
 }
 
@@ -6637,47 +6666,6 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   StructRNA *srna;
   PropertyRNA *prop;
 
-  /* XXX copied from rna_enum_id_type_filter_items. */
-  static const EnumPropertyItem asset_category_items[] = {
-      {FILTER_ID_SCE, "SCENES", ICON_SCENE_DATA, "Scenes", "Show scenes"},
-      {FILTER_ID_AC, "ANIMATIONS", ICON_ANIM_DATA, "Animations", "Show animation data"},
-      {FILTER_ID_OB | FILTER_ID_GR,
-       "OBJECTS_AND_COLLECTIONS",
-       ICON_GROUP,
-       "Objects & Collections",
-       "Show objects and collections"},
-      {FILTER_ID_AR | FILTER_ID_CU | FILTER_ID_LT | FILTER_ID_MB | FILTER_ID_ME
-       /* XXX avoid warning */
-       // | FILTER_ID_HA | FILTER_ID_PT | FILTER_ID_VO
-       ,
-       "GEOMETRY",
-       ICON_MESH_DATA,
-       "Geometry",
-       "Show meshes, curves, lattice, armatures and metaballs data"},
-      {FILTER_ID_LS | FILTER_ID_MA | FILTER_ID_NT | FILTER_ID_TE,
-       "SHADING",
-       ICON_MATERIAL_DATA,
-       "Shading",
-       "Show materials, nodetrees, textures and Freestyle's linestyles"},
-      {FILTER_ID_IM | FILTER_ID_MC | FILTER_ID_MSK | FILTER_ID_SO,
-       "IMAGES_AND_SOUNDS",
-       ICON_IMAGE_DATA,
-       "Images & Sounds",
-       "Show images, movie clips, sounds and masks"},
-      {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_LP | FILTER_ID_SPK | FILTER_ID_WO,
-       "ENVIRONMENTS",
-       ICON_WORLD,
-       "Environment",
-       "Show worlds, lights, cameras and speakers"},
-      {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
-           FILTER_ID_VF | FILTER_ID_CF | FILTER_ID_WS,
-       "MISC",
-       ICON_GREASEPENCIL,
-       "Miscellaneous",
-       "Show other data types"},
-      {0, NULL, 0, NULL, NULL},
-  };
-
   static const EnumPropertyItem asset_import_type_items[] = {
       {FILE_ASSET_IMPORT_LINK, "LINK", 0, "Link", "Import the assets as linked data-block"},
       {FILE_ASSET_IMPORT_APPEND,
@@ -6685,6 +6673,14 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        0,
        "Append",
        "Import the assets as copied data-block, with no link to the original asset data-block"},
+      {FILE_ASSET_IMPORT_APPEND_REUSE,
+       "APPEND_REUSE",
+       0,
+       "Append (Reuse Data)",
+       "Import the assets as copied data-block while avoiding multiple copies of nested, "
+       "typically heavy data. For example the textures of a material asset, or the mesh of an "
+       "object asset, don't have to be copied every time this asset is imported. The instances of "
+       "the asset share the data instead"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -6698,14 +6694,13 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Asset Library", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
 
-  prop = RNA_def_property(srna, "asset_category", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, asset_category_items);
-  RNA_def_property_enum_funcs(prop,
-                              "rna_FileAssetSelectParams_asset_category_get",
-                              "rna_FileAssetSelectParams_asset_category_set",
-                              NULL);
-  RNA_def_property_ui_text(prop, "Asset Category", "Determine which kind of assets to display");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, NULL);
+  prop = RNA_def_property(srna, "catalog_id", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_funcs(prop,
+                                "rna_FileAssetSelectParams_catalog_id_get",
+                                "rna_FileAssetSelectParams_catalog_id_length",
+                                NULL);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Catalog UUID", "The UUID of the catalog shown in the browser");
 
   prop = RNA_def_property(srna, "import_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_import_type_items);
@@ -7882,7 +7877,7 @@ void RNA_def_space(BlenderRNA *brna)
   rna_def_space_dopesheet(brna);
   rna_def_space_graph(brna);
   rna_def_space_nla(brna);
-  rna_def_space_toolbar(brna);
+  rna_def_space_toolbar(brna); /*bfa - toolbar editor*/
   rna_def_space_console(brna);
   rna_def_console_line(brna);
   rna_def_space_info(brna);

@@ -1881,10 +1881,6 @@ msgid "Animation"
 msgstr "Animazioa"
 
 
-msgid "AO"
-msgstr "Inguruneko Oklusioa"
-
-
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Ireki..."
@@ -2282,6 +2278,10 @@ msgid "Val"
 msgstr "Balioa"
 
 
+msgid "AO"
+msgstr "Inguruneko Oklusioa"
+
+
 msgid "Anisotropy"
 msgstr "Anisotropia"
 
@@ -2352,10 +2352,6 @@ msgstr "Kolore Faktorea"
 
 msgid "Alpha Fac"
 msgstr "Alpha faktorea"
-
-
-msgid "Texture Blur"
-msgstr "Testura Lausotua"
 
 
 msgid "BSSRDF"

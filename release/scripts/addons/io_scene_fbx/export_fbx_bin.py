@@ -879,7 +879,10 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
 
         if last_subsurf:
             elem_data_single_int32(geom, b"Smoothness", 2) # Display control mesh and smoothed
-            elem_data_single_int32(geom, b"BoundaryRule", 2) # Round edges like Blender
+            if last_subsurf.boundary_smooth == "PRESERVE_CORNERS":
+                elem_data_single_int32(geom, b"BoundaryRule", 2) # CreaseAll
+            else:
+                elem_data_single_int32(geom, b"BoundaryRule", 1) # CreaseEdge
             elem_data_single_int32(geom, b"PreviewDivisionLevels", last_subsurf.levels)
             elem_data_single_int32(geom, b"RenderDivisionLevels", last_subsurf.render_levels)
 

@@ -1175,23 +1175,32 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
             # bpy.context.window_manager.windows[0].screen.areas[5].spaces[0].show_region_ui = False
             print('running search no')
             ui_props = bpy.context.scene.blenderkitUI
-            random_searches = [
-                ('MATERIAL', 'ice'),
-                ('MODEL', 'car'),
-                ('MODEL', 'vase'),
-                ('MODEL', 'grass'),
-                ('MODEL', 'plant'),
-                ('MODEL', 'man'),
-                ('MATERIAL', 'metal'),
-                ('MATERIAL', 'wood'),
-                ('MATERIAL', 'floor'),
-                ('MATERIAL', 'bricks'),
-            ]
-            random_search = random.choice(random_searches)
-            ui_props.asset_type = random_search[0]
+            # random_searches = [
+            #     ('MATERIAL', 'ice'),
+            #     ('MODEL', 'car'),
+            #     ('MODEL', 'vase'),
+            #     ('MODEL', 'grass'),
+            #     ('MODEL', 'plant'),
+            #     ('MODEL', 'man'),
+            #     ('MATERIAL', 'metal'),
+            #     ('MATERIAL', 'wood'),
+            #     ('MATERIAL', 'floor'),
+            #     ('MATERIAL', 'bricks'),
+            # ]
+            # random_search = random.choice(random_searches)
+            # ui_props.asset_type = random_search[0]
+            ui_props.asset_type = 'MODEL'
 
-            bpy.context.window_manager.blenderkit_mat.search_keywords = ''  # random_search[1]
-            bpy.context.window_manager.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'  # random_search[1]
+            score_limit = 450
+            if ui_props.asset_type == 'MATERIAL':
+                props = bpy.context.window_manager.blenderkit_mat
+
+            elif ui_props.asset_type == 'MODEL':
+                props = bpy.context.window_manager.blenderkit_models
+                score_limit = 1000
+
+            props.search_keywords = ''#random_search[1]
+            props.search_keywords += f'+is_free:true+score_gte:{score_limit}+order:-created'  # random_search[1]
             # search.search()
         return {'FINISHED'}
 
@@ -1655,8 +1664,9 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         # self.draw_asset_parameter(box, key='purePbr', pretext='Pure PBR')
         # self.draw_asset_parameter(box, key='productionLevel', pretext='Readiness')
         # self.draw_asset_parameter(box, key='condition', pretext='Condition')
-        self.draw_asset_parameter(box, key='material_style', pretext='Style')
-        self.draw_asset_parameter(box, key='model_style', pretext='Style')
+        if utils.profile_is_validator():
+            self.draw_asset_parameter(box, key='materialStyle', pretext='Style')
+            self.draw_asset_parameter(box, key='modelStyle', pretext='Style')
 
         if utils.get_param(self.asset_data, 'dimensionX'):
             t = '%s×%s×%s m' % (utils.fmt_length(mparams['dimensionX']),

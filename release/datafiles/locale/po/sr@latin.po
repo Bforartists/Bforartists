@@ -555,10 +555,6 @@ msgid "None"
 msgstr "Ništa"
 
 
-msgid "Ambient Occlusion"
-msgstr "Ambijentalno senčenje"
-
-
 msgid "Emit"
 msgstr "Emitovanje"
 
@@ -5069,6 +5065,14 @@ msgid "Edit Mode"
 msgstr "Režim izmene"
 
 
+msgid "Texture Mapping"
+msgstr "Mapiranje teksture"
+
+
+msgid "Time Offset"
+msgstr "Vremenski pomak"
+
+
 msgid "Array"
 msgstr "Niz"
 
@@ -5085,16 +5089,8 @@ msgid "Hook"
 msgstr "Udica"
 
 
-msgid "Time Offset"
-msgstr "Vremenski pomak"
-
-
 msgid "Hue/Saturation"
 msgstr "Ton/zasićenost"
-
-
-msgid "Texture Mapping"
-msgstr "Mapiranje teksture"
 
 
 msgid "Armature Modifier"
@@ -5214,6 +5210,10 @@ msgid "Lattice object to deform with"
 msgstr "Objekat kaveza za deformisanje"
 
 
+msgid "Point Density"
+msgstr "Gustina tačaka"
+
+
 msgid "Step"
 msgstr "Korak"
 
@@ -5254,8 +5254,12 @@ msgid "Space"
 msgstr "Prostor"
 
 
-msgid "Blend"
-msgstr "Mešanje"
+msgid "Highest"
+msgstr "Najviša"
+
+
+msgid "Lowest"
+msgstr "Najniža"
 
 
 msgid "Group Index"
@@ -8060,6 +8064,10 @@ msgid "Factor Red"
 msgstr "Faktor crvene"
 
 
+msgid "Blend"
+msgstr "Mešanje"
+
+
 msgid "Clouds"
 msgstr "Oblaci"
 
@@ -10686,14 +10694,6 @@ msgid "Second vertex group name"
 msgstr "Ime druge grupe temena"
 
 
-msgid "Highest"
-msgstr "Najviša"
-
-
-msgid "Lowest"
-msgstr "Najniža"
-
-
 msgid "Proximity Geometry"
 msgstr "Povezana geometrija"
 
@@ -11890,6 +11890,10 @@ msgid "Add Shader"
 msgstr "Dodaj senčenje"
 
 
+msgid "Ambient Occlusion"
+msgstr "Ambijentalno senčenje"
+
+
 msgid "Attribute Name"
 msgstr "Ime atributa"
 
@@ -12068,10 +12072,6 @@ msgstr "Projekcija"
 
 msgid "Projection of the input image"
 msgstr "Projekcija ulazne slike"
-
-
-msgid "Point Density"
-msgstr "Gustina tačaka"
 
 
 msgid "Color Source"
@@ -16082,6 +16082,10 @@ msgstr "Zameni"
 
 msgid "Only cut selected geometry"
 msgstr "Jačina izdizanja geometrije"
+
+
+msgid "X-Ray"
+msgstr "X-zrak"
 
 
 msgctxt "Operator"
@@ -20856,10 +20860,6 @@ msgid "Property name edit"
 msgstr "Izmena naziva osobine"
 
 
-msgid "Property value edit"
-msgstr "Izmena vrednosti osobine"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Ukloni osobinu"
@@ -21223,10 +21223,6 @@ msgstr "Performanse"
 
 msgid "Threads"
 msgstr "Procesa"
-
-
-msgid "Tiles"
-msgstr "Delova"
 
 
 msgid "Subdivision"
@@ -22523,10 +22519,6 @@ msgid "Cast Shadow"
 msgstr "Bačena senka"
 
 
-msgid "Number of light samples to render for each AA sample"
-msgstr "Broj uzoraka renderovanih za svaki piksel"
-
-
 msgid "When using volume rendering, assume volume has the same density everywhere (not using any textures), for faster rendering"
 msgstr "Pri renderovanju zapremine, računaj da je gustina svuda ista (ne koristi teksture), radi bržeg renderinga"
 
@@ -22539,52 +22531,12 @@ msgid "Use Motion Blur"
 msgstr "Zamućenje pokreta"
 
 
-msgid "Diffuse Direct"
-msgstr "Difuzni faktor"
-
-
-msgid "Diffuse Indirect"
-msgstr "Difuzni intenzitet"
-
-
-msgid "Glossy Direct"
-msgstr "Direktorijum fontova"
-
-
-msgid "Glossy Indirect"
-msgstr "Indirektno"
-
-
-msgid "Transmission Direct"
-msgstr "Prenošenje"
-
-
-msgid "Transmission Indirect"
-msgstr "Indirektni prenos"
-
-
-msgid "AA Samples"
-msgstr "AA uzoraka"
-
-
-msgid "Number of antialiasing samples to render for each pixel"
-msgstr "Broj uzoraka ulepšavanja ivica renderovanih za svaki piksel"
-
-
-msgid "Ambient Occlusion Samples"
-msgstr "Uzoraka ambijentalnog senčenja"
-
-
 msgid "Dynamic BVH"
 msgstr "Dinamička BVH"
 
 
 msgid "Static BVH"
 msgstr "Statična BVH"
-
-
-msgid "Tile Size"
-msgstr "Veličina pločice"
 
 
 msgid "Use Spatial Splits"
@@ -22619,14 +22571,6 @@ msgid "Maximum number of diffuse reflection bounces, bounded by total maximum"
 msgstr "Maksimalni broj difuznih odbijanja, u okviru opšteg maksimuma"
 
 
-msgid "Diffuse Samples"
-msgstr "Difuznih uzoraka"
-
-
-msgid "Number of diffuse bounce samples to render for each AA sample"
-msgstr "Broj uzoraka difuznog senčenja renderovanih za svaki AA uzorak"
-
-
 msgid "Supported"
 msgstr "Podržani sloj"
 
@@ -22635,20 +22579,8 @@ msgid "Total maximum number of bounces"
 msgstr "Ukupan maksimalni broj odbijanja"
 
 
-msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
-msgstr "Broj uzoraka ulepšavanja ivica renderovanih u prozoru pregleda, neograničeno ako je 0"
-
-
 msgid "Pause Preview"
 msgstr "Pauziraj pregled"
-
-
-msgid "Start Resolution"
-msgstr "Početna rezolucija"
-
-
-msgid "Path Tracing"
-msgstr "Praćenje putanje"
 
 
 msgid "Number of samples to render for each pixel"
@@ -22659,68 +22591,44 @@ msgid "Use Open Shading Language (CPU rendering only)"
 msgstr "Otvoreni jezik senčenja OSL"
 
 
-msgid "Tile order for rendering"
-msgstr "Redosled renderovanja pločica"
-
-
-msgid "Render from center to the edges"
-msgstr "Renderuj od sredine do ivica"
-
-
-msgid "Right to Left"
-msgstr "S desna na levo"
-
-
-msgid "Render from right to left"
-msgstr "Renderuje sa desna na levo"
-
-
-msgid "Left to Right"
-msgstr "S leva na desno"
-
-
-msgid "Render from left to right"
-msgstr "Renderuje sa leva na desno"
-
-
-msgid "Top to Bottom"
-msgstr "Odozgo na dole"
-
-
-msgid "Render from top to bottom"
-msgstr "Renderuje odozgo na dole"
-
-
-msgid "Bottom to Top"
-msgstr "Odozdo na gore"
-
-
-msgid "Render from bottom to top"
-msgstr "Renderuje odozgo na gore"
-
-
-msgid "Transmission Samples"
-msgstr "Uzorci prenosa"
+msgid "Tile Size"
+msgstr "Veličina pločice"
 
 
 msgid "Layer Samples"
 msgstr "Uzoraka sloja"
 
 
-msgid "Progressive Refine"
-msgstr "Postepeno ulepšavanje"
-
-
-msgid "Instead of rendering each tile until it is finished, refine the whole image progressively (this renders somewhat slower, but time can be saved by manually stopping the render when the noise is low enough)"
-msgstr "Umesto renderinga svake pločice do kraja, postepeno ulepšava celu sliku (ovaj način je malo sporiji ali dozvoljava ručno zaustavljanje pre kraja kad se postigne zadovoljavajući kvalitet)"
-
-
 msgid "Max Steps"
 msgstr "Maks. koraka"
 
 
+msgid "Diffuse Direct"
+msgstr "Difuzni faktor"
+
+
+msgid "Diffuse Indirect"
+msgstr "Difuzni intenzitet"
+
+
+msgid "Glossy Direct"
+msgstr "Direktorijum fontova"
+
+
+msgid "Glossy Indirect"
+msgstr "Indirektno"
+
+
 msgid "Glossy Color"
 msgstr "Boja neba"
+
+
+msgid "Transmission Direct"
+msgstr "Prenošenje"
+
+
+msgid "Transmission Indirect"
+msgstr "Indirektni prenos"
 
 
 msgid "Transmission Color"
@@ -22939,10 +22847,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Crtaj slobodoručne stilizovane poteze"
 
 
-msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
-msgstr "Čuva za svaki uzorak umekšavanja celokupan rezultat renderovanih slojeva (kako bi izbegao probleme umekšavanja prilikom slaganja)"
-
-
 msgid "Persistent Data"
 msgstr "Trajni podaci"
 
@@ -22957,10 +22861,6 @@ msgstr "Keširaj rezultat"
 
 msgid "Save render cache to EXR files (useful for heavy compositing, Note: affects indirectly rendered scenes)"
 msgstr "Čuva keš renderinga u EXR datoteke (korisno za zahtevna slaganja, utiče na indirektno renderovane scene)"
-
-
-msgid "Save Buffers"
-msgstr "Čuvaj bafere"
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
@@ -23499,6 +23399,18 @@ msgid "Sequence Transform"
 msgstr "Transformacija sekvence"
 
 
+msgid "Show Grid"
+msgstr "Prikaži mrežu"
+
+
+msgid "Median Point"
+msgstr "Središna tačka"
+
+
+msgid "Individual Origins"
+msgstr "Individualni centri"
+
+
 msgid "Gray Scale"
 msgstr "Sivi tonovi"
 
@@ -23648,14 +23560,6 @@ msgid "Pivot around the 2D cursor"
 msgstr "Težište oko 2D kursora"
 
 
-msgid "Individual Origins"
-msgstr "Individualni centri"
-
-
-msgid "Median Point"
-msgstr "Središna tačka"
-
-
 msgid "Show Blue Channel"
 msgstr "Prikaži plavi kanal"
 
@@ -23694,10 +23598,6 @@ msgstr "Prikaži zeleni kanal"
 
 msgid "Show green channel in the frame"
 msgstr "Prikaži zeleni kanal u kadru"
-
-
-msgid "Show Grid"
-msgstr "Prikaži mrežu"
 
 
 msgid "Show grid showing lens distortion"
@@ -25406,22 +25306,6 @@ msgid "Gesture Straight Line"
 msgstr "Crtaj prave linije"
 
 
-msgid "Total Samples:"
-msgstr "Ukupno uzoraka:"
-
-
-msgid "Mesh Light"
-msgstr "Meš svetlo"
-
-
-msgid "Subsurface"
-msgstr "Izdeljena površ"
-
-
-msgid "Tiles X"
-msgstr "Delova X"
-
-
 msgid "No output node"
 msgstr "Bez izlaznog čvora"
 
@@ -26612,11 +26496,6 @@ msgstr "Zvučnik"
 
 
 msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Poveži..."
-
-
-msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Stvori veze..."
 
@@ -26887,10 +26766,6 @@ msgstr "Sva mala slova"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Izoštri"
-
-
-msgid "X-Ray"
-msgstr "X-zrak"
 
 
 msgctxt "Operator"
@@ -27681,12 +27556,12 @@ msgid "Without Targets"
 msgstr "Bez cilja"
 
 
-msgid "OK?"
-msgstr "U redu?"
-
-
 msgid "Object (Keep Transform)"
 msgstr "Objekat (zadrži transformaciju)"
+
+
+msgid "OK?"
+msgstr "U redu?"
 
 
 msgid "No active bone"
@@ -28387,6 +28262,10 @@ msgid "Stroke not found in grease pencil frame"
 msgstr "Odakle dolazi slika"
 
 
+msgid "Modify"
+msgstr "Izmenjen"
+
+
 msgid "Could not acquire buffer from image"
 msgstr "Približi/udalji pogled"
 
@@ -28406,10 +28285,6 @@ msgstr "nepodržan format fonta"
 
 msgid "unable to load text"
 msgstr "ne mogu da učitam tekst"
-
-
-msgid "Modify"
-msgstr "Izmenjen"
 
 
 msgid "Unable to create new strip"
@@ -28568,6 +28443,10 @@ msgid "RoughnessV"
 msgstr "Hrapavost V"
 
 
+msgid "Subsurface"
+msgstr "Izdeljena površ"
+
+
 msgid "Sigma"
 msgstr "Sigma"
 
@@ -28642,10 +28521,6 @@ msgstr "Faktor boje"
 
 msgid "Alpha Fac"
 msgstr "Alfa faktor"
-
-
-msgid "Texture Blur"
-msgstr "Zamućenje teksture"
 
 
 msgid "BSSRDF"

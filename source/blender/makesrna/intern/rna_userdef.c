@@ -3679,6 +3679,23 @@ static void rna_def_userdef_theme_collection_color(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 }
 
+static void rna_def_userdef_theme_strip_color(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "ThemeStripColor", NULL);
+  RNA_def_struct_sdna(srna, "ThemeStripColor");
+  RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
+  RNA_def_struct_ui_text(srna, "Theme Strip Color", "Theme settings for strip colors");
+
+  prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, NULL, "color");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Color", "Strip Color");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+}
+
 static void rna_def_userdef_theme_space_clip(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -4028,6 +4045,12 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
   RNA_def_property_collection_sdna(prop, NULL, "collection_color", "");
   RNA_def_property_struct_type(prop, "ThemeCollectionColor");
   RNA_def_property_ui_text(prop, "Collection Color", "");
+
+  prop = RNA_def_property(srna, "strip_color", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_collection_sdna(prop, NULL, "strip_color", "");
+  RNA_def_property_struct_type(prop, "ThemeStripColor");
+  RNA_def_property_ui_text(prop, "Strip Color", "");
 }
 
 static void rna_def_userdef_addon(BlenderRNA *brna)
@@ -4271,6 +4294,7 @@ static void rna_def_userdef_dothemes(BlenderRNA *brna)
   rna_def_userdef_theme_space_spreadsheet(brna);
   rna_def_userdef_theme_colorset(brna);
   rna_def_userdef_theme_collection_color(brna);
+  rna_def_userdef_theme_strip_color(brna);
   rna_def_userdef_themes(brna);
 }
 
@@ -6333,9 +6357,10 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Override Templates", "Enable library override template in the python API");
 
-  prop = RNA_def_property(srna, "use_geometry_nodes_fields", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "use_geometry_nodes_fields", 1);
-  RNA_def_property_ui_text(prop, "Geometry Nodes Fields", "Enable field nodes in geometry nodes");
+  prop = RNA_def_property(srna, "use_geometry_nodes_legacy", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "use_geometry_nodes_legacy", 1);
+  RNA_def_property_ui_text(
+      prop, "Geometry Nodes Legacy", "Enable legacy geometry nodes in the menu");
 }
 
 static void rna_def_userdef_addon_collection(BlenderRNA *brna, PropertyRNA *cprop)
