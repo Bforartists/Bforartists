@@ -2487,6 +2487,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         layout = self.layout
 
         st = context.space_data
+        overlay_settings = st.preview_overlay
         is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
@@ -2522,7 +2523,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         if is_preview:
             layout.use_property_split = False
             if st.display_mode == 'IMAGE':
-                layout.prop(st, "show_metadata")
+                layout.prop(overlay_settings, "show_metadata")
 
 
 classes = (
