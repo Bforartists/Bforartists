@@ -780,7 +780,7 @@ string_length
 string_substring
 string_to_curve
 value_to_string
-#~ DEF_ICON_BLANK(799)
+attribute_statistic
 
 # ------------------------- row 12 --------------------------*/
 
@@ -840,7 +840,7 @@ tracking
 tracking_backwards
 tracking_backwards_single
 
-#~ DEF_ICON_BLANK(859)
+attribute_capture
 #~ DEF_ICON_BLANK(860)
 #~ DEF_ICON_BLANK(861)
 #~ DEF_ICON_BLANK(862)
