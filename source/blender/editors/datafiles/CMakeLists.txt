@@ -841,11 +841,11 @@ tracking_backwards
 tracking_backwards_single
 
 attribute_capture
-#~ DEF_ICON_BLANK(860)
-#~ DEF_ICON_BLANK(861)
-#~ DEF_ICON_BLANK(862)
-#~ DEF_ICON_BLANK(863)
-#~ DEF_ICON_BLANK(864)
+curve_fillet
+curve_parameter
+curve_sample
+curve_tangent
+spline_length
 #~ DEF_ICON_BLANK(865)
 #~ DEF_ICON_BLANK(866)
 #~ DEF_ICON_BLANK(867)
