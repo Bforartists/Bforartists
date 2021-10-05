@@ -2179,8 +2179,6 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
 
         col.prop(st, "display_channel", text="Channel")
 
-        layout.prop(st, "use_zoom_to_fit")
-
         if st.display_mode == 'IMAGE':
             col.prop(st, "show_overexposed")
 
@@ -2188,9 +2186,8 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.use_property_split = False
             col.prop(st, "show_separate_color")
 
-        if st.display_mode == 'IMAGE':
-            layout.use_property_split = False
-            layout.prop(st, "use_zoom_to_fit")
+        layout.use_property_split = False
+        layout.prop(st, "use_zoom_to_fit")
 
 
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
