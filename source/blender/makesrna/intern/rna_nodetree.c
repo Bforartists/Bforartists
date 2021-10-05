@@ -13370,15 +13370,15 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_LEGACY_SUBDIVISION_SURFACE:
     //  icon = ICON_DELETE;
     //  break;
-    //case GEO_NODE_ATTRIBUTE_CAPTURE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_ATTRIBUTE_CAPTURE:
+      icon = ICON_ATTRIBUTE_CAPTURE;
+      break;
     case GEO_NODE_ATTRIBUTE_REMOVE:
       icon = ICON_ATTRIBUTE_REMOVE;
       break;
-    // case GEO_NODE_ATTRIBUTE_STATISTIC:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_ATTRIBUTE_STATISTIC:
+      icon = ICON_ATTRIBUTE_STATISTIC;
+      break;
     case GEO_NODE_BOOLEAN:
       icon = ICON_MOD_BOOLEAN;
       break;
