@@ -3331,7 +3331,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Attribute Capture         ", icon = "ATTRIBUTE_CAPTURE")
+            props = col.operator("node.add_node", text=" Attribute Capture   ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCapture"
 
@@ -3355,70 +3355,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_COMBINE_XYZ")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeCombineXYZ"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeCompare"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CONVERT")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeConvert"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CURVEMAP")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeCurveMap"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeFill"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MAPRANGE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeMapRange"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeMath"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeMix"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeProximity"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeRandomize"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeRemove"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeSampleTexture"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeSeparateXYZ"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeTransfer"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeVectorMath"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTOR_ROTATE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAttributeVectorRotate"
 
 
 #add color panel
