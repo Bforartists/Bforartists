@@ -4202,8 +4202,6 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
 
-            props.type = "GeometryNodeLegacyPointTranslate"
-
         #### Icon Buttons
 
         else:
