@@ -848,8 +848,8 @@ curve_tangent
 spline_length
 set_position
 geometry_proximity
-#~ DEF_ICON_BLANK(867)
-#~ DEF_ICON_BLANK(868)
+position
+index
 
 # ------------------------- row 13 --------------------------*/
 
