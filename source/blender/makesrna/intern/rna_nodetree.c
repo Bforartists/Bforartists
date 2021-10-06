@@ -13448,9 +13448,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TRIM:
       icon = ICON_CURVE_TRIM;
       break;
-      // case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
+      icon = ICON_POINT_DISTRIBUTE;
+      break;
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
@@ -13469,9 +13469,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_TANGENT:
       icon = ICON_CURVE_TANGENT;
       break;
-      // case GEO_NODE_INSTANCE_ON_POINTS:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_INSTANCE_ON_POINTS:
+      icon = ICON_POINT_INSTANCE;
+      break;
     case GEO_NODE_IS_VIEWPORT:
       icon = ICON_VIEW;
       break;
@@ -13514,9 +13514,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_SUBDIVIDE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
-      // case GEO_NODE_MESH_TO_POINTS:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_MESH_TO_POINTS:
+      icon = ICON_MESH_TO_POINTS;
+      break;
     case GEO_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
       break;

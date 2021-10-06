@@ -4190,35 +4190,18 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Align Rotation to Vector  ", icon = "ALIGN_ROTATION_TO_VECTOR")
+            props = col.operator("node.add_node", text=" Distribute Points on Faces  ", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
-            props.type = "GeometryNodeAlignRotationToVector"
+            props.type = "GeometryNodeDistributePointsOnFaces"
 
-            props = col.operator("node.add_node", text=" Point Distribute   ", icon = "POINT_DISTRIBUTE")
+            props = col.operator("node.add_node", text=" Instance on Points   ", icon = "POINT_INSTANCE")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyPointDistribute"
+            props.type = "GeometryNodeInstanceOnPoints"
 
-            props = col.operator("node.add_node", text=" Point Instance     ", icon = "POINT_INSTANCE")
+            props = col.operator("node.add_node", text=" Mesh to Points       ", icon = "MESH_TO_POINTS")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyPointInstance"
+            props.type = "GeometryNodeMeshToPoints"
 
-            props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyRotatePoints"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Point Scale    ", icon = "POINT_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodePointScale"
-
-            props = col.operator("node.add_node", text=" Point Separate    ", icon = "POINT_SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyPointSeparate"
-
-            props = col.operator("node.add_node", text=" Point Translate    ", icon = "POINT_TRANSLATE")
-            props.use_transform = True
             props.type = "GeometryNodeLegacyPointTranslate"
 
         #### Icon Buttons
@@ -4229,33 +4212,17 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "ALIGN_ROTATION_TO_VECTOR")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyAlignRotationToVector"
-
             props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyPointDistribute"
+            props.type = "GeometryNodeDistributePointsOnFaces"
 
             props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyPointInstance"
+            props.type = "GeometryNodeInstanceOnPoints"
 
-            props = flow.operator("node.add_node", text = "", icon = "POINT_ROTATE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyRotatePoints"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodePointScale"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyPointSeparate"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyPointTranslate"
+            props.type = "GeometryNodeMeshToPoints"
 
 
 #add text panel
