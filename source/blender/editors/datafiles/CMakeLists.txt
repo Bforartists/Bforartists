@@ -909,7 +909,7 @@ user
 view_camera
 view_ortho
 
-#~ DEF_ICON_BLANK(928)
+points_to_vertices
 #~ DEF_ICON_BLANK(929)
 #~ DEF_ICON_BLANK(930)
 #~ DEF_ICON_BLANK(931)
