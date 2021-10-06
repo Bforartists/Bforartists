@@ -13520,9 +13520,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
       break;
-      // case GEO_NODE_POINTS_TO_VERTICES:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_POINTS_TO_VERTICES:
+      icon = ICON_POINTS_TO_VERTICES;
+      break;
     case GEO_NODE_PROXIMITY:
       icon = ICON_GEOMETRY_PROXIMITY;
       break;
