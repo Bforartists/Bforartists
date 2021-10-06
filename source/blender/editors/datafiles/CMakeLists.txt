@@ -846,8 +846,8 @@ curve_parameter
 curve_sample
 curve_tangent
 spline_length
-#~ DEF_ICON_BLANK(865)
-#~ DEF_ICON_BLANK(866)
+set_position
+geometry_proximity
 #~ DEF_ICON_BLANK(867)
 #~ DEF_ICON_BLANK(868)
 
