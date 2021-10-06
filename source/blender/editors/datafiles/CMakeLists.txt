@@ -910,7 +910,7 @@ view_camera
 view_ortho
 
 points_to_vertices
-#~ DEF_ICON_BLANK(929)
+mesh_to_points
 #~ DEF_ICON_BLANK(930)
 #~ DEF_ICON_BLANK(931)
 #~ DEF_ICON_BLANK(932)
