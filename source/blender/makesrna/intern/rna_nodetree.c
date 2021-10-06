@@ -13451,18 +13451,18 @@ static int node_type_to_icon(int type)
       // case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       //  icon = ICON_DELETE;
       //  break;
-      // case GEO_NODE_INPUT_INDEX:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_INPUT_INDEX:
+      icon = ICON_INDEX;
+      break;
     case GEO_NODE_INPUT_MATERIAL:
       icon = ICON_NODE_MATERIAL;
       break;
-      // case GEO_NODE_INPUT_NORMAL:
-      //  icon = ICON_DELETE;
-      //  break;
-      // case GEO_NODE_INPUT_POSITION:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_INPUT_NORMAL:
+      icon = ICON_RECALC_NORMALS;
+      break;
+    case GEO_NODE_INPUT_POSITION:
+      icon = ICON_POSITION;
+      break;
     case GEO_NODE_INPUT_SPLINE_LENGTH:
       icon = ICON_SPLINE_LENGTH;
       break;
