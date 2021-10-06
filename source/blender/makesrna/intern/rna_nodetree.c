@@ -13524,12 +13524,12 @@ static int node_type_to_icon(int type)
       // case GEO_NODE_POINTS_TO_VERTICES:
       //  icon = ICON_DELETE;
       //  break;
-      // case GEO_NODE_PROXIMITY:
-      //  icon = ICON_DELETE;
-      //  break;
-      // case GEO_NODE_REALIZE_INSTANCES:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_PROXIMITY:
+      icon = ICON_GEOMETRY_PROXIMITY;
+      break;
+    case GEO_NODE_REALIZE_INSTANCES:
+      icon = ICON_MOD_INSTANCE;
+      break;
     case GEO_NODE_SEPARATE_COMPONENTS:
       icon = ICON_SEPARATE;
       break;
@@ -13539,9 +13539,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_STRING_TO_CURVES:
       icon = ICON_STRING_TO_CURVE;
       break;
-      // case GEO_NODE_SET_POSITION:
-      //  icon = ICON_DELETE;
-      //  break;
+    case GEO_NODE_SET_POSITION:
+      icon = ICON_SET_POSITION;
+      break;
     case GEO_NODE_SWITCH:
       icon = ICON_SWITCH;
       break;
