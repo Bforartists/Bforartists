@@ -4016,17 +4016,13 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeBoolean"
 
-            props = col.operator("node.add_node", text=" Edge Split                ", icon = "SPLITEDGE")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgeSplit"
-
             props = col.operator("node.add_node", text=" Mesh Subdivide        ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeMeshSubdivide"
 
-            props = col.operator("node.add_node", text=" Subdivision Surface ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Points to Vertices    ", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivisionSurface"
+            props.type = "GeometryNodePointsToVertices"
 
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
@@ -4044,17 +4040,13 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgeSplit"
-
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeMeshSubdivide"
 
-            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivisionSurface"
+            props.type = "GeometryNodePointsToVertices"
 
             props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
