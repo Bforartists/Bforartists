@@ -3819,17 +3819,25 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Collection Info       ", icon = "COLLECTION_INFO")
+            props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
+            
+            props = col.operator("node.add_node", text=" Index                   ", icon = "INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeInputIndex"
 
-            props = col.operator("node.add_node", text=" Is Viewport           ", icon = "VIEW")
+            props = col.operator("node.add_node", text=" Is Viewport         ", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
             props = col.operator("node.add_node", text=" Material              ", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
+            
+            props = col.operator("node.add_node", text=" Normal                ", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNormal"
 
             props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
@@ -3838,6 +3846,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Position                ", icon = "POSITION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputPosition"
+            
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeLegacyRandomFloat"
@@ -3865,6 +3877,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
+            
+            props = flow.operator("node.add_node", text = "", icon = "INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeInputIndex"
 
             props = flow.operator("node.add_node", text = "", icon = "VIEW")
             props.use_transform = True
@@ -3874,10 +3890,18 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
 
+            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNormal"
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
+            props = flow.operator("node.add_node", text = "", icon = "POSITION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputPosition"
+            
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeLegacyRandomFloat"
