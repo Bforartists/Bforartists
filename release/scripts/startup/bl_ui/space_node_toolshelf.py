@@ -4638,10 +4638,6 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Points to Volume     ", icon = "POINT_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVolume"
-
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeLegacyVolumeToMesh"
@@ -4653,10 +4649,6 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVolume"
 
             props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
             props.use_transform = True
