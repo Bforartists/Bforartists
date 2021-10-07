@@ -911,8 +911,8 @@ view_ortho
 
 points_to_vertices
 mesh_to_points
-#~ DEF_ICON_BLANK(930)
-#~ DEF_ICON_BLANK(931)
+float_curve
+rotate_euler
 #~ DEF_ICON_BLANK(932)
 #~ DEF_ICON_BLANK(933)
 #~ DEF_ICON_BLANK(934)
