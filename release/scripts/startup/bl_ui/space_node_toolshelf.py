@@ -3730,7 +3730,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Join Geometry           ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
- 
+
             props = col.operator("node.add_node", text=" Realize Instance         ", icon = "MOD_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeRealizeInstances"
@@ -3822,7 +3822,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
-            
+
             props = col.operator("node.add_node", text=" Index                   ", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
@@ -3834,7 +3834,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Material              ", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
-            
+
             props = col.operator("node.add_node", text=" Normal                ", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
@@ -3849,7 +3849,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Position                ", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
-            
+
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeLegacyRandomFloat"
@@ -3877,7 +3877,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
@@ -3901,7 +3901,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeLegacyRandomFloat"
@@ -4310,60 +4310,6 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.type = "FunctionNodeValueToString"
 
 
-#add volume panel
-class NODES_PT_geom_add_volume(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Volume"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Points to Volume     ", icon = "POINT_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVolume"
-
-            props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyVolumeToMesh"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVolume"
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyVolumeToMesh"
-
 
 #add utilities panel
 class NODES_PT_geom_add_utilities(bpy.types.Panel):
@@ -4461,6 +4407,53 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
+
+
+#add vector panel
+class NODES_PT_geom_add_texture(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Texture"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Noise Texture   ", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
 
 
 #add vector panel
@@ -4583,6 +4576,61 @@ class NODES_PT_geom_add_output(bpy.types.Panel):
             props.type = "GeometryNodeViewer"
 
 
+#add volume panel
+class NODES_PT_geom_add_volume(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Volume"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Points to Volume     ", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+
+            props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeLegacyVolumeToMesh"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeLegacyVolumeToMesh"
+
+
 # from nodeitems_builtin, not directly importable
 def contains_group(nodetree, group):
     if nodetree == group:
@@ -4595,7 +4643,7 @@ def contains_group(nodetree, group):
     return False
 
 class NODES_PT_Input_node_group(bpy.types.Panel):
-    bl_label = "Node Group"
+    bl_label = "Group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
@@ -4636,6 +4684,64 @@ class NODES_PT_Input_node_group(bpy.types.Panel):
             ops = props.settings.add()
             ops.name = "node_tree"
             ops.value = "bpy.data.node_groups['{0}']".format(group.name)
+
+
+#Relations tab, Relations Panel
+class NODES_PT_geom_layout(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Layout"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Relations"
+
+    bl_label = "Layout"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Frame               ", icon = "NODE_FRAME")
+            props.use_transform = True
+            props.type = "NodeFrame"
+
+            props = col.operator("node.add_node", text=" Reroute             ", icon = "NODE_REROUTE")
+            props.use_transform = True
+            props.type = "NodeReroute"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_FRAME")
+            props.use_transform = True
+            props.type = "NodeFrame"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_REROUTE")
+            props.use_transform = True
+            props.type = "NodeReroute"
+
 
 
 classes = (
@@ -4683,13 +4789,15 @@ classes = (
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
-    NODES_PT_geom_add_text,
     NODES_PT_geom_add_point,
-    NODES_PT_geom_add_volume,
+    NODES_PT_geom_add_text,
     NODES_PT_geom_add_utilities,
+    NODES_PT_geom_add_texture,
     NODES_PT_geom_add_vector,
     NODES_PT_geom_add_output,
+    NODES_PT_geom_add_volume,
     NODES_PT_Input_node_group,
+    NODES_PT_geom_layout,
 )
 
 if __name__ == "__main__":  # only for live edit.
