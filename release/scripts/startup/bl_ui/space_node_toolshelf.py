@@ -4352,10 +4352,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Float Compare ", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
-
-            props = col.operator("node.add_node", text=" Float to Integer   ", icon = "FLOAT_TO_INT")
+            
+            props = col.operator("node.add_node", text=" Float to Integer ", icon = "FLOAT_TO_INT")
             props.use_transform = True
             props.type = "FunctionNodeFloatToInt"
+
+            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4367,6 +4371,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
+            
+            props = col.operator("node.add_node", text=" Random Value  ", icon = "RANDOM_FLOAT")
+            props.use_transform = True
+            props.type = "FunctionNodeRandomValue"
+            
+            props = col.operator("node.add_node", text=" Rotate Euler     ", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
 
             props = col.operator("node.add_node", text=" Switch               ", icon = "SWITCH")
             props.use_transform = True
@@ -4391,6 +4403,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
+            
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
 
             props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
             props.use_transform = True
@@ -4403,6 +4419,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
+            
+            props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
+            props.use_transform = True
+            props.type = "FunctionNodeRandomValue"
+            
+            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
+            props.use_transform = True
+            props.type = "FunctionNodeRotateEuler"
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
