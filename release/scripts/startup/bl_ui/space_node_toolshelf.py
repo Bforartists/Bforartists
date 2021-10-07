@@ -4517,6 +4517,10 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
+            
+            props = col.operator("node.add_node", text=" Vector Curves   ", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorCurve"
 
             props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
             props.use_transform = True
@@ -4542,6 +4546,10 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
+            
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
             props.use_transform = True
