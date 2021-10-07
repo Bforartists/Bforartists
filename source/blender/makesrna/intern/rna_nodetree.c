@@ -12929,9 +12929,9 @@ static int node_type_to_icon(int type)
     case SH_NODE_OUTPUT_AOV:
       icon = ICON_NODE_VALUE;
       break;
-    //case SH_NODE_CURVE_FLOAT:
-    //  icon = ICON_DELETE;
-    //  break;
+    case SH_NODE_CURVE_FLOAT:
+      icon = ICON_FLOAT_CURVE;
+      break;
 
     /* bfa - CompositorNode */
     case CMP_NODE_VIEWER:
@@ -13239,12 +13239,12 @@ static int node_type_to_icon(int type)
     case FN_NODE_INPUT_VECTOR:
       icon = ICON_NODE_VECTOR;
       break;
-    //case FN_NODE_RANDOM_VALUE:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case FN_NODE_ROTATE_EULER:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_RANDOM_VALUE:
+      icon = ICON_RANDOM_FLOAT;
+      break;
+    case FN_NODE_ROTATE_EULER:
+      icon = ICON_ROTATE_EULER;
+      break;
     case FN_NODE_STRING_LENGTH:
       icon = ICON_STRING_LENGTH;
       break;
