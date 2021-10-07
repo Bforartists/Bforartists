@@ -4667,7 +4667,7 @@ def contains_group(nodetree, group):
     return False
 
 class NODES_PT_Input_node_group(bpy.types.Panel):
-    bl_label = "Group"
+    bl_label = "Node Group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
