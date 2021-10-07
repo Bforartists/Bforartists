@@ -201,6 +201,8 @@ class SEQUENCER_HT_header(Header):
         sub.popover(panel="SEQUENCER_PT_overlay", text="")
         sub.active = st.show_strip_overlay
 
+        row.popover(panel = "SEQUENCER_PT_view_options", text = "Options")
+
 
 class SEQUENCER_PT_overlay(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -2186,9 +2188,6 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.use_property_split = False
             col.prop(st, "show_separate_color")
 
-        layout.use_property_split = False
-        layout.prop(st, "use_zoom_to_fit")
-
 
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
     bl_label = "Frame Overlay"
@@ -2455,33 +2454,11 @@ class SEQUENCER_PT_snapping(Panel):
         col.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
 
 
-class SEQUENCER_PT_marker_options(Panel):
-    bl_label = "Marker Options"
-    bl_space_type = 'SEQUENCE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'View'
-
-    @classmethod
-    def poll(cls, context):
-        st = context.space_data
-        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        st = context.space_data
-
-        col = layout.column(align = True)
-        col.prop(tool_settings, "lock_markers")
-        col.prop(st, "use_marker_sync")
-
-
 class SEQUENCER_PT_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'SEQUENCE_EDITOR'
-    bl_region_type = 'UI'
+    bl_region_type = 'HEADER'
 
     def draw(self, context):
         layout = self.layout
@@ -2490,6 +2467,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         overlay_settings = st.preview_overlay
         is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+        tool_settings = context.tool_settings
 
         if is_sequencer_view:
 
@@ -2524,6 +2502,16 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             layout.use_property_split = False
             if st.display_mode == 'IMAGE':
                 layout.prop(overlay_settings, "show_metadata")
+
+            layout.use_property_split = False
+            layout.prop(st, "use_zoom_to_fit")
+
+
+        if is_sequencer_view:
+
+            col = layout.column(align = True)
+            col.prop(tool_settings, "lock_markers")
+            col.prop(st, "use_marker_sync")
 
 
 classes = (
@@ -2604,8 +2592,6 @@ classes = (
     SEQUENCER_PT_snapping,
 
 #BFA
-
-    SEQUENCER_PT_marker_options,
     SEQUENCER_PT_view_options
 )
 
