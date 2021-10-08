@@ -118,11 +118,16 @@ class GRAPH_HT_header(Header):
         if tool_settings.use_proportional_fcurve:
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
-        layout.prop(st, "pivot_point", icon_only=True)
+        row = layout.row()
 
-        layout.operator_menu_enum("graph.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
-        layout.operator_menu_enum("graph.handle_type", "type", text="", icon = "HANDLE_AUTO")
-        layout.operator_menu_enum("graph.interpolation_type", "type", text="", icon = "INTERPOLATE")
+        row.prop(st, "pivot_point", icon_only=True)
+        row.operator_menu_enum("graph.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
+        row.operator_menu_enum("graph.handle_type", "type", text="", icon = "HANDLE_AUTO")
+        row.operator_menu_enum("graph.interpolation_type", "type", text="", icon = "INTERPOLATE")
+
+
+        row = layout.row()
+        row.popover(panel = "GRAPH_PT_properties_view_options", text = "Options")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -150,53 +155,23 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
 
-class GRAPH_PT_properties_Marker_options(Panel):
-    bl_label = "Marker Options"
-    bl_category = "View"
-    bl_space_type = 'GRAPH_EDITOR'
-    bl_region_type = 'UI'
-
-    # animation editors is a wild mix. We need to separate them by the following two defs
-    # markers are just in graph editor or nla, not in driver editor
-    def in_graph_or_nla(context):
-        return context.space_data.mode != 'DRIVERS' # dopesheet, not timeline
-
-    @classmethod
-    def poll(cls, context):
-        # only for graph or nla
-        return cls.in_graph_or_nla(context)
-
-    def draw(self, context):
-
-        layout = self.layout
-        tool_settings = context.tool_settings
-
-        layout.prop(tool_settings, "lock_markers")
-
-
 class GRAPH_PT_properties_view_options(Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
-    bl_region_type = 'UI'
+    bl_region_type = 'HEADER'
 
     def draw(self, context):
         sc = context.scene
         layout = self.layout
 
         st = context.space_data
-
-        layout.prop(st, "use_realtime_update")
-        if st.mode != 'DRIVERS':
-            layout.prop(st, "show_markers")
-
-        layout.separator()
+        tool_settings = context.tool_settings
 
         col = layout.column(align = True)
+        col.prop(st, "use_realtime_update")
         col.prop(st, "show_seconds")
         col.prop(st, "show_locked_time")
-
-        layout.separator()
 
         col = layout.column(align = True)
         col.prop(st, "show_sliders")
@@ -205,13 +180,17 @@ class GRAPH_PT_properties_view_options(Panel):
         col.prop(st, "use_auto_merge_keyframes")
         col.prop(st, "use_beauty_drawing")
 
-        layout.separator()
-
         col = layout.column(align = True)
         col.prop(st, "show_extrapolation")
         col.prop(st, "show_handles")
         col.prop(st, "use_only_selected_curves_handles")
         col.prop(st, "use_only_selected_keyframe_handles")
+
+        col = layout.column(align = True)
+        if st.mode != 'DRIVERS':
+            col.prop(st, "show_markers")
+        if context.space_data.mode != 'DRIVERS':
+            col.prop(tool_settings, "lock_markers")
 
 
 class GRAPH_MT_editor_menus(Menu):
@@ -637,7 +616,6 @@ classes = (
     ANIM_OT_switch_editor_in_driver,
     ALL_MT_editormenu,
     GRAPH_HT_header,
-    GRAPH_PT_properties_Marker_options,
     GRAPH_PT_properties_view_options,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
