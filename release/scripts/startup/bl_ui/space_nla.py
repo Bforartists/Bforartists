@@ -98,9 +98,12 @@ class NLA_HT_header(Header):
 
         dopesheet_filter(layout, context)
 
-        layout.popover(panel="NLA_PT_filters", text="", icon='FILTER')
+        row = layout.row()
 
-        layout.prop(st, "auto_snap", text="")
+        row.popover(panel="NLA_PT_filters", text="", icon='FILTER')
+        row.prop(st, "auto_snap", text="")
+        row.popover(panel = "NLA_PT_view_view_options", text = "Options")
+
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -188,36 +191,19 @@ class NLA_MT_view_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'NLA_MT_snap_pie'
 
 
-class NLA_PT_view_marker_options(Panel):
-    bl_label = "Marker Options"
-    bl_space_type = 'NLA_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'View'
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-
-        layout.prop(tool_settings, "lock_markers")
-
-
 class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
     bl_space_type = 'NLA_EDITOR'
-    bl_region_type = 'UI'
+    bl_region_type = 'HEADER'
     bl_category = 'View'
 
     def draw(self, context):
         layout = self.layout
 
         st = context.space_data
-
+        tool_settings = context.tool_settings
 
         col = layout.column(align=True)
-        col.prop(st, "show_markers")
-        col.prop(st, "show_local_markers")
-        col.separator()
 
         col.prop(st, "show_seconds")
         col.prop(st, "show_locked_time")
@@ -225,6 +211,11 @@ class NLA_PT_view_view_options(Panel):
 
         col.prop(st, "show_strip_curves")
         col.prop(st, "use_realtime_update")
+
+        col.separator()
+        col.prop(st, "show_markers")
+        col.prop(st, "show_local_markers")
+        col.prop(tool_settings, "lock_markers")
 
 
 class NLA_MT_select(Menu):
@@ -400,7 +391,6 @@ classes = (
     NLA_MT_editor_menus,
     NLA_MT_view,
     NLA_MT_view_pie_menus,
-    NLA_PT_view_marker_options,
     NLA_PT_view_view_options,
     NLA_MT_select,
     NLA_MT_marker,
