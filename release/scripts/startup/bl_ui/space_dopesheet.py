@@ -412,7 +412,7 @@ class DOPESHEET_HT_editor_buttons:
             "action.interpolation_type", "type", text="", icon="INTERPOLATE")
         layout.operator_menu_enum(
             "action.keyframe_type", "type", text="", icon="SPACE2")
-            
+
         row = layout.row()
         row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
 
@@ -677,12 +677,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         st = context.space_data
 
         col = layout.column(align=True)
-
         col.prop(st, "use_realtime_update")
-        col.prop(st, "show_markers")
-
-        col.separator()
-
         col.prop(st, "show_seconds")
         col.prop(st, "show_locked_time")
 
@@ -700,6 +695,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         col.prop(st, "use_auto_merge_keyframes")
 
         col = layout.column(align=True)
+        col.prop(st, "show_markers")
         col.prop(tool_settings, "lock_markers")
         col.prop(st, "use_marker_sync")
 
