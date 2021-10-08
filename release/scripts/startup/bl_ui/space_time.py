@@ -84,15 +84,14 @@ class TIME_HT_editor_buttons:
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
         sub = row.row(align=True)
         if tool_settings.use_keyframe_insert_auto:
-            sub.popover(
-                panel="TIME_PT_auto_keyframing",
-                text="",
-            )
+            sub.popover(panel="TIME_PT_auto_keyframing", text="")
 
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
-        layout.popover(panel="TIME_PT_playback", text="Playback")
-        layout.popover(panel="TIME_PT_keyframing_settings", text="Keying")
+        row.popover(panel="TIME_PT_playback", text="Playback")
+        row.popover(panel="TIME_PT_keyframing_settings", text="Keying")
+        
+        row.popover(panel = "TIME_PT_view_view_options", text = "")
 
 class TIME_MT_editor_menus(Menu):
     bl_idname = "TIME_MT_editor_menus"
@@ -307,31 +306,11 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
 ############# Panels in sidebar #########################
 
 
-class TIME_PT_view_marker_options(TimelinePanelButtons, Panel):
-    bl_label = "Marker Options"
-    bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'View'
-
-    @classmethod
-    def poll(cls, context):
-        # only for timeline editor
-        return cls.has_timeline(context)
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        st = context.space_data
-
-        layout.prop(tool_settings, "lock_markers")
-
-
 class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'UI'
+    bl_region_type = 'HEADER'
 
     @classmethod
     def poll(cls, context):
@@ -344,36 +323,23 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
 
         st = context.space_data
         scene = context.scene
+        tool_settings = context.tool_settings
 
-        layout.prop(st, "show_markers")
+        col = layout.column()
 
-        layout.separator()
+        
+        col.prop(st.dopesheet, "show_only_errors")
 
-        layout.prop(scene, "show_keys_from_selected_only", text = "Only show selected")
-        layout.prop(st.dopesheet, "show_only_errors")
+        col.separator()
 
-        layout.separator()
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-
-class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
-    bl_label = "Cache"
-    bl_category = "Cache"
-    bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'UI'
-
-    @classmethod
-    def poll(cls, context):
-        # only for timeline editor
-        return cls.has_timeline(context)
-
-    def draw(self, context):
-        sc = context.scene
-        layout = self.layout
-
-        st = context.space_data
+        col.prop(scene, "show_keys_from_selected_only", text = "Only show selected")
+        col.prop(st, "show_seconds")
+        col.prop(st, "show_locked_time")
+        
+        col.prop(st, "show_markers")
+        col.prop(tool_settings, "lock_markers")
+        
+        col.separator()       
 
         row = layout.row()
         row.use_property_split = False
@@ -433,9 +399,7 @@ classes = (
     TIME_MT_view,
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
-    TIME_PT_view_marker_options,
     TIME_PT_view_view_options,
-    TIME_PT_view_view_cache,
     TIME_PT_auto_keyframing,
 )
 
