@@ -205,13 +205,13 @@ class NLA_PT_view_view_options(Panel):
 
         col = layout.column(align=True)
 
+        col.prop(st, "use_realtime_update")
         col.prop(st, "show_seconds")
         col.prop(st, "show_locked_time")
         col.separator()
 
         col.prop(st, "show_strip_curves")
-        col.prop(st, "use_realtime_update")
-
+        
         col.separator()
         col.prop(st, "show_markers")
         col.prop(st, "show_local_markers")
