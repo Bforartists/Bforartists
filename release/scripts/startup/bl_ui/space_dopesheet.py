@@ -406,12 +406,11 @@ class DOPESHEET_HT_editor_buttons:
             sub.prop(tool_settings, "proportional_edit_falloff",
                      text="", icon_only=True)
 
-        layout.operator_menu_enum(
-            "action.handle_type", "type", text="", icon="HANDLE_AUTO")
-        layout.operator_menu_enum(
-            "action.interpolation_type", "type", text="", icon="INTERPOLATE")
-        layout.operator_menu_enum(
-            "action.keyframe_type", "type", text="", icon="SPACE2")
+        row = layout.row()
+        row.operator_menu_enum("action.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
+        row.operator_menu_enum("action.handle_type", "type", text="", icon="HANDLE_AUTO")
+        row.operator_menu_enum("action.interpolation_type", "type", text="", icon="INTERPOLATE")
+        row.operator_menu_enum("action.keyframe_type", "type", text="", icon="SPACE2")
 
         row = layout.row()
         row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
@@ -641,10 +640,6 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.duplicate_move", icon="DUPLICATE")
         layout.operator("action.delete", icon="DELETE")
-
-        layout.separator()
-
-        layout.operator_menu_enum("action.easing_type", "type", text="Easing Mode")
 
         layout.separator()
 
