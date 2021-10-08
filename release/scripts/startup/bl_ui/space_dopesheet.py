@@ -412,6 +412,9 @@ class DOPESHEET_HT_editor_buttons:
             "action.interpolation_type", "type", text="", icon="INTERPOLATE")
         layout.operator_menu_enum(
             "action.keyframe_type", "type", text="", icon="SPACE2")
+            
+        row = layout.row()
+        row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
 
 
 class DOPESHEET_MT_editor_menus(Menu):
@@ -651,38 +654,11 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")
 
 
-class DOPESHEET_PT_view_marker_options(Panel):
-    bl_label = "Marker Options"
-    bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'View'
-
-    # dopesheet and timeline is a wild mix. We need to separate them by the following two defs
-    @staticmethod
-    def in_dopesheet(context):
-        return context.space_data.mode != 'TIMELINE'  # dopesheet, not timeline
-
-    @classmethod
-    def poll(cls, context):
-        # only for dopesheet editor
-        return cls.in_dopesheet(context)
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        st = context.space_data
-
-        col = layout.column(align=True)
-        col.prop(tool_settings, "lock_markers")
-        col.prop(st, "use_marker_sync")
-
-
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'UI'
+    bl_region_type = 'HEADER'
 
     # dopesheet and timeline is a wild mix. We need to separate them by the following two defs
     @staticmethod
@@ -697,7 +673,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     def draw(self, context):
         sc = context.scene
         layout = self.layout
-
+        tool_settings = context.tool_settings
         st = context.space_data
 
         col = layout.column(align=True)
@@ -722,6 +698,10 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         col.prop(st, "show_interpolation")
         col.prop(st, "show_extremes")
         col.prop(st, "use_auto_merge_keyframes")
+
+        col = layout.column(align=True)
+        col.prop(tool_settings, "lock_markers")
+        col.prop(st, "use_marker_sync")
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -1029,7 +1009,6 @@ classes = (
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key,
-    DOPESHEET_PT_view_marker_options,
     DOPESHEET_PT_view_view_options,
     DOPESHEET_MT_key_transform,
     DOPESHEET_MT_key_mirror,
