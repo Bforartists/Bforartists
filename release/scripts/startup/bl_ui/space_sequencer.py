@@ -2484,10 +2484,14 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 else:
                     col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-            if is_preview or st.show_backdrop:
-                row = layout.row()
-                row.separator()
-                row.prop(st, "show_transform_preview", text="Preview During Transform")
+                if is_preview or st.show_backdrop:
+                    row = layout.row()
+                    row.separator()
+                    row.prop(st, "show_transform_preview", text="Preview During Transform")
+
+            else:
+
+                col.prop(st, "show_transform_preview", text="Preview During Transform")
 
             col = layout.column(align = True)
             col.prop(st, "show_seconds")
