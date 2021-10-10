@@ -7436,14 +7436,6 @@ msgid "Show text files"
 msgstr "Ukáže textové soubory"
 
 
-msgid "Asset Category"
-msgstr "Kategorie Grafických položek"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "Určit jaké grafické položky se zobrazí"
-
-
 msgid "Asset Library"
 msgstr "Knihovna Grafických položek"
 
@@ -17982,6 +17974,10 @@ msgid "Projector"
 msgstr "Původni pozice"
 
 
+msgid "Combined"
+msgstr "Kombinované"
+
+
 msgid "Combined RGB"
 msgstr "Kužel"
 
@@ -17998,8 +17994,8 @@ msgid "Blue Channel"
 msgstr "Kanál textury"
 
 
-msgid "L"
-msgstr "L"
+msgid "Luminance"
+msgstr "Svítivost"
 
 
 msgid "Luminance Channel"
@@ -18402,6 +18398,10 @@ msgid "Random Float"
 msgstr "Náhodný Float"
 
 
+msgid "Base orientation of the points"
+msgstr "Základní orientace bodů"
+
+
 msgid "Geometry Node"
 msgstr "Geometrický Uzel"
 
@@ -18564,10 +18564,6 @@ msgstr "Body na Objem"
 
 msgid "Point Rotate"
 msgstr "Bod Rotace"
-
-
-msgid "Base orientation of the points"
-msgstr "Základní orientace bodů"
 
 
 msgid "Fill Type"
@@ -26729,10 +26725,6 @@ msgid "Bake image textures of selected objects"
 msgstr "Bake obrázkové textury vybraných objektů"
 
 
-msgid "Combined"
-msgstr "Kombinované"
-
-
 msgctxt "Operator"
 msgid "Add Camera"
 msgstr "Přidat kameru"
@@ -28840,10 +28832,6 @@ msgid "Saturation, Value, Hue"
 msgstr "Sytost, Hodnota, Odstín"
 
 
-msgid "Luminance"
-msgstr "Svítivost"
-
-
 msgctxt "Operator"
 msgid "Brush Edit"
 msgstr "Štětec"
@@ -30683,11 +30671,6 @@ msgstr "Poloha Myši"
 
 msgid "No Change"
 msgstr "Žádná Změna"
-
-
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Ořezat Proužky"
 
 
 msgctxt "Operator"
@@ -33557,10 +33540,6 @@ msgstr "Metadata assetu"
 
 msgid "Details"
 msgstr "Podrobnosti"
-
-
-msgid "Asset Navigation"
-msgstr "Navigace assetů"
 
 
 msgid "Chain Scaling"
@@ -44005,6 +43984,10 @@ msgid "Storage"
 msgstr "Úložiště"
 
 
+msgid "Offset:"
+msgstr "Odsazení:"
+
+
 msgctxt "Operator"
 msgid "Zoom"
 msgstr "Přiblížit"
@@ -47867,10 +47850,6 @@ msgid "Track is locked"
 msgstr "Akce"
 
 
-msgid "Offset:"
-msgstr "Odsazení:"
-
-
 msgid "Width:"
 msgstr "Šířka:"
 
@@ -48758,92 +48737,12 @@ msgid "Replace Original"
 msgstr "Nahradit Původní"
 
 
-msgid "Compositor"
-msgstr "Kompozitor"
+msgid "Shader Editor"
+msgstr "Editor Shaderů"
 
 
 msgid "Fac"
 msgstr "Fac"
-
-
-msgid "Determinator"
-msgstr "Oddělit"
-
-
-msgid "Bounding box"
-msgstr "Obálka"
-
-
-msgid "Key Color"
-msgstr "Barva oblohy"
-
-
-msgid "Image 1"
-msgstr "Obrázek"
-
-
-msgid "Image 2"
-msgstr "Obrázek"
-
-
-msgid "ID value"
-msgstr "Ladící"
-
-
-msgid "Dispersion"
-msgstr "Rozměr"
-
-
-msgid "From Min"
-msgstr "Z Min"
-
-
-msgid "From Max"
-msgstr "Z Max"
-
-
-msgid "To Min"
-msgstr "K Min"
-
-
-msgid "To Max"
-msgstr "K Max"
-
-
-msgid "Offset Y"
-msgstr "Odsazení Y"
-
-
-msgid "Undistortion"
-msgstr "Historie vracení"
-
-
-msgid "Dot"
-msgstr "Kvadratické"
-
-
-msgid "Degr"
-msgstr "Degr"
-
-
-msgid "Cb"
-msgstr "Krychle"
-
-
-msgid "Cr"
-msgstr "Křivka"
-
-
-msgid "On"
-msgstr "Zap"
-
-
-msgid "Val"
-msgstr "Hodnota"
-
-
-msgid "Shader Editor"
-msgstr "Editor Shaderů"
 
 
 msgid "Anisotropy"
@@ -48930,6 +48829,10 @@ msgid "Transparent Depth"
 msgstr "Hloubka Průhlednosti"
 
 
+msgid "Dot"
+msgstr "Kvadratické"
+
+
 msgid "Color1"
 msgstr "Barva 1"
 
@@ -48984,6 +48887,10 @@ msgstr "Souřadnice"
 
 msgid "iScale"
 msgstr "iScale"
+
+
+msgid "Val"
+msgstr "Hodnota"
 
 
 msgid "Image too small"

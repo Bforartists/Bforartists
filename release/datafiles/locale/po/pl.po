@@ -6405,10 +6405,6 @@ msgid "Prewitt"
 msgstr "Prewitt"
 
 
-msgid "L"
-msgstr "L"
-
-
 msgid "Motion Blur"
 msgstr "Rozmycie ruchu"
 
@@ -11258,98 +11254,6 @@ msgid "Fac"
 msgstr "Współczynnik"
 
 
-msgid "Determinator"
-msgstr "Determinator"
-
-
-msgid "Bounding box"
-msgstr "Obwiednia"
-
-
-msgid "Key Color"
-msgstr "Kolor klucza"
-
-
-msgid "Upper Left"
-msgstr "Lewa Górna"
-
-
-msgid "Upper Right"
-msgstr "Prawa Górna"
-
-
-msgid "Lower Left"
-msgstr "Lewa Dolna"
-
-
-msgid "Lower Right"
-msgstr "Prawa Dolna"
-
-
-msgid "Image 1"
-msgstr "Obraz 1"
-
-
-msgid "Image 2"
-msgstr "Obraz 2"
-
-
-msgid "ID value"
-msgstr "Wartość ID"
-
-
-msgid "Dispersion"
-msgstr "dyspersja"
-
-
-msgid "Std Dev"
-msgstr "Odchylenie Standardowe"
-
-
-msgid "From Min"
-msgstr "Od Min"
-
-
-msgid "From Max"
-msgstr "Od Max"
-
-
-msgid "To Min"
-msgstr "Do Min"
-
-
-msgid "To Max"
-msgstr "Do Maks"
-
-
-msgid "Undistortion"
-msgstr "Likwidacja zniekształcenia"
-
-
-msgid "Dot"
-msgstr "Punkt"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Stopni"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "Val"
-msgstr "Val"
-
-
 msgid "Anisotropy"
 msgstr "Anizotropia"
 
@@ -11454,6 +11358,10 @@ msgid "Transparent Depth"
 msgstr "Głębia przezroczystości"
 
 
+msgid "Dot"
+msgstr "Punkt"
+
+
 msgid "Color Fac"
 msgstr "Współczynnik koloru"
 
@@ -11532,6 +11440,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
+
+
+msgid "Val"
+msgstr "Val"
 
 
 msgid "Unknown py-exception, could not convert"

@@ -23,13 +23,15 @@ Pose Library - creation functions.
 import dataclasses
 import functools
 import re
+
 from typing import Optional, FrozenSet, Set, Union, Iterable, cast
 
 if "functions" not in locals():
-    from . import functions
+    from . import asset_browser, functions
 else:
     import importlib
 
+    asset_browser = importlib.reload(asset_browser)
     functions = importlib.reload(functions)
 
 import bpy
@@ -432,6 +434,12 @@ def find_keyframe(fcurve: FCurve, frame: float) -> Optional[Keyframe]:
     return None
 
 
-def assign_tags_from_asset_browser(asset: Action, asset_browser: bpy.types.Area) -> None:
-    # TODO(Sybren): implement
-    return
+def assign_from_asset_browser(asset: Action, asset_browser_area: bpy.types.Area) -> None:
+    """Assign some things from the asset browser to the asset.
+
+    This sets the current catalog ID, and in the future could include tags
+    from the active dynamic catalog, etc.
+    """
+
+    cat_id = asset_browser.active_catalog_id(asset_browser_area)
+    asset.asset_data.catalog_id = cat_id

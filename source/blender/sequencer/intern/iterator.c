@@ -189,10 +189,12 @@ SeqCollection *SEQ_query_by_reference(Sequence *seq_reference,
  */
 bool SEQ_collection_append_strip(Sequence *seq, SeqCollection *collection)
 {
-  if (BLI_gset_lookup(collection->set, seq) != NULL) {
+  void **key;
+  if (BLI_gset_ensure_p_ex(collection->set, seq, &key)) {
     return false;
   }
-  BLI_gset_insert(collection->set, seq);
+
+  *key = (void *)seq;
   return true;
 }
 
@@ -320,7 +322,9 @@ SeqCollection *SEQ_query_all_strips_recursive(ListBase *seqbase)
 SeqCollection *SEQ_query_all_strips(ListBase *seqbase)
 {
   SeqCollection *collection = SEQ_collection_create(__func__);
-  query_all_strips_recursive(seqbase, collection);
+  LISTBASE_FOREACH (Sequence *, seq, seqbase) {
+    SEQ_collection_append_strip(seq, collection);
+  }
   return collection;
 }
 

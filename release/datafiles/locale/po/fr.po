@@ -33959,8 +33959,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "(Dés)activer le mode projecteur (l’effet est appliqué dans la direction horizontale uniquement)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Combiné"
 
 
 msgid "Combined RGB"
@@ -33977,10 +33977,6 @@ msgstr "Canal vert"
 
 msgid "Blue Channel"
 msgstr "Canal bleu"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -47012,10 +47008,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Type de passes à pré-calculer, certaines peuvent ne pas être supportées par le moteur de rendu actif"
 
 
-msgid "Combined"
-msgstr "Combiné"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Nommer automatiquement le fichier de sortie d’après le type de passe"
 
@@ -52895,15 +52887,6 @@ msgid "Select more strips adjacent to the current selection"
 msgstr "Sélectionner plus de bandes adjacentes à la sélection courante"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Rogner bandes"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Rogner le contenu de la bande active"
-
-
 msgid "Offset to the data of the strip"
 msgstr "Décalage aux données de la bande"
 
@@ -54763,10 +54746,6 @@ msgstr "Nombre d’itérations à effectuer, 0 est illimité quand lancé intera
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Empaqueter Îles"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Transformer toutes les îles de façon qu’elles remplissent au mieux l’espace UV"
 
 
 msgid "Space between islands"
@@ -72616,6 +72595,10 @@ msgid "Storage"
 msgstr "Stockage"
 
 
+msgid "Offset:"
+msgstr "Décalage :"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "Gauche"
@@ -77489,10 +77472,6 @@ msgid "Y:"
 msgstr "Y :"
 
 
-msgid "Offset:"
-msgstr "Décalage :"
-
-
 msgid "Pattern Area:"
 msgstr "Zone de motif :"
 
@@ -80054,124 +80033,16 @@ msgid "Crease Edges"
 msgstr "Plis d’arêtes"
 
 
-msgid "Compositor"
-msgstr "Compositeur"
-
-
-msgid "Fac"
-msgstr "Fac"
-
-
-msgid "Determinator"
-msgstr "Déterminateur"
-
-
-msgid "Bounding box"
-msgstr "Boîte englobante"
-
-
-msgid "Key Color"
-msgstr "Couleur clé"
-
-
-msgid "Upper Left"
-msgstr "Supérieur gauche"
-
-
-msgid "Upper Right"
-msgstr "Supérieur droit"
-
-
-msgid "Lower Left"
-msgstr "Inférieur gauche"
-
-
-msgid "Lower Right"
-msgstr "Inférieur droit"
-
-
-msgid "Image 1"
-msgstr "Image 1"
-
-
-msgid "Image 2"
-msgstr "Image 2"
-
-
-msgid "ID value"
-msgstr "Valeur ID"
-
-
-msgid "Dispersion"
-msgstr "Dispersion"
-
-
-msgid "Std Dev"
-msgstr "Dév Std"
-
-
-msgid "From Min"
-msgstr "Depuis min"
-
-
-msgid "From Max"
-msgstr "Depuis max"
-
-
-msgid "To Min"
-msgstr "Vers min"
-
-
-msgid "To Max"
-msgstr "Vers max"
-
-
-msgid "Offset Y"
-msgstr "Décalage Y"
-
-
-msgid "Undistortion"
-msgstr "Dé-distortion"
-
-
-msgid "Dot"
-msgstr "Prod Scal"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Degr"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "On"
-
-
-msgid "Val"
-msgstr "Val"
-
-
-msgid "Missing Data-Block"
-msgstr "Bloc de données manquant"
-
-
 msgid "Shader Editor"
 msgstr "Éditeur de shader"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "Fac"
 
 
 msgid "Anisotropy"
@@ -80390,6 +80261,10 @@ msgid "Transmission Depth"
 msgstr "Profondeur de transmission"
 
 
+msgid "Dot"
+msgstr "Prod Scal"
+
+
 msgid "Color Fac"
 msgstr "Fac. couleur"
 
@@ -80512,6 +80387,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iÉchelle"
+
+
+msgid "Val"
+msgstr "Val"
 
 
 msgid ""

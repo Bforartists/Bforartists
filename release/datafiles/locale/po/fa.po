@@ -5741,8 +5741,8 @@ msgid "Projector"
 msgstr "ﺭﻮﺘﮐﮊﻭﺮﭘ"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "ﻩﺪﺷ ﺐﯿﮐﺮﺗ"
 
 
 msgid "Red Channel"
@@ -5755,10 +5755,6 @@ msgstr "ﺰﺒﺳ ﻝﺎﻧﺎﮐ"
 
 msgid "Blue Channel"
 msgstr "ﯽﺑﺁ ﻝﺎﻧﺎﮐ"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Map Range"
@@ -9067,10 +9063,6 @@ msgstr "ﺮﭽﯿﻣﺭﺁ"
 msgctxt "Operator"
 msgid "Bake"
 msgstr "ﻦﺘﺨﭘ"
-
-
-msgid "Combined"
-msgstr "ﻩﺪﺷ ﺐﯿﮐﺮﺗ"
 
 
 msgctxt "Operator"
@@ -14920,74 +14912,6 @@ msgid "Fac"
 msgstr "ﻪﻠﺻﺎﻓ"
 
 
-msgid "Determinator"
-msgstr "ﻞﻣﺎﻋ"
-
-
-msgid "Bounding box"
-msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
-
-
-msgid "Key Color"
-msgstr "ﮓﻧﺭ ﯽﭙﮐ"
-
-
-msgid "Image 1"
-msgstr "ﺮﯾﻮﺼﺗ"
-
-
-msgid "Image 2"
-msgstr "ﺮﯾﻮﺼﺗ"
-
-
-msgid "ID value"
-msgstr "ﺭﺍﺪﻘﻣ"
-
-
-msgid "Dispersion"
-msgstr "ﺩﺎﻌﺑﺍ"
-
-
-msgid "From Min"
-msgstr "ﯽﻠﺻﺍ ﺯﺍ"
-
-
-msgid "From Max"
-msgstr "ﻪﻨﯿﺸﯿﺑ ﻥﺎﻣﺯ"
-
-
-msgid "To Min"
-msgstr "X ﻪﻨﯿﻤﮐ"
-
-
-msgid "To Max"
-msgstr "X ﻪﻨﯿﺸﯿﺑ"
-
-
-msgid "Undistortion"
-msgstr "ﻞﻣﺎﻌﺗ:"
-
-
-msgid "Dot"
-msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
-
-
-msgid "Cb"
-msgstr "C"
-
-
-msgid "Cr"
-msgstr "C"
-
-
-msgid "On"
-msgstr "ﻦﺷﻭﺭ"
-
-
-msgid "Val"
-msgstr "ﺭﺍﺪﻘﻣ"
-
-
 msgid "Sigma"
 msgstr "ﺎﻤﮕﯿﺳ ﮓﻧﺭ"
 
@@ -15056,6 +14980,10 @@ msgid "Is Transmission Ray"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
+msgid "Dot"
+msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
+
+
 msgid "Color1"
 msgstr "ﮓﻧﺭ"
 
@@ -15114,6 +15042,10 @@ msgstr "W"
 
 msgid "iScale"
 msgstr "ﺲﻧﺎﺠﺗ"
+
+
+msgid "Val"
+msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "Image too small"

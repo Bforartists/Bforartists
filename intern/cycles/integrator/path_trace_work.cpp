@@ -134,7 +134,8 @@ void PathTraceWork::copy_from_denoised_render_buffers(const RenderBuffers *rende
 bool PathTraceWork::get_render_tile_pixels(const PassAccessor &pass_accessor,
                                            const PassAccessor::Destination &destination)
 {
-  const int offset_y = effective_buffer_params_.full_y - effective_big_tile_params_.full_y;
+  const int offset_y = (effective_buffer_params_.full_y + effective_buffer_params_.window_y) -
+                       (effective_big_tile_params_.full_y + effective_big_tile_params_.window_y);
   const int width = effective_buffer_params_.width;
 
   PassAccessor::Destination slice_destination = destination;
@@ -191,8 +192,10 @@ PassAccessor::Destination PathTraceWork::get_display_destination_template(
   PassAccessor::Destination destination(film_->get_display_pass());
 
   const int2 display_texture_size = display->get_texture_size();
-  const int texture_x = effective_buffer_params_.full_x - effective_full_params_.full_x;
-  const int texture_y = effective_buffer_params_.full_y - effective_full_params_.full_y;
+  const int texture_x = effective_buffer_params_.full_x - effective_full_params_.full_x +
+                        effective_buffer_params_.window_x;
+  const int texture_y = effective_buffer_params_.full_y - effective_full_params_.full_y +
+                        effective_buffer_params_.window_y;
 
   destination.offset = texture_y * display_texture_size.x + texture_x;
   destination.stride = display_texture_size.x;
