@@ -1849,6 +1849,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
         st = context.space_data
         strip = context.active_sequence_strip
+        overlay_settings = st.timeline_overlay
         sound = strip.sound
 
         layout.active = not strip.mute
