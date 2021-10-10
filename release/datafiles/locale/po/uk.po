@@ -12128,14 +12128,6 @@ msgid "Settings for the file selection in Asset Browser mode"
 msgstr "Устави для вибрання файлу у режимі Браузера Активів"
 
 
-msgid "Asset Category"
-msgstr "Категорія Активів"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "Визначити, який вид активів показувати"
-
-
 msgid "Asset Library"
 msgstr "Бібліотека Активів"
 
@@ -38893,8 +38885,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "Увімкнути/вимкнути режим проєктора (ефект діє лише у горизонтальному напрямі)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Комбінація"
 
 
 msgid "Combined RGB"
@@ -38913,8 +38905,8 @@ msgid "Blue Channel"
 msgstr "Канал синього"
 
 
-msgid "L"
-msgstr "Л"
+msgid "Luminance"
+msgstr "Світність"
 
 
 msgid "Luminance Channel"
@@ -39725,6 +39717,22 @@ msgid "Random Float"
 msgstr "Випадкове Дійсночислове"
 
 
+msgid "Base orientation of the points"
+msgstr "Базова орієнтація точок"
+
+
+msgid "Method used to describe the rotation"
+msgstr "Метод, використовуваний для опису обертання"
+
+
+msgid "Rotate around an axis by an angle"
+msgstr "Обертати навколо осі на кут"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "Обертати навколо X, Y та Z осей"
+
+
 msgid "Geometry Node"
 msgstr "Вузол Геометрії"
 
@@ -40181,28 +40189,12 @@ msgid "Point Rotate"
 msgstr "Оберт Точки"
 
 
-msgid "Base orientation of the points"
-msgstr "Базова орієнтація точок"
-
-
 msgid "Rotate points in the local space of the object"
 msgstr "Обертати точки у локальному просторі об'єкта"
 
 
 msgid "Rotate every point in its local space (as defined by the 'rotation' attribute)"
 msgstr "Обертати кожну точку в її локальному просторі (як визначено атрибутом 'rotation')"
-
-
-msgid "Method used to describe the rotation"
-msgstr "Метод, використовуваний для опису обертання"
-
-
-msgid "Rotate around an axis by an angle"
-msgstr "Обертати навколо осі на кут"
-
-
-msgid "Rotate around the X, Y, and Z axes"
-msgstr "Обертати навколо X, Y та Z осей"
 
 
 msgid "Fill Type"
@@ -56798,10 +56790,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Тип проходу для запікання; деякі з них можуть не підтримуватися поточним рушієм рендера"
 
 
-msgid "Combined"
-msgstr "Комбінація"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Автоматично назвати вивідний файл за типом проходу"
 
@@ -57918,11 +57906,6 @@ msgstr "Задати Режим Об'єкта"
 
 msgid "Sets the object interaction mode"
 msgstr "Встановити режим взаємодії об'єкта"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "Задати Режим Об'єкта з Підрежимом"
 
 
 msgid "Mesh Mode"
@@ -61065,10 +61048,6 @@ msgstr "Насиченість, Значення, Відтінок"
 
 msgid "Value, Hue, Saturation"
 msgstr "Значення, Відтінок, Насиченість"
-
-
-msgid "Luminance"
-msgstr "Світність"
 
 
 msgctxt "Operator"
@@ -65404,15 +65383,6 @@ msgid "Set the preview range instead"
 msgstr "Задати діапазон передогляду натомість"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Підрізати Смужки"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Підрізати вміст активної смужки"
-
-
 msgid "Offset to the data of the strip"
 msgstr "Зсув для даних смужки"
 
@@ -67637,10 +67607,6 @@ msgstr "Кількість ітерацій для запуску, 0 - необ�
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Упакувати острівці"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Трансформувати всі острівці так, щоб вони заповнили UV-простір, наскільки це можливо"
 
 
 msgid "Space between islands"
@@ -71763,10 +71729,6 @@ msgstr "Метадані Активу"
 
 msgid "Details"
 msgstr "Деталі"
-
-
-msgid "Asset Navigation"
-msgstr "Навігація Активу"
 
 
 msgid "Chain Scaling"
@@ -95136,6 +95098,10 @@ msgid "Set Overlay Region"
 msgstr "Задати Регіон Накладки"
 
 
+msgid "Offset:"
+msgstr "Зсув:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Задати Діапазон Передогляду для Смужок"
@@ -102952,10 +102918,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Зсув:"
-
-
 msgid "Pattern Area:"
 msgstr "Область Патерну:"
 
@@ -106408,124 +106370,16 @@ msgid "Crease Edges"
 msgstr "Робити складки"
 
 
-msgid "Compositor"
-msgstr "Компонівник"
-
-
-msgid "Fac"
-msgstr "Коеф."
-
-
-msgid "Determinator"
-msgstr "Детермінатор"
-
-
-msgid "Bounding box"
-msgstr "Габаритна коробка"
-
-
-msgid "Key Color"
-msgstr "Ключовий колір"
-
-
-msgid "Upper Left"
-msgstr "Верхній лівий"
-
-
-msgid "Upper Right"
-msgstr "Верхній правий"
-
-
-msgid "Lower Left"
-msgstr "Нижній лівий"
-
-
-msgid "Lower Right"
-msgstr "Нижній правий"
-
-
-msgid "Image 1"
-msgstr "Зображення 1"
-
-
-msgid "Image 2"
-msgstr "Зображення 2"
-
-
-msgid "ID value"
-msgstr "Значення ID"
-
-
-msgid "Dispersion"
-msgstr "Розсіювання"
-
-
-msgid "Std Dev"
-msgstr "Станд.відх."
-
-
-msgid "From Min"
-msgstr "Від мін."
-
-
-msgid "From Max"
-msgstr "Від макс."
-
-
-msgid "To Min"
-msgstr "До мін."
-
-
-msgid "To Max"
-msgstr "До макс."
-
-
-msgid "Offset Y"
-msgstr "Зсув Y"
-
-
-msgid "Undistortion"
-msgstr "Зняти спотворення"
-
-
-msgid "Dot"
-msgstr "Скаляр"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Градуси"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Увім"
-
-
-msgid "Val"
-msgstr "Знач."
-
-
-msgid "Missing Data-Block"
-msgstr "Відсутній блок даних"
-
-
 msgid "Shader Editor"
 msgstr "Редактор Відтінювачів"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "Коеф."
 
 
 msgid "Anisotropy"
@@ -106752,6 +106606,10 @@ msgid "Transmission Depth"
 msgstr "Глибина пропускання"
 
 
+msgid "Dot"
+msgstr "Скаляр"
+
+
 msgid "Color Fac"
 msgstr "Коефіцієнт кольору"
 
@@ -106878,6 +106736,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Сила"
+
+
+msgid "Val"
+msgstr "Знач."
 
 
 msgid ""

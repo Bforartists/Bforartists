@@ -12440,14 +12440,6 @@ msgid "Settings for the file selection in Asset Browser mode"
 msgstr "Cài đặt cho lụa chọn tập tin trong chế độ Trình Duyệt Tích Sản"
 
 
-msgid "Asset Category"
-msgstr "Loại Tích Sản"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "Định rỏ loại tích sản nào để hiện"
-
-
 msgid "Asset Library"
 msgstr "Thư Viện Tích Sản"
 
@@ -40215,8 +40207,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "Bật/tắt chế độ máy chiếu (chỉ áp dụng hiệu ứng cho hướng ngang)"
 
 
-msgid "C"
-msgstr "Gồm"
+msgid "Combined"
+msgstr "Gồm Chung"
 
 
 msgid "Combined RGB"
@@ -40235,7 +40227,7 @@ msgid "Blue Channel"
 msgstr "Kênh Xanh"
 
 
-msgid "L"
+msgid "Luminance"
 msgstr "Quang Độ"
 
 
@@ -41087,6 +41079,22 @@ msgid "Random Float"
 msgstr "Dấu Phẫy Động Ngẫu Nhiên"
 
 
+msgid "Base orientation of the points"
+msgstr "Định hướng cơ Sở của các điểm"
+
+
+msgid "Method used to describe the rotation"
+msgstr "Phương pháp cho áp dụng xoay"
+
+
+msgid "Rotate around an axis by an angle"
+msgstr "Xoay quanh một trục bằng một góc"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "Xoay quanh trục X, Y, và Z"
+
+
 msgid "Geometry Node"
 msgstr "Giao Điểm Hình Dạng"
 
@@ -41127,16 +41135,40 @@ msgid "Convex Hull"
 msgstr "Vỏ Lồi"
 
 
-msgid "Curve Endpoints"
-msgstr "Điểm Kết Thúc Đường Cong"
-
-
 msgid "Curve Fill"
 msgstr "Tô Đầy Đường Cong"
 
 
 msgid "N-gons"
 msgstr "N-Giác"
+
+
+msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
+msgstr "Tay cầm có thể di chuyển bắt cứ chổ nào, và không được ảnh hưởng tay cầm kia của tay cầm"
+
+
+msgid "The location is automatically calculated to be smooth"
+msgstr "Vị trí được tính tự động cho mịn"
+
+
+msgid "The location is calculated to point to the next/previous control point"
+msgstr "Vị trí được tính tự động cho chỉ đến điểm kiểm soát kế tiếp/trước"
+
+
+msgid "The location is constrained to point in the opposite direction as the other handle"
+msgstr "Vị trí được buộc chỉ đến nghịch hướng với tay cầm kia"
+
+
+msgid "Whether to check the type of left and right handles"
+msgstr "Kiểm tra hay không loại của tay cầm trái và phải"
+
+
+msgid "Use the left handles"
+msgstr "Dùng các tay cầm trái"
+
+
+msgid "Use the right handles"
+msgstr "Dùng các tay cầm phải"
 
 
 msgid "Curve Length"
@@ -41251,36 +41283,48 @@ msgid "Calculate the number of samples by splitting each spline into segments wi
 msgstr "Tính số lượng mẫu vật bằng chẻ mỗi mẫu cong thành khúc có chiều dài được xác định"
 
 
+msgid "Curve Reverse"
+msgstr "Đảo Nghịch Đường Cong"
+
+
+msgid "Set Handle Type"
+msgstr "Đặt Loại Tay Cầm"
+
+
+msgid "Whether to update left and right handles"
+msgstr "Nâng hay không nâng cấp tay cầm trái và phải"
+
+
 msgid "Curve Spiral"
 msgstr "Đường Cong Ốc"
+
+
+msgid "Set Spline Type"
+msgstr "Đặt Loại Mẫu Cong"
+
+
+msgid "Set the splines to Bezier"
+msgstr "Đặt mẫu cong sang Bezier"
+
+
+msgid "Set the splines to NURBS"
+msgstr "Đặt mẫu cong sang NURBS"
+
+
+msgid "Set the splines to Poly"
+msgstr "Đặt mẫu cong sang Đa Giác"
 
 
 msgid "Star"
 msgstr "Ngôi Sao"
 
 
+msgid "Curve Subdivide"
+msgstr "Phân Hóa Đường Cong"
+
+
 msgid "Curve to Mesh"
 msgstr "Đường Cong sang Mạng Lưới"
-
-
-msgid "Curve to Points"
-msgstr "Điểm Sang Đường Cong"
-
-
-msgid "How to generate points from the input curve"
-msgstr "Làm sao được chế tạo điểm từ đường cong ngõ vào"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr "Chế tạo điểm được tính từ điểm của đường cong, tùy đặc điểm độ phân giải cho NURBS và mẫu cong Bezier"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "Mẫu mỗi mẫu cong bằng phân phối đều số lượng điểm được xác định"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "Mẫu mỗi mẫu cong bằng chẻ nó thành khúc có chiều dài được xác định"
 
 
 msgid "Curve Trim"
@@ -41747,72 +41791,36 @@ msgid "Rotate a point using XYZ order"
 msgstr "Xoay một điểm bằng thứ tự XYZ"
 
 
-msgid "Curve Reverse"
-msgstr "Đảo Nghịch Đường Cong"
+msgid "Curve Endpoints"
+msgstr "Điểm Kết Thúc Đường Cong"
 
 
 msgid "Select by Handle Type"
 msgstr "Đặt tùy Loại Tay Cầm"
 
 
-msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
-msgstr "Tay cầm có thể di chuyển bắt cứ chổ nào, và không được ảnh hưởng tay cầm kia của tay cầm"
-
-
-msgid "The location is automatically calculated to be smooth"
-msgstr "Vị trí được tính tự động cho mịn"
-
-
-msgid "The location is calculated to point to the next/previous control point"
-msgstr "Vị trí được tính tự động cho chỉ đến điểm kiểm soát kế tiếp/trước"
-
-
-msgid "The location is constrained to point in the opposite direction as the other handle"
-msgstr "Vị trí được buộc chỉ đến nghịch hướng với tay cầm kia"
-
-
-msgid "Whether to check the type of left and right handles"
-msgstr "Kiểm tra hay không loại của tay cầm trái và phải"
-
-
-msgid "Use the left handles"
-msgstr "Dùng các tay cầm trái"
-
-
-msgid "Use the right handles"
-msgstr "Dùng các tay cầm phải"
-
-
-msgid "Set Handle Type"
-msgstr "Đặt Loại Tay Cầm"
-
-
-msgid "Whether to update left and right handles"
-msgstr "Nâng hay không nâng cấp tay cầm trái và phải"
-
-
-msgid "Set Spline Type"
-msgstr "Đặt Loại Mẫu Cong"
-
-
-msgid "Set the splines to Bezier"
-msgstr "Đặt mẫu cong sang Bezier"
-
-
-msgid "Set the splines to NURBS"
-msgstr "Đặt mẫu cong sang NURBS"
-
-
-msgid "Set the splines to Poly"
-msgstr "Đặt mẫu cong sang Đa Giác"
-
-
-msgid "Curve Subdivide"
-msgstr "Phân Hóa Đường Cong"
-
-
 msgid "Cuts Type"
 msgstr "Loại Chẻ Cắt"
+
+
+msgid "Curve to Points"
+msgstr "Điểm Sang Đường Cong"
+
+
+msgid "How to generate points from the input curve"
+msgstr "Làm sao được chế tạo điểm từ đường cong ngõ vào"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr "Chế tạo điểm được tính từ điểm của đường cong, tùy đặc điểm độ phân giải cho NURBS và mẫu cong Bezier"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "Mẫu mỗi mẫu cong bằng phân phối đều số lượng điểm được xác định"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "Mẫu mỗi mẫu cong bằng chẻ nó thành khúc có chiều dài được xác định"
 
 
 msgid "Delete Geometry"
@@ -41911,28 +41919,12 @@ msgid "Point Rotate"
 msgstr "Xoay Điểm"
 
 
-msgid "Base orientation of the points"
-msgstr "Định hướng cơ Sở của các điểm"
-
-
 msgid "Rotate points in the local space of the object"
 msgstr "Xoay điểm trong không gian địa phương của vật thể"
 
 
 msgid "Rotate every point in its local space (as defined by the 'rotation' attribute)"
 msgstr "Xoay mỗi điểm trong không gian điạ phương (được định nghĩa bởi đặc điểm 'xoay')"
-
-
-msgid "Method used to describe the rotation"
-msgstr "Phương pháp cho áp dụng xoay"
-
-
-msgid "Rotate around an axis by an angle"
-msgstr "Xoay quanh một trục bằng một góc"
-
-
-msgid "Rotate around the X, Y, and Z axes"
-msgstr "Xoay quanh trục X, Y, và Z"
 
 
 msgid "Select by Material"
@@ -59148,10 +59140,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Loại vòng kế xuất để nướng, có lẻ có vài loại động cơ kết xuất hiện tại chưa hỗ trợ"
 
 
-msgid "Combined"
-msgstr "Gồm Chung"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Dùng tên vòng cho tự động đặt tên của tập tin xuất "
 
@@ -60356,11 +60344,6 @@ msgstr "Đặt Chế Độ Vật Thể"
 
 msgid "Sets the object interaction mode"
 msgstr "Đặt chế độ tương tác vật thể"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "Đặt Chế Độ Vật Thể hay Hạ Chế Độ"
 
 
 msgid "Mesh Mode"
@@ -63568,10 +63551,6 @@ msgstr "Độ Tươi, Độ Sáng, Màu Sắc"
 
 msgid "Value, Hue, Saturation"
 msgstr "Độ Sáng, Màu Sắc, Độ Tươi"
-
-
-msgid "Luminance"
-msgstr "Quang Độ"
 
 
 msgctxt "Operator"
@@ -68158,15 +68137,6 @@ msgid "Set the preview range instead"
 msgstr "Đặt phạm vi dự khán trước"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Cắt Bớt Đoạn"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Cắt bớt nội dung của đoạn hoạt động"
-
-
 msgid "Offset to the data of the strip"
 msgstr "Địch đến dữ liệu của đoạn"
 
@@ -70456,10 +70426,6 @@ msgstr "Số lần lặp lại để chạy, 0 là vô hạn khi chạy tương 
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Gói Đảo"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Biến hóa hết đảo cho chúng nó vừa đầy nhất hết không gian UV có thể làm"
 
 
 msgid "Space between islands"
@@ -74791,10 +74757,6 @@ msgid "Details"
 msgstr "Chi Tiết"
 
 
-msgid "Asset Navigation"
-msgstr "Chuyển Hướng Tích Sản"
-
-
 msgid "Chain Scaling"
 msgstr "Phóng To Chuỗi"
 
@@ -78244,14 +78206,6 @@ msgstr "Bộ Ghép Toàn Khung"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Bật tùy chọn cho chế độ thực hành bộ ghép toàn khung (không dùng ô, giảm thời gian thực hành và bớt sử dụng bộ nhớ)"
-
-
-msgid "Geometry Nodes Fields"
-msgstr "Trường Giao Điểm Hình Dạng"
-
-
-msgid "Enable field nodes in geometry nodes"
-msgstr "Bật giao điểm trường trong giao điểm hình dạng"
 
 
 msgid "New Hair Type"
@@ -99497,6 +99451,10 @@ msgid "Snap to Strips"
 msgstr "Hút Dính đến Đoạn"
 
 
+msgid "Offset:"
+msgstr "Dịch:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Đặt Phạm Vi Dự Khán đến các Đoán"
@@ -107664,10 +107622,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Dịch:"
-
-
 msgid "Pattern Area:"
 msgstr "Khu Vực Gương Mẫu:"
 
@@ -111406,124 +111360,16 @@ msgid "Crease Edges"
 msgstr "Nhăn Cạnh"
 
 
-msgid "Compositor"
-msgstr "Bộ Ghép"
-
-
-msgid "Fac"
-msgstr "Phân Số"
-
-
-msgid "Determinator"
-msgstr "Mẫu Số"
-
-
-msgid "Bounding box"
-msgstr "Hộp bao quanh"
-
-
-msgid "Key Color"
-msgstr "Màu Trong Suốt"
-
-
-msgid "Upper Left"
-msgstr "Trên Trái"
-
-
-msgid "Upper Right"
-msgstr "Trên Phải"
-
-
-msgid "Lower Left"
-msgstr "Dưới Trái"
-
-
-msgid "Lower Right"
-msgstr "Dưới Phải"
-
-
-msgid "Image 1"
-msgstr "Ảnh 1"
-
-
-msgid "Image 2"
-msgstr "Ảnh 2"
-
-
-msgid "ID value"
-msgstr "Giá Trị ID"
-
-
-msgid "Dispersion"
-msgstr "Nhiễu Xạ"
-
-
-msgid "Std Dev"
-msgstr "Độ Lệch Chuẩn"
-
-
-msgid "From Min"
-msgstr "Từ Cực Tiểu"
-
-
-msgid "From Max"
-msgstr "Từ Cực Đại"
-
-
-msgid "To Min"
-msgstr "Đến Cực Tiểu"
-
-
-msgid "To Max"
-msgstr "Đến Cực Đại"
-
-
-msgid "Offset Y"
-msgstr "Dịch Y"
-
-
-msgid "Undistortion"
-msgstr "Bất Méo Hóa"
-
-
-msgid "Dot"
-msgstr "Dấu Chấm"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Độ"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Mở"
-
-
-msgid "Val"
-msgstr "Giá Trị"
-
-
-msgid "Missing Data-Block"
-msgstr "Cục Dữ Liệu Bị Mất"
-
-
 msgid "Shader Editor"
 msgstr "Bộ Biên Bộ Tô Sắc"
 
 
 msgid "AO"
 msgstr "Che Khuất Bao Quanh"
+
+
+msgid "Fac"
+msgstr "Phân Số"
 
 
 msgid "Anisotropy"
@@ -111750,6 +111596,10 @@ msgid "Transmission Depth"
 msgstr "Độ Sâu Truyền"
 
 
+msgid "Dot"
+msgstr "Dấu Chấm"
+
+
 msgid "Color Fac"
 msgstr "Hệ Số Màu"
 
@@ -111876,6 +111726,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Phóng To"
+
+
+msgid "Val"
+msgstr "Giá Trị"
 
 
 msgid ""

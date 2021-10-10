@@ -12412,14 +12412,6 @@ msgid "Settings for the file selection in Asset Browser mode"
 msgstr "Настройки выбора файлов в режиме просмотра ассетов"
 
 
-msgid "Asset Category"
-msgstr "Категория ассета"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "Тип отображаемых ассетов"
-
-
 msgid "Asset Library"
 msgstr "Библиотека ассетов"
 
@@ -36894,8 +36886,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "Включить/отключить режим проектора (для применения эффекта только в горизонтальном направлении)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Комбинация"
 
 
 msgid "Combined RGB"
@@ -36914,8 +36906,8 @@ msgid "Blue Channel"
 msgstr "Канал синего"
 
 
-msgid "L"
-msgstr "L"
+msgid "Luminance"
+msgstr "Яркость"
 
 
 msgid "Luminance Channel"
@@ -51880,10 +51872,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Тип запекаемого прохода; некоторые типы могут не поддерживаться текущим рендер-движком"
 
 
-msgid "Combined"
-msgstr "Комбинация"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Автоматически именовать выходной файл в зависимости от типа прохода"
 
@@ -52804,11 +52792,6 @@ msgstr "Установить объектный режим"
 
 msgid "Sets the object interaction mode"
 msgstr "Установить режим взаимодействия объектов"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "Выбрать объектный режим и режим выделения"
 
 
 msgid "Mesh Mode"
@@ -55441,10 +55424,6 @@ msgstr "Добавить новую палитру"
 
 msgid "Add new palette"
 msgstr "Добавить новую палитру"
-
-
-msgid "Luminance"
-msgstr "Яркость"
 
 
 msgctxt "Operator"
@@ -58832,15 +58811,6 @@ msgid "Set the preview range instead"
 msgstr "Установить диапазон предпросмотра"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Образать дорожки"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Обрезать содержимое активной дорожки"
-
-
 msgid "Offset to the data of the strip"
 msgstr "Смещение к данным дорожки"
 
@@ -60855,10 +60825,6 @@ msgstr "Количество выполняемых итераций, 0 для �
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Упаковать острова"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Переместить все острова, чтобы они заполнили всё пространство UV на сколько это возможно"
 
 
 msgid "Space between islands"
@@ -84270,6 +84236,10 @@ msgid "Set Overlay Region"
 msgstr "Установить регион наложения"
 
 
+msgid "Offset:"
+msgstr "Смещение:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Установить диапазон предпросмотра согласно дорожкам"
@@ -90929,10 +90899,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Смещение:"
-
-
 msgid "Pattern Area:"
 msgstr "Область шаблона:"
 
@@ -93879,124 +93845,16 @@ msgid "Crease Edges"
 msgstr "Складки ребер"
 
 
-msgid "Compositor"
-msgstr "Постобработка"
-
-
-msgid "Fac"
-msgstr "Коэфф."
-
-
-msgid "Determinator"
-msgstr "Детерминатор"
-
-
-msgid "Bounding box"
-msgstr "Габаритный контейнер"
-
-
-msgid "Key Color"
-msgstr "Цвет ключа"
-
-
-msgid "Upper Left"
-msgstr "Верхний левый"
-
-
-msgid "Upper Right"
-msgstr "Верхний правый"
-
-
-msgid "Lower Left"
-msgstr "Нижний левый"
-
-
-msgid "Lower Right"
-msgstr "Нижний правый"
-
-
-msgid "Image 1"
-msgstr "Изображение 1"
-
-
-msgid "Image 2"
-msgstr "Изображение 2"
-
-
-msgid "ID value"
-msgstr "Значение ID"
-
-
-msgid "Dispersion"
-msgstr "Дисперсия"
-
-
-msgid "Std Dev"
-msgstr "Станд. откл."
-
-
-msgid "From Min"
-msgstr "От мин."
-
-
-msgid "From Max"
-msgstr "От макс."
-
-
-msgid "To Min"
-msgstr "К мин."
-
-
-msgid "To Max"
-msgstr "К макс."
-
-
-msgid "Offset Y"
-msgstr "Смещение по Y"
-
-
-msgid "Undistortion"
-msgstr "Удаление искажения"
-
-
-msgid "Dot"
-msgstr "Скаляр"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Угол"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Вкл"
-
-
-msgid "Val"
-msgstr "Знач."
-
-
-msgid "Missing Data-Block"
-msgstr "Отсутствует датаблок"
-
-
 msgid "Shader Editor"
 msgstr "Редактор шейдеров"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "Коэфф."
 
 
 msgid "Anisotropy"
@@ -94223,6 +94081,10 @@ msgid "Transmission Depth"
 msgstr "Глубина светопропускаемости"
 
 
+msgid "Dot"
+msgstr "Скаляр"
+
+
 msgid "Color Fac"
 msgstr "Коэфф. цвета"
 
@@ -94349,6 +94211,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Сила"
+
+
+msgid "Val"
+msgstr "Знач."
 
 
 msgid "Unknown py-exception, could not convert"

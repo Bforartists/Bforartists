@@ -135,6 +135,7 @@ set(SRC
 
   function/nodes/legacy/node_fn_random_float.cc
 
+  function/nodes/node_fn_align_euler_to_vector.cc
   function/nodes/node_fn_boolean_math.cc
   function/nodes/node_fn_float_compare.cc
   function/nodes/node_fn_float_to_int.cc
@@ -198,6 +199,7 @@ set(SRC
   geometry/nodes/node_geo_convex_hull.cc
   geometry/nodes/node_geo_curve_fill.cc
   geometry/nodes/node_geo_curve_fillet.cc
+  geometry/nodes/node_geo_curve_handle_type_selection.cc
   geometry/nodes/node_geo_curve_length.cc
   geometry/nodes/node_geo_curve_parameter.cc
   geometry/nodes/node_geo_curve_primitive_bezier_segment.cc
@@ -240,6 +242,7 @@ set(SRC
   geometry/nodes/node_geo_mesh_to_points.cc
   geometry/nodes/node_geo_object_info.cc
   geometry/nodes/node_geo_points_to_vertices.cc
+  geometry/nodes/node_geo_points_to_volume.cc
   geometry/nodes/node_geo_proximity.cc
   geometry/nodes/node_geo_realize_instances.cc
   geometry/nodes/node_geo_separate_components.cc
@@ -317,19 +320,19 @@ set(SRC
   shader/nodes/node_shader_squeeze.c
   shader/nodes/node_shader_subsurface_scattering.c
   shader/nodes/node_shader_tangent.c
-  shader/nodes/node_shader_tex_brick.c
-  shader/nodes/node_shader_tex_checker.c
+  shader/nodes/node_shader_tex_brick.cc
+  shader/nodes/node_shader_tex_checker.cc
   shader/nodes/node_shader_tex_coord.c
   shader/nodes/node_shader_tex_environment.c
   shader/nodes/node_shader_tex_gradient.cc
-  shader/nodes/node_shader_tex_image.c
-  shader/nodes/node_shader_tex_magic.c
+  shader/nodes/node_shader_tex_image.cc
+  shader/nodes/node_shader_tex_magic.cc
   shader/nodes/node_shader_tex_musgrave.cc
   shader/nodes/node_shader_tex_noise.cc
   shader/nodes/node_shader_tex_pointdensity.c
   shader/nodes/node_shader_tex_sky.c
   shader/nodes/node_shader_tex_voronoi.cc
-  shader/nodes/node_shader_tex_wave.c
+  shader/nodes/node_shader_tex_wave.cc
   shader/nodes/node_shader_tex_white_noise.cc
   shader/nodes/node_shader_uvAlongStroke.c
   shader/nodes/node_shader_uvmap.c
@@ -376,6 +379,7 @@ set(SRC
   texture/node_texture_util.c
 
   intern/derived_node_tree.cc
+  intern/extern_implementations.cc
   intern/geometry_nodes_eval_log.cc
   intern/math_functions.cc
   intern/node_common.cc
