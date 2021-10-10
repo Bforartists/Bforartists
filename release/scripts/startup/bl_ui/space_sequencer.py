@@ -1849,8 +1849,8 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
         st = context.space_data
         strip = context.active_sequence_strip
-        overlay_settings = st.timeline_overlay
         sound = strip.sound
+        overlay_settings = st.timeline_overlay
 
         layout.active = not strip.mute
 
@@ -1892,13 +1892,9 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             layout.use_property_split = False
             col = layout.column()
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(sound, "use_mono")
+            col.prop(sound, "use_mono")
             if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
-                split = col.split(factor=0.4)
-                split.label(text="")
-                split.prop(strip, "show_waveform")
+                col.prop(strip, "show_waveform")
 
 
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
