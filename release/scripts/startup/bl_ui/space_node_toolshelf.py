@@ -4257,7 +4257,7 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInputSpecialCharacters"
 
-            props = col.operator("node.add_node", text=" String Join               ", icon = "STRING_JOIN")
+            props = col.operator("node.add_node", text=" Join Strings             ", icon = "STRING_JOIN")
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
 
