@@ -870,9 +870,6 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         col.label(text = "Debug")
         row = col.row()
         row.separator()
-        row.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
-        row = col.row()
-        row.separator()
         row.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
 
         layout.separator()
@@ -881,7 +878,6 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         layout.prop(view_layer, "pass_alpha_threshold")
 
 # bfa - move mist panel to viewlayers
-
 
 class CYCLES_RENDER_PT_passes_mist(CyclesButtonsPanel, Panel):
     bl_label = "Mist Pass"

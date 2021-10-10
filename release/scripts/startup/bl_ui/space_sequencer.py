@@ -195,6 +195,14 @@ class SEQUENCER_HT_header(Header):
             layout.prop(st, "display_mode", text="", icon_only=True)
             layout.prop(st, "preview_channels", text="", icon_only=True)
 
+            # Gizmo toggle & popover.
+            row = layout.row(align=True)
+            # FIXME: place-holder icon.
+            row.prop(st, "show_gizmo", text="", toggle=True, icon='GIZMO')
+            sub = row.row(align=True)
+            sub.active = st.show_gizmo
+            sub.popover(panel="SEQUENCER_PT_gizmo_display",text="")
+
         row = layout.row(align=True)
         row.prop(st, "show_strip_overlay", text="", icon='OVERLAY')
         sub = row.row(align=True)
@@ -202,6 +210,29 @@ class SEQUENCER_HT_header(Header):
         sub.active = st.show_strip_overlay
 
         row.popover(panel = "SEQUENCER_PT_view_options", text = "Options")
+
+
+class SEQUENCER_PT_gizmo_display(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Gizmo"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        st = context.space_data
+
+        col = layout.column()
+        col.label(text="Viewport Gizmos")
+        col.separator()
+
+        col.active = st.show_gizmo
+        colsub = col.column()
+        colsub.prop(st, "show_gizmo_navigate", text="Navigate")
+        colsub.prop(st, "show_gizmo_tool", text="Active Tools")
+        # colsub.prop(st, "show_gizmo_context", text="Active Object")  # Currently unused.
 
 
 class SEQUENCER_PT_overlay(Panel):
@@ -1016,6 +1047,43 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.menu("SEQUENCER_MT_strip_lock_mute")
 
 
+class SEQUENCER_MT_preview_context_menu(Menu):
+    bl_label = "Sequencer Preview Context Menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        props = layout.operator("wm.call_panel", text="Rename...")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
+
+        # TODO: support in preview.
+        # layout.operator("sequencer.delete", text="Delete")
+
+        strip = context.active_sequence_strip
+
+        if strip:
+            pass
+
+
+class SEQUENCER_MT_pivot_pie(Menu):
+    bl_label = "Pivot Point"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        tool_settings = context.tool_settings
+        sequencer_tool_settings = context.tool_settings.sequencer_tool_settings
+
+        pie.prop_enum(sequencer_tool_settings, "pivot_point", value='CENTER')
+        pie.prop_enum(sequencer_tool_settings, "pivot_point", value='CURSOR')
+        pie.prop_enum(sequencer_tool_settings, "pivot_point", value='INDIVIDUAL_ORIGINS')
+        pie.prop_enum(sequencer_tool_settings, "pivot_point", value='MEDIAN')
+
+
 class SequencerButtonsPanel:
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
@@ -1043,16 +1111,23 @@ class SequencerButtonsPanel_Output:
         return cls.has_preview(context)
 
 
-class SEQUENCER_PT_color_tag_picker(Panel):
-    bl_label = "Color Tag"
+class SequencerColorTagPicker:
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Strip"
-    bl_options = {'HIDE_HEADER', 'INSTANCED'}
+
+    @staticmethod
+    def has_sequencer(context):
+        return (context.space_data.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'})
 
     @classmethod
     def poll(cls, context):
-        return context.active_sequence_strip is not None
+        return cls.has_sequencer(context) and context.active_sequence_strip is not None
+
+
+class SEQUENCER_PT_color_tag_picker(SequencerColorTagPicker, Panel):
+    bl_label = "Color Tag"
+    bl_category = "Strip"
+    bl_options = {'HIDE_HEADER', 'INSTANCED'}
 
     def draw(self, context):
         layout = self.layout
@@ -1064,12 +1139,8 @@ class SEQUENCER_PT_color_tag_picker(Panel):
             row.operator("sequencer.strip_color_tag_set", icon=icon).color = 'COLOR_%02d' % i
 
 
-class SEQUENCER_MT_color_tag_picker(Menu):
+class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
     bl_label = "Set Color Tag"
-
-    @classmethod
-    def poll(cls, context):
-        return context.active_sequence_strip is not None
 
     def draw(self, context):
         layout = self.layout
@@ -1783,12 +1854,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
         layout.active = not strip.mute
 
         if sound is not None:
-            col = layout.column()
-
-            col.prop(sound, "use_mono")
-            if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
-                col.prop(strip, "show_waveform")
-
+            layout.use_property_split = True
             col = layout.column()
 
             split = col.split(factor=0.4)
@@ -1801,15 +1867,37 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.label(text="Pitch")
             split.prop(strip, "pitch", text="")
 
+            audio_channels = context.scene.render.ffmpeg.audio_channels
+            pan_enabled = sound.use_mono and audio_channels != 'MONO'
+            pan_text = "%.2f°" % (strip.pan * 90)
+
             split = col.split(factor=0.4)
             split.alignment = 'RIGHT'
             split.label(text="Pan")
-            audio_channels = context.scene.render.ffmpeg.audio_channels
-            pan_text = ""
+            split.prop(strip, "pan", text="")
+            split.enabled = pan_enabled
+
             if audio_channels != 'MONO' and audio_channels != 'STEREO':
-                pan_text = "%.2f°" % (strip.pan * 90)
-            split.prop(strip, "pan", text=pan_text)
-            split.enabled = sound.use_mono and audio_channels != 'MONO'
+                split = col.split(factor=0.4)
+                split.alignment = 'RIGHT'
+                split.label(text="Pan Angle")
+                split.enabled = pan_enabled
+                subsplit = split.row()
+                subsplit.alignment = 'CENTER'
+                subsplit.label(text=pan_text)
+                subsplit.label(text=" ")  # Compensate for no decorate.
+                subsplit.enabled = pan_enabled
+
+            layout.use_property_split = False
+            col = layout.column()
+
+            split = col.split(factor=0.4)
+            split.label(text="")
+            split.prop(sound, "use_mono")
+            if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
+                split = col.split(factor=0.4)
+                split.label(text="")
+                split.prop(strip, "show_waveform")
 
 
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
@@ -2189,6 +2277,22 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_separate_color")
 
 
+class SEQUENCER_PT_view_cursor(SequencerButtonsPanel_Output, Panel):
+    bl_category = "View"
+    bl_label = "2D Cursor"
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        col = layout.column()
+        col.prop(st, "cursor_location", text="Location")
+
+
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
     bl_label = "Frame Overlay"
     bl_category = "View"
@@ -2549,12 +2653,15 @@ classes = (
     SEQUENCER_MT_strip_lock_mute,
     SEQUENCER_MT_color_tag_picker,
     SEQUENCER_MT_context_menu,
+    SEQUENCER_MT_preview_context_menu,
+    SEQUENCER_MT_pivot_pie,
 
     SEQUENCER_PT_color_tag_picker,
 
     SEQUENCER_PT_active_tool,
     SEQUENCER_PT_strip,
 
+    SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
     SEQUENCER_PT_sequencer_overlay,
@@ -2585,6 +2692,7 @@ classes = (
     SEQUENCER_PT_custom_props,
 
     SEQUENCER_PT_view,
+    SEQUENCER_PT_view_cursor,
     SEQUENCER_PT_frame_overlay,
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_view_safe_areas_center_cut,

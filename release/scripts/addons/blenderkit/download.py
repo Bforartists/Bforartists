@@ -75,6 +75,10 @@ def check_missing():
 def check_unused():
     '''find assets that have been deleted from scene but their library is still present.'''
     # this is obviously broken. Blender should take care of the extra data automaticlaly
+    #first clean up collections
+    for c in bpy.data.collections:
+        if len(c.all_objects) == 0 and c.get('is_blenderkit_asset'):
+            bpy.data.collections.remove(c)
     return;
     used_libs = []
     for ob in bpy.data.objects:
@@ -493,6 +497,9 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     asset_main['asset_data'] = asset_data  # TODO remove this??? should write to blenderkit Props?
     asset_main.blenderkit.asset_base_id = asset_data['assetBaseId']
     asset_main.blenderkit.id = asset_data['id']
+
+
+
     bpy.ops.wm.undo_push_context(message='add %s to scene' % asset_data['name'])
     # moving reporting to on save.
     # report_use_success(asset_data['id'])
@@ -1446,7 +1453,7 @@ def register_download():
     bpy.app.handlers.load_post.append(scene_load)
     bpy.app.handlers.save_pre.append(scene_save)
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.use_timers:
+    if user_preferences.use_timers and not bpy.app.background:
         bpy.app.timers.register(download_timer)
 
 

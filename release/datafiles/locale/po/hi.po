@@ -3318,20 +3318,12 @@ msgid "Keying Screen"
 msgstr "चित्रपट कुंजीयन"
 
 
-msgid "C"
-msgstr "सी"
-
-
 msgid "Combined RGB"
 msgstr "संयुक्त ला.ह.नी."
 
 
 msgid "Red Channel"
 msgstr "लाल सरणि"
-
-
-msgid "L"
-msgstr "एल"
 
 
 msgid "Motion Blur"
@@ -5930,6 +5922,10 @@ msgid "Sound"
 msgstr "ध्वनि"
 
 
+msgid "Offset:"
+msgstr "विचलन:"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "बाईं ओर"
@@ -6919,10 +6915,6 @@ msgid "Y:"
 msgstr "Y अक्ष:"
 
 
-msgid "Offset:"
-msgstr "विचलन:"
-
-
 msgid "Width:"
 msgstr "चौड़ाई"
 
@@ -7131,32 +7123,12 @@ msgid "Outer"
 msgstr "बाहरी"
 
 
-msgid "Fac"
-msgstr "एफ़एसी"
-
-
-msgid "Dot"
-msgstr "बिन्दु"
-
-
-msgid "RGBA"
-msgstr "ला.ह.नी.पा."
-
-
-msgid "Cb"
-msgstr "सीबी"
-
-
-msgid "Cr"
-msgstr "सी. आर."
-
-
-msgid "On"
-msgstr "आरंभ"
-
-
 msgid "AO"
 msgstr "ए ओ"
+
+
+msgid "Fac"
+msgstr "एफ़एसी"
 
 
 msgid "BSDF"
@@ -7169,6 +7141,10 @@ msgstr "आईओआर"
 
 msgid "Sigma"
 msgstr "सिग्मा"
+
+
+msgid "Dot"
+msgstr "बिन्दु"
 
 
 msgid "Reflection"

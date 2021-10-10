@@ -24178,8 +24178,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "啟用/停用投影器模式 (效果僅套用於水平方向)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "合成"
 
 
 msgid "Combined RGB"
@@ -24196,10 +24196,6 @@ msgstr "綠色通道"
 
 msgid "Blue Channel"
 msgstr "藍色通道"
-
-
-msgid "L"
-msgstr "區域"
 
 
 msgid "Luminance Channel"
@@ -34603,10 +34599,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "要烘焙的通遞類型，有些可能目前的算繪引擎不支援"
 
 
-msgid "Combined"
-msgstr "合成"
-
-
 msgctxt "Operator"
 msgid "Add Camera"
 msgstr "添加攝影機"
@@ -39657,11 +39649,6 @@ msgid "Select more strips adjacent to the current selection"
 msgstr "選取更多相鄰於目前選取內容的片段"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "修剪片段"
-
-
 msgid "Frame where selected strips will be snapped"
 msgstr "所選片段會被吸附的框幀"
 
@@ -41207,10 +41194,6 @@ msgstr "執行迭代的次數，當互動式執行時 0 為無限制"
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "打包島塊"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "變換所有島塊，這樣它們會盡可能填滿 UV 空間"
 
 
 msgid "Space between islands"
@@ -54819,6 +54802,10 @@ msgid "Storage"
 msgstr "儲藏"
 
 
+msgid "Offset:"
+msgstr "偏移："
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "左"
@@ -58380,10 +58367,6 @@ msgid "Y:"
 msgstr "Y："
 
 
-msgid "Offset:"
-msgstr "偏移："
-
-
 msgid "Pattern Area:"
 msgstr "樣式區域："
 
@@ -60170,120 +60153,16 @@ msgid "Crease Edges"
 msgstr "皺摺邊線"
 
 
-msgid "Compositor"
-msgstr "合成器"
-
-
-msgid "Fac"
-msgstr "係數"
-
-
-msgid "Determinator"
-msgstr "判定器"
-
-
-msgid "Bounding box"
-msgstr "邊界方塊"
-
-
-msgid "Key Color"
-msgstr "鍵色"
-
-
-msgid "Upper Left"
-msgstr "左上"
-
-
-msgid "Upper Right"
-msgstr "右上"
-
-
-msgid "Lower Left"
-msgstr "左下"
-
-
-msgid "Lower Right"
-msgstr "右下"
-
-
-msgid "Image 1"
-msgstr "影像 1"
-
-
-msgid "Image 2"
-msgstr "影像 2"
-
-
-msgid "ID value"
-msgstr "ID 值"
-
-
-msgid "Dispersion"
-msgstr "離散"
-
-
-msgid "Std Dev"
-msgstr "標準差"
-
-
-msgid "From Min"
-msgstr "從最小"
-
-
-msgid "From Max"
-msgstr "從最大"
-
-
-msgid "To Min"
-msgstr "到最小"
-
-
-msgid "To Max"
-msgstr "到最大"
-
-
-msgid "Offset Y"
-msgstr "偏移 Y"
-
-
-msgid "Undistortion"
-msgstr "反扭曲"
-
-
-msgid "Dot"
-msgstr "點"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "度"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "開"
-
-
-msgid "Missing Data-Block"
-msgstr "遺失資料塊"
-
-
 msgid "Shader Editor"
 msgstr "著色器編輯器"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "係數"
 
 
 msgid "Anisotropy"
@@ -60428,6 +60307,10 @@ msgstr "透明深度"
 
 msgid "Transmission Depth"
 msgstr "穿透深度"
+
+
+msgid "Dot"
+msgstr "點"
 
 
 msgid "Color Fac"

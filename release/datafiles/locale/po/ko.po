@@ -34210,8 +34210,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "프로젝터 모드를 활성화/비활성화 (효과는 수평 방향으로 만 적용됩니다)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "결합된"
 
 
 msgid "Combined RGB"
@@ -34230,8 +34230,8 @@ msgid "Blue Channel"
 msgstr "블루 채널"
 
 
-msgid "L"
-msgstr "L"
+msgid "Luminance"
+msgstr "휘도"
 
 
 msgid "Luminance Channel"
@@ -49439,10 +49439,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "베이크하는 패스의 종류, 그것 중 일부는 현재 렌더링 엔진에서 지원되지 않을 수도 있음"
 
 
-msgid "Combined"
-msgstr "결합된"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "패스 유형과 함께 파일 출력을 자동으로 이름"
 
@@ -50349,11 +50345,6 @@ msgstr "오브젝트 모드를 설정"
 
 msgid "Sets the object interaction mode"
 msgstr "오브젝트 상호작용 모드를 설정"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "서브 모드로 오브젝트 모드를 설정"
 
 
 msgid "Mesh Mode"
@@ -52985,10 +52976,6 @@ msgstr "새로운 팔레트를 추가"
 
 msgid "Add new palette"
 msgstr "새로운 팔레트를 추가"
-
-
-msgid "Luminance"
-msgstr "휘도"
 
 
 msgctxt "Operator"
@@ -56384,15 +56371,6 @@ msgid "Set the preview range instead"
 msgstr "미리보기 범위를 대신 설정"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "스트립을 다듬기"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "활성 스트립의 내용을 다듬기"
-
-
 msgid "Offset to the data of the strip"
 msgstr "스트립의 데이터에 오프셋"
 
@@ -58407,10 +58385,6 @@ msgstr "실행할 반복 횟수, 대화식으로 실행될 때 0은 무제한입
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "아일랜드를 포장"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "가능한 한 UV 공간을 가득 채우도록 모든 아일렌드를 변형"
 
 
 msgid "Space between islands"
@@ -81724,6 +81698,10 @@ msgid "Set Overlay Region"
 msgstr "오버레이 지역DMF 설정"
 
 
+msgid "Offset:"
+msgstr "오프셋:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "미리보기 범위를 스트립으로 설정"
@@ -88142,10 +88120,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "오프셋:"
-
-
 msgid "Pattern Area:"
 msgstr "패턴 영역:"
 
@@ -90943,124 +90917,16 @@ msgid "Crease Edges"
 msgstr "크리스 에지"
 
 
-msgid "Compositor"
-msgstr "컴포지터"
-
-
-msgid "Fac"
-msgstr "팩터"
-
-
-msgid "Determinator"
-msgstr "결정기"
-
-
-msgid "Bounding box"
-msgstr "경계 박스"
-
-
-msgid "Key Color"
-msgstr "키 컬러"
-
-
-msgid "Upper Left"
-msgstr "왼쪽 상위"
-
-
-msgid "Upper Right"
-msgstr "오른쪽 상위"
-
-
-msgid "Lower Left"
-msgstr "왼쪽 하위"
-
-
-msgid "Lower Right"
-msgstr "오른쪽 하위"
-
-
-msgid "Image 1"
-msgstr "이미지 1"
-
-
-msgid "Image 2"
-msgstr "이미지 2"
-
-
-msgid "ID value"
-msgstr "ID 값"
-
-
-msgid "Dispersion"
-msgstr "분산"
-
-
-msgid "Std Dev"
-msgstr "Std Dev"
-
-
-msgid "From Min"
-msgstr "최소에서"
-
-
-msgid "From Max"
-msgstr "최대에서"
-
-
-msgid "To Min"
-msgstr "최소로"
-
-
-msgid "To Max"
-msgstr "최대로"
-
-
-msgid "Offset Y"
-msgstr "오프셋 Y"
-
-
-msgid "Undistortion"
-msgstr "왜곡취소"
-
-
-msgid "Dot"
-msgstr "도트"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Degr"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "On"
-
-
-msgid "Val"
-msgstr "값"
-
-
-msgid "Missing Data-Block"
-msgstr "누락된 데이터 블록"
-
-
 msgid "Shader Editor"
 msgstr "셰이더 에디터"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "팩터"
 
 
 msgid "Anisotropy"
@@ -91287,6 +91153,10 @@ msgid "Transmission Depth"
 msgstr "전달 깊이"
 
 
+msgid "Dot"
+msgstr "도트"
+
+
 msgid "Color Fac"
 msgstr "컬러 팩터"
 
@@ -91409,6 +91279,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "반대 축적"
+
+
+msgid "Val"
+msgstr "값"
 
 
 msgid "Unknown py-exception, could not convert"

@@ -205,6 +205,42 @@ class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
         layout.operator("poselib.convert_old_poselib")
 
 
+### Messagebus subscription to monitor asset library changes.
+_msgbus_owner = object()
+
+def _on_asset_library_changed() -> None:
+    """Update areas when a different asset library is selected."""
+    refresh_area_types = {'DOPESHEET_EDITOR', 'VIEW_3D'}
+    for win in bpy.context.window_manager.windows:
+        for area in win.screen.areas:
+            if area.type not in refresh_area_types:
+                continue
+
+            area.tag_redraw()
+
+def register_message_bus() -> None:
+    bpy.msgbus.subscribe_rna(
+        key=(bpy.types.FileAssetSelectParams, "asset_library_ref"),
+        owner=_msgbus_owner,
+        args=(),
+        notify=_on_asset_library_changed,
+        options={'PERSISTENT'},
+    )
+
+def unregister_message_bus() -> None:
+    bpy.msgbus.clear_by_owner(_msgbus_owner)
+
+@bpy.app.handlers.persistent
+def _on_blendfile_load_pre(none, other_none) -> None:
+    # The parameters are required, but both are None.
+    unregister_message_bus()
+
+@bpy.app.handlers.persistent
+def _on_blendfile_load_post(none, other_none) -> None:
+    # The parameters are required, but both are None.
+    register_message_bus()
+
+
 classes = (
     ASSETBROWSER_PT_pose_library_editing,
     ASSETBROWSER_PT_pose_library_usage,
@@ -230,12 +266,19 @@ def register() -> None:
     bpy.types.UI_MT_list_item_context_menu.prepend(pose_library_list_item_context_menu)
     bpy.types.ASSETBROWSER_MT_context_menu.prepend(pose_library_list_item_context_menu)
 
+    register_message_bus()
+    bpy.app.handlers.load_pre.append(_on_blendfile_load_pre)
+    bpy.app.handlers.load_post.append(_on_blendfile_load_post)
+
 
 def unregister() -> None:
     _unregister()
+
+    unregister_message_bus()
 
     del WorkSpace.active_pose_asset_index
     del WindowManager.pose_assets
 
     bpy.types.UI_MT_list_item_context_menu.remove(pose_library_list_item_context_menu)
     bpy.types.ASSETBROWSER_MT_context_menu.remove(pose_library_list_item_context_menu)
+

@@ -14,20 +14,17 @@ else:
     functions = importlib.reload(functions)
 
 
-def area_for_category(screen: bpy.types.Screen, category: str) -> Optional[bpy.types.Area]:
-    """Return the asset browser area that is most suitable for managing the category.
+def biggest_asset_browser_area(screen: bpy.types.Screen) -> Optional[bpy.types.Area]:
+    """Return the asset browser Area that's largest on screen.
 
     :param screen: context.window.screen
-    :param category: asset category, see asset_category_items in rna_space.c
 
-    :return: the area, or None if no Asset Browser area exists.
+    :return: the Area, or None if no Asset Browser area exists.
     """
 
     def area_sorting_key(area: bpy.types.Area) -> Tuple[bool, int]:
-        """Return tuple (is correct category, area size in pixels)"""
-        space_data = area.spaces[0]
-        asset_cat: str = space_data.params.asset_category
-        return (asset_cat == category, area.width * area.height)
+        """Return area size in pixels."""
+        return (area.width * area.height)
 
     areas = list(suitable_areas(screen))
     if not areas:
@@ -46,20 +43,29 @@ def suitable_areas(screen: bpy.types.Screen) -> Iterable[bpy.types.Area]:
         yield area
 
 
-def area_from_context(context: bpy.types.Context, category: str) -> Optional[bpy.types.Area]:
+def area_from_context(context: bpy.types.Context) -> Optional[bpy.types.Area]:
     """Return an Asset Browser suitable for the given category.
 
     Prefers the current Asset Browser if available, otherwise the biggest.
     """
 
     space_data = context.space_data
-    if not asset_utils.SpaceAssetInfo.is_asset_browser(space_data):
-        return area_for_category(context.screen, category)
+    if asset_utils.SpaceAssetInfo.is_asset_browser(space_data):
+        return context.area
 
-    if space_data.params.asset_category != category:
-        return area_for_category(context.screen, category)
+    # Try the current screen first.
+    browser_area = biggest_asset_browser_area(context.screen)
+    if browser_area:
+        return browser_area
 
-    return context.area
+    for win in context.window_manager.windows:
+        if win.screen == context.screen:
+            continue
+        browser_area = biggest_asset_browser_area(win.screen)
+        if browser_area:
+            return browser_area
+
+    return None
 
 
 def activate_asset(
@@ -70,6 +76,18 @@ def activate_asset(
     space_data = asset_browser.spaces[0]
     assert asset_utils.SpaceAssetInfo.is_asset_browser(space_data)
     space_data.activate_asset_by_id(asset, deferred=deferred)
+
+
+def active_catalog_id(asset_browser: bpy.types.Area) -> str:
+    """Return the ID of the catalog shown in the asset browser."""
+    return params(asset_browser).catalog_id
+
+
+def params(asset_browser: bpy.types.Area) -> bpy.types.FileAssetSelectParams:
+    """Return the asset browser parameters given its Area."""
+    space_data = asset_browser.spaces[0]
+    assert asset_utils.SpaceAssetInfo.is_asset_browser(space_data)
+    return space_data.params
 
 
 def tag_redraw(screen: bpy.types.Screen) -> None:

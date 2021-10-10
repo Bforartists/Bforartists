@@ -268,7 +268,7 @@ def add_bg_process(location=None, name=None, eval_path_computing='', eval_path_s
 def register():
     bpy.utils.register_class(KillBgProcess)
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.use_timers:
+    if user_preferences.use_timers and not bpy.app.background:
         bpy.app.timers.register(bg_update)
 
 

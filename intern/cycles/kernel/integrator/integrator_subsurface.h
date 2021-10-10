@@ -59,6 +59,9 @@ ccl_device int subsurface_bounce(INTEGRATOR_STATE_ARGS, ShaderData *sd, const Sh
   INTEGRATOR_STATE_WRITE(path, flag) = (path_flag & ~PATH_RAY_CAMERA) | PATH_RAY_SUBSURFACE;
   INTEGRATOR_STATE_WRITE(path, throughput) *= shader_bssrdf_sample_weight(sd, sc);
 
+  /* Advance random number offset for bounce. */
+  INTEGRATOR_STATE_WRITE(path, rng_offset) += PRNG_BOUNCE_NUM;
+
   if (kernel_data.kernel_features & KERNEL_FEATURE_LIGHT_PASSES) {
     if (INTEGRATOR_STATE(path, bounce) == 0) {
       INTEGRATOR_STATE_WRITE(path, diffuse_glossy_ratio) = one_float3();
@@ -577,7 +580,7 @@ ccl_device_inline bool subsurface_scatter(INTEGRATOR_STATE_ARGS)
 #  ifdef __VOLUME__
   /* Update volume stack if needed. */
   if (kernel_data.integrator.use_volumes) {
-    const int object = intersection_get_object(kg, &ss_isect.hits[0]);
+    const int object = ss_isect.hits[0].object;
     const int object_flag = kernel_tex_fetch(__object_flag, object);
 
     if (object_flag & SD_OBJECT_INTERSECTS_VOLUME) {
@@ -599,7 +602,7 @@ ccl_device_inline bool subsurface_scatter(INTEGRATOR_STATE_ARGS)
   integrator_state_write_isect(INTEGRATOR_STATE_PASS, &ss_isect.hits[0]);
   integrator_state_write_ray(INTEGRATOR_STATE_PASS, &ray);
 
-  /* Advanced random number offset for bounce. */
+  /* Advance random number offset for bounce. */
   INTEGRATOR_STATE_WRITE(path, rng_offset) += PRNG_BOUNCE_NUM;
 
   const int shader = intersection_get_shader(kg, &ss_isect.hits[0]);

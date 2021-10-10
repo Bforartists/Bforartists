@@ -8951,6 +8951,10 @@ msgid "Lens Distortion"
 msgstr "Kamera Lens Ölçeği"
 
 
+msgid "Combined"
+msgstr "Birleşik"
+
+
 msgid "Red Channel"
 msgstr "Kanal Sıralaması"
 
@@ -8961,10 +8965,6 @@ msgstr "Kanal Sıralaması"
 
 msgid "Blue Channel"
 msgstr "Kanal Sıralaması"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -13936,10 +13936,6 @@ msgstr "Nesneyi bir Gruba ekle"
 msgctxt "Operator"
 msgid "Bake"
 msgstr "Pişir"
-
-
-msgid "Combined"
-msgstr "Birleşik"
 
 
 msgctxt "Operator"
@@ -24356,70 +24352,6 @@ msgid "Fac"
 msgstr "Yüzey Alanı"
 
 
-msgid "Determinator"
-msgstr "Renk Oluşturucu"
-
-
-msgid "Bounding box"
-msgstr "Kutusal Sınır "
-
-
-msgid "Key Color"
-msgstr "Ekran Rengi:"
-
-
-msgid "Image 1"
-msgstr "Görüntü"
-
-
-msgid "Image 2"
-msgstr "Görüntü"
-
-
-msgid "ID value"
-msgstr "Hata Ayıklama Özelliklerini Göster"
-
-
-msgid "Dispersion"
-msgstr "Boyutlar"
-
-
-msgid "From Min"
-msgstr "Tüm grupları sil"
-
-
-msgid "From Max"
-msgstr "Tüm grupları sil"
-
-
-msgid "To Min"
-msgstr "Asg"
-
-
-msgid "To Max"
-msgstr "Azm"
-
-
-msgid "Dot"
-msgstr "Açı"
-
-
-msgid "Cb"
-msgstr "Küp"
-
-
-msgid "Cr"
-msgstr "Boyut|Ctrl C, 3"
-
-
-msgid "On"
-msgstr "Açık"
-
-
-msgid "Val"
-msgstr "Değer"
-
-
 msgid "Anisotropy"
 msgstr "Dosya Uzantılarını Filtrele"
 
@@ -24492,6 +24424,10 @@ msgid "Is Transmission Ray"
 msgstr "Ekran Rengi:"
 
 
+msgid "Dot"
+msgstr "Açı"
+
+
 msgid "Color1"
 msgstr "Renk"
 
@@ -24546,6 +24482,10 @@ msgstr "Düzeltilmiş koordinatları görüntüler"
 
 msgid "iScale"
 msgstr "Ölçekle"
+
+
+msgid "Val"
+msgstr "Değer"
 
 
 msgid "Image too small"

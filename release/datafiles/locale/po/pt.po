@@ -27386,8 +27386,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "Ativa ou desativa o modo de projetor (o efeito é aplicado somente na direção horizontal)."
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Combinado"
 
 
 msgid "Combined RGB"
@@ -27404,10 +27404,6 @@ msgstr "Canal verde"
 
 msgid "Blue Channel"
 msgstr "Canal azul"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -39428,10 +39424,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Tipo de passo para gerar e gravar, alguns deles podem não ser suportados pelo motor de renderização atual."
 
 
-msgid "Combined"
-msgstr "Combinado"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Nomeia automaticamente as saídas dos ficheiros com os tipos de passo."
 
@@ -44786,15 +44778,6 @@ msgid "Select more strips adjacent to the current selection"
 msgstr "Seleciona mais faixas adjacentes a seleção atual."
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Recortar as faixas"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Recorta os conteúdos da faixa ativa."
-
-
 msgid "Offset to the data of the strip"
 msgstr "Deslocamento dos dados da faixa."
 
@@ -46568,10 +46551,6 @@ msgstr "Número de interações para a execução, zero significa ilimitado dura
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Empacotar ilhas"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Transforma todas as ilhas de maneira que elas preencham o máximo possível do espaço UV."
 
 
 msgid "Space between islands"
@@ -62341,6 +62320,10 @@ msgid "Storage"
 msgstr "Armazenamento"
 
 
+msgid "Offset:"
+msgstr "Deslocamento:"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "Esquerda"
@@ -66703,10 +66686,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Deslocamento:"
-
-
 msgid "Pattern Area:"
 msgstr "Área Padrão:"
 
@@ -68832,116 +68811,12 @@ msgid "Crease Edges"
 msgstr "Vincos das arestas"
 
 
-msgid "Fac"
-msgstr "Fator"
-
-
-msgid "Determinator"
-msgstr "Determinador"
-
-
-msgid "Bounding box"
-msgstr "Caixa circundante"
-
-
-msgid "Key Color"
-msgstr "Cor principal"
-
-
-msgid "Upper Left"
-msgstr "Superior esquerdo"
-
-
-msgid "Upper Right"
-msgstr "Superior direito"
-
-
-msgid "Lower Left"
-msgstr "Inferior esquerdo"
-
-
-msgid "Lower Right"
-msgstr "Inferior direito"
-
-
-msgid "Image 1"
-msgstr "Imagem 1"
-
-
-msgid "Image 2"
-msgstr "Imagem 2"
-
-
-msgid "ID value"
-msgstr "Valor do identificador"
-
-
-msgid "Dispersion"
-msgstr "Dispersão"
-
-
-msgid "Std Dev"
-msgstr "Desvio padrão"
-
-
-msgid "From Min"
-msgstr "A partir do mínimo"
-
-
-msgid "From Max"
-msgstr "A partir do máximo"
-
-
-msgid "To Min"
-msgstr "Para o mínimo"
-
-
-msgid "To Max"
-msgstr "Para o máximo"
-
-
-msgid "Offset Y"
-msgstr "Deslocamento Y"
-
-
-msgid "Undistortion"
-msgstr "Sem distorção"
-
-
-msgid "Dot"
-msgstr "Ponto"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Graus"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Ligar"
-
-
-msgid "Val"
-msgstr "Valor"
-
-
-msgid "Missing Data-Block"
-msgstr "Bloco de dados faltando"
-
-
 msgid "AO"
 msgstr "Oclusão ambiente"
+
+
+msgid "Fac"
+msgstr "Fator"
 
 
 msgid "Anisotropy"
@@ -69112,6 +68987,10 @@ msgid "Transmission Depth"
 msgstr "Profundidade de transmissão "
 
 
+msgid "Dot"
+msgstr "Ponto"
+
+
 msgid "Color Fac"
 msgstr "Fator para cor"
 
@@ -69206,6 +69085,10 @@ msgstr "Peso de funcionalidade 4"
 
 msgid "iScale"
 msgstr "Escala de intensidade"
+
+
+msgid "Val"
+msgstr "Valor"
 
 
 msgid "Unknown py-exception, could not convert"
