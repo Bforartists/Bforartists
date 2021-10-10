@@ -14107,8 +14107,8 @@ msgid "Projector"
 msgstr "Proyektor"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Terkombinasi"
 
 
 msgid "Combined RGB"
@@ -14125,10 +14125,6 @@ msgstr "Saluran Hijau"
 
 msgid "Blue Channel"
 msgstr "Saluran Biru"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Map Value"
@@ -17337,10 +17333,6 @@ msgstr "Tambah Armatur"
 
 msgid "Add an armature object to the scene"
 msgstr "Tambah objek armatur ke adegan"
-
-
-msgid "Combined"
-msgstr "Terkombinasi"
 
 
 msgid "Split baked maps per material, using material name in output file (external only)"
@@ -27030,96 +27022,12 @@ msgid "Replace Original"
 msgstr "Gantikan yang Original"
 
 
-msgid "Compositor"
-msgstr "Penyusun Huruf"
+msgid "AO"
+msgstr "AO"
 
 
 msgid "Fac"
 msgstr "Fac"
-
-
-msgid "Determinator"
-msgstr "Determinator"
-
-
-msgid "Bounding box"
-msgstr "Suara"
-
-
-msgid "Key Color"
-msgstr "Warna Standar"
-
-
-msgid "Upper Left"
-msgstr "Kiri Atas"
-
-
-msgid "Upper Right"
-msgstr "Kanan Atas"
-
-
-msgid "Lower Left"
-msgstr "Kiri Bawah"
-
-
-msgid "Lower Right"
-msgstr "Kanan Bawah"
-
-
-msgid "Image 1"
-msgstr "Gambar 1"
-
-
-msgid "Image 2"
-msgstr "Gambar 1"
-
-
-msgid "ID value"
-msgstr "ID nilai"
-
-
-msgid "Dispersion"
-msgstr "Dispersi"
-
-
-msgid "From Min"
-msgstr "Dari Min"
-
-
-msgid "From Max"
-msgstr "Dari Max"
-
-
-msgid "To Min"
-msgstr "Ke Min"
-
-
-msgid "To Max"
-msgstr "Ke Max"
-
-
-msgid "Offset Y"
-msgstr "Offset Y"
-
-
-msgid "Undistortion"
-msgstr "Tidak terdistorsi"
-
-
-msgid "Dot"
-msgstr "Titik"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Val"
-msgstr "Val"
-
-
-msgid "AO"
-msgstr "AO"
 
 
 msgid "Random Color"
@@ -27172,6 +27080,10 @@ msgstr "Warna"
 
 msgid "Is Transmission Ray"
 msgstr "Orientasi Transformasi"
+
+
+msgid "Dot"
+msgstr "Titik"
 
 
 msgid "Color Fac"
@@ -27268,6 +27180,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
+
+
+msgid "Val"
+msgstr "Val"
 
 
 msgid ""

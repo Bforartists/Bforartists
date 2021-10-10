@@ -1615,10 +1615,6 @@ msgid "RGB"
 msgstr "RGB"
 
 
-msgid "C"
-msgstr "C"
-
-
 msgid "Red Channel"
 msgstr "Кызыл каналы"
 
@@ -1629,10 +1625,6 @@ msgstr "Жашыл каналы"
 
 msgid "Blue Channel"
 msgstr "Көк каналы"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Render Layers"

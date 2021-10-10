@@ -151,15 +151,16 @@ def scene_load(context):
 @bpy.app.handlers.persistent
 def check_timers_timer():
     ''' checks if all timers are registered regularly. Prevents possible bugs from stopping the addon.'''
-    if not bpy.app.timers.is_registered(search.search_timer):
-        bpy.app.timers.register(search.search_timer)
-    if not bpy.app.timers.is_registered(download.download_timer):
-        bpy.app.timers.register(download.download_timer)
-    if not (bpy.app.timers.is_registered(tasks_queue.queue_worker)):
-        bpy.app.timers.register(tasks_queue.queue_worker)
-    if not bpy.app.timers.is_registered(bg_blender.bg_update):
-        bpy.app.timers.register(bg_blender.bg_update)
-    return 5.0
+    if not bpy.app.background:
+        if not bpy.app.timers.is_registered(search.search_timer):
+            bpy.app.timers.register(search.search_timer)
+        if not bpy.app.timers.is_registered(download.download_timer):
+            bpy.app.timers.register(download.download_timer)
+        if not (bpy.app.timers.is_registered(tasks_queue.queue_worker)):
+            bpy.app.timers.register(tasks_queue.queue_worker)
+        if not bpy.app.timers.is_registered(bg_blender.bg_update):
+            bpy.app.timers.register(bg_blender.bg_update)
+        return 5.0
 
 
 conditions = (
@@ -1907,7 +1908,7 @@ def register():
     asset_bar_op.register()
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.use_timers:
+    if user_preferences.use_timers and not bpy.app.background:
         bpy.app.timers.register(check_timers_timer, persistent=True)
 
     bpy.app.handlers.load_post.append(scene_load)

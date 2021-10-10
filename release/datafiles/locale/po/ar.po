@@ -20731,8 +20731,8 @@ msgid "Projector"
 msgstr "ﺽﺭﺎﻌﻟﺍ"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "ﻊﻤﺠﻣ"
 
 
 msgid "Red Channel"
@@ -20745,10 +20745,6 @@ msgstr "ءﺍﺮﻀﺨﻟﺍ ﺓﺎﻨﻘﻟﺍ"
 
 msgid "Blue Channel"
 msgstr "ءﺎﻗﺭﺰﻟﺍ ﺓﺎﻨﻘﻟﺍ"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -26521,10 +26517,6 @@ msgstr "ﻞﻜﻴﻫ ﻒﺿﺍ"
 msgctxt "Operator"
 msgid "Bake"
 msgstr "ﻥﺰّﺧ"
-
-
-msgid "Combined"
-msgstr "ﻊﻤﺠﻣ"
 
 
 msgctxt "Operator"
@@ -38337,6 +38329,10 @@ msgid "Storage"
 msgstr "ﺔﻴﻄﻐﺘﻟﺍ"
 
 
+msgid "Offset:"
+msgstr ":ﺔﺣﺍﺯﺇ"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "ﺭﺎﺴﻳ"
@@ -40548,10 +40544,6 @@ msgid "Track is locked"
 msgstr "ﻞﻔﻘﻣ ﺔﻛﺮﺤﻟﺍ ﺭﺎﺴﻣ"
 
 
-msgid "Offset:"
-msgstr ":ﺔﺣﺍﺯﺇ"
-
-
 msgid "Width:"
 msgstr "ﺽﺮﻌﻟﺍ"
 
@@ -41232,92 +41224,12 @@ msgid "Crease Edges"
 msgstr "ﻑﺍﻮﺤﻟﺍ ﺪﻌّﺟ"
 
 
-msgid "Fac"
-msgstr "ﻞﻣﺎﻌﻤﻟﺍ"
-
-
-msgid "Determinator"
-msgstr "ﺩﺪﺤﻤﻟﺍ"
-
-
-msgid "Bounding box"
-msgstr "ﻂﻴﺤﻤﻟﺍ ﻕﻭﺪﻨﺼﻟﺍ"
-
-
-msgid "Key Color"
-msgstr "ﺡﺎﺘﻔﻤﻟﺍ ﻥﻮﻠﻟﺍ"
-
-
-msgid "Image 1"
-msgstr "1 ﺓﺭﻮﺼﻟﺍ"
-
-
-msgid "Image 2"
-msgstr "2 ﺓﺭﻮﺼﻟﺍ"
-
-
-msgid "ID value"
-msgstr "ﻑﺮّﻌﻤﻟﺍ ﺔﻤﻴﻗ"
-
-
-msgid "Dispersion"
-msgstr "ﺩﺪﺒﺘﻟﺍ"
-
-
-msgid "From Min"
-msgstr "X ﻰﻧﺩﺍ ﻦﻣ"
-
-
-msgid "From Max"
-msgstr "X ﻰﺼﻗﺍ ﻦﻣ"
-
-
-msgid "To Min"
-msgstr "ﻲﻘﻓﺃ ﺭﻮﺤﻣ ﻰﻧﺩﺃ"
-
-
-msgid "To Max"
-msgstr "ﻲﻘﻓﺃ ﺭﻮﺤﻣ ﻰﺼﻗﺃ"
-
-
-msgid "Offset Y"
-msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻦﻋ ﺡﺯﺃ"
-
-
-msgid "Undistortion"
-msgstr "ﻪﻳﻮﺸﺘﻟﺍ ءﺎﻐﻟﺍ "
-
-
-msgid "Dot"
-msgstr "ﺔﻄﻘﻧ"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "ﺔﺟﺭﺩ"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "ﻞﻌﻔﻣ"
-
-
-msgid "Val"
-msgstr "ﺔﻤﻴﻘﻟﺍ"
-
-
 msgid "AO"
 msgstr "ﻡ.ﺇ"
+
+
+msgid "Fac"
+msgstr "ﻞﻣﺎﻌﻤﻟﺍ"
 
 
 msgid "Anisotropy"
@@ -41436,6 +41348,10 @@ msgid "Transparent Depth"
 msgstr "ﻑﺎﻔّﺷ ﻖﻤﻋ"
 
 
+msgid "Dot"
+msgstr "ﺔﻄﻘﻧ"
+
+
 msgid "Color Fac"
 msgstr "ﻥﻮﻠﻟﺍ ﻞﻣﺎﻌﻣ"
 
@@ -41518,6 +41434,10 @@ msgstr "W3"
 
 msgid "W4"
 msgstr "W4"
+
+
+msgid "Val"
+msgstr "ﺔﻤﻴﻘﻟﺍ"
 
 
 msgid "| Time:%s | "

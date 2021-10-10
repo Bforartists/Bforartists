@@ -155,12 +155,17 @@ ccl_device_forceinline void integrator_state_read_shadow_isect(INTEGRATOR_STATE_
 ccl_device_forceinline void integrator_state_copy_volume_stack_to_shadow(INTEGRATOR_STATE_ARGS)
 {
   if (kernel_data.kernel_features & KERNEL_FEATURE_VOLUME) {
-    for (int i = 0; i < INTEGRATOR_VOLUME_STACK_SIZE; i++) {
-      INTEGRATOR_STATE_ARRAY_WRITE(shadow_volume_stack, i, object) = INTEGRATOR_STATE_ARRAY(
-          volume_stack, i, object);
-      INTEGRATOR_STATE_ARRAY_WRITE(shadow_volume_stack, i, shader) = INTEGRATOR_STATE_ARRAY(
-          volume_stack, i, shader);
-    }
+    int index = 0;
+    int shader;
+    do {
+      shader = INTEGRATOR_STATE_ARRAY(volume_stack, index, shader);
+
+      INTEGRATOR_STATE_ARRAY_WRITE(shadow_volume_stack, index, object) = INTEGRATOR_STATE_ARRAY(
+          volume_stack, index, object);
+      INTEGRATOR_STATE_ARRAY_WRITE(shadow_volume_stack, index, shader) = shader;
+
+      ++index;
+    } while (shader != OBJECT_NONE);
   }
 }
 
@@ -223,6 +228,8 @@ ccl_device_inline void integrator_state_copy_only(const IntegratorState to_state
     while (index < gpu_array_size) \
       ;
 
+#  define KERNEL_STRUCT_VOLUME_STACK_SIZE kernel_data.volume_stack_size
+
 #  include "kernel/integrator/integrator_state_template.h"
 
 #  undef KERNEL_STRUCT_BEGIN
@@ -230,6 +237,7 @@ ccl_device_inline void integrator_state_copy_only(const IntegratorState to_state
 #  undef KERNEL_STRUCT_ARRAY_MEMBER
 #  undef KERNEL_STRUCT_END
 #  undef KERNEL_STRUCT_END_ARRAY
+#  undef KERNEL_STRUCT_VOLUME_STACK_SIZE
 }
 
 ccl_device_inline void integrator_state_move(const IntegratorState to_state,

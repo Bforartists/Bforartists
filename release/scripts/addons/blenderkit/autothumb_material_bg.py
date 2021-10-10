@@ -50,6 +50,10 @@ if __name__ == "__main__":
         if data.get('do_download'):
             #need to save the file, so that asset doesn't get downloaded into addon directory
             temp_blend_path = os.path.join(data['tempdir'], 'temp.blend')
+
+            # if this isn't here, blender crashes.
+            bpy.context.preferences.filepaths.file_preview_type = 'NONE'
+
             bpy.ops.wm.save_as_mainfile(filepath=temp_blend_path)
 
             asset_data = data['asset_data']

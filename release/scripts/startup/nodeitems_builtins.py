@@ -532,6 +532,7 @@ geometry_node_categories = [
         NodeItem("GeometryNodeCurveSetHandles"),
         NodeItem("GeometryNodeInputTangent"),
         NodeItem("GeometryNodeCurveSample"),
+        NodeItem("GeometryNodeCurveHandleTypeSelection"),
         NodeItem("GeometryNodeCurveFillet"),
         NodeItem("GeometryNodeCurveReverse"),
     ]),
@@ -629,6 +630,7 @@ geometry_node_categories = [
         NodeItem("FunctionNodeFloatToInt"),
         NodeItem("GeometryNodeSwitch"),
         NodeItem("FunctionNodeRandomValue"),
+        NodeItem("FunctionNodeAlignEulerToVector"),
     ]),
     GeometryNodeCategory("GEO_TEXTURE", "Texture", items=[
         NodeItem("ShaderNodeTexNoise"),
@@ -646,6 +648,7 @@ geometry_node_categories = [
     GeometryNodeCategory("GEO_VOLUME", "Volume", items=[
         NodeItem("GeometryNodeLegacyPointsToVolume", poll=geometry_nodes_legacy_poll),
 
+        NodeItem("GeometryNodePointsToVolume"),
         NodeItem("GeometryNodeVolumeToMesh"),
     ]),
     GeometryNodeCategory("GEO_GROUP", "Group", items=node_group_items),

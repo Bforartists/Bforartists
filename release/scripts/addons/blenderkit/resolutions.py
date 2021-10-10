@@ -171,10 +171,11 @@ def unpack_asset(data):
     #mark asset browser asset
     data_block = None
     if asset_data['assetType'] == 'model':
-        for ob in bpy.context.scene.objects:
-            if ob.parent == None:
-                ob.asset_mark()
-                data_block = ob
+        
+        for c in bpy.data.collections:
+            if c.get('asset_data') is not None:
+                c.asset_mark()
+                data_block = c
     elif asset_data['assetType'] == 'material':
         for m in bpy.data.materials:
             m.asset_mark()
@@ -192,7 +193,10 @@ def unpack_asset(data):
             tags.remove(t)
         tags.new('description: ' + asset_data['description'])
         tags.new('tags: ' + ','.join(asset_data['tags']))
-        
+    #
+    # if this isn't here, blender crashes when saving file.
+    bpy.context.preferences.filepaths.file_preview_type = 'NONE'
+
     bpy.ops.wm.save_mainfile(compress=False)
     # now try to delete the .blend1 file
     try:
@@ -385,6 +389,9 @@ def generate_lower_resolutions(data):
                         i.pack()
                 # save
                 print(fpath)
+                # if this isn't here, blender crashes.
+                bpy.context.preferences.filepaths.file_preview_type = 'NONE'
+
                 # save the file
                 bpy.ops.wm.save_as_mainfile(filepath=fpath, compress=True, copy=True)
                 # compare file sizes

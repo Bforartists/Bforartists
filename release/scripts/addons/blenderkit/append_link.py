@@ -318,10 +318,10 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
                 # check for object that should be hidden
                 if ob.users_collection[0].name == collection_name:
                     collection = ob.users_collection[0]
+                    collection['is_blenderkit_asset'] = True
+
                 else:
                     to_hidden_collection.append(ob)
-
-
 
         if kwargs.get('rotation'):
             main_object.rotation_euler = kwargs['rotation']
@@ -329,6 +329,7 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
         if kwargs.get('parent') is not None:
             main_object.parent = bpy.data.objects[kwargs['parent']]
             main_object.matrix_world.translation = location
+
 
         #move objects that should be hidden to a sub collection
         if len(to_hidden_collection)>0 and collection is not None:
@@ -342,8 +343,10 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
 
         bpy.ops.object.select_all(action='DESELECT')
         utils.selection_set(sel)
+        #let collection also store info that it was created by BlenderKit, for purging reasons
 
         return main_object, return_obs
+
     #this is used for uploads:
     with bpy.data.libraries.load(file_name, link=link, relative=True) as (data_from, data_to):
         sobs = []

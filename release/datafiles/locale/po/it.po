@@ -23625,8 +23625,8 @@ msgid "Projector"
 msgstr "Proiettore"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Combinato"
 
 
 msgid "Combined RGB"
@@ -23643,10 +23643,6 @@ msgstr "Canale Verde"
 
 msgid "Blue Channel"
 msgstr "Canale Blu"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -34099,10 +34095,6 @@ msgid "Bake image textures of selected objects"
 msgstr "Precalcola immagini texture degli oggetti selezionati"
 
 
-msgid "Combined"
-msgstr "Combinato"
-
-
 msgctxt "Operator"
 msgid "Add Camera"
 msgstr "Aggiungi Camera"
@@ -39156,15 +39148,6 @@ msgid "Select more strips adjacent to the current selection"
 msgstr "Seleziona più spezzoni adiacenti alla selezione corrente"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Tronca Spezzone"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Tronca i contenuti dello spezzone attivo"
-
-
 msgid "Frame where selected strips will be snapped"
 msgstr "Fotogramma in cui gli spezzoni selezionati vengono agganciati"
 
@@ -40679,10 +40662,6 @@ msgstr "Numero di ripetizione da eseguire, con 0 sono illimitate quando usato in
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Compatta Isole"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Trasforma tutte le isole in modo che riempiano lo spazio UV il meglio possibile"
 
 
 msgid "Space between islands"
@@ -54728,6 +54707,10 @@ msgid "Storage"
 msgstr "Deposito"
 
 
+msgid "Offset:"
+msgstr "Scostamento:"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "Sinistra"
@@ -58834,10 +58817,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Scostamento:"
-
-
 msgid "Pattern Area:"
 msgstr "Area Motivo:"
 
@@ -60295,120 +60274,16 @@ msgid "Crease Edges"
 msgstr "Spigoli Piega"
 
 
-msgid "Fac"
-msgstr "Fatt"
-
-
-msgid "Determinator"
-msgstr "Generatore"
-
-
-msgid "Bounding box"
-msgstr "Casella Delimitazione"
-
-
-msgid "Key Color"
-msgstr "Colore Chiave"
-
-
-msgid "Upper Left"
-msgstr "Alto Sinistra"
-
-
-msgid "Upper Right"
-msgstr "Alto Destra"
-
-
-msgid "Lower Left"
-msgstr "Basso Sinistra"
-
-
-msgid "Lower Right"
-msgstr "Basso Destra"
-
-
-msgid "Image 1"
-msgstr "Immagine 1"
-
-
-msgid "Image 2"
-msgstr "Immagine 2"
-
-
-msgid "ID value"
-msgstr "Valore ID"
-
-
-msgid "Dispersion"
-msgstr "Dispersione"
-
-
-msgid "Std Dev"
-msgstr "Dev Std"
-
-
-msgid "From Min"
-msgstr "Da Min"
-
-
-msgid "From Max"
-msgstr "Da Max"
-
-
-msgid "To Min"
-msgstr "A Min"
-
-
-msgid "To Max"
-msgstr "A Max"
-
-
-msgid "Offset Y"
-msgstr "Scostamento Y"
-
-
-msgid "Undistortion"
-msgstr "De-distorsione"
-
-
-msgid "Dot"
-msgstr "Punti"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Gradi"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Acceso"
-
-
-msgid "Val"
-msgstr "Valore"
-
-
-msgid "Missing Data-Block"
-msgstr "Blocco-Dati Mancante"
-
-
 msgid "Shader Editor"
 msgstr "Editor Ombreggiatori"
 
 
 msgid "AO"
 msgstr "OA"
+
+
+msgid "Fac"
+msgstr "Fatt"
 
 
 msgid "Anisotropy"
@@ -60587,6 +60462,10 @@ msgid "Transmission Depth"
 msgstr "Profondità Trasmissione"
 
 
+msgid "Dot"
+msgstr "Punti"
+
+
 msgid "Color Fac"
 msgstr "Fattore Colore"
 
@@ -60685,6 +60564,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iScale"
+
+
+msgid "Val"
+msgstr "Valore"
 
 
 msgid "Could not resolve path (%s)"

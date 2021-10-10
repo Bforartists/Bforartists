@@ -1404,10 +1404,6 @@ msgid "Blue Channel"
 msgstr "Blauwe Kanaal"
 
 
-msgid "L"
-msgstr "L"
-
-
 msgid "Render Layers"
 msgstr "Render Lagen"
 
