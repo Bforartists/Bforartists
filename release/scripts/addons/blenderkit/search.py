@@ -179,7 +179,7 @@ def scene_load(context):
     purge_search_results()
     fetch_server_data()
     categories.load_categories()
-    if not bpy.app.timers.is_registered(refresh_token_timer):
+    if not bpy.app.timers.is_registered(refresh_token_timer) and not bpy.app.background:
         bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
     update_assets_data()
 
@@ -1625,7 +1625,7 @@ def register_search():
         bpy.utils.register_class(c)
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.use_timers:
+    if user_preferences.use_timers and not bpy.app.background:
         bpy.app.timers.register(search_timer)
 
     categories.load_categories()

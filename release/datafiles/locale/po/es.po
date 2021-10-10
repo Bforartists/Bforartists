@@ -12212,14 +12212,6 @@ msgid "Settings for the file selection in Asset Browser mode"
 msgstr "Opciones para la selección de archivos en modo Explorador de recursos"
 
 
-msgid "Asset Category"
-msgstr "Categoría de recurso"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "Determina qué tipo de recursos mostrar"
-
-
 msgid "Asset Library"
 msgstr "Biblioteca de recursos"
 
@@ -39677,8 +39669,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "Habilita o deshabilita el modo proyector (el efecto es aplicado sólo en dirección horizontal)"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Combinada"
 
 
 msgid "Combined RGB"
@@ -39697,8 +39689,8 @@ msgid "Blue Channel"
 msgstr "Canal azul"
 
 
-msgid "L"
-msgstr "L"
+msgid "Luminance"
+msgstr "Luminancia"
 
 
 msgid "Luminance Channel"
@@ -40509,6 +40501,22 @@ msgid "Random Float"
 msgstr "Decimal aleatorio"
 
 
+msgid "Base orientation of the points"
+msgstr "Orientación base de los puntos"
+
+
+msgid "Method used to describe the rotation"
+msgstr "Método usado para describir la rotación"
+
+
+msgid "Rotate around an axis by an angle"
+msgstr "Rotar un cierto ángulo en torno a un eje"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "Rotar en torno a los ejes X, Y y Z"
+
+
 msgid "Geometry Node"
 msgstr "Nodo de geometría"
 
@@ -41085,28 +41093,12 @@ msgid "Point Rotate"
 msgstr "Rotar puntos"
 
 
-msgid "Base orientation of the points"
-msgstr "Orientación base de los puntos"
-
-
 msgid "Rotate points in the local space of the object"
 msgstr "Rota los puntos en el espacio local del objeto"
 
 
 msgid "Rotate every point in its local space (as defined by the 'rotation' attribute)"
 msgstr "Rota cada punto en su espacio local (tal como haya sido definido en el atributo 'rotación')"
-
-
-msgid "Method used to describe the rotation"
-msgstr "Método usado para describir la rotación"
-
-
-msgid "Rotate around an axis by an angle"
-msgstr "Rotar un cierto ángulo en torno a un eje"
-
-
-msgid "Rotate around the X, Y, and Z axes"
-msgstr "Rotar en torno a los ejes X, Y y Z"
 
 
 msgid "Select by Material"
@@ -58145,10 +58137,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "Tipo de pasada a capturar, es posible que algunos tipos no sean soportados por el motor de procesamiento actual"
 
 
-msgid "Combined"
-msgstr "Combinada"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "Nombrar automáticamente el archivo de salida con el tipo de pasada que contiene"
 
@@ -59341,11 +59329,6 @@ msgstr "Definir modo Objeto"
 
 msgid "Sets the object interaction mode"
 msgstr "Define el modo de interacción del objeto"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "Definir modo Objeto con sub-modos"
 
 
 msgid "Mesh Mode"
@@ -62549,10 +62532,6 @@ msgstr "Saturación, Valor, Tono"
 
 msgid "Value, Hue, Saturation"
 msgstr "Valor, Tono, Saturación"
-
-
-msgid "Luminance"
-msgstr "Luminancia"
 
 
 msgctxt "Operator"
@@ -67039,15 +67018,6 @@ msgid "Set the preview range instead"
 msgstr "Usar el rango de previsualización"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "Recortar clips"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "Recorta el contenido del clip activo"
-
-
 msgid "Offset to the data of the strip"
 msgstr "Desplazamiento con respecto a los datos del clip"
 
@@ -69285,10 +69255,6 @@ msgstr "Cantidad de iteraciones a correr, 0 significa ilimitadas al correr de fo
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Empacar islas"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "Transforma todas las islas de manera que ocupen tanto espacio UV como sea posible"
 
 
 msgid "Space between islands"
@@ -73513,10 +73479,6 @@ msgstr "Metadatos de recurso"
 
 msgid "Details"
 msgstr "Detalles"
-
-
-msgid "Asset Navigation"
-msgstr "Navegación de recursos"
 
 
 msgid "Chain Scaling"
@@ -97364,6 +97326,10 @@ msgid "Set Overlay Region"
 msgstr "Definir región de superposición"
 
 
+msgid "Offset:"
+msgstr "Desplazamiento:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Definir rango previsualización de clips"
@@ -105361,10 +105327,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Desplazamiento:"
-
-
 msgid "Pattern Area:"
 msgstr "Área patrón:"
 
@@ -108968,124 +108930,16 @@ msgid "Crease Edges"
 msgstr "Plegar bordes"
 
 
-msgid "Compositor"
-msgstr "Compositor"
-
-
-msgid "Fac"
-msgstr "Fac"
-
-
-msgid "Determinator"
-msgstr "Determinador"
-
-
-msgid "Bounding box"
-msgstr "Volumen delimitador"
-
-
-msgid "Key Color"
-msgstr "Color a recortar"
-
-
-msgid "Upper Left"
-msgstr "Superior izquierda"
-
-
-msgid "Upper Right"
-msgstr "Superior derecha"
-
-
-msgid "Lower Left"
-msgstr "Inferior izquierda"
-
-
-msgid "Lower Right"
-msgstr "Inferior derecha"
-
-
-msgid "Image 1"
-msgstr "Imagen 1"
-
-
-msgid "Image 2"
-msgstr "Imagen 2"
-
-
-msgid "ID value"
-msgstr "Valor de ID"
-
-
-msgid "Dispersion"
-msgstr "Dispersión"
-
-
-msgid "Std Dev"
-msgstr "Desviación estándar"
-
-
-msgid "From Min"
-msgstr "Desde mín"
-
-
-msgid "From Max"
-msgstr "Desde máx"
-
-
-msgid "To Min"
-msgstr "Hasta mín"
-
-
-msgid "To Max"
-msgstr "Hasta máx"
-
-
-msgid "Offset Y"
-msgstr "Desplazamiento Y"
-
-
-msgid "Undistortion"
-msgstr "Eliminar distorsión"
-
-
-msgid "Dot"
-msgstr "Escalar"
-
-
-msgid "RGBA"
-msgstr "RVAα"
-
-
-msgid "Degr"
-msgstr "Grados"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "Activado"
-
-
-msgid "Val"
-msgstr "Valor"
-
-
-msgid "Missing Data-Block"
-msgstr "Bloque de datos faltante"
-
-
 msgid "Shader Editor"
 msgstr "Editor de sombreado"
 
 
 msgid "AO"
 msgstr "Oclusión ambiental"
+
+
+msgid "Fac"
+msgstr "Fac"
 
 
 msgid "Anisotropy"
@@ -109312,6 +109166,10 @@ msgid "Transmission Depth"
 msgstr "Profundidad de transmisión"
 
 
+msgid "Dot"
+msgstr "Escalar"
+
+
 msgid "Color Fac"
 msgstr "Fact de color"
 
@@ -109438,6 +109296,10 @@ msgstr "Infl.4"
 
 msgid "iScale"
 msgstr "Escala de intensidad"
+
+
+msgid "Val"
+msgstr "Valor"
 
 
 msgid ""

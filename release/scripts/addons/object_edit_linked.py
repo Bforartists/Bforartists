@@ -83,7 +83,9 @@ class OBJECT_OT_EditLinked(bpy.types.Operator):
                 context.active_object.instance_collection.library is not None) or
                 (context.active_object.proxy and
                 context.active_object.proxy.library is not None) or
-                context.active_object.library is not None)
+                context.active_object.library is not None or
+                (context.active_object.override_library and
+                context.active_object.override_library.reference.library is not None))
 
     def execute(self, context: bpy.context):
         target = context.active_object
@@ -96,6 +98,10 @@ class OBJECT_OT_EditLinked(bpy.types.Operator):
             settings["linked_objects"].append(target.name)
         elif target.proxy:
             target = target.proxy
+            targetpath = target.library.filepath
+            settings["linked_objects"].append(target.name)
+        elif target.override_library:
+            target = target.override_library.reference
             targetpath = target.library.filepath
             settings["linked_objects"].append(target.name)
 
@@ -149,12 +155,18 @@ class NODE_OT_EditLinked(bpy.types.Operator):
     @classmethod
     def poll(cls, context: bpy.context):
         return settings["original_file"] == "" and context.active_node is not None and (
-                context.active_node.type == 'GROUP' and
+                (context.active_node.type == 'GROUP' and
                 hasattr(context.active_node.node_tree, "library") and
-                context.active_node.node_tree.library is not None)
+                context.active_node.node_tree.library is not None) or
+                (hasattr(context.active_node, "monad") and
+                context.active_node.monad.library is not None))
 
     def execute(self, context: bpy.context):
-        target = context.active_node.node_tree
+        target = context.active_node
+        if (target.type == "GROUP"):
+            target = target.node_tree
+        else:
+            target = target.monad
 
         targetpath = target.library.filepath
         settings["linked_nodes"].append(target.name)
@@ -255,23 +267,31 @@ class VIEW3D_PT_PanelLinkedEdit(bpy.types.Panel):
         if settings["original_file"] == "" and (
                 (target and
                 target.library is not None) or
-                context.active_object.library is not None):
+                context.active_object.library is not None or
+                (context.active_object.override_library is not None and
+                context.active_object.override_library.reference is not None)):
 
             if (target is not None):
                 props = layout.operator("object.edit_linked", icon="LINK_BLEND",
                                         text="Edit Library: %s" % target.name)
-            else:
+            elif (context.active_object.library):
                 props = layout.operator("object.edit_linked", icon="LINK_BLEND",
                                         text="Edit Library: %s" % context.active_object.name)
+            else:
+                props = layout.operator("object.edit_linked", icon="LINK_BLEND",
+                                        text="Edit Override Library: %s" % context.active_object.override_library.reference.name)
 
             self.draw_common(scene, layout, props)
 
             if (target is not None):
                 layout.label(text="Path: %s" %
                             target.library.filepath)
-            else:
+            elif (context.active_object.library):
                 layout.label(text="Path: %s" %
                             context.active_object.library.filepath)
+            else:
+                layout.label(text="Path: %s" %
+                            context.active_object.override_library.reference.library.filepath)
 
         elif settings["original_file"] != "":
 
@@ -341,15 +361,23 @@ class NODE_PT_PanelLinkedEdit(bpy.types.Panel):
         target = context.active_node
 
         if settings["original_file"] == "" and (
-                target.type == 'GROUP' and hasattr(target.node_tree, "library") and
-                target.node_tree.library is not None):
+                (target.type == 'GROUP' and hasattr(target.node_tree, "library") and
+                target.node_tree.library is not None) or
+                (hasattr(target, "monad") and target.monad.library is not None)):
 
-            props = layout.operator("node.edit_linked", icon="LINK_BLEND",
-                                    text="Edit Library: %s" % target.name)
+            if (target.type == "GROUP"):
+                props = layout.operator("node.edit_linked", icon="LINK_BLEND",
+                                        text="Edit Library: %s" % target.name)
+            else:
+                props = layout.operator("node.edit_linked", icon="LINK_BLEND",
+                                        text="Edit Library: %s" % target.monad.name)
 
             self.draw_common(scene, layout, props)
 
-            layout.label(text="Path: %s" % target.node_tree.library.filepath)
+            if (target.type == "GROUP"):
+                layout.label(text="Path: %s" % target.node_tree.library.filepath)
+            else:
+                layout.label(text="Path: %s" % target.monad.library.filepath)
 
         elif settings["original_file"] != "":
 

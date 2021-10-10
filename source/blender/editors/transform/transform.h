@@ -222,6 +222,7 @@ typedef enum {
   TC_POSE,
   TC_ARMATURE_VERTS,
   TC_CURSOR_IMAGE,
+  TC_CURSOR_SEQUENCER,
   TC_CURSOR_VIEW3D,
   TC_CURVE_VERTS,
   TC_GRAPH_EDIT_DATA,
@@ -365,18 +366,18 @@ typedef struct TransCon {
    * The last three parameters are pointers to the in/out/printable vectors. */
   void (*applyVec)(const struct TransInfo *t,
                    const struct TransDataContainer *tc,
-                   struct TransData *td,
+                   const struct TransData *td,
                    const float in[3],
                    float r_out[3]);
   /** Apply function pointer for size transformation. */
   void (*applySize)(const struct TransInfo *t,
                     const struct TransDataContainer *tc,
-                    struct TransData *td,
+                    const struct TransData *td,
                     float r_smat[3][3]);
   /** Apply function pointer for rotation transformation */
   void (*applyRot)(const struct TransInfo *t,
                    const struct TransDataContainer *tc,
-                   struct TransData *td,
+                   const struct TransData *td,
                    float r_axis[3],
                    float *r_angle);
 } TransCon;

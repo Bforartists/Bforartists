@@ -11594,8 +11594,8 @@ msgid "Projector"
 msgstr "Projektor"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Kombinovano"
 
 
 msgid "Combined RGB"
@@ -11612,10 +11612,6 @@ msgstr "Zeleni kanal"
 
 msgid "Blue Channel"
 msgstr "Plavi kanal"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Map Range"
@@ -17148,10 +17144,6 @@ msgstr "Ispeci"
 
 msgid "Bake image textures of selected objects"
 msgstr "Ispeci teksture izabranih objekata"
-
-
-msgid "Combined"
-msgstr "Kombinovano"
 
 
 msgctxt "Operator"
@@ -26070,6 +26062,10 @@ msgid "Storage"
 msgstr "Skladište"
 
 
+msgid "Offset:"
+msgstr "Odstojanje:"
+
+
 msgctxt "Operator"
 msgid "Left"
 msgstr "Levo"
@@ -27836,10 +27832,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Odstojanje:"
-
-
 msgid "Width:"
 msgstr "Širina"
 
@@ -28343,86 +28335,6 @@ msgid "Fac"
 msgstr "Strana"
 
 
-msgid "Determinator"
-msgstr "Determinaror"
-
-
-msgid "Bounding box"
-msgstr "Granična kocka"
-
-
-msgid "Key Color"
-msgstr "Boja ključa"
-
-
-msgid "Upper Left"
-msgstr "Gornji levi"
-
-
-msgid "Upper Right"
-msgstr "Gornji desni"
-
-
-msgid "Lower Left"
-msgstr "Donji levi"
-
-
-msgid "Lower Right"
-msgstr "Donji desni"
-
-
-msgid "Image 1"
-msgstr "Slika 1"
-
-
-msgid "Image 2"
-msgstr "Slika 2"
-
-
-msgid "ID value"
-msgstr "ID vrednost"
-
-
-msgid "Dispersion"
-msgstr "Disperzija"
-
-
-msgid "From Min"
-msgstr "Od min."
-
-
-msgid "From Max"
-msgstr "Od maks."
-
-
-msgid "To Min"
-msgstr "Do min."
-
-
-msgid "To Max"
-msgstr "Do maks."
-
-
-msgid "Undistortion"
-msgstr "Neizobličavanje"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Stepen"
-
-
-msgid "On"
-msgstr "Uključeno"
-
-
-msgid "Val"
-msgstr "Vr."
-
-
 msgid "Anisotropy"
 msgstr "Anizotropno"
 
@@ -28597,6 +28509,10 @@ msgstr "W3"
 
 msgid "W4"
 msgstr "W4"
+
+
+msgid "Val"
+msgstr "Vr."
 
 
 msgid "Image too small"
