@@ -174,6 +174,9 @@ if __name__ == "__main__":
 
         fpath = os.path.join(export_data['temp_dir'], upload_data['assetBaseId'] + '.blend')
 
+        #if this isn't here, blender crashes.
+        bpy.context.preferences.filepaths.file_preview_type = 'NONE'
+
         bpy.ops.wm.save_as_mainfile(filepath=fpath, compress=True, copy=False)
         os.remove(export_data['source_filepath'])
 

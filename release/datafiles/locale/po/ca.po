@@ -24355,6 +24355,10 @@ msgid "Storage"
 msgstr "Emmagatzematge"
 
 
+msgid "Offset:"
+msgstr "Joc"
+
+
 msgctxt "Operator"
 msgid "Right"
 msgstr "Dreta"
@@ -25707,10 +25711,6 @@ msgid "Track is locked"
 msgstr "Seleccionar fila"
 
 
-msgid "Offset:"
-msgstr "Joc"
-
-
 msgid "Width:"
 msgstr "Seleccionar connectats"
 
@@ -26119,70 +26119,6 @@ msgid "Fac"
 msgstr "Pla"
 
 
-msgid "Determinator"
-msgstr "Separar"
-
-
-msgid "Bounding box"
-msgstr "Autotangents"
-
-
-msgid "Key Color"
-msgstr "Comprimir Dades"
-
-
-msgid "Image 1"
-msgstr "Zoom d'Imatge"
-
-
-msgid "Image 2"
-msgstr "Zoom d'Imatge"
-
-
-msgid "Dispersion"
-msgstr "Seleccionar connectats"
-
-
-msgid "From Min"
-msgstr "Seleccionar connectats"
-
-
-msgid "From Max"
-msgstr "Seleccionar connectats"
-
-
-msgid "To Min"
-msgstr "Reduir"
-
-
-msgid "To Max"
-msgstr "Escalar"
-
-
-msgid "Offset Y"
-msgstr "Joc"
-
-
-msgid "Undistortion"
-msgstr "Seleccionar connectats"
-
-
-msgid "Dot"
-msgstr "Rotar"
-
-
-msgid "Cb"
-msgstr "Cub"
-
-
-msgid "On"
-msgstr "Obrir"
-
-
-msgid "Val"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Anisotropy"
 msgstr "Mostrar propietats de les arestes"
 
@@ -26259,6 +26195,10 @@ msgid "Is Transmission Ray"
 msgstr "Seleccionar connectats"
 
 
+msgid "Dot"
+msgstr "Rotar"
+
+
 msgid "Color1"
 msgstr "Rotar"
 
@@ -26301,6 +26241,10 @@ msgstr "Arxiu"
 
 msgid "iScale"
 msgstr "Escalar"
+
+
+msgid "Val"
+msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Image too small"

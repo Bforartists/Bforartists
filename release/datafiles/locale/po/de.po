@@ -24513,8 +24513,8 @@ msgid "Projector"
 msgstr "Projektion"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "Kombiniert"
 
 
 msgid "Combined RGB"
@@ -24531,10 +24531,6 @@ msgstr "Grünkanal"
 
 msgid "Blue Channel"
 msgstr "Blaukanal"
-
-
-msgid "L"
-msgstr "L"
 
 
 msgid "Luminance Channel"
@@ -34251,10 +34247,6 @@ msgid "Bake image textures of selected objects"
 msgstr "Bildtexturen von ausgewählten Objekten backen"
 
 
-msgid "Combined"
-msgstr "Kombiniert"
-
-
 msgctxt "Operator"
 msgid "Add Camera"
 msgstr "Kamera hinzufügen"
@@ -41092,10 +41084,6 @@ msgstr "Asset-Metadaten"
 
 msgid "Details"
 msgstr "Details"
-
-
-msgid "Asset Navigation"
-msgstr "Asset-Navigation"
 
 
 msgid "Chain Scaling"
@@ -55416,6 +55404,10 @@ msgid "Storage"
 msgstr "Speicher"
 
 
+msgid "Offset:"
+msgstr "Versatz:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Vorschaubereich auf Streifen festlegen"
@@ -60416,10 +60408,6 @@ msgid "Y:"
 msgstr "Y:"
 
 
-msgid "Offset:"
-msgstr "Versatz:"
-
-
 msgid "Width:"
 msgstr "Breite:"
 
@@ -61925,120 +61913,16 @@ msgid "Crease Edges"
 msgstr "Faltenkanten"
 
 
-msgid "Compositor"
-msgstr "Kompositor"
-
-
-msgid "Fac"
-msgstr "Faktor"
-
-
-msgid "Determinator"
-msgstr "Bestimmung"
-
-
-msgid "Bounding box"
-msgstr "Begrenzungsrahmen"
-
-
-msgid "Key Color"
-msgstr "Schlüsselfarbe"
-
-
-msgid "Upper Left"
-msgstr "Oben links"
-
-
-msgid "Upper Right"
-msgstr "Oben rechts"
-
-
-msgid "Lower Left"
-msgstr "Unten links"
-
-
-msgid "Lower Right"
-msgstr "Unten rechts"
-
-
-msgid "Image 1"
-msgstr "Bild 1"
-
-
-msgid "Image 2"
-msgstr "Bild 2"
-
-
-msgid "ID value"
-msgstr "ID-Wert"
-
-
-msgid "Dispersion"
-msgstr "Verteilung"
-
-
-msgid "From Min"
-msgstr "Von Minimum"
-
-
-msgid "From Max"
-msgstr "Vom Maximum"
-
-
-msgid "To Min"
-msgstr "Bis Minimum"
-
-
-msgid "To Max"
-msgstr "Bis Maximum"
-
-
-msgid "Offset Y"
-msgstr "Y-Versatz"
-
-
-msgid "Undistortion"
-msgstr "Entzerren"
-
-
-msgid "Dot"
-msgstr "Punkt"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Grad"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "An"
-
-
-msgid "Val"
-msgstr "Wert"
-
-
-msgid "Missing Data-Block"
-msgstr "Fehlender Datenblock"
-
-
 msgid "Shader Editor"
 msgstr "Shader Editor"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "Faktor"
 
 
 msgid "Anisotropy"
@@ -62245,6 +62129,10 @@ msgid "Transmission Depth"
 msgstr "Transmissionstiefe"
 
 
+msgid "Dot"
+msgstr "Punkt"
+
+
 msgid "Color Fac"
 msgstr "Farbfaktor"
 
@@ -62371,6 +62259,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkalieren"
+
+
+msgid "Val"
+msgstr "Wert"
 
 
 msgid ""

@@ -12501,14 +12501,6 @@ msgid "Settings for the file selection in Asset Browser mode"
 msgstr "アセットブラウザーモードでのファイル選択用設定"
 
 
-msgid "Asset Category"
-msgstr "アセットカテゴリ"
-
-
-msgid "Determine which kind of assets to display"
-msgstr "どの種類のアセットを表示するかを決めます"
-
-
 msgid "Asset Library"
 msgstr "アセットライブラリ"
 
@@ -40515,8 +40507,8 @@ msgid "Enable/disable projector mode (the effect is applied in horizontal direct
 msgstr "プロジェクターモード（エフェクトが水平方向のみ適用）のON/OFF"
 
 
-msgid "C"
-msgstr "C"
+msgid "Combined"
+msgstr "統合"
 
 
 msgid "Combined RGB"
@@ -40535,8 +40527,8 @@ msgid "Blue Channel"
 msgstr "青チャンネル"
 
 
-msgid "L"
-msgstr "L"
+msgid "Luminance"
+msgstr "ルミナンス"
 
 
 msgid "Luminance Channel"
@@ -41389,6 +41381,22 @@ msgid "Random Float"
 msgstr "ランダムFloat"
 
 
+msgid "Base orientation of the points"
+msgstr "ポイントの方向の基準"
+
+
+msgid "Method used to describe the rotation"
+msgstr "回転を表現するのに使用する方法"
+
+
+msgid "Rotate around an axis by an angle"
+msgstr "単一の軸を中心に角度で回転します"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "X、Y、Z 軸を中心に回転します"
+
+
 msgid "Geometry Node"
 msgstr "ジオメトリノード"
 
@@ -41425,16 +41433,40 @@ msgid "Convex Hull"
 msgstr "凸包"
 
 
-msgid "Curve Endpoints"
-msgstr "カーブの両端"
-
-
 msgid "Curve Fill"
 msgstr "カーブフィル"
 
 
 msgid "N-gons"
 msgstr "Nゴン"
+
+
+msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
+msgstr "ハンドルをどこにでも移動でき、そのポイントの他のハンドルに影響しません"
+
+
+msgid "The location is automatically calculated to be smooth"
+msgstr "スムーズになるよう位置が自動的に計算されます"
+
+
+msgid "The location is calculated to point to the next/previous control point"
+msgstr "前後の制御点の方に向くよう、位置が計算されます"
+
+
+msgid "The location is constrained to point in the opposite direction as the other handle"
+msgstr "他のハンドルの逆方向に向くよう、位置が制限されます"
+
+
+msgid "Whether to check the type of left and right handles"
+msgstr "左右のハンドルタイプをチェックするかどうか"
+
+
+msgid "Use the left handles"
+msgstr "左のハンドルを使用します"
+
+
+msgid "Use the right handles"
+msgstr "右のハンドルを使用します"
 
 
 msgid "Curve Length"
@@ -41545,38 +41577,48 @@ msgid "Calculate the number of samples by splitting each spline into segments wi
 msgstr "各スプラインを指定の長さで分割し、サンプル数を算出します"
 
 
+msgid "Curve Reverse"
+msgstr "カーブ反転"
+
+
+msgid "Set Handle Type"
+msgstr "ハンドルタイプ設定"
+
+
+msgid "Whether to update left and right handles"
+msgstr "左右のハンドルを更新するかどうか"
+
+
 msgid "Curve Spiral"
 msgstr "カーブスパイラル"
+
+
+msgid "Set Spline Type"
+msgstr "スプラインタイプを設定"
+
+
+msgid "Set the splines to Bezier"
+msgstr "スプラインをベジエに設定します"
+
+
+msgid "Set the splines to NURBS"
+msgstr "スプラインを NURBS に設定します"
+
+
+msgid "Set the splines to Poly"
+msgstr "スプラインをポリに設定します"
 
 
 msgid "Star"
 msgstr "スター"
 
 
+msgid "Curve Subdivide"
+msgstr "カーブ細分化"
+
+
 msgid "Curve to Mesh"
 msgstr "カーブからメッシュへ"
-
-
-msgid "Curve to Points"
-msgstr "カーブからポイントへ"
-
-
-msgid "How to generate points from the input curve"
-msgstr "入力カーブからポイントを生成する方法"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr ""
-"NURBS やベジエスプラインの解像度属性を元に\n"
-"カーブの評価済みポイントからポイントを生成します"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "各スプラインを指定のポイント数で均一にサンプリングします"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "各スプラインを指定の長さで分割しサンプリングします"
 
 
 msgid "Curve Trim"
@@ -42049,72 +42091,38 @@ msgid "Rotate a point using XYZ order"
 msgstr "XYZ の順にポイントを回転します"
 
 
-msgid "Curve Reverse"
-msgstr "カーブ反転"
+msgid "Curve Endpoints"
+msgstr "カーブの両端"
 
 
 msgid "Select by Handle Type"
 msgstr "ハンドルタイプで選択"
 
 
-msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
-msgstr "ハンドルをどこにでも移動でき、そのポイントの他のハンドルに影響しません"
-
-
-msgid "The location is automatically calculated to be smooth"
-msgstr "スムーズになるよう位置が自動的に計算されます"
-
-
-msgid "The location is calculated to point to the next/previous control point"
-msgstr "前後の制御点の方に向くよう、位置が計算されます"
-
-
-msgid "The location is constrained to point in the opposite direction as the other handle"
-msgstr "他のハンドルの逆方向に向くよう、位置が制限されます"
-
-
-msgid "Whether to check the type of left and right handles"
-msgstr "左右のハンドルタイプをチェックするかどうか"
-
-
-msgid "Use the left handles"
-msgstr "左のハンドルを使用します"
-
-
-msgid "Use the right handles"
-msgstr "右のハンドルを使用します"
-
-
-msgid "Set Handle Type"
-msgstr "ハンドルタイプ設定"
-
-
-msgid "Whether to update left and right handles"
-msgstr "左右のハンドルを更新するかどうか"
-
-
-msgid "Set Spline Type"
-msgstr "スプラインタイプを設定"
-
-
-msgid "Set the splines to Bezier"
-msgstr "スプラインをベジエに設定します"
-
-
-msgid "Set the splines to NURBS"
-msgstr "スプラインを NURBS に設定します"
-
-
-msgid "Set the splines to Poly"
-msgstr "スプラインをポリに設定します"
-
-
-msgid "Curve Subdivide"
-msgstr "カーブ細分化"
-
-
 msgid "Cuts Type"
 msgstr "カットタイプ"
+
+
+msgid "Curve to Points"
+msgstr "カーブからポイントへ"
+
+
+msgid "How to generate points from the input curve"
+msgstr "入力カーブからポイントを生成する方法"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr ""
+"NURBS やベジエスプラインの解像度属性を元に\n"
+"カーブの評価済みポイントからポイントを生成します"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "各スプラインを指定のポイント数で均一にサンプリングします"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "各スプラインを指定の長さで分割しサンプリングします"
 
 
 msgid "Delete Geometry"
@@ -42213,28 +42221,12 @@ msgid "Point Rotate"
 msgstr "ポイント回転"
 
 
-msgid "Base orientation of the points"
-msgstr "ポイントの方向の基準"
-
-
 msgid "Rotate points in the local space of the object"
 msgstr "ポイントをオブジェクトのローカル空間で回転します"
 
 
 msgid "Rotate every point in its local space (as defined by the 'rotation' attribute)"
 msgstr "ポイント毎に（「rotation」属性で設定した）ローカル空間で回転します"
-
-
-msgid "Method used to describe the rotation"
-msgstr "回転を表現するのに使用する方法"
-
-
-msgid "Rotate around an axis by an angle"
-msgstr "単一の軸を中心に角度で回転します"
-
-
-msgid "Rotate around the X, Y, and Z axes"
-msgstr "X、Y、Z 軸を中心に回転します"
 
 
 msgid "Select by Material"
@@ -59567,10 +59559,6 @@ msgid "Type of pass to bake, some of them may not be supported by the current re
 msgstr "ベイクするパスの種類。いくつかは現在のレンダーエンジンでは未対応かもしれません"
 
 
-msgid "Combined"
-msgstr "統合"
-
-
 msgid "Automatically name the output file with the pass type"
 msgstr "出力ファイルの名前をパスの種類で自動的につけます"
 
@@ -60785,11 +60773,6 @@ msgstr "オブジェクトモードを設定"
 
 msgid "Sets the object interaction mode"
 msgstr "オブジェクトの対話モードを設定します"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode with Submode"
-msgstr "オブジェクトモードとサブモードを設定"
 
 
 msgid "Mesh Mode"
@@ -64023,10 +64006,6 @@ msgstr "SVH(彩度/輝度/色相)"
 
 msgid "Value, Hue, Saturation"
 msgstr "VHS(輝度/色相/彩度)"
-
-
-msgid "Luminance"
-msgstr "ルミナンス"
 
 
 msgctxt "Operator"
@@ -68635,15 +68614,6 @@ msgid "Set the preview range instead"
 msgstr "代わりにプレビュー範囲を設定します"
 
 
-msgctxt "Operator"
-msgid "Trim Strips"
-msgstr "ストリップをトリム"
-
-
-msgid "Trim the contents of the active strip"
-msgstr "アクティブストリップの「内容」を移動します"
-
-
 msgid "Offset to the data of the strip"
 msgstr "ストリップデータへのオフセット"
 
@@ -70935,10 +70905,6 @@ msgstr "繰り返す回数、0で繰り返し回数が無限"
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "アイランドを梱包"
-
-
-msgid "Transform all islands so that they fill up the UV space as much as possible"
-msgstr "できるだけUV空間を埋められるよう、すべてのアイランドをトランスフォームします"
 
 
 msgid "Space between islands"
@@ -75328,10 +75294,6 @@ msgid "Details"
 msgstr "詳細"
 
 
-msgid "Asset Navigation"
-msgstr "アセットナビゲーション"
-
-
 msgid "Chain Scaling"
 msgstr "チェーンのスケール"
 
@@ -78791,14 +78753,6 @@ msgstr "フルフレームコンポジター"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "コンポジターのフルフレーム処理モードオプションを有効にします（タイリングなし。実行時間とメモリ消費量が減ります）"
-
-
-msgid "Geometry Nodes Fields"
-msgstr "ジオメトリノードフィールド"
-
-
-msgid "Enable field nodes in geometry nodes"
-msgstr "ジオメトリノード中でフィールドノードを有効にします"
 
 
 msgid "New Hair Type"
@@ -100152,6 +100106,10 @@ msgid "Snap to Strips"
 msgstr "ストリップにスナップ"
 
 
+msgid "Offset:"
+msgstr "オフセット:"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "ストリップでプレビュー範囲を設定"
@@ -108327,10 +108285,6 @@ msgid "Y:"
 msgstr "Y: "
 
 
-msgid "Offset:"
-msgstr "オフセット:"
-
-
 msgid "Pattern Area:"
 msgstr "パターン領域:"
 
@@ -112099,124 +112053,16 @@ msgid "Crease Edges"
 msgstr "クリース辺"
 
 
-msgid "Compositor"
-msgstr "コンポジター"
-
-
-msgid "Fac"
-msgstr "係数"
-
-
-msgid "Determinator"
-msgstr "境界決定ソース"
-
-
-msgid "Bounding box"
-msgstr "バウンディングボックス"
-
-
-msgid "Key Color"
-msgstr "キーカラー"
-
-
-msgid "Upper Left"
-msgstr "左上"
-
-
-msgid "Upper Right"
-msgstr "右上"
-
-
-msgid "Lower Left"
-msgstr "左下"
-
-
-msgid "Lower Right"
-msgstr "右下"
-
-
-msgid "Image 1"
-msgstr "画像1"
-
-
-msgid "Image 2"
-msgstr "画像2"
-
-
-msgid "ID value"
-msgstr "ID値"
-
-
-msgid "Dispersion"
-msgstr "分光"
-
-
-msgid "Std Dev"
-msgstr "標準偏差"
-
-
-msgid "From Min"
-msgstr "最小から"
-
-
-msgid "From Max"
-msgstr "最大から"
-
-
-msgid "To Min"
-msgstr "最小へ"
-
-
-msgid "To Max"
-msgstr "最大へ"
-
-
-msgid "Offset Y"
-msgstr "オフセットY"
-
-
-msgid "Undistortion"
-msgstr "歪み除去"
-
-
-msgid "Dot"
-msgstr "内積"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "度"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "オン"
-
-
-msgid "Val"
-msgstr "値"
-
-
-msgid "Missing Data-Block"
-msgstr "データブロック不明"
-
-
 msgid "Shader Editor"
 msgstr "シェーダーエディター"
 
 
 msgid "AO"
 msgstr "AO"
+
+
+msgid "Fac"
+msgstr "係数"
 
 
 msgid "Anisotropy"
@@ -112443,6 +112289,10 @@ msgid "Transmission Depth"
 msgstr "伝播の深度"
 
 
+msgid "Dot"
+msgstr "内積"
+
+
 msgid "Color Fac"
 msgstr "色係数"
 
@@ -112569,6 +112419,10 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "強度のスケール"
+
+
+msgid "Val"
+msgstr "値"
 
 
 msgid ""

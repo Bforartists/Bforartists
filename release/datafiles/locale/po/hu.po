@@ -13069,6 +13069,10 @@ msgid "Keying Screen"
 msgstr "Képernyő/háttér kulcsozás"
 
 
+msgid "Combined"
+msgstr "Kombinált"
+
+
 msgid "Map Range"
 msgstr "Leképezés hatásköre"
 
@@ -14765,10 +14769,6 @@ msgstr "Sütés"
 
 msgid "Bake image textures of selected objects"
 msgstr "A kijelölt objektumok kép textúráinak kisütése"
-
-
-msgid "Combined"
-msgstr "Kombinált"
 
 
 msgid "Add a camera object to the scene"
@@ -21200,14 +21200,6 @@ msgstr "Eredeti felülírása"
 
 msgid "Crease Edges"
 msgstr "Élek domborítása"
-
-
-msgid "Offset Y"
-msgstr "Eltolás Y"
-
-
-msgid "On"
-msgstr "Bekapcsolás"
 
 
 msgid "AO"

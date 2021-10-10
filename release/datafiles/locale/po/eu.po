@@ -621,8 +621,8 @@ msgid "Shadow"
 msgstr "Itzala"
 
 
-msgid "L"
-msgstr "L"
+msgid "Combined"
+msgstr "Konbinatuak"
 
 
 msgid "Translate"
@@ -1506,10 +1506,6 @@ msgid "Hide"
 msgstr "Ezkutatu"
 
 
-msgid "Combined"
-msgstr "Konbinatuak"
-
-
 msgctxt "Operator"
 msgid "Duplicate Linked"
 msgstr "Bikoiztu Estekatua"
@@ -2206,80 +2202,12 @@ msgid "Font not packed"
 msgstr "Letra-mota paketatugabea"
 
 
-msgid "Fac"
-msgstr "Fak"
-
-
-msgid "Determinator"
-msgstr "Determinatzailea"
-
-
-msgid "Upper Left"
-msgstr "Goi Ezkerraldea"
-
-
-msgid "Upper Right"
-msgstr "Goi Eskuinaldea"
-
-
-msgid "Lower Left"
-msgstr "Behe Ezkerraldea"
-
-
-msgid "Lower Right"
-msgstr "Behe Eskuinaldea"
-
-
-msgid "Image 1"
-msgstr "1 Irudia"
-
-
-msgid "Image 2"
-msgstr "2 Irudia"
-
-
-msgid "ID value"
-msgstr "ID balioa"
-
-
-msgid "Dispersion"
-msgstr "Sakabanatu"
-
-
-msgid "From Min"
-msgstr "Minimotik"
-
-
-msgid "From Max"
-msgstr "Maximotik"
-
-
-msgid "To Min"
-msgstr "Minimora"
-
-
-msgid "To Max"
-msgstr "Maximora"
-
-
-msgid "Undistortion"
-msgstr "Distortsio eza"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Degr"
-msgstr "Graduak"
-
-
-msgid "Val"
-msgstr "Balioa"
-
-
 msgid "AO"
 msgstr "Inguruneko Oklusioa"
+
+
+msgid "Fac"
+msgstr "Fak"
 
 
 msgid "Anisotropy"
@@ -2400,6 +2328,10 @@ msgstr "2 Koordenatua"
 
 msgid "iScale"
 msgstr "iEskala"
+
+
+msgid "Val"
+msgstr "Balioa"
 
 
 msgid "| Time:%s | "

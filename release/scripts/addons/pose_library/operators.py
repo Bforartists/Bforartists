@@ -45,6 +45,7 @@ from bpy.types import (
     Object,
     Operator,
 )
+from bpy_extras import asset_utils
 
 
 class PoseAssetCreator:
@@ -74,12 +75,30 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
     bl_idname = "poselib.create_pose_asset"
     bl_label = "Create Pose Asset"
     bl_description = (
-        "Create a new Action that contains the pose of the selected bones, and mark it as Asset"
+        "Create a new Action that contains the pose of the selected bones, and mark it as Asset. "
+        "The asset will be stored in the current blend file"
     )
     bl_options = {"REGISTER", "UNDO"}
 
     pose_name: StringProperty(name="Pose Name")  # type: ignore
     activate_new_action: BoolProperty(name="Activate New Action", default=True)  # type: ignore
+
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        # Make sure that if there is an asset browser open, the artist can see the newly created pose asset.
+        asset_browse_area: Optional[bpy.types.Area] = asset_browser.area_from_context(context)
+        if not asset_browse_area:
+            # No asset browser is visible, so there also aren't any expectations
+            # that this asset will be visible.
+            return True
+
+        asset_space_params = asset_browser.params(asset_browse_area)
+        if asset_space_params.asset_library_ref != 'LOCAL':
+            cls.poll_message_set("Asset Browser must be set to the Current File library")
+            return False
+
+        return True
 
     def execute(self, context: Context) -> Set[str]:
         pose_name = self.pose_name or context.object.name
@@ -106,15 +125,13 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
         This makes it possible to immediately check & edit the created pose asset.
         """
 
-        asset_browse_area: Optional[bpy.types.Area] = asset_browser.area_for_category(
-            context.screen, "ANIMATION"
-        )
+        asset_browse_area: Optional[bpy.types.Area] = asset_browser.area_from_context(context)
         if not asset_browse_area:
             return
 
         # After creating an asset, the window manager has to process the
         # notifiers before editors should be manipulated.
-        pose_creation.assign_tags_from_asset_browser(asset, asset_browse_area)
+        pose_creation.assign_from_asset_browser(asset, asset_browse_area)
 
         # Pass deferred=True, because we just created a new asset that isn't
         # known to the Asset Browser space yet. That requires the processing of
@@ -258,11 +275,28 @@ class POSELIB_OT_paste_asset(Operator):
 
     @classmethod
     def poll(cls, context: Context) -> bool:
+        if not asset_utils.SpaceAssetInfo.is_asset_browser(context.space_data):
+            cls.poll_message_set("Current editor is not an asset browser")
+            return False
+
+        asset_lib_ref = context.space_data.params.asset_library_ref
+        if asset_lib_ref != 'LOCAL':
+            cls.poll_message_set("Asset Browser must be set to the Current File library")
+            return False
+
+        # Delay checking the clipboard as much as possible, as it's CPU-heavier than the other checks.
         clipboard: str = context.window_manager.clipboard
         if not clipboard:
+            cls.poll_message_set("Clipboard is empty")
             return False
+
         marker = POSELIB_OT_copy_as_asset.CLIPBOARD_ASSET_MARKER
-        return clipboard.startswith(marker)
+        if not clipboard.startswith(marker):
+            cls.poll_message_set("Clipboard does not contain an asset")
+            return False
+
+        return True
+
 
     def execute(self, context: Context) -> Set[str]:
         clipboard = context.window_manager.clipboard
@@ -277,9 +311,16 @@ class POSELIB_OT_paste_asset(Operator):
         self.report({"INFO"}, "Pasted %d assets" % len(assets))
 
         bpy.ops.file.refresh()
-        asset_browser_area = asset_browser.area_from_context(context, 'ANIMATIONS')
-        if asset_browser_area:
-            asset_browser.activate_asset(assets[0], asset_browser_area, deferred=True)
+
+        asset_browser_area = asset_browser.area_from_context(context)
+        if not asset_browser_area:
+            return {"FINISHED"}
+
+        # Assign same catalog as in asset browser.
+        catalog_id = asset_browser.active_catalog_id(asset_browser_area)
+        for asset in assets:
+            asset.asset_data.catalog_id = catalog_id
+        asset_browser.activate_asset(assets[0], asset_browser_area, deferred=True)
 
         return {"FINISHED"}
 

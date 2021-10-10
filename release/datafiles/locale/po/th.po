@@ -5731,34 +5731,6 @@ msgid "Replace Original"
 msgstr "แทนที่อันดั้งเดิม"
 
 
-msgid "ID value"
-msgstr "ค่า ID"
-
-
-msgid "Offset Y"
-msgstr "ออฟเซต Y"
-
-
-msgid "RGBA"
-msgstr "RGBA"
-
-
-msgid "Cb"
-msgstr "Cb"
-
-
-msgid "Cr"
-msgstr "Cr"
-
-
-msgid "On"
-msgstr "เปิด"
-
-
-msgid "Val"
-msgstr "Val"
-
-
 msgid "Shader Editor"
 msgstr "ตัวแก้ไขเชดเดอร์"
 
@@ -5769,6 +5741,10 @@ msgstr "ระยะมุมมอง"
 
 msgid "Texture Node Editor"
 msgstr "ตัวแก้ไขโนดพื้นผิว"
+
+
+msgid "Val"
+msgstr "Val"
 
 
 msgid "| Time:%s | "

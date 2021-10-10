@@ -27960,6 +27960,10 @@ msgid "Sound"
 msgstr "Ljud"
 
 
+msgid "Offset:"
+msgstr "Förskjutning:"
+
+
 msgctxt "Operator"
 msgid "Right"
 msgstr "Höger"
@@ -29477,10 +29481,6 @@ msgid "Track is locked"
 msgstr "Markera Rad"
 
 
-msgid "Offset:"
-msgstr "Förskjutning:"
-
-
 msgid "Width:"
 msgstr "Bredd"
 
@@ -29949,78 +29949,6 @@ msgid "Fac"
 msgstr "Yta"
 
 
-msgid "Determinator"
-msgstr "Separera"
-
-
-msgid "Bounding box"
-msgstr "Auto Handtag"
-
-
-msgid "Key Color"
-msgstr "Packa Data"
-
-
-msgid "Image 1"
-msgstr "Bild"
-
-
-msgid "Image 2"
-msgstr "Bild"
-
-
-msgid "ID value"
-msgstr "Värde"
-
-
-msgid "Dispersion"
-msgstr "Markera Länkad"
-
-
-msgid "From Min"
-msgstr "Från:"
-
-
-msgid "From Max"
-msgstr "Från:"
-
-
-msgid "To Min"
-msgstr "Zooma Ut"
-
-
-msgid "To Max"
-msgstr "Använd maximum"
-
-
-msgid "Offset Y"
-msgstr "Y-förskjutning"
-
-
-msgid "Undistortion"
-msgstr "Markera Länkad"
-
-
-msgid "Dot"
-msgstr "Rot"
-
-
-msgid "Cb"
-msgstr "Kub"
-
-
-msgid "Cr"
-msgstr "Beskär"
-
-
-msgid "On"
-msgstr "På"
-
-
-msgid "Val"
-msgstr "Värde"
-
-
 msgid "Anisotropy"
 msgstr "Anisotropisk"
 
@@ -30105,6 +30033,10 @@ msgid "Is Transmission Ray"
 msgstr "Markera Länkad"
 
 
+msgid "Dot"
+msgstr "Rot"
+
+
 msgid "Color1"
 msgstr "Färg 1"
 
@@ -30147,6 +30079,10 @@ msgstr "Arkiv"
 
 msgid "iScale"
 msgstr "Skala"
+
+
+msgid "Val"
+msgstr "Värde"
 
 
 msgid "Image too small"

@@ -909,22 +909,6 @@ msgid "Modify"
 msgstr "הנש"
 
 
-msgid "Key Color"
-msgstr "חתפמ עבצ"
-
-
-msgid "Image 1"
-msgstr "1 הנומת"
-
-
-msgid "Image 2"
-msgstr "2 הנומת"
-
-
-msgid "Std Dev"
-msgstr "ןקת תייטס"
-
-
 msgid "Incoming"
 msgstr "סנכנ"
 

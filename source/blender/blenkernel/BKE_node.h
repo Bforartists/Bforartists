@@ -1513,6 +1513,8 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_INPUT_SPLINE_LENGTH 1098
 #define GEO_NODE_CURVE_SPLINE_TYPE 1099
 #define GEO_NODE_CURVE_SET_HANDLES 1100
+#define GEO_NODE_POINTS_TO_VOLUME 1101
+#define GEO_NODE_CURVE_HANDLE_TYPE_SELECTION 1102
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1531,6 +1533,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define FN_NODE_INPUT_SPECIAL_CHARACTERS 1213
 #define FN_NODE_RANDOM_VALUE 1214
 #define FN_NODE_ROTATE_EULER 1215
+#define FN_NODE_ALIGN_EULER_TO_VECTOR 1216
 
 /** \} */
 
