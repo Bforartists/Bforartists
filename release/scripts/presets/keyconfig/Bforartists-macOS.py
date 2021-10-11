@@ -1,4 +1,4 @@
-keyconfig_version = (3, 0, 22)
+keyconfig_version = (3, 0, 33)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6391,7 +6391,15 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sequencer.view_toggle", {"type": 'TAB', "value": 'PRESS', "oskey": True}, None),
+    ("wm.context_toggle_enum",
+     {"type": 'TAB', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("data_path", 'space_data.view_type'),
+       ("value_1", 'SEQUENCER'),
+       ("value_2", 'PREVIEW'),
+       ],
+      },
+     ),
     ],
    },
   ),
