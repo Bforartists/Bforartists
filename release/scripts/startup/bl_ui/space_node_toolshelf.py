@@ -3471,7 +3471,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveFill"
 
-            props = col.operator("node.add_node", text=" Curve Fillet                  ", icon = "CURVE_FILLET")
+            props = col.operator("node.add_node", text=" Curve Fillet                 ", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeCurveFillet"
 
@@ -3479,7 +3479,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
 
-            props = col.operator("node.add_node", text=" Curve Parameter              ", icon = "CURVE_PARAMETER")
+            props = col.operator("node.add_node", text=" Curve Parameter        ", icon = "CURVE_PARAMETER")
             props.use_transform = True
             props.type = "GeometryNodeCurveParameter"
 
@@ -3495,7 +3495,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeLegacyCurveSubdivide"
 
-            props = col.operator("node.add_node", text=" Curve Tangent         ", icon = "CURVE_TANGENT")
+            props = col.operator("node.add_node", text=" Curve Tangent            ", icon = "CURVE_TANGENT")
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
 
@@ -3503,19 +3503,23 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
 
-            props = col.operator("node.add_node", text=" Curve Trim              ", icon = "CURVE_TRIM")
+            props = col.operator("node.add_node", text=" Curve Trim                 ", icon = "CURVE_TRIM")
             props.use_transform = True
             props.type = "GeometryNodeCurveTrim"
+            
+            props = col.operator("node.add_node", text=" Handle Type Selection", icon = "SELECT_HANDLETYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveHandleTypeSelection"
 
             props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
 
-            props = col.operator("node.add_node", text=" Set Handle Type       ", icon = "HANDLE_AUTO")
+            props = col.operator("node.add_node", text=" Set Handle Type         ", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveSetHandles"
 
-            props = col.operator("node.add_node", text=" Set Spline Type       ", icon = "SPLINE_TYPE")
+            props = col.operator("node.add_node", text=" Set Spline Type          ", icon = "SPLINE_TYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSplineType"
 
@@ -3571,6 +3575,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "CURVE_TRIM")
             props.use_transform = True
             props.type = "GeometryNodeCurveTrim"
+            
+            props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveHandleTypeSelection"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
             props.use_transform = True
@@ -4340,6 +4348,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+            
+            props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
 
             props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
             props.use_transform = True
@@ -4392,6 +4404,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
+            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeAlignEulerToVector"
+            
             props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
@@ -4638,6 +4654,10 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Points to volume       ", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+            
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeLegacyVolumeToMesh"
@@ -4650,7 +4670,11 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
+            props = flow.operator("node.add_node", text="", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+            
+            props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeLegacyVolumeToMesh"
 
