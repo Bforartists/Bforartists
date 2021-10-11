@@ -418,6 +418,7 @@ class SEQUENCER_MT_view_pie_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_PREVIEW'
         layout.operator("wm.call_menu_pie", text = "Pivot Point", icon = "MENU_PANEL").name = 'SEQUENCER_MT_pivot_pie'
 
 
