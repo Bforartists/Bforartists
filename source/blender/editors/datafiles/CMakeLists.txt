@@ -913,7 +913,7 @@ points_to_vertices
 mesh_to_points
 float_curve
 rotate_euler
-#~ DEF_ICON_BLANK(932)
+align_euler_to_vector
 #~ DEF_ICON_BLANK(933)
 #~ DEF_ICON_BLANK(934)
 #~ DEF_ICON_BLANK(935)
