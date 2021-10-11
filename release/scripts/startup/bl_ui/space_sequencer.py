@@ -176,12 +176,12 @@ class SEQUENCER_HT_header(Header):
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout.separator_spacer()
-        
+
         if st.view_type == 'PREVIEW':
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "pivot_point", text="", icon_only=True)
 
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:          
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="")
 
@@ -413,6 +413,14 @@ class SEQUENCER_MT_proxy(Menu):
         layout.prop(st, "proxy_render_size", text="")
 
 
+class SEQUENCER_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("wm.call_menu_pie", text = "Pivot Point", icon = "MENU_PANEL").name = 'SEQUENCER_MT_pivot_pie'
+
+
 class SEQUENCER_MT_view(Menu):
     bl_label = "View"
 
@@ -496,6 +504,9 @@ class SEQUENCER_MT_view(Menu):
         props.value_1 = 'SEQUENCER'
         props.value_2 = 'PREVIEW'
         layout.operator_context = 'INVOKE_DEFAULT'
+
+        if st.view_type == 'PREVIEW':
+            layout.menu("SEQUENCER_MT_view_pie_menus")
 
 
 class SEQUENCER_MT_export(Menu):
@@ -2630,6 +2641,7 @@ classes = (
     SEQUENCER_HT_header,
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
+    SEQUENCER_MT_view_pie_menus,
     SEQUENCER_MT_view,
     SEQUENCER_MT_export,
     SEQUENCER_MT_view_cache,
