@@ -172,12 +172,16 @@ class SEQUENCER_HT_header(Header):
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
+        tool_settings = context.tool_settings
+        sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout.separator_spacer()
+        
+        if st.view_type == 'PREVIEW':
+            row = layout.row(align=True)
+            row.prop(sequencer_tool_settings, "pivot_point", text="", icon_only=True)
 
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-            tool_settings = context.tool_settings
-            sequencer_tool_settings = tool_settings.sequencer_tool_settings
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:          
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="")
 
