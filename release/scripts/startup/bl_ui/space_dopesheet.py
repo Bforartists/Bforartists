@@ -406,7 +406,7 @@ class DOPESHEET_HT_editor_buttons:
             sub.prop(tool_settings, "proportional_edit_falloff",
                      text="", icon_only=True)
 
-        row = layout.row()
+        row = layout.row(align = True)
         row.operator_menu_enum("action.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
         row.operator_menu_enum("action.handle_type", "type", text="", icon="HANDLE_AUTO")
         row.operator_menu_enum("action.interpolation_type", "type", text="", icon="INTERPOLATE")
