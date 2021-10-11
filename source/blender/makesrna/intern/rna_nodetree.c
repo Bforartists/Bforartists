@@ -13323,9 +13323,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_LEGACY_RANDOM_FLOAT:
       icon = ICON_RANDOM_FLOAT;
       break;
-    //case FN_NODE_ALIGN_EULER_TO_VECTOR:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_ALIGN_EULER_TO_VECTOR:
+      icon = ICON_ALIGN_EULER_TO_VECTOR;
+      break;
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
       break;
@@ -13502,9 +13502,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_FILLET:
       icon = ICON_CURVE_FILLET;
       break;
-    //case GEO_NODE_CURVE_HANDLE_TYPE_SELECTION:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_CURVE_HANDLE_TYPE_SELECTION:
+      icon = ICON_SELECT_HANDLETYPE;
+      break;
     case GEO_NODE_CURVE_LENGTH:
       icon = ICON_PARTICLEBRUSH_LENGTH;
       break;
@@ -13631,9 +13631,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_POINTS_TO_VERTICES:
       icon = ICON_POINTS_TO_VERTICES;
       break;
-    //case GEO_NODE_POINTS_TO_VOLUME:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_POINTS_TO_VOLUME:
+      icon = ICON_POINT_TO_VOLUME;
+      break;
     case GEO_NODE_PROXIMITY:
       icon = ICON_GEOMETRY_PROXIMITY;
       break;
