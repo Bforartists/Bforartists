@@ -6547,7 +6547,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sequencer.cursor_set", {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.cursor_set", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True}, None),
     ("transform.translate",
      {"type": 'EVT_TWEAK_R', "value": 'ANY', "shift": True},
      {"properties":
