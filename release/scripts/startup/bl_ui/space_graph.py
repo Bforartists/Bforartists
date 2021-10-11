@@ -118,7 +118,7 @@ class GRAPH_HT_header(Header):
         if tool_settings.use_proportional_fcurve:
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
-        row = layout.row()
+        row = layout.row(align = True)
 
         row.prop(st, "pivot_point", icon_only=True)
         row.operator_menu_enum("graph.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
