@@ -568,12 +568,27 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
+        #bfa - preferences path exists
         if os.path.isdir(Path(bpy.utils.resource_path('USER'))):
             layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(user_path)
+        #bfa - preferences path does not exist yet
         else:
-            layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(local_path)
+            #layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(local_path)
+            layout.operator("topbar.no_prefsfolder", text="Open Preferences Folder", icon = "FOLDER_REDIRECT")
 
         layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
+
+
+# Workaround to separate the tooltips for the preferences folder
+class TOPBAR_MT_edit_no_prefsfolder(bpy.types.Operator):
+    """The preferences folder does not exist yet\nThe file browser will open at the installation directory instead\nPlease click at Next in the splash sceen first"""
+    bl_idname = "topbar.no_prefsfolder"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Open Installation folder"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.path_open(filepath = str(local_path))
+        return {'FINISHED'}
 
 
 class TOPBAR_MT_window(Menu):
@@ -792,6 +807,7 @@ classes = (
     TOPBAR_MT_render,
     TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
+    TOPBAR_MT_edit_no_prefsfolder,
     TOPBAR_MT_help,
     TOPBAR_PT_tool_fallback,
     TOPBAR_PT_tool_settings_extra,
