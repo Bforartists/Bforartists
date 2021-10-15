@@ -2528,6 +2528,12 @@ keyconfig_data = \
     ],
    },
   ),
+ ("Grease Pencil Stroke Curve Edit Mode",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [],
+   },
+  ),
  ("Grease Pencil Stroke Edit Mode",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
