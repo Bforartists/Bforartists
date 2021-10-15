@@ -50,6 +50,7 @@ class VIEW3D_HT_header(Header):
             (object_mode == 'POSE') or
             (object_mode == 'WEIGHT_PAINT' and context.pose_object is not None)
         )
+        gpd = context.gpencil_data
 
         tool_settings = context.tool_settings
 
@@ -59,8 +60,12 @@ class VIEW3D_HT_header(Header):
         # Orientation
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
             orient_slot = scene.transform_orientation_slots[0]
-            row = layout.row(align=True)
 
+            if gpd.use_curve_edit:
+                row = layout.row(align=True)
+                row.operator_menu_enum("gpencil.stroke_editcurve_set_handle_type", "type", text="", icon="HANDLE_AUTO")
+
+            row = layout.row(align=True)
             row.prop_with_popover(orient_slot, "type", text="", panel="VIEW3D_PT_transform_orientations",)
 
         # Pivot
