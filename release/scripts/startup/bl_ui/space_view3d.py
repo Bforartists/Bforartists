@@ -61,7 +61,7 @@ class VIEW3D_HT_header(Header):
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
             orient_slot = scene.transform_orientation_slots[0]
 
-            if gpd.use_curve_edit:
+            if gpd is not None and gpd.use_curve_edit:
                 row = layout.row(align=True)
                 row.operator_menu_enum("gpencil.stroke_editcurve_set_handle_type", "type", text="", icon="HANDLE_AUTO")
 
