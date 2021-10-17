@@ -2181,6 +2181,19 @@ static const EnumPropertyItem *rna_GeometryNodeAttributeFill_type_itemf(bContext
   return itemf_function_check(rna_enum_attribute_type_items, attribute_fill_type_supported);
 }
 
+static bool transfer_attribute_type_supported(const EnumPropertyItem *item)
+{
+  return ELEM(
+      item->value, CD_PROP_FLOAT, CD_PROP_FLOAT3, CD_PROP_COLOR, CD_PROP_BOOL, CD_PROP_INT32);
+}
+
+static const EnumPropertyItem *rna_NodeGeometryTransferAttribute_type_itemf(
+    bContext *UNUSED(C), PointerRNA *UNUSED(ptr), PropertyRNA *UNUSED(prop), bool *r_free)
+{
+  *r_free = true;
+  return itemf_function_check(rna_enum_attribute_type_items, transfer_attribute_type_supported);
+}
+
 static bool attribute_statistic_type_supported(const EnumPropertyItem *item)
 {
   return ELEM(item->value, CD_PROP_FLOAT, CD_PROP_FLOAT3);
@@ -4678,6 +4691,11 @@ static const EnumPropertyItem node_principled_distribution_items[] = {
 };
 
 static const EnumPropertyItem node_subsurface_method_items[] = {
+    {SHD_SUBSURFACE_BURLEY,
+     "BURLEY",
+     0,
+     "Christensen-Burley",
+     "Approximation to physically based volume scattering"},
     {SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS,
      "RANDOM_WALK_FIXED_RADIUS",
      0,
@@ -4980,6 +4998,19 @@ static void def_texture(StructRNA *srna)
   RNA_def_property_int_sdna(prop, NULL, "custom1");
   RNA_def_property_ui_text(
       prop, "Node Output", "For node-based textures, which output node to use");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_fn_input_color(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeInputColor", "storage");
+
+  prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_float_sdna(prop, NULL, "color");
+  RNA_def_property_ui_text(prop, "Color", "");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9687,6 +9718,18 @@ static void def_geo_legacy_curve_set_handles(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
 
+static void def_geo_curve_set_handle_positions(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometrySetCurveHandlePositions", "storage");
+
+  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_node_geometry_curve_handle_side_items);
+  RNA_def_property_ui_text(prop, "Mode", "Whether to update left and right handles");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+}
+
 static void def_geo_curve_select_handles(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -9857,10 +9900,10 @@ static void def_fn_rotate_euler(StructRNA *srna)
        ICON_NONE,
        "Object",
        "Rotate the input rotation in the local space of the object"},
-      {FN_NODE_ROTATE_EULER_SPACE_POINT,
-       "POINT",
+      {FN_NODE_ROTATE_EULER_SPACE_LOCAL,
+       "LOCAL",
        ICON_NONE,
-       "Point",
+       "Local",
        "Rotate the input rotation in its local space"},
       {0, NULL, 0, NULL, NULL},
   };
@@ -9876,7 +9919,7 @@ static void def_fn_rotate_euler(StructRNA *srna)
   prop = RNA_def_property(srna, "space", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "custom2");
   RNA_def_property_enum_items(prop, space_items);
-  RNA_def_property_ui_text(prop, "Space", "Base orientation of the points");
+  RNA_def_property_ui_text(prop, "Space", "Base orientation for rotation");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -10611,6 +10654,53 @@ static void def_geo_attribute_transfer(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_geo_transfer_attribute(StructRNA *srna)
+{
+  static EnumPropertyItem mapping_items[] = {
+      {GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED,
+       "NEAREST_FACE_INTERPOLATED",
+       0,
+       "Nearest Face Interpolated",
+       "Transfer the attribute from the nearest face on a surface (loose points and edges are "
+       "ignored)"},
+      {GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST,
+       "NEAREST",
+       0,
+       "Nearest",
+       "Transfer the element from the nearest element (using face and edge centers for the "
+       "distance computation)"},
+      {GEO_NODE_ATTRIBUTE_TRANSFER_INDEX,
+       "INDEX",
+       0,
+       "Index",
+       "Transfer the data from the element with the corresponding index in the target geometry"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryTransferAttribute", "storage");
+
+  prop = RNA_def_property(srna, "mapping", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "mode");
+  RNA_def_property_enum_items(prop, mapping_items);
+  RNA_def_property_ui_text(prop, "Mapping", "Mapping between geometries");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_type_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_NodeGeometryTransferAttribute_type_itemf");
+  RNA_def_property_enum_default(prop, CD_PROP_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "The type for the source and result data");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+
+  prop = RNA_def_property(srna, "domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
+  RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
+  RNA_def_property_ui_text(prop, "Domain", "The domain to use on the target geometry");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_geo_input_material(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -10695,6 +10785,31 @@ static void def_geo_attribute_capture(StructRNA *srna)
   RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
   RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
   RNA_def_property_ui_text(prop, "Domain", "Which domain to store the data in");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_geo_delete_geometry(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  static const EnumPropertyItem mode_items[] = {
+      {GEO_NODE_DELETE_GEOMETRY_MODE_ALL, "ALL", 0, "All", ""},
+      {GEO_NODE_DELETE_GEOMETRY_MODE_EDGE_FACE, "EDGE_FACE", 0, "Only Edges & Faces", ""},
+      {GEO_NODE_DELETE_GEOMETRY_MODE_ONLY_FACE, "ONLY_FACE", 0, "Only Faces", ""},
+      {0, NULL, 0, NULL, NULL},
+  };
+  RNA_def_struct_sdna_from(srna, "NodeGeometryDeleteGeometry", "storage");
+
+  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, mode_items);
+  RNA_def_property_enum_default(prop, GEO_NODE_DELETE_GEOMETRY_MODE_ALL);
+  RNA_def_property_ui_text(prop, "Mode", "Which parts of the mesh component to delete");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_without_corner_items);
+  RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
+  RNA_def_property_ui_text(prop, "Domain", "Which domain to delete in");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -10809,6 +10924,19 @@ static void def_geo_string_to_curves(StructRNA *srna)
   RNA_def_property_enum_items(prop, rna_node_geometry_string_to_curves_align_y_items);
   RNA_def_property_enum_default(prop, GEO_NODE_STRING_TO_CURVES_ALIGN_Y_TOP_BASELINE);
   RNA_def_property_ui_text(prop, "Align Y", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_geo_separate_geometry(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometrySeparateGeometry", "storage");
+
+  prop = RNA_def_property(srna, "domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_without_corner_items);
+  RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
+  RNA_def_property_ui_text(prop, "Domain", "Which domain to separate on");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -13329,12 +13457,15 @@ static int node_type_to_icon(int type)
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
       break;
-    case FN_NODE_FLOAT_COMPARE:
+    case FN_NODE_COMPARE_FLOATS:
       icon = ICON_FLOAT_COMPARE;
       break;
     case FN_NODE_FLOAT_TO_INT:
       icon = ICON_FLOAT_TO_INT;
       break;
+    //case FN_NODE_INPUT_COLOR:
+    //  icon = ICON_DELETE;
+    //  break;
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
       icon = ICON_SPECIAL;
       break;
@@ -13364,6 +13495,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_LEGACY_ALIGN_ROTATION_TO_VECTOR:
       icon = ICON_ALIGN_ROTATION_TO_VECTOR;
       break;
+    //case GEO_NODE_LEGACY_ATTRIBUTE_CLAMP:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_LEGACY_ATTRIBUTE_COLOR_RAMP:
       icon = ICON_ATTRIBUTE_COLORRAMP;
       break;
@@ -13475,7 +13609,7 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_LEGACY_SUBDIVISION_SURFACE:
     //  icon = ICON_DELETE;
     //  break;
-    case GEO_NODE_ATTRIBUTE_CAPTURE:
+    case GEO_NODE_CAPTURE_ATTRIBUTE:
       icon = ICON_ATTRIBUTE_CAPTURE;
       break;
     case GEO_NODE_ATTRIBUTE_REMOVE:
@@ -13484,7 +13618,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_STATISTIC:
       icon = ICON_ATTRIBUTE_STATISTIC;
       break;
-    case GEO_NODE_BOOLEAN:
+    case GEO_NODE_MESH_BOOLEAN:
       icon = ICON_MOD_BOOLEAN;
       break;
     case GEO_NODE_BOUNDING_BOX:
@@ -13496,10 +13630,10 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CONVEX_HULL:
       icon = ICON_CONVEXHULL;
       break;
-    case GEO_NODE_CURVE_FILL:
+    case GEO_NODE_FILL_CURVE:
       icon = ICON_CURVE_FILL;
       break;
-    case GEO_NODE_CURVE_FILLET:
+    case GEO_NODE_FILLET_CURVE:
       icon = ICON_CURVE_FILLET;
       break;
     case GEO_NODE_CURVE_HANDLE_TYPE_SELECTION:
@@ -13532,48 +13666,78 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PRIMITIVE_STAR:
       icon = ICON_CURVE_STAR;
       break;
-    case GEO_NODE_CURVE_RESAMPLE:
+    case GEO_NODE_RESAMPLE_CURVE:
       icon = ICON_CURVE_RESAMPLE;
       break;
-    case GEO_NODE_CURVE_SPLINE_TYPE:
-      icon = ICON_SPLINE_TYPE;
-      break;
-    case GEO_NODE_CURVE_REVERSE:
+    case GEO_NODE_REVERSE_CURVE:
       icon = ICON_SWITCH_DIRECTION;
       break;
-    case GEO_NODE_CURVE_SAMPLE:
+    case GEO_NODE_SAMPLE_CURVE:
       icon = ICON_CURVE_SAMPLE;
       break;
     case GEO_NODE_CURVE_SET_HANDLES:
       icon = ICON_HANDLE_AUTO;
       break;
-    case GEO_NODE_CURVE_SUBDIVIDE:
+    case GEO_NODE_CURVE_SPLINE_TYPE:
+      icon = ICON_SPLINE_TYPE;
+      break;
+    case GEO_NODE_SUBDIVIDE_CURVE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
       break;
-    case GEO_NODE_CURVE_TRIM:
+    case GEO_NODE_TRIM_CURVE:
       icon = ICON_CURVE_TRIM;
+      break;
+    case GEO_NODE_DELETE_GEOMETRY:
+      icon = ICON_DELETE;
       break;
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
       break;
+    //case GEO_NODE_SPLIT_EDGES:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_INPUT_CURVE_HANDLES:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_INPUT_CURVE_HANDLES:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_INPUT_CURVE_TILT:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
     case GEO_NODE_INPUT_MATERIAL:
       icon = ICON_NODE_MATERIAL;
       break;
+    // case GEO_NODE_INPUT_MATERIAL_INDEX:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_NORMAL:
       icon = ICON_RECALC_NORMALS;
       break;
     case GEO_NODE_INPUT_POSITION:
       icon = ICON_POSITION;
       break;
+    // case GEO_NODE_INPUT_RADIUS:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_INPUT_SHADE_SMOOTH:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_INPUT_SPLINE_CYCLIC:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_SPLINE_LENGTH:
       icon = ICON_SPLINE_LENGTH;
       break;
+    // case GEO_NODE_INPUT_SPLINE_RESOLUTION:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_TANGENT:
       icon = ICON_CURVE_TANGENT;
       break;
@@ -13586,10 +13750,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_JOIN_GEOMETRY:
       icon = ICON_JOIN;
       break;
-    case GEO_NODE_MATERIAL_ASSIGN:
-      icon = ICON_MATERIAL_ADD;
-      break;
-    case GEO_NODE_MATERIAL_REPLACE:
+    case GEO_NODE_REPLACE_MATERIAL:
       icon = ICON_MATERIAL_REPLACE;
       break;
     case GEO_NODE_MATERIAL_SELECTION:
@@ -13619,9 +13780,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_PRIMITIVE_UV_SPHERE:
       icon = ICON_MESH_UVSPHERE;
       break;
-    case GEO_NODE_MESH_SUBDIVIDE:
+    case GEO_NODE_SUBDIVIDE_MESH:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
+    // case GEO_NODE_MESH_TO_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_MESH_TO_POINTS:
       icon = ICON_MESH_TO_POINTS;
       break;
@@ -13640,24 +13804,69 @@ static int node_type_to_icon(int type)
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
       break;
+    // case GEO_NODE_ROTATE_INSTANCES:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SCALE_INSTANCES:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_SEPARATE_COMPONENTS:
       icon = ICON_SEPARATE;
       break;
+    // case GEO_NODE_SEPARATE_GEOMETRY:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_CURVE_HANDLES:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_CURVE_RADIUS:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_CURVE_TILT:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_MATERIAL:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_MATERIAL_INDEX:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_POINT_RADIUS:
+    //  icon = ICON_DELETE;
+    //  break;
+    case GEO_NODE_SET_POSITION:
+      icon = ICON_SET_POSITION;
+      break;
+    // case GEO_NODE_SET_SHADE_SMOOTH:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_SPLINE_CYCLIC:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_SET_SPLINE_RESOLUTION:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_STRING_JOIN:
       icon = ICON_STRING_JOIN;
       break;
     case GEO_NODE_STRING_TO_CURVES:
       icon = ICON_STRING_TO_CURVE;
       break;
-    case GEO_NODE_SET_POSITION:
-      icon = ICON_SET_POSITION;
-      break;
+    // case GEO_NODE_SUBDIVISION_SURFACE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_SWITCH:
       icon = ICON_SWITCH;
       break;
+    // case GEO_NODE_TRANSFER_ATTRIBUTE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_TRANSFORM:
       icon = ICON_NODE_TRANSFORM;
       break;
+    // case GEO_NODE_TRANSLATE_INSTANCES:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
       break;

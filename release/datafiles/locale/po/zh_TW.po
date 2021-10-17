@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -24654,6 +24654,14 @@ msgid "Convex Hull"
 msgstr "凸殼"
 
 
+msgid "Only Edges & Faces"
+msgstr "僅邊線和面"
+
+
+msgid "Only Faces"
+msgstr "僅面"
+
+
 msgid "Min Max"
 msgstr "最小最大"
 
@@ -26434,14 +26442,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "於指定鍵處理集中的所有屬性刪除目前框幀的鍵幀"
 
 
-msgid "Confirm Successful Delete"
-msgstr "確認成功刪除"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "當成功移除鍵幀時顯示彈出式視窗"
-
-
 msgid "The Keying Set to use"
 msgstr "要使用的鍵處理集"
 
@@ -26476,14 +26476,6 @@ msgstr "插入鍵幀"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "為所有指定鍵處理集中的屬性於目前框幀插入鍵幀"
-
-
-msgid "Confirm Successful Insert"
-msgstr "確認成功插入"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "當成功添加鍵幀時顯示彈出式視窗"
 
 
 msgctxt "Operator"
@@ -32052,14 +32044,6 @@ msgstr "刪除選取的頂點、邊線或面"
 
 msgid "Method used for deleting mesh data"
 msgstr "用來刪除網格資料的方法"
-
-
-msgid "Only Edges & Faces"
-msgstr "僅邊線和面"
-
-
-msgid "Only Faces"
-msgstr "僅面"
 
 
 msgctxt "Operator"
@@ -48701,8 +48685,16 @@ msgid "Use Strip Option"
 msgstr "使用片段選項"
 
 
+msgid "Bounding Box Center"
+msgstr "邊界框中心"
+
+
 msgid "Median Point"
 msgstr "中間點"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "圍繞 2D 游標的樞紐"
 
 
 msgid "Individual Origins"
@@ -49154,16 +49146,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "用於旋轉/縮放的樞紐中心"
 
 
-msgid "Bounding Box Center"
-msgstr "邊界框中心"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "圍繞選取物體的邊界框中心其樞紐"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "圍繞 2D 游標的樞紐"
 
 
 msgid "Pivot around each object's own origin"
@@ -53345,13 +53329,13 @@ msgstr "節點通用"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "序段編輯器"
+msgid "SequencerCommon"
+msgstr "序段編輯器常用"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "序段編輯器常用"
+msgid "Sequencer"
+msgstr "序段編輯器"
 
 
 msgctxt "WindowManager"
@@ -60325,40 +60309,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "色彩1"
-
-
-msgid "Color2"
-msgstr "色彩2"
-
-
-msgid "Mortar"
-msgstr "灰漿"
-
-
-msgid "Mortar Size"
-msgstr "灰漿大小"
-
-
-msgid "Mortar Smooth"
-msgstr "灰漿平滑"
-
-
-msgid "Brick Width"
-msgstr "磚塊寬度"
-
-
-msgid "Row Height"
-msgstr "列度"
-
-
 msgid "Reflection"
 msgstr "反射"
-
-
-msgid "Detail Scale"
-msgstr "細節縮放"
 
 
 msgid "Flame"
@@ -60403,6 +60355,26 @@ msgstr "磚塊 1"
 
 msgid "Bricks 2"
 msgstr "磚塊 2"
+
+
+msgid "Mortar"
+msgstr "灰漿"
+
+
+msgid "Brick Width"
+msgstr "磚塊寬度"
+
+
+msgid "Row Height"
+msgstr "列度"
+
+
+msgid "Color1"
+msgstr "色彩1"
+
+
+msgid "Color2"
+msgstr "色彩2"
 
 
 msgid "Coordinate 1"

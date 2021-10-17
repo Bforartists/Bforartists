@@ -10,6 +10,8 @@ class BL_UI_Label(BL_UI_Widget):
         self._text_color        = (1.0, 1.0, 1.0, 1.0)
         self._text = "Label"
         self._text_size = 16
+        self._ralign = 'LEFT'
+        self._valign = 'TOP'
 
     @property
     def text_color(self):
@@ -42,16 +44,29 @@ class BL_UI_Label(BL_UI_Widget):
         if not self.visible:
             return
 
+
         area_height = self.get_area_height()
 
-        blf.size(0, self._text_size, 72)
-        size = blf.dimensions(0, self._text)
+        font_id = 1
+        blf.size(font_id, self._text_size, 72)
+        size = blf.dimensions(font_id, self._text)
 
         textpos_y = area_height - self.y_screen - self.height
-        blf.position(0, self.x_screen, textpos_y, 0)
 
         r, g, b, a = self._text_color
+        x = self.x_screen
+        y = textpos_y
+        if self._halign != 'LEFT':
+            width, height = blf.dimensions(font_id, self._text)
+            if self._halign == 'RIGHT':
+                x -= width
+            elif self._halign == 'CENTER':
+                x -= width // 2
+            if self._valign == 'CENTER':
+                y -= height // 2
+            # bottom could be here but there's no reason for it
+        blf.position(font_id, x, y, 0)
 
-        blf.color(0, r, g, b, a)
+        blf.color(font_id, r, g, b, a)
 
-        blf.draw(0, self._text)
+        blf.draw(font_id, self._text)

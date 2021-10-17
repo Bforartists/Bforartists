@@ -93,7 +93,7 @@ def append_scene(file_name, scenename=None, link=False, fake_user=False):
     scene['uuid'] = str(uuid.uuid4())
 
     #reset ui_props of the scene to defaults:
-    ui_props = bpy.context.scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     ui_props.down_up = 'SEARCH'
 
     return scene

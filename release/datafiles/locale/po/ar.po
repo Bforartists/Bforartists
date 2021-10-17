@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -21031,6 +21031,14 @@ msgid "Convex Hull"
 msgstr "ﺏﺪﺤﻣ ﻑﻼ﻿ﻏ"
 
 
+msgid "Only Edges & Faces"
+msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻭ ﻑﺍﻮﺤﻟﺍ ﻂﻘﻓ"
+
+
+msgid "Only Faces"
+msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻂﻘﻓ"
+
+
 msgid "Z Axis"
 msgstr "Z ﺭﻮﺤﻣ"
 
@@ -22039,10 +22047,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻞﻜﻟ ﺔﺒﻌﻠ
 msgctxt "Operator"
 msgid "Delete Keying-Set Keyframe"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺡﺎﺘﻔﻣ ﻑﺬﺣﺇ"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "ﺡﺎﺠﻨﺑ ﺡﺎﺘﻔﻤﻟﺍ ﻑﺬﺤﻳ ﺎﻣﺪﻨﻋ ﺔﻟﺎﺳﺭ ﺮﻬﻇﺍ"
 
 
 msgid "The Keying Set to use"
@@ -25161,14 +25165,6 @@ msgstr "ﺓﺮﺸﻘﻟﺍ ﺔﻘﺒﻃ ﻢﺳﺍ"
 
 msgid "Method used for deleting mesh data"
 msgstr "ﻢﺴﺠﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻑﺬﺤﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺔﻘﻳﺮﻄﻟﺍ"
-
-
-msgid "Only Edges & Faces"
-msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻭ ﻑﺍﻮﺤﻟﺍ ﻂﻘﻓ"
-
-
-msgid "Only Faces"
-msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻂﻘﻓ"
 
 
 msgctxt "Operator"
@@ -37143,13 +37139,13 @@ msgstr "ﺓﺪﻘﻌﻟﺍ ﻡﺎﻋ"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "ﻞﺴِﻠﺴﻤﻟﺍ"
+msgid "SequencerCommon"
+msgstr "ﻞﺴِﻠﺴﻤﻟﺍ ﻡﺎﻋ"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "ﻞﺴِﻠﺴﻤﻟﺍ ﻡﺎﻋ"
+msgid "Sequencer"
+msgstr "ﻞﺴِﻠﺴﻤﻟﺍ"
 
 
 msgctxt "WindowManager"
@@ -41364,36 +41360,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "1 ﻥﻮﻠﻟﺍ"
-
-
-msgid "Color2"
-msgstr "2 ﻥﻮﻠﻟﺍ"
-
-
-msgid "Mortar"
-msgstr "ﻁﻼ﻿ﻤﻟﺍ"
-
-
-msgid "Mortar Size"
-msgstr "ﻢﻇﺎﻨﻟﺍ ﻢﺠﺣ"
-
-
-msgid "Brick Width"
-msgstr "ﺔﻨﺒﻠﻟﺍ ﺽﺮﻋ"
-
-
-msgid "Row Height"
-msgstr "ﺮﻄﺴﻟﺍ ﻉﺎﻔﺗﺭﺍ"
-
-
 msgid "Reflection"
 msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ"
-
-
-msgid "Detail Scale"
-msgstr "ﺔﻠﻴﺼﻔﺘﻟﺍ ﻢﺠﺣ"
 
 
 msgid "Emission Color"
@@ -41410,6 +41378,26 @@ msgstr "1 ﺕﺎﻨﺒﻠﻟﺍ"
 
 msgid "Bricks 2"
 msgstr "2 ﺕﺎﻨﺒﻠﻟﺍ"
+
+
+msgid "Mortar"
+msgstr "ﻁﻼ﻿ﻤﻟﺍ"
+
+
+msgid "Brick Width"
+msgstr "ﺔﻨﺒﻠﻟﺍ ﺽﺮﻋ"
+
+
+msgid "Row Height"
+msgstr "ﺮﻄﺴﻟﺍ ﻉﺎﻔﺗﺭﺍ"
+
+
+msgid "Color1"
+msgstr "1 ﻥﻮﻠﻟﺍ"
+
+
+msgid "Color2"
+msgstr "2 ﻥﻮﻠﻟﺍ"
 
 
 msgid "Coordinate 1"

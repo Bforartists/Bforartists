@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -34918,6 +34918,14 @@ msgid "Convex Hull"
 msgstr "볼록 선체"
 
 
+msgid "Only Edges & Faces"
+msgstr "에지 & 페이스 만"
+
+
+msgid "Only Faces"
+msgstr "페이스 만"
+
+
 msgid "Min Max"
 msgstr "최소 최대"
 
@@ -37344,14 +37352,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "지정된 키잉 설정의 모든 속성에 대해 현재 프레임에서 키 프레임을 삭제"
 
 
-msgid "Confirm Successful Delete"
-msgstr "성공한 삭제를 확인"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "키 프레임이 성공적으로 제거되면 팝업을 표시"
-
-
 msgid "The Keying Set to use"
 msgstr "사용하는 키잉 설정"
 
@@ -37394,14 +37394,6 @@ msgstr "키 프레임을 삽입"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "지정된 키잉 설정의 모든 속성에 대해 현재 프레임에 키 프레임을 삽입"
-
-
-msgid "Confirm Successful Insert"
-msgstr "성공한 삽입을 확인"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "키 프레임이 성공적으로 추가되면 팝업을 표시"
 
 
 msgctxt "Operator"
@@ -46024,14 +46016,6 @@ msgstr "선택된 에지 또는 페이스, 버텍스를 삭제"
 
 msgid "Method used for deleting mesh data"
 msgstr "메쉬 데이터를 삭제하기 위해 사용되는 메서드"
-
-
-msgid "Only Edges & Faces"
-msgstr "에지 & 페이스 만"
-
-
-msgid "Only Faces"
-msgstr "페이스 만"
 
 
 msgctxt "Operator"
@@ -62621,6 +62605,10 @@ msgid "Frame Overlay"
 msgstr "프레임 오버레이"
 
 
+msgid "Gizmo"
+msgstr "기즈모"
+
+
 msgid "Proxy Settings"
 msgstr "프록시 설정"
 
@@ -62895,10 +62883,6 @@ msgstr "사용자 인터페이스"
 
 msgid "Gradient Colors"
 msgstr "그라디언트 컬러"
-
-
-msgid "Gizmo"
-msgstr "기즈모"
 
 
 msgid "Brush Presets"
@@ -66654,14 +66638,6 @@ msgstr "이 오브젝트에 대해 모션 블러를 사용"
 
 msgid "Store Denoising Passes"
 msgstr "노이즈 제거 패스를 저장"
-
-
-msgid "Debug Render Time"
-msgstr "디버그 렌더링 시간"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "샘플 및 픽셀 당 렌더링 시간 (밀리 초)"
 
 
 msgid "Use Denoising"
@@ -71163,8 +71139,16 @@ msgid "Use Strip Option"
 msgstr "스트립 옵션을 사용"
 
 
+msgid "Bounding Box Center"
+msgstr "경계 박스 중심"
+
+
 msgid "Median Point"
 msgstr "평균 포인트"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "2D 커서 주위에 피벗"
 
 
 msgid "Individual Origins"
@@ -71912,16 +71896,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "회전/축적 조정에 대한 피벗 중심"
 
 
-msgid "Bounding Box Center"
-msgstr "경계 박스 중심"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "선택한 오브젝트(들)의 경계 박스의 주위에 피벗"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "2D 커서 주위에 피벗"
 
 
 msgid "Pivot around each object's own origin"
@@ -73291,6 +73267,38 @@ msgid "Display frames rather than seconds"
 msgstr "초 단위 대신 프레임을 표시"
 
 
+msgid "Show Gizmo"
+msgstr "기즈모를 표시"
+
+
+msgid "Show gizmos of all types"
+msgstr "모든 유형의 기즈모를 표시"
+
+
+msgid "Context Gizmo"
+msgstr "컨텍스트 기즈모"
+
+
+msgid "Context sensitive gizmos for the active item"
+msgstr "활성 항목에 대한 상황에 맞는 기즈모"
+
+
+msgid "Navigate Gizmo"
+msgstr "네비게이트 기즈모"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "뷰포트 탐색 기즈모"
+
+
+msgid "Tool Gizmo"
+msgstr "도구 기즈모"
+
+
+msgid "Active tool gizmo"
+msgstr "활성 도구 기즈모"
+
+
 msgid "Show Overexposed"
 msgstr "과다 노출을 표시"
 
@@ -73551,14 +73559,6 @@ msgid "Show reconstructed camera path"
 msgstr "복원된 카메라 경로를 표시"
 
 
-msgid "Show Gizmo"
-msgstr "기즈모를 표시"
-
-
-msgid "Show gizmos of all types"
-msgstr "모든 유형의 기즈모를 표시"
-
-
 msgid "Show Camera Focus Distance"
 msgstr "카메라 초점 거리를 표시"
 
@@ -73569,14 +73569,6 @@ msgstr "기즈모로 카메라 초점 거리 조정합니다 (한계 값 표시�
 
 msgid "Show Camera Lens"
 msgstr "카메라 렌즈를 표시"
-
-
-msgid "Context Gizmo"
-msgstr "컨텍스트 기즈모"
-
-
-msgid "Context sensitive gizmos for the active item"
-msgstr "활성 항목에 대한 상황에 맞는 기즈모"
 
 
 msgid "Show Empty Force Field"
@@ -73611,14 +73603,6 @@ msgid "Gizmo to adjust spot and area size"
 msgstr "기즈모로 지점 및 영역 크기를 조정합니다"
 
 
-msgid "Navigate Gizmo"
-msgstr "네비게이트 기즈모"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "뷰포트 탐색 기즈모"
-
-
 msgid "Show Object Rotation"
 msgstr "오브젝트 회전을 표시"
 
@@ -73641,14 +73625,6 @@ msgstr "오브젝트 위치를 표시"
 
 msgid "Gizmo to adjust location"
 msgstr "기즈모로 위치를 조정합니다"
-
-
-msgid "Tool Gizmo"
-msgstr "도구 기즈모"
-
-
-msgid "Active tool gizmo"
-msgstr "활성 도구 기즈모"
 
 
 msgid "Show Reconstruction"
@@ -78397,13 +78373,13 @@ msgstr "노드 일반"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "시퀀서"
+msgid "SequencerCommon"
+msgstr "시퀀서 공통"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "시퀀서 공통"
+msgid "Sequencer"
+msgstr "시퀀서"
 
 
 msgctxt "WindowManager"
@@ -78650,10 +78626,6 @@ msgstr "노이즈 제거"
 
 msgid "Denoising Data"
 msgstr "노이즈 제거 데이터"
-
-
-msgid "Render Time"
-msgstr "렌더 시간"
 
 
 msgid "No output node"
@@ -79779,6 +79751,10 @@ msgstr "오래된"
 
 msgid "Date"
 msgstr "날짜"
+
+
+msgid "Render Time"
+msgstr "렌더 시간"
 
 
 msgid "Hostname"
@@ -81588,6 +81564,18 @@ msgid "Gain:"
 msgstr "이득:"
 
 
+msgid "Viewport Gizmos"
+msgstr "뷰 기즈모"
+
+
+msgid "Navigate"
+msgstr "네비게이트"
+
+
+msgid "Active Tools"
+msgstr "활성 도구"
+
+
 msgctxt "Operator"
 msgid "Set Frame Range to Strips"
 msgstr "프레임 범위를 스트립으로 설정"
@@ -83305,18 +83293,6 @@ msgstr "오버레이를 토글"
 
 msgid "Object Types Visibility"
 msgstr "오브젝트 유형 가시성"
-
-
-msgid "Viewport Gizmos"
-msgstr "뷰 기즈모"
-
-
-msgid "Navigate"
-msgstr "네비게이트"
-
-
-msgid "Active Tools"
-msgstr "활성 도구"
 
 
 msgid "Object Gizmos"
@@ -91169,40 +91145,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "컬러1"
-
-
-msgid "Color2"
-msgstr "컬러2"
-
-
-msgid "Mortar"
-msgstr "모르타르"
-
-
-msgid "Mortar Size"
-msgstr "모르타르 크기"
-
-
-msgid "Mortar Smooth"
-msgstr "모르타르 스무스"
-
-
-msgid "Brick Width"
-msgstr "벽돌 폭"
-
-
-msgid "Row Height"
-msgstr "행 높이"
-
-
 msgid "Reflection"
 msgstr "반사"
-
-
-msgid "Detail Scale"
-msgstr "디테일 축적"
 
 
 msgid "Flame"
@@ -91251,6 +91195,26 @@ msgstr "벽돌 1"
 
 msgid "Bricks 2"
 msgstr "벽돌 2"
+
+
+msgid "Mortar"
+msgstr "모르타르"
+
+
+msgid "Brick Width"
+msgstr "벽돌 폭"
+
+
+msgid "Row Height"
+msgstr "행 높이"
+
+
+msgid "Color1"
+msgstr "컬러1"
+
+
+msgid "Color2"
+msgstr "컬러2"
 
 
 msgid "Coordinate 1"

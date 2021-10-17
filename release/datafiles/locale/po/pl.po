@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -11374,34 +11374,6 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Kolor1"
-
-
-msgid "Color2"
-msgstr "Kolor2"
-
-
-msgid "Mortar"
-msgstr "Zaprawa"
-
-
-msgid "Mortar Size"
-msgstr "Szerokość zaprawy"
-
-
-msgid "Brick Width"
-msgstr "Szerokość cegły"
-
-
-msgid "Row Height"
-msgstr "Wysokość rzędu"
-
-
-msgid "Detail Scale"
-msgstr "Skala szczegółów"
-
-
 msgid "Patterns"
 msgstr "Wzorce"
 
@@ -11412,6 +11384,26 @@ msgstr "Cegły 1"
 
 msgid "Bricks 2"
 msgstr "Cegły 2"
+
+
+msgid "Mortar"
+msgstr "Zaprawa"
+
+
+msgid "Brick Width"
+msgstr "Szerokość cegły"
+
+
+msgid "Row Height"
+msgstr "Wysokość rzędu"
+
+
+msgid "Color1"
+msgstr "Kolor1"
+
+
+msgid "Color2"
+msgstr "Kolor2"
 
 
 msgid "Coordinate 1"

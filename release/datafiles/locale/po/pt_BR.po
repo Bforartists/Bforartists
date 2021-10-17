@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -28038,6 +28038,14 @@ msgid "Convex Hull"
 msgstr "Casco convexo"
 
 
+msgid "Only Edges & Faces"
+msgstr "Somente arestas e faces"
+
+
+msgid "Only Faces"
+msgstr "Somente faces"
+
+
 msgid "Cross Product"
 msgstr "Produto vetorial"
 
@@ -30078,14 +30086,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Apaga os quadros-chave no quadro atual para todas as propriedades dentro do conjunto de inserção de chaves especificado."
 
 
-msgid "Confirm Successful Delete"
-msgstr "Confirmar o sucesso ao apagar"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Mostra uma janela de aviso quando os quadros-chave tenham sido removidos com sucesso."
-
-
 msgid "The Keying Set to use"
 msgstr "O conjunto de chaves inseridas para usar"
 
@@ -30119,14 +30119,6 @@ msgstr "Inserir quadro-chave"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Insere quadros-chave dentro do quadro atual para todas as propriedades dentro do conjunto de inserção de chaves especificado."
-
-
-msgid "Confirm Successful Insert"
-msgstr "Confirmar inserção com sucesso"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Mostra uma janela de contexto quando os quadros-chave estiverem sido adicionados com sucesso."
 
 
 msgctxt "Operator"
@@ -36833,14 +36825,6 @@ msgstr "Apaga os vértices, arestas ou faces selecionados."
 
 msgid "Method used for deleting mesh data"
 msgstr "Método usado para apagar os dados da malha."
-
-
-msgid "Only Edges & Faces"
-msgstr "Somente arestas e faces"
-
-
-msgid "Only Faces"
-msgstr "Somente faces"
 
 
 msgctxt "Operator"
@@ -52565,14 +52549,6 @@ msgid "Use motion blur for this object"
 msgstr "Usa o desfoque de movimento para este objeto."
 
 
-msgid "Debug Render Time"
-msgstr "Depurar tempo de renderização"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Tempo de renderização em milissegundos por amostras e pixeis."
-
-
 msgid "Use Denoising"
 msgstr "Usar redução de ruídos"
 
@@ -56036,8 +56012,16 @@ msgid "Use Strip Option"
 msgstr "Utilizar as opções de faixa "
 
 
+msgid "Bounding Box Center"
+msgstr "Centro da caixa circundante"
+
+
 msgid "Median Point"
 msgstr "Ponto mediano"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Pivô em torno do cursor 2D."
 
 
 msgid "Individual Origins"
@@ -56489,16 +56473,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Centro do pivô para rotação e escala."
 
 
-msgid "Bounding Box Center"
-msgstr "Centro da caixa circundante"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Pivô em torno do centro da caixa circundante dos objetos selecionados."
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Pivô em torno do cursor 2D."
 
 
 msgid "Pivot around each object's own origin"
@@ -61153,13 +61129,13 @@ msgstr "Nós em geral"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Editor de sequências"
+msgid "SequencerCommon"
+msgstr "Comum do editor de sequências"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Comum do editor de sequências"
+msgid "Sequencer"
+msgstr "Editor de sequências"
 
 
 msgctxt "WindowManager"
@@ -69586,40 +69562,8 @@ msgid "BSSRDF"
 msgstr "Função de distribuição de reflectância bidirecional na superfície."
 
 
-msgid "Color1"
-msgstr "Cor 1"
-
-
-msgid "Color2"
-msgstr "Cor 2"
-
-
-msgid "Mortar"
-msgstr "Massa"
-
-
-msgid "Mortar Size"
-msgstr "Tamanho da massa"
-
-
-msgid "Mortar Smooth"
-msgstr "Suavizar massa"
-
-
-msgid "Brick Width"
-msgstr "Largura do bloco"
-
-
-msgid "Row Height"
-msgstr "Altura da coluna"
-
-
 msgid "Reflection"
 msgstr "Reflexão"
-
-
-msgid "Detail Scale"
-msgstr "Escala para os detalhes"
 
 
 msgid "Flame"
@@ -69640,6 +69584,26 @@ msgstr "Blocos 1"
 
 msgid "Bricks 2"
 msgstr "Blocos 2"
+
+
+msgid "Mortar"
+msgstr "Massa"
+
+
+msgid "Brick Width"
+msgstr "Largura do bloco"
+
+
+msgid "Row Height"
+msgstr "Altura da coluna"
+
+
+msgid "Color1"
+msgstr "Cor 1"
+
+
+msgid "Color2"
+msgstr "Cor 2"
 
 
 msgid "Coordinate 1"

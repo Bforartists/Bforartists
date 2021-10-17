@@ -71,7 +71,7 @@ def set_colorspace(img, colorspace):
 def analyze_image_is_true_hdr(image):
     import numpy
     scene = bpy.context.scene
-    ui_props = scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     size = image.size
     imageWidth = size[0]
     imageHeight = size[1]
@@ -82,7 +82,7 @@ def analyze_image_is_true_hdr(image):
 def generate_hdr_thumbnail():
     import numpy
     scene = bpy.context.scene
-    ui_props = scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     hdr_image = ui_props.hdr_upload_image  # bpy.data.images.get(ui_props.hdr_upload_image)
 
     base, ext = os.path.splitext(hdr_image.filepath)
