@@ -20,6 +20,7 @@ class BL_UI_Drag_Panel(BL_UI_Widget):
         self.widgets = widgets
         self.layout_widgets()
 
+
     def layout_widgets(self):
         for widget in self.widgets:
             widget.update(self.x_screen + widget.x, self.y_screen + widget.y)

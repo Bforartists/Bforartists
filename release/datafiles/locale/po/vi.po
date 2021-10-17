@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -33670,10 +33670,6 @@ msgid "Better results when there are holes (slower)"
 msgstr "Kết qủa tốt hơn khi có lỗ (chậm hơn)"
 
 
-msgid "Self"
-msgstr "Tự Mình"
-
-
 msgid "Allow self-intersection in operands"
 msgstr "Cho tự cắt mình trong thao tác"
 
@@ -40975,6 +40971,46 @@ msgid "Function Node"
 msgstr "Giao Điểm Hàm Số"
 
 
+msgid "Axis to align to the vector"
+msgstr "Sắp xếp trục với vectơ"
+
+
+msgid "Align the X axis with the vector"
+msgstr "Sắp xếp trục X với vectơ"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Sắp xếp trục Y với vectơ"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Sắp xếp trục Z với vectơ"
+
+
+msgid "Pivot Axis"
+msgstr "Trục Điểm Tựa"
+
+
+msgid "Axis to rotate around"
+msgstr "Trục để xoay quanh"
+
+
+msgid "Automatically detect the best rotation axis to rotate towards the vector"
+msgstr "Tự động phát hiện trục xoay tốt nhất cho xoay đến vectơ"
+
+
+msgid "Rotate around the local X axis"
+msgstr "Xoay quanh trục X địa phương"
+
+
+msgid "Rotate around the local Y axis"
+msgstr "Xoay quanh trục Y địa phương"
+
+
+msgid "Rotate around the local Z axis"
+msgstr "Xoay quanh trục Z địa phương"
+
+
 msgid "Boolean Math"
 msgstr "Toán Bool"
 
@@ -41351,6 +41387,18 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Giao Điểm Nhóm Hình Dạng Chọn cho giao điểm Python"
 
 
+msgid "Delete Geometry"
+msgstr "Xóa Hình Dạng"
+
+
+msgid "Only Edges & Faces"
+msgstr "Chỉ Định & Mặt"
+
+
+msgid "Only Faces"
+msgstr "Chỉ Mặt"
+
+
 msgid "Distribution Method"
 msgstr "Phương Pháp Phân Phối"
 
@@ -41383,52 +41431,12 @@ msgid "Align Rotation to Vector"
 msgstr "Sắp Xếp Xoay với Vectơ"
 
 
-msgid "Axis to align to the vector"
-msgstr "Sắp xếp trục với vectơ"
-
-
-msgid "Align the X axis with the vector"
-msgstr "Sắp xếp trục X với vectơ"
-
-
-msgid "Align the Y axis with the vector"
-msgstr "Sắp xếp trục Y với vectơ"
-
-
-msgid "Align the Z axis with the vector"
-msgstr "Sắp xếp trục Z với vectơ"
-
-
 msgid "Input Type Factor"
 msgstr "Loại Hệ Số Ngõ Vào"
 
 
 msgid "Input Type Vector"
 msgstr "Vectơ Loại Ngõ Vào"
-
-
-msgid "Pivot Axis"
-msgstr "Trục Điểm Tựa"
-
-
-msgid "Axis to rotate around"
-msgstr "Trục để xoay quanh"
-
-
-msgid "Automatically detect the best rotation axis to rotate towards the vector"
-msgstr "Tự động phát hiện trục xoay tốt nhất cho xoay đến vectơ"
-
-
-msgid "Rotate around the local X axis"
-msgstr "Xoay quanh trục X địa phương"
-
-
-msgid "Rotate around the local Y axis"
-msgstr "Xoay quanh trục Y địa phương"
-
-
-msgid "Rotate around the local Z axis"
-msgstr "Xoay quanh trục Z địa phương"
 
 
 msgid "Attribute Clamp"
@@ -41821,10 +41829,6 @@ msgstr "Mẫu mỗi mẫu cong bằng phân phối đều số lượng điểm 
 
 msgid "Sample each spline by splitting it into segments with the specified length"
 msgstr "Mẫu mỗi mẫu cong bằng chẻ nó thành khúc có chiều dài được xác định"
-
-
-msgid "Delete Geometry"
-msgstr "Xóa Hình Dạng"
 
 
 msgid "Material Assign"
@@ -44802,14 +44806,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Xóa bức mẫu trong bức hiện tại cho tất cả đặc tính trong Tập Mẫu Dạng được xác định"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Xác Nhận Xóa Thành Công"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Hiện một bảng nhảy lên khi xóa bức mẫu được thành công"
-
-
 msgid "The Keying Set to use"
 msgstr "Dùng Tập Bức Mẫu Nào"
 
@@ -44852,14 +44848,6 @@ msgstr "Chèn Bức Mẫu"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Chèn bức mẫu vào bức hiện tại cho hết đặc tính trong Tập Mẫu Dạng xác định"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Xác Nhận Chèn Thành Công"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Hiện một bảng nhảy lên khi thêm bức mẫu được thành công"
 
 
 msgctxt "Operator"
@@ -55268,14 +55256,6 @@ msgid "Method used for deleting mesh data"
 msgstr "Phương pháp cho xóa dữ liệu mạng lưới"
 
 
-msgid "Only Edges & Faces"
-msgstr "Chỉ Định & Mặt"
-
-
-msgid "Only Faces"
-msgstr "Chỉ Mặt"
-
-
 msgctxt "Operator"
 msgid "Delete Edge Loop"
 msgstr "Xoá Vòng Cạnh"
@@ -63979,10 +63959,6 @@ msgid "Create Pose Asset"
 msgstr "Chế Tạo Tích Sản Dạng Đứng"
 
 
-msgid "Create a new Action that contains the pose of the selected bones, and mark it as Asset"
-msgstr "Chế tạo một Hành Động đang chứa dạng đứng của các xương được chọn, và ghi dấu nó là Tích Sản"
-
-
 msgid "Activate New Action"
 msgstr "Kích Động Hoạt Động Mới"
 
@@ -67940,6 +67916,10 @@ msgid "Select a strip (last selected becomes the \"active strip\")"
 msgstr "Chọn một đoạn (cuối được chọn sẽ thành \"đoạn hoạt động\")"
 
 
+msgid "Use the object center when selecting, in edit mode used to extend object selection"
+msgstr "Dùng trung tâm vật thể khi chọn, trong chế độ biên tập được dùng cho mở rộng sự lựa chọn vật thể"
+
+
 msgid "Linked Handle"
 msgstr "Tay Cầm Liên Kết"
 
@@ -71325,10 +71305,6 @@ msgstr "Xóa Cây Thước"
 
 msgid "Select and activate item(s)"
 msgstr "Chọn và hoạt động (các) mặt hàng"
-
-
-msgid "Use the object center when selecting, in edit mode used to extend object selection"
-msgstr "Dùng trung tâm vật thể khi chọn, trong chế độ biên tập được dùng cho mở rộng sự lựa chọn vật thể"
 
 
 msgid "Enumerate"
@@ -75658,6 +75634,10 @@ msgid "Frame Overlay"
 msgstr "Khung Che Trên"
 
 
+msgid "Gizmo"
+msgstr "Đồ Đạc"
+
+
 msgid "Scene Strip Display"
 msgstr "Hiển Thị Đoạn Cảnh"
 
@@ -75985,10 +75965,6 @@ msgstr "Giao Diện Người Dùng"
 
 msgid "Gradient Colors"
 msgstr "Màu Chuyển Sắc"
-
-
-msgid "Gizmo"
-msgstr "Đồ Đạc"
 
 
 msgid "Brush Presets"
@@ -80450,14 +80426,6 @@ msgstr "Chứa Lại Vòng Bớt Huyên Náo"
 
 msgid "Store the denoising feature passes and the noisy image. The passes adapt to the denoiser selected for rendering"
 msgstr "Chứa các vòng bớt huyên náo đặc trưng và ảnh có huyên náo. Các vòng ứnh phố với bộ bớt huyên náo được chọn cho kết xuất"
-
-
-msgid "Debug Render Time"
-msgstr "Sửa Sai Lầm Thời Gian Kết Xuất"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Thời gain kết xuất (mili giây) cho mỗi mẫu vật và điểm ảnh"
 
 
 msgid "Debug Sample Count"
@@ -85587,8 +85555,16 @@ msgid "Move transformed strips to nearest free space to resolve overlap"
 msgstr "Di chuyển các đoạn đến chỗ trống gần hất cho giải quyết lấn trên"
 
 
+msgid "Bounding Box Center"
+msgstr "Trung Tâm Hộp Bao Quanh"
+
+
 msgid "Median Point"
 msgstr "Điểm Trung Vị"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Tựa quanh con trỏ 2D"
 
 
 msgid "Individual Origins"
@@ -86445,16 +86421,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Điềm tựa làm trung tâm cho xoay/phóng to"
 
 
-msgid "Bounding Box Center"
-msgstr "Trung Tâm Hộp Bao Quanh"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Tựa quanh trung tâm của hộp bao quanh của các vật thể được chọn"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Tựa quanh con trỏ 2D"
 
 
 msgid "Pivot around each object's own origin"
@@ -87961,6 +87929,38 @@ msgid "Display frames rather than seconds"
 msgstr "Hiển thị số bức thay thế giây"
 
 
+msgid "Show Gizmo"
+msgstr "Hiện đồ đạc"
+
+
+msgid "Show gizmos of all types"
+msgstr "Hiện tất cả loại đồ đạc"
+
+
+msgid "Context Gizmo"
+msgstr "Đồ Đạc Bối Cảnh"
+
+
+msgid "Context sensitive gizmos for the active item"
+msgstr "Đồ đạc nhạy cảm bối cảnh cho mặt hàng hoạt động"
+
+
+msgid "Navigate Gizmo"
+msgstr "Đồ Đạc Chuyển Hướng"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Đồ đạc chuyển hướng trong màn chiếu"
+
+
+msgid "Tool Gizmo"
+msgstr "Đô Đạc Dụng Cụ"
+
+
+msgid "Active tool gizmo"
+msgstr "Đồ đạc dụng cụ hoạt động"
+
+
 msgid "Show Overexposed"
 msgstr "Hiện Hứng Dư"
 
@@ -88369,14 +88369,6 @@ msgid "Show reconstructed camera path"
 msgstr "Hiện đường máy quay phim được xây đựng lại"
 
 
-msgid "Show Gizmo"
-msgstr "Hiện đồ đạc"
-
-
-msgid "Show gizmos of all types"
-msgstr "Hiện tất cả loại đồ đạc"
-
-
 msgid "Show Camera Focus Distance"
 msgstr "Hiện Quãng Tiêu Điểm Máy Quay Phim"
 
@@ -88391,14 +88383,6 @@ msgstr "Hiện Thấu Kính Máy Quay Phim"
 
 msgid "Gizmo to adjust camera focal length or orthographic scale"
 msgstr "Đồ đạc cho chỉnh bề dài tiêu điểm của máy quay phim hay phóng to trực giao"
-
-
-msgid "Context Gizmo"
-msgstr "Đồ Đạc Bối Cảnh"
-
-
-msgid "Context sensitive gizmos for the active item"
-msgstr "Đồ đạc nhạy cảm bối cảnh cho mặt hàng hoạt động"
 
 
 msgid "Show Empty Force Field"
@@ -88433,14 +88417,6 @@ msgid "Gizmo to adjust spot and area size"
 msgstr "Đồ đạc để chỉnh kích cỡ điểm và diện tích"
 
 
-msgid "Navigate Gizmo"
-msgstr "Đồ Đạc Chuyển Hướng"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Đồ đạc chuyển hướng trong màn chiếu"
-
-
 msgid "Show Object Rotation"
 msgstr "Hiện Xoay Vật Thể"
 
@@ -88463,14 +88439,6 @@ msgstr "Hiện Vị Trí Vật Thể"
 
 msgid "Gizmo to adjust location"
 msgstr "Đồ đạc để chỉnh vị trí"
-
-
-msgid "Tool Gizmo"
-msgstr "Đô Đạc Dụng Cụ"
-
-
-msgid "Active tool gizmo"
-msgstr "Đồ đạc dụng cụ hoạt động"
 
 
 msgid "Show Reconstruction"
@@ -94753,13 +94721,13 @@ msgstr "Giao Điểm Tổng Quát"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Bộ Trình Tự"
+msgid "SequencerCommon"
+msgstr "Bộ Trình Tự Chung"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Bộ Trình Tự Chung"
+msgid "Sequencer"
+msgstr "Bộ Trình Tự"
 
 
 msgctxt "WindowManager"
@@ -95132,10 +95100,6 @@ msgstr "Dữ Liệu Bất Huyên Náo Hoá"
 
 msgid "Indexes"
 msgstr "Chỉ Số"
-
-
-msgid "Render Time"
-msgstr "Thời Gian Kết Xuất"
 
 
 msgid "Pipeline"
@@ -97148,6 +97112,10 @@ msgstr "Cũ"
 
 msgid "Date"
 msgstr "Ngày Tháng"
+
+
+msgid "Render Time"
+msgstr "Thời Gian Kết Xuất"
 
 
 msgid "Hostname"
@@ -99291,6 +99259,18 @@ msgstr "Gama:"
 
 msgid "Gain:"
 msgstr "Tăng Lượng:"
+
+
+msgid "Viewport Gizmos"
+msgstr "Đồ Đạc Màn Chiếu"
+
+
+msgid "Navigate"
+msgstr "Chuyển Hướng"
+
+
+msgid "Active Tools"
+msgstr "Dụng Cụ Hoạt Động"
 
 
 msgid "Offsets"
@@ -101663,18 +101643,6 @@ msgstr "Khóa Máy Quy Phim với Màn"
 
 msgid "Object Types Visibility"
 msgstr "Sự Hiển Thị Loại Vật Thể"
-
-
-msgid "Viewport Gizmos"
-msgstr "Đồ Đạc Màn Chiếu"
-
-
-msgid "Navigate"
-msgstr "Chuyển Hướng"
-
-
-msgid "Active Tools"
-msgstr "Dụng Cụ Hoạt Động"
 
 
 msgid "Object Gizmos"
@@ -111612,44 +111580,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Màu 1"
-
-
-msgid "Color2"
-msgstr "Màu 2"
-
-
-msgid "Mortar"
-msgstr "Vữa"
-
-
-msgid "Mortar Size"
-msgstr "Kích Cỡ Vữa"
-
-
-msgid "Mortar Smooth"
-msgstr "Vữa Mịn"
-
-
-msgid "Brick Width"
-msgstr "Bề Rộng Gạch"
-
-
-msgid "Row Height"
-msgstr "Bề Cao Hàng"
-
-
 msgid "Reflection"
 msgstr "Phản Xạ"
-
-
-msgid "Detail Scale"
-msgstr "Phóng To Chi Tiết"
-
-
-msgid "Detail Roughness"
-msgstr "Độ Nhám Chi Tiết"
 
 
 msgid "Flame"
@@ -111698,6 +111630,26 @@ msgstr "Các Gạch 1"
 
 msgid "Bricks 2"
 msgstr "Các Gạch 2"
+
+
+msgid "Mortar"
+msgstr "Vữa"
+
+
+msgid "Brick Width"
+msgstr "Bề Rộng Gạch"
+
+
+msgid "Row Height"
+msgstr "Bề Cao Hàng"
+
+
+msgid "Color1"
+msgstr "Màu 1"
+
+
+msgid "Color2"
+msgstr "Màu 2"
 
 
 msgid "Coordinate 1"

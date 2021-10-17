@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -11858,6 +11858,14 @@ msgid "Original"
 msgstr "Original"
 
 
+msgid "Only Edges & Faces"
+msgstr "Samo ivice i stranice"
+
+
+msgid "Only Faces"
+msgstr "Samo stranice"
+
+
 msgid "Z Axis"
 msgstr "Z osa"
 
@@ -12636,14 +12644,6 @@ msgid "Delete Keying-Set Keyframe"
 msgstr "Izbriši ključni kadar zbirke ključeva"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Potvrdi uspešno umetanje"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Prikaži dijalog kad je ključni kadar uspešno dodat"
-
-
 msgid "The Keying Set to use"
 msgstr "Koristi zbirku ključeva"
 
@@ -12665,14 +12665,6 @@ msgstr "Izbriši ključni kadar"
 msgctxt "Operator"
 msgid "Insert Keyframe"
 msgstr "Umetni ključni kadar"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Potvrdi uspešno umetanje"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Prikaži dijalog kad je ključni kadar uspešno dodat"
 
 
 msgctxt "Operator"
@@ -15800,14 +15792,6 @@ msgstr "Koristi krajnji kadar"
 
 msgid "Delete selected vertices, edges or faces"
 msgstr "Izbriši izabrana temena, ivice ili stranice"
-
-
-msgid "Only Edges & Faces"
-msgstr "Samo ivice i stranice"
-
-
-msgid "Only Faces"
-msgstr "Samo stranice"
 
 
 msgid "Face Split"
@@ -23395,8 +23379,16 @@ msgid "Show Grid"
 msgstr "Prikaži mrežu"
 
 
+msgid "Bounding Box Center"
+msgstr "Centar granične kocke"
+
+
 msgid "Median Point"
 msgstr "Središna tačka"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Težište oko 2D kursora"
 
 
 msgid "Individual Origins"
@@ -23542,14 +23534,6 @@ msgstr "Alfa kanal"
 
 msgid "Length of displaying path, in frames"
 msgstr "Dužina prikaza putanje u kadrovima"
-
-
-msgid "Bounding Box Center"
-msgstr "Centar granične kocke"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Težište oko 2D kursora"
 
 
 msgid "Show Blue Channel"
@@ -28439,36 +28423,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Boja1"
-
-
-msgid "Color2"
-msgstr "Boja2"
-
-
-msgid "Mortar"
-msgstr "Malter"
-
-
-msgid "Mortar Size"
-msgstr "Veličina maltera"
-
-
-msgid "Brick Width"
-msgstr "Širina cigle"
-
-
-msgid "Row Height"
-msgstr "Visina reda"
-
-
 msgid "Reflection"
 msgstr "Odsjaj"
-
-
-msgid "Detail Scale"
-msgstr "Zvećanje detalja"
 
 
 msgid "Emission Color"
@@ -28485,6 +28441,26 @@ msgstr "Cigle 1"
 
 msgid "Bricks 2"
 msgstr "Cigle 2"
+
+
+msgid "Mortar"
+msgstr "Malter"
+
+
+msgid "Brick Width"
+msgstr "Širina cigle"
+
+
+msgid "Row Height"
+msgstr "Visina reda"
+
+
+msgid "Color1"
+msgstr "Boja1"
+
+
+msgid "Color2"
+msgstr "Boja2"
 
 
 msgid "Coordinate 1"

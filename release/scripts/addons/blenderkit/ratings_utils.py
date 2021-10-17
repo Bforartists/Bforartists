@@ -78,7 +78,7 @@ def store_rating_local(asset_id, type='quality', value=0):
     context = bpy.context
     ar   = context.window_manager['asset ratings']
     ar[asset_id] = ar.get(asset_id, {})
-    ar[asset_id][type] = value
+    ar[asset_id]['type'] = value
 
 
 def get_rating(asset_id, headers):

@@ -2681,7 +2681,7 @@ static int rna_FileBrowser_FileSelectEntry_name_editable(PointerRNA *ptr, const 
 static void rna_FileBrowser_FileSelectEntry_name_get(PointerRNA *ptr, char *value)
 {
   const FileDirEntry *entry = ptr->data;
-  strcpy(value, entry->name);
+  BLI_strncpy_utf8(value, entry->name, strlen(entry->name) + 1);
 }
 
 static int rna_FileBrowser_FileSelectEntry_name_length(PointerRNA *ptr)
@@ -2693,7 +2693,7 @@ static int rna_FileBrowser_FileSelectEntry_name_length(PointerRNA *ptr)
 static void rna_FileBrowser_FileSelectEntry_relative_path_get(PointerRNA *ptr, char *value)
 {
   const FileDirEntry *entry = ptr->data;
-  strcpy(value, entry->relpath);
+  BLI_strncpy_utf8(value, entry->relpath, strlen(entry->relpath) + 1);
 }
 
 static int rna_FileBrowser_FileSelectEntry_relative_path_length(PointerRNA *ptr)
@@ -5773,7 +5773,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "cursor");
   RNA_def_property_array(prop, 2);
   RNA_def_property_ui_text(prop, "2D Cursor Location", "2D cursor location for this view");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, NULL);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, NULL);
 }
 
 static void rna_def_space_text(BlenderRNA *brna)
@@ -6415,7 +6415,7 @@ static void rna_def_fileselect_entry(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "FileDirEntry");
   RNA_def_struct_ui_text(srna, "File Select Entry", "A file viewable in the File Browser");
 
-  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
+  prop = RNA_def_property(srna, "name", PROP_STRING, PROP_FILENAME);
   RNA_def_property_editable_func(prop, "rna_FileBrowser_FileSelectEntry_name_editable");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_string_funcs(prop,
@@ -6425,7 +6425,7 @@ static void rna_def_fileselect_entry(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Name", "");
   RNA_def_struct_name_property(srna, prop);
 
-  prop = RNA_def_property(srna, "relative_path", PROP_STRING, PROP_NONE);
+  prop = RNA_def_property(srna, "relative_path", PROP_STRING, PROP_FILEPATH);
   RNA_def_property_string_funcs(prop,
                                 "rna_FileBrowser_FileSelectEntry_relative_path_get",
                                 "rna_FileBrowser_FileSelectEntry_relative_path_length",

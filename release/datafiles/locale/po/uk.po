@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -32484,10 +32484,6 @@ msgid "Advanced solver for the best result"
 msgstr "Просунутий рішач для найкращого результату"
 
 
-msgid "Self"
-msgstr "Само"
-
-
 msgid "Allow self-intersection in operands"
 msgstr "Дозволити самоперетин в операндах"
 
@@ -39645,6 +39641,46 @@ msgid "Function Node"
 msgstr "Вузол Функції"
 
 
+msgid "Axis to align to the vector"
+msgstr "Вісь для вирівнення за вектором"
+
+
+msgid "Align the X axis with the vector"
+msgstr "Вирівняти вісь X з вектором"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Вирівняти вісь Y з вектором"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Вирівняти вісь Z з вектором"
+
+
+msgid "Pivot Axis"
+msgstr "Вісь Опертя"
+
+
+msgid "Axis to rotate around"
+msgstr "Вісь для обертання навколо"
+
+
+msgid "Automatically detect the best rotation axis to rotate towards the vector"
+msgstr "Автоматично виявляти найкращу вісь обертання, щоб обертати у напрямку вектора"
+
+
+msgid "Rotate around the local X axis"
+msgstr "Обертати навколо локальної осі X"
+
+
+msgid "Rotate around the local Y axis"
+msgstr "Обертати навколо локальної осі Y"
+
+
+msgid "Rotate around the local Z axis"
+msgstr "Обертати навколо локальної осі Z"
+
+
 msgid "Boolean Math"
 msgstr "Булева Математика"
 
@@ -39761,6 +39797,18 @@ msgid "Convex Hull"
 msgstr "Опукла оболонка"
 
 
+msgid "Delete Geometry"
+msgstr "Видалити Геометрію"
+
+
+msgid "Only Edges & Faces"
+msgstr "Лише ребра та грані"
+
+
+msgid "Only Faces"
+msgstr "Лише грані"
+
+
 msgid "Distribution Method"
 msgstr "Метод Розподілу"
 
@@ -39793,52 +39841,12 @@ msgid "Align Rotation to Vector"
 msgstr "Вирівняти Обертання за Вектором"
 
 
-msgid "Axis to align to the vector"
-msgstr "Вісь для вирівнення за вектором"
-
-
-msgid "Align the X axis with the vector"
-msgstr "Вирівняти вісь X з вектором"
-
-
-msgid "Align the Y axis with the vector"
-msgstr "Вирівняти вісь Y з вектором"
-
-
-msgid "Align the Z axis with the vector"
-msgstr "Вирівняти вісь Z з вектором"
-
-
 msgid "Input Type Factor"
 msgstr "Фактор Типу Уводу"
 
 
 msgid "Input Type Vector"
 msgstr "Тип Вектора Уводу"
-
-
-msgid "Pivot Axis"
-msgstr "Вісь Опертя"
-
-
-msgid "Axis to rotate around"
-msgstr "Вісь для обертання навколо"
-
-
-msgid "Automatically detect the best rotation axis to rotate towards the vector"
-msgstr "Автоматично виявляти найкращу вісь обертання, щоб обертати у напрямку вектора"
-
-
-msgid "Rotate around the local X axis"
-msgstr "Обертати навколо локальної осі X"
-
-
-msgid "Rotate around the local Y axis"
-msgstr "Обертати навколо локальної осі Y"
-
-
-msgid "Rotate around the local Z axis"
-msgstr "Обертати навколо локальної осі Z"
 
 
 msgid "Min Max"
@@ -40127,10 +40135,6 @@ msgstr "Обертати точку, вживаючи вісь Z"
 
 msgid "Rotate a point using XYZ order"
 msgstr "Обертати точку, вживаючи порядок XYZ"
-
-
-msgid "Delete Geometry"
-msgstr "Видалити Геометрію"
 
 
 msgid "Point Distribute"
@@ -42920,14 +42924,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Видалити ключові кадри на поточному кадрі для всіх властивостей з зазначеного набору"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Підтвердити успішне видалення"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Показати спливне вікно, коли ключові кадри успішно вилучено"
-
-
 msgid "The Keying Set to use"
 msgstr "Набір ключів"
 
@@ -42970,14 +42966,6 @@ msgstr "Вставити ключовий кадр"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Вставити ключі на поточному кадрі для всіх властивостей у вказаному наборі ключів "
-
-
-msgid "Confirm Successful Insert"
-msgstr "Підтвердити успішне вставляння"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Показати спливне вікно, коли ключові кадри успішно додано"
 
 
 msgctxt "Operator"
@@ -53022,14 +53010,6 @@ msgstr "Видалити вибрані вершини, ребра чи гран
 
 msgid "Method used for deleting mesh data"
 msgstr "Метод вилучення даних сіті"
-
-
-msgid "Only Edges & Faces"
-msgstr "Лише ребра та грані"
-
-
-msgid "Only Faces"
-msgstr "Лише грані"
 
 
 msgctxt "Operator"
@@ -65190,6 +65170,10 @@ msgid "Select a strip (last selected becomes the \"active strip\")"
 msgstr "Вибрати смужку (остання вибрана стає \"активною смужкою\")"
 
 
+msgid "Use the object center when selecting, in edit mode used to extend object selection"
+msgstr "Вжити центр об'єкта при вибиранні, у режимі редагування використовується для розширення вибрання об'єктів"
+
+
 msgid "Linked Handle"
 msgstr "Пов'язаний держак"
 
@@ -68502,10 +68486,6 @@ msgstr "Мірник Вилучення"
 
 msgid "Select and activate item(s)"
 msgstr "Вибрати та активувати елемент(и)"
-
-
-msgid "Use the object center when selecting, in edit mode used to extend object selection"
-msgstr "Вжити центр об'єкта при вибиранні, у режимі редагування використовується для розширення вибрання об'єктів"
 
 
 msgid "Enumerate"
@@ -72604,6 +72584,10 @@ msgid "Frame Overlay"
 msgstr "Накладання Кадру"
 
 
+msgid "Gizmo"
+msgstr "Гізмо"
+
+
 msgid "Scene Strip Display"
 msgstr "Показ Смужки Сцени"
 
@@ -72927,10 +72911,6 @@ msgstr "Інтерфейс користувача"
 
 msgid "Gradient Colors"
 msgstr "Кольори градієнту"
-
-
-msgid "Gizmo"
-msgstr "Гізмо"
 
 
 msgid "Brush Presets"
@@ -77180,14 +77160,6 @@ msgstr "Зберігати Проходи Знешумлення"
 
 msgid "Store the denoising feature passes and the noisy image. The passes adapt to the denoiser selected for rendering"
 msgstr "Зберігати проходи вирізнення знешумлювання та шумне зображення. Ці проходи пристосовуються до знешумника, вибраного для рендерингу"
-
-
-msgid "Debug Render Time"
-msgstr "Зневадження Часу Рендера"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Час рендера у мілісекундах на кожні вибірку та піксель"
 
 
 msgid "Debug Sample Count"
@@ -82157,8 +82129,16 @@ msgid "Sequencer Tool Settings"
 msgstr "Устави Засобу Секвенсера"
 
 
+msgid "Bounding Box Center"
+msgstr "Центр габаритної коробки"
+
+
 msgid "Median Point"
 msgstr "Серединна точка"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Обертати навколо 2D-курсора"
 
 
 msgid "Individual Origins"
@@ -82971,16 +82951,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Опорна точка для обертання/масштабування"
 
 
-msgid "Bounding Box Center"
-msgstr "Центр габаритної коробки"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Обертати навколо центра габаритної коробки вибраного об'єкта(ів)"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Обертати навколо 2D-курсора"
 
 
 msgid "Pivot around each object's own origin"
@@ -84443,6 +84415,38 @@ msgid "Display frames rather than seconds"
 msgstr "Показувати кадри, а не секунди"
 
 
+msgid "Show Gizmo"
+msgstr "Показ Гізмо"
+
+
+msgid "Show gizmos of all types"
+msgstr "Показати гізмо всіх типів"
+
+
+msgid "Context Gizmo"
+msgstr "Контекстне Гізмо"
+
+
+msgid "Context sensitive gizmos for the active item"
+msgstr "Контекстно чутливі гізмо для активного елемента"
+
+
+msgid "Navigate Gizmo"
+msgstr "Гізмо Навігації"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Гізмо навігації оглядвікна"
+
+
+msgid "Tool Gizmo"
+msgstr "Гізмо Засобу"
+
+
+msgid "Active tool gizmo"
+msgstr "Гізмо активного засобу"
+
+
 msgid "Show Overexposed"
 msgstr "Показати переекспоноване"
 
@@ -84727,14 +84731,6 @@ msgid "Show reconstructed camera path"
 msgstr "Показати реконструйований шлях камери"
 
 
-msgid "Show Gizmo"
-msgstr "Показ Гізмо"
-
-
-msgid "Show gizmos of all types"
-msgstr "Показати гізмо всіх типів"
-
-
 msgid "Show Camera Focus Distance"
 msgstr "Показ Фокусної Відстані Камери"
 
@@ -84749,14 +84745,6 @@ msgstr "Показ Об'єктива Камери"
 
 msgid "Gizmo to adjust camera focal length or orthographic scale"
 msgstr "Гізмо для наладнання фокусної відстані або ортогонального масштабу камери"
-
-
-msgid "Context Gizmo"
-msgstr "Контекстне Гізмо"
-
-
-msgid "Context sensitive gizmos for the active item"
-msgstr "Контекстно чутливі гізмо для активного елемента"
 
 
 msgid "Show Empty Force Field"
@@ -84791,14 +84779,6 @@ msgid "Gizmo to adjust spot and area size"
 msgstr "Гізмо для наладнання розміру прожектора та площинного освітлювача"
 
 
-msgid "Navigate Gizmo"
-msgstr "Гізмо Навігації"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Гізмо навігації оглядвікна"
-
-
 msgid "Show Object Rotation"
 msgstr "Показ Обертання Об'єкта"
 
@@ -84821,14 +84801,6 @@ msgstr "Показ Локації Об'єкта"
 
 msgid "Gizmo to adjust location"
 msgstr "Гізмо для наладнання локації "
-
-
-msgid "Tool Gizmo"
-msgstr "Гізмо Засобу"
-
-
-msgid "Active tool gizmo"
-msgstr "Гізмо активного засобу"
 
 
 msgid "Show Reconstruction"
@@ -90585,13 +90557,13 @@ msgstr "Узагальнене Вузлів"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Секвенсер"
+msgid "SequencerCommon"
+msgstr "Загальне Секвенсера"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Загальне Секвенсера"
+msgid "Sequencer"
+msgstr "Секвенсер"
 
 
 msgctxt "WindowManager"
@@ -90956,10 +90928,6 @@ msgstr "Дані Знешумлювання"
 
 msgid "Indexes"
 msgstr "Індекси"
-
-
-msgid "Render Time"
-msgstr "Час Рендера"
 
 
 msgid "Pipeline"
@@ -92832,6 +92800,10 @@ msgstr "Старе"
 
 msgid "Date"
 msgstr "Дата"
+
+
+msgid "Render Time"
+msgstr "Час Рендера"
 
 
 msgid "Hostname"
@@ -94946,6 +94918,18 @@ msgstr "Гамма:"
 
 msgid "Gain:"
 msgstr "Підсил:"
+
+
+msgid "Viewport Gizmos"
+msgstr "Гізмо Оглядвікна"
+
+
+msgid "Navigate"
+msgstr "Навігація"
+
+
+msgid "Active Tools"
+msgstr "Активні Засоби"
 
 
 msgid "Offsets"
@@ -97203,18 +97187,6 @@ msgstr "Камера за Оглядом"
 
 msgid "Object Types Visibility"
 msgstr "Видимість Типів Об'єктів"
-
-
-msgid "Viewport Gizmos"
-msgstr "Гізмо Оглядвікна"
-
-
-msgid "Navigate"
-msgstr "Навігація"
-
-
-msgid "Active Tools"
-msgstr "Активні Засоби"
 
 
 msgid "Object Gizmos"
@@ -106622,44 +106594,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Колір1"
-
-
-msgid "Color2"
-msgstr "Колір2"
-
-
-msgid "Mortar"
-msgstr "Цемент"
-
-
-msgid "Mortar Size"
-msgstr "Товщина розчину"
-
-
-msgid "Mortar Smooth"
-msgstr "Згладження розчину"
-
-
-msgid "Brick Width"
-msgstr "Ширина цеглини"
-
-
-msgid "Row Height"
-msgstr "Висота рядка"
-
-
 msgid "Reflection"
 msgstr "Віддзеркалення"
-
-
-msgid "Detail Scale"
-msgstr "Масштаб деталей"
-
-
-msgid "Detail Roughness"
-msgstr "Шорсткість Детальності"
 
 
 msgid "Flame"
@@ -106708,6 +106644,26 @@ msgstr "Цеглини 1"
 
 msgid "Bricks 2"
 msgstr "Цеглини 2"
+
+
+msgid "Mortar"
+msgstr "Цемент"
+
+
+msgid "Brick Width"
+msgstr "Ширина цеглини"
+
+
+msgid "Row Height"
+msgstr "Висота рядка"
+
+
+msgid "Color1"
+msgstr "Колір1"
+
+
+msgid "Color2"
+msgstr "Колір2"
 
 
 msgid "Coordinate 1"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -14984,16 +14984,12 @@ msgid "Dot"
 msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
 
 
-msgid "Color1"
-msgstr "ﮓﻧﺭ"
+msgid "Reflection"
+msgstr "ﺱﺎﮑﻌﻧﺍ"
 
 
-msgid "Color2"
-msgstr "ﮓﻧﺭ"
-
-
-msgid "Mortar Size"
-msgstr "ﻪﻄﻘﻧ ﻩﺯﺍﺪﻧﺍ"
+msgid "Patterns"
+msgstr "ﻮﮕﻟﺍ ﻪﻨﯿﺸﯿﺑ"
 
 
 msgid "Brick Width"
@@ -15004,16 +15000,12 @@ msgid "Row Height"
 msgstr "ﻉﺎﻔﺗﺭﺍ"
 
 
-msgid "Reflection"
-msgstr "ﺱﺎﮑﻌﻧﺍ"
+msgid "Color1"
+msgstr "ﮓﻧﺭ"
 
 
-msgid "Detail Scale"
-msgstr "ﯼﺩﻮﻤﻋ"
-
-
-msgid "Patterns"
-msgstr "ﻮﮕﻟﺍ ﻪﻨﯿﺸﯿﺑ"
+msgid "Color2"
+msgstr "ﮓﻧﺭ"
 
 
 msgid "Coordinate 1"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -913,14 +913,6 @@ msgid "Incoming"
 msgstr "סנכנ"
 
 
-msgid "Color2"
-msgstr "2עבצ"
-
-
-msgid "Row Height"
-msgstr "הרוש הבוג"
-
-
 msgid "Reflection"
 msgstr "תופקתשה"
 
@@ -931,6 +923,14 @@ msgstr "1 םינבל"
 
 msgid "Bricks 2"
 msgstr "2 םינבל"
+
+
+msgid "Row Height"
+msgstr "הרוש הבוג"
+
+
+msgid "Color2"
+msgstr "2עבצ"
 
 
 msgid "No border area selected"

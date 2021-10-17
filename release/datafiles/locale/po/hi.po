@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -7149,10 +7149,6 @@ msgstr "बिन्दु"
 
 msgid "Reflection"
 msgstr "प्रतिबिंब"
-
-
-msgid "Detail Scale"
-msgstr "विस्तार प्रंमाण"
 
 
 msgid "Flame"

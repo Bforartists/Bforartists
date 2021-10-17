@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -10076,6 +10076,14 @@ msgid "Original"
 msgstr "Esborrar Origen"
 
 
+msgid "Only Edges & Faces"
+msgstr "Corba"
+
+
+msgid "Only Faces"
+msgstr "Corba"
+
+
 msgid "Z Axis"
 msgstr "Ampliar"
 
@@ -13957,14 +13965,6 @@ msgstr "Render"
 
 msgid "Delete selected vertices, edges or faces"
 msgstr "Seleccionar connectats"
-
-
-msgid "Only Edges & Faces"
-msgstr "Corba"
-
-
-msgid "Only Faces"
-msgstr "Corba"
 
 
 msgctxt "Operator"
@@ -26199,16 +26199,12 @@ msgid "Dot"
 msgstr "Rotar"
 
 
-msgid "Color1"
-msgstr "Rotar"
+msgid "Reflection"
+msgstr "Seleccionar connectats"
 
 
-msgid "Color2"
-msgstr "Rotar"
-
-
-msgid "Mortar Size"
-msgstr "Calcular Normals"
+msgid "Patterns"
+msgstr "Seleccionar fila"
 
 
 msgid "Brick Width"
@@ -26219,16 +26215,12 @@ msgid "Row Height"
 msgstr "Dreta"
 
 
-msgid "Reflection"
-msgstr "Seleccionar connectats"
+msgid "Color1"
+msgstr "Rotar"
 
 
-msgid "Detail Scale"
-msgstr "Seleccionar connectats"
-
-
-msgid "Patterns"
-msgstr "Seleccionar fila"
+msgid "Color2"
+msgstr "Rotar"
 
 
 msgid "Coordinate 1"
