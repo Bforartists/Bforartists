@@ -70,14 +70,58 @@ else:
     COLOR_WORD = ""
     COLOR_ENDC = ""
 
-
-import enchant
-dict_spelling = enchant.Dict("en_US")
-
 from check_spelling_c_config import (
     dict_custom,
     dict_ignore,
+    dict_ignore_hyphenated_prefix,
 )
+
+# -----------------------------------------------------------------------------
+# Dictionary Utilities
+
+def dictionary_create():  # type: ignore
+    import enchant  # type: ignore
+    dict_spelling = enchant.Dict("en_US")
+
+
+    # Don't add ignore to the dictionary, since they will be suggested.
+    for w in dict_custom:
+        dict_spelling.add(w)
+    return dict_spelling
+
+
+def dictionary_check(w: str) -> bool:
+    w_lower = w.lower()
+    if w_lower in dict_ignore:
+        return True
+
+    is_correct: bool = _dict.check(w)
+    # Split by hyphenation and check.
+    if not is_correct:
+        if "-" in w:
+            is_correct = True
+
+            # Allow: `un-word`, `re-word`.
+            w_split = w.strip("-").split("-")
+            if w_split and w_split[0].lower() in dict_ignore_hyphenated_prefix:
+                del w_split[0]
+
+            for w_sub in w_split:
+                if w_sub:
+                    w_sub_lower = w_sub.lower()
+                    if w_sub_lower in dict_ignore:
+                        continue
+                    if not _dict.check(w_sub):
+                        is_correct = False
+                        break
+    return is_correct
+
+
+def dictionary_suggest(w: str) -> List[str]:
+    return _dict.suggest(w)  # type: ignore
+
+
+_dict = dictionary_create()  # type: ignore
 
 
 # -----------------------------------------------------------------------------
@@ -106,7 +150,7 @@ re_ignore = re.compile(
     r"<\w+@[\w\.\-]+>|"
 
     # Convention for TODO/FIXME messages: TODO(my name) OR FIXME(name+name) OR XXX(some-name) OR NOTE(name/other-name):
-    r"\b(TODO|FIXME|XXX|NOTE)\([A-Za-z\s\+\-/]+\)|"
+    r"\b(TODO|FIXME|XXX|NOTE|WARNING)\(@?[\w\s\+\-/]+\)|"
 
     # Doxygen style: <pre> ... </pre>
     r"<pre>.+</pre>|"
@@ -207,9 +251,9 @@ class Comment:
 
 
 def extract_code_strings(filepath: str) -> Tuple[List[Comment], Set[str]]:
-    import pygments
+    import pygments  # type: ignore
     from pygments import lexers
-    from pygments.token import Token
+    from pygments.token import Token  # type: ignore
 
     comments = []
     code_words = set()
@@ -375,7 +419,7 @@ def spell_check_report(filepath: str, report: Report) -> None:
 
     suggest = _suggest_map.get(w_lower)
     if suggest is None:
-        _suggest_map[w_lower] = suggest = " ".join(dict_spelling.suggest(w))
+        _suggest_map[w_lower] = suggest = " ".join(dictionary_suggest(w))
 
     print("%s:%d:%d: %s%s%s, suggest (%s)" % (
         filepath,
@@ -403,19 +447,10 @@ def spell_check_file(
     for comment in comment_list:
         for w, pos in comment.parse():
             w_lower = w.lower()
-            if w_lower in dict_custom or w_lower in dict_ignore:
+            if w_lower in dict_ignore:
                 continue
 
-            is_good_spelling = dict_spelling.check(w)
-            if not is_good_spelling:
-                if "-" in w:
-                    is_good_spelling = True
-                    for w_sub in w.split("-"):
-                        if w_sub:
-                            if not dict_spelling.check(w_sub):
-                                is_good_spelling = False
-                                break
-
+            is_good_spelling = dictionary_check(w)
             if not is_good_spelling:
                 # Ignore literals that show up in code,
                 # gets rid of a lot of noise from comments that reference variables.
@@ -430,12 +465,15 @@ def spell_check_file(
 def spell_check_file_recursive(
         dirpath: str,
         check_type: str = 'COMMENTS',
-        cache_data: Optional[CacheData]=None,
+        cache_data: Optional[CacheData] = None,
 ) -> None:
     import os
     from os.path import join, splitext
 
-    def source_list(path: str, filename_check: Optional[Callable[[str], bool]]=None) -> Generator[str, None, None]:
+    def source_list(
+            path: str,
+            filename_check: Optional[Callable[[str], bool]] = None,
+    ) -> Generator[str, None, None]:
         for dirpath, dirnames, filenames in os.walk(path):
             # skip '.git'
             dirnames[:] = [d for d in dirnames if not d.startswith(".")]

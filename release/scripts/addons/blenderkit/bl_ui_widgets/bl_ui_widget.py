@@ -88,6 +88,8 @@ class BL_UI_Widget:
         self.batch_panel = batch_for_shader(self.shader, 'TRIS', {"pos" : vertices}, indices=indices)
 
     def handle_event(self, event):
+        if not self._is_visible:
+            return False
         x = event.mouse_region_x
         y = event.mouse_region_y
 
@@ -100,6 +102,7 @@ class BL_UI_Widget:
                 self.mouse_up(x, y)
 
         elif (event.type == 'RIGHTMOUSE'):
+
             if (event.value == 'PRESS'):
                 self._mouse_down_right = True
                 return self.mouse_down_right(x, y)
@@ -109,7 +112,6 @@ class BL_UI_Widget:
 
         elif (event.type == 'MOUSEMOVE'):
             self.mouse_move(x, y)
-
             inrect = self.is_in_rect(x, y)
 
             # we enter the rect
@@ -125,6 +127,7 @@ class BL_UI_Widget:
             return False
 
         elif event.value == 'PRESS' and (event.ascii != '' or event.type in self.get_input_keys()):
+
             return self.text_input(event)
 
         return False
@@ -143,6 +146,10 @@ class BL_UI_Widget:
             (self.x_screen <= x <= (self.x_screen + self.width)) and
             (widget_y >= y >= (widget_y - self.height))
             ):
+            # print('is in rect!?')
+            # print('area height', area_height)
+            # print ('x sceen ',self.x_screen,'x ', x, 'width', self.width)
+            # print ('widghet y', widget_y,'y', y, 'height',self.height)
             return True
 
         return False

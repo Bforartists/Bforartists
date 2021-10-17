@@ -151,7 +151,7 @@ def update_subcategory_enums(self, context):
 
 def get_category_enums(self, context):
     wm = bpy.context.window_manager
-    props = bpy.context.scene.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     asset_type = props.asset_type.lower()
     # asset_type = self.asset_type#get_upload_asset_type(self)
     asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type,))
@@ -165,7 +165,7 @@ def get_category_enums(self, context):
 
 def get_subcategory_enums(self, context):
     wm = bpy.context.window_manager
-    props = bpy.context.scene.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     asset_type = props.asset_type.lower()
     items = []
     if self.category != '':
@@ -180,7 +180,7 @@ def get_subcategory_enums(self, context):
 
 def get_subcategory1_enums(self, context):
     wm = bpy.context.window_manager
-    props = bpy.context.scene.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     asset_type = props.asset_type.lower()
     items = []
     if self.category != '' and self.subcategory != '':

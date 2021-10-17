@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -2286,36 +2286,28 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "1 Kolorea"
+msgid "Reflection"
+msgstr "Islapena"
 
 
-msgid "Color2"
-msgstr "2 Kolorea"
+msgid "Patterns"
+msgstr "Patroiak"
 
 
 msgid "Mortar"
 msgstr "Zementu"
 
 
-msgid "Mortar Size"
-msgstr "Zementuaren Tamaina"
-
-
 msgid "Row Height"
 msgstr "Lerroaren Altuera"
 
 
-msgid "Reflection"
-msgstr "Islapena"
+msgid "Color1"
+msgstr "1 Kolorea"
 
 
-msgid "Detail Scale"
-msgstr "Xehetasun Eskala"
-
-
-msgid "Patterns"
-msgstr "Patroiak"
+msgid "Color2"
+msgstr "2 Kolorea"
 
 
 msgid "Coordinate 1"

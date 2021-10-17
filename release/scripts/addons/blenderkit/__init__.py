@@ -50,6 +50,7 @@ if "bpy" in locals():
     paths = reload(paths)
     ratings = reload(ratings)
     ratings_utils = reload(ratings_utils)
+    comments_utils = reload(comments_utils)
     resolutions = reload(resolutions)
     search = reload(search)
     tasks_queue = reload(tasks_queue)
@@ -60,6 +61,7 @@ if "bpy" in locals():
     upload_bg = reload(upload_bg)
     utils = reload(utils)
 
+    bl_ui_label = reload(bl_ui_widget)
     bl_ui_label = reload(bl_ui_label)
     bl_ui_button = reload(bl_ui_button)
     # bl_ui_checkbox = reload(bl_ui_checkbox)
@@ -86,6 +88,7 @@ else:
     from blenderkit import paths
     from blenderkit import ratings
     from blenderkit import ratings_utils
+    from blenderkit import comments_utils
     from blenderkit import resolutions
     from blenderkit import search
     from blenderkit import tasks_queue
@@ -96,13 +99,14 @@ else:
     from blenderkit import upload_bg
     from blenderkit import utils
 
+    from blenderkit.bl_ui_widgets import bl_ui_widget
     from blenderkit.bl_ui_widgets import bl_ui_label
     from blenderkit.bl_ui_widgets import bl_ui_button
     # from blenderkit.bl_ui_widgets import bl_ui_checkbox
     # from blenderkit.bl_ui_widgets import bl_ui_slider
     # from blenderkit.bl_ui_widgets import bl_ui_up_down
-    from blenderkit.bl_ui_widgets import bl_ui_drag_panel
     from blenderkit.bl_ui_widgets import bl_ui_draw_op
+    from blenderkit.bl_ui_widgets import bl_ui_drag_panel
     # from blenderkit.bl_ui_widgets import bl_ui_textbox
 
 import os
@@ -141,7 +145,7 @@ from bpy.types import (
 
 @persistent
 def scene_load(context):
-    ui_props = bpy.context.scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     ui_props.assetbar_on = False
     ui_props.turn_off = False
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -236,7 +240,7 @@ def udate_down_up(self, context):
     """Perform a search if results are empty."""
     s = context.scene
     wm = bpy.context.window_manager
-    props = s.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     if wm.get('search results') == None and props.down_up == 'SEARCH':
         search.search()
 
@@ -244,7 +248,7 @@ def udate_down_up(self, context):
 def switch_search_results(self, context):
     s = bpy.context.scene
     wm = bpy.context.window_manager
-    props = s.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     if props.asset_type == 'MODEL':
         wm['search results'] = wm.get('bkit model search')
         wm['search results orig'] = wm.get('bkit model search orig')
@@ -266,6 +270,10 @@ def switch_search_results(self, context):
         if not (context.sculpt_object or context.image_paint_object):
             ui.add_report(
                 'Switch to paint or sculpt mode to search in BlenderKit brushes.')
+    # if wm['search results'] == None:
+    #     wm['search results'] = []
+    # if wm['search results orig'] == None:
+    #     wm['search results orig'] = {'count': 0, 'results': []}
 
     search.load_previews()
     if wm['search results'] == None and props.down_up == 'SEARCH':
@@ -305,11 +313,11 @@ def asset_type_callback(self, context):
 
 def run_drag_drop_update(self, context):
     if self.drag_init_button:
-        ui_props = bpy.context.scene.blenderkitUI
+        ui_props = bpy.context.window_manager.blenderkitUI
         # ctx = utils.get_fake_context(bpy.context)
 
         bpy.ops.view3d.close_popup_button('INVOKE_DEFAULT')
-        bpy.ops.view3d.asset_drag_drop('INVOKE_DEFAULT', asset_search_index=ui_props.active_index + ui_props.scrolloffset)
+        bpy.ops.view3d.asset_drag_drop('INVOKE_DEFAULT', asset_search_index=ui_props.active_index + ui_props.scroll_offset)
 
         self.drag_init_button = False
 
@@ -376,7 +384,7 @@ class BlenderKitUIProps(PropertyGroup):
     mouse_y: IntProperty(name="Mouse Y", default=0)
 
     active_index: IntProperty(name="Active Index", default=-3)
-    scrolloffset: IntProperty(name="Scroll Offset", default=0)
+    scroll_offset: IntProperty(name="Scroll Offset", default=0)
     drawoffset: IntProperty(name="Draw Offset", default=0)
 
     dragging: BoolProperty(name="Dragging", default=False)
@@ -1848,7 +1856,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.blenderkitUI = PointerProperty(
+    bpy.types.WindowManager.blenderkitUI = PointerProperty(
         type=BlenderKitUIProps)
 
     # MODELS

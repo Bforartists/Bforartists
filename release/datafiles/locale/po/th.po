@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3784,6 +3784,10 @@ msgid "Text color"
 msgstr "สีข้อความ"
 
 
+msgid "Bounding Box Center"
+msgstr "ศูนย์กลางของขอบเขต"
+
+
 msgid "Median Point"
 msgstr "จุดมัธยฐาน"
 
@@ -3803,10 +3807,6 @@ msgstr "แทร็ค"
 
 msgid "Pivot center for rotation/scaling"
 msgstr "ศูนย์หมุนสำหรับการหมุน/ย่อขยาย"
-
-
-msgid "Bounding Box Center"
-msgstr "ศูนย์กลางของขอบเขต"
 
 
 msgid "Pivot around bounding box center of selected object(s)"

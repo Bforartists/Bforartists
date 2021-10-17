@@ -72,7 +72,7 @@ ccl_device_inline float3 ray_offset(float3 P, float3 Ng)
 }
 
 #if defined(__VOLUME_RECORD_ALL__) || (defined(__SHADOW_RECORD_ALL__) && defined(__KERNEL_CPU__))
-/* ToDo: Move to another file? */
+/* TODO: Move to another file? */
 ccl_device int intersections_compare(const void *a, const void *b)
 {
   const Intersection *isect_a = (const Intersection *)a;
@@ -88,7 +88,7 @@ ccl_device int intersections_compare(const void *a, const void *b)
 #endif
 
 #if defined(__SHADOW_RECORD_ALL__)
-ccl_device_inline void sort_intersections(Intersection *hits, uint num_hits)
+ccl_device_inline void sort_intersections(ccl_private Intersection *hits, uint num_hits)
 {
   kernel_assert(num_hits > 0);
 
@@ -113,16 +113,39 @@ ccl_device_inline void sort_intersections(Intersection *hits, uint num_hits)
 }
 #endif /* __SHADOW_RECORD_ALL__ | __VOLUME_RECORD_ALL__ */
 
+/* For subsurface scattering, only sorting a small amount of intersections
+ * so bubble sort is fine for CPU and GPU. */
+ccl_device_inline void sort_intersections_and_normals(ccl_private Intersection *hits,
+                                                      ccl_private float3 *Ng,
+                                                      uint num_hits)
+{
+  bool swapped;
+  do {
+    swapped = false;
+    for (int j = 0; j < num_hits - 1; ++j) {
+      if (hits[j].t > hits[j + 1].t) {
+        struct Intersection tmp_hit = hits[j];
+        struct float3 tmp_Ng = Ng[j];
+        hits[j] = hits[j + 1];
+        Ng[j] = Ng[j + 1];
+        hits[j + 1] = tmp_hit;
+        Ng[j + 1] = tmp_Ng;
+        swapped = true;
+      }
+    }
+    --num_hits;
+  } while (swapped);
+}
+
 /* Utility to quickly get flags from an intersection. */
 
-ccl_device_forceinline int intersection_get_shader_flags(const KernelGlobals *ccl_restrict kg,
-                                                         const Intersection *ccl_restrict isect)
+ccl_device_forceinline int intersection_get_shader_flags(
+    ccl_global const KernelGlobals *ccl_restrict kg, const int prim, const int type)
 {
-  const int prim = isect->prim;
   int shader = 0;
 
 #ifdef __HAIR__
-  if (isect->type & PRIMITIVE_ALL_TRIANGLE)
+  if (type & PRIMITIVE_ALL_TRIANGLE)
 #endif
   {
     shader = kernel_tex_fetch(__tri_shader, prim);
@@ -137,7 +160,7 @@ ccl_device_forceinline int intersection_get_shader_flags(const KernelGlobals *cc
 }
 
 ccl_device_forceinline int intersection_get_shader_from_isect_prim(
-    const KernelGlobals *ccl_restrict kg, const int prim, const int isect_type)
+    ccl_global const KernelGlobals *ccl_restrict kg, const int prim, const int isect_type)
 {
   int shader = 0;
 
@@ -156,16 +179,47 @@ ccl_device_forceinline int intersection_get_shader_from_isect_prim(
   return shader & SHADER_MASK;
 }
 
-ccl_device_forceinline int intersection_get_shader(const KernelGlobals *ccl_restrict kg,
-                                                   const Intersection *ccl_restrict isect)
+ccl_device_forceinline int intersection_get_shader(ccl_global const KernelGlobals *ccl_restrict kg,
+                                                   ccl_private const Intersection *ccl_restrict
+                                                       isect)
 {
   return intersection_get_shader_from_isect_prim(kg, isect->prim, isect->type);
 }
 
-ccl_device_forceinline int intersection_get_object_flags(const KernelGlobals *ccl_restrict kg,
-                                                         const Intersection *ccl_restrict isect)
+ccl_device_forceinline int intersection_get_object_flags(
+    ccl_global const KernelGlobals *ccl_restrict kg,
+    ccl_private const Intersection *ccl_restrict isect)
 {
   return kernel_tex_fetch(__object_flag, isect->object);
+}
+
+/* TODO: find a better (faster) solution for this. Maybe store offset per object for
+ * attributes needed in intersection? */
+ccl_device_inline int intersection_find_attribute(ccl_global const KernelGlobals *kg,
+                                                  const int object,
+                                                  const uint id)
+{
+  uint attr_offset = kernel_tex_fetch(__objects, object).attribute_map_offset;
+  uint4 attr_map = kernel_tex_fetch(__attributes_map, attr_offset);
+
+  while (attr_map.x != id) {
+    if (UNLIKELY(attr_map.x == ATTR_STD_NONE)) {
+      if (UNLIKELY(attr_map.y == 0)) {
+        return (int)ATTR_STD_NOT_FOUND;
+      }
+      else {
+        /* Chain jump to a different part of the table. */
+        attr_offset = attr_map.z;
+      }
+    }
+    else {
+      attr_offset += ATTR_PRIM_TYPES;
+    }
+    attr_map = kernel_tex_fetch(__attributes_map, attr_offset);
+  }
+
+  /* return result */
+  return (attr_map.y == ATTR_ELEMENT_NONE) ? (int)ATTR_STD_NOT_FOUND : (int)attr_map.z;
 }
 
 CCL_NAMESPACE_END

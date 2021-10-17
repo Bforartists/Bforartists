@@ -640,7 +640,7 @@ class ReGenerateMaterialThumbnailOperator(bpy.types.Operator):
 
     def invoke(self, context, event):
         # scene = bpy.context.scene
-        # ui_props = scene.blenderkitUI
+        # ui_props = bpy.context.window_manager.blenderkitUI
         # if ui_props.active_index > -1:
         #     sr = bpy.context.window_manager['search results']
         #     self.asset_data = dict(sr[ui_props.active_index])

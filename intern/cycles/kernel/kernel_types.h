@@ -261,32 +261,36 @@ enum PathRayFlag {
   PATH_RAY_EMISSION = (1 << 19),
 
   /* Perform subsurface scattering. */
-  PATH_RAY_SUBSURFACE = (1 << 20),
+  PATH_RAY_SUBSURFACE_RANDOM_WALK = (1 << 20),
+  PATH_RAY_SUBSURFACE_DISK = (1 << 21),
+  PATH_RAY_SUBSURFACE_USE_FRESNEL = (1 << 22),
+  PATH_RAY_SUBSURFACE = (PATH_RAY_SUBSURFACE_RANDOM_WALK | PATH_RAY_SUBSURFACE_DISK |
+                         PATH_RAY_SUBSURFACE_USE_FRESNEL),
 
   /* Contribute to denoising features. */
-  PATH_RAY_DENOISING_FEATURES = (1 << 21),
+  PATH_RAY_DENOISING_FEATURES = (1 << 23),
 
   /* Render pass categories. */
-  PATH_RAY_REFLECT_PASS = (1 << 22),
-  PATH_RAY_TRANSMISSION_PASS = (1 << 23),
-  PATH_RAY_VOLUME_PASS = (1 << 24),
+  PATH_RAY_REFLECT_PASS = (1 << 24),
+  PATH_RAY_TRANSMISSION_PASS = (1 << 25),
+  PATH_RAY_VOLUME_PASS = (1 << 26),
   PATH_RAY_ANY_PASS = (PATH_RAY_REFLECT_PASS | PATH_RAY_TRANSMISSION_PASS | PATH_RAY_VOLUME_PASS),
 
   /* Shadow ray is for a light or surface. */
-  PATH_RAY_SHADOW_FOR_LIGHT = (1 << 25),
+  PATH_RAY_SHADOW_FOR_LIGHT = (1 << 27),
 
   /* A shadow catcher object was hit and the path was split into two. */
-  PATH_RAY_SHADOW_CATCHER_HIT = (1 << 26),
+  PATH_RAY_SHADOW_CATCHER_HIT = (1 << 28),
 
   /* A shadow catcher object was hit and this path traces only shadow catchers, writing them into
    * their dedicated pass for later division.
    *
    * NOTE: Is not covered with `PATH_RAY_ANY_PASS` because shadow catcher does special handling
    * which is separate from the light passes. */
-  PATH_RAY_SHADOW_CATCHER_PASS = (1 << 27),
+  PATH_RAY_SHADOW_CATCHER_PASS = (1 << 29),
 
   /* Path is evaluating background for an approximate shadow catcher with non-transparent film. */
-  PATH_RAY_SHADOW_CATCHER_BACKGROUND = (1 << 28),
+  PATH_RAY_SHADOW_CATCHER_BACKGROUND = (1 << 30),
 };
 
 /* Configure ray visibility bits for rays and objects respectively,
@@ -632,7 +636,7 @@ typedef struct AttributeDescriptor {
   float sample_weight; \
   float3 N
 
-typedef ccl_addr_space struct ccl_align(16) ShaderClosure
+typedef struct ccl_align(16) ShaderClosure
 {
   SHADER_CLOSURE_BASE;
 
@@ -743,7 +747,7 @@ enum ShaderDataObjectFlag {
                      SD_OBJECT_HAS_VOLUME_ATTRIBUTES)
 };
 
-typedef ccl_addr_space struct ccl_align(16) ShaderData
+typedef struct ccl_align(16) ShaderData
 {
   /* position */
   float3 P;
@@ -833,27 +837,28 @@ ShaderData;
 
 /* ShaderDataTinyStorage needs the same alignment as ShaderData, or else
  * the pointer cast in AS_SHADER_DATA invokes undefined behavior. */
-typedef ccl_addr_space struct ccl_align(16) ShaderDataTinyStorage
+typedef struct ccl_align(16) ShaderDataTinyStorage
 {
   char pad[sizeof(ShaderData) - sizeof(ShaderClosure) * MAX_CLOSURE];
 }
 ShaderDataTinyStorage;
-#define AS_SHADER_DATA(shader_data_tiny_storage) ((ShaderData *)shader_data_tiny_storage)
+#define AS_SHADER_DATA(shader_data_tiny_storage) \
+  ((ccl_private ShaderData *)shader_data_tiny_storage)
 
 /* Compact volume closures storage.
  *
  * Used for decoupled direct/indirect light closure storage. */
 
-ccl_addr_space struct ShaderVolumeClosure {
+typedef struct ShaderVolumeClosure {
   float3 weight;
   float sample_weight;
   float g;
-};
+} ShaderVolumeClosure;
 
-ccl_addr_space struct ShaderVolumePhases {
+typedef struct ShaderVolumePhases {
   ShaderVolumeClosure closure[MAX_VOLUME_CLOSURE];
   int num_closure;
-};
+} ShaderVolumePhases;
 
 /* Volume Stack */
 

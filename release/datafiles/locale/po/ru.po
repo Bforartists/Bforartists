@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -37494,6 +37494,14 @@ msgid "Convex Hull"
 msgstr "Выпуклая оболочка"
 
 
+msgid "Only Edges & Faces"
+msgstr "Только рёбра и грани"
+
+
+msgid "Only Faces"
+msgstr "Только грани"
+
+
 msgid "Cross Product"
 msgstr "Вект. произведение"
 
@@ -39909,14 +39917,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Удалить ключевые кадры на текущем кадре для всех свойств указанного набора ключей"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Подтверждать успешность удаления"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Показывать сообщение, когда ключевые кадры успешно удалены"
-
-
 msgid "The Keying Set to use"
 msgstr "Используемый ключевой набор"
 
@@ -39959,14 +39959,6 @@ msgstr "Вставить ключевой кадр"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Вставить ключевые кадры на текущем кадре для всех свойств используемого ключевого набора"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Подтверждать успешность вставки"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Показать всплывающее окно при успешном добавлении ключевых кадров"
 
 
 msgctxt "Operator"
@@ -48469,14 +48461,6 @@ msgstr "Удалить выделенные вершины, рёбра или г
 
 msgid "Method used for deleting mesh data"
 msgstr "Метод, используемый для удаления данных меша"
-
-
-msgid "Only Edges & Faces"
-msgstr "Только рёбра и грани"
-
-
-msgid "Only Faces"
-msgstr "Только грани"
 
 
 msgctxt "Operator"
@@ -65060,6 +65044,10 @@ msgid "Frame Overlay"
 msgstr "Наложение кадра"
 
 
+msgid "Gizmo"
+msgstr "Манипулятор"
+
+
 msgid "Proxy Settings"
 msgstr "Настройки прокси"
 
@@ -65328,10 +65316,6 @@ msgstr "Интерфейс"
 
 msgid "Gradient Colors"
 msgstr "Цвета градиента"
-
-
-msgid "Gizmo"
-msgstr "Манипулятор"
 
 
 msgid "Brush Presets"
@@ -69122,14 +69106,6 @@ msgstr "Использовать размытие движения для это
 
 msgid "Store Denoising Passes"
 msgstr "Сохранять проходы для шумоподавления"
-
-
-msgid "Debug Render Time"
-msgstr "Отладка времени рендера"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Время рендера в миллисекундах на каждый семпл в каждом пикселе"
 
 
 msgid "Use Denoising"
@@ -73699,8 +73675,16 @@ msgid "Use Strip Option"
 msgstr "Использовать настройки дорожек"
 
 
+msgid "Bounding Box Center"
+msgstr "Центр габаритного контейнера"
+
+
 msgid "Median Point"
 msgstr "Средняя точка"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Вращать вокруг 2D-курсора"
 
 
 msgid "Individual Origins"
@@ -74448,16 +74432,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Центр вращения/масштабирования"
 
 
-msgid "Bounding Box Center"
-msgstr "Центр габаритного контейнера"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Вращение вокруг центра габаритного контейнера выделенного объекта/объектов"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Вращать вокруг 2D-курсора"
 
 
 msgid "Pivot around each object's own origin"
@@ -75823,6 +75799,38 @@ msgid "Display frames rather than seconds"
 msgstr "Показывать кадры вместо секунд"
 
 
+msgid "Show Gizmo"
+msgstr "Показать манипулятор"
+
+
+msgid "Show gizmos of all types"
+msgstr "Показывать манипуляторы всех типов"
+
+
+msgid "Context Gizmo"
+msgstr "Контекстный манипулятор"
+
+
+msgid "Context sensitive gizmos for the active item"
+msgstr "Контекстный манипулятор для активного элемента"
+
+
+msgid "Navigate Gizmo"
+msgstr "Манипулятор навигации"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Манипуляторы навигации во вьюпорте"
+
+
+msgid "Tool Gizmo"
+msgstr "Манипулятор инструмента"
+
+
+msgid "Active tool gizmo"
+msgstr "Манипулятор активного инструмента"
+
+
 msgid "Show Overexposed"
 msgstr "Отображать с передержкой"
 
@@ -76083,14 +76091,6 @@ msgid "Show reconstructed camera path"
 msgstr "Отображать восстановленную траекторию камеры"
 
 
-msgid "Show Gizmo"
-msgstr "Показать манипулятор"
-
-
-msgid "Show gizmos of all types"
-msgstr "Показывать манипуляторы всех типов"
-
-
 msgid "Show Camera Focus Distance"
 msgstr "Показывать фокусное расстояние камеры"
 
@@ -76101,14 +76101,6 @@ msgstr "Манипулятор для настройки фокусного ра
 
 msgid "Show Camera Lens"
 msgstr "Показать линзы камеры"
-
-
-msgid "Context Gizmo"
-msgstr "Контекстный манипулятор"
-
-
-msgid "Context sensitive gizmos for the active item"
-msgstr "Контекстный манипулятор для активного элемента"
 
 
 msgid "Show Empty Force Field"
@@ -76143,14 +76135,6 @@ msgid "Gizmo to adjust spot and area size"
 msgstr "Манипулятор для настройки размеров прожекторов и протяжённых источников света"
 
 
-msgid "Navigate Gizmo"
-msgstr "Манипулятор навигации"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Манипуляторы навигации во вьюпорте"
-
-
 msgid "Show Object Rotation"
 msgstr "Показать поворот объекта"
 
@@ -76173,14 +76157,6 @@ msgstr "Показать положение объекта"
 
 msgid "Gizmo to adjust location"
 msgstr "Манипулятор для настройки положения"
-
-
-msgid "Tool Gizmo"
-msgstr "Манипулятор инструмента"
-
-
-msgid "Active tool gizmo"
-msgstr "Манипулятор активного инструмента"
 
 
 msgid "Show Reconstruction"
@@ -80901,13 +80877,13 @@ msgstr "Ноды: общее"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Видеоредактор"
+msgid "SequencerCommon"
+msgstr "Видеоредактор: общее"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Видеоредактор: общее"
+msgid "Sequencer"
+msgstr "Видеоредактор"
 
 
 msgctxt "WindowManager"
@@ -81162,10 +81138,6 @@ msgstr "Шумоподавление"
 
 msgid "Denoising Data"
 msgstr "Данные шумоподавления"
-
-
-msgid "Render Time"
-msgstr "Время рендера"
 
 
 msgid "Viewports"
@@ -82406,6 +82378,10 @@ msgstr "Старый"
 
 msgid "Date"
 msgstr "Дата"
+
+
+msgid "Render Time"
+msgstr "Время рендера"
 
 
 msgid "Hostname"
@@ -84129,6 +84105,18 @@ msgstr "Гамма:"
 
 msgid "Gain:"
 msgstr "Уровень белого:"
+
+
+msgid "Viewport Gizmos"
+msgstr "Манипуляторы вьюпорта"
+
+
+msgid "Navigate"
+msgstr "Навигация"
+
+
+msgid "Active Tools"
+msgstr "Активные инструменты"
 
 
 msgctxt "Operator"
@@ -85933,18 +85921,6 @@ msgstr "Включить/выключить наложения"
 
 msgid "Object Types Visibility"
 msgstr "Видимость типов объектов"
-
-
-msgid "Viewport Gizmos"
-msgstr "Манипуляторы вьюпорта"
-
-
-msgid "Navigate"
-msgstr "Навигация"
-
-
-msgid "Active Tools"
-msgstr "Активные инструменты"
 
 
 msgid "Object Gizmos"
@@ -94097,44 +94073,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Цвет1"
-
-
-msgid "Color2"
-msgstr "Цвет2"
-
-
-msgid "Mortar"
-msgstr "Цемент"
-
-
-msgid "Mortar Size"
-msgstr "Размер цемента"
-
-
-msgid "Mortar Smooth"
-msgstr "Смазывание цемента"
-
-
-msgid "Brick Width"
-msgstr "Ширина плитки"
-
-
-msgid "Row Height"
-msgstr "Высота ряда"
-
-
 msgid "Reflection"
 msgstr "Отражение"
-
-
-msgid "Detail Scale"
-msgstr "Масштаб деталей"
-
-
-msgid "Detail Roughness"
-msgstr "Детальная шероховатость"
 
 
 msgid "Flame"
@@ -94183,6 +94123,26 @@ msgstr "Плитка 1"
 
 msgid "Bricks 2"
 msgstr "Плитка 2"
+
+
+msgid "Mortar"
+msgstr "Цемент"
+
+
+msgid "Brick Width"
+msgstr "Ширина плитки"
+
+
+msgid "Row Height"
+msgstr "Высота ряда"
+
+
+msgid "Color1"
+msgstr "Цвет1"
+
+
+msgid "Color2"
+msgstr "Цвет2"
 
 
 msgid "Coordinate 1"

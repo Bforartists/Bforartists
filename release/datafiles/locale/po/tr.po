@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -9167,6 +9167,14 @@ msgid "Original"
 msgstr "Orijinali Koru"
 
 
+msgid "Only Edges & Faces"
+msgstr "Kenarlar ve Yüzeyler"
+
+
+msgid "Only Faces"
+msgstr "Yalnız Yüzeyler"
+
+
 msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
@@ -9884,10 +9892,6 @@ msgstr "Animasyonu Oluştur"
 
 msgid "Remove all keyframe animation for selected objects"
 msgstr "Seçili İşaretler arasında"
-
-
-msgid "Confirm Successful Delete"
-msgstr "Aktif pozisyonu sil"
 
 
 msgid "The Keying Set to use"
@@ -12752,14 +12756,6 @@ msgstr "Kesit Sınırını Temizle"
 
 msgid "Clear vertex skin layer"
 msgstr "Dosya adı"
-
-
-msgid "Only Edges & Faces"
-msgstr "Kenarlar ve Yüzeyler"
-
-
-msgid "Only Faces"
-msgstr "Yalnız Yüzeyler"
 
 
 msgctxt "Operator"
@@ -19891,6 +19887,10 @@ msgid "Show Grid"
 msgstr "Izgara Ekle"
 
 
+msgid "Bounding Box Center"
+msgstr "Kutusal Sınır Merkezi "
+
+
 msgid "Median Point"
 msgstr "Merkez Nokta "
 
@@ -20053,10 +20053,6 @@ msgstr "Anahat"
 
 msgid "Pivot center for rotation/scaling"
 msgstr "Çevirme/Ölçekleme Ekseni (Kısayollar: Virgül, Shift Virgül)"
-
-
-msgid "Bounding Box Center"
-msgstr "Kutusal Sınır Merkezi "
 
 
 msgid "Show Blue Channel"
@@ -24428,32 +24424,8 @@ msgid "Dot"
 msgstr "Açı"
 
 
-msgid "Color1"
-msgstr "Renk"
-
-
-msgid "Color2"
-msgstr "Renk"
-
-
-msgid "Mortar Size"
-msgstr "Ekstrüzyon Boyutu"
-
-
-msgid "Brick Width"
-msgstr "Genişlik Boyutu"
-
-
-msgid "Row Height"
-msgstr "Yükseklik"
-
-
 msgid "Reflection"
 msgstr "Yansıma"
-
-
-msgid "Detail Scale"
-msgstr "Döndürme & Ölçek"
 
 
 msgid "Emission Color"
@@ -24470,6 +24442,22 @@ msgstr "Mantık düzeni"
 
 msgid "Bricks 2"
 msgstr "Mantık düzeni"
+
+
+msgid "Brick Width"
+msgstr "Genişlik Boyutu"
+
+
+msgid "Row Height"
+msgstr "Yükseklik"
+
+
+msgid "Color1"
+msgstr "Renk"
+
+
+msgid "Color2"
+msgstr "Renk"
 
 
 msgid "Coordinate 1"

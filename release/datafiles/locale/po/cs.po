@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -18418,6 +18418,18 @@ msgid "Original"
 msgstr "Originální"
 
 
+msgid "Delete Geometry"
+msgstr "Odstranit Geometrii"
+
+
+msgid "Only Edges & Faces"
+msgstr "Hrany a plošky"
+
+
+msgid "Only Faces"
+msgstr "Pouze plošky"
+
+
 msgid "Distribution Method"
 msgstr "Metoda Distribuce"
 
@@ -18532,10 +18544,6 @@ msgstr "Typ rotace"
 
 msgid "Z Axis"
 msgstr "Osa Z"
-
-
-msgid "Delete Geometry"
-msgstr "Odstranit Geometrii"
 
 
 msgid "Point Distribute"
@@ -19981,14 +19989,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Odstraní klíčový snímek na vybraném snímku pro všechna nastavení v určené klíčové sestavě"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Potvrdit úspěšné odstranění"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Zobrazit vyskakovací okno, když budou klíčové snímky úspěšně odstraněny"
-
-
 msgid "The Keying Set to use"
 msgstr "Klíčovací sestava pro použití"
 
@@ -20014,10 +20014,6 @@ msgstr "Vložit klíčový snímek"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Vloží klíčové snímky na vybraný snímek pro všechna nastavení v určeném klíčovací sestavy"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Potvrdit Úspěšné Vložení"
 
 
 msgctxt "Operator"
@@ -24681,14 +24677,6 @@ msgstr "Decimovat Geometrii"
 
 msgid "Delete selected vertices, edges or faces"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
-
-
-msgid "Only Edges & Faces"
-msgstr "Hrany a plošky"
-
-
-msgid "Only Faces"
-msgstr "Pouze plošky"
 
 
 msgctxt "Operator"
@@ -39439,6 +39427,14 @@ msgid "Scene size"
 msgstr "Velikost scény"
 
 
+msgid "Show Gizmo"
+msgstr "Zobrazit Gizmo"
+
+
+msgid "Show gizmos of all types"
+msgstr "Zobrazit gizma všech typů"
+
+
 msgid "Separate Colors"
 msgstr "Oddělit"
 
@@ -39585,14 +39581,6 @@ msgstr "Generátory"
 
 msgid "Show reconstructed camera path"
 msgstr "Jemnost dělení"
-
-
-msgid "Show Gizmo"
-msgstr "Zobrazit Gizmo"
-
-
-msgid "Show gizmos of all types"
-msgstr "Zobrazit gizma všech typů"
 
 
 msgid "Show Reconstruction"
@@ -41963,10 +41951,6 @@ msgid "Denoising"
 msgstr "Odstranění šumu"
 
 
-msgid "Render Time"
-msgstr "Čas vykreslení"
-
-
 msgid "Pipeline"
 msgstr "Pipeline"
 
@@ -42697,6 +42681,10 @@ msgstr "Starý"
 
 msgid "Date"
 msgstr "Datum"
+
+
+msgid "Render Time"
+msgstr "Čas vykreslení"
 
 
 msgid "Include Labels"
@@ -43921,6 +43909,14 @@ msgstr "Očistit"
 
 msgid "Gamma:"
 msgstr "Gama:"
+
+
+msgid "Navigate"
+msgstr "Navigovat"
+
+
+msgid "Active Tools"
+msgstr "Aktivní nástroje"
 
 
 msgctxt "Operator"
@@ -45423,14 +45419,6 @@ msgstr "Místní Kamera"
 
 msgid "Object Types Visibility"
 msgstr "Viditelnost Typů Objektů"
-
-
-msgid "Navigate"
-msgstr "Navigovat"
-
-
-msgid "Active Tools"
-msgstr "Aktivní nástroje"
 
 
 msgid "Look At"
@@ -48833,28 +48821,8 @@ msgid "Dot"
 msgstr "Kvadratické"
 
 
-msgid "Color1"
-msgstr "Barva 1"
-
-
-msgid "Color2"
-msgstr "Barva 2"
-
-
-msgid "Brick Width"
-msgstr "Filtr skriptů"
-
-
-msgid "Row Height"
-msgstr "Výška"
-
-
 msgid "Reflection"
 msgstr "Zrcadlení"
-
-
-msgid "Detail Scale"
-msgstr "Zhranatit"
 
 
 msgid "Density Attribute"
@@ -48875,6 +48843,22 @@ msgstr "Vzory"
 
 msgid "Texture Node Editor"
 msgstr "Editor Uzlů Textur"
+
+
+msgid "Brick Width"
+msgstr "Filtr skriptů"
+
+
+msgid "Row Height"
+msgstr "Výška"
+
+
+msgid "Color1"
+msgstr "Barva 1"
+
+
+msgid "Color2"
+msgstr "Barva 2"
 
 
 msgid "Coordinate 1"
