@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11579,6 +11579,14 @@ msgid "Convex Hull"
 msgstr "Konvext hölje"
 
 
+msgid "Only Edges & Faces"
+msgstr "Bana"
+
+
+msgid "Only Faces"
+msgstr "Bana"
+
+
 msgid "Z Axis"
 msgstr "Zooma In"
 
@@ -16109,14 +16117,6 @@ msgstr "Flytta Till Lager"
 
 msgid "Delete selected vertices, edges or faces"
 msgstr "Markera Länkad"
-
-
-msgid "Only Edges & Faces"
-msgstr "Bana"
-
-
-msgid "Only Faces"
-msgstr "Bana"
 
 
 msgctxt "Operator"
@@ -30037,16 +30037,12 @@ msgid "Dot"
 msgstr "Rot"
 
 
-msgid "Color1"
-msgstr "Färg 1"
+msgid "Reflection"
+msgstr "Markera Länkad"
 
 
-msgid "Color2"
-msgstr "Färg"
-
-
-msgid "Mortar Size"
-msgstr "Beräkna Normaler"
+msgid "Patterns"
+msgstr "Markera Rad"
 
 
 msgid "Brick Width"
@@ -30057,16 +30053,12 @@ msgid "Row Height"
 msgstr "Höjd"
 
 
-msgid "Reflection"
-msgstr "Markera Länkad"
+msgid "Color1"
+msgstr "Färg 1"
 
 
-msgid "Detail Scale"
-msgstr "Markera Länkad"
-
-
-msgid "Patterns"
-msgstr "Markera Rad"
+msgid "Color2"
+msgstr "Färg"
 
 
 msgid "Coordinate 1"

@@ -21,7 +21,6 @@
 #pragma once
 
 struct Main;
-//
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,6 +67,10 @@ bool BKE_asset_library_find_suitable_root_path_from_path(
  */
 bool BKE_asset_library_find_suitable_root_path_from_main(
     const struct Main *bmain, char r_library_path[768 /* FILE_MAXDIR */]);
+
+/** Look up the asset's catalog and copy its simple name into #asset_data. */
+void BKE_asset_library_refresh_catalog_simplename(struct AssetLibrary *asset_library,
+                                                  struct AssetMetaData *asset_data);
 
 #ifdef __cplusplus
 }

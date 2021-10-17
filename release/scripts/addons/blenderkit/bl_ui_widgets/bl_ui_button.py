@@ -113,16 +113,17 @@ class BL_UI_Button(BL_UI_Widget):
         self.shader.uniform_float("color", color)
 
     def draw_text(self, area_height):
-        blf.size(0, self._text_size, 72)
+        font_id = 1
+        blf.size(font_id, self._text_size, 72)
         size = blf.dimensions(0, self._text)
 
         textpos_y = area_height - self._textpos[1] - (self.height + size[1]) / 2.0
-        blf.position(0, self._textpos[0] + (self.width - size[0]) / 2.0, textpos_y + 1, 0)
+        blf.position(font_id, self._textpos[0] + (self.width - size[0]) / 2.0, textpos_y + 1, 0)
 
         r, g, b, a = self._text_color
-        blf.color(0, r, g, b, a)
+        blf.color(font_id, r, g, b, a)
 
-        blf.draw(0, self._text)
+        blf.draw(font_id, self._text)
 
     def draw_image(self):
         if self.__image is not None:

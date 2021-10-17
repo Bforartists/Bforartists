@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -20952,10 +20952,6 @@ msgid "Exact"
 msgstr "Exakt"
 
 
-msgid "Self"
-msgstr "Selbst"
-
-
 msgid "Start frame of the effect"
 msgstr "Startbild des Effektes"
 
@@ -25033,6 +25029,38 @@ msgid "Anti-Alias Z"
 msgstr "An­ti­ali­a­sing Z"
 
 
+msgid "Align the X axis with the vector"
+msgstr "Ausrichten der X-Achse am Vektor"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Ausrichten der Y-Achse am Vektor"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Ausrichten der Z-Achse am Vektor"
+
+
+msgid "Axis to rotate around"
+msgstr "Achse um welche gedreht wird"
+
+
+msgid "Automatically detect the best rotation axis to rotate towards the vector"
+msgstr "Automatische Erkennung der besten Rotationsachse, um sich zum Vektor zu drehen"
+
+
+msgid "Rotate around the local X axis"
+msgstr "Drehen um die lokale X-Achse"
+
+
+msgid "Rotate around the local Y axis"
+msgstr "Drehen um die lokale Y-Achse"
+
+
+msgid "Rotate around the local Z axis"
+msgstr "Drehen um die lokale Z-Achse"
+
+
 msgid "And"
 msgstr "Und"
 
@@ -25109,6 +25137,18 @@ msgid "Convex Hull"
 msgstr "Konvexe Hülse"
 
 
+msgid "Delete Geometry"
+msgstr "Geometrie löschen"
+
+
+msgid "Only Edges & Faces"
+msgstr "Nur Kanten & Flächen"
+
+
+msgid "Only Faces"
+msgstr "Nur Flächen"
+
+
 msgid "Distribution Method"
 msgstr "Verteilungsmethode"
 
@@ -25123,38 +25163,6 @@ msgstr "Ist Ansichtsfenster"
 
 msgid "Join Geometry"
 msgstr "Geometrie verbinden"
-
-
-msgid "Align the X axis with the vector"
-msgstr "Ausrichten der X-Achse am Vektor"
-
-
-msgid "Align the Y axis with the vector"
-msgstr "Ausrichten der Y-Achse am Vektor"
-
-
-msgid "Align the Z axis with the vector"
-msgstr "Ausrichten der Z-Achse am Vektor"
-
-
-msgid "Axis to rotate around"
-msgstr "Achse um welche gedreht wird"
-
-
-msgid "Automatically detect the best rotation axis to rotate towards the vector"
-msgstr "Automatische Erkennung der besten Rotationsachse, um sich zum Vektor zu drehen"
-
-
-msgid "Rotate around the local X axis"
-msgstr "Drehen um die lokale X-Achse"
-
-
-msgid "Rotate around the local Y axis"
-msgstr "Drehen um die lokale Y-Achse"
-
-
-msgid "Rotate around the local Z axis"
-msgstr "Drehen um die lokale Z-Achse"
 
 
 msgid "Min Max"
@@ -25299,10 +25307,6 @@ msgstr "Drehen eines Punktes mit Z-Achse"
 
 msgid "Rotate a point using XYZ order"
 msgstr "Drehen eines Punktes mit XYZ-Reihenfolge"
-
-
-msgid "Delete Geometry"
-msgstr "Geometrie löschen"
 
 
 msgid "Point Scale"
@@ -26824,14 +26828,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Schlüsselbilder von dem aktuellen Einzelbild entfernen, für alle Eigenschaften im festgelegten Schlüsselbildsatz"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Erfolgreiches Löschen bestätigt"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Ein Pop-up zeigen, wenn die Schlüsselbilder erfolgreich entfernt werden"
-
-
 msgctxt "Operator"
 msgid "Delete Keyframe (Buttons)"
 msgstr "Schlüsselbild löschen (Knöpfe)"
@@ -26854,14 +26850,6 @@ msgstr "Schlüsselbild einfügen"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Schlüsselbilder auf dem aktuellen Einzelbild einfügen, für alle Eigenschaften im festgelegten Schlüsselbildsatz"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Erfolgreiches Einfügen bestätigen"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Ein Pop-up zeigen, wenn die Schlüsselbilder erfolgreich hinzugefügt wurden"
 
 
 msgctxt "Operator"
@@ -32266,14 +32254,6 @@ msgstr "Text durch Typ löschen"
 
 msgid "Delete selected vertices, edges or faces"
 msgstr "Ausgewählte Punkt, Kanten oder Flächen löschen"
-
-
-msgid "Only Edges & Faces"
-msgstr "Nur Kanten & Flächen"
-
-
-msgid "Only Faces"
-msgstr "Nur Flächen"
 
 
 msgctxt "Operator"
@@ -41754,6 +41734,10 @@ msgid "Frame Overlay"
 msgstr "Einzelbildüberlagerung"
 
 
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
 msgid "Proxy Settings"
 msgstr "Proxyeinstellungen"
 
@@ -41985,10 +41969,6 @@ msgstr "Benutzeroberfläche"
 
 msgid "Gradient Colors"
 msgstr "Malfarbe"
-
-
-msgid "Gizmo"
-msgstr "Gizmo"
 
 
 msgid "Brush Presets"
@@ -44670,10 +44650,6 @@ msgid "Use Motion Blur"
 msgstr "Bewegungsunschärfe verwenden"
 
 
-msgid "Debug Render Time"
-msgstr "Debug Renderzeit"
-
-
 msgid "Debug Sample Count"
 msgstr "Debug Beispielzähler"
 
@@ -47346,8 +47322,16 @@ msgid "Sequencer Tool Settings"
 msgstr "Sequenzer Werkzeugeinstellungen"
 
 
+msgid "Bounding Box Center"
+msgstr "Begrenzungsrahmen-Zentrum"
+
+
 msgid "Median Point"
 msgstr "Mittelwert"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Drehpunkt um den 2D-Cursor"
 
 
 msgid "Individual Origins"
@@ -47719,16 +47703,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Drehpunktzentum zum Rotieren/Skalieren"
 
 
-msgid "Bounding Box Center"
-msgstr "Begrenzungsrahmen-Zentrum"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Drehpunkt um die Mitte des Begrenzungsrahmen von ausgewählten Objekten"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Drehpunkt um den 2D-Cursor"
 
 
 msgid "Pivot around each object's own origin"
@@ -48598,6 +48574,10 @@ msgid "Display Frames"
 msgstr "Einzelbilder anzeigen"
 
 
+msgid "Navigate Gizmo"
+msgstr "Gizmo steuern"
+
+
 msgid "Separate Colors"
 msgstr "Farben trennen"
 
@@ -48740,10 +48720,6 @@ msgstr "Kameralinse anzeigen"
 
 msgid "Show Light Size"
 msgstr "Lichtgröße anzeigen"
-
-
-msgid "Navigate Gizmo"
-msgstr "Gizmo steuern"
 
 
 msgid "Show Object Rotation"
@@ -51909,13 +51885,13 @@ msgstr "Knoten allgemein"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Sequenzer"
+msgid "SequencerCommon"
+msgstr "Sequenzer normal"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Sequenzer normal"
+msgid "Sequencer"
+msgstr "Sequenzer"
 
 
 msgctxt "WindowManager"
@@ -52198,10 +52174,6 @@ msgstr "Rauschreduzierungsdaten"
 
 msgid "Indexes"
 msgstr "Kennzahlen"
-
-
-msgid "Render Time"
-msgstr "Renderzeit"
 
 
 msgid "Pipeline"
@@ -53617,6 +53589,10 @@ msgstr "Alt"
 
 msgid "Date"
 msgstr "Datum"
+
+
+msgid "Render Time"
+msgstr "Renderzeit"
 
 
 msgid "Saving"
@@ -55288,6 +55264,14 @@ msgstr "Gamma:"
 
 msgid "Gain:"
 msgstr "Verstärkung:"
+
+
+msgid "Navigate"
+msgstr "Navigiere"
+
+
+msgid "Active Tools"
+msgstr "Aktives Werkzeug"
 
 
 msgid "Offsets"
@@ -57174,14 +57158,6 @@ msgstr "Lokale Kamera"
 
 msgid "Camera to View"
 msgstr "Kamera auf Ansicht"
-
-
-msgid "Navigate"
-msgstr "Navigiere"
-
-
-msgid "Active Tools"
-msgstr "Aktives Werkzeug"
 
 
 msgid "Look At"
@@ -62145,44 +62121,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Farbe1"
-
-
-msgid "Color2"
-msgstr "Farbe2"
-
-
-msgid "Mortar"
-msgstr "Mauer"
-
-
-msgid "Mortar Size"
-msgstr "Mauergröße"
-
-
-msgid "Mortar Smooth"
-msgstr "Mauerweichheit"
-
-
-msgid "Brick Width"
-msgstr "Ziegelbreite"
-
-
-msgid "Row Height"
-msgstr "Zeilenhöhe"
-
-
 msgid "Reflection"
 msgstr "Reflexion"
-
-
-msgid "Detail Scale"
-msgstr "Detail-Skalierung"
-
-
-msgid "Detail Roughness"
-msgstr "Rauheitsdetails"
 
 
 msgid "Flame"
@@ -62231,6 +62171,26 @@ msgstr "Ziegel 1"
 
 msgid "Bricks 2"
 msgstr "Ziegel 2"
+
+
+msgid "Mortar"
+msgstr "Mauer"
+
+
+msgid "Brick Width"
+msgstr "Ziegelbreite"
+
+
+msgid "Row Height"
+msgstr "Zeilenhöhe"
+
+
+msgid "Color1"
+msgstr "Farbe1"
+
+
+msgid "Color2"
+msgstr "Farbe2"
 
 
 msgid "Coordinate 1"

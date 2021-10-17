@@ -232,7 +232,7 @@ class KillBgProcess(bpy.types.Operator):
                     if source.name == bpy.context.scene.name:
                         kill = True
                 if source.bl_rna.name == 'Image' and self.process_source == 'HDR':
-                    ui_props = bpy.context.scene.blenderkitUI
+                    ui_props = bpy.context.window_manager.blenderkitUI
                     if source.name == ui_props.hdr_upload_image.name:
                         kill = False
 

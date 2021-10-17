@@ -375,7 +375,7 @@ def search_timer():
     # finish loading thumbs from queues
     global all_thumbs_loaded
     if not all_thumbs_loaded:
-        ui_props = bpy.context.scene.blenderkitUI
+        ui_props = bpy.context.window_manager.blenderkitUI
         search_name = f'bkit {ui_props.asset_type.lower()} search'
         wm = bpy.context.window_manager
         if wm.get(search_name) is not None:
@@ -393,7 +393,7 @@ def search_timer():
         return 1.0
     # don't do anything while dragging - this could switch asset during drag, and make results list length different,
     # causing a lot of throuble.
-    if bpy.context.scene.blenderkitUI.dragging:
+    if bpy.context.window_manager.blenderkitUI.dragging:
         # utils.p('end search timer')
 
         return 0.5
@@ -433,7 +433,7 @@ def search_timer():
 
             ok, error = check_errors(rdata)
             if ok:
-                ui_props = bpy.context.scene.blenderkitUI
+                ui_props = bpy.context.window_manager.blenderkitUI
                 orig_len = len(result_field)
 
                 for ri, r in enumerate(rdata['results']):
@@ -460,9 +460,9 @@ def search_timer():
                 wm[search_name + ' orig'] = rdata
                 wm['search results orig'] = rdata
 
-                if len(result_field) < ui_props.scrolloffset or not (thread[0].params.get('get_next')):
+                if len(result_field) < ui_props.scroll_offset or not (thread[0].params.get('get_next')):
                     # jump back
-                    ui_props.scrolloffset = 0
+                    ui_props.scroll_offset = 0
                 props.search_error = False
                 props.report = 'Found %i results. ' % (wm['search results orig']['count'])
                 if len(wm['search results']) == 0:
@@ -490,7 +490,7 @@ def search_timer():
 def load_preview(asset, index):
     scene = bpy.context.scene
     # FIRST START SEARCH
-    props = scene.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
     s = bpy.context.scene
     results = bpy.context.window_manager.get('search results')
@@ -541,7 +541,7 @@ def load_preview(asset, index):
 def load_previews():
     scene = bpy.context.scene
     # FIRST START SEARCH
-    props = scene.blenderkitUI
+    props = bpy.context.window_manager.blenderkitUI
     directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
     s = bpy.context.scene
     results = bpy.context.window_manager.get('search results')
@@ -1332,7 +1332,7 @@ def search(category='', get_next=False, author_id=''):
     # mt('start')
     scene = bpy.context.scene
     wm = bpy.context.window_manager
-    ui_props = scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
 
     props = utils.get_search_props()
     if ui_props.asset_type == 'MODEL':
@@ -1423,7 +1423,7 @@ def search(category='', get_next=False, author_id=''):
 
 def update_filters():
     sprops = utils.get_search_props()
-    ui_props = bpy.context.scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     fcommon = sprops.own_only or \
               sprops.search_texture_resolution or \
               sprops.search_file_size or \
@@ -1447,7 +1447,7 @@ def search_update(self, context):
     utils.p('search updater')
     # if self.search_keywords != '':
     update_filters()
-    ui_props = bpy.context.scene.blenderkitUI
+    ui_props = bpy.context.window_manager.blenderkitUI
     if ui_props.down_up != 'SEARCH':
         ui_props.down_up = 'SEARCH'
 

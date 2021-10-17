@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -34459,6 +34459,14 @@ msgid "Convex Hull"
 msgstr "Coque convexe"
 
 
+msgid "Only Edges & Faces"
+msgstr "Arêtes & faces uniquement"
+
+
+msgid "Only Faces"
+msgstr "Faces seulement"
+
+
 msgid "Cross Product"
 msgstr "Produit vectoriel"
 
@@ -36608,14 +36616,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Supprimer les images clés de la frame courante pour toutes les propriétés dans l’ensemble de clés spécifié"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Confirmer suppression réussie"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Afficher un message quand les images clés sont enlevées avec succès"
-
-
 msgid "The Keying Set to use"
 msgstr "L’ensemble de clés à utiliser"
 
@@ -36654,14 +36654,6 @@ msgstr "Insérer image clé"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Insérer des images clé à la frame courante pour toutes les propriétés dans l’ensemble de clés spécifié"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Confirmer insertion réussie"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Afficher un message quand les images clés sont ajoutées avec succès"
 
 
 msgctxt "Operator"
@@ -44008,14 +44000,6 @@ msgstr "Supprimer les vertices, arêtes ou faces sélectionnés"
 
 msgid "Method used for deleting mesh data"
 msgstr "Méthode utilisée pour supprimer des données mesh"
-
-
-msgid "Only Edges & Faces"
-msgstr "Arêtes & faces uniquement"
-
-
-msgid "Only Faces"
-msgstr "Faces seulement"
 
 
 msgctxt "Operator"
@@ -61765,14 +61749,6 @@ msgid "Use motion blur for this object"
 msgstr "Utiliser le flou cinétique pour cet objet"
 
 
-msgid "Debug Render Time"
-msgstr "Temps de rendu débogage"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Temps de rendu en millisecondes par échantillon et par pixel"
-
-
 msgid "Use Denoising"
 msgstr "Utiliser débruitage"
 
@@ -65264,8 +65240,16 @@ msgid "Use Strip Option"
 msgstr "Utiliser option de bande"
 
 
+msgid "Bounding Box Center"
+msgstr "Centre de la boite englobante"
+
+
 msgid "Median Point"
 msgstr "Barycentre"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Pivoter autour du curseur 2D"
 
 
 msgid "Individual Origins"
@@ -65753,16 +65737,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Centre pivot pour les rotation/redimensionnement"
 
 
-msgid "Bounding Box Center"
-msgstr "Centre de la boite englobante"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Pivoter autour du centre de la boîte englobante des objets sélectionnés"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Pivoter autour du curseur 2D"
 
 
 msgid "Pivot around each object's own origin"
@@ -70550,13 +70526,13 @@ msgstr "Nœuds, générique"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Séquenceur"
+msgid "SequencerCommon"
+msgstr "Séquenceur, commun"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Séquenceur, commun"
+msgid "Sequencer"
+msgstr "Séquenceur"
 
 
 msgctxt "WindowManager"
@@ -80277,40 +80253,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Couleur 1"
-
-
-msgid "Color2"
-msgstr "Couleur 2"
-
-
-msgid "Mortar"
-msgstr "Mortier"
-
-
-msgid "Mortar Size"
-msgstr "Taille de mortier"
-
-
-msgid "Mortar Smooth"
-msgstr "Adoucissement de mortier"
-
-
-msgid "Brick Width"
-msgstr "Largeur de brique"
-
-
-msgid "Row Height"
-msgstr "Hauteur de rangée"
-
-
 msgid "Reflection"
 msgstr "Réflexion"
-
-
-msgid "Detail Scale"
-msgstr "Échelle de détail"
 
 
 msgid "Flame"
@@ -80359,6 +80303,26 @@ msgstr "Briques 1"
 
 msgid "Bricks 2"
 msgstr "Briques 2"
+
+
+msgid "Mortar"
+msgstr "Mortier"
+
+
+msgid "Brick Width"
+msgstr "Largeur de brique"
+
+
+msgid "Row Height"
+msgstr "Hauteur de rangée"
+
+
+msgid "Color1"
+msgstr "Couleur 1"
+
+
+msgid "Color2"
+msgstr "Couleur 2"
 
 
 msgid "Coordinate 1"
