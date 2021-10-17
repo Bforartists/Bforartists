@@ -39,7 +39,7 @@ import os
 import bpy
 import mathutils
 
-from bpy_extras.io_utils import create_derived_objects, free_derived_objects
+from bpy_extras.io_utils import create_derived_objects
 
 
 # h3d defines
@@ -1468,9 +1468,6 @@ def export(file,
             else:
                 #print "Info: Ignoring [%s], object type [%s] not handle yet" % (object.name,object.getType)
                 pass
-
-        if free:
-            free_derived_objects(obj_main)
 
         # ---------------------------------------------------------------------
         # write out children recursively

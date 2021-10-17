@@ -30,6 +30,7 @@
 #include "DNA_material_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_view3d_types.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -630,7 +631,9 @@ static void view3d_ob_drop_copy(wmDrag *drag, wmDropBox *drop)
   ID *id = WM_drag_get_local_ID_or_import_from_asset(drag, ID_OB);
 
   RNA_string_set(drop->ptr, "name", id->name + 2);
-  RNA_boolean_set(drop->ptr, "duplicate", false);
+  /* Don't duplicate ID's which were just imported. Only do that for existing, local IDs. */
+  const bool is_imported_id = drag->type == WM_DRAG_ASSET;
+  RNA_boolean_set(drop->ptr, "duplicate", !is_imported_id);
 }
 
 static void view3d_collection_drop_copy(wmDrag *drag, wmDropBox *drop)
@@ -1567,10 +1570,7 @@ static void space_view3d_listener(const wmSpaceTypeListenerParams *params)
     case NC_SCENE:
       switch (wmn->data) {
         case ND_WORLD: {
-          const bool use_scene_world = ((v3d->shading.type == OB_MATERIAL) &&
-                                        (v3d->shading.flag & V3D_SHADING_SCENE_WORLD)) ||
-                                       ((v3d->shading.type == OB_RENDER) &&
-                                        (v3d->shading.flag & V3D_SHADING_SCENE_WORLD_RENDER));
+          const bool use_scene_world = V3D_USES_SCENE_WORLD(v3d);
           if (v3d->flag2 & V3D_HIDE_OVERLAYS || use_scene_world) {
             ED_area_tag_redraw_regiontype(area, RGN_TYPE_WINDOW);
           }
@@ -1796,6 +1796,11 @@ void ED_spacetype_view3d(void)
 
   /* regions: hud */
   art = ED_area_type_hud(st->spaceid);
+  BLI_addhead(&st->regiontypes, art);
+
+  /* regions: xr */
+  art = MEM_callocN(sizeof(ARegionType), "spacetype view3d xr region");
+  art->regionid = RGN_TYPE_XR;
   BLI_addhead(&st->regiontypes, art);
 
   BKE_spacetype_register(st);

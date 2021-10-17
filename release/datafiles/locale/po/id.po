@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -22694,10 +22694,6 @@ msgid "Indexes"
 msgstr "Indeks"
 
 
-msgid "Render Time"
-msgstr "Waktu Render"
-
-
 msgid "Renders"
 msgstr "Render"
 
@@ -23645,6 +23641,10 @@ msgstr "Lama"
 
 msgid "Date"
 msgstr "Tanggal"
+
+
+msgid "Render Time"
+msgstr "Waktu Render"
 
 
 msgid "%.4g fps"
@@ -24762,6 +24762,10 @@ msgid "Gamma:"
 msgstr "Gamma:"
 
 
+msgid "Viewport Gizmos"
+msgstr "Gizmos Viewport"
+
+
 msgid "Offsets"
 msgstr "Offset"
 
@@ -25431,10 +25435,6 @@ msgstr "Tutup"
 msgctxt "Operator"
 msgid "View Selected"
 msgstr "Seleksi"
-
-
-msgid "Viewport Gizmos"
-msgstr "Gizmos Viewport"
 
 
 msgid "Viewport Overlays"
@@ -27090,34 +27090,6 @@ msgid "Color Fac"
 msgstr "Fac Warna"
 
 
-msgid "Color1"
-msgstr "Warna1"
-
-
-msgid "Color2"
-msgstr "Warna2"
-
-
-msgid "Mortar Size"
-msgstr "Ukuran Mortar"
-
-
-msgid "Brick Width"
-msgstr "Lebar"
-
-
-msgid "Row Height"
-msgstr "Tinggi"
-
-
-msgid "Detail Scale"
-msgstr "Skala Detail"
-
-
-msgid "Detail Roughness"
-msgstr "Kekasaran Detail"
-
-
 msgid "Flame"
 msgstr "Api"
 
@@ -27152,6 +27124,22 @@ msgstr "Batu Bata 1"
 
 msgid "Bricks 2"
 msgstr "Batu Bata 2"
+
+
+msgid "Brick Width"
+msgstr "Lebar"
+
+
+msgid "Row Height"
+msgstr "Tinggi"
+
+
+msgid "Color1"
+msgstr "Warna1"
+
+
+msgid "Color2"
+msgstr "Warna2"
 
 
 msgid "Coordinate 1"

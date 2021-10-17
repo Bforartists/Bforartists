@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -23981,6 +23981,14 @@ msgid "Convex Hull"
 msgstr "Guscio Convesso"
 
 
+msgid "Only Edges & Faces"
+msgstr "Solo Spigoli & Facce"
+
+
+msgid "Only Faces"
+msgstr "Solo Facce"
+
+
 msgid "Min Max"
 msgstr "Min Max"
 
@@ -25730,14 +25738,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Cancella i fotogr. chiave sul frame corrente per tutte le proprietà del Gruppo Chiavi specificato"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Conferma il successo della cancellazione"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Mostra un popup quando i keyframes sono stati aggiunti con successo"
-
-
 msgid "The Keying Set to use"
 msgstr "Il Gruppo Chiavi da usare"
 
@@ -25767,14 +25767,6 @@ msgstr "Inserisci Fotogramma Chiave"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Inserisce fotogr. chiave sul frame corrente per tutte le proprietà del Gruppo Chiavi specificato"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Conferma il successo dell'inserimento"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Mostra un popup quando i keyframes sono stati aggiunti con successo"
 
 
 msgctxt "Operator"
@@ -31552,14 +31544,6 @@ msgstr "Cancella vertici, spigoli o facce selezionati"
 
 msgid "Method used for deleting mesh data"
 msgstr "Metodo usato per cancellare i dati della mesh"
-
-
-msgid "Only Edges & Faces"
-msgstr "Solo Spigoli & Facce"
-
-
-msgid "Only Faces"
-msgstr "Solo Facce"
 
 
 msgctxt "Operator"
@@ -48499,8 +48483,16 @@ msgid "Use Strip Option"
 msgstr "Usa Opzione Spezzone"
 
 
+msgid "Bounding Box Center"
+msgstr "Centro Casella Delimitazione"
+
+
 msgid "Median Point"
 msgstr "Punto Medio"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Perno sul cursore 3D"
 
 
 msgid "Individual Origins"
@@ -48836,16 +48828,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Perno centrale per rotazione/scalatura"
 
 
-msgid "Bounding Box Center"
-msgstr "Centro Casella Delimitazione"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Pivot attorno al centro della casella di delimitazione dell'oggetto/i selezionato/i"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Perno sul cursore 3D"
 
 
 msgid "Pivot around each object's own origin"
@@ -52955,10 +52939,6 @@ msgid "Denoising"
 msgstr "Riduzione Rumore"
 
 
-msgid "Render Time"
-msgstr "Tempo di Render"
-
-
 msgid "No output node"
 msgstr "Nessun Nodo Uscita"
 
@@ -53681,6 +53661,10 @@ msgstr "Vecchio"
 
 msgid "Date"
 msgstr "Data"
+
+
+msgid "Render Time"
+msgstr "Tempo di Render"
 
 
 msgid "Buffer"
@@ -54643,6 +54627,10 @@ msgstr "Gamma:"
 
 msgid "Gain:"
 msgstr "Guadagno:"
+
+
+msgid "Active Tools"
+msgstr "Strumenti Attivi"
 
 
 msgctxt "Operator"
@@ -55928,10 +55916,6 @@ msgstr "Imposta come Materiale Attivo"
 msgctxt "Operator"
 msgid "View Selected"
 msgstr "Mostra Selezionati"
-
-
-msgid "Active Tools"
-msgstr "Strumenti Attivi"
 
 
 msgid "Look At"
@@ -60478,40 +60462,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Colore 1"
-
-
-msgid "Color2"
-msgstr "Colore 2"
-
-
-msgid "Mortar"
-msgstr "Malta"
-
-
-msgid "Mortar Size"
-msgstr "Dimensione Malta"
-
-
-msgid "Mortar Smooth"
-msgstr "Levigatura Malta"
-
-
-msgid "Brick Width"
-msgstr "Larghezza Mattone"
-
-
-msgid "Row Height"
-msgstr "Altezza Corso"
-
-
 msgid "Reflection"
 msgstr "Riflessione"
-
-
-msgid "Detail Scale"
-msgstr "Scala Dettaglio"
 
 
 msgid "Flame"
@@ -60536,6 +60488,26 @@ msgstr "Mattoni 1"
 
 msgid "Bricks 2"
 msgstr "Mattoni 2"
+
+
+msgid "Mortar"
+msgstr "Malta"
+
+
+msgid "Brick Width"
+msgstr "Larghezza Mattone"
+
+
+msgid "Row Height"
+msgstr "Altezza Corso"
+
+
+msgid "Color1"
+msgstr "Colore 1"
+
+
+msgid "Color2"
+msgstr "Colore 2"
 
 
 msgid "Coordinate 1"

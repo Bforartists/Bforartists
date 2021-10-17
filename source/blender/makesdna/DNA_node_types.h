@@ -1295,6 +1295,10 @@ typedef struct NodeInputVector {
   float vector[3];
 } NodeInputVector;
 
+typedef struct NodeInputColor {
+  float color[4];
+} NodeInputColor;
+
 typedef struct NodeInputString {
   char *string;
 } NodeInputString;
@@ -1432,6 +1436,11 @@ typedef struct NodeGeometryCurveSplineType {
   uint8_t spline_type;
 } NodeGeometryCurveSplineType;
 
+typedef struct NodeGeometrySetCurveHandlePositions {
+  /* GeometryNodeCurveHandleMode. */
+  uint8_t mode;
+} NodeGeometrySetCurveHandlePositions;
+
 typedef struct NodeGeometryCurveSetHandles {
   /* GeometryNodeCurveHandleType. */
   uint8_t handle_type;
@@ -1503,6 +1512,16 @@ typedef struct NodeGeometryAttributeTransfer {
   uint8_t mapping;
 } NodeGeometryAttributeTransfer;
 
+typedef struct NodeGeometryTransferAttribute {
+  /* CustomDataType. */
+  int8_t data_type;
+  /* AttributeDomain. */
+  int8_t domain;
+  /* GeometryNodeAttributeTransferMode. */
+  uint8_t mode;
+  char _pad[1];
+} NodeGeometryTransferAttribute;
+
 typedef struct NodeGeometryRaycast {
   /* GeometryNodeRaycastMapMode. */
   uint8_t mapping;
@@ -1537,6 +1556,18 @@ typedef struct NodeGeometryStringToCurves {
   uint8_t align_y;
   char _pad[1];
 } NodeGeometryStringToCurves;
+
+typedef struct NodeGeometryDeleteGeometry {
+  /* AttributeDomain. */
+  int8_t domain;
+  /* GeometryNodeDeleteGeometryMode. */
+  int8_t mode;
+} NodeGeometryDeleteGeometry;
+
+typedef struct NodeGeometrySeparateGeometry {
+  /* AttributeDomain. */
+  int8_t domain;
+} NodeGeometrySeparateGeometry;
 
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
@@ -1860,7 +1891,7 @@ enum {
   SHD_SUBSURFACE_CUBIC = 1,
   SHD_SUBSURFACE_GAUSSIAN = 2,
 #endif
-  SHD_SUBSURFACE_DIFFUSION = 3,
+  SHD_SUBSURFACE_BURLEY = 3,
   SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS = 4,
   SHD_SUBSURFACE_RANDOM_WALK = 5,
 };
@@ -2059,7 +2090,7 @@ typedef enum GeometryNodeRotatePointsSpace {
 
 typedef enum FunctionNodeRotateEulerSpace {
   FN_NODE_ROTATE_EULER_SPACE_OBJECT = 0,
-  FN_NODE_ROTATE_EULER_SPACE_POINT = 1,
+  FN_NODE_ROTATE_EULER_SPACE_LOCAL = 1,
 } FunctionNodeRotateEulerSpace;
 
 typedef enum GeometryNodeAlignRotationToVectorAxis {
@@ -2153,6 +2184,12 @@ typedef enum GeometryNodeAttributeTransferMapMode {
   GEO_NODE_LEGACY_ATTRIBUTE_TRANSFER_NEAREST = 1,
 } GeometryNodeAttributeTransferMapMode;
 
+typedef enum GeometryNodeAttributeTransferMode {
+  GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED = 0,
+  GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST = 1,
+  GEO_NODE_ATTRIBUTE_TRANSFER_INDEX = 2,
+} GeometryNodeAttributeTransferMode;
+
 typedef enum GeometryNodeRaycastMapMode {
   GEO_NODE_RAYCAST_INTERPOLATED = 0,
   GEO_NODE_RAYCAST_NEAREST = 1,
@@ -2191,6 +2228,12 @@ typedef enum GeometryNodeStringToCurvesAlignYMode {
   GEO_NODE_STRING_TO_CURVES_ALIGN_Y_BOTTOM_BASELINE = 3,
   GEO_NODE_STRING_TO_CURVES_ALIGN_Y_BOTTOM = 4,
 } GeometryNodeStringToCurvesAlignYMode;
+
+typedef enum GeometryNodeDeleteGeometryMode {
+  GEO_NODE_DELETE_GEOMETRY_MODE_ALL = 0,
+  GEO_NODE_DELETE_GEOMETRY_MODE_EDGE_FACE = 1,
+  GEO_NODE_DELETE_GEOMETRY_MODE_ONLY_FACE = 2,
+} GeometryNodeDeleteGeometryMode;
 
 #ifdef __cplusplus
 }

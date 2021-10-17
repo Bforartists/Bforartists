@@ -325,7 +325,7 @@ def check_modifiers(props, obs):
 
 def get_autotags():
     """ call all analysis functions """
-    ui = bpy.context.scene.blenderkitUI
+    ui = bpy.context.window_manager.blenderkitUI
     if ui.asset_type == 'MODEL':
         ob = utils.get_active_model()
         obs = utils.get_hierarchy(ob)

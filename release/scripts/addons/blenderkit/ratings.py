@@ -233,7 +233,7 @@ class FastRateMenu(Operator, ratings_utils.RatingsProperties):
     @classmethod
     def poll(cls, context):
         scene = bpy.context.scene
-        ui_props = scene.blenderkitUI
+        ui_props = bpy.context.window_manager.blenderkitUI
         return True;
 
     def draw(self, context):
@@ -242,7 +242,7 @@ class FastRateMenu(Operator, ratings_utils.RatingsProperties):
 
     def execute(self, context):
         scene = bpy.context.scene
-        ui_props = scene.blenderkitUI
+        ui_props = bpy.context.window_manager.blenderkitUI
         #get asset id
         if ui_props.active_index > -1:
             sr = bpy.context.window_manager['search results']
@@ -267,7 +267,7 @@ class FastRateMenu(Operator, ratings_utils.RatingsProperties):
 def rating_menu_draw(self, context):
     layout = self.layout
 
-    ui_props = context.scene.blenderkitUI
+    ui_props = context.window_manager.blenderkitUI
     sr = bpy.context.window_manager['search results']
 
     asset_search_index = ui_props.active_index
