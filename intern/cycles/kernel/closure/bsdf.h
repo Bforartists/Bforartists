@@ -41,32 +41,32 @@ CCL_NAMESPACE_BEGIN
 
 /* Returns the square of the roughness of the closure if it has roughness,
  * 0 for singular closures and 1 otherwise. */
-ccl_device_inline float bsdf_get_specular_roughness_squared(const ShaderClosure *sc)
+ccl_device_inline float bsdf_get_specular_roughness_squared(ccl_private const ShaderClosure *sc)
 {
   if (CLOSURE_IS_BSDF_SINGULAR(sc->type)) {
     return 0.0f;
   }
 
   if (CLOSURE_IS_BSDF_MICROFACET(sc->type)) {
-    MicrofacetBsdf *bsdf = (MicrofacetBsdf *)sc;
+    ccl_private MicrofacetBsdf *bsdf = (ccl_private MicrofacetBsdf *)sc;
     return bsdf->alpha_x * bsdf->alpha_y;
   }
 
   return 1.0f;
 }
 
-ccl_device_inline float bsdf_get_roughness_squared(const ShaderClosure *sc)
+ccl_device_inline float bsdf_get_roughness_squared(ccl_private const ShaderClosure *sc)
 {
   /* This version includes diffuse, mainly for baking Principled BSDF
    * where specular and metallic zero otherwise does not bake the
    * specified roughness parameter. */
   if (sc->type == CLOSURE_BSDF_OREN_NAYAR_ID) {
-    OrenNayarBsdf *bsdf = (OrenNayarBsdf *)sc;
+    ccl_private OrenNayarBsdf *bsdf = (ccl_private OrenNayarBsdf *)sc;
     return sqr(sqr(bsdf->roughness));
   }
 
   if (sc->type == CLOSURE_BSDF_PRINCIPLED_DIFFUSE_ID) {
-    PrincipledDiffuseBsdf *bsdf = (PrincipledDiffuseBsdf *)sc;
+    ccl_private PrincipledDiffuseBsdf *bsdf = (ccl_private PrincipledDiffuseBsdf *)sc;
     return sqr(sqr(bsdf->roughness));
   }
 
@@ -111,15 +111,15 @@ ccl_device_inline float shift_cos_in(float cos_in, const float frequency_multipl
   return val;
 }
 
-ccl_device_inline int bsdf_sample(const KernelGlobals *kg,
-                                  ShaderData *sd,
-                                  const ShaderClosure *sc,
+ccl_device_inline int bsdf_sample(ccl_global const KernelGlobals *kg,
+                                  ccl_private ShaderData *sd,
+                                  ccl_private const ShaderClosure *sc,
                                   float randu,
                                   float randv,
-                                  float3 *eval,
-                                  float3 *omega_in,
-                                  differential3 *domega_in,
-                                  float *pdf)
+                                  ccl_private float3 *eval,
+                                  ccl_private float3 *omega_in,
+                                  ccl_private differential3 *domega_in,
+                                  ccl_private float *pdf)
 {
   /* For curves use the smooth normal, particularly for ribbons the geometric
    * normal gives too much darkening otherwise. */
@@ -128,7 +128,6 @@ ccl_device_inline int bsdf_sample(const KernelGlobals *kg,
 
   switch (sc->type) {
     case CLOSURE_BSDF_DIFFUSE_ID:
-    case CLOSURE_BSDF_BSSRDF_ID:
       label = bsdf_diffuse_sample(sc,
                                   Ng,
                                   sd->I,
@@ -401,7 +400,6 @@ ccl_device_inline int bsdf_sample(const KernelGlobals *kg,
       break;
 #  ifdef __PRINCIPLED__
     case CLOSURE_BSDF_PRINCIPLED_DIFFUSE_ID:
-    case CLOSURE_BSDF_BSSRDF_PRINCIPLED_ID:
       label = bsdf_principled_diffuse_sample(sc,
                                              Ng,
                                              sd->I,
@@ -469,19 +467,18 @@ ccl_device
 ccl_device_inline
 #endif
     float3
-    bsdf_eval(const KernelGlobals *kg,
-              ShaderData *sd,
-              const ShaderClosure *sc,
+    bsdf_eval(ccl_global const KernelGlobals *kg,
+              ccl_private ShaderData *sd,
+              ccl_private const ShaderClosure *sc,
               const float3 omega_in,
               const bool is_transmission,
-              float *pdf)
+              ccl_private float *pdf)
 {
   float3 eval = zero_float3();
 
   if (!is_transmission) {
     switch (sc->type) {
       case CLOSURE_BSDF_DIFFUSE_ID:
-      case CLOSURE_BSDF_BSSRDF_ID:
         eval = bsdf_diffuse_eval_reflect(sc, sd->I, omega_in, pdf);
         break;
 #ifdef __SVM__
@@ -550,7 +547,6 @@ ccl_device_inline
         break;
 #  ifdef __PRINCIPLED__
       case CLOSURE_BSDF_PRINCIPLED_DIFFUSE_ID:
-      case CLOSURE_BSDF_BSSRDF_PRINCIPLED_ID:
         eval = bsdf_principled_diffuse_eval_reflect(sc, sd->I, omega_in, pdf);
         break;
       case CLOSURE_BSDF_PRINCIPLED_SHEEN_ID:
@@ -576,7 +572,6 @@ ccl_device_inline
   else {
     switch (sc->type) {
       case CLOSURE_BSDF_DIFFUSE_ID:
-      case CLOSURE_BSDF_BSSRDF_ID:
         eval = bsdf_diffuse_eval_transmit(sc, sd->I, omega_in, pdf);
         break;
 #ifdef __SVM__
@@ -637,7 +632,6 @@ ccl_device_inline
         break;
 #  ifdef __PRINCIPLED__
       case CLOSURE_BSDF_PRINCIPLED_DIFFUSE_ID:
-      case CLOSURE_BSDF_BSSRDF_PRINCIPLED_ID:
         eval = bsdf_principled_diffuse_eval_transmit(sc, sd->I, omega_in, pdf);
         break;
       case CLOSURE_BSDF_PRINCIPLED_SHEEN_ID:
@@ -658,9 +652,11 @@ ccl_device_inline
   return eval;
 }
 
-ccl_device void bsdf_blur(const KernelGlobals *kg, ShaderClosure *sc, float roughness)
+ccl_device void bsdf_blur(ccl_global const KernelGlobals *kg,
+                          ccl_private ShaderClosure *sc,
+                          float roughness)
 {
-  /* ToDo: do we want to blur volume closures? */
+  /* TODO: do we want to blur volume closures? */
 #ifdef __SVM__
   switch (sc->type) {
     case CLOSURE_BSDF_MICROFACET_MULTI_GGX_ID:

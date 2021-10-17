@@ -153,18 +153,18 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
   IDProperty *default_value = IDP_GetPropertyFromGroup(prop_ui_data, "default");
   if (default_value != NULL) {
     if (default_value->type == IDP_ARRAY) {
-      const int size = default_value->len;
-      ui_data->default_array_len = size;
+      const int array_len = default_value->len;
+      ui_data->default_array_len = array_len;
       if (default_value->subtype == IDP_FLOAT) {
-        ui_data->default_array = MEM_malloc_arrayN(size, sizeof(double), __func__);
+        ui_data->default_array = MEM_malloc_arrayN(array_len, sizeof(double), __func__);
         const float *old_default_array = IDP_Array(default_value);
         for (int i = 0; i < ui_data->default_array_len; i++) {
           ui_data->default_array[i] = (double)old_default_array[i];
         }
       }
       else if (default_value->subtype == IDP_DOUBLE) {
-        ui_data->default_array = MEM_malloc_arrayN(size, sizeof(double), __func__);
-        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(double) * size);
+        ui_data->default_array = MEM_malloc_arrayN(array_len, sizeof(double), __func__);
+        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(double) * array_len);
       }
     }
     else if (ELEM(default_value->type, IDP_DOUBLE, IDP_FLOAT)) {
@@ -456,6 +456,22 @@ static bool do_versions_sequencer_color_tags(Sequence *seq, void *UNUSED(user_da
   return true;
 }
 
+static bool do_versions_sequencer_color_balance_sop(Sequence *seq, void *UNUSED(user_data))
+{
+  LISTBASE_FOREACH (SequenceModifierData *, smd, &seq->modifiers) {
+    if (smd->type == seqModifierType_ColorBalance) {
+      StripColorBalance *cb = &((ColorBalanceModifierData *)smd)->color_balance;
+      cb->method = SEQ_COLOR_BALANCE_METHOD_LIFTGAMMAGAIN;
+      for (int i = 0; i < 3; i++) {
+        copy_v3_fl(cb->slope, 1.0f);
+        copy_v3_fl(cb->offset, 1.0f);
+        copy_v3_fl(cb->power, 1.0f);
+      }
+    }
+  }
+  return true;
+}
+
 static bNodeLink *find_connected_link(bNodeTree *ntree, bNodeSocket *in_socket)
 {
   LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
@@ -499,17 +515,17 @@ static void version_geometry_nodes_add_realize_instance_nodes(bNodeTree *ntree)
 {
   LISTBASE_FOREACH_MUTABLE (bNode *, node, &ntree->nodes) {
     if (ELEM(node->type,
-             GEO_NODE_ATTRIBUTE_CAPTURE,
+             GEO_NODE_CAPTURE_ATTRIBUTE,
              GEO_NODE_SEPARATE_COMPONENTS,
              GEO_NODE_CONVEX_HULL,
              GEO_NODE_CURVE_LENGTH,
-             GEO_NODE_BOOLEAN,
-             GEO_NODE_CURVE_FILLET,
-             GEO_NODE_CURVE_RESAMPLE,
+             GEO_NODE_MESH_BOOLEAN,
+             GEO_NODE_FILLET_CURVE,
+             GEO_NODE_RESAMPLE_CURVE,
              GEO_NODE_CURVE_TO_MESH,
-             GEO_NODE_CURVE_TRIM,
-             GEO_NODE_MATERIAL_REPLACE,
-             GEO_NODE_MESH_SUBDIVIDE,
+             GEO_NODE_TRIM_CURVE,
+             GEO_NODE_REPLACE_MATERIAL,
+             GEO_NODE_SUBDIVIDE_MESH,
              GEO_NODE_ATTRIBUTE_REMOVE,
              GEO_NODE_TRIANGULATE)) {
       bNodeSocket *geometry_socket = node->inputs.first;
@@ -807,9 +823,9 @@ static bool geometry_node_is_293_legacy(const short node_type)
     /* Not legacy: No attribute inputs or outputs. */
     case GEO_NODE_TRIANGULATE:
     case GEO_NODE_TRANSFORM:
-    case GEO_NODE_BOOLEAN:
+    case GEO_NODE_MESH_BOOLEAN:
     case GEO_NODE_IS_VIEWPORT:
-    case GEO_NODE_MESH_SUBDIVIDE:
+    case GEO_NODE_SUBDIVIDE_MESH:
     case GEO_NODE_MESH_PRIMITIVE_CUBE:
     case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
     case GEO_NODE_MESH_PRIMITIVE_UV_SPHERE:
@@ -819,9 +835,9 @@ static bool geometry_node_is_293_legacy(const short node_type)
     case GEO_NODE_MESH_PRIMITIVE_LINE:
     case GEO_NODE_MESH_PRIMITIVE_GRID:
     case GEO_NODE_BOUNDING_BOX:
-    case GEO_NODE_CURVE_RESAMPLE:
+    case GEO_NODE_RESAMPLE_CURVE:
     case GEO_NODE_INPUT_MATERIAL:
-    case GEO_NODE_MATERIAL_REPLACE:
+    case GEO_NODE_REPLACE_MATERIAL:
     case GEO_NODE_CURVE_LENGTH:
     case GEO_NODE_CONVEX_HULL:
     case GEO_NODE_SEPARATE_COMPONENTS:
@@ -833,8 +849,8 @@ static bool geometry_node_is_293_legacy(const short node_type)
     case GEO_NODE_VIEWER:
     case GEO_NODE_CURVE_PRIMITIVE_LINE:
     case GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL:
-    case GEO_NODE_CURVE_FILL:
-    case GEO_NODE_CURVE_TRIM:
+    case GEO_NODE_FILL_CURVE:
+    case GEO_NODE_TRIM_CURVE:
     case GEO_NODE_CURVE_TO_MESH:
       return false;
 
@@ -843,7 +859,7 @@ static bool geometry_node_is_293_legacy(const short node_type)
     case GEO_NODE_SET_POSITION:
     case GEO_NODE_INPUT_INDEX:
     case GEO_NODE_INPUT_NORMAL:
-    case GEO_NODE_ATTRIBUTE_CAPTURE:
+    case GEO_NODE_CAPTURE_ATTRIBUTE:
       return false;
 
     /* Maybe legacy: Might need special attribute handling, depending on design. */
@@ -948,12 +964,12 @@ static bool seq_transform_origin_set(Sequence *seq, void *UNUSED(user_data))
 static void do_version_subsurface_methods(bNode *node)
 {
   if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
-    if (node->custom1 != SHD_SUBSURFACE_RANDOM_WALK) {
+    if (!ELEM(node->custom1, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
       node->custom1 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
     }
   }
   else if (node->type == SH_NODE_BSDF_PRINCIPLED) {
-    if (node->custom2 != SHD_SUBSURFACE_RANDOM_WALK) {
+    if (!ELEM(node->custom2, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
       node->custom2 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
     }
   }
@@ -1079,7 +1095,7 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
     FOREACH_NODETREE_END;
 
-    if (!DNA_struct_elem_find(fd->filesdna, "FileAssetSelectParams", "int", "import_type")) {
+    if (!DNA_struct_elem_find(fd->filesdna, "FileAssetSelectParams", "short", "import_type")) {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -1213,7 +1229,7 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_GEOMETRY) {
         LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-          if (node->type == GEO_NODE_MESH_SUBDIVIDE) {
+          if (node->type == GEO_NODE_SUBDIVIDE_MESH) {
             strcpy(node->idname, "GeometryNodeMeshSubdivide");
           }
         }
@@ -1709,6 +1725,13 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         }
       }
     }
+
+    /* Set defaults for new color balance modifier parameters. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->ed != NULL) {
+        SEQ_for_each_callback(&scene->ed->seqbase, do_versions_sequencer_color_balance_sop, NULL);
+      }
+    }
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 300, 33)) {
@@ -1746,5 +1769,26 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+
+    /* Update the idnames for renamed geo and function nodes */
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type != NTREE_GEOMETRY) {
+        continue;
+      }
+      version_node_id(ntree, FN_NODE_COMPARE_FLOATS, "FunctionNodeCompareFloats");
+      version_node_id(ntree, GEO_NODE_CAPTURE_ATTRIBUTE, "GeometryNodeCaptureAttribute");
+      version_node_id(ntree, GEO_NODE_MESH_BOOLEAN, "GeometryNodeMeshBoolean");
+      version_node_id(ntree, GEO_NODE_FILL_CURVE, "GeometryNodeFillCurve");
+      version_node_id(ntree, GEO_NODE_FILLET_CURVE, "GeometryNodeFilletCurve");
+      version_node_id(ntree, GEO_NODE_REVERSE_CURVE, "GeometryNodeReverseCurve");
+      version_node_id(ntree, GEO_NODE_SAMPLE_CURVE, "GeometryNodeSampleCurve");
+      version_node_id(ntree, GEO_NODE_RESAMPLE_CURVE, "GeometryNodeResampleCurve");
+      version_node_id(ntree, GEO_NODE_SUBDIVIDE_CURVE, "GeometryNodeSubdivideCurve");
+      version_node_id(ntree, GEO_NODE_TRIM_CURVE, "GeometryNodeTrimCurve");
+      version_node_id(ntree, GEO_NODE_REPLACE_MATERIAL, "GeometryNodeReplaceMaterial");
+      version_node_id(ntree, GEO_NODE_SUBDIVIDE_MESH, "GeometryNodeSubdivideMesh");
+      version_node_id(ntree, GEO_NODE_SET_MATERIAL, "GeometryNodeSetMaterial");
+      version_node_id(ntree, GEO_NODE_SPLIT_EDGES, "GeometryNodeSplitEdges");
+    }
   }
 }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b6d890672c5f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -33156,10 +33156,6 @@ msgid "Better results when there are holes (slower)"
 msgstr "Logra mejores resultados en caso de ocurrencia de huecos (más lento)"
 
 
-msgid "Self"
-msgstr "Propia"
-
-
 msgid "Allow self-intersection in operands"
 msgstr "Permitir intersección propia en los operandos"
 
@@ -40429,6 +40425,46 @@ msgid "Function Node"
 msgstr "Nodo de función"
 
 
+msgid "Axis to align to the vector"
+msgstr "Eje a alinear con el vector"
+
+
+msgid "Align the X axis with the vector"
+msgstr "Alinear el eje X con el vector"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Alinear el eje Y con el vector"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Alinear el eje Z con el vector"
+
+
+msgid "Pivot Axis"
+msgstr "Eje de pivote"
+
+
+msgid "Axis to rotate around"
+msgstr "Eje en torno al cual rotar"
+
+
+msgid "Automatically detect the best rotation axis to rotate towards the vector"
+msgstr "Detectar automáticamente el mejor eje de rotación para rotar hacia el vector"
+
+
+msgid "Rotate around the local X axis"
+msgstr "Rotar en torno al eje local X"
+
+
+msgid "Rotate around the local Y axis"
+msgstr "Rotar en torno al eje local Y"
+
+
+msgid "Rotate around the local Z axis"
+msgstr "Rotar en torno al eje local Z"
+
+
 msgid "Boolean Math"
 msgstr "Operar (booleana)"
 
@@ -40585,6 +40621,18 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Nodo de grupo personalizado de geometría para nodos Python"
 
 
+msgid "Delete Geometry"
+msgstr "Borrar geometría"
+
+
+msgid "Only Edges & Faces"
+msgstr "Sólo bordes y caras"
+
+
+msgid "Only Faces"
+msgstr "Sólo caras"
+
+
 msgid "Distribution Method"
 msgstr "Método de distribución"
 
@@ -40617,52 +40665,12 @@ msgid "Align Rotation to Vector"
 msgstr "Alinear rotación a vector"
 
 
-msgid "Axis to align to the vector"
-msgstr "Eje a alinear con el vector"
-
-
-msgid "Align the X axis with the vector"
-msgstr "Alinear el eje X con el vector"
-
-
-msgid "Align the Y axis with the vector"
-msgstr "Alinear el eje Y con el vector"
-
-
-msgid "Align the Z axis with the vector"
-msgstr "Alinear el eje Z con el vector"
-
-
 msgid "Input Type Factor"
 msgstr "Entrada de tipo Factor"
 
 
 msgid "Input Type Vector"
 msgstr "Entrada de tipo Vector"
-
-
-msgid "Pivot Axis"
-msgstr "Eje de pivote"
-
-
-msgid "Axis to rotate around"
-msgstr "Eje en torno al cual rotar"
-
-
-msgid "Automatically detect the best rotation axis to rotate towards the vector"
-msgstr "Detectar automáticamente el mejor eje de rotación para rotar hacia el vector"
-
-
-msgid "Rotate around the local X axis"
-msgstr "Rotar en torno al eje local X"
-
-
-msgid "Rotate around the local Y axis"
-msgstr "Rotar en torno al eje local Y"
-
-
-msgid "Rotate around the local Z axis"
-msgstr "Rotar en torno al eje local Z"
 
 
 msgid "Attribute Clamp"
@@ -41023,10 +41031,6 @@ msgstr "Rota un punto usando el eje Z"
 
 msgid "Rotate a point using XYZ order"
 msgstr "Rota un punto usando el orden XYZ"
-
-
-msgid "Delete Geometry"
-msgstr "Borrar geometría"
 
 
 msgid "Material Assign"
@@ -43940,14 +43944,6 @@ msgid "Delete keyframes on the current frame for all properties in the specified
 msgstr "Borra los fotogramas clave existentes en el fotograma actual, para todas las propiedades del conjunto de claves especificado"
 
 
-msgid "Confirm Successful Delete"
-msgstr "Confirmar eliminación exitosa"
-
-
-msgid "Show a popup when the keyframes get successfully removed"
-msgstr "Mostrar un diálogo cuando los fotogramas clave sean removidos exitosamente"
-
-
 msgid "The Keying Set to use"
 msgstr "El conjunto de claves a usar"
 
@@ -43990,14 +43986,6 @@ msgstr "Insertar clave"
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
 msgstr "Inserta fotogramas clave en el fotograma actual, para todas las propiedades del conjunto de claves especificado"
-
-
-msgid "Confirm Successful Insert"
-msgstr "Confirmar inserción exitosa"
-
-
-msgid "Show a popup when the keyframes get successfully added"
-msgstr "Mostrar un diálogo cuando los fotogramas clave sean agregados exitosamente"
 
 
 msgctxt "Operator"
@@ -54308,14 +54296,6 @@ msgstr "Borra los vértices, bordes o caras seleccionados"
 
 msgid "Method used for deleting mesh data"
 msgstr "Método usado para borrar los datos de malla"
-
-
-msgid "Only Edges & Faces"
-msgstr "Sólo bordes y caras"
-
-
-msgid "Only Faces"
-msgstr "Sólo caras"
 
 
 msgctxt "Operator"
@@ -66821,6 +66801,10 @@ msgid "Select a strip (last selected becomes the \"active strip\")"
 msgstr "Selecciona un clip (el último seleccionado se convierte en el \"clip activo\")"
 
 
+msgid "Use the object center when selecting, in edit mode used to extend object selection"
+msgstr "Usa el centro del objeto al seleccionar, en modo Edición es usado para extender la selección de objetos"
+
+
 msgid "Linked Handle"
 msgstr "Asa vinculada"
 
@@ -70154,10 +70138,6 @@ msgstr "Regla eliminar"
 
 msgid "Select and activate item(s)"
 msgstr "Seleccionar y activar elemento(s)"
-
-
-msgid "Use the object center when selecting, in edit mode used to extend object selection"
-msgstr "Usa el centro del objeto al seleccionar, en modo Edición es usado para extender la selección de objetos"
 
 
 msgid "Enumerate"
@@ -74366,6 +74346,10 @@ msgid "Frame Overlay"
 msgstr "Indicador de fotograma"
 
 
+msgid "Gizmo"
+msgstr "Manipulador"
+
+
 msgid "Scene Strip Display"
 msgstr "Visualización clip de escena"
 
@@ -74689,10 +74673,6 @@ msgstr "Interfaz de usuario"
 
 msgid "Gradient Colors"
 msgstr "Colores del gradiente"
-
-
-msgid "Gizmo"
-msgstr "Manipulador"
 
 
 msgid "Brush Presets"
@@ -79054,14 +79034,6 @@ msgstr "Almacenar pasadas de reducción"
 
 msgid "Store the denoising feature passes and the noisy image. The passes adapt to the denoiser selected for rendering"
 msgstr "Almacena las pasadas de reducción de ruido y la imagen con ruido. Las pasadas se adaptan al tipo de reducción seleccionado para el procesamiento"
-
-
-msgid "Debug Render Time"
-msgstr "Depurar tiempo de procesamiento"
-
-
-msgid "Render time in milliseconds per sample and pixel"
-msgstr "Tiempo de procesamiento en milisegundos por muestra y píxel"
 
 
 msgid "Debug Sample Count"
@@ -84095,8 +84067,16 @@ msgid "Sequencer Tool Settings"
 msgstr "Editor de video - Opciones de herramientas"
 
 
+msgid "Bounding Box Center"
+msgstr "Centro del volumen delimitador"
+
+
 msgid "Median Point"
 msgstr "Punto medio"
+
+
+msgid "Pivot around the 2D cursor"
+msgstr "Pivotar alrededor del cursor 2D"
 
 
 msgid "Individual Origins"
@@ -84909,16 +84889,8 @@ msgid "Pivot center for rotation/scaling"
 msgstr "Punto de pivote para rotar y escalar"
 
 
-msgid "Bounding Box Center"
-msgstr "Centro del volumen delimitador"
-
-
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Pivotar alrededor del centro del volumen delimitador de los objetos seleccionados"
-
-
-msgid "Pivot around the 2D cursor"
-msgstr "Pivotar alrededor del cursor 2D"
 
 
 msgid "Pivot around each object's own origin"
@@ -86417,6 +86389,38 @@ msgid "Display frames rather than seconds"
 msgstr "Muestra fotogramas en vez de segundos"
 
 
+msgid "Show Gizmo"
+msgstr "Mostrar manipulador"
+
+
+msgid "Show gizmos of all types"
+msgstr "Muestra manipuladores de todos los tipos"
+
+
+msgid "Context Gizmo"
+msgstr "Manipulador contextual"
+
+
+msgid "Context sensitive gizmos for the active item"
+msgstr "Manipuladores contextuales según el elemento activo"
+
+
+msgid "Navigate Gizmo"
+msgstr "Manipulador de navegación"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Manipulación de navegación de la vista"
+
+
+msgid "Tool Gizmo"
+msgstr "Manipulador de herramienta"
+
+
+msgid "Active tool gizmo"
+msgstr "Manipulador de la herramienta activa"
+
+
 msgid "Show Overexposed"
 msgstr "Mostrar sobreexposición"
 
@@ -86797,14 +86801,6 @@ msgid "Show reconstructed camera path"
 msgstr "Muestra la trayectoria reconstruida de la cámara"
 
 
-msgid "Show Gizmo"
-msgstr "Mostrar manipulador"
-
-
-msgid "Show gizmos of all types"
-msgstr "Muestra manipuladores de todos los tipos"
-
-
 msgid "Show Camera Focus Distance"
 msgstr "Mostrar distancia enfoque de cámara"
 
@@ -86819,14 +86815,6 @@ msgstr "Mostrar lente de cámara"
 
 msgid "Gizmo to adjust camera focal length or orthographic scale"
 msgstr "Manipulador para ajustar la distancia focal y la escala ortogonal de la cámara"
-
-
-msgid "Context Gizmo"
-msgstr "Manipulador contextual"
-
-
-msgid "Context sensitive gizmos for the active item"
-msgstr "Manipuladores contextuales según el elemento activo"
 
 
 msgid "Show Empty Force Field"
@@ -86861,14 +86849,6 @@ msgid "Gizmo to adjust spot and area size"
 msgstr "Manipulador para ajustar el tamaño de focos y luces de área"
 
 
-msgid "Navigate Gizmo"
-msgstr "Manipulador de navegación"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Manipulación de navegación de la vista"
-
-
 msgid "Show Object Rotation"
 msgstr "Mostrar rotación de objetos"
 
@@ -86891,14 +86871,6 @@ msgstr "Mostrar posición de objetos"
 
 msgid "Gizmo to adjust location"
 msgstr "Manipulador para ajustar la posición de objetos"
-
-
-msgid "Tool Gizmo"
-msgstr "Manipulador de herramienta"
-
-
-msgid "Active tool gizmo"
-msgstr "Manipulador de la herramienta activa"
 
 
 msgid "Show Reconstruction"
@@ -92773,13 +92745,13 @@ msgstr "Nodo - Genérico"
 
 
 msgctxt "WindowManager"
-msgid "Sequencer"
-msgstr "Editor de video"
+msgid "SequencerCommon"
+msgstr "Editor de video - Común"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Editor de video - Común"
+msgid "Sequencer"
+msgstr "Editor de video"
 
 
 msgctxt "WindowManager"
@@ -93152,10 +93124,6 @@ msgstr "Datos reducción de ruido"
 
 msgid "Indexes"
 msgstr "Identificadores"
-
-
-msgid "Render Time"
-msgstr "Tiempo procesamiento"
 
 
 msgid "Pipeline"
@@ -95051,6 +95019,10 @@ msgstr "Antiguo"
 
 msgid "Date"
 msgstr "Fecha"
+
+
+msgid "Render Time"
+msgstr "Tiempo procesamiento"
 
 
 msgid "Hostname"
@@ -97174,6 +97146,18 @@ msgstr "Gama:"
 
 msgid "Gain:"
 msgstr "Ganancia:"
+
+
+msgid "Viewport Gizmos"
+msgstr "Manipuladores"
+
+
+msgid "Navigate"
+msgstr "Navegación"
+
+
+msgid "Active Tools"
+msgstr "Herramienta activa"
 
 
 msgid "Offsets"
@@ -99520,18 +99504,6 @@ msgstr "Cámara a la vista"
 
 msgid "Object Types Visibility"
 msgstr "Visibilidad por tipo"
-
-
-msgid "Viewport Gizmos"
-msgstr "Manipuladores"
-
-
-msgid "Navigate"
-msgstr "Navegación"
-
-
-msgid "Active Tools"
-msgstr "Herramienta activa"
 
 
 msgid "Object Gizmos"
@@ -109182,44 +109154,8 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Color1"
-msgstr "Color 1"
-
-
-msgid "Color2"
-msgstr "Color 2"
-
-
-msgid "Mortar"
-msgstr "Cemento"
-
-
-msgid "Mortar Size"
-msgstr "Tamaño del cemento"
-
-
-msgid "Mortar Smooth"
-msgstr "Suavizado del cemento"
-
-
-msgid "Brick Width"
-msgstr "Ancho del ladrillo"
-
-
-msgid "Row Height"
-msgstr "Altura de la fila"
-
-
 msgid "Reflection"
 msgstr "Reflectividad"
-
-
-msgid "Detail Scale"
-msgstr "Escala del detalle"
-
-
-msgid "Detail Roughness"
-msgstr "Rugosidad del detalle"
 
 
 msgid "Flame"
@@ -109268,6 +109204,26 @@ msgstr "Ladrillos 1"
 
 msgid "Bricks 2"
 msgstr "Ladrillos 2"
+
+
+msgid "Mortar"
+msgstr "Cemento"
+
+
+msgid "Brick Width"
+msgstr "Ancho del ladrillo"
+
+
+msgid "Row Height"
+msgstr "Altura de la fila"
+
+
+msgid "Color1"
+msgstr "Color 1"
+
+
+msgid "Color2"
+msgstr "Color 2"
 
 
 msgid "Coordinate 1"

@@ -105,44 +105,44 @@ def addColorCorrectors(material):
                         correctors.append(g)
 
 
-def modelProxy():
-    utils.p('No proxies in Blender anymore')
-    return False
-    
-    s = bpy.context.scene
-    ao = bpy.context.active_object
-    if utils.is_linked_asset(ao):
-        utils.activate(ao)
-
-        g = ao.instance_collection
-
-        rigs = []
-
-        for ob in g.objects:
-            if ob.type == 'ARMATURE':
-                rigs.append(ob)
-
-        if len(rigs) == 1:
-
-            ao.instance_collection = None
-            bpy.ops.object.duplicate()
-            new_ao = bpy.context.view_layer.objects.active
-            new_ao.instance_collection = g
-            new_ao.empty_display_type = 'SPHERE'
-            new_ao.empty_display_size *= 0.1
-
-            # bpy.ops.object.proxy_make(object=rigs[0].name)
-            proxy = bpy.context.active_object
-            bpy.context.view_layer.objects.active = ao
-            ao.select_set(True)
-            new_ao.select_set(True)
-            new_ao.use_extra_recalc_object = True
-            new_ao.use_extra_recalc_data = True
-            bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-            return True
-        else:  # TODO report this to ui
-            utils.p('not sure what to proxify')
-    return False
+# def modelProxy():
+#     utils.p('No proxies in Blender anymore')
+#     return False
+#
+#     s = bpy.context.scene
+#     ao = bpy.context.active_object
+#     if utils.is_linked_asset(ao):
+#         utils.activate(ao)
+#
+#         g = ao.instance_collection
+#
+#         rigs = []
+#
+#         for ob in g.objects:
+#             if ob.type == 'ARMATURE':
+#                 rigs.append(ob)
+#
+#         if len(rigs) == 1:
+#
+#             ao.instance_collection = None
+#             bpy.ops.object.duplicate()
+#             new_ao = bpy.context.view_layer.objects.active
+#             new_ao.instance_collection = g
+#             new_ao.empty_display_type = 'SPHERE'
+#             new_ao.empty_display_size *= 0.1
+#
+#             # bpy.ops.object.proxy_make(object=rigs[0].name)
+#             proxy = bpy.context.active_object
+#             bpy.context.view_layer.objects.active = ao
+#             ao.select_set(True)
+#             new_ao.select_set(True)
+#             new_ao.use_extra_recalc_object = True
+#             new_ao.use_extra_recalc_data = True
+#             bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+#             return True
+#         else:  # TODO report this to ui
+#             utils.p('not sure what to proxify')
+#     return False
 
 
 eevee_transp_nodes = [
@@ -247,20 +247,20 @@ class BringToScene(Operator):
         return {'FINISHED'}
 
 
-class ModelProxy(Operator):
-    """Attempt to create proxy armature from the asset"""
-    bl_idname = "object.blenderkit_make_proxy"
-    bl_label = "BlenderKit Make Proxy"
-
-    @classmethod
-    def poll(cls, context):
-        return bpy.context.view_layer.objects.active is not None
-
-    def execute(self, context):
-        result = modelProxy()
-        if not result:
-            self.report({'INFO'}, 'No proxy made.There is no armature or more than one in the model.')
-        return {'FINISHED'}
+# class ModelProxy(Operator):
+#     """Attempt to create proxy armature from the asset"""
+#     bl_idname = "object.blenderkit_make_proxy"
+#     bl_label = "BlenderKit Make Proxy"
+#
+#     @classmethod
+#     def poll(cls, context):
+#         return bpy.context.view_layer.objects.active is not None
+#
+#     def execute(self, context):
+#         result = modelProxy()
+#         if not result:
+#             self.report({'INFO'}, 'No proxy made.There is no armature or more than one in the model.')
+#         return {'FINISHED'}
 
 
 class ColorCorrector(Operator):
@@ -290,11 +290,11 @@ class ColorCorrector(Operator):
 
 def register_overrides():
     bpy.utils.register_class(BringToScene)
-    bpy.utils.register_class(ModelProxy)
+    # bpy.utils.register_class(ModelProxy)
     bpy.utils.register_class(ColorCorrector)
 
 
 def unregister_overrides():
     bpy.utils.unregister_class(BringToScene)
-    bpy.utils.unregister_class(ModelProxy)
+    # bpy.utils.unregister_class(ModelProxy)
     bpy.utils.unregister_class(ColorCorrector)

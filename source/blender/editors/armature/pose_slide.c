@@ -1045,7 +1045,7 @@ static int pose_slide_invoke_common(bContext *C, wmOperator *op, const wmEvent *
     const ActKeyColumn *nk = ED_keylist_find_next(pso->keylist, cframe);
 
     /* New set the frames. */
-    /* Prev frame. */
+    /* Previous frame. */
     pso->prevFrame = (pk) ? (pk->cfra) : (pso->cframe - 1);
     RNA_int_set(op->ptr, "prev_frame", pso->prevFrame);
     /* Next frame. */
@@ -1054,7 +1054,7 @@ static int pose_slide_invoke_common(bContext *C, wmOperator *op, const wmEvent *
   }
   else {
     /* Current frame itself is a keyframe, so just take keyframes on either side. */
-    /* Prev frame. */
+    /* Previous frame. */
     pso->prevFrame = (ak->prev) ? (ak->prev->cfra) : (pso->cframe - 1);
     RNA_int_set(op->ptr, "prev_frame", pso->prevFrame);
     /* Next frame. */
