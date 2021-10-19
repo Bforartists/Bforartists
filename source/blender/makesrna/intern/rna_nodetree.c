@@ -13810,9 +13810,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SEPARATE_COMPONENTS:
       icon = ICON_SEPARATE;
       break;
-    // case GEO_NODE_SEPARATE_GEOMETRY:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SEPARATE_GEOMETRY:
+      icon = ICON_SEPARATE_GEOMETRY;
+      break;
     case GEO_NODE_SET_CURVE_HANDLES:
       icon = ICON_SET_CURVE_HANDLE_POSITIONS;
       break;
