@@ -3330,7 +3330,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Attribute Statistics ", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
@@ -3338,11 +3338,11 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Capture   ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-            
+
             props = col.operator("node.add_node", text=" Attribute Transfer   ", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
-            
+
 
         #### Icon Buttons
 
@@ -3351,7 +3351,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
@@ -3359,7 +3359,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-            
+
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
@@ -3400,15 +3400,15 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = col.operator("node.add_node", text=" Combine RGB       ", icon = "NODE_COMBINERGB")
+            props = col.operator("node.add_node", text=" Combine RGB      ", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
 
-            props = col.operator("node.add_node", text=" Mix RGB       ", icon = "NODE_MIXRGB")
+            props = col.operator("node.add_node", text=" Mix RGB              ", icon = "NODE_MIXRGB")
             props.use_transform = True
             props.type = "ShaderNodeMixRGB"
 
-            props = col.operator("node.add_node", text=" RGB Curves       ", icon = "NODE_RGBCURVE")
+            props = col.operator("node.add_node", text=" RGB Curves         ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
@@ -3476,90 +3476,134 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Curve Fill                    ", icon = "CURVE_FILL")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveFill"
-
-            props = col.operator("node.add_node", text=" Curve Fillet                 ", icon = "CURVE_FILLET")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveFillet"
-
             props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
-
-            props = col.operator("node.add_node", text=" Curve Parameter        ", icon = "CURVE_PARAMETER")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveParameter"
-
-            props = col.operator("node.add_node", text=" Curve Reverse            ", icon = "SWITCH_DIRECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveReverse"
-
-            props = col.operator("node.add_node", text=" Curve Sample              ", icon = "CURVE_SAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSample"
-
-            props = col.operator("node.add_node", text=" Curve Subdivide         ", icon = "SUBDIVIDE_EDGES")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveSubdivide"
-
-            props = col.operator("node.add_node", text=" Curve Tangent            ", icon = "CURVE_TANGENT")
-            props.use_transform = True
-            props.type = "GeometryNodeInputTangent"
 
             props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
 
-            props = col.operator("node.add_node", text=" Curve Trim                 ", icon = "CURVE_TRIM")
+            props = col.operator("node.add_node", text=" Fill Curve                   ", icon = "CURVE_FILL")
             props.use_transform = True
-            props.type = "GeometryNodeCurveTrim"
-            
+            props.type = "GeometryNodeFillCurve"
+
+            props = col.operator("node.add_node", text=" Fillet Curve                ", icon = "CURVE_FILLET")
+            props.use_transform = True
+            props.type = "GeometryNodeFilletCurve"
+
+            props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeResampleCurve"
+
+            props = col.operator("node.add_node", text=" Reverse Curve           ", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeLegacyCurveReverse"
+
+            props = col.operator("node.add_node", text=" Sample Curve             ", icon = "CURVE_SAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleCurve"
+
+            props = col.operator("node.add_node", text=" Subdivide Curve         ", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideCurve"
+
+            props = col.operator("node.add_node", text=" Trim Curve                  ", icon = "CURVE_TRIM")
+            props.use_transform = True
+            props.type = "GeometryNodeTrimCurve"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCurveHandlePositions"
+
+            props = col.operator("node.add_node", text=" Curve Parameter      ", icon = "CURVE_PARAMETER")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveParameter"
+
+            props = col.operator("node.add_node", text=" Curve Tangent           ", icon = "CURVE_TANGENT")
+            props.use_transform = True
+            props.type = "GeometryNodeInputTangent"
+
+            props = col.operator("node.add_node", text=" Curve Tilt                   ", icon = "CURVE_TILT")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCurveTilt"
+
             props = col.operator("node.add_node", text=" Handle Type Selection", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveHandleTypeSelection"
 
-            props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
+            props = col.operator("node.add_node", text=" Is Spline Cyclic          ", icon = "IS_SPLINE_CYCLIC")
             props.use_transform = True
-            props.type = "GeometryNodeCurveResample"
+            props.type = "GeometryNodeInputSplineCyclic"
+
+            props = col.operator("node.add_node", text=" Spline Length             ", icon = "SPLINE_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineLength"
+
+            props = col.operator("node.add_node", text=" Spline Resolution        ", icon = "SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSplineResolution"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Set Curve Radius        ", icon = "SET_CURVE_RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveRadius"
+
+            props = col.operator("node.add_node", text=" Set Curve Tilt             ", icon = "SET_CURVE_TILT")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveTilt"
+
+            props = col.operator("node.add_node", text=" Set Handle Positions   ", icon = "SET_CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveHandlePositions"
 
             props = col.operator("node.add_node", text=" Set Handle Type         ", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveSetHandles"
 
-            props = col.operator("node.add_node", text=" Set Spline Type          ", icon = "SPLINE_TYPE")
+            props = col.operator("node.add_node", text=" Set Spline Cyclic        ", icon = "TOGGLE_CYCLIC")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineCyclic"
+
+            props = col.operator("node.add_node", text=" Set Spline Resolution   ", icon = "SET_SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineResolution"
+
+            props = col.operator("node.add_node", text=" Set Spline Type            ", icon = "SPLINE_TYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSplineType"
-
-            props = col.operator("node.add_node", text=" Set Spline Length       ", icon = "SPLINE_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineLength"
-
 
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILL")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveFillet"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveFill"
 
             props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
 
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
+            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
-            props.type = "GeometryNodeCurveParameter"
+            props.type = "GeometryNodeCurveToMesh"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILL")
+            props.use_transform = True
+            props.type = "GeometryNodeFillCurve"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
+            props.use_transform = True
+            props.type = "GeometryNodeFilletCurve"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeResampleCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
             props.use_transform = True
@@ -3567,43 +3611,85 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_SAMPLE")
             props.use_transform = True
-            props.type = "GeometryNodeCurveSample"
+            props.type = "GeometryNodeSampleCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyCurveSubdivide"
+            props.type = "GeometryNodeSubdivideCurve"
+
+            props = flow.operator("node.add_node", text="", icon = "CURVE_TRIM")
+            props.use_transform = True
+            props.type = "GeometryNodeTrimCurve"
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCurveHandlePositions"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveParameter"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_TANGENT")
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
 
-            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
+            props = flow.operator("node.add_node", text="", icon = "CURVE_TILT")
             props.use_transform = True
-            props.type = "GeometryNodeCurveToMesh"
+            props.type = "GeometryNodeInputCurveTilt"
 
-            props = flow.operator("node.add_node", text="", icon = "CURVE_TRIM")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveTrim"
-            
             props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveHandleTypeSelection"
 
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
+            props = flow.operator("node.add_node", text = "", icon = "IS_SPLINE_CYCLIC")
             props.use_transform = True
-            props.type = "GeometryNodeCurveResample"
+            props.type = "GeometryNodeInputSplineCyclic"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineLength"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSplineResolution"
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveRadius"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_TILT")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveTilt"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_HANDLE_POSITIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveHandlePositions"
 
             props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveSetHandles"
 
+            props = flow.operator("node.add_node", text = "", icon = "TOGGLE_CYCLIC")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineCyclic"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_SPLINE_RESOLUTION")
+            props.use_transform = True
+            props.type = "GeometryNodeSetSplineResolution"
+
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSplineType"
 
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineLength"
+
 
 
 #add Curves Primitives panel
@@ -4357,7 +4443,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Align Euler to Vector", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
@@ -4373,7 +4459,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Float Compare ", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
-            
+
             props = col.operator("node.add_node", text=" Float to Integer ", icon = "FLOAT_TO_INT")
             props.use_transform = True
             props.type = "FunctionNodeFloatToInt"
@@ -4392,11 +4478,11 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
-            
+
             props = col.operator("node.add_node", text=" Random Value  ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
-            
+
             props = col.operator("node.add_node", text=" Rotate Euler     ", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
@@ -4416,7 +4502,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeAlignEulerToVector"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
@@ -4428,7 +4514,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
             props.use_transform = True
             props.type = "ShaderNodeFloatCurve"
@@ -4444,11 +4530,11 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomValue"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
             props.use_transform = True
             props.type = "FunctionNodeRotateEuler"
@@ -4542,7 +4628,7 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
-            
+
             props = col.operator("node.add_node", text=" Vector Curves   ", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
@@ -4571,7 +4657,7 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
@@ -4666,7 +4752,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Points to volume       ", icon = "POINT_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodePointsToVolume"
-            
+
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeVolumeToMesh"
@@ -4682,7 +4768,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "POINT_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodePointsToVolume"
-            
+
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeVolumeToMesh"
