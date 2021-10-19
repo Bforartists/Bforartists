@@ -3826,6 +3826,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeConvexHull"
 
+            props = col.operator("node.add_node", text=" Delete Geometry       ", icon = "DELETE")
+            props.use_transform = True
+            props.type = "GeometryNodeDeleteGeometry"
+
             props = col.operator("node.add_node", text=" Geometry Proximity ", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeProximity"
@@ -3834,13 +3838,13 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
 
-            props = col.operator("node.add_node", text=" Realize Instance         ", icon = "MOD_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeRealizeInstances"
-
             props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodeSeparateComponents"
+
+            props = col.operator("node.add_node", text=" Separate Geometry   ", icon = "SEPARATE_GEOMETRY")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateGeometry"
 
             props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
             props.use_transform = True
@@ -3867,6 +3871,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeConvexHull"
 
+            props = flow.operator("node.add_node", text = "", icon = "DELETE")
+            props.use_transform = True
+            props.type = "GeometryNodeDeleteGeometry"
+
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeProximity"
@@ -3875,13 +3883,13 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
 
-            props = flow.operator("node.add_node", text = "", icon = "MOD_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeRealizeInstances"
-
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodeSeparateComponents"
+
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateGeometry"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_POSITION")
             props.use_transform = True
