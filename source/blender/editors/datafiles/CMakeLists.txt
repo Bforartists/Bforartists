@@ -914,11 +914,11 @@ mesh_to_points
 float_curve
 rotate_euler
 align_euler_to_vector
-#~ DEF_ICON_BLANK(933)
-#~ DEF_ICON_BLANK(934)
-#~ DEF_ICON_BLANK(935)
-#~ DEF_ICON_BLANK(936)
-#~ DEF_ICON_BLANK(937)
+curve_handle_positions
+curve_tilt
+is_spline_cyclic
+set_curve_handle_positions
+set_curve_radius
 
 # ------------------------- row 14 --------------------------*/
 
@@ -978,9 +978,9 @@ outliner_data_gp_layer
 workspace
 xray
 
-#~ DEF_ICON_BLANK(997)
-#~ DEF_ICON_BLANK(998)
-#~ DEF_ICON_BLANK(999)
+spline_resolution
+set_spline_resolution
+set_curve_tilt
 #~ DEF_ICON_BLANK(1000)
 #~ DEF_ICON_BLANK(1001)
 #~ DEF_ICON_BLANK(1002)
