@@ -4660,7 +4660,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyVolumeToMesh"
+            props.type = "GeometryNodeVolumeToMesh"
 
         #### Icon Buttons
 
@@ -4676,7 +4676,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             
             props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyVolumeToMesh"
+            props.type = "GeometryNodeVolumeToMesh"
 
 
 # from nodeitems_builtin, not directly importable
