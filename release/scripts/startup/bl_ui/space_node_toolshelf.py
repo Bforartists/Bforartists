@@ -3330,15 +3330,19 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Attribute Capture   ", icon = "ATTRIBUTE_CAPTURE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeCapture"
-
+            
             props = col.operator("node.add_node", text=" Attribute Statistics ", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
 
+            props = col.operator("node.add_node", text=" Attribute Capture   ", icon = "ATTRIBUTE_CAPTURE")
+            props.use_transform = True
+            props.type = "GeometryNodeCaptureAttribute"
+            
+            props = col.operator("node.add_node", text=" Attribute Transfer   ", icon = "ATTRIBUTE_TRANSFER")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeTransfer"
+            
 
         #### Icon Buttons
 
@@ -3347,14 +3351,19 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeCapture"
-
+            
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
+
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
+            props.use_transform = True
+            props.type = "GeometryNodeCaptureAttribute"
+            
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeTransfer"
+
 
 
 #add color panel

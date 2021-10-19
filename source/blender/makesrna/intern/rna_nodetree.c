@@ -13858,9 +13858,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SWITCH:
       icon = ICON_SWITCH;
       break;
-    // case GEO_NODE_TRANSFER_ATTRIBUTE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_TRANSFER_ATTRIBUTE:
+      icon = ICON_ATTRIBUTE_TRANSFER;
+      break;
     case GEO_NODE_TRANSFORM:
       icon = ICON_NODE_TRANSFORM;
       break;
