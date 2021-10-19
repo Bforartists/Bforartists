@@ -981,7 +981,7 @@ xray
 spline_resolution
 set_spline_resolution
 set_curve_tilt
-#~ DEF_ICON_BLANK(1000)
+separate_geometry
 #~ DEF_ICON_BLANK(1001)
 #~ DEF_ICON_BLANK(1002)
 #~ DEF_ICON_BLANK(1003)
