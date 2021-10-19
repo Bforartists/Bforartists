@@ -13699,15 +13699,12 @@ static int node_type_to_icon(int type)
     //case GEO_NODE_SPLIT_EDGES:
     //  icon = ICON_DELETE;
     //  break;
-    // case GEO_NODE_INPUT_CURVE_HANDLES:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_INPUT_CURVE_HANDLES:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_INPUT_CURVE_TILT:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_CURVE_HANDLES:
+      icon = ICON_CURVE_HANDLE_POSITIONS;
+      break;
+    case GEO_NODE_INPUT_CURVE_TILT:
+      icon = ICON_CURVE_TILT;
+      break;
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
@@ -13729,15 +13726,15 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_INPUT_SHADE_SMOOTH:
     //  icon = ICON_DELETE;
     //  break;
-    // case GEO_NODE_INPUT_SPLINE_CYCLIC:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_SPLINE_CYCLIC:
+      icon = ICON_IS_SPLINE_CYCLIC;
+      break;
     case GEO_NODE_INPUT_SPLINE_LENGTH:
       icon = ICON_SPLINE_LENGTH;
       break;
-    // case GEO_NODE_INPUT_SPLINE_RESOLUTION:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_SPLINE_RESOLUTION:
+      icon = ICON_SPLINE_RESOLUTION;
+      break;
     case GEO_NODE_INPUT_TANGENT:
       icon = ICON_CURVE_TANGENT;
       break;
@@ -13816,15 +13813,15 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_SEPARATE_GEOMETRY:
     //  icon = ICON_DELETE;
     //  break;
-    // case GEO_NODE_SET_CURVE_HANDLES:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_SET_CURVE_RADIUS:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_SET_CURVE_TILT:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_CURVE_HANDLES:
+      icon = ICON_SET_CURVE_HANDLE_POSITIONS;
+      break;
+    case GEO_NODE_SET_CURVE_RADIUS:
+      icon = ICON_SET_CURVE_RADIUS;
+      break;
+    case GEO_NODE_SET_CURVE_TILT:
+      icon = ICON_SET_CURVE_TILT;
+      break;
     // case GEO_NODE_SET_MATERIAL:
     //  icon = ICON_DELETE;
     //  break;
@@ -13840,12 +13837,12 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_SET_SHADE_SMOOTH:
     //  icon = ICON_DELETE;
     //  break;
-    // case GEO_NODE_SET_SPLINE_CYCLIC:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_SET_SPLINE_RESOLUTION:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_SPLINE_CYCLIC:
+      icon = ICON_TOGGLE_CYCLIC;
+      break;
+    case GEO_NODE_SET_SPLINE_RESOLUTION:
+      icon = ICON_SET_SPLINE_RESOLUTION;
+      break;
     case GEO_NODE_STRING_JOIN:
       icon = ICON_STRING_JOIN;
       break;
