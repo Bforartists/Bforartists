@@ -987,7 +987,7 @@ scale_instance
 translate_instance
 material_index
 set_material_index
-#~ DEF_ICON_BLANK(1006)
+set_shade_smooth
 
 # ------------------------- row 15 --------------------------*/
 
@@ -1046,7 +1046,7 @@ driver_distance
 driver_rotational_difference
 driver_transform
 
-#~ DEF_ICON_BLANK(1065)
+subdivide_mesh
 #~ DEF_ICON_BLANK(1066)
 #~ DEF_ICON_BLANK(1067)
 #~ DEF_ICON_BLANK(1068)
