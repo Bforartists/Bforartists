@@ -4463,7 +4463,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh to Points         ", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
-            
+
             props = col.operator("node.add_node", text=" Set Point Radius       ", icon = "SET_CURVE_RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeSetPointRadius"
@@ -4488,7 +4488,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeSetPointRadius"
@@ -4524,13 +4524,13 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Special Characters", icon = "SPECIAL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputSpecialCharacters"
-
             props = col.operator("node.add_node", text=" Join Strings             ", icon = "STRING_JOIN")
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
+
+            props = col.operator("node.add_node", text=" Special Characters", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
 
             props = col.operator("node.add_node", text=" String Length           ", icon = "STRING_LENGTH")
             props.use_transform = True
@@ -4556,13 +4556,13 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputSpecialCharacters"
-
             props = flow.operator("node.add_node", text="", icon = "STRING_JOIN")
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
+
+            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
+            props.use_transform = True
+            props.type = "FunctionNodeInputSpecialCharacters"
 
             props = flow.operator("node.add_node", text = "", icon = "STRING_LENGTH")
             props.use_transform = True
