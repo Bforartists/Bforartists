@@ -13828,9 +13828,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_MATERIAL_INDEX:
       icon = ICON_SET_MATERIAL_INDEX;
       break;
-    // case GEO_NODE_SET_POINT_RADIUS:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_POINT_RADIUS:
+      icon = ICON_SET_CURVE_RADIUS;
+      break;
     case GEO_NODE_SET_POSITION:
       icon = ICON_SET_POSITION;
       break;
