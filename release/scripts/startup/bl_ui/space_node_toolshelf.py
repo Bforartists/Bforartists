@@ -1432,74 +1432,7 @@ class NODES_PT_Input_color_advanced(bpy.types.Panel):
                 props.type = "CompositorNodeTonemap"
 
 
-#Input nodes tab, Output panel, Shader mode
-class NODES_PT_Input_output_shader(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Output"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        engine = context.engine
-
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            if context.space_data.shader_type == 'OBJECT':
-
-                props = col.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIAL")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputMaterial"
-
-                if engine == 'CYCLES':
-
-                    props = col.operator("node.add_node", text=" Light Output    ", icon = "LIGHT")
-                    props.use_transform = True
-                    props.type = "ShaderNodeOutputLight"
-
-                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
-                    props.use_transform = True
-                    props.type = "ShaderNodeOutputAOV"
-
-                elif engine == 'BLENDER_EEVEE':
-
-                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
-                    props.use_transform = True
-                    props.type = "ShaderNodeOutputAOV"
-
-            elif context.space_data.shader_type == 'WORLD':
-
-                props = col.operator("node.add_node", text=" World Output    ", icon = "WORLD")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputWorld"
-
-                props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputAOV"
-
-            elif context.space_data.shader_type == 'LINESTYLE':
-
-                props = col.operator("node.add_node", text=" Line Style Output", icon = "NODE_LINESTYLE_OUTPUT")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputLineStyle"
 
         #### Icon Buttons
 
@@ -4234,7 +4167,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh Boolean           ", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeMeshBoolean"
-            
+
             props = col.operator("node.add_node", text=" Mesh to Curve          ", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
@@ -4242,15 +4175,15 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh to Points          ", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
-            
+
             props = col.operator("node.add_node", text=" Split Edges               ", icon = "SPLITEDGE")
             props.use_transform = True
-            props.type = "GeometryNodeSplitEdges" 
-            
+            props.type = "GeometryNodeSplitEdges"
+
             props = col.operator("node.add_node", text=" Subdivide Mesh        ", icon = "SUBDIVIDE_MESH")
             props.use_transform = True
             props.type = "GeometryNodeSubdivideMesh"
-            
+
             props = col.operator("node.add_node", text=" Subdivision Surface ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivisionSurface"
@@ -4258,11 +4191,11 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
-            
+
             props = col.operator("node.add_node", text=" Is Shade Smoooth   ", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
-            
+
             props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeSetShadeSmooth"
@@ -4278,7 +4211,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeMeshBoolean"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
@@ -4286,7 +4219,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
             props.type = "GeometryNodeSplitEdges"
@@ -4294,19 +4227,19 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_MESH")
             props.use_transform = True
             props.type = "GeometryNodeSubdivideMesh"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivisionSurface"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeSetShadeSmooth"
@@ -4417,6 +4350,76 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshUVSphere"
+
+
+#Input nodes tab, Output panel, Shader mode
+class NODES_PT_Input_output_shader(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Output"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Input"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        engine = context.engine
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            if context.space_data.shader_type == 'OBJECT':
+
+                props = col.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIAL")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputMaterial"
+
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Light Output    ", icon = "LIGHT")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputLight"
+
+                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
+
+                elif engine == 'BLENDER_EEVEE':
+
+                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
+
+            elif context.space_data.shader_type == 'WORLD':
+
+                props = col.operator("node.add_node", text=" World Output    ", icon = "WORLD")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputWorld"
+
+                props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputAOV"
+
+            elif context.space_data.shader_type == 'LINESTYLE':
+
+                props = col.operator("node.add_node", text=" Line Style Output", icon = "NODE_LINESTYLE_OUTPUT")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputLineStyle"
 
 
 #add mesh panel
@@ -4569,6 +4572,53 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.type = "FunctionNodeValueToString"
 
 
+#add vector panel
+class NODES_PT_geom_add_texture(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Texture"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Noise Texture   ", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+
 
 #add utilities panel
 class NODES_PT_geom_add_utilities(bpy.types.Panel):
@@ -4698,53 +4748,6 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
-
-
-#add vector panel
-class NODES_PT_geom_add_texture(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Texture"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Noise Texture   ", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
-
-        #### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
 
 
 #add vector panel
@@ -5089,12 +5092,12 @@ classes = (
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
+    NODES_PT_geom_add_output,
     NODES_PT_geom_add_point,
     NODES_PT_geom_add_text,
-    NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_texture,
+    NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_vector,
-    NODES_PT_geom_add_output,
     NODES_PT_geom_add_volume,
     NODES_PT_Input_node_group,
     NODES_PT_geom_layout,
