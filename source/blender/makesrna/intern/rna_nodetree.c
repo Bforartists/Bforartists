@@ -13696,9 +13696,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
       break;
-    //case GEO_NODE_SPLIT_EDGES:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SPLIT_EDGES:
+      icon = ICON_SPLITEDGE;
+      break;
     case GEO_NODE_INPUT_CURVE_HANDLES:
       icon = ICON_CURVE_HANDLE_POSITIONS;
       break;
@@ -13723,9 +13723,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_RADIUS:
       icon = ICON_RADIUS;
       break;
-    // case GEO_NODE_INPUT_SHADE_SMOOTH:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_SHADE_SMOOTH:
+      icon = ICON_SHADING_SMOOTH;
+      break;
     case GEO_NODE_INPUT_SPLINE_CYCLIC:
       icon = ICON_IS_SPLINE_CYCLIC;
       break;
@@ -13778,11 +13778,11 @@ static int node_type_to_icon(int type)
       icon = ICON_MESH_UVSPHERE;
       break;
     case GEO_NODE_SUBDIVIDE_MESH:
-      icon = ICON_SUBDIVIDE_EDGES;
+      icon = ICON_SUBDIVIDE_MESH;
       break;
-    // case GEO_NODE_MESH_TO_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_MESH_TO_CURVE:
+      icon = ICON_OUTLINER_OB_CURVE;
+      break;
     case GEO_NODE_MESH_TO_POINTS:
       icon = ICON_MESH_TO_POINTS;
       break;
@@ -13834,9 +13834,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_POSITION:
       icon = ICON_SET_POSITION;
       break;
-    // case GEO_NODE_SET_SHADE_SMOOTH:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_SHADE_SMOOTH:
+      icon = ICON_SET_SHADE_SMOOTH;
+      break;
     case GEO_NODE_SET_SPLINE_CYCLIC:
       icon = ICON_TOGGLE_CYCLIC;
       break;
@@ -13849,9 +13849,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_STRING_TO_CURVES:
       icon = ICON_STRING_TO_CURVE;
       break;
-    // case GEO_NODE_SUBDIVISION_SURFACE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SUBDIVISION_SURFACE:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
     case GEO_NODE_SWITCH:
       icon = ICON_SWITCH;
       break;
