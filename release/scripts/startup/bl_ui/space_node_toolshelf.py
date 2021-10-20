@@ -1432,8 +1432,6 @@ class NODES_PT_Input_color_advanced(bpy.types.Panel):
                 props.type = "CompositorNodeTonemap"
 
 
-
-
         #### Icon Buttons
 
         else:
@@ -1610,7 +1608,6 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "NODE_VIEWER")
             props.use_transform = True
             props.type = "TextureNodeViewer"
-
 
 
 # ------------- Modify tab -------------------------------
@@ -1941,6 +1938,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_DENOISE")
             props.use_transform = True
             props.type = "CompositorNodeDenoise"
+
 
 #Modify nodes tab, Input panel. Just in shader mode
 class NODES_PT_Modify_input(bpy.types.Panel):
@@ -2975,7 +2973,6 @@ class NODES_PT_Modify_color(bpy.types.Panel):
         scene = context.scene
 
         ##### Textbuttons
-
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
@@ -3012,9 +3009,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
-
         ##### Icon Buttons
-
         else:
 
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
@@ -3621,8 +3616,6 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSplineType"
-
-
 
 
 #add Curves Primitives panel
@@ -4652,8 +4645,6 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props.type = "ShaderNodeTexWhiteNoise"
 
 
-
-
 #add utilities panel
 class NODES_PT_geom_add_utilities(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -4692,21 +4683,22 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
 
-            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
+            props = col.operator("node.add_node", text=" Clamp                ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
 
-            props = col.operator("node.add_node", text=" Float Compare ", icon = "FLOAT_COMPARE")
+            props = col.operator("node.add_node", text=" Compare Floats ", icon = "FLOAT_COMPARE")
             props.use_transform = True
-            props.type = "FunctionNodeFloatCompare"
+            props.type = "FunctionNodeCompareFloats"
+
+            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
 
             props = col.operator("node.add_node", text=" Float to Integer ", icon = "FLOAT_TO_INT")
             props.use_transform = True
             props.type = "FunctionNodeFloatToInt"
 
-            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4751,13 +4743,13 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeClamp"
 
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
-            props.use_transform = True
-            props.type = "FunctionNodeFloatCompare"
-
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
             props.use_transform = True
             props.type = "ShaderNodeFloatCurve"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
+            props.use_transform = True
+            props.type = "FunctionNodeCompareFloats"
 
             props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
             props.use_transform = True
@@ -5077,8 +5069,6 @@ class NODES_PT_geom_layout(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_REROUTE")
             props.use_transform = True
             props.type = "NodeReroute"
-
-
 
 classes = (
     NODES_PT_Textoricon_input,
