@@ -13463,9 +13463,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_TO_INT:
       icon = ICON_FLOAT_TO_INT;
       break;
-    //case FN_NODE_INPUT_COLOR:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_INPUT_COLOR:
+      icon = ICON_COLOR;
+      break;
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
       icon = ICON_SPECIAL;
       break;
@@ -13720,9 +13720,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_POSITION:
       icon = ICON_POSITION;
       break;
-    // case GEO_NODE_INPUT_RADIUS:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_RADIUS:
+      icon = ICON_RADIUS;
+      break;
     // case GEO_NODE_INPUT_SHADE_SMOOTH:
     //  icon = ICON_DELETE;
     //  break;
