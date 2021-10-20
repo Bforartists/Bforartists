@@ -4611,9 +4611,21 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Gradient Texture ", icon = "NODE_GRADIENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGradient"
+
             props = col.operator("node.add_node", text=" Noise Texture   ", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
+
+            props = col.operator("node.add_node", text=" Voronoi Texture   ", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+            props = col.operator("node.add_node", text=" White Noise   ", icon = "NODE_WHITE_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
 
         #### Icon Buttons
 
@@ -4623,9 +4635,22 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGradient"
+
             props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
+
+            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
+
 
 
 
