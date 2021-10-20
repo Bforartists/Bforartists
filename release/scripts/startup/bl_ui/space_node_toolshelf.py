@@ -3900,7 +3900,6 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.type = "GeometryNodeTransform"
 
 
-
 #add input panel
 class NODES_PT_geom_add_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -3933,7 +3932,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
-            
+
             props = col.operator("node.add_node", text=" Color                   ", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
@@ -3961,27 +3960,27 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Vector                   ", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeInputVector"
-                     
+
             col = layout.column(align=True)
-            col.scale_y = 1.5          
-                      
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Index                   ", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
-            
+
             props = col.operator("node.add_node", text=" Normal                ", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
-            
+
             props = col.operator("node.add_node", text=" Position                ", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
-            
+
             props = col.operator("node.add_node", text=" Radius                ", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
-            
+
         #### Icon Buttons
 
         else:
@@ -4021,26 +4020,105 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeInputVector"
-                
+
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
-            flow.scale_y = 1.5     
-            
+            flow.scale_y = 1.5
+
             props = flow.operator("node.add_node", text = "", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
+
+
+#add mesh panel
+class NODES_PT_geom_add_instances(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Instances"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Instances on Points       ", icon = "POINT_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeInstanceOnPoints"
+
+            props = col.operator("node.add_node", text=" Realize Instances         ", icon = "MOD_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeRealizeInstances"
+
+            props = col.operator("node.add_node", text=" Rotate Instances          ", icon = "ROTATE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeRotateInstances"
+
+            props = col.operator("node.add_node", text=" Scale Instances            ", icon = "SCALE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeScaleInstances"
+
+            props = col.operator("node.add_node", text=" Translate Instances      ", icon = "TRANSLATE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeTranslateInstances"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeInstanceOnPoints"
+
+            props = flow.operator("node.add_node", text = "", icon = "MOD_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeRealizeInstances"
+
+            props = flow.operator("node.add_node", text = "", icon = "ROTATE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeRotateInstances"
+
+            props = flow.operator("node.add_node", text = "", icon = "SCALE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeTriangulate"
+
+            props = flow.operator("node.add_node", text = "", icon = "TRANSLATE_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeTranslateInstances"
 
 
 #add input panel
@@ -4950,6 +5028,7 @@ classes = (
     NODES_PT_geom_add_curve_primitives,
     NODES_PT_geom_add_geometry,
     NODES_PT_geom_add_input,
+    NODES_PT_geom_add_instances,
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
