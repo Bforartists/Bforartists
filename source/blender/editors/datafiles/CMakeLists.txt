@@ -985,8 +985,8 @@ separate_geometry
 rotate_instance
 scale_instance
 translate_instance
-#~ DEF_ICON_BLANK(1004)
-#~ DEF_ICON_BLANK(1005)
+material_index
+set_material_index
 #~ DEF_ICON_BLANK(1006)
 
 # ------------------------- row 15 --------------------------*/
