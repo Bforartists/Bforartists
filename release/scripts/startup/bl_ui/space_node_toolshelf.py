@@ -4460,9 +4460,14 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInstanceOnPoints"
 
-            props = col.operator("node.add_node", text=" Mesh to Points       ", icon = "MESH_TO_POINTS")
+            props = col.operator("node.add_node", text=" Mesh to Points         ", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
+            
+            props = col.operator("node.add_node", text=" Set Point Radius       ", icon = "SET_CURVE_RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetPointRadius"
+
 
         #### Icon Buttons
 
@@ -4483,6 +4488,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
+            props.use_transform = True
+            props.type = "GeometryNodeSetPointRadius"
 
 
 #add text panel
