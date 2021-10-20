@@ -982,9 +982,9 @@ spline_resolution
 set_spline_resolution
 set_curve_tilt
 separate_geometry
-#~ DEF_ICON_BLANK(1001)
-#~ DEF_ICON_BLANK(1002)
-#~ DEF_ICON_BLANK(1003)
+rotate_instance
+scale_instance
+translate_instance
 #~ DEF_ICON_BLANK(1004)
 #~ DEF_ICON_BLANK(1005)
 #~ DEF_ICON_BLANK(1006)
