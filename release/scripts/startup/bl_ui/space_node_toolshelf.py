@@ -4231,21 +4231,41 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Boolean                    ", icon = "MOD_BOOLEAN")
+            props = col.operator("node.add_node", text=" Mesh Boolean           ", icon = "MOD_BOOLEAN")
             props.use_transform = True
-            props.type = "GeometryNodeBoolean"
+            props.type = "GeometryNodeMeshBoolean"
+            
+            props = col.operator("node.add_node", text=" Mesh to Curve          ", icon = "OUTLINER_OB_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshToCurve"
 
-            props = col.operator("node.add_node", text=" Mesh Subdivide        ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Mesh to Points          ", icon = "MESH_TO_POINTS")
             props.use_transform = True
-            props.type = "GeometryNodeMeshSubdivide"
-
-            props = col.operator("node.add_node", text=" Points to Vertices    ", icon = "POINTS_TO_VERTICES")
+            props.type = "GeometryNodeMeshToPoints"
+            
+            props = col.operator("node.add_node", text=" Split Edges               ", icon = "SPLITEDGE")
             props.use_transform = True
-            props.type = "GeometryNodePointsToVertices"
+            props.type = "GeometryNodeSplitEdges" 
+            
+            props = col.operator("node.add_node", text=" Subdivide Mesh        ", icon = "SUBDIVIDE_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideMesh"
+            
+            props = col.operator("node.add_node", text=" Subdivision Surface ", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivisionSurface"
 
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
+            
+            props = col.operator("node.add_node", text=" Is Shade Smoooth   ", icon = "SHADING_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShadeSmooth"
+            
+            props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetShadeSmooth"
 
         #### Icon Buttons
 
@@ -4257,19 +4277,39 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
             props.use_transform = True
-            props.type = "GeometryNodeObjectInfo"
+            props.type = "GeometryNodeMeshBoolean"
+            
+            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshToCurve"
 
+            props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshToPoints"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
+            props.use_transform = True
+            props.type = "GeometryNodeSplitEdges"
+
+            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideMesh"
+            
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeMeshSubdivide"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVertices"
-
+            props.type = "GeometryNodeSubdivisionSurface"
+            
             props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShadeSmooth"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetShadeSmooth"
 
 
 #add mesh panel
