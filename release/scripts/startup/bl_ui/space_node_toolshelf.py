@@ -4151,17 +4151,26 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Material Assign      ", icon = "MATERIAL_ADD")
+            props = col.operator("node.add_node", text=" Replace Material      ", icon = "MATERIAL_REPLACE")
             props.use_transform = True
-            props.type = "GeometryNodeLegacyMaterialAssign"
+            props.type = "GeometryNodeReplaceMaterial"
 
-            props = col.operator("node.add_node", text=" Material Replace      ", icon = "MATERIAL_REPLACE")
+            props = col.operator("node.add_node", text=" Material Index           ", icon = "MATERIAL_INDEX")
             props.use_transform = True
-            props.type = "GeometryNodeMaterialReplace"
+            props.type = "GeometryNodeInputMaterialIndex"
 
-            props = col.operator("node.add_node", text=" Select by Material     ", icon = "SELECT_BY_MATERIAL")
+            props = col.operator("node.add_node", text=" Material Selection    ", icon = "SELECT_BY_MATERIAL")
             props.use_transform = True
-            props.type = "GeometryNodeLegacySelectByMaterial"
+            props.type = "GeometryNodeMaterialSelection"
+
+            props = col.operator("node.add_node", text=" Set Material              ", icon = "MATERIAL_ADD")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMaterial"
+
+            props = col.operator("node.add_node", text=" Set Material Index   ", icon = "SET_MATERIAL_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMaterialIndex"
+
 
         #### Icon Buttons
 
@@ -4171,17 +4180,25 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_ADD")
-            props.use_transform = True
-            props.type = "GeometryNodeLegacyMaterialAssign"
-
             props = flow.operator("node.add_node", text = "", icon = "MATERIAL_REPLACE")
             props.use_transform = True
-            props.type = "GeometryNodeMaterialReplace"
+            props.type = "GeometryNodeReplaceMaterial"
+
+            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMaterialIndex"
 
             props = flow.operator("node.add_node", text = "", icon = "SELECT_BY_MATERIAL")
             props.use_transform = True
-            props.type = "GeometryNodeLegacySelectByMaterial"
+            props.type = "GeometryNodeMaterialSelection"
+
+            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_ADD")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMaterial"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_MATERIAL_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMaterialIndex"
 
 
 #add mesh panel
