@@ -13711,9 +13711,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_MATERIAL:
       icon = ICON_NODE_MATERIAL;
       break;
-    // case GEO_NODE_INPUT_MATERIAL_INDEX:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_MATERIAL_INDEX:
+      icon = ICON_MATERIAL_INDEX;
+      break;
     case GEO_NODE_INPUT_NORMAL:
       icon = ICON_RECALC_NORMALS;
       break;
@@ -13822,12 +13822,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_CURVE_TILT:
       icon = ICON_SET_CURVE_TILT;
       break;
-    // case GEO_NODE_SET_MATERIAL:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_SET_MATERIAL_INDEX:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_MATERIAL:
+      icon = ICON_MATERIAL_ADD;
+      break;
+    case GEO_NODE_SET_MATERIAL_INDEX:
+      icon = ICON_SET_MATERIAL_INDEX;
+      break;
     // case GEO_NODE_SET_POINT_RADIUS:
     //  icon = ICON_DELETE;
     //  break;
