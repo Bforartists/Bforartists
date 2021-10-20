@@ -13801,12 +13801,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
       break;
-    // case GEO_NODE_ROTATE_INSTANCES:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_SCALE_INSTANCES:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_ROTATE_INSTANCES:
+      icon = ICON_ROTATE_INSTANCE;
+      break;
+    case GEO_NODE_SCALE_INSTANCES:
+      icon = ICON_SCALE_INSTANCE;
+      break;
     case GEO_NODE_SEPARATE_COMPONENTS:
       icon = ICON_SEPARATE;
       break;
@@ -13861,9 +13861,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TRANSFORM:
       icon = ICON_NODE_TRANSFORM;
       break;
-    // case GEO_NODE_TRANSLATE_INSTANCES:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_TRANSLATE_INSTANCES:
+      icon = ICON_TRANSLATE_INSTANCE;
+      break;
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
       break;
