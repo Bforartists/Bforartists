@@ -20,6 +20,7 @@
 
 import bpy
 from bpy.types import Panel
+import bmesh
 
 from bpy.app.translations import contexts as i18n_contexts
 
@@ -1122,6 +1123,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
         layout = self.layout
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        obedit = bpy.context.edit_object
 
         #text buttons
         if column_count == 4:
@@ -1145,9 +1147,30 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
+                
+                if obedit and obedit.type == "MESH":
+                    row = col.row(align=True)
+                    em = bmesh.from_edit_mesh(obedit.data)
+                    if "VERT" in em.select_mode:
+                        first_sel_is_vert = False
+                        last_sel_is_vert = False
+                        if len(em.select_history) >= 1:
+                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
+                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
 
+                            if first_sel_is_vert:
+                                # show merge first
+                                #pass # delete this
+                                row.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
+                            
+                            if last_sel_is_vert:
+                                # show merge last
+                                #pass # delete this
+                                row.operator("mesh.merge", text="", icon = "MERGE_AT_LAST").type = 'LAST'
+                                
                 row = col.row(align=True)
+                
+                row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'          
                 row.operator("mesh.remove_doubles", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 2:
@@ -1155,6 +1178,27 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
+                
+                if obedit and obedit.type == "MESH":
+                    row = col.row(align=True)
+                    em = bmesh.from_edit_mesh(obedit.data)
+                    if "VERT" in em.select_mode:
+                        first_sel_is_vert = False
+                        last_sel_is_vert = False
+                        if len(em.select_history) >= 1:
+                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
+                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
+
+                            if first_sel_is_vert:
+                                # show merge first
+                                #pass # delete this
+                                row.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
+                            
+                            if last_sel_is_vert:
+                                # show merge last
+                                #pass # delete this
+                                row.operator("mesh.merge", text="", icon = "MERGE_AT_LAST").type = 'LAST'
+
 
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
@@ -1164,6 +1208,26 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
 
                 col.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 col.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
+                
+                if obedit and obedit.type == "MESH":
+                    em = bmesh.from_edit_mesh(obedit.data)
+                    if "VERT" in em.select_mode:
+                        first_sel_is_vert = False
+                        last_sel_is_vert = False
+                        if len(em.select_history) >= 1:
+                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
+                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
+
+                            if first_sel_is_vert:
+                                # show merge first
+                                #pass # delete this
+                                col.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
+                            
+                            if last_sel_is_vert:
+                                # show merge last
+                                #pass # delete this
+                                col.operator("mesh.merge", text="", icon = "MERGE_AT_LAST").type = 'LAST'
+
                 col.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
 
                 col.separator(factor = 0.5)

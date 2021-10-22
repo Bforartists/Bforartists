@@ -3517,8 +3517,8 @@ static int edbm_merge_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem merge_type_items[] = {
-    {MESH_MERGE_FIRST, "FIRST", ICON_MERGE, "At First", ""},
-    {MESH_MERGE_LAST, "LAST", ICON_MERGE, "At Last", ""},
+    {MESH_MERGE_FIRST, "FIRST", ICON_MERGE_AT_FIRST, "At First", ""},
+    {MESH_MERGE_LAST, "LAST", ICON_MERGE_AT_LAST, "At Last", ""},
     {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
     {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
     {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
