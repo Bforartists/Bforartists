@@ -1047,8 +1047,8 @@ driver_rotational_difference
 driver_transform
 
 subdivide_mesh
-#~ DEF_ICON_BLANK(1066)
-#~ DEF_ICON_BLANK(1067)
+merge_at_first
+merge_at_last
 #~ DEF_ICON_BLANK(1068)
 #~ DEF_ICON_BLANK(1069)
 #~ DEF_ICON_BLANK(1070)
