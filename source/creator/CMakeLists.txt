@@ -517,7 +517,7 @@ if(UNIX AND NOT APPLE)
 
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS bforartists-thumbnailer
+        TARGETS blender-thumbnailer
         DESTINATION "."
       )
     endif()
@@ -562,7 +562,7 @@ if(UNIX AND NOT APPLE)
     )
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS bforartists-thumbnailer
+        TARGETS blender-thumbnailer
         DESTINATION bin
       )
     endif()
