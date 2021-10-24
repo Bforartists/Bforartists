@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -27159,6 +27159,10 @@ msgid "Material slot name"
 msgstr "Nom de l’emplacement de matériau"
 
 
+msgid "Edit"
+msgstr "Éditer"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -27284,10 +27288,6 @@ msgstr "Groupes de vertices – Spécialités"
 
 msgid "NLA Context Menu"
 msgstr "Menu contextuel - NLA"
-
-
-msgid "Edit"
-msgstr "Éditer"
 
 
 msgid "Converter"
@@ -36071,11 +36071,6 @@ msgid "Paste keys from original time"
 msgstr "Coller les clés à leurs temps d’origine"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Régler automatiquement intervalle de prévisualisation"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Régler l’intervalle de prévisualisation d’après les durées des images clé sélectionnées"
 
@@ -41980,14 +41975,6 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
 
 
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Déverrouiller tous les calques"
@@ -42308,10 +42295,6 @@ msgstr "Inverser les valeurs des images clé sélectionnées en utilisant la val
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Inverser les temps des images clé sélectionnées, inversant de fait l’ordre dans lequel elles apparaissent"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Définir automatiquement l’intervalle de prévisualisation d’après l’intervalle des images clé"
 
 
 msgctxt "Operator"
@@ -48033,10 +48016,6 @@ msgstr "N’effacer que les chemins des objets sélectionnés"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Mettre à jour chemins d’objets"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Recalculer les chemins des objets sélectionnés"
 
 
 msgctxt "Operator"
@@ -65703,6 +65682,14 @@ msgstr "Masque affiché et édité dans cet espace"
 
 msgid "Outline"
 msgstr "Contour"
+
+
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgid "Overlay Mode"

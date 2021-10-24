@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -31967,6 +31967,10 @@ msgid "Assets Context Menu"
 msgstr "アセットコンテクストメニュー"
 
 
+msgid "Edit"
+msgstr "編集"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -32180,10 +32184,6 @@ msgid "NLA Context Menu"
 msgstr "NLAコンテクストメニュー"
 
 
-msgid "Edit"
-msgstr "編集"
-
-
 msgctxt "Operator"
 msgid "NODE_MT_add"
 msgstr "NODE_MT_add"
@@ -32207,6 +32207,10 @@ msgstr "マット"
 
 msgid "Attribute"
 msgstr "属性"
+
+
+msgid "Instances"
+msgstr "インスタンス"
 
 
 msgid "Curve Primitives"
@@ -32276,6 +32280,10 @@ msgstr "シーケンサーコンテクストメニュー"
 
 msgid "Navigation"
 msgstr "視点の操作"
+
+
+msgid "Sequencer Preview Context Menu"
+msgstr "シーケンサープレビューコンテクストメニュー"
 
 
 msgid "Select Channel"
@@ -34200,6 +34208,10 @@ msgstr "穴を許容"
 
 msgid "Better results when there are holes (slower)"
 msgstr "穴がある時の結果を改善します（低速）"
+
+
+msgid "Self Intersection"
+msgstr "自分自身と交差"
 
 
 msgid "Allow self-intersection in operands"
@@ -41611,10 +41623,6 @@ msgid "Outputs the opposite of the input"
 msgstr "出力が入力の反対になります"
 
 
-msgid "Float Compare"
-msgstr "Float比較"
-
-
 msgid "True when the first input is smaller than second input"
 msgstr "最初の入力が2つめの入力未満だと true"
 
@@ -41699,10 +41707,6 @@ msgid "Rotate Euler"
 msgstr "オイラー回転"
 
 
-msgid "Base orientation of the points"
-msgstr "ポイントの方向の基準"
-
-
 msgid "Rotate the input rotation in the local space of the object"
 msgstr "オブジェクトのローカル空間で入力を回転します"
 
@@ -41735,14 +41739,6 @@ msgid "Geometry Node"
 msgstr "ジオメトリノード"
 
 
-msgid "Attribute Capture"
-msgstr "属性キャプチャ"
-
-
-msgid "Which domain to store the data in"
-msgstr "データを格納するドメイン"
-
-
 msgid "Attribute Remove"
 msgstr "属性削除"
 
@@ -41757,6 +41753,26 @@ msgstr "結果を計算する前に変換される属性のデータタイプ"
 
 msgid "Which domain to read the data from"
 msgstr "データを読み込むドメイン"
+
+
+msgid "Mapping between geometries"
+msgstr "ジオメトリ間のマッピング"
+
+
+msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
+msgstr ""
+"サーフェス上の最近接面に属性を転送します\n"
+"（分離しているポイントと辺は無視）"
+
+
+msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
+msgstr ""
+"最近接の要素に属性を転送します\n"
+"（面や辺の中心を距離の計算に使用）"
+
+
+msgid "Which domain to store the data in"
+msgstr "データを格納するドメイン"
 
 
 msgid "Collection Info"
@@ -41781,26 +41797,6 @@ msgstr "入力コレクションのジオメトリを変形するオブジェク
 
 msgid "Convex Hull"
 msgstr "凸包"
-
-
-msgid "Curve Fill"
-msgstr "カーブフィル"
-
-
-msgid "N-gons"
-msgstr "Nゴン"
-
-
-msgid "Curve Fillet"
-msgstr "カーブフィレット"
-
-
-msgid "Align Bezier handles to create circular arcs at each control point"
-msgstr "各制御点にベジエハンドルを並べて円弧を生成します"
-
-
-msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
-msgstr "円弧に沿って制御点を追加します（ベジエスプラインの場合、ハンドルタイプはベクトル）"
 
 
 msgid "Handle Type Selection"
@@ -41927,42 +41923,6 @@ msgid "Quadratic Bezier"
 msgstr "二次ベジエ"
 
 
-msgid "Resample Curve"
-msgstr "カーブ再取得"
-
-
-msgid "How to specify the amount of samples"
-msgstr "サンプル数を指定する方法"
-
-
-msgid "Evaluated"
-msgstr "評価済"
-
-
-msgid "Sample the specified number of points along each spline"
-msgstr "各スプライン毎に指定のポイントの数でサンプリングします"
-
-
-msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
-msgstr "各スプラインを指定の長さで分割し、サンプル数を算出します"
-
-
-msgid "Curve Reverse"
-msgstr "カーブ反転"
-
-
-msgid "Curve Sample"
-msgstr "カーブサンプル"
-
-
-msgid "Method for sampling input"
-msgstr "入力のサンプリング方法"
-
-
-msgid "Find sample positions on the curve using a distance from its beginning"
-msgstr "開始からの距離を使用しカーブ上のサンプル位置を見つけます"
-
-
 msgid "Set Handle Type"
 msgstr "ハンドルタイプ設定"
 
@@ -41995,28 +41955,8 @@ msgid "Star"
 msgstr "スター"
 
 
-msgid "Curve Subdivide"
-msgstr "カーブ細分化"
-
-
 msgid "Curve to Mesh"
 msgstr "カーブからメッシュへ"
-
-
-msgid "Curve Trim"
-msgstr "カーブトリム"
-
-
-msgid "How to find endpoint positions for the trimmed spline"
-msgstr "トリムしたスプラインの終点の位置を見つける方法"
-
-
-msgid "Find the endpoint positions using a factor of each spline's length"
-msgstr "各スプラインの長さの係数を使用し、終点の位置を見つけます"
-
-
-msgid "Find the endpoint positions using a length from the start of each spline"
-msgstr "各スプラインの始点からの長さを使用し、終点の位置を見つけます"
 
 
 msgid "Geometry Custom Group"
@@ -42029,6 +41969,10 @@ msgstr "Python ノード用のカスタムジオメトリグループノード"
 
 msgid "Delete Geometry"
 msgstr "形状を削除"
+
+
+msgid "Which domain to delete in"
+msgstr "削除対象のあるドメイン"
 
 
 msgid "Only Edges & Faces"
@@ -42057,6 +42001,18 @@ msgstr "ポアソンディスク"
 
 msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
 msgstr "各ポイント間で最低距離を取りつつ、ポイントをサーフェス上にランダムに配置します"
+
+
+msgid "N-gons"
+msgstr "Nゴン"
+
+
+msgid "Align Bezier handles to create circular arcs at each control point"
+msgstr "各制御点にベジエハンドルを並べて円弧を生成します"
+
+
+msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
+msgstr "円弧に沿って制御点を追加します（ベジエスプラインの場合、ハンドルタイプはベクトル）"
 
 
 msgid "Curve Tangent"
@@ -42267,22 +42223,6 @@ msgid "Attribute Transfer"
 msgstr "属性転送"
 
 
-msgid "Mapping between geometries"
-msgstr "ジオメトリ間のマッピング"
-
-
-msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
-msgstr ""
-"サーフェス上の最近接面に属性を転送します\n"
-"（分離しているポイントと辺は無視）"
-
-
-msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
-msgstr ""
-"最近接の要素に属性を転送します\n"
-"（面や辺の中心を距離の計算に使用）"
-
-
 msgid "Attribute Vector Math"
 msgstr "属性ベクトル演算"
 
@@ -42457,8 +42397,16 @@ msgid "Curve Endpoints"
 msgstr "カーブの両端"
 
 
+msgid "Curve Reverse"
+msgstr "カーブ反転"
+
+
 msgid "Select by Handle Type"
 msgstr "ハンドルタイプで選択"
+
+
+msgid "Curve Subdivide"
+msgstr "カーブ細分化"
 
 
 msgid "Cuts Type"
@@ -42471,6 +42419,10 @@ msgstr "カーブからポイントへ"
 
 msgid "How to generate points from the input curve"
 msgstr "入力カーブからポイントを生成する方法"
+
+
+msgid "Evaluated"
+msgstr "評価済"
 
 
 msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
@@ -42575,6 +42527,14 @@ msgid "Use the attribute value of the closest mesh element"
 msgstr "最も近いメッシュ要素の属性値を使用します"
 
 
+msgid "Point Rotate"
+msgstr "ポイント回転"
+
+
+msgid "Base orientation of the points"
+msgstr "ポイントの方向の基準"
+
+
 msgid "Rotate points in the local space of the object"
 msgstr "ポイントをオブジェクトのローカル空間で回転します"
 
@@ -42585,10 +42545,6 @@ msgstr "ポイント毎に（「rotation」属性で設定した）ローカル�
 
 msgid "Select by Material"
 msgstr "マテリアルで選択(旧)"
-
-
-msgid "Material Replace"
-msgstr "マテリアル置換"
 
 
 msgid "Material Selection"
@@ -42637,10 +42593,6 @@ msgstr "最後のポイント"
 
 msgid "Specify the line's start and end points"
 msgstr "ラインの始点と終点を指定します"
-
-
-msgid "Mesh Subdivide"
-msgstr "メッシュ細分化"
 
 
 msgid "Create a point in the point cloud for each selected vertex"
@@ -42700,11 +42652,43 @@ msgstr "ターゲットの近接する面との距離を計算します"
 
 
 msgid "Realize Instances"
-msgstr "インスタンス作成"
+msgstr "インスタンス実体化"
+
+
+msgid "Resample Curve"
+msgstr "カーブ再取得"
+
+
+msgid "How to specify the amount of samples"
+msgstr "サンプル数を指定する方法"
+
+
+msgid "Sample the specified number of points along each spline"
+msgstr "各スプライン毎に指定のポイントの数でサンプリングします"
+
+
+msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
+msgstr "各スプラインを指定の長さで分割し、サンプル数を算出します"
+
+
+msgid "Method for sampling input"
+msgstr "入力のサンプリング方法"
+
+
+msgid "Find sample positions on the curve using a distance from its beginning"
+msgstr "開始からの距離を使用しカーブ上のサンプル位置を見つけます"
 
 
 msgid "Separate Components"
 msgstr "成分分離"
+
+
+msgid "Separate Geometry"
+msgstr "ジオメトリ分離"
+
+
+msgid "Which domain to separate on"
+msgstr "分離対象のあるドメイン"
 
 
 msgid "Set Position"
@@ -42715,8 +42699,8 @@ msgid "Spline Length"
 msgstr "スプライン長さ"
 
 
-msgid "String to Curves"
-msgstr "Stringからカーブへ"
+msgid "Join Strings"
+msgstr "String結合"
 
 
 msgid "Align X"
@@ -42777,6 +42761,18 @@ msgstr "テキストを拡大縮小して幅と高さ内に収めます"
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "幅と高さ内に収まる部分のカーブのみ出力します。残りは \"Remainder\" に出力します"
+
+
+msgid "How to find endpoint positions for the trimmed spline"
+msgstr "トリムしたスプラインの終点の位置を見つける方法"
+
+
+msgid "Find the endpoint positions using a factor of each spline's length"
+msgstr "各スプラインの長さの係数を使用し、終点の位置を見つけます"
+
+
+msgid "Find the endpoint positions using a length from the start of each spline"
+msgstr "各スプラインの始点からの長さを使用し、終点の位置を見つけます"
 
 
 msgctxt "NodeTree"
@@ -44961,11 +44957,6 @@ msgstr "オフセットなし"
 
 msgid "Paste keys from original time"
 msgstr "元の時間からキーを貼り付けます"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "プレビュー範囲を自動設定"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -53364,107 +53355,6 @@ msgstr "チントカラーを切り替えます"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "画像をグリースペンシルにトレース"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "画像からグリースペンシルのストロークを抽出します"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "単一画像または連番画像のどちらをトレースするかを決めます"
-
-
-msgid "Trace the current frame of the image"
-msgstr "現在のフレームの画像をトレースします"
-
-
-msgid "Trace full sequence"
-msgstr "連番画像全体をトレースします"
-
-
-msgid "Resolution of the generated curves"
-msgstr "生成するカーブの解像度"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "サンプルポイントの距離。０で無効"
-
-
-msgid "Scale of the final stroke"
-msgstr "最終ストロークのスケール"
-
-
-msgid "Color Threshold"
-msgstr "色のしきい値"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "この輝度のしきい値より上の位置のストロークを生成します"
-
-
-msgid "Turn Policy"
-msgstr "ターンポリシー"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
-
-
-msgid "Black"
-msgstr "黒"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "黒（前面）成分につなげるようにします"
-
-
-msgid "White"
-msgstr "白"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "白（背景）成分につなげるようにします"
-
-
-msgid "Always take a left turn"
-msgstr "常に左側にターンします"
-
-
-msgid "Always take a right turn"
-msgstr "常に右側にターンします"
-
-
-msgid "Minority"
-msgstr "マイノリティ"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
-
-
-msgid "Majority"
-msgstr "マジョリティ"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "疑似乱数で選択します"
-
-
-msgid "Start At Current Frame"
-msgstr "現在のフレームから開始"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "現在のフレームの画像からトレースを開始します"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "ストロークフィルをトランスフォーム"
 
@@ -53883,10 +53773,6 @@ msgstr "時間0を中心に時間を反転"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "選択中のキーフレームの時間を、表示とは逆順に反転します"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "キーフレームの範囲に基づいて自動的に設定されたプレビューの範囲"
 
 
 msgctxt "Operator"
@@ -61770,10 +61656,6 @@ msgid "Update Object Paths"
 msgstr "オブジェクトパスを更新"
 
 
-msgid "Recalculate paths for selected objects"
-msgstr "選択したオブジェクトのパスを再計算します"
-
-
 msgctxt "Operator"
 msgid "Add Point Cloud"
 msgstr "ポイントクラウドを追加"
@@ -62593,14 +62475,6 @@ msgstr "モードを転送"
 
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr "アクティブオブジェクトを切り替え、同じモードをマウスカーソル下の新しい物に割り当てます。現在のオブジェクトはアクティブモードから抜けます"
-
-
-msgid "Use Eyedropper"
-msgstr "スポイトを使用"
-
-
-msgid "Pick the object to switch to using an eyedropper"
-msgstr "スポイトを使用し、切り替えるオブジェクトを取得します"
 
 
 msgid "Flash On Transfer"
@@ -65114,11 +64988,11 @@ msgstr "移動するポーズ"
 
 msgctxt "Operator"
 msgid "PoseLib Remove Pose"
-msgstr "ポーズライブラリ ポーズを削除"
+msgstr "ポーズライブラリのポーズを削除"
 
 
 msgid "Remove nth pose from the active Pose Library"
-msgstr "n番目のポーズをアクティブなポーズライブラリから削除します"
+msgstr "アクティブポーズライブラリから n 番目のポーズを削除します"
 
 
 msgid "The pose to remove"
@@ -65127,11 +65001,11 @@ msgstr "削除するポーズ"
 
 msgctxt "Operator"
 msgid "PoseLib Rename Pose"
-msgstr "ポーズライブラリ ポーズのリネーム"
+msgstr "ポーズライブラリのポーズをリネーム"
 
 
 msgid "Rename specified pose from the active Pose Library"
-msgstr "アクティブなポーズライブラリから指定したポーズをリネームします"
+msgstr "アクティブポーズライブラリの指定のポーズをリネームします"
 
 
 msgid "New Pose Name"
@@ -68615,6 +68489,10 @@ msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "選択中の二つのサウンドストリップのクロスフェーディングを行う"
 
 
+msgid "Cursor location in normalized preview coordinates"
+msgstr "正規化プレビュー座標でのカーソル位置"
+
+
 msgctxt "Operator"
 msgid "Deinterlace Movies"
 msgstr "ムービーのインターレース解除"
@@ -71205,6 +71083,15 @@ msgstr "ツリービュードロップ"
 
 msgid "Drag and drop items onto a tree item"
 msgstr "ツリーアイテム上にアイテムをドラッグアンドドロップします"
+
+
+msgctxt "Operator"
+msgid "Rename Tree-View Item"
+msgstr "ツリービューアイテムをリネーム"
+
+
+msgid "Rename the active item in the tree"
+msgstr "ツリー内のアクティブアイテムの名前を変更します"
 
 
 msgctxt "Operator"
@@ -75947,14 +75834,6 @@ msgid "Allow buttons in the header to stretch and shrink to fill the entire layo
 msgstr "ヘッダー内のボタンを、レイアウト幅全体に合わせて伸び縮みできるようにします"
 
 
-msgid "Box Style"
-msgstr "ボックススタイル"
-
-
-msgid "Display panel with the box widget theme"
-msgstr "パネルをボックスウィジェットテーマで表示します"
-
-
 msgid "Order"
 msgstr "順序"
 
@@ -79777,7 +79656,11 @@ msgstr "ファイルブラウザーに最近利用した場所のリストを表
 
 
 msgid "Show System Locations"
-msgstr "システムディレクトリを表示"
+msgstr "特殊フォルダーを表示"
+
+
+msgid "Show System locations list in the File Browser"
+msgstr "ファイルブラウザーに特殊なフォルダー（デスクトップなど）のリストを表示します"
 
 
 msgid "Sounds Directory"
@@ -83344,7 +83227,7 @@ msgstr "ビュー位置をサイドビューと同期します"
 
 
 msgid "Clip view contents based on what is visible in other side views"
-msgstr "他のビューから見える部分を元に、ビューの内容をクリッピングします"
+msgstr "他のビューから見える部分を元に、ビューの中身をクリッピングします"
 
 
 msgid "Use Clip Planes"
@@ -88060,8 +87943,16 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
+msgid "Black"
+msgstr "黒"
+
+
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
+
+
+msgid "White"
+msgstr "白"
 
 
 msgid "Display white edges"
@@ -89760,10 +89651,6 @@ msgstr "ポイントデータのみ含むポイントクラウド成分"
 
 msgid "Curve component containing spline and control point data"
 msgstr "スプラインに含まれるカーブ成分と制御点データ"
-
-
-msgid "Instances"
-msgstr "インスタンス"
 
 
 msgid "Instances of objects or collections"
@@ -96564,8 +96451,88 @@ msgstr "シーケンサー"
 
 
 msgctxt "WindowManager"
+msgid "Sequencer Tool: Tweak"
+msgstr "シーケンサーツール：長押し"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Tweak (fallback)"
+msgstr "シーケンサーツール：長押し（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Select Box"
+msgstr "シーケンサーツール：ボックス選択"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Select Box (fallback)"
+msgstr "シーケンサーツール：ボックス選択（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Blade"
+msgstr "シーケンサーツール：ブレード"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Blade (fallback)"
+msgstr "シーケンサーツール：ブレード（予備）"
+
+
+msgctxt "WindowManager"
 msgid "SequencerPreview"
 msgstr "シーケンサープレビュー"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Cursor"
+msgstr "シーケンサーツール：カーソル"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Cursor (fallback)"
+msgstr "シーケンサーツール：カーソル（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Move"
+msgstr "シーケンサーツール：移動"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Move (fallback)"
+msgstr "シーケンサーツール：移動（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Rotate"
+msgstr "シーケンサーツール：回転"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Rotate (fallback)"
+msgstr "シーケンサーツール：回転（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Scale"
+msgstr "シーケンサーツール：スケール"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Scale (fallback)"
+msgstr "シーケンサーツール：スケール（予備）"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Sample"
+msgstr "シーケンサーツール：スポイト"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Sample (fallback)"
+msgstr "シーケンサーツール：スポイト（予備）"
 
 
 msgctxt "WindowManager"
@@ -100587,14 +100554,6 @@ msgid "No asset selected"
 msgstr "アセットが選択されていません"
 
 
-msgid "Asset Catalog:"
-msgstr "アセットカタログ:"
-
-
-msgid "UUID"
-msgstr "UUID"
-
-
 msgid "Source: Current File"
 msgstr "ソース：現在のファイル"
 
@@ -100606,6 +100565,14 @@ msgstr "ソース:"
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "アセットをクリア（フェイクユーザーを設定）"
+
+
+msgid "Asset Catalog:"
+msgstr "アセットカタログ:"
+
+
+msgid "UUID"
+msgstr "UUID"
 
 
 msgctxt "Operator"
@@ -101627,6 +101594,10 @@ msgstr "%.2f"
 
 msgid "Original Frame Range"
 msgstr "元のフレーム範囲"
+
+
+msgid "Pan Angle"
+msgstr "パンの角度"
 
 
 msgid "Custom Proxy"
@@ -108315,10 +108286,6 @@ msgstr "アーマチュアオブジェクト以外にフックボーンは追加
 
 msgid "Could not find hook modifier"
 msgstr "フックモディファイアーがありません"
-
-
-msgid "Click in the viewport to select an object"
-msgstr "ビューポートをクリックしてオブジェクトを選択してください"
 
 
 msgid "Unable to execute '%s', error changing modes"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -9297,6 +9297,10 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
+msgid "Edit"
+msgstr "Уреди"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Исечак"
@@ -9369,10 +9373,6 @@ msgstr "Додај"
 
 msgid "Vertex Group Specials"
 msgstr "Специјална група темена"
-
-
-msgid "Edit"
-msgstr "Уреди"
 
 
 msgid "Converter"
@@ -15127,14 +15127,6 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
-
-
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -23526,6 +23518,14 @@ msgstr "Локација 2D курсора"
 
 msgid "2D cursor location for this view"
 msgstr "Локација 2D курсора у овом погледу"
+
+
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
 
 
 msgid "Alpha Channel"

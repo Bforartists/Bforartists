@@ -131,7 +131,7 @@ static const EnumPropertyItem rna_enum_override_library_property_operation_items
  */
 const struct IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
     /* Datablocks */
-    {FILTER_ID_AC, "filter_action", ICON_ANIM_DATA, "Actions", "Show Action data-blocks"},
+    {FILTER_ID_AC, "filter_action", ICON_ACTION, "Actions", "Show Action data-blocks"},
     {FILTER_ID_AR,
      "filter_armature",
      ICON_ARMATURE_DATA,
@@ -173,7 +173,7 @@ const struct IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
     {FILTER_ID_MB, "filter_metaball", ICON_META_DATA, "Metaballs", "Show Metaball data-blocks"},
     {FILTER_ID_MC,
      "filter_movie_clip",
-     ICON_TRACKER_DATA,
+     ICON_TRACKER,
      "Movie Clips",
      "Show Movie Clip data-blocks"},
     {FILTER_ID_ME, "filter_mesh", ICON_MESH_DATA, "Meshes", "Show Mesh data-blocks"},
@@ -669,12 +669,20 @@ static ID *rna_ID_copy(ID *id, Main *bmain)
   return newid;
 }
 
-static void rna_ID_asset_mark(ID *id, bContext *C)
+static void rna_ID_asset_mark(ID *id)
 {
-  if (ED_asset_mark_id(C, id)) {
+  if (ED_asset_mark_id(id)) {
     WM_main_add_notifier(NC_ID | NA_EDITED, NULL);
     WM_main_add_notifier(NC_ASSET | NA_ADDED, NULL);
   }
+}
+
+static void rna_ID_asset_generate_preview(ID *id, bContext *C)
+{
+  ED_asset_generate_preview(C, id);
+
+  WM_main_add_notifier(NC_ID | NA_EDITED, NULL);
+  WM_main_add_notifier(NC_ASSET | NA_EDITED, NULL);
 }
 
 static void rna_ID_asset_clear(ID *id)
@@ -1985,12 +1993,16 @@ static void rna_def_ID(BlenderRNA *brna)
       func,
       "Enable easier reuse of the data-block through the Asset Browser, with the help of "
       "customizable metadata (like previews, descriptions and tags)");
-  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 
   func = RNA_def_function(srna, "asset_clear", "rna_ID_asset_clear");
   RNA_def_function_ui_description(
       func,
       "Delete all asset metadata and turn the asset data-block back into a normal data-block");
+
+  func = RNA_def_function(srna, "asset_generate_preview", "rna_ID_asset_generate_preview");
+  RNA_def_function_ui_description(
+      func, "Generate preview image (might be scheduled in a background thread)");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 
   func = RNA_def_function(srna, "override_create", "rna_ID_override_create");
   RNA_def_function_ui_description(func,

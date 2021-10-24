@@ -41,7 +41,7 @@ class BL_UI_Label(BL_UI_Widget):
         return False
 
     def draw(self):
-        if not self.visible:
+        if not self._is_visible:
             return
 
 

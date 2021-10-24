@@ -54,7 +54,6 @@ class BL_UI_OT_draw_operator(Operator):
         result = False
         for widget in self.widgets:
             if widget.handle_event(event):
-                print(type(widget))
                 result = True
         return result
 
@@ -80,5 +79,10 @@ class BL_UI_OT_draw_operator(Operator):
 
 	# Draw handler to paint onto the screen
     def draw_callback_px(self, op, context):
-        for widget in self.widgets:
-            widget.draw()
+        try:
+            for widget in self.widgets:
+                widget.draw()
+        except:
+            pass;
+        #     context.window_manager.event_timer_remove(self.draw_event)
+        #     bpy.types.SpaceView3D.draw_handler_remove(self.draw_handle, "WINDOW")
