@@ -47,6 +47,7 @@
 
 #include "BKE_action.h"
 #include "BKE_animsys.h"
+#include "BKE_armature.h"
 #include "BKE_asset.h"
 #include "BKE_collection.h"
 #include "BKE_deform.h"
@@ -55,6 +56,7 @@
 #include "BKE_idprop.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
+#include "BKE_modifier.h"
 #include "BKE_node.h"
 
 #include "RNA_access.h"
@@ -539,6 +541,54 @@ static void version_geometry_nodes_add_realize_instance_nodes(bNodeTree *ntree)
   }
 }
 
+/**
+ * The geometry nodes modifier used to realize instances for the next modifier implicitly. Now it
+ * is done with the realize instances node. It also used to convert meshes to point clouds
+ * automatically, which is also now done with a specific node.
+ */
+static bNodeTree *add_realize_node_tree(Main *bmain)
+{
+  bNodeTree *node_tree = ntreeAddTree(bmain, "Realize Instances 2.93 Legacy", "GeometryNodeTree");
+
+  ntreeAddSocketInterface(node_tree, SOCK_IN, "NodeSocketGeometry", "Geometry");
+  ntreeAddSocketInterface(node_tree, SOCK_OUT, "NodeSocketGeometry", "Geometry");
+
+  bNode *group_input = nodeAddStaticNode(NULL, node_tree, NODE_GROUP_INPUT);
+  group_input->locx = -400.0f;
+  bNode *group_output = nodeAddStaticNode(NULL, node_tree, NODE_GROUP_OUTPUT);
+  group_output->locx = 500.0f;
+  group_output->flag |= NODE_DO_OUTPUT;
+
+  bNode *join = nodeAddStaticNode(NULL, node_tree, GEO_NODE_JOIN_GEOMETRY);
+  join->locx = group_output->locx - 175.0f;
+  join->locy = group_output->locy;
+  bNode *conv = nodeAddStaticNode(NULL, node_tree, GEO_NODE_POINTS_TO_VERTICES);
+  conv->locx = join->locx - 175.0f;
+  conv->locy = join->locy - 70.0;
+  bNode *separate = nodeAddStaticNode(NULL, node_tree, GEO_NODE_SEPARATE_COMPONENTS);
+  separate->locx = join->locx - 350.0f;
+  separate->locy = join->locy + 50.0f;
+  bNode *realize = nodeAddStaticNode(NULL, node_tree, GEO_NODE_REALIZE_INSTANCES);
+  realize->locx = separate->locx - 200.0f;
+  realize->locy = join->locy;
+
+  nodeAddLink(node_tree, group_input, group_input->outputs.first, realize, realize->inputs.first);
+  nodeAddLink(node_tree, realize, realize->outputs.first, separate, separate->inputs.first);
+  nodeAddLink(node_tree, conv, conv->outputs.first, join, join->inputs.first);
+  nodeAddLink(node_tree, separate, BLI_findlink(&separate->outputs, 3), join, join->inputs.first);
+  nodeAddLink(node_tree, separate, BLI_findlink(&separate->outputs, 1), conv, conv->inputs.first);
+  nodeAddLink(node_tree, separate, BLI_findlink(&separate->outputs, 2), join, join->inputs.first);
+  nodeAddLink(node_tree, separate, separate->outputs.first, join, join->inputs.first);
+  nodeAddLink(node_tree, join, join->outputs.first, group_output, group_output->inputs.first);
+
+  LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+    nodeSetSelected(node, false);
+  }
+
+  ntreeUpdateTree(bmain, node_tree);
+  return node_tree;
+}
+
 void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
 {
   if (MAIN_VERSION_ATLEAST(bmain, 300, 0) && !MAIN_VERSION_ATLEAST(bmain, 300, 1)) {
@@ -667,6 +717,51 @@ void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
         /* This uses the fact that the active vertex group index starts counting at 1. */
         if (BKE_object_defgroup_active_index_get(object) == 0) {
           BKE_object_defgroup_active_index_set(object, object->actdef);
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 35)) {
+    /* Add a new modifier to realize instances from previous modifiers.
+     * Previously that was done automatically by geometry nodes. */
+    bNodeTree *realize_instances_node_tree = NULL;
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      LISTBASE_FOREACH_MUTABLE (ModifierData *, md, &ob->modifiers) {
+        if (md->type != eModifierType_Nodes) {
+          continue;
+        }
+        if (md->next == NULL) {
+          break;
+        }
+        if (md->next->type == eModifierType_Nodes) {
+          continue;
+        }
+        NodesModifierData *nmd = (NodesModifierData *)md;
+        if (nmd->node_group == NULL) {
+          continue;
+        }
+
+        NodesModifierData *new_nmd = (NodesModifierData *)BKE_modifier_new(eModifierType_Nodes);
+        STRNCPY(new_nmd->modifier.name, "Realize Instances 2.93 Legacy");
+        BKE_modifier_unique_name(&ob->modifiers, &new_nmd->modifier);
+        BLI_insertlinkafter(&ob->modifiers, md, new_nmd);
+        if (realize_instances_node_tree == NULL) {
+          realize_instances_node_tree = add_realize_node_tree(bmain);
+        }
+        new_nmd->node_group = realize_instances_node_tree;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 37)) {
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        LISTBASE_FOREACH_MUTABLE (bNode *, node, &ntree->nodes) {
+          if (node->type == GEO_NODE_BOUNDING_BOX) {
+            bNodeSocket *geometry_socket = node->inputs.first;
+            add_realize_instances_before_socket(ntree, node, geometry_socket);
+          }
         }
       }
     }
@@ -1013,6 +1108,113 @@ static void version_geometry_nodes_add_attribute_input_settings(NodesModifierDat
 
     IDProperty *attribute_prop = IDP_New(IDP_STRING, &idprop, attribute_name_prop_name);
     IDP_AddToGroup(nmd->settings.properties, attribute_prop);
+  }
+}
+
+/* Copy of the function before the fixes. */
+static void legacy_vec_roll_to_mat3_normalized(const float nor[3],
+                                               const float roll,
+                                               float r_mat[3][3])
+{
+  const float SAFE_THRESHOLD = 1.0e-5f;     /* theta above this value has good enough precision. */
+  const float CRITICAL_THRESHOLD = 1.0e-9f; /* above this is safe under certain conditions. */
+  const float THRESHOLD_SQUARED = CRITICAL_THRESHOLD * CRITICAL_THRESHOLD;
+
+  const float x = nor[0];
+  const float y = nor[1];
+  const float z = nor[2];
+
+  const float theta = 1.0f + y;          /* remapping Y from [-1,+1] to [0,2]. */
+  const float theta_alt = x * x + z * z; /* Helper value for matrix calculations.*/
+  float rMatrix[3][3], bMatrix[3][3];
+
+  BLI_ASSERT_UNIT_V3(nor);
+
+  /* When theta is close to zero (nor is aligned close to negative Y Axis),
+   * we have to check we do have non-null X/Z components as well.
+   * Also, due to float precision errors, nor can be (0.0, -0.99999994, 0.0) which results
+   * in theta being close to zero. This will cause problems when theta is used as divisor.
+   */
+  if (theta > SAFE_THRESHOLD || (theta > CRITICAL_THRESHOLD && theta_alt > THRESHOLD_SQUARED)) {
+    /* nor is *not* aligned to negative Y-axis (0,-1,0). */
+
+    bMatrix[0][1] = -x;
+    bMatrix[1][0] = x;
+    bMatrix[1][1] = y;
+    bMatrix[1][2] = z;
+    bMatrix[2][1] = -z;
+
+    if (theta > SAFE_THRESHOLD) {
+      /* nor differs significantly from negative Y axis (0,-1,0): apply the general case. */
+      bMatrix[0][0] = 1 - x * x / theta;
+      bMatrix[2][2] = 1 - z * z / theta;
+      bMatrix[2][0] = bMatrix[0][2] = -x * z / theta;
+    }
+    else {
+      /* nor is close to negative Y axis (0,-1,0): apply the special case. */
+      bMatrix[0][0] = (x + z) * (x - z) / -theta_alt;
+      bMatrix[2][2] = -bMatrix[0][0];
+      bMatrix[2][0] = bMatrix[0][2] = 2.0f * x * z / theta_alt;
+    }
+  }
+  else {
+    /* nor is very close to negative Y axis (0,-1,0): use simple symmetry by Z axis. */
+    unit_m3(bMatrix);
+    bMatrix[0][0] = bMatrix[1][1] = -1.0;
+  }
+
+  /* Make Roll matrix */
+  axis_angle_normalized_to_mat3(rMatrix, nor, roll);
+
+  /* Combine and output result */
+  mul_m3_m3m3(r_mat, rMatrix, bMatrix);
+}
+
+static void correct_bone_roll_value(const float head[3],
+                                    const float tail[3],
+                                    const float check_x_axis[3],
+                                    const float check_y_axis[3],
+                                    float *r_roll)
+{
+  const float SAFE_THRESHOLD = 1.0e-5f;
+  float vec[3], bone_mat[3][3], vec2[3];
+
+  /* Compute the Y axis vector. */
+  sub_v3_v3v3(vec, tail, head);
+  normalize_v3(vec);
+
+  /* Only correct when in the danger zone. */
+  if (1.0f + vec[1] < SAFE_THRESHOLD * 2 && (vec[0] || vec[2])) {
+    /* Use the armature matrix to double-check if adjustment is needed.
+     * This should minimize issues if the file is bounced back and forth between
+     * 2.92 and 2.91, provided Edit Mode isn't entered on the armature in 2.91. */
+    vec_roll_to_mat3(vec, *r_roll, bone_mat);
+
+    UNUSED_VARS_NDEBUG(check_y_axis);
+    BLI_assert(dot_v3v3(bone_mat[1], check_y_axis) > 0.999f);
+
+    if (dot_v3v3(bone_mat[0], check_x_axis) < 0.999f) {
+      /* Recompute roll using legacy code to interpret the old value. */
+      legacy_vec_roll_to_mat3_normalized(vec, *r_roll, bone_mat);
+      mat3_to_vec_roll(bone_mat, vec2, r_roll);
+      BLI_assert(compare_v3v3(vec, vec2, 0.001f));
+    }
+  }
+}
+
+/* Update the armature Bone roll fields for bones very close to -Y direction. */
+static void do_version_bones_roll(ListBase *lb)
+{
+  LISTBASE_FOREACH (Bone *, bone, lb) {
+    /* Parent-relative orientation (used for posing). */
+    correct_bone_roll_value(
+        bone->head, bone->tail, bone->bone_mat[0], bone->bone_mat[1], &bone->roll);
+
+    /* Absolute orientation (used for Edit mode). */
+    correct_bone_roll_value(
+        bone->arm_head, bone->arm_tail, bone->arm_mat[0], bone->arm_mat[1], &bone->arm_roll);
+
+    do_version_bones_roll(&bone->childbase);
   }
 }
 
@@ -1758,19 +1960,8 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
-  /**
-   * Versioning code until next subversion bump goes here.
-   *
-   * \note Be sure to check when bumping the version:
-   * - "versioning_userdef.c", #blo_do_versions_userdef
-   * - "versioning_userdef.c", #do_versions_theme
-   *
-   * \note Keep this message at the bottom of the function.
-   */
-  {
-    /* Keep this block, even when empty. */
-
-    /* Update the idnames for renamed geo and function nodes */
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 36)) {
+    /* Update the `idnames` for renamed geometry and function nodes. */
     LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
       if (ntree->type != NTREE_GEOMETRY) {
         continue;
@@ -1790,5 +1981,56 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
       version_node_id(ntree, GEO_NODE_SET_MATERIAL, "GeometryNodeSetMaterial");
       version_node_id(ntree, GEO_NODE_SPLIT_EDGES, "GeometryNodeSplitEdges");
     }
+
+    /* Update bone roll after a fix to vec_roll_to_mat3_normalized. */
+    LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
+      do_version_bones_roll(&arm->bonebase);
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 37)) {
+    /* Node Editor: toggle overlays on. */
+    if (!DNA_struct_find(fd->filesdna, "SpaceNodeOverlay")) {
+      LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+        LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+          LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+            if (space->spacetype == SPACE_NODE) {
+              SpaceNode *snode = (SpaceNode *)space;
+              snode->overlay.flag |= SN_OVERLAY_SHOW_OVERLAYS;
+              snode->overlay.flag |= SN_OVERLAY_SHOW_WIRE_COLORS;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 38)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+          if (space->spacetype == SPACE_FILE) {
+            SpaceFile *sfile = (SpaceFile *)space;
+            FileAssetSelectParams *asset_params = sfile->asset_params;
+            if (asset_params) {
+              asset_params->base_params.filter_id = FILTER_ID_ALL;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Versioning code until next subversion bump goes here.
+   *
+   * \note Be sure to check when bumping the version:
+   * - "versioning_userdef.c", #blo_do_versions_userdef
+   * - "versioning_userdef.c", #do_versions_theme
+   *
+   * \note Keep this message at the bottom of the function.
+   */
+  {
+    /* Keep this block, even when empty. */
   }
 }

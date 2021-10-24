@@ -2240,8 +2240,8 @@ void node_draw_space(const bContext *C, ARegion *region)
   /* XXX `snode->runtime->cursor` set in coordinate-space for placing new nodes,
    * used for drawing noodles too. */
   UI_view2d_region_to_view(&region->v2d,
-                           win->eventstate->x - region->winrct.xmin,
-                           win->eventstate->y - region->winrct.ymin,
+                           win->eventstate->xy[0] - region->winrct.xmin,
+                           win->eventstate->xy[1] - region->winrct.ymin,
                            &snode->runtime->cursor[0],
                            &snode->runtime->cursor[1]);
   snode->runtime->cursor[0] /= UI_DPI_FAC;
@@ -2319,7 +2319,7 @@ void node_draw_space(const bContext *C, ARegion *region)
     GPU_line_smooth(false);
     GPU_blend(GPU_BLEND_NONE);
 
-    if (snode->flag & SNODE_SHOW_GPENCIL) {
+    if (snode->overlay.flag & SN_OVERLAY_SHOW_OVERLAYS && snode->flag & SNODE_SHOW_GPENCIL) {
       /* Draw grease-pencil annotations. */
       ED_annotation_draw_view2d(C, true);
     }
@@ -2338,7 +2338,7 @@ void node_draw_space(const bContext *C, ARegion *region)
   UI_view2d_view_restore(C);
 
   if (snode->treepath.last) {
-    if (snode->flag & SNODE_SHOW_GPENCIL) {
+    if (snode->overlay.flag & SN_OVERLAY_SHOW_OVERLAYS && snode->flag & SNODE_SHOW_GPENCIL) {
       /* Draw grease-pencil (screen strokes, and also paint-buffer). */
       ED_annotation_draw_view2d(C, false);
     }

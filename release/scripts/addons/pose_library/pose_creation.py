@@ -316,6 +316,7 @@ def create_pose_asset(
         return None
 
     pose_action.asset_mark()
+    pose_action.asset_generate_preview()
     return pose_action
 
 

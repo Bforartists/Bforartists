@@ -135,6 +135,7 @@ class NODE_HT_header(Header):
 
         scene = context.scene
         snode = context.space_data
+        overlay = snode.overlay
         snode_id = snode.id
         id_from = snode.id_from
         tool_settings = context.tool_settings
@@ -326,6 +327,13 @@ class NODE_HT_header(Header):
             row.prop(tool_settings, "snap_node_element", icon_only=True)
             if tool_settings.snap_node_element != 'GRID':
                 row.prop(tool_settings, "snap_target", text="")
+
+        # Overlay toggle & popover
+        row = layout.row(align=True)
+        row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
+        sub = row.row(align=True)
+        sub.active = overlay.show_overlays
+        sub.popover(panel="NODE_PT_overlay", text="")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -853,6 +861,29 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(snode, "use_auto_render")
 
 
+class NODE_PT_overlay(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Overlays"
+    bl_ui_units_x = 7
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Node Editor Overlays")
+
+        snode = context.space_data
+        overlay = snode.overlay
+
+        layout.active = overlay.show_overlays
+
+        col = layout.column()
+        col.prop(overlay, "show_wire_color", text="Wire Colors")
+
+        col.separator()
+
+        col.prop(snode, "show_annotation", text="Annotations")
+
+
 class NODE_UL_interface_sockets(bpy.types.UIList):
     def draw_item(self, context, layout, _data, item, icon, _active_data, _active_propname, _index):
         socket = item
@@ -930,7 +961,7 @@ class NodeTreeInterfacePanel:
                 field_socket_prefixes = {
                     "NodeSocketInt", "NodeSocketColor", "NodeSocketVector", "NodeSocketBool", "NodeSocketFloat"}
                 is_field_type = any(active_socket.bl_socket_idname.startswith(prefix) for prefix in field_socket_prefixes)
-                if in_out == "OUT" and is_field_type:
+                if in_out == 'OUT' and is_field_type:
                     layout.prop(active_socket, "attribute_domain")
             active_socket.draw(context, layout)
 
@@ -1045,6 +1076,7 @@ classes = (
     NODE_PT_backdrop,
     NODE_PT_quality,
     NODE_PT_annotation,
+    NODE_PT_overlay,
     NODE_UL_interface_sockets,
     NODE_PT_node_tree_interface_inputs,
     NODE_PT_node_tree_interface_outputs,

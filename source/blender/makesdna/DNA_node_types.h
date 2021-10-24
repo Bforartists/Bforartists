@@ -1291,6 +1291,14 @@ typedef struct NodeAttributeCurveMap {
   CurveMapping *curve_rgb;
 } NodeAttributeCurveMap;
 
+typedef struct NodeInputBool {
+  uint8_t boolean;
+} NodeInputBool;
+
+typedef struct NodeInputInt {
+  int integer;
+} NodeInputInt;
+
 typedef struct NodeInputVector {
   float vector[3];
 } NodeInputVector;
@@ -1526,9 +1534,13 @@ typedef struct NodeGeometryRaycast {
   /* GeometryNodeRaycastMapMode. */
   uint8_t mapping;
 
+  /* CustomDataType. */
+  int8_t data_type;
+
+  /* Deprecated input types in new Ray-cast node. Can be removed when legacy nodes are no longer
+   * supported. */
   uint8_t input_type_ray_direction;
   uint8_t input_type_ray_length;
-  char _pad[1];
 } NodeGeometryRaycast;
 
 typedef struct NodeGeometryCurveFill {

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -29512,6 +29512,10 @@ msgid "Material slot name"
 msgstr "Имя слота материала"
 
 
+msgid "Edit"
+msgstr "Правка"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -29695,10 +29699,6 @@ msgstr "Контекстное меню канала НЛА"
 
 msgid "NLA Context Menu"
 msgstr "Контекстное меню НЛА"
-
-
-msgid "Edit"
-msgstr "Правка"
 
 
 msgctxt "Operator"
@@ -39330,11 +39330,6 @@ msgid "Paste keys from original time"
 msgstr "Вставить ключи по исходному времени"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Автоустановка диапазона предпросмотра"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Установить диапазон предпросмотра на основе протяжённости выделенных ключевых кадров"
 
@@ -46097,14 +46092,6 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
-msgid "White"
-msgstr "Белый"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Разблокировать все слои"
@@ -46434,10 +46421,6 @@ msgstr "Отразить значения выделенных ключевых 
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Развернуть выделенные ключевые кадры по времени, обратив порядок их появления"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Автоматическая установка диапазона предпросмотра на основе диапазона ключевых кадров"
 
 
 msgctxt "Operator"
@@ -53091,10 +53074,6 @@ msgstr "Установить диапазон кадров для траекто
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Обновить пути объектов"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Пересчитать пути для выделенных объектов"
 
 
 msgctxt "Operator"
@@ -74392,8 +74371,16 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgid "Display white edges"

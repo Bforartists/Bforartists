@@ -266,6 +266,7 @@ const bTheme U_theme_default = {
     .icon_modifier = RGBA(0x6e98ccff),
     .icon_shading = RGBA(0xcc6e6eff),
     .icon_folder = RGBA(0xffffffff),
+    .panel_roundness = 0.4f,
   },
   .space_properties = {
     .back = RGBA(0x40404000),
@@ -832,6 +833,7 @@ const bTheme U_theme_default = {
     .facedot_size = 4,
     .noodle_curving = 5,
     .grid_levels = 2,
+    .dash_alpha = 0.5f,
     .syntaxl = RGBA(0x4d4d4dff),
     .syntaxs = RGBA(0x975b5bff),
     .syntaxb = RGBA(0xccb83dff),

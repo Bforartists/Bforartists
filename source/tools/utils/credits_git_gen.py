@@ -35,7 +35,7 @@ import unicodedata as ud
 # This is a combination of unifying git logs as well as
 # name change requested by the authors.
 
-AuthorLookup = {
+author_table = {
     "Aaron": "Aaron Carlisle",
     "Your Name": "Aaron Carlisle",
     "Alan": "Alan Troth",
@@ -84,7 +84,7 @@ AuthorLookup = {
     "blender": "Sergey Sharybin",
     "Vuk GardaÅ¡eviÄ": "Vuk Gardašević",
     "ianwill": "Willian Padovani Germano",
-    }
+}
 
 
 # -----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ class Credits:
     def process_commit(self, c):
         # Normalize author string into canonical form, prevents duplicate credit users
         author = ud.normalize('NFC', c.author)
-        author = AuthorLookup.get(author, author)
+        author = author_table.get(author, author)
         year = c.date.year
         cu = self.users.get(author)
         if cu is None:
@@ -177,12 +177,17 @@ def argparse_create():
 
     parser.add_argument(
         "--source", dest="source_dir",
-        metavar='PATH', required=True,
-        help="Path to git repository")
+        metavar='PATH',
+        required=True,
+        help="Path to git repository",
+    )
     parser.add_argument(
-        "--range", dest="range_sha1",
-                        metavar='SHA1_RANGE', required=True,
-                        help="Range to use, eg: 169c95b8..HEAD")
+        "--range",
+        dest="range_sha1",
+        metavar='SHA1_RANGE',
+        required=True,
+        help="Range to use, eg: 169c95b8..HEAD",
+    )
 
     return parser
 

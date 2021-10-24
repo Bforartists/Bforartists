@@ -113,7 +113,7 @@ bool ShaderEval::eval_cpu(Device *device,
       }
 
       const int thread_index = tbb::this_task_arena::current_thread_index();
-      KernelGlobals *kg = &kernel_thread_globals[thread_index];
+      const KernelGlobalsCPU *kg = &kernel_thread_globals[thread_index];
 
       switch (type) {
         case SHADER_EVAL_DISPLACE:
@@ -121,6 +121,9 @@ bool ShaderEval::eval_cpu(Device *device,
           break;
         case SHADER_EVAL_BACKGROUND:
           kernels.shader_eval_background(kg, input_data, output_data, work_index);
+          break;
+        case SHADER_EVAL_CURVE_SHADOW_TRANSPARENCY:
+          kernels.shader_eval_curve_shadow_transparency(kg, input_data, output_data, work_index);
           break;
       }
     });
@@ -143,6 +146,9 @@ bool ShaderEval::eval_gpu(Device *device,
       break;
     case SHADER_EVAL_BACKGROUND:
       kernel = DEVICE_KERNEL_SHADER_EVAL_BACKGROUND;
+      break;
+    case SHADER_EVAL_CURVE_SHADOW_TRANSPARENCY:
+      kernel = DEVICE_KERNEL_SHADER_EVAL_CURVE_SHADOW_TRANSPARENCY;
       break;
   };
 

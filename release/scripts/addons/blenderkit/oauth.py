@@ -25,6 +25,10 @@ from urllib.parse import parse_qs, quote as urlquote, urlparse
 import requests
 
 
+class PortsBlockedException(Exception):
+    pass
+
+
 class SimpleOAuthAuthenticator(object):
     def __init__(self, server_url, client_id, ports):
         self.server_url = server_url
@@ -55,13 +59,14 @@ class SimpleOAuthAuthenticator(object):
             return None, None, None
 
         response_json = json.loads(response.content)
-        refresh_token = response_json ['refresh_token']
-        access_token = response_json ['access_token']
+        refresh_token = response_json['refresh_token']
+        access_token = response_json['access_token']
         return access_token, refresh_token, response_json
 
     def get_new_token(self, register=True, redirect_url=None):
         class HTTPServerHandler(BaseHTTPRequestHandler):
             html_template = '<html>%(head)s<h1>%(message)s</h1></html>'
+
             def do_GET(self):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -85,10 +90,15 @@ class SimpleOAuthAuthenticator(object):
         for port in self.ports:
             try:
                 httpServer = HTTPServer(('localhost', port), HTTPServerHandler)
-            except OSError:
+            except Exception as e:
+                print(f"Port {port}: {e}")
                 continue
             break
-        self.redirect_uri = "http://localhost:%s/consumer/exchange/" % port
+        else:
+            print("All available ports are blocked")
+            raise PortsBlockedException(f"All available ports are blocked: {self.ports}")
+        print(f"Choosen port {port}")
+        self.redirect_uri = f"http://localhost:{port}/consumer/exchange/"
         authorize_url = (
             "/o/authorize?client_id=%s&state=random_state_string&response_type=code&"
             "redirect_uri=%s" % (self.client_id, self.redirect_uri)
