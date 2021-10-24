@@ -278,7 +278,7 @@ def rating_menu_draw(self, context):
     layout.label(text='Admin rating Tools:')
     col.operator_context = 'INVOKE_DEFAULT'
 
-    op = col.operator('wm.blenderkit_menu_rating_upload', text='Rate')
+    op = col.operator('wm.blenderkit_menu_rating_upload', text='Add Rating')
     op.asset_id = asset_data['id']
     op.asset_name = asset_data['name']
     op.asset_type = asset_data['assetType']

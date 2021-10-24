@@ -82,7 +82,7 @@ void WM_event_print(const wmEvent *event)
     const char *prev_val_id = unknown;
 
     event_ids_from_type_and_value(event->type, event->val, &type_id, &val_id);
-    event_ids_from_type_and_value(event->prevtype, event->prevval, &prev_type_id, &prev_val_id);
+    event_ids_from_type_and_value(event->prev_type, event->prev_val, &prev_type_id, &prev_val_id);
 
     printf(
         "wmEvent type:%d / %s, val:%d / %s,\n"
@@ -93,9 +93,9 @@ void WM_event_print(const wmEvent *event)
         type_id,
         event->val,
         val_id,
-        event->prevtype,
+        event->prev_type,
         prev_type_id,
-        event->prevval,
+        event->prev_val,
         prev_val_id,
         event->shift,
         event->ctrl,
@@ -103,8 +103,8 @@ void WM_event_print(const wmEvent *event)
         event->oskey,
         event->keymodifier,
         event->is_repeat,
-        event->x,
-        event->y,
+        event->xy[0],
+        event->xy[1],
         event->ascii,
         BLI_str_utf8_size(event->utf8_buf),
         event->utf8_buf,
@@ -288,8 +288,8 @@ bool WM_event_is_mouse_drag_or_press(const wmEvent *event)
 int WM_event_drag_threshold(const struct wmEvent *event)
 {
   int drag_threshold;
-  if (ISMOUSE(event->prevtype)) {
-    BLI_assert(event->prevtype != MOUSEMOVE);
+  if (ISMOUSE(event->prev_type)) {
+    BLI_assert(event->prev_type != MOUSEMOVE);
     /* Using the previous type is important is we want to check the last pressed/released button,
      * The `event->type` would include #MOUSEMOVE which is always the case when dragging
      * and does not help us know which threshold to use. */
@@ -315,10 +315,8 @@ bool WM_event_drag_test_with_delta(const wmEvent *event, const int drag_delta[2]
 
 bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2])
 {
-  const int drag_delta[2] = {
-      prev_xy[0] - event->x,
-      prev_xy[1] - event->y,
-  };
+  int drag_delta[2];
+  sub_v2_v2v2_int(drag_delta, prev_xy, event->xy);
   return WM_event_drag_test_with_delta(event, drag_delta);
 }
 
@@ -476,7 +474,7 @@ bool WM_event_is_tablet(const struct wmEvent *event)
 
 int WM_event_absolute_delta_x(const struct wmEvent *event)
 {
-  int dx = event->x - event->prevx;
+  int dx = event->xy[0] - event->prev_xy[0];
 
   if (!event->is_direction_inverted) {
     dx = -dx;
@@ -487,7 +485,7 @@ int WM_event_absolute_delta_x(const struct wmEvent *event)
 
 int WM_event_absolute_delta_y(const struct wmEvent *event)
 {
-  int dy = event->y - event->prevy;
+  int dy = event->xy[1] - event->prev_xy[1];
 
   if (!event->is_direction_inverted) {
     dy = -dy;

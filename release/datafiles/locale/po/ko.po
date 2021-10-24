@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -26672,6 +26672,10 @@ msgid "Material slot name"
 msgstr "매테리얼 슬롯 이름"
 
 
+msgid "Edit"
+msgstr "편집"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -26855,10 +26859,6 @@ msgstr "NLA 채널 컨텍스트 메뉴"
 
 msgid "NLA Context Menu"
 msgstr "NLA 컨텍스트 메뉴"
-
-
-msgid "Edit"
-msgstr "편집"
 
 
 msgctxt "Operator"
@@ -36790,11 +36790,6 @@ msgid "Paste keys from original time"
 msgstr "원래 타임에서 키를 붙여 넣기"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "미리보기 범위를 자동 설정"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "선택된 키 프레임의 범위에 따라 미리보기 범위를 설정"
 
@@ -43583,14 +43578,6 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
-msgid "White"
-msgstr "화이트"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -43948,10 +43935,6 @@ msgstr "미러 경계선으로 커서 값(Y/수평 요소)을 이용하여 선�
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "선택한 키 프레임의 시간을 뒤집어 다음에 나타나는 순서를 반대로 바꿉니다"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "해당 범위 키 프레임의 범위에 따라 자동으로 설정"
 
 
 msgctxt "Operator"
@@ -50639,10 +50622,6 @@ msgstr "씬의 현재 프레임 범위에서 모션 경로의 프레임 범위�
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "오브젝트 경로를 업데이트"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "선택된 오브젝트에 대한 경로를 재계산"
 
 
 msgctxt "Operator"
@@ -71856,8 +71835,16 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgid "Display white edges"

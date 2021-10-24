@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -30307,6 +30307,10 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
+msgid "Edit"
+msgstr "Редагувати"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -30518,10 +30522,6 @@ msgstr "Контекстне Меню Каналів НЛА"
 
 msgid "NLA Context Menu"
 msgstr "Контекстне Меню НЛА"
-
-
-msgid "Edit"
-msgstr "Редагувати"
 
 
 msgctxt "Operator"
@@ -39705,10 +39705,6 @@ msgid "Outputs the opposite of the input"
 msgstr "Виводить протилежне до уводу"
 
 
-msgid "Float Compare"
-msgstr "Порівняння Дійсночислових"
-
-
 msgid "True when the first input is smaller than second input"
 msgstr "Істина, коли перший увод є меншим, ніж другий увід"
 
@@ -39751,10 +39747,6 @@ msgstr "Істина, коли обидва уводи не є приблизн�
 
 msgid "Random Float"
 msgstr "Випадкове Дійсночислове"
-
-
-msgid "Base orientation of the points"
-msgstr "Базова орієнтація точок"
 
 
 msgid "Method used to describe the rotation"
@@ -40191,6 +40183,10 @@ msgstr "Визначити довжину сторони вокселя"
 
 msgid "Point Rotate"
 msgstr "Оберт Точки"
+
+
+msgid "Base orientation of the points"
+msgstr "Базова орієнтація точок"
 
 
 msgid "Rotate points in the local space of the object"
@@ -42307,11 +42303,6 @@ msgstr "Без зсуву"
 
 msgid "Paste keys from original time"
 msgstr "Вставити ключі від оригінального часу"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Автозадання діапазону перегляду"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -50299,14 +50290,6 @@ msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
-msgid "White"
-msgstr "Біле"
-
-
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Трансформа Заповнення Штриха"
@@ -50726,10 +50709,6 @@ msgstr "За Часом Вище Часу Нуль"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Відобразити час вибраних ключових кадрів, змінивши порядок їх появи"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Автоматично встановлювати діапазон перегляду на основі діапазону ключових кадрів"
 
 
 msgctxt "Operator"
@@ -58268,10 +58247,6 @@ msgstr "Оновити діапазон кадрів для шляхів рух�
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Оновити шляхи об'єктів"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Перерахувати шляхи для вибраних об'єктів"
 
 
 msgctxt "Operator"
@@ -71647,10 +71622,6 @@ msgid "Allow buttons in the header to stretch and shrink to fill the entire layo
 msgstr "Дозволити кнопки у заголовку для розгортання та згортання, щоб заповнити всю ширину розстави"
 
 
-msgid "Box Style"
-msgstr "Стиль Коробки"
-
-
 msgid "Order"
 msgstr "Порядок"
 
@@ -82911,8 +82882,16 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgid "Display white edges"

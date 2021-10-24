@@ -25,7 +25,7 @@
 This is a tool for reviewing commit ranges, writing into accept/reject files,
 and optionally generate release-log-ready data.
 
-Useful for reviewing revisions to backport to stable builds.
+Useful for reviewing revisions to back-port to stable builds.
 
 Note that, if any of the data files generated already exist, they will be extended
 with new revisions, not overwritten.
@@ -673,7 +673,7 @@ def main():
 
     for i, c in enumerate(commits):
         if os.name == "posix":
-            # also clears scrollback
+            # Also clears scroll-back.
             os.system("tput reset")
         else:
             print('\x1b[2J')  # clear

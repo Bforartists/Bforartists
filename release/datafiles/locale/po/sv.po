@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8465,6 +8465,10 @@ msgid "Material slot name"
 msgstr "Spara som"
 
 
+msgid "Edit"
+msgstr "Redigera"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Vänd:"
@@ -8529,10 +8533,6 @@ msgstr "Specialare för formnycklar"
 
 msgid "Vertex Group Specials"
 msgstr "Vertexgrupp-special"
-
-
-msgid "Edit"
-msgstr "Redigera"
 
 
 msgid "Distort"
@@ -12230,11 +12230,6 @@ msgid "No Offset"
 msgstr "Spel"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Spara Bild"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Markera Länkad"
 
@@ -15197,14 +15192,6 @@ msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
 
 
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
-
-
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Markera Rad"
@@ -15323,10 +15310,6 @@ msgstr "Markera Länkad"
 
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
-msgstr "Markera Länkad"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
 msgstr "Markera Länkad"
 
 
@@ -18299,10 +18282,6 @@ msgstr "Duplicera"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Duplicera"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
@@ -25317,6 +25296,14 @@ msgstr "Markera Länkad"
 
 msgid "Outline"
 msgstr "Kontur"
+
+
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
 
 
 msgid "Length of displaying path, in frames"

@@ -1903,7 +1903,7 @@ class RunAssetBarWithContext(bpy.types.Operator):
         C_dict = utils.get_fake_context(context)
         if C_dict.get('window'):  # no 3d view, no asset bar.
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
-            if preferences.experimental_features or 1:
+            if 1:# preferences.experimental_features:
                 bpy.ops.view3d.blenderkit_asset_bar_widget(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running,
                                                            do_search=self.do_search)
 

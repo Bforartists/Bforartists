@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -568,6 +568,10 @@ msgid "Min Angle"
 msgstr "Angelu Minimoa"
 
 
+msgid "Edit"
+msgstr "Editatu"
+
+
 msgid "Show/Hide"
 msgstr "Erakutsi/Ezkutatu"
 
@@ -578,10 +582,6 @@ msgstr "UV"
 
 msgid "Show/Hide Faces"
 msgstr "Aurpegiak erakutsi/ezkutatu"
-
-
-msgid "Edit"
-msgstr "Editatu"
 
 
 msgid "File"
