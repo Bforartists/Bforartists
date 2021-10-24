@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -30955,6 +30955,10 @@ msgid "Material slot name"
 msgstr "Nombre del contenedor del material"
 
 
+msgid "Edit"
+msgstr "Editar"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -31168,10 +31172,6 @@ msgid "NLA Context Menu"
 msgstr "ANL - menú contextual"
 
 
-msgid "Edit"
-msgstr "Editar"
-
-
 msgctxt "Operator"
 msgid "NODE_MT_add"
 msgstr "NODE_MT_add"
@@ -31195,6 +31195,10 @@ msgstr "Mate"
 
 msgid "Attribute"
 msgstr "Atributo"
+
+
+msgid "Instances"
+msgstr "Instancias"
 
 
 msgid "Mesh Primitives"
@@ -40489,10 +40493,6 @@ msgid "Outputs the opposite of the input"
 msgstr "Produce el opuesto del conector de entrada"
 
 
-msgid "Float Compare"
-msgstr "Comparar decimal"
-
-
 msgid "True when the first input is smaller than second input"
 msgstr "Verdadero cuando la primera entrada sea menor que la segunda"
 
@@ -40537,10 +40537,6 @@ msgid "Random Float"
 msgstr "Decimal aleatorio"
 
 
-msgid "Base orientation of the points"
-msgstr "Orientación base de los puntos"
-
-
 msgid "Method used to describe the rotation"
 msgstr "Método usado para describir la rotación"
 
@@ -40559,6 +40555,18 @@ msgstr "Nodo de geometría"
 
 msgid "Attribute Remove"
 msgstr "Remover (atributo)"
+
+
+msgid "Mapping between geometries"
+msgstr "Mapeo entre las geometrías"
+
+
+msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
+msgstr "Transferir el atributo desde la cara más cercana de una superficie (los puntos y bordes sueltos serán ignorados)"
+
+
+msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
+msgstr "Transferir el elemento desde el elemento más cercano (usando los centros de caras y bordes para el cálculo de distancia)"
 
 
 msgid "Collection Info"
@@ -40587,26 +40595,6 @@ msgstr "Envolvente convexa"
 
 msgid "Curve Length"
 msgstr "Longitud de curva"
-
-
-msgid "Resample Curve"
-msgstr "Remuestrear curva"
-
-
-msgid "How to specify the amount of samples"
-msgstr "Cómo especificar la cantidad de muestras"
-
-
-msgid "Evaluated"
-msgstr "Evaluado"
-
-
-msgid "Sample the specified number of points along each spline"
-msgstr "Muestrear la cantidad específica de puntos a lo largo de cada curva"
-
-
-msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
-msgstr "Calcular la cantidad de muestras dividiendo cada curva en segmentos de la longitud especificada"
 
 
 msgid "Curve to Mesh"
@@ -40853,18 +40841,6 @@ msgid "Attribute Transfer"
 msgstr "Transferir atributo"
 
 
-msgid "Mapping between geometries"
-msgstr "Mapeo entre las geometrías"
-
-
-msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
-msgstr "Transferir el atributo desde la cara más cercana de una superficie (los puntos y bordes sueltos serán ignorados)"
-
-
-msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
-msgstr "Transferir el elemento desde el elemento más cercano (usando los centros de caras y bordes para el cálculo de distancia)"
-
-
 msgid "Attribute Vector Math"
 msgstr "Operar con vectores (atributo)"
 
@@ -41033,6 +41009,10 @@ msgid "Rotate a point using XYZ order"
 msgstr "Rota un punto usando el orden XYZ"
 
 
+msgid "Evaluated"
+msgstr "Evaluado"
+
+
 msgid "Material Assign"
 msgstr "Asignar material"
 
@@ -41097,6 +41077,10 @@ msgid "Point Rotate"
 msgstr "Rotar puntos"
 
 
+msgid "Base orientation of the points"
+msgstr "Orientación base de los puntos"
+
+
 msgid "Rotate points in the local space of the object"
 msgstr "Rota los puntos en el espacio local del objeto"
 
@@ -41107,10 +41091,6 @@ msgstr "Rota cada punto en su espacio local (tal como haya sido definido en el a
 
 msgid "Select by Material"
 msgstr "Seleccionar por material"
-
-
-msgid "Material Replace"
-msgstr "Reemplazar material"
 
 
 msgid "Fill Type"
@@ -41167,6 +41147,22 @@ msgstr "Produce la geometría en relación a las transformaciones del objeto de 
 
 msgid "Bring the input object geometry, location, rotation and scale into the modified object, maintaining the relative position between the two objects in the scene"
 msgstr "Trae la geometría, posición, rotación y escala del objeto de entrada al objeto modificado, manteniendo la posición relativa entre ambos objetos en la escena"
+
+
+msgid "Resample Curve"
+msgstr "Remuestrear curva"
+
+
+msgid "How to specify the amount of samples"
+msgstr "Cómo especificar la cantidad de muestras"
+
+
+msgid "Sample the specified number of points along each spline"
+msgstr "Muestrear la cantidad específica de puntos a lo largo de cada curva"
+
+
+msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
+msgstr "Calcular la cantidad de muestras dividiendo cada curva en segmentos de la longitud especificada"
 
 
 msgid "Align X"
@@ -43327,11 +43323,6 @@ msgstr "Sin desplazamiento"
 
 msgid "Paste keys from original time"
 msgstr "Pega fotogramas clave, desde el tiempo original"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Rango previsualización autom."
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -51472,107 +51463,6 @@ msgstr "Da vuelta los colores de tinte"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "Trazar imagen a lápiz de cera"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "Permite extraer trazos de lápiz de cera a partir de una imagen"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "Define si trazar una única imagen o una secuencia de imágenes"
-
-
-msgid "Trace the current frame of the image"
-msgstr "Trazar el fotograma actual de la imagen"
-
-
-msgid "Trace full sequence"
-msgstr "Trazar la secuencia completa"
-
-
-msgid "Resolution of the generated curves"
-msgstr "Resolución de las curvas generadas"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "Distancia entre los puntos de muestreo, cero para deshabilitar"
-
-
-msgid "Scale of the final stroke"
-msgstr "Escala del trazo producido"
-
-
-msgid "Color Threshold"
-msgstr "Umbral de color"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "Define el umbral de luminosidad por encima del cual se generarán trazos"
-
-
-msgid "Turn Policy"
-msgstr "Política de giro"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "Define cómo resolver las ambigüedades durante la descomposición de una imagen en trazos"
-
-
-msgid "Black"
-msgstr "Negro"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "Preferir conectar los componentes negros (de primer plano)"
-
-
-msgid "White"
-msgstr "Blanco"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "Preferir conectar los componentes blancos (de fondo)"
-
-
-msgid "Always take a left turn"
-msgstr "Siempre girar hacia la izquierda"
-
-
-msgid "Always take a right turn"
-msgstr "Siempre girar hacia la derecha"
-
-
-msgid "Minority"
-msgstr "Minoritario"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "Preferir conectar el color (blanco o negro) que ocurra menos frecuentemente en las inmediaciones de la posición actual"
-
-
-msgid "Majority"
-msgstr "Mayoritario"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "Preferir conectar el color (blanco o negro) que ocurra más frecuentemente en las inmediaciones de la posición actual"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "Elegir de forma pseudo aleatoria"
-
-
-msgid "Start At Current Frame"
-msgstr "Iniciar en el fotograma actual"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "Comienza a trazar la imagen en el fotograma actual"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar relleno de trazo"
 
@@ -51991,10 +51881,6 @@ msgstr "Tiempo, en torno al tiempo cero"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Invierte los tiempos de los fotogramas clave seleccionados, inviertiendo el orden en el que aparecen"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Define automáticamente el rango de previsualización basado en el rango de fotogramas clave"
 
 
 msgctxt "Operator"
@@ -59693,10 +59579,6 @@ msgid "Update Object Paths"
 msgstr "Actualizar trayectoria de los objetos"
 
 
-msgid "Recalculate paths for selected objects"
-msgstr "Recalcula las trayectorias de los objetos seleccionados"
-
-
 msgctxt "Operator"
 msgid "Add Point Cloud"
 msgstr "Agregar nube de puntos"
@@ -60510,14 +60392,6 @@ msgstr "Transferir modo"
 
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr "Cambia el objeto activo y asigna el mismo modo al que se encuentre bajo el puntero del ratón, manteniendo el modo activo en el objeto actual"
-
-
-msgid "Use Eyedropper"
-msgstr "Usar cuentagotas"
-
-
-msgid "Pick the object to switch to using an eyedropper"
-msgstr "Elegir el objeto al cual cambiar, usando un cuentagotas"
 
 
 msgid "Flash On Transfer"
@@ -73393,14 +73267,6 @@ msgid "Allow buttons in the header to stretch and shrink to fill the entire layo
 msgstr "Permite que los botones en el encabezado se expandan o contraigan para ajustarse al ancho completo de la organización"
 
 
-msgid "Box Style"
-msgstr "Tipo de caja"
-
-
-msgid "Display panel with the box widget theme"
-msgstr "Dibuja el panel con el tema de control de caja"
-
-
 msgid "Order"
 msgstr "Orden"
 
@@ -84849,8 +84715,16 @@ msgid "Display dashed black-white edges"
 msgstr "Dibuja bordes discontinuos en blanco y negro"
 
 
+msgid "Black"
+msgstr "Negro"
+
+
 msgid "Display black edges"
 msgstr "Dibuja bordes negros"
+
+
+msgid "White"
+msgstr "Blanco"
 
 
 msgid "Display white edges"
@@ -86519,10 +86393,6 @@ msgstr "Componente de la nube de puntos que contiene únicamente datos de puntos
 
 msgid "Curve component containing spline and control point data"
 msgstr "Componente de una curva conteniendo datos de la curva y sus puntos de control"
-
-
-msgid "Instances"
-msgstr "Instancias"
 
 
 msgid "Instances of objects or collections"
@@ -104140,10 +104010,6 @@ msgstr "No es posible agregar un hueso como gancho a un objeto que no sea un esq
 
 msgid "Could not find hook modifier"
 msgstr "No fue posible encontrar un modificador Gancho"
-
-
-msgid "Click in the viewport to select an object"
-msgstr "Hacer clic en la vista para seleccionar un objeto"
 
 
 msgid "Unable to execute '%s', error changing modes"

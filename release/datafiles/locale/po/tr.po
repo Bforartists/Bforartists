@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -6689,6 +6689,10 @@ msgid "Material slot name"
 msgstr "İşareti (Tekrar) Adlandır"
 
 
+msgid "Edit"
+msgstr "Düzenle"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Klip:"
@@ -6761,10 +6765,6 @@ msgstr "Şekil Anahtarı Ekle"
 
 msgid "Vertex Group Specials"
 msgstr "Yeni bir nokta grubu oluşturur"
-
-
-msgid "Edit"
-msgstr "Düzenle"
 
 
 msgid "Distort"
@@ -12024,14 +12024,6 @@ msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
 
 
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
-
-
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Yeni bir nokta grubu oluşturur"
@@ -14401,10 +14393,6 @@ msgstr "Tüm Nesne Merkezleri"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Tüm Nesne Merkezleri"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Seçili Nesne ve Bilgileri"
 
 
 msgctxt "Operator"
@@ -20049,6 +20037,14 @@ msgstr "Diğer Pencerelerde Zamanı Kilitle"
 
 msgid "Outline"
 msgstr "Anahat"
+
+
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
 
 
 msgid "Pivot center for rotation/scaling"

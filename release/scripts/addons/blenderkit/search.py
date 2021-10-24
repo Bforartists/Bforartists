@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
-    resolutions, image_utils, ratings_utils
+    resolutions, image_utils, ratings_utils, comments_utils
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -104,6 +104,15 @@ def refresh_token_timer():
     return max(3600, user_preferences.api_key_life - 3600)
 
 
+def refresh_notifications_timer():
+    ''' this timer gets notifications.'''
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    fetch_server_data()
+    unread_notifications_count = comments_utils.count_unread_notifications()
+    comments_utils.get_notifications(preferences.api_key, unread_count = unread_notifications_count)
+    return 300
+
+
 def update_ad(ad):
     if not ad.get('assetBaseId'):
         try:
@@ -181,6 +190,10 @@ def scene_load(context):
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer) and not bpy.app.background:
         bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
+    if utils.experimental_enabled() and not bpy.app.timers.is_registered(
+            refresh_notifications_timer) and not bpy.app.background:
+        bpy.app.timers.register(refresh_notifications_timer, persistent=True, first_interval=2)
+
     update_assets_data()
 
 
@@ -382,7 +395,9 @@ def search_timer():
             all_loaded = True
             for ri, r in enumerate(wm[search_name]):
                 if not r.get('thumb_small_loaded'):
-                    all_loaded = all_loaded and load_preview(r, ri)
+                    preview_loaded = load_preview(r, ri)
+                    all_loaded = all_loaded and preview_loaded
+
             all_thumbs_loaded = all_loaded
 
     global search_threads
@@ -488,13 +503,9 @@ def search_timer():
 
 
 def load_preview(asset, index):
-    scene = bpy.context.scene
     # FIRST START SEARCH
     props = bpy.context.window_manager.blenderkitUI
     directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
-    s = bpy.context.scene
-    results = bpy.context.window_manager.get('search results')
-    loaded = True
 
     tpath = os.path.join(directory, asset['thumbnail_small'])
     if not asset['thumbnail_small'] or asset['thumbnail_small'] == '' or not os.path.exists(tpath):
@@ -506,15 +517,19 @@ def load_preview(asset, index):
     # if os.path.exists(tpath):  # sometimes we are unlucky...
     img = bpy.data.images.get(iname)
 
-    if img is None:
+    if img is None or len(img.pixels) == 0:
         if not os.path.exists(tpath):
             return False
         # wrap into try statement since sometimes
         try:
             img = bpy.data.images.load(tpath)
+
             img.name = iname
+            if len(img.pixels)>0:
+                return True
         except:
-            return False
+            pass
+        return False
     elif img.filepath != tpath:
         if not os.path.exists(tpath):
             # unload loaded previews from previous results
@@ -838,6 +853,7 @@ def get_profile():
     a = bpy.context.window_manager.get('bkit profile')
     thread = threading.Thread(target=fetch_profile, args=(preferences.api_key,), daemon=True)
     thread.start()
+
     return a
 
 
@@ -1313,15 +1329,17 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
     bk_logger.info(f'retrieved {len(results)} assets from elastic search')
     return results
 
+
 def get_single_asset(asset_base_id):
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     params = {
         'asset_base_id': asset_base_id
     }
     results = get_search_simple(params, api_key=preferences.api_key)
-    if len(results)>0:
+    if len(results) > 0:
         return results[0]
     return None
+
 
 def search(category='', get_next=False, author_id=''):
     ''' initialize searching'''

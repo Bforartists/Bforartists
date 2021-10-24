@@ -74,7 +74,18 @@ from check_spelling_c_config import (
     dict_custom,
     dict_ignore,
     dict_ignore_hyphenated_prefix,
+    dict_ignore_hyphenated_suffix,
+    files_ignore,
 )
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+ROOTDIR = os.path.normpath(os.path.join(BASEDIR, "..", "..", ".."))
+
+# Ensure native slashes.
+files_ignore = {
+    os.path.normpath(os.path.join(ROOTDIR, f.replace("/", os.sep)))
+    for f in files_ignore
+}
 
 # -----------------------------------------------------------------------------
 # Dictionary Utilities
@@ -86,7 +97,8 @@ def dictionary_create():  # type: ignore
 
     # Don't add ignore to the dictionary, since they will be suggested.
     for w in dict_custom:
-        dict_spelling.add(w)
+        # Also, don't use `add(w)`, this will manipulate users personal dictionaries.
+        dict_spelling.add_to_session(w)
     return dict_spelling
 
 
@@ -103,8 +115,13 @@ def dictionary_check(w: str) -> bool:
 
             # Allow: `un-word`, `re-word`.
             w_split = w.strip("-").split("-")
-            if w_split and w_split[0].lower() in dict_ignore_hyphenated_prefix:
-                del w_split[0]
+            if len(w_split) > 1:
+                if w_split and w_split[0].lower() in dict_ignore_hyphenated_prefix:
+                    del w_split[0]
+            # Allow: `word-ish`, `word-ness`.
+            if len(w_split) > 1:
+                if w_split and w_split[-1].lower() in dict_ignore_hyphenated_suffix:
+                    del w_split[-1]
 
             for w_sub in w_split:
                 if w_sub:
@@ -159,7 +176,7 @@ re_ignore = re.compile(
     # Doxygen style #SOME_CODE.
     r'#\S+|'
     # Doxygen commands: \param foo
-    r"\\(section|subsection|subsubsection|ingroup|param|page|a|see)\s+\S+|"
+    r"\\(section|subsection|subsubsection|ingroup|param|tparam|page|a|see)\s+\S+|"
     # Doxygen commands without any arguments after them: \command
     r"\\(retval|todo)\b|"
     # Doxygen 'param' syntax used rarely: \param foo[in,out]
@@ -475,14 +492,19 @@ def spell_check_file_recursive(
             filename_check: Optional[Callable[[str], bool]] = None,
     ) -> Generator[str, None, None]:
         for dirpath, dirnames, filenames in os.walk(path):
+            # Only needed so this can be matches with ignore paths.
+            dirpath = os.path.abspath(dirpath)
             # skip '.git'
             dirnames[:] = [d for d in dirnames if not d.startswith(".")]
             for filename in filenames:
                 if filename.startswith("."):
                     continue
                 filepath = join(dirpath, filename)
-                if filename_check is None or filename_check(filepath):
-                    yield filepath
+                if not (filename_check is None or filename_check(filepath)):
+                    continue
+                if filepath in files_ignore:
+                    continue
+                yield filepath
 
     def is_source(filename: str) -> bool:
         ext = splitext(filename)[1]

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -20935,6 +20935,10 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
+msgid "Edit"
+msgstr "Editar"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "Clipe de captura de movimentos"
@@ -21032,10 +21036,6 @@ msgstr "Especiais para chaves de formato"
 
 msgid "Vertex Group Specials"
 msgstr "Especiais para grupo de vértices"
-
-
-msgid "Edit"
-msgstr "Editar"
 
 
 msgid "Converter"
@@ -29377,11 +29377,6 @@ msgid "Paste keys from original time"
 msgstr "Cola as chaves a partir do tempo original."
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Definir o espaço de previsão automaticamente"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Define o campo de previsão com base nas extensões dos fotogramas chave selecionados."
 
@@ -34766,14 +34761,6 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas as camadas"
@@ -35050,10 +35037,6 @@ msgstr "Inverte os valores dos fotogramas chave selecionados usando o valor do c
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Vira os tempos dos fotogramas chave selecionados, efetivamente revertendo a ordem na qual eles aparecem."
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Define automaticamente o espaço de previsão com base no intervalo de fotogramas chave."
 
 
 msgctxt "Operator"
@@ -40291,10 +40274,6 @@ msgstr "Limpa somente os caminhos dos objetos selecionados."
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Atualizar caminhos de objeto"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Recalcula os caminhos para os objetos selecionados."
 
 
 msgctxt "Operator"
@@ -55970,6 +55949,14 @@ msgstr "Mascara os mostrados e editados dentro deste espaço."
 
 msgid "Outline"
 msgstr "Contorno"
+
+
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
 
 
 msgid "Overlay Mode"

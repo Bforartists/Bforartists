@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2855,6 +2855,10 @@ msgid "Flip"
 msgstr "पलटें"
 
 
+msgid "Edit"
+msgstr "संपादन"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "छांटन"
@@ -2887,10 +2891,6 @@ msgstr "संरेखित करें"
 msgctxt "Operator"
 msgid "Add"
 msgstr "जोड़ें"
-
-
-msgid "Edit"
-msgstr "संपादन"
 
 
 msgid "Converter"
@@ -3857,14 +3857,6 @@ msgstr "उप विभाजन"
 
 msgid "Modifier"
 msgstr "संशोधक"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgid "Create a new image"
@@ -5145,6 +5137,14 @@ msgstr "खिंचाव"
 
 msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
+
+
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
 
 
 msgctxt "MovieClip"

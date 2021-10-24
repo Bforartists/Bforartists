@@ -583,6 +583,7 @@ typedef struct SequencerPreviewOverlay {
 
 /* SequencerPreviewOverlay.flag */
 typedef enum eSpaceSeq_SequencerPreviewOverlay_Flag {
+  SEQ_PREVIEW_SHOW_2D_CURSOR = (1 << 1),
   SEQ_PREVIEW_SHOW_OUTLINE_SELECTED = (1 << 2),
   SEQ_PREVIEW_SHOW_SAFE_MARGINS = (1 << 3),
   SEQ_PREVIEW_SHOW_GPENCIL = (1 << 4),
@@ -642,7 +643,7 @@ typedef struct SpaceSeq {
   float zoom DNA_DEPRECATED;
   /** See SEQ_VIEW_* below. */
   char view;
-  char overlay_type;
+  char overlay_frame_type;
   /** Overlay an image of the editing on below the strips. */
   char draw_flag;
   char gizmo_flag;
@@ -740,11 +741,11 @@ enum {
 };
 
 /* SpaceSeq.mainb */
-typedef enum eSpaceSeq_OverlayType {
-  SEQ_DRAW_OVERLAY_RECT = 0,
-  SEQ_DRAW_OVERLAY_REFERENCE = 1,
-  SEQ_DRAW_OVERLAY_CURRENT = 2,
-} eSpaceSeq_OverlayType;
+typedef enum eSpaceSeq_OverlayFrameType {
+  SEQ_OVERLAY_FRAME_TYPE_RECT = 0,
+  SEQ_OVERLAY_FRAME_TYPE_REFERENCE = 1,
+  SEQ_OVERLAY_FRAME_TYPE_CURRENT = 2,
+} eSpaceSeq_OverlayFrameType;
 
 /** \} */
 
@@ -772,7 +773,7 @@ typedef struct FileSelectParams {
   const ID *rename_id;
   void *_pad3;
 
-  /** List of filetypes to filter (FILE_MAXFILE). */
+  /** List of file-types to filter (#FILE_MAXFILE). */
   char filter_glob[256];
 
   /** Text items name must match to be shown. */
@@ -1150,7 +1151,6 @@ typedef struct FileDirEntryArr {
   ListBase entries;
   int nbr_entries;
   int nbr_entries_filtered;
-  int entry_idx_start, entry_idx_end;
 
   /** FILE_MAX. */
   char root[1024];
@@ -1511,6 +1511,15 @@ typedef struct bNodeTreePath {
   char display_name[64];
 } bNodeTreePath;
 
+typedef struct SpaceNodeOverlay {
+  int flag;
+} SpaceNodeOverlay;
+
+typedef enum eSpaceNodeOverlay_Flag {
+  SN_OVERLAY_SHOW_OVERLAYS = (1 << 1),
+  SN_OVERLAY_SHOW_WIRE_COLORS = (1 << 2),
+} eSpaceNodeOverlay_Flag;
+
 typedef struct SpaceNode {
   SpaceLink *next, *prev;
   /** Storage of regions for inactive spaces. */
@@ -1563,6 +1572,9 @@ typedef struct SpaceNode {
 
   /** Grease-pencil data. */
   struct bGPdata *gpd;
+
+  SpaceNodeOverlay overlay;
+  char _pad2[4];
 
   SpaceNode_Runtime *runtime;
 } SpaceNode;

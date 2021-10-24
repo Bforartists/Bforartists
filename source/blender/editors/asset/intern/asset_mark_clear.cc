@@ -39,8 +39,9 @@
 
 #include "ED_asset_list.h"
 #include "ED_asset_mark_clear.h"
+#include "ED_asset_type.h"
 
-bool ED_asset_mark_id(const bContext *C, ID *id)
+bool ED_asset_mark_id(ID *id)
 {
   if (id->asset_data) {
     return false;
@@ -53,12 +54,15 @@ bool ED_asset_mark_id(const bContext *C, ID *id)
 
   id->asset_data = BKE_asset_metadata_create();
 
-  UI_icon_render_id(C, nullptr, id, ICON_SIZE_PREVIEW, true);
-
   /* Important for asset storage to update properly! */
   ED_assetlist_storage_tag_main_data_dirty();
 
   return true;
+}
+
+void ED_asset_generate_preview(const bContext *C, ID *id)
+{
+  UI_icon_render_id(C, nullptr, id, ICON_SIZE_PREVIEW, true);
 }
 
 bool ED_asset_clear_id(ID *id)
@@ -78,5 +82,9 @@ bool ED_asset_clear_id(ID *id)
 bool ED_asset_can_mark_single_from_context(const bContext *C)
 {
   /* Context needs a "id" pointer to be set for #ASSET_OT_mark()/#ASSET_OT_clear() to use. */
-  return CTX_data_pointer_get_type_silent(C, "id", &RNA_ID).data != nullptr;
+  const ID *id = static_cast<ID *>(CTX_data_pointer_get_type_silent(C, "id", &RNA_ID).data);
+  if (!id) {
+    return false;
+  }
+  return ED_asset_type_is_supported(id);
 }

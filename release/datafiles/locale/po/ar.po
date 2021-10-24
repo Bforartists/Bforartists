@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -17145,6 +17145,10 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
+msgid "Edit"
+msgstr "ﺭﺮﺣ"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﻢﻠﻗ"
@@ -17213,10 +17217,6 @@ msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ ﺕﺎﻓﺎﺿﺇ"
 
 msgid "Vertex Group Specials"
 msgstr "ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺎﻓﺎﺿﺇ"
-
-
-msgid "Edit"
-msgstr "ﺭﺮﺣ"
 
 
 msgid "Converter"
@@ -21775,11 +21775,6 @@ msgstr "ﺓﺪﻳﺪﺟ ﺢﻴﺗﺎﻔﻤﺑ ﻲﻟﺎﺤﻟﺍ ﻲﻄﻏ"
 
 msgid "Overwrite keys in pasted range, using the range of all copied keys"
 msgstr "ﺔﺧﻮﺴﻨﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻞﻛ ﻯﺪﻣ ﻡﺍﺪﺨﺘﺳﺎﺑ ,ﻖﺼﻠﻟﺍ ﻯﺪﻣ ﻲﻓ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻝﺪﺒﺘﺳﺍ"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "ﺎﻴﺗﺍﺫ ﺔﻨﻳﺎﻌﻤﻟﺍ ﻯﺪﻣ ﺩﺪﺣ"
 
 
 msgctxt "Operator"
@@ -26935,10 +26930,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻦﻣ ﻂﻘﻓ ﺕ�
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺙﺪّﺣ"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺕﺍﺭﺎﺴﻤﻟﺍ ﺏﺎﺴﺣ ﺪﻋﺍ"
 
 
 msgctxt "Operator"

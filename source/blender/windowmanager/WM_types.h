@@ -463,6 +463,10 @@ typedef struct wmNotifier {
 #define ND_ASSET_LIST (1 << 16)
 #define ND_ASSET_LIST_PREVIEW (2 << 16)
 #define ND_ASSET_LIST_READING (3 << 16)
+/* Catalog data changed, requiring a redraw of catalog UIs. Note that this doesn't denote a
+ * reloading of asset libraries & their catalogs should happen. That only happens on explicit user
+ * action. */
+#define ND_ASSET_CATALOGS (4 << 16)
 
 /* subtype, 256 entries too */
 #define NOTE_SUBTYPE 0x0000FF00
@@ -594,10 +598,10 @@ typedef struct wmTabletData {
  * - The previous values are only set for mouse button and keyboard events.
  *   See: #ISMOUSE_BUTTON & #ISKEYBOARD macros.
  *
- * - Previous x/y are exceptions: #wmEvent.prevx & #wmEvent.prevy
+ * - Previous x/y are exceptions: #wmEvent.prev
  *   these are set on mouse motion, see #MOUSEMOVE & track-pad events.
  *
- * - Modal key-map handling sets `prevval` & `prevtype` to `val` & `type`,
+ * - Modal key-map handling sets `prev_val` & `prev_type` to `val` & `type`,
  *   this allows modal keys-maps to check the original values (needed in some cases).
  */
 typedef struct wmEvent {
@@ -608,7 +612,7 @@ typedef struct wmEvent {
   /** Press, release, scroll-value. */
   short val;
   /** Mouse pointer position, screen coord. */
-  int x, y;
+  int xy[2];
   /** Region relative mouse position (name convention before Blender 2.5). */
   int mval[2];
   /**
@@ -629,19 +633,19 @@ typedef struct wmEvent {
   char is_repeat;
 
   /** The previous value of `type`. */
-  short prevtype;
+  short prev_type;
   /** The previous value of `val`. */
-  short prevval;
+  short prev_val;
   /** The time when the key is pressed, see #PIL_check_seconds_timer. */
-  double prevclicktime;
+  double prev_click_time;
   /** The location when the key is pressed (used to enforce drag thresholds). */
-  int prevclickx, prevclicky;
+  int prev_click_xy[2];
   /**
-   * The previous value of #wmEvent.x #wmEvent.y,
+   * The previous value of #wmEvent.xy,
    * Unlike other previous state variables, this is set on any mouse motion.
-   * Use `prevclickx` & `prevclicky` for the value at time of pressing.
+   * Use `prev_click` for the value at time of pressing.
    */
-  int prevx, prevy;
+  int prev_xy[2];
 
   /** Modifier states. */
   /** 'oskey' is apple or windows-key, value denotes order of pressed. */
@@ -655,14 +659,14 @@ typedef struct wmEvent {
   /* Custom data. */
   /** Custom data type, stylus, 6dof, see wm_event_types.h */
   short custom;
-  short customdatafree;
+  short customdata_free;
   int pad2;
   /** Ascii, unicode, mouse-coords, angles, vectors, NDOF data, drag-drop info. */
   void *customdata;
 
   /**
    * True if the operating system inverted the delta x/y values and resulting
-   * `prevx`, `prevy` values, for natural scroll direction.
+   * `prev_xy` values, for natural scroll direction.
    * For absolute scroll direction, the delta must be negated again.
    */
   char is_direction_inverted;
@@ -903,6 +907,9 @@ typedef struct wmOperatorType {
 
   /** RNA integration */
   ExtensionRNA rna_ext;
+
+  /** Cursor to use when waiting for cursor input, see: #OPTYPE_DEPENDS_ON_CURSOR. */
+  int cursor_pending;
 
   /** Flag last for padding */
   short flag;

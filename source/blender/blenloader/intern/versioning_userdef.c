@@ -306,6 +306,14 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     btheme->space_node.movie[3] = U_theme_default.space_node.movie[3];
   }
 
+  if (!USER_VERSION_ATLEAST(300, 34)) {
+    btheme->tui.panel_roundness = 0.4f;
+  }
+
+  if (!USER_VERSION_ATLEAST(300, 37)) {
+    btheme->space_node.dash_alpha = 0.5f;
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -906,6 +914,13 @@ void blo_do_versions_userdef(UserDef *userdef)
                                                                         USER_FILE_PREVIEW_NONE;
     /* Clear for reuse. */
     userdef->flag &= ~USER_FLAG_UNUSED_5;
+  }
+
+  if (!USER_VERSION_ATLEAST(300, 38)) {
+    /* Patch to set Dupli Lattice/Camera/Speaker. */
+    userdef->dupflag |= USER_DUP_LATTICE;
+    userdef->dupflag |= USER_DUP_CAMERA;
+    userdef->dupflag |= USER_DUP_SPEAKER;
   }
 
   /**

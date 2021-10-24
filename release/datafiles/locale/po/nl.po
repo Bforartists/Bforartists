@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1113,6 +1113,10 @@ msgid "Calculate Holes"
 msgstr "Bereken Gaten"
 
 
+msgid "Edit"
+msgstr "Bewerken"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -1134,10 +1138,6 @@ msgstr "Selecteer Aaneengesloten"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Toevoegen"
-
-
-msgid "Edit"
-msgstr "Bewerken"
 
 
 msgid "Converter"
@@ -1567,11 +1567,6 @@ msgstr "Nieuwe Actie"
 msgctxt "Operator"
 msgid "Paste Keyframes"
 msgstr "Sleutelframes Plakken"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Auto-zet Preview Bereik"
 
 
 msgctxt "Operator"

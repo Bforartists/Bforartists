@@ -311,7 +311,8 @@ static void wm_drop_operator_options(bContext *C, wmDrag *drag, const wmEvent *e
   const int winsize_y = WM_window_pixels_y(win);
 
   /* for multiwin drags, we only do this if mouse inside */
-  if (event->x < 0 || event->y < 0 || event->x > winsize_x || event->y > winsize_y) {
+  if (event->xy[0] < 0 || event->xy[1] < 0 || event->xy[0] > winsize_x ||
+      event->xy[1] > winsize_y) {
     return;
   }
 
@@ -465,7 +466,8 @@ static ID *wm_drag_asset_id_import(wmDragAsset *asset_drag)
                                       asset_drag->path,
                                       idtype,
                                       name,
-                                      BLO_LIBLINK_APPEND_RECURSIVE | FILE_ACTIVE_COLLECTION);
+                                      BLO_LIBLINK_APPEND_RECURSIVE | FILE_ACTIVE_COLLECTION |
+                                          BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR);
     case FILE_ASSET_IMPORT_APPEND_REUSE:
       return WM_file_append_datablock(G_MAIN,
                                       scene,
@@ -475,6 +477,7 @@ static ID *wm_drag_asset_id_import(wmDragAsset *asset_drag)
                                       idtype,
                                       name,
                                       BLO_LIBLINK_APPEND_RECURSIVE | FILE_ACTIVE_COLLECTION |
+                                          BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR |
                                           BLO_LIBLINK_APPEND_LOCAL_ID_REUSE);
   }
 
@@ -650,8 +653,8 @@ void wm_drags_draw(bContext *C, wmWindow *win, rcti *rect)
   wmWindowManager *wm = CTX_wm_manager(C);
   const int winsize_y = WM_window_pixels_y(win);
 
-  int cursorx = win->eventstate->x;
-  int cursory = win->eventstate->y;
+  int cursorx = win->eventstate->xy[0];
+  int cursory = win->eventstate->xy[1];
   if (rect) {
     rect->xmin = rect->xmax = cursorx;
     rect->ymin = rect->ymax = cursory;
