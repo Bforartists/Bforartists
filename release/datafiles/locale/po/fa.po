@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4339,6 +4339,10 @@ msgid "Flip"
 msgstr "ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 
+msgid "Edit"
+msgstr "ﺶﯾﺍﺮﯾﻭ"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﭗﯿﻠﮐ:"
@@ -4367,10 +4371,6 @@ msgstr "UV"
 msgctxt "Operator"
 msgid "Add"
 msgstr "ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Edit"
-msgstr "ﺶﯾﺍﺮﯾﻭ"
 
 
 msgid "Distort"
@@ -6237,11 +6237,6 @@ msgstr "ﻞﻤﻋ"
 msgctxt "Operator"
 msgid "Paste Keyframes"
 msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﺭﺩ"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 
 msgctxt "Operator"
@@ -9417,10 +9412,6 @@ msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgctxt "Operator"

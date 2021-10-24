@@ -62,7 +62,6 @@ def activate(ob):
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
 
-
 def selection_get():
     aob = bpy.context.view_layer.objects.active
     selobs = bpy.context.view_layer.objects.selected[:]

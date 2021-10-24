@@ -972,9 +972,10 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
 
     /* if operator poll check failed, it can give pretty precise info why */
     if (optype) {
+      const int opcontext = extra_icon ? extra_icon->optype_params->opcontext : but->opcontext;
       CTX_wm_operator_poll_msg_clear(C);
-      WM_operator_poll_context(
-          C, optype, extra_icon ? extra_icon->optype_params->opcontext : but->opcontext);
+      ui_but_context_poll_operator_ex(
+          C, but, &(wmOperatorCallParams){.optype = optype, .opcontext = opcontext});
       disabled_msg = CTX_wm_operator_poll_msg_get(C, &disabled_msg_free);
     }
     /* alternatively, buttons can store some reasoning too */
@@ -1465,7 +1466,7 @@ ARegion *UI_tooltip_create_from_button_or_extra_icon(
     init_position[1] = but->rect.ymin;
     if (butregion) {
       ui_block_to_window_fl(butregion, but->block, &init_position[0], &init_position[1]);
-      init_position[0] = win->eventstate->x;
+      init_position[0] = win->eventstate->xy[0];
     }
     init_position[1] -= (UI_POPUP_MARGIN / 2);
   }
@@ -1489,7 +1490,7 @@ ARegion *UI_tooltip_create_from_gizmo(bContext *C, wmGizmo *gz)
 {
   wmWindow *win = CTX_wm_window(C);
   const float aspect = 1.0f;
-  float init_position[2] = {win->eventstate->x, win->eventstate->y};
+  float init_position[2] = {win->eventstate->xy[0], win->eventstate->xy[1]};
 
   uiTooltipData *data = ui_tooltip_data_from_gizmo(C, gz);
   if (data == NULL) {
@@ -1573,7 +1574,7 @@ ARegion *UI_tooltip_create_from_search_item_generic(
   const float aspect = 1.0f;
   const wmWindow *win = CTX_wm_window(C);
   float init_position[2];
-  init_position[0] = win->eventstate->x;
+  init_position[0] = win->eventstate->xy[0];
   init_position[1] = item_rect->ymin + searchbox_region->winrct.ymin - (UI_POPUP_MARGIN / 2);
 
   return ui_tooltip_create_with_data(C, data, init_position, NULL, aspect);

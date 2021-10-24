@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14573,6 +14573,10 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
+msgid "Edit"
+msgstr "Upravit"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Střih"
@@ -14677,10 +14681,6 @@ msgid "NLA_MT_add"
 msgstr "NLA_MT_přidat"
 
 
-msgid "Edit"
-msgstr "Upravit"
-
-
 msgctxt "Operator"
 msgid "NODE_MT_add"
 msgstr "NODE_MT_přidat"
@@ -14704,6 +14704,10 @@ msgstr "Slepecké Znaky"
 
 msgid "Attribute"
 msgstr "Atribut"
+
+
+msgid "Instances"
+msgstr "Instance"
 
 
 msgid "Utilities"
@@ -18354,10 +18358,6 @@ msgid "Outputs the opposite of the input"
 msgstr "Výsledek je opačný o proti vstupu"
 
 
-msgid "Float Compare"
-msgstr "Porovnat Float"
-
-
 msgid "Less Than or Equal"
 msgstr "Méně než nebo Rovno"
 
@@ -18396,10 +18396,6 @@ msgstr "Pravda pokud oba vstupy nejsou přibližně stejné"
 
 msgid "Random Float"
 msgstr "Náhodný Float"
-
-
-msgid "Base orientation of the points"
-msgstr "Základní orientace bodů"
 
 
 msgid "Geometry Node"
@@ -18572,6 +18568,10 @@ msgstr "Body na Objem"
 
 msgid "Point Rotate"
 msgstr "Bod Rotace"
+
+
+msgid "Base orientation of the points"
+msgstr "Základní orientace bodů"
 
 
 msgid "Fill Type"
@@ -19579,11 +19579,6 @@ msgstr "Žádné odsazení"
 
 msgid "Paste keys from original time"
 msgstr "Vložit pózu z bufferu"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Uložit změněný obrázek"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -23557,14 +23552,6 @@ msgid "Flip Colors"
 msgstr "Překlopit Barvy"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Odemknout Všechny Vrstvy"
@@ -27502,10 +27489,6 @@ msgstr "Aktualizovat Vzdálenost ze Scény"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Normály směrem ven"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Vypočítá trasy pro vybrané kosti"
 
 
 msgctxt "Operator"
@@ -38691,6 +38674,14 @@ msgid "Outline"
 msgstr "Obrys"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
+
+
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -39453,10 +39444,6 @@ msgstr "Geometrický Komponent"
 
 msgid "Part of the geometry to display data from"
 msgstr "Část geometrie ke které se zobrazí data"
-
-
-msgid "Instances"
-msgstr "Instance"
 
 
 msgid "Instances of objects or collections"

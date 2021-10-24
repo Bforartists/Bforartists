@@ -1560,6 +1560,13 @@ static void rna_def_userdef_theme_ui(BlenderRNA *brna)
       prop, "Text Cursor", "Color of the interface widgets text insertion cursor (caret)");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
+  prop = RNA_def_property(srna, "panel_roundness", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_ui_text(
+      prop, "Panel Roundness", "Roundness of the corners of panels and sub-panels");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_float_default(prop, 0.4f);
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
   /* Transparent Grid */
   prop = RNA_def_property(srna, "transparent_checker_primary", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, NULL, "transparent_checker_primary");
@@ -2908,6 +2915,12 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_range(prop, 0, 2);
   RNA_def_property_ui_text(
       prop, "Grid Levels", "Amount of grid lines displayed in the background");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "dash_alpha", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_float_default(prop, 0.5f);
+  RNA_def_property_ui_text(prop, "Dashed Lines Opacity", "Opacity for the dashed lines in wires");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "input_node", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -5166,6 +5179,11 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Duplicate Curve", "Causes curve data to be duplicated with the object");
 
+  prop = RNA_def_property(srna, "use_duplicate_lattice", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_LATTICE);
+  RNA_def_property_ui_text(
+      prop, "Duplicate Lattice", "Causes lattice data to be duplicated with the object");
+
   prop = RNA_def_property(srna, "use_duplicate_text", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_FONT);
   RNA_def_property_ui_text(
@@ -5180,6 +5198,16 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_ARM);
   RNA_def_property_ui_text(
       prop, "Duplicate Armature", "Causes armature data to be duplicated with the object");
+
+  prop = RNA_def_property(srna, "use_duplicate_camera", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_CAMERA);
+  RNA_def_property_ui_text(
+      prop, "Duplicate Camera", "Causes camera data to be duplicated with the object");
+
+  prop = RNA_def_property(srna, "use_duplicate_speaker", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_SPEAKER);
+  RNA_def_property_ui_text(
+      prop, "Duplicate Speaker", "Causes speaker data to be duplicated with the object");
 
   prop = RNA_def_property(srna, "use_duplicate_light", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_LAMP);

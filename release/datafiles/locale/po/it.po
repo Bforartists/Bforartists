@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -18331,6 +18331,10 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
+msgid "Edit"
+msgstr "Modifica"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Filmato"
@@ -18423,10 +18427,6 @@ msgstr "Chiave Forma Speciali"
 
 msgid "Vertex Group Specials"
 msgstr "Gruppo Vertici Speciali"
-
-
-msgid "Edit"
-msgstr "Modifica"
 
 
 msgid "Converter"
@@ -25224,11 +25224,6 @@ msgid "Paste keys from original time"
 msgstr "Incolla chiavi dal tempo originale"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Auto-Impostazione Intervallo di Anteprima"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Imposta l'Intervallo di Anteprima sulla base sulle estensioni dei Keyframes selezionati"
 
@@ -29957,14 +29952,6 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Sblocca Tutti i Livelli"
@@ -30209,10 +30196,6 @@ msgstr "Ribalta i valori dei keyframes selezionati usando il valore del cursore 
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Ribalta i tempi dei keyframes selezionati, invertendo l'ordine in cui appaiono"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Imposta automaticamente l'Intervallo di Anteprima in base al'intevallo dei keyframes"
 
 
 msgctxt "Operator"
@@ -34970,10 +34953,6 @@ msgstr "Cancella le cache del percorso solo per gli oggetti selezionati"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Aggiorna Percorsi Oggetto"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Ricalcola i percorsi per gli oggetti selezionati"
 
 
 msgctxt "Operator"
@@ -48806,6 +48785,14 @@ msgstr "L'immagine è mostrata e modificata in questo spazio"
 
 msgid "Outline"
 msgstr "Contorno"
+
+
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
 
 
 msgid "Overlay Mode"

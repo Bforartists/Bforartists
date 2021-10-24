@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -18541,6 +18541,10 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
+msgid "Edit"
+msgstr "編輯"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -18648,10 +18652,6 @@ msgstr "頂點群組特殊項"
 msgctxt "Operator"
 msgid "NLA_MT_add"
 msgstr "NLA_MT_add"
-
-
-msgid "Edit"
-msgstr "編輯"
 
 
 msgctxt "Operator"
@@ -25977,11 +25977,6 @@ msgid "Paste keys from original time"
 msgstr "從原時間點貼上鍵"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "自動設定預覽範圍"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "根據選取鍵幀的範圍設定預覽範圍"
 
@@ -30600,14 +30595,6 @@ msgid "Dissolve Points"
 msgstr "消散點"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -30769,10 +30756,6 @@ msgstr "將游標值 (Y/水平部份) 作為鏡像線翻轉所選鍵幀的值"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "翻轉所選框幀的時間，可有效反轉它們出現的順序"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "自動基於鍵幀區間設定預覽範圍"
 
 
 msgid "Include Handles"
@@ -35359,10 +35342,6 @@ msgstr "清除物體路徑"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "更新物體路徑"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "重新計算所選物體的路徑"
 
 
 msgctxt "Operator"
@@ -49116,6 +49095,14 @@ msgstr "遮罩此空間中顯示的與編輯的物體"
 
 msgid "Outline"
 msgstr "外框"
+
+
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgid "Overlay Mode"

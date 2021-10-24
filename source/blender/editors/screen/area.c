@@ -972,29 +972,33 @@ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
 #define AZONEPAD_ICON (0.45f * U.widget_unit)
 static void region_azone_edge(AZone *az, ARegion *region)
 {
+  /* If region is overlapped (transparent background), move #AZone to content.
+   * Note this is an arbitrary amount that matches nicely with numbers elsewhere. */
+  int overlap_padding = (region->overlap) ? (int)(0.4f * U.widget_unit) : 0;
+
   switch (az->edge) {
     case AE_TOP_TO_BOTTOMRIGHT:
       az->x1 = region->winrct.xmin;
-      az->y1 = region->winrct.ymax - AZONEPAD_EDGE;
+      az->y1 = region->winrct.ymax - AZONEPAD_EDGE - overlap_padding;
       az->x2 = region->winrct.xmax;
-      az->y2 = region->winrct.ymax + AZONEPAD_EDGE;
+      az->y2 = region->winrct.ymax + AZONEPAD_EDGE - overlap_padding;
       break;
     case AE_BOTTOM_TO_TOPLEFT:
       az->x1 = region->winrct.xmin;
-      az->y1 = region->winrct.ymin + AZONEPAD_EDGE;
+      az->y1 = region->winrct.ymin + AZONEPAD_EDGE + overlap_padding;
       az->x2 = region->winrct.xmax;
-      az->y2 = region->winrct.ymin - AZONEPAD_EDGE;
+      az->y2 = region->winrct.ymin - AZONEPAD_EDGE + overlap_padding;
       break;
     case AE_LEFT_TO_TOPRIGHT:
-      az->x1 = region->winrct.xmin - AZONEPAD_EDGE;
+      az->x1 = region->winrct.xmin - AZONEPAD_EDGE + overlap_padding;
       az->y1 = region->winrct.ymin;
-      az->x2 = region->winrct.xmin + AZONEPAD_EDGE;
+      az->x2 = region->winrct.xmin + AZONEPAD_EDGE + overlap_padding;
       az->y2 = region->winrct.ymax;
       break;
     case AE_RIGHT_TO_TOPLEFT:
-      az->x1 = region->winrct.xmax + AZONEPAD_EDGE;
+      az->x1 = region->winrct.xmax + AZONEPAD_EDGE - overlap_padding;
       az->y1 = region->winrct.ymin;
-      az->x2 = region->winrct.xmax - AZONEPAD_EDGE;
+      az->x2 = region->winrct.xmax - AZONEPAD_EDGE - overlap_padding;
       az->y2 = region->winrct.ymax;
       break;
   }
@@ -1681,7 +1685,7 @@ static bool event_in_markers_region(const ARegion *region, const wmEvent *event)
 {
   rcti rect = region->winrct;
   rect.ymax = rect.ymin + UI_MARKER_MARGIN_Y;
-  return BLI_rcti_isect_pt(&rect, event->x, event->y);
+  return BLI_rcti_isect_pt(&rect, event->xy[0], event->xy[1]);
 }
 
 /**
@@ -1912,7 +1916,7 @@ void ED_area_update_region_sizes(wmWindowManager *wm, wmWindow *win, ScrArea *ar
     /* Some AZones use View2D data which is only updated in region init, so call that first! */
     region_azones_add(screen, area, region);
   }
-  ED_area_azones_update(area, &win->eventstate->x);
+  ED_area_azones_update(area, win->eventstate->xy);
 
   area->flag &= ~AREA_FLAG_REGION_SIZE_UPDATE;
 }
@@ -2658,10 +2662,10 @@ static ThemeColorID region_background_color_id(const bContext *C, const ARegion 
     case RGN_TYPE_HEADER:
     case RGN_TYPE_TOOL_HEADER:
       if (ED_screen_area_active(C) || ED_area_is_global(area)) {
-        return TH_HEADER;
+        return TH_HEADER_ACTIVE;
       }
       else {
-        return TH_HEADERDESEL;
+        return TH_HEADER;
       }
     case RGN_TYPE_PREVIEW:
       return TH_PREVIEW_BACK;
@@ -2975,11 +2979,10 @@ void ED_region_panels_layout_ex(const bContext *C,
     margin_x = category_tabs_width;
   }
 
-  const int w = BLI_rctf_size_x(&v2d->cur) - margin_x;
+  const int width_no_header = BLI_rctf_size_x(&v2d->cur) - margin_x;
+  const int width = width_no_header - UI_PANEL_MARGIN_X * 2.0f;
   /* Works out to 10 * UI_UNIT_X or 20 * UI_UNIT_X. */
   const int em = (region->type->prefsizex) ? 10 : 20;
-
-  const int w_box_panel = w - UI_PANEL_BOX_STYLE_MARGIN * 2.0f;
 
   /* create panels */
   UI_panels_begin(C, region);
@@ -3016,7 +3019,7 @@ void ED_region_panels_layout_ex(const bContext *C,
                   &region->panels,
                   pt,
                   panel,
-                  (pt->flag & PANEL_TYPE_DRAW_BOX) ? w_box_panel : w,
+                  (pt->flag & PANEL_TYPE_NO_HEADER) ? width_no_header : width,
                   em,
                   NULL,
                   search_filter);
@@ -3050,7 +3053,7 @@ void ED_region_panels_layout_ex(const bContext *C,
                     &region->panels,
                     panel->type,
                     panel,
-                    (panel->type->flag & PANEL_TYPE_DRAW_BOX) ? w_box_panel : w,
+                    (panel->type->flag & PANEL_TYPE_NO_HEADER) ? width_no_header : width,
                     em,
                     unique_panel_str,
                     search_filter);

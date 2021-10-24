@@ -224,7 +224,7 @@ def main():
 
     for i, c in enumerate(commits):
         if os.name == "posix":
-            # also clears scrollback
+            # Also clears scroll-back.
             os.system("tput reset")
         else:
             print('\x1b[2J')  # clear

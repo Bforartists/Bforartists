@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -31451,6 +31451,10 @@ msgid "Assets Context Menu"
 msgstr "Danh Bạ Bối Cảnh Tích Sản"
 
 
+msgid "Edit"
+msgstr "Biên Tập"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "ĐOẠN_PHIM_MT_đoạn_phim"
@@ -31664,10 +31668,6 @@ msgid "NLA Context Menu"
 msgstr "Danh Bạ Bối Cảnh NLA"
 
 
-msgid "Edit"
-msgstr "Biên Tập"
-
-
 msgctxt "Operator"
 msgid "NODE_MT_add"
 msgstr "GIAO_ĐIỂM_MT_thêm"
@@ -31691,6 +31691,10 @@ msgstr "Lớp Che"
 
 msgid "Attribute"
 msgstr "Đặc Điểm"
+
+
+msgid "Instances"
+msgstr "Các Thực Thể"
 
 
 msgid "Curve Primitives"
@@ -41035,10 +41039,6 @@ msgid "Outputs the opposite of the input"
 msgstr "Ngõ ra là đảo nghịch của ngõ vào"
 
 
-msgid "Float Compare"
-msgstr "So Sánh Số Thật Dấu Phẫy Động"
-
-
 msgid "True when the first input is smaller than second input"
 msgstr "Đúng khi ngõ vào thứ nhất nhỏ hơn ngõ vào thứ hai"
 
@@ -41115,10 +41115,6 @@ msgid "Random Float"
 msgstr "Dấu Phẫy Động Ngẫu Nhiên"
 
 
-msgid "Base orientation of the points"
-msgstr "Định hướng cơ Sở của các điểm"
-
-
 msgid "Method used to describe the rotation"
 msgstr "Phương pháp cho áp dụng xoay"
 
@@ -41135,16 +41131,24 @@ msgid "Geometry Node"
 msgstr "Giao Điểm Hình Dạng"
 
 
-msgid "Attribute Capture"
-msgstr "Bắt Đặc Điểm"
+msgid "Attribute Remove"
+msgstr "Xóa Đặc Điểm"
+
+
+msgid "Mapping between geometries"
+msgstr "Ánh xạ giữa các hình dạng"
+
+
+msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
+msgstr "Truyền đặc điểm từ mặt gần nhất trên bề mặt (không quan tâm điểm và cạnh rời ra)"
+
+
+msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
+msgstr "Truyền phân tử từ phân tử gần nhất (sử dụng trung tâm mặt và cạnh cho tính khoảng cách)"
 
 
 msgid "Which domain to store the data in"
 msgstr "Chứa dữ liệu trong phạm vi nào"
-
-
-msgid "Attribute Remove"
-msgstr "Xóa Đặc Điểm"
 
 
 msgid "Collection Info"
@@ -41169,14 +41173,6 @@ msgstr "Đem hình dạng của sưu tập ngõ vào vật thể được sửa 
 
 msgid "Convex Hull"
 msgstr "Vỏ Lồi"
-
-
-msgid "Curve Fill"
-msgstr "Tô Đầy Đường Cong"
-
-
-msgid "N-gons"
-msgstr "N-Giác"
 
 
 msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
@@ -41295,34 +41291,6 @@ msgid "Quadratic Bezier"
 msgstr "Bezier Bậc Hai"
 
 
-msgid "Resample Curve"
-msgstr "Mẫu Lại Đường Cong"
-
-
-msgid "How to specify the amount of samples"
-msgstr "Chỉ định số lượng mẫu"
-
-
-msgid "Evaluated"
-msgstr "Được Tính Toán"
-
-
-msgid "Output the input spline's evaluated points, based on the resolution attribute for NURBS and Bezier splines. Poly splines are unchanged"
-msgstr "Xuất các điểm được tính toán từ mẫu cong ngõ vào, tùy đặc điểm độ phân giải cho mẫu cong NURBS và Bezier. Các đa mẫu cong sẽ không đổi"
-
-
-msgid "Sample the specified number of points along each spline"
-msgstr "Lấy mẫu cho số lượng điểm được xác định trên đường cong"
-
-
-msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
-msgstr "Tính số lượng mẫu vật bằng chẻ mỗi mẫu cong thành khúc có chiều dài được xác định"
-
-
-msgid "Curve Reverse"
-msgstr "Đảo Nghịch Đường Cong"
-
-
 msgid "Set Handle Type"
 msgstr "Đặt Loại Tay Cầm"
 
@@ -41355,28 +41323,8 @@ msgid "Star"
 msgstr "Ngôi Sao"
 
 
-msgid "Curve Subdivide"
-msgstr "Phân Hóa Đường Cong"
-
-
 msgid "Curve to Mesh"
 msgstr "Đường Cong sang Mạng Lưới"
-
-
-msgid "Curve Trim"
-msgstr "Cắt Đường Cong"
-
-
-msgid "How to find endpoint positions for the trimmed spline"
-msgstr "Phương pháp tìm điểm vị trí đầu và cuối cho mẫu cong bị cắt"
-
-
-msgid "Find the endpoint positions using a factor of each spline's length"
-msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một hệ số của chiều dài từng mẫu cong"
-
-
-msgid "Find the endpoint positions using a length from the start of each spline"
-msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một chiều dài từ đầu mỗi mẫu cong"
 
 
 msgid "Geometry Custom Group"
@@ -41417,6 +41365,10 @@ msgstr "Đĩa Poisson"
 
 msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
 msgstr "Phân phối các điểm ngẫu nhiên trên bề mặt khi xem xét khoảng cách giữa điểm"
+
+
+msgid "N-gons"
+msgstr "N-Giác"
 
 
 msgid "Is Viewport"
@@ -41619,18 +41571,6 @@ msgid "Attribute Transfer"
 msgstr "Truyền Đặc Điểm"
 
 
-msgid "Mapping between geometries"
-msgstr "Ánh xạ giữa các hình dạng"
-
-
-msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
-msgstr "Truyền đặc điểm từ mặt gần nhất trên bề mặt (không quan tâm điểm và cạnh rời ra)"
-
-
-msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
-msgstr "Truyền phân tử từ phân tử gần nhất (sử dụng trung tâm mặt và cạnh cho tính khoảng cách)"
-
-
 msgid "Attribute Vector Math"
 msgstr "Toán Vectơ Đặc Điểm"
 
@@ -41803,8 +41743,16 @@ msgid "Curve Endpoints"
 msgstr "Điểm Kết Thúc Đường Cong"
 
 
+msgid "Curve Reverse"
+msgstr "Đảo Nghịch Đường Cong"
+
+
 msgid "Select by Handle Type"
 msgstr "Đặt tùy Loại Tay Cầm"
+
+
+msgid "Curve Subdivide"
+msgstr "Phân Hóa Đường Cong"
 
 
 msgid "Cuts Type"
@@ -41817,6 +41765,10 @@ msgstr "Điểm Sang Đường Cong"
 
 msgid "How to generate points from the input curve"
 msgstr "Làm sao được chế tạo điểm từ đường cong ngõ vào"
+
+
+msgid "Evaluated"
+msgstr "Được Tính Toán"
 
 
 msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
@@ -41923,6 +41875,10 @@ msgid "Point Rotate"
 msgstr "Xoay Điểm"
 
 
+msgid "Base orientation of the points"
+msgstr "Định hướng cơ Sở của các điểm"
+
+
 msgid "Rotate points in the local space of the object"
 msgstr "Xoay điểm trong không gian địa phương của vật thể"
 
@@ -41933,10 +41889,6 @@ msgstr "Xoay mỗi điểm trong không gian điạ phương (được định n
 
 msgid "Select by Material"
 msgstr "Chọn bằng Vật Liệu"
-
-
-msgid "Material Replace"
-msgstr "Thay Thế Vật Liệu"
 
 
 msgid "Mesh Circle"
@@ -41983,10 +41935,6 @@ msgid "Specify the line's start and end points"
 msgstr "Chỉ định điểm bắt đầu và kết thúc của đường"
 
 
-msgid "Mesh Subdivide"
-msgstr "Phân Hóa Mạng Lưới"
-
-
 msgid "UV Sphere"
 msgstr "Hình Cầu UV"
 
@@ -42007,6 +41955,26 @@ msgid "Bring the input object geometry, location, rotation and scale into the mo
 msgstr "Đem nhình dạng vật thể ngõ vào, vị trí, xoay và phóng to vào vật thể được sửa đổi, giữ nguyên vị trí tương đối giữa hai vật thể trong cảnh"
 
 
+msgid "Resample Curve"
+msgstr "Mẫu Lại Đường Cong"
+
+
+msgid "How to specify the amount of samples"
+msgstr "Chỉ định số lượng mẫu"
+
+
+msgid "Output the input spline's evaluated points, based on the resolution attribute for NURBS and Bezier splines. Poly splines are unchanged"
+msgstr "Xuất các điểm được tính toán từ mẫu cong ngõ vào, tùy đặc điểm độ phân giải cho mẫu cong NURBS và Bezier. Các đa mẫu cong sẽ không đổi"
+
+
+msgid "Sample the specified number of points along each spline"
+msgstr "Lấy mẫu cho số lượng điểm được xác định trên đường cong"
+
+
+msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
+msgstr "Tính số lượng mẫu vật bằng chẻ mỗi mẫu cong thành khúc có chiều dài được xác định"
+
+
 msgid "Separate Components"
 msgstr "Chẻ Thành Phhần"
 
@@ -42025,6 +41993,18 @@ msgstr "Sắp Xếp Y"
 
 msgid "Font of the text. Falls back to the UI font by default"
 msgstr "Phông của văn bản. Mặc định là dùng phông của giao diện"
+
+
+msgid "How to find endpoint positions for the trimmed spline"
+msgstr "Phương pháp tìm điểm vị trí đầu và cuối cho mẫu cong bị cắt"
+
+
+msgid "Find the endpoint positions using a factor of each spline's length"
+msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một hệ số của chiều dài từng mẫu cong"
+
+
+msgid "Find the endpoint positions using a length from the start of each spline"
+msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một chiều dài từ đầu mỗi mẫu cong"
 
 
 msgctxt "NodeTree"
@@ -44189,11 +44169,6 @@ msgstr "Không Dịch"
 
 msgid "Paste keys from original time"
 msgstr "Dán bức mẫu từ thời gian ban đầu"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Tự Động Đặt Phạm Vi Dự Khán"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -52426,107 +52401,6 @@ msgstr "Trao đổi màu nhiễm"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "Vẽ Lại Ảnh đến Bút Sáp"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "Rút nét Bút Sáp từ ảnh"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "Cho chọn vẽ lại ảnh đơn giản hay toàn bộ tình tự"
-
-
-msgid "Trace the current frame of the image"
-msgstr "Vẽ lại bức hiện tại của ảnh"
-
-
-msgid "Trace full sequence"
-msgstr "Vé lại toàn bộ trình tự"
-
-
-msgid "Resolution of the generated curves"
-msgstr "Độ phân giải cửa đường cong được chế tạo"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "Khoảng cách đến điểm mẫu, đặt = 0 để  tắt"
-
-
-msgid "Scale of the final stroke"
-msgstr "Phóng to của nét cuối cùng"
-
-
-msgid "Color Threshold"
-msgstr "Ngưỡng Màu"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "Chọn ngưỡng chênh lệch độ sáng được chế tạo nét nếu lớn hơn giá trị này"
-
-
-msgid "Turn Policy"
-msgstr "Thủ Tục Rẽ"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "Chọn cách giải vấn đề xuất hiện khi phân tích ảnh điểm ảnh sang đường nét"
-
-
-msgid "Black"
-msgstr "Đèn"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "Chọn nối lại thành phần màu đen (cảnh trước)"
-
-
-msgid "White"
-msgstr "Trắng"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "Chọn nối lại thành phần màu trắng (cảnh trước)"
-
-
-msgid "Always take a left turn"
-msgstr "Lần nào cũng rẽ trái"
-
-
-msgid "Always take a right turn"
-msgstr "Lần nào cũng rẽ phải"
-
-
-msgid "Minority"
-msgstr "Thiểu Số"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "Ưa nối lại màu (đen hay trắng) có tần số xuất hiện thấp hơn trong vùng gần vị trí hiện tại"
-
-
-msgid "Majority"
-msgstr "Đa Số"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "Ưa nối lại màu (đen hay trắng) có tần số xuất hiện cao hơn trong vùng gần vị trí hiện tại"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "Chọn ngẫu nhiên giả"
-
-
-msgid "Start At Current Frame"
-msgstr "Bắt Đầu Tại Bức Hiện Tại"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "Vẽ lại ảnh bắt đầu từ bức ảnh hiện tại"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Biến Hóa Tô Đầy Nét"
 
@@ -52945,10 +52819,6 @@ msgstr "Bằng Thời Gian Hơn Thời Gian Số Không"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "Lật thời gian của các bức mẫu được chọn, làm lật thứ tự ngược chiều"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "Tự động đặt phạm vi dự khán tùy phạm vị của cạc bức mẫu"
 
 
 msgctxt "Operator"
@@ -60708,10 +60578,6 @@ msgid "Update Object Paths"
 msgstr "Nâng Cấp Đường Đi Vật Thể"
 
 
-msgid "Recalculate paths for selected objects"
-msgstr "Tính lại đường chuyển động cho vật thể được chọn"
-
-
 msgctxt "Operator"
 msgid "Add Point Cloud"
 msgstr "Thêm Mây Điểm"
@@ -61525,14 +61391,6 @@ msgstr "Chế Độ Truyền"
 
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr "Trao đổi vật thể hoạt động và chỉ định cùng chế độ đến một cái mới ở dưới con trỏ, giữ nguyên chế độ hoạt động trong chế độ hiện tại"
-
-
-msgid "Use Eyedropper"
-msgstr "Dùng Ống Hút Giọt Nước"
-
-
-msgid "Pick the object to switch to using an eyedropper"
-msgstr "Chọn vật thể để trao đổi bằng ống hút giọt nước"
 
 
 msgid "Flash On Transfer"
@@ -74665,14 +74523,6 @@ msgid "Allow buttons in the header to stretch and shrink to fill the entire layo
 msgstr "Cho nút trong đầu được kéo dài và rút nhỏ cho vừa đầy toàn bộ bề rộng của bố trí"
 
 
-msgid "Box Style"
-msgstr "Phong Cách Hộp"
-
-
-msgid "Display panel with the box widget theme"
-msgstr "Hiển thị bảng bằng phong cách khiển tố hộp"
-
-
 msgid "Order"
 msgstr "Thứ Tự"
 
@@ -86381,8 +86231,16 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
+
+
+msgid "White"
+msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -88067,10 +87925,6 @@ msgstr "Thầnh phần mây điểm chỉ chứa dữ liệu điểm"
 
 msgid "Curve component containing spline and control point data"
 msgstr "Thành phần đường cong đang chứa dữ liệu mẫu cong và điểm"
-
-
-msgid "Instances"
-msgstr "Các Thực Thể"
 
 
 msgid "Instances of objects or collections"
@@ -106375,10 +106229,6 @@ msgstr "Không thể thêm xương móc cho vật thể không phải là cốt"
 
 msgid "Could not find hook modifier"
 msgstr "Không tìm được cụ sửa đổi móc"
-
-
-msgid "Click in the viewport to select an object"
-msgstr "Bấm trong màn chiếu để chọn một vật thể"
 
 
 msgid "Unable to execute '%s', error changing modes"

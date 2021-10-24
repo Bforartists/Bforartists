@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -11826,6 +11826,10 @@ msgid "Draw strokes with solid color"
 msgstr "Menggambar stroke dengan warna solid"
 
 
+msgid "Edit"
+msgstr "Edit"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Klip"
@@ -11914,10 +11918,6 @@ msgstr "Menu Konteks Saluran NLA"
 
 msgid "NLA Context Menu"
 msgstr "Menu Konteks NLA"
-
-
-msgid "Edit"
-msgstr "Edit"
 
 
 msgid "Converter"
@@ -14891,11 +14891,6 @@ msgstr "Aksi Baru"
 msgctxt "Operator"
 msgid "Paste Keyframes"
 msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Partikel"
 
 
 msgctxt "Operator"

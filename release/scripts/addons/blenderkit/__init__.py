@@ -61,9 +61,10 @@ if "bpy" in locals():
     upload_bg = reload(upload_bg)
     utils = reload(utils)
 
-    bl_ui_label = reload(bl_ui_widget)
+    bl_ui_widget = reload(bl_ui_widget)
     bl_ui_label = reload(bl_ui_label)
     bl_ui_button = reload(bl_ui_button)
+    bl_ui_image = reload(bl_ui_image)
     # bl_ui_checkbox = reload(bl_ui_checkbox)
     # bl_ui_slider = reload(bl_ui_slider)
     # bl_ui_up_down = reload(bl_ui_up_down)
@@ -102,6 +103,7 @@ else:
     from blenderkit.bl_ui_widgets import bl_ui_widget
     from blenderkit.bl_ui_widgets import bl_ui_label
     from blenderkit.bl_ui_widgets import bl_ui_button
+    from blenderkit.bl_ui_widgets import bl_ui_image
     # from blenderkit.bl_ui_widgets import bl_ui_checkbox
     # from blenderkit.bl_ui_widgets import bl_ui_slider
     # from blenderkit.bl_ui_widgets import bl_ui_up_down
@@ -363,7 +365,7 @@ class BlenderKitUIProps(PropertyGroup):
     highlight_margin: IntProperty(name="Highlight Margin", default=int(margin_def / 2), min=-10, max=256)
 
     bar_height: IntProperty(name="Bar Height", default=thumb_size_def + 2 * margin_def, min=-1, max=2048)
-    bar_x_offset: IntProperty(name="Bar X Offset", default=20, min=0, max=5000)
+    bar_x_offset: IntProperty(name="Bar X Offset", default=40, min=0, max=5000)
     bar_y_offset: IntProperty(name="Bar Y Offset", default=80, min=0, max=5000)
 
     bar_x: IntProperty(name="Bar X", default=100, min=0, max=5000)

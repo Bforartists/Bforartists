@@ -5014,6 +5014,34 @@ static void def_fn_input_color(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_fn_input_bool(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeInputBool", "storage");
+
+  prop = RNA_def_property(srna, "boolean", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "boolean", 1);
+  RNA_def_property_ui_text(
+    prop, "Boolean", "Input value used for unconnected socket");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+}
+
+static void def_fn_input_int(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeInputInt", "storage");
+
+  prop = RNA_def_property(srna, "integer", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, NULL, "integer");
+  RNA_def_property_int_default(prop, 1);
+  RNA_def_property_ui_text(
+    prop, "Integer", "Input value used for unconnected socket");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_fn_input_vector(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -10526,6 +10554,38 @@ static void def_geo_curve_fillet(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
 
+static void def_geo_legacy_curve_to_points(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  static EnumPropertyItem mode_items[] = {
+      {GEO_NODE_CURVE_RESAMPLE_EVALUATED,
+       "EVALUATED",
+       0,
+       "Evaluated",
+       "Create points from the curve's evaluated points, based on the resolution attribute for "
+       "NURBS and Bezier splines"},
+      {GEO_NODE_CURVE_RESAMPLE_COUNT,
+       "COUNT",
+       0,
+       "Count",
+       "Sample each spline by evenly distributing the specified number of points"},
+      {GEO_NODE_CURVE_RESAMPLE_LENGTH,
+       "LENGTH",
+       0,
+       "Length",
+       "Sample each spline by splitting it into segments with the specified length"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryCurveToPoints", "storage");
+
+  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, mode_items);
+  RNA_def_property_ui_text(prop, "Mode", "How to generate points from the input curve");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+}
+
 static void def_geo_curve_to_points(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -10714,7 +10774,7 @@ static void def_geo_input_material(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static void def_geo_raycast(StructRNA *srna)
+static void def_geo_legacy_raycast(StructRNA *srna)
 {
   static EnumPropertyItem mapping_items[] = {
       {GEO_NODE_RAYCAST_INTERPOLATED,
@@ -10748,6 +10808,39 @@ static void def_geo_raycast(StructRNA *srna)
   RNA_def_property_enum_items(prop, rna_node_geometry_attribute_input_type_items_float);
   RNA_def_property_ui_text(prop, "Input Type Ray Length", "");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+}
+
+static void def_geo_raycast(StructRNA *srna)
+{
+  static EnumPropertyItem mapping_items[] = {
+      {GEO_NODE_RAYCAST_INTERPOLATED,
+       "INTERPOLATED",
+       0,
+       "Interpolated",
+       "Interpolate the attribute from the corners of the hit face"},
+      {GEO_NODE_RAYCAST_NEAREST,
+       "NEAREST",
+       0,
+       "Nearest",
+       "Use the attribute value of the closest mesh element"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryRaycast", "storage");
+
+  prop = RNA_def_property(srna, "mapping", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, mapping_items);
+  RNA_def_property_ui_text(prop, "Mapping", "Mapping from the target geometry to hit points");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_type_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_GeometryNodeAttributeFill_type_itemf");
+  RNA_def_property_enum_default(prop, CD_PROP_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "Type of data stored in attribute");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_GeometryNode_socket_update");
 }
 
 static void def_geo_curve_fill(StructRNA *srna)
@@ -13463,9 +13556,15 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_TO_INT:
       icon = ICON_FLOAT_TO_INT;
       break;
+    //case FN_NODE_INPUT_BOOL:
+    //  icon = ICON_DELETE;
+    //  break;
     case FN_NODE_INPUT_COLOR:
       icon = ICON_COLOR;
       break;
+    //case FN_NODE_INPUT_INT:
+    //  icon = ICON_DELETE;
+    //  break;
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
       icon = ICON_SPECIAL;
       break;
@@ -13477,6 +13576,9 @@ static int node_type_to_icon(int type)
       break;
     case FN_NODE_RANDOM_VALUE:
       icon = ICON_RANDOM_FLOAT;
+      break;
+    case FN_NODE_REPLACE_STRING:
+      icon = ICON_DELETE;
       break;
     case FN_NODE_ROTATE_EULER:
       icon = ICON_ROTATE_EULER;
@@ -13630,6 +13732,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CONVEX_HULL:
       icon = ICON_CONVEXHULL;
       break;
+    //case GEO_NODE_CURVE_ENDPOINT_SELECTION:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_FILL_CURVE:
       icon = ICON_CURVE_FILL;
       break;
@@ -13645,6 +13750,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PARAMETER:
       icon = ICON_CURVE_PARAMETER;
       break;
+    //case GEO_NODE_CURVE_TO_POINTS:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
       icon = ICON_CURVE_BEZCURVE;
       break;
@@ -13741,6 +13849,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INSTANCE_ON_POINTS:
       icon = ICON_POINT_INSTANCE;
       break;
+    case GEO_NODE_INSTANCES_TO_POINTS:
+      icon = ICON_DELETE;
+      break;
     case GEO_NODE_IS_VIEWPORT:
       icon = ICON_VIEW;
       break;
@@ -13798,6 +13909,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_PROXIMITY:
       icon = ICON_GEOMETRY_PROXIMITY;
       break;
+    //case GEO_NODE_RAYCAST:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
       break;
