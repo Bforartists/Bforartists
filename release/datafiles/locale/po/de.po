@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -19768,6 +19768,10 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
+msgid "Edit"
+msgstr "Bearbeiten"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -19926,10 +19930,6 @@ msgstr "Hinzufügen"
 
 msgid "NLA Context Menu"
 msgstr "NLA-Kontextmenü"
-
-
-msgid "Edit"
-msgstr "Bearbeiten"
 
 
 msgid "Converter"
@@ -25069,10 +25069,6 @@ msgid "Or"
 msgstr "Oder"
 
 
-msgid "Float Compare"
-msgstr "Gleitkommazahl Vergleich"
-
-
 msgid "True when the first input is smaller than second input"
 msgstr "Wahr, wenn der erste Eingang kleiner als der zweite Eingang ist"
 
@@ -26437,11 +26433,6 @@ msgstr "Kein Versatz"
 
 msgid "Paste keys from original time"
 msgstr "Fügt einen Schlüssel von der Ursprünglichen Zeit ein"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Vorschaubereich automatisch setzen"
 
 
 msgctxt "Operator"
@@ -30917,14 +30908,6 @@ msgid "Flip Colors"
 msgstr "Farben umdrehen"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
-msgid "White"
-msgstr "Weiß"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Alle Ebenen entsperreng"
@@ -34993,10 +34976,6 @@ msgstr "Objektpfade entfernen"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Objektpfade aktualisieren"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Ausgewählte Objekte löschen"
 
 
 msgctxt "Operator"
@@ -47679,8 +47658,16 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
+msgid "Black"
+msgstr "Schwarz"
+
+
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgid "Display white edges"

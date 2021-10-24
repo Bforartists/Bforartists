@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -31734,6 +31734,10 @@ msgid "Assets Context Menu"
 msgstr "资产上下文菜单"
 
 
+msgid "Edit"
+msgstr "编辑"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -31947,10 +31951,6 @@ msgid "NLA Context Menu"
 msgstr "NLA上下文菜单"
 
 
-msgid "Edit"
-msgstr "编辑"
-
-
 msgctxt "Operator"
 msgid "NODE_MT_add"
 msgstr "NODE_MT_add"
@@ -31974,6 +31974,10 @@ msgstr "蒙版"
 
 msgid "Attribute"
 msgstr "属性"
+
+
+msgid "Instances"
+msgstr "实例"
 
 
 msgid "Curve Primitives"
@@ -32043,6 +32047,10 @@ msgstr "视频序列编辑器上下文菜单"
 
 msgid "Navigation"
 msgstr "视图切换"
+
+
+msgid "Sequencer Preview Context Menu"
+msgstr "序列编辑器预览上下文菜单"
 
 
 msgid "Select Channel"
@@ -33955,6 +33963,10 @@ msgstr "孔洞优化"
 
 msgid "Better results when there are holes (slower)"
 msgstr "存在孔洞时可以获得更好的结果(更慢)"
+
+
+msgid "Self Intersection"
+msgstr "自身交集"
 
 
 msgid "Allow self-intersection in operands"
@@ -41282,6 +41294,10 @@ msgid "Function Node"
 msgstr "函数节点"
 
 
+msgid "Align Euler To Vector"
+msgstr "对齐欧拉至矢量"
+
+
 msgid "Axis to align to the vector"
 msgstr "要与矢量对齐的轴"
 
@@ -41344,10 +41360,6 @@ msgstr "当两个输入值中至少一个为真时输出真值"
 
 msgid "Outputs the opposite of the input"
 msgstr "输出与输入值相反的结果"
-
-
-msgid "Float Compare"
-msgstr "浮点比较"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41434,10 +41446,6 @@ msgid "Rotate Euler"
 msgstr "欧拉旋转"
 
 
-msgid "Base orientation of the points"
-msgstr "该点的基本方位"
-
-
 msgid "Rotate the input rotation in the local space of the object"
 msgstr "在物体的局部空间中执行输入旋转"
 
@@ -41474,14 +41482,6 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
-msgid "Attribute Capture"
-msgstr "属性捕获"
-
-
-msgid "Which domain to store the data in"
-msgstr "在哪个域存储数据"
-
-
 msgid "Attribute Remove"
 msgstr "属性删除"
 
@@ -41496,6 +41496,22 @@ msgstr "在计算结果之前，属性被转换为的数据类型"
 
 msgid "Which domain to read the data from"
 msgstr "在哪个域读取数据"
+
+
+msgid "Mapping between geometries"
+msgstr "几何体之间的映射"
+
+
+msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
+msgstr "从表面上最近的面传递属性(忽略松散的点和边缘)"
+
+
+msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
+msgstr "从最近的元素传递元素(使用面部和边缘中心进行距离计算)"
+
+
+msgid "Which domain to store the data in"
+msgstr "在哪个域存储数据"
 
 
 msgid "Collection Info"
@@ -41520,30 +41536,6 @@ msgstr "将输入集合几何体引入修改后的物体，保持场景物体之
 
 msgid "Convex Hull"
 msgstr "凸壳"
-
-
-msgid "Curve Fill"
-msgstr "曲线填充"
-
-
-msgid "N-gons"
-msgstr "多边形"
-
-
-msgid "Curve Fillet"
-msgstr "曲线圆角"
-
-
-msgid "How to choose number of vertices on fillet"
-msgstr "如何选择圆角上的顶点数量"
-
-
-msgid "Align Bezier handles to create circular arcs at each control point"
-msgstr "对齐贝塞尔手柄，在每个控制点创建圆形弧线"
-
-
-msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
-msgstr "沿圆形弧线添加控制点(如为贝塞尔样条线，手柄类型为矢量)"
 
 
 msgid "Handle Type Selection"
@@ -41670,50 +41662,6 @@ msgid "Quadratic Bezier"
 msgstr "二次型贝塞尔"
 
 
-msgid "Resample Curve"
-msgstr "曲线重采样"
-
-
-msgid "How to specify the amount of samples"
-msgstr "如何指定采样数量"
-
-
-msgid "Evaluated"
-msgstr "已解算"
-
-
-msgid "Output the input spline's evaluated points, based on the resolution attribute for NURBS and Bezier splines. Poly splines are unchanged"
-msgstr "基于NURBS 和贝塞尔样条线的精度属性，输出该输入样条线的解算点。多段线样条线保持不变。"
-
-
-msgid "Sample the specified number of points along each spline"
-msgstr "沿每根样条线采样指定数量的点数"
-
-
-msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
-msgstr "通过将每根样条线拆分为具有指定长度的线段来计算采样数量"
-
-
-msgid "Curve Reverse"
-msgstr "曲线反转"
-
-
-msgid "Curve Sample"
-msgstr "曲线采样"
-
-
-msgid "Method for sampling input"
-msgstr "采样输入方法"
-
-
-msgid "Find sample positions on the curve using a factor of its total length"
-msgstr "使用总长度的一个系数查找曲线上的采样位置"
-
-
-msgid "Find sample positions on the curve using a distance from its beginning"
-msgstr "使用到曲线起点的距离查找曲线上的采样位置"
-
-
 msgid "Set Handle Type"
 msgstr "设置控制柄类型"
 
@@ -41746,28 +41694,8 @@ msgid "Star"
 msgstr "星形"
 
 
-msgid "Curve Subdivide"
-msgstr "曲线细分"
-
-
 msgid "Curve to Mesh"
 msgstr "曲线 -> 网格"
-
-
-msgid "Curve Trim"
-msgstr "曲线修剪"
-
-
-msgid "How to find endpoint positions for the trimmed spline"
-msgstr "如何找到修剪后的样条线的端点位置"
-
-
-msgid "Find the endpoint positions using a factor of each spline's length"
-msgstr "使用每个样条线长度的系数查找端点位置"
-
-
-msgid "Find the endpoint positions using a length from the start of each spline"
-msgstr "使用到每个样条线的起点的长度查找终点位置"
 
 
 msgid "Geometry Custom Group"
@@ -41780,6 +41708,14 @@ msgstr "用于Python节点的自定义几何群组节点"
 
 msgid "Delete Geometry"
 msgstr "删除几何体"
+
+
+msgid "Which domain to delete in"
+msgstr "删除对象所在的域"
+
+
+msgid "Which parts of the mesh component to delete"
+msgstr "要删除的网格部件"
 
 
 msgid "Only Edges & Faces"
@@ -41812,6 +41748,22 @@ msgstr "泊松盘"
 
 msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
 msgstr "在表面上随机分布点，同时考虑点之间的最小距离"
+
+
+msgid "N-gons"
+msgstr "多边形"
+
+
+msgid "How to choose number of vertices on fillet"
+msgstr "如何选择圆角上的顶点数量"
+
+
+msgid "Align Bezier handles to create circular arcs at each control point"
+msgstr "对齐贝塞尔手柄，在每个控制点创建圆形弧线"
+
+
+msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
+msgstr "沿圆形弧线添加控制点(如为贝塞尔样条线，手柄类型为矢量)"
 
 
 msgid "Curve Tangent"
@@ -42022,18 +41974,6 @@ msgid "Attribute Transfer"
 msgstr "属性传递"
 
 
-msgid "Mapping between geometries"
-msgstr "几何体之间的映射"
-
-
-msgid "Transfer the attribute from the nearest face on a surface (loose points and edges are ignored)"
-msgstr "从表面上最近的面传递属性(忽略松散的点和边缘)"
-
-
-msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
-msgstr "从最近的元素传递元素(使用面部和边缘中心进行距离计算)"
-
-
 msgid "Attribute Vector Math"
 msgstr "属性矢量运算"
 
@@ -42206,8 +42146,16 @@ msgid "Curve Endpoints"
 msgstr "曲线端点"
 
 
+msgid "Curve Reverse"
+msgstr "曲线反转"
+
+
 msgid "Select by Handle Type"
 msgstr "按控制柄类型选择"
+
+
+msgid "Curve Subdivide"
+msgstr "曲线细分"
 
 
 msgid "Cuts Type"
@@ -42220,6 +42168,10 @@ msgstr "曲线 -> 点"
 
 msgid "How to generate points from the input curve"
 msgstr "如何从输入曲线生成点"
+
+
+msgid "Evaluated"
+msgstr "已解算"
 
 
 msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
@@ -42326,6 +42278,10 @@ msgid "Point Rotate"
 msgstr "点旋转"
 
 
+msgid "Base orientation of the points"
+msgstr "该点的基本方位"
+
+
 msgid "Rotate points in the local space of the object"
 msgstr "物体局部空间中的旋转点"
 
@@ -42336,10 +42292,6 @@ msgstr "旋转其局部空间中的每一点(由\"旋转\"属性定义)"
 
 msgid "Select by Material"
 msgstr "按材质选择"
-
-
-msgid "Material Replace"
-msgstr "材质替换"
 
 
 msgid "Material Selection"
@@ -42388,10 +42340,6 @@ msgstr "端点"
 
 msgid "Specify the line's start and end points"
 msgstr "指定直线的开始点和结束点"
-
-
-msgid "Mesh Subdivide"
-msgstr "网格细分"
 
 
 msgid "Mesh to Points"
@@ -42458,8 +42406,48 @@ msgid "Realize Instances"
 msgstr "实现实例"
 
 
+msgid "Resample Curve"
+msgstr "曲线重采样"
+
+
+msgid "How to specify the amount of samples"
+msgstr "如何指定采样数量"
+
+
+msgid "Output the input spline's evaluated points, based on the resolution attribute for NURBS and Bezier splines. Poly splines are unchanged"
+msgstr "基于NURBS 和贝塞尔样条线的精度属性，输出该输入样条线的解算点。多段线样条线保持不变。"
+
+
+msgid "Sample the specified number of points along each spline"
+msgstr "沿每根样条线采样指定数量的点数"
+
+
+msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
+msgstr "通过将每根样条线拆分为具有指定长度的线段来计算采样数量"
+
+
+msgid "Method for sampling input"
+msgstr "采样输入方法"
+
+
+msgid "Find sample positions on the curve using a factor of its total length"
+msgstr "使用总长度的一个系数查找曲线上的采样位置"
+
+
+msgid "Find sample positions on the curve using a distance from its beginning"
+msgstr "使用到曲线起点的距离查找曲线上的采样位置"
+
+
 msgid "Separate Components"
 msgstr "分离元素"
+
+
+msgid "Separate Geometry"
+msgstr "分离几何体"
+
+
+msgid "Which domain to separate on"
+msgstr "执行分离操作的域"
 
 
 msgid "Set Position"
@@ -42468,6 +42456,10 @@ msgstr "设置位置"
 
 msgid "Spline Length"
 msgstr "样条线长度"
+
+
+msgid "Join Strings"
+msgstr "合并字符串"
 
 
 msgid "String to Curves"
@@ -42532,6 +42524,18 @@ msgstr "缩放文本大小，以在宽度和高度上匹配"
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "仅输出匹配宽度和高度的曲线。将其余部分输出至\"其余\""
+
+
+msgid "How to find endpoint positions for the trimmed spline"
+msgstr "如何找到修剪后的样条线的端点位置"
+
+
+msgid "Find the endpoint positions using a factor of each spline's length"
+msgstr "使用每个样条线长度的系数查找端点位置"
+
+
+msgid "Find the endpoint positions using a length from the start of each spline"
+msgstr "使用到每个样条线的起点的长度查找终点位置"
 
 
 msgctxt "NodeTree"
@@ -44716,11 +44720,6 @@ msgstr "无偏移"
 
 msgid "Paste keys from original time"
 msgstr "从原时间点处粘贴帧"
-
-
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "自动设置预览区间"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -53031,107 +53030,6 @@ msgstr "切换染色"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "识别图像至蜡笔"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "从图像提取蜡笔笔画"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "确定是识别简单图像还是完整序列"
-
-
-msgid "Trace the current frame of the image"
-msgstr "识别图像的当前帧"
-
-
-msgid "Trace full sequence"
-msgstr "识别完整序列"
-
-
-msgid "Resolution of the generated curves"
-msgstr "生成的曲线的分辨率"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "到采样点的距离，零为禁用"
-
-
-msgid "Scale of the final stroke"
-msgstr "最终笔画的范围"
-
-
-msgid "Color Threshold"
-msgstr "颜色阈值"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "确定生成笔画上方的光度阈值"
-
-
-msgid "Turn Policy"
-msgstr "转向策略"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "确定在将位图分解为路径时如何解决分歧"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "首选连接黑色(前景)元素"
-
-
-msgid "White"
-msgstr "白色"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "首选连接白色(背景)元素"
-
-
-msgid "Always take a left turn"
-msgstr "总是左转"
-
-
-msgid "Always take a right turn"
-msgstr "总是右转"
-
-
-msgid "Minority"
-msgstr "少数"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "首选连接当前位置的局部邻域中出现频率较低的颜色(黑色或白色)"
-
-
-msgid "Majority"
-msgstr "多数"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "首选连接当前位置的局部邻域中出现频率较高的颜色(黑色或白色)"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "选择伪随机"
-
-
-msgid "Start At Current Frame"
-msgstr "从当前帧开始"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "从当前图像帧开始追踪图像"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
 
@@ -53550,10 +53448,6 @@ msgstr "按照纵轴(时间为0)"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "根据选择的镜像线翻转选择的关键帧"
-
-
-msgid "Automatically set Preview Range based on range of keyframes"
-msgstr "自动为关键帧区间设置一个预览范围"
 
 
 msgctxt "Operator"
@@ -61396,10 +61290,6 @@ msgid "Update Object Paths"
 msgstr "更新物体路径"
 
 
-msgid "Recalculate paths for selected objects"
-msgstr "计算所选骨骼的路径"
-
-
 msgctxt "Operator"
 msgid "Add Point Cloud"
 msgstr "添加点云"
@@ -62213,14 +62103,6 @@ msgstr "传递模式"
 
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr "切换活动物体并将相同的模式分配给鼠标光标下的新物体，使活动模式处于当前模式"
-
-
-msgid "Use Eyedropper"
-msgstr "使用吸管"
-
-
-msgid "Pick the object to switch to using an eyedropper"
-msgstr "选择要切换到使用吸管的物体"
 
 
 msgid "Flash On Transfer"
@@ -64645,6 +64527,10 @@ msgstr "在剪贴板上创建新的姿态资产，以供粘贴到资产浏览器
 msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "创建姿态资产"
+
+
+msgid "Create a new Action that contains the pose of the selected bones, and mark it as Asset. The asset will be stored in the current blend file"
+msgstr "创建包含所选骨骼姿态的新动作，并将其标记为资产。该资产将被存储在当前blend文件中"
 
 
 msgid "Activate New Action"
@@ -68201,6 +68087,10 @@ msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "在两个所选声音片段间应用淡化音量动画"
 
 
+msgid "Cursor location in normalized preview coordinates"
+msgstr "以归一化后的预览坐标表示的游标位置"
+
+
 msgctxt "Operator"
 msgid "Deinterlace Movies"
 msgstr "逐行扫描影片"
@@ -69980,6 +69870,10 @@ msgid "Scale (resize) selected items"
 msgstr "缩放或调整所选对象的尺寸"
 
 
+msgid "Mouse Directional Constraint"
+msgstr "鼠标定向约束"
+
+
 msgid "Remove on Cancel"
 msgstr "取消后删除"
 
@@ -70789,6 +70683,15 @@ msgstr "树视图拖放"
 
 msgid "Drag and drop items onto a tree item"
 msgstr "将条目拖放到树条目上"
+
+
+msgctxt "Operator"
+msgid "Rename Tree-View Item"
+msgstr "重命名树视图条目"
+
+
+msgid "Rename the active item in the tree"
+msgstr "在树形图中重命名活动条目"
 
 
 msgctxt "Operator"
@@ -75473,14 +75376,6 @@ msgstr "展开标题布局"
 
 msgid "Allow buttons in the header to stretch and shrink to fill the entire layout width"
 msgstr "允许拉伸和收缩标题中的按钮以填充整个布局宽度"
-
-
-msgid "Box Style"
-msgstr "框样式"
-
-
-msgid "Display panel with the box widget theme"
-msgstr "使用框部件主题绘制面板"
 
 
 msgid "Order"
@@ -87501,8 +87396,16 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
 msgid "Display black edges"
 msgstr "绘制黑色边线"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgid "Display white edges"
@@ -89191,10 +89094,6 @@ msgstr "点云组件仅包含点数据"
 
 msgid "Curve component containing spline and control point data"
 msgstr "包含样条线和控制点数据的曲线组件"
-
-
-msgid "Instances"
-msgstr "实例"
 
 
 msgid "Instances of objects or collections"
@@ -95980,8 +95879,88 @@ msgstr "序列容器"
 
 
 msgctxt "WindowManager"
+msgid "Sequencer Tool: Tweak"
+msgstr "序列编辑器工具: 调整"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Tweak (fallback)"
+msgstr "序列编辑器工具: 调整(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Select Box"
+msgstr "序列编辑器工具: 框选"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Select Box (fallback)"
+msgstr "序列编辑器工具: 框选(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Blade"
+msgstr "序列编辑器工具: 刀片"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Blade (fallback)"
+msgstr "序列编辑器工具: 刀片(回退)"
+
+
+msgctxt "WindowManager"
 msgid "SequencerPreview"
-msgstr "序列容器预览"
+msgstr "序列编辑器预览"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Cursor"
+msgstr "序列编辑器工具: 游标"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Cursor (fallback)"
+msgstr "序列编辑器工具: 游标(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Move"
+msgstr "序列编辑器工具: 移动"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Move (fallback)"
+msgstr "序列编辑器工具: 移动(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Rotate"
+msgstr "序列编辑器工具: 旋转"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Rotate (fallback)"
+msgstr "序列编辑器工具: 旋转(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Scale"
+msgstr "序列编辑器工具: 缩放"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Scale (fallback)"
+msgstr "序列编辑器工具: 缩放(回退)"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Sample"
+msgstr "序列编辑器工具: 采样"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer Tool: Sample (fallback)"
+msgstr "序列编辑器工具: 采样(回退)"
 
 
 msgctxt "WindowManager"
@@ -99999,18 +99978,6 @@ msgid "No asset selected"
 msgstr "未选择任何资产"
 
 
-msgid "Asset Catalog:"
-msgstr "资产目录:"
-
-
-msgid "UUID"
-msgstr "UUID"
-
-
-msgid "Simple Name"
-msgstr "简单名称"
-
-
 msgid "Source: Current File"
 msgstr "源: 当前文件"
 
@@ -100022,6 +99989,18 @@ msgstr "源:"
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "清除资产(设置伪用户）"
+
+
+msgid "Asset Catalog:"
+msgstr "资产目录:"
+
+
+msgid "UUID"
+msgstr "UUID"
+
+
+msgid "Simple Name"
+msgstr "简单名称"
 
 
 msgctxt "Operator"
@@ -101043,6 +101022,10 @@ msgstr "%.2f"
 
 msgid "Original Frame Range"
 msgstr "原始帧范围"
+
+
+msgid "Pan Angle"
+msgstr "转动角"
 
 
 msgid "Custom Proxy"
@@ -106941,6 +106924,10 @@ msgid "No intersections found"
 msgstr "未发现交集"
 
 
+msgid "%s: confirm, %s: cancel, %s: undo, %s: start/define cut, %s: close cut, %s: new cut, %s: midpoint snap (%s), %s: ignore snap (%s), %s: angle constraint %.2f(%.2f) (%s%s%s%s), %s: cut through (%s), %s: panning, %s%s%s: orientation lock (%s), %s: distance/angle measurements (%s), %s: x-ray (%s)"
+msgstr "%s: 确认， %s: 取消， %s: 撤消， %s: 开始/定义切割， %s: 关闭切割，%s: 新切割，%s: 中点吸附 (%s)， %s: 忽略吸附 (%s)，%s: 角度约束 %.2f(%.2f) (%s%s%s%s)，%s: 切穿(%s)，%s: 平移，%s%s%s: 方位锁定(%s)，%s: 距离/角度测量(%s)，%s: 透视(%s)"
+
+
 msgid "Selected faces required"
 msgstr "需选中面"
 
@@ -107721,10 +107708,6 @@ msgstr "不能为非骨架物体添加钩挂骨骼"
 
 msgid "Could not find hook modifier"
 msgstr "未能找到钩挂修改器"
-
-
-msgid "Click in the viewport to select an object"
-msgstr "在视图中单击以选择物体"
 
 
 msgid "Unable to execute '%s', error changing modes"

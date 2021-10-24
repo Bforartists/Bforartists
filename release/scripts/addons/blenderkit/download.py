@@ -75,7 +75,7 @@ def check_missing():
 def check_unused():
     '''find assets that have been deleted from scene but their library is still present.'''
     # this is obviously broken. Blender should take care of the extra data automaticlaly
-    #first clean up collections
+    # first clean up collections
     for c in bpy.data.collections:
         if len(c.all_objects) == 0 and c.get('is_blenderkit_asset'):
             bpy.data.collections.remove(c)
@@ -331,7 +331,6 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         props = hdr.blenderkit
         asset_main = hdr
 
-
     if asset_data['assetType'] == 'model':
         downloaders = kwargs.get('downloaders')
         sprops = wm.blenderkit_models
@@ -498,8 +497,6 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     asset_main.blenderkit.asset_base_id = asset_data['assetBaseId']
     asset_main.blenderkit.id = asset_data['id']
 
-
-
     bpy.ops.wm.undo_push_context(message='add %s to scene' % asset_data['name'])
     # moving reporting to on save.
     # report_use_success(asset_data['id'])
@@ -599,7 +596,7 @@ def download_timer():
             if sr is not None:
                 for r in sr:
                     if asset_data['id'] == r['id']:
-                        r['downloaded'] = 0.5#tcom.progress
+                        r['downloaded'] = 0.5  # tcom.progress
         if not t.is_alive():
             if tcom.error:
                 sprops = utils.get_search_props()
@@ -698,7 +695,7 @@ def delete_unfinished_file(file_name):
     return
 
 
-def download_asset_file(asset_data, resolution='blend', api_key = ''):
+def download_asset_file(asset_data, resolution='blend', api_key=''):
     # this is a simple non-threaded way to download files for background resolution genenration tool
     file_names = paths.get_download_filepaths(asset_data, resolution)  # prefer global dir if possible.
     if len(file_names) == 0:
@@ -852,7 +849,6 @@ class Downloader(threading.Thread):
         self.asset_data['resolution'] = self.resolution
         resolutions.send_to_bg(self.asset_data, file_name, command='unpack')
         # utils.p('end downloader thread')
-
 
 
 class ThreadCom:  # object passed to threads to read background process stdout info
@@ -1279,7 +1275,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     invoke_resolution: BoolProperty(name='Replace resolution popup',
                                     description='pop up to ask which resolution to download', default=False)
     invoke_scene_settings: BoolProperty(name='Scene import settings popup',
-                                    description='pop up scene import settings', default=False)
+                                        description='pop up scene import settings', default=False)
 
     resolution: EnumProperty(
         items=available_resolutions_callback,
@@ -1287,7 +1283,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         description='Replace resolution'
     )
 
-    #needs to be passed to the operator to not show all resolution possibilities
+    # needs to be passed to the operator to not show all resolution possibilities
     max_resolution: IntProperty(
         name="Max resolution",
         description="",
@@ -1306,6 +1302,13 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     # @classmethod
     # def poll(cls, context):
     #     return bpy.context.window_manager.BlenderKitModelThumbnails is not ''
+    tooltip: bpy.props.StringProperty(
+        default='Download and link asset to scene. Only link if asset already available locally')
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.tooltip
+
     def get_asset_data(self, context):
         # get asset data - it can come from scene, or from search results.
         s = bpy.context.scene
@@ -1327,14 +1330,14 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
                 # already used assets have already download link and especially file link.
                 asset_data = s['assets used'][asset_base_id].to_dict()
             else:
-                #when not in scene nor in search results, we need to get it from the server
+                # when not in scene nor in search results, we need to get it from the server
                 params = {
                     'asset_base_id': self.asset_base_id
                 }
                 preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
-                results = search.get_search_simple(params,  page_size=1, max_results=1,
-                             api_key=preferences.api_key)
+                results = search.get_search_simple(params, page_size=1, max_results=1,
+                                                   api_key=preferences.api_key)
                 asset_data = search.parse_result(results[0])
 
         return asset_data
@@ -1426,7 +1429,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
             self.asset_data = self.get_asset_data(context)
             sprops = utils.get_search_props()
 
-            #set initial resolutions enum activation
+            # set initial resolutions enum activation
             if sprops.resolution != 'ORIGINAL' and int(sprops.resolution) <= int(self.max_resolution):
                 self.resolution = sprops.resolution
             elif int(self.max_resolution) > 0:

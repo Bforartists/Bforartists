@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'9c004864511f')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7238,6 +7238,10 @@ msgid "Material slot name"
 msgstr "Guardar com"
 
 
+msgid "Edit"
+msgstr "Editar"
+
+
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Esborrar Rotació"
@@ -7298,10 +7302,6 @@ msgstr "Seleccionar fila"
 
 msgid "Vertex Group Specials"
 msgstr "Pintura Vectorial"
-
-
-msgid "Edit"
-msgstr "Editar"
 
 
 msgid "Distort"
@@ -10643,11 +10643,6 @@ msgid "No Offset"
 msgstr "Joc"
 
 
-msgctxt "Operator"
-msgid "Auto-Set Preview Range"
-msgstr "Guardar imatge"
-
-
 msgid "Set Preview Range based on extents of selected Keyframes"
 msgstr "Seleccionar connectats"
 
@@ -13125,14 +13120,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -15893,10 +15880,6 @@ msgstr "Duplicar"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Duplicar"
-
-
-msgid "Recalculate paths for selected objects"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -21864,6 +21847,14 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
+
+
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"

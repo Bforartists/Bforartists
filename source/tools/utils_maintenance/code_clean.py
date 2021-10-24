@@ -406,60 +406,63 @@ class edit_generators:
         def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
             edits = []
 
-            test_equal = (
-                r'[\(]*'
-                r'([^\|\(\)]+)'  # group 1 (no (|))
-                r'\s+==\s+'
-                r'([^\|\(\)]+)'  # group 2 (no (|))
-                r'[\)]*'
-            )
+            for use_brackets in (True, False):
 
-            test_not_equal = (
-                r'[\(]*'
-                r'([^\|\(\)]+)'  # group 1 (no (|))
-                r'\s+!=\s+'
-                r'([^\|\(\)]+)'  # group 2 (no (|))
-                r'[\)]*'
-            )
+                test_equal = (
+                    r'([^\|\(\)]+)'  # group 1 (no (|))
+                    r'\s+==\s+'
+                    r'([^\|\(\)]+)'  # group 2 (no (|))
+                )
 
-            for is_equal in (True, False):
-                for n in reversed(range(2, 64)):
-                    if is_equal:
-                        re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
-                    else:
-                        re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
+                test_not_equal = (
+                    r'([^\|\(\)]+)'  # group 1 (no (|))
+                    r'\s+!=\s+'
+                    r'([^\|\(\)]+)'  # group 2 (no (|))
+                )
 
-                    for match in re.finditer(re_str, data):
-                        var = match.group(1)
-                        var_rest = []
-                        groups = match.groups()
-                        groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
-                        found = True
-                        for a, b in groups_paired:
-                            # Unlikely but possible the checks are swapped.
-                            if b == var and a != var:
-                                a, b = b, a
+                if use_brackets:
+                    test_equal = r'\(' + test_equal + r'\)'
+                    test_not_equal = r'\(' + test_not_equal + r'\)'
 
-                            if a != var:
-                                found = False
-                                break
-                            var_rest.append(b)
+                for is_equal in (True, False):
+                    for n in reversed(range(2, 64)):
+                        if is_equal:
+                            re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
+                        else:
+                            re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
 
-                        if found:
-                            edits.append(Edit(
-                                span=match.span(),
-                                content='(%sELEM(%s, %s))' % (
-                                    ('' if is_equal else '!'),
-                                    var,
-                                    ', '.join(var_rest),
-                                ),
-                                # Use same expression otherwise this can change values inside assert when it shouldn't.
-                                content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
-                                    ('' if is_equal else '!'),
-                                    var,
-                                    ', '.join(var_rest),
-                                ),
-                            ))
+                        for match in re.finditer(re_str, data):
+                            var = match.group(1)
+                            var_rest = []
+                            groups = match.groups()
+                            groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
+                            found = True
+                            for a, b in groups_paired:
+                                # Unlikely but possible the checks are swapped.
+                                if b == var and a != var:
+                                    a, b = b, a
+
+                                if a != var:
+                                    found = False
+                                    break
+                                var_rest.append(b)
+
+                            if found:
+                                edits.append(Edit(
+                                    span=match.span(),
+                                    content='(%sELEM(%s, %s))' % (
+                                        ('' if is_equal else '!'),
+                                        var,
+                                        ', '.join(var_rest),
+                                    ),
+                                    # Use same expression otherwise this can change values
+                                    # inside assert when it shouldn't.
+                                    content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
+                                        ('' if is_equal else '!'),
+                                        var,
+                                        ', '.join(var_rest),
+                                    ),
+                                ))
 
             return edits
 
@@ -476,69 +479,72 @@ class edit_generators:
         def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
             edits = []
 
-            test_equal = (
-                r'[\(]*'
-                r'STREQ'
-                r'\('
-                r'([^\|\(\),]+)'  # group 1 (no (|,))
-                r',\s+'
-                r'([^\|\(\),]+)'  # group 2 (no (|,))
-                r'\)'
-                r'[\)]*'
-            )
+            for use_brackets in (True, False):
 
-            test_not_equal = (
-                r'[\(]*'
-                '!'  # Only difference.
-                r'STREQ'
-                r'\('
-                r'([^\|\(\),]+)'  # group 1 (no (|,))
-                r',\s+'
-                r'([^\|\(\),]+)'  # group 2 (no (|,))
-                r'\)'
-                r'[\)]*'
-            )
+                test_equal = (
+                    r'STREQ'
+                    r'\('
+                    r'([^\|\(\),]+)'  # group 1 (no (|,))
+                    r',\s+'
+                    r'([^\|\(\),]+)'  # group 2 (no (|,))
+                    r'\)'
+                )
 
-            for is_equal in (True, False):
-                for n in reversed(range(2, 64)):
-                    if is_equal:
-                        re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
-                    else:
-                        re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
+                test_not_equal = (
+                    '!'  # Only difference.
+                    r'STREQ'
+                    r'\('
+                    r'([^\|\(\),]+)'  # group 1 (no (|,))
+                    r',\s+'
+                    r'([^\|\(\),]+)'  # group 2 (no (|,))
+                    r'\)'
+                )
 
-                    for match in re.finditer(re_str, data):
-                        if _source == '/src/blender/source/blender/editors/mesh/editmesh_extrude_spin.c':
-                            print(match.groups())
-                        var = match.group(1)
-                        var_rest = []
-                        groups = match.groups()
-                        groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
-                        found = True
-                        for a, b in groups_paired:
-                            # Unlikely but possible the checks are swapped.
-                            if b == var and a != var:
-                                a, b = b, a
+                if use_brackets:
+                    test_equal = r'\(' + test_equal + r'\)'
+                    test_not_equal = r'\(' + test_not_equal + r'\)'
 
-                            if a != var:
-                                found = False
-                                break
-                            var_rest.append(b)
+                for is_equal in (True, False):
+                    for n in reversed(range(2, 64)):
+                        if is_equal:
+                            re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
+                        else:
+                            re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
 
-                        if found:
-                            edits.append(Edit(
-                                span=match.span(),
-                                content='(%sSTR_ELEM(%s, %s))' % (
-                                    ('' if is_equal else '!'),
-                                    var,
-                                    ', '.join(var_rest),
-                                ),
-                                # Use same expression otherwise this can change values inside assert when it shouldn't.
-                                content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
-                                    ('' if is_equal else '!'),
-                                    var,
-                                    ', '.join(var_rest),
-                                ),
-                            ))
+                        for match in re.finditer(re_str, data):
+                            if _source == '/src/blender/source/blender/editors/mesh/editmesh_extrude_spin.c':
+                                print(match.groups())
+                            var = match.group(1)
+                            var_rest = []
+                            groups = match.groups()
+                            groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
+                            found = True
+                            for a, b in groups_paired:
+                                # Unlikely but possible the checks are swapped.
+                                if b == var and a != var:
+                                    a, b = b, a
+
+                                if a != var:
+                                    found = False
+                                    break
+                                var_rest.append(b)
+
+                            if found:
+                                edits.append(Edit(
+                                    span=match.span(),
+                                    content='(%sSTR_ELEM(%s, %s))' % (
+                                        ('' if is_equal else '!'),
+                                        var,
+                                        ', '.join(var_rest),
+                                    ),
+                                    # Use same expression otherwise this can change values
+                                    # inside assert when it shouldn't.
+                                    content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
+                                        ('' if is_equal else '!'),
+                                        var,
+                                        ', '.join(var_rest),
+                                    ),
+                                ))
 
             return edits
 
