@@ -4102,14 +4102,14 @@ class VIEW3D_MT_pose_context_menu(Menu):
         layout.operator("pose.push", icon = 'PUSH_POSE')
         layout.operator("pose.relax", icon = 'RELAX_POSE')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
-        layout.operator("pose.blend_to_neighbor")
+        layout.operator("pose.blend_to_neighbor", icon = "BLEND_TO_NEIGHBOUR")
 
         layout.separator()
 
         layout.operator("pose.paths_calculate", text="Calculate Motion Paths", icon ='MOTIONPATHS_CALCULATE')
         layout.operator("pose.paths_clear", text="Clear Motion Paths", icon ='MOTIONPATHS_CLEAR')
-        layout.operator("pose.paths_update", text="Update Armature Motion Paths")
-        layout.operator("object.paths_update_visible", text="Update All Motion Paths")
+        layout.operator("pose.paths_update", text="Update Armature Motion Paths", icon = "MOTIONPATHS_UPDATE")
+        layout.operator("object.paths_update_visible", text="Update All Motion Paths", icon = "MOTIONPATHS_UPDATE_ALL")
 
         layout.separator()
 
