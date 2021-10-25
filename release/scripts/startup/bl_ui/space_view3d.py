@@ -3991,6 +3991,8 @@ class VIEW3D_MT_pose_motion(Menu):
 
         layout.operator("pose.paths_calculate", text="Calculate", icon ='MOTIONPATHS_CALCULATE')
         layout.operator("pose.paths_clear", text="Clear", icon ='MOTIONPATHS_CLEAR')
+        layout.operator("pose.paths_update", text="Update Armature Motion Paths", icon = "MOTIONPATHS_UPDATE")
+        layout.operator("object.paths_update_visible", text="Update All Motion Paths", icon = "MOTIONPATHS_UPDATE_ALL")
 
 
 class VIEW3D_MT_pose_group(Menu):
