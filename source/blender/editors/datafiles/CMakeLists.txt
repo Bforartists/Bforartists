@@ -1049,8 +1049,8 @@ driver_transform
 subdivide_mesh
 merge_at_first
 merge_at_last
-#~ DEF_ICON_BLANK(1068)
-#~ DEF_ICON_BLANK(1069)
+motionpaths_update
+motionpaths_update_all
 #~ DEF_ICON_BLANK(1070)
 #~ DEF_ICON_BLANK(1071)
 #~ DEF_ICON_BLANK(1072)
