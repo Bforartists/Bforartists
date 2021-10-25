@@ -5493,6 +5493,8 @@ class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
 
             col.operator("pose.paths_calculate", text="Calculate", icon ='MOTIONPATHS_CALCULATE')
             col.operator("pose.paths_clear", text="Clear", icon ='MOTIONPATHS_CLEAR')
+            col.operator("pose.paths_update", text="Update Armature Motion Paths", icon = "MOTIONPATHS_UPDATE")
+            col.operator("object.paths_update_visible", text="Update All Motion Paths", icon = "MOTIONPATHS_UPDATE_ALL")
 
         # icon buttons
         else:
@@ -5506,17 +5508,26 @@ class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
                 row.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+                
+                row = col.row(align=True)
+                row.operator("pose.paths_update", text="", icon = "MOTIONPATHS_UPDATE")
+                row.operator("object.paths_update_visible", text="", icon = "MOTIONPATHS_UPDATE_ALL")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
                 row.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+                row = col.row(align=True)
+                row.operator("pose.paths_update", text="", icon = "MOTIONPATHS_UPDATE")
+                row.operator("object.paths_update_visible", text="", icon = "MOTIONPATHS_UPDATE_ALL")
 
             elif column_count == 1:
 
                 col.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
                 col.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+                col.operator("pose.paths_update", text="", icon = "MOTIONPATHS_UPDATE")
+                col.operator("object.paths_update_visible", text="", icon = "MOTIONPATHS_UPDATE_ALL")
 
 
 class VIEW3D_PT_gp_posetab_ik(toolshelf_calculate, Panel):
