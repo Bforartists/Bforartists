@@ -3779,6 +3779,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Join Geometry           ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
+            
+            props = col.operator("node.add_node", text=" Raycast                     ", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
 
             props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
             props.use_transform = True
@@ -3824,6 +3828,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
+            
+            props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
 
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
             props.use_transform = True
