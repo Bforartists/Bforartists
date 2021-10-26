@@ -13578,7 +13578,7 @@ static int node_type_to_icon(int type)
       icon = ICON_RANDOM_FLOAT;
       break;
     case FN_NODE_REPLACE_STRING:
-      icon = ICON_DELETE;
+      icon = ICON_REPLACE_STRING;
       break;
     case FN_NODE_ROTATE_EULER:
       icon = ICON_ROTATE_EULER;
