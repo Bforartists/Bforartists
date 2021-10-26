@@ -13850,7 +13850,7 @@ static int node_type_to_icon(int type)
       icon = ICON_POINT_INSTANCE;
       break;
     case GEO_NODE_INSTANCES_TO_POINTS:
-      icon = ICON_DELETE;
+      icon = ICON_INSTANCES_TO_POINTS;
       break;
     case GEO_NODE_IS_VIEWPORT:
       icon = ICON_VIEW;

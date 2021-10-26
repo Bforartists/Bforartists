@@ -1053,7 +1053,7 @@ motionpaths_update
 motionpaths_update_all
 integer
 input_bool
-#~ DEF_ICON_BLANK(1072)
+instances_to_points
 #~ DEF_ICON_BLANK(1073)
 #~ DEF_ICON_BLANK(1074)
 
