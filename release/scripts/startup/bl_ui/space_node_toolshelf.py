@@ -4041,7 +4041,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Instances on Points       ", icon = "POINT_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeInstanceOnPoints"
-            
+
             props = col.operator("node.add_node", text=" Instances to Points       ", icon = "INSTANCES_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeInstancesToPoints"
@@ -4073,7 +4073,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeInstanceOnPoints"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "INSTANCES_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeInstancesToPoints"
@@ -4569,7 +4569,11 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
 
-            props = col.operator("node.add_node", text=" Special Characters", icon = "SPECIAL")
+            props = col.operator("node.add_node", text=" Replace Strings       ", icon = "REPLACE_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeReplaceString"
+
+            props = col.operator("node.add_node", text=" Special Characters  ", icon = "SPECIAL")
             props.use_transform = True
             props.type = "FunctionNodeInputSpecialCharacters"
 
@@ -4600,6 +4604,10 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "STRING_JOIN")
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
+
+            props = flow.operator("node.add_node", text="", icon = "REPLACE_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeReplaceString"
 
             props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
             props.use_transform = True
