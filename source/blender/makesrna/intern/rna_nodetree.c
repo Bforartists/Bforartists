@@ -13909,9 +13909,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_PROXIMITY:
       icon = ICON_GEOMETRY_PROXIMITY;
       break;
-    //case GEO_NODE_RAYCAST:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_RAYCAST:
+      icon = ICON_RAYCAST;
+      break;
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
       break;
