@@ -1054,7 +1054,7 @@ motionpaths_update_all
 integer
 input_bool
 instances_to_points
-#~ DEF_ICON_BLANK(1073)
+replace_string
 #~ DEF_ICON_BLANK(1074)
 
 # ------------------------- row 16 --------------------------*/
