@@ -4041,6 +4041,10 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Instances on Points       ", icon = "POINT_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeInstanceOnPoints"
+            
+            props = col.operator("node.add_node", text=" Instances to Points       ", icon = "INSTANCES_TO_POINTS")
+            props.use_transform = True
+            props.type = "GeometryNodeInstancesToPoints"
 
             props = col.operator("node.add_node", text=" Realize Instances         ", icon = "MOD_INSTANCE")
             props.use_transform = True
@@ -4069,6 +4073,10 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeInstanceOnPoints"
+            
+            props = flow.operator("node.add_node", text = "", icon = "INSTANCES_TO_POINTS")
+            props.use_transform = True
+            props.type = "GeometryNodeInstancesToPoints"
 
             props = flow.operator("node.add_node", text = "", icon = "MOD_INSTANCE")
             props.use_transform = True
