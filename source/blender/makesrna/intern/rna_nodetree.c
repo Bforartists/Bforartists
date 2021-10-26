@@ -13556,15 +13556,15 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_TO_INT:
       icon = ICON_FLOAT_TO_INT;
       break;
-    //case FN_NODE_INPUT_BOOL:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_INPUT_BOOL:
+      icon = ICON_INPUT_BOOL;
+      break;
     case FN_NODE_INPUT_COLOR:
       icon = ICON_COLOR;
       break;
-    //case FN_NODE_INPUT_INT:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_INPUT_INT:
+      icon = ICON_INTEGER;
+      break;
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
       icon = ICON_SPECIAL;
       break;
