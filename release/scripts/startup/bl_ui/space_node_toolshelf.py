@@ -3412,6 +3412,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
 
+            props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToPoints"
+
             props = col.operator("node.add_node", text=" Fill Curve                   ", icon = "CURVE_FILL")
             props.use_transform = True
             props.type = "GeometryNodeFillCurve"
@@ -3455,9 +3459,13 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
 
-            props = col.operator("node.add_node", text=" Curve Tilt                   ", icon = "CURVE_TILT")
+            props = col.operator("node.add_node", text=" Curve Tilt                 ", icon = "CURVE_TILT")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveTilt"
+
+            props = col.operator("node.add_node", text=" Endpoint Selection    ", icon = "SELECT_LAST")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveEndpointSelection"
 
             props = col.operator("node.add_node", text=" Handle Type Selection", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
@@ -3521,6 +3529,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
 
+            props = flow.operator("node.add_node", text = "", icon = "POINTCLOUD_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToPoints"
+
             props = flow.operator("node.add_node", text = "", icon = "CURVE_FILL")
             props.use_transform = True
             props.type = "GeometryNodeFillCurve"
@@ -3568,6 +3580,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "CURVE_TILT")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveTilt"
+
+            props = flow.operator("node.add_node", text="", icon = "SELECT_LAST")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveEndpointSelection"
 
             props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
