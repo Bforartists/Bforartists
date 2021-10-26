@@ -13667,7 +13667,7 @@ static int node_type_to_icon(int type)
       icon = ICON_SUBDIVIDE_EDGES;
       break;
     // case GEO_NODE_LEGACY_CURVE_TO_POINTS:
-    //  icon = ICON_DELETE;
+    //  icon = ICON_POINTCLOUD_DATA;
     //  break;
     case GEO_NODE_LEGACY_DELETE_GEOMETRY:
       icon = ICON_DELETE;
@@ -13732,9 +13732,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CONVEX_HULL:
       icon = ICON_CONVEXHULL;
       break;
-    //case GEO_NODE_CURVE_ENDPOINT_SELECTION:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_CURVE_ENDPOINT_SELECTION:
+      icon = ICON_SELECT_LAST;
+      break;
     case GEO_NODE_FILL_CURVE:
       icon = ICON_CURVE_FILL;
       break;
@@ -13750,9 +13750,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PARAMETER:
       icon = ICON_CURVE_PARAMETER;
       break;
-    //case GEO_NODE_CURVE_TO_POINTS:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_CURVE_TO_POINTS:
+      icon = ICON_POINTCLOUD_DATA;
+      break;
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
       icon = ICON_CURVE_BEZCURVE;
       break;
