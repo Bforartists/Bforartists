@@ -1051,8 +1051,8 @@ merge_at_first
 merge_at_last
 motionpaths_update
 motionpaths_update_all
-#~ DEF_ICON_BLANK(1070)
-#~ DEF_ICON_BLANK(1071)
+integer
+input_bool
 #~ DEF_ICON_BLANK(1072)
 #~ DEF_ICON_BLANK(1073)
 #~ DEF_ICON_BLANK(1074)
