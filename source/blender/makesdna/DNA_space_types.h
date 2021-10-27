@@ -1252,7 +1252,6 @@ typedef enum eSpaceImage_UVDT {
 typedef enum eSpaceImage_UVDT_Stretch {
   SI_UVDT_STRETCH_AREA = 0,
   SI_UVDT_STRETCH_ANGLE = 1,
-
 } eSpaceImage_UVDT_Stretch;
 
 /* SpaceImage.pixel_snap_mode */
