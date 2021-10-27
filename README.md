@@ -29,7 +29,7 @@ The main Differences between Bforartists 2 and Blender 2.8x are:
 - Better Tooltips.
 - Better readable standard theme.
 - Some neat addons to improve usability, like the reset 3D View addon or the Set Dimensions addon with which you can scale in world coordinates in edit mode.
-- And lots more small details like not so much confirm dialogs.
+- And lots more small details like not so much confirm dialogs. Or that we have resurrected the tabs in the tool shelf to allow quicker access to the tools.
 
 A detailed list of the changes can be found in the release notes: www.bforartists.de/wiki/release-notes
 
