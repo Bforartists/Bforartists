@@ -1528,7 +1528,11 @@ static void seq_box_select_seq_from_preview(const bContext *C, rctf *rect, const
   SeqCollection *strips = SEQ_query_rendered_strips(seqbase, scene->r.cfra, sseq->chanshown);
   Sequence *seq;
   SEQ_ITERATOR_FOREACH (seq, strips) {
-    if (seq_box_select_rect_image_isect(scene, seq, rect)) {
+    if (!seq_box_select_rect_image_isect(scene, seq, rect)) {
+      continue;
+    }
+
+    if (ELEM(mode, SEL_OP_ADD, SEL_OP_SET)) {
       seq->flag |= SELECT;
     }
     else {
