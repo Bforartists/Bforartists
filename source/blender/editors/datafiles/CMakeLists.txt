@@ -1055,7 +1055,7 @@ integer
 input_bool
 instances_to_points
 replace_string
-#~ DEF_ICON_BLANK(1074)
+color_tag
 
 # ------------------------- row 16 --------------------------*/
 
