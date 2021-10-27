@@ -1,6 +1,6 @@
 # Bforartists
 
-Note that the nightlies produced by Github Actions are without Cuda and Optix!
+Note that the nightlies produced by Github Actions are not meant for productive work. They miss Cuda and Optix. And will most likely not work. The purpose of the nightlies is to  show that the code compiles. Please have a look at the download section at our page. The devbuilds there are working versions.
 
 [![Ubuntu](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml)
 [![Mac](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml)
