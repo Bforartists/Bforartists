@@ -2100,7 +2100,6 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
         col = layout.column()
 
-
         col.prop(ed, "use_cache_raw")
         col.prop(ed, "use_cache_preprocessed")
         col.prop(ed, "use_cache_composite")
