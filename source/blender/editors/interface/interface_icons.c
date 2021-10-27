@@ -487,8 +487,8 @@ static void vicon_strip_color_draw(
   const ThemeStripColor *strip_color = &btheme->strip_color[color_tag];
 
   const float aspect = (float)ICON_DEFAULT_WIDTH / (float)w;
-
-  UI_icon_draw_ex(x, y, ICON_SNAP_FACE, aspect, 1.0f, 0.0f, strip_color->color, true);
+  /*bfa - we don't use the snap face icon here, but our own color tag one*/
+  UI_icon_draw_ex(x, y, ICON_COLOR_TAG, aspect, 1.0f, 0.0f, strip_color->color, true);
 }
 
 #  define DEF_ICON_STRIP_COLOR_DRAW(index, color) \
