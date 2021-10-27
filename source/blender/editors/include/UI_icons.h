@@ -1072,7 +1072,7 @@ DEF_ICON_COLOR(INTEGER)
 DEF_ICON_COLOR(INPUT_BOOL)
 DEF_ICON_COLOR(INSTANCES_TO_POINTS)
 DEF_ICON_COLOR(REPLACE_STRING)
-DEF_ICON_BLANK(1074)
+DEF_ICON(COLOR_TAG) /*bfa a plain white icon for colors in vse. DEF_ICON is required!*/
 
 /* ------------------------- Row 16 --------------------------*/
 
