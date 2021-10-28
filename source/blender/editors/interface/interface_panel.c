@@ -1237,6 +1237,8 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
 {
   const bool is_subpanel = panel->type->parent != NULL;
   const bool is_open = !UI_panel_is_closed(panel);
+  /*bfa - transparent background for the tool shelf panels*/
+  const float hide_bg = panel->type->flag & PANEL_HIDE_BG;
 
   if (is_subpanel && !is_open) {
     return;
@@ -1252,7 +1254,13 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
   if (is_open || panel->type->flag & PANEL_TYPE_NO_HEADER) {
     float panel_backcolor[4];
     UI_draw_roundbox_corner_set(is_open ? UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT : UI_CNR_ALL);
-    UI_GetThemeColor4fv((is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK), panel_backcolor);
+    /*bfa - transparent background */
+    if (hide_bg) {
+      immUniformThemeColorAlpha(is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK, 0.f);
+    }
+    else {
+      UI_GetThemeColor4fv((is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK), panel_backcolor);
+    }
 
     UI_draw_roundbox_4fv(
         &(const rctf){
