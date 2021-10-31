@@ -523,6 +523,10 @@ class SEQUENCER_MT_view(Menu):
         if st.view_type == 'PREVIEW':
             layout.menu("SEQUENCER_MT_view_pie_menus")
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 class SEQUENCER_MT_export(Menu):
     bl_label = "Export"
