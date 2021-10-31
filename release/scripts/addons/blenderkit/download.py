@@ -1421,7 +1421,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         # if self.close_window:
         #     context.window.cursor_warp(event.mouse_x-1000, event.mouse_y - 1000);
 
-        print(self.asset_base_id)
+        # print(self.asset_base_id)
         wm = context.window_manager
         # only make a pop up in case of switching resolutions
         if self.invoke_resolution:

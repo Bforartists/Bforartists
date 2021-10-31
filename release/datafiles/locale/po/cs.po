@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7068,6 +7068,18 @@ msgid "Both Z"
 msgstr "Oboje Z"
 
 
+msgid "Fonts"
+msgstr "Fonts"
+
+
+msgid "Node Trees"
+msgstr "Větvení Uzlů"
+
+
+msgid "Particles Settings"
+msgstr "Nastavení Částic"
+
+
 msgid "File Select Parameters"
 msgstr "Skryje označené plošky"
 
@@ -7222,18 +7234,6 @@ msgstr "Ukázat scény"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Zobrazit materiály, větvení uzlů, textury a Freestyle čáry"
-
-
-msgid "Fonts"
-msgstr "Fonts"
-
-
-msgid "Node Trees"
-msgstr "Větvení Uzlů"
-
-
-msgid "Particles Settings"
-msgstr "Nastavení Částic"
 
 
 msgid "Directory"
@@ -18394,6 +18394,10 @@ msgid "True when both inputs are not approximately equal"
 msgstr "Pravda pokud oba vstupy nejsou přibližně stejné"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Vstupní hodnota použitá pro nepropojené sokety"
+
+
 msgid "Random Float"
 msgstr "Náhodný Float"
 
@@ -18428,6 +18432,10 @@ msgstr "Pouze plošky"
 
 msgid "Distribution Method"
 msgstr "Metoda Distribuce"
+
+
+msgid "Linear interpolation"
+msgstr "Extrapolace"
 
 
 msgid "Is Viewport"
@@ -18927,10 +18935,6 @@ msgid "Environment Texture"
 msgstr "Textura prostředí"
 
 
-msgid "Linear interpolation"
-msgstr "Extrapolace"
-
-
 msgid "Projection"
 msgstr "Projekce"
 
@@ -19301,10 +19305,6 @@ msgstr "Kopírovat atributy"
 
 msgid "Default Value"
 msgstr "Výchozí hodnota"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Vstupní hodnota použitá pro nepropojené sokety"
 
 
 msgid "Geometry socket of a node"
@@ -23550,6 +23550,14 @@ msgstr "Dělit Tah"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Překlopit Barvy"
+
+
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
 
 
 msgctxt "Operator"
@@ -33505,12 +33513,16 @@ msgid "Show the panel on all tabs"
 msgstr "Zobrazení panelu na všech kartách"
 
 
+msgid "Integrator Presets"
+msgstr "Generátory"
+
+
+msgid "Sampling Presets"
+msgstr "Přednastavení vzorkování"
+
+
 msgid "Asset Metadata"
 msgstr "Metadata assetu"
-
-
-msgid "Details"
-msgstr "Podrobnosti"
 
 
 msgid "Chain Scaling"
@@ -33632,14 +33644,6 @@ msgstr "Clony"
 
 msgid "Ray Visibility"
 msgstr "Viditelnost Ray paprsku"
-
-
-msgid "Integrator Presets"
-msgstr "Generátory"
-
-
-msgid "Sampling Presets"
-msgstr "Přednastavení vzorkování"
 
 
 msgid "Film"
@@ -38674,14 +38678,6 @@ msgid "Outline"
 msgstr "Obrys"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -41892,10 +41888,6 @@ msgstr "Animační kanály"
 
 msgid "Denoising completed"
 msgstr "Odšumění dokončeno"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cycles bude vykreslovat s CPU"
 
 
 msgid "Noise Threshold"

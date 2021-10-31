@@ -134,7 +134,7 @@ def set_rto(layer_collection, rto, value):
         setattr(collection, rto_path[rto].split(".")[1], value)
 
 
-def apply_to_children(parent, apply_function):
+def apply_to_children(parent, apply_function, *args, **kwargs):
     # works for both Collections & LayerCollections
     child_lists = [parent.children]
 
@@ -143,7 +143,7 @@ def apply_to_children(parent, apply_function):
 
         for child_list in child_lists:
             for child in child_list:
-                apply_function(child)
+                apply_function(child, *args, **kwargs)
 
                 if child.children:
                     new_child_lists.append(child.children)
@@ -620,20 +620,20 @@ def select_collection_objects(is_master_collection, collection_name, replace, ne
     if replace:
         bpy.ops.object.select_all(action='DESELECT')
 
-    if selection_state == None:
-        selection_state = get_move_selection().isdisjoint(target_collection.objects)
+    def select_objects(collection, selection_state):
+        if selection_state == None:
+            selection_state = get_move_selection().isdisjoint(collection.objects)
 
-    def select_objects(collection):
-            for obj in collection.objects:
-                try:
-                    obj.select_set(selection_state)
-                except RuntimeError:
-                    pass
+        for obj in collection.objects:
+            try:
+                obj.select_set(selection_state)
+            except RuntimeError:
+                pass
 
-    select_objects(target_collection)
+    select_objects(target_collection, selection_state)
 
     if nested:
-        apply_to_children(target_collection, select_objects)
+        apply_to_children(target_collection, select_objects, selection_state)
 
 def set_exclude_state(target_layer_collection, state):
     # get current child exclusion state
