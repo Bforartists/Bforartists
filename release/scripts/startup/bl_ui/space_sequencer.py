@@ -578,7 +578,7 @@ class SEQUENCER_MT_select(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        st = context.space_data
+        st = _context.space_data
         has_sequencer, has_preview = _space_view_types(st)
 
         # FIXME: this doesn't work for both preview + window region.
