@@ -1581,6 +1581,16 @@ typedef struct NodeGeometrySeparateGeometry {
   int8_t domain;
 } NodeGeometrySeparateGeometry;
 
+typedef struct NodeGeometryImageTexture {
+  int interpolation;
+  int extension;
+} NodeGeometryImageTexture;
+
+typedef struct NodeGeometryViewer {
+  /* CustomDataType. */
+  int8_t data_type;
+} NodeGeometryViewer;
+
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
 #define NODE_SCRIPT_EXTERNAL 1

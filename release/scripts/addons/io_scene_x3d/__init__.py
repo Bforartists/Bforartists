@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Web3D X3D/VRML2 format",
     "author": "Campbell Barton, Bart, Bastien Montagne, Seva Alekseyev",
-    "version": (2, 2, 5),
-    "blender": (2, 81, 6),
+    "version": (2, 3, 0),
+    "blender": (2, 93, 0),
     "location": "File > Import-Export",
     "description": "Import-Export X3D, Import VRML2",
     "warning": "",

@@ -917,6 +917,10 @@ static void store_output_value_in_geometry(GeometrySet &geometry_set,
     CurveComponent &component = geometry_set.get_component_for_write<CurveComponent>();
     store_field_on_geometry_component(component, attribute_name, domain, field);
   }
+  if (geometry_set.has_instances()) {
+    InstancesComponent &component = geometry_set.get_component_for_write<InstancesComponent>();
+    store_field_on_geometry_component(component, attribute_name, domain, field);
+  }
 }
 
 /**
@@ -1424,12 +1428,17 @@ static void output_attribute_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, true);
 
+  bool has_output_attribute = false;
   if (nmd->node_group != nullptr && nmd->settings.properties != nullptr) {
     LISTBASE_FOREACH (bNodeSocket *, socket, &nmd->node_group->outputs) {
       if (socket_type_has_attribute_toggle(*socket)) {
+        has_output_attribute = true;
         draw_property_for_output_socket(layout, *nmd, ptr, *socket);
       }
     }
+  }
+  if (!has_output_attribute) {
+    uiItemL(layout, IFACE_("No group output attributes connected."), ICON_INFO);
   }
 }
 

@@ -34,66 +34,6 @@ from bpy.props import (
         )
 
 
-class AMTH_RENDER_OT_cycles_samples_percentage_set(bpy.types.Operator):
-
-    """Save the current number of samples per shader as final (gets saved in .blend)"""
-    bl_idname = "scene.amaranth_cycles_samples_percentage_set"
-    bl_label = "Set as Render Samples"
-
-    def execute(self, context):
-        cycles = context.scene.cycles
-        cycles.use_samples_final = True
-
-        context.scene["amth_cycles_samples_final"] = [
-            cycles.diffuse_samples,
-            cycles.glossy_samples,
-            cycles.transmission_samples,
-            cycles.ao_samples,
-            cycles.mesh_light_samples,
-            cycles.subsurface_samples,
-            cycles.volume_samples]
-
-        self.report({"INFO"}, "Render Samples Saved")
-
-        return {"FINISHED"}
-
-
-class AMTH_RENDER_OT_cycles_samples_percentage(bpy.types.Operator):
-
-    """Set a percentage of the final render samples"""
-    bl_idname = "scene.amaranth_cycles_samples_percentage"
-    bl_label = "Set Render Samples Percentage"
-
-    percent: IntProperty(
-            name="Percentage",
-            description="Percentage to divide render samples by",
-            subtype="PERCENTAGE", default=0
-            )
-
-    def execute(self, context):
-        percent = self.percent
-        cycles = context.scene.cycles
-        cycles_samples_final = context.scene["amth_cycles_samples_final"]
-
-        cycles.use_samples_final = False
-
-        if percent == 100:
-            cycles.use_samples_final = True
-
-        cycles.diffuse_samples = int((cycles_samples_final[0] / 100) * percent)
-        cycles.glossy_samples = int((cycles_samples_final[1] / 100) * percent)
-        cycles.transmission_samples = int(
-            (cycles_samples_final[2] / 100) * percent)
-        cycles.ao_samples = int((cycles_samples_final[3] / 100) * percent)
-        cycles.mesh_light_samples = int(
-            (cycles_samples_final[4] / 100) * percent)
-        cycles.subsurface_samples = int(
-            (cycles_samples_final[5] / 100) * percent)
-        cycles.volume_samples = int((cycles_samples_final[6] / 100) * percent)
-
-        return {"FINISHED"}
-
-
 def render_cycles_scene_samples(self, context):
 
     layout = self.layout
@@ -102,36 +42,6 @@ def render_cycles_scene_samples(self, context):
     if utils.cycles_exists():
         cscene = scene.cycles
         list_sampling = scene.amaranth_cycles_list_sampling
-
-    # Set Render Samples
-    if utils.cycles_exists() and cscene.progressive == "BRANCHED_PATH":
-        layout.separator()
-        split = layout.split()
-        col = split.column()
-
-        col.operator(
-            AMTH_RENDER_OT_cycles_samples_percentage_set.bl_idname,
-            text="%s" %
-            "Set as Render Samples" if cscene.use_samples_final else "Set New Render Samples",
-            icon="%s" %
-            "PINNED" if cscene.use_samples_final else "UNPINNED")
-
-        col = split.column()
-        row = col.row(align=True)
-        row.enabled = True if scene.get("amth_cycles_samples_final") else False
-
-        row.operator(
-            AMTH_RENDER_OT_cycles_samples_percentage.bl_idname,
-            text="100%").percent = 100
-        row.operator(
-            AMTH_RENDER_OT_cycles_samples_percentage.bl_idname,
-            text="75%").percent = 75
-        row.operator(
-            AMTH_RENDER_OT_cycles_samples_percentage.bl_idname,
-            text="50%").percent = 50
-        row.operator(
-            AMTH_RENDER_OT_cycles_samples_percentage.bl_idname,
-            text="25%").percent = 25
 
     # List Samples
     #if (len(scene.render.layers) > 1) or (len(bpy.data.scenes) > 1):
@@ -163,14 +73,14 @@ def render_cycles_scene_samples(self, context):
                 row.prop(
                     rl, "samples", text="%s" %
                     "Samples" if rl.samples > 0 else "Automatic (%s)" %
-                    (cscene.aa_samples if cscene.progressive == "BRANCHED_PATH" else cscene.samples))
+                    cscene.samples)
 
         if (len(bpy.data.scenes) > 1):
             col.separator()
 
             col.label(text="Scenes:", icon="SCENE_DATA")
 
-            if utils.cycles_exists() and cscene.progressive == "PATH":
+            if utils.cycles_exists():
                 for s in bpy.data.scenes:
                     if s != scene:
                         row = col.row(align=True)
@@ -224,15 +134,11 @@ def clear():
 
 def register():
     init()
-    bpy.utils.register_class(AMTH_RENDER_OT_cycles_samples_percentage)
-    bpy.utils.register_class(AMTH_RENDER_OT_cycles_samples_percentage_set)
     if utils.cycles_exists():
         bpy.types.CYCLES_RENDER_PT_sampling.append(render_cycles_scene_samples)
 
 
 def unregister():
-    bpy.utils.unregister_class(AMTH_RENDER_OT_cycles_samples_percentage)
-    bpy.utils.unregister_class(AMTH_RENDER_OT_cycles_samples_percentage_set)
     if utils.cycles_exists():
         bpy.types.CYCLES_RENDER_PT_sampling.remove(render_cycles_scene_samples)
 

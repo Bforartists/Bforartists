@@ -183,6 +183,8 @@ struct WriteAttributeLookup {
   GVMutableArrayPtr varray;
   /* Domain the attributes lives on in the geometry. */
   AttributeDomain domain;
+  /* Call this after changing the attribute to invalidate caches that depend on this attribute. */
+  std::function<void()> tag_modified_fn;
 
   /* Convenience function to check if the attribute has been found. */
   operator bool() const
@@ -208,7 +210,7 @@ class OutputAttribute {
 
  private:
   GVMutableArrayPtr varray_;
-  AttributeDomain domain_;
+  AttributeDomain domain_ = ATTR_DOMAIN_AUTO;
   SaveFn save_;
   std::unique_ptr<fn::GVMutableArray_GSpan> optional_span_varray_;
   bool ignore_old_values_ = false;

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -11464,6 +11464,162 @@ msgid "Both Z"
 msgstr "Обидва Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Показ блоків даних Арматури"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Показ блоків даних Пензлів"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Показ блоків даних Файлу Кешу"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Показ блоків даних Камери"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Показ блоків даних Кривої"
+
+
+msgid "Fonts"
+msgstr "Шрифти"
+
+
+msgid "Show Font data-blocks"
+msgstr "Показ блоків даних Шрифту"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Показ блоків даних Нарисного олівця"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Показ блоків даних Колекції"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "Показати/сховати блоки даних Волосся"
+
+
+msgid "Show Image data-blocks"
+msgstr "Показ блоків даних Зображення"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Показ блоків даних Решітки"
+
+
+msgid "Show Light data-blocks"
+msgstr "Показ блоків даних Освітлювача"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Показ блоків даних Проби Освітлення"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Стилі ліній Freestyle"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Показ блоків даних Стилю Лінії Freestyle"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Показ блоків даних Маски"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Показ блоків даних Сіті"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Показ блоків даних Метаболу"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Показ блоків даних Відеокліпу"
+
+
+msgid "Node Trees"
+msgstr "Дерева вузлів"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Показ блоків даних Дерева Вузлів"
+
+
+msgid "Show Object data-blocks"
+msgstr "Показ блоків даних Об'єкта"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Показ блоків даних Кривої Малювання"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Показ блоків даних Палітри"
+
+
+msgid "Particles Settings"
+msgstr "Параметри частинок"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Показ блоків даних Устав Частинок"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "Показати/сховати блоки даних Хмари Точок"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Показ блоків даних Сцени"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "Показати блоки даних Симуляції"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Показ блоків даних Звуку"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Показ блоків даних Гучномовця"
+
+
+msgid "Show Text data-blocks"
+msgstr "Показ блоків даних Тексту"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Показ блоків даних Текстури"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Показати/сховати блоки даних Об'єму"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Показ блоків даних робпростору"
+
+
+msgid "Show Action data-blocks"
+msgstr "Показ блоків даних Дії"
+
+
+msgid "Show Material data-blocks"
+msgstr "Показ блоків даних Матеріалу"
+
+
+msgid "Show World data-blocks"
+msgstr "Показ блоків даних Світу"
+
+
 msgid "File Select Parameters"
 msgstr "Параметри вибору файлу"
 
@@ -11662,162 +11818,6 @@ msgstr "Показ сцен"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Показ матеріалів, дерев вузлів, текстур та стилів ліній Freestyle"
-
-
-msgid "Show Action data-blocks"
-msgstr "Показ блоків даних Дії"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Показ блоків даних Арматури"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Показ блоків даних Пензлів"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Показ блоків даних Файлу Кешу"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Показ блоків даних Камери"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Показ блоків даних Кривої"
-
-
-msgid "Fonts"
-msgstr "Шрифти"
-
-
-msgid "Show Font data-blocks"
-msgstr "Показ блоків даних Шрифту"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Показ блоків даних Нарисного олівця"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Показ блоків даних Колекції"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Показати/сховати блоки даних Волосся"
-
-
-msgid "Show Image data-blocks"
-msgstr "Показ блоків даних Зображення"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Показ блоків даних Решітки"
-
-
-msgid "Show Light data-blocks"
-msgstr "Показ блоків даних Освітлювача"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Показ блоків даних Проби Освітлення"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Стилі ліній Freestyle"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Показ блоків даних Стилю Лінії Freestyle"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Показ блоків даних Маски"
-
-
-msgid "Show Material data-blocks"
-msgstr "Показ блоків даних Матеріалу"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Показ блоків даних Сіті"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Показ блоків даних Метаболу"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Показ блоків даних Відеокліпу"
-
-
-msgid "Node Trees"
-msgstr "Дерева вузлів"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Показ блоків даних Дерева Вузлів"
-
-
-msgid "Show Object data-blocks"
-msgstr "Показ блоків даних Об'єкта"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Показ блоків даних Кривої Малювання"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Показ блоків даних Палітри"
-
-
-msgid "Particles Settings"
-msgstr "Параметри частинок"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Показ блоків даних Устав Частинок"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "Показати/сховати блоки даних Хмари Точок"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Показ блоків даних Сцени"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "Показати блоки даних Симуляції"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Показ блоків даних Звуку"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Показ блоків даних Гучномовця"
-
-
-msgid "Show Text data-blocks"
-msgstr "Показ блоків даних Тексту"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Показ блоків даних Текстури"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Показати/сховати блоки даних Об'єму"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Показ блоків даних робпростору"
-
-
-msgid "Show World data-blocks"
-msgstr "Показ блоків даних Світу"
 
 
 msgid "Directory"
@@ -39745,6 +39745,10 @@ msgid "True when both inputs are not approximately equal"
 msgstr "Істина, коли обидва уводи не є приблизно рівними"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Ввідне значення, що використовується, якщо роз'єм не під'єднано"
+
+
 msgid "Random Float"
 msgstr "Випадкове Дійсночислове"
 
@@ -39819,6 +39823,18 @@ msgstr "Диск Пуассона"
 
 msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
 msgstr "Розподілити точки випадково на поверхні, водночас враховуючи мінімальну відстань між точками"
+
+
+msgid "Linear interpolation"
+msgstr "Лінійна інтерполяція"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Без інтерполяції (взяти найближчий тексель)"
+
+
+msgid "Cubic interpolation"
+msgstr "Кубічна інтерполяція"
 
 
 msgid "Is Viewport"
@@ -40806,18 +40822,6 @@ msgid "Texture interpolation"
 msgstr "Інтерполяція текстури"
 
 
-msgid "Linear interpolation"
-msgstr "Лінійна інтерполяція"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Без інтерполяції (взяти найближчий тексель)"
-
-
-msgid "Cubic interpolation"
-msgstr "Кубічна інтерполяція"
-
-
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
 msgstr "Бікубічна при збільшенні, інакше - білінійна (лише OSL)"
 
@@ -41628,10 +41632,6 @@ msgstr "Вузловий роз'єм логічного типу"
 
 msgid "Default Value"
 msgstr "Стандартне значення"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Ввідне значення, що використовується, якщо роз'єм не під'єднано"
 
 
 msgid "Collection Node Socket"
@@ -50288,6 +50288,14 @@ msgstr "Переверт Кольорів"
 
 msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
+
+
+msgid "Black"
+msgstr "Чорне"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgctxt "Operator"
@@ -62116,10 +62124,6 @@ msgid "Add Asset Library"
 msgstr "Додати Бібліотеку Активів"
 
 
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "Додати шлях до .blend файлу, що буде використовуватися Браузером Активів як джерело активів"
-
-
 msgctxt "Operator"
 msgid "Remove Asset Library"
 msgstr "Вилучити Бібліотеку Активів"
@@ -71674,12 +71678,16 @@ msgid "Show the panel on all tabs"
 msgstr "Показати панель на всіх вкладках"
 
 
+msgid "Integrator Presets"
+msgstr "Передустави Інтегратора"
+
+
+msgid "Sampling Presets"
+msgstr "Передустави Відбору"
+
+
 msgid "Asset Metadata"
 msgstr "Метадані Активу"
-
-
-msgid "Details"
-msgstr "Деталі"
 
 
 msgid "Chain Scaling"
@@ -71829,16 +71837,8 @@ msgid "Ray Visibility"
 msgstr "Видимість Променя"
 
 
-msgid "Integrator Presets"
-msgstr "Передустави Інтегратора"
-
-
 msgid "Post Processing"
 msgstr "Після Оброблення"
-
-
-msgid "Sampling Presets"
-msgstr "Передустави Відбору"
 
 
 msgid "Film"
@@ -77605,10 +77605,6 @@ msgid "Sampling Pattern"
 msgstr "Патерн Відбору"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Патерн відбору випадковостей використовуваний інтегратором"
-
-
 msgid "Sobol"
 msgstr "Соболь"
 
@@ -82882,16 +82878,8 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -90839,14 +90827,6 @@ msgstr "Неможливо прочитати байткод OSO для збер
 
 msgid "Failed to write .oso file next to external .osl file at "
 msgstr "Збій запису файлу .oso поряд із зовнішнім файлом .osl у"
-
-
-msgid "No compatible GPUs found for path tracing"
-msgstr "Не знайдено сумісних графічних процесорів для простежування шляхів"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cycles буде рендерити на центральному процесорі"
 
 
 msgid "Noise Threshold"

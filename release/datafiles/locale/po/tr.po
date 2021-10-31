@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3116,6 +3116,10 @@ msgid "Both Z"
 msgstr "Hepsi"
 
 
+msgid "Fonts"
+msgstr "Yazıtipleri:"
+
+
 msgid "File Select Parameters"
 msgstr "Anahtarları Seç"
 
@@ -3190,10 +3194,6 @@ msgstr "Dosya yolu"
 
 msgid "Environment"
 msgstr "Çevre"
-
-
-msgid "Fonts"
-msgstr "Yazıtipleri:"
 
 
 msgid "Display Mode"
@@ -9175,6 +9175,10 @@ msgid "Only Faces"
 msgstr "Yalnız Yüzeyler"
 
 
+msgid "Linear interpolation"
+msgstr "Aradeğerleme Modu"
+
+
 msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
@@ -9349,10 +9353,6 @@ msgstr "Doku Boyama"
 
 msgid "Environment Texture"
 msgstr "Doku Boyama"
-
-
-msgid "Linear interpolation"
-msgstr "Aradeğerleme Modu"
 
 
 msgid "Projection of the input image"
@@ -12022,6 +12022,14 @@ msgstr "İmleci Merkez al"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
+
+
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
 
 
 msgctxt "Operator"
@@ -20037,14 +20045,6 @@ msgstr "Diğer Pencerelerde Zamanı Kilitle"
 
 msgid "Outline"
 msgstr "Anahat"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgid "Pivot center for rotation/scaling"

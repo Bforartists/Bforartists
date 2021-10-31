@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -11752,6 +11752,162 @@ msgid "Both Z"
 msgstr "Cả Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Hiện các cục dữ liệu Cốt"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Hiện các cục dữ liệu Bút"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Hiện các cục dữ liệu Tập Tintập tin Đệm Chứa"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Hiện các cục dữ liệu Máy Quay Phim"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Hiện các cục dữ liệu Đường Cong"
+
+
+msgid "Fonts"
+msgstr "Phông"
+
+
+msgid "Show Font data-blocks"
+msgstr "Hiện các cục dữ liệu Phông"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Hiện các cục dữ liệu Bút Sáp"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Hiện các cục dữ liệu Sưu Tập"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "Hiện/ẳn các cục dữ liệu Tóc"
+
+
+msgid "Show Image data-blocks"
+msgstr "Hiện các cục dữ liệu Ảnh"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Hiện các cục dữ liệu Lưới Rào"
+
+
+msgid "Show Light data-blocks"
+msgstr "Hiện các cục dữ liệu Đèn"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Hiện các cục dữ liệu Quang Kế"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Phong Cách Nét Của Phong Cách Tự Do"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Hiện/ẩn cục dữ liệu Phong Cách Nét Tự Do"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Hiện các cục dữ liệu Mặt Nạ"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Hiện các cục dữ liệu Mạng Lưới"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Hiện các cục dữ liệu Siêu Cầu"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Hiện các cục dữ liệu Đoạn Phim"
+
+
+msgid "Node Trees"
+msgstr "Cây Giao Điểm"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Hiện các cục dữ liệu Cây Giao Điểm"
+
+
+msgid "Show Object data-blocks"
+msgstr "Hiện các cục dữ liệu Vật Thể"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Hiện các cục dữ liệu Đường Cong Sơn"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Hiện các cục dữ liệu Bảng Màu"
+
+
+msgid "Particles Settings"
+msgstr "Cài Đặt Hạt"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Hiện các cục dữ liệu Cài Đặt Hạt"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "Hiện các cục dữ liệu Mô Phỏng"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Hiện các cục dữ liệu Âm Thanh"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Hiện cácn cục dữ liệu Loa"
+
+
+msgid "Show Text data-blocks"
+msgstr "Hiện các cục dữ liệu Văn Bản"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Hiện các cục dữ liệu Họa Tiết"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Hiện/ẳn các cục dữ liệu Thể Tích"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Hiện các cục dữ liệu công trường"
+
+
+msgid "Show Action data-blocks"
+msgstr "Hiện các cục dữ liệu Hành Động"
+
+
+msgid "Show Material data-blocks"
+msgstr "Hiện các cục dữ liệu vật Liệu"
+
+
+msgid "Show World data-blocks"
+msgstr "Hiện các cục dữ liệu Thế Giới"
+
+
 msgid "File Select Parameters"
 msgstr "Tham Số Lựa Chọn Tập Tin"
 
@@ -11966,162 +12122,6 @@ msgstr "Hiện các cảnh"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Hiện vật liệu, cây giao điểm, họa tiết, và phong cách nét của Phong Cạch Tự Do"
-
-
-msgid "Show Action data-blocks"
-msgstr "Hiện các cục dữ liệu Hành Động"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Hiện các cục dữ liệu Cốt"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Hiện các cục dữ liệu Bút"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Hiện các cục dữ liệu Tập Tintập tin Đệm Chứa"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Hiện các cục dữ liệu Máy Quay Phim"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Hiện các cục dữ liệu Đường Cong"
-
-
-msgid "Fonts"
-msgstr "Phông"
-
-
-msgid "Show Font data-blocks"
-msgstr "Hiện các cục dữ liệu Phông"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Hiện các cục dữ liệu Bút Sáp"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Hiện các cục dữ liệu Sưu Tập"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Hiện/ẳn các cục dữ liệu Tóc"
-
-
-msgid "Show Image data-blocks"
-msgstr "Hiện các cục dữ liệu Ảnh"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Hiện các cục dữ liệu Lưới Rào"
-
-
-msgid "Show Light data-blocks"
-msgstr "Hiện các cục dữ liệu Đèn"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Hiện các cục dữ liệu Quang Kế"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Phong Cách Nét Của Phong Cách Tự Do"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Phong Cách Nét Tự Do"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Hiện các cục dữ liệu Mặt Nạ"
-
-
-msgid "Show Material data-blocks"
-msgstr "Hiện các cục dữ liệu vật Liệu"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Hiện các cục dữ liệu Mạng Lưới"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Hiện các cục dữ liệu Siêu Cầu"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Hiện các cục dữ liệu Đoạn Phim"
-
-
-msgid "Node Trees"
-msgstr "Cây Giao Điểm"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Hiện các cục dữ liệu Cây Giao Điểm"
-
-
-msgid "Show Object data-blocks"
-msgstr "Hiện các cục dữ liệu Vật Thể"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Hiện các cục dữ liệu Đường Cong Sơn"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Hiện các cục dữ liệu Bảng Màu"
-
-
-msgid "Particles Settings"
-msgstr "Cài Đặt Hạt"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Hiện các cục dữ liệu Cài Đặt Hạt"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Hiện các cục dữ liệu Cảnh"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "Hiện các cục dữ liệu Mô Phỏng"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Hiện các cục dữ liệu Âm Thanh"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Hiện cácn cục dữ liệu Loa"
-
-
-msgid "Show Text data-blocks"
-msgstr "Hiện các cục dữ liệu Văn Bản"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Hiện các cục dữ liệu Họa Tiết"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Hiện/ẳn các cục dữ liệu Thể Tích"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Hiện các cục dữ liệu công trường"
-
-
-msgid "Show World data-blocks"
-msgstr "Hiện các cục dữ liệu Thế Giới"
 
 
 msgid "Directory"
@@ -41111,6 +41111,10 @@ msgid "Round the float to the closest integer in the direction of zero (floor if
 msgstr "Tròn số thật đến số nguyên gần nhất hướng số không (sàn nếu dương; nóc nếu âm)"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Ngõ vào dùng cho ổ cắm chưa liên kết"
+
+
 msgid "Random Float"
 msgstr "Dấu Phẫy Động Ngẫu Nhiên"
 
@@ -41327,6 +41331,30 @@ msgid "Curve to Mesh"
 msgstr "Đường Cong sang Mạng Lưới"
 
 
+msgid "Curve to Points"
+msgstr "Điểm Sang Đường Cong"
+
+
+msgid "How to generate points from the input curve"
+msgstr "Làm sao được chế tạo điểm từ đường cong ngõ vào"
+
+
+msgid "Evaluated"
+msgstr "Được Tính Toán"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr "Chế tạo điểm được tính từ điểm của đường cong, tùy đặc điểm độ phân giải cho NURBS và mẫu cong Bezier"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "Mẫu mỗi mẫu cong bằng phân phối đều số lượng điểm được xác định"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "Mẫu mỗi mẫu cong bằng chẻ nó thành khúc có chiều dài được xác định"
+
+
 msgid "Geometry Custom Group"
 msgstr "Nhóm Tùy Chọn Hình Dạng"
 
@@ -41369,6 +41397,18 @@ msgstr "Phân phối các điểm ngẫu nhiên trên bề mặt khi xem xét kh
 
 msgid "N-gons"
 msgstr "N-Giác"
+
+
+msgid "Linear interpolation"
+msgstr "Suy nội bậc một"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Không suy nội (dùng điểm ảnh gần nhất)"
+
+
+msgid "Cubic interpolation"
+msgstr "Suy nội bật ba"
 
 
 msgid "Is Viewport"
@@ -41757,30 +41797,6 @@ msgstr "Phân Hóa Đường Cong"
 
 msgid "Cuts Type"
 msgstr "Loại Chẻ Cắt"
-
-
-msgid "Curve to Points"
-msgstr "Điểm Sang Đường Cong"
-
-
-msgid "How to generate points from the input curve"
-msgstr "Làm sao được chế tạo điểm từ đường cong ngõ vào"
-
-
-msgid "Evaluated"
-msgstr "Được Tính Toán"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr "Chế tạo điểm được tính từ điểm của đường cong, tùy đặc điểm độ phân giải cho NURBS và mẫu cong Bezier"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "Mẫu mỗi mẫu cong bằng phân phối đều số lượng điểm được xác định"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "Mẫu mỗi mẫu cong bằng chẻ nó thành khúc có chiều dài được xác định"
 
 
 msgid "Material Assign"
@@ -42574,18 +42590,6 @@ msgstr "Họa Tiết Môi Trường"
 
 msgid "Texture interpolation"
 msgstr "Suy nội họa tiết"
-
-
-msgid "Linear interpolation"
-msgstr "Suy nội bậc một"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Không suy nội (dùng điểm ảnh gần nhất)"
-
-
-msgid "Cubic interpolation"
-msgstr "Suy nội bật ba"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -43426,10 +43430,6 @@ msgstr "Ổ cắm giá trị bool của giao điểm"
 
 msgid "Default Value"
 msgstr "Giá Trị Mặc Định"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Ngõ vào dùng cho ổ cắm chưa liên kết"
 
 
 msgid "Collection Node Socket"
@@ -52398,6 +52398,14 @@ msgstr "Lật Màu"
 
 msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
+
+
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "White"
+msgstr "Trắng"
 
 
 msgctxt "Operator"
@@ -64581,10 +64589,6 @@ msgid "Add Asset Library"
 msgstr "Thêm Thư Viện Tích Sản"
 
 
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "Thêm một đường dẫn đến một tập tin .blend cho Trình Duyệt Tích Sản được sử dụng làm nguồn tích sản"
-
-
 msgctxt "Operator"
 msgid "Remove Asset Library"
 msgstr "Xoá Tích Sản"
@@ -74575,12 +74579,16 @@ msgid "Show the panel on all tabs"
 msgstr "Hiện bảng trên hết nhẵn"
 
 
+msgid "Integrator Presets"
+msgstr "Đặt Sẵn Bộ Tích Phân"
+
+
+msgid "Sampling Presets"
+msgstr "Đặt Sẵn Mẫu Vật"
+
+
 msgid "Asset Metadata"
 msgstr "Dữ Liệu Tích Sản"
-
-
-msgid "Details"
-msgstr "Chi Tiết"
 
 
 msgid "Chain Scaling"
@@ -74746,16 +74754,8 @@ msgid "Ray Visibility"
 msgstr "Sự Hiển Thị Tia"
 
 
-msgid "Integrator Presets"
-msgstr "Đặt Sẵn Bộ Tích Phân"
-
-
 msgid "Post Processing"
 msgstr "Qúa Trình Sau"
-
-
-msgid "Sampling Presets"
-msgstr "Đặt Sẵn Mẫu Vật"
 
 
 msgid "Film"
@@ -80758,10 +80758,6 @@ msgid "Sampling Pattern"
 msgstr "Cấu Hình Mẫu Vật"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Tích phân bằng cấu hình mẫu vật ngẫu nhiên"
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -86231,16 +86227,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -94880,14 +94868,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "Lưu tập tin .oso kề tập tin ngoài .osl bị thất bại"
 
 
-msgid "No compatible GPUs found for path tracing"
-msgstr "Không tìm được GPU phù hợp cho đò tia theo dõi đường"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cycle sẽ kết xuất bằng Bộ Xử Lý (CPU)"
-
-
 msgid "Noise Threshold"
 msgstr "Ngưỡng Huyên Náo"
 
@@ -98546,14 +98526,6 @@ msgstr "Giảm Số"
 
 msgid "No asset selected"
 msgstr "Chưa chọn tích sản nào"
-
-
-msgid "Source: Current File"
-msgstr "Nguồn: Tập Tin Hiện Tại"
-
-
-msgid "Source:"
-msgstr "Nguồn:"
 
 
 msgctxt "Operator"
