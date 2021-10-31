@@ -846,20 +846,12 @@ class SEQUENCER_MT_strip_transform(Menu):
         # TODO (for preview)
         if has_sequencer:
             layout.separator()
-            layout.operator("sequencer.snap")
-            layout.operator("sequencer.offset_clear")
-
-            layout.separator()
-
-            layout.operator("sequencer.strip_transform_clear", text="Clear Position").property = 'POSITION'
-            layout.operator("sequencer.strip_transform_clear", text="Clear Scale").property = 'SCALE'
-            layout.operator("sequencer.strip_transform_clear", text="Clear Rotation").property = 'ROTATION'
-            layout.operator("sequencer.strip_transform_clear", text="Clear All").property = 'ALL'
+            layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
+            layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
             layout.separator()
 
         if has_sequencer:
-            layout.operator_menu_enum("sequencer.swap", "side")
             layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
             layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
 
