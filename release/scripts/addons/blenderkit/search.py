@@ -108,8 +108,8 @@ def refresh_notifications_timer():
     ''' this timer gets notifications.'''
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     fetch_server_data()
-    unread_notifications_count = comments_utils.count_unread_notifications()
-    comments_utils.get_notifications(preferences.api_key, unread_count = unread_notifications_count)
+    all_notifications_count = comments_utils.count_all_notifications()
+    comments_utils.get_notifications_thread(preferences.api_key, all_count = all_notifications_count)
     return 300
 
 
@@ -730,7 +730,8 @@ def write_gravatar(a_id, gravatar_path):
         adata['gravatarImg'] = gravatar_path
 
 
-def fetch_gravatar(adata):
+def fetch_gravatar(adata = None):
+
     '''
     Gets avatars from blenderkit server
     Parameters
@@ -739,7 +740,7 @@ def fetch_gravatar(adata):
 
     '''
     # utils.p('fetch gravatar')
-
+    print(adata)
     # fetch new avatars if available already
     if adata.get('avatar128') is not None:
         avatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['id'] + '.jpg'
@@ -784,7 +785,9 @@ fetching_gravatars = {}
 
 
 def get_author(r):
-    ''' Writes author info (now from search results) and fetches gravatar if needed.'''
+    ''' Writes author info (now from search results) and fetches gravatar if needed.
+    this is now tweaked to be able to get authors from
+    '''
     global fetching_gravatars
 
     a_id = str(r['author']['id'])

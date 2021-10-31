@@ -162,8 +162,8 @@ class BaseLimbRig(BaseRig):
     #     FK chain parents (or None)
     #   ik_pivot
     #     Custom IK pivot result (optional).
-    #   ik_stretch
-    #     IK stretch switch implementation.
+    #   ik_swing
+    #     Bone that tracks ik_target to manually handle limb swing.
     #   ik_target
     #     Corrected target position.
     #   ik_base
@@ -182,7 +182,6 @@ class BaseLimbRig(BaseRig):
     def make_master_control(self):
         org = self.bones.org.main[0]
         self.bones.mch.master = name = self.copy_bone(org, make_derived_name(org, 'mch', '_parent_socket'), scale=1/12)
-        self.get_bone(name).roll = 0
         self.bones.ctrl.master = name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_parent'), scale=1/4)
         self.get_bone(name).roll = 0
         self.prop_bone = self.bones.ctrl.master
@@ -422,7 +421,10 @@ class BaseLimbRig(BaseRig):
 
     @stage.parent_bones
     def parent_ik_controls(self):
-        self.set_bone_parent(self.bones.ctrl.ik_base, self.bones.mch.follow)
+        if self.use_mch_ik_base:
+            self.set_bone_parent(self.bones.ctrl.ik_base, self.bones.mch.follow)
+        else:
+            self.set_bone_parent(self.bones.ctrl.ik_base, self.bones.mch.ik_swing)
 
     @stage.configure_bones
     def configure_ik_controls(self):
@@ -515,16 +517,17 @@ class BaseLimbRig(BaseRig):
         if self.use_mch_ik_base:
             self.bones.mch.ik_base = self.make_ik_mch_base_bone(orgs)
 
-        self.bones.mch.ik_stretch = self.make_ik_mch_stretch_bone(orgs)
+        self.bones.mch.ik_swing = self.make_ik_mch_swing_bone(orgs)
         self.bones.mch.ik_target = self.make_ik_mch_target_bone(orgs)
         self.bones.mch.ik_end = self.copy_bone(orgs[1], make_derived_name(orgs[1], 'mch', '_ik'))
 
     def make_ik_mch_base_bone(self, orgs):
         return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik'))
 
-    def make_ik_mch_stretch_bone(self, orgs):
-        name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik_stretch'))
-        self.get_bone(name).tail = self.get_bone(orgs[2]).head
+    def make_ik_mch_swing_bone(self, orgs):
+        name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik_swing'))
+        bone = self.get_bone(name)
+        bone.tail = bone.head + (self.get_bone(orgs[2]).head - bone.head).normalized() * bone.length * 0.3
         return name
 
     def make_ik_mch_target_bone(self, orgs):
@@ -533,8 +536,11 @@ class BaseLimbRig(BaseRig):
     @stage.parent_bones
     def parent_ik_mch_chain(self):
         if self.use_mch_ik_base:
-            self.set_bone_parent(self.bones.mch.ik_base, self.bones.ctrl.ik_base, inherit_scale='AVERAGE')
-        self.set_bone_parent(self.bones.mch.ik_stretch, self.bones.mch.follow)
+            self.set_bone_parent(self.bones.mch.ik_swing, self.bones.ctrl.ik_base, inherit_scale='AVERAGE')
+            self.set_bone_parent(self.bones.mch.ik_base, self.bones.mch.ik_swing)
+        else:
+            self.set_bone_parent(self.bones.mch.ik_swing, self.bones.mch.follow)
+
         self.set_bone_parent(self.bones.mch.ik_target, self.get_ik_input_bone())
         self.set_bone_parent(self.bones.mch.ik_end, self.get_ik_chain_base())
 
@@ -608,25 +614,28 @@ class BaseLimbRig(BaseRig):
         mch = self.bones.mch
         input_bone = self.get_ik_input_bone()
 
-        self.rig_ik_mch_stretch_bones(mch.ik_target, mch.ik_stretch, input_bone, self.ik_input_head_tail, 2)
+        self.make_constraint(mch.ik_swing, 'DAMPED_TRACK', mch.ik_target)
+
+        self.rig_ik_mch_stretch_limit(mch.ik_target, mch.follow, input_bone, self.ik_input_head_tail, 2)
         self.rig_ik_mch_end_bone(mch.ik_end, mch.ik_target, self.bones.ctrl.ik_pole)
 
-    def rig_ik_mch_stretch_bones(self, mch_target, mch_stretch, input_bone, head_tail, org_count, bias=1.035):
+    def rig_ik_mch_stretch_limit(self, mch_target, base_bone, input_bone, head_tail, org_count, bias=1.035):
         # Compute increase in length to fully straighten
         orgs = self.bones.org.main[0:org_count]
-        len_cur = (self.get_bone(orgs[-1]).tail - self.get_bone(orgs[0]).head).length
         len_full = sum(self.get_bone(org).length for org in orgs)
-        len_scale = len_full / len_cur
 
-        # Limited stretch on the stretch bone
-        self.make_constraint(mch_stretch, 'STRETCH_TO', input_bone, head_tail=head_tail, keep_axis='SWING_Y')
+        # Snap the target to the input position
+        self.make_constraint(mch_target, 'COPY_LOCATION', input_bone, head_tail=head_tail)
 
-        con = self.make_constraint(mch_stretch, 'LIMIT_SCALE', min_y=0.0, max_y=len_scale*bias, owner_space='LOCAL')
+        # Limit distance from the base of the limb
+        con = self.make_constraint(
+            mch_target, 'LIMIT_DISTANCE', base_bone,
+            limit_mode='LIMITDIST_INSIDE', distance=len_full*bias,
+            # Use custom space to tolerate rig scaling
+            space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.mch.follow,
+        )
 
         self.make_driver(con, "influence", variables=[(self.prop_bone, 'IK_Stretch')], polynomial=[1.0, -1.0])
-
-        # Snap the target to the end of the stretch bone
-        self.make_constraint(mch_target, 'COPY_LOCATION', mch_stretch, head_tail=1.0)
 
     def rig_ik_mch_end_bone(self, mch_ik, mch_target, ctrl_pole, chain=2):
         con = self.make_constraint(
@@ -749,22 +758,46 @@ class BaseLimbRig(BaseRig):
         else:
             self.set_bone_parent(mch, entry.org)
 
+    @stage.apply_bones
+    def apply_tweak_mch_chain(self):
+        for args in zip(count(0), self.bones.mch.tweak, self.segment_table_tweak):
+            self.apply_tweak_mch_bone(*args)
+
+    def apply_tweak_mch_bone(self, i, tweak, entry):
+        if entry.seg_idx:
+            prev_tweak, next_tweak, fac = self.get_tweak_blend(i, entry)
+
+            # Apply the final roll resulting from mixing tweaks to rest pose
+            prev_rot = self.get_bone(prev_tweak).matrix.to_quaternion()
+            next_rot = self.get_bone(next_tweak).matrix.to_quaternion()
+            rot = (prev_rot * (1-fac) + next_rot * fac).normalized()
+
+            bone = self.get_bone(tweak)
+            bone_rot = bone.matrix.to_quaternion()
+
+            bone.roll += (bone_rot.inverted() @ rot).to_swing_twist('Y')[1]
+
     @stage.rig_bones
     def rig_tweak_mch_chain(self):
         for args in zip(count(0), self.bones.mch.tweak, self.segment_table_tweak):
             self.rig_tweak_mch_bone(*args)
 
+    def get_tweak_blend(self, i, entry):
+        assert entry.seg_idx
+
+        tweaks = self.bones.ctrl.tweak
+        prev_tweak = tweaks[i - entry.seg_idx]
+        next_tweak = tweaks[i + self.segments - entry.seg_idx]
+        fac = entry.seg_idx / self.segments
+
+        return prev_tweak, next_tweak, fac
+
     def rig_tweak_mch_bone(self, i, tweak, entry):
         if entry.seg_idx:
-            tweaks = self.bones.ctrl.tweak
-            prev_tweak = tweaks[i - entry.seg_idx]
-            next_tweak = tweaks[i + self.segments - entry.seg_idx]
+            prev_tweak, next_tweak, fac = self.get_tweak_blend(i, entry)
 
             self.make_constraint(tweak, 'COPY_TRANSFORMS', prev_tweak)
-            self.make_constraint(
-                tweak, 'COPY_TRANSFORMS', next_tweak,
-                influence = entry.seg_idx / self.segments
-            )
+            self.make_constraint(tweak, 'COPY_TRANSFORMS', next_tweak, influence=fac)
             self.make_constraint(tweak, 'DAMPED_TRACK', next_tweak)
 
         elif entry.seg_idx is not None:

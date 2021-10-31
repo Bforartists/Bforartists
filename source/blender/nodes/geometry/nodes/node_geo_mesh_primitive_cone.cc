@@ -29,13 +29,16 @@ namespace blender::nodes {
 
 static void geo_node_mesh_primitive_cone_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Vertices").default_value(32).min(3).max(512);
-  b.add_input<decl::Int>("Side Segments").default_value(1).min(1).max(512);
-  b.add_input<decl::Int>("Fill Segments").default_value(1).min(1).max(512);
-  b.add_input<decl::Float>("Radius Top").min(0.0f).subtype(PROP_DISTANCE);
-  b.add_input<decl::Float>("Radius Bottom").default_value(1.0f).min(0.0f).subtype(PROP_DISTANCE);
-  b.add_input<decl::Float>("Depth").default_value(2.0f).min(0.0f).subtype(PROP_DISTANCE);
-  b.add_output<decl::Geometry>("Geometry");
+  b.add_input<decl::Int>(N_("Vertices")).default_value(32).min(3).max(512);
+  b.add_input<decl::Int>(N_("Side Segments")).default_value(1).min(1).max(512);
+  b.add_input<decl::Int>(N_("Fill Segments")).default_value(1).min(1).max(512);
+  b.add_input<decl::Float>(N_("Radius Top")).min(0.0f).subtype(PROP_DISTANCE);
+  b.add_input<decl::Float>(N_("Radius Bottom"))
+      .default_value(1.0f)
+      .min(0.0f)
+      .subtype(PROP_DISTANCE);
+  b.add_input<decl::Float>(N_("Depth")).default_value(2.0f).min(0.0f).subtype(PROP_DISTANCE);
+  b.add_output<decl::Geometry>(N_("Mesh"));
 }
 
 static void geo_node_mesh_primitive_cone_init(bNodeTree *UNUSED(ntree), bNode *node)
@@ -708,14 +711,14 @@ static void geo_node_mesh_primitive_cone_exec(GeoNodeExecParams params)
   const int circle_segments = params.extract_input<int>("Vertices");
   if (circle_segments < 3) {
     params.error_message_add(NodeWarningType::Info, TIP_("Vertices must be at least 3"));
-    params.set_output("Geometry", GeometrySet());
+    params.set_output("Mesh", GeometrySet());
     return;
   }
 
   const int side_segments = params.extract_input<int>("Side Segments");
   if (side_segments < 1) {
     params.error_message_add(NodeWarningType::Info, TIP_("Side Segments must be at least 1"));
-    params.set_output("Geometry", GeometrySet());
+    params.set_output("Mesh", GeometrySet());
     return;
   }
 
@@ -723,7 +726,7 @@ static void geo_node_mesh_primitive_cone_exec(GeoNodeExecParams params)
   const int fill_segments = no_fill ? 1 : params.extract_input<int>("Fill Segments");
   if (fill_segments < 1) {
     params.error_message_add(NodeWarningType::Info, TIP_("Fill Segments must be at least 1"));
-    params.set_output("Geometry", GeometrySet());
+    params.set_output("Mesh", GeometrySet());
     return;
   }
 
@@ -737,7 +740,7 @@ static void geo_node_mesh_primitive_cone_exec(GeoNodeExecParams params)
   /* Transform the mesh so that the base of the cone is at the origin. */
   BKE_mesh_translate(mesh, float3(0.0f, 0.0f, depth * 0.5f), false);
 
-  params.set_output("Geometry", GeometrySet::create_with_mesh(mesh));
+  params.set_output("Mesh", GeometrySet::create_with_mesh(mesh));
 }
 
 }  // namespace blender::nodes

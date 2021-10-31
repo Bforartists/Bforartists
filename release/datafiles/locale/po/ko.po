@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -10597,6 +10597,22 @@ msgid "Both Z"
 msgstr "양쪽 Z"
 
 
+msgid "Fonts"
+msgstr "폰트"
+
+
+msgid "Freestyle Linestyles"
+msgstr "프리스타일 라인 스타일"
+
+
+msgid "Node Trees"
+msgstr "노드 트리"
+
+
+msgid "Particles Settings"
+msgstr "파티클 설정"
+
+
 msgid "File Select Parameters"
 msgstr "파일 선택 매개 변수"
 
@@ -10739,22 +10755,6 @@ msgstr "기타"
 
 msgid "Objects & Collections"
 msgstr "오브젝트 & 컬렉션"
-
-
-msgid "Fonts"
-msgstr "폰트"
-
-
-msgid "Freestyle Linestyles"
-msgstr "프리스타일 라인 스타일"
-
-
-msgid "Node Trees"
-msgstr "노드 트리"
-
-
-msgid "Particles Settings"
-msgstr "파티클 설정"
 
 
 msgid "Directory"
@@ -34910,6 +34910,10 @@ msgid "Equal"
 msgstr "동일한"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "연결 없는 소켓에 사용되는 입력 값"
+
+
 msgid "Original"
 msgstr "원본"
 
@@ -34924,6 +34928,18 @@ msgstr "에지 & 페이스 만"
 
 msgid "Only Faces"
 msgstr "페이스 만"
+
+
+msgid "Linear interpolation"
+msgstr "선형 보간"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "보간 없음 (샘플에가까운 텍셀)"
+
+
+msgid "Cubic interpolation"
+msgstr "큐빅 보간"
 
 
 msgid "Min Max"
@@ -35529,18 +35545,6 @@ msgstr "환경 텍스처"
 
 msgid "Texture interpolation"
 msgstr "텍스처 보간"
-
-
-msgid "Linear interpolation"
-msgstr "선형 보간"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "보간 없음 (샘플에가까운 텍셀)"
-
-
-msgid "Cubic interpolation"
-msgstr "큐빅 보간"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -36189,10 +36193,6 @@ msgstr "노드의 불리언 값 소켓"
 
 msgid "Default Value"
 msgstr "기본 값"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "연결 없는 소켓에 사용되는 입력 값"
 
 
 msgid "Color Node Socket"
@@ -43576,6 +43576,14 @@ msgstr "스트로크를 다듬기"
 
 msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
+
+
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgctxt "Operator"
@@ -61755,6 +61763,14 @@ msgid "Show the panel on all tabs"
 msgstr "모든 탭에 패널을 표시"
 
 
+msgid "Integrator Presets"
+msgstr "적분기 프리셋"
+
+
+msgid "Sampling Presets"
+msgstr "샘플링 프리셋"
+
+
 msgid "Bone Constraints"
 msgstr "본 제약"
 
@@ -61890,16 +61906,8 @@ msgid "Ray Visibility"
 msgstr "광선 가시성"
 
 
-msgid "Integrator Presets"
-msgstr "적분기 프리셋"
-
-
 msgid "Post Processing"
 msgstr "후처리"
-
-
-msgid "Sampling Presets"
-msgstr "샘플링 프리셋"
 
 
 msgid "Film"
@@ -67043,10 +67051,6 @@ msgid "Sampling Pattern"
 msgstr "샘플링 패턴"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "적분기로 사용된 랜덤 샘플링 패턴"
-
-
 msgid "Sobol"
 msgstr "소볼"
 
@@ -71835,16 +71839,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -78569,14 +78565,6 @@ msgstr "%r에서 노드에 저장할 OSO 바이트 코드를 읽을 수 없습�
 
 msgid "Failed to write .oso file next to external .osl file at "
 msgstr "외부 .osl 파일 옆에 .oso 파일을 쓰지 못했습니다 "
-
-
-msgid "No compatible GPUs found for path tracing"
-msgstr "경로 추적에 호환되는 GPU가 없습니다"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "사이클이 CPU에서 렌더링됩니다"
 
 
 msgid "Dicing Rate Render"

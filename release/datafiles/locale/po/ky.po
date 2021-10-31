@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -783,6 +783,10 @@ msgid "Size"
 msgstr "Өлчөмү"
 
 
+msgid "Fonts"
+msgstr "Ариптер"
+
+
 msgid "Save"
 msgstr "Сактоо"
 
@@ -833,10 +837,6 @@ msgstr "Терезе менеджери"
 
 msgid "World"
 msgstr "Дүйнө"
-
-
-msgid "Fonts"
-msgstr "Ариптер"
 
 
 msgid "End"
@@ -2024,6 +2024,14 @@ msgid "Eraser"
 msgstr "Өчүргүч"
 
 
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
+
+
 msgctxt "Operator"
 msgid "New Image"
 msgstr "Жаңы сүрөт"
@@ -3014,14 +3022,6 @@ msgstr "Сфера өлчөмү"
 
 msgid "Gravitation"
 msgstr "Тартыш"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgid "Show Seconds"

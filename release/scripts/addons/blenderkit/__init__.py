@@ -1730,12 +1730,18 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     thumb_size: IntProperty(name="Assetbar thumbnail Size", default=96, min=-1, max=256)
 
+    #counts usages so it can encourage user after some time to do things.
     asset_counter: IntProperty(name="Usage Counter",
                                description="Counts usages so it asks for registration only after reaching a limit",
                                default=0,
                                min=0,
                                max=20000)
 
+    notifications_counter: IntProperty(
+        name='Notifications Counter',
+        description='count users notifications',
+        default=0,
+    )
     # this is now made obsolete by the new popup upon registration -ensures the user knows about the first search.
     # first_run: BoolProperty(
     #     name="First run",

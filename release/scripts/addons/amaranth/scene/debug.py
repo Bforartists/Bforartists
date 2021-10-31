@@ -1147,12 +1147,9 @@ class AMTH_PT_LightersCorner(Panel):
 
             col.label(text="Name/Library link")
 
-            if engine in ["CYCLES", "BLENDER_RENDER"]:
-                splits = 0.6 if engine == "BLENDER_RENDER" else 0.4
+            if engine in ["CYCLES"]:
+                splits = 0.4
                 splita = split.split(factor=splits, align=True)
-                col = splita.column(align=True)
-                col.alignment = "LEFT"
-                col.label(text="Samples")
 
                 if utils.cycles_exists() and engine == "CYCLES":
                     col = splita.column(align=True)
@@ -1226,9 +1223,8 @@ class AMTH_UL_LightersCorner_UI(UIList):
                     emboss=False, icon="LINK_BLEND").filepath = is_library
 
             rows = split.row(align=True)
-            splits = 0.9 if engine == "BLENDER_RENDER" else 0.4
+            splits = 0.4
             splitlamp = rows.split(factor=splits, align=True)
-            splitlampb = splitlamp.row(align=True)
             splitlampc = splitlamp.row(align=True)
             splitlampd = rows.row(align=True)
             splitlampd.alignment = "RIGHT"
@@ -1236,10 +1232,6 @@ class AMTH_UL_LightersCorner_UI(UIList):
             if utils.cycles_exists() and engine == "CYCLES":
                 if "LIGHT" in icon_type:
                     clamp = ob.data.cycles
-                    if context.scene.cycles.progressive == "BRANCHED_PATH":
-                        splitlampb.prop(clamp, "samples", text="")
-                    if context.scene.cycles.progressive == "PATH":
-                        splitlampb.label(text="N/A")
                     lamp = ob.data
                     if lamp.type in ["POINT", "SUN", "SPOT"]:
                         splitlampc.label(text="{:.2f}".format(lamp.shadow_soft_size))
@@ -1251,33 +1243,13 @@ class AMTH_UL_LightersCorner_UI(UIList):
                             )
                     else:
                         splitlampc.label(text="{:.2f}".format(lamp.size))
-                else:
-                    splitlampb.label(text="N/A")
-            if engine == "BLENDER_RENDER":
-                if "LIGHT" in icon_type:
-                    lamp = ob.data
-                    if lamp.type == "HEMI":
-                        splitlampb.label(text="Not Available")
-                    elif lamp.type == "AREA" and lamp.shadow_method == "RAY_SHADOW":
-                        splitlampb.prop(lamp, "shadow_ray_samples_x", text="X")
-                        if lamp.shape == "RECTANGLE":
-                            splitlampb.prop(lamp, "shadow_ray_samples_y", text="Y")
-                    elif lamp.shadow_method == "RAY_SHADOW":
-                        splitlampb.prop(lamp, "shadow_ray_samples", text="Ray Samples")
-                    elif lamp.shadow_method == "BUFFER_SHADOW":
-                        splitlampb.prop(lamp, "shadow_buffer_samples", text="Buffer Samples")
-                    else:
-                        splitlampb.label(text="No Shadow")
-                else:
-                    splitlampb.label(text="N/A")
             if utils.cycles_exists():
-                visibility = ob.cycles_visibility
-                splitlampd.prop(visibility, "camera", text="")
-                splitlampd.prop(visibility, "diffuse", text="")
-                splitlampd.prop(visibility, "glossy", text="")
-                splitlampd.prop(visibility, "shadow", text="")
+                splitlampd.prop(ob, "visible_camera", text="")
+                splitlampd.prop(ob, "visible_diffuse", text="")
+                splitlampd.prop(ob, "visible_glossy", text="")
+                splitlampd.prop(ob, "visible_shadow", text="")
                 splitlampd.separator()
-            splitlampd.prop(ob, "hide", text="", emboss=False)
+            splitlampd.prop(ob, "hide_viewport", text="", emboss=False)
             splitlampd.prop(ob, "hide_render", text="", emboss=False)
             splitlampd.operator(
                     AMTH_SCENE_OT_amaranth_object_select.bl_idname,

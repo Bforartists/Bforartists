@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -11728,6 +11728,162 @@ msgid "Both Z"
 msgstr "Вся ось Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Показать датаблоки арматур"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Показать датаблоки кистей"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Показать датаблоки файлов кэша"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Показать датаблоки камер"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Показать датаблоки кривых"
+
+
+msgid "Fonts"
+msgstr "Шрифты"
+
+
+msgid "Show Font data-blocks"
+msgstr "Показать датаблоки шрифтов"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Показать датаблоки Grease Pencil"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Показать датаблоки коллекций"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "Показать/скрыть датаблоки волос"
+
+
+msgid "Show Image data-blocks"
+msgstr "Показать датаблоки изображений"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Показать датаблоки решёток"
+
+
+msgid "Show Light data-blocks"
+msgstr "Показать датаблоки источников света"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Показать датаблоки зондов освещения"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Стили линий Freestyle"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Показать датаблоки стилей линий Freestyle"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Показать датаблоки масок"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Показать датаблоки мешей"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Показать датаблоки метасфер"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Показать датаблоки видеофрагментов"
+
+
+msgid "Node Trees"
+msgstr "Системы нодов"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Показать датаблоки нодовых систем"
+
+
+msgid "Show Object data-blocks"
+msgstr "Показать датаблоки объектов"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Показать датаблоки кривых рисования"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Показать датаблоки палитр"
+
+
+msgid "Particles Settings"
+msgstr "Настройки частиц"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Показать датаблоки настроек частиц"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "Показать/скрыть датаблоки облаков точек"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Показать датаблоки сцен"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "Показать датаблоки симуляций"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Показать датаблоки звуков"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Показать датаблоки источников звука"
+
+
+msgid "Show Text data-blocks"
+msgstr "Показать датаблоки текстов"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Показать датаблоки текстур"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Показать/скрыть датаблоки объёмов"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Показать датаблоки рабочих пространств"
+
+
+msgid "Show Action data-blocks"
+msgstr "Показать датаблоки действий"
+
+
+msgid "Show Material data-blocks"
+msgstr "Показать датаблоки материалов"
+
+
+msgid "Show World data-blocks"
+msgstr "Показать датаблоки миров"
+
+
 msgid "File Select Parameters"
 msgstr "Параметры выбора файла"
 
@@ -11938,162 +12094,6 @@ msgstr "Показать сцены"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Показать материалы, системы нодов и стили линий Freestyle"
-
-
-msgid "Show Action data-blocks"
-msgstr "Показать датаблоки действий"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Показать датаблоки арматур"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Показать датаблоки кистей"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Показать датаблоки файлов кэша"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Показать датаблоки камер"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Показать датаблоки кривых"
-
-
-msgid "Fonts"
-msgstr "Шрифты"
-
-
-msgid "Show Font data-blocks"
-msgstr "Показать датаблоки шрифтов"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Показать датаблоки Grease Pencil"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Показать датаблоки коллекций"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Показать/скрыть датаблоки волос"
-
-
-msgid "Show Image data-blocks"
-msgstr "Показать датаблоки изображений"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Показать датаблоки решёток"
-
-
-msgid "Show Light data-blocks"
-msgstr "Показать датаблоки источников света"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Показать датаблоки зондов освещения"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Стили линий Freestyle"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Показать датаблоки стилей линий Freestyle"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Показать датаблоки масок"
-
-
-msgid "Show Material data-blocks"
-msgstr "Показать датаблоки материалов"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Показать датаблоки мешей"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Показать датаблоки метасфер"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Показать датаблоки видеофрагментов"
-
-
-msgid "Node Trees"
-msgstr "Системы нодов"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Показать датаблоки нодовых систем"
-
-
-msgid "Show Object data-blocks"
-msgstr "Показать датаблоки объектов"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Показать датаблоки кривых рисования"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Показать датаблоки палитр"
-
-
-msgid "Particles Settings"
-msgstr "Настройки частиц"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Показать датаблоки настроек частиц"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "Показать/скрыть датаблоки облаков точек"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Показать датаблоки сцен"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "Показать датаблоки симуляций"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Показать датаблоки звуков"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Показать датаблоки источников звука"
-
-
-msgid "Show Text data-blocks"
-msgstr "Показать датаблоки текстов"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Показать датаблоки текстур"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Показать/скрыть датаблоки объёмов"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Показать датаблоки рабочих пространств"
-
-
-msgid "Show World data-blocks"
-msgstr "Показать датаблоки миров"
 
 
 msgid "Directory"
@@ -37486,6 +37486,10 @@ msgid "Equal"
 msgstr "Равно"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Входное значение, используемое для несоединённого сокета"
+
+
 msgid "Original"
 msgstr "Оригинал"
 
@@ -37500,6 +37504,18 @@ msgstr "Только рёбра и грани"
 
 msgid "Only Faces"
 msgstr "Только грани"
+
+
+msgid "Linear interpolation"
+msgstr "Линейная интерполяция"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Без интерполяции (использовать ближайший тексель)"
+
+
+msgid "Cubic interpolation"
+msgstr "Кубическая интерполяция"
 
 
 msgid "Cross Product"
@@ -38073,18 +38089,6 @@ msgstr "Текстура окр. среды"
 
 msgid "Texture interpolation"
 msgstr "Интерполяция текстуры"
-
-
-msgid "Linear interpolation"
-msgstr "Линейная интерполяция"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Без интерполяции (использовать ближайший тексель)"
-
-
-msgid "Cubic interpolation"
-msgstr "Кубическая интерполяция"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -38729,10 +38733,6 @@ msgstr "Булево значение сокета ноды"
 
 msgid "Default Value"
 msgstr "Значение по умолчанию"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Входное значение, используемое для несоединённого сокета"
 
 
 msgid "Color Node Socket"
@@ -46090,6 +46090,14 @@ msgstr "Обрезать выделенный штрих до первой пе�
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Отразить цвета"
+
+
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgctxt "Operator"
@@ -56430,10 +56438,6 @@ msgid "Remove existing template with the same ID"
 msgstr "Удалить существующие темплейты с одинаковым ID"
 
 
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "Добавить путь к blend-файлу, используемому в браузере ассетов в качестве источника ассетов"
-
-
 msgid "Remove a path to a .blend file, so the Asset Browser will not attempt to show it anymore"
 msgstr "Удалить путь к blend-файлу, тем самым убрав его из браузера ассетов"
 
@@ -64206,6 +64210,14 @@ msgid "Show the panel on all tabs"
 msgstr "Показывать панель на всех вкладках"
 
 
+msgid "Integrator Presets"
+msgstr "Предустановки интегратора"
+
+
+msgid "Sampling Presets"
+msgstr "Предустановки сэмплирования"
+
+
 msgid "Bone Constraints"
 msgstr "Ограничители кости"
 
@@ -64341,16 +64353,8 @@ msgid "Ray Visibility"
 msgstr "Видимость лучей"
 
 
-msgid "Integrator Presets"
-msgstr "Предустановки интегратора"
-
-
 msgid "Post Processing"
 msgstr "Постобработка"
-
-
-msgid "Sampling Presets"
-msgstr "Предустановки сэмплирования"
 
 
 msgid "Film"
@@ -69519,10 +69523,6 @@ msgid "Sampling Pattern"
 msgstr "Шаблон отбора"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Шаблон, по которому отбираются случайные места в интеграторе"
-
-
 msgid "Sobol"
 msgstr "Соболь"
 
@@ -74371,16 +74371,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -81073,14 +81065,6 @@ msgstr "Ошибка чтения байткода OSO для сохранени
 
 msgid "Failed to write .oso file next to external .osl file at "
 msgstr "Ошибка записи в файл .oso рядом с внешним файлом .osl в "
-
-
-msgid "No compatible GPUs found for path tracing"
-msgstr "Нет подходящих GPU-устройств для трассировки пути"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Выполнять рендеринг Cycles на CPU"
 
 
 msgid "Noise Threshold"
