@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -8730,6 +8730,14 @@ msgid "Both Z"
 msgstr "雙向 Z"
 
 
+msgid "Fonts"
+msgstr "字型"
+
+
+msgid "Show workspace data-blocks"
+msgstr "顯示工作空間資料塊"
+
+
 msgid "File Select Parameters"
 msgstr "檔案選取參數"
 
@@ -8844,14 +8852,6 @@ msgstr "相對路徑"
 
 msgid "Environment"
 msgstr "環境"
-
-
-msgid "Fonts"
-msgstr "字型"
-
-
-msgid "Show workspace data-blocks"
-msgstr "顯示工作空間資料塊"
 
 
 msgid "Directory"
@@ -24646,6 +24646,10 @@ msgid "Equal"
 msgstr "等於"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "用於未連接接口的輸入值"
+
+
 msgid "Original"
 msgstr "原始"
 
@@ -24660,6 +24664,14 @@ msgstr "僅邊線和面"
 
 msgid "Only Faces"
 msgstr "僅面"
+
+
+msgid "Linear interpolation"
+msgstr "線條插補"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "無插補 (樣本最接近紋理)"
 
 
 msgid "Min Max"
@@ -25069,14 +25081,6 @@ msgstr "環境紋理"
 
 msgid "Texture interpolation"
 msgstr "紋理插補"
-
-
-msgid "Linear interpolation"
-msgstr "線條插補"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "無插補 (樣本最接近紋理)"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -25525,10 +25529,6 @@ msgstr "節點的布林值接口"
 
 msgid "Default Value"
 msgstr "預設值"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "用於未連接接口的輸入值"
 
 
 msgid "Color Node Socket"
@@ -30593,6 +30593,14 @@ msgstr "吸附選取項至格線"
 
 msgid "Dissolve Points"
 msgstr "消散點"
+
+
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgctxt "Operator"
@@ -43143,6 +43151,14 @@ msgid "Pin"
 msgstr "釘住"
 
 
+msgid "Integrator Presets"
+msgstr "整合器預置"
+
+
+msgid "Sampling Presets"
+msgstr "取樣預置"
+
+
 msgid "Chain Scaling"
 msgstr "鏈縮放"
 
@@ -43254,16 +43270,8 @@ msgid "Ray Visibility"
 msgstr "光線可見性"
 
 
-msgid "Integrator Presets"
-msgstr "整合器預置"
-
-
 msgid "Post Processing"
 msgstr "後製"
-
-
-msgid "Sampling Presets"
-msgstr "取樣預置"
 
 
 msgid "Film"
@@ -49097,14 +49105,6 @@ msgid "Outline"
 msgstr "外框"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -54509,10 +54509,6 @@ msgstr "滑動"
 msgctxt "Operator"
 msgid "Back"
 msgstr "後"
-
-
-msgid "Source:"
-msgstr "來源："
 
 
 msgctxt "Operator"

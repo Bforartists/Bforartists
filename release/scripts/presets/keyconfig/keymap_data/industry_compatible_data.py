@@ -875,7 +875,7 @@ def km_graph_editor_generic(params):
 
     items.extend([
         op_panel("TOPBAR_PT_name", {"type": 'RET', "value": 'PRESS'}, [("keep_open", False)]),
-        ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("anim.channels_select_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
         ("graph.hide", {"type": 'H', "value": 'PRESS', "ctrl": True},
          {"properties": [("unselected", False)]}),
         ("graph.hide", {"type": 'H', "value": 'PRESS', "shift": True},
@@ -1227,7 +1227,9 @@ def km_file_browser(params):
         ("file.previous", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True}, None),
         ("file.next", {"type": 'RIGHT_ARROW', "value": 'PRESS', "alt": True}, None),
         ("file.next", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True}, None),
+        # The two refresh operators have polls excluding each other (so only one is available depending on context).
         ("file.refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+        ("file.asset_library_refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("file.previous", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
         ("file.next", {"type": 'BACK_SPACE', "value": 'PRESS', "shift": True}, None),
         ("wm.context_toggle", {"type": 'H', "value": 'PRESS'},
@@ -1272,7 +1274,9 @@ def km_file_browser_main(params):
 
     items.extend([
         ("file.mouse_execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+        # The two refresh operators have polls excluding each other (so only one is available depending on context).
         ("file.refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+        ("file.asset_library_refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'CLICK'},
          {"properties": [("open", False), ("deselect_all", True)]}),
@@ -1439,7 +1443,7 @@ def km_dopesheet(params):
         ("action.view_selected", {"type": 'F', "value": 'PRESS'}, None),
         ("action.view_frame", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
         ("anim.channels_editable_toggle", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-        ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("anim.channels_select_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
         ("transform.transform", {"type": 'W', "value": 'PRESS'},
          {"properties": [("mode", 'TIME_TRANSLATE')]}),
         ("transform.transform", {"type": 'EVT_TWEAK_L', "value": 'ANY'},
@@ -1477,7 +1481,7 @@ def km_nla_generic(params):
         *_template_items_animation(),
         ("nla.tweakmode_enter", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("nla.tweakmode_exit", {"type": 'ESC', "value": 'PRESS'}, None),
-        ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("anim.channels_select_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ])
 
     return keymap
@@ -2234,7 +2238,7 @@ def km_animation_channels(params):
         ("anim.channel_select_keys", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
          {"properties": [("extend", True)]}),
         # Find (setting the name filter).
-        ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("anim.channels_select_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
         # Selection.
         ("anim.channels_select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("action", 'SELECT')]}),
         ("anim.channels_select_all", {"type": 'A', "value": 'PRESS', "ctrl": True, "shift": True}, {"properties": [("action", 'DESELECT')]}),

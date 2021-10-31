@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3939,6 +3939,10 @@ msgid "Z Direction"
 msgstr "Riktning"
 
 
+msgid "Fonts"
+msgstr "Typsnitt"
+
+
 msgid "File Select Parameters"
 msgstr "Markera Rad"
 
@@ -3997,10 +4001,6 @@ msgstr "Värld"
 
 msgid "Relative Path"
 msgstr "Rensa Rotation"
-
-
-msgid "Fonts"
-msgstr "Typsnitt"
 
 
 msgid "Regular"
@@ -11587,6 +11587,10 @@ msgid "Only Faces"
 msgstr "Bana"
 
 
+msgid "Linear interpolation"
+msgstr "Extrapoleringsmetod"
+
+
 msgid "Z Axis"
 msgstr "Zooma In"
 
@@ -11801,10 +11805,6 @@ msgstr "Texturkoordinater:"
 
 msgid "Environment Texture"
 msgstr "Rensa Förälder"
-
-
-msgid "Linear interpolation"
-msgstr "Extrapoleringsmetod"
 
 
 msgid "Projection"
@@ -15190,6 +15190,14 @@ msgstr "Markerade till markör"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
+
+
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
 
 
 msgctxt "Operator"
@@ -22741,6 +22749,10 @@ msgid "Restrict"
 msgstr "Starta Spel"
 
 
+msgid "Integrator Presets"
+msgstr "Operatorinställning"
+
+
 msgid "Bone Constraints"
 msgstr "Benbegränsningar"
 
@@ -22803,10 +22815,6 @@ msgstr "Tygförinställningar"
 
 msgid "Ray Visibility"
 msgstr "Växla synlighet"
-
-
-msgid "Integrator Presets"
-msgstr "Operatorinställning"
 
 
 msgid "Pixel Filter"
@@ -25296,14 +25304,6 @@ msgstr "Markera Länkad"
 
 msgid "Outline"
 msgstr "Kontur"
-
-
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
 
 
 msgid "Length of displaying path, in frames"

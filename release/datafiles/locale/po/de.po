@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9528,6 +9528,162 @@ msgid "Both Z"
 msgstr "Beide Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Anker-Datenblöcke anzeigen"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Pinsel Datenblöcke anzeigen"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Pufferdatei-Datenblöcke anzeigen"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Kamera-Datenblöcke anzeigen"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Kurven-Datenblöcke anzeigen"
+
+
+msgid "Fonts"
+msgstr "Schriftarten"
+
+
+msgid "Show Font data-blocks"
+msgstr "Schrift-Datenblöcke anzeigen"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Wachsstift-Datenblöcke anzeigen"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Sammlungs-Datenblöcke anzeigen"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "Haar-Datenblöcke anzeigen/verbergen"
+
+
+msgid "Show Image data-blocks"
+msgstr "Bild-Datenblöcke anzeigen"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Gitter-Datenblöcke anzeigen"
+
+
+msgid "Show Light data-blocks"
+msgstr "Licht-Datenblöcke anzeigen"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Lichtproben-Datenblöcke anzeigen"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Freestyle Linienstile"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Freizeichnung Linien Style Datenblöcke anzeigen"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Maschendatenblöcke anzeigen"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Maschen Datenblöcke anzeigen"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Metaball-Datenblöcke anzeigen"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Film-Datenblöcke anzeigen"
+
+
+msgid "Node Trees"
+msgstr "Knotenbäume"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Knotenbaum-Datenblöcke anzeigen"
+
+
+msgid "Show Object data-blocks"
+msgstr "Objekt-Datenblöcke anzeigen"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Farbkurven-Datenblöcke anzeigen"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Paletten-Datenblöcke anzeigen"
+
+
+msgid "Particles Settings"
+msgstr "Partikeleinstellungen"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Partikeleinstellungen Datenblöcke anzeigen"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "Punkt Wolken-Datenblöcke anzeigen/verstecken"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Szenen-Datenblöcke anzeigen"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "Simulations-Datenblöcke anzeigen"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Klang-Datenblöcke anzeigen"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Lautsprecher-Datenblöcke anzeigen"
+
+
+msgid "Show Text data-blocks"
+msgstr "Text-Datenblöcke anzeigen"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Textur-Datenblöcke anzeigen"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Volumen-Datenblöcke anzeigen/verstecken"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Arbeitsplatz-Datenblöcke anzeigen"
+
+
+msgid "Show Action data-blocks"
+msgstr "Aktionen-Datenblöcke anzeigen"
+
+
+msgid "Show Material data-blocks"
+msgstr "Material-Datenblöcke anzeigen"
+
+
+msgid "Show World data-blocks"
+msgstr "Welt-Datenblöcke anzeigen"
+
+
 msgid "File Select Parameters"
 msgstr "Dateiauswahl-Paramenter"
 
@@ -9662,162 +9818,6 @@ msgstr "Objekte und Sammlungen anzeigen"
 
 msgid "Show scenes"
 msgstr "Szenen anzeigen"
-
-
-msgid "Show Action data-blocks"
-msgstr "Aktionen-Datenblöcke anzeigen"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Anker-Datenblöcke anzeigen"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Pinsel Datenblöcke anzeigen"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Pufferdatei-Datenblöcke anzeigen"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Kamera-Datenblöcke anzeigen"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Kurven-Datenblöcke anzeigen"
-
-
-msgid "Fonts"
-msgstr "Schriftarten"
-
-
-msgid "Show Font data-blocks"
-msgstr "Schrift-Datenblöcke anzeigen"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Wachsstift-Datenblöcke anzeigen"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Sammlungs-Datenblöcke anzeigen"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Haar-Datenblöcke anzeigen/verbergen"
-
-
-msgid "Show Image data-blocks"
-msgstr "Bild-Datenblöcke anzeigen"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Gitter-Datenblöcke anzeigen"
-
-
-msgid "Show Light data-blocks"
-msgstr "Licht-Datenblöcke anzeigen"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Lichtproben-Datenblöcke anzeigen"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Freestyle Linienstile"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Freizeichnung Linien Style Datenblöcke anzeigen"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Maschendatenblöcke anzeigen"
-
-
-msgid "Show Material data-blocks"
-msgstr "Material-Datenblöcke anzeigen"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Maschen Datenblöcke anzeigen"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Metaball-Datenblöcke anzeigen"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Film-Datenblöcke anzeigen"
-
-
-msgid "Node Trees"
-msgstr "Knotenbäume"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Knotenbaum-Datenblöcke anzeigen"
-
-
-msgid "Show Object data-blocks"
-msgstr "Objekt-Datenblöcke anzeigen"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Farbkurven-Datenblöcke anzeigen"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Paletten-Datenblöcke anzeigen"
-
-
-msgid "Particles Settings"
-msgstr "Partikeleinstellungen"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Partikeleinstellungen Datenblöcke anzeigen"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "Punkt Wolken-Datenblöcke anzeigen/verstecken"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Szenen-Datenblöcke anzeigen"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "Simulations-Datenblöcke anzeigen"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Klang-Datenblöcke anzeigen"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Lautsprecher-Datenblöcke anzeigen"
-
-
-msgid "Show Text data-blocks"
-msgstr "Text-Datenblöcke anzeigen"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Textur-Datenblöcke anzeigen"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Volumen-Datenblöcke anzeigen/verstecken"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Arbeitsplatz-Datenblöcke anzeigen"
-
-
-msgid "Show World data-blocks"
-msgstr "Welt-Datenblöcke anzeigen"
 
 
 msgid "Directory"
@@ -25109,6 +25109,10 @@ msgid "True when both inputs are not approximately equal"
 msgstr "Wahr, wenn beide Eingänge nicht ungefähr gleich sind"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Eingabewert, der für die nicht verbundene Buchse verwendet wird"
+
+
 msgid "Random Float"
 msgstr "Zufällige Gleitkommazahl"
 
@@ -25151,6 +25155,18 @@ msgstr "Verteilungsmethode"
 
 msgid "Method to use for scattering points"
 msgstr "Methode zur Verwendung von Streupunkten"
+
+
+msgid "Linear interpolation"
+msgstr "Biliniear interpolieren"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Keine Interpolation (Beispiel nähestes Texel)"
+
+
+msgid "Cubic interpolation"
+msgstr "Kubisch interpolieren"
 
 
 msgid "Is Viewport"
@@ -25694,18 +25710,6 @@ msgid "Texture interpolation"
 msgstr "Textur interpolieren"
 
 
-msgid "Linear interpolation"
-msgstr "Biliniear interpolieren"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Keine Interpolation (Beispiel nähestes Texel)"
-
-
-msgid "Cubic interpolation"
-msgstr "Kubisch interpolieren"
-
-
 msgid "Projection"
 msgstr "Projektion"
 
@@ -26116,10 +26120,6 @@ msgstr "Datentyp"
 
 msgid "Default Value"
 msgstr "Vorgabewert"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Eingabewert, der für die nicht verbundene Buchse verwendet wird"
 
 
 msgid "Collection Node Socket"
@@ -30906,6 +30906,14 @@ msgstr "Striche unterteilen"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Farben umdrehen"
+
+
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgctxt "Operator"
@@ -36726,10 +36734,6 @@ msgid "Add Asset Library"
 msgstr "Hinzufügen der Asset-Bibliothek"
 
 
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "Hinzufügen eines Pfads zu einer .blend-Datei, die vom Asset Browser als Quelle von Assets verwendet werden soll"
-
-
 msgctxt "Operator"
 msgid "Remove Asset Library"
 msgstr "Asset Library entfernen"
@@ -41037,12 +41041,16 @@ msgid "Pin"
 msgstr "Anheften"
 
 
+msgid "Integrator Presets"
+msgstr "Integrator-Voreinstellungen"
+
+
+msgid "Sampling Presets"
+msgstr "Abtastung-Voreinstellungen"
+
+
 msgid "Asset Metadata"
 msgstr "Asset-Metadaten"
-
-
-msgid "Details"
-msgstr "Details"
 
 
 msgid "Chain Scaling"
@@ -41154,16 +41162,8 @@ msgid "Ray Visibility"
 msgstr "Strahlensichtbarkeit"
 
 
-msgid "Integrator Presets"
-msgstr "Integrator-Voreinstellungen"
-
-
 msgid "Post Processing"
 msgstr "Nachbearbeitung"
-
-
-msgid "Sampling Presets"
-msgstr "Abtastung-Voreinstellungen"
 
 
 msgid "Film"
@@ -47658,16 +47658,8 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgid "Display white edges"
@@ -52113,14 +52105,6 @@ msgstr "Gesten Box"
 
 msgid "Denoising completed"
 msgstr "Entrauschen abgeschlossen"
-
-
-msgid "No compatible GPUs found for path tracing"
-msgstr "Keine kompatible GPU's gefunden für Pfadverfolgung"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Ablauf wird auf der CPU gerendert"
 
 
 msgid "Noise Threshold"

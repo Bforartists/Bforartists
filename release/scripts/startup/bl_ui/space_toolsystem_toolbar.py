@@ -2491,6 +2491,7 @@ class _defs_node_edit:
             icon="ops.node.links_cut",
             widget=None,
             keymap="Node Tool: Links Cut",
+            options={'KEYMAP_FALLBACK'},
         )
 
 
@@ -2524,6 +2525,7 @@ class _defs_sequencer_generic:
             widget=None,
             keymap="Sequencer Tool: Blade",
             draw_settings=draw_settings,
+            options={'KEYMAP_FALLBACK'},
         )
 
     @ToolDef.from_fn

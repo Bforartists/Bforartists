@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4293,6 +4293,10 @@ msgid "Both Z"
 msgstr "Obe Z"
 
 
+msgid "Fonts"
+msgstr "Fontovi"
+
+
 msgid "File Select Parameters"
 msgstr "Parametri izbora datoteka"
 
@@ -4375,10 +4379,6 @@ msgstr "Relativna putanja"
 
 msgid "Environment"
 msgstr "Okruženje"
-
-
-msgid "Fonts"
-msgstr "Fontovi"
 
 
 msgid "Directory"
@@ -11866,6 +11866,14 @@ msgid "Only Faces"
 msgstr "Samo stranice"
 
 
+msgid "Linear interpolation"
+msgstr "Linearna interpolacija"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Bez interpolacije (jednostavni susedni tekseli)"
+
+
 msgid "Z Axis"
 msgstr "Z osa"
 
@@ -12060,14 +12068,6 @@ msgstr "Tekstura okruženja"
 
 msgid "Texture interpolation"
 msgstr "Interpolacija teksture"
-
-
-msgid "Linear interpolation"
-msgstr "Linearna interpolacija"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Bez interpolacije (jednostavni susedni tekseli)"
 
 
 msgid "Projection"
@@ -15127,6 +15127,14 @@ msgstr "Izabor za kursor"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
+
+
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
 
 
 msgctxt "Operator"
@@ -23518,14 +23526,6 @@ msgstr "Lokacija 2D kursora"
 
 msgid "2D cursor location for this view"
 msgstr "Lokacija 2D kursora u ovom pogledu"
-
-
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
 
 
 msgid "Alpha Channel"

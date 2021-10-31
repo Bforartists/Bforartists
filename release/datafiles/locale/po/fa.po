@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2306,6 +2306,10 @@ msgid "Select domain object of the smoke simulation"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
+msgid "Fonts"
+msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
+
+
 msgid "Save"
 msgstr "ﻩﺮﯿﺧﺫ"
 
@@ -2364,10 +2368,6 @@ msgstr "ﻩﺮﺠﻨﭘ ﺖﯾﺮﯾﺪﻣ"
 
 msgid "World"
 msgstr "ﻥﺎﻬﺟ"
-
-
-msgid "Fonts"
-msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
 
 
 msgid "Link"
@@ -5937,6 +5937,10 @@ msgid "Original"
 msgstr "ﯽﻠﺻﺍ"
 
 
+msgid "Linear interpolation"
+msgstr "ﻡﺎﻏﺩﺍ"
+
+
 msgid "Z Axis"
 msgstr "Z ﺭﻮﺤﻣ"
 
@@ -6075,10 +6079,6 @@ msgstr "ﺎﻫ‌ﺖﻓﺎﺑ"
 
 msgid "Texture Coordinate"
 msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Linear interpolation"
-msgstr "ﻡﺎﻏﺩﺍ"
 
 
 msgid "Projection"
@@ -11538,6 +11538,10 @@ msgid "Restrict"
 msgstr "ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 
+msgid "Integrator Presets"
+msgstr "ﻡﺎﻏﺩﺍ"
+
+
 msgid "Bone Constraints"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
@@ -11580,10 +11584,6 @@ msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 msgid "Ray Visibility"
 msgstr "ﻪﻌﺷﺍ ﺪﯾﺩ"
-
-
-msgid "Integrator Presets"
-msgstr "ﻡﺎﻏﺩﺍ"
 
 
 msgid "Post Processing"
