@@ -315,10 +315,16 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         col = layout.column(align=True)
         col.active = not (cscene.use_adaptive_sampling and cscene.use_preview_adaptive_sampling)
         col.prop(cscene, "scrambling_distance", text="Scrambling Distance")
-        col.prop(cscene, "adaptive_scrambling_distance", text="Adaptive")
+        row = col.row()
+        row.use_property_split = False
+        row.separator()
+        row.prop(cscene, "adaptive_scrambling_distance", text="Adaptive")
         sub = col.row(align=True)
-        sub.active = not cscene.use_preview_adaptive_sampling
-        sub.prop(cscene, "preview_scrambling_distance", text="Viewport")
+        row = sub.row()
+        row.use_property_split = False
+        row.separator()
+        row.active = not cscene.use_preview_adaptive_sampling
+        row.prop(cscene, "preview_scrambling_distance", text="Viewport")
 
         layout.separator()
 
