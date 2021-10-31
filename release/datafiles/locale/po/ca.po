@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3344,6 +3344,10 @@ msgid "Z Direction"
 msgstr "Seleccionar connectats"
 
 
+msgid "Fonts"
+msgstr "Duplicar"
+
+
 msgid "File Select Parameters"
 msgstr "Seleccionar fila"
 
@@ -3385,10 +3389,6 @@ msgstr "Texte"
 
 
 msgid "Window Manager"
-msgstr "Duplicar"
-
-
-msgid "Fonts"
 msgstr "Duplicar"
 
 
@@ -10084,6 +10084,10 @@ msgid "Only Faces"
 msgstr "Corba"
 
 
+msgid "Linear interpolation"
+msgstr "Esborrar Rotació"
+
+
 msgid "Z Axis"
 msgstr "Ampliar"
 
@@ -10274,10 +10278,6 @@ msgstr "Texte"
 
 msgid "Environment Texture"
 msgstr "Desparentar"
-
-
-msgid "Linear interpolation"
-msgstr "Esborrar Rotació"
 
 
 msgid "Projection"
@@ -13120,6 +13120,14 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
+
+
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -19501,6 +19509,10 @@ msgid "Restrict"
 msgstr "Començar Joc"
 
 
+msgid "Integrator Presets"
+msgstr "Render"
+
+
 msgid "Bone Constraints"
 msgstr "Afegir Tira"
 
@@ -19563,10 +19575,6 @@ msgstr "Render"
 
 msgid "Ray Visibility"
 msgstr "Cíclic"
-
-
-msgid "Integrator Presets"
-msgstr "Render"
 
 
 msgid "Film"
@@ -21847,14 +21855,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"

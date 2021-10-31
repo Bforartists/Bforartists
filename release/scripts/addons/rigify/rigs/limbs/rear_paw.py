@@ -39,7 +39,7 @@ class Rig(pawRig):
     # EXTRA BONES
     #
     # mch:
-    #   ik2_stretch, ik2_target
+    #   ik2_target
     #     Three bone IK stretch limit
     #   ik2_chain[2]
     #     Second IK system (pre-driving thigh and ik3)
@@ -88,13 +88,7 @@ class Rig(pawRig):
     def make_ik2_mch_stretch(self):
         orgs = self.bones.org.main
 
-        self.bones.mch.ik2_stretch = self.make_ik2_mch_stretch_bone(orgs)
         self.bones.mch.ik2_target = self.make_ik2_mch_target_bone(orgs)
-
-    def make_ik2_mch_stretch_bone(self, orgs):
-        name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik2_stretch'))
-        self.get_bone(name).tail = self.get_bone(orgs[3]).head
-        return name
 
     def make_ik2_mch_target_bone(self, orgs):
         return self.copy_bone(orgs[3], make_derived_name(orgs[0], 'mch', '_ik2_target'), scale=1/2)
@@ -120,7 +114,6 @@ class Rig(pawRig):
     @stage.parent_bones
     def parent_ik2_mch_chain(self):
         mch = self.bones.mch
-        self.set_bone_parent(mch.ik2_stretch, mch.follow)
         self.set_bone_parent(mch.ik2_target, self.get_ik2_input_bone())
         self.set_bone_parent(mch.ik2_chain[0], self.bones.ctrl.ik_base, inherit_scale='AVERAGE')
         self.parent_bone_chain(mch.ik2_chain, use_connect=True)
@@ -143,7 +136,7 @@ class Rig(pawRig):
         input_bone = self.get_ik2_input_bone()
         head_tail = 1 if self.use_heel2 else 0
 
-        self.rig_ik_mch_stretch_bones(mch.ik2_target, mch.ik2_stretch, input_bone, head_tail, 3)
+        self.rig_ik_mch_stretch_limit(mch.ik2_target, mch.follow, input_bone, head_tail, 3)
         self.rig_ik_mch_end_bone(mch.ik2_chain[-1], mch.ik2_target, self.bones.ctrl.ik_pole)
 
 

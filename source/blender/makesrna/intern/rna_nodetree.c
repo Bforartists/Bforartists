@@ -2056,7 +2056,8 @@ static bool switch_type_supported(const EnumPropertyItem *item)
               SOCK_OBJECT,
               SOCK_COLLECTION,
               SOCK_TEXTURE,
-              SOCK_MATERIAL);
+              SOCK_MATERIAL,
+              SOCK_IMAGE);
 }
 
 static const EnumPropertyItem *rna_GeometryNodeSwitch_type_itemf(bContext *UNUSED(C),
@@ -5022,10 +5023,8 @@ static void def_fn_input_bool(StructRNA *srna)
 
   prop = RNA_def_property(srna, "boolean", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "boolean", 1);
-  RNA_def_property_ui_text(
-    prop, "Boolean", "Input value used for unconnected socket");
+  RNA_def_property_ui_text(prop, "Boolean", "Input value used for unconnected socket");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
 }
 
 static void def_fn_input_int(StructRNA *srna)
@@ -5037,8 +5036,7 @@ static void def_fn_input_int(StructRNA *srna)
   prop = RNA_def_property(srna, "integer", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "integer");
   RNA_def_property_int_default(prop, 1);
-  RNA_def_property_ui_text(
-    prop, "Integer", "Input value used for unconnected socket");
+  RNA_def_property_ui_text(prop, "Integer", "Input value used for unconnected socket");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -5413,6 +5411,50 @@ static void def_sh_tex_image(StructRNA *srna)
       prop,
       "Image User",
       "Parameters defining which layer, pass and frame of the image is displayed");
+  RNA_def_property_update(prop, 0, "rna_Node_update");
+}
+
+static void def_geo_image_texture(StructRNA *srna)
+{
+  static const EnumPropertyItem fn_tex_prop_interpolation_items[] = {
+      {SHD_INTERP_LINEAR, "Linear", 0, "Linear", "Linear interpolation"},
+      {SHD_INTERP_CLOSEST, "Closest", 0, "Closest", "No interpolation (sample closest texel)"},
+      {SHD_INTERP_CUBIC, "Cubic", 0, "Cubic", "Cubic interpolation"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  static const EnumPropertyItem prop_image_extension[] = {
+      {SHD_IMAGE_EXTENSION_REPEAT,
+       "REPEAT",
+       0,
+       "Repeat",
+       "Cause the image to repeat horizontally and vertically"},
+      {SHD_IMAGE_EXTENSION_EXTEND,
+       "EXTEND",
+       0,
+       "Extend",
+       "Extend by repeating edge pixels of the image"},
+      {SHD_IMAGE_EXTENSION_CLIP,
+       "CLIP",
+       0,
+       "Clip",
+       "Clip to image size and set exterior pixels as transparent"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryImageTexture", "storage");
+
+  prop = RNA_def_property(srna, "interpolation", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, fn_tex_prop_interpolation_items);
+  RNA_def_property_ui_text(prop, "Interpolation", "Method for smoothing values between pixels");
+  RNA_def_property_update(prop, 0, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, prop_image_extension);
+  RNA_def_property_ui_text(
+      prop, "Extension", "How the image is extrapolated past its original bounds");
   RNA_def_property_update(prop, 0, "rna_Node_update");
 }
 
@@ -10298,12 +10340,12 @@ static void def_geo_volume_to_mesh(StructRNA *srna)
       {VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT,
        "VOXEL_AMOUNT",
        0,
-       "Voxel Amount",
+       "Amount",
        "Desired number of voxels along one axis"},
       {VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE,
        "VOXEL_SIZE",
        0,
-       "Voxel Size",
+       "Size",
        "Desired voxel side length"},
       {0, NULL, 0, NULL, NULL},
   };
@@ -11031,6 +11073,20 @@ static void def_geo_separate_geometry(StructRNA *srna)
   RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
   RNA_def_property_ui_text(prop, "Domain", "Which domain to separate on");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_geo_viewer(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeGeometryViewer", "storage");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_type_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_GeometryNodeAttributeFill_type_itemf");
+  RNA_def_property_enum_default(prop, CD_PROP_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_GeometryNode_socket_update");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -13583,11 +13639,11 @@ static int node_type_to_icon(int type)
     case FN_NODE_ROTATE_EULER:
       icon = ICON_ROTATE_EULER;
       break;
+    //case FN_NODE_SLICE_STRING:
+    //  icon = ICON_DELETE;
+    //  break;
     case FN_NODE_STRING_LENGTH:
       icon = ICON_STRING_LENGTH;
-      break;
-    case FN_NODE_STRING_SUBSTRING:
-      icon = ICON_STRING_SUBSTRING;
       break;
     case FN_NODE_VALUE_TO_STRING:
       icon = ICON_VALUE_TO_STRING;
@@ -13711,20 +13767,21 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_LEGACY_SUBDIVISION_SURFACE:
     //  icon = ICON_DELETE;
     //  break;
-    case GEO_NODE_CAPTURE_ATTRIBUTE:
-      icon = ICON_ATTRIBUTE_CAPTURE;
-      break;
+    // case GEO_NODE_LEGACY_VOLUME_TO_MESH:
+    //  icon = ICON_DELETE;
+    //  break;
+
     case GEO_NODE_ATTRIBUTE_REMOVE:
       icon = ICON_ATTRIBUTE_REMOVE;
       break;
     case GEO_NODE_ATTRIBUTE_STATISTIC:
       icon = ICON_ATTRIBUTE_STATISTIC;
       break;
-    case GEO_NODE_MESH_BOOLEAN:
-      icon = ICON_MOD_BOOLEAN;
-      break;
     case GEO_NODE_BOUNDING_BOX:
       icon = ICON_PIVOT_BOUNDBOX;
+      break;
+    case GEO_NODE_CAPTURE_ATTRIBUTE:
+      icon = ICON_ATTRIBUTE_CAPTURE;
       break;
     case GEO_NODE_COLLECTION_INFO:
       icon = ICON_COLLECTION_INFO;
@@ -13735,12 +13792,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_ENDPOINT_SELECTION:
       icon = ICON_SELECT_LAST;
       break;
-    case GEO_NODE_FILL_CURVE:
-      icon = ICON_CURVE_FILL;
-      break;
-    case GEO_NODE_FILLET_CURVE:
-      icon = ICON_CURVE_FILLET;
-      break;
     case GEO_NODE_CURVE_HANDLE_TYPE_SELECTION:
       icon = ICON_SELECT_HANDLETYPE;
       break;
@@ -13749,9 +13800,6 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_CURVE_PARAMETER:
       icon = ICON_CURVE_PARAMETER;
-      break;
-    case GEO_NODE_CURVE_TO_POINTS:
-      icon = ICON_POINTCLOUD_DATA;
       break;
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
       icon = ICON_CURVE_BEZCURVE;
@@ -13774,53 +13822,50 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PRIMITIVE_STAR:
       icon = ICON_CURVE_STAR;
       break;
-    case GEO_NODE_RESAMPLE_CURVE:
-      icon = ICON_CURVE_RESAMPLE;
-      break;
-    case GEO_NODE_REVERSE_CURVE:
-      icon = ICON_SWITCH_DIRECTION;
-      break;
-    case GEO_NODE_SAMPLE_CURVE:
-      icon = ICON_CURVE_SAMPLE;
-      break;
     case GEO_NODE_CURVE_SET_HANDLES:
       icon = ICON_HANDLE_AUTO;
       break;
     case GEO_NODE_CURVE_SPLINE_TYPE:
       icon = ICON_SPLINE_TYPE;
       break;
-    case GEO_NODE_SUBDIVIDE_CURVE:
-      icon = ICON_SUBDIVIDE_EDGES;
-      break;
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
       break;
-    case GEO_NODE_TRIM_CURVE:
-      icon = ICON_CURVE_TRIM;
-      break;
+    //case GEO_NODE_CURVE_TO_POINTS:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
       break;
-    case GEO_NODE_SPLIT_EDGES:
-      icon = ICON_SPLITEDGE;
-      break;
+    //case GEO_NODE_FILL_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
+    //case GEO_NODE_FILLET_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_IMAGE_TEXTURE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_CURVE_HANDLES:
       icon = ICON_CURVE_HANDLE_POSITIONS;
       break;
     case GEO_NODE_INPUT_CURVE_TILT:
       icon = ICON_CURVE_TILT;
       break;
+    // case GEO_NODE_INPUT_ID:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
-    case GEO_NODE_INPUT_MATERIAL:
-      icon = ICON_NODE_MATERIAL;
-      break;
     case GEO_NODE_INPUT_MATERIAL_INDEX:
       icon = ICON_MATERIAL_INDEX;
+      break;
+    case GEO_NODE_INPUT_MATERIAL:
+      icon = ICON_NODE_MATERIAL;
       break;
     case GEO_NODE_INPUT_NORMAL:
       icon = ICON_RECALC_NORMALS;
@@ -13858,9 +13903,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_JOIN_GEOMETRY:
       icon = ICON_JOIN;
       break;
-    case GEO_NODE_REPLACE_MATERIAL:
-      icon = ICON_MATERIAL_REPLACE;
-      break;
     case GEO_NODE_MATERIAL_SELECTION:
       icon = ICON_SELECT_BY_MATERIAL;
       break;
@@ -13888,9 +13930,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_PRIMITIVE_UV_SPHERE:
       icon = ICON_MESH_UVSPHERE;
       break;
-    case GEO_NODE_SUBDIVIDE_MESH:
-      icon = ICON_SUBDIVIDE_MESH;
-      break;
     case GEO_NODE_MESH_TO_CURVE:
       icon = ICON_OUTLINER_OB_CURVE;
       break;
@@ -13915,9 +13954,21 @@ static int node_type_to_icon(int type)
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
       break;
+    case GEO_NODE_REPLACE_MATERIAL:
+      icon = ICON_MATERIAL_REPLACE;
+      break;
+    // case GEO_NODE_RESAMPLE_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
+    // case GEO_NODE_REVERSE_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_ROTATE_INSTANCES:
       icon = ICON_ROTATE_INSTANCE;
       break;
+    // case GEO_NODE_SAMPLE_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_SCALE_INSTANCES:
       icon = ICON_SCALE_INSTANCE;
       break;
@@ -13936,11 +13987,14 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_CURVE_TILT:
       icon = ICON_SET_CURVE_TILT;
       break;
-    case GEO_NODE_SET_MATERIAL:
-      icon = ICON_MATERIAL_ADD;
-      break;
+    // case GEO_NODE_SET_ID:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_SET_MATERIAL_INDEX:
       icon = ICON_SET_MATERIAL_INDEX;
+      break;
+    case GEO_NODE_SET_MATERIAL:
+      icon = ICON_MATERIAL_ADD;
       break;
     case GEO_NODE_SET_POINT_RADIUS:
       icon = ICON_SET_CURVE_RADIUS;
@@ -13957,11 +14011,20 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_SPLINE_RESOLUTION:
       icon = ICON_SET_SPLINE_RESOLUTION;
       break;
+    // case GEO_NODE_SPLIT_EDGES:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_STRING_JOIN:
       icon = ICON_STRING_JOIN;
       break;
     case GEO_NODE_STRING_TO_CURVES:
       icon = ICON_STRING_TO_CURVE;
+      break;
+    // case GEO_NODE_SUBDIVIDE_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
+    case GEO_NODE_SUBDIVIDE_MESH:
+      icon = ICON_SUBDIVIDE_MESH;
       break;
     case GEO_NODE_SUBDIVISION_SURFACE:
       icon = ICON_SUBDIVIDE_EDGES;
@@ -13981,6 +14044,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
       break;
+    // case GEO_NODE_TRIM_CURVE:
+    //  icon = ICON_DELETE;
+    //  break;
     case GEO_NODE_VIEWER:
       icon = ICON_NODE_VIEWER;
       break;

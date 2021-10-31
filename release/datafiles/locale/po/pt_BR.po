@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -8838,6 +8838,22 @@ msgid "Both Z"
 msgstr "Ambos Z"
 
 
+msgid "Fonts"
+msgstr "Fontes"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Freestyle - Estilos de linhas"
+
+
+msgid "Node Trees"
+msgstr "Árvores de nós"
+
+
+msgid "Particles Settings"
+msgstr "Configurações de partículas"
+
+
 msgid "File Select Parameters"
 msgstr "Parâmetros de seleção de arquivo"
 
@@ -8964,22 +8980,6 @@ msgstr "Imagens e sons"
 
 msgid "Miscellaneous"
 msgstr "Miscelânea"
-
-
-msgid "Fonts"
-msgstr "Fontes"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Freestyle - Estilos de linhas"
-
-
-msgid "Node Trees"
-msgstr "Árvores de nós"
-
-
-msgid "Particles Settings"
-msgstr "Configurações de partículas"
 
 
 msgid "Directory"
@@ -28030,6 +28030,10 @@ msgid "Equal"
 msgstr "Igual"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Valor de entrada usado para soquete não conectado."
+
+
 msgid "Original"
 msgstr "Original"
 
@@ -28044,6 +28048,18 @@ msgstr "Somente arestas e faces"
 
 msgid "Only Faces"
 msgstr "Somente faces"
+
+
+msgid "Linear interpolation"
+msgstr "Interpolação linear"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Sem interpolação (usa as amostras do texel mais próximo)."
+
+
+msgid "Cubic interpolation"
+msgstr "Interpolação cúbica"
 
 
 msgid "Cross Product"
@@ -28501,18 +28517,6 @@ msgstr "Textura de ambiente"
 
 msgid "Texture interpolation"
 msgstr "Interpolação de textura"
-
-
-msgid "Linear interpolation"
-msgstr "Interpolação linear"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Sem interpolação (usa as amostras do texel mais próximo)."
-
-
-msgid "Cubic interpolation"
-msgstr "Interpolação cúbica"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -29045,10 +29049,6 @@ msgstr "Conector de valor booleano de um nó."
 
 msgid "Default Value"
 msgstr "Valor padrão"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Valor de entrada usado para soquete não conectado."
 
 
 msgid "Color Node Socket"
@@ -34980,6 +34980,14 @@ msgstr "Subdividir traços"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
+
+
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
 
 
 msgctxt "Operator"
@@ -49323,6 +49331,14 @@ msgid "Pin"
 msgstr "Afixar"
 
 
+msgid "Integrator Presets"
+msgstr "Predefinições de integrador"
+
+
+msgid "Sampling Presets"
+msgstr "Predefinições de amostragem"
+
+
 msgid "Bone Constraints"
 msgstr "Restrições de ossos"
 
@@ -49430,16 +49446,8 @@ msgid "Ray Visibility"
 msgstr "Visibilidade dos raios projetados"
 
 
-msgid "Integrator Presets"
-msgstr "Predefinições de integrador"
-
-
 msgid "Post Processing"
 msgstr "Pós processamento"
-
-
-msgid "Sampling Presets"
-msgstr "Predefinições de amostragem"
 
 
 msgid "Film"
@@ -52928,10 +52936,6 @@ msgid "Sampling Pattern"
 msgstr "Amostragem padrão"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Usa as amostragens aleatórias padrão, usadas pelo integrador."
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -56418,14 +56422,6 @@ msgstr "Mascara os mostrados e editados dentro deste espaço."
 
 msgid "Outline"
 msgstr "Contorno"
-
-
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
 
 
 msgid "Overlay Mode"

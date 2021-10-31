@@ -51,13 +51,13 @@ def upload_comment_thread(url, comment='', api_key=None):
     # try:
     r = rerequests.put(url, data=data, verify=True, headers=headers)
     print(r)
-    print(dir(r))
+    # print(dir(r))
     print(r.text)
     # except requests.exceptions.RequestException as e:
     #     print('ratings upload failed: %s' % str(e))
 
 
-def upload_comment_flag_thread(url, comment_id='', flag='like', api_key=None):
+def upload_comment_flag_thread( asset_id = '', comment_id='', flag='like', api_key=None):
     ''' Upload rating thread function / disconnected from blender data.'''
     headers = utils.get_headers(api_key)
 
@@ -68,15 +68,21 @@ def upload_comment_flag_thread(url, comment_id='', flag='like', api_key=None):
         "comment": comment_id,
         "flag": flag,
     }
+    url = paths.get_api_url() + 'comments/feedback/'
 
     # try:
     r = rerequests.post(url, data=data, verify=True, headers=headers)
-    print(r)
-    print(dir(r))
     print(r.text)
-    # except requests.exceptions.RequestException as e:
-    #     print('ratings upload failed: %s' % str(e))
 
+    #here it's important we read back, so likes are updated accordingly:
+    get_comments(asset_id, api_key)
+
+
+def send_comment_flag_to_thread(asset_id = '', comment_id='', flag='like', api_key = None):
+    '''Sens rating into thread rating, main purpose is for tasks_queue.
+    One function per property to avoid lost data due to stashing.'''
+    thread = threading.Thread(target=upload_comment_flag_thread, args=(asset_id, comment_id, flag, api_key))
+    thread.start()
 
 def send_comment_to_thread(url, comment, api_key):
     '''Sens rating into thread rating, main purpose is for tasks_queue.
@@ -100,6 +106,14 @@ def get_comments_local(asset_id):
         return comments
     return None
 
+def get_comments_thread(asset_id, api_key):
+    thread = threading.Thread(target=get_comments, args=([asset_id, api_key]), daemon=True)
+    thread.start()
+
+
+def get_comments_thread(asset_id, api_key):
+    thread = threading.Thread(target=get_comments, args=([asset_id, api_key]), daemon=True)
+    thread.start()
 
 def get_comments(asset_id, api_key):
     '''
@@ -120,11 +134,12 @@ def get_comments(asset_id, api_key):
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r is None:
         return
+    print(r.status_code)
     if r.status_code == 200:
         rj = r.json()
-        comments = []
         # store comments - send them to task queue
-
+        # print('retrieved comments')
+        # print(rj)
         tasks_queue.add_task((store_comments_local, (asset_id, rj['results'])))
 
         # if len(rj['results'])==0:
@@ -132,20 +147,21 @@ def get_comments(asset_id, api_key):
         #     tasks_queue.add_task((store_rating_local_empty,(asset_id,)))
         # return ratings
 
+
+def store_notifications_count_local(all_count):
+    '''Store total count of notifications on server in preferences'''
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    user_preferences.notifications_counter = all_count
+
 def store_notifications_local(notifications):
+    '''Store notifications in Blender'''
     bpy.context.window_manager['bkit notifications'] = notifications
 
-def count_unread_notifications():
-    notifications = bpy.context.window_manager.get('bkit notifications')
-    if notifications is None:
-        return 0
-    unread = 0
-    for n in notifications:
-        
-        if n['unread'] == 1:
-            unread +=1
-    print('counted', unread)
-    return unread
+def count_all_notifications():
+    '''Return count of all notifications on server'''
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    return user_preferences.notifications_counter
+
 
 def check_notifications_read():
     '''checks if all notifications were already read, and removes them if so'''
@@ -158,14 +174,18 @@ def check_notifications_read():
     bpy.context.window_manager['bkit notifications'] = None
     return True
 
-def get_notifications(api_key, unread_count = 1000):
+def get_notifications_thread(api_key, all_count = 1000):
+    thread = threading.Thread(target=get_notifications, args=([api_key, all_count]), daemon=True)
+    thread.start()
+
+def get_notifications(api_key, all_count = 1000):
     '''
     Retrieve notifications from BlenderKit server. Can be run from a thread.
 
     Parameters
     ----------
     api_key
-    unread_count
+    all_count
 
     Returns
     -------
@@ -174,14 +194,16 @@ def get_notifications(api_key, unread_count = 1000):
 
     params = {}
 
-    url = paths.get_api_url() + 'notifications/api/unread_count/'
+    url = paths.get_api_url() + 'notifications/all_count/'
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r.status_code ==200:
         rj = r.json()
+        print(rj)
         # no new notifications?
-        if unread_count >= rj['unreadCount']:
+        if all_count >= rj['allCount']:
+            tasks_queue.add_task((store_notifications_count_local, ([rj['allCount']])))
+
             return
-    print('notifications', unread_count, rj['unreadCount'])
     url = paths.get_api_url() + 'notifications/unread/'
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r is None:
@@ -191,6 +213,9 @@ def get_notifications(api_key, unread_count = 1000):
         # store notifications - send them to task queue
         tasks_queue.add_task((store_notifications_local, ([rj])))
 
+def mark_notification_read_thread(api_key, notification_id):
+    thread = threading.Thread(target=mark_notification_read, args=([api_key, notification_id]), daemon=True)
+    thread.start()
 
 def mark_notification_read(api_key, notification_id):
     '''
@@ -203,6 +228,7 @@ def mark_notification_read(api_key, notification_id):
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r is None:
         return
+    # print(r.text)
     # if r.status_code == 200:
     #     rj = r.json()
     #     # store notifications - send them to task queue

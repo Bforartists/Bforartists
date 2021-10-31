@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -11853,6 +11853,162 @@ msgid "Both Z"
 msgstr "両方のZ"
 
 
+msgid "Show Armature data-blocks"
+msgstr "アーマチュアデータブロックを表示します"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "ブラシデータブロックを表示します"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "キャッシュファイルデータブロックを表示します"
+
+
+msgid "Show Camera data-blocks"
+msgstr "カメラデータブロックを表示します"
+
+
+msgid "Show Curve data-blocks"
+msgstr "カーブデータブロックを表示します"
+
+
+msgid "Fonts"
+msgstr "フォント"
+
+
+msgid "Show Font data-blocks"
+msgstr "フォントデータブロックを表示します"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "グリースペンシルデータブロックを表示します"
+
+
+msgid "Show Collection data-blocks"
+msgstr "コレクションデータブロックを表示します"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "ヘアーデータブロックを表示/隠します"
+
+
+msgid "Show Image data-blocks"
+msgstr "画像データブロックを表示します"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "ラティスデータブロックを表示します"
+
+
+msgid "Show Light data-blocks"
+msgstr "ライトデータブロックを表示します"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "ライトプローブデータブロックを表示します"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Freestyleラインスタイル"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Freestyleラインスタイルデータブロックを表示します"
+
+
+msgid "Show Mask data-blocks"
+msgstr "マスクデータブロックを表示します"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "メッシュデータブロックを表示します"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "メタボールデータブロックを表示します"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "動画クリップデータブロックを表示します"
+
+
+msgid "Node Trees"
+msgstr "ノードツリー"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "ノードツリーデータブロックを表示します"
+
+
+msgid "Show Object data-blocks"
+msgstr "オブジェクトデータブロックを表示します"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "ペイントカーブデータブロックを表示します"
+
+
+msgid "Show Palette data-blocks"
+msgstr "パレットデータブロックを表示します"
+
+
+msgid "Particles Settings"
+msgstr "パーティクル設定"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "パーティクル設定データブロックを表示します"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "ポイントクラウドデータブロックを表示/隠します"
+
+
+msgid "Show Scene data-blocks"
+msgstr "シーンデータブロックを表示します"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "シミュレーションデータブロックを表示します"
+
+
+msgid "Show Sound data-blocks"
+msgstr "音声データブロックを表示します"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "スピーカーデータブロックを表示します"
+
+
+msgid "Show Text data-blocks"
+msgstr "テキストデータブロックを表示します"
+
+
+msgid "Show Texture data-blocks"
+msgstr "テクスチャデータブロックを表示します"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "ボリュームデータブロックを表示/隠します"
+
+
+msgid "Show workspace data-blocks"
+msgstr "ワークスペースデータブロックを表示します"
+
+
+msgid "Show Action data-blocks"
+msgstr "アクションデータブロックを表示します"
+
+
+msgid "Show Material data-blocks"
+msgstr "マテリアルデータブロックを表示します"
+
+
+msgid "Show World data-blocks"
+msgstr "ワールドデータブロックを表示します"
+
+
 msgid "File Select Parameters"
 msgstr "ファイル選択パラメーター"
 
@@ -12069,162 +12225,6 @@ msgstr "シーンを表示します"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "マテリアル、ノードツリー、テクスチャ、Freestyle ラインスタイルを表示します"
-
-
-msgid "Show Action data-blocks"
-msgstr "アクションデータブロックを表示します"
-
-
-msgid "Show Armature data-blocks"
-msgstr "アーマチュアデータブロックを表示します"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "ブラシデータブロックを表示します"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "キャッシュファイルデータブロックを表示します"
-
-
-msgid "Show Camera data-blocks"
-msgstr "カメラデータブロックを表示します"
-
-
-msgid "Show Curve data-blocks"
-msgstr "カーブデータブロックを表示します"
-
-
-msgid "Fonts"
-msgstr "フォント"
-
-
-msgid "Show Font data-blocks"
-msgstr "フォントデータブロックを表示します"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "グリースペンシルデータブロックを表示します"
-
-
-msgid "Show Collection data-blocks"
-msgstr "コレクションデータブロックを表示します"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "ヘアーデータブロックを表示/隠します"
-
-
-msgid "Show Image data-blocks"
-msgstr "画像データブロックを表示します"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "ラティスデータブロックを表示します"
-
-
-msgid "Show Light data-blocks"
-msgstr "ライトデータブロックを表示します"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "ライトプローブデータブロックを表示します"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Freestyleラインスタイル"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Freestyleラインスタイルデータブロックを表示します"
-
-
-msgid "Show Mask data-blocks"
-msgstr "マスクデータブロックを表示します"
-
-
-msgid "Show Material data-blocks"
-msgstr "マテリアルデータブロックを表示します"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "メッシュデータブロックを表示します"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "メタボールデータブロックを表示します"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "動画クリップデータブロックを表示します"
-
-
-msgid "Node Trees"
-msgstr "ノードツリー"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "ノードツリーデータブロックを表示します"
-
-
-msgid "Show Object data-blocks"
-msgstr "オブジェクトデータブロックを表示します"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "ペイントカーブデータブロックを表示します"
-
-
-msgid "Show Palette data-blocks"
-msgstr "パレットデータブロックを表示します"
-
-
-msgid "Particles Settings"
-msgstr "パーティクル設定"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "パーティクル設定データブロックを表示します"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "ポイントクラウドデータブロックを表示/隠します"
-
-
-msgid "Show Scene data-blocks"
-msgstr "シーンデータブロックを表示します"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "シミュレーションデータブロックを表示します"
-
-
-msgid "Show Sound data-blocks"
-msgstr "音声データブロックを表示します"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "スピーカーデータブロックを表示します"
-
-
-msgid "Show Text data-blocks"
-msgstr "テキストデータブロックを表示します"
-
-
-msgid "Show Texture data-blocks"
-msgstr "テクスチャデータブロックを表示します"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "ボリュームデータブロックを表示/隠します"
-
-
-msgid "Show workspace data-blocks"
-msgstr "ワークスペースデータブロックを表示します"
-
-
-msgid "Show World data-blocks"
-msgstr "ワールドデータブロックを表示します"
 
 
 msgid "Directory"
@@ -29836,6 +29836,11 @@ msgid "AZone FullScr"
 msgstr "Aゾーン全画面"
 
 
+msgctxt "UI_Events_KeyMaps"
+msgid "XR Action"
+msgstr "XRアクション"
+
+
 msgid "Map Type"
 msgstr "マップの種類"
 
@@ -41559,6 +41564,10 @@ msgid "Function Node"
 msgstr "関数ノード"
 
 
+msgid "Align Euler To Vector"
+msgstr "オイラーをベクトルに整列"
+
+
 msgid "Axis to align to the vector"
 msgstr "ベクトルに回転を揃える軸"
 
@@ -41621,6 +41630,10 @@ msgstr "入力のうち最低一つが true の場合 true を出力します"
 
 msgid "Outputs the opposite of the input"
 msgstr "出力が入力の反対になります"
+
+
+msgid "Compare Floats"
+msgstr "Float比較"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41695,6 +41708,10 @@ msgid "Round the float to the closest integer in the direction of zero (floor if
 msgstr "0の方向に一番近い整数に丸めます（正の場合は床、負の場合は天井）"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "ソケット未接続時に使用される値"
+
+
 msgid "Random Float"
 msgstr "ランダムFloat"
 
@@ -41755,6 +41772,18 @@ msgid "Which domain to read the data from"
 msgstr "データを読み込むドメイン"
 
 
+msgid "Transfer Attribute"
+msgstr "属性転送"
+
+
+msgid "The type for the source and result data"
+msgstr "転送元と結果のデータのタイプ"
+
+
+msgid "The domain to use on the target geometry"
+msgstr "使用するターゲットジオメトリのあるドメイン"
+
+
 msgid "Mapping between geometries"
 msgstr "ジオメトリ間のマッピング"
 
@@ -41769,6 +41798,10 @@ msgid "Transfer the element from the nearest element (using face and edge center
 msgstr ""
 "最近接の要素に属性を転送します\n"
 "（面や辺の中心を距離の計算に使用）"
+
+
+msgid "Capture Attribute"
+msgstr "属性キャプチャ"
 
 
 msgid "Which domain to store the data in"
@@ -41959,6 +41992,32 @@ msgid "Curve to Mesh"
 msgstr "カーブからメッシュへ"
 
 
+msgid "Curve to Points"
+msgstr "カーブからポイントへ"
+
+
+msgid "How to generate points from the input curve"
+msgstr "入力カーブからポイントを生成する方法"
+
+
+msgid "Evaluated"
+msgstr "評価済"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr ""
+"NURBS やベジエスプラインの解像度属性を元に\n"
+"カーブの評価済みポイントからポイントを生成します"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "各スプラインを指定のポイント数で均一にサンプリングします"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "各スプラインを指定の長さで分割しサンプリングします"
+
+
 msgid "Geometry Custom Group"
 msgstr "ジオメトリカスタムグループ"
 
@@ -41968,11 +42027,15 @@ msgstr "Python ノード用のカスタムジオメトリグループノード"
 
 
 msgid "Delete Geometry"
-msgstr "形状を削除"
+msgstr "ジオメトリ削除"
 
 
 msgid "Which domain to delete in"
 msgstr "削除対象のあるドメイン"
+
+
+msgid "Which parts of the mesh component to delete"
+msgstr "削除する部分のメッシュ要素の種類"
 
 
 msgid "Only Edges & Faces"
@@ -42003,8 +42066,16 @@ msgid "Distribute the points randomly on the surface while taking a minimum dist
 msgstr "各ポイント間で最低距離を取りつつ、ポイントをサーフェス上にランダムに配置します"
 
 
+msgid "Fill Curve"
+msgstr "カーブフィル"
+
+
 msgid "N-gons"
 msgstr "Nゴン"
+
+
+msgid "Fillet Curve"
+msgstr "カーブフィレット"
 
 
 msgid "Align Bezier handles to create circular arcs at each control point"
@@ -42015,16 +42086,36 @@ msgid "Add control points along a circular arc (handle type is vector if Bezier 
 msgstr "円弧に沿って制御点を追加します（ベジエスプラインの場合、ハンドルタイプはベクトル）"
 
 
+msgid "Linear interpolation"
+msgstr "リニア補間"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "補間なし（最も近いテクセルをサンプリング）"
+
+
+msgid "Cubic interpolation"
+msgstr "三次補間"
+
+
+msgid "Curve Handle Positions"
+msgstr "カーブハンドル位置"
+
+
+msgid "Curve Tilt"
+msgstr "カーブ傾き"
+
+
+msgid "Spline Resolution"
+msgstr "スプライン解像度"
+
+
 msgid "Curve Tangent"
 msgstr "カーブタンジェント"
 
 
 msgid "Instance on Points"
 msgstr "ポイントにインスタンス作成"
-
-
-msgid "Is Viewport"
-msgstr "ビューポート判定"
 
 
 msgid "Join Geometry"
@@ -42413,32 +42504,6 @@ msgid "Cuts Type"
 msgstr "カットタイプ"
 
 
-msgid "Curve to Points"
-msgstr "カーブからポイントへ"
-
-
-msgid "How to generate points from the input curve"
-msgstr "入力カーブからポイントを生成する方法"
-
-
-msgid "Evaluated"
-msgstr "評価済"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr ""
-"NURBS やベジエスプラインの解像度属性を元に\n"
-"カーブの評価済みポイントからポイントを生成します"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "各スプラインを指定のポイント数で均一にサンプリングします"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "各スプラインを指定の長さで分割しサンプリングします"
-
-
 msgid "Material Assign"
 msgstr "マテリアル割当"
 
@@ -42551,6 +42616,10 @@ msgid "Material Selection"
 msgstr "マテリアルで選択"
 
 
+msgid "Mesh Boolean"
+msgstr "メッシュブーリアン"
+
+
 msgid "Mesh Circle"
 msgstr "メッシュ円"
 
@@ -42655,6 +42724,10 @@ msgid "Realize Instances"
 msgstr "インスタンス実体化"
 
 
+msgid "Replace Material"
+msgstr "マテリアル置換"
+
+
 msgid "Resample Curve"
 msgstr "カーブ再取得"
 
@@ -42669,6 +42742,14 @@ msgstr "各スプライン毎に指定のポイントの数でサンプリング
 
 msgid "Calculate the number of samples by splitting each spline into segments with the specified length"
 msgstr "各スプラインを指定の長さで分割し、サンプル数を算出します"
+
+
+msgid "Reverse Curve"
+msgstr "カーブ反転"
+
+
+msgid "Rotate Instances"
+msgstr "インスタンス回転"
 
 
 msgid "Method for sampling input"
@@ -42691,12 +42772,48 @@ msgid "Which domain to separate on"
 msgstr "分離対象のあるドメイン"
 
 
+msgid "Set Handle Positions"
+msgstr "ハンドル位置設定"
+
+
+msgid "Set Curve Radius"
+msgstr "カーブ半径設定"
+
+
+msgid "Set Curve Tilt"
+msgstr "カーブ傾き設定"
+
+
+msgid "Set Material"
+msgstr "マテリアル設定"
+
+
+msgid "Set Material Index"
+msgstr "マテリアルインデックス設定"
+
+
+msgid "Set Point Radius"
+msgstr "ポイント半径設定"
+
+
 msgid "Set Position"
 msgstr "位置設定"
 
 
+msgid "Set Shade Smooth"
+msgstr "スムーズシェード設定"
+
+
+msgid "Set Spline Resolution"
+msgstr "スプライン解像度設定"
+
+
 msgid "Spline Length"
 msgstr "スプライン長さ"
+
+
+msgid "Split Edges"
+msgstr "辺分離"
 
 
 msgid "Join Strings"
@@ -42763,8 +42880,20 @@ msgid "Only output curves that fit within the width and height. Output the remai
 msgstr "幅と高さ内に収まる部分のカーブのみ出力します。残りは \"Remainder\" に出力します"
 
 
-msgid "How to find endpoint positions for the trimmed spline"
-msgstr "トリムしたスプラインの終点の位置を見つける方法"
+msgid "Subdivide Curve"
+msgstr "カーブ細分化"
+
+
+msgid "Subdivide Mesh"
+msgstr "メッシュ細分化"
+
+
+msgid "Translate Instances"
+msgstr "インスタンス移動"
+
+
+msgid "Trim Curve"
+msgstr "カーブトリム"
 
 
 msgid "Find the endpoint positions using a factor of each spline's length"
@@ -42968,6 +43097,10 @@ msgstr "サブサーフェスメソッド"
 
 msgid "Method for rendering subsurface scattering"
 msgstr "サブサーフェススキャッタリングをレンダリングする方法"
+
+
+msgid "Approximation to physically based volume scattering"
+msgstr "物理ベースのボリューム散乱の近似"
 
 
 msgid "Random Walk (Fixed Radius)"
@@ -43356,18 +43489,6 @@ msgstr "環境テクスチャ"
 
 msgid "Texture interpolation"
 msgstr "テクスチャ補間"
-
-
-msgid "Linear interpolation"
-msgstr "リニア補間"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "補間なし（最も近いテクセルをサンプリング）"
-
-
-msgid "Cubic interpolation"
-msgstr "三次補間"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -44018,10 +44139,6 @@ msgid "From socket"
 msgstr "ソケットから"
 
 
-msgid "Is Hidden"
-msgstr "非表示か？"
-
-
 msgid "Link is hidden due to invisible sockets"
 msgstr "非表示ソケットのおかげでリンクが非表示"
 
@@ -44162,10 +44279,6 @@ msgid "True if the socket can accept multiple ordered input links"
 msgstr "ソケットが複数の順番の入力リンクを許容する時に True"
 
 
-msgid "Is Output"
-msgstr "出力か否か"
-
-
 msgid "True if the socket is an output, otherwise input"
 msgstr "ソケットが出力なら True、そうでなければ入力"
 
@@ -44208,10 +44321,6 @@ msgstr "ノードのブーリアン値のソケット"
 
 msgid "Default Value"
 msgstr "デフォルト値"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "ソケット未接続時に使用される値"
 
 
 msgid "Collection Node Socket"
@@ -44959,8 +45068,9 @@ msgid "Paste keys from original time"
 msgstr "元の時間からキーを貼り付けます"
 
 
-msgid "Set Preview Range based on extents of selected Keyframes"
-msgstr "選択したキーフレームの範囲を元にプレビュー範囲設定"
+msgctxt "Operator"
+msgid "Set Preview Range to Selected"
+msgstr "選択範囲にプレビュー範囲を設定"
 
 
 msgctxt "Operator"
@@ -46367,6 +46477,23 @@ msgstr "親のパス"
 
 msgid "Optional path defining the location to put the new catalog under"
 msgstr "新規カタログを下に配置する位置を決めるパス（オプション）"
+
+
+msgid "Redo the last undone edit to the asset catalogs"
+msgstr "アセットカタログの最後に元に戻した編集をやり直します"
+
+
+msgctxt "Operator"
+msgid "Undo Catalog Edits"
+msgstr "カタログ編集を元に戻す"
+
+
+msgid "Undo the last edit to the asset catalogs"
+msgstr "アセットカタログの最後の編集を元に戻します"
+
+
+msgid "Store the current state of the asset catalogs in the undo buffer"
+msgstr "アセットカタログの現在の状態を「元に戻す」バッファに格納します"
 
 
 msgctxt "Operator"
@@ -53354,6 +53481,14 @@ msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgid "Black"
+msgstr "黒"
+
+
+msgid "White"
+msgstr "白"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "ストロークフィルをトランスフォーム"
@@ -53773,6 +53908,10 @@ msgstr "時間0を中心に時間を反転"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "選択中のキーフレームの時間を、表示とは逆順に反転します"
+
+
+msgid "Set Preview Range based on range of selected keyframes"
+msgstr "選択中のキーフレームの範囲を元にプレビュー範囲を設定します"
 
 
 msgctxt "Operator"
@@ -61656,6 +61795,19 @@ msgid "Update Object Paths"
 msgstr "オブジェクトパスを更新"
 
 
+msgid "Recalculate motion paths for selected objects"
+msgstr "選択中のオブジェクトのモーションパスを再計算します"
+
+
+msgctxt "Operator"
+msgid "Update All Object Paths"
+msgstr "全オブジェクトパスを更新"
+
+
+msgid "Recalculate all visible motion paths for objects and poses"
+msgstr "表示中のオブジェクトとポーズのすべてのモーションパスを再計算します"
+
+
 msgctxt "Operator"
 msgid "Add Point Cloud"
 msgstr "ポイントクラウドを追加"
@@ -64917,6 +65069,10 @@ msgid "Create Pose Asset"
 msgstr "ポーズアセットを作成"
 
 
+msgid "Create a new Action that contains the pose of the selected bones, and mark it as Asset. The asset will be stored in the current blend file"
+msgstr "選択中のボーンのポーズを含む新しいアクションを作成し、アセットとしてマークします。このアセットは現在の blend ファイルに格納されます"
+
+
 msgid "Activate New Action"
 msgstr "アクティブ新規アクション"
 
@@ -65690,12 +65846,6 @@ msgstr "同じIDを持つ既存のテンプレートを削除します"
 msgctxt "Operator"
 msgid "Add Asset Library"
 msgstr "アセットライブラリを追加"
-
-
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr ""
-"アセットブラウザーがアセットのソースとして使用する\n"
-".blend ファイルへのパスを追加します"
 
 
 msgctxt "Operator"
@@ -75886,12 +76036,20 @@ msgid "Show the panel on all tabs"
 msgstr "全タブのパネルを表示します"
 
 
+msgid "Integrator Presets"
+msgstr "インテグレータプリセット"
+
+
+msgid "Sampling Presets"
+msgstr "サンプリングプリセット"
+
+
+msgid "Viewport Sampling Presets"
+msgstr "ビュー用サンプリングプリセット"
+
+
 msgid "Asset Metadata"
 msgstr "アセットメタデータ"
-
-
-msgid "Details"
-msgstr "詳細"
 
 
 msgid "Chain Scaling"
@@ -76057,20 +76215,8 @@ msgid "Ray Visibility"
 msgstr "レイの可視性"
 
 
-msgid "Integrator Presets"
-msgstr "インテグレータプリセット"
-
-
 msgid "Post Processing"
 msgstr "ポストプロセッシング"
-
-
-msgid "Sampling Presets"
-msgstr "サンプリングプリセット"
-
-
-msgid "Viewport Sampling Presets"
-msgstr "ビュー用サンプリングプリセット"
 
 
 msgid "Film"
@@ -82315,10 +82461,6 @@ msgid "Sampling Pattern"
 msgstr "サンプリングパターン"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "インテグレーターが使用するランダムサンプリングパターン"
-
-
 msgid "Sobol"
 msgstr "ソボル"
 
@@ -82934,10 +83076,6 @@ msgid "Operator Stroke Element"
 msgstr "オペレーター・ストローク要素"
 
 
-msgid "Is Stroke Start"
-msgstr "ストロークが開始したか"
-
-
 msgid "Mouse Event"
 msgstr "マウスイベント"
 
@@ -83194,16 +83332,8 @@ msgid "Clip Planes"
 msgstr "クリップ平面"
 
 
-msgid "Is Axis Aligned"
-msgstr "平行投影かどうか"
-
-
 msgid "Is current view an orthographic side view"
 msgstr "現在のビューが平行投影のサイドビューかどうか"
-
-
-msgid "Is Perspective"
-msgstr "透視投影かどうか"
 
 
 msgid "Lock view rotation of side views to Top/Front/Right"
@@ -87943,16 +88073,8 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
-msgid "Black"
-msgstr "黒"
-
-
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
-
-
-msgid "White"
-msgstr "白"
 
 
 msgid "Display white edges"
@@ -92369,6 +92491,14 @@ msgid "Width of menu shadows, set to zero to disable"
 msgstr "メニューの影の幅。0で無効"
 
 
+msgid "Panel Roundness"
+msgstr "パネルの角の丸み"
+
+
+msgid "Roundness of the corners of panels and sub-panels"
+msgstr "パネルとサブパネルの角の丸み"
+
+
 msgid "Primary Color"
 msgstr "プライマリカラー"
 
@@ -94944,10 +95074,6 @@ msgid "Unsupported data type"
 msgstr "未対応のデータタイプ"
 
 
-msgid "Is Loaded"
-msgstr "ロード済かどうか"
-
-
 msgid "Grid tree is loaded in memory"
 msgstr "グリッドツリーがメモリ内に読み込み済か"
 
@@ -95469,6 +95595,70 @@ msgid "Collection of XR action maps"
 msgstr "XR アクションマップの集合"
 
 
+msgid "XR Data for Window Manager Event"
+msgstr "ウィンドウマネージャイベント用XRデータ"
+
+
+msgid "XR action name"
+msgstr "XRアクション名"
+
+
+msgid "Action Set"
+msgstr "アクションセット"
+
+
+msgid "XR action set name"
+msgstr "XRアクションセット名"
+
+
+msgid "Whether bimanual interaction is occurring"
+msgstr "両手のインタラクションが起こったかどうか"
+
+
+msgid "Controller Location"
+msgstr "コントローラー位置"
+
+
+msgid "Location of the action's corresponding controller aim in world space"
+msgstr "アクションに対応するコントローラーエイムのワールド空間での位置"
+
+
+msgid "Controller aim location of the other user path for bimanual actions"
+msgstr "両手アクションのもう一方のユーザーパスのコントローラーエイム位置"
+
+
+msgid "Controller Rotation"
+msgstr "コントローラー回転"
+
+
+msgid "Rotation of the action's corresponding controller aim in world space"
+msgstr "アクションに対応するコントローラーエイムのワールド空間での回転"
+
+
+msgid "Controller aim rotation of the other user path for bimanual actions"
+msgstr "両手アクションのもう一方のユーザーパスのコントローラーエイム回転"
+
+
+msgid "Float Threshold"
+msgstr "Floatのしきい値"
+
+
+msgid "Input threshold for float/2D vector actions"
+msgstr "Float/2Dベクトルアクションの入力しきい値"
+
+
+msgid "XR action values corresponding to type"
+msgstr "タイプに対応する XR アクション値"
+
+
+msgid "State of the other user path for bimanual actions"
+msgstr "両手アクションのもう片方のユーザーパスの状態"
+
+
+msgid "XR action type"
+msgstr "XRアクションタイプ"
+
+
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
 msgstr "VR ヘッドセットの回転の差分を適用する、Z 軸を中心とした回転の角度"
 
@@ -95511,6 +95701,50 @@ msgstr "VR ビューポートの遠方のクリッピング距離"
 
 msgid "VR viewport near clipping distance"
 msgstr "VR ビューポートの手前のクリッピング距離"
+
+
+msgid "Controller Draw Style"
+msgstr "コントローラー表示スタイル"
+
+
+msgid "Style to use when drawing VR controllers"
+msgstr "VRコントローラー表示時に使用するスタイル"
+
+
+msgid "Dark"
+msgstr "ダーク"
+
+
+msgid "Draw dark controller"
+msgstr "暗いコントローラーを表示します"
+
+
+msgid "Draw light controller"
+msgstr "明るいコントローラーを表示します"
+
+
+msgid "Dark + Ray"
+msgstr "ダーク＋レイ"
+
+
+msgid "Light + Ray"
+msgstr "ライト＋レイ"
+
+
+msgid "Show Controllers"
+msgstr "コントローラーを表示"
+
+
+msgid "Show Custom Overlays"
+msgstr "カスタムオーバーレイを表示"
+
+
+msgid "Show custom VR overlays"
+msgstr "カスタムの VR オーバーレイを表示します"
+
+
+msgid "Show selection outlines"
+msgstr "選択の輪郭を表示します"
 
 
 msgid "Absolute Tracking"
@@ -96826,14 +97060,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "外部 .osl ファイルの次の .oso ファイルへの書込に失敗："
 
 
-msgid "No compatible GPUs found for path tracing"
-msgstr "パストレーシング用の互換性のある GPU がありません"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cycles は CPU でレンダリングします"
-
-
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
 
@@ -98086,6 +98312,11 @@ msgstr "後"
 
 msgid "To"
 msgstr "送り先"
+
+
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "すべてのパスを更新"
 
 
 msgid "Nothing to show yet..."
@@ -100554,14 +100785,6 @@ msgid "No asset selected"
 msgstr "アセットが選択されていません"
 
 
-msgid "Source: Current File"
-msgstr "ソース：現在のファイル"
-
-
-msgid "Source:"
-msgstr "ソース:"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "アセットをクリア（フェイクユーザーを設定）"
@@ -101318,11 +101541,6 @@ msgstr "パワー:"
 
 msgid "Slope:"
 msgstr "スロープ:"
-
-
-msgctxt "Operator"
-msgid "Set Preview Range to Strips"
-msgstr "ストリップでプレビュー範囲を設定"
 
 
 msgid "Preview as Backdrop"
@@ -103297,6 +103515,16 @@ msgstr "モーションパスを計算"
 msgctxt "Operator"
 msgid "Clear Motion Paths"
 msgstr "モーションパスをクリア"
+
+
+msgctxt "Operator"
+msgid "Update Armature Motion Paths"
+msgstr "アーマチュアのモーションパスを更新"
+
+
+msgctxt "Operator"
+msgid "Update All Motion Paths"
+msgstr "すべてのモーションパスを更新"
 
 
 msgctxt "Operator"
@@ -113468,7 +113696,7 @@ msgstr "アイランド毎の乱数"
 
 
 msgid "Is Strand"
-msgstr "ストランドか"
+msgstr "ストランドか？"
 
 
 msgid "Intercept"

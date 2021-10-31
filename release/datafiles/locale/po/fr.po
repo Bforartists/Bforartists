@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11078,6 +11078,150 @@ msgid "Both Z"
 msgstr "Les deux Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Afficher les blocs de données armature"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Afficher les blocs de données brosses"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Afficher les blocs de données fichier cache"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Afficher les blocs de données caméra"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Afficher les blocs de données courbe"
+
+
+msgid "Fonts"
+msgstr "Polices"
+
+
+msgid "Show Font data-blocks"
+msgstr "Afficher les blocs de données fontes"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Afficher les blocs de données crayon gras"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Afficher les blocs de données collection"
+
+
+msgid "Show Image data-blocks"
+msgstr "Afficher les blocs de données image"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Afficher les blocs de données lattice"
+
+
+msgid "Show Light data-blocks"
+msgstr "Afficher les blocs de données lumière"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Afficher les blocs de données sonde lumière"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Styles de ligne Freestyle"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Afficher les blocs de données style de ligne Freestyle"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Afficher les blocs de données masque"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Afficher les blocs de données mesh"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Afficher les blocs de données méta-balle"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Afficher les blocs de données clip vidéo"
+
+
+msgid "Node Trees"
+msgstr "Arbres de nœuds"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Afficher les blocs de données arbre de nœuds"
+
+
+msgid "Show Object data-blocks"
+msgstr "Afficher les blocs de données objet"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Afficher les blocs de données courbes de peinture"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Afficher les blocs de données palette"
+
+
+msgid "Particles Settings"
+msgstr "Réglages de particules"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Afficher les blocs de données réglages de particules"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Afficher les blocs de données scène"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Afficher les blocs de données son"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Afficher les blocs de données haut-parleur"
+
+
+msgid "Show Text data-blocks"
+msgstr "Afficher les blocs de données texte"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Afficher les blocs de données texture"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Afficher les blocs de données volume"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Afficher les blocs de données espace de travail"
+
+
+msgid "Show Action data-blocks"
+msgstr "Afficher les blocs de données action"
+
+
+msgid "Show Material data-blocks"
+msgstr "Afficher les blocs de données matériau"
+
+
+msgid "Show World data-blocks"
+msgstr "Afficher les blocs de données monde"
+
+
 msgid "File Select Parameters"
 msgstr "Réglage de sélection de fichiers"
 
@@ -11252,150 +11396,6 @@ msgstr "Afficher les scènes"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Afficher les matériaux, arbres de nœuds, textures et styles de lignes Freestyle"
-
-
-msgid "Show Action data-blocks"
-msgstr "Afficher les blocs de données action"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Afficher les blocs de données armature"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Afficher les blocs de données brosses"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Afficher les blocs de données fichier cache"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Afficher les blocs de données caméra"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Afficher les blocs de données courbe"
-
-
-msgid "Fonts"
-msgstr "Polices"
-
-
-msgid "Show Font data-blocks"
-msgstr "Afficher les blocs de données fontes"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Afficher les blocs de données crayon gras"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Afficher les blocs de données collection"
-
-
-msgid "Show Image data-blocks"
-msgstr "Afficher les blocs de données image"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Afficher les blocs de données lattice"
-
-
-msgid "Show Light data-blocks"
-msgstr "Afficher les blocs de données lumière"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Afficher les blocs de données sonde lumière"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Styles de ligne Freestyle"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Afficher les blocs de données style de ligne Freestyle"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Afficher les blocs de données masque"
-
-
-msgid "Show Material data-blocks"
-msgstr "Afficher les blocs de données matériau"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Afficher les blocs de données mesh"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Afficher les blocs de données méta-balle"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Afficher les blocs de données clip vidéo"
-
-
-msgid "Node Trees"
-msgstr "Arbres de nœuds"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Afficher les blocs de données arbre de nœuds"
-
-
-msgid "Show Object data-blocks"
-msgstr "Afficher les blocs de données objet"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Afficher les blocs de données courbes de peinture"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Afficher les blocs de données palette"
-
-
-msgid "Particles Settings"
-msgstr "Réglages de particules"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Afficher les blocs de données réglages de particules"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Afficher les blocs de données scène"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Afficher les blocs de données son"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Afficher les blocs de données haut-parleur"
-
-
-msgid "Show Text data-blocks"
-msgstr "Afficher les blocs de données texte"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Afficher les blocs de données texture"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Afficher les blocs de données volume"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Afficher les blocs de données espace de travail"
-
-
-msgid "Show World data-blocks"
-msgstr "Afficher les blocs de données monde"
 
 
 msgid "Directory"
@@ -34451,6 +34451,10 @@ msgid "Equal"
 msgstr "Égal"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Valeur d’entrée utilisée pour une prise non-connectée"
+
+
 msgid "Original"
 msgstr "Originelle"
 
@@ -34465,6 +34469,18 @@ msgstr "Arêtes & faces uniquement"
 
 msgid "Only Faces"
 msgstr "Faces seulement"
+
+
+msgid "Linear interpolation"
+msgstr "Interpolation linéaire"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Pas d’interpolation (échantillonner le texel le plus proche)"
+
+
+msgid "Cubic interpolation"
+msgstr "Interpolation cubique"
 
 
 msgid "Cross Product"
@@ -34950,18 +34966,6 @@ msgstr "Texture d’environnement"
 
 msgid "Texture interpolation"
 msgstr "Interpolation de texture"
-
-
-msgid "Linear interpolation"
-msgstr "Interpolation linéaire"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Pas d’interpolation (échantillonner le texel le plus proche)"
-
-
-msgid "Cubic interpolation"
-msgstr "Interpolation cubique"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -35510,10 +35514,6 @@ msgstr "Prise de valeur booléenne d’un nœud"
 
 msgid "Default Value"
 msgstr "Valeur par défaut"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Valeur d’entrée utilisée pour une prise non-connectée"
 
 
 msgid "Color Node Socket"
@@ -41973,6 +41973,14 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
+
+
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -57537,6 +57545,14 @@ msgid "Pin"
 msgstr "Épingler"
 
 
+msgid "Integrator Presets"
+msgstr "Pré-réglages d’intégrateur"
+
+
+msgid "Sampling Presets"
+msgstr "Pré-réglages d’échantillonnage"
+
+
 msgid "Bone Constraints"
 msgstr "Contrainte os"
 
@@ -57664,16 +57680,8 @@ msgid "Ray Visibility"
 msgstr "Visibilité de rayon"
 
 
-msgid "Integrator Presets"
-msgstr "Pré-réglages d’intégrateur"
-
-
 msgid "Post Processing"
 msgstr "Post processing"
-
-
-msgid "Sampling Presets"
-msgstr "Pré-réglages d’échantillonnage"
 
 
 msgid "Film"
@@ -62140,10 +62148,6 @@ msgid "Sampling Pattern"
 msgstr "Motif d’échantillonnage"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Motif d’échantillonnage aléatoire utilisé par l’intégrateur"
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -65682,14 +65686,6 @@ msgstr "Masque affiché et édité dans cet espace"
 
 msgid "Outline"
 msgstr "Contour"
-
-
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Overlay Mode"

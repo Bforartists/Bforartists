@@ -24,7 +24,7 @@ namespace blender::nodes {
 
 static void geo_node_curve_parameter_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Factor").field_source();
+  b.add_output<decl::Float>(N_("Factor")).field_source();
 }
 
 /**
@@ -150,8 +150,9 @@ static const GVArray *construct_curve_parameter_gvarray(const CurveEval &curve,
 
 class CurveParameterFieldInput final : public fn::FieldInput {
  public:
-  CurveParameterFieldInput() : fn::FieldInput(CPPType::get<float>(), "Curve Parameter")
+  CurveParameterFieldInput() : fn::FieldInput(CPPType::get<float>(), "Curve Parameter node")
   {
+    category_ = Category::Generated;
   }
 
   const GVArray *get_varray_for_context(const fn::FieldContext &context,
