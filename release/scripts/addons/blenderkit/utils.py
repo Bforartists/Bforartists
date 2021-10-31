@@ -927,10 +927,11 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines=10):
 
     Returns
     -------
-    True if max_lines was overstepped
+    rows of the text(to add extra elements)
     '''
+    rows = []
     if text.strip() == '':
-        return
+        return [layout.row()]
     text = text.replace('\r\n', '\n')
     lines = text.split('\n')
     if width > 0:
@@ -946,7 +947,9 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines=10):
             if i < 1:
                 i = threshold
             l1 = l[:i]
-            layout.label(text=l1, icon=icon)
+            row = layout.row()
+            row.label(text=l1, icon=icon)
+            rows.append(row)
             icon = 'NONE'
             l = l[i:].lstrip()
             li += 1
@@ -954,10 +957,12 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines=10):
                 break;
         if li > max_lines:
             break;
-        layout.label(text=l, icon=icon)
+        row = layout.row()
+        row.label(text=l, icon=icon)
+        rows.append(row)
         icon = 'NONE'
-    if li > max_lines:
-        return True
+    # if li > max_lines:
+    return rows
 
 
 def trace():

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-10-14 17:17+0200\n"
@@ -11805,6 +11805,162 @@ msgid "Both Z"
 msgstr "Obidve Z"
 
 
+msgid "Show Armature data-blocks"
+msgstr "Ukáže blok údajov armatúry"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "Ukáže blok údajov štetca"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "Ukáže blok údajov súboru zásobníka"
+
+
+msgid "Show Camera data-blocks"
+msgstr "Ukáže blok údajov kamery"
+
+
+msgid "Show Curve data-blocks"
+msgstr "Ukáže blok údajov krivky"
+
+
+msgid "Fonts"
+msgstr "Písma"
+
+
+msgid "Show Font data-blocks"
+msgstr "Ukáže blok údajov písma"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "Ukáže blok údajov pastelky"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Ukáže blok údajov kolekcie"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "Ukáže/skryje bloky údajov vlasov"
+
+
+msgid "Show Image data-blocks"
+msgstr "Ukáže blok údajov obrázka"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "Ukáže blok údajov drôtenej mriežky"
+
+
+msgid "Show Light data-blocks"
+msgstr "Ukáže blok údajov svetla"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "Ukáže blok údajov snímača svetla"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Voľný štýly typov čiar"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "Ukáže blok údajov typov čiar Voľný štýl"
+
+
+msgid "Show Mask data-blocks"
+msgstr "Ukáže blok údajov masky"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "Ukáže blok údajov povrchovej siete"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "Ukáže blok údajov meta gule"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "Ukáže blok údajov filmového klipu"
+
+
+msgid "Node Trees"
+msgstr "Stromy uzlov"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Ukáže blok údajov uzlov stromu"
+
+
+msgid "Show Object data-blocks"
+msgstr "Ukáže blok údajov objektu"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "Ukáže blok údajov maľby krivky"
+
+
+msgid "Show Palette data-blocks"
+msgstr "Ukáže blok údajov palety"
+
+
+msgid "Particles Settings"
+msgstr "Nastavenie častíc"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "Ukáže blok údajov nastavenie častíc"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "Ukáže/skryje bloky údajov mračno bodov"
+
+
+msgid "Show Scene data-blocks"
+msgstr "Ukáže blok údajov scény"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "Ukáže blok údajov simulácie"
+
+
+msgid "Show Sound data-blocks"
+msgstr "Ukáže blok údajov zvuku"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "Ukáže blok údajov reproduktora"
+
+
+msgid "Show Text data-blocks"
+msgstr "Ukáže blok údajov textu"
+
+
+msgid "Show Texture data-blocks"
+msgstr "Ukáže blok údajov textúry"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "Ukáže/skryje bloky údajov objemu"
+
+
+msgid "Show workspace data-blocks"
+msgstr "Ukáže blok údajov pracovného priestoru"
+
+
+msgid "Show Action data-blocks"
+msgstr "Ukáže blok údajov akcie"
+
+
+msgid "Show Material data-blocks"
+msgstr "Ukáže blok údajov materiálu"
+
+
+msgid "Show World data-blocks"
+msgstr "Ukáže blok údajov sveta"
+
+
 msgid "File Select Parameters"
 msgstr "Výber parametrov súboru"
 
@@ -12019,162 +12175,6 @@ msgstr "Ukáže scény"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Ukáže materiály, stromy ulov, textúry a typy čiar Voľný štýl"
-
-
-msgid "Show Action data-blocks"
-msgstr "Ukáže blok údajov akcie"
-
-
-msgid "Show Armature data-blocks"
-msgstr "Ukáže blok údajov armatúry"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "Ukáže blok údajov štetca"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "Ukáže blok údajov súboru zásobníka"
-
-
-msgid "Show Camera data-blocks"
-msgstr "Ukáže blok údajov kamery"
-
-
-msgid "Show Curve data-blocks"
-msgstr "Ukáže blok údajov krivky"
-
-
-msgid "Fonts"
-msgstr "Písma"
-
-
-msgid "Show Font data-blocks"
-msgstr "Ukáže blok údajov písma"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "Ukáže blok údajov pastelky"
-
-
-msgid "Show Collection data-blocks"
-msgstr "Ukáže blok údajov kolekcie"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Ukáže/skryje bloky údajov vlasov"
-
-
-msgid "Show Image data-blocks"
-msgstr "Ukáže blok údajov obrázka"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "Ukáže blok údajov drôtenej mriežky"
-
-
-msgid "Show Light data-blocks"
-msgstr "Ukáže blok údajov svetla"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "Ukáže blok údajov snímača svetla"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Voľný štýly typov čiar"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "Ukáže blok údajov typov čiar Voľný štýl"
-
-
-msgid "Show Mask data-blocks"
-msgstr "Ukáže blok údajov masky"
-
-
-msgid "Show Material data-blocks"
-msgstr "Ukáže blok údajov materiálu"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "Ukáže blok údajov povrchovej siete"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "Ukáže blok údajov meta gule"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "Ukáže blok údajov filmového klipu"
-
-
-msgid "Node Trees"
-msgstr "Stromy uzlov"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Ukáže blok údajov uzlov stromu"
-
-
-msgid "Show Object data-blocks"
-msgstr "Ukáže blok údajov objektu"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "Ukáže blok údajov maľby krivky"
-
-
-msgid "Show Palette data-blocks"
-msgstr "Ukáže blok údajov palety"
-
-
-msgid "Particles Settings"
-msgstr "Nastavenie častíc"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "Ukáže blok údajov nastavenie častíc"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "Ukáže/skryje bloky údajov mračno bodov"
-
-
-msgid "Show Scene data-blocks"
-msgstr "Ukáže blok údajov scény"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "Ukáže blok údajov simulácie"
-
-
-msgid "Show Sound data-blocks"
-msgstr "Ukáže blok údajov zvuku"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "Ukáže blok údajov reproduktora"
-
-
-msgid "Show Text data-blocks"
-msgstr "Ukáže blok údajov textu"
-
-
-msgid "Show Texture data-blocks"
-msgstr "Ukáže blok údajov textúry"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "Ukáže/skryje bloky údajov objemu"
-
-
-msgid "Show workspace data-blocks"
-msgstr "Ukáže blok údajov pracovného priestoru"
-
-
-msgid "Show World data-blocks"
-msgstr "Ukáže blok údajov sveta"
 
 
 msgid "Directory"
@@ -41432,6 +41432,10 @@ msgid "Round the float to the closest integer in the direction of zero (floor if
 msgstr "Zaokrúhli číslo na pohyblivej čiarke na najbližšie celé číslo v smere nuly (dolná hranica, ak je kladná; horná hranica, ak je záporná)"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Vstupná hodnota používaná pre nepripojenú zásuvku"
+
+
 msgid "Random Float"
 msgstr "Náhodná pohyblivá čiarka"
 
@@ -41466,10 +41470,6 @@ msgstr "Otočiť okolo osí X, Y a Z"
 
 msgid "String Length"
 msgstr "Dĺžka reťazca"
-
-
-msgid "String Substring"
-msgstr "Podreťazec reťazca"
 
 
 msgid "Value to String"
@@ -41696,6 +41696,30 @@ msgid "Curve to Mesh"
 msgstr "Krivka na povrchovú sieť"
 
 
+msgid "Curve to Points"
+msgstr "Krivka na body"
+
+
+msgid "How to generate points from the input curve"
+msgstr "Ako generujú body zo vstupnej krivky"
+
+
+msgid "Evaluated"
+msgstr "Vyhodnocuje sa"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr "Vytvorenie bodov z vyhodnotených bodov krivky na základe atribútu rozlíšenia pre NURBS a Bézierove drážky"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "Snímanie každej drážky rovnomerným delením zadaného počtu bodov"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "Snímanie každej drážky rozdelením na segmenty so zadanou dĺžkou"
+
+
 msgid "Geometry Custom Group"
 msgstr "Geometria vlastnej skupiny"
 
@@ -41762,6 +41786,18 @@ msgstr "Zarovnanie Bezierových manipulátorov na vytvorenie kruhových oblúkov
 
 msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
 msgstr "Pridáva riadiace bodov pozdĺž kruhového oblúka (typ manipulátora je vektor, ak ide o Bézierovu drážku)"
+
+
+msgid "Linear interpolation"
+msgstr "Lineárna interpolácia"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "Bez interpolácie (snímka najbližšie texelu)"
+
+
+msgid "Cubic interpolation"
+msgstr "Kubická interpolácia"
 
 
 msgid "Curve Tangent"
@@ -42158,30 +42194,6 @@ msgstr "Deliť krivku"
 
 msgid "Cuts Type"
 msgstr "Typ rezu"
-
-
-msgid "Curve to Points"
-msgstr "Krivka na body"
-
-
-msgid "How to generate points from the input curve"
-msgstr "Ako generujú body zo vstupnej krivky"
-
-
-msgid "Evaluated"
-msgstr "Vyhodnocuje sa"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr "Vytvorenie bodov z vyhodnotených bodov krivky na základe atribútu rozlíšenia pre NURBS a Bézierove drážky"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "Snímanie každej drážky rovnomerným delením zadaného počtu bodov"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "Snímanie každej drážky rozdelením na segmenty so zadanou dĺžkou"
 
 
 msgid "Material Assign"
@@ -43121,18 +43133,6 @@ msgid "Texture interpolation"
 msgstr "Interpolácia textúry"
 
 
-msgid "Linear interpolation"
-msgstr "Lineárna interpolácia"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "Bez interpolácie (snímka najbližšie texelu)"
-
-
-msgid "Cubic interpolation"
-msgstr "Kubická interpolácia"
-
-
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
 msgstr "Bikubická pri zväčšovaní, inak bilineárna (len OSL)"
 
@@ -43971,10 +43971,6 @@ msgstr "Zásuvka logických hodnôt uzla"
 
 msgid "Default Value"
 msgstr "Pôvodná hodnota"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Vstupná hodnota používaná pre nepripojenú zásuvku"
 
 
 msgid "Collection Node Socket"
@@ -53025,6 +53021,14 @@ msgstr "Preklopiť farby"
 
 msgid "Switch tint colors"
 msgstr "Prepínanie odtieňov farieb"
+
+
+msgid "Black"
+msgstr "Čierne"
+
+
+msgid "White"
+msgstr "Biele"
 
 
 msgctxt "Operator"
@@ -65304,10 +65308,6 @@ msgid "Add Asset Library"
 msgstr "Pridať knižnicu aktív"
 
 
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "Pridá cestu k súboru .blend, ktorý má prehliadač aktív použiť ako zdroj aktív"
-
-
 msgctxt "Operator"
 msgid "Remove Asset Library"
 msgstr "Odstrániť knižnicu aktív"
@@ -75428,12 +75428,20 @@ msgid "Show the panel on all tabs"
 msgstr "Zobraziť panel na všetkých kartách"
 
 
+msgid "Integrator Presets"
+msgstr "Predvoľby integrátora"
+
+
+msgid "Sampling Presets"
+msgstr "Predvoľby snímkovania"
+
+
+msgid "Viewport Sampling Presets"
+msgstr "Predvoľby snímania záberu"
+
+
 msgid "Asset Metadata"
 msgstr "Metaúdaje aktív"
-
-
-msgid "Details"
-msgstr "Detaily"
 
 
 msgid "Chain Scaling"
@@ -75599,20 +75607,8 @@ msgid "Ray Visibility"
 msgstr "Viditeľnosť lúča"
 
 
-msgid "Integrator Presets"
-msgstr "Predvoľby integrátora"
-
-
 msgid "Post Processing"
 msgstr "Následné spracovanie"
-
-
-msgid "Sampling Presets"
-msgstr "Predvoľby snímkovania"
-
-
-msgid "Viewport Sampling Presets"
-msgstr "Predvoľby snímania záberu"
 
 
 msgid "Film"
@@ -81783,10 +81779,6 @@ msgid "Sampling Pattern"
 msgstr "Vzor snímania"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Náhodný vzor snímania používaný integrátorom"
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -87392,16 +87384,8 @@ msgid "Display dashed black-white edges"
 msgstr "Zobrazí prerušované čiernobiele okraje"
 
 
-msgid "Black"
-msgstr "Čierne"
-
-
 msgid "Display black edges"
 msgstr "Zobrazí čierne okraje"
-
-
-msgid "White"
-msgstr "Biele"
 
 
 msgid "Display white edges"
@@ -96250,14 +96234,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "Zlyhalo zapísanie .oso súboru vedľa externého súboru .osl "
 
 
-msgid "No compatible GPUs found for path tracing"
-msgstr "Pre snímanie cesty sa nenašiel žiadny kompatibilný GPU"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cykly budú vykonané prekreslením na CPU"
-
-
 msgid "Noise Threshold"
 msgstr "Prah šumu"
 
@@ -99968,14 +99944,6 @@ msgstr "Znížiť počet"
 
 msgid "No asset selected"
 msgstr "Nie je vybraté žiadne aktívum"
-
-
-msgid "Source: Current File"
-msgstr "Zdroj: Aktuálny súbor"
-
-
-msgid "Source:"
-msgstr "Zdroj:"
 
 
 msgctxt "Operator"

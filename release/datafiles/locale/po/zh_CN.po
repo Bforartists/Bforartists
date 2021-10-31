@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8107,7 +8107,7 @@ msgstr "电影向"
 
 
 msgid "Clip"
-msgstr "剪辑"
+msgstr "剪辑(裁切)"
 
 
 msgid "Force the curve view to fit a defined boundary"
@@ -11807,6 +11807,162 @@ msgid "Both Z"
 msgstr "双 Z 向"
 
 
+msgid "Show Armature data-blocks"
+msgstr "显示骨架数据块"
+
+
+msgid "Show Brushes data-blocks"
+msgstr "显示笔刷数据块"
+
+
+msgid "Show Cache File data-blocks"
+msgstr "显示缓存文件数据块"
+
+
+msgid "Show Camera data-blocks"
+msgstr "显示摄像机数据块"
+
+
+msgid "Show Curve data-blocks"
+msgstr "显示曲面数据块"
+
+
+msgid "Fonts"
+msgstr "字体"
+
+
+msgid "Show Font data-blocks"
+msgstr "显示字体数据块"
+
+
+msgid "Show Grease pencil data-blocks"
+msgstr "显示蜡笔数据块"
+
+
+msgid "Show Collection data-blocks"
+msgstr "显示集合数据块"
+
+
+msgid "Show/hide Hair data-blocks"
+msgstr "显示缓存毛发数据块"
+
+
+msgid "Show Image data-blocks"
+msgstr "显示图像数据块"
+
+
+msgid "Show Lattice data-blocks"
+msgstr "显示晶格数据块"
+
+
+msgid "Show Light data-blocks"
+msgstr "显示灯光数据块"
+
+
+msgid "Show Light Probe data-blocks"
+msgstr "显示光照探头数据块"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Freestyle线条样式"
+
+
+msgid "Show Freestyle's Line Style data-blocks"
+msgstr "显示Freestyle的线样式数据块"
+
+
+msgid "Show Mask data-blocks"
+msgstr "显示遮罩数据块"
+
+
+msgid "Show Mesh data-blocks"
+msgstr "显示网格数据块"
+
+
+msgid "Show Metaball data-blocks"
+msgstr "显示融球数据块"
+
+
+msgid "Show Movie Clip data-blocks"
+msgstr "显示影片剪辑数据块"
+
+
+msgid "Node Trees"
+msgstr "节点树"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "显示节点树数据块"
+
+
+msgid "Show Object data-blocks"
+msgstr "显示物体数据块"
+
+
+msgid "Show Paint Curve data-blocks"
+msgstr "显示绘制曲线数据块"
+
+
+msgid "Show Palette data-blocks"
+msgstr "显示调色板数据块"
+
+
+msgid "Particles Settings"
+msgstr "粒子设置"
+
+
+msgid "Show Particle Settings data-blocks"
+msgstr "显示粒子设置数据块"
+
+
+msgid "Show/hide Point Cloud data-blocks"
+msgstr "显示/隐藏点云数据块"
+
+
+msgid "Show Scene data-blocks"
+msgstr "显示场景数据块"
+
+
+msgid "Show Simulation data-blocks"
+msgstr "显示模拟数据块"
+
+
+msgid "Show Sound data-blocks"
+msgstr "显示声音数据块"
+
+
+msgid "Show Speaker data-blocks"
+msgstr "显示扬声器数据块"
+
+
+msgid "Show Text data-blocks"
+msgstr "显示文本数据块"
+
+
+msgid "Show Texture data-blocks"
+msgstr "显示纹理数据块"
+
+
+msgid "Show/hide Volume data-blocks"
+msgstr "显示缓存文件数据块"
+
+
+msgid "Show workspace data-blocks"
+msgstr "显示工作区数据块"
+
+
+msgid "Show Action data-blocks"
+msgstr "显示动作数据块"
+
+
+msgid "Show Material data-blocks"
+msgstr "显示材质数据块"
+
+
+msgid "Show World data-blocks"
+msgstr "显示世界环境数据块"
+
+
 msgid "File Select Parameters"
 msgstr "文件选择参数"
 
@@ -12021,162 +12177,6 @@ msgstr "显示场景"
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "显示材质，节点树，纹理和Freestyle的线条样式"
-
-
-msgid "Show Action data-blocks"
-msgstr "显示动作数据块"
-
-
-msgid "Show Armature data-blocks"
-msgstr "显示骨架数据块"
-
-
-msgid "Show Brushes data-blocks"
-msgstr "显示笔刷数据块"
-
-
-msgid "Show Cache File data-blocks"
-msgstr "显示缓存文件数据块"
-
-
-msgid "Show Camera data-blocks"
-msgstr "显示摄像机数据块"
-
-
-msgid "Show Curve data-blocks"
-msgstr "显示曲面数据块"
-
-
-msgid "Fonts"
-msgstr "字体"
-
-
-msgid "Show Font data-blocks"
-msgstr "显示字体数据块"
-
-
-msgid "Show Grease pencil data-blocks"
-msgstr "显示蜡笔数据块"
-
-
-msgid "Show Collection data-blocks"
-msgstr "显示集合数据块"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "显示缓存毛发数据块"
-
-
-msgid "Show Image data-blocks"
-msgstr "显示图像数据块"
-
-
-msgid "Show Lattice data-blocks"
-msgstr "显示晶格数据块"
-
-
-msgid "Show Light data-blocks"
-msgstr "显示灯光数据块"
-
-
-msgid "Show Light Probe data-blocks"
-msgstr "显示光照探头数据块"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Freestyle线条样式"
-
-
-msgid "Show Freestyle's Line Style data-blocks"
-msgstr "显示Freestyle的线样式数据块"
-
-
-msgid "Show Mask data-blocks"
-msgstr "显示遮罩数据块"
-
-
-msgid "Show Material data-blocks"
-msgstr "显示材质数据块"
-
-
-msgid "Show Mesh data-blocks"
-msgstr "显示网格数据块"
-
-
-msgid "Show Metaball data-blocks"
-msgstr "显示融球数据块"
-
-
-msgid "Show Movie Clip data-blocks"
-msgstr "显示影片剪辑数据块"
-
-
-msgid "Node Trees"
-msgstr "节点树"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "显示节点树数据块"
-
-
-msgid "Show Object data-blocks"
-msgstr "显示物体数据块"
-
-
-msgid "Show Paint Curve data-blocks"
-msgstr "显示绘制曲线数据块"
-
-
-msgid "Show Palette data-blocks"
-msgstr "显示调色板数据块"
-
-
-msgid "Particles Settings"
-msgstr "粒子设置"
-
-
-msgid "Show Particle Settings data-blocks"
-msgstr "显示粒子设置数据块"
-
-
-msgid "Show/hide Point Cloud data-blocks"
-msgstr "显示/隐藏点云数据块"
-
-
-msgid "Show Scene data-blocks"
-msgstr "显示场景数据块"
-
-
-msgid "Show Simulation data-blocks"
-msgstr "显示模拟数据块"
-
-
-msgid "Show Sound data-blocks"
-msgstr "显示声音数据块"
-
-
-msgid "Show Speaker data-blocks"
-msgstr "显示扬声器数据块"
-
-
-msgid "Show Text data-blocks"
-msgstr "显示文本数据块"
-
-
-msgid "Show Texture data-blocks"
-msgstr "显示纹理数据块"
-
-
-msgid "Show/hide Volume data-blocks"
-msgstr "显示缓存文件数据块"
-
-
-msgid "Show workspace data-blocks"
-msgstr "显示工作区数据块"
-
-
-msgid "Show World data-blocks"
-msgstr "显示世界环境数据块"
 
 
 msgid "Directory"
@@ -27036,7 +27036,7 @@ msgstr "最小滤镜尺寸"
 
 
 msgid "Use Filter Size as a minimal filter value in pixels"
-msgstr "将滤镜尺寸用作最小过滤值, 以像素为单位"
+msgstr "将过滤尺寸用作最小过滤值, 以像素为单位"
 
 
 msgid "Interpolate pixels using selected filter"
@@ -29613,6 +29613,11 @@ msgstr "ActionZone 全屏"
 
 msgid "AZone FullScr"
 msgstr "AZone 全屏"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "XR Action"
+msgstr "XR 活动"
 
 
 msgid "Map Type"
@@ -41362,6 +41367,10 @@ msgid "Outputs the opposite of the input"
 msgstr "输出与输入值相反的结果"
 
 
+msgid "Compare Floats"
+msgstr "比较浮点"
+
+
 msgid "True when the first input is smaller than second input"
 msgstr "当第一个输入小于第二个输入时为真"
 
@@ -41434,6 +41443,10 @@ msgid "Round the float to the closest integer in the direction of zero (floor if
 msgstr "将浮点数四舍五入到离零方向最近的整数(如果为正，则向下取整; 如果为负，则向上取整)"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "用于未连接接口的输入值"
+
+
 msgid "Random Float"
 msgstr "随机浮点数"
 
@@ -41444,6 +41457,10 @@ msgstr "随机值"
 
 msgid "Rotate Euler"
 msgstr "欧拉旋转"
+
+
+msgid "Base orientation for rotation"
+msgstr "旋转的基础朝向"
 
 
 msgid "Rotate the input rotation in the local space of the object"
@@ -41470,10 +41487,6 @@ msgid "String Length"
 msgstr "字符串长度"
 
 
-msgid "String Substring"
-msgstr "子字符串"
-
-
 msgid "Value to String"
 msgstr "数值 -> 字符串"
 
@@ -41498,6 +41511,18 @@ msgid "Which domain to read the data from"
 msgstr "在哪个域读取数据"
 
 
+msgid "Transfer Attribute"
+msgstr "传递属性"
+
+
+msgid "The type for the source and result data"
+msgstr "源和结果数据的类型"
+
+
+msgid "The domain to use on the target geometry"
+msgstr "用于目标几何的域"
+
+
 msgid "Mapping between geometries"
 msgstr "几何体之间的映射"
 
@@ -41508,6 +41533,14 @@ msgstr "从表面上最近的面传递属性(忽略松散的点和边缘)"
 
 msgid "Transfer the element from the nearest element (using face and edge centers for the distance computation)"
 msgstr "从最近的元素传递元素(使用面部和边缘中心进行距离计算)"
+
+
+msgid "Transfer the data from the element with the corresponding index in the target geometry"
+msgstr "同时传递来自元素的数据与目标几何中对应的编号"
+
+
+msgid "Capture Attribute"
+msgstr "捕捉属性"
 
 
 msgid "Which domain to store the data in"
@@ -41536,6 +41569,10 @@ msgstr "将输入集合几何体引入修改后的物体，保持场景物体之
 
 msgid "Convex Hull"
 msgstr "凸壳"
+
+
+msgid "Endpoint Selection"
+msgstr "端点选择"
 
 
 msgid "Handle Type Selection"
@@ -41698,6 +41735,30 @@ msgid "Curve to Mesh"
 msgstr "曲线 -> 网格"
 
 
+msgid "Curve to Points"
+msgstr "曲线 -> 点"
+
+
+msgid "How to generate points from the input curve"
+msgstr "如何从输入曲线生成点"
+
+
+msgid "Evaluated"
+msgstr "已解算"
+
+
+msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
+msgstr "基于NURBS 和贝塞尔样条线的精度属性，从曲线的解算点创建点"
+
+
+msgid "Sample each spline by evenly distributing the specified number of points"
+msgstr "通过均匀分布指定数量的点对每根样条线进行采样"
+
+
+msgid "Sample each spline by splitting it into segments with the specified length"
+msgstr "通过将每根样条线拆分为具有指定长度的线段进行采样"
+
+
 msgid "Geometry Custom Group"
 msgstr "几何自定义群组"
 
@@ -41750,8 +41811,16 @@ msgid "Distribute the points randomly on the surface while taking a minimum dist
 msgstr "在表面上随机分布点，同时考虑点之间的最小距离"
 
 
+msgid "Fill Curve"
+msgstr "填充曲线"
+
+
 msgid "N-gons"
 msgstr "多边形"
+
+
+msgid "Fillet Curve"
+msgstr "圆角曲线"
 
 
 msgid "How to choose number of vertices on fillet"
@@ -41764,6 +41833,38 @@ msgstr "对齐贝塞尔手柄，在每个控制点创建圆形弧线"
 
 msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
 msgstr "沿圆形弧线添加控制点(如为贝塞尔样条线，手柄类型为矢量)"
+
+
+msgid "Linear interpolation"
+msgstr "线性插值"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "无插值 (采样邻近纹素)"
+
+
+msgid "Cubic interpolation"
+msgstr "三次插值"
+
+
+msgid "Curve Handle Positions"
+msgstr "曲线控制柄位置"
+
+
+msgid "Curve Tilt"
+msgstr "曲线倾斜"
+
+
+msgid "Is Shade Smooth"
+msgstr "是否平滑着色"
+
+
+msgid "Is Spline Cyclic"
+msgstr "是否闭合样条线"
+
+
+msgid "Spline Resolution"
+msgstr "样条线精度"
 
 
 msgid "Curve Tangent"
@@ -42162,30 +42263,6 @@ msgid "Cuts Type"
 msgstr "切割类型"
 
 
-msgid "Curve to Points"
-msgstr "曲线 -> 点"
-
-
-msgid "How to generate points from the input curve"
-msgstr "如何从输入曲线生成点"
-
-
-msgid "Evaluated"
-msgstr "已解算"
-
-
-msgid "Create points from the curve's evaluated points, based on the resolution attribute for NURBS and Bezier splines"
-msgstr "基于NURBS 和贝塞尔样条线的精度属性，从曲线的解算点创建点"
-
-
-msgid "Sample each spline by evenly distributing the specified number of points"
-msgstr "通过均匀分布指定数量的点对每根样条线进行采样"
-
-
-msgid "Sample each spline by splitting it into segments with the specified length"
-msgstr "通过将每根样条线拆分为具有指定长度的线段进行采样"
-
-
 msgid "Material Assign"
 msgstr "材质指定"
 
@@ -42298,6 +42375,10 @@ msgid "Material Selection"
 msgstr "材质选择"
 
 
+msgid "Mesh Boolean"
+msgstr "网格布尔"
+
+
 msgid "Mesh Circle"
 msgstr "网格圆"
 
@@ -42406,6 +42487,10 @@ msgid "Realize Instances"
 msgstr "实现实例"
 
 
+msgid "Replace Material"
+msgstr "替换材质"
+
+
 msgid "Resample Curve"
 msgstr "曲线重采样"
 
@@ -42426,6 +42511,18 @@ msgid "Calculate the number of samples by splitting each spline into segments wi
 msgstr "通过将每根样条线拆分为具有指定长度的线段来计算采样数量"
 
 
+msgid "Reverse Curve"
+msgstr "反转曲线"
+
+
+msgid "Rotate Instances"
+msgstr "旋转实例"
+
+
+msgid "Sample Curve"
+msgstr "采样曲线"
+
+
 msgid "Method for sampling input"
 msgstr "采样输入方法"
 
@@ -42436,6 +42533,10 @@ msgstr "使用总长度的一个系数查找曲线上的采样位置"
 
 msgid "Find sample positions on the curve using a distance from its beginning"
 msgstr "使用到曲线起点的距离查找曲线上的采样位置"
+
+
+msgid "Scale Instances"
+msgstr "缩放实例"
 
 
 msgid "Separate Components"
@@ -42450,12 +42551,52 @@ msgid "Which domain to separate on"
 msgstr "执行分离操作的域"
 
 
+msgid "Set Handle Positions"
+msgstr "设置控制柄位置"
+
+
+msgid "Set Curve Radius"
+msgstr "设置曲线半径"
+
+
+msgid "Set Curve Tilt"
+msgstr "平滑曲线倾斜"
+
+
+msgid "Set Material"
+msgstr "设置材质"
+
+
+msgid "Set Material Index"
+msgstr "设置材质编号"
+
+
+msgid "Set Point Radius"
+msgstr "设置点半径"
+
+
 msgid "Set Position"
 msgstr "设置位置"
 
 
+msgid "Set Shade Smooth"
+msgstr "设置着色平滑"
+
+
+msgid "Set Spline Cyclic"
+msgstr "设置样条线闭合"
+
+
+msgid "Set Spline Resolution"
+msgstr "设置样条线精度"
+
+
 msgid "Spline Length"
 msgstr "样条线长度"
+
+
+msgid "Split Edges"
+msgstr "拆分边"
 
 
 msgid "Join Strings"
@@ -42524,6 +42665,22 @@ msgstr "缩放文本大小，以在宽度和高度上匹配"
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "仅输出匹配宽度和高度的曲线。将其余部分输出至\"其余\""
+
+
+msgid "Subdivide Curve"
+msgstr "细分曲线"
+
+
+msgid "Subdivide Mesh"
+msgstr "细分网格"
+
+
+msgid "Translate Instances"
+msgstr "平移实例"
+
+
+msgid "Trim Curve"
+msgstr "修剪曲线"
 
 
 msgid "How to find endpoint positions for the trimmed spline"
@@ -42725,6 +42882,14 @@ msgstr "次表面方法"
 
 msgid "Method for rendering subsurface scattering"
 msgstr "用于渲染次表面散射(SSS)的方法"
+
+
+msgid "Christensen-Burley"
+msgstr "克里斯坦森-伯利"
+
+
+msgid "Approximation to physically based volume scattering"
+msgstr "基于物理的体积散射的近似值"
 
 
 msgid "Random Walk (Fixed Radius)"
@@ -43121,18 +43286,6 @@ msgstr "环境纹理"
 
 msgid "Texture interpolation"
 msgstr "纹理插值"
-
-
-msgid "Linear interpolation"
-msgstr "线性插值"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "无插值 (采样邻近纹素)"
-
-
-msgid "Cubic interpolation"
-msgstr "三次插值"
 
 
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
@@ -43975,10 +44128,6 @@ msgid "Default Value"
 msgstr "默认值"
 
 
-msgid "Input value used for unconnected socket"
-msgstr "用于未连接接口的输入值"
-
-
 msgid "Collection Node Socket"
 msgstr "集合节点接口"
 
@@ -44720,6 +44869,11 @@ msgstr "无偏移"
 
 msgid "Paste keys from original time"
 msgstr "从原时间点处粘贴帧"
+
+
+msgctxt "Operator"
+msgid "Set Preview Range to Selected"
+msgstr "设置预览范围为选中"
 
 
 msgid "Set Preview Range based on extents of selected Keyframes"
@@ -46120,6 +46274,28 @@ msgstr "父路径"
 
 msgid "Optional path defining the location to put the new catalog under"
 msgstr "定义放置新目录位置的可选路径"
+
+
+msgid "Redo the last undone edit to the asset catalogs"
+msgstr "重做上一步被撤销的资产目录编辑操作"
+
+
+msgctxt "Operator"
+msgid "Undo Catalog Edits"
+msgstr "撤消目录编辑"
+
+
+msgid "Undo the last edit to the asset catalogs"
+msgstr "撤消资产目录的最后一次编辑"
+
+
+msgctxt "Operator"
+msgid "Store undo snapshot for asset catalog edits"
+msgstr "存储资产目录编辑的撤消快照"
+
+
+msgid "Store the current state of the asset catalogs in the undo buffer"
+msgstr "将资产目录的当前状态存储在撤消缓存中"
 
 
 msgctxt "Operator"
@@ -53029,6 +53205,14 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
@@ -53448,6 +53632,10 @@ msgstr "按照纵轴(时间为0)"
 
 msgid "Flip times of selected keyframes, effectively reversing the order they appear in"
 msgstr "根据选择的镜像线翻转选择的关键帧"
+
+
+msgid "Set Preview Range based on range of selected keyframes"
+msgstr "根据选择的关键帧范围设置预览区间"
 
 
 msgctxt "Operator"
@@ -58552,6 +58740,10 @@ msgid "Mute or un-mute selected strips"
 msgstr "屏蔽或启用所选的片段"
 
 
+msgid "Set Preview Range based on extends of selected strips"
+msgstr "根据选择的片断扩展设置预览区间"
+
+
 msgid "Select or deselect all NLA-Strips"
 msgstr "选择或取消选择全部 NLA 片段"
 
@@ -61288,6 +61480,19 @@ msgstr "从场景的当前帧范围更新运动路径的帧范围"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "更新物体路径"
+
+
+msgid "Recalculate motion paths for selected objects"
+msgstr "重新计算选定物体的运动路径"
+
+
+msgctxt "Operator"
+msgid "Update All Object Paths"
+msgstr "更新全部物体路径"
+
+
+msgid "Recalculate all visible motion paths for objects and poses"
+msgstr "重新计算物体和姿态的所有可见运动路径"
 
 
 msgctxt "Operator"
@@ -65304,10 +65509,6 @@ msgstr "移除具有相同 ID 的已有模板"
 msgctxt "Operator"
 msgid "Add Asset Library"
 msgstr "添加资产库"
-
-
-msgid "Add a path to a .blend file to be used by the Asset Browser as source of assets"
-msgstr "添加指向一个 .blend 文件的路径，以供资产浏览器用作资产来源"
 
 
 msgctxt "Operator"
@@ -75430,12 +75631,20 @@ msgid "Show the panel on all tabs"
 msgstr "在所有选项卡上显示面板"
 
 
+msgid "Integrator Presets"
+msgstr "积分器预设"
+
+
+msgid "Sampling Presets"
+msgstr "采样预设"
+
+
+msgid "Viewport Sampling Presets"
+msgstr "视图采样预设"
+
+
 msgid "Asset Metadata"
 msgstr "资产元数据"
-
-
-msgid "Details"
-msgstr "详细信息"
 
 
 msgid "Chain Scaling"
@@ -75601,20 +75810,8 @@ msgid "Ray Visibility"
 msgstr "射线可见性"
 
 
-msgid "Integrator Presets"
-msgstr "积分器预设"
-
-
 msgid "Post Processing"
 msgstr "后期处理"
-
-
-msgid "Sampling Presets"
-msgstr "采样预设"
-
-
-msgid "Viewport Sampling Presets"
-msgstr "视图采样预设"
 
 
 msgid "Film"
@@ -81787,10 +81984,6 @@ msgid "Sampling Pattern"
 msgstr "采样模式"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "积分器使用的随机采样模式"
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -87396,16 +87589,8 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
 msgid "Display black edges"
 msgstr "绘制黑色边线"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Display white edges"
@@ -91812,6 +91997,14 @@ msgid "Width of menu shadows, set to zero to disable"
 msgstr "菜单阴影的宽度, 0 表示禁用"
 
 
+msgid "Panel Roundness"
+msgstr "面板圆度"
+
+
+msgid "Roundness of the corners of panels and sub-panels"
+msgstr "面板和子面板拐角的圆度"
+
+
 msgid "Primary Color"
 msgstr "主色"
 
@@ -94897,6 +95090,82 @@ msgid "Collection of XR action maps"
 msgstr "XR动作映射集合"
 
 
+msgid "XR Data for Window Manager Event"
+msgstr "窗口管理器事件的 XR 数据"
+
+
+msgid "XR action name"
+msgstr "XR 动作名称"
+
+
+msgid "Action Set"
+msgstr "动作类型"
+
+
+msgid "XR action set name"
+msgstr "XR动作设置名称"
+
+
+msgid "Whether bimanual interaction is occurring"
+msgstr "是否正在进行双手交互"
+
+
+msgid "Controller Location"
+msgstr "控制器位置"
+
+
+msgid "Location of the action's corresponding controller aim in world space"
+msgstr "动作对应的控制器目标在世界空间中的位置"
+
+
+msgid "Controller Location Other"
+msgstr "控制器位置其他"
+
+
+msgid "Controller aim location of the other user path for bimanual actions"
+msgstr "另一个用户路径的控制器目标位置，用于双手操作"
+
+
+msgid "Controller Rotation"
+msgstr "控制器旋转"
+
+
+msgid "Rotation of the action's corresponding controller aim in world space"
+msgstr "动作对应控制器目标在世界空间中的旋转"
+
+
+msgid "Controller Rotation Other"
+msgstr "控制器旋转其他"
+
+
+msgid "Controller aim rotation of the other user path for bimanual actions"
+msgstr "另一个用户路径的控制器目标旋转，用于双手操作"
+
+
+msgid "Float Threshold"
+msgstr "浮点阈值"
+
+
+msgid "Input threshold for float/2D vector actions"
+msgstr "浮点/二维动作的输入阈值"
+
+
+msgid "XR action values corresponding to type"
+msgstr "对应类型的XR动作值"
+
+
+msgid "State Other"
+msgstr "状态其他"
+
+
+msgid "State of the other user path for bimanual actions"
+msgstr "另一个用户路径的状态，用于双手操作"
+
+
+msgid "XR action type"
+msgstr "XR 动作类型"
+
+
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
 msgstr "VR头戴设备旋转的变化量将被应用到Z轴上的旋转角度"
 
@@ -94939,6 +95208,66 @@ msgstr "远裁距离的VR视口"
 
 msgid "VR viewport near clipping distance"
 msgstr "近裁距离的VR视口"
+
+
+msgid "Controller Draw Style"
+msgstr "控制器绘制样式"
+
+
+msgid "Style to use when drawing VR controllers"
+msgstr "绘制 VR 控制器时使用的样式"
+
+
+msgid "Dark"
+msgstr "暗"
+
+
+msgid "Draw dark controller"
+msgstr "绘制暗控制器"
+
+
+msgid "Draw light controller"
+msgstr "绘制亮控制器"
+
+
+msgid "Dark + Ray"
+msgstr "暗 + 射线"
+
+
+msgid "Draw dark controller with aiming axis ray"
+msgstr "用瞄准轴射线绘制暗控制器"
+
+
+msgid "Light + Ray"
+msgstr "亮 + 射线"
+
+
+msgid "Draw light controller with aiming axis ray"
+msgstr "用瞄准轴射线绘制亮控制器"
+
+
+msgid "Show Controllers"
+msgstr "显示控制器"
+
+
+msgid "Show VR controllers (requires VR actions for controller poses)"
+msgstr "显示 VR 控制器(控制器姿势需要 VR 动作）"
+
+
+msgid "Show Custom Overlays"
+msgstr "显示自定义叠加层"
+
+
+msgid "Show custom VR overlays"
+msgstr "显示自定义VR叠加层"
+
+
+msgid "Show Selection"
+msgstr "显示选择"
+
+
+msgid "Show selection outlines"
+msgstr "显示选中的轮廓"
 
 
 msgid "Absolute Tracking"
@@ -96254,14 +96583,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "在外部 .osl 文件路径中写入 .oso 文件失败 "
 
 
-msgid "No compatible GPUs found for path tracing"
-msgstr "找不到用于光追的兼容 GPU"
-
-
-msgid "Cycles will render on the CPU"
-msgstr "Cycles 将使用CPU渲染"
-
-
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -97510,6 +97831,11 @@ msgstr "后显帧数"
 
 msgid "To"
 msgstr "到"
+
+
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "更新全部路径"
 
 
 msgid "Nothing to show yet..."
@@ -99340,7 +99666,7 @@ msgstr "先启用颜色渐变"
 
 
 msgid "Tiles Even"
-msgstr "平铺均匀"
+msgstr "偶数块"
 
 
 msgid "Odd"
@@ -99976,14 +100302,6 @@ msgstr "减少编号"
 
 msgid "No asset selected"
 msgstr "未选择任何资产"
-
-
-msgid "Source: Current File"
-msgstr "源: 当前文件"
-
-
-msgid "Source:"
-msgstr "源:"
 
 
 msgctxt "Operator"
@@ -102725,6 +103043,16 @@ msgstr "计算运动路径"
 msgctxt "Operator"
 msgid "Clear Motion Paths"
 msgstr "清空运动路径"
+
+
+msgctxt "Operator"
+msgid "Update Armature Motion Paths"
+msgstr "更新骨架运动路径"
+
+
+msgctxt "Operator"
+msgid "Update All Motion Paths"
+msgstr "更新所有运动路径"
 
 
 msgctxt "Operator"

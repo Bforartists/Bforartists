@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'a9cb33081506')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -8401,6 +8401,22 @@ msgid "Both Z"
 msgstr "Entrambe Z"
 
 
+msgid "Fonts"
+msgstr "Caratteri"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Stile Linee Freestyle"
+
+
+msgid "Node Trees"
+msgstr "Alberi Nodi"
+
+
+msgid "Particles Settings"
+msgstr "Impostazioni Particelle"
+
+
 msgid "File Select Parameters"
 msgstr "Seleziona i parametri del File"
 
@@ -8527,22 +8543,6 @@ msgstr "Miscellanea"
 
 msgid "Objects & Collections"
 msgstr "Oggetti & Raccolte"
-
-
-msgid "Fonts"
-msgstr "Caratteri"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Stile Linee Freestyle"
-
-
-msgid "Node Trees"
-msgstr "Alberi Nodi"
-
-
-msgid "Particles Settings"
-msgstr "Impostazioni Particelle"
 
 
 msgid "Directory"
@@ -23973,6 +23973,10 @@ msgid "Equal"
 msgstr "Uguale"
 
 
+msgid "Input value used for unconnected socket"
+msgstr "Valore d'ingresso usato per connettore non collegato"
+
+
 msgid "Original"
 msgstr "Originale"
 
@@ -23987,6 +23991,18 @@ msgstr "Solo Spigoli & Facce"
 
 msgid "Only Faces"
 msgstr "Solo Facce"
+
+
+msgid "Linear interpolation"
+msgstr "Interpolazione lineare"
+
+
+msgid "No interpolation (sample closest texel)"
+msgstr "No interpolazione (campione texel più vicino)"
+
+
+msgid "Cubic interpolation"
+msgstr "Interpolazione Cubica"
 
 
 msgid "Min Max"
@@ -24368,18 +24384,6 @@ msgstr "Texture Ambiente"
 
 msgid "Texture interpolation"
 msgstr "Interpolazione texture"
-
-
-msgid "Linear interpolation"
-msgstr "Interpolazione lineare"
-
-
-msgid "No interpolation (sample closest texel)"
-msgstr "No interpolazione (campione texel più vicino)"
-
-
-msgid "Cubic interpolation"
-msgstr "Interpolazione Cubica"
 
 
 msgid "Projection"
@@ -24788,10 +24792,6 @@ msgstr "Connettore Nodo Booleano"
 
 msgid "Default Value"
 msgstr "Valore Predefinito"
-
-
-msgid "Input value used for unconnected socket"
-msgstr "Valore d'ingresso usato per connettore non collegato"
 
 
 msgid "Color Node Socket"
@@ -29950,6 +29950,14 @@ msgstr "Unisci punti per distanza"
 msgctxt "Operator"
 msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
+
+
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
 
 
 msgctxt "Operator"
@@ -42760,6 +42768,14 @@ msgid "Pin"
 msgstr "Appunta"
 
 
+msgid "Integrator Presets"
+msgstr "Preimpostazioni Integratore"
+
+
+msgid "Sampling Presets"
+msgstr "Preimpostazioni Campionatura"
+
+
 msgid "Bone Constraints"
 msgstr "Vincoli Osso"
 
@@ -42849,16 +42865,8 @@ msgid "Ray Visibility"
 msgstr "Visibilità Raggio"
 
 
-msgid "Integrator Presets"
-msgstr "Preimpostazioni Integratore"
-
-
 msgid "Post Processing"
 msgstr "Post Elaborazione"
-
-
-msgid "Sampling Presets"
-msgstr "Preimpostazioni Campionatura"
 
 
 msgid "Film"
@@ -46281,10 +46289,6 @@ msgid "Sampling Pattern"
 msgstr "Motivo Campionamento"
 
 
-msgid "Random sampling pattern used by the integrator"
-msgstr "Motivo campionamento casuale usato dall'integratore"
-
-
 msgid "Sobol"
 msgstr "Sobol"
 
@@ -48785,14 +48789,6 @@ msgstr "L'immagine è mostrata e modificata in questo spazio"
 
 msgid "Outline"
 msgstr "Contorno"
-
-
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
 
 
 msgid "Overlay Mode"

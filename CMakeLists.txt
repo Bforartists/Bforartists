@@ -30,7 +30,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
       "CMake generation for Bforartists is not allowed within the source directory!"
       "\n Remove \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" and try again from another folder, e.g.:"
       "\n "
-      "\n rm CMakeCache.txt"
+      "\n rm -rf CMakeCache.txt CMakeFiles"
       "\n cd .."
       "\n mkdir cmake-make"
       "\n cd cmake-make"
@@ -160,8 +160,7 @@ if(APPLE)
   # Currently this causes a build error linking, disable.
   set(WITH_BLENDER_THUMBNAILER OFF)
 elseif(WIN32)
-  # Building the thumbnail extraction DLL could be made optional.
-  set(WITH_BLENDER_THUMBNAILER ON)
+  option(WITH_BLENDER_THUMBNAILER "Build \"BlendThumb.dll\" helper for Windows explorer integration" ON)
 else()
   option(WITH_BLENDER_THUMBNAILER "Build \"blender-thumbnailer\" thumbnail extraction utility" ON)
 endif()

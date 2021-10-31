@@ -1251,9 +1251,16 @@ class vrmlNode(object):
     def canHaveReferences(self):
         return self.node_type == NODE_NORMAL and self.getDefName()
 
-    # This is a prerequisite for raw XML-based material caching. For now, only for X3D
+    # This is a prerequisite for raw XML-based material caching.
+    # NOTE - crude, but working implementation for
+    # material and texture caching, based on __repr__.
+    # Doesn't do any XML, but is better than nothing.
     def desc(self):
-        return None
+        if "material" in self.id or "texture" in self.id:
+            node = self.reference if self.node_type == NODE_REFERENCE else self
+            return frozenset(line.strip() for line in repr(node).strip().split("\n"))
+        else:
+            return None
 
 
 def gzipOpen(path):
@@ -1480,7 +1487,7 @@ for i, f in enumerate(files):
 # NO BLENDER CODE ABOVE THIS LINE.
 # -----------------------------------------------------------------------------------
 import bpy
-from bpy_extras import image_utils
+from bpy_extras import image_utils, node_shader_utils
 from mathutils import Vector, Matrix, Quaternion
 
 GLOBALS = {'CIRCLE_DETAIL': 16}
@@ -2703,31 +2710,46 @@ def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
     # Given an X3D material, creates a Blender material.
     # texture is applied later, in appearance_Create().
     # All values between 0.0 and 1.0, defaults from VRML docs.
-    bpymat = bpy.data.materials.new(vrmlname)
-    return  # XXX For now...
-    bpymat.ambient = mat.getFieldAsFloat('ambientIntensity', 0.2, ancestry)
-    diff_color = mat.getFieldAsFloatTuple('diffuseColor',
-                                          [0.8, 0.8, 0.8],
-                                          ancestry)
-    bpymat.diffuse_color = diff_color
+    mat_name = mat.getDefName()
+    bpymat = bpy.data.materials.new(mat_name if mat_name else vrmlname)
+    bpymat_wrap = node_shader_utils.PrincipledBSDFWrapper(bpymat, is_readonly=False)
 
-    # NOTE - blender doesn't support emmisive color
-    # Store in mirror color and approximate with emit.
-    emit = mat.getFieldAsFloatTuple('emissiveColor', [0.0, 0.0, 0.0], ancestry)
-    bpymat.mirror_color = emit
-    bpymat.emit = (emit[0] + emit[1] + emit[2]) / 3.0
+    # TODO: handle 'ambientIntensity'.
+    #ambient = mat.getFieldAsFloat('ambientIntensity', 0.2, ancestry)
 
+    diff_color = mat.getFieldAsFloatTuple('diffuseColor', [0.8, 0.8, 0.8], ancestry)
+    bpymat_wrap.base_color = diff_color
+
+    emit_color = mat.getFieldAsFloatTuple('emissiveColor', [0.0, 0.0, 0.0], ancestry)
+    bpymat_wrap.emission_color = emit_color
+
+    # NOTE - 'shininess' is being handled as 1 - roughness for now.
     shininess = mat.getFieldAsFloat('shininess', 0.2, ancestry)
-    bpymat.specular_hardness = int(1 + (510 * shininess))
+    bpymat_wrap.roughness = 1.0 - shininess
+
+    #bpymat.specular_hardness = int(1 + (510 * shininess))
     # 0-1 -> 1-511
-    bpymat.specular_color = mat.getFieldAsFloatTuple('specularColor',
-                                                     [0.0, 0.0, 0.0], ancestry)
-    bpymat.alpha = 1.0 - mat.getFieldAsFloat('transparency', 0.0, ancestry)
-    if bpymat.alpha < 0.999:
-        bpymat.use_transparency = True
+    # TODO: handle 'specularColor'.
+    #specular_color = mat.getFieldAsFloatTuple('specularColor',
+    #                                          [0.0, 0.0, 0.0], ancestry)
+
+    alpha = 1.0 - mat.getFieldAsFloat('transparency', 0.0, ancestry)
+    bpymat_wrap.alpha = alpha
+    if alpha < 1.0:
+        bpymat.blend_method = "BLEND"
+        bpymat.shadow_method = "HASHED"
+    
+    # NOTE - leaving this disabled for now
     if False and is_vcol:
-        bpymat.use_vertex_color_paint = True
-    return bpymat
+        node_vertex_color = bpymat.node_tree.nodes.new("ShaderNodeVertexColor")
+        node_vertex_color.location = (-200, 300)
+
+        bpymat.node_tree.links.new(
+            bpymat_wrap.node_principled_bsdf.inputs["Base Color"],
+            node_vertex_color.outputs["Color"]
+        )
+    
+    return bpymat_wrap
 
 
 def appearance_CreateDefaultMaterial():
@@ -2736,17 +2758,20 @@ def appearance_CreateDefaultMaterial():
     # (but possibly with a texture).
 
     bpymat = bpy.data.materials.new("Material")
-    return # XXX For now...
-    bpymat.ambient = 0.2
-    bpymat.diffuse_color = [0.8, 0.8, 0.8]
-    bpymat.mirror_color = (0, 0, 0)
-    bpymat.emit = 0
+    bpymat_wrap = node_shader_utils.PrincipledBSDFWrapper(bpymat, is_readonly=False)
 
-    bpymat.specular_hardness = 103
+    bpymat_wrap.roughness = 0.8
+    bpymat_wrap.base_color = (0.8, 0.8, 0.8, 1.0)
+    #bpymat.mirror_color = (0, 0, 0)
+    #bpymat.emit = 0
+
+    # TODO: handle 'shininess' and 'specularColor'.
+    #bpymat.specular_hardness = 103
     # 0-1 -> 1-511
-    bpymat.specular_color = (0, 0, 0)
-    bpymat.alpha = 1
-    return bpymat
+    #bpymat.specular_color = (0, 0, 0)
+    
+    bpymat_wrap.alpha = 1.0
+    return bpymat_wrap
 
 
 def appearance_LoadImageTextureFile(ima_urls, node):
@@ -2823,11 +2848,6 @@ def appearance_LoadTexture(tex_node, ancestry, node):
         bpyima = appearance_LoadPixelTexture(tex_node, ancestry)
 
     if bpyima:  # Loading can still fail
-        repeat_s = tex_node.getFieldAsBool('repeatS', True, ancestry)
-        bpyima.use_clamp_x = not repeat_s
-        repeat_t = tex_node.getFieldAsBool('repeatT', True, ancestry)
-        bpyima.use_clamp_y = not repeat_t
-
         # Update the desc-based cache
         if desc:
             texture_cache[desc] = bpyima
@@ -2870,35 +2890,29 @@ def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
     tex_has_alpha = False
 
     if material:
-        bpymat = appearance_CreateMaterial(vrmlname, material, ancestry, is_vcol)
+        bpymat_wrap = appearance_CreateMaterial(vrmlname, material, ancestry, is_vcol)
     else:
-        bpymat = appearance_CreateDefaultMaterial()
+        bpymat_wrap = appearance_CreateDefaultMaterial()
 
     if tex_node:  # Texture caching inside there
         bpyima = appearance_LoadTexture(tex_node, ancestry, node)
 
-    if False and is_vcol:
-        bpymat.use_vertex_color_paint = True
+    if bpyima:
+        repeatS = tex_node.getFieldAsBool('repeatS', True, ancestry)
+        repeatT = tex_node.getFieldAsBool('repeatT', True, ancestry)
 
-    if False and bpyima:
+        bpymat_wrap.base_color_texture.image = bpyima
+        
+        # NOTE - not possible to handle x and y tiling individually.
+        extension = "REPEAT" if repeatS or repeatT else "CLIP"
+        bpymat_wrap.base_color_texture.extension = extension
+
         tex_has_alpha = bpyima.alpha_mode not in {'NONE', 'CHANNEL_PACKED'}
-
-        texture = bpy.data.textures.new(bpyima.name, 'IMAGE')
-        texture.image = bpyima
-
-        mtex = bpymat.texture_slots.add()
-        mtex.texture = texture
-
-        mtex.texture_coords = 'UV'
-        mtex.use_map_diffuse = True
-        mtex.use = True
-
         if tex_has_alpha:
-            bpymat.use_transparency = True
-            mtex.use_map_alpha = True
-            mtex.alpha_factor = 0.0
+            bpymat_wrap.alpha_texture.image = bpyima
+            bpymat_wrap.alpha_texture.extension = extension
 
-    return (bpymat, bpyima, tex_has_alpha)
+    return (bpymat_wrap.material, bpyima, tex_has_alpha)
 
 
 def importShape_LoadAppearance(vrmlname, appr, ancestry, node, is_vcol):
@@ -3038,6 +3052,7 @@ def importShape_ProcessObject(
         if bpydata.uv_layers:
             if has_alpha and bpymat:  # set the faces alpha flag?
                 bpymat.blend_method = 'BLEND'
+                bpymat.shadow_method = 'HASHED'
 
             if texmtx:
                 # Apply texture transform?
@@ -3499,6 +3514,11 @@ def load_web3d(
 
     # Used when adding blender primitives
     GLOBALS['CIRCLE_DETAIL'] = PREF_CIRCLE_DIV
+
+    # NOTE - reset material cache
+    # (otherwise we might get "StructRNA of type Material has been removed" errors)
+    global material_cache
+    material_cache = {}
 
     bpyscene = bpycontext.scene
     bpycollection = bpycontext.collection
