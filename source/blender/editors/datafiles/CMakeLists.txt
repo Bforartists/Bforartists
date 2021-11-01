@@ -1114,8 +1114,8 @@ gp_only_selected
 gp_select_points
 gp_select_strokes
 
-#~ DEF_ICON_BLANK(1133)
-#~ DEF_ICON_BLANK(1134)
+view_stretch
+view_fill
 #~ DEF_ICON_BLANK(1135)
 #~ DEF_ICON_BLANK(1136)
 #~ DEF_ICON_BLANK(1137)
