@@ -1048,9 +1048,9 @@ class SEQUENCER_MT_image_apply(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.strip_transform_fit", text="Scale To Fit").fit_method = 'FIT'
-        layout.operator("sequencer.strip_transform_fit", text="Scale to Fill").fit_method = 'FILL'
-        layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill").fit_method = 'STRETCH'
+        layout.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon = "VIEW_FIT").fit_method = 'FIT'
+        layout.operator("sequencer.strip_transform_fit", text="Scale to Fill", icon = "VIEW_FILL").fit_method = 'FILL'
+        layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
 
 
 class SEQUENCER_MT_context_menu(Menu):
