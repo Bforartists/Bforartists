@@ -939,12 +939,12 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        grid="#404040"
+        grid="#666666"
         node_selected="#f15800"
         node_active="#eefcff"
         wire="#808080"
         wire_inner="#737373"
-        wire_select="#ffffff"
+        wire_select="#ffffffff"
         selected_text="#7f7070"
         node_backdrop="#4d4d4dff"
         converter_node="#66c4ff"
@@ -955,7 +955,7 @@
         matte_node="#975b5b"
         distor_node="#749797"
         noodle_curving="5"
-        grid_levels="2"
+        grid_levels="7"
         dash_alpha="0.5"
         input_node="#e64555"
         output_node="#b33641"
@@ -1581,7 +1581,7 @@
   <ThemeStyle>
     <panel_title>
       <ThemeFontStyle
-        points="12"
+        points="11"
         shadow="1"
         shadow_offset_x="0"
         shadow_offset_y="-1"
