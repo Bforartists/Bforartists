@@ -13639,9 +13639,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_ROTATE_EULER:
       icon = ICON_ROTATE_EULER;
       break;
-    //case FN_NODE_SLICE_STRING:
-    //  icon = ICON_DELETE;
-    //  break;
+    case FN_NODE_SLICE_STRING:
+      icon = ICON_STRING_SUBSTRING;
+      break;
     case FN_NODE_STRING_LENGTH:
       icon = ICON_STRING_LENGTH;
       break;
@@ -13722,9 +13722,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_LEGACY_CURVE_SUBDIVIDE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
-    // case GEO_NODE_LEGACY_CURVE_TO_POINTS:
-    //  icon = ICON_POINTCLOUD_DATA;
-    //  break;
+    case GEO_NODE_LEGACY_CURVE_TO_POINTS:
+      icon = ICON_POINTCLOUD_DATA;
+      break;
     case GEO_NODE_LEGACY_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;
@@ -13770,7 +13770,6 @@ static int node_type_to_icon(int type)
     // case GEO_NODE_LEGACY_VOLUME_TO_MESH:
     //  icon = ICON_DELETE;
     //  break;
-
     case GEO_NODE_ATTRIBUTE_REMOVE:
       icon = ICON_ATTRIBUTE_REMOVE;
       break;
@@ -13831,33 +13830,33 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
       break;
-    //case GEO_NODE_CURVE_TO_POINTS:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_CURVE_TO_POINTS:
+      icon = ICON_POINTCLOUD_DATA;
+      break;
     case GEO_NODE_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
       break;
-    //case GEO_NODE_FILL_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
-    //case GEO_NODE_FILLET_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_IMAGE_TEXTURE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_FILL_CURVE:
+      icon = ICON_CURVE_FILL;
+      break;
+    case GEO_NODE_FILLET_CURVE:
+      icon = ICON_CURVE_FILLET;
+      break;
+    case GEO_NODE_IMAGE_TEXTURE:
+      icon = ICON_IMAGE_DATA;
+      break;
     case GEO_NODE_INPUT_CURVE_HANDLES:
       icon = ICON_CURVE_HANDLE_POSITIONS;
       break;
     case GEO_NODE_INPUT_CURVE_TILT:
       icon = ICON_CURVE_TILT;
       break;
-    // case GEO_NODE_INPUT_ID:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_INPUT_ID:
+      icon = ICON_GET_ID;
+      break;
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
@@ -13957,18 +13956,18 @@ static int node_type_to_icon(int type)
     case GEO_NODE_REPLACE_MATERIAL:
       icon = ICON_MATERIAL_REPLACE;
       break;
-    // case GEO_NODE_RESAMPLE_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
-    // case GEO_NODE_REVERSE_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_RESAMPLE_CURVE:
+      icon = ICON_CURVE_RESAMPLE;
+      break;
+    case GEO_NODE_REVERSE_CURVE:
+      icon = ICON_SWITCH_DIRECTION;
+      break;
     case GEO_NODE_ROTATE_INSTANCES:
       icon = ICON_ROTATE_INSTANCE;
       break;
-    // case GEO_NODE_SAMPLE_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SAMPLE_CURVE:
+      icon = ICON_CURVE_SAMPLE;
+      break;
     case GEO_NODE_SCALE_INSTANCES:
       icon = ICON_SCALE_INSTANCE;
       break;
@@ -13987,9 +13986,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_CURVE_TILT:
       icon = ICON_SET_CURVE_TILT;
       break;
-    // case GEO_NODE_SET_ID:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SET_ID:
+      icon = ICON_SET_ID;
+      break;
     case GEO_NODE_SET_MATERIAL_INDEX:
       icon = ICON_SET_MATERIAL_INDEX;
       break;
@@ -14011,18 +14010,18 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_SPLINE_RESOLUTION:
       icon = ICON_SET_SPLINE_RESOLUTION;
       break;
-    // case GEO_NODE_SPLIT_EDGES:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SPLIT_EDGES:
+      icon = ICON_SPLITEDGE;
+      break;
     case GEO_NODE_STRING_JOIN:
       icon = ICON_STRING_JOIN;
       break;
     case GEO_NODE_STRING_TO_CURVES:
       icon = ICON_STRING_TO_CURVE;
       break;
-    // case GEO_NODE_SUBDIVIDE_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
+    case GEO_NODE_SUBDIVIDE_CURVE:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
     case GEO_NODE_SUBDIVIDE_MESH:
       icon = ICON_SUBDIVIDE_MESH;
       break;
@@ -14044,9 +14043,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
       break;
-    // case GEO_NODE_TRIM_CURVE:
-    //  icon = ICON_DELETE;
-    //  break;
+     case GEO_NODE_TRIM_CURVE:
+      icon = ICON_CURVE_TRIM;
+      break;
     case GEO_NODE_VIEWER:
       icon = ICON_NODE_VIEWER;
       break;
