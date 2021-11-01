@@ -1116,8 +1116,8 @@ gp_select_strokes
 
 view_stretch
 view_fill
-#~ DEF_ICON_BLANK(1135)
-#~ DEF_ICON_BLANK(1136)
+get_id
+set_id
 #~ DEF_ICON_BLANK(1137)
 #~ DEF_ICON_BLANK(1138)
 #~ DEF_ICON_BLANK(1139)
