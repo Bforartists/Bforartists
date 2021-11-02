@@ -2529,6 +2529,12 @@ keyconfig_data = \
     ],
    },
   ),
+ ("Grease Pencil Stroke Curve Edit Mode",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [],
+   },
+  ),
  ("Grease Pencil Stroke Edit Mode",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
@@ -6609,7 +6615,7 @@ keyconfig_data = \
     ("wm.context_toggle",
      {"type": 'Z', "value": 'PRESS', "shift": True, "alt": True},
      {"properties":
-      [("data_path", 'space_data.overlay.show_overlays'),
+      [("data_path", 'space_data.show_overlays'),
        ],
       },
      ),

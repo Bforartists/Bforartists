@@ -1,4 +1,4 @@
-keyconfig_version = (3, 0, 33)
+keyconfig_version = (3, 1, 0)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6549,7 +6549,7 @@ keyconfig_data = \
     ("wm.context_toggle",
      {"type": 'Z', "value": 'PRESS', "shift": True, "alt": True},
      {"properties":
-      [("data_path", 'space_data.overlay.show_overlays'),
+      [("data_path", 'space_data.show_overlays'),
        ],
       },
      ),
