@@ -1014,7 +1014,13 @@ class SEQUENCER_MT_image(Menu):
             layout.menu("SEQUENCER_MT_image_transform")
 
         layout.menu("SEQUENCER_MT_image_clear")
-        layout.menu("SEQUENCER_MT_image_apply")
+
+        layout.separator()
+
+        layout.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon = "VIEW_FIT").fit_method = 'FIT'
+        layout.operator("sequencer.strip_transform_fit", text="Scale to Fill", icon = "VIEW_FILL").fit_method = 'FILL'
+        layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
+
 
 
 class SEQUENCER_MT_image_transform(Menu):
@@ -1041,7 +1047,7 @@ class SEQUENCER_MT_image_clear(Menu):
         layout.operator("sequencer.strip_transform_clear", text="Rotation", icon = "CLEARROTATE").property = 'ROTATION'
         layout.operator("sequencer.strip_transform_clear", text="All Transforms", icon = "CLEAR").property = 'ALL'
 
-
+# bfa - Was used in the image menu. But not used in the UI anymore, remains for compatibility
 class SEQUENCER_MT_image_apply(Menu):
     bl_label = "Apply"
 
