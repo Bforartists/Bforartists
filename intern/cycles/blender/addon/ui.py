@@ -259,6 +259,9 @@ class CYCLES_RENDER_PT_sampling_render(CyclesButtonsPanel, Panel):
             row.prop(cscene, "adaptive_min_samples", text="Min Samples")
         else:
             col.prop(cscene, "samples", text="Samples")
+            
+        col.separator()
+
         col.prop(cscene, "time_limit")
 
 
@@ -325,8 +328,6 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.separator()
         row.active = not cscene.use_preview_adaptive_sampling
         row.prop(cscene, "preview_scrambling_distance", text="Viewport")
-
-        layout.separator()
 
         col = layout.column(align=True)
         col.prop(cscene, "min_light_bounces")
