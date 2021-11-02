@@ -170,7 +170,7 @@ class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
 
         split = layout.split(factor = 0.425)
         col = split.column()
-        col.prop(cscene, "use_preview_adaptive_sampling", text="Noise Threshold")
+        col.prop(cscene, "use_preview_adaptive_sampling", text="Adaptive Sampling")
         col = split.column()
         if cscene.use_preview_adaptive_sampling:
             col.prop(cscene, "preview_adaptive_threshold", text="")
@@ -240,7 +240,7 @@ class CYCLES_RENDER_PT_sampling_render(CyclesButtonsPanel, Panel):
 
         split = layout.split(factor = 0.425)
         col = split.column()
-        col.prop(cscene, "use_adaptive_sampling", text="Noise Threshold")
+        col.prop(cscene, "use_adaptive_sampling", text="Adaptive Sampling")
         col = split.column()
         if cscene.use_adaptive_sampling:
             col.prop(cscene, "adaptive_threshold", text="")
