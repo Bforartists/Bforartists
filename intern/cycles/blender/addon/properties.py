@@ -346,7 +346,10 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         name="Scrambling Distance",
         default=1.0,
         min=0.0, max=1.0,
-        description="Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling",
+        description="Speeds up rendering at the GPU by scrambling pixels that are farer away"
+                    "\nLower values renders faster, with less noise"
+                    "\nBut too low values can lead to artifacts"
+                    "\nTo activate Scrambling turn off Adaptive sampling in the Render or Viewport subtab",
     )
     preview_scrambling_distance: BoolProperty(
         name="Scrambling Distance viewport",
