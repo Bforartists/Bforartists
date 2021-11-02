@@ -802,13 +802,13 @@ void RNA_api_sequences(BlenderRNA *brna, PropertyRNA *cprop, const bool metastri
   };
 
   static const EnumPropertyItem scale_fit_methods[] = {
-      {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale image so fits in preview"},
+      {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale the image so that it fits in the preview"},
       {SEQ_SCALE_TO_FILL,
        "FILL",
        0,
        "Scale to Fill",
-       "Scale image so it fills preview completely"},
-      {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch image so it fills preview"},
+       "Scale the image so that it fills the preview completely"},
+      {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch the image so that it fills the preview"},
       {SEQ_USE_ORIGINAL_SIZE, "ORIGINAL", 0, "Use Original Size", "Don't scale the image"},
       {0, NULL, 0, NULL, NULL},
   };

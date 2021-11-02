@@ -3320,9 +3320,9 @@ void SEQUENCER_OT_strip_transform_clear(struct wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem scale_fit_methods[] = {
-    {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale image so fits in preview"},
-    {SEQ_SCALE_TO_FILL, "FILL", 0, "Scale to Fill", "Scale image so it fills preview completely"},
-    {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch image so it fills preview"},
+    {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale the image so that it fits in the preview"},
+    {SEQ_SCALE_TO_FILL, "FILL", 0, "Scale to Fill", "Scale the image so that it fills the preview completely"},
+    {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch the image so that it fills the preview"},
     {0, NULL, 0, NULL, NULL},
 };
 
