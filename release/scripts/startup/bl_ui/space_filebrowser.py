@@ -671,7 +671,7 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
 
         layout.prop(st, "show_region_toolbar", text="Source List")
         layout.prop(st, "show_region_tool_props", text="Asset Details")
-        layout.operator("file.view_selected")
+        layout.operator("file.view_selected", icon = "VIEW_SELECTED")
 
         layout.separator()
 
@@ -688,13 +688,13 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("file.select_all", text="All").action = 'SELECT'
-        layout.operator("file.select_all", text="None").action = 'DESELECT'
-        layout.operator("file.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("file.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("file.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("file.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("file.select_box")
+        layout.operator("file.select_box", icon = "BORDER_RECT")
 
 
 class ASSETBROWSER_MT_edit(AssetBrowserMenu, Menu):
@@ -703,8 +703,8 @@ class ASSETBROWSER_MT_edit(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.catalog_undo", text="Undo")
-        layout.operator("asset.catalog_redo", text="Redo")
+        layout.operator("asset.catalog_undo", text="Undo", icon = "UNDO")
+        layout.operator("asset.catalog_redo", text="Redo", icon = "REDO")
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
