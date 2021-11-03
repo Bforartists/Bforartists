@@ -904,7 +904,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
             "UI_OT_copy_data_path_button");
     uiItemBooleanO(layout,
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Full Data Path"),
-                   ICON_NONE,
+                   ICON_COPYDOWN,
                    "UI_OT_copy_data_path_button",
                    "full_path",
                    true);
