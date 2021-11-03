@@ -809,18 +809,18 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.asset_library_refresh")
+        layout.operator("file.asset_library_refresh", icon = "FILE_REFRESH")
 
         layout.separator()
 
         sub = layout.column()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("asset.clear", text="Clear Asset").set_fake_user = False
-        sub.operator("asset.clear", text="Clear Asset (Set Fake User)").set_fake_user = True
+        sub.operator("asset.clear", text="Clear Asset", icon = "CLEAR").set_fake_user = False
+        sub.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
 
         layout.separator()
 
-        layout.operator("asset.open_containing_blend_file")
+        layout.operator("asset.open_containing_blend_file", icon = "FILE_FOLDER")
 
         layout.separator()
 
