@@ -2817,10 +2817,12 @@ static const EnumPropertyItem *outliner_data_op_sets_enum_item_fn(bContext *C,
   TreeStoreElem *tselem = TREESTORE(te);
 
   static const EnumPropertyItem optype_sel_and_hide[] = {
-      {OL_DOP_SELECT, "SELECT", 0, "Select", ""},
-      {OL_DOP_DESELECT, "DESELECT", 0, "Deselect", ""},
-      {OL_DOP_HIDE, "HIDE", 0, "Hide", ""},
-      {OL_DOP_UNHIDE, "UNHIDE", 0, "Unhide", ""},
+      /*bfa - need to use the OFF icon to display the ON icon. Blender code hiccup with dealing with values
+         instead of icon names at other locations ...*/
+      {OL_DOP_SELECT, "SELECT", ICON_RESTRICT_SELECT_OFF, "Select", ""},
+      {OL_DOP_DESELECT, "DESELECT", ICON_SELECT_NONE, "Deselect", ""},
+      {OL_DOP_HIDE, "HIDE", ICON_HIDE_ON, "Hide", ""},
+      {OL_DOP_UNHIDE, "UNHIDE", ICON_HIDE_OFF, "Unhide", ""},
       {0, NULL, 0, NULL, NULL}};
 
   static const EnumPropertyItem optype_sel_linked[] = {
