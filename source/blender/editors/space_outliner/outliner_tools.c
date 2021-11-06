@@ -2868,10 +2868,10 @@ static int outliner_operator_menu(bContext *C, const char *opname)
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
   uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-  /* bfa -  OUTLINER_MT_context menu appends to Outliner ID Data Operation menu*/
   uiItemS(layout);
-
-  uiItemMContents(layout, "OUTLINER_MT_context_menu");
+  /* bfa -  We just append the asset sub menu here, not the whole context menu*/
+  /*uiItemMContents(layout, "OUTLINER_MT_context_menu");*/
+  uiItemMContents(layout, "OUTLINER_MT_asset");
 
   UI_popup_menu_end(C, pup);
 
