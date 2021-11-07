@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9616,10 +9616,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Knotenbaum-Datenblöcke anzeigen"
 
 
-msgid "Show Object data-blocks"
-msgstr "Objekt-Datenblöcke anzeigen"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Farbkurven-Datenblöcke anzeigen"
 
@@ -9678,6 +9674,10 @@ msgstr "Aktionen-Datenblöcke anzeigen"
 
 msgid "Show Material data-blocks"
 msgstr "Material-Datenblöcke anzeigen"
+
+
+msgid "Show Object data-blocks"
+msgstr "Objekt-Datenblöcke anzeigen"
 
 
 msgid "Show World data-blocks"
@@ -19980,6 +19980,10 @@ msgid "Change"
 msgstr "Ändern"
 
 
+msgid "Apply"
+msgstr "Anwenden"
+
+
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -19994,10 +19998,6 @@ msgstr "Griff auswählen"
 
 msgid "Strip"
 msgstr "Streifen"
-
-
-msgid "Image Transform"
-msgstr "Bildtransformation"
 
 
 msgid "Lock/Mute"
@@ -20184,8 +20184,8 @@ msgid "Make Single User"
 msgstr "Einfachen Benutzer erzeugen"
 
 
-msgid "Apply"
-msgstr "Anwenden"
+msgid "Asset"
+msgstr "Asset"
 
 
 msgid "Object Context Menu"
@@ -24120,10 +24120,6 @@ msgid "Use Object layer"
 msgstr "Objektebene verwenden"
 
 
-msgid "Asset"
-msgstr "Asset"
-
-
 msgid "Auto-Refresh"
 msgstr "Automatisch aktualisieren"
 
@@ -26680,11 +26676,6 @@ msgstr "Erweitern (öffnen) aller ausgewählten erweiterbaren Animationskanäle"
 msgctxt "Operator"
 msgid "Revive Disabled F-Curves"
 msgstr "Deaktivierte F-Kurven wiederherstellen"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Finde Kanäle"
 
 
 msgctxt "Operator"
@@ -34134,11 +34125,6 @@ msgid "Add an object to the scene"
 msgstr "Ein Objekt zur Szene hinzufügen"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Benanntes Objekt hinzufügen"
-
-
 msgid "Add named object"
 msgstr "Benanntes Objekt hinzufügen"
 
@@ -34157,6 +34143,10 @@ msgstr "Fallen Y"
 
 msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Y-Koordinate (Bildschirmraum), um das neue Objekt unter"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Objekt duplizieren, aber Objektdaten mit den Originaldaten verknüpfen"
 
 
 msgid "Object name to add"
@@ -34342,10 +34332,6 @@ msgstr "Objekte duplizieren"
 
 msgid "Duplicate selected objects"
 msgstr "Ausgewählte Objekte duplizieren"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Objekt duplizieren, aber Objektdaten mit den Originaldaten verknüpfen"
 
 
 msgid "Duplicate selected objects and move them"
@@ -37513,9 +37499,24 @@ msgid "Save Screenshot"
 msgstr "Bildschirmfoto speichern"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Einstellungen anzeigen"
+msgid "Themes"
+msgstr "Themen"
+
+
+msgid "Editing"
+msgstr "Bearbeitung"
+
+
+msgid "Add-ons"
+msgstr "Add-Ons"
+
+
+msgid "File Paths"
+msgstr "Dateipfade"
+
+
+msgid "Experimental"
+msgstr "Experimentell"
 
 
 msgctxt "Operator"
@@ -41745,10 +41746,6 @@ msgid "Extra Options"
 msgstr "Extraoptionen"
 
 
-msgid "Add-ons"
-msgstr "Add-Ons"
-
-
 msgid "Timeline"
 msgstr "Zeitleiste"
 
@@ -41848,10 +41845,6 @@ msgstr "Zyklen Rendergeräte"
 
 msgid "Memory & Limits"
 msgstr "Speicher & Begrenzung"
-
-
-msgid "Themes"
-msgstr "Themen"
 
 
 msgid "Bone Color Sets"
@@ -43063,18 +43056,6 @@ msgstr "Aktive Auswahl"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Aktiver Bereich der Einstellungen, der in der Benutzeroberfläche angezeigt wird"
-
-
-msgid "Editing"
-msgstr "Bearbeitung"
-
-
-msgid "File Paths"
-msgstr "Dateipfade"
-
-
-msgid "Experimental"
-msgstr "Experimentell"
 
 
 msgid "Edit Methods"
@@ -45171,10 +45152,6 @@ msgstr "Flächenindex"
 
 msgid "Scene Camera"
 msgstr "Szenenkamera"
-
-
-msgid "Custom Camera"
-msgstr "Benutzerdefinierte Kamera"
 
 
 msgid "Custom Pose"
@@ -52489,10 +52466,6 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
-msgid "Built without VR/OpenXR features"
-msgstr "Baue ohne VR/OpenXR Eigenschaften"
-
-
 msgid "Note:"
 msgstr "Notiz:"
 
@@ -52505,13 +52478,17 @@ msgid "performance impact!"
 msgstr "Performancebeeinflussung!"
 
 
-msgid "API Defined"
-msgstr "API definiert"
+msgid "Built without VR/OpenXR features"
+msgstr "Baue ohne VR/OpenXR Eigenschaften"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Bearbeiten"
+msgid "New"
+msgstr "Neu"
+
+
+msgid "API Defined"
+msgstr "API definiert"
 
 
 msgid "Torus"
@@ -54847,11 +54824,6 @@ msgstr "Kürzester Pfad"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Neu"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Alle Bilder speichern"
 
@@ -55279,10 +55251,6 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Sequenzer/Vorschau umschalten"
 
 
-msgid "Handle"
-msgstr "Griff"
-
-
 msgctxt "Operator"
 msgid "Grouped"
 msgstr "Gruppiert"
@@ -55422,6 +55390,10 @@ msgid "Both Sides"
 msgstr "Beide Seiten"
 
 
+msgid "Handle"
+msgstr "Griff"
+
+
 msgctxt "Operator"
 msgid "Scene..."
 msgstr "Szene..."
@@ -55508,6 +55480,11 @@ msgstr "Gaußscher Weichzeichner"
 
 
 msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotation"
+
+
+msgctxt "Operator"
 msgid "Scale To Fit"
 msgstr "Skalieren zum einpassen"
 
@@ -55520,16 +55497,6 @@ msgstr "Skalieren zum füllen"
 msgctxt "Operator"
 msgid "Stretch To Fill"
 msgstr "Strecken zum füllen"
-
-
-msgctxt "Operator"
-msgid "Clear Position"
-msgstr "Position löschen"
-
-
-msgctxt "Operator"
-msgid "Move/Extend from Current Frame"
-msgstr "Bewege/Strecke von aktuellem Einzelbild"
 
 
 msgid "Tracker"
@@ -55548,6 +55515,11 @@ msgstr "Szene"
 msgctxt "Operator"
 msgid "Clip"
 msgstr "Clip"
+
+
+msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Bewege/Strecke von aktuellem Einzelbild"
 
 
 msgctxt "Operator"
@@ -56886,11 +56858,6 @@ msgstr "Knochen-Ebene ändern..."
 
 msgid "Bone Settings"
 msgstr "Knocheneinstellungen"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotation"
 
 
 msgctxt "Operator"
@@ -60431,14 +60398,6 @@ msgid "File path"
 msgstr "Dateipfad"
 
 
-msgid "Library not found"
-msgstr "Bibliothek wurde nicht gefunden"
-
-
-msgid "Set up the library or edit libraries in the Preferences, File Paths section"
-msgstr "Setup der Bibliothek oder Bearbeite die Bibliothekseinstellungen, Dateipfad Auswahl"
-
-
 msgid "Today"
 msgstr "Heute"
 
@@ -61483,6 +61442,10 @@ msgstr "Knochen-Einhüllende"
 
 msgid "Use Factor"
 msgstr "Verwende Faktor"
+
+
+msgid "Custom Camera"
+msgstr "Benutzerdefinierte Kamera"
 
 
 msgid "Chain"

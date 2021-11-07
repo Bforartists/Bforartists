@@ -22,6 +22,7 @@ import bpy
 import importlib
 
 from ..utils.naming import Side, get_name_base_and_sides, mirror_name
+from ..utils.misc import property_to_python
 
 from ..utils.rig import get_rigify_type
 from ..rig_lists import get_rig_class
@@ -109,11 +110,157 @@ def make_copy_parameter_button(layout, property_name, *, base_class, mirror_bone
     props.class_name = base_class.__name__
 
 
+def recursive_mirror(value):
+    """Mirror strings(.L/.R) in any mixed structure of dictionaries/lists."""
+
+    if isinstance(value, dict):
+        return { key: recursive_mirror(val) for key, val in value.items() }
+
+    elif isinstance(value, list):
+        return [recursive_mirror(elem) for elem in value]
+
+    elif isinstance(value, str):
+        return mirror_name(value)
+
+    else:
+        return value
+
+
+def copy_rigify_params(from_bone: bpy.types.PoseBone, to_bone: bpy.types.PoseBone, *, match_type=False, x_mirror=False) -> bool:
+    rig_type = to_bone.rigify_type
+    if match_type and to_bone.rigify_type != from_bone.rigify_type:
+        return False
+    else:
+        rig_type = to_bone.rigify_type = get_rigify_type(from_bone)
+
+    from_params = from_bone.get('rigify_parameters')
+    if from_params and rig_type:
+        param_dict = property_to_python(from_params)
+        if x_mirror:
+            param_dict = recursive_mirror(param_dict)
+        to_bone['rigify_parameters'] = param_dict
+    else:
+        try:
+            del to_bone['rigify_parameters']
+        except KeyError:
+            pass
+    return True
+
+
+class POSE_OT_rigify_mirror_parameters(bpy.types.Operator):
+    """Mirror Rigify type and parameters of selected bones to the opposite side. Names should end in L/R"""
+
+    bl_idname = "pose.rigify_mirror_parameters"
+    bl_label = "Mirror Rigify Parameters"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        if not obj or obj.type != 'ARMATURE' or obj.mode != 'POSE':
+            return False
+        sel_bones = context.selected_pose_bones
+        if not sel_bones:
+            return False
+        for pb in sel_bones:
+            mirrored_name = mirror_name(pb.name)
+            if mirrored_name != pb.name and mirrored_name in obj.pose.bones:
+                return True
+        return False
+
+    def execute(self, context):
+        rig = context.object
+
+        num_mirrored = 0
+
+        # First make sure that all selected bones can be mirrored unambiguously.
+        for pb in context.selected_pose_bones:
+            flip_bone = rig.pose.bones.get(mirror_name(pb.name))
+            if not flip_bone:
+                # Bones without an opposite will just be ignored.
+                continue
+            if flip_bone != pb and flip_bone.bone.select:
+                self.report(
+                    {'ERROR'}, f"Bone {pb.name} selected on both sides, mirroring would be ambiguous, aborting. Only select the left or right side, not both!")
+                return {'CANCELLED'}
+
+        # Then mirror the parameters.
+        for pb in context.selected_pose_bones:
+            flip_bone = rig.pose.bones.get(mirror_name(pb.name))
+            if flip_bone == pb or not flip_bone:
+                # Bones without an opposite will just be ignored.
+                continue
+
+            num_mirrored += copy_rigify_params(pb, flip_bone, match_type=False, x_mirror=True)
+
+        self.report({'INFO'}, f"Mirrored parameters of {num_mirrored} bones.")
+
+        return {'FINISHED'}
+
+
+class POSE_OT_rigify_copy_parameters(bpy.types.Operator):
+    """Copy Rigify type and parameters from active to selected bones"""
+
+    bl_idname = "pose.rigify_copy_parameters"
+    bl_label = "Copy Rigify Parameters to Selected"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    match_type: bpy.props.BoolProperty(
+        name = "Match Type",
+        description = "Only mirror rigify parameters to selected bones which have the same rigify type as the active bone",
+        default = False
+    )
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        if not obj or obj.type != 'ARMATURE' or obj.mode != 'POSE':
+            return False
+
+        active = context.active_pose_bone
+        if not active or not active.rigify_type:
+            return False
+
+        select = context.selected_pose_bones
+        if len(select) < 2 or active not in select:
+            return False
+
+        return True
+
+    def execute(self, context):
+        active_bone = context.active_pose_bone
+
+        num_copied = 0
+        for pb in context.selected_pose_bones:
+            if pb == active_bone:
+                continue
+            num_copied += copy_rigify_params(active_bone, pb, match_type=self.match_type)
+
+        self.report({'INFO'}, f"Copied {active_bone.rigify_type} parameters to {num_copied} bones.")
+
+        return {'FINISHED'}
+
+
+def draw_copy_mirror_ops(self, context):
+    layout = self.layout
+    if context.mode == 'POSE':
+        layout.separator()
+        op = layout.operator(POSE_OT_rigify_copy_parameters.bl_idname,
+                        icon='DUPLICATE', text="Copy Only Parameters")
+        op.match_type = True
+        op = layout.operator(POSE_OT_rigify_copy_parameters.bl_idname,
+                        icon='DUPLICATE', text="Copy Type & Parameters")
+        op.match_type = False
+        layout.operator(POSE_OT_rigify_mirror_parameters.bl_idname,
+                        icon='MOD_MIRROR', text="Mirror Type & Parameters")
+
 # =============================================
 # Registration
 
 classes = (
     POSE_OT_rigify_copy_single_parameter,
+    POSE_OT_rigify_mirror_parameters,
+    POSE_OT_rigify_copy_parameters
 )
 
 
@@ -122,8 +269,11 @@ def register():
     for cls in classes:
         register_class(cls)
 
+    bpy.types.VIEW3D_MT_rigify.append(draw_copy_mirror_ops)
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in classes:
         unregister_class(cls)
+
+    bpy.types.VIEW3D_MT_rigify.remove(draw_copy_mirror_ops)

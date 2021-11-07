@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1878,6 +1878,11 @@ msgstr "Animazioa"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Berria"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Ireki..."
 
@@ -1906,11 +1911,6 @@ msgstr "Errefrakzioa"
 
 msgid "Temperature"
 msgstr "Tenperatura"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Berria"
 
 
 msgctxt "Operator"

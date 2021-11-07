@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14735,6 +14735,10 @@ msgid "Effect Strip"
 msgstr "NLA Proužky"
 
 
+msgid "Apply"
+msgstr "Použít"
+
+
 msgid "Navigation"
 msgstr "Navigace"
 
@@ -14845,10 +14849,6 @@ msgstr "Háky"
 
 msgid "Make Single User"
 msgstr "Přivlastnit"
-
-
-msgid "Apply"
-msgstr "Použít"
 
 
 msgid "Object Context Menu"
@@ -19845,11 +19845,6 @@ msgstr "Povolit"
 msgctxt "Operator"
 msgid "Expand Channels"
 msgstr "Změnit pruh"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Hledat Kanály"
 
 
 msgctxt "Operator"
@@ -26639,11 +26634,6 @@ msgid "Add an object to the scene"
 msgstr "Přidá objekt do scény"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Přidat pojmenovaný objekt"
-
-
 msgid "Add named object"
 msgstr "Přidá pojmenovaý objekt"
 
@@ -30090,13 +30080,32 @@ msgid "Save Screenshot"
 msgstr "Uložit snímek obrazovky"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Zobrazit Předvolby"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "Upravit uživatelské předvolby a systémové nastavení"
+
+
+msgid "Themes"
+msgstr "Motivy"
+
+
+msgid "Editing"
+msgstr "Úpravy"
+
+
+msgid "Add-ons"
+msgstr "Rozšíření"
+
+
+msgid "Keymap"
+msgstr "Mapa kláves"
+
+
+msgid "File Paths"
+msgstr "Cesty k souborům"
+
+
+msgid "Experimental"
+msgstr "Experimentální"
 
 
 msgctxt "Operator"
@@ -34214,10 +34223,6 @@ msgid "I18n Update Translation"
 msgstr "I18n Aktualizovat překlad"
 
 
-msgid "Add-ons"
-msgstr "Rozšíření"
-
-
 msgid "Timeline"
 msgstr "Časová osa"
 
@@ -34275,10 +34280,6 @@ msgid "Translation"
 msgstr "Překlad"
 
 
-msgid "Keymap"
-msgstr "Mapa kláves"
-
-
 msgid "Fly & Walk"
 msgstr "Létání & Chůze"
 
@@ -34325,10 +34326,6 @@ msgstr "Cycles vykreslovací zařízení"
 
 msgid "Memory & Limits"
 msgstr "Paměť & Omezení"
-
-
-msgid "Themes"
-msgstr "Motivy"
 
 
 msgid "Bone Color Sets"
@@ -35487,18 +35484,6 @@ msgstr "Limituje rotaci po Z ose"
 
 msgid "Active Section"
 msgstr "Aktivní kosti"
-
-
-msgid "Editing"
-msgstr "Úpravy"
-
-
-msgid "File Paths"
-msgstr "Cesty k souborům"
-
-
-msgid "Experimental"
-msgstr "Experimentální"
 
 
 msgid "Edit Methods"
@@ -36775,10 +36760,6 @@ msgstr "Umístění základní pozice"
 
 msgid "Scene Camera"
 msgstr "Kamera scény"
-
-
-msgid "Custom Camera"
-msgstr "Vlastní Kamera"
 
 
 msgid "Custom Pose"
@@ -42112,8 +42093,8 @@ msgstr "Poznámka:"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Upravit"
+msgid "New"
+msgstr "Nový"
 
 
 msgid "Active object is not a mesh"
@@ -43580,11 +43561,6 @@ msgstr "Nejkratší cesta"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nový"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Uložit všechny obrázky"
 
@@ -44081,6 +44057,11 @@ msgstr "Gaussovské Rozostření"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Přidat vazbu aktivní kosti"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotace"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -45195,11 +45176,6 @@ msgstr "Změnit vrstvu kostí..."
 
 msgid "Bone Settings"
 msgstr "Nastavení kosti"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotace"
 
 
 msgctxt "Operator"
@@ -47853,10 +47829,6 @@ msgid "File path"
 msgstr "Cesta souboru"
 
 
-msgid "Library not found"
-msgstr "Knihovna nebyla nalezena"
-
-
 msgid "Today"
 msgstr "Dnes"
 
@@ -48504,6 +48476,10 @@ msgstr "Nelze otevřít soubor: %s"
 
 msgid "Bone Envelopes"
 msgstr "Plášť"
+
+
+msgid "Custom Camera"
+msgstr "Vlastní Kamera"
 
 
 msgid "Keying set path could not be added"

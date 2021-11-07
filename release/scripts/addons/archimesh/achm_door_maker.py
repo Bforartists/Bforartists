@@ -237,12 +237,11 @@ def shape_children(mainobject, update=False):
     myctrl.hide_viewport = False
     myctrl.hide_render = True
     if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
-        myctrl.cycles_visibility.camera = False
-        myctrl.cycles_visibility.diffuse = False
-        myctrl.cycles_visibility.glossy = False
-        myctrl.cycles_visibility.transmission = False
-        myctrl.cycles_visibility.scatter = False
-        myctrl.cycles_visibility.shadow = False
+        myctrl.visible_camera = False
+        myctrl.visible_diffuse = False
+        myctrl.visible_glossy = False
+        myctrl.visible_transmission = False
+        myctrl.visible_shadow = False
 
     # Create control box for baseboard
     myctrlbase = create_control_box("CTRL_Baseboard",
@@ -260,12 +259,11 @@ def shape_children(mainobject, update=False):
     myctrlbase.hide_viewport = False
     myctrlbase.hide_render = True
     if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
-        myctrlbase.cycles_visibility.camera = False
-        myctrlbase.cycles_visibility.diffuse = False
-        myctrlbase.cycles_visibility.glossy = False
-        myctrlbase.cycles_visibility.transmission = False
-        myctrlbase.cycles_visibility.scatter = False
-        myctrlbase.cycles_visibility.shadow = False
+        myctrlbase.visible_camera = False
+        myctrlbase.visible_diffuse = False
+        myctrlbase.visible_glossy = False
+        myctrlbase.visible_transmission = False
+        myctrlbase.visible_shadow = False
 
         mat = create_transparent_material("hidden_material", False)
         set_material(myctrl, mat)

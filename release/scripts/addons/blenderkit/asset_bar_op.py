@@ -24,6 +24,7 @@ from bpy.props import (
     StringProperty
 )
 
+active_area_pointer = 0
 
 def get_area_height(self):
     if type(self.context) != dict:
@@ -64,7 +65,7 @@ def modal_inside(self, context, event):
         self.finish()
         return {'FINISHED'}
 
-    self.update_timer +=1
+    self.update_timer += 1
 
     if self.update_timer > self.update_timer_limit:
         self.update_timer = 0
@@ -83,7 +84,6 @@ def modal_inside(self, context, event):
                     asset_button.progress_bar.visible = True
                 else:
                     asset_button.progress_bar.visible = False
-
 
     if self.handle_widget_events(event):
         return {'RUNNING_MODAL'}
@@ -124,11 +124,16 @@ def asset_bar_invoke(self, context, event):
     self.register_handlers(args, context)
 
     self.update_timer_limit = 30
-    self.update_timer =0
+    self.update_timer = 0
     # print('adding timer')
     # self._timer = context.window_manager.event_timer_add(10.0, window=context.window)
-
+    global active_area_pointer
     context.window_manager.modal_handler_add(self)
+    self.active_window_pointer = context.window.as_pointer()
+    self.active_area_pointer = context.area.as_pointer()
+    active_area_pointer = context.area.as_pointer()
+    self.active_region_pointer = context.region.as_pointer()
+
     return {"RUNNING_MODAL"}
 
 
@@ -188,7 +193,7 @@ def get_tooltip_data(asset_data):
         if rc:
             rcount = min(rc.get('quality', 0), rc.get('workingHours', 0))
         if rcount > show_rating_threshold:
-            quality = round(asset_data['ratingsAverage'].get('quality'))
+            quality = str(round(asset_data['ratingsAverage'].get('quality')))
         tooltip_data = {
             'aname': aname,
             'author_text': author_text,
@@ -273,16 +278,32 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.authors_name = authors_name
         self.tooltip_widgets.append(authors_name)
 
-        gravatar_image = BL_UI_Image(self.tooltip_width - self.gravatar_size, self.tooltip_height - self.gravatar_size, 1, 1)
+        gravatar_image = BL_UI_Image(self.tooltip_width - self.gravatar_size, self.tooltip_height - self.gravatar_size,
+                                     1, 1)
         img_path = paths.get_addon_thumbnail_path('thumbnail_notready.jpg')
         gravatar_image.set_image(img_path)
         gravatar_image.set_image_size((self.gravatar_size - 1 * self.margin, self.gravatar_size - 1 * self.margin))
         gravatar_image.set_image_position((0, 0))
         self.gravatar_image = gravatar_image
         self.tooltip_widgets.append(gravatar_image)
-        offset_y = 16 + self.margin
-        # label = self.new_text('Left click or drag to append/link. Right click for more options.', self.margin*2, labels_start + offset_y,
-        #                       text_size=14)
+
+        quality_star = BL_UI_Image(self.margin, self.tooltip_height - self.margin - self.asset_name_text_size,
+                                     1, 1)
+        img_path = paths.get_addon_thumbnail_path('star_grey.png')
+        quality_star.set_image(img_path)
+        quality_star.set_image_size((self.asset_name_text_size, self.asset_name_text_size))
+        quality_star.set_image_position((0, 0))
+        # self.quality_star = quality_star
+        self.tooltip_widgets.append(quality_star)
+        label = self.new_text('', 2*self.margin+self.asset_name_text_size,
+                              self.tooltip_height - int(self.asset_name_text_size+ self.margin * .5),
+                              text_size=self.asset_name_text_size)
+        self.tooltip_widgets.append(label)
+        self.quality_label = label
+
+        # label = self.new_text('Right click for menu.', self.margin,
+        #                       self.tooltip_height - int(self.author_text_size) - self.margin,
+        #                       text_size=int(self.author_text_size*.7))
         # self.tooltip_widgets.append(label)
 
     def hide_tooltip(self):
@@ -383,7 +404,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         if not bpy.context.preferences.system.use_region_overlap:
             reg_multiplier = 0
         for r in area.regions:
-            if r.type == 'UI' :
+            if r.type == 'UI':
                 ui_width = r.width * reg_multiplier
             if r.type == 'TOOLS':
                 tools_width = r.width * reg_multiplier
@@ -409,13 +430,17 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         # self.bar_y = region.height - ui_props.bar_y_offset * ui_scale
         self.bar_y = ui_props.bar_y_offset * ui_scale
         if ui_props.down_up == 'UPLOAD':
-            self.reports_y = self.bar_y - 600
+            self.reports_y = region.height - self.bar_y - 600
+            ui_props.reports_y = region.height - self.bar_y - 600
             self.reports_x = self.bar_x
-        else:
-            self.reports_y = self.bar_y - self.bar_height - 100
+            ui_props.reports_x = self.bar_x
+        else:#ui.bar_y - ui.bar_height - 100
+
+            self.reports_y = region.height - self.bar_y - self.bar_height - 50
+            ui_props.reports_y =region.height -  self.bar_y - self.bar_height- 50
             self.reports_x = self.bar_x
-
-
+            ui_props.reports_x = self.bar_x
+            # print(self.bar_y, self.bar_height, region.height)
 
     def update_layout(self, context, event):
         # restarting asset_bar completely since the widgets are too hard to get working with updates.
@@ -437,9 +462,10 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             self.tooltip_panel.width = self.tooltip_width
             self.tooltip_image.width = self.tooltip_width
             self.tooltip_image.set_image_size((self.tooltip_width, self.tooltip_height))
-            self.gravatar_image.set_location(self.tooltip_width - self.gravatar_size, self.tooltip_height - self.gravatar_size)
+            self.gravatar_image.set_location(self.tooltip_width - self.gravatar_size,
+                                             self.tooltip_height - self.gravatar_size)
             self.authors_name.set_location(self.tooltip_width - self.gravatar_size - self.margin,
-            self.tooltip_height - self.author_text_size - self.margin)
+                                           self.tooltip_height - self.author_text_size - self.margin)
 
         # to hide arrows accordingly
         self.scroll_update()
@@ -491,6 +517,12 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         new_button.progress_bar = progress_bar
         self.progress_bars.append(progress_bar)
 
+        if utils.profile_is_validator():
+            red_alert = BL_UI_Widget(asset_x, asset_y, self.button_size, self.button_size)
+            red_alert.bg_color = (1.0, 0.0, 0.0, 0.0)
+            red_alert.visible = False
+            new_button.red_alert = red_alert
+            self.red_alerts.append(red_alert)
         # if result['downloaded'] > 0:
         #     ui_bgl.draw_rect(x, y, int(ui_props.thumb_size * result['downloaded'] / 100.0), 2, green)
 
@@ -506,6 +538,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.asset_buttons = []
         self.validation_icons = []
         self.progress_bars = []
+        self.red_alerts = []
         self.widgets_panel = []
 
         self.panel = BL_UI_Drag_Panel(0, 0, self.bar_width, self.bar_height)
@@ -608,6 +641,8 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                     button.visible = False
                     button.validation_icon.visible = False
                     button.progress_bar.visible = False
+                if utils.profile_is_validator():
+                    button.red_alert.set_location(asset_x, asset_y)
                 i += 1
 
         for a in range(i, len(self.asset_buttons)):
@@ -641,6 +676,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         widgets_panel.extend(self.asset_buttons)
         widgets_panel.extend(self.validation_icons)
         widgets_panel.extend(self.progress_bars)
+        widgets_panel.extend(self.red_alerts)
 
         widgets = [self.panel]
 
@@ -702,6 +738,14 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         # to hide arrows accordingly
         self.scroll_update()
 
+        self.window = context.window
+        self.area = context.area
+        self.scene = bpy.context.scene
+        # global active_window_pointer, active_area_pointer, active_region_pointer
+        # ui.active_window_pointer = self.window.as_pointer()
+        # ui.active_area_pointer = self.area.as_pointer()
+        # ui.active_region_pointer = self.region.as_pointer()
+
         return True
 
     def on_finish(self, context):
@@ -754,7 +798,8 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             get_tooltip_data(asset_data)
             self.asset_name.text = asset_data['name']
             self.authors_name.text = asset_data['tooltip_data']['author_text']
-
+            self.quality_label.text = asset_data['tooltip_data']['quality']
+            # print(asset_data['tooltip_data']['quality'])
             gimg = asset_data['tooltip_data']['gimg']
             if gimg is not None:
                 gimg = bpy.data.images[gimg]
@@ -817,8 +862,18 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
     def update_validation_icon(self, asset_button, asset_data):
         if utils.profile_is_validator():
+            ar = bpy.context.window_manager.get('asset ratings')
+            rating = ar.get(asset_data['id'])
+            if rating is not None:
+                rating = rating.to_dict()
+
             v_icon = ui.verification_icons[asset_data.get('verificationStatus', 'validated')]
             if v_icon is not None:
+                img_fp = paths.get_addon_thumbnail_path(v_icon)
+                asset_button.validation_icon.set_image(img_fp)
+                asset_button.validation_icon.visible = True
+            elif rating in (None, {}):
+                v_icon = 'star_grey.png'
                 img_fp = paths.get_addon_thumbnail_path(v_icon)
                 asset_button.validation_icon.set_image(img_fp)
                 asset_button.validation_icon.visible = True
@@ -854,8 +909,21 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
                     asset_button.set_image(img_filepath)
                     self.update_validation_icon(asset_button, asset_data)
+
+                    if utils.profile_is_validator() and asset_data['verificationStatus'] == 'uploaded':
+                        over_limit = utils.is_upload_old(asset_data)
+                        if over_limit:
+                            redness = min(over_limit * .05, 0.7)
+                            asset_button.red_alert.bg_color = (1, 0, 0, redness)
+                            asset_button.red_alert.visible = True
+                        else:
+                            asset_button.red_alert.visible = False
+                    elif utils.profile_is_validator():
+                        asset_button.red_alert.visible = False
                 else:
                     asset_button.validation_icon.visible = False
+                    if utils.profile_is_validator():
+                        asset_button.red_alert.visible = False
 
     def scroll_update(self):
         sr = bpy.context.window_manager.get('search results')
@@ -869,7 +937,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.scroll_offset = min(self.scroll_offset, len(sr) - (self.wcount * self.hcount))
         self.scroll_offset = max(self.scroll_offset, 0)
         self.update_images()
-
+        # print(sro)
         if sro['count'] > len(sr) and len(sr) - self.scroll_offset < (self.wcount * self.hcount) + 15:
             self.search_more()
 
@@ -898,6 +966,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
     def handle_key_input(self, event):
         if event.type == 'A':
             self.search_by_author(self.active_index)
+            return True
         return False
 
     def scroll_up(self, widget):

@@ -17,7 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import time
-from blenderkit import colors
+import bpy
+from blenderkit import colors, asset_bar_op, ui_bgl, utils
+
+reports = []
+
 
 def add_report(text='', timeout=5, color=colors.GREEN):
     global reports
@@ -26,18 +30,24 @@ def add_report(text='', timeout=5, color=colors.GREEN):
         if old_report.text == text:
             old_report.timeout = old_report.age + timeout
             return
-    report = Report(text=text, timeout=timeout, color=color)
+    report = Report(text=text,  timeout=timeout, color=color)
     reports.append(report)
 
 
 class Report():
-    def __init__(self, text='', timeout=5, color=(.5, 1, .5, 1)):
+    def __init__(self, area_pointer=0, text='', timeout=5, color=(.5, 1, .5, 1)):
         self.text = text
         self.timeout = timeout
         self.start_time = time.time()
         self.color = color
         self.draw_color = color
         self.age = 0
+        if asset_bar_op.active_area_pointer == 0:
+            w, a, r = utils.get_largest_area(area_type='VIEW_3D')
+
+            self.active_area_pointer = a.as_pointer()
+        else:
+            self.active_area_pointer = asset_bar_op.active_area_pointer
 
     def fade(self):
         fade_time = 1
@@ -53,5 +63,5 @@ class Report():
                     pass;
 
     def draw(self, x, y):
-        if bpy.context.area.as_pointer() == active_area_pointer:
+        if (bpy.context.area is not None and bpy.context.area.as_pointer() == self.active_area_pointer):
             ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
