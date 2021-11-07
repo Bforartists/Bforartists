@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -7471,10 +7471,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Tampilkan Pohon Node data-blok"
 
 
-msgid "Show Object data-blocks"
-msgstr "Tampilkan Objek data-blok"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Tampilkan Kurva Cat data-blok"
 
@@ -7533,6 +7529,10 @@ msgstr "Tampilkan Aksi data-blok"
 
 msgid "Show Material data-blocks"
 msgstr "Tampilkan Material data-blok"
+
+
+msgid "Show Object data-blocks"
+msgstr "Tampilkan Objek data-blok"
 
 
 msgid "Show World data-blocks"
@@ -11968,6 +11968,10 @@ msgid "Change"
 msgstr "Ganti"
 
 
+msgid "Apply"
+msgstr "Tetapkan"
+
+
 msgid "Navigation"
 msgstr "Navigasi"
 
@@ -11982,10 +11986,6 @@ msgstr "Pilih Pegangan"
 
 msgid "Strip"
 msgstr "Strip"
-
-
-msgid "Image Transform"
-msgstr "Transformasi Gambar"
 
 
 msgid "Lock/Mute"
@@ -12104,8 +12104,8 @@ msgid "Add Image"
 msgstr "Tambah Gambar"
 
 
-msgid "Apply"
-msgstr "Tetapkan"
+msgid "Asset"
+msgstr "Aset"
 
 
 msgid "Edge index"
@@ -13876,10 +13876,6 @@ msgstr "Gunakan layer Objek"
 
 msgid "Use Material layer"
 msgstr "Gunakan layer Material"
-
-
-msgid "Asset"
-msgstr "Aset"
 
 
 msgid "Use Asset layer"
@@ -17268,11 +17264,6 @@ msgstr "Tambah Objek"
 
 
 msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Tambah Objek"
-
-
-msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Menyejajarkan Objek"
 
@@ -18621,9 +18612,12 @@ msgid "Set Screen"
 msgstr "Adegan"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Tampilkan Preferensi"
+msgid "Themes"
+msgstr "Tema"
+
+
+msgid "Add-ons"
+msgstr "Tambahan"
 
 
 msgid "Menu ID Name"
@@ -20389,10 +20383,6 @@ msgid "I18n Update Translation"
 msgstr "I18n Update Terjemahan"
 
 
-msgid "Add-ons"
-msgstr "Tambahan"
-
-
 msgid "Timeline"
 msgstr "Timeline"
 
@@ -20480,10 +20470,6 @@ msgstr "Simpan Otomatis"
 
 msgid "Editor"
 msgstr "Editor"
-
-
-msgid "Themes"
-msgstr "Tema"
 
 
 msgid "Theme Space"
@@ -22902,13 +22888,13 @@ msgid "performance impact!"
 msgstr "dampak kinerja!"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Baru"
+
+
 msgid "API Defined"
 msgstr "API yang Terdefinisi"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Edit"
 
 
 msgid "Could not make new image"
@@ -24442,11 +24428,6 @@ msgstr "Jalur Terdekat"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Baru"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Simpan Semua Gambar"
 
@@ -24868,6 +24849,11 @@ msgstr "Teks"
 
 
 msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotasi"
+
+
+msgctxt "Operator"
 msgid "Scale To Fit"
 msgstr "Skala ke Cukup"
 
@@ -24880,11 +24866,6 @@ msgstr "Skala ke Isi"
 msgctxt "Operator"
 msgid "Stretch To Fill"
 msgstr "Regang ke Isi"
-
-
-msgctxt "Operator"
-msgid "Clear Position"
-msgstr "Kosongkan Posisi"
 
 
 msgid "Tracker"
@@ -25361,11 +25342,6 @@ msgstr "Tingkatkan Kontras"
 msgctxt "Operator"
 msgid "Decrease Contrast"
 msgstr "Kurangi Kontras"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotasi"
 
 
 msgctxt "Operator"

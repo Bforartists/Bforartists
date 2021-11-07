@@ -236,7 +236,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
                 subrow = box.row(align=True)
                 # current view indicator
                 if data_store.current_index == i and context.scene.stored_views.view_modified is False:
-                    subrow.label(text="", icon='SMALL_TRI_RIGHT_VEC')
+                    subrow.label(text="", icon='CHECKMARK')
                 subrow.operator("stored_views.set",
                                 text="", icon=icon_string).index = i
                 subrow.prop(list[i], "name", text="")

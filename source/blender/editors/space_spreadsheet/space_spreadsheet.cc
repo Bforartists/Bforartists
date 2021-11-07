@@ -137,7 +137,12 @@ static SpaceLink *spreadsheet_duplicate(SpaceLink *sl)
 {
   const SpaceSpreadsheet *sspreadsheet_old = (SpaceSpreadsheet *)sl;
   SpaceSpreadsheet *sspreadsheet_new = (SpaceSpreadsheet *)MEM_dupallocN(sspreadsheet_old);
-  sspreadsheet_new->runtime = new SpaceSpreadsheet_Runtime(*sspreadsheet_old->runtime);
+  if (sspreadsheet_old->runtime) {
+    sspreadsheet_new->runtime = new SpaceSpreadsheet_Runtime(*sspreadsheet_old->runtime);
+  }
+  else {
+    sspreadsheet_new->runtime = new SpaceSpreadsheet_Runtime();
+  }
 
   BLI_listbase_clear(&sspreadsheet_new->row_filters);
   LISTBASE_FOREACH (const SpreadsheetRowFilter *, src_filter, &sspreadsheet_old->row_filters) {
@@ -314,6 +319,8 @@ static float get_default_column_width(const ColumnValues &values)
       return 4.0f * float_width;
     case SPREADSHEET_VALUE_TYPE_INSTANCES:
       return 8.0f;
+    case SPREADSHEET_VALUE_TYPE_STRING:
+      return 5.0f;
   }
   return float_width;
 }

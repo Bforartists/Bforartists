@@ -463,14 +463,20 @@ def reactivate_custom_properties(obj):
 def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=False, overridable=True):
     """Copy custom properties with filtering by prefix. Optionally link using drivers."""
     res = []
-    exclude = {'rigify_parameters', 'rigify_type'}
+
+    # Exclude addon-defined properties.
+    exclude = {prop.identifier for prop in src.bl_rna.properties if prop.is_runtime}
 
     for key, value in src.items():
         if key.startswith(prefix) and key not in exclude:
             new_key = dest_prefix + key[len(prefix):]
 
-            ui_data_src = src.id_properties_ui(key)
-
+            try:
+                ui_data_src = src.id_properties_ui(key)
+            except TypeError:
+                # Some property types, eg. Python dictionaries 
+                # don't support id_properties_ui.
+                continue
 
             if src != dest or new_key != key:
                 dest[new_key] = value

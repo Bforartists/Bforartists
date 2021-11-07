@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import tasks_queue, utils, paths, search, categories, oauth, ui, ui_panels, colors
+from blenderkit import tasks_queue, utils, paths, search, categories, oauth, ui, ui_panels, colors, reports
 
 import bpy
 
@@ -25,6 +25,8 @@ import threading
 import requests
 import time
 import logging
+
+
 bk_logger = logging.getLogger('blenderkit')
 
 from bpy.props import (
@@ -52,7 +54,7 @@ def login(signup, url, r_url, authenticator):
     try:
         auth_token, refresh_token, oauth_response = authenticator.get_new_token(register=signup, redirect_url=r_url)
     except Exception as e:
-        tasks_queue.add_task((ui.add_report, (e, 20, colors.RED)))
+        tasks_queue.add_task((reports.add_report, (e, 20, colors.RED)))
 
     bk_logger.debug('tokens retrieved')
     tasks_queue.add_task((write_tokens, (auth_token, refresh_token, oauth_response)))
@@ -66,7 +68,7 @@ def refresh_token_thread():
         thread = threading.Thread(target=refresh_token, args=([preferences.api_key_refresh, url]), daemon=True)
         thread.start()
     else:
-        ui.add_report('Already Refreshing token, will be ready soon. If this fails, please login again in Login panel.')
+        reports.add_report('Already Refreshing token, will be ready soon. If this fails, please login again in Login panel.')
 
 
 def refresh_token(api_key_refresh, url):
@@ -89,7 +91,7 @@ def write_tokens(auth_token, refresh_token, oauth_response):
     props = utils.get_search_props()
     if props is not None:
         props.report = ''
-    ui.add_report('BlenderKit Re-Login success')
+    reports.add_report('BlenderKit Re-Login success')
     search.get_profile()
 
     categories.fetch_categories_thread(auth_token, force = False)

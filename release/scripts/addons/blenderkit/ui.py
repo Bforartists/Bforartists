@@ -18,7 +18,7 @@
 
 
 from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, \
-    ui_panels, icons, ratings_utils
+    ui_panels, icons, ratings_utils, reports
 
 import bpy
 
@@ -50,8 +50,6 @@ handler_3d = None
 active_area_pointer = None
 active_window_pointer = None
 active_region_pointer = None
-
-reports = []
 
 mappingdict = {
     'MODEL': 'model',
@@ -100,43 +98,6 @@ def get_approximate_text_width(st):
             size += 7
     return size  # Convert to picas
 
-
-def add_report(text='', timeout=5, color=colors.GREEN):
-    global reports
-    # check for same reports and just make them longer by the timeout.
-    for old_report in reports:
-        if old_report.text == text:
-            old_report.timeout = old_report.age + timeout
-            return
-    report = Report(text=text, timeout=timeout, color=color)
-    reports.append(report)
-
-
-class Report():
-    def __init__(self, text='', timeout=5, color=(.5, 1, .5, 1)):
-        self.text = text
-        self.timeout = timeout
-        self.start_time = time.time()
-        self.color = color
-        self.draw_color = color
-        self.age = 0
-
-    def fade(self):
-        fade_time = 1
-        self.age = time.time() - self.start_time
-        if self.age + fade_time > self.timeout:
-            alpha_multiplier = (self.timeout - self.age) / fade_time
-            self.draw_color = (self.color[0], self.color[1], self.color[2], self.color[3] * alpha_multiplier)
-            if self.age > self.timeout:
-                global reports
-                try:
-                    reports.remove(self)
-                except Exception as e:
-                    pass;
-
-    def draw(self, x, y):
-        if bpy.context.area.as_pointer() == active_area_pointer:
-            ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
 
 
 def get_asset_under_mouse(mousex, mousey):
@@ -528,8 +489,8 @@ def draw_callback_2d_progress(self, context):
         draw_progress(x, y - index * 30, '%s' % n + tcom.lasttext,
                       tcom.progress)
         index += 1
-    global reports
-    for report in reports:
+    for report in reports.reports:
+        # print('drawing reports', x, y, report.text)
         report.draw(x, y - index * 30)
         index += 1
         report.fade()
@@ -556,21 +517,6 @@ def draw_callback_2d_upload_preview(self, context):
 
         draw_tooltip(ui_props.bar_x, ui_props.bar_y, name=props.name, img=img)
 
-
-def is_upload_old(asset_data):
-    '''
-    estimates if the asset is far too long in the 'uploaded' state
-    This returns the number of days the validation is over the limit.
-    '''
-    date_time_str = asset_data["created"][:10]
-    # date_time_str = 'Jun 28 2018 7:40AM'
-    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d')
-    today = date_time_obj.today()
-    age = today - date_time_obj
-    old = datetime.timedelta(days=7)
-    if age > old:
-        return (age.days - old.days)
-    return 0
 
 
 def get_large_thumbnail_image(asset_data):
@@ -705,7 +651,7 @@ def draw_asset_bar(self, context):
                     # code to inform validators that the validation is waiting too long and should be done asap
                     if result['verificationStatus'] == 'uploaded':
                         if is_validator:
-                            over_limit = is_upload_old(result)
+                            over_limit = utils.is_upload_old(result)
                             if over_limit:
                                 redness = min(over_limit * .05, 0.5)
                                 red = (1, 0, 0, redness)
@@ -1903,7 +1849,7 @@ class RunAssetBarWithContext(bpy.types.Operator):
         C_dict = utils.get_fake_context(context)
         if C_dict.get('window'):  # no 3d view, no asset bar.
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
-            if 1:# preferences.experimental_features:
+            if 1:#preferences.experimental_features:
                 bpy.ops.view3d.blenderkit_asset_bar_widget(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running,
                                                            do_search=self.do_search)
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -11552,10 +11552,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Показ блоків даних Дерева Вузлів"
 
 
-msgid "Show Object data-blocks"
-msgstr "Показ блоків даних Об'єкта"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Показ блоків даних Кривої Малювання"
 
@@ -11614,6 +11610,10 @@ msgstr "Показ блоків даних Дії"
 
 msgid "Show Material data-blocks"
 msgstr "Показ блоків даних Матеріалу"
+
+
+msgid "Show Object data-blocks"
+msgstr "Показ блоків даних Об'єкта"
 
 
 msgid "Show World data-blocks"
@@ -16088,16 +16088,16 @@ msgid "Modify stroke hardness"
 msgstr "Модифікувати жорсткість штриха"
 
 
+msgid "Use a custom curve to define opacity effect along the strokes"
+msgstr "Вжити власну криву для визначення ефекту безпрозорості уздовж штрихів"
+
+
 msgid "Uniform Opacity"
 msgstr "Рівномірна Безпрозорість"
 
 
 msgid "Replace the stroke opacity"
 msgstr "Замінити безпрозорість штриха"
-
-
-msgid "Use a custom curve to define opacity effect along the strokes"
-msgstr "Вжити власну криву для визначення ефекту безпрозорості уздовж штрихів"
 
 
 msgid "Simplify Modifier"
@@ -16312,14 +16312,6 @@ msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Модифікатор Підподілу та Згладження Штриха"
 
 
-msgid "Uniform Thickness"
-msgstr "Рівномірна Товщина"
-
-
-msgid "Replace the stroke thickness"
-msgstr "Замінити товщину штриха"
-
-
 msgid "Absolute thickness to apply everywhere"
 msgstr "Абсолютна товщина для застосування скрізь"
 
@@ -16330,6 +16322,14 @@ msgstr "Фактор для множення на товщину"
 
 msgid "Use a custom curve to define thickness change along the strokes"
 msgstr "Вжити власну криву для визначення зміни товщини уздовж штрихів"
+
+
+msgid "Uniform Thickness"
+msgstr "Рівномірна Товщина"
+
+
+msgid "Replace the stroke thickness"
+msgstr "Замінити товщину штриха"
 
 
 msgid "Time Offset Modifier"
@@ -30602,6 +30602,10 @@ msgid "Sequencer Context Menu"
 msgstr "Контекстне Меню Секвенсера"
 
 
+msgid "Apply"
+msgstr "Застосувати"
+
+
 msgid "Navigation"
 msgstr "Навігація"
 
@@ -30616,10 +30620,6 @@ msgstr "Вибрати Держак"
 
 msgid "Strip"
 msgstr "Смужка"
-
-
-msgid "Image Transform"
-msgstr "Трансформа Зображення"
 
 
 msgid "Lock/Mute"
@@ -30844,10 +30844,6 @@ msgid "Add Image"
 msgstr "Додати Зображення"
 
 
-msgid "Landmark Controls"
-msgstr "Керувальники Віх"
-
-
 msgid "Link/Transfer Data"
 msgstr "Пов'язати/Перенести Дані"
 
@@ -30856,8 +30852,8 @@ msgid "Make Single User"
 msgstr "Зробити однокористувацьким"
 
 
-msgid "Apply"
-msgstr "Застосувати"
+msgid "Asset"
+msgstr "Актив"
 
 
 msgid "Object Context Menu"
@@ -30954,6 +30950,10 @@ msgstr "Регіони Огляду"
 
 msgid "Viewpoint"
 msgstr "Точка зору"
+
+
+msgid "Landmark Controls"
+msgstr "Керувальники Віх"
 
 
 msgid "Operator Presets"
@@ -38332,10 +38332,6 @@ msgid "Placeholder"
 msgstr "Заповнювач"
 
 
-msgid "Asset"
-msgstr "Актив"
-
-
 msgid "Auto-Refresh"
 msgstr "Автоматичне оновлення"
 
@@ -42708,19 +42704,6 @@ msgstr "Відновити вимкнені Ф-Криві"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Зчистити позначку 'вимкнено' з усіх Ф-Кривих, щоб пошкоджені Ф-криві знову працювали"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Пошук каналів"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Фільтрувати набір каналів, показавши лише ті, що мають узгодження назв"
-
-
-msgid "Text to search for in channel names"
-msgstr "Текст, що шукається у назвах каналів"
 
 
 msgctxt "Operator"
@@ -56603,11 +56586,6 @@ msgid "Add an object to the scene"
 msgstr "Додати об'єкт до сцени"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Додати іменований об'єкт"
-
-
 msgid "Add named object"
 msgstr "Додати імені об'єкта"
 
@@ -56626,6 +56604,10 @@ msgstr "Y Скидання"
 
 msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Y-координата (простір екрану) для поміщення під нею нового об'єкта"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Дублювати об'єкт, але не дані об'єкта, пов'язавши з оригінальними даними"
 
 
 msgid "Object name to add"
@@ -57071,10 +57053,6 @@ msgstr "Дублювати об'єкти"
 
 msgid "Duplicate selected objects"
 msgstr "Дублювати вибрані об'єкти"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Дублювати об'єкт, але не дані об'єкта, пов'язавши з оригінальними даними"
 
 
 msgid "Duplicate selected objects and move them"
@@ -63595,13 +63573,32 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Вилучити невикористовувані параметри невидимих редакторів"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Показ Уподобань"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "Правити уподобання користувача та устави системи"
+
+
+msgid "Themes"
+msgstr "Теми"
+
+
+msgid "Editing"
+msgstr "Редагування"
+
+
+msgid "Add-ons"
+msgstr "Додатки"
+
+
+msgid "Keymap"
+msgstr "Розкладка клавіш"
+
+
+msgid "File Paths"
+msgstr "Шляхи файлів"
+
+
+msgid "Experimental"
+msgstr "Експериментальні"
 
 
 msgctxt "Operator"
@@ -68911,18 +68908,8 @@ msgid "Add a new VR landmark to the list and select it"
 msgstr "Додати нову віху ВР у список та вибрати її"
 
 
-msgctxt "Operator"
-msgid "Add VR Landmark from camera"
-msgstr "Додати Віху ВР з камери"
-
-
 msgid "Add a new VR landmark from the active camera object to the list and select it"
 msgstr "Додати нову віху ВР з активного об'єкта камери у список та вибрати її"
-
-
-msgctxt "Operator"
-msgid "Add VR Landmark from session"
-msgstr "Додати Віху ВР із сесії"
 
 
 msgid "Add VR landmark from the viewer pose of the running VR session to the list and select it"
@@ -72630,10 +72617,6 @@ msgid "I18n Update Translation"
 msgstr "Оновлення перекладу"
 
 
-msgid "Add-ons"
-msgstr "Додатки"
-
-
 msgid "Timeline"
 msgstr "Шкала часу"
 
@@ -72712,10 +72695,6 @@ msgid "Translation"
 msgstr "Переклад"
 
 
-msgid "Keymap"
-msgstr "Розкладка клавіш"
-
-
 msgid "Preferences Navigation"
 msgstr "Навігація Уподобань"
 
@@ -72774,10 +72753,6 @@ msgstr "Пристрої Рендера з Cycles"
 
 msgid "Memory & Limits"
 msgstr "Пам'ять і Ліміти"
-
-
-msgid "Themes"
-msgstr "Теми"
 
 
 msgid "Bone Color Sets"
@@ -74611,18 +74586,6 @@ msgstr "Активний розділ"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Активний розділ уподобань, показуваних в інтерфейсі користувача"
-
-
-msgid "Editing"
-msgstr "Редагування"
-
-
-msgid "File Paths"
-msgstr "Шляхи файлів"
-
-
-msgid "Experimental"
-msgstr "Експериментальні"
 
 
 msgid "Application Template"
@@ -78295,14 +78258,6 @@ msgstr "Камера Сцени"
 
 msgid "Use scene's currently active camera to define the VR view base location and rotation"
 msgstr "Вжити поточно активну камеру сцени для визначення огляду ВР на основі локації та обертання"
-
-
-msgid "Custom Camera"
-msgstr "Власна камера"
-
-
-msgid "Use an existing camera to define the VR view base location and rotation"
-msgstr "Вжити наявну камеру для визначення огляду ВР на основі локації та обертання"
 
 
 msgid "Custom Pose"
@@ -86578,10 +86533,6 @@ msgid "Grid Levels"
 msgstr "Рівні Сітки"
 
 
-msgid "Amount of grid lines displayed in the background"
-msgstr "Кількість ліній сітки, що показуються у фоні"
-
-
 msgid "Group Node"
 msgstr "Вузол групування"
 
@@ -91372,10 +91323,6 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
-msgid "Built without VR/OpenXR features"
-msgstr "Побудовано без функціональностей VR/OpenXR"
-
-
 msgid "Note:"
 msgstr "Примітка:"
 
@@ -91388,13 +91335,17 @@ msgid "performance impact!"
 msgstr "вплив продуктивності!"
 
 
-msgid "API Defined"
-msgstr "Визначений API"
+msgid "Built without VR/OpenXR features"
+msgstr "Побудовано без функціональностей VR/OpenXR"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Редагування"
+msgid "New"
+msgstr "Нове"
+
+
+msgid "API Defined"
+msgstr "Визначений API"
 
 
 msgid "Torus"
@@ -94409,11 +94360,6 @@ msgstr "Найкоротший Шлях"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Нове"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Зберегти Всі Зображення"
 
@@ -94926,15 +94872,6 @@ msgstr "Перемкнути Секвенсер/Передогляд"
 
 
 msgctxt "Operator"
-msgid "Side of Frame..."
-msgstr "Сторона Кадру..."
-
-
-msgid "Handle"
-msgstr "Держак"
-
-
-msgctxt "Operator"
 msgid "Grouped"
 msgstr "Груповане"
 
@@ -94994,11 +94931,6 @@ msgstr "Перетікання Звуку"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Сковзнути Вміст Смужки"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Змінити Шлях/Файли"
 
@@ -95006,6 +94938,11 @@ msgstr "Змінити Шлях/Файли"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Обміняти Дані"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Сковзнути Вміст Смужки"
 
 
 msgid "Anchor X"
@@ -95105,6 +95042,15 @@ msgstr "Обидві Сторони"
 
 
 msgctxt "Operator"
+msgid "Side of Frame..."
+msgstr "Сторона Кадру..."
+
+
+msgid "Handle"
+msgstr "Держак"
+
+
+msgctxt "Operator"
 msgid "Scene..."
 msgstr "Сцена..."
 
@@ -95200,31 +95146,6 @@ msgstr "Гаусовий Розмив"
 
 
 msgctxt "Operator"
-msgid "Scale To Fit"
-msgstr "Масштаб До Підгонки"
-
-
-msgctxt "Operator"
-msgid "Scale to Fill"
-msgstr "Масштаб до Заповнення"
-
-
-msgctxt "Operator"
-msgid "Stretch To Fill"
-msgstr "Розтяг До Заповнення"
-
-
-msgctxt "Operator"
-msgid "Clear Position"
-msgstr "Зчистити Позицію"
-
-
-msgctxt "Operator"
-msgid "Move/Extend from Current Frame"
-msgstr "Перемістити/Розширити з Поточного Кадру"
-
-
-msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Перезавантажити Смужки і Наладнати Довжину"
 
@@ -95240,8 +95161,23 @@ msgstr "Знеглушити Зневибрані Смужки"
 
 
 msgctxt "Operator"
-msgid "Hold Split"
-msgstr "Тримати Розділ"
+msgid "Rotation"
+msgstr "Обертання"
+
+
+msgctxt "Operator"
+msgid "Scale To Fit"
+msgstr "Масштаб До Підгонки"
+
+
+msgctxt "Operator"
+msgid "Scale to Fill"
+msgstr "Масштаб до Заповнення"
+
+
+msgctxt "Operator"
+msgid "Stretch To Fill"
+msgstr "Розтяг До Заповнення"
 
 
 msgid "Default Fade"
@@ -95287,18 +95223,28 @@ msgstr "Кліп"
 
 
 msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Перемістити/Розширити з Поточного Кадру"
+
+
+msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Тримати Розділ"
+
+
+msgctxt "Operator"
 msgid "Copy Modifiers to Selection"
 msgstr "Копіювати Модифікатори на Вибрання"
 
 
 msgctxt "Operator"
-msgid "Toggle Meta"
-msgstr "Перемкнути Мета"
+msgid "Clear Fade"
+msgstr "Зчистити Зникання"
 
 
 msgctxt "Operator"
-msgid "Clear Fade"
-msgstr "Зчистити Зникання"
+msgid "Toggle Meta"
+msgstr "Перемкнути Мета"
 
 
 msgid "Effect Fader"
@@ -96861,11 +96807,6 @@ msgstr "Змінити Шари Кісток..."
 
 msgid "Bone Settings"
 msgstr "Устави Кісток"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Обертання"
 
 
 msgctxt "Operator"
@@ -103017,14 +102958,6 @@ msgid "File path"
 msgstr "Шлях файлу"
 
 
-msgid "Library not found"
-msgstr "Бібліотеку не знайдено"
-
-
-msgid "Set up the library or edit libraries in the Preferences, File Paths section"
-msgstr "Уклад бібліотеки або редагування бібліотек в Уподобаннях, секція Шляхи Файлів"
-
-
 msgid "Today"
 msgstr "Сьогодні"
 
@@ -105051,6 +104984,10 @@ msgstr "Оболонки кісток"
 
 msgid "Use Factor"
 msgstr "Вжити Фактор"
+
+
+msgid "Custom Camera"
+msgstr "Власна камера"
 
 
 msgid "Stroke Fit Method"

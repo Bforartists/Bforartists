@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -304,16 +304,16 @@ msgid "Add"
 msgstr "ףסוה"
 
 
+msgid "Apply"
+msgstr "לחה"
+
+
 msgid "Python"
 msgstr "Python"
 
 
 msgid "System"
 msgstr "תכרעמ"
-
-
-msgid "Apply"
-msgstr "לחה"
 
 
 msgid "Triangulate Modifier"
@@ -654,6 +654,11 @@ msgid "Alpha Under"
 msgstr "רמה"
 
 
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "בוביס"
+
+
 msgid "Location:"
 msgstr "‏:םוקימ"
 
@@ -665,11 +670,6 @@ msgstr "Blender שמתשמ תופדעה"
 msgctxt "Operator"
 msgid "Path"
 msgstr "ביתנ"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "בוביס"
 
 
 msgctxt "Operator"

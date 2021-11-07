@@ -110,11 +110,6 @@ def get_comments_thread(asset_id, api_key):
     thread = threading.Thread(target=get_comments, args=([asset_id, api_key]), daemon=True)
     thread.start()
 
-
-def get_comments_thread(asset_id, api_key):
-    thread = threading.Thread(target=get_comments, args=([asset_id, api_key]), daemon=True)
-    thread.start()
-
 def get_comments(asset_id, api_key):
     '''
     Retrieve comments  from BlenderKit server. Can be run from a thread
@@ -166,9 +161,9 @@ def count_all_notifications():
 def check_notifications_read():
     '''checks if all notifications were already read, and removes them if so'''
     notifications = bpy.context.window_manager.get('bkit notifications')
-    if notifications is None:
+    if notifications is None or notifications.get('count') == 0:
         return True
-    for n in notifications:
+    for n in notifications['results']:
         if n['unread'] == 1:
             return False
     bpy.context.window_manager['bkit notifications'] = None
@@ -198,7 +193,7 @@ def get_notifications(api_key, all_count = 1000):
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r.status_code ==200:
         rj = r.json()
-        print(rj)
+        # print(rj)
         # no new notifications?
         if all_count >= rj['allCount']:
             tasks_queue.add_task((store_notifications_count_local, ([rj['allCount']])))

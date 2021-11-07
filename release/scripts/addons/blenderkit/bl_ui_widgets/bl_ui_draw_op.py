@@ -35,6 +35,10 @@ class BL_UI_OT_draw_operator(Operator):
         self.register_handlers(args, context)
 
         context.window_manager.modal_handler_add(self)
+
+        self.active_window_pointer = context.window.as_pointer()
+        self.active_area_pointer = context.area.as_pointer()
+        self.active_region_pointer = context.region.as_pointer()
         return {"RUNNING_MODAL"}
 
     def register_handlers(self, args, context):
@@ -80,8 +84,9 @@ class BL_UI_OT_draw_operator(Operator):
 	# Draw handler to paint onto the screen
     def draw_callback_px(self, op, context):
         try:
-            for widget in self.widgets:
-                widget.draw()
+            if context.area.as_pointer() == self.active_area_pointer:
+                for widget in self.widgets:
+                    widget.draw()
         except:
             pass;
         #     context.window_manager.event_timer_remove(self.draw_event)

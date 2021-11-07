@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -17255,6 +17255,10 @@ msgid "Frame Rate Presets"
 msgstr "ﺮﻃﻷ﻿ﺍ ﻝﺪﻌﻤﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
 
+msgid "Apply"
+msgstr "ﻖﺒﻃ"
+
+
 msgid "Navigation"
 msgstr "ﺢﻔّﺼﺗ"
 
@@ -17357,10 +17361,6 @@ msgstr "ﺕﺎﻓﺎﻄﺧ"
 
 msgid "Make Single User"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺪﻴﺣﻭ ﻪﻠﻌﺟﺍ"
-
-
-msgid "Apply"
-msgstr "ﻖﺒﻃ"
 
 
 msgid "Quick Effects"
@@ -21942,11 +21942,6 @@ msgstr "ﺍﺩﺪﺠﻣ ﻞﻤﻌﻳ ﺎﻬﻨﻣ ﺭﻮﺴﻜﻤﻟﺍ ﻞﻌ�
 
 
 msgctxt "Operator"
-msgid "Find Channels"
-msgstr "ﺕﺍﻮﻨﻘﻟﺍ ﺪﺟ"
-
-
-msgctxt "Operator"
 msgid "Group Channels"
 msgstr "ﺕﺍﻮﻨﻗ 4"
 
@@ -26477,11 +26472,6 @@ msgid "Add Object"
 msgstr "ﻦﺋﺎﻛ ﻒﺿﺃ"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "ﻰﻤﺴﻣ ﻦﺋﺎﻛ ﻒﺿﺃ"
-
-
 msgid "Add named object"
 msgstr "ﻰﻤﺴﻣ ﻦﺋﺎﻛ ﻒﺿﺃ"
 
@@ -28678,6 +28668,22 @@ msgstr "ﺔﺷﺎﺸﻟﺍ ﺓﺭﻮﺻ ﻆﻔﺣﺍ"
 
 msgid "Remove unused settings for invisible editors"
 msgstr "ﺔﻴﻔﺨﻤﻟﺍ ﺕﺍﺭﺮﺤﻤﻠﻟ ﺔﻣﺪﺨﺘﺴﻣ ﺮﻴﻐﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺬﺣﺍ"
+
+
+msgid "Editing"
+msgstr "ﺮﻳﺮﺤﺘﻟﺍ"
+
+
+msgid "Add-ons"
+msgstr "ﺲﺑﺎﻘﻤﻟﺍ"
+
+
+msgid "File Paths"
+msgstr "ﻒﻠﻤﻟﺍ ﺕﺍﺭﺎﺴﻣ"
+
+
+msgid "Experimental"
+msgstr "ﻲﺑﺮﺠﺗ"
 
 
 msgctxt "Operator"
@@ -31050,10 +31056,6 @@ msgid "Playback"
 msgstr "ﺽﺮﻋ"
 
 
-msgid "Add-ons"
-msgstr "ﺲﺑﺎﻘﻤﻟﺍ"
-
-
 msgid "Timeline"
 msgstr "ﺖﻗﻮﻟﺍ ﻂﺧ"
 
@@ -32121,18 +32123,6 @@ msgstr "IK ﺪﻴﻗ ﻞﻜﺷ ﻰﻠﻋ ﻥﺍﺭﻭﺪﻟﺍ ﺓﺎﻨﻗ ﻖ�
 
 msgid "Active Section"
 msgstr "ﻝﺎﻌّﻔﻟﺍ ﻊﻄﻘﻤﻟﺍ"
-
-
-msgid "Editing"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ"
-
-
-msgid "File Paths"
-msgstr "ﻒﻠﻤﻟﺍ ﺕﺍﺭﺎﺴﻣ"
-
-
-msgid "Experimental"
-msgstr "ﻲﺑﺮﺠﺗ"
 
 
 msgid "Edit Methods"
@@ -37373,8 +37363,8 @@ msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺲﻜﻋﺇ"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "ﺭﺮﺣ"
+msgid "New"
+msgstr "ﺪﻳﺪﺟ"
 
 
 msgid "Active object is not a mesh"
@@ -38104,11 +38094,6 @@ msgstr "ﺭﺎﺴﻣ ﺮﺼﻗﺃ"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "ﺪﻳﺪﺟ"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "ﺭﻮﺼﻟﺍ ﻞﻛ ﻆﻔﺣﺇ"
 
@@ -38393,6 +38378,11 @@ msgstr "ﺎﻴﺳﻭﺎﻏ ﺐﺒﺿ"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "ﻝﻮﻄﻟﺍ ﻞﻳﺪﻌﺗ ﻭ ﺔﻃﺮﺷﻷ﻿ﺍ ﺚﻳﺪﺤﺗ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "ﻥﺍﺭﻭﺪﻟﺍ"
 
 
 msgid "Unpack"
@@ -38925,11 +38915,6 @@ msgstr "...ﻢﻈﻌﻟﺍ ﺕﺎﻘﺒﻃ ﺮﻴﻏ"
 
 msgid "Bone Settings"
 msgstr "ﻢﻈﻌﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "ﻥﺍﺭﻭﺪﻟﺍ"
 
 
 msgctxt "Operator"

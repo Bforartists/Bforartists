@@ -18,7 +18,7 @@
 
 
 from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
-    overrides, colors, rerequests, categories, upload_bg, tasks_queue, image_utils, asset_bar_op
+    overrides, colors, rerequests, categories, upload_bg, tasks_queue, image_utils, asset_bar_op, reports
 
 import tempfile, os, subprocess, json, re
 
@@ -715,7 +715,7 @@ class FastMetadata(bpy.types.Operator):
         thread = threading.Thread(target=patch_individual_metadata,
                                   args=(self.asset_id, mdict, user_preferences.api_key))
         thread.start()
-        tasks_queue.add_task((ui.add_report, (f'Uploading metadata for {self.name}. '
+        tasks_queue.add_task((reports.add_report, (f'Uploading metadata for {self.name}. '
                                               f'Refresh search results to see that changes applied correctly.', 8,)))
 
         return {'FINISHED'}
@@ -871,7 +871,7 @@ class Uploader(threading.Thread):
         message = str(message).replace("'", "")
 
         # this adds a UI report but also writes above the upload panel fields.
-        tasks_queue.add_task((ui.add_report, (message,)))
+        tasks_queue.add_task((reports.add_report, (message,)))
         estring = f"{self.export_data['eval_path_state']} = '{message}'"
         tasks_queue.add_task((exec, (estring,)))
 
@@ -895,14 +895,14 @@ class Uploader(threading.Thread):
         # self.upload_data['license'] = 'ovejajojo'
         json_metadata = self.upload_data  # json.dumps(self.upload_data, ensure_ascii=False).encode('utf8')
 
-        # tasks_queue.add_task((ui.add_report, ('Posting metadata',)))
+        # tasks_queue.add_task((reports.add_report, ('Posting metadata',)))
         self.send_message('Posting metadata')
         if self.export_data['assetBaseId'] == '':
             try:
                 r = rerequests.post(url, json=json_metadata, headers=headers, verify=True,
                                     immediate=True)  # files = files,
 
-                # tasks_queue.add_task((ui.add_report, ('uploaded metadata',)))
+                # tasks_queue.add_task((reports.add_report, ('uploaded metadata',)))
                 utils.p(r.text)
                 self.send_message('uploaded metadata')
 
@@ -920,7 +920,7 @@ class Uploader(threading.Thread):
                                      immediate=True)  # files = files,
                 self.send_message('uploaded metadata')
 
-                # tasks_queue.add_task((ui.add_report, ('uploaded metadata',)))
+                # tasks_queue.add_task((reports.add_report, ('uploaded metadata',)))
                 # parse the request
                 # print('uploaded metadata')
                 print(r.text)
@@ -938,10 +938,10 @@ class Uploader(threading.Thread):
             return {'FINISHED'}
         try:
             rj = r.json()
-            utils.pprint(rj)
+            # utils.pprint(rj)
             # if r.status_code not in (200, 201):
             #     if r.status_code == 401:
-            #         ###ui.add_report(r.detail, 5, colors.RED)
+            #         ###reports.add_report(r.detail, 5, colors.RED)
             #     return {'CANCELLED'}
             # if props.asset_base_id == '':
             #     props.asset_base_id = rj['assetBaseId']
