@@ -13907,6 +13907,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MATERIAL_SELECTION:
       icon = ICON_SELECT_BY_MATERIAL;
       break;
+    case GEO_NODE_MESH_BOOLEAN:
+      icon = ICON_MOD_BOOLEAN;
+      break;
     case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
       icon = ICON_MESH_CIRCLE;
       break;
