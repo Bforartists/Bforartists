@@ -77,7 +77,8 @@ class FILEBROWSER_HT_header(Header):
         space_data = context.space_data
 
         if space_data.active_operator is None:
-            layout.template_header()
+            #layout.template_header()
+            ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if SpaceAssetInfo.is_asset_browser(space_data):
             ASSETBROWSER_MT_editor_menus.draw_collapsible(context, layout)
