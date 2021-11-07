@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions, ui_panels, search
+from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions, ui_panels, search, reports
 
 import threading
 import time
@@ -779,7 +779,7 @@ class Downloader(threading.Thread):
 
         if not has_url:
             tasks_queue.add_task(
-                (ui.add_report, ('Failed to obtain download URL for %s.' % asset_data['name'], 5, colors.RED)))
+                (reports.add_report, ('Failed to obtain download URL for %s.' % asset_data['name'], 5, colors.RED)))
             return;
         if tcom.error:
             return
@@ -814,7 +814,7 @@ class Downloader(threading.Thread):
             else:
                 # bk_logger.debug(total_length)
                 if int(total_length) < 1000:  # means probably no file returned.
-                    tasks_queue.add_task((ui.add_report, (response.content, 20, colors.RED)))
+                    tasks_queue.add_task((reports.add_report, (response.content, 20, colors.RED)))
 
                     tcom.report = response.content
 
@@ -875,7 +875,7 @@ def download(asset_data, **kwargs):
         sprops = utils.get_search_props()
         report = f"Maximum retries exceeded for {asset_data['name']}"
         sprops.report = report
-        ui.add_report(report, 5, colors.RED)
+        reports.add_report(report, 5, colors.RED)
 
         bk_logger.debug(sprops.report)
         return
@@ -1122,12 +1122,12 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None, resolution='blend
         return True
 
     # let's print it into UI
-    tasks_queue.add_task((ui.add_report, (str(r), 10, colors.RED)))
+    tasks_queue.add_task((reports.add_report, (str(r), 10, colors.RED)))
 
     if r.status_code == 403:
         report = 'You need Full plan to get this item.'
         # r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
-        # tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
+        # tasks_queue.add_task((reports.add_report, (r1, 5, colors.RED)))
         if tcom is not None:
             tcom.report = report
             tcom.error = True

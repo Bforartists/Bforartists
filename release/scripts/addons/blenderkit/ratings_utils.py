@@ -78,7 +78,7 @@ def store_rating_local(asset_id, type='quality', value=0):
     context = bpy.context
     ar   = context.window_manager['asset ratings']
     ar[asset_id] = ar.get(asset_id, {})
-    ar[asset_id]['type'] = value
+    ar[asset_id][type] = value
 
 
 def get_rating(asset_id, headers):
@@ -101,6 +101,7 @@ def get_rating(asset_id, headers):
     if r.status_code == 200:
         rj = r.json()
         ratings = {}
+        print(rj)
         # store ratings - send them to task queue
         for r in rj['results']:
             ratings[r['ratingType']] = r['score']
@@ -353,6 +354,8 @@ class RatingsProperties():
     def prefill_ratings(self):
         # pre-fill ratings
         ratings = get_rating_local(self.asset_id)
+        print('prefill ratings')
+        print(ratings)
         if ratings and ratings.get('quality'):
             self.rating_quality = ratings['quality']
         if ratings and ratings.get('working_hours'):

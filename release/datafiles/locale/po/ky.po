@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -1455,6 +1455,10 @@ msgid "Node"
 msgstr "Түйүн"
 
 
+msgid "Apply"
+msgstr "Колдонуу"
+
+
 msgid "Cache"
 msgstr "Кэш"
 
@@ -1481,10 +1485,6 @@ msgstr "Импорттоо"
 
 msgid "Help"
 msgstr "Жардам"
-
-
-msgid "Apply"
-msgstr "Колдонуу"
 
 
 msgid "Active Element"
@@ -2425,6 +2425,14 @@ msgid "Save Screenshot"
 msgstr "Скриншотту сактоо"
 
 
+msgid "Themes"
+msgstr "Темалар"
+
+
+msgid "Editing"
+msgstr "Оңдоо"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Скульптинг режими"
@@ -2786,10 +2794,6 @@ msgid "Development"
 msgstr "Иштетүү"
 
 
-msgid "Themes"
-msgstr "Темалар"
-
-
 msgid "Panel Colors"
 msgstr "Панель түстөрү"
 
@@ -2806,10 +2810,6 @@ msgstr "Түз сызык"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Тегерек"
-
-
-msgid "Editing"
-msgstr "Оңдоо"
 
 
 msgid "Add/Replace"
@@ -3246,8 +3246,8 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Оңдоо"
+msgid "New"
+msgstr "Жаңы"
 
 
 msgctxt "Operator"
@@ -3322,11 +3322,6 @@ msgstr "Опциялар:"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Артынан"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Жаңы"
 
 
 msgctxt "Operator"

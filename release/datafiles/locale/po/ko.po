@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -26927,6 +26927,10 @@ msgid "Sequencer Context Menu"
 msgstr "시퀀서 컨텍스트 메뉴"
 
 
+msgid "Apply"
+msgstr "적용"
+
+
 msgid "Navigation"
 msgstr "네비게이션"
 
@@ -27161,8 +27165,8 @@ msgid "Make Single User"
 msgstr "싱글 유저를 만들기"
 
 
-msgid "Apply"
-msgstr "적용"
+msgid "Asset"
+msgstr "에셋"
 
 
 msgid "Object Context Menu"
@@ -33677,10 +33681,6 @@ msgid "Placeholder"
 msgstr "자리 표시자"
 
 
-msgid "Asset"
-msgstr "에셋"
-
-
 msgid "Auto-Refresh"
 msgstr "자동 새로 고침"
 
@@ -37144,19 +37144,6 @@ msgstr "사용 중지된 F-커브를 회복"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "모든 F-커브에서 ' 사용 중지됨' 태그를 지워 깨진 F-커브가 다시 작동 하도록합니다"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "채널 찾기"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "일치하는 이름을 가진 채널만 포함하도록 표시된 채널 집합을 필터"
-
-
-msgid "Text to search for in channel names"
-msgstr "텍스트는 채널 이름에서 검색하기"
 
 
 msgctxt "Operator"
@@ -49292,13 +49279,12 @@ msgid "Add an object to the scene"
 msgstr "씬에 오브젝트를 추가"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "명명된 오브젝트를 추가"
-
-
 msgid "Add named object"
 msgstr "명명된 오브젝트를 추가"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "오브젝트 가 복제되었지만 오브젝트 데이터가 아니라 원본 데이터에 연결"
 
 
 msgid "Object name to add"
@@ -49665,10 +49651,6 @@ msgstr "오브젝트를 복제"
 
 msgid "Duplicate selected objects"
 msgstr "선택된 오브젝트를 복제"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "오브젝트 가 복제되었지만 오브젝트 데이터가 아니라 원본 데이터에 연결"
 
 
 msgid "Duplicate selected objects and move them"
@@ -55338,13 +55320,32 @@ msgid "Remove unused settings for invisible editors"
 msgstr "보이지 않는 에디터에 대해 사용하지 않은 설정을 제거"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "환경 설정을 표시"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "사용자 환경 설정 및 시스템 설정을 편집"
+
+
+msgid "Themes"
+msgstr "테마"
+
+
+msgid "Editing"
+msgstr "편집"
+
+
+msgid "Add-ons"
+msgstr "애드온"
+
+
+msgid "Keymap"
+msgstr "키맵"
+
+
+msgid "File Paths"
+msgstr "파일 경로"
+
+
+msgid "Experimental"
+msgstr "실험적"
 
 
 msgctxt "Operator"
@@ -62646,10 +62647,6 @@ msgid "I18n Update Translation"
 msgstr "I18n 번역 업데이트"
 
 
-msgid "Add-ons"
-msgstr "애드온"
-
-
 msgid "Timeline"
 msgstr "타임라인"
 
@@ -62706,10 +62703,6 @@ msgstr "USERPREF_PT_interface_translation"
 msgctxt "WindowManager"
 msgid "Translation"
 msgstr "번역"
-
-
-msgid "Keymap"
-msgstr "키맵"
 
 
 msgid "Preferences Navigation"
@@ -62770,10 +62763,6 @@ msgstr "사이클 렌더 장치"
 
 msgid "Memory & Limits"
 msgstr "메모리 & 제한"
-
-
-msgid "Themes"
-msgstr "테마"
 
 
 msgid "Bone Color Sets"
@@ -64433,18 +64422,6 @@ msgstr "활성 섹션"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "사용자 인터페이스에 표시된 환경 설정의 활성 섹션"
-
-
-msgid "Editing"
-msgstr "편집"
-
-
-msgid "File Paths"
-msgstr "파일 경로"
-
-
-msgid "Experimental"
-msgstr "실험적"
 
 
 msgid "Application Template"
@@ -79034,13 +79011,13 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "새로운"
+
+
 msgid "API Defined"
 msgstr "API 정의"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "편집"
 
 
 msgid "Active object is not a mesh"
@@ -81121,11 +81098,6 @@ msgstr "최단 경로"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "새로운"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "모든 이미지를 저장"
 
@@ -81566,10 +81538,6 @@ msgid "Sequence Render Animation"
 msgstr "시퀀스 렌더 애니메이션"
 
 
-msgid "Handle"
-msgstr "핸들"
-
-
 msgctxt "Operator"
 msgid "Grouped"
 msgstr "그룹됨"
@@ -81630,11 +81598,6 @@ msgstr "사운드 교차 페이드"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "스트립 내용을 미끌기"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "경로/파일을 변경"
 
@@ -81642,6 +81605,11 @@ msgstr "경로/파일을 변경"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "교환 데이터"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "스트립 내용을 미끌기"
 
 
 msgid "Position X"
@@ -81707,6 +81675,10 @@ msgstr "오른쪽"
 msgctxt "Operator"
 msgid "Both Sides"
 msgstr "양쪽 측면"
+
+
+msgid "Handle"
+msgstr "핸들"
 
 
 msgctxt "Operator"
@@ -81819,6 +81791,11 @@ msgid "Unmute Deselected Strips"
 msgstr "선택 해제된 스트립 음소거를 해제"
 
 
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "회전"
+
+
 msgid "Original frame range: %d-%d (%d)"
 msgstr "원본 프레임 범위: %d-%d (%d)"
 
@@ -81859,13 +81836,13 @@ msgstr "모디파이어를 선택 항목에 복사"
 
 
 msgctxt "Operator"
-msgid "Toggle Meta"
-msgstr "메타를 전환"
+msgid "Clear Fade"
+msgstr "페이드를 제거"
 
 
 msgctxt "Operator"
-msgid "Clear Fade"
-msgstr "페이드를 제거"
+msgid "Toggle Meta"
+msgstr "메타를 전환"
 
 
 msgid "Effect Fader"
@@ -83021,11 +82998,6 @@ msgstr "본 레이어를 변경..."
 
 msgid "Bone Settings"
 msgstr "본 설정"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "회전"
 
 
 msgctxt "Operator"

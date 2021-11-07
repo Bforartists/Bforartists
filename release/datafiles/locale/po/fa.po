@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4389,6 +4389,10 @@ msgid "Node Color Specials"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 
+msgid "Apply"
+msgstr "ﻝﺎﻤﻋﺍ"
+
+
 msgid "Python"
 msgstr "ﻥﻮﺘﯾﺎﭘ"
 
@@ -4419,10 +4423,6 @@ msgstr "ﮏﻤﮐ"
 
 msgid "Enabled Modes"
 msgstr "ﻩﺪﺷ ﻝﺎﻌﻓ"
-
-
-msgid "Apply"
-msgstr "ﻝﺎﻤﻋﺍ"
 
 
 msgid "Relations"
@@ -9036,11 +9036,6 @@ msgid "Add Object"
 msgstr "ءﯽﺷ ﻥﺩﻭﺰﻓﺍ"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "ءﯽﺷ ﻥﺩﺮﮐ ﻪﻓﺎﺿﺍ"
-
-
 msgid "Object name to add"
 msgstr "ﻥﺩﻭﺰﻓﺍ ﯼﺍﺮﺑ ﯽﺷ ﻡﺎﻧ"
 
@@ -10401,6 +10396,22 @@ msgid "Save Screenshot"
 msgstr "ﺖﺴﺨﻧ ﻪﺤﻔﺻ"
 
 
+msgid "Themes"
+msgstr "ﺎﻫ ﻢﺗ"
+
+
+msgid "Editing"
+msgstr "ﺶﯾﺍﺮﯾﻭ"
+
+
+msgid "File Paths"
+msgstr "ﻞﯾﺎﻓ ﯼﺎﻫﺮﯿﺴﻣ"
+
+
+msgid "Experimental"
+msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
+
+
 msgctxt "Operator"
 msgid "Reload Scripts"
 msgstr "ﺎﻫ‌ﺖﭙﯾﺮﮑﺳﺍ:"
@@ -11680,10 +11691,6 @@ msgid "Timeline"
 msgstr "ﻥﺎﻣﺯ ﺭﻮﺤﻣ"
 
 
-msgid "Themes"
-msgstr "ﺎﻫ ﻢﺗ"
-
-
 msgid "Theme Space"
 msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
@@ -11733,18 +11740,6 @@ msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 msgid "Auto IK"
 msgstr "ﺭﺎﮐﺩﻮﺧ"
-
-
-msgid "Editing"
-msgstr "ﺶﯾﺍﺮﯾﻭ"
-
-
-msgid "File Paths"
-msgstr "ﻞﯾﺎﻓ ﯼﺎﻫﺮﯿﺴﻣ"
-
-
-msgid "Experimental"
-msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
 
 
 msgid "Built-in animation player"
@@ -12613,8 +12608,8 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "ﺶﯾﺍﺮﯾﻭ"
+msgid "New"
+msgstr "ﺪﯾﺪﺟ"
 
 
 msgid "Active object is not a mesh"
@@ -12976,11 +12971,6 @@ msgstr "ﻂﺒﺗﺮﻣ"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "ﺪﯾﺪﺟ"
-
-
-msgctxt "Operator"
 msgid "Edit Externally"
 msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -13121,6 +13111,11 @@ msgstr "ﻞﯾﺪﺒﺗ"
 msgctxt "Operator"
 msgid "Alpha Under"
 msgstr "ﻞﯾﺪﺒﺗ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "ﻥﺍﺭﻭﺩ"
 
 
 msgctxt "Operator"
@@ -13537,11 +13532,6 @@ msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 msgid "Bone Settings"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "ﻥﺍﺭﻭﺩ"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -21158,6 +21158,10 @@ msgid "Effect Strip"
 msgstr "Faixa de efeito"
 
 
+msgid "Apply"
+msgstr "Aplicar"
+
+
 msgid "Navigation"
 msgstr "Navegação"
 
@@ -21296,10 +21300,6 @@ msgstr "Ganchos"
 
 msgid "Make Single User"
 msgstr "Tornar usuário único"
-
-
-msgid "Apply"
-msgstr "Aplicar"
 
 
 msgid "Quick Effects"
@@ -29895,19 +29895,6 @@ msgstr "Reviver as curvas-f desabilitadas"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Limpa as bandeiras que desabilitam o funcionamento de todas as curvas-f, fazendo com que as curvas-f quebradas funcionem novamente."
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Encontrar canais"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Filtra o conjunto de canais mostrado para incluir somente aqueles com nomes que combinem."
-
-
-msgid "Text to search for in channel names"
-msgstr "Texto para encontrar nos nomes dos canais."
 
 
 msgctxt "Operator"
@@ -39548,13 +39535,12 @@ msgid "Add an object to the scene"
 msgstr "Permite adicionar um objeto para a cena."
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Adicionar um objeto nomeado"
-
-
 msgid "Add named object"
 msgstr "Permite a adição de um objeto nomeado."
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplica os objetos mas não os dados do objeto, vinculando-os aos dados originais."
 
 
 msgid "Object name to add"
@@ -39837,10 +39823,6 @@ msgstr "Duplicar objetos"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica os objetos selecionados."
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplica os objetos mas não os dados do objeto, vinculando-os aos dados originais."
 
 
 msgid "Duplicate selected objects and move them"
@@ -44365,6 +44347,26 @@ msgstr "A direção na qual reciclar."
 
 msgid "Remove unused settings for invisible editors"
 msgstr "Remove as configurações não usadas para os editores invisíveis."
+
+
+msgid "Themes"
+msgstr "Temas"
+
+
+msgid "Editing"
+msgstr "Edição"
+
+
+msgid "Add-ons"
+msgstr "Complementos"
+
+
+msgid "File Paths"
+msgstr "Caminhos de arquivo"
+
+
+msgid "Experimental"
+msgstr "Experimental"
 
 
 msgctxt "Operator"
@@ -49741,10 +49743,6 @@ msgid "I18n Update Translation"
 msgstr "Atualização da tradução I18N"
 
 
-msgid "Add-ons"
-msgstr "Complementos"
-
-
 msgid "Timeline"
 msgstr "Linha do tempo"
 
@@ -49763,10 +49761,6 @@ msgstr "Configurações de mouse 3D"
 
 msgid "Auto Run Python Scripts"
 msgstr "Executar scripts Python automaticamente"
-
-
-msgid "Themes"
-msgstr "Temas"
 
 
 msgid "Bone Color Sets"
@@ -50978,18 +50972,6 @@ msgstr "Restrição ativa do canal de poses."
 
 msgid "Active Section"
 msgstr "Seção ativa"
-
-
-msgid "Editing"
-msgstr "Edição"
-
-
-msgid "File Paths"
-msgstr "Caminhos de arquivo"
-
-
-msgid "Experimental"
-msgstr "Experimental"
 
 
 msgid "Application Template"
@@ -61613,13 +61595,13 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Novo(a)"
+
+
 msgid "API Defined"
 msgstr "API Definida"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Editar"
 
 
 msgid "Active object is not a mesh"
@@ -62494,11 +62476,6 @@ msgstr "Caminho mais curto"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Novo(a)"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Salvar todas as imagens"
 
@@ -62801,11 +62778,6 @@ msgstr "Som"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Deslizar os conteúdos da faixa"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Alterar caminhos e / ou arquivos"
 
@@ -62813,6 +62785,11 @@ msgstr "Alterar caminhos e / ou arquivos"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Trocar dados"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Deslizar os conteúdos da faixa"
 
 
 msgid "Convert to Float"
@@ -62925,6 +62902,11 @@ msgstr "Desfoque gaussiano"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Recarregar as faixas e ajustar comprimento"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotação"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -63588,11 +63570,6 @@ msgstr "Alterar camadas dos ossos..."
 
 msgid "Bone Settings"
 msgstr "Configurações de ossos"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotação"
 
 
 msgctxt "Operator"

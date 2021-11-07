@@ -170,6 +170,26 @@ const char *BKE_appdir_folder_default(void)
 #endif /* WIN32 */
 }
 
+const char *BKE_appdir_folder_root(void)
+{
+#ifndef WIN32
+  return "/";
+#else
+  static char root[4];
+  BLI_windows_get_default_root_dir(root);
+  return root;
+#endif
+}
+
+const char *BKE_appdir_folder_default_or_root(void)
+{
+  const char *path = BKE_appdir_folder_default();
+  if (path == NULL) {
+    path = BKE_appdir_folder_root();
+  }
+  return path;
+}
+
 /**
  * Get the user's home directory, i.e.
  * - Unix: `$HOME`
@@ -261,22 +281,29 @@ bool BKE_appdir_folder_caches(char *r_path, const size_t path_len)
  */
 bool BKE_appdir_font_folder_default(char *dir)
 {
+  char test_dir[FILE_MAXDIR];
+  test_dir[0] = '\0';
+
 #ifdef WIN32
   wchar_t wpath[FILE_MAXDIR];
   if (SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0)) {
     wcscat(wpath, L"\\");
-    BLI_strncpy_wchar_as_utf8(dir, wpath, FILE_MAXDIR);
-    return (BLI_exists(dir));
+    BLI_strncpy_wchar_as_utf8(test_dir, wpath, sizeof(test_dir));
   }
-  return false;
 #elif defined(__APPLE__)
   const char *home = BLI_getenv("HOME");
-  BLI_snprintf(dir, FILE_MAXDIR, "%s/Library/Fonts/", home);
-  return (BLI_exists(dir));
+  if (home) {
+    BLI_path_join(test_dir, sizeof(test_dir), home, "Library", "Fonts", NULL);
+  }
 #else
-  BLI_strncpy(dir, "/usr/share/fonts/", FILE_MAXDIR);
-  return (BLI_exists(dir));
+  STRNCPY(test_dir, "/usr/share/fonts");
 #endif
+
+  if (test_dir[0] && BLI_exists(test_dir)) {
+    BLI_strncpy(dir, test_dir, FILE_MAXDIR);
+    return true;
+  }
+  return false;
 }
 
 /** \} */

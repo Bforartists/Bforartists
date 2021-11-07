@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11162,10 +11162,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Afficher les blocs de données arbre de nœuds"
 
 
-msgid "Show Object data-blocks"
-msgstr "Afficher les blocs de données objet"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Afficher les blocs de données courbes de peinture"
 
@@ -11216,6 +11212,10 @@ msgstr "Afficher les blocs de données action"
 
 msgid "Show Material data-blocks"
 msgstr "Afficher les blocs de données matériau"
+
+
+msgid "Show Object data-blocks"
+msgstr "Afficher les blocs de données objet"
 
 
 msgid "Show World data-blocks"
@@ -15258,16 +15258,16 @@ msgid "Factor of Opacity"
 msgstr "Facteur d’opacité"
 
 
+msgid "Use a custom curve to define opacity effect along the strokes"
+msgstr "Utiliser une courbe personnalisée pour définir l'opacité le long du tracé"
+
+
 msgid "Uniform Opacity"
 msgstr "Uniformiser l'opacité"
 
 
 msgid "Replace the stroke opacity"
 msgstr "Remplacer l'opacité du trait"
-
-
-msgid "Use a custom curve to define opacity effect along the strokes"
-msgstr "Utiliser une courbe personnalisée pour définir l'opacité le long du tracé"
 
 
 msgid "Simplify Modifier"
@@ -27338,6 +27338,10 @@ msgid "Change"
 msgstr "Modifier"
 
 
+msgid "Apply"
+msgstr "Appliquer"
+
+
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -27536,10 +27540,6 @@ msgstr "Ajouter image"
 
 msgid "Make Single User"
 msgstr "Rendre utilisateur unique"
-
-
-msgid "Apply"
-msgstr "Appliquer"
 
 
 msgid "Object Context Menu"
@@ -36416,19 +36416,6 @@ msgstr "Ranimer F-courbes désactivées"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Efface le tag “désactivé” de toutes les F-courbes, pour refaire marcher les F-courbes en panne"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Chercher canaux"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Filtrer l’ensemble de canaux affichés pour n’inclure que ceux dont le nom correspond"
-
-
-msgid "Text to search for in channel names"
-msgstr "Texte à rechercher dans les noms de canaux"
 
 
 msgctxt "Operator"
@@ -46878,13 +46865,12 @@ msgid "Add an object to the scene"
 msgstr "Ajouter un objet à la scène"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Ajouter objet nommé"
-
-
 msgid "Add named object"
 msgstr "Ajouter un objet nommé"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Dupliquer l’objet, mais pas les données objet, lier aux données originales"
 
 
 msgid "Object name to add"
@@ -47210,10 +47196,6 @@ msgstr "Dupliquer objets"
 
 msgid "Duplicate selected objects"
 msgstr "Dupliquer les objets sélectionnés"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Dupliquer l’objet, mais pas les données objet, lier aux données originales"
 
 
 msgid "Duplicate selected objects and move them"
@@ -52184,9 +52166,28 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Enlever les réglages inutilisés des éditeurs invisibles"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Afficher préférences"
+msgid "Themes"
+msgstr "Thèmes"
+
+
+msgid "Editing"
+msgstr "Edition"
+
+
+msgid "Add-ons"
+msgstr "Add-ons"
+
+
+msgid "Keymap"
+msgstr "Ensemble de raccourcis"
+
+
+msgid "File Paths"
+msgstr "Chemins de fichier"
+
+
+msgid "Experimental"
+msgstr "Expérimentales"
 
 
 msgctxt "Operator"
@@ -58282,10 +58283,6 @@ msgid "I18n Update Translation"
 msgstr "I18n mise-à-jour traduction"
 
 
-msgid "Add-ons"
-msgstr "Add-ons"
-
-
 msgid "Timeline"
 msgstr "Timeline"
 
@@ -58335,10 +58332,6 @@ msgid "Translation"
 msgstr "Traduction"
 
 
-msgid "Keymap"
-msgstr "Ensemble de raccourcis"
-
-
 msgid "Walk"
 msgstr "Marcher"
 
@@ -58377,10 +58370,6 @@ msgstr "Périphériques de rendu Cycles"
 
 msgid "Memory & Limits"
 msgstr "Mémoire & limites"
-
-
-msgid "Themes"
-msgstr "Thèmes"
 
 
 msgid "Bone Color Sets"
@@ -59966,18 +59955,6 @@ msgstr "Section active"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Section active des préférences affichée dans l’interface utilisateur"
-
-
-msgid "Editing"
-msgstr "Edition"
-
-
-msgid "File Paths"
-msgstr "Chemins de fichier"
-
-
-msgid "Experimental"
-msgstr "Expérimentales"
 
 
 msgid "Application Template"
@@ -71038,13 +71015,13 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Nouveau"
+
+
 msgid "API Defined"
 msgstr "Défini par l’API"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Éditer"
 
 
 msgid "Active object is not a mesh"
@@ -72211,11 +72188,6 @@ msgstr "Chemin le plus court"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nouveau"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Enregistrer toutes les images"
 
@@ -72532,11 +72504,6 @@ msgstr "Son"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Faire glisser contenu de bande"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Changer chemin/fichiers"
 
@@ -72544,6 +72511,11 @@ msgstr "Changer chemin/fichiers"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Interchanger données"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Faire glisser contenu de bande"
 
 
 msgid "Convert to Float"
@@ -72656,6 +72628,11 @@ msgstr "Flou gaussien"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Recharger bandes et ajuster longueurs"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotation"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -73550,11 +73527,6 @@ msgstr "Changer calques os…"
 
 msgid "Bone Settings"
 msgstr "Réglages des os"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotation"
 
 
 msgctxt "Operator"

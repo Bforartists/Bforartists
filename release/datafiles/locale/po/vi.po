@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -5260,26 +5260,6 @@ msgstr "Không Gian Màu Ngõ Vào"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Không gian màu trong tập tin ảnh, để biến đổi đến và từ khi lưu và nhập ảnh"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Phim dạng hàm log có độ rộng 16.5 bước, và phám vi động lý 25 bước"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Không gian bậc một địa phương của Blender, Chuẩn Rec 709 (Toàn Phạm Vi)"
-
-
-msgid "ACES linear space"
-msgstr "Không gian bậc một ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Không gian được sử dung cho ảnh chứa dữ liệu vô màu sắc (ví dụ: bản đồ pháp tuyến)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Không Gian Tiêu Chuẩn Hiển Thi RGB"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11840,10 +11820,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Hiện các cục dữ liệu Cây Giao Điểm"
 
 
-msgid "Show Object data-blocks"
-msgstr "Hiện các cục dữ liệu Vật Thể"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Hiện các cục dữ liệu Đường Cong Sơn"
 
@@ -11902,6 +11878,10 @@ msgstr "Hiện các cục dữ liệu Hành Động"
 
 msgid "Show Material data-blocks"
 msgstr "Hiện các cục dữ liệu vật Liệu"
+
+
+msgid "Show Object data-blocks"
+msgstr "Hiện các cục dữ liệu Vật Thể"
 
 
 msgid "Show World data-blocks"
@@ -16816,16 +16796,16 @@ msgid "Modify stroke hardness"
 msgstr "Chỉnh sữa độ cứng của nét"
 
 
+msgid "Use a custom curve to define opacity effect along the strokes"
+msgstr "Dùng một đường cong tùy chọn để xác định hiệu ứng độ đục trên các nét"
+
+
 msgid "Uniform Opacity"
 msgstr "Độ Đục Đều Đặn"
 
 
 msgid "Replace the stroke opacity"
 msgstr "Thay thế cho độ đục nét"
-
-
-msgid "Use a custom curve to define opacity effect along the strokes"
-msgstr "Dùng một đường cong tùy chọn để xác định hiệu ứng độ đục trên các nét"
 
 
 msgid "Weighted"
@@ -17048,14 +17028,6 @@ msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Cụ sửa đổi Phân và Mịn Hóa"
 
 
-msgid "Uniform Thickness"
-msgstr "Bề Dày Đều Đặn"
-
-
-msgid "Replace the stroke thickness"
-msgstr "Thay thế cho bề dày nét"
-
-
 msgid "Absolute thickness to apply everywhere"
 msgstr "Bề dày thuyệt đối để áp dụng mỗi nơi"
 
@@ -17066,6 +17038,14 @@ msgstr "Hệ số cho nhân bề dày"
 
 msgid "Use a custom curve to define thickness change along the strokes"
 msgstr "Dùng một đường cong tùy chọn để chỉ định sử thay đổi bề dày trên các nét"
+
+
+msgid "Uniform Thickness"
+msgstr "Bề Dày Đều Đặn"
+
+
+msgid "Replace the stroke thickness"
+msgstr "Thay thế cho bề dày nét"
 
 
 msgid "Time Offset Modifier"
@@ -31758,6 +31738,10 @@ msgid "Sequencer Context Menu"
 msgstr "Danh Bạ Bối Cảnh Bộ Trình Tự"
 
 
+msgid "Apply"
+msgstr "Áp Dụng"
+
+
 msgid "Navigation"
 msgstr "Chuyển Hướng"
 
@@ -31772,10 +31756,6 @@ msgstr "Chọn Tay Cầm"
 
 msgid "Strip"
 msgstr "Đoạn"
-
-
-msgid "Image Transform"
-msgstr "Biến Hóa Ảnh"
 
 
 msgid "Lock/Mute"
@@ -32014,10 +31994,6 @@ msgid "Add Image"
 msgstr "Thêm Ảnh"
 
 
-msgid "Landmark Controls"
-msgstr "Điều Khiển Mốc Bờ"
-
-
 msgid "Link/Transfer Data"
 msgstr "Liên Kết/Truyền Dữ Liệu"
 
@@ -32026,8 +32002,8 @@ msgid "Make Single User"
 msgstr "Thành Một Người Dùng"
 
 
-msgid "Apply"
-msgstr "Áp Dụng"
+msgid "Asset"
+msgstr "Tích Sản"
 
 
 msgid "Object Context Menu"
@@ -32128,6 +32104,10 @@ msgstr "Vùng Hiển Thị"
 
 msgid "Viewpoint"
 msgstr "Điểm Nhìn"
+
+
+msgid "Landmark Controls"
+msgstr "Điều Khiển Mốc Bờ"
 
 
 msgid "Operator Presets"
@@ -39642,10 +39622,6 @@ msgid "Use Material layer"
 msgstr "Dùng lớp Vật Liệu"
 
 
-msgid "Asset"
-msgstr "Tích Sản"
-
-
 msgid "Use Asset layer"
 msgstr "Duông lớp Tích Sản"
 
@@ -44574,19 +44550,6 @@ msgstr "Hồi Phục Cong-F Bị Tắt"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Xóa nhãn 'tắt' từ hết Cong-F cho Cong-F hư có thể hoạt động lại"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Tìm Kênh"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Lọc tập kênh và chỉ hiện các kênh có tên giống"
-
-
-msgid "Text to search for in channel names"
-msgstr "Văn bản để tìm kiếm trong tên các kênh"
 
 
 msgctxt "Operator"
@@ -58836,11 +58799,6 @@ msgid "Add an object to the scene"
 msgstr "Thêm vật thể trong cảnh"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Thêm Vật Thể Có Tên"
-
-
 msgid "Add named object"
 msgstr "Thêm vật thể có tên"
 
@@ -58861,12 +58819,8 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Tọa độ Y (không gian màn) để đặt vị trí của vật thể"
 
 
-msgid "Create a duplicate of the object. If not set, only ensures the object is linked into the active view layer, positions and selects/activates it (deselecting others)"
-msgstr "Chế tạo một bản sao của vật thể. Nếu chưa đặt, chỉ làm chắc vật thể được liên kết vào lớp hiển thị hoạt động, di chuyển và chọn/hoạt động nó (và thả các lớp khác)"
-
-
-msgid "Duplicate object but not object data, linking to the original data (ignored if 'duplicate' is false)"
-msgstr "Sao chép vật thể nhưng không chép dữ liệu của vật thể, liên kết dữ liệu ban đầu (không thực hành nếu 'bản sao' là sai)"
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Sao chép vật thể nhưng không chép dữ liệu, liên kết với dữ liệu ban đầu"
 
 
 msgid "Object name to add"
@@ -59322,10 +59276,6 @@ msgid "Duplicate selected objects"
 msgstr "Bản sao các vật thể chọn"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Sao chép vật thể nhưng không chép dữ liệu, liên kết với dữ liệu ban đầu"
-
-
 msgid "Duplicate selected objects and move them"
 msgstr "Bản sao vật thể và di chhuyển nó"
 
@@ -59479,10 +59429,6 @@ msgstr "Thêm Bút Sáp"
 
 msgid "Add a Grease Pencil object to the scene"
 msgstr "Thêm một vật thể bút sáp vào cảnh"
-
-
-msgid "Defines how the strokes are ordered in 3D space for objects not displayed 'In Front'"
-msgstr "Chỉ định phương pháp cho sắp xếp thứ tự của các nét trong không gian 3D cho các vật thể không hiển thị 'Phía Trước'"
 
 
 msgid "Create an empty grease pencil object"
@@ -66082,13 +66028,32 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Xoá cài đặt không dùng cho bộ biên tập ẩn"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Hiện Tùy Chọn"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "Biên tập cài đặt tùy chọn của người dùng và hệ thống"
+
+
+msgid "Themes"
+msgstr "Phong Cách"
+
+
+msgid "Editing"
+msgstr "Biên Tập"
+
+
+msgid "Add-ons"
+msgstr "Đồ Kèm"
+
+
+msgid "Keymap"
+msgstr "Ánh Xạ Phím"
+
+
+msgid "File Paths"
+msgstr "Đường Dẫn Tập Tin"
+
+
+msgid "Experimental"
+msgstr "Thí Nghiệm"
 
 
 msgctxt "Operator"
@@ -71613,18 +71578,8 @@ msgid "Add a new VR landmark to the list and select it"
 msgstr "Thêm một mốc bờ sự thật ảo trong danh sách và chọn nó"
 
 
-msgctxt "Operator"
-msgid "Add VR Landmark from camera"
-msgstr "Thêm Mốc Bờ Sự Thật Ảo từ máy quay phim"
-
-
 msgid "Add a new VR landmark from the active camera object to the list and select it"
 msgstr "Thêm một mốc bờ sự thật ảo từ vật thể máy quay phim hoạt động vào danh sách và chọn nó"
-
-
-msgctxt "Operator"
-msgid "Add VR Landmark from session"
-msgstr "Thêm Môc Bờ Sự Thật Ảo từ phiên chạy"
 
 
 msgid "Add VR landmark from the viewer pose of the running VR session to the list and select it"
@@ -75559,10 +75514,6 @@ msgid "I18n Update Translation"
 msgstr "Nâng Cấp Dịch I18n"
 
 
-msgid "Add-ons"
-msgstr "Đồ Kèm"
-
-
 msgid "Timeline"
 msgstr "Thời Biểu"
 
@@ -75641,10 +75592,6 @@ msgid "Translation"
 msgstr "Phiên Dịch"
 
 
-msgid "Keymap"
-msgstr "Ánh Xạ Phím"
-
-
 msgid "Preferences Navigation"
 msgstr "Chuyển Hướng Tùy Chọn"
 
@@ -75707,10 +75654,6 @@ msgstr "Bộ Nhớ & Giới Hạn"
 
 msgid "Operating System Settings"
 msgstr "Cài Đặt Hệ Điều Hành"
-
-
-msgid "Themes"
-msgstr "Phong Cách"
 
 
 msgid "Bone Color Sets"
@@ -77564,18 +77507,6 @@ msgstr "Phần Hoạt Động"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Khúc hoạt động của tùy chọn người dùng được hiển thị trong giao diện người dùng"
-
-
-msgid "Editing"
-msgstr "Biên Tập"
-
-
-msgid "File Paths"
-msgstr "Đường Dẫn Tập Tin"
-
-
-msgid "Experimental"
-msgstr "Thí Nghiệm"
 
 
 msgid "Application Template"
@@ -81464,14 +81395,6 @@ msgstr "Máy Quay Phim Cảnh"
 
 msgid "Use scene's currently active camera to define the VR view base location and rotation"
 msgstr "Dùng máy quay phim đang hoạt hình để xác định vị trí và xoay của cơ sở sự thật ảo"
-
-
-msgid "Custom Camera"
-msgstr "Máy Quay Phim Tùy Chọn"
-
-
-msgid "Use an existing camera to define the VR view base location and rotation"
-msgstr "Dùng một máy quay phim đang tồn tại để xác định vị trí và xoay của cơ sở sự thật ảo"
 
 
 msgid "Custom Pose"
@@ -90187,10 +90110,6 @@ msgid "Grid Levels"
 msgstr "Mức Đồ Đồ Thị"
 
 
-msgid "Amount of grid lines displayed in the background"
-msgstr "Số lượng đường đồ thị được hiển thị trong nền"
-
-
 msgid "Group Node"
 msgstr "Giao Điểm Nhóm"
 
@@ -93744,10 +93663,6 @@ msgid "Absolute Tracking"
 msgstr "Theo Dõi Tuyệt Đối"
 
 
-msgid "Use unadjusted location/rotation as defined by the XR runtime"
-msgstr "Dùng vị trí/xoay chưa được chỉnh theo được chỉ định bộ thời chạy XR"
-
-
 msgid "Positional Tracking"
 msgstr "Theo Dõi Vị Trí"
 
@@ -94904,14 +94819,6 @@ msgid "Refractive"
 msgstr "Khúc Xạ"
 
 
-msgid "Viewport Bounces"
-msgstr "Nhồi Màn Chiếu"
-
-
-msgid "Render Bounces"
-msgstr "Nhồi Kết Xuất"
-
-
 msgid "Rolling Shutter"
 msgstr "Trập Lăn"
 
@@ -95010,6 +94917,14 @@ msgstr "Phân Hóa Đường Cong"
 
 msgid "AO Factor"
 msgstr "Hệ Số Che Khuất Bao Quanh"
+
+
+msgid "Viewport Bounces"
+msgstr "Nhồi Màn Chiếu"
+
+
+msgid "Render Bounces"
+msgstr "Nhồi Kết Xuất"
 
 
 msgid "Incompatible output node"
@@ -95508,10 +95423,6 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
-msgid "Built without VR/OpenXR features"
-msgstr "Được xây dựng thiếu tính năng Sự Thật Ảo/OpenXR"
-
-
 msgid "Note:"
 msgstr "Ghi Chú:"
 
@@ -95524,13 +95435,17 @@ msgid "performance impact!"
 msgstr "hiệu suất không ít!"
 
 
-msgid "API Defined"
-msgstr "API Được Định Nghĩa"
+msgid "Built without VR/OpenXR features"
+msgstr "Được xây dựng thiếu tính năng Sự Thật Ảo/OpenXR"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Biên Tập"
+msgid "New"
+msgstr "Mới"
+
+
+msgid "API Defined"
+msgstr "API Được Định Nghĩa"
 
 
 msgid "Torus"
@@ -98609,11 +98524,6 @@ msgstr "Đường Nhắn Nhất"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Mới"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Lưu Hết Ảnh"
 
@@ -99134,15 +99044,6 @@ msgstr "Bật/Tắt Bộ Trình Tự/Dự Khán"
 
 
 msgctxt "Operator"
-msgid "Side of Frame..."
-msgstr "Phía của Bức"
-
-
-msgid "Handle"
-msgstr "Tay Cầm"
-
-
-msgctxt "Operator"
 msgid "Grouped"
 msgstr "Được Nhóm Lại"
 
@@ -99202,11 +99103,6 @@ msgstr "Phai Đổi Âm Thanh"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Nội Dung Đoạn Phim Trượt"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Đổi Đường Dẫn/Tập Tin"
 
@@ -99214,6 +99110,11 @@ msgstr "Đổi Đường Dẫn/Tập Tin"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Trao Đổi Dữ Liệu"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Nội Dung Đoạn Phim Trượt"
 
 
 msgid "Anchor X"
@@ -99325,6 +99226,15 @@ msgstr "Hai Bên"
 
 
 msgctxt "Operator"
+msgid "Side of Frame..."
+msgstr "Phía của Bức"
+
+
+msgid "Handle"
+msgstr "Tay Cầm"
+
+
+msgctxt "Operator"
 msgid "Scene..."
 msgstr "Cảnh..."
 
@@ -99420,31 +99330,6 @@ msgstr "Mờ Hóa Gauss"
 
 
 msgctxt "Operator"
-msgid "Scale To Fit"
-msgstr "Phóng To Cho Vừa"
-
-
-msgctxt "Operator"
-msgid "Scale to Fill"
-msgstr "Phóng To cho Vừa"
-
-
-msgctxt "Operator"
-msgid "Stretch To Fill"
-msgstr "Kéo Ra cho Vừa"
-
-
-msgctxt "Operator"
-msgid "Clear Position"
-msgstr "Xóa Vị Trí"
-
-
-msgctxt "Operator"
-msgid "Move/Extend from Current Frame"
-msgstr "Di Chuyển/Kéo Ra từ Bức Hiện Tại"
-
-
-msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "znhập Lại Đoạn Lại Và Chỉnh Bề Dài"
 
@@ -99460,8 +99345,23 @@ msgstr "Bật Tiếng Các Đoạn Chưa Chọn"
 
 
 msgctxt "Operator"
-msgid "Hold Split"
-msgstr "Giữ Chẻ"
+msgid "Rotation"
+msgstr "Xoay"
+
+
+msgctxt "Operator"
+msgid "Scale To Fit"
+msgstr "Phóng To Cho Vừa"
+
+
+msgctxt "Operator"
+msgid "Scale to Fill"
+msgstr "Phóng To cho Vừa"
+
+
+msgctxt "Operator"
+msgid "Stretch To Fill"
+msgstr "Kéo Ra cho Vừa"
 
 
 msgid "Default Fade"
@@ -99507,18 +99407,28 @@ msgstr "Đoạn Phim"
 
 
 msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Di Chuyển/Kéo Ra từ Bức Hiện Tại"
+
+
+msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Giữ Chẻ"
+
+
+msgctxt "Operator"
 msgid "Copy Modifiers to Selection"
 msgstr "Chép Cụ Sửa _ổi đến Sự Lựa Chọn"
 
 
 msgctxt "Operator"
-msgid "Toggle Meta"
-msgstr "Bật/Tắt Siêu"
+msgid "Clear Fade"
+msgstr "Xóa Phai"
 
 
 msgctxt "Operator"
-msgid "Clear Fade"
-msgstr "Xóa Phai"
+msgid "Toggle Meta"
+msgstr "Bật/Tắt Siêu"
 
 
 msgid "Effect Fader"
@@ -101175,11 +101085,6 @@ msgstr "Đổi Lớp Xương..."
 
 msgid "Bone Settings"
 msgstr "Cài Đặt Xương"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Xoay"
 
 
 msgctxt "Operator"
@@ -107596,14 +107501,6 @@ msgid "File path"
 msgstr "Đường dẫn tập tin"
 
 
-msgid "Library not found"
-msgstr "Không tìm được thư viện"
-
-
-msgid "Set up the library or edit libraries in the Preferences, File Paths section"
-msgstr "Cài đặt thư viện hay biện tập các thư viện trong phần Tùy Chọn, Đường Dẫn Tập Tin"
-
-
 msgid "Today"
 msgstr "Ngày nay"
 
@@ -109787,6 +109684,10 @@ msgstr "Biên Giới Vật Liệu"
 
 msgid "Angle Cached"
 msgstr "Được Chứa Góc"
+
+
+msgid "Custom Camera"
+msgstr "Máy Quay Phim Tùy Chọn"
 
 
 msgid "Overlapping Edges As Contour"

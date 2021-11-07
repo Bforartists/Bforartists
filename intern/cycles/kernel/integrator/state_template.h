@@ -25,7 +25,7 @@ KERNEL_STRUCT_BEGIN(path)
  * The multiplication is delayed for later, so that state can use 32bit integer. */
 KERNEL_STRUCT_MEMBER(path, uint32_t, render_pixel_index, KERNEL_FEATURE_PATH_TRACING)
 /* Current sample number. */
-KERNEL_STRUCT_MEMBER(path, uint16_t, sample, KERNEL_FEATURE_PATH_TRACING)
+KERNEL_STRUCT_MEMBER(path, uint32_t, sample, KERNEL_FEATURE_PATH_TRACING)
 /* Current ray bounce depth. */
 KERNEL_STRUCT_MEMBER(path, uint16_t, bounce, KERNEL_FEATURE_PATH_TRACING)
 /* Current transparent ray bounce depth. */
@@ -56,6 +56,8 @@ KERNEL_STRUCT_MEMBER(path, float, mis_ray_pdf, KERNEL_FEATURE_PATH_TRACING)
 KERNEL_STRUCT_MEMBER(path, float, mis_ray_t, KERNEL_FEATURE_PATH_TRACING)
 /* Filter glossy. */
 KERNEL_STRUCT_MEMBER(path, float, min_ray_pdf, KERNEL_FEATURE_PATH_TRACING)
+/* Continuation probability for path termination. */
+KERNEL_STRUCT_MEMBER(path, float, continuation_probability, KERNEL_FEATURE_PATH_TRACING)
 /* Throughput. */
 KERNEL_STRUCT_MEMBER(path, float3, throughput, KERNEL_FEATURE_PATH_TRACING)
 /* Ratio of throughput to distinguish diffuse and glossy render passes. */
