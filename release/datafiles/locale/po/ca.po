@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15348,11 +15348,6 @@ msgstr "Comprimir Dades"
 
 
 msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Duplicar"
 
@@ -17554,6 +17549,18 @@ msgstr "Esborrar Str"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Emparentar"
+
+
+msgid "Editing"
+msgstr "Editar"
+
+
+msgid "File Paths"
+msgstr "Arxiu"
+
+
+msgid "Experimental"
+msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -20363,18 +20370,6 @@ msgstr "Esborrar Posició"
 
 msgid "Active Section"
 msgstr "Moure a Capa"
-
-
-msgid "Editing"
-msgstr "Editar"
-
-
-msgid "File Paths"
-msgstr "Arxiu"
-
-
-msgid "Experimental"
-msgstr "Seleccionar fila"
 
 
 msgid "Default paths for external files"
@@ -23738,8 +23733,8 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Editar"
+msgid "New"
+msgstr "Nou"
 
 
 msgid "Active object is not a mesh"
@@ -24191,11 +24186,6 @@ msgstr "Enllaç"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nou"
-
-
-msgctxt "Operator"
 msgid "Invert Image Colors"
 msgstr "Separar"
 
@@ -24408,6 +24398,11 @@ msgstr "Créixer"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Començar a renderitzar una seqüència"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"
@@ -24786,11 +24781,6 @@ msgstr "Render"
 
 msgid "Bone Settings"
 msgstr "Eines"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"

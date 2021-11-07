@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2909,6 +2909,10 @@ msgid "Node"
 msgstr "ग्रन्थि"
 
 
+msgid "Apply"
+msgstr "लागू करें"
+
+
 msgid "Strip"
 msgstr "पट्टी"
 
@@ -2979,10 +2983,6 @@ msgstr "खूँटी"
 
 msgid "Make Single User"
 msgstr "एकल प्रयोक्ता बनाएँ"
-
-
-msgid "Apply"
-msgstr "लागू करें"
 
 
 msgid "Quick Effects"
@@ -5569,8 +5569,8 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "संपादन"
+msgid "New"
+msgstr "नई"
 
 
 msgctxt "Operator"
@@ -5846,11 +5846,6 @@ msgstr "और अधिक"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "नई"
-
-
-msgctxt "Operator"
 msgid "Save As..."
 msgstr "के रूप में सहेजें..."
 
@@ -5974,6 +5969,11 @@ msgstr "गति नियंत्रण"
 msgctxt "Operator"
 msgid "Glow"
 msgstr "चमक"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "घूर्णन"
 
 
 msgid "Unpack"
@@ -6167,11 +6167,6 @@ msgstr "वस्तु"
 msgctxt "Operator"
 msgid "Clean"
 msgstr "साफ"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "घूर्णन"
 
 
 msgctxt "Operator"

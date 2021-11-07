@@ -18,7 +18,7 @@
 
 
 
-from blenderkit import paths, append_link, bg_blender, utils, rerequests, tasks_queue, ui
+from blenderkit import paths, append_link, bg_blender, utils, rerequests, tasks_queue, ui, reports
 
 import sys, json, os, time
 import requests
@@ -50,7 +50,7 @@ class upload_in_chunks(object):
                     break
                 self.readsofar += len(data)
                 percent = self.readsofar * 1e2 / self.totalsize
-                tasks_queue.add_task((ui.add_report, (f"Uploading {self.report_name} {percent}%",)))
+                tasks_queue.add_task((reports.add_report, (f"Uploading {self.report_name} {percent}%",)))
 
                 # bg_blender.progress('uploading %s' % self.report_name, percent)
                 # sys.stderr.write("\r{percent:3.0f}%".format(percent=percent))
@@ -65,7 +65,7 @@ def upload_file(upload_data, f):
     version_id = upload_data['id']
 
     message = f"uploading {f['type']} {os.path.basename(f['file_path'])}"
-    tasks_queue.add_task((ui.add_report, (message,)))
+    tasks_queue.add_task((reports.add_report, (message,)))
 
     upload_info = {
         'assetId': version_id,
@@ -95,17 +95,17 @@ def upload_file(upload_data, f):
                     upload_response = rerequests.post(upload_done_url, headers=headers, verify=True)
                     # print(upload_response)
                     # print(upload_response.text)
-                    tasks_queue.add_task((ui.add_report, (f"Finished file upload: {os.path.basename(f['file_path'])}",)))
+                    tasks_queue.add_task((reports.add_report, (f"Finished file upload: {os.path.basename(f['file_path'])}",)))
                     return True
                 else:
                     print(upload_response.text)
                     message = f"Upload failed, retry. File : {f['type']} {os.path.basename(f['file_path'])}"
-                    tasks_queue.add_task((ui.add_report, (message,)))
+                    tasks_queue.add_task((reports.add_report, (message,)))
 
             except Exception as e:
                 print(e)
                 message = f"Upload failed, retry. File : {f['type']} {os.path.basename(f['file_path'])}"
-                tasks_queue.add_task((ui.add_report, (message,)))
+                tasks_queue.add_task((reports.add_report, (message,)))
                 time.sleep(1)
 
             # confirm single file upload to bkit server
@@ -123,7 +123,7 @@ def upload_files(upload_data, files):
         uploaded = upload_file(upload_data, f)
         if not uploaded:
             uploaded_all = False
-        tasks_queue.add_task((ui.add_report, (f"Uploaded all files for asset {upload_data['name']}",)))
+        tasks_queue.add_task((reports.add_report, (f"Uploaded all files for asset {upload_data['name']}",)))
     return uploaded_all
 
 

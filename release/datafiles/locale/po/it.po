@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -18473,6 +18473,10 @@ msgid "Effect Strip"
 msgstr "Spezzone Effetto"
 
 
+msgid "Apply"
+msgstr "Applica"
+
+
 msgid "Navigation"
 msgstr "Navigazione"
 
@@ -18647,10 +18651,6 @@ msgstr "Aggiungi Immagine"
 
 msgid "Make Single User"
 msgstr "Rendi Utilizzatore Singolo"
-
-
-msgid "Apply"
-msgstr "Applica"
 
 
 msgid "Object Context Menu"
@@ -25551,15 +25551,6 @@ msgstr "Riabilita le Curve-F Disabilitate"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Elimina i tag 'disabled' dalle Curve-F per rendere quelle inattive (broken?) di nuovo funzionanti"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Trova Canali"
-
-
-msgid "Text to search for in channel names"
-msgstr "Testo da cercare nei nomi dei canali"
 
 
 msgctxt "Operator"
@@ -34001,13 +33992,12 @@ msgid "Add an object to the scene"
 msgstr "Aggiunge un oggetto alla scena"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Aggiungi Oggetto con Nome"
-
-
 msgid "Add named object"
 msgstr "Aggiunge un oggetto con nome"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplica l'oggetto ma non i dati dell'oggetto, collegandoli hai dati originali"
 
 
 msgid "Object name to add"
@@ -34278,10 +34268,6 @@ msgstr "Duplica Oggetti"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica gli oggetti selezionati"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplica l'oggetto ma non i dati dell'oggetto, collegandoli hai dati originali"
 
 
 msgid "Duplicate selected objects and move them"
@@ -38505,9 +38491,24 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Rimuove le impostazioni inutilizzate per gli editor invisibili"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Mostra Preferenze Utente"
+msgid "Themes"
+msgstr "Temi"
+
+
+msgid "Editing"
+msgstr "Modifica"
+
+
+msgid "Add-ons"
+msgstr "Add-ons"
+
+
+msgid "File Paths"
+msgstr "Percorsi File"
+
+
+msgid "Experimental"
+msgstr "Sperimentale"
 
 
 msgctxt "Operator"
@@ -43311,10 +43312,6 @@ msgid "I18n Update Translation"
 msgstr "Aggiornamento Traduzioni i18n"
 
 
-msgid "Add-ons"
-msgstr "Add-ons"
-
-
 msgid "Timeline"
 msgstr "Linea Temporale"
 
@@ -43402,10 +43399,6 @@ msgstr "Dispositivi Render Cycles"
 
 msgid "Memory & Limits"
 msgstr "Memoria & Limiti"
-
-
-msgid "Themes"
-msgstr "Temi"
 
 
 msgid "Bone Color Sets"
@@ -44571,18 +44564,6 @@ msgstr "Sezione Attiva"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Sezione attiva delle preferenze utente mostrata nell'interfaccia utente"
-
-
-msgid "Editing"
-msgstr "Modifica"
-
-
-msgid "File Paths"
-msgstr "Percorsi File"
-
-
-msgid "Experimental"
-msgstr "Sperimentale"
 
 
 msgid "Application Template"
@@ -53232,13 +53213,13 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Nuovo"
+
+
 msgid "API Defined"
 msgstr "Definito dall'API"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Modifica"
 
 
 msgid "Active object is not a mesh"
@@ -54296,11 +54277,6 @@ msgstr "Percorso Più Breve"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nuovo"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Salva Tutte le Immagini"
 
@@ -54652,11 +54628,6 @@ msgstr "Suono"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Scivola Spezzone Contenuti"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Cambia Percorso/Files"
 
@@ -54664,6 +54635,11 @@ msgstr "Cambia Percorso/Files"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Scambia Dati"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Scivola Spezzone Contenuti"
 
 
 msgid "Position X"
@@ -54775,6 +54751,11 @@ msgstr "Sfumatura Gaussiana"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Ricarica Spezzoni e Aggiusta Lunghezza"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotazione"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -55724,11 +55705,6 @@ msgstr "Cambia Livelli Osso..."
 
 msgid "Bone Settings"
 msgstr "Impostazioni Osso"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotazione"
 
 
 msgctxt "Operator"

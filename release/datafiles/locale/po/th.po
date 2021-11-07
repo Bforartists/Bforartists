@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -2120,6 +2120,10 @@ msgid "Node"
 msgstr "โนด"
 
 
+msgid "Apply"
+msgstr "นำไปใช้"
+
+
 msgid "Navigation"
 msgstr "การนำทาง"
 
@@ -2194,10 +2198,6 @@ msgstr "ตะขอ"
 
 msgid "Add Image"
 msgstr "เพิ่มภาพ"
-
-
-msgid "Apply"
-msgstr "นำไปใช้"
 
 
 msgid "Object Context Menu"
@@ -3193,9 +3193,20 @@ msgid "Redo Last"
 msgstr "ทำอีกครั้งล่าสุด"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "แสดงการตั้งค่า"
+msgid "Themes"
+msgstr "ธีม"
+
+
+msgid "Editing"
+msgstr "การแก้ไข"
+
+
+msgid "Add-ons"
+msgstr "แอดออน"
+
+
+msgid "File Paths"
+msgstr "เส้นทางไฟล์"
 
 
 msgctxt "Operator"
@@ -3465,10 +3476,6 @@ msgid "Playback"
 msgstr "เล่น"
 
 
-msgid "Add-ons"
-msgstr "แอดออน"
-
-
 msgid "Timeline"
 msgstr "ไทม์ไลน์"
 
@@ -3504,10 +3511,6 @@ msgstr "บันทึกการตั้งค่า"
 
 msgid "Editor"
 msgstr "ตัวแก้ไข"
-
-
-msgid "Themes"
-msgstr "ธีม"
 
 
 msgid "Text Style"
@@ -3579,14 +3582,6 @@ msgstr "ล็อกมุมมอง"
 
 msgid "Tip"
 msgstr "คำแนะนำ"
-
-
-msgid "Editing"
-msgstr "การแก้ไข"
-
-
-msgid "File Paths"
-msgstr "เส้นทางไฟล์"
 
 
 msgid "View & Controls"
@@ -4134,6 +4129,11 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "ใหม่"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "เปิด..."
 
@@ -4340,11 +4340,6 @@ msgstr "เพิ่มเติม"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "ใหม่"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "บันทึกภาพทั้งหมด"
 
@@ -4524,6 +4519,11 @@ msgstr "เรืองแสง"
 msgctxt "Operator"
 msgid "Gaussian Blur"
 msgstr "เบลอเกาส์เซียน"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "หมุน"
 
 
 msgctxt "Operator"
@@ -5060,11 +5060,6 @@ msgstr "ทำให้หน้ากากราบเรียบ"
 msgctxt "Operator"
 msgid "Grow Mask"
 msgstr "เปล่งแสงหน้ากาก"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "หมุน"
 
 
 msgctxt "Operator"

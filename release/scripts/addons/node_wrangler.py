@@ -43,7 +43,7 @@ from bpy.props import (
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
-from nodeitems_utils import node_categories_iter
+from nodeitems_utils import node_categories_iter, NodeItemCustom
 from math import cos, sin, pi, hypot
 from os import path
 from glob import glob
@@ -4986,6 +4986,9 @@ def draw_switch_category_submenu(self, context):
                 props.to_type = node.nodetype
     else:
         for node in self.category.items(context):
+            if isinstance(node, NodeItemCustom):
+                node.draw(self, layout, context)
+                continue
             props = layout.operator(NWSwitchNodeType.bl_idname, text=node.label)
             props.geo_to_type = node.nodetype
 

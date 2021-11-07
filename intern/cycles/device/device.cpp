@@ -23,6 +23,7 @@
 #include "device/queue.h"
 
 #include "device/cpu/device.h"
+#include "device/cpu/kernel.h"
 #include "device/cuda/device.h"
 #include "device/dummy/device.h"
 #include "device/hip/device.h"
@@ -285,7 +286,6 @@ DeviceInfo Device::get_multi_device(const vector<DeviceInfo> &subdevices,
   info.description = "Multi Device";
   info.num = 0;
 
-  info.has_half_images = true;
   info.has_nanovdb = true;
   info.has_osl = true;
   info.has_profiling = true;
@@ -332,7 +332,6 @@ DeviceInfo Device::get_multi_device(const vector<DeviceInfo> &subdevices,
     }
 
     /* Accumulate device info. */
-    info.has_half_images &= device.has_half_images;
     info.has_nanovdb &= device.has_nanovdb;
     info.has_osl &= device.has_osl;
     info.has_profiling &= device.has_profiling;
@@ -363,10 +362,11 @@ unique_ptr<DeviceQueue> Device::gpu_queue_create()
   return nullptr;
 }
 
-const CPUKernels *Device::get_cpu_kernels() const
+const CPUKernels &Device::get_cpu_kernels()
 {
-  LOG(FATAL) << "Device does not support CPU kernels.";
-  return nullptr;
+  /* Initialize CPU kernels once and reuse. */
+  static CPUKernels kernels;
+  return kernels;
 }
 
 void Device::get_cpu_kernel_thread_globals(

@@ -334,7 +334,7 @@ def draw_assetbar_show_hide(layout, props):
         ttip = 'Click to Show Asset Bar'
 
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if 1:  # preferences.experimental_features:
+    if 1:#preferences.experimental_features:
         op = layout.operator('view3d.blenderkit_asset_bar_widget', text='', icon=icon)
     else:
         op = layout.operator('view3d.blenderkit_asset_bar', text='', icon=icon)
@@ -609,7 +609,7 @@ class MarkNotificationRead(bpy.types.Operator):
 
     def execute(self, context):
         notifications = bpy.context.window_manager['bkit notifications']
-        for n in notifications:
+        for n in notifications['results']:
             if n['id'] == self.notification_id:
                 n['unread'] = 0
         comments_utils.check_notifications_read()
@@ -634,7 +634,7 @@ class MarkAllNotificationsRead(bpy.types.Operator):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         api_key = user_preferences.api_key
         notifications = bpy.context.window_manager['bkit notifications']
-        for n in notifications:
+        for n in notifications.get('results'):
             if n['unread'] == 1:
                 n['unread'] = 0
                 comments_utils.mark_notification_read_thread(api_key, n['id'])
@@ -705,42 +705,54 @@ def draw_notification(self, notification, width=600):
     box = layout.box()
     firstline = f"{notification['actor']['string']} {notification['verb']} {notification['target']['string']}"
     box1 = box.box()
-    row = box1.row()
-    utils.label_multiline(row, text=firstline, width=width)
+    # row = box1.row()
 
-    op = row.operator("wm.blenderkit_mark_notification_read", text="", icon='CANCEL')
-    op.notification_id = notification['id']
+    split_last = 0.7
     if notification['description']:
-        rows = utils.label_multiline(box, text=notification['description'], width=width)
-        split = rows[-1].split(factor=0.8)
+        split_last = 0
 
-    else:
-        row = layout.row()
-        split = row.split(factor=0.8)
-        split.label(text='')
-        split = split.split()
+
+    rows = utils.label_multiline(box1, text=firstline, width=width, split_last = split_last)
+
+
+    if notification['description']:
+        rows = utils.label_multiline(box, text=notification['description'], width=width, split_last = 0.7)
+
+
     if notification['target']:
         # row = layout.row()
         # split = row.split(factor=.8)
         # split.label(text='')
         # split = split.split()
-        op = split.operator('wm.blenderkit_open_notification_target', text='Open page', icon='GREASEPENCIL')
+        # split = rows[-1].split(factor=0.8)
+        # split = split.split()
+        # split.alignment = 'RIGHT'
+        # row = split.row(align = True)
+        row = rows[-1]
+        row = row.row(align=False)
+
+        # row = row.split(factor = 0.7)
+
+        op = row.operator('wm.blenderkit_open_notification_target', text='Open page', icon='HIDE_OFF')
         op.tooltip = 'Open the browser on the asset page to comment'
         op.url = paths.get_bkit_url() + notification['target']['url']
+        op.notification_id = notification['id']
+        # split =
+        op = row.operator("wm.blenderkit_mark_notification_read", text="", icon='CANCEL')
         op.notification_id = notification['id']
 
 
 def draw_notifications(self, context, width=600):
     layout = self.layout
     notifications = bpy.context.window_manager.get('bkit notifications')
-    if notifications is not None:
+    if notifications is not None and notifications.get('count')>0:
         row = layout.row()
         # row.alert = True
         split = row.split(factor = 0.7)
         split.label(text='')
         split = split.split()
         split.operator('wm.blenderkit_mark_notifications_read_all', text = 'Mark All Read', icon = 'CANCEL')
-        for notification in notifications:
+        for notification in notifications['results']:
             if notification['unread'] == 1:
                 draw_notification(self, notification, width=width)
 
@@ -778,7 +790,7 @@ class VIEW3D_PT_blenderkit_notifications(Panel):
     @classmethod
     def poll(cls, context):
         notifications = bpy.context.window_manager.get('bkit notifications')
-        if notifications is not None and len(notifications) > 0:
+        if notifications is not None and len(notifications['results']) > 0:
             return True
         return False
 
@@ -1554,8 +1566,7 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
             if asset_data['assetType'] == 'model':
                 op = layout.operator('object.blenderkit_regenerate_thumbnail', text='Regenerate thumbnail')
                 op.asset_index = ui_props.active_index
-
-            if asset_data['assetType'] == 'material':
+            elif asset_data['assetType'] == 'material':
                 op = layout.operator('object.blenderkit_regenerate_material_thumbnail', text='Regenerate thumbnail')
                 op.asset_index = ui_props.active_index
                 # op.asset_id = asset_data['id']
@@ -1993,11 +2004,15 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             if a.get('aboutMeUrl') is not None:
                 url = a['aboutMeUrl']
                 text = url
-                if len(url) > 25:
-                    text = url[:25] + '...'
-            else:
-                url = paths.get_author_gallery_url(a['id'])
-                text = "Open Author's Profile"
+                if len(url) > 45:
+                    text = url[:45] + '...'
+                op = button_row.operator('wm.url_open', text=text)
+                op.url = url
+                button_row = author_box.row()
+                button_row.scale_y = 2.0
+
+            url = paths.get_author_gallery_url(a['id'])
+            text = "Author's Profile"
 
             op = button_row.operator('wm.url_open', text=text)
             op.url = url
@@ -2129,7 +2144,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             # name_row = name_row.row()
             for i, c in enumerate(cat_path):
                 cat_name = cat_path_names[i]
-                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + '     >', emboss=True)
+                op = name_row.operator('view3d.blenderkit_asset_bar_widget', text=cat_name + '     >', emboss=True)
                 op.do_search = True
                 op.keep_running = True
                 op.tooltip = f"Browse {cat_name} category"
@@ -2225,12 +2240,29 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         tip_box = layout.box()
         tip_box.label(text=self.tip)
         # comments
-        if utils.profile_is_validator() and bpy.app.debug_value == 2:
+        if utils.profile_is_validator():
             comments = bpy.context.window_manager.get('asset comments', {})
             self.comments = comments.get(self.asset_data['assetBaseId'], [])
             if self.comments is not None:
                 for comment in self.comments:
                     self.draw_comment(context, layout, comment, width=self.width)
+
+    def prefill_ratings(self):
+        # pre-fill ratings
+        ratings = ratings_utils.get_rating_local(self.asset_id)
+        print('prefill ratings')
+        print(ratings)
+        if ratings and ratings.get('quality'):
+            self.rating_quality = ratings['quality']
+        if ratings and ratings.get('working_hours'):
+            wh = int(ratings['working_hours'])
+            whs = str(wh)
+            if wh in self.possible_wh_values:
+                self.rating_work_hours_ui = whs
+            if wh < 6 and wh in self.possible_wh_values_1_5:
+                self.rating_work_hours_ui_1_5 = whs
+            if wh < 11 and wh in self.possible_wh_values_1_10:
+                self.rating_work_hours_ui_1_10 = whs
 
     def execute(self, context):
         wm = context.window_manager
@@ -2262,7 +2294,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         self.prefill_ratings()
 
         # get comments
-        if utils.profile_is_validator() and bpy.app.debug_value == 2:
+        if utils.profile_is_validator():
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
             api_key = user_preferences.api_key
             comments = comments_utils.get_comments_local(asset_data['assetBaseId'])
@@ -2452,7 +2484,7 @@ def draw_panel_categories(self, context):
     cats = categories.get_category(wm['bkit_categories'], cat_path=acat)
     # draw freebies only in models parent category
     # if ui_props.asset_type == 'MODEL' and len(acat) == 1:
-    #     op = col.operator('view3d.blenderkit_asset_bar', text='freebies')
+    #     op = col.operator('view3d.blenderkit_asset_bar_widget', text='freebies')
     #     op.free_only = True
 
     for c in cats['children']:
@@ -2465,7 +2497,7 @@ def draw_panel_categories(self, context):
             ctext = '%s (%i)' % (c['name'], c['assetCount'])
 
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
-            if 1:  # preferences.experimental_features:
+            if 1:#preferences.experimental_features:
                 op = row.operator('view3d.blenderkit_asset_bar_widget', text=ctext)
             else:
                 op = row.operator('view3d.blenderkit_asset_bar', text=ctext)
@@ -2570,7 +2602,7 @@ def header_search_draw(self, context):
         layout.popover(panel="VIEW3D_PT_blenderkit_advanced_HDR_search", text="", icon_value=icon_id)
 
     notifications = bpy.context.window_manager.get('bkit notifications')
-    if notifications is not None and len(notifications) > 0:
+    if notifications is not None and notifications['count'] > 0:
         layout.operator('wm.show_notifications', text="", icon_value=pcoll['bell'].icon_id)
         # layout.popover(panel="VIEW3D_PT_blenderkit_notifications", text="", icon_value=pcoll['bell'].icon_id)
 

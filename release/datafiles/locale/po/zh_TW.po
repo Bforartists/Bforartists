@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -3782,22 +3782,6 @@ msgstr "輸入色彩空間設定"
 
 msgid "Input Color Space"
 msgstr "輸入色彩空間"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
-
-
-msgid "ACES linear space"
-msgstr "ACES 線性空間"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "影像使用的色彩空間，包含非色彩資料 (例如：法向映射)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "標準 RGB 顯示空間"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -18704,6 +18688,10 @@ msgid "Effect Strip"
 msgstr "效果片段"
 
 
+msgid "Apply"
+msgstr "套用"
+
+
 msgid "Navigation"
 msgstr "導覽"
 
@@ -18852,10 +18840,6 @@ msgstr "鉤"
 
 msgid "Make Single User"
 msgstr "製作單一使用者"
-
-
-msgid "Apply"
-msgstr "套用"
 
 
 msgid "Quick Effects"
@@ -26254,11 +26238,6 @@ msgstr "恢復停用的 F 曲線"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "清除所有 F 曲線的「停用」標籤，讓不能用的 F 曲線可再度運作"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "尋找通道"
 
 
 msgctxt "Operator"
@@ -34505,13 +34484,12 @@ msgid "Add an object to the scene"
 msgstr "添加物體至場景中"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "添加已命名物體"
-
-
 msgid "Add named object"
 msgstr "添加已命名的物體"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "製作物體複本但不包括資料，而是連結至原始資料"
 
 
 msgid "Object name to add"
@@ -34706,10 +34684,6 @@ msgstr "製作物體複本"
 
 msgid "Duplicate selected objects"
 msgstr "為所選物體製作複本"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "製作物體複本但不包括資料，而是連結至原始資料"
 
 
 msgid "Duplicate selected objects and move them"
@@ -38843,13 +38817,28 @@ msgid "Remove unused settings for invisible editors"
 msgstr "移除不可見編輯器的無用設定"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "顯示偏好設定"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "編輯使用者偏好設定和系統設定"
+
+
+msgid "Themes"
+msgstr "主題"
+
+
+msgid "Editing"
+msgstr "編輯"
+
+
+msgid "Add-ons"
+msgstr "附加元件"
+
+
+msgid "File Paths"
+msgstr "檔案路徑"
+
+
+msgid "Experimental"
+msgstr "實驗中"
 
 
 msgctxt "Operator"
@@ -43676,10 +43665,6 @@ msgid "I18n Update Translation"
 msgstr "I18n 更新翻譯"
 
 
-msgid "Add-ons"
-msgstr "附加元件"
-
-
 msgid "Timeline"
 msgstr "時間軸"
 
@@ -43722,10 +43707,6 @@ msgstr "自動執行 Python 指令稿"
 
 msgid "Auto Save"
 msgstr "自動儲存"
-
-
-msgid "Themes"
-msgstr "主題"
 
 
 msgid "Bone Color Sets"
@@ -44874,18 +44855,6 @@ msgstr "作用中區段"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "在使用者介面中顯示的偏好設定的作用中區段"
-
-
-msgid "Editing"
-msgstr "編輯"
-
-
-msgid "File Paths"
-msgstr "檔案路徑"
-
-
-msgid "Experimental"
-msgstr "實驗中"
 
 
 msgid "Edit Methods"
@@ -53735,13 +53704,13 @@ msgid "performance impact!"
 msgstr "會影響效能！"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "新增"
+
+
 msgid "API Defined"
 msgstr "API 已定義"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "編輯"
 
 
 msgid "Active object is not a mesh"
@@ -54547,11 +54516,6 @@ msgstr "最短路徑"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "新增"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "儲存所有影像"
 
@@ -54866,6 +54830,11 @@ msgstr "高斯模糊"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "重新載入片段並調整長度"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "旋轉"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -55607,11 +55576,6 @@ msgstr "更改骨骼分層..."
 
 msgid "Bone Settings"
 msgstr "骨骼設定"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "旋轉"
 
 
 msgctxt "Operator"

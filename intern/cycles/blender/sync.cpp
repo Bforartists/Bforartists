@@ -183,6 +183,15 @@ void BlenderSync::sync_recalc(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d
               (object_subdivision_type(b_ob, preview, experimental) != Mesh::SUBDIVISION_NONE)) {
             BL::ID key = BKE_object_is_modified(b_ob) ? b_ob : b_ob.data();
             geometry_map.set_recalc(key);
+
+            /* Sync all contained geometry instances as well when the object changed.. */
+            map<void *, set<BL::ID>>::const_iterator instance_geometries =
+                instance_geometries_by_object.find(b_ob.ptr.data);
+            if (instance_geometries != instance_geometries_by_object.end()) {
+              for (BL::ID geometry : instance_geometries->second) {
+                geometry_map.set_recalc(geometry);
+              }
+            }
           }
 
           if (updated_geometry) {
@@ -366,7 +375,9 @@ void BlenderSync::sync_integrator(BL::ViewLayer &b_view_layer, bool background)
   if ((preview && !preview_scrambling_distance) || use_adaptive_sampling)
     scrambling_distance = 1.0f;
 
-  VLOG(1) << "Used Scrambling Distance: " << scrambling_distance;
+  if (scrambling_distance != 1.0f) {
+    VLOG(3) << "Using scrambling distance: " << scrambling_distance;
+  }
   integrator->set_scrambling_distance(scrambling_distance);
 
   if (get_boolean(cscene, "use_fast_gi")) {

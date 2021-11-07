@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5144,26 +5144,6 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Espacio de color fílmico logarítmico, con una latitud de 16,5 paradas y un rango dinámico de 25 paradas"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (rango completo), espacio de color lineal nativo de Blender"
-
-
-msgid "ACES linear space"
-msgstr "Espacio de color lineal ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Espacio usado para imágenes que no contienen datos de color (p.ej: mapas de normales)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Espacio de visualización estándar RVA"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11628,10 +11608,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Mostrar bloques de datos de árboles de nodos"
 
 
-msgid "Show Object data-blocks"
-msgstr "Mostrar bloques de datos de objetos"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Mostrar bloques de datos de curvas de pintura"
 
@@ -11690,6 +11666,10 @@ msgstr "Mostrar bloques de datos de acciones"
 
 msgid "Show Material data-blocks"
 msgstr "Mostrar bloques de datos de materiales"
+
+
+msgid "Show Object data-blocks"
+msgstr "Mostrar bloques de datos de objetos"
 
 
 msgid "Show World data-blocks"
@@ -16472,16 +16452,16 @@ msgid "Modify stroke hardness"
 msgstr "Permite modificar la dureza del trazo"
 
 
+msgid "Use a custom curve to define opacity effect along the strokes"
+msgstr "Usar una curva personalizada para definir el efecto de opacidad a lo largo de los trazos"
+
+
 msgid "Uniform Opacity"
 msgstr "Opacidad uniforme"
 
 
 msgid "Replace the stroke opacity"
 msgstr "Reemplaza la opacidad del trazo"
-
-
-msgid "Use a custom curve to define opacity effect along the strokes"
-msgstr "Usar una curva personalizada para definir el efecto de opacidad a lo largo de los trazos"
 
 
 msgid "Simplify Modifier"
@@ -16696,14 +16676,6 @@ msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Modificador para subdividir y suavizar trazos"
 
 
-msgid "Uniform Thickness"
-msgstr "Grosor uniforme"
-
-
-msgid "Replace the stroke thickness"
-msgstr "Reemplaza el grosor del trazo"
-
-
 msgid "Absolute thickness to apply everywhere"
 msgstr "Grosor absoluto a ser aplicado a todo"
 
@@ -16714,6 +16686,14 @@ msgstr "Factor por el cual multiplicar el grosor"
 
 msgid "Use a custom curve to define thickness change along the strokes"
 msgstr "Usar una curva personalizada para definir los cambios de grosor a lo largo de los trazos"
+
+
+msgid "Uniform Thickness"
+msgstr "Grosor uniforme"
+
+
+msgid "Replace the stroke thickness"
+msgstr "Reemplaza el grosor del trazo"
 
 
 msgid "Time Offset Modifier"
@@ -31258,6 +31238,10 @@ msgid "Sequencer Context Menu"
 msgstr "Editor de video - menú contextual"
 
 
+msgid "Apply"
+msgstr "Aplicar"
+
+
 msgid "Navigation"
 msgstr "Navegación"
 
@@ -31272,10 +31256,6 @@ msgstr "Seleccionar asa"
 
 msgid "Strip"
 msgstr "Clip"
-
-
-msgid "Image Transform"
-msgstr "Transformar imagen"
 
 
 msgid "Lock/Mute"
@@ -31500,10 +31480,6 @@ msgid "Add Image"
 msgstr "Agregar imagen"
 
 
-msgid "Landmark Controls"
-msgstr "Controles de puntos de referencia"
-
-
 msgid "Link/Transfer Data"
 msgstr "Vincular/Transferir datos"
 
@@ -31512,8 +31488,8 @@ msgid "Make Single User"
 msgstr "Hacer de único usuario"
 
 
-msgid "Apply"
-msgstr "Aplicar"
+msgid "Asset"
+msgstr "Recurso"
 
 
 msgid "Object Context Menu"
@@ -31614,6 +31590,10 @@ msgstr "Regiones de la vista"
 
 msgid "Viewpoint"
 msgstr "Punto de vista"
+
+
+msgid "Landmark Controls"
+msgstr "Controles de puntos de referencia"
 
 
 msgid "Operator Presets"
@@ -39104,10 +39084,6 @@ msgid "Use Material layer"
 msgstr "Usar capa de material"
 
 
-msgid "Asset"
-msgstr "Recurso"
-
-
 msgid "Use Asset layer"
 msgstr "Usar capa de recurso"
 
@@ -43728,19 +43704,6 @@ msgstr "Revivir curvas-f deshabilitadas"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Elimina la etiqueta 'deshabilitada' de todas las curvas-f para hacer que las curvas-f vuelvan a actuar"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Buscar canales"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Filtra el conjunto de canales para mostrar sólo aquellos cuyo nombre coincida"
-
-
-msgid "Text to search for in channel names"
-msgstr "Texto a buscar entre los nombres de canales"
 
 
 msgctxt "Operator"
@@ -57849,11 +57812,6 @@ msgid "Add an object to the scene"
 msgstr "Agrega un objeto a la escena"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Agregar objeto con nombre"
-
-
 msgid "Add named object"
 msgstr "Agrega un nuevo objeto"
 
@@ -57874,12 +57832,8 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Coordenada Y (en espacio de pantalla) en donde ubicar el nuevo objeto"
 
 
-msgid "Create a duplicate of the object. If not set, only ensures the object is linked into the active view layer, positions and selects/activates it (deselecting others)"
-msgstr "Crea un duplicado del objeto. Si no se encontrara habilitada, sólo se asegura de que el objeto se encuentre vinculado a la capa de visualización activa, lo ubicará y seleccionará/activará (deseleccionando a otros)"
-
-
-msgid "Duplicate object but not object data, linking to the original data (ignored if 'duplicate' is false)"
-msgstr "Duplica el objeto pero no así a sus datos, vinculándolo a los datos originales (se ignorará si 'duplicar' fuera falso)"
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplicar el objeto pero no sus datos, vinculándolo a los datos originales"
 
 
 msgid "Object name to add"
@@ -58335,10 +58289,6 @@ msgid "Duplicate selected objects"
 msgstr "Duplica los objetos seleccionados"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplicar el objeto pero no sus datos, vinculándolo a los datos originales"
-
-
 msgid "Duplicate selected objects and move them"
 msgstr "Duplica los objetos seleccionados y permite mover los duplicados"
 
@@ -58492,10 +58442,6 @@ msgstr "Agregar lápiz de cera"
 
 msgid "Add a Grease Pencil object to the scene"
 msgstr "Agrega un objeto de lápiz de cera a la escena"
-
-
-msgid "Defines how the strokes are ordered in 3D space for objects not displayed 'In Front'"
-msgstr "Define cómo serán ordenados los trazos en el espacio 3D, para objetos no mostrados 'En frente'"
 
 
 msgid "Create an empty grease pencil object"
@@ -64991,13 +64937,32 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Remueve las opciones no usadas en editores no nvisibles"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Mostrar preferencias"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "Permite editar las preferencias de usuario y las opciones del sistema"
+
+
+msgid "Themes"
+msgstr "Temas"
+
+
+msgid "Editing"
+msgstr "Edición"
+
+
+msgid "Add-ons"
+msgstr "Complementos"
+
+
+msgid "Keymap"
+msgstr "Mapa de teclado"
+
+
+msgid "File Paths"
+msgstr "Rutas de archivo"
+
+
+msgid "Experimental"
+msgstr "Experimental"
 
 
 msgctxt "Operator"
@@ -70462,18 +70427,8 @@ msgid "Add a new VR landmark to the list and select it"
 msgstr "Agrega un nuevo punto de referencia de RV a la lista y lo selecciona"
 
 
-msgctxt "Operator"
-msgid "Add VR Landmark from camera"
-msgstr "Agregar punto de referencia de RV desde la cámara"
-
-
 msgid "Add a new VR landmark from the active camera object to the list and select it"
 msgstr "Agrega un nuevo punto de referencia de RV desde la posición de la cámara a la lista y lo selecciona"
-
-
-msgctxt "Operator"
-msgid "Add VR Landmark from session"
-msgstr "Agregar punto de referencia de RV desde sesión"
 
 
 msgid "Add VR landmark from the viewer pose of the running VR session to the list and select it"
@@ -74287,10 +74242,6 @@ msgid "I18n Update Translation"
 msgstr "I18n actualizar traducción"
 
 
-msgid "Add-ons"
-msgstr "Complementos"
-
-
 msgid "Timeline"
 msgstr "Línea de tiempo"
 
@@ -74369,10 +74320,6 @@ msgid "Translation"
 msgstr "Traducción"
 
 
-msgid "Keymap"
-msgstr "Mapa de teclado"
-
-
 msgid "Preferences Navigation"
 msgstr "Navegación de preferencias"
 
@@ -74431,10 +74378,6 @@ msgstr "Dispositivos para procesamiento con Cycles"
 
 msgid "Memory & Limits"
 msgstr "Memoria y límites"
-
-
-msgid "Themes"
-msgstr "Temas"
 
 
 msgid "Bone Color Sets"
@@ -76288,18 +76231,6 @@ msgstr "Sección activa"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Sección activa de las preferencias mostrada en la interfaz de usuario"
-
-
-msgid "Editing"
-msgstr "Edición"
-
-
-msgid "File Paths"
-msgstr "Rutas de archivo"
-
-
-msgid "Experimental"
-msgstr "Experimental"
 
 
 msgid "Application Template"
@@ -80076,14 +80007,6 @@ msgstr "Cámara de la escena"
 
 msgid "Use scene's currently active camera to define the VR view base location and rotation"
 msgstr "Usa la cámara activa de la escena para definir la posición y rotación de la vista de RV"
-
-
-msgid "Custom Camera"
-msgstr "Cámara personalizada"
-
-
-msgid "Use an existing camera to define the VR view base location and rotation"
-msgstr "Usa una cámara existente para definir la posición y rotación de la vista de RV"
 
 
 msgid "Custom Pose"
@@ -88575,10 +88498,6 @@ msgid "Grid Levels"
 msgstr "Niveles de cuadrícula"
 
 
-msgid "Amount of grid lines displayed in the background"
-msgstr "Cantidad de líneas en la cuadrícula mostrada en el fondo"
-
-
 msgid "Group Node"
 msgstr "Nodo de grupo"
 
@@ -92944,14 +92863,6 @@ msgid "Refractive"
 msgstr "Refractivas"
 
 
-msgid "Viewport Bounces"
-msgstr "Rebotes vistas"
-
-
-msgid "Render Bounces"
-msgstr "Rebotes procesamiento"
-
-
 msgid "Rolling Shutter"
 msgstr "Obturador progresivo"
 
@@ -93042,6 +92953,14 @@ msgstr "Subdivisiones de curvas"
 
 msgid "AO Factor"
 msgstr "Factor de OA"
+
+
+msgid "Viewport Bounces"
+msgstr "Rebotes vistas"
+
+
+msgid "Render Bounces"
+msgstr "Rebotes procesamiento"
 
 
 msgid "Incompatible output node"
@@ -93463,10 +93382,6 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
-msgid "Built without VR/OpenXR features"
-msgstr "Compilado sin características de RV (OpenXR)"
-
-
 msgid "Note:"
 msgstr "Nota:"
 
@@ -93479,13 +93394,17 @@ msgid "performance impact!"
 msgstr "impacto significativo en el rendimiento!"
 
 
-msgid "API Defined"
-msgstr "Definida en la API"
+msgid "Built without VR/OpenXR features"
+msgstr "Compilado sin características de RV (OpenXR)"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Editar"
+msgid "New"
+msgstr "Nueva"
+
+
+msgid "API Defined"
+msgstr "Definida en la API"
 
 
 msgid "Torus"
@@ -96524,11 +96443,6 @@ msgstr "Camino más corto"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nueva"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Guardar todas las imágenes"
 
@@ -97045,15 +96959,6 @@ msgstr "Editor de video / Previsualización"
 
 
 msgctxt "Operator"
-msgid "Side of Frame..."
-msgstr "Lado del fotograma..."
-
-
-msgid "Handle"
-msgstr "Asa"
-
-
-msgctxt "Operator"
 msgid "Grouped"
 msgstr "Agrupado"
 
@@ -97113,11 +97018,6 @@ msgstr "Fundido cruzado de sonido"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Deslizar contenido del clip"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Cambiar rutas/archivos"
 
@@ -97125,6 +97025,11 @@ msgstr "Cambiar rutas/archivos"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Intercambiar datos"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Deslizar contenido del clip"
 
 
 msgid "Anchor X"
@@ -97228,6 +97133,15 @@ msgstr "Ambos lados"
 
 
 msgctxt "Operator"
+msgid "Side of Frame..."
+msgstr "Lado del fotograma..."
+
+
+msgid "Handle"
+msgstr "Asa"
+
+
+msgctxt "Operator"
 msgid "Scene..."
 msgstr "Escena..."
 
@@ -97323,31 +97237,6 @@ msgstr "Desenfoque gaussiano"
 
 
 msgctxt "Operator"
-msgid "Scale To Fit"
-msgstr "Escalar hasta ajustar"
-
-
-msgctxt "Operator"
-msgid "Scale to Fill"
-msgstr "Escalar hasta rellenar"
-
-
-msgctxt "Operator"
-msgid "Stretch To Fill"
-msgstr "Estirar hasta rellenar"
-
-
-msgctxt "Operator"
-msgid "Clear Position"
-msgstr "Eliminar posición"
-
-
-msgctxt "Operator"
-msgid "Move/Extend from Current Frame"
-msgstr "Mover/Extender desde el fotograma actual"
-
-
-msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Recargar clips y ajustar duración"
 
@@ -97363,8 +97252,23 @@ msgstr "Habilitar clips no seleccionados"
 
 
 msgctxt "Operator"
-msgid "Hold Split"
-msgstr "Dividir y congelar"
+msgid "Rotation"
+msgstr "Rotación"
+
+
+msgctxt "Operator"
+msgid "Scale To Fit"
+msgstr "Escalar hasta ajustar"
+
+
+msgctxt "Operator"
+msgid "Scale to Fill"
+msgstr "Escalar hasta rellenar"
+
+
+msgctxt "Operator"
+msgid "Stretch To Fill"
+msgstr "Estirar hasta rellenar"
 
 
 msgid "Default Fade"
@@ -97410,18 +97314,28 @@ msgstr "Clip"
 
 
 msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Mover/Extender desde el fotograma actual"
+
+
+msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Dividir y congelar"
+
+
+msgctxt "Operator"
 msgid "Copy Modifiers to Selection"
 msgstr "Copiar modificadores a selección"
 
 
 msgctxt "Operator"
-msgid "Toggle Meta"
-msgstr "Alternar meta-clip"
+msgid "Clear Fade"
+msgstr "Eliminar fundido"
 
 
 msgctxt "Operator"
-msgid "Clear Fade"
-msgstr "Eliminar fundido"
+msgid "Toggle Meta"
+msgstr "Alternar meta-clip"
 
 
 msgid "Effect Fader"
@@ -99060,11 +98974,6 @@ msgstr "Cambiar capas de huesos..."
 
 msgid "Bone Settings"
 msgstr "Opciones de huesos"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotación"
 
 
 msgctxt "Operator"
@@ -105329,14 +105238,6 @@ msgid "File path"
 msgstr "Ruta del archivo"
 
 
-msgid "Library not found"
-msgstr "Biblioteca no encontrada"
-
-
-msgid "Set up the library or edit libraries in the Preferences, File Paths section"
-msgstr "Definir las rutas a las bibliotecas en las Preferencias, dentro de la sección Rutas de archivo"
-
-
 msgid "Today"
 msgstr "Hoy"
 
@@ -107434,6 +107335,10 @@ msgstr "Usar factor"
 
 msgid "Material Borders"
 msgstr "Límites de materiales"
+
+
+msgid "Custom Camera"
+msgstr "Cámara personalizada"
 
 
 msgid "Overlapping Edges As Contour"

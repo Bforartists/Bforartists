@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -9403,6 +9403,10 @@ msgid "Effect Strip"
 msgstr "Трака ефекта"
 
 
+msgid "Apply"
+msgstr "Примени"
+
+
 msgid "Navigation"
 msgstr "Навигација"
 
@@ -9505,10 +9509,6 @@ msgstr "Мод избора мреже"
 
 msgid "Hooks"
 msgstr "Удице"
-
-
-msgid "Apply"
-msgstr "Примени"
 
 
 msgid "Quick Effects"
@@ -17074,13 +17074,12 @@ msgid "Add an object to the scene"
 msgstr "Додаје објекат на сцену"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Додај именован објекат"
-
-
 msgid "Add named object"
 msgstr "Додаје овај објекат"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Удвостручи објекат, али не и податке о објекту повезане са изворним подацима"
 
 
 msgid "Object name to add"
@@ -17194,10 +17193,6 @@ msgstr "Удвостручи објекте"
 
 msgid "Duplicate selected objects"
 msgstr "Удвостручи изабране објекте"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Удвостручи објекат, али не и податке о објекту повезане са изворним подацима"
 
 
 msgid "Duplicate selected objects and move them"
@@ -19044,6 +19039,26 @@ msgstr "Понавља последњу акцију"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Сачувај снимак екрана"
+
+
+msgid "Themes"
+msgstr "Теме"
+
+
+msgid "Editing"
+msgstr "Уређивање"
+
+
+msgid "Add-ons"
+msgstr "Додаци"
+
+
+msgid "File Paths"
+msgstr "Путање датотеке"
+
+
+msgid "Experimental"
+msgstr "Прошири водоравно"
 
 
 msgid "Menu ID Name"
@@ -21347,10 +21362,6 @@ msgid "Playback"
 msgstr "Репродукција"
 
 
-msgid "Add-ons"
-msgstr "Додаци"
-
-
 msgid "Timeline"
 msgstr "Временска линија"
 
@@ -21365,10 +21376,6 @@ msgstr "Шетња"
 
 msgid "Auto Run Python Scripts"
 msgstr "Ауто-покретајуће Python скрипте"
-
-
-msgid "Themes"
-msgstr "Теме"
 
 
 msgid "Theme Space"
@@ -21865,18 +21872,6 @@ msgstr "IK Z граница"
 
 msgid "Active Section"
 msgstr "Активни одељак"
-
-
-msgid "Editing"
-msgstr "Уређивање"
-
-
-msgid "File Paths"
-msgstr "Путање датотеке"
-
-
-msgid "Experimental"
-msgstr "Прошири водоравно"
 
 
 msgid "Edit Methods"
@@ -25421,8 +25416,8 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Уреди"
+msgid "New"
+msgstr "Ново"
 
 
 msgid "Active object is not a mesh"
@@ -25892,11 +25887,6 @@ msgstr "Повезано"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Ново"
-
-
-msgctxt "Operator"
 msgid "Edit Externally"
 msgstr "Уреди слику екстерно"
 
@@ -26113,6 +26103,11 @@ msgstr "Контрола брзине"
 msgctxt "Operator"
 msgid "Glow"
 msgstr "Сјај"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Окретање"
 
 
 msgctxt "Operator"
@@ -26596,11 +26591,6 @@ msgstr "Очисти маску"
 
 msgid "Bone Settings"
 msgstr "Подешавање кости"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Окретање"
 
 
 msgctxt "Operator"
