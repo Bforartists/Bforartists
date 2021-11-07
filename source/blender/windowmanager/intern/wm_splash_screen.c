@@ -214,8 +214,10 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *region, void *UNUSE
   UI_but_func_set(but, wm_block_close, block, NULL);
 
   /*bfa -  We don't need Blender hashes or Blender version numbers in Bforartists*/
-  /*  wm_block_splash_add_label(
-        block, BKE_blender_version_string(), splash_width, splash_height - 13.0 * U.dpi_fac);*/
+  /*    wm_block_splash_add_label(block,
+                            BKE_blender_version_string(),
+                            splash_width - 8.0 * U.dpi_fac,
+                            splash_height - 13.0 * U.dpi_fac);;*/
 
   const int layout_margin_x = U.dpi_fac * 26;
   uiLayout *layout = UI_block_layout(block,
@@ -325,7 +327,7 @@ static uiBlock *wm_block_create_about(bContext *C, ARegion *region, void *UNUSED
 
   uiLayout *col = uiLayoutColumn(layout, true);
 
-  uiItemL_ex(col, N_("Blender"), ICON_NONE, true, false);
+  uiItemL_ex(col, IFACE_("Blender"), ICON_NONE, true, false);
 
   MenuType *mt = WM_menutype_find("WM_MT_splash_about", true);
   if (mt) {

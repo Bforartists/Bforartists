@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1651,11 +1651,6 @@ msgstr "Breid Kanalen Uit"
 
 
 msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Zoek Kanalen"
-
-
-msgctxt "Operator"
 msgid "Group Channels"
 msgstr "Groepeer Kanalen"
 
@@ -2913,11 +2908,6 @@ msgstr "Verander Grote van Node"
 msgctxt "Operator"
 msgid "Add Object"
 msgstr "Voeg Object Toe"
-
-
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Voeg Object Met Naam Toe"
 
 
 msgctxt "Operator"
@@ -4630,8 +4620,8 @@ msgstr "Laden"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Bewerken"
+msgid "New"
+msgstr "Nieuw"
 
 
 msgctxt "Operator"
@@ -4874,11 +4864,6 @@ msgstr "Kortste pad"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Nieuw"
-
-
-msgctxt "Operator"
 msgid "Unpin"
 msgstr "Haal Prikker Los"
 
@@ -4986,6 +4971,11 @@ msgstr "Alpha Over"
 msgctxt "Operator"
 msgid "Alpha Under"
 msgstr "Alpha Onder"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotatie"
 
 
 msgctxt "Operator"
@@ -5200,11 +5190,6 @@ msgstr "Verberg Passende Doos"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "Maak Masker Leeg"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotatie"
 
 
 msgctxt "Operator"

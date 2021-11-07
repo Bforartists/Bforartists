@@ -310,7 +310,7 @@ class POSELIB_OT_paste_asset(Operator):
 
         self.report({"INFO"}, "Pasted %d assets" % len(assets))
 
-        bpy.ops.file.refresh()
+        bpy.ops.file.asset_library_refresh()
 
         asset_browser_area = asset_browser.area_from_context(context)
         if not asset_browser_area:

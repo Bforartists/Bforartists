@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy, os, sys, tempfile, shutil
-from blenderkit import tasks_queue, ui, utils
+from blenderkit import tasks_queue, ui, utils, reports
 
 _presets = os.path.join(bpy.utils.user_resource('SCRIPTS'), "presets")
 BLENDERKIT_LOCAL = "http://localhost:8001"
@@ -129,12 +129,12 @@ def get_temp_dir(subdir=None):
 
         cleanup_old_folders()
     except:
-        tasks_queue.add_task((ui.add_report, ('Cache directory not found. Resetting Cache folder path.',)))
+        tasks_queue.add_task((reports.add_report, ('Cache directory not found. Resetting Cache folder path.',)))
 
         p = default_global_dict()
         if p == user_preferences.global_dir:
             message = 'Global dir was already default, plese set a global directory in addon preferences to a dir where you have write permissions.'
-            tasks_queue.add_task((ui.add_report, (message,)))
+            tasks_queue.add_task((reports.add_report, (message,)))
             return None
         user_preferences.global_dir = p
         tempdir = get_temp_dir(subdir=subdir)

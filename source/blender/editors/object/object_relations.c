@@ -1698,11 +1698,11 @@ static void libblock_relink_collection(Main *bmain,
                                        const bool do_collection)
 {
   if (do_collection) {
-    BKE_libblock_relink_to_newid(bmain, &collection->id);
+    BKE_libblock_relink_to_newid(bmain, &collection->id, 0);
   }
 
   for (CollectionObject *cob = collection->gobject.first; cob != NULL; cob = cob->next) {
-    BKE_libblock_relink_to_newid(bmain, &cob->ob->id);
+    BKE_libblock_relink_to_newid(bmain, &cob->ob->id, 0);
   }
 
   LISTBASE_FOREACH (CollectionChild *, child, &collection->children) {
@@ -1776,7 +1776,7 @@ static void single_object_users(
   single_object_users_collection(bmain, scene, master_collection, flag, copy_collections, true);
 
   /* Will also handle the master collection. */
-  BKE_libblock_relink_to_newid(bmain, &scene->id);
+  BKE_libblock_relink_to_newid(bmain, &scene->id, 0);
 
   /* Collection and object pointers in collections */
   libblock_relink_collection(bmain, scene->master_collection, false);
@@ -2666,7 +2666,7 @@ void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 
   /* api callbacks */
   ot->invoke = drop_named_material_invoke;
-  ot->poll = ED_operator_objectmode;
+  ot->poll = ED_operator_objectmode_poll_msg;
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;

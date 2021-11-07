@@ -220,12 +220,11 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     myctrl.hide_viewport = False
     myctrl.hide_render = True
     if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
-        myctrl.cycles_visibility.camera = False
-        myctrl.cycles_visibility.diffuse = False
-        myctrl.cycles_visibility.glossy = False
-        myctrl.cycles_visibility.transmission = False
-        myctrl.cycles_visibility.scatter = False
-        myctrl.cycles_visibility.shadow = False
+        myctrl.visible_camera = False
+        myctrl.visible_diffuse = False
+        myctrl.visible_glossy = False
+        myctrl.visible_transmission = False
+        myctrl.visible_shadow = False
 
         mat = create_transparent_material("hidden_material", False)
         set_material(myctrl, mat)

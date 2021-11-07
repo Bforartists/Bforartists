@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import ui, utils, paths, tasks_queue, bkit_oauth
+from blenderkit import ui, utils, paths, tasks_queue, bkit_oauth, reports
 
 import requests
 import bpy
@@ -44,7 +44,7 @@ def rerequest(method, url, recursion=0, **kwargs):
         response = requests.request(method, url, **kwargs)
     except Exception as e:
         print(e)
-        tasks_queue.add_task((ui.add_report, (
+        tasks_queue.add_task((reports.add_report, (
             'Connection error.', 10)))
         return FakeResponse()
 
@@ -57,13 +57,13 @@ def rerequest(method, url, recursion=0, **kwargs):
         except:
             rdata = {}
 
-        tasks_queue.add_task((ui.add_report, (method + ' request Failed.' + str(rdata.get('detail')),)))
+        tasks_queue.add_task((reports.add_report, (method + ' request Failed.' + str(rdata.get('detail')),)))
 
         if rdata.get('detail') == 'Invalid token.':
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
             if user_preferences.api_key != '':
                 if user_preferences.enable_oauth and user_preferences.api_key_refresh != '':
-                    tasks_queue.add_task((ui.add_report, (
+                    tasks_queue.add_task((reports.add_report, (
                         'refreshing token. If this fails, please login in BlenderKit Login panel.', 10)))
                     refresh_url = paths.get_bkit_url()
                     auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(
@@ -84,11 +84,11 @@ def rerequest(method, url, recursion=0, **kwargs):
                         bk_logger.debug('reresult', response.status_code)
                         if response.status_code >= 400:
                             bk_logger.debug('reresult', response.text)
-                            tasks_queue.add_task((ui.add_report, (
+                            tasks_queue.add_task((reports.add_report, (
                                 response.text, 10)))
 
                     else:
-                        tasks_queue.add_task((ui.add_report, (
+                        tasks_queue.add_task((reports.add_report, (
                             'Refreshing token failed.Please login manually.', 10)))
                         # tasks_queue.add_task((bkit_oauth.write_tokens, ('', '', '')))
                         tasks_queue.add_task((bpy.ops.wm.blenderkit_login, ('INVOKE_DEFAULT',)), fake_context=True)

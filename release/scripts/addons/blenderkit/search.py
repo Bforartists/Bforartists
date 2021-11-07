@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
-    resolutions, image_utils, ratings_utils, comments_utils
+    resolutions, image_utils, ratings_utils, comments_utils, reports
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -83,15 +83,22 @@ thumb_full_download_threads = queue.Queue()
 reports_queue = queue.Queue()
 all_thumbs_loaded = True
 
-rtips = ['Click or drag model or material in scene to link/append ',
-         "Please rate responsively and plentifully. This helps us distribute rewards to the authors.",
-         "Click on brushes to link them into scene.",
-         "All materials are free.",
-         "Storage for public assets is unlimited.",
-         "Locked models are available if you subscribe to Full plan.",
-         "Login to upload your own models, materials or brushes.",
-         "Use 'A' key over asset bar to search assets by same author.",
-         "Use 'W' key over asset bar to open Authors webpage.", ]
+rtips_string = """You can disable tips in the add-on preferences.
+Ratings help us distribute funds to creators.
+Creators also gain credits for free assets from subscribers.
+Click or drag model or material in scene to link/append 
+Right click in the asset bar for more options
+Use Append in import settings if you want to edit downloaded objects. 
+Please rate responsively and plentifully. This helps us distribute rewards to the authors.
+All materials are free.
+Storage for public assets is unlimited.
+Locked models are available if you subscribe to Full plan.
+Login to upload your own models, materials or brushes.
+Use 'A' key over the asset bar to search assets by the same author.
+Use semicolon - ; to hide or show the AssetBar.
+Support the authors by subscribing to Full plan.
+"""
+rtips = rtips_string.splitlines()
 
 
 def refresh_token_timer():
@@ -192,7 +199,7 @@ def scene_load(context):
         bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
     if utils.experimental_enabled() and not bpy.app.timers.is_registered(
             refresh_notifications_timer) and not bpy.app.background:
-        bpy.app.timers.register(refresh_notifications_timer, persistent=True, first_interval=2)
+        bpy.app.timers.register(refresh_notifications_timer, persistent=True, first_interval=5)
 
     update_assets_data()
 
@@ -211,7 +218,8 @@ def fetch_server_data():
             get_profile()
         if bpy.context.window_manager.get('bkit_categories') is None:
             categories.fetch_categories_thread(api_key, force=False)
-
+        all_notifications_count = comments_utils.count_all_notifications()
+        comments_utils.get_notifications_thread(api_key, all_count = all_notifications_count)
 
 first_time = True
 last_clipboard = ''
@@ -374,7 +382,7 @@ def search_timer():
         if preferences.tips_on_start:
             utils.get_largest_area()
             ui.update_ui_size(ui.active_area_pointer, ui.active_region_pointer)
-            ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
+            reports.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
         # utils.p('end search timer')
 
         return 3.0
@@ -481,7 +489,7 @@ def search_timer():
                 props.search_error = False
                 props.report = 'Found %i results. ' % (wm['search results orig']['count'])
                 if len(wm['search results']) == 0:
-                    tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
+                    tasks_queue.add_task((reports.add_report, ('No matching results found.',)))
                 # undo push
                 # bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
                 # show asset bar automatically, but only on first page - others are loaded also when asset bar is hidden.
@@ -740,7 +748,7 @@ def fetch_gravatar(adata = None):
 
     '''
     # utils.p('fetch gravatar')
-    print(adata)
+    # print(adata)
     # fetch new avatars if available already
     if adata.get('avatar128') is not None:
         avatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['id'] + '.jpg'
@@ -968,13 +976,13 @@ class Searcher(threading.Thread):
             if hasattr(r, 'text'):
                 error_description = parse_html_formated_error(r.text)
                 reports_queue.put(error_description)
-                tasks_queue.add_task((ui.add_report, (error_description, 10, colors.RED)))
+                tasks_queue.add_task((reports.add_report, (error_description, 10, colors.RED)))
 
             bk_logger.error(e)
             return
         mt('data parsed ')
         if not rdata.get('results'):
-            utils.pprint(rdata)
+            # utils.pprint(rdata)
             # if the result was converted to json and didn't return results,
             # it means it's a server error that has a clear message.
             # That's why it gets processed in the update timer, where it can be passed in messages to user.
@@ -1437,7 +1445,7 @@ def search(category='', get_next=False, author_id=''):
     if orig_results is not None and get_next:
         params['next'] = orig_results['next']
     add_search_process(query, params)
-    tasks_queue.add_task((ui.add_report, ('BlenderKit searching....', 2)))
+    tasks_queue.add_task((reports.add_report, ('BlenderKit searching....', 2)))
 
     props.report = 'BlenderKit searching....'
 
@@ -1583,7 +1591,7 @@ class SearchOperator(Operator):
             sprops.search_keywords = self.keywords
 
         search(category=self.category, get_next=self.get_next, author_id=self.author_id)
-        # bpy.ops.view3d.blenderkit_asset_bar()
+        # bpy.ops.view3d.blenderkit_asset_bar_widget()
 
         return {'FINISHED'}
 
