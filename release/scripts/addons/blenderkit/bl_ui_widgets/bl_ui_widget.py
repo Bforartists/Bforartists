@@ -125,7 +125,7 @@ class BL_UI_Widget:
 
             return False
 
-        elif event.value == 'PRESS' and (event.ascii != '' or event.type in self.get_input_keys()):
+        elif event.value == 'PRESS' and self.__inrect and (event.ascii != '' or event.type in self.get_input_keys()):
 
             return self.text_input(event)
 

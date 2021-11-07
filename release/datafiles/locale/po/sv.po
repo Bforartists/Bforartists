@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -17644,11 +17644,6 @@ msgid "Add an object to the scene"
 msgstr "Packa Data"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Packa Data"
-
-
 msgid "Add named object"
 msgstr "Packa Data"
 
@@ -20302,6 +20297,18 @@ msgstr "Skapa Förälder"
 
 msgid "Remove unused settings for invisible editors"
 msgstr "Materialets volym-inställningar"
+
+
+msgid "Editing"
+msgstr "Redigera"
+
+
+msgid "File Paths"
+msgstr "Sökvägar:"
+
+
+msgid "Experimental"
+msgstr "Markera Rad"
 
 
 msgctxt "Operator"
@@ -23700,18 +23707,6 @@ msgstr "Gränsvärde"
 
 msgid "Active Section"
 msgstr "Aktiv spline"
-
-
-msgid "Editing"
-msgstr "Redigera"
-
-
-msgid "File Paths"
-msgstr "Sökvägar:"
-
-
-msgid "Experimental"
-msgstr "Markera Rad"
 
 
 msgid "Default paths for external files"
@@ -27256,8 +27251,8 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Redigera"
+msgid "New"
+msgstr "Ny"
 
 
 msgid "Active object is not a mesh"
@@ -27787,11 +27782,6 @@ msgstr "Länka"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Ny"
-
-
-msgctxt "Operator"
 msgid "Invert Image Colors"
 msgstr "Vertexfärger"
 
@@ -28034,6 +28024,11 @@ msgstr "Glöd"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Starta rendering av sekvens"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotation"
 
 
 msgctxt "Operator"
@@ -28509,11 +28504,6 @@ msgstr "Rendera"
 
 msgid "Bone Settings"
 msgstr "Verktyg"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotation"
 
 
 msgctxt "Operator"

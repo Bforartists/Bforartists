@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -111,6 +111,11 @@ msgstr "Restaŭri lasta kunsido"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Operator"
 msgid "Set X Axis"
 msgstr "Montri X Axis"
 
@@ -118,11 +123,6 @@ msgstr "Montri X Axis"
 msgctxt "Operator"
 msgid "Interpolation Mode"
 msgstr "Interago:"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nova"
 
 
 msgctxt "Scene"

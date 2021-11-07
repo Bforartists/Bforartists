@@ -60,6 +60,7 @@ if "bpy" in locals():
     upload = reload(upload)
     upload_bg = reload(upload_bg)
     utils = reload(utils)
+    reports = reload(reports)
 
     bl_ui_widget = reload(bl_ui_widget)
     bl_ui_label = reload(bl_ui_label)
@@ -99,6 +100,7 @@ else:
     from blenderkit import upload
     from blenderkit import upload_bg
     from blenderkit import utils
+    from blenderkit import reports
 
     from blenderkit.bl_ui_widgets import bl_ui_widget
     from blenderkit.bl_ui_widgets import bl_ui_label
@@ -270,7 +272,7 @@ def switch_search_results(self, context):
         wm['search results'] = wm.get('bkit brush search')
         wm['search results orig'] = wm.get('bkit brush search orig')
         if not (context.sculpt_object or context.image_paint_object):
-            ui.add_report(
+            reports.add_report(
                 'Switch to paint or sculpt mode to search in BlenderKit brushes.')
     # if wm['search results'] == None:
     #     wm['search results'] = []
@@ -1658,7 +1660,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
     tips_on_start: BoolProperty(
         name="Show tips when starting blender",
         description="Show tips when starting blender",
-        default=False
+        default=True
     )
 
     search_in_header: BoolProperty(

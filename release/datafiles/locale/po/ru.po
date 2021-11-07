@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -5236,26 +5236,6 @@ msgstr "Входное цветовое пространство"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Цветовое пространство изображения, из которого и в которое его нужно конвертировать при сохранении и загрузке"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Логарифмический кинематографический шейпер с 16.5 стопами широты и 25 стопами динамического диапазона"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (полный диапазон), стандартное линейное пространство Blender"
-
-
-msgid "ACES linear space"
-msgstr "Линейное пространство ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Цветовое пространство, используемое изображениями, содержащими нецветовые данные (например, карты нормалей)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Стандартное пространство RGB-дисплея"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11816,10 +11796,6 @@ msgid "Show Node Tree data-blocks"
 msgstr "Показать датаблоки нодовых систем"
 
 
-msgid "Show Object data-blocks"
-msgstr "Показать датаблоки объектов"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Показать датаблоки кривых рисования"
 
@@ -11878,6 +11854,10 @@ msgstr "Показать датаблоки действий"
 
 msgid "Show Material data-blocks"
 msgstr "Показать датаблоки материалов"
+
+
+msgid "Show Object data-blocks"
+msgstr "Показать датаблоки объектов"
 
 
 msgid "Show World data-blocks"
@@ -16784,16 +16764,16 @@ msgid "Modify stroke hardness"
 msgstr "Изменить жёсткость штриха"
 
 
+msgid "Use a custom curve to define opacity effect along the strokes"
+msgstr "Использовать настраиваемую кривую для задания эффекта прозрачности вдоль штрихов"
+
+
 msgid "Uniform Opacity"
 msgstr "Равномерная прозрачность"
 
 
 msgid "Replace the stroke opacity"
 msgstr "Заменить прозрачность штриха"
-
-
-msgid "Use a custom curve to define opacity effect along the strokes"
-msgstr "Использовать настраиваемую кривую для задания эффекта прозрачности вдоль штрихов"
 
 
 msgid "Weighted"
@@ -17016,14 +16996,6 @@ msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Модификатор подразделения и сглаживания"
 
 
-msgid "Uniform Thickness"
-msgstr "Равномерная толщина"
-
-
-msgid "Replace the stroke thickness"
-msgstr "Заменить толщину штриха"
-
-
 msgid "Absolute thickness to apply everywhere"
 msgstr "Абсолютная толщина для применения везде"
 
@@ -17034,6 +17006,14 @@ msgstr "Множитель, применяемый к толщине"
 
 msgid "Use a custom curve to define thickness change along the strokes"
 msgstr "Использовать настраиваемую кривую для задания изменения толщины вдоль штрихов"
+
+
+msgid "Uniform Thickness"
+msgstr "Равномерная толщина"
+
+
+msgid "Replace the stroke thickness"
+msgstr "Заменить толщину штриха"
 
 
 msgid "Time Offset Modifier"
@@ -29767,6 +29747,10 @@ msgid "Sequencer Context Menu"
 msgstr "Контекстное меню видеоредактора"
 
 
+msgid "Apply"
+msgstr "Применить"
+
+
 msgid "Navigation"
 msgstr "Навигация"
 
@@ -29997,8 +29981,8 @@ msgid "Make Single User"
 msgstr "Эксклюзивное использование"
 
 
-msgid "Apply"
-msgstr "Применить"
+msgid "Asset"
+msgstr "Ассет"
 
 
 msgid "Object Context Menu"
@@ -36353,10 +36337,6 @@ msgid "Placeholder"
 msgstr "Заполнитель"
 
 
-msgid "Asset"
-msgstr "Ассет"
-
-
 msgid "Auto-Refresh"
 msgstr "Автообновление"
 
@@ -39709,19 +39689,6 @@ msgstr "Восстановить отключённые F-кривые"
 
 msgid "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again"
 msgstr "Очистить метку «отключено» у всех F-кривых для восстановления работы повреждённых F-кривых"
-
-
-msgctxt "Operator"
-msgid "Find Channels"
-msgstr "Найти каналы"
-
-
-msgid "Filter the set of channels shown to only include those with matching names"
-msgstr "Фильтровать набор отображаемых каналов по имени"
-
-
-msgid "Text to search for in channel names"
-msgstr "Текст поиска по именам каналов"
 
 
 msgctxt "Operator"
@@ -51725,13 +51692,12 @@ msgid "Add an object to the scene"
 msgstr "Добавить объект на сцену"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Добавить именованный объект"
-
-
 msgid "Add named object"
 msgstr "Добавить именованный объект"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Дублировать объект, но не данные объекта, создав ссылку на исходные данные"
 
 
 msgid "Object name to add"
@@ -52103,10 +52069,6 @@ msgstr "Дублировать"
 
 msgid "Duplicate selected objects"
 msgstr "Дублировать выделенные объекты"
-
-
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Дублировать объект, но не данные объекта, создав ссылку на исходные данные"
 
 
 msgid "Duplicate selected objects and move them"
@@ -57776,13 +57738,32 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Удалить неиспользуемые настройки для невидимых редакторов"
 
 
-msgctxt "Operator"
-msgid "Show Preferences"
-msgstr "Показать настройки"
-
-
 msgid "Edit user preferences and system settings"
 msgstr "Редактировать настройки пользователя и системы"
+
+
+msgid "Themes"
+msgstr "Темы"
+
+
+msgid "Editing"
+msgstr "Редактирование"
+
+
+msgid "Add-ons"
+msgstr "Аддоны"
+
+
+msgid "Keymap"
+msgstr "Раскладка"
+
+
+msgid "File Paths"
+msgstr "Пути к файлам"
+
+
+msgid "Experimental"
+msgstr "Экспериментальный"
 
 
 msgctxt "Operator"
@@ -65067,10 +65048,6 @@ msgid "I18n Update Translation"
 msgstr "Обновить переводы"
 
 
-msgid "Add-ons"
-msgstr "Аддоны"
-
-
 msgid "Timeline"
 msgstr "Временная шкала"
 
@@ -65137,10 +65114,6 @@ msgid "Translation"
 msgstr "Перевод"
 
 
-msgid "Keymap"
-msgstr "Раскладка"
-
-
 msgid "Preferences Navigation"
 msgstr "Настройки навигации"
 
@@ -65195,10 +65168,6 @@ msgstr "Устройства рендера Cycles"
 
 msgid "Memory & Limits"
 msgstr "Память и ограничения"
-
-
-msgid "Themes"
-msgstr "Темы"
 
 
 msgid "Bone Color Sets"
@@ -66873,18 +66842,6 @@ msgstr "Активный раздел"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Текущий раздел настроек, отображаемый в пользовательском интерфейсе"
-
-
-msgid "Editing"
-msgstr "Редактирование"
-
-
-msgid "File Paths"
-msgstr "Пути к файлам"
-
-
-msgid "Experimental"
-msgstr "Экспериментальный"
 
 
 msgid "Application Template"
@@ -81566,13 +81523,13 @@ msgid "Built without VR/OpenXR features"
 msgstr "Собрано без поддержки VR/OpenXR"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Создать"
+
+
 msgid "API Defined"
 msgstr "Определён в API"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Редактировать"
 
 
 msgid "Active object is not a mesh"
@@ -83644,11 +83601,6 @@ msgstr "Кратчайший путь"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Создать"
-
-
-msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Сохранить все изображения"
 
@@ -84100,10 +84052,6 @@ msgid "Sequence Render Animation"
 msgstr "Рендер анимации из видеоредактора"
 
 
-msgid "Handle"
-msgstr "Рукоятка"
-
-
 msgctxt "Operator"
 msgid "Grouped"
 msgstr "По характеристике"
@@ -84164,11 +84112,6 @@ msgstr "Перекрёстное затухание звука"
 
 
 msgctxt "Operator"
-msgid "Slip Strip Contents"
-msgstr "Сместить содержимое дорожки"
-
-
-msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Поменять директории/файлы"
 
@@ -84176,6 +84119,11 @@ msgstr "Поменять директории/файлы"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Обменять данные"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "Сместить содержимое дорожки"
 
 
 msgid "Position X"
@@ -84241,6 +84189,10 @@ msgstr "Справа"
 msgctxt "Operator"
 msgid "Both Sides"
 msgstr "С обеих сторон"
+
+
+msgid "Handle"
+msgstr "Рукоятка"
 
 
 msgctxt "Operator"
@@ -84339,11 +84291,6 @@ msgstr "Гауссово размытие"
 
 
 msgctxt "Operator"
-msgid "Move/Extend from Current Frame"
-msgstr "Переместить/расширить от текущего кадра"
-
-
-msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Перезагрузить дорожки и отрегулировать длину"
 
@@ -84356,6 +84303,11 @@ msgstr "Выключить невыделенные дорожки"
 msgctxt "Operator"
 msgid "Unmute Deselected Strips"
 msgstr "Включить невыделенные дорожки"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Повернуть"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -84393,18 +84345,23 @@ msgstr "Клип"
 
 
 msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Переместить/расширить от текущего кадра"
+
+
+msgctxt "Operator"
 msgid "Copy Modifiers to Selection"
 msgstr "Скопировать модификаторы на выделенное"
 
 
 msgctxt "Operator"
-msgid "Toggle Meta"
-msgstr "Переключить метадорожку"
+msgid "Clear Fade"
+msgstr "Очистить затухание"
 
 
 msgctxt "Operator"
-msgid "Clear Fade"
-msgstr "Очистить затухание"
+msgid "Toggle Meta"
+msgstr "Переключить метадорожку"
 
 
 msgid "Effect Fader"
@@ -85645,11 +85602,6 @@ msgstr "Изменить слои костей…"
 
 msgid "Bone Settings"
 msgstr "Настройки кости"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Повернуть"
 
 
 msgctxt "Operator"

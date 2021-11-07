@@ -87,7 +87,7 @@ enum_use_layer_samples = (
 
 enum_sampling_pattern = (
     ('SOBOL', "Sobol", "Use Sobol random sampling pattern", 0),
-    ('PROGRESSIVE_MUTI_JITTER', "Progressive Multi-Jitter", "Use Progressive Multi-Jitter random sampling pattern", 1),
+    ('PROGRESSIVE_MULTI_JITTER', "Progressive Multi-Jitter", "Use Progressive Multi-Jitter random sampling pattern", 1),
 )
 
 enum_volume_sampling = (
@@ -339,7 +339,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         name="Sampling Pattern",
         description="Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol",
         items=enum_sampling_pattern,
-        default='PROGRESSIVE_MUTI_JITTER',
+        default='PROGRESSIVE_MULTI_JITTER',
     )
 
     scrambling_distance: FloatProperty(
@@ -1363,7 +1363,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
             elif entry.type == 'CPU':
                 cpu_devices.append(entry)
         # Extend all GPU devices with CPU.
-        if compute_device_type != 'CPU':
+        if len(devices) and compute_device_type != 'CPU':
             devices.extend(cpu_devices)
         return devices
 
@@ -1381,12 +1381,18 @@ class CyclesPreferences(bpy.types.AddonPreferences):
         self.refresh_devices()
         return None
 
+    def get_compute_device_type(self):
+        if self.compute_device_type == '':
+            return 'NONE'
+        return self.compute_device_type
+
     def get_num_gpu_devices(self):
         import _cycles
-        device_list = _cycles.available_devices(self.compute_device_type)
+        compute_device_type = self.get_compute_device_type()
+        device_list = _cycles.available_devices(compute_device_type)
         num = 0
         for device in device_list:
-            if device[1] != self.compute_device_type:
+            if device[1] != compute_device_type:
                 continue
             for dev in self.devices:
                 if dev.use and dev.id == device[2]:
@@ -1416,9 +1422,10 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 col.label(text="and NVIDIA driver version 470 or newer", icon='BLANK1')
             elif device_type == 'HIP':
                 import sys
-                col.label(text="Requires discrete AMD GPU with ??? architecture", icon='BLANK1')
-                if sys.platform[:3] == "win":
-                    col.label(text="and AMD driver version ??? or newer", icon='BLANK1')
+                col.label(text="Requires discrete AMD GPU with RDNA2 architecture", icon='BLANK1')
+                # TODO: provide driver version info.
+                #if sys.platform[:3] == "win":
+                #    col.label(text="and AMD driver version ??? or newer", icon='BLANK1')
             return
 
         for device in devices:
@@ -1428,15 +1435,16 @@ class CyclesPreferences(bpy.types.AddonPreferences):
         row = layout.row()
         row.prop(self, "compute_device_type", expand=True)
 
-        if self.compute_device_type == 'NONE':
+        compute_device_type = self.get_compute_device_type()
+        if compute_device_type == 'NONE':
             return
         row = layout.row()
-        devices = self.get_devices_for_type(self.compute_device_type)
-        self._draw_devices(row, self.compute_device_type, devices)
+        devices = self.get_devices_for_type(compute_device_type)
+        self._draw_devices(row, compute_device_type, devices)
 
         import _cycles
         has_peer_memory = 0
-        for device in _cycles.available_devices(self.compute_device_type):
+        for device in _cycles.available_devices(compute_device_type):
             if device[3] and self.find_existing_device_entry(device).use:
                 has_peer_memory += 1
         if has_peer_memory > 1:

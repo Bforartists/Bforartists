@@ -73,7 +73,6 @@ class DeviceInfo {
   int num;
   bool display_device;        /* GPU is used as a display device. */
   bool has_nanovdb;           /* Support NanoVDB volumes. */
-  bool has_half_images;       /* Support half-float textures. */
   bool has_osl;               /* Support Open Shading Language. */
   bool has_profiling;         /* Supports runtime collection of profiling info. */
   bool has_peer_memory;       /* GPU has P2P access to memory of another GPU. */
@@ -90,7 +89,6 @@ class DeviceInfo {
     num = 0;
     cpu_threads = 0;
     display_device = false;
-    has_half_images = false;
     has_nanovdb = false;
     has_osl = false;
     has_profiling = false;
@@ -180,7 +178,7 @@ class Device {
    * These may not be used on GPU or multi-devices. */
 
   /* Get CPU kernel functions for native instruction set. */
-  virtual const CPUKernels *get_cpu_kernels() const;
+  static const CPUKernels &get_cpu_kernels();
   /* Get kernel globals to pass to kernels. */
   virtual void get_cpu_kernel_thread_globals(
       vector<CPUKernelThreadGlobals> & /*kernel_thread_globals*/);

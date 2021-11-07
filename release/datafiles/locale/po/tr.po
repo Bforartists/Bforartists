@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bd7f1c5cce09')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -6791,6 +6791,10 @@ msgid "Effect Strip"
 msgstr "Strip Özellikleri..."
 
 
+msgid "Apply"
+msgstr "Uygula"
+
+
 msgid "Navigation"
 msgstr "Dolaşım Görünümü"
 
@@ -6873,10 +6877,6 @@ msgstr "Kanca"
 
 msgid "Make Single User"
 msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
-
-
-msgid "Apply"
-msgstr "Uygula"
 
 
 msgid "Quick Effects"
@@ -13890,11 +13890,6 @@ msgid "Add an object to the scene"
 msgstr "Nesneyi bir Gruba ekle"
 
 
-msgctxt "Operator"
-msgid "Add Named Object"
-msgstr "Nesneyi bir Gruba ekle"
-
-
 msgid "Add named object"
 msgstr "Nesneyi bir Gruba ekle"
 
@@ -15891,6 +15886,22 @@ msgstr "Tam Ekran Resim Al"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Otomatik Kayıt"
+
+
+msgid "Themes"
+msgstr "Temalar"
+
+
+msgid "Editing"
+msgstr "Düzenleme"
+
+
+msgid "File Paths"
+msgstr "Dosya Yolları"
+
+
+msgid "Experimental"
+msgstr "Deneysel"
 
 
 msgctxt "Operator"
@@ -17908,10 +17919,6 @@ msgid "3D Mouse Settings"
 msgstr "Fabrika Ayarlarını Yükle"
 
 
-msgid "Themes"
-msgstr "Temalar"
-
-
 msgid "Bone Color Sets"
 msgstr "Nesnenin genel rengi."
 
@@ -18409,18 +18416,6 @@ msgstr "Aktif pozisyonu sil"
 
 msgid "Active Section"
 msgstr "Aktif Bölüm"
-
-
-msgid "Editing"
-msgstr "Düzenleme"
-
-
-msgid "File Paths"
-msgstr "Dosya Yolları"
-
-
-msgid "Experimental"
-msgstr "Deneysel"
 
 
 msgid "Edit Methods"
@@ -21701,8 +21696,8 @@ msgstr "Seçim Çevresi"
 
 
 msgctxt "Operator"
-msgid "Edit"
-msgstr "Düzenle"
+msgid "New"
+msgstr "Yeni"
 
 
 msgid "Active object is not a mesh"
@@ -22186,11 +22181,6 @@ msgstr "İlişkilenmiş"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "Yeni"
-
-
-msgctxt "Operator"
 msgid "Invert Image Colors"
 msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
@@ -22404,6 +22394,11 @@ msgstr "Hız Kontrol"
 msgctxt "Operator"
 msgid "Glow"
 msgstr "Parlama"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Dönme"
 
 
 msgctxt "Operator"
@@ -22849,11 +22844,6 @@ msgstr "Kemik Katmanlarınını Değiştir..."
 
 msgid "Bone Settings"
 msgstr "Kemik Ayarları"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Dönme"
 
 
 msgctxt "Operator"

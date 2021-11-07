@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, utils, tasks_queue, rerequests, ui, colors
+from blenderkit import paths, utils, tasks_queue, rerequests, ui, colors, reports
 
 import requests
 import json
@@ -261,7 +261,7 @@ def fetch_categories(API_key, force=False):
         tasks_queue.add_task((load_categories, ()))
     except Exception as e:
         t = 'BlenderKit failed to download fresh categories from the server'
-        tasks_queue.add_task((ui.add_report,(t, 15, colors.RED)))
+        tasks_queue.add_task((reports.add_report(),(t, 15, colors.RED)))
         bk_logger.debug(t)
         bk_logger.exception(e)
         if not os.path.exists(categories_filepath):
