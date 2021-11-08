@@ -1147,7 +1147,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
-                
+
                 if obedit and obedit.type == "MESH":
                     row = col.row(align=True)
                     em = bmesh.from_edit_mesh(obedit.data)
@@ -1162,15 +1162,15 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                                 # show merge first
                                 #pass # delete this
                                 row.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
-                            
+
                             if last_sel_is_vert:
                                 # show merge last
                                 #pass # delete this
                                 row.operator("mesh.merge", text="", icon = "MERGE_AT_LAST").type = 'LAST'
-                                
+
                 row = col.row(align=True)
-                
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'          
+
+                row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
                 row.operator("mesh.remove_doubles", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 2:
@@ -1178,7 +1178,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
-                
+
                 if obedit and obedit.type == "MESH":
                     row = col.row(align=True)
                     em = bmesh.from_edit_mesh(obedit.data)
@@ -1193,7 +1193,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                                 # show merge first
                                 #pass # delete this
                                 row.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
-                            
+
                             if last_sel_is_vert:
                                 # show merge last
                                 #pass # delete this
@@ -1208,7 +1208,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
 
                 col.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
                 col.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
-                
+
                 if obedit and obedit.type == "MESH":
                     em = bmesh.from_edit_mesh(obedit.data)
                     if "VERT" in em.select_mode:
@@ -1222,7 +1222,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                                 # show merge first
                                 #pass # delete this
                                 col.operator("mesh.merge", text="", icon = "MERGE_AT_FIRST").type = 'FIRST'
-                            
+
                             if last_sel_is_vert:
                                 # show merge last
                                 #pass # delete this
@@ -4369,6 +4369,215 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_merge", text="", icon = "MERGE")
 
 
+class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
+    bl_label = "Draw"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_paint"
+    bl_category = "Draw"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
+            col.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon = "SEQUENCE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.interpolate", text="", icon = "EXTRUDE_REGION")
+                row.operator("gpencil.interpolate_sequence", text="", icon = "SEQUENCE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.interpolate", text="", icon = "INTERPOLATE")
+                row.operator("gpencil.interpolate_sequence", text="", icon = "SEQUENCE")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.interpolate", text="", icon = "INTERPOLATE")
+                col.operator("gpencil.interpolate_sequence", text="", icon = "SEQUENCE")
+
+
+class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
+    bl_label = "Animation"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_paint"
+    bl_category = "Animation"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (Active Layer)", icon = "ADD")
+            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)", icon = "ADD").all_layers = True
+
+            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon = "DUPLICATE")
+            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE").mode = 'ALL'
+
+            col.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").type = 'FRAME'
+            col.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = "DELETE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+
+                row = col.row(align=True)
+                row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
+                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+
+                row = col.row(align=True)
+                row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
+                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                col.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+
+                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
+                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+
+                col.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
+                col.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+
+
+class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
+    bl_label = "Clean Up"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_paint"
+    bl_category = "Clean Up"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        ob = _context.active_object
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+            col.operator("gpencil.frame_clean_loose", text="Delete Loose Points", icon = "DELETE_LOOSE")
+            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE")
+            col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+                row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+
+                row = col.row(align=True)
+                row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+
+                row = col.row(align=True)
+                row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+                col.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
+                col.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                col.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
+
+
 class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
     bl_label = "Weights"
     bl_space_type = 'VIEW_3D'
@@ -5258,7 +5467,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             col.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
             col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
             col.operator("pose.blend_to_neighbor", icon = 'BLEND_TO_NEIGHBOUR')
-        
+
 
         # icon buttons
         else:
@@ -5508,7 +5717,7 @@ class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
                 row.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
-                
+
                 row = col.row(align=True)
                 row.operator("pose.paths_update", text="", icon = "MOTIONPATHS_UPDATE")
                 row.operator("object.paths_update_visible", text="", icon = "MOTIONPATHS_UPDATE_ALL")
@@ -5781,6 +5990,11 @@ classes = (
     VIEW3D_PT_gp_stroketab_togglecaps,
     VIEW3D_PT_gp_stroketab_reproject,
     VIEW3D_PT_gp_pointtab_point,
+
+    # grease pencil draw mode
+    VIEW3D_PT_gp_drawtab_draw,
+    VIEW3D_PT_gp_drawtab_animation,
+    VIEW3D_PT_gp_drawtab_cleanup,
 
     # grease pencil weights mode
     VIEW3D_PT_gp_weightstab_weights,
