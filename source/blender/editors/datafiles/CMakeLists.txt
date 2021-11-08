@@ -1118,9 +1118,9 @@ view_stretch
 view_fill
 get_id
 set_id
-#~ DEF_ICON_BLANK(1137)
-#~ DEF_ICON_BLANK(1138)
-#~ DEF_ICON_BLANK(1139)
+add_all
+delete_all
+duplicate_all
 #~ DEF_ICON_BLANK(1140)
 #~ DEF_ICON_BLANK(1141)
 #~ DEF_ICON_BLANK(1142)
