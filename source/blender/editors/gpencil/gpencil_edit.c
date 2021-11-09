@@ -1988,6 +1988,30 @@ static int gpencil_blank_frame_add_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+  /*bfa - tool name*/
+static const char *GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "all_layers")) {
+    return CTX_IFACE_(ot->translation_context, "Insert Blank Frame (All Layers)");
+  }
+  else {
+    return CTX_IFACE_(ot->translation_context, "Insert Blank Frame (Active Layer)");
+  }
+}
+
+/*bfa - descriptions*/
+static char *GPENCIL_OT_blank_frame_add_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "all_layers")) {
+    return BLI_strdup(
+        "Insert a blank frame on all layers "
+        "(all subsequently existing frames, if any, are shifted right by one frame)");
+  }
+  return NULL;
+}
+
 void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1996,11 +2020,13 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
   ot->name = "Insert Blank Frame";
   ot->idname = "GPENCIL_OT_blank_frame_add";
   ot->description =
-      "Insert a blank frame on the current frame "
+      "Insert a blank frame on the current layer "
       "(all subsequently existing frames, if any, are shifted right by one frame)";
 
   /* callbacks */
   ot->exec = gpencil_blank_frame_add_exec;
+  ot->get_name = GPENCIL_OT_blank_frame_add_name; /*bfa - tool name*/
+  ot->get_description = GPENCIL_OT_blank_frame_add_get_description; /*bfa - descriptions*/
   ot->poll = gpencil_add_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
