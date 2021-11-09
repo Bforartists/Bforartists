@@ -1341,7 +1341,7 @@ class TOOLBAR_MT_tools(Menu):
 
                     row = layout.row(align=True)
                     row.operator("object.make_local", icon='MAKE_LOCAL', text="")
-                    row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+                    row.operator("object.make_override_library", text="", icon = "LIBRARY_DATA_OVERRIDE")
 
                 if addon_prefs.tools_join:
 
