@@ -4450,13 +4450,13 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (Active Layer)", icon = "ADD")
-            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)", icon = "ADD").all_layers = True
+            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)", icon = "ADD_ALL").all_layers = True
 
             col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon = "DUPLICATE")
-            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE").mode = 'ALL'
+            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE_ALL").mode = 'ALL'
 
             col.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").type = 'FRAME'
-            col.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = "DELETE")
+            col.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = "DELETE_ALL")
 
         # icon buttons
         else:
@@ -4469,40 +4469,40 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
 
                 row = col.row(align=True)
                 row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                row.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
 
                 row = col.row(align=True)
                 row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
 
             elif column_count == 1:
 
                 col.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                col.operator("gpencil.blank_frame_add", text="", icon = "ADD")
+                col.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
 
                 col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE").mode = 'ALL'
+                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
 
                 col.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                col.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE")
+                col.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
 
 
 class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
