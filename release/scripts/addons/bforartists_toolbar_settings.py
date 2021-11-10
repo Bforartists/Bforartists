@@ -137,6 +137,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # misc
 
+    misc_viewport : BoolProperty(name="Viewport", default=False, description = "Display the Viewport toolbar\nAll Modes", )
     misc_undoredo : BoolProperty(name="Undo / Redo", default=True, description = "Display the Undo Redo toolbar\nAll Modes", )
     misc_undohistory : BoolProperty(name="Undo History", default=True, description = "Display the Undo History Toolbar\nAll Modes", )
     misc_repeat : BoolProperty(name="Repeat", default=True, description = "Display the Repeat Toolbar\nAll Modes", )
@@ -458,15 +459,18 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = col.row()
         row.separator()
+        row.prop(self, "misc_viewport")
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_undoredo")
         row = col.row()
         row.separator()
         row.prop(self, "misc_undohistory")
+
+        col = flow.column(align=True)
         row = col.row()
         row.separator()
         row.prop(self, "misc_repeat")
-
-        col = flow.column(align=True)
         row = col.row()
         row.separator()
         row.prop(self, "misc_scene")
