@@ -1788,6 +1788,9 @@ class TOOLBAR_PT_menu_misc(Panel):
         col = layout.column(align = True)
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "misc_viewport")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "misc_undoredo")
         row = col.row()
         row.separator()
@@ -1834,6 +1837,12 @@ class TOOLBAR_MT_misc(Menu):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ Misc sub toolbars
+
+        if addon_prefs.misc_viewport:
+            
+            if obj is not None:
+                row = layout.row(align=True)
+                row.popover(panel="OBJECT_PT_display", text="", icon = "VIEW")
 
         if addon_prefs.misc_undoredo:
 
