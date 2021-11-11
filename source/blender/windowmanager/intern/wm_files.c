@@ -3174,7 +3174,8 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
 
   ot->name = "Save As";
   ot->idname = "WM_OT_save_as_mainfile";
-  ot->description = "Save As saves the current file in the desired location";
+  ot->description = "Save As saves the current file in the desired location"
+    "\nIncremental Save saves an already saved file with incremental file name. 001, 002, 003 etc";
 
   ot->invoke = wm_save_as_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
