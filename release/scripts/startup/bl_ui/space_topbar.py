@@ -245,6 +245,23 @@ class TOPBAR_MT_file_cleanup(Menu):
 class TOPBAR_MT_file(Menu):
     bl_label = "File"
 
+    #bfa - incremental save calculation
+    @staticmethod
+    def _save_calculate_incremental_name():
+        import re
+        dirname, base_name = os.path.split(bpy.data.filepath)
+        base_name_no_ext, ext = os.path.splitext(base_name)
+        match = re.match(r"(.*)_([\d]+)$", base_name_no_ext)
+        if match:
+            prefix, number = match.groups()
+            number = int(number) + 1
+        else:
+            prefix, number = base_name_no_ext, 1
+        prefix = os.path.join(dirname, prefix)
+        while os.path.isfile(output := "%s_%03d%s" % (prefix, number, ext)):
+            number += 1
+        return output
+
     def draw(self, context):
         layout = self.layout
 
@@ -267,6 +284,16 @@ class TOPBAR_MT_file(Menu):
         layout.operator("wm.save_as_mainfile", text="Save As", icon='SAVE_AS')
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.save_as_mainfile", text="Save Copy", icon='SAVE_COPY').copy = True
+
+        if bpy.data.is_saved:
+            default_operator_contest = layout.operator_context
+            layout.operator_context = 'EXEC_DEFAULT'
+            layout.operator( "wm.save_as_mainfile", text="Incremental Save", icon='SAVE_AS').filepath = self._save_calculate_incremental_name()
+            layout.operator_context = default_operator_contest
+        else:
+            col = layout.column()
+            col.active = bpy.data.is_saved
+            col.operator( "wm.save_as_mainfile", text="Incremental Save (Unsaved)", icon='SAVE_AS').filepath = "" #bfa dummy unsaved
 
         layout.separator()
 
