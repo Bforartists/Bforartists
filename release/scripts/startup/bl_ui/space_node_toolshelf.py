@@ -3447,7 +3447,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
+            props = col.operator("node.add_node", text=" Get Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveHandlePositions"
 
@@ -3459,7 +3459,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
 
-            props = col.operator("node.add_node", text=" Curve Tilt                 ", icon = "CURVE_TILT")
+            props = col.operator("node.add_node", text=" Get Curve Tilt            ", icon = "CURVE_TILT")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveTilt"
 
@@ -3936,8 +3936,8 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
-            props = col.operator("node.add_node", text=" ID                         ", icon = "DELETE")
+
+            props = col.operator("node.add_node", text=" Get ID                   ", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeInputID"
 
@@ -3949,11 +3949,11 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
 
-            props = col.operator("node.add_node", text=" Position                ", icon = "POSITION")
+            props = col.operator("node.add_node", text=" Get Position         ", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
 
-            props = col.operator("node.add_node", text=" Radius                ", icon = "RADIUS")
+            props = col.operator("node.add_node", text=" Get Radius           ", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
@@ -4152,7 +4152,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeReplaceMaterial"
 
-            props = col.operator("node.add_node", text=" Material Index           ", icon = "MATERIAL_INDEX")
+            props = col.operator("node.add_node", text=" Get Material Index           ", icon = "MATERIAL_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterialIndex"
 
