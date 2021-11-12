@@ -1287,6 +1287,43 @@ class TOOLBAR_PT_menu_tools(Panel):
 
 
 ############### bfa - menu hidable by the flag in the right click menu
+class TOOLBAR_PT_normals_autosmooth(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Normals"
+
+    @classmethod
+    def poll(cls, context):
+        if context.active_object is None:
+            return False
+        
+        if context.active_object.type != "MESH":
+            return False
+        
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        if context.active_object is None:
+            return
+        
+        if context.active_object.type != "MESH":
+            return
+
+        mesh = context.active_object.data
+
+        col = layout.column(align=False, heading="Auto Smooth")
+        col.use_property_decorate = False
+        row = col.row(align=True)
+        sub = row.row(align=True)
+        sub.prop(mesh, "use_auto_smooth", text="")
+        sub = sub.row(align=True)
+        sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+        sub.prop(mesh, "auto_smooth_angle", text="")
+        row.prop_decorator(mesh, "auto_smooth_angle")
+
 
 class TOOLBAR_MT_tools(Menu):
     bl_idname = "TOOLBAR_MT_tools"
@@ -1373,10 +1410,7 @@ class TOOLBAR_MT_tools(Menu):
                         row = layout.row(align=True)
                         row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                         row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
-                        if context.active_object is not None:
-                            if context.active_object.type == "MESH":
-                                row.context_pointer_set("mesh", context.active_object.data)
-                                row.popover(panel="DATA_PT_normals", text="", icon="NORMAL_SMOOTH")
+                        row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
                 if addon_prefs.tools_datatransfer:
 
@@ -1921,6 +1955,7 @@ classes = (
     VIEW3D_MT_object_apply_all,
     VIEW3D_MT_object_apply_rotscale,
     TOOLBAR_PT_menu_animation,
+    TOOLBAR_PT_normals_autosmooth,
     TOOLBAR_PT_menu_tools,
     TOOLBAR_PT_menu_image,
     TOOLBAR_PT_menu_primitives,
