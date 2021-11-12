@@ -3447,7 +3447,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Get Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
+            props = col.operator("node.add_node", text=" Curve Handle Positions ", icon = "CURVE_HANDLE_POSITIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveHandlePositions"
 
@@ -3459,7 +3459,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
 
-            props = col.operator("node.add_node", text=" Get Curve Tilt            ", icon = "CURVE_TILT")
+            props = col.operator("node.add_node", text=" Curve Tilt                 ", icon = "CURVE_TILT")
             props.use_transform = True
             props.type = "GeometryNodeInputCurveTilt"
 
@@ -3795,10 +3795,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
             props.use_transform = True
             props.type = "GeometryNodeSetPosition"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Set ID                         ", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
@@ -3851,11 +3851,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SET_POSITION")
             props.use_transform = True
             props.type = "GeometryNodeSetPosition"
-            
+
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeSetID"
@@ -3937,7 +3937,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Get ID                   ", icon = "DELETE")
+            props = col.operator("node.add_node", text=" ID                         ", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeInputID"
 
@@ -3949,11 +3949,11 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
 
-            props = col.operator("node.add_node", text=" Get Position         ", icon = "POSITION")
+            props = col.operator("node.add_node", text=" Position                ", icon = "POSITION")
             props.use_transform = True
             props.type = "GeometryNodeInputPosition"
 
-            props = col.operator("node.add_node", text=" Get Radius           ", icon = "RADIUS")
+            props = col.operator("node.add_node", text=" Radius                ", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
@@ -4009,7 +4009,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeInputID"
@@ -4152,7 +4152,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeReplaceMaterial"
 
-            props = col.operator("node.add_node", text=" Get Material Index           ", icon = "MATERIAL_INDEX")
+            props = col.operator("node.add_node", text=" Material Index           ", icon = "MATERIAL_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterialIndex"
 
@@ -4523,7 +4523,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Points to Vertices         ", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodePointsToVertices"
-            
+
             props = col.operator("node.add_node", text=" Points to Volume         ", icon = "POINT_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodePointsToVolume"
@@ -4548,7 +4548,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodePointsToVertices"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodePointsToVolume"
@@ -4595,7 +4595,7 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Replace Strings       ", icon = "REPLACE_STRING")
             props.use_transform = True
             props.type = "FunctionNodeReplaceString"
-            
+
             props = col.operator("node.add_node", text=" Slice Strings            ", icon = "STRING_SUBSTRING")
             props.use_transform = True
             props.type = "FunctionNodeSliceString"
@@ -4631,7 +4631,7 @@ class NODES_PT_geom_add_text(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "REPLACE_STRING")
             props.use_transform = True
             props.type = "FunctionNodeReplaceString"
-            
+
             props = flow.operator("node.add_node", text="", icon = "STRING_SUBSTRING")
             props.use_transform = True
             props.type = "FunctionNodeSliceString"
@@ -4682,7 +4682,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Brick Texture        ", icon = "NODE_BRICK")
             props.use_transform = True
             props.type = "ShaderNodeTexBrick"
@@ -4694,7 +4694,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Gradient Texture  ", icon = "NODE_GRADIENT")
             props.use_transform = True
             props.type = "ShaderNodeTexGradient"
-            
+
             props = col.operator("node.add_node", text=" Image Texture      ", icon = "FILE_IMAGE")
             props.use_transform = True
             props.type = "GeometryNodeImageTexture"
@@ -4734,7 +4734,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
             props.use_transform = True
             props.type = "ShaderNodeTexBrick"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
             props.use_transform = True
             props.type = "ShaderNodeTexChecker"
@@ -4742,7 +4742,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
             props.use_transform = True
             props.type = "ShaderNodeTexGradient"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
             props.use_transform = True
             props.type = "GeometryNodeImageTexture"
