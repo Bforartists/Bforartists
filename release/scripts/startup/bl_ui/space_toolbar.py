@@ -1373,6 +1373,10 @@ class TOOLBAR_MT_tools(Menu):
                         row = layout.row(align=True)
                         row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                         row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
+                        if context.active_object is not None:
+                            if context.active_object.type == "MESH":
+                                row.context_pointer_set("mesh", context.active_object.data)
+                                row.popover(panel="DATA_PT_normals", text="", icon="NORMAL_SMOOTH")
 
                 if addon_prefs.tools_datatransfer:
 
