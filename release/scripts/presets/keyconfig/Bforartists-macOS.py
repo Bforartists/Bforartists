@@ -1,4 +1,4 @@
-keyconfig_version = (3, 1, 0)
+keyconfig_version = (3, 1, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1791,6 +1791,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -4770,6 +4771,7 @@ keyconfig_data = \
       },
      ),
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True}, None),
+    ("node.links_cut", {"type": 'EVT_TWEAK_R', "value": 'ANY', "ctrl": True}, None),
     ],
    },
   ),
