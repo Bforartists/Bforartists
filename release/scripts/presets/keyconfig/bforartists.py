@@ -1,4 +1,4 @@
-keyconfig_version = (3, 1, 0)
+keyconfig_version = (3, 1, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -4770,6 +4770,7 @@ keyconfig_data = \
       },
      ),
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+    ("node.links_cut", {"type": 'EVT_TWEAK_R', "value": 'ANY', "ctrl": True}, None),
     ],
    },
   ),
