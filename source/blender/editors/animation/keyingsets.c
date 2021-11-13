@@ -791,13 +791,20 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
 
   /* builtin Keying Sets */
   i = -1;
+  int icon_index = 0;
+  int icons[] = {ICON_ANIM, ICON_ACTION};
   for (ks = builtin_keyingsets.first; ks; ks = ks->next, i--) {
     /* only show KeyingSet if context is suitable */
     if (ANIM_keyingset_context_ok_poll(C, ks)) {
+      item_tmp.icon = ICON_NONE;
       item_tmp.identifier = ks->idname;
       item_tmp.name = ks->name;
       item_tmp.description = ks->description;
       item_tmp.value = i;
+      if ((icon_index >= 0) && (icon_index < (sizeof(icons) / sizeof(int)))) {
+        item_tmp.icon = icons[icon_index];
+      }
+      icon_index++;
       RNA_enum_item_add(&item, &totitem, &item_tmp);
     }
   }
