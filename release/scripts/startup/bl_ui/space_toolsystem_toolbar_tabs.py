@@ -1075,6 +1075,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
 
             col.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
             col.operator("object.shade_flat", icon ='SHADING_FLAT')
+            col.popover(panel="TOOLBAR_PT_normals_autosmooth", text="Autosmoooth", icon="NORMAL_SMOOTH")
 
         # icon buttons
         else:
@@ -1088,17 +1089,26 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
                 row.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+                row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
                 row.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+                
+                row = col.row()
+                row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
             elif column_count == 1:
 
                 col.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
                 col.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+
+                
+                row = col.row()
+                row.alignment = 'LEFT'     
+                row.popover(panel="TOOLBAR_PT_normals_autosmooth", text="", icon="NORMAL_SMOOTH")
 
 
 
