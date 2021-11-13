@@ -3343,8 +3343,10 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Auto Smooth",
-      "Auto smooth (based on smooth/sharp faces/edges and angle between faces), "
-      "or use custom split normals data if available");
+      "Either smooth edges based on the angle of the adjacent faces, "
+      "\nor use custom split normals data if available"
+      "\nThe shading needs to be set to smooth. Auto smooth will not work with flat shading"
+        );
   RNA_def_property_update(prop, 0, "rna_Mesh_update_geom_and_params");
 
   prop = RNA_def_property(srna, "auto_smooth_angle", PROP_FLOAT, PROP_ANGLE);
