@@ -1287,10 +1287,12 @@ class TOOLBAR_PT_menu_tools(Panel):
 
 
 ############### bfa - menu hidable by the flag in the right click menu
+
+
 class TOOLBAR_PT_normals_autosmooth(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = "Normals"
+    bl_label = "Auto Smooth"
 
     @classmethod
     def poll(cls, context):
@@ -1313,15 +1315,14 @@ class TOOLBAR_PT_normals_autosmooth(Panel):
             return
 
         mesh = context.active_object.data
-
-        col = layout.column(align=False, heading="Auto Smooth")
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(mesh, "use_auto_smooth", text="")
-        sub = sub.row(align=True)
-        sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-        sub.prop(mesh, "auto_smooth_angle", text="")
+        
+        split = layout.split()
+        split.use_property_split = False
+        col = split.column()
+        col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
+        col = split.column()
+        row = col.row(align = True)
+        row.prop(mesh, "auto_smooth_angle", text="")
         row.prop_decorator(mesh, "auto_smooth_angle")
 
 
