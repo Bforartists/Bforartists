@@ -178,8 +178,8 @@ class NLA_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("INFO_MT_area")
         layout.menu("NLA_MT_view_pie_menus")
+        layout.menu("INFO_MT_area")
 
 
 class NLA_MT_view_pie_menus(Menu):
@@ -189,6 +189,7 @@ class NLA_MT_view_pie_menus(Menu):
         layout = self.layout
 
         layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'NLA_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NLA_MT_view_pie'
 
 
 class NLA_PT_view_view_options(Panel):
@@ -211,7 +212,7 @@ class NLA_PT_view_view_options(Panel):
         col.separator()
 
         col.prop(st, "show_strip_curves")
-        
+
         col.separator()
         col.prop(st, "show_markers")
         col.prop(st, "show_local_markers")
