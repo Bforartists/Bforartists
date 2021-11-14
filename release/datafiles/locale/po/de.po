@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5298,6 +5298,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Festlegen des Farbmodus für die Interpolation"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Elemente"
 
@@ -8546,14 +8550,6 @@ msgid "Wind effector weight"
 msgstr "Wind-Effektorwichtung"
 
 
-msgid "Icon"
-msgstr "Icons"
-
-
-msgid "Icon of the item"
-msgstr "ID des Eintrags"
-
-
 msgid "Unique name used in the code and scripting"
 msgstr "Eindeutige Namen werden im Code und Skripten verwendet"
 
@@ -10716,6 +10712,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "Generiere Koordinaten zentriert auf das Flow Objekt"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "Verwende UV-Koordinaten für Texturkoordinaten"
 
@@ -12191,12 +12191,24 @@ msgid "Red Green Blue"
 msgstr "Rot-Grün-Blau"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Rot"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Grün"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -17719,14 +17731,6 @@ msgid "Settings for image formats"
 msgstr "Einstellungen für Bilderformate"
 
 
-msgid "B"
-msgstr "B"
-
-
-msgid "G"
-msgstr "G"
-
-
 msgid "Color Depth"
 msgstr "Farbtiefe"
 
@@ -19888,10 +19892,6 @@ msgstr "Masken Kontextmenü"
 
 msgid "Select Linked"
 msgstr "Verknüpfte auswählen"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -24024,10 +24024,6 @@ msgid "Scale limit by value"
 msgstr "Skale durch Wert begrenzen"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Unspill"
 msgstr "Überfüllung aufheben"
 
@@ -24426,10 +24422,6 @@ msgstr "Malen"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Abstand zu Inpaint (Anzahl der Wiederholungen)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -25452,6 +25444,10 @@ msgstr "Haar BSDF"
 
 msgid "Component"
 msgstr "Komponente"
+
+
+msgid "Reflection"
+msgstr "Reflexion"
 
 
 msgid "Color Parametrization"
@@ -41022,26 +41018,6 @@ msgid "Active Palette Color"
 msgstr "Aktive Farbpalette"
 
 
-msgid "Default Closed"
-msgstr "Standardmäßig geschlossen"
-
-
-msgid "Parent ID Name"
-msgstr "Eltern ID-Name"
-
-
-msgid "Units X"
-msgstr "Einheiten X"
-
-
-msgid "Custom Data"
-msgstr "Benutzerdefinierte Daten"
-
-
-msgid "Pin"
-msgstr "Anheften"
-
-
 msgid "Integrator Presets"
 msgstr "Integrator-Voreinstellungen"
 
@@ -42858,10 +42834,6 @@ msgid "Info on current cache status"
 msgstr "Information vom aktuellen Pufferstatus"
 
 
-msgid "Cache is outdated"
-msgstr "Puffer ist veraltet"
-
-
 msgid "Cache name"
 msgstr "Puffername"
 
@@ -43998,8 +43970,16 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Zwischenspeicher Limit (in Megabyte)"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Compute"
@@ -44548,14 +44528,6 @@ msgstr "Form der Haare"
 
 msgid "3D Curves"
 msgstr "3D Kurven"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -50845,6 +50817,10 @@ msgstr "Farbe für Objektkontur"
 
 msgid "Volume Light"
 msgstr "Lichtintensität"
+
+
+msgid "AOV"
+msgstr "AOV"
 
 
 msgid "Shadow Intensity"
@@ -57925,10 +57901,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Das Bild wurde nicht geschrieben, es hat keine \"%s\" und \"%s\" Ansichten"
 
 
-msgid "AOV"
-msgstr "AOV"
-
-
 msgid "MaskLayer"
 msgstr "Maskenebene"
 
@@ -58218,6 +58190,10 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "Konnte Marker nicht wieder zur selben Szene verknüpfen"
 
 
+msgid "✕ (Ax + B)"
+msgstr "✕ (Ax + B)"
+
+
 msgid "Add Control Point"
 msgstr "Kontrollpunkt hinzufügen"
 
@@ -58228,10 +58204,6 @@ msgstr "Modifier löschen"
 
 msgid "Delete envelope control point"
 msgstr "Einhüllenden-Kontrollpunkt löschen"
-
-
-msgid "✕ (Ax + B)"
-msgstr "✕ (Ax + B)"
 
 
 msgid "No animation data in buffer to paste"
@@ -58580,6 +58552,10 @@ msgstr "Kann nicht malen, während Animation wiedergegeben wird"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Kein Tastaturkürzel"
+
+
+msgid "Pin"
+msgstr "Anheften"
 
 
 msgid "Shift Left Mouse"
@@ -60486,22 +60462,6 @@ msgid "Cursor Value to Selection"
 msgstr "Cursorwert zur Auswahl"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "F-Kurve die nur F-Modifikatoren haben"
-
-
-msgid "See Modifiers panel below"
-msgstr "Siehe Modifikator-Panel unten"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F-Kurve hat keine Schlüsselbilder, da sie nur abgetastete Punkte enthält"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Kein aktives Schlüsselbild auf der F-Kurve"
-
-
 msgid "Prop:"
 msgstr "Eigenschaft:"
 
@@ -60536,6 +60496,22 @@ msgstr "Treiber Einstellungen:"
 
 msgid "Add Modifier"
 msgstr "Modifikator hinzufügen"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "F-Kurve die nur F-Modifikatoren haben"
+
+
+msgid "See Modifiers panel below"
+msgstr "Siehe Modifikator-Panel unten"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "F-Kurve hat keine Schlüsselbilder, da sie nur abgetastete Punkte enthält"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Kein aktives Schlüsselbild auf der F-Kurve"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -61738,12 +61714,12 @@ msgid "Save External..."
 msgstr "Speichern Extern..."
 
 
-msgid "Built without Ocean modifier"
-msgstr "Bauen mit Ozean Modifikator"
-
-
 msgid "Delete Bake"
 msgstr "Backen löschen"
+
+
+msgid "Built without Ocean modifier"
+msgstr "Bauen mit Ozean Modifikator"
 
 
 msgid "Create Instances"
@@ -61823,16 +61799,28 @@ msgid "Crease Edges"
 msgstr "Faltenkanten"
 
 
+msgid "Fac"
+msgstr "Faktor"
+
+
+msgid "Dot"
+msgstr "Punkt"
+
+
+msgid "Val"
+msgstr "Wert"
+
+
+msgid "Density Attribute"
+msgstr "Dichteneigenschaft"
+
+
 msgid "Shader Editor"
 msgstr "Shader Editor"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "Faktor"
 
 
 msgid "Anisotropy"
@@ -62039,8 +62027,12 @@ msgid "Transmission Depth"
 msgstr "Transmissionstiefe"
 
 
-msgid "Dot"
-msgstr "Punkt"
+msgid "Color1"
+msgstr "Farbe1"
+
+
+msgid "Color2"
+msgstr "Farbe2"
 
 
 msgid "Color Fac"
@@ -62055,8 +62047,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Reflexion"
+msgid "Mortar"
+msgstr "Mauer"
+
+
+msgid "Brick Width"
+msgstr "Ziegelbreite"
+
+
+msgid "Row Height"
+msgstr "Zeilenhöhe"
 
 
 msgid "Flame"
@@ -62065,10 +62065,6 @@ msgstr "Flamme"
 
 msgid "Color Attribute"
 msgstr "Farbeigenschaft"
-
-
-msgid "Density Attribute"
-msgstr "Dichteneigenschaft"
 
 
 msgid "Absorption Color"
@@ -62107,26 +62103,6 @@ msgid "Bricks 2"
 msgstr "Ziegel 2"
 
 
-msgid "Mortar"
-msgstr "Mauer"
-
-
-msgid "Brick Width"
-msgstr "Ziegelbreite"
-
-
-msgid "Row Height"
-msgstr "Zeilenhöhe"
-
-
-msgid "Color1"
-msgstr "Farbe1"
-
-
-msgid "Color2"
-msgstr "Farbe2"
-
-
 msgid "Coordinate 1"
 msgstr "Koordinate 1"
 
@@ -62153,10 +62129,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkalieren"
-
-
-msgid "Val"
-msgstr "Wert"
 
 
 msgid ""
@@ -62245,10 +62217,6 @@ msgstr "Objektdrehpunkt"
 
 msgid "Wave Effect"
 msgstr "Welleneffekt"
-
-
-msgid "Paste name"
-msgstr "Name einfügen"
 
 
 msgid "Blender File View"

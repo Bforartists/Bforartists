@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11653,6 +11653,10 @@ msgstr "Anisotropisk"
 
 msgid "Diffuse BSDF"
 msgstr "Diffus färg"
+
+
+msgid "Reflection"
+msgstr "Markera Länkad"
 
 
 msgid "Refraction BSDF"
@@ -29514,14 +29518,6 @@ msgid "Interpolation:"
 msgstr "Integrering:"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Radera Allt"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Markera Länkad"
-
-
 msgid "Prop:"
 msgstr "Bild Displist"
 
@@ -29540,6 +29536,14 @@ msgstr "Renderings Fönster"
 
 msgid "Add Modifier"
 msgstr "Radera Allt"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Radera Allt"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Markera Länkad"
 
 
 msgid "Delete target variable"
@@ -29926,6 +29930,14 @@ msgid "Fac"
 msgstr "Yta"
 
 
+msgid "Dot"
+msgstr "Rot"
+
+
+msgid "Val"
+msgstr "Värde"
+
+
 msgid "Anisotropy"
 msgstr "Anisotropisk"
 
@@ -30010,16 +30022,12 @@ msgid "Is Transmission Ray"
 msgstr "Markera Länkad"
 
 
-msgid "Dot"
-msgstr "Rot"
+msgid "Color1"
+msgstr "Färg 1"
 
 
-msgid "Reflection"
-msgstr "Markera Länkad"
-
-
-msgid "Patterns"
-msgstr "Markera Rad"
+msgid "Color2"
+msgstr "Färg"
 
 
 msgid "Brick Width"
@@ -30030,12 +30038,8 @@ msgid "Row Height"
 msgstr "Höjd"
 
 
-msgid "Color1"
-msgstr "Färg 1"
-
-
-msgid "Color2"
-msgstr "Färg"
+msgid "Patterns"
+msgstr "Markera Rad"
 
 
 msgid "Coordinate 1"
@@ -30048,10 +30052,6 @@ msgstr "Arkiv"
 
 msgid "iScale"
 msgstr "Skala"
-
-
-msgid "Val"
-msgstr "Värde"
 
 
 msgid "Image too small"
@@ -30080,10 +30080,6 @@ msgstr "Höger"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Markera Länkad"
-
-
-msgid "Paste name"
-msgstr "Starta Spel"
 
 
 msgid "unable to open the file"

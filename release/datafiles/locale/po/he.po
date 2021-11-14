@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -394,6 +394,10 @@ msgstr ":םונילופ תלעמ"
 
 msgid "Background"
 msgstr "עקר"
+
+
+msgid "Reflection"
+msgstr "תופקתשה"
 
 
 msgid "Refraction BSDF"
@@ -913,8 +917,12 @@ msgid "Incoming"
 msgstr "סנכנ"
 
 
-msgid "Reflection"
-msgstr "תופקתשה"
+msgid "Color2"
+msgstr "2עבצ"
+
+
+msgid "Row Height"
+msgstr "הרוש הבוג"
 
 
 msgid "Bricks 1"
@@ -925,20 +933,8 @@ msgid "Bricks 2"
 msgstr "2 םינבל"
 
 
-msgid "Row Height"
-msgstr "הרוש הבוג"
-
-
-msgid "Color2"
-msgstr "2עבצ"
-
-
 msgid "No border area selected"
 msgstr "רבד רחבנ אל"
-
-
-msgid "Paste name"
-msgstr "םש קבדה"
 
 
 msgid "Nothing indicated"

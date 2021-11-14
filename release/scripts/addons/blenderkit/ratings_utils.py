@@ -101,7 +101,7 @@ def get_rating(asset_id, headers):
     if r.status_code == 200:
         rj = r.json()
         ratings = {}
-        print(rj)
+        # print(rj)
         # store ratings - send them to task queue
         for r in rj['results']:
             ratings[r['ratingType']] = r['score']

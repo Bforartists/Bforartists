@@ -2,7 +2,7 @@
   <Theme>
     <user_interface>
       <ThemeUserInterface
-        menu_shadow_fac="0.5"
+        menu_shadow_fac="0.35"
         menu_shadow_width="12"
         icon_alpha="1"
         icon_saturation="1"
@@ -22,12 +22,12 @@
         gizmo_view_align="#ffffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
-        icon_scene="#f2f2f2ff"
-        icon_collection="#f2f2f2ff"
-        icon_object="#f2f2f2ff"
-        icon_object_data="#f2f2f2ff"
-        icon_modifier="#f2f2f2ff"
-        icon_shading="#f2f2f2ff"
+        icon_scene="#e6e6e6ff"
+        icon_collection="#e6e6e6ff"
+        icon_object="#e6e6e6ff"
+        icon_object_data="#e6e6e6ff"
+        icon_modifier="#e6e6e6ff"
+        icon_shading="#e6e6e6ff"
         icon_folder="#e3c16eff"
         icon_border_intensity="0"
         >
@@ -882,7 +882,7 @@
               <ThemePanelColors
                 header="#3b3b3b00"
                 back="#393939ff"
-                sub_back="#343434ff"
+                sub_back="#0000001a"
                 >
               </ThemePanelColors>
             </panelcolors>
@@ -939,7 +939,7 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        grid="#202020"
+        grid="#2d2d2d"
         node_selected="#00bdff"
         node_active="#00ff2f"
         wire="#1a1a1a"
@@ -955,7 +955,7 @@
         matte_node="#404040"
         distor_node="#404040"
         noodle_curving="5"
-        grid_levels="3"
+        grid_levels="7"
         dash_alpha="0.5"
         input_node="#404040"
         output_node="#404040"

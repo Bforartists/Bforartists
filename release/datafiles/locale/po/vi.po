@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -5438,6 +5438,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Đặt chế độ màu cho suy nội"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Phần Tử"
 
@@ -10162,14 +10166,6 @@ msgid "Description of the item's purpose"
 msgstr "Chính tả cho sử dụng của mặt hàng"
 
 
-msgid "Icon"
-msgstr "Biểu Tượng"
-
-
-msgid "Icon of the item"
-msgstr "Biểu tượng của mặt hàng"
-
-
 msgid "Identifier"
 msgstr "Tên Đặc Biệt"
 
@@ -13168,6 +13164,10 @@ msgid "Change the underlying simulation method"
 msgstr "Đổi phương pháp mô phỏng"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Use FLIP as the simulation method (more splashy behavior)"
 msgstr "Dùng mô phỏng FLIP (hành vi dăn hơn)"
 
@@ -13514,10 +13514,6 @@ msgstr "Hòa Tan Kiểu Log"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "Hóa tan khói kiểu log. Bắt đầu hòa tan nhanh, nhưng sau ở lại lâu hơn"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Create liquid particle system"
@@ -13942,6 +13938,10 @@ msgstr "Được Chế Tạo"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "Tọa độ được chế tạo có trung tâm tại vật thể lưu"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -17352,12 +17352,24 @@ msgid "Red Green Blue"
 msgstr "Đỏ Lục Xanh"
 
 
+msgid "R"
+msgstr "Đỏ"
+
+
 msgid "Red"
 msgstr "Đỏ"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Lục"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -23239,10 +23251,6 @@ msgid "Index of the active output"
 msgstr "Chỉ số của ngõ ra hoạt động"
 
 
-msgid "The node tree icon"
-msgstr "Biểu tượng của cây giao điểm"
-
-
 msgid "ID Name"
 msgstr "Tên ID"
 
@@ -27764,16 +27772,8 @@ msgid "Settings for image formats"
 msgstr "Cài đặt cho định dạng ảnh"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Điểm đen tham chiếu khi biến đổi log"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -29350,6 +29350,10 @@ msgstr "Bàn Phím"
 
 msgid "Mouse"
 msgstr "Chuột"
+
+
+msgid "NDOF"
+msgstr "NDOF"
 
 
 msgid "Text Input"
@@ -31587,10 +31591,6 @@ msgstr "Mặt Nạ Danh Bạ Bối Cảnh"
 
 msgid "Select Linked"
 msgstr "Chọn Được Nối"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -38746,10 +38746,6 @@ msgid "Node in a node tree"
 msgstr "Giao điểm trong một cây giao điểm"
 
 
-msgid "The node icon"
-msgstr "Biểu tượng giao điêm ̉"
-
-
 msgid "The node label"
 msgstr "Nhãn giao điểm"
 
@@ -39470,10 +39466,6 @@ msgid "Green spillmap scale"
 msgstr "Phóng to ánh xạ tràn lục"
 
 
-msgid "R"
-msgstr "Đỏ"
-
-
 msgid "Red spillmap scale"
 msgstr "Phóng to ánh xạ tràn đỏ"
 
@@ -40056,10 +40048,6 @@ msgstr "Sơn Nội"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Khoảng cách đến sơn nội (số lượng lặp lại)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -42138,6 +42126,10 @@ msgstr "BSDF Tóc"
 
 msgid "Component"
 msgstr "Thành Phần"
+
+
+msgid "Reflection"
+msgstr "Phản Xạ"
 
 
 msgid "Principled Hair BSDF"
@@ -74434,106 +74426,6 @@ msgid "Panel containing UI elements"
 msgstr "Bảng đang chứa phần tử Giao Diện"
 
 
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "Bối cảnh được sở hữu bảng. (CẦN LÀM: giải thích có thể ghép bl_context/bl_region_type/bl_space_type)"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Nếu cái này được đặt, bảng được một ID tùy chọn, nếu không bảng sẽ lấy tên của lớp được dùng để chỉ định nó. Ví dụ, nếu tên lớp là \"VẬT_THỂ_PT_xinChào\", và bl_idname chưa được văn thảo đặt, thì bl_idtên = \"VẬT_THỂ_PT_xinChào\")"
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "Nhãn bảng, xuất hiện tại phần đầu bảng phía phải của tam giác sử dụng cho tóp lại bảng"
-
-
-msgid "Options for this panel type"
-msgstr "Tùy chọn của loại bảng này"
-
-
-msgid "Default Closed"
-msgstr "Mặc Định Đóng"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "Chỉ định nếu bảng cần mở rộng hay tóp lại khi nó được chế tạo"
-
-
-msgid "Hide Header"
-msgstr "Ẩn Phần Đầu"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "Nếu đặt = Sai, bảng sẽ có một phần đầu có một mũi tên để tóp lại bảng và nhãn (xem bl_label) "
-
-
-msgid "Instanced Panel"
-msgstr "Bảng Được Thực Thể"
-
-
-msgid "Multiple panels with this type can be used as part of a list depending on data external to the UI. Used to create panels for the modifiers and other stacks"
-msgstr "Nhiều bảng loại này được dùng làm một danh sách nhờ dữ liệu ngoài cho giao diện. Được dùng để chế tạo bảng cho cụ sửa đổi và xếp đống"
-
-
-msgid "Expand Header Layout"
-msgstr "Mở Rộng Bố Trí Đầu"
-
-
-msgid "Allow buttons in the header to stretch and shrink to fill the entire layout width"
-msgstr "Cho nút trong đầu được kéo dài và rút nhỏ cho vừa đầy toàn bộ bề rộng của bố trí"
-
-
-msgid "Order"
-msgstr "Thứ Tự"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "Mặc định là bảng có số thấp hơn được lưu trước bảng có số cao hơn"
-
-
-msgid "Parent ID Name"
-msgstr "Tên ID Phụ Huynh"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "Nếu cái này được đặt, bảng được làm bảng phụ"
-
-
-msgid "Units X"
-msgstr "Đơn Vị X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "Khi được đặt, nó chỉ định bề rộng bảng"
-
-
-msgid "Custom Data"
-msgstr "Dữ Liệu Tùy Chọn"
-
-
-msgid "Panel data"
-msgstr "Dữ liệu bảng"
-
-
-msgid "Popover"
-msgstr "Nhảy Lên"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "Cho chỉ định cấu trúc của bảng trong Giao Diện"
-
-
-msgid "XXX todo"
-msgstr "XXX cần làm"
-
-
-msgid "Pin"
-msgstr "Đinh"
-
-
-msgid "Show the panel on all tabs"
-msgstr "Hiện bảng trên hết nhẵn"
-
-
 msgid "Integrator Presets"
 msgstr "Đặt Sẵn Bộ Tích Phân"
 
@@ -75548,10 +75440,6 @@ msgstr "Thư Viện Tích Sản"
 
 msgid "Development"
 msgstr "Thử Nghiệm"
-
-
-msgid "NDOF"
-msgstr "NDOF"
 
 
 msgid "Tablet"
@@ -77103,10 +76991,6 @@ msgstr "Thông Tin Đệm Chứa"
 
 msgid "Info on current cache status"
 msgstr "Thông tin về trạng thái hiện tại của đệm chứa"
-
-
-msgid "Cache is outdated"
-msgstr "Đệm chứa lỗi thời"
 
 
 msgid "Cache name"
@@ -78933,8 +78817,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "Kiểu 'bộ đằng sau' vi tính dùng với OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -79983,14 +79875,6 @@ msgstr "Kết xuất tóc bằng đường cong 3D, cho kết qủa chính xác 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Dùng số lượng phân hóa trong cắt đường cong Cốt Yếu (mũ 2)"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -92699,6 +92583,10 @@ msgid "Volume Light"
 msgstr "Đèn Thể Tích"
 
 
+msgid "AOV"
+msgstr "AOV"
+
+
 msgid "Selected StudioLight"
 msgstr "Đèn Xưởng Được Chọn"
 
@@ -96060,6 +95948,10 @@ msgstr "Thêm Ràng Buộc Xương"
 msgctxt "Operator"
 msgid "Animate Path"
 msgstr "Đường Hoạt Hình"
+
+
+msgid "Order"
+msgstr "Thứ Tự"
 
 
 msgid "Clamp Region"
@@ -102592,10 +102484,6 @@ msgid "Key %d"
 msgstr "Bức Mẫu %d"
 
 
-msgid "AOV"
-msgstr "AOV"
-
-
 msgid "Impossible to resync data-block %s and its dependencies, as its linked reference is missing"
 msgstr "Không thể đồng bộ lại cục dữ liệu %s và những đồ nhờ nó, vì tham chiếu được liên kết bị thiếu"
 
@@ -103285,6 +103173,14 @@ msgid "<Unknown Modifier>"
 msgstr "<Cụ Sửa Đổi Lạ>"
 
 
+msgid "y = (Ax + B)"
+msgstr "y = (Ax + B)"
+
+
+msgid "✕ (Ax + B)"
+msgstr "✕ (Ax + B)"
+
+
 msgid "Add Control Point"
 msgstr "Thêm Điểm Kiểm Soát"
 
@@ -103299,14 +103195,6 @@ msgstr "Thêm một điểm kiểm soát mới cho bao bì trên bức hiện t�
 
 msgid "Delete envelope control point"
 msgstr "Xóa điểm kiểm soát bao bì"
-
-
-msgid "y = (Ax + B)"
-msgstr "y = (Ax + B)"
-
-
-msgid "✕ (Ax + B)"
-msgstr "✕ (Ax + B)"
 
 
 msgid "No animation data in buffer to paste"
@@ -104303,6 +104191,10 @@ msgstr "Sai lầm khi tính toán số, xem bộ biên tập Thông Tin cho chi 
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Phím Tắt Vô Bàn Phím"
+
+
+msgid "Pin"
+msgstr "Đinh"
 
 
 msgid "Shift Left Mouse"
@@ -107601,22 +107493,6 @@ msgid "Key Frame"
 msgstr "Bức Mẫu"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Cong-F chỉ có Cụ Sửa Đổi-F"
-
-
-msgid "See Modifiers panel below"
-msgstr "Xem bảng Cụ Sửa Đổi ở dưới"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "Cong-F không có bức mẫu vì nó chỉ chứa điểm mẫu vật"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Không có bức mẫu hoạt động trên Cong-F"
-
-
 msgid "Prop:"
 msgstr "Đặc Tính:"
 
@@ -107655,6 +107531,22 @@ msgstr "Cho xem Đồ Dắt trong Bộ Biên Tập"
 
 msgid "Add Modifier"
 msgstr "Thêm Cụ Sửa Đổi"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Cong-F chỉ có Cụ Sửa Đổi-F"
+
+
+msgid "See Modifiers panel below"
+msgstr "Xem bảng Cụ Sửa Đổi ở dưới"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "Cong-F không có bức mẫu vì nó chỉ chứa điểm mẫu vật"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Không có bức mẫu hoạt động trên Cong-F"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -107822,10 +107714,6 @@ msgid "Discard"
 msgstr "Bỏ"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Trong mã nguồn Không Bậc Một, Gama:1.7"
-
-
 msgid "Select Slot"
 msgstr "Chọn Khe"
 
@@ -107840,6 +107728,10 @@ msgstr "Chọn Vòng"
 
 msgid "Select View"
 msgstr "Chọn Màn"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Trong mã nguồn Không Bậc Một, Gama:1.7"
 
 
 msgid "Can't Load Image"
@@ -109718,12 +109610,12 @@ msgid "Filter Source"
 msgstr "Nguồn Bộ Lọc"
 
 
-msgid "Modifier has baked data"
-msgstr "Cụ sửa đổi có dữ liệu đã nướng"
-
-
 msgid "Continue Without Clearing"
 msgstr "Làm Tiếp Tục Nhưng Không Xóa"
+
+
+msgid "Modifier has baked data"
+msgstr "Cụ sửa đổi có dữ liệu đã nướng"
 
 
 msgid "Stroke Fit Method"
@@ -110920,16 +110812,16 @@ msgid "Save External..."
 msgstr "Lưu Ngoại Bộ..."
 
 
-msgid "Built without Ocean modifier"
-msgstr "Xây dựng thiếu cụ sửa đổi Đại Dương"
-
-
 msgid "Coverage"
 msgstr "Sự Che Khuất"
 
 
 msgid "Delete Bake"
 msgstr "Xóa Nướng"
+
+
+msgid "Built without Ocean modifier"
+msgstr "Xây dựng thiếu cụ sửa đổi Đại Dương"
 
 
 msgid "Create Instances"
@@ -111051,16 +110943,28 @@ msgid "Crease Edges"
 msgstr "Nhăn Cạnh"
 
 
+msgid "Fac"
+msgstr "Phân Số"
+
+
+msgid "Dot"
+msgstr "Dấu Chấm"
+
+
+msgid "Val"
+msgstr "Giá Trị"
+
+
+msgid "Density Attribute"
+msgstr "Đặc Điểm Tỉ Trọng"
+
+
 msgid "Shader Editor"
 msgstr "Bộ Biên Bộ Tô Sắc"
 
 
 msgid "AO"
 msgstr "Che Khuất Bao Quanh"
-
-
-msgid "Fac"
-msgstr "Phân Số"
 
 
 msgid "Anisotropy"
@@ -111287,8 +111191,12 @@ msgid "Transmission Depth"
 msgstr "Độ Sâu Truyền"
 
 
-msgid "Dot"
-msgstr "Dấu Chấm"
+msgid "Color1"
+msgstr "Màu 1"
+
+
+msgid "Color2"
+msgstr "Màu 2"
 
 
 msgid "Color Fac"
@@ -111303,8 +111211,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Phản Xạ"
+msgid "Mortar"
+msgstr "Vữa"
+
+
+msgid "Brick Width"
+msgstr "Bề Rộng Gạch"
+
+
+msgid "Row Height"
+msgstr "Bề Cao Hàng"
 
 
 msgid "Flame"
@@ -111313,10 +111229,6 @@ msgstr "Ngón Lửa"
 
 msgid "Color Attribute"
 msgstr "Đặc Điểm Màu"
-
-
-msgid "Density Attribute"
-msgstr "Đặc Điểm Tỉ Trọng"
 
 
 msgid "Absorption Color"
@@ -111355,26 +111267,6 @@ msgid "Bricks 2"
 msgstr "Các Gạch 2"
 
 
-msgid "Mortar"
-msgstr "Vữa"
-
-
-msgid "Brick Width"
-msgstr "Bề Rộng Gạch"
-
-
-msgid "Row Height"
-msgstr "Bề Cao Hàng"
-
-
-msgid "Color1"
-msgstr "Màu 1"
-
-
-msgid "Color2"
-msgstr "Màu 2"
-
-
 msgid "Coordinate 1"
 msgstr "Tọa Độ 2"
 
@@ -111401,10 +111293,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Phóng To"
-
-
-msgid "Val"
-msgstr "Giá Trị"
 
 
 msgid ""
@@ -111575,10 +111463,6 @@ msgstr "Điểm Tựa Vật Thể"
 
 msgid "Wave Effect"
 msgstr "Hiệu Ứng Sóng"
-
-
-msgid "Paste name"
-msgstr "Dán tên"
 
 
 msgid "Blender File View"

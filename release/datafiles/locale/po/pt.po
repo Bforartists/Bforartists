@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -3909,6 +3909,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Define o modo de cor para ser usado na interpolação."
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Elementos "
 
@@ -7565,14 +7569,6 @@ msgid "Description of the item's purpose"
 msgstr "Descrição da finalidade do item."
 
 
-msgid "Icon"
-msgstr "Ícone"
-
-
-msgid "Icon of the item"
-msgstr "Ícone do item."
-
-
 msgid "Identifier"
 msgstr "Identificador"
 
@@ -9638,6 +9634,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "Coordenadas geradas centralizadas para o objeto de fluxo."
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "Usa a camada UV para as coordenadas de textura."
 
@@ -10976,12 +10976,24 @@ msgid "Red Green Blue"
 msgstr "Vermelho, verde e azul"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Vermelho"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Verde"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -14421,10 +14433,6 @@ msgid "Index of the active output"
 msgstr "Índice da saída ativa."
 
 
-msgid "The node tree icon"
-msgstr "O ícone da árvore de nós."
-
-
 msgid "ID Name"
 msgstr "Nome do identificador"
 
@@ -17783,16 +17791,8 @@ msgid "Settings for image formats"
 msgstr "Definições para formatos de imagem."
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Referência para a curva logarítmica de conversão dos pontos pretos."
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -21007,10 +21007,6 @@ msgstr "Especiais para materiais"
 
 msgid "Select Linked"
 msgstr "Selecionar vinculados(as)"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -26157,10 +26153,6 @@ msgid "Node in a node tree"
 msgstr "Nós em uma árvore de nós."
 
 
-msgid "The node icon"
-msgstr "O ícone do nó."
-
-
 msgid "The node label"
 msgstr "O rótulo do nó."
 
@@ -26769,10 +26761,6 @@ msgid "Green spillmap scale"
 msgstr "Escala de mapa de derramamento de verde."
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Escala de mapa de derramamento de vermelho."
 
@@ -27259,10 +27247,6 @@ msgstr "Pintura interna"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Distância para pintura interna (número de interações)."
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -28033,6 +28017,10 @@ msgstr "BSDF - Cabelo "
 
 msgid "Component"
 msgstr "Componente"
+
+
+msgid "Reflection"
+msgstr "Reflexão"
 
 
 msgid "Principled BSDF"
@@ -49026,10 +49014,6 @@ msgid "Active Palette Color"
 msgstr "Cor ativa da paleta"
 
 
-msgid "Pin"
-msgstr "Afixar"
-
-
 msgid "Integrator Presets"
 msgstr "Predefinições de integrador"
 
@@ -50307,10 +50291,6 @@ msgid "Info on current cache status"
 msgstr "Informações no status de cache atual."
 
 
-msgid "Cache is outdated"
-msgstr "O cache está desatualizado."
-
-
 msgid "Cache name"
 msgstr "Nome do cache."
 
@@ -51539,8 +51519,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "O tipo de suporte computacional usado com a subdivisão aberta."
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -52029,14 +52017,6 @@ msgstr "Forma do cabelo"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Número de subdivisões usadas em intersecção de curvas cardinais (elevado ao quadrado)."
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "Cast Shadow"
@@ -64697,6 +64677,10 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Atalhos não relacionados ao teclado"
 
 
+msgid "Pin"
+msgstr "Afixar"
+
+
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Somente atalhos relacionados ao teclado podem ser editados desta maneira. Em caso contrário, por favor, utilize as \"Preferências de utilizador\"."
 
@@ -66830,22 +66814,6 @@ msgid "None for Enum/Boolean"
 msgstr "Referencial nulo para enumeradores ou booleanos"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Curva-f somente possui modificadores-f"
-
-
-msgid "See Modifiers panel below"
-msgstr "Verifique o painel de modificadores abaixo."
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "A curva-f não possui quaisquer fotogramas chave uma vez que ela apenas contém pontos amostrados."
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Nenhum fotograma chave ativo na curva-f."
-
-
 msgid "Prop:"
 msgstr "Propriedades:"
 
@@ -66864,6 +66832,22 @@ msgstr "Atualizar dependências"
 
 msgid "Add Modifier"
 msgstr "Adicionar modificador"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Curva-f somente possui modificadores-f"
+
+
+msgid "See Modifiers panel below"
+msgstr "Verifique o painel de modificadores abaixo."
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "A curva-f não possui quaisquer fotogramas chave uma vez que ela apenas contém pontos amostrados."
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Nenhum fotograma chave ativo na curva-f."
 
 
 msgid "ERROR: Invalid Python expression"
@@ -66979,10 +66963,6 @@ msgid "Slot %d"
 msgstr "Núm. %d"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Codificação rígida não linear, gama: 1.7"
-
-
 msgid "Select Slot"
 msgstr "Selecionar compartimento"
 
@@ -66997,6 +66977,10 @@ msgstr "Selecionar passo"
 
 msgid "Select View"
 msgstr "Selecionar visualização"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Codificação rígida não linear, gama: 1.7"
 
 
 msgid "Can't Load Image"
@@ -68755,12 +68739,20 @@ msgid "Crease Edges"
 msgstr "Vincos das arestas"
 
 
-msgid "AO"
-msgstr "Oclusão ambiente"
-
-
 msgid "Fac"
 msgstr "Fator"
+
+
+msgid "Dot"
+msgstr "Ponto"
+
+
+msgid "Val"
+msgstr "Valor"
+
+
+msgid "AO"
+msgstr "Oclusão ambiente"
 
 
 msgid "Anisotropy"
@@ -68931,8 +68923,12 @@ msgid "Transmission Depth"
 msgstr "Profundidade de transmissão "
 
 
-msgid "Dot"
-msgstr "Ponto"
+msgid "Color1"
+msgstr "Cor 1"
+
+
+msgid "Color2"
+msgstr "Cor 2"
 
 
 msgid "Color Fac"
@@ -68947,8 +68943,16 @@ msgid "BSSRDF"
 msgstr "Função de distribuição de reflectância bidirecional na superfície."
 
 
-msgid "Reflection"
-msgstr "Reflexão"
+msgid "Mortar"
+msgstr "Massa"
+
+
+msgid "Brick Width"
+msgstr "Largura do bloco"
+
+
+msgid "Row Height"
+msgstr "Altura da coluna"
 
 
 msgid "Flame"
@@ -68969,26 +68973,6 @@ msgstr "Blocos 1"
 
 msgid "Bricks 2"
 msgstr "Blocos 2"
-
-
-msgid "Mortar"
-msgstr "Massa"
-
-
-msgid "Brick Width"
-msgstr "Largura do bloco"
-
-
-msgid "Row Height"
-msgstr "Altura da coluna"
-
-
-msgid "Color1"
-msgstr "Cor 1"
-
-
-msgid "Color2"
-msgstr "Cor 2"
 
 
 msgid "Coordinate 1"
@@ -69017,10 +69001,6 @@ msgstr "Peso de funcionalidade 4"
 
 msgid "iScale"
 msgstr "Escala de intensidade"
-
-
-msgid "Val"
-msgstr "Valor"
 
 
 msgid "Unknown py-exception, could not convert"
@@ -69143,10 +69123,6 @@ msgstr "Faixas não são compatíveis."
 
 msgid "Strips must have the same number of inputs"
 msgstr "Faixas devem possuir o mesmo número de entradas."
-
-
-msgid "Paste name"
-msgstr "Colar nome"
 
 
 msgid "Blender File View"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6308,14 +6308,6 @@ msgstr "Hmotnost efektoru víru"
 
 msgid "Wind"
 msgstr "Vítr"
-
-
-msgid "Icon"
-msgstr "Ikona"
-
-
-msgid "Icon of the item"
-msgstr "Nelze uložit soubor"
 
 
 msgid "Identifier"
@@ -18701,6 +18693,10 @@ msgstr "Vlasy BSDF"
 
 msgid "Component"
 msgstr "Komponent"
+
+
+msgid "Reflection"
+msgstr "Zrcadlení"
 
 
 msgid "Absorption Coefficient"
@@ -33490,38 +33486,6 @@ msgid "Restrict"
 msgstr "Omezit"
 
 
-msgid "Order"
-msgstr "Pořadí"
-
-
-msgid "Parent ID Name"
-msgstr "ID Název nadřazeného"
-
-
-msgid "Units X"
-msgstr "Jednotky X"
-
-
-msgid "Custom Data"
-msgstr "Vlastní data"
-
-
-msgid "Popover"
-msgstr "Vyskakovací okno"
-
-
-msgid "XXX todo"
-msgstr "XXX todo"
-
-
-msgid "Pin"
-msgstr "Připnout"
-
-
-msgid "Show the panel on all tabs"
-msgstr "Zobrazení panelu na všech kartách"
-
-
 msgid "Integrator Presets"
 msgstr "Generátory"
 
@@ -42242,6 +42206,10 @@ msgid "Animate Path"
 msgstr "Animovat Cestu"
 
 
+msgid "Order"
+msgstr "Pořadí"
+
+
 msgid "Min/Max"
 msgstr "Min/Max"
 
@@ -46362,6 +46330,10 @@ msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick) %s"
 msgstr "Potvrdit: Enter/LCKlik, Zrušit: (Esc/RKlik) %s"
 
 
+msgid "Pin"
+msgstr "Připnout"
+
+
 msgctxt "Operator"
 msgid "Change Shortcut"
 msgstr "Znaky"
@@ -47897,14 +47869,6 @@ msgid "Key Frame"
 msgstr "Klíčový snímek"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "F-Křivka má pouze F-Modifikátory"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
-
-
 msgid "Prop:"
 msgstr "Prop:"
 
@@ -47923,6 +47887,14 @@ msgstr "Přehrát animaci"
 
 msgid "Add Modifier"
 msgstr "Přidat modifikátor"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "F-Křivka má pouze F-Modifikátory"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 
 msgid "Delete target variable"
@@ -48680,12 +48652,24 @@ msgid "Replace Original"
 msgstr "Nahradit Původní"
 
 
-msgid "Shader Editor"
-msgstr "Editor Shaderů"
-
-
 msgid "Fac"
 msgstr "Fac"
+
+
+msgid "Dot"
+msgstr "Kvadratické"
+
+
+msgid "Val"
+msgstr "Hodnota"
+
+
+msgid "Density Attribute"
+msgstr "Atribut Hustoty"
+
+
+msgid "Shader Editor"
+msgstr "Editor Shaderů"
 
 
 msgid "Anisotropy"
@@ -48772,16 +48756,20 @@ msgid "Transparent Depth"
 msgstr "Hloubka Průhlednosti"
 
 
-msgid "Dot"
-msgstr "Kvadratické"
+msgid "Color1"
+msgstr "Barva 1"
 
 
-msgid "Reflection"
-msgstr "Zrcadlení"
+msgid "Color2"
+msgstr "Barva 2"
 
 
-msgid "Density Attribute"
-msgstr "Atribut Hustoty"
+msgid "Brick Width"
+msgstr "Filtr skriptů"
+
+
+msgid "Row Height"
+msgstr "Výška"
 
 
 msgid "Absorption Color"
@@ -48800,22 +48788,6 @@ msgid "Texture Node Editor"
 msgstr "Editor Uzlů Textur"
 
 
-msgid "Brick Width"
-msgstr "Filtr skriptů"
-
-
-msgid "Row Height"
-msgstr "Výška"
-
-
-msgid "Color1"
-msgstr "Barva 1"
-
-
-msgid "Color2"
-msgstr "Barva 2"
-
-
 msgid "Coordinate 1"
 msgstr "Souřadnice"
 
@@ -48826,10 +48798,6 @@ msgstr "Souřadnice"
 
 msgid "iScale"
 msgstr "iScale"
-
-
-msgid "Val"
-msgstr "Hodnota"
 
 
 msgid "Image too small"
@@ -48858,10 +48826,6 @@ msgstr "Přepne směr normál označených plošek"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Odstranit aktuální skript link"
-
-
-msgid "Paste name"
-msgstr "Nejbližší snímek"
 
 
 msgid "Don't Save"

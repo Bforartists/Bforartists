@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5086,6 +5086,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Définir le mode de couleur à utiliser pour l’interpolation"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Éléments"
 
@@ -9584,14 +9588,6 @@ msgid "Description of the item's purpose"
 msgstr "Description du but de l’élément"
 
 
-msgid "Icon"
-msgstr "Icône"
-
-
-msgid "Icon of the item"
-msgstr "Icône de l’élément"
-
-
 msgid "Identifier"
 msgstr "Identifiant"
 
@@ -12274,6 +12270,10 @@ msgid "Change the underlying simulation method"
 msgstr "Modifier la méthode de simulation sous-jacente"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Adjust slice direction according to the view direction"
 msgstr "Ajuster la direction de la coupe en fonction de la vue courante"
 
@@ -12596,10 +12596,6 @@ msgstr "Dissolution logarithmique"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "Dissoudre la fumée de façon logarithmique (rapidement d'abord, mais persiste plus longtemps)"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Create liquid particle system"
@@ -12964,6 +12960,10 @@ msgstr "Générée"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "Coordonnées générées centrées sur l’objet de flux"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -15622,12 +15622,24 @@ msgid "Red Green Blue"
 msgstr "Rouge Vert Bleu"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Rouge"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Vert"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -20169,10 +20181,6 @@ msgid "Index of the active output"
 msgstr "Indice de la sortie active"
 
 
-msgid "The node tree icon"
-msgstr "L’icône de l’arborescence de nœuds"
-
-
 msgid "ID Name"
 msgstr "Nom ID"
 
@@ -23914,16 +23922,8 @@ msgid "Settings for image formats"
 msgstr "Réglages pour les formats d’image"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Point noir de référence pour la conversion log"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -27251,10 +27251,6 @@ msgstr "Menu contextuel - Masque"
 
 msgid "Select Linked"
 msgstr "Sélectionner liés"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -32726,10 +32722,6 @@ msgid "Node in a node tree"
 msgstr "Nœuds dans une arborescence de nœuds"
 
 
-msgid "The node icon"
-msgstr "L’icône du nœud"
-
-
 msgid "The node label"
 msgstr "Le libellé du nœud"
 
@@ -33338,10 +33330,6 @@ msgid "Green spillmap scale"
 msgstr "Échelle de carte d’épandage vert"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Échelle de carte d’épandage rouge"
 
@@ -33832,10 +33820,6 @@ msgstr "Empeindre"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Distance à “empeindre” (nombre d’itérations)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -34614,6 +34598,10 @@ msgstr "BSDF Cheveux"
 
 msgid "Component"
 msgstr "Composante"
+
+
+msgid "Reflection"
+msgstr "Réflexion"
 
 
 msgid "Principled Hair BSDF"
@@ -57522,30 +57510,6 @@ msgid "Active Palette Color"
 msgstr "Couleur de palette active"
 
 
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Si défini, le panneau obtient un ID personnel, sinon il prend le nom de la classes utilisée pour le définir (par exemple, si le nom de classe est \"OBJECT_PT_hello\", et que bl_idname n’est pas défini par le script, alors bl_idname = \"OBJECT_PT_hello\")"
-
-
-msgid "Default Closed"
-msgstr "Fermé par défaut"
-
-
-msgid "Order"
-msgstr "Ordre"
-
-
-msgid "Parent ID Name"
-msgstr "Nom d’ID parent"
-
-
-msgid "Units X"
-msgstr "Unités X"
-
-
-msgid "Pin"
-msgstr "Épingler"
-
-
 msgid "Integrator Presets"
 msgstr "Pré-réglages d’intégrateur"
 
@@ -59605,10 +59569,6 @@ msgid "Info on current cache status"
 msgstr "Info sur le statut du cache courant"
 
 
-msgid "Cache is outdated"
-msgstr "Le cache est obsolète"
-
-
 msgid "Cache name"
 msgstr "Nom du cache"
 
@@ -60913,8 +60873,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "Type de “back-end” de calcul utilisé par OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -61531,14 +61499,6 @@ msgstr "Forme de cheveux"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Nombre de sub-divisions utilisées dans les intersections de courbes cardinales (puissance de 2)"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "Cast Shadow"
@@ -69728,6 +69688,10 @@ msgid "Theme"
 msgstr "Thème"
 
 
+msgid "AOV"
+msgstr "AOV"
+
+
 msgid "Viewport Shading"
 msgstr "Ombrage de vue"
 
@@ -71136,6 +71100,10 @@ msgstr "Ajouter contrainte os"
 msgctxt "Operator"
 msgid "Animate Path"
 msgstr "Animer chemin"
+
+
+msgid "Order"
+msgstr "Ordre"
 
 
 msgid "Volume Min"
@@ -74371,10 +74339,6 @@ msgid "Key %d"
 msgstr "Clé %d"
 
 
-msgid "AOV"
-msgstr "AOV"
-
-
 msgid "MaskLayer"
 msgstr "CalqueMasque"
 
@@ -75410,6 +75374,10 @@ msgstr "Copier des traits dans le presse-papier avant d’utiliser la brosse de 
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Raccourci non-clavier"
+
+
+msgid "Pin"
+msgstr "Épingler"
 
 
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
@@ -77603,22 +77571,6 @@ msgid "None for Enum/Boolean"
 msgstr "None for Enum/Boolean"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "La F-courbe n’a que des F-modificateurs"
-
-
-msgid "See Modifiers panel below"
-msgstr "Voyez le panneau Modificateurs ci-dessous"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "La F-courbe n’a aucune image clé, car elle ne contient que des points échantillonnés"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Pas d’image clé active sur la F-courbe"
-
-
 msgid "Prop:"
 msgstr "Prop :"
 
@@ -77649,6 +77601,22 @@ msgstr "Réglages de contrôleur :"
 
 msgid "Add Modifier"
 msgstr "Ajouter modificateur"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "La F-courbe n’a que des F-modificateurs"
+
+
+msgid "See Modifiers panel below"
+msgstr "Voyez le panneau Modificateurs ci-dessous"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "La F-courbe n’a aucune image clé, car elle ne contient que des points échantillonnés"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Pas d’image clé active sur la F-courbe"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -77764,10 +77732,6 @@ msgid "Slot %d"
 msgstr "Prise %d"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Non-linéaire codé en dur, gamma : 1.7"
-
-
 msgid "Select Slot"
 msgstr "Sélectionner prise"
 
@@ -77782,6 +77746,10 @@ msgstr "Sélectionner passe"
 
 msgid "Select View"
 msgstr "Sélectionner vue"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Non-linéaire codé en dur, gamma : 1.7"
 
 
 msgid "Can't Load Image"
@@ -79964,16 +79932,28 @@ msgid "Crease Edges"
 msgstr "Plis d’arêtes"
 
 
+msgid "Fac"
+msgstr "Fac"
+
+
+msgid "Dot"
+msgstr "Prod Scal"
+
+
+msgid "Val"
+msgstr "Val"
+
+
+msgid "Density Attribute"
+msgstr "Attribut de densité"
+
+
 msgid "Shader Editor"
 msgstr "Éditeur de shader"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "Fac"
 
 
 msgid "Anisotropy"
@@ -80192,8 +80172,12 @@ msgid "Transmission Depth"
 msgstr "Profondeur de transmission"
 
 
-msgid "Dot"
-msgstr "Prod Scal"
+msgid "Color1"
+msgstr "Couleur 1"
+
+
+msgid "Color2"
+msgstr "Couleur 2"
 
 
 msgid "Color Fac"
@@ -80208,8 +80192,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Réflexion"
+msgid "Mortar"
+msgstr "Mortier"
+
+
+msgid "Brick Width"
+msgstr "Largeur de brique"
+
+
+msgid "Row Height"
+msgstr "Hauteur de rangée"
 
 
 msgid "Flame"
@@ -80218,10 +80210,6 @@ msgstr "Flamme"
 
 msgid "Color Attribute"
 msgstr "Attribut de couleur"
-
-
-msgid "Density Attribute"
-msgstr "Attribut de densité"
 
 
 msgid "Absorption Color"
@@ -80260,26 +80248,6 @@ msgid "Bricks 2"
 msgstr "Briques 2"
 
 
-msgid "Mortar"
-msgstr "Mortier"
-
-
-msgid "Brick Width"
-msgstr "Largeur de brique"
-
-
-msgid "Row Height"
-msgstr "Hauteur de rangée"
-
-
-msgid "Color1"
-msgstr "Couleur 1"
-
-
-msgid "Color2"
-msgstr "Couleur 2"
-
-
 msgid "Coordinate 1"
 msgstr "Coordonnée 1"
 
@@ -80306,10 +80274,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iÉchelle"
-
-
-msgid "Val"
-msgstr "Val"
 
 
 msgid ""
@@ -80444,10 +80408,6 @@ msgstr "Les bandes doivent avoir le même nombre d’entrées"
 
 msgid "Wave Effect"
 msgstr "Effet Vague"
-
-
-msgid "Paste name"
-msgstr "Coller nom"
 
 
 msgid "Blender File View"
