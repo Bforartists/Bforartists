@@ -429,10 +429,15 @@ class SEQUENCER_MT_proxy(Menu):
 class SEQUENCER_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+
+        st = context.space_data
+
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
-        layout.operator("wm.call_menu_pie", text = "Pivot Point", icon = "MENU_PANEL").name = 'SEQUENCER_MT_pivot_pie'
+        if st.view_type == 'PREVIEW':
+            layout.operator("wm.call_menu_pie", text = "Pivot Point", icon = "MENU_PANEL").name = 'SEQUENCER_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'SEQUENCER_MT_preview_view_pie'
 
 
 class SEQUENCER_MT_view(Menu):
@@ -520,8 +525,8 @@ class SEQUENCER_MT_view(Menu):
         props.value_2 = 'PREVIEW'
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        if st.view_type == 'PREVIEW':
-            layout.menu("SEQUENCER_MT_view_pie_menus")
+
+        layout.menu("SEQUENCER_MT_view_pie_menus")
 
         layout.separator()
 
