@@ -151,6 +151,16 @@ class OUTLINER_MT_editor_menus(Menu):
             layout.operator("outliner.orphans_purge", text="Clean Up")
             layout.menu("TOPBAR_MT_file_cleanup", text = "", icon = "DOWNARROW_HLT")
 
+class OUTLINER_MT_pie_menus(Menu):
+    bl_label = "Pie Menus"
+
+    def draw(self, context):
+        layout = self.layout
+
+        space = context.space_data
+
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'OUTLINER_MT_view_pie'
+
 
 class OUTLINER_MT_view(Menu):
     bl_label = "View"
@@ -181,7 +191,7 @@ class OUTLINER_MT_view(Menu):
         layout.operator("outliner.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
-
+        layout.menu("OUTLINER_MT_pie_menus")
         layout.menu("INFO_MT_area")
 
 
@@ -558,6 +568,7 @@ classes = (
     OUTLINER_MT_object_collection,
     ALL_MT_editormenu,
     OUTLINER_MT_editor_menus,
+    OUTLINER_MT_pie_menus,
     OUTLINER_MT_view,
     OUTLINER_MT_edit_datablocks,
     OUTLINER_MT_collection,
