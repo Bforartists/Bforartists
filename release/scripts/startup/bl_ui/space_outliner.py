@@ -220,6 +220,17 @@ class OUTLINER_MT_context_menu_view(Menu):
         layout.operator("outliner.show_one_level", text = "Hide One Level", icon = "HIERARCHY_UP").open = False
 
 
+class OUTLINER_MT_view_pie(Menu):
+    bl_label = "View"
+
+    def draw(self, context):
+        layout = self.layout
+
+        pie = layout.menu_pie()
+        pie.operator("outliner.show_hierarchy")
+        pie.operator("outliner.show_active", icon='ZOOM_SELECTED')
+
+
 class OUTLINER_MT_edit_datablocks(Menu):
     bl_label = "Edit"
 
@@ -556,6 +567,7 @@ classes = (
     OUTLINER_MT_asset,
     OUTLINER_MT_context_menu,
     OUTLINER_MT_context_menu_view,
+    OUTLINER_MT_view_pie,
     OUTLINER_PT_filter,
 )
 

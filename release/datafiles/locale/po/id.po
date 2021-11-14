@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -4389,6 +4389,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Set mode warna digunakan untuk interpolasi"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Elemen"
 
@@ -7015,14 +7019,6 @@ msgid "Wind effector weight"
 msgstr "Beban efektor angin"
 
 
-msgid "Icon"
-msgstr "Ikon"
-
-
-msgid "Icon of the item"
-msgstr "Ikon item"
-
-
 msgid "Identifier"
 msgstr "Pengenal"
 
@@ -8227,6 +8223,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "Partikel"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Absolute Density"
 msgstr "Kepadatan Absolut"
 
@@ -9151,12 +9151,24 @@ msgid "Red Green Blue"
 msgstr "Merah Hijau Biru"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Merah"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Hijau"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -10045,10 +10057,6 @@ msgid "Index of the active output"
 msgstr "Indeks keluaran aktif"
 
 
-msgid "The node tree icon"
-msgstr "Ikon pohon node"
-
-
 msgid "ID Name"
 msgstr "Nama ID"
 
@@ -10736,14 +10744,6 @@ msgid "Auto Step"
 msgstr "Langkah Auto"
 
 
-msgid "B"
-msgstr "B"
-
-
-msgid "G"
-msgstr "G"
-
-
 msgid "Color Depth"
 msgstr "Kedalaman Warna"
 
@@ -11326,6 +11326,10 @@ msgid "Mouse"
 msgstr "Mouse"
 
 
+msgid "NDOF"
+msgstr "NDOF"
+
+
 msgid "Text Input"
 msgstr "Input Teks"
 
@@ -11893,10 +11897,6 @@ msgstr "Tambahkan Atribut"
 
 msgid "Select Linked"
 msgstr "Seleksi yang Terhubung"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgctxt "Operator"
@@ -13410,10 +13410,6 @@ msgid "Node in a node tree"
 msgstr "Node di pohon node"
 
 
-msgid "The node icon"
-msgstr "Ikon node"
-
-
 msgid "The node label"
 msgstr "Label node"
 
@@ -13850,10 +13846,6 @@ msgid "Scale limit by value"
 msgstr "Skalakan batas oleh nilai"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Combine HSVA"
 msgstr "Gabungkan HSVA"
 
@@ -14052,10 +14044,6 @@ msgstr "Nilai Saturasi Hue"
 
 msgid "ID Mask"
 msgstr "ID Mask"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Clip Black"
@@ -20413,10 +20401,6 @@ msgstr "Aplikasi"
 
 msgid "Development"
 msgstr "Pengembangan"
-
-
-msgid "NDOF"
-msgstr "NDOF"
 
 
 msgid "Tablet"
@@ -26989,12 +26973,24 @@ msgid "Replace Original"
 msgstr "Gantikan yang Original"
 
 
-msgid "AO"
-msgstr "AO"
-
-
 msgid "Fac"
 msgstr "Fac"
+
+
+msgid "Dot"
+msgstr "Titik"
+
+
+msgid "Val"
+msgstr "Val"
+
+
+msgid "Density Attribute"
+msgstr "Atribut Densitas"
+
+
+msgid "AO"
+msgstr "AO"
 
 
 msgid "Random Color"
@@ -27049,12 +27045,24 @@ msgid "Is Transmission Ray"
 msgstr "Orientasi Transformasi"
 
 
-msgid "Dot"
-msgstr "Titik"
+msgid "Color1"
+msgstr "Warna1"
+
+
+msgid "Color2"
+msgstr "Warna2"
 
 
 msgid "Color Fac"
 msgstr "Fac Warna"
+
+
+msgid "Brick Width"
+msgstr "Lebar"
+
+
+msgid "Row Height"
+msgstr "Tinggi"
 
 
 msgid "Flame"
@@ -27063,10 +27071,6 @@ msgstr "Api"
 
 msgid "Color Attribute"
 msgstr "Atribut Warna"
-
-
-msgid "Density Attribute"
-msgstr "Atribut Densitas"
 
 
 msgid "Absorption Color"
@@ -27091,22 +27095,6 @@ msgstr "Batu Bata 1"
 
 msgid "Bricks 2"
 msgstr "Batu Bata 2"
-
-
-msgid "Brick Width"
-msgstr "Lebar"
-
-
-msgid "Row Height"
-msgstr "Tinggi"
-
-
-msgid "Color1"
-msgstr "Warna1"
-
-
-msgid "Color2"
-msgstr "Warna2"
 
 
 msgid "Coordinate 1"
@@ -27135,10 +27123,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
-
-
-msgid "Val"
-msgstr "Val"
 
 
 msgid ""
@@ -27203,10 +27187,6 @@ msgstr "Pivot Objek"
 
 msgid "Wave Effect"
 msgstr "Efek Gelombang"
-
-
-msgid "Paste name"
-msgstr "Tekstur"
 
 
 msgid "Blender File View"
