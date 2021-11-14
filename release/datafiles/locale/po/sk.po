@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-10-26 17:41+0200\n"
+"PO-Revision-Date: 2021-11-02 09:06+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -5463,6 +5463,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Nastavenie farebného režimu na použitie pre interpoláciu"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Prvky"
 
@@ -10223,14 +10227,6 @@ msgid "Description of the item's purpose"
 msgstr "Popis účelu položky"
 
 
-msgid "Icon"
-msgstr "Ikona"
-
-
-msgid "Icon of the item"
-msgstr "Ikona položky"
-
-
 msgid "Identifier"
 msgstr "Identifikátor"
 
@@ -13253,6 +13249,10 @@ msgid "Change the underlying simulation method"
 msgstr "Zmena základnej simulačnej metódy"
 
 
+msgid "FLIP"
+msgstr "Rozstrek"
+
+
 msgid "Use FLIP as the simulation method (more splashy behavior)"
 msgstr "Použije ako simulačnú metódu Rozstrek (špliechavejšie správanie)"
 
@@ -13599,10 +13599,6 @@ msgstr "Logaritmické rozplývanie"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "Dym sa rozplynie logaritmickým spôsobom. Najskôr sa rýchlo rozplýva, avšak dlhšie zotrváva"
-
-
-msgid "FLIP"
-msgstr "Rozstrek"
 
 
 msgid "Create liquid particle system"
@@ -14027,6 +14023,10 @@ msgstr "Vygenerované"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "Vygenerované súradnice vystredené na objekt prúdenia"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -15763,6 +15763,10 @@ msgid "GizmoGroup has a set of reports (warnings and errors) from last execution
 msgstr "Skupina manipulátorov polohy má nastavené správy (varovania a chyby) od posledného vykonania"
 
 
+msgid "VR Controller Poses Indicator"
+msgstr "Indikátor pózy VR ovládača"
+
+
 msgid "VR Landmark Indicators"
 msgstr "Indikátory orientačných bodov VR"
 
@@ -16601,6 +16605,14 @@ msgid "Strength of smoothing applied on jagged chains"
 msgstr "Sila vyhladzovania použitá na členité reťaze"
 
 
+msgid "Camera Object"
+msgstr "Objekt kamery"
+
+
+msgid "Use specified camera object for generating line art"
+msgstr "Použije zadaný objekt kamery na vygenerovanie čiarovej grafiky"
+
+
 msgid "Generate strokes from the objects in this collection"
 msgstr "Vygeneruje ťahy z objektov v tejto kolekcii"
 
@@ -16631,6 +16643,14 @@ msgstr "Delenie uhla"
 
 msgid "Angle in screen space below which a stroke is split in two"
 msgstr "Uhol v priestore obrazovky, pod ktorým je ťah rozdelený na dve časti"
+
+
+msgid "Stroke Depth Offset"
+msgstr "Posuv hĺbky ťahu"
+
+
+msgid "Move strokes slightly towards the camera to avoid clipping while preserve depth for the viewport"
+msgstr "Posúva ťahy mierne smerom ku kamere, aby ste sa vyhli orezaniu a zároveň zachovali hĺbku zobrazenia"
 
 
 msgid "Grease Pencil layer assigned to the generated strokes"
@@ -16687,6 +16707,14 @@ msgstr "Záhyby na vyhladených povrchoch"
 
 msgid "Allow crease edges to show inside smooth surfaces"
 msgstr "Umožní zobrazovať záhyby hrán vnútri vyhladených povrchov"
+
+
+msgid "Use Custom Camera"
+msgstr "Použiť vlastnú kameru"
+
+
+msgid "Use custom camera instead of the active camera"
+msgstr "Použije vlastnú kameru namiesto aktívnej kamery"
 
 
 msgid "Use Edge Mark"
@@ -16747,6 +16775,14 @@ msgstr "Použiť geometrický priestor"
 
 msgid "Use geometry distance for chaining instead of image space"
 msgstr "Používa geometrickú vzdialenosť na reťazenie namiesto priestoru obrázku"
+
+
+msgid "Image Boundary Trimming"
+msgstr "Orezávanie okrajov obrázku"
+
+
+msgid "Trim all edges right at the boundary of image(including overscan region)"
+msgstr "Oreže všetky hrany priamo na okraji obrázku (vrátane oblasti presahu snímania)"
 
 
 msgid "Use Intersection"
@@ -16835,6 +16871,14 @@ msgstr "Vytvorené inštancie objektov"
 
 msgid "Support particle objects and face/vertex instances to show in line art"
 msgstr "Podporuje zobrazovanie objektov častíc a inštancií plôšok/vertexov v čiarovej grafike"
+
+
+msgid "Offset Towards Custom Camera"
+msgstr "Posuv smerom k vlastnej kamere"
+
+
+msgid "Offset strokes towards selected camera instead of the active camera"
+msgstr "Posunie ťahy smerom k vybranej kamere namiesto aktívnej kamery"
 
 
 msgid "Match Output"
@@ -17613,12 +17657,24 @@ msgid "Red Green Blue"
 msgstr "Červená Zelená Modrá"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Červená"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Zelená"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -23508,10 +23564,6 @@ msgid "Index of the active output"
 msgstr "Index aktívneho výstupu"
 
 
-msgid "The node tree icon"
-msgstr "Ikona uzla stromu"
-
-
 msgid "ID Name"
 msgstr "Názov ID"
 
@@ -26183,6 +26235,30 @@ msgid "Color management settings applied on image before saving"
 msgstr "Nastavenia správy farieb aplikovanej na obrázok pred uložením"
 
 
+msgid "Use Controller Actions"
+msgstr "Použiť akcie ovládača"
+
+
+msgid "Enable default VR controller actions, including controller poses and haptics"
+msgstr "Povolí predvolené akcie ovládača VR vrátane póz ovládača a hmatových"
+
+
+msgid "Enable bindings for the HTC Vive Cosmos controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "Povolí väzby pre ovládače HTC Vive Cosmos. Všimnite si, že toto nemusia podporovať všetky bežiace programy OpenXR"
+
+
+msgid "Enable bindings for the Huawei controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "Povolí väzby pre ovládače Huawei. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
+
+
+msgid "Enable bindings for the HP Reverb G2 controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "Povolí väzby pre ovládače HP Reverb G2. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
+
+
+msgid "Use input from gamepad (Microsoft Xbox Controller) instead of motion controllers"
+msgstr "Používanie vstupu z gamepadu (ovládača Microsoft Xbox Controller) namiesto ovládačov pohybu"
+
+
 msgid "Landmark"
 msgstr "Orientačný bod"
 
@@ -28041,16 +28117,8 @@ msgid "Settings for image formats"
 msgstr "Nastavenia obrázkových formátov"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Záznam konverzie odkazu čierneho bodu"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -29640,6 +29708,10 @@ msgstr "Klávesnica"
 
 msgid "Mouse"
 msgstr "Myš"
+
+
+msgid "NDOF"
+msgstr "NDOF"
 
 
 msgid "Text Input"
@@ -31901,10 +31973,6 @@ msgstr "Kontextová ponuka masky"
 
 msgid "Select Linked"
 msgstr "Vybrať prepojené"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -39080,10 +39148,6 @@ msgid "Node in a node tree"
 msgstr "Uzol v strome uzlov"
 
 
-msgid "The node icon"
-msgstr "Ikona uzla"
-
-
 msgid "The node label"
 msgstr "Menovka uzla"
 
@@ -39804,10 +39868,6 @@ msgid "Green spillmap scale"
 msgstr "Mierka mapy rozliatia zelenej"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Mierka mapy rozliatia červenej"
 
@@ -40406,10 +40466,6 @@ msgstr "Domaľovať"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Vzdialenosť pre domaľovanie (počet opakovaní)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -42581,6 +42637,10 @@ msgid "Set Curve Tilt"
 msgstr "Nastaviť sklon krivky"
 
 
+msgid "Set ID"
+msgstr "Nastaviť ID"
+
+
 msgid "Set Material"
 msgstr "Nastaviť materiál"
 
@@ -42602,7 +42662,7 @@ msgstr "Nastaviť vyhladenie tieňa"
 
 
 msgid "Set Spline Cyclic"
-msgstr "Nastaviť cyklickej drážky"
+msgstr "Nastaviť cyklickú drážku"
 
 
 msgid "Set Spline Resolution"
@@ -42852,6 +42912,10 @@ msgstr "BSDF Vlasy"
 
 msgid "Component"
 msgstr "Komponent"
+
+
+msgid "Reflection"
+msgstr "Zrkadlenie"
 
 
 msgid "Principled Hair BSDF"
@@ -45356,6 +45420,15 @@ msgstr "Zrušiť výber skôr vybraných položiek"
 
 msgid "Extend selection instead of deselecting everything first"
 msgstr "Rozšíri výber namiesto odstránenia všetkých prvých"
+
+
+msgctxt "Operator"
+msgid "Filter Channels"
+msgstr "Filtrovať kanály"
+
+
+msgid "Start entering text which filters the set of channels shown to only include those with matching names"
+msgstr "Začať zadávať text, ktorý filtruje súbor zobrazených kanálov tak, aby obsahoval iba kanály so zhodnými názvami"
 
 
 msgctxt "Operator"
@@ -50385,6 +50458,15 @@ msgstr "Pokojová snímka"
 
 msgid "Write the rest state at the first frame"
 msgstr "Zapíše stav pokoja po prvej snímke"
+
+
+msgctxt "Operator"
+msgid "Refresh Asset Library"
+msgstr "Obnoviť knižnicu aktív"
+
+
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Opätovne načíta aktíva a katalógy aktív z knižnice aktív na disku"
 
 
 msgctxt "Operator"
@@ -56830,6 +56912,10 @@ msgid "X-Ray"
 msgstr "Röntgen"
 
 
+msgid "Show cuts hidden by geometry"
+msgstr "Zobrazí rezy skryté geometriou"
+
+
 msgctxt "Operator"
 msgid "Multi Select Loops"
 msgstr "Viacnásobný výber slučiek"
@@ -60467,6 +60553,14 @@ msgid "Add a Grease Pencil object to the scene"
 msgstr "Pridá objekt pastelky na scénu"
 
 
+msgid "Stroke offset for the line art modifier"
+msgstr "Posunúť ťah pre modifikátor čiarovej grafiky"
+
+
+msgid "Defines how the strokes are ordered in 3D space for objects not displayed 'In Front')"
+msgstr "Definuje, ako sú ťahy usporiadané v 3D priestore pre objekty, ktoré nie sú zobrazené \"Vpredu\")"
+
+
 msgid "Create an empty grease pencil object"
 msgstr "Vytvoriť prázdny objekt pastelky"
 
@@ -60501,6 +60595,10 @@ msgstr "Rýchle nastavenie čiarovej grafiky aktívnej kolekcie"
 
 msgid "Quickly set up line art for the active object"
 msgstr "Rýchle nastavenie čiarovej grafiky aktívneho objektu"
+
+
+msgid "Show In Front"
+msgstr "Zobraziť vpredu"
 
 
 msgid "Show line art grease pencil in front of everything"
@@ -62433,6 +62531,19 @@ msgstr "Interaktívna svetelná stopa na kurzor"
 
 msgid "Interactively point cameras and lights to a location (Ctrl translates)"
 msgstr "Interaktívne zameria kamery a svetlá na polohu (Ctrl presúva)"
+
+
+msgctxt "Operator"
+msgid "Place Object Under Mouse"
+msgstr "Umiestniť objekt pod myš"
+
+
+msgid "Snap selected item(s) to the mouse location"
+msgstr "Prichytí vybranú položku (položky) na polohu myši"
+
+
+msgid "Object name to place (when unset use the active object)"
+msgstr "Názov objektu na umiestnenie (ak nie je nastavený, použije sa aktívny objekt)"
 
 
 msgctxt "Operator"
@@ -67121,8 +67232,17 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Odstráni nepoužívané nastavenia pre neviditeľné editory"
 
 
+msgctxt "Operator"
+msgid "Open Preferences..."
+msgstr "Otvoriť Predvoľby..."
+
+
 msgid "Edit user preferences and system settings"
 msgstr "Úprava predvolieb užívateľov a systémových nastavení"
+
+
+msgid "Section to activate in the Preferences"
+msgstr "Sekcia na aktiváciu v Predvoľbách"
 
 
 msgid "Themes"
@@ -72751,8 +72871,18 @@ msgid "Add a new VR landmark to the list and select it"
 msgstr "Pridá do zoznamu nový orientačný bod VR a vyberie ho"
 
 
+msgctxt "Operator"
+msgid "Add VR Landmark from Camera"
+msgstr "Pridať orientačný bod VR z kamery"
+
+
 msgid "Add a new VR landmark from the active camera object to the list and select it"
 msgstr "Pridá do zoznamu nový orientačný bod VR z aktívneho objektu kamery a vyberie ho"
+
+
+msgctxt "Operator"
+msgid "Add VR Landmark from Session"
+msgstr "Pridať orientačný bod VR z relácie"
 
 
 msgid "Add VR landmark from the viewer pose of the running VR session to the list and select it"
@@ -74282,6 +74412,38 @@ msgid "Property name edit"
 msgstr "Upraviť názov vlastnosti"
 
 
+msgid "A single floating-point value"
+msgstr "Jedna hodnota s pohyblivou desatinnou čiarkou"
+
+
+msgid "Float Array"
+msgstr "Pole na pohyblivej čiarke"
+
+
+msgid "An array of floating-point values"
+msgstr "Pole hodnôt s pohyblivou desatinnou čiarkou"
+
+
+msgid "A single integer"
+msgstr "Jedno celé číslo"
+
+
+msgid "Integer Array"
+msgstr "Pole celých čísel"
+
+
+msgid "An array of integers"
+msgstr "Pole celých čísel"
+
+
+msgid "A string value"
+msgstr "Hodnota raťazca"
+
+
+msgid "Edit a python value directly, for unsupported property types"
+msgstr "Priama úprava hodnoty jazyka Python pre nepodporované typy vlastností"
+
+
 msgid "Soft Max"
 msgstr "Mäkkosť Maximum"
 
@@ -74300,6 +74462,19 @@ msgstr "Použiť mäkké limity"
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
 msgstr "Limit hodnoty vlastnosti jazdca pre rozsah, hodnoty mimo rozsah sa musia zadávať číselne"
+
+
+msgctxt "Operator"
+msgid "Edit Property Value"
+msgstr "Upraviť hodnotu vlastnosti"
+
+
+msgid "Edit the value of a custom property"
+msgstr "Upraví hodnotu užívateľskej vlastnosti"
+
+
+msgid "Value for custom property types that can only be edited as a Python expression"
+msgstr "Hodnota pre užívateľské typy vlastností, ktoré možno upravovať len ako výraz jazyka Python"
 
 
 msgctxt "Operator"
@@ -75060,6 +75235,258 @@ msgstr "Vytvorí nové hlavné okna s vlastným pracovným priestorom a výberom
 
 
 msgctxt "Operator"
+msgid "XR Navigation Fly"
+msgstr "Navigácia letu XR"
+
+
+msgid "Move/turn relative to the VR viewer or controller"
+msgstr "Pohyb/otáčanie vzhľadom na diváka alebo riadiaceho VR"
+
+
+msgid "Lock Direction"
+msgstr "Zamknúť smer"
+
+
+msgid "Limit movement to viewer's initial direction"
+msgstr "Limituje pohyb na počiatočný smer diváka"
+
+
+msgid "Lock Elevation"
+msgstr "Zamknúť stúpanie"
+
+
+msgid "Prevent changes to viewer elevation"
+msgstr "Zabráni zmenám výšky diváka"
+
+
+msgid "Fly mode"
+msgstr "Režim lietania"
+
+
+msgid "Move along navigation forward axis"
+msgstr "Pohyb po navigačnej osi dopredu"
+
+
+msgid "Move along navigation back axis"
+msgstr "Pohyb po navigačnej osi dozadu"
+
+
+msgid "Move along navigation left axis"
+msgstr "Pohyb po navigačnej osi vľavo"
+
+
+msgid "Move along navigation right axis"
+msgstr "Pohyb po navigačnej osi vpravo"
+
+
+msgid "Move along navigation up axis"
+msgstr "Pohyb po navigačnej osi nahor"
+
+
+msgid "Move along navigation down axis"
+msgstr "Pohyb po navigačnej osi nadol"
+
+
+msgid "Turn Left"
+msgstr "Otočiť doľava"
+
+
+msgid "Turn counter-clockwise around navigation up axis"
+msgstr "Otáča proti smeru hodinových ručičiek okolo navigačnej osi nahor"
+
+
+msgid "Turn Right"
+msgstr "Otočiť doprava"
+
+
+msgid "Turn clockwise around navigation up axis"
+msgstr "Otáča v smere hodinových ručičiek okolo navigačnej osi nahor"
+
+
+msgid "Viewer Forward"
+msgstr "Divák dopredu"
+
+
+msgid "Move along viewer's forward axis"
+msgstr "Pohyb pozdĺž osi diváka dopredu"
+
+
+msgid "Viewer Back"
+msgstr "Divák dozadu"
+
+
+msgid "Move along viewer's back axis"
+msgstr "Pohyb pozdĺž osi diváka dozadu"
+
+
+msgid "Viewer Left"
+msgstr "Divák vľavo"
+
+
+msgid "Move along viewer's left axis"
+msgstr "Pohyb pozdĺž osi diváka vľavo"
+
+
+msgid "Viewer Right"
+msgstr "Divák vpravo"
+
+
+msgid "Move along viewer's right axis"
+msgstr "Pohyb pozdĺž osi diváka vpravo"
+
+
+msgid "Controller Forward"
+msgstr "Riadiaci dopredu"
+
+
+msgid "Move along controller's forward axis"
+msgstr "Pohyb pozdĺž osi riadiaceho dopredu"
+
+
+msgid "Frame Based Speed"
+msgstr "Rýchlosť na základe snímky"
+
+
+msgid "Apply fixed movement deltas every update"
+msgstr "Použitie pevných delt pohybu pri každej aktualizácii"
+
+
+msgid "Speed Interpolation 0"
+msgstr "Interpolácia rýchlosti 0"
+
+
+msgid "First cubic spline control point between min/max speeds"
+msgstr "Prvý riadiaci bod kubickej drážky medzi min/max rýchlosťami"
+
+
+msgid "Speed Interpolation 1"
+msgstr "Interpolácia rýchlosti 1"
+
+
+msgid "Second cubic spline control point between min/max speeds"
+msgstr "Druhý riadiaci bod kubickej drážky medzi min/max rýchlosťami"
+
+
+msgid "Maximum Speed"
+msgstr "Maximálna rýchlosť"
+
+
+msgid "Maximum move (turn) speed in meters (radians) per second or frame"
+msgstr "Maximálna rýchlosť pohybu (otáčania) v metroch (radiánoch) za sekundu alebo snímky"
+
+
+msgid "Minimum Speed"
+msgstr "Minimálna rýchlosť"
+
+
+msgid "Minimum move (turn) speed in meters (radians) per second or frame"
+msgstr "Minimálna rýchlosť pohybu (otáčania) v metroch (radiánoch) za sekundu alebo snímky"
+
+
+msgctxt "Operator"
+msgid "XR Navigation Grab"
+msgstr "Navigácia XR uchopením"
+
+
+msgid "Navigate the VR scene by grabbing with controllers"
+msgstr "Pohybuje sa po scéne VR podľa uchopenia riadiacimi"
+
+
+msgid "Prevent changes to viewer location"
+msgstr "Zabráni zmenám umiestnenia diváka"
+
+
+msgid "Prevent changes to viewer rotation"
+msgstr "Zabráni zmenám v otáčania diváka"
+
+
+msgid "Lock Up Orientation"
+msgstr "Uzamknúť orientáciu"
+
+
+msgid "Prevent changes to viewer up orientation"
+msgstr "Zabráni zmenám orientácie diváka nahor"
+
+
+msgid "Prevent changes to viewer scale"
+msgstr "Zabráni zmenám mierky diváka"
+
+
+msgctxt "Operator"
+msgid "XR Navigation Reset"
+msgstr "Obnoviť navigáciu XR"
+
+
+msgid "Reset VR navigation deltas relative to session base pose"
+msgstr "Obnovení delty pre navigáciu VR vzhľadom na reláciu základnej pózy"
+
+
+msgid "Reset location deltas"
+msgstr "Obnoví delty umiestnenia"
+
+
+msgid "Reset rotation deltas"
+msgstr "Obnoví delty rotácie"
+
+
+msgid "Reset scale deltas"
+msgstr "Obnoví delty mierky"
+
+
+msgctxt "Operator"
+msgid "XR Navigation Teleport"
+msgstr "Teleport navigácie XR"
+
+
+msgid "Set VR viewer location to controller raycast hit location"
+msgstr "Nastaví umiestnenia diváka VR na umiestnenie vrhnutia lúča riadiaceho"
+
+
+msgid "Raycast axis in controller/viewer space"
+msgstr "Os vrhnutia lúča v priestore riadiaceho/diváka"
+
+
+msgid "Raycast color"
+msgstr "Farba vrhnutého lúča"
+
+
+msgid "Maximum raycast distance"
+msgstr "Maximálna vzdialenosť vrhnutia lúčov"
+
+
+msgid "From Viewer"
+msgstr "Od diváka"
+
+
+msgid "Use viewer pose as raycast origin"
+msgstr "Použije pózu diváka ako počiatok vrhnutia lúča"
+
+
+msgid "Interpolation factor between viewer and hit locations"
+msgstr "Faktor interpolácie medzi miestom diváka a miestom zásahu"
+
+
+msgid "Offset along hit normal to subtract from final location"
+msgstr "Posuv pozdĺž normály zásahu na odčítanie od konečného umiestnenia"
+
+
+msgid "Selectable Only"
+msgstr "Iba voliteľné"
+
+
+msgid "Only allow selectable objects to influence raycast result"
+msgstr "Umožniť len vybraným objektom ovplyvniť výsledok vrhnutia lúčov"
+
+
+msgid "Teleport Axes"
+msgstr "Osi teleportu"
+
+
+msgid "Enabled teleport axes in navigation space"
+msgstr "Povolený teleport osí v priestore navigácie"
+
+
+msgctxt "Operator"
 msgid "Toggle VR Session"
 msgstr "Prepnúť reláciu VR"
 
@@ -75633,106 +76060,6 @@ msgstr "Aktívnej paleta farby"
 
 msgid "Panel containing UI elements"
 msgstr "Panel obsahujúci prvky užívateľského rozhrania"
-
-
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "Kontext, do ktorého panel patrí. (Komentár: vysvetľuje možné kombinácie bl_context/bl_region_type/bl_space_type)"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Ak je nastavené, panel dostane vlastný ID, inak to získa názov triedy použitej na definovanie panelu. Napríklad, ak názov triedy je \"OBJECT_PT_hello\" a bl_idname nie je nastavený skript, potom bl_idname = \"OBJECT_PT_hello\""
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "Menovka panelu, ktorý sa zobrazí v záhlaví panelu napravo od trojuholníka použitého na zbalenie panelu"
-
-
-msgid "Options for this panel type"
-msgstr "Možnosti pre tento typ panelu"
-
-
-msgid "Default Closed"
-msgstr "Predvolene zatvorené"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "Definuje, či je panel otvorený alebo zvinutý v čase jeho vytvorenia"
-
-
-msgid "Hide Header"
-msgstr "Skryť záhlavie"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "Ak je nastavená hodnota Nepravda, panel zobrazuje záhlavie, ktorá obsahuje klikateľnú šípku na zbalenie panelu a menovky (pozri bl_label)"
-
-
-msgid "Instanced Panel"
-msgstr "Rozšírený panel"
-
-
-msgid "Multiple panels with this type can be used as part of a list depending on data external to the UI. Used to create panels for the modifiers and other stacks"
-msgstr "Viacnásobné panely tohto typu sa môžu použiť ako súčasť zoznamu v závislosti od údajov mimo UI. Používajú sa na vytvorenie panelov pre modifikátory a ďalšie sklady"
-
-
-msgid "Expand Header Layout"
-msgstr "Rozbaliť vrstvu záhlavia"
-
-
-msgid "Allow buttons in the header to stretch and shrink to fill the entire layout width"
-msgstr "Povolí tlačidlám v záhlaví sa rozťahovať a zmršťovať tak, aby vyplnili celú šírku rozloženia"
-
-
-msgid "Order"
-msgstr "Poradie"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "Panely s nižšími číslami sú štandardne zaradené pred panelmi s vyšším číslom"
-
-
-msgid "Parent ID Name"
-msgstr "Názov nadradeného identifikátora"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "Ak je toto nastavené, panel sa stane podpanelom"
-
-
-msgid "Units X"
-msgstr "Jednotky X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "Pri nastavení definuje šírku vyskakovacieho panela"
-
-
-msgid "Custom Data"
-msgstr "Vlastné údaje"
-
-
-msgid "Panel data"
-msgstr "Údaje panela"
-
-
-msgid "Popover"
-msgstr "Plávajúci panel"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "Definuje štruktúru panelu v užívateľskom rozhraní"
-
-
-msgid "XXX todo"
-msgstr "XXX komentár"
-
-
-msgid "Pin"
-msgstr "Pripnúť"
-
-
-msgid "Show the panel on all tabs"
-msgstr "Zobraziť panel na všetkých kartách"
 
 
 msgid "Integrator Presets"
@@ -76759,10 +77086,6 @@ msgid "Development"
 msgstr "Vývoj"
 
 
-msgid "NDOF"
-msgstr "NDOF"
-
-
 msgid "Tablet"
 msgstr "Tablet"
 
@@ -77484,6 +77807,10 @@ msgstr "Zamknúť zobrazenie"
 
 msgid "VR"
 msgstr "Virtuálna realita VR"
+
+
+msgid "Action Maps"
+msgstr "Mapy akcií"
 
 
 msgid "Landmarks"
@@ -78356,10 +78683,6 @@ msgstr "Informácie o zásobníku"
 
 msgid "Info on current cache status"
 msgstr "Informácie o aktuálnom stave zásobníka"
-
-
-msgid "Cache is outdated"
-msgstr "Zásobník je zastaralý"
 
 
 msgid "Cache name"
@@ -80254,8 +80577,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "Typ koncového výpočtu používajúceho knižnicu OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -81306,14 +81637,6 @@ msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Počet delení použitých v pretnutí zásadnej krivky (výkon 2)"
 
 
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
 msgid "OptiX"
 msgstr "OptiX"
 
@@ -81578,8 +81901,16 @@ msgid "Minimum AA samples for adaptive sampling, to discover noisy features befo
 msgstr "Minimálny počet snímok AA pre adaptívne snímanie, aby sa odhalili rušivé prvky pred zastavením snímania. Nula pre automatické nastavenie na základe prahu šumu"
 
 
+msgid "Adaptive Scrambling Distance"
+msgstr "Vzdialenosť prispôsobiteľného snímania"
+
+
+msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
+msgstr "Používa vzorec na prispôsobenie sily vzdialenosti snímania na základe počtu snímok"
+
+
 msgid "Adaptive Sampling Threshold"
-msgstr "Prah prispôsobiteľného snímkovania"
+msgstr "Prah prispôsobiteľného snímania"
 
 
 msgid "Noise level step to stop sampling at, lower values reduce noise at the cost of render time. Zero for automatic setting based on number of AA samples"
@@ -81830,6 +82161,22 @@ msgid "Cull objects which are further away from camera than this distance"
 msgstr "Vyradí objekty, ktoré sú ďalej od kamery, ako je táto vzdialenosť"
 
 
+msgid "Fast GI Method"
+msgstr "Metóda rýchleho GI"
+
+
+msgid "Fast GI approximation method"
+msgstr "Metóda rýchlej aproximácie GI"
+
+
+msgid "Replace global illumination with ambient occlusion after a specified number of bounces"
+msgstr "Nahradí globálne osvetlenie pohlcovaním okolia po zadanom počte odrazov"
+
+
+msgid "Add ambient occlusion to diffuse surfaces"
+msgstr "Pridanie pohlcovanie okolím do difúznych povrchov"
+
+
 msgid "Feature Set"
 msgstr "Sústava funkcií"
 
@@ -82038,6 +82385,14 @@ msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "Počet snímok na prekreslenie v zábere, nelimitované ak je 0"
 
 
+msgid "Scrambling Distance viewport"
+msgstr "Vzdialenosť snímania záberu"
+
+
+msgid "Uses the Scrambling Distance value for the viewport. Faster but may flicker"
+msgstr "Používa hodnotu Vzdialenosť snímania pre záber. Rýchlejšie, ale môže blikať"
+
+
 msgid "Rolling Shutter Duration"
 msgstr "Trvanie posúvania uzávierky"
 
@@ -82104,6 +82459,14 @@ msgstr "Progresívne viacnásobné chvenie"
 
 msgid "Use Progressive Multi-Jitter random sampling pattern"
 msgstr "Použije náhodný vzor snímkovania Progresívneho viacnásobného chvenia (Multi-Jitter)"
+
+
+msgid "Scrambling Distance"
+msgstr "Vzdialenosť snímania"
+
+
+msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
+msgstr "Nižšie hodnoty umožňujú rýchlejšie prekresľovanie pri GPU prekresľovaní a menej šumu pri všetkých zariadeniach za cenu možných artefaktov, ak sú nastavené príliš nízko. Funguje len vtedy, keď sa nepoužíva adaptívne snímania"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -82842,6 +83205,14 @@ msgid "Base Pose Location"
 msgstr "Poloha základnej pózy"
 
 
+msgid "Base Scale"
+msgstr "Základná mierka"
+
+
+msgid "Viewer reference scale associated with this landmark"
+msgstr "Referenčná mierka diváka spojená s týmto orientačným bodom"
+
+
 msgid "VR Landmark"
 msgstr "Orientačný bod VR"
 
@@ -82852,6 +83223,10 @@ msgstr "Kamera scény"
 
 msgid "Use scene's currently active camera to define the VR view base location and rotation"
 msgstr "Použitím aktuálnej aktívnej kamery scény na určenie základnej polohy a rotácie zobrazenia VR"
+
+
+msgid "Use an existing object to define the VR view base location and rotation"
+msgstr "Použitie existujúceho objektu na definovanie polohy a rotácie základného zobrazenia VR"
 
 
 msgid "Custom Pose"
@@ -91691,6 +92066,10 @@ msgid "Grid Levels"
 msgstr "Úrovne mriežky"
 
 
+msgid "Number of subdivisions for the dot grid displayed in the background"
+msgstr "Počet delení pre bodovú mriežku zobrazenú na pozadí"
+
+
 msgid "Group Node"
 msgstr "Uzol Skupina"
 
@@ -94296,6 +94675,10 @@ msgid "Volume Light"
 msgstr "Objemové svetlo"
 
 
+msgid "AOV"
+msgstr "AOV"
+
+
 msgid "Selected StudioLight"
 msgstr "Vybrané štúdiové svetlo"
 
@@ -94414,6 +94797,10 @@ msgstr "Vytvorí pevnú HDR rotáciu a bez sledovania kamerou"
 
 msgid "Make the lighting fixed and not follow the camera"
 msgstr "Vytvorí plné osvetlenie a nenasleduje kameru"
+
+
+msgid "Show VR Controllers"
+msgstr "Zobraziť riadiacich VR"
 
 
 msgid "Show Landmarks"
@@ -95324,6 +95711,10 @@ msgid "Follow a custom transformation to define the VR view's base pose"
 msgstr "Postupuje vlastnou transformáciou na definovanie základnú pózy zobrazenia VR"
 
 
+msgid "Uniform scale to apply to VR view"
+msgstr "Jednotná mierka, ktorá sa použije na zobrazenie VR"
+
+
 msgid "VR viewport far clipping distance"
 msgstr "Záber VR ďaleko vzdialenosti strihu"
 
@@ -95396,6 +95787,10 @@ msgid "Absolute Tracking"
 msgstr "Absolútne snímanie"
 
 
+msgid "Allow the VR tracking origin to be defined independently of the headset location"
+msgstr "Umožniť definovanie pôvodu sledovania VR nezávisle od umiestnenia hlavovej súpravy"
+
+
 msgid "Positional Tracking"
 msgstr "Snímanie polohy"
 
@@ -95410,6 +95805,30 @@ msgstr "Stav relácie"
 
 msgid "Active Action Map"
 msgstr "Mapa aktívnej akcie"
+
+
+msgid "Navigation Location"
+msgstr "Poloha navigácie"
+
+
+msgid "Location offset to apply to base pose when determining viewer location"
+msgstr "Posun polohy na použitie základnej pózy pri určovaní polohy diváka"
+
+
+msgid "Navigation Rotation"
+msgstr "Rotácia navigácie"
+
+
+msgid "Rotation offset to apply to base pose when determining viewer rotation"
+msgstr "Posun rotácie na použitie základnej pózy pri určovaní rotácie diváka"
+
+
+msgid "Navigation Scale"
+msgstr "Mieka navigácia"
+
+
+msgid "Additional scale multiplier to apply to base scale when determining viewer scale"
+msgstr "Dodatočný násobiteľ mierky na použitie základnej mierky pri určovaní mierky diváka"
 
 
 msgid "Selected Action Map"
@@ -96717,14 +97136,6 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "a ovládač NVIDIA vo verzii 470 alebo novšej"
 
 
-msgid "Requires discrete AMD GPU with ??? architecture"
-msgstr "Vyžaduje sa samostatný grafický procesor AMD s architektúrou ???"
-
-
-msgid "and AMD driver version ??? or newer"
-msgstr "a ovládač AMD vo verzii ??? alebo novšej"
-
-
 msgid "Noise Threshold"
 msgstr "Prah šumu"
 
@@ -97373,6 +97784,38 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgid "Positional"
+msgstr "Pozičný"
+
+
+msgid "Controllers"
+msgstr "Riadiaci"
+
+
+msgid "Custom Overlays"
+msgstr "Vlastné prekrytia"
+
+
+msgid "Controller Style"
+msgstr "Štýl riadiaceho"
+
+
+msgid "Gamepad"
+msgstr "Gamepad"
+
+
+msgid "HP Reverb G2"
+msgstr "HP Reverb G2"
+
+
+msgid "HTC Vive Cosmos"
+msgstr "HTC Vive Cosmos"
+
+
+msgid "Huawei"
+msgstr "Huawei"
+
+
 msgid "Note:"
 msgstr "Poznámka:"
 
@@ -97392,6 +97835,11 @@ msgstr "Postavené bez funkcií VR/OpenXR"
 msgctxt "Operator"
 msgid "New"
 msgstr "Nový"
+
+
+msgctxt "Operator"
+msgid "Edit Value"
+msgstr "Upraviť hodnotu"
 
 
 msgid "API Defined"
@@ -98023,6 +98471,10 @@ msgstr "Pridať vynútenie kostí"
 msgctxt "Operator"
 msgid "Animate Path"
 msgstr "Cesta animácie"
+
+
+msgid "Order"
+msgstr "Poradie"
 
 
 msgid "Clamp Region"
@@ -101381,8 +101833,18 @@ msgstr "Zrušiť útlm nevybraných pásov"
 
 
 msgctxt "Operator"
+msgid "Position"
+msgstr "Pozícia"
+
+
+msgctxt "Operator"
 msgid "Rotation"
 msgstr "Rotácia"
+
+
+msgctxt "Operator"
+msgid "All Transforms"
+msgstr "Všetky transformácie"
 
 
 msgctxt "Operator"
@@ -104360,6 +104822,10 @@ msgid "Ignore Transparent"
 msgstr "Ignorovať priehľadné"
 
 
+msgid "User Library"
+msgstr "Užívateľská knižnica"
+
+
 msgid "No AnimData to set action on"
 msgstr "Žiadne údaje animácie na nastavenie akcie"
 
@@ -104644,10 +105110,6 @@ msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať čísl
 
 msgid "Key %d"
 msgstr "Kľúč %d"
-
-
-msgid "AOV"
-msgstr "AOV"
 
 
 msgid "Impossible to resync data-block %s and its dependencies, as its linked reference is missing"
@@ -105339,6 +105801,14 @@ msgid "<Unknown Modifier>"
 msgstr "<Neznámy modifikátor>"
 
 
+msgid "y = (Ax + B)"
+msgstr "y = (Ax + B)"
+
+
+msgid "✕ (Ax + B)"
+msgstr "✕ (Ax + B)"
+
+
 msgid "Add Control Point"
 msgstr "Pridať riadiaci bod"
 
@@ -105353,14 +105823,6 @@ msgstr "Pridá nový riadiaci bod na plášť v aktuálnej snímke"
 
 msgid "Delete envelope control point"
 msgstr "Odstrániť riadiaci bod plášťa"
-
-
-msgid "y = (Ax + B)"
-msgstr "y = (Ax + B)"
-
-
-msgid "✕ (Ax + B)"
-msgstr "✕ (Ax + B)"
 
 
 msgid "No animation data in buffer to paste"
@@ -106361,6 +106823,10 @@ msgstr "Chyba pri vyhodnocovaní čísla, ďalšie informácie nájdete v editor
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Neklávesová skratka"
+
+
+msgid "Pin"
+msgstr "Pripnúť"
 
 
 msgid "Shift Left Mouse"
@@ -107758,6 +108224,10 @@ msgid "Object not found"
 msgstr "Objekt sa nenašiel"
 
 
+msgid "Object could not be duplicated"
+msgstr "Nebolo možné vytvoriť kópiu objektu"
+
+
 msgid "This data does not support joining in edit mode"
 msgstr "Tieto údaje nepodporujú prepojenie v režime editácie"
 
@@ -109054,6 +109524,10 @@ msgid "Removed amount of editors: %d"
 msgstr "Odstránený počet editorov: %d"
 
 
+msgid "Only supported in object mode"
+msgstr "Podporované len v režime objektu"
+
+
 msgid "expected a view3d region"
 msgstr "očakávaný región 3D zobrazenia"
 
@@ -109567,6 +110041,18 @@ msgid "File path"
 msgstr "Cesta súboru"
 
 
+msgid "Path to asset library does not exist:"
+msgstr "Cesta ku knižnici aktív neexistuje:"
+
+
+msgid ""
+"Asset Libraries are local directories that can contain .blend files with assets inside.\n"
+"Manage Asset Libraries from the File Paths section in Preferences"
+msgstr ""
+"Knižnice aktív sú lokálne priečinka, ktoré môžu obsahovať súbory .blend s aktívami vo vnútri.\n"
+"Spravujte knižnice aktív v časti Cesty súborov v Predvoľbách"
+
+
 msgid "Today"
 msgstr "Dnes"
 
@@ -109671,22 +110157,6 @@ msgid "Key Frame"
 msgstr "Kľúčová snímka"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Krivka funkcie má iba modifikátory funkcie"
-
-
-msgid "See Modifiers panel below"
-msgstr "Pozri panel modifikátorov nižšie"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F-krivka nemá žiadne kľúčové snímky, pretože obsahuje iba nasnímané body"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Žiadna aktívna kľúčová snímka na F-krivke"
-
-
 msgid "Prop:"
 msgstr "Vlast:"
 
@@ -109725,6 +110195,22 @@ msgstr "Zobraziť v editore ovládačov"
 
 msgid "Add Modifier"
 msgstr "Pridať modifikátor"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Krivka funkcie má iba modifikátory funkcie"
+
+
+msgid "See Modifiers panel below"
+msgstr "Pozri panel modifikátorov nižšie"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "F-krivka nemá žiadne kľúčové snímky, pretože obsahuje iba nasnímané body"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Žiadna aktívna kľúčová snímka na F-krivke"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -109892,10 +110378,6 @@ msgid "Discard"
 msgstr "Zahodenie"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Pevný kódovaný nelineárny, gama:1.7"
-
-
 msgid "Select Slot"
 msgstr "Vybrať zásuvku"
 
@@ -109910,6 +110392,10 @@ msgstr "Vybrať prechod"
 
 msgid "Select View"
 msgstr "Vybrať zobrazenie"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Pevný kódovaný nelineárny, gama:1.7"
 
 
 msgid "Can't Load Image"
@@ -111826,12 +112312,28 @@ msgid "Filter Source"
 msgstr "Zdroj filtra"
 
 
+msgid "Continue Without Clearing"
+msgstr "Pokračovať bez zmazania"
+
+
+msgid "Depth Offset"
+msgstr "Posuv hĺbky"
+
+
+msgid "Towards Custom Camera"
+msgstr "Smerom k vlastnej kamere"
+
+
+msgid "Object is not in front"
+msgstr "Objekt nie je vpredu"
+
+
 msgid "Modifier has baked data"
 msgstr "Modifikátor má zapečené údaje"
 
 
-msgid "Continue Without Clearing"
-msgstr "Pokračovať bez zmazania"
+msgid "Object is shown in front"
+msgstr "Objekt je zobrazený vpredu"
 
 
 msgid "Stroke Fit Method"
@@ -113032,16 +113534,16 @@ msgid "Save External..."
 msgstr "Uložiť externý..."
 
 
-msgid "Built without Ocean modifier"
-msgstr "Zostaviť bez modifikátora Oceán"
-
-
 msgid "Coverage"
 msgstr "Pokrytie"
 
 
 msgid "Delete Bake"
 msgstr "Odstrániť zapečené"
+
+
+msgid "Built without Ocean modifier"
+msgstr "Zostaviť bez modifikátora Oceán"
 
 
 msgid "Create Instances"
@@ -113163,16 +113665,28 @@ msgid "Crease Edges"
 msgstr "Záhyby hrán"
 
 
+msgid "Fac"
+msgstr "Faktor"
+
+
+msgid "Dot"
+msgstr "Bodka"
+
+
+msgid "Val"
+msgstr "Hodnota"
+
+
+msgid "Density Attribute"
+msgstr "Atribút hustoty"
+
+
 msgid "Shader Editor"
 msgstr "Editor tieňovača"
 
 
 msgid "AO"
 msgstr "Pohltenie okolím"
-
-
-msgid "Fac"
-msgstr "Faktor"
 
 
 msgid "Anisotropy"
@@ -113407,8 +113921,12 @@ msgid "Transmission Depth"
 msgstr "Hĺbka prestupu"
 
 
-msgid "Dot"
-msgstr "Bodka"
+msgid "Color1"
+msgstr "Farba1"
+
+
+msgid "Color2"
+msgstr "Farba2"
 
 
 msgid "Color Fac"
@@ -113423,8 +113941,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Zrkadlenie"
+msgid "Mortar"
+msgstr "Malta"
+
+
+msgid "Brick Width"
+msgstr "Šírka tehál"
+
+
+msgid "Row Height"
+msgstr "Výška radu"
 
 
 msgid "Flame"
@@ -113433,10 +113959,6 @@ msgstr "Plameň"
 
 msgid "Color Attribute"
 msgstr "Atribút farby"
-
-
-msgid "Density Attribute"
-msgstr "Atribút hustoty"
 
 
 msgid "Absorption Color"
@@ -113475,26 +113997,6 @@ msgid "Bricks 2"
 msgstr "Tehly 2"
 
 
-msgid "Mortar"
-msgstr "Malta"
-
-
-msgid "Brick Width"
-msgstr "Šírka tehál"
-
-
-msgid "Row Height"
-msgstr "Výška radu"
-
-
-msgid "Color1"
-msgstr "Farba1"
-
-
-msgid "Color2"
-msgstr "Farba2"
-
-
 msgid "Coordinate 1"
 msgstr "Súradnice 1"
 
@@ -113521,10 +114023,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iMierka"
-
-
-msgid "Val"
-msgstr "Hodnota"
 
 
 msgid ""
@@ -113697,10 +114195,6 @@ msgid "Wave Effect"
 msgstr "Efekt vlny"
 
 
-msgid "Paste name"
-msgstr "Prilepiť názov"
-
-
 msgid "Input pending "
 msgstr "Čaká sa na vstup"
 
@@ -113771,6 +114265,10 @@ msgstr "Cesta je príliš dlhá, nemožno uložiť"
 
 msgid "Unable to create user config path"
 msgstr "Nemožno vytvoriť cestu užívateľskej konfigurácie"
+
+
+msgid "Startup file saved"
+msgstr "Spúšťací súbor uložený"
 
 
 msgid "Context window not set"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -425,6 +425,10 @@ msgid "Delete"
 msgstr "Ezabatu"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Onion Skinning"
 msgstr "Tipula-azapa"
 
@@ -576,10 +580,6 @@ msgid "Show/Hide"
 msgstr "Erakutsi/Ezkutatu"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Show/Hide Faces"
 msgstr "Aurpegiak erakutsi/ezkutatu"
 
@@ -643,6 +643,10 @@ msgstr "Jatorrizkoa"
 
 msgid "Z Axis"
 msgstr "Z Ardatza"
+
+
+msgid "Reflection"
+msgstr "Islapena"
 
 
 msgid "Layer Weight"
@@ -2202,12 +2206,16 @@ msgid "Font not packed"
 msgstr "Letra-mota paketatugabea"
 
 
-msgid "AO"
-msgstr "Inguruneko Oklusioa"
-
-
 msgid "Fac"
 msgstr "Fak"
+
+
+msgid "Val"
+msgstr "Balioa"
+
+
+msgid "AO"
+msgstr "Inguruneko Oklusioa"
 
 
 msgid "Anisotropy"
@@ -2274,6 +2282,14 @@ msgid "Transmission Depth"
 msgstr "Trasmisio-sakonera"
 
 
+msgid "Color1"
+msgstr "1 Kolorea"
+
+
+msgid "Color2"
+msgstr "2 Kolorea"
+
+
 msgid "Color Fac"
 msgstr "Kolore Faktorea"
 
@@ -2286,14 +2302,6 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Islapena"
-
-
-msgid "Patterns"
-msgstr "Patroiak"
-
-
 msgid "Mortar"
 msgstr "Zementu"
 
@@ -2302,12 +2310,8 @@ msgid "Row Height"
 msgstr "Lerroaren Altuera"
 
 
-msgid "Color1"
-msgstr "1 Kolorea"
-
-
-msgid "Color2"
-msgstr "2 Kolorea"
+msgid "Patterns"
+msgstr "Patroiak"
 
 
 msgid "Coordinate 1"
@@ -2320,10 +2324,6 @@ msgstr "2 Koordenatua"
 
 msgid "iScale"
 msgstr "iEskala"
-
-
-msgid "Val"
-msgstr "Balioa"
 
 
 msgid "| Time:%s | "
@@ -2348,10 +2348,6 @@ msgstr "Renderizatutako geruza guztiak desgaitu"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: errorea '%s' kargatzean "
-
-
-msgid "Paste name"
-msgstr "Izena itsatsi"
 
 
 msgid "Blender File View"

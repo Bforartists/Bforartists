@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -3794,6 +3794,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Imposta la modalità colore da usare per l'interpolazione"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Elementi"
 
@@ -7232,14 +7236,6 @@ msgid "Description of the item's purpose"
 msgstr "Descrizione dello scopo dell'elemento"
 
 
-msgid "Icon"
-msgstr "Icona"
-
-
-msgid "Icon of the item"
-msgstr "Icona dell'elemento"
-
-
 msgid "Identifier"
 msgstr "Identificatore"
 
@@ -9145,6 +9141,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "Usa le coordinate generate localmente di un altro oggetto"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "Usa le coordinate UV come coordinate della texture"
 
@@ -10143,12 +10143,24 @@ msgid "Red Green Blue"
 msgstr "Rosso Verde Blu"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Rosso"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Verde"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -16035,14 +16047,6 @@ msgid "Settings for image formats"
 msgstr "Impostazioni peri formati dell'immagine"
 
 
-msgid "B"
-msgstr "B"
-
-
-msgid "G"
-msgstr "G"
-
-
 msgid "Color Depth"
 msgstr "Profondità Colore"
 
@@ -18398,10 +18402,6 @@ msgstr "Materiali Speciali"
 
 msgid "Select Linked"
 msgstr "Seleziona Collegati"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -22708,10 +22708,6 @@ msgid "Node in a node tree"
 msgstr "Nodo in un albero dei nodi"
 
 
-msgid "The node icon"
-msgstr "L'icona del nodo"
-
-
 msgid "The node label"
 msgstr "L'etichetta del nodo"
 
@@ -23220,10 +23216,6 @@ msgid "Color Spill"
 msgstr "Versamento Colore"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Unspill"
 msgstr "Sopprimi Versamento"
 
@@ -23566,10 +23558,6 @@ msgstr "ID Maschera"
 
 msgid "Inpaint"
 msgstr "Ricostruisci"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Post Blur"
@@ -24132,6 +24120,10 @@ msgstr "Capelli BSDF"
 
 msgid "Component"
 msgstr "Componente"
+
+
+msgid "Reflection"
+msgstr "Riflessione"
 
 
 msgid "Principled BSDF"
@@ -42765,10 +42757,6 @@ msgid "Active Palette Color"
 msgstr "Colore Tavolozza Attivo"
 
 
-msgid "Pin"
-msgstr "Appunta"
-
-
 msgid "Integrator Presets"
 msgstr "Preimpostazioni Integratore"
 
@@ -44290,10 +44278,6 @@ msgid "Info on current cache status"
 msgstr "Informazioni sullo stato corrente della cache"
 
 
-msgid "Cache is outdated"
-msgstr "Cache obsoleta"
-
-
 msgid "Cache name"
 msgstr "Nome cache"
 
@@ -45410,8 +45394,16 @@ msgid "OpenSubdiv Compute Type"
 msgstr "Tipo Calcolo OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "Maximum number of lines to store for the console buffer"
@@ -45828,14 +45820,6 @@ msgstr "Usa la mappatura sfera a specchio"
 
 msgid "Form of hair"
 msgstr "Forma dei capelli"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "Cast Shadow"
@@ -57238,6 +57222,10 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Scorciatoia Non-di-Tastiera"
 
 
+msgid "Pin"
+msgstr "Appunta"
+
+
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Solo le scorciatoie da tastiera possono essere modificate così, per favore usa le Preferenze Utente"
 
@@ -58840,22 +58828,6 @@ msgid "Interpolation:"
 msgstr "Interpolazione:"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "La Curva-F ha solo Modificatori-F"
-
-
-msgid "See Modifiers panel below"
-msgstr "Vedi il pannello Modificatori sotto"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "La Curva-Funzione non ha alcun fotogramma chiave, poichè contiene solo punti campionati"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Nessun fotogramma chiave attivo sulla Curva-F"
-
-
 msgid "Prop:"
 msgstr "Proprietà:"
 
@@ -58878,6 +58850,22 @@ msgstr "Aggiorna Dipendenze"
 
 msgid "Add Modifier"
 msgstr "Aggiungi Modificatore"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "La Curva-F ha solo Modificatori-F"
+
+
+msgid "See Modifiers panel below"
+msgstr "Vedi il pannello Modificatori sotto"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "La Curva-Funzione non ha alcun fotogramma chiave, poichè contiene solo punti campionati"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Nessun fotogramma chiave attivo sulla Curva-F"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -58937,10 +58925,6 @@ msgid "Slot %d"
 msgstr "Slot %d"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Hard coded Non-Lineare, Gamma:1.7"
-
-
 msgid "Select Slot"
 msgstr "Seleziona Slot"
 
@@ -58955,6 +58939,10 @@ msgstr "Seleziona Passaggio"
 
 msgid "Select View"
 msgstr "Seleziona Vista"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Hard coded Non-Lineare, Gamma:1.7"
 
 
 msgid "Can't Load Image"
@@ -60217,16 +60205,24 @@ msgid "Crease Edges"
 msgstr "Spigoli Piega"
 
 
+msgid "Fac"
+msgstr "Fatt"
+
+
+msgid "Dot"
+msgstr "Punti"
+
+
+msgid "Val"
+msgstr "Valore"
+
+
 msgid "Shader Editor"
 msgstr "Editor Ombreggiatori"
 
 
 msgid "AO"
 msgstr "OA"
-
-
-msgid "Fac"
-msgstr "Fatt"
 
 
 msgid "Anisotropy"
@@ -60405,8 +60401,12 @@ msgid "Transmission Depth"
 msgstr "Profondità Trasmissione"
 
 
-msgid "Dot"
-msgstr "Punti"
+msgid "Color1"
+msgstr "Colore 1"
+
+
+msgid "Color2"
+msgstr "Colore 2"
 
 
 msgid "Color Fac"
@@ -60421,8 +60421,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Riflessione"
+msgid "Mortar"
+msgstr "Malta"
+
+
+msgid "Brick Width"
+msgstr "Larghezza Mattone"
+
+
+msgid "Row Height"
+msgstr "Altezza Corso"
 
 
 msgid "Flame"
@@ -60447,26 +60455,6 @@ msgstr "Mattoni 1"
 
 msgid "Bricks 2"
 msgstr "Mattoni 2"
-
-
-msgid "Mortar"
-msgstr "Malta"
-
-
-msgid "Brick Width"
-msgstr "Larghezza Mattone"
-
-
-msgid "Row Height"
-msgstr "Altezza Corso"
-
-
-msgid "Color1"
-msgstr "Colore 1"
-
-
-msgid "Color2"
-msgstr "Colore 2"
 
 
 msgid "Coordinate 1"
@@ -60495,10 +60483,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iScale"
-
-
-msgid "Val"
-msgstr "Valore"
 
 
 msgid "Could not resolve path (%s)"
@@ -60589,10 +60573,6 @@ msgstr "Gli spezzoni non sono compatibili"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Gli spezzoni devono avere lo stesso numero di ingressi"
-
-
-msgid "Paste name"
-msgstr "Incolla nome"
 
 
 msgid "Blender File View"

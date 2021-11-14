@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -851,6 +851,10 @@ msgid "Screen"
 msgstr "चित्रपट"
 
 
+msgid "RGB"
+msgstr "ला.ह.नी."
+
+
 msgid "Near"
 msgstr "पास"
 
@@ -1308,10 +1312,6 @@ msgid "Wind"
 msgstr "पवन"
 
 
-msgid "Icon"
-msgstr "अनुप्रतीक"
-
-
 msgid "Group"
 msgstr "समूह"
 
@@ -1617,6 +1617,10 @@ msgid "Generated"
 msgstr "उत्पन्न"
 
 
+msgid "UV"
+msgstr "यूवी"
+
+
 msgid "Border"
 msgstr "सीमांत"
 
@@ -1766,12 +1770,24 @@ msgid "Red Green Blue"
 msgstr "लाल हरा नीला"
 
 
+msgid "R"
+msgstr "आर"
+
+
 msgid "Red"
 msgstr "लाल"
 
 
+msgid "G"
+msgstr "जी"
+
+
 msgid "Green"
 msgstr "हरा"
+
+
+msgid "B"
+msgstr "बी"
 
 
 msgid "Blue"
@@ -2703,14 +2719,6 @@ msgid "Min Step"
 msgstr "न्यूनतम कदम"
 
 
-msgid "B"
-msgstr "बी"
-
-
-msgid "G"
-msgstr "जी"
-
-
 msgid "Codec"
 msgstr "कोडेक"
 
@@ -2878,10 +2886,6 @@ msgstr "सरणि"
 
 msgid "Snap"
 msgstr "स्नैप"
-
-
-msgid "UV"
-msgstr "यूवी"
 
 
 msgid "Align"
@@ -3246,10 +3250,6 @@ msgid "S"
 msgstr "एस"
 
 
-msgid "R"
-msgstr "आर"
-
-
 msgid "Jpeg"
 msgstr "जेपीईजी"
 
@@ -3292,10 +3292,6 @@ msgstr "छाया"
 
 msgid "Straight Alpha Output"
 msgstr "सीधे पारदर्शिता उत्पादित"
-
-
-msgid "RGB"
-msgstr "ला.ह.नी."
 
 
 msgid "Keying"
@@ -3344,6 +3340,10 @@ msgstr "घुमावदार"
 
 msgid "Equal"
 msgstr "बराबर"
+
+
+msgid "Reflection"
+msgstr "प्रतिबिंब"
 
 
 msgid "Bump"
@@ -7118,12 +7118,16 @@ msgid "Outer"
 msgstr "बाहरी"
 
 
-msgid "AO"
-msgstr "ए ओ"
-
-
 msgid "Fac"
 msgstr "एफ़एसी"
+
+
+msgid "Dot"
+msgstr "बिन्दु"
+
+
+msgid "AO"
+msgstr "ए ओ"
 
 
 msgid "BSDF"
@@ -7136,14 +7140,6 @@ msgstr "आईओआर"
 
 msgid "Sigma"
 msgstr "सिग्मा"
-
-
-msgid "Dot"
-msgstr "बिन्दु"
-
-
-msgid "Reflection"
-msgstr "प्रतिबिंब"
 
 
 msgid "Flame"
@@ -7176,10 +7172,6 @@ msgstr "स्ट्रिप्स संगत नहीं थे"
 
 msgid "Strips must have the same number of inputs"
 msgstr "स्ट्रिप्स आदानों की समान संख्या होना आवश्यक"
-
-
-msgid "Paste name"
-msgstr "नाम चिपकाएँ"
 
 
 msgid "Blender File View"

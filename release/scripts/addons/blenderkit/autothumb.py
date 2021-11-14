@@ -481,13 +481,16 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
         bpy.ops.wm.save_as_mainfile(filepath=filepath, compress=False, copy=True)
 
         thumb_dir = os.path.dirname(bpy.data.filepath)
-        thumb_path = os.path.join(thumb_dir, asset.name)
-        rel_thumb_path = os.path.join('//', asset.name)
+        an_slug = paths.slugify(asset.name)
+
+        thumb_path = os.path.join(thumb_dir, an_slug)
+        rel_thumb_path = os.path.join('//', an_slug)
+
         # auto increase number of the generated thumbnail.
         i = 0
         while os.path.isfile(thumb_path + '.png'):
-            thumb_path = os.path.join(thumb_dir, asset.name + '_' + str(i).zfill(4))
-            rel_thumb_path = os.path.join('//', asset.name + '_' + str(i).zfill(4))
+            thumb_path = os.path.join(thumb_dir, an_slug + '_' + str(i).zfill(4))
+            rel_thumb_path = os.path.join('//', an_slug + '_' + str(i).zfill(4))
             i += 1
 
         asset.blenderkit.thumbnail = rel_thumb_path + '.png'
@@ -606,10 +609,11 @@ class ReGenerateMaterialThumbnailOperator(bpy.types.Operator):
         # either get the data from search results
         sr = bpy.context.window_manager['search results']
         asset_data = sr[self.asset_index].to_dict()
+        an_slug = paths.slugify(asset_data['name'])
 
         tempdir = tempfile.mkdtemp()
 
-        thumb_path = os.path.join(tempdir, asset_data['name'])
+        thumb_path = os.path.join(tempdir,an_slug)
 
         args_dict = {
             "type": "material",

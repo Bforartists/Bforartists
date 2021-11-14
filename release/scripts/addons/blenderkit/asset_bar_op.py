@@ -444,6 +444,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
     def update_layout(self, context, event):
         # restarting asset_bar completely since the widgets are too hard to get working with updates.
+        self.scroll_update()
 
         self.position_and_hide_buttons()
 
@@ -468,7 +469,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                                            self.tooltip_height - self.author_text_size - self.margin)
 
         # to hide arrows accordingly
-        self.scroll_update()
+
 
     def asset_button_init(self, asset_x, asset_y, button_idx):
         ui_scale = bpy.context.preferences.view.ui_scale
@@ -796,7 +797,11 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                 self.tooltip_image.set_image(img.filepath)
 
             get_tooltip_data(asset_data)
-            self.asset_name.text = asset_data['name']
+            an = asset_data['name']
+            max_name_length = 30
+            if len(an)>max_name_length+3:
+                an = an[:30]+'...'
+            self.asset_name.text = an
             self.authors_name.text = asset_data['tooltip_data']['author_text']
             self.quality_label.text = asset_data['tooltip_data']['quality']
             # print(asset_data['tooltip_data']['quality'])
@@ -893,7 +898,9 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         for asset_button in self.asset_buttons:
             if asset_button.visible:
                 asset_button.asset_index = asset_button.button_index + self.scroll_offset
+                # print(asset_button.asset_index, len(sr))
                 if asset_button.asset_index < len(sr):
+                    asset_button.visible = True
 
                     asset_data = sr[asset_button.asset_index]
 
@@ -920,10 +927,11 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                             asset_button.red_alert.visible = False
                     elif utils.profile_is_validator():
                         asset_button.red_alert.visible = False
-                else:
-                    asset_button.validation_icon.visible = False
-                    if utils.profile_is_validator():
-                        asset_button.red_alert.visible = False
+            else:
+                asset_button.visible = False
+                asset_button.validation_icon.visible = False
+                if utils.profile_is_validator():
+                    asset_button.red_alert.visible = False
 
     def scroll_update(self):
         sr = bpy.context.window_manager.get('search results')
@@ -937,6 +945,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.scroll_offset = min(self.scroll_offset, len(sr) - (self.wcount * self.hcount))
         self.scroll_offset = max(self.scroll_offset, 0)
         self.update_images()
+
         # print(sro)
         if sro['count'] > len(sr) and len(sr) - self.scroll_offset < (self.wcount * self.hcount) + 15:
             self.search_more()
@@ -959,7 +968,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             sprops = utils.get_search_props()
             sprops.search_keywords = ''
             sprops.search_verification_status = 'ALL'
-            utils.p('author:', a)
+            # utils.p('author:', a)
             search.search(author_id=a)
         return True
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -5403,14 +5403,6 @@ msgid "Description of the item's purpose"
 msgstr "Opis przeznaczenia elementu"
 
 
-msgid "Icon"
-msgstr "Ikona"
-
-
-msgid "Icon of the item"
-msgstr "Ikona elementu"
-
-
 msgid "Identifier"
 msgstr "Identyfikator"
 
@@ -6576,10 +6568,6 @@ msgid "Save Copy"
 msgstr "Zapisz Kopię"
 
 
-msgid "Pin"
-msgstr "Przypnij"
-
-
 msgid "Performance"
 msgstr "Wydajność"
 
@@ -7673,6 +7661,10 @@ msgstr "Efekt Dynamiczny"
 
 msgid "Grease Pencil operator is already active"
 msgstr "Operator Szkicownik jest już aktywny"
+
+
+msgid "Pin"
+msgstr "Przypnij"
 
 
 msgctxt "Operator"
@@ -9582,22 +9574,6 @@ msgid "Cursor X"
 msgstr "Kursor X"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Krzywa F ma tylko modyfikatory F"
-
-
-msgid "See Modifiers panel below"
-msgstr "Patrz panel modyfikatorów poniżej"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "Krzywa F nie posiada żadnych klatek kluczowych, ponieważ ma tylko próbkowane punkty"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Brak aktywnej klatki kluczowej dla krzywej F"
-
-
 msgid "Prop:"
 msgstr "Prop:"
 
@@ -9616,6 +9592,22 @@ msgstr "Odśwież Zależności"
 
 msgid "Add Modifier"
 msgstr "Dodaj Modyfikator"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Krzywa F ma tylko modyfikatory F"
+
+
+msgid "See Modifiers panel below"
+msgstr "Patrz panel modyfikatorów poniżej"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "Krzywa F nie posiada żadnych klatek kluczowych, ponieważ ma tylko próbkowane punkty"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Brak aktywnej klatki kluczowej dla krzywej F"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -9706,10 +9698,6 @@ msgid "Slot %d"
 msgstr "Otwór %d"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
-
-
 msgid "Select Slot"
 msgstr "Zaznacz otwór"
 
@@ -9720,6 +9708,10 @@ msgstr "Zaznacz Warstwę"
 
 msgid "Select Pass"
 msgstr "Zaznacz Pass"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
 
 
 msgid "Can't Load Image"
@@ -11254,6 +11246,14 @@ msgid "Fac"
 msgstr "Współczynnik"
 
 
+msgid "Dot"
+msgstr "Punkt"
+
+
+msgid "Val"
+msgstr "Val"
+
+
 msgid "Anisotropy"
 msgstr "Anizotropia"
 
@@ -11358,8 +11358,12 @@ msgid "Transparent Depth"
 msgstr "Głębia przezroczystości"
 
 
-msgid "Dot"
-msgstr "Punkt"
+msgid "Color1"
+msgstr "Kolor1"
+
+
+msgid "Color2"
+msgstr "Kolor2"
 
 
 msgid "Color Fac"
@@ -11374,18 +11378,6 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Patterns"
-msgstr "Wzorce"
-
-
-msgid "Bricks 1"
-msgstr "Cegły 1"
-
-
-msgid "Bricks 2"
-msgstr "Cegły 2"
-
-
 msgid "Mortar"
 msgstr "Zaprawa"
 
@@ -11398,12 +11390,16 @@ msgid "Row Height"
 msgstr "Wysokość rzędu"
 
 
-msgid "Color1"
-msgstr "Kolor1"
+msgid "Patterns"
+msgstr "Wzorce"
 
 
-msgid "Color2"
-msgstr "Kolor2"
+msgid "Bricks 1"
+msgstr "Cegły 1"
+
+
+msgid "Bricks 2"
+msgstr "Cegły 2"
 
 
 msgid "Coordinate 1"
@@ -11432,10 +11428,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
-
-
-msgid "Val"
-msgstr "Val"
 
 
 msgid "Unknown py-exception, could not convert"
@@ -11500,10 +11492,6 @@ msgstr "Paski były niekompatybilne"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Paski muszą posiadać identyczną liczbę wejść"
-
-
-msgid "Paste name"
-msgstr "Wklej nazwę"
 
 
 msgid "Blender File View"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -638,6 +638,10 @@ msgid "Brightness"
 msgstr "ความสว่าง"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Constant"
 msgstr "คงตัว"
 
@@ -989,10 +993,6 @@ msgid "Roll"
 msgstr "หมุน"
 
 
-msgid "Icon"
-msgstr "ไอคอน"
-
-
 msgid "Group"
 msgstr "กลุ่ม"
 
@@ -1240,6 +1240,10 @@ msgid "Fire"
 msgstr "ไฟ"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Border"
 msgstr "เส้นขอบ"
 
@@ -1373,6 +1377,10 @@ msgstr "แดง เขียน น้ำเงิน"
 
 msgid "Red"
 msgstr "แดง"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Users"
@@ -1948,10 +1956,6 @@ msgid "Animation"
 msgstr "แอนิเมชัน"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "ZIP (lossless)"
 msgstr "ZIP (ไม่สูญเสียข้อมูล)"
 
@@ -2101,10 +2105,6 @@ msgstr "จุดหมุน"
 
 msgid "Snap"
 msgstr "ยึดติด"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgctxt "Operator"
@@ -2407,10 +2407,6 @@ msgstr "-1 คือ ภาพต้นฉบับเท่านั้น, 0 �
 
 msgid "Rotate 45"
 msgstr "หมุน 45"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -5726,6 +5722,10 @@ msgid "Replace Original"
 msgstr "แทนที่อันดั้งเดิม"
 
 
+msgid "Val"
+msgstr "Val"
+
+
 msgid "Shader Editor"
 msgstr "ตัวแก้ไขเชดเดอร์"
 
@@ -5738,10 +5738,6 @@ msgid "Texture Node Editor"
 msgstr "ตัวแก้ไขโนดพื้นผิว"
 
 
-msgid "Val"
-msgstr "Val"
-
-
 msgid "| Time:%s | "
 msgstr "| เวลา:%s | "
 
@@ -5752,10 +5748,6 @@ msgstr "%s: มิติที่ไม่ถูกต้องสำหรั�
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: ไม่สามารถโหลด '%s'"
-
-
-msgid "Paste name"
-msgstr "วางชื่อ"
 
 
 msgid "Don't Save"

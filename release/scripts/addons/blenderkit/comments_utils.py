@@ -50,9 +50,9 @@ def upload_comment_thread(url, comment='', api_key=None):
 
     # try:
     r = rerequests.put(url, data=data, verify=True, headers=headers)
-    print(r)
+    # print(r)
     # print(dir(r))
-    print(r.text)
+    # print(r.text)
     # except requests.exceptions.RequestException as e:
     #     print('ratings upload failed: %s' % str(e))
 
@@ -72,7 +72,7 @@ def upload_comment_flag_thread( asset_id = '', comment_id='', flag='like', api_k
 
     # try:
     r = rerequests.post(url, data=data, verify=True, headers=headers)
-    print(r.text)
+    # print(r.text)
 
     #here it's important we read back, so likes are updated accordingly:
     get_comments(asset_id, api_key)
@@ -129,7 +129,7 @@ def get_comments(asset_id, api_key):
     r = rerequests.get(url, params=params, verify=True, headers=headers)
     if r is None:
         return
-    print(r.status_code)
+    # print(r.status_code)
     if r.status_code == 200:
         rj = r.json()
         # store comments - send them to task queue
