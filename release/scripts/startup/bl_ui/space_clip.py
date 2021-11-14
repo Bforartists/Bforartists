@@ -1465,8 +1465,8 @@ class CLIP_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("INFO_MT_area")
         layout.menu("CLIP_MT_view_pie_menus")
+        layout.menu("INFO_MT_area")
 
 
 class CLIP_MT_view_pie_menus(Menu):
@@ -1480,6 +1480,7 @@ class CLIP_MT_view_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "Tracking", icon = "MENU_PANEL").name = 'CLIP_MT_tracking_pie'
         layout.operator("wm.call_menu_pie", text = "Reconstruction", icon = "MENU_PANEL").name = 'CLIP_MT_reconstruction_pie'
         layout.operator("wm.call_menu_pie", text = "Solving", icon = "MENU_PANEL").name = 'CLIP_MT_solving_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'CLIP_MT_view_pie'
 
 
 class CLIP_MT_clip(Menu):
