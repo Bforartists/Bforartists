@@ -472,8 +472,8 @@ class DOPESHEET_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("INFO_MT_area")
         layout.menu("DOPESHEET_MT_view_pie_menus")
+        layout.menu("INFO_MT_area")
 
 
 class DOPESHEET_MT_view_pie_menus(Menu):
@@ -482,8 +482,8 @@ class DOPESHEET_MT_view_pie_menus(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("wm.call_menu_pie", text="Snap",
-                        icon="MENU_PANEL").name = 'DOPESHEET_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text="Snap", icon="MENU_PANEL").name = 'DOPESHEET_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = 'DOPESHEET_MT_view_pie'
 
 
 class DOPESHEET_MT_view_pie(Menu):
