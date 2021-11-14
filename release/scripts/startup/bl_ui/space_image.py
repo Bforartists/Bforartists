@@ -158,6 +158,7 @@ class IMAGE_MT_view_pie_menus(Menu):
 
         layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'IMAGE_MT_pivot_pie'
         layout.operator("wm.call_menu_pie", text = "UV's snap", icon = "MENU_PANEL").name = 'IMAGE_MT_uvs_snap_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'IMAGE_MT_view_pie'
 
 
 class IMAGE_MT_view_zoom(Menu):
