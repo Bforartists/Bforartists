@@ -384,6 +384,18 @@ class NODE_MT_add(bpy.types.Menu):
             nodeitems_utils.draw_node_categories_menu(self, context)
 
 
+class NODE_MT_pie_menus(Menu):
+    bl_label = "Pie Menus"
+
+    def draw(self, context):
+        layout = self.layout
+
+        space = context.space_data
+
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
+
+
+
 class NODE_MT_view(Menu):
     bl_label = "View"
 
@@ -418,6 +430,7 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("NODE_MT_pie_menus")
         layout.menu("INFO_MT_area")
 
 
@@ -1076,6 +1089,7 @@ classes = (
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,
+    NODE_MT_pie_menus,
     NODE_MT_view,
     NODE_MT_select,
     NODE_MT_select_legacy,
