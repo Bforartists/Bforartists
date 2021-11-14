@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -3053,6 +3053,10 @@ msgstr "ﻥﺍﻮﻟﻷ﻿ﺍ ﻂﻤﻧ"
 
 msgid "Set color mode to use for interpolation"
 msgstr "ﺪﻴﻟﻮﺘﻟﺍ ﻡﺍﺪﺨﺘﺳﻹ﻿ ﻥﻮﻠّﻟﺍ ﻂﻤﻧ ﻊﺿ"
+
+
+msgid "RGB"
+msgstr "ﻥﻮﻟ"
 
 
 msgid "Elements"
@@ -6304,14 +6308,6 @@ msgid "Description of the item's purpose"
 msgstr "ﺮﺼﻨﻌﻟﺍ ﺽﺮﻏ ﻒﻳﺮﻌﺗ"
 
 
-msgid "Icon"
-msgstr ":ﺕﺎﻧﻮﻘﻳﺃ"
-
-
-msgid "Icon of the item"
-msgstr "ﺮﺼﻨﻌﻟﺍ ﻑﺮﻌﻣ"
-
-
 msgid "Identifier"
 msgstr "ﻑﺮﻌﻤﻟﺍ"
 
@@ -8061,6 +8057,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "ﺮﺧﺍ ﻦﺋﺎﻜﻟ ﺔﻴﻠﺤﻣ ﺓﺪﻟّﻮﻣ ﺕﺎﻴﺛﺍﺪﺣﺇ ﻡﺪﺨﺘﺳﺍ"
 
 
+msgid "UV"
+msgstr "ﺭﻭﺎﺤﻣ"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﻻ﻿ UV ـﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﺍ ﻡﺪﺨﺘﺳﺍ"
 
@@ -9099,12 +9099,24 @@ msgid "Red Green Blue"
 msgstr "ﻕﺭﺯﺃ ﺮﻀﺧﺃ ﺮﻤﺣﺃ"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "ﺮﻤﺣﺃ"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "ﺮﻀﺧﺃ"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -12233,10 +12245,6 @@ msgstr "ﻝﺎﻌّﻔﻟﺍ ﺝﺮﺨﻟﺍ"
 
 msgid "Index of the active output"
 msgstr "ﻝﺎﻌّﻔﻟﺍ ﺝﺮﺨﻟﺍ ﻞﻴﻟﺩ"
-
-
-msgid "The node tree icon"
-msgstr "ﺓﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ ﺔﻧﻮﻘﻳﺍ"
 
 
 msgid "ID Name"
@@ -15453,16 +15461,8 @@ msgid "Settings for image formats"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﺔﺌﻴﻫ ﺕﺩﺍﺪﻋﺇ"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "ءﺍﺩﻮﺴﻟﺍ ﻞﻳﻮﺤﺘﻟﺍ ﻞﺠﺳ ﻊﺟﺮﻣ ﺔﻄﻘﻧ"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -17188,10 +17188,6 @@ msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
 msgid "Select Linked"
 msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
-
-
-msgid "UV"
-msgstr "ﺭﻭﺎﺤﻣ"
 
 
 msgid "Align"
@@ -20366,10 +20362,6 @@ msgid "Color Spill"
 msgstr "ﻥﻮﻠﻟﺍ ﺐﻜﺳ"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "spillmap ﺔﻄﻳﺮﺧ ﻢﺠﺣ"
 
@@ -20648,10 +20640,6 @@ msgstr "ﺢﻠّﺻ"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "(ﺕﺍﺭﺍﺮﻜﺘﻟﺍ ﺩﺪﻋ) ﻢﺳﺮﻠﻟ ﺔﻓﺎﺴﻤﻟﺍ"
-
-
-msgid "RGB"
-msgstr "ﻥﻮﻟ"
 
 
 msgid "Keying"
@@ -21101,6 +21089,10 @@ msgstr "BSDF ﺭﺎﺸﺘﻧﺇ"
 
 msgid "Component"
 msgstr "ﻥﻮّﻜﻣ"
+
+
+msgid "Reflection"
+msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ"
 
 
 msgid "Refraction BSDF"
@@ -30741,10 +30733,6 @@ msgid "Palette Color"
 msgstr "ﻥﻮﻠﻟﺍ ﺔﺣﻮﻟ"
 
 
-msgid "Pin"
-msgstr "ﺖﺒّﺛ"
-
-
 msgid "Integrator Presets"
 msgstr "ﻞﻣﺎﻜﻤﻠﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
@@ -31843,10 +31831,6 @@ msgstr "ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﺕﺎﻣﻮﻠﻌﻣ"
 
 msgid "Info on current cache status"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﺔﻟﺎﺣ ﻝﻮﺣ ﺕﺎﻣﻮﻠﻌﻣ"
-
-
-msgid "Cache is outdated"
-msgstr "ﺙﺪﺤﻣ ﺮﻴﻏ ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ"
 
 
 msgid "Cache name"
@@ -39647,6 +39631,10 @@ msgid "Dynamic Effects"
 msgstr "ﺔﻳﻮﻴﺣ ﺕﺍﺮﺛﺆﻣ"
 
 
+msgid "Pin"
+msgstr "ﺖﺒّﺛ"
+
+
 msgctxt "Operator"
 msgid "Change Shortcut"
 msgstr "ﺭﺎﺼﺘﺧﻹ﻿ﺍ ﺮﻴﻏ"
@@ -40608,22 +40596,6 @@ msgid "Interpolation:"
 msgstr ":ﻰﻨﺤﻨﻤﻟﺍ ﻉﻮﻧ"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "ﺔﻴﻧﺎﻴﺑ ﺕﺍﺮﻴﻐﻣ ﻂﻘﻓ ﻪﻳﺪﻟ ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
-
-
-msgid "See Modifiers panel below"
-msgstr "ﻞﻔﺳﻻ﻿ﺍ ﻲﻓ ﺮﻴﻐﻤﻟﺍ ﺡﻮﻠﻟ ﺮﻈﻧﺍ"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "ﻂﻘﻓ ﺔﻨﻳﺎﻌﻤﻟﺍ ﻁﺎﻘﻧ ﻰﻠﻋ ﻱﻮﺘﺤﻳ ﻪﻧﻻ﻿ ﺢﻴﺗﺎﻔﻣ ﻱﺍ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﻯﺪﻟ ﺲﻴﻟ"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻰﻠﻋ ﻝﺎﻌﻓ ﺭﺎﻃﺇ ﺪﺟﻮﻳ ﻻ﻿"
-
-
 msgid "Prop:"
 msgstr ":ﺔﻴﺻﺎﺧ"
 
@@ -40642,6 +40614,22 @@ msgstr "ﺕﺎﻳﺩﺎﻤﺘﻋﻻ﻿ﺍ ﺙﺪﺣ"
 
 msgid "Add Modifier"
 msgstr "ﺮﻴﻐﻣ ﻒﺿﺃ"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "ﺔﻴﻧﺎﻴﺑ ﺕﺍﺮﻴﻐﻣ ﻂﻘﻓ ﻪﻳﺪﻟ ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
+
+
+msgid "See Modifiers panel below"
+msgstr "ﻞﻔﺳﻻ﻿ﺍ ﻲﻓ ﺮﻴﻐﻤﻟﺍ ﺡﻮﻠﻟ ﺮﻈﻧﺍ"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "ﻂﻘﻓ ﺔﻨﻳﺎﻌﻤﻟﺍ ﻁﺎﻘﻧ ﻰﻠﻋ ﻱﻮﺘﺤﻳ ﻪﻧﻻ﻿ ﺢﻴﺗﺎﻔﻣ ﻱﺍ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﻯﺪﻟ ﺲﻴﻟ"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻰﻠﻋ ﻝﺎﻌﻓ ﺭﺎﻃﺇ ﺪﺟﻮﻳ ﻻ﻿"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -40676,10 +40664,6 @@ msgid "Slot %d"
 msgstr "‬%d‪ ﺔﺤﺘﻓ"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "1.0 :ﺔﻴﻄﺧ ﺮﻴﻏ ﺎﻘﺒﺴﻣ ﺓﺩﺪﺤﻣ ﺓﺭﺎﻧﺍ"
-
-
 msgid "Select Slot"
 msgstr "ﺓﺭﺄﻔﻟﺍ ﺮﺘﺧﺍ"
 
@@ -40694,6 +40678,10 @@ msgstr "ﺮﻤﻤﻟﺍ ﺮﺘﺧﺍ"
 
 msgid "Select View"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﺮﺘﺧﺍ"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "1.0 :ﺔﻴﻄﺧ ﺮﻴﻏ ﺎﻘﺒﺴﻣ ﺓﺩﺪﺤﻣ ﺓﺭﺎﻧﺍ"
 
 
 msgid "Can't Load Image"
@@ -41196,12 +41184,20 @@ msgid "Crease Edges"
 msgstr "ﻑﺍﻮﺤﻟﺍ ﺪﻌّﺟ"
 
 
-msgid "AO"
-msgstr "ﻡ.ﺇ"
-
-
 msgid "Fac"
 msgstr "ﻞﻣﺎﻌﻤﻟﺍ"
+
+
+msgid "Dot"
+msgstr "ﺔﻄﻘﻧ"
+
+
+msgid "Val"
+msgstr "ﺔﻤﻴﻘﻟﺍ"
+
+
+msgid "AO"
+msgstr "ﻡ.ﺇ"
 
 
 msgid "Anisotropy"
@@ -41320,8 +41316,12 @@ msgid "Transparent Depth"
 msgstr "ﻑﺎﻔّﺷ ﻖﻤﻋ"
 
 
-msgid "Dot"
-msgstr "ﺔﻄﻘﻧ"
+msgid "Color1"
+msgstr "1 ﻥﻮﻠﻟﺍ"
+
+
+msgid "Color2"
+msgstr "2 ﻥﻮﻠﻟﺍ"
 
 
 msgid "Color Fac"
@@ -41336,8 +41336,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ"
+msgid "Mortar"
+msgstr "ﻁﻼ﻿ﻤﻟﺍ"
+
+
+msgid "Brick Width"
+msgstr "ﺔﻨﺒﻠﻟﺍ ﺽﺮﻋ"
+
+
+msgid "Row Height"
+msgstr "ﺮﻄﺴﻟﺍ ﻉﺎﻔﺗﺭﺍ"
 
 
 msgid "Emission Color"
@@ -41354,26 +41362,6 @@ msgstr "1 ﺕﺎﻨﺒﻠﻟﺍ"
 
 msgid "Bricks 2"
 msgstr "2 ﺕﺎﻨﺒﻠﻟﺍ"
-
-
-msgid "Mortar"
-msgstr "ﻁﻼ﻿ﻤﻟﺍ"
-
-
-msgid "Brick Width"
-msgstr "ﺔﻨﺒﻠﻟﺍ ﺽﺮﻋ"
-
-
-msgid "Row Height"
-msgstr "ﺮﻄﺴﻟﺍ ﻉﺎﻔﺗﺭﺍ"
-
-
-msgid "Color1"
-msgstr "1 ﻥﻮﻠﻟﺍ"
-
-
-msgid "Color2"
-msgstr "2 ﻥﻮﻠﻟﺍ"
 
 
 msgid "Coordinate 1"
@@ -41398,10 +41386,6 @@ msgstr "W3"
 
 msgid "W4"
 msgstr "W4"
-
-
-msgid "Val"
-msgstr "ﺔﻤﻴﻘﻟﺍ"
 
 
 msgid "| Time:%s | "
@@ -41458,10 +41442,6 @@ msgstr "ﺭﺎﺴﻴﻟﺍ ﻰﻟﺇ ﻂﺋﺍﺮﺸﻟﺍ"
 
 msgid "Strips must have the same number of inputs"
 msgstr "ﻂﻘﻨﻟﺍ ﺩﺪﻌﺑ ﺮﺘﺧﺍ"
-
-
-msgid "Paste name"
-msgstr "ﻢﺳﻹ﻿ﺍ ﻖﺼﻟﺍ"
 
 
 msgid "Blender File View"

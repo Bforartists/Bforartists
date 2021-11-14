@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -4707,6 +4707,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "보간에 대해 사용하는 컬러 모드를 설정"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "요소"
 
@@ -9111,14 +9115,6 @@ msgid "Description of the item's purpose"
 msgstr "항목의 목적에 대한 설명"
 
 
-msgid "Icon"
-msgstr "아이콘"
-
-
-msgid "Icon of the item"
-msgstr "항목의 아이콘"
-
-
 msgid "Identifier"
 msgstr "식별자"
 
@@ -11481,6 +11477,10 @@ msgid "Change the underlying simulation method"
 msgstr "기본 시뮬레이션 메서드를 변경"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Adjust slice direction according to the view direction"
 msgstr "뷰 방향에 따라 슬라이스 방향을 조정"
 
@@ -11687,10 +11687,6 @@ msgstr "Top"
 
 msgid "Dissolve Smoke"
 msgstr "디졸브 스모크"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Foam"
@@ -12015,6 +12011,10 @@ msgstr "생성됨"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "오브젝트를 흐르는 중심으로 생성된 좌표들"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -14405,12 +14405,24 @@ msgid "Red Green Blue"
 msgstr "레드 그린 블루"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "레드"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "그린"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -19244,10 +19256,6 @@ msgid "Index of the active output"
 msgstr "활성 출력의 인덱스"
 
 
-msgid "The node tree icon"
-msgstr "노드 트리 아이콘"
-
-
 msgid "ID Name"
 msgstr "ID 이름"
 
@@ -23193,16 +23201,8 @@ msgid "Settings for image formats"
 msgstr "이미지 포맷에 대한 설정"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "로그 변환 참조 블랙 포인트"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -24717,6 +24717,10 @@ msgstr "키보드"
 
 msgid "Mouse"
 msgstr "마우스"
+
+
+msgid "NDOF"
+msgstr "NDOF"
 
 
 msgid "Text Input"
@@ -26804,10 +26808,6 @@ msgstr "마스크 컨텍스트 메뉴"
 
 msgid "Select Linked"
 msgstr "연결된 선택"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -32929,10 +32929,6 @@ msgid "Node in a node tree"
 msgstr "노드 트리에서 노드"
 
 
-msgid "The node icon"
-msgstr "노드 아이콘"
-
-
 msgid "The node label"
 msgstr "노드 레이블"
 
@@ -33553,10 +33549,6 @@ msgid "Green spillmap scale"
 msgstr "그린 스필맵 축적"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "레드 스필맵 축적"
 
@@ -34083,10 +34075,6 @@ msgstr "인페인트"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "인페인트에 거리 (반복의 수)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -35145,6 +35133,10 @@ msgstr "헤어 BSDF"
 
 msgid "Component"
 msgstr "구성 요소"
+
+
+msgid "Reflection"
+msgstr "반사"
 
 
 msgid "Principled Hair BSDF"
@@ -61688,82 +61680,6 @@ msgid "Panel containing UI elements"
 msgstr "UI 요소가 포함된 패널"
 
 
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "패널이 속한 컨텍스트 (TODO: bl_context/bl_region_type/bl_space_type의 가능한 조합을 설명)"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "이 속성이 설정되면 패널에서 맞춤 ID를 가져오고 그렇지 않으면 패널 정의에 사용된 클래스 이름을 사용합니다. 예를 들어, 클래스 이름이 \"OBJECT_PT_hello\"이고 bl_idname이 스크립트에 의해 설정되지 않은 경우 bl_idname = \"OBJECT_PT_hello\""
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "패널 레이블은 패널 축소에 사용되는 삼각형의 오른쪽에 있는 패널 해더에 표시됩니다"
-
-
-msgid "Options for this panel type"
-msgstr "이 패널 유형에 대한 옵션"
-
-
-msgid "Default Closed"
-msgstr "기본 종료됨"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "생성시 패널을 열거나 닫아야하는지 정의합니다"
-
-
-msgid "Hide Header"
-msgstr "헤더 숨기기"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "False로 설정하면 패널에 해더가 표시됩니다. 여기에는 클릭 가능한 화살표가 포함되어있어 패널과 레이블을 접을 수 있습니다 (bl_label 참조)"
-
-
-msgid "Order"
-msgstr "순서"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "숫자가 작은 패널은 숫자가 더 큰 패널보다 먼저 기본값으로 정렬됩니다"
-
-
-msgid "Parent ID Name"
-msgstr "부모 ID 이름"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "이 옵션을 설정하면 패널이 하위 패널이됩니다"
-
-
-msgid "Units X"
-msgstr "단위 X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "설정되면 팝업 패널 너비를 정의합니다"
-
-
-msgid "Popover"
-msgstr "팝오버"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "UI에서 패널의 구조를 정의"
-
-
-msgid "XXX todo"
-msgstr "모두 XXX"
-
-
-msgid "Pin"
-msgstr "고정"
-
-
-msgid "Show the panel on all tabs"
-msgstr "모든 탭에 패널을 표시"
-
-
 msgid "Integrator Presets"
 msgstr "적분기 프리셋"
 
@@ -62665,10 +62581,6 @@ msgstr "어플리케이션"
 
 msgid "Development"
 msgstr "개발"
-
-
-msgid "NDOF"
-msgstr "NDOF"
 
 
 msgid "Tablet"
@@ -64066,10 +63978,6 @@ msgstr "캐시 정보"
 
 msgid "Info on current cache status"
 msgstr "현재 캐시 등급에 대한 정보"
-
-
-msgid "Cache is outdated"
-msgstr "캐시가 오래됨"
 
 
 msgid "Cache name"
@@ -65548,8 +65456,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "OpenSubdiv과 함께 사용되는 컴퓨터 백엔드의 유형"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -66414,14 +66330,6 @@ msgstr "헤어의 형태"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "카디날 커브 교차 지점에서 사용된 섭디비젼들의 수 (2의 파워)"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -79113,6 +79021,10 @@ msgid "Animate Path"
 msgstr "애니메이트 경로"
 
 
+msgid "Order"
+msgstr "순서"
+
+
 msgid "Volume Min"
 msgstr "볼륨 최소"
 
@@ -85616,6 +85528,10 @@ msgid "Non-Keyboard Shortcut"
 msgstr "비-키보드 단축 키"
 
 
+msgid "Pin"
+msgstr "고정"
+
+
 msgid "Shift Left Mouse"
 msgstr "Shift Left Mouse"
 
@@ -88267,22 +88183,6 @@ msgid "None for Enum/Boolean"
 msgstr "열거/불리언에 대해 없음"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "F-커브는 F-모디파이어 만 있음"
-
-
-msgid "See Modifiers panel below"
-msgstr "아래에 모디파이어 패널을 참조"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F-커브는 샘플된 포인트 만 포함하므로 키 프레임이 없습니다"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "F-커브에서 활성 키 프레임 없음"
-
-
 msgid "Prop:"
 msgstr "프로스:"
 
@@ -88321,6 +88221,22 @@ msgstr "드라이버 에디터에 표시"
 
 msgid "Add Modifier"
 msgstr "모디파이어를 추가"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "F-커브는 F-모디파이어 만 있음"
+
+
+msgid "See Modifiers panel below"
+msgstr "아래에 모디파이어 패널을 참조"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "F-커브는 샘플된 포인트 만 포함하므로 키 프레임이 없습니다"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "F-커브에서 활성 키 프레임 없음"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -88468,10 +88384,6 @@ msgid "Discard"
 msgstr "포기"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "비선형 하드 코딩, 감마:1.7"
-
-
 msgid "Select Slot"
 msgstr "슬롯을 선택"
 
@@ -88486,6 +88398,10 @@ msgstr "패스를 선택"
 
 msgid "Select View"
 msgstr "뷰를 선택"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "비선형 하드 코딩, 감마:1.7"
 
 
 msgid "Can't Load Image"
@@ -90840,16 +90756,28 @@ msgid "Crease Edges"
 msgstr "크리스 에지"
 
 
+msgid "Fac"
+msgstr "팩터"
+
+
+msgid "Dot"
+msgstr "도트"
+
+
+msgid "Val"
+msgstr "값"
+
+
+msgid "Density Attribute"
+msgstr "밀도 속성"
+
+
 msgid "Shader Editor"
 msgstr "셰이더 에디터"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "팩터"
 
 
 msgid "Anisotropy"
@@ -91076,8 +91004,12 @@ msgid "Transmission Depth"
 msgstr "전달 깊이"
 
 
-msgid "Dot"
-msgstr "도트"
+msgid "Color1"
+msgstr "컬러1"
+
+
+msgid "Color2"
+msgstr "컬러2"
 
 
 msgid "Color Fac"
@@ -91092,8 +91024,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "반사"
+msgid "Mortar"
+msgstr "모르타르"
+
+
+msgid "Brick Width"
+msgstr "벽돌 폭"
+
+
+msgid "Row Height"
+msgstr "행 높이"
 
 
 msgid "Flame"
@@ -91102,10 +91042,6 @@ msgstr "플래임"
 
 msgid "Color Attribute"
 msgstr "컬러 속성"
-
-
-msgid "Density Attribute"
-msgstr "밀도 속성"
 
 
 msgid "Absorption Color"
@@ -91144,26 +91080,6 @@ msgid "Bricks 2"
 msgstr "벽돌 2"
 
 
-msgid "Mortar"
-msgstr "모르타르"
-
-
-msgid "Brick Width"
-msgstr "벽돌 폭"
-
-
-msgid "Row Height"
-msgstr "행 높이"
-
-
-msgid "Color1"
-msgstr "컬러1"
-
-
-msgid "Color2"
-msgstr "컬러2"
-
-
 msgid "Coordinate 1"
 msgstr "조정 1"
 
@@ -91190,10 +91106,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "반대 축적"
-
-
-msgid "Val"
-msgstr "값"
 
 
 msgid "Unknown py-exception, could not convert"
@@ -91316,10 +91228,6 @@ msgstr "스트립 호환성이 없음"
 
 msgid "Strips must have the same number of inputs"
 msgstr "스트립은 입력의 같은 수가 있어야함"
-
-
-msgid "Paste name"
-msgstr "이름을 붙여 넣기"
 
 
 msgid "Blender File View"

@@ -991,7 +991,7 @@ class BlenderKitHDRUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
                                         default=0)
     evs_cap: IntProperty(name="EV cap", description="EVs dynamic range",
                                         default=0)
-    true_hdr: BoolProperty(name="Real HDR", description="Image has High dynamic range.",default=False)
+    true_hdr: BoolProperty(name="Real HDR", description="Image has High dynamic range", default=False)
 
 
 class BlenderKitBrushUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
@@ -1532,7 +1532,7 @@ class BlenderKitHDRSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
 
     true_hdr: BoolProperty(
         name='Real HDRs only',
-        description='Search only for real HDRs, this means images that have a range higher than 0-1 in their pixels.',
+        description='Search only for real HDRs, this means images that have a range higher than 0-1 in their pixels',
         default=True,
         update=search.search_update
     )

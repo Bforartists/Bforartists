@@ -939,12 +939,12 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        grid="#1b1b1b"
+        grid="#1B1B1B"
         node_selected="#f15800"
         node_active="#f15800"
         wire="#191919"
         wire_inner="#999999"
-        wire_select="#ffa733b3"
+        wire_select="#ffa733"
         selected_text="#7f7070"
         node_backdrop="#e6e6e6ff"
         converter_node="#66c4ff"
@@ -1354,10 +1354,10 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#303030"
+            list="#adadad"
             list_title="#c3c3c3"
             list_text="#c3c3c3"
-            list_text_hi="#ffffff"
+            list_text_hi="#00ffff"
             >
           </ThemeSpaceListGeneric>
         </space_list>

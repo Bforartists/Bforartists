@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -5282,6 +5282,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Вкажіть колірний режим для інтерполяції"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Елементи"
 
@@ -9898,14 +9902,6 @@ msgid "Description of the item's purpose"
 msgstr "Опис призначення елемента"
 
 
-msgid "Icon"
-msgstr "Піктограма"
-
-
-msgid "Icon of the item"
-msgstr "Піктограма елемента"
-
-
 msgid "Identifier"
 msgstr "Ідентифікатор"
 
@@ -12856,6 +12852,10 @@ msgid "Change the underlying simulation method"
 msgstr "Змінити лежачий в основі метод симуляції"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Use FLIP as the simulation method (more splashy behavior)"
 msgstr "Вжити FLIP як метод симуляції (більше розбризкування)"
 
@@ -13202,10 +13202,6 @@ msgstr "Логарифмічне Розчинення"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "Розчинення диму логарифмічно. Розчиняє швидко спершу, а далі затягується довше"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Create liquid particle system"
@@ -13630,6 +13626,10 @@ msgstr "Генероване"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "Створені координати центровані за об'єктом, що випускає"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -16612,12 +16612,24 @@ msgid "Red Green Blue"
 msgstr "Червоне Зелене Синє"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Червоне"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Зелений"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -22335,10 +22347,6 @@ msgid "Index of the active output"
 msgstr "Індекс активного виводу"
 
 
-msgid "The node tree icon"
-msgstr "Піктограма вузлового дерева"
-
-
 msgid "ID Name"
 msgstr "ID-назва"
 
@@ -26672,16 +26680,8 @@ msgid "Settings for image formats"
 msgstr "Параметри форматів зображень"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Еталон чорної точки для логарифмічного перетворення"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -28258,6 +28258,10 @@ msgstr "Клавіатура"
 
 msgid "Mouse"
 msgstr "Миша"
+
+
+msgid "NDOF"
+msgstr "3D Маніпулятор"
 
 
 msgid "Text Input"
@@ -30463,10 +30467,6 @@ msgstr "Контекстне меню масок"
 
 msgid "Select Linked"
 msgstr "Виділити пов'язане"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -37504,10 +37504,6 @@ msgid "Node in a node tree"
 msgstr "Вузол у дереві вузлів"
 
 
-msgid "The node icon"
-msgstr "Піктограма вузла"
-
-
 msgid "The node label"
 msgstr "Позначка вузла"
 
@@ -38204,10 +38200,6 @@ msgid "Green spillmap scale"
 msgstr "Рівень зеленого у карті розтікання"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Рівень червоного у карті розтікання"
 
@@ -38750,10 +38742,6 @@ msgstr "Ретуш"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Відстань ретушування (число ітерацій)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -40392,6 +40380,10 @@ msgstr "Волосся BSDF"
 
 msgid "Component"
 msgstr "Компонент"
+
+
+msgid "Reflection"
+msgstr "Віддзеркалення"
 
 
 msgid "Principled Hair BSDF"
@@ -71565,106 +71557,6 @@ msgid "Panel containing UI elements"
 msgstr "Панель, що містить елементи Інтерфейсу Користувача"
 
 
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "Контекст, до якого належить панель. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Якщо це задано, то панель отримує власний ідентифікатор, інакше вона отримує назву класу, що використовується для визначення цієї панелі. Наприклад, якщо назва класу є \"OBJECT_PT_hello\", а bl_idname не задано скриптом, то bl_idname = \"OBJECT_PT_hello\""
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "Позначка панелі, показується у заголовку панелі у правому боці трикутника, що використовується для згортання панелі"
-
-
-msgid "Options for this panel type"
-msgstr "Опції для цього типу панелі"
-
-
-msgid "Default Closed"
-msgstr "Стандартно Закрито"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "Визначає, чи панель має бути відкритою чи згорнутою у момент її створення"
-
-
-msgid "Hide Header"
-msgstr "Схов Заголовка"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "Якщо задано як False, то панель показує заголовок, який містить клацкоздатну стрілку для згортання панелі та позначки (дивіться  bl_label)"
-
-
-msgid "Instanced Panel"
-msgstr "Примірникована Панель"
-
-
-msgid "Multiple panels with this type can be used as part of a list depending on data external to the UI. Used to create panels for the modifiers and other stacks"
-msgstr "Численні панелі з цим типом можуть використовуватися як частина списку, залежно від даних, зовнішніх до інтерфейсу користувача. Використовується для створення панель для модифікаторів та інших стеків"
-
-
-msgid "Expand Header Layout"
-msgstr "Розгортання Розстави Заголовка"
-
-
-msgid "Allow buttons in the header to stretch and shrink to fill the entire layout width"
-msgstr "Дозволити кнопки у заголовку для розгортання та згортання, щоб заповнити всю ширину розстави"
-
-
-msgid "Order"
-msgstr "Порядок"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "Панелі з меншими номерами стандартно впорядковуються перед панелями з більшими номерами"
-
-
-msgid "Parent ID Name"
-msgstr "Назва ідентифікатора приріднення"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "Якщо це задано, то панель стає під-панеллю"
-
-
-msgid "Units X"
-msgstr "Одиниці X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "Коли задано, визначає ширину спливної панелі"
-
-
-msgid "Custom Data"
-msgstr "Власні дані"
-
-
-msgid "Panel data"
-msgstr "Дані панелі"
-
-
-msgid "Popover"
-msgstr "Випливна"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "Визначає структуру панелі в Інтерфейсі Користувача"
-
-
-msgid "XXX todo"
-msgstr "XXX todo"
-
-
-msgid "Pin"
-msgstr "Пришпилення"
-
-
-msgid "Show the panel on all tabs"
-msgstr "Показати панель на всіх вкладках"
-
-
 msgid "Integrator Presets"
 msgstr "Передустави Інтегратора"
 
@@ -72651,10 +72543,6 @@ msgstr "Бібліотеки Активів"
 
 msgid "Development"
 msgstr "Розробка"
-
-
-msgid "NDOF"
-msgstr "3D Маніпулятор"
 
 
 msgid "Tablet"
@@ -74202,10 +74090,6 @@ msgstr "Інформація про кеш"
 
 msgid "Info on current cache status"
 msgstr "Інформація про поточний стан кешу"
-
-
-msgid "Cache is outdated"
-msgstr "Кеш застарів"
 
 
 msgid "Cache name"
@@ -75896,8 +75780,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "Тип внуштрішнього обчислювача використовуваний для OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "ЦП"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -76890,14 +76782,6 @@ msgstr "Рендерити волосся як 3D криву, для акура�
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Кількість поділів при перетині кардинальних кривих (степінь 2)"
-
-
-msgid "CPU"
-msgstr "ЦП"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -89022,6 +88906,10 @@ msgid "Volume Light"
 msgstr "Освітлення Об'єму"
 
 
+msgid "AOV"
+msgstr "ДВЗ"
+
+
 msgid "Selected StudioLight"
 msgstr "Вибраний Студіосвітлювач"
 
@@ -91944,6 +91832,10 @@ msgstr "Додати Примус Кістки"
 msgctxt "Operator"
 msgid "Animate Path"
 msgstr "Шлях Анімування"
+
+
+msgid "Order"
+msgstr "Порядок"
 
 
 msgid "Clamp Region"
@@ -98278,10 +98170,6 @@ msgid "Key %d"
 msgstr "Ключ %d"
 
 
-msgid "AOV"
-msgstr "ДВЗ"
-
-
 msgid "MaskLayer"
 msgstr "ШарМаски"
 
@@ -98931,6 +98819,14 @@ msgid "<Unknown Modifier>"
 msgstr "<Невідомий модифікатор>"
 
 
+msgid "y = (Ax + B)"
+msgstr "y = (Ax + B)"
+
+
+msgid "✕ (Ax + B)"
+msgstr "✕ (Ax + B)"
+
+
 msgid "Add Control Point"
 msgstr "Додати Керувальну Точку"
 
@@ -98945,14 +98841,6 @@ msgstr "Додати нову керувальну точку до оболон�
 
 msgid "Delete envelope control point"
 msgstr "Видалити керувальну точку оболонки"
-
-
-msgid "y = (Ax + B)"
-msgstr "y = (Ax + B)"
-
-
-msgid "✕ (Ax + B)"
-msgstr "✕ (Ax + B)"
 
 
 msgid "No animation data in buffer to paste"
@@ -99917,6 +99805,10 @@ msgstr "Помилка обчислювання числа, дивіться р�
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Не-клавіатурна швидка клавіша"
+
+
+msgid "Pin"
+msgstr "Пришпилення"
 
 
 msgid "Shift Left Mouse"
@@ -103058,22 +102950,6 @@ msgid "Key Frame"
 msgstr "Ключовий Кадр"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Ф-крива має лише Ф-модифікатори"
-
-
-msgid "See Modifiers panel below"
-msgstr "Дивіться панель модифікаторів нижче"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "Ф-крива не має ключових кадрів, тому що містить лише зразкові точки"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "На Ф-кривій немає активного ключового кадру"
-
-
 msgid "Prop:"
 msgstr "Властивість:"
 
@@ -103112,6 +102988,22 @@ msgstr "Показ у Редакторі Драйверів"
 
 msgid "Add Modifier"
 msgstr "Додати модифікатор"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Ф-крива має лише Ф-модифікатори"
+
+
+msgid "See Modifiers panel below"
+msgstr "Дивіться панель модифікаторів нижче"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "Ф-крива не має ключових кадрів, тому що містить лише зразкові точки"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "На Ф-кривій немає активного ключового кадру"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -103279,10 +103171,6 @@ msgid "Discard"
 msgstr "Відкидання"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Жорстко фіксована нелінійна, гамма: 1.7"
-
-
 msgid "Select Slot"
 msgstr "Виберіть гніздо"
 
@@ -103297,6 +103185,10 @@ msgstr "Виберіть прохід"
 
 msgid "Select View"
 msgstr "Вибрати вигляд"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Жорстко фіксована нелінійна, гамма: 1.7"
 
 
 msgid "Can't Load Image"
@@ -106116,16 +106008,16 @@ msgid "Save External..."
 msgstr "Зберегти Зовнішнє..."
 
 
-msgid "Built without Ocean modifier"
-msgstr "Побудовано без модифікатора Океан"
-
-
 msgid "Coverage"
 msgstr "Покриття"
 
 
 msgid "Delete Bake"
 msgstr "Видалити Запікання"
+
+
+msgid "Built without Ocean modifier"
+msgstr "Побудовано без модифікатора Океан"
 
 
 msgid "Create Instances"
@@ -106238,16 +106130,28 @@ msgid "Crease Edges"
 msgstr "Робити складки"
 
 
+msgid "Fac"
+msgstr "Коеф."
+
+
+msgid "Dot"
+msgstr "Скаляр"
+
+
+msgid "Val"
+msgstr "Знач."
+
+
+msgid "Density Attribute"
+msgstr "Атрибут Щільності"
+
+
 msgid "Shader Editor"
 msgstr "Редактор Відтінювачів"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "Коеф."
 
 
 msgid "Anisotropy"
@@ -106474,8 +106378,12 @@ msgid "Transmission Depth"
 msgstr "Глибина пропускання"
 
 
-msgid "Dot"
-msgstr "Скаляр"
+msgid "Color1"
+msgstr "Колір1"
+
+
+msgid "Color2"
+msgstr "Колір2"
 
 
 msgid "Color Fac"
@@ -106490,8 +106398,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Віддзеркалення"
+msgid "Mortar"
+msgstr "Цемент"
+
+
+msgid "Brick Width"
+msgstr "Ширина цеглини"
+
+
+msgid "Row Height"
+msgstr "Висота рядка"
 
 
 msgid "Flame"
@@ -106500,10 +106416,6 @@ msgstr "Полум'я"
 
 msgid "Color Attribute"
 msgstr "Атрибут Кольору"
-
-
-msgid "Density Attribute"
-msgstr "Атрибут Щільності"
 
 
 msgid "Absorption Color"
@@ -106542,26 +106454,6 @@ msgid "Bricks 2"
 msgstr "Цеглини 2"
 
 
-msgid "Mortar"
-msgstr "Цемент"
-
-
-msgid "Brick Width"
-msgstr "Ширина цеглини"
-
-
-msgid "Row Height"
-msgstr "Висота рядка"
-
-
-msgid "Color1"
-msgstr "Колір1"
-
-
-msgid "Color2"
-msgstr "Колір2"
-
-
 msgid "Coordinate 1"
 msgstr "Координата 1"
 
@@ -106588,10 +106480,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Сила"
-
-
-msgid "Val"
-msgstr "Знач."
 
 
 msgid ""
@@ -106742,10 +106630,6 @@ msgstr "Опертя Об'єкта"
 
 msgid "Wave Effect"
 msgstr "Ефект Хвилі"
-
-
-msgid "Paste name"
-msgstr "Вставити назву"
 
 
 msgid "Blender File View"
