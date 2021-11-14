@@ -844,7 +844,6 @@ def asset_from_newer_blender_version(asset_data):
     '''checks if asset is from a newer blender version, to avoid incompatibility'''
     bver = bpy.app.version
     aver = asset_data['sourceAppVersion'].split('.')
-    #print(aver,bver)
     bver_f = bver[0] + bver[1] * .01 + bver[2] * .0001
     if len(aver)>=3:
         aver_f = int(aver[0]) + int(aver[1]) * .01 + int(aver[2]) * .0001

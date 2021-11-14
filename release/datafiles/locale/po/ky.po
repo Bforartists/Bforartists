@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -469,6 +469,10 @@ msgid "Divide"
 msgstr "Бөлүү"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "B-Spline"
 msgstr "B-сплайн"
 
@@ -660,10 +664,6 @@ msgstr "Куюн"
 
 msgid "Wind"
 msgstr "Шамал"
-
-
-msgid "Icon"
-msgstr "Белги"
 
 
 msgid "Group"
@@ -887,6 +887,10 @@ msgid "Fire"
 msgstr "От"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Visibility"
 msgstr "Көрүнүү"
 
@@ -948,12 +952,24 @@ msgid "Catmull-Clark"
 msgstr "Катмулл-Кларк"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Кызыл"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Жашыл"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -1361,14 +1377,6 @@ msgid "Animation"
 msgstr "Анимация"
 
 
-msgid "B"
-msgstr "B"
-
-
-msgid "G"
-msgstr "G"
-
-
 msgid "Codec"
 msgstr "Кодек"
 
@@ -1436,10 +1444,6 @@ msgstr "Тилдер..."
 
 msgid "Channel"
 msgstr "Канал"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -1571,10 +1575,6 @@ msgid "YCbCr"
 msgstr "YCbCr"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "ITU 601"
 msgstr "ITU 601"
 
@@ -1609,10 +1609,6 @@ msgstr "Өчүрүү"
 
 msgid "Shadow"
 msgstr "Көлөкө"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Red Channel"

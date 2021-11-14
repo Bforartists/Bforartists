@@ -582,7 +582,6 @@ def can_edit_asset(active_index=-1, asset_data=None):
     if not asset_data:
         sr = bpy.context.window_manager['search results']
         asset_data = dict(sr[active_index])
-    # print(profile, asset_data)
     if int(asset_data['author']['id']) == int(profile['user']['id']):
         return True
     return False

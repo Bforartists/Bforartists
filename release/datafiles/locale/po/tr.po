@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -1216,6 +1216,10 @@ msgstr "Arabellek rengini yapıştır"
 
 msgid "Color Mode"
 msgstr "Düzenleme Modu"
+
+
+msgid "RGB"
+msgstr "RGB"
 
 
 msgid "Interpolation"
@@ -2719,10 +2723,6 @@ msgid "Texture effector weight"
 msgstr "Doku butonları(F6)"
 
 
-msgid "Icon of the item"
-msgstr "ID Özellik Gezgini"
-
-
 msgid "Human readable name"
 msgstr "İşareti (Tekrar) Adlandır"
 
@@ -3488,6 +3488,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "Doku Boyama"
 
 
+msgid "UV"
+msgstr "UV "
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "Düzeltilmiş koordinatları görüntüler"
 
@@ -3826,6 +3830,10 @@ msgstr "Döndürme & Ölçek"
 
 msgid "Active Layer"
 msgstr "Aktif katmana ayarla"
+
+
+msgid "R"
+msgstr "R"
 
 
 msgid "Red"
@@ -6738,10 +6746,6 @@ msgid "Select Linked"
 msgstr "Bağlantılı Çoğalt"
 
 
-msgid "UV"
-msgstr "UV "
-
-
 msgid "Align"
 msgstr "Düzen"
 
@@ -8699,10 +8703,6 @@ msgid "Green spillmap scale"
 msgstr "Ölçeyi/Çevrimi Uygula"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Ölçeyi/Çevrimi Uygula"
 
@@ -8889,10 +8889,6 @@ msgstr "Çoklu-Boyama"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Görüntüyü Seçili Olana Hizala"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -9237,6 +9233,10 @@ msgstr "Dosya Uzantılarını Filtrele"
 
 msgid "Diffuse BSDF"
 msgstr "Nesnenin genel rengi."
+
+
+msgid "Reflection"
+msgstr "Yansıma"
 
 
 msgid "Refraction BSDF"
@@ -18350,10 +18350,6 @@ msgid "Cache Info"
 msgstr "Nesne Bilgisi"
 
 
-msgid "Cache is outdated"
-msgstr "Nesneyi, Sabitlenmiş bir Engel yap"
-
-
 msgid "Cache name"
 msgstr "Dosya adı"
 
@@ -24334,6 +24330,14 @@ msgid "Fac"
 msgstr "Yüzey Alanı"
 
 
+msgid "Dot"
+msgstr "Açı"
+
+
+msgid "Val"
+msgstr "Değer"
+
+
 msgid "Anisotropy"
 msgstr "Dosya Uzantılarını Filtrele"
 
@@ -24406,12 +24410,20 @@ msgid "Is Transmission Ray"
 msgstr "Ekran Rengi:"
 
 
-msgid "Dot"
-msgstr "Açı"
+msgid "Color1"
+msgstr "Renk"
 
 
-msgid "Reflection"
-msgstr "Yansıma"
+msgid "Color2"
+msgstr "Renk"
+
+
+msgid "Brick Width"
+msgstr "Genişlik Boyutu"
+
+
+msgid "Row Height"
+msgstr "Yükseklik"
 
 
 msgid "Emission Color"
@@ -24430,22 +24442,6 @@ msgid "Bricks 2"
 msgstr "Mantık düzeni"
 
 
-msgid "Brick Width"
-msgstr "Genişlik Boyutu"
-
-
-msgid "Row Height"
-msgstr "Yükseklik"
-
-
-msgid "Color1"
-msgstr "Renk"
-
-
-msgid "Color2"
-msgstr "Renk"
-
-
 msgid "Coordinate 1"
 msgstr "Düzeltilmiş koordinatları görüntüler"
 
@@ -24456,10 +24452,6 @@ msgstr "Düzeltilmiş koordinatları görüntüler"
 
 msgid "iScale"
 msgstr "Ölçekle"
-
-
-msgid "Val"
-msgstr "Değer"
 
 
 msgid "Image too small"
@@ -24488,10 +24480,6 @@ msgstr "Otomatik İsimlendir Sol/Sağ"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Katmandan Tümünü Seç"
-
-
-msgid "Paste name"
-msgstr "Paste name"
 
 
 msgid "Blender File View"

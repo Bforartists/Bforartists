@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5465,6 +5465,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "选择用于插值的颜色模式"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "元素"
 
@@ -10225,14 +10229,6 @@ msgid "Description of the item's purpose"
 msgstr "描述条目的目的"
 
 
-msgid "Icon"
-msgstr "图标"
-
-
-msgid "Icon of the item"
-msgstr "项目的图标"
-
-
 msgid "Identifier"
 msgstr "识别符"
 
@@ -13255,6 +13251,10 @@ msgid "Change the underlying simulation method"
 msgstr "更改基础模拟方法"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Use FLIP as the simulation method (more splashy behavior)"
 msgstr "使用FLIP作为模拟方法(更多飞溅行为)"
 
@@ -13601,10 +13601,6 @@ msgstr "对数式消融"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "以对数方式消融烟雾。起初消散得很快，但残留时间较长"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Create liquid particle system"
@@ -14029,6 +14025,10 @@ msgstr "生成"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "生成的坐标位于流物体中心"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -15765,6 +15765,10 @@ msgid "GizmoGroup has a set of reports (warnings and errors) from last execution
 msgstr "Gizmo群组有最后一次执行的一组报告(警告和错误)"
 
 
+msgid "VR Controller Poses Indicator"
+msgstr "VR控制器姿势指示器"
+
+
 msgid "VR Landmark Indicators"
 msgstr "VR 地标指示器"
 
@@ -16603,6 +16607,14 @@ msgid "Strength of smoothing applied on jagged chains"
 msgstr "应用于锯齿状链条的平滑强度"
 
 
+msgid "Camera Object"
+msgstr "摄像机物体"
+
+
+msgid "Use specified camera object for generating line art"
+msgstr "使用指定的摄像机物体生成线条画"
+
+
 msgid "Generate strokes from the objects in this collection"
 msgstr "从该集合中的物体生成笔画"
 
@@ -16633,6 +16645,14 @@ msgstr "拐角拆分"
 
 msgid "Angle in screen space below which a stroke is split in two"
 msgstr "在屏幕空间中的角度，低于该值的笔画会被一分为二"
+
+
+msgid "Stroke Depth Offset"
+msgstr "笔画深度偏移"
+
+
+msgid "Move strokes slightly towards the camera to avoid clipping while preserve depth for the viewport"
+msgstr "稍微向摄像机移动笔画以避免剪切，同时保持视图的深度"
 
 
 msgid "Grease Pencil layer assigned to the generated strokes"
@@ -16689,6 +16709,14 @@ msgstr "平滑表面上的折痕"
 
 msgid "Allow crease edges to show inside smooth surfaces"
 msgstr "允许在光滑的表面内部显示折痕边"
+
+
+msgid "Use Custom Camera"
+msgstr "使用自定义摄像机"
+
+
+msgid "Use custom camera instead of the active camera"
+msgstr "使用自定义摄像机而非活动摄像机"
 
 
 msgid "Use Edge Mark"
@@ -16749,6 +16777,14 @@ msgstr "使用几何空间"
 
 msgid "Use geometry distance for chaining instead of image space"
 msgstr "对链式而非图像空间使用几何距离"
+
+
+msgid "Image Boundary Trimming"
+msgstr "图像边界修剪"
+
+
+msgid "Trim all edges right at the boundary of image(including overscan region)"
+msgstr "修剪图像边界上的所有边线(包括过扫描区域)"
 
 
 msgid "Use Intersection"
@@ -16837,6 +16873,14 @@ msgstr "实例物体"
 
 msgid "Support particle objects and face/vertex instances to show in line art"
 msgstr "支持以线条画显示粒子物体和面/顶点实例"
+
+
+msgid "Offset Towards Custom Camera"
+msgstr "向自定义摄像机偏移"
+
+
+msgid "Offset strokes towards selected camera instead of the active camera"
+msgstr "向选定的摄像机偏移笔画，而非活动摄像机"
 
 
 msgid "Match Output"
@@ -17615,12 +17659,24 @@ msgid "Red Green Blue"
 msgstr "红绿蓝"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "红"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "绿"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -23510,10 +23566,6 @@ msgid "Index of the active output"
 msgstr "活动的输出项编号"
 
 
-msgid "The node tree icon"
-msgstr "节点树图标"
-
-
 msgid "ID Name"
 msgstr "ID 名称"
 
@@ -26185,6 +26237,30 @@ msgid "Color management settings applied on image before saving"
 msgstr "保存前应用到图像上的色彩管理选项"
 
 
+msgid "Use Controller Actions"
+msgstr "使用控制器动作"
+
+
+msgid "Enable default VR controller actions, including controller poses and haptics"
+msgstr "启用默认VR控制器动作，包括控制器姿势和触觉"
+
+
+msgid "Enable bindings for the HTC Vive Cosmos controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "启用 HTC Vive Cosmos控制器的绑定。请注意，这可能不受所有OpenXR运行时的支持"
+
+
+msgid "Enable bindings for the Huawei controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "启用Huawei 控制器的绑定。请注意，这可能不受所有OpenXR运行时的支持"
+
+
+msgid "Enable bindings for the HP Reverb G2 controllers. Note that this may not be supported by all OpenXR runtimes"
+msgstr "启用 HP Reverb G2 控制器的绑定。请注意，这可能不受所有 OpenXR 运行时的支持"
+
+
+msgid "Use input from gamepad (Microsoft Xbox Controller) instead of motion controllers"
+msgstr "使用来自游戏手柄(微软 Xbox 控制器)的输入，而非运动控制器"
+
+
 msgid "Landmark"
 msgstr "地标"
 
@@ -28043,16 +28119,8 @@ msgid "Settings for image formats"
 msgstr "图像格式设置"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "参考黑点的对数转换"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -29642,6 +29710,10 @@ msgstr "键盘"
 
 msgid "Mouse"
 msgstr "鼠标"
+
+
+msgid "NDOF"
+msgstr "NDOF"
 
 
 msgid "Text Input"
@@ -31903,10 +31975,6 @@ msgstr "遮罩上下文菜单"
 
 msgid "Select Linked"
 msgstr "选择相连元素"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -39082,10 +39150,6 @@ msgid "Node in a node tree"
 msgstr "节点树中的节点"
 
 
-msgid "The node icon"
-msgstr "节点图标"
-
-
 msgid "The node label"
 msgstr "节点标签"
 
@@ -39806,10 +39870,6 @@ msgid "Green spillmap scale"
 msgstr "绿色溢出映射比"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "红色溢出映射比"
 
@@ -40408,10 +40468,6 @@ msgstr "瑕疵修复"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "瑕疵修复间隔 (迭代次数)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -42583,6 +42639,10 @@ msgid "Set Curve Tilt"
 msgstr "平滑曲线倾斜"
 
 
+msgid "Set ID"
+msgstr "设置ID"
+
+
 msgid "Set Material"
 msgstr "设置材质"
 
@@ -42854,6 +42914,10 @@ msgstr "毛发 BSDF"
 
 msgid "Component"
 msgstr "组件"
+
+
+msgid "Reflection"
+msgstr "反射"
 
 
 msgid "Principled Hair BSDF"
@@ -75637,106 +75701,6 @@ msgid "Panel containing UI elements"
 msgstr "面板包含用户界面元素"
 
 
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "面板所属的上下文(TODO：解释可能的组合 bl_context/bl_region_type/bl_space_type)"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "如果设置了此项, 插帧集将获取一个自定义ID, 否则它将使用类名称来定义插帧集 (例如, 如果类名称是\"BUILTIN_KSI_location\", 并且bl_idname并未被脚本设置, 则bl_idname = \"BUILTIN_KSI_location\")"
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "显示在面板标题的三角形右侧的面板标签, 可用于折叠面板"
-
-
-msgid "Options for this panel type"
-msgstr "用于该面板类型的选项"
-
-
-msgid "Default Closed"
-msgstr "默认关闭"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "定义面板在创建时是否需要打开或折叠"
-
-
-msgid "Hide Header"
-msgstr "隐藏标题栏"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "如果设置为False，面板显示一个标题，其中包含一个可点击的箭头来折叠面板和标签(见bl_label)"
-
-
-msgid "Instanced Panel"
-msgstr "实例面板"
-
-
-msgid "Multiple panels with this type can be used as part of a list depending on data external to the UI. Used to create panels for the modifiers and other stacks"
-msgstr "具有此类型的多个面板可用作列表的一部分，具体取决于 UI 外部的数据。用于为修改器和其他队列创建面板"
-
-
-msgid "Expand Header Layout"
-msgstr "展开标题布局"
-
-
-msgid "Allow buttons in the header to stretch and shrink to fill the entire layout width"
-msgstr "允许拉伸和收缩标题中的按钮以填充整个布局宽度"
-
-
-msgid "Order"
-msgstr "排序"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "数字较低的面板默认在数字较高的面板之前有序排列"
-
-
-msgid "Parent ID Name"
-msgstr "父级 ID 名称"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "若此已设定, 面板变为一个子面板"
-
-
-msgid "Units X"
-msgstr "单位 X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "当设定, 定义弹出面板宽度"
-
-
-msgid "Custom Data"
-msgstr "自定义数据"
-
-
-msgid "Panel data"
-msgstr "面板数据"
-
-
-msgid "Popover"
-msgstr "弹出框"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "定义用户界面中的面板结构"
-
-
-msgid "XXX todo"
-msgstr "XXX todo"
-
-
-msgid "Pin"
-msgstr "钉"
-
-
-msgid "Show the panel on all tabs"
-msgstr "在所有选项卡上显示面板"
-
-
 msgid "Integrator Presets"
 msgstr "积分器预设"
 
@@ -76759,10 +76723,6 @@ msgstr "资产库"
 
 msgid "Development"
 msgstr "开发"
-
-
-msgid "NDOF"
-msgstr "NDOF"
 
 
 msgid "Tablet"
@@ -78358,10 +78318,6 @@ msgstr "缓存信息"
 
 msgid "Info on current cache status"
 msgstr "当前缓存状态信息"
-
-
-msgid "Cache is outdated"
-msgstr "缓存已过期"
 
 
 msgid "Cache name"
@@ -80256,8 +80212,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "用于OpenSubdiv的计算机后端类型"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -81308,14 +81272,6 @@ msgstr "将毛发渲染为3D曲线，在近距离观察毛发时获得准确的�
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "用于基数曲线交互的细分级数 (幂值翻倍)"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -94300,6 +94256,10 @@ msgid "Volume Light"
 msgstr "体积光线"
 
 
+msgid "AOV"
+msgstr "AOV"
+
+
 msgid "Selected StudioLight"
 msgstr "选中棚灯"
 
@@ -96721,14 +96681,6 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "以及Nvidia驱动程序470版本或更新"
 
 
-msgid "Requires discrete AMD GPU with ??? architecture"
-msgstr "需要独立的AMD GPU 与??? 架构"
-
-
-msgid "and AMD driver version ??? or newer"
-msgstr "以及AMD 驱动程序版本???或更新"
-
-
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -98031,6 +97983,10 @@ msgstr "添加骨骼约束"
 msgctxt "Operator"
 msgid "Animate Path"
 msgstr "动画路径"
+
+
+msgid "Order"
+msgstr "排序"
 
 
 msgid "Clamp Region"
@@ -104654,10 +104610,6 @@ msgid "Key %d"
 msgstr "键 %d"
 
 
-msgid "AOV"
-msgstr "AOV"
-
-
 msgid "Impossible to resync data-block %s and its dependencies, as its linked reference is missing"
 msgstr "不可能重新同步数据块 %s 及其依赖关系，因为它的关联引用缺失"
 
@@ -105347,6 +105299,14 @@ msgid "<Unknown Modifier>"
 msgstr "<未知修改器>"
 
 
+msgid "y = (Ax + B)"
+msgstr "y = (Ax + B)"
+
+
+msgid "✕ (Ax + B)"
+msgstr "✕ (Ax + B)"
+
+
 msgid "Add Control Point"
 msgstr "添加控制点"
 
@@ -105361,14 +105321,6 @@ msgstr "在当前帧为封套添加一个新的控制点"
 
 msgid "Delete envelope control point"
 msgstr "删除封套控制点"
-
-
-msgid "y = (Ax + B)"
-msgstr "y = (Ax + B)"
-
-
-msgid "✕ (Ax + B)"
-msgstr "✕ (Ax + B)"
 
 
 msgid "No animation data in buffer to paste"
@@ -106369,6 +106321,10 @@ msgstr "计算数字错误，详细信息见信息编辑器"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "无键盘快捷键"
+
+
+msgid "Pin"
+msgstr "钉"
 
 
 msgid "Shift Left Mouse"
@@ -109679,22 +109635,6 @@ msgid "Key Frame"
 msgstr "关键帧"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "函数曲线仅包含函数修改器"
-
-
-msgid "See Modifiers panel below"
-msgstr "见下方修改器面板"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "函数曲线不包含关键帧仅存储采样点"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "函数曲线中无活动关键帧"
-
-
 msgid "Prop:"
 msgstr "属性:"
 
@@ -109733,6 +109673,22 @@ msgstr "在驱动器编辑器中显示"
 
 msgid "Add Modifier"
 msgstr "添加修改器"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "函数曲线仅包含函数修改器"
+
+
+msgid "See Modifiers panel below"
+msgstr "见下方修改器面板"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "函数曲线不包含关键帧仅存储采样点"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "函数曲线中无活动关键帧"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -109900,10 +109856,6 @@ msgid "Discard"
 msgstr "丢弃"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "硬编码的非线性, 伽玛值: 1.7"
-
-
 msgid "Select Slot"
 msgstr "选取槽"
 
@@ -109918,6 +109870,10 @@ msgstr "选择通道"
 
 msgid "Select View"
 msgstr "连接视图"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "硬编码的非线性, 伽玛值: 1.7"
 
 
 msgid "Can't Load Image"
@@ -111834,12 +111790,12 @@ msgid "Filter Source"
 msgstr "过滤源"
 
 
-msgid "Modifier has baked data"
-msgstr "修改器已烘焙数据"
-
-
 msgid "Continue Without Clearing"
 msgstr "不清除继续"
+
+
+msgid "Modifier has baked data"
+msgstr "修改器已烘焙数据"
 
 
 msgid "Stroke Fit Method"
@@ -113040,16 +112996,16 @@ msgid "Save External..."
 msgstr "保存外部文件..."
 
 
-msgid "Built without Ocean modifier"
-msgstr "不使用洋面修改器进行构建"
-
-
 msgid "Coverage"
 msgstr "范围"
 
 
 msgid "Delete Bake"
 msgstr "删除烘焙"
+
+
+msgid "Built without Ocean modifier"
+msgstr "不使用洋面修改器进行构建"
 
 
 msgid "Create Instances"
@@ -113171,16 +113127,28 @@ msgid "Crease Edges"
 msgstr "折痕边"
 
 
+msgid "Fac"
+msgstr "系数"
+
+
+msgid "Dot"
+msgstr "点"
+
+
+msgid "Val"
+msgstr "值"
+
+
+msgid "Density Attribute"
+msgstr "密度属性"
+
+
 msgid "Shader Editor"
 msgstr "着色器编辑器"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "系数"
 
 
 msgid "Anisotropy"
@@ -113415,8 +113383,12 @@ msgid "Transmission Depth"
 msgstr "透射深度"
 
 
-msgid "Dot"
-msgstr "点"
+msgid "Color1"
+msgstr "色彩 1"
+
+
+msgid "Color2"
+msgstr "色彩 2"
 
 
 msgid "Color Fac"
@@ -113431,8 +113403,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "反射"
+msgid "Mortar"
+msgstr "灰泥"
+
+
+msgid "Brick Width"
+msgstr "砖宽度"
+
+
+msgid "Row Height"
+msgstr "行高度"
 
 
 msgid "Flame"
@@ -113441,10 +113421,6 @@ msgstr "火焰"
 
 msgid "Color Attribute"
 msgstr "颜色属性"
-
-
-msgid "Density Attribute"
-msgstr "密度属性"
 
 
 msgid "Absorption Color"
@@ -113483,26 +113459,6 @@ msgid "Bricks 2"
 msgstr "砖墙 2"
 
 
-msgid "Mortar"
-msgstr "灰泥"
-
-
-msgid "Brick Width"
-msgstr "砖宽度"
-
-
-msgid "Row Height"
-msgstr "行高度"
-
-
-msgid "Color1"
-msgstr "色彩 1"
-
-
-msgid "Color2"
-msgstr "色彩 2"
-
-
 msgid "Coordinate 1"
 msgstr "坐标 1"
 
@@ -113529,10 +113485,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "缩放"
-
-
-msgid "Val"
-msgstr "值"
 
 
 msgid ""
@@ -113699,10 +113651,6 @@ msgstr "物体轴心"
 
 msgid "Wave Effect"
 msgstr "波浪效果"
-
-
-msgid "Paste name"
-msgstr "粘贴名称"
 
 
 msgid "Input pending "

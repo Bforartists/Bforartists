@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -5414,6 +5414,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "Режим цвета, используемый при интерполяции"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Элементы"
 
@@ -10138,14 +10142,6 @@ msgid "Description of the item's purpose"
 msgstr "Описание предназначения элемента"
 
 
-msgid "Icon"
-msgstr "Значок"
-
-
-msgid "Icon of the item"
-msgstr "Значок элемента"
-
-
 msgid "Identifier"
 msgstr "Идентификатор"
 
@@ -13140,6 +13136,10 @@ msgid "Change the underlying simulation method"
 msgstr "Выбор метода симуляции"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Use FLIP as the simulation method (more splashy behavior)"
 msgstr "Использовать метод моделирования FLIP (создаёт больше брызг)"
 
@@ -13486,10 +13486,6 @@ msgstr "Логарифмическое рассеивание"
 
 msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
 msgstr "Растворять дым в логарифмической прогрессии. Сначала растворяется быстро, но задерживается надолго"
-
-
-msgid "FLIP"
-msgstr "FLIP"
 
 
 msgid "Create liquid particle system"
@@ -13914,6 +13910,10 @@ msgstr "Сгенерировать"
 
 msgid "Generated coordinates centered to flow object"
 msgstr "Использовать сгенерированные координаты с центром по испускающему объекту"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Use UV layer for texture coordinates"
@@ -17248,12 +17248,24 @@ msgid "Red Green Blue"
 msgstr "Красный-зелёный-синий"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Красный"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "Зелёный"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -22047,10 +22059,6 @@ msgid "Index of the active output"
 msgstr "Индекс активного выхода"
 
 
-msgid "The node tree icon"
-msgstr "Иконка нодовой системы"
-
-
 msgid "ID Name"
 msgstr "Имя идентификатора"
 
@@ -26032,16 +26040,8 @@ msgid "Settings for image formats"
 msgstr "Настройки форматов изображений"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "Эталонная чёрная точка для преобразования цвета"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -27539,6 +27539,10 @@ msgstr "Клавиатура"
 
 msgid "Mouse"
 msgstr "Мышь"
+
+
+msgid "NDOF"
+msgstr "NDOF"
 
 
 msgid "Text Input"
@@ -29620,10 +29624,6 @@ msgstr "Контекстное меню маски"
 
 msgid "Select Linked"
 msgstr "Выделить связанные"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -35585,10 +35585,6 @@ msgid "Node in a node tree"
 msgstr "Нода в системе нодов"
 
 
-msgid "The node icon"
-msgstr "Значок ноды"
-
-
 msgid "The node label"
 msgstr "Метка ноды"
 
@@ -36209,10 +36205,6 @@ msgid "Green spillmap scale"
 msgstr "Уровень зелёного в карте спиллинга"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "Уровень красного в карте спиллинга"
 
@@ -36739,10 +36731,6 @@ msgstr "Ретушь"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "Расстояние ретуширования (количество итераций)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -37681,6 +37669,10 @@ msgstr "BSDF волос"
 
 msgid "Component"
 msgstr "Компонента"
+
+
+msgid "Reflection"
+msgstr "Отражение"
 
 
 msgid "Principled Hair BSDF"
@@ -64111,86 +64103,6 @@ msgid "Panel containing UI elements"
 msgstr "Панель содержит элементы интерфейса"
 
 
-msgid "The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)"
-msgstr "Контекст, которому принадлежит эта панель"
-
-
-msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Если установлено, панель приобретает особый идентификатор. В противном случае она принимает имя класса, используемого для определения ключевого набора. Например, если имя класса «OBJECT_PT_hello» и bl_idname не установлено скриптом, тогда bl_idname = \"OBJECT_PT_hello\""
-
-
-msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
-msgstr "Текст заголовка панели, отображаемый рядом с треугольником, который используется для сворачивания панели"
-
-
-msgid "Options for this panel type"
-msgstr "Параметры для этого типа панели"
-
-
-msgid "Default Closed"
-msgstr "Закрыто по умолчанию"
-
-
-msgid "Defines if the panel has to be open or collapsed at the time of its creation"
-msgstr "Открывать или сворачивать эту панель во время создания"
-
-
-msgid "Hide Header"
-msgstr "Скрыть заголовок"
-
-
-msgid "If set to False, the panel shows a header, which contains a clickable arrow to collapse the panel and the label (see bl_label)"
-msgstr "Если установлено False, панель показывает заголовок, который содержит нажимаемую стрелку для скрытия панели и текста заголовка (см. bl_label)"
-
-
-msgid "Multiple panels with this type can be used as part of a list depending on data external to the UI. Used to create panels for the modifiers and other stacks"
-msgstr "Несколько панелей с этим типом могут использоваться как часть списка в зависимости от данных, внешних по отношению к пользовательскому интерфейсу. Используется для создания панелей для модификаторов и других стеков"
-
-
-msgid "Order"
-msgstr "Порядок"
-
-
-msgid "Panels with lower numbers are default ordered before panels with higher numbers"
-msgstr "Панели с меньшим значением по умолчанию будут сортироваться выше панелей с большим значением"
-
-
-msgid "Parent ID Name"
-msgstr "Имя идентификатора родителя"
-
-
-msgid "If this is set, the panel becomes a sub-panel"
-msgstr "Если установлено, панель становится суб-панелью"
-
-
-msgid "Units X"
-msgstr "Размер X"
-
-
-msgid "When set, defines popup panel width"
-msgstr "Если установлено, определяет ширину всплывающей панели"
-
-
-msgid "Popover"
-msgstr "Всплывашка"
-
-
-msgid "Defines the structure of the panel in the UI"
-msgstr "Определяет структуру панели в интерфейсе пользователя"
-
-
-msgid "XXX todo"
-msgstr "XXX todo"
-
-
-msgid "Pin"
-msgstr "Закрепить"
-
-
-msgid "Show the panel on all tabs"
-msgstr "Показывать панель на всех вкладках"
-
-
 msgid "Integrator Presets"
 msgstr "Предустановки интегратора"
 
@@ -65070,10 +64982,6 @@ msgstr "Библиотеки ассетов"
 
 msgid "Development"
 msgstr "Разработка"
-
-
-msgid "NDOF"
-msgstr "NDOF"
 
 
 msgid "Tablet"
@@ -66486,10 +66394,6 @@ msgstr "Информация кэша"
 
 msgid "Info on current cache status"
 msgstr "Информация о текущем состоянии кэша"
-
-
-msgid "Cache is outdated"
-msgstr "Кэш устарел"
 
 
 msgid "Cache name"
@@ -67976,8 +67880,16 @@ msgid "Type of computer back-end used with OpenSubdiv"
 msgstr "Тип вычислительной системы, используемой для OpenSubdiv"
 
 
+msgid "CPU"
+msgstr "CPU"
+
+
 msgid "OpenMP"
 msgstr "OpenMP"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "GLSL Transform Feedback"
@@ -68850,14 +68762,6 @@ msgstr "3D-кривые"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Количество подразделений, используемых в пересечении с кардинальной кривой (степень двойки)"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -81712,6 +81616,10 @@ msgid "Animate Path"
 msgstr "Анимировать путь"
 
 
+msgid "Order"
+msgstr "Порядок"
+
+
 msgid "Volume Min"
 msgstr "Мин. объём"
 
@@ -88310,6 +88218,10 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Не клавиатурное сочетание клавиш"
 
 
+msgid "Pin"
+msgstr "Закрепить"
+
+
 msgid "Shift Left Mouse"
 msgstr "Shift+левая кнопка мыши"
 
@@ -91058,22 +90970,6 @@ msgid "None for Enum/Boolean"
 msgstr "None для Enum/Boolean"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "F-кривая описана только F-модификаторами"
-
-
-msgid "See Modifiers panel below"
-msgstr "См. панель модификаторов ниже"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F-кривая не имеет ключевых кадров и содержит только измеренные точки"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "Нет активного ключевого кадра на F-кривой"
-
-
 msgid "Prop:"
 msgstr "Свойство:"
 
@@ -91112,6 +91008,22 @@ msgstr "Показать в редакторе драйверов"
 
 msgid "Add Modifier"
 msgstr "Добавить модификатор"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "F-кривая описана только F-модификаторами"
+
+
+msgid "See Modifiers panel below"
+msgstr "См. панель модификаторов ниже"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "F-кривая не имеет ключевых кадров и содержит только измеренные точки"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Нет активного ключевого кадра на F-кривой"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -91259,10 +91171,6 @@ msgid "Discard"
 msgstr "Не сохранять"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Жёсткофикс. нелинейная, гамма: 1.7"
-
-
 msgid "Select Slot"
 msgstr "Выбор слота"
 
@@ -91277,6 +91185,10 @@ msgstr "Выбор прохода"
 
 msgid "Select View"
 msgstr "Выбор вида"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Жёсткофикс. нелинейная, гамма: 1.7"
 
 
 msgid "Can't Load Image"
@@ -93631,16 +93543,16 @@ msgid "Save External..."
 msgstr "Сохранить вне основного файла…"
 
 
-msgid "Built without Ocean modifier"
-msgstr "Построено без модификатора океана"
-
-
 msgid "Coverage"
 msgstr "Покрытие"
 
 
 msgid "Delete Bake"
 msgstr "Удалить запекание"
+
+
+msgid "Built without Ocean modifier"
+msgstr "Построено без модификатора океана"
 
 
 msgid "Create Instances"
@@ -93744,16 +93656,28 @@ msgid "Crease Edges"
 msgstr "Складки ребер"
 
 
+msgid "Fac"
+msgstr "Коэфф."
+
+
+msgid "Dot"
+msgstr "Скаляр"
+
+
+msgid "Val"
+msgstr "Знач."
+
+
+msgid "Density Attribute"
+msgstr "Атрибут плотности"
+
+
 msgid "Shader Editor"
 msgstr "Редактор шейдеров"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "Коэфф."
 
 
 msgid "Anisotropy"
@@ -93980,8 +93904,12 @@ msgid "Transmission Depth"
 msgstr "Глубина светопропускаемости"
 
 
-msgid "Dot"
-msgstr "Скаляр"
+msgid "Color1"
+msgstr "Цвет1"
+
+
+msgid "Color2"
+msgstr "Цвет2"
 
 
 msgid "Color Fac"
@@ -93996,8 +93924,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Отражение"
+msgid "Mortar"
+msgstr "Цемент"
+
+
+msgid "Brick Width"
+msgstr "Ширина плитки"
+
+
+msgid "Row Height"
+msgstr "Высота ряда"
 
 
 msgid "Flame"
@@ -94006,10 +93942,6 @@ msgstr "Пламя"
 
 msgid "Color Attribute"
 msgstr "Атрибут цвета"
-
-
-msgid "Density Attribute"
-msgstr "Атрибут плотности"
 
 
 msgid "Absorption Color"
@@ -94048,26 +93980,6 @@ msgid "Bricks 2"
 msgstr "Плитка 2"
 
 
-msgid "Mortar"
-msgstr "Цемент"
-
-
-msgid "Brick Width"
-msgstr "Ширина плитки"
-
-
-msgid "Row Height"
-msgstr "Высота ряда"
-
-
-msgid "Color1"
-msgstr "Цвет1"
-
-
-msgid "Color2"
-msgstr "Цвет2"
-
-
 msgid "Coordinate 1"
 msgstr "Координата 1"
 
@@ -94094,10 +94006,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Сила"
-
-
-msgid "Val"
-msgstr "Знач."
 
 
 msgid "Unknown py-exception, could not convert"
@@ -94236,10 +94144,6 @@ msgstr "Центр объекта"
 
 msgid "Wave Effect"
 msgstr "Эффект волн"
-
-
-msgid "Paste name"
-msgstr "Вставить имя"
 
 
 msgid "Blender File View"

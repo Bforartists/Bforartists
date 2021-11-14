@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -1136,6 +1136,10 @@ msgid "Color ramp mapping a scalar value to a color"
 msgstr "ﮓﻧﺭ ﮏﯾ ﻪﺑ ﯼﺩﺪﻋ ﺭﺍﺪﻘﻣ ﮏﯾ ﮓﻧﺭ ﭗﻣﺭ ﺖﺷﺎﮕﻧ"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "ﺮﺻﺎﻨﻋ"
 
@@ -2145,10 +2149,6 @@ msgid "Wind"
 msgstr "ﺩﺎﺑ"
 
 
-msgid "Icon"
-msgstr "ﺎﻫﺩﺎﻤﻧ:"
-
-
 msgid "Group"
 msgstr "ﻩﻭﺮﮔ"
 
@@ -2486,6 +2486,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "ﻝﺎﻌﻓ ﺖﯿﻌﻗﻮﻣ ﻑﺬﺣ"
 
@@ -2642,12 +2646,24 @@ msgid "Space"
 msgstr "ﺎﻀﻓ"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "ﺰﻣﺮﻗ"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "ﺰﺒﺳ"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -4171,14 +4187,6 @@ msgid "Settings for image formats"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "B"
-msgstr "B"
-
-
-msgid "G"
-msgstr "G"
-
-
 msgid "Color Depth"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
@@ -4362,10 +4370,6 @@ msgstr "ﯽﺑﺎﯾﺩﺭ"
 
 msgid "Select Linked"
 msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgctxt "Operator"
@@ -5569,10 +5573,6 @@ msgid "Color Spill"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Combine YCbCrA"
 msgstr "ﻩﺪﺷ ﺐﯿﮐﺮﺗ"
 
@@ -5683,10 +5683,6 @@ msgstr "ﺢﯿﺤﺻ:"
 
 msgid "Hue Saturation Value"
 msgstr "ﻉﺎﺒﺷﺍ"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -5979,6 +5975,10 @@ msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
 
 msgid "Bright Contrast"
 msgstr "ﻦﺷﻭﺭ ﺖﺳﺍﺮﺘﻨﮐ"
+
+
+msgid "Reflection"
+msgstr "ﺱﺎﮑﻌﻧﺍ"
 
 
 msgid "Refraction BSDF"
@@ -14561,10 +14561,6 @@ msgid "Cursor X"
 msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
 msgid "Prop:"
 msgstr "ﯽﮔﮋﯾﻭ"
 
@@ -14582,6 +14578,10 @@ msgstr "ﺎﻫ‌ﯽﮕﺘﺴﺑﺍﻭ ﯽﻧﺎﺳﺭ ﺯﻭﺭ‌ﻪﺑ"
 
 
 msgid "Add Modifier"
+msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgid "F-Curve only has F-Modifiers"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
@@ -14893,6 +14893,14 @@ msgid "Fac"
 msgstr "ﻪﻠﺻﺎﻓ"
 
 
+msgid "Dot"
+msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
+
+
+msgid "Val"
+msgstr "ﺭﺍﺪﻘﻣ"
+
+
 msgid "Sigma"
 msgstr "ﺎﻤﮕﯿﺳ ﮓﻧﺭ"
 
@@ -14961,16 +14969,12 @@ msgid "Is Transmission Ray"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Dot"
-msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
+msgid "Color1"
+msgstr "ﮓﻧﺭ"
 
 
-msgid "Reflection"
-msgstr "ﺱﺎﮑﻌﻧﺍ"
-
-
-msgid "Patterns"
-msgstr "ﻮﮕﻟﺍ ﻪﻨﯿﺸﯿﺑ"
+msgid "Color2"
+msgstr "ﮓﻧﺭ"
 
 
 msgid "Brick Width"
@@ -14981,12 +14985,8 @@ msgid "Row Height"
 msgstr "ﻉﺎﻔﺗﺭﺍ"
 
 
-msgid "Color1"
-msgstr "ﮓﻧﺭ"
-
-
-msgid "Color2"
-msgstr "ﮓﻧﺭ"
+msgid "Patterns"
+msgstr "ﻮﮕﻟﺍ ﻪﻨﯿﺸﯿﺑ"
 
 
 msgid "Coordinate 1"
@@ -15017,10 +15017,6 @@ msgid "iScale"
 msgstr "ﺲﻧﺎﺠﺗ"
 
 
-msgid "Val"
-msgstr "ﺭﺍﺪﻘﻣ"
-
-
 msgid "Image too small"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
 
@@ -15043,10 +15039,6 @@ msgstr "ﺮﯿﺜﮑﺗ ﻝﺎﺣ ﺭﺩ ءﯽﺷ"
 
 msgid "Strips must have the same number of inputs"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Paste name"
-msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﺭﺩ"
 
 
 msgid "Blender File View"

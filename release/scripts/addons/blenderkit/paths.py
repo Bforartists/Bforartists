@@ -187,7 +187,7 @@ def slugify(slug):
     import unicodedata, re
     slug = slug.lower()
 
-    characters = '<>:"/\\|?*., ()#'
+    characters = '<>:"/\\|?\*., ()#'
     for ch in characters:
         slug = slug.replace(ch, '_')
     # import re

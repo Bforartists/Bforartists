@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1963,6 +1963,10 @@ msgid "Color Mode"
 msgstr "Мод боје"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "Елементи"
 
@@ -3808,14 +3812,6 @@ msgid "Description of the item's purpose"
 msgstr "Опис сврхе ставке"
 
 
-msgid "Icon"
-msgstr "Иконица"
-
-
-msgid "Icon of the item"
-msgstr "Иконица ставке"
-
-
 msgid "Identifier"
 msgstr "Идентификатор"
 
@@ -4717,6 +4713,10 @@ msgid "Generated"
 msgstr "Генерисано"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "Користи UV слој за координате текстуре"
 
@@ -5274,12 +5274,24 @@ msgid "Active Layer"
 msgstr "Активни слој"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "Црвена"
 
 
+msgid "G"
+msgstr "Г"
+
+
 msgid "Green"
 msgstr "Зелена"
+
+
+msgid "B"
+msgstr "Б"
 
 
 msgid "Blue"
@@ -8620,14 +8632,6 @@ msgid "Settings for image formats"
 msgstr "Подешавања формата слика"
 
 
-msgid "B"
-msgstr "Б"
-
-
-msgid "G"
-msgstr "Г"
-
-
 msgid "Color Depth"
 msgstr "Дубина боје"
 
@@ -9348,10 +9352,6 @@ msgstr "Специјални материјали"
 
 msgid "Select Linked"
 msgstr "Изабери повезано"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -11150,10 +11150,6 @@ msgid "NLA Track is selected"
 msgstr "NLA стаза је изабрана"
 
 
-msgid "The node icon"
-msgstr "Икона чвора"
-
-
 msgid "The node label"
 msgstr "Наслов чвора"
 
@@ -11332,10 +11328,6 @@ msgstr "Толеранција тона за боје које се сматра
 
 msgid "S"
 msgstr "З"
-
-
-msgid "R"
-msgstr "R"
 
 
 msgid "Combine HSVA"
@@ -11568,10 +11560,6 @@ msgstr "Вредснот тона и засићености"
 
 msgid "Inpaint"
 msgstr "Обоји"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -11936,6 +11924,10 @@ msgstr "Коса BSDF"
 
 msgid "Component"
 msgstr "Компонента"
+
+
+msgid "Reflection"
+msgstr "Одсјај"
 
 
 msgid "Refraction BSDF"
@@ -21111,10 +21103,6 @@ msgid "Restrict"
 msgstr "Ограничи"
 
 
-msgid "Pin"
-msgstr "Закачи"
-
-
 msgid "Bone Constraints"
 msgstr "Ограничења костију"
 
@@ -21732,10 +21720,6 @@ msgstr "Подаци о остави"
 
 msgid "Info on current cache status"
 msgstr "Подаци о текућем стању оставе"
-
-
-msgid "Cache is outdated"
-msgstr "Остава је застарела"
 
 
 msgid "Cache name"
@@ -27046,6 +27030,10 @@ msgid "Nothing selected"
 msgstr "Ништа није изабрано"
 
 
+msgid "Pin"
+msgstr "Закачи"
+
+
 msgctxt "Operator"
 msgid "Change Shortcut"
 msgstr "Промени пречицу"
@@ -27866,10 +27854,6 @@ msgid "Cursor X"
 msgstr "Курсор X"
 
 
-msgid "No active keyframe on F-Curve"
-msgstr "Модификатор вредности F-криве"
-
-
 msgid "Prop:"
 msgstr "Својство"
 
@@ -27888,6 +27872,10 @@ msgstr "Освежи зависности"
 
 msgid "Add Modifier"
 msgstr "Додај модификатор"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "Модификатор вредности F-криве"
 
 
 msgid "Unsupported audio format"
@@ -28309,6 +28297,10 @@ msgid "Fac"
 msgstr "Страна"
 
 
+msgid "Val"
+msgstr "Вр."
+
+
 msgid "Anisotropy"
 msgstr "Анизотропно"
 
@@ -28401,6 +28393,14 @@ msgid "Transparent Depth"
 msgstr "Дубина провидности"
 
 
+msgid "Color1"
+msgstr "Боја1"
+
+
+msgid "Color2"
+msgstr "Боја2"
+
+
 msgid "Color Fac"
 msgstr "Фактор боје"
 
@@ -28413,8 +28413,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "Одсјај"
+msgid "Mortar"
+msgstr "Малтер"
+
+
+msgid "Brick Width"
+msgstr "Ширина цигле"
+
+
+msgid "Row Height"
+msgstr "Висина реда"
 
 
 msgid "Emission Color"
@@ -28431,26 +28439,6 @@ msgstr "Цигле 1"
 
 msgid "Bricks 2"
 msgstr "Цигле 2"
-
-
-msgid "Mortar"
-msgstr "Малтер"
-
-
-msgid "Brick Width"
-msgstr "Ширина цигле"
-
-
-msgid "Row Height"
-msgstr "Висина реда"
-
-
-msgid "Color1"
-msgstr "Боја1"
-
-
-msgid "Color2"
-msgstr "Боја2"
 
 
 msgid "Coordinate 1"
@@ -28475,10 +28463,6 @@ msgstr "W3"
 
 msgid "W4"
 msgstr "W4"
-
-
-msgid "Val"
-msgstr "Вр."
 
 
 msgid "Image too small"
@@ -28526,10 +28510,6 @@ msgstr "Траке нису компатибилне"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Траке морају имати исти број улаза"
-
-
-msgid "Paste name"
-msgstr "Убаци кључне кадрове"
 
 
 msgid "Blender File View"
