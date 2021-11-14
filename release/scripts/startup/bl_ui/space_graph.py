@@ -252,6 +252,7 @@ class GRAPH_MT_view_pie_menus(Menu):
 
         layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'GRAPH_MT_pivot_pie'
         layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'GRAPH_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'GRAPH_MT_view_pie'
 
 
 class GRAPH_MT_select(Menu):
