@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -10150,6 +10150,10 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Diffuse BSDF"
 msgstr "Comprimir Dades"
+
+
+msgid "Reflection"
+msgstr "Seleccionar connectats"
 
 
 msgid "Refraction BSDF"
@@ -25744,10 +25748,6 @@ msgid "Interpolation:"
 msgstr "Esborrar Rotació"
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "Comprimir Dades"
-
-
 msgid "Prop:"
 msgstr "Image Displist"
 
@@ -25766,6 +25766,10 @@ msgstr "Finestra de Render"
 
 msgid "Add Modifier"
 msgstr "Esborrar tot"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "Comprimir Dades"
 
 
 msgid "Delete target variable"
@@ -26100,6 +26104,14 @@ msgid "Fac"
 msgstr "Pla"
 
 
+msgid "Dot"
+msgstr "Rotar"
+
+
+msgid "Val"
+msgstr "Mostrar propietats de les arestes"
+
+
 msgid "Anisotropy"
 msgstr "Mostrar propietats de les arestes"
 
@@ -26176,16 +26188,12 @@ msgid "Is Transmission Ray"
 msgstr "Seleccionar connectats"
 
 
-msgid "Dot"
+msgid "Color1"
 msgstr "Rotar"
 
 
-msgid "Reflection"
-msgstr "Seleccionar connectats"
-
-
-msgid "Patterns"
-msgstr "Seleccionar fila"
+msgid "Color2"
+msgstr "Rotar"
 
 
 msgid "Brick Width"
@@ -26196,12 +26204,8 @@ msgid "Row Height"
 msgstr "Dreta"
 
 
-msgid "Color1"
-msgstr "Rotar"
-
-
-msgid "Color2"
-msgstr "Rotar"
+msgid "Patterns"
+msgstr "Seleccionar fila"
 
 
 msgid "Coordinate 1"
@@ -26214,10 +26218,6 @@ msgstr "Arxiu"
 
 msgid "iScale"
 msgstr "Escalar"
-
-
-msgid "Val"
-msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Image too small"
@@ -26246,10 +26246,6 @@ msgstr "Dreta"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Seleccionar connectats"
-
-
-msgid "Paste name"
-msgstr "Començar Joc"
 
 
 msgid "unable to open the file"

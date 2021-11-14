@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -4128,10 +4128,6 @@ msgid "Palette Color"
 msgstr "Palet Kleur"
 
 
-msgid "Pin"
-msgstr "Prik"
-
-
 msgid "Active Point"
 msgstr "Actieve Punt"
 
@@ -5328,6 +5324,10 @@ msgstr "Oppervlak"
 
 msgid "Nothing selected"
 msgstr "Niets geselecteerd"
+
+
+msgid "Pin"
+msgstr "Prik"
 
 
 msgctxt "Operator"

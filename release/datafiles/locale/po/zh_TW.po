@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'2f667c2bc949')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0969dcc861a5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -3956,6 +3956,10 @@ msgid "Set color mode to use for interpolation"
 msgstr "設定插補法所要使用的色彩模式"
 
 
+msgid "RGB"
+msgstr "RGB"
+
+
 msgid "Elements"
 msgstr "元素"
 
@@ -7472,14 +7476,6 @@ msgid "Description of the item's purpose"
 msgstr "項目用途的描述"
 
 
-msgid "Icon"
-msgstr "圖示"
-
-
-msgid "Icon of the item"
-msgstr "項目的圖示"
-
-
 msgid "Identifier"
 msgstr "識別碼"
 
@@ -9374,6 +9370,10 @@ msgid "Generated coordinates centered to flow object"
 msgstr "將生成的座標系對流動物體置中"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Use UV layer for texture coordinates"
 msgstr "為紋理座標系使用 UV 分層"
 
@@ -10568,12 +10568,24 @@ msgid "Red Green Blue"
 msgstr "紅綠藍"
 
 
+msgid "R"
+msgstr "R"
+
+
 msgid "Red"
 msgstr "紅"
 
 
+msgid "G"
+msgstr "G"
+
+
 msgid "Green"
 msgstr "綠"
+
+
+msgid "B"
+msgstr "B"
 
 
 msgid "Blue"
@@ -13781,10 +13793,6 @@ msgstr "作用中輸出"
 
 msgid "Index of the active output"
 msgstr "作用中輸出的索引"
-
-
-msgid "The node tree icon"
-msgstr "節點樹圖示"
 
 
 msgid "ID Name"
@@ -17040,16 +17048,8 @@ msgid "Settings for image formats"
 msgstr "影像格式的設定"
 
 
-msgid "B"
-msgstr "B"
-
-
 msgid "Log conversion reference blackpoint"
 msgstr "參照黑點的對數轉換"
-
-
-msgid "G"
-msgstr "G"
 
 
 msgid "Log conversion gamma"
@@ -18597,10 +18597,6 @@ msgstr "材質特殊項"
 
 msgid "Select Linked"
 msgstr "選取連結項"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Align"
@@ -22981,10 +22977,6 @@ msgid "Node in a node tree"
 msgstr "節點樹中的節點"
 
 
-msgid "The node icon"
-msgstr "節點圖示"
-
-
 msgid "The node label"
 msgstr "節點標籤"
 
@@ -23573,10 +23565,6 @@ msgid "Green spillmap scale"
 msgstr "綠溢灑映射縮放"
 
 
-msgid "R"
-msgstr "R"
-
-
 msgid "Red spillmap scale"
 msgstr "紅溢灑映射縮放"
 
@@ -24035,10 +24023,6 @@ msgstr "內繪"
 
 msgid "Distance to inpaint (number of iterations)"
 msgstr "內繪的距離 (迭代次數)"
-
-
-msgid "RGB"
-msgstr "RGB"
 
 
 msgid "Keying"
@@ -24781,6 +24765,10 @@ msgstr "毛髮 BSDF"
 
 msgid "Component"
 msgstr "元件"
+
+
+msgid "Reflection"
+msgstr "反射"
 
 
 msgid "Refraction BSDF"
@@ -43132,14 +43120,6 @@ msgid "Palette Color"
 msgstr "色版色彩"
 
 
-msgid "Order"
-msgstr "順序"
-
-
-msgid "Pin"
-msgstr "釘住"
-
-
 msgid "Integrator Presets"
 msgstr "整合器預置"
 
@@ -44563,10 +44543,6 @@ msgstr "快取資訊"
 
 msgid "Info on current cache status"
 msgstr "目前快取狀態的資訊"
-
-
-msgid "Cache is outdated"
-msgstr "快取已過期"
 
 
 msgid "Cache name"
@@ -53798,6 +53774,10 @@ msgid "Animate Path"
 msgstr "動畫化路徑"
 
 
+msgid "Order"
+msgstr "順序"
+
+
 msgid "Volume Min"
 msgstr "體積最小"
 
@@ -56864,6 +56844,10 @@ msgid "Grease Pencil operator is already active"
 msgstr "蠟筆資料操作器已在作用中"
 
 
+msgid "Pin"
+msgstr "釘住"
+
+
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "只有鍵盤快捷鍵可以這樣修改，其他則請利用使用者偏好設定"
 
@@ -58434,22 +58418,6 @@ msgid "Interpolation:"
 msgstr "插補："
 
 
-msgid "F-Curve only has F-Modifiers"
-msgstr "F 曲線僅有 F 修改器"
-
-
-msgid "See Modifiers panel below"
-msgstr "檢視下方的修改器面板"
-
-
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F 曲線沒有任何鍵幀，因為它僅包含取樣的點"
-
-
-msgid "No active keyframe on F-Curve"
-msgstr "F 曲線上沒有作用中的鍵幀"
-
-
 msgid "Prop:"
 msgstr "屬性："
 
@@ -58472,6 +58440,22 @@ msgstr "更新相依關係"
 
 msgid "Add Modifier"
 msgstr "添加修改器"
+
+
+msgid "F-Curve only has F-Modifiers"
+msgstr "F 曲線僅有 F 修改器"
+
+
+msgid "See Modifiers panel below"
+msgstr "檢視下方的修改器面板"
+
+
+msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
+msgstr "F 曲線沒有任何鍵幀，因為它僅包含取樣的點"
+
+
+msgid "No active keyframe on F-Curve"
+msgstr "F 曲線上沒有作用中的鍵幀"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -58587,10 +58571,6 @@ msgid "Slot %d"
 msgstr "槽 %d"
 
 
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "非線性硬式編碼，伽瑪值：1.7"
-
-
 msgid "Select Slot"
 msgstr "選取槽"
 
@@ -58601,6 +58581,10 @@ msgstr "選取層"
 
 msgid "Select Pass"
 msgstr "選取通遞"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "非線性硬式編碼，伽瑪值：1.7"
 
 
 msgid "Can't Load Image"
@@ -60084,16 +60068,24 @@ msgid "Crease Edges"
 msgstr "皺摺邊線"
 
 
+msgid "Fac"
+msgstr "係數"
+
+
+msgid "Dot"
+msgstr "點"
+
+
+msgid "Density Attribute"
+msgstr "密度特性"
+
+
 msgid "Shader Editor"
 msgstr "著色器編輯器"
 
 
 msgid "AO"
 msgstr "AO"
-
-
-msgid "Fac"
-msgstr "係數"
 
 
 msgid "Anisotropy"
@@ -60240,8 +60232,12 @@ msgid "Transmission Depth"
 msgstr "穿透深度"
 
 
-msgid "Dot"
-msgstr "點"
+msgid "Color1"
+msgstr "色彩1"
+
+
+msgid "Color2"
+msgstr "色彩2"
 
 
 msgid "Color Fac"
@@ -60256,8 +60252,16 @@ msgid "BSSRDF"
 msgstr "BSSRDF"
 
 
-msgid "Reflection"
-msgstr "反射"
+msgid "Mortar"
+msgstr "灰漿"
+
+
+msgid "Brick Width"
+msgstr "磚塊寬度"
+
+
+msgid "Row Height"
+msgstr "列度"
 
 
 msgid "Flame"
@@ -60266,10 +60270,6 @@ msgstr "火焰"
 
 msgid "Color Attribute"
 msgstr "色彩特性"
-
-
-msgid "Density Attribute"
-msgstr "密度特性"
 
 
 msgid "Absorption Color"
@@ -60302,26 +60302,6 @@ msgstr "磚塊 1"
 
 msgid "Bricks 2"
 msgstr "磚塊 2"
-
-
-msgid "Mortar"
-msgstr "灰漿"
-
-
-msgid "Brick Width"
-msgstr "磚塊寬度"
-
-
-msgid "Row Height"
-msgstr "列度"
-
-
-msgid "Color1"
-msgstr "色彩1"
-
-
-msgid "Color2"
-msgstr "色彩2"
 
 
 msgid "Coordinate 1"
@@ -60458,10 +60438,6 @@ msgstr "片段不相容"
 
 msgid "Strips must have the same number of inputs"
 msgstr "片段必須有相同的輸入數"
-
-
-msgid "Paste name"
-msgstr "貼上名稱"
 
 
 msgid "Blender File View"
