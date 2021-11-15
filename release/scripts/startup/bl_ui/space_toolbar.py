@@ -1195,7 +1195,7 @@ class TOOLBAR_MT_image(Menu):
 
             #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
 
-            row.operator("uv.align", text= "", icon = "STRAIGHTEN").axis = 'ALIGN_S'
+            row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
             row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
             row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
             row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
@@ -1298,10 +1298,10 @@ class TOOLBAR_PT_normals_autosmooth(Panel):
     def poll(cls, context):
         if context.active_object is None:
             return False
-
+        
         if context.active_object.type != "MESH":
             return False
-
+        
         return True
 
     def draw(self, context):
@@ -1310,12 +1310,12 @@ class TOOLBAR_PT_normals_autosmooth(Panel):
 
         if context.active_object is None:
             return
-
+        
         if context.active_object.type != "MESH":
             return
 
         mesh = context.active_object.data
-
+        
         split = layout.split()
         split.use_property_split = False
         col = split.column()
@@ -1878,7 +1878,7 @@ class TOOLBAR_MT_misc(Menu):
         ## ------------------ Misc sub toolbars
 
         if addon_prefs.misc_viewport:
-
+            
             if obj is not None:
                 row = layout.row(align=True)
                 row.popover(panel="OBJECT_PT_display", text="", icon = "VIEW")
