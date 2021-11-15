@@ -50,8 +50,6 @@ from bpy.app.translations import pgettext_iface as iface_
 
 class toolshelf_calculate( Panel):
 
-
-
     @staticmethod
     def ts_width(layout, region, scale_y):
 
@@ -112,14 +110,14 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
-            layout.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
-            layout.operator_context = 'INVOKE_DEFAULT'
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
+            col.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
+            col.operator_context = 'INVOKE_DEFAULT'
 
-            layout.separator()
+            col.separator()
 
-            layout.operator("transform.shear", icon = 'SHEAR')
+            col.operator("transform.shear", icon = 'SHEAR')
 
         # icon buttons
         else:
@@ -155,9 +153,83 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
 
                 col.operator("transform.shear", icon = 'SHEAR')
 
+
+class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
+    bl_label = "Mirror"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.faces_mirror_uv", icon = "COPYMIRRORED")
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("transform.mirror", text="X Axis", icon = "MIRROR_X").constraint_axis[0] = True
+            col.operator("transform.mirror", text="Y Axis", icon = "MIRROR_Y").constraint_axis[1] = True
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
+                row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
+                row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+
+            elif column_count == 1:
+
+                col.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
+                col.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
+    IMAGE_PT_uvtab_mirror,
 )
 
 if __name__ == "__main__":  # only for live edit.
