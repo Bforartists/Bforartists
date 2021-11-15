@@ -226,10 +226,104 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
                 col.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
                 col.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
 
+
+class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
+    bl_label = "Snap"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+            col.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+            col.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+            col.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+
+            col.separator()
+
+            col.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+            col.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+
+                row = col.row(align=True)
+                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+                row.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+
+                row = col.row(align=True)
+                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+
+                row = col.row(align=True)
+                row.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+
+            elif column_count == 1:
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+                col.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+                col.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+                col.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+
+                col.separator()
+
+                col.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+                col.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
     IMAGE_PT_uvtab_mirror,
+    IMAGE_PT_uvtab_snap,
 )
 
 if __name__ == "__main__":  # only for live edit.
