@@ -90,7 +90,7 @@ class TIME_HT_editor_buttons:
 
         row.popover(panel="TIME_PT_playback", text="Playback")
         row.popover(panel="TIME_PT_keyframing_settings", text="Keying")
-        
+
         row.popover(panel = "TIME_PT_view_view_options", text = "")
 
 class TIME_MT_editor_menus(Menu):
@@ -327,7 +327,7 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
 
         col = layout.column()
 
-        
+
         col.prop(st.dopesheet, "show_only_errors")
 
         col.separator()
@@ -335,11 +335,11 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
         col.prop(scene, "show_keys_from_selected_only", text = "Only show selected")
         col.prop(st, "show_seconds")
         col.prop(st, "show_locked_time")
-        
+
         col.prop(st, "show_markers")
         col.prop(tool_settings, "lock_markers")
-        
-        col.separator()       
+
+        col.separator()
 
         row = layout.row()
         row.use_property_split = False

@@ -366,7 +366,7 @@ def basic_force_field_falloff_ui(self, field):
     col = layout.column()
     col.prop(field, "z_direction")
     col.prop(field, "falloff_power", text="Power")
-    
+
     split = layout.split(factor = 0.35)
     col = split.column()
     col.use_property_split = False
@@ -378,8 +378,8 @@ def basic_force_field_falloff_ui(self, field):
         row.prop(field, "distance_min", text="")
         row.prop_decorator(field, "distance_min")
     else:
-        col.label(icon='DISCLOSURE_TRI_RIGHT')   	
-    
+        col.label(icon='DISCLOSURE_TRI_RIGHT')
+
     split = layout.split(factor = 0.35)
     col = split.column()
     col.use_property_split = False
@@ -391,7 +391,7 @@ def basic_force_field_falloff_ui(self, field):
         row.prop(field, "distance_max", text="")
         row.prop_decorator(field, "distance_max")
     else:
-        col.label(icon='DISCLOSURE_TRI_RIGHT')   	
+        col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 classes = (

@@ -205,16 +205,16 @@ class RENDER_PT_eevee_depth_of_field(RenderButtonsPanel, Panel):
         col.prop(props, "bokeh_denoise_fac")
         col.use_property_split = False
         col.prop(props, "use_bokeh_high_quality_slight_defocus")
-        
+
         split = col.split(factor=.4)
         split.use_property_split=False
         split.prop(props, "use_bokeh_jittered")
-        
+
         split.alignment = 'LEFT'
         if props.use_bokeh_jittered:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')     
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if props.use_bokeh_jittered:
             row = col.row()
