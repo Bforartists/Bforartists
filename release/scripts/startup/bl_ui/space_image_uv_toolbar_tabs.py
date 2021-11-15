@@ -435,12 +435,86 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
                 col.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
 
 
+class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
+    bl_label = "Merge"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("uv.weld", text="At Center", icon='MERGE_CENTER')
+            col.operator("uv.snap_selected", text="At Cursor", icon='MERGE_CURSOR').target = 'CURSOR'
+
+            col.separator()
+
+            col.operator("uv.remove_doubles", text="By Distance", icon='REMOVE_DOUBLES')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("uv.weld", text="", icon='MERGE_CENTER')
+                row.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
+                row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("uv.weld", text="", icon='MERGE_CENTER')
+                row.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
+
+                row = col.row(align=True)
+                row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+
+            elif column_count == 1:
+
+                col.operator("uv.weld", text="", icon='MERGE_CENTER')
+                col.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
+
+                col.separator()
+
+                col.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
     IMAGE_PT_uvtab_mirror,
     IMAGE_PT_uvtab_snap,
     IMAGE_PT_uvtab_unwrap,
+    IMAGE_PT_uvtab_merge,
 )
 
 if __name__ == "__main__":  # only for live edit.
