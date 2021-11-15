@@ -128,7 +128,7 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col.separator()
 
             col.prop(field, "strength")
-            
+
             col.label( text = "Affect")
             col.use_property_split = False
             row = col.row()
@@ -153,7 +153,7 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             col.prop(field, "strength")
             col.prop(field, "flow")
-            
+
             col.label( text = "Affect")
             col.use_property_split = False
             row = col.row()
