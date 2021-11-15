@@ -638,6 +638,89 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
                 col.operator("uv.reset", text="", icon = "RESET")
 
 
+class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
+    bl_label = "Align"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("uv.align", text= "Straighten", icon = "ALIGN").axis = 'ALIGN_S'
+            col.operator("uv.align", text= "Straighten X", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+            col.operator("uv.align", text= "Straighten Y", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+            col.operator("uv.align", text= "Align Auto", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+            col.operator("uv.align", text= "Align X", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+            col.operator("uv.align", text= "Align Y", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+
+                row = col.row(align=True)
+                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+                row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+
+                row = col.row(align=True)
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+
+                row = col.row(align=True)
+                row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+            elif column_count == 1:
+
+                col.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
+                col.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+                col.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+                col.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+                col.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                col.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
@@ -646,6 +729,7 @@ classes = (
     IMAGE_PT_uvtab_unwrap,
     IMAGE_PT_uvtab_merge,
     IMAGE_PT_uvtab_uvtools,
+    IMAGE_PT_uvtab_align,
 )
 
 if __name__ == "__main__":  # only for live edit.
