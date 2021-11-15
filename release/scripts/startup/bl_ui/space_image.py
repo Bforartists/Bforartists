@@ -500,9 +500,9 @@ class IMAGE_MT_uvs_merge(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.weld", text="At Center", icon='WELD')
+        layout.operator("uv.weld", text="At Center", icon='MERGE_CENTER')
         # Mainly to match the mesh menu.
-        layout.operator("uv.snap_selected", text="At Cursor", icon='WELD').target = 'CURSOR'
+        layout.operator("uv.snap_selected", text="At Cursor", icon='MERGE_CURSOR').target = 'CURSOR'
 
         layout.separator()
 
