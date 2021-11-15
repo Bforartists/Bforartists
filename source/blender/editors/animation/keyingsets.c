@@ -794,7 +794,26 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
   /* bfa - set builtin keyingset enum items icons */
   int icon_index = 0;
   /* fill icons in order for builtin keyingset enum items */
-  int icons[] = {ICON_ANIM, ICON_ACTION};
+  int icons[] = {
+      ICON_TRANSFORM_MOVE,
+      ICON_TRANSFORM_ROTATE,
+      ICON_TRANSFORM_SCALE,
+      ICON_LOC_ROT,
+      ICON_LOC_ROT_SCALE,
+      ICON_LOC_ROT_SCALE_CUSTOM,
+      ICON_LOC_SCALE,
+      ICON_ROT_SCALE,
+      ICON_APPLYMOVEDELTA,
+      ICON_APPLYROTATEDELTA,
+      ICON_APPLYSCALEDELTA,
+      ICON_VISUAL_MOVE,
+      ICON_VISUAL_ROTATE,
+      ICON_VISUAL_SCALE,
+      ICON_VISUAL_LOC_ROT,
+      ICON_VISUAL_LOC_ROT_SCALE,
+      ICON_VISUAL_LOC_SCALE,
+      ICON_VISUAL_ROT_SCALE,
+  };
   /* endbfa */
   for (ks = builtin_keyingsets.first; ks; ks = ks->next, i--) {
     /* only show KeyingSet if context is suitable */
