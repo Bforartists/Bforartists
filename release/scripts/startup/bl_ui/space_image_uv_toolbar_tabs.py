@@ -319,11 +319,128 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
                 col.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
                 col.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
 
+
+class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
+    bl_label = "Unwrap"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+            col.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+            col.separator()
+
+            col.operator_context = 'INVOKE_DEFAULT'
+            col.operator("uv.smart_project", icon = "MOD_UVPROJECT")
+            col.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
+            col.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
+
+            col.separator()
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("uv.cube_project", icon = "CUBEPROJECT")
+            col.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
+            col.operator("uv.sphere_project", icon = "SPHEREPROJECT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                row.operator_context = 'INVOKE_DEFAULT'
+                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+                row = col.row(align=True)
+                row.operator_context = 'INVOKE_DEFAULT'
+                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+
+                row = col.row(align=True)
+                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+            elif column_count == 1:
+
+                col.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                col.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+                col.separator()
+
+                col.operator_context = 'INVOKE_DEFAULT'
+                col.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+                col.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+                col.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+
+                col.separator()
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+                col.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                col.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
     IMAGE_PT_uvtab_mirror,
     IMAGE_PT_uvtab_snap,
+    IMAGE_PT_uvtab_unwrap,
 )
 
 if __name__ == "__main__":  # only for live edit.
