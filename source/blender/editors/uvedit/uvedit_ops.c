@@ -659,7 +659,7 @@ static void UV_OT_align(wmOperatorType *ot)
   static const EnumPropertyItem axis_items[] = {
       {UV_STRAIGHTEN,
        "ALIGN_S",
-       ICON_STRAIGHTEN,
+       ICON_ALIGN,
        "Straighten",
        "Align UVs along the line defined by the endpoints"},
       {UV_STRAIGHTEN_X,
