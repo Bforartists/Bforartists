@@ -508,6 +508,136 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
                 col.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
 
 
+class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
+    bl_label = "UV Tools"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        view = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("uv.pin", icon = "PINNED").clear = False
+            col.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
+            col.operator("uv.select_split", text="Split Selection", icon = 'SPLIT')
+
+            col.separator()
+
+            col.operator("uv.pack_islands", icon ="PACKISLAND")
+            col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
+            col.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
+            col.operator("uv.stitch", icon = "STITCH")
+
+            col.separator()
+
+            col.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
+            col.operator("uv.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
+            col.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
+
+            col.separator()
+
+            col.operator("uv.reset", icon = "RESET")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("uv.pin", text="", icon = "PINNED").clear = False
+                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+                row.operator("uv.select_split", text="", icon = 'SPLIT')
+
+                row = col.row(align=True)
+                row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+                row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+                row.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
+
+                row = col.row(align=True)
+                row.operator("uv.stitch", text="", icon = "STITCH")
+                row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+                row.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
+
+                row = col.row(align=True)
+                row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+                row.operator("uv.reset", text="", icon = "RESET")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("uv.pin", text="", icon = "PINNED").clear = False
+                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+
+                row = col.row(align=True)
+                row.operator("uv.select_split", text="", icon = 'SPLIT')
+                row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+
+                row = col.row(align=True)
+                row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+                row.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
+
+                row = col.row(align=True)
+                row.operator("uv.stitch", text="", icon = "STITCH")
+                row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+
+                row = col.row(align=True)
+                row.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
+                row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+                row = col.row(align=True)
+                row.operator("uv.reset", text="", icon = "RESET")
+
+            elif column_count == 1:
+
+                col.operator("uv.pin", text="", icon = "PINNED").clear = False
+                col.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+                col.operator("uv.select_split", text="", icon = 'SPLIT')
+
+                col.separator()
+
+                col.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+                col.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+                col.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
+                col.operator("uv.stitch", text="", icon = "STITCH")
+
+                col.separator()
+
+                col.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+                col.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
+                col.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+
+                col.separator()
+
+                col.operator("uv.reset", text="", icon = "RESET")
+
+
 classes = (
 
     IMAGE_PT_uvtab_transform,
@@ -515,6 +645,7 @@ classes = (
     IMAGE_PT_uvtab_snap,
     IMAGE_PT_uvtab_unwrap,
     IMAGE_PT_uvtab_merge,
+    IMAGE_PT_uvtab_uvtools,
 )
 
 if __name__ == "__main__":  # only for live edit.
