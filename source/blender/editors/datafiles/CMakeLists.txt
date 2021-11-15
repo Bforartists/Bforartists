@@ -1121,9 +1121,9 @@ set_id
 add_all
 delete_all
 duplicate_all
-#~ DEF_ICON_BLANK(1140)
-#~ DEF_ICON_BLANK(1141)
-#~ DEF_ICON_BLANK(1142)
+visual_move
+visual_rotate
+visual_scale
 
 # ------------------------- row 17 --------------------------*/
 
@@ -1182,15 +1182,15 @@ mod_hue_saturation
 outliner_collection
 mod_noise
 
-#~ DEF_ICON_BLANK(1201)
-#~ DEF_ICON_BLANK(1202)
-#~ DEF_ICON_BLANK(1203)
-#~ DEF_ICON_BLANK(1204)
-#~ DEF_ICON_BLANK(1205)
-#~ DEF_ICON_BLANK(1206)
-#~ DEF_ICON_BLANK(1207)
-#~ DEF_ICON_BLANK(1208)
-#~ DEF_ICON_BLANK(1209)
+loc_rot
+loc_rot_scale
+loc_scale
+rot_scale
+visual_loc_rot
+visual_loc_rot_scale
+visual_loc_scale
+visual_rot_scale
+loc_rot_scale_custom
 #~ DEF_ICON_BLANK(1210)
 
 # ------------------------- row 18 --------------------------*/
