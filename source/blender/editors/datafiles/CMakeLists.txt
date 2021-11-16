@@ -1191,7 +1191,7 @@ visual_loc_rot_scale
 visual_loc_scale
 visual_rot_scale
 loc_rot_scale_custom
-#~ DEF_ICON_BLANK(1210)
+separate_copy
 
 # ------------------------- row 18 --------------------------*/
 

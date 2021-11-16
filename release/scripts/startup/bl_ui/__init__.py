@@ -77,6 +77,7 @@ _modules = [
     #bfa - toolbar tabs panels
     "space_toolsystem_toolbar_tabs",
     "space_image_uv_toolbar_tabs",
+    "space_node_tabs",
 
     "space_clip",
     "space_console",
