@@ -164,9 +164,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     nla_tweak_isolate_action : BoolProperty(name="Isolate", default = False, description = "Edit action in isolate mode")
 
-    # UV Editor - show tabs
+    # Tabs
 
     uv_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf")
+    node_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf")
 
 
     def draw(self, context):
@@ -555,6 +556,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = col.row()
         row.separator()
         row.prop(self, "uv_show_toolshelf_tabs")
+        row = col.row()
+        row.separator()
+        row.prop(self, "node_show_toolshelf_tabs")
+
 
 class BFA_OT_toolbar_prefs(Operator):
     """Display example preferences"""
