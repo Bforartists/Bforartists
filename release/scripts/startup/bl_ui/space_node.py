@@ -395,7 +395,6 @@ class NODE_MT_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
 
 
-
 class NODE_MT_view(Menu):
     bl_label = "View"
 
@@ -404,8 +403,12 @@ class NODE_MT_view(Menu):
 
         snode = context.space_data
 
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
+        layout.prop(addon_prefs, "uv_show_toolshelf_tabs")
 
         layout.separator()
 
@@ -481,7 +484,7 @@ class NODE_MT_node_group_separate(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.group_separate", text = "Copy", icon = "SEPARATE").type = 'COPY'
+        layout.operator("node.group_separate", text = "Copy", icon = "SEPARATE_COPY").type = 'COPY'
         layout.operator("node.group_separate", text = "Move", icon = "SEPARATE").type = 'MOVE'
 
 
