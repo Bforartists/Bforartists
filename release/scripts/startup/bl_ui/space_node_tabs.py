@@ -166,9 +166,9 @@ class NODE_PT_links(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("node.link_make", icon = "LINK_DATA").replace = False
-            col.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
+            col.operator("node.link_make", text="Make and Replace Links", icon = "LINK_REPLACE").replace = True
             col.operator("node.links_detach", icon = "DETACH_LINKS")
-            col.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
+            col.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS_MOVE")
             col.operator("node.links_mute", icon = "MUTE_IPO_ON")
 
         # icon buttons
@@ -182,22 +182,22 @@ class NODE_PT_links(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                row.operator("node.link_make", text="", icon = "LINK_DATA").replace = True
+                row.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
                 row.operator("node.links_detach", text="", icon = "DETACH_LINKS")
 
                 row = col.row(align=True)
-                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS")
+                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
                 row.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                row.operator("node.link_make", text="", icon = "LINK_DATA").replace = True
+                row.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
 
                 row = col.row(align=True)
                 row.operator("node.links_detach", text="", icon = "DETACH_LINKS")
-                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS")
+                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
 
                 row = col.row(align=True)
                 row.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
@@ -205,9 +205,9 @@ class NODE_PT_links(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                col.operator("node.link_make", text="", icon = "LINK_DATA").replace = True
+                col.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
                 col.operator("node.links_detach", text="", icon = "DETACH_LINKS")
-                col.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS")
+                col.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
                 col.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
 
 
@@ -271,7 +271,7 @@ class NODE_PT_separate(toolshelf_calculate, Panel):
 
 
 class NODE_PT_node_tools(toolshelf_calculate, Panel):
-    bl_label = "Node Tools"
+    bl_label = "Frame Tools"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Node"
