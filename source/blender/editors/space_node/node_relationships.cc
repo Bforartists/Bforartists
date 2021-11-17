@@ -1432,6 +1432,27 @@ static int node_make_link_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+
+/*bfa - tool name*/
+static const char *NODE_OT_link_make_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "replace")) {
+    return CTX_IFACE_(ot->translation_context, "Make and Replace Links");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *NODE_OT_link_make_get_description(bContext *UNUSED(C),
+                                                               wmOperatorType *UNUSED(ot),
+                                                               PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "replace")) {
+    return BLI_strdup("Makes a link between selected output in input sockets and replaces existing links");
+  }
+  return NULL;
+}
+
 void NODE_OT_link_make(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1441,6 +1462,8 @@ void NODE_OT_link_make(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = node_make_link_exec;
+  ot->get_name = NODE_OT_link_make_get_name;                               /*bfa - tool name*/
+  ot->get_description = NODE_OT_link_make_get_description; /*bfa - descriptions*/
   /* XXX we need a special poll which checks that there are selected input/output sockets. */
   ot->poll = ED_operator_node_editable;
 
