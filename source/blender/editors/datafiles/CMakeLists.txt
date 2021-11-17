@@ -1250,8 +1250,8 @@ modifier_off
 modifier_on
 orientation_global
 
-#~ DEF_ICON_BLANK(1269)
-#~ DEF_ICON_BLANK(1270)
+link_replace
+detach_links_move
 #~ DEF_ICON_BLANK(1271)
 #~ DEF_ICON_BLANK(1272)
 #~ DEF_ICON_BLANK(1273)
