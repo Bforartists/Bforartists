@@ -359,7 +359,7 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
-            col.operator("sequencer.split", text="Hold Split", icon='CUT').type = 'HARD'
+            col.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT').type = 'HARD'
 
         # icon buttons
         else:
