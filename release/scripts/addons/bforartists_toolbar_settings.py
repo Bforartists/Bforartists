@@ -166,8 +166,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Tabs
 
-    uv_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf")
-    node_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf")
+    uv_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the UV editor")
+    node_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Node editor")
+    vse_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Video Sequence editor")
 
 
     def draw(self, context):
@@ -559,6 +560,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = col.row()
         row.separator()
         row.prop(self, "node_show_toolshelf_tabs")
+        row = col.row()
+        row.separator()
+        row.prop(self, "vse_show_toolshelf_tabs")
 
 
 class BFA_OT_toolbar_prefs(Operator):
