@@ -450,6 +450,9 @@ class SEQUENCER_MT_view(Menu):
         is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
         if st.view_type == 'PREVIEW':
             # Specifying the REGION_PREVIEW context is needed in preview-only
             # mode, else the lookup for the shortcut will fail in
@@ -458,6 +461,7 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_region_toolbar")
         layout.prop(st, "show_region_tool_header")
         layout.prop(st, "show_region_ui")
+        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
