@@ -408,7 +408,7 @@ class NODE_MT_view(Menu):
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        layout.prop(addon_prefs, "uv_show_toolshelf_tabs")
+        layout.prop(addon_prefs, "node_show_toolshelf_tabs")
 
         layout.separator()
 
