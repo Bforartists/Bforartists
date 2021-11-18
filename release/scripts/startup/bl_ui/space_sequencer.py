@@ -461,12 +461,13 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_region_toolbar")
         layout.prop(st, "show_region_tool_header")
         layout.prop(st, "show_region_ui")
-        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
         if is_sequencer_view:
             layout.prop(st, "show_region_hud")
+
+        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")
 
         layout.separator()
 
@@ -951,7 +952,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if has_sequencer:
             layout.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
-            layout.operator("sequencer.split", text="Hold Split", icon='CUT').type = 'HARD'
+            layout.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT').type = 'HARD'
 
             layout.separator()
 
