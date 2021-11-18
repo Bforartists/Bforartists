@@ -1252,7 +1252,7 @@ orientation_global
 
 link_replace
 detach_links_move
-#~ DEF_ICON_BLANK(1271)
+hold_split
 #~ DEF_ICON_BLANK(1272)
 #~ DEF_ICON_BLANK(1273)
 #~ DEF_ICON_BLANK(1274)
