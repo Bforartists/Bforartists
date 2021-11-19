@@ -512,7 +512,6 @@ class TOPBAR_MT_render(Menu):
 
         layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
         layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
-        layout.menu("TOPBAR_MT_opengl_render")
 
 
         layout.separator()
@@ -523,17 +522,6 @@ class TOPBAR_MT_render(Menu):
         layout.separator()
 
         layout.prop(rd, "use_lock_interface", text="Lock Interface")
-
-
-class TOPBAR_MT_opengl_render(Menu):
-    bl_label = "OpenGL Render Options"
-
-    def draw(self, context):
-        layout = self.layout
-
-        rd = context.scene.render
-
-        layout.prop(rd, "use_full_sample")
 
 
 class TOPBAR_MT_edit(Menu):
@@ -832,7 +820,6 @@ classes = (
     TOPBAR_MT_file_previews,
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
-    TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
     TOPBAR_MT_edit_no_prefsfolder,
     TOPBAR_MT_help,
