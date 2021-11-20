@@ -1576,6 +1576,29 @@ static void sequencer_split_ui(bContext *UNUSED(C), wmOperator *op)
   }
 }
 
+/*bfa - tool name*/
+static const char *SEQUENCER_OT_split_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "type") == SEQ_SPLIT_HARD) {
+    return CTX_IFACE_(ot->translation_context, "Hold Split");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *SEQUENCER_OT_split_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "type") == SEQ_SPLIT_HARD) {
+    return BLI_strdup(
+        "Split the selected strips in two\nBut you cannot drag the endpoints to show the frames past the split of each resulting strip");
+  }
+
+  return NULL;
+}
+
 void SEQUENCER_OT_split(struct wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -1586,6 +1609,8 @@ void SEQUENCER_OT_split(struct wmOperatorType *ot)
   /* Api callbacks. */
   ot->invoke = sequencer_split_invoke;
   ot->exec = sequencer_split_exec;
+  ot->get_name = SEQUENCER_OT_split_get_name;                   /*bfa - tool name*/
+  ot->get_description = SEQUENCER_OT_split_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
   ot->ui = sequencer_split_ui;
 
@@ -2328,6 +2353,36 @@ static int sequencer_swap_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
+/*bfa - tool name*/
+static const char *SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
+    return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
+  }
+  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+    return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *SEQUENCER_OT_swap_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
+    return BLI_strdup(
+        "Swap active strip with strip to the right");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
+    return BLI_strdup(
+        "Swap active strip with strip to the left");
+  }
+  return NULL;
+}
+
 void SEQUENCER_OT_swap(wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -2337,6 +2392,8 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
 
   /* Api callbacks. */
   ot->exec = sequencer_swap_exec;
+  ot->get_name = SEQUENCER_OT_swap_get_name;                    /*bfa - tool name*/
+  ot->get_description = SEQUENCER_OT_swap_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
 
   /* Flags. */
