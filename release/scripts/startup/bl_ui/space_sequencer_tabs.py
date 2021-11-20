@@ -372,18 +372,18 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                row.operator("sequencer.split", text="", icon='CUT').type = 'HARD'
+                row.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                row.operator("sequencer.split", text="", icon='CUT').type = 'HARD'
+                row.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
 
             elif column_count == 1:
 
                 col.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                col.operator("sequencer.split", text="", icon='CUT').type = 'HARD'
+                col.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
 
 classes = (
     SEQUENCER_PT_imagetab_clear,
