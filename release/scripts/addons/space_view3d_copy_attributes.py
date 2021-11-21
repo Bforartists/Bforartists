@@ -20,11 +20,11 @@
 
 bl_info = {
     "name": "Copy Attributes Menu",
-    "author": "Bassam Kurdali, Fabian Fricke, Adam Wiseman",
-    "version": (0, 4, 9),
-    "blender": (2, 80, 0),
+    "author": "Bassam Kurdali, Fabian Fricke, Adam Wiseman, Demeter Dzadik",
+    "version": (0, 5, 0),
+    "blender": (3, 0, 0),
     "location": "View3D > Ctrl-C",
-    "description": "Copy Attributes Menu from Blender 2.4",
+    "description": "Copy Attributes Menu",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/copy_attributes.html",
     "category": "Interface",
 }
@@ -248,6 +248,79 @@ def pose_invoke_func(self, context, event):
     return {'RUNNING_MODAL'}
 
 
+CustomPropSelectionBoolsProperty = BoolVectorProperty(
+    size=32,
+    options={'SKIP_SAVE'}
+)
+
+class CopySelection:
+    """Base class for copying properties from active to selected based on a selection."""
+
+    selection: CustomPropSelectionBoolsProperty
+
+    def draw_bools(self, button_names):
+        """Draws the boolean toggle list with a list of strings for the button texts."""
+        layout = self.layout
+        for idx, name in enumerate(button_names):
+            layout.prop(self, "selection", index=idx, text=name,
+                        toggle=True)
+
+def copy_custom_property(source, destination, prop_name):
+    """Copy a custom property called prop_name, from source to destination.
+    source and destination must be a Blender data type that can hold custom properties.
+    For a list of such data types, see:
+    https://docs.blender.org/manual/en/latest/files/data_blocks.html#files-data-blocks-custom-properties
+    """
+
+    # Create the property.
+    destination[prop_name] = source[prop_name]
+    # Copy the settings of the property.
+    try:
+        dst_prop_manager = destination.id_properties_ui(prop_name)
+    except TypeError:
+        # Python values like lists or dictionaries don't have any settings to copy.
+        # They just consist of a value and nothing else.
+        return
+
+    src_prop_manager = source.id_properties_ui(prop_name)
+    assert src_prop_manager, f'Property "{prop_name}" not found in {source}'
+
+    dst_prop_manager.update_from(src_prop_manager)
+
+    # Copy the Library Overridable flag, which is stored elsewhere.
+    prop_rna_path = f'["{prop_name}"]'
+    is_lib_overridable = source.is_property_overridable_library(prop_rna_path)
+    destination.property_overridable_library_set(prop_rna_path, is_lib_overridable)
+
+class CopyCustomProperties(CopySelection):
+    """Base class for copying a selection of custom properties."""
+
+    def copy_selected_custom_props(self, active, selected):
+        keys = list(active.keys())
+        for item in selected:
+            if item == active:
+                continue
+            for index, is_selected in enumerate(self.selection):
+                if is_selected:
+                    copy_custom_property(active, item, keys[index])
+
+class CopySelectedBoneCustomProperties(CopyCustomProperties, Operator):
+    """Copy Chosen custom properties from active to selected"""
+    bl_idname = "pose.copy_selected_custom_props"
+    bl_label = "Copy Selected Custom Properties"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    poll = pose_poll_func
+    invoke = pose_invoke_func
+
+    def draw(self, context):
+        self.draw_bools(context.active_pose_bone.keys())
+
+    def execute(self, context):
+        self.copy_selected_custom_props(context.active_pose_bone, context.selected_pose_bones)
+        return {'FINISHED'}
+
+
 class CopySelectedPoseConstraints(Operator):
     """Copy Chosen constraints from active to selected"""
     bl_idname = "pose.copy_selected_constraints"
@@ -291,6 +364,7 @@ class VIEW3D_MT_posecopypopup(Menu):
         for op in pose_copies:
             layout.operator("pose.copy_" + op[0])
         layout.operator("pose.copy_selected_constraints")
+        layout.operator("pose.copy_selected_custom_props")
         layout.operator("pose.copy", text="copy pose")
 
 
@@ -614,6 +688,22 @@ class CopySelectedObjectModifiers(Operator):
         return{'FINISHED'}
 
 
+class CopySelectedObjectCustomProperties(CopyCustomProperties, Operator):
+    """Copy Chosen custom properties from active to selected objects"""
+    bl_idname = "object.copy_selected_custom_props"
+    bl_label = "Copy Selected Custom Properties"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    poll = object_poll_func
+    invoke = object_invoke_func
+
+    def draw(self, context):
+        self.draw_bools(context.object.keys())
+
+    def execute(self, context):
+        self.copy_selected_custom_props(context.object, context.selected_objects)
+        return {'FINISHED'}
+
 object_ops = []
 genops(object_copies, object_ops, "object.copy_", object_poll_func, obLoopExec)
 
@@ -638,6 +728,7 @@ class VIEW3D_MT_copypopup(Menu):
             layout.operator("object.copy_" + op[0])
         layout.operator("object.copy_selected_constraints")
         layout.operator("object.copy_selected_modifiers")
+        layout.operator("object.copy_selected_custom_props")
 
 
 # Begin Mesh copy settings:
@@ -810,9 +901,11 @@ class MESH_OT_CopyFaceSettings(Operator):
 
 classes = (
     CopySelectedPoseConstraints,
+    CopySelectedBoneCustomProperties,
     VIEW3D_MT_posecopypopup,
     CopySelectedObjectConstraints,
     CopySelectedObjectModifiers,
+    CopySelectedObjectCustomProperties,
     VIEW3D_MT_copypopup,
     MESH_MT_CopyFaceSettings,
     MESH_MT_CopyUVCoordsFromLayer,
