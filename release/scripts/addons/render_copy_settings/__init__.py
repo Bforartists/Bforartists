@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Copy Render Settings",
     "author": "Bastien Montagne",
-    "version": (1, 0, 0),
-    "blender": (2, 80, 0),
+    "version": (1, 1, 0),
+    "blender": (3, 0, 0),
     "location": "Render buttons (Properties window)",
     "description": "Allows to copy a selection of render settings "
                    "from current scene to others.",
@@ -56,6 +56,11 @@ from bpy.props import (
 classes = data.classes + operator.classes + panel.classes
 
 
+def scene_render_copy_settings_timer():
+    operator.scene_render_copy_settings_update()
+    return 1.0  # Run every second.
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -63,8 +68,12 @@ def register():
 
     bpy.app.translations.register(__name__, translations.translations_dict)
 
+    bpy.app.timers.register(scene_render_copy_settings_timer, persistent=True)
+
 
 def unregister():
+    bpy.app.timers.unregister(scene_render_copy_settings_timer)
+
     bpy.app.translations.unregister(__name__)
 
     del bpy.types.Scene.render_copy_settings
