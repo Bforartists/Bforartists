@@ -25,10 +25,6 @@
 
 #include "node_geometry_util.hh"
 
-using blender::fn::GVArray_For_GSpan;
-using blender::fn::GVArray_For_Span;
-using blender::fn::GVArray_Typed;
-
 namespace blender::nodes {
 
 static void geo_node_curve_subdivide_declare(NodeDeclarationBuilder &b)
@@ -55,12 +51,12 @@ static void geo_node_curve_subdivide_init(bNodeTree *UNUSED(tree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_curve_subdivide_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_curve_subdivide_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryPointTranslate &node_storage = *(NodeGeometryPointTranslate *)node->storage;
 
   update_attribute_input_socket_availabilities(
-      *node, "Cuts", (GeometryNodeAttributeInputMode)node_storage.input_type);
+      *ntree, *node, "Cuts", (GeometryNodeAttributeInputMode)node_storage.input_type);
 }
 
 static Array<int> get_subdivided_offsets(const Spline &spline,
@@ -363,14 +359,13 @@ static void geo_node_subdivide_exec(GeoNodeExecParams params)
   }
 
   const CurveComponent &component = *geometry_set.get_component_for_read<CurveComponent>();
-  GVArray_Typed<int> cuts = params.get_input_attribute<int>(
-      "Cuts", component, ATTR_DOMAIN_POINT, 0);
-  if (cuts->is_single() && cuts->get_internal_single() < 1) {
+  VArray<int> cuts = params.get_input_attribute<int>("Cuts", component, ATTR_DOMAIN_POINT, 0);
+  if (cuts.is_single() && cuts.get_internal_single() < 1) {
     params.set_output("Geometry", geometry_set);
     return;
   }
 
-  std::unique_ptr<CurveEval> output_curve = subdivide_curve(*component.get_for_read(), *cuts);
+  std::unique_ptr<CurveEval> output_curve = subdivide_curve(*component.get_for_read(), cuts);
 
   params.set_output("Geometry", GeometrySet::create_with_curve(output_curve.release()));
 }

@@ -65,14 +65,14 @@ static void geo_node_align_rotation_to_vector_init(bNodeTree *UNUSED(ntree), bNo
   node->storage = node_storage;
 }
 
-static void geo_node_align_rotation_to_vector_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_align_rotation_to_vector_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryAlignRotationToVector *node_storage = (NodeGeometryAlignRotationToVector *)
                                                         node->storage;
   update_attribute_input_socket_availabilities(
-      *node, "Factor", (GeometryNodeAttributeInputMode)node_storage->input_type_factor);
+      *ntree, *node, "Factor", (GeometryNodeAttributeInputMode)node_storage->input_type_factor);
   update_attribute_input_socket_availabilities(
-      *node, "Vector", (GeometryNodeAttributeInputMode)node_storage->input_type_vector);
+      *ntree, *node, "Vector", (GeometryNodeAttributeInputMode)node_storage->input_type_vector);
 }
 
 static void align_rotations_auto_pivot(const VArray<float3> &vectors,
@@ -179,9 +179,9 @@ static void align_rotations_on_component(GeometryComponent &component,
     return;
   }
 
-  GVArray_Typed<float> factors = params.get_input_attribute<float>(
+  VArray<float> factors = params.get_input_attribute<float>(
       "Factor", component, ATTR_DOMAIN_POINT, 1.0f);
-  GVArray_Typed<float3> vectors = params.get_input_attribute<float3>(
+  VArray<float3> vectors = params.get_input_attribute<float3>(
       "Vector", component, ATTR_DOMAIN_POINT, {0, 0, 1});
 
   float3 local_main_axis{0, 0, 0};

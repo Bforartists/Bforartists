@@ -57,7 +57,7 @@ static void geo_node_legacy_attribute_randomize_init(bNodeTree *UNUSED(tree), bN
   node->storage = data;
 }
 
-static void geo_node_legacy_attribute_randomize_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_legacy_attribute_randomize_update(bNodeTree *ntree, bNode *node)
 {
   bNodeSocket *sock_min_vector = (bNodeSocket *)BLI_findlink(&node->inputs, 2);
   bNodeSocket *sock_max_vector = sock_min_vector->next;
@@ -68,12 +68,12 @@ static void geo_node_legacy_attribute_randomize_update(bNodeTree *UNUSED(ntree),
 
   const NodeAttributeRandomize &storage = *(const NodeAttributeRandomize *)node->storage;
   const CustomDataType data_type = static_cast<CustomDataType>(storage.data_type);
-  nodeSetSocketAvailability(sock_min_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_max_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_min_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_max_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_min_int, data_type == CD_PROP_INT32);
-  nodeSetSocketAvailability(sock_max_int, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, sock_min_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_max_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_min_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_max_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_min_int, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, sock_max_int, data_type == CD_PROP_INT32);
 }
 
 template<typename T>
@@ -180,13 +180,13 @@ Array<uint32_t> get_geometry_element_ids_as_uints(const GeometryComponent &compo
   const int domain_size = component.attribute_domain_size(domain);
 
   /* Hash the reserved name attribute "id" as a (hopefully) stable seed for each point. */
-  GVArrayPtr hash_attribute = component.attribute_try_get_for_read("id", domain);
+  GVArray hash_attribute = component.attribute_try_get_for_read("id", domain);
   Array<uint32_t> hashes(domain_size);
   if (hash_attribute) {
-    BLI_assert(hashes.size() == hash_attribute->size());
-    const CPPType &cpp_type = hash_attribute->type();
+    BLI_assert(hashes.size() == hash_attribute.size());
+    const CPPType &cpp_type = hash_attribute.type();
     BLI_assert(cpp_type.is_hashable());
-    GVArray_GSpan items{*hash_attribute};
+    GVArray_GSpan items{hash_attribute};
     threading::parallel_for(hashes.index_range(), 512, [&](IndexRange range) {
       for (const int i : range) {
         hashes[i] = cpp_type.hash(items[i]);
