@@ -55,11 +55,6 @@ class RENDER_PT_copy_settings(bpy.types.Panel):
 
         layout.operator("scene.render_copy_settings", text="Copy Render Settings")
 
-        # This will update affected_settings/allowed_scenes (as this seems
-        # to be impossible to do it from here…).
-        if bpy.ops.scene.render_copy_settings_prepare.poll():
-            bpy.ops.scene.render_copy_settings_prepare()
-
         split = layout.split(factor=0.75)
         split.template_list("RENDER_UL_copy_settings", "settings", cp_sett, "affected_settings",
                             cp_sett, "affected_settings_idx", rows=5)

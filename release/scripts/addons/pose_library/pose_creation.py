@@ -302,7 +302,6 @@ class PoseActionCreator:
 
 
 def create_pose_asset(
-    context: Context,
     params: PoseCreationParams,
 ) -> Optional[Action]:
     """Create a single-frame Action containing only the pose of the given bones.
@@ -334,7 +333,7 @@ def create_pose_asset_from_context(context: Context, new_asset_name: str) -> Opt
         new_asset_name,
     )
 
-    return create_pose_asset(context, params)
+    return create_pose_asset(params)
 
 
 def copy_fcurves(

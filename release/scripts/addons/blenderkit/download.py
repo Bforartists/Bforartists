@@ -302,7 +302,6 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
 
     '''
-
     file_names = paths.get_download_filepaths(asset_data, kwargs['resolution'])
     props = None
     #####
@@ -439,7 +438,6 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             lib['asset_data'] = asset_data
 
     elif asset_data['assetType'] == 'brush':
-
         # TODO if already in scene, should avoid reappending.
         inscene = False
         for b in bpy.data.brushes:

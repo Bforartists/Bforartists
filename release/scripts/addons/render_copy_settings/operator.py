@@ -21,9 +21,6 @@
 import bpy
 from . import presets
 
-# These operators are only defined because it seems impossible to directly edit properties from UI code…
-
-
 # A sorting func for collections (working in-place).
 # XXX Not optimized at all…
 # XXX If some items in the collection do not have the sortkey property, they are just ignored…
@@ -46,74 +43,66 @@ def collection_property_sort(collection, sortkey, start_idx=0):
     return collection
 
 
-class RenderCopySettingsOPPrepare(bpy.types.Operator):
-    """Prepare internal data for render_copy_settings (gathering all existing render settings, and scenes)"""
-    bl_idname = "scene.render_copy_settings_prepare"
-    bl_label = "Render: Copy Settings Prepare"
-    bl_option = {'REGISTER'}
+def scene_render_copy_settings_update():
+    """Prepare internal data for render_copy_settings (gathering all existing render settings, and scenes)."""
+    current_scene = getattr(bpy.context, "scene", None)
+    if current_scene is None:
+        return
+    cp_sett = current_scene.render_copy_settings
 
-    @classmethod
-    def poll(cls, context):
-        return context.scene is not None
+    # Get all available render settings, and update accordingly affected_settings…
+    props = {}
+    for prop in current_scene.render.bl_rna.properties:
+        if prop.identifier in {'rna_type'}:
+            continue
+        if prop.is_readonly:
+            continue
+        props[prop.identifier] = prop.name
+    corr = 0
+    for i, sett in enumerate(cp_sett.affected_settings):
+        if sett.strid not in props:
+            cp_sett.affected_settings.remove(i - corr)
+            corr += 1
+        else:
+            del props[sett.strid]
+    for strid, name in props.items():
+        sett = cp_sett.affected_settings.add()
+        sett.name = "{} [{}]".format(name, strid)
+        sett.strid = strid
+    collection_property_sort(cp_sett.affected_settings, "name")
 
-    def execute(self, context):
-        cp_sett = context.scene.render_copy_settings
-
-        # Get all available render settings, and update accordingly affected_settings…
-        props = {}
-        for prop in context.scene.render.bl_rna.properties:
-            if prop.identifier in {'rna_type'}:
-                continue
-            if prop.is_readonly:
-                continue
-            props[prop.identifier] = prop.name
-        corr = 0
-        for i, sett in enumerate(cp_sett.affected_settings):
-            if sett.strid not in props:
-                cp_sett.affected_settings.remove(i - corr)
-                corr += 1
-            else:
-                del props[sett.strid]
-        for strid, name in props.items():
-            sett = cp_sett.affected_settings.add()
-            sett.name = "{} [{}]".format(name, strid)
-            sett.strid = strid
-        collection_property_sort(cp_sett.affected_settings, "name")
-
-        # Get all available scenes, and update accordingly allowed_scenes…
-        regex = None
-        if cp_sett.filter_scene:
+    # Get all available scenes, and update accordingly allowed_scenes…
+    regex = None
+    if cp_sett.filter_scene:
+        try:
+            import re
             try:
-                import re
-                try:
-                    regex = re.compile(cp_sett.filter_scene)
-                except Exception as e:
-                    self.report({'ERROR_INVALID_INPUT'}, "The filter-scene regex did not compile:\n    (%s)." % str(e))
-                    return {'CANCELLED'}
-            except:
-                regex = None
-                self.report({'WARNING'}, "Unable to import the re module, regex scene filtering will be disabled!")
-        scenes = set()
-        for scene in bpy.data.scenes:
-            if scene == bpy.context.scene:  # Exclude current scene!
-                continue
-            # If a valid filtering regex, only keep scenes matching it.
-            if regex:
-                if regex.match(scene.name):
-                    scenes.add(scene.name)
-            else:
+                regex = re.compile(cp_sett.filter_scene)
+            except Exception as e:
+                print("The filter-scene regex did not compile:\n    (%s)." % str(e))
+                return
+        except:
+            regex = None
+            print("Unable to import the re module, regex scene filtering will be disabled!")
+    scenes = set()
+    for scene in bpy.data.scenes:
+        if scene == current_scene:  # Exclude current scene!
+            continue
+        # If a valid filtering regex, only keep scenes matching it.
+        if regex:
+            if regex.match(scene.name):
                 scenes.add(scene.name)
-        for i, scene in enumerate(cp_sett.allowed_scenes):
-            if scene.name not in scenes:
-                cp_sett.allowed_scenes.remove(i)
-            else:
-                scenes.remove(scene.name)
-        for scene in scenes:
-            sett = cp_sett.allowed_scenes.add()
-            sett.name = scene
-        collection_property_sort(cp_sett.allowed_scenes, "name")
-
-        return {'FINISHED'}
+        else:
+            scenes.add(scene.name)
+    for i, scene in enumerate(cp_sett.allowed_scenes):
+        if scene.name not in scenes:
+            cp_sett.allowed_scenes.remove(i)
+        else:
+            scenes.remove(scene.name)
+    for scene in scenes:
+        sett = cp_sett.allowed_scenes.add()
+        sett.name = scene
+    collection_property_sort(cp_sett.allowed_scenes, "name")
 
 
 from bpy.props import EnumProperty
@@ -191,7 +180,6 @@ class RenderCopySettingsOPCopy(bpy.types.Operator):
 
 
 classes = (
-    RenderCopySettingsOPPrepare,
     RenderCopySettingsOPPreset,
     RenderCopySettingsOPCopy,
 )

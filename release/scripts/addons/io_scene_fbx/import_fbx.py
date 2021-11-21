@@ -1936,7 +1936,8 @@ class FbxImportHelperNode:
         for _, m in self.clusters:
             meshes.update(m)
         for child in self.children:
-            child.collect_skeleton_meshes(meshes)
+            if not child.meshes:
+                child.collect_skeleton_meshes(meshes)
 
     def collect_armature_meshes(self):
         if self.is_armature:

@@ -431,7 +431,7 @@ def search_timer():
             if first_search_parsing:
                 first_search_parsing = False
                 all_notifications_count = comments_utils.count_all_notifications()
-                comments_utils.get_notifications_thread(api_key, all_count=all_notifications_count)
+                comments_utils.get_notifications_thread(preferences.api_key, all_count=all_notifications_count)
                 if utils.experimental_enabled() and not bpy.app.timers.is_registered(
                         refresh_notifications_timer) and not bpy.app.background:
                     bpy.app.timers.register(refresh_notifications_timer, persistent=True, first_interval=5)
