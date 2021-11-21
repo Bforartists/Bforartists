@@ -53,7 +53,7 @@ static void geo_node_attribute_clamp_init(bNodeTree *UNUSED(tree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_attribute_clamp_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_clamp_update(bNodeTree *ntree, bNode *node)
 {
   bNodeSocket *sock_min_vector = (bNodeSocket *)BLI_findlink(&node->inputs, 3);
   bNodeSocket *sock_max_vector = sock_min_vector->next;
@@ -66,14 +66,14 @@ static void geo_node_attribute_clamp_update(bNodeTree *UNUSED(ntree), bNode *nod
 
   const NodeAttributeClamp &storage = *(const NodeAttributeClamp *)node->storage;
   const CustomDataType data_type = static_cast<CustomDataType>(storage.data_type);
-  nodeSetSocketAvailability(sock_min_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_max_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_min_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_max_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_min_int, data_type == CD_PROP_INT32);
-  nodeSetSocketAvailability(sock_max_int, data_type == CD_PROP_INT32);
-  nodeSetSocketAvailability(sock_min_color, data_type == CD_PROP_COLOR);
-  nodeSetSocketAvailability(sock_max_color, data_type == CD_PROP_COLOR);
+  nodeSetSocketAvailability(ntree, sock_min_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_max_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_min_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_max_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_min_int, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, sock_max_int, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, sock_min_color, data_type == CD_PROP_COLOR);
+  nodeSetSocketAvailability(ntree, sock_max_color, data_type == CD_PROP_COLOR);
 }
 
 template<typename T> T clamp_value(const T val, const T min, const T max);
@@ -156,7 +156,7 @@ static void clamp_attribute(GeometryComponent &component, const GeoNodeExecParam
   const AttributeDomain domain = get_result_domain(component, attribute_name, result_name);
   const int operation = static_cast<int>(storage.operation);
 
-  GVArrayPtr attribute_input = component.attribute_try_get_for_read(
+  GVArray attribute_input = component.attribute_try_get_for_read(
       attribute_name, domain, data_type);
 
   OutputAttribute attribute_result = component.attribute_try_get_for_output_only(
@@ -185,7 +185,7 @@ static void clamp_attribute(GeometryComponent &component, const GeoNodeExecParam
         }
       }
       MutableSpan<float3> results = attribute_result.as_span<float3>();
-      clamp_attribute<float3>(attribute_input->typed<float3>(), results, min, max);
+      clamp_attribute<float3>(attribute_input.typed<float3>(), results, min, max);
       break;
     }
     case CD_PROP_FLOAT: {
@@ -193,10 +193,10 @@ static void clamp_attribute(GeometryComponent &component, const GeoNodeExecParam
       const float max = params.get_input<float>("Max_001");
       MutableSpan<float> results = attribute_result.as_span<float>();
       if (operation == NODE_CLAMP_RANGE && min > max) {
-        clamp_attribute<float>(attribute_input->typed<float>(), results, max, min);
+        clamp_attribute<float>(attribute_input.typed<float>(), results, max, min);
       }
       else {
-        clamp_attribute<float>(attribute_input->typed<float>(), results, min, max);
+        clamp_attribute<float>(attribute_input.typed<float>(), results, min, max);
       }
       break;
     }
@@ -205,10 +205,10 @@ static void clamp_attribute(GeometryComponent &component, const GeoNodeExecParam
       const int max = params.get_input<int>("Max_002");
       MutableSpan<int> results = attribute_result.as_span<int>();
       if (operation == NODE_CLAMP_RANGE && min > max) {
-        clamp_attribute<int>(attribute_input->typed<int>(), results, max, min);
+        clamp_attribute<int>(attribute_input.typed<int>(), results, max, min);
       }
       else {
-        clamp_attribute<int>(attribute_input->typed<int>(), results, min, max);
+        clamp_attribute<int>(attribute_input.typed<int>(), results, min, max);
       }
       break;
     }
@@ -231,7 +231,7 @@ static void clamp_attribute(GeometryComponent &component, const GeoNodeExecParam
       }
       MutableSpan<ColorGeometry4f> results = attribute_result.as_span<ColorGeometry4f>();
       clamp_attribute<ColorGeometry4f>(
-          attribute_input->typed<ColorGeometry4f>(), results, min, max);
+          attribute_input.typed<ColorGeometry4f>(), results, min, max);
       break;
     }
     default: {
