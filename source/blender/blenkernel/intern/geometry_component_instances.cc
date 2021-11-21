@@ -363,10 +363,20 @@ blender::Span<int> InstancesComponent::almost_unique_ids() const
 
 int InstancesComponent::attribute_domain_size(const AttributeDomain domain) const
 {
-  if (domain != ATTR_DOMAIN_POINT) {
+  if (domain != ATTR_DOMAIN_INSTANCE) {
     return 0;
   }
   return this->instances_amount();
+}
+
+blender::bke::CustomDataAttributes &InstancesComponent::attributes()
+{
+  return this->attributes_;
+}
+
+const blender::bke::CustomDataAttributes &InstancesComponent::attributes() const
+{
+  return this->attributes_;
 }
 
 namespace blender::bke {
@@ -385,29 +395,26 @@ class InstancePositionAttributeProvider final : public BuiltinAttributeProvider 
  public:
   InstancePositionAttributeProvider()
       : BuiltinAttributeProvider(
-            "position", ATTR_DOMAIN_POINT, CD_PROP_FLOAT3, NonCreatable, Writable, NonDeletable)
+            "position", ATTR_DOMAIN_INSTANCE, CD_PROP_FLOAT3, NonCreatable, Writable, NonDeletable)
   {
   }
 
-  GVArrayPtr try_get_for_read(const GeometryComponent &component) const final
+  GVArray try_get_for_read(const GeometryComponent &component) const final
   {
     const InstancesComponent &instances_component = static_cast<const InstancesComponent &>(
         component);
     Span<float4x4> transforms = instances_component.instance_transforms();
-    return std::make_unique<fn::GVArray_For_DerivedSpan<float4x4, float3, get_transform_position>>(
-        transforms);
+    return VArray<float3>::ForDerivedSpan<float4x4, get_transform_position>(transforms);
   }
 
   WriteAttributeLookup try_get_for_write(GeometryComponent &component) const final
   {
     InstancesComponent &instances_component = static_cast<InstancesComponent &>(component);
     MutableSpan<float4x4> transforms = instances_component.instance_transforms();
-    return {
-        std::make_unique<fn::GVMutableArray_For_DerivedSpan<float4x4,
-                                                            float3,
-                                                            get_transform_position,
-                                                            set_transform_position>>(transforms),
-        domain_};
+    return {VMutableArray<float3>::ForDerivedSpan<float4x4,
+                                                  get_transform_position,
+                                                  set_transform_position>(transforms),
+            domain_};
   }
 
   bool try_delete(GeometryComponent &UNUSED(component)) const final
@@ -431,17 +438,17 @@ class InstanceIDAttributeProvider final : public BuiltinAttributeProvider {
  public:
   InstanceIDAttributeProvider()
       : BuiltinAttributeProvider(
-            "id", ATTR_DOMAIN_POINT, CD_PROP_INT32, Creatable, Writable, Deletable)
+            "id", ATTR_DOMAIN_INSTANCE, CD_PROP_INT32, Creatable, Writable, Deletable)
   {
   }
 
-  GVArrayPtr try_get_for_read(const GeometryComponent &component) const final
+  GVArray try_get_for_read(const GeometryComponent &component) const final
   {
     const InstancesComponent &instances = static_cast<const InstancesComponent &>(component);
     if (instances.instance_ids().is_empty()) {
       return {};
     }
-    return std::make_unique<fn::GVArray_For_Span<int>>(instances.instance_ids());
+    return VArray<int>::ForSpan(instances.instance_ids());
   }
 
   WriteAttributeLookup try_get_for_write(GeometryComponent &component) const final
@@ -450,8 +457,7 @@ class InstanceIDAttributeProvider final : public BuiltinAttributeProvider {
     if (instances.instance_ids().is_empty()) {
       return {};
     }
-    return {std::make_unique<fn::GVMutableArray_For_MutableSpan<int>>(instances.instance_ids()),
-            domain_};
+    return {VMutableArray<int>::ForSpan(instances.instance_ids()), domain_};
   }
 
   bool try_delete(GeometryComponent &component) const final
@@ -477,8 +483,8 @@ class InstanceIDAttributeProvider final : public BuiltinAttributeProvider {
         break;
       }
       case AttributeInit::Type::VArray: {
-        const GVArray *varray = static_cast<const AttributeInitVArray &>(initializer).varray;
-        varray->materialize_to_uninitialized(IndexRange(varray->size()), ids.data());
+        const GVArray &varray = static_cast<const AttributeInitVArray &>(initializer).varray;
+        varray.materialize_to_uninitialized(varray.index_range(), ids.data());
         break;
       }
       case AttributeInit::Type::MoveArray: {
@@ -503,7 +509,21 @@ static ComponentAttributeProviders create_attribute_providers_for_instances()
   static InstancePositionAttributeProvider position;
   static InstanceIDAttributeProvider id;
 
-  return ComponentAttributeProviders({&position, &id}, {});
+  static CustomDataAccessInfo instance_custom_data_access = {
+      [](GeometryComponent &component) -> CustomData * {
+        InstancesComponent &inst = static_cast<InstancesComponent &>(component);
+        return &inst.attributes().data;
+      },
+      [](const GeometryComponent &component) -> const CustomData * {
+        const InstancesComponent &inst = static_cast<const InstancesComponent &>(component);
+        return &inst.attributes().data;
+      },
+      nullptr};
+
+  static CustomDataAttributeProvider instance_custom_data(ATTR_DOMAIN_INSTANCE,
+                                                          instance_custom_data_access);
+
+  return ComponentAttributeProviders({&position, &id}, {&instance_custom_data});
 }
 }  // namespace blender::bke
 

@@ -57,15 +57,15 @@ static void geo_node_attribute_combine_xyz_init(bNodeTree *UNUSED(tree), bNode *
   node->storage = data;
 }
 
-static void geo_node_attribute_combine_xyz_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_combine_xyz_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeCombineXYZ *node_storage = (NodeAttributeCombineXYZ *)node->storage;
   update_attribute_input_socket_availabilities(
-      *node, "X", (GeometryNodeAttributeInputMode)node_storage->input_type_x);
+      *ntree, *node, "X", (GeometryNodeAttributeInputMode)node_storage->input_type_x);
   update_attribute_input_socket_availabilities(
-      *node, "Y", (GeometryNodeAttributeInputMode)node_storage->input_type_y);
+      *ntree, *node, "Y", (GeometryNodeAttributeInputMode)node_storage->input_type_y);
   update_attribute_input_socket_availabilities(
-      *node, "Z", (GeometryNodeAttributeInputMode)node_storage->input_type_z);
+      *ntree, *node, "Z", (GeometryNodeAttributeInputMode)node_storage->input_type_z);
 }
 
 static AttributeDomain get_result_domain(const GeometryComponent &component,
@@ -95,11 +95,11 @@ static void combine_attributes(GeometryComponent &component, const GeoNodeExecPa
   if (!attribute_result) {
     return;
   }
-  GVArray_Typed<float> attribute_x = params.get_input_attribute<float>(
+  VArray<float> attribute_x = params.get_input_attribute<float>(
       "X", component, result_domain, 0.0f);
-  GVArray_Typed<float> attribute_y = params.get_input_attribute<float>(
+  VArray<float> attribute_y = params.get_input_attribute<float>(
       "Y", component, result_domain, 0.0f);
-  GVArray_Typed<float> attribute_z = params.get_input_attribute<float>(
+  VArray<float> attribute_z = params.get_input_attribute<float>(
       "Z", component, result_domain, 0.0f);
 
   for (const int i : IndexRange(attribute_result->size())) {

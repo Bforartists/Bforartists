@@ -152,7 +152,7 @@ static void node_buts_time(uiLayout *layout, bContext *UNUSED(C), PointerRNA *pt
   uiTemplateCurveMapping(layout, ptr, "curve", 's', false, false, false, false);
 
   uiLayout *row = uiLayoutRow(layout, true);
-  uiItemR(row, ptr, "frame_start", DEFAULT_FLAGS, IFACE_("Sta"), ICON_NONE);
+  uiItemR(row, ptr, "frame_start", DEFAULT_FLAGS, IFACE_("Start"), ICON_NONE);
   uiItemR(row, ptr, "frame_end", DEFAULT_FLAGS, IFACE_("End"), ICON_NONE);
 }
 
@@ -4313,9 +4313,7 @@ void node_draw_link_bezier(const bContext *C,
     }
 
     if (snode->overlay.flag & SN_OVERLAY_SHOW_OVERLAYS &&
-        snode->overlay.flag & SN_OVERLAY_SHOW_WIRE_COLORS &&
-        ((link->fromsock == nullptr || link->fromsock->typeinfo->type >= 0) &&
-         (link->tosock == nullptr || link->tosock->typeinfo->type >= 0))) {
+        snode->overlay.flag & SN_OVERLAY_SHOW_WIRE_COLORS) {
       PointerRNA from_node_ptr, to_node_ptr;
       RNA_pointer_create((ID *)snode->edittree, &RNA_Node, link->fromnode, &from_node_ptr);
       RNA_pointer_create((ID *)snode->edittree, &RNA_Node, link->tonode, &to_node_ptr);
@@ -4401,7 +4399,10 @@ void node_draw_link_bezier(const bContext *C,
 }
 
 /* NOTE: this is used for fake links in groups too. */
-void node_draw_link(const bContext *C, View2D *v2d, SpaceNode *snode, bNodeLink *link)
+void node_draw_link(const bContext *C,
+                    const View2D *v2d,
+                    const SpaceNode *snode,
+                    const bNodeLink *link)
 {
   int th_col1 = TH_WIRE_INNER, th_col2 = TH_WIRE_INNER, th_col3 = TH_WIRE;
 
