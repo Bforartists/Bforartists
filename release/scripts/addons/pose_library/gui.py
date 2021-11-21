@@ -146,9 +146,9 @@ class ASSETBROWSER_PT_pose_library_usage(PoseLibraryPanel, asset_utils.AssetBrow
 
         col = layout.column(align=True)
         col.prop(wm, "poselib_flipped")
-        props = col.operator("poselib.apply_pose_asset")
+        props = col.operator("poselib.apply_pose_asset", text="Apply")
         props.flipped = wm.poselib_flipped
-        props = col.operator("poselib.blend_pose_asset")
+        props = col.operator("poselib.blend_pose_asset", text="Interactive Blend")
         props.flipped = wm.poselib_flipped
 
         row = col.row(align=True)

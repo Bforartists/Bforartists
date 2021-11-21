@@ -108,6 +108,15 @@ def modal_inside(self, context, event):
         self.update_ui_size(context)
         self.update_layout(context, event)
 
+    # this was here to check if sculpt stroke is running, but obviously that didn't help,
+    #  since the RELEASE event is cought by operator and thus there is no way to detect a stroke has ended...
+    if bpy.context.mode in ('SCULPT', 'PAINT_TEXTURE'):
+        if event.type == 'MOUSEMOVE':  # ASSUME THAT SCULPT OPERATOR ACTUALLY STEALS THESE EVENTS,
+            # SO WHEN THERE ARE SOME WE CAN APPEND BRUSH...
+            bpy.context.window_manager['appendable'] = True
+        if event.type == 'LEFTMOUSE':
+            if event.value == 'PRESS':
+                bpy.context.window_manager['appendable'] = False
     return {"PASS_THROUGH"}
 
 
