@@ -50,7 +50,7 @@ static void geo_node_curve_to_points_init(bNodeTree *UNUSED(tree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_curve_to_points_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_curve_to_points_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryCurveToPoints &node_storage = *(NodeGeometryCurveToPoints *)node->storage;
   const GeometryNodeCurveResampleMode mode = (GeometryNodeCurveResampleMode)node_storage.mode;
@@ -58,8 +58,8 @@ static void geo_node_curve_to_points_update(bNodeTree *UNUSED(ntree), bNode *nod
   bNodeSocket *count_socket = ((bNodeSocket *)node->inputs.first)->next;
   bNodeSocket *length_socket = count_socket->next;
 
-  nodeSetSocketAvailability(count_socket, mode == GEO_NODE_CURVE_RESAMPLE_COUNT);
-  nodeSetSocketAvailability(length_socket, mode == GEO_NODE_CURVE_RESAMPLE_LENGTH);
+  nodeSetSocketAvailability(ntree, count_socket, mode == GEO_NODE_CURVE_RESAMPLE_COUNT);
+  nodeSetSocketAvailability(ntree, length_socket, mode == GEO_NODE_CURVE_RESAMPLE_LENGTH);
 }
 
 /**
@@ -121,7 +121,7 @@ static GMutableSpan create_attribute_and_retrieve_span(PointCloudComponent &poin
   points.attribute_try_create(attribute_id, ATTR_DOMAIN_POINT, data_type, AttributeInitDefault());
   WriteAttributeLookup attribute = points.attribute_try_get_for_write(attribute_id);
   BLI_assert(attribute);
-  return attribute.varray->get_internal_span();
+  return attribute.varray.get_internal_span();
 }
 
 template<typename T>
@@ -177,8 +177,8 @@ static void copy_evaluated_point_attributes(Span<SplinePtr> splines,
       const int size = offsets[i + 1] - offsets[i];
 
       data.positions.slice(offset, size).copy_from(spline.evaluated_positions());
-      spline.interpolate_to_evaluated(spline.radii())->materialize(data.radii.slice(offset, size));
-      spline.interpolate_to_evaluated(spline.tilts())->materialize(data.tilts.slice(offset, size));
+      spline.interpolate_to_evaluated(spline.radii()).materialize(data.radii.slice(offset, size));
+      spline.interpolate_to_evaluated(spline.tilts()).materialize(data.tilts.slice(offset, size));
 
       for (const Map<AttributeIDRef, GMutableSpan>::Item item : data.point_attributes.items()) {
         const AttributeIDRef attribute_id = item.key;
@@ -188,7 +188,7 @@ static void copy_evaluated_point_attributes(Span<SplinePtr> splines,
         GSpan spline_span = *spline.attributes.get_for_read(attribute_id);
 
         spline.interpolate_to_evaluated(spline_span)
-            ->materialize(point_span.slice(offset, size).data());
+            .materialize(point_span.slice(offset, size).data());
       }
 
       data.tangents.slice(offset, size).copy_from(spline.evaluated_tangents());
@@ -230,7 +230,7 @@ static void copy_uniform_sample_point_attributes(Span<SplinePtr> splines,
         BLI_assert(spline.attributes.get_for_read(attribute_id));
         GSpan spline_span = *spline.attributes.get_for_read(attribute_id);
 
-        spline.sample_with_index_factors(*spline.interpolate_to_evaluated(spline_span),
+        spline.sample_with_index_factors(spline.interpolate_to_evaluated(spline_span),
                                          uniform_samples,
                                          point_span.slice(offset, size));
       }
@@ -263,20 +263,20 @@ static void copy_spline_domain_attributes(const CurveComponent &curve_component,
         if (meta_data.domain != ATTR_DOMAIN_CURVE) {
           return true;
         }
-        GVArrayPtr spline_attribute = curve_component.attribute_get_for_read(
+        GVArray spline_attribute = curve_component.attribute_get_for_read(
             attribute_id, ATTR_DOMAIN_CURVE, meta_data.data_type);
-        const CPPType &type = spline_attribute->type();
+        const CPPType &type = spline_attribute.type();
 
         OutputAttribute result_attribute = points.attribute_try_get_for_output_only(
             attribute_id, ATTR_DOMAIN_POINT, meta_data.data_type);
         GMutableSpan result = result_attribute.as_span();
 
-        for (const int i : IndexRange(spline_attribute->size())) {
+        for (const int i : spline_attribute.index_range()) {
           const int offset = offsets[i];
           const int size = offsets[i + 1] - offsets[i];
           if (size != 0) {
             BUFFER_FOR_CPP_TYPE_VALUE(type, buffer);
-            spline_attribute->get(i, buffer);
+            spline_attribute.get(i, buffer);
             type.fill_assign_n(buffer, result[offset], size);
           }
         }

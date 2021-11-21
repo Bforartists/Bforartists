@@ -21,6 +21,8 @@
 
 #include "kernel/device/gpu/image.h"  /* Texture lookup uses normal CUDA intrinsics. */
 
+#include "kernel/tables.h"
+
 #include "kernel/integrator/state.h"
 #include "kernel/integrator/state_flow.h"
 #include "kernel/integrator/state_util.h"
@@ -44,7 +46,7 @@ template<typename T> ccl_device_forceinline T *get_payload_ptr_2()
 ccl_device_forceinline int get_object_id()
 {
 #ifdef __OBJECT_MOTION__
-  /* Always get the the instance ID from the TLAS
+  /* Always get the instance ID from the TLAS
    * There might be a motion transform node between TLAS and BLAS which does not have one. */
   return optixGetInstanceIdFromHandle(optixGetTransformListHandle(0));
 #else
@@ -159,9 +161,9 @@ extern "C" __global__ void __anyhit__kernel_optix_local_hit()
 
   /* Record geometric normal. */
   const uint tri_vindex = kernel_tex_fetch(__tri_vindex, prim).w;
-  const float3 tri_a = float4_to_float3(kernel_tex_fetch(__tri_verts, tri_vindex + 0));
-  const float3 tri_b = float4_to_float3(kernel_tex_fetch(__tri_verts, tri_vindex + 1));
-  const float3 tri_c = float4_to_float3(kernel_tex_fetch(__tri_verts, tri_vindex + 2));
+  const float3 tri_a = kernel_tex_fetch(__tri_verts, tri_vindex + 0);
+  const float3 tri_b = kernel_tex_fetch(__tri_verts, tri_vindex + 1);
+  const float3 tri_c = kernel_tex_fetch(__tri_verts, tri_vindex + 2);
   local_isect->Ng[hit] = normalize(cross(tri_b - tri_a, tri_c - tri_a));
 
   /* Continue tracing (without this the trace call would return after the first hit). */

@@ -58,7 +58,7 @@ static void geo_node_attribute_map_range_init(bNodeTree *UNUSED(ntree), bNode *n
 
   node->storage = data;
 }
-static void geo_node_attribute_map_range_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_map_range_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeMapRange &node_storage = *(NodeAttributeMapRange *)node->storage;
 
@@ -78,23 +78,26 @@ static void geo_node_attribute_map_range_update(bNodeTree *UNUSED(ntree), bNode 
 
   const CustomDataType data_type = static_cast<CustomDataType>(node_storage.data_type);
 
-  nodeSetSocketAvailability(sock_clamp,
+  nodeSetSocketAvailability(ntree,
+                            sock_clamp,
                             node_storage.interpolation_type == NODE_MAP_RANGE_LINEAR ||
                                 node_storage.interpolation_type == NODE_MAP_RANGE_STEPPED);
 
-  nodeSetSocketAvailability(sock_from_min_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_from_max_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_to_min_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_to_max_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(sock_steps_float,
+  nodeSetSocketAvailability(ntree, sock_from_min_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_from_max_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_to_min_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, sock_to_max_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree,
+                            sock_steps_float,
                             data_type == CD_PROP_FLOAT &&
                                 node_storage.interpolation_type == NODE_MAP_RANGE_STEPPED);
 
-  nodeSetSocketAvailability(sock_from_min_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_from_max_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_to_min_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_to_max_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(sock_steps_vector,
+  nodeSetSocketAvailability(ntree, sock_from_min_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_from_max_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_to_min_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, sock_to_max_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree,
+                            sock_steps_vector,
                             data_type == CD_PROP_FLOAT3 &&
                                 node_storage.interpolation_type == NODE_MAP_RANGE_STEPPED);
 }
@@ -362,7 +365,7 @@ static void map_range_attribute(GeometryComponent &component, const GeoNodeExecP
 
   const AttributeDomain domain = get_result_domain(component, input_name, result_name);
 
-  GVArrayPtr attribute_input = component.attribute_try_get_for_read(input_name, domain, data_type);
+  GVArray attribute_input = component.attribute_try_get_for_read(input_name, domain, data_type);
 
   if (!attribute_input) {
     params.error_message_add(NodeWarningType::Error,
@@ -381,12 +384,12 @@ static void map_range_attribute(GeometryComponent &component, const GeoNodeExecP
 
   switch (data_type) {
     case CD_PROP_FLOAT: {
-      map_range_float(attribute_input->typed<float>(), attribute_result.as_span<float>(), params);
+      map_range_float(attribute_input.typed<float>(), attribute_result.as_span<float>(), params);
       break;
     }
     case CD_PROP_FLOAT3: {
       map_range_float3(
-          attribute_input->typed<float3>(), attribute_result.as_span<float3>(), params);
+          attribute_input.typed<float3>(), attribute_result.as_span<float3>(), params);
       break;
     }
     default:

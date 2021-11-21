@@ -1192,7 +1192,7 @@ static bool cursor_isect_multi_input_socket(const float cursor[2], const bNodeSo
 }
 
 /* type is SOCK_IN and/or SOCK_OUT */
-int node_find_indicated_socket(
+bool node_find_indicated_socket(
     SpaceNode *snode, bNode **nodep, bNodeSocket **sockp, const float cursor[2], int in_out)
 {
   rctf rect;
@@ -1224,7 +1224,7 @@ int node_find_indicated_socket(
               if (node == visible_node(snode, &rect)) {
                 *nodep = node;
                 *sockp = sock;
-                return 1;
+                return true;
               }
             }
           }
@@ -1232,7 +1232,7 @@ int node_find_indicated_socket(
             if (node == visible_node(snode, &rect)) {
               *nodep = node;
               *sockp = sock;
-              return 1;
+              return true;
             }
           }
         }
@@ -1245,7 +1245,7 @@ int node_find_indicated_socket(
             if (node == visible_node(snode, &rect)) {
               *nodep = node;
               *sockp = sock;
-              return 1;
+              return true;
             }
           }
         }
@@ -1253,7 +1253,7 @@ int node_find_indicated_socket(
     }
   }
 
-  return 0;
+  return false;
 }
 
 /* ****************** Link Dimming *********************** */
@@ -1775,8 +1775,7 @@ static int node_mute_exec(bContext *C, wmOperator *UNUSED(op))
   ED_preview_kill_jobs(CTX_wm_manager(C), bmain);
 
   LISTBASE_FOREACH (bNode *, node, &snode->edittree->nodes) {
-    /* Only allow muting of nodes having a mute func! */
-    if ((node->flag & SELECT) && node->typeinfo->update_internal_links) {
+    if ((node->flag & SELECT) && !node->typeinfo->no_muting) {
       node->flag ^= NODE_MUTED;
       snode_update(snode, node);
       do_tag_update |= (do_tag_update || node_connected_to_output(bmain, snode->edittree, node));

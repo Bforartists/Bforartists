@@ -141,19 +141,21 @@ static void geo_node_math_label(bNodeTree *UNUSED(ntree), bNode *node, char *lab
   BLI_strncpy(label, IFACE_(name), maxlen);
 }
 
-static void geo_node_attribute_math_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_math_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeMath &node_storage = *(NodeAttributeMath *)node->storage;
   NodeMathOperation operation = static_cast<NodeMathOperation>(node_storage.operation);
 
   update_attribute_input_socket_availabilities(
-      *node, "A", (GeometryNodeAttributeInputMode)node_storage.input_type_a);
+      *ntree, *node, "A", (GeometryNodeAttributeInputMode)node_storage.input_type_a);
   update_attribute_input_socket_availabilities(
+      *ntree,
       *node,
       "B",
       (GeometryNodeAttributeInputMode)node_storage.input_type_b,
       operation_use_input_b(operation));
   update_attribute_input_socket_availabilities(
+      *ntree,
       *node,
       "C",
       (GeometryNodeAttributeInputMode)node_storage.input_type_c,
@@ -250,7 +252,7 @@ static void attribute_math_calc(GeometryComponent &component, const GeoNodeExecP
     return;
   }
 
-  GVArray_Typed<float> attribute_a = params.get_input_attribute<float>(
+  VArray<float> attribute_a = params.get_input_attribute<float>(
       "A", component, result_domain, 0.0f);
 
   MutableSpan<float> result_span = attribute_result.as_span();
@@ -258,10 +260,10 @@ static void attribute_math_calc(GeometryComponent &component, const GeoNodeExecP
   /* Note that passing the data with `get_internal_span<float>()` works
    * because the attributes were accessed with #CD_PROP_FLOAT. */
   if (operation_use_input_b(operation)) {
-    GVArray_Typed<float> attribute_b = params.get_input_attribute<float>(
+    VArray<float> attribute_b = params.get_input_attribute<float>(
         "B", component, result_domain, 0.0f);
     if (operation_use_input_c(operation)) {
-      GVArray_Typed<float> attribute_c = params.get_input_attribute<float>(
+      VArray<float> attribute_c = params.get_input_attribute<float>(
           "C", component, result_domain, 0.0f);
       do_math_operation(attribute_a, attribute_b, attribute_c, result_span, operation);
     }
