@@ -286,6 +286,10 @@ class ViewLayerCryptomattePanel(ViewLayerButtonsPanel, Panel):
             row = split.row()
             row.label(icon="DISCLOSURE_TRI_RIGHT")
 
+        if context.engine == 'BLENDER_EEVEE':
+            col.prop(view_layer, "use_pass_cryptomatte_accurate",
+                     text="Accurate Mode")
+
 
 class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerCryptomattePanel, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"

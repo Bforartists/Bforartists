@@ -821,8 +821,6 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
 
     case EVT_ESCKEY:
     case RIGHTMOUSE: {
-      Editing *ed = SEQ_editing_get(scene);
-
       for (int i = 0; i < data->num_seq; i++) {
         transseq_restore(data->ts + i, data->seq_array[i]);
       }
@@ -841,8 +839,6 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
       op->customdata = NULL;
 
       WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
-
-      SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
 
       if (area) {
         ED_area_status_text(area, NULL);
@@ -1119,7 +1115,6 @@ static int sequencer_reload_exec(bContext *C, wmOperator *op)
 
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
     if (seq->flag & SELECT) {
-      SEQ_relations_update_changed_seq_and_deps(scene, seq, 0, 1);
       SEQ_add_reload_new_file(bmain, scene, seq, !adjust_length);
 
       if (adjust_length) {
@@ -1329,7 +1324,9 @@ static int sequencer_reassign_inputs_exec(bContext *C, wmOperator *op)
   last_seq->seq3 = seq3;
 
   int old_start = last_seq->start;
-  SEQ_relations_update_changed_seq_and_deps(scene, last_seq, 1, 1);
+  SEQ_time_update_recursive(scene, last_seq);
+
+  SEQ_relations_invalidate_cache_preprocessed(scene, last_seq);
   SEQ_offset_animdata(scene, last_seq, (last_seq->start - old_start));
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
@@ -1387,7 +1384,7 @@ static int sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
   last_seq->seq1 = last_seq->seq2;
   last_seq->seq2 = seq;
 
-  SEQ_relations_update_changed_seq_and_deps(scene, last_seq, 1, 1);
+  SEQ_relations_invalidate_cache_preprocessed(scene, last_seq);
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
@@ -1820,6 +1817,7 @@ static int sequencer_offset_clear_exec(bContext *C, wmOperator *UNUSED(op))
   while (seq) {
     ListBase *seqbase = SEQ_active_seqbase_get(ed);
     SEQ_time_update_sequence(scene, seqbase, seq);
+    SEQ_relations_invalidate_cache_preprocessed(scene, seq);
     seq = seq->next;
   }
 
@@ -2185,6 +2183,7 @@ static int sequencer_strip_jump_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_AUDIO_SEEK);
   WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
 
   return OPERATOR_FINISHED;
@@ -2231,10 +2230,12 @@ static void swap_sequence(Scene *scene, Sequence *seqa, Sequence *seqb)
   seq_b_start = (seqb->start - seqb->startdisp) + seqa->startdisp;
   SEQ_transform_translate_sequence(scene, seqb, seq_b_start - seqb->start);
   SEQ_time_update_sequence(scene, seqbase, seqb);
+  SEQ_relations_invalidate_cache_preprocessed(scene, seqb);
 
   seq_a_start = (seqa->start - seqa->startdisp) + seqb->enddisp + gap;
   SEQ_transform_translate_sequence(scene, seqa, seq_a_start - seqa->start);
   SEQ_time_update_sequence(scene, seqbase, seqa);
+  SEQ_relations_invalidate_cache_preprocessed(scene, seqa);
 }
 
 static Sequence *find_next_prev_sequence(Scene *scene, Sequence *test, int lr, int sel)
@@ -2734,7 +2735,6 @@ static const EnumPropertyItem prop_change_effect_input_types[] = {
 static int sequencer_change_effect_input_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  Editing *ed = SEQ_editing_get(scene);
   Sequence *seq = SEQ_select_active_get(scene);
 
   Sequence **seq_1, **seq_2;
@@ -2761,10 +2761,7 @@ static int sequencer_change_effect_input_exec(bContext *C, wmOperator *op)
 
   SWAP(Sequence *, *seq_1, *seq_2);
 
-  SEQ_relations_update_changed_seq_and_deps(scene, seq, 0, 1);
-
-  /* Invalidate cache. */
-  SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
+  SEQ_relations_invalidate_cache_preprocessed(scene, seq);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -2838,7 +2835,6 @@ EnumPropertyItem sequencer_prop_effect_types[] = {
 static int sequencer_change_effect_type_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  Editing *ed = SEQ_editing_get(scene);
   Sequence *seq = SEQ_select_active_get(scene);
   const int new_type = RNA_enum_get(op->ptr, "type");
 
@@ -2864,10 +2860,7 @@ static int sequencer_change_effect_type_exec(bContext *C, wmOperator *op)
   sh = SEQ_effect_handle_get(seq);
   sh.init(seq);
 
-  SEQ_relations_update_changed_seq_and_deps(scene, seq, 0, 1);
-  /* Invalidate cache. */
-  SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
-
+  SEQ_relations_invalidate_cache_preprocessed(scene, seq);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -2961,9 +2954,6 @@ static int sequencer_change_path_exec(bContext *C, wmOperator *op)
 
     ListBase *seqbase = SEQ_active_seqbase_get(SEQ_editing_get(scene));
     SEQ_time_update_sequence(scene, seqbase, seq);
-
-    /* Invalidate cache. */
-    SEQ_relations_free_imbuf(scene, seqbase, false);
   }
   else if (ELEM(seq->type, SEQ_TYPE_SOUND_RAM, SEQ_TYPE_SOUND_HD)) {
     bSound *sound = seq->sound;
@@ -2987,8 +2977,10 @@ static int sequencer_change_path_exec(bContext *C, wmOperator *op)
     prop = RNA_struct_find_property(&seq_ptr, "filepath");
     RNA_property_string_set(&seq_ptr, prop, filepath);
     RNA_property_update(C, &seq_ptr, prop);
+    SEQ_relations_sequence_free_anim(seq);
   }
 
+  SEQ_relations_invalidate_cache_raw(scene, seq);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;

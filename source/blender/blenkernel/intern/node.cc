@@ -130,10 +130,6 @@ static void node_socket_interface_free(bNodeTree *UNUSED(ntree),
 static void nodeMuteRerouteOutputLinks(struct bNodeTree *ntree,
                                        struct bNode *node,
                                        const bool mute);
-static FieldInferencingInterface *node_field_inferencing_interface_copy(
-    const FieldInferencingInterface &field_inferencing_interface);
-static void node_field_inferencing_interface_free(
-    const FieldInferencingInterface *field_inferencing_interface);
 
 static void ntree_init_data(ID *id)
 {
@@ -246,7 +242,7 @@ static void ntree_copy_data(Main *UNUSED(bmain), ID *id_dst, const ID *id_src, c
   ntree_dst->interface_type = nullptr;
 
   if (ntree_src->field_inferencing_interface) {
-    ntree_dst->field_inferencing_interface = node_field_inferencing_interface_copy(
+    ntree_dst->field_inferencing_interface = new FieldInferencingInterface(
         *ntree_src->field_inferencing_interface);
   }
 
@@ -301,7 +297,7 @@ static void ntree_free_data(ID *id)
     MEM_freeN(sock);
   }
 
-  node_field_inferencing_interface_free(ntree->field_inferencing_interface);
+  delete ntree->field_inferencing_interface;
 
   /* free preview hash */
   if (ntree->previews) {
@@ -490,8 +486,10 @@ static void write_node_socket_default_value(BlendWriter *writer, bNodeSocket *so
     case SOCK_MATERIAL:
       BLO_write_struct(writer, bNodeSocketValueMaterial, sock->default_value);
       break;
-    case __SOCK_MESH:
     case SOCK_CUSTOM:
+      /* Custom node sockets where default_value is defined uses custom properties for storage. */
+      break;
+    case __SOCK_MESH:
     case SOCK_SHADER:
     case SOCK_GEOMETRY:
       BLI_assert_unreachable();
@@ -3994,8 +3992,10 @@ int nodeSocketIsHidden(const bNodeSocket *sock)
   return ((sock->flag & (SOCK_HIDDEN | SOCK_UNAVAIL)) != 0);
 }
 
-void nodeSetSocketAvailability(bNodeSocket *sock, bool is_available)
+void nodeSetSocketAvailability(bNodeTree *UNUSED(ntree), bNodeSocket *sock, bool is_available)
 {
+  /* #ntree is not needed right now, but it's generally necessary when changing the tree because we
+   * want to tag it as changed in the future. */
   if (is_available) {
     sock->flag &= ~SOCK_UNAVAIL;
   }
@@ -4544,18 +4544,6 @@ void ntreeUpdateAllNew(Main *main)
     }
   }
   FOREACH_NODETREE_END;
-}
-
-static FieldInferencingInterface *node_field_inferencing_interface_copy(
-    const FieldInferencingInterface &field_inferencing_interface)
-{
-  return new FieldInferencingInterface(field_inferencing_interface);
-}
-
-static void node_field_inferencing_interface_free(
-    const FieldInferencingInterface *field_inferencing_interface)
-{
-  delete field_inferencing_interface;
 }
 
 namespace blender::bke::node_field_inferencing {
@@ -5249,9 +5237,8 @@ bool nodeUpdateID(bNodeTree *ntree, ID *id)
 void nodeUpdateInternalLinks(bNodeTree *ntree, bNode *node)
 {
   BLI_freelistN(&node->internal_links);
-
-  if (node->typeinfo && node->typeinfo->update_internal_links) {
-    node->typeinfo->update_internal_links(ntree, node);
+  if (!node->typeinfo->no_muting) {
+    node_internal_links_create(ntree, node);
   }
 }
 
@@ -5514,12 +5501,6 @@ void node_type_exec(struct bNodeType *ntype,
 void node_type_gpu(struct bNodeType *ntype, NodeGPUExecFunction gpu_fn)
 {
   ntype->gpu_fn = gpu_fn;
-}
-
-void node_type_internal_links(bNodeType *ntype,
-                              void (*update_internal_links)(bNodeTree *, bNode *))
-{
-  ntype->update_internal_links = update_internal_links;
 }
 
 /* callbacks for undefined types */

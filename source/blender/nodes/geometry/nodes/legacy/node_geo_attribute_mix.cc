@@ -70,15 +70,15 @@ static void geo_node_attribute_mix_init(bNodeTree *UNUSED(ntree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_attribute_mix_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_mix_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeMix *node_storage = (NodeAttributeMix *)node->storage;
   update_attribute_input_socket_availabilities(
-      *node, "Factor", (GeometryNodeAttributeInputMode)node_storage->input_type_factor);
+      *ntree, *node, "Factor", (GeometryNodeAttributeInputMode)node_storage->input_type_factor);
   update_attribute_input_socket_availabilities(
-      *node, "A", (GeometryNodeAttributeInputMode)node_storage->input_type_a);
+      *ntree, *node, "A", (GeometryNodeAttributeInputMode)node_storage->input_type_a);
   update_attribute_input_socket_availabilities(
-      *node, "B", (GeometryNodeAttributeInputMode)node_storage->input_type_b);
+      *ntree, *node, "B", (GeometryNodeAttributeInputMode)node_storage->input_type_b);
 }
 
 static void do_mix_operation_float(const int blend_mode,
@@ -144,25 +144,28 @@ static void do_mix_operation(const CustomDataType result_type,
                              GVMutableArray &attribute_result)
 {
   if (result_type == CD_PROP_FLOAT) {
+    VMutableArray<float> result = attribute_result.typed<float>();
     do_mix_operation_float(blend_mode,
                            attribute_factor,
                            attribute_a.typed<float>(),
                            attribute_b.typed<float>(),
-                           attribute_result.typed<float>());
+                           result);
   }
   else if (result_type == CD_PROP_FLOAT3) {
+    VMutableArray<float3> result = attribute_result.typed<float3>();
     do_mix_operation_float3(blend_mode,
                             attribute_factor,
                             attribute_a.typed<float3>(),
                             attribute_b.typed<float3>(),
-                            attribute_result.typed<float3>());
+                            result);
   }
   else if (result_type == CD_PROP_COLOR) {
+    VMutableArray<ColorGeometry4f> result = attribute_result.typed<ColorGeometry4f>();
     do_mix_operation_color4f(blend_mode,
                              attribute_factor,
                              attribute_a.typed<ColorGeometry4f>(),
                              attribute_b.typed<ColorGeometry4f>(),
-                             attribute_result.typed<ColorGeometry4f>());
+                             result);
   }
 }
 
@@ -203,19 +206,19 @@ static void attribute_mix_calc(GeometryComponent &component, const GeoNodeExecPa
     return;
   }
 
-  GVArray_Typed<float> attribute_factor = params.get_input_attribute<float>(
+  VArray<float> attribute_factor = params.get_input_attribute<float>(
       "Factor", component, result_domain, 0.5f);
-  GVArrayPtr attribute_a = params.get_input_attribute(
+  GVArray attribute_a = params.get_input_attribute(
       "A", component, result_domain, result_type, nullptr);
-  GVArrayPtr attribute_b = params.get_input_attribute(
+  GVArray attribute_b = params.get_input_attribute(
       "B", component, result_domain, result_type, nullptr);
 
   do_mix_operation(result_type,
                    node_storage->blend_type,
                    attribute_factor,
-                   *attribute_a,
-                   *attribute_b,
-                   *attribute_result);
+                   attribute_a,
+                   attribute_b,
+                   attribute_result.varray());
   attribute_result.save();
 }
 

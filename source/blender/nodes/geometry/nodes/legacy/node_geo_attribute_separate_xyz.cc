@@ -49,11 +49,11 @@ static void geo_node_attribute_separate_xyz_init(bNodeTree *UNUSED(tree), bNode 
   node->storage = data;
 }
 
-static void geo_node_attribute_separate_xyz_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_separate_xyz_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeSeparateXYZ *node_storage = (NodeAttributeSeparateXYZ *)node->storage;
   update_attribute_input_socket_availabilities(
-      *node, "Vector", (GeometryNodeAttributeInputMode)node_storage->input_type);
+      *ntree, *node, "Vector", (GeometryNodeAttributeInputMode)node_storage->input_type);
 }
 
 static void extract_input(const int index, const Span<float3> &input, MutableSpan<float> result)
@@ -106,9 +106,9 @@ static void separate_attribute(GeometryComponent &component, const GeoNodeExecPa
   const AttributeDomain result_domain = get_result_domain(
       component, params, result_name_x, result_name_y, result_name_z);
 
-  GVArray_Typed<float3> attribute_input = params.get_input_attribute<float3>(
+  VArray<float3> attribute_input = params.get_input_attribute<float3>(
       "Vector", component, result_domain, {0, 0, 0});
-  VArray_Span<float3> input_span{*attribute_input};
+  VArray_Span<float3> input_span{attribute_input};
 
   OutputAttribute_Typed<float> attribute_result_x =
       component.attribute_try_get_for_output_only<float>(result_name_x, result_domain);

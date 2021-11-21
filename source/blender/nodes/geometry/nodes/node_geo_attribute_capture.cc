@@ -60,7 +60,7 @@ static void geo_node_attribute_capture_init(bNodeTree *UNUSED(tree), bNode *node
   node->storage = data;
 }
 
-static void geo_node_attribute_capture_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_capture_update(bNodeTree *ntree, bNode *node)
 {
   const NodeGeometryAttributeCapture &storage = *(const NodeGeometryAttributeCapture *)
                                                      node->storage;
@@ -73,11 +73,11 @@ static void geo_node_attribute_capture_update(bNodeTree *UNUSED(ntree), bNode *n
   bNodeSocket *socket_value_boolean = socket_value_color4f->next;
   bNodeSocket *socket_value_int32 = socket_value_boolean->next;
 
-  nodeSetSocketAvailability(socket_value_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(socket_value_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(socket_value_color4f, data_type == CD_PROP_COLOR);
-  nodeSetSocketAvailability(socket_value_boolean, data_type == CD_PROP_BOOL);
-  nodeSetSocketAvailability(socket_value_int32, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, socket_value_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, socket_value_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, socket_value_color4f, data_type == CD_PROP_COLOR);
+  nodeSetSocketAvailability(ntree, socket_value_boolean, data_type == CD_PROP_BOOL);
+  nodeSetSocketAvailability(ntree, socket_value_int32, data_type == CD_PROP_INT32);
 
   bNodeSocket *out_socket_value_geometry = (bNodeSocket *)node->outputs.first;
   bNodeSocket *out_socket_value_vector = out_socket_value_geometry->next;
@@ -86,11 +86,11 @@ static void geo_node_attribute_capture_update(bNodeTree *UNUSED(ntree), bNode *n
   bNodeSocket *out_socket_value_boolean = out_socket_value_color4f->next;
   bNodeSocket *out_socket_value_int32 = out_socket_value_boolean->next;
 
-  nodeSetSocketAvailability(out_socket_value_vector, data_type == CD_PROP_FLOAT3);
-  nodeSetSocketAvailability(out_socket_value_float, data_type == CD_PROP_FLOAT);
-  nodeSetSocketAvailability(out_socket_value_color4f, data_type == CD_PROP_COLOR);
-  nodeSetSocketAvailability(out_socket_value_boolean, data_type == CD_PROP_BOOL);
-  nodeSetSocketAvailability(out_socket_value_int32, data_type == CD_PROP_INT32);
+  nodeSetSocketAvailability(ntree, out_socket_value_vector, data_type == CD_PROP_FLOAT3);
+  nodeSetSocketAvailability(ntree, out_socket_value_float, data_type == CD_PROP_FLOAT);
+  nodeSetSocketAvailability(ntree, out_socket_value_color4f, data_type == CD_PROP_COLOR);
+  nodeSetSocketAvailability(ntree, out_socket_value_boolean, data_type == CD_PROP_BOOL);
+  nodeSetSocketAvailability(ntree, out_socket_value_int32, data_type == CD_PROP_INT32);
 }
 
 static void try_capture_field_on_geometry(GeometryComponent &component,
@@ -147,16 +147,27 @@ static void geo_node_attribute_capture_exec(GeoNodeExecParams params)
   WeakAnonymousAttributeID anonymous_id{"Attribute"};
   const CPPType &type = field.cpp_type();
 
-  static const Array<GeometryComponentType> types = {
-      GEO_COMPONENT_TYPE_MESH, GEO_COMPONENT_TYPE_POINT_CLOUD, GEO_COMPONENT_TYPE_CURVE};
-  geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
-    for (const GeometryComponentType type : types) {
-      if (geometry_set.has(type)) {
-        GeometryComponent &component = geometry_set.get_component_for_write(type);
-        try_capture_field_on_geometry(component, anonymous_id.get(), domain, field);
-      }
+  /* Run on the instances component separately to only affect the top level of instances. */
+  if (domain == ATTR_DOMAIN_INSTANCE) {
+    if (geometry_set.has_instances()) {
+      GeometryComponent &component = geometry_set.get_component_for_write(
+          GEO_COMPONENT_TYPE_INSTANCES);
+      try_capture_field_on_geometry(component, anonymous_id.get(), domain, field);
     }
-  });
+  }
+  else {
+    static const Array<GeometryComponentType> types = {
+        GEO_COMPONENT_TYPE_MESH, GEO_COMPONENT_TYPE_POINT_CLOUD, GEO_COMPONENT_TYPE_CURVE};
+
+    geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
+      for (const GeometryComponentType type : types) {
+        if (geometry_set.has(type)) {
+          GeometryComponent &component = geometry_set.get_component_for_write(type);
+          try_capture_field_on_geometry(component, anonymous_id.get(), domain, field);
+        }
+      }
+    });
+  }
 
   GField output_field{std::make_shared<bke::AnonymousAttributeFieldInput>(
       std::move(anonymous_id), type, params.attribute_producer_name())};
