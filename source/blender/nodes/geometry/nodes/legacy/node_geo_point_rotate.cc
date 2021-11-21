@@ -71,20 +71,23 @@ static void geo_node_point_rotate_init(bNodeTree *UNUSED(ntree), bNode *node)
   node->storage = node_storage;
 }
 
-static void geo_node_point_rotate_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_point_rotate_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryRotatePoints *node_storage = (NodeGeometryRotatePoints *)node->storage;
   update_attribute_input_socket_availabilities(
+      *ntree,
       *node,
       "Axis",
       (GeometryNodeAttributeInputMode)node_storage->input_type_axis,
       node_storage->type == GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE);
   update_attribute_input_socket_availabilities(
+      *ntree,
       *node,
       "Angle",
       (GeometryNodeAttributeInputMode)node_storage->input_type_angle,
       node_storage->type == GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE);
   update_attribute_input_socket_availabilities(
+      *ntree,
       *node,
       "Rotation",
       (GeometryNodeAttributeInputMode)node_storage->input_type_rotation,
@@ -169,9 +172,9 @@ static void point_rotate_on_component(GeometryComponent &component,
   const int domain_size = rotations.size();
 
   if (storage.type == GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE) {
-    GVArray_Typed<float3> axis = params.get_input_attribute<float3>(
+    VArray<float3> axis = params.get_input_attribute<float3>(
         "Axis", component, ATTR_DOMAIN_POINT, {0, 0, 1});
-    GVArray_Typed<float> angles = params.get_input_attribute<float>(
+    VArray<float> angles = params.get_input_attribute<float>(
         "Angle", component, ATTR_DOMAIN_POINT, 0);
 
     if (storage.space == GEO_NODE_POINT_ROTATE_SPACE_OBJECT) {
@@ -182,7 +185,7 @@ static void point_rotate_on_component(GeometryComponent &component,
     }
   }
   else {
-    GVArray_Typed<float3> eulers = params.get_input_attribute<float3>(
+    VArray<float3> eulers = params.get_input_attribute<float3>(
         "Rotation", component, ATTR_DOMAIN_POINT, {0, 0, 0});
 
     if (storage.space == GEO_NODE_POINT_ROTATE_SPACE_OBJECT) {

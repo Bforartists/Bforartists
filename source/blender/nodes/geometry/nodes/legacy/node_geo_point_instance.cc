@@ -53,7 +53,7 @@ static void geo_node_point_instance_init(bNodeTree *UNUSED(tree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_point_instance_update(bNodeTree *UNUSED(tree), bNode *node)
+static void geo_node_point_instance_update(bNodeTree *ntree, bNode *node)
 {
   bNodeSocket *object_socket = (bNodeSocket *)BLI_findlink(&node->inputs, 1);
   bNodeSocket *collection_socket = object_socket->next;
@@ -65,12 +65,15 @@ static void geo_node_point_instance_update(bNodeTree *UNUSED(tree), bNode *node)
   const bool use_whole_collection = (node_storage->flag &
                                      GEO_NODE_POINT_INSTANCE_WHOLE_COLLECTION) != 0;
 
-  nodeSetSocketAvailability(object_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_OBJECT);
-  nodeSetSocketAvailability(collection_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION);
-  nodeSetSocketAvailability(instance_geometry_socket,
-                            type == GEO_NODE_POINT_INSTANCE_TYPE_GEOMETRY);
+  nodeSetSocketAvailability(ntree, object_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_OBJECT);
   nodeSetSocketAvailability(
-      seed_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION && !use_whole_collection);
+      ntree, collection_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION);
+  nodeSetSocketAvailability(
+      ntree, instance_geometry_socket, type == GEO_NODE_POINT_INSTANCE_TYPE_GEOMETRY);
+  nodeSetSocketAvailability(ntree,
+                            seed_socket,
+                            type == GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION &&
+                                !use_whole_collection);
 }
 
 static Vector<InstanceReference> get_instance_references__object(GeoNodeExecParams &params)
@@ -171,13 +174,12 @@ static void add_instances_from_component(InstancesComponent &instances,
 
   const int domain_size = src_geometry.attribute_domain_size(domain);
 
-  GVArray_Typed<float3> positions = src_geometry.attribute_get_for_read<float3>(
+  VArray<float3> positions = src_geometry.attribute_get_for_read<float3>(
       "position", domain, {0, 0, 0});
-  GVArray_Typed<float3> rotations = src_geometry.attribute_get_for_read<float3>(
+  VArray<float3> rotations = src_geometry.attribute_get_for_read<float3>(
       "rotation", domain, {0, 0, 0});
-  GVArray_Typed<float3> scales = src_geometry.attribute_get_for_read<float3>(
-      "scale", domain, {1, 1, 1});
-  GVArray_Typed<int> id_attribute = src_geometry.attribute_get_for_read<int>("id", domain, -1);
+  VArray<float3> scales = src_geometry.attribute_get_for_read<float3>("scale", domain, {1, 1, 1});
+  VArray<int> id_attribute = src_geometry.attribute_get_for_read<int>("id", domain, -1);
 
   /* The initial size of the component might be non-zero if there are two component types. */
   const int start_len = instances.instances_amount();

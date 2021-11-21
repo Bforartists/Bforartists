@@ -43,10 +43,10 @@ static void execute_on_component(GeoNodeExecParams params, GeometryComponent &co
   if (!position_attribute) {
     return;
   }
-  GVArray_Typed<float3> attribute = params.get_input_attribute<float3>(
+  VArray<float3> attribute = params.get_input_attribute<float3>(
       "Translation", component, ATTR_DOMAIN_POINT, {0, 0, 0});
 
-  for (const int i : IndexRange(attribute.size())) {
+  for (const int i : attribute.index_range()) {
     position_attribute->set(i, position_attribute->get(i) + attribute[i]);
   }
 
@@ -81,12 +81,12 @@ static void geo_node_point_translate_init(bNodeTree *UNUSED(tree), bNode *node)
   node->storage = data;
 }
 
-static void geo_node_point_translate_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_point_translate_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryPointTranslate &node_storage = *(NodeGeometryPointTranslate *)node->storage;
 
   update_attribute_input_socket_availabilities(
-      *node, "Translation", (GeometryNodeAttributeInputMode)node_storage.input_type);
+      *ntree, *node, "Translation", (GeometryNodeAttributeInputMode)node_storage.input_type);
 }
 
 }  // namespace blender::nodes

@@ -65,16 +65,16 @@ static bool operation_tests_equality(const NodeAttributeCompare &node_storage)
   return ELEM(node_storage.operation, NODE_FLOAT_COMPARE_EQUAL, NODE_FLOAT_COMPARE_NOT_EQUAL);
 }
 
-static void geo_node_attribute_compare_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_attribute_compare_update(bNodeTree *ntree, bNode *node)
 {
   NodeAttributeCompare *node_storage = (NodeAttributeCompare *)node->storage;
   update_attribute_input_socket_availabilities(
-      *node, "A", (GeometryNodeAttributeInputMode)node_storage->input_type_a);
+      *ntree, *node, "A", (GeometryNodeAttributeInputMode)node_storage->input_type_a);
   update_attribute_input_socket_availabilities(
-      *node, "B", (GeometryNodeAttributeInputMode)node_storage->input_type_b);
+      *ntree, *node, "B", (GeometryNodeAttributeInputMode)node_storage->input_type_b);
 
   bNodeSocket *socket_threshold = (bNodeSocket *)BLI_findlink(&node->inputs, 9);
-  nodeSetSocketAvailability(socket_threshold, operation_tests_equality(*node_storage));
+  nodeSetSocketAvailability(ntree, socket_threshold, operation_tests_equality(*node_storage));
 }
 
 static void do_math_operation(const VArray<float> &input_a,
@@ -257,9 +257,9 @@ static void attribute_compare_calc(GeometryComponent &component, const GeoNodeEx
 
   const CustomDataType input_data_type = get_data_type(component, params, *node_storage);
 
-  GVArrayPtr attribute_a = params.get_input_attribute(
+  GVArray attribute_a = params.get_input_attribute(
       "A", component, result_domain, input_data_type, nullptr);
-  GVArrayPtr attribute_b = params.get_input_attribute(
+  GVArray attribute_b = params.get_input_attribute(
       "B", component, result_domain, input_data_type, nullptr);
 
   if (!attribute_a || !attribute_b) {
@@ -276,47 +276,47 @@ static void attribute_compare_calc(GeometryComponent &component, const GeoNodeEx
     if (operation == NODE_FLOAT_COMPARE_EQUAL) {
       if (input_data_type == CD_PROP_FLOAT) {
         do_equal_operation_float(
-            attribute_a->typed<float>(), attribute_b->typed<float>(), threshold, result_span);
+            attribute_a.typed<float>(), attribute_b.typed<float>(), threshold, result_span);
       }
       else if (input_data_type == CD_PROP_FLOAT3) {
         do_equal_operation_float3(
-            attribute_a->typed<float3>(), attribute_b->typed<float3>(), threshold, result_span);
+            attribute_a.typed<float3>(), attribute_b.typed<float3>(), threshold, result_span);
       }
       else if (input_data_type == CD_PROP_COLOR) {
-        do_equal_operation_color4f(attribute_a->typed<ColorGeometry4f>(),
-                                   attribute_b->typed<ColorGeometry4f>(),
+        do_equal_operation_color4f(attribute_a.typed<ColorGeometry4f>(),
+                                   attribute_b.typed<ColorGeometry4f>(),
                                    threshold,
                                    result_span);
       }
       else if (input_data_type == CD_PROP_BOOL) {
         do_equal_operation_bool(
-            attribute_a->typed<bool>(), attribute_b->typed<bool>(), threshold, result_span);
+            attribute_a.typed<bool>(), attribute_b.typed<bool>(), threshold, result_span);
       }
     }
     else if (operation == NODE_FLOAT_COMPARE_NOT_EQUAL) {
       if (input_data_type == CD_PROP_FLOAT) {
         do_not_equal_operation_float(
-            attribute_a->typed<float>(), attribute_b->typed<float>(), threshold, result_span);
+            attribute_a.typed<float>(), attribute_b.typed<float>(), threshold, result_span);
       }
       else if (input_data_type == CD_PROP_FLOAT3) {
         do_not_equal_operation_float3(
-            attribute_a->typed<float3>(), attribute_b->typed<float3>(), threshold, result_span);
+            attribute_a.typed<float3>(), attribute_b.typed<float3>(), threshold, result_span);
       }
       else if (input_data_type == CD_PROP_COLOR) {
-        do_not_equal_operation_color4f(attribute_a->typed<ColorGeometry4f>(),
-                                       attribute_b->typed<ColorGeometry4f>(),
+        do_not_equal_operation_color4f(attribute_a.typed<ColorGeometry4f>(),
+                                       attribute_b.typed<ColorGeometry4f>(),
                                        threshold,
                                        result_span);
       }
       else if (input_data_type == CD_PROP_BOOL) {
         do_not_equal_operation_bool(
-            attribute_a->typed<bool>(), attribute_b->typed<bool>(), threshold, result_span);
+            attribute_a.typed<bool>(), attribute_b.typed<bool>(), threshold, result_span);
       }
     }
   }
   else {
     do_math_operation(
-        attribute_a->typed<float>(), attribute_b->typed<float>(), operation, result_span);
+        attribute_a.typed<float>(), attribute_b.typed<float>(), operation, result_span);
   }
 
   attribute_result.save();

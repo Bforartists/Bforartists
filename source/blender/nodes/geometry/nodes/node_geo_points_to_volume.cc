@@ -61,16 +61,19 @@ static void geo_node_points_to_volume_init(bNodeTree *UNUSED(ntree), bNode *node
   node->storage = data;
 }
 
-static void geo_node_points_to_volume_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_points_to_volume_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryPointsToVolume *data = (NodeGeometryPointsToVolume *)node->storage;
   bNodeSocket *voxel_size_socket = nodeFindSocket(node, SOCK_IN, "Voxel Size");
   bNodeSocket *voxel_amount_socket = nodeFindSocket(node, SOCK_IN, "Voxel Amount");
-  nodeSetSocketAvailability(voxel_amount_socket,
+  nodeSetSocketAvailability(ntree,
+                            voxel_amount_socket,
                             data->resolution_mode ==
                                 GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_AMOUNT);
-  nodeSetSocketAvailability(
-      voxel_size_socket, data->resolution_mode == GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_SIZE);
+  nodeSetSocketAvailability(ntree,
+                            voxel_size_socket,
+                            data->resolution_mode ==
+                                GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_SIZE);
 }
 
 #ifdef WITH_OPENVDB
@@ -165,7 +168,7 @@ static void gather_point_data_from_component(GeoNodeExecParams &params,
                                              Vector<float3> &r_positions,
                                              Vector<float> &r_radii)
 {
-  GVArray_Typed<float3> positions = component.attribute_get_for_read<float3>(
+  VArray<float3> positions = component.attribute_get_for_read<float3>(
       "position", ATTR_DOMAIN_POINT, {0, 0, 0});
 
   Field<float> radius_field = params.get_input<Field<float>>("Radius");
@@ -173,7 +176,7 @@ static void gather_point_data_from_component(GeoNodeExecParams &params,
   const int domain_size = component.attribute_domain_size(ATTR_DOMAIN_POINT);
 
   r_positions.resize(r_positions.size() + domain_size);
-  positions->materialize(r_positions.as_mutable_span().take_back(domain_size));
+  positions.materialize(r_positions.as_mutable_span().take_back(domain_size));
 
   r_radii.resize(r_radii.size() + domain_size);
   fn::FieldEvaluator evaluator{field_context, domain_size};

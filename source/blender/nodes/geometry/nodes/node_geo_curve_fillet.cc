@@ -59,10 +59,10 @@ struct FilletParam {
   GeometryNodeCurveFilletMode mode;
 
   /* Number of points to be added. */
-  const VArray<int> *counts;
+  VArray<int> counts;
 
   /* Radii for fillet arc at all vertices. */
-  const VArray<float> *radii;
+  VArray<float> radii;
 
   /* Whether or not fillets are allowed to overlap. */
   bool limit_radius;
@@ -76,14 +76,14 @@ struct FilletData {
   Array<int> counts;
 };
 
-static void geo_node_curve_fillet_update(bNodeTree *UNUSED(ntree), bNode *node)
+static void geo_node_curve_fillet_update(bNodeTree *ntree, bNode *node)
 {
   NodeGeometryCurveFillet &node_storage = *(NodeGeometryCurveFillet *)node->storage;
   const GeometryNodeCurveFilletMode mode = (GeometryNodeCurveFilletMode)node_storage.mode;
 
   bNodeSocket *poly_socket = ((bNodeSocket *)node->inputs.first)->next;
 
-  nodeSetSocketAvailability(poly_socket, mode == GEO_NODE_CURVE_FILLET_POLY);
+  nodeSetSocketAvailability(ntree, poly_socket, mode == GEO_NODE_CURVE_FILLET_POLY);
 }
 
 /* Function to get the center of a fillet. */
@@ -160,7 +160,7 @@ static Array<int> calculate_counts(const FilletParam &fillet_param,
   Array<int> counts(size, 1);
   if (fillet_param.mode == GEO_NODE_CURVE_FILLET_POLY) {
     for (const int i : IndexRange(size)) {
-      counts[i] = (*fillet_param.counts)[spline_offset + i];
+      counts[i] = fillet_param.counts[spline_offset + i];
     }
   }
   if (!cyclic) {
@@ -178,12 +178,12 @@ static Array<float> calculate_radii(const FilletParam &fillet_param,
   Array<float> radii(size, 0.0f);
   if (fillet_param.limit_radius) {
     for (const int i : IndexRange(size)) {
-      radii[i] = std::max((*fillet_param.radii)[spline_offset + i], 0.0f);
+      radii[i] = std::max(fillet_param.radii[spline_offset + i], 0.0f);
     }
   }
   else {
     for (const int i : IndexRange(size)) {
-      radii[i] = (*fillet_param.radii)[spline_offset + i];
+      radii[i] = fillet_param.radii[spline_offset + i];
     }
   }
 
@@ -590,13 +590,13 @@ static void calculate_curve_fillet(GeometrySet &geometry_set,
 
   field_evaluator.evaluate();
 
-  fillet_param.radii = &field_evaluator.get_evaluated<float>(0);
-  if (fillet_param.radii->is_single() && fillet_param.radii->get_internal_single() < 0.0f) {
+  fillet_param.radii = field_evaluator.get_evaluated<float>(0);
+  if (fillet_param.radii.is_single() && fillet_param.radii.get_internal_single() < 0.0f) {
     return;
   }
 
   if (mode == GEO_NODE_CURVE_FILLET_POLY) {
-    fillet_param.counts = &field_evaluator.get_evaluated<int>(1);
+    fillet_param.counts = field_evaluator.get_evaluated<int>(1);
   }
 
   fillet_param.limit_radius = limit_radius;

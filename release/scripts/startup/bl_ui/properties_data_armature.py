@@ -241,6 +241,7 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
                 col.operator("poselib.pose_remove", icon='REMOVE', text="")
 
             col.operator("poselib.action_sanitize", icon='HELP', text="")  # XXX: put in menu?
+            col.operator("poselib.convert_old_poselib", icon='ASSET_MANAGER', text="")
 
             if pose_marker_active is not None:
                 col.operator("poselib.pose_move", icon='TRIA_UP', text="").direction = 'UP'
