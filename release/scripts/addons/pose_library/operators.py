@@ -399,9 +399,13 @@ class POSELIB_OT_pose_asset_select_bones(PoseAssetUser, Operator):
         return cls.bl_description.replace("Select", "Deselect")
 
 
+# This operator takes the Window Manager's `poselib_flipped` property, and
+# passes it to the `POSELIB_OT_blend_pose_asset` operator. This makes it
+# possible to bind a key to the operator and still have it respect the global
+# "Flip Pose" checkbox.
 class POSELIB_OT_blend_pose_asset_for_keymap(Operator):
     bl_idname = "poselib.blend_pose_asset_for_keymap"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     _rna = bpy.ops.poselib.blend_pose_asset.get_rna_type()
     bl_label = _rna.name
@@ -421,9 +425,13 @@ class POSELIB_OT_blend_pose_asset_for_keymap(Operator):
         return bpy.ops.poselib.blend_pose_asset(context.copy(), 'INVOKE_DEFAULT', flipped=flipped)
 
 
+# This operator takes the Window Manager's `poselib_flipped` property, and
+# passes it to the `POSELIB_OT_apply_pose_asset` operator. This makes it
+# possible to bind a key to the operator and still have it respect the global
+# "Flip Pose" checkbox.
 class POSELIB_OT_apply_pose_asset_for_keymap(Operator):
     bl_idname = "poselib.apply_pose_asset_for_keymap"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     _rna = bpy.ops.poselib.apply_pose_asset.get_rna_type()
     bl_label = _rna.name
