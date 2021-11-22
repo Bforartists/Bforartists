@@ -180,7 +180,11 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "track_axis", expand=True)
         layout.prop(con, "up_axis", text="Up", expand=True)
-        layout.prop(con, "use_target_z")
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_target_z")
+        row.prop_decorator(con, "use_target_z")
 
         self.space_template(layout, con)
 
@@ -202,10 +206,17 @@ class ConstraintButtonsPanel:
         layout.prop(con, "forward_axis", expand=True)
         layout.prop(con, "up_axis", expand=True)
 
-        col = layout.column()
-        col.prop(con, "use_fixed_location")
-        col.prop(con, "use_curve_radius")
-        col.prop(con, "use_curve_follow")
+        col = layout.column(align = True)
+        col.use_property_split = False
+        row = col.row()
+        row.prop(con, "use_fixed_location")
+        row.prop_decorator(con, "use_fixed_location")
+        row = col.row()
+        row.prop(con, "use_curve_radius")
+        row.prop_decorator(con, "use_curve_radius")
+        row = col.row()
+        row.prop(con, "use_curve_follow")
+        row.prop_decorator(con, "use_curve_follow")
 
         layout.operator("constraint.followpath_path_animate", text="Animate Path", icon='ANIM_DATA')
 
@@ -246,7 +257,12 @@ class ConstraintButtonsPanel:
         row.label(icon='BLANK1')
 
         layout.prop(con, "euler_order", text="Order")
-        layout.prop(con, "use_transform_limit")
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_transform_limit")
+        row.prop_decorator(con, "use_transform_limit")
+
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -315,7 +331,11 @@ class ConstraintButtonsPanel:
         subsub.prop(con, "max_z", text="")
         row.prop_decorator(con, "max_z")
 
-        layout.prop(con, "use_transform_limit")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_transform_limit")
+        row.prop_decorator(con, "use_transform_limit")
+
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -445,7 +465,10 @@ class ConstraintButtonsPanel:
         sub.prop(con, "invert_z", text="Z", toggle=True)
         row.label(icon='BLANK1')
 
-        layout.prop(con, "use_offset")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_offset")
+        row.prop_decorator(con, "use_offset")
 
         self.space_template(layout, con)
 
@@ -469,12 +492,21 @@ class ConstraintButtonsPanel:
 
         col = layout.column()
         col.prop(con, "power")
-        col.prop(con, "use_make_uniform")
 
-        col.prop(con, "use_offset")
+        col = layout.column(align = True)
+        col.use_property_split = False
+        row = col.row()
+        row.prop(con, "use_make_uniform")
+        row.prop_decorator(con, "use_make_uniform")
+
+        row = col.row()
+        row.prop(con, "use_offset")
+        row.prop_decorator(con, "use_offset")
+
         row = col.row()
         row.active = con.use_offset
         row.prop(con, "use_add")
+        row.prop_decorator(con, "use_add")
 
         self.space_template(layout, con)
 
@@ -505,7 +537,11 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        layout.prop(con, "remove_target_shear")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "remove_target_shear")
+        row.prop_decorator(con, "remove_target_shear")
+
         layout.prop(con, "mix_mode", text="Mix")
 
         self.space_template(layout, con)
@@ -562,7 +598,10 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "limit_mode", text="Clamp Region")
 
-        layout.prop(con, "use_transform_limit")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_transform_limit")
+        row.prop_decorator(con, "use_transform_limit")
 
         self.space_template(layout, con)
 
@@ -622,7 +661,11 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "offset")
         layout.prop(con, "floor_location", expand=True, text="Min/Max")
-        layout.prop(con, "use_rotation")
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_rotation")
+        row.prop_decorator(con, "use_rotation")
 
         self.space_template(layout, con)
 
@@ -638,7 +681,10 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "main_axis", expand=True)
 
-        layout.prop(con, "use_cyclic")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_cyclic")
+        row.prop_decorator(con, "use_cyclic")
 
         self.draw_influence(layout, con)
 
@@ -650,7 +696,10 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        layout.prop(con, "use_motion_extrapolate", text="Extrapolate")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_motion_extrapolate", text="Extrapolate")
+        row.prop_decorator(con, "use_motion_extrapolate")
 
         self.space_template(layout, con)
 
@@ -732,7 +781,10 @@ class ConstraintButtonsPanel:
         if con.target:
             layout.prop(con, "offset", text="Pivot Offset")
         else:
-            layout.prop(con, "use_relative_location")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(con, "use_relative_location")
+            row.prop_decorator(con, "use_relative_location")
             if con.use_relative_location:
                 layout.prop(con, "offset", text="Pivot Point")
             else:
@@ -755,12 +807,20 @@ class ConstraintButtonsPanel:
         else:
             clip = con.clip
 
-        layout.prop(con, "use_active_clip")
-        layout.prop(con, "use_3d_position")
+        col = layout.column(align = True)
+        col.use_property_split = False
+        row = col.row()
+        row.prop(con, "use_active_clip")
+        row.prop_decorator(con, "use_active_clip")
 
-        row = layout.row()
+        row = col.row()
+        row.prop(con, "use_3d_position")
+        row.prop_decorator(con, "use_3d_position")
+
+        row = col.row()
         row.active = not con.use_3d_position
         row.prop(con, "use_undistorted_position")
+        row.prop_decorator(con, "use_undistorted_position")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
@@ -789,14 +849,17 @@ class ConstraintButtonsPanel:
     def draw_camera_solver(self, context):
         layout = self.layout
         con = self.get_constraint(context)
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = True
 
-        layout.prop(con, "use_active_clip")
+        row = layout.row()
+        row.prop(con, "use_active_clip")
+        row.prop_decorator(con, "use_active_clip")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
 
+        layout.use_property_split = True
         layout.operator("clip.constraint_to_fcurve")
 
         self.draw_influence(layout, con)
@@ -813,7 +876,10 @@ class ConstraintButtonsPanel:
         else:
             clip = con.clip
 
-        layout.prop(con, "use_active_clip")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_active_clip")
+        row.prop_decorator(con, "use_active_clip")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
@@ -857,8 +923,16 @@ class ConstraintButtonsPanel:
         layout.use_property_decorate = True
 
         col = layout.column()
-        col.prop(con, "use_deform_preserve_volume")
-        col.prop(con, "use_bone_envelopes")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(con, "use_deform_preserve_volume")
+        row.prop_decorator(con, "use_deform_preserve_volume")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(con, "use_bone_envelopes")
+        row.prop_decorator(con, "use_bone_envelopes")
 
         if context.pose_bone:
             col.prop(con, "use_current_location")
@@ -1140,7 +1214,11 @@ class ConstraintButtonsSubPanel:
         layout.use_property_decorate = True
 
         layout.prop(con, "action")
-        layout.prop(con, "use_bone_object_action")
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_bone_object_action")
+        row.prop_decorator(con, "use_bone_object_action")
 
         col = layout.column(align=True)
         col.prop(con, "frame_start", text="Frame Start")
