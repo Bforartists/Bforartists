@@ -98,6 +98,9 @@
 
 #include "render_intern.h" /* own include */
 
+#include "UI_interface.h" /*bfa - needed for the icons*/
+#include "UI_resources.h" /*bfa - needed for the icons*/
+
 static bool object_materials_supported_poll_ex(bContext *C, const Object *ob);
 
 /* -------------------------------------------------------------------- */
@@ -953,11 +956,15 @@ static int view_layer_add_exec(bContext *C, wmOperator *op)
 void SCENE_OT_view_layer_add(wmOperatorType *ot)
 {
   static EnumPropertyItem type_items[] = {
-      {VIEWLAYER_ADD_NEW, "NEW", 0, "New", "Add a new view layer"},
-      {VIEWLAYER_ADD_COPY, "COPY", 0, "Copy Settings", "Copy settings of current view layer"},
+      {VIEWLAYER_ADD_NEW, "NEW", ICON_ADD, "New", "Add a new view layer"},
+      {VIEWLAYER_ADD_COPY,
+       "COPY",
+       ICON_COPYDOWN,
+       "Copy Settings",
+       "Copy settings of current view layer"},
       {VIEWLAYER_ADD_EMPTY,
        "EMPTY",
-       0,
+       ICON_LAYER,
        "Blank",
        "Add a new view layer with all collections disabled"},
       {0, NULL, 0, NULL, NULL},
