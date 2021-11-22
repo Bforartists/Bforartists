@@ -404,7 +404,11 @@ class ConstraintButtonsPanel:
         subsub.prop(con, "max_z", text="")
         row.prop_decorator(con, "max_z")
 
-        layout.prop(con, "use_transform_limit")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_transform_limit")
+        row.prop_decorator(con, "use_transform_limit")
+        
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
