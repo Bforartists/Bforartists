@@ -287,8 +287,8 @@ class ViewLayerCryptomattePanel(ViewLayerButtonsPanel, Panel):
             row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if context.engine == 'BLENDER_EEVEE':
-            col.use_property_split = False
-            col.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
+            layout.use_property_split = False
+            layout.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
 
 
 class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerCryptomattePanel, Panel):
