@@ -51,6 +51,9 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "UI_interface.h" /*bfa - needed for the icons*/
+#include "UI_resources.h" /*bfa - needed for the icons*/
+
 Scene *ED_scene_add(Main *bmain, bContext *C, wmWindow *win, eSceneCopyMethod method)
 {
   Scene *scene_new;
@@ -207,18 +210,22 @@ static int scene_new_exec(bContext *C, wmOperator *op)
 static void SCENE_OT_new(wmOperatorType *ot)
 {
   static EnumPropertyItem type_items[] = {
-      {SCE_COPY_NEW, "NEW", 0, "New", "Add a new, empty scene with default settings"},
+      {SCE_COPY_NEW, "NEW", ICON_ADD, "New", "Add a new, empty scene with default settings"},
       {SCE_COPY_EMPTY,
        "EMPTY",
-       0,
+       ICON_COPYDOWN,
        "Copy Settings",
        "Add a new, empty scene, and copy settings from the current scene"},
       {SCE_COPY_LINK_COLLECTION,
        "LINK_COPY",
-       0,
+       ICON_LINKED,
        "Linked Copy",
        "Link in the collections from the current scene (shallow copy)"},
-      {SCE_COPY_FULL, "FULL_COPY", 0, "Full Copy", "Make a full copy of the current scene"},
+      {SCE_COPY_FULL,
+       "FULL_COPY",
+       ICON_DUPLICATE_ALL,
+       "Full Copy",
+       "Make a full copy of the current scene"},
       {0, NULL, 0, NULL, NULL},
   };
 
