@@ -726,7 +726,11 @@ class ConstraintButtonsPanel:
             layout.prop(con, "project_axis", expand=True, text="Project Axis")
             layout.prop(con, "project_axis_space", text="Space")
             layout.prop(con, "project_limit", text="Distance")
-            layout.prop(con, "use_project_opposite")
+            
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(con, "use_project_opposite")
+            row.prop_decorator(con, "use_project_opposite")
 
             layout.separator()
 
@@ -735,7 +739,12 @@ class ConstraintButtonsPanel:
             row.prop(con, "cull_face", expand=True)
             row = col.row()
             row.active = con.use_project_opposite and con.cull_face != 'OFF'
+            
+            
+            row = col.row()
+            row.use_property_split = False
             row.prop(con, "use_invert_cull")
+            row.prop_decorator(con, "use_invert_cull")
 
             layout.separator()
 
