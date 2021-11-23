@@ -562,14 +562,20 @@ class ConstraintButtonsPanel:
         target_row.active = not con.use_eval_time
         self.target_template(target_row, con)
 
-        row = layout.row(align=True, heading="Evaluation Time")
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_eval_time", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_eval_time
-        subsub.prop(con, "eval_time", text="")
-        row.prop_decorator(con, "eval_time")
+        ###########################################
+        
+        split = layout.split(factor = 0.38)
+        col = split.column(align = True)
+        col.use_property_split = False
+        col.prop(con, "use_eval_time", text = "Evaluation Time")
+        col = split.column()
+        if con.use_eval_time:
+            row = col.row()
+            row.prop(con, "eval_time", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+            
+        ##########################################
 
         layout.prop(con, "mix_mode", text="Mix")
 
@@ -628,10 +634,8 @@ class ConstraintButtonsPanel:
         col = layout.column()
         col.prop(con, "bulge", text="Volume Variation")
         
-        
         ##########################################
-        
-        
+             
         split = layout.split(factor = 0.38)
         col = split.column(align = True)
         col.use_property_split = False
