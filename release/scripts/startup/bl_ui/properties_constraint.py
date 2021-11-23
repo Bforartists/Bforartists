@@ -627,28 +627,41 @@ class ConstraintButtonsPanel:
 
         col = layout.column()
         col.prop(con, "bulge", text="Volume Variation")
+        
+        
+        ##########################################
+        
+        
+        split = layout.split(factor = 0.38)
+        col = split.column(align = True)
+        col.use_property_split = False
+        col.prop(con, "use_bulge_min", text = "Volume Min")
+        col = split.column()
+        if con.use_bulge_min:
+            row = col.row()
+            row.prop(con, "bulge_min", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        
+        split = layout.split(factor = 0.38)
+        col = split.column()
+        col.use_property_split = False
+        col.prop(con, "use_bulge_max", text = "Volume Max")
+        col = split.column()
+        if con.use_bulge_max:
+            row = col.row()
+            row.prop(con, "bulge_max", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        row = col.row(heading="Volume Min", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_bulge_min", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_bulge_min
-        subsub.prop(con, "bulge_min", text="")
-        row.prop_decorator(con, "bulge_min")
-
-        row = col.row(heading="Max", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_bulge_max", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_bulge_max
-        subsub.prop(con, "bulge_max", text="")
-        row.prop_decorator(con, "bulge_max")
-
-        row = col.row()
-        row.active = con.use_bulge_min or con.use_bulge_max
-        row.prop(con, "bulge_smooth", text="Smooth")
+        if con.use_bulge_min or con.use_bulge_max:
+            row = layout.row()
+            row.separator()
+            row.prop(con, "bulge_smooth", text="Smooth")
+            
+        ##########################################
+            
+        layout.separator()
 
         layout.prop(con, "volume", expand=True)
         layout.prop(con, "keep_axis", text="Rotation", expand=True)
