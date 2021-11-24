@@ -1097,21 +1097,42 @@ class ConstraintButtonsPanel:
                 col.prop(con, "pole_angle")
             col.prop(con, "iterations")
             col.prop(con, "chain_count")
-            col.prop(con, "use_tail")
-            col.prop(con, "use_stretch")
 
-            col = layout.column()
-            row = col.row(align=True, heading="Weight Position")
-            row.prop(con, "use_location", text="")
-            sub = row.row(align=True)
-            sub.active = con.use_location
-            sub.prop(con, "weight", text="", slider=True)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(con, "use_tail")
+            row.prop_decorator(con, "use_tail")
 
-            row = col.row(align=True, heading="Rotation")
-            row.prop(con, "use_rotation", text="")
-            sub = row.row(align=True)
-            sub.active = con.use_rotation
-            sub.prop(con, "orient_weight", text="", slider=True)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(con, "use_stretch")
+            row.prop_decorator(con, "use_stretch")
+
+            split = layout.split(factor = 0.38)
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.prop(con, "use_location", text = "Weight Position")
+            row.prop_decorator(con, "use_location")
+            col = split.column()
+            if con.use_location:
+                row = col.row()
+                row.prop(con, "weight", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            split = layout.split(factor = 0.38)
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.prop(con, "use_rotation", text = "Rotation")
+            row.prop_decorator(con, "use_rotation")
+            col = split.column()
+            if con.use_rotation:
+                row = col.row()
+                row.prop(con, "orient_weight", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         self.draw_influence(layout, con)
 
