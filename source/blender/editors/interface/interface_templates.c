@@ -6507,7 +6507,9 @@ void uiTemplateCacheFile(uiLayout *layout,
   uiItemO(sub, "", ICON_FILE_REFRESH, "cachefile.reload");
 
   row = uiLayoutRow(layout, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, &fileptr, "is_sequence", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, &fileptr, "is_sequence", 0); /*bfa - decorator*/
 
   /* Only enable render procedural option if the active engine supports it. */
   const struct RenderEngineType *engine_type = CTX_data_engine_type(C);
@@ -6534,14 +6536,18 @@ void uiTemplateCacheFile(uiLayout *layout,
 
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, engine_supports_procedural);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, &fileptr, "use_render_procedural", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, &fileptr, "use_render_procedural", 0); /*bfa - decorator*/
 
   const bool use_render_procedural = RNA_boolean_get(&fileptr, "use_render_procedural");
   const bool use_prefetch = RNA_boolean_get(&fileptr, "use_prefetch");
 
   row = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row, use_render_procedural);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, &fileptr, "use_prefetch", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, &fileptr, "use_prefetch", 0); /*bfa - decorator*/
 
   sub = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
