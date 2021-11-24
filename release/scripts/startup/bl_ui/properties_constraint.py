@@ -273,63 +273,63 @@ class ConstraintButtonsPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        col = layout.column()
+        #########################################
 
-        row = col.row(heading="Minimum X", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_min_x", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_min_x
-        subsub.prop(con, "min_x", text="")
-        row.prop_decorator(con, "min_x")
+        col = layout.column(align = True)
+        split = col.split(factor = 0.38)
 
-        row = col.row(heading="Y", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_min_y", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_min_y
-        subsub.prop(con, "min_y", text="")
-        row.prop_decorator(con, "min_y")
+        col = split.column(align = True)
+        col.use_property_split = False
+        col.prop(con, "use_min_x", text = "Minimum X")
+        col.prop(con, "use_min_y", text = "Y")
+        col.prop(con, "use_min_z", text = "Z")
 
-        row = col.row(heading="Z", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_min_z", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_min_z
-        subsub.prop(con, "min_z", text="")
-        row.prop_decorator(con, "min_z")
+        col = split.column(align = True)
+        if con.use_min_x:
+            row = col.row(align = True)
+            row.prop(con, "min_x", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        if con.use_min_y:
+            row = col.row(align = True)
+            row.prop(con, "min_y", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        if con.use_min_z:
+            row = col.row(align = True)
+            row.prop(con, "min_z", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col.separator()
+        ###########################################
 
-        row = col.row(heading="Maximum X", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_max_x", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_max_x
-        subsub.prop(con, "max_x", text="")
-        row.prop_decorator(con, "max_x")
+        col = layout.column(align = True)
+        split = col.split(factor = 0.38)
 
-        row = col.row(heading="Y", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_max_y", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_max_y
-        subsub.prop(con, "max_y", text="")
-        row.prop_decorator(con, "max_y")
+        col = split.column(align = True)
+        col.use_property_split = False
+        col.prop(con, "use_max_x", text = "Maximum X")
+        col.prop(con, "use_max_y", text = "Y")
+        col.prop(con, "use_max_z", text = "Z")
 
-        row = col.row(heading="Z", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_max_z", text="")
-        subsub = sub.row(align=True)
-        subsub.active = con.use_max_z
-        subsub.prop(con, "max_z", text="")
-        row.prop_decorator(con, "max_z")
+        col = split.column(align = True)
+        if con.use_max_x:
+            row = col.row(align = True)
+            row.prop(con, "max_x", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        if con.use_max_y:
+            row = col.row(align = True)
+            row.prop(con, "max_y", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        if con.use_max_z:
+            row = col.row(align = True)
+            row.prop(con, "max_z", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        ###########################################
 
         row = layout.row()
         row.use_property_split = False
