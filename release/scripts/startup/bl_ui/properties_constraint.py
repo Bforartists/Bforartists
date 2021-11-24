@@ -1247,8 +1247,16 @@ class ConstraintButtonsSubPanel:
 
         col = layout.column()
         col.prop(con, "chain_count")
-        col.prop(con, "use_even_divisions")
-        col.prop(con, "use_chain_offset")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(con, "use_even_divisions")
+        row.prop_decorator(con, "use_even_divisions")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(con, "use_chain_offset")
+        row.prop_decorator(con, "use_chain_offset")
 
     def draw_spline_ik_chain_scaling(self, context):
         layout = self.layout
@@ -1256,33 +1264,54 @@ class ConstraintButtonsSubPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        layout.prop(con, "use_curve_radius")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_curve_radius")
+        row.prop_decorator(con, "use_curve_radius")
 
         layout.prop(con, "y_scale_mode")
         layout.prop(con, "xz_scale_mode")
 
         if con.xz_scale_mode in {'INVERSE_PRESERVE', 'VOLUME_PRESERVE'}:
-            layout.prop(con, "use_original_scale")
+
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(con, "use_original_scale")
+            row.prop_decorator(con, "use_original_scale")
 
         if con.xz_scale_mode == 'VOLUME_PRESERVE':
             col = layout.column()
             col.prop(con, "bulge", text="Volume Variation")
 
-            row = col.row(heading="Volume Min")
-            row.prop(con, "use_bulge_min", text="")
-            sub = row.row()
-            sub.active = con.use_bulge_min
-            sub.prop(con, "bulge_min", text="")
+            split = layout.split(factor = 0.38)
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.prop(con, "use_bulge_min", text = "Volume Min")
+            row.prop_decorator(con, "use_bulge_min")
+            col = split.column()
+            if con.use_bulge_min:
+                row = col.row()
+                row.prop(con, "bulge_min", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-            row = col.row(heading="Max")
-            row.prop(con, "use_bulge_max", text="")
-            sub = row.row()
-            sub.active = con.use_bulge_max
-            sub.prop(con, "bulge_max", text="")
+            split = layout.split(factor = 0.38)
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.prop(con, "use_bulge_max", text = "Volume Max")
+            row.prop_decorator(con, "use_bulge_max")
+            col = split.column()
+            if con.use_bulge_max:
+                row = col.row()
+                row.prop(con, "bulge_max", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-            row = layout.row()
-            row.active = con.use_bulge_min or con.use_bulge_max
-            row.prop(con, "bulge_smooth", text="Smooth")
+            if con.use_bulge_min or con.use_bulge_max:
+                row = layout.row()
+                row.prop(con, "bulge_smooth", text="Smooth")
 
     def draw_action_target(self, context):
         layout = self.layout
