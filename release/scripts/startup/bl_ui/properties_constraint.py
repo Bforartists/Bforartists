@@ -228,33 +228,67 @@ class ConstraintButtonsPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        # Decorators and property split are really buggy with these properties
-        row = layout.row(heading="Limit X", align=True)
-        row.use_property_decorate = False
-        row.prop(con, "use_limit_x", text="")
-        sub = row.column(align=True)
-        sub.active = con.use_limit_x
-        sub.prop(con, "min_x", text="Min")
-        sub.prop(con, "max_x", text="Max")
-        row.label(icon='BLANK1')
+        #########################################
 
-        row = layout.row(heading="Y", align=True)
-        row.use_property_decorate = False
-        row.prop(con, "use_limit_y", text="")
-        sub = row.column(align=True)
-        sub.active = con.use_limit_y
-        sub.prop(con, "min_y", text="Min")
-        sub.prop(con, "max_y", text="Max")
-        row.label(icon='BLANK1')
+        col = layout.column()
+        split = col.split(factor = 0.38)
+        split.use_property_split = False
 
-        row = layout.row(heading="Z", align=True)
-        row.use_property_decorate = False
-        row.prop(con, "use_limit_z", text="")
-        sub = row.column(align=True)
-        sub.active = con.use_limit_z
-        sub.prop(con, "min_z", text="Min")
-        sub.prop(con, "max_z", text="Max")
-        row.label(icon='BLANK1')
+        col = split.column()
+        col.prop(con, "use_limit_x", text = "Limit X")
+
+        col = split.column(align = True)
+        if con.use_limit_x:
+            col.use_property_decorate = False
+            row = col.row(align = True)
+            sub = row.column(align=True)
+            sub.prop(con, "min_x", text="Min")
+            sub.prop(con, "max_x", text="Max")
+            row.label(icon='BLANK1')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        #########################################
+
+        col = layout.column()
+        split = col.split(factor = 0.38)
+        split.use_property_split = False
+
+        col = split.column()
+        col.prop(con, "use_limit_y", text = "Y")
+
+        col = split.column(align = True)
+        if con.use_limit_y:
+            col.use_property_decorate = False
+            row = col.row(align = True)
+            sub = row.column(align=True)
+            sub.prop(con, "min_y", text="Min")
+            sub.prop(con, "max_y", text="Max")
+            row.label(icon='BLANK1')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        #########################################
+
+        col = layout.column()
+        split = col.split(factor = 0.38)
+        split.use_property_split = False
+
+        col = split.column(align = True)
+        col.prop(con, "use_limit_z", text = "Z")
+
+        col = split.column()
+        if con.use_limit_z:
+            col.use_property_decorate = False
+            row = col.row(align = True)
+            sub = row.column(align=True)
+            sub.prop(con, "min_z", text="Min")
+            sub.prop(con, "max_z", text="Max")
+            row.label(icon='BLANK1')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        ###########################################
 
         layout.prop(con, "euler_order", text="Order")
 
