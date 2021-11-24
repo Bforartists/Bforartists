@@ -408,7 +408,7 @@ class ConstraintButtonsPanel:
         row.use_property_split = False
         row.prop(con, "use_transform_limit")
         row.prop_decorator(con, "use_transform_limit")
-        
+
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -563,7 +563,7 @@ class ConstraintButtonsPanel:
         self.target_template(target_row, con)
 
         ###########################################
-        
+
         split = layout.split(factor = 0.38)
         col = split.column(align = True)
         col.use_property_split = False
@@ -574,7 +574,7 @@ class ConstraintButtonsPanel:
             row.prop(con, "eval_time", text="")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
-            
+
         ##########################################
 
         layout.prop(con, "mix_mode", text="Mix")
@@ -633,9 +633,9 @@ class ConstraintButtonsPanel:
 
         col = layout.column()
         col.prop(con, "bulge", text="Volume Variation")
-        
+
         ##########################################
-             
+
         split = layout.split(factor = 0.38)
         col = split.column(align = True)
         col.use_property_split = False
@@ -646,7 +646,7 @@ class ConstraintButtonsPanel:
             row.prop(con, "bulge_min", text="")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
-        
+
         split = layout.split(factor = 0.38)
         col = split.column()
         col.use_property_split = False
@@ -662,9 +662,9 @@ class ConstraintButtonsPanel:
             row = layout.row()
             row.separator()
             row.prop(con, "bulge_smooth", text="Smooth")
-            
+
         ##########################################
-            
+
         layout.separator()
 
         layout.prop(con, "volume", expand=True)
@@ -743,7 +743,7 @@ class ConstraintButtonsPanel:
             layout.prop(con, "project_axis", expand=True, text="Project Axis")
             layout.prop(con, "project_axis_space", text="Space")
             layout.prop(con, "project_limit", text="Distance")
-            
+
             row = layout.row()
             row.use_property_split = False
             row.prop(con, "use_project_opposite")
@@ -756,8 +756,8 @@ class ConstraintButtonsPanel:
             row.prop(con, "cull_face", expand=True)
             row = col.row()
             row.active = con.use_project_opposite and con.cull_face != 'OFF'
-            
-            
+
+
             row = col.row()
             row.use_property_split = False
             row.prop(con, "use_invert_cull")
@@ -767,14 +767,21 @@ class ConstraintButtonsPanel:
 
         if con.shrinkwrap_type in {'PROJECT', 'NEAREST_SURFACE', 'TARGET_PROJECT'}:
             layout.prop(con, "wrap_mode", text="Snap Mode")
-            row = layout.row(heading="Align to Normal", align=True)
-            row.use_property_decorate = False
-            sub = row.row(align=True)
-            sub.prop(con, "use_track_normal", text="")
-            subsub = sub.row(align=True)
-            subsub.active = con.use_track_normal
-            subsub.prop(con, "track_axis", text="")
-            row.prop_decorator(con, "track_axis")
+
+            ###########################################
+
+            split = layout.split(factor = 0.38)
+            col = split.column(align = True)
+            col.use_property_split = False
+            col.prop(con, "use_track_normal", text = "Align to Normal")
+            col = split.column()
+            if con.use_track_normal:
+                row = col.row()
+                row.prop(con, "track_axis", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            ##########################################
 
         self.draw_influence(layout, con)
 
