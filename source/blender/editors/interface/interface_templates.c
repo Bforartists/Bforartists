@@ -6578,8 +6578,12 @@ void uiTemplateCacheFile(uiLayout *layout,
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);
-  uiLayoutSetActive(row, RNA_boolean_get(&fileptr, "override_frame"));
-  uiItemR(row, &fileptr, "frame", 0, "", ICON_NONE);
+  if (RNA_boolean_get(&fileptr, "override_frame")) {
+    uiItemR(row, &fileptr, "frame", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
 
   // ------------------------------- end bfa
 
