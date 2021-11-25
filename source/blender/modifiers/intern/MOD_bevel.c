@@ -373,10 +373,25 @@ static void geometry_panel_draw(const bContext *UNUSED(C), Panel *panel)
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, edge_bevel);
   uiItemR(row, ptr, "vmesh_method", 0, IFACE_("Intersections"), ICON_NONE);
-  uiItemR(layout, ptr, "use_clamp_overlap", 0, NULL, ICON_NONE);
-  row = uiLayoutRow(layout, false);
-  uiLayoutSetActive(row, edge_bevel);
+
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_clamp_overlap", 0, NULL, ICON_NONE);
+  //row = uiLayoutRow(layout, false);
+  //uiLayoutSetActive(row, edge_bevel);
+  //uiItemR(row, ptr, "loop_slide", 0, NULL, ICON_NONE);
+
+  uiLayout *col;
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_clamp_overlap", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "loop_slide", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "loop_slide", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void shading_panel_draw(const bContext *UNUSED(C), Panel *panel)
@@ -390,12 +405,38 @@ static void shading_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "harden_normals", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original prop */
+  //uiItemR(layout, ptr, "harden_normals", 0, NULL, ICON_NONE);
 
-  col = uiLayoutColumnWithHeading(layout, true, IFACE_("Mark"));
+  uiLayout *row;
+  row = uiLayoutRow(layout, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "harden_normals", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "harden_normals", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Mark"));
+  //uiLayoutSetActive(col, edge_bevel);
+  //uiItemR(col, ptr, "mark_seam", 0, IFACE_("Seam"), ICON_NONE);
+  //uiItemR(col, ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
   uiLayoutSetActive(col, edge_bevel);
-  uiItemR(col, ptr, "mark_seam", 0, IFACE_("Seam"), ICON_NONE);
-  uiItemR(col, ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+
+  uiItemL(col, TIP_("Mark"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "mark_seam", 0, IFACE_("Seam"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   uiItemR(layout, ptr, "material", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "face_strength_mode", 0, NULL, ICON_NONE);
