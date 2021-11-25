@@ -947,7 +947,16 @@ static void symmetry_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayout *col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_merge_vertices"));
   uiItemR(col, ptr, "merge_threshold", 0, IFACE_("Distance"), ICON_NONE);
-  uiItemR(col, ptr, "use_merge_vertices_cap", 0, IFACE_("First and Last Copies"), ICON_NONE);
+
+  /*------------------- bfa - original prop */
+  //uiItemR(col, ptr, "use_merge_vertices_cap", 0, IFACE_("First and Last Copies"), ICON_NONE);
+
+  uiLayout *row;
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_merge_vertices_cap", 0, IFACE_("First and Last Copies"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void uv_panel_draw(const bContext *UNUSED(C), Panel *panel)
