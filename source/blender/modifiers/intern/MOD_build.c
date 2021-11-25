@@ -298,7 +298,17 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(layout, ptr, "frame_start", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "frame_duration", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_reverse", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_reverse", 0, NULL, ICON_NONE);
+
+  uiLayout *row;
+  row = uiLayoutRow(layout, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_reverse", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
 
   modifier_panel_end(layout, ptr);
 }
