@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -22790,6 +22790,11 @@ msgid "Result"
 msgstr "Hasil"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Setujui"
+
+
 msgid "Demo Mode:"
 msgstr "Mode Demo:"
 
@@ -25459,11 +25464,6 @@ msgstr "Lapisan:"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Sunting Cepat"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Setujui"
 
 
 msgid "Int"

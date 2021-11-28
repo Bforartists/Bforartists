@@ -9,6 +9,7 @@
         widget_emboss="#000000ff"
         editor_outline="#000000"
         widget_text_cursor="#3399e6"
+        panel_roundness="0.4"
         transparent_checker_primary="#9b9b9b"
         transparent_checker_secondary="#cacaca"
         transparent_checker_size="8"
@@ -1342,14 +1343,23 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#424242cc"
-                back="#333333b3"
+                header="#d8d8d8ff"
+                back="#ffffffcc"
                 sub_back="#0000003e"
                 >
               </ThemePanelColors>
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#d8d8d8"
+            list_title="#c3c3c3"
+            list_text="#c3c3c3"
+            list_text_hi="#00ffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSpreadsheet>
     </spreadsheet>
     <bone_color_sets>

@@ -1333,7 +1333,7 @@
             header_text_hi="#ffffff"
             button="#404040ff"
             button_title="#c7c7c7"
-            button_text="#000000"
+            button_text="#b4b4b4"
             button_text_hi="#d8d8d8"
             navigation_bar="#202020ff"
             execution_buts="#00000000"
@@ -1344,9 +1344,9 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#26262600"
-                back="#292929ff"
-                sub_back="#242424ff"
+                header="#404040ff"
+                back="#383838ff"
+                sub_back="#333333ff"
                 >
               </ThemePanelColors>
             </panelcolors>

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -37304,6 +37304,11 @@ msgid "Export"
 msgstr "ﺭﺪّﺻ"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻖﺒﻃ"
+
+
 msgid "Demo Mode:"
 msgstr "ﻞﺒﻗ ﻂﻤﻨﻟﺍ"
 
@@ -39208,11 +39213,6 @@ msgstr "ﺩﺪﻌﺘﻣ-ﻦﻳﻮﻠﺗ"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "ﻊﻳﺮﺳ ﻞﻳﺪﻌﺗ"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻖﺒﻃ"
 
 
 msgctxt "Operator"

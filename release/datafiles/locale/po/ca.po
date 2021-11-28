@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23713,6 +23713,11 @@ msgid "Position:"
 msgstr "Esborrar Posició"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Aplicar Tamany/Rotació"
+
+
 msgid "Demo Mode:"
 msgstr "Esborrar Rotació"
 
@@ -24962,11 +24967,6 @@ msgstr "Image Displist"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Image Displist"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Aplicar Tamany/Rotació"
 
 
 msgctxt "Operator"

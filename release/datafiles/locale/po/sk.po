@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-11-08 14:07+0100\n"
+"PO-Revision-Date: 2021-11-16 08:09+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -42276,7 +42276,7 @@ msgstr "Body rozloží náhodne po povrchu, pričom zohľadní minimálnu vzdial
 
 
 msgid "Fill Curve"
-msgstr "Krivka vyplnenia"
+msgstr "Vyplniť krivku"
 
 
 msgid "N-gons"
@@ -42284,15 +42284,15 @@ msgstr "N-uholník"
 
 
 msgid "Fillet Curve"
-msgstr "Krivka plátku"
+msgstr "Zaoblenie krivky"
 
 
 msgid "How to choose number of vertices on fillet"
-msgstr "Určuje, ako vybrať počet vrcholov na plátok"
+msgstr "Určuje, ako vybrať počet vrcholov na zaoblenie"
 
 
 msgid "Align Bezier handles to create circular arcs at each control point"
-msgstr "Zarovnanie Bezierových manipulátorov na vytvorenie kruhových oblúkov v každom riadiacom bode"
+msgstr "Zarovná Bézierove manipulátory na vytvorenie kruhových oblúkov v každom riadiacom bode"
 
 
 msgid "Add control points along a circular arc (handle type is vector if Bezier Spline)"
@@ -65307,11 +65307,6 @@ msgstr "Aplikovať preklopené"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "Ak je povolené, použije pózu preklopenú cez os X"
-
-
-msgctxt "Operator"
-msgid "Blend Pose Library Pose"
-msgstr "Zamiešať pózu Knižnice póz"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -97627,6 +97622,14 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "a ovládač NVIDIA vo verzii 470 alebo novšej"
 
 
+msgid "Requires discrete AMD GPU with RDNA architecture"
+msgstr "Vyžaduje diskrétny grafický procesor AMD s architektúrou RDNA"
+
+
+msgid "and AMD Radeon Pro 21.Q4 driver or newer"
+msgstr "a ovládač AMD Radeon Pro 21.Q4 alebo novší"
+
+
 msgid "Noise Threshold"
 msgstr "Prah šumu"
 
@@ -98047,6 +98050,11 @@ msgstr "Vybrať kosti pózy"
 msgctxt "Operator"
 msgid "Deselect Pose Bones"
 msgstr "Zrušiť výber kostí pózy"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Použiť"
 
 
 msgid "Activate & Edit"
@@ -105255,11 +105263,6 @@ msgstr "Rýchle úpravy"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Použiť"
-
-
-msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "Použiť obrázok kamery"
 
@@ -106860,6 +106863,10 @@ msgid "No point was selected"
 msgstr "Nebol vybratý žiadny bod"
 
 
+msgid "Could not separate selected curve(s)"
+msgstr "Nepodarilo sa oddeliť vybrané krivky"
+
+
 msgid "Cannot separate curves with vertex keys"
 msgstr "Nemožno oddeliť krivky od kľúčových vrcholov"
 
@@ -106910,6 +106917,14 @@ msgstr "Podporované sú iba bézierove krivky"
 
 msgid "Active object is not a selected curve"
 msgstr "Aktívny objekt nie je vybraná krivka"
+
+
+msgid "%d curve(s) could not be separated"
+msgstr "%d krivku(y) nebolo možné oddeliť"
+
+
+msgid "%d curves could not make segments"
+msgstr "%d krivky nemohli vytvoriť úsečky"
 
 
 msgctxt "Curve"
@@ -106978,6 +106993,14 @@ msgstr "Nedá sa získať prístup k 3D záberu"
 
 msgid "Unable to access depth buffer, using view plane"
 msgstr "Nemožno získať prístup k zásobníku hĺbky použitím roviny zobrazenia"
+
+
+msgid "Surface(s) have no active point"
+msgstr "Povrch(y) nemajú aktívny bod"
+
+
+msgid "Curve(s) have no active point"
+msgstr "Krivka (krivky) nemá aktívny bod"
 
 
 msgid "No control point selected"
@@ -108376,6 +108399,10 @@ msgid "Mesh Data"
 msgstr "Údaje povrchovej siete"
 
 
+msgid "No weights/vertex groups on object(s)"
+msgstr "Žiadne váhy/skupiny vrcholov na objekte(-och)"
+
+
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "Rovina"
@@ -108581,6 +108608,10 @@ msgid "No selected vertex"
 msgstr "Žiadny vybraný vrchol"
 
 
+msgid "Mesh(es) do not have shape keys"
+msgstr "Povrchová sieť(e) nemajú kľúčové tvary"
+
+
 msgid "Active mesh does not have shape keys"
 msgstr "Aktívna povrchová sieť nemá kľúčové tvary"
 
@@ -108691,6 +108722,18 @@ msgstr "V režime úprav nemožno polygóny odstrániť"
 
 msgid "Cannot remove more polys than the mesh contains"
 msgstr "Nemožno odstrániť viac polygónov, ako obsahuje povrchová sieť"
+
+
+msgid "Cannot add more than %i UV maps"
+msgstr "Nemožno pridať viac ako %i UV máp"
+
+
+msgid "Cannot add more than %i vertex color layers"
+msgstr "Nemožno pridať viac ako %i farebných vrstiev vrcholov"
+
+
+msgid "Cannot add more than %i sculpt vertex color layers"
+msgstr "Nemožno pridať viac ako %i vrstiev farieb vrcholov"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -111517,6 +111560,10 @@ msgid "Undefined Socket Type"
 msgstr "Nedefinovaný typ zásuvky"
 
 
+msgid "Nishita not available in Eevee"
+msgstr "Nishita nie je k dispozícii v Eevee"
+
+
 msgid "No mesh in active object"
 msgstr "Žiadna povrchová sieť v aktívnom objekte"
 
@@ -111569,10 +111616,6 @@ msgid "Can not add node group '%s' to '%s'"
 msgstr "Nemožno pridať skupinu uzlov '%s' do '%s'"
 
 
-msgid "Mask '%s' not found"
-msgstr "Maska '%s' nebola nájdená"
-
-
 msgid "Node tree type %s undefined"
 msgstr "Typ uzlového stromu %s nedefinovaný"
 
@@ -111582,7 +111625,7 @@ msgstr " (celé číslo)"
 
 
 msgid " (Float)"
-msgstr "(na pohyblivej čiarke)"
+msgstr " (na pohyblivej čiarke)"
 
 
 msgid " (Vector)"
@@ -115340,6 +115383,10 @@ msgid "The target geometry must contain a mesh"
 msgstr "Cieľová geometria musí obsahovať povrchovú sieť"
 
 
+msgid "The target geometry must contain a mesh or a point cloud"
+msgstr "Cieľová geometria musí obsahovať povrchovú sieť alebo mračno bodov"
+
+
 msgid "Missing Data-Block"
 msgstr "Chýbajúci blok údajov"
 
@@ -115353,7 +115400,7 @@ msgstr "Realizované údaje vo vstupnej geometrii sa ignorujú"
 
 
 msgid "Input geometry has unsupported type: "
-msgstr "Vstupná geometria má nepodporovaný typ"
+msgstr "Vstupná geometria má nepodporovaný typ:"
 
 
 msgid " node"
