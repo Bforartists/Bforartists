@@ -370,10 +370,10 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         description="Uses the Scrambling Distance value for the viewport. Faster but may flicker",
     )
 
-    adaptive_scrambling_distance: BoolProperty(
-        name="Adaptive Scrambling Distance",
+    auto_scrambling_distance: BoolProperty(
+        name="Automatic Scrambling Distance",
         default=False,
-        description="Uses a formula to adapt the scrambling distance strength based on the sample count",
+        description="Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling",
     )
 
     use_layer_samples: EnumProperty(
@@ -432,7 +432,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
 
     direct_light_sampling_type: EnumProperty(
-        name="Direct Light Sampling Type",
+        name="Direct Light Sampling",
         description="The type of strategy used for sampling direct light contributions",
         items=enum_direct_light_sampling_type,
         default='MULTIPLE_IMPORTANCE_SAMPLING',
@@ -793,8 +793,8 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
 
     use_auto_tile: BoolProperty(
-        name="Auto Tiles",
-        description="Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory",
+        name="Use Tiling",
+        description="Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory",
         default=True,
     )
     tile_size: IntProperty(

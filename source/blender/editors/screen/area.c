@@ -594,7 +594,7 @@ void ED_region_do_draw(bContext *C, ARegion *region)
 
   memset(&region->drawrct, 0, sizeof(region->drawrct));
 
-  UI_blocklist_free_inactive(C, &region->uiblocks);
+  UI_blocklist_free_inactive(C, region);
 
   if (area) {
     const bScreen *screen = WM_window_get_active_screen(win);
@@ -1985,7 +1985,7 @@ void ED_area_init(wmWindowManager *wm, wmWindow *win, ScrArea *area)
     }
     else {
       /* prevent uiblocks to run */
-      UI_blocklist_free(NULL, &region->uiblocks);
+      UI_blocklist_free(NULL, region);
     }
 
     /* Some AZones use View2D data which is only updated in region init, so call that first! */
@@ -2932,6 +2932,16 @@ static const char *region_panels_collect_categories(ARegion *region,
   return NULL;
 }
 
+static int panel_draw_width_from_max_width_get(const ARegion *region,
+                                               const PanelType *panel_type,
+                                               const int max_width)
+{
+  /* With a background, we want some extra padding. */
+  return UI_panel_should_show_background(region, panel_type) ?
+             max_width - UI_PANEL_MARGIN_X * 2.0f :
+             max_width;
+}
+
 /**
  * \param contexts: A NULL terminated array of context strings to match against.
  * Matching against any of these strings will draw the panel.
@@ -2980,7 +2990,6 @@ void ED_region_panels_layout_ex(const bContext *C,
   }
 
   const int width_no_header = BLI_rctf_size_x(&v2d->cur) - margin_x;
-  const int width = width_no_header - UI_PANEL_MARGIN_X * 2.0f;
   /* Works out to 10 * UI_UNIT_X or 20 * UI_UNIT_X. */
   const int em = (region->type->prefsizex) ? 10 : 20;
 
@@ -3008,6 +3017,7 @@ void ED_region_panels_layout_ex(const bContext *C,
         continue;
       }
     }
+    const int width = panel_draw_width_from_max_width_get(region, pt, width_no_header);
 
     if (panel && UI_panel_is_dragging(panel)) {
       /* Prevent View2d.tot rectangle size changes while dragging panels. */
@@ -3038,6 +3048,7 @@ void ED_region_panels_layout_ex(const bContext *C,
           !STREQ(category, panel->type->category)) {
         continue;
       }
+      const int width = panel_draw_width_from_max_width_get(region, panel->type, width_no_header);
 
       if (panel && UI_panel_is_dragging(panel)) {
         /* Prevent View2d.tot rectangle size changes while dragging panels. */
@@ -3321,7 +3332,7 @@ bool ED_region_property_search(const bContext *C,
   }
 
   /* Free the panels and blocks, as they are only used for search. */
-  UI_blocklist_free(C, &region->uiblocks);
+  UI_blocklist_free(C, region);
   UI_panels_free_instanced(C, region);
   BKE_area_region_panels_free(&region->panels);
 

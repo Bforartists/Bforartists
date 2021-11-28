@@ -111,7 +111,10 @@ void AbstractTreeView::update_from_old(uiBlock &new_block)
 
   uiTreeViewHandle *old_view_handle = ui_block_view_find_matching_in_old_block(
       &new_block, reinterpret_cast<uiTreeViewHandle *>(this));
-  BLI_assert(old_view_handle);
+  if (old_view_handle == nullptr) {
+    is_reconstructed_ = true;
+    return;
+  }
 
   AbstractTreeView &old_view = reinterpret_cast<AbstractTreeView &>(*old_view_handle);
 
@@ -559,6 +562,19 @@ void AbstractTreeViewItem::change_state_delayed()
     activate();
   }
 }
+
+/* ---------------------------------------------------------------------- */
+
+AbstractTreeViewItemDragController::AbstractTreeViewItemDragController(AbstractTreeView &tree_view)
+    : tree_view_(tree_view)
+{
+}
+
+void AbstractTreeViewItemDragController::on_drag_start()
+{
+  /* Do nothing by default. */
+}
+
 /* ---------------------------------------------------------------------- */
 
 AbstractTreeViewItemDropController::AbstractTreeViewItemDropController(AbstractTreeView &tree_view)
@@ -736,6 +752,8 @@ bool UI_tree_view_item_drag_start(bContext *C, uiTreeViewItemHandle *item_)
                       drag_controller->create_drag_data(),
                       0,
                       WM_DRAG_FREE_DATA);
+  drag_controller->on_drag_start();
+
   return true;
 }
 
@@ -769,7 +787,9 @@ char *UI_tree_view_item_drop_tooltip(const uiTreeViewItemHandle *item_, const wm
  * Let a tree-view item handle a drop event.
  * \return True if the drop was handled by the tree-view item.
  */
-bool UI_tree_view_item_drop_handle(uiTreeViewItemHandle *item_, const ListBase *drags)
+bool UI_tree_view_item_drop_handle(struct bContext *C,
+                                   uiTreeViewItemHandle *item_,
+                                   const ListBase *drags)
 {
   AbstractTreeViewItem &item = reinterpret_cast<AbstractTreeViewItem &>(*item_);
   std::unique_ptr<AbstractTreeViewItemDropController> drop_controller =
@@ -778,7 +798,7 @@ bool UI_tree_view_item_drop_handle(uiTreeViewItemHandle *item_, const ListBase *
   const char *disabled_hint_dummy = nullptr;
   LISTBASE_FOREACH (const wmDrag *, drag, drags) {
     if (drop_controller->can_drop(*drag, &disabled_hint_dummy)) {
-      return drop_controller->on_drop(*drag);
+      return drop_controller->on_drop(C, *drag);
     }
   }
 
