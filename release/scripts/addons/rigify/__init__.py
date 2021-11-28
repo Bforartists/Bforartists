@@ -20,9 +20,9 @@
 
 bl_info = {
     "name": "Rigify",
-    "version": (0, 6, 3),
+    "version": (0, 6, 4),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello, Alexander Gavrilov",
-    "blender": (2, 82, 0),
+    "blender": (3, 0, 0),
     "description": "Automatic rigging from building-block components",
     "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/rigging/rigify/index.html",

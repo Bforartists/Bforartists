@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -4112,6 +4112,11 @@ msgid "%s is not supported"
 msgstr "%s ยังไม่สนับสนุน"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "นำไปใช้"
+
+
 msgid "    RNA Path: bpy.types."
 msgstr "    ตำแหน่ง RNA: bpy.types."
 
@@ -5181,11 +5186,6 @@ msgstr "ต่อแผ่นผิว"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "ลบแผ่นผิว"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "นำไปใช้"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -556,6 +556,11 @@ msgstr "לדחמ תרירב"
 
 
 msgctxt "Operator"
+msgid "Apply"
+msgstr "לחה"
+
+
+msgctxt "Operator"
 msgid "Manual"
 msgstr "ינדי"
 
@@ -679,11 +684,6 @@ msgstr "ביתנ"
 msgctxt "Operator"
 msgid "Make"
 msgstr "הכסמ"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "לחה"
 
 
 msgid "No joints selected"

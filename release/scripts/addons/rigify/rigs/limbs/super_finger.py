@@ -174,6 +174,8 @@ class Rig(SimpleChainRig):
             bone.lock_rotation_w = True
             bone.lock_scale = True, True, True
 
+            ControlLayersOption.EXTRA_IK.assign_rig(self, [self.bones.ctrl.ik])
+
     @stage.configure_bones
     def configure_ik_control_properties(self):
         if self.make_ik:
@@ -379,6 +381,7 @@ class Rig(SimpleChainRig):
         )
 
         ControlLayersOption.TWEAK.add_parameters(params)
+        ControlLayersOption.EXTRA_IK.add_parameters(params)
 
     @classmethod
     def parameters_ui(self, layout, params):
@@ -392,6 +395,9 @@ class Rig(SimpleChainRig):
         layout.prop(params, 'make_extra_ik_control', text='IK Control')
 
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
+
+        if params.make_extra_ik_control:
+            ControlLayersOption.EXTRA_IK.parameters_ui(layout, params)
 
 #############################
 # Finger FK to IK operator ##
