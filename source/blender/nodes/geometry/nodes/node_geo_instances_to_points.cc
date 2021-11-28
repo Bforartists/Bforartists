@@ -19,9 +19,9 @@
 
 #include "node_geometry_util.hh"
 
-namespace blender::nodes {
+namespace blender::nodes::node_geo_instances_to_points_cc {
 
-static void geo_node_instances_to_points_declare(NodeDeclarationBuilder &b)
+static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Instances")).only_instances();
   b.add_input<decl::Bool>(N_("Selection")).default_value(true).hide_value().supports_field();
@@ -51,9 +51,8 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
 {
   const InstancesComponent &instances = *geometry_set.get_component_for_read<InstancesComponent>();
 
-  const AttributeDomain attribute_domain = ATTR_DOMAIN_POINT;
-  GeometryComponentFieldContext field_context{instances, attribute_domain};
-  const int domain_size = instances.attribute_domain_size(attribute_domain);
+  GeometryComponentFieldContext field_context{instances, ATTR_DOMAIN_INSTANCE};
+  const int domain_size = instances.attribute_domain_size(ATTR_DOMAIN_INSTANCE);
 
   fn::FieldEvaluator selection_evaluator{field_context, domain_size};
   selection_evaluator.add(std::move(selection_field));
@@ -88,7 +87,7 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
   }
 }
 
-static void geo_node_instances_to_points_exec(GeoNodeExecParams params)
+static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Instances");
 
@@ -101,19 +100,21 @@ static void geo_node_instances_to_points_exec(GeoNodeExecParams params)
     params.set_output("Points", std::move(geometry_set));
   }
   else {
-    params.set_output("Points", GeometrySet());
+    params.set_default_remaining_outputs();
   }
 }
 
-}  // namespace blender::nodes
+}  // namespace blender::nodes::node_geo_instances_to_points_cc
 
 void register_node_type_geo_instances_to_points()
 {
+  namespace file_ns = blender::nodes::node_geo_instances_to_points_cc;
+
   static bNodeType ntype;
 
   geo_node_type_base(
       &ntype, GEO_NODE_INSTANCES_TO_POINTS, "Instances to Points", NODE_CLASS_GEOMETRY, 0);
-  ntype.declare = blender::nodes::geo_node_instances_to_points_declare;
-  ntype.geometry_node_execute = blender::nodes::geo_node_instances_to_points_exec;
+  ntype.declare = file_ns::node_declare;
+  ntype.geometry_node_execute = file_ns::node_geo_exec;
   nodeRegisterType(&ntype);
 }

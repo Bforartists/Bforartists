@@ -183,6 +183,15 @@ template<typename T> class VArrayImpl {
      * own anything can overwrite this with false. */
     return true;
   }
+
+  /**
+   * Return true when the other virtual array should be considered to be the same, e.g. because it
+   * shares the same underlying memory.
+   */
+  virtual bool is_same(const VArrayImpl<T> &UNUSED(other)) const
+  {
+    return false;
+  }
 };
 
 /* Similar to #VArrayImpl, but adds methods that allow modifying the referenced elements. */
@@ -223,69 +232,21 @@ template<typename T> class VMutableArrayImpl : public VArrayImpl<T> {
 };
 
 /**
- * A virtual array implementation for a span. Methods in this class are final so that it can be
- * devirtualized by the compiler in some cases (e.g. when #devirtualize_varray is used).
+ * A virtual array implementation that references that wraps a span. This implementation is used by
+ * mutable and immutable spans to avoid code duplication.
  */
-template<typename T> class VArrayImpl_For_Span : public VArrayImpl<T> {
- protected:
-  const T *data_ = nullptr;
-
- public:
-  VArrayImpl_For_Span(const Span<T> data) : VArrayImpl<T>(data.size()), data_(data.data())
-  {
-  }
-
- protected:
-  VArrayImpl_For_Span(const int64_t size) : VArrayImpl<T>(size)
-  {
-  }
-
-  T get(const int64_t index) const final
-  {
-    return data_[index];
-  }
-
-  bool is_span() const final
-  {
-    return true;
-  }
-
-  Span<T> get_internal_span() const final
-  {
-    return Span<T>(data_, this->size_);
-  }
-};
-
-/**
- * A version of #VArrayImpl_For_Span that can not be subclassed. This allows safely overwriting the
- * #may_have_ownership method.
- */
-template<typename T> class VArrayImpl_For_Span_final final : public VArrayImpl_For_Span<T> {
- public:
-  using VArrayImpl_For_Span<T>::VArrayImpl_For_Span;
-
- private:
-  bool may_have_ownership() const override
-  {
-    return false;
-  }
-};
-
-/**
- * Like #VArrayImpl_For_Span but for mutable data.
- */
-template<typename T> class VMutableArrayImpl_For_MutableSpan : public VMutableArrayImpl<T> {
+template<typename T> class VArrayImpl_For_Span : public VMutableArrayImpl<T> {
  protected:
   T *data_ = nullptr;
 
  public:
-  VMutableArrayImpl_For_MutableSpan(const MutableSpan<T> data)
+  VArrayImpl_For_Span(const MutableSpan<T> data)
       : VMutableArrayImpl<T>(data.size()), data_(data.data())
   {
   }
 
  protected:
-  VMutableArrayImpl_For_MutableSpan(const int64_t size) : VMutableArrayImpl<T>(size)
+  VArrayImpl_For_Span(const int64_t size) : VMutableArrayImpl<T>(size)
   {
   }
 
@@ -308,15 +269,27 @@ template<typename T> class VMutableArrayImpl_For_MutableSpan : public VMutableAr
   {
     return Span<T>(data_, this->size_);
   }
+
+  bool is_same(const VArrayImpl<T> &other) const final
+  {
+    if (other.size() != this->size_) {
+      return false;
+    }
+    if (!other.is_span()) {
+      return false;
+    }
+    const Span<T> other_span = other.get_internal_span();
+    return data_ == other_span.data();
+  }
 };
 
 /**
- * Like #VArrayImpl_For_Span_final but for mutable data.
+ * A version of #VArrayImpl_For_Span that can not be subclassed. This allows safely overwriting the
+ * #may_have_ownership method.
  */
-template<typename T>
-class VMutableArrayImpl_For_MutableSpan_final final : public VMutableArrayImpl_For_MutableSpan<T> {
+template<typename T> class VArrayImpl_For_Span_final final : public VArrayImpl_For_Span<T> {
  public:
-  using VMutableArrayImpl_For_MutableSpan<T>::VMutableArrayImpl_For_MutableSpan;
+  using VArrayImpl_For_Span<T>::VArrayImpl_For_Span;
 
  private:
   bool may_have_ownership() const override
@@ -340,7 +313,7 @@ class VArrayImpl_For_ArrayContainer : public VArrayImpl_For_Span<T> {
   VArrayImpl_For_ArrayContainer(Container container)
       : VArrayImpl_For_Span<T>((int64_t)container.size()), container_(std::move(container))
   {
-    this->data_ = container_.data();
+    this->data_ = const_cast<T *>(container_.data());
   }
 };
 
@@ -422,57 +395,25 @@ template<typename T, typename GetFunc> class VArrayImpl_For_Func final : public 
 /**
  * \note: This is `final` so that #may_have_ownership can be implemented reliably.
  */
-template<typename StructT, typename ElemT, ElemT (*GetFunc)(const StructT &)>
-class VArrayImpl_For_DerivedSpan final : public VArrayImpl<ElemT> {
- private:
-  const StructT *data_;
-
- public:
-  VArrayImpl_For_DerivedSpan(const Span<StructT> data)
-      : VArrayImpl<ElemT>(data.size()), data_(data.data())
-  {
-  }
-
- private:
-  ElemT get(const int64_t index) const override
-  {
-    return GetFunc(data_[index]);
-  }
-
-  void materialize(IndexMask mask, MutableSpan<ElemT> r_span) const override
-  {
-    ElemT *dst = r_span.data();
-    mask.foreach_index([&](const int64_t i) { dst[i] = GetFunc(data_[i]); });
-  }
-
-  void materialize_to_uninitialized(IndexMask mask, MutableSpan<ElemT> r_span) const override
-  {
-    ElemT *dst = r_span.data();
-    mask.foreach_index([&](const int64_t i) { new (dst + i) ElemT(GetFunc(data_[i])); });
-  }
-
-  bool may_have_ownership() const override
-  {
-    return false;
-  }
-};
-
-/**
- * \note: This is `final` so that #may_have_ownership can be implemented reliably.
- */
 template<typename StructT,
          typename ElemT,
          ElemT (*GetFunc)(const StructT &),
-         void (*SetFunc)(StructT &, ElemT)>
-class VMutableArrayImpl_For_DerivedSpan final : public VMutableArrayImpl<ElemT> {
+         void (*SetFunc)(StructT &, ElemT) = nullptr>
+class VArrayImpl_For_DerivedSpan final : public VMutableArrayImpl<ElemT> {
  private:
   StructT *data_;
 
  public:
-  VMutableArrayImpl_For_DerivedSpan(const MutableSpan<StructT> data)
+  VArrayImpl_For_DerivedSpan(const MutableSpan<StructT> data)
       : VMutableArrayImpl<ElemT>(data.size()), data_(data.data())
   {
   }
+
+  template<typename OtherStructT,
+           typename OtherElemT,
+           OtherElemT (*OtherGetFunc)(const OtherStructT &),
+           void (*OtherSetFunc)(OtherStructT &, OtherElemT)>
+  friend class VArrayImpl_For_DerivedSpan;
 
  private:
   ElemT get(const int64_t index) const override
@@ -499,6 +440,23 @@ class VMutableArrayImpl_For_DerivedSpan final : public VMutableArrayImpl<ElemT> 
 
   bool may_have_ownership() const override
   {
+    return false;
+  }
+
+  bool is_same(const VArrayImpl<ElemT> &other) const override
+  {
+    if (other.size() != this->size_) {
+      return false;
+    }
+    if (const VArrayImpl_For_DerivedSpan<StructT, ElemT, GetFunc> *other_typed =
+            dynamic_cast<const VArrayImpl_For_DerivedSpan<StructT, ElemT, GetFunc> *>(&other)) {
+      return other_typed->data_ == data_;
+    }
+    if (const VArrayImpl_For_DerivedSpan<StructT, ElemT, GetFunc, SetFunc> *other_typed =
+            dynamic_cast<const VArrayImpl_For_DerivedSpan<StructT, ElemT, GetFunc, SetFunc> *>(
+                &other)) {
+      return other_typed->data_ == data_;
+    }
     return false;
   }
 };
@@ -719,9 +677,6 @@ template<typename T> class VArrayCommon {
   bool is_span() const
   {
     BLI_assert(*this);
-    if (this->is_empty()) {
-      return true;
-    }
     return impl_->is_span();
   }
 
@@ -742,9 +697,6 @@ template<typename T> class VArrayCommon {
   bool is_single() const
   {
     BLI_assert(*this);
-    if (impl_->size() == 1) {
-      return true;
-    }
     return impl_->is_single();
   }
 
@@ -759,6 +711,25 @@ template<typename T> class VArrayCommon {
       return impl_->get(0);
     }
     return impl_->get_internal_single();
+  }
+
+  /**
+   * Return true when the other virtual references the same underlying memory.
+   */
+  bool is_same(const VArrayCommon<T> &other) const
+  {
+    if (!*this || !other) {
+      return false;
+    }
+    /* Check in both directions in case one does not know how to compare to the other
+     * implementation. */
+    if (impl_->is_same(*other.impl_)) {
+      return true;
+    }
+    if (other.impl_->is_same(*impl_)) {
+      return true;
+    }
+    return false;
   }
 
   /** Copy the entire virtual array into a span. */
@@ -846,7 +817,10 @@ template<typename T> class VArray : public VArrayCommon<T> {
    */
   static VArray ForSpan(Span<T> values)
   {
-    return VArray::For<VArrayImpl_For_Span_final<T>>(values);
+    /* Cast const away, because the virtual array implementation for const and non const spans is
+     * shared. */
+    MutableSpan<T> span{const_cast<T *>(values.data()), values.size()};
+    return VArray::For<VArrayImpl_For_Span_final<T>>(span);
   }
 
   /**
@@ -865,7 +839,10 @@ template<typename T> class VArray : public VArrayCommon<T> {
   template<typename StructT, T (*GetFunc)(const StructT &)>
   static VArray ForDerivedSpan(Span<StructT> values)
   {
-    return VArray::For<VArrayImpl_For_DerivedSpan<StructT, T, GetFunc>>(values);
+    /* Cast const away, because the virtual array implementation for const and non const derived
+     * spans is shared. */
+    MutableSpan<StructT> span{const_cast<StructT *>(values.data()), values.size()};
+    return VArray::For<VArrayImpl_For_DerivedSpan<StructT, T, GetFunc>>(span);
   }
 
   /**
@@ -925,7 +902,7 @@ template<typename T> class VMutableArray : public VArrayCommon<T> {
    */
   static VMutableArray ForSpan(MutableSpan<T> values)
   {
-    return VMutableArray::For<VMutableArrayImpl_For_MutableSpan_final<T>>(values);
+    return VMutableArray::For<VArrayImpl_For_Span_final<T>>(values);
   }
 
   /**
@@ -935,8 +912,7 @@ template<typename T> class VMutableArray : public VArrayCommon<T> {
   template<typename StructT, T (*GetFunc)(const StructT &), void (*SetFunc)(StructT &, T)>
   static VMutableArray ForDerivedSpan(MutableSpan<StructT> values)
   {
-    return VMutableArray::For<VMutableArrayImpl_For_DerivedSpan<StructT, T, GetFunc, SetFunc>>(
-        values);
+    return VMutableArray::For<VArrayImpl_For_DerivedSpan<StructT, T, GetFunc, SetFunc>>(values);
   }
 
   /** Convert to a #VArray by copying. */
@@ -1107,6 +1083,30 @@ template<typename T> class VMutableArray_Span final : public MutableSpan<T> {
   }
 };
 
+template<typename T> class SingleAsSpan {
+ private:
+  T value_;
+  int64_t size_;
+
+ public:
+  SingleAsSpan(T value, int64_t size) : value_(std::move(value)), size_(size)
+  {
+    BLI_assert(size_ >= 0);
+  }
+
+  SingleAsSpan(const VArray<T> &varray) : SingleAsSpan(varray.get_internal_single(), varray.size())
+  {
+  }
+
+  const T &operator[](const int64_t index) const
+  {
+    BLI_assert(index >= 0);
+    BLI_assert(index < size_);
+    UNUSED_VARS_NDEBUG(index);
+    return value_;
+  }
+};
+
 /**
  * Generate multiple versions of the given function optimized for different virtual arrays.
  * One has to be careful with nesting multiple devirtualizations, because that results in an
@@ -1121,14 +1121,11 @@ inline void devirtualize_varray(const VArray<T> &varray, const Func &func, bool 
   /* Support disabling the devirtualization to simplify benchmarking. */
   if (enable) {
     if (varray.is_single()) {
-      /* `VArrayImpl_For_Single` can be used for devirtualization, because it is declared `final`.
-       */
-      func(VArray<T>::ForSingle(varray.get_internal_single(), varray.size()));
+      func(SingleAsSpan<T>(varray));
       return;
     }
     if (varray.is_span()) {
-      /* `VArrayImpl_For_Span` can be used for devirtualization, because it is declared `final`. */
-      func(VArray<T>::ForSpan(varray.get_internal_span()));
+      func(varray.get_internal_span());
       return;
     }
   }
@@ -1153,23 +1150,19 @@ inline void devirtualize_varray2(const VArray<T1> &varray1,
     const bool is_single1 = varray1.is_single();
     const bool is_single2 = varray2.is_single();
     if (is_span1 && is_span2) {
-      func(VArray<T1>::ForSpan(varray1.get_internal_span()),
-           VArray<T2>::ForSpan(varray2.get_internal_span()));
+      func(varray1.get_internal_span(), varray2.get_internal_span());
       return;
     }
     if (is_span1 && is_single2) {
-      func(VArray<T1>::ForSpan(varray1.get_internal_span()),
-           VArray<T2>::ForSingle(varray2.get_internal_single(), varray2.size()));
+      func(varray1.get_internal_span(), SingleAsSpan(varray2));
       return;
     }
     if (is_single1 && is_span2) {
-      func(VArray<T1>::ForSingle(varray1.get_internal_single(), varray1.size()),
-           VArray<T2>::ForSpan(varray2.get_internal_span()));
+      func(SingleAsSpan(varray1), varray2.get_internal_span());
       return;
     }
     if (is_single1 && is_single2) {
-      func(VArray<T1>::ForSingle(varray1.get_internal_single(), varray1.size()),
-           VArray<T2>::ForSingle(varray2.get_internal_single(), varray2.size()));
+      func(SingleAsSpan(varray1), SingleAsSpan(varray2));
       return;
     }
   }
