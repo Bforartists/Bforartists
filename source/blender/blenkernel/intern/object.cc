@@ -1258,6 +1258,7 @@ IDTypeInfo IDType_ID_OB = {
     /* name_plural */ "objects",
     /* translation_context */ BLT_I18NCONTEXT_ID_OBJECT,
     /* flags */ 0,
+    /* asset_type_info */ &AssetType_OB,
 
     /* init_data */ object_init_data,
     /* copy_data */ object_copy_data,
@@ -1275,8 +1276,6 @@ IDTypeInfo IDType_ID_OB = {
     /* blend_read_undo_preserve */ nullptr,
 
     /* lib_override_apply_post */ object_lib_override_apply_post,
-
-    /* asset_type_info */ &AssetType_OB,
 };
 
 void BKE_object_workob_clear(Object *workob)
@@ -3984,6 +3983,37 @@ void BKE_object_boundbox_calc_from_mesh(Object *ob, const Mesh *me_eval)
   ob->runtime.bb->flag &= ~BOUNDBOX_DIRTY;
 }
 
+bool BKE_object_boundbox_calc_from_evaluated_geometry(Object *ob)
+{
+  blender::float3 min, max;
+  INIT_MINMAX(min, max);
+
+  if (ob->runtime.geometry_set_eval) {
+    ob->runtime.geometry_set_eval->compute_boundbox_without_instances(&min, &max);
+  }
+  else if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob)) {
+    if (!BKE_mesh_wrapper_minmax(mesh_eval, min, max)) {
+      return false;
+    }
+  }
+  else if (ob->runtime.curve_cache) {
+    BKE_displist_minmax(&ob->runtime.curve_cache->disp, min, max);
+  }
+  else {
+    return false;
+  }
+
+  if (ob->runtime.bb == nullptr) {
+    ob->runtime.bb = (BoundBox *)MEM_callocN(sizeof(BoundBox), __func__);
+  }
+
+  BKE_boundbox_init_from_minmax(ob->runtime.bb, min, max);
+
+  ob->runtime.bb->flag &= ~BOUNDBOX_DIRTY;
+
+  return true;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -4573,10 +4603,11 @@ Mesh *BKE_object_get_evaluated_mesh(const Object *object)
    * object types either store it there or add a reference to it if it's owned elsewhere. */
   GeometrySet *geometry_set_eval = object->runtime.geometry_set_eval;
   if (geometry_set_eval) {
-    /* Some areas expect to be able to modify the evaluated mesh. Theoretically this should be
-     * avoided, or at least protected with a lock, so a const mesh could be returned from this
-     * function. */
-    Mesh *mesh = geometry_set_eval->get_mesh_for_write();
+    /* Some areas expect to be able to modify the evaluated mesh in limited ways. Theoretically
+     * this should be avoided, or at least protected with a lock, so a const mesh could be returned
+     * from this function. We use a const_cast instead of #get_mesh_for_write, because that might
+     * result in a copy of the mesh when it is shared. */
+    Mesh *mesh = const_cast<Mesh *>(geometry_set_eval->get_mesh_for_read());
     if (mesh) {
       return mesh;
     }

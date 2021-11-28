@@ -20,13 +20,12 @@
 
 namespace blender::fn {
 
-MFProcedureExecutor::MFProcedureExecutor(std::string name, const MFProcedure &procedure)
-    : procedure_(procedure)
+MFProcedureExecutor::MFProcedureExecutor(const MFProcedure &procedure) : procedure_(procedure)
 {
-  MFSignatureBuilder signature(std::move(name));
+  MFSignatureBuilder signature("Procedure Executor");
 
   for (const ConstMFParameter &param : procedure.params()) {
-    signature.add(param.variable->name(), MFParamType(param.type, param.variable->data_type()));
+    signature.add("Parameter", MFParamType(param.type, param.variable->data_type()));
   }
 
   signature_ = signature.build();
@@ -1046,7 +1045,7 @@ static void execute_call_instruction(const MFCallInstruction &instruction,
     }
 
     try {
-      fn.call(mask, params, context);
+      fn.call_auto(mask, params, context);
     }
     catch (...) {
       /* Multi-functions must not throw exceptions. */
@@ -1235,6 +1234,14 @@ void MFProcedureExecutor::call(IndexMask full_mask, MFParams params, MFContext c
       }
     }
   }
+}
+
+MultiFunction::ExecutionHints MFProcedureExecutor::get_execution_hints() const
+{
+  ExecutionHints hints;
+  hints.allocates_array = true;
+  hints.min_grain_size = 10000;
+  return hints;
 }
 
 }  // namespace blender::fn

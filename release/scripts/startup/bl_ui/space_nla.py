@@ -23,6 +23,7 @@ from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
+    DopesheetActionPanelBase,
     dopesheet_filter,
 )
 
@@ -129,6 +130,21 @@ class NLA_PT_filters(DopesheetFilterPopoverBase, Panel):
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
+
+
+class NLA_PT_action(DopesheetActionPanelBase, Panel):
+    bl_space_type = 'NLA_EDITOR'
+    bl_category = "Strip"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        strip = context.active_nla_strip
+        return strip and strip.type == 'CLIP' and strip.action
+
+    def draw(self, context):
+        action = context.active_nla_strip.action
+        self.draw_generic_panel(context, self.layout, action)
 
 
 class NLA_MT_editor_menus(Menu):
@@ -414,6 +430,7 @@ classes = (
     NLA_MT_context_menu,
     NLA_MT_channel_context_menu,
     NLA_PT_filters,
+    NLA_PT_action,
 )
 
 if __name__ == "__main__":  # only for live edit.

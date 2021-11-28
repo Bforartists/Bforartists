@@ -37,6 +37,7 @@
 #include "DNA_workspace_types.h"
 
 #include "BLI_alloca.h"
+#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_rect.h"
@@ -2061,24 +2062,11 @@ void UI_block_draw(const bContext *C, uiBlock *block)
     ui_draw_menu_back(&style, block, &rect);
   }
   else if (block->panel) {
-    bool show_background = region->alignment != RGN_ALIGN_FLOAT;
-    if (show_background) {
-      if (block->panel->type && (block->panel->type->flag & PANEL_TYPE_NO_HEADER)) {
-        if (region->regiontype == RGN_TYPE_TOOLS) {
-          /* We never want a background around active tools. */
-          show_background = false;
-        }
-        else {
-          /* Without a header there is no background except for region overlap. */
-          show_background = region->overlap != 0;
-        }
-      }
-    }
     ui_draw_aligned_panel(&style,
                           block,
                           &rect,
                           UI_panel_category_is_visible(region),
-                          show_background,
+                          UI_panel_should_show_background(region, block->panel->type),
                           region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE);
   }
 
@@ -3521,22 +3509,35 @@ void UI_blocklist_draw(const bContext *C, const ListBase *lb)
 }
 
 /* can be called with C==NULL */
-void UI_blocklist_free(const bContext *C, ListBase *lb)
+void UI_blocklist_free(const bContext *C, ARegion *region)
 {
+  ListBase *lb = &region->uiblocks;
   uiBlock *block;
   while ((block = BLI_pophead(lb))) {
     UI_block_free(C, block);
   }
+  if (region->runtime.block_name_map != NULL) {
+    BLI_ghash_free(region->runtime.block_name_map, NULL, NULL);
+    region->runtime.block_name_map = NULL;
+  }
 }
 
-void UI_blocklist_free_inactive(const bContext *C, ListBase *lb)
+void UI_blocklist_free_inactive(const bContext *C, ARegion *region)
 {
+  ListBase *lb = &region->uiblocks;
+
   LISTBASE_FOREACH_MUTABLE (uiBlock *, block, lb) {
     if (!block->handle) {
       if (block->active) {
         block->active = false;
       }
       else {
+        if (region->runtime.block_name_map != NULL) {
+          uiBlock *b = BLI_ghash_lookup(region->runtime.block_name_map, block->name);
+          if (b == block) {
+            BLI_ghash_remove(region->runtime.block_name_map, b->name, NULL, NULL);
+          }
+        }
         BLI_remlink(lb, block);
         UI_block_free(C, block);
       }
@@ -3552,7 +3553,10 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
   /* each listbase only has one block with this name, free block
    * if is already there so it can be rebuilt from scratch */
   if (lb) {
-    oldblock = BLI_findstring(lb, block->name, offsetof(uiBlock, name));
+    if (region->runtime.block_name_map == NULL) {
+      region->runtime.block_name_map = BLI_ghash_str_new(__func__);
+    }
+    oldblock = (uiBlock *)BLI_ghash_lookup(region->runtime.block_name_map, block->name);
 
     if (oldblock) {
       oldblock->active = false;
@@ -3562,6 +3566,7 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
 
     /* at the beginning of the list! for dynamical menus/blocks */
     BLI_addhead(lb, block);
+    BLI_ghash_reinsert(region->runtime.block_name_map, block->name, block, NULL, NULL);
   }
 
   block->oldblock = oldblock;
