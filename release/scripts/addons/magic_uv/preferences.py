@@ -59,9 +59,7 @@ from .ui.IMAGE_MT_uvs import (
     MUV_MT_UVInspection,
 )
 from .utils.bl_class_registry import BlClassRegistry
-from .utils.addon_updater import AddonUpdaterManager
 from .utils import compatibility as compat
-from . import updater
 
 
 def view3d_uvmap_menu_fn(self, context):
@@ -167,14 +165,6 @@ def remove_builtin_menu():
     bpy.types.IMAGE_MT_uvs.remove(image_uvs_menu_fn)
     bpy.types.VIEW3D_MT_object.remove(view3d_object_menu_fn)
     bpy.types.VIEW3D_MT_uv_map.remove(view3d_uvmap_menu_fn)
-
-
-def get_update_candidate_branches(_, __):
-    manager = AddonUpdaterManager.get_instance()
-    if not manager.candidate_checked():
-        return []
-
-    return [(name, name, "") for name in manager.get_candidate_branch_names()]
 
 
 def set_debug_mode(self, value):
@@ -301,7 +291,6 @@ class MUV_Preferences(AddonPreferences):
         items=[
             ('INFO', "Information", "Information about this add-on"),
             ('CONFIG', "Configuration", "Configuration about this add-on"),
-            ('UPDATE', "Update", "Update this add-on"),
         ],
         default='INFO'
     )
@@ -334,13 +323,6 @@ class MUV_Preferences(AddonPreferences):
         name="UV Bounding Box",
         description="UV Bounding Box",
         default=False
-    )
-
-    # for add-on updater
-    updater_branch_to_update = EnumProperty(
-        name="branch",
-        description="Target branch to update add-on",
-        items=get_update_candidate_branches
     )
 
     def draw(self, _):
@@ -520,6 +502,3 @@ class MUV_Preferences(AddonPreferences):
                 col.prop(self, "uv_bounding_box_cp_size")
                 col.prop(self, "uv_bounding_box_cp_react_size")
                 layout.separator()
-
-        elif self.category == 'UPDATE':
-            updater.draw_updater_ui(self)

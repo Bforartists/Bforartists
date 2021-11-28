@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -41991,6 +41991,11 @@ msgid "Result"
 msgstr "Výsledek"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Použít"
+
+
 msgid "Demo Mode:"
 msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
 
@@ -45761,11 +45766,6 @@ msgstr "VBar malování"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Rychlá úprava"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Použít"
 
 
 msgctxt "Operator"

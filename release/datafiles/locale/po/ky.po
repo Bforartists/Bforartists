@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -3228,6 +3228,11 @@ msgstr "Көлөм"
 
 
 msgctxt "Operator"
+msgid "Apply"
+msgstr "Колдонуу"
+
+
+msgctxt "Operator"
 msgid "Reset Settings"
 msgstr "Ырастоолорду түшүрүү"
 
@@ -3605,11 +3610,6 @@ msgstr "Решётка"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Тез оңдоо"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Колдонуу"
 
 
 msgctxt "Curve"

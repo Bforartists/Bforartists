@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -21668,6 +21668,11 @@ msgid "Position:"
 msgstr "Aktif pozisyonu sil"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Uygula"
+
+
 msgid "Demo Mode:"
 msgstr "Düzenleme Modu"
 
@@ -23007,11 +23012,6 @@ msgstr "Çoklu-Boyama"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Hızlı Düzenle"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Uygula"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -771,7 +771,7 @@ msgstr "Outils de suivi de mouvement"
 
 
 msgid "Dope Sheet"
-msgstr "Dope Sheet"
+msgstr "Feuille d'exposition"
 
 
 msgid "Adjust timing of keyframes"
@@ -8152,7 +8152,7 @@ msgstr "Refermer résumé"
 
 
 msgid "Collapse summary when shown, so all other channels get hidden (Dope Sheet editors only)"
-msgstr "Refermer le résumé quand il est montré, de façon que tous les autres canaux soient cachés (éditeur Dope Sheet uniquement)"
+msgstr "Refermer le résumé quand il est montré, de façon que tous les autres canaux soient cachés (éditeur Feuille d'exposition uniquement)"
 
 
 msgid "Display Grease Pencil"
@@ -8308,7 +8308,7 @@ msgstr "Afficher résumé"
 
 
 msgid "Display an additional 'summary' line (Dope Sheet editors only)"
-msgstr "Afficher une ligne de “résumé” supplémentaire (éditeur Dope Sheet uniquement)"
+msgstr "Afficher une ligne de “résumé” supplémentaire (éditeur Feuille d'exposition uniquement)"
 
 
 msgid "Display Texture"
@@ -9501,7 +9501,7 @@ msgstr "Pondération de l'effecteur Courbe Guide"
 
 
 msgid "Drag"
-msgstr "Traction"
+msgstr "Glisser"
 
 
 msgid "Drag effector weight"
@@ -13579,7 +13579,7 @@ msgstr "Une image clé de remplissage, ou pré-calculée pour la création de cl
 
 
 msgid "Frame is selected for editing in the Dope Sheet"
-msgstr "La frame est sélectionnée pour édition dans la Dope Sheet"
+msgstr "La frame est sélectionnée pour édition dans la Feuille d'exposition"
 
 
 msgid "Freehand curves defining the sketch on this frame"
@@ -13807,7 +13807,7 @@ msgstr "Valeurs pour la modification de la taille"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
-msgstr "Le calque est sélectionné pour l'édition dans la Dope Sheet"
+msgstr "Le calque est sélectionné pour l'édition dans la Feuille d'exposition"
 
 
 msgid "In Front"
@@ -27231,6 +27231,10 @@ msgstr "Groupes d’os – Spécialités"
 
 msgid "Channel"
 msgstr "Canal"
+
+
+msgid "Dope Sheet Context Menu"
+msgstr "Menu contextuel de la Feuille d'exposition"
 
 
 msgid "Snap"
@@ -47047,6 +47051,11 @@ msgstr "Copier contraintes vers objets sélectionnés"
 
 msgid "Copy constraints to other selected objects"
 msgstr "Copier les contraintes vers les autres objets sélectionnés"
+
+
+msgctxt "Operator"
+msgid "Convert To"
+msgstr "Convertir vers"
 
 
 msgid "Convert selected objects to another type"
@@ -67953,11 +67962,11 @@ msgstr "Ligne de sortie"
 
 
 msgid "Theme Dope Sheet"
-msgstr "Thème de Dope Sheet"
+msgstr "Thème de Feuille d'exposition"
 
 
 msgid "Theme settings for the Dope Sheet"
-msgstr "Réglages du thème pour la Dope Sheet"
+msgstr "Réglages du thème pour la Feuille d'exposition"
 
 
 msgid "Active Channel Group"
@@ -70819,6 +70828,11 @@ msgid "Export"
 msgstr "Exporter"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Appliquer"
+
+
 msgid "Demo Mode:"
 msgstr "Mode démo :"
 
@@ -71390,6 +71404,11 @@ msgstr "Sélection vers curseur"
 
 
 msgctxt "Operator"
+msgid "Selection to Cursor (Keep Offset)"
+msgstr "Sélection vers curseur (conserver décalage)"
+
+
+msgctxt "Operator"
 msgid "Delete Active Keyframe (Active Layer)"
 msgstr "Supprimer l’images clé active (calque actif)"
 
@@ -71408,12 +71427,24 @@ msgid "Data Source:"
 msgstr "Source de données :"
 
 
+msgid "Display Cursor"
+msgstr "Afficher curseur"
+
+
 msgid "Show Fill Color While Drawing"
 msgstr "Afficher couleur de remplissage durant le dessin"
 
 
+msgid "Cursor Color"
+msgstr "Couleur du curseur"
+
+
 msgid "Lock Frame"
 msgstr "Verrouiller frame"
+
+
+msgid "Inverse Color"
+msgstr "Inverser couleur"
 
 
 msgid "Unlocked"
@@ -71422,6 +71453,10 @@ msgstr "Déverrouillé"
 
 msgid "Frame: %d (%s)"
 msgstr "Frame : %d  (%s)"
+
+
+msgid "Stroke Color"
+msgstr "Couleur du trait"
 
 
 msgctxt "Operator"
@@ -71668,6 +71703,10 @@ msgstr "Tout connecter"
 msgctxt "Operator"
 msgid "Disconnect All"
 msgstr "Tout déconnecter"
+
+
+msgid "Air Viscosity"
+msgstr "Viscosité de l'air"
 
 
 msgid "Max Spring Creation Length"
@@ -72113,6 +72152,11 @@ msgstr "Nettoyer"
 msgctxt "Operator"
 msgid "Back"
 msgstr "De derrière"
+
+
+msgctxt "Operator"
+msgid "Toggle Dope Sheet"
+msgstr "Thème de Feuille d'exposition"
 
 
 msgctxt "Operator"
@@ -74052,11 +74096,6 @@ msgstr "Édition rapide"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Appliquer"
-
-
-msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "Appliquer image caméra"
 
@@ -74155,6 +74194,10 @@ msgstr "Impossible d’ouvrir le dossier “%s”"
 
 msgid "Could not find '%s' in '%s'"
 msgstr "“%s” est introuvable dans “%s”"
+
+
+msgid "Scene Collection"
+msgstr "Collection de scène"
 
 
 msgid "Const"
@@ -75626,6 +75669,20 @@ msgid "Python: %s.%s"
 msgstr "Python: %s.%s"
 
 
+msgctxt "Operator"
+msgid "Click"
+msgstr "Clic"
+
+
+msgctxt "Operator"
+msgid "Drag"
+msgstr "Glisser"
+
+
+msgid "Double click to rename"
+msgstr "Double-cliquez pour renommer"
+
+
 msgid "ID-Block:"
 msgstr "Bloc-ID :"
 
@@ -75636,6 +75693,10 @@ msgstr "Pas de propriétés"
 
 msgid "Reset"
 msgstr "Réinitialiser"
+
+
+msgid "More..."
+msgstr "Plus…"
 
 
 msgid "Pos"
@@ -76248,6 +76309,11 @@ msgstr "PisteSon"
 msgctxt "Object"
 msgid "CurveGuide"
 msgstr "CourbeGuide"
+
+
+msgctxt "Object"
+msgid "Drag"
+msgstr "Glisser"
 
 
 msgctxt "Object"
@@ -77071,8 +77137,24 @@ msgid "Failed to open window!"
 msgstr "Impossible d’ouvrir une fenêtre !"
 
 
+msgid "Join Areas"
+msgstr "Joindre les zones"
+
+
+msgid "Swap Areas"
+msgstr "Intervertir les zones"
+
+
+msgid "Restore Areas"
+msgstr "Restaurer les zones"
+
+
 msgid "Maximize Area"
 msgstr "Agrandir fenêtre"
+
+
+msgid "Full Screen Area"
+msgstr "Zone en plein écran"
 
 
 msgid "Flip to Bottom"
@@ -77097,6 +77179,10 @@ msgstr "Préférences de Blender"
 
 msgid "Blender Drivers Editor"
 msgstr "Éditeur de contrôleurs de Blender"
+
+
+msgid "Unable to close area"
+msgstr "Impossible de fermer la zone"
 
 
 msgid "Can only scale region size from an action zone"
@@ -78457,8 +78543,56 @@ msgid "Vertex Weights"
 msgstr "Poids du vertex"
 
 
+msgid "No active object found"
+msgstr "Pas d’objet actif trouvé"
+
+
+msgid "Front Orthographic"
+msgstr "Orthographique de face"
+
+
+msgid "Front Perspective"
+msgstr "Perspective de face"
+
+
+msgid "Back Orthographic"
+msgstr "Orthographique arrière"
+
+
+msgid "Back Perspective"
+msgstr "Perspective arrière"
+
+
+msgid "Top Orthographic"
+msgstr "Orthographique du dessus"
+
+
+msgid "Top Perspective"
+msgstr "Perspective du dessus"
+
+
 msgid "Bottom Orthographic"
-msgstr "D’en bas orthographique"
+msgstr "Orthographique du dessous"
+
+
+msgid "Bottom Perspective"
+msgstr "Perspective du dessous"
+
+
+msgid "Right Orthographic"
+msgstr "Orthographique de droite"
+
+
+msgid "Right Perspective"
+msgstr "Perspective de droite"
+
+
+msgid "Left Orthographic"
+msgstr "Orthographique de gauche"
+
+
+msgid "Left Perspective"
+msgstr "Perspective de gauche"
 
 
 msgid "Camera Perspective"
@@ -78467,6 +78601,10 @@ msgstr "Caméra perspective"
 
 msgid "Camera Orthographic"
 msgstr "Caméra orthographique"
+
+
+msgid "Camera Panoramic"
+msgstr "Caméra panoramique"
 
 
 msgid "Object as Camera"
@@ -78906,7 +79044,7 @@ msgstr "Auto-décalage défini à %s – presser %s pour inverser la direction 
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
-msgstr "Utiliser le mode de transformation 'Time_Translate' au lieu du mode 'Translation' pour déplacer les images clés dans l’éditeur Dope Sheet"
+msgstr "Utiliser le mode de transformation 'Time_Translate' au lieu du mode 'Translation' pour déplacer les images clés dans l’éditeur Feuille d'exposition"
 
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
