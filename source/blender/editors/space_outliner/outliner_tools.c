@@ -451,6 +451,7 @@ typedef enum eOutliner_PropSceneOps {
 static const EnumPropertyItem prop_scene_op_types[] = {
     /*bfa - replaced the ICON_X by ICON_DELETE*/
     {OL_SCENE_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+    /* bfa - add scene outliner operators  */
     // {OL_SCENE_OP_NEW, "NEW", ICON_NEW, "New", ""},
     {OL_SCENE_OP_COPY_SETTINGS, "COPY_SETTINGS", ICON_COPYDOWN, "Copy Settings", ""},
     {OL_SCENE_OP_COPY_LINKED, "COPY_LINKED", ICON_LINKED, "Linked Copy", ""},
@@ -478,7 +479,7 @@ static bool outliner_do_scene_operation(
   return success;
 }
 
-/* bfa */
+/* bfa - add scene outliner operators  */
 /* based on ED_scene_add, but without the need of getting setting active scene */
 static Scene *scene_add_ex(Scene *scene_old, Main *bmain, bContext *C, eSceneCopyMethod method)
 {
@@ -518,6 +519,7 @@ static bool scene_fn(bContext *C,
       return false;
     }
   }
+  /* bfa - add scene outliner operators  */
   else if (event == OL_SCENE_OP_NEW) {
     scene_add_ex(scene, bmain, C, SCE_COPY_NEW);
   }
@@ -548,6 +550,7 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
     outliner_cleanup_tree(space_outliner);
     ED_undo_push(C, "Delete Scene(s)");
   }
+  /* bfa - add scene outliner operators  */
   else if (ELEM(event,
                 OL_SCENE_OP_NEW,
                 OL_SCENE_OP_COPY_SETTINGS,
