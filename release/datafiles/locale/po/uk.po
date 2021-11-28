@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -91038,6 +91038,11 @@ msgid "Select objects to scatter and a target object"
 msgstr "Вибрати об'єкти для розсіювання та цільовий об'єкт"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Застосувати"
+
+
 msgid "Demo Mode:"
 msgstr "Демо Режим:"
 
@@ -97831,11 +97836,6 @@ msgstr "Мульти-Малювання"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Швидке Редагування"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Застосувати"
 
 
 msgctxt "Operator"

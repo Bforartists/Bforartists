@@ -52,7 +52,6 @@ if "bpy" in locals():
     importlib.reload(ui)
     importlib.reload(properites)
     importlib.reload(preferences)
-    importlib.reload(updater)
 else:
     import bpy
     from . import common
@@ -61,14 +60,11 @@ else:
     from . import ui
     from . import properites
     from . import preferences
-    from . import updater
 
 import bpy
 
 
 def register():
-    updater.register_updater(bl_info)
-
     utils.bl_class_registry.BlClassRegistry.register()
     properites.init_props(bpy.types.Scene)
     user_prefs = utils.compatibility.get_user_preferences(bpy.context)

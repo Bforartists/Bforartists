@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -12584,6 +12584,11 @@ msgid "Deselect"
 msgstr "ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻝﺎﻤﻋﺍ"
+
+
 msgid "Demo Mode:"
 msgstr "ﯽﻠﺒﻗ ﺖﻟﺎﺣ"
 
@@ -13682,11 +13687,6 @@ msgstr "ﮓﻧﺭ ﺪﻨﭼ"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "ﻊﯾﺮﺳ ﺶﯾﺍﺮﯾﻭ"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻝﺎﻤﻋﺍ"
 
 
 msgctxt "Operator"

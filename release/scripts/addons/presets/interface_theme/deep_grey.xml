@@ -1342,9 +1342,9 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#424242cc"
-                back="#333333b3"
-                sub_back="#0000003e"
+                header="#6b6b6bff"
+                back="#474747ff"
+                sub_back="#00000019"
                 >
               </ThemePanelColors>
             </panelcolors>
