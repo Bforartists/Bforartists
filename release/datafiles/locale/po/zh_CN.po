@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -27689,6 +27689,14 @@ msgstr "重复帧，每隔一个周期反转播放方向"
 
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "窗口管理器数据块, 定义了打开的窗口以及其他的用户界面数据"
+
+
+msgid "MathVisProp"
+msgstr "MathVisProp"
+
+
+msgid "MathVisStatePropList"
+msgstr "MathVisStatePropList"
 
 
 msgid "Category"
@@ -65303,11 +65311,6 @@ msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "启用后，应用沿X轴翻转后的姿态"
 
 
-msgctxt "Operator"
-msgid "Blend Pose Library Pose"
-msgstr "混合姿态库姿态"
-
-
 msgid "Blend the given Pose Action to the rig"
 msgstr "将给定的姿态动作混合到绑定中"
 
@@ -96198,6 +96201,10 @@ msgid "Follow a custom transformation to define the VR view's base pose"
 msgstr "按照自定义的变换来定义VR视角的基础姿势"
 
 
+msgid "Uniform scale to apply to VR view"
+msgstr "应用于VR视图的统一缩放"
+
+
 msgid "VR viewport far clipping distance"
 msgstr "远裁距离的VR视口"
 
@@ -96270,6 +96277,10 @@ msgid "Absolute Tracking"
 msgstr "绝对追踪"
 
 
+msgid "Allow the VR tracking origin to be defined independently of the headset location"
+msgstr "允许独立于头戴设备位置定义VR跟踪原点"
+
+
 msgid "Positional Tracking"
 msgstr "位置追踪"
 
@@ -96284,6 +96295,30 @@ msgstr "会话状态"
 
 msgid "Active Action Map"
 msgstr "活动动作"
+
+
+msgid "Navigation Location"
+msgstr "漫游位置"
+
+
+msgid "Location offset to apply to base pose when determining viewer location"
+msgstr "在确定查看器位置时，应用于基本姿势的位置偏移"
+
+
+msgid "Navigation Rotation"
+msgstr "漫游旋转"
+
+
+msgid "Rotation offset to apply to base pose when determining viewer rotation"
+msgstr "在确定查看器旋转时，应用于基本姿势的旋转偏移"
+
+
+msgid "Navigation Scale"
+msgstr "漫游缩放"
+
+
+msgid "Additional scale multiplier to apply to base scale when determining viewer scale"
+msgstr "在确定查看器缩放时，应用于基本缩放的缩放乘数"
 
 
 msgid "Selected Action Map"
@@ -97591,6 +97626,14 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "以及Nvidia驱动程序470版本或更新"
 
 
+msgid "Requires discrete AMD GPU with RDNA architecture"
+msgstr "需要RDNA架构的独立AMD GPU"
+
+
+msgid "and AMD Radeon Pro 21.Q4 driver or newer"
+msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
+
+
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -98013,6 +98056,11 @@ msgid "Deselect Pose Bones"
 msgstr "删除姿态骨骼"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "应用"
+
+
 msgid "Activate & Edit"
 msgstr "激活&编辑"
 
@@ -98239,6 +98287,38 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgid "Positional"
+msgstr "位置上的"
+
+
+msgid "Controllers"
+msgstr "控制器"
+
+
+msgid "Custom Overlays"
+msgstr "自定义叠加层"
+
+
+msgid "Controller Style"
+msgstr "控制器样式"
+
+
+msgid "Gamepad"
+msgstr "Gamepad"
+
+
+msgid "HP Reverb G2"
+msgstr "HP Reverb G2"
+
+
+msgid "HTC Vive Cosmos"
+msgstr "HTC Vive Cosmos"
+
+
+msgid "Huawei"
+msgstr "华为"
+
+
 msgid "Note:"
 msgstr "说明:"
 
@@ -98258,6 +98338,11 @@ msgstr "未编译VR/OpenXR特性"
 msgctxt "Operator"
 msgid "New"
 msgstr "新建"
+
+
+msgctxt "Operator"
+msgid "Edit Value"
+msgstr "编辑值"
 
 
 msgid "API Defined"
@@ -102255,8 +102340,18 @@ msgstr "取消屏蔽弃选片段"
 
 
 msgctxt "Operator"
+msgid "Position"
+msgstr "位置"
+
+
+msgctxt "Operator"
 msgid "Rotation"
 msgstr "旋转"
+
+
+msgctxt "Operator"
+msgid "All Transforms"
+msgstr "全部变换"
 
 
 msgctxt "Operator"
@@ -105176,11 +105271,6 @@ msgstr "快速编辑"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "应用"
-
-
-msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "应用摄像机图像"
 
@@ -105234,6 +105324,10 @@ msgid "Ignore Transparent"
 msgstr "忽略透明"
 
 
+msgid "User Library"
+msgstr "用户库"
+
+
 msgid "No AnimData to set action on"
 msgstr "没有可供设置动作的动画数据"
 
@@ -105272,6 +105366,18 @@ msgstr "此几何类型不支持的属性域"
 
 msgid "Attribute is required and can't be removed"
 msgstr "属性是必需的，且无法删除"
+
+
+msgid " attribute from geometry"
+msgstr " 来自几何体的属性"
+
+
+msgid "ID / Index"
+msgstr "ID/编号"
+
+
+msgid " from "
+msgstr "从"
 
 
 msgid "Library file, loading empty scene"
@@ -105576,6 +105682,14 @@ msgid "[Action Stash]"
 msgstr "[Action Stash]"
 
 
+msgid "Undefined"
+msgstr "未定义"
+
+
+msgid "Undefined Node Tree Type"
+msgstr "尚未定义的节点树类型"
+
+
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
 msgstr "非空物体 '%s' 无法在 Blender 2.80 中再复制集合 '%s'，已移除实例"
 
@@ -105767,6 +105881,14 @@ msgstr "Blender 没有使用运动追踪库来编译"
 
 msgid "Original Mode"
 msgstr "原始模式"
+
+
+msgid "Could not load volume for writing"
+msgstr "无法加载用于写入的体积"
+
+
+msgid "Could not write volume: %s"
+msgstr "无法写入体积: %s"
 
 
 msgid "Cannot open or start AVI movie file"
@@ -106013,6 +106135,26 @@ msgid "Edge-rings are not connected"
 msgstr "循环边未相连"
 
 
+msgid "Compositing | Tile %u-%u"
+msgstr "合成中 | 分块 %u-%u"
+
+
+msgid "Compositing | Initializing execution"
+msgstr "合成中 | 执行初始化"
+
+
+msgid "Compositing | Operation %i-%li"
+msgstr "合成中 | 操作 %i-%li"
+
+
+msgid "Compositing | Determining resolution"
+msgstr "合成中 | 确定分辨率"
+
+
+msgid "Compositing | De-initializing execution"
+msgstr "合成 | 执行去初始化"
+
+
 msgid "Basic"
 msgstr "基本"
 
@@ -106231,6 +106373,10 @@ msgstr "在当前帧为封套添加一个新的控制点"
 
 msgid "Delete envelope control point"
 msgstr "删除封套控制点"
+
+
+msgid "Coefficient"
+msgstr "系数"
 
 
 msgid "No animation data in buffer to paste"
@@ -106677,8 +106823,56 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "程序错误：缺失清除变换的功能或帧设置名称"
 
 
+msgid "Selected data-blocks are already assets (or do not support use as assets)"
+msgstr "选定的数据块已经是资产(或不支持用作资产)"
+
+
+msgid "No data-blocks to create assets for found (or do not support use as assets)"
+msgstr "没有用于创建已找到的资产的数据块(或不支持用作资产)"
+
+
+msgid "No asset data-blocks from the current file selected (assets must be stored in the current file to be able to edit or clear them)"
+msgstr "从所选当前文件中选取的资产数据块(资产必须存储在当前文件中才能编辑或清除)"
+
+
+msgid "No asset data-blocks selected/focused"
+msgstr "未选择/聚焦资产数据块"
+
+
+msgid "Data-block '%s' is now an asset"
+msgstr "数据块 '%s' 现在是资产"
+
+
+msgid "%i data-blocks are now assets"
+msgstr "%i 数据块现在是资产"
+
+
+msgid "Data-block '%s' is no asset anymore"
+msgstr "数据块 '%s' 已非资产"
+
+
+msgid "%i data-blocks are no assets anymore"
+msgstr "%i 数据块已非资产"
+
+
+msgid "Cannot save asset catalogs before the Blender file is saved"
+msgstr "保存Blender文件之前无法保存资产目录"
+
+
+msgid "No changes to be saved"
+msgstr "无需保存更改"
+
+
+msgid "Unable to load %s from %s"
+msgstr "无法加载 %s 来自 %s"
+
+
 msgid "No point was selected"
 msgstr "无选中点"
+
+
+msgid "Could not separate selected curve(s)"
+msgstr "无法分离所选曲线"
 
 
 msgid "Cannot separate curves with vertex keys"
@@ -106731,6 +106925,14 @@ msgstr "仅支持贝塞尔曲线"
 
 msgid "Active object is not a selected curve"
 msgstr "活动物体不是一个被选中的曲线物体"
+
+
+msgid "%d curve(s) could not be separated"
+msgstr "%d 曲线无法分离"
+
+
+msgid "%d curves could not make segments"
+msgstr "%d 曲线无法创建线段"
 
 
 msgctxt "Curve"
@@ -106799,6 +107001,14 @@ msgstr "无法访问3D 视图"
 
 msgid "Unable to access depth buffer, using view plane"
 msgstr "无法进入深度缓冲, 使用视图平面"
+
+
+msgid "Surface(s) have no active point"
+msgstr "表面没有活动点"
+
+
+msgid "Curve(s) have no active point"
+msgstr "曲线没有活动点"
 
 
 msgid "No control point selected"
@@ -107229,6 +107439,14 @@ msgid "Error evaluating number, see Info editor for details"
 msgstr "计算数字错误，详细信息见信息编辑器"
 
 
+msgid "Missing Panel: %s"
+msgstr "面板丢失: %s"
+
+
+msgid "Missing Menu: %s"
+msgstr "按钮丢失: %s"
+
+
 msgid "Non-Keyboard Shortcut"
 msgstr "无键盘快捷键"
 
@@ -107398,6 +107616,10 @@ msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
 msgstr "LMB: 笔画 - Shift: 填充 - Shift+Ctrl: 笔画+填充"
 
 
+msgid "Menu Missing:"
+msgstr "菜单丢失:"
+
+
 msgid "Animate property"
 msgstr "动画属性"
 
@@ -107562,6 +107784,14 @@ msgstr "单击"
 msgctxt "Operator"
 msgid "Drag"
 msgstr "拖拽"
+
+
+msgid "Double click to rename"
+msgstr "双击以重命名"
+
+
+msgid "Hide filtering options"
+msgstr "隐藏过滤选项"
 
 
 msgid "ID-Block:"
@@ -107762,6 +107992,14 @@ msgstr "停止动画播放"
 
 msgid "Click to see the remaining reports in text block: 'Recent Reports'"
 msgstr "点击以在文本块中查看完整报告:'最新报告'"
+
+
+msgid "The Cycles Alembic Procedural is only available with the experimental feature set"
+msgstr "Cycles Alembic 仅对实验特性组可用"
+
+
+msgid "The active render engine does not have an Alembic Procedural"
+msgstr "活动渲染引擎没有Alembic程序化"
 
 
 msgid "Browse Scene to be linked"
@@ -108169,6 +108407,10 @@ msgid "Mesh Data"
 msgstr "网格数据"
 
 
+msgid "No weights/vertex groups on object(s)"
+msgstr "物体未包含权重/顶点组"
+
+
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "平面"
@@ -108374,6 +108616,10 @@ msgid "No selected vertex"
 msgstr "无选中顶点"
 
 
+msgid "Mesh(es) do not have shape keys"
+msgstr "网格没有形态键"
+
+
 msgid "Active mesh does not have shape keys"
 msgstr "活动网格没有形态键"
 
@@ -108484,6 +108730,18 @@ msgstr "无法在编辑模式下移除多边形"
 
 msgid "Cannot remove more polys than the mesh contains"
 msgstr "无法移除多边形, 超出网格所包含的多边形数量"
+
+
+msgid "Cannot add more than %i UV maps"
+msgstr "不能添加超过%i UV贴图"
+
+
+msgid "Cannot add more than %i vertex color layers"
+msgstr "不能添加超过 %i 顶点颜色层"
+
+
+msgid "Cannot add more than %i sculpt vertex color layers"
+msgstr "不能添加超过 %i 雕刻顶点颜色层"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -108630,6 +108888,10 @@ msgstr "目前不支持曲面转蜡笔"
 
 msgid "Object not found"
 msgstr "没找到物体"
+
+
+msgid "Object could not be duplicated"
+msgstr "无法复制物体"
 
 
 msgid "This data does not support joining in edit mode"
@@ -109266,6 +109528,34 @@ msgstr "找不到包含物体 '%s' 的可重写集合"
 
 msgid "Could not create a library override from proxy '%s' (might use already local data?)"
 msgstr "无法从代理 '%s' 创建库重写(可能已使用本地数据?)"
+
+
+msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "移动鼠标以更改体素大小。LBM：确认大小，ESC/RMB：取消"
+
+
+msgid "Voxel remesher cannot run with a voxel size of 0.0"
+msgstr "不能对大小为 0.0 的体素使用体素网格重构"
+
+
+msgid "Voxel remesher failed to create mesh"
+msgstr "体素网格重构创建网格失败"
+
+
+msgid "The remesher cannot worked on linked or override data"
+msgstr "网格重构器无法作用于已关联或覆写数据"
+
+
+msgid "The remesher cannot run from edit mode"
+msgstr "不能从编辑模式运行网格重构"
+
+
+msgid "The remesher cannot run with dyntopo activated"
+msgstr "不能在已激活动态拓扑时运行网格重构"
+
+
+msgid "The remesher cannot run with a Multires modifier in the modifier stack"
+msgstr "网格重构不能与多级精度修改器同时使用"
 
 
 msgid "Select Collection"
@@ -109928,6 +110218,10 @@ msgid "Removed amount of editors: %d"
 msgstr "移除的编辑器数量: %d"
 
 
+msgid "Only supported in object mode"
+msgstr "仅在物体模式下支持"
+
+
 msgid "expected a view3d region"
 msgstr "期望一个 3D 视图区"
 
@@ -109970,6 +110264,14 @@ msgstr "无法在顶栏切换区块"
 
 msgid "Flipping regions in the Top-bar is not allowed"
 msgstr "不允许翻转区块至顶栏"
+
+
+msgid "Missing: %s"
+msgstr "丢失: %s"
+
+
+msgid "Missing: %s.%s"
+msgstr "丢失: %s.%s"
 
 
 msgid "No menu items found"
@@ -110437,8 +110739,48 @@ msgid "Track the selected markers forward by one frame"
 msgstr "向前追踪一帧选定的标记"
 
 
+msgid "Unassigned"
+msgstr "未分配"
+
+
+msgid "Move Catalog"
+msgstr "移动目录"
+
+
+msgid "into"
+msgstr "到"
+
+
+msgid "Move assets to catalog"
+msgstr "将资产移动到目录"
+
+
+msgid "Move asset to catalog"
+msgstr "将资产移动到目录"
+
+
+msgid "Move assets out of any catalog"
+msgstr "将资产从任何目录中移出"
+
+
+msgid "Move asset out of any catalog"
+msgstr "将资产从任何目录中移出"
+
+
 msgid "File path"
 msgstr "文件路径"
+
+
+msgid "Path to asset library does not exist:"
+msgstr "资产库路径不存在:"
+
+
+msgid ""
+"Asset Libraries are local directories that can contain .blend files with assets inside.\n"
+"Manage Asset Libraries from the File Paths section in Preferences"
+msgstr ""
+"资产库是包含包含内部资产的 .blend 文件的本地目录。\n"
+"从偏好设置中的文件路径部分管理资产库"
 
 
 msgid "Today"
@@ -110599,6 +110941,34 @@ msgstr "函数曲线不包含关键帧仅存储采样点"
 
 msgid "No active keyframe on F-Curve"
 msgstr "函数曲线中无活动关键帧"
+
+
+msgid "It cannot be left blank"
+msgstr "不能留空"
+
+
+msgid "It cannot start with a number"
+msgstr "不能以数字开头"
+
+
+msgid "It cannot start with a special character, including '$', '@', '!', '~', '+', '-', '_', '.', or ' '"
+msgstr "不能以特殊字符开头，包括 '$', '@', '!', '~', '+', '-', '_', '.', 或 ' '"
+
+
+msgid "It cannot contain spaces (e.g. 'a space')"
+msgstr "不能包含空格 (比如 'a space')"
+
+
+msgid "It cannot contain dots (e.g. 'a.dot')"
+msgstr "不能包含小数点 (比如 'a.dot')"
+
+
+msgid "It cannot contain special (non-alphabetical/numeric) characters"
+msgstr "不能包含特殊 (非字母表/数字)字符"
+
+
+msgid "It cannot be a reserved keyword in Python"
+msgstr "不能是Python的保留关键字"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -111082,6 +111452,346 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "修改器无法被添加至 (%s : %s)(请参考控制台的打印信息)"
 
 
+msgid "Sta"
+msgstr "Sta"
+
+
+msgid "Label Size"
+msgstr "标签大小"
+
+
+msgid "Frame: %d"
+msgstr "帧: %d"
+
+
+msgid "Squash"
+msgstr "挤压"
+
+
+msgid "Center:"
+msgstr "中心:"
+
+
+msgid "Bokeh Type:"
+msgstr "散景类型:"
+
+
+msgid "Speed:"
+msgstr "速率:"
+
+
+msgid "Inner Edge:"
+msgstr "内侧边:"
+
+
+msgid "Buffer Edge:"
+msgstr "缓冲边线:"
+
+
+msgid "Color Space:"
+msgstr "色彩空间:"
+
+
+msgid "Despill Channel:"
+msgstr "非溢出通道:"
+
+
+msgid "Limiting Channel:"
+msgstr "限定通道:"
+
+
+msgid "Key Channel:"
+msgstr "关键通道:"
+
+
+msgid "Path:"
+msgstr "路径:"
+
+
+msgid "Base Path:"
+msgstr "基本路径:"
+
+
+msgid "Add Input"
+msgstr "添加输入"
+
+
+msgid "File Subpath:"
+msgstr "文件子路径:"
+
+
+msgid "Format:"
+msgstr "格式:"
+
+
+msgid "Master"
+msgstr "主要"
+
+
+msgid "Highlights"
+msgstr "高亮"
+
+
+msgid "Midtones"
+msgstr "中间调"
+
+
+msgid "Matte Objects:"
+msgstr "蒙版物体:"
+
+
+msgid "Add Crypto Layer"
+msgstr "添加Crypto层"
+
+
+msgid "Remove Crypto Layer"
+msgstr "移除Crypto层"
+
+
+msgid "Matte ID:"
+msgstr "蒙版ID:"
+
+
+msgid "Disabled, built without OpenImageDenoise"
+msgstr "已禁用, 未使用OpenImageDenoise编译"
+
+
+msgid "Disabled, CPU with SSE4.1 is required"
+msgstr "已禁用, 需要带SSE4.1的CPU"
+
+
+msgid "Prefilter:"
+msgstr "预过滤:"
+
+
+msgid "Undefined Socket Type"
+msgstr "未定义的接口类型"
+
+
+msgid "Nishita not available in Eevee"
+msgstr "Nishita在Eevee中不可用"
+
+
+msgid "No mesh in active object"
+msgstr "活动物体中没有网格"
+
+
+msgid "NodeTree"
+msgstr "节点树"
+
+
+msgid "Could not add node group"
+msgstr "无法添加节点组"
+
+
+msgid "Could not add node object"
+msgstr "无法添加节点物体"
+
+
+msgid "Could not find node object socket"
+msgstr "无法找到节点物体接口"
+
+
+msgid "Could not add texture node"
+msgstr "无法添加纹理节点"
+
+
+msgid "Could not add node collection"
+msgstr "无法添加节点集合"
+
+
+msgid "Could not find node collection socket"
+msgstr "无法找到节点集合接口"
+
+
+msgid "Could not add an image node"
+msgstr "无法添加图像节点"
+
+
+msgid "Could not add a mask node"
+msgstr "无法添加一个遮罩节点"
+
+
+msgid ""
+"Can not add node group '%s' to '%s':\n"
+"  %s"
+msgstr ""
+"无法添加节点组 '%s' 至 '%s':\n"
+"  %s"
+
+
+msgid "Can not add node group '%s' to '%s'"
+msgstr "无法添加节点组 '%s' 至 '%s'"
+
+
+msgid "Node tree type %s undefined"
+msgstr "尚未定义节点树类型 %s"
+
+
+msgid " (Integer)"
+msgstr " (整数)"
+
+
+msgid " (Float)"
+msgstr "(浮点)"
+
+
+msgid " (Vector)"
+msgstr " (矢量)"
+
+
+msgid "True"
+msgstr "真"
+
+
+msgid "False"
+msgstr "假"
+
+
+msgid " (Boolean)"
+msgstr " (布尔)"
+
+
+msgid " (String)"
+msgstr " (字符串)"
+
+
+msgid "Integer field"
+msgstr "整型字段"
+
+
+msgid "Float field"
+msgstr "浮点字段"
+
+
+msgid "Vector field"
+msgstr "矢量字段"
+
+
+msgid "Boolean field"
+msgstr "布尔字段"
+
+
+msgid "String field"
+msgstr "字符串字段"
+
+
+msgid "Color field"
+msgstr "颜色字段"
+
+
+msgid " based on:"
+msgstr " 基于:"
+
+
+msgid "Empty Geometry"
+msgstr "空几何体"
+
+
+msgid "Geometry:"
+msgstr "几何:"
+
+
+msgid "• Mesh: %s vertices, %s edges, %s faces"
+msgstr "• 网格: %s 顶点, %s 边, %s 面"
+
+
+msgid "• Point Cloud: %s points"
+msgstr "• 点云: %s 点"
+
+
+msgid "• Curve: %s splines"
+msgstr "• 曲线: %s 样条线"
+
+
+msgid "• Instances: %s"
+msgstr "• 实例: %s"
+
+
+msgid "• Volume"
+msgstr "• 体积"
+
+
+msgid "The socket value has not been computed yet"
+msgstr "接口值尚未经计算"
+
+
+msgid "Clipboard is empty"
+msgstr "剪贴板为空"
+
+
+msgid "Clipboard nodes are an incompatible type"
+msgstr "剪贴板节点处于一个不兼容的类型"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "一些节点引用无法被重置, 将被留空"
+
+
+msgid "Text not used by any node, no update done"
+msgstr "文本没有被节点使用, 无更新"
+
+
+msgid ""
+"Cannot add node %s into node tree %s:\n"
+"  %s"
+msgstr ""
+"无法将节点 %s 添加至节点树 %s:\n"
+"  %s"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "无法将 %s 类型的节点添加到节点树 %s 中"
+
+
+msgid "Cannot ungroup"
+msgstr "无法解组"
+
+
+msgid "Not inside node group"
+msgstr "不在节点组内"
+
+
+msgid "Cannot separate nodes"
+msgstr "无法分离节点"
+
+
+msgid ""
+"Can not add node '%s' in a group:\n"
+"  %s"
+msgstr ""
+"无法添加节点 '%s' 在组内:\n"
+"  %s"
+
+
+msgid "Can not add node '%s' in a group"
+msgstr "无法在组中添加节点 '%s'"
+
+
+msgid "LMB: drag node link, RMB: cancel"
+msgstr "鼠标左键: 拖拽节点连线, 鼠标右键: 取消"
+
+
+msgid "Disconnect"
+msgstr "断开"
+
+
+msgid "Dependency Loop"
+msgstr "从属循环"
+
+
+msgid "Add node to input"
+msgstr "添加节点至输入"
+
+
+msgid "Remove nodes connected to the input"
+msgstr "移除与输入端相连的节点"
+
+
+msgid "Disconnect nodes connected to the input"
+msgstr "将与输入端相连的节点断开"
+
+
 msgid "More than one collection is selected"
 msgstr "有多个集合被选中"
 
@@ -111447,6 +112157,10 @@ msgid "(empty)"
 msgstr "(空)"
 
 
+msgid "Current File"
+msgstr "当前文件"
+
+
 msgid "Can't reload with running modal operators"
 msgstr "无法使用运行中模态操作重新加载"
 
@@ -111629,6 +112343,10 @@ msgstr "选择影片或图像片段"
 
 msgid "No active sequence!"
 msgstr "没有活动的序列!"
+
+
+msgid "Column"
+msgstr "列"
 
 
 msgid "File Modified Outside and Inside Blender"
@@ -112572,6 +113290,22 @@ msgid "Overwrite %s"
 msgstr "覆盖 %s"
 
 
+msgid "Can't edit previews of overridden library data"
+msgstr "无法编辑重写库数据的预览"
+
+
+msgid "Data-block does not support previews"
+msgstr "数据块不支持预览"
+
+
+msgid "Incorrect context for running data-block fake user toggling"
+msgstr "运行数据块伪用户切换的上下文不正确"
+
+
+msgid "Data-block type does not support fake user"
+msgstr "数据块类型不支持伪用户"
+
+
 msgid "Numeric input evaluation"
 msgstr "数值输入运算"
 
@@ -112704,8 +113438,28 @@ msgid "Continue Without Clearing"
 msgstr "不清除继续"
 
 
+msgid "Depth Offset"
+msgstr "深度偏移"
+
+
+msgid "Towards Custom Camera"
+msgstr "朝向自定义摄像机"
+
+
+msgid "Cached from the first line art modifier"
+msgstr "从第一个线条画修改器中缓存"
+
+
+msgid "Object is not in front"
+msgstr "物体不在前面"
+
+
 msgid "Modifier has baked data"
 msgstr "修改器已烘焙数据"
+
+
+msgid "Object is shown in front"
+msgstr "物体已显示在前面"
 
 
 msgid "Stroke Fit Method"
@@ -112713,7 +113467,7 @@ msgstr "笔画拟合方法"
 
 
 msgid "All line art objects are now cleared"
-msgstr "已清除全部张条画物体"
+msgstr "已清除全部线条画物体"
 
 
 msgid "AaBbCc"
@@ -113858,6 +114612,10 @@ msgid "Layer Mapping"
 msgstr "层映射"
 
 
+msgid "Face Count: %d"
+msgstr "面数: %d"
+
+
 msgid "Refresh"
 msgstr "刷新"
 
@@ -113904,6 +114662,22 @@ msgstr "打包外部文件"
 
 msgid "Save External..."
 msgstr "保存外部文件..."
+
+
+msgid "Node tree has legacy node"
+msgstr "节点树包含旧版节点"
+
+
+msgid "No group output attributes connected"
+msgstr "没有连接组输出属性"
+
+
+msgid "Output Attributes"
+msgstr "输出属性"
+
+
+msgid "Legacy node will be removed before Blender 4.0"
+msgstr "在Blender 4.0 之前，将删除旧节点"
 
 
 msgid "Coverage"
@@ -113999,6 +114773,10 @@ msgid "Levels Viewport"
 msgstr "视图层级"
 
 
+msgid "Final Scale: Render %.2f px, Viewport %.2f px"
+msgstr "最终缩放：渲染 %.2f px, %.2f px"
+
+
 msgid "This modifier can only deform control points, not the filled curve/surface"
 msgstr "此修改器只能使控制点变形，而不能改变已填充曲线/曲面形状"
 
@@ -114037,20 +114815,604 @@ msgid "Crease Edges"
 msgstr "折痕边"
 
 
+msgid "Compositor"
+msgstr "合成器"
+
+
 msgid "Fac"
 msgstr "系数"
+
+
+msgid "Determinator"
+msgstr "测定"
+
+
+msgid "Bounding box"
+msgstr "边界框"
+
+
+msgid "Key Color"
+msgstr "关键色彩"
+
+
+msgid "Upper Left"
+msgstr "左上"
+
+
+msgid "Upper Right"
+msgstr "右上"
+
+
+msgid "Lower Left"
+msgstr "左下"
+
+
+msgid "Lower Right"
+msgstr "右下"
+
+
+msgid "Pick"
+msgstr "选取"
+
+
+msgid "Image 1"
+msgstr "图像 1"
+
+
+msgid "Image 2"
+msgstr "图像 2"
+
+
+msgid "ID value"
+msgstr "ID 值"
+
+
+msgid "Dispersion"
+msgstr "色散"
+
+
+msgid "Std Dev"
+msgstr "标准差"
+
+
+msgid "From Min"
+msgstr "从最小值"
+
+
+msgid "From Max"
+msgstr "从最大值"
+
+
+msgid "To Min"
+msgstr "到最小值"
+
+
+msgid "To Max"
+msgstr "到最大值"
+
+
+msgid "Offset Y"
+msgstr "Y 向偏移量"
+
+
+msgid "Undistortion"
+msgstr "移除畸变"
 
 
 msgid "Dot"
 msgstr "点"
 
 
+msgid "Degr"
+msgstr "角度"
+
+
+msgid "Cb"
+msgstr "Cb"
+
+
+msgid "Cr"
+msgstr "Cr"
+
+
+msgid "On"
+msgstr "开启"
+
+
 msgid "Val"
 msgstr "值"
 
 
+msgid "Line Break"
+msgstr "换行符"
+
+
+msgid "Probability"
+msgstr "慨率"
+
+
+msgid "The string to find in the input string"
+msgstr "输入字符串中要查找的字符串"
+
+
+msgid "The string to replace each match with"
+msgstr "用来替换匹配结果的字符串"
+
+
+msgid "Rotate By"
+msgstr "旋转轴"
+
+
+msgid "Decimals"
+msgstr "位数"
+
+
+msgid "Geometry Node Editor"
+msgstr "几何节点编辑器"
+
+
+msgid "No attribute with name \""
+msgstr "无属性名称包含 \""
+
+
+msgid "Could not find or create attribute with name \""
+msgstr "无法找到或创建属性名称包含 \""
+
+
+msgid "Result X"
+msgstr "结果 X"
+
+
+msgid "Result Y"
+msgstr "结果 Y"
+
+
+msgid "Result Z"
+msgstr "结果 Z"
+
+
+msgid "Source Geometry"
+msgstr "源几何体"
+
+
+msgid "Destination"
+msgstr "目标"
+
+
+msgid "Vector %s"
+msgstr "矢量 %s"
+
+
+msgid "Start Points"
+msgstr "起点"
+
+
+msgid "No Bezier splines in input curve"
+msgstr "输入曲线中没有贝塞尔样条线"
+
+
+msgid "NURBS must have minimum of 6 points for Bezier Conversion"
+msgstr "NURBS必须至少有6个点供贝塞尔转换"
+
+
+msgid "NURBS must have multiples of 3 points for full Bezier conversion, curve truncated"
+msgstr "NURBS必须至少有3的倍数个点供完整贝塞尔转换，曲线截断"
+
+
+msgid "Cuts"
+msgstr "切割数量"
+
+
+msgid "Input geometry must contain a mesh"
+msgstr "输入几何体必须包含网格"
+
+
+msgid "Distance Min"
+msgstr "距离最小值"
+
+
+msgid "Density Max"
+msgstr "密度最大值"
+
+
 msgid "Density Attribute"
 msgstr "密度属性"
+
+
+msgid "Collection is empty"
+msgstr "集合为空"
+
+
+msgid "Instance Geometry"
+msgstr "实例几何"
+
+
+msgid "Geometry 1"
+msgstr "几何体 1"
+
+
+msgid "Geometry 2"
+msgstr "几何体 2"
+
+
+msgid "Target Attribute"
+msgstr "目标属性"
+
+
+msgid "Is Hit"
+msgstr "是否命中"
+
+
+msgid "Hit Position"
+msgstr "命中位置"
+
+
+msgid "Hit Normal"
+msgstr "命中法向"
+
+
+msgid "Hit Distance"
+msgstr "命中距离"
+
+
+msgid "Hit Attribute"
+msgstr "命中属性"
+
+
+msgid "Disabled, Blender was compiled without OpenSubdiv"
+msgstr "已禁用, 未使用OpenSubdiv编译Blender"
+
+
+msgid "Disabled, Blender was compiled without OpenVDB"
+msgstr "已禁用, 未使用OpenVDB编译Blender"
+
+
+msgid "Cannot delete attribute with name \""
+msgstr "无法删除属性名称包含 \""
+
+
+msgid "Sum"
+msgstr "求和"
+
+
+msgid "Standard Deviation"
+msgstr "标准差"
+
+
+msgid "Variance"
+msgstr "方差"
+
+
+msgid "Disabled, Blender was compiled without GMP"
+msgstr "已禁用, 未使用GMP编译Blender"
+
+
+msgid "Mesh 1"
+msgstr "网格 1"
+
+
+msgid "Mesh 2"
+msgstr "网格 2"
+
+
+msgid "Separate Children"
+msgstr "分离子级"
+
+
+msgid "Output each child of the collection as a separate instance, sorted alphabetically"
+msgstr "将每个集合的子集输出为一个单独的实例，按字母顺序排序"
+
+
+msgid "Reset Children"
+msgstr "重置子级"
+
+
+msgid "Reset the transforms of every child instance in the output. Only used when Separate Children is enabled"
+msgstr "重置输出中每个子实例的变换。仅在启用分离子级时使用"
+
+
+msgid "Disabled, Blender was compiled without Bullet"
+msgstr "已禁用, 未使用Bullet编译Blender"
+
+
+msgid "Start Size"
+msgstr "开始大小"
+
+
+msgid "The amount of points to select from the start of each spline"
+msgstr "从每根样条线的起点选择的点数量"
+
+
+msgid "End Size"
+msgstr "末端尺寸"
+
+
+msgid "The amount of points to select from the end of each spline"
+msgstr "从每根样条线的末端选择的点数量"
+
+
+msgid "The selection from the start and end of the splines based on the input sizes"
+msgstr "根据输入大小，从样条线的起点和末端的选中项"
+
+
+msgid "Limit Radius"
+msgstr "限制半径"
+
+
+msgid "Point 1"
+msgstr "点 1"
+
+
+msgid "Point 2"
+msgstr "点 2"
+
+
+msgid "Point 3"
+msgstr "点 3"
+
+
+msgid "Bottom Width"
+msgstr "底部宽度"
+
+
+msgid "Top Width"
+msgstr "顶部宽度"
+
+
+msgid "Bottom Height"
+msgstr "底部高度"
+
+
+msgid "Top Height"
+msgstr "顶部高度"
+
+
+msgid "Point 4"
+msgstr "点 4"
+
+
+msgid "Start Radius"
+msgstr "开始半径"
+
+
+msgid "End Radius"
+msgstr "末端半径"
+
+
+msgid "Inner Radius"
+msgstr "内半径"
+
+
+msgid "Outer Radius"
+msgstr "外半径"
+
+
+msgid "Profile Curve"
+msgstr "轮廓曲线"
+
+
+msgid "If the profile spline is cyclic, fill the ends of the generated mesh with N-gons"
+msgstr "如果轮廓样条线是闭合的，则用多边形填充生成网格的末端"
+
+
+msgid "No geometry with given domain"
+msgstr "没有带给定域的几何形状"
+
+
+msgid "The parts of the geometry to be deleted"
+msgstr "要删除的几何部分"
+
+
+msgid "Realized geometry is not used when pick instances is true"
+msgstr "当选择实例为真时，不使用已实现的几何体"
+
+
+msgid "Points to instance on"
+msgstr "要在其上实例化的点"
+
+
+msgid "Instance"
+msgstr "实例"
+
+
+msgid "Geometry that is instanced on the points"
+msgstr "在点上实例化的几何体"
+
+
+msgid "Pick Instance"
+msgstr "选择实例"
+
+
+msgid "Instance Index"
+msgstr "实例编号"
+
+
+msgid "Index of the instance that used for each point. This is only used when Pick Instances is on. By default the point index is used"
+msgstr "用于每个点的实例编号。只有当启用选择实例时，才会用到。默认情况下，使用点编号"
+
+
+msgid "Rotation of the instances"
+msgstr "实例的旋转"
+
+
+msgid "Scale of the instances"
+msgstr "实例的缩放"
+
+
+msgid "Vertices must be at least 3"
+msgstr "点必须至少为3个"
+
+
+msgid "Side Segments must be at least 1"
+msgstr "侧段必须至少为1个"
+
+
+msgid "Fill Segments must be at least 1"
+msgstr "填充段必须至少为1个"
+
+
+msgid "Side Segments"
+msgstr "侧段"
+
+
+msgid "Fill Segments"
+msgstr "填充段"
+
+
+msgid "Radius Top"
+msgstr "顶部半径"
+
+
+msgid "Radius Bottom"
+msgstr "底部半径"
+
+
+msgid "Vertices must be at least 1"
+msgstr "点必须至少为1个"
+
+
+msgid "Vertices X"
+msgstr "顶点 X"
+
+
+msgid "Vertices Y"
+msgstr "顶点 Y"
+
+
+msgid "Vertices Z"
+msgstr "顶点 Z"
+
+
+msgid "The number of vertices around the circumference"
+msgstr "沿周长的顶点数"
+
+
+msgid "The number of segments along the side"
+msgstr "沿该侧面的段数"
+
+
+msgid "The number of concentric segments of the fill"
+msgstr "填充的同心段数"
+
+
+msgid "The radius of the cylinder"
+msgstr "圆柱体的半径"
+
+
+msgid "The height of the cylinder on the Z axis"
+msgstr "圆柱体Z 轴上的高度"
+
+
+msgid "Start Location"
+msgstr "开始位置"
+
+
+msgid "End Location"
+msgstr "末端位置"
+
+
+msgid "Segments must be at least 3"
+msgstr "线段必须至少为3个"
+
+
+msgid "Rings must be at least 3"
+msgstr "环形必须至少为3个"
+
+
+msgid "As Instance"
+msgstr "作为实例"
+
+
+msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
+msgstr "将整个物体输出为单个实例。这允许实例化非几何物体类型"
+
+
+msgid "Source Position"
+msgstr "源位置"
+
+
+msgid "The target mesh must have faces"
+msgstr "目标网格必须有面"
+
+
+msgid "The parts of the geometry that go into the first output"
+msgstr "进入第一输出的几何部分"
+
+
+msgid "The parts of the geometry in the selection"
+msgstr "选中项中的几何部分"
+
+
+msgid "The parts of the geometry not in the selection"
+msgstr "不在选中项中的几何部分"
+
+
+msgid "The input geometry does not contain a Bezier spline"
+msgstr "输入几何不包含贝塞尔样条线"
+
+
+msgid "Volumes only support a single material; selection input can not be a field"
+msgstr "体只支持单个材质；选中项输入不能是一个字段"
+
+
+msgid "Shade Smooth"
+msgstr "平滑着色"
+
+
+msgid "Input geometry does not contain a Bezier or NURB spline"
+msgstr "输入几何不包含贝塞尔或NURB样条线"
+
+
+msgid "Delimiter"
+msgstr "分隔符"
+
+
+msgid "Strings"
+msgstr "字符串"
+
+
+msgid "Text Box Width"
+msgstr "文本框宽度"
+
+
+msgid "Text Box Height"
+msgstr "文本框高度"
+
+
+msgid "Remainder"
+msgstr "余数"
+
+
+msgid "Max Width"
+msgstr "最大宽度"
+
+
+msgid "The target geometry must contain a mesh"
+msgstr "目标几何体必须包含网格"
+
+
+msgid "The target geometry must contain a mesh or a point cloud"
+msgstr "目标几何体必须包含网格或点云"
+
+
+msgid "Missing Data-Block"
+msgstr "缺失数据块"
+
+
+msgid "Instances in input geometry are ignored"
+msgstr "忽略输入几何体中的实例"
+
+
+msgid "Realized data in input geometry is ignored"
+msgstr "忽略输入几何体中的已实现数据"
+
+
+msgid "Input geometry has unsupported type: "
+msgstr "输入几何体包含不受支持的类型: "
+
+
+msgid " node"
+msgstr " 节点"
 
 
 msgid "Shader Editor"
@@ -114317,12 +115679,28 @@ msgid "Mortar"
 msgstr "灰泥"
 
 
+msgid "Mortar Size"
+msgstr "灰泥尺寸"
+
+
+msgid "Mortar Smooth"
+msgstr "灰泥平滑"
+
+
 msgid "Brick Width"
 msgstr "砖宽度"
 
 
 msgid "Row Height"
 msgstr "行高度"
+
+
+msgid "Detail Scale"
+msgstr "细节缩放"
+
+
+msgid "Detail Roughness"
+msgstr "细节糙度"
 
 
 msgid "Flame"
@@ -114633,6 +116011,10 @@ msgstr "路径太长，无法保存"
 
 msgid "Unable to create user config path"
 msgstr "无法创建用户配置路径"
+
+
+msgid "Startup file saved"
+msgstr "已保存启动文件"
 
 
 msgid "Context window not set"

@@ -2091,8 +2091,14 @@ def fbx_animations(scene_data):
             ob = ob_obj.bdata  # Back to real Blender Object.
             if not ob.animation_data:
                 continue
+
+            # Some actions are read-only, one cause is being in NLA tweakmode
+            restore_use_tweak_mode = ob.animation_data.use_tweak_mode
+            if ob.animation_data.is_property_readonly('action'):
+              ob.animation_data.use_tweak_mode = False
+
             # We have to remove active action from objects, it overwrites strips actions otherwise...
-            ob_actions.append((ob, ob.animation_data.action))
+            ob_actions.append((ob, ob.animation_data.action, restore_use_tweak_mode))
             ob.animation_data.action = None
             for track in ob.animation_data.nla_tracks:
                 if track.mute:
@@ -2113,8 +2119,9 @@ def fbx_animations(scene_data):
         for strip in strips:
             strip.mute = False
 
-        for ob, ob_act in ob_actions:
+        for ob, ob_act, restore_use_tweak_mode in ob_actions:
             ob.animation_data.action = ob_act
+            ob.animation_data.use_tweak_mode = restore_use_tweak_mode
 
     # All actions.
     if scene_data.settings.bake_anim_use_all_actions:

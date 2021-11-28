@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -53065,6 +53065,11 @@ msgid "Export"
 msgstr "Esporta"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Applica"
+
+
 msgid "Demo Mode:"
 msgstr "Modo Demo:"
 
@@ -56384,11 +56389,6 @@ msgstr "Multi-Pittura"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Modifica Veloce"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Applica"
 
 
 msgctxt "Operator"

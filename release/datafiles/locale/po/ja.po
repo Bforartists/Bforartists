@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1062,7 +1062,7 @@ msgstr "浮動小数点数値"
 
 
 msgid "Integer"
-msgstr "Integer"
+msgstr "整数"
 
 
 msgid "32-bit integer"
@@ -1090,7 +1090,7 @@ msgstr "8ビット数値の RGBA カラー"
 
 
 msgid "String"
-msgstr "String"
+msgstr "文字列"
 
 
 msgid "Text string"
@@ -1214,7 +1214,7 @@ msgstr "浮動小数点数値のベクトルジオメトリ属性"
 
 
 msgid "Int Attribute"
-msgstr "Int属性"
+msgstr "整数属性"
 
 
 msgid "Integer geometry attribute"
@@ -1222,7 +1222,7 @@ msgstr "整数型のジオメトリ属性"
 
 
 msgid "String Attribute"
-msgstr "String属性"
+msgstr "文字列属性"
 
 
 msgid "String geometry attribute"
@@ -3283,11 +3283,11 @@ msgstr "ボーングループ配列内のアクティブインデックス"
 
 
 msgid "Bool Attribute Value"
-msgstr "ブール属性値"
+msgstr "ブーリアン属性値"
 
 
 msgid "Bool value in geometry attribute"
-msgstr "ジオメトリ属性のブール値"
+msgstr "ジオメトリ属性のブーリアン値"
 
 
 msgid "Brush Capabilities"
@@ -6075,6 +6075,13 @@ msgid "Before Original (Full)"
 msgstr "オリジナルの前（フル）"
 
 
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr ""
+"仮想の親に「フル」の「スケールを継承」モードを適用するかのように、\n"
+"オリジナルのトランスフォームの前にアクションチャンネルを適用します\n"
+"回転と非均一のスケールの組み合わせではせん断ができます"
+
+
 msgid "Before Original (Aligned)"
 msgstr "オリジナルの前（整列）"
 
@@ -6083,7 +6090,7 @@ msgid "Apply the action channels before the original transformation, as if appli
 msgstr ""
 "仮想の親に「整列」の「スケールを継承」モードを適用するかのように、\n"
 "オリジナルのトランスフォームの前にアクションチャンネルを適用します\n"
-"実際は「フル」を位置に「チャンネル分割」を回転とスケールに使用します"
+"実際は「フル」を位置、「チャンネル分割」を回転とスケールに使用します"
 
 
 msgid "Before Original (Split Channels)"
@@ -6671,6 +6678,51 @@ msgstr "コピーと現存のトランスフォームを組み合わせる方法
 
 msgid "Replace the original transformation with copied"
 msgstr "オリジナルのトランスフォームをコピーで置き換えます"
+
+
+msgid "Apply copied transformation before original, using simple matrix multiplication as if the constraint target is a parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr ""
+"コンストレイントのターゲットが「フル」の「スケールを継承」モードの\n"
+"親であるかのように、シンプルな行列の乗算を使用しトランスフォームの\n"
+"コピーの適用をオリジナルの前に行います\n"
+"回転と非均一なスケールの組み合わせの場合、せん断が生じます"
+
+
+msgid "Apply copied transformation before original, as if the constraint target is a parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr ""
+"コンストレイントのターゲットが「整列」の「スケールを継承」モードの\n"
+"親であるかのように、シンプルな行列の乗算を使用しトランスフォームの\n"
+"コピーの適用をオリジナルの前に行います\n"
+"実際は位置に「フル」、回転とスケールに「チャンネル分割」を使用します"
+
+
+msgid "Apply copied transformation before original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr ""
+"3つのコピーコンストレイントを順番に使用するように、\n"
+"位置、回転、スケールを別々に処理し、トランスフォームの\n"
+"コピーの適用をオリジナルの前に行います"
+
+
+msgid "Apply copied transformation after original, using simple matrix multiplication as if the constraint target is a child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr ""
+"コンストレイントのターゲットが「フル」の「スケールを継承」モードの\n"
+"子であるかのように、シンプルな行列の乗算を使用しトランスフォームの\n"
+"コピーの適用をオリジナルの後に行います\n"
+"回転と非均一なスケールの組み合わせの場合、せん断が生じます"
+
+
+msgid "Apply copied transformation after original, as if the constraint target is a child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr ""
+"コンストレイントのターゲットが「整列」の「スケールを継承」モードの\n"
+"子であるかのように、トランスフォームのコピーの適用をオリジナルの後に行います\n"
+"実際は位置に「フル」、回転とスケールに「チャンネル分割」を使用します"
+
+
+msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr ""
+"3つのコピーコンストレイントを順番に使用するように、\n"
+"位置、回転、スケールを別々に処理し、トランスフォームの\n"
+"コピーの適用をオリジナルの後に行います"
 
 
 msgid "Remove Target Shear"
@@ -23470,7 +23522,7 @@ msgstr "Intプロパティのレイヤー"
 
 
 msgid "String Property Layers"
-msgstr "Stringプロパティレイヤー"
+msgstr "文字列プロパティレイヤー"
 
 
 msgid "Polygons"
@@ -28828,7 +28880,7 @@ msgstr "ムービーをリピート再生します"
 
 
 msgid "Integer Attribute Value"
-msgstr "Integer属性値"
+msgstr "整数属性値"
 
 
 msgid "Integer value in geometry attribute"
@@ -33525,11 +33577,11 @@ msgstr "浮動小数点数値のユーザー定義レイヤー"
 
 
 msgid "Mesh Polygon Int Property"
-msgstr "メッシュポリゴンのIntプロパティ"
+msgstr "メッシュポリゴンの整数プロパティ"
 
 
 msgid "User defined integer number value in an integer properties layer"
-msgstr "Integer プロパティレイヤー内のユーザ定義の整数値"
+msgstr "整数値プロパティレイヤー内のユーザ定義の整数値"
 
 
 msgid "Mesh Polygon Int Property Layer"
@@ -33541,7 +33593,7 @@ msgstr "ユーザ定義の整数値レイヤー"
 
 
 msgid "Mesh Polygon String Property"
-msgstr "メッシュポリゴンStringプロパティ"
+msgstr "メッシュポリゴン文字列プロパティ"
 
 
 msgid "User defined string text value in a string properties layer"
@@ -33549,7 +33601,7 @@ msgstr "文字列プロパティレイヤー内のユーザ定義の文字列テ
 
 
 msgid "Mesh Polygon String Property Layer"
-msgstr "メッシュポリゴンStringプロパティレイヤー"
+msgstr "メッシュポリゴン文字列プロパティレイヤー"
 
 
 msgid "User defined layer of string text values"
@@ -33763,19 +33815,19 @@ msgstr "メッシュ頂点のFloatプロパティレイヤー"
 
 
 msgid "Mesh Vertex Int Property"
-msgstr "メッシュ頂点のIntプロパティ"
+msgstr "メッシュ頂点の整数プロパティ"
 
 
 msgid "Mesh Vertex Int Property Layer"
-msgstr "メッシュ頂点のIntプロパティレイヤー"
+msgstr "メッシュ頂点の整数プロパティレイヤー"
 
 
 msgid "Mesh Vertex String Property"
-msgstr "メッシュ頂点のStringプロパティ"
+msgstr "メッシュ頂点の文字列プロパティ"
 
 
 msgid "Mesh Vertex String Property Layer"
-msgstr "メッシュ頂点のStringプロパティレイヤー"
+msgstr "メッシュ頂点の文字列プロパティレイヤー"
 
 
 msgid "Mesh Vertices"
@@ -34651,11 +34703,11 @@ msgstr "ブーリアンモディファイアー"
 
 
 msgid "Boolean operations modifier"
-msgstr "ブール演算を行うモディファイアー"
+msgstr "ブーリアン演算を行うモディファイアー"
 
 
 msgid "Use mesh objects in this collection for Boolean operation"
-msgstr "ブール演算にこのコレクション内のメッシュオブジェクトを使用します"
+msgstr "ブーリアン演算にこのコレクション内のメッシュオブジェクトを使用します"
 
 
 msgid "Debug"
@@ -34683,7 +34735,7 @@ msgstr "形状の重複チェックのしきい値"
 
 
 msgid "Mesh object to use for Boolean operation"
-msgstr "ブール演算に使用されるオブジェクト"
+msgstr "ブーリアン演算に使用されるオブジェクト"
 
 
 msgid "Operand Type"
@@ -34691,11 +34743,11 @@ msgstr "演算対象"
 
 
 msgid "Use a mesh object as the operand for the Boolean operation"
-msgstr "ブール演算にメッシュオブジェクトを演算対象として使用します"
+msgstr "ブーリアン演算にメッシュオブジェクトを演算対象として使用します"
 
 
 msgid "Use a collection of mesh objects as the operand for the Boolean operation"
-msgstr "ブール演算にメッシュオブジェクトのコレクションを演算対象として使用します"
+msgstr "ブーリアン演算にメッシュオブジェクトのコレクションを演算対象として使用します"
 
 
 msgid "Keep the part of the mesh that is common between all operands"
@@ -34715,7 +34767,7 @@ msgstr "複数のメッシュを引き算して合成します"
 
 
 msgid "Method for calculating booleans"
-msgstr "ブール演算の方法"
+msgstr "ブーリアン演算の方法"
 
 
 msgid "Simple solver for the best performance, without support for overlapping geometry"
@@ -42208,7 +42260,7 @@ msgstr "両入力が違うと true"
 
 
 msgid "Float to Integer"
-msgstr "FloatからIntegerへ"
+msgstr "Floatから整数へ"
 
 
 msgid "Rounding Mode"
@@ -42252,7 +42304,7 @@ msgstr "ランダム値"
 
 
 msgid "Replace String"
-msgstr "String置換"
+msgstr "文字列置換"
 
 
 msgid "Rotate Euler"
@@ -42284,15 +42336,15 @@ msgstr "X、Y、Z 軸を中心に回転します"
 
 
 msgid "Slice String"
-msgstr "Stringスライス"
+msgstr "文字列スライス"
 
 
 msgid "String Length"
-msgstr "String長"
+msgstr "文字列長"
 
 
 msgid "Value to String"
-msgstr "値からStringへ"
+msgstr "値から文字列へ"
 
 
 msgid "Geometry Node"
@@ -42896,7 +42948,7 @@ msgstr "入力タイプ"
 
 
 msgid "Attribute Transfer"
-msgstr "属性転送"
+msgstr "属性転送(旧)"
 
 
 msgid "Attribute Vector Math"
@@ -43433,11 +43485,11 @@ msgstr "辺分離"
 
 
 msgid "Join Strings"
-msgstr "String結合"
+msgstr "文字列結合"
 
 
 msgid "String to Curves"
-msgstr "Stringからカーブへ"
+msgstr "文字列からカーブへ"
 
 
 msgid "Align X"
@@ -45028,7 +45080,7 @@ msgstr "ノードの画像ソケット"
 
 
 msgid "Integer Node Socket"
-msgstr "Integerノードソケット"
+msgstr "整数ノードソケット"
 
 
 msgid "Integer number socket of a node"
@@ -45060,7 +45112,7 @@ msgstr "ノードのシェーダーソケット"
 
 
 msgid "String Node Socket"
-msgstr "Stringノードソケット"
+msgstr "文字列ノードソケット"
 
 
 msgid "String socket of a node"
@@ -45144,7 +45196,7 @@ msgstr "画像ノードソケットインターフェイス"
 
 
 msgid "Integer Node Socket Interface"
-msgstr "Integerノードソケットインターフェイス"
+msgstr "整数ノードソケットインターフェイス"
 
 
 msgid "Material Node Socket Interface"
@@ -45160,7 +45212,7 @@ msgstr "シェーダーノードソケットインターフェイス"
 
 
 msgid "String Node Socket Interface"
-msgstr "Stringノードソケットインターフェイス"
+msgstr "文字列ノードソケットインターフェイス"
 
 
 msgid "Texture Node Socket Interface"
@@ -57685,11 +57737,11 @@ msgstr "選択部分で非選択部分のソリッドな形状をカットしま
 
 
 msgid "Boolean Operation"
-msgstr "ブール演算"
+msgstr "ブーリアン演算"
 
 
 msgid "Which boolean operation to apply"
-msgstr "適用するブール演算"
+msgstr "適用するブーリアン演算"
 
 
 msgid "Which Boolean solver to use"
@@ -64414,6 +64466,14 @@ msgid "Resync Library Override Hierarchy Enforce"
 msgstr "ライブラリオーバーライド階層を強制再同期"
 
 
+msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
+msgstr ""
+"このローカルオーバーライドと依存の階層を、リンク中のデータと\n"
+"適合するようリンクの参照から強制的に再構築します\n"
+"（要はデータブロックポインタプロパティの既存のオーバーライドを\n"
+"　無視します）"
+
+
 msgid "Delete Library Override Hierarchy"
 msgstr "ライブラリオーバーライド階層を削除"
 
@@ -65831,11 +65891,6 @@ msgstr "反転して適用"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "有効時、ポーズを X 軸で反転して適用します"
-
-
-msgctxt "Operator"
-msgid "Blend Pose Library Pose"
-msgstr "ライブラリポーズをブレンド"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -68452,7 +68507,7 @@ msgstr "Dyntopo のディテールサイズをインタラクティブに変更�
 
 msgctxt "Operator"
 msgid "Expand"
-msgstr "拡張"
+msgstr "拡大"
 
 
 msgid "Generic sculpt expand operator"
@@ -68460,7 +68515,7 @@ msgstr "汎用のスカルプト拡大オペレーター"
 
 
 msgid "Initial falloff of the expand operation"
-msgstr "拡張操作の最初の減衰"
+msgstr "拡大操作の初期減衰"
 
 
 msgid "Geodesic"
@@ -68484,11 +68539,17 @@ msgstr "アクティブ面セット"
 
 
 msgid "Invert the expand active elements"
-msgstr "アクティブ要素の拡張を反転します"
+msgstr "アクティブ要素の拡大を反転します"
 
 
 msgid "Max Vertex Count for Geodesic Move Preview"
-msgstr "測地線移動プレビューの最大頂点数"
+msgstr "ジオデシック移動プレビューの最大頂点数"
+
+
+msgid "Maximum number of vertices in the mesh for using geodesic falloff when moving the origin of expand. If the total number of vertices is greater than this value, the falloff will be set to spherical when moving"
+msgstr ""
+"拡大の原点が移動する際の、ジオデシック減衰使用時のメッシュ内の最大頂点数\n"
+"頂点の総数がこの値より大きい場合、移動時の減衰は球状に設定されます"
 
 
 msgid "Data Target"
@@ -68496,7 +68557,7 @@ msgstr "対象データ"
 
 
 msgid "Data that is going to be modified in the expand operation"
-msgstr "拡張操作で変更が行われるデータ"
+msgstr "拡大操作で変更が行われるデータ"
 
 
 msgid "Falloff Gradient"
@@ -68504,7 +68565,7 @@ msgstr "減衰グラデーション"
 
 
 msgid "Expand Using a linear falloff"
-msgstr "リニア(直線的)な減衰で拡張します"
+msgstr "リニア(直線的)な減衰で拡大します"
 
 
 msgid "Preserve Previous"
@@ -74655,11 +74716,15 @@ msgstr "ボーンチェーン検索時、この値未満の長さのチェーン
 
 msgctxt "Operator"
 msgid "Context Collection Boolean Set"
-msgstr "Boolean群設定コンテクスト"
+msgstr "ブーリアン群設定コンテクスト"
 
 
 msgid "Set boolean values for a collection of items"
 msgstr "アイテム群用のブーリアン値を設定します"
+
+
+msgid "The data path from each iterable to the value (int or float)"
+msgstr "各イテラブルから値へのデータパス（整数または Float）"
 
 
 msgid "The data path relative to the context, must point to an iterable"
@@ -74669,6 +74734,10 @@ msgstr "コンテクストへの相対データパス。繰り返し可能な物
 msgctxt "Operator"
 msgid "Context Array Cycle"
 msgstr "配列ループコンテクスト"
+
+
+msgid "Set a context array value (useful for cycling the active mesh edit mode)"
+msgstr "コンテクスト配列値を設定します（アクティブメッシュ編集モードの繰り返しに便利です）"
 
 
 msgid "Context Attributes"
@@ -74772,7 +74841,7 @@ msgstr "「値」が1.0以外の時、常に1を最低とした値に調整し�
 
 msgctxt "Operator"
 msgid "Context Set Boolean"
-msgstr "Boolean設定コンテクスト"
+msgstr "ブーリアン設定コンテクスト"
 
 
 msgid "Set a context value"
@@ -74817,7 +74886,7 @@ msgstr "設定コンテクスト"
 
 msgctxt "Operator"
 msgid "Context Set String"
-msgstr "String設定コンテクスト"
+msgstr "文字列設定コンテクスト"
 
 
 msgctxt "Operator"
@@ -75444,7 +75513,7 @@ msgstr "単一の整数値"
 
 
 msgid "Integer Array"
-msgstr "Integer配列"
+msgstr "整数配列"
 
 
 msgid "An array of integers"
@@ -79787,11 +79856,11 @@ msgstr "Intプロパティの集合"
 
 
 msgid "Polygon String Properties"
-msgstr "ポリゴンStringプロパティ"
+msgstr "ポリゴン文字列プロパティ"
 
 
 msgid "Collection of string properties"
-msgstr "ポリゴンStringプロパティの集合"
+msgstr "文字列プロパティの集合"
 
 
 msgid "A collection of pose channels, including settings for animating bones"
@@ -80136,6 +80205,10 @@ msgstr "アプリケーションテンプレート"
 
 msgid "Apps"
 msgstr "アプリ"
+
+
+msgid "Preferences that work only for apps"
+msgstr "アプリのみで動作するプリファレンス"
 
 
 msgid "Auto-Execution Paths"
@@ -83010,6 +83083,10 @@ msgstr ""
 "0 でノイズしきい値を元に自動設定します"
 
 
+msgid "Adaptive Scrambling Distance"
+msgstr "適応スクランブリングディスタンス"
+
+
 msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
 msgstr "サンプル数を元にスクランブルディスタンスの強さを式を使用して適合させます"
 
@@ -83522,6 +83599,14 @@ msgid "Number of samples to render in the viewport, unlimited if 0"
 msgstr "ビューポートにレンダリングするサンプル数。0なら無制限"
 
 
+msgid "Scrambling Distance viewport"
+msgstr "スクランブリングディスタンス（ビュー）"
+
+
+msgid "Uses the Scrambling Distance value for the viewport. Faster but may flicker"
+msgstr "スクランブリングディスタンス値をビューポートに使用します。高速ですがちらつきがあります"
+
+
 msgid "Rolling Shutter Duration"
 msgstr "ローリングシャッター期間"
 
@@ -83593,8 +83678,15 @@ msgid "Use Progressive Multi-Jitter random sampling pattern"
 msgstr "プログレッシブマルチジッターランダムサンプリングパターンを使用します"
 
 
+msgid "Scrambling Distance"
+msgstr "スクランブリングディスタンス"
+
+
 msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "小さな値で"
+msgstr ""
+"小さな値で GPU レンダリングでは高速になり、全デバイスでノイズが小さくなりますが\n"
+"小さすぎる値に設定した場合、アーティファクトができる可能性があります\n"
+"適応サンプリング未使用時のみ動作します"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -83602,7 +83694,7 @@ msgstr "異なるノイズパターンを得るインテギュレーターのシ
 
 
 msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "Open Shading Languageを使用(CPUレンダリングのみ)"
+msgstr "Open Shading Language を使用（CPU レンダリングのみ）"
 
 
 msgid "Viewport Texture Limit"
@@ -90984,7 +91076,7 @@ msgstr "選択物のみ表示"
 
 
 msgid "Only include rows that correspond to selected elements"
-msgstr "選択中の成分に対応する列のみ含めます"
+msgstr "選択中の成分に対応する行のみ含めます"
 
 
 msgid "Use Filter"
@@ -91808,7 +91900,7 @@ msgstr "等しいとみなすのに必要な浮動小数点数"
 
 
 msgid "Boolean Value"
-msgstr "ブール値"
+msgstr "ブーリアン値"
 
 
 msgid "Float Value"
@@ -91824,7 +91916,7 @@ msgstr "ベクトル値"
 
 
 msgid "Integer Value"
-msgstr "Integer値"
+msgstr "整数値"
 
 
 msgid "Text Value"
@@ -91860,7 +91952,7 @@ msgstr "両ビューを一つのスクイーズフレームに合成します"
 
 
 msgid "String Attribute Value"
-msgstr "String属性値"
+msgstr "文字列属性値"
 
 
 msgid "String value in geometry attribute"
@@ -95153,7 +95245,7 @@ msgstr "頂点Intプロパティ"
 
 
 msgid "Vertex String Properties"
-msgstr "頂点Stringプロパティ"
+msgstr "頂点文字列プロパティ"
 
 
 msgid "Scroll and zoom for a 2D region"
@@ -98342,6 +98434,14 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "。NVIDIA ドライバーVer.470以降も必要です"
 
 
+msgid "Requires discrete AMD GPU with RDNA architecture"
+msgstr "RDNA2 アーキテクチャの AMD GPU が別に必要です"
+
+
+msgid "and AMD Radeon Pro 21.Q4 driver or newer"
+msgstr "さらに AMD Radeon Pro 21.Q4 以降のドライバも必須"
+
+
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
 
@@ -98768,6 +98868,11 @@ msgstr "ポーズボーンを選択"
 msgctxt "Operator"
 msgid "Deselect Pose Bones"
 msgstr "ポーズボーンを選択解除"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "適用"
 
 
 msgid "Activate & Edit"
@@ -99574,7 +99679,7 @@ msgstr "マニュアル"
 
 
 msgid "Non boolean value found: %s[ ].%s"
-msgstr "ブール値以外です：%s[ ].%s"
+msgstr "非ブール値があります：%s[ ].%s"
 
 
 msgid "Python evaluation failed: "
@@ -105982,11 +106087,6 @@ msgstr "クイック編集"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "適用"
-
-
-msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "カメラ画像を適用"
 
@@ -109454,6 +109554,18 @@ msgid "Cannot remove more polys than the mesh contains"
 msgstr "メッシュ中の数より多くのポリゴンは削除できません"
 
 
+msgid "Cannot add more than %i UV maps"
+msgstr "%i個以上のUV マップは追加できません"
+
+
+msgid "Cannot add more than %i vertex color layers"
+msgstr "%i個以上の頂点カラーレイヤーは追加できません"
+
+
+msgid "Cannot add more than %i sculpt vertex color layers"
+msgstr "%i個以上のスカルプト頂点カラーレイヤーは追加できません"
+
+
 msgid "%d %s mirrored, %d failed"
 msgstr "%d個の%sをミラー化、%d個失敗しました"
 
@@ -112282,6 +112394,10 @@ msgid "Undefined Socket Type"
 msgstr "未定義ソケットタイプ"
 
 
+msgid "Nishita not available in Eevee"
+msgstr "Nishita モデルは Eevee では利用できません"
+
+
 msgid "No mesh in active object"
 msgstr "アクティブオブジェクトにメッシュがありません"
 
@@ -112334,12 +112450,12 @@ msgid "Can not add node group '%s' to '%s'"
 msgstr "ノードグループ「%s」を「%s」に追加できません"
 
 
-msgid "Mask '%s' not found"
-msgstr "マスク「%s」がありません"
-
-
 msgid "Node tree type %s undefined"
 msgstr "ノードツリータイプ「%s」が未定義です"
+
+
+msgid " (Integer)"
+msgstr "(整数)"
 
 
 msgid " (Float)"
@@ -112358,12 +112474,16 @@ msgid "False"
 msgstr "False"
 
 
+msgid " (Boolean)"
+msgstr "(ブーリアン)"
+
+
 msgid " (String)"
-msgstr "(String)"
+msgstr "(文字列)"
 
 
 msgid "Integer field"
-msgstr "Integerフィールド"
+msgstr "整数フィールド"
 
 
 msgid "Float field"
@@ -112379,7 +112499,7 @@ msgstr "ブーリアンフィールド"
 
 
 msgid "String field"
-msgstr "Stringフィールド"
+msgstr "文字列フィールド"
 
 
 msgid "Color field"
@@ -114002,6 +114122,10 @@ msgstr "オーバーライドされたライブラリデータのプレビュー
 
 msgid "Data-block does not support previews"
 msgstr "プレビュー未対応のデータブロックです"
+
+
+msgid "Incorrect context for running data-block fake user toggling"
+msgstr "データブロックのフェイクユーザー切り替えに不適切なコンテクストです"
 
 
 msgid "Data-block type does not support fake user"
@@ -115636,7 +115760,7 @@ msgstr "確率"
 
 
 msgid "The string to find in the input string"
-msgstr "入力 String 内を検索する文字列"
+msgstr "入力文字列内を検索する文字列"
 
 
 msgid "The string to replace each match with"
@@ -115995,6 +116119,10 @@ msgid "The number of segments along the side"
 msgstr "側面のセグメント数"
 
 
+msgid "The number of concentric segments of the fill"
+msgstr "フィルの中心に集中するセグメントの数"
+
+
 msgid "The radius of the cylinder"
 msgstr "円柱の半径"
 
@@ -116089,6 +116217,10 @@ msgstr "最大幅"
 
 msgid "The target geometry must contain a mesh"
 msgstr "ターゲットジオメトリにメッシュが必要です"
+
+
+msgid "The target geometry must contain a mesh or a point cloud"
+msgstr "ターゲットジオメトリにメッシュまたはポイントクラウドが必要です"
 
 
 msgid "Missing Data-Block"

@@ -9,6 +9,7 @@
         widget_emboss="#9e9e9e0d"
         editor_outline="#a5a5a5"
         widget_text_cursor="#ffac0d"
+        panel_roundness="0.4"
         transparent_checker_primary="#ffffff"
         transparent_checker_secondary="#f0f0f0"
         transparent_checker_size="10"
@@ -1307,6 +1308,51 @@
         </space>
       </ThemeStatusBar>
     </statusbar>
+    <spreadsheet>
+      <ThemeSpreadsheet
+        row_alternate="#00000007"
+        >
+        <space>
+          <ThemeSpaceGeneric
+            back="#ffffff"
+            title="#ffffff"
+            text="#000000"
+            text_hi="#ffffff"
+            header="#fafafaff"
+            header_text="#000000"
+            header_text_hi="#ffffff"
+            button="#ffffffff"
+            button_title="#ffffff"
+            button_text="#000000"
+            button_text_hi="#000000"
+            navigation_bar="#ffffff00"
+            execution_buts="#e0e0e000"
+            tab_active="#ffffff"
+            tab_inactive="#e0e0e0"
+            tab_back="#212121ff"
+            tab_outline="#232323"
+            >
+            <panelcolors>
+              <ThemePanelColors
+                header="#d1d1d1cc"
+                back="#f0f0f0b3"
+                sub_back="#0000003e"
+                >
+              </ThemePanelColors>
+            </panelcolors>
+          </ThemeSpaceGeneric>
+        </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#ffffff"
+            list_title="#afafaf"
+            list_text="#a7a7a7"
+            list_text_hi="#00ffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
+      </ThemeSpreadsheet>
+    </spreadsheet>
     <bone_color_sets>
       <ThemeBoneColorSet
         normal="#9a0000"
