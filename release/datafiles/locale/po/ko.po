@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'a5c59fb90ef9')\n"
+"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -78746,6 +78746,11 @@ msgid "Result"
 msgstr "결과"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "적용"
+
+
 msgid "Demo Mode:"
 msgstr "데모 모드:"
 
@@ -83812,11 +83817,6 @@ msgstr "다중 페인트"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "빠르게 편집"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "적용"
 
 
 msgctxt "Operator"
