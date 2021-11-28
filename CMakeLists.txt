@@ -187,6 +187,13 @@ mark_as_advanced(CPACK_OVERRIDE_PACKAGENAME)
 mark_as_advanced(BUILDINFO_OVERRIDE_DATE)
 mark_as_advanced(BUILDINFO_OVERRIDE_TIME)
 
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16")
+  option(WITH_UNITY_BUILD   "Enable unity build for modules that support it to improve compile times" ON)
+  mark_as_advanced(WITH_UNITY_BUILD)
+else()
+  set(WITH_UNITY_BUILD OFF)
+endif()
+
 option(WITH_IK_ITASC      "Enable ITASC IK solver (only disable for development & for incompatible C++ compilers)" ON)
 option(WITH_IK_SOLVER     "Enable Legacy IK solver (only disable for development)" ON)
 option(WITH_FFTW3         "Enable FFTW3 support (Used for smoke, ocean sim, and audio effects)" ON)
@@ -494,11 +501,10 @@ if(WIN32)
 endif()
 
 # This should be turned off when Blender enter beta/rc/release
-if("${BLENDER_VERSION_CYCLE}" STREQUAL "release" OR
-   "${BLENDER_VERSION_CYCLE}" STREQUAL "rc")
-  set(WITH_EXPERIMENTAL_FEATURES OFF)
-else()
+if("${BLENDER_VERSION_CYCLE}" STREQUAL "alpha")
   set(WITH_EXPERIMENTAL_FEATURES ON)
+else()
+  set(WITH_EXPERIMENTAL_FEATURES OFF)
 endif()
 
 # Unit testsing
