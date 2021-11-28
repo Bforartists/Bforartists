@@ -442,6 +442,7 @@ static void outliner_do_libdata_operation(bContext *C,
 
 typedef enum eOutliner_PropSceneOps {
   OL_SCENE_OP_DELETE = 1,
+  /* bfa - add scene outliner operators  */
   OL_SCENE_OP_NEW = 2,
   OL_SCENE_OP_COPY_SETTINGS = 3,
   OL_SCENE_OP_COPY_LINKED = 4,
@@ -509,9 +510,11 @@ static bool scene_fn(bContext *C,
                      TreeStoreElem *tselem)
 {
   Scene *scene = (Scene *)tselem->id;
+  /* bfa - add scene outliner operators  */
   Main *bmain = CTX_data_main(C);
 
   if (event == OL_SCENE_OP_DELETE) {
+    /* bfa - add scene outliner operators  */
     if (ED_scene_delete(C, bmain, scene)) {
       WM_event_add_notifier(C, NC_SCENE | NA_REMOVED, scene);
     }
@@ -538,6 +541,7 @@ static bool scene_fn(bContext *C,
 static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
 {
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
+  /* bfa - add scene outliner operators  */
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   const eOutliner_PropSceneOps event = RNA_enum_get(op->ptr, "type");
