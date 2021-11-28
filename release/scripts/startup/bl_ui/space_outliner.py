@@ -145,6 +145,11 @@ class OUTLINER_MT_editor_menus(Menu):
 
             layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
 
+            if display_mode == 'SCENES':
+                # BFA - Outliner - Scene View - Add Scene creation operator to header
+                layout.separator()
+                layout.operator("scene.new", text="", icon="SCENE_DATA").type = "NEW"
+
         elif display_mode == 'ORPHAN_DATA':
             layout.separator()
 
