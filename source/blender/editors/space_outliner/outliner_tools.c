@@ -71,12 +71,15 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
+#include "BLT_translation.h"
+
 #include "ED_object.h"
 #include "ED_outliner.h"
 #include "ED_scene.h"
 #include "ED_screen.h"
 #include "ED_sequencer.h"
 #include "ED_undo.h"
+#include "ED_util.h"
 
 #include "WM_api.h"
 #include "WM_message.h"
@@ -439,14 +442,19 @@ static void outliner_do_libdata_operation(bContext *C,
 
 typedef enum eOutliner_PropSceneOps {
   OL_SCENE_OP_DELETE = 1,
+  OL_SCENE_OP_NEW = 2,
+  OL_SCENE_OP_COPY_SETTINGS = 3,
+  OL_SCENE_OP_COPY_LINKED = 4,
+  OL_SCENE_OP_COPY_FULL = 5
 } eOutliner_PropSceneOps;
 
 static const EnumPropertyItem prop_scene_op_types[] = {
-    {OL_SCENE_OP_DELETE,
-     "DELETE",
-     ICON_DELETE,
-     "Delete",
-     ""}, /*bfa - replaced the ICON_X by ICON_DELETE*/
+    /*bfa - replaced the ICON_X by ICON_DELETE*/
+    {OL_SCENE_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+    // {OL_SCENE_OP_NEW, "NEW", ICON_NEW, "New", ""},
+    {OL_SCENE_OP_COPY_SETTINGS, "COPY_SETTINGS", ICON_COPYDOWN, "Copy Settings", ""},
+    {OL_SCENE_OP_COPY_LINKED, "COPY_LINKED", ICON_LINKED, "Linked Copy", ""},
+    {OL_SCENE_OP_COPY_LINKED, "COPY_FULL", ICON_DUPLICATE_ALL, "Full Copy", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -470,28 +478,66 @@ static bool outliner_do_scene_operation(
   return success;
 }
 
+/* bfa */
+/* based on ED_scene_add, but without the need of getting setting active scene */
+static Scene *scene_add_ex(Scene *scene_old, Main *bmain, bContext *C, eSceneCopyMethod method)
+{
+  Scene *scene_new;
+
+  if (method == SCE_COPY_NEW) {
+    scene_new = BKE_scene_add(bmain, DATA_("Scene"));
+  }
+  else { /* different kinds of copying */
+    /* We are going to deep-copy collections, objects and various object data, we need to have
+     * up-to-date obdata for that. */
+    if (method == SCE_COPY_FULL) {
+      ED_editors_flush_edits(bmain);
+    }
+
+    scene_new = BKE_scene_duplicate(bmain, scene_old, method);
+  }
+
+  WM_event_add_notifier(C, NC_SCENE | ND_SCENEBROWSE, scene_new);
+
+  return scene_new;
+}
+
 static bool scene_fn(bContext *C,
                      eOutliner_PropSceneOps event,
                      TreeElement *UNUSED(te),
                      TreeStoreElem *tselem)
 {
   Scene *scene = (Scene *)tselem->id;
+  Main *bmain = CTX_data_main(C);
 
   if (event == OL_SCENE_OP_DELETE) {
-    if (ED_scene_delete(C, CTX_data_main(C), scene)) {
+    if (ED_scene_delete(C, bmain, scene)) {
       WM_event_add_notifier(C, NC_SCENE | NA_REMOVED, scene);
     }
     else {
       return false;
     }
   }
-
+  else if (event == OL_SCENE_OP_NEW) {
+    scene_add_ex(scene, bmain, C, SCE_COPY_NEW);
+  }
+  else if (event == OL_SCENE_OP_COPY_SETTINGS) {
+    scene_add_ex(scene, bmain, C, SCE_COPY_EMPTY);
+  }
+  else if (event == OL_SCENE_OP_COPY_LINKED) {
+    scene_add_ex(scene, bmain, C, SCE_COPY_LINK_COLLECTION);
+  }
+  else if (event == OL_SCENE_OP_COPY_FULL) {
+    scene_add_ex(scene, bmain, C, SCE_COPY_FULL);
+  }
   return true;
 }
 
 static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
 {
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
   const eOutliner_PropSceneOps event = RNA_enum_get(op->ptr, "type");
 
   if (outliner_do_scene_operation(C, event, &space_outliner->tree, scene_fn) == false) {
@@ -501,6 +547,16 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
   if (event == OL_SCENE_OP_DELETE) {
     outliner_cleanup_tree(space_outliner);
     ED_undo_push(C, "Delete Scene(s)");
+  }
+  else if (ELEM(event,
+                OL_SCENE_OP_NEW,
+                OL_SCENE_OP_COPY_SETTINGS,
+                OL_SCENE_OP_COPY_LINKED,
+                OL_SCENE_OP_COPY_FULL)) {
+    DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+    DEG_relations_tag_update(bmain);
+    outliner_cleanup_tree(space_outliner);
+    WM_main_add_notifier(NC_SCENE | ND_LAYER, NULL);
   }
   else {
     BLI_assert(0);
@@ -2817,8 +2873,8 @@ static const EnumPropertyItem *outliner_data_op_sets_enum_item_fn(bContext *C,
   TreeStoreElem *tselem = TREESTORE(te);
 
   static const EnumPropertyItem optype_sel_and_hide[] = {
-      /*bfa - need to use the OFF icon to display the ON icon. Blender code hiccup with dealing with values
-         instead of icon names at other locations ...*/
+      /*bfa - need to use the OFF icon to display the ON icon. Blender code hiccup with dealing
+         with values instead of icon names at other locations ...*/
       {OL_DOP_SELECT, "SELECT", ICON_RESTRICT_SELECT_OFF, "Select", ""},
       {OL_DOP_DESELECT, "DESELECT", ICON_SELECT_NONE, "Deselect", ""},
       {OL_DOP_HIDE, "HIDE", ICON_HIDE_ON, "Hide", ""},
