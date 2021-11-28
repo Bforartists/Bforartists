@@ -753,6 +753,39 @@ class DOPESHEET_MT_key_snap(Menu):
                         icon="SNAP_NEARESTMARKER").type = 'NEAREST_MARKER'
 
 
+class DopesheetActionPanelBase:
+    bl_region_type = 'UI'
+    bl_label = "Action"
+
+    @classmethod
+    def draw_generic_panel(cls, context, layout, action):
+        layout.label(text=action.name, icon='ACTION')
+
+        layout.prop(action, "use_frame_range")
+
+        col = layout.column()
+        col.active = action.use_frame_range
+
+        row = col.row(align=True)
+        row.prop(action, "frame_start", text="Start")
+        row.prop(action, "frame_end", text="End")
+
+        col.prop(action, "use_cyclic")
+
+
+class DOPESHEET_PT_action(DopesheetActionPanelBase, Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_category = "Item"
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.selected_visible_actions)
+
+    def draw(self, context):
+        action = context.selected_visible_actions[0]
+        self.draw_generic_panel(context, self.layout, action)
+
+
 #######################################
 # Grease Pencil Editing
 
@@ -1024,6 +1057,7 @@ classes = (
     DOPESHEET_MT_snap_pie,
     DOPESHEET_MT_view_pie,
     DOPESHEET_PT_filters,
+    DOPESHEET_PT_action,
     DOPESHEET_PT_gpencil_mode,
     DOPESHEET_PT_gpencil_layer_masks,
     DOPESHEET_PT_gpencil_layer_transform,

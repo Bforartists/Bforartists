@@ -52,3 +52,5 @@ waveletNoiseTile.bin
 
 # testing environment
 /Testing
+/release/datafiles/blender_icons16/icon16_current_file.dat
+/release/datafiles/blender_icons32/icon32_current_file.dat
