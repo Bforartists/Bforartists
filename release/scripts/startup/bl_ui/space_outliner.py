@@ -121,6 +121,17 @@ class ALL_MT_editormenu(Menu):
         row.template_header() # editor type menus
 
 
+class BFA_OUTLINER_PT_scene_ops(Panel):
+    bl_label = "New Scene"
+    bl_space_type = "OUTLINER"
+    bl_region_type = "HEADER"
+    
+    def draw(self, context):
+        col = self.layout.column(align=True)
+        col.label(text="New Scene")
+        col.separator_spacer()
+        col.operator_enum(operator="scene.new", property="type")
+
 class OUTLINER_MT_editor_menus(Menu):
     bl_idname = "OUTLINER_MT_editor_menus"
     bl_label = ""
@@ -148,7 +159,7 @@ class OUTLINER_MT_editor_menus(Menu):
             if display_mode == 'SCENES':
                 # BFA - Outliner - Scene View - Add Scene creation operator to header
                 layout.separator()
-                layout.operator("scene.new", text="", icon="SCENE_DATA").type = "NEW"
+                layout.popover("BFA_OUTLINER_PT_scene_ops", text="", icon="SCENE_DATA")
 
         elif display_mode == 'ORPHAN_DATA':
             layout.separator()
@@ -572,6 +583,7 @@ classes = (
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection,
     ALL_MT_editormenu,
+    BFA_OUTLINER_PT_scene_ops,
     OUTLINER_MT_editor_menus,
     OUTLINER_MT_pie_menus,
     OUTLINER_MT_view,
