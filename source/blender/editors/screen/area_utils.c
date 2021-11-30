@@ -82,6 +82,7 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
         column + margin,
         (2.0f * column) + margin,
         (2.7f * column) + margin,
+        (3.4f * column) + margin,
     };
     int best_diff = INT_MAX;
     int best_size = size;
