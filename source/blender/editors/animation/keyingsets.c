@@ -789,12 +789,9 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
     RNA_enum_item_add_separator(&item, &totitem);
   }
 
-  /* builtin Keying Sets */
-  i = -1;
   /* bfa - set builtin keyingset enum items icons */
-  int icon_index = 0;
-  /* fill icons in order for builtin keyingset enum items */
-  int icons[] = {
+  /* fill icons and keyingset idnames in same order */
+  int ks_icons[] = {
       ICON_TRANSFORM_MOVE,
       ICON_TRANSFORM_ROTATE,
       ICON_TRANSFORM_SCALE,
@@ -814,7 +811,33 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       ICON_VISUAL_LOC_SCALE,
       ICON_VISUAL_ROT_SCALE,
   };
+  int ks_icons_len = sizeof(ks_icons) / sizeof(int);
+  char *ks_icons_idnames[] = {
+      "Location",
+      "Rotation",
+      "Scaling",
+      "BUILTIN_KSI_LocRot",
+      "LocRotScale",
+      "LocRotScaleCProp",
+      "BUILTIN_KSI_LocScale",
+      "BUILTIN_KSI_RotScale",
+      "BUILTIN_KSI_DeltaLocation",
+      "BUILTIN_KSI_DeltaRotation",
+      "BUILTIN_KSI_DeltaScale",
+      "BUILTIN_KSI_VisualLoc",
+      "BUILTIN_KSI_VisualRot",
+      "BUILTIN_KSI_VisualScaling",
+      "BUILTIN_KSI_VisualLocRot",
+      "BUILTIN_KSI_VisualLocRotScale",
+      "BUILTIN_KSI_VisualLocScale",
+      "BUILTIN_KSI_VisualRotScale",
+  };
+  int ks_icons_idnames_len = sizeof(ks_icons_idnames) / sizeof(char *);
+  int ks_icons_iter_len = min(ks_icons_len, ks_icons_idnames_len);
   /* endbfa */
+
+  /* builtin Keying Sets */
+  i = -1;
   for (ks = builtin_keyingsets.first; ks; ks = ks->next, i--) {
     /* only show KeyingSet if context is suitable */
     if (ANIM_keyingset_context_ok_poll(C, ks)) {
@@ -823,11 +846,15 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       item_tmp.description = ks->description;
       item_tmp.value = i;
       /* bfa */
-      item_tmp.icon = ICON_NONE; /* have to reset icon as item_tmp is persistent*/
-      if ((icon_index >= 0) && (icon_index < (sizeof(icons) / sizeof(int)))) {
-        item_tmp.icon = icons[icon_index];
+      /* Have to reset icon as item_tmp is persistent*/
+      item_tmp.icon = ICON_NONE;
+      /* Match icon by keyingset idname, yes this is in theory slow */
+      for (int j = 0; j < ks_icons_iter_len; j++) {
+        if (STREQ(ks->idname, ks_icons_idnames[j])) {
+          item_tmp.icon = ks_icons[j];
+          break;
+        }
       }
-      icon_index++;
       /* endbfa */
       RNA_enum_item_add(&item, &totitem, &item_tmp);
     }
