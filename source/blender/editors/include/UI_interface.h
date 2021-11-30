@@ -260,7 +260,7 @@ enum {
 
 /* Both these margins should be ignored if the panel doesn't show a background (check
  * #UI_panel_should_show_background()). */
-#define UI_PANEL_MARGIN_X (U.widget_unit * 0.1f) /*bfa - margin from 0.4 to 0.1*/
+#define UI_PANEL_MARGIN_X (U.widget_unit * 0.2f) /*bfa - margin from 0.4 to 0.2 for now*/
 #define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
 
 /* but->drawflag - these flags should only affect how the button is drawn. */
