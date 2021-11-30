@@ -2936,10 +2936,17 @@ static int panel_draw_width_from_max_width_get(const ARegion *region,
                                                const PanelType *panel_type,
                                                const int max_width)
 {
-  /* With a background, we want some extra padding. */
-  return UI_panel_should_show_background(region, panel_type) ?
-             max_width - UI_PANEL_MARGIN_X * 2.0f :
-             max_width;
+  /* bfa - With a background, we want some extra padding.
+  But not for our no header panel in the tool shelves. So if - else*/
+  if (region->regiontype == RGN_TYPE_TOOLS) {
+    /*our tool shelf, no extra padding*/
+    return UI_panel_should_show_background(region, panel_type) ? max_width : max_width;
+  }
+  else {
+    /* With a background, we want some extra padding*/
+    return UI_panel_should_show_background(region, panel_type) ?
+      max_width - UI_PANEL_MARGIN_X * 2.0f : max_width;
+  }
 }
 
 /**
