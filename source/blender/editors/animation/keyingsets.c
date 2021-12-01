@@ -788,9 +788,6 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
     /* separator */
     RNA_enum_item_add_separator(&item, &totitem);
   }
-/*bfa - old code*/
- // /* builtin Keying Sets */
- // i = -1;
   /* bfa - set builtin keyingset enum items icons */
   /* fill icons and keyingset idnames in same order */
   int ks_icons[] = {
@@ -836,11 +833,10 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
   };
   int ks_icons_idnames_len = sizeof(ks_icons_idnames) / sizeof(char *);
   int ks_icons_iter_len = min(ks_icons_len, ks_icons_idnames_len);
+  /* endbfa */
 
   /* builtin Keying Sets */
   i = -1;
-  /* endbfa */
-
   for (ks = builtin_keyingsets.first; ks; ks = ks->next, i--) {
     /* only show KeyingSet if context is suitable */
     if (ANIM_keyingset_context_ok_poll(C, ks)) {
