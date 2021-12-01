@@ -791,6 +791,7 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
   /* bfa - set builtin keyingset enum items icons */
   /* fill icons and keyingset idnames in same order */
   int ks_icons[] = {
+      ICON_DECORATE_KEYFRAME,
       ICON_TRANSFORM_MOVE,
       ICON_TRANSFORM_ROTATE,
       ICON_TRANSFORM_SCALE,
@@ -809,9 +810,13 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       ICON_VISUAL_LOC_ROT_SCALE,
       ICON_VISUAL_LOC_SCALE,
       ICON_VISUAL_ROT_SCALE,
+      ICON_BONE_DATA,
+      ICON_ARMATURE_DATA,
+      ICON_MOD_ARMATURE_SELECTED
   };
   int ks_icons_len = sizeof(ks_icons) / sizeof(int);
   char *ks_icons_idnames[] = {
+      "Available",
       "Location",
       "Rotation",
       "Scaling",
@@ -830,6 +835,9 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       "BUILTIN_KSI_VisualLocRotScale",
       "BUILTIN_KSI_VisualLocScale",
       "BUILTIN_KSI_VisualRotScale",
+      "BUILTIN_KSI_BendyBones",
+      "WholeCharacter",
+      "WholeCharacterSelected"
   };
   int ks_icons_idnames_len = sizeof(ks_icons_idnames) / sizeof(char *);
   int ks_icons_iter_len = min(ks_icons_len, ks_icons_idnames_len);
