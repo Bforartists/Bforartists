@@ -16,7 +16,7 @@ Please use the tracker to add issues, bug reports and requests. The tracker can 
 
 Why choose Bforartists, and not Blender? Because our UI  is streamlined, cleaner, better organized, has colored icons, left aligned text, and much more of all those things that makes a good UI and the life easier. Bforartists is fully compatible with Blender. You can use both asides to make yourself a picture. The files are transferable. So try it, you loose nothing.
 
-The main Differences between Bforartists 2 and Blender 2.8x are:
+The main Differences between Bforartists and Blender are:
 
 - An own keymap, which is reduced to just the necessary hotkeys and a navigation that can be purely done by mouse.
 - Cleaned up User Interface. Lots of not necessary double, triple or even more equal menu entries removed.
