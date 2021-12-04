@@ -24,7 +24,8 @@ The main Differences between Bforartists and Blender are:
 - Rearranged User Interface. Some things are better accessible now, some are not so much in the way anymore.
 - Improved defaults.
 - Colored and as double as much icons than Blender.
-- A configurable Toolbar with icon buttons.
+- Configurable UI Elements like the Toolbar, with icon buttons.
+- Tabs in the toolshelf.
 - Improved Layouts.
 - Left aligned checkboxes and text where possible.
 - Better Tooltips.
