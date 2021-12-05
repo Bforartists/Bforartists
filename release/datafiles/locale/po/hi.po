@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -3565,6 +3565,18 @@ msgid "Number of Cuts"
 msgstr "कटौती की संख्या"
 
 
+msgid "Short List"
+msgstr "संक्षिप्त सूची"
+
+
+msgid "Long List"
+msgstr "लंबी सूची"
+
+
+msgid "File Browser Mode"
+msgstr "संचिका विचरक रूप"
+
+
 msgctxt "Operator"
 msgid "Preset"
 msgstr "पूर्ववत"
@@ -3592,18 +3604,6 @@ msgstr "दौर"
 
 msgid "Tool"
 msgstr "यंत्र"
-
-
-msgid "Short List"
-msgstr "संक्षिप्त सूची"
-
-
-msgid "Long List"
-msgstr "लंबी सूची"
-
-
-msgid "File Browser Mode"
-msgstr "संचिका विचरक रूप"
 
 
 msgctxt "Operator"

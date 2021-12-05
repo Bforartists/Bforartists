@@ -63,6 +63,7 @@
 
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
+#include "BKE_bpath.h"
 #include "BKE_colortools.h"
 #include "BKE_cryptomatte.h"
 #include "BKE_global.h"
@@ -413,6 +414,29 @@ static void node_foreach_cache(ID *id,
         function_callback(id, &key, (void **)&node->storage, 0, user_data);
       }
     }
+  }
+}
+
+static void node_foreach_path(ID *id, BPathForeachPathData *bpath_data)
+{
+  bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
+
+  switch (ntree->type) {
+    case NTREE_SHADER: {
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type == SH_NODE_SCRIPT) {
+          NodeShaderScript *nss = reinterpret_cast<NodeShaderScript *>(node->storage);
+          BKE_bpath_foreach_path_fixed_process(bpath_data, nss->filepath);
+        }
+        else if (node->type == SH_NODE_TEX_IES) {
+          NodeShaderTexIES *ies = reinterpret_cast<NodeShaderTexIES *>(node->storage);
+          BKE_bpath_foreach_path_fixed_process(bpath_data, ies->filepath);
+        }
+      }
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -1055,6 +1079,7 @@ IDTypeInfo IDType_ID_NT = {
     /* make_local */ nullptr,
     /* foreach_id */ node_foreach_id,
     /* foreach_cache */ node_foreach_cache,
+    /* foreach_path */ node_foreach_path,
     /* owner_get */ node_owner_get,
 
     /* blend_write */ ntree_blend_write,
@@ -1430,7 +1455,7 @@ void nodeUnregisterType(bNodeType *nt)
   BLI_ghash_remove(nodetypes_hash, nt->idname, nullptr, node_free_type);
 }
 
-bool nodeTypeUndefined(bNode *node)
+bool nodeTypeUndefined(const bNode *node)
 {
   return (node->typeinfo == &NodeTypeUndefined) ||
          ((ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP)) && node->id &&
@@ -5828,6 +5853,7 @@ static void registerGeometryNodes()
   register_node_type_geo_attribute_compare();
   register_node_type_geo_attribute_convert();
   register_node_type_geo_attribute_curve_map();
+  register_node_type_geo_attribute_domain_size();
   register_node_type_geo_attribute_fill();
   register_node_type_geo_attribute_map_range();
   register_node_type_geo_attribute_math();
@@ -5846,7 +5872,6 @@ static void registerGeometryNodes()
   register_node_type_geo_curve_fillet();
   register_node_type_geo_curve_handle_type_selection();
   register_node_type_geo_curve_length();
-  register_node_type_geo_curve_parameter();
   register_node_type_geo_curve_primitive_bezier_segment();
   register_node_type_geo_curve_primitive_circle();
   register_node_type_geo_curve_primitive_line();
@@ -5858,6 +5883,7 @@ static void registerGeometryNodes()
   register_node_type_geo_curve_reverse();
   register_node_type_geo_curve_sample();
   register_node_type_geo_curve_set_handles();
+  register_node_type_geo_curve_spline_parameter();
   register_node_type_geo_curve_spline_type();
   register_node_type_geo_curve_subdivide();
   register_node_type_geo_curve_to_mesh();
@@ -5865,6 +5891,7 @@ static void registerGeometryNodes()
   register_node_type_geo_curve_trim();
   register_node_type_geo_delete_geometry();
   register_node_type_geo_distribute_points_on_faces();
+  register_node_type_geo_dual_mesh();
   register_node_type_geo_edge_split();
   register_node_type_geo_image_texture();
   register_node_type_geo_input_curve_handles();
@@ -5944,7 +5971,7 @@ static void registerFunctionNodes()
 
   register_node_type_fn_align_euler_to_vector();
   register_node_type_fn_boolean_math();
-  register_node_type_fn_float_compare();
+  register_node_type_fn_compare();
   register_node_type_fn_float_to_int();
   register_node_type_fn_input_bool();
   register_node_type_fn_input_color();

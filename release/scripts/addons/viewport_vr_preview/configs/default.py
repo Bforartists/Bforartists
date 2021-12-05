@@ -68,7 +68,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_FORWARD'),
        ("lock_location_z", True),
        ],
-      }, 
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
@@ -85,7 +85,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_BACK'),
        ("lock_location_z", True),
        ],
-      },  
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
@@ -102,7 +102,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_LEFT'),
        ("lock_location_z", True),
        ],
-      }, 
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
@@ -119,7 +119,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_RIGHT'),
        ("lock_location_z", True),
        ],
-      },   
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
@@ -137,7 +137,7 @@ actionconfig_data = \
        ("speed_min", 0.014),
        ("speed_max", 0.042),
        ],
-      }, 
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
@@ -155,7 +155,7 @@ actionconfig_data = \
        ("speed_min", 0.014),
        ("speed_max", 0.042),
        ],
-      },  
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
@@ -191,7 +191,7 @@ actionconfig_data = \
        ("speed_min", 0.01),
        ("speed_max", 0.03),
        ],
-      },  
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/thumbstick/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
@@ -209,7 +209,7 @@ actionconfig_data = \
        ("rotation", False),
        ("scale", True),
        ],
-      }, 
+      },
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/x/click', "component_path1": '/input/a/click', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/back/click', "component_path1": '/input/back/click', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
@@ -245,7 +245,7 @@ actionconfig_data = \
        ("from_viewer", True),
        ("color", (0.0, 1.0, 1.0, 1.0)),
        ],
-      }, 
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/trigger_right/value', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ],
@@ -262,7 +262,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_FORWARD'),
        ("lock_location_z", True),
        ],
-      }, 
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_left/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ],
@@ -273,7 +273,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_BACK'),
        ("lock_location_z", True),
        ],
-      },  
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_left/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ],
@@ -284,7 +284,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_LEFT'),
        ("lock_location_z", True),
        ],
-      }, 
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_left/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ],
@@ -295,7 +295,7 @@ actionconfig_data = \
       [("mode", 'VIEWER_RIGHT'),
        ("lock_location_z", True),
        ],
-      }, 
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_left/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ],
@@ -307,7 +307,7 @@ actionconfig_data = \
        ("speed_min", 0.014),
        ("speed_max", 0.042),
        ],
-      },   
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_right/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ],
@@ -319,7 +319,7 @@ actionconfig_data = \
        ("speed_min", 0.014),
        ("speed_max", 0.042),
        ],
-      },   
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_right/y', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ],
@@ -331,7 +331,7 @@ actionconfig_data = \
        ("speed_min", 0.01),
        ("speed_max", 0.03),
        ],
-      },  
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_right/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'NEGATIVE'}),
        ],
@@ -343,7 +343,7 @@ actionconfig_data = \
        ("speed_min", 0.01),
        ("speed_max", 0.03),
        ],
-      }, 
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/thumbstick_right/x', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'POSITIVE'}),
        ],
@@ -355,7 +355,7 @@ actionconfig_data = \
        ("rotation", False),
        ("scale", True),
        ],
-      },  
+      },
      {"bindings":
       [("gamepad", {"profile": '/interaction_profiles/microsoft/xbox_controller', "component_path0": '/input/a/click', "component_path1": '', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ],

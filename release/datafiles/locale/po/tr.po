@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -10195,6 +10195,58 @@ msgid "Switch Direction"
 msgstr "Yönü Çevir"
 
 
+msgid "Check Existing"
+msgstr "Varolanla Değiştir..."
+
+
+msgid "Long List"
+msgstr "Ayrıntılı bilgi göster"
+
+
+msgid "File Browser Mode"
+msgstr "Kamera Uçuş Modu"
+
+
+msgid "Path to file"
+msgstr "Dosya kaydı olanaksız"
+
+
+msgid "Filter .blend files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter btx files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter COLLADA files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter font files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter image files"
+msgstr "Çoklu Resim dosyaları"
+
+
+msgid "Filter movie files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter python files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter sound files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
+msgid "Filter text files"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
 msgctxt "Operator"
 msgid "Add Boid Rule"
 msgstr "Kütüphaneye Ekle"
@@ -10248,54 +10300,6 @@ msgstr "Araç:"
 
 msgid "Directory of the file"
 msgstr "Dosya adı"
-
-
-msgid "Long List"
-msgstr "Ayrıntılı bilgi göster"
-
-
-msgid "File Browser Mode"
-msgstr "Kamera Uçuş Modu"
-
-
-msgid "Filter .blend files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter btx files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter COLLADA files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter font files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter image files"
-msgstr "Çoklu Resim dosyaları"
-
-
-msgid "Filter movie files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter python files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter sound files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Filter text files"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Path to file"
-msgstr "Dosya kaydı olanaksız"
 
 
 msgctxt "Operator"
@@ -11339,10 +11343,6 @@ msgstr "Mesaj"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Seçili İşaretler arasında"
-
-
-msgid "Check Existing"
-msgstr "Varolanla Değiştir..."
 
 
 msgid "End frame for export"
