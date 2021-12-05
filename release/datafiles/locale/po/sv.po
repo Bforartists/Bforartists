@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12973,6 +12973,54 @@ msgid "Switch Direction"
 msgstr "Riktning"
 
 
+msgid "Check and warn on overwriting existing files"
+msgstr "Överskrivning av/på"
+
+
+msgid "File Browser Mode"
+msgstr "Växla poseringsläge"
+
+
+msgid "Path to file"
+msgstr "Packa in i .blend-filen"
+
+
+msgid "Filter .blend files"
+msgstr "Rendera"
+
+
+msgid "Filter btx files"
+msgstr "Filtrera mappar"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtrera mappar"
+
+
+msgid "Filter font files"
+msgstr "Filtrera mappar"
+
+
+msgid "Filter image files"
+msgstr "Spara Bild"
+
+
+msgid "Filter movie files"
+msgstr "Arkiv"
+
+
+msgid "Filter python files"
+msgstr "Filtrera Python"
+
+
+msgid "Filter sound files"
+msgstr "Filtrera mappar"
+
+
+msgid "Filter text files"
+msgstr "Duplicera"
+
+
 msgctxt "Operator"
 msgid "Add Boid Rule"
 msgstr "Flytta Till Lager"
@@ -13061,51 +13109,7 @@ msgid "Directory of the file"
 msgstr "Riktning"
 
 
-msgid "File Browser Mode"
-msgstr "Växla poseringsläge"
-
-
-msgid "Filter .blend files"
-msgstr "Rendera"
-
-
-msgid "Filter btx files"
-msgstr "Filtrera mappar"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtrera mappar"
-
-
-msgid "Filter font files"
-msgstr "Filtrera mappar"
-
-
-msgid "Filter image files"
-msgstr "Spara Bild"
-
-
-msgid "Filter movie files"
-msgstr "Arkiv"
-
-
-msgid "Filter python files"
-msgstr "Filtrera Python"
-
-
-msgid "Filter sound files"
-msgstr "Filtrera mappar"
-
-
-msgid "Filter text files"
-msgstr "Duplicera"
-
-
 msgid "Select the file relative to the blend file"
-msgstr "Packa in i .blend-filen"
-
-
-msgid "Path to file"
 msgstr "Packa in i .blend-filen"
 
 
@@ -14403,10 +14407,6 @@ msgstr "Ångra/gör om"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Rensa Förälder"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Överskrivning av/på"
 
 
 msgid "Filepath used for exporting the file"

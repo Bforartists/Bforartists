@@ -258,7 +258,7 @@ class Generator(base_generate.BaseGenerator):
                     for tar in var.targets:
                         # If a custom property
                         if var.type == 'SINGLE_PROP' \
-                        and re.match('^pose.bones\["[^"\]]*"\]\["[^"\]]*"\]$', tar.data_path):
+                        and re.match(r'^pose.bones\["[^"\]]*"\]\["[^"\]]*"\]$', tar.data_path):
                             tar.data_path = "RIGIFY-" + tar.data_path
 
 

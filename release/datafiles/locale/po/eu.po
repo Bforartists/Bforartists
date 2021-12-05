@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -2040,6 +2040,14 @@ msgid "Speaker"
 msgstr "Bozgorailua"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Helbide hutsa, ezin da gorde"
+
+
+msgid "Path too long, cannot save"
+msgstr "Helbide oso luzea, ezin da gorde"
+
+
 msgid "Reset"
 msgstr "Berhasieratu"
 
@@ -2356,14 +2364,6 @@ msgstr "Blender Fitxategi Bista"
 
 msgid "unable to open the file"
 msgstr "Ezin izan da fitxategia ireki"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Helbide hutsa, ezin da gorde"
-
-
-msgid "Path too long, cannot save"
-msgstr "Helbide oso luzea, ezin da gorde"
 
 
 msgid "File format is not supported in file '%s'"
