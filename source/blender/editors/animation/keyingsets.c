@@ -840,7 +840,7 @@ const EnumPropertyItem *ANIM_keying_sets_enum_itemf(bContext *C,
       "WholeCharacterSelected"
   };
   int ks_icons_idnames_len = sizeof(ks_icons_idnames) / sizeof(char *);
-  int ks_icons_iter_len = min(ks_icons_len, ks_icons_idnames_len);
+  int ks_icons_iter_len = (ks_icons_len < ks_icons_idnames_len) ? ks_icons_len : ks_icons_idnames_len;
   /* endbfa */
 
   /* builtin Keying Sets */
