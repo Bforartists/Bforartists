@@ -62,10 +62,10 @@ def vr_create_actions(context: bpy.context):
         return
 
     # Ensure default action maps.
-    if not defaults.vr_ensure_default_actionmaps(session_state):  
+    if not defaults.vr_ensure_default_actionmaps(session_state):
         return
 
-    for am in session_state.actionmaps:    
+    for am in session_state.actionmaps:
         if len(am.actionmap_items) < 1:
             continue
 
@@ -79,7 +79,7 @@ def vr_create_actions(context: bpy.context):
         for ami in am.actionmap_items:
             if len(ami.bindings) < 1:
                 continue
-            
+
             ok = session_state.action_create(context, am, ami)
             if not ok:
                 return
@@ -131,7 +131,7 @@ def vr_save_actionmaps(session_state, filepath, sort=False):
     action_map_io.actionconfig_export_as_data(session_state, filepath, sort=sort)
 
     print("Saved XR actionmaps: " + filepath)
-    
+
     return True
 
 

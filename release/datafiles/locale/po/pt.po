@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -10956,14 +10956,6 @@ msgid "Index of active grease pencil layer"
 msgstr "O índice da camada de lápis de cera ativa."
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Índice do primeiro anel deste polígono."
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Número de anéis usados por este polígono."
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "Visualização estatística dos níveis de cor em uma imagem."
 
@@ -21466,8 +21458,16 @@ msgid "Loop Start"
 msgstr "Início dos anéis"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Índice do primeiro anel deste polígono."
+
+
 msgid "Loop Total"
 msgstr "Total de anéis"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Número de anéis usados por este polígono."
 
 
 msgid "Polygon Normal"
@@ -30483,6 +30483,90 @@ msgid "+X to -X"
 msgstr "+X para -X"
 
 
+msgid "Check Existing"
+msgstr "Verificar existentes"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Verifica e avisa caso esteja sobrescrevendo ficheiros existentes."
+
+
+msgid "Automatically determine display type for files"
+msgstr "Determina automaticamente o tipo de visualização para ficheiros."
+
+
+msgid "Short List"
+msgstr "Lista curta"
+
+
+msgid "Display files as short list"
+msgstr "Mostra ficheiros como uma lista curta."
+
+
+msgid "Long List"
+msgstr "Lista longa"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostra ficheiros como uma lista detalhada."
+
+
+msgid "File Browser Mode"
+msgstr "Modo de navegação de ficheiros"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "As definições para o navegador de ficheiros carregar ficheiros Blender, bibliotecas ou ficheiros especiais."
+
+
+msgid "Path to file"
+msgstr "Caminho para o ficheiro"
+
+
+msgid "Filter Alembic files"
+msgstr "Filtra por ficheiros do tipo Alembic"
+
+
+msgid "Filter .blend files"
+msgstr "Filtra por ficheiros Blender (.blend)"
+
+
+msgid "Filter btx files"
+msgstr "Filtra por ficheiros btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtra por ficheiros COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtra por ficheiros de fonte "
+
+
+msgid "Filter image files"
+msgstr "Filtra por ficheiros de imagem"
+
+
+msgid "Filter movie files"
+msgstr "Filtra por ficheiros de filme"
+
+
+msgid "Filter python files"
+msgstr "Filtra por ficheiros Python"
+
+
+msgid "Filter sound files"
+msgstr "Filtra por ficheiros de som"
+
+
+msgid "Filter text files"
+msgstr "Filtra por ficheiros de texto"
+
+
+msgid "File sorting mode"
+msgstr "Modo de ordenamento de ficheiros"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Iniciar sessão"
@@ -30714,84 +30798,8 @@ msgid "Directory of the file"
 msgstr "Diretório do ficheiro"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Determina automaticamente o tipo de visualização para ficheiros."
-
-
-msgid "Short List"
-msgstr "Lista curta"
-
-
-msgid "Display files as short list"
-msgstr "Mostra ficheiros como uma lista curta."
-
-
-msgid "Long List"
-msgstr "Lista longa"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostra ficheiros como uma lista detalhada."
-
-
-msgid "File Browser Mode"
-msgstr "Modo de navegação de ficheiros"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "As definições para o navegador de ficheiros carregar ficheiros Blender, bibliotecas ou ficheiros especiais."
-
-
-msgid "Filter Alembic files"
-msgstr "Filtra por ficheiros do tipo Alembic"
-
-
-msgid "Filter .blend files"
-msgstr "Filtra por ficheiros Blender (.blend)"
-
-
-msgid "Filter btx files"
-msgstr "Filtra por ficheiros btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtra por ficheiros COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtra por ficheiros de fonte "
-
-
-msgid "Filter image files"
-msgstr "Filtra por ficheiros de imagem"
-
-
-msgid "Filter movie files"
-msgstr "Filtra por ficheiros de filme"
-
-
-msgid "Filter python files"
-msgstr "Filtra por ficheiros Python"
-
-
-msgid "Filter sound files"
-msgstr "Filtra por ficheiros de som"
-
-
-msgid "Filter text files"
-msgstr "Filtra por ficheiros de texto"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleciona o ficheiro relativo ao ficheiro Blender."
-
-
-msgid "File sorting mode"
-msgstr "Modo de ordenamento de ficheiros"
-
-
-msgid "Path to file"
-msgstr "Caminho para o ficheiro"
 
 
 msgctxt "Operator"
@@ -32752,14 +32760,6 @@ msgstr "Exportar câmara e marcadores"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Guarda um script python que irá criar novamente as câmaras e marcadores em algum outro local."
-
-
-msgid "Check Existing"
-msgstr "Verificar existentes"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Verifica e avisa caso esteja sobrescrevendo ficheiros existentes."
 
 
 msgid "Filepath used for exporting the file"
@@ -64425,6 +64425,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Erro de programação: faltando função clara de transformação ou nome de conjunto de inserção de chaves."
 
 
+msgid "Path is empty, cannot save"
+msgstr "Caminho está vazio, não é possível guardar."
+
+
+msgid "Path too long, cannot save"
+msgstr "Caminho muito longo, não é possível guardar."
+
+
 msgid "Cannot separate current selection"
 msgstr "Não é possível separar a seleção atual."
 
@@ -69139,14 +69147,6 @@ msgstr "Fonte fiável [Caminho não garantido]"
 
 msgid "unable to open the file"
 msgstr "Não foi possível abrir o ficheiro."
-
-
-msgid "Path is empty, cannot save"
-msgstr "Caminho está vazio, não é possível guardar."
-
-
-msgid "Path too long, cannot save"
-msgstr "Caminho muito longo, não é possível guardar."
 
 
 msgid "Unable to create user config path"
