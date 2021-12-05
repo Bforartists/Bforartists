@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -26335,6 +26335,90 @@ msgid "+X to -X"
 msgstr "da +X a -X"
 
 
+msgid "Check Existing"
+msgstr "Controlla Preesistenza"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Controlla ed avvisa se si sovrascrive un file esistente"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Unisce automaticamente i fotogrammi chiave vicini"
+
+
+msgid "Short List"
+msgstr "Lista Breve"
+
+
+msgid "Display files as short list"
+msgstr "Mostra i file come lista breve"
+
+
+msgid "Long List"
+msgstr "Lista lunga"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostra i file come lista dettagliata"
+
+
+msgid "File Browser Mode"
+msgstr "Modalità File Browser"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Impostazioni per la modalità file browser per caricare un file .blend, una libreria o un file speciale"
+
+
+msgid "Path to file"
+msgstr "Percorso del file"
+
+
+msgid "Filter Alembic files"
+msgstr "Filtra i file Alembic"
+
+
+msgid "Filter .blend files"
+msgstr "Filtra i file .blend"
+
+
+msgid "Filter btx files"
+msgstr "Filtra i file btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtra i file COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtra i file di caratteri"
+
+
+msgid "Filter image files"
+msgstr "Filtra i file di immagini"
+
+
+msgid "Filter movie files"
+msgstr "Filtra i file di filmati"
+
+
+msgid "Filter python files"
+msgstr "Filtra i file python"
+
+
+msgid "Filter sound files"
+msgstr "Filtra i file di suoni"
+
+
+msgid "Filter text files"
+msgstr "Filtra i file di testo"
+
+
+msgid "File sorting mode"
+msgstr "Modo ordinamento file"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Accedi"
@@ -26534,84 +26618,8 @@ msgid "Directory of the file"
 msgstr "Cartella del file"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Unisce automaticamente i fotogrammi chiave vicini"
-
-
-msgid "Short List"
-msgstr "Lista Breve"
-
-
-msgid "Display files as short list"
-msgstr "Mostra i file come lista breve"
-
-
-msgid "Long List"
-msgstr "Lista lunga"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostra i file come lista dettagliata"
-
-
-msgid "File Browser Mode"
-msgstr "Modalità File Browser"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Impostazioni per la modalità file browser per caricare un file .blend, una libreria o un file speciale"
-
-
-msgid "Filter Alembic files"
-msgstr "Filtra i file Alembic"
-
-
-msgid "Filter .blend files"
-msgstr "Filtra i file .blend"
-
-
-msgid "Filter btx files"
-msgstr "Filtra i file btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtra i file COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtra i file di caratteri"
-
-
-msgid "Filter image files"
-msgstr "Filtra i file di immagini"
-
-
-msgid "Filter movie files"
-msgstr "Filtra i file di filmati"
-
-
-msgid "Filter python files"
-msgstr "Filtra i file python"
-
-
-msgid "Filter sound files"
-msgstr "Filtra i file di suoni"
-
-
-msgid "Filter text files"
-msgstr "Filtra i file di testo"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleziona il file relativamente al file .blend"
-
-
-msgid "File sorting mode"
-msgstr "Modo ordinamento file"
-
-
-msgid "Path to file"
-msgstr "Percorso del file"
 
 
 msgctxt "Operator"
@@ -28303,14 +28311,6 @@ msgstr "Esporta Camera & Marcatori"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Salva uno script python che ricrea le camere e i marcatori altrove"
-
-
-msgid "Check Existing"
-msgstr "Controlla Preesistenza"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Controlla ed avvisa se si sovrascrive un file esistente"
 
 
 msgid "Filepath used for exporting the file"
@@ -57026,6 +57026,14 @@ msgid "Copy buffer has no pose"
 msgstr "Il buffer di copia non contiene una posa"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Percorso vuoto, impossibile salvare"
+
+
+msgid "Path too long, cannot save"
+msgstr "Percorso troppo lungo, impossibile salvare"
+
+
 msgid "Not yet implemented"
 msgstr "Non ancora implementato"
 
@@ -60593,14 +60601,6 @@ msgstr "Non Salvare"
 
 msgid "unable to open the file"
 msgstr "impossibile aprire il file"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Percorso vuoto, impossibile salvare"
-
-
-msgid "Path too long, cannot save"
-msgstr "Percorso troppo lungo, impossibile salvare"
 
 
 msgid "Context window not set"

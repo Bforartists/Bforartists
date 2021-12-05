@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -14385,14 +14385,6 @@ msgid "Note/Layer to add annotation strokes to"
 msgstr "주석 스트로크를 추가 할 노트/레이어"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "이 폴리곤으로 사용된 루프의 수"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "이미지에 사용된 컬러 레벨의 통계 보기"
 
@@ -17514,10 +17506,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "표면 모드에서 그리기 할 때의 오프셋 양"
 
 
-msgid "Attributes"
-msgstr "속성"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "외부 또는 포장된 이미지를 참조하는 이미지 데이터 블록"
 
@@ -18850,6 +18838,10 @@ msgstr "서브 표면에 반투명 이펙트를 추가"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "지오메트리 표면을 정의하는 메쉬 데이터 블록"
+
+
+msgid "Attributes"
+msgstr "속성"
 
 
 msgid "Auto Smooth Angle"
@@ -27517,8 +27509,16 @@ msgid "Loop Start"
 msgstr "루프 시작"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
+
+
 msgid "Loop Total"
 msgstr "루프 합계"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "이 폴리곤으로 사용된 루프의 수"
 
 
 msgid "Polygon Normal"
@@ -38004,6 +38004,106 @@ msgid "+X to -X"
 msgstr "+X 에서 -X"
 
 
+msgid "Check Existing"
+msgstr "기존을 체크"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "확인 및 기존 파일 덮어 쓰기에 대한 경고"
+
+
+msgid "Automatically determine display type for files"
+msgstr "자동으로 파일에 대한 표시 유형을 결정하기"
+
+
+msgid "Short List"
+msgstr "짧은 목록"
+
+
+msgid "Display files as short list"
+msgstr "짧은 목록으로 파일을 표시"
+
+
+msgid "Long List"
+msgstr "긴 목록"
+
+
+msgid "Display files as a detailed list"
+msgstr "자세한 목록으로 파일을 표시"
+
+
+msgid "File Browser Mode"
+msgstr "파일 브라우저 모드"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr ".blend 파일, 라이브러리 또는 특수 파일을 불러오는 파일 브라우저 모드를 설정"
+
+
+msgid "Path to file"
+msgstr "파일의 경로"
+
+
+msgid "Filter Alembic files"
+msgstr "Alembic 파일을 필터"
+
+
+msgid "Filter archive files"
+msgstr "보관 파일을 필터"
+
+
+msgid "Filter .blend files"
+msgstr ".blend 파일을 필터"
+
+
+msgid "Filter btx files"
+msgstr "btx 파일을 필터"
+
+
+msgid "Filter COLLADA files"
+msgstr "Collada 파일을 필터"
+
+
+msgid "Filter font files"
+msgstr "폰트 파일을 필터"
+
+
+msgid "Filter image files"
+msgstr "이미지 파일을 필터"
+
+
+msgid "Filter movie files"
+msgstr "영상 파일을 필터"
+
+
+msgid "Filter python files"
+msgstr "Python 파일을 필터"
+
+
+msgid "Filter sound files"
+msgstr "사운드 파일을 필터"
+
+
+msgid "Filter text files"
+msgstr "텍스트 파일을 필터"
+
+
+msgid "Filter USD files"
+msgstr "USD 파일을 필터"
+
+
+msgid "Hide Operator Properties"
+msgstr "오퍼레이터 속성을 숨기기"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "오퍼레이터 설정을 표시하는 영역을 축소"
+
+
+msgid "File sorting mode"
+msgstr "파일 분류 모드"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "로그인"
@@ -38253,100 +38353,8 @@ msgid "Directory of the file"
 msgstr "파일의 디렉토리"
 
 
-msgid "Automatically determine display type for files"
-msgstr "자동으로 파일에 대한 표시 유형을 결정하기"
-
-
-msgid "Short List"
-msgstr "짧은 목록"
-
-
-msgid "Display files as short list"
-msgstr "짧은 목록으로 파일을 표시"
-
-
-msgid "Long List"
-msgstr "긴 목록"
-
-
-msgid "Display files as a detailed list"
-msgstr "자세한 목록으로 파일을 표시"
-
-
-msgid "File Browser Mode"
-msgstr "파일 브라우저 모드"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr ".blend 파일, 라이브러리 또는 특수 파일을 불러오는 파일 브라우저 모드를 설정"
-
-
-msgid "Filter Alembic files"
-msgstr "Alembic 파일을 필터"
-
-
-msgid "Filter archive files"
-msgstr "보관 파일을 필터"
-
-
-msgid "Filter .blend files"
-msgstr ".blend 파일을 필터"
-
-
-msgid "Filter btx files"
-msgstr "btx 파일을 필터"
-
-
-msgid "Filter COLLADA files"
-msgstr "Collada 파일을 필터"
-
-
-msgid "Filter font files"
-msgstr "폰트 파일을 필터"
-
-
-msgid "Filter image files"
-msgstr "이미지 파일을 필터"
-
-
-msgid "Filter movie files"
-msgstr "영상 파일을 필터"
-
-
-msgid "Filter python files"
-msgstr "Python 파일을 필터"
-
-
-msgid "Filter sound files"
-msgstr "사운드 파일을 필터"
-
-
-msgid "Filter text files"
-msgstr "텍스트 파일을 필터"
-
-
-msgid "Filter USD files"
-msgstr "USD 파일을 필터"
-
-
-msgid "Hide Operator Properties"
-msgstr "오퍼레이터 속성을 숨기기"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "오퍼레이터 설정을 표시하는 영역을 축소"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Blend 파일에 상대적인 파일을 선택"
-
-
-msgid "File sorting mode"
-msgstr "파일 분류 모드"
-
-
-msgid "Path to file"
-msgstr "파일의 경로"
 
 
 msgctxt "Operator"
@@ -40549,14 +40557,6 @@ msgstr "카메라 & 마커를 내보내기"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "다른 곳에서 카메라와 마커를 재생성하는 Python 스크립트를 저장합니다"
-
-
-msgid "Check Existing"
-msgstr "기존을 체크"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "확인 및 기존 파일 덮어 쓰기에 대한 경고"
 
 
 msgid "Filepath used for exporting the file"
@@ -85108,6 +85108,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "프로그래밍 오류: 누락된 지우기 변환 함수 또는 키잉 설정 이름"
 
 
+msgid "Path is empty, cannot save"
+msgstr "경로가 비어 있음, 저장할 수 없습니다"
+
+
+msgid "Path too long, cannot save"
+msgstr "경로가 너무 길기 때문에 저장 할 수 없습니다"
+
+
 msgid "No point was selected"
 msgstr "포인트가 선택되지 않았습니다"
 
@@ -91272,14 +91280,6 @@ msgstr "스크립트를 사용"
 
 msgid "Continue using file without Python scripts"
 msgstr "Python 스크립트없이 파일 사용을 계속하기"
-
-
-msgid "Path is empty, cannot save"
-msgstr "경로가 비어 있음, 저장할 수 없습니다"
-
-
-msgid "Path too long, cannot save"
-msgstr "경로가 너무 길기 때문에 저장 할 수 없습니다"
 
 
 msgid "Unable to create user config path"

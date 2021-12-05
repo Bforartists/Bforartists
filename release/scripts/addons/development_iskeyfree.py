@@ -509,7 +509,7 @@ class IsKeyFreeRunExportKeys(Operator):
 
             if new_name in list_txt:
                 from re import findall
-                test_num = [findall("\d+", words) for words in list_txt]
+                test_num = [findall(r"\d+", words) for words in list_txt]
                 suffix += max([int(l[-1]) for l in test_num])
                 new_name = "{}_{}{}".format(def_name, suffix, ext)
             return new_name
