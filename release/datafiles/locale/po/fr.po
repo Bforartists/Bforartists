@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1702,10 +1702,6 @@ msgid "Particle data-blocks"
 msgstr "Blocs de données particules"
 
 
-msgid "Point Clouds"
-msgstr "Nuages de points"
-
-
 msgid "Scenes"
 msgstr "Scènes"
 
@@ -1728,14 +1724,6 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
-
-
-msgid "Simulations"
-msgstr "Simulations"
-
-
-msgid "Simulation data-blocks"
-msgstr "Blocs de données de simulation"
 
 
 msgid "Sounds"
@@ -1886,14 +1874,6 @@ msgid "Collection of grease pencils"
 msgstr "Collection de crayons gras"
 
 
-msgid "Main Hairs"
-msgstr "Cheveux principaux"
-
-
-msgid "Collection of hairs"
-msgstr "Collection de cheveux"
-
-
 msgid "Main Images"
 msgstr "Images du Main"
 
@@ -2036,10 +2016,6 @@ msgstr "Écrans du Main"
 
 msgid "Collection of screens"
 msgstr "Collection d’écrans"
-
-
-msgid "Collection of simulations"
-msgstr "Collection de simulations"
 
 
 msgid "Main Sounds"
@@ -11174,8 +11150,16 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Afficher les blocs de données réglages de particules"
 
 
+msgid "Point Clouds"
+msgstr "Nuages de points"
+
+
 msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
+
+
+msgid "Simulations"
+msgstr "Simulations"
 
 
 msgid "Show Sound data-blocks"
@@ -15600,14 +15584,6 @@ msgstr "Note active"
 
 msgid "Note/Layer to add annotation strokes to"
 msgstr "Note/calque auquel ajouter les traits d’annotation"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Indice de la première boucle de ce polygone"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Nombre de boucles utilisées par ce polygone"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -27850,8 +27826,16 @@ msgid "Loop Start"
 msgstr "Boucle départ"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Indice de la première boucle de ce polygone"
+
+
 msgid "Loop Total"
 msgstr "Boucle total"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Nombre de boucles utilisées par ce polygone"
 
 
 msgid "Polygon Normal"
@@ -37243,6 +37227,90 @@ msgid "+X to -X"
 msgstr "+X vers -X"
 
 
+msgid "Check Existing"
+msgstr "Vérifier existant"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Prévenir la réécriture de fichiers existants"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Déterminer automatiquement le type d’affichage pour les fichiers"
+
+
+msgid "Short List"
+msgstr "Liste brève"
+
+
+msgid "Display files as short list"
+msgstr "Afficher les fichiers en une liste brève"
+
+
+msgid "Long List"
+msgstr "Liste détaillée"
+
+
+msgid "Display files as a detailed list"
+msgstr "Afficher les fichiers en une liste détaillée"
+
+
+msgid "File Browser Mode"
+msgstr "Mode du navigateur de fichier"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Critère du navigateur pour charger un fichier .blend, une bibliothèque ou un fichier spécial"
+
+
+msgid "Path to file"
+msgstr "Chemin vers fichier"
+
+
+msgid "Filter Alembic files"
+msgstr "Filtrer fichiers Alembic"
+
+
+msgid "Filter .blend files"
+msgstr "Filtrer fichiers .blend"
+
+
+msgid "Filter btx files"
+msgstr "Filtrer fichiers btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtre pour fichiers COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtrer fichiers de police"
+
+
+msgid "Filter image files"
+msgstr "Filtre pour fichiers image"
+
+
+msgid "Filter movie files"
+msgstr "Filtrer fichiers vidéo"
+
+
+msgid "Filter python files"
+msgstr "Filtre pour fichiers python"
+
+
+msgid "Filter sound files"
+msgstr "Filtrer fichier son"
+
+
+msgid "Filter text files"
+msgstr "Filtrer fichier texte"
+
+
+msgid "File sorting mode"
+msgstr "Mode de tri fichier"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Connexion"
@@ -37484,84 +37552,8 @@ msgid "Directory of the file"
 msgstr "Dossier du fichier"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Déterminer automatiquement le type d’affichage pour les fichiers"
-
-
-msgid "Short List"
-msgstr "Liste brève"
-
-
-msgid "Display files as short list"
-msgstr "Afficher les fichiers en une liste brève"
-
-
-msgid "Long List"
-msgstr "Liste détaillée"
-
-
-msgid "Display files as a detailed list"
-msgstr "Afficher les fichiers en une liste détaillée"
-
-
-msgid "File Browser Mode"
-msgstr "Mode du navigateur de fichier"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Critère du navigateur pour charger un fichier .blend, une bibliothèque ou un fichier spécial"
-
-
-msgid "Filter Alembic files"
-msgstr "Filtrer fichiers Alembic"
-
-
-msgid "Filter .blend files"
-msgstr "Filtrer fichiers .blend"
-
-
-msgid "Filter btx files"
-msgstr "Filtrer fichiers btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtre pour fichiers COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtrer fichiers de police"
-
-
-msgid "Filter image files"
-msgstr "Filtre pour fichiers image"
-
-
-msgid "Filter movie files"
-msgstr "Filtrer fichiers vidéo"
-
-
-msgid "Filter python files"
-msgstr "Filtre pour fichiers python"
-
-
-msgid "Filter sound files"
-msgstr "Filtrer fichier son"
-
-
-msgid "Filter text files"
-msgstr "Filtrer fichier texte"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Sélectionner le fichier relatif au .blend"
-
-
-msgid "File sorting mode"
-msgstr "Mode de tri fichier"
-
-
-msgid "Path to file"
-msgstr "Chemin vers fichier"
 
 
 msgctxt "Operator"
@@ -39625,14 +39617,6 @@ msgstr "Exporter caméra et marqueurs"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Enregistrer un script python qui recrée les caméras et marqueurs ailleurs"
-
-
-msgid "Check Existing"
-msgstr "Vérifier existant"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Prévenir la réécriture de fichiers existants"
 
 
 msgid "Filepath used for exporting the file"
@@ -50961,6 +50945,10 @@ msgid "Remove existing template with the same ID"
 msgstr "Enlever patrons existants ayant le même ID"
 
 
+msgid "Use this installation for .blend files and to display thumbnails"
+msgstr "Utiliser cette installation pour les fichiers .blend et pour afficher les miniatures"
+
+
 msgctxt "Operator"
 msgid "Copy Previous Settings"
 msgstr "Copier réglages précédents"
@@ -58345,6 +58333,10 @@ msgid "Memory & Limits"
 msgstr "Mémoire & limites"
 
 
+msgid "Operating System Settings"
+msgstr "Paramètres du système d'exploitation"
+
+
 msgid "Bone Color Sets"
 msgstr "Ensemble de couleurs d’os"
 
@@ -60626,6 +60618,10 @@ msgid "Use selection as the pivot point"
 msgstr "Utiliser la sélection en tant que point pivot"
 
 
+msgid "Zoom to Mouse Position"
+msgstr "Zoomer sur la position de la souris"
+
+
 msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
 msgstr "Zoomer sur la position du pointeur de la souris dans la vue 3D, à la place du centre de la vue"
 
@@ -60666,8 +60662,20 @@ msgid "Continue"
 msgstr "Continuer"
 
 
+msgid "Continuous zooming. The zoom direction and speed depends on how far along the set Zoom Axis the mouse has moved"
+msgstr "Zoom continu. La direction du zoom et sa vitesse dépendent de la distance parcourue par la souris sur l'axe de zoom"
+
+
 msgid "Dolly"
 msgstr "Travelling"
+
+
+msgid "Zoom in and out based on mouse movement along the set Zoom Axis"
+msgstr "Zoom en avant ou en arrière en se basant sur les mouvements de la souris le long de l'axe de zoom"
+
+
+msgid "Zoom in and out as if you are scaling the view, mouse movements relative to center"
+msgstr "Zoom en avant ou en arrière comme si vous redimensionnez la vue, les mouvements de la souris sont relatifs au centre"
 
 
 msgid "Walk Navigation"
@@ -61086,6 +61094,10 @@ msgid "Language used for translation"
 msgstr "Langue utilisée pour la traduction"
 
 
+msgid "HDRI Preview Size"
+msgstr "Taille de l'aperçu HDRI"
+
+
 msgid "Mini Axes Brightness"
 msgstr "Luminosité mini axes"
 
@@ -61352,6 +61364,18 @@ msgstr "Autrement les menus et autres seront toujours du haut vers le bas, de ga
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Ouvrir automatiquement les menus et listes déroulantes au passage de la souris"
+
+
+msgid "Save Prompt"
+msgstr "Confirmation d'enregistrement"
+
+
+msgid "Ask for confirmation when quitting with unsaved changes"
+msgstr "Demander une confirmation lorsque vous quittez avec des modifications non sauvegardées"
+
+
+msgid "Text Anti-Aliasing"
+msgstr "Anti-aliasing du texte"
 
 
 msgid "Translate Interface"
@@ -72990,6 +73014,19 @@ msgid "Sample Format"
 msgstr "Format d’échantillonnage"
 
 
+msgid "Make this installation your default Blender"
+msgstr "Définir cette installation de Blender par défaut"
+
+
+msgctxt "Operator"
+msgid "Make Default"
+msgstr "Définir par défaut"
+
+
+msgid "Undo Memory Limit"
+msgstr "Mémoire max pour l'annulation"
+
+
 msgid "View Name"
 msgstr "Afficher nom"
 
@@ -73046,8 +73083,16 @@ msgid "Double Click Speed"
 msgstr "Vitesse du double-clic"
 
 
+msgid "Zoom Method"
+msgstr "Méthode de zoom"
+
+
 msgid "Pan Sensitivity"
 msgstr "Sensibilité en panoramique"
+
+
+msgid "Wheel"
+msgstr "Molette"
 
 
 msgid "Invert Wheel Zoom Direction"
@@ -73060,6 +73105,10 @@ msgstr "Il y a plusieurs add-ons du même nom !"
 
 msgid "Missing script files"
 msgstr "Fichiers de script manquants"
+
+
+msgid "No custom %s configured"
+msgstr "Pas de %s personnalisé configuré"
 
 
 msgid ":"
@@ -75157,6 +75206,14 @@ msgstr "Le tampon de copie n’a pas de pose"
 
 msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Erreur de programmation : manque une fonction de nettoyage de transformation ou un nom d’ensemble de clés"
+
+
+msgid "Path is empty, cannot save"
+msgstr "Le chemin est vide, impossible d’enregistrer"
+
+
+msgid "Path too long, cannot save"
+msgstr "Le chemin est trop long, impossible d’enregistrer"
 
 
 msgid "Cannot separate current selection"
@@ -80602,14 +80659,6 @@ msgstr "Enregistrer les changements avant de fermer ?"
 
 msgid "File Not Found"
 msgstr "Fichier introuvable"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Le chemin est vide, impossible d’enregistrer"
-
-
-msgid "Path too long, cannot save"
-msgstr "Le chemin est trop long, impossible d’enregistrer"
 
 
 msgid "Unable to create user config path"

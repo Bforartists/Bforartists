@@ -474,7 +474,7 @@ def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=
             try:
                 ui_data_src = src.id_properties_ui(key)
             except TypeError:
-                # Some property types, eg. Python dictionaries 
+                # Some property types, eg. Python dictionaries
                 # don't support id_properties_ui.
                 continue
 

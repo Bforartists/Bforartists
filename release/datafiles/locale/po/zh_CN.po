@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1717,14 +1717,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "蜡笔数据块"
 
 
-msgid "Hairs"
-msgstr "毛发"
-
-
-msgid "Hair data-blocks"
-msgstr "毛发数据块"
-
-
 msgid "Images"
 msgstr "图像"
 
@@ -1869,14 +1861,6 @@ msgid "Particle data-blocks"
 msgstr "粒子数据块"
 
 
-msgid "Point Clouds"
-msgstr "点云"
-
-
-msgid "Point cloud data-blocks"
-msgstr "点云数据块"
-
-
 msgid "Scenes"
 msgstr "场景"
 
@@ -1899,14 +1883,6 @@ msgstr "形态键"
 
 msgid "Shape Key data-blocks"
 msgstr "形态键数据块"
-
-
-msgid "Simulations"
-msgstr "模拟"
-
-
-msgid "Simulation data-blocks"
-msgstr "模拟数据块"
 
 
 msgid "Sounds"
@@ -2061,14 +2037,6 @@ msgid "Collection of grease pencils"
 msgstr "蜡笔集合"
 
 
-msgid "Main Hairs"
-msgstr "主毛发"
-
-
-msgid "Collection of hairs"
-msgstr "毛发集合"
-
-
 msgid "Main Images"
 msgstr "主图像"
 
@@ -2189,14 +2157,6 @@ msgid "Collection of particle settings"
 msgstr "粒子设置集合"
 
 
-msgid "Main Point Clouds"
-msgstr "主点云"
-
-
-msgid "Collection of point clouds"
-msgstr "点云集合"
-
-
 msgid "Main Light Probes"
 msgstr "主光照探头"
 
@@ -2219,14 +2179,6 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
-
-
-msgid "Main Simulations"
-msgstr "主模拟"
-
-
-msgid "Collection of simulations"
-msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -5640,6 +5592,14 @@ msgstr "影响"
 
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "最终结果的约束影响数量"
+
+
+msgid "Override Constraint"
+msgstr "重写约束"
+
+
+msgid "In a local override object, whether this constraint comes from the linked reference object, or is local to the override"
+msgstr "在本地重写物体中中，此约束是来自关联的引用物体，或者对重写而是本地的"
 
 
 msgid "Proxy Local"
@@ -11879,6 +11839,10 @@ msgid "Show Collection data-blocks"
 msgstr "显示集合数据块"
 
 
+msgid "Hairs"
+msgstr "毛发"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "显示缓存毛发数据块"
 
@@ -11947,12 +11911,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "显示粒子设置数据块"
 
 
+msgid "Point Clouds"
+msgstr "点云"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "显示/隐藏点云数据块"
 
 
 msgid "Show Scene data-blocks"
 msgstr "显示场景数据块"
+
+
+msgid "Simulations"
+msgstr "模拟"
 
 
 msgid "Show Simulation data-blocks"
@@ -15853,6 +15825,14 @@ msgid "Modifier affecting the Grease Pencil object"
 msgstr "修改器影响蜡笔物体"
 
 
+msgid "Override Modifier"
+msgstr "重写修改器"
+
+
+msgid "In a local override object, whether this modifier comes from the linked reference object, or is local to the override"
+msgstr "在本地重写物体中，此修改器是来自关联的引用物体，或者对重写而言是本地的"
+
+
 msgid "Modifier name"
 msgstr "修改器名称"
 
@@ -17655,50 +17635,6 @@ msgid "Active index in layer mask array"
 msgstr "层遮罩数组中的活动编号"
 
 
-msgid "Hair Curve"
-msgstr "毛发曲线"
-
-
-msgid "Hair curve"
-msgstr "毛发曲线"
-
-
-msgid "First Point Index"
-msgstr "第一点编号"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "此多边形的首个循环边编号"
-
-
-msgid "Index of this curve"
-msgstr "该曲线编号"
-
-
-msgid "Number of Points"
-msgstr "点数"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "被该多边形使用的循环数量"
-
-
-msgid "Control points of the curve"
-msgstr "曲线的控制点"
-
-
-msgid "Hair Point"
-msgstr "毛发点"
-
-
-msgid "Hair curve control point"
-msgstr "毛发曲线控制点"
-
-
-msgid "Index of this points"
-msgstr "该点的编号"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "图像统计视图范围"
 
@@ -19345,7 +19281,7 @@ msgstr "重写叠加层"
 
 
 msgid "Don't show overlay during a stroke"
-msgstr "在下笔时不显示覆盖图"
+msgstr "在下笔时不显示叠加"
 
 
 msgid "Define the stroke curve with a bezier curve. Dabs are separated according to spacing"
@@ -21724,26 +21660,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "在表面模式下绘制时的偏移量"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "毛发曲线的毛发数据块"
-
-
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "几何属性"
-
-
-msgid "All hair curves"
-msgstr "所有毛发曲线"
-
-
-msgid "Control points of all hair curves"
-msgstr "所有头发曲线的控制点"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "引用自外部图像或已打包图像的图像数据块"
 
@@ -23184,6 +23100,14 @@ msgstr "为次表面添加半透明效果"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "定义几何体表面的网格数据块"
+
+
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "几何属性"
 
 
 msgid "Auto Smooth Angle"
@@ -25925,10 +25849,6 @@ msgid "Relative amount of virtual parents"
 msgstr "虚拟父级的相对量"
 
 
-msgid "Point cloud data-block"
-msgstr "点云数据块"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "场景数据块, 包含在物体中, 并定义与时间及渲染有关的设置"
 
@@ -26431,14 +26351,6 @@ msgstr "序列编辑器"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
-
-
-msgid "Simulation data-block"
-msgstr "模拟数据块"
-
-
-msgid "Node tree defining the simulation"
-msgstr "定义模拟的节点树"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33180,8 +33092,16 @@ msgid "Loop Start"
 msgstr "循环起点"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "此多边形的首个循环边编号"
+
+
 msgid "Loop Total"
 msgstr "总循环数"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "被该多边形使用的循环数量"
 
 
 msgid "Material slot index of this polygon"
@@ -39502,6 +39422,14 @@ msgstr "一个包含引用为 NLA 片段的动作的动画层"
 
 msgid "NLA Track is active"
 msgstr "激活 NLA 轨道"
+
+
+msgid "Override Track"
+msgstr "重写轨道"
+
+
+msgid "In a local override data, whether this NLA track comes from the linked reference data, or is local to the override"
+msgstr "在本地重写数据中，此NLA 轨道是来自关联的引用数据，或者对重写而是本地的"
 
 
 msgid "Solo"
@@ -46736,6 +46664,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "将此姿态动作设置为活动物体上的活动动作"
 
 
+msgid "Check Existing"
+msgstr "检查是否存在"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "检查并提醒是否需要覆盖现有文件"
+
+
+msgid "Automatically determine display type for files"
+msgstr "自动决定文件的显示类型"
+
+
+msgid "Short List"
+msgstr "短列表"
+
+
+msgid "Display files as short list"
+msgstr "显示短文件列表"
+
+
+msgid "Long List"
+msgstr "长列表"
+
+
+msgid "Display files as a detailed list"
+msgstr "显示文件的详细信息"
+
+
+msgid "File Browser Mode"
+msgstr "文件浏览模式"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "为文件浏览器设置加载工程、库或一个特殊的工程"
+
+
+msgid "Path to file"
+msgstr "文件路径"
+
+
+msgid "Filter Alembic files"
+msgstr "过滤Alembic文件"
+
+
+msgid "Filter archive files"
+msgstr "过滤存档文件"
+
+
+msgid "Filter .blend files"
+msgstr "过滤 .blend 文件"
+
+
+msgid "Filter btx files"
+msgstr "过滤 BTX 文件"
+
+
+msgid "Filter COLLADA files"
+msgstr "过滤 COLLADA 文件"
+
+
+msgid "Filter font files"
+msgstr "过滤字体文件"
+
+
+msgid "Filter image files"
+msgstr "过滤图像文件"
+
+
+msgid "Filter movie files"
+msgstr "过滤视频文件"
+
+
+msgid "Filter python files"
+msgstr "过滤 Python 文件"
+
+
+msgid "Filter sound files"
+msgstr "过滤声音文件"
+
+
+msgid "Filter text files"
+msgstr "过滤文本文件"
+
+
+msgid "Filter USD files"
+msgstr "过滤USD文件"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "过滤OpenVDB体积文件"
+
+
+msgid "Hide Operator Properties"
+msgstr "隐藏操作属性"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "收起显示操作设置的区块"
+
+
+msgid "File sorting mode"
+msgstr "文件排序模式"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "删除资产目录"
@@ -46824,12 +46856,12 @@ msgstr "确保数据块被保存，即使它不再标记为资产"
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "刷新资产列表"
+msgid "Refresh Asset Library"
+msgstr "刷新资产库"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "触发重新读取资产"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "从磁盘上的资产库重读资产和资产目录"
 
 
 msgctxt "Operator"
@@ -47130,108 +47162,12 @@ msgid "Directory of the file"
 msgstr "文件所在目录"
 
 
-msgid "Automatically determine display type for files"
-msgstr "自动决定文件的显示类型"
-
-
-msgid "Short List"
-msgstr "短列表"
-
-
-msgid "Display files as short list"
-msgstr "显示短文件列表"
-
-
-msgid "Long List"
-msgstr "长列表"
-
-
-msgid "Display files as a detailed list"
-msgstr "显示文件的详细信息"
-
-
-msgid "File Browser Mode"
-msgstr "文件浏览模式"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "为文件浏览器设置加载工程、库或一个特殊的工程"
-
-
-msgid "Filter Alembic files"
-msgstr "过滤Alembic文件"
-
-
-msgid "Filter archive files"
-msgstr "过滤存档文件"
-
-
-msgid "Filter .blend files"
-msgstr "过滤 .blend 文件"
-
-
-msgid "Filter btx files"
-msgstr "过滤 BTX 文件"
-
-
-msgid "Filter COLLADA files"
-msgstr "过滤 COLLADA 文件"
-
-
-msgid "Filter font files"
-msgstr "过滤字体文件"
-
-
-msgid "Filter image files"
-msgstr "过滤图像文件"
-
-
-msgid "Filter movie files"
-msgstr "过滤视频文件"
-
-
-msgid "Filter python files"
-msgstr "过滤 Python 文件"
-
-
-msgid "Filter sound files"
-msgstr "过滤声音文件"
-
-
-msgid "Filter text files"
-msgstr "过滤文本文件"
-
-
-msgid "Filter USD files"
-msgstr "过滤USD文件"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "过滤OpenVDB体积文件"
-
-
-msgid "Hide Operator Properties"
-msgstr "隐藏操作属性"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "收起显示操作设置的区块"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "选择与工程相关联的文件"
 
 
-msgid "File sorting mode"
-msgstr "文件排序模式"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "开启文件浏览器, 按住Shift打开文件, 按住Alt浏览包含的目录"
-
-
-msgid "Path to file"
-msgstr "文件路径"
 
 
 msgctxt "Operator"
@@ -49708,14 +49644,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "保存一个 python 脚本, 可将摄像机及标记重建到其他地方"
 
 
-msgid "Check Existing"
-msgstr "检查是否存在"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "检查并提醒是否需要覆盖现有文件"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "输出文件的文件路径"
 
@@ -50874,15 +50802,6 @@ msgstr "静止帧"
 
 msgid "Write the rest state at the first frame"
 msgstr "在第一帧写入静止状态"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "刷新资产库"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "从磁盘上的资产库重读资产和资产目录"
 
 
 msgctxt "Operator"
@@ -59530,6 +59449,14 @@ msgid "Data-block name to assign"
 msgstr "要指定的数据块名称"
 
 
+msgid "Session UUID"
+msgstr "会话UUID"
+
+
+msgid "Session UUID of the data-block to assign"
+msgstr "要分配的数据块的会话UUID"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "添加文件节点"
@@ -60528,6 +60455,10 @@ msgid "Collection name to add"
 msgstr "要添加的集合名称"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "要添加的集合的会话UUID"
+
+
 msgctxt "Operator"
 msgid "Link to Collection"
 msgstr "关联至集合"
@@ -60621,16 +60552,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "网格 -> 点云"
 
 
 msgctxt "Operator"
@@ -65295,6 +65218,11 @@ msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib acti
 msgstr "要应用的姿态编号(-2则不改变姿态, -1则使用poselib中活动姿态)"
 
 
+msgctxt "Operator"
+msgid "Apply Pose Asset"
+msgstr "应用姿态资产"
+
+
 msgid "Apply the given Pose Action to the rig"
 msgstr "将给定的姿态动作应用到绑定中"
 
@@ -65309,6 +65237,11 @@ msgstr "应用翻转"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "启用后，应用沿X轴翻转后的姿态"
+
+
+msgctxt "Operator"
+msgid "Blend Pose Asset"
+msgstr "混合姿态资产"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -79057,10 +78990,6 @@ msgid "Collection of paths"
 msgstr "路径集合"
 
 
-msgid "Point in a point cloud"
-msgstr "点云中的点"
-
-
 msgid "Active Point Cache"
 msgstr "活动点缓存"
 
@@ -80023,6 +79952,14 @@ msgstr "自动转换代理为重写"
 
 msgid "Enable automatic conversion of proxies to library overrides on file load"
 msgstr "启用在文件加载时自动转换代理为库重写"
+
+
+msgid "Asset Debug Info"
+msgstr "资产调试信息"
+
+
+msgid "Enable some extra fields in the Asset Browser to aid in debugging"
+msgstr "在资产浏览器中启用一些额外的字段以帮助调试"
 
 
 msgid "Cycles Debug"
@@ -82367,14 +82304,6 @@ msgid "Minimum AA samples for adaptive sampling, to discover noisy features befo
 msgstr "用于自适应采样的最小AA采样数，在停止采样前发现噪点特征。根据噪点阈值自动设置为0"
 
 
-msgid "Adaptive Scrambling Distance"
-msgstr "自适应置乱距离"
-
-
-msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
-msgstr "基于采样数使用公式置乱距离强度"
-
-
 msgid "Adaptive Sampling Threshold"
 msgstr "自适应采样阈值"
 
@@ -82935,10 +82864,6 @@ msgid "Scrambling Distance"
 msgstr "置乱距离"
 
 
-msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "调低该值使 GPU 渲染的渲染速度更快，噪点更少，代价是设置过低时可能导致瑕疵。仅在不使用自适应采样时起作用"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "积分器的随机种值, 用于获得不同效果的噪点"
 
@@ -83037,14 +82962,6 @@ msgstr "使用动画随机种"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "在不同的帧使用不同的种子值(以及噪点模式)"
-
-
-msgid "Auto Tiles"
-msgstr "自动分块"
-
-
-msgid "Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
-msgstr "使用指定的分块大小，自动分块渲染高分辨率的图像，以降低内存占用。渲染时分块将缓存至磁盘以节约内存"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -95393,6 +95310,14 @@ msgid "Render stylized strokes in this Layer"
 msgstr "在当前层中渲染样式笔画"
 
 
+msgid "Cryptomatte Accurate"
+msgstr "精确Cryptomatte"
+
+
+msgid "Generate a more accurate cryptomatte pass"
+msgstr "生成更准确的cryptomatte通道"
+
+
 msgid "Cryptomatte Asset"
 msgstr "Cryptomatte资产"
 
@@ -98059,6 +97984,11 @@ msgstr "删除姿态骨骼"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "应用"
+
+
+msgctxt "Operator"
+msgid "Interactive Blend"
+msgstr "交互式混合"
 
 
 msgid "Activate & Edit"
@@ -100784,6 +100714,10 @@ msgstr "用于渲染"
 
 msgid "Conflicts with another render pass with the same name"
 msgstr "与另一个同名的渲染通道冲突"
+
+
+msgid "Accurate Mode"
+msgstr "精确模式"
 
 
 msgid "Unknown add-ons"
@@ -106837,6 +106771,14 @@ msgstr "从所选当前文件中选取的资产数据块(资产必须存储在�
 
 msgid "No asset data-blocks selected/focused"
 msgstr "未选择/聚焦资产数据块"
+
+
+msgid "Path is empty, cannot save"
+msgstr "路径为空，无法保存"
+
+
+msgid "Path too long, cannot save"
+msgstr "路径太长，无法保存"
 
 
 msgid "Data-block '%s' is now an asset"
@@ -115999,14 +115941,6 @@ msgstr "是否在关闭之前保存更改？"
 
 msgid "File Not Found"
 msgstr "文件未找到"
-
-
-msgid "Path is empty, cannot save"
-msgstr "路径为空，无法保存"
-
-
-msgid "Path too long, cannot save"
-msgstr "路径太长，无法保存"
 
 
 msgid "Unable to create user config path"
