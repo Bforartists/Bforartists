@@ -40,14 +40,14 @@ def actionconfig_update(actionconfig_data, actionconfig_version):
 ##
 ##        for (am_name, am_content) in actionconfig_data:
 ##            # Apply action map updates.
-##            
+##
 ##            am_items = am_content["items"]
 ##
 ##            for (ami_name, ami_args, ami_data, ami_content) in am_items
 ##                # Apply action map item updates.
 ##
 ##                ami_bindings = ami_content["bindings"]
-##                    
+##
 ##                for (amb_name, amb_args) in ami_bindings:
 ##                # Apply action map binding updates.
 

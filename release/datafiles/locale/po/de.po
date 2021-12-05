@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1642,14 +1642,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Wachsstift-Datenblock"
 
 
-msgid "Hairs"
-msgstr "Haare"
-
-
-msgid "Hair data-blocks"
-msgstr "Haar Datenblöcke"
-
-
 msgid "Images"
 msgstr "Bilder"
 
@@ -1794,14 +1786,6 @@ msgid "Particle data-blocks"
 msgstr "Partikeldatenblöcke"
 
 
-msgid "Point Clouds"
-msgstr "Punkt Wolken"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Punkt Wolken Datenblöcke"
-
-
 msgid "Scenes"
 msgstr "Szenen"
 
@@ -1824,14 +1808,6 @@ msgstr "Formschlüssel"
 
 msgid "Shape Key data-blocks"
 msgstr "Formschlüssel-Datenblöcke"
-
-
-msgid "Simulations"
-msgstr "Simulationen"
-
-
-msgid "Simulation data-blocks"
-msgstr "Simulationsdatenblock"
 
 
 msgid "Sounds"
@@ -1986,14 +1962,6 @@ msgid "Collection of grease pencils"
 msgstr "Sammlung von Wachsstiften"
 
 
-msgid "Main Hairs"
-msgstr "Haupthaare"
-
-
-msgid "Collection of hairs"
-msgstr "Sammlung von Haaren"
-
-
 msgid "Main Images"
 msgstr "Hauptbilder"
 
@@ -2114,14 +2082,6 @@ msgid "Collection of particle settings"
 msgstr "Sammlung von Partikeleinstellungen"
 
 
-msgid "Main Point Clouds"
-msgstr "Haupt Punkt Wolke"
-
-
-msgid "Collection of point clouds"
-msgstr "Sammlung von Punkt Wolken"
-
-
 msgid "Main Light Probes"
 msgstr "Hauptlichtsonden"
 
@@ -2144,14 +2104,6 @@ msgstr "Hauptbildschirme"
 
 msgid "Collection of screens"
 msgstr "Sammlung von Bildschirmen"
-
-
-msgid "Main Simulations"
-msgstr "Hauptsimulation"
-
-
-msgid "Collection of simulations"
-msgstr "Sammlung von Simulationen"
 
 
 msgid "Main Sounds"
@@ -9560,6 +9512,10 @@ msgid "Show Collection data-blocks"
 msgstr "Sammlungs-Datenblöcke anzeigen"
 
 
+msgid "Hairs"
+msgstr "Haare"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Haar-Datenblöcke anzeigen/verbergen"
 
@@ -9628,12 +9584,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Partikeleinstellungen Datenblöcke anzeigen"
 
 
+msgid "Point Clouds"
+msgstr "Punkt Wolken"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Punkt Wolken-Datenblöcke anzeigen/verstecken"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Szenen-Datenblöcke anzeigen"
+
+
+msgid "Simulations"
+msgstr "Simulationen"
 
 
 msgid "Show Simulation data-blocks"
@@ -12159,30 +12123,6 @@ msgid "Active index in layer mask array"
 msgstr "Aktiver Index im Ebenen-Maskenarray"
 
 
-msgid "Hair Curve"
-msgstr "Haarkurve"
-
-
-msgid "Hair curve"
-msgstr "Haarkurve"
-
-
-msgid "Index of this curve"
-msgstr "Indexnummer dieser Kurve"
-
-
-msgid "Number of Points"
-msgstr "Anzahl der Punkte"
-
-
-msgid "Hair curve control point"
-msgstr "Haarkurvenkontrollpunkt"
-
-
-msgid "Index of this points"
-msgstr "Index dieser Punkte"
-
-
 msgid "Luma"
 msgstr "Luma"
 
@@ -14220,14 +14160,6 @@ msgid "Surface Offset"
 msgstr "Oberflächenversatz"
 
 
-msgid "Attributes"
-msgstr "Eigenschaften"
-
-
-msgid "All hair curves"
-msgstr "Alle Haarkurven"
-
-
 msgid "Alpha Mode"
 msgstr "Alphamodus"
 
@@ -15028,6 +14960,10 @@ msgstr "Shader-Knoten verwenden, um Material zu rendern"
 
 msgid "Preview World"
 msgstr "Weltvorschau"
+
+
+msgid "Attributes"
+msgstr "Eigenschaften"
 
 
 msgid "Auto Smooth Angle"
@@ -16843,10 +16779,6 @@ msgstr "Sequenzeditor"
 
 msgid "Top-Left 3D Editor"
 msgstr "3D-Editor oben links"
-
-
-msgid "Simulation data-block"
-msgstr "Datenblock simulieren"
 
 
 msgid "Caching"
@@ -27215,6 +27147,98 @@ msgid "+X to -X"
 msgstr "+X bis -X"
 
 
+msgid "Automatically determine display type for files"
+msgstr "Anzeigetyp für Dateien automatisch ermitteln"
+
+
+msgid "Short List"
+msgstr "Kurze Liste"
+
+
+msgid "Display files as short list"
+msgstr "Dateien als kurze Liste anzeigen"
+
+
+msgid "Long List"
+msgstr "Lange Liste"
+
+
+msgid "Display files as a detailed list"
+msgstr "Dateien als detaillierte Liste anzeigen"
+
+
+msgid "File Browser Mode"
+msgstr "Dateibrowser-Modus"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Die Einstellung für den Dateibrowsermodus, eine .blend-Datei, eine Bibliothek oder eine spezielle Datei zu laden"
+
+
+msgid "Path to file"
+msgstr "Pfad zur Datei"
+
+
+msgid "Filter Alembic files"
+msgstr "Alembicdateien filtern"
+
+
+msgid "Filter archive files"
+msgstr "Archivdateien filtern"
+
+
+msgid "Filter .blend files"
+msgstr ".blend Dateien filtern"
+
+
+msgid "Filter btx files"
+msgstr "Btx Dateien filtern"
+
+
+msgid "Filter COLLADA files"
+msgstr "COLLADA Dateien filtern"
+
+
+msgid "Filter font files"
+msgstr "Schriftdateien filtern"
+
+
+msgid "Filter image files"
+msgstr "Bilddateien filtern"
+
+
+msgid "Filter movie files"
+msgstr "Filmdateien filtern"
+
+
+msgid "Filter python files"
+msgstr "Python Dateien filtern"
+
+
+msgid "Filter sound files"
+msgstr "Sounddateien filtern"
+
+
+msgid "Filter text files"
+msgstr "Textdateien filtern"
+
+
+msgid "Filter USD files"
+msgstr "USD Dateien filtern"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "OpenVDB volume Dateien filtern"
+
+
+msgid "Hide Operator Properties"
+msgstr "Verstecke Auswahleisntellungen"
+
+
+msgid "File sorting mode"
+msgstr "Dateisortierungsmodus"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Anmelden"
@@ -27384,104 +27408,12 @@ msgid "Open a directory browser, hold Shift to open the file, Alt to browse cont
 msgstr "Dateibrowser öffnen, halte Umschalt um die Datei zu öffnen, Alt um enthaltene Verzeichnisse zu durchsuchen"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Anzeigetyp für Dateien automatisch ermitteln"
-
-
-msgid "Short List"
-msgstr "Kurze Liste"
-
-
-msgid "Display files as short list"
-msgstr "Dateien als kurze Liste anzeigen"
-
-
-msgid "Long List"
-msgstr "Lange Liste"
-
-
-msgid "Display files as a detailed list"
-msgstr "Dateien als detaillierte Liste anzeigen"
-
-
-msgid "File Browser Mode"
-msgstr "Dateibrowser-Modus"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Die Einstellung für den Dateibrowsermodus, eine .blend-Datei, eine Bibliothek oder eine spezielle Datei zu laden"
-
-
-msgid "Filter Alembic files"
-msgstr "Alembicdateien filtern"
-
-
-msgid "Filter archive files"
-msgstr "Archivdateien filtern"
-
-
-msgid "Filter .blend files"
-msgstr ".blend Dateien filtern"
-
-
-msgid "Filter btx files"
-msgstr "Btx Dateien filtern"
-
-
-msgid "Filter COLLADA files"
-msgstr "COLLADA Dateien filtern"
-
-
-msgid "Filter font files"
-msgstr "Schriftdateien filtern"
-
-
-msgid "Filter image files"
-msgstr "Bilddateien filtern"
-
-
-msgid "Filter movie files"
-msgstr "Filmdateien filtern"
-
-
-msgid "Filter python files"
-msgstr "Python Dateien filtern"
-
-
-msgid "Filter sound files"
-msgstr "Sounddateien filtern"
-
-
-msgid "Filter text files"
-msgstr "Textdateien filtern"
-
-
-msgid "Filter USD files"
-msgstr "USD Dateien filtern"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "OpenVDB volume Dateien filtern"
-
-
-msgid "Hide Operator Properties"
-msgstr "Verstecke Auswahleisntellungen"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Wähle die Datei relativ zur blend Datei aus"
 
 
-msgid "File sorting mode"
-msgstr "Dateisortierungsmodus"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Dateibrowser öffnen, halte Umschalt um die Datei zu öffnen, Alt um enthaltene Verzeichnisse zu durchsuchen"
-
-
-msgid "Path to file"
-msgstr "Pfad zur Datei"
 
 
 msgctxt "Operator"
@@ -42764,10 +42696,6 @@ msgstr "Pfad vergleichen"
 
 msgid "Collection of paths"
 msgstr "Sammlung von Pfaden"
-
-
-msgid "Point in a point cloud"
-msgstr "Punkt in einer Punkt Wolke"
 
 
 msgid "Active Point Cache"
@@ -58330,6 +58258,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Programmierfehler: Fehlende(r) Transformation-Funktion oder Schlüsselbildsatz-Name"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Pfad ist leer, konnte nicht gespeichert werden"
+
+
+msgid "Path too long, cannot save"
+msgstr "Pfad ist zu lang, konnte nicht gespeichert werden"
+
+
 msgid "No point was selected"
 msgstr "Kein Punkt ausgewählt"
 
@@ -62269,14 +62205,6 @@ msgstr "Änderungen vor dem Schließen speichern?"
 
 msgid "File Not Found"
 msgstr "Datei nicht gefunden"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Pfad ist leer, konnte nicht gespeichert werden"
-
-
-msgid "Path too long, cannot save"
-msgstr "Pfad ist zu lang, konnte nicht gespeichert werden"
 
 
 msgid "Unable to create user config path"

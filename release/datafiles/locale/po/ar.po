@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -22341,6 +22341,42 @@ msgid "Symmetrize"
 msgstr "ﻞﺛﺎﻤﺘﻟﺍ"
 
 
+msgid "Automatically determine display type for files"
+msgstr "ﺎﻴﺗﺍﺫ ﺕﺎﻔﻠﻤﻠﻟ ﺽﺮﻌﻟﺍ ﻉﻮﻧ ﺩﺪﺣ"
+
+
+msgid "Short List"
+msgstr "ﺓﺮﻴﺼﻗ ﺔﺤﺋﻻ﻿"
+
+
+msgid "Display files as short list"
+msgstr "ﺓﺮﻴﺼﻗ ﺔﺤﺋﻻ﻿ ﻞﻜﺷ ﻰﻠﻋ ﺕﺎﻔﻠﻤﻟﺍ ﺽﺮﻋﺇ"
+
+
+msgid "Long List"
+msgstr "ﺔﻠﻳﻮﻃ ﺔﺤﺋﻻ﻿"
+
+
+msgid "Display files as a detailed list"
+msgstr "ﺔﻠﺼﻔﻣ ﺔﺤﺋﻻ﻿ ﻞﻜﺷ ﻰﻠﻋ ﺕﺎﻔﻠﻤﻟﺍ ﺽﺮﻋﺇ"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "ﺹﺎﺧ ﻒﻠﻣ ﻭﺃ ﺔﺒﺘﻜﻣ ،blend. ﻒﻠﻣ ﻞﻴﻤﺤﺘﻟ ﺕﺎﻔﻠﻤﻟﺍ ﺢﻔﺼﺘﻤﻟ ﺩﺍﺪﻋﻹ﻿ﺍ"
+
+
+msgid "Filter COLLADA files"
+msgstr "COLLADA ـﻟﺍ ﺕﺎﻔﻠﻣ ﻲﻔّﺻ"
+
+
+msgid "Filter font files"
+msgstr "ﻁﻮﻄﺨﻟﺍ ﺕﺎﻔﻠﻣ ﻲﻔﺻ"
+
+
+msgid "Filter movie files"
+msgstr "ﻡﻼ﻿ﻓﻷ﻿ﺍ ﺕﺎﻔﻠﻣ ﻒّﺻ"
+
+
 msgid "(undocumented operator)"
 msgstr "(ﻖﺛﻮﻣ ﺮﻴﻏ ﻞﻣﺎﻌﻣ)"
 
@@ -22468,42 +22504,6 @@ msgstr "ﻝﻮّﺤﺘﻟﺍ ﻂﺒﺿ ﺪﻋﺍ"
 
 msgid "Directory of the file"
 msgstr "ﻒﻠﻤﻟﺍ ﺪﻠّﺠﻣ"
-
-
-msgid "Automatically determine display type for files"
-msgstr "ﺎﻴﺗﺍﺫ ﺕﺎﻔﻠﻤﻠﻟ ﺽﺮﻌﻟﺍ ﻉﻮﻧ ﺩﺪﺣ"
-
-
-msgid "Short List"
-msgstr "ﺓﺮﻴﺼﻗ ﺔﺤﺋﻻ﻿"
-
-
-msgid "Display files as short list"
-msgstr "ﺓﺮﻴﺼﻗ ﺔﺤﺋﻻ﻿ ﻞﻜﺷ ﻰﻠﻋ ﺕﺎﻔﻠﻤﻟﺍ ﺽﺮﻋﺇ"
-
-
-msgid "Long List"
-msgstr "ﺔﻠﻳﻮﻃ ﺔﺤﺋﻻ﻿"
-
-
-msgid "Display files as a detailed list"
-msgstr "ﺔﻠﺼﻔﻣ ﺔﺤﺋﻻ﻿ ﻞﻜﺷ ﻰﻠﻋ ﺕﺎﻔﻠﻤﻟﺍ ﺽﺮﻋﺇ"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "ﺹﺎﺧ ﻒﻠﻣ ﻭﺃ ﺔﺒﺘﻜﻣ ،blend. ﻒﻠﻣ ﻞﻴﻤﺤﺘﻟ ﺕﺎﻔﻠﻤﻟﺍ ﺢﻔﺼﺘﻤﻟ ﺩﺍﺪﻋﻹ﻿ﺍ"
-
-
-msgid "Filter COLLADA files"
-msgstr "COLLADA ـﻟﺍ ﺕﺎﻔﻠﻣ ﻲﻔّﺻ"
-
-
-msgid "Filter font files"
-msgstr "ﻁﻮﻄﺨﻟﺍ ﺕﺎﻔﻠﻣ ﻲﻔﺻ"
-
-
-msgid "Filter movie files"
-msgstr "ﻡﻼ﻿ﻓﻷ﻿ﺍ ﺕﺎﻔﻠﻣ ﻒّﺻ"
 
 
 msgctxt "Operator"
