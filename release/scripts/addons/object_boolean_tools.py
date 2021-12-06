@@ -80,18 +80,13 @@ def isBrush(_obj):
 #         return False
 
 
-def cycles_visibility_set(ob, value=False):
-    if not hasattr(ob, "cycles_visibility"):
-        return
-
-    vis = ob.cycles_visibility
-
-    vis.camera = value
-    vis.diffuse = value
-    vis.glossy = value
-    vis.shadow = value
-    vis.transmission = value
-    vis.scatter = value
+def object_visibility_set(ob, value=False):
+    ob.visible_camera = value
+    ob.visible_diffuse = value
+    ob.visible_glossy = value
+    ob.visible_shadow = value
+    ob.visible_transmission = value
+    ob.visible_volume_scatter = value
 
 
 def BT_ObjectByName(obj):
@@ -147,7 +142,7 @@ def Operation(context, _operation):
             else:
                 selObj.display_type = "BOUNDS"
 
-            cycles_visibility_set(selObj, value=False)
+            object_visibility_set(selObj, value=False)
 
             if _operation == "SLICE":
                 # copies instance_collection property(empty), but group property is empty (users_group = None)
@@ -191,7 +186,7 @@ def Remove(context, thisObj_name, Prop):
                 obj.display_type = "TEXTURED"
                 del obj["BoolToolBrush"]
                 del obj["BoolTool_FTransform"]
-                cycles_visibility_set(obj, value=True)
+                object_visibility_set(obj, value=True)
 
                 # Remove it from the Canvas
                 for mod in actObj.modifiers:
@@ -216,7 +211,7 @@ def Remove(context, thisObj_name, Prop):
             actObj.display_type = "TEXTURED"
             del actObj["BoolToolBrush"]
             del actObj["BoolTool_FTransform"]
-            cycles_visibility_set(actObj, value=True)
+            object_visibility_set(actObj, value=True)
 
         if Prop == "CANVAS":
             for mod in actObj.modifiers:

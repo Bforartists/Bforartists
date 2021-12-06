@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1666,14 +1666,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Датаблоки Grease Pencil"
 
 
-msgid "Hairs"
-msgstr "Волосы"
-
-
-msgid "Hair data-blocks"
-msgstr "Датаблоки волос"
-
-
 msgid "Images"
 msgstr "Изображения"
 
@@ -1818,14 +1810,6 @@ msgid "Particle data-blocks"
 msgstr "Датаблоки частиц"
 
 
-msgid "Point Clouds"
-msgstr "Облака точек"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Датаблоки облаков точек"
-
-
 msgid "Scenes"
 msgstr "Сцены"
 
@@ -1848,14 +1832,6 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
-
-
-msgid "Simulation data-blocks"
-msgstr "Датаблоки симуляций"
 
 
 msgid "Sounds"
@@ -2010,14 +1986,6 @@ msgid "Collection of grease pencils"
 msgstr "Коллекция Grease Pencil"
 
 
-msgid "Main Hairs"
-msgstr "Основные волосы"
-
-
-msgid "Collection of hairs"
-msgstr "Коллекция волос"
-
-
 msgid "Main Images"
 msgstr "Основные изображения"
 
@@ -2138,14 +2106,6 @@ msgid "Collection of particle settings"
 msgstr "Коллекция параметров частиц"
 
 
-msgid "Main Point Clouds"
-msgstr "Основные облака точек"
-
-
-msgid "Collection of point clouds"
-msgstr "Коллекция облаков точек"
-
-
 msgid "Main Light Probes"
 msgstr "Основные зонды освещения"
 
@@ -2168,14 +2128,6 @@ msgstr "Основные экраны"
 
 msgid "Collection of screens"
 msgstr "Коллекция экранов"
-
-
-msgid "Main Simulations"
-msgstr "Основные симуляции"
-
-
-msgid "Collection of simulations"
-msgstr "Коллекция симуляций"
 
 
 msgid "Main Sounds"
@@ -11740,6 +11692,10 @@ msgid "Show Collection data-blocks"
 msgstr "Показать датаблоки коллекций"
 
 
+msgid "Hairs"
+msgstr "Волосы"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Показать/скрыть датаблоки волос"
 
@@ -11808,12 +11764,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Показать датаблоки настроек частиц"
 
 
+msgid "Point Clouds"
+msgstr "Облака точек"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Показать/скрыть датаблоки облаков точек"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
+
+
+msgid "Simulations"
+msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -17228,14 +17192,6 @@ msgid "Note/Layer to add annotation strokes to"
 msgstr "Заметка/слой, на которую добавляются штрихи аннотации"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Индекс первой петли этого полигона"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Количество петель, используемых полигоном"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "Статистическое представление цветовых уровней изображения"
 
@@ -20321,10 +20277,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Величина смещения при рисовании в режиме поверхности"
 
 
-msgid "Attributes"
-msgstr "Атрибуты"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Датаблок изображения, ссылающийся на внешнее или упакованное изображение"
 
@@ -21645,6 +21597,10 @@ msgstr "Добавить эффект просвечиваемости для п
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Датаблок меша, определяющий геометрические поверхности"
+
+
+msgid "Attributes"
+msgstr "Атрибуты"
 
 
 msgid "Auto Smooth Angle"
@@ -30337,8 +30293,16 @@ msgid "Loop Start"
 msgstr "Начало цикла"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Индекс первой петли этого полигона"
+
+
 msgid "Loop Total"
 msgstr "Всего в цикле"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Polygon Normal"
@@ -40549,6 +40513,102 @@ msgid "+X to -X"
 msgstr "+X на −X"
 
 
+msgid "Check Existing"
+msgstr "Проверять существование"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Проверять и предупреждать при перезаписи существующих файлов"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Определить тип отображения файлов автоматически"
+
+
+msgid "Short List"
+msgstr "Короткий список"
+
+
+msgid "Display files as short list"
+msgstr "Отображать файлы в виде короткого списка"
+
+
+msgid "Long List"
+msgstr "Длинный список"
+
+
+msgid "Display files as a detailed list"
+msgstr "Отображать файлы в виде подробного списка"
+
+
+msgid "File Browser Mode"
+msgstr "Режим обозревателя файлов"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Параметр для загрузки файла .blend, библиотеки или спецфайла в режиме обзора файлов"
+
+
+msgid "Path to file"
+msgstr "Путь к файлу"
+
+
+msgid "Filter Alembic files"
+msgstr "Фильтровать файлы Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Фильтровать файлы архивов"
+
+
+msgid "Filter .blend files"
+msgstr "Фильтровать файлы .blend"
+
+
+msgid "Filter btx files"
+msgstr "Фильтровать файлы btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Фильтровать файлы COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Фильтровать файлы шрифтов"
+
+
+msgid "Filter image files"
+msgstr "Фильтровать файлы изображений"
+
+
+msgid "Filter movie files"
+msgstr "Фильтровать видеофайлы"
+
+
+msgid "Filter python files"
+msgstr "Фильтровать файлы Python"
+
+
+msgid "Filter sound files"
+msgstr "Фильтровать аудиофайлы"
+
+
+msgid "Filter text files"
+msgstr "Фильтровать текстовые файлы"
+
+
+msgid "Hide Operator Properties"
+msgstr "Скрыть настройки оператора"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Свернуть область, отображающую настройки оператора"
+
+
+msgid "File sorting mode"
+msgstr "Режим сортировки файлов"
+
+
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
 msgstr "Упростить переиспользование выбранных датаблоков через браузер ассетов с поддержкой пользовательских метаданных (таких как предпросмотры, описания и теги)"
 
@@ -40802,96 +40862,8 @@ msgid "Directory of the file"
 msgstr "Папка файла"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Определить тип отображения файлов автоматически"
-
-
-msgid "Short List"
-msgstr "Короткий список"
-
-
-msgid "Display files as short list"
-msgstr "Отображать файлы в виде короткого списка"
-
-
-msgid "Long List"
-msgstr "Длинный список"
-
-
-msgid "Display files as a detailed list"
-msgstr "Отображать файлы в виде подробного списка"
-
-
-msgid "File Browser Mode"
-msgstr "Режим обозревателя файлов"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Параметр для загрузки файла .blend, библиотеки или спецфайла в режиме обзора файлов"
-
-
-msgid "Filter Alembic files"
-msgstr "Фильтровать файлы Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Фильтровать файлы архивов"
-
-
-msgid "Filter .blend files"
-msgstr "Фильтровать файлы .blend"
-
-
-msgid "Filter btx files"
-msgstr "Фильтровать файлы btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Фильтровать файлы COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Фильтровать файлы шрифтов"
-
-
-msgid "Filter image files"
-msgstr "Фильтровать файлы изображений"
-
-
-msgid "Filter movie files"
-msgstr "Фильтровать видеофайлы"
-
-
-msgid "Filter python files"
-msgstr "Фильтровать файлы Python"
-
-
-msgid "Filter sound files"
-msgstr "Фильтровать аудиофайлы"
-
-
-msgid "Filter text files"
-msgstr "Фильтровать текстовые файлы"
-
-
-msgid "Hide Operator Properties"
-msgstr "Скрыть настройки оператора"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Свернуть область, отображающую настройки оператора"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Выбрать файл относительно текущего blend-файла"
-
-
-msgid "File sorting mode"
-msgstr "Режим сортировки файлов"
-
-
-msgid "Path to file"
-msgstr "Путь к файлу"
 
 
 msgctxt "Operator"
@@ -43094,14 +43066,6 @@ msgstr "Экспортировать камеру и маркеры"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Сохранить Python-скрипт, воссоздающий камеры и маркеры в другом месте"
-
-
-msgid "Check Existing"
-msgstr "Проверять существование"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Проверять и предупреждать при перезаписи существующих файлов"
 
 
 msgid "Filepath used for exporting the file"
@@ -87778,6 +87742,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Ошибка в коде: отсутствует функция очистки трансформации или имя ключевого набора"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Пустой путь, сохранить не удалось"
+
+
+msgid "Path too long, cannot save"
+msgstr "Путь слишком длинный, сохранить не удалось"
+
+
 msgid "No point was selected"
 msgstr "Нет выделенных точек"
 
@@ -94192,14 +94164,6 @@ msgstr "Продолжить работу с файлом без скрипто�
 
 msgid "Save changes before closing?"
 msgstr "Сохранить изменения перед закрытием?"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Пустой путь, сохранить не удалось"
-
-
-msgid "Path too long, cannot save"
-msgstr "Путь слишком длинный, сохранить не удалось"
 
 
 msgid "Unable to create user config path"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -1481,14 +1481,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Pensil grease data-blok"
 
 
-msgid "Hairs"
-msgstr "Rambut"
-
-
-msgid "Hair data-blocks"
-msgstr "Rambut data-blok"
-
-
 msgid "Images"
 msgstr "Gambar"
 
@@ -1625,14 +1617,6 @@ msgid "Particle data-blocks"
 msgstr "Partikel data-blok"
 
 
-msgid "Point Clouds"
-msgstr "Awan Titik"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Awan titik data-blok"
-
-
 msgid "Scenes"
 msgstr "Adegan"
 
@@ -1655,14 +1639,6 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
-
-
-msgid "Simulation data-blocks"
-msgstr "Simulasi data-blok"
 
 
 msgid "Sounds"
@@ -1817,14 +1793,6 @@ msgid "Collection of grease pencils"
 msgstr "Koleksi pensil grease"
 
 
-msgid "Main Hairs"
-msgstr "Rambut Utama"
-
-
-msgid "Collection of hairs"
-msgstr "Koleksi rambut"
-
-
 msgid "Main Images"
 msgstr "Gambar Utama"
 
@@ -1937,14 +1905,6 @@ msgid "Collection of particle settings"
 msgstr "Koleksi pengaturan partikel"
 
 
-msgid "Main Point Clouds"
-msgstr "Awan Titik Utama"
-
-
-msgid "Collection of point clouds"
-msgstr "Koleksi awan titik"
-
-
 msgid "Main Light Probes"
 msgstr "Probe Cahaya Utama"
 
@@ -1967,14 +1927,6 @@ msgstr "Layar Utama"
 
 msgid "Collection of screens"
 msgstr "Koleksi layar"
-
-
-msgid "Main Simulations"
-msgstr "Simulasi Utama"
-
-
-msgid "Collection of simulations"
-msgstr "Koleksi Simulasi"
 
 
 msgid "Main Sounds"
@@ -7435,6 +7387,10 @@ msgid "Show Collection data-blocks"
 msgstr "Tampilkan Koleksi data-blok"
 
 
+msgid "Hairs"
+msgstr "Rambut"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Tampilkan/sembunyikan Rambut data-blok"
 
@@ -7483,12 +7439,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Tampilkan Pengaturan Partikel data-blok"
 
 
+msgid "Point Clouds"
+msgstr "Awan Titik"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -9125,26 +9089,6 @@ msgstr "Indeks Masker Layer Aktif"
 
 msgid "Active index in layer mask array"
 msgstr "Aktif indeks di larik masker layer"
-
-
-msgid "Hair Curve"
-msgstr "Kurva Rambut"
-
-
-msgid "Hair curve"
-msgstr "Kurva rambut"
-
-
-msgid "First Point Index"
-msgstr "Indeks Titik Pertama"
-
-
-msgid "Index of this curve"
-msgstr "Indeks kurva ini"
-
-
-msgid "Number of Points"
-msgstr "Jumlah Titik"
 
 
 msgid "Red Green Blue"

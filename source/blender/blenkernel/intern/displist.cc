@@ -830,7 +830,7 @@ static bool do_curve_implicit_mesh_conversion(const Curve *curve,
   }
 
   /* Curve objects with implicit "tube" meshes should convert implicitly to a mesh. */
-  if (curve->ext1 != 0.0f || curve->ext2 != 0.0f) {
+  if (curve->extrude != 0.0f || curve->bevel_radius != 0.0f) {
     return true;
   }
 
@@ -1310,11 +1310,11 @@ static GeometrySet evaluate_curve_type_object(Depsgraph *depsgraph,
   ListBase dlbev = BKE_curve_bevel_make(cu);
 
   /* no bevel or extrude, and no width correction? */
-  if (BLI_listbase_is_empty(&dlbev) && cu->width == 1.0f) {
+  if (BLI_listbase_is_empty(&dlbev) && cu->offset == 1.0f) {
     curve_to_displist(cu, deformed_nurbs, for_render, r_dispbase);
   }
   else {
-    const float widfac = cu->width - 1.0f;
+    const float widfac = cu->offset - 1.0f;
 
     const BevList *bl = (BevList *)ob->runtime.curve_cache->bev.first;
     const Nurb *nu = (Nurb *)deformed_nurbs->first;
@@ -1526,9 +1526,7 @@ void BKE_displist_make_curveTypes(Depsgraph *depsgraph,
     ob->runtime.geometry_set_eval = new GeometrySet(std::move(geometry));
   }
 
-  if (ob->runtime.bb) {
-    ob->runtime.bb->flag |= BOUNDBOX_DIRTY;
-  }
+  BKE_object_boundbox_calc_from_evaluated_geometry(ob);
 }
 
 void BKE_displist_minmax(const ListBase *dispbase, float min[3], float max[3])

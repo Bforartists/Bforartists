@@ -41,6 +41,8 @@
 #  define __KERNEL_OPTIX__
 #  include "kernel/device/optix/globals.h"
 
+#  include <optix_denoiser_tiling.h>
+
 CCL_NAMESPACE_BEGIN
 
 OptiXDevice::Denoiser::Denoiser(OptiXDevice *device)
@@ -335,7 +337,7 @@ bool OptiXDevice::load_kernels(const uint kernel_features)
 #  if OPTIX_ABI_VERSION >= 55
       builtin_options.builtinISModuleType = OPTIX_PRIMITIVE_TYPE_ROUND_CATMULLROM;
       builtin_options.buildFlags = OPTIX_BUILD_FLAG_PREFER_FAST_TRACE;
-      builtin_options.curveEndcapFlags = OPTIX_CURVE_ENDCAP_DEFAULT; /* Disable endcaps. */
+      builtin_options.curveEndcapFlags = OPTIX_CURVE_ENDCAP_DEFAULT; /* Disable end-caps. */
 #  else
       builtin_options.builtinISModuleType = OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE;
 #  endif
@@ -667,22 +669,22 @@ bool OptiXDevice::denoise_filter_guiding_preprocess(DenoiseContext &context)
 
   const int work_size = buffer_params.width * buffer_params.height;
 
-  void *args[] = {const_cast<device_ptr *>(&context.guiding_params.device_pointer),
-                  const_cast<int *>(&context.guiding_params.pass_stride),
-                  const_cast<int *>(&context.guiding_params.pass_albedo),
-                  const_cast<int *>(&context.guiding_params.pass_normal),
-                  &context.render_buffers->buffer.device_pointer,
-                  const_cast<int *>(&buffer_params.offset),
-                  const_cast<int *>(&buffer_params.stride),
-                  const_cast<int *>(&buffer_params.pass_stride),
-                  const_cast<int *>(&context.pass_sample_count),
-                  const_cast<int *>(&context.pass_denoising_albedo),
-                  const_cast<int *>(&context.pass_denoising_normal),
-                  const_cast<int *>(&buffer_params.full_x),
-                  const_cast<int *>(&buffer_params.full_y),
-                  const_cast<int *>(&buffer_params.width),
-                  const_cast<int *>(&buffer_params.height),
-                  const_cast<int *>(&context.num_samples)};
+  DeviceKernelArguments args(&context.guiding_params.device_pointer,
+                             &context.guiding_params.pass_stride,
+                             &context.guiding_params.pass_albedo,
+                             &context.guiding_params.pass_normal,
+                             &context.render_buffers->buffer.device_pointer,
+                             &buffer_params.offset,
+                             &buffer_params.stride,
+                             &buffer_params.pass_stride,
+                             &context.pass_sample_count,
+                             &context.pass_denoising_albedo,
+                             &context.pass_denoising_normal,
+                             &buffer_params.full_x,
+                             &buffer_params.full_y,
+                             &buffer_params.width,
+                             &buffer_params.height,
+                             &context.num_samples);
 
   return denoiser_.queue.enqueue(DEVICE_KERNEL_FILTER_GUIDING_PREPROCESS, work_size, args);
 }
@@ -693,11 +695,11 @@ bool OptiXDevice::denoise_filter_guiding_set_fake_albedo(DenoiseContext &context
 
   const int work_size = buffer_params.width * buffer_params.height;
 
-  void *args[] = {const_cast<device_ptr *>(&context.guiding_params.device_pointer),
-                  const_cast<int *>(&context.guiding_params.pass_stride),
-                  const_cast<int *>(&context.guiding_params.pass_albedo),
-                  const_cast<int *>(&buffer_params.width),
-                  const_cast<int *>(&buffer_params.height)};
+  DeviceKernelArguments args(&context.guiding_params.device_pointer,
+                             &context.guiding_params.pass_stride,
+                             &context.guiding_params.pass_albedo,
+                             &buffer_params.width,
+                             &buffer_params.height);
 
   return denoiser_.queue.enqueue(DEVICE_KERNEL_FILTER_GUIDING_SET_FAKE_ALBEDO, work_size, args);
 }
@@ -793,15 +795,15 @@ bool OptiXDevice::denoise_filter_color_preprocess(DenoiseContext &context, const
 
   const int work_size = buffer_params.width * buffer_params.height;
 
-  void *args[] = {&context.render_buffers->buffer.device_pointer,
-                  const_cast<int *>(&buffer_params.full_x),
-                  const_cast<int *>(&buffer_params.full_y),
-                  const_cast<int *>(&buffer_params.width),
-                  const_cast<int *>(&buffer_params.height),
-                  const_cast<int *>(&buffer_params.offset),
-                  const_cast<int *>(&buffer_params.stride),
-                  const_cast<int *>(&buffer_params.pass_stride),
-                  const_cast<int *>(&pass.denoised_offset)};
+  DeviceKernelArguments args(&context.render_buffers->buffer.device_pointer,
+                             &buffer_params.full_x,
+                             &buffer_params.full_y,
+                             &buffer_params.width,
+                             &buffer_params.height,
+                             &buffer_params.offset,
+                             &buffer_params.stride,
+                             &buffer_params.pass_stride,
+                             &pass.denoised_offset);
 
   return denoiser_.queue.enqueue(DEVICE_KERNEL_FILTER_COLOR_PREPROCESS, work_size, args);
 }
@@ -813,20 +815,20 @@ bool OptiXDevice::denoise_filter_color_postprocess(DenoiseContext &context,
 
   const int work_size = buffer_params.width * buffer_params.height;
 
-  void *args[] = {&context.render_buffers->buffer.device_pointer,
-                  const_cast<int *>(&buffer_params.full_x),
-                  const_cast<int *>(&buffer_params.full_y),
-                  const_cast<int *>(&buffer_params.width),
-                  const_cast<int *>(&buffer_params.height),
-                  const_cast<int *>(&buffer_params.offset),
-                  const_cast<int *>(&buffer_params.stride),
-                  const_cast<int *>(&buffer_params.pass_stride),
-                  const_cast<int *>(&context.num_samples),
-                  const_cast<int *>(&pass.noisy_offset),
-                  const_cast<int *>(&pass.denoised_offset),
-                  const_cast<int *>(&context.pass_sample_count),
-                  const_cast<int *>(&pass.num_components),
-                  const_cast<bool *>(&pass.use_compositing)};
+  DeviceKernelArguments args(&context.render_buffers->buffer.device_pointer,
+                             &buffer_params.full_x,
+                             &buffer_params.full_y,
+                             &buffer_params.width,
+                             &buffer_params.height,
+                             &buffer_params.offset,
+                             &buffer_params.stride,
+                             &buffer_params.pass_stride,
+                             &context.num_samples,
+                             &pass.noisy_offset,
+                             &pass.denoised_offset,
+                             &context.pass_sample_count,
+                             &pass.num_components,
+                             &pass.use_compositing);
 
   return denoiser_.queue.enqueue(DEVICE_KERNEL_FILTER_COLOR_POSTPROCESS, work_size, args);
 }
@@ -884,35 +886,33 @@ bool OptiXDevice::denoise_create_if_needed(DenoiseContext &context)
 
 bool OptiXDevice::denoise_configure_if_needed(DenoiseContext &context)
 {
-  if (denoiser_.is_configured && (denoiser_.configured_size.x == context.buffer_params.width &&
-                                  denoiser_.configured_size.y == context.buffer_params.height)) {
+  /* Limit maximum tile size denoiser can be invoked with. */
+  const int2 tile_size = make_int2(min(context.buffer_params.width, 4096),
+                                   min(context.buffer_params.height, 4096));
+
+  if (denoiser_.is_configured &&
+      (denoiser_.configured_size.x == tile_size.x && denoiser_.configured_size.y == tile_size.y)) {
     return true;
   }
 
-  const BufferParams &buffer_params = context.buffer_params;
-
-  OptixDenoiserSizes sizes = {};
   optix_assert(optixDenoiserComputeMemoryResources(
-      denoiser_.optix_denoiser, buffer_params.width, buffer_params.height, &sizes));
-
-  /* Denoiser is invoked on whole images only, so no overlap needed (would be used for tiling). */
-  denoiser_.scratch_size = sizes.withoutOverlapScratchSizeInBytes;
-  denoiser_.scratch_offset = sizes.stateSizeInBytes;
+      denoiser_.optix_denoiser, tile_size.x, tile_size.y, &denoiser_.sizes));
 
   /* Allocate denoiser state if tile size has changed since last setup. */
-  denoiser_.state.alloc_to_device(denoiser_.scratch_offset + denoiser_.scratch_size);
+  denoiser_.state.alloc_to_device(denoiser_.sizes.stateSizeInBytes +
+                                  denoiser_.sizes.withOverlapScratchSizeInBytes);
 
   /* Initialize denoiser state for the current tile size. */
   const OptixResult result = optixDenoiserSetup(
       denoiser_.optix_denoiser,
       0, /* Work around bug in r495 drivers that causes artifacts when denoiser setup is called
             on a stream that is not the default stream */
-      buffer_params.width,
-      buffer_params.height,
+      tile_size.x + denoiser_.sizes.overlapWindowSizeInPixels * 2,
+      tile_size.y + denoiser_.sizes.overlapWindowSizeInPixels * 2,
       denoiser_.state.device_pointer,
-      denoiser_.scratch_offset,
-      denoiser_.state.device_pointer + denoiser_.scratch_offset,
-      denoiser_.scratch_size);
+      denoiser_.sizes.stateSizeInBytes,
+      denoiser_.state.device_pointer + denoiser_.sizes.stateSizeInBytes,
+      denoiser_.sizes.withOverlapScratchSizeInBytes);
   if (result != OPTIX_SUCCESS) {
     set_error("Failed to set up OptiX denoiser");
     return false;
@@ -921,8 +921,7 @@ bool OptiXDevice::denoise_configure_if_needed(DenoiseContext &context)
   cuda_assert(cuCtxSynchronize());
 
   denoiser_.is_configured = true;
-  denoiser_.configured_size.x = buffer_params.width;
-  denoiser_.configured_size.y = buffer_params.height;
+  denoiser_.configured_size = tile_size;
 
   return true;
 }
@@ -993,18 +992,20 @@ bool OptiXDevice::denoise_run(DenoiseContext &context, const DenoisePass &pass)
   guide_layers.albedo = albedo_layer;
   guide_layers.normal = normal_layer;
 
-  optix_assert(optixDenoiserInvoke(denoiser_.optix_denoiser,
-                                   denoiser_.queue.stream(),
-                                   &params,
-                                   denoiser_.state.device_pointer,
-                                   denoiser_.scratch_offset,
-                                   &guide_layers,
-                                   &image_layers,
-                                   1,
-                                   0,
-                                   0,
-                                   denoiser_.state.device_pointer + denoiser_.scratch_offset,
-                                   denoiser_.scratch_size));
+  optix_assert(optixUtilDenoiserInvokeTiled(denoiser_.optix_denoiser,
+                                            denoiser_.queue.stream(),
+                                            &params,
+                                            denoiser_.state.device_pointer,
+                                            denoiser_.sizes.stateSizeInBytes,
+                                            &guide_layers,
+                                            &image_layers,
+                                            1,
+                                            denoiser_.state.device_pointer +
+                                                denoiser_.sizes.stateSizeInBytes,
+                                            denoiser_.sizes.withOverlapScratchSizeInBytes,
+                                            denoiser_.sizes.overlapWindowSizeInPixels,
+                                            denoiser_.configured_size.x,
+                                            denoiser_.configured_size.y));
 
   return true;
 }
@@ -1281,7 +1282,7 @@ void OptiXDevice::build_bvh(BVH *bvh, Progress &progress, bool refit)
       }
       else {
         /* Disable visibility test any-hit program, since it is already checked during
-         * intersection. Those trace calls that require anyhit can force it with a ray flag. */
+         * intersection. Those trace calls that require any-hit can force it with a ray flag. */
         build_flags |= OPTIX_GEOMETRY_FLAG_DISABLE_ANYHIT;
 
         build_input.type = OPTIX_BUILD_INPUT_TYPE_CUSTOM_PRIMITIVES;
@@ -1449,7 +1450,7 @@ void OptiXDevice::build_bvh(BVH *bvh, Progress &progress, bool refit)
         }
       }
 #  if OPTIX_ABI_VERSION < 55
-      /* Cannot disable any-hit program for thick curves, since it needs to filter out endcaps. */
+      /* Cannot disable any-hit program for thick curves, since it needs to filter out end-caps. */
       else
 #  endif
       {

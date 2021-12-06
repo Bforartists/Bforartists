@@ -289,7 +289,7 @@ static void action_blend_read_expand(BlendExpander *expander, ID *id)
 
 static IDProperty *action_asset_type_property(const bAction *action)
 {
-  const bool is_single_frame = !BKE_action_has_single_frame(action);
+  const bool is_single_frame = BKE_action_has_single_frame(action);
 
   IDPropertyTemplate idprop = {0};
   idprop.i = is_single_frame;
@@ -328,6 +328,7 @@ IDTypeInfo IDType_ID_AC = {
     .make_local = NULL,
     .foreach_id = action_foreach_id,
     .foreach_cache = NULL,
+    .foreach_path = NULL,
     .owner_get = NULL,
 
     .blend_write = action_blend_write,

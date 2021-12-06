@@ -576,7 +576,7 @@ class Offset(object):
         return ans
 
     def SplitJoinFaces(self, newfaces, ev):
-        """Use event ev to split or join faces.
+        r"""Use event ev to split or join faces.
 
         Given ev, an edge event, use the ev spoke to split the
         other spoke's inner edge.
