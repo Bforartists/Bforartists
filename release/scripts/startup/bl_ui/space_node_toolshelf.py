@@ -3451,10 +3451,6 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputCurveHandlePositions"
 
-            props = col.operator("node.add_node", text=" Curve Parameter      ", icon = "CURVE_PARAMETER")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveParameter"
-
             props = col.operator("node.add_node", text=" Curve Tangent           ", icon = "CURVE_TANGENT")
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
@@ -3478,6 +3474,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Spline Length             ", icon = "SPLINE_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeSplineLength"
+            
+            props = col.operator("node.add_node", text=" Spline Parameter      ", icon = "CURVE_PARAMETER")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineParameter"
 
             props = col.operator("node.add_node", text=" Spline Resolution        ", icon = "SPLINE_RESOLUTION")
             props.use_transform = True
@@ -3569,10 +3569,6 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputCurveHandlePositions"
 
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveParameter"
-
             props = flow.operator("node.add_node", text = "", icon = "CURVE_TANGENT")
             props.use_transform = True
             props.type = "GeometryNodeInputTangent"
@@ -3596,6 +3592,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeSplineLength"
+            
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
+            props.use_transform = True
+            props.type = "GeometryNodeSplineParameter"
 
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_RESOLUTION")
             props.use_transform = True
