@@ -13960,7 +13960,7 @@ static int node_type_to_icon(int type)
       icon = ICON_ATTRIBUTE_STATISTIC;
       break;
     case GEO_NODE_ATTRIBUTE_DOMAIN_SIZE:
-      icon = ICON_DELETE;
+      icon = ICON_DOMAIN_SIZE;
       break;
     case GEO_NODE_BOUNDING_BOX:
       icon = ICON_PIVOT_BOUNDBOX;
