@@ -3263,11 +3263,15 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
 
-            props = col.operator("node.add_node", text=" Attribute Capture   ", icon = "ATTRIBUTE_CAPTURE")
+            props = col.operator("node.add_node", text=" Capture Attribute   ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
+            
+            props = col.operator("node.add_node", text=" Domain Size           ", icon = "DOMAIN_SIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeDomainSize"
 
-            props = col.operator("node.add_node", text=" Attribute Transfer   ", icon = "ATTRIBUTE_TRANSFER")
+            props = col.operator("node.add_node", text=" Transfer Attribute   ", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
 
@@ -3287,6 +3291,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
+            
+            props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeDomainSize"
 
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
