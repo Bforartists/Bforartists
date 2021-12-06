@@ -342,6 +342,7 @@ class SEQUENCER_MT_editor_menus(Menu):
         layout.menu("SEQUENCER_MT_export")
 
         if has_sequencer:
+            layout.menu("SEQUENCER_MT_navigation")
             if st.show_markers:
                 layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
