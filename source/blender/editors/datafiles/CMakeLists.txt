@@ -1253,7 +1253,7 @@ orientation_global
 link_replace
 detach_links_move
 hold_split
-#~ DEF_ICON_BLANK(1272)
+dual_mesh
 #~ DEF_ICON_BLANK(1273)
 #~ DEF_ICON_BLANK(1274)
 #~ DEF_ICON_BLANK(1275)
