@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -7479,6 +7479,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Błąd programowania: Brak funkcji wyczyść transformację lub nazwy zestawu kluczowania"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Pusta ścieżka. Nie udało się zapisać"
+
+
+msgid "Path too long, cannot save"
+msgstr "Za długa ścieżka. Nie udało się zapisać"
+
+
 msgid "Cannot separate current selection"
 msgstr "Nie można oddzielić obecnego zaznaczenia"
 
@@ -11504,14 +11512,6 @@ msgstr "Brakuje \"Okna\" w kontekście"
 
 msgid "unable to open the file"
 msgstr "Nie udało się otworzyć pliku"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Pusta ścieżka. Nie udało się zapisać"
-
-
-msgid "Path too long, cannot save"
-msgstr "Za długa ścieżka. Nie udało się zapisać"
 
 
 msgid "Context window not set"

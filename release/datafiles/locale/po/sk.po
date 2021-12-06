@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-11-16 08:09+0100\n"
+"PO-Revision-Date: 2021-11-23 08:45+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -1715,14 +1715,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Blok údajov pastelky"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
-msgid "Hair data-blocks"
-msgstr "Blok údajov vlasov"
-
-
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1867,14 +1859,6 @@ msgid "Particle data-blocks"
 msgstr "Blok údajov častíc"
 
 
-msgid "Point Clouds"
-msgstr "Bod mrakov"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Bloky údajov bodov mraku"
-
-
 msgid "Scenes"
 msgstr "Scény"
 
@@ -1897,14 +1881,6 @@ msgstr "Kľúčové tvary"
 
 msgid "Shape Key data-blocks"
 msgstr "Blok údajov kľúčového tvaru"
-
-
-msgid "Simulations"
-msgstr "Simulácia"
-
-
-msgid "Simulation data-blocks"
-msgstr "Blok údajov simulácie"
 
 
 msgid "Sounds"
@@ -2059,14 +2035,6 @@ msgid "Collection of grease pencils"
 msgstr "Kolekcia pasteliek"
 
 
-msgid "Main Hairs"
-msgstr "Hlavné vlasy"
-
-
-msgid "Collection of hairs"
-msgstr "Kolekcia vlasov"
-
-
 msgid "Main Images"
 msgstr "Hlavné obrázky"
 
@@ -2187,14 +2155,6 @@ msgid "Collection of particle settings"
 msgstr "Kolekcia nastavenia častíc"
 
 
-msgid "Main Point Clouds"
-msgstr "Hlavné body mrakov"
-
-
-msgid "Collection of point clouds"
-msgstr "Kolekcia mračien bodov"
-
-
 msgid "Main Light Probes"
 msgstr "Hlavné snímače svetla"
 
@@ -2217,14 +2177,6 @@ msgstr "Hlavné obrazovky"
 
 msgid "Collection of screens"
 msgstr "Kolekcia obrazoviek"
-
-
-msgid "Main Simulations"
-msgstr "Hlavná simulácia"
-
-
-msgid "Collection of simulations"
-msgstr "Kolekcia simulácií"
 
 
 msgid "Main Sounds"
@@ -5638,6 +5590,14 @@ msgstr "Vplyv"
 
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "Výška vplyvu vynútenia na finálne riešenie"
+
+
+msgid "Override Constraint"
+msgstr "Prepis vynútenia"
+
+
+msgid "In a local override object, whether this constraint comes from the linked reference object, or is local to the override"
+msgstr "V lokálnom prepise objektu sa určuje, či toto vynútenie pochádza z prepojeného referenčného objektu, alebo je lokálne pre prepis"
 
 
 msgid "Proxy Local"
@@ -10152,7 +10112,7 @@ msgstr "Vplyv efektora vodiacej krivky"
 
 
 msgid "Drag"
-msgstr "Ťahanie"
+msgstr "Ťahať"
 
 
 msgid "Drag effector weight"
@@ -11877,6 +11837,10 @@ msgid "Show Collection data-blocks"
 msgstr "Ukáže blok údajov kolekcie"
 
 
+msgid "Hairs"
+msgstr "Vlasy"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Ukáže/skryje bloky údajov vlasov"
 
@@ -11945,12 +11909,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Ukáže blok údajov nastavenie častíc"
 
 
+msgid "Point Clouds"
+msgstr "Bod mrakov"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Ukáže/skryje bloky údajov mračno bodov"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Ukáže blok údajov scény"
+
+
+msgid "Simulations"
+msgstr "Simulácia"
 
 
 msgid "Show Simulation data-blocks"
@@ -15851,6 +15823,14 @@ msgid "Modifier affecting the Grease Pencil object"
 msgstr "Modifikátor ovplyvňujúci objekt Pastelky"
 
 
+msgid "Override Modifier"
+msgstr "Prepis modifikátora"
+
+
+msgid "In a local override object, whether this modifier comes from the linked reference object, or is local to the override"
+msgstr "V lokálnom prepise objektu určuje, či tento modifikátor pochádza z prepojeného referenčného objektu, alebo je lokálny pre prepis"
+
+
 msgid "Modifier name"
 msgstr "Názov modifikátora"
 
@@ -17651,50 +17631,6 @@ msgstr "Index aktívnej vrstvy masky"
 
 msgid "Active index in layer mask array"
 msgstr "Aktívny index v poli vrstiev masky"
-
-
-msgid "Hair Curve"
-msgstr "Krivka vlasov"
-
-
-msgid "Hair curve"
-msgstr "Krivka vlasov"
-
-
-msgid "First Point Index"
-msgstr "Index prvého bodu"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Index prvej slučky tohto polygónu (mnohouholníka)"
-
-
-msgid "Index of this curve"
-msgstr "Index tejto krivky"
-
-
-msgid "Number of Points"
-msgstr "Počet bodov"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Počet slučiek použitých týmto polygónom"
-
-
-msgid "Control points of the curve"
-msgstr "Riadiace body krivky"
-
-
-msgid "Hair Point"
-msgstr "Vlasový bod"
-
-
-msgid "Hair curve control point"
-msgstr "Riadiaci bod krivky vlasov"
-
-
-msgid "Index of this points"
-msgstr "Index týchto bodov"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -21722,26 +21658,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Veľkosť posuvu pri kreslení v režime povrchu"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Blok údajov vlasov pre krivky vlasov"
-
-
-msgid "Attributes"
-msgstr "Atribúty"
-
-
-msgid "Geometry attributes"
-msgstr "Atribúty geometrie"
-
-
-msgid "All hair curves"
-msgstr "Všetky krivky vlasov"
-
-
-msgid "Control points of all hair curves"
-msgstr "Riadiace body všetkých kriviek vlasov"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Blok údajov obrázku odkazujúci na externý alebo zabalený obrázok"
 
@@ -23182,6 +23098,14 @@ msgstr "Pridá efekt priesvitnosti pod povrch"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Blok údajov povrchovej siete definujúci geometrické plochy"
+
+
+msgid "Attributes"
+msgstr "Atribúty"
+
+
+msgid "Geometry attributes"
+msgstr "Atribúty geometrie"
 
 
 msgid "Auto Smooth Angle"
@@ -25923,10 +25847,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Relatívne množstvo virtuálnych rodičov"
 
 
-msgid "Point cloud data-block"
-msgstr "Blok údajov mračna bodov"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Blok údajov scény, pozostávajúci z objektov, definovania času a súvisiacich nastavení prekreslenia"
 
@@ -26429,14 +26349,6 @@ msgstr "Editory sekvencií"
 
 msgid "Top-Left 3D Editor"
 msgstr "3D editor hore-vľavo"
-
-
-msgid "Simulation data-block"
-msgstr "Blok údajov simulácie"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Strom uzlov definujúcich simuláciu"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -27706,7 +27618,7 @@ msgstr "Doplnky filtra podľa kategórie"
 
 
 msgid "Search"
-msgstr "Vyhľadávanie"
+msgstr "Vyhľadať"
 
 
 msgid "Search within the selected filter"
@@ -33178,8 +33090,16 @@ msgid "Loop Start"
 msgstr "Počiatočná slučka"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Index prvej slučky tohto polygónu (mnohouholníka)"
+
+
 msgid "Loop Total"
 msgstr "Súčet slučiek"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Počet slučiek použitých týmto polygónom"
 
 
 msgid "Material slot index of this polygon"
@@ -39502,6 +39422,14 @@ msgid "NLA Track is active"
 msgstr "Stopa NAL je aktívna"
 
 
+msgid "Override Track"
+msgstr "Prepis stopy"
+
+
+msgid "In a local override data, whether this NLA track comes from the linked reference data, or is local to the override"
+msgstr "V lokálnom prepise údajov určuje, či táto stopa NLA pochádza z prepojených referenčných údajov, alebo je lokálna pre prepis"
+
+
 msgid "Solo"
 msgstr "Sólo"
 
@@ -40343,7 +40271,7 @@ msgstr "Či má byť orezaná veľkosť vstupného obrázka"
 
 
 msgid "Cryptomatte (Legacy)"
-msgstr "Cryptomatte (dedičné)"
+msgstr "Kryptomatovanie (dedičné)"
 
 
 msgid "Add object or material to matte, by picking a color from the Pick output"
@@ -40367,7 +40295,7 @@ msgstr "Odstráni objekt alebo materiál z matovania, nabratím farby z výstupu
 
 
 msgid "Cryptomatte"
-msgstr "Cryptomatte"
+msgstr "Kryptomatovanie"
 
 
 msgid "Mattes"
@@ -40395,11 +40323,11 @@ msgstr "Zástupný symbol"
 
 
 msgid "Cryptomatte Layer"
-msgstr "Vrstva Cryptomatte"
+msgstr "Vrstva kryptomatovania"
 
 
 msgid "What Cryptomatte layer is used"
-msgstr "Aká vrstva Cryptomatte sa používa"
+msgstr "Aká vrstva kryptomatovania sa používa"
 
 
 msgid "Use Object layer"
@@ -40415,15 +40343,15 @@ msgstr "Použije vrstvu aktív"
 
 
 msgid "Where the Cryptomatte passes are loaded from"
-msgstr "Odkiaľ sa načítavajú prechody Cryptomatte"
+msgstr "Odkiaľ sa načítavajú prechody kryptomatovania"
 
 
 msgid "Use Cryptomatte passes from a render"
-msgstr "Použitie prechody Cryptomatte z prekresľovania"
+msgstr "Použitie prechody kryptomatovania z prekresľovania"
 
 
 msgid "Use Cryptomatte passes from an image"
-msgstr "Použitie prechody Cryptomatte z obrázka"
+msgstr "Použitie prechody kryptomatovania z obrázka"
 
 
 msgid "Auto-Refresh"
@@ -46734,6 +46662,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "Nastavuje túto akciu pózy ako aktívnu akciu na aktívnom objekte"
 
 
+msgid "Check Existing"
+msgstr "Skontrolovať existujúce"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Kontroluje a upozorňuje na prepísanie existujúcich súborov"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Automaticky určí typ zobrazenia pre súbory"
+
+
+msgid "Short List"
+msgstr "Krátky zoznam"
+
+
+msgid "Display files as short list"
+msgstr "Zobrazí súbory ako krátky zoznam"
+
+
+msgid "Long List"
+msgstr "Dlhý zoznam"
+
+
+msgid "Display files as a detailed list"
+msgstr "Zobrazí súbory ako dlhý zoznam"
+
+
+msgid "File Browser Mode"
+msgstr "Režim prehľadávača súborov"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Nastaví režim prehľadávača súborov na načítanie súboru .blend, knižnice alebo špeciálneho súboru"
+
+
+msgid "Path to file"
+msgstr "Cesta súboru"
+
+
+msgid "Filter Alembic files"
+msgstr "Filter súborov Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Filter archívnych súborov"
+
+
+msgid "Filter .blend files"
+msgstr "Filter .blend súborov"
+
+
+msgid "Filter btx files"
+msgstr "Filter .btx súborov"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filter súborov COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filter súborov písma"
+
+
+msgid "Filter image files"
+msgstr "Filter súborov obrázka"
+
+
+msgid "Filter movie files"
+msgstr "Filter súborov filmu"
+
+
+msgid "Filter python files"
+msgstr "Filter python súborov"
+
+
+msgid "Filter sound files"
+msgstr "Filter súborov zvuku"
+
+
+msgid "Filter text files"
+msgstr "Filter textových súborov"
+
+
+msgid "Filter USD files"
+msgstr "Filter USD súborov"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "Filter súborov objemov OpenVDB"
+
+
+msgid "Hide Operator Properties"
+msgstr "Skryť vlastnosti operátora"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Zbalí oblasť zobrazujúcu nastavenia operátora"
+
+
+msgid "File sorting mode"
+msgstr "Režim triedenia súborov"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "Odstrániť katalóg aktív"
@@ -46822,12 +46854,12 @@ msgstr "Zabezpečí uloženie bloku údajov, aj keď už nie je označený ako a
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "Obnoviť zoznam aktív"
+msgid "Refresh Asset Library"
+msgstr "Obnoviť knižnicu aktív"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "Spustí opätovné načítanie aktív"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Opätovne načíta aktíva a katalógy aktív z knižnice aktív na disku"
 
 
 msgctxt "Operator"
@@ -47128,108 +47160,12 @@ msgid "Directory of the file"
 msgstr "Priečinok súboru"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Automaticky určí typ zobrazenia pre súbory"
-
-
-msgid "Short List"
-msgstr "Krátky zoznam"
-
-
-msgid "Display files as short list"
-msgstr "Zobrazí súbory ako krátky zoznam"
-
-
-msgid "Long List"
-msgstr "Dlhý zoznam"
-
-
-msgid "Display files as a detailed list"
-msgstr "Zobrazí súbory ako dlhý zoznam"
-
-
-msgid "File Browser Mode"
-msgstr "Režim prehľadávača súborov"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Nastaví režim prehľadávača súborov na načítanie súboru .blend, knižnice alebo špeciálneho súboru"
-
-
-msgid "Filter Alembic files"
-msgstr "Filter súborov Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Filter archívnych súborov"
-
-
-msgid "Filter .blend files"
-msgstr "Filter .blend súborov"
-
-
-msgid "Filter btx files"
-msgstr "Filter .btx súborov"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filter súborov COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filter súborov písma"
-
-
-msgid "Filter image files"
-msgstr "Filter súborov obrázka"
-
-
-msgid "Filter movie files"
-msgstr "Filter súborov filmu"
-
-
-msgid "Filter python files"
-msgstr "Filter python súborov"
-
-
-msgid "Filter sound files"
-msgstr "Filter súborov zvuku"
-
-
-msgid "Filter text files"
-msgstr "Filter textových súborov"
-
-
-msgid "Filter USD files"
-msgstr "Filter USD súborov"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "Filter súborov objemov OpenVDB"
-
-
-msgid "Hide Operator Properties"
-msgstr "Skryť vlastnosti operátora"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Zbalí oblasť zobrazujúcu nastavenia operátora"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Vyberie súbor vzhľadom na blend súbor"
 
 
-msgid "File sorting mode"
-msgstr "Režim triedenia súborov"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Otvorí prehliadač priečinkov, pridržaním Shift na otvorenie súboru, ALT na prehliadanie obsahu priečinka"
-
-
-msgid "Path to file"
-msgstr "Cesta súboru"
 
 
 msgctxt "Operator"
@@ -49706,14 +49642,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Uloží python skript, ktorý znovu vytvorí niekde inde kamery a značky"
 
 
-msgid "Check Existing"
-msgstr "Skontrolovať existujúce"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Kontroluje a upozorňuje na prepísanie existujúcich súborov"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "Cesta súboru používaná na exportovanie súboru"
 
@@ -50875,15 +50803,6 @@ msgstr "Zapíše stav pokoja po prvej snímke"
 
 
 msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "Obnoviť knižnicu aktív"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "Opätovne načíta aktíva a katalógy aktív z knižnice aktív na disku"
-
-
-msgctxt "Operator"
 msgid "Automatically Pack Resources"
 msgstr "Zbaliť zdroje automaticky"
 
@@ -51724,7 +51643,7 @@ msgstr "Odstráni atribút z geometrie"
 
 msgctxt "Operator"
 msgid "Gizmo Select"
-msgstr "Výber manipulátora polohy"
+msgstr "Vybrať manipulátor polohy"
 
 
 msgid "Select the currently highlighted gizmo"
@@ -51745,11 +51664,11 @@ msgstr "Prepne výber"
 
 msgctxt "Operator"
 msgid "Gizmo Tweak"
-msgstr "Ťahanie manipulátorom polohy"
+msgstr "Ťahať manipulátorom polohy"
 
 
 msgid "Tweak the active gizmo"
-msgstr "Ťahanie aktívneho manipulátora polohy"
+msgstr "Ťahať aktívnym manipulátorom polohy"
 
 
 msgctxt "Operator"
@@ -59528,6 +59447,14 @@ msgid "Data-block name to assign"
 msgstr "Názov bloku údajov na priradenie"
 
 
+msgid "Session UUID"
+msgstr "UUID relácia"
+
+
+msgid "Session UUID of the data-block to assign"
+msgstr "UUID relácia bloku údajov na priradenie"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Pridať uzol súboru"
@@ -60526,6 +60453,10 @@ msgid "Collection name to add"
 msgstr "Názov kolekcie na pridanie"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "UUID relácia kolekcie na pridanie"
+
+
 msgctxt "Operator"
 msgid "Link to Collection"
 msgstr "Prepojiť s kolekciou"
@@ -60619,16 +60550,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Povrchová sieť podľa objektov krivky, povrchu, meta gule, textu alebo mračna bodov"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Pastelka podľa objektov krivky alebo povrchovej siete objektu"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Mračno bodov podľa povrchovej siete objektu"
 
 
 msgctxt "Operator"
@@ -65293,6 +65216,11 @@ msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib acti
 msgstr "Index pózy na použitie (-2 pre žiadnu zmenu pózy, -1 pre aktívna póza knižnice pózy)"
 
 
+msgctxt "Operator"
+msgid "Apply Pose Asset"
+msgstr "Použiť aktívum pózy"
+
+
 msgid "Apply the given Pose Action to the rig"
 msgstr "Použije danú akciu pózy na výbavu"
 
@@ -65307,6 +65235,11 @@ msgstr "Aplikovať preklopené"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "Ak je povolené, použije pózu preklopenú cez os X"
+
+
+msgctxt "Operator"
+msgid "Blend Pose Asset"
+msgstr "Zmiešať aktívum pózy"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -79055,10 +78988,6 @@ msgid "Collection of paths"
 msgstr "Kolekcia dráh"
 
 
-msgid "Point in a point cloud"
-msgstr "Bod v mračne bodov"
-
-
 msgid "Active Point Cache"
 msgstr "Zásobník aktívnych bodov"
 
@@ -80023,8 +79952,16 @@ msgid "Enable automatic conversion of proxies to library overrides on file load"
 msgstr "Povolenie automatickej konverzie náhrady na prepis knižnice pri načítaní súboru"
 
 
+msgid "Asset Debug Info"
+msgstr "Informácie o ladení aktív"
+
+
+msgid "Enable some extra fields in the Asset Browser to aid in debugging"
+msgstr "Povolí niektoré ďalšie polia v Prehliadači aktív na pomoc pri ladení"
+
+
 msgid "Cycles Debug"
-msgstr "Ladenie cyklov"
+msgstr "Ladenie Cyklov"
 
 
 msgid "Enable Cycles debugging options for developers"
@@ -82363,14 +82300,6 @@ msgid "Minimum AA samples for adaptive sampling, to discover noisy features befo
 msgstr "Minimálny počet snímok AA pre adaptívne snímanie, aby sa odhalili rušivé prvky pred zastavením snímania. Nula pre automatické nastavenie na základe prahu šumu"
 
 
-msgid "Adaptive Scrambling Distance"
-msgstr "Vzdialenosť prispôsobiteľného snímania"
-
-
-msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
-msgstr "Používa vzorec na prispôsobenie sily vzdialenosti snímania na základe počtu snímok"
-
-
 msgid "Adaptive Sampling Threshold"
 msgstr "Prah prispôsobiteľného snímania"
 
@@ -82931,10 +82860,6 @@ msgid "Scrambling Distance"
 msgstr "Vzdialenosť snímania"
 
 
-msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "Nižšie hodnoty umožňujú rýchlejšie prekresľovanie pri GPU prekresľovaní a menej šumu pri všetkých zariadeniach za cenu možných artefaktov, ak sú nastavené príliš nízko. Funguje len vtedy, keď sa nepoužíva adaptívne snímania"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "Hodnota osiva pre integrátor na získanie rôznych modelov šumu"
 
@@ -83033,14 +82958,6 @@ msgstr "Použiť animáciu rozosiatia"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "Použite rôzne hodnoty rozosiatia (a tým aj vzory šumu) na rôznych snímkach"
-
-
-msgid "Auto Tiles"
-msgstr "Automatické dlaždice"
-
-
-msgid "Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
-msgstr "Automatické prekresľovanie obrázkov s vysokým rozlíšením v dlaždiciach s cieľom znížiť spotrebu pamäte použitím zadanej veľkosti dlaždíc. Dlaždice sa počas prekresľovania ukladajú do zásobníka na disk, aby sa ušetrila pamäť"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -95389,8 +95306,16 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Prekreslí štylizované ťahy v tejto vrstve"
 
 
+msgid "Cryptomatte Accurate"
+msgstr "Presnosť kryptomatovania"
+
+
+msgid "Generate a more accurate cryptomatte pass"
+msgstr "Vygeneruje presnejší prechod kryptomatovania"
+
+
 msgid "Cryptomatte Asset"
-msgstr "Aktívne kryptomatovania"
+msgstr "Aktívne kryptomatovanie"
 
 
 msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
@@ -98055,6 +97980,11 @@ msgstr "Zrušiť výber kostí pózy"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "Použiť"
+
+
+msgctxt "Operator"
+msgid "Interactive Blend"
+msgstr "Interaktívne zmiešavanie"
 
 
 msgid "Activate & Edit"
@@ -100776,6 +100706,10 @@ msgstr "Použiť na prekreslenie"
 
 msgid "Conflicts with another render pass with the same name"
 msgstr "Konflikty s iným prekreslením prechodu s rovnakým názvom"
+
+
+msgid "Accurate Mode"
+msgstr "Režim presnosti"
 
 
 msgid "Unknown add-ons"
@@ -104483,12 +104417,12 @@ msgstr "Prekresliť animáciu záberu"
 
 msgctxt "Operator"
 msgid "Roll Left"
-msgstr "Prevaľovať doľava"
+msgstr "Prevaliť doľava"
 
 
 msgctxt "Operator"
 msgid "Roll Right"
-msgstr "Prevaľovať doprava"
+msgstr "Prevaliť doprava"
 
 
 msgctxt "Operator"
@@ -106831,6 +106765,14 @@ msgid "No asset data-blocks selected/focused"
 msgstr "Žiadne vybrané/zamerané bloky údajov o aktívach"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Cesta je prázdna, nemožno uložiť"
+
+
+msgid "Path too long, cannot save"
+msgstr "Cesta je príliš dlhá, nemožno uložiť"
+
+
 msgid "Data-block '%s' is now an asset"
 msgstr "Blok údajov '%s' je teraz aktívum"
 
@@ -108849,7 +108791,7 @@ msgstr "Turbulencia"
 
 msgctxt "Object"
 msgid "Drag"
-msgstr "Ťahanie"
+msgstr "Ťahať"
 
 
 msgctxt "Object"
@@ -115995,14 +115937,6 @@ msgstr "Uložiť zmeny pred ukončením?"
 
 msgid "File Not Found"
 msgstr "Súbor nenájdený"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Cesta je prázdna, nemožno uložiť"
-
-
-msgid "Path too long, cannot save"
-msgstr "Cesta je príliš dlhá, nemožno uložiť"
 
 
 msgid "Unable to create user config path"

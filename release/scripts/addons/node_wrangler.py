@@ -3221,7 +3221,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
             # Remove digits
             fname = ''.join(i for i in fname if not i.isdigit())
             # Separate CamelCase by space
-            fname = re.sub("([a-z])([A-Z])","\g<1> \g<2>",fname)
+            fname = re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>",fname)
             # Replace common separators with SPACE
             seperators = ['_', '.', '-', '__', '--', '#']
             for sep in seperators:

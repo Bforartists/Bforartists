@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -1714,14 +1714,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Các cục dữ liệu Bút Sáp"
 
 
-msgid "Hairs"
-msgstr "Tóc"
-
-
-msgid "Hair data-blocks"
-msgstr "Cac cục dữ liệu tóc"
-
-
 msgid "Images"
 msgstr "Ảnh"
 
@@ -1866,14 +1858,6 @@ msgid "Particle data-blocks"
 msgstr "Các cục dữ liệu hạt"
 
 
-msgid "Point Clouds"
-msgstr "Mây Điểm"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Các cục dữ liệu điểm mây"
-
-
 msgid "Scenes"
 msgstr "Cảnh"
 
@@ -1896,14 +1880,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô phỏng"
-
-
-msgid "Simulation data-blocks"
-msgstr "Các cục dữ liệu mô phỏng"
 
 
 msgid "Sounds"
@@ -2058,14 +2034,6 @@ msgid "Collection of grease pencils"
 msgstr "Sưu tập bút sáp"
 
 
-msgid "Main Hairs"
-msgstr "Tóc Chánh"
-
-
-msgid "Collection of hairs"
-msgstr "Sưu tập tóc"
-
-
 msgid "Main Images"
 msgstr "Ảnh Chánh"
 
@@ -2186,14 +2154,6 @@ msgid "Collection of particle settings"
 msgstr "Sưu tập cài đặt hạt"
 
 
-msgid "Main Point Clouds"
-msgstr "Mây Điểm Chánh"
-
-
-msgid "Collection of point clouds"
-msgstr "Sưu tập mây điểm"
-
-
 msgid "Main Light Probes"
 msgstr "Quang Kế Chánh"
 
@@ -2216,14 +2176,6 @@ msgstr "Màn Chánh"
 
 msgid "Collection of screens"
 msgstr "Sưu tập màn"
-
-
-msgid "Main Simulations"
-msgstr "Mô Phỏng Chánh"
-
-
-msgid "Collection of simulations"
-msgstr "Sưu tập mô phỏng"
 
 
 msgid "Main Sounds"
@@ -11876,6 +11828,10 @@ msgid "Show Collection data-blocks"
 msgstr "Hiện các cục dữ liệu Sưu Tập"
 
 
+msgid "Hairs"
+msgstr "Tóc"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Hiện/ẳn các cục dữ liệu Tóc"
 
@@ -11944,12 +11900,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Hiện các cục dữ liệu Cài Đặt Hạt"
 
 
+msgid "Point Clouds"
+msgstr "Mây Điểm"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Simulations"
+msgstr "Mô phỏng"
 
 
 msgid "Show Simulation data-blocks"
@@ -17652,50 +17616,6 @@ msgid "Active index in layer mask array"
 msgstr "Chỉ số hoạt động trong mảng mặt nạ lớp"
 
 
-msgid "Hair Curve"
-msgstr "Đường Cong Tóc"
-
-
-msgid "Hair curve"
-msgstr "Đường cong tóc"
-
-
-msgid "First Point Index"
-msgstr "Chỉ Số Điểm Bắt Đầu"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Chỉ số của vòng bắt đầu của đa giác này"
-
-
-msgid "Index of this curve"
-msgstr "Chỉ số của đường cong này"
-
-
-msgid "Number of Points"
-msgstr "Số Lượng Điểm"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Số lượng vòng được dùng trong đa giác này"
-
-
-msgid "Control points of the curve"
-msgstr "Điểm kiểm soát của đường cong"
-
-
-msgid "Hair Point"
-msgstr "Điểm Tóc"
-
-
-msgid "Hair curve control point"
-msgstr "Điểm kiểm soát của đường cong tóc"
-
-
-msgid "Index of this points"
-msgstr "Chỉ số của điểm này"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "Sự hiển thị thống kê của mức độ màu trong một ảnh"
 
@@ -21721,26 +21641,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Mức dịch khi vẽ trong chế độ bề mặt"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Cục dữ liệu tóc cho đường cong tóc"
-
-
-msgid "Attributes"
-msgstr "Các Đặc Điểm"
-
-
-msgid "Geometry attributes"
-msgstr "Các đặc điểm của hình dạng"
-
-
-msgid "All hair curves"
-msgstr "Hết đường cong tóc"
-
-
-msgid "Control points of all hair curves"
-msgstr "Điểm kiểm soát của hết đường cong tóc"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Cục dữ liệu ảnh đang tham chiếu một ảnh ngoài hay ảnh được gói lại"
 
@@ -23181,6 +23081,14 @@ msgstr "Thêm hiệu ứng trong suốt cho hạ bề mặt"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Cục dữ liệu cho chỉ định bề mặt hình dạng"
+
+
+msgid "Attributes"
+msgstr "Các Đặc Điểm"
+
+
+msgid "Geometry attributes"
+msgstr "Các đặc điểm của hình dạng"
 
 
 msgid "Auto Smooth Angle"
@@ -25922,10 +25830,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Số lượng tương đối của phụ huynh ảo"
 
 
-msgid "Point cloud data-block"
-msgstr "Cục dữ liệu điểm mây"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Cục dữ liệu cảnh, gồm vật thể và chỉ định thời gian và cài đặt kết xuất liên được quan"
 
@@ -26428,14 +26332,6 @@ msgstr "Bộ Biên Tập Trình Tự"
 
 msgid "Top-Left 3D Editor"
 msgstr "Bộ Biên Tập Thảo 3D Trên-Trái"
-
-
-msgid "Simulation data-block"
-msgstr "Cục dữ liệu mô phỏng"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Cây giao điểm được chỉ định mô phỏng"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33177,8 +33073,16 @@ msgid "Loop Start"
 msgstr "Đầu Vòng"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Chỉ số của vòng bắt đầu của đa giác này"
+
+
 msgid "Loop Total"
 msgstr "Tổng Vòng"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Số lượng vòng được dùng trong đa giác này"
 
 
 msgid "Material slot index of this polygon"
@@ -46733,6 +46637,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "Đặt Hành Động dạng đứng này làm Hành Động hoạt động trên Vật Thể hoạt động"
 
 
+msgid "Check Existing"
+msgstr "Kiểm Tra Tồn Tại"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Kiểm tra và báo cáo khi lưu trên tập tin tồn tại rồi"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Tự động xác định cách hiển thị cho tập tin"
+
+
+msgid "Short List"
+msgstr "Danh Sách Ngắn"
+
+
+msgid "Display files as short list"
+msgstr "Hiển thị tập tin bằng danh sách ngắn"
+
+
+msgid "Long List"
+msgstr "Danh Sách Dài"
+
+
+msgid "Display files as a detailed list"
+msgstr "Hiển thị tập tin bằng một danh sách chi tiết"
+
+
+msgid "File Browser Mode"
+msgstr "Chế Độ Trình Duyệt Tập Tin"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Cài đặt cho chế độ trình duyệt tập tin để nhập một tập tin .blend, một thư viện, hay một tập tin đặc biệt"
+
+
+msgid "Path to file"
+msgstr "Đường dỗn đến tập tin"
+
+
+msgid "Filter Alembic files"
+msgstr "Lọc tập tin Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Lọc tập tin trong kho chứa"
+
+
+msgid "Filter .blend files"
+msgstr "Lọc tập tin .blend"
+
+
+msgid "Filter btx files"
+msgstr "Lọc tập tin btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Lọc tập tin COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Lọc tập tin phông"
+
+
+msgid "Filter image files"
+msgstr "Lọc tập tin ảnh"
+
+
+msgid "Filter movie files"
+msgstr "Lọc tập tin phim"
+
+
+msgid "Filter python files"
+msgstr "Lọc tập tin Python"
+
+
+msgid "Filter sound files"
+msgstr "Lọc tập tin âm thanh"
+
+
+msgid "Filter text files"
+msgstr "Lọc tập tin văn bản"
+
+
+msgid "Filter USD files"
+msgstr "Lọc tập tin USD"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "Bộ lọc tập tin thể tích OpenVDB"
+
+
+msgid "Hide Operator Properties"
+msgstr "Ẩn Đặc Tính Thao Tác"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Tóp vùng đang hiển thị cài đặt thao tác"
+
+
+msgid "File sorting mode"
+msgstr "Chế độ sắp xếp tập tin"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "Xóa Dang Mục Tích Sản"
@@ -46821,12 +46829,12 @@ msgstr "Làm chắc cục dữ lưu được lưu, mặc dù không còn đượ
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "Nạp Lại Danh Sách Tích Sản"
+msgid "Refresh Asset Library"
+msgstr "Hoàn Lại Thư Viện Tích Sản"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "Khởi động nạp lại tích sản"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Nạp lại tích sản và danh mục tích sản từ thư viện tích sản trên đĩa"
 
 
 msgctxt "Operator"
@@ -47127,108 +47135,12 @@ msgid "Directory of the file"
 msgstr "Mục lục của tập tin"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Tự động xác định cách hiển thị cho tập tin"
-
-
-msgid "Short List"
-msgstr "Danh Sách Ngắn"
-
-
-msgid "Display files as short list"
-msgstr "Hiển thị tập tin bằng danh sách ngắn"
-
-
-msgid "Long List"
-msgstr "Danh Sách Dài"
-
-
-msgid "Display files as a detailed list"
-msgstr "Hiển thị tập tin bằng một danh sách chi tiết"
-
-
-msgid "File Browser Mode"
-msgstr "Chế Độ Trình Duyệt Tập Tin"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Cài đặt cho chế độ trình duyệt tập tin để nhập một tập tin .blend, một thư viện, hay một tập tin đặc biệt"
-
-
-msgid "Filter Alembic files"
-msgstr "Lọc tập tin Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Lọc tập tin trong kho chứa"
-
-
-msgid "Filter .blend files"
-msgstr "Lọc tập tin .blend"
-
-
-msgid "Filter btx files"
-msgstr "Lọc tập tin btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Lọc tập tin COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Lọc tập tin phông"
-
-
-msgid "Filter image files"
-msgstr "Lọc tập tin ảnh"
-
-
-msgid "Filter movie files"
-msgstr "Lọc tập tin phim"
-
-
-msgid "Filter python files"
-msgstr "Lọc tập tin Python"
-
-
-msgid "Filter sound files"
-msgstr "Lọc tập tin âm thanh"
-
-
-msgid "Filter text files"
-msgstr "Lọc tập tin văn bản"
-
-
-msgid "Filter USD files"
-msgstr "Lọc tập tin USD"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "Bộ lọc tập tin thể tích OpenVDB"
-
-
-msgid "Hide Operator Properties"
-msgstr "Ẩn Đặc Tính Thao Tác"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Tóp vùng đang hiển thị cài đặt thao tác"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Chọn tập tin tương đối với tập tin .blend"
 
 
-msgid "File sorting mode"
-msgstr "Chế độ sắp xếp tập tin"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Mở một trình duyệt tập tin, Bấm giữ Shift để mở tập tin, Alt để trình duyệt mục lục đang chứa nó"
-
-
-msgid "Path to file"
-msgstr "Đường dỗn đến tập tin"
 
 
 msgctxt "Operator"
@@ -49705,14 +49617,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Lưu văn thảo Python thì có thể chế tạo lại các máy quay phim và ký hiệu ở chỗ khác"
 
 
-msgid "Check Existing"
-msgstr "Kiểm Tra Tồn Tại"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Kiểm tra và báo cáo khi lưu trên tập tin tồn tại rồi"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "Đường dẫn dùng cho xuất tập tin"
 
@@ -50871,15 +50775,6 @@ msgstr "Bức Nghỉ"
 
 msgid "Write the rest state at the first frame"
 msgstr "Ghi lưu trạng thái nghỉ tại bức đầu"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "Hoàn Lại Thư Viện Tích Sản"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "Nạp lại tích sản và danh mục tích sản từ thư viện tích sản trên đĩa"
 
 
 msgctxt "Operator"
@@ -60618,16 +60513,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Đường Cong từ vật thể Mạng Lưới hay Văn Bản"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Mạng lưới từ vật thể Đường Cong, Bề Mặt, Siêu Cầu, Văn Bản, hay Mây Điểm"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Bút Sáp từ vất thể Đường Cong/Mạng Lưới"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Mây Điểm từ vật thể Mạng Lưới"
 
 
 msgctxt "Operator"
@@ -79054,10 +78941,6 @@ msgid "Collection of paths"
 msgstr "Sưu tập đường dẫn"
 
 
-msgid "Point in a point cloud"
-msgstr "Điểm trong một mây điểm"
-
-
 msgid "Active Point Cache"
 msgstr "Đệm Chứa Điểm Hoạt Động"
 
@@ -82362,14 +82245,6 @@ msgid "Minimum AA samples for adaptive sampling, to discover noisy features befo
 msgstr "Số lượng mẫu tối thiểu chống răng cư cho mẫu ứng phó, cho phát hiện đặc trưng huyên náo trước nghỉ tính mẫu. Đặt = 0 cho cài đặt tự động cơ sở tùy ngưỡng huyên náo"
 
 
-msgid "Adaptive Scrambling Distance"
-msgstr "Khoảng Cách Hốt Hoảng"
-
-
-msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
-msgstr "Dùng một cộng thức cho ứng phó sức khoảng cách hốt hoảng tùy số lượng mẫu"
-
-
 msgid "Adaptive Sampling Threshold"
 msgstr "Ngưỡng Mẫu Ứng Phó"
 
@@ -82930,10 +82805,6 @@ msgid "Scrambling Distance"
 msgstr "Khoảng Cách Hốt Hoảng"
 
 
-msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "Giá trị thấp hơn tăng tốc độ kết xuất GPU và giảm huyên náo với hết thiết bị nhưng có thể tạo lỗi lầm trong ảnh nếu đặt qúa thấp. Chỉ hoạt động khi không dùng mẫu ứng phó"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "Số hạt cho bộ tích phân được gương mẫu huyên náo khác"
 
@@ -83032,14 +82903,6 @@ msgstr "Dùng Số Hạt Hoạt Động"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "Dùng giá trị hạt khác nhau (và cấu hình huyên náo) mỗi bức"
-
-
-msgid "Auto Tiles"
-msgstr "Ô Tự Động"
-
-
-msgid "Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
-msgstr "Tự động kết xuất ảnh có độ phân giải cao bằng ô cho giảm sử dụng bộ nhớ, dùng kích thước ô được xác định. Các ô được chứa trên đĩa khi kết xuất cho tiết kiệm bộ nhớ"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -106834,6 +106697,14 @@ msgid "No asset data-blocks selected/focused"
 msgstr "Không có cục dữ liếu tích sản được chọn/tập trung"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Đường dẫn rỗng, không thể lưu"
+
+
+msgid "Path too long, cannot save"
+msgstr "Đường dẫn qúa dài, không thể lưu"
+
+
 msgid "Data-block '%s' is now an asset"
 msgstr "Cục dữ liệu '%s' đã trở thành một tích sản"
 
@@ -115972,14 +115843,6 @@ msgstr "Lưu sự thay đổi trước đóng?"
 
 msgid "File Not Found"
 msgstr "Không Tìm Được Tập Tin"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Đường dẫn rỗng, không thể lưu"
-
-
-msgid "Path too long, cannot save"
-msgstr "Đường dẫn qúa dài, không thể lưu"
 
 
 msgid "Unable to create user config path"

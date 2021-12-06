@@ -81,6 +81,7 @@ set(SRC
   nodes/legacy/node_geo_legacy_volume_to_mesh.cc
 
   nodes/node_geo_attribute_capture.cc
+  nodes/node_geo_attribute_domain_size.cc
   nodes/node_geo_attribute_remove.cc
   nodes/node_geo_attribute_statistic.cc
   nodes/node_geo_boolean.cc
@@ -93,7 +94,6 @@ set(SRC
   nodes/node_geo_curve_fillet.cc
   nodes/node_geo_curve_handle_type_selection.cc
   nodes/node_geo_curve_length.cc
-  nodes/node_geo_curve_parameter.cc
   nodes/node_geo_curve_primitive_bezier_segment.cc
   nodes/node_geo_curve_primitive_circle.cc
   nodes/node_geo_curve_primitive_line.cc
@@ -106,12 +106,14 @@ set(SRC
   nodes/node_geo_curve_sample.cc
   nodes/node_geo_curve_set_handles.cc
   nodes/node_geo_curve_spline_type.cc
+  nodes/node_geo_curve_spline_parameter.cc
   nodes/node_geo_curve_subdivide.cc
   nodes/node_geo_curve_to_mesh.cc
   nodes/node_geo_curve_to_points.cc
   nodes/node_geo_curve_trim.cc
   nodes/node_geo_delete_geometry.cc
   nodes/node_geo_distribute_points_on_faces.cc
+  nodes/node_geo_dual_mesh.cc
   nodes/node_geo_edge_split.cc
   nodes/node_geo_image_texture.cc
   nodes/node_geo_input_curve_handles.cc

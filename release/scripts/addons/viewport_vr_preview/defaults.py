@@ -107,7 +107,7 @@ def vr_defaults_action_add(am,
 
 
     ami = am.actionmap_items.new(name, True)
-    if ami:        
+    if ami:
         ami.type = 'FLOAT'
         ami.user_path0 = user_path0
         ami.user_path1 = user_path1
@@ -131,7 +131,7 @@ def vr_defaults_pose_action_add(am,
                                 is_controller_grip,
                                 is_controller_aim):
     ami = am.actionmap_items.new(name, True)
-    if ami:             
+    if ami:
         ami.type = 'POSE'
         ami.user_path0 = user_path0
         ami.user_path1 = user_path1
@@ -146,11 +146,11 @@ def vr_defaults_haptic_action_add(am,
                                   user_path0,
                                   user_path1):
     ami = am.actionmap_items.new(name, True)
-    if ami:        
+    if ami:
         ami.type = 'VIBRATION'
         ami.user_path0 = user_path0
         ami.user_path1 = user_path1
-    
+
     return ami
 
 
@@ -162,7 +162,7 @@ def vr_defaults_actionbinding_add(ami,
                                   threshold,
                                   axis0_region,
                                   axis1_region):
-    amb = ami.bindings.new(name, True)    
+    amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
         amb.component_path0 = component_path0
@@ -181,7 +181,7 @@ def vr_defaults_pose_actionbinding_add(ami,
                                   component_path1,
                                   location,
                                   rotation):
-    amb = ami.bindings.new(name, True)    
+    amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
         amb.component_path0 = component_path0
@@ -197,7 +197,7 @@ def vr_defaults_haptic_actionbinding_add(ami,
                                          profile,
                                          component_path0,
                                          component_path1):
-    amb = ami.bindings.new(name, True)    
+    amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
         amb.component_path0 = component_path0
@@ -652,7 +652,7 @@ def vr_defaults_create_default(session_state):
                                  False,
                                  0.0,
                                  0.0,
-                                 0.0,                                         
+                                 0.0,
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
@@ -673,7 +673,7 @@ def vr_defaults_create_default(session_state):
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
-                                      VRDefaultActionprofiles.INDEX.value, 
+                                      VRDefaultActionprofiles.INDEX.value,
                                       "/input/thumbstick/x",
                                       "",
                                       0.3,
@@ -728,7 +728,7 @@ def vr_defaults_create_default(session_state):
     if ami:
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value, 
+                                      VRDefaultActionprofiles.COSMOS.value,
                                       "/input/thumbstick/x",
                                       "",
                                       0.3,
@@ -736,7 +736,7 @@ def vr_defaults_create_default(session_state):
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
-                                      VRDefaultActionprofiles.HUAWEI.value, 
+                                      VRDefaultActionprofiles.HUAWEI.value,
                                       "/input/trackpad/x",
                                       "",
                                       0.3,
@@ -752,7 +752,7 @@ def vr_defaults_create_default(session_state):
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
-                                      VRDefaultActionprofiles.OCULUS.value, 
+                                      VRDefaultActionprofiles.OCULUS.value,
                                       "/input/thumbstick/x",
                                       "",
                                       0.3,
@@ -760,7 +760,7 @@ def vr_defaults_create_default(session_state):
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
-                                      VRDefaultActionprofiles.REVERB_G2.value, 
+                                      VRDefaultActionprofiles.REVERB_G2.value,
                                       "/input/thumbstick/x",
                                       "",
                                       0.3,
@@ -1460,7 +1460,7 @@ def vr_defaults_create_default_gamepad(session_state):
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
-                                             VRDefaultActionprofiles.GAMEPAD.value,                                              
+                                             VRDefaultActionprofiles.GAMEPAD.value,
                                              "/output/haptic_right",
                                              "")
 
@@ -1471,7 +1471,7 @@ def vr_defaults_create_default_gamepad(session_state):
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
-                                             VRDefaultActionprofiles.GAMEPAD.value,                                              
+                                             VRDefaultActionprofiles.GAMEPAD.value,
                                              "/output/haptic_left_trigger",
                                              "")
 
@@ -1482,7 +1482,7 @@ def vr_defaults_create_default_gamepad(session_state):
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
-                                             VRDefaultActionprofiles.GAMEPAD.value,                                              
+                                             VRDefaultActionprofiles.GAMEPAD.value,
                                              "/output/haptic_right_trigger",
                                              "")
 

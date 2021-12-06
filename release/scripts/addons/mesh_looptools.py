@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 # Contributed to Germano Cavalcante (mano-wii), Florian Meyer (testscreenings),
 # Brendon Murphy (meta-androcto),
-# Maintainer:	Vladimir Spivak (cwolf3d)
+# Maintainer: Vladimir Spivak (cwolf3d)
 # Originally an addon by Bart Crouch
 
 bl_info = {

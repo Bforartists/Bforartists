@@ -417,7 +417,7 @@ class NodeParamsProvider : public nodes::GeoNodeExecParamsProvider {
   bool lazy_require_input(StringRef identifier) override;
   bool lazy_output_is_required(StringRef identifier) const override;
 
-  void set_default_remaining_outputs();
+  void set_default_remaining_outputs() override;
 };
 
 class GeometryNodesEvaluator {
@@ -1528,8 +1528,8 @@ class GeometryNodesEvaluator {
    * still be linked to e.g. a Group Input node, but the socket on the outside is not connected to
    * anything.
    *
-   * \param input_socket The socket of the node that wants to use the value.
-   * \param origin_socket The socket that we want to load the value from.
+   * \param input_socket: The socket of the node that wants to use the value.
+   * \param origin_socket: The socket that we want to load the value from.
    */
   void load_unlinked_input_value(LockedNode &locked_node,
                                  const DInputSocket input_socket,
