@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1482,10 +1482,6 @@ msgid "Grease Pencil"
 msgstr "Skicovací tužka"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1566,10 +1562,6 @@ msgid "Particles"
 msgstr "Částice"
 
 
-msgid "Point Clouds"
-msgstr "Point Clouds"
-
-
 msgid "Scenes"
 msgstr "Scény"
 
@@ -1580,10 +1572,6 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -1708,14 +1696,6 @@ msgstr "Hlavní skicovací tužky"
 
 msgid "Collection of grease pencils"
 msgstr "Kolekce skicovacích tužek"
-
-
-msgid "Main Hairs"
-msgstr "Hlavní vlasy"
-
-
-msgid "Collection of hairs"
-msgstr "Kolekce vlasů"
 
 
 msgid "Main Images"
@@ -7064,12 +7044,24 @@ msgid "Fonts"
 msgstr "Fonts"
 
 
+msgid "Hairs"
+msgstr "Vlasy"
+
+
 msgid "Node Trees"
 msgstr "Větvení Uzlů"
 
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
+
+
+msgid "Point Clouds"
+msgstr "Point Clouds"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "File Select Parameters"
@@ -8458,14 +8450,6 @@ msgstr "Původní velikost"
 
 msgid "Active Layer"
 msgstr "Aktivní vrstva"
-
-
-msgid "Hair curve"
-msgstr "Křivka vlasu"
-
-
-msgid "Control points of the curve"
-msgstr "Kontrolní bod křivky"
 
 
 msgid "Luma"
@@ -9920,22 +9904,6 @@ msgid "Always Show Ghosts"
 msgstr "Vždy Zobrazit Duchy"
 
 
-msgid "Attributes"
-msgstr "Atributy"
-
-
-msgid "Geometry attributes"
-msgstr "Atributy geometrie"
-
-
-msgid "All hair curves"
-msgstr "Všechny vlasové křivky"
-
-
-msgid "Control points of all hair curves"
-msgstr "Kontrolní body všech vlasových křivek"
-
-
 msgid "Alpha Mode"
 msgstr "Aplfa režim"
 
@@ -10588,6 +10556,14 @@ msgstr "Spustit renderovani"
 
 msgid "Subsurface Translucency"
 msgstr "Průsvitnost podpovrchu"
+
+
+msgid "Attributes"
+msgstr "Atributy"
+
+
+msgid "Geometry attributes"
+msgstr "Atributy geometrie"
 
 
 msgid "Auto Smooth Angle"
@@ -20434,6 +20410,70 @@ msgid "Symmetrize"
 msgstr "Symetrie"
 
 
+msgid "Check Existing"
+msgstr "Opakovat editaci"
+
+
+msgid "Short List"
+msgstr "Krátký Seznam"
+
+
+msgid "Display files as short list"
+msgstr "Zobrazit soubory jako krátký seznam"
+
+
+msgid "Long List"
+msgstr "Dlouhý Seznam"
+
+
+msgid "Display files as a detailed list"
+msgstr "Zobrazit soubory jako podrobný seznam"
+
+
+msgid "File Browser Mode"
+msgstr "Režim prohlížeče souborů"
+
+
+msgid "Path to file"
+msgstr "Cesta k souboru"
+
+
+msgid "Filter .blend files"
+msgstr "Filtrovat soubory .blend"
+
+
+msgid "Filter btx files"
+msgstr "Skrýt skryté soubory"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtrovat soubory COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtr souborů písma"
+
+
+msgid "Filter image files"
+msgstr "Filtrovat obrazkové soubory"
+
+
+msgid "Filter movie files"
+msgstr "Filtr video souborů"
+
+
+msgid "Filter python files"
+msgstr "Filtr python souborů"
+
+
+msgid "Filter sound files"
+msgstr "Filtr zvukových souborů"
+
+
+msgid "Filter text files"
+msgstr "Filtr textových souborů"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Přihlásit se"
@@ -20620,66 +20660,6 @@ msgstr "Přijmout"
 
 msgid "Directory of the file"
 msgstr "Adresář souboru"
-
-
-msgid "Short List"
-msgstr "Krátký Seznam"
-
-
-msgid "Display files as short list"
-msgstr "Zobrazit soubory jako krátký seznam"
-
-
-msgid "Long List"
-msgstr "Dlouhý Seznam"
-
-
-msgid "Display files as a detailed list"
-msgstr "Zobrazit soubory jako podrobný seznam"
-
-
-msgid "File Browser Mode"
-msgstr "Režim prohlížeče souborů"
-
-
-msgid "Filter .blend files"
-msgstr "Filtrovat soubory .blend"
-
-
-msgid "Filter btx files"
-msgstr "Skrýt skryté soubory"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtrovat soubory COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtr souborů písma"
-
-
-msgid "Filter image files"
-msgstr "Filtrovat obrazkové soubory"
-
-
-msgid "Filter movie files"
-msgstr "Filtr video souborů"
-
-
-msgid "Filter python files"
-msgstr "Filtr python souborů"
-
-
-msgid "Filter sound files"
-msgstr "Filtr zvukových souborů"
-
-
-msgid "Filter text files"
-msgstr "Filtr textových souborů"
-
-
-msgid "Path to file"
-msgstr "Cesta k souboru"
 
 
 msgctxt "Operator"
@@ -22176,10 +22156,6 @@ msgstr "Vrátit zpět a Znovu"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Obdelníkové Označení"
-
-
-msgid "Check Existing"
-msgstr "Opakovat editaci"
 
 
 msgid "Filepath used for exporting the file"
@@ -26762,14 +26738,6 @@ msgstr "Převede vybrané objekty na jiný typ"
 
 msgid "Type of object to convert to"
 msgstr "Typ objektu pro převod na"
-
-
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Síť z Křivek, Povrchu, Meta objektu, Textu, nebo z Bodového Mraku"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Bodový Mrak ze Síťových objektů"
 
 
 msgid "Exact Match"

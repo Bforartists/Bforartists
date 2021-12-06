@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1634,14 +1634,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Блоки даних нарисного олівця"
 
 
-msgid "Hairs"
-msgstr "Волосинки"
-
-
-msgid "Hair data-blocks"
-msgstr "Блоки даних волосся"
-
-
 msgid "Images"
 msgstr "Зображення"
 
@@ -1786,14 +1778,6 @@ msgid "Particle data-blocks"
 msgstr "Блоки даних частинок"
 
 
-msgid "Point Clouds"
-msgstr "Хмари Точок"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Блоки даних хмар точок"
-
-
 msgid "Scenes"
 msgstr "Сцени"
 
@@ -1816,14 +1800,6 @@ msgstr "Ключі форм"
 
 msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
-
-
-msgid "Simulation data-blocks"
-msgstr "Блоки даних симуляцій"
 
 
 msgid "Sounds"
@@ -1978,14 +1954,6 @@ msgid "Collection of grease pencils"
 msgstr "Колекція нарисних олівців"
 
 
-msgid "Main Hairs"
-msgstr "Головні Волосинки"
-
-
-msgid "Collection of hairs"
-msgstr "Колекція волосинок"
-
-
 msgid "Main Images"
 msgstr "Основні зображення"
 
@@ -2106,14 +2074,6 @@ msgid "Collection of particle settings"
 msgstr "Колекція параметрів частинок"
 
 
-msgid "Main Point Clouds"
-msgstr "Головні Хмари Точок"
-
-
-msgid "Collection of point clouds"
-msgstr "Колекція хмар точок"
-
-
 msgid "Main Light Probes"
 msgstr "Головні Проби Освітлення"
 
@@ -2136,14 +2096,6 @@ msgstr "Основні екрани"
 
 msgid "Collection of screens"
 msgstr "Колекція екранів"
-
-
-msgid "Main Simulations"
-msgstr "Головні Симуляції"
-
-
-msgid "Collection of simulations"
-msgstr "Колекція симуляцій"
 
 
 msgid "Main Sounds"
@@ -11496,6 +11448,10 @@ msgid "Show Collection data-blocks"
 msgstr "Показ блоків даних Колекції"
 
 
+msgid "Hairs"
+msgstr "Волосинки"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Показати/сховати блоки даних Волосся"
 
@@ -11564,12 +11520,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Показ блоків даних Устав Частинок"
 
 
+msgid "Point Clouds"
+msgstr "Хмари Точок"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Показати/сховати блоки даних Хмари Точок"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
+
+
+msgid "Simulations"
+msgstr "Симуляції"
 
 
 msgid "Show Simulation data-blocks"
@@ -16556,50 +16520,6 @@ msgid "Active index in layer mask array"
 msgstr "Активний індекс у масиві шарів маски"
 
 
-msgid "Hair Curve"
-msgstr "Крива Волосся"
-
-
-msgid "Hair curve"
-msgstr "Крива волосся"
-
-
-msgid "First Point Index"
-msgstr "Індекс Першої Точки"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Індекс першої петлі цього багатобічника"
-
-
-msgid "Index of this curve"
-msgstr "Індекс цієї кривої"
-
-
-msgid "Number of Points"
-msgstr "Кількість Точок"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Кількість петель, що використовуються цим багатобічником"
-
-
-msgid "Control points of the curve"
-msgstr "Керувальні точки кривої"
-
-
-msgid "Hair Point"
-msgstr "Точка Волосся"
-
-
-msgid "Hair curve control point"
-msgstr "Керувальна точка кривої волосся"
-
-
-msgid "Index of this points"
-msgstr "Індекс цієї точки"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "Показує статистику рівнів кольору в зображенні"
 
@@ -20489,26 +20409,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Величина зсуву при рисуванні у режимі поверхні"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Блок даних волосся для кривих волосся"
-
-
-msgid "Attributes"
-msgstr "Атрибути"
-
-
-msgid "Geometry attributes"
-msgstr "Атрибути геометрії"
-
-
-msgid "All hair curves"
-msgstr "Усі криві волосся"
-
-
-msgid "Control points of all hair curves"
-msgstr "Керувальні точки для всіх кривих волосся"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Блок даних зображення, що посилається на зовнішнє або упаковане зображення"
 
@@ -21893,6 +21793,14 @@ msgstr "Додання ефекту півпрозорості для підпо
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Блок даних сіті, що визначає геометричну поверхню"
+
+
+msgid "Attributes"
+msgstr "Атрибути"
+
+
+msgid "Geometry attributes"
+msgstr "Атрибути геометрії"
 
 
 msgid "Auto Smooth Angle"
@@ -24474,10 +24382,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Відносна кількість віртуальних предків"
 
 
-msgid "Point cloud data-block"
-msgstr "Блок даних хмари точок"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Блок даних сцени, що складається з об'єктів та визначає відповідні устави часу і рендера"
 
@@ -24952,14 +24856,6 @@ msgstr "Редактори відеорядів"
 
 msgid "Top-Left 3D Editor"
 msgstr "Верхній лівий 3D-редактор"
-
-
-msgid "Simulation data-block"
-msgstr "Блок даних симуляції"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Дерево вузлів визначає симуляцію"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -31252,8 +31148,16 @@ msgid "Loop Start"
 msgstr "Старт Петель"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Індекс першої петлі цього багатобічника"
+
+
 msgid "Loop Total"
 msgstr "Петель Тотально"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Кількість петель, що використовуються цим багатобічником"
 
 
 msgid "Polygon Normal"
@@ -43621,6 +43525,110 @@ msgid "+X to -X"
 msgstr "+X до -X"
 
 
+msgid "Check Existing"
+msgstr "Перевірка наявних"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Перевіряти і попереджати про перезапис наявних файлів"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Автоматичне визначення типу показу файлів"
+
+
+msgid "Short List"
+msgstr "Короткий список"
+
+
+msgid "Display files as short list"
+msgstr "Показати простий список файлів "
+
+
+msgid "Long List"
+msgstr "Довгий список"
+
+
+msgid "Display files as a detailed list"
+msgstr "Показати докладний список файлів"
+
+
+msgid "File Browser Mode"
+msgstr "Режим Оглядача Файлів"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "Установки режиму огляду файлів для завантаження blend-файлу, бібліотеки або спеціального файлу"
+
+
+msgid "Path to file"
+msgstr "Шлях до файлу"
+
+
+msgid "Filter Alembic files"
+msgstr "Фільтрувати файли Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Фільтрувати файли архівів"
+
+
+msgid "Filter .blend files"
+msgstr "Фільтрувати .blend-файли"
+
+
+msgid "Filter btx files"
+msgstr "Фільтрувати BTX-файли"
+
+
+msgid "Filter COLLADA files"
+msgstr "Фільтрувати файли COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Фільтрувати файли шрифтів"
+
+
+msgid "Filter image files"
+msgstr "Фільтрувати файли зображень"
+
+
+msgid "Filter movie files"
+msgstr "Фільтрувати відеофайли"
+
+
+msgid "Filter python files"
+msgstr "Фільтрувати файли Python"
+
+
+msgid "Filter sound files"
+msgstr "Фільтрувати звукові файли"
+
+
+msgid "Filter text files"
+msgstr "Фільтрувати текстові файли"
+
+
+msgid "Filter USD files"
+msgstr "Фільтрувати файли USD"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "Фільтрувати файли об'єму OpenVDB"
+
+
+msgid "Hide Operator Properties"
+msgstr "Сховати Властивості Оператора"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Згорнути регіон, що показує устави оператора"
+
+
+msgid "File sorting mode"
+msgstr "Режим упорядкування файлів"
+
+
 msgctxt "Operator"
 msgid "Clear Asset"
 msgstr "Зчистити Актив"
@@ -43914,108 +43922,12 @@ msgid "Directory of the file"
 msgstr "Тека файлу"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Автоматичне визначення типу показу файлів"
-
-
-msgid "Short List"
-msgstr "Короткий список"
-
-
-msgid "Display files as short list"
-msgstr "Показати простий список файлів "
-
-
-msgid "Long List"
-msgstr "Довгий список"
-
-
-msgid "Display files as a detailed list"
-msgstr "Показати докладний список файлів"
-
-
-msgid "File Browser Mode"
-msgstr "Режим Оглядача Файлів"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "Установки режиму огляду файлів для завантаження blend-файлу, бібліотеки або спеціального файлу"
-
-
-msgid "Filter Alembic files"
-msgstr "Фільтрувати файли Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Фільтрувати файли архівів"
-
-
-msgid "Filter .blend files"
-msgstr "Фільтрувати .blend-файли"
-
-
-msgid "Filter btx files"
-msgstr "Фільтрувати BTX-файли"
-
-
-msgid "Filter COLLADA files"
-msgstr "Фільтрувати файли COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Фільтрувати файли шрифтів"
-
-
-msgid "Filter image files"
-msgstr "Фільтрувати файли зображень"
-
-
-msgid "Filter movie files"
-msgstr "Фільтрувати відеофайли"
-
-
-msgid "Filter python files"
-msgstr "Фільтрувати файли Python"
-
-
-msgid "Filter sound files"
-msgstr "Фільтрувати звукові файли"
-
-
-msgid "Filter text files"
-msgstr "Фільтрувати текстові файли"
-
-
-msgid "Filter USD files"
-msgstr "Фільтрувати файли USD"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "Фільтрувати файли об'єму OpenVDB"
-
-
-msgid "Hide Operator Properties"
-msgstr "Сховати Властивості Оператора"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Згорнути регіон, що показує устави оператора"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Вибрати файли відносно .blend-файлу"
 
 
-msgid "File sorting mode"
-msgstr "Режим упорядкування файлів"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Відкрити браузер файлів, утримувати Shift для відкриття файлу, Alt для переходу у вміщувальний каталог"
-
-
-msgid "Path to file"
-msgstr "Шлях до файлу"
 
 
 msgctxt "Operator"
@@ -46458,14 +46370,6 @@ msgstr "Експорт камери та міток"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Зберегти Python-скрипт, який відтворює камери та мітки в іншому місці"
-
-
-msgid "Check Existing"
-msgstr "Перевірка наявних"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Перевіряти і попереджати про перезапис наявних файлів"
 
 
 msgid "Filepath used for exporting the file"
@@ -56875,16 +56779,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Крива з об'єктів Сіть або Текст"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Сіть з об'єктів Крива, Поверхня, Метабол, Текст або Хмара Точок"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Нарисний Олівець з об'єктів Крива або Сіть"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Хмара Точок з об'єктів Сіть"
 
 
 msgctxt "Operator"
@@ -74022,10 +73918,6 @@ msgstr "Порівняти шляхи"
 
 msgid "Collection of paths"
 msgstr "Колекція шляхів"
-
-
-msgid "Point in a point cloud"
-msgstr "Точка у хмарі точок"
 
 
 msgid "Active Point Cache"
@@ -99255,6 +99147,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Помилка програмування: пропущена функція зчищення трансформацій або назва набору ключів"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Шлях порожній, запис неможливий"
+
+
+msgid "Path too long, cannot save"
+msgstr "Шлях занадто довгий, запис неможливий"
+
+
 msgid "No point was selected"
 msgstr "Жодна точка не вибрана"
 
@@ -106682,14 +106582,6 @@ msgstr "Зберегти зміни перед закриттям?"
 
 msgid "File Not Found"
 msgstr "Файл Не Знайдено"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Шлях порожній, запис неможливий"
-
-
-msgid "Path too long, cannot save"
-msgstr "Шлях занадто довгий, запис неможливий"
 
 
 msgid "Unable to create user config path"

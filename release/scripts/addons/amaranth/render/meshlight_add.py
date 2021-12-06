@@ -168,8 +168,8 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
             sockets.show_expanded = True
 
         material.cycles.sample_as_light = True
-        meshlight.cycles_visibility.shadow = False
-        meshlight.cycles_visibility.camera = self.visible
+        meshlight.visible_shadow = False
+        meshlight.visible_camera = self.visible
 
         return {'FINISHED'}
 
