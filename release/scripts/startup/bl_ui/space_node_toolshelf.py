@@ -4817,12 +4817,12 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
-
-            props = col.operator("node.add_node", text=" Clamp                ", icon = "NODE_CLAMP")
+ 
+            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
 
-            props = col.operator("node.add_node", text=" Compare Floats ", icon = "FLOAT_COMPARE")
+            props = col.operator("node.add_node", text=" Compare          ", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeCompareFloats"
 
