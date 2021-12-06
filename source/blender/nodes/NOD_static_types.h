@@ -325,7 +325,7 @@ DefNode(GeometryNode, GEO_NODE_LEGACY_VOLUME_TO_MESH, def_geo_volume_to_mesh, "L
 
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_REMOVE, 0, "ATTRIBUTE_REMOVE", AttributeRemove, "Attribute Remove", "Add a Attribute Remove Geometry node\nRemove temporary attributes")
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_STATISTIC, def_geo_attribute_statistic, "ATTRIBUTE_STATISTIC", AttributeStatistic, "Attribute Statistic", "Add a Attribute Statistic Geometry node\nProvides statistic informations")
-DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_DOMAIN_SIZE, def_geo_attribute_domain_size, "ATTRIBUTE_DOMAIN_SIZE", AttributeDomainSize, "Domain Size", "Add a Domain Size Geometry node\nNot documented yet")
+DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_DOMAIN_SIZE, def_geo_attribute_domain_size, "ATTRIBUTE_DOMAIN_SIZE", AttributeDomainSize, "Domain Size", "Add a Domain Size Geometry node\nOutputs containing single values for the related domains are shown")
 DefNode(GeometryNode, GEO_NODE_BOUNDING_BOX, 0, "BOUNDING_BOX", BoundBox, "Bounding Box", "Add a Bounding Box Geometry node\nAllows you to work with the values of a bounding box")
 DefNode(GeometryNode, GEO_NODE_CAPTURE_ATTRIBUTE, def_geo_attribute_capture, "CAPTURE_ATTRIBUTE", CaptureAttribute, "Capture Attribute", "Add a capture Attribute node\nCapture an attribute")
 DefNode(GeometryNode, GEO_NODE_COLLECTION_INFO, def_geo_collection_info, "COLLECTION_INFO", CollectionInfo, "Collection Info", "Add a Collection Info Geometry node\nRetreives information from collections")
