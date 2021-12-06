@@ -1254,7 +1254,7 @@ link_replace
 detach_links_move
 hold_split
 dual_mesh
-#~ DEF_ICON_BLANK(1273)
+domain_size
 #~ DEF_ICON_BLANK(1274)
 #~ DEF_ICON_BLANK(1275)
 #~ DEF_ICON_BLANK(1276)
