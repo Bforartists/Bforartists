@@ -61,7 +61,7 @@ def first_letters(text):
     """Iterator over the first letter of each word"""
     for match in first_letters.pattern.finditer(text):
         yield text[match.start()]
-first_letters.pattern = re_compile("((?<!\w)\w)|\d")
+first_letters.pattern = re_compile(r"((?<!\w)\w)|\d")
 
 
 def is_upsidedown_wrong(name):

@@ -502,10 +502,6 @@ static void lineart_main_occlusion_begin(LineartRenderBuffer *rb)
   rb->edge_mark.last = rb->edge_mark.first;
   rb->floating.last = rb->floating.first;
 
-  /* This is needed because the occlusion function expects the camera vector to point towards the
-   * camera. */
-  negate_v3_db(rb->view_vector);
-
   TaskPool *tp = BLI_task_pool_create(NULL, TASK_PRIORITY_HIGH);
 
   for (i = 0; i < thread_count; i++) {
@@ -2332,9 +2328,9 @@ static bool lineart_edge_from_triangle(const LineartTriangle *tri,
  * if returns true, then from/to will carry the occluded segments
  * in ratio from `e->v1` to `e->v2`. The line is later cut with these two values.
  *
- * TODO: (Yiming) This function uses a convoluted method that needs to be redesigned.
+ * TODO(@Yiming): This function uses a convoluted method that needs to be redesigned.
  *
- * 1) The lineart_intersect_seg_seg() and lineart_point_triangle_relation() are separate calls,
+ * 1) The #lineart_intersect_seg_seg() and #lineart_point_triangle_relation() are separate calls,
  * which would potentially return results that doesn't agree, especially when it's an edge
  * extruding from one of the triangle's point. To get the information using one math process can
  * solve this problem.
@@ -2346,7 +2342,7 @@ static bool lineart_edge_from_triangle(const LineartTriangle *tri,
  * I keep this function as-is because it's still fast, and more importantly the output value
  * threshold is already in tune with the cutting function in the next stage.
  * While current "edge aligned" fix isn't ideal, it does solve most of the precision issue
- * especially in ortho camera mode.
+ * especially in orthographic camera mode.
  */
 static bool lineart_triangle_edge_image_space_occlusion(SpinLock *UNUSED(spl),
                                                         const LineartTriangle *tri,
@@ -3006,7 +3002,7 @@ static void lineart_triangle_intersect_in_bounding_area(LineartRenderBuffer *rb,
  */
 static void lineart_main_get_view_vector(LineartRenderBuffer *rb)
 {
-  float direction[3] = {0, 0, -1};
+  float direction[3] = {0, 0, 1};
   float trans[3];
   float inv[4][4];
   float obmat_no_scale[4][4];
@@ -4394,7 +4390,7 @@ static void lineart_gpencil_generate(LineartCache *cache,
         }
       }
     }
-    if (types & LRT_EDGE_FLAG_INTERSECTION) {
+    if (ec->type & LRT_EDGE_FLAG_INTERSECTION) {
       if (mask_switches & LRT_GPENCIL_INTERSECTION_MATCH) {
         if (ec->intersection_mask != intersection_mask) {
           continue;

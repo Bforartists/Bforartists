@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1723,14 +1723,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "グリースペンシルデータブロック"
 
 
-msgid "Hairs"
-msgstr "ヘアー"
-
-
-msgid "Hair data-blocks"
-msgstr "ヘアーデータブロック"
-
-
 msgid "Images"
 msgstr "画像"
 
@@ -1875,14 +1867,6 @@ msgid "Particle data-blocks"
 msgstr "パーティクルデータブロック"
 
 
-msgid "Point Clouds"
-msgstr "ポイントクラウド"
-
-
-msgid "Point cloud data-blocks"
-msgstr "ポイントクラウドデータブロック"
-
-
 msgid "Scenes"
 msgstr "シーン"
 
@@ -1905,14 +1889,6 @@ msgstr "シェイプキー"
 
 msgid "Shape Key data-blocks"
 msgstr "シェイプキーデータブロック"
-
-
-msgid "Simulations"
-msgstr "シミュレーション"
-
-
-msgid "Simulation data-blocks"
-msgstr "シミュレーションデータブロック"
 
 
 msgid "Sounds"
@@ -2067,14 +2043,6 @@ msgid "Collection of grease pencils"
 msgstr "グリースペンシルの集合"
 
 
-msgid "Main Hairs"
-msgstr "メインヘアー"
-
-
-msgid "Collection of hairs"
-msgstr "ヘアーの集合"
-
-
 msgid "Main Images"
 msgstr "メイン画像"
 
@@ -2195,14 +2163,6 @@ msgid "Collection of particle settings"
 msgstr "パーティクル設定の集合"
 
 
-msgid "Main Point Clouds"
-msgstr "メインポイントクラウド"
-
-
-msgid "Collection of point clouds"
-msgstr "ポイントクラウドの集合"
-
-
 msgid "Main Light Probes"
 msgstr "メインライトプローブ"
 
@@ -2225,14 +2185,6 @@ msgstr "メインスクリーン"
 
 msgid "Collection of screens"
 msgstr "スクリーンの集合"
-
-
-msgid "Main Simulations"
-msgstr "メインシミュレーション"
-
-
-msgid "Collection of simulations"
-msgstr "シミュレーションの集合"
 
 
 msgid "Main Sounds"
@@ -11993,6 +11945,10 @@ msgid "Show Collection data-blocks"
 msgstr "コレクションデータブロックを表示します"
 
 
+msgid "Hairs"
+msgstr "ヘアー"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "ヘアーデータブロックを表示/隠します"
 
@@ -12061,12 +12017,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "パーティクル設定データブロックを表示します"
 
 
+msgid "Point Clouds"
+msgstr "ポイントクラウド"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "ポイントクラウドデータブロックを表示/隠します"
 
 
 msgid "Show Scene data-blocks"
 msgstr "シーンデータブロックを表示します"
+
+
+msgid "Simulations"
+msgstr "シミュレーション"
 
 
 msgid "Show Simulation data-blocks"
@@ -17882,50 +17846,6 @@ msgid "Active index in layer mask array"
 msgstr "レイヤーマスク配列内のアクティブインデックス"
 
 
-msgid "Hair Curve"
-msgstr "ヘアーカーブ"
-
-
-msgid "Hair curve"
-msgstr "ヘアーカーブ"
-
-
-msgid "First Point Index"
-msgstr "最初のポイントインデックス"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "このポリゴンの最初のループのインデックス"
-
-
-msgid "Index of this curve"
-msgstr "このカーブのインデックス"
-
-
-msgid "Number of Points"
-msgstr "ポイント数"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "このポリゴンで使用されているループ数"
-
-
-msgid "Control points of the curve"
-msgstr "カーブの制御点"
-
-
-msgid "Hair Point"
-msgstr "ヘアーポイント"
-
-
-msgid "Hair curve control point"
-msgstr "ヘアーカーブ制御点"
-
-
-msgid "Index of this points"
-msgstr "このポイントのインデックス"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "画像の色レベルの統計ビュー"
 
@@ -22003,26 +21923,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "サーフェスモードでドローイング時のオフセット量"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "ヘアーカーブ用のヘアーデータブロック"
-
-
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "ジオメトリ属性"
-
-
-msgid "All hair curves"
-msgstr "全ヘアーカーブ"
-
-
-msgid "Control points of all hair curves"
-msgstr "全ヘアーカーブの制御点"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "外部またはパックされた画像を参照する画像データブロック"
 
@@ -23471,6 +23371,14 @@ msgstr "サブサーフェスに透過エフェクトを与えます"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "サーフェス形状を定義するメッシュデータブロック"
+
+
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "ジオメトリ属性"
 
 
 msgid "Auto Smooth Angle"
@@ -26242,10 +26150,6 @@ msgid "Relative amount of virtual parents"
 msgstr "仮想の親の相対量"
 
 
-msgid "Point cloud data-block"
-msgstr "ポイントクラウドデータブロック"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "シーンデータブロック。オブジェクト群から成り、時間とレンダリング関連の設定を定義します"
 
@@ -26750,14 +26654,6 @@ msgstr "シーケンサーエディター"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上3Dビューのみ同期"
-
-
-msgid "Simulation data-block"
-msgstr "シミュレーションデータブロック"
-
-
-msgid "Node tree defining the simulation"
-msgstr "シミュレーションを定義するノードツリー"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33536,8 +33432,16 @@ msgid "Loop Start"
 msgstr "開始ループ"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "このポリゴンの最初のループのインデックス"
+
+
 msgid "Loop Total"
 msgstr "ループ合計"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "このポリゴンで使用されているループ数"
 
 
 msgid "Material slot index of this polygon"
@@ -47161,6 +47065,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "このポーズアクションをアクティブアクションとして、アクティブオブジェクトに設定します"
 
 
+msgid "Check Existing"
+msgstr "上書きチェック"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "既存のファイルを上書きするときに警告します"
+
+
+msgid "Automatically determine display type for files"
+msgstr "自動的にファイルの表示タイプを決定します"
+
+
+msgid "Short List"
+msgstr "ショートリスト"
+
+
+msgid "Display files as short list"
+msgstr "ファイルを短いリストで表示します"
+
+
+msgid "Long List"
+msgstr "ロングリスト"
+
+
+msgid "Display files as a detailed list"
+msgstr "ファイルを詳細リストで表示します"
+
+
+msgid "File Browser Mode"
+msgstr "ファイルブラウザーモード"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "ライブラリまたは特別なblendファイルを読み込む時のファイルブラウザーモードでの設定"
+
+
+msgid "Path to file"
+msgstr "ファイルへのパス"
+
+
+msgid "Filter Alembic files"
+msgstr "Alembicファイルをフィルタリング"
+
+
+msgid "Filter archive files"
+msgstr "アーカイブファイルをフィルタリング"
+
+
+msgid "Filter .blend files"
+msgstr ".blendファイルをフィルタリング"
+
+
+msgid "Filter btx files"
+msgstr "btxファイルをフィルタリング"
+
+
+msgid "Filter COLLADA files"
+msgstr "COLLADAファイルをフィルタリング"
+
+
+msgid "Filter font files"
+msgstr "フォントファイルをフィルタリング"
+
+
+msgid "Filter image files"
+msgstr "画像ファイルをフィルタリング"
+
+
+msgid "Filter movie files"
+msgstr "動画ファイルをフィルタリング"
+
+
+msgid "Filter python files"
+msgstr "Pythonファイルをフィルタリング"
+
+
+msgid "Filter sound files"
+msgstr "音声ファイルをフィルタリング"
+
+
+msgid "Filter text files"
+msgstr "テキストファイルをフィルタリング"
+
+
+msgid "Filter USD files"
+msgstr "USDファイルをフィルタリング"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "OpenVDBボリュームファイルをフィルタリング"
+
+
+msgid "Hide Operator Properties"
+msgstr "オペレータープロパティを隠す"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "オペレーター設定を表示する領域を折り畳みます"
+
+
+msgid "File sorting mode"
+msgstr "ファイルの並び順"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "アセットカタログを削除"
@@ -47249,12 +47257,12 @@ msgstr "対象のデータブロックがアセットとしてマークされて
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "アセットリストを更新"
+msgid "Refresh Asset Library"
+msgstr "アセットライブラリをリフレッシュ"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "アセットのリロードのトリガー"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "ディスク上のアセットライブラリから、アセットとアセットカタログを再読み込みします"
 
 
 msgctxt "Operator"
@@ -47560,100 +47568,8 @@ msgid "Directory of the file"
 msgstr "ファイルのディレクトリ"
 
 
-msgid "Automatically determine display type for files"
-msgstr "自動的にファイルの表示タイプを決定します"
-
-
-msgid "Short List"
-msgstr "ショートリスト"
-
-
-msgid "Display files as short list"
-msgstr "ファイルを短いリストで表示します"
-
-
-msgid "Long List"
-msgstr "ロングリスト"
-
-
-msgid "Display files as a detailed list"
-msgstr "ファイルを詳細リストで表示します"
-
-
-msgid "File Browser Mode"
-msgstr "ファイルブラウザーモード"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "ライブラリまたは特別なblendファイルを読み込む時のファイルブラウザーモードでの設定"
-
-
-msgid "Filter Alembic files"
-msgstr "Alembicファイルをフィルタリング"
-
-
-msgid "Filter archive files"
-msgstr "アーカイブファイルをフィルタリング"
-
-
-msgid "Filter .blend files"
-msgstr ".blendファイルをフィルタリング"
-
-
-msgid "Filter btx files"
-msgstr "btxファイルをフィルタリング"
-
-
-msgid "Filter COLLADA files"
-msgstr "COLLADAファイルをフィルタリング"
-
-
-msgid "Filter font files"
-msgstr "フォントファイルをフィルタリング"
-
-
-msgid "Filter image files"
-msgstr "画像ファイルをフィルタリング"
-
-
-msgid "Filter movie files"
-msgstr "動画ファイルをフィルタリング"
-
-
-msgid "Filter python files"
-msgstr "Pythonファイルをフィルタリング"
-
-
-msgid "Filter sound files"
-msgstr "音声ファイルをフィルタリング"
-
-
-msgid "Filter text files"
-msgstr "テキストファイルをフィルタリング"
-
-
-msgid "Filter USD files"
-msgstr "USDファイルをフィルタリング"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "OpenVDBボリュームファイルをフィルタリング"
-
-
-msgid "Hide Operator Properties"
-msgstr "オペレータープロパティを隠す"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "オペレーター設定を表示する領域を折り畳みます"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "blendファイルへの相対パスにします"
-
-
-msgid "File sorting mode"
-msgstr "ファイルの並び順"
 
 
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
@@ -47661,10 +47577,6 @@ msgstr ""
 "ファイルブラウザを開きます\n"
 "＋[Shift]キーでファイルを開く\n"
 "＋[Alt]でディレクトリをブラウズ"
-
-
-msgid "Path to file"
-msgstr "ファイルへのパス"
 
 
 msgctxt "Operator"
@@ -50155,14 +50067,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "どこか他の場所にカメラとマーカーを再生成するPythonスクリプトを保存します"
 
 
-msgid "Check Existing"
-msgstr "上書きチェック"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "既存のファイルを上書きするときに警告します"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "ファイルのエクスポートに使うファイルパス"
 
@@ -51365,15 +51269,6 @@ msgstr "静止フレーム"
 
 msgid "Write the rest state at the first frame"
 msgstr "最初のフレームに静止状態を書き込みます"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "アセットライブラリをリフレッシュ"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "ディスク上のアセットライブラリから、アセットとアセットカタログを再読み込みします"
 
 
 msgctxt "Operator"
@@ -61159,16 +61054,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "メッシュ/テキストからカーブ"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "カーブ/サーフェス/メタ/テキスト/ポイントクラウドからメッシュ"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "カーブ/メッシュからグリースペンシル"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "メッシュからポイントクラウド"
 
 
 msgctxt "Operator"
@@ -79719,10 +79606,6 @@ msgid "Collection of paths"
 msgstr "パスの集合"
 
 
-msgid "Point in a point cloud"
-msgstr "ポイントクラウド内のポイント"
-
-
 msgid "Active Point Cache"
 msgstr "アクティブポイントキャッシュ"
 
@@ -83083,14 +82966,6 @@ msgstr ""
 "0 でノイズしきい値を元に自動設定します"
 
 
-msgid "Adaptive Scrambling Distance"
-msgstr "適応スクランブリングディスタンス"
-
-
-msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
-msgstr "サンプル数を元にスクランブルディスタンスの強さを式を使用して適合させます"
-
-
 msgid "Adaptive Sampling Threshold"
 msgstr "適応サンプリングのしきい値"
 
@@ -83682,13 +83557,6 @@ msgid "Scrambling Distance"
 msgstr "スクランブリングディスタンス"
 
 
-msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr ""
-"小さな値で GPU レンダリングでは高速になり、全デバイスでノイズが小さくなりますが\n"
-"小さすぎる値に設定した場合、アーティファクトができる可能性があります\n"
-"適応サンプリング未使用時のみ動作します"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "異なるノイズパターンを得るインテギュレーターのシード値"
 
@@ -83787,14 +83655,6 @@ msgstr "シードのアニメーション"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "フレーム毎に違うシード値（つまり違うノイズパターン）を使用します"
-
-
-msgid "Auto Tiles"
-msgstr "自動タイル"
-
-
-msgid "Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
-msgstr "メモリ使用量を減らすため、自動的に高解像度の画像を指定のサイズのタイルにレンダリングします。レンダリング中はタイルをディスクにキャッシュし、メモリを節約します"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -107659,6 +107519,14 @@ msgid "No asset data-blocks selected/focused"
 msgstr "アセットデータブロックが未選択/未フォーカスです"
 
 
+msgid "Path is empty, cannot save"
+msgstr "パスが空なので保存できません"
+
+
+msgid "Path too long, cannot save"
+msgstr "パスが長すぎて保存できません"
+
+
 msgid "Data-block '%s' is now an asset"
 msgstr "データブロック「%s」がアセット化されました"
 
@@ -116831,14 +116699,6 @@ msgstr "閉じる前に変更を保存しますか？"
 
 msgid "File Not Found"
 msgstr "ファイルが見つかりません"
-
-
-msgid "Path is empty, cannot save"
-msgstr "パスが空なので保存できません"
-
-
-msgid "Path too long, cannot save"
-msgstr "パスが長すぎて保存できません"
 
 
 msgid "Unable to create user config path"

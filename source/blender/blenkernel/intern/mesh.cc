@@ -48,6 +48,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_anim_data.h"
+#include "BKE_bpath.h"
 #include "BKE_deform.h"
 #include "BKE_editmesh.h"
 #include "BKE_global.h"
@@ -180,6 +181,14 @@ static void mesh_foreach_id(ID *id, LibraryForeachIDData *data)
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, mesh->key, IDWALK_CB_USER);
   for (int i = 0; i < mesh->totcol; i++) {
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, mesh->mat[i], IDWALK_CB_USER);
+  }
+}
+
+static void mesh_foreach_path(ID *id, BPathForeachPathData *bpath_data)
+{
+  Mesh *me = (Mesh *)id;
+  if (me->ldata.external) {
+    BKE_bpath_foreach_path_fixed_process(bpath_data, me->ldata.external->filename);
   }
 }
 
@@ -371,6 +380,7 @@ IDTypeInfo IDType_ID_ME = {
     /* make_local */ nullptr,
     /* foreach_id */ mesh_foreach_id,
     /* foreach_cache */ nullptr,
+    /* foreach_path */ mesh_foreach_path,
     /* owner_get */ nullptr,
 
     /* blend_write */ mesh_blend_write,
@@ -1320,6 +1330,18 @@ void BKE_mesh_orco_verts_transform(Mesh *me, float (*orco)[3], int totvert, int 
       co[2] = (co[2] - loc[2]) / size[2];
     }
   }
+}
+
+void BKE_mesh_orco_ensure(Object *ob, Mesh *mesh)
+{
+  if (CustomData_has_layer(&mesh->vdata, CD_ORCO)) {
+    return;
+  }
+
+  /* Orcos are stored in normalized 0..1 range by convention. */
+  float(*orcodata)[3] = BKE_mesh_orco_verts_get(ob);
+  BKE_mesh_orco_verts_transform(mesh, orcodata, mesh->totvert, false);
+  CustomData_add_layer(&mesh->vdata, CD_ORCO, CD_ASSIGN, orcodata, mesh->totvert);
 }
 
 /**
