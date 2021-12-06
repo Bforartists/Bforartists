@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -13006,6 +13006,62 @@ msgid "+X to -X"
 msgstr "+X до -X"
 
 
+msgid "Automatically determine display type for files"
+msgstr "Самостално изабери врсту убрзања"
+
+
+msgid "Short List"
+msgstr "Кратка листа"
+
+
+msgid "Display files as short list"
+msgstr "Прикажи датотеке као скраћену листу"
+
+
+msgid "Long List"
+msgstr "Дуга листа"
+
+
+msgid "Display files as a detailed list"
+msgstr "Прикажи датотеке као детаљну листу"
+
+
+msgid "Filter .blend files"
+msgstr "Филтрирај .blend датотеке"
+
+
+msgid "Filter btx files"
+msgstr "Филтрирај btx датотеке"
+
+
+msgid "Filter COLLADA files"
+msgstr "Филтрирај COLLADA датотеке"
+
+
+msgid "Filter font files"
+msgstr "Филтрирај фонтове"
+
+
+msgid "Filter image files"
+msgstr "Филтрирај слике"
+
+
+msgid "Filter movie files"
+msgstr "Филтрирај филмове"
+
+
+msgid "Filter python files"
+msgstr "Филтрирај python датотеке"
+
+
+msgid "Filter sound files"
+msgstr "Филтрирај звучне датотеке"
+
+
+msgid "Filter text files"
+msgstr "Филтрирај текстуалне датотеке"
+
+
 msgid "(undocumented operator)"
 msgstr "(непознат оператор)"
 
@@ -13093,62 +13149,6 @@ msgstr "Поништи тренсформације"
 msgctxt "Operator"
 msgid "Accept"
 msgstr "Прихвати"
-
-
-msgid "Automatically determine display type for files"
-msgstr "Самостално изабери врсту убрзања"
-
-
-msgid "Short List"
-msgstr "Кратка листа"
-
-
-msgid "Display files as short list"
-msgstr "Прикажи датотеке као скраћену листу"
-
-
-msgid "Long List"
-msgstr "Дуга листа"
-
-
-msgid "Display files as a detailed list"
-msgstr "Прикажи датотеке као детаљну листу"
-
-
-msgid "Filter .blend files"
-msgstr "Филтрирај .blend датотеке"
-
-
-msgid "Filter btx files"
-msgstr "Филтрирај btx датотеке"
-
-
-msgid "Filter COLLADA files"
-msgstr "Филтрирај COLLADA датотеке"
-
-
-msgid "Filter font files"
-msgstr "Филтрирај фонтове"
-
-
-msgid "Filter image files"
-msgstr "Филтрирај слике"
-
-
-msgid "Filter movie files"
-msgstr "Филтрирај филмове"
-
-
-msgid "Filter python files"
-msgstr "Филтрирај python датотеке"
-
-
-msgid "Filter sound files"
-msgstr "Филтрирај звучне датотеке"
-
-
-msgid "Filter text files"
-msgstr "Филтрирај текстуалне датотеке"
 
 
 msgid "Select the file relative to the blend file"

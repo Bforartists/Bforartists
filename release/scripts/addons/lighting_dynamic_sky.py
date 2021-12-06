@@ -60,7 +60,7 @@ def check_world_name(name_id="Dynamic"):
             test_num = []
             from re import findall
             for words in name_list:
-                test_num.append(findall("\d+", words))
+                test_num.append(findall(r"\d+", words))
 
             suffix += max([int(l[-1]) for l in test_num])
             new_name = "{}_{}".format(name_id, suffix)

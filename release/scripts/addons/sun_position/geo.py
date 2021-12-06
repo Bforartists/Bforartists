@@ -51,7 +51,7 @@ class Parser:
         # build pattern with subgroups
         sub_dict = {}
         subpattern_names = []
-        for s in re.finditer("%\(.*?\)s", self.raw_patterns[pattern_name]):
+        for s in re.finditer(r"%\(.*?\)s", self.raw_patterns[pattern_name]):
             subpattern_name = s.group()[2:-2]
             if not self.virtual[subpattern_name]:
                 sub_dict[subpattern_name] = "(" + self.patterns[
@@ -108,7 +108,7 @@ position_parser.add("minutes", r"%(number)s\s*%(minutes_symbol)s")
 position_parser.add("seconds", r"%(number)s\s*%(seconds_symbol)s")
 position_parser.add(
     "degree_coordinates",
-    "(?:%(sign)s\s*)?%(degrees)s(?:[+\s]*%(minutes)s)?(?:[+\s]*%(seconds)s)?|(?:%(sign)s\s*)%(minutes)s(?:[+\s]*%(seconds)s)?|(?:%(sign)s\s*)%(seconds)s"
+    r"(?:%(sign)s\s*)?%(degrees)s(?:[+\s]*%(minutes)s)?(?:[+\s]*%(seconds)s)?|(?:%(sign)s\s*)%(minutes)s(?:[+\s]*%(seconds)s)?|(?:%(sign)s\s*)%(seconds)s"
 )
 
 position_parser.add(
@@ -119,13 +119,13 @@ position_parser.add(
     r"%(nmea_style)s|%(plain_degrees)s|%(degree_coordinates)s")
 
 position_parser.add(
-    "position", """\
-\s*%(direction_ns)s\s*%(coordinates_ns)s[,;\s]*%(direction_ew)s\s*%(coordinates_ew)s\s*|\
-\s*%(direction_ew)s\s*%(coordinates_ew)s[,;\s]*%(direction_ns)s\s*%(coordinates_ns)s\s*|\
-\s*%(coordinates_ns)s\s*%(direction_ns)s[,;\s]*%(coordinates_ew)s\s*%(direction_ew)s\s*|\
-\s*%(coordinates_ew)s\s*%(direction_ew)s[,;\s]*%(coordinates_ns)s\s*%(direction_ns)s\s*|\
-\s*%(coordinates_ns)s[,;\s]+%(coordinates_ew)s\s*\
-""")
+    "position", (
+        r"\s*%(direction_ns)s\s*%(coordinates_ns)s[,;\s]*%(direction_ew)s\s*%(coordinates_ew)s\s*|"
+        r"\s*%(direction_ew)s\s*%(coordinates_ew)s[,;\s]*%(direction_ns)s\s*%(coordinates_ns)s\s*|"
+        r"\s*%(coordinates_ns)s\s*%(direction_ns)s[,;\s]*%(coordinates_ew)s\s*%(direction_ew)s\s*|"
+        r"\s*%(coordinates_ew)s\s*%(direction_ew)s[,;\s]*%(coordinates_ns)s\s*%(direction_ns)s\s*|"
+        r"\s*%(coordinates_ns)s[,;\s]+%(coordinates_ew)s\s*"
+    ))
 
 
 def get_number(b):
