@@ -64,10 +64,10 @@ def exportDXF(context, filePath, settings):
 
         if not drawing.isEmpty():
             # NOTE: Only orthographic projection used now.
-    #		if PERSPECTIVE: # generate view border - passepartout
-    #			from .primitive_exporters.viewborder_exporter import ViewBorderDXFExporter
-    #			e = ViewBorderDXFExporter(settings)
-    #			e.export(drawing, ob, mx, mw)
+    #       if PERSPECTIVE: # generate view border - passepartout
+    #           from .primitive_exporters.viewborder_exporter import ViewBorderDXFExporter
+    #           e = ViewBorderDXFExporter(settings)
+    #           e.export(drawing, ob, mx, mw)
 
             drawing.convert(filePath)
 
@@ -172,38 +172,38 @@ def getCommons(ob, settings):
 
 def getCameraMatrix(cam):
     raise NotImplementedError()
-#	camProps = cam.data
-#		mc0 = act_camera.matrix.copy()
-#				#print 'deb: camera.Matrix=\n', mc0 #------------------
-#				camera = Camera.Get(act_camera.getData(name_only=True))
-#				#print 'deb: camera=', dir(camera) #------------------
-#				if camera.type=='persp': PERSPECTIVE = 1
-#				elif camera.type=='ortho': PERSPECTIVE = 0
-#				# mcp is matrix.camera.perspective
-#				clip_box, mcp = getClipBox(camera)
-##				if PERSPECTIVE:
-##					# get border
-##					# lens = camera.lens
-##					min_X1, max_X1, min_Y1, max_Y1,\
-##					min_X2, max_X2, min_Y2, max_Y2,\
-##						min_Z, max_Z = clip_box
-##					verts = []
-##					verts.append([min_X1, min_Y1, min_Z])
-##					verts.append([max_X1, min_Y1, min_Z])
-##					verts.append([max_X1, max_Y1, min_Z])
-##					verts.append([min_X1, max_Y1, min_Z])
-##					border=verts
-#				mw = mc0.copy().invert()
-#			#ViewVector = mathutils.Vector(Window.GetViewVector())
-#			#print 'deb: ViewVector=\n', ViewVector #------------------
-#			#TODO: what is Window.GetViewOffset() for?
-#			#print 'deb: Window.GetViewOffset():', Window.GetViewOffset() #---------
-#			#Window.SetViewOffset([0,0,0])
-#			mw0 = Window.GetViewMatrix()
-#			#print 'deb: mwOrtho	=\n', mw0	 #---------
-#			mwp = Window.GetPerspMatrix() #TODO: how to get it working?
-#			#print 'deb: mwPersp	=\n', mwp	 #---------
-#			mw = mw0.copy()
+#   camProps = cam.data
+#       mc0 = act_camera.matrix.copy()
+#               #print 'deb: camera.Matrix=\n', mc0 #------------------
+#               camera = Camera.Get(act_camera.getData(name_only=True))
+#               #print 'deb: camera=', dir(camera) #------------------
+#               if camera.type=='persp': PERSPECTIVE = 1
+#               elif camera.type=='ortho': PERSPECTIVE = 0
+#               # mcp is matrix.camera.perspective
+#               clip_box, mcp = getClipBox(camera)
+##              if PERSPECTIVE:
+##                  # get border
+##                  # lens = camera.lens
+##                  min_X1, max_X1, min_Y1, max_Y1,\
+##                  min_X2, max_X2, min_Y2, max_Y2,\
+##                      min_Z, max_Z = clip_box
+##                  verts = []
+##                  verts.append([min_X1, min_Y1, min_Z])
+##                  verts.append([max_X1, min_Y1, min_Z])
+##                  verts.append([max_X1, max_Y1, min_Z])
+##                  verts.append([min_X1, max_Y1, min_Z])
+##                  border=verts
+#               mw = mc0.copy().invert()
+#           #ViewVector = mathutils.Vector(Window.GetViewVector())
+#           #print 'deb: ViewVector=\n', ViewVector #------------------
+#           #TODO: what is Window.GetViewOffset() for?
+#           #print 'deb: Window.GetViewOffset():', Window.GetViewOffset() #---------
+#           #Window.SetViewOffset([0,0,0])
+#           mw0 = Window.GetViewMatrix()
+#           #print 'deb: mwOrtho    =\n', mw0    #---------
+#           mwp = Window.GetPerspMatrix() #TODO: how to get it working?
+#           #print 'deb: mwPersp    =\n', mwp    #---------
+#           mw = mw0.copy()
 
 projectionMapping = {
   'TOP' : mathutils.Vector((0, 0, -1)),
@@ -241,10 +241,10 @@ def _exportItem(ctx, o, mw, drawing, settings):
     """
     if settings['verbose']: print('Exporting %s' % o)
     #mx = ob.matrix.copy()
-    #print 'deb: ob	=', ob	 #---------
-    #print 'deb: ob.type	=', ob.type	 #---------
-    #print 'deb: mx	=\n', mx	 #---------
-    #print 'deb: mw0	=\n', mw0	 #---------
+    #print 'deb: ob =', ob   #---------
+    #print 'deb: ob.type    =', ob.type  #---------
+    #print 'deb: mx =\n', mx     #---------
+    #print 'deb: mw0    =\n', mw0    #---------
     #mx_n is trans-matrix for normal_vectors for front-side faces
     mx = o.matrix_world
     viewRotation = mw.to_euler().to_matrix()

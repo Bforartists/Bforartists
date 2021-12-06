@@ -25,6 +25,7 @@
 
 #include "BLI_compiler_compat.h"
 #include "BLI_ghash.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_listBase.h"
 
@@ -222,6 +223,16 @@ typedef int (*NodeGPUExecFunction)(struct GPUMaterial *mat,
                                    struct GPUNodeStack *in,
                                    struct GPUNodeStack *out);
 
+typedef enum NodeResizeDirection {
+  NODE_RESIZE_NONE = 0,
+  NODE_RESIZE_TOP = (1 << 0),
+  NODE_RESIZE_BOTTOM = (1 << 1),
+  NODE_RESIZE_RIGHT = (1 << 2),
+  NODE_RESIZE_LEFT = (1 << 3),
+} NodeResizeDirection;
+
+ENUM_OPERATORS(NodeResizeDirection, NODE_RESIZE_LEFT);
+
 /**
  * \brief Defines a node type.
  *
@@ -274,7 +285,7 @@ typedef struct bNodeType {
    */
   void (*labelfunc)(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
   /** Optional custom resize handle polling. */
-  int (*resize_area_func)(struct bNode *node, int x, int y);
+  NodeResizeDirection (*resize_area_func)(const struct bNode *node, int x, int y);
   /** Optional selection area polling. */
   int (*select_area_func)(struct bNode *node, int x, int y);
   /** Optional tweak area polling (for grabbing). */
@@ -378,12 +389,6 @@ typedef struct bNodeType {
 #define NODE_CLASS_GEOMETRY 41
 #define NODE_CLASS_ATTRIBUTE 42
 #define NODE_CLASS_LAYOUT 100
-
-/* node resize directions */
-#define NODE_RESIZE_TOP 1
-#define NODE_RESIZE_BOTTOM 2
-#define NODE_RESIZE_RIGHT 4
-#define NODE_RESIZE_LEFT 8
 
 typedef enum eNodeSizePreset {
   NODE_SIZE_DEFAULT,
@@ -550,7 +555,7 @@ void ntreeInterfaceTypeUpdate(struct bNodeTree *ntree);
 struct bNodeType *nodeTypeFind(const char *idname);
 void nodeRegisterType(struct bNodeType *ntype);
 void nodeUnregisterType(struct bNodeType *ntype);
-bool nodeTypeUndefined(struct bNode *node);
+bool nodeTypeUndefined(const struct bNode *node);
 struct GHashIterator *nodeTypeGetIterator(void);
 
 /* Helper macros for iterating over node types. */
@@ -1507,7 +1512,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_SAMPLE_CURVE 1085
 #define GEO_NODE_INPUT_TANGENT 1086
 #define GEO_NODE_STRING_JOIN 1087
-#define GEO_NODE_CURVE_PARAMETER 1088
+#define GEO_NODE_CURVE_SPLINE_PARAMETER 1088
 #define GEO_NODE_FILLET_CURVE 1089
 #define GEO_NODE_DISTRIBUTE_POINTS_ON_FACES 1090
 #define GEO_NODE_STRING_TO_CURVES 1091
@@ -1554,6 +1559,8 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_VOLUME_TO_MESH 1133
 #define GEO_NODE_INPUT_ID 1134
 #define GEO_NODE_SET_ID 1135
+#define GEO_NODE_ATTRIBUTE_DOMAIN_SIZE 1136
+#define GEO_NODE_DUAL_MESH 1137
 
 /** \} */
 
@@ -1562,7 +1569,7 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
  * \{ */
 
 #define FN_NODE_BOOLEAN_MATH 1200
-#define FN_NODE_COMPARE_FLOATS 1202
+#define FN_NODE_COMPARE 1202
 #define FN_NODE_LEGACY_RANDOM_FLOAT 1206
 #define FN_NODE_INPUT_VECTOR 1207
 #define FN_NODE_INPUT_STRING 1208

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1714,14 +1714,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Bloques de datos de lápiz de cera"
 
 
-msgid "Hairs"
-msgstr "Pelos"
-
-
-msgid "Hair data-blocks"
-msgstr "Bloques de datos de pelo"
-
-
 msgid "Images"
 msgstr "Imágenes"
 
@@ -1866,14 +1858,6 @@ msgid "Particle data-blocks"
 msgstr "Bloques de datos de partícula"
 
 
-msgid "Point Clouds"
-msgstr "Nubes de puntos"
-
-
-msgid "Point cloud data-blocks"
-msgstr "Bloques de datos de nube de puntos"
-
-
 msgid "Scenes"
 msgstr "Escenas"
 
@@ -1896,14 +1880,6 @@ msgstr "Formas clave"
 
 msgid "Shape Key data-blocks"
 msgstr "Bloques de datos de Forma clave"
-
-
-msgid "Simulations"
-msgstr "Simulaciones"
-
-
-msgid "Simulation data-blocks"
-msgstr "Bloques de datos de simulación"
 
 
 msgid "Sounds"
@@ -2058,14 +2034,6 @@ msgid "Collection of grease pencils"
 msgstr "Colección de lápices de cera"
 
 
-msgid "Main Hairs"
-msgstr "Pelos principales"
-
-
-msgid "Collection of hairs"
-msgstr "Colección de pelos"
-
-
 msgid "Main Images"
 msgstr "Imágenes principales"
 
@@ -2186,14 +2154,6 @@ msgid "Collection of particle settings"
 msgstr "Colección de opciones de partículas"
 
 
-msgid "Main Point Clouds"
-msgstr "Nubes de puntos principales"
-
-
-msgid "Collection of point clouds"
-msgstr "Colección de nubes de puntos"
-
-
 msgid "Main Light Probes"
 msgstr "Sondas de luz principales"
 
@@ -2216,14 +2176,6 @@ msgstr "Pantallas principales"
 
 msgid "Collection of screens"
 msgstr "Colección de pantallas"
-
-
-msgid "Main Simulations"
-msgstr "Simulaciones principales"
-
-
-msgid "Collection of simulations"
-msgstr "Colección de simulaciones"
 
 
 msgid "Main Sounds"
@@ -11804,6 +11756,10 @@ msgid "Show Collection data-blocks"
 msgstr "Mostrar bloques de datos de colecciones"
 
 
+msgid "Hairs"
+msgstr "Pelos"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Mostrar bloques de datos de pelos"
 
@@ -11872,12 +11828,20 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Mostrar bloques de datos de opciones de partículas"
 
 
+msgid "Point Clouds"
+msgstr "Nubes de puntos"
+
+
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Mostrar bloques de datos de nubes de puntos"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Mostrar bloques de datos de escena"
+
+
+msgid "Simulations"
+msgstr "Simulaciones"
 
 
 msgid "Show Simulation data-blocks"
@@ -17580,50 +17544,6 @@ msgid "Active index in layer mask array"
 msgstr "Identificador de la capa activa en la matriz de capas de máscara"
 
 
-msgid "Hair Curve"
-msgstr "Curva de pelo"
-
-
-msgid "Hair curve"
-msgstr "Curva de pelo"
-
-
-msgid "First Point Index"
-msgstr "Identificador del primer punto"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Identificador del primer bucle de este polígono"
-
-
-msgid "Index of this curve"
-msgstr "Identificador de esta curva"
-
-
-msgid "Number of Points"
-msgstr "Cantidad de puntos"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Cantidad de bucles usados por este polígono"
-
-
-msgid "Control points of the curve"
-msgstr "Puntos de control de la curva"
-
-
-msgid "Hair Point"
-msgstr "Punto del pelo"
-
-
-msgid "Hair curve control point"
-msgstr "Punto de control de la curva de pelo"
-
-
-msgid "Index of this points"
-msgstr "Identificadores de estos puntos"
-
-
 msgid "Statistical view of the levels of color in an image"
 msgstr "Vista estadística de los niveles de color de una imagen"
 
@@ -21649,26 +21569,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Cantidad de desplazamiento al dibujar en modo Superficie"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Bloque de datos de pelo para curvas de pelo"
-
-
-msgid "Attributes"
-msgstr "Atributos"
-
-
-msgid "Geometry attributes"
-msgstr "Atributos de la geometría"
-
-
-msgid "All hair curves"
-msgstr "Todas las curvas de pelo"
-
-
-msgid "Control points of all hair curves"
-msgstr "Puntos de control de todas las curvas de pelo"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Bloque de datos de imagen referenciando a una imagen externa o empacada"
 
@@ -23109,6 +23009,14 @@ msgstr "Agrega un efecto de translucidez por debajo de la superficie"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloque de datos de malla que define la superficie de la geometría"
+
+
+msgid "Attributes"
+msgstr "Atributos"
+
+
+msgid "Geometry attributes"
+msgstr "Atributos de la geometría"
 
 
 msgid "Auto Smooth Angle"
@@ -25850,10 +25758,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Cantidad relativa de principales virtuales"
 
 
-msgid "Point cloud data-block"
-msgstr "Bloque de datos de nube de puntos"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Bloque de datos de escena, conteniendo objetos y definiendo opciones relativas al tiempo y el procesamiento"
 
@@ -26336,14 +26240,6 @@ msgstr "Editores de video"
 
 msgid "Top-Left 3D Editor"
 msgstr "Vista 3D superior izquierda"
-
-
-msgid "Simulation data-block"
-msgstr "Bloque de datos de simulación"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Árbol de nodos que define la simulación"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33063,8 +32959,16 @@ msgid "Loop Start"
 msgstr "Comiénzo del bucle"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Identificador del primer bucle de este polígono"
+
+
 msgid "Loop Total"
 msgstr "Total de bucles"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Cantidad de bucles usados por este polígono"
 
 
 msgid "Material slot index of this polygon"
@@ -46506,6 +46410,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "Define a esta acción de pose como la activa para el objeto activo"
 
 
+msgid "Check Existing"
+msgstr "Comprobar existencia"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Determina automáticamente el tipo de visualización de los archivos"
+
+
+msgid "Short List"
+msgstr "Lista reducida"
+
+
+msgid "Display files as short list"
+msgstr "Mostrar archivos en una lista reducida"
+
+
+msgid "Long List"
+msgstr "Lista completa"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostrar archivos en una lista detallada"
+
+
+msgid "File Browser Mode"
+msgstr "Modo de exploración de archivos"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "La propiedad del explorador de archivos para abrir un archivo .blend, una biblioteca o un archivo especial"
+
+
+msgid "Path to file"
+msgstr "Ruta hacia el archivo"
+
+
+msgid "Filter Alembic files"
+msgstr "Filtrar archivos Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Filtrar archivos"
+
+
+msgid "Filter .blend files"
+msgstr "Filtrar archivos .blend"
+
+
+msgid "Filter btx files"
+msgstr "Filtrar archivos btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtrar archivos COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtrar archivos de fuentes"
+
+
+msgid "Filter image files"
+msgstr "Filtrar archivos de imagen"
+
+
+msgid "Filter movie files"
+msgstr "Filtrar archivos de película"
+
+
+msgid "Filter python files"
+msgstr "Filtrar archivos Python"
+
+
+msgid "Filter sound files"
+msgstr "Filtrar archivos de sonido"
+
+
+msgid "Filter text files"
+msgstr "Filtrar archivos de texto"
+
+
+msgid "Filter USD files"
+msgstr "Filtrar archivos USD"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "Filtrar archivos de volúmenes OpenVDB"
+
+
+msgid "Hide Operator Properties"
+msgstr "Ocultar propiedades del operador"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Colapsa la región que muestra las opciones del operador"
+
+
+msgid "File sorting mode"
+msgstr "Modo de ordenamiento de archivos"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "Borrar catálogo de recursos"
@@ -46585,12 +46593,12 @@ msgstr "Asegurar que el bloque de datos sea guardado, aún en caso de no encontr
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "Refrescar lista de recursos"
+msgid "Refresh Asset Library"
+msgstr "Refrescar biblioteca de recursos"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "Releer los recursos"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Releer los recursos y catálogos desde la biblioteca en el disco"
 
 
 msgctxt "Operator"
@@ -46891,108 +46899,12 @@ msgid "Directory of the file"
 msgstr "Directorio del archivo"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Determina automáticamente el tipo de visualización de los archivos"
-
-
-msgid "Short List"
-msgstr "Lista reducida"
-
-
-msgid "Display files as short list"
-msgstr "Mostrar archivos en una lista reducida"
-
-
-msgid "Long List"
-msgstr "Lista completa"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostrar archivos en una lista detallada"
-
-
-msgid "File Browser Mode"
-msgstr "Modo de exploración de archivos"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "La propiedad del explorador de archivos para abrir un archivo .blend, una biblioteca o un archivo especial"
-
-
-msgid "Filter Alembic files"
-msgstr "Filtrar archivos Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Filtrar archivos"
-
-
-msgid "Filter .blend files"
-msgstr "Filtrar archivos .blend"
-
-
-msgid "Filter btx files"
-msgstr "Filtrar archivos btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtrar archivos COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtrar archivos de fuentes"
-
-
-msgid "Filter image files"
-msgstr "Filtrar archivos de imagen"
-
-
-msgid "Filter movie files"
-msgstr "Filtrar archivos de película"
-
-
-msgid "Filter python files"
-msgstr "Filtrar archivos Python"
-
-
-msgid "Filter sound files"
-msgstr "Filtrar archivos de sonido"
-
-
-msgid "Filter text files"
-msgstr "Filtrar archivos de texto"
-
-
-msgid "Filter USD files"
-msgstr "Filtrar archivos USD"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "Filtrar archivos de volúmenes OpenVDB"
-
-
-msgid "Hide Operator Properties"
-msgstr "Ocultar propiedades del operador"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Colapsa la región que muestra las opciones del operador"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleccionar el archivo, en relación al archivo .blend"
 
 
-msgid "File sorting mode"
-msgstr "Modo de ordenamiento de archivos"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Abre un explorador de archivos, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar el directorio contenedor"
-
-
-msgid "Path to file"
-msgstr "Ruta hacia el archivo"
 
 
 msgctxt "Operator"
@@ -49469,14 +49381,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Guarda un script Python que recrea las cámaras y marcadores en otro lado"
 
 
-msgid "Check Existing"
-msgstr "Comprobar existencia"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "Ruta usada para exportar el archivo"
 
@@ -50631,15 +50535,6 @@ msgstr "Fotograma de reposo"
 
 msgid "Write the rest state at the first frame"
 msgstr "Escribe el estado de reposo en el fotograma inicial"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "Refrescar biblioteca de recursos"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "Releer los recursos y catálogos desde la biblioteca en el disco"
 
 
 msgctxt "Operator"
@@ -60322,16 +60217,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Curva a partir de mallas o textos"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Malla a partir de curvas, superficies, metabolas, textos o nubes de puntos"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Lápiz de cera a partir de curvas o mallas"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Nube de puntos a partir de mallas"
 
 
 msgctxt "Operator"
@@ -78343,10 +78230,6 @@ msgstr "Comparar rutas"
 
 msgid "Collection of paths"
 msgstr "Colección de rutas"
-
-
-msgid "Point in a point cloud"
-msgstr "Punto de una nube de puntos"
 
 
 msgid "Active Point Cache"
@@ -104768,6 +104651,14 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Error de programación: falta eliminar función de transformación o nombre de conjunto de claves"
 
 
+msgid "Path is empty, cannot save"
+msgstr "Ruta vacía, no es posible guardar"
+
+
+msgid "Path too long, cannot save"
+msgstr "Ruta demasiado larga, no es posible guardar"
+
+
 msgid "No point was selected"
 msgstr "No se ha seleccionado ningún punto"
 
@@ -112892,14 +112783,6 @@ msgstr "¿Guardar cambios antes de cerrar?"
 
 msgid "File Not Found"
 msgstr "Archivo no encontrado"
-
-
-msgid "Path is empty, cannot save"
-msgstr "Ruta vacía, no es posible guardar"
-
-
-msgid "Path too long, cannot save"
-msgstr "Ruta demasiado larga, no es posible guardar"
 
 
 msgid "Unable to create user config path"
