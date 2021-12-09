@@ -6044,7 +6044,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Transparent",
-      "World background is transparent, for compositing the render over another background");
+      "Render the world background as transparent. This allows compositing the rendered image over another background");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
 
   prop = RNA_def_property(srna, "use_freestyle", PROP_BOOLEAN, PROP_NONE);
