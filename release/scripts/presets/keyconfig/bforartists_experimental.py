@@ -1,4 +1,4 @@
-keyconfig_version = (3, 1, 1)
+keyconfig_version = (3, 1, 4)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1784,6 +1784,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("file.view_selected", {"type": 'F', "value": 'PRESS', "repeat": True}, None),
     ],
    },
   ),
@@ -5273,7 +5274,7 @@ keyconfig_data = \
     ("outliner.item_drag_drop", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
     ("outliner.item_drag_drop", {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True}, None),
     ("outliner.show_hierarchy", {"type": 'HOME', "value": 'PRESS'}, None),
-    ("outliner.show_active", {"type": 'PERIOD', "value": 'PRESS'}, None),
+    ("outliner.show_active", {"type": 'F', "value": 'PRESS'}, None),
     ("outliner.show_active", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
     ("outliner.scroll_page",
      {"type": 'PAGE_DOWN', "value": 'PRESS', "repeat": True},
