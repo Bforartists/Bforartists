@@ -416,18 +416,42 @@ static void face_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
 static void advanced_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *sub;
+  //uiLayout *row, *sub; /* bfa - no sub, see below*/
+  uiLayout *row;
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Max Distance"));
-  uiItemR(row, ptr, "use_max_distance", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
-  uiItemR(sub, ptr, "max_distance", 0, "", ICON_NONE);
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Max Distance"));
+  //uiItemR(row, ptr, "use_max_distance", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
+  //uiItemR(sub, ptr, "max_distance", 0, "", ICON_NONE);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_max_distance", 0, "Max Distance", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_max_distance", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_max_distance")) {
+    uiItemR(row, ptr, "max_distance", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+  // ------------------------------- end bfa
 
   uiItemR(layout, ptr, "ray_radius", 0, NULL, ICON_NONE);
 }
