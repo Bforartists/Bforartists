@@ -144,20 +144,56 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *UNUSED(ctx)
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *sub;
+  //uiLayout *row, *sub;
+  uiLayout *row, *col; /*bfa, added *col, removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
-  uiItemR(row, ptr, "use_edge_angle", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
-  uiItemR(sub, ptr, "split_angle", 0, "", ICON_NONE);
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
+  //uiItemR(row, ptr, "use_edge_angle", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
+  //uiItemR(sub, ptr, "split_angle", 0, "", ICON_NONE);
 
-  uiItemR(layout, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_edge_angle", 0, "Edge Angle", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_edge_angle")) {
+    uiItemR(row, ptr, "split_angle", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
+
+
+
+      /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
 }
