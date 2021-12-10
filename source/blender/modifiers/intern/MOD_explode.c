@@ -1214,8 +1214,22 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "use_edge_cut", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_size", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_edge_cut", 0, NULL, ICON_NONE);
+  //uiItemR(col, ptr, "use_size", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_edge_cut", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_edge_cut", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_size", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_size", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 
