@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1158,6 +1158,10 @@ msgid "Attribute on spline"
 msgstr "Atributo de curva"
 
 
+msgid "Instance"
+msgstr "Instancia"
+
+
 msgid "Name of the Attribute"
 msgstr "Nombre del atributo"
 
@@ -1714,6 +1718,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "Bloques de datos de lápiz de cera"
 
 
+msgid "Hairs"
+msgstr "Pelos"
+
+
 msgid "Images"
 msgstr "Imágenes"
 
@@ -1858,6 +1866,10 @@ msgid "Particle data-blocks"
 msgstr "Bloques de datos de partícula"
 
 
+msgid "Point Clouds"
+msgstr "Nubes de puntos"
+
+
 msgid "Scenes"
 msgstr "Escenas"
 
@@ -1880,6 +1892,10 @@ msgstr "Formas clave"
 
 msgid "Shape Key data-blocks"
 msgstr "Bloques de datos de Forma clave"
+
+
+msgid "Simulations"
+msgstr "Simulaciones"
 
 
 msgid "Sounds"
@@ -4030,10 +4046,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "Color de vértices sólo afecta al relleno"
 
 
-msgid "Stroke and Fill"
-msgstr "Trazo y relleno"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Color de vértices afecta al trazo y el relleno"
 
@@ -5212,6 +5224,10 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
+
+
+msgid "Raw"
+msgstr "Crudo"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11756,10 +11772,6 @@ msgid "Show Collection data-blocks"
 msgstr "Mostrar bloques de datos de colecciones"
 
 
-msgid "Hairs"
-msgstr "Pelos"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "Mostrar bloques de datos de pelos"
 
@@ -11828,20 +11840,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Mostrar bloques de datos de opciones de partículas"
 
 
-msgid "Point Clouds"
-msgstr "Nubes de puntos"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Mostrar bloques de datos de nubes de puntos"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Mostrar bloques de datos de escena"
-
-
-msgid "Simulations"
-msgstr "Simulaciones"
 
 
 msgid "Show Simulation data-blocks"
@@ -17544,6 +17548,14 @@ msgid "Active index in layer mask array"
 msgstr "Identificador de la capa activa en la matriz de capas de máscara"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Identificador del primer bucle de este polígono"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Cantidad de bucles usados por este polígono"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Vista estadística de los niveles de color de una imagen"
 
@@ -17710,10 +17722,6 @@ msgstr "Las curvas-f individuales que conforman la acción"
 
 msgid "Frame Range"
 msgstr "Rango de fotogramas"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "Rango final de fotogramas de todas las Curvas-F en esta acción"
 
 
 msgid "Groups"
@@ -21569,6 +21577,14 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Cantidad de desplazamiento al dibujar en modo Superficie"
 
 
+msgid "Attributes"
+msgstr "Atributos"
+
+
+msgid "Geometry attributes"
+msgstr "Atributos de la geometría"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "Bloque de datos de imagen referenciando a una imagen externa o empacada"
 
@@ -23011,14 +23027,6 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloque de datos de malla que define la superficie de la geometría"
 
 
-msgid "Attributes"
-msgstr "Atributos"
-
-
-msgid "Geometry attributes"
-msgstr "Atributos de la geometría"
-
-
 msgid "Auto Smooth Angle"
 msgstr "Ángulo suavizado automático"
 
@@ -23521,6 +23529,10 @@ msgstr "Salidas del árbol de nodos"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "Tipo de árbol de nodos (depreciado, bl_idname es el identificador actual de tipo de árbol de nodos)"
+
+
+msgid "Undefined"
+msgstr "No definido"
 
 
 msgid "Shader"
@@ -32959,16 +32971,8 @@ msgid "Loop Start"
 msgstr "Comiénzo del bucle"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Identificador del primer bucle de este polígono"
-
-
 msgid "Loop Total"
 msgstr "Total de bucles"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Cantidad de bucles usados por este polígono"
 
 
 msgid "Material slot index of this polygon"
@@ -37775,10 +37779,6 @@ msgid "Remove original geometry"
 msgstr "Remueve la geometría original"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Caché de las posiciones globales de un elemento a lo largo de un rango de fotogramas"
-
-
 msgid "Custom color for motion path"
 msgstr "Color personalizado para la trayectoria de movimiento"
 
@@ -41596,8 +41596,12 @@ msgid "Outputs the opposite of the input"
 msgstr "Produce el opuesto del conector de entrada"
 
 
-msgid "Compare Floats"
-msgstr "Comparar decimales"
+msgid "Input Type"
+msgstr "Tipo de entrada"
+
+
+msgid "Dot Product"
+msgstr "Producto escalar"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41732,6 +41736,26 @@ msgid "Geometry Node"
 msgstr "Nodo de geometría"
 
 
+msgid "Component"
+msgstr "Componente"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "Componente de la malla que contiene datos de puntos, bordes, caras y esquinas de caras"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "Componente de la nube de puntos que contiene únicamente datos de puntos"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "Componente de una curva conteniendo datos de la curva y sus puntos de control"
+
+
+msgid "Instances of objects or collections"
+msgstr "Instancias de objetos o colecciones"
+
+
 msgid "Attribute Remove"
 msgstr "Remover (atributo)"
 
@@ -41830,10 +41854,6 @@ msgstr "Usar las asas derechas"
 
 msgid "Curve Length"
 msgstr "Longitud de curva"
-
-
-msgid "Curve Parameter"
-msgstr "Parámetro de curva"
 
 
 msgid "Bezier Segment"
@@ -42252,10 +42272,6 @@ msgid "Attribute Separate XYZ"
 msgstr "Separar XYZ (atributo)"
 
 
-msgid "Input Type"
-msgstr "Tipo de entrada"
-
-
 msgid "Attribute Transfer"
 msgstr "Transferir atributo"
 
@@ -42306,10 +42322,6 @@ msgstr "Hacia adelante"
 
 msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
 msgstr "Orienta un vector A para que apunte en sentido contrario a una superficie B, definida por su normal C. Devuelve (dot(B, C) < 0) ? A : -A"
-
-
-msgid "Dot Product"
-msgstr "Producto escalar"
 
 
 msgid "A dot B"
@@ -43007,10 +43019,6 @@ msgstr "BSDF Reflectivo"
 
 msgid "Hair BSDF"
 msgstr "BSDF Pelo"
-
-
-msgid "Component"
-msgstr "Componente"
 
 
 msgid "Reflection"
@@ -52410,10 +52418,6 @@ msgstr "Eliminar capa de máscara"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Fusionar"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Permite fusionar la capa actual con la de abajo"
 
 
 msgctxt "Operator"
@@ -88933,22 +88937,6 @@ msgid "Part of the geometry to display data from"
 msgstr "Parte de la geometría de la cual mostrar datos"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "Componente de la malla que contiene datos de puntos, bordes, caras y esquinas de caras"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "Componente de la nube de puntos que contiene únicamente datos de puntos"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "Componente de una curva conteniendo datos de la curva y sus puntos de control"
-
-
-msgid "Instances of objects or collections"
-msgstr "Instancias de objetos o colecciones"
-
-
 msgid "Is Pinned"
 msgstr "Fijo"
 
@@ -92334,10 +92322,6 @@ msgid "Cycle-Aware Keying"
 msgstr "Claves cíclicos"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "Para canales con extrapolación cíclica, la inserción de fotogramas clave es automáticamente remapeada dentro del rango de tiempo del ciclo, para mantener los extremos en sincronía"
-
-
 msgid "Auto Keying"
 msgstr "Claves automáticos"
 
@@ -95594,18 +95578,6 @@ msgid "Homogeneous"
 msgstr "Homogéneo"
 
 
-msgid "CPU Flags:"
-msgstr "Indicadores CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Indicadores CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Indicadores OptiX:"
-
-
 msgid "Max Subdivision"
 msgstr "Subdivisiones máx"
 
@@ -96655,11 +96627,6 @@ msgstr "Barra espaciadora"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Cargar opciones %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Guardar nuevas opciones"
 
@@ -96760,6 +96727,11 @@ msgstr "Rama: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Expresión regular inválida (búsqueda): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Cargar opciones %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -98942,6 +98914,11 @@ msgid "Unlock Tracks"
 msgstr "Desbloquear rastros"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Enmarcar todo"
+
+
 msgid "Solve error: %.2f px"
 msgstr "Error de resolución: %.2f px"
 
@@ -99261,10 +99238,6 @@ msgid "Decrease Number"
 msgstr "Disminuir número"
 
 
-msgid "No asset selected"
-msgstr "No hay recursos seleccionados"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "Eliminar recurso (definir usuario ficticio)"
@@ -99397,11 +99370,6 @@ msgstr "Bordes modificados"
 
 msgid "Show Same Material"
 msgstr "Mostrar el mismo material"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Enmarcar todo"
 
 
 msgctxt "Operator"
@@ -99982,10 +99950,6 @@ msgstr "Posición X"
 
 msgid "Convert to Float"
 msgstr "Convertir a decimal"
-
-
-msgid "Raw"
-msgstr "Crudo"
 
 
 msgid "Pre-Processed"
@@ -101155,10 +101119,6 @@ msgstr "No se configuró ningún %s personalizado"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Se necesita actualizar a 2.8x"
 
 
 msgid "Description:"
@@ -103276,8 +103236,20 @@ msgid "Loading '%s' failed: "
 msgstr "Falla al cargar '%s': "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Se está vinculando o anexando un archivo .blend de formato muy antiguo (%d.%d), no se realizará conversión alguna de animación! Sería deseable volver a guardar el archivo de biblioteca con la versión actual de Blender"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Recargar biblioteca: Falló el reemplazo de todas las referencias al antiguo bloque de datos '%s' por el bloque recién cargado, se ha debido mantener el anterior (con %d usuarios restantes) renombrándolo como '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "Ruta '%s' no encontrada"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "No fue posible encontrar '%s' en '%s'"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -103290,14 +103262,6 @@ msgstr "Total arch. %d | Cambiados %d | Fallidos %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "La ruta '%s' no puede ser convertida en relativa"
-
-
-msgid "Could not open directory '%s'"
-msgstr "No fue posible abrir el directorio '%s'"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "No fue posible encontrar '%s' en '%s'"
 
 
 msgid "Scene Collection"
@@ -103532,10 +103496,6 @@ msgstr "Clip ANL"
 
 msgid "[Action Stash]"
 msgstr "[Esconder acción]"
-
-
-msgid "Undefined"
-msgstr "No definido"
 
 
 msgid "Undefined Node Tree Type"
@@ -112055,10 +112015,6 @@ msgid "Points to instance on"
 msgstr "Puntos donde ubicar instancias"
 
 
-msgid "Instance"
-msgstr "Instancia"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "Geometría que será instanciada en los puntos"
 
@@ -112127,24 +112083,8 @@ msgid "Vertices Z"
 msgstr "Vértices Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "La cantidad de vértices alrededor de la circunferencia"
-
-
-msgid "The number of segments along the side"
-msgstr "Cantidad de segmentos laterales"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "Cantidad de segmentos concéntricos de relleno"
-
-
 msgid "The radius of the cylinder"
 msgstr "Radio del cilindro"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "Altura del cilindro en el eje Z"
 
 
 msgid "Start Location"
@@ -112845,10 +112785,6 @@ msgid "Nothing indicated"
 msgstr "Nada indicado"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Se está vinculando o anexando un archivo .blend de formato muy antiguo (%d.%d), no se realizará conversión alguna de animación! Sería deseable volver a guardar el archivo de biblioteca con la versión actual de Blender"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "No es posible anexar el bloque de datos '%s' de tipo '%s'"
 
@@ -112871,10 +112807,6 @@ msgstr "'%s': no es posible usar el archivo actual como una biblioteca"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "La escena '%s' se encuentra vinculada, el instanciado de objetos se encuentra deshabilitado"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Recargar biblioteca: Falló el reemplazo de todas las referencias al antiguo bloque de datos '%s' por el bloque recién cargado, se ha debido mantener el anterior (con %d usuarios restantes) renombrándolo como '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

@@ -161,13 +161,13 @@ static void sh_node_math_build_multi_function(blender::nodes::NodeMultiFunctionB
   }
 }
 
-void register_node_type_sh_math(void)
+void register_node_type_sh_math()
 {
   static bNodeType ntype;
 
   sh_fn_node_type_base(&ntype, SH_NODE_MATH, "Math", NODE_CLASS_CONVERTER, 0);
   ntype.declare = blender::nodes::sh_node_math_declare;
-  node_type_label(&ntype, node_math_label);
+  ntype.labelfunc = node_math_label;
   node_type_gpu(&ntype, gpu_shader_math);
   node_type_update(&ntype, node_math_update);
   ntype.build_multi_function = sh_node_math_build_multi_function;

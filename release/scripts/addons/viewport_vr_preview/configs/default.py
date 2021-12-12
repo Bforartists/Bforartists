@@ -54,7 +54,7 @@ actionconfig_data = \
      {"bindings":
       [("cosmos", {"profile": '/interaction_profiles/htc/vive_cosmos_controller', "component_path0": '/input/squeeze/click', "component_path1": '/input/squeeze/click', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ("huawei", {"profile": '/interaction_profiles/huawei/controller', "component_path0": '/input/trackpad/click', "component_path1": '/input/trackpad/click', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
-       ("index", {"profile": '/interaction_profiles/valve/index_controller', "component_path0": '/input/squeeze/value', "component_path1": '/input/squeeze/value', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
+       ("index", {"profile": '/interaction_profiles/valve/index_controller', "component_path0": '/input/squeeze/force', "component_path1": '/input/squeeze/force', "threshold": '0.5', "axis_region": 'ANY'}),
        ("oculus", {"profile": '/interaction_profiles/oculus/touch_controller', "component_path0": '/input/squeeze/value', "component_path1": '/input/squeeze/value', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ("reverb_g2", {"profile": '/interaction_profiles/hp/mixed_reality_controller', "component_path0": '/input/squeeze/value', "component_path1": '/input/squeeze/value', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),
        ("simple", {"profile": '/interaction_profiles/khr/simple_controller', "component_path0": '/input/menu/click', "component_path1": '/input/menu/click', "threshold": '0.30000001192092896', "axis_region": 'ANY'}),

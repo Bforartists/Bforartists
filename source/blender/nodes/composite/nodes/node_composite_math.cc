@@ -43,13 +43,13 @@ static void cmp_node_math_declare(NodeDeclarationBuilder &b)
 
 }  // namespace blender::nodes
 
-void register_node_type_cmp_math(void)
+void register_node_type_cmp_math()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_MATH, "Math", NODE_CLASS_CONVERTER, 0);
   ntype.declare = blender::nodes::cmp_node_math_declare;
-  node_type_label(&ntype, node_math_label);
+  ntype.labelfunc = node_math_label;
   node_type_update(&ntype, node_math_update);
 
   nodeRegisterType(&ntype);

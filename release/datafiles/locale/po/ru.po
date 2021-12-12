@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1666,6 +1666,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "Датаблоки Grease Pencil"
 
 
+msgid "Hairs"
+msgstr "Волосы"
+
+
 msgid "Images"
 msgstr "Изображения"
 
@@ -1810,6 +1814,10 @@ msgid "Particle data-blocks"
 msgstr "Датаблоки частиц"
 
 
+msgid "Point Clouds"
+msgstr "Облака точек"
+
+
 msgid "Scenes"
 msgstr "Сцены"
 
@@ -1832,6 +1840,10 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
+
+
+msgid "Simulations"
+msgstr "Симуляции"
 
 
 msgid "Sounds"
@@ -4004,10 +4016,6 @@ msgstr "Цвета вершин влияют только на штрихи"
 
 msgid "Vertex Color affects to Fill only"
 msgstr "Цвета вершин влияют только на заливку"
-
-
-msgid "Stroke and Fill"
-msgstr "Обвести и залить"
 
 
 msgid "Vertex Color affects to Stroke and Fill"
@@ -11692,10 +11700,6 @@ msgid "Show Collection data-blocks"
 msgstr "Показать датаблоки коллекций"
 
 
-msgid "Hairs"
-msgstr "Волосы"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "Показать/скрыть датаблоки волос"
 
@@ -11764,20 +11768,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Показать датаблоки настроек частиц"
 
 
-msgid "Point Clouds"
-msgstr "Облака точек"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Показать/скрыть датаблоки облаков точек"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -17192,6 +17188,14 @@ msgid "Note/Layer to add annotation strokes to"
 msgstr "Заметка/слой, на которую добавляются штрихи аннотации"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Индекс первой петли этого полигона"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Количество петель, используемых полигоном"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Статистическое представление цветовых уровней изображения"
 
@@ -17326,10 +17330,6 @@ msgstr "Отдельные F-кривые, составляющие действ
 
 msgid "Frame Range"
 msgstr "Диапазон кадров"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "Окончательный диапазон кадров всех F-кривых в рамках данного действия"
 
 
 msgid "Groups"
@@ -20277,6 +20277,10 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Величина смещения при рисовании в режиме поверхности"
 
 
+msgid "Attributes"
+msgstr "Атрибуты"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "Датаблок изображения, ссылающийся на внешнее или упакованное изображение"
 
@@ -21597,10 +21601,6 @@ msgstr "Добавить эффект просвечиваемости для п
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Датаблок меша, определяющий геометрические поверхности"
-
-
-msgid "Attributes"
-msgstr "Атрибуты"
 
 
 msgid "Auto Smooth Angle"
@@ -30293,16 +30293,8 @@ msgid "Loop Start"
 msgstr "Начало цикла"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Индекс первой петли этого полигона"
-
-
 msgid "Loop Total"
 msgstr "Всего в цикле"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Polygon Normal"
@@ -34121,10 +34113,6 @@ msgid "Remove original geometry"
 msgstr "Удалить исходную геометрию"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Кэш положений элемента в мировом пространстве на диапазоне кадров"
-
-
 msgid "Custom color for motion path"
 msgstr "Особый цвет для траектории движения"
 
@@ -37414,12 +37402,20 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Использовать сглаживание в z-буфере для предотвращения артефактов, полезно для рендеров в Blender"
 
 
+msgid "Dot Product"
+msgstr "Скал. произведение"
+
+
 msgid "Equal"
 msgstr "Равно"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "Входное значение, используемое для несоединённого сокета"
+
+
+msgid "Component"
+msgstr "Компонента"
 
 
 msgid "Original"
@@ -37464,10 +37460,6 @@ msgstr "Проекция A на B"
 
 msgid "Reflect"
 msgstr "Отразить"
-
-
-msgid "Dot Product"
-msgstr "Скал. произведение"
 
 
 msgid "A dot B"
@@ -37629,10 +37621,6 @@ msgstr "Глянцевый BSDF"
 
 msgid "Hair BSDF"
 msgstr "BSDF волос"
-
-
-msgid "Component"
-msgstr "Компонента"
 
 
 msgid "Reflection"
@@ -45378,10 +45366,6 @@ msgstr "Удалить слой маски"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Объединить вниз"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Объединить текущий слой со слоем ниже"
 
 
 msgctxt "Operator"
@@ -78448,10 +78432,6 @@ msgid "Cycle-Aware Keying"
 msgstr "Установка ключей внутри цикла"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "Автоматически пересчитывать временной интервал цикла, сохраняя концы в синхронизации, при добавлении ключевых кадров для каналов с циклической экстраполяцией"
-
-
 msgid "Auto Keying"
 msgstr "Автосоздание ключей"
 
@@ -80948,18 +80928,6 @@ msgid "Homogeneous"
 msgstr "Однородные"
 
 
-msgid "CPU Flags:"
-msgstr "Флаги CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Флаги CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Флаги OptiX:"
-
-
 msgid "Max Subdivision"
 msgstr "Макс. подразделения"
 
@@ -81447,11 +81415,6 @@ msgstr "Пробел"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Загрузить настройки %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Сохранить новые настройки"
 
@@ -81514,6 +81477,11 @@ msgstr "Хэш: %s"
 
 msgid "Branch: %s"
 msgstr "Ветка: %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Загрузить настройки %d.%d"
 
 
 msgid "Frame Numbers"
@@ -83110,6 +83078,11 @@ msgid "Unlock Tracks"
 msgstr "Разблокировать треки"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Вписать всё в рамку"
+
+
 msgid "Zoom %d:%d"
 msgstr "Масштабировать %d:%d"
 
@@ -83500,11 +83473,6 @@ msgstr "Выделение"
 
 msgid "Show Same Material"
 msgstr "Показать тот же материал"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Вписать всё в рамку"
 
 
 msgctxt "Operator"
@@ -84856,10 +84824,6 @@ msgstr "Нет настроенных объектов %s"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Необходимо обновление до 2.8х"
 
 
 msgid "Description:"
@@ -86535,8 +86499,20 @@ msgid "Loading '%s' failed: "
 msgstr "Ошибка при загрузке «%s»: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Связывание или присоединение от .blend-файла в очень старом формате (%d.%d), анимация не будет преобразована! Пересохраните библиотечный файл в текущей версии Blender"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Перезагрузка библиотеки: замена всех ссылок на старый датаблок '%s' с помощью перезагрузки не удалась, старый датаблок (%d оставшихся пользователей) пришлось сохранить и переименовать в '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "Путь «%s» не найден"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "Не удалось найти «%s» в «%s»"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -86549,14 +86525,6 @@ msgstr "Всего файлов: %d | Изменено: %d | Ошибок: %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "Невозможно преобразовать путь «%s» в относительный"
-
-
-msgid "Could not open directory '%s'"
-msgstr "Не удалось открыть папку «%s»"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "Не удалось найти «%s» в «%s»"
 
 
 msgid "Scene Collection"
@@ -94226,10 +94194,6 @@ msgid "Nothing indicated"
 msgstr "Ничего не указано"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Связывание или присоединение от .blend-файла в очень старом формате (%d.%d), анимация не будет преобразована! Пересохраните библиотечный файл в текущей версии Blender"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "Невозможно добавить датаблок «%s» типа «%s"
 
@@ -94248,10 +94212,6 @@ msgstr "«%s»: ничего не указано"
 
 msgid "'%s': cannot use current file as library"
 msgstr "«%s»: невозможно использовать файл как библиотеку"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Перезагрузка библиотеки: замена всех ссылок на старый датаблок '%s' с помощью перезагрузки не удалась, старый датаблок (%d оставшихся пользователей) пришлось сохранить и переименовать в '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

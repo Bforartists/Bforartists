@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -835,7 +835,7 @@ msgstr "Barre globale en bas de l’écran pour les informations de statut gén�
 
 
 msgid "Outliner"
-msgstr "Outliner"
+msgstr "Concepteur"
 
 
 msgid "Overview of scene graph and all available data-blocks"
@@ -954,8 +954,40 @@ msgid "Armatures active edit bone"
 msgstr "Os d’édition actif de l’armature"
 
 
+msgid "Additional data stored for an asset data-block"
+msgstr "Données supplémentaires stockées pour un bloc de données d'asset"
+
+
+msgid "Name of the creator of the asset"
+msgstr "Nom du créateur de l'asset"
+
+
+msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122"
+msgstr "Identifiant pour le catalogue d'asset, utilisé par Blender pour retrouver le chemin du catalogue de l'asset. Doit être un UUID selon RFC4122"
+
+
+msgid "Simple name of the asset's catalog, for debugging and data recovery purposes"
+msgstr "Nom simple du catalogue d'asset, utile pour le débogage et la récupération de données"
+
+
 msgid "Description"
 msgstr "Description"
+
+
+msgid "A description of the asset to be displayed for the user"
+msgstr "Une description de l'asset affichée à l'utilisateur"
+
+
+msgid "Tags"
+msgstr "Tags"
+
+
+msgid "Asset Tag"
+msgstr "Etiquette de l'asset"
+
+
+msgid "Asset Tags"
+msgstr "Etiquettes de l'asset"
 
 
 msgid "Geometry attribute"
@@ -1702,6 +1734,10 @@ msgid "Particle data-blocks"
 msgstr "Blocs de données particules"
 
 
+msgid "Point Clouds"
+msgstr "Nuages de points"
+
+
 msgid "Scenes"
 msgstr "Scènes"
 
@@ -1724,6 +1760,10 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
+
+
+msgid "Simulations"
+msgstr "Simulations"
 
 
 msgid "Sounds"
@@ -3736,10 +3776,6 @@ msgstr "La couleur de vertex n’affecte que le trait"
 
 msgid "Vertex Color affects to Fill only"
 msgstr "La couleur de vertex n’affecte que le remplissage"
-
-
-msgid "Stroke and Fill"
-msgstr "Trait et remplissage"
 
 
 msgid "Vertex Color affects to Stroke and Fill"
@@ -8084,7 +8120,7 @@ msgstr "Filtre par nom"
 
 
 msgid "Live filtering string"
-msgstr "Chaîne du filtrage en live"
+msgstr "Chaîne pour filtrage en live"
 
 
 msgid "Display Armature"
@@ -11050,6 +11086,14 @@ msgid "Both Z"
 msgstr "Les deux Z"
 
 
+msgid "File Select Asset Filter"
+msgstr "Filtre pour le sélecteur de fichier d'asset"
+
+
+msgid "Which asset types to show/hide, when browsing an asset library"
+msgstr "Quels types d'asset afficher/cacher lors de la navigation dans une bibliothèque d'asset"
+
+
 msgid "Show Armature data-blocks"
 msgstr "Afficher les blocs de données armature"
 
@@ -11150,16 +11194,8 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Afficher les blocs de données réglages de particules"
 
 
-msgid "Point Clouds"
-msgstr "Nuages de points"
-
-
 msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
-
-
-msgid "Simulations"
-msgstr "Simulations"
 
 
 msgid "Show Sound data-blocks"
@@ -11216,6 +11252,10 @@ msgstr "Enregistrer"
 
 msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Si ce chemin est enregistré dans les signets, ou généré par l’OS"
+
+
+msgid "Asset data, valid if the file represents an asset"
+msgstr "Données d'asset, valide si le fichier représente un asset"
 
 
 msgid "Brush"
@@ -11566,6 +11606,10 @@ msgid "Enable filtering of files"
 msgstr "Activer le filtrage des fichiers"
 
 
+msgid "Only Assets"
+msgstr "Assets seulement"
+
+
 msgid "Filter Blender Backup Files"
 msgstr "Filtrer fichiers Blender de sauvegarde"
 
@@ -11670,12 +11714,40 @@ msgid "Sort items descending, from highest value to lowest"
 msgstr "Trier les éléments de façon descendante, de la plus forte valeur à la plus faible"
 
 
+msgid "Asset Select Parameters"
+msgstr "Paramètres de sélection d'asset"
+
+
+msgid "Asset Library"
+msgstr "Bibliothèque d'asset"
+
+
+msgid "Filter Asset Types"
+msgstr "Filtrer les types d'asset"
+
+
+msgid "Import Type"
+msgstr "Type d'import"
+
+
+msgid "Determine how the asset will be imported"
+msgstr "Détermine comment les assets seront importés"
+
+
 msgid "Link"
 msgstr "Lier"
 
 
+msgid "Import the assets as linked data-block"
+msgstr "Importer les assets en tant que blocs liés"
+
+
 msgid "Append"
 msgstr "Ajouter"
+
+
+msgid "Import the assets as copied data-block, with no link to the original asset data-block"
+msgstr "Importer les assets en tant que blocs de données copiés, sans aucun lien avec les blocs de données de l'asset d'origine"
 
 
 msgid "3D vector"
@@ -14584,6 +14656,14 @@ msgid "Create duplication of strokes"
 msgstr "Créer une duplication de traits"
 
 
+msgid "Line Art"
+msgstr "Dessin au trait"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "Générer un tracé de dessin au trait à partir de la source sélectionnée"
+
+
 msgid "Mirror"
 msgstr "Miroir"
 
@@ -15102,8 +15182,48 @@ msgid "Point Density"
 msgstr "Densité de point"
 
 
+msgid "Use Curvature"
+msgstr "Utiliser courbure"
+
+
+msgid "Follow the curvature of the stroke"
+msgstr "Suivre la courbure du tracé"
+
+
+msgid "Line Art Modifier"
+msgstr "Modificateur de dessin au trait"
+
+
 msgid "Overscan"
 msgstr "Sur-balayage"
+
+
+msgid "Use specified camera object for generating line art"
+msgstr "Utiliser l'objet caméra spécifié pour générer le dessin au trait"
+
+
+msgid "Generate strokes from the objects in this collection"
+msgstr "Générer des tracés à partir des objets dans cette collection"
+
+
+msgid "Generate strokes from this object"
+msgstr "Générer des tracés à partir de cet objet"
+
+
+msgid "Source Type"
+msgstr "Type de source"
+
+
+msgid "Line art stroke source type"
+msgstr "Type de source pour le tracé du dessin au trait"
+
+
+msgid "The thickness for the generated strokes"
+msgstr "L'épaisseur pour les traits générés"
+
+
+msgid "Use cached scene data from the first line art modifier in the stack. Certain settings will be unavailable"
+msgstr "Utiliser les données de scène en cache pour le premier modificateur dans la pile du dessin au trait. Certains paramètres seront indisponibles"
 
 
 msgid "Boundaries"
@@ -15586,6 +15706,14 @@ msgid "Note/Layer to add annotation strokes to"
 msgstr "Note/calque auquel ajouter les traits d’annotation"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Indice de la première boucle de ce polygone"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Nombre de boucles utilisées par ce polygone"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Graphiques pour une vue statistique d’une image"
 
@@ -15632,6 +15760,10 @@ msgstr "Afficher des lignes plutôt que des formes pleines"
 
 msgid "Base type for data-blocks, defining a unique name, linking from other libraries and garbage collection"
 msgstr "Type de base pour les blocs de données, avec définition d’un nom unique, lien depuis d’autres bibliothèques, et ramasse-miettes"
+
+
+msgid "Additional data for an asset data-block"
+msgstr "Données supplémentaires pour un bloc de données d'asset"
 
 
 msgid "Is Evaluated"
@@ -15720,10 +15852,6 @@ msgstr "Les F-courbes individuelles qui constituent l’action"
 
 msgid "Frame Range"
 msgstr "Intervalle de frames"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "L’intervalle de frames final de toutes les F-courbes dans l’action"
 
 
 msgid "Groups"
@@ -17209,6 +17337,62 @@ msgstr "Décalage d’instance"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Décalage depuis l’origine à utiliser lors de l’instanciation"
+
+
+msgid "Usage"
+msgstr "Utilisation"
+
+
+msgid "How to use this collection in line art"
+msgstr "Comment utiliser cette collection dans le dessin au trait"
+
+
+msgid "Include"
+msgstr "Inclure"
+
+
+msgid "Generate feature lines for this collection"
+msgstr "Générer les lignes caractéristiques pour cette collection"
+
+
+msgid "Occlusion Only"
+msgstr "Occlusion seulement"
+
+
+msgid "Only use the collection to produce occlusion"
+msgstr "Utiliser cette collection uniquement pour produire l'occlusion"
+
+
+msgid "Exclude"
+msgstr "Exclure"
+
+
+msgid "Don't use this collection in line art"
+msgstr "Ne pas utiliser cette collection dans le dessin au trait"
+
+
+msgid "Intersection Only"
+msgstr "Intersection seulement"
+
+
+msgid "Only generate intersection lines for this collection"
+msgstr "Ne générer que les lignes d'intersection pour cette collection"
+
+
+msgid "No Intersection"
+msgstr "Pas d'intersection"
+
+
+msgid "Include this collection but do not generate intersection lines"
+msgstr "Inclure cette collection, mais ne pas générer les lignes d'intersection"
+
+
+msgid "Use Intersection Masks"
+msgstr "Utiliser des masques d'intersection"
+
+
+msgid "Use custom intersection mask for faces in this collection"
+msgstr "Utiliser des masques d'intersection personnalisés pour les faces de cette collection"
 
 
 msgid "Objects that are directly in this collection"
@@ -19617,6 +19801,14 @@ msgid "The line color of a higher priority is used at material boundaries"
 msgstr "La couleur de ligne de plus haute priorité est utilisée comme limites de matériau"
 
 
+msgid "Line Art Settings"
+msgstr "Paramètres du dessin au trait"
+
+
+msgid "Line art settings for material"
+msgstr "Paramètres du dessin au trait pour le matériau"
+
+
 msgid "Metallic"
 msgstr "Métallique"
 
@@ -20699,6 +20891,10 @@ msgstr "Rendre les objets comme cache, qui créent un trou dans l’image avec u
 
 msgid "Shadow Catcher"
 msgstr "Attrapeur d’ombres"
+
+
+msgid "Line art settings for the object"
+msgstr "Paramètres de dessin au trait pour l'objet"
 
 
 msgid "Location of the object"
@@ -23660,6 +23856,10 @@ msgstr "En test"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Scripts nouvellement proposés (exclus des versions officielles)"
+
+
+msgid "Full path to the Blender file containing the active asset"
+msgstr "Chemin complet vers le fichier Blender contenant l'asset actif"
 
 
 msgid "Key Configurations"
@@ -27135,6 +27335,10 @@ msgid "Material slot name"
 msgstr "Nom de l’emplacement de matériau"
 
 
+msgid "Assets Context Menu"
+msgstr "Menu contextuel des assets"
+
+
 msgid "Edit"
 msgstr "Éditer"
 
@@ -27292,6 +27496,14 @@ msgstr "Nœud"
 
 msgid "Node Color Specials"
 msgstr "Couleur de nœud – Spécialités"
+
+
+msgid "Assets"
+msgstr "Assets"
+
+
+msgid "Outliner Context Menu"
+msgstr "Menu contextuel du concepteur"
 
 
 msgid "Particle Specials"
@@ -27516,6 +27728,10 @@ msgstr "Ajouter image"
 
 msgid "Make Single User"
 msgstr "Rendre utilisateur unique"
+
+
+msgid "Asset"
+msgstr "Asset"
 
 
 msgid "Object Context Menu"
@@ -27826,16 +28042,8 @@ msgid "Loop Start"
 msgstr "Boucle départ"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Indice de la première boucle de ce polygone"
-
-
 msgid "Loop Total"
 msgstr "Boucle total"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Nombre de boucles utilisées par ce polygone"
 
 
 msgid "Polygon Normal"
@@ -31302,10 +31510,6 @@ msgid "Remove original geometry"
 msgstr "Supprimer géométrie originale"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Un élément pour le cache de l'espace du monde après une rangée"
-
-
 msgid "Custom color for motion path"
 msgstr "Couleur personnalisée pour le chemin de mouvement"
 
@@ -34419,12 +34623,20 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Anti-aliaser le z-buffer pour essayer d’éviter des artefacts, surtout utile pour les rendus Blender"
 
 
+msgid "Dot Product"
+msgstr "Produit scalaire"
+
+
 msgid "Equal"
 msgstr "Égal"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "Valeur d’entrée utilisée pour une prise non-connectée"
+
+
+msgid "Component"
+msgstr "Composante"
 
 
 msgid "Original"
@@ -34457,10 +34669,6 @@ msgstr "Interpolation cubique"
 
 msgid "Cross Product"
 msgstr "Produit vectoriel"
-
-
-msgid "Dot Product"
-msgstr "Produit scalaire"
 
 
 msgid "Z Axis"
@@ -34582,10 +34790,6 @@ msgstr "BSDF brillant"
 
 msgid "Hair BSDF"
 msgstr "BSDF Cheveux"
-
-
-msgid "Component"
-msgstr "Composante"
 
 
 msgid "Reflection"
@@ -35660,6 +35864,38 @@ msgid "Collection of object grease pencil modifiers"
 msgstr "Collection de modificateurs d’objet crayon gras"
 
 
+msgid "Object Line Art"
+msgstr "Dessin au trait de l'objet"
+
+
+msgid "Object line art settings"
+msgstr "Paramètres du dessin au trait de l'objet"
+
+
+msgid "How to use this object in line art calculation"
+msgstr "Comment utiliser cet objet dans le calcul du dessin au trait"
+
+
+msgid "Inherit"
+msgstr "Hériter"
+
+
+msgid "Use settings from the parent collection"
+msgstr "Utiliser les paramètres de la collection parente"
+
+
+msgid "Generate feature lines for this object's data"
+msgstr "Générer les lignes caractéristiques pour les données de cet objet"
+
+
+msgid "Don't use this object for Line Art rendering"
+msgstr "Ne pas utiliser cet objet pour le rendu du dessin au trait"
+
+
+msgid "Include this object but do not generate intersection lines"
+msgstr "Inclure cet objet mais ne pas générer les lignes d'intersection"
+
+
 msgid "Object Modifiers"
 msgstr "Modificateurs d’objet"
 
@@ -36217,7 +36453,7 @@ msgstr "Désélectionner les images clé aux extrémités des îles de sélectio
 
 msgctxt "Operator"
 msgid "Select Linked"
-msgstr "Sélectionner lié(e)s"
+msgstr "Sélectionner liés"
 
 
 msgid "Select keyframes occurring in the same F-Curves as selected ones"
@@ -37227,6 +37463,15 @@ msgid "+X to -X"
 msgstr "+X vers -X"
 
 
+msgctxt "Operator"
+msgid "Copy to Asset Library"
+msgstr "Copier dans la bibliothèque d'asset"
+
+
+msgid "Copy the current .blend file into an Asset Library. Only works on standalone .blend files (i.e. when no other files are referenced)"
+msgstr "Copie le fichier .blend actuel dans une bibliothèque d'asset. Fonctionne seulement sur un fichier .blend autonome (c.-à-d. lorsque aucun autre fichier n'est référencé)"
+
+
 msgid "Check Existing"
 msgstr "Vérifier existant"
 
@@ -37309,6 +37554,95 @@ msgstr "Filtrer fichier texte"
 
 msgid "File sorting mode"
 msgstr "Mode de tri fichier"
+
+
+msgctxt "Operator"
+msgid "Delete Asset Catalog"
+msgstr "Supprimer catalogue d'asset"
+
+
+msgid "Remove an asset catalog from the asset library (contained assets will not be affected and show up as unassigned)"
+msgstr "Supprime un catalogue d'asset de la bibliothèque d'asset (les assets qui s'y trouvent ne seront pas affectés et seront visible en tant que non-assigné)"
+
+
+msgctxt "Operator"
+msgid "New Asset Catalog"
+msgstr "Nouveau catalogue d'asset"
+
+
+msgid "Create a new catalog to put assets in"
+msgstr "Créer un nouveau catalogue pour y placer des assets"
+
+
+msgctxt "Operator"
+msgid "Redo Catalog Edits"
+msgstr "Rétablir modification de catalogue"
+
+
+msgid "Redo the last undone edit to the asset catalogs"
+msgstr "Rétablir la dernière modification annulée dans les catalogues d'assets"
+
+
+msgctxt "Operator"
+msgid "Undo Catalog Edits"
+msgstr "Annuler modification de catalogue"
+
+
+msgid "Undo the last edit to the asset catalogs"
+msgstr "Annule la dernière modification des catalogues d'assets"
+
+
+msgctxt "Operator"
+msgid "Clear Asset"
+msgstr "Effacer Asset"
+
+
+msgid "Delete all asset metadata and turn the selected asset data-blocks back into normal data-blocks"
+msgstr "Effacer toutes les métadonnées d'asset et redéfinir les blocs de donnée d'asset en tant que blocs de données normaux"
+
+
+msgid "Set Fake User"
+msgstr "Définir utilisateur factice"
+
+
+msgid "Ensure the data-block is saved, even when it is no longer marked as asset"
+msgstr "S'assure que le bloc de données est sauvegardé, même lorsqu'il n'est plus indiqué comme étant un asset"
+
+
+msgctxt "Operator"
+msgid "Refresh Asset Library"
+msgstr "Actualiser bibliothèque d'asset"
+
+
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Relire les assets et les catalogues d'asset depuis la bibliothèque d'asset sur le disque"
+
+
+msgctxt "Operator"
+msgid "Mark as Asset"
+msgstr "Définir comme Asset"
+
+
+msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
+msgstr "Permet de réutiliser simplement les blocs de donnée sélectionnés via l'explorateur d'asset, à l'aide de métadonnées personnalisables (comme les prévisualisations, les descriptions et les étiquettes)"
+
+
+msgctxt "Operator"
+msgid "Add Asset Tag"
+msgstr "Ajouter étiquette d'asset"
+
+
+msgid "Add a new keyword tag to the active asset"
+msgstr "Ajouter un mot clé en tant qu'étiquette sur l'asset actif"
+
+
+msgctxt "Operator"
+msgid "Remove Asset Tag"
+msgstr "Supprimer étiquette d'asset"
+
+
+msgid "Remove an existing keyword tag from the active asset"
+msgstr "Supprimer un mot clé défini comme étiquette sur l'asset actif"
 
 
 msgctxt "Operator"
@@ -37554,6 +37888,11 @@ msgstr "Dossier du fichier"
 
 msgid "Select the file relative to the blend file"
 msgstr "Sélectionner le fichier relatif au .blend"
+
+
+msgctxt "Operator"
+msgid "Filter"
+msgstr "Filtre"
 
 
 msgctxt "Operator"
@@ -41464,10 +41803,6 @@ msgid "Merge Down"
 msgstr "Fusionner vers le bas"
 
 
-msgid "Merge the current layer with the layer below"
-msgstr "Fusionner le calque actuel avec celui du dessous"
-
-
 msgctxt "Operator"
 msgid "Move Grease Pencil Layer"
 msgstr "Déplacer calque de crayon gras"
@@ -44051,6 +44386,10 @@ msgid "Split off face corners instead of merging faces"
 msgstr "Diviser les coins de face au lieu de fusionner les faces"
 
 
+msgid "Dissolve vertices, merge edges and faces"
+msgstr "Dissoudre les sommets, fusionner arêtes et faces"
+
+
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
 msgstr "Dupliquer et extruder les vertices, arêtes ou faces sélectionnés vers la curseur de la souris"
 
@@ -44064,7 +44403,7 @@ msgstr "Tourner la sélection initiale, pour donner une meilleure forme"
 
 
 msgid "Duplicate selected vertices, edges or faces"
-msgstr "Dupliquer les vertices, arêtes ou faces sélectionnées"
+msgstr "Dupliquer les sommets, arêtes ou faces sélectionnées"
 
 
 msgid "Duplicate mesh and move"
@@ -44073,6 +44412,15 @@ msgstr "Dupliquer le mesh et le déplacer"
 
 msgid "Duplicate"
 msgstr "Dupliquer"
+
+
+msgctxt "Operator"
+msgid "Collapse Edges & Faces"
+msgstr "Replier arêtes & faces"
+
+
+msgid "Collapse isolated edge and face regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
+msgstr "Replier les régions isolées d'arêtes et de faces, fusionnant ainsi les données telles que les UV et les couleurs des sommets. Ceci peut replier en sommets à la fois des anneaux d'arêtes ainsi que des régions de faces connectées"
 
 
 msgctxt "Operator"
@@ -47266,8 +47614,32 @@ msgid "Add a Grease Pencil object to the scene"
 msgstr "Ajouter un objet crayon gras à la scène"
 
 
+msgid "Stroke offset for the line art modifier"
+msgstr "Décalage du tracé pour le modificateur de dessin au trait"
+
+
 msgid "Monkey"
 msgstr "Singe"
+
+
+msgid "Scene Line Art"
+msgstr "Dessin au trait de la scène"
+
+
+msgid "Quickly set up line art for the entire scene"
+msgstr "Mettre en place rapidement le dessin au trait pour toute la scène"
+
+
+msgid "Collection Line Art"
+msgstr "Dessin au trait de la collection"
+
+
+msgid "Quickly set up line art for the active collection"
+msgstr "Mettre en place rapidement le dessin au trait pour la collection active"
+
+
+msgid "Quickly set up line art for the active object"
+msgstr "Mettre en place rapidement le dessin au trait pour l'objet actif"
 
 
 msgctxt "Operator"
@@ -47516,6 +47888,10 @@ msgstr "Ajouter sonde lumière"
 
 msgid "Add a light probe object"
 msgstr "Ajouter un objet sonde lumière"
+
+
+msgid "Move objects to a new collection"
+msgstr "Déplacer les objets vers une nouvelle collection"
 
 
 msgid "Name of the newly added collection"
@@ -48942,7 +49318,7 @@ msgstr "Appliquer la transformation visuelle de l’objet à ses données"
 
 msgctxt "Operator"
 msgid "Outliner Set Action"
-msgstr "Outliner définir action"
+msgstr "Concepteur - Définir action"
 
 
 msgid "Change the active action used"
@@ -48951,7 +49327,7 @@ msgstr "Change l’action active utilisée"
 
 msgctxt "Operator"
 msgid "Outliner Animation Data Operation"
-msgstr "Outliner opération sur les données d’animation"
+msgstr "Concepteur - Opération sur donnée d’animation"
 
 
 msgid "Animation Operation"
@@ -48985,6 +49361,10 @@ msgstr "Effacer contrôleurs"
 msgctxt "Operator"
 msgid "Disable Collection"
 msgstr "Désactiver collection"
+
+
+msgid "Drag to move to collection in Outliner"
+msgstr "Trainer pour déplacer la collection dans le concepteur"
 
 
 msgctxt "Operator"
@@ -49031,6 +49411,10 @@ msgid "New Collection"
 msgstr "Nouvelle collection"
 
 
+msgid "Add a new collection inside selected collection"
+msgstr "Ajouter une nouvelle collection dans la collection sélectionnée"
+
+
 msgctxt "Operator"
 msgid "Deselect Objects"
 msgstr "Désélectionner objets"
@@ -49053,7 +49437,7 @@ msgstr "Afficher dans collection"
 
 msgctxt "Operator"
 msgid "Outliner Constraint Operation"
-msgstr "Outliner opérations sur les contraintes"
+msgstr "Concepteur - Opération sur contrainte"
 
 
 msgid "Constraint Operation"
@@ -49062,7 +49446,7 @@ msgstr "Opération sur les contraintes"
 
 msgctxt "Operator"
 msgid "Outliner Data Operation"
-msgstr "Outliner opérations sur les données"
+msgstr "Concepteur - Opérations sur les données"
 
 
 msgid "Data Operation"
@@ -49102,7 +49486,7 @@ msgstr "Cacher les objets et collections sélectionnés"
 
 msgctxt "Operator"
 msgid "Outliner ID Data Copy"
-msgstr "Outliner copier données d’ID"
+msgstr "Concepteur copier données d’ID"
 
 
 msgctxt "Operator"
@@ -49112,6 +49496,11 @@ msgstr "Supprimer bloc de données"
 
 msgid "Delete the ID under cursor"
 msgstr "Supprimer l’ID sous le pointeur"
+
+
+msgctxt "Operator"
+msgid "Outliner ID Data Operation"
+msgstr "Concepteur - Opération sur donnée ID"
 
 
 msgid "Unlink"
@@ -49152,7 +49541,12 @@ msgstr "Renommer"
 
 msgctxt "Operator"
 msgid "Outliner ID Data Paste"
-msgstr "Outliner coller données d’ID"
+msgstr "Concepteur - Coller données d’ID"
+
+
+msgctxt "Operator"
+msgid "Outliner ID Data Remap"
+msgstr "Concepteur - Réaffecter données d’ID"
 
 
 msgid "New ID"
@@ -49217,7 +49611,7 @@ msgstr "Enlever les éléments sélectionnés (lignes bleu-gris) de l’ensemble
 
 msgctxt "Operator"
 msgid "Outliner Library Operation"
-msgstr "Outliner opérations sur les bibliothèques"
+msgstr "Concepteur - Opérations sur les bibliothèques"
 
 
 msgid "Library Operation"
@@ -49255,12 +49649,12 @@ msgstr "Lâcher matériau sur objet"
 
 
 msgid "Drag material to object in Outliner"
-msgstr "Tirer un matériau vers un objet dans l’Outliner"
+msgstr "Tirer un matériau vers un objet dans le concepteur"
 
 
 msgctxt "Operator"
 msgid "Outliner Modifier Operation"
-msgstr "Outliner opération sur les modificateurs"
+msgstr "Concepteur - Opération sur modificateur"
 
 
 msgid "Modifier Operation"
@@ -49269,7 +49663,7 @@ msgstr "Opération sur les modificateurs"
 
 msgctxt "Operator"
 msgid "Outliner Object Operation"
-msgstr "Outliner opération d’objet"
+msgstr "Concepteur - Opération d’objet"
 
 
 msgid "Object Operation"
@@ -49305,12 +49699,26 @@ msgid "Local Data-blocks"
 msgstr "Blocs de données locaux"
 
 
+msgid "Recursive Delete"
+msgstr "Suppression récursive"
+
+
+msgctxt "Operator"
+msgid "Drop to Clear Parent (hold Alt to keep transforms)"
+msgstr "Lâcher pour effacer le parent (Alt pour garder transformations)"
+
+
 msgid "Drag to clear parent in Outliner"
-msgstr "Tirer pour effacer le parent dans l’Outliner"
+msgstr "Tirer pour effacer le parent dans le concepteur"
+
+
+msgctxt "Operator"
+msgid "Drop to Set Parent (hold Alt to keep transforms)"
+msgstr "Lâcher pour définir le parent (Alt pour garder transformations)"
 
 
 msgid "Drag to parent in Outliner"
-msgstr "Tirer pour apparenter dans l’Outliner"
+msgstr "Tirer pour apparenter dans le concepteur"
 
 
 msgctxt "Operator"
@@ -49319,12 +49727,12 @@ msgstr "Lâcher objet dans scène"
 
 
 msgid "Drag object to scene in Outliner"
-msgstr "Tirer un objet dans une scène dans l’Outliner"
+msgstr "Tirer un objet dans une scène dans le concepteur"
 
 
 msgctxt "Operator"
 msgid "Outliner Scene Operation"
-msgstr "Outliner opération de scène"
+msgstr "Concepteur - Opération de scène"
 
 
 msgid "Context menu for scene operations"
@@ -49354,7 +49762,7 @@ msgstr "(Dés)activer sélectionné"
 
 
 msgid "Toggle the Outliner selection of items"
-msgstr "Inverser la sélection des éléments de l’Outliner"
+msgstr "Inverser la sélection des éléments du concepteur"
 
 
 msgid "Use box selection to select tree elements"
@@ -50280,6 +50688,15 @@ msgstr "Ajouter une nouvelle bibliothèque de poses à l’objet actif"
 
 
 msgctxt "Operator"
+msgid "Paste As New Asset"
+msgstr "Coller comme nouvel asset"
+
+
+msgid "Paste the Asset that was previously copied using Copy As Asset"
+msgstr "Coller l'asset qui avait été copié avec la fonction Copier en tant qu'asset"
+
+
+msgctxt "Operator"
 msgid "PoseLib Add Pose"
 msgstr "Ajouter pose à bibliothèque"
 
@@ -50943,6 +51360,24 @@ msgstr "Installer patron depuis fichier…"
 
 msgid "Remove existing template with the same ID"
 msgstr "Enlever patrons existants ayant le même ID"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Ajouter bibliothèque d'asset"
+
+
+msgid "Add a directory to be used by the Asset Browser as source of assets"
+msgstr "Ajoute un répertoire qui sera utilisé par l'explorateur d'asset en tant que source d'assets"
+
+
+msgctxt "Operator"
+msgid "Remove Asset Library"
+msgstr "Supprimer bibliothèque d'asset"
+
+
+msgid "Remove a path to a .blend file, so the Asset Browser will not attempt to show it anymore"
+msgstr "Supprimer un chemin vers un fichier .blend, afin que l'explorateur d'asset ne tente plus de l'afficher à nouveau"
 
 
 msgid "Use this installation for .blend files and to display thumbnails"
@@ -52087,7 +52522,7 @@ msgstr "Redimensionner l’area sélectionnée"
 
 msgctxt "Operator"
 msgid "Repeat History"
-msgstr "Répéter historique"
+msgstr "Historique des actions répétées"
 
 
 msgid "Display menu for previous actions performed"
@@ -55401,6 +55836,10 @@ msgid "Snap selected item(s) to their nearest grid division"
 msgstr "Aimanter les éléments sélectionnés à leur plus proche division de la grille"
 
 
+msgid "Material Preview"
+msgstr "Prévisualisation du matériau"
+
+
 msgid "Toggle rendered shading"
 msgstr "(Dés)activer l’ombrage de rendu"
 
@@ -57008,6 +57447,18 @@ msgid "UV Maps"
 msgstr "Cartes UV"
 
 
+msgid "Visible Only"
+msgstr "Visible uniquement"
+
+
+msgid "Create Collection"
+msgstr "Créer collection"
+
+
+msgid "Add all imported objects to a new collection"
+msgstr "Ajouter tous les objets importés à une nouvelle collection"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fermer fenêtre"
@@ -57513,6 +57964,10 @@ msgstr "Pré-réglages d’intégrateur"
 
 msgid "Sampling Presets"
 msgstr "Pré-réglages d’échantillonnage"
+
+
+msgid "Asset Metadata"
+msgstr "Métadonnées d'asset"
 
 
 msgid "Bone Constraints"
@@ -58144,6 +58599,10 @@ msgid "Viscosity"
 msgstr "Viscosité"
 
 
+msgid "Show options for the properties editor"
+msgstr "Afficher les options pour l'éditeur de propriétés"
+
+
 msgid "Freestyle Line Style SVG Export"
 msgstr "Export SVG de style de ligne Freestyle"
 
@@ -58258,6 +58717,10 @@ msgstr "Nouveaux objets"
 
 msgid "Applications"
 msgstr "Applications"
+
+
+msgid "Asset Libraries"
+msgstr "Bibliothèques d'asset"
 
 
 msgid "Development"
@@ -60222,6 +60685,18 @@ msgid "Use Visual keying automatically for constrained objects"
 msgstr "Utiliser automatiquement les images clé visuelles pour les objets contraints"
 
 
+msgid "Asset Debug Info"
+msgstr "Infos debug d'asset"
+
+
+msgid "Enable some extra fields in the Asset Browser to aid in debugging"
+msgstr "Active quelques champs supplémentaires dans l'explorateur d'asset pour aider au débogage"
+
+
+msgid "Extended Asset Browser"
+msgstr "Explorateur d'asset étendu"
+
+
 msgid "Animation Player"
 msgstr "Lecteur d’animation"
 
@@ -60632,6 +61107,14 @@ msgstr "Méthode de rotation"
 
 msgid "Orbit method in the viewport"
 msgstr "Méthode de rotation de la vue 3D"
+
+
+msgid "Turntable keeps the Z-axis upright while orbiting"
+msgstr "Le mode Table tournante maintient l'axe Z vertical pendant la rotation"
+
+
+msgid "Trackball allows you to tumble your view at any angle"
+msgstr "Trackball vous permet de basculer la vue dans tous les angles"
 
 
 msgid "Zoom Axis"
@@ -62964,6 +63447,14 @@ msgstr "Ombrage de la prévisualisation du séquenceur"
 
 msgid "Display the object as wire edges"
 msgstr "Afficher l’objet en fil de fer"
+
+
+msgid "Display in solid mode"
+msgstr "Afficher en mode solide"
+
+
+msgid "Display in Material Preview mode"
+msgstr "Afficher en mode prévisualisation du matériau"
 
 
 msgid "Display render preview"
@@ -66133,6 +66624,10 @@ msgid "Index of active bookmark (-1 if none)"
 msgstr "Indice du signet actif (-1 si aucun)"
 
 
+msgid "Asset Browser"
+msgstr "Explorateur d'asset"
+
+
 msgid "Filebrowser Parameter"
 msgstr "Réglages du navigateur de fichiers"
 
@@ -66597,12 +67092,8 @@ msgid "Automatically offset the following or previous nodes in a chain when inse
 msgstr "Décaler automatiquement les nœuds suivants ou précédents d’une chaîne à l’insertion d’un nouveau nœud"
 
 
-msgid "Space Outliner"
-msgstr "Espace Outliner"
-
-
 msgid "Outliner space data"
-msgstr "Données d’espace de l’outliner"
+msgstr "Concepteur - Données d’espace"
 
 
 msgid "Type of information to display"
@@ -66625,12 +67116,29 @@ msgid "Display data-blocks which are unused and/or will be lost when the file is
 msgstr "Afficher les blocs de données qui sont inutilisés et/ou seront perdus au prochain rechargement du fichier"
 
 
+msgctxt "ID"
+msgid "Filter by Type"
+msgstr "Filtrer par type"
+
+
+msgid "Show selected objects"
+msgstr "Afficher objets sélectionnés"
+
+
+msgid "Show only the active object"
+msgstr "Afficher seulement l'objet actif"
+
+
+msgid "Show only selectable objects"
+msgstr "Afficher seulement objets sélectionnables"
+
+
 msgid "Display Filter"
 msgstr "Filtre d’affichage"
 
 
 msgid "Live search filtering string"
-msgstr "Chaîne du filtrage de la recherche en live"
+msgstr "Chaîne utilisée pour filtrer la recherche en temps réel"
 
 
 msgid "Case Sensitive Matches Only"
@@ -66653,12 +67161,64 @@ msgid "Only use complete matches of search string"
 msgstr "N’utiliser que les correspondances à la recherche complètes"
 
 
+msgid "Filter Objects"
+msgstr "Filtrer les objets"
+
+
+msgid "Show objects"
+msgstr "Afficher les objets"
+
+
+msgid "Show Cameras"
+msgstr "Afficher les caméras"
+
+
+msgid "Show camera objects"
+msgstr "Afficher les objets de type caméra"
+
+
+msgid "Show Object Contents"
+msgstr "Afficher le contenu des objets"
+
+
+msgid "Show what is inside the objects elements"
+msgstr "Afficher ce qui se trouve dans les éléments des objets"
+
+
+msgid "Show Empties"
+msgstr "Afficher vides"
+
+
+msgid "Show empty objects"
+msgstr "Afficher les objets vides"
+
+
+msgid "Show Lights"
+msgstr "Afficher lampes"
+
+
+msgid "Show light objects"
+msgstr "Afficher les objets de type lampe"
+
+
+msgid "Show Other Objects"
+msgstr "Afficher autres objets"
+
+
 msgid "Show curves, lattices, light probes, fonts, ..."
 msgstr "Afficher les courbes, lattices, sondes lumière, polices, …"
 
 
 msgid "Sort Alphabetically"
 msgstr "Trier alphabétiquement"
+
+
+msgid "Sync Outliner Selection"
+msgstr "Synchroniser la sélection du concepteur"
+
+
+msgid "Sync outliner selection with other editors"
+msgstr "Synchroniser la sélection du concepteur avec les autres éditeurs"
 
 
 msgid "Search term for filtering in the UI"
@@ -66743,6 +67303,26 @@ msgstr "Propriétés des particules"
 
 msgid "Physics Properties"
 msgstr "Propriétés de la physique"
+
+
+msgid "Outliner Sync"
+msgstr "Synchroniser concepteur"
+
+
+msgid "Change to the corresponding tab when outliner data icons are clicked"
+msgstr "Basculer vers l'onglet correspondant lors du clic sur les icônes de données du concepteur"
+
+
+msgid "Always change tabs when clicking an icon in an outliner"
+msgstr "Toujours changer d'onglet lors du clic sur une icône dans un concepteur"
+
+
+msgid "Never change tabs when clicking an icon in an outliner"
+msgstr "Ne jamais changer d'onglet lors du clic sur une icône dans un concepteur"
+
+
+msgid "Change tabs only when this editor shares a border with an outliner"
+msgstr "Changer d'onglet seulement quand cet éditeur partage une bordure avec un concepteur"
 
 
 msgid "Pin ID"
@@ -68406,11 +68986,11 @@ msgstr "Fil de fer sélectionné"
 
 
 msgid "Theme Outliner"
-msgstr "Thème de l’outliner"
+msgstr "Thème du concepteur"
 
 
 msgid "Theme settings for the Outliner"
-msgstr "Réglages du thème pour l’outliner"
+msgstr "Réglages du thème pour le concepteur"
 
 
 msgid "Filter Match"
@@ -68543,6 +69123,10 @@ msgstr "Texte surligné de liste de sources"
 
 msgid "Source List Title"
 msgstr "Titre de liste de sources"
+
+
+msgid "Theme settings for the Status Bar"
+msgstr "Réglages du thème pour la barre d'état"
 
 
 msgid "Theme settings for style sets"
@@ -69073,6 +69657,10 @@ msgid "Mesh Statistics Visualization"
 msgstr "Visualisation des statistiques du mesh"
 
 
+msgid "Transform Pivot Point"
+msgstr "Point de pivotement pour la transformation"
+
+
 msgid "Unified Paint Settings"
 msgstr "Réglages de peinture unifiés"
 
@@ -69493,6 +70081,10 @@ msgid "Display units in pairs (e.g. 1m 0cm)"
 msgstr "Afficher les unités par paires (par ex. 1m 0cm)"
 
 
+msgid "Path to a directory with .blend files to use as an asset library"
+msgstr "Chemin vers un dossier contenant les fichiers .blend à utiliser comme bibliothèque d'asset"
+
+
 msgid "Solid Light"
 msgstr "Lumières en vue Solide"
 
@@ -69721,6 +70313,26 @@ msgid "Theme"
 msgstr "Thème"
 
 
+msgid "Cycles Settings"
+msgstr "Réglages de Cycles"
+
+
+msgid "Lighting Method for Solid/Texture Viewport Shading"
+msgstr "Méthode d'éclairage pour l'ombrage dans la vue solide/texture"
+
+
+msgid "Display using studio lighting"
+msgstr "Afficher en utilisant l'éclairage studio"
+
+
+msgid "Display using matcap material and lighting"
+msgstr "Afficher en utilisant le matériau et l'éclairage matcap"
+
+
+msgid "Display using flat lighting"
+msgstr "Afficher en utilisant l'éclairage plat"
+
+
 msgid "AOV"
 msgstr "AOV"
 
@@ -69910,6 +70522,11 @@ msgstr "Anim :"
 msgctxt "Operator"
 msgid "Armature:"
 msgstr "Armature :"
+
+
+msgctxt "Operator"
+msgid "Asset:"
+msgstr "Asset:"
 
 
 msgctxt "Operator"
@@ -70119,7 +70736,7 @@ msgstr "Objet :"
 
 msgctxt "Operator"
 msgid "Outliner:"
-msgstr "Outliner :"
+msgstr "Concepteur :"
 
 
 msgctxt "Operator"
@@ -70469,7 +71086,7 @@ msgstr "Image, générique"
 
 msgctxt "WindowManager"
 msgid "Outliner"
-msgstr "Outliner"
+msgstr "Concepteur"
 
 
 msgctxt "WindowManager"
@@ -70670,14 +71287,6 @@ msgid "Homogeneous"
 msgstr "Homogène"
 
 
-msgid "CPU Flags:"
-msgstr "Drapeaux CPU :"
-
-
-msgid "CUDA Flags:"
-msgstr "Drapeaux CUDA :"
-
-
 msgid "Portal"
 msgstr "Portail"
 
@@ -70857,6 +71466,22 @@ msgid "Apply"
 msgstr "Appliquer"
 
 
+msgid "Pasted %d assets"
+msgstr "%d assets collés"
+
+
+msgid "Did not find any assets on clipboard"
+msgstr "Aucun asset trouvé dans le presse-papier"
+
+
+msgid "Selected asset  could not be located inside the asset library"
+msgstr "L'asset sélectionné  n'a pas pu être trouvé dans la bibliothèque d'asset"
+
+
+msgid "Selected asset  is not an Action"
+msgstr "L'asset sélectionné  n'est pas une action"
+
+
 msgid "Demo Mode:"
 msgstr "Mode démo :"
 
@@ -71026,6 +71651,10 @@ msgid "API Defined"
 msgstr "Défini par l’API"
 
 
+msgid "This asset is stored in the current blend file"
+msgstr "Cet asset est stocké dans le fichier blend actuel"
+
+
 msgid "Active object is not a mesh"
 msgstr "L’objet actif n’est pas un mesh"
 
@@ -71045,11 +71674,6 @@ msgstr "Sélectionner avec"
 
 msgid "Spacebar"
 msgstr "Barre d’espace"
-
-
-msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Récupérer les paramètres de %d.%d"
 
 
 msgctxt "Operator"
@@ -71089,6 +71713,11 @@ msgstr "Ajouter…"
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Manuel (en)"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Récupérer les paramètres de %d.%d"
 
 
 msgid "Frame Numbers"
@@ -72178,6 +72807,19 @@ msgid "Back"
 msgstr "De derrière"
 
 
+msgid "Asset Details"
+msgstr "Détails de l'asset"
+
+
+msgctxt "Operator"
+msgid "Clear Asset (Set Fake User)"
+msgstr "Effacer Asset (Définir utilisateur factice)"
+
+
+msgid "Simple Name"
+msgstr "Nom simple"
+
+
 msgctxt "Operator"
 msgid "Toggle Dope Sheet"
 msgstr "Thème de Feuille d'exposition"
@@ -72479,6 +73121,20 @@ msgid "Show One Level"
 msgstr "Afficher un niveau"
 
 
+msgctxt "Operator"
+msgid "Isolate"
+msgstr "Isoler"
+
+
+msgctxt "Operator"
+msgid "Paste Data-Blocks"
+msgstr "Coller les blocs de données"
+
+
+msgid "Object Contents"
+msgstr "Contenu d'objet"
+
+
 msgid "Object Children"
 msgstr "Enfants d’objet"
 
@@ -72488,8 +73144,29 @@ msgid "Hide One Level"
 msgstr "Cacher un niveau"
 
 
+msgctxt "Operator"
+msgid "Link to Scene"
+msgstr "Lier à la scène"
+
+
+msgid "Restriction Toggles"
+msgstr "Boutons de restriction"
+
+
+msgid "Sync Selection"
+msgstr "Synchroniser sélection"
+
+
+msgid "Others"
+msgstr "Autres"
+
+
 msgid "No Keying Set Active"
 msgstr "Pas d‘ensemble de clés actif"
+
+
+msgid "Sync with Outliner"
+msgstr "Synchroniser avec le concepteur"
 
 
 msgid "Lift:"
@@ -72777,6 +73454,10 @@ msgid "Jump to Previous Marker"
 msgstr "Aller au marqueur précédent"
 
 
+msgid "Drag:"
+msgstr "Traîner:"
+
+
 msgid ""
 "Measure distance and angles.\n"
 "• %s anywhere for new measurement.\n"
@@ -72845,7 +73526,7 @@ msgstr "Historique d’annulation…"
 
 msgctxt "Operator"
 msgid "Repeat History..."
-msgstr "Répéter historique…"
+msgstr "Historiques des actions répétées..."
 
 
 msgctxt "Operator"
@@ -73115,10 +73796,6 @@ msgid ":"
 msgstr ":"
 
 
-msgid "Upgrade to 2.8x required"
-msgstr "Mise à niveau requise vers la version 2.8x"
-
-
 msgid "Description:"
 msgstr "Description :"
 
@@ -73254,7 +73931,7 @@ msgstr "Sélectionner la caméra active"
 
 msgctxt "Operator"
 msgid "Select Pattern..."
-msgstr "Motif de sélection…"
+msgstr "Sélectionner par motif..."
 
 
 msgctxt "Operator"
@@ -74165,6 +74842,10 @@ msgid "in memory to enable editing!"
 msgstr "en mémoire pour permettre l’édition !"
 
 
+msgid "User Library"
+msgstr "Bibliothèque de l'utilisateur"
+
+
 msgid "No AnimData to set action on"
 msgstr "Aucune donnée d’animation sur laquelle définir l’action"
 
@@ -74221,8 +74902,20 @@ msgid "Loading '%s' failed: "
 msgstr "Le chargement de “%s” a échoué : "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Liaison ou import depuis un très vieux format de fichier .blend (%d.%d), aucune conversion d’animation ne sera effectuée ! Vous devriez ré-enregistrer votre fichier bibliothèque avec le Blender actuel"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Rechargement de bibliothèque : le remplacement de toutes les références à l’ancien bloc de données “%s” par celui rechargé a échoué, l’ancien (%d utilisateurs restants) a été conservé et renommé en “%s”"
+
+
 msgid "Path '%s' not found"
 msgstr "Le chemin “%s” est introuvable"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "“%s” est introuvable dans “%s”"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -74235,14 +74928,6 @@ msgstr "Fichiers totaux %d | Modifiés %d | Échoués %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "Impossible de rendre relatif le chemin “%s”"
-
-
-msgid "Could not open directory '%s'"
-msgstr "Impossible d’ouvrir le dossier “%s”"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "“%s” est introuvable dans “%s”"
 
 
 msgid "Scene Collection"
@@ -75208,12 +75893,40 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Erreur de programmation : manque une fonction de nettoyage de transformation ou un nom d’ensemble de clés"
 
 
+msgid "Selected data-blocks are already assets (or do not support use as assets)"
+msgstr "Les blocs de donnée sélectionnés sont déjà des assets (ou ne supportent pas d'être utilisés comme assets)"
+
+
+msgid "No data-blocks to create assets for found (or do not support use as assets)"
+msgstr "Pas de bloc de données trouvé pour créer des assets (ou ne supportent pas d'être utilisés en tant qu'assets)"
+
+
 msgid "Path is empty, cannot save"
 msgstr "Le chemin est vide, impossible d’enregistrer"
 
 
 msgid "Path too long, cannot save"
 msgstr "Le chemin est trop long, impossible d’enregistrer"
+
+
+msgid "Data-block '%s' is now an asset"
+msgstr "Bloc de données '%s' est maintenant un asset"
+
+
+msgid "%i data-blocks are now assets"
+msgstr "%i blocs de données sont maintenant des assets"
+
+
+msgid "Data-block '%s' is no asset anymore"
+msgstr "Le bloc de données '%s' n'est plus un asset"
+
+
+msgid "%i data-blocks are no assets anymore"
+msgstr "%i blocs de données ne sont plus des assets"
+
+
+msgid "Cannot save asset catalogs before the Blender file is saved"
+msgstr "Impossible de sauvegarder les catalogues d'asset avant que le fichier Blender ne soit sauvegardé"
 
 
 msgid "Cannot separate current selection"
@@ -76606,6 +77319,14 @@ msgid "Can't edit linked mesh or curve data"
 msgstr "Impossible d’éditer les meshes ou données de courbes liés"
 
 
+msgid "%s already in %s"
+msgstr "%s déjà dans %s"
+
+
+msgid "%s %s to %s"
+msgstr "%s %s vers %s"
+
+
 msgid "Only one modifier of this type is allowed"
 msgstr "Un seul modificateur de ce type autorisé"
 
@@ -77230,6 +77951,14 @@ msgid "Show Tool Settings"
 msgstr "Afficher les paramètres de l'outil"
 
 
+msgid "Flip to Right"
+msgstr "Basculer vers la droite"
+
+
+msgid "Flip to Left"
+msgstr "Basculer vers la gauche"
+
+
 msgid "Blender Preferences"
 msgstr "Préférences de Blender"
 
@@ -77666,8 +78395,40 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Certaines données ont échoué à la reconstruction (voyez la console pour les détails)"
 
 
+msgid "Unassigned"
+msgstr "Non assigné"
+
+
+msgid "Move assets to catalog"
+msgstr "Déplacer les assets vers le catalogue"
+
+
+msgid "Move asset to catalog"
+msgstr "Déplacer l'asset vers le catalogue"
+
+
 msgid "File path"
 msgstr "Chemin de fichier"
+
+
+msgid "Path to asset library does not exist:"
+msgstr "Le chemin vers la bibliothèque d'asset n'existe pas:"
+
+
+msgid ""
+"Asset Libraries are local directories that can contain .blend files with assets inside.\n"
+"Manage Asset Libraries from the File Paths section in Preferences"
+msgstr ""
+"Les bibliothèques d'asset sont des répertoires locaux qui contiennent des fichiers .blend contenant des assets.\n"
+"Gérez les bibliothèques d'asset depuis la section Chemins de fichier dans les Préférences"
+
+
+msgid "Today"
+msgstr "Aujourd'hui"
+
+
+msgid "Yesterday"
+msgstr "Hier"
 
 
 msgid "File does not exist"
@@ -77700,6 +78461,10 @@ msgstr "Nom de fichier, écraser existant"
 
 msgid "File name"
 msgstr "Nom de fichier"
+
+
+msgid "Asset Catalogs"
+msgstr "Catalogues d'asset"
 
 
 msgid "Cursor X"
@@ -78290,6 +79055,10 @@ msgstr "Aucune bande"
 
 msgid "(empty)"
 msgstr "(vide)"
+
+
+msgid "Current File"
+msgstr "Fichier actuel"
 
 
 msgid "Can't reload with running modal operators"
@@ -79239,6 +80008,10 @@ msgstr "Impossible d’ouvrir le fichier : \"%s\""
 
 msgid "Bone Envelopes"
 msgstr "Enveloppes des os"
+
+
+msgid "Cached from the first line art modifier"
+msgstr "Mis en cache à partir du premier modificateur du dessin au trait"
 
 
 msgid "AaBbCc"
@@ -80721,10 +81494,6 @@ msgid "Nothing indicated"
 msgstr "Rien d’indiqué"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Liaison ou import depuis un très vieux format de fichier .blend (%d.%d), aucune conversion d’animation ne sera effectuée ! Vous devriez ré-enregistrer votre fichier bibliothèque avec le Blender actuel"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "Impossible d’importer le bloc de données “%s” de type “%s”"
 
@@ -80743,10 +81512,6 @@ msgstr "“%s” : rien d’indiqué"
 
 msgid "'%s': cannot use current file as library"
 msgstr "“%s” : impossible d’utiliser le fichier courant comme bibliothèque"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Rechargement de bibliothèque : le remplacement de toutes les références à l’ancien bloc de données “%s” par celui rechargé a échoué, l’ancien (%d utilisateurs restants) a été conservé et renommé en “%s”"
 
 
 msgid "'%s' is not a valid library filepath"
