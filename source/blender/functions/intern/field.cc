@@ -257,24 +257,6 @@ static void build_multi_function_procedure_for_fields(MFProcedure &procedure,
   BLI_assert(procedure.validate());
 }
 
-/**
- * Evaluate fields in the given context. If possible, multiple fields should be evaluated together,
- * because that can be more efficient when they share common sub-fields.
- *
- * \param scope: The resource scope that owns data that makes up the output virtual arrays. Make
- *   sure the scope is not destructed when the output virtual arrays are still used.
- * \param fields_to_evaluate: The fields that should be evaluated together.
- * \param mask: Determines which indices are computed. The mask may be referenced by the returned
- *   virtual arrays. So the underlying indices (if applicable) should live longer then #scope.
- * \param context: The context that the field is evaluated in. Used to retrieve data from each
- *   #FieldInput in the field network.
- * \param dst_varrays: If provided, the computed data will be written into those virtual arrays
- *   instead of into newly created ones. That allows making the computed data live longer than
- *   #scope and is more efficient when the data will be written into those virtual arrays
- *   later anyway.
- * \return The computed virtual arrays for each provided field. If #dst_varrays is passed, the
- *   provided virtual arrays are returned.
- */
 Vector<GVArray> evaluate_fields(ResourceScope &scope,
                                 Span<GFieldRef> fields_to_evaluate,
                                 IndexMask mask,
@@ -488,15 +470,6 @@ void evaluate_constant_field(const GField &field, void *r_value)
   varrays[0].get_to_uninitialized(0, r_value);
 }
 
-/**
- * If the field depends on some input, the same field is returned.
- * Otherwise the field is evaluated and a new field is created that just computes this constant.
- *
- * Making the field constant has two benefits:
- * - The field-tree becomes a single node, which is more efficient when the field is evaluated many
- *   times.
- * - Memory of the input fields may be freed.
- */
 GField make_field_constant_if_possible(GField field)
 {
   if (field.node().depends_on_input()) {
@@ -531,7 +504,7 @@ IndexFieldInput::IndexFieldInput() : FieldInput(CPPType::get<int>(), "Index")
   category_ = Category::Generated;
 }
 
-GVArray IndexFieldInput::get_index_varray(IndexMask mask, ResourceScope &UNUSED(scope))
+GVArray IndexFieldInput::get_index_varray(IndexMask mask)
 {
   auto index_func = [](int i) { return i; };
   return VArray<int>::ForFunc(mask.min_array_size(), index_func);
@@ -539,10 +512,10 @@ GVArray IndexFieldInput::get_index_varray(IndexMask mask, ResourceScope &UNUSED(
 
 GVArray IndexFieldInput::get_varray_for_context(const fn::FieldContext &UNUSED(context),
                                                 IndexMask mask,
-                                                ResourceScope &scope) const
+                                                ResourceScope &UNUSED(scope)) const
 {
   /* TODO: Investigate a similar method to IndexRange::as_span() */
-  return get_index_varray(mask, scope);
+  return get_index_varray(mask);
 }
 
 uint64_t IndexFieldInput::hash() const
@@ -567,28 +540,65 @@ FieldOperation::FieldOperation(std::shared_ptr<const MultiFunction> function,
   owned_function_ = std::move(function);
 }
 
-static bool any_field_depends_on_input(Span<GField> fields)
+/**
+ * Returns the field inputs used by all the provided fields.
+ * This tries to reuse an existing #FieldInputs whenever possible to avoid copying it.
+ */
+static std::shared_ptr<const FieldInputs> combine_field_inputs(Span<GField> fields)
 {
+  /* The #FieldInputs that we try to reuse if possible. */
+  const std::shared_ptr<const FieldInputs> *field_inputs_candidate = nullptr;
   for (const GField &field : fields) {
-    if (field.node().depends_on_input()) {
-      return true;
+    const std::shared_ptr<const FieldInputs> &field_inputs = field.node().field_inputs();
+    /* Only try to reuse non-empty #FieldInputs. */
+    if (field_inputs && !field_inputs->nodes.is_empty()) {
+      if (field_inputs_candidate == nullptr) {
+        field_inputs_candidate = &field_inputs;
+      }
+      else if ((*field_inputs_candidate)->nodes.size() < field_inputs->nodes.size()) {
+        /* Always try to reuse the #FieldInputs that has the most nodes already. */
+        field_inputs_candidate = &field_inputs;
+      }
     }
   }
-  return false;
+  if (field_inputs_candidate == nullptr) {
+    /* None of the field depends on an input. */
+    return {};
+  }
+  /* Check if all inputs are in the */
+  Vector<const FieldInput *> inputs_not_in_candidate;
+  for (const GField &field : fields) {
+    const std::shared_ptr<const FieldInputs> &field_inputs = field.node().field_inputs();
+    if (!field_inputs) {
+      continue;
+    }
+    if (&field_inputs == field_inputs_candidate) {
+      continue;
+    }
+    for (const FieldInput *field_input : field_inputs->nodes) {
+      if (!(*field_inputs_candidate)->nodes.contains(field_input)) {
+        inputs_not_in_candidate.append(field_input);
+      }
+    }
+  }
+  if (inputs_not_in_candidate.is_empty()) {
+    /* The existing #FieldInputs can be reused, because no other field has additional inputs. */
+    return *field_inputs_candidate;
+  }
+  /* Create new #FieldInputs that contains all of the inputs that the fields depend on. */
+  std::shared_ptr<FieldInputs> new_field_inputs = std::make_shared<FieldInputs>(
+      **field_inputs_candidate);
+  for (const FieldInput *field_input : inputs_not_in_candidate) {
+    new_field_inputs->nodes.add(field_input);
+    new_field_inputs->deduplicated_nodes.add(*field_input);
+  }
+  return new_field_inputs;
 }
 
 FieldOperation::FieldOperation(const MultiFunction &function, Vector<GField> inputs)
-    : FieldNode(false, any_field_depends_on_input(inputs)),
-      function_(&function),
-      inputs_(std::move(inputs))
+    : FieldNode(false), function_(&function), inputs_(std::move(inputs))
 {
-}
-
-void FieldOperation::foreach_field_input(FunctionRef<void(const FieldInput &)> foreach_fn) const
-{
-  for (const GField &field : inputs_) {
-    field.node().foreach_field_input(foreach_fn);
-  }
+  field_inputs_ = combine_field_inputs(inputs);
 }
 
 /* --------------------------------------------------------------------
@@ -596,13 +606,12 @@ void FieldOperation::foreach_field_input(FunctionRef<void(const FieldInput &)> f
  */
 
 FieldInput::FieldInput(const CPPType &type, std::string debug_name)
-    : FieldNode(true, true), type_(&type), debug_name_(std::move(debug_name))
+    : FieldNode(true), type_(&type), debug_name_(std::move(debug_name))
 {
-}
-
-void FieldInput::foreach_field_input(FunctionRef<void(const FieldInput &)> foreach_fn) const
-{
-  foreach_fn(*this);
+  std::shared_ptr<FieldInputs> field_inputs = std::make_shared<FieldInputs>();
+  field_inputs->nodes.add_new(this);
+  field_inputs->deduplicated_nodes.add_new(*this);
+  field_inputs_ = std::move(field_inputs);
 }
 
 /* --------------------------------------------------------------------

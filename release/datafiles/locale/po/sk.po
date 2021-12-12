@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-11-23 08:45+0100\n"
+"PO-Revision-Date: 2021-11-30 08:55+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -1159,6 +1159,10 @@ msgid "Attribute on spline"
 msgstr "Atribút na drážku"
 
 
+msgid "Instance"
+msgstr "Inštancia"
+
+
 msgid "Name of the Attribute"
 msgstr "Názov atribútu"
 
@@ -1715,6 +1719,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "Blok údajov pastelky"
 
 
+msgid "Hairs"
+msgstr "Vlasy"
+
+
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1859,6 +1867,10 @@ msgid "Particle data-blocks"
 msgstr "Blok údajov častíc"
 
 
+msgid "Point Clouds"
+msgstr "Bod mrakov"
+
+
 msgid "Scenes"
 msgstr "Scény"
 
@@ -1881,6 +1893,10 @@ msgstr "Kľúčové tvary"
 
 msgid "Shape Key data-blocks"
 msgstr "Blok údajov kľúčového tvaru"
+
+
+msgid "Simulations"
+msgstr "Simulácia"
 
 
 msgid "Sounds"
@@ -2448,7 +2464,7 @@ msgstr "Koľko členov kŕdľa je v rade"
 
 
 msgid "Line"
-msgstr "Línia"
+msgstr "Čiara"
 
 
 msgid "Follow leader in a line"
@@ -4055,10 +4071,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "Farba vrcholu ovplyvňuje iba výplň"
 
 
-msgid "Stroke and Fill"
-msgstr "Ťah a výplň"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Farba vrcholu ovplyvňuje ťah a výplň"
 
@@ -5237,6 +5249,10 @@ msgstr "Vstupný farebný priestor"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Farebný priestor v súbore obrázka na konvertovanie do a z pri ukladaní a načítavaní obrázka"
+
+
+msgid "Raw"
+msgstr "Nespracované"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11837,10 +11853,6 @@ msgid "Show Collection data-blocks"
 msgstr "Ukáže blok údajov kolekcie"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "Ukáže/skryje bloky údajov vlasov"
 
@@ -11909,20 +11921,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Ukáže blok údajov nastavenie častíc"
 
 
-msgid "Point Clouds"
-msgstr "Bod mrakov"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Ukáže/skryje bloky údajov mračno bodov"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Ukáže blok údajov scény"
-
-
-msgid "Simulations"
-msgstr "Simulácia"
 
 
 msgid "Show Simulation data-blocks"
@@ -17633,6 +17637,14 @@ msgid "Active index in layer mask array"
 msgstr "Aktívny index v poli vrstiev masky"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Index prvej slučky tohto polygónu (mnohouholníka)"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Počet slučiek použitých týmto polygónom"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Štatistické zobrazenie úrovne farieb v obrázku"
 
@@ -17799,10 +17811,6 @@ msgstr "Jednotlivé F-krivky tvoriace akciu"
 
 msgid "Frame Range"
 msgstr "Rozsah snímky"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "Konečný rozsah snímky všetkých F-kriviek v rámci tejto akcie"
 
 
 msgid "Groups"
@@ -21658,6 +21666,14 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Veľkosť posuvu pri kreslení v režime povrchu"
 
 
+msgid "Attributes"
+msgstr "Atribúty"
+
+
+msgid "Geometry attributes"
+msgstr "Atribúty geometrie"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "Blok údajov obrázku odkazujúci na externý alebo zabalený obrázok"
 
@@ -23100,14 +23116,6 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Blok údajov povrchovej siete definujúci geometrické plochy"
 
 
-msgid "Attributes"
-msgstr "Atribúty"
-
-
-msgid "Geometry attributes"
-msgstr "Atribúty geometrie"
-
-
 msgid "Auto Smooth Angle"
 msgstr "Uhol automatického vyhladenia"
 
@@ -23610,6 +23618,10 @@ msgstr "Výstupy uzlu stromu"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "Typ uzla stromu (zastarané, bl_idname je identifikátor typu skutočného uzla stromu)"
+
+
+msgid "Undefined"
+msgstr "Nedefinované"
 
 
 msgid "Shader"
@@ -33090,16 +33102,8 @@ msgid "Loop Start"
 msgstr "Počiatočná slučka"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Index prvej slučky tohto polygónu (mnohouholníka)"
-
-
 msgid "Loop Total"
 msgstr "Súčet slučiek"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Počet slučiek použitých týmto polygónom"
 
 
 msgid "Material slot index of this polygon"
@@ -37906,10 +37910,6 @@ msgid "Remove original geometry"
 msgstr "Odstráni pôvodnú geometriu"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Zásobník pozícií priestoru oblasti prvku nad rozsahom snímky"
-
-
 msgid "Custom color for motion path"
 msgstr "Vlastná farba pre dráhu pohybu"
 
@@ -40888,7 +40888,7 @@ msgstr "Kľúčovanie zaclonenia"
 
 
 msgid "Tracking Object"
-msgstr "Snímanie objektu"
+msgstr "Sledovanie objektu"
 
 
 msgid "Lens Distortion"
@@ -41747,8 +41747,12 @@ msgid "Outputs the opposite of the input"
 msgstr "Výstup je opačný ako vstup"
 
 
-msgid "Compare Floats"
-msgstr "Porovnanie hodnoty na pohyblivej čiarke"
+msgid "Input Type"
+msgstr "Typ vstupu"
+
+
+msgid "Dot Product"
+msgstr "Bodka súčinu"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41883,6 +41887,26 @@ msgid "Geometry Node"
 msgstr "Uzol geometrie"
 
 
+msgid "Component"
+msgstr "Komponent"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "Komponent siete obsahujúci údaje o bodoch, rohoch, hranách a plôškach"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "Komponent mračna bodov obsahujúci iba údaje bodu"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "Komponent krivky obsahujúci drážku a údaje o riadiacich bodoch"
+
+
+msgid "Instances of objects or collections"
+msgstr "Inštancie objektov alebo kolekcií"
+
+
 msgid "Attribute Remove"
 msgstr "Atribút Odstrániť"
 
@@ -41997,10 +42021,6 @@ msgstr "Použije pravé manipulátory"
 
 msgid "Curve Length"
 msgstr "Dĺžka krivky"
-
-
-msgid "Curve Parameter"
-msgstr "Parameter krivky"
 
 
 msgid "Bezier Segment"
@@ -42467,10 +42487,6 @@ msgid "Attribute Separate XYZ"
 msgstr "Atribút Oddeliť XYZ"
 
 
-msgid "Input Type"
-msgstr "Typ vstupu"
-
-
 msgid "Attribute Transfer"
 msgstr "Prenos atribútu"
 
@@ -42521,10 +42537,6 @@ msgstr "Predná plôška"
 
 msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
 msgstr "Orientuje vektor A tak, aby smeroval preč od povrchu B definovaného jeho normálom C. Vráti (bod(B, C) < 0) ? A : -A"
-
-
-msgid "Dot Product"
-msgstr "Bodka súčinu"
 
 
 msgid "A dot B"
@@ -43238,10 +43250,6 @@ msgstr "BSDF Odlesk"
 
 msgid "Hair BSDF"
 msgstr "BSDF Vlasy"
-
-
-msgid "Component"
-msgstr "Komponent"
 
 
 msgid "Reflection"
@@ -46660,6 +46668,15 @@ msgstr "Priradiť akciu"
 
 msgid "Set this pose Action as active Action on the active Object"
 msgstr "Nastavuje túto akciu pózy ako aktívnu akciu na aktívnom objekte"
+
+
+msgctxt "Operator"
+msgid "Copy to Asset Library"
+msgstr "Kopírovať do knižnice aktív"
+
+
+msgid "Copy the current .blend file into an Asset Library. Only works on standalone .blend files (i.e. when no other files are referenced)"
+msgstr "Skopírujte aktuálny súbor .blend do knižnice aktív. Funguje len na samostatných súboroch .blend (t. j. keď sa neodkazuje na žiadne iné súbory)"
 
 
 msgid "Check Existing"
@@ -52675,10 +52692,6 @@ msgstr "Odstráni vrstvu masky"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Zlúčiť s dolnou"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Zlúči aktuálnu vrstvu s dolnou vrstvou"
 
 
 msgctxt "Operator"
@@ -82320,6 +82333,14 @@ msgid "AO Bounces Render"
 msgstr "Prekreslenie odrazov pohlcovania okolím"
 
 
+msgid "Automatic Scrambling Distance"
+msgstr "Automatická vzdialenosť snímania"
+
+
+msgid "Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling"
+msgstr "Automatické zníženie náhodnosti medzi pixelmi na zlepšenie výkonu prekresľovania GPU za cenu možných artefaktov prekreslenia. Funguje len vtedy, keď sa nepoužíva adaptívne snímanie"
+
+
 msgid "Bake Type"
 msgstr "Typ zapečenia"
 
@@ -82860,6 +82881,10 @@ msgid "Scrambling Distance"
 msgstr "Vzdialenosť snímania"
 
 
+msgid "Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low. Only works when not using adaptive sampling"
+msgstr "Redukuje náhodnosť medzi pixelmi na zlepšenie výkonu prekresľovania GPU za cenu možných artefaktov pri prekresľovaní, ak je nastavená príliš nízka hodnota. Funguje len vtedy, keď sa nepoužíva adaptívne snímanie"
+
+
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "Hodnota osiva pre integrátor na získanie rôznych modelov šumu"
 
@@ -82958,6 +82983,14 @@ msgstr "Použiť animáciu rozosiatia"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "Použite rôzne hodnoty rozosiatia (a tým aj vzory šumu) na rôznych snímkach"
+
+
+msgid "Use Tiling"
+msgstr "Použiť dlaždicovanie"
+
+
+msgid "Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
+msgstr "Prekresľovanie obrázkov s vysokým rozlíšením v dlaždiciach na zníženie spotreby pamäte s použitím zadanej veľkosti dlaždice. Dlaždice sa počas prekresľovania ukladajú do zásobníka na disk, aby sa ušetrila pamäť"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -90149,22 +90182,6 @@ msgid "Part of the geometry to display data from"
 msgstr "Údaje na zobrazenie časť geometrie"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "Komponent siete obsahujúci údaje o bodoch, rohoch, hranách a plôškach"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "Komponent mračna bodov obsahujúci iba údaje bodu"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "Komponent krivky obsahujúci drážku a údaje o riadiacich bodoch"
-
-
-msgid "Instances of objects or collections"
-msgstr "Inštancie objektov alebo kolekcií"
-
-
 msgid "Is Pinned"
 msgstr "Je pripnuté"
 
@@ -93652,10 +93669,6 @@ msgstr "Pri vytváraní nových ťahov sa údaje o váhei pridávajú podľa akt
 
 msgid "Cycle-Aware Keying"
 msgstr "Vedome cyklovať kľúčovanie"
-
-
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "Pri kanáloch s cyklickou extrapoláciou sa vkladanie kľúčových snímok automaticky premapuje do časového rozsahu cyklu a udržiava synchronizáciu"
 
 
 msgid "Auto Keying"
@@ -97563,6 +97576,10 @@ msgid "Start Sample"
 msgstr "Počiatočná snímka"
 
 
+msgid "Multiplier"
+msgstr "Násobiteľ"
+
+
 msgid "Dicing Rate Render"
 msgstr "Miera delenia Prekreslenie"
 
@@ -97645,18 +97662,6 @@ msgstr "Bez výstupného uzla"
 
 msgid "Homogeneous"
 msgstr "Homogénne"
-
-
-msgid "CPU Flags:"
-msgstr "Príznaky CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Príznaky CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Príznaky OptiX:"
 
 
 msgid "Max Subdivision"
@@ -98713,11 +98718,6 @@ msgstr "medzerník"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Načítať nastavenia %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Uložiť nové nastavenia"
 
@@ -98818,6 +98818,11 @@ msgstr "Vetva: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Neplatný regulárny výraz (hľadať): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Načítať nastavenia %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -101004,6 +101009,11 @@ msgid "Unlock Tracks"
 msgstr "Odomknúť stopy"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Prispôsobiť všetky snímky"
+
+
 msgid "Solve error: %.2f px"
 msgstr "Chyba riešenia: %.2f px"
 
@@ -101323,10 +101333,6 @@ msgid "Decrease Number"
 msgstr "Znížiť počet"
 
 
-msgid "No asset selected"
-msgstr "Nie je vybraté žiadne aktívum"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "Zmazať aktíva (nastaviť falošného užívateľa)"
@@ -101459,11 +101465,6 @@ msgstr "Upravené hrany"
 
 msgid "Show Same Material"
 msgstr "Zobraziť rovnaký materiál"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Prispôsobiť všetky snímky"
 
 
 msgctxt "Operator"
@@ -102044,10 +102045,6 @@ msgstr "Pozícia X"
 
 msgid "Convert to Float"
 msgstr "Konvertovať na pohyblivú čiarku"
-
-
-msgid "Raw"
-msgstr "Nespracované"
 
 
 msgid "Pre-Processed"
@@ -103219,10 +103216,6 @@ msgid ":"
 msgstr ":"
 
 
-msgid "Upgrade to 2.8x required"
-msgstr "Požadované povýšenie na 2.8x"
-
-
 msgid "Description:"
 msgstr "Popis:"
 
@@ -103884,7 +103877,7 @@ msgstr "Sústava plôšok podľa výberu režimu editácie"
 
 
 msgid "Initialize Face Sets"
-msgstr "Inicializuje sústavu plôšok"
+msgstr "Inicializovať sústavu plôšok"
 
 
 msgctxt "Operator"
@@ -105338,8 +105331,20 @@ msgid "Loading '%s' failed: "
 msgstr "Načítanie '%s' zlyhalo: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Prepájanie alebo pridávanie z veľmi starého formátu .blend súboru (%d.%d), nedokončená žiadna konverzia animácie! Možno budete chcieť znovu uložiť súbor knižnice so súčasnou verziou programu Blender"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Znovu načítanie knižnice: znovu načítaním nejakého starého blok údajov '%s' zlyhalo nahradenie všetkých referencií, starý (%d zostávajúcich užívateľov) sa musel zachovať a bol premenovaný na '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "Cesta '%s' sa nenašla"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "Nemožno nájsť '%s' v '%s'"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -105352,14 +105357,6 @@ msgstr "Celkovo súborov %d | zmenených %d | zlyhaných %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "Cestu '%s' nemožno vytvoriť relatívne"
-
-
-msgid "Could not open directory '%s'"
-msgstr "Nemožno otvoriť priečinok '%s'"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "Nemožno nájsť '%s' v '%s'"
 
 
 msgid "Scene Collection"
@@ -105606,10 +105603,6 @@ msgstr "NlaPas"
 
 msgid "[Action Stash]"
 msgstr "[Skryť akciu]"
-
-
-msgid "Undefined"
-msgstr "Nedefinované"
 
 
 msgid "Undefined Node Tree Type"
@@ -106787,6 +106780,10 @@ msgstr "Blok údajov '%s' už nie je aktívum"
 
 msgid "%i data-blocks are no assets anymore"
 msgstr "%i bloky údajov už nie sú aktívami"
+
+
+msgid "Selected path is outside of the selected asset library"
+msgstr "Vybraná cesta je mimo vybranej knižnice aktív"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -110693,6 +110690,10 @@ msgid "Move asset to catalog"
 msgstr "Presunúť aktívum do katalógu"
 
 
+msgid "to the top level of the tree"
+msgstr "na najvyššiu úroveň stromu"
+
+
 msgid "Move assets out of any catalog"
 msgstr "Presunúť aktíva z akéhokoľvek katalógu"
 
@@ -111384,10 +111385,6 @@ msgstr "Nemožno vymeniť '%s' a '%s' ako jeden alebo obidva sa nebudú môcť p
 
 msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modifikátor nemožno pridať do (%s : %s) (podrobnosti nájdete na konzole)"
-
-
-msgid "Sta"
-msgstr "Sta"
 
 
 msgid "Label Size"
@@ -115145,10 +115142,6 @@ msgid "Points to instance on"
 msgstr "Body inštancie na"
 
 
-msgid "Instance"
-msgstr "Inštancia"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "Geometria vytvorená inštanciou na body"
 
@@ -115217,24 +115210,8 @@ msgid "Vertices Z"
 msgstr "Vrcholy Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "Počet vrcholov po obvode"
-
-
-msgid "The number of segments along the side"
-msgstr "Počet segmentov pozdĺž strany"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "Počet koncentrických segmentov výplne"
-
-
 msgid "The radius of the cylinder"
 msgstr "Polomer valca"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "Výška valca na osi Z"
 
 
 msgid "Start Location"
@@ -116023,10 +116000,6 @@ msgid "Nothing indicated"
 msgstr "Žiadna indikácia"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Prepájanie alebo pridávanie z veľmi starého formátu .blend súboru (%d.%d), nedokončená žiadna konverzia animácie! Možno budete chcieť znovu uložiť súbor knižnice so súčasnou verziou programu Blender"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "Nepripojený žiadny blok údajov '%s' typu '%s'"
 
@@ -116049,10 +116022,6 @@ msgstr "'%s': aktuálny súbor nemožno použiť ako knižnicu"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "Scéna '%s' je prepojená, vytváranie inštancií objektov je zakázané"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Znovu načítanie knižnice: znovu načítaním nejakého starého blok údajov '%s' zlyhalo nahradenie všetkých referencií, starý (%d zostávajúcich užívateľov) sa musel zachovať a bol premenovaný na '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

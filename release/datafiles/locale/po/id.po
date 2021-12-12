@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -1481,6 +1481,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "Pensil grease data-blok"
 
 
+msgid "Hairs"
+msgstr "Rambut"
+
+
 msgid "Images"
 msgstr "Gambar"
 
@@ -1617,6 +1621,10 @@ msgid "Particle data-blocks"
 msgstr "Partikel data-blok"
 
 
+msgid "Point Clouds"
+msgstr "Awan Titik"
+
+
 msgid "Scenes"
 msgstr "Adegan"
 
@@ -1639,6 +1647,10 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Sounds"
@@ -3505,10 +3517,6 @@ msgid "Mode Type"
 msgstr "Tipe Mode"
 
 
-msgid "Stroke and Fill"
-msgstr "Stroke dan Isi"
-
-
 msgid "Byte Color Attribute Value"
 msgstr "Nilai Atribut Warna Byte"
 
@@ -4211,6 +4219,10 @@ msgstr "Memasukkan Ruang Warna"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Ruang warna dalam dokumen gambar, untuk mengubahnya ke dan dari saat menyimpan atau memuat gambar"
+
+
+msgid "Raw"
+msgstr "Raw"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -7387,10 +7399,6 @@ msgid "Show Collection data-blocks"
 msgstr "Tampilkan Koleksi data-blok"
 
 
-msgid "Hairs"
-msgstr "Rambut"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "Tampilkan/sembunyikan Rambut data-blok"
 
@@ -7439,20 +7447,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "Tampilkan Pengaturan Partikel data-blok"
 
 
-msgid "Point Clouds"
-msgstr "Awan Titik"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -14427,6 +14427,18 @@ msgid "Or"
 msgstr "Atau"
 
 
+msgid "Input Type"
+msgstr "Tipe Masukan"
+
+
+msgid "Dot Product"
+msgstr "Produk Dot"
+
+
+msgid "Component"
+msgstr "Komponen"
+
+
 msgid "Attribute Remove"
 msgstr "Hapus Atribut"
 
@@ -14491,10 +14503,6 @@ msgid "Replace/Create"
 msgstr "Ganti/Buat"
 
 
-msgid "Input Type"
-msgstr "Tipe Masukan"
-
-
 msgid "Reflect"
 msgstr "Cerminkan"
 
@@ -14505,10 +14513,6 @@ msgstr "Biaskan"
 
 msgid "Faceforward"
 msgstr "Wajahdepan"
-
-
-msgid "Dot Product"
-msgstr "Produk Dot"
 
 
 msgid "Length of A"
@@ -14549,10 +14553,6 @@ msgstr "Tambah Shader"
 
 msgid "Ambient Occlusion"
 msgstr "Oklusi ambien"
-
-
-msgid "Component"
-msgstr "Komponen"
 
 
 msgid "Refraction BSDF"
@@ -22611,18 +22611,6 @@ msgid "Homogeneous"
 msgstr "Homogen"
 
 
-msgid "CPU Flags:"
-msgstr "Bendera CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Bendera CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Bendera OptiX:"
-
-
 msgid "Texture Limit"
 msgstr "Batas Tekstur"
 
@@ -22960,11 +22948,6 @@ msgstr "Spasi"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Muat Pengaturan %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Simpan Pengaturan Baru"
 
@@ -23014,6 +22997,11 @@ msgstr "Karakter"
 
 msgid "Date: %s %s"
 msgstr "Tanggal: %s %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Muat Pengaturan %d.%d"
 
 
 msgid "After"
@@ -24080,6 +24068,11 @@ msgid "Enable Markers"
 msgstr "Gunakan Tanda"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Semua Frame Cukup/Fit"
+
+
 msgid "Solve error: %.2f px"
 msgstr "Memecahkan error: %.2f px"
 
@@ -24336,10 +24329,6 @@ msgid "Decrease Number"
 msgstr "Mengurangi Angka"
 
 
-msgid "No asset selected"
-msgstr "Tidak ada aset yang terseleksi"
-
-
 msgctxt "Operator"
 msgid "Less"
 msgstr "Lebih Sedikit"
@@ -24387,11 +24376,6 @@ msgstr "Seleksi"
 
 msgid "Show Same Material"
 msgstr "Tampilkan Material yang Sama"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Semua Frame Cukup/Fit"
 
 
 msgctxt "Operator"
@@ -24718,10 +24702,6 @@ msgid "%14s"
 msgstr "%14s"
 
 
-msgid "Raw"
-msgstr "Raw"
-
-
 msgid "Storage"
 msgstr "Gudang"
 
@@ -24999,10 +24979,6 @@ msgstr "Tidak ada %s kustom yang dikonfigurasi"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Peningkatan ke 2.8x diperlukan"
 
 
 msgid "Description:"

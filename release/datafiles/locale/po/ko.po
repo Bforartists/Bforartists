@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -14385,6 +14385,14 @@ msgid "Note/Layer to add annotation strokes to"
 msgstr "주석 스트로크를 추가 할 노트/레이어"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "이 폴리곤으로 사용된 루프의 수"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "이미지에 사용된 컬러 레벨의 통계 보기"
 
@@ -14519,10 +14527,6 @@ msgstr "액션을 구성하는 개별 F-커브"
 
 msgid "Frame Range"
 msgstr "프레임 범위"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "이 액션 내의 모든 F-커브의 최종 프레임 범위"
 
 
 msgid "Groups"
@@ -17506,6 +17510,10 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "표면 모드에서 그리기 할 때의 오프셋 양"
 
 
+msgid "Attributes"
+msgstr "속성"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "외부 또는 포장된 이미지를 참조하는 이미지 데이터 블록"
 
@@ -18838,10 +18846,6 @@ msgstr "서브 표면에 반투명 이펙트를 추가"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "지오메트리 표면을 정의하는 메쉬 데이터 블록"
-
-
-msgid "Attributes"
-msgstr "속성"
 
 
 msgid "Auto Smooth Angle"
@@ -27509,16 +27513,8 @@ msgid "Loop Start"
 msgstr "루프 시작"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
-
-
 msgid "Loop Total"
 msgstr "루프 합계"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "이 폴리곤으로 사용된 루프의 수"
 
 
 msgid "Polygon Normal"
@@ -31501,10 +31497,6 @@ msgid "Remove original geometry"
 msgstr "원본 지오메트리를 제거"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "프레임 범위에 걸친 요소의 월드 공간 위치를 캐시"
-
-
 msgid "Custom color for motion path"
 msgstr "모션 경로의 커스텀 컬러"
 
@@ -34894,12 +34886,20 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Z 버퍼를 안티 앨리어싱하여 부자연스러운 결과를 피하려고 시도, 블렌더 렌더에 주로 유용합니다"
 
 
+msgid "Dot Product"
+msgstr "내적"
+
+
 msgid "Equal"
 msgstr "동일한"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "연결 없는 소켓에 사용되는 입력 값"
+
+
+msgid "Component"
+msgstr "구성 요소"
 
 
 msgid "Original"
@@ -34964,10 +34964,6 @@ msgstr "B에 A를 투사"
 
 msgid "Reflect"
 msgstr "반영"
-
-
-msgid "Dot Product"
-msgstr "내적"
 
 
 msgid "A dot B"
@@ -35129,10 +35125,6 @@ msgstr "광택 BSDF"
 
 msgid "Hair BSDF"
 msgstr "헤어 BSDF"
-
-
-msgid "Component"
-msgstr "구성 요소"
 
 
 msgid "Reflection"
@@ -42957,10 +42949,6 @@ msgstr "마스크 레이어를 제거"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "아래로 병합"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "아래 레이어로 현재 레이어를 병합"
 
 
 msgctxt "Operator"
@@ -76004,10 +75992,6 @@ msgid "Cycle-Aware Keying"
 msgstr "주기-인식 키잉"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "Cyclic 외삽법을 사용하는 채널의 경우 키 프레임 삽입이 Cyclic 시간 범위 내에서 자동으로 다시 매핑되고 동기화가 끝나는대로 유지됩니다"
-
-
 msgid "Auto Keying"
 msgstr "자동 키잉"
 
@@ -78492,18 +78476,6 @@ msgid "Homogeneous"
 msgstr "동종"
 
 
-msgid "CPU Flags:"
-msgstr "CPU 플래그:"
-
-
-msgid "CUDA Flags:"
-msgstr "CUDA 플래그:"
-
-
-msgid "OptiX Flags:"
-msgstr "OptiX 플래그:"
-
-
 msgid "Max Subdivision"
 msgstr "최대 섭디비젼"
 
@@ -80680,6 +80652,11 @@ msgid "Unlock Tracks"
 msgstr "트랙을 잠금 해제"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "프레임 모두 맞춤"
+
+
 msgid "Zoom %d:%d"
 msgstr "줌 %d:%d"
 
@@ -81031,11 +81008,6 @@ msgstr "격자 모양"
 
 msgid "Show Same Material"
 msgstr "같은 매테리얼을 표시"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "프레임 모두 맞춤"
 
 
 msgctxt "Operator"
@@ -83909,8 +83881,20 @@ msgid "Loading '%s' failed: "
 msgstr "불러오기 '%s' 실패함: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "매우 오래된 .blend 파일 형식 (%d.%d)에서 연결하거나 추가하면 애니메이션 변환이 수행되지 않습니다! 현재 블렌더로 lib 파일을 다시 저장하고 싶을 수도 있습니다"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Lib 다시 불러오기: 이전 데이터 블록 '%s'에 대한 모든 참조를 다시 불러온 블록으로 대체하는 데 실패, 이전 유저 (남은 유저 %d 명)는 보관해야 하고 '%s'으로 이름이 변경되었습니다"
+
+
 msgid "Path '%s' not found"
 msgstr "경로 '%s' 찾을 수 없습니다"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "'%s'를 다음 '%s'에서 찾을 수 없습니다"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -83923,14 +83907,6 @@ msgstr "전체 파일 %d | 바뀜 %d | 실패됨 %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "경로 '%s'는 상대적으로 만들 수 없습니다"
-
-
-msgid "Could not open directory '%s'"
-msgstr "디렉토리 '%s' 열 수 없음"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "'%s'를 다음 '%s'에서 찾을 수 없습니다"
 
 
 msgid "Scene Collection"
@@ -91342,10 +91318,6 @@ msgid "Nothing indicated"
 msgstr "아무것도 표시하지 않음"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "매우 오래된 .blend 파일 형식 (%d.%d)에서 연결하거나 추가하면 애니메이션 변환이 수행되지 않습니다! 현재 블렌더로 lib 파일을 다시 저장하고 싶을 수도 있습니다"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "'%s'을 (를) 추가 할 수 없습니다. '%s'유형의 데이터 블록"
 
@@ -91364,10 +91336,6 @@ msgstr "'%s': 아무것도 표시하지 않음"
 
 msgid "'%s': cannot use current file as library"
 msgstr "'%s': 라이브러리로 현재 파일을 사용 할 수 없습니다"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Lib 다시 불러오기: 이전 데이터 블록 '%s'에 대한 모든 참조를 다시 불러온 블록으로 대체하는 데 실패, 이전 유저 (남은 유저 %d 명)는 보관해야 하고 '%s'으로 이름이 변경되었습니다"
 
 
 msgid "'%s' is not a valid library filepath"
