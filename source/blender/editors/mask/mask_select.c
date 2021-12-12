@@ -53,7 +53,6 @@
 /** \name Public Mask Selection API
  * \{ */
 
-/* 'check' select */
 bool ED_mask_spline_select_check(const MaskSpline *spline)
 {
   for (int i = 0; i < spline->tot_point; i++) {
