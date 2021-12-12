@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -1424,6 +1424,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "蠟筆資料塊"
 
 
+msgid "Hairs"
+msgstr "毛髮"
+
+
 msgid "Images"
 msgstr "影像"
 
@@ -1582,6 +1586,10 @@ msgstr "外形鍵"
 
 msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Sounds"
@@ -8690,14 +8698,6 @@ msgid "Fonts"
 msgstr "字型"
 
 
-msgid "Hairs"
-msgstr "毛髮"
-
-
-msgid "Simulations"
-msgstr "模擬"
-
-
 msgid "Show workspace data-blocks"
 msgstr "顯示工作空間資料塊"
 
@@ -10536,6 +10536,14 @@ msgid "Active Layer"
 msgstr "作用分層"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "此多角形的第一個迴圈索引"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "此多角形使用的迴圈數"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "將色階的統計視圖以影像顯示"
 
@@ -10614,10 +10622,6 @@ msgstr "構成動作的個別 F 曲線"
 
 msgid "Frame Range"
 msgstr "框幀區間"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "此動作內所有 F 曲線的最終框幀區間"
 
 
 msgid "Groups"
@@ -19010,16 +19014,8 @@ msgid "Loop Start"
 msgstr "迴圈開始"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "此多角形的第一個迴圈索引"
-
-
 msgid "Loop Total"
 msgstr "迴圈總計"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "此多角形使用的迴圈數"
 
 
 msgid "Polygon Normal"
@@ -21799,10 +21795,6 @@ msgstr "藉由周圍幾何形狀縮放偏移"
 
 msgid "Remove original geometry"
 msgstr "移除原始幾何"
-
-
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "元素在一段框幀區間上世界空間位置的快取"
 
 
 msgid "End frame of the stored range"
@@ -24594,12 +24586,20 @@ msgid "Anti-Alias Z"
 msgstr "抗鋸齒 Z"
 
 
+msgid "Dot Product"
+msgstr "內積"
+
+
 msgid "Equal"
 msgstr "等於"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "用於未連接接口的輸入值"
+
+
+msgid "Component"
+msgstr "元件"
 
 
 msgid "Original"
@@ -24632,10 +24632,6 @@ msgstr "最小最大"
 
 msgid "Cross Product"
 msgstr "向量積"
-
-
-msgid "Dot Product"
-msgstr "內積"
 
 
 msgid "Z Axis"
@@ -24745,10 +24741,6 @@ msgstr "光澤 BSDF"
 
 msgid "Hair BSDF"
 msgstr "毛髮 BSDF"
-
-
-msgid "Component"
-msgstr "元件"
 
 
 msgid "Reflection"
@@ -55970,8 +55962,16 @@ msgid "Loading '%s' failed: "
 msgstr "載入「%s」失敗： "
 
 
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "藏庫重載：若重新載入者失敗則將所有參照取代為「%s」舊資料塊，而舊的（%d 位剩餘使用者）必須保留並重新命名為「%s」"
+
+
 msgid "Path '%s' not found"
 msgstr "找不到路徑「%s」"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "找不到「%s」於「%s」中"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -55984,14 +55984,6 @@ msgstr "總計檔案 %d | 更動 %d | 失敗 %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "路徑「%s」無法變為相對路徑"
-
-
-msgid "Could not open directory '%s'"
-msgstr "無法開啟目錄「%s」"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "找不到「%s」於「%s」中"
 
 
 msgid "Scene Collection"
@@ -60562,10 +60554,6 @@ msgstr "「%s」：未有指示"
 
 msgid "'%s': cannot use current file as library"
 msgstr "「%s」：無法將目前檔案作為函式庫使用"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "藏庫重載：若重新載入者失敗則將所有參照取代為「%s」舊資料塊，而舊的（%d 位剩餘使用者）必須保留並重新命名為「%s」"
 
 
 msgid "'%s' is not a valid library filepath"

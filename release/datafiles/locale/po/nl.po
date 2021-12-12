@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-11-28 21:02+0100\n"
+"PO-Revision-Date: 2021-12-05 20:05+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -408,6 +408,10 @@ msgstr "Bestandsnaam"
 
 msgid "Grease Pencil"
 msgstr "Vetkrijt"
+
+
+msgid "Hairs"
+msgstr "Haren"
 
 
 msgid "Images"
@@ -1380,10 +1384,6 @@ msgid "Fonts"
 msgstr "Lettertypen"
 
 
-msgid "Hairs"
-msgstr "Haren"
-
-
 msgid "Particles Settings"
 msgstr "Deeltjes Instellingen"
 
@@ -2310,7 +2310,7 @@ msgstr "Grote Y"
 
 
 msgid "Resolution X"
-msgstr "X resolutie"
+msgstr "Resolutie X"
 
 
 msgid "Resolution Y"
@@ -2335,6 +2335,10 @@ msgstr "Schaduwmodus"
 
 msgid "Links"
 msgstr "Koppeling"
+
+
+msgid "Undefined"
+msgstr "Niet Gedefinieerd"
 
 
 msgid "Active Material"
@@ -2474,7 +2478,7 @@ msgstr "Snelheid van Geluid"
 
 
 msgid "3D Cursor"
-msgstr "#D Cursor"
+msgstr "3D Cursor"
 
 
 msgid "Current Frame"
@@ -3135,6 +3139,10 @@ msgid "Z Axis"
 msgstr "Z As"
 
 
+msgid "Set Position"
+msgstr "Zet Positie"
+
+
 msgid "Layer Weight"
 msgstr "Invloed van Laag"
 
@@ -3149,6 +3157,10 @@ msgstr "Y as"
 
 msgid "Z axis"
 msgstr "Z as"
+
+
+msgid "Sun Rotation"
+msgstr "Rotatie Zon"
 
 
 msgid "Node Socket"
@@ -3509,7 +3521,7 @@ msgstr "(De)selecteer Alles"
 
 msgctxt "Operator"
 msgid "Select Hierarchy"
-msgstr "Selecteer Hiearchie"
+msgstr "Selecteer Hiërarchie"
 
 
 msgid "Select Parent"
@@ -5321,8 +5333,18 @@ msgid "Unlink Action"
 msgstr "Ontkoppel Actie"
 
 
+msgctxt "Operator"
+msgid "Duplicate Collection"
+msgstr "Dupliceer Collectie"
+
+
 msgid "Render the collection"
 msgstr "Render de collectie"
+
+
+msgctxt "Operator"
+msgid "Delete Hierarchy"
+msgstr "Verwijder Hiërarchie"
 
 
 msgid "Delete selected objects and collections"
@@ -5354,7 +5376,7 @@ msgstr "Herlaad alle data van deze bibliotheek"
 
 
 msgid "Select Hierarchy"
-msgstr "Selecteer Hiearchie"
+msgstr "Selecteer Hiërarchie"
 
 
 msgctxt "Operator"
@@ -5362,8 +5384,17 @@ msgid "Unhide All"
 msgstr "Maak Alles Zichtbaar"
 
 
+msgid "Place cursor"
+msgstr "Plaats cursor"
+
+
 msgid "(De)select all"
 msgstr "(De)selecteer alles"
+
+
+msgctxt "Operator"
+msgid "Hide/Show"
+msgstr "Verberg/Toon"
 
 
 msgctxt "Operator"
@@ -5413,6 +5444,10 @@ msgstr "Ontkoppel Poses Bibliotheek"
 msgctxt "Operator"
 msgid "Apply Pose as Rest Pose"
 msgstr "Pas Pose als Rust Pose Toe"
+
+
+msgid "Rotation only"
+msgstr "Alleen Rotatie"
 
 
 msgid "Next Keyframe"
@@ -6494,6 +6529,16 @@ msgstr "Aangepaste Afstand"
 
 
 msgctxt "Operator"
+msgid "Annotate"
+msgstr "Annotatie"
+
+
+msgctxt "Operator"
+msgid "Cursor"
+msgstr "Cursor"
+
+
+msgctxt "Operator"
 msgid "Scale"
 msgstr "Schalen"
 
@@ -6507,8 +6552,28 @@ msgid "Force Field Settings"
 msgstr "Instellingen Krachtveld"
 
 
+msgid "Type 1"
+msgstr "Type 1"
+
+
+msgid "Type 2"
+msgstr "Type 2"
+
+
+msgid "Structure"
+msgstr "Structuur"
+
+
+msgid "Hair Shape"
+msgstr "Haarvorm"
+
+
 msgid "Springs"
 msgstr "Veren"
+
+
+msgid "Forces"
+msgstr "Krachten"
 
 
 msgid "Sensitivity"
@@ -6567,6 +6632,11 @@ msgid "Tablet"
 msgstr "Tablet"
 
 
+msgctxt "WindowManager"
+msgid "Translation"
+msgstr "Vertaling"
+
+
 msgid "Fly & Walk"
 msgstr "Vliegen & Lopen"
 
@@ -6577,6 +6647,10 @@ msgstr "Lopen"
 
 msgid "Save Preferences"
 msgstr "Sla instellingen Op"
+
+
+msgid "Blend Files"
+msgstr "Blenderbestanden"
 
 
 msgid "Auto Save"
@@ -8958,10 +9032,6 @@ msgstr "Oppervlak"
 msgctxt "Action"
 msgid "var"
 msgstr "var"
-
-
-msgid "Undefined"
-msgstr "Niet Gedefinieerd"
 
 
 msgid "%i frames found!"

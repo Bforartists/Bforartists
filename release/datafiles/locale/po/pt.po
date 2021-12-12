@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -10956,6 +10956,14 @@ msgid "Index of active grease pencil layer"
 msgstr "O índice da camada de lápis de cera ativa."
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Índice do primeiro anel deste polígono."
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Número de anéis usados por este polígono."
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Visualização estatística dos níveis de cor em uma imagem."
 
@@ -11058,10 +11066,6 @@ msgstr "As curvas-f individuais que perfazem a ação."
 
 msgid "Frame Range"
 msgstr "Faixa de fotogramas"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "A faixa final de fotogramas de todas as curvas-f dentro desta ação."
 
 
 msgid "Groups"
@@ -21458,16 +21462,8 @@ msgid "Loop Start"
 msgstr "Início dos anéis"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Índice do primeiro anel deste polígono."
-
-
 msgid "Loop Total"
 msgstr "Total de anéis"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Número de anéis usados por este polígono."
 
 
 msgid "Polygon Normal"
@@ -24757,10 +24753,6 @@ msgid "Remove original geometry"
 msgstr "Remove a geometria original"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Cache das posições do espaço de ambiente (mundo) de um elemento sobre um intervalo de fotogramas."
-
-
 msgid "Custom color for motion path"
 msgstr "Cor personalizada para o caminho de movimento."
 
@@ -27858,12 +27850,20 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Usa antisserrilhamento no buffer Z para tentar evitar artefatos, mais útil para renderizações com o motor interno Blender."
 
 
+msgid "Dot Product"
+msgstr "Produto escalar"
+
+
 msgid "Equal"
 msgstr "Igual"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "Valor de entrada usado para soquete não conectado."
+
+
+msgid "Component"
+msgstr "Componente"
 
 
 msgid "Original"
@@ -27892,10 +27892,6 @@ msgstr "Sem interpolação (usa as amostras do texel mais próximo)."
 
 msgid "Cross Product"
 msgstr "Produto vetorial"
-
-
-msgid "Dot Product"
-msgstr "Produto escalar"
 
 
 msgid "Z Axis"
@@ -28013,10 +28009,6 @@ msgstr "BSDF - Polimento"
 
 msgid "Hair BSDF"
 msgstr "BSDF - Cabelo "
-
-
-msgid "Component"
-msgstr "Componente"
 
 
 msgid "Reflection"
@@ -34412,10 +34404,6 @@ msgstr "Remover camada de máscara"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Fundir abaixo"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Funde a camada atual com a camada logo abaixo."
 
 
 msgctxt "Operator"
@@ -60772,14 +60760,6 @@ msgid "Homogeneous"
 msgstr "Homogeneizar"
 
 
-msgid "CPU Flags:"
-msgstr "Capacidades da CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Bandeiras CUDA:"
-
-
 msgid "Portal"
 msgstr "Portal"
 
@@ -63458,8 +63438,20 @@ msgid "Loading '%s' failed: "
 msgstr "Falha de carregamento de '%s': "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Vínculo ou anexação a partir de um formato de ficheiro (%d.%d) muito antigo do Blender. Nenhuma conversão de animação será feita ! Talvez você queira guardar novamente seu ficheiro de bibliotecas usando a versão atual do Blender."
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Recarregamento de biblioteca: A substituição de todas as referências para o bloco de dados anterior '%s' pelo que foi recarregado falhou.  O bloco de dados anterior que possui %d utilizadores remanescentes, teve de ser mantido e foi renomeado para '%s' ."
+
+
 msgid "Path '%s' not found"
 msgstr "Caminho '%s' não encontrado"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "Não é possível encontrar '%s' dentro de '%s'"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -63472,14 +63464,6 @@ msgstr "Ficheiros totais %d | Alterados %d | Falhos %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "Caminho '%s' não pode se tornar relativo"
-
-
-msgid "Could not open directory '%s'"
-msgstr "Não é possível abrir diretório '%s'"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "Não é possível encontrar '%s' dentro de '%s'"
 
 
 msgid "Const"
@@ -69201,10 +69185,6 @@ msgid "Nothing indicated"
 msgstr "Sem indicação de dados."
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Vínculo ou anexação a partir de um formato de ficheiro (%d.%d) muito antigo do Blender. Nenhuma conversão de animação será feita ! Talvez você queira guardar novamente seu ficheiro de bibliotecas usando a versão atual do Blender."
-
-
 msgid "'%s': not a library"
 msgstr "'%s': não é uma biblioteca"
 
@@ -69215,10 +69195,6 @@ msgstr "'%s': nada indicado"
 
 msgid "'%s': cannot use current file as library"
 msgstr "'%s': não é possível usar o ficheiro atual como biblioteca"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Recarregamento de biblioteca: A substituição de todas as referências para o bloco de dados anterior '%s' pelo que foi recarregado falhou.  O bloco de dados anterior que possui %d utilizadores remanescentes, teve de ser mantido e foi renomeado para '%s' ."
 
 
 msgid "'%s' is not a valid library filepath"
