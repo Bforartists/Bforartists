@@ -453,9 +453,9 @@ def vr_defaults_create_default(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/squeeze/value",
-                                      "/input/squeeze/value",
-                                      0.3,
+                                      "/input/squeeze/force",
+                                      "/input/squeeze/force",
+                                      0.5,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,

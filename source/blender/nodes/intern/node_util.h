@@ -75,13 +75,34 @@ void node_sock_label_clear(struct bNodeSocket *sock);
 void node_math_update(struct bNodeTree *ntree, struct bNode *node);
 
 /**** Labels ****/
-void node_blend_label(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
-void node_image_label(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
-void node_math_label(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
-void node_vector_math_label(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
-void node_filter_label(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
+void node_blend_label(const struct bNodeTree *ntree,
+                      const struct bNode *node,
+                      char *label,
+                      int maxlen);
+void node_image_label(const struct bNodeTree *ntree,
+                      const struct bNode *node,
+                      char *label,
+                      int maxlen);
+void node_math_label(const struct bNodeTree *ntree,
+                     const struct bNode *node,
+                     char *label,
+                     int maxlen);
+void node_vector_math_label(const struct bNodeTree *ntree,
+                            const struct bNode *node,
+                            char *label,
+                            int maxlen);
+void node_filter_label(const struct bNodeTree *ntree,
+                       const struct bNode *node,
+                       char *label,
+                       int maxlen);
 
 /*** Link Handling */
+
+/**
+ * The idea behind this is: When a user connects an input to a socket that is
+ * already linked (and if its not an Multi Input Socket), we try to find a replacement socket for
+ * the link that we try to overwrite and connect that previous link to the new socket.
+ */
 void node_insert_link_default(struct bNodeTree *ntree, struct bNode *node, struct bNodeLink *link);
 
 float node_socket_get_float(struct bNodeTree *ntree, struct bNode *node, struct bNodeSocket *sock);

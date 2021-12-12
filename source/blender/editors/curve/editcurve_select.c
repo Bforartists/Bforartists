@@ -62,7 +62,6 @@
 /** \name Utilities
  * \{ */
 
-/* returns 1 in case (de)selection was successful */
 bool select_beztriple(BezTriple *bezt, bool selstatus, uint8_t flag, eVisible_Types hidden)
 {
   if ((bezt->hide == 0) || (hidden == HIDDEN)) {
@@ -82,7 +81,6 @@ bool select_beztriple(BezTriple *bezt, bool selstatus, uint8_t flag, eVisible_Ty
   return false;
 }
 
-/* returns 1 in case (de)selection was successful */
 bool select_bpoint(BPoint *bp, bool selstatus, uint8_t flag, bool hidden)
 {
   if ((bp->hide == 0) || (hidden == 1)) {

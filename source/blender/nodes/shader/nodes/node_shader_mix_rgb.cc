@@ -183,13 +183,13 @@ static void sh_node_mix_rgb_build_multi_function(blender::nodes::NodeMultiFuncti
   builder.construct_and_set_matching_fn<MixRGBFunction>(clamp, mix_type);
 }
 
-void register_node_type_sh_mix_rgb(void)
+void register_node_type_sh_mix_rgb()
 {
   static bNodeType ntype;
 
   sh_fn_node_type_base(&ntype, SH_NODE_MIX_RGB, "Mix", NODE_CLASS_OP_COLOR, 0);
   ntype.declare = blender::nodes::sh_node_mix_rgb_declare;
-  node_type_label(&ntype, node_blend_label);
+  ntype.labelfunc = node_blend_label;
   node_type_exec(&ntype, nullptr, nullptr, node_shader_exec_mix_rgb);
   node_type_gpu(&ntype, gpu_shader_mix_rgb);
   ntype.build_multi_function = sh_node_mix_rgb_build_multi_function;

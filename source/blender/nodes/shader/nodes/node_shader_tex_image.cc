@@ -174,7 +174,7 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat,
 }
 
 /* node type definition */
-void register_node_type_sh_tex_image(void)
+void register_node_type_sh_tex_image()
 {
   static bNodeType ntype;
 
@@ -184,7 +184,7 @@ void register_node_type_sh_tex_image(void)
   node_type_storage(
       &ntype, "NodeTexImage", node_free_standard_storage, node_copy_standard_storage);
   node_type_gpu(&ntype, node_shader_gpu_tex_image);
-  node_type_label(&ntype, node_image_label);
+  ntype.labelfunc = node_image_label;
   node_type_size_preset(&ntype, NODE_SIZE_LARGE);
 
   nodeRegisterType(&ntype);
