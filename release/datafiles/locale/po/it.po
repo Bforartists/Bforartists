@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -23957,12 +23957,20 @@ msgid "Anti-Alias Z"
 msgstr "Anti-Alias Z"
 
 
+msgid "Dot Product"
+msgstr "Prodotto Scalare"
+
+
 msgid "Equal"
 msgstr "Uguale"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "Valore d'ingresso usato per connettore non collegato"
+
+
+msgid "Component"
+msgstr "Componente"
 
 
 msgid "Original"
@@ -24003,10 +24011,6 @@ msgstr "Tipo Interpolazione"
 
 msgid "Cross Product"
 msgstr "Prodotto Vettoriale"
-
-
-msgid "Dot Product"
-msgstr "Prodotto Scalare"
 
 
 msgid "Z Axis"
@@ -24116,10 +24120,6 @@ msgstr "Lucido BSDF"
 
 msgid "Hair BSDF"
 msgstr "Capelli BSDF"
-
-
-msgid "Component"
-msgstr "Componente"
 
 
 msgid "Reflection"
@@ -29642,10 +29642,6 @@ msgstr "Rimuovi Livello Maschera"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Unisci col Sottostante"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Unisce il livello corrente con quello sottostante"
 
 
 msgctxt "Operator"
@@ -52895,14 +52891,6 @@ msgid "Homogeneous"
 msgstr "Omogeneo"
 
 
-msgid "CPU Flags:"
-msgstr "Flags CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Flags CUDA:"
-
-
 msgid "Portal"
 msgstr "Portale"
 
@@ -56441,8 +56429,16 @@ msgid "Loading '%s' failed: "
 msgstr "Caricamento '%s' fallito: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Collegano o incorporando un file in formato .blend molto vecchio (%d.%d), non sarà fatta alcuna conversione delle animazioni. Potresti salvare il tuo file libreria con la versione di Blender attuale"
+
+
 msgid "Path '%s' not found"
 msgstr "Percorso '%s' non trovato"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "Impossibile trovare '%s' in '%s'"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -56455,14 +56451,6 @@ msgstr "Files totali %d | Modificati %d | Falliti %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "Il percorso '%s' non può essere reso relativo"
-
-
-msgid "Could not open directory '%s'"
-msgstr "Impossibile aprire la cartella '%s'"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "Impossibile trovare '%s' in '%s'"
 
 
 msgid "Scene Collection"
@@ -60649,10 +60637,6 @@ msgstr "Non è una libreria"
 
 msgid "Nothing indicated"
 msgstr "Nessuna selezione"
-
-
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Collegano o incorporando un file in formato .blend molto vecchio (%d.%d), non sarà fatta alcuna conversione delle animazioni. Potresti salvare il tuo file libreria con la versione di Blender attuale"
 
 
 msgid "'%s': not a library"

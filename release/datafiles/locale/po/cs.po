@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1482,6 +1482,10 @@ msgid "Grease Pencil"
 msgstr "Skicovací tužka"
 
 
+msgid "Hairs"
+msgstr "Vlasy"
+
+
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1562,6 +1566,10 @@ msgid "Particles"
 msgstr "Částice"
 
 
+msgid "Point Clouds"
+msgstr "Point Clouds"
+
+
 msgid "Scenes"
 msgstr "Scény"
 
@@ -1572,6 +1580,10 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -7044,24 +7056,12 @@ msgid "Fonts"
 msgstr "Fonts"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
 msgid "Node Trees"
 msgstr "Větvení Uzlů"
 
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
-
-
-msgid "Point Clouds"
-msgstr "Point Clouds"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "File Select Parameters"
@@ -9904,6 +9904,14 @@ msgid "Always Show Ghosts"
 msgstr "Vždy Zobrazit Duchy"
 
 
+msgid "Attributes"
+msgstr "Atributy"
+
+
+msgid "Geometry attributes"
+msgstr "Atributy geometrie"
+
+
 msgid "Alpha Mode"
 msgstr "Aplfa režim"
 
@@ -10556,14 +10564,6 @@ msgstr "Spustit renderovani"
 
 msgid "Subsurface Translucency"
 msgstr "Průsvitnost podpovrchu"
-
-
-msgid "Attributes"
-msgstr "Atributy"
-
-
-msgid "Geometry attributes"
-msgstr "Atributy geometrie"
 
 
 msgid "Auto Smooth Angle"
@@ -18374,6 +18374,14 @@ msgid "Geometry Node"
 msgstr "Geometrický Uzel"
 
 
+msgid "Component"
+msgstr "Komponent"
+
+
+msgid "Instances of objects or collections"
+msgstr "Instance objektů nebo kolekcí"
+
+
 msgid "Attribute Remove"
 msgstr "Atribut Odstranit"
 
@@ -18665,10 +18673,6 @@ msgstr "Lesklost BSDF"
 
 msgid "Hair BSDF"
 msgstr "Vlasy BSDF"
-
-
-msgid "Component"
-msgstr "Komponent"
 
 
 msgid "Reflection"
@@ -39355,10 +39359,6 @@ msgid "Part of the geometry to display data from"
 msgstr "Část geometrie ke které se zobrazí data"
 
 
-msgid "Instances of objects or collections"
-msgstr "Instance objektů nebo kolekcí"
-
-
 msgid "Show Only Selected"
 msgstr "Zobrazit Pouze Vybrané"
 
@@ -42056,11 +42056,6 @@ msgstr "Mezerník"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Načíst %d.%d Nastavení"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Uložit Nová Nastavení"
 
@@ -42124,6 +42119,11 @@ msgstr "Znaky"
 
 msgid "Date: %s %s"
 msgstr "Datum: %s %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Načíst %d.%d Nastavení"
 
 
 msgid "Frame Numbers"
@@ -44566,10 +44566,6 @@ msgstr "Létat/Chodit"
 
 msgid "No custom %s configured"
 msgstr "Žádná vlastní %s nastavena"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Je vyžadován upgrade na 2,8x"
 
 
 msgid "Description:"

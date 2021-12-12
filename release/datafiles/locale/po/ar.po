@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -9173,10 +9173,6 @@ msgstr "ﺙﺪﺤﻟﺍ ﺊﺸﻨﻳ ﻱﺬﻟﺍ ﻱﺩﺮﻔﻟﺍ ﻞﻤﻌ�
 
 msgid "Frame Range"
 msgstr "ﺭﺎﻄﻟﺍ ﻯﺪﻣ"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "ﺙﺪﺤﻟﺍ ﺍﺬﻫ ﻲﻓ ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣ ﻞﻜﻟ ﺮﻃﻸ﻿ﻟ ﻲﺋﺎﻬﻨﻟﺍ ﻯﺪﻤﻟﺍ"
 
 
 msgid "Groups"
@@ -19242,10 +19238,6 @@ msgid "Remove original geometry"
 msgstr "ﻲﻠﺻﻻ﻿ﺍ ﻢﺴﺠﻤﻟﺍ ﻑﺬﺣﺍ"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "ﺢﻴﺗﺎﻔﻣ ﻕﺎﻄﻧ ﻲﻓ ﺮﺼﻨﻌﻟ ﻢﻟﺎﻌﻟﺍ ءﺎﻀﻓ ﻊﻗﺍﻮﻣ ﺎﻘﺒﺴﻣ ﺐﺴﺣﺍ"
-
-
 msgid "End frame of the stored range"
 msgstr "ﻥﺰﺨﻤﻟﺍ ﻕﺎﻄﻨﻠﻟ ﺭﺎﻃﺇ ﺮﺧﺁ"
 
@@ -21011,6 +21003,10 @@ msgid "Anti-Alias Z"
 msgstr "Z ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ"
 
 
+msgid "Component"
+msgstr "ﻥﻮّﻜﻣ"
+
+
 msgid "Original"
 msgstr "ﻲﻠﺻﺃ"
 
@@ -21085,10 +21081,6 @@ msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ ﻞﻜﺸﺗ"
 
 msgid "Diffuse BSDF"
 msgstr "BSDF ﺭﺎﺸﺘﻧﺇ"
-
-
-msgid "Component"
-msgstr "ﻥﻮّﻜﻣ"
 
 
 msgid "Reflection"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1161,6 +1161,10 @@ msgid "Attribute on spline"
 msgstr "样条线上的属性"
 
 
+msgid "Instance"
+msgstr "实例"
+
+
 msgid "Name of the Attribute"
 msgstr "属性名称"
 
@@ -1717,6 +1721,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "蜡笔数据块"
 
 
+msgid "Hairs"
+msgstr "毛发"
+
+
 msgid "Images"
 msgstr "图像"
 
@@ -1861,6 +1869,10 @@ msgid "Particle data-blocks"
 msgstr "粒子数据块"
 
 
+msgid "Point Clouds"
+msgstr "点云"
+
+
 msgid "Scenes"
 msgstr "场景"
 
@@ -1883,6 +1895,10 @@ msgstr "形态键"
 
 msgid "Shape Key data-blocks"
 msgstr "形态键数据块"
+
+
+msgid "Simulations"
+msgstr "模拟"
 
 
 msgid "Sounds"
@@ -4057,10 +4073,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "顶点颜色仅影响填充"
 
 
-msgid "Stroke and Fill"
-msgstr "笔画与填充"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "顶点颜色同时影响笔画和填充"
 
@@ -5239,6 +5251,10 @@ msgstr "输入色彩空间"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "图像文件中的颜色空间，用于在保存和加载图像时转换"
+
+
+msgid "Raw"
+msgstr "Raw"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -11400,7 +11416,7 @@ msgstr "转换效果的外力为空气的速度"
 
 
 msgid "Amount"
-msgstr "数量"
+msgstr "(数)量"
 
 
 msgid "Amount of clumping"
@@ -11839,10 +11855,6 @@ msgid "Show Collection data-blocks"
 msgstr "显示集合数据块"
 
 
-msgid "Hairs"
-msgstr "毛发"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "显示缓存毛发数据块"
 
@@ -11911,20 +11923,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "显示粒子设置数据块"
 
 
-msgid "Point Clouds"
-msgstr "点云"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "显示/隐藏点云数据块"
 
 
 msgid "Show Scene data-blocks"
 msgstr "显示场景数据块"
-
-
-msgid "Simulations"
-msgstr "模拟"
 
 
 msgid "Show Simulation data-blocks"
@@ -17635,6 +17639,14 @@ msgid "Active index in layer mask array"
 msgstr "层遮罩数组中的活动编号"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "此多边形的首个循环边编号"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "被该多边形使用的循环数量"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "图像统计视图范围"
 
@@ -17801,10 +17813,6 @@ msgstr "组成动作的各条函数曲线"
 
 msgid "Frame Range"
 msgstr "帧范围"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "当前动作中所有函数曲线的最终帧区间"
 
 
 msgid "Groups"
@@ -21660,6 +21668,14 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "在表面模式下绘制时的偏移量"
 
 
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "几何属性"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "引用自外部图像或已打包图像的图像数据块"
 
@@ -23102,14 +23118,6 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "定义几何体表面的网格数据块"
 
 
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "几何属性"
-
-
 msgid "Auto Smooth Angle"
 msgstr "自动平滑角度"
 
@@ -23612,6 +23620,10 @@ msgstr "节点树输出"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "节点树类型(不推荐使用，bl_idname 为实际节点树类型的标识符)"
+
+
+msgid "Undefined"
+msgstr "未定义"
 
 
 msgid "Shader"
@@ -27660,7 +27672,7 @@ msgstr "新近贡献的脚本 (不包括官方发布版)"
 
 
 msgid "Asset Blend Path"
-msgstr "资产混合路径"
+msgstr "资产blend路径"
 
 
 msgid "Full path to the Blender file containing the active asset"
@@ -33092,16 +33104,8 @@ msgid "Loop Start"
 msgstr "循环起点"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "此多边形的首个循环边编号"
-
-
 msgid "Loop Total"
 msgstr "总循环数"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "被该多边形使用的循环数量"
 
 
 msgid "Material slot index of this polygon"
@@ -37908,10 +37912,6 @@ msgid "Remove original geometry"
 msgstr "移除原始几何体"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "在一个帧区间内, 一个元素的世界空间位置缓存"
-
-
 msgid "Custom color for motion path"
 msgstr "自定义运动路径的颜色"
 
@@ -41749,8 +41749,12 @@ msgid "Outputs the opposite of the input"
 msgstr "输出与输入值相反的结果"
 
 
-msgid "Compare Floats"
-msgstr "比较浮点"
+msgid "Input Type"
+msgstr "输入类型"
+
+
+msgid "Dot Product"
+msgstr "点乘"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41885,6 +41889,26 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
+msgid "Component"
+msgstr "组件"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "包含点、角、边和面数据的网格组件"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "点云组件仅包含点数据"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "包含样条线和控制点数据的曲线组件"
+
+
+msgid "Instances of objects or collections"
+msgstr "物体或集合的实例"
+
+
 msgid "Attribute Remove"
 msgstr "属性删除"
 
@@ -41999,10 +42023,6 @@ msgstr "使用右控制柄"
 
 msgid "Curve Length"
 msgstr "曲线长度"
-
-
-msgid "Curve Parameter"
-msgstr "曲线参数"
 
 
 msgid "Bezier Segment"
@@ -42182,7 +42202,7 @@ msgstr "仅面"
 
 
 msgid "Distribute Points on Faces"
-msgstr "在表面上分布点"
+msgstr "分布点于面上"
 
 
 msgid "Distribution Method"
@@ -42270,7 +42290,7 @@ msgstr "曲线切向"
 
 
 msgid "Instance on Points"
-msgstr "点上的实例"
+msgstr "实例化于点上"
 
 
 msgid "Instances to Points"
@@ -42469,10 +42489,6 @@ msgid "Attribute Separate XYZ"
 msgstr "属性分离XYZ"
 
 
-msgid "Input Type"
-msgstr "输入类型"
-
-
 msgid "Attribute Transfer"
 msgstr "属性传递"
 
@@ -42523,10 +42539,6 @@ msgstr "面朝前"
 
 msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
 msgstr "Orients a vector A to point away from a surface B as defined by its normal C. 返回 (dot(B, C) < 0) ? A : -A"
-
-
-msgid "Dot Product"
-msgstr "点乘"
 
 
 msgid "A dot B"
@@ -43240,10 +43252,6 @@ msgstr "光泽 BSDF"
 
 msgid "Hair BSDF"
 msgstr "毛发 BSDF"
-
-
-msgid "Component"
-msgstr "组件"
 
 
 msgid "Reflection"
@@ -46662,6 +46670,15 @@ msgstr "指定动作"
 
 msgid "Set this pose Action as active Action on the active Object"
 msgstr "将此姿态动作设置为活动物体上的活动动作"
+
+
+msgctxt "Operator"
+msgid "Copy to Asset Library"
+msgstr "复制到资产库"
+
+
+msgid "Copy the current .blend file into an Asset Library. Only works on standalone .blend files (i.e. when no other files are referenced)"
+msgstr "将当前 .blend 文件复制到资产库中。仅适用于独立的 .blend 文件(即未引用其他文件时)"
 
 
 msgid "Check Existing"
@@ -52677,10 +52694,6 @@ msgstr "移除遮罩层"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "向下合并"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "将当前层与下方层合并"
 
 
 msgctxt "Operator"
@@ -74658,7 +74671,7 @@ msgstr "在文件浏览器中显示Blender文件"
 
 
 msgid "Show folders in the File Browser"
-msgstr "在文件浏览器中文件夹"
+msgstr "在文件浏览器中显示文件夹"
 
 
 msgid "Keep a backup (.blend1) version of the files when saving with generated previews"
@@ -75980,7 +75993,7 @@ msgstr "对于多级精度, 在操纵视图时显示低精度"
 
 
 msgid "Tiling offset for the X Axis"
-msgstr "为X轴拼贴偏移"
+msgstr "X 轴的平铺偏移"
 
 
 msgid "Stride at which tiled strokes are copied"
@@ -82324,6 +82337,14 @@ msgid "AO Bounces Render"
 msgstr "AO反弹渲染"
 
 
+msgid "Automatic Scrambling Distance"
+msgstr "自适应置乱距离"
+
+
+msgid "Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling"
+msgstr "自动降低像素之间的随机化，以提高GPU渲染性能，但代价是可能会出现渲染瑕疵。仅当不使用自适应采样时才有效"
+
+
 msgid "Bake Type"
 msgstr "烘培类型"
 
@@ -82864,6 +82885,10 @@ msgid "Scrambling Distance"
 msgstr "置乱距离"
 
 
+msgid "Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low. Only works when not using adaptive sampling"
+msgstr "降低像素之间的随机化以提高GPU渲染性能，但代价是如果设置得太低，可能会出现渲染瑕疵。仅当不使用自适应采样时才有效"
+
+
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "积分器的随机种值, 用于获得不同效果的噪点"
 
@@ -82962,6 +82987,14 @@ msgstr "使用动画随机种"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "在不同的帧使用不同的种子值(以及噪点模式)"
+
+
+msgid "Use Tiling"
+msgstr "使用平铺"
+
+
+msgid "Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
+msgstr "使用指定的分块大小，分块渲染高分辨率的图像，以降低内存占用。渲染时分块将缓存至磁盘以节约内存"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -90153,22 +90186,6 @@ msgid "Part of the geometry to display data from"
 msgstr "要显示数据的部分几何元素"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "包含点、角、边和面数据的网格组件"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "点云组件仅包含点数据"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "包含样条线和控制点数据的曲线组件"
-
-
-msgid "Instances of objects or collections"
-msgstr "物体或集合的实例"
-
-
 msgid "Is Pinned"
 msgstr "已钉固"
 
@@ -93656,10 +93673,6 @@ msgstr "启用后，将根据当前顶点组和权重添加新笔画权重数据
 
 msgid "Cycle-Aware Keying"
 msgstr "循环感知插帧"
-
-
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "对于具有循环外插的通道,关键帧插入会自动在循环时间范围内重新映射,并保持两端同步"
 
 
 msgid "Auto Keying"
@@ -97567,6 +97580,10 @@ msgid "Start Sample"
 msgstr "起始采样"
 
 
+msgid "Multiplier"
+msgstr "乘数"
+
+
 msgid "Dicing Rate Render"
 msgstr "切分速率渲染"
 
@@ -97649,18 +97666,6 @@ msgstr "无输出节点"
 
 msgid "Homogeneous"
 msgstr "均质"
-
-
-msgid "CPU Flags:"
-msgstr "CPU标记:"
-
-
-msgid "CUDA Flags:"
-msgstr "CUDA标记:"
-
-
-msgid "OptiX Flags:"
-msgstr "OptiX 标记:"
 
 
 msgid "Max Subdivision"
@@ -98721,11 +98726,6 @@ msgstr "空格"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "加载 %d.%d 设置"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "保存新设置"
 
@@ -98826,6 +98826,11 @@ msgstr "分支: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "无效正则表达式(查找): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "加载 %d.%d 设置"
 
 
 msgid "Type \"%s\" can not be found"
@@ -101012,6 +101017,11 @@ msgid "Unlock Tracks"
 msgstr "轨迹解锁"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "框显完全匹配"
+
+
 msgid "Solve error: %.2f px"
 msgstr "解算错误: %.2f px"
 
@@ -101331,10 +101341,6 @@ msgid "Decrease Number"
 msgstr "减少编号"
 
 
-msgid "No asset selected"
-msgstr "未选择任何资产"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "清除资产(设置伪用户）"
@@ -101467,11 +101473,6 @@ msgstr "修改后的边"
 
 msgid "Show Same Material"
 msgstr "显示相同材质"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "框显完全匹配"
 
 
 msgctxt "Operator"
@@ -102052,10 +102053,6 @@ msgstr "位置 X"
 
 msgid "Convert to Float"
 msgstr "转换为浮点数"
-
-
-msgid "Raw"
-msgstr "Raw"
 
 
 msgid "Pre-Processed"
@@ -103225,10 +103222,6 @@ msgstr "无自定义 %s 配置"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "插件需升级至2.8x版本"
 
 
 msgid "Description:"
@@ -105346,8 +105339,20 @@ msgid "Loading '%s' failed: "
 msgstr "加载 '%s' 失败: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "关联或附加自一个非常旧的 .blend 文件格式 (%d.%d), 不会进行动画转换! 您可能希望使用当前版本的 Blender 重新保存库文件"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "库重载：通过重新加载一个失败的数据块替换所有对旧数据块 '%s' 的引用，旧数据块(%d 个剩余用户)必须保留并重命名为 '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "未能找到路径 '%s'"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "'%s' 无法在 '%s' 中找到"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -105360,14 +105365,6 @@ msgstr "文件总数 %d | 更改 %d 项 | 失败 %d 项"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "无法产生相对路径 '%s'"
-
-
-msgid "Could not open directory '%s'"
-msgstr "无法打开文件夹 %s"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "'%s' 无法在 '%s' 中找到"
 
 
 msgid "Scene Collection"
@@ -105614,10 +105611,6 @@ msgstr "NLA 片段"
 
 msgid "[Action Stash]"
 msgstr "[Action Stash]"
-
-
-msgid "Undefined"
-msgstr "未定义"
 
 
 msgid "Undefined Node Tree Type"
@@ -106795,6 +106788,10 @@ msgstr "数据块 '%s' 已非资产"
 
 msgid "%i data-blocks are no assets anymore"
 msgstr "%i 数据块已非资产"
+
+
+msgid "Selected path is outside of the selected asset library"
+msgstr "所选路径位于所选资产库之外"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -110701,6 +110698,10 @@ msgid "Move asset to catalog"
 msgstr "将资产移动到目录"
 
 
+msgid "to the top level of the tree"
+msgstr "到树的顶层"
+
+
 msgid "Move assets out of any catalog"
 msgstr "将资产从任何目录中移出"
 
@@ -111394,10 +111395,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "修改器无法被添加至 (%s : %s)(请参考控制台的打印信息)"
 
 
-msgid "Sta"
-msgstr "Sta"
-
-
 msgid "Label Size"
 msgstr "标签大小"
 
@@ -111599,27 +111596,27 @@ msgstr " (字符串)"
 
 
 msgid "Integer field"
-msgstr "整型字段"
+msgstr "整型场"
 
 
 msgid "Float field"
-msgstr "浮点字段"
+msgstr "浮点场"
 
 
 msgid "Vector field"
-msgstr "矢量字段"
+msgstr "矢量场"
 
 
 msgid "Boolean field"
-msgstr "布尔字段"
+msgstr "布尔场"
 
 
 msgid "String field"
-msgstr "字符串字段"
+msgstr "字符串场"
 
 
 msgid "Color field"
-msgstr "颜色字段"
+msgstr "颜色场"
 
 
 msgid " based on:"
@@ -114942,7 +114939,7 @@ msgstr "NURBS必须至少有3的倍数个点供完整贝塞尔转换，曲线截
 
 
 msgid "Cuts"
-msgstr "切割数量"
+msgstr "切割"
 
 
 msgid "Input geometry must contain a mesh"
@@ -115153,10 +115150,6 @@ msgid "Points to instance on"
 msgstr "要在其上实例化的点"
 
 
-msgid "Instance"
-msgstr "实例"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "在点上实例化的几何体"
 
@@ -115225,24 +115218,8 @@ msgid "Vertices Z"
 msgstr "顶点 Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "沿周长的顶点数"
-
-
-msgid "The number of segments along the side"
-msgstr "沿该侧面的段数"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "填充的同心段数"
-
-
 msgid "The radius of the cylinder"
 msgstr "圆柱体的半径"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "圆柱体Z 轴上的高度"
 
 
 msgid "Start Location"
@@ -115294,7 +115271,7 @@ msgstr "输入几何不包含贝塞尔样条线"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"
-msgstr "体只支持单个材质；选中项输入不能是一个字段"
+msgstr "体积只支持单个材质；选中项输入不能是一个场"
 
 
 msgid "Shade Smooth"
@@ -116027,10 +116004,6 @@ msgid "Nothing indicated"
 msgstr "未有指示结果"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "关联或附加自一个非常旧的 .blend 文件格式 (%d.%d), 不会进行动画转换! 您可能希望使用当前版本的 Blender 重新保存库文件"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "无法附加类型为 '%s' 的数据块 '%s'"
 
@@ -116053,10 +116026,6 @@ msgstr "'%s': 无法使用当前文件作为库文件"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "场景 '%s' 已被关联，物体实例化已禁用"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "库重载：通过重新加载一个失败的数据块替换所有对旧数据块 '%s' 的引用，旧数据块(%d 个剩余用户)必须保留并重命名为 '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

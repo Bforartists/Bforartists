@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1161,6 +1161,10 @@ msgid "Attribute on spline"
 msgstr "スプライン上の属性"
 
 
+msgid "Instance"
+msgstr "インスタンス"
+
+
 msgid "Name of the Attribute"
 msgstr "属性の名前"
 
@@ -1723,6 +1727,10 @@ msgid "Grease Pencil data-blocks"
 msgstr "グリースペンシルデータブロック"
 
 
+msgid "Hairs"
+msgstr "ヘアー"
+
+
 msgid "Images"
 msgstr "画像"
 
@@ -1867,6 +1875,10 @@ msgid "Particle data-blocks"
 msgstr "パーティクルデータブロック"
 
 
+msgid "Point Clouds"
+msgstr "ポイントクラウド"
+
+
 msgid "Scenes"
 msgstr "シーン"
 
@@ -1889,6 +1901,10 @@ msgstr "シェイプキー"
 
 msgid "Shape Key data-blocks"
 msgstr "シェイプキーデータブロック"
+
+
+msgid "Simulations"
+msgstr "シミュレーション"
 
 
 msgid "Sounds"
@@ -4080,10 +4096,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "頂点カラーがフィルにのみ影響します"
 
 
-msgid "Stroke and Fill"
-msgstr "ストロークとフィル"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "頂点カラーがストロークとフィルに影響します"
 
@@ -5286,6 +5298,10 @@ msgid "Color space in the image file, to convert to and from when saving and loa
 msgstr "保存・読み込み時に変換先・変換元となる、画像ファイルの色空間"
 
 
+msgid "Raw"
+msgstr "Raw"
+
+
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
 msgstr "読み込み時に色変換を行わず、シーン同様リニア空間で処理します"
 
@@ -5637,6 +5653,10 @@ msgstr "影響"
 
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "コンストレイントが最終的に影響を及ぼす量"
+
+
+msgid "Override Constraint"
+msgstr "オーバーライドコンストレイント"
 
 
 msgid "Proxy Local"
@@ -11945,10 +11965,6 @@ msgid "Show Collection data-blocks"
 msgstr "コレクションデータブロックを表示します"
 
 
-msgid "Hairs"
-msgstr "ヘアー"
-
-
 msgid "Show/hide Hair data-blocks"
 msgstr "ヘアーデータブロックを表示/隠します"
 
@@ -12017,20 +12033,12 @@ msgid "Show Particle Settings data-blocks"
 msgstr "パーティクル設定データブロックを表示します"
 
 
-msgid "Point Clouds"
-msgstr "ポイントクラウド"
-
-
 msgid "Show/hide Point Cloud data-blocks"
 msgstr "ポイントクラウドデータブロックを表示/隠します"
 
 
 msgid "Show Scene data-blocks"
 msgstr "シーンデータブロックを表示します"
-
-
-msgid "Simulations"
-msgstr "シミュレーション"
 
 
 msgid "Show Simulation data-blocks"
@@ -16038,6 +16046,10 @@ msgid "Modifier affecting the Grease Pencil object"
 msgstr "グリースペンシルオブジェクトに作用するモディファイアー"
 
 
+msgid "Override Modifier"
+msgstr "オーバーライドモディファイアー"
+
+
 msgid "Modifier name"
 msgstr "モディファイアー名"
 
@@ -17846,6 +17858,14 @@ msgid "Active index in layer mask array"
 msgstr "レイヤーマスク配列内のアクティブインデックス"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "このポリゴンの最初のループのインデックス"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "このポリゴンで使用されているループ数"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "画像の色レベルの統計ビュー"
 
@@ -18015,10 +18035,6 @@ msgstr "アクションを形成する個々のFカーブ"
 
 msgid "Frame Range"
 msgstr "フレーム範囲"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "このアクション内のすべてのFカーブの最後のフレーム範囲"
 
 
 msgid "Groups"
@@ -21923,6 +21939,14 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "サーフェスモードでドローイング時のオフセット量"
 
 
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "ジオメトリ属性"
+
+
 msgid "Image data-block referencing an external or packed image"
 msgstr "外部またはパックされた画像を参照する画像データブロック"
 
@@ -23373,14 +23397,6 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "サーフェス形状を定義するメッシュデータブロック"
 
 
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "ジオメトリ属性"
-
-
 msgid "Auto Smooth Angle"
 msgstr "自動スムーズの角度"
 
@@ -23889,6 +23905,10 @@ msgstr "ノードツリー出力"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "ノードツリータイプ（廃止予定。bl_idname が実際のノードツリータイプの識別子です）"
+
+
+msgid "Undefined"
+msgstr "未定義"
 
 
 msgid "Shader"
@@ -32878,7 +32898,7 @@ msgstr ""
 
 
 msgid "List Item"
-msgstr "アイテムリスト"
+msgstr "リストアイテム"
 
 
 msgid "Presets"
@@ -33432,16 +33452,8 @@ msgid "Loop Start"
 msgstr "開始ループ"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "このポリゴンの最初のループのインデックス"
-
-
 msgid "Loop Total"
 msgstr "ループ合計"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "このポリゴンで使用されているループ数"
 
 
 msgid "Material slot index of this polygon"
@@ -38274,10 +38286,6 @@ msgid "Remove original geometry"
 msgstr "元の形状を削除します"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "フレーム範囲内の要素のワールド座標系での位置のキャッシュ"
-
-
 msgid "Custom color for motion path"
 msgstr "モーションパス用カスタム色"
 
@@ -39796,6 +39804,10 @@ msgstr "NLA ストリップとして参照されるアクションを含むア�
 
 msgid "NLA Track is active"
 msgstr "NLAトラックがアクティブです"
+
+
+msgid "Override Track"
+msgstr "オーバーライドトラック"
 
 
 msgid "Solo"
@@ -42119,8 +42131,12 @@ msgid "Outputs the opposite of the input"
 msgstr "出力が入力の反対になります"
 
 
-msgid "Compare Floats"
-msgstr "Float比較"
+msgid "Input Type"
+msgstr "入力タイプ"
+
+
+msgid "Dot Product"
+msgstr "内積"
 
 
 msgid "True when the first input is smaller than second input"
@@ -42255,6 +42271,26 @@ msgid "Geometry Node"
 msgstr "ジオメトリノード"
 
 
+msgid "Component"
+msgstr "成分"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "ポイント、コーナー、辺、面データを含むメッシュ成分"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "ポイントデータのみ含むポイントクラウド成分"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "スプラインに含まれるカーブ成分と制御点データ"
+
+
+msgid "Instances of objects or collections"
+msgstr "オブジェクトまたはコレクションのインスタンス"
+
+
 msgid "Attribute Remove"
 msgstr "属性削除"
 
@@ -42375,10 +42411,6 @@ msgstr "右のハンドルを使用します"
 
 msgid "Curve Length"
 msgstr "カーブ長"
-
-
-msgid "Curve Parameter"
-msgstr "カーブパラメーター"
 
 
 msgid "Bezier Segment"
@@ -42847,10 +42879,6 @@ msgid "Attribute Separate XYZ"
 msgstr "属性XYZ分離"
 
 
-msgid "Input Type"
-msgstr "入力タイプ"
-
-
 msgid "Attribute Transfer"
 msgstr "属性転送(旧)"
 
@@ -42903,10 +42931,6 @@ msgid "Orients a vector A to point away from a surface B as defined by its norma
 msgstr ""
 "ベクトル A を法線 C で定義された、表面 B から離れる方向に合わせます\n"
 "(dot(B, C) < 0) ? A : -A を返します"
-
-
-msgid "Dot Product"
-msgstr "内積"
 
 
 msgid "A dot B"
@@ -43625,10 +43649,6 @@ msgstr "光沢BSDF"
 
 msgid "Hair BSDF"
 msgstr "ヘアーBSDF"
-
-
-msgid "Component"
-msgstr "成分"
 
 
 msgid "Reflection"
@@ -47063,6 +47083,15 @@ msgstr "アクションを割り当て"
 
 msgid "Set this pose Action as active Action on the active Object"
 msgstr "このポーズアクションをアクティブアクションとして、アクティブオブジェクトに設定します"
+
+
+msgctxt "Operator"
+msgid "Copy to Asset Library"
+msgstr "アセットライブラリへコピー"
+
+
+msgid "Copy the current .blend file into an Asset Library. Only works on standalone .blend files (i.e. when no other files are referenced)"
+msgstr "現在の .blend ファイルをアセットライブラリにコピーします。スタンドアローンの（他にファイルを参照していない）.blend ファイルのみ処理します"
 
 
 msgid "Check Existing"
@@ -53152,10 +53181,6 @@ msgstr "マスクレイヤーを削除"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "下とマージ"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "現在のレイヤーを下のレイヤーと統合します"
 
 
 msgctxt "Operator"
@@ -59959,6 +59984,14 @@ msgid "Data-block name to assign"
 msgstr "割り当てるデータブロック名"
 
 
+msgid "Session UUID"
+msgstr "セッションUUID"
+
+
+msgid "Session UUID of the data-block to assign"
+msgstr "割り当てるデータブロックのセッション UUID"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "ファイルノードを追加"
@@ -60957,6 +60990,10 @@ msgstr "コレクションインスタンスを追加します"
 
 msgid "Collection name to add"
 msgstr "追加するコレクション名"
+
+
+msgid "Session UUID of the collection to add"
+msgstr "追加するコレクションのセッション UUID"
 
 
 msgctxt "Operator"
@@ -65764,6 +65801,11 @@ msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib acti
 msgstr "適用するポーズのインデックス (-2でポーズに変更を加えない、-1でアクティブポーズをポーズライブラリに)"
 
 
+msgctxt "Operator"
+msgid "Apply Pose Asset"
+msgstr "ポーズアセットを適用"
+
+
 msgid "Apply the given Pose Action to the rig"
 msgstr "リグに与えられたポーズアクションを適用します"
 
@@ -65778,6 +65820,11 @@ msgstr "反転して適用"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "有効時、ポーズを X 軸で反転して適用します"
+
+
+msgctxt "Operator"
+msgid "Blend Pose Asset"
+msgstr "ポーズアセットをブレンド"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -80578,6 +80625,14 @@ msgid "Enable automatic conversion of proxies to library overrides on file load"
 msgstr "ファイル読み込み時のプロキシからライブラリオーバーライドへの自動変換を有効にします"
 
 
+msgid "Asset Debug Info"
+msgstr "アセットデバッグ情報"
+
+
+msgid "Enable some extra fields in the Asset Browser to aid in debugging"
+msgstr "アセットブラウザーにデバッグを補助するフィールドを追加します"
+
+
 msgid "Cycles Debug"
 msgstr "Cyclesデバッグ"
 
@@ -82989,6 +83044,16 @@ msgid "AO Bounces Render"
 msgstr "AOバウンス数（レンダー）"
 
 
+msgid "Automatic Scrambling Distance"
+msgstr "自動スクランブリングディスタンス"
+
+
+msgid "Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling"
+msgstr ""
+"自動的にピクセル間のランダム性を減らし、アーティファクトがレンダリングされる可能性と引き換えに\n"
+"GPU レンダリングのパフォーマンスを向上します。適応サンプリング使用時以外のみ動作します"
+
+
 msgid "Bake Type"
 msgstr "ベイクタイプ"
 
@@ -83557,6 +83622,12 @@ msgid "Scrambling Distance"
 msgstr "スクランブリングディスタンス"
 
 
+msgid "Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low. Only works when not using adaptive sampling"
+msgstr ""
+"小さい値で、自動的にピクセル間のランダム性を減らし、アーティファクトがレンダリングされる可能性と引き換えに\n"
+"GPU レンダリングのパフォーマンスを向上します。適応サンプリング使用時以外のみ動作します"
+
+
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "異なるノイズパターンを得るインテギュレーターのシード値"
 
@@ -83655,6 +83726,14 @@ msgstr "シードのアニメーション"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "フレーム毎に違うシード値（つまり違うノイズパターン）を使用します"
+
+
+msgid "Use Tiling"
+msgstr "タイルを使用"
+
+
+msgid "Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
+msgstr "メモリ使用量を減らすため、自動的に高解像度の画像を指定のタイルサイズでレンダリングします。レンダリング中はタイルをディスクにキャッシュし、メモリを節約します"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -90879,22 +90958,6 @@ msgid "Part of the geometry to display data from"
 msgstr "表示するジオメトリの一部のデータ"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "ポイント、コーナー、辺、面データを含むメッシュ成分"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "ポイントデータのみ含むポイントクラウド成分"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "スプラインに含まれるカーブ成分と制御点データ"
-
-
-msgid "Instances of objects or collections"
-msgstr "オブジェクトまたはコレクションのインスタンス"
-
-
 msgid "Is Pinned"
 msgstr "ピン止め"
 
@@ -94390,10 +94453,6 @@ msgid "Cycle-Aware Keying"
 msgstr "ループ対応キー挿入"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "外挿がループのチャンネルでのキーフレーム挿入が、自動的にループ時間の範囲に収められ、終端の同期を維持します"
-
-
 msgid "Auto Keying"
 msgstr "自動キー挿入"
 
@@ -96046,6 +96105,14 @@ msgstr "このビューレイヤーのレンダリングをON/OFFします"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "このレイヤーのFreesyleストロークをレンダリングします"
+
+
+msgid "Cryptomatte Accurate"
+msgstr "高精度Cryptomatte"
+
+
+msgid "Generate a more accurate cryptomatte pass"
+msgstr "より高精度な Cryptomatte パスを生成します"
 
 
 msgid "Cryptomatte Asset"
@@ -98310,6 +98377,10 @@ msgid "Start Sample"
 msgstr "開始サンプル数"
 
 
+msgid "Multiplier"
+msgstr "乗数"
+
+
 msgid "Dicing Rate Render"
 msgstr "ダイシング率：レンダー"
 
@@ -98392,18 +98463,6 @@ msgstr "未出力モード"
 
 msgid "Homogeneous"
 msgstr "均質"
-
-
-msgid "CPU Flags:"
-msgstr "CPUフラグ:"
-
-
-msgid "CUDA Flags:"
-msgstr "CUDAフラグ:"
-
-
-msgid "OptiX Flags:"
-msgstr "OptiXフラグ:"
 
 
 msgid "Max Subdivision"
@@ -98733,6 +98792,11 @@ msgstr "ポーズボーンを選択解除"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "適用"
+
+
+msgctxt "Operator"
+msgid "Interactive Blend"
+msgstr "インタラクティブブレンド"
 
 
 msgid "Activate & Edit"
@@ -99467,11 +99531,6 @@ msgstr "[スペース]"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "%d.%dの設定を読み込む"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "新しい設定を保存"
 
@@ -99572,6 +99631,11 @@ msgstr "ブランチ: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "無効な正規表現（検索）: "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "%d.%dの設定を読み込む"
 
 
 msgid "Type \"%s\" can not be found"
@@ -101462,6 +101526,10 @@ msgid "Conflicts with another render pass with the same name"
 msgstr "他に同じ名前のレンダーパスがあります"
 
 
+msgid "Accurate Mode"
+msgstr "高精度モード"
+
+
 msgid "Unknown add-ons"
 msgstr "未知のアドオン"
 
@@ -101752,6 +101820,11 @@ msgstr "マーカーを有効化"
 msgctxt "Operator"
 msgid "Unlock Tracks"
 msgstr "トラックをロック解除"
+
+
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "全体表示"
 
 
 msgid "Solve error: %.2f px"
@@ -102073,10 +102146,6 @@ msgid "Decrease Number"
 msgstr "番号を減少"
 
 
-msgid "No asset selected"
-msgstr "アセットが選択されていません"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "アセットをクリア（フェイクユーザーを設定）"
@@ -102209,11 +102278,6 @@ msgstr "変形後の辺"
 
 msgid "Show Same Material"
 msgstr "同じマテリアルを表示"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "全体表示"
 
 
 msgctxt "Operator"
@@ -102794,10 +102858,6 @@ msgstr "位置 X"
 
 msgid "Convert to Float"
 msgstr "Floatに変換"
-
-
-msgid "Raw"
-msgstr "Raw"
 
 
 msgid "Pre-Processed"
@@ -103967,10 +104027,6 @@ msgstr "設定済のカスタム %s がありません"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "2.8xへのアップグレードが必要です"
 
 
 msgid "Description:"
@@ -106088,8 +106144,22 @@ msgid "Loading '%s' failed: "
 msgstr "「%s」の読み込み失敗: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr ""
+"非常に古い.blendファイルフォーマット(%d.%d)からのリンクまたはアペンドのため、アニメーションの変換が行われません！\n"
+"現在の Blender でライブラリファイルを再保存してください"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "ライブラリリロード：旧データブロック「%s」のリロードによる全参照の置き換えに失敗しました。旧データ（残ユーザー数: %d）は保持のため、「%s」にリネームしました"
+
+
 msgid "Path '%s' not found"
 msgstr "パス「%s」が見つかりません"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "「%s」が「%s」内にありませんでした"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -106102,14 +106172,6 @@ msgstr "総ファイル数 %d | 変更 %d | 失敗 %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "パス「%s」が相対パスにできません"
-
-
-msgid "Could not open directory '%s'"
-msgstr "「%s」ディレクトリが開けませんでした"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "「%s」が「%s」内にありませんでした"
 
 
 msgid "Scene Collection"
@@ -106356,10 +106418,6 @@ msgstr "NLAストリップ"
 
 msgid "[Action Stash]"
 msgstr "[保留アクション]"
-
-
-msgid "Undefined"
-msgstr "未定義"
 
 
 msgid "Undefined Node Tree Type"
@@ -107541,6 +107599,10 @@ msgstr "データブロック「%s」はもうアセットではありません"
 
 msgid "%i data-blocks are no assets anymore"
 msgstr "%i 個のデータブロックはもうアセットではありません"
+
+
+msgid "Selected path is outside of the selected asset library"
+msgstr "選択したパスは選択中のアセットライブラリの外側です"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -111451,6 +111513,10 @@ msgid "Move asset to catalog"
 msgstr "アセットをカタログに移動します"
 
 
+msgid "to the top level of the tree"
+msgstr "ツリーのトップレベルへ"
+
+
 msgid "Move assets out of any catalog"
 msgstr "アセットをカタログ外に移動"
 
@@ -112144,10 +112210,6 @@ msgstr "「%s」と「%s」の片方または両方が新しい場所に対応�
 
 msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "モディファイアーが(%s : %s)に追加できませんでした（コンソールに詳細）"
-
-
-msgid "Sta"
-msgstr "開始"
 
 
 msgid "Label Size"
@@ -115907,10 +115969,6 @@ msgid "Points to instance on"
 msgstr "インスタンスを作成するポイント"
 
 
-msgid "Instance"
-msgstr "インスタンス"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "ポイント上にインスタンス化するジオメトリ"
 
@@ -115979,24 +116037,8 @@ msgid "Vertices Z"
 msgstr "頂点 Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "外周の頂点数"
-
-
-msgid "The number of segments along the side"
-msgstr "側面のセグメント数"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "フィルの中心に集中するセグメントの数"
-
-
 msgid "The radius of the cylinder"
 msgstr "円柱の半径"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "円柱の Z 軸の高さ"
 
 
 msgid "Start Location"
@@ -116785,12 +116827,6 @@ msgid "Nothing indicated"
 msgstr "何も表示していません"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr ""
-"非常に古い.blendファイルフォーマット(%d.%d)からのリンクまたはアペンドのため、アニメーションの変換が行われません！\n"
-"現在の Blender でライブラリファイルを再保存してください"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "データブロック「%s」（タイプ「%s」）をアペンドできません"
 
@@ -116813,10 +116849,6 @@ msgstr "「%s」: 現在のファイルはライブラリとして使用でき�
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "シーン「%s」はリンクされており、オブジェクトのインスタンス化はできません"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "ライブラリリロード：旧データブロック「%s」のリロードによる全参照の置き換えに失敗しました。旧データ（残ユーザー数: %d）は保持のため、「%s」にリネームしました"
 
 
 msgid "'%s' is not a valid library filepath"

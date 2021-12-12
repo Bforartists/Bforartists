@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Release Candidate (b'd2e608733507')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -11842,6 +11842,10 @@ msgid "Equal"
 msgstr "Jednako"
 
 
+msgid "Component"
+msgstr "Komponenta"
+
+
 msgid "Original"
 msgstr "Original"
 
@@ -11920,10 +11924,6 @@ msgstr "Sjajno BSDF"
 
 msgid "Hair BSDF"
 msgstr "Kosa BSDF"
-
-
-msgid "Component"
-msgstr "Komponenta"
 
 
 msgid "Reflection"
