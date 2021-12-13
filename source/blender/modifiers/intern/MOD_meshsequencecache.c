@@ -307,7 +307,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  uiLayout *layout = panel->layout, *row, *col; /*bfa, added *col and *row*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -325,7 +325,16 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
     uiItemR(layout, ptr, "read_data", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
-    uiItemR(layout, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
+
+      /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 
   uiItemR(layout, ptr, "velocity_scale", 0, NULL, ICON_NONE);
