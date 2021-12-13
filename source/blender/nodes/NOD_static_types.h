@@ -344,7 +344,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_STAR, 0, "CURVE_PRIMITIVE_STAR", 
 DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLES, def_geo_curve_set_handles, "CURVE_SET_HANDLES", CurveSetHandles, "Set Handle Type", "Add a Curve Set Handles Geometry node\nSet the curve handle type")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "CURVE_SPLINE_TYPE", CurveSplineType, "Set Spline Type", "Add a Curve Spline Type Geometry node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "Curve to Mesh", "Add a Curve to Mesh Geometry node\nConverts a curve object to a mesh object")
-DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud"")
+DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud")
 DefNode(GeometryNode, GEO_NODE_DELETE_GEOMETRY, def_geo_delete_geometry, "DELETE_GEOMETRY", DeleteGeometry, "Delete Geometry", "Add a Delete Geometry Node\nDeletes Geometry")
 DefNode(GeometryNode, GEO_NODE_DISTRIBUTE_POINTS_ON_FACES, def_geo_distribute_points_on_faces, "DISTRIBUTE_POINTS_ON_FACES", DistributePointsOnFaces, "Distribute Points on Faces", "Add a Distribute Points on Faces Geometry node\nDistribute geometry at the center of faces")
 DefNode(GeometryNode, GEO_NODE_DUAL_MESH, 0, "DUAL_MESH", DualMesh, "Dual Mesh", "Add a Dual Mesh Geometry node\nCalculates the dual of the input mesh. This means that faces get replaced with vertices and vice versa")
