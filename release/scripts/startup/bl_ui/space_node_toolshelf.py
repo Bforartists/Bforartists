@@ -3266,7 +3266,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Capture Attribute   ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-            
+
             props = col.operator("node.add_node", text=" Domain Size           ", icon = "DOMAIN_SIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeDomainSize"
@@ -3291,7 +3291,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
-            
+
             props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeDomainSize"
@@ -3482,7 +3482,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Spline Length             ", icon = "SPLINE_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeSplineLength"
-            
+
             props = col.operator("node.add_node", text=" Spline Parameter      ", icon = "CURVE_PARAMETER")
             props.use_transform = True
             props.type = "GeometryNodeSplineParameter"
@@ -3600,7 +3600,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeSplineLength"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
             props.use_transform = True
             props.type = "GeometryNodeSplineParameter"
@@ -3780,6 +3780,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDeleteGeometry"
 
+            props = col.operator("node.add_node", text=" Geometry to Instance    ", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
+
             props = col.operator("node.add_node", text=" Geometry Proximity ", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeProximity"
@@ -3807,9 +3811,9 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Set ID                         ", icon = "DELETE")
+            props = col.operator("node.add_node", text=" Set ID                         ", icon = "SET_ID")
             props.use_transform = True
-            props.type = "GeometryNodeTransform"
+            props.type = "GeometryNodeSetID"
 
             props = col.operator("node.add_node", text=" Transform                  ", icon = "NODE_TRANSFORM")
             props.use_transform = True
@@ -3835,6 +3839,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeDeleteGeometry"
+
+            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
 
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
@@ -3864,7 +3872,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "DELETE")
+            props = flow.operator("node.add_node", text = "", icon = "SET_ID")
             props.use_transform = True
             props.type = "GeometryNodeSetID"
 
@@ -3945,7 +3953,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" ID                         ", icon = "DELETE")
+            props = col.operator("node.add_node", text=" ID                         ", icon = "GET_ID")
             props.use_transform = True
             props.type = "GeometryNodeInputID"
 
@@ -3964,6 +3972,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Radius                ", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
+
+            props = col.operator("node.add_node", text=" Scene Time             ", icon = "TIME")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSceneTime"
 
 
         #### Icon Buttons
@@ -4018,7 +4030,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "DELETE")
+            props = flow.operator("node.add_node", text = "", icon = "GET_ID")
             props.use_transform = True
             props.type = "GeometryNodeInputID"
 
@@ -4037,6 +4049,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
+
+            props = flow.operator("node.add_node", text = "", icon = "TIME")
+            props.use_transform = True
+            props.type = "GeometryNodeInputSceneTime"
 
 
 #add mesh panel
@@ -4235,11 +4251,11 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Dual Mesh               ", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
-            
+
             props = col.operator("node.add_node", text=" Mesh Boolean           ", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeMeshBoolean"
@@ -4268,9 +4284,33 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
+            props = col.operator("node.add_node", text=" Edge Neighbors       ", icon = "EDGE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeNeighbors"
+
+            props = col.operator("node.add_node", text=" Edge Vertices           ", icon = "EDGE_VERTICES")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeVertices"
+
+            props = col.operator("node.add_node", text=" Face Area                ", icon = "FACEREGIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceNeighbors"
+
+            props = col.operator("node.add_node", text=" Mesh Island             ", icon = "UV_ISLANDSEL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshIsland"
+
             props = col.operator("node.add_node", text=" Is Shade Smoooth   ", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
+
+            props = col.operator("node.add_node", text=" Vertex Neighbors   ", icon = "VERTEX_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshVertexNeighbors"
 
             props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
@@ -4283,7 +4323,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
@@ -4316,9 +4356,33 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
+            props = flow.operator("node.add_node", text = "", icon = "EDGE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeNeighbors"
+
+            props = flow.operator("node.add_node", text = "", icon = "EDGE_VERTICES")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeVertices"
+
+            props = flow.operator("node.add_node", text = "", icon = "FACEREGIONS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceNeighbors"
+
+            props = flow.operator("node.add_node", text = "", icon = "UV_ISLANDSEL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshIsland"
+
             props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
+
+            props = flow.operator("node.add_node", text = "", icon = "VERTEX_NEIGHBORS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshVertexNeighbors"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
@@ -4825,7 +4889,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
- 
+
             props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
