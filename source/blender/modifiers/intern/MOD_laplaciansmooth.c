@@ -585,7 +585,7 @@ static void deformVertsEM(ModifierData *md,
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row;
+  uiLayout *row, *col; /*bfa, added *col*/
   uiLayout *layout = panel->layout;
   int toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -604,8 +604,22 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "lambda_factor", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "lambda_border", 0, NULL, ICON_NONE);
 
-  uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_normalized", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+  //uiItemR(layout, ptr, "use_normalized", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normalized", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_normalized", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 
