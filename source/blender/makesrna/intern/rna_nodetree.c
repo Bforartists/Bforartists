@@ -14043,7 +14043,7 @@ static int node_type_to_icon(int type)
       icon = ICON_CURVE_FILLET;
       break;
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
-      icon = ICON_DELETE;
+      icon = ICON_GEOMETRY_INSTANCE;
       break;
     case GEO_NODE_IMAGE_TEXTURE:
       icon = ICON_IMAGE_DATA;
@@ -14067,22 +14067,22 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_MATERIAL;
       break;
     case GEO_NODE_INPUT_MESH_EDGE_NEIGHBORS:
-      icon = ICON_DELETE;
+      icon = ICON_EDGE_NEIGHBORS;
       break;
     case GEO_NODE_INPUT_MESH_EDGE_VERTICES:
-      icon = ICON_DELETE;
+      icon = ICON_EDGE_VERTICES;
       break;
     case GEO_NODE_INPUT_MESH_FACE_AREA:
-      icon = ICON_DELETE;
+      icon = ICON_FACEREGIONS;
       break;
     case GEO_NODE_INPUT_MESH_FACE_NEIGHBORS:
-      icon = ICON_DELETE;
+      icon = ICON_FACE_NEIGHBORS;
       break;
     case GEO_NODE_INPUT_MESH_ISLAND:
-      icon = ICON_DELETE;
+      icon = ICON_UV_ISLANDSEL;
       break;
     case GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS:
-      icon = ICON_DELETE;
+      icon = ICON_VERTEX_NEIGHBORS;
       break;
     case GEO_NODE_INPUT_NORMAL:
       icon = ICON_RECALC_NORMALS;
@@ -14094,7 +14094,7 @@ static int node_type_to_icon(int type)
       icon = ICON_RADIUS;
       break;
     case GEO_NODE_INPUT_SCENE_TIME:
-      icon = ICON_DELETE;
+      icon = ICON_TIME;
       break;
     case GEO_NODE_INPUT_SHADE_SMOOTH:
       icon = ICON_SHADING_SMOOTH;

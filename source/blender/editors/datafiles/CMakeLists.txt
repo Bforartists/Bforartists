@@ -1255,11 +1255,11 @@ detach_links_move
 hold_split
 dual_mesh
 domain_size
-#~ DEF_ICON_BLANK(1274)
-#~ DEF_ICON_BLANK(1275)
-#~ DEF_ICON_BLANK(1276)
-#~ DEF_ICON_BLANK(1277)
-#~ DEF_ICON_BLANK(1278)
+edge_neighbors
+edge_vertices
+face_neighbors
+geometry_instance
+vertex_neighbors
 
 # ------------------------- row 19 --------------------------*/
 
