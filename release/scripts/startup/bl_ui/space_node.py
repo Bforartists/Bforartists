@@ -1003,6 +1003,7 @@ class NodeTreeInterfacePanel:
                 )
                 if in_out == 'OUT' and is_field_type:
                     layout.prop(active_socket, "attribute_domain")
+            layout.use_property_split = False
             active_socket.draw(context, layout)
 
 
