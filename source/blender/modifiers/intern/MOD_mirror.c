@@ -128,7 +128,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *col, *sub;
+  uiLayout *row, *col; /*bfa - no *sub*/
   uiLayout *layout = panel->layout;
   int toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -161,27 +161,60 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(col, ptr, "mirror_object", 0, NULL, ICON_NONE);
 
-  uiItemR(col, ptr, "use_clip", 0, IFACE_("Clipping"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(col, ptr, "use_clip", 0, IFACE_("Clipping"), ICON_NONE);
 
-  row = uiLayoutRowWithHeading(col, true, IFACE_("Merge"));
-  uiItemR(row, ptr, "use_mirror_merge", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_merge"));
-  uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_clip", 0, IFACE_("Clipping"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_clip", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(col, true, IFACE_("Merge"));
+  //uiItemR(row, ptr, "use_mirror_merge", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_merge"));
+  //uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_mirror_merge", 0, "Merge", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_mirror_merge", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_mirror_merge")) {
+    uiLayoutSetPropSep(row, true);
+    uiItemR(row, ptr, "merge_threshold", toggles_flag, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+  // ------------------------------- end bfa
 
   bool is_bisect_set[3];
   RNA_boolean_get_array(ptr, "use_bisect_axis", is_bisect_set);
 
-  sub = uiLayoutRow(col, true);
-  uiLayoutSetActive(sub, is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
-  uiItemR(sub, ptr, "bisect_threshold", 0, IFACE_("Bisect Distance"), ICON_NONE);
+  col = uiLayoutRow(layout, true); /*bfa - col, not sub*/
+  uiLayoutSetPropSep(col, true);  /* bfa - use_property_split = true */
+  uiLayoutSetActive(col, is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
+  uiItemR(col, ptr, "bisect_threshold", 0, IFACE_("Bisect Distance"), ICON_NONE);
 
   modifier_panel_end(layout, ptr);
 }
 
 static void data_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col, *row, *sub;
+  uiLayout *col, *row; /*bfa - no *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
@@ -189,30 +222,91 @@ static void data_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = uiLayoutColumn(layout, true);
-  row = uiLayoutRowWithHeading(col, true, IFACE_("Mirror U"));
-  uiLayoutSetPropDecorate(row, false);
-  sub = uiLayoutRow(row, true);
-  uiItemR(sub, ptr, "use_mirror_u", 0, "", ICON_NONE);
-  sub = uiLayoutRow(sub, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_u"));
-  uiItemR(sub, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mirror_offset_u", 0);
 
-  row = uiLayoutRowWithHeading(col, true, IFACE_("V"));
+/*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(col, true, IFACE_("Mirror U"));
+  //uiLayoutSetPropDecorate(row, false);
+  //sub = uiLayoutRow(row, true);
+  //uiItemR(sub, ptr, "use_mirror_u", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(sub, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_u"));
+  //uiItemR(sub, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  //uiItemDecoratorR(row, ptr, "mirror_offset_u", 0);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(col, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
   uiLayoutSetPropDecorate(row, false);
-  sub = uiLayoutRow(row, true);
-  uiItemR(sub, ptr, "use_mirror_v", 0, "", ICON_NONE);
-  sub = uiLayoutRow(sub, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_v"));
-  uiItemR(sub, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mirror_offset_v", 0);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_mirror_u", 0, "Mirror U", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_mirror_u")) {
+    uiItemR(row, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
+
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(col, true, IFACE_("V"));
+  //uiLayoutSetPropDecorate(row, false);
+  //sub = uiLayoutRow(row, true);
+  //uiItemR(sub, ptr, "use_mirror_v", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(sub, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_v"));
+  //uiItemR(sub, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  //uiItemDecoratorR(row, ptr, "mirror_offset_v", 0);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  split = uiLayoutSplit(col, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_mirror_v", 0, "V", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_mirror_v")) {
+    uiItemR(row, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
 
   col = uiLayoutColumn(layout, true);
   uiItemR(col, ptr, "offset_u", UI_ITEM_R_SLIDER, IFACE_("Offset U"), ICON_NONE);
   uiItemR(col, ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
 
-  uiItemR(layout, ptr, "use_mirror_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
-  uiItemR(layout, ptr, "use_mirror_udim", 0, IFACE_("Flip UDIM"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_mirror_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+  //uiItemR(layout, ptr, "use_mirror_udim", 0, IFACE_("Flip UDIM"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_mirror_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_mirror_vertex_groups", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_mirror_udim", 0, IFACE_("Flip UDIM"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_mirror_udim", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 }
 
 static void panelRegister(ARegionType *region_type)
