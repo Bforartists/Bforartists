@@ -336,7 +336,7 @@ static void deformMatrices(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
@@ -350,11 +350,30 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
   uiBlock *block = uiLayoutGetBlock(panel->layout);
+
   UI_block_lock_set(block, !is_sculpt_mode, IFACE_("Sculpt Base Mesh"));
-  uiItemR(col, ptr, "use_sculpt_base_mesh", 0, IFACE_("Sculpt Base Mesh"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_sculpt_base_mesh", 0, IFACE_("Sculpt Base Mesh"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_sculpt_base_mesh", 0, IFACE_("Sculpt Base Mesh"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
   UI_block_lock_clear(block);
 
-  uiItemR(layout, ptr, "show_only_control_edges", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "show_only_control_edges", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "show_only_control_edges", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
 }
@@ -467,7 +486,7 @@ static void generate_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
 static void advanced_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa - added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
@@ -485,8 +504,21 @@ static void advanced_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "uv_smooth", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "boundary_smooth", 0, NULL, ICON_NONE);
 
-  uiItemR(layout, ptr, "use_creases", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_creases", 0, NULL, ICON_NONE);
+  //uiItemR(layout, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_creases", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void panelRegister(ARegionType *region_type)
