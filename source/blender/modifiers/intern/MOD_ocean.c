@@ -648,7 +648,6 @@ static void spray_panel_draw(const bContext *UNUSED(C), Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "invert_spray", 0, IFACE_("Invert"), ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "invert_spray", 0, NULL, ICON_NONE);
