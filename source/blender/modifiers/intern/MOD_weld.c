@@ -2028,7 +2028,16 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "mode", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "merge_threshold", 0, IFACE_("Distance"), ICON_NONE);
   if (weld_mode == MOD_WELD_MODE_CONNECTED) {
-    uiItemR(layout, ptr, "loose_edges", 0, NULL, ICON_NONE);
+    /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "loose_edges", 0, NULL, ICON_NONE);
+
+    uiLayout *row, *col; /*bfa*/
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "loose_edges", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "loose_edges", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 
