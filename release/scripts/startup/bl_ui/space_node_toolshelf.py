@@ -4896,7 +4896,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Compare          ", icon = "FLOAT_COMPARE")
             props.use_transform = True
-            props.type = "FunctionNodeCompareFloats"
+            props.type = "FunctionNodeCompare"
 
             props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
             props.use_transform = True
@@ -4956,7 +4956,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
-            props.type = "FunctionNodeCompareFloats"
+            props.type = "FunctionNodeCompare"
 
             props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
             props.use_transform = True
