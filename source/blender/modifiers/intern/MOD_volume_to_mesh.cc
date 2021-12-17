@@ -91,6 +91,7 @@ static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *u
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa*/
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
@@ -98,13 +99,13 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   {
-    uiLayout *col = uiLayoutColumn(layout, false);
+    col = uiLayoutColumn(layout, false); /*bfa*/
     uiItemR(col, ptr, "object", 0, nullptr, ICON_NONE);
     uiItemR(col, ptr, "grid_name", 0, nullptr, ICON_NONE);
   }
 
   {
-    uiLayout *col = uiLayoutColumn(layout, false);
+    col = uiLayoutColumn(layout, false); /*bfa*/
     uiItemR(col, ptr, "resolution_mode", 0, nullptr, ICON_NONE);
     if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
       uiItemR(col, ptr, "voxel_amount", 0, nullptr, ICON_NONE);
@@ -115,10 +116,20 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   }
 
   {
-    uiLayout *col = uiLayoutColumn(layout, false);
+    col = uiLayoutColumn(layout, false); /*bfa*/
     uiItemR(col, ptr, "threshold", 0, nullptr, ICON_NONE);
     uiItemR(col, ptr, "adaptivity", 0, nullptr, ICON_NONE);
-    uiItemR(col, ptr, "use_smooth_shade", 0, nullptr, ICON_NONE);
+
+    /*------------------- bfa - original props */
+    // uiItemR(col, ptr, "use_smooth_shade", 0, nullptr, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+
   }
 
   modifier_panel_end(layout, ptr);
