@@ -121,7 +121,7 @@ static Mesh *modifyMesh(ModifierData *md, const struct ModifierEvalContext *ctx,
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col, *row, *sub;
+  uiLayout *col, *row; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -133,18 +133,72 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "offset", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
-  uiItemR(col, ptr, "use_boundary", 0, IFACE_("Boundary"), ICON_NONE);
-  uiItemR(col, ptr, "use_replace", 0, IFACE_("Replace Original"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_boundary", 0, IFACE_("Boundary"), ICON_NONE);
+  //uiItemR(col, ptr, "use_replace", 0, IFACE_("Replace Original"), ICON_NONE);
 
-  col = uiLayoutColumnWithHeading(layout, true, IFACE_("Thickness"));
-  uiItemR(col, ptr, "use_even_offset", 0, IFACE_("Even"), ICON_NONE);
-  uiItemR(col, ptr, "use_relative_offset", 0, IFACE_("Relative"), ICON_NONE);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_boundary", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_boundary", 0); /*bfa - decorator*/
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Crease Edges"));
-  uiItemR(row, ptr, "use_crease", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
-  uiItemR(sub, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_replace", 0, IFACE_("Replace Original"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_replace", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Thickness"));
+  //uiItemR(col, ptr, "use_even_offset", 0, IFACE_("Even"), ICON_NONE);
+  //uiItemR(col, ptr, "use_relative_offset", 0, IFACE_("Relative"), ICON_NONE);
+
+  uiItemL(col, TIP_("Thickness"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_even_offset", 0, IFACE_("Even"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_relative_offset", 0, IFACE_("Relative"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_relative_offset", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Crease Edges"));
+  //uiItemR(row, ptr, "use_crease", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
+  //uiItemR(sub, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_crease", 0, "Crease Edges", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_crease", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_crease")) {
+    uiItemR(row, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+  // ------------------------------- end bfa
+
+
+
 
   uiItemR(layout, ptr, "material_offset", 0, IFACE_("Material Offset"), ICON_NONE);
 
