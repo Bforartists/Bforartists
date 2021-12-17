@@ -193,7 +193,16 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, mode != GP_TIME_MODE_FIX);
+
+  /*------------------- bfa - original props */
+  // uiItemR(row, ptr, "use_keep_loop", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_keep_loop", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_keep_loop", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
 
   gpencil_modifier_panel_end(layout, ptr);
 }
