@@ -687,7 +687,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "min_dist", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "max_dist", 0, NULL, ICON_NONE);
 
-
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
 
@@ -696,7 +695,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "normalize", 0, NULL, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
-                                                             /* ------------ end bfa */
+  /* ------------ end bfa */
 }
 
 static void falloff_panel_draw(const bContext *UNUSED(C), Panel *panel)
