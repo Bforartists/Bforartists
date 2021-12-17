@@ -403,7 +403,7 @@ static void deformVertsEM(ModifierData *md,
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -428,7 +428,15 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemPointerR(col, ptr, "bone_to", &to_obj_data_ptr, "bones", IFACE_("Bone"), ICON_NONE);
   }
 
-  uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   uiItemR(layout, ptr, "strength", 0, NULL, ICON_NONE);
 
