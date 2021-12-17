@@ -664,7 +664,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -687,7 +687,16 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "min_dist", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "max_dist", 0, NULL, ICON_NONE);
 
-  uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "normalize", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
+                                                             /* ------------ end bfa */
 }
 
 static void falloff_panel_draw(const bContext *UNUSED(C), Panel *panel)
