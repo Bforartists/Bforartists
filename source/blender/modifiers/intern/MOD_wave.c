@@ -363,7 +363,7 @@ static void deformVertsEM(ModifierData *md,
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *sub, *row, *col;
+  uiLayout *row, *col; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -375,15 +375,51 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(row, ptr, "use_x", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, NULL, ICON_NONE);
   uiItemR(row, ptr, "use_y", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, NULL, ICON_NONE);
 
-  uiItemR(layout, ptr, "use_cyclic", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_cyclic", 0, NULL, ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Along Normals"));
-  uiItemR(row, ptr, "use_normal", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
-  uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-  uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-  uiItemR(sub, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_cyclic", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Along Normals"));
+  //uiItemR(row, ptr, "use_normal", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
+  //uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
+  //uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
+  //uiItemR(sub, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+
+// ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normal", 0, "Along Normals", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  if (RNA_boolean_get(ptr, "use_normal")) {
+    uiItemR(row, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
+    uiItemR(row, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
+    uiItemR(row, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    uiItemL(row, TIP_(""), ICON_NONE);/* bfa - aligns the decorator right...*/
+    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+  }
+  // ------------------------------- end bfa
 
   col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "falloff_radius", 0, "Falloff", ICON_NONE);
