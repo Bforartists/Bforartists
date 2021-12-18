@@ -256,19 +256,29 @@ static void curvature_header_draw(const bContext *UNUSED(C), Panel *panel)
 static void curvature_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *col and *row*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = uiLayoutColumn(layout, false);
+  //uiLayout *col = uiLayoutColumn(layout, false); /*bfa*/
+  col = uiLayoutColumn(layout, false);
 
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_curvature"));
 
   uiItemR(col, ptr, "point_density", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "segment_influence", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "max_angle", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "invert_curvature", 0, IFACE_("Invert"), ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(col, ptr, "invert_curvature", 0, IFACE_("Invert"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "invert_curvature", 0, IFACE_("Invert"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "invert_curvature", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void panelRegister(ARegionType *region_type)
