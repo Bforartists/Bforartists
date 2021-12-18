@@ -406,7 +406,7 @@ DefNode(GeometryNode, GEO_NODE_SEPARATE_GEOMETRY, def_geo_separate_geometry, "SE
 DefNode(GeometryNode, GEO_NODE_SET_CURVE_HANDLES, def_geo_curve_set_handle_positions, "SET_CURVE_HANDLES", SetCurveHandlePositions, "Set Handle Positions", "Add a Set Handle Positions Geometry node\nSet the positions of a curve handle")
 DefNode(GeometryNode, GEO_NODE_SET_CURVE_RADIUS, 0, "SET_CURVE_RADIUS", SetCurveRadius, "Set Curve Radius", "Add a Set Curve Radius Geometry node\nSets the radius of a curve")
 DefNode(GeometryNode, GEO_NODE_SET_CURVE_TILT, 0, "SET_CURVE_TILT", SetCurveTilt, "Set Curve Tilt", "Add a Set Curve Tilt Geometry node\nSets the tilt of a curve")
-DefNode(GeometryNode, GEO_NODE_SET_ID, 0, "SET_ID", SetID, "Set ID", "Add a Set ID Geometry Node\Set the ID of an object")
+DefNode(GeometryNode, GEO_NODE_SET_ID, 0, "SET_ID", SetID, "Set ID", "Add a Set ID Geometry Node\nSet the ID of an object")
 DefNode(GeometryNode, GEO_NODE_SET_MATERIAL_INDEX, 0, "SET_MATERIAL_INDEX", SetMaterialIndex, "Set Material Index", "Add a Set Material Index Geometry node\nSets the material index")
 DefNode(GeometryNode, GEO_NODE_SET_MATERIAL, 0, "SET_MATERIAL", SetMaterial, "Set Material", "Add a Set Material Geometry node\nSets the material")
 DefNode(GeometryNode, GEO_NODE_SET_POINT_RADIUS, 0, "SET_POINT_RADIUS", SetPointRadius, "Set Point Radius", "Add a Set Point Radius Geometry node\nSets the radius of a point")
