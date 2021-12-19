@@ -50,8 +50,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeAttributeCompare *data = (NodeAttributeCompare *)MEM_callocN(sizeof(NodeAttributeCompare),
-                                                                   __func__);
+  NodeAttributeCompare *data = MEM_cnew<NodeAttributeCompare>(__func__);
   data->operation = NODE_COMPARE_GREATER_THAN;
   data->input_type_a = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
   data->input_type_b = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
@@ -324,7 +323,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     attribute_compare_calc(geometry_set.get_component_for_write<MeshComponent>(), params);

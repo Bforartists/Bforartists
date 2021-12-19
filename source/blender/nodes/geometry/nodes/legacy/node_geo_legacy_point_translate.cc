@@ -57,7 +57,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     execute_on_component(params, geometry_set.get_component_for_write<MeshComponent>());
@@ -74,8 +74,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryPointTranslate *data = (NodeGeometryPointTranslate *)MEM_callocN(
-      sizeof(NodeGeometryPointTranslate), __func__);
+  NodeGeometryPointTranslate *data = MEM_cnew<NodeGeometryPointTranslate>(__func__);
 
   data->input_type = GEO_NODE_ATTRIBUTE_INPUT_VECTOR;
   node->storage = data;

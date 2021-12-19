@@ -1308,6 +1308,10 @@ char *WM_modalkeymap_operator_items_to_string_buf(wmOperatorType *ot,
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Keymap Finding Utilities
+ * \{ */
+
 static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                                                    const char *opname,
                                                    IDProperty *properties,

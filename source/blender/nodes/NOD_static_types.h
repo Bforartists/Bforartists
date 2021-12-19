@@ -394,7 +394,7 @@ DefNode(GeometryNode, GEO_NODE_POINTS_TO_VERTICES, 0, "POINTS_TO_VERTICES", Poin
 DefNode(GeometryNode, GEO_NODE_POINTS_TO_VOLUME, def_geo_points_to_volume, "POINTS_TO_VOLUME", PointsToVolume, "Points to Volume", "Add a Points to Volume Geometry node\nAdds points to a volume")
 DefNode(GeometryNode, GEO_NODE_PROXIMITY, def_geo_proximity, "PROXIMITY", Proximity, "Geometry Proximity", "Add a Geometry Proximity Geometry node\nFinds the closest position on the target for each point in the input geometry ")
 DefNode(GeometryNode, GEO_NODE_RAYCAST, def_geo_raycast, "RAYCAST", Raycast, "Raycast", "Add a Raycast Geometry node\nSends a raycast and retreives data from the hit target")
-DefNode(GeometryNode, GEO_NODE_REALIZE_INSTANCES, 0, "REALIZE_INSTANCES", RealizeInstances, "Realize Instances", "Add a Realize Instances Geometry node\nMakes the instances in the geometry inmput real")
+DefNode(GeometryNode, GEO_NODE_REALIZE_INSTANCES, def_geo_realize_instances, "REALIZE_INSTANCES", RealizeInstances, "Realize Instances", "Add a Realize Instances Geometry node\nMakes the instances in the geometry inmput real")
 DefNode(GeometryNode, GEO_NODE_REPLACE_MATERIAL, 0, "REPLACE_MATERIAL", ReplaceMaterial, "Replace Material", "Add a Material Replace Geometry node\nReplace an existing material by a new material")
 DefNode(GeometryNode, GEO_NODE_RESAMPLE_CURVE, def_geo_curve_resample, "RESAMPLE_CURVE", ResampleCurve, "Resample Curve", "Add a Resample Curve Geometry node\nResamples a curve object")
 DefNode(GeometryNode, GEO_NODE_REVERSE_CURVE, 0, "REVERSE_CURVE", ReverseCurve, "Reverse Curve",  "Add a Reverse Curve Geometry node\nReverse the direction of the curve")

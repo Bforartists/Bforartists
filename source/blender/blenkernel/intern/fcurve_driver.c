@@ -29,6 +29,7 @@
 
 #include "BLI_alloca.h"
 #include "BLI_expr_pylike_eval.h"
+#include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_string_utils.h"
 #include "BLI_threads.h"
@@ -864,6 +865,12 @@ void driver_variable_name_validate(DriverVar *dvar)
   }
 }
 
+void driver_variable_unique_name(DriverVar *dvar)
+{
+  ListBase variables = BLI_listbase_from_link((Link *)dvar);
+  BLI_uniquename(&variables, dvar, dvar->name, '_', offsetof(DriverVar, name), sizeof(dvar->name));
+}
+
 DriverVar *driver_add_new_variable(ChannelDriver *driver)
 {
   DriverVar *dvar;
@@ -1285,3 +1292,5 @@ float evaluate_driver(PathResolvedRNA *anim_rna,
   /* Return value for driver. */
   return driver->curval;
 }
+
+/** \} */

@@ -46,8 +46,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryPointInstance *data = (NodeGeometryPointInstance *)MEM_callocN(
-      sizeof(NodeGeometryPointInstance), __func__);
+  NodeGeometryPointInstance *data = MEM_cnew<NodeGeometryPointInstance>(__func__);
   data->instance_type = GEO_NODE_POINT_INSTANCE_TYPE_OBJECT;
   data->flag |= GEO_NODE_POINT_INSTANCE_WHOLE_COLLECTION;
   node->storage = data;
@@ -229,7 +228,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   /* TODO: This node should be able to instance on the input instances component
    * rather than making the entire input geometry set real. */
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   const Vector<InstanceReference> possible_references = get_instance_references(params);
   if (possible_references.is_empty()) {
