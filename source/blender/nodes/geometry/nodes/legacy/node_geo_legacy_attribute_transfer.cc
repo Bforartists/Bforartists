@@ -50,8 +50,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryAttributeTransfer *data = (NodeGeometryAttributeTransfer *)MEM_callocN(
-      sizeof(NodeGeometryAttributeTransfer), __func__);
+  NodeGeometryAttributeTransfer *data = MEM_cnew<NodeGeometryAttributeTransfer>(__func__);
   data->domain = ATTR_DOMAIN_AUTO;
   node->storage = data;
 }
@@ -403,7 +402,7 @@ static void transfer_attribute_nearest(const GeometrySet &src_geometry,
                                                                                         data_type);
     for (const int i : IndexRange(tot_samples)) {
       if (pointcloud_distances_sq[i] < mesh_distances_sq[i]) {
-        /* Point-cloud point is closer. */
+        /* Point cloud point is closer. */
         const int index = pointcloud_indices[i];
         pointcloud_src_attribute.varray.get(index, buffer);
         dst_attribute->set_by_relocate(i, buffer);
@@ -487,8 +486,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  dst_geometry_set = bke::geometry_set_realize_instances(dst_geometry_set);
-  src_geometry_set = bke::geometry_set_realize_instances(src_geometry_set);
+  dst_geometry_set = geometry::realize_instances_legacy(dst_geometry_set);
+  src_geometry_set = geometry::realize_instances_legacy(src_geometry_set);
 
   if (dst_geometry_set.has<MeshComponent>()) {
     transfer_attribute(params,
