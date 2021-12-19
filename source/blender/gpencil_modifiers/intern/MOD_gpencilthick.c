@@ -186,12 +186,23 @@ static void foreachIDLink(GpencilModifierData *md, Object *ob, IDWalkFunc walk, 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_normalized_thickness", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+
   if (RNA_boolean_get(ptr, "use_normalized_thickness")) {
     uiItemR(layout, ptr, "thickness", 0, NULL, ICON_NONE);
   }
