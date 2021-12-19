@@ -27,7 +27,7 @@ from mathutils import Matrix, Vector, Euler
 from itertools import count
 
 from .errors import MetarigError
-from .collections import ensure_widget_collection
+from .collections import ensure_collection
 from .naming import change_name_side, get_name_side, Side
 
 WGT_PREFIX = "WGT-"  # Prefix for widget objects
@@ -79,7 +79,7 @@ def create_widget(rig, bone_name, bone_transform_name=None, *, widget_name=None,
     if generator:
         collection = generator.widget_collection
     else:
-        collection = ensure_widget_collection(bpy.context, 'WGTS_' + rig.name)
+        collection = ensure_collection(bpy.context, 'WGTS_' + rig.name, hidden=True)
 
     use_mirror = generator and generator.use_mirror_widgets
 

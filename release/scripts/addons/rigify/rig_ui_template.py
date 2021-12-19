@@ -1167,27 +1167,10 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
             layer_layout += [(l.name, l.row)]
 
         # Generate the UI script
-        if metarig.data.rigify_rig_basename:
-            rig_ui_name = metarig.data.rigify_rig_basename + '_ui.py'
-        else:
-            rig_ui_name = 'rig_ui.py'
-
-        script = None
-
-        if metarig.data.rigify_generate_mode == 'overwrite':
-            script = metarig.data.rigify_rig_ui
-
-            if not script and rig_ui_name in bpy.data.texts:
-                script = bpy.data.texts[rig_ui_name]
-
-            if script:
-                script.clear()
-                script.name = rig_ui_name
-
-        if script is None:
-            script = bpy.data.texts.new(rig_ui_name)
-
-        metarig.data.rigify_rig_ui = script
+        script = metarig.data.rigify_rig_ui
+        if not script:
+            script = bpy.data.texts.new("rig_ui.py")
+            metarig.data.rigify_rig_ui = script
 
         for s in OrderedDict.fromkeys(self.ui_imports):
             script.write(s + "\n")

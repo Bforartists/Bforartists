@@ -3869,11 +3869,6 @@ static int set_spline_type_exec(bContext *C, wmOperator *op)
     const bool use_handles = RNA_boolean_get(op->ptr, "use_handles");
     const int type = RNA_enum_get(op->ptr, "type");
 
-    if (ELEM(type, CU_CARDINAL, CU_BSPLINE)) {
-      BKE_report(op->reports, RPT_ERROR, "Not yet implemented");
-      continue;
-    }
-
     LISTBASE_FOREACH (Nurb *, nu, editnurb) {
       if (ED_curve_nurb_select_check(v3d, nu)) {
         const int pntsu_prev = nu->pntsu;
@@ -3917,8 +3912,6 @@ void CURVE_OT_spline_type_set(wmOperatorType *ot)
   static const EnumPropertyItem type_items[] = {
       {CU_POLY, "POLY", ICON_MESH_DATA, "Poly", ""},
       {CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bezier", ""},
-      //      {CU_CARDINAL, "CARDINAL", 0, "Cardinal", ""},
-      //      {CU_BSPLINE, "B_SPLINE", 0, "B-Spline", ""},
       {CU_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
       {0, NULL, 0, NULL, NULL},
   };

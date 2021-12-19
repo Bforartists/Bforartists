@@ -95,8 +95,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCurveToPoints *data = (NodeGeometryCurveToPoints *)MEM_callocN(
-      sizeof(NodeGeometryCurveToPoints), __func__);
+  NodeGeometryCurveToPoints *data = MEM_cnew<NodeGeometryCurveToPoints>(__func__);
 
   data->mode = GEO_NODE_CURVE_RESAMPLE_COUNT;
   node->storage = data;
@@ -296,7 +295,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const GeometryNodeCurveResampleMode mode = (GeometryNodeCurveResampleMode)node_storage.mode;
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = bke::geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (!geometry_set.has_curve()) {
     params.set_output("Geometry", GeometrySet());
