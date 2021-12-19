@@ -287,15 +287,37 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(row, ptr, "use_project_y", toggles_flag, NULL, ICON_NONE);
     uiItemR(row, ptr, "use_project_z", toggles_flag, NULL, ICON_NONE);
 
-    uiItemR(col, ptr, "use_negative_direction", 0, NULL, ICON_NONE);
-    uiItemR(col, ptr, "use_positive_direction", 0, NULL, ICON_NONE);
+
+    /*------------------- bfa - original props */
+    //uiItemR(col, ptr, "use_negative_direction", 0, NULL, ICON_NONE);
+    //uiItemR(col, ptr, "use_positive_direction", 0, NULL, ICON_NONE);
+
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_negative_direction", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
+
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_positive_direction", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
 
     uiItemR(layout, ptr, "cull_face", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
     col = uiLayoutColumn(layout, false);
     uiLayoutSetActive(col,
                       RNA_boolean_get(ptr, "use_negative_direction") &&
                           RNA_enum_get(ptr, "cull_face") != 0);
-    uiItemR(col, ptr, "use_invert_cull", 0, NULL, ICON_NONE);
+
+    /*------------------- bfa - original props */
+    // uiItemR(col, ptr, "use_invert_cull", 0, NULL, ICON_NONE);
+
+    row = uiLayoutRow(col, true);
+    uiItemS(row);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_invert_cull", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 
   uiItemR(layout, ptr, "target", 0, NULL, ICON_NONE);
