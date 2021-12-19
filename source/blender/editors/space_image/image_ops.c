@@ -729,9 +729,9 @@ void IMAGE_OT_view_zoom(wmOperatorType *ot)
   WM_operator_properties_use_cursor_init(ot);
 }
 
-#ifdef WITH_INPUT_NDOF
-
 /** \} */
+
+#ifdef WITH_INPUT_NDOF
 
 /* -------------------------------------------------------------------- */
 /** \name NDOF Operator
@@ -4172,3 +4172,5 @@ void IMAGE_OT_tile_fill(wmOperatorType *ot)
 
   def_fill_tile(ot->srna);
 }
+
+/** \} */

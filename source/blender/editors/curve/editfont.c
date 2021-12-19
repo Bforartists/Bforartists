@@ -72,8 +72,6 @@
 
 static int kill_selection(Object *obedit, int ins);
 
-/** \} */
-
 /* -------------------------------------------------------------------- */
 /** \name Internal Utilities
  * \{ */

@@ -1205,7 +1205,7 @@ static void gpencil_stroke_newfrombuffer(tGPsdata *p)
       for (int r = 0; r < brush->gpencil_settings->draw_smoothlvl; r++) {
         for (i = 0; i < gps->totpoints - 1; i++) {
           BKE_gpencil_stroke_smooth_point(
-              gps, i, brush->gpencil_settings->draw_smoothfac - reduce);
+              gps, i, brush->gpencil_settings->draw_smoothfac - reduce, false);
           BKE_gpencil_stroke_smooth_strength(gps, i, brush->gpencil_settings->draw_smoothfac);
         }
         reduce += 0.25f; /* reduce the factor */
@@ -1217,7 +1217,7 @@ static void gpencil_stroke_newfrombuffer(tGPsdata *p)
       float ifac = (float)brush->gpencil_settings->input_samples / 10.0f;
       float sfac = interpf(1.0f, 0.2f, ifac);
       for (i = 0; i < gps->totpoints - 1; i++) {
-        BKE_gpencil_stroke_smooth_point(gps, i, sfac);
+        BKE_gpencil_stroke_smooth_point(gps, i, sfac, false);
         BKE_gpencil_stroke_smooth_strength(gps, i, sfac);
       }
     }
@@ -1567,6 +1567,12 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
       }
 
       bGPDspoint npt;
+      gpencil_point_to_parent_space(pt1, p->diff_mat, &npt);
+      gpencil_point_to_xy(&p->gsc, gps, &npt, &pc1[0], &pc1[1]);
+
+      gpencil_point_to_parent_space(pt2, p->diff_mat, &npt);
+      gpencil_point_to_xy(&p->gsc, gps, &npt, &pc2[0], &pc2[1]);
+
       if (pt0) {
         gpencil_point_to_parent_space(pt0, p->diff_mat, &npt);
         gpencil_point_to_xy(&p->gsc, gps, &npt, &pc0[0], &pc0[1]);
@@ -1575,12 +1581,6 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
         /* avoid null values */
         copy_v2_v2_int(pc0, pc1);
       }
-
-      gpencil_point_to_parent_space(pt1, p->diff_mat, &npt);
-      gpencil_point_to_xy(&p->gsc, gps, &npt, &pc1[0], &pc1[1]);
-
-      gpencil_point_to_parent_space(pt2, p->diff_mat, &npt);
-      gpencil_point_to_xy(&p->gsc, gps, &npt, &pc2[0], &pc2[1]);
 
       /* Check that point segment of the boundbox of the eraser stroke */
       if (((!ELEM(V2D_IS_CLIPPED, pc0[0], pc0[1])) && BLI_rcti_isect_pt(rect, pc0[0], pc0[1])) ||

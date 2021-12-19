@@ -61,8 +61,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeAttributeMix *data = (NodeAttributeMix *)MEM_callocN(sizeof(NodeAttributeMix),
-                                                           "attribute mix node");
+  NodeAttributeMix *data = MEM_cnew<NodeAttributeMix>("attribute mix node");
   data->blend_type = MA_RAMP_BLEND;
   data->input_type_factor = GEO_NODE_ATTRIBUTE_INPUT_FLOAT;
   data->input_type_a = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
@@ -226,7 +225,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     attribute_mix_calc(geometry_set.get_component_for_write<MeshComponent>(), params);

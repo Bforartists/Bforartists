@@ -41,8 +41,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeAttributeSeparateXYZ *data = (NodeAttributeSeparateXYZ *)MEM_callocN(
-      sizeof(NodeAttributeSeparateXYZ), __func__);
+  NodeAttributeSeparateXYZ *data = MEM_cnew<NodeAttributeSeparateXYZ>(__func__);
   data->input_type = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
   node->storage = data;
 }
@@ -134,7 +133,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     separate_attribute(geometry_set.get_component_for_write<MeshComponent>(), params);

@@ -21,6 +21,10 @@
 #include "BLI_vector_set.hh"
 
 #include "FN_field.hh"
+#include "FN_multi_function_procedure.hh"
+#include "FN_multi_function_procedure_builder.hh"
+#include "FN_multi_function_procedure_executor.hh"
+#include "FN_multi_function_procedure_optimization.hh"
 
 namespace blender::fn {
 
@@ -251,7 +255,9 @@ static void build_multi_function_procedure_for_fields(MFProcedure &procedure,
     builder.add_destruct(*variable);
   }
 
-  builder.add_return();
+  MFReturnInstruction &return_instr = builder.add_return();
+
+  procedure_optimization::move_destructs_up(procedure, return_instr);
 
   // std::cout << procedure.to_dot() << "\n";
   BLI_assert(procedure.validate());
@@ -565,7 +571,7 @@ static std::shared_ptr<const FieldInputs> combine_field_inputs(Span<GField> fiel
     /* None of the field depends on an input. */
     return {};
   }
-  /* Check if all inputs are in the */
+  /* Check if all inputs are in the candidate. */
   Vector<const FieldInput *> inputs_not_in_candidate;
   for (const GField &field : fields) {
     const std::shared_ptr<const FieldInputs> &field_inputs = field.node().field_inputs();
@@ -598,7 +604,7 @@ static std::shared_ptr<const FieldInputs> combine_field_inputs(Span<GField> fiel
 FieldOperation::FieldOperation(const MultiFunction &function, Vector<GField> inputs)
     : FieldNode(false), function_(&function), inputs_(std::move(inputs))
 {
-  field_inputs_ = combine_field_inputs(inputs);
+  field_inputs_ = combine_field_inputs(inputs_);
 }
 
 /* --------------------------------------------------------------------
@@ -618,7 +624,7 @@ FieldInput::FieldInput(const CPPType &type, std::string debug_name)
  * FieldEvaluator.
  */
 
-static Vector<int64_t> indices_from_selection(const VArray<bool> &selection)
+static Vector<int64_t> indices_from_selection(IndexMask mask, const VArray<bool> &selection)
 {
   /* If the selection is just a single value, it's best to avoid calling this
    * function when constructing an IndexMask and use an IndexRange instead. */
@@ -627,14 +633,14 @@ static Vector<int64_t> indices_from_selection(const VArray<bool> &selection)
   Vector<int64_t> indices;
   if (selection.is_span()) {
     Span<bool> span = selection.get_internal_span();
-    for (const int64_t i : span.index_range()) {
+    for (const int64_t i : mask) {
       if (span[i]) {
         indices.append(i);
       }
     }
   }
   else {
-    for (const int i : selection.index_range()) {
+    for (const int i : mask) {
       if (selection[i]) {
         indices.append(i);
       }
@@ -675,14 +681,36 @@ int FieldEvaluator::add(GField field)
   return field_index;
 }
 
+static IndexMask evaluate_selection(const Field<bool> &selection_field,
+                                    const FieldContext &context,
+                                    IndexMask full_mask,
+                                    ResourceScope &scope)
+{
+  if (selection_field) {
+    VArray<bool> selection =
+        evaluate_fields(scope, {selection_field}, full_mask, context)[0].typed<bool>();
+    if (selection.is_single()) {
+      if (selection.get_internal_single()) {
+        return full_mask;
+      }
+      return IndexRange(0);
+    }
+    return scope.add_value(indices_from_selection(full_mask, selection)).as_span();
+  }
+  return full_mask;
+}
+
 void FieldEvaluator::evaluate()
 {
   BLI_assert_msg(!is_evaluated_, "Cannot evaluate fields twice.");
+
+  selection_mask_ = evaluate_selection(selection_field_, context_, mask_, scope_);
+
   Array<GFieldRef> fields(fields_to_evaluate_.size());
   for (const int i : fields_to_evaluate_.index_range()) {
     fields[i] = fields_to_evaluate_[i];
   }
-  evaluated_varrays_ = evaluate_fields(scope_, fields, mask_, context_, dst_varrays_);
+  evaluated_varrays_ = evaluate_fields(scope_, fields, selection_mask_, context_, dst_varrays_);
   BLI_assert(fields_to_evaluate_.size() == evaluated_varrays_.size());
   for (const int i : fields_to_evaluate_.index_range()) {
     OutputPointerInfo &info = output_pointer_infos_[i];
@@ -704,7 +732,13 @@ IndexMask FieldEvaluator::get_evaluated_as_mask(const int field_index)
     return IndexRange(0);
   }
 
-  return scope_.add_value(indices_from_selection(varray)).as_span();
+  return scope_.add_value(indices_from_selection(mask_, varray)).as_span();
+}
+
+IndexMask FieldEvaluator::get_evaluated_selection_as_mask()
+{
+  BLI_assert(is_evaluated_);
+  return selection_mask_;
 }
 
 }  // namespace blender::fn
