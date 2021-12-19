@@ -43,8 +43,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryPointScale *data = (NodeGeometryPointScale *)MEM_callocN(
-      sizeof(NodeGeometryPointScale), __func__);
+  NodeGeometryPointScale *data = MEM_cnew<NodeGeometryPointScale>(__func__);
 
   data->input_type = GEO_NODE_ATTRIBUTE_INPUT_VECTOR;
   node->storage = data;
@@ -105,7 +104,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     execute_on_component(params, geometry_set.get_component_for_write<MeshComponent>());

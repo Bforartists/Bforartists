@@ -30,7 +30,7 @@ from .utils.widgets import WGT_PREFIX
 from .utils.widgets_special import create_root_widget
 from .utils.mechanism import refresh_all_drivers
 from .utils.misc import gamma_correct, select_object
-from .utils.collections import ensure_widget_collection, list_layer_collections, filter_layer_collections_by_object
+from .utils.collections import ensure_collection, list_layer_collections, filter_layer_collections_by_object
 from .utils.rig import get_rigify_type
 
 from . import base_generate
@@ -55,9 +55,6 @@ class Generator(base_generate.BaseGenerator):
 
         self.id_store = context.window_manager
 
-        self.rig_new_name = ""
-        self.rig_old_name = ""
-
 
     def find_rig_class(self, rig_type):
         rig_module = rig_lists.rigs[rig_type]["module"]
@@ -76,55 +73,42 @@ class Generator(base_generate.BaseGenerator):
         self.collection = self.layer_collection.collection
 
 
-    def __create_rig_object(self):
-        scene = self.scene
-        id_store = self.id_store
+    def ensure_rig_object(self) -> bpy.types.Object:
+        """Check if the generated rig already exists, so we can
+        regenerate in the same object. If not, create a new
+        object to generate the rig in.
+        """
+        print("Fetch rig.")
         meta_data = self.metarig.data
 
-        # Check if the generated rig already exists, so we can
-        # regenerate in the same object.  If not, create a new
-        # object to generate the rig in.
-        print("Fetch rig.")
+        target_rig = meta_data.rigify_target_rig
+        if not target_rig:
+            if "metarig" in self.metarig.name:
+                rig_new_name = self.metarig.name.replace("metarig", "rig")
+            elif "META" in self.metarig.name:
+                rig_new_name = self.metarig.name.replace("META", "RIG")
+            else:
+                rig_new_name = "RIG-" + self.metarig.name
 
-        self.rig_new_name = name = meta_data.rigify_rig_basename or "rig"
-
-        obj = None
-
-        # Try existing object if overwriting
-        if meta_data.rigify_generate_mode == 'overwrite':
-            obj = meta_data.rigify_target_rig
-
-            if obj:
-                self.rig_old_name = obj.name
-
-                obj.name = name
-                obj.data.name = obj.name
-
-            elif name in bpy.data.objects:
-                obj = bpy.data.objects[name]
-
-        # Create a new object if not found
-        if not obj:
-            obj = bpy.data.objects.new(name, bpy.data.armatures.new(name))
-            obj.display_type = 'WIRE'
+            target_rig = bpy.data.objects.new(rig_new_name, bpy.data.armatures.new(rig_new_name))
+            target_rig.display_type = 'WIRE'
 
         # If the object is already added to the scene, switch to its collection
-        if obj.name in self.context.scene.collection.all_objects:
-            self.__switch_to_usable_collection(obj)
+        if target_rig.name in self.context.scene.collection.all_objects:
+            self.__switch_to_usable_collection(target_rig)
         else:
             # Otherwise, add to the selected collection or the metarig collection if unusable
             if (self.layer_collection not in self.usable_collections
                 or self.layer_collection == self.view_layer.layer_collection):
                 self.__switch_to_usable_collection(self.metarig, True)
 
-            self.collection.objects.link(obj)
+            self.collection.objects.link(target_rig)
 
         # Configure and remember the object
-        meta_data.rigify_target_rig = obj
-        obj.data.pose_position = 'POSE'
+        meta_data.rigify_target_rig = target_rig
+        target_rig.data.pose_position = 'POSE'
 
-        self.obj = obj
-        return obj
+        return target_rig
 
 
     def __unhide_rig_object(self, obj):
@@ -144,11 +128,11 @@ class Generator(base_generate.BaseGenerator):
             raise Exception('Could not generate: Could not find a usable collection.')
 
 
-    def __create_widget_group(self):
-        new_group_name = "WGTS_" + self.obj.name
-        wgts_group_name = "WGTS_" + (self.rig_old_name or self.obj.name)
-
-        # Find the old widgets collection
+    def __find_legacy_collection(self) -> bpy.types.Collection:
+        """For backwards comp, matching by name to find a legacy collection.
+        (For before there was a Widget Collection PointerProperty)
+        """
+        wgts_group_name = "WGTS_" + self.obj.name
         old_collection = bpy.data.collections.get(wgts_group_name)
 
         if not old_collection:
@@ -160,16 +144,22 @@ class Generator(base_generate.BaseGenerator):
                 old_collection = legacy_collection
 
         if old_collection:
-            # Remove widgets if force update is set
-            if self.metarig.data.rigify_force_widget_update:
-                for obj in list(old_collection.objects):
-                    bpy.data.objects.remove(obj)
-
             # Rename the collection
-            old_collection.name = new_group_name
+            old_collection.name = wgts_group_name
+        
+        return old_collection
 
+    def ensure_widget_collection(self):
         # Create/find widget collection
-        self.widget_collection = ensure_widget_collection(self.context, new_group_name)
+        self.widget_collection = self.metarig.data.rigify_widgets_collection
+        if not self.widget_collection:
+            self.widget_collection = self.__find_legacy_collection()
+        if not self.widget_collection:
+            wgts_group_name = "WGTS_" + self.obj.name.replace("RIG-", "")
+            self.widget_collection = ensure_collection(self.context, wgts_group_name, hidden=True)
+
+        self.metarig.data.rigify_widgets_collection = self.widget_collection
+
         self.use_mirror_widgets = self.metarig.data.rigify_mirror_widgets
 
         # Build tables for existing widgets
@@ -177,7 +167,11 @@ class Generator(base_generate.BaseGenerator):
         self.new_widget_table = {}
         self.widget_mirror_mesh = {}
 
-        if not self.metarig.data.rigify_force_widget_update and self.obj.pose:
+        if self.metarig.data.rigify_force_widget_update:
+            # Remove widgets if force update is set
+            for obj in list(self.widget_collection.objects):
+                bpy.data.objects.remove(obj)
+        elif self.obj.pose:
             # Find all widgets from the collection referenced by the old rig
             known_widgets = set(obj.name for obj in self.widget_collection.objects)
 
@@ -430,7 +424,7 @@ class Generator(base_generate.BaseGenerator):
 
         #------------------------------------------
         # Create/find the rig object and set it up
-        obj = self.__create_rig_object()
+        self.obj = obj = self.ensure_rig_object()
 
         self.__unhide_rig_object(obj)
 
@@ -446,8 +440,8 @@ class Generator(base_generate.BaseGenerator):
         select_object(context, obj, deselect_all=True)
 
         #------------------------------------------
-        # Create Group widget
-        self.__create_widget_group()
+        # Create Widget Collection
+        self.ensure_widget_collection()
 
         t.tick("Create main WGTS: ")
 

@@ -51,8 +51,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryPointsToVolume *data = (NodeGeometryPointsToVolume *)MEM_callocN(
-      sizeof(NodeGeometryPointsToVolume), __func__);
+  NodeGeometryPointsToVolume *data = MEM_cnew<NodeGeometryPointsToVolume>(__func__);
   data->resolution_mode = GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_AMOUNT;
   data->input_type_radius = GEO_NODE_ATTRIBUTE_INPUT_FLOAT;
   node->storage = data;
@@ -248,7 +247,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   GeometrySet geometry_set_out;
 
   /* TODO: Read-only access to instances should be supported here, for now they are made real. */
-  geometry_set_in = geometry_set_realize_instances(geometry_set_in);
+  geometry_set_in = geometry::realize_instances_legacy(geometry_set_in);
 
 #ifdef WITH_OPENVDB
   initialize_volume_component_from_points(geometry_set_in, geometry_set_out, params);
