@@ -215,9 +215,24 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropDecorate(sub, false);
   uiItemR(sub, ptr, "invert_vertex_group", 0, "", ICON_ARROW_LEFTRIGHT);
 
-  col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind To"));
-  uiItemR(col, ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
-  uiItemR(col, ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind To"));
+  //uiItemR(col, ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+  //uiItemR(col, ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+
+  uiItemL(col, TIP_("Bind To"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
+  /* ------------ end bfa */
 
   gpencil_modifier_panel_end(layout, ptr);
 }
