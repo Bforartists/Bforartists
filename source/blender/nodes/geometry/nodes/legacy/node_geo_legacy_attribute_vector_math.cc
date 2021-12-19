@@ -103,8 +103,7 @@ static CustomDataType operation_get_read_type_c(const NodeVectorMathOperation op
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeAttributeVectorMath *data = (NodeAttributeVectorMath *)MEM_callocN(
-      sizeof(NodeAttributeVectorMath), __func__);
+  NodeAttributeVectorMath *data = MEM_cnew<NodeAttributeVectorMath>(__func__);
 
   data->operation = NODE_VECTOR_MATH_ADD;
   data->input_type_a = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
@@ -533,7 +532,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     attribute_vector_math_calc(geometry_set.get_component_for_write<MeshComponent>(), params);

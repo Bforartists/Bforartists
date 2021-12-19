@@ -53,8 +53,8 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryAlignRotationToVector *node_storage = (NodeGeometryAlignRotationToVector *)
-      MEM_callocN(sizeof(NodeGeometryAlignRotationToVector), __func__);
+  NodeGeometryAlignRotationToVector *node_storage = MEM_cnew<NodeGeometryAlignRotationToVector>(
+      __func__);
 
   node_storage->axis = GEO_NODE_ALIGN_ROTATION_TO_VECTOR_AXIS_X;
   node_storage->input_type_factor = GEO_NODE_ATTRIBUTE_INPUT_FLOAT;
@@ -201,7 +201,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     align_rotations_on_component(geometry_set.get_component_for_write<MeshComponent>(), params);
