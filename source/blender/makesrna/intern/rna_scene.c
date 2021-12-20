@@ -3653,7 +3653,7 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush\nHotkey in the default keymap: F");
+  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush\nHotkey in the default keymap: X");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_radius_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);
