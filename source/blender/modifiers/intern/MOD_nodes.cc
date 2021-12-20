@@ -1328,7 +1328,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
-  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
+  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);/*bfa - we align left*/
   uiItemL(name_row, socket.name, ICON_NONE);
 
   uiLayout *row = uiLayoutRow(split, true);
