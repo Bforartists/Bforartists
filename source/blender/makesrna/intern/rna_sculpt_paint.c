@@ -1288,12 +1288,12 @@ static void rna_def_particle_edit(BlenderRNA *brna)
   RNA_def_property_range(prop, 1, SHRT_MAX);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 10, 3);
   RNA_def_property_ui_text(
-      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: F");
+      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: X");
 
   prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, 0.001, 1.0);
   RNA_def_property_ui_text(
-      prop, "Strength", "Brush strength\nHotkey in the default keymap: Shift + F");
+      prop, "Strength", "Brush strength\nHotkey in the default keymap: C");
 
   prop = RNA_def_property(srna, "count", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 1, 1000);
