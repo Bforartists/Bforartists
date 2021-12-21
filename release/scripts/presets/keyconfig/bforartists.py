@@ -5843,6 +5843,8 @@ keyconfig_data = \
     ("render.play_rendered_anim", {"type": 'F11', "value": 'PRESS', "ctrl": True}, None),
     ("screen.region_flip", {"type": 'F5', "value": 'PRESS'}, None),
     ("screen.redo_last", {"type": 'F6', "value": 'PRESS'}, None),
+    ("asset.catalog_undo", {"type": 'Z', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("asset.catalog_redo", {"type": 'Z', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True}, None),
     ],
    },
   ),
