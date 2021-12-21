@@ -44,14 +44,10 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         # Uses prop_with_popover() as popover() only adds the triangle icon in headers.
-        layout.prop_with_popover(
-            params,
-            "display_type",
-            panel="ASSETBROWSER_PT_display",
-            text="",
-            icon_only=True,
-        )
-
+        row = layout.row(align = True)
+        row.prop(params, "display_type", expand=True, icon_only=True)
+        row.prop_with_popover(params,"display_type", panel="ASSETBROWSER_PT_display",text="", icon_only=True,)
+        
         sub = layout.row()
         sub.ui_units_x = 8
         sub.prop(params, "filter_search", text="", icon='VIEWZOOM')
