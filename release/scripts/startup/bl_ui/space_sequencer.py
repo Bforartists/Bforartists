@@ -755,7 +755,7 @@ class SEQUENCER_MT_add(Menu):
         #col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
 
-        col.menu("SEQUENCER_PT_fades_add")
+        col.menu("SEQUENCER_MT_fades_add")
         col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
 
@@ -2751,7 +2751,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
 
 
-class SEQUENCER_PT_fades_add(Menu):
+class SEQUENCER_MT_fades_add(Menu):
     bl_label = "Fade"
 
     def draw(self, context):
@@ -2853,7 +2853,7 @@ classes = (
 
 #BFA
     SEQUENCER_PT_view_options,
-    SEQUENCER_PT_fades_add
+    SEQUENCER_MT_fades_add
 )
 
 if __name__ == "__main__":  # only for live edit.
