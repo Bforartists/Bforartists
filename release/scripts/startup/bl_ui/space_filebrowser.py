@@ -708,6 +708,10 @@ class ASSETBROWSER_MT_edit(AssetBrowserMenu, Menu):
 
         layout.operator("asset.catalog_undo", text="Undo", icon = "UNDO")
         layout.operator("asset.catalog_redo", text="Redo", icon = "REDO")
+        
+        layout.separator()
+        
+        layout.operator("preferences.filepaths_show", emboss=False, text="Asset Library Paths", icon='PREFERENCES')
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
