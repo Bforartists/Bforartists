@@ -47,7 +47,7 @@ class FILEBROWSER_HT_header(Header):
         row = layout.row(align = True)
         row.prop(params, "display_type", expand=True, icon_only=True)
         row.prop_with_popover(params,"display_type", panel="ASSETBROWSER_PT_display",text="", icon_only=True,)
-        
+
         sub = layout.row()
         sub.ui_units_x = 8
         sub.prop(params, "filter_search", text="", icon='VIEWZOOM')
@@ -752,6 +752,16 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
                 col.prop(asset_file_handle.asset_data, "catalog_id", text="UUID")
                 col.prop(asset_file_handle.asset_data, "catalog_simple_name", text="Simple Name")
 
+
+class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
+    bl_label = "Info"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        wm = context.window_manager
+        asset_file_handle = context.asset_file_handle
+
         row = layout.row(align=True)
         row.prop(wm, "asset_path_dummy", text="Source")
         row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
@@ -856,6 +866,7 @@ classes = (
     ASSETBROWSER_MT_select,
     ASSETBROWSER_MT_edit,
     ASSETBROWSER_PT_metadata,
+    ASSETBROWSER_PT_metadata_info,
     ASSETBROWSER_PT_metadata_preview,
     ASSETBROWSER_PT_metadata_tags,
     ASSETBROWSER_UL_metadata_tags,
