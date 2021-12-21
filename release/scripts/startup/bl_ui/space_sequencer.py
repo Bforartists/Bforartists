@@ -752,8 +752,10 @@ class SEQUENCER_MT_add(Menu):
         col.enabled = selected_sequences_len(context) >= 2
 
         col = layout.column()
-        col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
+        #col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
+
+        col.menu("SEQUENCER_PT_fades_add")
         col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
 
@@ -2749,6 +2751,19 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
 
 
+class SEQUENCER_PT_fades_add(Menu):
+    bl_label = "Fade"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("sequencer.fades_add", text="Fade In and Out", icon='IPO_EASE_IN_OUT').type = 'IN_OUT'
+        layout.operator("sequencer.fades_add", text="Fade In", icon='IPO_EASE_IN').type = 'IN'
+        layout.operator("sequencer.fades_add", text="Fade Out", icon='IPO_EASE_OUT').type = 'OUT'
+        layout.operator("sequencer.fades_add", text="From current Frame", icon='BEFORE_CURRENT_FRAME').type = 'CURSOR_FROM'
+        layout.operator("sequencer.fades_add", text="To current Frame", icon='AFTER_CURRENT_FRAME').type = 'CURSOR_TO'
+
+
 classes = (
     ALL_MT_editormenu,
     SEQUENCER_MT_change,
@@ -2837,7 +2852,8 @@ classes = (
     SEQUENCER_PT_snapping,
 
 #BFA
-    SEQUENCER_PT_view_options
+    SEQUENCER_PT_view_options,
+    SEQUENCER_PT_fades_add
 )
 
 if __name__ == "__main__":  # only for live edit.
