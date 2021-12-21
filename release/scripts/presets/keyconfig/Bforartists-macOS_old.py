@@ -1791,8 +1791,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -4760,7 +4758,7 @@ keyconfig_data = \
     ("node.clipboard_copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
     ("node.clipboard_paste", {"type": 'V', "value": 'PRESS', "oskey": True}, None),
     ("node.viewer_border", {"type": 'B', "value": 'PRESS', "oskey": True}, None),
-    ("node.clear_viewer_border", {"type": 'B', "value": 'PRESS', "oskey": True, "alt": True}, None),
+    ("node.clear_viewer_border", {"type": 'B', "value": 'PRESS', "alt": True, "oskey": True}, None),
     ("node.translate_attach",
      {"type": 'W', "value": 'PRESS'},
      {"properties":
@@ -5844,6 +5842,8 @@ keyconfig_data = \
     ("render.play_rendered_anim", {"type": 'F11', "value": 'PRESS', "oskey": True}, None),
     ("screen.region_flip", {"type": 'F5', "value": 'PRESS'}, None),
     ("screen.redo_last", {"type": 'F6', "value": 'PRESS'}, None),
+    ("asset.catalog_undo", {"type": 'Z', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("asset.catalog_redo", {"type": 'Z', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True}, None),
     ],
    },
   ),
