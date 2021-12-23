@@ -14,8 +14,8 @@ bl_info = {
     "name": "Minilightlib",
     "description": "A mini library addon with predefined light setups",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (0,8,0),
-    "blender": (2, 90, 0),
+    "version": (0,9,0),
+    "blender": (3, 0, 0),
     "location": "Tool Shelf > Create > Mini Lightlib",
     "warning": "",
     "wiki_url": "",
@@ -44,7 +44,8 @@ class MLL_OT_read_asset(bpy.types.Operator):
 
         #append all objects from .blend file
         with bpy.data.libraries.load(filepath) as (data_from, data_to):
-            data_to.objects = data_from.objects
+            #data_to.objects = data_from.objects
+            data_to.collections = data_from.collections
 
          # When you want to load just specific object types
 #        obj_name = "Cube" # name of object(s) in the lib file to append or link
@@ -52,11 +53,14 @@ class MLL_OT_read_asset(bpy.types.Operator):
 #            data_to.objects = [name for name in data_from.objects if name.startswith(obj_name)]
 
         #link object to current scene
-        for obj in data_to.objects:
-            if obj is not None:
-               scn.collection.objects.link(obj)
-               #bpy.context.object.select_set(False) # We don't want to have the asset selected after loading
-               obj.select_set(False) # We don't want to have the asset selected after loading
+        #for obj in data_to.objects:
+        #    if obj is not None:
+        #       scn.collection.objects.link(obj)
+        #       obj.select_set(False) # We don't want to have the asset selected after loading
+        # link collection to scene collection
+        for coll in data_to.collections:
+            if coll is not None:
+                bpy.context.scene.collection.children.link(coll)
         return {'FINISHED'}
 
 ############################# read directory
