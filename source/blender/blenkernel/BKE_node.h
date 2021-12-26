@@ -34,6 +34,7 @@
 #include "RNA_types.h"
 
 #ifdef __cplusplus
+#  include "BLI_map.hh"
 #  include "BLI_string_ref.hh"
 #endif
 
@@ -501,16 +502,13 @@ void ntreeFreeLocalTree(struct bNodeTree *ntree);
 struct bNode *ntreeFindType(const struct bNodeTree *ntree, int type);
 bool ntreeHasType(const struct bNodeTree *ntree, int type);
 bool ntreeHasTree(const struct bNodeTree *ntree, const struct bNodeTree *lookup);
-void ntreeUpdateTree(struct Main *main, struct bNodeTree *ntree);
 void ntreeUpdateAllNew(struct Main *main);
-/**
- * \param tree_update_flag: #eNodeTreeUpdate enum.
- */
-void ntreeUpdateAllUsers(struct Main *main, struct ID *id, int tree_update_flag);
+void ntreeUpdateAllUsers(struct Main *main, struct ID *id);
 
 void ntreeGetDependencyList(struct bNodeTree *ntree,
                             struct bNode ***r_deplist,
                             int *r_deplist_len);
+void ntreeUpdateNodeLevels(struct bNodeTree *ntree);
 
 /**
  * XXX: old trees handle output flags automatically based on special output
@@ -521,8 +519,6 @@ void ntreeSetOutput(struct bNodeTree *ntree);
 
 void ntreeFreeCache(struct bNodeTree *ntree);
 
-bool ntreeNodeExists(const struct bNodeTree *ntree, const struct bNode *testnode);
-bool ntreeOutputExists(const struct bNode *node, const struct bNodeSocket *testsock);
 void ntreeNodeFlagSet(const bNodeTree *ntree, const int flag, const bool enable);
 /**
  * Returns localized tree for execution in threads.
@@ -700,31 +696,28 @@ void nodeRemoveNode(struct Main *bmain,
                     struct bNode *node,
                     bool do_id_user);
 
-/**
- * \param ntree: is the target tree.
- *
- * \note keep socket list order identical, for copying links.
- * \note `unique_name` needs to be true. It's only disabled for speed when doing GPUnodetrees.
- */
-struct bNode *BKE_node_copy_ex(struct bNodeTree *ntree,
-                               const struct bNode *node_src,
-                               const int flag,
-                               const bool unique_name);
+#ifdef __cplusplus
+
+namespace blender::bke {
 
 /**
- * Same as #BKE_node_copy_ex but stores pointers to a new node and its sockets in the source node.
- *
- * NOTE: DANGER ZONE!
- *
- * TODO(sergey): Maybe it's better to make BKE_node_copy_ex() return a mapping from old node and
- * sockets to new one.
+ * \note keeps socket list order identical, for copying links.
+ * \note `unique_name` should usually be true, unless the \a dst_tree is temporary,
+ * or the names can already be assumed valid.
  */
-struct bNode *BKE_node_copy_store_new_pointers(struct bNodeTree *ntree,
-                                               struct bNode *node_src,
-                                               const int flag);
-struct bNodeTree *ntreeCopyTree_ex_new_pointers(const struct bNodeTree *ntree,
-                                                struct Main *bmain,
-                                                const bool do_id_user);
+bNode *node_copy_with_mapping(bNodeTree *dst_tree,
+                              const bNode &node_src,
+                              int flag,
+                              bool unique_name,
+                              Map<const bNodeSocket *, bNodeSocket *> &new_socket_map);
+
+bNode *node_copy(bNodeTree *dst_tree, const bNode &src_node, int flag, bool unique_name);
+
+}  // namespace blender::bke
+
+#endif
+
+bNode *BKE_node_copy(bNodeTree *dst_tree, const bNode *src_node, int flag, bool unique_name);
 
 /**
  * Also used via RNA API, so we check for proper input output direction.
@@ -833,12 +826,7 @@ void nodeClearActive(struct bNodeTree *ntree);
 void nodeClearActiveID(struct bNodeTree *ntree, short idtype);
 struct bNode *nodeGetActiveTexture(struct bNodeTree *ntree);
 
-void nodeUpdate(struct bNodeTree *ntree, struct bNode *node);
-bool nodeUpdateID(struct bNodeTree *ntree, struct ID *id);
-void nodeUpdateInternalLinks(struct bNodeTree *ntree, struct bNode *node);
-
 int nodeSocketIsHidden(const struct bNodeSocket *sock);
-void ntreeTagUsedSockets(struct bNodeTree *ntree);
 void nodeSetSocketAvailability(struct bNodeTree *ntree,
                                struct bNodeSocket *sock,
                                bool is_available);
@@ -960,10 +948,7 @@ bNodePreview *BKE_node_preview_verify(
     struct bNodeInstanceHash *previews, bNodeInstanceKey key, int xsize, int ysize, bool create);
 bNodePreview *BKE_node_preview_copy(struct bNodePreview *preview);
 void BKE_node_preview_free(struct bNodePreview *preview);
-void BKE_node_preview_init_tree(struct bNodeTree *ntree,
-                                int xsize,
-                                int ysize,
-                                bool create_previews);
+void BKE_node_preview_init_tree(struct bNodeTree *ntree, int xsize, int ysize);
 void BKE_node_preview_free_tree(struct bNodeTree *ntree);
 void BKE_node_preview_remove_unused(struct bNodeTree *ntree);
 void BKE_node_preview_clear(struct bNodePreview *preview);
@@ -973,14 +958,6 @@ void BKE_node_preview_sync_tree(struct bNodeTree *to_ntree, struct bNodeTree *fr
 void BKE_node_preview_merge_tree(struct bNodeTree *to_ntree,
                                  struct bNodeTree *from_ntree,
                                  bool remove_old);
-
-/**
- * Hack warning! this function is only used for shader previews,
- * and since it gets called multiple times per pixel for Z-transparency we only add the color once.
- * Preview gets cleared before it starts render though.
- */
-void BKE_node_preview_set_pixel(
-    struct bNodePreview *preview, const float col[4], int x, int y, bool do_manage);
 
 /** \} */
 
@@ -1170,7 +1147,6 @@ void BKE_nodetree_remove_layer_n(struct bNodeTree *ntree,
 #define SH_NODE_SEPRGB 120
 #define SH_NODE_COMBRGB 121
 #define SH_NODE_HUE_SAT 122
-#define NODE_DYNAMIC 123
 
 #define SH_NODE_OUTPUT_MATERIAL 124
 #define SH_NODE_OUTPUT_WORLD 125

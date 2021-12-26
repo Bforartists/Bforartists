@@ -95,7 +95,7 @@ typedef struct SocketDeclarationHandle SocketDeclarationHandle;
 #endif
 
 typedef struct bNodeSocket {
-  struct bNodeSocket *next, *prev, *new_sock;
+  struct bNodeSocket *next, *prev;
 
   /** User-defined properties. */
   IDProperty *prop;
@@ -159,7 +159,7 @@ typedef struct bNodeSocket {
    * restores pointer from matching own_index. */
   struct bNodeSocket *groupsock DNA_DEPRECATED;
 
-  /** A link pointer, set in ntreeUpdateTree. */
+  /** A link pointer, set in #BKE_ntree_update_main. */
   struct bNodeLink *link;
 
   /* XXX deprecated, socket input values are stored in default_value now.
@@ -172,9 +172,13 @@ typedef struct bNodeSocket {
    * data. It has to be updated when the node declaration changes.
    */
   const SocketDeclarationHandle *declaration;
+
+  /** #eNodeTreeChangedFlag. */
+  uint32_t changed_flag;
+  char _pad[4];
 } bNodeSocket;
 
-/* sock->type */
+/** #bNodeSocket.type & #bNodeSocketType.type */
 typedef enum eNodeSocketDatatype {
   SOCK_CUSTOM = -1, /* socket has no integer type */
   SOCK_FLOAT = 0,
@@ -193,7 +197,7 @@ typedef enum eNodeSocketDatatype {
   SOCK_MATERIAL = 13,
 } eNodeSocketDatatype;
 
-/* Socket shape. */
+/** Socket shape. */
 typedef enum eNodeSocketDisplayShape {
   SOCK_DISPLAY_SHAPE_CIRCLE = 0,
   SOCK_DISPLAY_SHAPE_SQUARE = 1,
@@ -203,13 +207,13 @@ typedef enum eNodeSocketDisplayShape {
   SOCK_DISPLAY_SHAPE_DIAMOND_DOT = 5,
 } eNodeSocketDisplayShape;
 
-/* Socket side (input/output). */
+/** Socket side (input/output). */
 typedef enum eNodeSocketInOut {
   SOCK_IN = 1 << 0,
   SOCK_OUT = 1 << 1,
 } eNodeSocketInOut;
 
-/* #bNodeSocket.flag, first bit is selection. */
+/** #bNodeSocket.flag, first bit is selection. */
 typedef enum eNodeSocketFlag {
   /** Hidden is user defined, to hide unused sockets. */
   SOCK_HIDDEN = (1 << 1),
@@ -239,9 +243,9 @@ typedef enum eNodeSocketFlag {
   SOCK_HIDE_LABEL = (1 << 12),
 } eNodeSocketFlag;
 
-/* TODO: Limit data in bNode to what we want to see saved. */
+/** TODO: Limit data in #bNode to what we want to see saved. */
 typedef struct bNode {
-  struct bNode *next, *prev, *new_node;
+  struct bNode *next, *prev;
 
   /** User-defined properties. */
   IDProperty *prop;
@@ -260,8 +264,9 @@ typedef struct bNode {
 
   /** Used as a boolean for execution. */
   uint8_t need_exec;
-
-  char _pad[1];
+  char _pad2[5];
+  /** #eNodeTreeChangedFlag. */
+  uint32_t changed_flag;
 
   /** Custom user-defined color. */
   float color[3];
@@ -400,10 +405,6 @@ typedef struct bNode {
 #define __NODE_ACTIVE_PREVIEW (1 << 18) /* deprecated */
 
 /* node->update */
-/* XXX NODE_UPDATE is a generic update flag. More fine-grained updates
- * might be used in the future, but currently all work the same way.
- */
-#define NODE_UPDATE 0xFFFF     /* generic update flag (includes all others) */
 #define NODE_UPDATE_ID 1       /* associated id data block has changed */
 #define NODE_UPDATE_OPERATOR 2 /* node update triggered from update operator */
 
@@ -511,8 +512,12 @@ typedef struct bNodeTree {
    */
   int cur_index;
   int flag;
-  /** Update flags. */
-  int update;
+  /**
+   * Keeps track of what changed in the node tree until the next update.
+   * Should not be changed directly, instead use the functions in `BKE_node_tree_update.h`.
+   * #eNodeTreeChangedFlag.
+   */
+  uint32_t changed_flag;
   /** Flag to prevent re-entrant update calls. */
   short is_updating;
   /** Generic temporary flag for recursion check (DFS/BFS). */
@@ -546,7 +551,11 @@ typedef struct bNodeTree {
    * in case multiple different editors are used and make context ambiguous.
    */
   bNodeInstanceKey active_viewer_key;
-  char _pad[4];
+  /**
+   * A hash of the topology of the node tree leading up to the outputs. This is used to determine
+   * of the node tree changed in a way that requires updating geometry nodes or shaders.
+   */
+  uint32_t output_topology_hash;
 
   /** Execution data.
    *
@@ -571,7 +580,7 @@ typedef struct bNodeTree {
   struct PreviewImage *preview;
 } bNodeTree;
 
-/* ntree->type, index */
+/** #NodeTree.type, index */
 
 #define NTREE_UNDEFINED -2 /* Represents #NodeTreeTypeUndefined type. */
 #define NTREE_CUSTOM -1    /* for dynamically registered custom types */
@@ -580,10 +589,10 @@ typedef struct bNodeTree {
 #define NTREE_TEXTURE 2
 #define NTREE_GEOMETRY 3
 
-/* ntree->init, flag */
+/** #NodeTree.init, flag */
 #define NTREE_TYPE_INIT 1
 
-/* ntree->flag */
+/** #NodeTree.flag */
 #define NTREE_DS_EXPAND (1 << 0)            /* for animation editors */
 #define NTREE_COM_OPENCL (1 << 1)           /* use opencl */
 #define NTREE_TWO_PASS (1 << 2)             /* two pass */
@@ -593,20 +602,6 @@ typedef struct bNodeTree {
 
 /* tree is localized copy, free when deleting node groups */
 /* #define NTREE_IS_LOCALIZED           (1 << 5) */
-
-/* ntree->update */
-typedef enum eNodeTreeUpdate {
-  NTREE_UPDATE = 0xFFFF,             /* generic update flag (includes all others) */
-  NTREE_UPDATE_LINKS = (1 << 0),     /* links have been added or removed */
-  NTREE_UPDATE_NODES = (1 << 1),     /* nodes or sockets have been added or removed */
-  NTREE_UPDATE_GROUP_IN = (1 << 4),  /* group inputs have changed */
-  NTREE_UPDATE_GROUP_OUT = (1 << 5), /* group outputs have changed */
-  /* The field interface has changed. So e.g. an output that was always a field before is not
-   * anymore. This implies that the field type inferencing has to be done again. */
-  NTREE_UPDATE_FIELD_INFERENCING = (1 << 6),
-  /* group has changed (generic flag including all other group flags) */
-  NTREE_UPDATE_GROUP = (NTREE_UPDATE_GROUP_IN | NTREE_UPDATE_GROUP_OUT),
-} eNodeTreeUpdate;
 
 /* tree->execution_mode */
 typedef enum eNodeTreeExecutionMode {
@@ -674,7 +669,8 @@ typedef struct bNodeSocketValueMaterial {
   struct Material *value;
 } bNodeSocketValueMaterial;
 
-/* Data structs, for node->storage. */
+/* Data structs, for `node->storage`. */
+
 enum {
   CMP_NODE_MASKTYPE_ADD = 0,
   CMP_NODE_MASKTYPE_SUBTRACT = 1,
@@ -713,7 +709,7 @@ typedef struct NodeFrame {
   short label_size;
 } NodeFrame;
 
-/* This one has been replaced with ImageUser, keep it for do_versions(). */
+/** \note This one has been replaced with #ImageUser, keep it for do_versions(). */
 typedef struct NodeImageAnim {
   int frames DNA_DEPRECATED;
   int sfra DNA_DEPRECATED;
@@ -767,7 +763,7 @@ typedef struct NodeEllipseMask {
   char _pad[4];
 } NodeEllipseMask;
 
-/* Layer info for image node outputs. */
+/** Layer info for image node outputs. */
 typedef struct NodeImageLayer {
   /* index in the Image->layers->passes lists */
   int pass_index DNA_DEPRECATED;
@@ -805,7 +801,7 @@ typedef struct NodeAntiAliasingData {
   float corner_rounding;
 } NodeAntiAliasingData;
 
-/* NOTE: Only for do-version code. */
+/** \note Only for do-version code. */
 typedef struct NodeHueSat {
   float hue, sat, val;
 } NodeHueSat;
@@ -817,7 +813,9 @@ typedef struct NodeImageFile {
   int sfra, efra;
 } NodeImageFile;
 
-/* XXX first struct fields should match NodeImageFile to ensure forward compatibility */
+/**
+ * XXX: first struct fields should match #NodeImageFile to ensure forward compatibility.
+ */
 typedef struct NodeImageMultiFile {
   /** 1024 = FILE_MAX. */
   char base_path[1024];
@@ -1066,7 +1064,7 @@ typedef struct NodeShaderPrincipled {
   char _pad[3];
 } NodeShaderPrincipled;
 
-/* TEX_output */
+/** TEX_output. */
 typedef struct TexNodeOutput {
   char name[64];
 } TexNodeOutput;
@@ -1632,14 +1630,17 @@ typedef struct NodeFunctionCompare {
 #define NODE_IES_INTERNAL 0
 #define NODE_IES_EXTERNAL 1
 
-/* frame node flags */
+/* Frame node flags. */
+
 #define NODE_FRAME_SHRINK 1     /* keep the bounding box minimal */
 #define NODE_FRAME_RESIZEABLE 2 /* test flag, if frame can be resized by user */
 
-/* proxy node flags */
+/* Proxy node flags. */
+
 #define NODE_PROXY_AUTOTYPE 1 /* automatically change output type based on link */
 
-/* comp channel matte */
+/* Comp channel matte. */
+
 #define CMP_NODE_CHANNEL_MATTE_CS_RGB 1
 #define CMP_NODE_CHANNEL_MATTE_CS_HSV 2
 #define CMP_NODE_CHANNEL_MATTE_CS_YUV 3
@@ -1661,7 +1662,7 @@ typedef struct NodeFunctionCompare {
 #define SHD_VECT_TRANSFORM_SPACE_OBJECT 1
 #define SHD_VECT_TRANSFORM_SPACE_CAMERA 2
 
-/* attribute */
+/** #NodeShaderAttribute.type */
 enum {
   SHD_ATTRIBUTE_GEOMETRY = 0,
   SHD_ATTRIBUTE_OBJECT = 1,
@@ -1795,7 +1796,7 @@ enum {
 #define SHD_AO_INSIDE 1
 #define SHD_AO_LOCAL 2
 
-/* Mapping node vector types. */
+/** Mapping node vector types. */
 enum {
   NODE_MAPPING_TYPE_POINT = 0,
   NODE_MAPPING_TYPE_TEXTURE = 1,
@@ -1803,7 +1804,7 @@ enum {
   NODE_MAPPING_TYPE_NORMAL = 3,
 };
 
-/* Rotation node vector types. */
+/** Rotation node vector types. */
 enum {
   NODE_VECTOR_ROTATE_TYPE_AXIS = 0,
   NODE_VECTOR_ROTATE_TYPE_AXIS_X = 1,
@@ -1815,7 +1816,7 @@ enum {
 /* math node clamp */
 #define SHD_MATH_CLAMP 1
 
-/* Math node operations. */
+/** Math node operations. */
 typedef enum NodeMathOperation {
   NODE_MATH_ADD = 0,
   NODE_MATH_SUBTRACT = 1,
@@ -1859,7 +1860,7 @@ typedef enum NodeMathOperation {
   NODE_MATH_SMOOTH_MAX = 39,
 } NodeMathOperation;
 
-/* Vector Math node operations. */
+/** Vector Math node operations. */
 typedef enum NodeVectorMathOperation {
   NODE_VECTOR_MATH_ADD = 0,
   NODE_VECTOR_MATH_SUBTRACT = 1,
@@ -1893,14 +1894,14 @@ typedef enum NodeVectorMathOperation {
   NODE_VECTOR_MATH_MULTIPLY_ADD = 26,
 } NodeVectorMathOperation;
 
-/* Boolean math node operations. */
+/** Boolean math node operations. */
 enum {
   NODE_BOOLEAN_MATH_AND = 0,
   NODE_BOOLEAN_MATH_OR = 1,
   NODE_BOOLEAN_MATH_NOT = 2,
 };
 
-/* Float compare node operations. */
+/** Float compare node operations. */
 typedef enum NodeCompareMode {
   NODE_COMPARE_MODE_ELEMENT = 0,
   NODE_COMPARE_MODE_LENGTH = 1,
@@ -1921,7 +1922,7 @@ typedef enum NodeCompareOperation {
 
 } NodeCompareOperation;
 
-/* Float to Int node operations. */
+/** Float to Int node operations. */
 typedef enum FloatToIntRoundingMode {
   FN_NODE_FLOAT_TO_INT_ROUND = 0,
   FN_NODE_FLOAT_TO_INT_FLOOR = 1,
@@ -1929,13 +1930,13 @@ typedef enum FloatToIntRoundingMode {
   FN_NODE_FLOAT_TO_INT_TRUNCATE = 3,
 } FloatToIntRoundingMode;
 
-/* Clamp node types. */
+/** Clamp node types. */
 enum {
   NODE_CLAMP_MINMAX = 0,
   NODE_CLAMP_RANGE = 1,
 };
 
-/* Map range node types. */
+/** Map range node types. */
 enum {
   NODE_MAP_RANGE_LINEAR = 0,
   NODE_MAP_RANGE_STEPPED = 1,
@@ -1947,7 +1948,8 @@ enum {
 #define SHD_MIXRGB_USE_ALPHA 1
 #define SHD_MIXRGB_CLAMP 2
 
-/* subsurface */
+/* Subsurface. */
+
 enum {
 #ifdef DNA_DEPRECATED_ALLOW
   SHD_SUBSURFACE_COMPATIBLE = 0, /* Deprecated */
@@ -1978,25 +1980,29 @@ enum {
 /* viewer and composite output. */
 #define CMP_NODE_OUTPUT_IGNORE_ALPHA 1
 
-/* Plane track deform node */
+/* Plane track deform node. */
+
 enum {
   CMP_NODEFLAG_PLANETRACKDEFORM_MOTION_BLUR = 1,
 };
 
-/* Stabilization node */
+/* Stabilization node. */
+
 enum {
   CMP_NODEFLAG_STABILIZE_INVERSE = 1,
 };
 
 /* Set Alpha Node. */
-/* `NodeSetAlpha.mode` */
+
+/** #NodeSetAlpha.mode */
 typedef enum CMPNodeSetAlphaMode {
   CMP_NODE_SETALPHA_MODE_APPLY = 0,
   CMP_NODE_SETALPHA_MODE_REPLACE_ALPHA = 1,
 } CMPNodeSetAlphaMode;
 
 /* Denoise Node. */
-/* `NodeDenoise.prefilter` */
+
+/** #NodeDenoise.prefilter */
 typedef enum CMPNodeDenoisePrefilter {
   CMP_NODE_DENOISE_PREFILTER_FAST = 0,
   CMP_NODE_DENOISE_PREFILTER_NONE = 1,
