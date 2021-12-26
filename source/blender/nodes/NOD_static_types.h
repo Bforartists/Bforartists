@@ -322,10 +322,9 @@ DefNode(GeometryNode, GEO_NODE_LEGACY_SELECT_BY_MATERIAL, 0, "LEGACY_SELECT_BY_M
 DefNode(GeometryNode, GEO_NODE_LEGACY_SUBDIVISION_SURFACE, def_geo_subdivision_surface, "LEGACY_SUBDIVISION_SURFACE", LegacySubdivisionSurface, "Subdivision Surface", "Add a Subdivision Surface Geometry node\nSubdivide the geometry")
 DefNode(GeometryNode, GEO_NODE_LEGACY_VOLUME_TO_MESH, def_geo_volume_to_mesh, "LEGACY_VOLUME_TO_MESH", LegacyVolumeToMesh, "Volume to Mesh", "")
 
-
+DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_DOMAIN_SIZE, def_geo_attribute_domain_size, "ATTRIBUTE_DOMAIN_SIZE", AttributeDomainSize, "Domain Size", "Add a Domain Size Geometry node\nOutputs containing single values for the related domains are shown")
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_REMOVE, 0, "ATTRIBUTE_REMOVE", AttributeRemove, "Attribute Remove", "Add a Attribute Remove Geometry node\nRemove temporary attributes")
 DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_STATISTIC, def_geo_attribute_statistic, "ATTRIBUTE_STATISTIC", AttributeStatistic, "Attribute Statistic", "Add a Attribute Statistic Geometry node\nProvides statistic informations")
-DefNode(GeometryNode, GEO_NODE_ATTRIBUTE_DOMAIN_SIZE, def_geo_attribute_domain_size, "ATTRIBUTE_DOMAIN_SIZE", AttributeDomainSize, "Domain Size", "Add a Domain Size Geometry node\nOutputs containing single values for the related domains are shown")
 DefNode(GeometryNode, GEO_NODE_BOUNDING_BOX, 0, "BOUNDING_BOX", BoundBox, "Bounding Box", "Add a Bounding Box Geometry node\nAllows you to work with the values of a bounding box")
 DefNode(GeometryNode, GEO_NODE_CAPTURE_ATTRIBUTE, def_geo_attribute_capture, "CAPTURE_ATTRIBUTE", CaptureAttribute, "Capture Attribute", "Add a capture Attribute node\nCapture an attribute")
 DefNode(GeometryNode, GEO_NODE_COLLECTION_INFO, def_geo_collection_info, "COLLECTION_INFO", CollectionInfo, "Collection Info", "Add a Collection Info Geometry node\nRetreives information from collections")
@@ -333,7 +332,6 @@ DefNode(GeometryNode, GEO_NODE_CONVEX_HULL, 0, "CONVEX_HULL", ConvexHull, "Conve
 DefNode(GeometryNode, GEO_NODE_CURVE_ENDPOINT_SELECTION, 0, "CURVE_ENDPOINT_SELECTION", CurveEndpointSelection, "Endpoint Selection", "Add a Endpoint Selection Geometry node\nSelect an arbitrary number of endpoints from each spline in a curve")
 DefNode(GeometryNode, GEO_NODE_CURVE_HANDLE_TYPE_SELECTION, def_geo_curve_handle_type_selection, "CURVE_HANDLE_TYPE_SELECTION", CurveHandleTypeSelection, "Handle Type Selection", "Add a Handle Type Selection Geometry node\nAllows to select handle types")
 DefNode(GeometryNode, GEO_NODE_CURVE_LENGTH, 0, "CURVE_LENGTH", CurveLength, "Curve Length", "Add a Curve Length Geometry node\nRetreives the length of a curve")
-DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER, 0, "SPLINE_PARAMETER", SplineParameter, "Spline Parameter", "Add a Spline Paramenter Geometry node\nAdds extra curve parameters")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT, def_geo_curve_primitive_bezier_segment, "CURVE_PRIMITIVE_BEZIER_SEGMENT", CurvePrimitiveBezierSegment, "Bezier Segment", "Add a Bezier Segment\nCreates a Bezier segment curve")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_CIRCLE, def_geo_curve_primitive_circle, "CURVE_PRIMITIVE_CIRCLE", CurvePrimitiveCircle, "Curve Circle", "Add a Curve Circle\nCreates a curve in the shape of a circle")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_LINE, def_geo_curve_primitive_line, "CURVE_PRIMITIVE_LINE", CurvePrimitiveLine, "Curve Line", "Add a Curve Line\nCreates curve in the shape of a straight line")
@@ -342,6 +340,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL, def_geo_curve_prim
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_SPIRAL, 0, "CURVE_PRIMITIVE_SPIRAL", CurveSpiral, "Curve Spiral", "Add a Curve Spiral\nCreates a curve in the shape of a spiral")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_STAR, 0, "CURVE_PRIMITIVE_STAR", CurveStar, "Star", "Add a Star\nCreates a curve in the shape of a star")
 DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLES, def_geo_curve_set_handles, "CURVE_SET_HANDLES", CurveSetHandles, "Set Handle Type", "Add a Curve Set Handles Geometry node\nSet the curve handle type")
+DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER, 0, "SPLINE_PARAMETER", SplineParameter, "Spline Parameter", "Add a Spline Paramenter Geometry node\nAdds extra curve parameters")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "CURVE_SPLINE_TYPE", CurveSplineType, "Set Spline Type", "Add a Curve Spline Type Geometry node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "Curve to Mesh", "Add a Curve to Mesh Geometry node\nConverts a curve object to a mesh object")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud")
