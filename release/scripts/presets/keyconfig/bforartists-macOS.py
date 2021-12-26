@@ -2291,7 +2291,7 @@ keyconfig_data = \
   {"items":
    [("graph.cursor_set", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
     ("graph.clickselect",
-     {"type": 'LEFTMOUSE', "value": 'RELEASE'},
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
        ("deselect_all", True),
