@@ -493,8 +493,8 @@ class GRAPH_MT_slider(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("graph.breakdown", text="Breakdown")
-        layout.operator("graph.blend_to_neighbor", text="Blend To Neighbor")
+        layout.operator("graph.breakdown", text="Breakdown", icon = 'BREAKDOWNER_POSE')
+        layout.operator("graph.blend_to_neighbor", text="Blend To Neighbor", icon = 'BLEND_TO_NEIGHBOUR')
 
 
 class GRAPH_MT_key_transform(Menu):
