@@ -256,7 +256,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
     const char *text = (is_normalized) ? IFACE_("Strength") : IFACE_("Opacity Factor");
 
-    uiLayout *row = uiLayoutRow(layout, true);
+    row = uiLayoutRow(layout, true);
     uiLayoutSetActive(row, !is_weighted || is_normalized);
     uiItemR(row, ptr, "factor", 0, text, ICON_NONE);
     if (!is_normalized) {
