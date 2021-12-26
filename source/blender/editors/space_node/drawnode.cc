@@ -36,6 +36,7 @@
 #include "BKE_image.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
+#include "BKE_node_tree_update.h"
 #include "BKE_scene.h"
 #include "BKE_tracking.h"
 
@@ -1558,7 +1559,8 @@ static void node_property_update_default(Main *bmain, Scene *UNUSED(scene), Poin
 {
   bNodeTree *ntree = (bNodeTree *)ptr->owner_id;
   bNode *node = (bNode *)ptr->data;
-  ED_node_tag_update_nodetree(bmain, ntree, node);
+  BKE_ntree_update_tag_node_property(ntree, node);
+  ED_node_tree_propagate_change(nullptr, bmain, ntree);
 }
 
 static void node_socket_template_properties_update(bNodeType *ntype, bNodeSocketTemplate *stemp)
@@ -1652,12 +1654,6 @@ void ED_node_init_butfuncs()
     node_template_properties_update(ntype);
   }
   NODE_TYPES_END;
-
-  /* tree type icons */
-  ntreeType_Composite->ui_icon = ICON_NODE_COMPOSITING;
-  ntreeType_Shader->ui_icon = ICON_NODE_MATERIAL;
-  ntreeType_Texture->ui_icon = ICON_TEXTURE;
-  ntreeType_Geometry->ui_icon = ICON_NODETREE;
 }
 
 void ED_init_custom_node_type(bNodeType *UNUSED(ntype))
