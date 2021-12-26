@@ -6470,19 +6470,51 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiLayout *row, *sub, *subsub;
+  uiLayout *row, *col; /*bfa, added *col, removed *sub, *subsub*/
 
   row = uiLayoutRow(layout, false);
-  uiItemR(row, fileptr, "is_sequence", 0, NULL, ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetPropDecorate(sub, false);
-  uiItemR(sub, fileptr, "override_frame", 0, "", ICON_NONE);
-  subsub = uiLayoutRow(sub, true);
-  uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
-  uiItemR(subsub, fileptr, "frame", 0, "", ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "frame", 0);
+  /*------------------- bfa - original props */
+  // uiItemR(row, fileptr, "is_sequence", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, fileptr, "is_sequence", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetPropDecorate(sub, false);
+  //uiItemR(sub, fileptr, "override_frame", 0, "", ICON_NONE);
+  //subsub = uiLayoutRow(sub, true);
+  //uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
+  //uiItemR(subsub, fileptr, "frame", 0, "", ICON_NONE);
+  //uiItemDecoratorR(row, fileptr, "frame", 0);
+
+// ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, fileptr, "override_frame", 0, "Override Frame", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(fileptr, "override_frame")) {
+    uiItemR(row, fileptr, "frame", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
 
   row = uiLayoutRow(layout, false);
   uiItemR(row, fileptr, "frame_offset", 0, NULL, ICON_NONE);
