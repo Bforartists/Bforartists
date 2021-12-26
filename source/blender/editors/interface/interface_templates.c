@@ -6449,7 +6449,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   uiLayoutSetActive(row, engine_supports_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, fileptr, "use_render_procedural", 0, NULL, ICON_NONE);
-  uiItemDecoratorR(row, &fileptr, "use_render_procedural", 0); /*bfa - decorator*/
+  uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /*bfa - decorator*/
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
   const bool use_prefetch = RNA_boolean_get(fileptr, "use_prefetch");
@@ -6458,7 +6458,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   uiLayoutSetEnabled(row, use_render_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, fileptr, "use_prefetch", 0, NULL, ICON_NONE);
-  uiItemDecoratorR(row, &fileptr, "use_prefetch", 0); /*bfa - decorator*/
+  uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /*bfa - decorator*/
 
   sub = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
