@@ -14,7 +14,7 @@ bl_info = {
     "name": "Minilightlib",
     "description": "A mini library addon with predefined light setups",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (0,9,0),
+    "version": (0,9,1),
     "blender": (3, 0, 0),
     "location": "Tool Shelf > Create > Mini Lightlib",
     "warning": "",
@@ -124,7 +124,9 @@ class MLL_PT_Minilightlib(bpy.types.Panel):
 
         layout.separator()
 
-        layout.label(text = "Cycles only!")
+        layout.label(text = "C stands for Cycles")
+        layout.label(text = "E stands for Eevee")
+        layout.label(text = "No label means it works in both")
 
 
 # ------------------------------ register unregister --------------------------------------------------------
