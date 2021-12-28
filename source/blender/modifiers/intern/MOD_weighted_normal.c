@@ -718,7 +718,7 @@ static bool dependsOnNormals(ModifierData *UNUSED(md))
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *col*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -732,8 +732,21 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "thresh", 0, IFACE_("Threshold"), ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "keep_sharp", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_face_influence", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "keep_sharp", 0, NULL, ICON_NONE);
+  //uiItemR(col, ptr, "use_face_influence", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "keep_sharp", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "keep_sharp", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_face_influence", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_face_influence", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 

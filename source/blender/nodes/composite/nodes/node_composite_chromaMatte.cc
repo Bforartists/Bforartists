@@ -21,24 +21,28 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* ******************* Chroma Key ********************************************************** */
-static bNodeSocketTemplate cmp_node_chroma_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {SOCK_RGBA, N_("Key Color"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {-1, ""},
-};
 
-static bNodeSocketTemplate cmp_node_chroma_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {SOCK_FLOAT, N_("Matte")},
-    {-1, ""},
-};
+namespace blender::nodes {
+
+static void cmp_node_chroma_matte_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Color>(N_("Key Color")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_output<decl::Color>(N_("Image"));
+  b.add_output<decl::Float>(N_("Matte"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_chroma_matte(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeChroma *c = (NodeChroma *)MEM_callocN(sizeof(NodeChroma), "node chroma");
+  NodeChroma *c = MEM_cnew<NodeChroma>(__func__);
   node->storage = c;
   c->t1 = DEG2RADF(30.0f);
   c->t2 = DEG2RADF(10.0f);
@@ -47,12 +51,29 @@ static void node_composit_init_chroma_matte(bNodeTree *UNUSED(ntree), bNode *nod
   c->fstrength = 1.0f;
 }
 
-void register_node_type_cmp_chroma_matte(void)
+static void node_composit_buts_chroma_matte(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *col;
+
+  col = uiLayoutColumn(layout, false);
+  uiItemR(col, ptr, "tolerance", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "threshold", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  /* Removed for now. */
+  // uiItemR(col, ptr, "lift", UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "gain", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  /* Removed for now. */
+  // uiItemR(col, ptr, "shadow_adjust", UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_chroma_matte()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_CHROMA_MATTE, "Chroma Key", NODE_CLASS_MATTE, NODE_PREVIEW);
-  node_type_socket_templates(&ntype, cmp_node_chroma_in, cmp_node_chroma_out);
+  ntype.declare = blender::nodes::cmp_node_chroma_matte_declare;
+  ntype.draw_buttons = node_composit_buts_chroma_matte;
   node_type_init(&ntype, node_composit_init_chroma_matte);
   node_type_storage(&ntype, "NodeChroma", node_free_standard_storage, node_copy_standard_storage);
 

@@ -401,10 +401,8 @@ struct ResultAttributes {
 };
 static ResultAttributes create_result_attributes(const CurveEval &curve,
                                                  const CurveEval &profile,
-                                                 Mesh &mesh)
+                                                 MeshComponent &mesh_component)
 {
-  MeshComponent mesh_component;
-  mesh_component.replace(&mesh, GeometryOwnershipType::Editable);
   Set<AttributeIDRef> curve_attributes;
 
   /* In order to prefer attributes on the main curve input when there are name collisions, first
@@ -691,16 +689,6 @@ static void copy_spline_domain_attributes_to_mesh(const CurveEval &curve,
   }
 }
 
-/**
- * Extrude all splines in the profile curve along the path of every spline in the curve input.
- * Transfer curve attributes to the mesh.
- *
- * \note Normal calculation is by far the slowest part of calculations relating to the result mesh.
- * Although it would be a sensible decision to use the better topology information available while
- * generating the mesh to also generate the normals, that work may wasted if the output mesh is
- * changed anyway in a way that affects the normals. So currently this code uses the safer /
- * simpler solution of deferring normal calculation to the rest of Blender.
- */
 Mesh *curve_to_mesh_sweep(const CurveEval &curve, const CurveEval &profile, const bool fill_caps)
 {
   Span<SplinePtr> profiles = profile.splines();
@@ -718,7 +706,11 @@ Mesh *curve_to_mesh_sweep(const CurveEval &curve, const CurveEval &profile, cons
   mesh->smoothresh = DEG2RADF(180.0f);
   BKE_mesh_normals_tag_dirty(mesh);
 
-  ResultAttributes attributes = create_result_attributes(curve, profile, *mesh);
+  /* Create the mesh component for retrieving attributes at this scope, since output attributes
+   * can keep a reference to the component for updating after retrieving write access. */
+  MeshComponent mesh_component;
+  mesh_component.replace(mesh, GeometryOwnershipType::Editable);
+  ResultAttributes attributes = create_result_attributes(curve, profile, mesh_component);
 
   threading::parallel_for(curves.index_range(), 128, [&](IndexRange curves_range) {
     for (const int i_spline : curves_range) {
@@ -770,16 +762,15 @@ static CurveEval get_curve_single_vert()
 {
   CurveEval curve;
   std::unique_ptr<PolySpline> spline = std::make_unique<PolySpline>();
-  spline->add_point(float3(0), 0, 0.0f);
+  spline->resize(1.0f);
+  spline->positions().fill(float3(0));
+  spline->radii().fill(1.0f);
+  spline->tilts().fill(0.0f);
   curve.add_spline(std::move(spline));
 
   return curve;
 }
 
-/**
- * Create a loose-edge mesh based on the evaluated path of the curve's splines.
- * Transfer curve attributes to the mesh.
- */
 Mesh *curve_to_wire_mesh(const CurveEval &curve)
 {
   static const CurveEval vert_curve = get_curve_single_vert();

@@ -165,7 +165,6 @@ static bool ED_operator_screenactive_norender(bContext *C)
   return true;
 }
 
-/* when mouse is over area-edge */
 bool ED_operator_screen_mainwinactive(bContext *C)
 {
   if (CTX_wm_window(C) == NULL) {
@@ -219,10 +218,6 @@ bool ED_operator_objectmode(bContext *C)
   return true;
 }
 
-/**
- * Same as #ED_operator_objectmode() but additionally sets a "disabled hint". That is, a message
- * to be displayed to the user explaining why the operator can't be used in current context.
- */
 bool ED_operator_objectmode_poll_msg(bContext *C)
 {
   if (!ED_operator_objectmode(C)) {
@@ -257,7 +252,6 @@ bool ED_operator_region_view3d_active(bContext *C)
   return false;
 }
 
-/* generic for any view2d which uses anim_ops */
 bool ED_operator_animview_active(bContext *C)
 {
   if (ED_operator_areaactive(C)) {
@@ -289,21 +283,11 @@ bool ED_operator_outliner_active_no_editobject(bContext *C)
   return false;
 }
 
-/**
- * \note Will return true for file spaces in either file or asset browsing mode! See
- *       #ED_operator_file_browsing_active() (file browsing only) and
- *       #ED_operator_asset_browsing_active() (asset browsing only).
- */
 bool ED_operator_file_active(bContext *C)
 {
   return ed_spacetype_test(C, SPACE_FILE);
 }
 
-/**
- * \note Will only return true if the file space is in file browsing mode, not asset browsing! See
- *       #ED_operator_file_active() (file or asset browsing) and
- *       #ED_operator_asset_browsing_active() (asset browsing only).
- */
 bool ED_operator_file_browsing_active(bContext *C)
 {
   if (ed_spacetype_test(C, SPACE_FILE)) {
@@ -430,7 +414,6 @@ bool ED_operator_object_active_editable(bContext *C)
   return ED_operator_object_active_editable_ex(C, ob);
 }
 
-/** Object must be editable and fully local (i.e. not an override). */
 bool ED_operator_object_active_local_editable_ex(bContext *C, const Object *ob)
 {
   return ED_operator_object_active_editable_ex(C, ob) && !ID_IS_OVERRIDE_LIBRARY(ob);
@@ -530,7 +513,6 @@ bool ED_operator_posemode_exclusive(bContext *C)
   return ed_operator_posemode_exclusive_ex(C, obact);
 }
 
-/** Object must be editable, fully local (i.e. not an override), and exclusively in Pose mode. */
 bool ED_operator_object_active_local_editable_posemode_exclusive(bContext *C)
 {
   Object *obact = ED_object_active_context(C);
@@ -547,8 +529,6 @@ bool ED_operator_object_active_local_editable_posemode_exclusive(bContext *C)
   return true;
 }
 
-/* allows for pinned pose objects to be used in the object buttons
- * and the non-active pose object to be used in the 3D view */
 bool ED_operator_posemode_context(bContext *C)
 {
   Object *obpose = ED_pose_object_from_context(C);
@@ -588,7 +568,6 @@ bool ED_operator_posemode_local(bContext *C)
   return false;
 }
 
-/* wrapper for ED_space_image_show_uvedit */
 bool ED_operator_uvedit(bContext *C)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
@@ -1149,8 +1128,7 @@ static int actionzone_modal(bContext *C, wmOperator *op, const wmEvent *event)
                  AREAMAP_FROM_SCREEN(screen), &screen_rect, event->xy[0], event->xy[1]) == NULL)) {
 
           /* What area are we now in? */
-          ScrArea *area = BKE_screen_find_area_xy(
-              screen, SPACE_TYPE_ANY, event->xy[0], event->xy[1]);
+          ScrArea *area = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy);
 
           if (area == sad->sa1) {
             /* Same area, so possible split. */
@@ -1194,7 +1172,7 @@ static int actionzone_modal(bContext *C, wmOperator *op, const wmEvent *event)
       /* gesture is large enough? */
       if (is_gesture) {
         /* second area, for join when (sa1 != sa2) */
-        sad->sa2 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy[0], event->xy[1]);
+        sad->sa2 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy);
         /* apply sends event */
         actionzone_apply(C, op, sad->az->type);
         actionzone_exit(op);
@@ -1262,12 +1240,16 @@ static ScrEdge *screen_area_edge_from_cursor(const bContext *C,
   int borderwidth = (4 * UI_DPI_FAC);
   ScrArea *sa1, *sa2;
   if (screen_geom_edge_is_horizontal(actedge)) {
-    sa1 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, cursor[0], cursor[1] + borderwidth);
-    sa2 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, cursor[0], cursor[1] - borderwidth);
+    sa1 = BKE_screen_find_area_xy(
+        screen, SPACE_TYPE_ANY, (const int[2]){cursor[0], cursor[1] + borderwidth});
+    sa2 = BKE_screen_find_area_xy(
+        screen, SPACE_TYPE_ANY, (const int[2]){cursor[0], cursor[1] - borderwidth});
   }
   else {
-    sa1 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, cursor[0] + borderwidth, cursor[1]);
-    sa2 = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, cursor[0] - borderwidth, cursor[1]);
+    sa1 = BKE_screen_find_area_xy(
+        screen, SPACE_TYPE_ANY, (const int[2]){cursor[0] + borderwidth, cursor[1]});
+    sa2 = BKE_screen_find_area_xy(
+        screen, SPACE_TYPE_ANY, (const int[2]){cursor[0] - borderwidth, cursor[1]});
   }
   bool isGlobal = ((sa1 && ED_area_is_global(sa1)) || (sa2 && ED_area_is_global(sa2)));
   if (!isGlobal) {
@@ -1355,8 +1337,7 @@ static int area_swap_modal(bContext *C, wmOperator *op, const wmEvent *event)
   switch (event->type) {
     case MOUSEMOVE:
       /* second area, for join */
-      sad->sa2 = BKE_screen_find_area_xy(
-          CTX_wm_screen(C), SPACE_TYPE_ANY, event->xy[0], event->xy[1]);
+      sad->sa2 = BKE_screen_find_area_xy(CTX_wm_screen(C), SPACE_TYPE_ANY, event->xy);
       break;
     case LEFTMOUSE: /* release LMB */
       if (event->val == KM_RELEASE) {
@@ -2529,8 +2510,7 @@ static int area_split_modal(bContext *C, wmOperator *op, const wmEvent *event)
         ED_area_tag_redraw(sd->sarea);
       }
       /* area context not set */
-      sd->sarea = BKE_screen_find_area_xy(
-          CTX_wm_screen(C), SPACE_TYPE_ANY, event->xy[0], event->xy[1]);
+      sd->sarea = BKE_screen_find_area_xy(CTX_wm_screen(C), SPACE_TYPE_ANY, event->xy);
 
       if (sd->sarea) {
         ScrArea *area = sd->sarea;
@@ -3561,7 +3541,7 @@ static int area_join_modal(bContext *C, wmOperator *op, const wmEvent *event)
   switch (event->type) {
 
     case MOUSEMOVE: {
-      ScrArea *area = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy[0], event->xy[1]);
+      ScrArea *area = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy);
       jd->dir = area_getorientation(jd->sa1, jd->sa2);
 
       if (area == jd->sa1) {
@@ -4768,6 +4748,7 @@ static void SCREEN_OT_region_context_menu(wmOperatorType *ot)
  *
  * Animation Step.
  * \{ */
+
 static bool screen_animation_region_supports_time_follow(eSpace_Type spacetype,
                                                          eRegion_Type regiontype)
 {
@@ -5154,7 +5135,6 @@ static void SCREEN_OT_animation_step(wmOperatorType *ot)
  * Animation Playback with Timer.
  * \{ */
 
-/* find window that owns the animation timer */
 bScreen *ED_screen_animation_playing(const wmWindowManager *wm)
 {
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
@@ -5181,7 +5161,6 @@ bScreen *ED_screen_animation_no_scrub(const wmWindowManager *wm)
   return NULL;
 }
 
-/* toggle operator */
 int ED_screen_animation_play(bContext *C, int sync, int mode)
 {
   bScreen *screen = CTX_wm_screen(C);
@@ -5733,9 +5712,6 @@ static void region_blend_end(bContext *C, ARegion *region, const bool is_running
   WM_event_remove_timer(CTX_wm_manager(C), NULL, region->regiontimer); /* frees rgi */
   region->regiontimer = NULL;
 }
-/**
- * \note Assumes that \a region itself is not a split version from previous region.
- */
 void ED_region_visibility_change_update_animated(bContext *C, ScrArea *area, ARegion *region)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -6043,7 +6019,6 @@ static void SCREEN_OT_workspace_cycle(wmOperatorType *ot)
 /** \name Assigning Operator Types
  * \{ */
 
-/* called in spacetypes.c */
 void ED_operatortypes_screen(void)
 {
   /* Generic UI stuff. */
@@ -6137,7 +6112,7 @@ static void keymap_modal_set(wmKeyConfig *keyconf)
 static bool blend_file_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
 {
   if (drag->type == WM_DRAG_PATH) {
-    if (drag->icon == ICON_FILE_BLEND) {
+    if (ELEM(drag->icon, ICON_FILE_BLEND, ICON_BLENDER)) {
       return true;
     }
   }
@@ -6150,7 +6125,6 @@ static void blend_file_drop_copy(wmDrag *drag, wmDropBox *drop)
   RNA_string_set(drop->ptr, "filepath", drag->path);
 }
 
-/* called in spacetypes.c */
 void ED_keymap_screen(wmKeyConfig *keyconf)
 {
   /* Screen Editing ------------------------------------------------ */

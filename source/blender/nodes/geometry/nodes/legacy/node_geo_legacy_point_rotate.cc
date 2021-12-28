@@ -59,8 +59,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryRotatePoints *node_storage = (NodeGeometryRotatePoints *)MEM_callocN(
-      sizeof(NodeGeometryRotatePoints), __func__);
+  NodeGeometryRotatePoints *node_storage = MEM_cnew<NodeGeometryRotatePoints>(__func__);
 
   node_storage->type = GEO_NODE_POINT_ROTATE_TYPE_EULER;
   node_storage->space = GEO_NODE_POINT_ROTATE_SPACE_OBJECT;
@@ -203,7 +202,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     point_rotate_on_component(geometry_set.get_component_for_write<MeshComponent>(), params);

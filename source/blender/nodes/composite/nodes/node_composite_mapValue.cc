@@ -21,29 +21,58 @@
  * \ingroup cmpnodes
  */
 
+#include "RNA_access.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* **************** MAP VALUE ******************** */
-static bNodeSocketTemplate cmp_node_map_value_in[] = {
-    {SOCK_FLOAT, N_("Value"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, PROP_NONE},
-    {-1, ""},
-};
-static bNodeSocketTemplate cmp_node_map_value_out[] = {
-    {SOCK_FLOAT, N_("Value")},
-    {-1, ""},
-};
+
+namespace blender::nodes {
+
+static void cmp_node_map_value_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Float>(N_("Value")).default_value(1.0f).min(0.0f).max(1.0f);
+  b.add_output<decl::Float>(N_("Value"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_map_value(bNodeTree *UNUSED(ntree), bNode *node)
 {
   node->storage = BKE_texture_mapping_add(TEXMAP_TYPE_POINT);
 }
 
-void register_node_type_cmp_map_value(void)
+static void node_composit_buts_map_value(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *sub, *col;
+
+  col = uiLayoutColumn(layout, true);
+  uiItemR(col, ptr, "offset", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "size", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  uiItemR(col, ptr, "use_min", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  sub = uiLayoutColumn(col, false);
+  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_min"));
+  uiItemR(sub, ptr, "min", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  uiItemR(col, ptr, "use_max", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  sub = uiLayoutColumn(col, false);
+  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max"));
+  uiItemR(sub, ptr, "max", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+}
+
+void register_node_type_cmp_map_value()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_MAP_VALUE, "Map Value", NODE_CLASS_OP_VECTOR, 0);
-  node_type_socket_templates(&ntype, cmp_node_map_value_in, cmp_node_map_value_out);
+  ntype.declare = blender::nodes::cmp_node_map_value_declare;
+  ntype.draw_buttons = node_composit_buts_map_value;
   node_type_init(&ntype, node_composit_init_map_value);
   node_type_storage(&ntype, "TexMapping", node_free_standard_storage, node_copy_standard_storage);
 

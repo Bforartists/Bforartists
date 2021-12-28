@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1158,6 +1158,10 @@ msgid "Attribute on spline"
 msgstr "Atributo de curva"
 
 
+msgid "Instance"
+msgstr "Instancia"
+
+
 msgid "Name of the Attribute"
 msgstr "Nombre del atributo"
 
@@ -1718,10 +1722,6 @@ msgid "Hairs"
 msgstr "Pelos"
 
 
-msgid "Hair data-blocks"
-msgstr "Bloques de datos de pelo"
-
-
 msgid "Images"
 msgstr "Imágenes"
 
@@ -1870,10 +1870,6 @@ msgid "Point Clouds"
 msgstr "Nubes de puntos"
 
 
-msgid "Point cloud data-blocks"
-msgstr "Bloques de datos de nube de puntos"
-
-
 msgid "Scenes"
 msgstr "Escenas"
 
@@ -1900,10 +1896,6 @@ msgstr "Bloques de datos de Forma clave"
 
 msgid "Simulations"
 msgstr "Simulaciones"
-
-
-msgid "Simulation data-blocks"
-msgstr "Bloques de datos de simulación"
 
 
 msgid "Sounds"
@@ -2058,14 +2050,6 @@ msgid "Collection of grease pencils"
 msgstr "Colección de lápices de cera"
 
 
-msgid "Main Hairs"
-msgstr "Pelos principales"
-
-
-msgid "Collection of hairs"
-msgstr "Colección de pelos"
-
-
 msgid "Main Images"
 msgstr "Imágenes principales"
 
@@ -2186,14 +2170,6 @@ msgid "Collection of particle settings"
 msgstr "Colección de opciones de partículas"
 
 
-msgid "Main Point Clouds"
-msgstr "Nubes de puntos principales"
-
-
-msgid "Collection of point clouds"
-msgstr "Colección de nubes de puntos"
-
-
 msgid "Main Light Probes"
 msgstr "Sondas de luz principales"
 
@@ -2216,14 +2192,6 @@ msgstr "Pantallas principales"
 
 msgid "Collection of screens"
 msgstr "Colección de pantallas"
-
-
-msgid "Main Simulations"
-msgstr "Simulaciones principales"
-
-
-msgid "Collection of simulations"
-msgstr "Colección de simulaciones"
 
 
 msgid "Main Sounds"
@@ -4078,10 +4046,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "Color de vértices sólo afecta al relleno"
 
 
-msgid "Stroke and Fill"
-msgstr "Trazo y relleno"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Color de vértices afecta al trazo y el relleno"
 
@@ -5260,6 +5224,10 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
+
+
+msgid "Raw"
+msgstr "Crudo"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -17580,48 +17548,12 @@ msgid "Active index in layer mask array"
 msgstr "Identificador de la capa activa en la matriz de capas de máscara"
 
 
-msgid "Hair Curve"
-msgstr "Curva de pelo"
-
-
-msgid "Hair curve"
-msgstr "Curva de pelo"
-
-
-msgid "First Point Index"
-msgstr "Identificador del primer punto"
-
-
 msgid "Index of the first loop of this polygon"
 msgstr "Identificador del primer bucle de este polígono"
 
 
-msgid "Index of this curve"
-msgstr "Identificador de esta curva"
-
-
-msgid "Number of Points"
-msgstr "Cantidad de puntos"
-
-
 msgid "Number of loops used by this polygon"
 msgstr "Cantidad de bucles usados por este polígono"
-
-
-msgid "Control points of the curve"
-msgstr "Puntos de control de la curva"
-
-
-msgid "Hair Point"
-msgstr "Punto del pelo"
-
-
-msgid "Hair curve control point"
-msgstr "Punto de control de la curva de pelo"
-
-
-msgid "Index of this points"
-msgstr "Identificadores de estos puntos"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -17790,10 +17722,6 @@ msgstr "Las curvas-f individuales que conforman la acción"
 
 msgid "Frame Range"
 msgstr "Rango de fotogramas"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "Rango final de fotogramas de todas las Curvas-F en esta acción"
 
 
 msgid "Groups"
@@ -21649,24 +21577,12 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Cantidad de desplazamiento al dibujar en modo Superficie"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Bloque de datos de pelo para curvas de pelo"
-
-
 msgid "Attributes"
 msgstr "Atributos"
 
 
 msgid "Geometry attributes"
 msgstr "Atributos de la geometría"
-
-
-msgid "All hair curves"
-msgstr "Todas las curvas de pelo"
-
-
-msgid "Control points of all hair curves"
-msgstr "Puntos de control de todas las curvas de pelo"
 
 
 msgid "Image data-block referencing an external or packed image"
@@ -23613,6 +23529,10 @@ msgstr "Salidas del árbol de nodos"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "Tipo de árbol de nodos (depreciado, bl_idname es el identificador actual de tipo de árbol de nodos)"
+
+
+msgid "Undefined"
+msgstr "No definido"
 
 
 msgid "Shader"
@@ -25850,10 +25770,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Cantidad relativa de principales virtuales"
 
 
-msgid "Point cloud data-block"
-msgstr "Bloque de datos de nube de puntos"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Bloque de datos de escena, conteniendo objetos y definiendo opciones relativas al tiempo y el procesamiento"
 
@@ -26336,14 +26252,6 @@ msgstr "Editores de video"
 
 msgid "Top-Left 3D Editor"
 msgstr "Vista 3D superior izquierda"
-
-
-msgid "Simulation data-block"
-msgstr "Bloque de datos de simulación"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Árbol de nodos que define la simulación"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -37871,10 +37779,6 @@ msgid "Remove original geometry"
 msgstr "Remueve la geometría original"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Caché de las posiciones globales de un elemento a lo largo de un rango de fotogramas"
-
-
 msgid "Custom color for motion path"
 msgstr "Color personalizado para la trayectoria de movimiento"
 
@@ -41692,8 +41596,12 @@ msgid "Outputs the opposite of the input"
 msgstr "Produce el opuesto del conector de entrada"
 
 
-msgid "Compare Floats"
-msgstr "Comparar decimales"
+msgid "Input Type"
+msgstr "Tipo de entrada"
+
+
+msgid "Dot Product"
+msgstr "Producto escalar"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41828,6 +41736,26 @@ msgid "Geometry Node"
 msgstr "Nodo de geometría"
 
 
+msgid "Component"
+msgstr "Componente"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "Componente de la malla que contiene datos de puntos, bordes, caras y esquinas de caras"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "Componente de la nube de puntos que contiene únicamente datos de puntos"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "Componente de una curva conteniendo datos de la curva y sus puntos de control"
+
+
+msgid "Instances of objects or collections"
+msgstr "Instancias de objetos o colecciones"
+
+
 msgid "Attribute Remove"
 msgstr "Remover (atributo)"
 
@@ -41926,10 +41854,6 @@ msgstr "Usar las asas derechas"
 
 msgid "Curve Length"
 msgstr "Longitud de curva"
-
-
-msgid "Curve Parameter"
-msgstr "Parámetro de curva"
 
 
 msgid "Bezier Segment"
@@ -42348,10 +42272,6 @@ msgid "Attribute Separate XYZ"
 msgstr "Separar XYZ (atributo)"
 
 
-msgid "Input Type"
-msgstr "Tipo de entrada"
-
-
 msgid "Attribute Transfer"
 msgstr "Transferir atributo"
 
@@ -42402,10 +42322,6 @@ msgstr "Hacia adelante"
 
 msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
 msgstr "Orienta un vector A para que apunte en sentido contrario a una superficie B, definida por su normal C. Devuelve (dot(B, C) < 0) ? A : -A"
-
-
-msgid "Dot Product"
-msgstr "Producto escalar"
 
 
 msgid "A dot B"
@@ -43103,10 +43019,6 @@ msgstr "BSDF Reflectivo"
 
 msgid "Hair BSDF"
 msgstr "BSDF Pelo"
-
-
-msgid "Component"
-msgstr "Componente"
 
 
 msgid "Reflection"
@@ -46506,6 +46418,110 @@ msgid "Set this pose Action as active Action on the active Object"
 msgstr "Define a esta acción de pose como la activa para el objeto activo"
 
 
+msgid "Check Existing"
+msgstr "Comprobar existencia"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
+
+
+msgid "Automatically determine display type for files"
+msgstr "Determina automáticamente el tipo de visualización de los archivos"
+
+
+msgid "Short List"
+msgstr "Lista reducida"
+
+
+msgid "Display files as short list"
+msgstr "Mostrar archivos en una lista reducida"
+
+
+msgid "Long List"
+msgstr "Lista completa"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostrar archivos en una lista detallada"
+
+
+msgid "File Browser Mode"
+msgstr "Modo de exploración de archivos"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "La propiedad del explorador de archivos para abrir un archivo .blend, una biblioteca o un archivo especial"
+
+
+msgid "Path to file"
+msgstr "Ruta hacia el archivo"
+
+
+msgid "Filter Alembic files"
+msgstr "Filtrar archivos Alembic"
+
+
+msgid "Filter archive files"
+msgstr "Filtrar archivos"
+
+
+msgid "Filter .blend files"
+msgstr "Filtrar archivos .blend"
+
+
+msgid "Filter btx files"
+msgstr "Filtrar archivos btx"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtrar archivos COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtrar archivos de fuentes"
+
+
+msgid "Filter image files"
+msgstr "Filtrar archivos de imagen"
+
+
+msgid "Filter movie files"
+msgstr "Filtrar archivos de película"
+
+
+msgid "Filter python files"
+msgstr "Filtrar archivos Python"
+
+
+msgid "Filter sound files"
+msgstr "Filtrar archivos de sonido"
+
+
+msgid "Filter text files"
+msgstr "Filtrar archivos de texto"
+
+
+msgid "Filter USD files"
+msgstr "Filtrar archivos USD"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "Filtrar archivos de volúmenes OpenVDB"
+
+
+msgid "Hide Operator Properties"
+msgstr "Ocultar propiedades del operador"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "Colapsa la región que muestra las opciones del operador"
+
+
+msgid "File sorting mode"
+msgstr "Modo de ordenamiento de archivos"
+
+
 msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "Borrar catálogo de recursos"
@@ -46585,12 +46601,12 @@ msgstr "Asegurar que el bloque de datos sea guardado, aún en caso de no encontr
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "Refrescar lista de recursos"
+msgid "Refresh Asset Library"
+msgstr "Refrescar biblioteca de recursos"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "Releer los recursos"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "Releer los recursos y catálogos desde la biblioteca en el disco"
 
 
 msgctxt "Operator"
@@ -46891,108 +46907,12 @@ msgid "Directory of the file"
 msgstr "Directorio del archivo"
 
 
-msgid "Automatically determine display type for files"
-msgstr "Determina automáticamente el tipo de visualización de los archivos"
-
-
-msgid "Short List"
-msgstr "Lista reducida"
-
-
-msgid "Display files as short list"
-msgstr "Mostrar archivos en una lista reducida"
-
-
-msgid "Long List"
-msgstr "Lista completa"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostrar archivos en una lista detallada"
-
-
-msgid "File Browser Mode"
-msgstr "Modo de exploración de archivos"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "La propiedad del explorador de archivos para abrir un archivo .blend, una biblioteca o un archivo especial"
-
-
-msgid "Filter Alembic files"
-msgstr "Filtrar archivos Alembic"
-
-
-msgid "Filter archive files"
-msgstr "Filtrar archivos"
-
-
-msgid "Filter .blend files"
-msgstr "Filtrar archivos .blend"
-
-
-msgid "Filter btx files"
-msgstr "Filtrar archivos btx"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtrar archivos COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtrar archivos de fuentes"
-
-
-msgid "Filter image files"
-msgstr "Filtrar archivos de imagen"
-
-
-msgid "Filter movie files"
-msgstr "Filtrar archivos de película"
-
-
-msgid "Filter python files"
-msgstr "Filtrar archivos Python"
-
-
-msgid "Filter sound files"
-msgstr "Filtrar archivos de sonido"
-
-
-msgid "Filter text files"
-msgstr "Filtrar archivos de texto"
-
-
-msgid "Filter USD files"
-msgstr "Filtrar archivos USD"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "Filtrar archivos de volúmenes OpenVDB"
-
-
-msgid "Hide Operator Properties"
-msgstr "Ocultar propiedades del operador"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "Colapsa la región que muestra las opciones del operador"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "Seleccionar el archivo, en relación al archivo .blend"
 
 
-msgid "File sorting mode"
-msgstr "Modo de ordenamiento de archivos"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "Abre un explorador de archivos, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar el directorio contenedor"
-
-
-msgid "Path to file"
-msgstr "Ruta hacia el archivo"
 
 
 msgctxt "Operator"
@@ -49469,14 +49389,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Guarda un script Python que recrea las cámaras y marcadores en otro lado"
 
 
-msgid "Check Existing"
-msgstr "Comprobar existencia"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "Ruta usada para exportar el archivo"
 
@@ -50631,15 +50543,6 @@ msgstr "Fotograma de reposo"
 
 msgid "Write the rest state at the first frame"
 msgstr "Escribe el estado de reposo en el fotograma inicial"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "Refrescar biblioteca de recursos"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "Releer los recursos y catálogos desde la biblioteca en el disco"
 
 
 msgctxt "Operator"
@@ -52515,10 +52418,6 @@ msgstr "Eliminar capa de máscara"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "Fusionar"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "Permite fusionar la capa actual con la de abajo"
 
 
 msgctxt "Operator"
@@ -60322,16 +60221,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Curva a partir de mallas o textos"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Malla a partir de curvas, superficies, metabolas, textos o nubes de puntos"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Lápiz de cera a partir de curvas o mallas"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Nube de puntos a partir de mallas"
 
 
 msgctxt "Operator"
@@ -78345,10 +78236,6 @@ msgid "Collection of paths"
 msgstr "Colección de rutas"
 
 
-msgid "Point in a point cloud"
-msgstr "Punto de una nube de puntos"
-
-
 msgid "Active Point Cache"
 msgstr "Caché de puntos activo"
 
@@ -89050,22 +88937,6 @@ msgid "Part of the geometry to display data from"
 msgstr "Parte de la geometría de la cual mostrar datos"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "Componente de la malla que contiene datos de puntos, bordes, caras y esquinas de caras"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "Componente de la nube de puntos que contiene únicamente datos de puntos"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "Componente de una curva conteniendo datos de la curva y sus puntos de control"
-
-
-msgid "Instances of objects or collections"
-msgstr "Instancias de objetos o colecciones"
-
-
 msgid "Is Pinned"
 msgstr "Fijo"
 
@@ -92451,10 +92322,6 @@ msgid "Cycle-Aware Keying"
 msgstr "Claves cíclicos"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "Para canales con extrapolación cíclica, la inserción de fotogramas clave es automáticamente remapeada dentro del rango de tiempo del ciclo, para mantener los extremos en sincronía"
-
-
 msgid "Auto Keying"
 msgstr "Claves automáticos"
 
@@ -95711,18 +95578,6 @@ msgid "Homogeneous"
 msgstr "Homogéneo"
 
 
-msgid "CPU Flags:"
-msgstr "Indicadores CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Indicadores CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Indicadores OptiX:"
-
-
 msgid "Max Subdivision"
 msgstr "Subdivisiones máx"
 
@@ -96772,11 +96627,6 @@ msgstr "Barra espaciadora"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Cargar opciones %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Guardar nuevas opciones"
 
@@ -96877,6 +96727,11 @@ msgstr "Rama: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Expresión regular inválida (búsqueda): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Cargar opciones %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -99059,6 +98914,11 @@ msgid "Unlock Tracks"
 msgstr "Desbloquear rastros"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Enmarcar todo"
+
+
 msgid "Solve error: %.2f px"
 msgstr "Error de resolución: %.2f px"
 
@@ -99378,10 +99238,6 @@ msgid "Decrease Number"
 msgstr "Disminuir número"
 
 
-msgid "No asset selected"
-msgstr "No hay recursos seleccionados"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "Eliminar recurso (definir usuario ficticio)"
@@ -99514,11 +99370,6 @@ msgstr "Bordes modificados"
 
 msgid "Show Same Material"
 msgstr "Mostrar el mismo material"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Enmarcar todo"
 
 
 msgctxt "Operator"
@@ -100099,10 +99950,6 @@ msgstr "Posición X"
 
 msgid "Convert to Float"
 msgstr "Convertir a decimal"
-
-
-msgid "Raw"
-msgstr "Crudo"
 
 
 msgid "Pre-Processed"
@@ -101272,10 +101119,6 @@ msgstr "No se configuró ningún %s personalizado"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Se necesita actualizar a 2.8x"
 
 
 msgid "Description:"
@@ -103393,8 +103236,20 @@ msgid "Loading '%s' failed: "
 msgstr "Falla al cargar '%s': "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Se está vinculando o anexando un archivo .blend de formato muy antiguo (%d.%d), no se realizará conversión alguna de animación! Sería deseable volver a guardar el archivo de biblioteca con la versión actual de Blender"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "Recargar biblioteca: Falló el reemplazo de todas las referencias al antiguo bloque de datos '%s' por el bloque recién cargado, se ha debido mantener el anterior (con %d usuarios restantes) renombrándolo como '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "Ruta '%s' no encontrada"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "No fue posible encontrar '%s' en '%s'"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -103407,14 +103262,6 @@ msgstr "Total arch. %d | Cambiados %d | Fallidos %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "La ruta '%s' no puede ser convertida en relativa"
-
-
-msgid "Could not open directory '%s'"
-msgstr "No fue posible abrir el directorio '%s'"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "No fue posible encontrar '%s' en '%s'"
 
 
 msgid "Scene Collection"
@@ -103649,10 +103496,6 @@ msgstr "Clip ANL"
 
 msgid "[Action Stash]"
 msgstr "[Esconder acción]"
-
-
-msgid "Undefined"
-msgstr "No definido"
 
 
 msgid "Undefined Node Tree Type"
@@ -104766,6 +104609,14 @@ msgstr "El buffer de copia no contiene ninguna pose"
 
 msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Error de programación: falta eliminar función de transformación o nombre de conjunto de claves"
+
+
+msgid "Path is empty, cannot save"
+msgstr "Ruta vacía, no es posible guardar"
+
+
+msgid "Path too long, cannot save"
+msgstr "Ruta demasiado larga, no es posible guardar"
 
 
 msgid "No point was selected"
@@ -112164,10 +112015,6 @@ msgid "Points to instance on"
 msgstr "Puntos donde ubicar instancias"
 
 
-msgid "Instance"
-msgstr "Instancia"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "Geometría que será instanciada en los puntos"
 
@@ -112236,24 +112083,8 @@ msgid "Vertices Z"
 msgstr "Vértices Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "La cantidad de vértices alrededor de la circunferencia"
-
-
-msgid "The number of segments along the side"
-msgstr "Cantidad de segmentos laterales"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "Cantidad de segmentos concéntricos de relleno"
-
-
 msgid "The radius of the cylinder"
 msgstr "Radio del cilindro"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "Altura del cilindro en el eje Z"
 
 
 msgid "Start Location"
@@ -112894,14 +112725,6 @@ msgid "File Not Found"
 msgstr "Archivo no encontrado"
 
 
-msgid "Path is empty, cannot save"
-msgstr "Ruta vacía, no es posible guardar"
-
-
-msgid "Path too long, cannot save"
-msgstr "Ruta demasiado larga, no es posible guardar"
-
-
 msgid "Unable to create user config path"
 msgstr "No es posible crear la ruta para la configuración de usuario"
 
@@ -112962,10 +112785,6 @@ msgid "Nothing indicated"
 msgstr "Nada indicado"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Se está vinculando o anexando un archivo .blend de formato muy antiguo (%d.%d), no se realizará conversión alguna de animación! Sería deseable volver a guardar el archivo de biblioteca con la versión actual de Blender"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "No es posible anexar el bloque de datos '%s' de tipo '%s'"
 
@@ -112988,10 +112807,6 @@ msgstr "'%s': no es posible usar el archivo actual como una biblioteca"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "La escena '%s' se encuentra vinculada, el instanciado de objetos se encuentra deshabilitado"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "Recargar biblioteca: Falló el reemplazo de todas las referencias al antiguo bloque de datos '%s' por el bloque recién cargado, se ha debido mantener el anterior (con %d usuarios restantes) renombrándolo como '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

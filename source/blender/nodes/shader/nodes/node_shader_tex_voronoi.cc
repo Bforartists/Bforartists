@@ -21,20 +21,30 @@
 
 #include "BLI_noise.hh"
 
+NODE_STORAGE_FUNCS(NodeTexVoronoi)
+
 namespace blender::nodes {
 
 static void sh_node_tex_voronoi_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
   b.add_input<decl::Vector>(N_("Vector")).hide_value().implicit_field();
-  b.add_input<decl::Float>(N_("W")).min(-1000.0f).max(1000.0f);
+  b.add_input<decl::Float>(N_("W")).min(-1000.0f).max(1000.0f).make_available([](bNode &node) {
+    /* Default to 1 instead of 4, because it is much faster. */
+    node_storage(node).dimensions = 1;
+  });
   b.add_input<decl::Float>(N_("Scale")).min(-1000.0f).max(1000.0f).default_value(5.0f);
   b.add_input<decl::Float>(N_("Smoothness"))
       .min(0.0f)
       .max(1.0f)
       .default_value(1.0f)
-      .subtype(PROP_FACTOR);
-  b.add_input<decl::Float>(N_("Exponent")).min(0.0f).max(32.0f).default_value(0.5f);
+      .subtype(PROP_FACTOR)
+      .make_available([](bNode &node) { node_storage(node).feature = SHD_VORONOI_SMOOTH_F1; });
+  b.add_input<decl::Float>(N_("Exponent"))
+      .min(0.0f)
+      .max(32.0f)
+      .default_value(0.5f)
+      .make_available([](bNode &node) { node_storage(node).distance = SHD_VORONOI_MINKOWSKI; });
   b.add_input<decl::Float>(N_("Randomness"))
       .min(0.0f)
       .max(1.0f)
@@ -43,15 +53,20 @@ static void sh_node_tex_voronoi_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Float>(N_("Distance")).no_muted_links();
   b.add_output<decl::Color>(N_("Color")).no_muted_links();
   b.add_output<decl::Vector>(N_("Position")).no_muted_links();
-  b.add_output<decl::Float>(N_("W")).no_muted_links();
-  b.add_output<decl::Float>(N_("Radius")).no_muted_links();
+  b.add_output<decl::Float>(N_("W")).no_muted_links().make_available([](bNode &node) {
+    /* Default to 1 instead of 4, because it is much faster. */
+    node_storage(node).dimensions = 1;
+  });
+  b.add_output<decl::Float>(N_("Radius")).no_muted_links().make_available([](bNode &node) {
+    node_storage(node).feature = SHD_VORONOI_N_SPHERE_RADIUS;
+  });
 };
 
 }  // namespace blender::nodes
 
 static void node_shader_init_tex_voronoi(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeTexVoronoi *tex = (NodeTexVoronoi *)MEM_callocN(sizeof(NodeTexVoronoi), "NodeTexVoronoi");
+  NodeTexVoronoi *tex = MEM_cnew<NodeTexVoronoi>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
   tex->dimensions = 3;
@@ -136,33 +151,34 @@ static void node_shader_update_tex_voronoi(bNodeTree *ntree, bNode *node)
   bNodeSocket *outWSock = nodeFindSocket(node, SOCK_OUT, "W");
   bNodeSocket *outRadiusSock = nodeFindSocket(node, SOCK_OUT, "Radius");
 
-  NodeTexVoronoi *tex = (NodeTexVoronoi *)node->storage;
+  const NodeTexVoronoi &storage = node_storage(*node);
 
-  nodeSetSocketAvailability(ntree, inWSock, tex->dimensions == 1 || tex->dimensions == 4);
-  nodeSetSocketAvailability(ntree, inVectorSock, tex->dimensions != 1);
+  nodeSetSocketAvailability(ntree, inWSock, storage.dimensions == 1 || storage.dimensions == 4);
+  nodeSetSocketAvailability(ntree, inVectorSock, storage.dimensions != 1);
   nodeSetSocketAvailability(
       ntree,
       inExponentSock,
-      tex->distance == SHD_VORONOI_MINKOWSKI && tex->dimensions != 1 &&
-          !ELEM(tex->feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS));
-  nodeSetSocketAvailability(ntree, inSmoothnessSock, tex->feature == SHD_VORONOI_SMOOTH_F1);
+      storage.distance == SHD_VORONOI_MINKOWSKI && storage.dimensions != 1 &&
+          !ELEM(storage.feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS));
+  nodeSetSocketAvailability(ntree, inSmoothnessSock, storage.feature == SHD_VORONOI_SMOOTH_F1);
 
-  nodeSetSocketAvailability(ntree, outDistanceSock, tex->feature != SHD_VORONOI_N_SPHERE_RADIUS);
+  nodeSetSocketAvailability(
+      ntree, outDistanceSock, storage.feature != SHD_VORONOI_N_SPHERE_RADIUS);
   nodeSetSocketAvailability(ntree,
                             outColorSock,
-                            tex->feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
-                                tex->feature != SHD_VORONOI_N_SPHERE_RADIUS);
+                            storage.feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
+                                storage.feature != SHD_VORONOI_N_SPHERE_RADIUS);
   nodeSetSocketAvailability(ntree,
                             outPositionSock,
-                            tex->feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
-                                tex->feature != SHD_VORONOI_N_SPHERE_RADIUS &&
-                                tex->dimensions != 1);
+                            storage.feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
+                                storage.feature != SHD_VORONOI_N_SPHERE_RADIUS &&
+                                storage.dimensions != 1);
   nodeSetSocketAvailability(ntree,
                             outWSock,
-                            tex->feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
-                                tex->feature != SHD_VORONOI_N_SPHERE_RADIUS &&
-                                (ELEM(tex->dimensions, 1, 4)));
-  nodeSetSocketAvailability(ntree, outRadiusSock, tex->feature == SHD_VORONOI_N_SPHERE_RADIUS);
+                            storage.feature != SHD_VORONOI_DISTANCE_TO_EDGE &&
+                                storage.feature != SHD_VORONOI_N_SPHERE_RADIUS &&
+                                (ELEM(storage.dimensions, 1, 4)));
+  nodeSetSocketAvailability(ntree, outRadiusSock, storage.feature == SHD_VORONOI_N_SPHERE_RADIUS);
 }
 
 namespace blender::nodes {
@@ -1304,26 +1320,29 @@ class VoronoiEdgeFunction : public fn::MultiFunction {
 
 static void sh_node_voronoi_build_multi_function(blender::nodes::NodeMultiFunctionBuilder &builder)
 {
-  bNode &node = builder.node();
-  NodeTexVoronoi *tex = (NodeTexVoronoi *)node.storage;
-  bool minowski = (tex->distance == SHD_VORONOI_MINKOWSKI && tex->dimensions != 1 &&
-                   !ELEM(tex->feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS));
-  bool dist_radius = ELEM(tex->feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS);
+  const NodeTexVoronoi &storage = node_storage(builder.node());
+  bool minowski =
+      (storage.distance == SHD_VORONOI_MINKOWSKI && storage.dimensions != 1 &&
+       !ELEM(storage.feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS));
+  bool dist_radius = ELEM(
+      storage.feature, SHD_VORONOI_DISTANCE_TO_EDGE, SHD_VORONOI_N_SPHERE_RADIUS);
   if (dist_radius) {
-    builder.construct_and_set_matching_fn<VoronoiEdgeFunction>(tex->dimensions, tex->feature);
+    builder.construct_and_set_matching_fn<VoronoiEdgeFunction>(storage.dimensions,
+                                                               storage.feature);
   }
   else if (minowski) {
-    builder.construct_and_set_matching_fn<VoronoiMinowskiFunction>(tex->dimensions, tex->feature);
+    builder.construct_and_set_matching_fn<VoronoiMinowskiFunction>(storage.dimensions,
+                                                                   storage.feature);
   }
   else {
     builder.construct_and_set_matching_fn<VoronoiMetricFunction>(
-        tex->dimensions, tex->feature, tex->distance);
+        storage.dimensions, storage.feature, storage.distance);
   }
 }
 
 }  // namespace blender::nodes
 
-void register_node_type_sh_tex_voronoi(void)
+void register_node_type_sh_tex_voronoi()
 {
   static bNodeType ntype;
 

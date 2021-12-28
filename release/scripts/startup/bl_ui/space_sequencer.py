@@ -41,7 +41,7 @@ def _space_view_types(st):
     view_type = st.view_type
     return (
         view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'},
-        view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'},
+        view_type == 'PREVIEW',
     )
 
 
@@ -193,10 +193,6 @@ class SEQUENCER_HT_header(Header):
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="")
 
-        if st.view_type == 'SEQUENCER_PREVIEW':
-            row = layout.row(align=True)
-            row.prop(sequencer_tool_settings, "pivot_point", text="", icon_only=True)
-
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_sequencer", text="")
@@ -346,13 +342,15 @@ class SEQUENCER_MT_editor_menus(Menu):
         layout.menu("SEQUENCER_MT_export")
 
         if has_sequencer:
+            layout.menu("SEQUENCER_MT_navigation")
             if st.show_markers:
                 layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
 
         layout.menu("SEQUENCER_MT_strip")
 
-        layout.menu("SEQUENCER_MT_image")
+        if st.view_type in {'SEQUENCER', 'PREVIEW'}:
+            layout.menu("SEQUENCER_MT_image")
 
 
 
@@ -595,10 +593,6 @@ class SEQUENCER_MT_select(Menu):
         st = _context.space_data
         has_sequencer, has_preview = _space_view_types(st)
 
-        # FIXME: this doesn't work for both preview + window region.
-        if has_preview:
-            layout.operator_context = 'INVOKE_REGION_PREVIEW'
-
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("sequencer.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
@@ -758,8 +752,10 @@ class SEQUENCER_MT_add(Menu):
         col.enabled = selected_sequences_len(context) >= 2
 
         col = layout.column()
-        col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
+        #col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
+
+        col.menu("SEQUENCER_MT_fades_add")
         col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
 
@@ -842,8 +838,6 @@ class SEQUENCER_MT_strip_transform(Menu):
         else:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-
-        # FIXME: mixed preview/sequencer views.
         if has_preview:
             layout.operator("transform.translate", text="Move", icon = "TRANSFORM_MOVE")
             layout.operator("transform.rotate", text="Rotate", icon = "TRANSFORM_ROTATE")
@@ -940,12 +934,6 @@ class SEQUENCER_MT_strip(Menu):
         layout = self.layout
         st = context.space_data
         has_sequencer, has_preview = _space_view_types(st)
-
-        # FIXME: this doesn't work for both preview + window region.
-        if has_preview:
-            layout.operator_context = 'INVOKE_REGION_PREVIEW'
-        else:
-            layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.menu("SEQUENCER_MT_strip_transform")
         layout.separator()
@@ -2763,6 +2751,19 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
 
 
+class SEQUENCER_MT_fades_add(Menu):
+    bl_label = "Fade"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("sequencer.fades_add", text="Fade In and Out", icon='IPO_EASE_IN_OUT').type = 'IN_OUT'
+        layout.operator("sequencer.fades_add", text="Fade In", icon='IPO_EASE_IN').type = 'IN'
+        layout.operator("sequencer.fades_add", text="Fade Out", icon='IPO_EASE_OUT').type = 'OUT'
+        layout.operator("sequencer.fades_add", text="From current Frame", icon='BEFORE_CURRENT_FRAME').type = 'CURSOR_FROM'
+        layout.operator("sequencer.fades_add", text="To current Frame", icon='AFTER_CURRENT_FRAME').type = 'CURSOR_TO'
+
+
 classes = (
     ALL_MT_editormenu,
     SEQUENCER_MT_change,
@@ -2851,7 +2852,8 @@ classes = (
     SEQUENCER_PT_snapping,
 
 #BFA
-    SEQUENCER_PT_view_options
+    SEQUENCER_PT_view_options,
+    SEQUENCER_MT_fades_add
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -263,12 +263,30 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
       uiItemR(col, ptr, "sharpness", 0, NULL, ICON_NONE);
     }
 
-    uiItemR(layout, ptr, "use_remove_disconnected", 0, NULL, ICON_NONE);
+    /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "use_remove_disconnected", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_remove_disconnected", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+
     row = uiLayoutRow(layout, false);
     uiLayoutSetActive(row, RNA_boolean_get(ptr, "use_remove_disconnected"));
     uiItemR(layout, ptr, "threshold", 0, NULL, ICON_NONE);
   }
-  uiItemR(layout, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
 

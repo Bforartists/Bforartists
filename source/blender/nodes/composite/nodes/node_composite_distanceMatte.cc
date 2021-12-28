@@ -21,36 +21,58 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* ******************* channel Distance Matte ********************************* */
-static bNodeSocketTemplate cmp_node_distance_matte_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {SOCK_RGBA, N_("Key Color"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {-1, ""},
-};
 
-static bNodeSocketTemplate cmp_node_distance_matte_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {SOCK_FLOAT, N_("Matte")},
-    {-1, ""},
-};
+namespace blender::nodes {
+
+static void cmp_node_distance_matte_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Color>(N_("Key Color")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_output<decl::Color>(N_("Image"));
+  b.add_output<decl::Float>(N_("Matte"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_distance_matte(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeChroma *c = (NodeChroma *)MEM_callocN(sizeof(NodeChroma), "node chroma");
+  NodeChroma *c = MEM_cnew<NodeChroma>(__func__);
   node->storage = c;
   c->channel = 1;
   c->t1 = 0.1f;
   c->t2 = 0.1f;
 }
 
-void register_node_type_cmp_distance_matte(void)
+static void node_composit_buts_distance_matte(uiLayout *layout,
+                                              bContext *UNUSED(C),
+                                              PointerRNA *ptr)
+{
+  uiLayout *col, *row;
+
+  col = uiLayoutColumn(layout, true);
+
+  uiItemL(layout, IFACE_("Color Space:"), ICON_NONE);
+  row = uiLayoutRow(layout, false);
+  uiItemR(row, ptr, "channel", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+
+  uiItemR(
+      col, ptr, "tolerance", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "falloff", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_distance_matte()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_DIST_MATTE, "Distance Key", NODE_CLASS_MATTE, NODE_PREVIEW);
-  node_type_socket_templates(&ntype, cmp_node_distance_matte_in, cmp_node_distance_matte_out);
+  ntype.declare = blender::nodes::cmp_node_distance_matte_declare;
+  ntype.draw_buttons = node_composit_buts_distance_matte;
   node_type_init(&ntype, node_composit_init_distance_matte);
   node_type_storage(&ntype, "NodeChroma", node_free_standard_storage, node_copy_standard_storage);
 

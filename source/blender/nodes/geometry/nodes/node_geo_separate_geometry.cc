@@ -21,6 +21,8 @@
 
 namespace blender::nodes::node_geo_separate_geometry_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometrySeparateGeometry)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Geometry"));
@@ -42,8 +44,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometrySeparateGeometry *data = (NodeGeometrySeparateGeometry *)MEM_callocN(
-      sizeof(NodeGeometrySeparateGeometry), __func__);
+  NodeGeometrySeparateGeometry *data = MEM_cnew<NodeGeometrySeparateGeometry>(__func__);
   data->domain = ATTR_DOMAIN_POINT;
 
   node->storage = data;
@@ -55,8 +56,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
 
-  const bNode &node = params.node();
-  const NodeGeometryDeleteGeometry &storage = *(const NodeGeometryDeleteGeometry *)node.storage;
+  const NodeGeometrySeparateGeometry &storage = node_storage(params.node());
   const AttributeDomain domain = static_cast<AttributeDomain>(storage.domain);
 
   bool all_is_error = false;

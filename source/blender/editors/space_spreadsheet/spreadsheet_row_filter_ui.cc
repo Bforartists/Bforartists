@@ -114,6 +114,8 @@ static std::string value_string(const SpreadsheetRowFilter &row_filter,
     }
     case SPREADSHEET_VALUE_TYPE_STRING:
       return row_filter.value_string;
+    case SPREADSHEET_VALUE_TYPE_UNKNOWN:
+      return "";
   }
   BLI_assert_unreachable();
   return "";
@@ -238,6 +240,10 @@ static void spreadsheet_filter_panel_draw(const bContext *C, Panel *panel)
       uiItemR(layout, filter_ptr, "threshold", 0, nullptr, ICON_NONE);
       break;
     case SPREADSHEET_VALUE_TYPE_STRING:
+      uiItemR(layout, filter_ptr, "value_string", 0, IFACE_("Value"), ICON_NONE);
+      break;
+    case SPREADSHEET_VALUE_TYPE_UNKNOWN:
+      uiItemL(layout, IFACE_("Unkown column type"), ICON_ERROR);
       break;
   }
 }
@@ -325,7 +331,7 @@ static void set_filter_expand_flag(const bContext *UNUSED(C), Panel *panel, shor
 void register_row_filter_panels(ARegionType &region_type)
 {
   {
-    PanelType *panel_type = (PanelType *)MEM_callocN(sizeof(PanelType), __func__);
+    PanelType *panel_type = MEM_cnew<PanelType>(__func__);
     strcpy(panel_type->idname, "SPREADSHEET_PT_row_filters");
     strcpy(panel_type->label, N_("Filters"));
     strcpy(panel_type->category, "Filters");
@@ -336,7 +342,7 @@ void register_row_filter_panels(ARegionType &region_type)
   }
 
   {
-    PanelType *panel_type = (PanelType *)MEM_callocN(sizeof(PanelType), __func__);
+    PanelType *panel_type = MEM_cnew<PanelType>(__func__);
     strcpy(panel_type->idname, "SPREADSHEET_PT_filter");
     strcpy(panel_type->label, "");
     strcpy(panel_type->category, "Filters");

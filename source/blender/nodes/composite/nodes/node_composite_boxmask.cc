@@ -21,20 +21,27 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "../node_composite_util.hh"
 
 /* **************** SCALAR MATH ******************** */
-static bNodeSocketTemplate cmp_node_boxmask_in[] = {
-    {SOCK_FLOAT, N_("Mask"), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-    {SOCK_FLOAT, N_("Value"), 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-    {-1, ""}};
 
-static bNodeSocketTemplate cmp_node_boxmask_out[] = {
-    {SOCK_FLOAT, N_("Mask"), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f}, {-1, ""}};
+namespace blender::nodes {
+
+static void cmp_node_boxmask_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Float>(N_("Mask")).default_value(0.0f).min(0.0f).max(1.0f);
+  b.add_input<decl::Float>(N_("Value")).default_value(1.0f).min(0.0f).max(1.0f);
+  b.add_output<decl::Float>(N_("Mask"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_boxmask(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeBoxMask *data = (NodeBoxMask *)MEM_callocN(sizeof(NodeBoxMask), "NodeBoxMask");
+  NodeBoxMask *data = MEM_cnew<NodeBoxMask>(__func__);
   data->x = 0.5;
   data->y = 0.5;
   data->width = 0.2;
@@ -43,12 +50,29 @@ static void node_composit_init_boxmask(bNodeTree *UNUSED(ntree), bNode *node)
   node->storage = data;
 }
 
-void register_node_type_cmp_boxmask(void)
+static void node_composit_buts_boxmask(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *row;
+
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, ptr, "x", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "y", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, ptr, "width", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "height", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+
+  uiItemR(layout, ptr, "rotation", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "mask_type", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_boxmask()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_MASK_BOX, "Box Mask", NODE_CLASS_MATTE, 0);
-  node_type_socket_templates(&ntype, cmp_node_boxmask_in, cmp_node_boxmask_out);
+  ntype.declare = blender::nodes::cmp_node_boxmask_declare;
+  ntype.draw_buttons = node_composit_buts_boxmask;
   node_type_init(&ntype, node_composit_init_boxmask);
   node_type_storage(&ntype, "NodeBoxMask", node_free_standard_storage, node_copy_standard_storage);
 

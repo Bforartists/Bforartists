@@ -29,6 +29,8 @@
 
 namespace blender::nodes::node_geo_subdivision_surface_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometrySubdivisionSurface)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Mesh")).supported_type(GEO_COMPONENT_TYPE_MESH);
@@ -50,8 +52,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometrySubdivisionSurface *data = (NodeGeometrySubdivisionSurface *)MEM_callocN(
-      sizeof(NodeGeometrySubdivisionSurface), __func__);
+  NodeGeometrySubdivisionSurface *data = MEM_cnew<NodeGeometrySubdivisionSurface>(__func__);
   data->uv_smooth = SUBSURF_UV_SMOOTH_PRESERVE_BOUNDARIES;
   data->boundary_smooth = SUBSURF_BOUNDARY_SMOOTH_ALL;
   node->storage = data;
@@ -66,8 +67,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 #else
   Field<float> crease_field = params.extract_input<Field<float>>("Crease");
 
-  const NodeGeometrySubdivisionSurface &storage =
-      *(const NodeGeometrySubdivisionSurface *)params.node().storage;
+  const NodeGeometrySubdivisionSurface &storage = node_storage(params.node());
   const int uv_smooth = storage.uv_smooth;
   const int boundary_smooth = storage.boundary_smooth;
   const int subdiv_level = clamp_i(params.extract_input<int>("Level"), 0, 30);

@@ -520,7 +520,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
 #ifdef WITH_OCEANSIM
-  uiLayout *col, *sub;
+  uiLayout *col, *sub, *row; /*bfa, added *row*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -547,7 +547,14 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(col, ptr, "random_seed", 0, NULL, ICON_NONE);
 
-  uiItemR(col, ptr, "use_normals", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(col, ptr, "use_normals", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normals", 0, NULL, ICON_NONE);
+  /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
 
@@ -624,7 +631,7 @@ static void spray_panel_draw_header(const bContext *UNUSED(C), Panel *panel)
 
 static void spray_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
@@ -637,7 +644,14 @@ static void spray_panel_draw(const bContext *UNUSED(C), Panel *panel)
   col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, use_foam && use_spray);
   uiItemR(col, ptr, "spray_layer_name", 0, IFACE_("Data Layer"), ICON_NONE);
-  uiItemR(col, ptr, "invert_spray", 0, IFACE_("Invert"), ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(col, ptr, "invert_spray", 0, IFACE_("Invert"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "invert_spray", 0, NULL, ICON_NONE);
+  /* ------------ end bfa */
 }
 
 static void spectrum_panel_draw(const bContext *UNUSED(C), Panel *panel)

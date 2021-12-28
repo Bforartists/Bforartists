@@ -439,7 +439,10 @@ static GPUMaterialTexture *gpu_node_graph_add_texture(GPUNodeGraph *graph,
   if (tex == NULL) {
     tex = MEM_callocN(sizeof(*tex), __func__);
     tex->ima = ima;
-    tex->iuser = iuser;
+    if (iuser != NULL) {
+      tex->iuser = *iuser;
+      tex->iuser_available = true;
+    }
     tex->colorband = colorband;
     tex->sampler_state = sampler_state;
     BLI_snprintf(tex->sampler_name, sizeof(tex->sampler_name), "samp%d", num_textures);
@@ -791,7 +794,6 @@ static void gpu_node_free(GPUNode *node)
   MEM_freeN(node);
 }
 
-/* Free intermediate node graph. */
 void gpu_node_graph_free_nodes(GPUNodeGraph *graph)
 {
   GPUNode *node;
@@ -803,7 +805,6 @@ void gpu_node_graph_free_nodes(GPUNodeGraph *graph)
   graph->outlink = NULL;
 }
 
-/* Free both node graph and requested attributes and textures. */
 void gpu_node_graph_free(GPUNodeGraph *graph)
 {
   BLI_freelistN(&graph->outlink_aovs);

@@ -27,9 +27,6 @@
 #include "DNA_movieclip_types.h"
 #include "DNA_node_types.h"
 
-#include "BLI_blenlib.h"
-#include "BLI_math.h"
-
 #include "BLT_translation.h"
 
 #include "BKE_colorband.h"
@@ -45,8 +42,8 @@
 
 #include "RE_pipeline.h"
 
-/* only for forward declarations */
 #include "NOD_composite.h"
+#include "NOD_socket.h"
 #include "NOD_socket_declarations.hh"
 
 #define CMP_SCALE_MAX 12000

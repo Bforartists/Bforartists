@@ -227,6 +227,7 @@ static void foreachIDLink(GpencilModifierData *md, Object *ob, IDWalkFunc walk, 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
@@ -243,10 +244,19 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     const bool is_normalized = RNA_boolean_get(ptr, "use_normalized_opacity");
     const bool is_weighted = RNA_boolean_get(ptr, "use_weight_factor");
 
-    uiItemR(layout, ptr, "use_normalized_opacity", 0, NULL, ICON_NONE);
+    /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "use_normalized_opacity", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_normalized_opacity", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_normalized_opacity", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+
     const char *text = (is_normalized) ? IFACE_("Strength") : IFACE_("Opacity Factor");
 
-    uiLayout *row = uiLayoutRow(layout, true);
+    row = uiLayoutRow(layout, true);
     uiLayoutSetActive(row, !is_weighted || is_normalized);
     uiItemR(row, ptr, "factor", 0, text, ICON_NONE);
     if (!is_normalized) {

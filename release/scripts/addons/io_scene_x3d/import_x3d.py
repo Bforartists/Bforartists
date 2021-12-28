@@ -2738,7 +2738,7 @@ def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
     if alpha < 1.0:
         bpymat.blend_method = "BLEND"
         bpymat.shadow_method = "HASHED"
-    
+
     # NOTE - leaving this disabled for now
     if False and is_vcol:
         node_vertex_color = bpymat.node_tree.nodes.new("ShaderNodeVertexColor")
@@ -2748,7 +2748,7 @@ def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
             bpymat_wrap.node_principled_bsdf.inputs["Base Color"],
             node_vertex_color.outputs["Color"]
         )
-    
+
     return bpymat_wrap
 
 
@@ -2769,7 +2769,7 @@ def appearance_CreateDefaultMaterial():
     #bpymat.specular_hardness = 103
     # 0-1 -> 1-511
     #bpymat.specular_color = (0, 0, 0)
-    
+
     bpymat_wrap.alpha = 1.0
     return bpymat_wrap
 
@@ -2902,7 +2902,7 @@ def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
         repeatT = tex_node.getFieldAsBool('repeatT', True, ancestry)
 
         bpymat_wrap.base_color_texture.image = bpyima
-        
+
         # NOTE - not possible to handle x and y tiling individually.
         extension = "REPEAT" if repeatS or repeatT else "CLIP"
         bpymat_wrap.base_color_texture.extension = extension

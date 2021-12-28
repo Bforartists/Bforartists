@@ -44,13 +44,9 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         # Uses prop_with_popover() as popover() only adds the triangle icon in headers.
-        layout.prop_with_popover(
-            params,
-            "display_type",
-            panel="ASSETBROWSER_PT_display",
-            text="",
-            icon_only=True,
-        )
+        row = layout.row(align = True)
+        row.prop(params, "display_type", expand=True, icon_only=True)
+        row.prop_with_popover(params,"display_type", panel="ASSETBROWSER_PT_display",text="", icon_only=True,)
 
         sub = layout.row()
         sub.ui_units_x = 8
@@ -429,7 +425,13 @@ class FILEBROWSER_PT_advanced_filter(Panel):
 
 
 def is_option_region_visible(context, space):
-    if not space.active_operator:
+    from bpy_extras.asset_utils import SpaceAssetInfo
+
+    if SpaceAssetInfo.is_asset_browser(space):
+        pass
+    # For the File Browser, there must be an operator for there to be options
+    # (irrelevant for the Asset Browser).
+    elif not space.active_operator:
         return False
 
     for region in context.area.regions:
@@ -706,6 +708,10 @@ class ASSETBROWSER_MT_edit(AssetBrowserMenu, Menu):
 
         layout.operator("asset.catalog_undo", text="Undo", icon = "UNDO")
         layout.operator("asset.catalog_redo", text="Redo", icon = "REDO")
+        
+        layout.separator()
+        
+        layout.operator("preferences.filepaths_show", emboss=False, text="Asset Library Paths", icon='PREFERENCES')
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
@@ -719,7 +725,7 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
         asset_file_handle = context.asset_file_handle
 
         if asset_file_handle is None:
-            layout.label(text="No asset selected", icon='INFO')
+            layout.label(text="No active asset", icon='INFO')
             return
 
         asset_library_ref = context.asset_library_ref
@@ -750,9 +756,19 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
                 col.prop(asset_file_handle.asset_data, "catalog_id", text="UUID")
                 col.prop(asset_file_handle.asset_data, "catalog_simple_name", text="Simple Name")
 
+
+class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
+    bl_label = "Info"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        wm = context.window_manager
+        asset_file_handle = context.asset_file_handle
+
         row = layout.row(align=True)
         row.prop(wm, "asset_path_dummy", text="Source")
-        row.operator("asset.open_containing_blend_file", text="", icon='TOOL_SETTINGS')
+        row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
 
         layout.prop(asset_file_handle.asset_data, "description")
         layout.prop(asset_file_handle.asset_data, "author")
@@ -854,6 +870,7 @@ classes = (
     ASSETBROWSER_MT_select,
     ASSETBROWSER_MT_edit,
     ASSETBROWSER_PT_metadata,
+    ASSETBROWSER_PT_metadata_info,
     ASSETBROWSER_PT_metadata_preview,
     ASSETBROWSER_PT_metadata_tags,
     ASSETBROWSER_UL_metadata_tags,
