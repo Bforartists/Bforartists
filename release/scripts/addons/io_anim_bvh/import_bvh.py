@@ -320,7 +320,7 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
             else:
                 # allow this, see above
                 # if not bvh_node.children:
-                #	raise Exception("bvh node has no end and no children. bad file")
+                #     raise Exception("bvh node has no end and no children. bad file")
 
                 # Removed temp for now
                 rest_tail_world = Vector((0.0, 0.0, 0.0))

@@ -16,9 +16,10 @@
 
 #include "MOD_nodes_evaluator.hh"
 
+#include "BKE_type_conversions.hh"
+
 #include "NOD_geometry_exec.hh"
 #include "NOD_socket_declarations.hh"
-#include "NOD_type_conversions.hh"
 
 #include "DEG_depsgraph_query.h"
 
@@ -65,31 +66,55 @@ struct SingleInputValue {
   void *value = nullptr;
 };
 
-struct MultiInputValueItem {
-  /**
-   * The socket where this value is coming from. This is required to sort the inputs correctly
-   * based on the link order later on.
-   */
-  DSocket origin;
-  /**
-   * Should only be null directly after construction. After that it should always point to a value
-   * of the correct type.
-   */
-  void *value = nullptr;
-};
-
 struct MultiInputValue {
   /**
-   * Collection of all the inputs that have been provided already. Note, the same origin can occur
-   * multiple times. However, it is guaranteed that if two items have the same origin, they will
-   * also have the same value (the pointer is different, but they point to values that would
-   * compare equal).
+   * Ordered sockets connected to this multi-input.
    */
-  Vector<MultiInputValueItem> items;
+  Vector<DSocket> origins;
   /**
-   * Number of items that need to be added until all inputs have been provided.
+   * A value for every origin socket. The order is determined by #origins.
+   * Note, the same origin can occur multiple times. However, it is guaranteed that values coming
+   * from the same origin have the same value (the pointer is different, but they point to values
+   * that would compare equal).
    */
-  int expected_size = 0;
+  Vector<void *> values;
+  /**
+   * Number of non-null values.
+   */
+  int provided_value_count = 0;
+
+  bool all_values_available() const
+  {
+    return this->missing_values() == 0;
+  }
+
+  int missing_values() const
+  {
+    return this->values.size() - this->provided_value_count;
+  }
+
+  void add_value(const DSocket origin, void *value)
+  {
+    const int index = this->find_available_index(origin);
+    this->values[index] = value;
+    this->provided_value_count++;
+  }
+
+ private:
+  int find_available_index(DSocket origin) const
+  {
+    for (const int i : origins.index_range()) {
+      if (values[i] != nullptr) {
+        continue;
+      }
+      if (origins[i] != origin) {
+        continue;
+      }
+      return i;
+    }
+    BLI_assert_unreachable();
+    return -1;
+  }
 };
 
 struct InputState {
@@ -417,7 +442,7 @@ class NodeParamsProvider : public nodes::GeoNodeExecParamsProvider {
   bool lazy_require_input(StringRef identifier) override;
   bool lazy_output_is_required(StringRef identifier) const override;
 
-  void set_default_remaining_outputs();
+  void set_default_remaining_outputs() override;
 };
 
 class GeometryNodesEvaluator {
@@ -449,7 +474,7 @@ class GeometryNodesEvaluator {
   TaskPool *task_pool_ = nullptr;
 
   GeometryNodesEvaluationParams &params_;
-  const blender::nodes::DataTypeConversions &conversions_;
+  const blender::bke::DataTypeConversions &conversions_;
 
   friend NodeParamsProvider;
 
@@ -457,7 +482,7 @@ class GeometryNodesEvaluator {
   GeometryNodesEvaluator(GeometryNodesEvaluationParams &params)
       : outer_allocator_(params.allocator),
         params_(params),
-        conversions_(blender::nodes::get_implicit_type_conversions())
+        conversions_(blender::bke::get_implicit_type_conversions())
   {
   }
 
@@ -555,13 +580,14 @@ class GeometryNodesEvaluator {
       /* Construct the correct struct that can hold the input(s). */
       if (socket->is_multi_input_socket()) {
         input_state.value.multi = allocator.construct<MultiInputValue>().release();
+        MultiInputValue &multi_value = *input_state.value.multi;
         /* Count how many values should be added until the socket is complete. */
-        socket.foreach_origin_socket(
-            [&](DSocket UNUSED(origin)) { input_state.value.multi->expected_size++; });
+        socket.foreach_origin_socket([&](DSocket origin) { multi_value.origins.append(origin); });
         /* If no links are connected, we do read the value from socket itself. */
-        if (input_state.value.multi->expected_size == 0) {
-          input_state.value.multi->expected_size = 1;
+        if (multi_value.origins.is_empty()) {
+          multi_value.origins.append(socket);
         }
+        multi_value.values.resize(multi_value.origins.size(), nullptr);
       }
       else {
         input_state.value.single = allocator.construct<SingleInputValue>().release();
@@ -622,8 +648,10 @@ class GeometryNodesEvaluator {
       const InputSocketRef &socket_ref = node->input(i);
       if (socket_ref.is_multi_input_socket()) {
         MultiInputValue &multi_value = *input_state.value.multi;
-        for (MultiInputValueItem &item : multi_value.items) {
-          input_state.type->destruct(item.value);
+        for (void *value : multi_value.values) {
+          if (value != nullptr) {
+            input_state.type->destruct(value);
+          }
         }
         multi_value.~MultiInputValue();
       }
@@ -891,7 +919,7 @@ class GeometryNodesEvaluator {
       if (socket->is_multi_input_socket()) {
         MultiInputValue &multi_value = *input_state.value.multi;
         /* Checks if all the linked sockets have been provided already. */
-        if (multi_value.items.size() == multi_value.expected_size) {
+        if (multi_value.all_values_available()) {
           input_state.was_ready_for_execution = true;
         }
         else if (is_required) {
@@ -1242,7 +1270,7 @@ class GeometryNodesEvaluator {
     int missing_values = 0;
     if (input_socket->is_multi_input_socket()) {
       MultiInputValue &multi_value = *input_state.value.multi;
-      missing_values = multi_value.expected_size - multi_value.items.size();
+      missing_values = multi_value.missing_values();
     }
     else {
       SingleInputValue &single_value = *input_state.value.single;
@@ -1500,10 +1528,10 @@ class GeometryNodesEvaluator {
       if (socket->is_multi_input_socket()) {
         /* Add a new value to the multi-input. */
         MultiInputValue &multi_value = *input_state.value.multi;
-        multi_value.items.append({origin, value.get()});
+        multi_value.add_value(origin, value.get());
 
-        if (multi_value.expected_size == multi_value.items.size()) {
-          this->log_socket_value({socket}, input_state, multi_value.items);
+        if (multi_value.all_values_available()) {
+          this->log_socket_value({socket}, input_state, multi_value.values);
         }
       }
       else {
@@ -1528,8 +1556,8 @@ class GeometryNodesEvaluator {
    * still be linked to e.g. a Group Input node, but the socket on the outside is not connected to
    * anything.
    *
-   * \param input_socket The socket of the node that wants to use the value.
-   * \param origin_socket The socket that we want to load the value from.
+   * \param input_socket: The socket of the node that wants to use the value.
+   * \param origin_socket: The socket that we want to load the value from.
    */
   void load_unlinked_input_value(LockedNode &locked_node,
                                  const DInputSocket input_socket,
@@ -1542,9 +1570,9 @@ class GeometryNodesEvaluator {
     GMutablePointer value = this->get_value_from_socket(origin_socket, *input_state.type);
     if (input_socket->is_multi_input_socket()) {
       MultiInputValue &multi_value = *input_state.value.multi;
-      multi_value.items.append({origin_socket, value.get()});
-      if (multi_value.expected_size == multi_value.items.size()) {
-        this->log_socket_value({input_socket}, input_state, multi_value.items);
+      multi_value.add_value(origin_socket, value.get());
+      if (multi_value.all_values_available()) {
+        this->log_socket_value({input_socket}, input_state, multi_value.values);
       }
     }
     else {
@@ -1567,10 +1595,13 @@ class GeometryNodesEvaluator {
     InputState &input_state = locked_node.node_state.inputs[socket->index()];
     if (socket->is_multi_input_socket()) {
       MultiInputValue &multi_value = *input_state.value.multi;
-      for (MultiInputValueItem &item : multi_value.items) {
-        input_state.type->destruct(item.value);
+      for (void *&value : multi_value.values) {
+        if (value != nullptr) {
+          input_state.type->destruct(value);
+          value = nullptr;
+        }
       }
-      multi_value.items.clear();
+      multi_value.provided_value_count = 0;
     }
     else {
       SingleInputValue &single_value = *input_state.value.single;
@@ -1652,7 +1683,7 @@ class GeometryNodesEvaluator {
     return *node_states_.lookup_key_as(node).state;
   }
 
-  void log_socket_value(DSocket socket, InputState &input_state, Span<MultiInputValueItem> values)
+  void log_socket_value(DSocket socket, InputState &input_state, Span<void *> values)
   {
     if (params_.geo_logger == nullptr) {
       return;
@@ -1661,8 +1692,8 @@ class GeometryNodesEvaluator {
     Vector<GPointer, 16> value_pointers;
     value_pointers.reserve(values.size());
     const CPPType &type = *input_state.type;
-    for (const MultiInputValueItem &item : values) {
-      value_pointers.append({type, item.value});
+    for (const void *value : values) {
+      value_pointers.append({type, value});
     }
     params_.geo_logger->local().log_multi_value_socket(socket, value_pointers);
   }
@@ -1748,7 +1779,7 @@ bool NodeParamsProvider::can_get_input(StringRef identifier) const
 
   if (socket->is_multi_input_socket()) {
     MultiInputValue &multi_value = *input_state.value.multi;
-    return multi_value.items.size() == multi_value.expected_size;
+    return multi_value.all_values_available();
   }
   SingleInputValue &single_value = *input_state.value.single;
   return single_value.value != nullptr;
@@ -1788,25 +1819,11 @@ Vector<GMutablePointer> NodeParamsProvider::extract_multi_input(StringRef identi
   MultiInputValue &multi_value = *input_state.value.multi;
 
   Vector<GMutablePointer> ret_values;
-  socket.foreach_origin_socket([&](DSocket origin) {
-    for (MultiInputValueItem &item : multi_value.items) {
-      if (item.origin == origin && item.value != nullptr) {
-        ret_values.append({*input_state.type, item.value});
-        /* Make sure we do not use the same value again if two values have the same origin. */
-        item.value = nullptr;
-        return;
-      }
-    }
-    BLI_assert_unreachable();
-  });
-  if (ret_values.is_empty()) {
-    /* If the socket is not linked, we just use the value from the socket itself. */
-    BLI_assert(multi_value.items.size() == 1);
-    MultiInputValueItem &item = multi_value.items[0];
-    BLI_assert(item.origin == socket);
-    ret_values.append({*input_state.type, item.value});
+  for (void *&value : multi_value.values) {
+    BLI_assert(value != nullptr);
+    ret_values.append({*input_state.type, value});
+    value = nullptr;
   }
-  multi_value.items.clear();
   return ret_values;
 }
 

@@ -37,8 +37,7 @@
 #include "DNA_scene_types.h"
 #include "DNA_texture_types.h"
 
-#include "BLI_blenlib.h"
-#include "BLI_math.h"
+#include "BLI_math_vector.h"
 #include "BLI_rand.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
@@ -122,10 +121,6 @@ void tex_output(bNode *node,
                 bNodeStack *out,
                 TexFn texfn,
                 TexCallData *data);
-void tex_do_preview(bNodePreview *preview,
-                    const float coord[2],
-                    const float col[4],
-                    bool do_manage);
 
 void params_from_cdata(TexParams *out, TexCallData *in);
 

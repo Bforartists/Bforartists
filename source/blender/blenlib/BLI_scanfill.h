@@ -91,6 +91,7 @@ typedef struct ScanFillFace {
 } ScanFillFace;
 
 /* scanfill.c */
+
 struct ScanFillVert *BLI_scanfill_vert_add(ScanFillContext *sf_ctx, const float vec[3]);
 struct ScanFillEdge *BLI_scanfill_edge_add(ScanFillContext *sf_ctx,
                                            struct ScanFillVert *v1,
@@ -123,6 +124,12 @@ void BLI_scanfill_begin_arena(ScanFillContext *sf_ctx, struct MemArena *arena);
 void BLI_scanfill_end_arena(ScanFillContext *sf_ctx, struct MemArena *arena);
 
 /* scanfill_utils.c */
+
+/**
+ * Call before scan-fill to remove self intersections.
+ *
+ * \return false if no changes were made.
+ */
 bool BLI_scanfill_calc_self_isect(ScanFillContext *sf_ctx,
                                   ListBase *fillvertbase,
                                   ListBase *filledgebase);

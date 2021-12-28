@@ -1637,7 +1637,7 @@ class Do:
         if type(self.pScene) is TransverseMercator:
             scene['SRID'] = "tmerc"
         elif self.pScene is not None:  # assume Proj
-            scene['SRID'] = re.findall("\+init=(.+)\s", self.pScene.srs)[0]
+            scene['SRID'] = re.findall(r"\+init=(.+)\s", self.pScene.srs)[0]
 
         #bpy.context.screen.scene = scene
 

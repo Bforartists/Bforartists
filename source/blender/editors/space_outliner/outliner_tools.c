@@ -884,7 +884,7 @@ static void id_override_library_create_fn(bContext *C,
   ID *id_reference = NULL;
   bool is_override_instancing_object = false;
   if (tsep != NULL && tsep->type == TSE_SOME_ID && tsep->id != NULL &&
-      GS(tsep->id->name) == ID_OB) {
+      GS(tsep->id->name) == ID_OB && !ID_IS_OVERRIDE_LIBRARY(tsep->id)) {
     Object *ob = (Object *)tsep->id;
     if (ob->type == OB_EMPTY && &ob->instance_collection->id == id_root) {
       BLI_assert(GS(id_root->name) == ID_GR);
@@ -1162,10 +1162,6 @@ static void singleuser_world_fn(bContext *C,
   }
 }
 
-/**
- * \param recurse_selected: Set to false for operations which are already
- * recursively operating on their children.
- */
 void outliner_do_object_operation_ex(bContext *C,
                                      ReportList *reports,
                                      Scene *scene_act,
@@ -3054,7 +3050,6 @@ static int outliner_operation(bContext *C, wmOperator *op, const wmEvent *event)
   return do_outliner_operation_event(C, op->reports, region, space_outliner, hovered_te);
 }
 
-/* Menu only! Calls other operators */
 void OUTLINER_OT_operation(wmOperatorType *ot)
 {
   ot->name = "Context Menu";

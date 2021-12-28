@@ -93,13 +93,13 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
 # Calculate the vertex coordinates for a single
 # section of a gear tooth.
 # Returns 4 lists of vertex coords (list of tuples):
-#  *-*---*---*	(1.) verts_inner_base
+#  *-*---*---*  (1.) verts_inner_base
 #  | |   |   |
-#  *-*---*---*	(2.) verts_outer_base
+#  *-*---*---*  (2.) verts_outer_base
 #    |   |   |
-#    *---*---*	(3.) verts_middle_tooth
+#    *---*---*  (3.) verts_middle_tooth
 #     \  |  /
-#      *-*-*	(4.) verts_tip_tooth
+#      *-*-*    (4.) verts_tip_tooth
 #
 # a
 # t

@@ -269,17 +269,6 @@ static void findnearestvert__doClosest(void *userData,
   }
 }
 
-/**
- * Nearest vertex under the cursor.
- *
- * \param dist_px_manhattan_p: (in/out), minimal distance to the nearest and at the end,
- * actual distance.
- * \param use_select_bias:
- * - When true, selected vertices are given a 5 pixel bias
- *   to make them further than unselect verts.
- * - When false, unselected vertices are given the bias.
- * \param use_cycle: Cycle over elements within #FIND_NEAR_CYCLE_THRESHOLD_MIN in order of index.
- */
 BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
                                   float *dist_px_manhattan_p,
                                   const bool use_select_bias,
@@ -715,13 +704,6 @@ static void findnearestface__doClosest(void *userData,
   }
 }
 
-/**
- * \param use_zbuf_single_px: Special case, when using the back-buffer selection,
- * only use the pixel at `vc->mval` instead of using `dist_px_manhattan_p` to search over a larger
- * region. This is needed because historically selection worked this way for a long time, however
- * it's reasonable that some callers might want to expand the region too. So add an argument to do
- * this,
- */
 BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
                                   float *dist_px_manhattan_p,
                                   float *r_dist_center,
@@ -2240,8 +2222,6 @@ static void edbm_strip_selections(BMEditMesh *em)
   }
 }
 
-/* when switching select mode, makes sure selection is consistent for editing */
-/* also for paranoia checks to make sure edge or face mode works */
 void EDBM_selectmode_set(BMEditMesh *em)
 {
   BMVert *eve;
@@ -2296,20 +2276,6 @@ void EDBM_selectmode_set(BMEditMesh *em)
   }
 }
 
-/**
- * Expand & Contract the Selection
- * (used when changing modes and Ctrl key held)
- *
- * Flush the selection up:
- * - vert -> edge
- * - vert -> face
- * - edge -> face
- *
- * Flush the selection down:
- * - face -> edge
- * - face -> vert
- * - edge -> vert
- */
 void EDBM_selectmode_convert(BMEditMesh *em,
                              const short selectmode_old,
                              const short selectmode_new)
@@ -2416,7 +2382,6 @@ void EDBM_selectmode_convert(BMEditMesh *em,
   }
 }
 
-/* user facing function, does notification */
 bool EDBM_selectmode_toggle_multi(bContext *C,
                                   const short selectmode_new,
                                   const int action,
@@ -2592,12 +2557,6 @@ bool EDBM_selectmode_set_multi(bContext *C, const short selectmode)
   return changed;
 }
 
-/**
- * Use to disable a selectmode if its enabled, Using another mode as a fallback
- * if the disabled mode is the only mode set.
- *
- * \return true if the mode is changed.
- */
 bool EDBM_selectmode_disable(Scene *scene,
                              BMEditMesh *em,
                              const short selectmode_disable,

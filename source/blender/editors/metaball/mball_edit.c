@@ -64,7 +64,6 @@
 /** \name Edit Mode Functions
  * \{ */
 
-/* This function is used to free all MetaElems from MetaBall */
 void ED_mball_editmball_free(Object *obedit)
 {
   MetaBall *mb = (MetaBall *)obedit->data;
@@ -73,8 +72,6 @@ void ED_mball_editmball_free(Object *obedit)
   mb->lastelem = NULL;
 }
 
-/* This function is called, when MetaBall Object is
- * switched from object mode to edit mode */
 void ED_mball_editmball_make(Object *obedit)
 {
   MetaBall *mb = (MetaBall *)obedit->data;
@@ -92,9 +89,6 @@ void ED_mball_editmball_make(Object *obedit)
   mb->editelems = &mb->elems;
 }
 
-/* This function is called, when MetaBall Object switched from
- * edit mode to object mode. List of MetaElements is copied
- * from object->data->edit_elems to object->data->elems. */
 void ED_mball_editmball_load(Object *UNUSED(obedit))
 {
 }
@@ -124,9 +118,6 @@ bool ED_mball_deselect_all_multi(bContext *C)
 /** \name Add Meta Primitive Utility
  * \{ */
 
-/**
- * Add meta-element primitive to meta-ball object (which is in edit mode).
- */
 MetaElem *ED_mball_add_primitive(
     bContext *UNUSED(C), Object *obedit, bool obedit_is_new, float mat[4][4], float dia, int type)
 {
@@ -794,8 +785,6 @@ void MBALL_OT_reveal_metaelems(wmOperatorType *ot)
 /** \name Select Pick Utility
  * \{ */
 
-/* Select MetaElement with mouse click (user can select radius circle or
- * stiffness circle) */
 bool ED_mball_select_pick(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);

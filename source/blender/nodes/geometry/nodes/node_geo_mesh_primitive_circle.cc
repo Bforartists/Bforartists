@@ -27,6 +27,8 @@
 
 namespace blender::nodes::node_geo_mesh_primitive_circle_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryMeshCircle)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Int>(N_("Vertices"))
@@ -50,8 +52,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryMeshCircle *node_storage = (NodeGeometryMeshCircle *)MEM_callocN(
-      sizeof(NodeGeometryMeshCircle), __func__);
+  NodeGeometryMeshCircle *node_storage = MEM_cnew<NodeGeometryMeshCircle>(__func__);
 
   node_storage->fill_type = GEO_NODE_MESH_CIRCLE_FILL_NONE;
 
@@ -199,11 +200,8 @@ static Mesh *create_circle_mesh(const float radius,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const bNode &node = params.node();
-  const NodeGeometryMeshCircle &storage = *(const NodeGeometryMeshCircle *)node.storage;
-
-  const GeometryNodeMeshCircleFillType fill_type = (const GeometryNodeMeshCircleFillType)
-                                                       storage.fill_type;
+  const NodeGeometryMeshCircle &storage = node_storage(params.node());
+  const GeometryNodeMeshCircleFillType fill = (GeometryNodeMeshCircleFillType)storage.fill_type;
 
   const float radius = params.extract_input<float>("Radius");
   const int verts_num = params.extract_input<int>("Vertices");
@@ -213,9 +211,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  Mesh *mesh = create_circle_mesh(radius, verts_num, fill_type);
-
-  BLI_assert(BKE_mesh_is_valid(mesh));
+  Mesh *mesh = create_circle_mesh(radius, verts_num, fill);
 
   params.set_output("Mesh", GeometrySet::create_with_mesh(mesh));
 }

@@ -126,8 +126,6 @@ int RNA_property_override_flag(PropertyRNA *prop)
   return rna_ensure_property(prop)->flag_override;
 }
 
-/** \note Does not take into account editable status, this has to be checked separately
- * (using #RNA_property_editable_flag() usually). */
 bool RNA_property_overridable_get(PointerRNA *ptr, PropertyRNA *prop)
 {
   if (prop->magic == RNA_MAGIC) {
@@ -170,7 +168,6 @@ bool RNA_property_overridable_get(PointerRNA *ptr, PropertyRNA *prop)
   return (idprop->flag & IDP_FLAG_OVERRIDABLE_LIBRARY) != 0;
 }
 
-/* Should only be used for custom properties */
 bool RNA_property_overridable_library_set(PointerRNA *UNUSED(ptr),
                                           PropertyRNA *prop,
                                           const bool is_overridable)
@@ -614,37 +611,27 @@ static bool rna_property_override_operation_apply(Main *bmain,
   }
 
   /* get and set the default values as appropriate for the various types */
-  const bool sucess = override_apply(bmain,
-                                     ptr_dst,
-                                     ptr_src,
-                                     ptr_storage,
-                                     prop_dst,
-                                     prop_src,
-                                     prop_storage,
-                                     len_dst,
-                                     len_src,
-                                     len_storage,
-                                     ptr_item_dst,
-                                     ptr_item_src,
-                                     ptr_item_storage,
-                                     opop);
-  if (sucess) {
+  const bool success = override_apply(bmain,
+                                      ptr_dst,
+                                      ptr_src,
+                                      ptr_storage,
+                                      prop_dst,
+                                      prop_src,
+                                      prop_storage,
+                                      len_dst,
+                                      len_src,
+                                      len_storage,
+                                      ptr_item_dst,
+                                      ptr_item_src,
+                                      ptr_item_storage,
+                                      opop);
+  if (success) {
     RNA_property_update_main(bmain, NULL, ptr_dst, prop_dst);
   }
 
-  return sucess;
+  return success;
 }
 
-/**
- * Check whether reference and local overridden data match (are the same),
- * with respect to given restrictive sets of properties.
- * If requested, will generate needed new property overrides, and/or restore values from reference.
- *
- * \param r_report_flags: If given,
- * will be set with flags matching actions taken by the function on \a ptr_local.
- *
- * \return True if _resulting_ \a ptr_local does match \a ptr_reference.
- */
 bool RNA_struct_override_matches(Main *bmain,
                                  PointerRNA *ptr_local,
                                  PointerRNA *ptr_reference,
@@ -928,10 +915,6 @@ bool RNA_struct_override_matches(Main *bmain,
   return matching;
 }
 
-/**
- * Store needed second operands into \a storage data-block
- * for differential override operations.
- */
 bool RNA_struct_override_store(Main *bmain,
                                PointerRNA *ptr_local,
                                PointerRNA *ptr_reference,
@@ -1076,7 +1059,12 @@ static void rna_porperty_override_collection_subitem_lookup(
     *r_ptr_item_storage = private_ptr_item_storage;
   }
 
-  if ((*r_ptr_item_dst)->type == NULL) {
+  /* Note that there is no reason to report in case no item is expected, i.e. in case subitem name
+   * and index are invalid. This can often happen when inserting new items (constraint,
+   * modifier...) in a collection that supports it. */
+  if ((*r_ptr_item_dst)->type == NULL &&
+      ((opop->subitem_reference_name != NULL && opop->subitem_reference_name[0] != '\0') ||
+       opop->subitem_reference_index != -1)) {
     CLOG_INFO(&LOG,
               2,
               "Failed to find destination sub-item '%s' (%d) of '%s' in new override data '%s'",
@@ -1085,7 +1073,9 @@ static void rna_porperty_override_collection_subitem_lookup(
               op->rna_path,
               ptr_dst->owner_id->name);
   }
-  if ((*r_ptr_item_src)->type == NULL) {
+  if ((*r_ptr_item_src)->type == NULL &&
+      ((opop->subitem_local_name != NULL && opop->subitem_local_name[0] != '\0') ||
+       opop->subitem_local_index != -1)) {
     CLOG_INFO(&LOG,
               2,
               "Failed to find source sub-item '%s' (%d) of '%s' in old override data '%s'",
@@ -1195,10 +1185,6 @@ static void rna_property_override_apply_ex(Main *bmain,
   }
 }
 
-/**
- * Apply given \a override operations on \a ptr_dst, using \a ptr_src
- * (and \a ptr_storage for differential ops) as source.
- */
 void RNA_struct_override_apply(Main *bmain,
                                PointerRNA *ptr_dst,
                                PointerRNA *ptr_src,

@@ -44,8 +44,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCurveSubdivide *data = (NodeGeometryCurveSubdivide *)MEM_callocN(
-      sizeof(NodeGeometryCurveSubdivide), __func__);
+  NodeGeometryCurveSubdivide *data = MEM_cnew<NodeGeometryCurveSubdivide>(__func__);
 
   data->cuts_type = GEO_NODE_ATTRIBUTE_INPUT_INTEGER;
   node->storage = data;
@@ -351,7 +350,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = bke::geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (!geometry_set.has_curve()) {
     params.set_output("Geometry", geometry_set);

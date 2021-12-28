@@ -21,25 +21,32 @@
  * \ingroup cmpnodes
  */
 
-#include "node_composite_util.hh"
-
 #include <climits>
 
+#include "RNA_access.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
+
+#include "node_composite_util.hh"
+
 /* ************ Defocus Node ****************** */
-static bNodeSocketTemplate cmp_node_defocus_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {SOCK_FLOAT, N_("Z"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, PROP_NONE},
-    {-1, ""},
-};
-static bNodeSocketTemplate cmp_node_defocus_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {-1, ""},
-};
+
+namespace blender::nodes {
+
+static void cmp_node_defocus_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>(N_("Z")).default_value(1.0f).min(0.0f).max(1.0f);
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_defocus(bNodeTree *UNUSED(ntree), bNode *node)
 {
   /* defocus node */
-  NodeDefocus *nbd = (NodeDefocus *)MEM_callocN(sizeof(NodeDefocus), "node defocus data");
+  NodeDefocus *nbd = MEM_cnew<NodeDefocus>(__func__);
   nbd->bktype = 0;
   nbd->rotation = 0.0f;
   nbd->preview = 1;
@@ -53,12 +60,52 @@ static void node_composit_init_defocus(bNodeTree *UNUSED(ntree), bNode *node)
   node->storage = nbd;
 }
 
-void register_node_type_cmp_defocus(void)
+static void node_composit_buts_defocus(uiLayout *layout, bContext *C, PointerRNA *ptr)
+{
+  uiLayout *sub, *col;
+
+  col = uiLayoutColumn(layout, false);
+  uiItemL(col, IFACE_("Bokeh Type:"), ICON_NONE);
+  uiItemR(col, ptr, "bokeh", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+  uiItemR(col, ptr, "angle", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  uiItemR(layout, ptr, "use_gamma_correction", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  col = uiLayoutColumn(layout, false);
+  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_zbuffer") == true);
+  uiItemR(col, ptr, "f_stop", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  uiItemR(layout, ptr, "blur_max", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "threshold", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  col = uiLayoutColumn(layout, false);
+  uiItemR(col, ptr, "use_preview", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "scene",
+               nullptr,
+               nullptr,
+               nullptr,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               nullptr);
+
+  col = uiLayoutColumn(layout, false);
+  uiItemR(col, ptr, "use_zbuffer", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  sub = uiLayoutColumn(col, false);
+  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_zbuffer") == false);
+  uiItemR(sub, ptr, "z_scale", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_defocus()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_DEFOCUS, "Defocus", NODE_CLASS_OP_FILTER, 0);
-  node_type_socket_templates(&ntype, cmp_node_defocus_in, cmp_node_defocus_out);
+  ntype.declare = blender::nodes::cmp_node_defocus_declare;
+  ntype.draw_buttons = node_composit_buts_defocus;
   node_type_init(&ntype, node_composit_init_defocus);
   node_type_storage(&ntype, "NodeDefocus", node_free_standard_storage, node_copy_standard_storage);
 

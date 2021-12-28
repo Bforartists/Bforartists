@@ -3219,7 +3219,7 @@ def load(operator, context, filepath="",
                                 break
 
                     for obj in (obj for obj in bpy.data.objects if obj.data == mesh):
-                        obj.cycles_visibility.shadow = False
+                        obj.visible_shadow = False
     _(); del _
 
     perfmon.level_down()

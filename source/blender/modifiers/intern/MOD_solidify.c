@@ -97,7 +97,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *sub, *row, *col;
+  uiLayout *row, *col; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -122,26 +122,59 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(layout, ptr, "nonmanifold_merge_threshold", 0, NULL, ICON_NONE);
   }
   else {
-    uiItemR(layout, ptr, "use_even_offset", 0, NULL, ICON_NONE);
+    /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "use_even_offset", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_even_offset", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 
-  col = uiLayoutColumnWithHeading(layout, false, IFACE_("Rim"));
-  uiItemR(col, ptr, "use_rim", 0, IFACE_("Fill"), ICON_NONE);
-  sub = uiLayoutColumn(col, false);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
-  uiItemR(sub, ptr, "use_rim_only", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Rim"));
+  //uiItemR(col, ptr, "use_rim", 0, IFACE_("Fill"), ICON_NONE);
+  //sub = uiLayoutColumn(col, false);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
+  //uiItemR(sub, ptr, "use_rim_only", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_rim", 0, IFACE_("Fill Rim"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_rim", 0); /*bfa - decorator*/
+
+  if (RNA_boolean_get(ptr, "use_rim")) {
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemS(row);
+    uiItemR(row, ptr, "use_rim_only", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_rim_only", 0); /*bfa - decorator*/
+  }
+  /* ------------ end bfa */
 
   uiItemS(layout);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, has_vertex_group);
+  uiItemS(row); /*bfa -indent*/
   uiItemR(row, ptr, "thickness_vertex_group", 0, IFACE_("Factor"), ICON_NONE);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
     row = uiLayoutRow(layout, false);
     uiLayoutSetActive(row, has_vertex_group);
+
+    /*------------------- bfa - original props */
+    // uiItemR(row, ptr, "use_flat_faces", 0, NULL, ICON_NONE);
+
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemS(row);                   /*bfa -indent*/
     uiItemR(row, ptr, "use_flat_faces", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_flat_faces", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 
   modifier_panel_end(layout, ptr);
@@ -149,7 +182,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
 static void normals_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa - added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -160,9 +193,25 @@ static void normals_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "use_flip_normals", 0, IFACE_("Flip"), ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(col, ptr, "use_flip_normals", 0, IFACE_("Flip"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_flip_normals", 0, IFACE_("Flip"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_flip_normals", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
   if (solidify_mode == MOD_SOLIDIFY_MODE_EXTRUDE) {
-    uiItemR(col, ptr, "use_quality_normals", 0, IFACE_("High Quality"), ICON_NONE);
+    /*------------------- bfa - original props */
+    // uiItemR(col, ptr, "use_quality_normals", 0, IFACE_("High Quality"), ICON_NONE);
+
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_quality_normals", 0, IFACE_("High Quality"), ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_quality_normals", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 }
 
@@ -217,7 +266,15 @@ static void clamp_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "thickness_clamp", 0, NULL, ICON_NONE);
   row = uiLayoutRow(col, false);
   uiLayoutSetActive(row, RNA_float_get(ptr, "thickness_clamp") > 0.0f);
+
+  /*------------------- bfa - original props */
+  //uiItemR(row, ptr, "use_thickness_angle_clamp", 0, NULL, ICON_NONE);
+
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
   uiItemR(row, ptr, "use_thickness_angle_clamp", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_thickness_angle_clamp", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void vertex_group_panel_draw(const bContext *UNUSED(C), Panel *panel)

@@ -3653,7 +3653,7 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush\nHotkey in the default keymap: F");
+  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush\nHotkey in the default keymap: X");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_radius_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);
@@ -5585,7 +5585,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       {FFMPEG_MPEG2, "MPEG2", 0, "MPEG-2", ""},
       {FFMPEG_MPEG4, "MPEG4", 0, "MPEG-4", ""},
       {FFMPEG_AVI, "AVI", 0, "AVI", ""},
-      {FFMPEG_MOV, "QUICKTIME", 0, "Quicktime", ""},
+      {FFMPEG_MOV, "QUICKTIME", 0, "QuickTime", ""},
       {FFMPEG_DV, "DV", 0, "DV", ""},
       {FFMPEG_OGG, "OGG", 0, "Ogg", ""},
       {FFMPEG_MKV, "MKV", 0, "Matroska", ""},
@@ -6044,7 +6044,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Transparent",
-      "World background is transparent, for compositing the render over another background");
+      "Render the world background as transparent. This allows compositing the rendered image over another background");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
 
   prop = RNA_def_property(srna, "use_freestyle", PROP_BOOLEAN, PROP_NONE);

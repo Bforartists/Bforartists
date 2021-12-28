@@ -337,7 +337,7 @@ static bool gpencil_brush_smooth_apply(tGP_BrushEditData *gso,
 
   /* perform smoothing */
   if (gso->brush->gpencil_settings->sculpt_mode_flag & GP_SCULPT_FLAGMODE_APPLY_POSITION) {
-    BKE_gpencil_stroke_smooth_point(gps, pt_index, inf);
+    BKE_gpencil_stroke_smooth_point(gps, pt_index, inf, false);
   }
   if (gso->brush->gpencil_settings->sculpt_mode_flag & GP_SCULPT_FLAGMODE_APPLY_STRENGTH) {
     BKE_gpencil_stroke_smooth_strength(gps, pt_index, inf);
@@ -2134,7 +2134,6 @@ static int gpencil_sculpt_brush_modal(bContext *C, wmOperator *op, const wmEvent
   return OPERATOR_RUNNING_MODAL;
 }
 
-/* Also used for weight paint. */
 void GPENCIL_OT_sculpt_paint(wmOperatorType *ot)
 {
   /* identifiers */

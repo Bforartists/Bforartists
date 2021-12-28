@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # This script is Free software. Please share and reuse.
-# ♡2010-2020 Adam Dominec <adominec@gmail.com>
+# ♡2010-2021 Adam Dominec <adominec@gmail.com>
 
 ## Code structure
 # This file consists of several components, in this order:
@@ -13,7 +13,7 @@ bl_info = {
     "name": "Export Paper Model",
     "author": "Addam Dominec",
     "version": (1, 2),
-    "blender": (2, 83, 0),
+    "blender": (3, 0, 0),
     "location": "File > Export > Paper Model",
     "warning": "",
     "description": "Export printable net of the active mesh",
@@ -61,7 +61,7 @@ def first_letters(text):
     """Iterator over the first letter of each word"""
     for match in first_letters.pattern.finditer(text):
         yield text[match.start()]
-first_letters.pattern = re_compile("((?<!\w)\w)|\d")
+first_letters.pattern = re_compile(r"((?<!\w)\w)|\d")
 
 
 def is_upsidedown_wrong(name):
@@ -253,7 +253,7 @@ class Unfolder:
             bk = rd.bake
             recall = store_rna_properties(rd, bk, sce.cycles)
             rd.engine = 'CYCLES'
-            for p in ('ambient_occlusion', 'color', 'diffuse', 'direct', 'emit', 'glossy', 'indirect', 'transmission'):
+            for p in ('color', 'diffuse', 'direct', 'emit', 'glossy', 'indirect', 'transmission'):
                 setattr(bk, f"use_pass_{p}", (properties.output_type != 'TEXTURE'))
             lookup = {'TEXTURE': 'DIFFUSE', 'AMBIENT_OCCLUSION': 'AO', 'RENDER': 'COMBINED', 'SELECTED_TO_ACTIVE': 'COMBINED'}
             sce.cycles.bake_type = lookup[properties.output_type]
@@ -266,7 +266,7 @@ class Unfolder:
                 sce.cycles.samples = properties.bake_samples
             if sce.cycles.bake_type == 'COMBINED':
                 bk.use_pass_direct, bk.use_pass_indirect = True, True
-                bk.use_pass_diffuse, bk.use_pass_glossy, bk.use_pass_transmission, bk.use_pass_ambient_occlusion, bk.use_pass_emit = True, False, False, True, True
+                bk.use_pass_diffuse, bk.use_pass_glossy, bk.use_pass_transmission, bk.use_pass_emit = True, False, False, True
 
             if image_packing == 'PAGE_LINK':
                 self.mesh.save_image(printable_size * ppm, filepath)

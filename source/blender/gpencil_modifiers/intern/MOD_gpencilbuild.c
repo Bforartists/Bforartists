@@ -542,7 +542,7 @@ static void generateStrokes(GpencilModifierData *md, Depsgraph *depsgraph, Objec
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *sub;
+  uiLayout *row; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -570,13 +570,35 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemS(layout);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Use Factor"));
+ /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Use Factor"));
+  //uiLayoutSetPropDecorate(row, false);
+  //uiItemR(row, ptr, "use_percentage", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, use_percentage);
+  //uiItemR(sub, ptr, "percentage_factor", 0, "", ICON_NONE);
+  //uiItemDecoratorR(row, ptr, "percentage_factor", 0);
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
   uiLayoutSetPropDecorate(row, false);
-  uiItemR(row, ptr, "use_percentage", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, use_percentage);
-  uiItemR(sub, ptr, "percentage_factor", 0, "", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "percentage_factor", 0);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_percentage", 0, "Use Factor", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_percentage")) {
+    uiItemR(row, ptr, "percentage_factor", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+  // ------------------------------- end bfa
 
   /* Check for incompatible time modifier. */
   Object *ob = ob_ptr.data;

@@ -1076,7 +1076,6 @@ static void curve_rename_fcurves(Curve *cu, ListBase *orig_curves)
   }
 }
 
-/* return 0 if animation data wasn't changed, 1 otherwise */
 int ED_curve_updateAnimPaths(Main *bmain, Curve *cu)
 {
   AnimData *adt = BKE_animdata_from_id(&cu->id);
@@ -1249,7 +1248,6 @@ static void remap_hooks_and_vertex_parents(Main *bmain, Object *obedit)
   }
 }
 
-/* load editNurb in object */
 void ED_curve_editnurb_load(Main *bmain, Object *obedit)
 {
   ListBase *editnurb = object_editcurve_get(obedit);
@@ -1287,7 +1285,6 @@ void ED_curve_editnurb_load(Main *bmain, Object *obedit)
   }
 }
 
-/* make copy in cu->editnurb */
 void ED_curve_editnurb_make(Object *obedit)
 {
   Curve *cu = (Curve *)obedit->data;
@@ -1993,7 +1990,6 @@ static void ed_curve_delete_selected(Object *obedit, View3D *v3d)
   }
 }
 
-/* only for OB_SURF */
 bool ed_editnurb_extrude_flag(EditNurb *editnurb, const uint8_t flag)
 {
   BPoint *bp, *bpn, *newbp;
@@ -3873,11 +3869,6 @@ static int set_spline_type_exec(bContext *C, wmOperator *op)
     const bool use_handles = RNA_boolean_get(op->ptr, "use_handles");
     const int type = RNA_enum_get(op->ptr, "type");
 
-    if (ELEM(type, CU_CARDINAL, CU_BSPLINE)) {
-      BKE_report(op->reports, RPT_ERROR, "Not yet implemented");
-      continue;
-    }
-
     LISTBASE_FOREACH (Nurb *, nu, editnurb) {
       if (ED_curve_nurb_select_check(v3d, nu)) {
         const int pntsu_prev = nu->pntsu;
@@ -3921,8 +3912,6 @@ void CURVE_OT_spline_type_set(wmOperatorType *ot)
   static const EnumPropertyItem type_items[] = {
       {CU_POLY, "POLY", ICON_MESH_DATA, "Poly", ""},
       {CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bezier", ""},
-      //      {CU_CARDINAL, "CARDINAL", 0, "Cardinal", ""},
-      //      {CU_BSPLINE, "B_SPLINE", 0, "B-Spline", ""},
       {CU_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
       {0, NULL, 0, NULL, NULL},
   };
@@ -4923,10 +4912,6 @@ bool ED_curve_editnurb_select_pick(
 /** \name Spin Operator
  * \{ */
 
-/**
- * \param axis: is in world-space.
- * \param cent: is in object-space.
- */
 bool ed_editnurb_spin(
     float viewmat[4][4], View3D *v3d, Object *obedit, const float axis[3], const float cent[3])
 {
@@ -6818,10 +6803,6 @@ void CURVE_OT_shade_flat(wmOperatorType *ot)
 /** \name Join Operator
  * \{ */
 
-/**
- * This is used externally, by #OBJECT_OT_join.
- * TODO: shape keys - as with meshes.
- */
 int ED_curve_join_objects_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
@@ -6870,9 +6851,9 @@ int ED_curve_join_objects_exec(bContext *C, wmOperator *op)
           /* Compensate for different bevel depth. */
           bool do_radius = false;
           float compensate_radius = 0.0f;
-          if (cu->ext2 != 0.0f && cu_active->ext2 != 0.0f) {
+          if (cu->bevel_radius != 0.0f && cu_active->bevel_radius != 0.0f) {
             float compensate_scale = mat4_to_scale(cmat);
-            compensate_radius = cu->ext2 / cu_active->ext2 * compensate_scale;
+            compensate_radius = cu->bevel_radius / cu_active->bevel_radius * compensate_scale;
             do_radius = true;
           }
 

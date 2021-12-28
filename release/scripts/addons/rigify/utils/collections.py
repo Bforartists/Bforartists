@@ -19,9 +19,6 @@
 # <pep8 compliant>
 
 import bpy
-import math
-
-from .errors import MetarigError
 
 
 #=============================================
@@ -65,30 +62,32 @@ def filter_layer_collections_by_object(layer_collections, obj):
     return [lc for lc in layer_collections if obj in lc.collection.objects.values()]
 
 
-def ensure_widget_collection(context, wgts_collection_name):
+def ensure_collection(context, collection_name, hidden=False) -> bpy.types.Collection:
+    """Check if a collection with a certain name exists.
+    If yes, return it, if not, create it in the scene root collection.
+    """
     view_layer = context.view_layer
-    layer_collection = bpy.context.layer_collection
-    collection = layer_collection.collection
+    active_layer_coll = bpy.context.layer_collection
+    active_collection = active_layer_coll.collection
 
-    widget_collection = bpy.data.collections.get(wgts_collection_name)
-    if not widget_collection:
-        # ------------------------------------------
-        # Create the widget collection
-        widget_collection = bpy.data.collections.new(wgts_collection_name)
-        widget_collection.hide_viewport = True
-        widget_collection.hide_render = True
+    collection = bpy.data.collections.get(collection_name)
+    if not collection:
+        # Create the collection
+        collection = bpy.data.collections.new(collection_name)
+        collection.hide_viewport = hidden
+        collection.hide_render = hidden
 
-        widget_layer_collection = None
+        layer_collection = None
     else:
-        widget_layer_collection = find_layer_collection_by_collection(view_layer.layer_collection, widget_collection)
+        layer_collection = find_layer_collection_by_collection(view_layer.layer_collection, collection)
 
-    if not widget_layer_collection:
-        # Add the widget collection to the tree
-        collection.children.link(widget_collection)
-        widget_layer_collection = [c for c in layer_collection.children if c.collection == widget_collection][0]
+    if not layer_collection:
+        # Let the new collection be a child of the active one.
+        active_collection.children.link(collection)
+        layer_collection = [c for c in active_layer_coll.children if c.collection == collection][0]
 
-        widget_layer_collection.exclude = True
+        layer_collection.exclude = True
 
-    # Make the widget the active collection for the upcoming added (widget) objects
-    view_layer.active_layer_collection = widget_layer_collection
-    return widget_collection
+    # Make the new collection active.
+    view_layer.active_layer_collection = layer_collection
+    return collection

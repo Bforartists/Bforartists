@@ -91,14 +91,6 @@
 /** \name Public Object Selection API
  * \{ */
 
-/**
- * Simple API for object selection, rather than just using the flag
- * this takes into account the 'restrict selection in 3d view' flag.
- * deselect works always, the restriction just prevents selection
- *
- * \note Caller must send a `NC_SCENE | ND_OB_SELECT` notifier
- * (or a `NC_SCENE | ND_OB_VISIBLE` in case of visibility toggling).
- */
 void ED_object_base_select(Base *base, eObjectSelect_Mode mode)
 {
   if (mode == BA_INVERT) {
@@ -123,9 +115,6 @@ void ED_object_base_select(Base *base, eObjectSelect_Mode mode)
   }
 }
 
-/**
- * Call when the active base has changed.
- */
 void ED_object_base_active_refresh(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
   WM_main_add_notifier(NC_SCENE | ND_OB_ACTIVE, scene);
@@ -136,9 +125,6 @@ void ED_object_base_active_refresh(Main *bmain, Scene *scene, ViewLayer *view_la
   }
 }
 
-/**
- * Change active base, it includes the notifier
- */
 void ED_object_base_activate(bContext *C, Base *base)
 {
   Scene *scene = CTX_data_scene(C);
@@ -244,10 +230,6 @@ static int get_base_select_priority(Base *base)
   return 1;
 }
 
-/**
- * If id is not already an Object, try to find an object that uses it as data.
- * Prefers active, then selected, then visible/selectable.
- */
 Base *ED_object_find_first_by_data_id(ViewLayer *view_layer, ID *id)
 {
   BLI_assert(OB_DATA_SUPPORT_ID(GS(id->name)));
@@ -281,12 +263,6 @@ Base *ED_object_find_first_by_data_id(ViewLayer *view_layer, ID *id)
   return base_best;
 }
 
-/**
- * Select and make the target object active in the view layer.
- * If already selected, selection isn't changed.
- *
- * \returns false if not found in current view layer
- */
 bool ED_object_jump_to_object(bContext *C, Object *ob, const bool UNUSED(reveal_hidden))
 {
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -318,13 +294,6 @@ bool ED_object_jump_to_object(bContext *C, Object *ob, const bool UNUSED(reveal_
   return true;
 }
 
-/**
- * Select and make the target object and bone active.
- * Switches to Pose mode if in Object mode so the selection is visible.
- * Un-hides the target bone and bone layer if necessary.
- *
- * \returns false if object not in layer, bone not found, or other error
- */
 bool ED_object_jump_to_bone(bContext *C,
                             Object *ob,
                             const char *bone_name,
@@ -788,21 +757,17 @@ enum {
 };
 
 static const EnumPropertyItem prop_select_grouped_types[] = {
-    {OBJECT_GRPSEL_CHILDREN_RECURSIVE, "CHILDREN_RECURSIVE", 0, "Children", ""},
-    {OBJECT_GRPSEL_CHILDREN, "CHILDREN", 0, "Immediate Children", ""},
-    {OBJECT_GRPSEL_PARENT, "PARENT", 0, "Parent", ""},
-    {OBJECT_GRPSEL_SIBLINGS, "SIBLINGS", 0, "Siblings", "Shared parent"},
-    {OBJECT_GRPSEL_TYPE, "TYPE", 0, "Type", "Shared object type"},
-    {OBJECT_GRPSEL_COLLECTION, "COLLECTION", 0, "Collection", "Shared collection"},
-    {OBJECT_GRPSEL_HOOK, "HOOK", 0, "Hook", ""},
-    {OBJECT_GRPSEL_PASS, "PASS", 0, "Pass", "Render pass index"},
-    {OBJECT_GRPSEL_COLOR, "COLOR", 0, "Color", "Object color"},
-    {OBJECT_GRPSEL_KEYINGSET,
-     "KEYINGSET",
-     0,
-     "Keying Set",
-     "Objects included in active Keying Set"},
-    {OBJECT_GRPSEL_LIGHT_TYPE, "LIGHT_TYPE", 0, "Light Type", "Matching light types"},
+    {OBJECT_GRPSEL_CHILDREN_RECURSIVE, "CHILDREN_RECURSIVE", ICON_CHILD_RECURSIVE, "Children", ""},
+    {OBJECT_GRPSEL_CHILDREN, "CHILDREN", ICON_CHILD, "Immediate Children", ""},
+    {OBJECT_GRPSEL_PARENT, "PARENT", ICON_PARENT, "Parent", ""},
+    {OBJECT_GRPSEL_SIBLINGS, "SIBLINGS", ICON_SIBLINGS, "Siblings", "Shared parent"},
+    {OBJECT_GRPSEL_TYPE, "TYPE", ICON_TYPE, "Type", "Shared object type"},
+    {OBJECT_GRPSEL_COLLECTION, "COLLECTION", ICON_GROUP, "Collection", "Shared collection"},
+    {OBJECT_GRPSEL_HOOK, "HOOK", ICON_HOOK, "Hook", ""},
+    {OBJECT_GRPSEL_PASS, "PASS", ICON_PASS, "Pass", "Render pass index"},
+    {OBJECT_GRPSEL_COLOR, "COLOR", ICON_COLOR, "Color", "Object color"},
+    {OBJECT_GRPSEL_KEYINGSET, "KEYINGSET", ICON_KEYINGSET,"Keying Set", "Objects included in active Keying Set"},
+    {OBJECT_GRPSEL_LIGHT_TYPE, "LIGHT_TYPE", ICON_LIGHT, "Light Type", "Matching light types"},
     {0, NULL, 0, NULL, NULL},
 };
 

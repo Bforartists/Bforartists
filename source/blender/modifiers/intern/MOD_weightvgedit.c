@@ -312,7 +312,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *sub, *col, *row;
+  uiLayout *col, *row; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -325,29 +325,79 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(layout, ptr, "default_weight", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 
-  col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Add"));
-  row = uiLayoutRow(col, true);
-  uiLayoutSetPropDecorate(row, false);
-  sub = uiLayoutRow(row, true);
-  uiItemR(sub, ptr, "use_add", 0, "", ICON_NONE);
-  sub = uiLayoutRow(sub, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
-  uiLayoutSetPropSep(sub, false);
-  uiItemR(sub, ptr, "add_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "add_threshold", 0);
+ /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Add"));
+  //row = uiLayoutRow(col, true);
+  //uiLayoutSetPropDecorate(row, false);
+  //sub = uiLayoutRow(row, true);
+  //uiItemR(sub, ptr, "use_add", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(sub, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
+  //uiLayoutSetPropSep(sub, false);
+  //uiItemR(sub, ptr, "add_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
+  //uiItemDecoratorR(row, ptr, "add_threshold", 0);
 
-  col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Remove"));
-  row = uiLayoutRow(col, true);
-  uiLayoutSetPropDecorate(row, false);
-  sub = uiLayoutRow(row, true);
-  uiItemR(sub, ptr, "use_remove", 0, "", ICON_NONE);
-  sub = uiLayoutRow(sub, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
-  uiLayoutSetPropSep(sub, false);
-  uiItemR(sub, ptr, "remove_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "remove_threshold", 0);
+// ------------------ bfa new left aligned prop with triangle button to hide the slider
 
-  uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_add", 0, "Group Add", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_add")) {
+    uiItemR(row, ptr, "add_threshold", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
+
+ /*------------------- bfa - original props */
+  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Remove"));
+  //row = uiLayoutRow(col, true);
+  //uiLayoutSetPropDecorate(row, false);
+  //sub = uiLayoutRow(row, true);
+  //uiItemR(sub, ptr, "use_remove", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(sub, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
+  //uiLayoutSetPropSep(sub, false);
+  //uiItemR(sub, ptr, "remove_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
+  //uiItemDecoratorR(row, ptr, "remove_threshold", 0);
+
+// ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_remove", 0, "Group Remove", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_remove")) {
+    uiItemR(row, ptr, "remove_threshold", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "normalize", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "normalize", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
 }
