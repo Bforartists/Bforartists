@@ -4435,7 +4435,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             if selected_faces_len >= 2:
                 col.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
-            col.operator("mesh.poke", icon = "POKEFACES") #BFA-Draise - changed order after "Poke" for consistency
+            col.operator("mesh.poke", icon = "POKEFACES") #BFA-Draise - changed order after "Poke" for consistency to other menus
 
             # Modify Operators
             col.menu("VIEW3D_MT_uv_map", text="UV Unwrap Faces")
