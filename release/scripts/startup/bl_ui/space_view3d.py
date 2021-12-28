@@ -4303,7 +4303,12 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION')
+            
+            col.separator() #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
+            
             col.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').affect = 'VERTICES'
+
+            col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
 
             if selected_verts_len > 1:
                 col.separator()
@@ -4349,11 +4354,17 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION')
+
+            col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
+
             col.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").affect = 'EDGES'
+            
+            col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
+
+            if selected_edges_len >= 1: #BFA-Draise - Changed order of Make Edge before Bridge Edge Loop for consistency with Vertex Context
+                col.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
             if selected_edges_len >= 2:
                 col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
-            if selected_edges_len >= 1:
-                col.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
             if selected_edges_len >= 2:
                 col.operator("mesh.fill", icon = "FILL")
 
@@ -4406,19 +4417,25 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Additive Operators
             col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-
+            
             col.separator()
 
             col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION')
             col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
             col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
-            col.operator("mesh.poke", icon = "POKEFACES")
+            col.separator() #BFA-Draise - Legacy Operator Group
+
+            col.operator("mesh.inset", icon = "INSET_FACES") #BFA-Draise - Legacy Operator Added to own group with consistent order
+
+            col.separator()
+
+            col.separator()  #BFA-Draise - Seperated extrude operators to be in own group for consistency
 
             if selected_faces_len >= 2:
                 col.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
-            col.separator()
+            col.operator("mesh.poke", icon = "POKEFACES") #BFA-Draise - changed order after "Poke" for consistency
 
             # Modify Operators
             col.menu("VIEW3D_MT_uv_map", text="UV Unwrap Faces")
