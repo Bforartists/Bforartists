@@ -238,13 +238,13 @@ def add_material(obj: bpy.types.Object):
     mat_name = "Snow"
     # If material doesn't exist, create it
     if mat_name in bpy.data.materials:
-	    bpy.data.materials[mat_name].name = mat_name+".001"
+        bpy.data.materials[mat_name].name = mat_name+".001"
     mat = bpy.data.materials.new(mat_name)
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
     # Delete all nodes
     for node in nodes:
-	    nodes.remove(node)
+        nodes.remove(node)
     # Add nodes
     output = nodes.new('ShaderNodeOutputMaterial')
     principled = nodes.new('ShaderNodeBsdfPrincipled')

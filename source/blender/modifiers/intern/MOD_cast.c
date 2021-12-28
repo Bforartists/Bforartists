@@ -555,7 +555,16 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "factor", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "radius", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "size", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_radius_as_size", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original prop */
+  //uiItemR(layout, ptr, "use_radius_as_size", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(layout, true);
+  uiItemS(row);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_radius_as_size", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_radius_as_size", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 

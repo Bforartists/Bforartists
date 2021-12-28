@@ -499,13 +499,15 @@ void applySnapping(TransInfo *t, float *vec)
     /* Time base quirky code to go around find-nearest slowness. */
     /* TODO: add exception for object mode, no need to slow it down then. */
     if (current - t->tsnap.last >= 0.01) {
-      t->tsnap.calcSnap(t, vec);
+      if (t->tsnap.calcSnap) {
+        t->tsnap.calcSnap(t, vec);
+      }
       if (t->tsnap.targetSnap) {
         t->tsnap.targetSnap(t);
       }
-    }
 
-    t->tsnap.last = current;
+      t->tsnap.last = current;
+    }
 
     if (validSnap(t)) {
       t->tsnap.applySnap(t, vec);
@@ -708,33 +710,39 @@ void initSnapping(TransInfo *t, wmOperator *op)
   resetSnapping(t);
 
   /* if snap property exists */
-  if (op && RNA_struct_find_property(op->ptr, "snap") &&
-      RNA_struct_property_is_set(op->ptr, "snap")) {
-    if (RNA_boolean_get(op->ptr, "snap")) {
+  PropertyRNA *prop;
+  if (op && (prop = RNA_struct_find_property(op->ptr, "snap")) &&
+      RNA_property_is_set(op->ptr, prop)) {
+    if (RNA_property_boolean_get(op->ptr, prop)) {
       t->modifiers |= MOD_SNAP;
 
-      if (RNA_struct_property_is_set(op->ptr, "snap_target")) {
-        snap_target = RNA_enum_get(op->ptr, "snap_target");
+      if ((prop = RNA_struct_find_property(op->ptr, "snap_target")) &&
+          RNA_property_is_set(op->ptr, prop)) {
+        snap_target = RNA_property_enum_get(op->ptr, prop);
       }
 
-      if (RNA_struct_property_is_set(op->ptr, "snap_point")) {
-        RNA_float_get_array(op->ptr, "snap_point", t->tsnap.snapPoint);
+      if ((prop = RNA_struct_find_property(op->ptr, "snap_point")) &&
+          RNA_property_is_set(op->ptr, prop)) {
+        RNA_property_float_get_array(op->ptr, prop, t->tsnap.snapPoint);
         t->tsnap.status |= SNAP_FORCED | POINT_INIT;
       }
 
       /* snap align only defined in specific cases */
-      if (RNA_struct_find_property(op->ptr, "snap_align")) {
-        t->tsnap.align = RNA_boolean_get(op->ptr, "snap_align");
+      if ((prop = RNA_struct_find_property(op->ptr, "snap_align")) &&
+          RNA_property_is_set(op->ptr, prop)) {
+        t->tsnap.align = RNA_property_boolean_get(op->ptr, prop);
         RNA_float_get_array(op->ptr, "snap_normal", t->tsnap.snapNormal);
         normalize_v3(t->tsnap.snapNormal);
       }
 
-      if (RNA_struct_find_property(op->ptr, "use_snap_project")) {
-        t->tsnap.project = RNA_boolean_get(op->ptr, "use_snap_project");
+      if ((prop = RNA_struct_find_property(op->ptr, "use_snap_project")) &&
+          RNA_property_is_set(op->ptr, prop)) {
+        t->tsnap.project = RNA_property_boolean_get(op->ptr, prop);
       }
 
-      if (RNA_struct_find_property(op->ptr, "use_snap_self")) {
-        t->tsnap.snap_self = RNA_boolean_get(op->ptr, "use_snap_self");
+      if ((prop = RNA_struct_find_property(op->ptr, "use_snap_self")) &&
+          RNA_property_is_set(op->ptr, prop)) {
+        t->tsnap.snap_self = RNA_property_boolean_get(op->ptr, prop);
       }
     }
   }
@@ -777,8 +785,15 @@ static void setSnappingCallback(TransInfo *t)
   if (t->spacetype == SPACE_VIEW3D) {
     t->tsnap.calcSnap = snap_calc_view3d_fn;
   }
-  else if (t->spacetype == SPACE_IMAGE && t->obedit_type == OB_MESH) {
-    t->tsnap.calcSnap = snap_calc_uv_fn;
+  else if (t->spacetype == SPACE_IMAGE) {
+    SpaceImage *sima = t->area->spacedata.first;
+    Object *obact = t->view_layer->basact ? t->view_layer->basact->object : NULL;
+
+    const bool is_uv_editor = sima->mode == SI_MODE_UV;
+    const bool has_edit_object = obact && BKE_object_is_in_editmode(obact);
+    if (is_uv_editor && has_edit_object) {
+      t->tsnap.calcSnap = snap_calc_uv_fn;
+    }
   }
   else if (t->spacetype == SPACE_NODE) {
     t->tsnap.calcSnap = snap_calc_node_fn;
@@ -953,7 +968,7 @@ static void snap_calc_view3d_fn(TransInfo *t, float *UNUSED(vec))
 
 static void snap_calc_uv_fn(TransInfo *t, float *UNUSED(vec))
 {
-  BLI_assert(t->spacetype == SPACE_IMAGE && t->obedit_type == OB_MESH);
+  BLI_assert(t->spacetype == SPACE_IMAGE);
   if (t->tsnap.mode & SCE_SNAP_MODE_VERTEX) {
     float co[2];
 

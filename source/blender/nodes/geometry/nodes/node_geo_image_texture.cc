@@ -34,6 +34,8 @@
 
 namespace blender::nodes::node_geo_image_texture_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryImageTexture)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Image>(N_("Image")).hide_label();
@@ -53,8 +55,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryImageTexture *tex = (NodeGeometryImageTexture *)MEM_callocN(
-      sizeof(NodeGeometryImageTexture), __func__);
+  NodeGeometryImageTexture *tex = MEM_cnew<NodeGeometryImageTexture>(__func__);
   node->storage = tex;
 }
 
@@ -378,8 +379,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const bNode &node = params.node();
-  NodeGeometryImageTexture *data = (NodeGeometryImageTexture *)node.storage;
+  const NodeGeometryImageTexture &storage = node_storage(params.node());
 
   ImageUser image_user;
   BKE_imageuser_default(&image_user);
@@ -391,7 +391,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   std::unique_ptr<ImageFieldsFunction> image_fn;
   try {
     image_fn = std::make_unique<ImageFieldsFunction>(
-        data->interpolation, data->extension, *image, image_user);
+        storage.interpolation, storage.extension, *image, image_user);
   }
   catch (const std::runtime_error &) {
     params.set_default_remaining_outputs();
@@ -409,7 +409,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
 }  // namespace blender::nodes::node_geo_image_texture_cc
 
-void register_node_type_geo_image_texture(void)
+void register_node_type_geo_image_texture()
 {
   namespace file_ns = blender::nodes::node_geo_image_texture_cc;
 

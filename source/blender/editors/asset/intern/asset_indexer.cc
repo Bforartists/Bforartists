@@ -237,7 +237,7 @@ struct AssetEntryWriter {
     char idcode_prefix[2];
     /* Similar to `BKE_libblock_alloc`. */
     *((short *)idcode_prefix) = idcode;
-    std::string name_with_idcode = std::string(idcode_prefix) + name;
+    std::string name_with_idcode = std::string(idcode_prefix, sizeof(idcode_prefix)) + name;
 
     attributes.append_as(std::pair(ATTRIBUTE_ENTRIES_NAME, new StringValue(name_with_idcode)));
   }
@@ -509,12 +509,12 @@ struct AssetLibraryIndex {
 /**
  * Instance of this class represents the contents of an asset index file.
  *
- * /code
+ * \code
  * {
  *    "version": {version},
  *    "entries": ...
  * }
- * /endcode
+ * \endcode
  */
 struct AssetIndex {
   /**
@@ -532,11 +532,11 @@ struct AssetIndex {
   const int UNKNOWN_VERSION = -1;
 
   /**
-   * `blender::io::serialize::Value` represeting the contents of an index file.
+   * `blender::io::serialize::Value` representing the contents of an index file.
    *
-   * Value is used over ObjectValue as the contents of the index could be corrupted and doesn't
+   * Value is used over #ObjectValue as the contents of the index could be corrupted and doesn't
    * represent an object. In case corrupted files are detected the `get_version` would return
-   * UNKNOWN_VERSION.`
+   * `UNKNOWN_VERSION`.
    */
   std::unique_ptr<Value> contents;
 
@@ -742,16 +742,15 @@ static void update_index(const char *filename, FileIndexerEntries *entries, void
 
 static void *init_user_data(const char *root_directory, size_t root_directory_maxlen)
 {
-  AssetLibraryIndex *library_index = OBJECT_GUARDED_NEW(
-      AssetLibraryIndex,
-      StringRef(root_directory, BLI_strnlen(root_directory, root_directory_maxlen)));
+  AssetLibraryIndex *library_index = MEM_new<AssetLibraryIndex>(
+      __func__, StringRef(root_directory, BLI_strnlen(root_directory, root_directory_maxlen)));
   library_index->init_unused_index_files();
   return library_index;
 }
 
 static void free_user_data(void *user_data)
 {
-  OBJECT_GUARDED_DELETE(user_data, AssetLibraryIndex);
+  MEM_delete((AssetLibraryIndex *)user_data);
 }
 
 static void filelist_finished(void *user_data)

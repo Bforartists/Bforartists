@@ -60,6 +60,7 @@
 #include "BKE_main.h"
 #include "BKE_mesh.h"
 #include "BKE_modifier.h"
+#include "BKE_node_tree_update.h"
 #include "BKE_object.h"
 #include "BKE_pointcloud.h"
 #include "BKE_screen.h"
@@ -237,7 +238,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
   NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
   DEG_add_modifier_to_transform_relation(ctx->node, "Nodes Modifier");
   if (nmd->node_group != nullptr) {
-    DEG_add_node_tree_relation(ctx->node, nmd->node_group, "Nodes Modifier");
+    DEG_add_node_tree_output_relation(ctx->node, nmd->node_group, "Nodes Modifier");
 
     Set<ID *> used_ids;
     find_used_ids_from_settings(nmd->settings, used_ids);
@@ -266,6 +267,39 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
       }
     }
   }
+}
+
+static bool check_tree_for_time_node(const bNodeTree &tree,
+                                     Set<const bNodeTree *> &r_checked_trees)
+{
+  if (!r_checked_trees.add(&tree)) {
+    return false;
+  }
+  LISTBASE_FOREACH (const bNode *, node, &tree.nodes) {
+    if (node->type == GEO_NODE_INPUT_SCENE_TIME) {
+      return true;
+    }
+    if (node->type == NODE_GROUP) {
+      const bNodeTree *sub_tree = reinterpret_cast<const bNodeTree *>(node->id);
+      if (sub_tree && check_tree_for_time_node(*sub_tree, r_checked_trees)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+static bool dependsOnTime(struct Scene *UNUSED(scene),
+                          ModifierData *md,
+                          const int UNUSED(dag_eval_mode))
+{
+  const NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
+  const bNodeTree *tree = nmd->node_group;
+  if (tree == nullptr) {
+    return false;
+  }
+  Set<const bNodeTree *> checked_trees;
+  return check_tree_for_time_node(*tree, checked_trees);
 }
 
 static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
@@ -561,11 +595,6 @@ static void init_socket_cpp_value_from_property(const IDProperty &property,
   }
 }
 
-/**
- * Rebuild the list of properties based on the sockets exposed as the modifier's node group
- * inputs. If any properties correspond to the old properties by name and type, carry over
- * the values.
- */
 void MOD_nodes_update_interface(Object *object, NodesModifierData *nmd)
 {
   if (nmd->node_group == nullptr) {
@@ -697,7 +726,7 @@ void MOD_nodes_init(Main *bmain, NodesModifierData *nmd)
               group_input_node,
               (bNodeSocket *)group_input_node->outputs.first);
 
-  ntreeUpdateTree(bmain, ntree);
+  BKE_ntree_update_main_tree(bmain, ntree, nullptr);
 }
 
 static void initialize_group_input(NodesModifierData &nmd,
@@ -1266,7 +1295,7 @@ static void add_attribute_search_button(const bContext &C,
     return;
   }
 
-  AttributeSearchData *data = OBJECT_GUARDED_NEW(AttributeSearchData);
+  AttributeSearchData *data = MEM_new<AttributeSearchData>(__func__);
   data->object_session_uid = object->id.session_uuid;
   STRNCPY(data->modifier_name, nmd.modifier.name);
   STRNCPY(data->socket_identifier, socket.identifier);
@@ -1300,7 +1329,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
   uiLayout *name_row = uiLayoutRow(split, false);
-  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
+  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);/*bfa - we align left*/
   uiItemL(name_row, socket.name, ICON_NONE);
 
   uiLayout *row = uiLayoutRow(split, true);
@@ -1595,7 +1624,7 @@ ModifierTypeInfo modifierType_Nodes = {
     /* freeData */ freeData,
     /* isDisabled */ isDisabled,
     /* updateDepsgraph */ updateDepsgraph,
-    /* dependsOnTime */ nullptr,
+    /* dependsOnTime */ dependsOnTime,
     /* dependsOnNormals */ nullptr,
     /* foreachIDLink */ foreachIDLink,
     /* foreachTexLink */ foreachTexLink,

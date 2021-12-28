@@ -70,27 +70,6 @@ void BezierSpline::set_resolution(const int value)
   this->mark_cache_invalid();
 }
 
-/**
- * \warning Call #reallocate on the spline's attributes after adding all points.
- */
-void BezierSpline::add_point(const float3 position,
-                             const HandleType handle_type_left,
-                             const float3 handle_position_left,
-                             const HandleType handle_type_right,
-                             const float3 handle_position_right,
-                             const float radius,
-                             const float tilt)
-{
-  handle_types_left_.append(handle_type_left);
-  handle_positions_left_.append(handle_position_left);
-  positions_.append(position);
-  handle_types_right_.append(handle_type_right);
-  handle_positions_right_.append(handle_position_right);
-  radii_.append(radius);
-  tilts_.append(tilt);
-  this->mark_cache_invalid();
-}
-
 void BezierSpline::resize(const int size)
 {
   handle_types_left_.resize(size);
@@ -203,10 +182,6 @@ static float3 next_position(Span<float3> positions, const bool cyclic, const int
   return positions[i + 1];
 }
 
-/**
- * Recalculate all #Auto and #Vector handles with positions automatically
- * derived from the neighboring control points.
- */
 void BezierSpline::ensure_auto_handles() const
 {
   if (!auto_handles_dirty_) {
@@ -315,10 +290,6 @@ static void set_handle_position(const float3 &position,
   }
 }
 
-/**
- * Set positions for the right handle of the control point, ensuring that
- * aligned handles stay aligned. Has no effect for auto and vector type handles.
- */
 void BezierSpline::set_handle_position_right(const int index, const blender::float3 &value)
 {
   set_handle_position(positions_[index],
@@ -329,10 +300,6 @@ void BezierSpline::set_handle_position_right(const int index, const blender::flo
                       handle_positions_left_[index]);
 }
 
-/**
- * Set positions for the left handle of the control point, ensuring that
- * aligned handles stay aligned. Has no effect for auto and vector type handles.
- */
 void BezierSpline::set_handle_position_left(const int index, const blender::float3 &value)
 {
   set_handle_position(positions_[index],
@@ -349,9 +316,6 @@ bool BezierSpline::point_is_sharp(const int index) const
          ELEM(handle_types_right_[index], HandleType::Vector, HandleType::Free);
 }
 
-/**
- * \warning This functional assumes that the spline has more than one point.
- */
 bool BezierSpline::segment_is_vector(const int index) const
 {
   /* Two control points are necessary to form a segment, that should be checked by the caller. */
@@ -387,12 +351,6 @@ int BezierSpline::evaluated_points_size() const
   return this->control_point_offsets().last();
 }
 
-/**
- * If the spline is not cyclic, the direction for the first and last points is just the
- * direction formed by the corresponding handles and control points. In the unlikely situation
- * that the handles define a zero direction, fallback to using the direction defined by the
- * first and last evaluated segments already calculated in #Spline::evaluated_tangents().
- */
 void BezierSpline::correct_end_tangents() const
 {
   if (is_cyclic_) {
@@ -409,25 +367,6 @@ void BezierSpline::correct_end_tangents() const
   }
 }
 
-/**
- * De Casteljau Bezier subdivision.
- * \param index: The index of the segment's start control point.
- * \param next_index: The index of the control point at the end of the segment. Could be 0,
- * if the spline is cyclic.
- * \param parameter: The factor along the segment, between 0 and 1. Note that this is used
- * directly by the calculation, it doesn't correspond to a portion of the evaluated length.
- *
- * <pre>
- *           handle_prev         handle_next
- *                x----------------x
- *               /                  \
- *              /      x---O---x     \
- *             /        result        \
- *            /                        \
- *           O                          O
- *       point_prev                  point_next
- * </pre>
- */
 BezierSpline::InsertResult BezierSpline::calculate_segment_insertion(const int index,
                                                                      const int next_index,
                                                                      const float parameter)
@@ -493,15 +432,6 @@ void BezierSpline::evaluate_segment(const int index,
   }
 }
 
-/**
- * Returns access to a cache of offsets into the evaluated point array for each control point.
- * While most control point edges generate the number of edges specified by the resolution, vector
- * segments only generate one edge.
- *
- * \note The length of the result is one greater than the number of points, so that the last item
- * is the total number of evaluated points. This is useful to avoid recalculating the size of the
- * last segment everywhere.
- */
 Span<int> BezierSpline::control_point_offsets() const
 {
   if (!offset_cache_dirty_) {
@@ -568,12 +498,6 @@ static void calculate_mappings_linear_resolution(Span<int> offsets,
   }
 }
 
-/**
- * Returns non-owning access to an array of values containing the information necessary to
- * interpolate values from the original control points to evaluated points. The control point
- * index is the integer part of each value, and the factor used for interpolating to the next
- * control point is the remaining factional part.
- */
 Span<float> BezierSpline::evaluated_mappings() const
 {
   if (!mapping_cache_dirty_) {
@@ -659,11 +583,6 @@ Span<float3> BezierSpline::evaluated_positions() const
   return positions;
 }
 
-/**
- * Convert the data encoded in #evaulated_mappings into its parts-- the information necessary
- * to interpolate data from control points to evaluated points between them. The next control
- * point index result will not overflow the size of the control point vectors.
- */
 BezierSpline::InterpolationData BezierSpline::interpolation_data_from_index_factor(
     const float index_factor) const
 {

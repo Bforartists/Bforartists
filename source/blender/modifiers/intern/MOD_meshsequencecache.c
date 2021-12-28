@@ -307,7 +307,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  uiLayout *layout = panel->layout, *row, *col; /*bfa, added *col and *row*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -325,17 +325,95 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
     uiItemR(layout, ptr, "read_data", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
-    uiItemR(layout, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
-  }
 
-  uiItemR(layout, ptr, "velocity_scale", 0, NULL, ICON_NONE);
+      /*------------------- bfa - original props */
+    // uiItemR(layout, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+  }
 
   modifier_panel_end(layout, ptr);
 }
 
+static void velocity_panel_draw(const bContext *UNUSED(C), Panel *panel)
+{
+  uiLayout *layout = panel->layout;
+
+  PointerRNA ob_ptr;
+  PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
+
+  PointerRNA fileptr;
+  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+    return;
+  }
+
+  if (RNA_pointer_is_null(&fileptr)) {
+    return;
+  }
+
+  uiLayoutSetPropSep(layout, true);
+  uiTemplateCacheFileVelocity(layout, &fileptr);
+  uiItemR(layout, ptr, "velocity_scale", 0, NULL, ICON_NONE);
+}
+
+static void time_panel_draw(const bContext *UNUSED(C), Panel *panel)
+{
+  uiLayout *layout = panel->layout;
+
+  PointerRNA ob_ptr;
+  PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
+
+  PointerRNA fileptr;
+  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+    return;
+  }
+
+if (RNA_pointer_is_null(&fileptr)) {
+    return;
+  }
+
+  uiLayoutSetPropSep(layout, true);
+  uiTemplateCacheFileTimeSettings(layout, &fileptr);
+}
+
+static void render_procedural_panel_draw(const bContext *C, Panel *panel)
+{
+  uiLayout *layout = panel->layout;
+
+  PointerRNA ob_ptr;
+  PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
+
+  PointerRNA fileptr;
+  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+    return;
+  }
+
+  if (RNA_pointer_is_null(&fileptr)) {
+    return;
+  }
+
+  uiLayoutSetPropSep(layout, true);
+  uiTemplateCacheFileProcedural(layout, C, &fileptr);
+}
+
 static void panelRegister(ARegionType *region_type)
 {
-  modifier_panel_register(region_type, eModifierType_MeshSequenceCache, panel_draw);
+  PanelType *panel_type = modifier_panel_register(
+      region_type, eModifierType_MeshSequenceCache, panel_draw);
+  modifier_subpanel_register(region_type, "time", "Time", NULL, time_panel_draw, panel_type);
+  modifier_subpanel_register(region_type,
+                             "render_procedural",
+                             "Render Procedural",
+                             NULL,
+                             render_procedural_panel_draw,
+                             panel_type);
+  modifier_subpanel_register(
+      region_type, "velocity", "Velocity", NULL, velocity_panel_draw, panel_type);
 }
 
 static void blendRead(BlendDataReader *UNUSED(reader), ModifierData *md)

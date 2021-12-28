@@ -77,11 +77,11 @@ def ami_args_as_data(ami):
     return "{" + ", ".join(s) + "}"
 
 
-def ami_data_from_args(ami, args):    
+def ami_data_from_args(ami, args):
     ami.type = args["type"]
     ami.user_path0 = args["user_path0"]
     ami.user_path1 = args["user_path1"]
-    
+
     if ami.type == 'FLOAT' or ami.type == 'VECTOR2D':
         ami.op = args["op"]
         ami.op_mode = args["op_mode"]
@@ -168,7 +168,7 @@ def amb_args_as_data(amb, type):
     return "{" + ", ".join(s) + "}"
 
 
-def amb_data_from_args(amb, args, type):    
+def amb_data_from_args(amb, args, type):
     amb.profile = args["profile"]
     amb.component_path0 = args["component_path0"]
     amb.component_path1 = args["component_path1"]
@@ -327,7 +327,7 @@ def actionconfig_init_from_data(session_state, actionconfig_data, actionconfig_v
     if actionconfig_version is not None:
         from .versioning import actionconfig_update
         actionconfig_data = actionconfig_update(actionconfig_data, actionconfig_version)
-    
+
     for (am_name, am_content) in actionconfig_data:
         am = session_state.actionmaps.new(session_state, am_name, True)
         am_items = am_content["items"]

@@ -67,10 +67,10 @@ void gpencil_modifier_type_init(GpencilModifierTypeInfo *types[])
   INIT_GP_TYPE(WeightProximity);
   INIT_GP_TYPE(Lineart);
   INIT_GP_TYPE(Dash);
+  INIT_GP_TYPE(Shrinkwrap);
 #undef INIT_GP_TYPE
 }
 
-/* verify if valid layer, material and pass index */
 bool is_stroke_affected_by_modifier(Object *ob,
                                     char *mlayername,
                                     const Material *material,
@@ -147,7 +147,6 @@ bool is_stroke_affected_by_modifier(Object *ob,
   return true;
 }
 
-/* verify if valid vertex group *and return weight */
 float get_modifier_point_weight(MDeformVert *dvert, bool inverse, int def_nr)
 {
   float weight = 1.0f;

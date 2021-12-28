@@ -2858,6 +2858,8 @@ void UV_OT_cylinder_project(wmOperatorType *ot)
   uv_map_clip_correct_properties(ot);
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Cube UV Project Operator
  * \{ */

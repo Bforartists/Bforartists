@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1708,14 +1708,6 @@ msgstr "Hlavní skicovací tužky"
 
 msgid "Collection of grease pencils"
 msgstr "Kolekce skicovacích tužek"
-
-
-msgid "Main Hairs"
-msgstr "Hlavní vlasy"
-
-
-msgid "Collection of hairs"
-msgstr "Kolekce vlasů"
 
 
 msgid "Main Images"
@@ -8460,14 +8452,6 @@ msgid "Active Layer"
 msgstr "Aktivní vrstva"
 
 
-msgid "Hair curve"
-msgstr "Křivka vlasu"
-
-
-msgid "Control points of the curve"
-msgstr "Kontrolní bod křivky"
-
-
 msgid "Luma"
 msgstr "Luma"
 
@@ -9926,14 +9910,6 @@ msgstr "Atributy"
 
 msgid "Geometry attributes"
 msgstr "Atributy geometrie"
-
-
-msgid "All hair curves"
-msgstr "Všechny vlasové křivky"
-
-
-msgid "Control points of all hair curves"
-msgstr "Kontrolní body všech vlasových křivek"
 
 
 msgid "Alpha Mode"
@@ -18398,6 +18374,14 @@ msgid "Geometry Node"
 msgstr "Geometrický Uzel"
 
 
+msgid "Component"
+msgstr "Komponent"
+
+
+msgid "Instances of objects or collections"
+msgstr "Instance objektů nebo kolekcí"
+
+
 msgid "Attribute Remove"
 msgstr "Atribut Odstranit"
 
@@ -18689,10 +18673,6 @@ msgstr "Lesklost BSDF"
 
 msgid "Hair BSDF"
 msgstr "Vlasy BSDF"
-
-
-msgid "Component"
-msgstr "Komponent"
 
 
 msgid "Reflection"
@@ -20434,6 +20414,70 @@ msgid "Symmetrize"
 msgstr "Symetrie"
 
 
+msgid "Check Existing"
+msgstr "Opakovat editaci"
+
+
+msgid "Short List"
+msgstr "Krátký Seznam"
+
+
+msgid "Display files as short list"
+msgstr "Zobrazit soubory jako krátký seznam"
+
+
+msgid "Long List"
+msgstr "Dlouhý Seznam"
+
+
+msgid "Display files as a detailed list"
+msgstr "Zobrazit soubory jako podrobný seznam"
+
+
+msgid "File Browser Mode"
+msgstr "Režim prohlížeče souborů"
+
+
+msgid "Path to file"
+msgstr "Cesta k souboru"
+
+
+msgid "Filter .blend files"
+msgstr "Filtrovat soubory .blend"
+
+
+msgid "Filter btx files"
+msgstr "Skrýt skryté soubory"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtrovat soubory COLLADA"
+
+
+msgid "Filter font files"
+msgstr "Filtr souborů písma"
+
+
+msgid "Filter image files"
+msgstr "Filtrovat obrazkové soubory"
+
+
+msgid "Filter movie files"
+msgstr "Filtr video souborů"
+
+
+msgid "Filter python files"
+msgstr "Filtr python souborů"
+
+
+msgid "Filter sound files"
+msgstr "Filtr zvukových souborů"
+
+
+msgid "Filter text files"
+msgstr "Filtr textových souborů"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "Přihlásit se"
@@ -20620,66 +20664,6 @@ msgstr "Přijmout"
 
 msgid "Directory of the file"
 msgstr "Adresář souboru"
-
-
-msgid "Short List"
-msgstr "Krátký Seznam"
-
-
-msgid "Display files as short list"
-msgstr "Zobrazit soubory jako krátký seznam"
-
-
-msgid "Long List"
-msgstr "Dlouhý Seznam"
-
-
-msgid "Display files as a detailed list"
-msgstr "Zobrazit soubory jako podrobný seznam"
-
-
-msgid "File Browser Mode"
-msgstr "Režim prohlížeče souborů"
-
-
-msgid "Filter .blend files"
-msgstr "Filtrovat soubory .blend"
-
-
-msgid "Filter btx files"
-msgstr "Skrýt skryté soubory"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtrovat soubory COLLADA"
-
-
-msgid "Filter font files"
-msgstr "Filtr souborů písma"
-
-
-msgid "Filter image files"
-msgstr "Filtrovat obrazkové soubory"
-
-
-msgid "Filter movie files"
-msgstr "Filtr video souborů"
-
-
-msgid "Filter python files"
-msgstr "Filtr python souborů"
-
-
-msgid "Filter sound files"
-msgstr "Filtr zvukových souborů"
-
-
-msgid "Filter text files"
-msgstr "Filtr textových souborů"
-
-
-msgid "Path to file"
-msgstr "Cesta k souboru"
 
 
 msgctxt "Operator"
@@ -22176,10 +22160,6 @@ msgstr "Vrátit zpět a Znovu"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Obdelníkové Označení"
-
-
-msgid "Check Existing"
-msgstr "Opakovat editaci"
 
 
 msgid "Filepath used for exporting the file"
@@ -26762,14 +26742,6 @@ msgstr "Převede vybrané objekty na jiný typ"
 
 msgid "Type of object to convert to"
 msgstr "Typ objektu pro převod na"
-
-
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Síť z Křivek, Povrchu, Meta objektu, Textu, nebo z Bodového Mraku"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Bodový Mrak ze Síťových objektů"
 
 
 msgid "Exact Match"
@@ -39387,10 +39359,6 @@ msgid "Part of the geometry to display data from"
 msgstr "Část geometrie ke které se zobrazí data"
 
 
-msgid "Instances of objects or collections"
-msgstr "Instance objektů nebo kolekcí"
-
-
 msgid "Show Only Selected"
 msgstr "Zobrazit Pouze Vybrané"
 
@@ -42088,11 +42056,6 @@ msgstr "Mezerník"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Načíst %d.%d Nastavení"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Uložit Nová Nastavení"
 
@@ -42156,6 +42119,11 @@ msgstr "Znaky"
 
 msgid "Date: %s %s"
 msgstr "Datum: %s %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Načíst %d.%d Nastavení"
 
 
 msgid "Frame Numbers"
@@ -44598,10 +44566,6 @@ msgstr "Létat/Chodit"
 
 msgid "No custom %s configured"
 msgstr "Žádná vlastní %s nastavena"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Je vyžadován upgrade na 2,8x"
 
 
 msgid "Description:"

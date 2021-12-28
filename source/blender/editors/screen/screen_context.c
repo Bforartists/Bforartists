@@ -501,7 +501,7 @@ static eContextResult screen_ctx_active_pose_bone(const bContext *C, bContextDat
   Object *obact = view_layer->basact ? view_layer->basact->object : NULL;
   Object *obpose = BKE_object_pose_armature_get(obact);
 
-  bPoseChannel *pchan = BKE_pose_channel_active(obpose);
+  bPoseChannel *pchan = BKE_pose_channel_active_if_layer_visible(obpose);
   if (pchan) {
     CTX_data_pointer_set(result, &obpose->id, &RNA_PoseBone, pchan);
     return CTX_RESULT_OK;
@@ -1283,7 +1283,6 @@ static void ensure_ed_screen_context_functions(void)
   register_context_function("ui_list", screen_ctx_ui_list);
 }
 
-/* Entry point for the screen context. */
 int ed_screen_context(const bContext *C, const char *member, bContextDataResult *result)
 {
   if (CTX_data_dir(member)) {

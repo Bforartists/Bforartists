@@ -24,17 +24,12 @@
 #include "BKE_mesh_runtime.h"
 #include "BKE_pointcloud.h"
 
+#include "NOD_socket_search_link.hh"
+
 namespace blender::nodes {
 
 using bke::GeometryInstanceGroup;
 
-/**
- * Update the availability of a group of input sockets with the same name,
- * used for switching between attribute inputs or single values.
- *
- * \param mode: Controls which socket of the group to make available.
- * \param name_is_available: If false, make all sockets with this name unavailable.
- */
 void update_attribute_input_socket_availabilities(bNodeTree &ntree,
                                                   bNode &node,
                                                   const StringRef name,
@@ -56,6 +51,31 @@ void update_attribute_input_socket_availabilities(bNodeTree &ntree,
   }
 }
 
+std::optional<CustomDataType> node_data_type_to_custom_data_type(const eNodeSocketDatatype type)
+{
+  switch (type) {
+    case SOCK_FLOAT:
+      return CD_PROP_FLOAT;
+    case SOCK_VECTOR:
+      return CD_PROP_FLOAT3;
+    case SOCK_RGBA:
+      return CD_PROP_COLOR;
+    case SOCK_BOOLEAN:
+      return CD_PROP_BOOL;
+    case SOCK_INT:
+      return CD_PROP_INT32;
+    case SOCK_STRING:
+      return CD_PROP_STRING;
+    default:
+      return {};
+  }
+}
+
+std::optional<CustomDataType> node_socket_to_custom_data_type(const bNodeSocket &socket)
+{
+  return node_data_type_to_custom_data_type(static_cast<eNodeSocketDatatype>(socket.type));
+}
+
 }  // namespace blender::nodes
 
 bool geo_node_poll_default(bNodeType *UNUSED(ntype),
@@ -63,7 +83,7 @@ bool geo_node_poll_default(bNodeType *UNUSED(ntype),
                            const char **r_disabled_hint)
 {
   if (!STREQ(ntree->idname, "GeometryNodeTree")) {
-    *r_disabled_hint = "Not a geometry node tree";
+    *r_disabled_hint = TIP_("Not a geometry node tree");
     return false;
   }
   return true;
@@ -74,4 +94,5 @@ void geo_node_type_base(bNodeType *ntype, int type, const char *name, short ncla
   node_type_base(ntype, type, name, nclass, flag);
   ntype->poll = geo_node_poll_default;
   ntype->insert_link = node_insert_link_default;
+  ntype->gather_link_search_ops = blender::nodes::search_link_ops_for_basic_node;
 }

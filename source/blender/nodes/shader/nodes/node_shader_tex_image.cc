@@ -33,7 +33,7 @@ static void sh_node_tex_image_declare(NodeDeclarationBuilder &b)
 
 static void node_shader_init_tex_image(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeTexImage *tex = (NodeTexImage *)MEM_callocN(sizeof(NodeTexImage), "NodeTexImage");
+  NodeTexImage *tex = MEM_cnew<NodeTexImage>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
   BKE_imageuser_default(&tex->iuser);
@@ -174,7 +174,7 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat,
 }
 
 /* node type definition */
-void register_node_type_sh_tex_image(void)
+void register_node_type_sh_tex_image()
 {
   static bNodeType ntype;
 
@@ -184,7 +184,7 @@ void register_node_type_sh_tex_image(void)
   node_type_storage(
       &ntype, "NodeTexImage", node_free_standard_storage, node_copy_standard_storage);
   node_type_gpu(&ntype, node_shader_gpu_tex_image);
-  node_type_label(&ntype, node_image_label);
+  ntype.labelfunc = node_image_label;
   node_type_size_preset(&ntype, NODE_SIZE_LARGE);
 
   nodeRegisterType(&ntype);

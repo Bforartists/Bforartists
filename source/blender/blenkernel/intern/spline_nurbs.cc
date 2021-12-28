@@ -81,22 +81,6 @@ void NURBSpline::set_order(const uint8_t value)
   this->mark_cache_invalid();
 }
 
-/**
- * \warning Call #reallocate on the spline's attributes after adding all points.
- */
-void NURBSpline::add_point(const float3 position,
-                           const float radius,
-                           const float tilt,
-                           const float weight)
-{
-  positions_.append(position);
-  radii_.append(radius);
-  tilts_.append(tilt);
-  weights_.append(weight);
-  knots_dirty_ = true;
-  this->mark_cache_invalid();
-}
-
 void NURBSpline::resize(const int size)
 {
   positions_.resize(size);
@@ -260,13 +244,13 @@ void NURBSpline::calculate_knots() const
 Span<float> NURBSpline::knots() const
 {
   if (!knots_dirty_) {
-    BLI_assert(knots_.size() == this->size() + order_);
+    BLI_assert(knots_.size() == this->knots_size());
     return knots_;
   }
 
   std::lock_guard lock{knots_mutex_};
   if (!knots_dirty_) {
-    BLI_assert(knots_.size() == this->size() + order_);
+    BLI_assert(knots_.size() == this->knots_size());
     return knots_;
   }
 

@@ -189,7 +189,6 @@ static bool wm_keymap_item_equals(wmKeyMapItem *a, wmKeyMapItem *b)
            (a->flag & KMI_REPEAT_IGNORE) == (b->flag & KMI_REPEAT_IGNORE)));
 }
 
-/* properties can be NULL, otherwise the arg passed is used and ownership is given to the kmi */
 void WM_keymap_item_properties_reset(wmKeyMapItem *kmi, struct IDProperty *properties)
 {
   if (LIKELY(kmi->ptr)) {
@@ -516,7 +515,6 @@ static void keymap_item_set_id(wmKeyMap *keymap, wmKeyMapItem *kmi)
   }
 }
 
-/* always add item */
 wmKeyMapItem *WM_keymap_add_item(
     wmKeyMap *keymap, const char *idname, int type, int val, int modifier, int keymodifier)
 {
@@ -1152,7 +1150,6 @@ const char *WM_key_event_string(const short type, const bool compact)
   return CTX_IFACE_(BLT_I18NCONTEXT_UI_EVENTS, it->name);
 }
 
-/* TODO: also support (some) value, like e.g. double-click? */
 int WM_keymap_item_raw_to_string(const short shift,
                                  const short ctrl,
                                  const short alt,
@@ -1164,6 +1161,8 @@ int WM_keymap_item_raw_to_string(const short shift,
                                  char *result,
                                  const int result_len)
 {
+  /* TODO: also support (some) value, like e.g. double-click? */
+
 #define ADD_SEP \
   if (p != buf) { \
     *p++ = ' '; \
@@ -1308,6 +1307,10 @@ char *WM_modalkeymap_operator_items_to_string_buf(wmOperatorType *ot,
 }
 
 /** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Keymap Finding Utilities
+ * \{ */
 
 static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                                                    const char *opname,
@@ -1678,10 +1681,6 @@ static bool kmi_filter_is_visible_type_mask(const wmKeyMap *km,
           kmi_filter_is_visible(km, kmi, user_data));
 }
 
-/**
- * \param include_mask, exclude_mask:
- * Event types to include/exclude when looking up keys (#eEventType_Mask).
- */
 wmKeyMapItem *WM_key_event_operator(const bContext *C,
                                     const char *opname,
                                     wmOperatorCallContext opcontext,

@@ -27,10 +27,17 @@
 
 namespace blender::nodes::node_geo_curve_fillet_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryCurveFillet)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Curve")).supported_type(GEO_COMPONENT_TYPE_CURVE);
-  b.add_input<decl::Int>(N_("Count")).default_value(1).min(1).max(1000).supports_field();
+  b.add_input<decl::Int>(N_("Count"))
+      .default_value(1)
+      .min(1)
+      .max(1000)
+      .supports_field()
+      .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_FILLET_POLY; });
   b.add_input<decl::Float>(N_("Radius"))
       .min(0.0f)
       .max(FLT_MAX)
@@ -48,8 +55,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCurveFillet *data = (NodeGeometryCurveFillet *)MEM_callocN(
-      sizeof(NodeGeometryCurveFillet), __func__);
+  NodeGeometryCurveFillet *data = MEM_cnew<NodeGeometryCurveFillet>(__func__);
 
   data->mode = GEO_NODE_CURVE_FILLET_BEZIER;
   node->storage = data;
@@ -78,8 +84,8 @@ struct FilletData {
 
 static void node_update(bNodeTree *ntree, bNode *node)
 {
-  NodeGeometryCurveFillet &node_storage = *(NodeGeometryCurveFillet *)node->storage;
-  const GeometryNodeCurveFilletMode mode = (GeometryNodeCurveFilletMode)node_storage.mode;
+  const NodeGeometryCurveFillet &storage = node_storage(*node);
+  const GeometryNodeCurveFilletMode mode = (GeometryNodeCurveFilletMode)storage.mode;
 
   bNodeSocket *poly_socket = ((bNodeSocket *)node->inputs.first)->next;
 
@@ -614,8 +620,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
 
-  NodeGeometryCurveFillet &node_storage = *(NodeGeometryCurveFillet *)params.node().storage;
-  const GeometryNodeCurveFilletMode mode = (GeometryNodeCurveFilletMode)node_storage.mode;
+  const NodeGeometryCurveFillet &storage = node_storage(params.node());
+  const GeometryNodeCurveFilletMode mode = (GeometryNodeCurveFilletMode)storage.mode;
 
   Field<float> radius_field = params.extract_input<Field<float>>("Radius");
   const bool limit_radius = params.extract_input<bool>("Limit Radius");

@@ -28,6 +28,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "DNA_gpencil_modifier_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
@@ -101,7 +102,6 @@ typedef struct ShrinkwrapCalcCBData {
   SpaceTransform *local2aux;
 } ShrinkwrapCalcCBData;
 
-/* Checks if the modifier needs target normals with these settings. */
 bool BKE_shrinkwrap_needs_normals(int shrinkType, int shrinkMode)
 {
   return (shrinkType == MOD_SHRINKWRAP_TARGET_PROJECT) ||
@@ -109,7 +109,6 @@ bool BKE_shrinkwrap_needs_normals(int shrinkType, int shrinkMode)
           shrinkMode == MOD_SHRINKWRAP_ABOVE_SURFACE);
 }
 
-/* Initializes the mesh data structure from the given mesh and settings. */
 bool BKE_shrinkwrap_init_tree(
     ShrinkwrapTreeData *data, Mesh *mesh, int shrinkType, int shrinkMode, bool force_normals)
 {
@@ -160,13 +159,11 @@ bool BKE_shrinkwrap_init_tree(
   return true;
 }
 
-/* Frees the tree data if necessary. */
 void BKE_shrinkwrap_free_tree(ShrinkwrapTreeData *data)
 {
   free_bvhtree_from_mesh(&data->treeData);
 }
 
-/* Free boundary data for target project */
 void BKE_shrinkwrap_discard_boundary_data(struct Mesh *mesh)
 {
   struct ShrinkwrapBoundaryData *data = mesh->runtime.shrinkwrap_data;
@@ -434,14 +431,6 @@ static void shrinkwrap_calc_nearest_vertex(ShrinkwrapCalcData *calc)
       0, calc->numVerts, &data, shrinkwrap_calc_nearest_vertex_cb_ex, &settings);
 }
 
-/*
- * This function raycast a single vertex and updates the hit if the "hit" is considered valid.
- * Returns true if "hit" was updated.
- * Opts control whether an hit is valid or not
- * Supported options are:
- * - MOD_SHRINKWRAP_CULL_TARGET_FRONTFACE (front faces hits are ignored)
- * - MOD_SHRINKWRAP_CULL_TARGET_BACKFACE (back faces hits are ignored)
- */
 bool BKE_shrinkwrap_project_normal(char options,
                                    const float vert[3],
                                    const float dir[3],
@@ -1089,9 +1078,6 @@ static void mesh_looptri_target_project(void *userdata,
   }
 }
 
-/*
- * Maps the point to the nearest surface, either by simple nearest, or by target normal projection.
- */
 void BKE_shrinkwrap_find_nearest_surface(struct ShrinkwrapTreeData *tree,
                                          BVHTreeNearest *nearest,
                                          float co[3],
@@ -1196,13 +1182,6 @@ static void shrinkwrap_calc_nearest_surface_point_cb_ex(void *__restrict userdat
   }
 }
 
-/**
- * Compute a smooth normal of the target (if applicable) at the hit location.
- *
- * \param tree: information about the mesh
- * \param transform: transform from the hit coordinate space to the object space; may be null
- * \param r_no: output in hit coordinate space; may be shared with inputs
- */
 void BKE_shrinkwrap_compute_smooth_normal(const struct ShrinkwrapTreeData *tree,
                                           const struct SpaceTransform *transform,
                                           int looptri_idx,
@@ -1318,13 +1297,6 @@ static void shrinkwrap_snap_with_side(float r_point_co[3],
   }
 }
 
-/**
- * Apply the shrink to surface modes to the given original coordinates and nearest point.
- *
- * \param tree: mesh data for smooth normals
- * \param transform: transform from the hit coordinate space to the object space; may be null
- * \param r_point_co: may be the same memory location as point_co, hit_co, or hit_no.
- */
 void BKE_shrinkwrap_snap_point_to_surface(const struct ShrinkwrapTreeData *tree,
                                           const struct SpaceTransform *transform,
                                           int mode,
@@ -1404,7 +1376,6 @@ static void shrinkwrap_calc_nearest_surface_point(ShrinkwrapCalcData *calc)
       0, calc->numVerts, &data, shrinkwrap_calc_nearest_surface_point_cb_ex, &settings);
 }
 
-/* Main shrinkwrap function */
 void shrinkwrapModifier_deform(ShrinkwrapModifierData *smd,
                                const ModifierEvalContext *ctx,
                                struct Scene *scene,
@@ -1510,6 +1481,55 @@ void shrinkwrapModifier_deform(ShrinkwrapModifierData *smd,
   /* free memory */
   if (ss_mesh) {
     ss_mesh->release(ss_mesh);
+  }
+}
+
+void shrinkwrapGpencilModifier_deform(ShrinkwrapGpencilModifierData *mmd,
+                                      Object *ob,
+                                      MDeformVert *dvert,
+                                      const int defgrp_index,
+                                      float (*vertexCos)[3],
+                                      int numVerts)
+{
+
+  ShrinkwrapCalcData calc = NULL_ShrinkwrapCalcData;
+  /* Convert gpencil struct to use the same struct and function used with meshes. */
+  ShrinkwrapModifierData smd;
+  smd.target = mmd->target;
+  smd.auxTarget = mmd->aux_target;
+  smd.keepDist = mmd->keep_dist;
+  smd.shrinkType = mmd->shrink_type;
+  smd.shrinkOpts = mmd->shrink_opts;
+  smd.shrinkMode = mmd->shrink_mode;
+  smd.projLimit = mmd->proj_limit;
+  smd.projAxis = mmd->proj_axis;
+
+  /* Configure Shrinkwrap calc data. */
+  calc.smd = &smd;
+  calc.ob = ob;
+  calc.numVerts = numVerts;
+  calc.vertexCos = vertexCos;
+  calc.dvert = dvert;
+  calc.vgroup = defgrp_index;
+  calc.invert_vgroup = (mmd->flag & GP_SHRINKWRAP_INVERT_VGROUP) != 0;
+
+  BLI_SPACE_TRANSFORM_SETUP(&calc.local2target, ob, mmd->target);
+  calc.keepDist = mmd->keep_dist;
+  calc.tree = mmd->cache_data;
+
+  switch (mmd->shrink_type) {
+    case MOD_SHRINKWRAP_NEAREST_SURFACE:
+    case MOD_SHRINKWRAP_TARGET_PROJECT:
+      TIMEIT_BENCH(shrinkwrap_calc_nearest_surface_point(&calc), gpdeform_surface);
+      break;
+
+    case MOD_SHRINKWRAP_PROJECT:
+      TIMEIT_BENCH(shrinkwrap_calc_normal_projection(&calc), gpdeform_project);
+      break;
+
+    case MOD_SHRINKWRAP_NEAREST_VERTEX:
+      TIMEIT_BENCH(shrinkwrap_calc_nearest_vertex(&calc), gpdeform_vertex);
+      break;
   }
 }
 
