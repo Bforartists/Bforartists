@@ -422,6 +422,7 @@ static void object_offset_draw(const bContext *UNUSED(C), Panel *panel)
 static void random_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
@@ -430,7 +431,17 @@ static void random_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "random_offset", 0, IFACE_("Offset"), ICON_NONE);
   uiItemR(layout, ptr, "random_rotation", 0, IFACE_("Rotation"), ICON_NONE);
   uiItemR(layout, ptr, "random_scale", 0, IFACE_("Scale"), ICON_NONE);
-  uiItemR(layout, ptr, "use_uniform_random_scale", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_uniform_random_scale", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_uniform_random_scale", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_uniform_random_scale", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
   uiItemR(layout, ptr, "seed", 0, NULL, ICON_NONE);
 }
 

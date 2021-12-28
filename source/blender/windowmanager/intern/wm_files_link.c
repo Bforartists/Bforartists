@@ -113,12 +113,13 @@ static bool wm_link_append_poll(bContext *C)
 static int wm_link_append_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
   if (!RNA_struct_property_is_set(op->ptr, "filepath")) {
+    const char *blendfile_path = BKE_main_blendfile_path_from_global();
     if (G.lib[0] != '\0') {
       RNA_string_set(op->ptr, "filepath", G.lib);
     }
-    else if (G.relbase_valid) {
+    else if (blendfile_path[0] != '\0') {
       char path[FILE_MAX];
-      BLI_strncpy(path, BKE_main_blendfile_path_from_global(), sizeof(path));
+      STRNCPY(path, blendfile_path);
       BLI_path_parent_dir(path);
       RNA_string_set(op->ptr, "filepath", path);
     }
@@ -544,10 +545,6 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
   return id;
 }
 
-/*
- * NOTE: `scene` (and related `view_layer` and `v3d`) pointers may be NULL, in which case no
- * instantiation of linked objects, collections etc. will be performed.
- */
 ID *WM_file_link_datablock(Main *bmain,
                            Scene *scene,
                            ViewLayer *view_layer,
@@ -562,10 +559,6 @@ ID *WM_file_link_datablock(Main *bmain,
       bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag);
 }
 
-/*
- * NOTE: `scene` (and related `view_layer` and `v3d`) pointers may be NULL, in which case no
- * instantiation of appended objects, collections etc. will be performed.
- */
 ID *WM_file_append_datablock(Main *bmain,
                              Scene *scene,
                              ViewLayer *view_layer,

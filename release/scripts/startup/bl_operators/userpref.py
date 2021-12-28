@@ -1140,6 +1140,18 @@ class PREFERENCES_OT_studiolight_show(Operator):
         return {'FINISHED'}
 
 
+class PREFERENCES_OT_filepaths_show(Operator):
+    """Show, edit and add file paths to Asset Libraries\nThis button opens the Preferences"""
+    bl_idname = "preferences.filepaths_show"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        context.preferences.active_section = 'FILE_PATHS'
+        bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+        return {'FINISHED'}
+
+
 classes = (
     PREFERENCES_OT_addon_disable,
     PREFERENCES_OT_addon_enable,
@@ -1165,4 +1177,5 @@ classes = (
     PREFERENCES_OT_studiolight_uninstall,
     PREFERENCES_OT_studiolight_copy_settings,
     PREFERENCES_OT_studiolight_show,
+    PREFERENCES_OT_filepaths_show,
 )

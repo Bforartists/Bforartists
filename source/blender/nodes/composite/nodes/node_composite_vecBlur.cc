@@ -21,31 +21,61 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* **************** VECTOR BLUR ******************** */
-static bNodeSocketTemplate cmp_node_vecblur_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {SOCK_FLOAT, N_("Z"), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_NONE},
-    {SOCK_VECTOR, N_("Speed"), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_VELOCITY},
-    {-1, ""}};
-static bNodeSocketTemplate cmp_node_vecblur_out[] = {{SOCK_RGBA, N_("Image")}, {-1, ""}};
+
+namespace blender::nodes {
+
+static void cmp_node_vec_blur_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>(N_("Z")).default_value(0.0f).min(0.0f).max(1.0f);
+  b.add_input<decl::Vector>(N_("Speed"))
+      .default_value({0.0f, 0.0f, 0.0f})
+      .min(0.0f)
+      .max(1.0f)
+      .subtype(PROP_VELOCITY);
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_vecblur(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeBlurData *nbd = (NodeBlurData *)MEM_callocN(sizeof(NodeBlurData), "node blur data");
+  NodeBlurData *nbd = MEM_cnew<NodeBlurData>(__func__);
   node->storage = nbd;
   nbd->samples = 32;
   nbd->fac = 1.0f;
 }
 
+static void node_composit_buts_vecblur(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *col;
+
+  col = uiLayoutColumn(layout, false);
+  uiItemR(col, ptr, "samples", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "factor", UI_ITEM_R_SPLIT_EMPTY_NAME, IFACE_("Blur"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  uiItemL(col, IFACE_("Speed:"), ICON_NONE);
+  uiItemR(col, ptr, "speed_min", UI_ITEM_R_SPLIT_EMPTY_NAME, IFACE_("Min"), ICON_NONE);
+  uiItemR(col, ptr, "speed_max", UI_ITEM_R_SPLIT_EMPTY_NAME, IFACE_("Max"), ICON_NONE);
+
+  uiItemR(layout, ptr, "use_curved", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
 /* custom1: iterations, custom2: max_speed (0 = no_limit). */
-void register_node_type_cmp_vecblur(void)
+void register_node_type_cmp_vecblur()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_VECBLUR, "Vector Blur", NODE_CLASS_OP_FILTER, 0);
-  node_type_socket_templates(&ntype, cmp_node_vecblur_in, cmp_node_vecblur_out);
+  ntype.declare = blender::nodes::cmp_node_vec_blur_declare;
+  ntype.draw_buttons = node_composit_buts_vecblur;
   node_type_init(&ntype, node_composit_init_vecblur);
   node_type_storage(
       &ntype, "NodeBlurData", node_free_standard_storage, node_copy_standard_storage);

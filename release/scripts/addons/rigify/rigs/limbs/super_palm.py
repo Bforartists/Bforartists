@@ -77,7 +77,7 @@ class Rig(BaseRig):
         self.order = 'YXZ' if 'X' in self.palm_rotation_axis else 'YZX'
 
         # Figure out the name for the control bone (remove the last .##)
-        self.ctrl_name = re.sub("([0-9]+\.)", "", strip_org(self.bones.org[-1])[::-1], count=1)[::-1]
+        self.ctrl_name = re.sub(r"([0-9]+\.)", "", strip_org(self.bones.org[-1])[::-1], count=1)[::-1]
 
     def parent_bones(self):
         self.rig_parent_bone = self.get_bone_parent(self.bones.org[0])

@@ -209,7 +209,7 @@ static int open_exec(bContext *C, wmOperator *op)
 
     RNA_string_get(op->ptr, "directory", dir_only);
     if (relative) {
-      BLI_path_rel(dir_only, bmain->name);
+      BLI_path_rel(dir_only, bmain->filepath);
     }
 
     prop = RNA_struct_find_property(op->ptr, "files");
@@ -285,7 +285,7 @@ static int open_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event)
   if (clip) {
     BLI_strncpy(path, clip->filepath, sizeof(path));
 
-    BLI_path_abs(path, CTX_data_main(C)->name);
+    BLI_path_abs(path, CTX_data_main(C)->filepath);
     BLI_path_parent_dir(path);
   }
   else {
@@ -912,6 +912,7 @@ void CLIP_OT_view_zoom_ratio(wmOperatorType *ot)
                 -FLT_MAX,
                 FLT_MAX);
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -990,6 +991,7 @@ void CLIP_OT_view_all(wmOperatorType *ot)
       ot->srna, "fit_view", 0, "Fit View", "Fit View\nFit frame to the viewport");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1054,6 +1056,7 @@ void CLIP_OT_view_selected(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_LOCK_BYPASS;
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1174,6 +1177,7 @@ void CLIP_OT_change_frame(wmOperatorType *ot)
   /* rna */
   RNA_def_int(ot->srna, "frame", 0, MINAFRAME, MAXFRAME, "Frame", "", MINAFRAME, MAXFRAME);
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1586,6 +1590,7 @@ void CLIP_OT_rebuild_proxy(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER;
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1625,9 +1630,9 @@ void CLIP_OT_mode_set(wmOperatorType *ot)
   RNA_def_enum(ot->srna, "mode", rna_enum_clip_editor_mode_items, SC_MODE_TRACKING, "Mode", "");
 }
 
-#ifdef WITH_INPUT_NDOF
-
 /** \} */
+
+#ifdef WITH_INPUT_NDOF
 
 /* -------------------------------------------------------------------- */
 /** \name NDOF Operator
@@ -1727,6 +1732,7 @@ void CLIP_OT_prefetch(wmOperatorType *ot)
   ot->invoke = clip_prefetch_invoke;
   ot->modal = clip_prefetch_modal;
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1766,6 +1772,7 @@ void CLIP_OT_set_scene_frames(wmOperatorType *ot)
   ot->poll = ED_space_clip_view_clip_poll;
   ot->exec = clip_set_scene_frames_exec;
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

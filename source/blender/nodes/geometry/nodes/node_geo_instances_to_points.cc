@@ -14,8 +14,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "BKE_pointcloud.h"
 #include "DNA_pointcloud_types.h"
+
+#include "BKE_attribute_math.hh"
+#include "BKE_pointcloud.h"
 
 #include "node_geometry_util.hh"
 
@@ -54,10 +56,12 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
   GeometryComponentFieldContext field_context{instances, ATTR_DOMAIN_INSTANCE};
   const int domain_size = instances.attribute_domain_size(ATTR_DOMAIN_INSTANCE);
 
-  fn::FieldEvaluator selection_evaluator{field_context, domain_size};
-  selection_evaluator.add(std::move(selection_field));
-  selection_evaluator.evaluate();
-  const IndexMask selection = selection_evaluator.get_evaluated_as_mask(0);
+  fn::FieldEvaluator evaluator{field_context, domain_size};
+  evaluator.set_selection(std::move(selection_field));
+  evaluator.add(std::move(position_field));
+  evaluator.add(std::move(radius_field));
+  evaluator.evaluate();
+  const IndexMask selection = evaluator.get_evaluated_selection_as_mask();
   if (selection.is_empty()) {
     return;
   }
@@ -67,23 +71,36 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
 
   PointCloudComponent &points = geometry_set.get_component_for_write<PointCloudComponent>();
 
-  fn::FieldEvaluator evaluator{field_context, &selection};
-  evaluator.add(std::move(position_field));
-  evaluator.add(std::move(radius_field));
-  evaluator.evaluate();
   const VArray<float3> &positions = evaluator.get_evaluated<float3>(0);
   copy_attribute_to_points(positions, selection, {(float3 *)pointcloud->co, pointcloud->totpoint});
   const VArray<float> &radii = evaluator.get_evaluated<float>(1);
   copy_attribute_to_points(radii, selection, {pointcloud->radius, pointcloud->totpoint});
 
-  if (!instances.instance_ids().is_empty()) {
-    OutputAttribute_Typed<int> id_attribute = points.attribute_try_get_for_output<int>(
-        "id", ATTR_DOMAIN_POINT, CD_PROP_INT32);
-    MutableSpan<int> ids = id_attribute.as_span();
-    for (const int i : selection.index_range()) {
-      ids[i] = instances.instance_ids()[selection[i]];
-    }
-    id_attribute.save();
+  Map<AttributeIDRef, AttributeKind> attributes_to_propagate;
+  geometry_set.gather_attributes_for_propagation({GEO_COMPONENT_TYPE_INSTANCES},
+                                                 GEO_COMPONENT_TYPE_POINT_CLOUD,
+                                                 false,
+                                                 attributes_to_propagate);
+  /* These two attributes are added by the implicit inputs above. */
+  attributes_to_propagate.remove("position");
+  attributes_to_propagate.remove("radius");
+
+  for (const auto item : attributes_to_propagate.items()) {
+    const AttributeIDRef &attribute_id = item.key;
+    const AttributeKind attribute_kind = item.value;
+
+    const GVArray src = instances.attribute_get_for_read(
+        attribute_id, ATTR_DOMAIN_INSTANCE, attribute_kind.data_type);
+    BLI_assert(src);
+    OutputAttribute dst = points.attribute_try_get_for_output_only(
+        attribute_id, ATTR_DOMAIN_POINT, attribute_kind.data_type);
+    BLI_assert(dst);
+
+    attribute_math::convert_to_static_type(attribute_kind.data_type, [&](auto dummy) {
+      using T = decltype(dummy);
+      copy_attribute_to_points(src.typed<T>(), selection, dst.as_span().typed<T>());
+    });
+    dst.save();
   }
 }
 

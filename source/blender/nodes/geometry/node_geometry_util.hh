@@ -43,6 +43,13 @@ bool geo_node_poll_default(struct bNodeType *ntype,
                            const char **r_disabled_hint);
 
 namespace blender::nodes {
+/**
+ * Update the availability of a group of input sockets with the same name,
+ * used for switching between attribute inputs or single values.
+ *
+ * \param mode: Controls which socket of the group to make available.
+ * \param name_is_available: If false, make all sockets with this name unavailable.
+ */
 void update_attribute_input_socket_availabilities(bNodeTree &ntree,
                                                   bNode &node,
                                                   const StringRef name,
@@ -125,5 +132,8 @@ CurveToPointsResults curve_to_points_create_result_attributes(PointCloudComponen
 void curve_create_default_rotation_attribute(Span<float3> tangents,
                                              Span<float3> normals,
                                              MutableSpan<float3> rotations);
+
+std::optional<CustomDataType> node_data_type_to_custom_data_type(eNodeSocketDatatype type);
+std::optional<CustomDataType> node_socket_to_custom_data_type(const bNodeSocket &socket);
 
 }  // namespace blender::nodes

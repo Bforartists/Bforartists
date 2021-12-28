@@ -557,7 +557,6 @@ static void draw_anti_tria(
   GPU_blend(GPU_BLEND_NONE);
 }
 
-/* Triangle 'icon' for panel header and other cases. */
 void UI_draw_icon_tri(float x, float y, char dir, const float color[4])
 {
   const float f3 = 0.05 * U.widget_unit;
@@ -1520,17 +1519,6 @@ static void ui_text_clip_right_ex(const uiFontStyle *fstyle,
   }
 }
 
-/**
- * Cut off the middle of the text to fit into the given width.
- *
- * \note in case this middle clipping would just remove a few chars,
- * it rather clips right, which is more readable.
- *
- * If rpart_sep is not Null, the part of str starting to first occurrence of rpart_sep
- * is preserved at all cost.
- * Useful for strings with shortcuts
- * (like 'AVeryLongFooBarLabelForMenuEntry|Ctrl O' -> 'AVeryLong...MenuEntry|Ctrl O').
- */
 float UI_text_clip_middle_ex(const uiFontStyle *fstyle,
                              char *str,
                              float okwidth,
@@ -2846,20 +2834,21 @@ static void widget_menu_back(
   GPU_blend(GPU_BLEND_NONE);
 }
 
-static void ui_hsv_cursor(float x, float y)
+static void ui_hsv_cursor(const float x, const float y, const float zoom)
 {
+  const float radius = zoom * 3.0f * U.pixelsize;
   const uint pos = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
   immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
   immUniformColor3f(1.0f, 1.0f, 1.0f);
-  imm_draw_circle_fill_2d(pos, x, y, 3.0f * U.pixelsize, 8);
+  imm_draw_circle_fill_2d(pos, x, y, radius, 8);
 
   GPU_blend(GPU_BLEND_ALPHA);
   GPU_line_smooth(true);
   immUniformColor3f(0.0f, 0.0f, 0.0f);
-  imm_draw_circle_wire_2d(pos, x, y, 3.0f * U.pixelsize, 12);
+  imm_draw_circle_wire_2d(pos, x, y, radius, 12);
   GPU_blend(GPU_BLEND_NONE);
   GPU_line_smooth(false);
 
@@ -2880,7 +2869,6 @@ void ui_hsvcircle_vals_from_pos(
   *r_val_rad = atan2f(m_delta[0], m_delta[1]) / (2.0f * (float)M_PI) + 0.5f;
 }
 
-/* cursor in hsv circle, in float units -1 to 1, to map on radius */
 void ui_hsvcircle_pos_from_vals(
     const ColorPicker *cpicker, const rcti *rect, const float *hsv, float *r_xpos, float *r_ypos)
 {
@@ -3007,7 +2995,8 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, const uiWidgetColors *wcol, const 
 
   float xpos, ypos;
   ui_hsvcircle_pos_from_vals(cpicker, rect, hsv, &xpos, &ypos);
-  ui_hsv_cursor(xpos, ypos);
+  const float zoom = 1.0f / but->block->aspect;
+  ui_hsv_cursor(xpos, ypos, zoom);
 }
 
 /** \} */
@@ -3016,7 +3005,6 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, const uiWidgetColors *wcol, const 
 /** \name Draw Custom Buttons
  * \{ */
 
-/* draws in resolution of 48x4 colors */
 void ui_draw_gradient(const rcti *rect,
                       const float hsv[3],
                       const eButGradientType type,
@@ -3241,7 +3229,9 @@ static void ui_draw_but_HSVCUBE(uiBut *but, const rcti *rect)
   CLAMP(x, rect->xmin + 3.0f, rect->xmax - 3.0f);
   CLAMP(y, rect->ymin + 3.0f, rect->ymax - 3.0f);
 
-  ui_hsv_cursor(x, y);
+  const float zoom = 1.0f / but->block->aspect;
+
+  ui_hsv_cursor(x, y, zoom);
 
   /* outline */
   const uint pos = GPU_vertformat_attr_add(
@@ -3304,8 +3294,9 @@ static void ui_draw_but_HSV_v(uiBut *but, const rcti *rect)
   x = rect->xmin + 0.5f * BLI_rcti_size_x(rect);
   y = rect->ymin + v * BLI_rcti_size_y(rect);
   CLAMP(y, rect->ymin + 3.0f, rect->ymax - 3.0f);
+  const float zoom = 1.0f / but->block->aspect;
 
-  ui_hsv_cursor(x, y);
+  ui_hsv_cursor(x, y, zoom);
 }
 
 /** Separator for menus. */
@@ -3506,7 +3497,6 @@ static void widget_numbut_embossn(const uiBut *UNUSED(but),
   widget_numbut_draw(wcol, rect, zoom, state, roundboxalign, true);
 }
 
-/* function in use for buttons and for view2d sliders */
 void UI_draw_widget_scroll(uiWidgetColors *wcol, const rcti *rect, const rcti *slider, int state)
 {
   uiWidgetBase wtb;
@@ -4572,7 +4562,6 @@ static uiWidgetType *widget_type(uiWidgetTypeEnum type)
       wt.custom = widget_progressbar;
       break;
 
-
     case UI_WTYPE_TREEROW:
       wt.custom = widget_treerow;
       break;
@@ -4658,11 +4647,12 @@ static int widget_roundbox_set(uiBut *but, rcti *rect)
   return roundbox;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Public API
  * \{ */
 
-/* conversion from old to new buttons, so still messy */
 void ui_draw_but(const bContext *C, struct ARegion *region, uiStyle *style, uiBut *but, rcti *rect)
 {
   bTheme *btheme = UI_GetTheme();
@@ -5349,15 +5339,6 @@ void ui_draw_tooltip_background(const uiStyle *UNUSED(style), uiBlock *UNUSED(bl
   wt->draw(&wt->wcol, rect, 0, 0, 1.0f);
 }
 
-/**
- * Helper call to draw a menu item without a button.
- *
- * \param state: The state of the button,
- * typically #UI_ACTIVE, #UI_BUT_DISABLED, #UI_BUT_INACTIVE.
- * \param separator_type: The kind of separator which controls if and how the string is clipped.
- * \param r_xmax: The right hand position of the text, this takes into the icon,
- * padding and text clipping when there is not enough room to display the full text.
- */
 void ui_draw_menu_item(const uiFontStyle *fstyle,
                        rcti *rect,
                        const char *name,
@@ -5496,10 +5477,6 @@ void ui_draw_menu_item(const uiFontStyle *fstyle,
   }
 }
 
-/**
- * Version of #ui_draw_preview_item() that does not draw the menu background and item text based on
- * state. It just draws the preview and text directly.
- */
 void ui_draw_preview_item_stateless(const uiFontStyle *fstyle,
                                     rcti *rect,
                                     const char *name,

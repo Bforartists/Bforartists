@@ -21,28 +21,42 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
-/* **************** MAP VALUE ******************** */
-static bNodeSocketTemplate cmp_node_map_range_in[] = {
-    {SOCK_FLOAT, N_("Value"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, PROP_NONE},
-    {SOCK_FLOAT, N_("From Min"), 0.0f, 1.0f, 1.0f, 1.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {SOCK_FLOAT, N_("From Max"), 1.0f, 1.0f, 1.0f, 1.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {SOCK_FLOAT, N_("To Min"), 0.0f, 1.0f, 1.0f, 1.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {SOCK_FLOAT, N_("To Max"), 1.0f, 1.0f, 1.0f, 1.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {-1, ""},
-};
-static bNodeSocketTemplate cmp_node_map_range_out[] = {
-    {SOCK_FLOAT, N_("Value")},
-    {-1, ""},
-};
+/* **************** Map Range ******************** */
 
-void register_node_type_cmp_map_range(void)
+namespace blender::nodes {
+
+static void cmp_node_map_range_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Float>(N_("Value")).default_value(1.0f).min(0.0f).max(1.0f);
+  b.add_input<decl::Float>(N_("From Min")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>(N_("From Max")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>(N_("To Min")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>(N_("To Max")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_output<decl::Float>(N_("Value"));
+}
+
+}  // namespace blender::nodes
+
+static void node_composit_buts_map_range(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *col;
+
+  col = uiLayoutColumn(layout, true);
+  uiItemR(col, ptr, "use_clamp", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_map_range()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_MAP_RANGE, "Map Range", NODE_CLASS_OP_VECTOR, 0);
-  node_type_socket_templates(&ntype, cmp_node_map_range_in, cmp_node_map_range_out);
+  ntype.declare = blender::nodes::cmp_node_map_range_declare;
+  ntype.draw_buttons = node_composit_buts_map_range;
 
   nodeRegisterType(&ntype);
 }

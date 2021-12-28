@@ -228,16 +228,15 @@ typedef struct Curve {
   /** Creation-time type of curve datablock. */
   short type;
 
-  /** Keep a short because of BKE_object_obdata_texspace_get(). */
-  short texflag;
-  char _pad0[6];
+  char texflag;
+  char _pad0[7];
   short twist_mode;
   float twist_smooth, smallcaps_scale;
 
   int pathlen;
   short bevresol, totcol;
   int flag;
-  float width, ext1, ext2;
+  float offset, extrude, bevel_radius;
 
   /* default */
   short resolu, resolv;
@@ -421,10 +420,8 @@ enum {
 enum {
   CU_POLY = 0,
   CU_BEZIER = 1,
-  CU_BSPLINE = 2,
-  CU_CARDINAL = 3,
   CU_NURBS = 4,
-  CU_TYPE = (CU_POLY | CU_BEZIER | CU_BSPLINE | CU_CARDINAL | CU_NURBS),
+  CU_TYPE = (CU_POLY | CU_BEZIER | CU_NURBS),
 
   /* only for adding */
   CU_PRIMITIVE = 0xF00,

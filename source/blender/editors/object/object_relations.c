@@ -583,8 +583,8 @@ bool ED_object_parent_set(ReportList *reports,
     }
     case PAR_BONE:
     case PAR_BONE_RELATIVE:
-      pchan = BKE_pose_channel_active(par);
-      pchan_eval = BKE_pose_channel_active(parent_eval);
+      pchan = BKE_pose_channel_active_if_layer_visible(par);
+      pchan_eval = BKE_pose_channel_active_if_layer_visible(parent_eval);
 
       if (pchan == NULL) {
         BKE_report(reports, RPT_ERROR, "No active bone");
@@ -1791,8 +1791,6 @@ static void single_object_users(
   BKE_main_collection_sync_remap(bmain);
 }
 
-/* not an especially efficient function, only added so the single user
- * button can be functional. */
 void ED_object_single_user(Main *bmain, Scene *scene, Object *ob)
 {
   FOREACH_SCENE_OBJECT_BEGIN (scene, ob_iter) {
@@ -2369,7 +2367,8 @@ static bool make_override_library_poll(bContext *C)
   /* Object must be directly linked to be overridable. */
   return (ED_operator_objectmode(C) && obact != NULL &&
           (ID_IS_LINKED(obact) || (obact->instance_collection != NULL &&
-                                   ID_IS_OVERRIDABLE_LIBRARY(obact->instance_collection))));
+                                   ID_IS_OVERRIDABLE_LIBRARY(obact->instance_collection) &&
+                                   !ID_IS_OVERRIDE_LIBRARY(obact))));
 }
 
 static const EnumPropertyItem *make_override_collections_of_linked_object_itemf(
@@ -2654,10 +2653,6 @@ static int drop_named_material_invoke(bContext *C, wmOperator *op, const wmEvent
   return OPERATOR_FINISHED;
 }
 
-/**
- * Used for drop-box.
- * Assigns to object under cursor, only first material slot.
- */
 void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2716,9 +2711,6 @@ static int object_unlink_data_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/**
- * \note Only for empty-image objects, this operator is needed
- */
 void OBJECT_OT_unlink_data(wmOperatorType *ot)
 {
   /* identifiers */

@@ -1093,8 +1093,8 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Angle",
-      "Brush texture rotation\nTexture angle Hotkey in the default keymap: Ctrl + F\nTexture Mask "
-      "angle Hotkey in the default keymap: Ctrl + Alt + F");
+      "Brush texture rotation\nTexture angle Hotkey in the default keymap: C\nTexture Mask "
+      "angle Hotkey in the default keymap: V");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_TextureSlot_brush_angle_update");
 
@@ -2453,7 +2453,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
   RNA_def_property_ui_text(
-      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: F");
+      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: X");
   RNA_def_property_update(prop, 0, "rna_Brush_size_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);

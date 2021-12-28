@@ -232,7 +232,7 @@ void register_node_type_sh_group(void)
   /* NOTE: cannot use #sh_node_type_base for node group, because it would map the node type
    * to the shared #NODE_GROUP integer type id. */
 
-  node_type_base_custom(&ntype, "ShaderNodeGroup", "Group", NODE_CLASS_GROUP, NODE_CONST_OUTPUT);
+  node_type_base_custom(&ntype, "ShaderNodeGroup", "Group", NODE_CLASS_GROUP, 0);
   ntype.type = NODE_GROUP;
   ntype.poll = sh_node_poll_default;
   ntype.poll_instance = node_group_poll_instance;
@@ -243,7 +243,7 @@ void register_node_type_sh_group(void)
 
   node_type_socket_templates(&ntype, NULL, NULL);
   node_type_size(&ntype, 140, 60, 400);
-  node_type_label(&ntype, node_group_label);
+  ntype.labelfunc = node_group_label;
   node_type_group_update(&ntype, node_group_update);
   node_type_exec(&ntype, group_initexec, group_freeexec, group_execute);
   node_type_gpu(&ntype, gpu_group_execute);

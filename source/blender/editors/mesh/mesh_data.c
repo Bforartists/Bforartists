@@ -208,7 +208,6 @@ static void mesh_uv_reset_mface(MPoly *mp, MLoopUV *mloopuv)
   mesh_uv_reset_array(fuv, mp->totloop);
 }
 
-/* without bContext, called in uvedit */
 void ED_mesh_uv_loop_reset_ex(struct Mesh *me, const int layernum)
 {
   BMEditMesh *em = me->edit_mesh;
@@ -253,10 +252,11 @@ void ED_mesh_uv_loop_reset(struct bContext *C, struct Mesh *me)
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
 }
 
-/* NOTE: keep in sync with #ED_mesh_color_add. */
 int ED_mesh_uv_texture_add(
     Mesh *me, const char *name, const bool active_set, const bool do_init, ReportList *reports)
 {
+  /* NOTE: keep in sync with #ED_mesh_color_add. */
+
   BMEditMesh *em;
   int layernum_dst;
 
@@ -267,7 +267,7 @@ int ED_mesh_uv_texture_add(
 
     layernum_dst = CustomData_number_of_layers(&em->bm->ldata, CD_MLOOPUV);
     if (layernum_dst >= MAX_MTFACE) {
-      BKE_reportf(reports, RPT_ERROR, "Cannot add more than %i UV maps", MAX_MTFACE);
+      BKE_reportf(reports, RPT_WARNING, "Cannot add more than %i UV maps", MAX_MTFACE);
       return -1;
     }
 
@@ -287,7 +287,7 @@ int ED_mesh_uv_texture_add(
   else {
     layernum_dst = CustomData_number_of_layers(&me->ldata, CD_MLOOPUV);
     if (layernum_dst >= MAX_MTFACE) {
-      BKE_reportf(reports, RPT_ERROR, "Cannot add more than %i UV maps", MAX_MTFACE);
+      BKE_reportf(reports, RPT_WARNING, "Cannot add more than %i UV maps", MAX_MTFACE);
       return -1;
     }
 
@@ -381,10 +381,11 @@ bool ED_mesh_uv_texture_remove_named(Mesh *me, const char *name)
   return false;
 }
 
-/* NOTE: keep in sync with #ED_mesh_uv_texture_add. */
 int ED_mesh_color_add(
     Mesh *me, const char *name, const bool active_set, const bool do_init, ReportList *reports)
 {
+  /* NOTE: keep in sync with #ED_mesh_uv_texture_add. */
+
   BMEditMesh *em;
   int layernum;
 
@@ -393,7 +394,7 @@ int ED_mesh_color_add(
 
     layernum = CustomData_number_of_layers(&em->bm->ldata, CD_MLOOPCOL);
     if (layernum >= MAX_MCOL) {
-      BKE_reportf(reports, RPT_ERROR, "Cannot add more than %i vertex color layers", MAX_MCOL);
+      BKE_reportf(reports, RPT_WARNING, "Cannot add more than %i vertex color layers", MAX_MCOL);
       return -1;
     }
 
@@ -411,7 +412,7 @@ int ED_mesh_color_add(
   else {
     layernum = CustomData_number_of_layers(&me->ldata, CD_MLOOPCOL);
     if (layernum >= MAX_MCOL) {
-      BKE_reportf(reports, RPT_ERROR, "Cannot add more than %i vertex color layers", MAX_MCOL);
+      BKE_reportf(reports, RPT_WARNING, "Cannot add more than %i vertex color layers", MAX_MCOL);
       return -1;
     }
 
@@ -516,10 +517,11 @@ static bool sculpt_vertex_color_remove_poll(bContext *C)
   return false;
 }
 
-/* NOTE: keep in sync with #ED_mesh_uv_texture_add. */
 int ED_mesh_sculpt_color_add(
     Mesh *me, const char *name, const bool active_set, const bool do_init, ReportList *reports)
 {
+  /* NOTE: keep in sync with #ED_mesh_uv_texture_add. */
+
   BMEditMesh *em;
   int layernum;
 
@@ -529,7 +531,7 @@ int ED_mesh_sculpt_color_add(
     layernum = CustomData_number_of_layers(&em->bm->vdata, CD_PROP_COLOR);
     if (layernum >= MAX_MCOL) {
       BKE_reportf(
-          reports, RPT_ERROR, "Cannot add more than %i sculpt vertex color layers", MAX_MCOL);
+          reports, RPT_WARNING, "Cannot add more than %i sculpt vertex color layers", MAX_MCOL);
       return -1;
     }
 
@@ -548,7 +550,7 @@ int ED_mesh_sculpt_color_add(
     layernum = CustomData_number_of_layers(&me->vdata, CD_PROP_COLOR);
     if (layernum >= MAX_MCOL) {
       BKE_reportf(
-          reports, RPT_ERROR, "Cannot add more than %i sculpt vertex color layers", MAX_MCOL);
+          reports, RPT_WARNING, "Cannot add more than %i sculpt vertex color layers", MAX_MCOL);
       return -1;
     }
 
@@ -905,6 +907,7 @@ static int mesh_customdata_mask_clear_exec(bContext *C, wmOperator *UNUSED(op))
 
 void MESH_OT_customdata_mask_clear(wmOperatorType *ot)
 {
+  /* NOTE: no create_mask yet */
 
   /* identifiers */
   ot->name = "Clear Sculpt Mask Data";

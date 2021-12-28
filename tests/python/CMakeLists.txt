@@ -639,6 +639,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
     MESSAGE(STATUS "Disabling Cycles tests because WITH_OPENCOLORIO is disabled")
   else()
     set(render_tests
+      camera
       bsdf
       hair
       image_colorspace
@@ -648,6 +649,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
       integrator
       light
       mesh
+      pointcloud
       shader
       shadow_catcher
       sss

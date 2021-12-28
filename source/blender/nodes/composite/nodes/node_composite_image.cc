@@ -26,15 +26,20 @@
 #include "BLI_linklist.h"
 #include "BLI_utildefines.h"
 
-#include "DNA_scene_types.h"
-
-#include "RE_engine.h"
-
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_scene.h"
+
+#include "DNA_scene_types.h"
+
+#include "RE_engine.h"
+
+#include "RNA_access.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 /* **************** IMAGE (and RenderResult, multilayer image) ******************** */
 
@@ -103,8 +108,7 @@ static void cmp_node_image_add_pass_output(bNodeTree *ntree,
       sock = nodeAddStaticSocket(ntree, node, SOCK_OUT, type, PROP_NONE, name, name);
     }
     /* extra socket info */
-    NodeImageLayer *sockdata = (NodeImageLayer *)MEM_callocN(sizeof(NodeImageLayer),
-                                                             "node image layer");
+    NodeImageLayer *sockdata = MEM_cnew<NodeImageLayer>(__func__);
     sock->storage = sockdata;
   }
 
@@ -407,7 +411,7 @@ static void cmp_node_image_update(bNodeTree *ntree, bNode *node)
 
 static void node_composit_init_image(bNodeTree *ntree, bNode *node)
 {
-  ImageUser *iuser = (ImageUser *)MEM_callocN(sizeof(ImageUser), "node image user");
+  ImageUser *iuser = MEM_cnew<ImageUser>(__func__);
   node->storage = iuser;
   iuser->frames = 1;
   iuser->sfra = 1;
@@ -443,7 +447,7 @@ static void node_composit_copy_image(bNodeTree *UNUSED(dest_ntree),
   }
 }
 
-void register_node_type_cmp_image(void)
+void register_node_type_cmp_image()
 {
   static bNodeType ntype;
 
@@ -451,7 +455,7 @@ void register_node_type_cmp_image(void)
   node_type_init(&ntype, node_composit_init_image);
   node_type_storage(&ntype, "ImageUser", node_composit_free_image, node_composit_copy_image);
   node_type_update(&ntype, cmp_node_image_update);
-  node_type_label(&ntype, node_image_label);
+  ntype.labelfunc = node_image_label;
 
   nodeRegisterType(&ntype);
 }
@@ -484,8 +488,7 @@ static void node_composit_init_rlayers(const bContext *C, PointerRNA *ptr)
 
   for (bNodeSocket *sock = (bNodeSocket *)node->outputs.first; sock;
        sock = sock->next, sock_index++) {
-    NodeImageLayer *sockdata = (NodeImageLayer *)MEM_callocN(sizeof(NodeImageLayer),
-                                                             "node image layer");
+    NodeImageLayer *sockdata = MEM_cnew<NodeImageLayer>(__func__);
     sock->storage = sockdata;
 
     BLI_strncpy(sockdata->pass_name,
@@ -499,7 +502,7 @@ static bool node_composit_poll_rlayers(bNodeType *UNUSED(ntype),
                                        const char **r_disabled_hint)
 {
   if (!STREQ(ntree->idname, "CompositorNodeTree")) {
-    *r_disabled_hint = "Not a compositor node tree";
+    *r_disabled_hint = TIP_("Not a compositor node tree");
     return false;
   }
 
@@ -516,7 +519,8 @@ static bool node_composit_poll_rlayers(bNodeType *UNUSED(ntype),
   }
 
   if (scene == nullptr) {
-    *r_disabled_hint = "The node tree must be the compositing node tree of any scene in the file";
+    *r_disabled_hint = TIP_(
+        "The node tree must be the compositing node tree of any scene in the file");
     return false;
   }
   return true;
@@ -554,12 +558,56 @@ static void cmp_node_rlayers_update(bNodeTree *ntree, bNode *node)
   cmp_node_update_default(ntree, node);
 }
 
-void register_node_type_cmp_rlayers(void)
+static void node_composit_buts_viewlayers(uiLayout *layout, bContext *C, PointerRNA *ptr)
+{
+  bNode *node = (bNode *)ptr->data;
+  uiLayout *col, *row;
+
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "scene",
+               nullptr,
+               nullptr,
+               nullptr,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               nullptr);
+
+  if (!node->id) {
+    return;
+  }
+
+  col = uiLayoutColumn(layout, false);
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "layer", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+
+  PropertyRNA *prop = RNA_struct_find_property(ptr, "layer");
+  const char *layer_name;
+  if (!(RNA_property_enum_identifier(
+          C, ptr, prop, RNA_property_enum_get(ptr, prop), &layer_name))) {
+    return;
+  }
+
+  PointerRNA scn_ptr;
+  char scene_name[MAX_ID_NAME - 2];
+  scn_ptr = RNA_pointer_get(ptr, "scene");
+  RNA_string_get(&scn_ptr, "name", scene_name);
+
+  PointerRNA op_ptr;
+  uiItemFullO(
+      row, "RENDER_OT_render", "", ICON_RENDER_STILL, nullptr, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
+  RNA_string_set(&op_ptr, "layer", layer_name);
+  RNA_string_set(&op_ptr, "scene", scene_name);
+}
+
+void register_node_type_cmp_rlayers()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_R_LAYERS, "Render Layers", NODE_CLASS_INPUT, NODE_PREVIEW);
   node_type_socket_templates(&ntype, nullptr, cmp_node_rlayers_out);
+  ntype.draw_buttons = node_composit_buts_viewlayers;
   ntype.initfunc_api = node_composit_init_rlayers;
   ntype.poll = node_composit_poll_rlayers;
   node_type_storage(&ntype, nullptr, node_composit_free_rlayers, node_composit_copy_rlayers);

@@ -60,6 +60,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_anim_data.h"
+#include "BKE_bpath.h"
 #include "BKE_colortools.h"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
@@ -69,6 +70,7 @@
 #include "BKE_main.h"
 #include "BKE_movieclip.h"
 #include "BKE_node.h"
+#include "BKE_node_tree_update.h"
 #include "BKE_tracking.h"
 
 #include "IMB_imbuf.h"
@@ -163,6 +165,12 @@ static void movie_clip_foreach_cache(ID *id,
   key.offset_in_ID = offsetof(MovieClip, tracking.camera.intrinsics);
   key.cache_v = movie_clip->tracking.camera.intrinsics;
   function_callback(id, &key, (void **)&movie_clip->tracking.camera.intrinsics, 0, user_data);
+}
+
+static void movie_clip_foreach_path(ID *id, BPathForeachPathData *bpath_data)
+{
+  MovieClip *movie_clip = (MovieClip *)id;
+  BKE_bpath_foreach_path_fixed_process(bpath_data, movie_clip->filepath);
 }
 
 static void write_movieTracks(BlendWriter *writer, ListBase *tracks)
@@ -355,6 +363,7 @@ IDTypeInfo IDType_ID_MC = {
     .make_local = NULL,
     .foreach_id = movie_clip_foreach_id,
     .foreach_cache = movie_clip_foreach_cache,
+    .foreach_path = movie_clip_foreach_path,
     .owner_get = NULL,
 
     .blend_write = movieclip_blend_write,
@@ -536,10 +545,6 @@ static void movieclip_convert_multilayer_add_pass(void *UNUSED(layer),
 
 #endif /* WITH_OPENEXR */
 
-/* Will try to make image buffer usable when originating from the multi-layer
- * source.
- * Internally finds a first combined pass and uses that as a buffer. Not ideal,
- * but is better than a complete empty buffer. */
 void BKE_movieclip_convert_multilayer_ibuf(struct ImBuf *ibuf)
 {
   if (ibuf == NULL) {
@@ -980,10 +985,6 @@ static void detect_clip_source(Main *bmain, MovieClip *clip)
   }
 }
 
-/* checks if image was already loaded, then returns same image
- * otherwise creates new.
- * does not load ibuf itself
- * pass on optional frame for #name images */
 MovieClip *BKE_movieclip_file_add(Main *bmain, const char *name)
 {
   MovieClip *clip;
@@ -1613,7 +1614,6 @@ void BKE_movieclip_get_aspect(MovieClip *clip, float *aspx, float *aspy)
   *aspy = clip->aspy / clip->aspx / clip->tracking.camera.pixel_aspect;
 }
 
-/* get segments of cached frames. useful for debugging cache policies */
 void BKE_movieclip_get_cache_segments(MovieClip *clip,
                                       MovieClipUser *user,
                                       int *r_totseg,
@@ -1696,17 +1696,7 @@ void BKE_movieclip_reload(Main *bmain, MovieClip *clip)
 
   movieclip_calc_length(clip);
 
-  /* same as for image update -- don't use notifiers because they are not 100% sure to succeeded
-   * (node trees which are not currently visible wouldn't be refreshed)
-   */
-  {
-    Scene *scene;
-    for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
-      if (scene->nodetree) {
-        nodeUpdateID(scene->nodetree, &clip->id);
-      }
-    }
-  }
+  BKE_ntree_update_tag_id_changed(bmain, &clip->id);
 }
 
 void BKE_movieclip_update_scopes(MovieClip *clip, MovieClipUser *user, MovieClipScopes *scopes)
@@ -1849,9 +1839,6 @@ static void movieclip_build_proxy_ibuf(
   IMB_freeImBuf(scaleibuf);
 }
 
-/* NOTE: currently used by proxy job for movies, threading happens within single frame
- * (meaning scaling shall be threaded)
- */
 void BKE_movieclip_build_proxy_frame(MovieClip *clip,
                                      int clip_flag,
                                      struct MovieDistortion *distortion,
@@ -1893,9 +1880,6 @@ void BKE_movieclip_build_proxy_frame(MovieClip *clip,
   }
 }
 
-/* NOTE: currently used by proxy job for sequences, threading happens within sequence
- * (different threads handles different frames, no threading within frame is needed)
- */
 void BKE_movieclip_build_proxy_frame_for_ibuf(MovieClip *clip,
                                               ImBuf *ibuf,
                                               struct MovieDistortion *distortion,
@@ -2151,4 +2135,5 @@ void BKE_movieclip_free_gputexture(struct MovieClip *clip)
     MEM_freeN(tex);
   }
 }
+
 /** \} */

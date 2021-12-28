@@ -31,12 +31,16 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
+#include "NOD_socket_search_link.hh"
+
 #include "node_geometry_util.hh"
 
 namespace blender::nodes::node_geo_transfer_attribute_cc {
 
 using namespace blender::bke::mesh_surface_sample;
 using blender::fn::GArray;
+
+NODE_STORAGE_FUNCS(NodeGeometryTransferAttribute)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
@@ -52,8 +56,14 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Bool>(N_("Attribute"), "Attribute_003").hide_value().supports_field();
   b.add_input<decl::Int>(N_("Attribute"), "Attribute_004").hide_value().supports_field();
 
-  b.add_input<decl::Vector>(N_("Source Position")).implicit_field();
-  b.add_input<decl::Int>(N_("Index")).implicit_field();
+  b.add_input<decl::Vector>(N_("Source Position"))
+      .implicit_field()
+      .make_available([](bNode &node) {
+        node_storage(node).mode = GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED;
+      });
+  b.add_input<decl::Int>(N_("Index")).implicit_field().make_available([](bNode &node) {
+    node_storage(node).mode = GEO_NODE_ATTRIBUTE_TRANSFER_INDEX;
+  });
 
   b.add_output<decl::Vector>(N_("Attribute")).dependent_field({6, 7});
   b.add_output<decl::Float>(N_("Attribute"), "Attribute_001").dependent_field({6, 7});
@@ -65,9 +75,9 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
   const bNode &node = *static_cast<const bNode *>(ptr->data);
-  const NodeGeometryTransferAttribute &data = *static_cast<const NodeGeometryTransferAttribute *>(
-      node.storage);
-  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)data.mode;
+  const NodeGeometryTransferAttribute &storage = node_storage(node);
+  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)
+                                                        storage.mode;
 
   uiItemR(layout, ptr, "data_type", 0, "", ICON_NONE);
   uiItemR(layout, ptr, "mapping", 0, "", ICON_NONE);
@@ -78,8 +88,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryTransferAttribute *data = (NodeGeometryTransferAttribute *)MEM_callocN(
-      sizeof(NodeGeometryTransferAttribute), __func__);
+  NodeGeometryTransferAttribute *data = MEM_cnew<NodeGeometryTransferAttribute>(__func__);
   data->data_type = CD_PROP_FLOAT;
   data->mode = GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED;
   node->storage = data;
@@ -87,10 +96,10 @@ static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 
 static void node_update(bNodeTree *ntree, bNode *node)
 {
-  const NodeGeometryTransferAttribute &data = *(const NodeGeometryTransferAttribute *)
-                                                   node->storage;
-  const CustomDataType data_type = static_cast<CustomDataType>(data.data_type);
-  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)data.mode;
+  const NodeGeometryTransferAttribute &storage = node_storage(*node);
+  const CustomDataType data_type = static_cast<CustomDataType>(storage.data_type);
+  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)
+                                                        storage.mode;
 
   bNodeSocket *socket_geometry = (bNodeSocket *)node->inputs.first;
   bNodeSocket *socket_vector = socket_geometry->next;
@@ -122,6 +131,24 @@ static void node_update(bNodeTree *ntree, bNode *node)
   nodeSetSocketAvailability(ntree, out_socket_color4f, data_type == CD_PROP_COLOR);
   nodeSetSocketAvailability(ntree, out_socket_boolean, data_type == CD_PROP_BOOL);
   nodeSetSocketAvailability(ntree, out_socket_int32, data_type == CD_PROP_INT32);
+}
+
+static void node_gather_link_searches(GatherLinkSearchOpParams &params)
+{
+  const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
+  search_link_ops_for_declarations(params, declaration.inputs().take_back(2));
+  search_link_ops_for_declarations(params, declaration.inputs().take_front(1));
+
+  const std::optional<CustomDataType> type = node_data_type_to_custom_data_type(
+      (eNodeSocketDatatype)params.other_socket().type);
+  if (type && *type != CD_PROP_STRING) {
+    /* The input and output sockets have the same name. */
+    params.add_item(IFACE_("Attribute"), [type](LinkSearchOpParams &params) {
+      bNode &node = params.add_node("GeometryNodeAttributeTransfer");
+      node_storage(node).data_type = *type;
+      params.update_and_connect_available_socket(node, "Attribute");
+    });
+  }
 }
 
 static void get_closest_in_bvhtree(BVHTreeFromMesh &tree_data,
@@ -499,7 +526,7 @@ class NearestTransferFunction : public fn::MultiFunction {
     Array<int> mesh_indices;
     Array<float> mesh_distances;
 
-    /* If there is a point-cloud, find the closest points. */
+    /* If there is a point cloud, find the closest points. */
     if (use_points_) {
       point_indices.reinitialize(tot_samples);
       if (use_mesh_) {
@@ -723,11 +750,11 @@ static void output_attribute_field(GeoNodeExecParams &params, GField field)
 static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry = params.extract_input<GeometrySet>("Target");
-  const bNode &node = params.node();
-  const NodeGeometryTransferAttribute &data = *(const NodeGeometryTransferAttribute *)node.storage;
-  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)data.mode;
-  const CustomDataType data_type = static_cast<CustomDataType>(data.data_type);
-  const AttributeDomain domain = static_cast<AttributeDomain>(data.domain);
+  const NodeGeometryTransferAttribute &storage = node_storage(params.node());
+  const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)
+                                                        storage.mode;
+  const CustomDataType data_type = static_cast<CustomDataType>(storage.data_type);
+  const AttributeDomain domain = static_cast<AttributeDomain>(storage.domain);
 
   GField field = get_input_attribute_field(params, data_type);
 
@@ -810,5 +837,6 @@ void register_node_type_geo_transfer_attribute()
   ntype.declare = file_ns::node_declare;
   ntype.geometry_node_execute = file_ns::node_geo_exec;
   ntype.draw_buttons = file_ns::node_layout;
+  ntype.gather_link_search_ops = file_ns::node_gather_link_searches;
   nodeRegisterType(&ntype);
 }

@@ -23,29 +23,62 @@
  * \ingroup cmpnodes
  */
 
+#include "BLI_system.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
-static bNodeSocketTemplate cmp_node_denoise_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-    {SOCK_VECTOR, N_("Normal"), 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, PROP_NONE, SOCK_HIDE_VALUE},
-    {SOCK_RGBA, N_("Albedo"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, PROP_NONE, SOCK_HIDE_VALUE},
-    {-1, ""}};
-static bNodeSocketTemplate cmp_node_denoise_out[] = {{SOCK_RGBA, N_("Image")}, {-1, ""}};
+namespace blender::nodes {
+
+static void cmp_node_denoise_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Vector>(N_("Normal"))
+      .default_value({0.0f, 0.0f, 0.0f})
+      .min(-1.0f)
+      .max(1.0f)
+      .hide_value();
+  b.add_input<decl::Color>(N_("Albedo")).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_denonise(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeDenoise *ndg = (NodeDenoise *)MEM_callocN(sizeof(NodeDenoise), "node denoise data");
+  NodeDenoise *ndg = MEM_cnew<NodeDenoise>(__func__);
   ndg->hdr = true;
   ndg->prefilter = CMP_NODE_DENOISE_PREFILTER_ACCURATE;
   node->storage = ndg;
 }
 
-void register_node_type_cmp_denoise(void)
+static void node_composit_buts_denoise(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+#ifndef WITH_OPENIMAGEDENOISE
+  uiItemL(layout, IFACE_("Disabled, built without OpenImageDenoise"), ICON_ERROR);
+#else
+  /* Always supported through Accelerate framework BNNS on macOS. */
+#  ifndef __APPLE__
+  if (!BLI_cpu_support_sse41()) {
+    uiItemL(layout, IFACE_("Disabled, CPU with SSE4.1 is required"), ICON_ERROR);
+  }
+#  endif
+#endif
+
+  uiItemL(layout, IFACE_("Prefilter:"), ICON_NONE);
+  uiItemR(layout, ptr, "prefilter", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_hdr", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_denoise()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_DENOISE, "Denoise", NODE_CLASS_OP_FILTER, 0);
-  node_type_socket_templates(&ntype, cmp_node_denoise_in, cmp_node_denoise_out);
+  ntype.declare = blender::nodes::cmp_node_denoise_declare;
+  ntype.draw_buttons = node_composit_buts_denoise;
   node_type_init(&ntype, node_composit_init_denonise);
   node_type_storage(&ntype, "NodeDenoise", node_free_standard_storage, node_copy_standard_storage);
 

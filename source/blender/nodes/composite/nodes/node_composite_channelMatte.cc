@@ -21,23 +21,29 @@
  * \ingroup cmpnodes
  */
 
+#include "RNA_access.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* ******************* Channel Matte Node ********************************* */
-static bNodeSocketTemplate cmp_node_channel_matte_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {-1, ""},
-};
 
-static bNodeSocketTemplate cmp_node_channel_matte_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {SOCK_FLOAT, N_("Matte")},
-    {-1, ""},
-};
+namespace blender::nodes {
+
+static void cmp_node_channel_matte_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_output<decl::Color>(N_("Image"));
+  b.add_output<decl::Float>(N_("Matte"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_channel_matte(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeChroma *c = (NodeChroma *)MEM_callocN(sizeof(NodeChroma), "node chroma");
+  NodeChroma *c = MEM_cnew<NodeChroma>(__func__);
   node->storage = c;
   c->t1 = 1.0f;
   c->t2 = 0.0f;
@@ -50,13 +56,55 @@ static void node_composit_init_channel_matte(bNodeTree *UNUSED(ntree), bNode *no
   node->custom2 = 2; /* Green Channel. */
 }
 
-void register_node_type_cmp_channel_matte(void)
+static void node_composit_buts_channel_matte(uiLayout *layout,
+                                             bContext *UNUSED(C),
+                                             PointerRNA *ptr)
+{
+  uiLayout *col, *row;
+
+  uiItemL(layout, IFACE_("Color Space:"), ICON_NONE);
+  row = uiLayoutRow(layout, false);
+  uiItemR(
+      row, ptr, "color_space", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+
+  col = uiLayoutColumn(layout, false);
+  uiItemL(col, IFACE_("Key Channel:"), ICON_NONE);
+  row = uiLayoutRow(col, false);
+  uiItemR(row,
+          ptr,
+          "matte_channel",
+          UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_EXPAND,
+          nullptr,
+          ICON_NONE);
+
+  col = uiLayoutColumn(layout, false);
+
+  uiItemR(col, ptr, "limit_method", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  if (RNA_enum_get(ptr, "limit_method") == 0) {
+    uiItemL(col, IFACE_("Limiting Channel:"), ICON_NONE);
+    row = uiLayoutRow(col, false);
+    uiItemR(row,
+            ptr,
+            "limit_channel",
+            UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_EXPAND,
+            nullptr,
+            ICON_NONE);
+  }
+
+  uiItemR(
+      col, ptr, "limit_max", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  uiItemR(
+      col, ptr, "limit_min", UI_ITEM_R_SPLIT_EMPTY_NAME | UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_channel_matte()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(
       &ntype, CMP_NODE_CHANNEL_MATTE, "Channel Key", NODE_CLASS_MATTE, NODE_PREVIEW);
-  node_type_socket_templates(&ntype, cmp_node_channel_matte_in, cmp_node_channel_matte_out);
+  ntype.declare = blender::nodes::cmp_node_channel_matte_declare;
+  ntype.draw_buttons = node_composit_buts_channel_matte;
   node_type_init(&ntype, node_composit_init_channel_matte);
   node_type_storage(&ntype, "NodeChroma", node_free_standard_storage, node_copy_standard_storage);
 

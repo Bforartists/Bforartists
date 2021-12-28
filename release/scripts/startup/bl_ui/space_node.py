@@ -908,6 +908,7 @@ class NODE_PT_overlay(Panel):
 
         col.separator()
 
+        col.prop(overlay, "show_context_path", text="Context Path")
         col.prop(snode, "show_annotation", text="Annotations")
 
         if snode.tree_type == 'GeometryNodeTree':
@@ -1002,6 +1003,7 @@ class NodeTreeInterfacePanel:
                 )
                 if in_out == 'OUT' and is_field_type:
                     layout.prop(active_socket, "attribute_domain")
+            layout.use_property_split = False
             active_socket.draw(context, layout)
 
 

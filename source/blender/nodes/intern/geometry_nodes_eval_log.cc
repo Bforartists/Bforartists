@@ -191,12 +191,14 @@ const SocketLog *NodeLog::lookup_socket_log(const bNode &node, const bNodeSocket
 
 GFieldValueLog::GFieldValueLog(fn::GField field, bool log_full_field) : type_(field.cpp_type())
 {
-  Set<std::reference_wrapper<const FieldInput>> field_inputs_set;
-  field.node().foreach_field_input(
-      [&](const FieldInput &field_input) { field_inputs_set.add(field_input); });
+  const std::shared_ptr<const fn::FieldInputs> &field_input_nodes = field.node().field_inputs();
 
+  /* Put the deduplicated field inputs into a vector so that they can be sorted below. */
   Vector<std::reference_wrapper<const FieldInput>> field_inputs;
-  field_inputs.extend(field_inputs_set.begin(), field_inputs_set.end());
+  if (field_input_nodes) {
+    field_inputs.extend(field_input_nodes->deduplicated_nodes.begin(),
+                        field_input_nodes->deduplicated_nodes.end());
+  }
 
   std::sort(
       field_inputs.begin(), field_inputs.end(), [](const FieldInput &a, const FieldInput &b) {
@@ -489,10 +491,6 @@ void LocalGeoLogger::log_execution_time(DNode node, std::chrono::microseconds ex
   node_exec_times_.append({node, exec_time});
 }
 
-/**
- * Log a message that will be displayed in the node editor next to the node. This should only be
- * used for debugging purposes and not to display information to users.
- */
 void LocalGeoLogger::log_debug_message(DNode node, std::string message)
 {
   node_debug_messages_.append({node, std::move(message)});

@@ -38,8 +38,10 @@
 
 #include <optional>
 
+/* -------------------------------------------------------------------- */
 /** \name Cryptomatte
  * \{ */
+
 static blender::bke::cryptomatte::CryptomatteSessionPtr cryptomatte_init_from_node_render(
     const bNode &node, const bool use_meta_data)
 {
@@ -134,8 +136,7 @@ static void cryptomatte_add(const Scene &scene,
     return;
   }
 
-  CryptomatteEntry *entry = static_cast<CryptomatteEntry *>(
-      MEM_callocN(sizeof(CryptomatteEntry), __func__));
+  CryptomatteEntry *entry = MEM_cnew<CryptomatteEntry>(__func__);
   entry->encoded_hash = encoded_hash;
   blender::bke::cryptomatte::CryptomatteSessionPtr session = cryptomatte_init_from_node(
       scene, node, true);
@@ -197,8 +198,7 @@ void ntreeCompositCryptomatteUpdateLayerNames(const Scene *scene, bNode *node)
   if (session) {
     for (blender::StringRef layer_name :
          blender::bke::cryptomatte::BKE_cryptomatte_layer_names_get(*session)) {
-      CryptomatteLayer *layer = static_cast<CryptomatteLayer *>(
-          MEM_callocN(sizeof(CryptomatteLayer), __func__));
+      CryptomatteLayer *layer = MEM_cnew<CryptomatteLayer>(__func__);
       layer_name.copy(layer->name);
       BLI_addtail(&n->runtime.layers, layer);
     }
@@ -243,8 +243,7 @@ CryptomatteSession *ntreeCompositCryptomatteSession(const Scene *scene, bNode *n
 
 static void node_init_cryptomatte(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeCryptomatte *user = static_cast<NodeCryptomatte *>(
-      MEM_callocN(sizeof(NodeCryptomatte), __func__));
+  NodeCryptomatte *user = MEM_cnew<NodeCryptomatte>(__func__);
   node->storage = user;
 }
 
@@ -297,16 +296,16 @@ static bool node_poll_cryptomatte(bNodeType *UNUSED(ntype),
     }
 
     if (scene == nullptr) {
-      *r_disabled_hint =
-          "The node tree must be the compositing node tree of any scene in the file";
+      *r_disabled_hint = TIP_(
+          "The node tree must be the compositing node tree of any scene in the file");
     }
     return scene != nullptr;
   }
-  *r_disabled_hint = "Not a compositor node tree";
+  *r_disabled_hint = TIP_("Not a compositor node tree");
   return false;
 }
 
-void register_node_type_cmp_cryptomatte(void)
+void register_node_type_cmp_cryptomatte()
 {
   static bNodeType ntype;
 
@@ -322,8 +321,10 @@ void register_node_type_cmp_cryptomatte(void)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
 /** \name Cryptomatte Legacy
  * \{ */
+
 static void node_init_cryptomatte_legacy(bNodeTree *ntree, bNode *node)
 {
   node_init_cryptomatte(ntree, node);
@@ -361,7 +362,7 @@ int ntreeCompositCryptomatteRemoveSocket(bNodeTree *ntree, bNode *node)
   return 1;
 }
 
-void register_node_type_cmp_cryptomatte_legacy(void)
+void register_node_type_cmp_cryptomatte_legacy()
 {
   static bNodeType ntype;
 

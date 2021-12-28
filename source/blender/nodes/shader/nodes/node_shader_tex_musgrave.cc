@@ -21,13 +21,18 @@
 
 #include "BLI_noise.hh"
 
+NODE_STORAGE_FUNCS(NodeTexMusgrave)
+
 namespace blender::nodes {
 
 static void sh_node_tex_musgrave_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
   b.add_input<decl::Vector>(N_("Vector")).hide_value().implicit_field();
-  b.add_input<decl::Float>(N_("W")).min(-1000.0f).max(1000.0f);
+  b.add_input<decl::Float>(N_("W")).min(-1000.0f).max(1000.0f).make_available([](bNode &node) {
+    /* Default to 1 instead of 4, because it is much faster. */
+    node_storage(node).dimensions = 1;
+  });
   b.add_input<decl::Float>(N_("Scale")).min(-1000.0f).max(1000.0f).default_value(5.0f);
   b.add_input<decl::Float>(N_("Detail")).min(0.0f).max(15.0f).default_value(2.0f);
   b.add_input<decl::Float>(N_("Dimension")).min(0.0f).max(1000.0f).default_value(2.0f);
@@ -41,8 +46,7 @@ static void sh_node_tex_musgrave_declare(NodeDeclarationBuilder &b)
 
 static void node_shader_init_tex_musgrave(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeTexMusgrave *tex = (NodeTexMusgrave *)MEM_callocN(sizeof(NodeTexMusgrave),
-                                                        "NodeTexMusgrave");
+  NodeTexMusgrave *tex = MEM_cnew<NodeTexMusgrave>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
   tex->musgrave_type = SHD_MUSGRAVE_FBM;
@@ -106,23 +110,23 @@ static int node_shader_gpu_tex_musgrave(GPUMaterial *mat,
 
 static void node_shader_update_tex_musgrave(bNodeTree *ntree, bNode *node)
 {
-  NodeTexMusgrave *tex = (NodeTexMusgrave *)node->storage;
+  const NodeTexMusgrave &storage = node_storage(*node);
 
   bNodeSocket *inVectorSock = nodeFindSocket(node, SOCK_IN, "Vector");
   bNodeSocket *inWSock = nodeFindSocket(node, SOCK_IN, "W");
   bNodeSocket *inOffsetSock = nodeFindSocket(node, SOCK_IN, "Offset");
   bNodeSocket *inGainSock = nodeFindSocket(node, SOCK_IN, "Gain");
 
-  nodeSetSocketAvailability(ntree, inVectorSock, tex->dimensions != 1);
-  nodeSetSocketAvailability(ntree, inWSock, tex->dimensions == 1 || tex->dimensions == 4);
+  nodeSetSocketAvailability(ntree, inVectorSock, storage.dimensions != 1);
+  nodeSetSocketAvailability(ntree, inWSock, storage.dimensions == 1 || storage.dimensions == 4);
   nodeSetSocketAvailability(ntree,
                             inOffsetSock,
-                            tex->musgrave_type != SHD_MUSGRAVE_MULTIFRACTAL &&
-                                tex->musgrave_type != SHD_MUSGRAVE_FBM);
+                            storage.musgrave_type != SHD_MUSGRAVE_MULTIFRACTAL &&
+                                storage.musgrave_type != SHD_MUSGRAVE_FBM);
   nodeSetSocketAvailability(ntree,
                             inGainSock,
-                            tex->musgrave_type == SHD_MUSGRAVE_HYBRID_MULTIFRACTAL ||
-                                tex->musgrave_type == SHD_MUSGRAVE_RIDGED_MULTIFRACTAL);
+                            storage.musgrave_type == SHD_MUSGRAVE_HYBRID_MULTIFRACTAL ||
+                                storage.musgrave_type == SHD_MUSGRAVE_RIDGED_MULTIFRACTAL);
 
   bNodeSocket *outFacSock = nodeFindSocket(node, SOCK_OUT, "Fac");
   node_sock_label(outFacSock, "Height");
@@ -531,7 +535,7 @@ static void sh_node_musgrave_build_multi_function(
 
 }  // namespace blender::nodes
 
-void register_node_type_sh_tex_musgrave(void)
+void register_node_type_sh_tex_musgrave()
 {
   static bNodeType ntype;
 

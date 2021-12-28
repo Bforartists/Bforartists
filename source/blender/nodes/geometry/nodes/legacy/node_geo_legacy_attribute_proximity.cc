@@ -44,8 +44,8 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryAttributeProximity *node_storage = (NodeGeometryAttributeProximity *)MEM_callocN(
-      sizeof(NodeGeometryAttributeProximity), __func__);
+  NodeGeometryAttributeProximity *node_storage = MEM_cnew<NodeGeometryAttributeProximity>(
+      __func__);
 
   node_storage->target_geometry_element = GEO_NODE_PROXIMITY_TARGET_FACES;
   node->storage = node_storage;
@@ -206,11 +206,11 @@ static void node_geo_exec(GeoNodeExecParams params)
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
   GeometrySet geometry_set_target = params.extract_input<GeometrySet>("Target");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   /* This isn't required. This node should be rewritten to handle instances
    * for the target geometry set. However, the generic BVH API complicates this. */
-  geometry_set_target = geometry_set_realize_instances(geometry_set_target);
+  geometry_set_target = geometry::realize_instances_legacy(geometry_set_target);
 
   if (geometry_set.has<MeshComponent>()) {
     attribute_calc_proximity(

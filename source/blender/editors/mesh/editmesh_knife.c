@@ -210,7 +210,7 @@ typedef struct KnifeBVH {
 typedef struct KnifeTool_OpData {
   ARegion *region;   /* Region that knifetool was activated in. */
   void *draw_handle; /* For drawing preview loop. */
-  ViewContext vc;    /* Note: _don't_ use 'mval', instead use the one we define below. */
+  ViewContext vc;    /* NOTE: _don't_ use 'mval', instead use the one we define below. */
   float mval[2];     /* Mouse value with snapping applied. */
 
   Scene *scene;
@@ -236,7 +236,7 @@ typedef struct KnifeTool_OpData {
   GHash *facetrimap;
 
   KnifeBVH bvh;
-  float (**cagecos)[3];
+  const float (**cagecos)[3];
 
   BLI_mempool *kverts;
   BLI_mempool *kedges;
@@ -3976,7 +3976,7 @@ static void knifetool_init_cagecos(KnifeTool_OpData *kcd, Object *ob, uint base_
 
   BM_mesh_elem_index_ensure(em_eval->bm, BM_VERT);
 
-  kcd->cagecos[base_index] = BKE_editmesh_vert_coords_alloc(
+  kcd->cagecos[base_index] = (const float(*)[3])BKE_editmesh_vert_coords_alloc(
       kcd->vc.depsgraph, em_eval, scene_eval, obedit_eval, NULL);
 }
 
@@ -4144,7 +4144,7 @@ static void knifetool_exit_ex(KnifeTool_OpData *kcd)
   for (int i = 0; i < kcd->objects_len; i++) {
     knifetool_free_cagecos(kcd, i);
   }
-  MEM_freeN(kcd->cagecos);
+  MEM_freeN((void *)kcd->cagecos);
   knife_bvh_free(kcd);
 
   /* Line-hits cleanup. */
@@ -4867,9 +4867,6 @@ static bool edbm_mesh_knife_point_isect(LinkNode *polys, const float cent_ss[2])
   return false;
 }
 
-/**
- * \param use_tag: When set, tag all faces inside the polylines.
- */
 void EDBM_mesh_knife(bContext *C, ViewContext *vc, LinkNode *polys, bool use_tag, bool cut_through)
 {
   KnifeTool_OpData *kcd;
