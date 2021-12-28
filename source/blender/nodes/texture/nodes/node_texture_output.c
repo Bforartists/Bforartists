@@ -21,6 +21,8 @@
  * \ingroup texnodes
  */
 
+#include "BLI_string.h"
+
 #include "NOD_texture.h"
 #include "node_texture_util.h"
 
@@ -35,7 +37,7 @@ static bNodeSocketTemplate inputs[] = {
 static void exec(void *data,
                  int UNUSED(thread),
                  bNode *node,
-                 bNodeExecData *execdata,
+                 bNodeExecData *UNUSED(execdata),
                  bNodeStack **in,
                  bNodeStack **UNUSED(out))
 {
@@ -52,7 +54,6 @@ static void exec(void *data,
     else {
       tex_input_rgba(&target->tr, in[0], &params, cdata->thread);
     }
-    tex_do_preview(execdata->preview, params.co, &target->tr, cdata->do_manage);
   }
   else {
     /* 0 means don't care, so just use first */

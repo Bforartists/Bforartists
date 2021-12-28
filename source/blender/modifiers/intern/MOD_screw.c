@@ -1164,7 +1164,7 @@ static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *u
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *sub, *row, *col;
+  uiLayout *row, *col; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
   int toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -1188,9 +1188,21 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   row = uiLayoutRow(col, false);
   uiItemR(row, ptr, "axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
   uiItemR(col, ptr, "object", 0, IFACE_("Axis Object"), ICON_NONE);
-  sub = uiLayoutColumn(col, false);
-  uiLayoutSetActive(sub, !RNA_pointer_is_null(&screw_obj_ptr));
-  uiItemR(sub, ptr, "use_object_screw_offset", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  // sub = uiLayoutColumn(col, false);
+  // uiLayoutSetActive(sub, !RNA_pointer_is_null(&screw_obj_ptr));
+  // uiItemR(sub, ptr, "use_object_screw_offset", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetActive(row, !RNA_pointer_is_null(&screw_obj_ptr));
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_object_screw_offset", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 
   uiItemS(layout);
 
@@ -1200,11 +1212,34 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemS(layout);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
-  uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
-  uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+  /*------------------- bfa - original props */
+  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
+  //uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
+  //sub = uiLayoutRow(row, true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
+  //uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+
+// ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = uiLayoutRow(split, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_merge_vertices", 0, "Merge", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_merge_vertices", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = uiLayoutRow(split, false);
+  if (RNA_boolean_get(ptr, "use_merge_vertices")) {
+    uiItemR(row, ptr, "merge_threshold", 0, "", ICON_NONE);
+  }
+  else {
+    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------------------- end bfa
 
   uiItemS(layout);
 
@@ -1217,17 +1252,37 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
 static void normals_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
+
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
 
-  uiLayoutSetPropSep(layout, true);
+  /*------------------- bfa - original props */
+  //uiLayoutSetPropSep(layout, true);
 
-  col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
+  //col = uiLayoutColumn(layout, false);
+  //uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+  //uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
+  //uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  row = uiLayoutRow(col, true);
+
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_normal_calculate", 0); /*bfa - decorator*/
+  row = uiLayoutRow(col, true);
+
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_normal_flip", 0); /*bfa - decorator*/
+
+  /* ------------ end bfa */
 }
 
 static void panelRegister(ARegionType *region_type)

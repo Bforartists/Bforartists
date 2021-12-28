@@ -535,7 +535,7 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("ed.undo_history", text="Undo History", icon='UNDO_HISTORY')
+        layout.menu("TOPBAR_MT_undo_history")
 
         layout.separator()
 

@@ -81,8 +81,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeAttributeRandomize *data = (NodeAttributeRandomize *)MEM_callocN(
-      sizeof(NodeAttributeRandomize), __func__);
+  NodeAttributeRandomize *data = MEM_cnew<NodeAttributeRandomize>(__func__);
   data->data_type = CD_PROP_FLOAT;
   data->domain = ATTR_DOMAIN_POINT;
   data->operation = GEO_NODE_ATTRIBUTE_RANDOMIZE_REPLACE_CREATE;
@@ -296,7 +295,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const GeometryNodeAttributeRandomizeMode operation =
       static_cast<GeometryNodeAttributeRandomizeMode>(storage.operation);
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     randomize_attribute_on_component(geometry_set.get_component_for_write<MeshComponent>(),

@@ -32,6 +32,8 @@
 
 namespace blender::nodes::node_geo_string_to_curves_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryStringToCurves)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::String>(N_("String"));
@@ -55,9 +57,14 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Float>(N_("Text Box Height"))
       .default_value(0.0f)
       .min(0.0f)
-      .subtype(PROP_DISTANCE);
+      .subtype(PROP_DISTANCE)
+      .make_available([](bNode &node) {
+        node_storage(node).overflow = GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT;
+      });
   b.add_output<decl::Geometry>(N_("Curves"));
-  b.add_output<decl::String>(N_("Remainder"));
+  b.add_output<decl::String>(N_("Remainder")).make_available([](bNode &node) {
+    node_storage(node).overflow = GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE;
+  });
 }
 
 static void node_layout(uiLayout *layout, struct bContext *C, PointerRNA *ptr)
@@ -81,8 +88,7 @@ static void node_layout(uiLayout *layout, struct bContext *C, PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryStringToCurves *data = (NodeGeometryStringToCurves *)MEM_callocN(
-      sizeof(NodeGeometryStringToCurves), __func__);
+  NodeGeometryStringToCurves *data = MEM_cnew<NodeGeometryStringToCurves>(__func__);
 
   data->overflow = GEO_NODE_STRING_TO_CURVES_MODE_OVERFLOW;
   data->align_x = GEO_NODE_STRING_TO_CURVES_ALIGN_X_LEFT;
@@ -93,9 +99,9 @@ static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 
 static void node_update(bNodeTree *ntree, bNode *node)
 {
-  const NodeGeometryStringToCurves *storage = (const NodeGeometryStringToCurves *)node->storage;
+  const NodeGeometryStringToCurves &storage = node_storage(*node);
   const GeometryNodeStringToCurvesOverflowMode overflow = (GeometryNodeStringToCurvesOverflowMode)
-                                                              storage->overflow;
+                                                              storage.overflow;
   bNodeSocket *socket_remainder = ((bNodeSocket *)node->outputs.first)->next;
   nodeSetSocketAvailability(
       ntree, socket_remainder, overflow == GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE);
@@ -131,8 +137,7 @@ static TextLayout get_text_layout(GeoNodeExecParams &params)
     return {};
   }
 
-  const NodeGeometryStringToCurves &storage =
-      *(const NodeGeometryStringToCurves *)params.node().storage;
+  const NodeGeometryStringToCurves &storage = node_storage(params.node());
   const GeometryNodeStringToCurvesOverflowMode overflow = (GeometryNodeStringToCurvesOverflowMode)
                                                               storage.overflow;
   const GeometryNodeStringToCurvesAlignXMode align_x = (GeometryNodeStringToCurvesAlignXMode)

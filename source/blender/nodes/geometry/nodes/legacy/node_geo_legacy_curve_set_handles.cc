@@ -38,8 +38,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCurveSetHandles *data = (NodeGeometryCurveSetHandles *)MEM_callocN(
-      sizeof(NodeGeometryCurveSetHandles), __func__);
+  NodeGeometryCurveSetHandles *data = MEM_cnew<NodeGeometryCurveSetHandles>(__func__);
 
   data->handle_type = GEO_NODE_CURVE_HANDLE_AUTO;
   data->mode = GEO_NODE_CURVE_HANDLE_LEFT | GEO_NODE_CURVE_HANDLE_RIGHT;
@@ -70,7 +69,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const GeometryNodeCurveHandleMode mode = (GeometryNodeCurveHandleMode)node_storage->mode;
 
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
-  geometry_set = bke::geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
   if (!geometry_set.has_curve()) {
     params.set_output("Curve", geometry_set);
     return;

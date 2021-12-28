@@ -46,8 +46,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryPointInstance *data = (NodeGeometryPointInstance *)MEM_callocN(
-      sizeof(NodeGeometryPointInstance), __func__);
+  NodeGeometryPointInstance *data = MEM_cnew<NodeGeometryPointInstance>(__func__);
   data->instance_type = GEO_NODE_POINT_INSTANCE_TYPE_OBJECT;
   data->flag |= GEO_NODE_POINT_INSTANCE_WHOLE_COLLECTION;
   node->storage = data;
@@ -173,6 +172,9 @@ static void add_instances_from_component(InstancesComponent &instances,
   const AttributeDomain domain = ATTR_DOMAIN_POINT;
 
   const int domain_size = src_geometry.attribute_domain_size(domain);
+  if (domain_size == 0) {
+    return;
+  }
 
   VArray<float3> positions = src_geometry.attribute_get_for_read<float3>(
       "position", domain, {0, 0, 0});
@@ -186,7 +188,9 @@ static void add_instances_from_component(InstancesComponent &instances,
   instances.resize(start_len + domain_size);
   MutableSpan<int> handles = instances.instance_reference_handles().slice(start_len, domain_size);
   MutableSpan<float4x4> transforms = instances.instance_transforms().slice(start_len, domain_size);
-  MutableSpan<int> instance_ids = instances.instance_ids_ensure().slice(start_len, domain_size);
+  OutputAttribute_Typed<int> instance_id_attribute =
+      instances.attribute_try_get_for_output_only<int>("id", ATTR_DOMAIN_INSTANCE);
+  MutableSpan<int> instance_ids = instance_id_attribute.as_span();
 
   /* Skip all of the randomness handling if there is only a single possible instance
    * (anything except for collection mode with "Whole Collection" turned off). */
@@ -213,6 +217,8 @@ static void add_instances_from_component(InstancesComponent &instances,
       }
     });
   }
+
+  instance_id_attribute.save();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -222,7 +228,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   /* TODO: This node should be able to instance on the input instances component
    * rather than making the entire input geometry set real. */
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   const Vector<InstanceReference> possible_references = get_instance_references(params);
   if (possible_references.is_empty()) {

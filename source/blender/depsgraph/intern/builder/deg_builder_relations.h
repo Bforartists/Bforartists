@@ -299,7 +299,7 @@ class DepsgraphRelationBuilder : public DepsgraphBuilder {
   virtual void build_scene_speakers(Scene *scene, ViewLayer *view_layer);
   virtual void build_vfont(VFont *vfont);
 
-  virtual void build_nested_datablock(ID *owner, ID *id);
+  virtual void build_nested_datablock(ID *owner, ID *id, bool flush_cow_changes);
   virtual void build_nested_nodetree(ID *owner, bNodeTree *ntree);
   virtual void build_nested_shapekey(ID *owner, Key *key);
 
@@ -336,6 +336,11 @@ class DepsgraphRelationBuilder : public DepsgraphBuilder {
                               Node *node_to,
                               const char *description,
                               int flags = 0);
+
+  /* Add relation which ensures visibility of `id_from` when `id_to` is visible.
+   * For the more detailed explanation see comment for `NodeType::VISIBILITY`. */
+  void add_visibility_relation(ID *id_from, ID *id_to);
+
   Relation *add_operation_relation(OperationNode *node_from,
                                    OperationNode *node_to,
                                    const char *description,

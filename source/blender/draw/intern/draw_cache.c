@@ -47,6 +47,10 @@
 #include "draw_cache_impl.h"
 #include "draw_manager.h"
 
+/* -------------------------------------------------------------------- */
+/** \name Internal Defines
+ * \{ */
+
 #define VCLASS_LIGHT_AREA_SHAPE (1 << 0)
 #define VCLASS_LIGHT_SPOT_SHAPE (1 << 1)
 #define VCLASS_LIGHT_SPOT_BLEND (1 << 2)
@@ -76,6 +80,12 @@
 /* High */
 #define DRW_SPHERE_SHAPE_LATITUDE_HIGH 80
 #define DRW_SPHERE_SHAPE_LONGITUDE_HIGH 60
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Internal Types
+ * \{ */
 
 typedef struct Vert {
   float pos[3];
@@ -162,6 +172,8 @@ void DRW_shape_cache_free(void)
     batch++;
   }
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Procedural Batches
@@ -354,7 +366,6 @@ static GPUVertBuf *sphere_wire_vbo(const float rad, int flag)
 }
 
 /* Quads */
-/* Use this one for rendering fullscreen passes. For 3D objects use DRW_cache_quad_get(). */
 GPUBatch *DRW_cache_fullscreen_quad_get(void)
 {
   if (!SHC.drw_fullscreen_quad) {
@@ -388,7 +399,6 @@ GPUBatch *DRW_cache_fullscreen_quad_get(void)
   return SHC.drw_fullscreen_quad;
 }
 
-/* Just a regular quad with 4 vertices. */
 GPUBatch *DRW_cache_quad_get(void)
 {
   if (!SHC.drw_quad) {
@@ -409,7 +419,6 @@ GPUBatch *DRW_cache_quad_get(void)
   return SHC.drw_quad;
 }
 
-/* Just a regular quad with 4 vertices - wires. */
 GPUBatch *DRW_cache_quad_wires_get(void)
 {
   if (!SHC.drw_quad_wires) {
@@ -430,7 +439,6 @@ GPUBatch *DRW_cache_quad_wires_get(void)
   return SHC.drw_quad_wires;
 }
 
-/* Grid */
 GPUBatch *DRW_cache_grid_get(void)
 {
   if (!SHC.drw_grid) {
@@ -769,6 +777,8 @@ GPUBatch *DRW_cache_normal_arrow_get(void)
   return SHC.drw_normal_arrow;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Dummy VBO's
  *
@@ -911,7 +921,6 @@ GPUBatch *DRW_cache_object_surface_get(Object *ob)
   }
 }
 
-/* Returns the vertbuf used by shaded surface batch. */
 GPUVertBuf *DRW_cache_object_pos_vertbuf_get(Object *ob)
 {
   Mesh *me = BKE_object_get_evaluated_mesh(ob);
@@ -1260,7 +1269,6 @@ GPUBatch *DRW_cache_empty_capsule_cap_get(void)
 #undef NSEGMENTS
 }
 
-/* Force Field */
 GPUBatch *DRW_cache_field_wind_get(void)
 {
 #define CIRCLE_RESOL 32
@@ -1336,7 +1344,6 @@ GPUBatch *DRW_cache_field_vortex_get(void)
 #undef SPIRAL_RESOL
 }
 
-/* Screen-aligned circle. */
 GPUBatch *DRW_cache_field_curve_get(void)
 {
 #define CIRCLE_RESOL 32
@@ -1425,7 +1432,6 @@ GPUBatch *DRW_cache_field_cone_limit_get(void)
 #undef CIRCLE_RESOL
 }
 
-/* Screen-aligned dashed circle */
 GPUBatch *DRW_cache_field_sphere_limit_get(void)
 {
 #define CIRCLE_RESOL 32
@@ -2872,7 +2878,6 @@ GPUBatch *DRW_cache_mesh_surface_edges_get(Object *ob)
   return DRW_mesh_batch_cache_get_surface_edges(ob->data);
 }
 
-/* Return list of batches with length equal to max(1, totcol). */
 GPUBatch **DRW_cache_mesh_surface_shaded_get(Object *ob,
                                              struct GPUMaterial **gpumat_array,
                                              uint gpumat_array_len)
@@ -2881,7 +2886,6 @@ GPUBatch **DRW_cache_mesh_surface_shaded_get(Object *ob,
   return DRW_mesh_batch_cache_get_surface_shaded(ob->data, gpumat_array, gpumat_array_len);
 }
 
-/* Return list of batches with length equal to max(1, totcol). */
 GPUBatch **DRW_cache_mesh_surface_texpaint_get(Object *ob)
 {
   BLI_assert(ob->type == OB_MESH);
@@ -3078,7 +3082,6 @@ GPUBatch *DRW_cache_surf_loose_edges_get(Object *ob)
   return NULL;
 }
 
-/* Return list of batches */
 GPUBatch **DRW_cache_surf_surface_shaded_get(Object *ob,
                                              struct GPUMaterial **gpumat_array,
                                              uint gpumat_array_len)
@@ -3147,6 +3150,8 @@ GPUBatch *DRW_cache_pointcloud_surface_get(Object *object)
   BLI_assert(object->type == OB_POINTCLOUD);
   return DRW_pointcloud_batch_cache_get_surface(object);
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Volume
@@ -3275,7 +3280,6 @@ GPUBatch *DRW_cache_particles_get_prim(int type)
   return NULL;
 }
 
-/* 3D cursor */
 GPUBatch *DRW_cache_cursor_get(bool crosshair_lines)
 {
   GPUBatch **drw_cursor = crosshair_lines ? &SHC.drw_cursor : &SHC.drw_cursor_only_circle;
@@ -3448,6 +3452,26 @@ void drw_batch_cache_generate_requested(Object *ob)
     default:
       break;
   }
+}
+
+void drw_batch_cache_generate_requested_evaluated_mesh(Object *ob)
+{
+  /* NOTE: Logic here is duplicated from #drw_batch_cache_generate_requested. */
+
+  const DRWContextState *draw_ctx = DRW_context_state_get();
+  const Scene *scene = draw_ctx->scene;
+  const enum eContextObjectMode mode = CTX_data_mode_enum_ex(
+      draw_ctx->object_edit, draw_ctx->obact, draw_ctx->object_mode);
+  const bool is_paint_mode = ELEM(
+      mode, CTX_MODE_SCULPT, CTX_MODE_PAINT_TEXTURE, CTX_MODE_PAINT_VERTEX, CTX_MODE_PAINT_WEIGHT);
+
+  const bool use_hide = ((ob->type == OB_MESH) &&
+                         ((is_paint_mode && (ob == draw_ctx->obact) &&
+                           DRW_object_use_hide_faces(ob)) ||
+                          ((mode == CTX_MODE_EDIT_MESH) && DRW_object_is_in_edit_mode(ob))));
+
+  Mesh *mesh = BKE_object_get_evaluated_mesh(ob);
+  DRW_mesh_batch_cache_create_requested(DST.task_graph, ob, mesh, scene, is_paint_mode, use_hide);
 }
 
 void drw_batch_cache_generate_requested_delayed(Object *ob)

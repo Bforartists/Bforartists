@@ -21,20 +21,35 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
 /* **************** Inpaint/ ******************** */
 
-static bNodeSocketTemplate cmp_node_inpaint_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f}, {-1, ""}};
-static bNodeSocketTemplate cmp_node_inpaint_out[] = {{SOCK_RGBA, N_("Image")}, {-1, ""}};
+namespace blender::nodes {
 
-void register_node_type_cmp_inpaint(void)
+static void cmp_node_inpaint_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
+
+static void node_composit_buts_inpaint(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "distance", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_inpaint()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_INPAINT, "Inpaint", NODE_CLASS_OP_FILTER, 0);
-  node_type_socket_templates(&ntype, cmp_node_inpaint_in, cmp_node_inpaint_out);
+  ntype.declare = blender::nodes::cmp_node_inpaint_declare;
+  ntype.draw_buttons = node_composit_buts_inpaint;
 
   nodeRegisterType(&ntype);
 }

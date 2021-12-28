@@ -61,7 +61,7 @@ static void sh_node_tex_brick_declare(NodeDeclarationBuilder &b)
 
 static void node_shader_init_tex_brick(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeTexBrick *tex = (NodeTexBrick *)MEM_callocN(sizeof(NodeTexBrick), "NodeTexBrick");
+  NodeTexBrick *tex = MEM_cnew<NodeTexBrick>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
 
@@ -268,7 +268,7 @@ static void sh_node_brick_build_multi_function(blender::nodes::NodeMultiFunction
 
 }  // namespace blender::nodes
 
-void register_node_type_sh_tex_brick(void)
+void register_node_type_sh_tex_brick()
 {
   static bNodeType ntype;
 

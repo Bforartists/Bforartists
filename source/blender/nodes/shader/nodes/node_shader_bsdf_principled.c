@@ -25,7 +25,7 @@ static bNodeSocketTemplate sh_node_bsdf_principled_in[] = {
     {SOCK_RGBA, N_("Base Color"), 0.8f, 0.8f, 0.8f, 1.0f, 0.0f, 1.0f},
     {SOCK_FLOAT, N_("Subsurface"), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
     {SOCK_VECTOR,
-     N_("Subsurface Radius (R,G,B)"),
+     N_("Subsurface Radius"),
      1.0f,
      0.2f,
      0.1f,
@@ -169,17 +169,16 @@ static int node_shader_gpu_bsdf_principled(GPUMaterial *mat,
 
 static void node_shader_update_principled(bNodeTree *ntree, bNode *node)
 {
-  bNodeSocket *sock;
-  int distribution = node->custom1;
-  int sss_method = node->custom2;
+  const int distribution = node->custom1;
+  const int sss_method = node->custom2;
 
-  for (sock = node->inputs.first; sock; sock = sock->next) {
+  for (bNodeSocket *sock = node->inputs.first; sock; sock = sock->next) {
     if (STREQ(sock->name, "Transmission Roughness")) {
       nodeSetSocketAvailability(ntree, sock, distribution == SHD_GLOSSY_GGX);
     }
 
     if (STR_ELEM(sock->name, "Subsurface IOR", "Subsurface Anisotropy")) {
-      nodeSetSocketAvailability(ntree, sock, sss_method == SHD_SUBSURFACE_BURLEY);
+      nodeSetSocketAvailability(ntree, sock, sss_method != SHD_SUBSURFACE_BURLEY);
     }
   }
 }

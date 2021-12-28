@@ -82,8 +82,12 @@ class GeometryDataSource : public DataSource {
     return object_eval_;
   }
 
+  /**
+   * Only data sets corresponding to mesh objects in edit mode currently support selection
+   * filtering.
+   */
   bool has_selection_filter() const override;
-  void apply_selection_filter(MutableSpan<bool> rows_included) const;
+  IndexMask apply_selection_filter(Vector<int64_t> &indices) const;
 
   void foreach_default_column_ids(
       FunctionRef<void(const SpreadsheetColumnID &, bool is_extra)> fn) const override;

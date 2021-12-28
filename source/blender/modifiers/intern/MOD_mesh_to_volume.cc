@@ -150,7 +150,15 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   {
     uiLayout *col = uiLayoutColumn(layout, false);
-    uiItemR(col, ptr, "use_fill_volume", 0, nullptr, ICON_NONE);
+
+    /*------------------- bfa - original props */
+    // uiItemR(col, ptr, "use_fill_volume", 0, nullptr, ICON_NONE);
+    uiLayout *row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_fill_volume", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_fill_volume", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+
     uiItemR(col, ptr, "exterior_band_width", 0, nullptr, ICON_NONE);
 
     uiLayout *subcol = uiLayoutColumn(col, false);

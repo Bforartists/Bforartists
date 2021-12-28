@@ -229,7 +229,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *sub, *row;
+  uiLayout *sub, *row, *col; /*bfa, added *col*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -246,16 +246,54 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
     uiItemR(layout, ptr, "ratio", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 
-    row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
-    uiLayoutSetPropDecorate(row, false);
-    sub = uiLayoutRow(row, true);
-    uiItemR(sub, ptr, "use_symmetry", 0, "", ICON_NONE);
-    sub = uiLayoutRow(sub, true);
-    uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
-    uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    /*------------------- bfa - original props */
 
-    uiItemR(layout, ptr, "use_collapse_triangulate", 0, NULL, ICON_NONE);
+    //row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
+    //uiLayoutSetPropDecorate(row, false);
+    //sub = uiLayoutRow(row, true);
+    //uiItemR(sub, ptr, "use_symmetry", 0, "", ICON_NONE);
+    //sub = uiLayoutRow(sub, true);
+    //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
+    //uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+    //uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+
+    // ------------------ bfa new left aligned prop with triangle button to hide the inactive content
+
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = uiLayoutRow(split, false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_symmetry", 0, "Symmetry", ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_symmetry", 0);
+
+    /* SECOND PART ................................................ */
+    row = uiLayoutRow(split, false);
+    if (RNA_boolean_get(ptr, "use_symmetry")) {
+      uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+      uiItemR(row, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+      uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    }
+    else {
+      uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
+
+    /* ------------ end bfa */
+
+    /*------------------- bfa - original props */
+    //uiItemR(layout, ptr, "use_collapse_triangulate", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_collapse_triangulate", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
+
+    /* ------------ end bfa */
 
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
     sub = uiLayoutRow(layout, true);
@@ -270,7 +308,14 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(layout, ptr, "angle_limit", 0, NULL, ICON_NONE);
     uiLayout *col = uiLayoutColumn(layout, false);
     uiItemR(col, ptr, "delimit", 0, NULL, ICON_NONE);
-    uiItemR(layout, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
+
+    /*------------------- bfa - original prop */
+    //uiItemR(layout, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
+    row = uiLayoutRow(layout, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
   uiItemL(layout, count_info, ICON_NONE);
 

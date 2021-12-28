@@ -79,7 +79,7 @@ typedef struct wmMsg {
 } wmMsg;
 
 typedef struct wmMsgSubscribeKey {
-  /** Linked list for predicable ordering, otherwise we would depend on ghash bucketing. */
+  /** Linked list for predicable ordering, otherwise we would depend on #GHash bucketing. */
   struct wmMsgSubscribeKey *next, *prev;
   ListBase values;
   /* over-alloc, eg: wmMsgSubscribeKey_RNA */
@@ -124,6 +124,16 @@ void WM_msg_dump(struct wmMsgBus *mbus, const char *info);
 void WM_msgbus_handle(struct wmMsgBus *mbus, struct bContext *C);
 
 void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key);
+/**
+ * \param msg_key_test: Needs following #wmMsgSubscribeKey fields filled in:
+ * - `msg.params`
+ * - `msg.head.type`
+ * - `msg.head.id`
+ * .. other values should be zeroed.
+ *
+ * \return The key for this subscription.
+ * note that this is only needed in rare cases when the key needs further manipulation.
+ */
 wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
                                              const wmMsgSubscribeKey *msg_key_test,
                                              const wmMsgSubscribeValue *msg_val_params);

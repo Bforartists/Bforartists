@@ -28,7 +28,6 @@
 #include "BLI_color.hh"
 #include "BLI_float3.hh"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
@@ -192,7 +191,6 @@ static void refresh_socket_list(bNodeTree &ntree,
                                 bNode &node,
                                 ListBase &sockets,
                                 Span<SocketDeclarationPtr> socket_decls,
-                                const eNodeSocketInOut in_out,
                                 const bool do_id_user)
 {
   Vector<bNodeSocket *> old_sockets = sockets;
@@ -211,7 +209,7 @@ static void refresh_socket_list(bNodeTree &ntree,
     bNodeSocket *new_socket = nullptr;
     if (old_socket_with_same_identifier == nullptr) {
       /* Create a completely new socket. */
-      new_socket = &socket_decl->build(ntree, node, in_out);
+      new_socket = &socket_decl->build(ntree, node);
     }
     else {
       STRNCPY(old_socket_with_same_identifier->name, socket_decl->name().c_str());
@@ -238,6 +236,14 @@ static void refresh_socket_list(bNodeTree &ntree,
               link->tosock = new_socket;
             }
           }
+          LISTBASE_FOREACH (bNodeLink *, internal_link, &node.internal_links) {
+            if (internal_link->fromsock == old_socket_with_same_identifier) {
+              internal_link->fromsock = new_socket;
+            }
+            else if (internal_link->tosock == old_socket_with_same_identifier) {
+              internal_link->tosock = new_socket;
+            }
+          }
         }
       }
     }
@@ -259,8 +265,8 @@ static void refresh_node(bNodeTree &ntree,
                          blender::nodes::NodeDeclaration &node_decl,
                          bool do_id_user)
 {
-  refresh_socket_list(ntree, node, node.inputs, node_decl.inputs(), SOCK_IN, do_id_user);
-  refresh_socket_list(ntree, node, node.outputs, node_decl.outputs(), SOCK_OUT, do_id_user);
+  refresh_socket_list(ntree, node, node.inputs, node_decl.inputs(), do_id_user);
+  refresh_socket_list(ntree, node, node.outputs, node_decl.outputs(), do_id_user);
 }
 
 void node_verify_sockets(bNodeTree *ntree, bNode *node, bool do_id_user)
@@ -303,8 +309,7 @@ void node_socket_init_default_value(bNodeSocket *sock)
 
   switch (type) {
     case SOCK_FLOAT: {
-      bNodeSocketValueFloat *dval = (bNodeSocketValueFloat *)MEM_callocN(
-          sizeof(bNodeSocketValueFloat), "node socket value float");
+      bNodeSocketValueFloat *dval = MEM_cnew<bNodeSocketValueFloat>("node socket value float");
       dval->subtype = subtype;
       dval->value = 0.0f;
       dval->min = -FLT_MAX;
@@ -314,8 +319,7 @@ void node_socket_init_default_value(bNodeSocket *sock)
       break;
     }
     case SOCK_INT: {
-      bNodeSocketValueInt *dval = (bNodeSocketValueInt *)MEM_callocN(sizeof(bNodeSocketValueInt),
-                                                                     "node socket value int");
+      bNodeSocketValueInt *dval = MEM_cnew<bNodeSocketValueInt>("node socket value int");
       dval->subtype = subtype;
       dval->value = 0;
       dval->min = INT_MIN;
@@ -325,8 +329,7 @@ void node_socket_init_default_value(bNodeSocket *sock)
       break;
     }
     case SOCK_BOOLEAN: {
-      bNodeSocketValueBoolean *dval = (bNodeSocketValueBoolean *)MEM_callocN(
-          sizeof(bNodeSocketValueBoolean), "node socket value bool");
+      bNodeSocketValueBoolean *dval = MEM_cnew<bNodeSocketValueBoolean>("node socket value bool");
       dval->value = false;
 
       sock->default_value = dval;
@@ -334,8 +337,7 @@ void node_socket_init_default_value(bNodeSocket *sock)
     }
     case SOCK_VECTOR: {
       static float default_value[] = {0.0f, 0.0f, 0.0f};
-      bNodeSocketValueVector *dval = (bNodeSocketValueVector *)MEM_callocN(
-          sizeof(bNodeSocketValueVector), "node socket value vector");
+      bNodeSocketValueVector *dval = MEM_cnew<bNodeSocketValueVector>("node socket value vector");
       dval->subtype = subtype;
       copy_v3_v3(dval->value, default_value);
       dval->min = -FLT_MAX;
@@ -346,16 +348,14 @@ void node_socket_init_default_value(bNodeSocket *sock)
     }
     case SOCK_RGBA: {
       static float default_value[] = {0.0f, 0.0f, 0.0f, 1.0f};
-      bNodeSocketValueRGBA *dval = (bNodeSocketValueRGBA *)MEM_callocN(
-          sizeof(bNodeSocketValueRGBA), "node socket value color");
+      bNodeSocketValueRGBA *dval = MEM_cnew<bNodeSocketValueRGBA>("node socket value color");
       copy_v4_v4(dval->value, default_value);
 
       sock->default_value = dval;
       break;
     }
     case SOCK_STRING: {
-      bNodeSocketValueString *dval = (bNodeSocketValueString *)MEM_callocN(
-          sizeof(bNodeSocketValueString), "node socket value string");
+      bNodeSocketValueString *dval = MEM_cnew<bNodeSocketValueString>("node socket value string");
       dval->subtype = subtype;
       dval->value[0] = '\0';
 
@@ -363,40 +363,38 @@ void node_socket_init_default_value(bNodeSocket *sock)
       break;
     }
     case SOCK_OBJECT: {
-      bNodeSocketValueObject *dval = (bNodeSocketValueObject *)MEM_callocN(
-          sizeof(bNodeSocketValueObject), "node socket value object");
+      bNodeSocketValueObject *dval = MEM_cnew<bNodeSocketValueObject>("node socket value object");
       dval->value = nullptr;
 
       sock->default_value = dval;
       break;
     }
     case SOCK_IMAGE: {
-      bNodeSocketValueImage *dval = (bNodeSocketValueImage *)MEM_callocN(
-          sizeof(bNodeSocketValueImage), "node socket value image");
+      bNodeSocketValueImage *dval = MEM_cnew<bNodeSocketValueImage>("node socket value image");
       dval->value = nullptr;
 
       sock->default_value = dval;
       break;
     }
     case SOCK_COLLECTION: {
-      bNodeSocketValueCollection *dval = (bNodeSocketValueCollection *)MEM_callocN(
-          sizeof(bNodeSocketValueCollection), "node socket value object");
+      bNodeSocketValueCollection *dval = MEM_cnew<bNodeSocketValueCollection>(
+          "node socket value object");
       dval->value = nullptr;
 
       sock->default_value = dval;
       break;
     }
     case SOCK_TEXTURE: {
-      bNodeSocketValueTexture *dval = (bNodeSocketValueTexture *)MEM_callocN(
-          sizeof(bNodeSocketValueTexture), "node socket value texture");
+      bNodeSocketValueTexture *dval = MEM_cnew<bNodeSocketValueTexture>(
+          "node socket value texture");
       dval->value = nullptr;
 
       sock->default_value = dval;
       break;
     }
     case SOCK_MATERIAL: {
-      bNodeSocketValueMaterial *dval = (bNodeSocketValueMaterial *)MEM_callocN(
-          sizeof(bNodeSocketValueMaterial), "node socket value material");
+      bNodeSocketValueMaterial *dval = MEM_cnew<bNodeSocketValueMaterial>(
+          "node socket value material");
       dval->value = nullptr;
 
       sock->default_value = dval;
@@ -549,7 +547,7 @@ void node_socket_skip_reroutes(
 }
 
 static void standard_node_socket_interface_init_socket(bNodeTree *UNUSED(ntree),
-                                                       bNodeSocket *stemp,
+                                                       const bNodeSocket *interface_socket,
                                                        bNode *UNUSED(node),
                                                        bNodeSocket *sock,
                                                        const char *UNUSED(data_path))
@@ -560,47 +558,50 @@ static void standard_node_socket_interface_init_socket(bNodeTree *UNUSED(ntree),
   /* XXX socket interface 'type' value is not used really,
    * but has to match or the copy function will bail out
    */
-  stemp->type = stemp->typeinfo->type;
+  const_cast<bNodeSocket *>(interface_socket)->type = interface_socket->typeinfo->type;
   /* copy default_value settings */
-  node_socket_copy_default_value(sock, stemp);
+  node_socket_copy_default_value(sock, interface_socket);
 }
 
 /* copies settings that are not changed for each socket instance */
 static void standard_node_socket_interface_verify_socket(bNodeTree *UNUSED(ntree),
-                                                         bNodeSocket *stemp,
+                                                         const bNodeSocket *interface_socket,
                                                          bNode *UNUSED(node),
                                                          bNodeSocket *sock,
                                                          const char *UNUSED(data_path))
 {
   /* sanity check */
-  if (sock->type != stemp->typeinfo->type) {
+  if (sock->type != interface_socket->typeinfo->type) {
     return;
   }
 
   /* make sure both exist */
-  if (!stemp->default_value) {
+  if (!interface_socket->default_value) {
     return;
   }
   node_socket_init_default_value(sock);
 
-  switch (stemp->typeinfo->type) {
+  switch (interface_socket->typeinfo->type) {
     case SOCK_FLOAT: {
       bNodeSocketValueFloat *toval = (bNodeSocketValueFloat *)sock->default_value;
-      bNodeSocketValueFloat *fromval = (bNodeSocketValueFloat *)stemp->default_value;
+      const bNodeSocketValueFloat *fromval = (const bNodeSocketValueFloat *)
+                                                 interface_socket->default_value;
       toval->min = fromval->min;
       toval->max = fromval->max;
       break;
     }
     case SOCK_INT: {
       bNodeSocketValueInt *toval = (bNodeSocketValueInt *)sock->default_value;
-      bNodeSocketValueInt *fromval = (bNodeSocketValueInt *)stemp->default_value;
+      const bNodeSocketValueInt *fromval = (const bNodeSocketValueInt *)
+                                               interface_socket->default_value;
       toval->min = fromval->min;
       toval->max = fromval->max;
       break;
     }
     case SOCK_VECTOR: {
       bNodeSocketValueVector *toval = (bNodeSocketValueVector *)sock->default_value;
-      bNodeSocketValueVector *fromval = (bNodeSocketValueVector *)stemp->default_value;
+      const bNodeSocketValueVector *fromval = (const bNodeSocketValueVector *)
+                                                  interface_socket->default_value;
       toval->min = fromval->min;
       toval->max = fromval->max;
       break;
@@ -628,7 +629,7 @@ static bNodeSocketType *make_standard_socket_type(int type, int subtype)
   bNodeSocketType *stype;
   StructRNA *srna;
 
-  stype = (bNodeSocketType *)MEM_callocN(sizeof(bNodeSocketType), "node socket C type");
+  stype = MEM_cnew<bNodeSocketType>("node socket C type");
   stype->free_self = (void (*)(bNodeSocketType * stype)) MEM_freeN;
   BLI_strncpy(stype->idname, socket_idname, sizeof(stype->idname));
   BLI_strncpy(stype->label, socket_label, sizeof(stype->label));
@@ -672,7 +673,7 @@ static bNodeSocketType *make_socket_type_virtual()
   bNodeSocketType *stype;
   StructRNA *srna;
 
-  stype = (bNodeSocketType *)MEM_callocN(sizeof(bNodeSocketType), "node socket C type");
+  stype = MEM_cnew<bNodeSocketType>("node socket C type");
   stype->free_self = (void (*)(bNodeSocketType * stype)) MEM_freeN;
   BLI_strncpy(stype->idname, socket_idname, sizeof(stype->idname));
 

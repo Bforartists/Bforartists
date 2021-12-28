@@ -35,9 +35,9 @@ class TransformOperation : public MultiThreadedOperation {
   int translate_x_;
   int translate_y_;
   float scale_;
-  rcti scale_canvas_;
-  rcti rotate_canvas_;
-  rcti translate_canvas_;
+  rcti scale_canvas_ = COM_AREA_NONE;
+  rcti rotate_canvas_ = COM_AREA_NONE;
+  rcti translate_canvas_ = COM_AREA_NONE;
 
   /* Set variables. */
   PixelSampler sampler_;
@@ -82,7 +82,9 @@ class TransformOperation : public MultiThreadedOperation {
   void determine_canvas(const rcti &preferred_area, rcti &r_area) override;
 
  private:
+  /** Translate -> Rotate -> Scale. */
   void transform(BuffersIterator<float> &it, const MemoryBuffer *input_img);
+  /** Scale -> Rotate -> Translate. */
   void transform_inverted(BuffersIterator<float> &it, const MemoryBuffer *input_img);
 };
 

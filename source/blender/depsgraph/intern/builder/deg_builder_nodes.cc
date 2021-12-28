@@ -179,15 +179,30 @@ IDNode *DepsgraphNodeBuilder::add_id_node(ID *id)
   id_node->previously_visible_components_mask = previously_visible_components_mask;
   id_node->previous_eval_flags = previous_eval_flags;
   id_node->previous_customdata_masks = previous_customdata_masks;
+
   /* NOTE: Zero number of components indicates that ID node was just created. */
-  if (id_node->components.is_empty() && deg_copy_on_write_is_needed(id_type)) {
-    ComponentNode *comp_cow = id_node->add_component(NodeType::COPY_ON_WRITE);
-    OperationNode *op_cow = comp_cow->add_operation(
-        [id_node](::Depsgraph *depsgraph) { deg_evaluate_copy_on_write(depsgraph, id_node); },
-        OperationCode::COPY_ON_WRITE,
-        "",
-        -1);
-    graph_->operations.append(op_cow);
+  const bool is_newly_created = id_node->components.is_empty();
+
+  if (is_newly_created) {
+    if (deg_copy_on_write_is_needed(id_type)) {
+      ComponentNode *comp_cow = id_node->add_component(NodeType::COPY_ON_WRITE);
+      OperationNode *op_cow = comp_cow->add_operation(
+          [id_node](::Depsgraph *depsgraph) { deg_evaluate_copy_on_write(depsgraph, id_node); },
+          OperationCode::COPY_ON_WRITE,
+          "",
+          -1);
+      graph_->operations.append(op_cow);
+    }
+
+    ComponentNode *visibility_component = id_node->add_component(NodeType::VISIBILITY);
+    OperationNode *visibility_operation = visibility_component->add_operation(
+        nullptr, OperationCode::OPERATION, "", -1);
+    /* Pin the node so that it and its relations are preserved by the unused nodes/relations
+     * deletion. This is mainly to make it easier to debug visibility. */
+    /* NOTE: Keep un-pinned for the 3.0 release. This way we are more sure that side effects of the
+     * change is minimal outside of the dependency graph area. */
+    // visibility_operation->flag |= OperationFlag::DEPSOP_FLAG_PINNED;
+    graph_->operations.append(visibility_operation);
   }
   return id_node;
 }
@@ -375,8 +390,6 @@ void DepsgraphNodeBuilder::begin_build()
  * NOTE: This is split in two, a static function and a public method of the node builder, to allow
  * the code to access the builder's data more easily. */
 
-/* `id_cow_self` is the user of `id_pointer`, see also `LibraryIDLinkCallbackData` struct
- * definition. */
 int DepsgraphNodeBuilder::foreach_id_cow_detect_need_for_update_callback(ID *id_cow_self,
                                                                          ID *id_pointer)
 {
@@ -425,21 +438,18 @@ static int foreach_id_cow_detect_need_for_update_callback(LibraryIDLinkCallbackD
   return builder->foreach_id_cow_detect_need_for_update_callback(id_cow_self, id);
 }
 
-/* Check for IDs that need to be flushed (COW-updated) because the depsgraph itself created or
- * removed some of their evaluated dependencies.
- *
- * NOTE: Currently the only ID types that depsgraph may decide to not evaluate/generate COW
- * copies for, even though they are referenced by other data-blocks, are Collections and Objects
- * (through their various visibility flags, and the ones from LayerCollections too). However, this
- * code is kept generic as it makes it more future-proof, and optimization here would give
- * negligible performance improvements in typical cases.
- *
- * NOTE: This mechanism may also 'fix' some missing update tagging from non-depsgraph code in
- * some cases. This is slightly unfortunate (as it may hide issues in other parts of Blender
- * code), but cannot really be avoided currently.
- */
 void DepsgraphNodeBuilder::update_invalid_cow_pointers()
 {
+  /* NOTE: Currently the only ID types that depsgraph may decide to not evaluate/generate COW
+   * copies for, even though they are referenced by other data-blocks, are Collections and Objects
+   * (through their various visibility flags, and the ones from #LayerCollections too). However,
+   * this code is kept generic as it makes it more future-proof, and optimization here would give
+   * negligible performance improvements in typical cases.
+   *
+   * NOTE: This mechanism may also 'fix' some missing update tagging from non-depsgraph code in
+   * some cases. This is slightly unfortunate (as it may hide issues in other parts of Blender
+   * code), but cannot really be avoided currently. */
+
   for (const IDNode *id_node : graph_->id_nodes) {
     if (id_node->previously_visible_components_mask == 0) {
       /* Newly added node/ID, no need to check it. */
@@ -1056,10 +1066,6 @@ void DepsgraphNodeBuilder::build_object_pointcache(Object *object)
                      });
 }
 
-/**
- * Build graph nodes for AnimData block and any animated images used.
- * \param id: ID-Block which hosts the AnimData
- */
 void DepsgraphNodeBuilder::build_animdata(ID *id)
 {
   /* Special handling for animated images/sequences. */
@@ -1113,9 +1119,6 @@ void DepsgraphNodeBuilder::build_animdata_nlastrip_targets(ListBase *strips)
   }
 }
 
-/**
- * Build graph nodes to update the current frame in image users.
- */
 void DepsgraphNodeBuilder::build_animation_images(ID *id)
 {
   if (BKE_image_user_id_has_animation(id)) {
@@ -1137,12 +1140,6 @@ void DepsgraphNodeBuilder::build_action(bAction *action)
   add_operation_node(&action->id, NodeType::ANIMATION, OperationCode::ANIMATION_EVAL);
 }
 
-/**
- * Build graph node(s) for Driver
- * \param id: ID-Block that driver is attached to
- * \param fcu: Driver-FCurve
- * \param driver_index: Index in animation data drivers list
- */
 void DepsgraphNodeBuilder::build_driver(ID *id, FCurve *fcurve, int driver_index)
 {
   /* Create data node for this driver */
@@ -1713,9 +1710,8 @@ void DepsgraphNodeBuilder::build_nodetree(bNodeTree *ntree)
   build_idproperties(ntree->id.properties);
   /* Animation, */
   build_animdata(&ntree->id);
-  /* Shading update. */
-  add_operation_node(&ntree->id, NodeType::SHADING, OperationCode::MATERIAL_UPDATE);
-  add_operation_node(&ntree->id, NodeType::SHADING_PARAMETERS, OperationCode::MATERIAL_UPDATE);
+  /* Output update. */
+  add_operation_node(&ntree->id, NodeType::NTREE_OUTPUT, OperationCode::NTREE_OUTPUT);
   /* nodetree's nodes... */
   LISTBASE_FOREACH (bNode *, bnode, &ntree->nodes) {
     build_idproperties(bnode->prop);

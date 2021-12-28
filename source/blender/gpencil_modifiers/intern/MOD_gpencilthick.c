@@ -186,25 +186,34 @@ static void foreachIDLink(GpencilModifierData *md, Object *ob, IDWalkFunc walk, 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col, *sub; /*bfa, added *row, *col*, *sub*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_normalized_thickness", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_normalized_thickness", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
   if (RNA_boolean_get(ptr, "use_normalized_thickness")) {
     uiItemR(layout, ptr, "thickness", 0, NULL, ICON_NONE);
   }
   else {
     const bool is_weighted = !RNA_boolean_get(ptr, "use_weight_factor");
-    uiLayout *row = uiLayoutRow(layout, true);
+    row = uiLayoutRow(layout, true);
     uiLayoutSetActive(row, is_weighted);
     uiItemR(row, ptr, "thickness_factor", 0, NULL, ICON_NONE);
-    uiLayout *sub = uiLayoutRow(row, true);
+    sub = uiLayoutRow(row, true);
     uiLayoutSetActive(sub, true);
     uiItemR(row, ptr, "use_weight_factor", 0, "", ICON_MOD_VERTEX_WEIGHT);
   }
-
   gpencil_modifier_panel_end(layout, ptr);
 }
 

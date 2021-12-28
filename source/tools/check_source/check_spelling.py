@@ -161,7 +161,7 @@ re_ignore = re.compile(
     r'('
 
     # URL.
-    r'(https?|ftp)://\S+|'
+    r'\b(https?|ftp)://\S+|'
     # Email address: <me@email.com>
     #                <someone@foo.bar-baz.com>
     r"<\w+@[\w\.\-]+>|"
@@ -190,8 +190,10 @@ re_ignore = re.compile(
     r'\w+\.\w+\S*|'
 
     # Single and back-tick quotes (often used to reference code).
-    r"\s\`[^\n`]+\`|"
-    r"\s'[^\n']+'"
+    # Allow white-space or any bracket prefix, e.g:
+    # (`expr a+b`)
+    r"[\s\(\[\{]\`[^\n`]+\`|"
+    r"[\s\(\[\{]'[^\n']+'"
 
     r')',
     re.MULTILINE | re.DOTALL,

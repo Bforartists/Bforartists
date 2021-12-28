@@ -63,11 +63,6 @@
 
 /* **************************************************** */
 
-/**
- * Only delete the nominated keyframe from provided F-Curve.
- * Not recommended to be used many times successively. For that
- * there is #delete_fcurve_keys().
- */
 void delete_fcurve_key(FCurve *fcu, int index, bool do_recalc)
 {
   /* sanity check */
@@ -101,7 +96,6 @@ void delete_fcurve_key(FCurve *fcu, int index, bool do_recalc)
   }
 }
 
-/* Delete selected keyframes in given F-Curve */
 bool delete_fcurve_keys(FCurve *fcu)
 {
   bool changed = false;
@@ -140,7 +134,6 @@ void clear_fcurve_keys(FCurve *fcu)
 
 /* ---------------- */
 
-/* duplicate selected keyframes for the given F-Curve */
 void duplicate_fcurve_keys(FCurve *fcu)
 {
   /* this can only work when there is an F-Curve, and also when there are some BezTriples */
@@ -176,10 +169,6 @@ void duplicate_fcurve_keys(FCurve *fcu)
 /* **************************************************** */
 /* Various Tools */
 
-/**
- * Basic F-Curve 'cleanup' function that removes 'double points' and unnecessary keyframes on
- * linear-segments only optionally clears up curve if one keyframe with default value remains.
- */
 void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, bool cleardefault)
 {
   FCurve *fcu = (FCurve *)ale->key_data;
@@ -320,8 +309,8 @@ void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, boo
 
 /** Find the first segment of consecutive selected curve points, starting from \a start_index.
  * Keys that have BEZT_FLAG_IGNORE_TAG set are treated as unselected.
- * \param r_segment_start_idx returns the start index of the segment.
- * \param r_segment_len returns the number of curve points in the segment.
+ * \param r_segment_start_idx: returns the start index of the segment.
+ * \param r_segment_len: returns the number of curve points in the segment.
  * \return whether such a segment was found or not.*/
 static bool find_fcurve_segment(FCurve *fcu,
                                 const int start_index,
@@ -354,6 +343,71 @@ static bool find_fcurve_segment(FCurve *fcu,
   /* If the last curve point was in the segment, `r_segment_len` and `r_segment_start_idx`
    * are already updated and true is returned. */
   return in_segment;
+}
+
+/* Return a list of FCurveSegment with a start index and a length.
+ * A segment is a continuous selection of keyframes.
+ * Keys that have BEZT_FLAG_IGNORE_TAG set are treated as unselected.
+ * The caller is responsible for freeing the memory. */
+ListBase find_fcurve_segments(FCurve *fcu)
+{
+  ListBase segments = {NULL, NULL};
+  int segment_start_idx = 0;
+  int segment_len = 0;
+  int current_index = 0;
+
+  while (find_fcurve_segment(fcu, current_index, &segment_start_idx, &segment_len)) {
+    FCurveSegment *segment;
+    segment = MEM_callocN(sizeof(*segment), "FCurveSegment");
+    segment->start_index = segment_start_idx;
+    segment->length = segment_len;
+    BLI_addtail(&segments, segment);
+    current_index = segment_start_idx + segment_len;
+  }
+  return segments;
+}
+
+static BezTriple fcurve_segment_start_get(FCurve *fcu, int index)
+{
+  BezTriple start_bezt = index - 1 >= 0 ? fcu->bezt[index - 1] : fcu->bezt[index];
+  return start_bezt;
+}
+
+static BezTriple fcurve_segment_end_get(FCurve *fcu, int index)
+{
+  BezTriple end_bezt = index < fcu->totvert ? fcu->bezt[index] : fcu->bezt[index - 1];
+  return end_bezt;
+}
+
+/* ---------------- */
+
+void blend_to_neighbor_fcurve_segment(FCurve *fcu, FCurveSegment *segment, const float factor)
+{
+  const float blend_factor = fabs(factor * 2 - 1);
+  BezTriple target_bezt;
+  /* Find which key to blend towards. */
+  if (factor < 0.5f) {
+    target_bezt = fcurve_segment_start_get(fcu, segment->start_index);
+  }
+  else {
+    target_bezt = fcurve_segment_end_get(fcu, segment->start_index + segment->length);
+  }
+  /* Blend each key individually. */
+  for (int i = segment->start_index; i < segment->start_index + segment->length; i++) {
+    fcu->bezt[i].vec[1][1] = interpf(target_bezt.vec[1][1], fcu->bezt[i].vec[1][1], blend_factor);
+  }
+}
+
+/* ---------------- */
+
+void breakdown_fcurve_segment(FCurve *fcu, FCurveSegment *segment, const float factor)
+{
+  BezTriple left_bezt = fcurve_segment_start_get(fcu, segment->start_index);
+  BezTriple right_bezt = fcurve_segment_end_get(fcu, segment->start_index + segment->length);
+
+  for (int i = segment->start_index; i < segment->start_index + segment->length; i++) {
+    fcu->bezt[i].vec[1][1] = interpf(right_bezt.vec[1][1], left_bezt.vec[1][1], factor);
+  }
 }
 
 /* ---------------- */
@@ -429,13 +483,6 @@ static void decimate_fcurve_segment(FCurve *fcu,
                                 target_fcurve_verts);
 }
 
-/**
- * F-Curve 'decimate' function that removes a certain ratio of curve
- * points that will affect the curves overall shape the least.
- * If you want to remove based on a error margin, set remove_ratio to 1 and
- * simply specify the desired error_sq_max. Otherwise, set the error margin to
- * FLT_MAX.
- */
 bool decimate_fcurve(bAnimListElem *ale, float remove_ratio, float error_sq_max)
 {
   FCurve *fcu = (FCurve *)ale->key_data;
@@ -458,15 +505,12 @@ bool decimate_fcurve(bAnimListElem *ale, float remove_ratio, float error_sq_max)
     fcu->bezt[i].f2 &= ~BEZT_FLAG_TEMP_TAG;
   }
 
-  /* Only decimate the individual selected curve segments. */
-  int segment_start_idx = 0;
-  int segment_len = 0;
-  int current_index = 0;
-
-  while (find_fcurve_segment(fcu, current_index, &segment_start_idx, &segment_len)) {
-    decimate_fcurve_segment(fcu, segment_start_idx, segment_len, remove_ratio, error_sq_max);
-    current_index = segment_start_idx + segment_len;
+  ListBase segments = find_fcurve_segments(fcu);
+  LISTBASE_FOREACH (FCurveSegment *, segment, &segments) {
+    decimate_fcurve_segment(
+        fcu, segment->start_index, segment->length, remove_ratio, error_sq_max);
   }
+  BLI_freelistN(&segments);
 
   uint old_totvert = fcu->totvert;
   fcu->bezt = NULL;
@@ -495,8 +539,6 @@ typedef struct tSmooth_Bezt {
   float y1, y2, y3;    /* averaged before/new/after y-values */
 } tSmooth_Bezt;
 
-/* Use a weighted moving-means method to reduce intensity of fluctuations */
-/* TODO: introduce scaling factor for weighting falloff */
 void smooth_fcurve(FCurve *fcu)
 {
   int totSel = 0;
@@ -600,7 +642,6 @@ typedef struct TempFrameValCache {
   float frame, val;
 } TempFrameValCache;
 
-/* Evaluates the curves between each selected keyframe on each frame, and keys the value. */
 void sample_fcurve(FCurve *fcu)
 {
   BezTriple *bezt, *start = NULL, *end = NULL;
@@ -709,7 +750,6 @@ typedef struct tAnimCopybufItem {
   bool is_bone;  /* special flag for armature bones */
 } tAnimCopybufItem;
 
-/* This function frees any MEM_calloc'ed copy/paste buffer data */
 void ANIM_fcurves_copybuf_free(void)
 {
   tAnimCopybufItem *aci, *acn;
@@ -740,7 +780,6 @@ void ANIM_fcurves_copybuf_free(void)
 
 /* ------------------- */
 
-/* This function adds data to the keyframes copy/paste buffer, freeing existing data first */
 short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
 {
   bAnimListElem *ale;
@@ -1099,8 +1138,6 @@ static void paste_animedit_keys_fcurve(
   calchandles_fcurve(fcu);
 }
 
-/* ------------------- */
-
 const EnumPropertyItem rna_enum_keyframe_paste_offset_items[] = {
     {KEYFRAME_PASTE_OFFSET_CFRA_START,
      "START",
@@ -1133,11 +1170,6 @@ const EnumPropertyItem rna_enum_keyframe_paste_merge_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
-/**
- * This function pastes data from the keyframes copy/paste buffer
- *
- * \return Status code is whether the method FAILED to do anything
- */
 short paste_animedit_keys(bAnimContext *ac,
                           ListBase *anim_data,
                           const eKeyPasteOffset offset_mode,

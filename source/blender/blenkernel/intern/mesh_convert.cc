@@ -589,14 +589,14 @@ struct VertLink {
 
 static void prependPolyLineVert(ListBase *lb, uint index)
 {
-  VertLink *vl = (VertLink *)MEM_callocN(sizeof(VertLink), "VertLink");
+  VertLink *vl = MEM_cnew<VertLink>("VertLink");
   vl->index = index;
   BLI_addhead(lb, vl);
 }
 
 static void appendPolyLineVert(ListBase *lb, uint index)
 {
-  VertLink *vl = (VertLink *)MEM_callocN(sizeof(VertLink), "VertLink");
+  VertLink *vl = MEM_cnew<VertLink>("VertLink");
   vl->index = index;
   BLI_addtail(lb, vl);
 }
@@ -632,7 +632,7 @@ void BKE_mesh_to_curve_nurblist(const Mesh *me, ListBase *nurblist, const int ed
   med = medge;
   for (i = 0; i < medge_len; i++, med++) {
     if (edge_users[i] == edge_users_test) {
-      EdgeLink *edl = (EdgeLink *)MEM_callocN(sizeof(EdgeLink), "EdgeLink");
+      EdgeLink *edl = MEM_cnew<EdgeLink>("EdgeLink");
       edl->edge = med;
 
       BLI_addtail(&edges, edl);
@@ -719,7 +719,7 @@ void BKE_mesh_to_curve_nurblist(const Mesh *me, ListBase *nurblist, const int ed
         VertLink *vl;
 
         /* create new 'nurb' within the curve */
-        nu = (Nurb *)MEM_callocN(sizeof(Nurb), "MeshNurb");
+        nu = MEM_cnew<Nurb>("MeshNurb");
 
         nu->pntsu = totpoly;
         nu->pntsv = 1;
@@ -917,7 +917,7 @@ static void curve_to_mesh_eval_ensure(Object &object)
    * will have no modifiers. */
   Object bevel_object = {{nullptr}};
   if (curve.bevobj != nullptr) {
-    bevel_object = *curve.bevobj;
+    memcpy(&bevel_object, curve.bevobj, sizeof(bevel_object));
     BLI_listbase_clear(&bevel_object.modifiers);
     BKE_object_runtime_reset(&bevel_object);
     curve.bevobj = &bevel_object;
@@ -926,7 +926,7 @@ static void curve_to_mesh_eval_ensure(Object &object)
   /* Same thing for taper. */
   Object taper_object = {{nullptr}};
   if (curve.taperobj != nullptr) {
-    taper_object = *curve.taperobj;
+    memcpy(&taper_object, curve.taperobj, sizeof(taper_object));
     BLI_listbase_clear(&taper_object.modifiers);
     BKE_object_runtime_reset(&taper_object);
     curve.taperobj = &taper_object;
@@ -1065,7 +1065,8 @@ static Mesh *mesh_new_from_mesh_object_with_layers(Depsgraph *depsgraph,
     return nullptr;
   }
 
-  Object object_for_eval = *object;
+  Object object_for_eval;
+  memcpy(&object_for_eval, object, sizeof(object_for_eval));
   if (object_for_eval.runtime.data_orig != nullptr) {
     object_for_eval.data = object_for_eval.runtime.data_orig;
   }
@@ -1277,11 +1278,6 @@ static void add_shapekey_layers(Mesh *mesh_dest, Mesh *mesh_src)
   }
 }
 
-/**
- * \param use_virtual_modifiers: When enabled calculate virtual-modifiers before applying `md_eval`
- * support this since virtual-modifiers are not modifiers from a user perspective,
- * allowing shape keys to be included with the modifier being applied, see: T91923.
- */
 Mesh *BKE_mesh_create_derived_for_modifier(struct Depsgraph *depsgraph,
                                            Scene *scene,
                                            Object *ob_eval,
@@ -1445,7 +1441,8 @@ void BKE_mesh_nomain_to_mesh(Mesh *mesh_src,
   /* mesh_src might depend on mesh_dst, so we need to do everything with a local copy */
   /* TODO(Sybren): the above claim came from 2.7x derived-mesh code (DM_to_mesh);
    * check whether it is still true with Mesh */
-  Mesh tmp = *mesh_dst;
+  Mesh tmp;
+  memcpy(&tmp, mesh_dst, sizeof(tmp));
   int totvert, totedge /*, totface */ /* UNUSED */, totloop, totpoly;
   bool did_shapekeys = false;
   eCDAllocType alloctype = CD_DUPLICATE;

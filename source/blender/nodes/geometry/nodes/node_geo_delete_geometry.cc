@@ -979,8 +979,8 @@ static void do_mesh_separation(GeometrySet &geometry_set,
   /* Needed in all cases. */
   Vector<int> selected_poly_indices;
   Vector<int> new_loop_starts;
-  int num_selected_polys;
-  int num_selected_loops;
+  int num_selected_polys = 0;
+  int num_selected_loops = 0;
 
   const Mesh &mesh_in = *in_component.get_for_read();
   Mesh *mesh_out;
@@ -1279,6 +1279,8 @@ void separate_geometry(GeometrySet &geometry_set,
 
 namespace blender::nodes::node_geo_delete_geometry_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryDeleteGeometry)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Geometry"));
@@ -1293,7 +1295,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
   const bNode *node = static_cast<bNode *>(ptr->data);
-  const NodeGeometryDeleteGeometry &storage = *(const NodeGeometryDeleteGeometry *)node->storage;
+  const NodeGeometryDeleteGeometry &storage = node_storage(*node);
   const AttributeDomain domain = static_cast<AttributeDomain>(storage.domain);
 
   uiItemR(layout, ptr, "domain", 0, "", ICON_NONE);
@@ -1305,8 +1307,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryDeleteGeometry *data = (NodeGeometryDeleteGeometry *)MEM_callocN(
-      sizeof(NodeGeometryDeleteGeometry), __func__);
+  NodeGeometryDeleteGeometry *data = MEM_cnew<NodeGeometryDeleteGeometry>(__func__);
   data->domain = ATTR_DOMAIN_POINT;
   data->mode = GEO_NODE_DELETE_GEOMETRY_MODE_ALL;
 
@@ -1319,11 +1320,9 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
 
-  const bNode &node = params.node();
-  const NodeGeometryDeleteGeometry &storage = *(const NodeGeometryDeleteGeometry *)node.storage;
+  const NodeGeometryDeleteGeometry &storage = node_storage(params.node());
   const AttributeDomain domain = static_cast<AttributeDomain>(storage.domain);
-  const GeometryNodeDeleteGeometryMode mode = static_cast<GeometryNodeDeleteGeometryMode>(
-      storage.mode);
+  const GeometryNodeDeleteGeometryMode mode = (GeometryNodeDeleteGeometryMode)storage.mode;
 
   bool all_is_error = false;
   geometry_set.modify_geometry_sets([&](GeometrySet &geometry_set) {
