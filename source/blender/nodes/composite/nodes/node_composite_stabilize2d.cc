@@ -21,22 +21,25 @@
  * \ingroup cmpnodes
  */
 
-#include "node_composite_util.hh"
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 #include "BKE_context.h"
 #include "BKE_lib_id.h"
 
-/* **************** Translate  ******************** */
+#include "node_composite_util.hh"
 
-static bNodeSocketTemplate cmp_node_stabilize2d_in[] = {
-    {SOCK_RGBA, N_("Image"), 0.8f, 0.8f, 0.8f, 1.0f, 0.0f, 1.0f},
-    {-1, ""},
-};
+/* **************** Stabilize 2D ******************** */
 
-static bNodeSocketTemplate cmp_node_stabilize2d_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {-1, ""},
-};
+namespace blender::nodes {
+
+static void cmp_node_stabilize2d_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({0.8f, 0.8f, 0.8f, 1.0f});
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
 
 static void init(const bContext *C, PointerRNA *ptr)
 {
@@ -50,12 +53,36 @@ static void init(const bContext *C, PointerRNA *ptr)
   node->custom1 = 1;
 }
 
-void register_node_type_cmp_stabilize2d(void)
+static void node_composit_buts_stabilize2d(uiLayout *layout, bContext *C, PointerRNA *ptr)
+{
+  bNode *node = (bNode *)ptr->data;
+
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               nullptr,
+               "CLIP_OT_open",
+               nullptr,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               nullptr);
+
+  if (!node->id) {
+    return;
+  }
+
+  uiItemR(layout, ptr, "filter_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+  uiItemR(layout, ptr, "invert", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_stabilize2d()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_STABILIZE2D, "Stabilize 2D", NODE_CLASS_DISTORT, 0);
-  node_type_socket_templates(&ntype, cmp_node_stabilize2d_in, cmp_node_stabilize2d_out);
+  ntype.declare = blender::nodes::cmp_node_stabilize2d_declare;
+  ntype.draw_buttons = node_composit_buts_stabilize2d;
   ntype.initfunc_api = init;
 
   nodeRegisterType(&ntype);

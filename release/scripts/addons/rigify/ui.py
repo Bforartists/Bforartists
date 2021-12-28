@@ -60,27 +60,27 @@ def build_type_list(context, rigify_types):
             a.name = r
 
 
-class DATA_PT_rigify_buttons(bpy.types.Panel):
-    bl_label = "Rigify Buttons"
+class DATA_PT_rigify_generate(bpy.types.Panel):
+    bl_label = "Rigify Generation"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
 
     @classmethod
     def poll(cls, context):
+        obj = context.object
         if not context.object:
             return False
-        return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
+        return obj.type == 'ARMATURE' \
+            and obj.data.get("rig_id") is None \
+            and obj.mode in {'POSE', 'OBJECT'}
 
     def draw(self, context):
         C = context
         layout = self.layout
-        obj = context.object
-        id_store = C.window_manager
+        obj = C.object
 
         if obj.mode in {'POSE', 'OBJECT'}:
-            armature_id_store = C.object.data
-
             WARNING = "Warning: Some features may change after generation"
             show_warning = False
             show_update_metarig = False
@@ -110,7 +110,7 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
             if show_warning:
                 layout.label(text=WARNING, icon='ERROR')
 
-            enable_generate_and_advanced = not (show_not_updatable or show_update_metarig)
+            enable_generate = not (show_not_updatable or show_update_metarig)
 
             if show_not_updatable:
                 layout.label(text="WARNING: This metarig contains deprecated rigify rig-types and cannot be upgraded automatically.", icon='ERROR')
@@ -131,71 +131,74 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
 
             col.separator()
             row = col.row()
-            row.operator("pose.rigify_generate", text="Generate Rig", icon='POSE_HLT')
+            text = "Re-Generate Rig" if obj.data.rigify_target_rig else "Generate Rig"
+            row.operator("pose.rigify_generate", text=text, icon='POSE_HLT')
+            row.enabled = enable_generate
 
-            row.enabled = enable_generate_and_advanced
 
-            if armature_id_store.rigify_advanced_generation:
-                icon = 'UNLOCKED'
-            else:
-                icon = 'LOCKED'
+class DATA_PT_rigify_generate_advanced(bpy.types.Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
+    bl_label = "Advanced"
+    bl_parent_id = 'DATA_PT_rigify_generate'
+    bl_options = {'DEFAULT_CLOSED'}
 
-            col = layout.column()
-            col.enabled = enable_generate_and_advanced
-            row = col.row()
-            row.prop(armature_id_store, "rigify_advanced_generation", toggle=True, icon=icon)
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-            if armature_id_store.rigify_advanced_generation:
+        armature_id_store = context.object.data
 
-                row = col.row(align=True)
-                row.prop(armature_id_store, "rigify_generate_mode", expand=True)
+        col = layout.column()
+        col.row().prop(armature_id_store, "rigify_target_rig", text="Target Rig")
+        col.row().prop(armature_id_store, "rigify_rig_ui", text="Rig UI Script")
+        col.separator()
+        col.row().prop(armature_id_store, "rigify_widgets_collection")
+        col.row().prop(armature_id_store, "rigify_force_widget_update")
+        col.row().prop(armature_id_store, "rigify_mirror_widgets")
+        col.separator()
+        col.row().prop(armature_id_store, "rigify_finalize_script", text="Run Script")
 
-                main_row = col.row(align=True).split(factor=0.3)
-                col1 = main_row.column()
-                col2 = main_row.column()
-                col1.label(text="Rig Name")
-                row = col1.row()
-                row.label(text="Target Rig")
-                row.enabled = (armature_id_store.rigify_generate_mode == "overwrite")
-                row = col1.row()
-                row.label(text="Target UI")
-                row.enabled = (armature_id_store.rigify_generate_mode == "overwrite")
 
-                row = col2.row(align=True)
-                row.prop(armature_id_store, "rigify_rig_basename", text="", icon="SORTALPHA")
+class DATA_PT_rigify_samples(bpy.types.Panel):
+    bl_label = "Rigify Samples"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
 
-                row = col2.row(align=True)
-                row.prop(armature_id_store, "rigify_target_rig", text="")
-                row.enabled = (armature_id_store.rigify_generate_mode == "overwrite")
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        if not obj:
+            return False
+        return obj.type == 'ARMATURE' \
+            and obj.data.get("rig_id") is None \
+            and obj.mode == 'EDIT'
 
-                row = col2.row()
-                row.prop(armature_id_store, "rigify_rig_ui", text="", icon='TEXT')
-                row.enabled = (armature_id_store.rigify_generate_mode == "overwrite")
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        obj = context.object
+        id_store = context.window_manager
 
-                row = col.row()
-                row.prop(armature_id_store, "rigify_force_widget_update")
-                if armature_id_store.rigify_generate_mode == 'new':
-                    row.enabled = False
+        # Build types list
+        build_type_list(context, id_store.rigify_types)
 
-                col.prop(armature_id_store, "rigify_mirror_widgets")
-                col.prop(armature_id_store, "rigify_finalize_script", text="Run Script")
+        if id_store.rigify_active_type > len(id_store.rigify_types):
+            id_store.rigify_active_type = 0
 
-        elif obj.mode == 'EDIT':
-            # Build types list
-            build_type_list(context, id_store.rigify_types)
-
-            if id_store.rigify_active_type > len(id_store.rigify_types):
-                id_store.rigify_active_type = 0
-
-            # Rig type list
-            if len(feature_set_list.get_installed_list()) > 0:
-                row = layout.row()
-                row.prop(context.object.data, "active_feature_set")
+        # Rig type list
+        if len(feature_set_list.get_installed_list()) > 0:
             row = layout.row()
-            row.template_list("UI_UL_list", "rigify_types", id_store, "rigify_types", id_store, 'rigify_active_type')
+            row.prop(context.object.data, "active_feature_set")
+        row = layout.row()
+        row.template_list("UI_UL_list", "rigify_types", id_store, "rigify_types", id_store, 'rigify_active_type')
 
-            props = layout.operator("armature.metarig_sample_add", text="Add sample")
-            props.metarig_type = id_store.rigify_types[id_store.rigify_active_type].name
+        props = layout.operator("armature.metarig_sample_add", text="Add sample")
+        props.metarig_type = id_store.rigify_types[id_store.rigify_active_type].name
 
 
 class DATA_PT_rigify_layer_names(bpy.types.Panel):
@@ -791,8 +794,9 @@ class Generate(bpy.types.Operator):
         return is_metarig(context.object)
 
     def execute(self, context):
+        metarig = context.object
         try:
-            generate.generate_rig(context, context.object)
+            generate.generate_rig(context, metarig)
         except MetarigError as rig_exception:
             import traceback
             traceback.print_exc()
@@ -803,6 +807,8 @@ class Generate(bpy.types.Operator):
             traceback.print_exc()
 
             self.report({'ERROR'}, 'Generation has thrown an exception: ' + str(rig_exception))
+        else:
+            self.report({'INFO'}, 'Successfully generated: "' + metarig.data.rigify_target_rig.name + '"')
         finally:
             bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -930,8 +936,10 @@ class VIEW3D_MT_rigify(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+        obj = context.object
 
-        layout.operator(Generate.bl_idname, text="Generate")
+        text = "Re-Generate Rig" if obj.data.rigify_target_rig else "Generate Rig"
+        layout.operator(Generate.bl_idname, text=text)
 
         if context.mode == 'EDIT_ARMATURE':
             layout.separator()
@@ -1381,7 +1389,9 @@ classes = (
     DATA_MT_rigify_bone_groups_context_menu,
     DATA_PT_rigify_bone_groups,
     DATA_PT_rigify_layer_names,
-    DATA_PT_rigify_buttons,
+    DATA_PT_rigify_generate,
+    DATA_PT_rigify_generate_advanced,
+    DATA_PT_rigify_samples,
     BONE_PT_rigify_buttons,
     VIEW3D_PT_rigify_animation_tools,
     VIEW3D_PT_tools_rigify_dev,

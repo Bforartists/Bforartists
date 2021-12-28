@@ -77,7 +77,6 @@ bool CurveComponent::has_curve() const
   return curve_ != nullptr;
 }
 
-/* Clear the component and replace it with the new curve. */
 void CurveComponent::replace(CurveEval *curve, GeometryOwnershipType ownership)
 {
   BLI_assert(this->is_mutable());
@@ -128,10 +127,6 @@ void CurveComponent::ensure_owns_direct_data()
   }
 }
 
-/**
- * Create empty curve data used for rendering the spline's wire edges.
- * \note See comment on #curve_for_render_ for further explanation.
- */
 const Curve *CurveComponent::get_curve_for_render() const
 {
   if (curve_ == nullptr) {
@@ -391,13 +386,13 @@ static const CurveEval *get_curve_from_component_for_read(const GeometryComponen
 
 /** \} */
 
+namespace blender::bke {
+
 /* -------------------------------------------------------------------- */
 /** \name Builtin Spline Attributes
  *
  * Attributes with a value for every spline, stored contiguously or in every spline separately.
  * \{ */
-
-namespace blender::bke {
 
 class BuiltinSplineAttributeProvider final : public BuiltinAttributeProvider {
   using AsReadAttribute = GVArray (*)(const CurveEval &data);
@@ -1490,6 +1485,8 @@ static ComponentAttributeProviders create_attribute_providers_for_curve()
       {&spline_custom_data, &point_custom_data});
 }
 
+/** \} */
+
 }  // namespace blender::bke
 
 const blender::bke::ComponentAttributeProviders *CurveComponent::get_attribute_providers() const
@@ -1498,5 +1495,3 @@ const blender::bke::ComponentAttributeProviders *CurveComponent::get_attribute_p
       blender::bke::create_attribute_providers_for_curve();
   return &providers;
 }
-
-/** \} */

@@ -1253,13 +1253,13 @@ orientation_global
 link_replace
 detach_links_move
 hold_split
-#~ DEF_ICON_BLANK(1272)
-#~ DEF_ICON_BLANK(1273)
-#~ DEF_ICON_BLANK(1274)
-#~ DEF_ICON_BLANK(1275)
-#~ DEF_ICON_BLANK(1276)
-#~ DEF_ICON_BLANK(1277)
-#~ DEF_ICON_BLANK(1278)
+dual_mesh
+domain_size
+edge_neighbors
+edge_vertices
+face_neighbors
+geometry_instance
+vertex_neighbors
 
 # ------------------------- row 19 --------------------------*/
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -1732,14 +1732,6 @@ msgid "Collection of grease pencils"
 msgstr "蠟筆的選集"
 
 
-msgid "Main Hairs"
-msgstr "主要毛髮"
-
-
-msgid "Collection of hairs"
-msgstr "毛髮選集"
-
-
 msgid "Main Images"
 msgstr "主要影像"
 
@@ -1882,14 +1874,6 @@ msgstr "主要螢幕"
 
 msgid "Collection of screens"
 msgstr "螢幕的選集"
-
-
-msgid "Main Simulations"
-msgstr "主要模擬"
-
-
-msgid "Collection of simulations"
-msgstr "模擬選集"
 
 
 msgid "Main Sounds"
@@ -10638,10 +10622,6 @@ msgstr "構成動作的個別 F 曲線"
 
 msgid "Frame Range"
 msgstr "框幀區間"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "此動作內所有 F 曲線的最終框幀區間"
 
 
 msgid "Groups"
@@ -21817,10 +21797,6 @@ msgid "Remove original geometry"
 msgstr "移除原始幾何"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "元素在一段框幀區間上世界空間位置的快取"
-
-
 msgid "End frame of the stored range"
 msgstr "儲藏範圍的結束幀"
 
@@ -24610,12 +24586,20 @@ msgid "Anti-Alias Z"
 msgstr "抗鋸齒 Z"
 
 
+msgid "Dot Product"
+msgstr "內積"
+
+
 msgid "Equal"
 msgstr "等於"
 
 
 msgid "Input value used for unconnected socket"
 msgstr "用於未連接接口的輸入值"
+
+
+msgid "Component"
+msgstr "元件"
 
 
 msgid "Original"
@@ -24648,10 +24632,6 @@ msgstr "最小最大"
 
 msgid "Cross Product"
 msgstr "向量積"
-
-
-msgid "Dot Product"
-msgstr "內積"
 
 
 msgid "Z Axis"
@@ -24761,10 +24741,6 @@ msgstr "光澤 BSDF"
 
 msgid "Hair BSDF"
 msgstr "毛髮 BSDF"
-
-
-msgid "Component"
-msgstr "元件"
 
 
 msgid "Reflection"
@@ -26964,6 +26940,82 @@ msgid "+X to -X"
 msgstr "+X 至 -X"
 
 
+msgid "Check Existing"
+msgstr "檢查是否存在"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "檢查並警告是否需要覆寫既有檔案"
+
+
+msgid "Automatically determine display type for files"
+msgstr "自動決定檔案的顯示類型"
+
+
+msgid "Short List"
+msgstr "短清單"
+
+
+msgid "Display files as short list"
+msgstr "以短清單顯示檔案"
+
+
+msgid "Long List"
+msgstr "長清單"
+
+
+msgid "Display files as a detailed list"
+msgstr "以詳細清單顯示檔案"
+
+
+msgid "File Browser Mode"
+msgstr "檔案瀏覽器模式"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "檔案瀏覽器載入 .blende 檔、庫或特殊檔案的模式設定"
+
+
+msgid "Path to file"
+msgstr "檔案的路徑"
+
+
+msgid "Filter .blend files"
+msgstr "過濾 .blend 檔案"
+
+
+msgid "Filter btx files"
+msgstr "過濾 BTX 檔案"
+
+
+msgid "Filter COLLADA files"
+msgstr "過濾 COLLADA 檔案"
+
+
+msgid "Filter font files"
+msgstr "過濾字型檔案"
+
+
+msgid "Filter image files"
+msgstr "過濾影像檔案"
+
+
+msgid "Filter movie files"
+msgstr "過濾視訊檔案"
+
+
+msgid "Filter python files"
+msgstr "過濾 Python 檔案"
+
+
+msgid "Filter sound files"
+msgstr "過濾聲音檔案"
+
+
+msgid "Filter text files"
+msgstr "過濾文字檔案"
+
+
 msgctxt "Operator"
 msgid "Login"
 msgstr "登入"
@@ -27201,76 +27253,8 @@ msgid "Directory of the file"
 msgstr "檔案的目錄"
 
 
-msgid "Automatically determine display type for files"
-msgstr "自動決定檔案的顯示類型"
-
-
-msgid "Short List"
-msgstr "短清單"
-
-
-msgid "Display files as short list"
-msgstr "以短清單顯示檔案"
-
-
-msgid "Long List"
-msgstr "長清單"
-
-
-msgid "Display files as a detailed list"
-msgstr "以詳細清單顯示檔案"
-
-
-msgid "File Browser Mode"
-msgstr "檔案瀏覽器模式"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "檔案瀏覽器載入 .blende 檔、庫或特殊檔案的模式設定"
-
-
-msgid "Filter .blend files"
-msgstr "過濾 .blend 檔案"
-
-
-msgid "Filter btx files"
-msgstr "過濾 BTX 檔案"
-
-
-msgid "Filter COLLADA files"
-msgstr "過濾 COLLADA 檔案"
-
-
-msgid "Filter font files"
-msgstr "過濾字型檔案"
-
-
-msgid "Filter image files"
-msgstr "過濾影像檔案"
-
-
-msgid "Filter movie files"
-msgstr "過濾視訊檔案"
-
-
-msgid "Filter python files"
-msgstr "過濾 Python 檔案"
-
-
-msgid "Filter sound files"
-msgstr "過濾聲音檔案"
-
-
-msgid "Filter text files"
-msgstr "過濾文字檔案"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "選取相對於該 blend 檔的檔案"
-
-
-msgid "Path to file"
-msgstr "檔案的路徑"
 
 
 msgctxt "Operator"
@@ -29168,14 +29152,6 @@ msgstr "匯出攝影機與標記"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "在其他地方儲存個可重新建立攝影機與標記的 Python 指令稿"
-
-
-msgid "Check Existing"
-msgstr "檢查是否存在"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "檢查並警告是否需要覆寫既有檔案"
 
 
 msgid "Filepath used for exporting the file"
@@ -55986,8 +55962,16 @@ msgid "Loading '%s' failed: "
 msgstr "載入「%s」失敗： "
 
 
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "藏庫重載：若重新載入者失敗則將所有參照取代為「%s」舊資料塊，而舊的（%d 位剩餘使用者）必須保留並重新命名為「%s」"
+
+
 msgid "Path '%s' not found"
 msgstr "找不到路徑「%s」"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "找不到「%s」於「%s」中"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -56000,14 +55984,6 @@ msgstr "總計檔案 %d | 更動 %d | 失敗 %d"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "路徑「%s」無法變為相對路徑"
-
-
-msgid "Could not open directory '%s'"
-msgstr "無法開啟目錄「%s」"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "找不到「%s」於「%s」中"
 
 
 msgid "Scene Collection"
@@ -56666,6 +56642,14 @@ msgstr "複製緩衝沒有姿勢"
 
 msgid "Programming error: missing clear transform function or keying set name"
 msgstr "程式設計錯誤：遺失清楚變換函式或鍵處理集名稱"
+
+
+msgid "Path is empty, cannot save"
+msgstr "路徑空白，無法儲存"
+
+
+msgid "Path too long, cannot save"
+msgstr "路徑過長，無法儲存"
 
 
 msgid "Cannot separate current selection"
@@ -60492,14 +60476,6 @@ msgid "Save changes before closing?"
 msgstr "關閉之前先儲存改動？"
 
 
-msgid "Path is empty, cannot save"
-msgstr "路徑空白，無法儲存"
-
-
-msgid "Path too long, cannot save"
-msgstr "路徑過長，無法儲存"
-
-
 msgid "Unable to create user config path"
 msgstr "無法建立使用者組態路徑"
 
@@ -60578,10 +60554,6 @@ msgstr "「%s」：未有指示"
 
 msgid "'%s': cannot use current file as library"
 msgstr "「%s」：無法將目前檔案作為函式庫使用"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "藏庫重載：若重新載入者失敗則將所有參照取代為「%s」舊資料塊，而舊的（%d 位剩餘使用者）必須保留並重新命名為「%s」"
 
 
 msgid "'%s' is not a valid library filepath"

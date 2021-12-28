@@ -21,34 +21,44 @@
  * \ingroup cmpnodes
  */
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 #include "node_composite_util.hh"
 
-/* **************** Translate  ******************** */
+/* **************** Translate ******************** */
 
-static bNodeSocketTemplate cmp_node_translate_in[] = {
-    {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    {SOCK_FLOAT, N_("X"), 0.0f, 0.0f, 0.0f, 0.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {SOCK_FLOAT, N_("Y"), 0.0f, 0.0f, 0.0f, 0.0f, -10000.0f, 10000.0f, PROP_NONE},
-    {-1, ""},
-};
-static bNodeSocketTemplate cmp_node_translate_out[] = {
-    {SOCK_RGBA, N_("Image")},
-    {-1, ""},
-};
+namespace blender::nodes {
+
+static void cmp_node_translate_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Color>(N_("Image")).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>(N_("X")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>(N_("Y")).default_value(0.0f).min(-10000.0f).max(10000.0f);
+  b.add_output<decl::Color>(N_("Image"));
+}
+
+}  // namespace blender::nodes
 
 static void node_composit_init_translate(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeTranslateData *data = (NodeTranslateData *)MEM_callocN(sizeof(NodeTranslateData),
-                                                             "node translate data");
+  NodeTranslateData *data = MEM_cnew<NodeTranslateData>(__func__);
   node->storage = data;
 }
 
-void register_node_type_cmp_translate(void)
+static void node_composit_buts_translate(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "use_relative", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "wrap_axis", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+}
+
+void register_node_type_cmp_translate()
 {
   static bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_TRANSLATE, "Translate", NODE_CLASS_DISTORT, 0);
-  node_type_socket_templates(&ntype, cmp_node_translate_in, cmp_node_translate_out);
+  ntype.declare = blender::nodes::cmp_node_translate_declare;
+  ntype.draw_buttons = node_composit_buts_translate;
   node_type_init(&ntype, node_composit_init_translate);
   node_type_storage(
       &ntype, "NodeTranslateData", node_free_standard_storage, node_copy_standard_storage);

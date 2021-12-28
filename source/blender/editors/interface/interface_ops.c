@@ -26,7 +26,8 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_armature_types.h"
-#include "DNA_object_types.h" /* for OB_DATA_SUPPORT_ID */
+#include "DNA_modifier_types.h" /* for handling geometry nodes properties */
+#include "DNA_object_types.h"   /* for OB_DATA_SUPPORT_ID */
 #include "DNA_screen_types.h"
 #include "DNA_text_types.h"
 
@@ -985,6 +986,97 @@ bool UI_context_copy_to_selected_list(bContext *C,
   return true;
 }
 
+bool UI_context_copy_to_selected_check(PointerRNA *ptr,
+                                       PointerRNA *ptr_link,
+                                       PropertyRNA *prop,
+                                       const char *path,
+                                       bool use_path_from_id,
+                                       PointerRNA *r_ptr,
+                                       PropertyRNA **r_prop)
+{
+  PointerRNA idptr;
+  PropertyRNA *lprop;
+  PointerRNA lptr;
+
+  if (ptr_link->data == ptr->data) {
+    return false;
+  }
+
+  if (use_path_from_id) {
+    /* Path relative to ID. */
+    lprop = NULL;
+    RNA_id_pointer_create(ptr_link->owner_id, &idptr);
+    RNA_path_resolve_property(&idptr, path, &lptr, &lprop);
+  }
+  else if (path) {
+    /* Path relative to elements from list. */
+    lprop = NULL;
+    RNA_path_resolve_property(ptr_link, path, &lptr, &lprop);
+  }
+  else {
+    lptr = *ptr_link;
+    lprop = prop;
+  }
+
+  if (lptr.data == ptr->data) {
+    /* temp_ptr might not be the same as ptr_link! */
+    return false;
+  }
+
+  /* Skip non-existing properties on link. This was previously covered with the `lprop != prop`
+   * check but we are now more permissive when it comes to ID properties, see below. */
+  if (lprop == NULL) {
+    return false;
+  }
+
+  if (RNA_property_type(lprop) != RNA_property_type(prop)) {
+    return false;
+  }
+
+  /* Check property pointers matching.
+   * For ID properties, these pointers match:
+   * - If the property is API defined on an existing class (and they are equally named).
+   * - Never for ID properties on specific ID (even if they are equally named).
+   * - Never for NodesModifierSettings properties (even if they are equally named).
+   *
+   * Be permissive on ID properties in the following cases:
+   * - #NodesModifierSettings properties
+   *   - (special check: only if the node-group matches, since the 'Input_n' properties are name
+   *      based and similar on potentially very different node-groups).
+   * - ID properties on specific ID
+   *   - (no special check, copying seems OK [even if type does not match -- does not do anything
+   *      then])
+   */
+  bool ignore_prop_eq = RNA_property_is_idprop(lprop) && RNA_property_is_idprop(prop);
+  if (RNA_struct_is_a(lptr.type, &RNA_NodesModifier) &&
+      RNA_struct_is_a(ptr->type, &RNA_NodesModifier)) {
+    ignore_prop_eq = false;
+
+    NodesModifierData *nmd_link = (NodesModifierData *)lptr.data;
+    NodesModifierData *nmd_src = (NodesModifierData *)ptr->data;
+    if (nmd_link->node_group == nmd_src->node_group) {
+      ignore_prop_eq = true;
+    }
+  }
+
+  if ((lprop != prop) && !ignore_prop_eq) {
+    return false;
+  }
+
+  if (!RNA_property_editable(&lptr, lprop)) {
+    return false;
+  }
+
+  if (r_ptr) {
+    *r_ptr = lptr;
+  }
+  if (r_prop) {
+    *r_prop = lprop;
+  }
+
+  return true;
+}
+
 /**
  * Called from both exec & poll.
  *
@@ -995,7 +1087,7 @@ bool UI_context_copy_to_selected_list(bContext *C,
 static bool copy_to_selected_button(bContext *C, bool all, bool poll)
 {
   Main *bmain = CTX_data_main(C);
-  PointerRNA ptr, lptr, idptr;
+  PointerRNA ptr, lptr;
   PropertyRNA *prop, *lprop;
   bool success = false;
   int index;
@@ -1025,32 +1117,8 @@ static bool copy_to_selected_button(bContext *C, bool all, bool poll)
       continue;
     }
 
-    if (use_path_from_id) {
-      /* Path relative to ID. */
-      lprop = NULL;
-      RNA_id_pointer_create(link->ptr.owner_id, &idptr);
-      RNA_path_resolve_property(&idptr, path, &lptr, &lprop);
-    }
-    else if (path) {
-      /* Path relative to elements from list. */
-      lprop = NULL;
-      RNA_path_resolve_property(&link->ptr, path, &lptr, &lprop);
-    }
-    else {
-      lptr = link->ptr;
-      lprop = prop;
-    }
-
-    if (lptr.data == ptr.data) {
-      /* lptr might not be the same as link->ptr! */
-      continue;
-    }
-
-    if (lprop != prop) {
-      continue;
-    }
-
-    if (!RNA_property_editable(&lptr, lprop)) {
+    if (!UI_context_copy_to_selected_check(
+            &ptr, &link->ptr, prop, path, use_path_from_id, &lptr, &lprop)) {
       continue;
     }
 
@@ -1343,10 +1411,6 @@ void UI_editsource_active_but_test(uiBut *but)
   BLI_ghash_insert(ui_editsource_info->hash, but, but_store);
 }
 
-/**
- * Remove the editsource data for \a old_but and reinsert it for \a new_but. Use when the button
- * was reallocated, e.g. to have a new type (#ui_but_change_type()).
- */
 void UI_editsource_but_replace(const uiBut *old_but, uiBut *new_but)
 {
   uiEditSourceButStore *but_store = BLI_ghash_lookup(ui_editsource_info->hash, old_but);
@@ -1408,7 +1472,7 @@ static int editsource_exec(bContext *C, wmOperator *op)
     int ret;
 
     /* needed else the active button does not get tested */
-    UI_screen_free_active_but(C, CTX_wm_screen(C));
+    UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
 
     // printf("%s: begin\n", __func__);
 
@@ -2085,9 +2149,6 @@ void ED_operatortypes_ui(void)
   WM_operatortype_append(UI_OT_eyedropper_gpencil_color);
 }
 
-/**
- * \brief User Interface Keymap
- */
 void ED_keymap_ui(wmKeyConfig *keyconf)
 {
   WM_keymap_ensure(keyconf, "User Interface", 0, 0);

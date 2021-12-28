@@ -37,11 +37,24 @@
 
 namespace blender::nodes::node_geo_volume_to_mesh_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryVolumeToMesh)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Volume")).supported_type(GEO_COMPONENT_TYPE_VOLUME);
-  b.add_input<decl::Float>(N_("Voxel Size")).default_value(0.3f).min(0.01f).subtype(PROP_DISTANCE);
-  b.add_input<decl::Float>(N_("Voxel Amount")).default_value(64.0f).min(0.0f);
+  b.add_input<decl::Float>(N_("Voxel Size"))
+      .default_value(0.3f)
+      .min(0.01f)
+      .subtype(PROP_DISTANCE)
+      .make_available([](bNode &node) {
+        node_storage(node).resolution_mode = VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE;
+      });
+  b.add_input<decl::Float>(N_("Voxel Amount"))
+      .default_value(64.0f)
+      .min(0.0f)
+      .make_available([](bNode &node) {
+        node_storage(node).resolution_mode = VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT;
+      });
   b.add_input<decl::Float>(N_("Threshold")).default_value(0.1f).min(0.0f);
   b.add_input<decl::Float>(N_("Adaptivity")).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
   b.add_output<decl::Geometry>(N_("Mesh"));
@@ -56,32 +69,31 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
-  NodeGeometryVolumeToMesh *data = (NodeGeometryVolumeToMesh *)MEM_callocN(
-      sizeof(NodeGeometryVolumeToMesh), __func__);
+  NodeGeometryVolumeToMesh *data = MEM_cnew<NodeGeometryVolumeToMesh>(__func__);
   data->resolution_mode = VOLUME_TO_MESH_RESOLUTION_MODE_GRID;
   node->storage = data;
 }
 
 static void node_update(bNodeTree *ntree, bNode *node)
 {
-  NodeGeometryVolumeToMesh *data = (NodeGeometryVolumeToMesh *)node->storage;
+  const NodeGeometryVolumeToMesh &storage = node_storage(*node);
 
   bNodeSocket *voxel_size_socket = nodeFindSocket(node, SOCK_IN, "Voxel Size");
   bNodeSocket *voxel_amount_socket = nodeFindSocket(node, SOCK_IN, "Voxel Amount");
   nodeSetSocketAvailability(ntree,
                             voxel_amount_socket,
-                            data->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT);
+                            storage.resolution_mode ==
+                                VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT);
   nodeSetSocketAvailability(ntree,
                             voxel_size_socket,
-                            data->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE);
+                            storage.resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE);
 }
 
 #ifdef WITH_OPENVDB
 
 static bke::VolumeToMeshResolution get_resolution_param(const GeoNodeExecParams &params)
 {
-  const NodeGeometryVolumeToMesh &storage =
-      *(const NodeGeometryVolumeToMesh *)params.node().storage;
+  const NodeGeometryVolumeToMesh &storage = node_storage(params.node());
 
   bke::VolumeToMeshResolution resolution;
   resolution.mode = (VolumeToMeshResolutionMode)storage.resolution_mode;

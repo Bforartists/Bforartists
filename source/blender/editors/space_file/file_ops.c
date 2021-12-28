@@ -211,6 +211,11 @@ static FileSelect file_select_do(bContext *C, int selected_idx, bool do_diropen)
             filelist_setrecursion(sfile->files, params->recursion_level);
           }
         }
+        else if (file->redirection_path) {
+          BLI_strncpy(params->dir, file->redirection_path, sizeof(params->dir));
+          BLI_path_normalize_dir(BKE_main_blendfile_path(bmain), params->dir);
+          BLI_path_slash_ensure(params->dir);
+        }
         else {
           BLI_path_normalize_dir(BKE_main_blendfile_path(bmain), params->dir);
           strcat(params->dir, file->relpath);
@@ -1413,8 +1418,13 @@ int file_highlight_set(SpaceFile *sfile, ARegion *region, int mx, int my)
     return 0;
   }
 
-  numfiles = filelist_files_ensure(sfile->files);
   params = ED_fileselect_get_active_params(sfile);
+  /* In case #SpaceFile.browse_mode just changed, the area may be pending a refresh still, which is
+   * what creates the params for the current browse mode. See T93508. */
+  if (!params) {
+    return false;
+  }
+  numfiles = filelist_files_ensure(sfile->files);
 
   origfile = params->highlight_file;
 
@@ -1684,9 +1694,6 @@ void file_operator_to_sfile(Main *bmain, SpaceFile *sfile, wmOperator *op)
   /* XXX, files and dirs updates missing, not really so important though */
 }
 
-/**
- * Use to set the file selector path from some arbitrary source.
- */
 void file_sfile_filepath_set(SpaceFile *sfile, const char *filepath)
 {
   FileSelectParams *params = ED_fileselect_get_active_params(sfile);
@@ -1736,7 +1743,6 @@ void file_draw_check(bContext *C)
   file_draw_check_ex(C, area);
 }
 
-/* for use with; UI_block_func_set */
 void file_draw_check_cb(bContext *C, void *UNUSED(arg1), void *UNUSED(arg2))
 {
   file_draw_check(C);
@@ -1897,10 +1903,6 @@ static int file_execute_mouse_invoke(bContext *C, wmOperator *UNUSED(op), const 
   return OPERATOR_FINISHED;
 }
 
-/**
- * Variation of #FILE_OT_execute that accounts for some mouse specific handling. Otherwise calls
- * the same logic.
- */
 void FILE_OT_mouse_execute(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2461,9 +2463,10 @@ static void file_expand_directory(bContext *C)
   if (params) {
     if (BLI_path_is_rel(params->dir)) {
       /* Use of 'default' folder here is just to avoid an error message on '//' prefix. */
+      const char *blendfile_path = BKE_main_blendfile_path(bmain);
       BLI_path_abs(params->dir,
-                   G.relbase_valid ? BKE_main_blendfile_path(bmain) :
-                                     BKE_appdir_folder_default_or_root());
+                   (blendfile_path[0] != '\0') ? blendfile_path :
+                                                 BKE_appdir_folder_default_or_root());
     }
     else if (params->dir[0] == '~') {
       char tmpstr[sizeof(params->dir) - 1];

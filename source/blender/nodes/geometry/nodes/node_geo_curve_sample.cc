@@ -25,14 +25,24 @@
 
 namespace blender::nodes::node_geo_curve_sample_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryCurveSample)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Curve"))
       .only_realized_data()
       .supported_type(GEO_COMPONENT_TYPE_CURVE);
-  b.add_input<decl::Float>(N_("Factor")).min(0.0f).max(1.0f).subtype(PROP_FACTOR).supports_field();
-  b.add_input<decl::Float>(N_("Length")).min(0.0f).subtype(PROP_DISTANCE).supports_field();
-
+  b.add_input<decl::Float>(N_("Factor"))
+      .min(0.0f)
+      .max(1.0f)
+      .subtype(PROP_FACTOR)
+      .supports_field()
+      .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR; });
+  b.add_input<decl::Float>(N_("Length"))
+      .min(0.0f)
+      .subtype(PROP_DISTANCE)
+      .supports_field()
+      .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_LENGTH; });
   b.add_output<decl::Vector>(N_("Position")).dependent_field();
   b.add_output<decl::Vector>(N_("Tangent")).dependent_field();
   b.add_output<decl::Vector>(N_("Normal")).dependent_field();
@@ -45,16 +55,15 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_type_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCurveSample *data = (NodeGeometryCurveSample *)MEM_callocN(
-      sizeof(NodeGeometryCurveSample), __func__);
+  NodeGeometryCurveSample *data = MEM_cnew<NodeGeometryCurveSample>(__func__);
   data->mode = GEO_NODE_CURVE_SAMPLE_LENGTH;
   node->storage = data;
 }
 
 static void node_update(bNodeTree *ntree, bNode *node)
 {
-  const NodeGeometryCurveSample &node_storage = *(NodeGeometryCurveSample *)node->storage;
-  const GeometryNodeCurveSampleMode mode = (GeometryNodeCurveSampleMode)node_storage.mode;
+  const NodeGeometryCurveSample &storage = node_storage(*node);
+  const GeometryNodeCurveSampleMode mode = (GeometryNodeCurveSampleMode)storage.mode;
 
   bNodeSocket *factor = ((bNodeSocket *)node->inputs.first)->next;
   bNodeSocket *length = factor->next;
@@ -200,8 +209,8 @@ class SampleCurveFunction : public fn::MultiFunction {
 static Field<float> get_length_input_field(const GeoNodeExecParams &params,
                                            const float curve_total_length)
 {
-  const NodeGeometryCurveSample &node_storage = *(NodeGeometryCurveSample *)params.node().storage;
-  const GeometryNodeCurveSampleMode mode = (GeometryNodeCurveSampleMode)node_storage.mode;
+  const NodeGeometryCurveSample &storage = node_storage(params.node());
+  const GeometryNodeCurveSampleMode mode = (GeometryNodeCurveSampleMode)storage.mode;
 
   if (mode == GEO_NODE_CURVE_SAMPLE_LENGTH) {
     /* Just make sure the length is in bounds of the curve. */
@@ -277,7 +286,7 @@ void register_node_type_geo_curve_sample()
 
   static bNodeType ntype;
 
-  geo_node_type_base(&ntype, GEO_NODE_SAMPLE_CURVE, " Sample Curve", NODE_CLASS_GEOMETRY, 0);
+  geo_node_type_base(&ntype, GEO_NODE_SAMPLE_CURVE, "Sample Curve", NODE_CLASS_GEOMETRY, 0);
   ntype.geometry_node_execute = file_ns::node_geo_exec;
   ntype.declare = file_ns::node_declare;
   node_type_init(&ntype, file_ns::node_type_init);

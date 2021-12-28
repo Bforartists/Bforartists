@@ -316,7 +316,7 @@ class VIEW3D_GT_vr_controller_aim(Gizmo):
     def draw(self, context):
         bgl.glLineWidth(1)
         bgl.glEnable(bgl.GL_BLEND)
-        
+
         self.color = 1.0, 0.2, 0.322
         self.draw_preset_arrow(self.matrix_basis, axis='POS_X')
         self.color = 0.545, 0.863, 0.0
@@ -414,7 +414,7 @@ class VIEW3D_GGT_vr_controller_poses(GizmoGroup):
             gizmo.aspect = 1 / 3, 1 / 4
             gizmo.color_highlight = 1.0, 1.0, 1.0
             gizmo.alpha = 1.0
-            
+
     def draw_prepare(self, context):
         grip_idx = 0
         aim_idx = 0

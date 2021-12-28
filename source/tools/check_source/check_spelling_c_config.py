@@ -45,6 +45,7 @@ dict_custom = {
     "accessor",
     "adjoint", "adjugate",
     "alignable",
+    "allocatable",
     "allocator", "allocators",
     "anisotropic",
     "anisotropy",
@@ -88,6 +89,7 @@ dict_custom = {
     "equiangular",
     "finalizer",
     "flushable",
+    "formatter",
     "haptics",
     "highlightable",
     "homogenous",
@@ -115,8 +117,11 @@ dict_custom = {
     "parallelize",
     "parallelizing",
     "precompute",
+    "renormalized",
+    "sortable",
     "tokenizing",
     "transmissive",
+    "unmaximized",
     "unpaused"
     "overridable",
     "paddings",
@@ -196,6 +201,7 @@ dict_custom = {
     "visibilities",
     "volumetrics",
     "vortices",
+    "voxelize",
     "zoomable",
 
     # python types

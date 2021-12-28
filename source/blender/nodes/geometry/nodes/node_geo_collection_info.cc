@@ -29,6 +29,8 @@
 
 namespace blender::nodes::node_geo_collection_info_cc {
 
+NODE_STORAGE_FUNCS(NodeGeometryCollectionInfo)
+
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Collection>(N_("Collection")).hide_label();
@@ -49,8 +51,7 @@ static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 
 static void node_node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeGeometryCollectionInfo *data = (NodeGeometryCollectionInfo *)MEM_callocN(
-      sizeof(NodeGeometryCollectionInfo), __func__);
+  NodeGeometryCollectionInfo *data = MEM_cnew<NodeGeometryCollectionInfo>(__func__);
   data->transform_space = GEO_NODE_TRANSFORM_SPACE_ORIGINAL;
   node->storage = data;
 }
@@ -78,9 +79,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const bNode &bnode = params.node();
-  NodeGeometryCollectionInfo *node_storage = (NodeGeometryCollectionInfo *)bnode.storage;
-  const bool use_relative_transform = (node_storage->transform_space ==
+  const NodeGeometryCollectionInfo &storage = node_storage(params.node());
+  const bool use_relative_transform = (storage.transform_space ==
                                        GEO_NODE_TRANSFORM_SPACE_RELATIVE);
 
   GeometrySet geometry_set_out;

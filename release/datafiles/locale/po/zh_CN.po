@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1161,6 +1161,10 @@ msgid "Attribute on spline"
 msgstr "样条线上的属性"
 
 
+msgid "Instance"
+msgstr "实例"
+
+
 msgid "Name of the Attribute"
 msgstr "属性名称"
 
@@ -1721,10 +1725,6 @@ msgid "Hairs"
 msgstr "毛发"
 
 
-msgid "Hair data-blocks"
-msgstr "毛发数据块"
-
-
 msgid "Images"
 msgstr "图像"
 
@@ -1873,10 +1873,6 @@ msgid "Point Clouds"
 msgstr "点云"
 
 
-msgid "Point cloud data-blocks"
-msgstr "点云数据块"
-
-
 msgid "Scenes"
 msgstr "场景"
 
@@ -1903,10 +1899,6 @@ msgstr "形态键数据块"
 
 msgid "Simulations"
 msgstr "模拟"
-
-
-msgid "Simulation data-blocks"
-msgstr "模拟数据块"
 
 
 msgid "Sounds"
@@ -2061,14 +2053,6 @@ msgid "Collection of grease pencils"
 msgstr "蜡笔集合"
 
 
-msgid "Main Hairs"
-msgstr "主毛发"
-
-
-msgid "Collection of hairs"
-msgstr "毛发集合"
-
-
 msgid "Main Images"
 msgstr "主图像"
 
@@ -2189,14 +2173,6 @@ msgid "Collection of particle settings"
 msgstr "粒子设置集合"
 
 
-msgid "Main Point Clouds"
-msgstr "主点云"
-
-
-msgid "Collection of point clouds"
-msgstr "点云集合"
-
-
 msgid "Main Light Probes"
 msgstr "主光照探头"
 
@@ -2219,14 +2195,6 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
-
-
-msgid "Main Simulations"
-msgstr "主模拟"
-
-
-msgid "Collection of simulations"
-msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -4105,10 +4073,6 @@ msgid "Vertex Color affects to Fill only"
 msgstr "顶点颜色仅影响填充"
 
 
-msgid "Stroke and Fill"
-msgstr "笔画与填充"
-
-
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "顶点颜色同时影响笔画和填充"
 
@@ -5289,6 +5253,10 @@ msgid "Color space in the image file, to convert to and from when saving and loa
 msgstr "图像文件中的颜色空间，用于在保存和加载图像时转换"
 
 
+msgid "Raw"
+msgstr "Raw"
+
+
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
 msgstr "不要在加载时执行任何色彩转换, 已将颜色视为场景线性空间中的颜色"
 
@@ -5640,6 +5608,14 @@ msgstr "影响"
 
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "最终结果的约束影响数量"
+
+
+msgid "Override Constraint"
+msgstr "重写约束"
+
+
+msgid "In a local override object, whether this constraint comes from the linked reference object, or is local to the override"
+msgstr "在本地重写物体中中，此约束是来自关联的引用物体，或者对重写而是本地的"
 
 
 msgid "Proxy Local"
@@ -11440,7 +11416,7 @@ msgstr "转换效果的外力为空气的速度"
 
 
 msgid "Amount"
-msgstr "数量"
+msgstr "(数)量"
 
 
 msgid "Amount of clumping"
@@ -15853,6 +15829,14 @@ msgid "Modifier affecting the Grease Pencil object"
 msgstr "修改器影响蜡笔物体"
 
 
+msgid "Override Modifier"
+msgstr "重写修改器"
+
+
+msgid "In a local override object, whether this modifier comes from the linked reference object, or is local to the override"
+msgstr "在本地重写物体中，此修改器是来自关联的引用物体，或者对重写而言是本地的"
+
+
 msgid "Modifier name"
 msgstr "修改器名称"
 
@@ -17655,48 +17639,12 @@ msgid "Active index in layer mask array"
 msgstr "层遮罩数组中的活动编号"
 
 
-msgid "Hair Curve"
-msgstr "毛发曲线"
-
-
-msgid "Hair curve"
-msgstr "毛发曲线"
-
-
-msgid "First Point Index"
-msgstr "第一点编号"
-
-
 msgid "Index of the first loop of this polygon"
 msgstr "此多边形的首个循环边编号"
 
 
-msgid "Index of this curve"
-msgstr "该曲线编号"
-
-
-msgid "Number of Points"
-msgstr "点数"
-
-
 msgid "Number of loops used by this polygon"
 msgstr "被该多边形使用的循环数量"
-
-
-msgid "Control points of the curve"
-msgstr "曲线的控制点"
-
-
-msgid "Hair Point"
-msgstr "毛发点"
-
-
-msgid "Hair curve control point"
-msgstr "毛发曲线控制点"
-
-
-msgid "Index of this points"
-msgstr "该点的编号"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -17865,10 +17813,6 @@ msgstr "组成动作的各条函数曲线"
 
 msgid "Frame Range"
 msgstr "帧范围"
-
-
-msgid "The final frame range of all F-Curves within this action"
-msgstr "当前动作中所有函数曲线的最终帧区间"
 
 
 msgid "Groups"
@@ -19345,7 +19289,7 @@ msgstr "重写叠加层"
 
 
 msgid "Don't show overlay during a stroke"
-msgstr "在下笔时不显示覆盖图"
+msgstr "在下笔时不显示叠加"
 
 
 msgid "Define the stroke curve with a bezier curve. Dabs are separated according to spacing"
@@ -21724,24 +21668,12 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "在表面模式下绘制时的偏移量"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "毛发曲线的毛发数据块"
-
-
 msgid "Attributes"
 msgstr "属性"
 
 
 msgid "Geometry attributes"
 msgstr "几何属性"
-
-
-msgid "All hair curves"
-msgstr "所有毛发曲线"
-
-
-msgid "Control points of all hair curves"
-msgstr "所有头发曲线的控制点"
 
 
 msgid "Image data-block referencing an external or packed image"
@@ -23688,6 +23620,10 @@ msgstr "节点树输出"
 
 msgid "Node Tree type (deprecated, bl_idname is the actual node tree type identifier)"
 msgstr "节点树类型(不推荐使用，bl_idname 为实际节点树类型的标识符)"
+
+
+msgid "Undefined"
+msgstr "未定义"
 
 
 msgid "Shader"
@@ -25925,10 +25861,6 @@ msgid "Relative amount of virtual parents"
 msgstr "虚拟父级的相对量"
 
 
-msgid "Point cloud data-block"
-msgstr "点云数据块"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "场景数据块, 包含在物体中, 并定义与时间及渲染有关的设置"
 
@@ -26431,14 +26363,6 @@ msgstr "序列编辑器"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
-
-
-msgid "Simulation data-block"
-msgstr "模拟数据块"
-
-
-msgid "Node tree defining the simulation"
-msgstr "定义模拟的节点树"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -27748,7 +27672,7 @@ msgstr "新近贡献的脚本 (不包括官方发布版)"
 
 
 msgid "Asset Blend Path"
-msgstr "资产混合路径"
+msgstr "资产blend路径"
 
 
 msgid "Full path to the Blender file containing the active asset"
@@ -37988,10 +37912,6 @@ msgid "Remove original geometry"
 msgstr "移除原始几何体"
 
 
-msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "在一个帧区间内, 一个元素的世界空间位置缓存"
-
-
 msgid "Custom color for motion path"
 msgstr "自定义运动路径的颜色"
 
@@ -39502,6 +39422,14 @@ msgstr "一个包含引用为 NLA 片段的动作的动画层"
 
 msgid "NLA Track is active"
 msgstr "激活 NLA 轨道"
+
+
+msgid "Override Track"
+msgstr "重写轨道"
+
+
+msgid "In a local override data, whether this NLA track comes from the linked reference data, or is local to the override"
+msgstr "在本地重写数据中，此NLA 轨道是来自关联的引用数据，或者对重写而是本地的"
 
 
 msgid "Solo"
@@ -41821,8 +41749,12 @@ msgid "Outputs the opposite of the input"
 msgstr "输出与输入值相反的结果"
 
 
-msgid "Compare Floats"
-msgstr "比较浮点"
+msgid "Input Type"
+msgstr "输入类型"
+
+
+msgid "Dot Product"
+msgstr "点乘"
 
 
 msgid "True when the first input is smaller than second input"
@@ -41957,6 +41889,26 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
+msgid "Component"
+msgstr "组件"
+
+
+msgid "Mesh component containing point, corner, edge and face data"
+msgstr "包含点、角、边和面数据的网格组件"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "点云组件仅包含点数据"
+
+
+msgid "Curve component containing spline and control point data"
+msgstr "包含样条线和控制点数据的曲线组件"
+
+
+msgid "Instances of objects or collections"
+msgstr "物体或集合的实例"
+
+
 msgid "Attribute Remove"
 msgstr "属性删除"
 
@@ -42071,10 +42023,6 @@ msgstr "使用右控制柄"
 
 msgid "Curve Length"
 msgstr "曲线长度"
-
-
-msgid "Curve Parameter"
-msgstr "曲线参数"
 
 
 msgid "Bezier Segment"
@@ -42254,7 +42202,7 @@ msgstr "仅面"
 
 
 msgid "Distribute Points on Faces"
-msgstr "在表面上分布点"
+msgstr "分布点于面上"
 
 
 msgid "Distribution Method"
@@ -42342,7 +42290,7 @@ msgstr "曲线切向"
 
 
 msgid "Instance on Points"
-msgstr "点上的实例"
+msgstr "实例化于点上"
 
 
 msgid "Instances to Points"
@@ -42541,10 +42489,6 @@ msgid "Attribute Separate XYZ"
 msgstr "属性分离XYZ"
 
 
-msgid "Input Type"
-msgstr "输入类型"
-
-
 msgid "Attribute Transfer"
 msgstr "属性传递"
 
@@ -42595,10 +42539,6 @@ msgstr "面朝前"
 
 msgid "Orients a vector A to point away from a surface B as defined by its normal C. Returns (dot(B, C) < 0) ? A : -A"
 msgstr "Orients a vector A to point away from a surface B as defined by its normal C. 返回 (dot(B, C) < 0) ? A : -A"
-
-
-msgid "Dot Product"
-msgstr "点乘"
 
 
 msgid "A dot B"
@@ -43312,10 +43252,6 @@ msgstr "光泽 BSDF"
 
 msgid "Hair BSDF"
 msgstr "毛发 BSDF"
-
-
-msgid "Component"
-msgstr "组件"
 
 
 msgid "Reflection"
@@ -46737,6 +46673,119 @@ msgstr "将此姿态动作设置为活动物体上的活动动作"
 
 
 msgctxt "Operator"
+msgid "Copy to Asset Library"
+msgstr "复制到资产库"
+
+
+msgid "Copy the current .blend file into an Asset Library. Only works on standalone .blend files (i.e. when no other files are referenced)"
+msgstr "将当前 .blend 文件复制到资产库中。仅适用于独立的 .blend 文件(即未引用其他文件时)"
+
+
+msgid "Check Existing"
+msgstr "检查是否存在"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "检查并提醒是否需要覆盖现有文件"
+
+
+msgid "Automatically determine display type for files"
+msgstr "自动决定文件的显示类型"
+
+
+msgid "Short List"
+msgstr "短列表"
+
+
+msgid "Display files as short list"
+msgstr "显示短文件列表"
+
+
+msgid "Long List"
+msgstr "长列表"
+
+
+msgid "Display files as a detailed list"
+msgstr "显示文件的详细信息"
+
+
+msgid "File Browser Mode"
+msgstr "文件浏览模式"
+
+
+msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
+msgstr "为文件浏览器设置加载工程、库或一个特殊的工程"
+
+
+msgid "Path to file"
+msgstr "文件路径"
+
+
+msgid "Filter Alembic files"
+msgstr "过滤Alembic文件"
+
+
+msgid "Filter archive files"
+msgstr "过滤存档文件"
+
+
+msgid "Filter .blend files"
+msgstr "过滤 .blend 文件"
+
+
+msgid "Filter btx files"
+msgstr "过滤 BTX 文件"
+
+
+msgid "Filter COLLADA files"
+msgstr "过滤 COLLADA 文件"
+
+
+msgid "Filter font files"
+msgstr "过滤字体文件"
+
+
+msgid "Filter image files"
+msgstr "过滤图像文件"
+
+
+msgid "Filter movie files"
+msgstr "过滤视频文件"
+
+
+msgid "Filter python files"
+msgstr "过滤 Python 文件"
+
+
+msgid "Filter sound files"
+msgstr "过滤声音文件"
+
+
+msgid "Filter text files"
+msgstr "过滤文本文件"
+
+
+msgid "Filter USD files"
+msgstr "过滤USD文件"
+
+
+msgid "Filter OpenVDB volume files"
+msgstr "过滤OpenVDB体积文件"
+
+
+msgid "Hide Operator Properties"
+msgstr "隐藏操作属性"
+
+
+msgid "Collapse the region displaying the operator settings"
+msgstr "收起显示操作设置的区块"
+
+
+msgid "File sorting mode"
+msgstr "文件排序模式"
+
+
+msgctxt "Operator"
 msgid "Delete Asset Catalog"
 msgstr "删除资产目录"
 
@@ -46824,12 +46873,12 @@ msgstr "确保数据块被保存，即使它不再标记为资产"
 
 
 msgctxt "Operator"
-msgid "Refresh Asset List"
-msgstr "刷新资产列表"
+msgid "Refresh Asset Library"
+msgstr "刷新资产库"
 
 
-msgid "Trigger a reread of the assets"
-msgstr "触发重新读取资产"
+msgid "Reread assets and asset catalogs from the asset library on disk"
+msgstr "从磁盘上的资产库重读资产和资产目录"
 
 
 msgctxt "Operator"
@@ -47130,108 +47179,12 @@ msgid "Directory of the file"
 msgstr "文件所在目录"
 
 
-msgid "Automatically determine display type for files"
-msgstr "自动决定文件的显示类型"
-
-
-msgid "Short List"
-msgstr "短列表"
-
-
-msgid "Display files as short list"
-msgstr "显示短文件列表"
-
-
-msgid "Long List"
-msgstr "长列表"
-
-
-msgid "Display files as a detailed list"
-msgstr "显示文件的详细信息"
-
-
-msgid "File Browser Mode"
-msgstr "文件浏览模式"
-
-
-msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "为文件浏览器设置加载工程、库或一个特殊的工程"
-
-
-msgid "Filter Alembic files"
-msgstr "过滤Alembic文件"
-
-
-msgid "Filter archive files"
-msgstr "过滤存档文件"
-
-
-msgid "Filter .blend files"
-msgstr "过滤 .blend 文件"
-
-
-msgid "Filter btx files"
-msgstr "过滤 BTX 文件"
-
-
-msgid "Filter COLLADA files"
-msgstr "过滤 COLLADA 文件"
-
-
-msgid "Filter font files"
-msgstr "过滤字体文件"
-
-
-msgid "Filter image files"
-msgstr "过滤图像文件"
-
-
-msgid "Filter movie files"
-msgstr "过滤视频文件"
-
-
-msgid "Filter python files"
-msgstr "过滤 Python 文件"
-
-
-msgid "Filter sound files"
-msgstr "过滤声音文件"
-
-
-msgid "Filter text files"
-msgstr "过滤文本文件"
-
-
-msgid "Filter USD files"
-msgstr "过滤USD文件"
-
-
-msgid "Filter OpenVDB volume files"
-msgstr "过滤OpenVDB体积文件"
-
-
-msgid "Hide Operator Properties"
-msgstr "隐藏操作属性"
-
-
-msgid "Collapse the region displaying the operator settings"
-msgstr "收起显示操作设置的区块"
-
-
 msgid "Select the file relative to the blend file"
 msgstr "选择与工程相关联的文件"
 
 
-msgid "File sorting mode"
-msgstr "文件排序模式"
-
-
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
 msgstr "开启文件浏览器, 按住Shift打开文件, 按住Alt浏览包含的目录"
-
-
-msgid "Path to file"
-msgstr "文件路径"
 
 
 msgctxt "Operator"
@@ -49708,14 +49661,6 @@ msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "保存一个 python 脚本, 可将摄像机及标记重建到其他地方"
 
 
-msgid "Check Existing"
-msgstr "检查是否存在"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "检查并提醒是否需要覆盖现有文件"
-
-
 msgid "Filepath used for exporting the file"
 msgstr "输出文件的文件路径"
 
@@ -50874,15 +50819,6 @@ msgstr "静止帧"
 
 msgid "Write the rest state at the first frame"
 msgstr "在第一帧写入静止状态"
-
-
-msgctxt "Operator"
-msgid "Refresh Asset Library"
-msgstr "刷新资产库"
-
-
-msgid "Reread assets and asset catalogs from the asset library on disk"
-msgstr "从磁盘上的资产库重读资产和资产目录"
 
 
 msgctxt "Operator"
@@ -52758,10 +52694,6 @@ msgstr "移除遮罩层"
 msgctxt "Operator"
 msgid "Merge Down"
 msgstr "向下合并"
-
-
-msgid "Merge the current layer with the layer below"
-msgstr "将当前层与下方层合并"
 
 
 msgctxt "Operator"
@@ -59530,6 +59462,14 @@ msgid "Data-block name to assign"
 msgstr "要指定的数据块名称"
 
 
+msgid "Session UUID"
+msgstr "会话UUID"
+
+
+msgid "Session UUID of the data-block to assign"
+msgstr "要分配的数据块的会话UUID"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "添加文件节点"
@@ -60528,6 +60468,10 @@ msgid "Collection name to add"
 msgstr "要添加的集合名称"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "要添加的集合的会话UUID"
+
+
 msgctxt "Operator"
 msgid "Link to Collection"
 msgstr "关联至集合"
@@ -60621,16 +60565,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "网格 -> 点云"
 
 
 msgctxt "Operator"
@@ -65295,6 +65231,11 @@ msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib acti
 msgstr "要应用的姿态编号(-2则不改变姿态, -1则使用poselib中活动姿态)"
 
 
+msgctxt "Operator"
+msgid "Apply Pose Asset"
+msgstr "应用姿态资产"
+
+
 msgid "Apply the given Pose Action to the rig"
 msgstr "将给定的姿态动作应用到绑定中"
 
@@ -65309,6 +65250,11 @@ msgstr "应用翻转"
 
 msgid "When enabled, applies the pose flipped over the X-axis"
 msgstr "启用后，应用沿X轴翻转后的姿态"
+
+
+msgctxt "Operator"
+msgid "Blend Pose Asset"
+msgstr "混合姿态资产"
 
 
 msgid "Blend the given Pose Action to the rig"
@@ -74725,7 +74671,7 @@ msgstr "在文件浏览器中显示Blender文件"
 
 
 msgid "Show folders in the File Browser"
-msgstr "在文件浏览器中文件夹"
+msgstr "在文件浏览器中显示文件夹"
 
 
 msgid "Keep a backup (.blend1) version of the files when saving with generated previews"
@@ -76047,7 +75993,7 @@ msgstr "对于多级精度, 在操纵视图时显示低精度"
 
 
 msgid "Tiling offset for the X Axis"
-msgstr "为X轴拼贴偏移"
+msgstr "X 轴的平铺偏移"
 
 
 msgid "Stride at which tiled strokes are copied"
@@ -79057,10 +79003,6 @@ msgid "Collection of paths"
 msgstr "路径集合"
 
 
-msgid "Point in a point cloud"
-msgstr "点云中的点"
-
-
 msgid "Active Point Cache"
 msgstr "活动点缓存"
 
@@ -80023,6 +79965,14 @@ msgstr "自动转换代理为重写"
 
 msgid "Enable automatic conversion of proxies to library overrides on file load"
 msgstr "启用在文件加载时自动转换代理为库重写"
+
+
+msgid "Asset Debug Info"
+msgstr "资产调试信息"
+
+
+msgid "Enable some extra fields in the Asset Browser to aid in debugging"
+msgstr "在资产浏览器中启用一些额外的字段以帮助调试"
 
 
 msgid "Cycles Debug"
@@ -82367,14 +82317,6 @@ msgid "Minimum AA samples for adaptive sampling, to discover noisy features befo
 msgstr "用于自适应采样的最小AA采样数，在停止采样前发现噪点特征。根据噪点阈值自动设置为0"
 
 
-msgid "Adaptive Scrambling Distance"
-msgstr "自适应置乱距离"
-
-
-msgid "Uses a formula to adapt the scrambling distance strength based on the sample count"
-msgstr "基于采样数使用公式置乱距离强度"
-
-
 msgid "Adaptive Sampling Threshold"
 msgstr "自适应采样阈值"
 
@@ -82393,6 +82335,14 @@ msgstr "在该次数的光反弹后，使用近似的全局照明。0为禁用�
 
 msgid "AO Bounces Render"
 msgstr "AO反弹渲染"
+
+
+msgid "Automatic Scrambling Distance"
+msgstr "自适应置乱距离"
+
+
+msgid "Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling"
+msgstr "自动降低像素之间的随机化，以提高GPU渲染性能，但代价是可能会出现渲染瑕疵。仅当不使用自适应采样时才有效"
 
 
 msgid "Bake Type"
@@ -82935,8 +82885,8 @@ msgid "Scrambling Distance"
 msgstr "置乱距离"
 
 
-msgid "Lower values give faster rendering with GPU rendering and less noise with all devices at the cost of possible artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "调低该值使 GPU 渲染的渲染速度更快，噪点更少，代价是设置过低时可能导致瑕疵。仅在不使用自适应采样时起作用"
+msgid "Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low. Only works when not using adaptive sampling"
+msgstr "降低像素之间的随机化以提高GPU渲染性能，但代价是如果设置得太低，可能会出现渲染瑕疵。仅当不使用自适应采样时才有效"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -83039,12 +82989,12 @@ msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "在不同的帧使用不同的种子值(以及噪点模式)"
 
 
-msgid "Auto Tiles"
-msgstr "自动分块"
+msgid "Use Tiling"
+msgstr "使用平铺"
 
 
-msgid "Automatically render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
-msgstr "使用指定的分块大小，自动分块渲染高分辨率的图像，以降低内存占用。渲染时分块将缓存至磁盘以节约内存"
+msgid "Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory"
+msgstr "使用指定的分块大小，分块渲染高分辨率的图像，以降低内存占用。渲染时分块将缓存至磁盘以节约内存"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -90236,22 +90186,6 @@ msgid "Part of the geometry to display data from"
 msgstr "要显示数据的部分几何元素"
 
 
-msgid "Mesh component containing point, corner, edge and face data"
-msgstr "包含点、角、边和面数据的网格组件"
-
-
-msgid "Point cloud component containing only point data"
-msgstr "点云组件仅包含点数据"
-
-
-msgid "Curve component containing spline and control point data"
-msgstr "包含样条线和控制点数据的曲线组件"
-
-
-msgid "Instances of objects or collections"
-msgstr "物体或集合的实例"
-
-
 msgid "Is Pinned"
 msgstr "已钉固"
 
@@ -93741,10 +93675,6 @@ msgid "Cycle-Aware Keying"
 msgstr "循环感知插帧"
 
 
-msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync"
-msgstr "对于具有循环外插的通道,关键帧插入会自动在循环时间范围内重新映射,并保持两端同步"
-
-
 msgid "Auto Keying"
 msgstr "自动插帧"
 
@@ -95391,6 +95321,14 @@ msgstr "启用或禁用渲染该视图层"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "在当前层中渲染样式笔画"
+
+
+msgid "Cryptomatte Accurate"
+msgstr "精确Cryptomatte"
+
+
+msgid "Generate a more accurate cryptomatte pass"
+msgstr "生成更准确的cryptomatte通道"
 
 
 msgid "Cryptomatte Asset"
@@ -97642,6 +97580,10 @@ msgid "Start Sample"
 msgstr "起始采样"
 
 
+msgid "Multiplier"
+msgstr "乘数"
+
+
 msgid "Dicing Rate Render"
 msgstr "切分速率渲染"
 
@@ -97724,18 +97666,6 @@ msgstr "无输出节点"
 
 msgid "Homogeneous"
 msgstr "均质"
-
-
-msgid "CPU Flags:"
-msgstr "CPU标记:"
-
-
-msgid "CUDA Flags:"
-msgstr "CUDA标记:"
-
-
-msgid "OptiX Flags:"
-msgstr "OptiX 标记:"
 
 
 msgid "Max Subdivision"
@@ -98059,6 +97989,11 @@ msgstr "删除姿态骨骼"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "应用"
+
+
+msgctxt "Operator"
+msgid "Interactive Blend"
+msgstr "交互式混合"
 
 
 msgid "Activate & Edit"
@@ -98791,11 +98726,6 @@ msgstr "空格"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "加载 %d.%d 设置"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "保存新设置"
 
@@ -98896,6 +98826,11 @@ msgstr "分支: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "无效正则表达式(查找): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "加载 %d.%d 设置"
 
 
 msgid "Type \"%s\" can not be found"
@@ -100786,6 +100721,10 @@ msgid "Conflicts with another render pass with the same name"
 msgstr "与另一个同名的渲染通道冲突"
 
 
+msgid "Accurate Mode"
+msgstr "精确模式"
+
+
 msgid "Unknown add-ons"
 msgstr "未知插件"
 
@@ -101076,6 +101015,11 @@ msgstr "启用标记"
 msgctxt "Operator"
 msgid "Unlock Tracks"
 msgstr "轨迹解锁"
+
+
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "框显完全匹配"
 
 
 msgid "Solve error: %.2f px"
@@ -101397,10 +101341,6 @@ msgid "Decrease Number"
 msgstr "减少编号"
 
 
-msgid "No asset selected"
-msgstr "未选择任何资产"
-
-
 msgctxt "Operator"
 msgid "Clear Asset (Set Fake User)"
 msgstr "清除资产(设置伪用户）"
@@ -101533,11 +101473,6 @@ msgstr "修改后的边"
 
 msgid "Show Same Material"
 msgstr "显示相同材质"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "框显完全匹配"
 
 
 msgctxt "Operator"
@@ -102118,10 +102053,6 @@ msgstr "位置 X"
 
 msgid "Convert to Float"
 msgstr "转换为浮点数"
-
-
-msgid "Raw"
-msgstr "Raw"
 
 
 msgid "Pre-Processed"
@@ -103291,10 +103222,6 @@ msgstr "无自定义 %s 配置"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "插件需升级至2.8x版本"
 
 
 msgid "Description:"
@@ -105412,8 +105339,20 @@ msgid "Loading '%s' failed: "
 msgstr "加载 '%s' 失败: "
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "关联或附加自一个非常旧的 .blend 文件格式 (%d.%d), 不会进行动画转换! 您可能希望使用当前版本的 Blender 重新保存库文件"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "库重载：通过重新加载一个失败的数据块替换所有对旧数据块 '%s' 的引用，旧数据块(%d 个剩余用户)必须保留并重命名为 '%s'"
+
+
 msgid "Path '%s' not found"
 msgstr "未能找到路径 '%s'"
+
+
+msgid "Could not find '%s' in '%s'"
+msgstr "'%s' 无法在 '%s' 中找到"
 
 
 msgid "Path '%s' cannot be made absolute"
@@ -105426,14 +105365,6 @@ msgstr "文件总数 %d | 更改 %d 项 | 失败 %d 项"
 
 msgid "Path '%s' cannot be made relative"
 msgstr "无法产生相对路径 '%s'"
-
-
-msgid "Could not open directory '%s'"
-msgstr "无法打开文件夹 %s"
-
-
-msgid "Could not find '%s' in '%s'"
-msgstr "'%s' 无法在 '%s' 中找到"
 
 
 msgid "Scene Collection"
@@ -105680,10 +105611,6 @@ msgstr "NLA 片段"
 
 msgid "[Action Stash]"
 msgstr "[Action Stash]"
-
-
-msgid "Undefined"
-msgstr "未定义"
 
 
 msgid "Undefined Node Tree Type"
@@ -106839,6 +106766,14 @@ msgid "No asset data-blocks selected/focused"
 msgstr "未选择/聚焦资产数据块"
 
 
+msgid "Path is empty, cannot save"
+msgstr "路径为空，无法保存"
+
+
+msgid "Path too long, cannot save"
+msgstr "路径太长，无法保存"
+
+
 msgid "Data-block '%s' is now an asset"
 msgstr "数据块 '%s' 现在是资产"
 
@@ -106853,6 +106788,10 @@ msgstr "数据块 '%s' 已非资产"
 
 msgid "%i data-blocks are no assets anymore"
 msgstr "%i 数据块已非资产"
+
+
+msgid "Selected path is outside of the selected asset library"
+msgstr "所选路径位于所选资产库之外"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -110759,6 +110698,10 @@ msgid "Move asset to catalog"
 msgstr "将资产移动到目录"
 
 
+msgid "to the top level of the tree"
+msgstr "到树的顶层"
+
+
 msgid "Move assets out of any catalog"
 msgstr "将资产从任何目录中移出"
 
@@ -111452,10 +111395,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "修改器无法被添加至 (%s : %s)(请参考控制台的打印信息)"
 
 
-msgid "Sta"
-msgstr "Sta"
-
-
 msgid "Label Size"
 msgstr "标签大小"
 
@@ -111657,27 +111596,27 @@ msgstr " (字符串)"
 
 
 msgid "Integer field"
-msgstr "整型字段"
+msgstr "整型场"
 
 
 msgid "Float field"
-msgstr "浮点字段"
+msgstr "浮点场"
 
 
 msgid "Vector field"
-msgstr "矢量字段"
+msgstr "矢量场"
 
 
 msgid "Boolean field"
-msgstr "布尔字段"
+msgstr "布尔场"
 
 
 msgid "String field"
-msgstr "字符串字段"
+msgstr "字符串场"
 
 
 msgid "Color field"
-msgstr "颜色字段"
+msgstr "颜色场"
 
 
 msgid " based on:"
@@ -115000,7 +114939,7 @@ msgstr "NURBS必须至少有3的倍数个点供完整贝塞尔转换，曲线截
 
 
 msgid "Cuts"
-msgstr "切割数量"
+msgstr "切割"
 
 
 msgid "Input geometry must contain a mesh"
@@ -115211,10 +115150,6 @@ msgid "Points to instance on"
 msgstr "要在其上实例化的点"
 
 
-msgid "Instance"
-msgstr "实例"
-
-
 msgid "Geometry that is instanced on the points"
 msgstr "在点上实例化的几何体"
 
@@ -115283,24 +115218,8 @@ msgid "Vertices Z"
 msgstr "顶点 Z"
 
 
-msgid "The number of vertices around the circumference"
-msgstr "沿周长的顶点数"
-
-
-msgid "The number of segments along the side"
-msgstr "沿该侧面的段数"
-
-
-msgid "The number of concentric segments of the fill"
-msgstr "填充的同心段数"
-
-
 msgid "The radius of the cylinder"
 msgstr "圆柱体的半径"
-
-
-msgid "The height of the cylinder on the Z axis"
-msgstr "圆柱体Z 轴上的高度"
 
 
 msgid "Start Location"
@@ -115352,7 +115271,7 @@ msgstr "输入几何不包含贝塞尔样条线"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"
-msgstr "体只支持单个材质；选中项输入不能是一个字段"
+msgstr "体积只支持单个材质；选中项输入不能是一个场"
 
 
 msgid "Shade Smooth"
@@ -116001,14 +115920,6 @@ msgid "File Not Found"
 msgstr "文件未找到"
 
 
-msgid "Path is empty, cannot save"
-msgstr "路径为空，无法保存"
-
-
-msgid "Path too long, cannot save"
-msgstr "路径太长，无法保存"
-
-
 msgid "Unable to create user config path"
 msgstr "无法创建用户配置路径"
 
@@ -116093,10 +116004,6 @@ msgid "Nothing indicated"
 msgstr "未有指示结果"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "关联或附加自一个非常旧的 .blend 文件格式 (%d.%d), 不会进行动画转换! 您可能希望使用当前版本的 Blender 重新保存库文件"
-
-
 msgid "Can't append data-block '%s' of type '%s'"
 msgstr "无法附加类型为 '%s' 的数据块 '%s'"
 
@@ -116119,10 +116026,6 @@ msgstr "'%s': 无法使用当前文件作为库文件"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "场景 '%s' 已被关联，物体实例化已禁用"
-
-
-msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
-msgstr "库重载：通过重新加载一个失败的数据块替换所有对旧数据块 '%s' 的引用，旧数据块(%d 个剩余用户)必须保留并重命名为 '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

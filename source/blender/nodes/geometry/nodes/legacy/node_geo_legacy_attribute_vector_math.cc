@@ -103,8 +103,7 @@ static CustomDataType operation_get_read_type_c(const NodeVectorMathOperation op
 
 static void node_init(bNodeTree *UNUSED(tree), bNode *node)
 {
-  NodeAttributeVectorMath *data = (NodeAttributeVectorMath *)MEM_callocN(
-      sizeof(NodeAttributeVectorMath), __func__);
+  NodeAttributeVectorMath *data = MEM_cnew<NodeAttributeVectorMath>(__func__);
 
   data->operation = NODE_VECTOR_MATH_ADD;
   data->input_type_a = GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE;
@@ -150,8 +149,8 @@ static CustomDataType operation_get_result_type(const NodeVectorMathOperation op
   return CD_PROP_FLOAT3;
 }
 
-static void geo_node_vector_math_label(bNodeTree *UNUSED(ntree),
-                                       bNode *node,
+static void geo_node_vector_math_label(const bNodeTree *UNUSED(ntree),
+                                       const bNode *node,
                                        char *label,
                                        int maxlen)
 {
@@ -533,7 +532,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
-  geometry_set = geometry_set_realize_instances(geometry_set);
+  geometry_set = geometry::realize_instances_legacy(geometry_set);
 
   if (geometry_set.has<MeshComponent>()) {
     attribute_vector_math_calc(geometry_set.get_component_for_write<MeshComponent>(), params);
@@ -565,7 +564,7 @@ void register_node_type_geo_attribute_vector_math()
   ntype.declare = file_ns::node_declare;
   ntype.geometry_node_execute = file_ns::node_geo_exec;
   ntype.draw_buttons = file_ns::node_layout;
-  node_type_label(&ntype, file_ns::geo_node_vector_math_label);
+  ntype.labelfunc = file_ns::geo_node_vector_math_label;
   node_type_update(&ntype, file_ns::node_update);
   node_type_init(&ntype, file_ns::node_init);
   node_type_storage(

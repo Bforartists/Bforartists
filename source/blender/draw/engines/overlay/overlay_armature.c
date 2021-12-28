@@ -104,9 +104,6 @@ typedef struct ArmatureDrawContext {
   const ThemeWireColor *bcolor; /* pchan color */
 } ArmatureDrawContext;
 
-/**
- * Return true if armature should be handled by the pose mode engine.
- */
 bool OVERLAY_armature_is_pose_mode(Object *ob, const DRWContextState *draw_ctx)
 {
   Object *active_ob = draw_ctx->obact;
@@ -591,12 +588,16 @@ static void drw_shgroup_bone_custom_wire(ArmatureDrawContext *ctx,
                                          const float color[4],
                                          Object *custom)
 {
+  /* See comments in #drw_shgroup_bone_custom_solid. */
+  Mesh *mesh = BKE_object_get_evaluated_mesh(custom);
+  if (mesh == NULL) {
+    return;
+  }
   /* TODO(fclem): arg... less than ideal but we never iter on this object
    * to assure batch cache is valid. */
-  drw_batch_cache_validate(custom);
+  DRW_mesh_batch_cache_validate(mesh);
 
-  struct GPUBatch *geom = DRW_cache_object_all_edges_get(custom);
-
+  struct GPUBatch *geom = DRW_mesh_batch_cache_get_all_edges(mesh);
   if (geom) {
     DRWCallBuffer *buf = custom_bone_instance_shgroup(ctx, ctx->custom_wire, geom);
     BoneInstanceData inst_data;
@@ -1919,6 +1920,7 @@ static void draw_bone_name(ArmatureDrawContext *ctx,
                      DRW_TEXT_CACHE_GLOBALSPACE | DRW_TEXT_CACHE_STRING_PTR,
                      color);
 }
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -2327,3 +2329,5 @@ void OVERLAY_pose_draw(OVERLAY_Data *vedata)
     DRW_draw_pass(psl->armature_ps[1]);
   }
 }
+
+/** \} */

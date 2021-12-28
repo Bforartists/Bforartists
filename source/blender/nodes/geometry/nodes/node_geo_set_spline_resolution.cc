@@ -24,7 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Geometry")).supported_type(GEO_COMPONENT_TYPE_CURVE);
   b.add_input<decl::Bool>(N_("Selection")).default_value(true).hide_value().supports_field();
-  b.add_input<decl::Int>(N_("Resolution")).default_value(12).supports_field();
+  b.add_input<decl::Int>(N_("Resolution")).min(1).default_value(12).supports_field();
   b.add_output<decl::Geometry>(N_("Geometry"));
 }
 
@@ -38,16 +38,14 @@ static void set_resolution_in_component(GeometryComponent &component,
     return;
   }
 
-  fn::FieldEvaluator selection_evaluator{field_context, domain_size};
-  selection_evaluator.add(selection_field);
-  selection_evaluator.evaluate();
-  const IndexMask selection = selection_evaluator.get_evaluated_as_mask(0);
-
   OutputAttribute_Typed<int> resolutions = component.attribute_try_get_for_output_only<int>(
       "resolution", ATTR_DOMAIN_CURVE);
-  fn::FieldEvaluator resolution_evaluator{field_context, &selection};
-  resolution_evaluator.add_with_destination(resolution_field, resolutions.varray());
-  resolution_evaluator.evaluate();
+
+  fn::FieldEvaluator evaluator{field_context, domain_size};
+  evaluator.set_selection(selection_field);
+  evaluator.add_with_destination(resolution_field, resolutions.varray());
+  evaluator.evaluate();
+
   resolutions.save();
 }
 

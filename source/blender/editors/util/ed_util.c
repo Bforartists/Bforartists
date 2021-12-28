@@ -195,7 +195,6 @@ void ED_editors_init(bContext *C)
   wm->op_undo_depth--;
 }
 
-/* frees all editmode stuff */
 void ED_editors_exit(Main *bmain, bool do_undo_system)
 {
   if (!bmain) {
@@ -291,8 +290,6 @@ bool ED_editors_flush_edits_for_object(Main *bmain, Object *ob)
   return ED_editors_flush_edits_for_object_ex(bmain, ob, false, false);
 }
 
-/* flush any temp data from object editing to DNA before writing files,
- * rendering, copying, etc. */
 bool ED_editors_flush_edits_ex(Main *bmain, bool for_render, bool check_needs_flush)
 {
   bool has_edited = false;
@@ -317,11 +314,6 @@ bool ED_editors_flush_edits(Main *bmain)
 
 /* ***** XXX: functions are using old blender names, cleanup later ***** */
 
-/**
- * Now only used in 2D spaces, like time, f-curve, NLA, image, etc.
- *
- * \note Shift/Control are not configurable key-bindings.
- */
 void apply_keyb_grid(
     int shift, int ctrl, float *val, float fac1, float fac2, float fac3, int invert)
 {
@@ -360,6 +352,7 @@ void unpack_menu(bContext *C,
   uiLayout *layout;
   char line[FILE_MAX + 100];
   wmOperatorType *ot = WM_operatortype_find(opname, 1);
+  const char *blendfile_path = BKE_main_blendfile_path(bmain);
 
   pup = UI_popup_menu_begin(C, IFACE_("Unpack File"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
@@ -369,13 +362,13 @@ void unpack_menu(bContext *C,
   RNA_enum_set(&props_ptr, "method", PF_REMOVE);
   RNA_string_set(&props_ptr, "id", id_name);
 
-  if (G.relbase_valid) {
+  if (blendfile_path[0] != '\0') {
     char local_name[FILE_MAXDIR + FILE_MAX], fi[FILE_MAX];
 
     BLI_split_file_part(abs_name, fi, sizeof(fi));
     BLI_snprintf(local_name, sizeof(local_name), "//%s/%s", folder, fi);
     if (!STREQ(abs_name, local_name)) {
-      switch (BKE_packedfile_compare_to_file(BKE_main_blendfile_path(bmain), local_name, pf)) {
+      switch (BKE_packedfile_compare_to_file(blendfile_path, local_name, pf)) {
         case PF_CMP_NOFILE:
           BLI_snprintf(line, sizeof(line), TIP_("Create %s"), local_name);
           uiItemFullO_ptr(layout, ot, line, ICON_NONE, NULL, WM_OP_EXEC_DEFAULT, 0, &props_ptr);
@@ -408,7 +401,7 @@ void unpack_menu(bContext *C,
     }
   }
 
-  switch (BKE_packedfile_compare_to_file(BKE_main_blendfile_path(bmain), abs_name, pf)) {
+  switch (BKE_packedfile_compare_to_file(blendfile_path, abs_name, pf)) {
     case PF_CMP_NOFILE:
       BLI_snprintf(line, sizeof(line), TIP_("Create %s"), abs_name);
       // uiItemEnumO_ptr(layout, ot, line, 0, "method", PF_WRITE_ORIGINAL);
@@ -441,11 +434,6 @@ void unpack_menu(bContext *C,
   UI_popup_menu_end(C, pup);
 }
 
-/**
- * Use to free ID references within runtime data (stored outside of DNA)
- *
- * \param new_id: may be NULL to unlink \a old_id.
- */
 void ED_spacedata_id_remap(struct ScrArea *area, struct SpaceLink *sl, ID *old_id, ID *new_id)
 {
   SpaceType *st = BKE_spacetype_from_id(sl->spacetype);

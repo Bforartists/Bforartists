@@ -40,6 +40,7 @@ set(SRC
   object_cull.cpp
   output_driver.cpp
   particles.cpp
+  pointcloud.cpp
   curves.cpp
   logging.cpp
   python.cpp
@@ -87,6 +88,7 @@ endif()
 
 set(ADDON_FILES
   addon/__init__.py
+  addon/camera.py
   addon/engine.py
   addon/operators.py
   addon/osl.py
@@ -101,6 +103,11 @@ add_definitions(${GL_DEFINITIONS})
 if(WITH_CYCLES_DEVICE_HIP)
   add_definitions(-DWITH_HIP)
 endif()
+
+if(WITH_CYCLES_DEVICE_METAL)
+  add_definitions(-DWITH_METAL)
+endif()
+
 if(WITH_MOD_FLUID)
   add_definitions(-DWITH_FLUID)
 endif()

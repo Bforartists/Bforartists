@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -11842,6 +11842,10 @@ msgid "Equal"
 msgstr "Jednako"
 
 
+msgid "Component"
+msgstr "Komponenta"
+
+
 msgid "Original"
 msgstr "Original"
 
@@ -11920,10 +11924,6 @@ msgstr "Sjajno BSDF"
 
 msgid "Hair BSDF"
 msgstr "Kosa BSDF"
-
-
-msgid "Component"
-msgstr "Komponenta"
 
 
 msgid "Reflection"
@@ -13006,6 +13006,62 @@ msgid "+X to -X"
 msgstr "+X do -X"
 
 
+msgid "Automatically determine display type for files"
+msgstr "Samostalno izaberi vrstu ubrzanja"
+
+
+msgid "Short List"
+msgstr "Kratka lista"
+
+
+msgid "Display files as short list"
+msgstr "Prikaži datoteke kao skraćenu listu"
+
+
+msgid "Long List"
+msgstr "Duga lista"
+
+
+msgid "Display files as a detailed list"
+msgstr "Prikaži datoteke kao detaljnu listu"
+
+
+msgid "Filter .blend files"
+msgstr "Filtriraj .blend datoteke"
+
+
+msgid "Filter btx files"
+msgstr "Filtriraj btx datoteke"
+
+
+msgid "Filter COLLADA files"
+msgstr "Filtriraj COLLADA datoteke"
+
+
+msgid "Filter font files"
+msgstr "Filtriraj fontove"
+
+
+msgid "Filter image files"
+msgstr "Filtriraj slike"
+
+
+msgid "Filter movie files"
+msgstr "Filtriraj filmove"
+
+
+msgid "Filter python files"
+msgstr "Filtriraj python datoteke"
+
+
+msgid "Filter sound files"
+msgstr "Filtriraj zvučne datoteke"
+
+
+msgid "Filter text files"
+msgstr "Filtriraj tekstualne datoteke"
+
+
 msgid "(undocumented operator)"
 msgstr "(nepoznat operator)"
 
@@ -13093,62 +13149,6 @@ msgstr "Poništi trensformacije"
 msgctxt "Operator"
 msgid "Accept"
 msgstr "Prihvati"
-
-
-msgid "Automatically determine display type for files"
-msgstr "Samostalno izaberi vrstu ubrzanja"
-
-
-msgid "Short List"
-msgstr "Kratka lista"
-
-
-msgid "Display files as short list"
-msgstr "Prikaži datoteke kao skraćenu listu"
-
-
-msgid "Long List"
-msgstr "Duga lista"
-
-
-msgid "Display files as a detailed list"
-msgstr "Prikaži datoteke kao detaljnu listu"
-
-
-msgid "Filter .blend files"
-msgstr "Filtriraj .blend datoteke"
-
-
-msgid "Filter btx files"
-msgstr "Filtriraj btx datoteke"
-
-
-msgid "Filter COLLADA files"
-msgstr "Filtriraj COLLADA datoteke"
-
-
-msgid "Filter font files"
-msgstr "Filtriraj fontove"
-
-
-msgid "Filter image files"
-msgstr "Filtriraj slike"
-
-
-msgid "Filter movie files"
-msgstr "Filtriraj filmove"
-
-
-msgid "Filter python files"
-msgstr "Filtriraj python datoteke"
-
-
-msgid "Filter sound files"
-msgstr "Filtriraj zvučne datoteke"
-
-
-msgid "Filter text files"
-msgstr "Filtriraj tekstualne datoteke"
 
 
 msgid "Select the file relative to the blend file"

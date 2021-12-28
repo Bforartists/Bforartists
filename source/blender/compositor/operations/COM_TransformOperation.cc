@@ -126,7 +126,7 @@ void TransformOperation::determine_canvas(const rcti &preferred_area, rcti &r_ar
       get_input_socket(IMAGE_INPUT_INDEX)->determine_canvas(preferred_area, r_area);
   if (image_determined) {
     rcti image_canvas = r_area;
-    rcti unused;
+    rcti unused = COM_AREA_NONE;
     get_input_socket(X_INPUT_INDEX)->determine_canvas(image_canvas, unused);
     get_input_socket(Y_INPUT_INDEX)->determine_canvas(image_canvas, unused);
     get_input_socket(DEGREE_INPUT_INDEX)->determine_canvas(image_canvas, unused);
@@ -171,7 +171,6 @@ void TransformOperation::determine_canvas(const rcti &preferred_area, rcti &r_ar
   }
 }
 
-/** Translate -> Rotate -> Scale. */
 void TransformOperation::transform(BuffersIterator<float> &it, const MemoryBuffer *input_img)
 {
   float rotate_center_x, rotate_center_y;
@@ -198,7 +197,6 @@ void TransformOperation::transform(BuffersIterator<float> &it, const MemoryBuffe
   }
 }
 
-/** Scale -> Rotate -> Translate. */
 void TransformOperation::transform_inverted(BuffersIterator<float> &it,
                                             const MemoryBuffer *input_img)
 {

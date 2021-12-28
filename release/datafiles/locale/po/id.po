@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-09-24 00:34-0700\n"
@@ -1485,10 +1485,6 @@ msgid "Hairs"
 msgstr "Rambut"
 
 
-msgid "Hair data-blocks"
-msgstr "Rambut data-blok"
-
-
 msgid "Images"
 msgstr "Gambar"
 
@@ -1629,10 +1625,6 @@ msgid "Point Clouds"
 msgstr "Awan Titik"
 
 
-msgid "Point cloud data-blocks"
-msgstr "Awan titik data-blok"
-
-
 msgid "Scenes"
 msgstr "Adegan"
 
@@ -1659,10 +1651,6 @@ msgstr "Kunci Bentuk data-blok"
 
 msgid "Simulations"
 msgstr "Simulasi"
-
-
-msgid "Simulation data-blocks"
-msgstr "Simulasi data-blok"
 
 
 msgid "Sounds"
@@ -1817,14 +1805,6 @@ msgid "Collection of grease pencils"
 msgstr "Koleksi pensil grease"
 
 
-msgid "Main Hairs"
-msgstr "Rambut Utama"
-
-
-msgid "Collection of hairs"
-msgstr "Koleksi rambut"
-
-
 msgid "Main Images"
 msgstr "Gambar Utama"
 
@@ -1937,14 +1917,6 @@ msgid "Collection of particle settings"
 msgstr "Koleksi pengaturan partikel"
 
 
-msgid "Main Point Clouds"
-msgstr "Awan Titik Utama"
-
-
-msgid "Collection of point clouds"
-msgstr "Koleksi awan titik"
-
-
 msgid "Main Light Probes"
 msgstr "Probe Cahaya Utama"
 
@@ -1967,14 +1939,6 @@ msgstr "Layar Utama"
 
 msgid "Collection of screens"
 msgstr "Koleksi layar"
-
-
-msgid "Main Simulations"
-msgstr "Simulasi Utama"
-
-
-msgid "Collection of simulations"
-msgstr "Koleksi Simulasi"
 
 
 msgid "Main Sounds"
@@ -3553,10 +3517,6 @@ msgid "Mode Type"
 msgstr "Tipe Mode"
 
 
-msgid "Stroke and Fill"
-msgstr "Stroke dan Isi"
-
-
 msgid "Byte Color Attribute Value"
 msgstr "Nilai Atribut Warna Byte"
 
@@ -4259,6 +4219,10 @@ msgstr "Memasukkan Ruang Warna"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Ruang warna dalam dokumen gambar, untuk mengubahnya ke dan dari saat menyimpan atau memuat gambar"
+
+
+msgid "Raw"
+msgstr "Raw"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -9125,26 +9089,6 @@ msgstr "Indeks Masker Layer Aktif"
 
 msgid "Active index in layer mask array"
 msgstr "Aktif indeks di larik masker layer"
-
-
-msgid "Hair Curve"
-msgstr "Kurva Rambut"
-
-
-msgid "Hair curve"
-msgstr "Kurva rambut"
-
-
-msgid "First Point Index"
-msgstr "Indeks Titik Pertama"
-
-
-msgid "Index of this curve"
-msgstr "Indeks kurva ini"
-
-
-msgid "Number of Points"
-msgstr "Jumlah Titik"
 
 
 msgid "Red Green Blue"
@@ -14483,6 +14427,18 @@ msgid "Or"
 msgstr "Atau"
 
 
+msgid "Input Type"
+msgstr "Tipe Masukan"
+
+
+msgid "Dot Product"
+msgstr "Produk Dot"
+
+
+msgid "Component"
+msgstr "Komponen"
+
+
 msgid "Attribute Remove"
 msgstr "Hapus Atribut"
 
@@ -14547,10 +14503,6 @@ msgid "Replace/Create"
 msgstr "Ganti/Buat"
 
 
-msgid "Input Type"
-msgstr "Tipe Masukan"
-
-
 msgid "Reflect"
 msgstr "Cerminkan"
 
@@ -14561,10 +14513,6 @@ msgstr "Biaskan"
 
 msgid "Faceforward"
 msgstr "Wajahdepan"
-
-
-msgid "Dot Product"
-msgstr "Produk Dot"
 
 
 msgid "Length of A"
@@ -14605,10 +14553,6 @@ msgstr "Tambah Shader"
 
 msgid "Ambient Occlusion"
 msgstr "Oklusi ambien"
-
-
-msgid "Component"
-msgstr "Komponen"
 
 
 msgid "Refraction BSDF"
@@ -22667,18 +22611,6 @@ msgid "Homogeneous"
 msgstr "Homogen"
 
 
-msgid "CPU Flags:"
-msgstr "Bendera CPU:"
-
-
-msgid "CUDA Flags:"
-msgstr "Bendera CUDA:"
-
-
-msgid "OptiX Flags:"
-msgstr "Bendera OptiX:"
-
-
 msgid "Texture Limit"
 msgstr "Batas Tekstur"
 
@@ -23016,11 +22948,6 @@ msgstr "Spasi"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Muat Pengaturan %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Simpan Pengaturan Baru"
 
@@ -23070,6 +22997,11 @@ msgstr "Karakter"
 
 msgid "Date: %s %s"
 msgstr "Tanggal: %s %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Muat Pengaturan %d.%d"
 
 
 msgid "After"
@@ -24136,6 +24068,11 @@ msgid "Enable Markers"
 msgstr "Gunakan Tanda"
 
 
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "Semua Frame Cukup/Fit"
+
+
 msgid "Solve error: %.2f px"
 msgstr "Memecahkan error: %.2f px"
 
@@ -24392,10 +24329,6 @@ msgid "Decrease Number"
 msgstr "Mengurangi Angka"
 
 
-msgid "No asset selected"
-msgstr "Tidak ada aset yang terseleksi"
-
-
 msgctxt "Operator"
 msgid "Less"
 msgstr "Lebih Sedikit"
@@ -24443,11 +24376,6 @@ msgstr "Seleksi"
 
 msgid "Show Same Material"
 msgstr "Tampilkan Material yang Sama"
-
-
-msgctxt "Operator"
-msgid "Frame All Fit"
-msgstr "Semua Frame Cukup/Fit"
 
 
 msgctxt "Operator"
@@ -24774,10 +24702,6 @@ msgid "%14s"
 msgstr "%14s"
 
 
-msgid "Raw"
-msgstr "Raw"
-
-
 msgid "Storage"
 msgstr "Gudang"
 
@@ -25055,10 +24979,6 @@ msgstr "Tidak ada %s kustom yang dikonfigurasi"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "Upgrade to 2.8x required"
-msgstr "Peningkatan ke 2.8x diperlukan"
 
 
 msgid "Description:"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Beta (b'0b246ed8131f')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6676,6 +6676,10 @@ msgid "Layer:"
 msgstr "Warstwa:"
 
 
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Powiązanie lub dołączenie z bardzo starego formatu .blend (%d.%d), dane o animacji nie zostaną przystosowane! Spróbuj zapisać źródłowy plik zawierający bibliotekę w aktualnym formacie pliku .blend"
+
+
 msgid "Const"
 msgstr "Stała"
 
@@ -7477,6 +7481,14 @@ msgstr "Bufor kopiowania jest pusty"
 
 msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Błąd programowania: Brak funkcji wyczyść transformację lub nazwy zestawu kluczowania"
+
+
+msgid "Path is empty, cannot save"
+msgstr "Pusta ścieżka. Nie udało się zapisać"
+
+
+msgid "Path too long, cannot save"
+msgstr "Za długa ścieżka. Nie udało się zapisać"
 
 
 msgid "Cannot separate current selection"
@@ -11506,14 +11518,6 @@ msgid "unable to open the file"
 msgstr "Nie udało się otworzyć pliku"
 
 
-msgid "Path is empty, cannot save"
-msgstr "Pusta ścieżka. Nie udało się zapisać"
-
-
-msgid "Path too long, cannot save"
-msgstr "Za długa ścieżka. Nie udało się zapisać"
-
-
 msgid "Context window not set"
 msgstr "Nie ustalono okna kontekstu"
 
@@ -11556,10 +11560,6 @@ msgstr "To nie jest biblioteka"
 
 msgid "Nothing indicated"
 msgstr "Nic nie wskazano"
-
-
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Powiązanie lub dołączenie z bardzo starego formatu .blend (%d.%d), dane o animacji nie zostaną przystosowane! Spróbuj zapisać źródłowy plik zawierający bibliotekę w aktualnym formacie pliku .blend"
 
 
 msgid "ON"
