@@ -4303,9 +4303,9 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION')
-            
+
             col.separator() #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
-            
+
             col.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').affect = 'VERTICES'
 
             col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
@@ -4358,7 +4358,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
 
             col.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").affect = 'EDGES'
-            
+
             col.separator()  #BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
 
             if selected_edges_len >= 1: #BFA-Draise - Changed order of Make Edge before Bridge Edge Loop for consistency with Vertex Context
@@ -4417,7 +4417,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Additive Operators
             col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-            
+
             col.separator()
 
             col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION')
@@ -4745,10 +4745,34 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
     bl_label = "Legacy"
 
-    def draw(self, _context):
+    def draw(self, context):
+
+        # bfa - checking if in edit mode and in wich select mode we are.
+        # We need to check for all three select modes, or the menu remains empty.
+        # See also the specials menu
+        def count_selected_items_for_objects_in_mode():
+            selected_verts_len = 0
+            selected_edges_len = 0
+            selected_faces_len = 0
+            for ob in context.objects_in_mode_unique_data:
+                v, e, f = ob.data.count_selected_items()
+                selected_verts_len += v
+                selected_edges_len += e
+                selected_faces_len += f
+            return (selected_verts_len, selected_edges_len, selected_faces_len)
+
+        is_vert_mode, is_edge_mode, is_face_mode = context.tool_settings.mesh_select_mode
+        selected_verts_len, selected_edges_len, selected_faces_len = count_selected_items_for_objects_in_mode()
+
+        del count_selected_items_for_objects_in_mode
+
         layout = self.layout
 
         layout.operator("mesh.inset", icon = "INSET_FACES")
+
+        # bfa - we need the check, or BFA will crash at this operator
+        if selected_faces_len >= 2:
+            layout.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
 
 class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
