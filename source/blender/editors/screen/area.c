@@ -957,7 +957,8 @@ static void region_azone_edge(AZone *az, ARegion *region)
 {
   /* If region is overlapped (transparent background), move #AZone to content.
    * Note this is an arbitrary amount that matches nicely with numbers elsewhere. */
-  int overlap_padding = (region->overlap) ? (int)(0.4f * U.widget_unit) : 0;
+  /*bfa - changed the value from 0.4f to 0.2f since our margin is just 0.2*. See #2731*/
+  int overlap_padding = (region->overlap) ? (int)(0.2f * U.widget_unit) : 0;
 
   switch (az->edge) {
     case AE_TOP_TO_BOTTOMRIGHT:
@@ -2910,7 +2911,7 @@ static int panel_draw_width_from_max_width_get(const ARegion *region,
                                                const int max_width)
 {
   /* bfa - With a background, we want some extra padding.
-  But not for our no header panel in the tool shelves. So if - else*/
+  But not for our no header panel in the tool shelves. So if - else. See #2731*/
   if (region->regiontype == RGN_TYPE_TOOLS) {
     /*our tool shelf, no extra padding*/
     return UI_panel_should_show_background(region, panel_type) ? max_width : max_width;
