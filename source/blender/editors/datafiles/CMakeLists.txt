@@ -1319,7 +1319,7 @@ uv
 window
 swirl
 
-#~ DEF_ICON_BLANK(1338)
+accumulate
 #~ DEF_ICON_BLANK(1339)
 #~ DEF_ICON_BLANK(1340)
 #~ DEF_ICON_BLANK(1341)
