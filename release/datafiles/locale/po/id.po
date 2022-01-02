@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-09-24 00:34-0700\n"
+"PO-Revision-Date: 2021-12-25 23:57-0800\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
@@ -1803,6 +1803,14 @@ msgstr "Pensil Grease Utama"
 
 msgid "Collection of grease pencils"
 msgstr "Koleksi pensil grease"
+
+
+msgid "Main Hairs"
+msgstr "Rambut Utama"
+
+
+msgid "Collection of hairs"
+msgstr "Koleksi rambut"
 
 
 msgid "Main Images"
@@ -3781,6 +3789,14 @@ msgid "Center"
 msgstr "Tengah"
 
 
+msgid "Child Particle"
+msgstr "Partikel anak"
+
+
+msgid "Cloth Collision Settings"
+msgstr "Pengaturan Tabrakan Kain"
+
+
 msgid "Collision Collection"
 msgstr "Koleksi Tabrakan"
 
@@ -4341,8 +4357,20 @@ msgid "Brightness"
 msgstr "Keterangan"
 
 
+msgid "Adjust the brightness of the texture"
+msgstr "Menyesuaikan keterangan tekstur"
+
+
 msgid "Contrast"
 msgstr "Kontras"
+
+
+msgid "Adjust the contrast of the texture"
+msgstr "Menyesuaikan kontras tekstur"
+
+
+msgid "Adjust the saturation of colors in the texture"
+msgstr "Menyesuaikan saturasi warna di tekstur"
 
 
 msgid "Color Mode"
@@ -4452,6 +4480,10 @@ msgstr "Masukan"
 
 msgid "Error"
 msgstr "Error"
+
+
+msgid "Use the results of this constraint"
+msgstr "Gunakan hasil paksaan ini"
 
 
 msgid "Lin error"
@@ -4598,6 +4630,10 @@ msgid "Transformation"
 msgstr "Transformasi"
 
 
+msgid "Use one transform property from target to control another (or same) property on owner"
+msgstr "Gunakan satu properti transformasi dari target ke kontrol properti lain (atau sama) di pemilik"
+
+
 msgid "Transform Cache"
 msgstr "Cache Transfromasi"
 
@@ -4688,6 +4724,10 @@ msgstr "Objek target"
 
 msgid "Transform Channel"
 msgstr "Saluran Transformasi"
+
+
+msgid "Transformation channel from the target that is used to key the Action"
+msgstr "Saluran transformasi"
 
 
 msgid "X Location"
@@ -5062,6 +5102,10 @@ msgid "Power"
 msgstr "Daya"
 
 
+msgid "Raise the target's scale to the specified power"
+msgstr "Naikkan skala target ke kekuatan spesifik"
+
+
 msgid "Additive"
 msgstr "Adiktif"
 
@@ -5374,6 +5418,10 @@ msgid "Limit Z"
 msgstr "Batasi Z"
 
 
+msgid "Limit Size Constraint"
+msgstr "Batasi Ukuran Paksaan"
+
+
 msgid "Point toward the target along the track axis, while locking the other axis"
 msgstr "Arahkan ke target di sepanjang sumbu lintasan, sambil mengunci sumbu lainnya"
 
@@ -5430,8 +5478,16 @@ msgid "Movie tracking object to follow"
 msgstr "Objek pelacak film untuk diikuti"
 
 
+msgid "Enabled Rotation Range"
+msgstr "Aktifkan Jarak Rotasi"
+
+
 msgid "Always"
 msgstr "Selalu"
+
+
+msgid "Use the pivot point in every rotation"
+msgstr "Gunakan titik poros di semua rotasi"
 
 
 msgid "Use the pivot point in the negative rotation range around the X-axis"
@@ -5504,6 +5560,10 @@ msgstr "Hentikan sudut dari proyeksi ke muka di target saat menghadap ke depan/l
 
 msgid "Off"
 msgstr "Mati"
+
+
+msgid "Distance to Target"
+msgstr "Jarak ke Target"
 
 
 msgid "Project Axis"
@@ -5622,6 +5682,10 @@ msgid "XZ Scale Mode"
 msgstr "Modus Pahat"
 
 
+msgid "Don't scale the X and Z axes (Default)"
+msgstr "Jangan skalakan axes X and Z (Default)"
+
+
 msgid "Bone Original"
 msgstr "Tulang Asli"
 
@@ -5644,6 +5708,10 @@ msgstr "Jangan skalakan di sumbu Y"
 
 msgid "Fit Curve"
 msgstr "Hapus"
+
+
+msgid "Use the original Y scale of the bone"
+msgstr "Gunakan skala Y asli tulang"
 
 
 msgid "Keep Axis"
@@ -5800,6 +5868,10 @@ msgstr "Petakan Ke Y Dari"
 
 msgid "Map To Z From"
 msgstr "Petakan Ke Z Dari"
+
+
+msgid "Location Mix Mode"
+msgstr "Mode Campur Lokasi"
 
 
 msgid "Rotation Mix Mode"
@@ -7214,10 +7286,6 @@ msgstr "Wadah"
 
 msgid "MPEG-4"
 msgstr "MPEG-4"
-
-
-msgid "Quicktime"
-msgstr "Quicktime"
 
 
 msgid "Lossless Output"
@@ -8943,6 +9011,10 @@ msgid "Relative force of the hook"
 msgstr "Gaya relatif kait"
 
 
+msgid "Step"
+msgstr "Langkah"
+
+
 msgid "Source Type"
 msgstr "Tipe Sumber"
 
@@ -8975,8 +9047,12 @@ msgid "Thickness Factor"
 msgstr "Faktor Ketebalan"
 
 
-msgid "Step"
-msgstr "Langkah"
+msgid "Project Limit"
+msgstr "Objek"
+
+
+msgid "Negative"
+msgstr "Negatif"
 
 
 msgid "Adaptive"
@@ -12136,10 +12212,6 @@ msgid "Ball"
 msgstr "Bola"
 
 
-msgid "Negative"
-msgstr "Negatif"
-
-
 msgid "Data Transfer"
 msgstr "Transfer Data"
 
@@ -12470,10 +12542,6 @@ msgstr "Bayangan Halus"
 
 msgid "Object Screw"
 msgstr "Data Objek"
-
-
-msgid "Project Limit"
-msgstr "Objek"
 
 
 msgid "Bend the mesh over the Z axis of the modifier space"
@@ -20246,16 +20314,24 @@ msgid "Detail Size"
 msgstr "Adegan"
 
 
+msgid "Brush Detail"
+msgstr "Detail Kuas"
+
+
+msgid "Manual Detail"
+msgstr "Detail Manual"
+
+
 msgid "Lock X"
-msgstr "Kunci"
+msgstr "Kunci X"
 
 
 msgid "Lock Y"
-msgstr "Kunci"
+msgstr "Kunci Y"
 
 
 msgid "Lock Z"
-msgstr "Kunci"
+msgstr "Kunci Z"
 
 
 msgid "Restrict"
@@ -20270,41 +20346,186 @@ msgid "Sampling Presets"
 msgstr "Contoh Tersedia"
 
 
+msgid "Custom Shape"
+msgstr "Bentuk Kustom"
+
+
 msgid "Camera Presets"
-msgstr "Kamera"
+msgstr "Preset Kamera"
 
 
 msgid "Active Point"
-msgstr "Tambah Baru"
+msgstr "Titik Aktif"
+
+
+msgid "Clip Display"
+msgstr "Tampilan Klip"
+
+
+msgid "Footage"
+msgstr "Rekaman"
+
+
+msgid "Footage Settings"
+msgstr "Pengaturan Rekaman"
+
+
+msgid "Marker Display"
+msgstr "Tampilan Penanda"
 
 
 msgid "Mask Settings"
-msgstr "Partikel"
+msgstr "Pengaturan Masker"
 
 
 msgid "Mask Display"
-msgstr "Grup"
+msgstr "Tampilan Masker"
+
+
+msgid "Stabilization"
+msgstr "Stabilisasi"
+
+
+msgid "2D Stabilization"
+msgstr "Stabilisasi 2D"
+
+
+msgid "Solve"
+msgstr "Selesaikan"
 
 
 msgid "Tracking Presets"
 msgstr "Kamera"
 
 
+msgid "Film"
+msgstr "Film"
+
+
+msgid "Pixel Filter"
+msgstr "Filter Pixel"
+
+
+msgid "Transparent"
+msgstr "Transparan"
+
+
 msgid "Light Paths"
 msgstr "Kamera"
 
 
+msgid "Custom Distance"
+msgstr "Jarak Kustom"
+
+
+msgid "Texture Space"
+msgstr "Spasi Tekstur"
+
+
 msgid "Geometry Data"
-msgstr "Kamera"
+msgstr "Data Geometri"
+
+
+msgid "Adjustments"
+msgstr "Pengaturan"
+
+
+msgid "Paragraph"
+msgstr "Paragraf"
+
+
+msgid "Effects"
+msgstr "Efek"
 
 
 msgid "Fluid Presets"
 msgstr "Kamera"
 
 
+msgid "Color Palette"
+msgstr "Palet Warna"
+
+
+msgctxt "Operator"
+msgid "Annotate"
+msgstr "Annotasi"
+
+
+msgctxt "Operator"
+msgid "Annotate Line"
+msgstr "Annotasi Garis"
+
+
+msgctxt "Operator"
+msgid "Annotate Polygon"
+msgstr "Annotasi Poligon"
+
+
+msgctxt "Operator"
+msgid "Annotate Eraser"
+msgstr "Annotasi Penghapus"
+
+
+msgctxt "Operator"
+msgid "Select Box"
+msgstr "Seleksi Kotak"
+
+
+msgctxt "Operator"
+msgid "Select Circle"
+msgstr "Seleksi Lingkaran"
+
+
+msgctxt "Operator"
+msgid "Select Lasso"
+msgstr "Seleksi Laso"
+
+
+msgctxt "Operator"
+msgid "Cursor"
+msgstr "Kursor"
+
+
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Adegan"
+
+
+msgctxt "Operator"
+msgid "Grab"
+msgstr "Ambil"
+
+
+msgid "Type 1"
+msgstr "Tipe 1"
+
+
+msgid "Type 2"
+msgstr "Tipe2"
+
+
+msgid "Collisions"
+msgstr "Tabrakan"
+
+
+msgid "Sensitivity"
+msgstr "Sensitivitas"
+
+
+msgid "Dynamics"
+msgstr "Dinamika"
+
+
+msgid "Color Management"
+msgstr "Manajemen Warna"
+
+
+msgid "Audio"
+msgstr "Audio"
+
+
+msgid "Video"
+msgstr "Video"
 
 
 msgid "Extra Options"
@@ -20424,6 +20645,10 @@ msgid "Menu"
 msgstr "Menu"
 
 
+msgid "Menu Item"
+msgstr "Item Menu"
+
+
 msgid "Option"
 msgstr "Opsi"
 
@@ -20465,13 +20690,43 @@ msgstr "Analisis"
 
 
 msgctxt "Operator"
+msgid "Push"
+msgstr "Dorong"
+
+
+msgctxt "Operator"
+msgid "Bone Size"
+msgstr "Ukuran Tulang"
+
+
+msgctxt "Operator"
 msgid "Knife"
 msgstr "Pisau"
 
 
 msgctxt "Operator"
+msgid "Radius"
+msgstr "Radius"
+
+
+msgctxt "Operator"
+msgid "Length"
+msgstr "Panjang"
+
+
+msgctxt "Operator"
+msgid "Weight"
+msgstr "Berat"
+
+
+msgctxt "Operator"
 msgid "Flatten"
 msgstr "Meratakan"
+
+
+msgctxt "Operator"
+msgid "Thumb"
+msgstr "Ibu Jari"
 
 
 msgctxt "Operator"
@@ -20510,6 +20765,26 @@ msgstr "Otomatis"
 
 msgid "Active section of the preferences shown in the user interface"
 msgstr "Bagian aktif preferensi ditapilkan di antarmuka pengguna"
+
+
+msgid "Duplicate Camera"
+msgstr "Duplikasi Kamera"
+
+
+msgid "Duplicate GPencil"
+msgstr "Duplikasi PensilG"
+
+
+msgid "Causes grease pencil data to be duplicated with the object"
+msgstr "Menyebabkan data pensil grease diduplikasi dengan objek"
+
+
+msgid "Duplicate Hair"
+msgstr "Duplikasi Rambut"
+
+
+msgid "Duplicate Light"
+msgstr "Duplikasi Cahaya"
 
 
 msgid "Duplicate Metaball"
@@ -26382,6 +26657,14 @@ msgid "No active camera set"
 msgstr "Hapus"
 
 
+msgid "Warning!"
+msgstr "Bahaya!"
+
+
+msgid "OK"
+msgstr "OK"
+
+
 msgid "vertex data"
 msgstr "data vertex"
 
@@ -26392,14 +26675,6 @@ msgstr "data tepi"
 
 msgid "face data"
 msgstr "data wajah"
-
-
-msgid "Warning!"
-msgstr "Bahaya!"
-
-
-msgid "OK"
-msgstr "OK"
 
 
 msgid "Active F-Curve"

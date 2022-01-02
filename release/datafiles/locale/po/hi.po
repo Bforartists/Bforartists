@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1750,6 +1750,10 @@ msgid "Step"
 msgstr "कदम"
 
 
+msgid "Negative"
+msgstr "नकारात्मक"
+
+
 msgid "Fixed"
 msgstr "निर्धारित"
 
@@ -3015,10 +3019,6 @@ msgstr "सीवन"
 
 msgid "Ball"
 msgstr "गेंद"
-
-
-msgid "Negative"
-msgstr "नकारात्मक"
 
 
 msgid "Mesh Cache"
