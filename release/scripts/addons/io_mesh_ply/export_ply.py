@@ -24,7 +24,15 @@ colors, and texture coordinates per face or per vertex.
 """
 
 
-def _write_binary(fw, ply_verts, ply_faces, mesh_verts):
+class _PLYface:
+    __slots__ = "verts", "sides"
+
+    def __init__(self, sides: int) -> None:
+        self.verts = []
+        self.sides = sides
+
+
+def _write_binary(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: list) -> None:
     from struct import pack
 
     # Vertex data
@@ -43,11 +51,10 @@ def _write_binary(fw, ply_verts, ply_faces, mesh_verts):
     # ---------------------------
 
     for pf in ply_faces:
-        length = len(pf)
-        fw(pack("<B%dI" % length, length, *pf))
+        fw(pack(f"<B{pf.sides}I", pf.sides, *pf.verts))
 
 
-def _write_ascii(fw, ply_verts, ply_faces, mesh_verts):
+def _write_ascii(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: list) -> None:
 
     # Vertex data
     # ---------------------------
@@ -66,8 +73,8 @@ def _write_ascii(fw, ply_verts, ply_faces, mesh_verts):
     # ---------------------------
 
     for pf in ply_faces:
-        fw(b"%d" % len(pf))
-        for index in pf:
+        fw(b"%d" % pf.sides)
+        for index in pf.verts:
             fw(b" %d" % index)
         fw(b"\n")
 
@@ -96,12 +103,12 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
 
     mesh_verts = mesh.vertices
     # vdict = {} # (index, normal, uv) -> new index
-    vdict = [{} for i in range(len(mesh_verts))]
+    vdict = [{} for _ in range(len(mesh_verts))]
     ply_verts = []
-    ply_faces = [[] for f in range(len(mesh.polygons))]
+    ply_faces = []
     vert_count = 0
 
-    for i, f in enumerate(mesh.polygons):
+    for f in mesh.polygons:
 
         if use_normals:
             smooth = f.use_smooth
@@ -120,8 +127,8 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
                 for l in range(f.loop_start, f.loop_start + f.loop_total)
             ]
 
-        pf = ply_faces[i]
-        for j, vidx in enumerate(f.vertices):
+        pf = _PLYface(f.loop_total)
+        for i, vidx in enumerate(f.vertices):
             v = mesh_verts[vidx]
 
             if use_normals and smooth:
@@ -129,11 +136,11 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
                 normal_key = rvec3d(normal)
 
             if use_uv_coords:
-                uvcoord = uv[j][0], uv[j][1]
+                uvcoord = uv[i][0], uv[i][1]
                 uvcoord_key = rvec2d(uvcoord)
 
             if use_colors:
-                color = col[j]
+                color = col[i]
                 color = (
                     int(color[0] * 255.0),
                     int(color[1] * 255.0),
@@ -150,7 +157,9 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
                 ply_verts.append((vidx, normal, uvcoord, color))
                 vert_count += 1
 
-            pf.append(pf_vidx)
+            pf.verts.append(pf_vidx)
+
+        ply_faces.append(pf)
 
     with open(filepath, "wb") as file:
         fw = file.write
@@ -243,6 +252,10 @@ def save(
         me.transform(ob.matrix_world)
         bm.from_mesh(me)
         ob_eval.to_mesh_clear()
+
+    # Workaround for hardcoded unsigned char limit in other DCCs PLY importers
+    if (ngons := [f for f in bm.faces if len(f.verts) > 255]):
+        bmesh.ops.triangulate(bm, faces=ngons)
 
     mesh = bpy.data.meshes.new("TMP PLY EXPORT")
     bm.to_mesh(mesh)

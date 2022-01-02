@@ -1168,7 +1168,10 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
 
         # Generate the UI script
         script = metarig.data.rigify_rig_ui
-        if not script:
+
+        if script:
+            script.clear()
+        else:
             script = bpy.data.texts.new("rig_ui.py")
             metarig.data.rigify_rig_ui = script
 

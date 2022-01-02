@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6531,10 +6531,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Konec"
-
-
 msgid "Matroska"
 msgstr "Plošky"
 
@@ -8170,6 +8166,10 @@ msgid "Hook"
 msgstr "Hák"
 
 
+msgid "Project the shape onto another object"
+msgstr "Projektovat tvar na další objekt"
+
+
 msgid "Hue/Saturation"
 msgstr "Odstín/sytost"
 
@@ -8348,6 +8348,10 @@ msgid "Point Density"
 msgstr "Hustota bodů"
 
 
+msgid "Step"
+msgstr "Krok"
+
+
 msgid "Mirror Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -8356,8 +8360,44 @@ msgid "Noise Offset"
 msgstr "Odsazení Šumu"
 
 
-msgid "Step"
-msgstr "Krok"
+msgid "Shrinkwrap Modifier"
+msgstr "Smrštit/roztáhnout"
+
+
+msgid "Auxiliary Target"
+msgstr "Pomocný cíl"
+
+
+msgid "Distance to keep from the target"
+msgstr "Vzdálenost, kterou chcete držet od cíle"
+
+
+msgid "Project Limit"
+msgstr "Textový editor"
+
+
+msgid "Subdivision Levels"
+msgstr "Úrovně Dělení"
+
+
+msgid "Negative"
+msgstr "Negativní"
+
+
+msgid "Positive"
+msgstr "Pozitivní"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Odstranit označené Objekt(y)"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Odstranit označené Objekt(y)"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Odstranit označené Objekt(y)"
 
 
 msgid "Fixed"
@@ -15051,10 +15091,6 @@ msgid "Ellipsoid"
 msgstr "Elipsoid"
 
 
-msgid "Negative"
-msgstr "Negativní"
-
-
 msgid "Modifier affecting the geometry data of an object"
 msgstr "Přesune geometrii objektu ke středovému bodu objektu"
 
@@ -15189,10 +15225,6 @@ msgstr "Deformace Sítí"
 
 msgid "Deform using a different mesh, which acts as a deformation cage"
 msgstr "Deformovat z využitím jiné sítě, který se chová jako deformační klec"
-
-
-msgid "Project the shape onto another object"
-msgstr "Projektovat tvar na další objekt"
 
 
 msgid "Simple Deform"
@@ -16130,42 +16162,6 @@ msgstr "Číslo ve stupních určující počet otočení"
 
 msgid "Object Screw"
 msgstr "Objekt"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Smrštit/roztáhnout"
-
-
-msgid "Auxiliary Target"
-msgstr "Pomocný cíl"
-
-
-msgid "Distance to keep from the target"
-msgstr "Vzdálenost, kterou chcete držet od cíle"
-
-
-msgid "Project Limit"
-msgstr "Textový editor"
-
-
-msgid "Subdivision Levels"
-msgstr "Úrovně Dělení"
-
-
-msgid "Positive"
-msgstr "Pozitivní"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Odstranit označené Objekt(y)"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Odstranit označené Objekt(y)"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Odstranit označené Objekt(y)"
 
 
 msgid "SimpleDeform Modifier"
@@ -44255,11 +44251,6 @@ msgstr "Zobrazit animaci"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Vrátit historii zpět..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Opakovat historii..."
 
@@ -46100,10 +46091,6 @@ msgid "Cannot split current selection"
 msgstr "Aktuální výběr nelze rozdělit"
 
 
-msgid "Not yet implemented"
-msgstr "Dosud není implementováno"
-
-
 msgid "No points were selected"
 msgstr "Nebyly vybrány žádné body"
 
@@ -47689,20 +47676,20 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Odstranit skupinu vertexů"
 
 
-msgid "edge data"
-msgstr "data hrany"
-
-
-msgid "face data"
-msgstr "data plochy"
-
-
 msgid "Warning!"
 msgstr "Upozornění!"
 
 
 msgid "OK"
 msgstr "OK"
+
+
+msgid "edge data"
+msgstr "data hrany"
+
+
+msgid "face data"
+msgstr "data plochy"
 
 
 msgid "Active F-Curve"
@@ -47980,6 +47967,10 @@ msgstr "Nastavit aktivní klíčovací sestavu"
 
 msgid "Not found: %s"
 msgstr "Nebyl nalezen: %s"
+
+
+msgid "Not yet implemented"
+msgstr "Dosud není implementováno"
 
 
 msgid "Mixed selection"

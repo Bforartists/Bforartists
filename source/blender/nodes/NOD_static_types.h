@@ -346,6 +346,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud")
 DefNode(GeometryNode, GEO_NODE_DELETE_GEOMETRY, def_geo_delete_geometry, "DELETE_GEOMETRY", DeleteGeometry, "Delete Geometry", "Add a Delete Geometry Node\nDeletes Geometry")
 DefNode(GeometryNode, GEO_NODE_DISTRIBUTE_POINTS_ON_FACES, def_geo_distribute_points_on_faces, "DISTRIBUTE_POINTS_ON_FACES", DistributePointsOnFaces, "Distribute Points on Faces", "Add a Distribute Points on Faces Geometry node\nDistribute geometry at the center of faces")
+DefNode(GeometryNode, GEO_NODE_ACCUMULATE_FIELD, def_geo_accumulate_field, "ACCUMULATE_FIELD", AccumulateField, "Accumulate Field", "Add a Accumulate Field Geometry Node\nNot documented yet")
 DefNode(GeometryNode, GEO_NODE_DUAL_MESH, 0, "DUAL_MESH", DualMesh, "Dual Mesh", "Add a Dual Mesh Geometry node\nCalculates the dual of the input mesh. This means that faces get replaced with vertices and vice versa")
 DefNode(GeometryNode, GEO_NODE_FILL_CURVE, def_geo_curve_fill, "FILL_CURVE", FillCurve, "Fill Curve", "Add a Fill Curve Geometry node\nFill the curve")
 DefNode(GeometryNode, GEO_NODE_FILLET_CURVE, def_geo_curve_fillet, "FILLET_CURVE", FilletCurve, "Fillet Curve", "Add a Curve Fillet Geometry node\nFillet splines at control points to create a circular arc")
