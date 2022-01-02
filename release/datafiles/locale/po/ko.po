@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -9564,10 +9564,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "퀵타임"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -13555,6 +13551,10 @@ msgid "Change stroke location, rotation or scale"
 msgstr "스트로크 위치, 회전 또는 축적을 변경"
 
 
+msgid "Project the shape onto another object"
+msgstr "셰이프를 다른 오브젝트에 투사합니다"
+
+
 msgid "Smooth stroke"
 msgstr "스무스 스트로크"
 
@@ -13993,6 +13993,14 @@ msgid "Point Density"
 msgstr "포인트 밀도"
 
 
+msgid "Step"
+msgstr "단계"
+
+
+msgid "Number of frames before recalculate random values again"
+msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
+
+
 msgid "Overscan"
 msgstr "오버스캔"
 
@@ -14057,14 +14065,6 @@ msgid "Thickness Factor"
 msgstr "두께 팩터"
 
 
-msgid "Step"
-msgstr "단계"
-
-
-msgid "Number of frames before recalculate random values again"
-msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
-
-
 msgid "Offset Modifier"
 msgstr "오프셋 모디파이어"
 
@@ -14083,6 +14083,78 @@ msgstr "스트로크 모디파이어의 불투명도"
 
 msgid "Factor of Opacity"
 msgstr "불투명도의 팩터"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "수축 감싸기 모디파이어"
+
+
+msgid "Shrink wrapping modifier to shrink wrap and object to a target"
+msgstr "대상에 오브젝트 및 수축 감싸기하는 수축 감싸기 모디파이어"
+
+
+msgid "Auxiliary Target"
+msgstr "보조 대상"
+
+
+msgid "Additional mesh target to shrink to"
+msgstr "다음으로 수축하는 추가적인 메쉬"
+
+
+msgid "Distance to keep from the target"
+msgstr "대상에서 유지하는 거리"
+
+
+msgid "Project Limit"
+msgstr "투사 제한"
+
+
+msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
+msgstr "버텍스 위치 및 노멀을 추출하기 이전에 실행해야 하는 섭디비젼의 수"
+
+
+msgid "Mesh target to shrink to"
+msgstr "다음으로 수축하는 메쉬 대상"
+
+
+msgid "When projecting in the negative direction invert the face cull mode"
+msgstr "음의 방향으로 투사할 때 페이스 추려내기 모드를 반전시킵니다"
+
+
+msgid "Negative"
+msgstr "음수"
+
+
+msgid "Allow vertices to move in the negative direction of axis"
+msgstr "축의 음수 방향에서 이동하는 버텍스를 허용"
+
+
+msgid "Positive"
+msgstr "양수"
+
+
+msgid "Allow vertices to move in the positive direction of axis"
+msgstr "축의 양수 방향에서 이동하는 버텍스를 허용"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "가까운 대상 표면에 메쉬를 수축"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "주어진 축을 따라 가까운 대상 표면에 메쉬를 수축"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "가까운 대상 버텍스에 메쉬를 수축"
+
+
+msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
+msgstr "메쉬를 대상의 보간된 버텍스 노멀을 따라 가장 가까운 대상 표면으로 축소합니다"
+
+
+msgid "Select how vertices are constrained to the target surface"
+msgstr "대상 표면에 구속되는 버텍스 선택 방법"
 
 
 msgid "Simplify Modifier"
@@ -27821,10 +27893,6 @@ msgid "Ellipsoid"
 msgstr "타원체"
 
 
-msgid "Negative"
-msgstr "음수"
-
-
 msgid "Set metaball as negative one"
 msgstr "다른 음수 하나로 매타볼을 추가"
 
@@ -28063,10 +28131,6 @@ msgstr "메쉬 변형"
 
 msgid "Deform using a different mesh, which acts as a deformation cage"
 msgstr "변형 케이지 역할을 하는 다른 메쉬를 사용하여 변형합니다"
-
-
-msgid "Project the shape onto another object"
-msgstr "셰이프를 다른 오브젝트에 투사합니다"
 
 
 msgid "Simple Deform"
@@ -30408,74 +30472,6 @@ msgstr "늘이기 U"
 
 msgid "Stretch V"
 msgstr "늘이기 V"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "수축 감싸기 모디파이어"
-
-
-msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "대상에 오브젝트 및 수축 감싸기하는 수축 감싸기 모디파이어"
-
-
-msgid "Auxiliary Target"
-msgstr "보조 대상"
-
-
-msgid "Additional mesh target to shrink to"
-msgstr "다음으로 수축하는 추가적인 메쉬"
-
-
-msgid "Distance to keep from the target"
-msgstr "대상에서 유지하는 거리"
-
-
-msgid "Project Limit"
-msgstr "투사 제한"
-
-
-msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "버텍스 위치 및 노멀을 추출하기 이전에 실행해야 하는 섭디비젼의 수"
-
-
-msgid "Mesh target to shrink to"
-msgstr "다음으로 수축하는 메쉬 대상"
-
-
-msgid "When projecting in the negative direction invert the face cull mode"
-msgstr "음의 방향으로 투사할 때 페이스 추려내기 모드를 반전시킵니다"
-
-
-msgid "Allow vertices to move in the negative direction of axis"
-msgstr "축의 음수 방향에서 이동하는 버텍스를 허용"
-
-
-msgid "Positive"
-msgstr "양수"
-
-
-msgid "Allow vertices to move in the positive direction of axis"
-msgstr "축의 양수 방향에서 이동하는 버텍스를 허용"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "가까운 대상 표면에 메쉬를 수축"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "주어진 축을 따라 가까운 대상 표면에 메쉬를 수축"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "가까운 대상 버텍스에 메쉬를 수축"
-
-
-msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
-msgstr "메쉬를 대상의 보간된 버텍스 노멀을 따라 가장 가까운 대상 표면으로 축소합니다"
-
-
-msgid "Select how vertices are constrained to the target surface"
-msgstr "대상 표면에 구속되는 버텍스 선택 방법"
 
 
 msgid "SimpleDeform Modifier"
@@ -81948,11 +81944,6 @@ msgstr "에니메이션을 보기"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "실행 취소 기록..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "기록을 반복..."
 
@@ -85108,10 +85099,6 @@ msgid "Cannot split current selection"
 msgstr "현재 선택을 분할 할 수 없습니다"
 
 
-msgid "Not yet implemented"
-msgstr "아직 구현되지 안음"
-
-
 msgid "No points were selected"
 msgstr "포인트가 선택되지 않았습니다"
 
@@ -87783,6 +87770,34 @@ msgid "No active vertex group for painting, aborting"
 msgstr "페인팅을 위한 활성 버텍스 그룹이 없음, 중단하기"
 
 
+msgid "Click on the mesh to set the detail"
+msgstr "디테일을 설정하려면 메쉬를 클릭하십시오"
+
+
+msgid "Warning!"
+msgstr "경고!"
+
+
+msgid "OK"
+msgstr "OK"
+
+
+msgid "Vertex Data Detected!"
+msgstr "버텍스 데이터 감지됨!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "다인토포는 버텍스 컬러, UV 또는 다른 커스텀 데이터를 보존하지 않습니다"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "생성 모디파이어 감지됨!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "오브젝트 모드로 돌아갈 때 모디파이어를 유지하면 폴리 숫자가 증가합니다"
+
+
 msgid "non-triangle face"
 msgstr "비 삼각형 페이스"
 
@@ -87817,34 +87832,6 @@ msgstr "오브젝트의 축적이 음수이고 스컬프트을 예측할 수 없
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "발견된 다이나믹 토폴로지: %s, 비활성화됨"
-
-
-msgid "Click on the mesh to set the detail"
-msgstr "디테일을 설정하려면 메쉬를 클릭하십시오"
-
-
-msgid "Warning!"
-msgstr "경고!"
-
-
-msgid "OK"
-msgstr "OK"
-
-
-msgid "Vertex Data Detected!"
-msgstr "버텍스 데이터 감지됨!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "다인토포는 버텍스 컬러, UV 또는 다른 커스텀 데이터를 보존하지 않습니다"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "생성 모디파이어 감지됨!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "오브젝트 모드로 돌아갈 때 모디파이어를 유지하면 폴리 숫자가 증가합니다"
 
 
 msgid "Compiled without sound support"
@@ -88835,6 +88822,10 @@ msgstr "찾을 수 없음: %s"
 
 msgid "Deleted %d data-block(s)"
 msgstr "%d개의 데이터-블록을 삭제했습니다"
+
+
+msgid "Not yet implemented"
+msgstr "아직 구현되지 안음"
 
 
 msgid "Mixed selection"

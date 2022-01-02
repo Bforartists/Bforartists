@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -10639,10 +10639,6 @@ msgid "AVI"
 msgstr "AVI"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -15890,6 +15886,10 @@ msgid "Change stroke location, rotation or scale"
 msgstr "Cambia la posición, rotación o escala de los trazos"
 
 
+msgid "Project the shape onto another object"
+msgstr "Permite proyectar la forma del objeto hacia la superficie de otro objeto"
+
+
 msgid "Smooth stroke"
 msgstr "Suavizar trazo"
 
@@ -16476,12 +16476,24 @@ msgid "Absolute added length to the start of each stroke"
 msgstr "Longitud absoluta a adicionar al inicio de cada trazo"
 
 
+msgid "Step"
+msgstr "Intervalo"
+
+
+msgid "Number of frames before recalculate random values again"
+msgstr "Cantidad de fotogramas antes de recalcular los valores aleatorios nuevamente"
+
+
 msgid "Use Curvature"
 msgstr "Usar curvatura"
 
 
 msgid "Follow the curvature of the stroke"
 msgstr "Seguir la curvatura del trazo"
+
+
+msgid "Use random values over time"
+msgstr "Usar valores aleatorios a lo largo del tiempo"
 
 
 msgid "Line Art Modifier"
@@ -16976,20 +16988,8 @@ msgid "Noise Seed"
 msgstr "Semilla del ruido"
 
 
-msgid "Step"
-msgstr "Intervalo"
-
-
-msgid "Number of frames before recalculate random values again"
-msgstr "Cantidad de fotogramas antes de recalcular los valores aleatorios nuevamente"
-
-
 msgid "Use a custom curve to define noise effect along the strokes"
 msgstr "Usar una curva personalizada para definir el efecto de ruido a lo largo de los trazos"
-
-
-msgid "Use random values over time"
-msgstr "Usar valores aleatorios a lo largo del tiempo"
 
 
 msgid "Offset Modifier"
@@ -17042,6 +17042,86 @@ msgstr "Con influencias"
 
 msgid "Use weight to modulate effect"
 msgstr "Usar influencias para modular el efecto"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "Modificador Envolver"
+
+
+msgid "Shrink wrapping modifier to shrink wrap and object to a target"
+msgstr "Modificador de envoltura para envolver un objeto alrededor de un objetivo"
+
+
+msgid "Auxiliary Target"
+msgstr "Objetivo auxiliar"
+
+
+msgid "Additional mesh target to shrink to"
+msgstr "Malla objetivo adicional a la cual contraer"
+
+
+msgid "Distance to keep from the target"
+msgstr "Distancia a mantener desde el objetivo"
+
+
+msgid "Project Limit"
+msgstr "Límite proyección"
+
+
+msgid "Subdivision Levels"
+msgstr "Niveles de subdivisión"
+
+
+msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
+msgstr "Cantidad de subdivisiones que deben ser realizadas antes de extraer la posición y las normales de los vértices"
+
+
+msgid "Mesh target to shrink to"
+msgstr "Malla objetivo a envolver"
+
+
+msgid "When projecting in the negative direction invert the face cull mode"
+msgstr "Al proyectar en la dirección negativa invertir el modo de desechar caras"
+
+
+msgid "Negative"
+msgstr "Negativa"
+
+
+msgid "Allow vertices to move in the negative direction of axis"
+msgstr "Permitir que los vértices se muevan en la dirección negativa del eje"
+
+
+msgid "Positive"
+msgstr "Positiva"
+
+
+msgid "Allow vertices to move in the positive direction of axis"
+msgstr "Permitir que los vértices se muevan en la dirección positiva del eje"
+
+
+msgid "Wrap Method"
+msgstr "Método de envoltura"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Contraer la malla a la superficie más cercana del objetivo"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Contraer la malla a la superficie más cercana del objetivo en un eje indicado"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Contraer la malla al vértice más cercano del objetivo"
+
+
+msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
+msgstr "Contraer la malla a la superficie más cercana del objetivo en dirección a las normales interpoladas de los vértices del objetivo"
+
+
+msgid "Select how vertices are constrained to the target surface"
+msgstr "Permite seleccionar cómo se restringen los vértices a la superficie del objetivo"
 
 
 msgid "Simplify Modifier"
@@ -33335,10 +33415,6 @@ msgid "Ellipsoid"
 msgstr "Elipsoide"
 
 
-msgid "Negative"
-msgstr "Negativa"
-
-
 msgid "Set metaball as negative one"
 msgstr "Definir como metabola negativa"
 
@@ -33617,10 +33693,6 @@ msgstr "Deformar con malla"
 
 msgid "Deform using a different mesh, which acts as a deformation cage"
 msgstr "Permite deformar el objeto usando otra malla, que actuará como jaula de deformación"
-
-
-msgid "Project the shape onto another object"
-msgstr "Permite proyectar la forma del objeto hacia la superficie de otro objeto"
 
 
 msgid "Simple Deform"
@@ -36438,82 +36510,6 @@ msgstr "Estirar V"
 
 msgid "Stretch the V coordinates between 0 and 1 when UV's are present"
 msgstr "Estira la coordenada V entre 0 y 1, si hay UV presentes"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Modificador Envolver"
-
-
-msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "Modificador de envoltura para envolver un objeto alrededor de un objetivo"
-
-
-msgid "Auxiliary Target"
-msgstr "Objetivo auxiliar"
-
-
-msgid "Additional mesh target to shrink to"
-msgstr "Malla objetivo adicional a la cual contraer"
-
-
-msgid "Distance to keep from the target"
-msgstr "Distancia a mantener desde el objetivo"
-
-
-msgid "Project Limit"
-msgstr "Límite proyección"
-
-
-msgid "Subdivision Levels"
-msgstr "Niveles de subdivisión"
-
-
-msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "Cantidad de subdivisiones que deben ser realizadas antes de extraer la posición y las normales de los vértices"
-
-
-msgid "Mesh target to shrink to"
-msgstr "Malla objetivo a envolver"
-
-
-msgid "When projecting in the negative direction invert the face cull mode"
-msgstr "Al proyectar en la dirección negativa invertir el modo de desechar caras"
-
-
-msgid "Allow vertices to move in the negative direction of axis"
-msgstr "Permitir que los vértices se muevan en la dirección negativa del eje"
-
-
-msgid "Positive"
-msgstr "Positiva"
-
-
-msgid "Allow vertices to move in the positive direction of axis"
-msgstr "Permitir que los vértices se muevan en la dirección positiva del eje"
-
-
-msgid "Wrap Method"
-msgstr "Método de envoltura"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Contraer la malla a la superficie más cercana del objetivo"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Contraer la malla a la superficie más cercana del objetivo en un eje indicado"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Contraer la malla al vértice más cercano del objetivo"
-
-
-msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
-msgstr "Contraer la malla a la superficie más cercana del objetivo en dirección a las normales interpoladas de los vértices del objetivo"
-
-
-msgid "Select how vertices are constrained to the target surface"
-msgstr "Permite seleccionar cómo se restringen los vértices a la superficie del objetivo"
 
 
 msgid "SimpleDeform Modifier"
@@ -53640,6 +53636,11 @@ msgstr "Captura las curvas-f seleccionadas a un conjunto de puntos muestreados f
 
 
 msgctxt "Operator"
+msgid "Blend To Neighbor"
+msgstr "Fundir a cercano"
+
+
+msgctxt "Operator"
 msgid "Click-Insert Keyframes"
 msgstr "Clic-insertar claves"
 
@@ -53682,6 +53683,10 @@ msgid "Decimate F-Curves by removing keyframes that influence the curve shape th
 msgstr "Permite diezmar las curvas-f eliminando los claves que ejercen menos influencia en su forma"
 
 
+msgid "The ratio of remaining keyframes after the operation"
+msgstr "La proporción de fotogramas clave restantes luego de la operación"
+
+
 msgid "Which mode to use for decimation"
 msgstr "Modo a usar para diezmar"
 
@@ -53704,10 +53709,6 @@ msgstr "Margen de error máximo"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "Cuánto se permitirá que la nueva curva diezmada se desvíe de la original"
-
-
-msgid "The ratio of remaining keyframes after the operation"
-msgstr "La proporción de fotogramas clave restantes luego de la operación"
 
 
 msgctxt "Operator"
@@ -65006,11 +65007,6 @@ msgstr "Sólo seleccionados"
 
 msgid "Only apply the selected bones (with propagation to children)"
 msgstr "Sólo aplicar los huesos seleccionados (con propagación a sus subordinados)"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Fundir a cercano"
 
 
 msgid "Blend from current position to previous or next keyframe"
@@ -100650,11 +100646,6 @@ msgstr "Ver animación procesada"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Historial de acciones..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Repetir historial..."
 
@@ -104635,10 +104626,6 @@ msgid "Cannot split current selection"
 msgstr "No es posible dividir la selección actual"
 
 
-msgid "Not yet implemented"
-msgstr "Aún no implementado"
-
-
 msgid "No points were selected"
 msgstr "No se han seleccionado puntos"
 
@@ -107935,42 +107922,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Ningún grupo de vértices activo donde pintar, cancelando"
 
 
-msgid "non-triangle face"
-msgstr "cara no triangular"
-
-
-msgid "multi-res modifier"
-msgstr "modificador multi-resolución"
-
-
-msgid "vertex data"
-msgstr "datos de vértices"
-
-
-msgid "edge data"
-msgstr "datos de bordes"
-
-
-msgid "face data"
-msgstr "datos de caras"
-
-
-msgid "constructive modifier"
-msgstr "modificador de construcción"
-
-
-msgid "Object has non-uniform scale, sculpting may be unpredictable"
-msgstr "El objeto tiene una escala no uniforme, esculpir sobre él puede ser impredecible"
-
-
-msgid "Object has negative scale, sculpting may be unpredictable"
-msgstr "El objeto tiene una escala negativa, esculpir sobre él puede ser impredecible"
-
-
-msgid "Dynamic Topology found: %s, disabled"
-msgstr "Se encontró topología dinámica: %s, se deshabilitó"
-
-
 msgid "Click on the mesh to set the detail"
 msgstr "Hacer clic sobre la malla para definir el detalle"
 
@@ -108013,6 +107964,42 @@ msgstr "El mapeo de textura no está definido en 3D, es posible que los resultad
 
 msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
 msgstr "Mover el ratón para expandir la máscara desde el vértice activo. Clic Izq: confirmar máscara, Esc/clic Der: cancelar"
+
+
+msgid "non-triangle face"
+msgstr "cara no triangular"
+
+
+msgid "multi-res modifier"
+msgstr "modificador multi-resolución"
+
+
+msgid "vertex data"
+msgstr "datos de vértices"
+
+
+msgid "edge data"
+msgstr "datos de bordes"
+
+
+msgid "face data"
+msgstr "datos de caras"
+
+
+msgid "constructive modifier"
+msgstr "modificador de construcción"
+
+
+msgid "Object has non-uniform scale, sculpting may be unpredictable"
+msgstr "El objeto tiene una escala no uniforme, esculpir sobre él puede ser impredecible"
+
+
+msgid "Object has negative scale, sculpting may be unpredictable"
+msgstr "El objeto tiene una escala negativa, esculpir sobre él puede ser impredecible"
+
+
+msgid "Dynamic Topology found: %s, disabled"
+msgstr "Se encontró topología dinámica: %s, se deshabilitó"
 
 
 msgid "Compiled without sound support"
@@ -109315,6 +109302,10 @@ msgstr "No encontrado: %s"
 
 msgid "Deleted %d data-block(s)"
 msgstr "Se borraron %d bloques de datos"
+
+
+msgid "Not yet implemented"
+msgstr "Aún no implementado"
 
 
 msgid "Mixed selection"

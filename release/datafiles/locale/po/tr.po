@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3774,6 +3774,22 @@ msgstr "Nokta Ekle"
 
 msgid "Mirror Modifier"
 msgstr "Değiştirici Ekle"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "Değiştirici Ekle"
+
+
+msgid "Auxiliary Target"
+msgstr "Hedef değişkeni sil"
+
+
+msgid "Project Limit"
+msgstr "Düzenleme Modu"
+
+
+msgid "Mesh target to shrink to"
+msgstr "Örgü verileri bağlarına gözat"
 
 
 msgid "Merge"
@@ -7633,22 +7649,6 @@ msgstr "Yatay Eksen"
 
 msgid "Object Screw"
 msgstr "Nesne Kısıtlamaları"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Değiştirici Ekle"
-
-
-msgid "Auxiliary Target"
-msgstr "Hedef değişkeni sil"
-
-
-msgid "Project Limit"
-msgstr "Düzenleme Modu"
-
-
-msgid "Mesh target to shrink to"
-msgstr "Örgü verileri bağlarına gözat"
 
 
 msgid "SimpleDeform Modifier"

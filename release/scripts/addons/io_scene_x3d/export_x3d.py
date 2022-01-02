@@ -1378,7 +1378,8 @@ def export(file,
     def export_object(ident, obj_main_parent, obj_main, obj_children):
         matrix_fallback = mathutils.Matrix()
         world = scene.world
-        free, derived = create_derived_objects(scene, obj_main)
+        derived_dict = create_derived_objects(depsgraph, [obj_main])
+        derived = derived_dict.get(obj_main)
 
         if use_hierarchy:
             obj_main_matrix_world = obj_main.matrix_world
