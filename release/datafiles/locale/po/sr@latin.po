@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -3981,10 +3981,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -5216,6 +5212,26 @@ msgstr "Gustina tačaka"
 
 msgid "Step"
 msgstr "Korak"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "Stanji/udebljaj modifikator"
+
+
+msgid "Distance to keep from the target"
+msgstr "Visina Fh područja"
+
+
+msgid "Project Limit"
+msgstr "Izmena projekcije"
+
+
+msgid "Negative"
+msgstr "Negativ"
+
+
+msgid "Positive"
+msgstr "Pozitivno"
 
 
 msgid "Fixed"
@@ -9751,10 +9767,6 @@ msgid "Ellipsoid"
 msgstr "Elipsoid"
 
 
-msgid "Negative"
-msgstr "Negativ"
-
-
 msgid "Set metaball as negative one"
 msgstr "Postavlja negativnu meta loptu"
 
@@ -10465,22 +10477,6 @@ msgstr "Razvuci U"
 
 msgid "Stretch V"
 msgstr "Razvuci V"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Stanji/udebljaj modifikator"
-
-
-msgid "Distance to keep from the target"
-msgstr "Visina Fh područja"
-
-
-msgid "Project Limit"
-msgstr "Izmena projekcije"
-
-
-msgid "Positive"
-msgstr "Pozitivno"
 
 
 msgid "Angle of deformation"

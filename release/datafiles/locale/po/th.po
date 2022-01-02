@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1052,10 +1052,6 @@ msgstr "ตามเวลาจริง"
 
 msgid "MPEG-4"
 msgstr "MPEG-4"
-
-
-msgid "Quicktime"
-msgstr "Quicktime"
 
 
 msgid "Ogg"
@@ -4608,11 +4604,6 @@ msgstr "ดูเรนเดอร์"
 msgctxt "Operator"
 msgid "View Animation"
 msgstr "ดูอนิเมชัน"
-
-
-msgctxt "Operator"
-msgid "Undo History..."
-msgstr "ประวัติการเลิกทำ..."
 
 
 msgctxt "Operator"

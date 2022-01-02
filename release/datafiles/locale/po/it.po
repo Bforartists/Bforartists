@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -7581,10 +7581,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -10003,6 +9999,10 @@ msgid "Point Density"
 msgstr "Densità Punto"
 
 
+msgid "Step"
+msgstr "Passo"
+
+
 msgid "Boundaries"
 msgstr "Bordi"
 
@@ -10011,8 +10011,64 @@ msgid "Mirror Modifier"
 msgstr "Modificatore Specchia"
 
 
-msgid "Step"
-msgstr "Passo"
+msgid "Shrinkwrap Modifier"
+msgstr "Modificatore Stringi e Avvolgi"
+
+
+msgid "Shrink wrapping modifier to shrink wrap and object to a target"
+msgstr "Modificatore di restringimento ed avviluppo di un oggetto su un obiettivo"
+
+
+msgid "Auxiliary Target"
+msgstr "Obiettivo Ausiliario"
+
+
+msgid "Additional mesh target to shrink to"
+msgstr "Mesh obiettivo aggiuntiva per restringere"
+
+
+msgid "Distance to keep from the target"
+msgstr "Distanza da mantenere dall'obiettivo"
+
+
+msgid "Project Limit"
+msgstr "Limite Proiezione"
+
+
+msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
+msgstr "Numero di suddivisioni da eseguire prima di estrarre le posizioni dei vertici e delle normali"
+
+
+msgid "Mesh target to shrink to"
+msgstr "Mesh obiettivo per restringere"
+
+
+msgid "Negative"
+msgstr "Negativa"
+
+
+msgid "Allow vertices to move in the negative direction of axis"
+msgstr "Consente ai vertici di muoversi nella direzione negativa degli assi"
+
+
+msgid "Positive"
+msgstr "Positivo"
+
+
+msgid "Allow vertices to move in the positive direction of axis"
+msgstr "Consente ai vertici di muoversi nella direzione positiva degli assi"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Restringe la mesh alla superficie obiettivo più vicina"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Restringe la mesh alla superficie obiettivo più vicina lungo un dato asse"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Restringe la mesh al vertice obiettivo più vicino"
 
 
 msgid "Fixed"
@@ -19081,10 +19137,6 @@ msgid "Ellipsoid"
 msgstr "Ellissoide"
 
 
-msgid "Negative"
-msgstr "Negativa"
-
-
 msgid "Set metaball as negative one"
 msgstr "Imposta la metaball come la sua negativa"
 
@@ -21007,62 +21059,6 @@ msgstr "Allungamento U"
 
 msgid "Stretch V"
 msgstr "Allungamento V"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Modificatore Stringi e Avvolgi"
-
-
-msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "Modificatore di restringimento ed avviluppo di un oggetto su un obiettivo"
-
-
-msgid "Auxiliary Target"
-msgstr "Obiettivo Ausiliario"
-
-
-msgid "Additional mesh target to shrink to"
-msgstr "Mesh obiettivo aggiuntiva per restringere"
-
-
-msgid "Distance to keep from the target"
-msgstr "Distanza da mantenere dall'obiettivo"
-
-
-msgid "Project Limit"
-msgstr "Limite Proiezione"
-
-
-msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "Numero di suddivisioni da eseguire prima di estrarre le posizioni dei vertici e delle normali"
-
-
-msgid "Mesh target to shrink to"
-msgstr "Mesh obiettivo per restringere"
-
-
-msgid "Allow vertices to move in the negative direction of axis"
-msgstr "Consente ai vertici di muoversi nella direzione negativa degli assi"
-
-
-msgid "Positive"
-msgstr "Positivo"
-
-
-msgid "Allow vertices to move in the positive direction of axis"
-msgstr "Consente ai vertici di muoversi nella direzione positiva degli assi"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Restringe la mesh alla superficie obiettivo più vicina"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Restringe la mesh alla superficie obiettivo più vicina lungo un dato asse"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Restringe la mesh al vertice obiettivo più vicino"
 
 
 msgid "SimpleDeform Modifier"
@@ -54916,11 +54912,6 @@ msgstr "Vedi Animazione"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Cronologia Annullamenti..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Ripeti Cronologia..."
 
@@ -57022,10 +57013,6 @@ msgid "Path too long, cannot save"
 msgstr "Percorso troppo lungo, impossibile salvare"
 
 
-msgid "Not yet implemented"
-msgstr "Non ancora implementato"
-
-
 msgid "Too few selections to merge"
 msgstr "Troppe poche selezioni da unire"
 
@@ -58628,6 +58615,30 @@ msgid "Multipaint group is locked, aborting"
 msgstr "Il gruppo multipittura è bloccato, comando annullato"
 
 
+msgid "Warning!"
+msgstr "Attenzione!"
+
+
+msgid "OK"
+msgstr "OK"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Rilevati Dati Vertice!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Topologia Dinamica non preserva i colori vertici, le UV o altri dati personalizzati"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Rilevati Modificatori Generativi!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Mantenere i modificatori aumenterà il conteggio dei poligoni ritornando alla modalità oggetto"
+
+
 msgid "non-triangle face"
 msgstr "faccia non triangolare"
 
@@ -58662,30 +58673,6 @@ msgstr "L'oggetto ha una scala negativa, la scultura può avere esiti imprevedib
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Rilevata Topologia Dinamica:  %s, disabilitato"
-
-
-msgid "Warning!"
-msgstr "Attenzione!"
-
-
-msgid "OK"
-msgstr "OK"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Rilevati Dati Vertice!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Topologia Dinamica non preserva i colori vertici, le UV o altri dati personalizzati"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Rilevati Modificatori Generativi!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Mantenere i modificatori aumenterà il conteggio dei poligoni ritornando alla modalità oggetto"
 
 
 msgid "Compiled without sound support"
@@ -59092,6 +59079,10 @@ msgstr "Impossibile rilocalizzare la libreria '%s 'collegata indirettamente"
 
 msgid "Not found: %s"
 msgstr "Non trovato: %s"
+
+
+msgid "Not yet implemented"
+msgstr "Non ancora implementato"
 
 
 msgid "Mixed selection"
