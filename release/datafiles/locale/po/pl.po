@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -5680,10 +5680,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -7497,10 +7493,6 @@ msgstr "Nie można oddzielić obecnego zaznaczenia"
 
 msgid "Cannot split current selection"
 msgstr "Nie można rozdzielić obecnego zaznaczenia"
-
-
-msgid "Not yet implemented"
-msgstr "Jeszcze nie zaimplementowano"
 
 
 msgid "Too few selections to merge"
@@ -9326,14 +9318,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Brak aktywnej grupy wierzchołków do malowania, rezygnuję"
 
 
-msgid "Object has non-uniform scale, sculpting may be unpredictable"
-msgstr "Obiekt ma niejednolitą skalę, rzeźbienie może dać nieprzewidywalne skutki"
-
-
-msgid "Object has negative scale, sculpting may be unpredictable"
-msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
-
-
 msgid "Warning!"
 msgstr "Uwaga!"
 
@@ -9356,6 +9340,14 @@ msgstr "Wykryto Modyfikatory Produktywne!"
 
 msgid "Keeping the modifiers will increase polycount when returning to object mode"
 msgstr "Zachowanie modyfikatorów zwiększy gęstość geometrii przy powrocie do trybu obiektowego"
+
+
+msgid "Object has non-uniform scale, sculpting may be unpredictable"
+msgstr "Obiekt ma niejednolitą skalę, rzeźbienie może dać nieprzewidywalne skutki"
+
+
+msgid "Object has negative scale, sculpting may be unpredictable"
+msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
 
 
 msgid "Compiled without sound support"
@@ -9929,6 +9921,10 @@ msgstr "Operacja wymaga aktywnego zestawu klatek kluczowych"
 
 msgid "Not found: %s"
 msgstr "Nie odnaleziono: %s"
+
+
+msgid "Not yet implemented"
+msgstr "Jeszcze nie zaimplementowano"
 
 
 msgid "Mixed selection"

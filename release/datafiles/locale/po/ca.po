@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3968,6 +3968,42 @@ msgid "Mirror Modifier"
 msgstr "Esborrar tot"
 
 
+msgid "Shrinkwrap Modifier"
+msgstr "Contreure/Engreixar"
+
+
+msgid "Auxiliary Target"
+msgstr "Afegir Tira"
+
+
+msgid "Distance to keep from the target"
+msgstr "Esborrar"
+
+
+msgid "Project Limit"
+msgstr "Image Displist"
+
+
+msgid "Negative"
+msgstr "Mostrar Tot"
+
+
+msgid "Positive"
+msgstr "Afegir Tira"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Seleccionar connectats"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Seleccionar connectats"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Seleccionar connectats"
+
+
 msgid "Adaptive"
 msgstr "Moure a Capa"
 
@@ -7552,10 +7588,6 @@ msgid "Metaball types"
 msgstr "MetaBall"
 
 
-msgid "Negative"
-msgstr "Mostrar Tot"
-
-
 msgid "UV Project"
 msgstr "Esborrar Posició"
 
@@ -8278,38 +8310,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Object Screw"
 msgstr "Comprimir Dades"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Contreure/Engreixar"
-
-
-msgid "Auxiliary Target"
-msgstr "Afegir Tira"
-
-
-msgid "Distance to keep from the target"
-msgstr "Esborrar"
-
-
-msgid "Project Limit"
-msgstr "Image Displist"
-
-
-msgid "Positive"
-msgstr "Afegir Tira"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Seleccionar connectats"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Seleccionar connectats"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Seleccionar connectats"
 
 
 msgid "SimpleDeform Modifier"
@@ -25146,10 +25146,6 @@ msgid "Copy buffer is empty"
 msgstr "Seleccionar connectats"
 
 
-msgid "Not yet implemented"
-msgstr "Encara no s'ha implementat"
-
-
 msgid "Too few selections to merge"
 msgstr "Seleccionar connectats"
 
@@ -25822,6 +25818,10 @@ msgstr "Duplicar"
 
 msgid "Operation requires an active keying set"
 msgstr "Canviar Str"
+
+
+msgid "Not yet implemented"
+msgstr "Encara no s'ha implementat"
 
 
 msgid "Mixed selection"

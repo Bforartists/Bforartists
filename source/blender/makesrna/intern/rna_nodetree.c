@@ -1273,10 +1273,6 @@ static bNode *rna_NodeTree_node_new(bNodeTree *ntree,
   ED_node_tree_propagate_change(C, bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
-  if (node->type == GEO_NODE_INPUT_SCENE_TIME) {
-    DEG_relations_tag_update(bmain);
-  }
-
   return node;
 }
 
@@ -2197,6 +2193,20 @@ static const EnumPropertyItem *rna_FunctionNodeRandomValue_type_itemf(bContext *
 {
   *r_free = true;
   return itemf_function_check(rna_enum_attribute_type_items, random_value_type_supported);
+}
+
+static bool accumulate_field_type_supported(const EnumPropertyItem *item)
+{
+  return ELEM(item->value, CD_PROP_FLOAT, CD_PROP_FLOAT3, CD_PROP_INT32);
+}
+
+static const EnumPropertyItem *rna_GeoNodeAccumulateField_type_itemf(bContext *UNUSED(C),
+                                                                     PointerRNA *UNUSED(ptr),
+                                                                     PropertyRNA *UNUSED(prop),
+                                                                     bool *r_free)
+{
+  *r_free = true;
+  return itemf_function_check(rna_enum_attribute_type_items, accumulate_field_type_supported);
 }
 
 static const EnumPropertyItem *rna_GeometryNodeAttributeRandomize_operation_itemf(
@@ -9444,6 +9454,28 @@ static void def_geo_subdivision_surface(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_geo_accumulate_field(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeAccumulateField", "storage");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "data_type");
+  RNA_def_property_enum_items(prop, rna_enum_attribute_type_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_GeoNodeAccumulateField_type_itemf");
+  RNA_def_property_enum_default(prop, CD_PROP_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "Type of data stored in attribute");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+
+  prop = RNA_def_property(srna, "domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "domain");
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
+  RNA_def_property_enum_default(prop, ATTR_DOMAIN_POINT);
+  RNA_def_property_ui_text(prop, "Domain", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_fn_random_value(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -14012,6 +14044,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
+      break;
+    case GEO_NODE_ACCUMULATE_FIELD:
+      icon = ICON_DELETE;
       break;
     case GEO_NODE_DUAL_MESH:
       icon = ICON_DUAL_MESH;

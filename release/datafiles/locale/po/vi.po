@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -10719,10 +10719,6 @@ msgid "AVI"
 msgstr "AVI"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -15978,6 +15974,10 @@ msgid "Change stroke location, rotation or scale"
 msgstr "Đổi vị trí, xoay, hay phóng to nét"
 
 
+msgid "Project the shape onto another object"
+msgstr "Chiếu hình dạng trên một vật thể khác"
+
+
 msgid "Smooth stroke"
 msgstr "Mịn hóa nét"
 
@@ -16564,12 +16564,24 @@ msgid "Absolute added length to the start of each stroke"
 msgstr "Chiều dài tuyệt đối được cộng thêm tại đầu của mỗi nét"
 
 
+msgid "Step"
+msgstr "Bước"
+
+
+msgid "Number of frames before recalculate random values again"
+msgstr "Số lượng bức trước được tính lại giá trị ngẫu nhiên lần nữa"
+
+
 msgid "Use Curvature"
 msgstr "Sử Dụng Độ Cong"
 
 
 msgid "Follow the curvature of the stroke"
 msgstr "Theo độ công của nét"
+
+
+msgid "Use random values over time"
+msgstr "Dùng giá trị ngẫu nhiên qua thời gian"
 
 
 msgid "Line Art Modifier"
@@ -17064,20 +17076,8 @@ msgid "Noise Seed"
 msgstr "Hạt Huyên Náo"
 
 
-msgid "Step"
-msgstr "Bước"
-
-
-msgid "Number of frames before recalculate random values again"
-msgstr "Số lượng bức trước được tính lại giá trị ngẫu nhiên lần nữa"
-
-
 msgid "Use a custom curve to define noise effect along the strokes"
 msgstr "Dùng một đường cong tùy chọn để xác định một hiệu ứng huyên náo trên các nét"
-
-
-msgid "Use random values over time"
-msgstr "Dùng giá trị ngẫu nhiên qua thời gian"
 
 
 msgid "Offset Modifier"
@@ -17130,6 +17130,86 @@ msgstr "Có Quyền Lượng"
 
 msgid "Use weight to modulate effect"
 msgstr "Dùng quyền lượng cho điều chỉnh hiệu ứng"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "Cụ Sửa Đối Gói Thu Xiết"
+
+
+msgid "Shrink wrapping modifier to shrink wrap and object to a target"
+msgstr "Cụ sửa đổi cho thu xiết vật thể đến một mục tiêu"
+
+
+msgid "Auxiliary Target"
+msgstr "Mục Tiêu Phụ"
+
+
+msgid "Additional mesh target to shrink to"
+msgstr "Thu xiết đến mạng lưới mục tiêu phụ nào"
+
+
+msgid "Distance to keep from the target"
+msgstr "Khoảng cách giữ từ mục tiêu"
+
+
+msgid "Project Limit"
+msgstr "Giới Hạn Phép Chiếu"
+
+
+msgid "Subdivision Levels"
+msgstr "Tầng Phân Hóa"
+
+
+msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
+msgstr "Số lần phân hóa cần làm trước được rút vị trí và pháp tuyến của đỉnh"
+
+
+msgid "Mesh target to shrink to"
+msgstr "Thu xiết đến mạng lưới mục tiêu nào"
+
+
+msgid "When projecting in the negative direction invert the face cull mode"
+msgstr "Đảo nghịch hủy diệt mặt khi chiếu độ theo hượng âm"
+
+
+msgid "Negative"
+msgstr "Âm"
+
+
+msgid "Allow vertices to move in the negative direction of axis"
+msgstr "Cho đỉnh di chuyển hướng âm của trục"
+
+
+msgid "Positive"
+msgstr "Dương"
+
+
+msgid "Allow vertices to move in the positive direction of axis"
+msgstr "Cho đỉnh di chuyển hướng dương của trục"
+
+
+msgid "Wrap Method"
+msgstr "Phương Pháp Gói Lại"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Thu nhỏ lưới đến mặt mục tiêu gần nhất"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Thu nhỏ lưới đến mục tiêu mặt gần nhất theo hướng một trục được xác định"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Thu nhỏ mạng lưới đến đỉnh gần nhất"
+
+
+msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
+msgstr "Thu nhỏ mạng lưới đến bề mặt mục tiêu gần nhất theo pháp tuyến đỉnh được suy nội của mục tiêu"
+
+
+msgid "Select how vertices are constrained to the target surface"
+msgstr "Chọn phương pháp đỉnh được ràng buộc đến bề mặt của mục tiêu"
 
 
 msgid "Simplify Modifier"
@@ -33465,10 +33545,6 @@ msgid "Ellipsoid"
 msgstr "Hình Cầu Elip"
 
 
-msgid "Negative"
-msgstr "Âm"
-
-
 msgid "Set metaball as negative one"
 msgstr "Đặt siêu cầu làm âm"
 
@@ -33747,10 +33823,6 @@ msgstr "Méo Hóa Mạng Lưới"
 
 msgid "Deform using a different mesh, which acts as a deformation cage"
 msgstr "Méo hóa bằng dùng một mạng lưới khác, thì được làm một lồng méo hóa"
-
-
-msgid "Project the shape onto another object"
-msgstr "Chiếu hình dạng trên một vật thể khác"
 
 
 msgid "Simple Deform"
@@ -36568,82 +36640,6 @@ msgstr "Kéo Dài V"
 
 msgid "Stretch the V coordinates between 0 and 1 when UV's are present"
 msgstr "Kéo dài tọa độ V giữa 0 đên 1 khi có tọa độ UV"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Cụ Sửa Đối Gói Thu Xiết"
-
-
-msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "Cụ sửa đổi cho thu xiết vật thể đến một mục tiêu"
-
-
-msgid "Auxiliary Target"
-msgstr "Mục Tiêu Phụ"
-
-
-msgid "Additional mesh target to shrink to"
-msgstr "Thu xiết đến mạng lưới mục tiêu phụ nào"
-
-
-msgid "Distance to keep from the target"
-msgstr "Khoảng cách giữ từ mục tiêu"
-
-
-msgid "Project Limit"
-msgstr "Giới Hạn Phép Chiếu"
-
-
-msgid "Subdivision Levels"
-msgstr "Tầng Phân Hóa"
-
-
-msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "Số lần phân hóa cần làm trước được rút vị trí và pháp tuyến của đỉnh"
-
-
-msgid "Mesh target to shrink to"
-msgstr "Thu xiết đến mạng lưới mục tiêu nào"
-
-
-msgid "When projecting in the negative direction invert the face cull mode"
-msgstr "Đảo nghịch hủy diệt mặt khi chiếu độ theo hượng âm"
-
-
-msgid "Allow vertices to move in the negative direction of axis"
-msgstr "Cho đỉnh di chuyển hướng âm của trục"
-
-
-msgid "Positive"
-msgstr "Dương"
-
-
-msgid "Allow vertices to move in the positive direction of axis"
-msgstr "Cho đỉnh di chuyển hướng dương của trục"
-
-
-msgid "Wrap Method"
-msgstr "Phương Pháp Gói Lại"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Thu nhỏ lưới đến mặt mục tiêu gần nhất"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Thu nhỏ lưới đến mục tiêu mặt gần nhất theo hướng một trục được xác định"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Thu nhỏ mạng lưới đến đỉnh gần nhất"
-
-
-msgid "Shrink the mesh to the nearest target surface along the interpolated vertex normals of the target"
-msgstr "Thu nhỏ mạng lưới đến bề mặt mục tiêu gần nhất theo pháp tuyến đỉnh được suy nội của mục tiêu"
-
-
-msgid "Select how vertices are constrained to the target surface"
-msgstr "Chọn phương pháp đỉnh được ràng buộc đến bề mặt của mục tiêu"
 
 
 msgid "SimpleDeform Modifier"
@@ -53945,6 +53941,11 @@ msgstr "Nướng các Cong-F được chọn đến một tập mẫu vật đư
 
 
 msgctxt "Operator"
+msgid "Blend To Neighbor"
+msgstr "Pha Trộn Đến Kề"
+
+
+msgctxt "Operator"
 msgid "Click-Insert Keyframes"
 msgstr "Bấm-Chèn Bức Mẫu"
 
@@ -53987,6 +53988,10 @@ msgid "Decimate F-Curves by removing keyframes that influence the curve shape th
 msgstr "Chẻ cắt Cong-F bằng xóa các bức ảnh được ảnh hưởng hình dạng đường cong ít nhất"
 
 
+msgid "The ratio of remaining keyframes after the operation"
+msgstr "Tỉ số của bức mẫu vẫn còn sau thao tác"
+
+
 msgid "Which mode to use for decimation"
 msgstr "Dùng chế độ nào khi chẻ cắt"
 
@@ -54009,10 +54014,6 @@ msgstr "Lề Sai Lầm Cực Đại"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "Mức cho đường cong chẻ cắt mới được chệnh lệch từ đường cong ban đầu"
-
-
-msgid "The ratio of remaining keyframes after the operation"
-msgstr "Tỉ số của bức mẫu vẫn còn sau thao tác"
 
 
 msgctxt "Operator"
@@ -65430,11 +65431,6 @@ msgstr "Chỉ Được Chọn"
 
 msgid "Only apply the selected bones (with propagation to children)"
 msgstr "Chỉ áp dụng các xương được chọn (và tiến triển đến con cái)"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Pha Trộn Đến Kề"
 
 
 msgid "Blend from current position to previous or next keyframe"
@@ -102748,11 +102744,6 @@ msgstr "Hiện Hoạt Hình"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Lịch Sử Hủy Bước..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Lịch Sử Làm Lại..."
 
@@ -106821,10 +106812,6 @@ msgid "Cannot split current selection"
 msgstr "Không thể chẻ sự lựa chọn hiện tại"
 
 
-msgid "Not yet implemented"
-msgstr "Chưa được thực hành"
-
-
 msgid "No points were selected"
 msgstr "Chưa chọn điểm nào"
 
@@ -110313,42 +110300,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Không có nhóm đỉnh hoạt động để sơn, đang hủy"
 
 
-msgid "non-triangle face"
-msgstr "mặt vô tam giác"
-
-
-msgid "multi-res modifier"
-msgstr "Cụ sửa đổi đa phân giải"
-
-
-msgid "vertex data"
-msgstr "dữ liệu đỉnh"
-
-
-msgid "edge data"
-msgstr "dữ liệu cạnh"
-
-
-msgid "face data"
-msgstr "dữ liệu mặt"
-
-
-msgid "constructive modifier"
-msgstr "cụ sửa đổi xây dựng"
-
-
-msgid "Object has non-uniform scale, sculpting may be unpredictable"
-msgstr "Vật thể có phóng to không đều, khắc có thế không theo dự đoán"
-
-
-msgid "Object has negative scale, sculpting may be unpredictable"
-msgstr "Vật thể có phóng to âm, khắc có thế không theo dự đoán"
-
-
-msgid "Dynamic Topology found: %s, disabled"
-msgstr "Tìm được Hình Thể Động Lý: %s, bị tắt"
-
-
 msgid "Click on the mesh to set the detail"
 msgstr "Bấm trên mạng lưới để đặt chi tiết"
 
@@ -110391,6 +110342,42 @@ msgstr "Ánh xạ họa tiết chưa được đặt 2D, có lẻ kết qủa kh
 
 msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
 msgstr "Di chuyển chuột để mở rộng mặt nạ từ đỉnh hoạt động. NCT: chấp nhận mặt nạ, ESC/NCP: hủy"
+
+
+msgid "non-triangle face"
+msgstr "mặt vô tam giác"
+
+
+msgid "multi-res modifier"
+msgstr "Cụ sửa đổi đa phân giải"
+
+
+msgid "vertex data"
+msgstr "dữ liệu đỉnh"
+
+
+msgid "edge data"
+msgstr "dữ liệu cạnh"
+
+
+msgid "face data"
+msgstr "dữ liệu mặt"
+
+
+msgid "constructive modifier"
+msgstr "cụ sửa đổi xây dựng"
+
+
+msgid "Object has non-uniform scale, sculpting may be unpredictable"
+msgstr "Vật thể có phóng to không đều, khắc có thế không theo dự đoán"
+
+
+msgid "Object has negative scale, sculpting may be unpredictable"
+msgstr "Vật thể có phóng to âm, khắc có thế không theo dự đoán"
+
+
+msgid "Dynamic Topology found: %s, disabled"
+msgstr "Tìm được Hình Thể Động Lý: %s, bị tắt"
 
 
 msgid "Compiled without sound support"
@@ -111402,74 +111389,6 @@ msgid "Squash"
 msgstr "Nhẹp"
 
 
-msgid "Center:"
-msgstr "Trung Tâm:"
-
-
-msgid "Bokeh Type:"
-msgstr "Loại Tản Cảnh:"
-
-
-msgid "Speed:"
-msgstr "Tốc Độ:"
-
-
-msgid "Inner Edge:"
-msgstr "Cạnh Nội"
-
-
-msgid "Buffer Edge:"
-msgstr "Cạnh Đệm:"
-
-
-msgid "Color Space:"
-msgstr "Không Gian Màu:"
-
-
-msgid "Despill Channel:"
-msgstr "Dẹp Tràn Kênh:"
-
-
-msgid "Limiting Channel:"
-msgstr "Kênh Hạn Chế:"
-
-
-msgid "Key Channel:"
-msgstr "Kênh Màu Trốn:"
-
-
-msgid "Path:"
-msgstr "Đường Dẫn:"
-
-
-msgid "Base Path:"
-msgstr "Đường Dẫn Cơ Sở:"
-
-
-msgid "Add Input"
-msgstr "Cộng Ngõ Vào"
-
-
-msgid "File Subpath:"
-msgstr "Đường Hạ Đường Dẫn:"
-
-
-msgid "Format:"
-msgstr "Định Dạng:"
-
-
-msgid "Master"
-msgstr "Chủ"
-
-
-msgid "Highlights"
-msgstr "Nổi Bật"
-
-
-msgid "Midtones"
-msgstr "Độ Sáng Giữa"
-
-
 msgid "Matte Objects:"
 msgstr "Vật Thể Mặt Nạ Mã:"
 
@@ -111484,18 +111403,6 @@ msgstr "Xóa Lớp Mặt Nạ Mã"
 
 msgid "Matte ID:"
 msgstr "ID Mặt Nạ Mã:"
-
-
-msgid "Disabled, built without OpenImageDenoise"
-msgstr "Đã tắt, đã xây dựng thiếu OpenImageDenoise"
-
-
-msgid "Disabled, CPU with SSE4.1 is required"
-msgstr "Đã tắt, yêu cầu CPU có SSE4.1"
-
-
-msgid "Prefilter:"
-msgstr "Bộ Lọc Trước:"
 
 
 msgid "Undefined Socket Type"
@@ -112047,6 +111954,10 @@ msgstr "Không tìm được: %s"
 
 msgid "Deleted %d data-block(s)"
 msgstr "Đã xóa %d cục dữ liệu"
+
+
+msgid "Not yet implemented"
+msgstr "Chưa được thực hành"
 
 
 msgid "Mixed selection"
@@ -114743,8 +114654,36 @@ msgid "Bounding box"
 msgstr "Hộp bao quanh"
 
 
+msgid "Color Space:"
+msgstr "Không Gian Màu:"
+
+
+msgid "Key Channel:"
+msgstr "Kênh Màu Trốn:"
+
+
+msgid "Limiting Channel:"
+msgstr "Kênh Hạn Chế:"
+
+
 msgid "Key Color"
 msgstr "Màu Trống"
+
+
+msgid "Despill Channel:"
+msgstr "Dẹp Tràn Kênh:"
+
+
+msgid "Master"
+msgstr "Chủ"
+
+
+msgid "Highlights"
+msgstr "Nổi Bật"
+
+
+msgid "Midtones"
+msgstr "Độ Sáng Giữa"
 
 
 msgid "Upper Left"
@@ -114767,12 +114706,40 @@ msgid "Pick"
 msgstr "Chọn"
 
 
+msgid "Bokeh Type:"
+msgstr "Loại Tản Cảnh:"
+
+
+msgid "Disabled, built without OpenImageDenoise"
+msgstr "Đã tắt, đã xây dựng thiếu OpenImageDenoise"
+
+
+msgid "Disabled, CPU with SSE4.1 is required"
+msgstr "Đã tắt, yêu cầu CPU có SSE4.1"
+
+
+msgid "Prefilter:"
+msgstr "Bộ Lọc Trước:"
+
+
 msgid "Image 1"
 msgstr "Ảnh 1"
 
 
 msgid "Image 2"
 msgstr "Ảnh 2"
+
+
+msgid "Center:"
+msgstr "Trung Tâm:"
+
+
+msgid "Inner Edge:"
+msgstr "Cạnh Nội"
+
+
+msgid "Buffer Edge:"
+msgstr "Cạnh Đệm:"
 
 
 msgid "ID value"
@@ -114815,6 +114782,26 @@ msgid "Dot"
 msgstr "Dấu Chấm"
 
 
+msgid "Path:"
+msgstr "Đường Dẫn:"
+
+
+msgid "Base Path:"
+msgstr "Đường Dẫn Cơ Sở:"
+
+
+msgid "Add Input"
+msgstr "Cộng Ngõ Vào"
+
+
+msgid "File Subpath:"
+msgstr "Đường Hạ Đường Dẫn:"
+
+
+msgid "Format:"
+msgstr "Định Dạng:"
+
+
 msgid "Degr"
 msgstr "Độ"
 
@@ -114833,6 +114820,10 @@ msgstr "Mở"
 
 msgid "Val"
 msgstr "Giá Trị"
+
+
+msgid "Speed:"
+msgstr "Tốc Độ:"
 
 
 msgid "Line Break"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2638,6 +2638,10 @@ msgid "Mirror Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
+msgid "Project Limit"
+msgstr "ﻥﺪﻨﮑﻓﺍ ﮓﻧﺭ"
+
+
 msgid "Smooth Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -4819,10 +4823,6 @@ msgstr "ﻪﺤﻔﺻ ﯼﺭﺍﺰﮔﺭﺎﺑ"
 
 msgid "Object Screw"
 msgstr "ءﯽﺷ ﯼﺎﻀﻓ"
-
-
-msgid "Project Limit"
-msgstr "ﻥﺪﻨﮑﻓﺍ ﮓﻧﺭ"
 
 
 msgid "Origin"

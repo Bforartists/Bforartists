@@ -373,7 +373,7 @@ static void time_panel_draw(const bContext *UNUSED(C), Panel *panel)
     return;
   }
 
-if (RNA_pointer_is_null(&fileptr)) {
+  if (RNA_pointer_is_null(&fileptr)) {
     return;
   }
 
