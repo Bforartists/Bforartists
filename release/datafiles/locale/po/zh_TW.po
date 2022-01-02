@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-30 01:32+0800\n"
@@ -7777,10 +7777,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -10408,6 +10404,10 @@ msgid "Point Density"
 msgstr "點密度"
 
 
+msgid "Step"
+msgstr "步"
+
+
 msgid "Boundaries"
 msgstr "邊界"
 
@@ -10424,16 +10424,72 @@ msgid "Thickness Factor"
 msgstr "厚度係數"
 
 
-msgid "Step"
-msgstr "步"
-
-
 msgid "Opacity Factor"
 msgstr "不透明度係數"
 
 
 msgid "Factor of Opacity"
 msgstr "不透明度的係數"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "收縮包覆修改器"
+
+
+msgid "Shrink wrapping modifier to shrink wrap and object to a target"
+msgstr "收縮包覆與物體至目標的收縮包覆修改器"
+
+
+msgid "Auxiliary Target"
+msgstr "輔助目標"
+
+
+msgid "Additional mesh target to shrink to"
+msgstr "要收縮的額外網格目標"
+
+
+msgid "Distance to keep from the target"
+msgstr "從目標保持的距離"
+
+
+msgid "Project Limit"
+msgstr "投影限制"
+
+
+msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
+msgstr "在抽出頂點的位置與法線之前必須執行的細分數"
+
+
+msgid "Mesh target to shrink to"
+msgstr "要收縮的網格目標"
+
+
+msgid "Negative"
+msgstr "負"
+
+
+msgid "Allow vertices to move in the negative direction of axis"
+msgstr "允許頂點可移入軸的負方向"
+
+
+msgid "Positive"
+msgstr "正"
+
+
+msgid "Allow vertices to move in the positive direction of axis"
+msgstr "允許底點可移入軸的正方向"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "將網格收縮至最近的目標表面"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "沿給定的軸將網格收縮至最近的目標表面"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "收縮網格至最近的目標頂點"
 
 
 msgid "Factor of Simplify"
@@ -19222,10 +19278,6 @@ msgid "Ellipsoid"
 msgstr "橢球體"
 
 
-msgid "Negative"
-msgstr "負"
-
-
 msgid "Set metaball as negative one"
 msgstr "將變幻球設為負的"
 
@@ -20904,62 +20956,6 @@ msgstr "拉伸 U"
 
 msgid "Stretch V"
 msgstr "拉伸 V"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "收縮包覆修改器"
-
-
-msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "收縮包覆與物體至目標的收縮包覆修改器"
-
-
-msgid "Auxiliary Target"
-msgstr "輔助目標"
-
-
-msgid "Additional mesh target to shrink to"
-msgstr "要收縮的額外網格目標"
-
-
-msgid "Distance to keep from the target"
-msgstr "從目標保持的距離"
-
-
-msgid "Project Limit"
-msgstr "投影限制"
-
-
-msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "在抽出頂點的位置與法線之前必須執行的細分數"
-
-
-msgid "Mesh target to shrink to"
-msgstr "要收縮的網格目標"
-
-
-msgid "Allow vertices to move in the negative direction of axis"
-msgstr "允許頂點可移入軸的負方向"
-
-
-msgid "Positive"
-msgstr "正"
-
-
-msgid "Allow vertices to move in the positive direction of axis"
-msgstr "允許底點可移入軸的正方向"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "將網格收縮至最近的目標表面"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "沿給定的軸將網格收縮至最近的目標表面"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "收縮網格至最近的目標頂點"
 
 
 msgid "SimpleDeform Modifier"
@@ -56660,10 +56656,6 @@ msgid "Cannot split current selection"
 msgstr "無法分割目前的選取項"
 
 
-msgid "Not yet implemented"
-msgstr "尚未實作"
-
-
 msgid "Too few selections to merge"
 msgstr "要合併的選取項過少"
 
@@ -58178,6 +58170,18 @@ msgid "Missing%s%s%s%s detected!"
 msgstr "偵測到遺失%s%s%s%s！"
 
 
+msgid "Warning!"
+msgstr "警告！"
+
+
+msgid "OK"
+msgstr "確定"
+
+
+msgid "Vertex Data Detected!"
+msgstr "已偵測到頂點資料！"
+
+
 msgid "non-triangle face"
 msgstr "非三角面"
 
@@ -58196,18 +58200,6 @@ msgstr "邊線資料"
 
 msgid "face data"
 msgstr "面資料"
-
-
-msgid "Warning!"
-msgstr "警告！"
-
-
-msgid "OK"
-msgstr "確定"
-
-
-msgid "Vertex Data Detected!"
-msgstr "已偵測到頂點資料！"
 
 
 msgid "Compiled without sound support"
@@ -58726,6 +58718,10 @@ msgstr "無法重新定位間接連結的「%s」藏庫位置"
 
 msgid "Not found: %s"
 msgstr "找不到：%s"
+
+
+msgid "Not yet implemented"
+msgstr "尚未實作"
 
 
 msgid "Mixed selection"

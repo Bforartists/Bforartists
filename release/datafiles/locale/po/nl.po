@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -1862,6 +1862,10 @@ msgid "Used Length"
 msgstr "Gebruikte Lengte"
 
 
+msgid "Step"
+msgstr "Stap"
+
+
 msgid "Camera Object"
 msgstr "Camera Object"
 
@@ -1904,10 +1908,6 @@ msgstr "Spiegel de Z as"
 
 msgid "Duplicates"
 msgstr "Duplicaten"
-
-
-msgid "Step"
-msgstr "Stap"
 
 
 msgid "Simple"
@@ -8361,11 +8361,6 @@ msgstr "Bekijk Animatie"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Maak Geschiedenis Ongedaan..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Herhaal Geschiedenis..."
 
@@ -9074,10 +9069,6 @@ msgid "Replace Existing..."
 msgstr "Vervang Bestaande..."
 
 
-msgid "Not yet implemented"
-msgstr "Nog niet geimplementeerd"
-
-
 msgctxt "Curve"
 msgid "BezierCurve"
 msgstr "Bezier Kromme"
@@ -9658,18 +9649,6 @@ msgid "Now"
 msgstr "Nu"
 
 
-msgid "Center:"
-msgstr "Midden:"
-
-
-msgid "Speed:"
-msgstr "Snelheid:"
-
-
-msgid "Path:"
-msgstr "Pad:"
-
-
 msgid " (Vector)"
 msgstr " (Punt)"
 
@@ -9677,6 +9656,10 @@ msgstr " (Punt)"
 msgctxt "Action"
 msgid "Group"
 msgstr "Groep"
+
+
+msgid "Not yet implemented"
+msgstr "Nog niet geimplementeerd"
 
 
 msgid "(empty)"
@@ -9744,6 +9727,18 @@ msgstr "Vervang Origineel"
 
 msgid "Crease Edges"
 msgstr "Vouwranden"
+
+
+msgid "Center:"
+msgstr "Midden:"
+
+
+msgid "Path:"
+msgstr "Pad:"
+
+
+msgid "Speed:"
+msgstr "Snelheid:"
 
 
 msgid "Random Roughness"

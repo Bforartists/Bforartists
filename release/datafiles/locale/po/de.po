@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8907,10 +8907,6 @@ msgid "MPEG-4"
 msgstr "MPEG-4"
 
 
-msgid "Quicktime"
-msgstr "Quicktime"
-
-
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -11879,6 +11875,10 @@ msgid "Start Factor"
 msgstr "Startfaktor"
 
 
+msgid "Step"
+msgstr "Schritt"
+
+
 msgid "Image Threshold"
 msgstr "Bildschwelle"
 
@@ -11971,10 +11971,6 @@ msgid "Noise Seed"
 msgstr "Rauschsamen"
 
 
-msgid "Step"
-msgstr "Schritt"
-
-
 msgid "Offset Modifier"
 msgstr "Offset-Modifizierer"
 
@@ -11989,6 +11985,38 @@ msgstr "Deckkraftfaktor"
 
 msgid "Uniform Opacity"
 msgstr "Einheitliche Deckkraft"
+
+
+msgid "Shrinkwrap Modifier"
+msgstr "Schrumpfen Modifikator"
+
+
+msgid "Project Limit"
+msgstr "Projektion bearbeiten"
+
+
+msgid "Subdivision Levels"
+msgstr "Unterteilungsebenen"
+
+
+msgid "Negative"
+msgstr "Negativ"
+
+
+msgid "Positive"
+msgstr "Positiv"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Zwischen ausgewählten Markierungen"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Zwischen ausgewählten Markierungen"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Die Masche zum nächsten Zieleckpunkt schrumpfen"
 
 
 msgid "Simplify Modifier"
@@ -20930,10 +20958,6 @@ msgid "Ellipsoid"
 msgstr "Ellyptisch"
 
 
-msgid "Negative"
-msgstr "Negativ"
-
-
 msgid "Scale Stiffness"
 msgstr "Skalierungssteifigkeit"
 
@@ -22185,34 +22209,6 @@ msgstr "Strecken U"
 
 msgid "Stretch V"
 msgstr "Strecken V"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Schrumpfen Modifikator"
-
-
-msgid "Project Limit"
-msgstr "Projektion bearbeiten"
-
-
-msgid "Subdivision Levels"
-msgstr "Unterteilungsebenen"
-
-
-msgid "Positive"
-msgstr "Positiv"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Die Masche zum nächsten Zieleckpunkt schrumpfen"
 
 
 msgid "SimpleDeform Modifier"
@@ -56703,11 +56699,6 @@ msgstr "Animation anzeigen"
 
 
 msgctxt "Operator"
-msgid "Undo History..."
-msgstr "Letztes rückgängig machen..."
-
-
-msgctxt "Operator"
 msgid "Repeat History..."
 msgstr "Wiederholungsverlauf..."
 
@@ -59333,10 +59324,6 @@ msgid "Cannot split current selection"
 msgstr "Aktuelle Selektion kann nicht aufgeteilt werden"
 
 
-msgid "Not yet implemented"
-msgstr "Aktuell implementiert"
-
-
 msgid "No points were selected"
 msgstr "Keine Punkte ausgewählt"
 
@@ -61263,16 +61250,16 @@ msgid "Multipaint group is locked, aborting"
 msgstr "Mulitfarben Gruppe ist gesperrt, abbrechen"
 
 
-msgid "vertex data"
-msgstr "Knotenpfad"
-
-
 msgid "Warning!"
 msgstr "Warnung!"
 
 
 msgid "OK"
 msgstr "OK"
+
+
+msgid "vertex data"
+msgstr "Knotenpfad"
 
 
 msgid "Active F-Curve"
@@ -61743,60 +61730,8 @@ msgid "Frame: %d"
 msgstr "Einzelbild: %d"
 
 
-msgid "Center:"
-msgstr "Zentrum:"
-
-
-msgid "Bokeh Type:"
-msgstr "Bokeh-Typ:"
-
-
-msgid "Speed:"
-msgstr "Geschwindigkeit:"
-
-
-msgid "Inner Edge:"
-msgstr "Innenkante:"
-
-
-msgid "Buffer Edge:"
-msgstr "Pufferkante:"
-
-
-msgid "Color Space:"
-msgstr "Farbraum:"
-
-
-msgid "Limiting Channel:"
-msgstr "Kanal begrenzen:"
-
-
-msgid "Key Channel:"
-msgstr "Schlüsselkanal:"
-
-
-msgid "Base Path:"
-msgstr "Basispfad:"
-
-
-msgid "Add Input"
-msgstr "Eingang hinzufügen"
-
-
-msgid "File Subpath:"
-msgstr "Datei Unterpfad:"
-
-
-msgid "Format:"
-msgstr "Format:"
-
-
 msgid "Matte Objects:"
 msgstr "Matte Objekte:"
-
-
-msgid "Disabled, CPU with SSE4.1 is required"
-msgstr "Deaktiviert, CPU mit SSE4.1 ist erforderlich"
 
 
 msgid " (Integer)"
@@ -61922,6 +61857,10 @@ msgstr "Nicht gefunden: %s"
 
 msgid "Deleted %d data-block(s)"
 msgstr "Lösche %d Datenblöck(e)"
+
+
+msgid "Not yet implemented"
+msgstr "Aktuell implementiert"
 
 
 msgid "Mixed selection"
@@ -63000,8 +62939,28 @@ msgid "Fac"
 msgstr "Faktor"
 
 
+msgid "Color Space:"
+msgstr "Farbraum:"
+
+
+msgid "Key Channel:"
+msgstr "Schlüsselkanal:"
+
+
+msgid "Limiting Channel:"
+msgstr "Kanal begrenzen:"
+
+
 msgid "Lower Right"
 msgstr "Unten rechts"
+
+
+msgid "Bokeh Type:"
+msgstr "Bokeh-Typ:"
+
+
+msgid "Disabled, CPU with SSE4.1 is required"
+msgstr "Deaktiviert, CPU mit SSE4.1 ist erforderlich"
 
 
 msgid "Image 1"
@@ -63012,6 +62971,18 @@ msgid "Image 2"
 msgstr "Bild 2"
 
 
+msgid "Center:"
+msgstr "Zentrum:"
+
+
+msgid "Inner Edge:"
+msgstr "Innenkante:"
+
+
+msgid "Buffer Edge:"
+msgstr "Pufferkante:"
+
+
 msgid "Offset Y"
 msgstr "Y-Versatz"
 
@@ -63020,8 +62991,28 @@ msgid "Dot"
 msgstr "Punkt"
 
 
+msgid "Base Path:"
+msgstr "Basispfad:"
+
+
+msgid "Add Input"
+msgstr "Eingang hinzufügen"
+
+
+msgid "File Subpath:"
+msgstr "Datei Unterpfad:"
+
+
+msgid "Format:"
+msgstr "Format:"
+
+
 msgid "Val"
 msgstr "Wert"
+
+
+msgid "Speed:"
+msgstr "Geschwindigkeit:"
 
 
 msgid "Rotate By"

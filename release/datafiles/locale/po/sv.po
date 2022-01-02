@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'9a69c456bd85')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4647,12 +4647,48 @@ msgid "Point Density"
 msgstr "Intensitet"
 
 
+msgid "Step"
+msgstr "Steg"
+
+
 msgid "Mirror Modifier"
 msgstr "Radera Allt"
 
 
-msgid "Step"
-msgstr "Steg"
+msgid "Shrinkwrap Modifier"
+msgstr "Krympa/Förtjocka"
+
+
+msgid "Auxiliary Target"
+msgstr "Driver"
+
+
+msgid "Distance to keep from the target"
+msgstr "Radera"
+
+
+msgid "Project Limit"
+msgstr "Redigera egenskap"
+
+
+msgid "Negative"
+msgstr "Negativ"
+
+
+msgid "Positive"
+msgstr "Lägg till Stripp"
+
+
+msgid "Shrink the mesh to the nearest target surface"
+msgstr "Markera Länkad"
+
+
+msgid "Shrink the mesh to the nearest target surface along a given axis"
+msgstr "Markera Länkad"
+
+
+msgid "Shrink the mesh to the nearest target vertex"
+msgstr "Markera Länkad"
 
 
 msgid "Adaptive"
@@ -8859,10 +8895,6 @@ msgid "Ellipsoid"
 msgstr "Ellipsoid"
 
 
-msgid "Negative"
-msgstr "Negativ"
-
-
 msgid "UV Project"
 msgstr "Rensa Placering"
 
@@ -9649,38 +9681,6 @@ msgstr "Iterationer"
 
 msgid "Object Screw"
 msgstr "Packa Data"
-
-
-msgid "Shrinkwrap Modifier"
-msgstr "Krympa/Förtjocka"
-
-
-msgid "Auxiliary Target"
-msgstr "Driver"
-
-
-msgid "Distance to keep from the target"
-msgstr "Radera"
-
-
-msgid "Project Limit"
-msgstr "Redigera egenskap"
-
-
-msgid "Positive"
-msgstr "Lägg till Stripp"
-
-
-msgid "Shrink the mesh to the nearest target surface"
-msgstr "Markera Länkad"
-
-
-msgid "Shrink the mesh to the nearest target surface along a given axis"
-msgstr "Markera Länkad"
-
-
-msgid "Shrink the mesh to the nearest target vertex"
-msgstr "Markera Länkad"
 
 
 msgid "SimpleDeform Modifier"
