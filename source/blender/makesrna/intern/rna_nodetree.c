@@ -14046,7 +14046,7 @@ static int node_type_to_icon(int type)
       icon = ICON_POINT_DISTRIBUTE;
       break;
     case GEO_NODE_ACCUMULATE_FIELD:
-      icon = ICON_DELETE;
+      icon = ICON_ACCUMULATE;
       break;
     case GEO_NODE_DUAL_MESH:
       icon = ICON_DUAL_MESH;
