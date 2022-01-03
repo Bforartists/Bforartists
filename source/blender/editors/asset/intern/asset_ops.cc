@@ -638,7 +638,7 @@ static bool asset_catalogs_save_poll(bContext *C)
 
   const Main *bmain = CTX_data_main(C);
   if (!bmain->filepath[0]) {
-    CTX_wm_operator_poll_msg_set(C, "Cannot save asset catalogs before the Blender file is saved");
+    CTX_wm_operator_poll_msg_set(C, "Cannot save asset catalogs before the .blend file is saved");
     return false;
   }
 
