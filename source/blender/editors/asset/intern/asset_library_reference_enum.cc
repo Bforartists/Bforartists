@@ -98,7 +98,7 @@ const EnumPropertyItem *ED_asset_library_reference_to_rna_enum_itemf(
          "LOCAL",
          ICON_BLENDER,
          "Current File",
-         "Show the assets currently available in this Blender session"},
+         "Show the assets currently available in this session"},
         {0, nullptr, 0, nullptr, nullptr},
     };
 
