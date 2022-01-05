@@ -926,6 +926,7 @@ function(get_blender_version)
   set(BLENDER_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
   set(BLENDER_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
   
+# bfa
   file(STRINGS ${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h _contents REGEX "^#define[ \t]+BFORARTISTS_.*$")
 
   string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
@@ -953,6 +954,7 @@ function(get_blender_version)
   set(BFORARTISTS_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
   set(BFORARTISTS_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
   set(BFORARTISTS_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
+#end bfa
 
 endfunction()
 
