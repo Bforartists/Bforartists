@@ -7558,8 +7558,8 @@ class VIEW3D_PT_overlay_bones(Panel):
             col.active = display_all
             split = col.split()
             row = split.row(align=True)
-            #row.separator()
-            #row.separator()
+            row.separator()
+            row.separator()
             row.prop(overlay, "show_xray_bone")
 
             row = split.row(align=True)
@@ -7570,6 +7570,7 @@ class VIEW3D_PT_overlay_bones(Panel):
 
         elif mode == 'PAINT_WEIGHT':
             row = col.row()
+            row.separator()
             row.prop(overlay, "show_xray_bone")
 
         if VIEW3D_PT_overlay_bones.is_using_wireframe(context):
