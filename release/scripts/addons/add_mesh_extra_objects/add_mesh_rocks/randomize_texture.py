@@ -26,7 +26,7 @@ def randomizeTexture(texture, level=1):
 
     param: texture - bpy.data.texture to modify.
     level   - designated tweaked settings to use
-    -> Below 10 is a displacment texture
+    -> Below 10 is a displacement texture
     -> Between 10 and 20 is a base material texture
     '''
     noises = ['BLENDER_ORIGINAL', 'ORIGINAL_PERLIN', 'IMPROVED_PERLIN',

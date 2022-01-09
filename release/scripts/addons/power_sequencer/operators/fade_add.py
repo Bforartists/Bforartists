@@ -27,7 +27,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
     Fade options:
 
     - In, Out, In and Out create a fade animation of the given duration from
-    the start of the sequence, to the end of the sequence, or on boths sides
+    the start of the sequence, to the end of the sequence, or on both sides
     - From playhead: the fade animation goes from the start of sequences under the playhead to the playhead
     - To playhead: the fade animation goes from the playhead to the end of sequences under the playhead
 

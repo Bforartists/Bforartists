@@ -23,27 +23,21 @@ This script exports Stanford PLY files from Blender. It supports normals,
 colors, and texture coordinates per face or per vertex.
 """
 
-
-class _PLYface:
-    __slots__ = "verts", "sides"
-
-    def __init__(self, sides: int) -> None:
-        self.verts = []
-        self.sides = sides
+import bpy
 
 
-def _write_binary(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: list) -> None:
+def _write_binary(fw, ply_verts: list, ply_faces: list) -> None:
     from struct import pack
 
     # Vertex data
     # ---------------------------
 
-    for index, normal, uv_coords, color in ply_verts:
-        fw(pack("<3f", *mesh_verts[index].co))
+    for v, normal, uv, color in ply_verts:
+        fw(pack("<3f", *v.co))
         if normal is not None:
             fw(pack("<3f", *normal))
-        if uv_coords is not None:
-            fw(pack("<2f", *uv_coords))
+        if uv is not None:
+            fw(pack("<2f", *uv))
         if color is not None:
             fw(pack("<4B", *color))
 
@@ -51,20 +45,21 @@ def _write_binary(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: li
     # ---------------------------
 
     for pf in ply_faces:
-        fw(pack(f"<B{pf.sides}I", pf.sides, *pf.verts))
+        length = len(pf)
+        fw(pack(f"<B{length}I", length, *pf))
 
 
-def _write_ascii(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: list) -> None:
+def _write_ascii(fw, ply_verts: list, ply_faces: list) -> None:
 
     # Vertex data
     # ---------------------------
 
-    for index, normal, uv_coords, color in ply_verts:
-        fw(b"%.6f %.6f %.6f" % mesh_verts[index].co[:])
+    for v, normal, uv, color in ply_verts:
+        fw(b"%.6f %.6f %.6f" % v.co[:])
         if normal is not None:
-            fw(b" %.6f %.6f %.6f" % normal)
-        if uv_coords is not None:
-            fw(b" %.6f %.6f" % uv_coords)
+            fw(b" %.6f %.6f %.6f" % normal[:])
+        if uv is not None:
+            fw(b" %.6f %.6f" % uv)
         if color is not None:
             fw(b" %u %u %u %u" % color)
         fw(b"\n")
@@ -73,93 +68,51 @@ def _write_ascii(fw, ply_verts: list, ply_faces: list[_PLYface], mesh_verts: lis
     # ---------------------------
 
     for pf in ply_faces:
-        fw(b"%d" % pf.sides)
-        for index in pf.verts:
+        fw(b"%d" % len(pf))
+        for index in pf:
             fw(b" %d" % index)
         fw(b"\n")
 
 
-def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors):
-    import bpy
+def save_mesh(filepath, bm, use_ascii, use_normals, use_uv, use_color):
+    uv_lay = bm.loops.layers.uv.active
+    col_lay = bm.loops.layers.color.active
 
-    def rvec3d(v):
-        return round(v[0], 6), round(v[1], 6), round(v[2], 6)
+    use_uv = use_uv and uv_lay is not None
+    use_color = use_color and col_lay is not None
+    normal = uv = color = None
 
-    def rvec2d(v):
-        return round(v[0], 6), round(v[1], 6)
-
-    if use_uv_coords and mesh.uv_layers:
-        active_uv_layer = mesh.uv_layers.active.data
-    else:
-        use_uv_coords = False
-
-    if use_colors and mesh.vertex_colors:
-        active_col_layer = mesh.vertex_colors.active.data
-    else:
-        use_colors = False
-
-    # in case
-    color = uvcoord = uvcoord_key = normal = normal_key = None
-
-    mesh_verts = mesh.vertices
-    # vdict = {} # (index, normal, uv) -> new index
-    vdict = [{} for _ in range(len(mesh_verts))]
-    ply_verts = []
     ply_faces = []
-    vert_count = 0
+    ply_verts = []
+    ply_vert_map = {}
+    ply_vert_id = 0
 
-    for f in mesh.polygons:
-
-        if use_normals:
-            smooth = f.use_smooth
-            if not smooth:
-                normal = f.normal[:]
-                normal_key = rvec3d(normal)
-
-        if use_uv_coords:
-            uv = [
-                active_uv_layer[l].uv[:]
-                for l in range(f.loop_start, f.loop_start + f.loop_total)
-            ]
-        if use_colors:
-            col = [
-                active_col_layer[l].color[:]
-                for l in range(f.loop_start, f.loop_start + f.loop_total)
-            ]
-
-        pf = _PLYface(f.loop_total)
-        for i, vidx in enumerate(f.vertices):
-            v = mesh_verts[vidx]
-
-            if use_normals and smooth:
-                normal = v.normal[:]
-                normal_key = rvec3d(normal)
-
-            if use_uv_coords:
-                uvcoord = uv[i][0], uv[i][1]
-                uvcoord_key = rvec2d(uvcoord)
-
-            if use_colors:
-                color = col[i]
-                color = (
-                    int(color[0] * 255.0),
-                    int(color[1] * 255.0),
-                    int(color[2] * 255.0),
-                    int(color[3] * 255.0),
-                )
-            key = normal_key, uvcoord_key, color
-
-            vdict_local = vdict[vidx]
-            pf_vidx = vdict_local.get(key)  # Will be None initially
-
-            if pf_vidx is None:  # Same as vdict_local.has_key(key)
-                pf_vidx = vdict_local[key] = vert_count
-                ply_verts.append((vidx, normal, uvcoord, color))
-                vert_count += 1
-
-            pf.verts.append(pf_vidx)
-
+    for f in bm.faces:
+        pf = []
         ply_faces.append(pf)
+
+        for loop in f.loops:
+            v = map_id = loop.vert
+
+            if use_uv:
+                uv = loop[uv_lay].uv[:]
+                map_id = uv
+
+            # Identify vertex by pointer unless exporting UVs,
+            # in which case id by UV coordinate (will split edges by seams).
+            if (_id := ply_vert_map.get(map_id)) is not None:
+                pf.append(_id)
+                continue
+
+            if use_normals:
+                normal = v.normal
+            if use_color:
+                color = tuple(int(x * 255.0) for x in loop[col_lay])
+
+            ply_verts.append((v, normal, uv, color))
+            ply_vert_map[map_id] = ply_vert_id
+            pf.append(ply_vert_id)
+            ply_vert_id += 1
 
     with open(filepath, "wb") as file:
         fw = file.write
@@ -184,12 +137,12 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
                 b"property float ny\n"
                 b"property float nz\n"
             )
-        if use_uv_coords:
+        if use_uv:
             fw(
                 b"property float s\n"
                 b"property float t\n"
             )
-        if use_colors:
+        if use_color:
             fw(
                 b"property uchar red\n"
                 b"property uchar green\n"
@@ -197,7 +150,7 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
                 b"property uchar alpha\n"
             )
 
-        fw(b"element face %d\n" % len(mesh.polygons))
+        fw(b"element face %d\n" % len(ply_faces))
         fw(b"property list uchar uint vertex_indices\n")
         fw(b"end_header\n")
 
@@ -205,9 +158,9 @@ def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors)
         # ---------------------------
 
         if use_ascii:
-            _write_ascii(fw, ply_verts, ply_faces, mesh_verts)
+            _write_ascii(fw, ply_verts, ply_faces)
         else:
-            _write_binary(fw, ply_verts, ply_faces, mesh_verts)
+            _write_binary(fw, ply_verts, ply_faces)
 
 
 def save(
@@ -222,7 +175,6 @@ def save(
     global_matrix=None,
 ):
     import time
-    import bpy
     import bmesh
 
     t = time.time()
@@ -257,26 +209,22 @@ def save(
     if (ngons := [f for f in bm.faces if len(f.verts) > 255]):
         bmesh.ops.triangulate(bm, faces=ngons)
 
-    mesh = bpy.data.meshes.new("TMP PLY EXPORT")
-    bm.to_mesh(mesh)
-    bm.free()
-
     if global_matrix is not None:
-        mesh.transform(global_matrix)
+        bm.transform(global_matrix)
 
     if use_normals:
-        mesh.calc_normals()
+        bm.normal_update()
 
     save_mesh(
         filepath,
-        mesh,
+        bm,
         use_ascii,
         use_normals,
         use_uv_coords,
         use_colors,
     )
 
-    bpy.data.meshes.remove(mesh)
+    bm.free()
 
     t_delta = time.time() - t
     print(f"Export completed {filepath!r} in {t_delta:.3f}")

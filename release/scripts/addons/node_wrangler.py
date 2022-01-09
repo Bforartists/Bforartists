@@ -2061,7 +2061,7 @@ class NWPreviewNode(Operator, NWBase):
                     for li_from, li_to in make_links:
                         base_node_tree.links.new(li_from, li_to)
 
-                    # Crate links through node groups until we reach the active node
+                    # Create links through node groups until we reach the active node
                     tree = base_node_tree
                     link_end = output_socket
                     while tree.nodes.active != active:
@@ -3223,8 +3223,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
             # Separate CamelCase by space
             fname = re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>",fname)
             # Replace common separators with SPACE
-            seperators = ['_', '.', '-', '__', '--', '#']
-            for sep in seperators:
+            separators = ['_', '.', '-', '__', '--', '#']
+            for sep in separators:
                 fname = fname.replace(sep, ' ')
 
             components = fname.split(' ')
@@ -3584,7 +3584,7 @@ class NWLinkActiveToSelected(Operator, NWBase):
                     if node.label:
                         dst_name = node.label
                     valid = True  # Initial value. Will be changed to False if names don't match.
-                    src_name = dst_name  # If names not used - this asignment will keep valid = True.
+                    src_name = dst_name  # If names not used - this assignment will keep valid = True.
                     if use_node_name:
                         # Set src_name to source node name or label
                         src_name = active.name

@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# This ASE converion use code from Marcos A Ojeda http://generic.cx/
+# This ASE conversion uses code from Marcos A Ojeda http://generic.cx/
 #
 # With notes from
 # http://iamacamera.org/default.aspx?id=109 by Carl Camera and

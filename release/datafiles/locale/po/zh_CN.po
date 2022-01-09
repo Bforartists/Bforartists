@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7435,7 +7435,7 @@ msgstr "缩小与指定轴向上的最近目标表面间的位置"
 
 
 msgid "Nearest Vertex"
-msgstr "最近的点"
+msgstr "最近的顶点"
 
 
 msgid "Shrink the location to the nearest target vertex"
@@ -7443,7 +7443,7 @@ msgstr "缩小与最近目标顶点间的位置"
 
 
 msgid "Target Normal Project"
-msgstr "法线"
+msgstr "目标法线投影"
 
 
 msgid "Shrink the location to the nearest target surface along the interpolated vertex normals of the target"
@@ -10800,6 +10800,10 @@ msgstr "MPEG-4"
 
 msgid "AVI"
 msgstr "AVI"
+
+
+msgid "QuickTime"
+msgstr "QuickTime"
 
 
 msgid "Ogg"
@@ -16627,6 +16631,30 @@ msgid "Multiplied by Start/End for the total added point count"
 msgstr "乘以开始/结束求得总共添加的点数"
 
 
+msgid "Random End Factor"
+msgstr "随机终点系数"
+
+
+msgid "Size of random length added to the end of each stroke"
+msgstr "添加到每个笔画末尾的随机长度的大小"
+
+
+msgid "Random Noise Offset"
+msgstr "随机噪波偏移"
+
+
+msgid "Smoothly offset each stroke's random value"
+msgstr "平滑地偏移每个笔画的随机值"
+
+
+msgid "Random Start Factor"
+msgstr "随机起点系数"
+
+
+msgid "Size of random length added to the start of each stroke"
+msgstr "在每个笔画的开始添加的随机长度的大小"
+
+
 msgid "Segment Influence"
 msgstr "线段影响"
 
@@ -17237,6 +17265,18 @@ msgstr "与目标之间的距离"
 
 msgid "Project Limit"
 msgstr "投射限定"
+
+
+msgid "Smooth Factor"
+msgstr "平滑系数"
+
+
+msgid "Amount of smoothing to apply"
+msgstr "应用的平滑量"
+
+
+msgid "Number of times to apply smooth (high numbers can reduce FPS)"
+msgstr "应用平滑的次数(数字越大FPS越低)"
 
 
 msgid "Subdivision Levels"
@@ -32527,6 +32567,10 @@ msgid "F-Curve Context Menu"
 msgstr "函数曲线上下文菜单"
 
 
+msgid "Slider Operators"
+msgstr "滑块操作"
+
+
 msgid "Add Attribute"
 msgstr "添加属性"
 
@@ -42477,6 +42521,10 @@ msgid "Add control points along a circular arc (handle type is vector if Bezier 
 msgstr "沿圆形弧线添加控制点(如为贝塞尔样条线，手柄类型为矢量)"
 
 
+msgid "Geometry to Instance"
+msgstr "几何到实例"
+
+
 msgid "Method for smoothing values between pixels"
 msgstr "平滑像素之间数值的方法"
 
@@ -42499,6 +42547,30 @@ msgstr "曲线控制柄位置"
 
 msgid "Curve Tilt"
 msgstr "曲线倾斜"
+
+
+msgid "Edge Neighbors"
+msgstr "边的邻面"
+
+
+msgid "Edge Vertices"
+msgstr "边的顶点"
+
+
+msgid "Face Neighbors"
+msgstr "面的邻项"
+
+
+msgid "Mesh Island"
+msgstr "网格孤岛"
+
+
+msgid "Vertex Neighbors"
+msgstr "顶点的邻项"
+
+
+msgid "Scene Time"
+msgstr "场景时间"
 
 
 msgid "Is Shade Smooth"
@@ -43127,6 +43199,14 @@ msgstr "计算与目标面的靠近程度"
 
 msgid "Realize Instances"
 msgstr "实现实例"
+
+
+msgid "Legacy Behavior"
+msgstr "后遗行为"
+
+
+msgid "Behave like before instance attributes existed"
+msgstr "行为与实例属性存在之前类似"
 
 
 msgid "Replace Material"
@@ -54196,6 +54276,27 @@ msgid "Blend To Neighbor"
 msgstr "与邻帧混合"
 
 
+msgid "Blend selected keyframes to their left or right neighbor"
+msgstr "将所选关键帧混合到其左右邻帧"
+
+
+msgid "The blend factor with 0.5 being the current frame"
+msgstr "混合系数，0.5 为当前帧"
+
+
+msgctxt "Operator"
+msgid "Breakdown"
+msgstr "间断"
+
+
+msgid "Move selected keyframes to an inbetween position relative to adjacent keys"
+msgstr "将所选关键帧移动到相对于相邻帧的中间位置"
+
+
+msgid "Favor either the left or the right key"
+msgstr "偏爱左侧帧或右侧帧"
+
+
 msgctxt "Operator"
 msgid "Click-Insert Keyframes"
 msgstr "单击插入关键帧"
@@ -60836,6 +60937,15 @@ msgstr "将代理转换为本地库重写"
 
 
 msgctxt "Operator"
+msgid "Copy Global Transform"
+msgstr "复制全局变换"
+
+
+msgid "Copies the matrix of the currently active object or pose bone to the clipboard. Uses world-space matrices"
+msgstr "将当前活动物体的矩阵或姿态骨骼复制到剪贴板。使用世界空间矩阵"
+
+
+msgctxt "Operator"
 msgid "Corrective Smooth Bind"
 msgstr "矫正平滑绑定"
 
@@ -62234,6 +62344,51 @@ msgstr "移除粒子系统槽"
 
 msgid "Remove the selected particle system"
 msgstr "移除选择的粒子系统"
+
+
+msgctxt "Operator"
+msgid "Paste Global Transform"
+msgstr "粘贴全局变换"
+
+
+msgid "Pastes the matrix from the clipboard to the currently active pose bone or object. Uses world-space matrices"
+msgstr "将剪贴板中的矩阵粘贴到当前活动的姿态骨骼或物体。使用世界空间矩阵"
+
+
+msgid "Only used for baking. Step=1 creates a key on every frame, step=2 bakes on 2s, etc"
+msgstr "仅用于烘焙。步数=1 在每帧上创建一个关键帧，步数=2秒上创建两个烘焙，依此类推"
+
+
+msgid "Paste Method"
+msgstr "粘贴方法"
+
+
+msgid "Update the current transform, selected keyframes, or even create new keys"
+msgstr "更新当前变换、所选关键帧，甚至创建新关键帧"
+
+
+msgid "Current Transform"
+msgstr "当前变换"
+
+
+msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgstr "仅粘贴到当前值上，仅当启用了自动插帧时才操作动画数据"
+
+
+msgid "Selected Keys"
+msgstr "选中的关键帧"
+
+
+msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgstr "粘贴到具有选定帧的帧上，可能会在这些帧上创建新关键帧"
+
+
+msgid "Bake on Key Range"
+msgstr "在帧范围内烘焙"
+
+
+msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgstr "粘贴到第一个和最后一个选定关键帧之间的所有帧上，如有必要，可创建新的关键帧"
 
 
 msgctxt "Operator"
@@ -76728,6 +76883,10 @@ msgid "Fitting"
 msgstr "匹配"
 
 
+msgid "Render Procedural"
+msgstr "渲染程序化"
+
+
 msgid "Bone Constraints"
 msgstr "骨骼约束"
 
@@ -77932,6 +78091,10 @@ msgstr "用户界面"
 
 msgid "Gradient Colors"
 msgstr "渐变颜色"
+
+
+msgid "Global Transform"
+msgstr "全局变换"
 
 
 msgid "Brush Presets"
@@ -82233,6 +82396,46 @@ msgid "Lens focal length (mm)"
 msgstr "镜头的焦距(mm)"
 
 
+msgid "Fisheye Polynomial K0"
+msgstr "鱼眼多项式 K0"
+
+
+msgid "Coefficient K0 of the lens polinomial"
+msgstr "镜头多项式的系数K0"
+
+
+msgid "Fisheye Polynomial K1"
+msgstr "鱼眼多项式 K1"
+
+
+msgid "Coefficient K1 of the lens polinomial"
+msgstr "镜头多项式的系数K1"
+
+
+msgid "Fisheye Polynomial K2"
+msgstr "鱼眼多项式 K2"
+
+
+msgid "Coefficient K2 of the lens polinomial"
+msgstr "镜头多项式的系数K2"
+
+
+msgid "Fisheye Polynomial K3"
+msgstr "鱼眼多项式 K3"
+
+
+msgid "Coefficient K3 of the lens polinomial"
+msgstr "镜头多项式的系数K3"
+
+
+msgid "Fisheye Polynomial K4"
+msgstr "鱼眼多项式 K4"
+
+
+msgid "Coefficient K4 of the lens polinomial"
+msgstr "镜头多项式的系数K4"
+
+
 msgid "Max Latitude"
 msgstr "最大纬度"
 
@@ -82297,6 +82500,14 @@ msgid "Uses the mirror ball mapping"
 msgstr "使用镜像球贴图"
 
 
+msgid "Fisheye Lens Polynomial"
+msgstr "鱼眼镜头多项式"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
+msgstr "定义镜头投影为多项式，以允许模拟真实世界的相机镜头。"
+
+
 msgid "Form of hair"
 msgstr "毛发外形"
 
@@ -82327,6 +82538,10 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
+
+
+msgid "Metal"
+msgstr "金属"
 
 
 msgid "Cast Shadow"
@@ -97840,6 +98055,40 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "吸管颜色渐变点采样映射"
 
 
+msgid "No selected keys, pasting over scene range"
+msgstr "无选中的关键帧，在场景范围内粘贴"
+
+
+msgid "Clipboard does not contain a valid matrix."
+msgstr "剪贴板不包含有效的矩阵。"
+
+
+msgid "This mode requires auto-keying to work properly"
+msgstr "此模式需要自动插帧才能正常工作"
+
+
+msgid "No selected frames found"
+msgstr "未找到选中的帧"
+
+
+msgid "No selected keys, pasting over preview range"
+msgstr "无选中的关键帧，在预览范围内粘贴"
+
+
+msgid "These require auto-key:"
+msgstr "这些需要自动插帧："
+
+
+msgctxt "Operator"
+msgid "Paste to Selected Keys"
+msgstr "粘贴到所选关键帧"
+
+
+msgctxt "Operator"
+msgid "Paste and Bake"
+msgstr "粘贴并烘焙"
+
+
 msgid "Denoising completed"
 msgstr "降噪已完成"
 
@@ -97898,6 +98147,10 @@ msgstr "需要RDNA架构的独立AMD GPU"
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
+
+
+msgid "Requires Apple Silicon and macOS 12.0 or newer"
+msgstr "需要Apple Silicon 和 macOS 12.0 或更新版本"
 
 
 msgid "Noise Threshold"
@@ -98884,6 +99137,14 @@ msgid "The selected strips don't overlap"
 msgstr "所选片段不重叠"
 
 
+msgid "No sequences selected"
+msgstr "无选中序列"
+
+
+msgid "Current frame not within strip framerange"
+msgstr "当前帧不在片段帧范围内"
+
+
 msgid "Remove Add-on: %r?"
 msgstr "删除插件: %r?"
 
@@ -99465,6 +99726,10 @@ msgstr "最小纬度"
 
 msgid "Longitude Min"
 msgstr "最小经度"
+
+
+msgid "K0"
+msgstr "K0"
 
 
 msgid "Resolution Preview U"
@@ -105919,10 +106184,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "无法写入，图像没有 \"%s\" 和 \"%s\" 视图"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
-msgstr "保存拼贴图像时， '%s' 路径必须包含 UDIM分块编号 %d"
-
-
 msgid "Key %d"
 msgstr "键 %d"
 
@@ -107166,6 +107427,10 @@ msgstr "所选路径位于所选资产库之外"
 
 msgid "Unable to copy bundle due to external dependency: \"%s\""
 msgstr "由于外部依赖项 \"%s\", 无法复制捆绑包"
+
+
+msgid "Unable to copy bundle due to %zu external dependencies; more details on the console"
+msgstr "由于 %zu 外部依赖项，无法复制捆绑包；详情见控制台"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -112610,6 +112875,10 @@ msgid "Column"
 msgstr "列"
 
 
+msgid "Unkown column type"
+msgstr "未知列类型"
+
+
 msgid "File Modified Outside and Inside Blender"
 msgstr "在 Blender 外部及内部修改的文件"
 
@@ -112696,6 +112965,10 @@ msgstr "没有最近打开过的文件"
 
 msgid "Open Recent"
 msgstr "打开近期文件"
+
+
+msgid "Undo History"
+msgstr "重做历史"
 
 
 msgid "File association registered"
@@ -113641,6 +113914,14 @@ msgstr "骨骼封套"
 
 msgid "Use Factor"
 msgstr "使用系数"
+
+
+msgid "Random Offset Start"
+msgstr "随机偏开始"
+
+
+msgid "Random Offset End"
+msgstr "随机偏移结束"
 
 
 msgid "Curvature"
@@ -115708,12 +115989,92 @@ msgid "If the profile spline is cyclic, fill the ends of the generated mesh with
 msgstr "如果轮廓样条线是闭合的，则用多边形填充生成网格的末端"
 
 
+msgid "Start (Factor)"
+msgstr "起点(系数)"
+
+
+msgid "End (Factor)"
+msgstr "终点(系数)"
+
+
+msgid "Start (Length)"
+msgstr "起点(长度)"
+
+
+msgid "End (Length)"
+msgstr "终点(长度)"
+
+
 msgid "No geometry with given domain"
 msgstr "没有带给定域的几何形状"
 
 
 msgid "The parts of the geometry to be deleted"
 msgstr "要删除的几何部分"
+
+
+msgid "Number of faces that contain the edge"
+msgstr "包含该边的面数"
+
+
+msgid "Vertex Index 1"
+msgstr "顶点编号1"
+
+
+msgid "The index of the first vertex in the edge"
+msgstr "边上第一个顶点的编号"
+
+
+msgid "Vertex Index 2"
+msgstr "顶点编号1"
+
+
+msgid "The index of the second vertex in the edge"
+msgstr "边上第二个顶点的编号"
+
+
+msgid "Position 1"
+msgstr "位置 1"
+
+
+msgid "The position of the first vertex in the edge"
+msgstr "边上第一个顶点的位置"
+
+
+msgid "Position 2"
+msgstr "位置 2"
+
+
+msgid "The position of the second vertex in the edge"
+msgstr "边上第二个顶点的位置"
+
+
+msgid "The surface area of each of the mesh's faces"
+msgstr "每个网格面的表面积"
+
+
+msgid "Vertex Count"
+msgstr "顶点数量"
+
+
+msgid "Number of edges or points in the face"
+msgstr "面上的边或点数"
+
+
+msgid "Number of faces which share an edge with the face"
+msgstr "与该面共用一条边的面数"
+
+
+msgid "Island indices are based on the order of the lowest-numbered vertex contained in each island"
+msgstr "孤岛编号基于每个孤岛中包含的最小编号顶点的顺序"
+
+
+msgid "Vertex count and edge count are equal"
+msgstr "顶点数和边数相等"
+
+
+msgid "Number of faces that contain the vertex"
+msgstr "包含该顶点的面数"
 
 
 msgid "Point Count"
@@ -115966,6 +116327,10 @@ msgstr "输入几何不包含贝塞尔样条线"
 
 msgid "Volumes only support a single material; selection input can not be a field"
 msgstr "体积只支持单个材质；选中项输入不能是一个场"
+
+
+msgid "Point clouds only support a single material; selection input can not be a field"
+msgstr "点云只支持单个材质；选中项输入不能是一个场"
 
 
 msgid "Shade Smooth"
@@ -116642,6 +117007,10 @@ msgid "Context window not set"
 msgstr "未设置上下文窗口"
 
 
+msgid "Unable to save an unsaved file with an empty or unset \"filepath\" property"
+msgstr "无法使用空的或未设置的\"filepath\"属性保存未保存的文件"
+
+
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "引擎 '%s' 对场景 '%s' (可能需要安装或启用一个插件) 不可用"
 
@@ -116704,6 +117073,10 @@ msgstr "已保存 \"%s\""
 
 msgid "Can't read alternative start-up file: '%s'"
 msgstr "无法读取备用启动文件: '%s'"
+
+
+msgid "The \"filepath\" property was not an absolute path: \"%s\""
+msgstr "\"filepath\"属性不是绝对路径： \"%s\""
 
 
 msgid "Not a library"

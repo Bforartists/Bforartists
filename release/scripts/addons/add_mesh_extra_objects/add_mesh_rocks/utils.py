@@ -21,7 +21,7 @@
 # <pep8 compliant>
 
 
-# Converts a formated string to a float tuple:
+# Converts a formatted string to a float tuple:
 #   IN - '(0.5, 0.2)' -> CONVERT -> OUT - (0.5, 0.2)
 def toTuple(stringIn):
     sTemp = str(stringIn)[1:len(str(stringIn)) - 1].split(', ')
@@ -31,7 +31,7 @@ def toTuple(stringIn):
     return tuple(fTemp)
 
 
-# Converts a formated string to a float tuple:
+# Converts a formatted string to a float tuple:
 #   IN - '[0.5, 0.2]' -> CONVERT -> OUT - [0.5, 0.2]
 def toList(stringIn):
     sTemp = str(stringIn)[1:len(str(stringIn)) - 1].split(', ')
@@ -93,7 +93,7 @@ except:
     # from random import weibullvariate as weibull
     print("Rock Generator: Numpy not found.  Using Python's random.")
     numpy = False
-# Artifically skews a normal (gaussian) distribution.  This will not create
+# Artificially skews a normal (gaussian) distribution.  This will not create
 # a continuous distribution curve but instead acts as a piecewise finction.
 # This linearly scales the output on one side to fit the bounds.
 #

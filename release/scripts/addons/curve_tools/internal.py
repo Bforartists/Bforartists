@@ -32,7 +32,7 @@ units = [
     ('in', 'Inch', '0.0254', 8)
 ]
 
-param_tollerance = 0.0001
+param_tolerance = 0.0001
 AABB = namedtuple('AxisAlignedBoundingBox', 'center dimensions')
 Plane = namedtuple('Plane', 'normal distance')
 Circle = namedtuple('Circle', 'orientation center radius')
@@ -62,7 +62,7 @@ def circleOfTriangle(a, b, c):
     orientation.col[0] = orientation.col[1].xyz.cross(orientation.col[2].xyz)
     return Circle(orientation=orientation, center=center, radius=radius)
 
-def circleOfBezier(points, tollerance=0.000001, samples=16):
+def circleOfBezier(points, tolerance=0.000001, samples=16):
     circle = circleOfTriangle(points[0], bezierPointAt(points, 0.5), points[3])
     if circle == None:
         return None
@@ -70,7 +70,7 @@ def circleOfBezier(points, tollerance=0.000001, samples=16):
     for t in range(0, samples):
         variance += ((circle.center-bezierPointAt(points, (t+1)/(samples-1))).length/circle.radius-1) ** 2
     variance /= samples
-    return None if variance > tollerance else circle
+    return None if variance > tolerance else circle
 
 def areaOfPolygon(vertices):
     area = 0
@@ -86,25 +86,25 @@ def linePlaneIntersection(origin, dir, plane):
     det = dir@plane.normal
     return float('nan') if det == 0 else (plane.distance-origin@plane.normal)/det
 
-def nearestPointOfLines(originA, dirA, originB, dirB, tollerance=0.0):
+def nearestPointOfLines(originA, dirA, originB, dirB, tolerance=0.0):
     # https://en.wikipedia.org/wiki/Skew_lines#Nearest_Points
     normal = dirA.cross(dirB)
     normalA = dirA.cross(normal)
     normalB = dirB.cross(normal)
     divisorA = dirA@normalB
     divisorB = dirB@normalA
-    if abs(divisorA) <= tollerance or abs(divisorB) <= tollerance:
+    if abs(divisorA) <= tolerance or abs(divisorB) <= tolerance:
         return (float('nan'), float('nan'), None, None)
     else:
         paramA = (originB-originA)@normalB/divisorA
         paramB = (originA-originB)@normalA/divisorB
         return (paramA, paramB, originA+dirA*paramA, originB+dirB*paramB)
 
-def lineSegmentLineSegmentIntersection(beginA, endA, beginB, endB, tollerance=0.001):
+def lineSegmentLineSegmentIntersection(beginA, endA, beginB, endB, tolerance=0.001):
     dirA = endA-beginA
     dirB = endB-beginB
     paramA, paramB, pointA, pointB = nearestPointOfLines(beginA, dirA, beginB, dirB)
-    if math.isnan(paramA) or (pointA-pointB).length > tollerance or \
+    if math.isnan(paramA) or (pointA-pointB).length > tolerance or \
        paramA < 0 or paramA > 1 or paramB < 0 or paramB > 1:
         return None
     return (paramA, paramB, pointA, pointB)
@@ -120,15 +120,15 @@ def aabbOfPoints(points):
                 max[i] = point[i]
     return AABB(center=(max+min)*0.5, dimensions=(max-min)*0.5)
 
-def aabbIntersectionTest(a, b, tollerance=0.0):
+def aabbIntersectionTest(a, b, tolerance=0.0):
     for i in range(0, 3):
-        if abs(a.center[i]-b.center[i]) > a.dimensions[i]+b.dimensions[i]+tollerance:
+        if abs(a.center[i]-b.center[i]) > a.dimensions[i]+b.dimensions[i]+tolerance:
             return False
     return True
 
-def isPointInAABB(point, aabb, tollerance=0.0, ignore_axis=None):
+def isPointInAABB(point, aabb, tolerance=0.0, ignore_axis=None):
     for i in range(0, 3):
-        if i != ignore_axis and (point[i] < aabb.center[i]-aabb.dimensions[i]-tollerance or point[i] > aabb.center[i]+aabb.dimensions[i]+tollerance):
+        if i != ignore_axis and (point[i] < aabb.center[i]-aabb.dimensions[i]-tolerance or point[i] > aabb.center[i]+aabb.dimensions[i]+tolerance):
             return False
     return True
 
@@ -181,14 +181,14 @@ def bezierLength(points, beginT=0, endT=1, samples=1024):
 # https://en.wikipedia.org/wiki/Root_of_unity
 # cubic_roots_of_unity = [cmath.rect(1, i/3*2*math.pi) for i in range(0, 3)]
 cubic_roots_of_unity = [complex(1, 0), complex(-1, math.sqrt(3))*0.5, complex(-1, -math.sqrt(3))*0.5]
-def bezierRoots(dists, tollerance=0.0001):
+def bezierRoots(dists, tolerance=0.0001):
     # https://en.wikipedia.org/wiki/Cubic_function
     # y(t) = a*t^3 +b*t^2 +c*t^1 +d*t^0
     a = 3*(dists[1]-dists[2])+dists[3]-dists[0]
     b = 3*(dists[0]-2*dists[1]+dists[2])
     c = 3*(dists[1]-dists[0])
     d = dists[0]
-    if abs(a) > tollerance: # Cubic
+    if abs(a) > tolerance: # Cubic
         E2 = a*c
         E3 = a*a*d
         A = (2*b*b-9*E2)*b+27*E3
@@ -198,25 +198,25 @@ def bezierRoots(dists, tollerance=0.0001):
         for root in cubic_roots_of_unity:
             root *= C
             root = -1/(3*a)*(b+root+B/root)
-            if abs(root.imag) < tollerance and root.real > -param_tollerance and root.real < 1.0+param_tollerance:
+            if abs(root.imag) < tolerance and root.real > -param_tolerance and root.real < 1.0+param_tolerance:
                 roots.append(max(0.0, min(root.real, 1.0)))
         # Remove doubles
         roots.sort()
         for index in range(len(roots)-1, 0, -1):
-            if abs(roots[index-1]-roots[index]) < param_tollerance:
+            if abs(roots[index-1]-roots[index]) < param_tolerance:
                 roots.pop(index)
         return roots
-    elif abs(b) > tollerance: # Quadratic
+    elif abs(b) > tolerance: # Quadratic
         disc = c*c-4*b*d
         if disc < 0:
             return []
         disc = math.sqrt(disc)
         return [(-c-disc)/(2*b), (-c+disc)/(2*b)]
-    elif abs(c) > tollerance: # Linear
+    elif abs(c) > tolerance: # Linear
         root = -d/c
         return [root] if root >= 0.0 and root <= 1.0 else []
     else: # Constant / Parallel
-        return [] if abs(d) > tollerance else float('inf')
+        return [] if abs(d) > tolerance else float('inf')
 
 def xRaySplineIntersectionTest(spline, origin):
     spline_points = spline.bezier_points if spline.type == 'BEZIER' else spline.points
@@ -229,7 +229,7 @@ def xRaySplineIntersectionTest(spline, origin):
         prev = intersections[index-1]
         current = intersections[index]
         if prev[1] == current[0] and \
-           prev[2] > 1.0-param_tollerance and current[2] < param_tollerance and \
+           prev[2] > 1.0-param_tolerance and current[2] < param_tolerance and \
            ((prev[3] < 0 and current[3] < 0) or (prev[3] > 0 and current[3] > 0)):
             intersections.pop(index)
 
@@ -284,8 +284,8 @@ def xRaySplineIntersectionTest(spline, origin):
 def isPointInSpline(point, spline):
     return spline.use_cyclic_u and len(xRaySplineIntersectionTest(spline, point))%2 == 1
 
-def isSegmentLinear(points, tollerance=0.0001):
-    return 1.0-(points[1]-points[0]).normalized()@(points[3]-points[2]).normalized() < tollerance
+def isSegmentLinear(points, tolerance=0.0001):
+    return 1.0-(points[1]-points[0]).normalized()@(points[3]-points[2]).normalized() < tolerance
 
 def bezierSegmentPoints(begin, end):
     return [begin.co, begin.handle_right, end.handle_left, end.co]
@@ -321,8 +321,8 @@ def bezierSliceFromTo(points, minParam, maxParam):
     paramDiff = maxParam-minParam
     return [fromP, fromP+fromT*paramDiff, toP-toT*paramDiff, toP]
 
-def bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin=0.0, aMax=1.0, bMin=0.0, bMax=1.0, depth=8, tollerance=0.001):
-    if aabbIntersectionTest(aabbOfPoints(bezierSliceFromTo(pointsA, aMin, aMax)), aabbOfPoints(bezierSliceFromTo(pointsB, bMin, bMax)), tollerance) == False:
+def bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin=0.0, aMax=1.0, bMin=0.0, bMax=1.0, depth=8, tolerance=0.001):
+    if aabbIntersectionTest(aabbOfPoints(bezierSliceFromTo(pointsA, aMin, aMax)), aabbOfPoints(bezierSliceFromTo(pointsB, bMin, bMax)), tolerance) == False:
         return
     if depth == 0:
         solutions.append([aMin, aMax, bMin, bMax])
@@ -330,17 +330,17 @@ def bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin=0.0, aMax=1.0
     depth -= 1
     aMid = (aMin+aMax)*0.5
     bMid = (bMin+bMax)*0.5
-    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin, aMid, bMin, bMid, depth, tollerance)
-    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin, aMid, bMid, bMax, depth, tollerance)
-    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMid, aMax, bMin, bMid, depth, tollerance)
-    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMid, aMax, bMid, bMax, depth, tollerance)
+    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin, aMid, bMin, bMid, depth, tolerance)
+    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMin, aMid, bMid, bMax, depth, tolerance)
+    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMid, aMax, bMin, bMid, depth, tolerance)
+    bezierIntersectionBroadPhase(solutions, pointsA, pointsB, aMid, aMax, bMid, bMax, depth, tolerance)
 
-def bezierIntersectionNarrowPhase(broadPhase, pointsA, pointsB, tollerance=0.000001):
+def bezierIntersectionNarrowPhase(broadPhase, pointsA, pointsB, tolerance=0.000001):
     aMin = broadPhase[0]
     aMax = broadPhase[1]
     bMin = broadPhase[2]
     bMax = broadPhase[3]
-    while (aMax-aMin > tollerance) or (bMax-bMin > tollerance):
+    while (aMax-aMin > tolerance) or (bMax-bMin > tolerance):
         aMid = (aMin+aMax)*0.5
         bMid = (bMin+bMax)*0.5
         a1 = bezierPointAt(pointsA, (aMin+aMid)*0.5)
@@ -366,7 +366,7 @@ def bezierIntersectionNarrowPhase(broadPhase, pointsA, pointsB, tollerance=0.000
             bMin = bMid
     return [aMin, bMin, minDist]
 
-def segmentIntersection(segmentA, segmentB, tollerance=0.001):
+def segmentIntersection(segmentA, segmentB, tolerance=0.001):
     pointsA = bezierSegmentPoints(segmentA['beginPoint'], segmentA['endPoint'])
     pointsB = bezierSegmentPoints(segmentB['beginPoint'], segmentB['endPoint'])
     result = []
@@ -401,9 +401,9 @@ def segmentIntersection(segmentA, segmentB, tollerance=0.001):
                 else:
                     solutions[index][2] = float('inf')
     def areIntersectionsAdjacent(segmentA, segmentB, paramA, paramB):
-        return segmentA['endIndex'] == segmentB['beginIndex'] and paramA > 1-param_tollerance and paramB < param_tollerance
+        return segmentA['endIndex'] == segmentB['beginIndex'] and paramA > 1-param_tolerance and paramB < param_tolerance
     for solution in solutions:
-        if (solution[2] > tollerance) or \
+        if (solution[2] > tolerance) or \
           (segmentA['spline'] == segmentB['spline'] and \
           (areIntersectionsAdjacent(segmentA, segmentB, solution[0], solution[1]) or \
            areIntersectionsAdjacent(segmentB, segmentA, solution[1], solution[0]))):
@@ -504,19 +504,19 @@ def subdivideBezierSegment(segment):
 def prepareSegmentIntersections(segments):
     def areCutsAdjacent(cutA, cutB):
         return cutA['segment']['beginIndex'] == cutB['segment']['endIndex'] and \
-               cutA['param'] < param_tollerance and cutB['param'] > 1.0-param_tollerance
+               cutA['param'] < param_tolerance and cutB['param'] > 1.0-param_tolerance
     for segment in segments:
         segment['cuts'].sort(key=(lambda cut: cut['param']))
         for index in range(len(segment['cuts'])-1, 0, -1):
             prev = segment['cuts'][index-1]
             current = segment['cuts'][index]
-            if abs(prev['param']-current['param']) < param_tollerance and \
+            if abs(prev['param']-current['param']) < param_tolerance and \
                prev['otherCut']['segment']['spline'] == current['otherCut']['segment']['spline'] and \
                (areCutsAdjacent(prev['otherCut'], current['otherCut']) or \
                 areCutsAdjacent(current['otherCut'], prev['otherCut'])):
                 deleteFromArray(prev['otherCut'], prev['otherCut']['segment']['cuts'])
                 deleteFromArray(current['otherCut'], current['otherCut']['segment']['cuts'])
-                segment['cuts'].pop(index-1 if current['otherCut']['param'] < param_tollerance else index)
+                segment['cuts'].pop(index-1 if current['otherCut']['param'] < param_tolerance else index)
                 current = segment['cuts'][index-1]['otherCut']
                 current['segment']['extraCut'] = current
 
@@ -667,14 +667,14 @@ def polygonArcAt(center, radius, begin_angle, angle, step_angle, include_ends):
         vertices.append(center+normal*radius)
     return vertices
 
-def bezierArcAt(tangent, normal, center, radius, angle, tollerance=0.99999):
+def bezierArcAt(tangent, normal, center, radius, angle, tolerance=0.99999):
     transform = Matrix.Identity(4)
     transform.col[0].xyz = tangent.cross(normal)*radius
     transform.col[1].xyz = tangent*radius
     transform.col[2].xyz = normal*radius
     transform.col[3].xyz = center
     segments = []
-    segment_count = math.ceil(abs(angle)/(math.pi*0.5)*tollerance)
+    segment_count = math.ceil(abs(angle)/(math.pi*0.5)*tolerance)
     angle /= segment_count
     x0 = math.cos(angle*0.5)
     y0 = math.sin(angle*0.5)
@@ -718,7 +718,7 @@ def iterateSpline(spline, callback):
         callback(prev_segment_points, next_segment_points, selected, prev_tangent, current_tangent, next_tangent, normal, angle, is_first, is_last)
     return spline_points
 
-def offsetPolygonOfSpline(spline, offset, step_angle, round_line_join, bezier_samples=128, tollerance=0.000001):
+def offsetPolygonOfSpline(spline, offset, step_angle, round_line_join, bezier_samples=128, tolerance=0.000001):
     def offsetVertex(position, tangent):
         normal = Vector((-tangent[1], tangent[0], 0))
         return position+normal*offset
@@ -728,7 +728,7 @@ def offsetPolygonOfSpline(spline, offset, step_angle, round_line_join, bezier_sa
         angle *= sign
         if is_last:
             return
-        is_protruding = (abs(angle) > tollerance and abs(offset) > tollerance)
+        is_protruding = (abs(angle) > tolerance and abs(offset) > tolerance)
         if is_protruding and not is_first and sign != math.copysign(1, offset): # Convex Corner
             if round_line_join:
                 begin_angle = math.atan2(prev_tangent[1], prev_tangent[0])+math.pi*0.5
@@ -774,7 +774,7 @@ def offsetPolygonOfSpline(spline, offset, step_angle, round_line_join, bezier_sa
     new_area = areaOfPolygon(vertices)
     return [vertices] if original_area*new_area >= 0 else []
 
-def filletSpline(spline, radius, chamfer_mode, limit_half_way, tollerance=0.0001):
+def filletSpline(spline, radius, chamfer_mode, limit_half_way, tolerance=0.0001):
     vertices = []
     distance_limit_factor = 0.5 if limit_half_way else 1.0
     def handlePoint(prev_segment_points, next_segment_points, selected, prev_tangent, current_tangent, next_tangent, normal, angle, is_first, is_last):
@@ -803,7 +803,7 @@ def filletSpline(spline, radius, chamfer_mode, limit_half_way, tollerance=0.0001
     iterateSpline(spline, handlePoint)
     i = 0 if spline.use_cyclic_u else 1
     while(i < len(vertices)):
-        if (vertices[i-1][1]-vertices[i][1]).length < tollerance:
+        if (vertices[i-1][1]-vertices[i][1]).length < tolerance:
             vertices[i-1][2] = vertices[i][2]
             del vertices[i]
         else:

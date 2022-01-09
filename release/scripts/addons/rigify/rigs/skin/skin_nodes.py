@@ -162,7 +162,7 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
             return -abs(self.layer - other.layer) - 100
 
     def is_better_cluster(self, other):
-        """Check if the current bone is preferrable as master when choosing of same sized groups."""
+        """Check if the current bone is preferable as master when choosing of same sized groups."""
 
         # Prefer bones that have strictly more parents
         my_parents = list(reversed(get_parent_rigs(self.rig.rigify_parent)))

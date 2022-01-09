@@ -489,7 +489,7 @@ class DOPESHEET_MT_view_pie_menus(Menu):
 class DOPESHEET_MT_view_pie(Menu):
     bl_label = "View"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         pie = layout.menu_pie()
@@ -758,7 +758,7 @@ class DopesheetActionPanelBase:
     bl_label = "Action"
 
     @classmethod
-    def draw_generic_panel(cls, context, layout, action):
+    def draw_generic_panel(cls, _context, layout, action):
         layout.label(text=action.name, icon='ACTION')
 
         layout.prop(action, "use_frame_range")

@@ -332,7 +332,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         _set_recenter(self, self.recenter)
     dxf_indi: EnumProperty(
             name="DXF coordinate type",
-            description="Indication for spherical or euclidian coordinates",
+            description="Indication for spherical or euclidean coordinates",
             items=[('EUCLIDEAN', "Euclidean", "Coordinates in x/y"),
                    ('SPHERICAL', "Spherical", "Coordinates in lat/lon")],
             default='EUCLIDEAN',
