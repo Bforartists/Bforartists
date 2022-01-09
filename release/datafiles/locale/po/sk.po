@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-12-07 09:15+0100\n"
+"PO-Revision-Date: 2021-12-28 09:03+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -10801,6 +10801,10 @@ msgid "AVI"
 msgstr "AVI"
 
 
+msgid "QuickTime"
+msgstr "QuickTime"
+
+
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -16626,6 +16630,30 @@ msgid "Multiplied by Start/End for the total added point count"
 msgstr "Vynásobené podľa Začiatku/Konca pre celkový počet pridaných bodov"
 
 
+msgid "Random End Factor"
+msgstr "Náhodný koncový faktor"
+
+
+msgid "Size of random length added to the end of each stroke"
+msgstr "Veľkosť náhodnej dĺžky pridanej na koniec každého ťahu"
+
+
+msgid "Random Noise Offset"
+msgstr "Posuv náhodného šumu"
+
+
+msgid "Smoothly offset each stroke's random value"
+msgstr "Plynulý posun náhodnej hodnoty každého ťahu"
+
+
+msgid "Random Start Factor"
+msgstr "Náhodný počiatočný faktor"
+
+
+msgid "Size of random length added to the start of each stroke"
+msgstr "Veľkosť náhodnej dĺžky pridanej na začiatok každého ťahu"
+
+
 msgid "Segment Influence"
 msgstr "Vplyv segmentu"
 
@@ -17236,6 +17264,18 @@ msgstr "Vzdialenosť na udržanie cieľa"
 
 msgid "Project Limit"
 msgstr "Limit premietania"
+
+
+msgid "Smooth Factor"
+msgstr "Faktor vyhladenia"
+
+
+msgid "Amount of smoothing to apply"
+msgstr "Množstvo vyhladzovania na použitie"
+
+
+msgid "Number of times to apply smooth (high numbers can reduce FPS)"
+msgstr "Koľkokrát je použité vyhladenie (vysoké čísla môžu znížiť FPS)"
 
 
 msgid "Subdivision Levels"
@@ -32526,6 +32566,10 @@ msgid "F-Curve Context Menu"
 msgstr "Kontextová ponuka F-krivky"
 
 
+msgid "Slider Operators"
+msgstr "Operátori posúvača"
+
+
 msgid "Add Attribute"
 msgstr "Pridať atribút"
 
@@ -42476,6 +42520,10 @@ msgid "Add control points along a circular arc (handle type is vector if Bezier 
 msgstr "Pridáva riadiace bodov pozdĺž kruhového oblúka (typ manipulátora je vektor, ak ide o Bézierovu drážku)"
 
 
+msgid "Geometry to Instance"
+msgstr "Geometria do inštancie"
+
+
 msgid "Method for smoothing values between pixels"
 msgstr "Metóda vyhladzovania hodnôt medzi pixelmi"
 
@@ -42498,6 +42546,30 @@ msgstr "Pozície manipulátora krivky"
 
 msgid "Curve Tilt"
 msgstr "Náklon krivky"
+
+
+msgid "Edge Neighbors"
+msgstr "Susedné hrany"
+
+
+msgid "Edge Vertices"
+msgstr "Vrcholy hrán"
+
+
+msgid "Face Neighbors"
+msgstr "Susedné plôšky"
+
+
+msgid "Mesh Island"
+msgstr "Povrchová sieť ostrova"
+
+
+msgid "Vertex Neighbors"
+msgstr "Susedné vrcholy"
+
+
+msgid "Scene Time"
+msgstr "Čas scény"
 
 
 msgid "Is Shade Smooth"
@@ -43126,6 +43198,14 @@ msgstr "Vypočíta príbuznosť k cieľovým plôškam"
 
 msgid "Realize Instances"
 msgstr "Realizovať inštancie"
+
+
+msgid "Legacy Behavior"
+msgstr "Dedičné správanie"
+
+
+msgid "Behave like before instance attributes existed"
+msgstr "Správanie sa ako pred existenciou atribútov inštancie"
 
 
 msgid "Replace Material"
@@ -54195,6 +54275,27 @@ msgid "Blend To Neighbor"
 msgstr "Prelínať na susedné"
 
 
+msgid "Blend selected keyframes to their left or right neighbor"
+msgstr "Prelínanie vybraných kľúčových snímok s ich ľavou alebo pravou susednou"
+
+
+msgid "The blend factor with 0.5 being the current frame"
+msgstr "Faktor zmiešavania s 0,5 ako aktuálna snímka"
+
+
+msgctxt "Operator"
+msgid "Breakdown"
+msgstr "Rozklad"
+
+
+msgid "Move selected keyframes to an inbetween position relative to adjacent keys"
+msgstr "Presun vybraných kľúčových snímok do medzipolohy vzhľadom na susedné kľúče"
+
+
+msgid "Favor either the left or the right key"
+msgstr "Uprednostniť ľavé alebo pravé tlačidlo"
+
+
 msgctxt "Operator"
 msgid "Click-Insert Keyframes"
 msgstr "Vložiť kľúčovú snímku kliknutím"
@@ -60835,6 +60936,15 @@ msgstr "Konvertuje náhradu na prepis lokálnej knižnice"
 
 
 msgctxt "Operator"
+msgid "Copy Global Transform"
+msgstr "Kopírovať globálnu transformáciu"
+
+
+msgid "Copies the matrix of the currently active object or pose bone to the clipboard. Uses world-space matrices"
+msgstr "Skopíruje matricu aktuálne aktívneho objektu alebo pózy kosti do schránky. Používa matrice svetového priestoru"
+
+
+msgctxt "Operator"
 msgid "Corrective Smooth Bind"
 msgstr "Opravné vyhladenie väzby"
 
@@ -62233,6 +62343,51 @@ msgstr "Odstrániť zásuvku časticového systému"
 
 msgid "Remove the selected particle system"
 msgstr "Odstráni vybraný časticový systém"
+
+
+msgctxt "Operator"
+msgid "Paste Global Transform"
+msgstr "Prilepiť globálnu transformáciu"
+
+
+msgid "Pastes the matrix from the clipboard to the currently active pose bone or object. Uses world-space matrices"
+msgstr "Prilepí matricu zo schránky do aktuálne aktívnej pózy kosti alebo objektu. Používa matrice vo svetovom priestore"
+
+
+msgid "Only used for baking. Step=1 creates a key on every frame, step=2 bakes on 2s, etc"
+msgstr "Používa sa len na zapečenie. Krok=1 vytvára kľúčovú každú snímku, krok=2 zapečie na 2s atď."
+
+
+msgid "Paste Method"
+msgstr "Metóda Prilepiť"
+
+
+msgid "Update the current transform, selected keyframes, or even create new keys"
+msgstr "Aktualizuje aktuálnu transformáciu, vybrané kľúčové snímky alebo dokonca vytvorí nové kľúče"
+
+
+msgid "Current Transform"
+msgstr "Aktuálna transformácia"
+
+
+msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgstr "Prilepí len na aktuálne hodnoty, pričom s údajmi animácie sa manipuluje len vtedy, ak je zapnuté automatické kľúčovanie"
+
+
+msgid "Selected Keys"
+msgstr "Vybrané kľúče"
+
+
+msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgstr "Prilepí do snímok, ktoré majú vybraný kľúč, čím sa potenciálne vytvoria nové kľúče v týchto snímkach"
+
+
+msgid "Bake on Key Range"
+msgstr "Zapiecť na kľúčový rozsah"
+
+
+msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgstr "Prilepí na všetky snímky medzi prvým a posledným vybraným kľúčom, v prípade potreby vytvoriť nové kľúčové snímky"
 
 
 msgctxt "Operator"
@@ -76727,6 +76882,10 @@ msgid "Fitting"
 msgstr "Montáž"
 
 
+msgid "Render Procedural"
+msgstr "Procedurálne prekresľovanie"
+
+
 msgid "Bone Constraints"
 msgstr "Vynútenia kostí"
 
@@ -77931,6 +78090,10 @@ msgstr "Užívateľské rozhranie"
 
 msgid "Gradient Colors"
 msgstr "Stupňovitosť farieb"
+
+
+msgid "Global Transform"
+msgstr "Globálna transformácia"
 
 
 msgid "Brush Presets"
@@ -82230,6 +82393,46 @@ msgid "Lens focal length (mm)"
 msgstr "Ohnisková vzdialenosť objektívu (mm)"
 
 
+msgid "Fisheye Polynomial K0"
+msgstr "Mnohočlen rybieho oka K0"
+
+
+msgid "Coefficient K0 of the lens polinomial"
+msgstr "Koeficient K0 mnohočlena šošovky"
+
+
+msgid "Fisheye Polynomial K1"
+msgstr "Mnohočlen rybieho oka K1"
+
+
+msgid "Coefficient K1 of the lens polinomial"
+msgstr "Koeficient K1 mnohočlena šošovky"
+
+
+msgid "Fisheye Polynomial K2"
+msgstr "Mnohočlen rybieho oka K2"
+
+
+msgid "Coefficient K2 of the lens polinomial"
+msgstr "Koeficient K2 mnohočlena šošovky"
+
+
+msgid "Fisheye Polynomial K3"
+msgstr "Mnohočlen rybieho oka K3"
+
+
+msgid "Coefficient K3 of the lens polinomial"
+msgstr "Koeficient K3 mnohočlena šošovky"
+
+
+msgid "Fisheye Polynomial K4"
+msgstr "Mnohočlen rybieho oka K4"
+
+
+msgid "Coefficient K4 of the lens polinomial"
+msgstr "Koeficient K4 mnohočlena šošovky"
+
+
 msgid "Max Latitude"
 msgstr "Maximálna zemepisná šírka"
 
@@ -82294,6 +82497,14 @@ msgid "Uses the mirror ball mapping"
 msgstr "Používa priradenie zrkadlovej lopty"
 
 
+msgid "Fisheye Lens Polynomial"
+msgstr "Mnohočlenový objektív rybie oko"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
+msgstr "Definuje premietanie objektívu ako mnohočlenové, aby bolo možné napodobniť objektívy kamier v reálnom svete."
+
+
 msgid "Form of hair"
 msgstr "Forma vlasov"
 
@@ -82324,6 +82535,10 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
+
+
+msgid "Metal"
+msgstr "Kov"
 
 
 msgid "Cast Shadow"
@@ -97837,6 +98052,40 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Mapa kvapkadla snímania bodu farebného spádu"
 
 
+msgid "No selected keys, pasting over scene range"
+msgstr "Žiadne vybrané kľúče, prilepenie cez rozsah scény"
+
+
+msgid "Clipboard does not contain a valid matrix."
+msgstr "Schránka neobsahuje platnú matricu."
+
+
+msgid "This mode requires auto-keying to work properly"
+msgstr "Tento režim si na správnu funkciu vyžaduje automatické zadávanie kľúčov"
+
+
+msgid "No selected frames found"
+msgstr "Nenašli sa žiadne vybrané snímky"
+
+
+msgid "No selected keys, pasting over preview range"
+msgstr "Žiadne vybrané kľúče, prilepenie cez rozsah náhľadu"
+
+
+msgid "These require auto-key:"
+msgstr "Tieto vyžadujú automatický kľúč:"
+
+
+msgctxt "Operator"
+msgid "Paste to Selected Keys"
+msgstr "Prilepiť na vybrané kľúče"
+
+
+msgctxt "Operator"
+msgid "Paste and Bake"
+msgstr "Prilepiť a zapiecť"
+
+
 msgid "Denoising completed"
 msgstr "Odstránenie šumu dokončené"
 
@@ -97895,6 +98144,10 @@ msgstr "Vyžaduje diskrétny grafický procesor AMD s architektúrou RDNA"
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "a ovládač AMD Radeon Pro 21.Q4 alebo novší"
+
+
+msgid "Requires Apple Silicon and macOS 12.0 or newer"
+msgstr "Vyžaduje Apple Silicon a macOS 12.0 alebo novší"
 
 
 msgid "Noise Threshold"
@@ -98877,6 +99130,14 @@ msgid "The selected strips don't overlap"
 msgstr "Vybrané pásy sa neprekrývajú"
 
 
+msgid "No sequences selected"
+msgstr "Nie sú vybrané žiadne sekvencie"
+
+
+msgid "Current frame not within strip framerange"
+msgstr "Aktuálna snímka sa nenachádza v rozsahu pásov"
+
+
 msgid "Remove Add-on: %r?"
 msgstr "Odstrániť doplnok: %r?"
 
@@ -99458,6 +99719,10 @@ msgstr "Minimálna zemepisná šírka"
 
 msgid "Longitude Min"
 msgstr "Minimálna zemepisná dĺžka"
+
+
+msgid "K0"
+msgstr "K0"
 
 
 msgid "Resolution Preview U"
@@ -105912,10 +106177,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Nezapísané, obrázok nemá \"%s\" a \"%s\" zobrazenia"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
-msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať číslo dlaždice UDIM %d"
-
-
 msgid "Key %d"
 msgstr "Kľúč %d"
 
@@ -107159,6 +107420,10 @@ msgstr "Vybraná cesta je mimo vybranej knižnice aktív"
 
 msgid "Unable to copy bundle due to external dependency: \"%s\""
 msgstr "Nemožno skopírovať balík kvôli externej závislosti: \"%s\""
+
+
+msgid "Unable to copy bundle due to %zu external dependencies; more details on the console"
+msgstr "Nemožno skopírovať balík kvôli %zu externým závislostiam; viac informácií na konzole"
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
@@ -112603,6 +112868,10 @@ msgid "Column"
 msgstr "Stĺpec"
 
 
+msgid "Unkown column type"
+msgstr "Neznámy typ stĺpca"
+
+
 msgid "File Modified Outside and Inside Blender"
 msgstr "Súbor upravený mimo a vnútri Blendera"
 
@@ -112689,6 +112958,10 @@ msgstr "Žiadne nedávne súbory"
 
 msgid "Open Recent"
 msgstr "Nedávno otvorené"
+
+
+msgid "Undo History"
+msgstr "Späť v histórii"
 
 
 msgid "File association registered"
@@ -113634,6 +113907,14 @@ msgstr "Plášte kostí"
 
 msgid "Use Factor"
 msgstr "Použiť faktor"
+
+
+msgid "Random Offset Start"
+msgstr "Začiatok náhodného posuvu"
+
+
+msgid "Random Offset End"
+msgstr "Koniec náhodného posuvu"
 
 
 msgid "Curvature"
@@ -115590,7 +115871,7 @@ msgstr "Veľkosť tvaru v osi Y"
 
 
 msgid "For Parallelogram, the relative X difference between the top and bottom edges. For Trapezoid, the amount to move the top edge in the positive X axis"
-msgstr "V režime `Rovnobežník` je relatívny rozdiel X medzi hornou a dolnou hranou. V režime `Lichobežník` veľkosť posunu hornej hrany v kladnej osi X."
+msgstr "V režime `Rovnobežník` je relatívny rozdiel X medzi hornou a dolnou hranou. V režime `Lichobežník` veľkosť posunu hornej hrany v kladnej osi X"
 
 
 msgid "Bottom Height"
@@ -115701,12 +115982,92 @@ msgid "If the profile spline is cyclic, fill the ends of the generated mesh with
 msgstr "Ak je profil drážky cyklický, vyplní konce vygenerovanej povrchovej siete n-uholníkmi"
 
 
+msgid "Start (Factor)"
+msgstr "Začiatok (faktor)"
+
+
+msgid "End (Factor)"
+msgstr "Koniec (faktor)"
+
+
+msgid "Start (Length)"
+msgstr "Začiatok (dĺžka)"
+
+
+msgid "End (Length)"
+msgstr "Koniec (dĺžka)"
+
+
 msgid "No geometry with given domain"
 msgstr "Žiadna geometria s danou oblasťou pôsobnosti"
 
 
 msgid "The parts of the geometry to be deleted"
 msgstr "Časti geometrie na odstránenie"
+
+
+msgid "Number of faces that contain the edge"
+msgstr "Počet plôšok, ktoré obsahujú hranu"
+
+
+msgid "Vertex Index 1"
+msgstr "Vrcholový index 1"
+
+
+msgid "The index of the first vertex in the edge"
+msgstr "Index prvého vrcholu v hrane"
+
+
+msgid "Vertex Index 2"
+msgstr "Vrcholový index 2"
+
+
+msgid "The index of the second vertex in the edge"
+msgstr "Index druhého vrcholu v hrane"
+
+
+msgid "Position 1"
+msgstr "Pozícia 1"
+
+
+msgid "The position of the first vertex in the edge"
+msgstr "Pozícia prvého vrcholu v hrane"
+
+
+msgid "Position 2"
+msgstr "Pozícia 2"
+
+
+msgid "The position of the second vertex in the edge"
+msgstr "Pozícia druhého vrcholu v hrane"
+
+
+msgid "The surface area of each of the mesh's faces"
+msgstr "Plocha povrchu každej z plôšok povrchovej siete"
+
+
+msgid "Vertex Count"
+msgstr "Počet vrcholov"
+
+
+msgid "Number of edges or points in the face"
+msgstr "Počet hrán alebo bodov na plôške"
+
+
+msgid "Number of faces which share an edge with the face"
+msgstr "Počet plôšok majúcich spoločnú hranu s danou plôškou"
+
+
+msgid "Island indices are based on the order of the lowest-numbered vertex contained in each island"
+msgstr "Indexy ostrovov sú založené na poradí najnižšie očíslovaného vrcholu obsiahnutého v každom ostrove"
+
+
+msgid "Vertex count and edge count are equal"
+msgstr "Počet vrcholov a počet hrán sú rovnaké"
+
+
+msgid "Number of faces that contain the vertex"
+msgstr "Počet plôšok, ktoré obsahujú vrchol"
 
 
 msgid "Point Count"
@@ -115862,7 +116223,7 @@ msgstr "Dĺžka strany roviny v smere X"
 
 
 msgid "Side length of the plane in the Y direction"
-msgstr "Dĺžka strany roviny v smere Y."
+msgstr "Dĺžka strany roviny v smere Y"
 
 
 msgid "Number of vertices in the X direction"
@@ -115961,6 +116322,10 @@ msgid "Volumes only support a single material; selection input can not be a fiel
 msgstr "Objemy podporujú len jeden materiál; vstupom výberu nemôže byť pole"
 
 
+msgid "Point clouds only support a single material; selection input can not be a field"
+msgstr "Mračná bodov podporujú len jeden materiál; vstupom výberu nemôže byť pole"
+
+
 msgid "Shade Smooth"
 msgstr "Vyhladiť tieň"
 
@@ -116018,7 +116383,7 @@ msgstr "Realizované údaje vo vstupnej geometrii sa ignorujú"
 
 
 msgid "Input geometry has unsupported type: "
-msgstr "Vstupná geometria má nepodporovaný typ:"
+msgstr "Vstupná geometria má nepodporovaný typ: "
 
 
 msgid " node"
@@ -116639,6 +117004,10 @@ msgid "Context window not set"
 msgstr "Kontextové okno nie je nastavené"
 
 
+msgid "Unable to save an unsaved file with an empty or unset \"filepath\" property"
+msgstr "Nemožno uložiť neuložený súbor s prázdnou alebo nenastavenou vlastnosťou \"filepath\""
+
+
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "Mechanizmus '%s' nie je k dispozícii pre scénu '%s' (doplnok je potrebné nainštalovať alebo zapnúť)"
 
@@ -116701,6 +117070,10 @@ msgstr "Uložené \"%s\""
 
 msgid "Can't read alternative start-up file: '%s'"
 msgstr "Nemožno načítať alternatívny spúšťací súbor: '%s'"
+
+
+msgid "The \"filepath\" property was not an absolute path: \"%s\""
+msgstr "Vlastnosť \"filepath\" nebola absolútna cesta: \"%s\""
 
 
 msgid "Not a library"

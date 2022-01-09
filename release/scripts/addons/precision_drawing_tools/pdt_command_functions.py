@@ -90,7 +90,7 @@ def vector_build(context, pg, obj, operation, values, num_values):
         pg: PDT Parameters Group - our variables
         obj: The Active Object
         operation: The Operation e.g. Create New Vertex
-        values: The paramters passed e.g. 1,4,3 for Cartesian Coordinates
+        values: The parameters passed e.g. 1,4,3 for Cartesian Coordinates
         num_values: The number of values passed - determines the function
 
     Returns:
@@ -320,7 +320,7 @@ def placement_arc_centre(context, operation):
 
 
 def placement_intersect(context, operation):
-    """Manipulates Geometry, or Objects by Convergance Intersection between 4 points, or 2 Edges.
+    """Manipulates Geometry, or Objects by Convergence Intersection between 4 points, or 2 Edges.
 
     Args:
         context: Blender bpy.context instance.

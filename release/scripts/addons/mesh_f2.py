@@ -461,7 +461,7 @@ def expand_vert(self, context, event):
     bpy.ops.transform.translate('INVOKE_DEFAULT')
 
 
-def checkforconnected(conection):
+def checkforconnected(connection):
     obj = bpy.context.object
     me = obj.data
     bm = bmesh.from_edit_mesh(me)
@@ -470,9 +470,9 @@ def checkforconnected(conection):
     for v in bm.verts:
         if v.select:
             v_active = v
-    if conection == 'faces':
+    if connection == 'faces':
         linked = v_active.link_faces
-    elif conection == 'edges':
+    elif connection == 'edges':
         linked = v_active.link_edges
 
     bmesh.update_edit_mesh(obj.data)

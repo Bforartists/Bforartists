@@ -42,7 +42,7 @@ Import-Export STL files (binary or ascii)
 Issues:
 
 Import:
-    - Does not handle endien
+    - Does not handle endian
 """
 
 if "bpy" in locals():

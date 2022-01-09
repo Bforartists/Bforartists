@@ -275,6 +275,9 @@ static FileSelectParams *fileselect_ensure_updated_file_params(SpaceFile *sfile)
     if ((prop = RNA_struct_find_property(op->ptr, "filter_usd"))) {
       params->filter |= RNA_property_boolean_get(op->ptr, prop) ? FILE_TYPE_USD : 0;
     }
+    if ((prop = RNA_struct_find_property(op->ptr, "filter_obj"))) {
+      params->filter |= RNA_property_boolean_get(op->ptr, prop) ? FILE_TYPE_OBJECT_IO : 0;
+    }
     if ((prop = RNA_struct_find_property(op->ptr, "filter_volume"))) {
       params->filter |= RNA_property_boolean_get(op->ptr, prop) ? FILE_TYPE_VOLUME : 0;
     }
@@ -316,6 +319,10 @@ static FileSelectParams *fileselect_ensure_updated_file_params(SpaceFile *sfile)
       params->flag |= RNA_boolean_get(op->ptr, "link") ? FILE_LINK : 0;
       params->flag |= RNA_boolean_get(op->ptr, "autoselect") ? FILE_AUTOSELECT : 0;
       params->flag |= RNA_boolean_get(op->ptr, "active_collection") ? FILE_ACTIVE_COLLECTION : 0;
+    }
+
+    if ((prop = RNA_struct_find_property(op->ptr, "allow_path_tokens"))) {
+      params->flag |= RNA_property_boolean_get(op->ptr, prop) ? FILE_PATH_TOKENS_ALLOW : 0;
     }
 
     if ((prop = RNA_struct_find_property(op->ptr, "display_type"))) {

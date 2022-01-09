@@ -56,7 +56,7 @@ from .fbx_utils import (
 # global singleton, assign on execution
 fbx_elem_nil = None
 
-# Units convertors...
+# Units converters...
 convert_deg_to_rad_iter = units_convertor_iter("degree", "radian")
 
 MAT_CONVERT_BONE = fbx_utils.MAT_CONVERT_BONE.inverted()

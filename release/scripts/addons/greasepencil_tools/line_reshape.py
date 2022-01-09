@@ -43,9 +43,9 @@ def vector_len_from_coord(a, b):
         return (a.co - b.co).length
 
 def point_from_dist_in_segment_3d(a, b, ratio):
-    '''return the tuple coords of a point on 3D segment ab according to given ratio (some distance divided by total segment lenght)'''
+    '''return the tuple coords of a point on 3D segment ab according to given ratio (some distance divided by total segment length)'''
     ## ref:https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
-    # ratio = dist / seglenght
+    # ratio = dist / seglength
     return ( ((1 - ratio) * a[0] + (ratio*b[0])), ((1 - ratio) * a[1] + (ratio*b[1])), ((1 - ratio) * a[2] + (ratio*b[2])) )
 
 def get_stroke_length(s):
@@ -144,7 +144,7 @@ class GP_OT_straightStroke(bpy.types.Operator):
             ct = 0
             for l in gpl:
                 if l.lock or l.hide or not l.active_frame:
-                    # avoid locked, hided, empty layers
+                    # avoid locked, hidden, empty layers
                     continue
                 if gp.use_multiedit:
                     target_frames = [f for f in l.frames if f.select]

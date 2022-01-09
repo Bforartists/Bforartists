@@ -757,8 +757,11 @@ static void duplidata_key_free(void *key)
   }
   else {
     Object temp_object = *dupli_key->ob;
+    /* Do not modify the original boundbox. */
+    temp_object.runtime.bb = NULL;
     BKE_object_replace_data_on_shallow_copy(&temp_object, dupli_key->ob_data);
     drw_batch_cache_generate_requested(&temp_object);
+    MEM_SAFE_FREE(temp_object.runtime.bb);
   }
   MEM_freeN(key);
 }
@@ -1796,12 +1799,12 @@ void DRW_draw_render_loop_offscreen(struct Depsgraph *depsgraph,
   DRW_draw_render_loop_ex(depsgraph, engine_type, region, v3d, render_viewport, NULL);
 
   if (draw_background) {
-    /* HACK(fclem): In this case we need to make sure the final alpha is 1.
+    /* HACK(@fclem): In this case we need to make sure the final alpha is 1.
      * We use the blend mode to ensure that. A better way to fix that would
      * be to do that in the color-management shader. */
     GPU_offscreen_bind(ofs, false);
     GPU_clear_color(0.0f, 0.0f, 0.0f, 1.0f);
-    /* Premult Alpha over black background. */
+    /* Pre-multiply alpha over black background. */
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
   }
 

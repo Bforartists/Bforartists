@@ -160,7 +160,7 @@ class UI_PT_i18n_update_translations_settings(Panel):
 
         if not i18n_sett.is_init and bpy.ops.ui.i18n_updatetranslation_svn_init_settings.poll():
             # Cannot call the operator from here, this code might run while `pyrna_write_check()` returns False
-            # (which prevents any operator call from Python), during initalization of Blender.
+            # (which prevents any operator call from Python), during initialization of Blender.
             UI_OT_i18n_updatetranslation_svn_init_settings.execute_static(context, settings.settings)
 
         if not i18n_sett.is_init:

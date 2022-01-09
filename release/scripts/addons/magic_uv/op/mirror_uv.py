@@ -200,7 +200,7 @@ class MUV_OT_MirrorUV(bpy.types.Operator):
         eular = Euler(obj.rotation_euler)
         rotation_mat = eular.to_matrix()
 
-        # Get center location of all verticies.
+        # Get center location of all vertices.
         center_location = Vector((0.0, 0.0, 0.0))
         for v in bm.verts:
             center_location += v.co
@@ -217,7 +217,7 @@ class MUV_OT_MirrorUV(bpy.types.Operator):
     def _get_local_vertices(self, _, bm):
         transformed = {}
 
-        # Get center location of all verticies.
+        # Get center location of all vertices.
         center_location = Vector((0.0, 0.0, 0.0))
         for v in bm.verts:
             center_location += v.co

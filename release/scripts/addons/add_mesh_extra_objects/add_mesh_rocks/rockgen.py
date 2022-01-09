@@ -84,7 +84,7 @@
 # Coded in IDLE, tested in Blender 2.59.  NumPy Recommended.
 # Search for "@todo" to quickly find sections that need work.
 #
-# Remeber -
+# Remember -
 #   Functional code comes before fast code.  Once it works, then worry about
 #   making it faster/more efficient.
 #
@@ -793,7 +793,7 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
     # sigma is the standard deviation of the values.  The 95% interval is three
     # standard deviations, which is what we want most generated values to fall
     # in.  Since it might be skewed we are going to use half the difference
-    # betwee the mean and the furthest bound and scale the other side down
+    # between the mean and the furthest bound and scale the other side down
     # post-number generation.
     if scaleX[0] != scaleX[1]:
         skewX = (skewX + 1) / 2
@@ -900,7 +900,7 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
             rock.modifiers.new(name="Smooth", type='SMOOTH')
             rock.modifiers[6].factor = gauss(smooth_fac, (smooth_fac ** 0.5) / 12)
             rock.modifiers[6].iterations = smooth_it
-        # Make a call to random to keep things consistant:
+        # Make a call to random to keep things consistent:
         else:
             gauss(0, 1)
 
@@ -1021,7 +1021,7 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         min=-1.0, max=1.0, default=defaults[6])
     use_scale_dis: BoolProperty(
         name="Scale displace textures",
-        description="Scale displacement textures with dimensions.  May cause streched textures",
+        description="Scale displacement textures with dimensions.  May cause stretched textures",
         default=defaults[7])
     scale_fac: FloatVectorProperty(
         name="Scaling Factor",

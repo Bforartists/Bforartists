@@ -1,0 +1,1815 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: __POT__\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgid "Name"
+msgstr "სახელი"
+
+
+msgid "Color"
+msgstr "ფერი"
+
+
+msgid "Drivers"
+msgstr "დრაივერები"
+
+
+msgid "Editor Type"
+msgstr "რედაქტორის ტიპი"
+
+
+msgid "Current editor type for this area"
+msgstr "მიმდინარე რედაქტორის ტიპი ამ არეალისთვის"
+
+
+msgid "Empty"
+msgstr "ცარიელი"
+
+
+msgid "3D Viewport"
+msgstr "3გ სარკმელი"
+
+
+msgid "Manipulate objects in a 3D environment"
+msgstr "ობიექტებით მანიპულირება 3გ გარემოში"
+
+
+msgid "Video Sequencer"
+msgstr "ვიდეო სეკვენსერი"
+
+
+msgid "Video editing tools"
+msgstr "ვიდეოს დასამუშავებელი ხელსაწყოები"
+
+
+msgid "Movie Clip Editor"
+msgstr "ფილმის კლიპის რედაქტორი"
+
+
+msgid "Motion tracking tools"
+msgstr "მოძრაობის დასაფიქსირებელი ხელსაწყოები"
+
+
+msgid "Dope Sheet"
+msgstr "საექსპოზიციო ფურცელი"
+
+
+msgid "Graph Editor"
+msgstr "გრაფების რედაქტორი"
+
+
+msgid "Edit drivers and keyframe interpolation"
+msgstr "დრაივერებისა და საკვანძო კადრების ინტერპოლაციის დამუშავება"
+
+
+msgid "Nonlinear Animation"
+msgstr "არასწორხაზოვანი ანიმაცია"
+
+
+msgid "Combine and layer Actions"
+msgstr "მოქმედებების შეთავსება და შრეებად განთავსება"
+
+
+msgid "Text Editor"
+msgstr "ტექსტური რედაქტორი"
+
+
+msgid "Edit scripts and in-file documentation"
+msgstr "სკრიპტებისა და ფაილის შიდა დოკუმენტაციის დამუშავება"
+
+
+msgid "Python Console"
+msgstr "Python-ის კონსოლი"
+
+
+msgid "Interactive programmatic console for advanced editing and script development"
+msgstr "ინტერაქტიული პროგრამული კონსოლი გადაფართოებული რედაქტირებისა და სკრიპტების დეველოპმენტისათვის"
+
+
+msgid "Info"
+msgstr "ინფორმაცია"
+
+
+msgid "Log of operations, warnings and error messages"
+msgstr "ოპერაციების, გაფრთხილებებისა და შეცდომების შესახებ მიღებული შეტყობინებების ჟურნალი"
+
+
+msgid "Top Bar"
+msgstr "ზემო ზოლი"
+
+
+msgid "Status Bar"
+msgstr "სტატუსის ზოლი"
+
+
+msgid "Global bar at the bottom of the screen for general status information"
+msgstr "ეკრანის ძირში მდებარე გლობალური ზოლი ზოგადი სტატუს-ინფორმაციისთვის"
+
+
+msgid "Outliner"
+msgstr "მონახაზი"
+
+
+msgid "Overview of scene graph and all available data-blocks"
+msgstr "სცენის გრაფისა და ყველა ხელმისაწვდომი მონაცემთა ბლოკის მიმოხილვა"
+
+
+msgid "Properties"
+msgstr "თვისებები"
+
+
+msgid "Edit properties of active object and related data-blocks"
+msgstr "აქტიური ობიექტისა და მასთან დაკავშირებული მონაცემთა ბლოკების თვისებების რედაქტირება"
+
+
+msgid "File Browser"
+msgstr "ფაილების ბრაუზერი"
+
+
+msgid "Browse for files and assets"
+msgstr "ფაილებისა და აქტივების დათვალიერება"
+
+
+msgid "Spreadsheet"
+msgstr "ელცხრილი"
+
+
+msgid "Explore geometry data in a table"
+msgstr "ცხრილში გეომეტრიული მონაცემების კვლევა"
+
+
+msgid "Preferences"
+msgstr "პარამეტრები"
+
+
+msgid "Edit persistent configuration settings"
+msgstr "კონფიგურაციის მუდმივი პარამეტრების დამუშავება"
+
+
+msgid "Width"
+msgstr "სიგანე"
+
+
+msgid "Active Bone"
+msgstr "აქტიური ძვალი"
+
+
+msgid "Author"
+msgstr "ავტორი"
+
+
+msgid "Vector"
+msgstr "ვექტორი"
+
+
+msgid "Render"
+msgstr "რენდერი"
+
+
+msgid "2D"
+msgstr "2გ"
+
+
+msgid "Save"
+msgstr "შენახვა"
+
+
+msgid "Link"
+msgstr "ბმულით დაკავშირება"
+
+
+msgid "Append"
+msgstr "მიმაგრება"
+
+
+msgid "Python Scripting"
+msgstr "სკრიპტინგი Python-ში"
+
+
+msgid "Parameter Editor"
+msgstr "პარამეტრების რედაქტორი"
+
+
+msgid "Window"
+msgstr "ფანჯარა"
+
+
+msgid "Shader"
+msgstr "შეიდერი"
+
+
+msgid "Shader nodes"
+msgstr "შეიდერის კვანძები"
+
+
+msgid "Texture nodes"
+msgstr "ტექსტურის კვანძები"
+
+
+msgid "Compositing nodes"
+msgstr "კვანძები კომპოზიტინგისთვის"
+
+
+msgid "Geometry nodes"
+msgstr "კვანძები გეომეტრიისთვის"
+
+
+msgid "Show Status Bar"
+msgstr "სტატუსის ზოლის ჩვენება"
+
+
+msgid "Show status bar"
+msgstr "სტატუსის ზოლის ჩვენება"
+
+
+msgid "Animation"
+msgstr "ანიმაცია"
+
+
+msgid "Edit"
+msgstr "რედაქტირება"
+
+
+msgid "System"
+msgstr "სისტემა"
+
+
+msgid "File"
+msgstr "ფაილი"
+
+
+msgid "Defaults"
+msgstr "ნაგულისხმები"
+
+
+msgid "Export"
+msgstr "ექსპორტი"
+
+
+msgid "External Data"
+msgstr "გარე მონაცემები"
+
+
+msgid "Import"
+msgstr "იმპორტი"
+
+
+msgid "New File"
+msgstr "ახალი ფაილი"
+
+
+msgid "Data Previews"
+msgstr "მონაცემთა წინასწარ ნახვა"
+
+
+msgid "Recover"
+msgstr "აღდგენა"
+
+
+msgid "Help"
+msgstr "დახმარება"
+
+
+msgid "New"
+msgstr "ახალი"
+
+
+msgctxt "Operator"
+msgid "Undo"
+msgstr "გაუქმება"
+
+
+msgid "Undo previous action"
+msgstr "ბოლო ქმედების გაუქმება"
+
+
+msgctxt "Operator"
+msgid "Undo History"
+msgstr "გაუქმებების ისტორია"
+
+
+msgid "Redo specific action in history"
+msgstr "ისტორიიდან კონკრეტული ქმედების გამეორება"
+
+
+msgctxt "Operator"
+msgid "Export BVH"
+msgstr "BVH-ის ექსპორტირება"
+
+
+msgid "Save a BVH motion capture file from an armature"
+msgstr "მოძრაობის დაფიქსირების BVH ფაილის შენახვა არმატურიდან"
+
+
+msgctxt "Operator"
+msgid "Export PLY"
+msgstr "PLY-ის ექსპორტირება"
+
+
+msgid "Export as a Stanford PLY with normals, vertex colors and texture coordinates"
+msgstr "Stanford PLY-ის ექსპორტი ნორმალებით, წვეროების ფერებითა და ტექსტურების კოორდინატებით"
+
+
+msgctxt "Operator"
+msgid "Export STL"
+msgstr "STL-ის ექსპორტირება"
+
+
+msgid "Save STL triangle mesh data"
+msgstr "STL სამკუთხოვანი მეშის მონაცემების შენახვა"
+
+
+msgid "Ascii"
+msgstr "Ascii"
+
+
+msgctxt "Operator"
+msgid "Export FBX"
+msgstr "FBX-ის ექსპორტირება"
+
+
+msgid "Write a FBX file"
+msgstr "FBX ფაილის ჩაწერა"
+
+
+msgctxt "Operator"
+msgid "Export glTF 2.0"
+msgstr "glTF 2.0-ის ექსპორტირება"
+
+
+msgid "Export scene as glTF 2.0 file"
+msgstr "სცენის ექსპორტი glTF 2.0 ფაილად"
+
+
+msgid "General"
+msgstr "ზოგადი"
+
+
+msgid "General settings"
+msgstr "ზოგადი პარამეტრები"
+
+
+msgid "Mesh settings"
+msgstr "მეშის პარამეტრები"
+
+
+msgid "Object settings"
+msgstr "ობიექტის პარამეტრები"
+
+
+msgid "Animation settings"
+msgstr "ანიმაციის პარამეტრები"
+
+
+msgctxt "Operator"
+msgid "Export OBJ"
+msgstr "OBJ-ის ექსპორტირება"
+
+
+msgid "Save a Wavefront OBJ File"
+msgstr "Wavefront OBJ ფაილის შენახვა"
+
+
+msgctxt "Operator"
+msgid "Export X3D"
+msgstr "X3D-ის ექსპორტირება"
+
+
+msgid "Export selection to Extensible 3D file (.x3d)"
+msgstr "მონიშნულის ექსპორტი Extensible 3D file (.x3d) ფაილად"
+
+
+msgctxt "Operator"
+msgid "Automatically Pack Resources"
+msgstr "რესურსების ავტომატური შეფუთვა"
+
+
+msgid "Automatically pack all external files into the .blend file"
+msgstr "ყველა გარე ფაილის ავტომატურად ჩალაგება .blend ფაილში"
+
+
+msgid "Open"
+msgstr "გახსნა"
+
+
+msgctxt "Operator"
+msgid "Find Missing Files"
+msgstr "დაკარგული ფაილების პოვნა"
+
+
+msgid "Try to find missing external files"
+msgstr "სცადე, იპოვო დაკარგული გარე ფაილები"
+
+
+msgid "Find All"
+msgstr "ყველას პოვნა"
+
+
+msgctxt "Operator"
+msgid "Make Paths Absolute"
+msgstr "მისამართების გააბსოლუტურება"
+
+
+msgid "Make all paths to external files absolute"
+msgstr "ყველა გარე ფაილის მისამართის აბსოლუტურად გადაქცევა"
+
+
+msgctxt "Operator"
+msgid "Make Paths Relative"
+msgstr "მისამართების გაფარდობითება"
+
+
+msgid "Make all paths to external files relative to current .blend"
+msgstr "ყველა გარე ფაილის მისამართის ფარდობითად გადაქცევა მიმდინარე .blend-თან მიმართებაში"
+
+
+msgctxt "Operator"
+msgid "Pack Resources"
+msgstr "რესურსების შეფუთვა"
+
+
+msgid "Pack all used external files into this .blend"
+msgstr "ყველა გამოყენებული გარე ფაილის ჩალაგება ამ .blend-ში"
+
+
+msgctxt "Operator"
+msgid "Pack Linked Libraries"
+msgstr "ბმულით დაკავშირებული ბიბლიოთეკების შეფუთვა"
+
+
+msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgstr "სხვა .blend ფაილებიდან ბმულით მომაგრებული ყველა მონაცემთა ბლოკის შენახვა მიმდინარე .blend ფაილში. ბიბლიოთეკების ბმულები ინახება, რომ დაკავშირებული მონაცემთა ბლოკების კვლავ ამოლაგება შეიძლებოდეს"
+
+
+msgctxt "Operator"
+msgid "Report Missing Files"
+msgstr "დაკარგული ფაილების შესახებ შეტყობინება"
+
+
+msgid "Report all missing external files"
+msgstr "შეტყობინება ყველა დაკარგული გარე ფაილის შესახებ"
+
+
+msgctxt "Operator"
+msgid "Unpack Resources"
+msgstr "რესურსების ამოლაგება"
+
+
+msgid "Unpack all files packed into this .blend to external ones"
+msgstr "ამ .blend-ში ჩალაგებული ყველა ფაილის ამოლაგება გარე ფაილებში"
+
+
+msgid "How to unpack"
+msgstr "როგორ ამოვალაგოთ"
+
+
+msgctxt "Operator"
+msgid "Unpack Linked Libraries"
+msgstr "ბმულით დაკავშირებული ბიბლიოთეკების ამოლაგება"
+
+
+msgid "Restore all packed linked data-blocks to their original locations"
+msgstr "ყველა ჩალაგებული, ბმულით დაკავშირებული მონაცემთა ბლოკის აღდგენა თავის თავდაპირველ ადგილმდებარეობაზე"
+
+
+msgctxt "Operator"
+msgid "Import BVH"
+msgstr "BVH-ის იმპორტირება"
+
+
+msgid "Load a BVH motion capture file"
+msgstr "მოძრაობის დაფიქსირების BVH ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import SVG"
+msgstr "SVG-ის იმპორტირება"
+
+
+msgid "Load a SVG file"
+msgstr "SVG ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import Images as Planes"
+msgstr "გამოსახულებების იმპორტირება სიბრტყეებად"
+
+
+msgctxt "Operator"
+msgid "Import PLY"
+msgstr "PLY-ის იმპორტირება"
+
+
+msgid "Load a PLY geometry file"
+msgstr "PLY გეომეტრიული ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import STL"
+msgstr "STL-ის იმპორტირება"
+
+
+msgid "Load STL triangle mesh data"
+msgstr "STL სამკუთხოვანი მეშის მონაცემების ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import FBX"
+msgstr "FBX-ის იმპორტირება"
+
+
+msgid "Load a FBX file"
+msgstr "FBX ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import glTF 2.0"
+msgstr "glTF 2.0-ის იმპორტირება"
+
+
+msgid "Load a glTF 2.0 file"
+msgstr "glTF 2.0 ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import OBJ"
+msgstr "OBJ-ის იმპორტირება"
+
+
+msgid "Load a Wavefront OBJ File"
+msgstr "Wavefront OBJ ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Import X3D/VRML2"
+msgstr "X3D/VRML2-ის იმპორტირება"
+
+
+msgid "Import an X3D or VRML2 file"
+msgstr "X3D, ან VRML2 ფაილის იმპორტირება"
+
+
+msgid "Clear all orphaned data-blocks without any users from the file"
+msgstr "ფაილის გასუფთავება ყველა გამოუყენებელი მონაცემთა ბლოკისაგან, რომელსაც მომხმარებელი არ გააჩნია"
+
+
+msgid "Install an application template"
+msgstr "აპლიკაციის შაბლონის დაყენება"
+
+
+msgid "Play back rendered frames/movies using an external player"
+msgstr "დარენდერებული კადრების/ფილმების დაკვრა გარე დამკვრელის გამოყენებით"
+
+
+msgid "Render active scene"
+msgstr "აქტიური სცენის რენდერი"
+
+
+msgid "Toggle show render view"
+msgstr "რენდერის ჩვენების ჩართვა-გამორთვა"
+
+
+msgid "Display parameters for last action performed"
+msgstr "ბოლო ქმედების პარამეტრების ჩვენება"
+
+
+msgctxt "Operator"
+msgid "Repeat History"
+msgstr "ისტორიის გამეორება"
+
+
+msgid "Display menu for previous actions performed"
+msgstr "წინა მოქმედებების მენიუს ჩვენება"
+
+
+msgctxt "Operator"
+msgid "Repeat Last"
+msgstr "ბოლოს გამეორება"
+
+
+msgid "Repeat last action"
+msgstr "უკანასკნელი ქმედების გამეორება"
+
+
+msgctxt "Operator"
+msgid "Save Screenshot"
+msgstr "ეკრანის ანაბეჭდის შენახვა"
+
+
+msgid "Capture a picture of the whole Blender window"
+msgstr "ბლენდერის მთლიანი ფანჯრის სურათის გადაღება"
+
+
+msgctxt "Operator"
+msgid "Save Screenshot (Editor)"
+msgstr "ეკრანის ანაბეჭდის შენახვა (რედაქტორი)"
+
+
+msgid "Capture a picture of an editor"
+msgstr "რედაქტორის სურათის გადაღება"
+
+
+msgctxt "Operator"
+msgid "Clean Up Space Data"
+msgstr "სივრცის მონაცემების წაშლა"
+
+
+msgid "Remove unused settings for invisible editors"
+msgstr "უჩინარი რედაქტორების გამოუყენებელი პარამეტრების წაშლა"
+
+
+msgctxt "Operator"
+msgid "Open Preferences..."
+msgstr "პარამეტრების გახსნა"
+
+
+msgid "Edit user preferences and system settings"
+msgstr "მომხმარებლისა და სისტემის პარამეტრები)"
+
+
+msgid "Themes"
+msgstr "თემები"
+
+
+msgid "Editing"
+msgstr "რედაქტირება"
+
+
+msgid "Add-ons"
+msgstr "დანამატები"
+
+
+msgid "Experimental"
+msgstr "ექსპერიმენტალური"
+
+
+msgid "Cycle through workspaces"
+msgstr "სამუშაო სივრცეებში წრეზე წასვლა"
+
+
+msgctxt "Operator"
+msgid "Reload Scripts"
+msgstr "სკრიპტების ხელახლა ჩატვირთვა"
+
+
+msgid "Reload scripts"
+msgstr "სკრიპტების ხელახლა ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Sculpt"
+msgstr "ძერწვა"
+
+
+msgid "Mix the scene's audio to a sound file"
+msgstr "სცენის აუდიოს მიქშირება ხმოვან ფაილში"
+
+
+msgctxt "Operator"
+msgid "Save"
+msgstr "შენახვა"
+
+
+msgctxt "Operator"
+msgid "Save As"
+msgstr "შენახვა, როგორც"
+
+
+msgctxt "Operator"
+msgid "Export Alembic"
+msgstr "Alembic-ის ექსპორტირება"
+
+
+msgid "Export current scene in an Alembic archive"
+msgstr "მიმდინარე სცენის ექსპორტი Alembic არქივში"
+
+
+msgid "Load an Alembic archive"
+msgstr "Alembic არქივის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Append"
+msgstr "მომაგრება"
+
+
+msgid "Append from a Library .blend file"
+msgstr "მომაგრება ბიბლიოთეკის .blend ფაილიდან"
+
+
+msgctxt "Operator"
+msgid "Batch Rename"
+msgstr "სახელების ერთობლივი გადარქმევა"
+
+
+msgid "Rename multiple items at once"
+msgstr "რამდენიმე ელემენტისთვის სახელის ერთდროულად შეცვლა"
+
+
+msgid "Open a predefined panel"
+msgstr "წინასწარ განსაზღვრული პანელის გახსნა"
+
+
+msgid "Save a Collada file"
+msgstr "Collada ფაილის შენახვა"
+
+
+msgid "Load a Collada file"
+msgstr "Collada ფაილის ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "Debug Menu"
+msgstr "გამართვის მენიუ"
+
+
+msgid "Open a popup to set the debug level"
+msgstr "კონტექსტური მენიუს გახსნა გამართვის დონის დასაყენებლად"
+
+
+msgctxt "Operator"
+msgid "View Manual"
+msgstr "სახელმძღვანელოს ნახვა"
+
+
+msgid "Load online manual"
+msgstr "ონლაინ სახელმძღვანელოს ჩატვირთვა"
+
+
+msgctxt "Operator"
+msgid "View Online Manual"
+msgstr "ონლაინ სახელმძღვანელოს ნახვა"
+
+
+msgctxt "Operator"
+msgid "Export to PDF"
+msgstr "ექსპორტი PDF-ად"
+
+
+msgid "Export grease pencil to PDF"
+msgstr "grease pencil-ის ექსპორტი PDF-ად"
+
+
+msgid "Import SVG into grease pencil"
+msgstr "SVG-ის იმპორტირება Grease Pencil-ში"
+
+
+msgctxt "Operator"
+msgid "Link"
+msgstr "ბმულით დაკავშირება"
+
+
+msgid "Link from a Library .blend file"
+msgstr "ბმულით დაკავშირება ბიბლიოთეკის .blend ფაილიდან"
+
+
+msgctxt "Operator"
+msgid "Memory Statistics"
+msgstr "მეხსიერების სტატისტიკა"
+
+
+msgid "Print memory statistics to the console"
+msgstr "მეხსიერების სტატისტიკის დაბეჭდვა კონსოლში"
+
+
+msgctxt "Operator"
+msgid "Open"
+msgstr "გახსნა"
+
+
+msgid "Open a Blender file"
+msgstr "ბლენდერის ფაილის გახსნა"
+
+
+msgctxt "Operator"
+msgid "Batch-Clear Previews"
+msgstr "წინასწარი ხედების ერთობლივი გასუფთავება"
+
+
+msgid "Clear selected .blend file's previews"
+msgstr "არჩეული .blend ფაილის წინასწარი ხედების გასუფთავება"
+
+
+msgctxt "Operator"
+msgid "Batch-Generate Previews"
+msgstr "წინასწარი ხედების ერთობლივი გენერირება"
+
+
+msgid "Generate selected .blend file's previews"
+msgstr "არჩეული .blend ფაილის წინასწარი ხედების გენერირება"
+
+
+msgctxt "Operator"
+msgid "Clear Data-Block Previews"
+msgstr "მონაცემთა ბლოკების წინასწარი ხედების გასუფთავება"
+
+
+msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgstr "მონაცემთა ბლოკების წინასწარი ხედების გასუფთავება (მხოლოდ ზოგიერთი ტიპისთვის, როგორიცაა ობიექტები, მასალები, ტექსტურები და სხვ.)"
+
+
+msgctxt "Operator"
+msgid "Refresh Data-Block Previews"
+msgstr "მონაცემთა ბლოკების წინასწარი ხედის განახლება"
+
+
+msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgstr "ზრუნვა იმაზე, რომ მონაცემთა ბლოკის ხედები ხელმისაწვდომი და განახლებული იყოს (.blend ფაილში შესანახად, მხოლოდ ზოგიერთი ტიპისთვის, როგორიცაა მასალები, ტექსტურები და სხვ.)"
+
+
+msgctxt "Operator"
+msgid "Quit Blender"
+msgstr "ბლენდერის დახურვა"
+
+
+msgid "Quit Blender"
+msgstr "ბლენდერის დახურვა"
+
+
+msgctxt "Operator"
+msgid "Load Factory Settings"
+msgstr "თავდაპირველი პარამეტრების ჩატვირთვა"
+
+
+msgid "Load factory default startup file and preferences. To make changes permanent, use \"Save Startup File\" and \"Save Preferences\""
+msgstr "თავდაპირველი საწყისი ფაილისა და პარამეტრების ჩატვირთვა. იმისთვის, რომ ცვლილებები მუდმივი გახდეს, გამოიყენეთ \"საწყისი ფაილის შენახვა\" და \"პარამეტრების შენახვა\""
+
+
+msgid "Open the default file (doesn't save the current file)"
+msgstr "ნაგულისხმები ფაილის გახსნა (მიმდინარე ფაილს არ ინახავს)"
+
+
+msgctxt "Operator"
+msgid "Load Preferences"
+msgstr "პარამეტრების ჩატვირთვა"
+
+
+msgid "Open an automatically saved file to recover it"
+msgstr "ავტომატურად შენახული ფაილის გახსნა მის აღსადგენად"
+
+
+msgctxt "Operator"
+msgid "Recover Last Session"
+msgstr "ბოლო სესიის აღდგენა"
+
+
+msgid "Open the last closed file (\"quit.blend\")"
+msgstr "ბოლო დახურული ფაილის გახსნა (\"quit.blend\")"
+
+
+msgctxt "Operator"
+msgid "Redraw Timer"
+msgstr "ხელახლა გამოსახვის წამმზომი"
+
+
+msgid "Simple redraw timer to test the speed of updating the interface"
+msgstr "ხელახლა გამოსახვის მარტივი წამმზომი ინტერფეისის განახლების სიჩქარის გამოსაცდელად"
+
+
+msgid "Draw Region"
+msgstr "არეალის გამოსახვა"
+
+
+msgid "Draw region"
+msgstr "არეალის გამოსახვა"
+
+
+msgid "Draw Region & Swap"
+msgstr "არეალის გამოსახვა და გაცვლა"
+
+
+msgid "Draw region and swap"
+msgstr "არეალის გამოსახვა და გაცვლა"
+
+
+msgid "Draw Window"
+msgstr "ფანჯრის გამოსახვა"
+
+
+msgid "Draw window"
+msgstr "ფანჯრის გამოსახვა"
+
+
+msgid "Draw Window & Swap"
+msgstr "ფანჯრის გამოსახვა და გაცვლა"
+
+
+msgid "Draw window and swap"
+msgstr "ფანჯრის გამოსახვა და გაცვლა"
+
+
+msgid "Animation Step"
+msgstr "ანიმაციის საფეხური"
+
+
+msgid "Animation steps"
+msgstr "ანიმაციის საფეხურები"
+
+
+msgid "Animation Play"
+msgstr "ანიმაციის დაკვრა"
+
+
+msgid "Animation playback"
+msgstr "ანიმაციის დაკვრა"
+
+
+msgid "Undo/Redo"
+msgstr "გაუქმება/დაბრუნება"
+
+
+msgid "Undo and redo"
+msgstr "გაუქმება და დაბრუნება"
+
+
+msgctxt "Operator"
+msgid "Revert"
+msgstr "საწყის მდგომარეობაში დაბრუნება"
+
+
+msgid "Reload the saved file"
+msgstr "შენახული ფაილის ხელახლა ჩატვირთვა"
+
+
+msgid "Save the current file in the desired location"
+msgstr "მიმდინარე ფაილის სასურველ ადგილას შენახვა"
+
+
+msgid "Save Copy"
+msgstr "ასლის შენახვა"
+
+
+msgctxt "Operator"
+msgid "Save Startup File"
+msgstr "საწყისი ფაილის შენახვა"
+
+
+msgid "Make the current file the default .blend file"
+msgstr "მიმდინარე ფაილის გადაქცევა ნაგულისხმევ .blend ფაილად"
+
+
+msgctxt "Operator"
+msgid "Save Blender File"
+msgstr "ბლენდერის ფაილის შენახვა"
+
+
+msgid "Save the current Blender file"
+msgstr "ბლენდერის მიმდინარე ფაილის შენახვა"
+
+
+msgid "Exit Blender after saving"
+msgstr "ბლენდერიდან გამოსვლა შენახვის შემდეგ"
+
+
+msgctxt "Operator"
+msgid "Save Preferences"
+msgstr "პარამეტრების შენახვა"
+
+
+msgid "Pop-up a search over all menus in the current context"
+msgstr "კონტექსტური ძიება ყველა მენიუში"
+
+
+msgctxt "Operator"
+msgid "Splash Screen"
+msgstr "ქუდი"
+
+
+msgid "Open the splash screen with release info"
+msgstr "გამოშვების შესახებ ინფორმაციის მქონე ქუდის გახსნა"
+
+
+msgctxt "Operator"
+msgid "About Blender"
+msgstr "ბლენდერის შესახებ"
+
+
+msgid "Open a window with information about Blender"
+msgstr "ბლენდერის შესახებ ინფორმაციის მქონე ფანჯრის გახსნა"
+
+
+msgctxt "Operator"
+msgid "Save System Info"
+msgstr "სისტემური ინფორმაციის შენახვა"
+
+
+msgid "Generate system information, saved into a text file"
+msgstr "ტექსტურ ფაილში შენახული სისტემური ინფორმაციის წარმოქმნა"
+
+
+msgid "Open a preset website in the web browser"
+msgstr "ვებ ბრაუზერში ვებსაიტის გახსნა"
+
+
+msgctxt "Operator"
+msgid "Export USD"
+msgstr "USD-ის ექსპორტირება"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "მიმდინარე სცენის ექსპორტირება USD არქივში"
+
+
+msgid "Import USD stage into current scene"
+msgstr "USD-ის იმპორტირება მიმდინარე სცენაში"
+
+
+msgctxt "Operator"
+msgid "Toggle Window Fullscreen"
+msgstr "სრულ ეკრანზე ჩვენების ჩართვა-გამორთვა"
+
+
+msgid "Toggle the current window fullscreen"
+msgstr "მიმდინარე ფანჯრის მთელ ეკრანზე ჩვენების ჩართვა-გამორთვა"
+
+
+msgctxt "Operator"
+msgid "New Window"
+msgstr "ახალი ფანჯარა"
+
+
+msgid "Create a new window"
+msgstr "ახალი ფანჯრის შექმნა"
+
+
+msgctxt "Operator"
+msgid "New Main Window"
+msgstr "ახალი მთავარი ფანჯარა"
+
+
+msgid "Create a new main window with its own workspace and scene selection"
+msgstr "ახალი მთავარი ფანჯრის შექმნა თავისი საკუთარი სამუშაო სივრცითა და სცენის არჩევანით"
+
+
+msgid "Indirect Lighting"
+msgstr "ირიბი განათება"
+
+
+msgid "Shadows"
+msgstr "ჩრდილები"
+
+
+msgid "Audio"
+msgstr "აუდიო"
+
+
+msgid "Video"
+msgstr "ვიდეო"
+
+
+msgid "Rename Active Item"
+msgstr "აქტიური ელემენტის სახელის გადარქმევა"
+
+
+msgid "Timeline"
+msgstr "დროის ზოლი"
+
+
+msgid "Save Preferences"
+msgstr "პარამეტრების შენახვა"
+
+
+msgid "Auto Save"
+msgstr "ავტომატური შენახვები"
+
+
+msgid "Preferences have changed"
+msgstr "პარამეტრები შეიცვალა"
+
+
+msgid "Image Editor"
+msgstr "გამოსახულების რედაქტორი"
+
+
+msgid "New Window"
+msgstr "ახალი ფანჯარა"
+
+
+msgid "OBJ"
+msgstr "OBJ"
+
+
+msgid "PLY"
+msgstr "PLY"
+
+
+msgid "STL"
+msgstr "STL"
+
+
+msgid "X3D"
+msgstr "X3D"
+
+
+msgid "Lock Interface"
+msgstr "ინტერფეისის ჩაკეტვა"
+
+
+msgid "Lock interface during rendering in favor of giving more memory to the renderer"
+msgstr "რენდერის დროს ინტერფეისის ჩაკეტვა რენდერერისთვის მეტი მეხსიერების დასათმობად"
+
+
+msgid "Adjust Last Operation"
+msgstr "ბოლო ოპერაციის პარამეტრები"
+
+
+msgid "Edit all keyframes in scene"
+msgstr "სცენაში არსებული ყველა საკვანძო კადრის დამუშავება"
+
+
+msgid "Timeline and playback controls"
+msgstr "დროის ზოლი და დაკვრის კონტროლი"
+
+
+msgid "Asset Browser"
+msgstr "აქტივების ბრაუზერი"
+
+
+msgid "Edit animation/keyframes displayed as 2D curves"
+msgstr "2გ მრუდებად ასახული ანიმაციის/საკვანძო კადრების დამუშავება"
+
+
+msgid "Edit drivers"
+msgstr "დრაივერების დამუშავება"
+
+
+msgid "View the image"
+msgstr "გამოსახულების ნახვა"
+
+
+msgid "UV Editor"
+msgstr "UV რედაქტორი"
+
+
+msgid "UV edit in mesh editmode"
+msgstr "UV-ის დამუშავება მეშის დამუშავების რეჟიმში"
+
+
+msgid "Lock Object Modes"
+msgstr "ობიექტების რეჟიმების ჩაკეტვა"
+
+
+msgid "Restrict select to the current mode"
+msgstr "მონიშვნის შეზღუდვა მიმდინარე რეჟიმით"
+
+
+msgctxt "Operator"
+msgid "Sound:"
+msgstr "ხმა:"
+
+
+msgctxt "Operator"
+msgid "Surface:"
+msgstr "ზედაპირი:"
+
+
+msgctxt "Operator"
+msgid "Texture:"
+msgstr "ტექსტურა:"
+
+
+msgctxt "Operator"
+msgid "Text:"
+msgstr "ტექსტი:"
+
+
+msgctxt "Operator"
+msgid "Workspace:"
+msgstr "სამუშაო სივრცე:"
+
+
+msgctxt "WindowManager"
+msgid "Window"
+msgstr "ფანჯარა"
+
+
+msgctxt "WindowManager"
+msgid "Graph Editor"
+msgstr "გრაფების რედაქტორი"
+
+
+msgctxt "WindowManager"
+msgid "Timeline"
+msgstr "დროის ზოლი"
+
+
+msgctxt "WindowManager"
+msgid "UV Editor"
+msgstr "UV რედაქტორი"
+
+
+msgctxt "WindowManager"
+msgid "Sequencer"
+msgstr "სეკვენსერი"
+
+
+msgctxt "Operator"
+msgid "Save New Settings"
+msgstr "ახალი პარამეტრების შენახვა"
+
+
+msgctxt "Operator"
+msgid "Next"
+msgstr "შემდეგი"
+
+
+msgid "Getting Started"
+msgstr "დაწყება"
+
+
+msgctxt "Operator"
+msgid "Release Notes"
+msgstr "შენიშვნები გამოშვებაზე"
+
+
+msgctxt "Operator"
+msgid "Development Fund"
+msgstr "დეველოპმენტის ფონდი"
+
+
+msgctxt "Operator"
+msgid "Credits"
+msgstr "ავტორები"
+
+
+msgctxt "Operator"
+msgid "License"
+msgstr "ლიცენზია"
+
+
+msgctxt "Operator"
+msgid "Blender Website"
+msgstr "ბლენდერის ვებსაიტი"
+
+
+msgctxt "Operator"
+msgid "Blender Store"
+msgstr "ბლენდერის მაღაზია"
+
+
+msgctxt "Operator"
+msgid "Link..."
+msgstr "ბმულით დაკავშირება"
+
+
+msgctxt "Operator"
+msgid "Append..."
+msgstr "მიმაგრება"
+
+
+msgid "Assign"
+msgstr "მინიჭება"
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "სახელმძღვანელო"
+
+
+msgctxt "Operator"
+msgid "Cleanup"
+msgstr "გაწმენდა"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "უკან"
+
+
+msgctxt "Operator"
+msgid "Forward"
+msgstr "წინ"
+
+
+msgctxt "Operator"
+msgid "Save As..."
+msgstr "შენახვა, როგორც"
+
+
+msgid "Annotation:"
+msgstr "ანოტაცია"
+
+
+msgctxt "Operator"
+msgid "Install Application Template..."
+msgstr "აპლიკაციის შაბლონის დაყენება"
+
+
+msgctxt "Operator"
+msgid "Unused Data-Blocks"
+msgstr "გამოუყენებელი მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Recursive Unused Data-Blocks"
+msgstr "რეკურსიული გამოუყენებელი მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Unused Linked Data-Blocks"
+msgstr "ბმულით დაკავშირებული გამოუყენებელი მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Recursive Unused Linked Data-Blocks"
+msgstr "ბმულით დაკავშირებული რეკურსიული გამოუყენებელი მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Unused Local Data-Blocks"
+msgstr "გამოუყენებელი ლოკალური მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Recursive Unused Local Data-Blocks"
+msgstr "რეკურსიული გამოუყენებელი ლოკალური მონაცემთა ბლოკები"
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "გამოსვლა"
+
+
+msgctxt "Operator"
+msgid "Last Session"
+msgstr "ბოლო სესია"
+
+
+msgctxt "Operator"
+msgid "Auto Save..."
+msgstr "ავტომატური შენახვები"
+
+
+msgctxt "Operator"
+msgid "SVG as Grease Pencil"
+msgstr "SVG როგორც Grease Pencil"
+
+
+msgctxt "Operator"
+msgid "Render Animation"
+msgstr "ანიმაციის რენდერი"
+
+
+msgctxt "Operator"
+msgid "Render Audio..."
+msgstr "აუდიოს რენდერი"
+
+
+msgctxt "Operator"
+msgid "View Render"
+msgstr "რენდერის ნახვა"
+
+
+msgctxt "Operator"
+msgid "View Animation"
+msgstr "ანიმაციის ნახვა"
+
+
+msgctxt "Operator"
+msgid "Repeat History..."
+msgstr "ისტორიის გამეორება"
+
+
+msgctxt "Operator"
+msgid "Adjust Last Operation..."
+msgstr "ბოლო ოპერაციის პარამეტრები"
+
+
+msgctxt "Operator"
+msgid "Menu Search..."
+msgstr "ძიება მენიუში"
+
+
+msgctxt "Operator"
+msgid "Rename Active Item..."
+msgstr "აქტიური ელემენტისთვის სახელის გადარქმევა"
+
+
+msgctxt "Operator"
+msgid "Batch Rename..."
+msgstr "სახელების ერთობლივი გადარქმევა"
+
+
+msgctxt "Operator"
+msgid "Preferences..."
+msgstr "პარამეტრები"
+
+
+msgctxt "Operator"
+msgid "Reorder to Front"
+msgstr "რიგში დაწინაურება"
+
+
+msgctxt "Operator"
+msgid "Reorder to Back"
+msgstr "რიგში უკან გადანაცვლება"
+
+
+msgctxt "Operator"
+msgid "Previous Workspace"
+msgstr "წინა სამუშაო სივრცე"
+
+
+msgctxt "Operator"
+msgid "Next Workspace"
+msgstr "მომდევნო სამუშაო სივრცე"
+
+
+msgctxt "Operator"
+msgid "Back to Previous"
+msgstr "წინაზე დაბრუნება"
+
+
+msgctxt "Operator"
+msgid "Save Copy..."
+msgstr "ასლის შენახვა"
+
+
+msgctxt "Operator"
+msgid "General"
+msgstr "ზოგადი"
+
+
+msgctxt "Operator"
+msgid "Collada (Default) (.dae)"
+msgstr "Collada (ნაგულისხმები) (.dae)"
+
+
+msgctxt "Operator"
+msgid "Alembic (.abc)"
+msgstr "Alembic (.abc)"
+
+
+msgctxt "Operator"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Universal Scene Description (.usd, .usdc, .usda)"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as SVG"
+msgstr "Grease Pencil როგორც SVG"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as PDF"
+msgstr "Grease Pencil როგორც PDF"
+
+
+msgctxt "Operator"
+msgid "Render Image"
+msgstr "გამოსახულების რენდერი"
+
+
+msgctxt "Operator"
+msgid "Operator Search..."
+msgstr "ოპერატორის ძიება"
+
+
+msgctxt "Operator"
+msgid "Tutorials"
+msgstr "გაკვეთილები"
+
+
+msgctxt "Operator"
+msgid "Support"
+msgstr "მხარდაჭერა"
+
+
+msgctxt "Operator"
+msgid "User Communities"
+msgstr "მომხმარებელთა საზოგადოებები"
+
+
+msgctxt "Operator"
+msgid "Developer Community"
+msgstr "დეველოპერთა საზოგადოება"
+
+
+msgctxt "Operator"
+msgid "Python API Reference"
+msgstr "Python API-ს ცნობარი"
+
+
+msgctxt "Operator"
+msgid "Report a Bug"
+msgstr "შეტყობინება ხარვეზის შესახებ"
+
+
+msgid "No active item"
+msgstr "აქტიური ელემენტი არაა"
+
+
+msgctxt "Operator"
+msgid "Developer Documentation"
+msgstr "დეველოპერის დოკუმენტაცია"
+
+
+msgid "Auto-Save Preferences"
+msgstr "პარამეტრების ავტომატური შენახვა"
+
+
+msgid "Splash Screen"
+msgstr "ქუდი"
+
+
+msgid "Hinting"
+msgstr "მინიშნება"
+
+
+msgctxt "Operator"
+msgid "Online Manual"
+msgstr "ონლაინ სახელმძღვანელო"
+
+
+msgctxt "Operator"
+msgid "Online Python Reference"
+msgstr "Python-ის ონლაინ ცნობარი"
+
+
+msgid "No Recent Files"
+msgstr "ბოლოდროინდელი ფაილები არაა"
+
+
+msgid "Open Recent"
+msgstr "ბოლოდროინდელის გახსნა"
+
+
+msgid "Compositor"
+msgstr "კომპოზიტორი"
+
+
+msgid "Geometry Node Editor"
+msgstr "გეომეტრიის კვანძური რედაქტორი"
+
+
+msgid "Shader Editor"
+msgstr "შეიდერის რედაქტორი"
+
+
+msgid "Texture Node Editor"
+msgstr "ტექსტურის კვანძური რედაქტორი"
+
+
+msgid "Toggle System Console"
+msgstr "სისტემური კონსოლის ჩართვა-გამორთვა"
+
+
+msgctxt "Operator"
+msgid "Toggle System Console"
+msgstr "სისტემური კონსოლის ჩართვა-გამორთვა"
+
+
+msgctxt "WindowManager"
+msgid "Graphics card:"
+msgstr "გრაფიკული ბარათი:"
+
+
+msgctxt "WindowManager"
+msgid "Platform Unsupported"
+msgstr "პლატფორმას მხარდაჭერა არა აქვს"
+
+
+msgctxt "WindowManager"
+msgid "Your graphics card or driver is not supported."
+msgstr "თქვენს გრაფიკულ ბარათს, ან დრაივერს მხარდაჭერა არა აქვს."
+
+
+msgctxt "WindowManager"
+msgid "The program will now close."
+msgstr "ახლა პროგრამა დაიხურება."
+
+
+msgid "Failed to create window"
+msgstr "ფანჯრის შექმნა ვერ მოხერხდა"
+
+
+msgid "All Add-ons"
+msgstr "ყველა დანამატი"
+
+
+msgid "All Add-ons Installed by User"
+msgstr "მომხმარებლის მიერ დაყენებული ყველა დანამატი"
+
+
+msgid "Add Curve"
+msgstr "მრუდის დამატება"
+
+
+msgid "Add Mesh"
+msgstr "მეშის დამატება"
+
+
+msgid "Import-Export"
+msgstr "იმპორტ-ექსპორტი"
+
+
+msgid "English (English)"
+msgstr "ინგლისური (English)"
+
+
+msgid "Japanese (日本語)"
+msgstr "იაპონური (日本語)"
+
+
+msgid "Dutch (Nederlandse taal)"
+msgstr "ნიდერლანდური (Nederlandse taal)"
+
+
+msgid "Italian (Italiano)"
+msgstr "იტალიური (Italiano)"
+
+
+msgid "German (Deutsch)"
+msgstr "გერმანული (Deutsch)"
+
+
+msgid "Finnish (Suomi)"
+msgstr "ფინური (Suomi)"
+
+
+msgid "Swedish (Svenska)"
+msgstr "შვედური (Svenska)"
+
+
+msgid "French (Français)"
+msgstr "ფრანგული (Français)"
+
+
+msgid "Spanish (Español)"
+msgstr "ესპანური (Español)"
+
+
+msgid "Catalan (Català)"
+msgstr "კატალანური (Català)"
+
+
+msgid "Czech (Český)"
+msgstr "ჩეხური (Český)"
+
+
+msgid "Portuguese (Português)"
+msgstr "პორტუგალიური (Português)"
+
+
+msgid "Simplified Chinese (简体中文)"
+msgstr "გამარტივებული ჩინური (简体中文)"
+
+
+msgid "Traditional Chinese (繁體中文)"
+msgstr "ტრადიციური ჩინური (繁體中文)"
+
+
+msgid "Russian (Русский)"
+msgstr "რუსული (Русский)"
+
+
+msgid "Croatian (Hrvatski)"
+msgstr "ხორვატიული (Hrvatski)"
+
+
+msgid "Serbian (Српски)"
+msgstr "სერბული (Српски)"
+
+
+msgid "Ukrainian (Український)"
+msgstr "უკრაინული (Український)"
+
+
+msgid "Polish (Polski)"
+msgstr "პოლონური (Polski)"
+
+
+msgid "Romanian (Român)"
+msgstr "რუმინული (Român)"
+
+
+msgid "Arabic (ﺔﻴﺑﺮﻌﻟﺍ)"
+msgstr "არაბული (ﺔﻴﺑﺮﻌﻟﺍ)"
+
+
+msgid "Bulgarian (Български)"
+msgstr "ბულგარული (Български)"
+
+
+msgid "Greek (Ελληνικά)"
+msgstr "ბერძნული (Ελληνικά)"
+
+
+msgid "Korean (한국 언어)"
+msgstr "კორეული (한국 언어)"
+
+
+msgid "Nepali (नेपाली)"
+msgstr "ნეპალური (नेपाली)"
+
+
+msgid "Persian (ﯽﺳﺭﺎﻓ)"
+msgstr "სპარსული (ﯽﺳﺭﺎﻓ)"
+
+
+msgid "Indonesian (Bahasa indonesia)"
+msgstr "ინდონეზიური (Bahasa indonesia)"
+
+
+msgid "Serbian Latin (Srpski latinica)"
+msgstr "სერბული ლათინური"
+
+
+msgid "Kyrgyz (Кыргыз тили)"
+msgstr "ყირგიზული (Кыргыз тили)"
+
+
+msgid "Turkish (Türkçe)"
+msgstr "თურქული (Türkçe)"
+
+
+msgid "Hungarian (Magyar)"
+msgstr "უნგრული (Magyar)"
+
+
+msgid "Brazilian Portuguese (Português do Brasil)"
+msgstr "ბრაზილიური პორტუგალიური (Português do Brasil)"
+
+
+msgid "Hebrew (תירִבְעִ)"
+msgstr "ებრაული (תירִבְעִ)"
+
+
+msgid "Estonian (Eestlane)"
+msgstr "ესტონური (Eestlane)"
+
+
+msgid "Esperanto (Esperanto)"
+msgstr "ესპერანტო (Esperanto)"
+
+
+msgid "Spanish from Spain (Español de España)"
+msgstr "ესპანური ესპანეთიდან (Español de España)"
+
+
+msgid "Amharic (አማርኛ)"
+msgstr "ამჰარული (አማርኛ)"
+
+
+msgid "Uzbek (Oʻzbek)"
+msgstr "უზბეკური (Oʻzbek)"
+
+
+msgid "Uzbek Cyrillic (Ўзбек)"
+msgstr "უზბეკური კირილური (Ўзбек)"
+
+
+msgid "Hindi (मानक हिन्दी)"
+msgstr "ჰინდი मानक हिन्दी)"
+
+
+msgid "Vietnamese (tiếng Việt)"
+msgstr "ვიეტნამური (tiếng Việt)"
+
+
+msgid "Basque (Euskara)"
+msgstr "ბასკური (Euskara)"
+
+
+msgid "Hausa (Hausa)"
+msgstr "ჰაუსა (Hausa)"
+
+
+msgid "Kazakh (қазақша)"
+msgstr "ყაზახური (қазақша)"
+
+
+msgid "Abkhaz (Аԥсуа бызшәа)"
+msgstr "აფხაზური (Аԥсуа бызшәа)"
+
+
+msgid "Thai (ภาษาไทย)"
+msgstr "ტაი (ภาษาไทย)"
+
+
+msgid "Slovak (Slovenčina)"
+msgstr "სლოვაკური (Slovenčina)"
+
+
+msgid "Complete"
+msgstr "დასრულებული"
+
+
+msgid "In Progress"
+msgstr "დამუშავებაში"
+
+
+msgid "Starting"
+msgstr "იწყება"
+

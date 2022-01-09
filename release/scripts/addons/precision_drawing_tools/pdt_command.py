@@ -465,7 +465,7 @@ def command_parse(context):
         mode_sel = 'SEL'
 
     if mode == "a" and operation not in {"C", "P"}:
-        # Place new Vetex, or Extrude Vertices by Absolute Coords.
+        # Place new Vertex, or Extrude Vertices by Absolute Coords.
         if mode_sel == 'REL':
             pg.select = 'SEL'
             mode_sel = 'SEL'

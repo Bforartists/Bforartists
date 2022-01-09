@@ -34,7 +34,7 @@ import sys
 import os
 
 # ----------------------------------------------
-# Add to Phyton path (once only)
+# Add to Python path (once only)
 # ----------------------------------------------
 path = sys.path
 flag = False

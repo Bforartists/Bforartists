@@ -97,7 +97,7 @@ from .fbx_utils import (
     FBXExportSettingsMedia, FBXExportSettings, FBXExportData,
 )
 
-# Units convertors!
+# Units converters!
 convert_sec_to_ktime = units_convertor("second", "ktime")
 convert_sec_to_ktime_iter = units_convertor_iter("second", "ktime")
 
