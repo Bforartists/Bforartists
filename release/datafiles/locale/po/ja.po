@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -10883,6 +10883,10 @@ msgid "AVI"
 msgstr "AVI"
 
 
+msgid "QuickTime"
+msgstr "QuickTime"
+
+
 msgid "Ogg"
 msgstr "Ogg"
 
@@ -16818,6 +16822,10 @@ msgid "Multiplied by Start/End for the total added point count"
 msgstr "追加ポイントの総数に対する、開始/終了への乗数"
 
 
+msgid "Random Noise Offset"
+msgstr "ランダムノイズオフセット"
+
+
 msgid "Segment Influence"
 msgstr "セグメントの影響"
 
@@ -17430,6 +17438,14 @@ msgstr "ターゲットから保つ距離"
 
 msgid "Project Limit"
 msgstr "最大投影距離"
+
+
+msgid "Smooth Factor"
+msgstr "スムージング係数"
+
+
+msgid "Number of times to apply smooth (high numbers can reduce FPS)"
+msgstr "スムーズを適用する回数（大きな値で FPS が減る可能性があります）"
 
 
 msgid "Subdivision Levels"
@@ -18197,6 +18213,10 @@ msgid "A collection of F-Curves for animation"
 msgstr "アニメーション用 F カーブの集合"
 
 
+msgid "Curve Frame Range"
+msgstr "カーブのフレーム範囲"
+
+
 msgid "The combined frame range of all F-Curves within this action"
 msgstr "このアクション内のすべての F カーブを統合したフレーム範囲"
 
@@ -18207,6 +18227,10 @@ msgstr "Fカーブ"
 
 msgid "The individual F-Curves that make up the action"
 msgstr "アクションを形成する個々のFカーブ"
+
+
+msgid "The end frame of the manually set intended playback range"
+msgstr "再生範囲として手動で設定した最終フレーム"
 
 
 msgid "Frame Range"
@@ -32829,6 +32853,10 @@ msgid "F-Curve Context Menu"
 msgstr "Fカーブコンテクストメニュー"
 
 
+msgid "Slider Operators"
+msgstr "スライダーオペレーター"
+
+
 msgid "Add Attribute"
 msgstr "属性を追加"
 
@@ -42331,8 +42359,16 @@ msgid "True when both inputs are not approximately equal"
 msgstr "両入力が違うと true"
 
 
+msgid "Brighter"
+msgstr "明るい"
+
+
 msgid "True when the first input is brighter"
 msgstr "最初の入力の方が明るいと True"
+
+
+msgid "Darker"
+msgstr "暗い"
 
 
 msgid "True when the first input is darker"
@@ -42829,6 +42865,18 @@ msgstr "カーブハンドル位置"
 
 msgid "Curve Tilt"
 msgstr "カーブ傾き"
+
+
+msgid "Edge Vertices"
+msgstr "辺の頂点"
+
+
+msgid "Mesh Island"
+msgstr "メッシュアイランド"
+
+
+msgid "Scene Time"
+msgstr "シーンタイム"
 
 
 msgid "Is Shade Smooth"
@@ -43459,6 +43507,10 @@ msgstr "ターゲットの近接する面との距離を計算します"
 
 msgid "Realize Instances"
 msgstr "インスタンス実体化"
+
+
+msgid "Legacy Behavior"
+msgstr "以前の挙動"
 
 
 msgid "Replace Material"
@@ -54631,6 +54683,23 @@ msgid "Blend To Neighbor"
 msgstr "隣とブレンド"
 
 
+msgid "Blend selected keyframes to their left or right neighbor"
+msgstr "選択中のキーフレームを左右の隣のキーフレームとブレンドします"
+
+
+msgid "The blend factor with 0.5 being the current frame"
+msgstr "ブレンド係数。0.5で現在のフレーム"
+
+
+msgctxt "Operator"
+msgid "Breakdown"
+msgstr "ブレイクダウン"
+
+
+msgid "Move selected keyframes to an inbetween position relative to adjacent keys"
+msgstr "選択中のキーフレームを、左右の近くのキーに対して中間の位置に移動します"
+
+
 msgctxt "Operator"
 msgid "Click-Insert Keyframes"
 msgstr "クリックしてキーフレームを挿入"
@@ -61280,6 +61349,10 @@ msgid "Curve from Mesh or Text objects"
 msgstr "メッシュ/テキストからカーブ"
 
 
+msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
+msgstr "カーブ/サーフェス/メタボール/テキスト/ポイントクラウドオブジェクトからメッシュ"
+
+
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "カーブ/メッシュからグリースペンシル"
 
@@ -61295,6 +61368,10 @@ msgstr "プロキシからオーバーライドに変換"
 
 msgid "Convert a proxy to a local library override"
 msgstr "プロキシからローカルライブラリオーバーライドに変換します"
+
+
+msgid "Copies the matrix of the currently active object or pose bone to the clipboard. Uses world-space matrices"
+msgstr "現在アクティブなオブジェクトまたはポーズボーンの行列をクリップボードにコピーします。ワールド空間行列を使用します"
 
 
 msgctxt "Operator"
@@ -62708,6 +62785,43 @@ msgstr "パーティクルシステムスロットを削除"
 
 msgid "Remove the selected particle system"
 msgstr "選択中のパーティクルシステムを削除します"
+
+
+msgctxt "Operator"
+msgid "Paste Global Transform"
+msgstr "グローバルトランスフォーム貼り付け"
+
+
+msgid "Pastes the matrix from the clipboard to the currently active pose bone or object. Uses world-space matrices"
+msgstr "クリップボードから現在アクティブなポーズボーンまたはオブジェクトに行列を貼り付けます。ワールド空間行列を使用します"
+
+
+msgid "Paste Method"
+msgstr "貼り付け方法"
+
+
+msgid "Update the current transform, selected keyframes, or even create new keys"
+msgstr "現在のトランスフォームや選択中のキーフレームの更新、さらに新しいキーの作成を行います"
+
+
+msgid "Current Transform"
+msgstr "現在のトランスフォーム"
+
+
+msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgstr "現在の値にのみ貼り付けを行い、自動キーイング有効時はアニメーションデータを操作します"
+
+
+msgid "Selected Keys"
+msgstr "選択中のキー"
+
+
+msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgstr "選択中のキーがあるフレームに貼り付けます。これらのフレームには新しいキーが作成される可能性があります"
+
+
+msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgstr "選択中の最初と最後のキーの間の全フレームに貼り付けます。必要であれば新しいキーフレームを作成します"
 
 
 msgctxt "Operator"
@@ -77314,6 +77428,10 @@ msgid "Fitting"
 msgstr "フィット"
 
 
+msgid "Render Procedural"
+msgstr "レンダープロシージャル"
+
+
 msgid "Bone Constraints"
 msgstr "ボーンコンストレイント"
 
@@ -78518,6 +78636,10 @@ msgstr "ユーザーインターフェイス"
 
 msgid "Gradient Colors"
 msgstr "グラデーションカラー"
+
+
+msgid "Global Transform"
+msgstr "グローバルトランスフォーム"
 
 
 msgid "Brush Presets"
@@ -82859,6 +82981,42 @@ msgid "Lens focal length (mm)"
 msgstr "レンズの焦点距離(mm)"
 
 
+msgid "Coefficient K0 of the lens polinomial"
+msgstr "レンズ多項式の K0 係数"
+
+
+msgid "Fisheye Polynomial K1"
+msgstr "魚眼多項式 K1"
+
+
+msgid "Coefficient K1 of the lens polinomial"
+msgstr "レンズ多項式の K1 係数"
+
+
+msgid "Fisheye Polynomial K2"
+msgstr "魚眼多項式 K2"
+
+
+msgid "Coefficient K2 of the lens polinomial"
+msgstr "レンズ多項式の K2 係数"
+
+
+msgid "Fisheye Polynomial K3"
+msgstr "魚眼多項式 K3"
+
+
+msgid "Coefficient K3 of the lens polinomial"
+msgstr "レンズ多項式の K3 係数"
+
+
+msgid "Fisheye Polynomial K4"
+msgstr "魚眼多項式 K4"
+
+
+msgid "Coefficient K4 of the lens polinomial"
+msgstr "レンズ多項式の K4 係数"
+
+
 msgid "Max Latitude"
 msgstr "最大緯度"
 
@@ -82923,6 +83081,14 @@ msgid "Uses the mirror ball mapping"
 msgstr "ミラーボールマッピングを使用します"
 
 
+msgid "Fisheye Lens Polynomial"
+msgstr "魚眼レンズ多項式"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
+msgstr "レンズの投影を多項式で定義し、現実のカメラレンズを模倣します"
+
+
 msgid "Form of hair"
 msgstr "ヘアーの形状"
 
@@ -82955,6 +83121,10 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
+
+
+msgid "Metal"
+msgstr "Metal"
 
 
 msgid "Cast Shadow"
@@ -83801,6 +83971,10 @@ msgstr "0以外で間接サンプルの最大値。多数のノイズと収束�
 
 msgid "Sample Offset"
 msgstr "サンプルオフセット"
+
+
+msgid "Number of samples to skip when starting render"
+msgstr "レンダリング開始時にスキップするサンプル数"
 
 
 msgid "Number of samples to render for each pixel"
@@ -98541,6 +98715,32 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "カラーランプのカラーストップ用スポイトマップ"
 
 
+msgid "Clipboard does not contain a valid matrix."
+msgstr "クリップボードに有効な行列がありません"
+
+
+msgid "This mode requires auto-keying to work properly"
+msgstr "このモードで正しく動作させるには自動キーイングが必要です"
+
+
+msgid "No selected frames found"
+msgstr "選択中のフレームがありません"
+
+
+msgid "These require auto-key:"
+msgstr "これらは自動キーが必要です："
+
+
+msgctxt "Operator"
+msgid "Paste to Selected Keys"
+msgstr "選択中のキーに貼り付け"
+
+
+msgctxt "Operator"
+msgid "Paste and Bake"
+msgstr "貼り付けとベイク"
+
+
 msgid "Denoising completed"
 msgstr "デノイジング完了"
 
@@ -98601,6 +98801,10 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "さらに AMD Radeon Pro 21.Q4 以降のドライバも必須"
 
 
+msgid "Requires Apple Silicon and macOS 12.0 or newer"
+msgstr "Apple Silicon と macOS 12.0以降が必要です"
+
+
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
 
@@ -98626,7 +98830,7 @@ msgstr "ステップ率：レンダー"
 
 
 msgid "Direct Light"
-msgstr "間接照明"
+msgstr "直接照明"
 
 
 msgid "Indirect Light"
@@ -99593,6 +99797,10 @@ msgid "The selected strips don't overlap"
 msgstr "選択中のストリップはオーバーラップしません"
 
 
+msgid "Current frame not within strip framerange"
+msgstr "現在のフレームはストリップのフレーム範囲内ではありません"
+
+
 msgid "Remove Add-on: %r?"
 msgstr "アドオンを削除: %r?"
 
@@ -100169,6 +100377,10 @@ msgstr "緯度最小"
 
 msgid "Longitude Min"
 msgstr "経度最小"
+
+
+msgid "K0"
+msgstr "K0"
 
 
 msgid "Resolution Preview U"
@@ -106616,10 +106828,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "書き込み失敗、画像に「%s」と「%s」ビューがありません"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
-msgstr "タイル画像の保存時、パス「%s」に UDIM のタイル番号「%d」を入れてください"
-
-
 msgid "Key %d"
 msgstr "キー %d"
 
@@ -107870,7 +108078,7 @@ msgstr "バンドルをコピーできません。外部に依存「%s」して�
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
-msgstr "Blendr ファイル保存前はアセットカタログを保存できません"
+msgstr "Blender ファイル保存前はアセットカタログを保存できません"
 
 
 msgid "No changes to be saved"
@@ -113293,12 +113501,24 @@ msgid "Class"
 msgstr "クラス"
 
 
+msgid "Fog Volume"
+msgstr "フォグボリューム"
+
+
+msgid "Level Set"
+msgstr "レベルセット"
+
+
 msgid "Data Set"
 msgstr "データセット"
 
 
 msgid "Column"
 msgstr "列"
+
+
+msgid "Unkown column type"
+msgstr "未知の列タイプ"
 
 
 msgid "File Modified Outside and Inside Blender"
@@ -113387,6 +113607,10 @@ msgstr "最近使用したファイルはありません"
 
 msgid "Open Recent"
 msgstr "最近使用したファイル"
+
+
+msgid "Undo History"
+msgstr "操作履歴"
 
 
 msgid "File association registered"
@@ -114332,6 +114556,14 @@ msgstr "ボーンエンベロープ"
 
 msgid "Use Factor"
 msgstr "係数を使用"
+
+
+msgid "Random Offset Start"
+msgstr "ランダムオフセット開始"
+
+
+msgid "Random Offset End"
+msgstr "ランダムオフセット終了"
 
 
 msgid "Curvature"
@@ -115837,6 +116069,10 @@ msgid "Lower Right"
 msgstr "右下"
 
 
+msgid "The node tree must be the compositing node tree of any scene in the file"
+msgstr "そのノードツリーはファイル内のいずれかのシーンのコンポジティングノードツリーでないといけません"
+
+
 msgid "Pick"
 msgstr "ピック"
 
@@ -115877,12 +116113,20 @@ msgid "Buffer Edge:"
 msgstr "外部境界:"
 
 
+msgid "Inner Mask"
+msgstr "内部マスク"
+
+
 msgid "Outer Mask"
 msgstr "外部マスク"
 
 
 msgid "ID value"
 msgstr "ID値"
+
+
+msgid "Garbage Matte"
+msgstr "ガーベジマット"
 
 
 msgid "Core Matte"
@@ -116237,6 +116481,10 @@ msgid "Position of the second control point"
 msgstr "二つめの制御点の位置"
 
 
+msgid "Direction the line is going in. The length of this vector does not matter"
+msgstr "このラインの進行方向。このベクトルの長さは関係ありません"
+
+
 msgid "Distance between the two points"
 msgstr "二つのポイント間の距離"
 
@@ -116255,6 +116503,10 @@ msgstr "下の幅"
 
 msgid "Top Width"
 msgstr "上の幅"
+
+
+msgid "The X axis size of the shape"
+msgstr "X 軸の形状のサイズ"
 
 
 msgid "The Y axis size of the shape"
@@ -116333,12 +116585,80 @@ msgid "If the profile spline is cyclic, fill the ends of the generated mesh with
 msgstr "断面のスプラインがループの時、生成メッシュの端を N ゴンでフィルします"
 
 
+msgid "End (Factor)"
+msgstr "終了（係数）"
+
+
+msgid "Start (Length)"
+msgstr "開始（長さ）"
+
+
+msgid "End (Length)"
+msgstr "終了（長さ）"
+
+
 msgid "No geometry with given domain"
 msgstr "ジオメトリのないドメインです"
 
 
 msgid "The parts of the geometry to be deleted"
 msgstr "削除するジオメトリの部分"
+
+
+msgid "Number of faces that contain the edge"
+msgstr "この辺を含む面の数"
+
+
+msgid "The index of the first vertex in the edge"
+msgstr "辺の最初の頂点のインデックス"
+
+
+msgid "Vertex Index 2"
+msgstr "頂点インデックス 2"
+
+
+msgid "The index of the second vertex in the edge"
+msgstr "辺の二つめの頂点のインデックス"
+
+
+msgid "Position 1"
+msgstr "位置 1"
+
+
+msgid "The position of the first vertex in the edge"
+msgstr "辺の最初の頂点の位置"
+
+
+msgid "Position 2"
+msgstr "位置 2"
+
+
+msgid "The position of the second vertex in the edge"
+msgstr "辺の二つめの頂点の位置"
+
+
+msgid "Vertex Count"
+msgstr "頂点数"
+
+
+msgid "Number of edges or points in the face"
+msgstr "面の中の辺またはポイント数"
+
+
+msgid "Number of faces which share an edge with the face"
+msgstr "この面の辺を共有する面の数"
+
+
+msgid "Vertex count and edge count are equal"
+msgstr "頂点数と辺数が同じ"
+
+
+msgid "Number of faces that contain the vertex"
+msgstr "この頂点を含む面の数"
+
+
+msgid "Point Count"
+msgstr "ポイント数"
 
 
 msgid "Realized geometry is not used when pick instances is true"
@@ -116599,6 +116919,10 @@ msgstr "ターゲットジオメトリにメッシュまたはポイントクラ
 
 msgid "Missing Data-Block"
 msgstr "データブロックなし"
+
+
+msgid "Nesting a node group inside of itself is not allowed"
+msgstr "自分自身の中へのノードグループの入れ子はできません"
 
 
 msgid "Instances in input geometry are ignored"
@@ -117293,6 +117617,10 @@ msgstr "「%s」を保存"
 
 msgid "Can't read alternative start-up file: '%s'"
 msgstr "代替スタートアップファイル「%s」が読み込みできません"
+
+
+msgid "The \"filepath\" property was not an absolute path: \"%s\""
+msgstr "「ファイルパス」プロパティが絶対パスではありません:「%s」"
 
 
 msgid "Not a library"

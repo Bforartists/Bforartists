@@ -1314,7 +1314,7 @@ class VIEW3D_OT_stored_views_preferences(AddonPreferences):
     view_3d_update_rate: IntProperty(
         name="3D view update",
         description="Update rate of the 3D view redraw\n"
-                    "Increse the value if the UI feels sluggish",
+                    "Increase the value if the UI feels sluggish",
         min=1, max=10,
         default=1
     )

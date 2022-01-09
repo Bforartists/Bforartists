@@ -26,7 +26,7 @@ Used as a blender script, it load all the stl files in the scene:
 blender --python stl_utils.py -- file1.stl file2.stl file3.stl ...
 """
 
-# TODO: endien
+# TODO: endian
 
 
 class ListDict(dict):

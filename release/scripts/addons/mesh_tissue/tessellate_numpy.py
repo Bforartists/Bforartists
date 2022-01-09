@@ -300,7 +300,7 @@ class tissue_tessellate_prop(PropertyGroup):
         min=1,
         soft_max=5,
         description="Automatically repeat the Tessellation using the "
-                    + "generated geometry as new base object.\nUsefull for "
+                    + "generated geometry as new base object.\nUseful for "
                     + "for branching systems. Dangerous!",
         update = anim_tessellate_active
         )
@@ -1868,7 +1868,7 @@ class tessellate(Operator):
             min=1,
             soft_max=5,
             description="Automatically repeat the Tessellation using the "
-                        + "generated geometry as new base object.\nUsefull for "
+                        + "generated geometry as new base object.\nUseful for "
                         + "for branching systems. Dangerous!"
             )
     bool_combine : BoolProperty(

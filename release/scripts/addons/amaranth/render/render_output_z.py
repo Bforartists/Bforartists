@@ -17,7 +17,7 @@ Display a little warning label when exporting EXR, with Z Buffer enabled, but
 forgot to plug the Z input in the Compositor.
 
 Might be a bit too specific, but found it nice to remember to plug the Z input
-if we explicitely specify for Z Buffers to be saved (because it's disabled by
+if we explicitly specify for Z Buffers to be saved (because it's disabled by
 default).
 
 Find it on the Output panel, Render properties.

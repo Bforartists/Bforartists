@@ -345,7 +345,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             for i in ui_key_pos:
                 center = self.init_mouse_x + ((i-self.init_frame)*self.px_step)
                 if self.keyframe_aspect == 'DIAMOND':
-                    # +1 on x is to correct pixel alignement
+                    # +1 on x is to correct pixel alignment
                     shaped_key += [(center-keysize, my+upper),
                                    (center+1, my+keysize+upper),
                                    (center+keysize, my+upper),
@@ -552,7 +552,7 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
 
     rolling_mode: BoolProperty(
         name="Rolling Mode",
-        description="Alternative Gap-less timeline. No time informations to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
+        description="Alternative Gap-less timeline. No time information to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
         default=False)
 
     use: BoolProperty(

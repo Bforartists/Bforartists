@@ -208,7 +208,7 @@ class Rig(BaseSkinRig):
                 self.bones.org,
                 distance=(node.point - self.center).length,
                 limit_mode='LIMITDIST_ONSURFACE', use_transform_limit=True,
-                # Use custom space to accomodate scaling
+                # Use custom space to accommodate scaling
                 space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
                 # Don't allow reordering this limit and subsequent offsets
                 ensure_order=True,
@@ -223,7 +223,7 @@ class Rig(BaseSkinRig):
                 node.control_bone, 'LIMIT_DISTANCE', self.bones.org,
                 distance=(node.point - self.center).length,
                 limit_mode='LIMITDIST_ONSURFACE', use_transform_limit=True,
-                # Use custom space to accomodate scaling
+                # Use custom space to accommodate scaling
                 space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
             )
 
