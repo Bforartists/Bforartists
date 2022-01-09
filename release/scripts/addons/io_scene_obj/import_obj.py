@@ -689,7 +689,7 @@ def create_mesh(new_objects,
 
     me = bpy.data.meshes.new(dataname)
 
-    # make sure the list isnt too big
+    # make sure the list isn't too big
     for material in materials:
         me.materials.append(material)
 
@@ -730,7 +730,7 @@ def create_mesh(new_objects,
         me.loops.foreach_set("normal", loops_nor)
 
     if verts_tex and me.polygons:
-        # Some files Do not explicitely write the 'v' value when it's 0.0, see T68249...
+        # Some files Do not explicitly write the 'v' value when it's 0.0, see T68249...
         verts_tex = [uv if len(uv) == 2 else uv + [0.0] for uv in verts_tex]
         me.uv_layers.new(do_init=False)
         loops_uv = tuple(uv for (_, _, face_vert_tex_indices, _, _, _, _) in faces

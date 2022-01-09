@@ -181,31 +181,35 @@ class BaseLimbRig(BaseRig):
     @stage.generate_bones
     def make_master_control(self):
         org = self.bones.org.main[0]
-        self.bones.mch.master = name = self.copy_bone(org, make_derived_name(org, 'mch', '_parent_socket'), scale=1/12)
+        self.bones.mch.master = name = self.copy_bone(org, make_derived_name(org, 'mch', '_parent_widget'), scale=1/12)
         self.bones.ctrl.master = name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_parent'), scale=1/4)
         self.get_bone(name).roll = 0
         self.prop_bone = self.bones.ctrl.master
 
     @stage.parent_bones
     def parent_master_control(self):
-        self.set_bone_parent(self.bones.ctrl.master, self.bones.mch.master)
-        self.set_bone_parent(self.bones.mch.master, self.bones.mch.follow)
+        self.set_bone_parent(self.bones.ctrl.master, self.rig_parent_bone, inherit_scale='NONE')
+        self.set_bone_parent(self.bones.mch.master, self.bones.org.main[0], inherit_scale='NONE')
 
     @stage.configure_bones
     def configure_master_control(self):
         bone = self.get_bone(self.bones.ctrl.master)
         bone.lock_location = (True, True, True)
         bone.lock_rotation = (True, True, True)
-        bone.lock_scale = (True, True, True)
+        bone.lock_scale = (False, False, False)
         bone.lock_rotation_w = True
 
     @stage.rig_bones
     def rig_master_control(self):
-        self.make_constraint(self.bones.mch.master, 'COPY_ROTATION', self.bones.org.main[0])
+        mch = self.bones.mch
+        self.make_constraint(mch.master, 'COPY_SCALE', 'root', use_make_uniform=True)
+        self.make_constraint(mch.master, 'COPY_SCALE', self.bones.ctrl.master, use_offset=True, space='LOCAL')
 
     @stage.generate_widgets
     def make_master_control_widget(self):
-        create_gear_widget(self.obj, self.bones.ctrl.master, radius=1)
+        master = self.bones.ctrl.master
+        set_bone_widget_transform(self.obj, master, self.bones.mch.master)
+        create_gear_widget(self.obj, master, radius=1)
 
 
     ####################################################
@@ -235,6 +239,10 @@ class BaseLimbRig(BaseRig):
         mch = self.bones.mch.follow
 
         self.make_constraint(mch, 'COPY_SCALE', 'root', use_make_uniform=True)
+        self.make_constraint(
+            mch, 'COPY_SCALE', self.bones.ctrl.master,
+            use_make_uniform=True, use_offset=True, space='LOCAL'
+        )
 
         con = self.make_constraint(mch, 'COPY_ROTATION', 'root')
 
@@ -265,8 +273,10 @@ class BaseLimbRig(BaseRig):
     def parent_fk_control_bone(self, i, ctrl, prev, org, parent_mch):
         if parent_mch:
             self.set_bone_parent(ctrl, parent_mch)
+        elif i == 0:
+            self.set_bone_parent(ctrl, prev, inherit_scale='AVERAGE')
         else:
-            self.set_bone_parent(ctrl, prev, use_connect=(i > 0))
+            self.set_bone_parent(ctrl, prev, use_connect=True, inherit_scale='ALIGNED')
 
     @stage.configure_bones
     def configure_fk_control_chain(self):
@@ -325,7 +335,9 @@ class BaseLimbRig(BaseRig):
 
     def rig_fk_parent_bone(self, i, parent_mch, org):
         if i >= 2:
-            self.make_constraint(parent_mch, 'COPY_SCALE', 'root', use_make_uniform=True)
+            self.make_constraint(
+                parent_mch, 'COPY_SCALE', self.bones.mch.follow, use_make_uniform=True
+            )
 
 
     ####################################################
@@ -435,6 +447,13 @@ class BaseLimbRig(BaseRig):
     @stage.rig_bones
     def rig_ik_controls(self):
         self.rig_hide_pole_control(self.bones.ctrl.ik_pole)
+        self.rig_ik_control_scale(self.bones.ctrl.ik)
+
+    def rig_ik_control_scale(self, ctrl):
+        self.make_constraint(
+            ctrl, 'COPY_SCALE', self.bones.ctrl.master,
+            use_make_uniform=True, use_offset=True, space='LOCAL',
+        )
 
     @stage.generate_widgets
     def make_ik_control_widgets(self):
@@ -801,7 +820,7 @@ class BaseLimbRig(BaseRig):
             self.make_constraint(tweak, 'DAMPED_TRACK', next_tweak)
 
         elif entry.seg_idx is not None:
-            self.make_constraint(tweak, 'COPY_SCALE', 'root', use_make_uniform=True)
+            self.make_constraint(tweak, 'COPY_SCALE', self.bones.mch.follow, use_make_uniform=True)
 
         if i == 0:
             self.make_constraint(tweak, 'COPY_LOCATION', entry.org)
@@ -1007,7 +1026,8 @@ class RigifyLimbIk2FkBase:
         endmat = convert_pose_matrix_via_rest_delta(matrices[-1], ik_bones[-1], ctrl_bones[-1])
 
         set_transform_from_matrix(
-            obj, self.ctrl_bone_list[-1], endmat, keyflags=self.keyflags
+            obj, self.ctrl_bone_list[-1], endmat, keyflags=self.keyflags,
+            undo_copy_scale=True,
         )
 
         # Remove foot heel transform, if present

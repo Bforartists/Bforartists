@@ -605,7 +605,7 @@ def check_add_mesh_extra_objects():
     """Test if Add mesh extra objects addon is activated
 
     This addon is currently used to generate the proxy for POV parametric
-    surface which is almost the same priciple as its Math xyz surface
+    surface which is almost the same principle as its Math xyz surface
     """
     if "add_mesh_extra_objects" in bpy.context.preferences.addons.keys():
         return True

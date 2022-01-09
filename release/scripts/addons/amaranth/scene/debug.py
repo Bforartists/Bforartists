@@ -801,7 +801,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
 
 
 class AMTH_SCENE_OT_list_users_debug_clear(Operator):
-    """Clear the list bellow"""
+    """Clear the list below"""
     bl_idname = "scene.amth_list_users_debug_clear"
     bl_label = "Clear Debug Panel lists"
 
@@ -992,7 +992,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
                     AMTH_store_data.count_images, "IMAGE_DATA"
                     )
         if AMTH_store_data.count_image_node_unlinked != 0:
-            self.draw_miss_link(col, "image", "node", "nodes", "with no output conected",
+            self.draw_miss_link(col, "image", "node", "nodes", "with no output connected",
                     AMTH_store_data.count_image_node_unlinked, "NODE"
                     )
 

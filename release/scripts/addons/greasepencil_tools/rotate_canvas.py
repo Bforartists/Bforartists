@@ -235,7 +235,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         self.pos_current = mathutils.Vector((event.mouse_region_x, event.mouse_region_y))
 
         self.initial_pos = self.pos_current# for draw debug, else no need
-        # Calculate inital vector
+        # Calculate initial vector
         self.vector_initial = self.pos_current - self.center
         self.vector_initial.normalize()
 

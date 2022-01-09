@@ -347,7 +347,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
             elif event.type == 'F8':
                 self.vector_constrain = None
-                self.constrain.toogle()
+                self.constrain.toggle()
 
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 if not self.wait_for_input or not is_making_lines or event.type == 'ESC':

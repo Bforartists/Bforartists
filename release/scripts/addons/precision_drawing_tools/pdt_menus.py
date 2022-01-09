@@ -412,7 +412,7 @@ class PDT_PT_PanelCommandLine(Panel):
         col = row.column()
         col.prop(pdt_pg, "select", text="Mode")
         row = layout.row()
-        row.label(text="Comand Line, uses Plane & Mode Options")
+        row.label(text="Command Line, uses Plane & Mode Options")
         row = layout.row()
         row.prop(pdt_pg, "command", text="")
         # Try Re-run

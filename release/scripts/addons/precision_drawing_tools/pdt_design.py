@@ -45,8 +45,8 @@ class PDT_OT_PlacementAbs(Operator):
         Note:
             - Reads pg.operate from Operation Mode Selector as 'operation'
             - Reads pg.cartesian_coords scene variables to:
-            -- set position of CUrsor      (CU)
-            -- set postion of Pivot Point  (PP)
+            -- set position of Cursor      (CU)
+            -- set position of Pivot Point (PP)
             -- MoVe geometry/objects       (MV)
             -- Extrude Vertices            (EV)
             -- Split Edges                 (SE)
@@ -534,7 +534,7 @@ class PDT_OT_PlacementInt(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        """Manipulates Geometry, or Objects by Convergance Intersection between 4 points, or 2 Edges.
+        """Manipulates Geometry, or Objects by Convergence Intersection between 4 points, or 2 Edges.
 
         Note:
             - Reads pg.operation from Operation Mode Selector as 'operation'

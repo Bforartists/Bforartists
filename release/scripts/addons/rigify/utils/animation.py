@@ -182,17 +182,32 @@ def undo_copy_scale_with_offset(obj, bone, con, old_matrix):
     "Undo the effects of Copy Scale with Offset constraint on a bone matrix."
     inf = con.influence
 
-    if con.mute or inf == 0 or not con.is_valid or not con.use_offset or con.use_add or con.use_make_uniform:
+    if con.mute or inf == 0 or not con.is_valid or not con.use_offset or con.use_add:
         return old_matrix
+
+    tgt_matrix = get_constraint_target_matrix(con)
+    tgt_scale = tgt_matrix.to_scale()
+    use = [con.use_x, con.use_y, con.use_z]
+
+    if con.use_make_uniform:
+        if con.use_x and con.use_y and con.use_z:
+            total = tgt_matrix.determinant()
+        else:
+            total = 1
+            for i, use in enumerate(use):
+                if use:
+                    total *= tgt_scale[i]
+
+        tgt_scale = [abs(total)**(1./3.)]*3
+    else:
+        for i, use in enumerate(use):
+            if not use:
+                tgt_scale[i] = 1
 
     scale_delta = [
         1 / (1 + (math.pow(x, con.power) - 1) * inf)
-        for x in get_constraint_target_matrix(con).to_scale()
+        for x in tgt_scale
     ]
-
-    for i, use in enumerate([con.use_x, con.use_y, con.use_z]):
-        if not use:
-            scale_delta[i] = 1
 
     return old_matrix @ Matrix.Diagonal([*scale_delta, 1])
 

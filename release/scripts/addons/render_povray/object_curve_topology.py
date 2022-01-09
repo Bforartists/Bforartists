@@ -32,13 +32,13 @@ from .shading import write_object_material_interior
 
 def export_curves(file, ob, string_strip_hyphen, global_matrix, tab_write):
     """write all curves based POV primitives to exported file """
-    # name_orig = "OB" + ob.name # XXX Unused, check instanciation
+    # name_orig = "OB" + ob.name # XXX Unused, check instantiation
     dataname_orig = "DATA" + ob.data.name
 
-    # name = string_strip_hyphen(bpy.path.clean_name(name_orig)) # XXX Unused, check instanciation
+    # name = string_strip_hyphen(bpy.path.clean_name(name_orig)) # XXX Unused, check instantiation
     dataname = string_strip_hyphen(bpy.path.clean_name(dataname_orig))
 
-    # matrix = global_matrix @ ob.matrix_world # XXX Unused, check instanciation
+    # matrix = global_matrix @ ob.matrix_world # XXX Unused, check instantiation
     bezier_sweep = False
     if ob.pov.curveshape == 'sphere_sweep':
         # TODO: Check radius ; shorten lines, may use tab_write() ? > fstrings since py 2.9
@@ -962,7 +962,7 @@ def export_curves(file, ob, string_strip_hyphen, global_matrix, tab_write):
         if ob.pov.curveshape in {'birail'}:
             splines = '%s1,%s2,%s3,%s4' % (dataname, dataname, dataname, dataname)
             tab_write('object {Coons(%s, %s, %s, "")\n' % (splines, ob.pov.res_u, ob.pov.res_v))
-        # pov_mat_name = "Default_texture" # XXX! Unused, check instanciation
+        # pov_mat_name = "Default_texture" # XXX! Unused, check instantiation
         if ob.active_material:
             # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
             try:

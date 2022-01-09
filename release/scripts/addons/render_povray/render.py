@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 
-"""Wirte the POV file using this file's functions and some from other modules then render it."""
+"""Write the POV file using this file's functions and some from other modules then render it."""
 
 import bpy
 import subprocess
@@ -285,7 +285,7 @@ def write_pov(filename, scene=None, info_callback=None):
         return name
 
     def write_matrix(matrix):
-        """Translate some tranform matrix from Blender UI
+        """Translate some transform matrix from Blender UI
         to POV syntax and write to exported file """
         tab_write(
             "matrix <%.6f, %.6f, %.6f,  %.6f, %.6f, %.6f,  %.6f, %.6f, %.6f,  %.6f, %.6f, %.6f>\n"
