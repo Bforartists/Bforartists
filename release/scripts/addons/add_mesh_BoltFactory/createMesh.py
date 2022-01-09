@@ -67,7 +67,7 @@ def unpack_face_list(list_of_tuples):
 """
 Remove Doubles takes a list on Verts and a list of Faces and
 removes the doubles, much like Blender does in edit mode.
-It doesn't have the range function  but it will round the corrdinates
+It doesn't have the range function  but it will round the coordinates
 and remove verts that are very close together.  The function
 is useful because you can perform a "Remove Doubles" with out
 having to enter Edit Mode. Having to enter edit mode has the
@@ -292,7 +292,7 @@ def Fill_Fan_Face(OFFSET, NUM, FACE_DOWN=0):
     Face = [NUM-1,0,1]
     TempFace = [0, 0, 0]
     A = 0
-    #B = 1 unsed
+    #B = 1 unused
     C = 2
     if NUM < 3:
         return None
@@ -1193,7 +1193,7 @@ def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
     v_5Deg_Line.length *= 2  # extende out the line on a 5 deg angle
 
     #We cross 2 lines. One from the origin to the 0 Deg point
-    #and the second is from the orign extended out past the first line
+    #and the second is from the origin extended out past the first line
     # This gives the cross point of the
     v_Cross = geometry.intersect_line_line_2d(v_0_Deg_Point,v_15Deg_Point,v_origin,v_5Deg_Line)
     dvec = vec2 - Vector([v_Cross.x,v_Cross.y,0.0])

@@ -32,7 +32,7 @@ from .scenography import export_smoke
 
 
 def matrix_as_pov_string(matrix):
-    """Translate some tranform matrix from Blender UI
+    """Translate some transform matrix from Blender UI
     to POV syntax and return that string """
     matrix_string = (
         "matrix <%.6f, %.6f, %.6f,  %.6f, %.6f, %.6f,  %.6f, %.6f, %.6f,  %.6f, %.6f, %.6f>\n"
@@ -720,7 +720,7 @@ def export_meshes(
                 if not ob.is_instancer:
                     # except duplis which should be instances groups for now but all duplis later
                     if ob.type == 'EMPTY':
-                        # XXX Should we only write this once and instanciate the same for every
+                        # XXX Should we only write this once and instantiate the same for every
                         # empty in the final matrix writing, or even no marix and just a comment
                         # with empty object transforms ?
                         tab_write("\n//dummy sphere to represent Empty location\n")

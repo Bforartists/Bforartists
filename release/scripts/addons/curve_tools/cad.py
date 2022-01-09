@@ -37,7 +37,7 @@ class Fillet(bpy.types.Operator):
 
     radius: bpy.props.FloatProperty(name='Radius', description='Radius of the rounded corners', unit='LENGTH', min=0.0, default=0.1)
     chamfer_mode: bpy.props.BoolProperty(name='Chamfer', description='Cut off sharp without rounding', default=False)
-    limit_half_way: bpy.props.BoolProperty(name='Limit Half Way', description='Limits the segements to half their length in order to prevent collisions', default=False)
+    limit_half_way: bpy.props.BoolProperty(name='Limit Half Way', description='Limits the segments to half their length in order to prevent collisions', default=False)
 
     @classmethod
     def poll(cls, context):

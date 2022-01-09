@@ -36,6 +36,7 @@ struct ImageFormatData;
 struct ImagePool;
 struct ImageTile;
 struct ImbFormatOptions;
+struct ListBase;
 struct Main;
 struct Object;
 struct RenderResult;
@@ -112,35 +113,35 @@ int BKE_imbuf_write(struct ImBuf *ibuf, const char *name, const struct ImageForm
 int BKE_imbuf_write_as(struct ImBuf *ibuf,
                        const char *name,
                        struct ImageFormatData *imf,
-                       const bool save_copy);
+                       bool save_copy);
 void BKE_image_path_from_imformat(char *string,
                                   const char *base,
                                   const char *relbase,
                                   int frame,
                                   const struct ImageFormatData *im_format,
-                                  const bool use_ext,
-                                  const bool use_frames,
+                                  bool use_ext,
+                                  bool use_frames,
                                   const char *suffix);
 void BKE_image_path_from_imtype(char *string,
                                 const char *base,
                                 const char *relbase,
                                 int frame,
-                                const char imtype,
-                                const bool use_ext,
-                                const bool use_frames,
+                                char imtype,
+                                bool use_ext,
+                                bool use_frames,
                                 const char *suffix);
 int BKE_image_path_ensure_ext_from_imformat(char *string, const struct ImageFormatData *im_format);
-int BKE_image_path_ensure_ext_from_imtype(char *string, const char imtype);
-char BKE_image_ftype_to_imtype(const int ftype, const struct ImbFormatOptions *options);
-int BKE_image_imtype_to_ftype(const char imtype, struct ImbFormatOptions *r_options);
+int BKE_image_path_ensure_ext_from_imtype(char *string, char imtype);
+char BKE_image_ftype_to_imtype(int ftype, const struct ImbFormatOptions *options);
+int BKE_image_imtype_to_ftype(char imtype, struct ImbFormatOptions *r_options);
 
-bool BKE_imtype_is_movie(const char imtype);
-bool BKE_imtype_supports_zbuf(const char imtype);
-bool BKE_imtype_supports_compress(const char imtype);
-bool BKE_imtype_supports_quality(const char imtype);
-bool BKE_imtype_requires_linear_float(const char imtype);
-char BKE_imtype_valid_channels(const char imtype, bool write_file);
-char BKE_imtype_valid_depths(const char imtype);
+bool BKE_imtype_is_movie(char imtype);
+bool BKE_imtype_supports_zbuf(char imtype);
+bool BKE_imtype_supports_compress(char imtype);
+bool BKE_imtype_supports_quality(char imtype);
+bool BKE_imtype_requires_linear_float(char imtype);
+char BKE_imtype_valid_channels(char imtype, bool write_file);
+char BKE_imtype_valid_depths(char imtype);
 
 /**
  * String is from command line `--render-format` argument,
@@ -240,9 +241,9 @@ struct Image *BKE_image_add_generated(struct Main *bmain,
                                       int floatbuf,
                                       short gen_type,
                                       const float color[4],
-                                      const bool stereo3d,
-                                      const bool is_data,
-                                      const bool tiled);
+                                      bool stereo3d,
+                                      bool is_data,
+                                      bool tiled);
 /**
  * Create an image from ibuf. The reference-count of ibuf is increased,
  * caller should take care to drop its reference by calling #IMB_freeImBuf if needed.
@@ -284,6 +285,10 @@ void BKE_image_ensure_viewer_views(const struct RenderData *rd,
 void BKE_image_user_frame_calc(struct Image *ima, struct ImageUser *iuser, int cfra);
 int BKE_image_user_frame_get(const struct ImageUser *iuser, int cfra, bool *r_is_in_range);
 void BKE_image_user_file_path(struct ImageUser *iuser, struct Image *ima, char *path);
+void BKE_image_user_file_path_ex(struct ImageUser *iuser,
+                                 struct Image *ima,
+                                 char *path,
+                                 bool resolve_udim);
 void BKE_image_editors_update_frame(const struct Main *bmain, int cfra);
 
 /**
@@ -329,7 +334,7 @@ void BKE_image_backup_render(struct Scene *scene, struct Image *ima, bool free_c
 bool BKE_image_save_openexr_multiview(struct Image *ima,
                                       struct ImBuf *ibuf,
                                       const char *filepath,
-                                      const int flags);
+                                      int flags);
 
 /**
  * Goes over all textures that use images.
@@ -397,6 +402,18 @@ void BKE_image_get_tile_label(struct Image *ima,
                               char *label,
                               int len_label);
 
+/**
+ * Checks whether the given filepath refers to a UDIM tiled texture.
+ * If yes, the range from the lowest to the highest tile is returned.
+ *
+ * `filepath` may be modified to ensure a UDIM token is present.
+ * `tiles` may be filled even if the result ultimately is false!
+ */
+bool BKE_image_get_tile_info(char *filepath,
+                             struct ListBase *tiles,
+                             int *tile_start,
+                             int *tile_range);
+
 struct ImageTile *BKE_image_add_tile(struct Image *ima, int tile_number, const char *label);
 bool BKE_image_remove_tile(struct Image *ima, struct ImageTile *tile);
 void BKE_image_reassign_tile(struct Image *ima, struct ImageTile *tile, int new_tile_number);
@@ -410,6 +427,41 @@ bool BKE_image_fill_tile(struct Image *ima,
                          int gen_type,
                          int planes,
                          bool is_float);
+
+typedef enum {
+  UDIM_TILE_FORMAT_NONE = 0,
+  UDIM_TILE_FORMAT_UDIM = 1,
+  UDIM_TILE_FORMAT_UVTILE = 2
+} eUDIM_TILE_FORMAT;
+
+/**
+ * Ensures that `filename` contains a UDIM token if we find a supported format pattern.
+ * \note This must only be the name component (without slashes).
+ */
+void BKE_image_ensure_tile_token(char *filename);
+
+/**
+ * When provided with an absolute virtual filepath, check to see if at least
+ * one concrete file exists.
+ * Note: This function requires directory traversal and may be inefficient in time-critical,
+ * or iterative, code paths.
+ */
+bool BKE_image_tile_filepath_exists(const char *filepath);
+
+/**
+ * Retrieves the UDIM token format and returns the pattern from the provided `filepath`.
+ * The returned pattern is typically passed to either `BKE_image_get_tile_number_from_filepath` or
+ * `BKE_image_set_filepath_from_tile_number`.
+ */
+char *BKE_image_get_tile_strformat(const char *filepath, eUDIM_TILE_FORMAT *r_tile_format);
+bool BKE_image_get_tile_number_from_filepath(const char *filepath,
+                                             const char *pattern,
+                                             eUDIM_TILE_FORMAT tile_format,
+                                             int *r_tile_number);
+void BKE_image_set_filepath_from_tile_number(char *filepath,
+                                             const char *pattern,
+                                             eUDIM_TILE_FORMAT tile_format,
+                                             int tile_number);
 
 struct ImageTile *BKE_image_get_tile(struct Image *ima, int tile_number);
 struct ImageTile *BKE_image_get_tile_from_iuser(struct Image *ima, const struct ImageUser *iuser);

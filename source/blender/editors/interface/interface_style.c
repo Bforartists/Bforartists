@@ -177,11 +177,11 @@ void UI_fontstyle_draw_ex(const uiFontStyle *fs,
   BLF_enable(fs->uifont_id, font_flag);
 
   if (fs_params->word_wrap == 1) {
-    /* draw from boundbox top */
+    /* Draw from bound-box top. */
     yofs = BLI_rcti_size_y(rect) - BLF_height_max(fs->uifont_id);
   }
   else {
-    /* draw from boundbox center */
+    /* Draw from bound-box center. */
     const float height = BLF_ascender(fs->uifont_id) + BLF_descender(fs->uifont_id);
     yofs = ceil(0.5f * (BLI_rcti_size_y(rect) - height));
   }
@@ -431,11 +431,11 @@ void uiStyleInit(void)
   }
 
   if (U.font_path_ui[0]) {
-    BLI_strncpy(font_first->filename, U.font_path_ui, sizeof(font_first->filename));
+    BLI_strncpy(font_first->filepath, U.font_path_ui, sizeof(font_first->filepath));
     font_first->uifont_id = UIFONT_CUSTOM1;
   }
   else {
-    BLI_strncpy(font_first->filename, "default", sizeof(font_first->filename));
+    BLI_strncpy(font_first->filepath, "default", sizeof(font_first->filepath));
     font_first->uifont_id = UIFONT_DEFAULT;
   }
 
@@ -446,7 +446,7 @@ void uiStyleInit(void)
       font->blf_id = BLF_load_default(unique);
     }
     else {
-      font->blf_id = BLF_load(font->filename);
+      font->blf_id = BLF_load(font->filepath);
       if (font->blf_id == -1) {
         font->blf_id = BLF_load_default(unique);
       }

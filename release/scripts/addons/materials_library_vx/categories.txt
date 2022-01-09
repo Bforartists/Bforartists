@@ -64,7 +64,7 @@
             "Coated Glossy",
             "Flaky Tangelo",
             "High Gloss Plastic",
-            "Metalic Paint",
+            "Metallic Paint",
             "Metallic Paint Clean"
         ]
     ]

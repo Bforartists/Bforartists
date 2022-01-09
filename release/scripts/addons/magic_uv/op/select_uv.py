@@ -356,7 +356,7 @@ class MUV_OT_SelectUV_ZoomSelectedUV(bpy.types.Operator):
             return {'CANCELLED'}
         bpy.ops.view3d.view_selected(override_context, use_all_regions=False)
 
-        # Revert selection of verticies.
+        # Revert selection of vertices.
         for v in sel_verts:
             v.select = True
         for obj in objs:

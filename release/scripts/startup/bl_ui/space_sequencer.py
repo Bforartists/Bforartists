@@ -1195,7 +1195,7 @@ class SEQUENCER_MT_pivot_pie(Menu):
 class SEQUENCER_MT_view_pie(Menu):
     bl_label = "View"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         pie = layout.menu_pie()
@@ -1206,7 +1206,7 @@ class SEQUENCER_MT_view_pie(Menu):
 class SEQUENCER_MT_preview_view_pie(Menu):
     bl_label = "View"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         pie = layout.menu_pie()
@@ -1262,7 +1262,7 @@ class SEQUENCER_PT_color_tag_picker(SequencerColorTagPicker, Panel):
     bl_category = "Strip"
     bl_options = {'HIDE_HEADER', 'INSTANCED'}
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         row = layout.row(align=True)
@@ -1275,7 +1275,7 @@ class SEQUENCER_PT_color_tag_picker(SequencerColorTagPicker, Panel):
 class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
     bl_label = "Set Color Tag"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         row = layout.row(align=True)
