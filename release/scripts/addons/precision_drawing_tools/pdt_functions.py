@@ -51,7 +51,7 @@ def debug(msg, prefix=""):
         {prefix}{caller file name:line number}| {msg}
 
     Args:
-        msg: Incomming message to display
+        msg: Incoming message to display
         prefix: Always Blank
 
     Returns:
@@ -238,7 +238,7 @@ def view_coords(x_loc, y_loc, z_loc):
         z_loc: Z coordinate from vector
 
     Returns:
-        Vector adjusted to View's Inverted Tranformation Matrix.
+        Vector adjusted to View's Inverted Transformation Matrix.
     """
 
     areas = [a for a in bpy.context.screen.areas if a.type == "VIEW_3D"]
@@ -256,7 +256,7 @@ def view_coords_i(x_loc, y_loc, z_loc):
     """Converts Screen Oriented input Vector values to new World Vector.
 
     Note:
-        Converts View tranformation Matrix to Rotational Matrix
+        Converts View transformation Matrix to Rotational Matrix
 
     Args:
         x_loc: X coordinate from vector

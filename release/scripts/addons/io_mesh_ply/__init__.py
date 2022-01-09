@@ -20,9 +20,9 @@
 
 bl_info = {
     "name": "Stanford PLY format",
-    "author": "Bruce Merry, Campbell Barton", "Bastien Montagne"
-    "version": (2, 1, 0),
-    "blender": (2, 90, 0),
+    "author": "Bruce Merry, Campbell Barton, Bastien Montagne, Mikhail Rachinsky",
+    "version": (2, 2, 0),
+    "blender": (3, 0, 0),
     "location": "File > Import/Export",
     "description": "Import-Export PLY mesh data with UVs and vertex colors",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/mesh_ply.html",
@@ -127,15 +127,12 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
     )
     use_normals: BoolProperty(
         name="Normals",
-        description=(
-            "Export Normals for smooth and hard shaded faces "
-            "(hard shaded faces will be exported as individual faces)"
-        ),
+        description="Export vertex normals",
         default=True,
     )
     use_uv_coords: BoolProperty(
         name="UVs",
-        description="Export the active UV layer",
+        description="Export the active UV layer (will split edges by seams)",
         default=True,
     )
     use_colors: BoolProperty(

@@ -256,7 +256,7 @@ def write_file(filepath, objects, depsgraph, scene,
                ):
     """
     Basic write function. The context and options must be already set
-    This can be accessed externaly
+    This can be accessed externally
     eg.
     write( 'c:\\test\\foobar.obj', Blender.Object.GetSelected() ) # Using default options.
     """

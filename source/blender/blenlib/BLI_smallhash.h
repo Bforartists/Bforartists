@@ -53,7 +53,7 @@ typedef struct {
   unsigned int i;
 } SmallHashIter;
 
-void BLI_smallhash_init_ex(SmallHash *sh, const unsigned int nentries_reserve) ATTR_NONNULL(1);
+void BLI_smallhash_init_ex(SmallHash *sh, unsigned int nentries_reserve) ATTR_NONNULL(1);
 void BLI_smallhash_init(SmallHash *sh) ATTR_NONNULL(1);
 /**
  * \note does *not* free *sh itself! only the direct data!
@@ -61,7 +61,7 @@ void BLI_smallhash_init(SmallHash *sh) ATTR_NONNULL(1);
 void BLI_smallhash_release(SmallHash *sh) ATTR_NONNULL(1);
 void BLI_smallhash_insert(SmallHash *sh, uintptr_t key, void *item) ATTR_NONNULL(1);
 /**
- * Inserts a new value to a key that may already be in ghash.
+ * Inserts a new value to a key that may already be in #GHash.
  *
  * Avoids #BLI_smallhash_remove, #BLI_smallhash_insert calls (double lookups)
  *

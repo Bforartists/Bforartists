@@ -1953,7 +1953,7 @@ static bNodeType *rna_Node_register_base(Main *bmain,
   /* setup dummy node & node type to store static properties in */
   memset(&dummynt, 0, sizeof(bNodeType));
   /* this does some additional initialization of default values */
-  node_type_base_custom(&dummynt, identifier, "", 0, 0);
+  node_type_base_custom(&dummynt, identifier, "", 0);
 
   memset(&dummynode, 0, sizeof(bNode));
   dummynode.typeinfo = &dummynt;
@@ -14080,6 +14080,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_INPUT_MATERIAL:
       icon = ICON_NODE_MATERIAL;
+      break;
+    case GEO_NODE_INPUT_MESH_EDGE_ANGLE:
+      icon = ICON_DELETE;
       break;
     case GEO_NODE_INPUT_MESH_EDGE_NEIGHBORS:
       icon = ICON_EDGE_NEIGHBORS;

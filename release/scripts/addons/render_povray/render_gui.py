@@ -96,7 +96,7 @@ class RenderButtonsPanel:
 
 
 class RENDER_PT_POV_export_settings(RenderButtonsPanel, Panel):
-    """Use this class to define pov ini settingss buttons."""
+    """Use this class to define pov ini settings buttons."""
 
     bl_options = {'DEFAULT_CLOSED'}
     bl_label = "Auto Start"

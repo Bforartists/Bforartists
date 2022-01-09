@@ -7,7 +7,7 @@ bl_info = {
     'version': (1, 1),
     'blender': (2, 80, 0),
     'location': 'View3D > Context menu (W/RMB) > Remove Doubles',
-    'description': 'Adds comand "Remove Doubles" for curves',
+    'description': 'Adds command "Remove Doubles" for curves',
     'category': 'Add Curve'
 }
 

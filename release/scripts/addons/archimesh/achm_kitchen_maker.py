@@ -2542,7 +2542,7 @@ def handle_model_08():
 
 
 # ----------------------------------------------
-# Creaate SKU code for inventory
+# Create SKU code for inventory
 # ----------------------------------------------
 def createunitsku(self, cabinet):
     # ------------------

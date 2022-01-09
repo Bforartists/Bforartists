@@ -390,7 +390,7 @@ class BezierSpline:
         self.segments.append(BezierSegment(self.segments[-1].bezierPoint2, spline2.segments[0].bezierPoint1))
         for seg2 in spline2.segments: self.segments.append(seg2)
 
-        self.resolution += spline2.resolution    # extra segment will usually be short -- impact on resolution negligable
+        self.resolution += spline2.resolution    # extra segment will usually be short -- impact on resolution negligible
 
         self.isCyclic = False    # is this ok?
 

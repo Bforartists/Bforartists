@@ -37,7 +37,7 @@ from bpy.props import (
 # *update this file to just cover 2.79 to  3.xx and ui it from a Blender internal to pov menu
 # *as well as update from older pov > switch to QMC when pov 3.8 is out ?
 # *filter if possible  files built in pre 2.79 versions. tell user their file is too old and may
-# be salvaged from older vesion of this operator from within latest stable blender 2.79 version.
+# be salvaged from older version of this operator from within latest stable blender 2.79 version.
 # else if bpy.app.version[0] == 2 and bpy.app.version[1] <= 92 and and bpy.app.version[1] >= 79:
 # warn users to update blender to 3.xx for creating their newer files then try to salvage
 # using this script

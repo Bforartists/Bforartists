@@ -1037,7 +1037,7 @@ def join(uvedge_a, uvedge_b, size_limit=None, epsilon=1e-6):
     for uvedge in merged_uvedges:
         island_a.mesh.edges[uvedge.loop.edge].is_main_cut = False
 
-    # include all trasformed vertices as mine
+    # include all transformed vertices as mine
     island_a.vertices.update({loop: phantoms[uvvertex] for loop, uvvertex in island_b.vertices.items()})
 
     # re-link uvedges and uvfaces to their transformed locations

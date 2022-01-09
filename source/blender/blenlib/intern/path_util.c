@@ -245,12 +245,19 @@ void BLI_path_normalize_dir(const char *relabase, char *dir)
   BLI_path_slash_ensure(dir);
 }
 
-bool BLI_filename_make_safe(char *fname)
+bool BLI_filename_make_safe_ex(char *fname, bool allow_tokens)
 {
-  const char *invalid =
-      "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
-      "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
-      "/\\?*:|\"<>";
+#define INVALID_CHARS \
+  "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f" \
+  "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f" \
+  "/\\?*:|\""
+#define INVALID_TOKENS "<>"
+
+  const char *invalid = allow_tokens ? INVALID_CHARS : INVALID_CHARS INVALID_TOKENS;
+
+#undef INVALID_CHARS
+#undef INVALID_TOKENS
+
   char *fn;
   bool changed = false;
 
@@ -313,6 +320,11 @@ bool BLI_filename_make_safe(char *fname)
 #endif
 
   return changed;
+}
+
+bool BLI_filename_make_safe(char *fname)
+{
+  return BLI_filename_make_safe_ex(fname, false);
 }
 
 bool BLI_path_make_safe(char *path)
@@ -945,15 +957,15 @@ bool BLI_path_abs(char *path, const char *basepath)
 
 #endif
 
-  /* push slashes into unix mode - strings entering this part are
+  /* NOTE(@jesterKing): push slashes into unix mode - strings entering this part are
    * potentially messed up: having both back- and forward slashes.
    * Here we push into one conform direction, and at the end we
    * push them into the system specific dir. This ensures uniformity
-   * of paths and solving some problems (and prevent potential future
-   * ones) -jesterKing.
-   * For UNC paths the first characters containing the UNC prefix
+   * of paths and solving some problems (and prevent potential future ones).
+   *
+   * NOTE(@elubie): For UNC paths the first characters containing the UNC prefix
    * shouldn't be switched as we need to distinguish them from
-   * paths relative to the .blend file -elubie */
+   * paths relative to the `.blend` file. */
   BLI_str_replace_char(tmp + BLI_path_unc_prefix_len(tmp), '\\', '/');
 
   /* Paths starting with `//` will get the blend file as their base,

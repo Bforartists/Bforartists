@@ -25,7 +25,6 @@ set(INC
   ../../../intern/atomic
   ../../../intern/eigen
   ../../../intern/guardedalloc
-  ../../../intern/numaapi/include
   ../../../extern/wcwidth
   ../../../extern/json/include
 )
@@ -127,8 +126,8 @@ set(SRC
   intern/resource_scope.cc
   intern/scanfill.c
   intern/scanfill_utils.c
-  intern/session_uuid.c
   intern/serialize.cc
+  intern/session_uuid.c
   intern/smallhash.c
   intern/sort.c
   intern/sort_utils.c
@@ -284,10 +283,10 @@ set(SRC
   BLI_rect.h
   BLI_resource_scope.hh
   BLI_scanfill.h
+  BLI_serialize.hh
   BLI_session_uuid.h
   BLI_set.hh
   BLI_set_slots.hh
-  BLI_serialize.hh
   BLI_simd.h
   BLI_smallhash.h
   BLI_sort.h
@@ -334,7 +333,6 @@ set(SRC
 set(LIB
   bf_intern_eigen
   bf_intern_guardedalloc
-  bf_intern_numaapi
   extern_wcwidth
 
   ${ZLIB_LIBRARIES}
@@ -423,8 +421,8 @@ if(WITH_GTESTS)
     tests/BLI_disjoint_set_test.cc
     tests/BLI_edgehash_test.cc
     tests/BLI_expr_pylike_eval_test.cc
-    tests/BLI_function_ref_test.cc
     tests/BLI_fileops_test.cc
+    tests/BLI_function_ref_test.cc
     tests/BLI_ghash_test.cc
     tests/BLI_hash_mm2a_test.cc
     tests/BLI_heap_simple_test.cc
@@ -455,12 +453,12 @@ if(WITH_GTESTS)
     tests/BLI_path_util_test.cc
     tests/BLI_polyfill_2d_test.cc
     tests/BLI_ressource_strings.h
+    tests/BLI_serialize_test.cc
     tests/BLI_session_uuid_test.cc
     tests/BLI_set_test.cc
     tests/BLI_span_test.cc
     tests/BLI_stack_cxx_test.cc
     tests/BLI_stack_test.cc
-    tests/BLI_serialize_test.cc
     tests/BLI_string_ref_test.cc
     tests/BLI_string_search_test.cc
     tests/BLI_string_test.cc

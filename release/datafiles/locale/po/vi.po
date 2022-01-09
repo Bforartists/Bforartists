@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'7cf5f4cc6395')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -105533,10 +105533,6 @@ msgstr "Không lưu được ảnh: %s"
 
 msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Chưa được lưu, ảnh không có một màn \"%s\" và \"%s\""
-
-
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
-msgstr "Khi lưu một ảnh ô, đường dẫn '%s' phải chứa số tựa UDIM %d"
 
 
 msgid "Key %d"

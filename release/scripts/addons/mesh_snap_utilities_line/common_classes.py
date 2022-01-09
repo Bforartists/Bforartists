@@ -293,7 +293,7 @@ class Constrain:
         self.last_type = type
         return True
 
-    def toogle(self):
+    def toggle(self):
         self.rotMat = None # update
         if self.preferences.auto_constrain:
             self.orientation_id = (self.orientation_id + 1) % 2

@@ -1717,7 +1717,7 @@ class SceneCoat3D(PropertyGroup):
     )
     foundExchangeFolder: BoolProperty(
         name="found Exchange Folder",
-        description="found Excahnge folder",
+        description="found Exchange folder",
         default=False
     )
     delete_images: BoolProperty(

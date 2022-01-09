@@ -261,7 +261,7 @@ class AutoMirrorProps(PropertyGroup):
 
     cut : BoolProperty(
         default= True,
-        description="If enabeled, cut the mesh in two parts and mirror it. If not, just make a loopcut",
+        description="If enabled, cut the mesh in two parts and mirror it. If not, just make a loopcut",
         )
 
     clipping : BoolProperty(

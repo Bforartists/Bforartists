@@ -17,13 +17,16 @@
  * All rights reserved.
  */
 
-#include "../node_shader_util.h"
+#include "node_shader_util.hh"
 
 #include "BLI_noise.hh"
 
-NODE_STORAGE_FUNCS(NodeTexNoise)
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 namespace blender::nodes::node_shader_tex_noise_cc {
+
+NODE_STORAGE_FUNCS(NodeTexNoise)
 
 static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
 {
@@ -44,6 +47,11 @@ static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Float>(N_("Fac")).no_muted_links();
   b.add_output<decl::Color>(N_("Color")).no_muted_links();
 };
+
+static void node_shader_buts_tex_noise(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "noise_dimensions", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+}
 
 static void node_shader_init_tex_noise(bNodeTree *UNUSED(ntree), bNode *node)
 {
@@ -254,8 +262,9 @@ void register_node_type_sh_tex_noise()
 
   static bNodeType ntype;
 
-  sh_fn_node_type_base(&ntype, SH_NODE_TEX_NOISE, "Noise Texture", NODE_CLASS_TEXTURE, 0);
+  sh_fn_node_type_base(&ntype, SH_NODE_TEX_NOISE, "Noise Texture", NODE_CLASS_TEXTURE);
   ntype.declare = file_ns::sh_node_tex_noise_declare;
+  ntype.draw_buttons = file_ns::node_shader_buts_tex_noise;
   node_type_init(&ntype, file_ns::node_shader_init_tex_noise);
   node_type_storage(
       &ntype, "NodeTexNoise", node_free_standard_storage, node_copy_standard_storage);
