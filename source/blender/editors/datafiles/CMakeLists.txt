@@ -1320,7 +1320,7 @@ window
 swirl
 
 accumulate
-#~ DEF_ICON_BLANK(1339)
+edge_angle
 #~ DEF_ICON_BLANK(1340)
 #~ DEF_ICON_BLANK(1341)
 #~ DEF_ICON_BLANK(1342)
