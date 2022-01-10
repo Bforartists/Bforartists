@@ -35,8 +35,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Vector>(N_("Subsurface Radius"))
       .default_value({1.0f, 0.2f, 0.1f})
       .min(0.0f)
-      .max(100.0f)
-      .compact();
+      .max(100.0f);
+      //.compact();  /*bfa - we have it expanded*/
   b.add_input<decl::Color>(N_("Subsurface Color")).default_value({0.8f, 0.8f, 0.8f, 1.0f});
   b.add_input<decl::Float>(N_("Subsurface IOR"))
       .default_value(1.4f)
