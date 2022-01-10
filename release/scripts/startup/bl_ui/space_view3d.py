@@ -7563,7 +7563,7 @@ class VIEW3D_PT_overlay_bones(Panel):
             row.prop(overlay, "show_xray_bone")
 
             row = split.row(align=True)
-            if overlay.show_xray_bone:
+            if display_all and overlay.show_xray_bone:
                 row.prop(overlay, "xray_alpha_bone", text="")
             else:
                 row.label(icon='DISCLOSURE_TRI_RIGHT')
@@ -7574,7 +7574,12 @@ class VIEW3D_PT_overlay_bones(Panel):
             row.prop(overlay, "show_xray_bone")
 
         if VIEW3D_PT_overlay_bones.is_using_wireframe(context):
-            col.prop(overlay, "bone_wire_alpha")
+
+            row = col.row()
+            row.separator()
+            row.use_property_split = True
+            row.use_property_decorate = False
+            row.prop(overlay, "bone_wire_alpha")
 
 
 class VIEW3D_PT_overlay_texture_paint(Panel):
