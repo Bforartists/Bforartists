@@ -14082,7 +14082,7 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_MATERIAL;
       break;
     case GEO_NODE_INPUT_MESH_EDGE_ANGLE:
-      icon = ICON_DELETE;
+      icon = ICON_EDGE_ANGLE;
       break;
     case GEO_NODE_INPUT_MESH_EDGE_NEIGHBORS:
       icon = ICON_EDGE_NEIGHBORS;
