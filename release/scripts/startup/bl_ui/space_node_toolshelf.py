@@ -4283,6 +4283,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
+                     
+            props = col.operator("node.add_node", text=" Edge Angle              ", icon = "EDGE_ANGLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeAngle"
 
             props = col.operator("node.add_node", text=" Edge Neighbors       ", icon = "EDGE_NEIGHBORS")
             props.use_transform = True
@@ -4367,6 +4371,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
+            
+            props = flow.operator("node.add_node", text = "", icon = "EDGE_ANGLE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshEdgeAngle"
 
             props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
             props.use_transform = True
