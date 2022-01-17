@@ -1007,7 +1007,7 @@ class NODES_PT_Input_input_advanced_comp(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeBokehImage"
 
-            props = col.operator("node.add_node", text=" Time                 ", icon = "TIME")
+            props = col.operator("node.add_node", text=" Time Curve      ", icon = "TIME")
             props.use_transform = True
             props.type = "CompositorNodeTime"
 
