@@ -48,6 +48,9 @@ set(INC
   ../windowmanager
   ../../../intern/glew-mx
   ../../../intern/guardedalloc
+
+  # dna_type_offsets.h
+  ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
 )
 
 
@@ -178,3 +181,6 @@ if(WITH_OPENVDB)
 endif()
 
 blender_add_lib(bf_nodes "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+# Needed so we can use dna_type_offsets.h for defaults initialization.
+add_dependencies(bf_nodes bf_dna)
