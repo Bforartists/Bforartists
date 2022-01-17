@@ -55,7 +55,7 @@ static void fn_node_compare_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Float>(N_("Epsilon")).default_value(0.001).min(-10000.0f).max(10000.0f);
 
   b.add_output<decl::Bool>(N_("Result"));
-};
+}
 
 static void geo_node_compare_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
@@ -122,41 +122,42 @@ class SocketSearchOp {
 
 static void node_compare_gather_link_searches(GatherLinkSearchOpParams &params)
 {
-  const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
-  if (params.in_out() == SOCK_OUT) {
-    search_link_ops_for_declarations(params, declaration.outputs());
+  const eNodeSocketDatatype type = static_cast<eNodeSocketDatatype>(params.other_socket().type);
+  if (!ELEM(type, SOCK_BOOLEAN, SOCK_FLOAT, SOCK_RGBA, SOCK_VECTOR, SOCK_INT, SOCK_STRING)) {
     return;
   }
 
-  const eNodeSocketDatatype type = static_cast<eNodeSocketDatatype>(params.other_socket().type);
+  const eNodeSocketDatatype mode_type = (type == SOCK_BOOLEAN) ? SOCK_INT : type;
+  const bool string_type = (type == SOCK_STRING);
 
-  if (ELEM(type, SOCK_BOOLEAN, SOCK_FLOAT, SOCK_RGBA, SOCK_VECTOR, SOCK_INT, SOCK_STRING)) {
-    const eNodeSocketDatatype mode_type = (type == SOCK_BOOLEAN) ? SOCK_FLOAT : type;
-    const bool string_type = (type == SOCK_STRING);
-    /* Add socket A compare operations. */
-    for (const EnumPropertyItem *item = rna_enum_node_compare_operation_items;
-         item->identifier != nullptr;
-         item++) {
-      if (item->name != nullptr && item->identifier[0] != '\0') {
-        if (!string_type &&
-            ELEM(item->value, NODE_COMPARE_COLOR_BRIGHTER, NODE_COMPARE_COLOR_DARKER)) {
-          params.add_item(IFACE_(item->name),
-                          SocketSearchOp{"A", SOCK_RGBA, (NodeCompareOperation)item->value});
-        }
-        else if ((!string_type) ||
-                 (string_type && ELEM(item->value, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL))) {
-          params.add_item(IFACE_(item->name),
-                          SocketSearchOp{"A", mode_type, (NodeCompareOperation)item->value});
-        }
+  const std::string socket_name = params.in_out() == SOCK_IN ? "A" : "Result";
+
+  for (const EnumPropertyItem *item = rna_enum_node_compare_operation_items;
+       item->identifier != nullptr;
+       item++) {
+    if (item->name != nullptr && item->identifier[0] != '\0') {
+      if (!string_type &&
+          ELEM(item->value, NODE_COMPARE_COLOR_BRIGHTER, NODE_COMPARE_COLOR_DARKER)) {
+        params.add_item(IFACE_(item->name),
+                        SocketSearchOp{socket_name,
+                                       SOCK_RGBA,
+                                       static_cast<NodeCompareOperation>(item->value)});
+      }
+      else if ((!string_type) ||
+               (string_type && ELEM(item->value, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL))) {
+        params.add_item(IFACE_(item->name),
+                        SocketSearchOp{socket_name,
+                                       mode_type,
+                                       static_cast<NodeCompareOperation>(item->value)});
       }
     }
-    /* Add Angle socket. */
-    if (!string_type) {
-      params.add_item(
-          IFACE_("Angle"),
-          SocketSearchOp{
-              "Angle", SOCK_VECTOR, NODE_COMPARE_GREATER_THAN, NODE_COMPARE_MODE_DIRECTION});
-    }
+  }
+  /* Add Angle socket. */
+  if (!string_type && params.in_out() == SOCK_IN) {
+    params.add_item(
+        IFACE_("Angle"),
+        SocketSearchOp{
+            "Angle", SOCK_VECTOR, NODE_COMPARE_GREATER_THAN, NODE_COMPARE_MODE_DIRECTION});
   }
 }
 
@@ -265,7 +266,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Less Than - Dot Product",
-                  [](float3 a, float3 b, float comp) { return float3::dot(a, b) < comp; }};
+                  [](float3 a, float3 b, float comp) { return math::dot(a, b) < comp; }};
               return &fn;
             }
             case NODE_COMPARE_MODE_DIRECTION: {
@@ -283,7 +284,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SO<float3, float3, bool> fn{
                   "Less Than - Length",
-                  [](float3 a, float3 b) { return a.length() < b.length(); }};
+                  [](float3 a, float3 b) { return math::length(a) < math::length(b); }};
               return &fn;
             }
           }
@@ -299,7 +300,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Less Equal - Dot Product",
-                  [](float3 a, float3 b, float comp) { return float3::dot(a, b) <= comp; }};
+                  [](float3 a, float3 b, float comp) { return math::dot(a, b) <= comp; }};
               return &fn;
             }
             case NODE_COMPARE_MODE_DIRECTION: {
@@ -317,7 +318,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SO<float3, float3, bool> fn{
                   "Less Equal - Length",
-                  [](float3 a, float3 b) { return a.length() <= b.length(); }};
+                  [](float3 a, float3 b) { return math::length(a) <= math::length(b); }};
               return &fn;
             }
           }
@@ -333,7 +334,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Greater Than - Dot Product",
-                  [](float3 a, float3 b, float comp) { return float3::dot(a, b) > comp; }};
+                  [](float3 a, float3 b, float comp) { return math::dot(a, b) > comp; }};
               return &fn;
             }
             case NODE_COMPARE_MODE_DIRECTION: {
@@ -351,7 +352,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SO<float3, float3, bool> fn{
                   "Greater Than - Length",
-                  [](float3 a, float3 b) { return a.length() > b.length(); }};
+                  [](float3 a, float3 b) { return math::length(a) > math::length(b); }};
               return &fn;
             }
           }
@@ -367,7 +368,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Greater Equal - Dot Product",
-                  [](float3 a, float3 b, float comp) { return float3::dot(a, b) >= comp; }};
+                  [](float3 a, float3 b, float comp) { return math::dot(a, b) >= comp; }};
               return &fn;
             }
             case NODE_COMPARE_MODE_DIRECTION: {
@@ -385,7 +386,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SO<float3, float3, bool> fn{
                   "Greater Equal - Length",
-                  [](float3 a, float3 b) { return a.length() >= b.length(); }};
+                  [](float3 a, float3 b) { return math::length(a) >= math::length(b); }};
               return &fn;
             }
           }
@@ -402,7 +403,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SI_SO<float3, float3, float, float, bool> fn{
                   "Equal - Dot Product", [](float3 a, float3 b, float comp, float epsilon) {
-                    return abs(float3::dot(a, b) - comp) <= epsilon;
+                    return abs(math::dot(a, b) - comp) <= epsilon;
                   }};
               return &fn;
             }
@@ -424,7 +425,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Equal - Length", [](float3 a, float3 b, float epsilon) {
-                    return abs(a.length() - b.length()) <= epsilon;
+                    return abs(math::length(a) - math::length(b)) <= epsilon;
                   }};
               return &fn;
             }
@@ -442,7 +443,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_DOT_PRODUCT: {
               static fn::CustomMF_SI_SI_SI_SI_SO<float3, float3, float, float, bool> fn{
                   "Not Equal - Dot Product", [](float3 a, float3 b, float comp, float epsilon) {
-                    return abs(float3::dot(a, b) - comp) >= epsilon;
+                    return abs(math::dot(a, b) - comp) >= epsilon;
                   }};
               return &fn;
             }
@@ -464,7 +465,7 @@ static const fn::MultiFunction *get_multi_function(bNode &node)
             case NODE_COMPARE_MODE_LENGTH: {
               static fn::CustomMF_SI_SI_SI_SO<float3, float3, float, bool> fn{
                   "Not Equal - Length", [](float3 a, float3 b, float epsilon) {
-                    return abs(a.length() - b.length()) > epsilon;
+                    return abs(math::length(a) - math::length(b)) > epsilon;
                   }};
               return &fn;
             }

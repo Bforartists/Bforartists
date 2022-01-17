@@ -1148,6 +1148,7 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
     UI_fontstyle_draw(fontstyle,
                       &title_rect,
                       panel->drawname,
+                      sizeof(panel->drawname),
                       title_color,
                       &(struct uiFontStyleDraw_Params){
                           .align = UI_STYLE_TEXT_LEFT,

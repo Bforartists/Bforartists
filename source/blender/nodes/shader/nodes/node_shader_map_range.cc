@@ -53,7 +53,7 @@ static void sh_node_map_range_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Vector>(N_("Steps"), "Steps_FLOAT3").default_value(float3(4.0f));
   b.add_output<decl::Float>(N_("Result"));
   b.add_output<decl::Vector>(N_("Vector"));
-};
+}
 
 static void node_shader_buts_map_range(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
@@ -272,7 +272,7 @@ class MapRangeVectorFunction : public blender::fn::MultiFunction {
     blender::MutableSpan<float3> results = params.uninitialized_single_output<float3>(5, "Vector");
 
     for (int64_t i : mask) {
-      float3 factor = float3::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
+      float3 factor = math::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
       results[i] = factor * (to_max[i] - to_min[i]) + to_min[i];
     }
 
@@ -315,8 +315,8 @@ class MapRangeSteppedVectorFunction : public blender::fn::MultiFunction {
     blender::MutableSpan<float3> results = params.uninitialized_single_output<float3>(6, "Vector");
 
     for (int64_t i : mask) {
-      float3 factor = float3::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
-      factor = float3::safe_divide(float3::floor(factor * (steps[i] + 1.0f)), steps[i]);
+      float3 factor = math::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
+      factor = math::safe_divide(math::floor(factor * (steps[i] + 1.0f)), steps[i]);
       results[i] = factor * (to_max[i] - to_min[i]) + to_min[i];
     }
 
@@ -355,7 +355,7 @@ class MapRangeSmoothstepVectorFunction : public blender::fn::MultiFunction {
     blender::MutableSpan<float3> results = params.uninitialized_single_output<float3>(5, "Vector");
 
     for (int64_t i : mask) {
-      float3 factor = float3::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
+      float3 factor = math::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
       clamp_v3(factor, 0.0f, 1.0f);
       factor = (float3(3.0f) - 2.0f * factor) * (factor * factor);
       results[i] = factor * (to_max[i] - to_min[i]) + to_min[i];
@@ -390,7 +390,7 @@ class MapRangeSmootherstepVectorFunction : public blender::fn::MultiFunction {
     blender::MutableSpan<float3> results = params.uninitialized_single_output<float3>(5, "Vector");
 
     for (int64_t i : mask) {
-      float3 factor = float3::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
+      float3 factor = math::safe_divide(values[i] - from_min[i], from_max[i] - from_min[i]);
       clamp_v3(factor, 0.0f, 1.0f);
       factor = factor * factor * factor * (factor * (factor * 6.0f - 15.0f) + 10.0f);
       results[i] = factor * (to_max[i] - to_min[i]) + to_min[i];
