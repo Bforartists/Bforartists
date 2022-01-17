@@ -30,7 +30,7 @@ static void sh_node_tex_gradient_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Vector>(N_("Vector")).hide_value().implicit_field();
   b.add_output<decl::Color>(N_("Color")).no_muted_links();
   b.add_output<decl::Float>(N_("Fac")).no_muted_links();
-};
+}
 
 static void node_shader_buts_tex_gradient(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
@@ -130,7 +130,7 @@ class GradientFunction : public fn::MultiFunction {
           /* Bias a little bit for the case where input is a unit length vector,
            * to get exactly zero instead of a small random value depending
            * on float precision. */
-          const float r = std::max(0.999999f - vector[i].length(), 0.0f);
+          const float r = std::max(0.999999f - math::length(vector[i]), 0.0f);
           fac[i] = r * r;
         }
         break;
@@ -140,7 +140,7 @@ class GradientFunction : public fn::MultiFunction {
           /* Bias a little bit for the case where input is a unit length vector,
            * to get exactly zero instead of a small random value depending
            * on float precision. */
-          fac[i] = std::max(0.999999f - vector[i].length(), 0.0f);
+          fac[i] = std::max(0.999999f - math::length(vector[i]), 0.0f);
         }
         break;
       }
