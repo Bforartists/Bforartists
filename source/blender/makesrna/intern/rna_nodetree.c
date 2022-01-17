@@ -13652,7 +13652,7 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_MAP_RANGE;
       break;
     case CMP_NODE_TIME:
-      icon = ICON_TIME;
+      icon = ICON_NODE_CURVE_TIME;
       break;
     case CMP_NODE_VECBLUR:
       icon = ICON_NODE_VECTOR_BLUR;
@@ -13887,10 +13887,10 @@ static int node_type_to_icon(int type)
       icon = ICON_POSTERIZE;
       break;
     case CMP_NODE_CONVERT_COLOR_SPACE:
-      icon = ICON_DELETE;
+      icon = ICON_COLOR_SPACE;
       break;
     case CMP_NODE_SCENE_TIME:
-      icon = ICON_DELETE;
+      icon = ICON_TIME;
       break;
 
       /* bfa - TextureNode, we don't have these nodes iconized yet */
