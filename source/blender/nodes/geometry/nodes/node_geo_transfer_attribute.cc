@@ -44,7 +44,7 @@ NODE_STORAGE_FUNCS(NodeGeometryTransferAttribute)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>(N_("Target"))
+  b.add_input<decl::Geometry>(N_("Source"))
       .supported_type({GEO_COMPONENT_TYPE_MESH,
                        GEO_COMPONENT_TYPE_POINT_CLOUD,
                        GEO_COMPONENT_TYPE_CURVE,
@@ -296,7 +296,7 @@ static void get_closest_mesh_corners(const Mesh &mesh,
       const MLoop &loop = mesh.mloop[loop_index];
       const int vertex_index = loop.v;
       const MVert &mvert = mesh.mvert[vertex_index];
-      const float distance_sq = float3::distance_squared(position, mvert.co);
+      const float distance_sq = math::distance_squared(position, float3(mvert.co));
       if (distance_sq < min_distance_sq) {
         min_distance_sq = distance_sq;
         closest_loop_index = loop_index;
@@ -749,7 +749,7 @@ static void output_attribute_field(GeoNodeExecParams &params, GField field)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry = params.extract_input<GeometrySet>("Target");
+  GeometrySet geometry = params.extract_input<GeometrySet>("Source");
   const NodeGeometryTransferAttribute &storage = node_storage(params.node());
   const GeometryNodeAttributeTransferMode mapping = (GeometryNodeAttributeTransferMode)
                                                         storage.mode;

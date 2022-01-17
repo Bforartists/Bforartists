@@ -777,16 +777,10 @@ void nodeSetSelected(struct bNode *node, bool select);
  */
 void nodeSetActive(struct bNodeTree *ntree, struct bNode *node);
 struct bNode *nodeGetActive(struct bNodeTree *ntree);
-/**
- * Two active flags, ID nodes have special flag for buttons display.
- */
-struct bNode *nodeGetActiveID(struct bNodeTree *ntree, short idtype);
-bool nodeSetActiveID(struct bNodeTree *ntree, short idtype, struct ID *id);
 void nodeClearActive(struct bNodeTree *ntree);
 /**
  * Two active flags, ID nodes have special flag for buttons display.
  */
-void nodeClearActiveID(struct bNodeTree *ntree, short idtype);
 struct bNode *nodeGetActiveTexture(struct bNodeTree *ntree);
 
 int nodeSocketIsHidden(const struct bNodeSocket *sock);
@@ -1318,6 +1312,8 @@ void ntreeGPUMaterialNodes(struct bNodeTree *localtree,
 #define CMP_NODE_EXPOSURE 325
 #define CMP_NODE_CRYPTOMATTE 326
 #define CMP_NODE_POSTERIZE 327
+#define CMP_NODE_CONVERT_COLOR_SPACE 328
+#define CMP_NODE_SCENE_TIME 329
 
 /* channel toggles */
 #define CMP_CHAN_RGB 1
@@ -1378,18 +1374,12 @@ void ntreeCompositTagRender(struct Scene *scene);
  * - Each render layer node calls the update function of the
  *   render engine that's used for its scene.
  * - The render engine calls RE_engine_register_pass for each pass.
- * - #RE_engine_register_pass calls #ntreeCompositRegisterPass,
- *   which calls #node_cmp_rlayers_register_pass for every render layer node.
+ * - #RE_engine_register_pass calls #node_cmp_rlayers_register_pass.
  *
  * TODO: This is *not* part of `blenkernel`, it's defined under "source/blender/nodes/".
  * This declaration should be moved out of BKE.
  */
 void ntreeCompositUpdateRLayers(struct bNodeTree *ntree);
-void ntreeCompositRegisterPass(struct bNodeTree *ntree,
-                               struct Scene *scene,
-                               struct ViewLayer *view_layer,
-                               const char *name,
-                               eNodeSocketDatatype type);
 void ntreeCompositClearTags(struct bNodeTree *ntree);
 
 struct bNodeSocket *ntreeCompositOutputFileAddSocket(struct bNodeTree *ntree,
