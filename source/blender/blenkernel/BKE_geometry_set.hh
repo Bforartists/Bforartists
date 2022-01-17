@@ -23,11 +23,11 @@
 #include <atomic>
 #include <iostream>
 
-#include "BLI_float3.hh"
 #include "BLI_float4x4.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_hash.hh"
 #include "BLI_map.hh"
+#include "BLI_math_vec_types.hh"
 #include "BLI_set.hh"
 #include "BLI_user_counter.hh"
 #include "BLI_vector_set.hh"
@@ -1070,6 +1070,30 @@ class IDAttributeFieldInput : public GeometryFieldInput {
 
   GVArray get_varray_for_context(const GeometryComponent &component,
                                  AttributeDomain domain,
+                                 IndexMask mask) const override;
+
+  std::string socket_inspection_name() const override;
+
+  uint64_t hash() const override;
+  bool is_equal_to(const fn::FieldNode &other) const override;
+};
+
+VArray<float3> curve_normals_varray(const CurveComponent &component, const AttributeDomain domain);
+
+VArray<float3> mesh_normals_varray(const MeshComponent &mesh_component,
+                                   const Mesh &mesh,
+                                   const IndexMask mask,
+                                   const AttributeDomain domain);
+
+class NormalFieldInput : public GeometryFieldInput {
+ public:
+  NormalFieldInput() : GeometryFieldInput(CPPType::get<float3>())
+  {
+    category_ = Category::Generated;
+  }
+
+  GVArray get_varray_for_context(const GeometryComponent &component,
+                                 const AttributeDomain domain,
                                  IndexMask mask) const override;
 
   std::string socket_inspection_name() const override;

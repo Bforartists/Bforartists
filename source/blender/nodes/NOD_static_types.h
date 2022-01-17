@@ -148,7 +148,7 @@ DefNode(CompositorNode, CMP_NODE_BLUR,           def_cmp_blur,           "BLUR",
 DefNode(CompositorNode, CMP_NODE_FILTER,         def_cmp_filter,         "FILTER",         Filter,           "Filter",            "Add a Filter Compositor node\nProvides various common image enhancement filters"              )
 DefNode(CompositorNode, CMP_NODE_MAP_VALUE,      def_cmp_map_value,      "MAP_VALUE",      MapValue,         "Map Value",         "Add a Map Value Compositor node\nScale, offset and clamp values"              )
 DefNode(CompositorNode, CMP_NODE_MAP_RANGE,      def_cmp_map_range,      "MAP_RANGE",      MapRange,         "Map Range",         "Add a Map Range Compositor node\nRemaps a value from a source range to a target range"              )
-DefNode(CompositorNode, CMP_NODE_TIME,           def_time,               "TIME",           Time,             "Time",              "Add a Time Compositor node\ngenerates a factor value that changes according to the curve as time progresses through the Timeline."              )
+DefNode(CompositorNode, CMP_NODE_TIME,           def_time,               "TIME",           Time,             "Time Curve",          "Add a Time Compositor node\ngenerates a factor value that changes according to the curve as time progresses through the Timeline."              )
 DefNode(CompositorNode, CMP_NODE_VECBLUR,        def_cmp_vector_blur,    "VECBLUR",        VecBlur,          "Vector Blur",       "Add a Vector Blur Compositor node\nUses the vector speed render pass to blur the image pixels in 2D"              )
 DefNode(CompositorNode, CMP_NODE_SEPRGBA,        0,                      "SEPRGBA",        SepRGBA,          "Separate RGBA",     "Add a Separate RGBA Compositor node\nSeparates the RGBA values from a single image"              )
 DefNode(CompositorNode, CMP_NODE_SEPHSVA,        0,                      "SEPHSVA",        SepHSVA,          "Separate HSVA",     "Add a Separate HSVA Compositor node\nSeparates the single RGB channels from a single image"              )
@@ -227,6 +227,8 @@ DefNode(CompositorNode, CMP_NODE_DENOISE,        def_cmp_denoise,        "DENOIS
 DefNode(CompositorNode, CMP_NODE_EXPOSURE,       0,                      "EXPOSURE",       Exposure,         "Exposure",          "Add a Exposure Compositor node\nMake areas of an image brighter or dimmer"              )
 DefNode(CompositorNode, CMP_NODE_ANTIALIASING,   def_cmp_antialiasing,   "ANTIALIASING",   AntiAliasing,     "Anti-Aliasing",     "Add a Anti-Aliasing Compositor node\nAnti-alias an image"              )
 DefNode(CompositorNode, CMP_NODE_POSTERIZE,      0,                      "POSTERIZE",      Posterize,        "Posterize",         "Add a Posterize Node\nPosterize reduces the number of colors"              )
+DefNode(CompositorNode, CMP_NODE_CONVERT_COLOR_SPACE,def_cmp_convert_color_space, "CONVERT_COLORSPACE", ConvertColorSpace, "Color Space","Add a Color Space Node\nNot documented yet"       )
+DefNode(CompositorNode, CMP_NODE_SCENE_TIME,     0,                      "SCENE_TIME",      SceneTime,        "Scene Time",        "Add a Scene Time Node\nNot documented yet"              )
 
 DefNode(TextureNode,    TEX_NODE_OUTPUT,         def_tex_output,         "OUTPUT",         Output,           "Output",            "Add a Output Texture node\nOutput for node textures"              )
 DefNode(TextureNode,    TEX_NODE_CHECKER,        0,                      "CHECKER",        Checker,          "Checker",           "Add a Checker Texture node\nAdds a procedural checkerboard texture"              )
