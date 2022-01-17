@@ -46,7 +46,7 @@ static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Float>(N_("Distortion")).min(-1000.0f).max(1000.0f).default_value(0.0f);
   b.add_output<decl::Float>(N_("Fac")).no_muted_links();
   b.add_output<decl::Color>(N_("Color")).no_muted_links();
-};
+}
 
 static void node_shader_buts_tex_noise(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
@@ -176,14 +176,14 @@ class NoiseFunction : public fn::MultiFunction {
         const VArray<float3> &vector = params.readonly_single_input<float3>(0, "Vector");
         if (compute_factor) {
           for (int64_t i : mask) {
-            const float2 position = vector[i] * scale[i];
+            const float2 position = float2(vector[i] * scale[i]);
             r_factor[i] = noise::perlin_fractal_distorted(
                 position, detail[i], roughness[i], distortion[i]);
           }
         }
         if (compute_color) {
           for (int64_t i : mask) {
-            const float2 position = vector[i] * scale[i];
+            const float2 position = float2(vector[i] * scale[i]);
             const float3 c = noise::perlin_float3_fractal_distorted(
                 position, detail[i], roughness[i], distortion[i]);
             r_color[i] = ColorGeometry4f(c[0], c[1], c[2], 1.0f);
