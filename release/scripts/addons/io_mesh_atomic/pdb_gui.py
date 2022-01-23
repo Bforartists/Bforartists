@@ -203,6 +203,10 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
 
 
     def execute(self, context):
+        # Switch to 'OBJECT' mode when in 'EDIT' mode.
+        if bpy.context.mode == 'EDIT_MESH':
+            bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+
         # This is in order to solve this strange 'relative path' thing.
         filepath_pdb = bpy.path.abspath(self.filepath)
 

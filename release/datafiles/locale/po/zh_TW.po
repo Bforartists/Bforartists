@@ -1,19 +1,17 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-08-30 01:32+0800\n"
+"PO-Revision-Date: 2022-01-09 14:18+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-Bookmarks: 11434,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+"Plural-Forms: nplurals=1; plural=0;"
 
 
 msgid "Shader AOV"
@@ -1385,11 +1383,11 @@ msgstr "攝影機資料塊"
 
 
 msgid "Collections"
-msgstr "選集"
+msgstr "集盒"
 
 
 msgid "Collection data-blocks"
-msgstr "選集資料塊"
+msgstr "集盒資料塊"
 
 
 msgid "Curves"
@@ -1701,7 +1699,7 @@ msgstr "攝影機的選集"
 
 
 msgid "Main Collections"
-msgstr "主要選集"
+msgstr "主要集盒"
 
 
 msgid "Collection of collections"
@@ -1730,6 +1728,14 @@ msgstr "主要蠟筆"
 
 msgid "Collection of grease pencils"
 msgstr "蠟筆的選集"
+
+
+msgid "Main Hairs"
+msgstr "主要毛髮"
+
+
+msgid "Collection of hairs"
+msgstr "毛髮選集"
 
 
 msgid "Main Images"
@@ -1874,6 +1880,14 @@ msgstr "主要螢幕"
 
 msgid "Collection of screens"
 msgstr "螢幕的選集"
+
+
+msgid "Main Simulations"
+msgstr "主要模擬"
+
+
+msgid "Collection of simulations"
+msgstr "模擬選集"
 
 
 msgid "Main Sounds"
@@ -3644,6 +3658,10 @@ msgid "The inputs are invalid, or the algorithm has been improperly called"
 msgstr "輸入內容無效，或演算法不正常呼叫"
 
 
+msgid "Collection Objects"
+msgstr "物件集盒"
+
+
 msgid "Collision Settings"
 msgstr "碰撞設定"
 
@@ -3768,6 +3786,22 @@ msgid "Input Color Space"
 msgstr "輸入色彩空間"
 
 
+msgid "Rec. 709 (Full Range), Blender native linear space"
+msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
+
+
+msgid "ACES linear space"
+msgstr "ACES 線性空間"
+
+
+msgid "Color space used for images which contains non-color data (i,e, normal maps)"
+msgstr "影像使用的色彩空間，包含非色彩資料 (例如：法向映射)"
+
+
+msgid "Standard RGB Display Space"
+msgstr "標準 RGB 顯示空間"
+
+
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
 msgstr "不要在載入時執行任何色彩變換，將色彩視為已是場景中的線性空間"
 
@@ -3809,7 +3843,7 @@ msgstr "在顯示轉換之前要套用的伽瑪修改量"
 
 
 msgid "Look"
-msgstr "查看"
+msgstr "風格"
 
 
 msgid "Do not modify image in an artistic manner"
@@ -5997,6 +6031,10 @@ msgid "Segments"
 msgstr "分段"
 
 
+msgid "Sample Straight Edges"
+msgstr "直線邊緣樣本"
+
+
 msgid "Active Spline"
 msgstr "作用中樣條"
 
@@ -6950,6 +6988,10 @@ msgstr "繪製表面"
 
 msgid "A canvas surface layer"
 msgstr "畫布表面分層"
+
+
+msgid "Brush Collection"
+msgstr "筆刷集盒"
 
 
 msgid "Influence Scale"
@@ -12754,7 +12796,7 @@ msgstr "Alpha 模式"
 
 
 msgid "Straight"
-msgstr "坦直"
+msgstr "直出"
 
 
 msgid "Premultiplied"
@@ -17112,6 +17154,10 @@ msgid "Images are saved with RGB (color) data"
 msgstr "儲存影像附帶 RGB (色彩) 資料"
 
 
+msgid "RGBA"
+msgstr "RGBA"
+
+
 msgid "Images are saved with RGB and Alpha data (if supported)"
 msgstr "儲存影像附帶 RGB 與 Alpha 資料 (如果支援的話)"
 
@@ -17524,6 +17570,10 @@ msgid "Left Handle Type"
 msgstr "左控制桿類型"
 
 
+msgid "Automatic handles that create straight lines"
+msgstr "自動建立直線手柄"
+
+
 msgid "Auto Clamped"
 msgstr "自動緊固"
 
@@ -17549,7 +17599,7 @@ msgstr "無插補，A 的值會留住直到遭遇 B"
 
 
 msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "A 與 B 之間直線插補 (例：無緩入/緩出)"
+msgstr "在 A 與 B 之間直線插補 (例：無緩入/緩出)"
 
 
 msgid "Smooth interpolation between A and B, with some control over curve shape"
@@ -17782,6 +17832,10 @@ msgstr "作用中物體"
 
 msgid "Selected Objects"
 msgstr "所選的物體"
+
+
+msgid "ID name"
+msgstr "ID 名稱"
 
 
 msgid "Line Style Modifier"
@@ -18908,6 +18962,10 @@ msgstr "雕塑"
 
 msgid "Face Sets Edit"
 msgstr "面集編輯"
+
+
+msgid "Sculpt Set Pivot"
+msgstr "設定樞紐點"
 
 
 msgid "Clone Layer"
@@ -21230,10 +21288,6 @@ msgid "Shortest Diagonal"
 msgstr "最短對角"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "根據頂點之間的距離分割四角形"
-
-
 msgid "UV Project Modifier"
 msgstr "UV 投射修改器"
 
@@ -21815,6 +21869,10 @@ msgstr "快取的幀數"
 
 msgid "Line Thickness"
 msgstr "線條厚度"
+
+
+msgid "Use straight lines between keyframe points"
+msgstr "在關鍵幀點之間使用直線型"
 
 
 msgid "Motion Path Points"
@@ -23053,6 +23111,10 @@ msgid "Alpha Over"
 msgstr "Alpha 上疊"
 
 
+msgid "Convert Premultiplied"
+msgstr "轉為預乘"
+
+
 msgid "Bilateral Blur"
 msgstr "雙側模糊"
 
@@ -23199,6 +23261,10 @@ msgstr "方塊中間的 Y 位置"
 
 msgid "Bright/Contrast"
 msgstr "亮度/對比"
+
+
+msgid "Keep output image premultiplied alpha"
+msgstr "保持輸出圖片的 alpha 為預乘模式"
 
 
 msgid "Channel Key"
@@ -23582,7 +23648,11 @@ msgstr "合成"
 
 
 msgid "Colors are treated alpha premultiplied, or colors output straight (alpha gets set to 1)"
-msgstr "色彩以 alpha 預乘對待，或是色彩純直輸出 (alpha 設為 1)"
+msgstr "色彩會以 alpha 預乘模式，或是以直出模式來備處裡 (alpha 設為 1)"
+
+
+msgid "To"
+msgstr "給"
 
 
 msgid "X2"
@@ -23989,6 +24059,10 @@ msgid "Straight Alpha Output"
 msgstr "純直 Alpha 輸出"
 
 
+msgid "Put node output buffer to straight alpha instead of premultiplied"
+msgstr "將節點輸出緩衝放到 alpha 直出模式而不是 alpha 預乘模式"
+
+
 msgid "Inpaint"
 msgstr "內繪"
 
@@ -24295,7 +24369,23 @@ msgstr "Alpha 轉換"
 
 
 msgid "Conversion between premultiplied alpha and key alpha"
-msgstr "在預乘的 alpha 與鍵 alpha 之間轉換"
+msgstr "在預乘模式 alpha 與 key alpha 之間轉換"
+
+
+msgid "To Premultiplied"
+msgstr "轉為預乘"
+
+
+msgid "Convert straight to premultiplied"
+msgstr "由直出 (R, G, B, A) 轉為，預乘 (R × A, G × A, B × A, A)"
+
+
+msgid "To Straight"
+msgstr "直出"
+
+
+msgid "Convert premultiplied to straight"
+msgstr "由預乘 (R × A, G × A, B × A, A) 轉為，直出 (R, G, B, A)"
 
 
 msgid "RGB to BW"
@@ -24620,6 +24710,10 @@ msgstr "線條插補"
 
 msgid "No interpolation (sample closest texel)"
 msgstr "無插補 (樣本最接近紋理)"
+
+
+msgid "Edge Angle"
+msgstr "線角"
 
 
 msgid "Min Max"
@@ -25723,7 +25817,7 @@ msgstr "線性外推"
 
 
 msgid "Straight-line slope of end segments are extended past the endpoint keyframes"
-msgstr "末端片段的斜率會以直線延伸出端點鍵幀"
+msgstr "末端區段斜率會以直線延伸出最末端鍵幀"
 
 
 msgid "Make Cyclic (F-Modifier)"
@@ -29312,20 +29406,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "為匯出的網格套用修改器"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "為平滑與硬著色的面匯出法線 (硬著色的面會被匯出為獨立面)"
-
-
 msgid "Selection Only"
 msgstr "僅所選項"
 
 
 msgid "Export selected objects only"
 msgstr "僅匯出選取的物體"
-
-
-msgid "Export the active UV layer"
-msgstr "匯出作用中 UV 分層"
 
 
 msgctxt "Operator"
@@ -29387,11 +29473,11 @@ msgstr "每個場景為一個檔案"
 
 
 msgid "Scene Collections"
-msgstr "場景選集"
+msgstr "場景集盒"
 
 
 msgid "Active Scene Collections"
-msgstr "作用中場景選集"
+msgstr "作用中場景集盒"
 
 
 msgid "Scale all data (Some importers do not support scaled armatures!)"
@@ -30270,7 +30356,7 @@ msgstr "繪製直線"
 
 
 msgid "Draw straight line segment(s)"
-msgstr "繪製直線段"
+msgstr "繪製直線線段"
 
 
 msgid "Draw Poly Line"
@@ -30452,6 +30538,14 @@ msgid "Grease Pencil Draw"
 msgstr "蠟筆繪製"
 
 
+msgid "No Straight lines"
+msgstr "沒有直線"
+
+
+msgid "Disable key for straight lines"
+msgstr "禁用直線 key"
+
+
 msgid "Erase Grease Pencil strokes"
 msgstr "擦除蠟筆筆觸"
 
@@ -30532,14 +30626,6 @@ msgstr "吸附選取項至格線"
 
 msgid "Dissolve Points"
 msgstr "消散點"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgctxt "Operator"
@@ -33325,12 +33411,16 @@ msgid "Quad Corner Type"
 msgstr "四角形角落類型"
 
 
+msgid "How to subdivide quad corners (anything other than Straight Cut will prevent n-gons)"
+msgstr "如何細分四角形角落 (「直接切割」以外的任何東西都會預防 ngons 產生)"
+
+
 msgid "Inner Vert"
 msgstr "內部頂點"
 
 
 msgid "Straight Cut"
-msgstr "直接切割"
+msgstr "直切割"
 
 
 msgid "Fan"
@@ -38975,6 +39065,10 @@ msgid "Generates a new set of random colors to render the Face Sets in the viewp
 msgstr "在視接口中使用一組新的隨機色彩重設所有面集"
 
 
+msgid "Set the pivot position to the mask border after creating the mask"
+msgstr "在雕刻模式下設定樞紐點至建立的雕刻遮罩邊緣的中心"
+
+
 msgid "Smooth Mask"
 msgstr "平滑化遮罩"
 
@@ -39053,6 +39147,31 @@ msgstr "設定永久基底"
 
 msgid "Reset the copy of the mesh that is being sculpted on"
 msgstr "重設網格正被雕塑的副本"
+
+
+msgctxt "Operator"
+msgid "Set Pivot Position"
+msgstr "設定樞紐點位置"
+
+
+msgid "Sets the pivot to the origin of the sculpt"
+msgstr "在雕刻模式下設定樞紐點至該物體的原點軸心"
+
+
+msgid "Sets the pivot position to the average position of the unmasked vertices"
+msgstr "在雕刻模式下設定樞紐點至沒有建立雕刻遮罩的部分之平均值中心"
+
+
+msgid "Sets the pivot position to the center of the border of the mask"
+msgstr "設定樞紐點至遮罩邊緣的中心"
+
+
+msgid "Sets the pivot position to the active vertex position"
+msgstr "在雕刻模式下設定樞紐點至該物體作用中的頂點"
+
+
+msgid "Sets the pivot position to the surface under the cursor"
+msgstr "在雕刻模式下設定樞紐點至3D游標下方模型的表面"
 
 
 msgid "Symmetrize the topology modifications"
@@ -49022,6 +49141,14 @@ msgid "Outline"
 msgstr "外框"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -52538,10 +52665,6 @@ msgid "Display UV unwrapping seams"
 msgstr "顯示 UV 拆解縫線"
 
 
-msgid "Edge Angle"
-msgstr "線角"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "顯示所選的邊線角度，當於變換面板中設定時使用全域值"
 
@@ -52819,7 +52942,7 @@ msgstr "布料："
 
 msgctxt "Operator"
 msgid "Collection:"
-msgstr "集合："
+msgstr "集盒："
 
 
 msgctxt "Operator"
@@ -53714,10 +53837,6 @@ msgid "After"
 msgstr "在這之後"
 
 
-msgid "To"
-msgstr "給"
-
-
 msgid "Nothing to show yet..."
 msgstr "沒有可以顯示的..."
 
@@ -53768,7 +53887,7 @@ msgstr "Blender 2.6 尚不支援 Python 約束"
 
 
 msgid "Pivot Offset"
-msgstr "樞紐偏移"
+msgstr "樞紐點偏移"
 
 
 msgid "Layers:"
@@ -55382,6 +55501,15 @@ msgid "Hide Masked"
 msgstr "隱藏已遮罩"
 
 
+msgid "Set Pivot"
+msgstr "設定樞紐點"
+
+
+msgctxt "Operator"
+msgid "Transfer Sculpt Mode"
+msgstr "切換雕刻目標"
+
+
 msgctxt "Operator"
 msgid "Invert Mask"
 msgstr "反轉遮罩"
@@ -55474,6 +55602,31 @@ msgstr "顯示所有面集"
 msgctxt "Operator"
 msgid "Randomize Colors"
 msgstr "亂數重設面集色彩"
+
+
+msgctxt "Operator"
+msgid "Pivot to Origin"
+msgstr "樞紐點至物體軸心"
+
+
+msgctxt "Operator"
+msgid "Pivot to Unmasked"
+msgstr "樞紐點至無遮罩區域"
+
+
+msgctxt "Operator"
+msgid "Pivot to Mask Border"
+msgstr "樞紐點至遮罩邊緣中心"
+
+
+msgctxt "Operator"
+msgid "Pivot to Active Vertex"
+msgstr "樞紐點至作用中頂點"
+
+
+msgctxt "Operator"
+msgid "Pivot to Surface Under Cursor"
+msgstr "樞紐點至3D游標"
 
 
 msgctxt "Operator"
@@ -55880,6 +56033,11 @@ msgid "Scale Radius"
 msgstr "縮放半徑"
 
 
+msgctxt "Operator"
+msgid "Adjust Empty Display Size"
+msgstr "調整空體顯示大小"
+
+
 msgid "Layer:"
 msgstr "層："
 
@@ -55983,7 +56141,7 @@ msgstr "路徑「%s」無法變為相對路徑"
 
 
 msgid "Scene Collection"
-msgstr "場景選集"
+msgstr "場景集盒"
 
 
 msgid "Int"
@@ -57047,6 +57205,14 @@ msgid "Drag"
 msgstr "拖曳"
 
 
+msgid "Double click to rename"
+msgstr "連按兩下滑鼠按鍵重新命名"
+
+
+msgid "Hide filtering options"
+msgstr "隱藏過濾用選項"
+
+
 msgid "ID-Block:"
 msgstr "ID 塊："
 
@@ -57628,6 +57794,10 @@ msgstr "尚未實作"
 
 msgid "Object not found"
 msgstr "找不到物體"
+
+
+msgid "Object could not be duplicated"
+msgstr "無法製作物體複本"
 
 
 msgid "This data does not support joining in edit mode"
@@ -58669,6 +58839,94 @@ msgstr "內部錯誤 - AnimData 塊無效"
 
 msgid "No valid action to add"
 msgstr "無有效的動作可添加"
+
+
+msgid "Label Size"
+msgstr "標籤大小"
+
+
+msgid "Frame: %d"
+msgstr "框幀：%d"
+
+
+msgid "Squash"
+msgstr "塞擠"
+
+
+msgid "Undefined Socket Type"
+msgstr "未定義的接口類型"
+
+
+msgid "NodeTree"
+msgstr "節點樹"
+
+
+msgid "Could not add a mask node"
+msgstr "無法加入遮罩節點"
+
+
+msgid "Node tree type %s undefined"
+msgstr "節點樹類型 %s 尚未定義"
+
+
+msgid "Clipboard is empty"
+msgstr "剪貼簿為空白"
+
+
+msgid "Clipboard nodes are an incompatible type"
+msgstr "剪貼簿節點是不相容的類型"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "有些節點參照無法還原，將會留白"
+
+
+msgid "Text not used by any node, no update done"
+msgstr "文字無法被任何節點使用，無更新"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "無法將 %s 節點加入 %s 節點樹"
+
+
+msgid "Cannot ungroup"
+msgstr "無法取消群組"
+
+
+msgid "Not inside node group"
+msgstr "不在節點群組內"
+
+
+msgid "Cannot separate nodes"
+msgstr "無法分離節點"
+
+
+msgid "Can not add node '%s' in a group"
+msgstr "無法在群組中添加「%s」節點"
+
+
+msgid "LMB: drag node link, RMB: cancel"
+msgstr "左鼠鍵：拖曳節點連結，右鼠鍵：取消"
+
+
+msgid "Disconnect"
+msgstr "斷開連接"
+
+
+msgid "Dependency Loop"
+msgstr "依賴迴圈"
+
+
+msgid "Add node to input"
+msgstr "添加節點到輸入"
+
+
+msgid "Remove nodes connected to the input"
+msgstr "移除連接至該輸入的節點"
+
+
+msgid "Disconnect nodes connected to the input"
+msgstr "斷開連接至該輸入的節點"
 
 
 msgid "Can't edit library linked object(s)"
@@ -60048,16 +60306,168 @@ msgid "Crease Edges"
 msgstr "皺摺邊線"
 
 
+msgid "Compositor"
+msgstr "合成器"
+
+
 msgid "Fac"
 msgstr "係數"
+
+
+msgid "Determinator"
+msgstr "判定器"
+
+
+msgid "Bounding box"
+msgstr "邊界方塊"
+
+
+msgid "Color Space:"
+msgstr "色彩空間："
+
+
+msgid "Key Channel:"
+msgstr "鍵通道："
+
+
+msgid "Limiting Channel:"
+msgstr "限制通道："
+
+
+msgid "Key Color"
+msgstr "鍵色"
+
+
+msgid "Despill Channel:"
+msgstr "溢灑通道："
+
+
+msgid "Master"
+msgstr "主"
+
+
+msgid "Highlights"
+msgstr "高亮區塊"
+
+
+msgid "Midtones"
+msgstr "中間色調"
+
+
+msgid "Upper Left"
+msgstr "左上"
+
+
+msgid "Upper Right"
+msgstr "右上"
+
+
+msgid "Bokeh Type:"
+msgstr "散景類型："
+
+
+msgid "Image 1"
+msgstr "影像 1"
+
+
+msgid "Image 2"
+msgstr "影像 2"
+
+
+msgid "Center:"
+msgstr "中心："
+
+
+msgid "Inner Edge:"
+msgstr "內邊線："
+
+
+msgid "Buffer Edge:"
+msgstr "緩衝邊線："
+
+
+msgid "ID value"
+msgstr "ID 值"
+
+
+msgid "Dispersion"
+msgstr "離散"
+
+
+msgid "Std Dev"
+msgstr "標準差"
+
+
+msgid "From Min"
+msgstr "從最小"
+
+
+msgid "From Max"
+msgstr "從最大"
+
+
+msgid "To Min"
+msgstr "到最小"
+
+
+msgid "To Max"
+msgstr "到最大"
+
+
+msgid "Offset Y"
+msgstr "偏移 Y"
+
+
+msgid "Undistortion"
+msgstr "反扭曲"
 
 
 msgid "Dot"
 msgstr "點"
 
 
+msgid "Base Path:"
+msgstr "基礎路徑："
+
+
+msgid "Add Input"
+msgstr "添加輸入"
+
+
+msgid "File Subpath:"
+msgstr "檔案子路徑："
+
+
+msgid "Format:"
+msgstr "格式："
+
+
+msgid "Degr"
+msgstr "度"
+
+
+msgid "Cb"
+msgstr "Cb"
+
+
+msgid "Cr"
+msgstr "Cr"
+
+
+msgid "On"
+msgstr "開"
+
+
+msgid "Speed:"
+msgstr "速度："
+
+
 msgid "Density Attribute"
 msgstr "密度特性"
+
+
+msgid "Missing Data-Block"
+msgstr "遺失資料塊"
 
 
 msgid "Shader Editor"
@@ -60236,12 +60646,24 @@ msgid "Mortar"
 msgstr "灰漿"
 
 
+msgid "Mortar Size"
+msgstr "灰漿大小"
+
+
+msgid "Mortar Smooth"
+msgstr "灰漿平滑"
+
+
 msgid "Brick Width"
 msgstr "磚塊寬度"
 
 
 msgid "Row Height"
 msgstr "列度"
+
+
+msgid "Detail Scale"
+msgstr "細節縮放"
 
 
 msgid "Flame"

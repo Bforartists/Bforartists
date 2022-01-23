@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -11358,6 +11358,10 @@ msgid "Composite"
 msgstr "Спојено"
 
 
+msgid "To"
+msgstr "Ка"
+
+
 msgid "Corner Pin"
 msgstr "Закачи угао"
 
@@ -11860,6 +11864,10 @@ msgstr "Линеарна интерполација"
 
 msgid "No interpolation (sample closest texel)"
 msgstr "Без интерполације (једноставни суседни тексели)"
+
+
+msgid "Edge Angle"
+msgstr "Угао ивице"
 
 
 msgid "Z Axis"
@@ -15115,14 +15123,6 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
-
-
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -23503,6 +23503,14 @@ msgid "2D cursor location for this view"
 msgstr "Локација 2D курсора у овом погледу"
 
 
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
+
+
 msgid "Alpha Channel"
 msgstr "Алфа канал"
 
@@ -24924,10 +24932,6 @@ msgid "Display 3D curve normals in editmode"
 msgstr "Прикажи нормале 3D криве у режиму измене"
 
 
-msgid "Edge Angle"
-msgstr "Угао ивице"
-
-
 msgid "Indices"
 msgstr "Индиректно"
 
@@ -25429,10 +25433,6 @@ msgstr "Бројеви кључних кадрова"
 
 msgid "After"
 msgstr "После"
-
-
-msgid "To"
-msgstr "Ка"
 
 
 msgid "+ Non-Grouped Keyframes"

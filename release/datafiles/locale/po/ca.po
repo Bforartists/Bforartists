@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9572,6 +9572,10 @@ msgid "Color Spill"
 msgstr "Desparentar"
 
 
+msgid "To"
+msgstr "Superior"
+
+
 msgid "Crop Image Size"
 msgstr "Image Displist"
 
@@ -10086,6 +10090,10 @@ msgstr "Corba"
 
 msgid "Linear interpolation"
 msgstr "Esborrar Rotació"
+
+
+msgid "Edge Angle"
+msgstr "Seleccionar fila"
 
 
 msgid "Z Axis"
@@ -12539,10 +12547,6 @@ msgid "Export selected objects only"
 msgstr "Seleccionar connectats"
 
 
-msgid "Export the active UV layer"
-msgstr "Seleccionar fila"
-
-
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Seleccionar fila"
@@ -13124,14 +13128,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -21856,6 +21852,14 @@ msgid "Outline"
 msgstr "Perfilar"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Esborrar"
 
@@ -23644,10 +23648,6 @@ msgid "Display UV unwrapping seams"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Edge Angle"
-msgstr "Seleccionar fila"
-
-
 msgid "Display the index numbers of selected vertices, edges, and faces"
 msgstr "Seleccionar connectats"
 
@@ -23761,10 +23761,6 @@ msgstr "Joc"
 
 msgid "Keyframe Numbers"
 msgstr "Joc"
-
-
-msgid "To"
-msgstr "Superior"
 
 
 msgid "+ Non-Grouped Keyframes"

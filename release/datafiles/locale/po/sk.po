@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-12-28 09:03+0100\n"
+"PO-Revision-Date: 2022-01-03 15:22+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Bookmarks: -1,546,-1,-1,-1,-1,-1,-1,-1,-1"
 
 
@@ -22837,10 +22837,6 @@ msgid "Contact Shadow"
 msgstr "Dotyk tieňa"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "Použije snímanie lúča priestoru obrazovky na správne tieňovanie v blízkosti uzávery, alebo pre malé funkcie, ktoré sa neobjavia v mape tieňov"
-
-
 msgid "Point Light"
 msgstr "Bodové svetlo"
 
@@ -37336,10 +37332,6 @@ msgid "Shortest Diagonal"
 msgstr "Najkratšia uhlopriečka"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Rozdelí štvoruholníky na základe vzdialenosti medzi vrcholmi"
-
-
 msgid "UV Project Modifier"
 msgstr "Modifikátor UV premietania"
 
@@ -40463,6 +40455,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "Farby sú ošetrené prednásobením alfa, alebo rovno výstupnými farbami (alfa je nastavená na 1)"
 
 
+msgid "To"
+msgstr "Na"
+
+
 msgid "Corner Pin"
 msgstr "Pripnúť roh"
 
@@ -41588,6 +41584,10 @@ msgid "Coordinate space to scale relative to"
 msgstr "Priestor súradníc na stupnici úmerne na"
 
 
+msgid "Scene Time"
+msgstr "Čas scény"
+
+
 msgid "Separate HSVA"
 msgstr "Oddeliť HSVA"
 
@@ -42152,6 +42152,10 @@ msgid "Geometry Node"
 msgstr "Uzol geometrie"
 
 
+msgid "Accumulate Field"
+msgstr "Akumulovať pole"
+
+
 msgid "Domain Size"
 msgstr "Veľkosť oblasti pôsobenia"
 
@@ -42548,6 +42552,10 @@ msgid "Curve Tilt"
 msgstr "Náklon krivky"
 
 
+msgid "Edge Angle"
+msgstr "Uhol hrany"
+
+
 msgid "Edge Neighbors"
 msgstr "Susedné hrany"
 
@@ -42566,10 +42574,6 @@ msgstr "Povrchová sieť ostrova"
 
 msgid "Vertex Neighbors"
 msgstr "Susedné vrcholy"
-
-
-msgid "Scene Time"
-msgstr "Čas scény"
 
 
 msgid "Is Shade Smooth"
@@ -50154,20 +50158,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Použije modifikátory na exportované povrchové siete"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Exportuje normály pre vyhladené a tvrdé zatienené plôšky (tvrdé zatienené plôšky budú exportované ako samostatné plôšky)"
-
-
 msgid "Selection Only"
 msgstr "Len vybrané"
 
 
 msgid "Export selected objects only"
 msgstr "Exportuje len vybrané objekty"
-
-
-msgid "Export the active UV layer"
-msgstr "Exportuje aktívnu UV vrstvu"
 
 
 msgctxt "Operator"
@@ -53978,107 +53974,6 @@ msgstr "Prepínanie odtieňov farieb"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "Sledovať obrázok pre pastelku"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "Vytiahne ťahy Pastelky z obrázku"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "Určuje, či sa má snímať jednoduchý obrázok alebo úplná sekvencia"
-
-
-msgid "Trace the current frame of the image"
-msgstr "Sleduje aktuálnu snímku obrázka"
-
-
-msgid "Trace full sequence"
-msgstr "Sleduje celú sekvenciu"
-
-
-msgid "Resolution of the generated curves"
-msgstr "Rozlíšenie vygenerovaných kriviek"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "Vzdialenosť od bodov snímky, nula pre zakázanie"
-
-
-msgid "Scale of the final stroke"
-msgstr "Mierka finálneho ťahu"
-
-
-msgid "Color Threshold"
-msgstr "Prah farby"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "Určí prah svetlosti, nad ktorým sa generujú ťahy"
-
-
-msgid "Turn Policy"
-msgstr "Politika zvratu"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "Určuje, ako vyriešiť nejasnosti počas rozkladu bitmáp na cestách"
-
-
-msgid "Black"
-msgstr "Čierne"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "Preferuje prepojenie čiernych (predných) komponentov"
-
-
-msgid "White"
-msgstr "Biele"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "Preferuje prepojenie bielych (zadných) komponentov"
-
-
-msgid "Always take a left turn"
-msgstr "Vždy odbočiť doľava"
-
-
-msgid "Always take a right turn"
-msgstr "Vždy odbočiť doprava"
-
-
-msgid "Minority"
-msgstr "Menšina"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "Preferuje prepojenie farby (čiernej alebo bielej), ktorá sa v lokálnom susedstve aktuálnej pozície vyskytuje najmenej často"
-
-
-msgid "Majority"
-msgstr "Väčšina"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "Preferuje pripojenie farby (čiernej alebo bielej), ktorá sa v lokálnom susedstve aktuálnej pozície vyskytuje najčastejšie"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "Pseudonáhodný výber"
-
-
-msgid "Start At Current Frame"
-msgstr "Začať od aktuálnej snímky"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "Sledovať obrázok začínajúci v aktuálnej snímke"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformovať výplň ťahu"
 
@@ -54855,6 +54750,10 @@ msgstr "Otvoriť obrázok"
 
 msgid "Open image"
 msgstr "Otvorí obrázok"
+
+
+msgid "Allow the path to contain substitution tokens"
+msgstr "Umožniť, aby cesta obsahovala substitučné tokeny"
 
 
 msgid "Detect Sequences"
@@ -74920,6 +74819,10 @@ msgid "Print memory statistics to the console"
 msgstr "Vytlačí štatistiky pamäte na konzolu"
 
 
+msgid "Object Properties"
+msgstr "Vlastnosti Objekt"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Otvoriť"
@@ -76340,13 +76243,13 @@ msgid "Workspace Reorder to Back"
 msgstr "Zmeniť poradie pracovného priestoru na zadné"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "Zmení poradie pracovného priestoru na prvé v zozname"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "Zmeniť poradie pracovné priestoru na predné"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "Zmení poradie pracovného priestoru na prvé v zozname"
 
 
 msgctxt "Operator"
@@ -81549,6 +81452,14 @@ msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
 msgstr "Povolí režimu editácie vyhladenie hrán, zníženie aliasingu, vyžaduje reštart"
 
 
+msgid "GPU Subdivision"
+msgstr "Delenie GPU"
+
+
+msgid "Enable GPU acceleration for evaluating the last subdivision surface modifiers in the stack"
+msgstr "Povolí akceleráciu GPU pre vyhodnotenie posledných modifikátorov povrchu v zásobníku"
+
+
 msgid "Overlay Smooth Wires"
 msgstr "Vyhladzovanie drôtov prekrývaním"
 
@@ -86369,10 +86280,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "Nepoužíva odrazy trasy lúča pre zdrsnenie nad túto hodnotu"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "Presnosť miesta na trasu lúča obrazovky"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "Hrúbka pixelu používaná na detekciu križovania"
 
@@ -89022,8 +88929,16 @@ msgid "Display dashed black-white edges"
 msgstr "Zobrazí prerušované čiernobiele okraje"
 
 
+msgid "Black"
+msgstr "Čierne"
+
+
 msgid "Display black edges"
 msgstr "Zobrazí čierne okraje"
+
+
+msgid "White"
+msgstr "Biele"
 
 
 msgid "Display white edges"
@@ -90404,10 +90319,6 @@ msgstr "Vlastnosti Svet"
 
 msgid "Collection Properties"
 msgstr "Vlastnosti Kolekcie"
-
-
-msgid "Object Properties"
-msgstr "Vlastnosti Objekt"
 
 
 msgid "Object Constraint Properties"
@@ -95115,10 +95026,6 @@ msgid "Highlight selected edges"
 msgstr "Zvýrazní vybrané hrany"
 
 
-msgid "Edge Angle"
-msgstr "Uhol hrany"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Zobrazí vybraný uhol hrany použitím globálnych hodnôt pri nastavení na paneli transformácie"
 
@@ -99440,6 +99347,11 @@ msgid "Invalid regular expression (replace): "
 msgstr "Neplatný regulárny výraz (nahradiť): "
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Aktualizovať všetky cesty"
+
+
 msgid "Frame Numbers"
 msgstr "Čísla snímok"
 
@@ -99454,15 +99366,6 @@ msgstr "Rozsah snímky Pred"
 
 msgid "After"
 msgstr "Po"
-
-
-msgid "To"
-msgstr "Na"
-
-
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Aktualizovať všetky cesty"
 
 
 msgid "Nothing to show yet..."
@@ -106177,6 +106080,10 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Nezapísané, obrázok nemá \"%s\" a \"%s\" zobrazenia"
 
 
+msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker"
+msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať platnú značku UDIM"
+
+
 msgid "Key %d"
 msgstr "Kľúč %d"
 
@@ -112039,10 +111946,6 @@ msgid "Frame: %d"
 msgstr "Snímka: %d"
 
 
-msgid "Squash"
-msgstr "Vtesnať"
-
-
 msgid "Matte Objects:"
 msgstr "Objekty matovania:"
 
@@ -112059,16 +111962,16 @@ msgid "Matte ID:"
 msgstr "ID matovania:"
 
 
+msgid "Squash"
+msgstr "Vtesnať"
+
+
 msgid "Undefined Socket Type"
 msgstr "Nedefinovaný typ zásuvky"
 
 
-msgid "Nishita not available in Eevee"
-msgstr "Nishita nie je k dispozícii v Eevee"
-
-
-msgid "No mesh in active object"
-msgstr "Žiadna povrchová sieť v aktívnom objekte"
+msgid "Group Input "
+msgstr "Vstup skupiny"
 
 
 msgid "NodeTree"
@@ -115710,6 +115613,18 @@ msgid "Disabled, Blender was compiled without OpenVDB"
 msgstr "Zakázané, Blender bol skompilovaný bez OpenVDB"
 
 
+msgid "Leading"
+msgstr "Vedenie"
+
+
+msgid "Trailing"
+msgstr "Vlečenie"
+
+
+msgid "An index used to group values together for multiple separate accumulations"
+msgstr "Index používaný na zoskupenie hodnôt pre viacero samostatných kumulácií"
+
+
 msgid "Cannot delete attribute with name \""
 msgstr "Nemožno odstrániť atribút s názvom \""
 
@@ -115996,10 +115911,6 @@ msgstr "Začiatok (dĺžka)"
 
 msgid "End (Length)"
 msgstr "Koniec (dĺžka)"
-
-
-msgid "No geometry with given domain"
-msgstr "Žiadna geometria s danou oblasťou pôsobnosti"
 
 
 msgid "The parts of the geometry to be deleted"
@@ -116678,12 +116589,20 @@ msgid "Row Height"
 msgstr "Výška radu"
 
 
+msgid "Nishita not available in Eevee"
+msgstr "Nishita nie je k dispozícii v Eevee"
+
+
 msgid "Detail Scale"
 msgstr "Mierka detailu"
 
 
 msgid "Detail Roughness"
 msgstr "Zdrsnenie detailu"
+
+
+msgid "No mesh in active object"
+msgstr "Žiadna povrchová sieť v aktívnom objekte"
 
 
 msgid "Flame"
@@ -117514,6 +117433,10 @@ msgstr "Thajský (ภาษาไทย)"
 
 msgid "Slovak (Slovenčina)"
 msgstr "Slovenský (slovenčina)"
+
+
+msgid "Georgian (ქართული)"
+msgstr "Gruzínčina (ქართული)"
 
 
 msgid "Complete"

@@ -93,6 +93,11 @@ class AnimallProperties(bpy.types.PropertyGroup):
         description="Insert keyframes on point locations",
         default=False
     )
+    key_handle_type: BoolProperty(
+        name="Handle Types",
+        description="Insert keyframes on Bezier point types",
+        default=False
+    )
     key_radius: BoolProperty(
         name="Radius",
         description="Insert keyframes on point radius (Shrink/Fatten)",
@@ -181,6 +186,8 @@ class VIEW3D_PT_animall(Panel):
             row = col.row()
             row.prop(animall_properties, "key_radius")
             row.prop(animall_properties, "key_tilt")
+            row = col.row()
+            row.prop(animall_properties, "key_handle_type")
 
         elif obj.type == 'SURFACE':
             row.prop(animall_properties, "key_points")
@@ -270,6 +277,10 @@ class ANIM_OT_insert_keyframe_animall(Operator):
 
                                 if animall_properties.key_radius:
                                     insert_key(CV, 'radius', group="Spline %s CV %s" % (s_i, v_i))
+
+                                if animall_properties.key_handle_type:
+                                    insert_key(CV, 'handle_left_type', group="spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'handle_right_type', group="spline %s CV %s" % (s_i, v_i))
 
                                 if animall_properties.key_tilt:
                                     insert_key(CV, 'tilt', group="Spline %s CV %s" % (s_i, v_i))
@@ -468,6 +479,9 @@ class ANIM_OT_delete_keyframe_animall(Operator):
                                     delete_key(CV, 'co')
                                     delete_key(CV, 'handle_left')
                                     delete_key(CV, 'handle_right')
+                                if animall_properties.key_handle_type:
+                                    delete_key(CV, 'handle_left_type')
+                                    delete_key(CV, 'handle_right_type')
                                 if animall_properties.key_radius:
                                     delete_key(CV, 'radius')
                                 if animall_properties.key_tilt:

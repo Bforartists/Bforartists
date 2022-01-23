@@ -69,6 +69,8 @@ class Rig(SimpleChainRig):
     def configure_master_control(self):
         master = self.bones.ctrl.master
 
+        self.copy_bone_properties(self.bones.org[0], master, props=False, widget=False)
+
         bone = self.get_bone(master)
         bone.lock_scale = True, False, True
 
