@@ -793,6 +793,7 @@ static void chaining_panel_draw(const bContext *UNUSED(C), Panel *panel)
   //uiItemR(col, ptr, "use_fuzzy_all", 0, NULL, ICON_NONE);
   //uiItemR(col, ptr, "use_loose_edge_chain", 0, IFACE_("Loose Edges"), ICON_NONE);
   //uiItemR(col, ptr, "use_loose_as_contour", 0, NULL, ICON_NONE);
+  //uiItemR(col, ptr, "use_detail_preserve", 0, NULL, ICON_NONE);
   //uiItemR(col, ptr, "use_geometry_space_chain", 0, IFACE_("Geometry Space"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
@@ -818,6 +819,11 @@ static void chaining_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemS(row);
   uiItemR(row, ptr, "use_loose_as_contour", 0, NULL, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_loose_as_contour", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_detail_preserve", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_detail_preserve", 0); /*bfa - decorator*/
 
   row = uiLayoutRow(col, true);
   uiItemS(row);
