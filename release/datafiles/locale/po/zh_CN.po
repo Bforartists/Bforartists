@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12384,7 +12384,7 @@ msgstr "一个层级"
 
 
 msgid "List all sub-directories' content, one level of recursion"
-msgstr "列表全部子-目录的内容, 递归一个层级"
+msgstr "列出所有子目录的内容, 递归一个层级"
 
 
 msgid "Two Levels"
@@ -12392,7 +12392,7 @@ msgstr "两个层级"
 
 
 msgid "List all sub-directories' content, two levels of recursion"
-msgstr "列表所有子-目录的内容, 递归二个层级"
+msgstr "列出所有子目录的内容, 递归二个层级"
 
 
 msgid "Three Levels"
@@ -12400,7 +12400,7 @@ msgstr "三个层级"
 
 
 msgid "List all sub-directories' content, three levels of recursion"
-msgstr "列表所有子-目录的内容, 递归三个层级"
+msgstr "列出所有子目录的内容, 递归三个层级"
 
 
 msgid "File Modification Date"
@@ -22838,8 +22838,8 @@ msgid "Contact Shadow"
 msgstr "接触阴影"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "使用屏幕空间光线追踪来矫正自身投影，或者小物件未能产生的阴影贴图"
+msgid "Use screen space ray-tracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
+msgstr "使用屏幕空间光线追踪来矫正靠近遮挡物的阴影，或者未能在阴影贴图中出现的小物件"
 
 
 msgid "Point Light"
@@ -28151,6 +28151,14 @@ msgid "Struct gathering all data needed by overridden linked IDs"
 msgstr "结构收集覆写的关联的 ID 所需的全部数据"
 
 
+msgid "Is In Hierarchy"
+msgstr "是否位于层级中"
+
+
+msgid "Whether this library override is defined as part of a library hierarchy, or as a single, isolated and autonomous override"
+msgstr "此库重写已定义为库层级结构的一部分，或者定义为单个、孤立并且自主的重写"
+
+
 msgid "List of overridden properties"
 msgstr "被重写属性列表"
 
@@ -28557,6 +28565,10 @@ msgstr "PB44A (有损)"
 
 msgid "DWAA (lossy)"
 msgstr "DWAA (有损)"
+
+
+msgid "DWAB (lossy)"
+msgstr "DWAB(有损)"
 
 
 msgid "File format to save the rendered images as"
@@ -37337,10 +37349,6 @@ msgid "Shortest Diagonal"
 msgstr "最短对角线"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "在将四边面拆分成三角面"
-
-
 msgid "UV Project Modifier"
 msgstr "UV 投射修改器"
 
@@ -40464,6 +40472,22 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "经预乘Alpha处理的颜色, 或输出为直接alpha的颜色 (alpha值设为1)"
 
 
+msgid "From"
+msgstr "从"
+
+
+msgid "Color space of the input image"
+msgstr "输入图像的色彩空间"
+
+
+msgid "To"
+msgstr "到"
+
+
+msgid "Color space of the output image"
+msgstr "输出图像的色彩空间"
+
+
 msgid "Corner Pin"
 msgstr "边角定位"
 
@@ -41589,6 +41613,10 @@ msgid "Coordinate space to scale relative to"
 msgstr "用于相对缩放的坐标空间"
 
 
+msgid "Scene Time"
+msgstr "场景时间"
+
+
 msgid "Separate HSVA"
 msgstr "分离 HSVA"
 
@@ -42153,6 +42181,10 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
+msgid "Accumulate Field"
+msgstr "累积场"
+
+
 msgid "Domain Size"
 msgstr "域大小"
 
@@ -42549,6 +42581,10 @@ msgid "Curve Tilt"
 msgstr "曲线倾斜"
 
 
+msgid "Edge Angle"
+msgstr "边夹角"
+
+
 msgid "Edge Neighbors"
 msgstr "边的邻面"
 
@@ -42567,10 +42603,6 @@ msgstr "网格孤岛"
 
 msgid "Vertex Neighbors"
 msgstr "顶点的邻项"
-
-
-msgid "Scene Time"
-msgstr "场景时间"
 
 
 msgid "Is Shade Smooth"
@@ -47065,6 +47097,10 @@ msgid "Filter movie files"
 msgstr "过滤视频文件"
 
 
+msgid "Filter OBJ files"
+msgstr "过滤OBJ文件"
+
+
 msgid "Filter python files"
 msgstr "过滤 Python 文件"
 
@@ -50155,8 +50191,8 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "为输出的网格应用修改器"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "导出用于平滑着色面及锐利着色面的法线数据 (锐利着色面将以多个独立面的形式导出)"
+msgid "Export vertex normals"
+msgstr "导出顶点法向"
 
 
 msgid "Selection Only"
@@ -50167,8 +50203,8 @@ msgid "Export selected objects only"
 msgstr "仅导出选择的物体"
 
 
-msgid "Export the active UV layer"
-msgstr "输出活动UV 层"
+msgid "Export the active UV layer (will split edges by seams)"
+msgstr "导出活动 UV 层(将按缝合线拆分边)"
 
 
 msgctxt "Operator"
@@ -53979,107 +54015,6 @@ msgstr "切换染色"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "识别图像至蜡笔"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "从图像提取蜡笔笔画"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "确定是识别简单图像还是完整序列"
-
-
-msgid "Trace the current frame of the image"
-msgstr "识别图像的当前帧"
-
-
-msgid "Trace full sequence"
-msgstr "识别完整序列"
-
-
-msgid "Resolution of the generated curves"
-msgstr "生成的曲线的分辨率"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "到采样点的距离，零为禁用"
-
-
-msgid "Scale of the final stroke"
-msgstr "最终笔画的范围"
-
-
-msgid "Color Threshold"
-msgstr "颜色阈值"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "确定生成笔画上方的光度阈值"
-
-
-msgid "Turn Policy"
-msgstr "转向策略"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "确定在将位图分解为路径时如何解决分歧"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "首选连接黑色(前景)元素"
-
-
-msgid "White"
-msgstr "白色"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "首选连接白色(背景)元素"
-
-
-msgid "Always take a left turn"
-msgstr "总是左转"
-
-
-msgid "Always take a right turn"
-msgstr "总是右转"
-
-
-msgid "Minority"
-msgstr "少数"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "首选连接当前位置的局部邻域中出现频率较低的颜色(黑色或白色)"
-
-
-msgid "Majority"
-msgstr "多数"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "首选连接当前位置的局部邻域中出现频率较高的颜色(黑色或白色)"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "选择伪随机"
-
-
-msgid "Start At Current Frame"
-msgstr "从当前帧开始"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "从当前图像帧开始追踪图像"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
 
@@ -54856,6 +54791,10 @@ msgstr "打开图像"
 
 msgid "Open image"
 msgstr "打开图像"
+
+
+msgid "Allow the path to contain substitution tokens"
+msgstr "允许路径包含替换令牌"
 
 
 msgid "Detect Sequences"
@@ -74922,6 +74861,163 @@ msgstr "将内存统计打印到控制台"
 
 
 msgctxt "Operator"
+msgid "Export Wavefront OBJ"
+msgstr "导出Wavefront OBJ"
+
+
+msgid "Save the scene to a Wavefront OBJ file"
+msgstr "保存该场景至Wavefront OBJ文件"
+
+
+msgid "The last frame to be exported"
+msgstr "要导出的最后一帧"
+
+
+msgid "Export Animation"
+msgstr "导出动画"
+
+
+msgid "Export multiple frames instead of the current frame only"
+msgstr "导出多个帧，而非仅当前帧"
+
+
+msgid "Export Curves as NURBS"
+msgstr "导出曲线为NURBS"
+
+
+msgid "Export curves in parametric form instead of exporting as mesh"
+msgstr "以参数化形式导出曲线，而非导出为网格"
+
+
+msgid "Object Properties"
+msgstr "物体属性"
+
+
+msgid "Determines properties like object visibility, modifiers etc., where they differ for Render and Viewport"
+msgstr "确定物体可见性、修改器等属性，这些属性视渲染和视口而异"
+
+
+msgid "Export objects as they appear in render"
+msgstr "按照在渲染中的设置导出物体"
+
+
+msgid "Viewport (Default)"
+msgstr "视图(默认)"
+
+
+msgid "Export objects as they appear in the viewport"
+msgstr "按照在视图中的设置导出物体"
+
+
+msgid "Export Material Groups"
+msgstr "导出材质组"
+
+
+msgid "Append mesh name and material name to object name, separated by a '_'"
+msgstr "将网格名称和材质名称追加到物体名称，以\"_\"分隔"
+
+
+msgid "Export Materials"
+msgstr "导出材质"
+
+
+msgid "Export MTL library. There must be a Principled-BSDF node for image textures to be exported to the MTL file"
+msgstr "导出 MTL 库。必须有一个 Principled-BSDF 节点才能将图像纹理导出到 MTL 文件"
+
+
+msgid "Export Normals"
+msgstr "导出法向"
+
+
+msgid "Export per-face normals if the face is flat-shaded, per-face-per-loop normals if smooth-shaded"
+msgstr "如果该面为平直着色，则逐面导出法向，如果为平滑着色，则逐个面循环导出法向"
+
+
+msgid "Export Object Groups"
+msgstr "导出物体组"
+
+
+msgid "Append mesh name to object name, separated by a '_'"
+msgstr "将网格名称追加到物体名称，用\"_\"分隔"
+
+
+msgid "Export Selected Objects"
+msgstr "导出选中的物体"
+
+
+msgid "Export only selected objects instead of all supported objects"
+msgstr "仅导出选定物体，而非所有受支持的物体"
+
+
+msgid "Export Smooth Groups"
+msgstr "导出平滑组"
+
+
+msgid "Every smooth-shaded face is assigned group \"1\" and every flat-shaded face \"off\""
+msgstr "每个平滑着色的面都指定为组\"1\"，每个平直着色面都为\"关闭\""
+
+
+msgid "Export Triangulated Mesh"
+msgstr "导出三角化网格"
+
+
+msgid "All ngons with four or more vertices will be triangulated. Meshes in the scene will not be affected. Behaves like Triangulate Modifier with ngon-method: \"Beauty\", quad-method: \"Shortest Diagonal\", min vertices: 4"
+msgstr "所有具有四个或更多顶点的多边形都将进行三角化。场景中的网格将不受影响。行为类似于三角化修改器，多边形方法：\"布线优化\"，四边面拆分方法：\"最短对角线\"，最小顶点：4"
+
+
+msgid "Export Vertex Groups"
+msgstr "导出顶点组"
+
+
+msgid "Export the name of the vertex group of a face. It is approximated by choosing the vertex group with the most members among the vertices of a face"
+msgstr "导出面的顶点组的名称。它是通过选择面顶点中成员最多的顶点组来近似的"
+
+
+msgid "Positive X axis"
+msgstr "正X轴"
+
+
+msgid "Positive Y axis"
+msgstr "正Y轴"
+
+
+msgid "Positive Z axis"
+msgstr "正Z轴"
+
+
+msgid "Negative X axis"
+msgstr "负X轴"
+
+
+msgid "Negative Y axis"
+msgstr "负Y轴"
+
+
+msgid "-Z (Default)"
+msgstr "-Z (默认)"
+
+
+msgid "Negative Z axis"
+msgstr "负Z轴"
+
+
+msgid "Upscale the object by this factor"
+msgstr "依此系数放大物体"
+
+
+msgid "Generate Bitflags for Smooth Groups"
+msgstr "为平滑组生成位标记"
+
+
+msgid "The first frame to be exported"
+msgstr "要导出的第一帧"
+
+
+msgid "Y (Default)"
+msgstr "Y (默认)"
+
+
+msgctxt "Operator"
 msgid "Open"
 msgstr "打开"
 
@@ -76341,13 +76437,13 @@ msgid "Workspace Reorder to Back"
 msgstr "工作区向后重排序"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "工作区重排序至列表首位"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "工作区向前重排序"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "工作区重排序至列表首位"
 
 
 msgctxt "Operator"
@@ -77589,7 +77685,7 @@ msgstr "软体与布料"
 
 
 msgid "Diffusion"
-msgstr "漫射"
+msgstr "扩散"
 
 
 msgid "Falloff Ramp"
@@ -81550,6 +81646,14 @@ msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
 msgstr "启用编辑模式边缘平滑，减少锯齿，需要重启Blender才能生效"
 
 
+msgid "GPU Subdivision"
+msgstr "GPU细分"
+
+
+msgid "Enable GPU acceleration for evaluating the last subdivision surface modifiers in the stack"
+msgstr "启用GPU加速计算队列中的最后一个表面细分修改器"
+
+
 msgid "Overlay Smooth Wires"
 msgstr "叠加平滑线框"
 
@@ -83213,7 +83317,7 @@ msgstr "最小光线反弹"
 
 
 msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "透明反弹的最小数量。设置较高的数值可降低第一次反弹时的噪波，但对于头发和体积等更复杂的几何形状，效率也会降低"
+msgstr "光线反弹的最小次数。设置较高的数值可降低第一次反弹时的噪波，但对于头发和体积等更复杂的几何形状，效率也会降低"
 
 
 msgid "Min Transparent Bounces"
@@ -83221,7 +83325,7 @@ msgstr "最小透明反弹"
 
 
 msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "透明反弹的最小数量。设置较高的数值可降低第一次反弹时的噪波，但对于头发和体积等更复杂的几何形状，效率也会降低"
+msgstr "透明反弹的最小次数。设置较高的数值可降低第一次反弹时的噪波，但对于头发和体积等更复杂的几何形状，效率也会降低"
 
 
 msgid "Motion Blur Position"
@@ -83493,7 +83597,7 @@ msgstr "透明反弹次数上限"
 
 
 msgid "Maximum number of transparent bounces. This is independent of maximum number of other bounces "
-msgstr "透明反弹的最大次数。该设置独立于其他反弹的最大次数"
+msgstr "透明反弹的最大次数。该设置独立于其他反弹的最大次数 "
 
 
 msgid "Use Adaptive Sampling"
@@ -86372,7 +86476,7 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "超过这个值将不进行光线追踪反射的粗糙度计算"
 
 
-msgid "Precision of the screen space raytracing"
+msgid "Precision of the screen space ray-tracing"
 msgstr "屏幕空间光线追踪精度"
 
 
@@ -89025,8 +89129,16 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
 msgid "Display black edges"
 msgstr "绘制黑色边线"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgid "Display white edges"
@@ -90407,10 +90519,6 @@ msgstr "世界属性"
 
 msgid "Collection Properties"
 msgstr "集合属性"
-
-
-msgid "Object Properties"
-msgstr "物体属性"
 
 
 msgid "Object Constraint Properties"
@@ -94958,6 +95066,14 @@ msgid "Opacity when rendering transparent wires"
 msgstr "渲染透明线框时的不透明度"
 
 
+msgid "Bone Wireframe Opacity"
+msgstr "骨骼线框不透明度"
+
+
+msgid "Maximim opacity of bones in wireframe display mode"
+msgstr "线框显示模式下骨骼的最大不透明度"
+
+
 msgid "Display Handles"
 msgstr "显示控制柄"
 
@@ -95116,10 +95232,6 @@ msgstr "显示边"
 
 msgid "Highlight selected edges"
 msgstr "高亮显示选中的连线"
-
-
-msgid "Edge Angle"
-msgstr "边夹角"
 
 
 msgid "Display selected edge angle, using global values when set in the transform panel"
@@ -97522,7 +97634,7 @@ msgstr "切刀工具模态映射"
 
 msgctxt "WindowManager"
 msgid "Bevel Modal Map"
-msgstr "标准模态映射"
+msgstr "倒角模态映射"
 
 
 msgctxt "WindowManager"
@@ -99447,6 +99559,11 @@ msgid "Invalid regular expression (replace): "
 msgstr "无效正则表达式(替换): "
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "更新全部路径"
+
+
 msgid "Frame Numbers"
 msgstr "帧序号"
 
@@ -99461,15 +99578,6 @@ msgstr "帧范围前"
 
 msgid "After"
 msgstr "后显帧数"
-
-
-msgid "To"
-msgstr "到"
-
-
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "更新全部路径"
 
 
 msgid "Nothing to show yet..."
@@ -103361,6 +103469,11 @@ msgstr "SVG为蜡笔"
 
 
 msgctxt "Operator"
+msgid "Wavefront OBJ (.obj) - New"
+msgstr "Wavefront OBJ (.obj) - 新"
+
+
+msgctxt "Operator"
 msgid "Render Animation"
 msgstr "渲染动画"
 
@@ -106184,6 +106297,10 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "无法写入，图像没有 \"%s\" 和 \"%s\" 视图"
 
 
+msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker"
+msgstr "保存分块图像时，路径 '%s' 必须包含有效的UDIM 标记"
+
+
 msgid "Key %d"
 msgstr "键 %d"
 
@@ -108975,6 +109092,34 @@ msgstr "无法导出PDF"
 
 msgid "Unable to import SVG"
 msgstr "无法导入SVG"
+
+
+msgid "Axis Forward"
+msgstr "轴向前"
+
+
+msgid "Geometry Export"
+msgstr "几何导出"
+
+
+msgid "Triangulated Mesh"
+msgstr "三角化网格"
+
+
+msgid "Curves as NURBS"
+msgstr "曲线为NURBS"
+
+
+msgid "Grouping"
+msgstr "分组"
+
+
+msgid "Object Groups"
+msgstr "物体组"
+
+
+msgid "Smooth Group Bitflags"
+msgstr "平滑组位标记"
 
 
 msgid "Data Types"
@@ -112046,10 +112191,6 @@ msgid "Frame: %d"
 msgstr "帧: %d"
 
 
-msgid "Squash"
-msgstr "挤压"
-
-
 msgid "Matte Objects:"
 msgstr "蒙版物体:"
 
@@ -112066,16 +112207,16 @@ msgid "Matte ID:"
 msgstr "蒙版ID:"
 
 
+msgid "Squash"
+msgstr "挤压"
+
+
 msgid "Undefined Socket Type"
 msgstr "未定义的接口类型"
 
 
-msgid "Nishita not available in Eevee"
-msgstr "Nishita在Eevee中不可用"
-
-
-msgid "No mesh in active object"
-msgstr "活动物体中没有网格"
+msgid "Group Input "
+msgstr "组输入 "
 
 
 msgid "NodeTree"
@@ -115717,6 +115858,18 @@ msgid "Disabled, Blender was compiled without OpenVDB"
 msgstr "已禁用, 未使用OpenVDB编译Blender"
 
 
+msgid "Leading"
+msgstr "首"
+
+
+msgid "Trailing"
+msgstr "尾"
+
+
+msgid "An index used to group values together for multiple separate accumulations"
+msgstr "用于将多个数字群组在一起以进行多个单独累加的编号"
+
+
 msgid "Cannot delete attribute with name \""
 msgstr "无法删除属性名称包含 \""
 
@@ -116005,10 +116158,6 @@ msgid "End (Length)"
 msgstr "终点(长度)"
 
 
-msgid "No geometry with given domain"
-msgstr "没有带给定域的几何形状"
-
-
 msgid "The parts of the geometry to be deleted"
 msgstr "要删除的几何部分"
 
@@ -116095,6 +116244,10 @@ msgstr "在点上实例化的几何体"
 
 msgid "Pick Instance"
 msgstr "选择实例"
+
+
+msgid "Place different instances on different points"
+msgstr "将不同的实例放在不同的点上"
 
 
 msgid "Instance Index"
@@ -116661,6 +116814,10 @@ msgid "Alpha Fac"
 msgstr "Alpha 系数"
 
 
+msgid "Age"
+msgstr "寿命"
+
+
 msgid "BSSRDF"
 msgstr "BSSRDF"
 
@@ -116685,12 +116842,20 @@ msgid "Row Height"
 msgstr "行高度"
 
 
+msgid "Nishita not available in Eevee"
+msgstr "Nishita在Eevee中不可用"
+
+
 msgid "Detail Scale"
 msgstr "细节缩放"
 
 
 msgid "Detail Roughness"
 msgstr "细节糙度"
+
+
+msgid "No mesh in active object"
+msgstr "活动物体中没有网格"
 
 
 msgid "Flame"
@@ -117517,6 +117682,10 @@ msgstr "泰语 (ภาษาไทย)"
 
 msgid "Slovak (Slovenčina)"
 msgstr "斯洛伐克语 (Slovenčina)"
+
+
+msgid "Georgian (ქართული)"
+msgstr "格鲁吉亚语 (ქართული)"
 
 
 msgid "Complete"

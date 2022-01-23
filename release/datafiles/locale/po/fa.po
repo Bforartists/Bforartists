@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5575,6 +5575,10 @@ msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 msgid "Combine YCbCrA"
 msgstr "ﻩﺪﺷ ﺐﯿﮐﺮﺗ"
+
+
+msgid "To"
+msgstr "ﻻ﻿ﺎﺑ"
 
 
 msgid "Remove"
@@ -12629,10 +12633,6 @@ msgstr "ﻥﺩﺮﮐ ﺯﺎﺑ..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
-
-
-msgid "To"
-msgstr "ﻻ﻿ﺎﺑ"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -19551,10 +19551,6 @@ msgid "Contact Shadow"
 msgstr "Ombre contacte"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "Utiliser le ray-tracing en espace d’écran pour obtenir un ombrage correct près de l’occludeur, ou pour de petits détails qui n’apparaissent pas dans les cartes d’ombrage"
-
-
 msgid "Point Light"
 msgstr "Lumière point"
 
@@ -31137,10 +31133,6 @@ msgid "Shortest Diagonal"
 msgstr "Diagonale la plus courte"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Diviser les quadrangles d’après la distance entre vertices"
-
-
 msgid "UV Project Modifier"
 msgstr "Modificateur projeter UV"
 
@@ -33784,6 +33776,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "Les couleurs sont traitées alpha-prémultipliées, ou elles sont affichées tel quel (l’alpha est mis à 1)"
 
 
+msgid "To"
+msgstr "À"
+
+
 msgid "Corner Pin"
 msgstr "Épingle de coin"
 
@@ -34879,6 +34875,10 @@ msgstr "Pas d’interpolation (échantillonner le texel le plus proche)"
 
 msgid "Cubic interpolation"
 msgstr "Interpolation cubique"
+
+
+msgid "Edge Angle"
+msgstr "Angle entre arêtes"
 
 
 msgid "Cross Product"
@@ -40352,20 +40352,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Appliquer les modificateurs au mesh exporté"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Exporter les normales pour les faces à l’ombrage lissé et dure (à facettes – les faces à ombrage dur seront exportées comme faces individuelles)"
-
-
 msgid "Selection Only"
 msgstr "Sélection uniquement"
 
 
 msgid "Export selected objects only"
 msgstr "N’exporter que les objets sélectionnés"
-
-
-msgid "Export the active UV layer"
-msgstr "Exporter le calque UV actif"
 
 
 msgctxt "Operator"
@@ -42503,14 +42495,6 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
-
-
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -57186,6 +57170,10 @@ msgid "Print memory statistics to the console"
 msgstr "Afficher les statistiques mémoire dans la console"
 
 
+msgid "Object Properties"
+msgstr "Propriétés de l'objet"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Ouvrir"
@@ -66547,6 +66535,14 @@ msgid "Outline"
 msgstr "Contour"
 
 
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -67669,10 +67665,6 @@ msgstr "Propriétés du calque de vue"
 
 msgid "World Properties"
 msgstr "Propriétés du monde"
-
-
-msgid "Object Properties"
-msgstr "Propriétés de l'objet"
 
 
 msgid "Object Constraint Properties"
@@ -70615,10 +70607,6 @@ msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "Afficher les arêtes dures, utilisée par le modificateur Division d’arêtes (Edge Split)"
 
 
-msgid "Edge Angle"
-msgstr "Angle entre arêtes"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Afficher les angles des arêtes sélectionnées, en utilisant des valeurs globales lorsqu’activé dans le panneau Transformer"
 
@@ -72148,10 +72136,6 @@ msgstr "Numéros d’image clé"
 
 msgid "After"
 msgstr "Après"
-
-
-msgid "To"
-msgstr "À"
 
 
 msgid "Nothing to show yet..."
