@@ -743,6 +743,7 @@ static void face_mark_panel_draw(const bContext *UNUSED(C), Panel *panel)
   /*------------------- bfa - original props */
   //uiItemR(layout, ptr, "use_face_mark_invert", 0, NULL, ICON_NONE);
   //uiItemR(layout, ptr, "use_face_mark_boundaries", 0, NULL, ICON_NONE);
+ // uiItemR(layout, ptr, "use_face_mark_keep_contour", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
@@ -752,6 +753,10 @@ static void face_mark_panel_draw(const bContext *UNUSED(C), Panel *panel)
   row = uiLayoutRow(col, true);
   uiItemR(row, ptr, "use_face_mark_boundaries", 0, NULL, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_face_mark_boundaries", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "use_face_mark_keep_contour", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_face_mark_keep_contour", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }
 
