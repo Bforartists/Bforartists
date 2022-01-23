@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -3254,6 +3254,10 @@ msgid "Jpeg"
 msgstr "जेपीईजी"
 
 
+msgid "To"
+msgstr "करने के लिए"
+
+
 msgid "X2"
 msgstr "२ एक्स"
 
@@ -3857,14 +3861,6 @@ msgstr "उप विभाजन"
 
 msgid "Modifier"
 msgstr "संशोधक"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgid "Create a new image"
@@ -5147,6 +5143,14 @@ msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
 
 
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
+
+
 msgctxt "MovieClip"
 msgid "View"
 msgstr "दृश्य"
@@ -5590,10 +5594,6 @@ msgstr "नियम पुस्तिका"
 
 msgid "After"
 msgstr "के बाद"
-
-
-msgid "To"
-msgstr "करने के लिए"
 
 
 msgctxt "Operator"

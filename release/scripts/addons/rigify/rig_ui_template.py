@@ -130,6 +130,11 @@ def convert_pose_matrix_via_rest_delta(mat, from_bone, to_bone):
     return mat @ from_bone.bone.matrix_local.inverted() @ to_bone.bone.matrix_local
 
 
+def convert_pose_matrix_via_pose_delta(mat, from_bone, to_bone):
+    """Convert pose of one bone to another bone, preserving the current pose difference between them."""
+    return mat @ from_bone.matrix.inverted() @ to_bone.matrix
+
+
 def get_local_pose_matrix(pose_bone):
     """ Returns the local transform matrix of the given pose bone.
     """

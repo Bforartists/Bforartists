@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -21131,10 +21131,6 @@ msgid "Contact Shadow"
 msgstr "Контактная тень"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "Использовать трассировку лучей в экранном пространстве чтобы получить правильные тени возле перекрывающих объектов или для мелких деталей, которые не попали в теневые карты"
-
-
 msgid "Point Light"
 msgstr "Точечный источник света"
 
@@ -33458,10 +33454,6 @@ msgid "Shortest Diagonal"
 msgstr "Кратчайшая диагональ"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Разбивать четырёхугольники на основе расстояния между вершинами"
-
-
 msgid "UV Project Modifier"
 msgstr "Модификатор UV-проецирования"
 
@@ -36201,6 +36193,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "Считать, что цвета используют предумноженный альфа-канал, либо непосредственный выходной цвет (со значением альфа = 1)"
 
 
+msgid "To"
+msgstr "Кому"
+
+
 msgid "Corner Pin"
 msgstr "Привязка по углам"
 
@@ -37440,6 +37436,10 @@ msgstr "Без интерполяции (использовать ближайш
 
 msgid "Cubic interpolation"
 msgstr "Кубическая интерполяция"
+
+
+msgid "Edge Angle"
+msgstr "По углу ребра"
 
 
 msgid "Cross Product"
@@ -43222,20 +43222,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Применить модификаторы в экспортируемом меше"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Экспортировать нормали для граней с гладким и плоским типами затенений (грани с плоским типом затенения будут экспортированы в виде отдельных граней)"
-
-
 msgid "Selection Only"
 msgstr "Только выделенное"
 
 
 msgid "Export selected objects only"
 msgstr "Экспортировать только выделенные объекты"
-
-
-msgid "Export the active UV layer"
-msgstr "Экспортировать активный UV-слой"
 
 
 msgctxt "Operator"
@@ -45993,14 +45985,6 @@ msgstr "Обрезать выделенный штрих до первой пе�
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Отразить цвета"
-
-
-msgid "Black"
-msgstr "Чёрный"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgctxt "Operator"
@@ -62779,6 +62763,10 @@ msgid "Print memory statistics to the console"
 msgstr "Вывести статистику использования памяти в консоль"
 
 
+msgid "Object Properties"
+msgstr "Настройки объекта"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Открыть"
@@ -63569,13 +63557,13 @@ msgid "Workspace Reorder to Back"
 msgstr "Переместить рабочее пространство в начало"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "Переместить рабочее пространство в начало списка"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "Переместить рабочее пространство в конец"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "Переместить рабочее пространство в начало списка"
 
 
 msgctxt "Operator"
@@ -71968,10 +71956,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "Не просчитывать отражения, если шероховатость больше этой величины"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "Точность экранной трассировки лучей"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "Толщина пикселей для определения пересечений"
 
@@ -74172,8 +74156,16 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -75449,10 +75441,6 @@ msgstr "Настройки слоя визуализации"
 
 msgid "World Properties"
 msgstr "Настройки мира"
-
-
-msgid "Object Properties"
-msgstr "Настройки объекта"
 
 
 msgid "Object Constraint Properties"
@@ -79136,10 +79124,6 @@ msgid "Highlight selected edges"
 msgstr "Подсвечивать выделенные рёбра"
 
 
-msgid "Edge Angle"
-msgstr "По углу ребра"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Отобразить угол выделенного ребра с использованием глобальных значений, установленных в панели трансформации"
 
@@ -81494,10 +81478,6 @@ msgstr "Диапазон кадров до"
 
 msgid "After"
 msgstr "После"
-
-
-msgid "To"
-msgstr "Кому"
 
 
 msgid "Nothing to show yet..."

@@ -79,8 +79,11 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_alloca.h"
+#include "BLI_array.hh"
+#include "BLI_index_range.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
+#include "BLI_span.hh"
 
 #include "BKE_customdata.h"
 #include "BKE_mesh.h"
@@ -95,6 +98,10 @@
 #include "bmesh.h"
 #include "intern/bmesh_private.h" /* For element checking. */
 
+using blender::Array;
+using blender::IndexRange;
+using blender::Span;
+
 void BM_mesh_cd_flag_ensure(BMesh *bm, Mesh *mesh, const char cd_flag)
 {
   const char cd_flag_all = BM_mesh_cd_flag_from_bmesh(bm) | cd_flag;
@@ -107,9 +114,9 @@ void BM_mesh_cd_flag_ensure(BMesh *bm, Mesh *mesh, const char cd_flag)
 void BM_mesh_cd_flag_apply(BMesh *bm, const char cd_flag)
 {
   /* CustomData_bmesh_init_pool() must run first */
-  BLI_assert(bm->vdata.totlayer == 0 || bm->vdata.pool != NULL);
-  BLI_assert(bm->edata.totlayer == 0 || bm->edata.pool != NULL);
-  BLI_assert(bm->pdata.totlayer == 0 || bm->pdata.pool != NULL);
+  BLI_assert(bm->vdata.totlayer == 0 || bm->vdata.pool != nullptr);
+  BLI_assert(bm->edata.totlayer == 0 || bm->edata.pool != nullptr);
+  BLI_assert(bm->pdata.totlayer == 0 || bm->pdata.pool != nullptr);
 
   if (cd_flag & ME_CDFLAG_VERT_BWEIGHT) {
     if (!CustomData_has_layer(&bm->vdata, CD_BWEIGHT)) {
@@ -119,6 +126,17 @@ void BM_mesh_cd_flag_apply(BMesh *bm, const char cd_flag)
   else {
     if (CustomData_has_layer(&bm->vdata, CD_BWEIGHT)) {
       BM_data_layer_free(bm, &bm->vdata, CD_BWEIGHT);
+    }
+  }
+
+  if (cd_flag & ME_CDFLAG_VERT_CREASE) {
+    if (!CustomData_has_layer(&bm->vdata, CD_CREASE)) {
+      BM_data_layer_add(bm, &bm->vdata, CD_CREASE);
+    }
+  }
+  else {
+    if (CustomData_has_layer(&bm->vdata, CD_CREASE)) {
+      BM_data_layer_free(bm, &bm->vdata, CD_CREASE);
     }
   }
 
@@ -151,6 +169,9 @@ char BM_mesh_cd_flag_from_bmesh(BMesh *bm)
   if (CustomData_has_layer(&bm->vdata, CD_BWEIGHT)) {
     cd_flag |= ME_CDFLAG_VERT_BWEIGHT;
   }
+  if (CustomData_has_layer(&bm->vdata, CD_CREASE)) {
+    cd_flag |= ME_CDFLAG_VERT_CREASE;
+  }
   if (CustomData_has_layer(&bm->edata, CD_BWEIGHT)) {
     cd_flag |= ME_CDFLAG_EDGE_BWEIGHT;
   }
@@ -161,35 +182,28 @@ char BM_mesh_cd_flag_from_bmesh(BMesh *bm)
 }
 
 /* Static function for alloc (duplicate in modifiers_bmesh.c) */
-static BMFace *bm_face_create_from_mpoly(
-    MPoly *mp, MLoop *ml, BMesh *bm, BMVert **vtable, BMEdge **etable)
+static BMFace *bm_face_create_from_mpoly(BMesh &bm,
+                                         Span<MLoop> loops,
+                                         Span<BMVert *> vtable,
+                                         Span<BMEdge *> etable)
 {
-  BMVert **verts = BLI_array_alloca(verts, mp->totloop);
-  BMEdge **edges = BLI_array_alloca(edges, mp->totloop);
-  int j;
+  Array<BMVert *, BM_DEFAULT_NGON_STACK_SIZE> verts(loops.size());
+  Array<BMEdge *, BM_DEFAULT_NGON_STACK_SIZE> edges(loops.size());
 
-  for (j = 0; j < mp->totloop; j++, ml++) {
-    verts[j] = vtable[ml->v];
-    edges[j] = etable[ml->e];
+  for (const int i : loops.index_range()) {
+    verts[i] = vtable[loops[i].v];
+    edges[i] = etable[loops[i].e];
   }
 
-  return BM_face_create(bm, verts, edges, mp->totloop, NULL, BM_CREATE_SKIP_CD);
+  return BM_face_create(&bm, verts.data(), edges.data(), loops.size(), nullptr, BM_CREATE_SKIP_CD);
 }
 
 void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshParams *params)
 {
   const bool is_new = !(bm->totvert || (bm->vdata.totlayer || bm->edata.totlayer ||
                                         bm->pdata.totlayer || bm->ldata.totlayer));
-  MVert *mvert;
-  MEdge *medge;
-  MLoop *mloop;
-  MPoly *mp;
-  KeyBlock *actkey, *block;
-  BMVert *v, **vtable = NULL;
-  BMEdge *e, **etable = NULL;
-  BMFace *f, **ftable = NULL;
-  float(*keyco)[3] = NULL;
-  int totloops, i;
+  KeyBlock *actkey;
+  float(*keyco)[3] = nullptr;
   CustomData_MeshMasks mask = CD_MASK_BMESH;
   CustomData_MeshMasks_update(&mask, &params->cd_mask_extra);
 
@@ -211,7 +225,7 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
   /* Only copy normals to the new BMesh if they are not already dirty. This avoids unnecessary
    * work, but also accessing normals on an incomplete mesh, for example when restoring undo steps
    * in edit mode. */
-  const float(*vert_normals)[3] = NULL;
+  const float(*vert_normals)[3] = nullptr;
   if (!BKE_mesh_vertex_normals_are_dirty(me)) {
     vert_normals = BKE_mesh_vertex_normals_ensure(me);
   }
@@ -232,7 +246,7 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
   /* -------------------------------------------------------------------- */
   /* Shape Key */
   int tot_shape_keys = 0;
-  if (me->key != NULL && DEG_is_original_id(&me->id)) {
+  if (me->key != nullptr && DEG_is_original_id(&me->id)) {
     /* Evaluated meshes can be topologically inconsistent with their shape keys.
      * Shape keys are also already integrated into the state of the evaluated
      * mesh, so considering them here would kind of apply them twice. */
@@ -259,20 +273,20 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
   if (is_new == false) {
     tot_shape_keys = min_ii(tot_shape_keys, CustomData_number_of_layers(&bm->vdata, CD_SHAPEKEY));
   }
-  const float(**shape_key_table)[3] = tot_shape_keys ?
-                                          BLI_array_alloca(shape_key_table, tot_shape_keys) :
-                                          NULL;
+  const float(**shape_key_table)[3] = tot_shape_keys ? (const float(**)[3])BLI_array_alloca(
+                                                           shape_key_table, tot_shape_keys) :
+                                                       nullptr;
 
   if ((params->active_shapekey != 0) && tot_shape_keys > 0) {
-    actkey = BLI_findlink(&me->key->block, params->active_shapekey - 1);
+    actkey = static_cast<KeyBlock *>(BLI_findlink(&me->key->block, params->active_shapekey - 1));
   }
   else {
-    actkey = NULL;
+    actkey = nullptr;
   }
 
   if (is_new) {
     if (tot_shape_keys || params->add_key_index) {
-      CustomData_add_layer(&bm->vdata, CD_SHAPE_KEYINDEX, CD_ASSIGN, NULL, 0);
+      CustomData_add_layer(&bm->vdata, CD_SHAPE_KEYINDEX, CD_ASSIGN, nullptr, 0);
     }
   }
 
@@ -287,26 +301,29 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
                 __func__);
 
         me->key->uidgen = 1;
-        for (block = me->key->block.first; block; block = block->next) {
+        LISTBASE_FOREACH (KeyBlock *, block, &me->key->block) {
           block->uid = me->key->uidgen++;
         }
       }
     }
 
     if (actkey && actkey->totelem == me->totvert) {
-      keyco = params->use_shapekey ? actkey->data : NULL;
+      keyco = params->use_shapekey ? static_cast<float(*)[3]>(actkey->data) : nullptr;
       if (is_new) {
         bm->shapenr = params->active_shapekey;
       }
     }
 
-    for (i = 0, block = me->key->block.first; i < tot_shape_keys; block = block->next, i++) {
+    int i;
+    KeyBlock *block;
+    for (i = 0, block = static_cast<KeyBlock *>(me->key->block.first); i < tot_shape_keys;
+         block = block->next, i++) {
       if (is_new) {
-        CustomData_add_layer_named(&bm->vdata, CD_SHAPEKEY, CD_ASSIGN, NULL, 0, block->name);
+        CustomData_add_layer_named(&bm->vdata, CD_SHAPEKEY, CD_ASSIGN, nullptr, 0, block->name);
         int j = CustomData_get_layer_index_n(&bm->vdata, CD_SHAPEKEY, i);
         bm->vdata.layers[j].uid = block->uid;
       }
-      shape_key_table[i] = (const float(*)[3])block->data;
+      shape_key_table[i] = static_cast<const float(*)[3]>(block->data);
     }
   }
 
@@ -315,30 +332,38 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
     CustomData_bmesh_init_pool(&bm->edata, me->totedge, BM_EDGE);
     CustomData_bmesh_init_pool(&bm->ldata, me->totloop, BM_LOOP);
     CustomData_bmesh_init_pool(&bm->pdata, me->totpoly, BM_FACE);
-
-    BM_mesh_cd_flag_apply(bm, me->cd_flag);
   }
+  BM_mesh_cd_flag_apply(bm, me->cd_flag | (is_new ? 0 : BM_mesh_cd_flag_from_bmesh(bm)));
 
-  const int cd_vert_bweight_offset = CustomData_get_offset(&bm->vdata, CD_BWEIGHT);
-  const int cd_edge_bweight_offset = CustomData_get_offset(&bm->edata, CD_BWEIGHT);
-  const int cd_edge_crease_offset = CustomData_get_offset(&bm->edata, CD_CREASE);
+  /* Only copy these values over if the source mesh is flagged to be using them.
+   * Even if `bm` has these layers, they may have been added from another mesh, when `!is_new`. */
+  const int cd_vert_bweight_offset = (me->cd_flag & ME_CDFLAG_VERT_BWEIGHT) ?
+                                         CustomData_get_offset(&bm->vdata, CD_BWEIGHT) :
+                                         -1;
+  const int cd_edge_bweight_offset = (me->cd_flag & ME_CDFLAG_EDGE_BWEIGHT) ?
+                                         CustomData_get_offset(&bm->edata, CD_BWEIGHT) :
+                                         -1;
+  const int cd_edge_crease_offset = (me->cd_flag & ME_CDFLAG_EDGE_CREASE) ?
+                                        CustomData_get_offset(&bm->edata, CD_CREASE) :
+                                        -1;
   const int cd_shape_key_offset = tot_shape_keys ? CustomData_get_offset(&bm->vdata, CD_SHAPEKEY) :
                                                    -1;
   const int cd_shape_keyindex_offset = is_new && (tot_shape_keys || params->add_key_index) ?
                                            CustomData_get_offset(&bm->vdata, CD_SHAPE_KEYINDEX) :
                                            -1;
 
-  vtable = MEM_mallocN(sizeof(BMVert **) * me->totvert, __func__);
-
-  for (i = 0, mvert = me->mvert; i < me->totvert; i++, mvert++) {
-    v = vtable[i] = BM_vert_create(bm, keyco ? keyco[i] : mvert->co, NULL, BM_CREATE_SKIP_CD);
+  Span<MVert> mvert{me->mvert, me->totvert};
+  Array<BMVert *> vtable(me->totvert);
+  for (const int i : mvert.index_range()) {
+    BMVert *v = vtable[i] = BM_vert_create(
+        bm, keyco ? keyco[i] : mvert[i].co, nullptr, BM_CREATE_SKIP_CD);
     BM_elem_index_set(v, i); /* set_ok */
 
     /* Transfer flag. */
-    v->head.hflag = BM_vert_flag_from_mflag(mvert->flag & ~SELECT);
+    v->head.hflag = BM_vert_flag_from_mflag(mvert[i].flag & ~SELECT);
 
     /* This is necessary for selection counts to work properly. */
-    if (mvert->flag & SELECT) {
+    if (mvert[i].flag & SELECT) {
       BM_vert_select_set(bm, v, true);
     }
 
@@ -350,7 +375,7 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
     CustomData_to_bmesh_block(&me->vdata, &bm->vdata, i, &v->head.data, true);
 
     if (cd_vert_bweight_offset != -1) {
-      BM_ELEM_CD_SET_FLOAT(v, cd_vert_bweight_offset, (float)mvert->bweight / 255.0f);
+      BM_ELEM_CD_SET_FLOAT(v, cd_vert_bweight_offset, (float)mvert[i].bweight / 255.0f);
     }
 
     /* Set shape key original index. */
@@ -360,7 +385,7 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
 
     /* Set shape-key data. */
     if (tot_shape_keys) {
-      float(*co_dst)[3] = BM_ELEM_CD_GET_VOID_P(v, cd_shape_key_offset);
+      float(*co_dst)[3] = (float(*)[3])BM_ELEM_CD_GET_VOID_P(v, cd_shape_key_offset);
       for (int j = 0; j < tot_shape_keys; j++, co_dst++) {
         copy_v3_v3(*co_dst, shape_key_table[j][i]);
       }
@@ -370,19 +395,18 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
     bm->elem_index_dirty &= ~BM_VERT; /* Added in order, clear dirty flag. */
   }
 
-  etable = MEM_mallocN(sizeof(BMEdge **) * me->totedge, __func__);
-
-  medge = me->medge;
-  for (i = 0; i < me->totedge; i++, medge++) {
-    e = etable[i] = BM_edge_create(
-        bm, vtable[medge->v1], vtable[medge->v2], NULL, BM_CREATE_SKIP_CD);
+  Span<MEdge> medge{me->medge, me->totedge};
+  Array<BMEdge *> etable(me->totedge);
+  for (const int i : medge.index_range()) {
+    BMEdge *e = etable[i] = BM_edge_create(
+        bm, vtable[medge[i].v1], vtable[medge[i].v2], nullptr, BM_CREATE_SKIP_CD);
     BM_elem_index_set(e, i); /* set_ok */
 
     /* Transfer flags. */
-    e->head.hflag = BM_edge_flag_from_mflag(medge->flag & ~SELECT);
+    e->head.hflag = BM_edge_flag_from_mflag(medge[i].flag & ~SELECT);
 
     /* This is necessary for selection counts to work properly. */
-    if (medge->flag & SELECT) {
+    if (medge[i].flag & SELECT) {
       BM_edge_select_set(bm, e, true);
     }
 
@@ -390,33 +414,35 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
     CustomData_to_bmesh_block(&me->edata, &bm->edata, i, &e->head.data, true);
 
     if (cd_edge_bweight_offset != -1) {
-      BM_ELEM_CD_SET_FLOAT(e, cd_edge_bweight_offset, (float)medge->bweight / 255.0f);
+      BM_ELEM_CD_SET_FLOAT(e, cd_edge_bweight_offset, (float)medge[i].bweight / 255.0f);
     }
     if (cd_edge_crease_offset != -1) {
-      BM_ELEM_CD_SET_FLOAT(e, cd_edge_crease_offset, (float)medge->crease / 255.0f);
+      BM_ELEM_CD_SET_FLOAT(e, cd_edge_crease_offset, (float)medge[i].crease / 255.0f);
     }
   }
   if (is_new) {
     bm->elem_index_dirty &= ~BM_EDGE; /* Added in order, clear dirty flag. */
   }
 
+  Span<MPoly> mpoly{me->mpoly, me->totpoly};
+  Span<MLoop> mloop{me->mloop, me->totloop};
+
   /* Only needed for selection. */
+
+  Array<BMFace *> ftable;
   if (me->mselect && me->totselect != 0) {
-    ftable = MEM_mallocN(sizeof(BMFace **) * me->totpoly, __func__);
+    ftable.reinitialize(me->totpoly);
   }
 
-  mloop = me->mloop;
-  mp = me->mpoly;
-  for (i = 0, totloops = 0; i < me->totpoly; i++, mp++) {
-    BMLoop *l_iter;
-    BMLoop *l_first;
-
-    f = bm_face_create_from_mpoly(mp, mloop + mp->loopstart, bm, vtable, etable);
-    if (ftable != NULL) {
+  int totloops = 0;
+  for (const int i : mpoly.index_range()) {
+    BMFace *f = bm_face_create_from_mpoly(
+        *bm, mloop.slice(mpoly[i].loopstart, mpoly[i].totloop), vtable, etable);
+    if (!ftable.is_empty()) {
       ftable[i] = f;
     }
 
-    if (UNLIKELY(f == NULL)) {
+    if (UNLIKELY(f == nullptr)) {
       printf(
           "%s: Warning! Bad face in mesh"
           " \"%s\" at index %d!, skipping\n",
@@ -430,20 +456,21 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
     BM_elem_index_set(f, bm->totface - 1); /* set_ok */
 
     /* Transfer flag. */
-    f->head.hflag = BM_face_flag_from_mflag(mp->flag & ~ME_FACE_SEL);
+    f->head.hflag = BM_face_flag_from_mflag(mpoly[i].flag & ~ME_FACE_SEL);
 
     /* This is necessary for selection counts to work properly. */
-    if (mp->flag & ME_FACE_SEL) {
+    if (mpoly[i].flag & ME_FACE_SEL) {
       BM_face_select_set(bm, f, true);
     }
 
-    f->mat_nr = mp->mat_nr;
+    f->mat_nr = mpoly[i].mat_nr;
     if (i == me->act_face) {
       bm->act_face = f;
     }
 
-    int j = mp->loopstart;
-    l_iter = l_first = BM_FACE_FIRST_LOOP(f);
+    int j = mpoly[i].loopstart;
+    BMLoop *l_first = BM_FACE_FIRST_LOOP(f);
+    BMLoop *l_iter = l_first;
     do {
       /* Don't use 'j' since we may have skipped some faces, hence some loops. */
       BM_elem_index_set(l_iter, totloops++); /* set_ok */
@@ -464,43 +491,38 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
   }
 
   /* -------------------------------------------------------------------- */
-  /* MSelect clears the array elements (avoid adding multiple times).
+  /* MSelect clears the array elements (to avoid adding multiple times).
    *
    * Take care to keep this last and not use (v/e/ftable) after this.
    */
 
   if (me->mselect && me->totselect != 0) {
-    MSelect *msel;
-    for (i = 0, msel = me->mselect; i < me->totselect; i++, msel++) {
+    for (const int i : IndexRange(me->totselect)) {
+      const MSelect &msel = me->mselect[i];
+
       BMElem **ele_p;
-      switch (msel->type) {
+      switch (msel.type) {
         case ME_VSEL:
-          ele_p = (BMElem **)&vtable[msel->index];
+          ele_p = (BMElem **)&vtable[msel.index];
           break;
         case ME_ESEL:
-          ele_p = (BMElem **)&etable[msel->index];
+          ele_p = (BMElem **)&etable[msel.index];
           break;
         case ME_FSEL:
-          ele_p = (BMElem **)&ftable[msel->index];
+          ele_p = (BMElem **)&ftable[msel.index];
           break;
         default:
           continue;
       }
 
-      if (*ele_p != NULL) {
+      if (*ele_p != nullptr) {
         BM_select_history_store_notest(bm, *ele_p);
-        *ele_p = NULL;
+        *ele_p = nullptr;
       }
     }
   }
   else {
     BM_select_history_clear(bm);
-  }
-
-  MEM_freeN(vtable);
-  MEM_freeN(etable);
-  if (ftable) {
-    MEM_freeN(ftable);
   }
 }
 
@@ -510,7 +532,7 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *me, const struct BMeshFromMeshPar
 static BMVert **bm_to_mesh_vertex_map(BMesh *bm, int ototvert)
 {
   const int cd_shape_keyindex_offset = CustomData_get_offset(&bm->vdata, CD_SHAPE_KEYINDEX);
-  BMVert **vertMap = NULL;
+  BMVert **vertMap = nullptr;
   BMVert *eve;
   int i = 0;
   BMIter iter;
@@ -518,7 +540,7 @@ static BMVert **bm_to_mesh_vertex_map(BMesh *bm, int ototvert)
   /* Caller needs to ensure this. */
   BLI_assert(ototvert > 0);
 
-  vertMap = MEM_callocN(sizeof(*vertMap) * ototvert, "vertMap");
+  vertMap = static_cast<BMVert **>(MEM_callocN(sizeof(*vertMap) * ototvert, "vertMap"));
   if (cd_shape_keyindex_offset != -1) {
     BM_ITER_MESH_INDEX (eve, &iter, bm, BM_VERTS_OF_MESH, i) {
       const int keyi = BM_ELEM_CD_GET_INT(eve, cd_shape_keyindex_offset);
@@ -526,7 +548,7 @@ static BMVert **bm_to_mesh_vertex_map(BMesh *bm, int ototvert)
           /* Not fool-proof, but chances are if we have many verts with the same index,
            * we will want to use the first one,
            * since the second is more likely to be a duplicate. */
-          (vertMap[keyi] == NULL)) {
+          (vertMap[keyi] == nullptr)) {
         vertMap[keyi] = eve;
       }
     }
@@ -596,7 +618,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
   const int cd_edge_crease_offset = CustomData_get_offset(&bm->edata, CD_CREASE);
   const int cd_shape_keyindex_offset = CustomData_get_offset(&bm->vdata, CD_SHAPE_KEYINDEX);
 
-  MVert *oldverts = NULL;
+  MVert *oldverts = nullptr;
   const int ototvert = me->totvert;
 
   if (me->key && (cd_shape_keyindex_offset != -1)) {
@@ -607,9 +629,9 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
   oldverts = MEM_dupallocN(me->mvert);
 #else
     oldverts = me->mvert;
-    me->mvert = NULL;
+    me->mvert = nullptr;
     CustomData_update_typemap(&me->vdata);
-    CustomData_set_layer(&me->vdata, CD_MVERT, NULL);
+    CustomData_set_layer(&me->vdata, CD_MVERT, nullptr);
 #endif
   }
 
@@ -626,7 +648,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
   me->totloop = bm->totloop;
   me->totpoly = bm->totface;
   /* Will be overwritten with a valid value if 'dotess' is set, otherwise we
-   * end up with 'me->totface' and me->mface == NULL which can crash T28625. */
+   * end up with 'me->totface' and me->mface == nullptr which can crash T28625. */
   me->totface = 0;
   me->act_face = -1;
 
@@ -639,10 +661,14 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
     CustomData_copy(&bm->pdata, &me->pdata, mask.pmask, CD_CALLOC, me->totpoly);
   }
 
-  MVert *mvert = bm->totvert ? MEM_callocN(sizeof(MVert) * bm->totvert, "bm_to_me.vert") : NULL;
-  MEdge *medge = bm->totedge ? MEM_callocN(sizeof(MEdge) * bm->totedge, "bm_to_me.edge") : NULL;
-  MLoop *mloop = bm->totloop ? MEM_callocN(sizeof(MLoop) * bm->totloop, "bm_to_me.loop") : NULL;
-  MPoly *mpoly = bm->totface ? MEM_callocN(sizeof(MPoly) * bm->totface, "bm_to_me.poly") : NULL;
+  MVert *mvert = bm->totvert ? (MVert *)MEM_callocN(sizeof(MVert) * bm->totvert, "bm_to_me.vert") :
+                               nullptr;
+  MEdge *medge = bm->totedge ? (MEdge *)MEM_callocN(sizeof(MEdge) * bm->totedge, "bm_to_me.edge") :
+                               nullptr;
+  MLoop *mloop = bm->totloop ? (MLoop *)MEM_callocN(sizeof(MLoop) * bm->totloop, "bm_to_me.loop") :
+                               nullptr;
+  MPoly *mpoly = bm->totface ? (MPoly *)MEM_callocN(sizeof(MPoly) * bm->totface, "bm_to_me.poly") :
+                               nullptr;
 
   CustomData_add_layer(&me->vdata, CD_MVERT, CD_ASSIGN, mvert, me->totvert);
   CustomData_add_layer(&me->edata, CD_MEDGE, CD_ASSIGN, medge, me->totedge);
@@ -656,7 +682,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
   me->cd_flag = BM_mesh_cd_flag_from_bmesh(bm);
 
   /* This is called again, 'dotess' arg is used there. */
-  BKE_mesh_update_customdata_pointers(me, 0);
+  BKE_mesh_update_customdata_pointers(me, false);
 
   i = 0;
   BM_ITER_MESH (v, &iter, bm, BM_VERTS_OF_MESH) {
@@ -746,15 +772,13 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
 
   /* Patch hook indices and vertex parents. */
   if (params->calc_object_remap && (ototvert > 0)) {
-    BLI_assert(bmain != NULL);
-    Object *ob;
-    ModifierData *md;
-    BMVert **vertMap = NULL;
+    BLI_assert(bmain != nullptr);
+    BMVert **vertMap = nullptr;
 
-    for (ob = bmain->objects.first; ob; ob = ob->id.next) {
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
       if ((ob->parent) && (ob->parent->data == me) && ELEM(ob->partype, PARVERT1, PARVERT3)) {
 
-        if (vertMap == NULL) {
+        if (vertMap == nullptr) {
           vertMap = bm_to_mesh_vertex_map(bm, ototvert);
         }
 
@@ -778,11 +802,11 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
         }
       }
       if (ob->data == me) {
-        for (md = ob->modifiers.first; md; md = md->next) {
+        LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
           if (md->type == eModifierType_Hook) {
             HookModifierData *hmd = (HookModifierData *)md;
 
-            if (vertMap == NULL) {
+            if (vertMap == nullptr) {
               vertMap = bm_to_mesh_vertex_map(bm, ototvert);
             }
 
@@ -813,15 +837,15 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
   BKE_mesh_update_customdata_pointers(me, false);
 
   {
-    BMEditSelection *selected;
     me->totselect = BLI_listbase_count(&(bm->selected));
 
     MEM_SAFE_FREE(me->mselect);
     if (me->totselect != 0) {
-      me->mselect = MEM_mallocN(sizeof(MSelect) * me->totselect, "Mesh selection history");
+      me->mselect = static_cast<MSelect *>(
+          MEM_mallocN(sizeof(MSelect) * me->totselect, "Mesh selection history"));
     }
 
-    for (i = 0, selected = bm->selected.first; selected; i++, selected = selected->next) {
+    LISTBASE_FOREACH_INDEX (BMEditSelection *, selected, &bm->selected, i) {
       if (selected->htype == BM_VERT) {
         me->mselect[i].type = ME_VSEL;
       }
@@ -840,9 +864,9 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
 
   if (me->key) {
     KeyBlock *currkey;
-    KeyBlock *actkey = BLI_findlink(&me->key->block, bm->shapenr - 1);
+    KeyBlock *actkey = static_cast<KeyBlock *>(BLI_findlink(&me->key->block, bm->shapenr - 1));
 
-    float(*ofs)[3] = NULL;
+    float(*ofs)[3] = nullptr;
 
     /* Go through and find any shape-key custom-data layers
      * that might not have corresponding KeyBlocks, and add them if necessary. */
@@ -851,7 +875,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
         continue;
       }
 
-      for (currkey = me->key->block.first; currkey; currkey = currkey->next) {
+      for (currkey = (KeyBlock *)me->key->block.first; currkey; currkey = currkey->next) {
         if (currkey->uid == bm->vdata.layers[i].uid) {
           break;
         }
@@ -869,10 +893,10 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
 
         /* Unlikely, but the active key may not be valid if the
          * BMesh and the mesh are out of sync. */
-        (actkey != NULL) &&
+        (actkey != nullptr) &&
 
         /* Not used here, but 'oldverts' is used later for applying 'ofs'. */
-        (oldverts != NULL) &&
+        (oldverts != nullptr) &&
 
         /* Needed for referencing oldverts. */
         (cd_shape_keyindex_offset != -1)) {
@@ -881,9 +905,10 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
 
       /* Active key is a base. */
       if (act_is_basis) {
-        const float(*fp)[3] = actkey->data;
+        const float(*fp)[3] = static_cast<const float(*)[3]>(actkey->data);
 
-        ofs = MEM_callocN(sizeof(float[3]) * bm->totvert, "currkey->data");
+        ofs = static_cast<float(*)[3]>(
+            MEM_callocN(sizeof(float[3]) * bm->totvert, "currkey->data"));
         mvert = me->mvert;
         BM_ITER_MESH_INDEX (eve, &iter, bm, BM_VERTS_OF_MESH, i) {
           const int keyi = BM_ELEM_CD_GET_INT(eve, cd_shape_keyindex_offset);
@@ -897,7 +922,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
              * because it will only work for the existing vertices and not the new
              * ones, creating a mess when doing e.g. subdivide + translate. */
             MEM_freeN(ofs);
-            ofs = NULL;
+            ofs = nullptr;
             break;
           }
 
@@ -906,7 +931,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
       }
     }
 
-    for (currkey = me->key->block.first; currkey; currkey = currkey->next) {
+    LISTBASE_FOREACH (KeyBlock *, currkey, &me->key->block) {
       int keyi;
       const float(*ofs_pt)[3] = ofs;
       float *newkey, (*oldkey)[3], *fp;
@@ -916,11 +941,12 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
                                                          CustomData_get_n_offset(&bm->vdata,
                                                                                  CD_SHAPEKEY,
                                                                                  currkey_uuid);
-      const bool apply_offset = (cd_shape_offset != -1) && (ofs != NULL) && (currkey != actkey) &&
-                                (bm->shapenr - 1 == currkey->relative);
+      const bool apply_offset = (cd_shape_offset != -1) && (ofs != nullptr) &&
+                                (currkey != actkey) && (bm->shapenr - 1 == currkey->relative);
 
-      fp = newkey = MEM_callocN(me->key->elemsize * bm->totvert, "currkey->data");
-      oldkey = currkey->data;
+      fp = newkey = static_cast<float *>(
+          MEM_callocN(me->key->elemsize * bm->totvert, "currkey->data"));
+      oldkey = static_cast<float(*)[3]>(currkey->data);
 
       mvert = me->mvert;
       BM_ITER_MESH (eve, &iter, bm, BM_VERTS_OF_MESH) {
@@ -941,9 +967,9 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
         }
         else if (cd_shape_offset != -1) {
           /* In most cases this runs. */
-          copy_v3_v3(fp, BM_ELEM_CD_GET_VOID_P(eve, cd_shape_offset));
+          copy_v3_v3(fp, (const float *)BM_ELEM_CD_GET_VOID_P(eve, cd_shape_offset));
         }
-        else if ((oldkey != NULL) && (cd_shape_keyindex_offset != -1) &&
+        else if ((oldkey != nullptr) && (cd_shape_keyindex_offset != -1) &&
                  ((keyi = BM_ELEM_CD_GET_INT(eve, cd_shape_keyindex_offset)) != ORIGINDEX_NONE) &&
                  (keyi < currkey->totelem)) {
           /* Old method of reconstructing keys via vertices original key indices,
@@ -963,7 +989,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
            * Otherwise, in case we call again #BM_mesh_bm_to_me on same BMesh,
            * we'll apply diff from previous call to #BM_mesh_bm_to_me,
            * to shape-key values from *original creation of the BMesh*. See T50524. */
-          copy_v3_v3(BM_ELEM_CD_GET_VOID_P(eve, cd_shape_offset), fp);
+          copy_v3_v3((float *)BM_ELEM_CD_GET_VOID_P(eve, cd_shape_offset), fp);
         }
 
         fp += 3;
@@ -993,7 +1019,7 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *me, const struct BMeshToMesh
     }
   }
 
-  if (oldverts != NULL) {
+  if (oldverts != nullptr) {
     MEM_freeN(oldverts);
   }
 
@@ -1008,7 +1034,7 @@ void BM_mesh_bm_to_me_for_eval(BMesh *bm, Mesh *me, const CustomData_MeshMasks *
 {
   /* Must be an empty mesh. */
   BLI_assert(me->totvert == 0);
-  BLI_assert(cd_mask_extra == NULL || (cd_mask_extra->vmask & CD_MASK_SHAPEKEY) == 0);
+  BLI_assert(cd_mask_extra == nullptr || (cd_mask_extra->vmask & CD_MASK_SHAPEKEY) == 0);
 
   me->totvert = bm->totvert;
   me->totedge = bm->totedge;
@@ -1016,19 +1042,19 @@ void BM_mesh_bm_to_me_for_eval(BMesh *bm, Mesh *me, const CustomData_MeshMasks *
   me->totloop = bm->totloop;
   me->totpoly = bm->totface;
 
-  CustomData_add_layer(&me->vdata, CD_ORIGINDEX, CD_CALLOC, NULL, bm->totvert);
-  CustomData_add_layer(&me->edata, CD_ORIGINDEX, CD_CALLOC, NULL, bm->totedge);
-  CustomData_add_layer(&me->pdata, CD_ORIGINDEX, CD_CALLOC, NULL, bm->totface);
+  CustomData_add_layer(&me->vdata, CD_ORIGINDEX, CD_CALLOC, nullptr, bm->totvert);
+  CustomData_add_layer(&me->edata, CD_ORIGINDEX, CD_CALLOC, nullptr, bm->totedge);
+  CustomData_add_layer(&me->pdata, CD_ORIGINDEX, CD_CALLOC, nullptr, bm->totface);
 
-  CustomData_add_layer(&me->vdata, CD_MVERT, CD_CALLOC, NULL, bm->totvert);
-  CustomData_add_layer(&me->edata, CD_MEDGE, CD_CALLOC, NULL, bm->totedge);
-  CustomData_add_layer(&me->ldata, CD_MLOOP, CD_CALLOC, NULL, bm->totloop);
-  CustomData_add_layer(&me->pdata, CD_MPOLY, CD_CALLOC, NULL, bm->totface);
+  CustomData_add_layer(&me->vdata, CD_MVERT, CD_CALLOC, nullptr, bm->totvert);
+  CustomData_add_layer(&me->edata, CD_MEDGE, CD_CALLOC, nullptr, bm->totedge);
+  CustomData_add_layer(&me->ldata, CD_MLOOP, CD_CALLOC, nullptr, bm->totloop);
+  CustomData_add_layer(&me->pdata, CD_MPOLY, CD_CALLOC, nullptr, bm->totface);
 
   /* Don't process shape-keys, we only feed them through the modifier stack as needed,
    * e.g. for applying modifiers or the like. */
   CustomData_MeshMasks mask = CD_MASK_DERIVEDMESH;
-  if (cd_mask_extra != NULL) {
+  if (cd_mask_extra != nullptr) {
     CustomData_MeshMasks_update(&mask, cd_mask_extra);
   }
   mask.vmask &= ~CD_MASK_SHAPEKEY;
@@ -1061,7 +1087,7 @@ void BM_mesh_bm_to_me_for_eval(BMesh *bm, Mesh *me, const CustomData_MeshMasks *
   /* Don't add origindex layer if one already exists. */
   add_orig = !CustomData_has_layer(&bm->pdata, CD_ORIGINDEX);
 
-  index = CustomData_get_layer(&me->vdata, CD_ORIGINDEX);
+  index = (int *)CustomData_get_layer(&me->vdata, CD_ORIGINDEX);
 
   BM_ITER_MESH_INDEX (eve, &iter, bm, BM_VERTS_OF_MESH, i) {
     MVert *mv = &mvert[i];
@@ -1084,7 +1110,7 @@ void BM_mesh_bm_to_me_for_eval(BMesh *bm, Mesh *me, const CustomData_MeshMasks *
   }
   bm->elem_index_dirty &= ~BM_VERT;
 
-  index = CustomData_get_layer(&me->edata, CD_ORIGINDEX);
+  index = (int *)CustomData_get_layer(&me->edata, CD_ORIGINDEX);
   BM_ITER_MESH_INDEX (eed, &iter, bm, BM_EDGES_OF_MESH, i) {
     MEdge *med = &medge[i];
 
@@ -1117,7 +1143,7 @@ void BM_mesh_bm_to_me_for_eval(BMesh *bm, Mesh *me, const CustomData_MeshMasks *
   }
   bm->elem_index_dirty &= ~BM_EDGE;
 
-  index = CustomData_get_layer(&me->pdata, CD_ORIGINDEX);
+  index = (int *)CustomData_get_layer(&me->pdata, CD_ORIGINDEX);
   j = 0;
   BM_ITER_MESH_INDEX (efa, &iter, bm, BM_FACES_OF_MESH, i) {
     BMLoop *l_iter;
