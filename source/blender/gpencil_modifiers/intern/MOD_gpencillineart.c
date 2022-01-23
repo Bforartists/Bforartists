@@ -505,6 +505,7 @@ static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
   //uiItemR(col, ptr, "use_clip_plane_boundaries", 0, NULL, ICON_NONE);
   //uiItemR(col, ptr, "use_crease_on_smooth", 0, IFACE_("Crease On Smooth"), ICON_NONE);
   //uiItemR(col, ptr, "use_crease_on_sharp", 0, IFACE_("Crease On Sharp"), ICON_NONE);
+  //uiItemR(col, ptr, "use_back_face_culling", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
 
@@ -537,6 +538,11 @@ static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_crease_on_sharp", 0, IFACE_("Crease On Sharp"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_crease_on_sharp", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_back_face_culling", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_back_face_culling", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }
 
