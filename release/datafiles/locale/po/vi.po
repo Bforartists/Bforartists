@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -22631,10 +22631,6 @@ msgid "Contact Shadow"
 msgstr "Bóng Tối Đụng"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "Sử dụng dò tia trong không gian màn chiếu để có bóng tối đúng gần đồ hấp thụ, hoặc cho chi tiết nhỏ không xuất hiện trong bản đồ bóng tối"
-
-
 msgid "Point Light"
 msgstr "Đèn Điểm"
 
@@ -37110,10 +37106,6 @@ msgid "Shortest Diagonal"
 msgstr "Đường Chéo Ngắn Nhất"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Chẻ tư giác dùng khoảng cách ngắn nhất giữa các đỉnh"
-
-
 msgid "UV Project Modifier"
 msgstr "Cụ Sửa Đổi Chiếu UV"
 
@@ -40233,6 +40225,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "Làm như màu được nhân độ đục trước, hay ngõ ra màu trực tiếp (độ đục được đặt bằng 1 )"
 
 
+msgid "To"
+msgstr "Đến"
+
+
 msgid "Corner Pin"
 msgstr "Đinh Góc Giác"
 
@@ -42264,6 +42260,10 @@ msgstr "Vị Trí Của Tay Cầm Đường Cong"
 
 msgid "Curve Tilt"
 msgstr "Độ Nghiệng Đường Cong"
+
+
+msgid "Edge Angle"
+msgstr "Góc Cạnh"
 
 
 msgid "Is Shade Smooth"
@@ -49836,20 +49836,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Áp dụng cuự sửa đổi với mạng lưới xuất"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Xuất Pháp Tuyến cho bề mặt được tô sắc mịn và đều (mặt tô sấc đều sẽ được xuất thành mặt riêng)"
-
-
 msgid "Selection Only"
 msgstr "Chỉ Vật Chọn"
 
 
 msgid "Export selected objects only"
 msgstr "Chỉ xuất vật thể được chọn"
-
-
-msgid "Export the active UV layer"
-msgstr "Xuất lớp UV hoạt động"
 
 
 msgctxt "Operator"
@@ -53645,107 +53637,6 @@ msgstr "Lật Màu"
 
 msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
-
-
-msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "Vẽ Lại Ảnh vào Bút Sáp"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "Rút nét Bút Sáp từ ảnh"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "Nó quyết định nếu vẽ lại một ảnh hay toàn bộ trình tự"
-
-
-msgid "Trace the current frame of the image"
-msgstr "Vẽ lại bức ảnh hiện tại"
-
-
-msgid "Trace full sequence"
-msgstr "Vẽ lại toàn bộ trình tự"
-
-
-msgid "Resolution of the generated curves"
-msgstr "Độ phân giải cửa đường cong được chế tạo"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "Khoảng cách đến điểm mẫu, đặt = 0 cho tắt"
-
-
-msgid "Scale of the final stroke"
-msgstr "Phóng to của nét cuối cùng"
-
-
-msgid "Color Threshold"
-msgstr "Ngưỡng Màu Sắc"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "Nó quyết định ngưỡng độ sáng cực tiểu cho chế tạo nét"
-
-
-msgid "Turn Policy"
-msgstr "Thủ Tục Thay Ca"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "Nó quyết định làm sao giải duyết sự không rõ khi phân tích ảnh điểm ảnh sang đường nét"
-
-
-msgid "Black"
-msgstr "Đèn"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "Ưu tiên kết nối thành phân màu đen (cảnh trước)"
-
-
-msgid "White"
-msgstr "Trắng"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "Ưu tiên kết nối thành phân màu trắng (cảnh sau)"
-
-
-msgid "Always take a left turn"
-msgstr "Lần nào cũng quẹo trái"
-
-
-msgid "Always take a right turn"
-msgstr "Lần nào cũng quẹo phải"
-
-
-msgid "Minority"
-msgstr "Thiểu Số"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "Ưu tiên kết nối màu nào (trắng và đen) có tần số ít hơn trong địa phương kề quanh vị trí hiện tại"
-
-
-msgid "Majority"
-msgstr "Đa Số"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "Ưu tiên kết nối màu (trắng hay đen) có tần số cao hơn trong địa phương kề vị trí hiện tại"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "Chọn ngẫu nhiên giả"
-
-
-msgid "Start At Current Frame"
-msgstr "Bắt Đầu Tại Bức Hiện Tại"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "Vẽ lại ảnh bắt đầu từ bức ảnh hiện tại"
 
 
 msgctxt "Operator"
@@ -74503,6 +74394,10 @@ msgid "Print memory statistics to the console"
 msgstr "In thống kê bộ nhớ trong diện điều khiển"
 
 
+msgid "Object Properties"
+msgstr "Đỉnh Vật Thể"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Mở"
@@ -75923,13 +75818,13 @@ msgid "Workspace Reorder to Back"
 msgstr "Sắp Thứ Tự Công Trường đến Phía Sau"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "Sắp thứ tự công trường cho nó là thứ nhất trong danh sách"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "Sắp Thứ Tự Công Trường đến Phía Trước"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "Sắp thứ tự công trường cho nó là thứ nhất trong danh sách"
 
 
 msgctxt "Operator"
@@ -85840,10 +85735,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "Không dò tia phản xạ cho độ nhạm lớn hơn giá trị này"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "Độ chính xác của dò tia trong không gian màn"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "Bề dày điểm ảnh được sử dụng cho phát hiện tia cắt"
 
@@ -88493,8 +88384,16 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
+
+
+msgid "White"
+msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -89875,10 +89774,6 @@ msgstr "Đặc Tính Thế Giới"
 
 msgid "Collection Properties"
 msgstr "Đặc Tính Sưu Tập"
-
-
-msgid "Object Properties"
-msgstr "Đỉnh Vật Thể"
 
 
 msgid "Object Constraint Properties"
@@ -94566,10 +94461,6 @@ msgid "Highlight selected edges"
 msgstr "Tô sáng các cạnh được chọn"
 
 
-msgid "Edge Angle"
-msgstr "Góc Cạnh"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Hiển thị góc cạnh được chọn, dùng giá trị toàn cầu khi đặt trong bảng biến hóa"
 
@@ -98832,6 +98723,11 @@ msgid "Invalid regular expression (replace): "
 msgstr "Biểu thức chính quy không hợp lệ (thay thế): "
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Nâng Cấp Hết Đường Dẫn"
+
+
 msgid "Frame Numbers"
 msgstr "Số Bức"
 
@@ -98846,15 +98742,6 @@ msgstr "Phạm Vi Bức Trước"
 
 msgid "After"
 msgstr "Sau"
-
-
-msgid "To"
-msgstr "Đến"
-
-
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Nâng Cấp Hết Đường Dẫn"
 
 
 msgid "Nothing to show yet..."
@@ -111381,10 +111268,6 @@ msgid "Frame: %d"
 msgstr "Bức: %d"
 
 
-msgid "Squash"
-msgstr "Nhẹp"
-
-
 msgid "Matte Objects:"
 msgstr "Vật Thể Mặt Nạ Mã:"
 
@@ -111401,16 +111284,12 @@ msgid "Matte ID:"
 msgstr "ID Mặt Nạ Mã:"
 
 
+msgid "Squash"
+msgstr "Nhẹp"
+
+
 msgid "Undefined Socket Type"
 msgstr "Loại Ổ Cắm Không Xác Định"
-
-
-msgid "Nishita not available in Eevee"
-msgstr "Không có Nishita trong Eevee"
-
-
-msgid "No mesh in active object"
-msgstr "Không có mạng lưới trong vật thể hoạt động"
 
 
 msgid "NodeTree"
@@ -115094,10 +114973,6 @@ msgid "If the profile spline is cyclic, fill the ends of the generated mesh with
 msgstr "Nếu mẫu cong trình bay có chu trình, tô đầy kết thúc của mạng lưới được chế tạo bằng N-giác"
 
 
-msgid "No geometry with given domain"
-msgstr "Không có hình dạng trong phạm vi"
-
-
 msgid "The parts of the geometry to be deleted"
 msgstr "Các bộ phận của hình dạng để xóa"
 
@@ -115574,12 +115449,20 @@ msgid "Row Height"
 msgstr "Chiều Cao Hàng"
 
 
+msgid "Nishita not available in Eevee"
+msgstr "Không có Nishita trong Eevee"
+
+
 msgid "Detail Scale"
 msgstr "Phóng To Chi Tiết"
 
 
 msgid "Detail Roughness"
 msgstr "Độ Nhám Chi Tiết"
+
+
+msgid "No mesh in active object"
+msgstr "Không có mạng lưới trong vật thể hoạt động"
 
 
 msgid "Flame"

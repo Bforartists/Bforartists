@@ -27,6 +27,7 @@ from mathutils import Vector
 from ..utils.errors import MetarigError
 from ..utils.bones import align_bone_roll
 from ..utils.rig import get_rigify_type
+from ..utils.node_merger import NodeMerger
 
 
 def find_face_bone(obj):
@@ -35,7 +36,7 @@ def find_face_bone(obj):
         return pbone.name
 
 
-def process_all(process):
+def process_all(process, name_map):
     process('face', layer='*', rig='')
 
     process('nose', rig='skin.stretchy_chain', connect_ends='next', priority=1)
@@ -192,7 +193,10 @@ def process_all(process):
     process('nose_glue.R.001', parent='face', rig='skin.glue', glue_copy=0.2, glue_reparent=True)
 
     process('nose_glue.004', parent='face', rig='skin.glue', glue_copy=0.2, glue_reparent=True)
-    process('nose_end_glue.004', parent='face', rig='skin.glue', glue_copy=0.5, glue_reparent=True)
+
+    if 'nose_end_glue.004' in name_map:
+        process('nose_end_glue.004', parent='face', rig='skin.glue', glue_copy=0.5, glue_reparent=True)
+
     process('chin_end_glue.001', parent='jaw_master', rig='skin.glue', glue_copy=0.5, glue_reparent=True)
 
 
@@ -240,7 +244,15 @@ def make_new_bones(obj, name_map):
     align_bones(['brow.B.L', 'brow.B.L.001', 'brow.B.L.002', 'brow.B.L.003', 'nose.L'])
     align_bones(['brow.B.R', 'brow.B.R.001', 'brow.B.R.002', 'brow.B.R.003', 'nose.R'])
 
+    def is_same_pos(from_name, from_end, to_name, to_end):
+        head = getattr(eb[from_name], from_end)
+        tail = getattr(eb[to_name], to_end)
+        return (head - tail).length < 2 * NodeMerger.epsilon
+
     def bridge(name, from_name, from_end, to_name, to_end, roll=0):
+        if is_same_pos(from_name, from_end, to_name, to_end):
+            raise MetarigError(f"Locations of {from_name} {from_end} and {to_name} {to_end} overlap.")
+
         bone = eb.new(name=name)
         bone.head = getattr(eb[from_name], from_end)
         bone.tail = getattr(eb[to_name], to_end)
@@ -266,7 +278,12 @@ def make_new_bones(obj, name_map):
     bridge_glue('nose_glue.R.001', 'nose.R.001', 'lip.T.R.001')
 
     bridge('nose_glue.004', 'nose.004', 'head', 'lip.T.L', 'head', roll=45)
-    bridge('nose_end_glue.004', 'nose.004', 'tail', 'lip.T.L', 'head', roll=45)
+
+    if not is_same_pos('nose.004', 'tail', 'lip.T.L', 'head'):
+        bridge('nose_end_glue.004', 'nose.004', 'tail', 'lip.T.L', 'head', roll=45)
+    else:
+        eb['nose.004'].tail = eb['lip.T.L'].head
+
     bridge('chin_end_glue.001', 'chin.001', 'tail', 'lip.B.L', 'head', roll=45)
 
 
@@ -386,12 +403,12 @@ def update_face_rig(obj):
 
     make_new_bones(obj, name_map)
 
-    process_all(partial(parent_bone, obj, name_map))
+    process_all(partial(parent_bone, obj, name_map), name_map)
 
     # Check all bones exist
     bpy.ops.object.mode_set(mode='OBJECT')
 
-    process_all(partial(check_bone, obj, name_map))
+    process_all(partial(check_bone, obj, name_map), name_map)
 
     # Set bone layers
     layer_table = {
@@ -399,8 +416,8 @@ def update_face_rig(obj):
         '*': [a or b or c for a, b, c in zip(main_layers, primary_layers, secondary_layers)],
     }
 
-    process_all(partial(set_rig, obj, name_map))
-    process_all(partial(set_layers, obj, name_map, layer_table))
+    process_all(partial(set_rig, obj, name_map), name_map)
+    process_all(partial(set_layers, obj, name_map, layer_table), name_map)
 
     for i, v in enumerate(layer_table['*']):
         if v:

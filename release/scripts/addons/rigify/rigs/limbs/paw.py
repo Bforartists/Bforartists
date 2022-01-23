@@ -46,6 +46,7 @@ class Rig(BaseLimbRig):
         if self.use_heel2:
             self.toe_bone_index = 4
             self.fk_name_suffix_cutoff = 3
+            self.fk_ik_layer_cutoff = 4
 
         super().initialize()
 

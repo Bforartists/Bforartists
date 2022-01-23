@@ -1168,12 +1168,13 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
     capabilities = brush.image_paint_capabilities
 
     if capabilities.has_color:
-        #bfa - added secondary color and swap colors switch
-        row = layout.row(align = True)
-        sub = row.row(align = True)
-        sub.scale_x = 0.33
-        UnifiedPaintPanel.prop_unified_color(sub, context, brush, "color", text="")
-        UnifiedPaintPanel.prop_unified_color(sub, context, brush, "secondary_color", text="")
+        row = layout.row(align=True)
+        row.ui_units_x = 4
+        UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
+        UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
+
+        row.separator()
+
         row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
 
         layout.prop(brush, "blend", text="" if compact else "Blend")

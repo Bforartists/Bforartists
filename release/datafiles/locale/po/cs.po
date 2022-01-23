@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -16348,10 +16348,6 @@ msgid "Shortest Diagonal"
 msgstr "Nejkratší Úhlopříčka"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Rozdělit čtyřúhelníky na základě vzdálenosti mezi vrcholy"
-
-
 msgid "UV Project Modifier"
 msgstr "Objektové modifikátory"
 
@@ -17646,6 +17642,10 @@ msgid "Composite"
 msgstr "Kompozit"
 
 
+msgid "To"
+msgstr "K"
+
+
 msgid "Crop Image Size"
 msgstr "Oříznout velikost obrázku"
 
@@ -18408,6 +18408,10 @@ msgstr "Metoda Distribuce"
 
 msgid "Linear interpolation"
 msgstr "Extrapolace"
+
+
+msgid "Edge Angle"
+msgstr "Úhel Hrany"
 
 
 msgid "Is Viewport"
@@ -22320,10 +22324,6 @@ msgid "Export selected objects only"
 msgstr "Ostranit označené Objekt(y) Globálně"
 
 
-msgid "Export the active UV layer"
-msgstr "Renderovvat animaci"
-
-
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Exportovat"
@@ -23517,14 +23517,6 @@ msgstr "Dělit Tah"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Překlopit Barvy"
-
-
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
 
 
 msgctxt "Operator"
@@ -32798,6 +32790,10 @@ msgid "Memory Statistics"
 msgstr "Statistika Paměti"
 
 
+msgid "Object Properties"
+msgstr "Vlastnosti objektu"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Otevřít"
@@ -37558,10 +37554,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "Neodrážet raytrace odrazy nad touto hodnotou hrubosti"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "Přesnost raytracingu screen space"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "Tloušťka obrazových bodů použitá k detekci průsečíku"
 
@@ -38591,6 +38583,14 @@ msgid "Outline"
 msgstr "Obrys"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
+
+
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -39237,10 +39237,6 @@ msgstr "Vlastnosti světa"
 
 msgid "Collection Properties"
 msgstr "Vlastnosti Kolekce"
-
-
-msgid "Object Properties"
-msgstr "Vlastnosti objektu"
 
 
 msgid "Object Constraint Properties"
@@ -41075,10 +41071,6 @@ msgid "Display UV unwrapping seams"
 msgstr "Zobrat čísla řádků"
 
 
-msgid "Edge Angle"
-msgstr "Úhel Hrany"
-
-
 msgid "Indices"
 msgstr "Jednotlivé plošky"
 
@@ -42132,10 +42124,6 @@ msgstr "Čísla klíčových snímků"
 
 msgid "After"
 msgstr "Po"
-
-
-msgid "To"
-msgstr "K"
 
 
 msgid "Nothing to show yet..."
