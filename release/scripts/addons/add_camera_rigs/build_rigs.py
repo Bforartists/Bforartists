@@ -324,7 +324,7 @@ def create_2d_bones(context, rig, cam):
     # Property to switch between rotation and switch mode
     pose_bones["Camera"]['rotation_shift'] = 0.0
     ui_data = pose_bones["Camera"].id_properties_ui('rotation_shift')
-    ui_data.update(min=0.0, max=1.0, soft_max = 5000.0, description="rotation_shift")
+    ui_data.update(min=0.0, max=1.0, description="rotation_shift")
 
     # Rotation / shift switch driver
     driver = con.driver_add('influence').driver

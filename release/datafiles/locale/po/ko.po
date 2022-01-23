@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -18380,10 +18380,6 @@ msgid "Contact Shadow"
 msgstr "접촉 섀도우"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "폐쇄 공간 근처에서 정확한 음영 처리를 위해 화면 공간 광선 추적을 사용하거나 셰도우 맵에 나타나지 않는 작은 특성에 대해 사용"
-
-
 msgid "Point Light"
 msgstr "포인트 라이트"
 
@@ -30858,10 +30854,6 @@ msgid "Shortest Diagonal"
 msgstr "최단 대각선"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "버텍스 사이의 거리에 따라 쿼드를 분할합니다"
-
-
 msgid "UV Project Modifier"
 msgstr "UV 투사 모디파이어"
 
@@ -33585,6 +33577,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "컬러은 알파 미리 곱셈 처리, 또는 직접 컬러 출력 (알파는 1로 설정 됨)"
 
 
+msgid "To"
+msgstr "다음으로"
+
+
 msgid "Corner Pin"
 msgstr "코너 핀"
 
@@ -34924,6 +34920,10 @@ msgstr "보간 없음 (샘플에가까운 텍셀)"
 
 msgid "Cubic interpolation"
 msgstr "큐빅 보간"
+
+
+msgid "Edge Angle"
+msgstr "에지 각도"
 
 
 msgid "Min Max"
@@ -40721,20 +40721,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "내보낸 메쉬에 모디파이어를 적용"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "스무스 및 하드 셰이드된 페이스의 노멀을 내보내기 ( 각진 셰이드 페이스들은 개별 페이스로 내보내집니다. )"
-
-
 msgid "Selection Only"
 msgstr "선택 만"
 
 
 msgid "Export selected objects only"
 msgstr "선택된 오브젝트 만 내보내기"
-
-
-msgid "Export the active UV layer"
-msgstr "활성 UV 레이어를 내보내기"
 
 
 msgctxt "Operator"
@@ -43539,14 +43531,6 @@ msgstr "스트로크를 다듬기"
 
 msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
-
-
-msgid "Black"
-msgstr "블랙"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgctxt "Operator"
@@ -60395,6 +60379,10 @@ msgid "Print memory statistics to the console"
 msgstr "콘솔에 메모리 통계 출력"
 
 
+msgid "Object Properties"
+msgstr "오브젝트 프로퍼티스"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "열기"
@@ -61186,13 +61174,13 @@ msgid "Workspace Reorder to Back"
 msgstr "작업공간 순서를 변경"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "목록에서 작업 공간 순서를 변경"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "작업 공간 순서 변경"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "목록에서 작업 공간 순서를 변경"
 
 
 msgctxt "Operator"
@@ -69512,10 +69500,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "이 값보다 큰 거칠기에 대한 반사를 광선 추적하지 마십시오"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "화면 공간 레이 트레이싱의 정밀도"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "교차점을 감지하는 데 사용되는 픽셀 두께"
 
@@ -71704,8 +71688,16 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -72985,10 +72977,6 @@ msgstr "뷰 레이어 프로퍼티스"
 
 msgid "World Properties"
 msgstr "월드 프로퍼티스"
-
-
-msgid "Object Properties"
-msgstr "오브젝트 프로퍼티스"
 
 
 msgid "Object Constraint Properties"
@@ -76720,10 +76708,6 @@ msgid "Highlight selected edges"
 msgstr "선택한 모서리를 강조"
 
 
-msgid "Edge Angle"
-msgstr "에지 각도"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "변환 패널에서 설정할 때 글로벌 값을 사용하여 선택한 에지 각도를 표시"
 
@@ -78939,10 +78923,6 @@ msgstr "이전 프레임 범위"
 
 msgid "After"
 msgstr "이후"
-
-
-msgid "To"
-msgstr "다음으로"
 
 
 msgid "Nothing to show yet..."

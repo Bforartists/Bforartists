@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -20362,6 +20362,10 @@ msgid "Composite"
 msgstr "ﺐﻴﻛﺮﺗ"
 
 
+msgid "To"
+msgstr "ـﻟ"
+
+
 msgid "Crop Image Size"
 msgstr "ﺺﻘﻟﺍ ﺓﺭﻮﺻ ﻢﺠﺣ"
 
@@ -21021,6 +21025,10 @@ msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻂﻘﻓ"
 
 msgid "Linear interpolation"
 msgstr "ﻲﻄﺧ ﺪﻴﻟﻮﺗ"
+
+
+msgid "Edge Angle"
+msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ"
 
 
 msgid "Z Axis"
@@ -23680,10 +23688,6 @@ msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺔﻄﻘﻨﻟﺍ ﻥﻮﻟ ﺔﻘﺒﻃ ﺭﺪّ
 
 msgid "Apply Modifiers"
 msgstr "ﺕﺍﺮﻴّﻐﻤﻟﺍ ﻖﺒّﻃ"
-
-
-msgid "Export the active UV layer"
-msgstr "ﺔﻟﺎﻌّﻔﻟﺍ UV ـﻟﺍ ﺔﻘﺒﻃ ﺭﺪّﺻ"
 
 
 msgctxt "Operator"
@@ -36717,10 +36721,6 @@ msgid "Display UV unwrapping seams"
 msgstr "UVـﻟﺍ ﺾﻓ ﺕﺍﺯﺭﺩ ﺮﻬﻇﺃ"
 
 
-msgid "Edge Angle"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "ﻝﻮّﺤﺘﻟﺍ ﺡﻮﻟ ﻲﻓ ﺎﻬﻌﺿﻭ ﺪﻨﻋ ﺔﻴﻤﻟﺎﻋ ﻢﻴﻗ ﻡﺍﺪﺨﺘﺳﺈﺑ ,ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ ﺽﺮﻋﺇ"
 
@@ -37368,10 +37368,6 @@ msgstr "ﺡﺎﺘﻔﻤﻟﺍ ﻡﺎﻗﺭﺍ"
 
 msgid "After"
 msgstr "ﺪﻌﺑ"
-
-
-msgid "To"
-msgstr "ـﻟ"
 
 
 msgid "Nothing to show yet..."

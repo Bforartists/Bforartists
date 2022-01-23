@@ -13,27 +13,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2012 Blender Foundation.
+ * The Original Code is Copyright (C) 2022 Blender Foundation.
  * All rights reserved.
  */
 
 /** \file
- * \ingroup nodes
+ * \ingroup gpu
  */
 
-#include "BLI_utildefines.h"
+#include "gpu_interface_info.hh"
+#include "gpu_shader_create_info.hh"
 
-#include "DNA_node_types.h"
-
-#include "BKE_context.h"
-#include "BKE_screen.h"
-
-#include "WM_api.h"
-
-#include "node_intern.hh" /* own include */
-
-/* ******************* node toolbar registration ************** */
-
-void node_toolbar_register(ARegionType *UNUSED(art))
-{
-}
+GPU_SHADER_CREATE_INFO(gpu_shader_2D_smooth_color)
+    .vertex_in(0, Type::VEC2, "pos")
+    .vertex_in(1, Type::VEC4, "color")
+    .vertex_out(smooth_color_iface)
+    .fragment_out(0, Type::VEC4, "fragColor")
+    .push_constant(0, Type::MAT4, "ModelViewProjectionMatrix")
+    .vertex_source("gpu_shader_2D_smooth_color_vert.glsl")
+    .fragment_source("gpu_shader_2D_smooth_color_frag.glsl")
+    .additional_info("gpu_srgb_to_framebuffer_space")
+    .do_static_compilation(true);

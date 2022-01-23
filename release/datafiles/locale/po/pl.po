@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6373,6 +6373,10 @@ msgid "Active Track"
 msgstr "Aktywna Ścieżka"
 
 
+msgid "To"
+msgstr "Do"
+
+
 msgid "Remove"
 msgstr "Usuń"
 
@@ -6627,10 +6631,6 @@ msgstr "Nieznany"
 
 msgid "Active object is not a mesh"
 msgstr "Aktywny obiekt nie jest siatką"
-
-
-msgid "To"
-msgstr "Do"
 
 
 msgctxt "Operator"

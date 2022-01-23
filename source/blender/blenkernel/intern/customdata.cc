@@ -44,6 +44,10 @@
 #include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
+#ifndef NDEBUG
+#  include "BLI_dynstr.h"
+#endif
+
 #include "BLT_translation.h"
 
 #include "BKE_anonymous_attribute.h"
@@ -1688,7 +1692,9 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
     /* 29: CD_BWEIGHT */
     {sizeof(float), "", 0, N_("BevelWeight"), nullptr, nullptr, layerInterp_bweight},
     /* 30: CD_CREASE */
-    {sizeof(float), "", 0, N_("SubSurfCrease"), nullptr, nullptr, layerInterp_bweight},
+    /* NOTE: we do not interpolate crease data as it should be either inherited for subdivided
+     * edges, or for vertex creases, only present on the original vertex. */
+    {sizeof(float), "", 0, N_("SubSurfCrease"), nullptr, nullptr, nullptr},
     /* 31: CD_ORIGSPACE_MLOOP */
     {sizeof(OrigSpaceLoop),
      "OrigSpaceLoop",
@@ -1934,7 +1940,7 @@ const CustomData_MeshMasks CD_MASK_BAREMESH_ORIGINDEX = {
 };
 const CustomData_MeshMasks CD_MASK_MESH = {
     /* vmask */ (CD_MASK_MVERT | CD_MASK_MDEFORMVERT | CD_MASK_MVERT_SKIN | CD_MASK_PAINT_MASK |
-                 CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR),
+                 CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR | CD_MASK_CREASE),
     /* emask */ (CD_MASK_MEDGE | CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL),
     /* fmask */ 0,
     /* pmask */
@@ -1946,7 +1952,7 @@ const CustomData_MeshMasks CD_MASK_MESH = {
 };
 const CustomData_MeshMasks CD_MASK_EDITMESH = {
     /* vmask */ (CD_MASK_MDEFORMVERT | CD_MASK_PAINT_MASK | CD_MASK_MVERT_SKIN | CD_MASK_SHAPEKEY |
-                 CD_MASK_SHAPE_KEYINDEX | CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR),
+                 CD_MASK_SHAPE_KEYINDEX | CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR | CD_MASK_CREASE),
     /* emask */ (CD_MASK_PROP_ALL),
     /* fmask */ 0,
     /* pmask */ (CD_MASK_FACEMAP | CD_MASK_PROP_ALL | CD_MASK_SCULPT_FACE_SETS),
@@ -1957,7 +1963,7 @@ const CustomData_MeshMasks CD_MASK_EDITMESH = {
 const CustomData_MeshMasks CD_MASK_DERIVEDMESH = {
     /* vmask */ (CD_MASK_ORIGINDEX | CD_MASK_MDEFORMVERT | CD_MASK_SHAPEKEY | CD_MASK_MVERT_SKIN |
                  CD_MASK_PAINT_MASK | CD_MASK_ORCO | CD_MASK_CLOTH_ORCO | CD_MASK_PROP_ALL |
-                 CD_MASK_PROP_COLOR),
+                 CD_MASK_PROP_COLOR | CD_MASK_CREASE),
     /* emask */ (CD_MASK_ORIGINDEX | CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL),
     /* fmask */ (CD_MASK_ORIGINDEX | CD_MASK_ORIGSPACE | CD_MASK_PREVIEW_MCOL | CD_MASK_TANGENT),
     /* pmask */
@@ -1970,7 +1976,7 @@ const CustomData_MeshMasks CD_MASK_DERIVEDMESH = {
 const CustomData_MeshMasks CD_MASK_BMESH = {
     /* vmask */ (CD_MASK_MDEFORMVERT | CD_MASK_BWEIGHT | CD_MASK_MVERT_SKIN | CD_MASK_SHAPEKEY |
                  CD_MASK_SHAPE_KEYINDEX | CD_MASK_PAINT_MASK | CD_MASK_PROP_ALL |
-                 CD_MASK_PROP_COLOR),
+                 CD_MASK_PROP_COLOR | CD_MASK_CREASE),
     /* emask */ (CD_MASK_BWEIGHT | CD_MASK_CREASE | CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL),
     /* fmask */ 0,
     /* pmask */
@@ -1997,7 +2003,7 @@ const CustomData_MeshMasks CD_MASK_EVERYTHING = {
     /* vmask */ (CD_MASK_MVERT | CD_MASK_BM_ELEM_PYPTR | CD_MASK_ORIGINDEX | CD_MASK_NORMAL |
                  CD_MASK_MDEFORMVERT | CD_MASK_BWEIGHT | CD_MASK_MVERT_SKIN | CD_MASK_ORCO |
                  CD_MASK_CLOTH_ORCO | CD_MASK_SHAPEKEY | CD_MASK_SHAPE_KEYINDEX |
-                 CD_MASK_PAINT_MASK | CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR),
+                 CD_MASK_PAINT_MASK | CD_MASK_PROP_ALL | CD_MASK_PROP_COLOR | CD_MASK_CREASE),
     /* emask */
     (CD_MASK_MEDGE | CD_MASK_BM_ELEM_PYPTR | CD_MASK_ORIGINDEX | CD_MASK_BWEIGHT | CD_MASK_CREASE |
      CD_MASK_FREESTYLE_EDGE | CD_MASK_PROP_ALL),
@@ -4405,7 +4411,12 @@ bool CustomData_verify_versions(struct CustomData *data, int index)
     /* 0 structnum is used in writing code to tag layer types that should not be written. */
     else if (typeInfo->structnum == 0 &&
              /* XXX Not sure why those three are exception, maybe that should be fixed? */
-             !ELEM(layer->type, CD_PAINT_MASK, CD_FACEMAP, CD_MTEXPOLY, CD_SCULPT_FACE_SETS)) {
+             !ELEM(layer->type,
+                   CD_PAINT_MASK,
+                   CD_FACEMAP,
+                   CD_MTEXPOLY,
+                   CD_SCULPT_FACE_SETS,
+                   CD_CREASE)) {
       keeplayer = false;
       CLOG_WARN(&LOG, ".blend file read: removing a data layer that should not have been written");
     }
@@ -5076,6 +5087,10 @@ void CustomData_blend_write(BlendWriter *writer,
       const bool *layer_data = static_cast<const bool *>(layer->data);
       BLO_write_raw(writer, sizeof(*layer_data) * count, layer_data);
     }
+    else if (layer->type == CD_CREASE) {
+      const float *layer_data = static_cast<const float *>(layer->data);
+      BLO_write_raw(writer, sizeof(*layer_data) * count, layer_data);
+    }
     else {
       const char *structname;
       int structnum;
@@ -5188,3 +5203,33 @@ void CustomData_blend_read(BlendDataReader *reader, CustomData *data, int count)
 
   CustomData_update_typemap(data);
 }
+
+#ifndef NDEBUG
+
+void CustomData_debug_info_from_layers(const CustomData *data, const char *indent, DynStr *dynstr)
+{
+  for (int type = 0; type < CD_NUMTYPES; type++) {
+    if (CustomData_has_layer(data, type)) {
+      /* NOTE: doesn't account for multiple layers. */
+      const char *name = CustomData_layertype_name(type);
+      const int size = CustomData_sizeof(type);
+      const void *pt = CustomData_get_layer(data, type);
+      const int pt_size = pt ? (int)(MEM_allocN_len(pt) / size) : 0;
+      const char *structname;
+      int structnum;
+      CustomData_file_write_info(type, &structname, &structnum);
+      BLI_dynstr_appendf(
+          dynstr,
+          "%sdict(name='%s', struct='%s', type=%d, ptr='%p', elem=%d, length=%d),\n",
+          indent,
+          name,
+          structname,
+          type,
+          (const void *)pt,
+          size,
+          pt_size);
+    }
+  }
+}
+
+#endif /* NDEBUG */
