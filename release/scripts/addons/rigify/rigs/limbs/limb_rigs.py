@@ -257,6 +257,7 @@ class BaseLimbRig(BaseRig):
         self.bones.ctrl.fk = map_list(self.make_fk_control_bone, count(0), self.bones.org.main)
 
     fk_name_suffix_cutoff = 2
+    fk_ik_layer_cutoff = 3
 
     def get_fk_name(self, i, org, kind):
         return make_derived_name(org, kind, '_fk' if i <= self.fk_name_suffix_cutoff else '')
@@ -283,8 +284,9 @@ class BaseLimbRig(BaseRig):
         for args in zip(count(0), self.bones.ctrl.fk, self.bones.org.main):
             self.configure_fk_control_bone(*args)
 
-        ControlLayersOption.FK.assign_rig(self, self.bones.ctrl.fk[0:3])
-        ControlLayersOption.FK.assign_rig(self, self.bones.ctrl.fk[3:], combine=True, priority=1)
+        cut = self.fk_ik_layer_cutoff
+        ControlLayersOption.FK.assign_rig(self, self.bones.ctrl.fk[0:cut])
+        ControlLayersOption.FK.assign_rig(self, self.bones.ctrl.fk[cut:], combine=True, priority=1)
 
     def configure_fk_control_bone(self, i, ctrl, org):
         self.copy_bone_properties(org, ctrl)
@@ -352,16 +354,24 @@ class BaseLimbRig(BaseRig):
     def get_middle_ik_controls(self):
         return []
 
+    def get_tail_ik_controls(self):
+        return []
+
     def get_ik_fk_position_chains(self):
         ik_chain = self.get_ik_output_chain()
-        return ik_chain, self.bones.ctrl.fk[0:len(ik_chain)]
+        tail_chain = self.get_tail_ik_controls()
+        return ik_chain, tail_chain, self.bones.ctrl.fk[0:len(ik_chain)+len(tail_chain)]
 
     def get_ik_control_chain(self):
         ctrl = self.bones.ctrl
         return [ctrl.ik_base, ctrl.ik_pole, *self.get_middle_ik_controls(), ctrl.ik]
 
     def get_all_ik_controls(self):
-        return self.get_ik_control_chain() + self.get_extra_ik_controls()
+        return [
+            *self.get_ik_control_chain(),
+            *self.get_tail_ik_controls(),
+            *self.get_extra_ik_controls(),
+        ]
 
     @stage.generate_bones
     def make_ik_controls(self):
@@ -596,22 +606,20 @@ class BaseLimbRig(BaseRig):
 
     def add_global_buttons(self, panel, rig_name):
         ctrl = self.bones.ctrl
-        ik_chain = self.get_ik_output_chain()
-        fk_chain = ctrl.fk[0:len(ik_chain)]
+        ik_chain, tail_chain, fk_chain = self.get_ik_fk_position_chains()
 
         add_generic_snap_fk_to_ik(
             panel,
-            fk_bones=fk_chain, ik_bones=ik_chain,
+            fk_bones=fk_chain, ik_bones=ik_chain+tail_chain,
             ik_ctrl_bones=self.get_all_ik_controls(),
             rig_name=rig_name
         )
 
-        ik_chain, fk_chain = self.get_ik_fk_position_chains()
 
         add_limb_snap_ik_to_fk(
             panel,
             master=ctrl.master,
-            fk_bones=fk_chain, ik_bones=ik_chain,
+            fk_bones=fk_chain, ik_bones=ik_chain, tail_bones=tail_chain,
             ik_ctrl_bones=self.get_ik_control_chain(),
             ik_extra_ctrls=self.get_extra_ik_controls(),
             rig_name=rig_name
@@ -619,7 +627,7 @@ class BaseLimbRig(BaseRig):
 
     def add_ik_only_buttons(self, panel, rig_name):
         ctrl = self.bones.ctrl
-        ik_chain, fk_chain = self.get_ik_fk_position_chains()
+        ik_chain, tail_chain, fk_chain = self.get_ik_fk_position_chains()
 
         add_limb_toggle_pole(
             panel, master=ctrl.master,
@@ -688,7 +696,7 @@ class BaseLimbRig(BaseRig):
 
     @stage.rig_bones
     def rig_org_chain(self):
-        ik = self.get_ik_output_chain()
+        ik = self.get_ik_output_chain() + self.get_tail_ik_controls()
         for args in zip(count(0), self.bones.org.main, self.bones.ctrl.fk, padnone(ik)):
             self.rig_org_bone(*args)
 
@@ -979,6 +987,7 @@ class RigifyLimbIk2FkBase:
     fk_bones:     StringProperty(name="FK Bone Chain")
     ik_bones:     StringProperty(name="IK Result Bone Chain")
     ctrl_bones:   StringProperty(name="IK Controls")
+    tail_bones:   StringProperty(name="Tail IK Controls", default="[]")
     extra_ctrls:  StringProperty(name="Extra IK Controls")
 
     def init_execute(self, context):
@@ -986,6 +995,7 @@ class RigifyLimbIk2FkBase:
             self.fk_bone_list = json.loads(self.fk_bones)
         self.ik_bone_list = json.loads(self.ik_bones)
         self.ctrl_bone_list = json.loads(self.ctrl_bones)
+        self.tail_bone_list = json.loads(self.tail_bones)
         self.extra_ctrl_list = json.loads(self.extra_ctrls)
 
     def get_use_pole(self, obj):
@@ -1016,25 +1026,36 @@ class RigifyLimbIk2FkBase:
             mat = convert_pose_matrix_via_rest_delta(mat, ik, ctrl)
             set_transform_from_matrix(obj, ctrl.name, mat, keyflags=keyflags)
 
-    def apply_frame_state(self, context, obj, matrices):
+    def assign_extra_controls(self, context, obj, all_matrices, ik_bones, ctrl_bones):
+        for extra in self.extra_ctrl_list:
+            set_transform_from_matrix(
+                obj, extra, Matrix.Identity(4), space='LOCAL', keyflags=self.keyflags
+            )
+
+    def apply_frame_state(self, context, obj, all_matrices):
         ik_bones = [ obj.pose.bones[k] for k in self.ik_bone_list ]
         ctrl_bones = [ obj.pose.bones[k] for k in self.ctrl_bone_list ]
+        tail_bones = [ obj.pose.bones[k] for k in self.tail_bone_list ]
+
+        assert len(all_matrices) >= len(ik_bones) + len(tail_bones)
+
+        matrices = all_matrices[0:len(ik_bones)]
+        tail_matrices = all_matrices[len(ik_bones):]
 
         use_pole = self.get_use_pole(obj)
 
+        # Remove foot heel transform, if present
+        self.assign_extra_controls(context, obj, all_matrices, ik_bones, ctrl_bones)
+
+        context.view_layer.update()
+
         # Set the end control position
-        endmat = convert_pose_matrix_via_rest_delta(matrices[-1], ik_bones[-1], ctrl_bones[-1])
+        endmat = convert_pose_matrix_via_pose_delta(matrices[-1], ik_bones[-1], ctrl_bones[-1])
 
         set_transform_from_matrix(
             obj, self.ctrl_bone_list[-1], endmat, keyflags=self.keyflags,
             undo_copy_scale=True,
         )
-
-        # Remove foot heel transform, if present
-        for extra in self.extra_ctrl_list:
-            set_transform_from_matrix(
-                obj, extra, Matrix.Identity(4), space='LOCAL', keyflags=self.keyflags
-            )
 
         # Set the base bone position
         ctrl_bones[0].matrix_basis = Matrix.Identity(4)
@@ -1054,6 +1075,11 @@ class RigifyLimbIk2FkBase:
 
         # Assign middle control transforms (final pass)
         self.assign_middle_controls(context, obj, matrices, ik_bones, ctrl_bones, keyflags=self.keyflags)
+
+        # Assign tail control transforms
+        for mat, ctrl in zip(tail_matrices, tail_bones):
+            context.view_layer.update()
+            set_transform_from_matrix(obj, ctrl.name, mat, keyflags=self.keyflags)
 
         # Keyframe controls
         if self.keyflags is not None:
@@ -1083,23 +1109,26 @@ class POSE_OT_rigify_limb_ik2fk_bake(RigifyLimbIk2FkBase, RigifyBakeKeyframesMix
         return self.bake_get_all_bone_curves(self.ctrl_bone_list + self.extra_ctrl_list, TRANSFORM_PROPS_ALL)
 ''']
 
-def add_limb_snap_ik_to_fk(panel, *, master=None, fk_bones=[], ik_bones=[], ik_ctrl_bones=[], ik_extra_ctrls=[], rig_name=''):
+def add_limb_snap_ik_to_fk(panel, *, master=None, fk_bones=[], ik_bones=[], tail_bones=[], ik_ctrl_bones=[], ik_extra_ctrls=[], rig_name=''):
     panel.use_bake_settings()
     panel.script.add_utilities(SCRIPT_UTILITIES_OP_SNAP_IK_FK)
     panel.script.register_classes(SCRIPT_REGISTER_OP_SNAP_IK_FK)
+
+    assert len(fk_bones) == len(ik_bones) + len(tail_bones)
 
     op_props = {
         'prop_bone': master,
         'fk_bones': json.dumps(fk_bones),
         'ik_bones': json.dumps(ik_bones),
         'ctrl_bones': json.dumps(ik_ctrl_bones),
+        'tail_bones': json.dumps(tail_bones),
         'extra_ctrls': json.dumps(ik_extra_ctrls),
     }
 
     add_fk_ik_snap_buttons(
         panel, 'pose.rigify_limb_ik2fk_{rig_id}', 'pose.rigify_limb_ik2fk_bake_{rig_id}',
         label='IK->FK', rig_name=rig_name, properties=op_props,
-        clear_bones=ik_ctrl_bones + ik_extra_ctrls,
+        clear_bones=ik_ctrl_bones + tail_bones + ik_extra_ctrls,
     )
 
 #########################

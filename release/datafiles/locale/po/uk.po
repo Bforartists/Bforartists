@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -21335,10 +21335,6 @@ msgid "Contact Shadow"
 msgstr "Тінь Контакту"
 
 
-msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
-msgstr "Використання простеження променя в екранному просторі, щоб мати коректне затінення біля перепиняча або для невеликих рис, що не показуються у картах тіней"
-
-
 msgid "Point Light"
 msgstr "Точковий Освітлювач"
 
@@ -35101,10 +35097,6 @@ msgid "Shortest Diagonal"
 msgstr "Коротша діагональ"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Поділити чотирикутники з урахуванням відстаней між вершинами"
-
-
 msgid "UV Project Modifier"
 msgstr "Модифікатор UV-проєкція"
 
@@ -38140,6 +38132,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "Кольори отримують передмножене альфа чи виводяться прямо (альфа стає рівне 1 )"
 
 
+msgid "To"
+msgstr "До"
+
+
 msgid "Corner Pin"
 msgstr "Куткова шпилька"
 
@@ -39723,6 +39719,10 @@ msgstr "Без інтерполяції (взяти найближчий тек�
 
 msgid "Cubic interpolation"
 msgstr "Кубічна інтерполяція"
+
+
+msgid "Edge Angle"
+msgstr "Кут ребра"
 
 
 msgid "Is Viewport"
@@ -46542,20 +46542,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Застосувати модифікатори до експортованої сіті"
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Експортувати нормалі для граней з м'яким і плоским відтіненням (грані з плоским відтіненням будуть експортовані як окремі грані)"
-
-
 msgid "Selection Only"
 msgstr "Лише вибране"
 
 
 msgid "Export selected objects only"
 msgstr "Експортувати лише вибрані об'єкти"
-
-
-msgid "Export the active UV layer"
-msgstr "Експорт активного UV-шару"
 
 
 msgctxt "Operator"
@@ -50151,14 +50143,6 @@ msgstr "Переверт Кольорів"
 
 msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
-
-
-msgid "Black"
-msgstr "Чорне"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgctxt "Operator"
@@ -69925,6 +69909,10 @@ msgid "Print memory statistics to the console"
 msgstr "Вивести статистику використання пам'яті на консоль"
 
 
+msgid "Object Properties"
+msgstr "Властивості Об'єкта"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "Відкриття"
@@ -70919,13 +70907,13 @@ msgid "Workspace Reorder to Back"
 msgstr "Перевпорядкувати Робпростір Назад"
 
 
-msgid "Reorder workspace to be first in the list"
-msgstr "Перевпорядкувати робпростір, щоб він був першим у списку"
-
-
 msgctxt "Operator"
 msgid "Workspace Reorder to Front"
 msgstr "Перевпорядкувати Робпростір Вперед"
+
+
+msgid "Reorder workspace to be first in the list"
+msgstr "Перевпорядкувати робпростір, щоб він був першим у списку"
 
 
 msgctxt "Operator"
@@ -80168,10 +80156,6 @@ msgid "Do not raytrace reflections for roughness above this value"
 msgstr "Не промінь-простежувати відбиття для шорсткості вище цього значення"
 
 
-msgid "Precision of the screen space raytracing"
-msgstr "Точність промінь-простеження простору екрана"
-
-
 msgid "Pixel thickness used to detect intersection"
 msgstr "Товщина пікселя, використовувана для виявлення перетинання"
 
@@ -82589,8 +82573,16 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -83935,10 +83927,6 @@ msgstr "Властивості Шару Огляду"
 
 msgid "World Properties"
 msgstr "Властивості Світу"
-
-
-msgid "Object Properties"
-msgstr "Властивості Об'єкта"
 
 
 msgid "Object Constraint Properties"
@@ -88282,10 +88270,6 @@ msgid "Highlight selected edges"
 msgstr "Підсвічувати вибрані ребра"
 
 
-msgid "Edge Angle"
-msgstr "Кут ребра"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Показати кут вибраного ребра, використовуючи глобальні значення, якщо встановлено у панелі трансформацій"
 
@@ -91644,10 +91628,6 @@ msgstr "Діапазон Кадрів Перед"
 
 msgid "After"
 msgstr "Після"
-
-
-msgid "To"
-msgstr "До"
 
 
 msgid "Nothing to show yet..."

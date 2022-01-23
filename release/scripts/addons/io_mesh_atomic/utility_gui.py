@@ -66,14 +66,6 @@ class PANEL_PT_prepare(Panel):
         col.operator("atom_blend.button_distance")
         col.prop(scn, "distance")
 
-        # This is from Blender 2.79 and does not work in 2.80. However, it
-        # might be useful later on if changed.
-        #
-        #box = layout.box()
-        #col = box.column(align=True)
-        #col.label(text="All changes concern:")
-        #col.prop(scn, "action_type")
-
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Change atom size")
@@ -127,7 +119,6 @@ class PanelProperties(bpy.types.PropertyGroup):
     def Callback_radius_type(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_RADIUS_TYPE",
-                       scn.action_type,
                        None,
                        None,
                        scn.radius_type,
@@ -136,7 +127,6 @@ class PanelProperties(bpy.types.PropertyGroup):
     def Callback_radius_pm(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_RADIUS_PM",
-                       scn.action_type,
                        None,
                        [scn.radius_pm_name,
                        scn.radius_pm],
@@ -194,13 +184,6 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('2',"F+ center", "Replace with a F+ center"),
                ('3',"F0 center", "Replace with a F0 center")),
                default='0',)
-    action_type: EnumProperty(
-        name="",
-        description="Which objects shall be modified?",
-        items=(('ALL_ACTIVE',"all active objects", "in the current layer"),
-               ('ALL_IN_LAYER',"all in all selected layers",
-                "in selected layer(s)")),
-               default='ALL_ACTIVE',)
     radius_type: EnumProperty(
         name="Type",
         description="Which type of atom radii?",
@@ -275,7 +258,6 @@ class DefaultAtom(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_DEFAULT_OBJ",
-                       scn.action_type,
                        None,
                        None,
                        None,
@@ -301,7 +283,6 @@ class ReplaceAtom(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_REPLACE_OBJ",
-                       scn.action_type,
                        None,
                        None,
                        None,
@@ -357,7 +338,6 @@ class RadiusAllBiggerButton(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_RADIUS_ALL",
-                       scn.action_type,
                        scn.radius_all,
                        None,
                        None,
@@ -375,7 +355,6 @@ class RadiusAllSmallerButton(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("ATOM_RADIUS_ALL",
-                       scn.action_type,
                        1.0/scn.radius_all,
                        None,
                        None,
@@ -393,7 +372,6 @@ class SticksAllBiggerButton(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("STICKS_RADIUS_ALL",
-                       scn.action_type,
                        None,
                        None,
                        None,
@@ -411,7 +389,6 @@ class SticksAllSmallerButton(Operator):
     def execute(self, context):
         scn = bpy.context.scene.atom_blend
         choose_objects("STICKS_RADIUS_ALL",
-                       scn.action_type,
                        None,
                        None,
                        None,

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -24178,10 +24178,6 @@ msgid "Shortest Diagonal"
 msgstr "Diagonal mais curta"
 
 
-msgid "Split the quads based on the distance between the vertices"
-msgstr "Divide os quadriláteros com base na distância entre os vértices."
-
-
 msgid "UV Project Modifier"
 msgstr "Modificador - Projeção UV"
 
@@ -26797,6 +26793,10 @@ msgid "Colors are treated alpha premultiplied, or colors output straight (alpha 
 msgstr "As cores são tratadas com alfa pré-multiplicado, ou saída de cores diretas (alfa é definido para 1)."
 
 
+msgid "To"
+msgstr "Para"
+
+
 msgid "Corner Pin"
 msgstr "Afixar as laterais"
 
@@ -27884,6 +27884,10 @@ msgstr "Interpolação linear"
 
 msgid "No interpolation (sample closest texel)"
 msgstr "Sem interpolação (usa as amostras do texel mais próximo)."
+
+
+msgid "Edge Angle"
+msgstr "Ângulos das arestas"
 
 
 msgid "Cross Product"
@@ -32920,20 +32924,12 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Aplica os modificadores para a malha exportada."
 
 
-msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "Exporta as normais para as faces com sombreamento suave e rígido (as faces com sombreamento rígido serão exportadas como faces individuais)."
-
-
 msgid "Selection Only"
 msgstr "Somente a seleção"
 
 
 msgid "Export selected objects only"
 msgstr "Exporta somente os objetos selecionados."
-
-
-msgid "Export the active UV layer"
-msgstr "Exporta a camada de UV ativa"
 
 
 msgctxt "Operator"
@@ -34718,14 +34714,6 @@ msgstr "Subdividir traços"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
-
-
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
 
 
 msgctxt "Operator"
@@ -55901,6 +55889,14 @@ msgid "Outline"
 msgstr "Contorno"
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -59736,10 +59732,6 @@ msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "Mostra as arestas ressaltadas, usadas com o modificador \"Dividir arestas\"."
 
 
-msgid "Edge Angle"
-msgstr "Ângulos das arestas"
-
-
 msgid "Display selected edge angle, using global values when set in the transform panel"
 msgstr "Mostra os ângulos das arestas selecionadas, usando valores globais conforme definidos nos painéis de transformações."
 
@@ -61100,10 +61092,6 @@ msgstr "Números dos fotogramas chave"
 
 msgid "After"
 msgstr "Depois"
-
-
-msgid "To"
-msgstr "Para"
 
 
 msgid "Nothing to show yet..."

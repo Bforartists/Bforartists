@@ -367,6 +367,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
     split_list = line.split(' ')
 
     # Go to the first entry
+    # DO NOT CHANGE 'CONECT', read below.
     if "CONECT" not in split_list[0]:
         for line in filepath_pdb_p:
             split_list = line.split(' ')
@@ -388,7 +389,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
 
         # Note 2019-03-16: in a PDB file the identifier for sticks is called
         # 'CONECT' and NOT 'CONNECT'! Please leave this as is, otherwise the
-        # sticks are NOT correctly loaded.
+        # sticks are NOT correctly imported.
 
         # The strings of the atom numbers do have a clear position in the file
         # (From 7 to 12, from 13 to 18 and so on.) and one needs to consider
@@ -618,30 +619,30 @@ def camera_light_source(use_camera,
 
         # This is the distance from the object measured in terms of %
         # of the camera distance. It is set onto 50% (1/2) distance.
-        light_dl = sqrt(object_size) * 15 * 0.5
+        lamp_dl = sqrt(object_size) * 15 * 0.5
         # This is a factor to which extend the lamp shall go to the right
         # (from the camera  point of view).
-        light_dy_right = light_dl * (3.0/4.0)
+        lamp_dy_right = lamp_dl * (3.0/4.0)
 
         # Create x, y and z for the lamp.
-        object_light_vec = Vector((light_dl,light_dy_right,light_dl))
-        light_xyz_vec = object_center_vec + object_light_vec
+        object_lamp_vec = Vector((lamp_dl,lamp_dy_right,lamp_dl))
+        lamp_xyz_vec = object_center_vec + object_lamp_vec
+        length = lamp_xyz_vec.length
 
-        # Create the lamp
-        light_data = bpy.data.lights.new(name="A_light", type="SUN")
-        light_data.distance = 500.0
-        light_data.energy = 3.0
-        lamp = bpy.data.objects.new("A_light", light_data)
-        lamp.location = light_xyz_vec
+        # As a lamp we use a point source.
+        lamp_data = bpy.data.lights.new(name="A_lamp", type="POINT")
+        # We now determine the emission strength of the lamp. Note that the
+        # intensity depends on 1/r^2. For this we use a value of 100000.0 at a
+        # distance of 58. This value was determined manually inside Blender.
+        lamp_data.energy = 500000.0 * ( (length * length) / (58.0 * 58.0) )
+        lamp = bpy.data.objects.new("A_lamp", lamp_data)
+        lamp.location = lamp_xyz_vec
         bpy.context.collection.objects.link(lamp)
 
         # Some settings for the World: a bit ambient occlusion
         bpy.context.scene.world.light_settings.use_ambient_occlusion = True
         bpy.context.scene.world.light_settings.ao_factor = 0.1
-        # Some properties for cycles
-        lamp.data.use_nodes = True
-        lmp_P_BSDF = lamp.data.node_tree.nodes['Emission']
-        lmp_P_BSDF.inputs['Strength'].default_value = 5
+
 
 
 # Function, which draws the atoms of one type (balls). This is one
@@ -769,7 +770,9 @@ def draw_sticks_dupliverts(all_atoms,
 
     if use_sticks_color == False:
         stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
-        stick_material.diffuse_color = ELEMENTS[-1].color
+        stick_material.use_nodes = True
+        mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
 
     # Sort the sticks and put them into a new list such that ...
     sticks_all_lists = []
@@ -1057,7 +1060,9 @@ def draw_sticks_skin(all_atoms,
     new_stick_mesh.modifiers[1].render_levels = sticks_subdiv_render
 
     stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
-    stick_material.diffuse_color = ELEMENTS[-1].color
+    stick_material.use_nodes = True
+    mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
     new_stick_mesh.active_material = stick_material
 
     # This is for putting the radius of the sticks onto
@@ -1112,7 +1117,9 @@ def draw_sticks_normal(all_atoms,
                        coll_molecule):
 
     stick_material = bpy.data.materials.new(ELEMENTS[-1].name)
-    stick_material.diffuse_color = ELEMENTS[-1].color
+    stick_material.use_nodes = True
+    mat_P_BSDF = stick_material.node_tree.nodes['Principled BSDF']
+    mat_P_BSDF.inputs['Base Color'].default_value = ELEMENTS[-1].color
 
     up_axis = Vector([0.0, 0.0, 1.0])
 
@@ -1336,8 +1343,10 @@ def import_pdb(Ball_type,
     # (e.g. hydrogen)
     for atom_type in atom_all_types_list:
         material = bpy.data.materials.new(atom_type[1])
+        material.use_nodes = True
+        mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = atom_type[2]
         material.name = atom_type[0]
-        material.diffuse_color = atom_type[2]
         atom_material_list.append(material)
 
     # Now, we go through all atoms and give them a material. For all atoms ...
@@ -1348,23 +1357,24 @@ def import_pdb(Ball_type,
             # comparison of names ...
             if atom.name in material.name:
                 # ... and give the atom its material properties.
-                # However, before we check, if it is a vacancy, because then it
-                # gets some additional preparation. The vacancy is represented
-                # by a transparent cube.
+                # However, before we check if it is a vacancy.
+                # The vacancy is represented by a transparent cube.
                 if atom.name == "Vacancy":
-                    # Some properties for eevee.
-                    material.metallic = 0.8
-                    material.specular_intensity = 0.5
-                    material.roughness = 0.3
-                    material.blend_method = 'OPAQUE'
-                    material.show_transparent_back = False
-                    # Some properties for cycles
+                    # For cycles and eevee.
                     material.use_nodes = True
                     mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
                     mat_P_BSDF.inputs['Metallic'].default_value = 0.1
-                    mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-                    mat_P_BSDF.inputs['Transmission'].default_value = 0.97
+                    mat_P_BSDF.inputs['Specular'].default_value = 0.15
+                    mat_P_BSDF.inputs['Roughness'].default_value = 0.05
+                    mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
                     mat_P_BSDF.inputs['IOR'].default_value = 0.8
+                    mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+                    mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+                    mat_P_BSDF.inputs['Alpha'].default_value = 0.5
+                    # Some additional stuff for eevee.
+                    material.blend_method = 'HASHED'
+                    material.shadow_method = 'HASHED'
+                    material.use_backface_culling = False
                 # The atom gets its properties.
                 atom.material = material
 

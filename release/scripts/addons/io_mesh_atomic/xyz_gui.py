@@ -153,6 +153,9 @@ class IMPORT_OT_xyz(Operator, ImportHelper):
         col.prop(self, "images_per_key")
 
     def execute(self, context):
+        # Switch to 'OBJECT' mode when in 'EDIT' mode.
+        if bpy.context.mode == 'EDIT_MESH':
+            bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
         del ALL_FRAMES[:]
         del ELEMENTS[:]

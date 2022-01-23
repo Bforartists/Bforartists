@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -1583,6 +1583,10 @@ msgid "Jpeg"
 msgstr "JPEG"
 
 
+msgid "To"
+msgstr "Кимге"
+
+
 msgid "X2"
 msgstr "X2"
 
@@ -2014,14 +2018,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -3016,6 +3012,14 @@ msgid "Gravitation"
 msgstr "Тартыш"
 
 
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
+
+
 msgid "Show Seconds"
 msgstr "Секундаларды көрсөтүү"
 
@@ -3255,10 +3259,6 @@ msgstr "Ачуу..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Колдонмо"
-
-
-msgid "To"
-msgstr "Кимге"
 
 
 msgctxt "Operator"

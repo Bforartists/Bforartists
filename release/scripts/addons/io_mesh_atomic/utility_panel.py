@@ -158,14 +158,126 @@ ELEMENTS = []
 
 # This is the class, which stores the properties for one element.
 class ElementProp(object):
-    __slots__ = ('number', 'name', 'short_name', 'color', 'radii', 'radii_ionic')
-    def __init__(self, number, name, short_name, color, radii, radii_ionic):
-        self.number = number
-        self.name = name
-        self.short_name = short_name
-        self.color = color
-        self.radii = radii
-        self.radii_ionic = radii_ionic
+    __slots__ = ('number',
+                 'name',
+                 'short_name',
+                 'color',
+                 'radii',
+                 'radii_ionic',
+                 'mat_P_BSDF',
+                 'mat_Eevee')
+    def __init__(self,
+                 number,
+                 name,
+                 short_name,
+                 color,
+                 radii,
+                 radii_ionic,
+                 mat_P_BSDF,
+                 mat_Eevee):
+        self.number       = number
+        self.name         = name
+        self.short_name   = short_name
+        self.color        = color
+        self.radii        = radii
+        self.radii_ionic  = radii_ionic
+        self.mat_P_BSDF   = mat_P_BSDF
+        self.mat_Eevee    = mat_Eevee
+
+
+class PBSDFProp(object):
+    __slots__ = ('Subsurface_method',
+                 'Distribution',
+                 'Subsurface',
+                 'Subsurface_color',
+                 'Subsurface_radius',
+                 'Metallic',
+                 'Specular',
+                 'Specular_tilt',
+                 'Roughness',
+                 'Anisotropic',
+                 'Anisotropic_rotation',
+                 'Sheen',
+                 'Sheen_tint',
+                 'Clearcoat',
+                 'Clearcoat_rough',
+                 'IOR',
+                 'Trans',
+                 'Trans_rough',
+                 'Emission',
+                 'Emission_strength',
+                 'Alpha')
+    def __init__(self,
+                 Subsurface_method,
+                 Distribution,
+                 Subsurface,
+                 Subsurface_color,
+                 Subsurface_radius,
+                 Metallic,
+                 Specular,
+                 Specular_tilt,
+                 Roughness,
+                 Anisotropic,
+                 Anisotropic_rotation,
+                 Sheen,
+                 Sheen_tint,
+                 Clearcoat,
+                 Clearcoat_rough,
+                 IOR,
+                 Trans,
+                 Trans_rough,
+                 Emission,
+                 Emission_strength,
+                 Alpha):
+        self.Subsurface_method     = Subsurface_method
+        self.Distribution          = Distribution
+        self.Subsurface            = Subsurface
+        self.Subsurface_color      = Subsurface_color
+        self.Subsurface_radius     = Subsurface_radius
+        self.Metallic              = Metallic
+        self.Specular              = Specular
+        self.Specular_tilt         = Specular_tilt
+        self.Roughness             = Roughness
+        self.Anisotropic           = Anisotropic
+        self.Anisotropic_rotation  = Anisotropic_rotation
+        self.Sheen                 = Sheen
+        self.Sheen_tint            = Sheen_tint
+        self.Clearcoat             = Clearcoat
+        self.Clearcoat_rough       = Clearcoat_rough
+        self.IOR                   = IOR
+        self.Trans                 = Trans
+        self.Trans_rough           = Trans_rough
+        self.Emission              = Emission
+        self.Emission_strength     = Emission_strength
+        self.Alpha                 = Alpha
+
+
+class EeveeProp(object):
+    __slots__ = ('use_backface',
+                 'blend_method',
+                 'shadow_method',
+                 'clip_threshold',
+                 'use_screen_refraction',
+                 'refraction_depth',
+                 'use_sss_translucency',
+                 'pass_index')
+    def __init__(self,
+                 use_backface,
+                 blend_method,
+                 shadow_method,
+                 clip_threshold,
+                 use_screen_refraction,
+                 refraction_depth,
+                 use_sss_translucency,
+                 pass_index):
+        self.use_backface          = use_backface
+        self.blend_method          = blend_method
+        self.shadow_method         = shadow_method
+        self.clip_threshold        = clip_threshold
+        self.use_screen_refraction = use_screen_refraction
+        self.refraction_depth      = refraction_depth
+        self.use_sss_translucency  = use_sss_translucency
+        self.pass_index            = pass_index
 
 
 # This function measures the distance between two selected objects.
@@ -206,33 +318,16 @@ def distance():
 
 
 def choose_objects(action_type,
-                   who,
                    radius_all,
                    radius_pm,
                    radius_type,
                    radius_type_ionic,
                    sticks_all):
 
-    # For selected objects of all selected layers
-    if who == "ALL_IN_LAYER":
-        # Determine all selected layers.
-        layers = []
-        for i, layer in enumerate(bpy.context.scene.layers):
-            if layer == True:
-                layers.append(i)
-
-        # Put all objects, which are in the layers, into a list.
-        change_objects_all = []
-        for atom in bpy.context.scene.objects:
-            for layer in layers:
-                if atom.layers[layer] == True:
-                    change_objects_all.append(atom)
-    # For selected objects of the visible layer
-    elif who == "ALL_ACTIVE":
-        change_objects_all = []
-        # Note all selected objects first.
-        for atom in bpy.context.selected_objects:
-            change_objects_all.append(atom)
+    # Note all selected objects first.
+    change_objects_all = []
+    for atom in bpy.context.selected_objects:
+        change_objects_all.append(atom)
 
     # This is very important now: If there are dupliverts structures, note
     # only the parents and NOT the children! Otherwise the double work is
@@ -355,47 +450,65 @@ def modify_objects(action_type,
 
         bpy.context.view_layer.objects.active = None
 
-    # Replace atom objects
+    # Change the atom objects
     if action_type == "ATOM_REPLACE_OBJ" and "STICK" not in atom.name.upper():
 
         scn = bpy.context.scene.atom_blend
 
-        new_material = draw_obj_material(scn.replace_objs_material,
-                                         atom.active_material)
+        material = atom.active_material
+        new_material = draw_obj_material(scn.replace_objs_material, material)
 
         # Special object (like halo, etc.)
         if scn.replace_objs_special != '0':
-            new_atom = draw_obj_special(scn.replace_objs_special, atom)
+            atom = draw_obj_special(scn.replace_objs_special, atom)
         # Standard geometrical objects
         else:
             # If the atom shape shall not be changed, then:
             if scn.replace_objs == '0':
                 atom.active_material = new_material
-                #return {'FINISHED'}
             # If the atom shape shall change, then:
             else:
-                new_atom = draw_obj(scn.replace_objs, atom, new_material)
+                atom = draw_obj(scn.replace_objs, atom, new_material)
 
-    # Default shapes and colors for atoms
+        # If the atom is the representative ball of a dupliverts structure,
+        # then make it invisible.
+        if atom.parent != None:
+            atom.hide_set(True)
+
+    # Default shape and colors for atoms
     if action_type == "ATOM_DEFAULT_OBJ" and "STICK" not in atom.name.upper():
 
         scn = bpy.context.scene.atom_blend
 
-        # Create new material
-        new_material = bpy.data.materials.new("tmp")
-        # Create new object (NURBS sphere = '1b')
-        new_atom = draw_obj('1b', atom, new_material)
-        new_atom.active_material = new_material
-        new_material = draw_obj_material('0', new_material)
-
-        # Change size and color of the new object
+        # We first obtain the element form the list of elements.
         for element in ELEMENTS:
-            if element.name in new_atom.name:
-                new_atom.scale = (element.radii[0],) * 3
-                new_atom.active_material.diffuse_color = element.color
-                new_atom.name = element.name + "_ball"
-                new_atom.active_material.name = element.name
+            if element.name in atom.name:
                 break
+
+        # Create now a new material with normal properties. Note that the
+        # 'normal material' initially used during the import could have been
+        # deleted by the user. This is why we create a new one.
+        if "vacancy" in atom.name.lower():
+            new_material = draw_obj_material('2', atom.active_material)
+        else:
+            new_material = draw_obj_material('1', atom.active_material)
+        # Assign now the correct color.
+        mat_P_BSDF = new_material.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = element.color
+        new_material.name = element.name + "_normal"
+
+        # Create a new atom because the current atom might have any kind
+        # of shape. For this, we use a definition from below since it also
+        # deletes the old atom.
+        if "vacancy" in atom.name.lower():
+            new_atom = draw_obj('2', atom, new_material)
+        else:
+            new_atom = draw_obj('1b', atom, new_material)
+
+        # Now assign the material properties, name and size.
+        new_atom.active_material = new_material
+        new_atom.name = element.name + "_ball"
+        new_atom.scale = (element.radii[0],) * 3
 
 
 # Separating atoms from a dupliverts structure.
@@ -422,7 +535,6 @@ def separate_atoms(scn):
 
     # Free memory
     bm.free()
-    del(bm)
 
     # Delete already the selected vertices
     bpy.ops.mesh.delete(type='VERT')
@@ -445,7 +557,6 @@ def separate_atoms(scn):
         # Do not hide the object!
         obj_dupli.hide_set(False)
 
-
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
     bpy.context.view_layer.objects.active = mesh
 
@@ -453,51 +564,80 @@ def separate_atoms(scn):
 # Prepare a new material
 def draw_obj_material(material_type, material):
 
+    mat_P_BSDF_default = material.node_tree.nodes['Principled BSDF']
+    default_color = mat_P_BSDF_default.inputs['Base Color'].default_value
+
     if material_type == '0': # Unchanged
         material_new = material
     if material_type == '1': # Normal
+        # We create again the 'normal' material. Why? It's because the old
+        # one could have been deleted by the user during the course of the
+        # user's work in Blender ... .
         material_new = bpy.data.materials.new(material.name + "_normal")
+        material_new.use_nodes = True
+        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = default_color
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular'].default_value = 0.5
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.03
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.0
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Alpha'].default_value = 1.0
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'OPAQUE'
+        material_new.shadow_method = 'OPAQUE'
     if material_type == '2': # Transparent
         material_new = bpy.data.materials.new(material.name + "_transparent")
-        material_new.metallic = 0.8
-        material_new.specular_intensity = 0.5
-        material_new.roughness = 0.3
-        material_new.blend_method = 'OPAQUE'
-        material_new.show_transparent_back = False
-        # Some properties for cycles
         material_new.use_nodes = True
         mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
-        mat_P_BSDF.inputs['Metallic'].default_value = 0.1
+        mat_P_BSDF.inputs['Base Color'].default_value = default_color
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.0
+        mat_P_BSDF.inputs['Specular'].default_value = 0.15
         mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.9
-        mat_P_BSDF.inputs['IOR'].default_value = 0.8
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.8
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Alpha'].default_value = 0.4
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'HASHED'
+        material_new.shadow_method = 'HASHED'
+        material_new.use_backface_culling = False
     if material_type == '3': # Reflecting
         material_new = bpy.data.materials.new(material.name + "_reflecting")
-        material_new.metallic = 0.5
-        material_new.specular_intensity = 0.5
-        material_new.roughness = 0.0
-        material_new.blend_method = 'OPAQUE'
-        # Some properties for cycles
         material_new.use_nodes = True
         mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
-        mat_P_BSDF.inputs['Metallic'].default_value = 0.95
+        mat_P_BSDF.inputs['Base Color'].default_value = default_color
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.7
+        mat_P_BSDF.inputs['Specular'].default_value = 0.15
         mat_P_BSDF.inputs['Roughness'].default_value = 0.1
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['IOR'].default_value = 0.8
         mat_P_BSDF.inputs['Transmission'].default_value = 0.0
-        mat_P_BSDF.inputs['IOR'].default_value = 1.0
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Alpha'].default_value = 1.0
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'OPAQUE'
+        material_new.shadow_method = 'OPAQUE'
     if material_type == '4': # Transparent + reflecting
         material_new = bpy.data.materials.new(material.name + "_trans+refl")
-        material_new.metallic = 0.3
-        material_new.specular_intensity = 0.5
-        material_new.roughness = 0.3
-        material_new.blend_method = 'OPAQUE'
-        material_new.show_transparent_back = False
-        # Some properties for cycles
         material_new.use_nodes = True
         mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = default_color
         mat_P_BSDF.inputs['Metallic'].default_value = 0.5
-        mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.5
-        mat_P_BSDF.inputs['IOR'].default_value = 0.8
+        mat_P_BSDF.inputs['Specular'].default_value = 0.15
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.05
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.37
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['Alpha'].default_value = 0.6
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'HASHED'
+        material_new.shadow_method = 'HASHED'
+        material_new.use_backface_culling = False
 
     # Always, when the material is changed, a new name is created. Note that
     # this makes sense: Imagine, an other object uses the same material as the
@@ -668,7 +808,6 @@ def draw_obj(atom_shape, atom, new_material):
         coll_child = get_collection_object(child)
         coll_child.objects.unlink(child)
         bpy.ops.object.delete()
-        del(child)
 
     # Deselect everything
     bpy.ops.object.select_all(action='DESELECT')
@@ -682,7 +821,6 @@ def draw_obj(atom_shape, atom, new_material):
     coll_old_atom.objects.unlink(atom)
     # Delete the old atom
     bpy.ops.object.delete()
-    del(atom)
 
     #if "_F2+_center" or "_F+_center" or "_F0_center" in coll_old_atom:
     #    print("Delete the collection")
@@ -703,48 +841,53 @@ def draw_obj_special(atom_shape, atom):
     # ... link it to the collection, which contains 'atom'.
     coll_atom.children.link(coll_new)
 
+    # Get the color of the selected atom.
+    material = atom.active_material
+    mat_P_BSDF_default = material.node_tree.nodes['Principled BSDF']
+    default_color = mat_P_BSDF_default.inputs['Base Color'].default_value
+
+    # Create first a cube
+    bpy.ops.mesh.primitive_cube_add(align='WORLD',
+                                    enter_editmode=False,
+                                    location=atom.location,
+                                    rotation=(0.0, 0.0, 0.0))
+    cube = bpy.context.view_layer.objects.active
+    cube.scale = atom.scale + Vector((0.0,0.0,0.0))
+    cube.select_set(True)
 
     # F2+ center
     if atom_shape == '1':
-        # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(align='WORLD',
-                                        enter_editmode=False,
-                                        location=atom.location,
-                                        rotation=(0.0, 0.0, 0.0))
-        cube = bpy.context.view_layer.objects.active
-        cube.scale = atom.scale + Vector((0.0,0.0,0.0))
         cube.name = atom.name + "_F2+_vac"
-        cube.select_set(True)
+
         # New material for this cube
-        material_cube = bpy.data.materials.new(atom.name + "_F2+_vac")
-        material_cube.diffuse_color = [0.8, 0.0, 0.0, 1.0]
-        material_cube.metallic = 0.8
-        material_cube.specular_intensity = 0.5
-        material_cube.roughness = 0.3
-        material_cube.blend_method = 'OPAQUE'
-        material_cube.show_transparent_back = True
-        # Some properties for cycles
-        material_cube.use_nodes = True
-        mat_P_BSDF = material_cube.node_tree.nodes['Principled BSDF']
-        mat_P_BSDF.inputs['Metallic'].default_value = 0.1
-        mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.9
-        mat_P_BSDF.inputs['IOR'].default_value = 0.8
-        cube.active_material = material_cube
-        # Put a nice point lamp inside the defect
-        lamp_data = bpy.data.lights.new(name=atom.name + "_F2+_lamp",
-                                        type="POINT")
+        material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
+        material_new.use_nodes = True
+        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = default_color
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.7
+        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.65
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Alpha'].default_value = 0.6
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'HASHED'
+        material_new.shadow_method = 'HASHED'
+        material_new.use_backface_culling = False
+        cube.active_material = material_new
+
+        # Put a point lamp inside the defect.
+        lamp_data = bpy.data.lights.new(name=atom.name + "_F2+_lamp", type="POINT")
         lamp_data.distance = atom.scale[0] * 2.0
-        lamp_data.energy = 1.0
+        lamp_data.energy = 2000.0
         lamp_data.color = (0.8, 0.8, 0.8)
         lamp = bpy.data.objects.new(atom.name + "_F2+_lamp", lamp_data)
         lamp.location = Vector((0.0, 0.0, 0.0))
         bpy.context.collection.objects.link(lamp)
         lamp.parent = cube
-        # Some properties for cycles
-        lamp.data.use_nodes = True
-        lmp_P_BSDF = lamp.data.node_tree.nodes['Emission']
-        lmp_P_BSDF.inputs['Strength'].default_value = 2000
+
         # The new 'atom' is the F2+ defect
         new_atom = cube
 
@@ -770,31 +913,27 @@ def draw_obj_special(atom_shape, atom):
 
     # F+ center
     if atom_shape == '2':
-        # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(align='WORLD',
-                                        enter_editmode=False,
-                                        location=atom.location,
-                                        rotation=(0.0, 0.0, 0.0))
-        cube = bpy.context.view_layer.objects.active
-        cube.scale = atom.scale + Vector((0.0,0.0,0.0))
-        cube.name = atom.name + "_F+_vac"
-        cube.select_set(True)
+        cube.name = atom.name + "_F2+_vac"
+
         # New material for this cube
-        material_cube = bpy.data.materials.new(atom.name + "_F+_vac")
-        material_cube.diffuse_color = [0.0, 0.0, 0.8, 1.0]
-        material_cube.metallic = 0.8
-        material_cube.specular_intensity = 0.5
-        material_cube.roughness = 0.3
-        material_cube.blend_method = 'OPAQUE'
-        material_cube.show_transparent_back = True
-        # Some properties for cycles
-        material_cube.use_nodes = True
-        mat_P_BSDF = material_cube.node_tree.nodes['Principled BSDF']
-        mat_P_BSDF.inputs['Metallic'].default_value = 0.1
-        mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.9
-        mat_P_BSDF.inputs['IOR'].default_value = 0.8
-        cube.active_material = material_cube
+        material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
+        material_new.use_nodes = True
+        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.7
+        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.65
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Alpha'].default_value = 0.6
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'HASHED'
+        material_new.shadow_method = 'HASHED'
+        material_new.use_backface_culling = False
+        cube.active_material = material_new
+
         # Create now an electron
         scale = atom.scale / 10.0
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
@@ -808,27 +947,33 @@ def draw_obj_special(atom_shape, atom):
         electron.parent = cube
         # New material for the electron
         material_electron = bpy.data.materials.new(atom.name + "_F+-center")
-        material_electron.diffuse_color = [0.0, 0.0, 0.8, 1.0]
-        material_electron.metallic = 0.8
-        material_electron.specular_intensity = 0.5
-        material_electron.roughness = 0.3
+        material_electron.use_nodes = True
+        mat_P_BSDF = material_electron.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.8
+        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.3
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Alpha'].default_value = 1.0
+        # Some additional stuff for eevee.
         material_electron.blend_method = 'OPAQUE'
-        material_electron.show_transparent_back = False
+        material_electron.shadow_method = 'OPAQUE'
+        material_electron.use_backface_culling = False
         electron.active_material = material_electron
-        # Put a nice point lamp inside the electron
-        lamp_data = bpy.data.lights.new(name=atom.name + "_F+_lamp",
-                                        type="POINT")
+
+        # Put a point lamp inside the electron
+        lamp_data = bpy.data.lights.new(name=atom.name + "_F+_lamp", type="POINT")
         lamp_data.distance = atom.scale[0] * 2.0
-        lamp_data.energy = 1.0
-        lamp_data.color = (0.8, 0.8, 0.8)
+        lamp_data.energy = 100000.0
+        lamp_data.color = (0.0, 0.0, 0.8)
         lamp = bpy.data.objects.new(atom.name + "_F+_lamp", lamp_data)
         lamp.location = Vector((scale[0]*1.5, 0.0, 0.0))
         bpy.context.collection.objects.link(lamp)
         lamp.parent = cube
-        # Some properties for cycles
-        lamp.data.use_nodes = True
-        lmp_P_BSDF = lamp.data.node_tree.nodes['Emission']
-        lmp_P_BSDF.inputs['Strength'].default_value = 2000
+
         # The new 'atom' is the F+ defect complex + lamp
         new_atom = cube
 
@@ -857,32 +1002,28 @@ def draw_obj_special(atom_shape, atom):
 
     # F0 center
     if atom_shape == '3':
-        # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(align='WORLD',
-                                        enter_editmode=False,
-                                        location=atom.location,
-                                        rotation=(0.0, 0.0, 0.0))
-        cube = bpy.context.view_layer.objects.active
-        cube.scale = atom.scale + Vector((0.0,0.0,0.0))
-        cube.name = atom.name + "_F0_vac"
-        cube.select_set(True)
+        cube.name = atom.name + "_F2+_vac"
+
         # New material for this cube
-        material_cube = bpy.data.materials.new(atom.name + "_F0_vac")
-        material_cube.diffuse_color = [0.8, 0.8, 0.8, 1.0]
-        material_cube.metallic = 0.8
-        material_cube.specular_intensity = 0.5
-        material_cube.roughness = 0.83
-        material_cube.blend_method = 'OPAQUE'
-        material_cube.show_transparent_back = True
-        # Some properties for cycles
-        material_cube.use_nodes = True
-        mat_P_BSDF = material_cube.node_tree.nodes['Principled BSDF']
-        mat_P_BSDF.inputs['Metallic'].default_value = 0.1
-        mat_P_BSDF.inputs['Roughness'].default_value = 0.2
-        mat_P_BSDF.inputs['Transmission'].default_value = 0.9
-        mat_P_BSDF.inputs['IOR'].default_value = 0.8
-        cube.active_material = material_cube
-        # Create now two electrons
+        material_new = bpy.data.materials.new(atom.name + "_F2+_vac")
+        material_new.use_nodes = True
+        mat_P_BSDF = material_new.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = [0.8, 0.0, 0.0, 1.0]
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.7
+        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.65
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Alpha'].default_value = 0.6
+        # Some additional stuff for eevee.
+        material_new.blend_method = 'HASHED'
+        material_new.shadow_method = 'HASHED'
+        material_new.use_backface_culling = False
+        cube.active_material = material_new
+
+        # Create now two electrons ... .
         scale = atom.scale / 10.0
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
                                         align='WORLD',
@@ -891,7 +1032,7 @@ def draw_obj_special(atom_shape, atom):
                                         rotation=(0.0, 0.0, 0.0))
         electron1 = bpy.context.view_layer.objects.active
         electron1.scale = scale
-        electron1.name = atom.name + "_F0_electron1"
+        electron1.name = atom.name + "_F0_electron_1"
         electron1.parent = cube
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
                                         align='WORLD',
@@ -900,44 +1041,47 @@ def draw_obj_special(atom_shape, atom):
                                         rotation=(0.0, 0.0, 0.0))
         electron2 = bpy.context.view_layer.objects.active
         electron2.scale = scale
-        electron2.name = atom.name + "_F0_electron2"
+        electron2.name = atom.name + "_F0_electron_2"
         electron2.parent = cube
-        # New material for the electrons
+        # Create a new material for the two electrons.
         material_electron = bpy.data.materials.new(atom.name + "_F0-center")
-        material_electron.diffuse_color = [0.0, 0.0, 0.8, 1.0]
-        material_electron.metallic = 0.8
-        material_electron.specular_intensity = 0.5
-        material_electron.roughness = 0.3
+        material_electron.use_nodes = True
+        mat_P_BSDF = material_electron.node_tree.nodes['Principled BSDF']
+        mat_P_BSDF.inputs['Base Color'].default_value = [0.0, 0.0, 0.8, 1.0]
+        mat_P_BSDF.inputs['Metallic'].default_value = 0.8
+        mat_P_BSDF.inputs['Specular'].default_value = 0.0
+        mat_P_BSDF.inputs['Roughness'].default_value = 0.3
+        mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = 0.0
+        mat_P_BSDF.inputs['IOR'].default_value = 1.45
+        mat_P_BSDF.inputs['Transmission'].default_value = 0.6
+        mat_P_BSDF.inputs['Transmission Roughness'].default_value = 0.5
+        mat_P_BSDF.inputs['Alpha'].default_value = 1.0
+        # Some additional stuff for eevee.
         material_electron.blend_method = 'OPAQUE'
-        material_electron.show_transparent_back = False
+        material_electron.shadow_method = 'OPAQUE'
+        material_electron.use_backface_culling = False
+        # We assign the materials to the two electrons.
         electron1.active_material = material_electron
         electron2.active_material = material_electron
-        # Put two nice point lamps inside the electrons
-        lamp1_data = bpy.data.lights.new(name=atom.name + "_F0_lamp1",
-                                         type="POINT")
+
+        # Put two point lamps inside the electrons.
+        lamp1_data = bpy.data.lights.new(name=atom.name + "_F0_lamp_1", type="POINT")
         lamp1_data.distance = atom.scale[0] * 2.0
-        lamp1_data.energy = 1.0
-        lamp1_data.color = (0.8, 0.8, 0.8)
+        lamp1_data.energy = 20000.0
+        lamp1_data.color = (0.8, 0.0, 0.0)
         lamp1 = bpy.data.objects.new(atom.name + "_F0_lamp", lamp1_data)
         lamp1.location = Vector((scale[0]*1.5, 0.0, 0.0))
         bpy.context.collection.objects.link(lamp1)
         lamp1.parent = cube
-        lamp2_data = bpy.data.lights.new(name=atom.name + "_F0_lamp2",
-                                         type="POINT")
+        lamp2_data = bpy.data.lights.new(name=atom.name + "_F0_lamp_2", type="POINT")
         lamp2_data.distance = atom.scale[0] * 2.0
-        lamp2_data.energy = 1.0
-        lamp2_data.color = (0.8, 0.8, 0.8)
+        lamp2_data.energy = 20000.0
+        lamp2_data.color = (0.8, 0.0, 0.0)
         lamp2 = bpy.data.objects.new(atom.name + "_F0_lamp", lamp2_data)
         lamp2.location = Vector((-scale[0]*1.5, 0.0, 0.0))
         bpy.context.collection.objects.link(lamp2)
         lamp2.parent = cube
-        # Some properties for cycles
-        lamp1.data.use_nodes = True
-        lamp2.data.use_nodes = True
-        lmp1_P_BSDF = lamp1.data.node_tree.nodes['Emission']
-        lmp2_P_BSDF = lamp1.data.node_tree.nodes['Emission']
-        lmp1_P_BSDF.inputs['Strength'].default_value = 200
-        lmp2_P_BSDF.inputs['Strength'].default_value = 200
+
         # The new 'atom' is the F0 defect complex + lamps
         new_atom = cube
 
@@ -982,7 +1126,6 @@ def draw_obj_special(atom_shape, atom):
     coll_atom.objects.unlink(atom)
     # Delete the old atom
     bpy.ops.object.delete()
-    del(atom)
 
     return new_atom
 
@@ -1000,8 +1143,8 @@ def read_elements():
         # empty list.
         radii_ionic = item[7:]
 
-        li = ElementProp(item[0],item[1],item[2],item[3],
-                                     radii,radii_ionic)
+        li = ElementProp(item[0], item[1], item[2], item[3], radii, radii_ionic, [], [])
+
         ELEMENTS.append(li)
 
 
@@ -1009,19 +1152,64 @@ def read_elements():
 def custom_datafile_change_atom_props():
 
     for atom in bpy.context.selected_objects:
+
+        FLAG = False
         if len(atom.children) != 0:
             child = atom.children[0]
             if child.type in {'SURFACE', 'MESH', 'META'}:
                 for element in ELEMENTS:
                     if element.name in atom.name:
-                        child.scale = (element.radii[0],) * 3
-                        child.active_material.diffuse_color = element.color
+                        obj = child
+                        e = element
+                        FLAG = True
         else:
             if atom.type in {'SURFACE', 'MESH', 'META'}:
                 for element in ELEMENTS:
                     if element.name in atom.name:
-                        atom.scale = (element.radii[0],) * 3
-                        atom.active_material.diffuse_color = element.color
+                        obj = atom
+                        e = element
+                        FLAG = True
+
+        if FLAG:
+            obj.scale = (e.radii[0],) * 3
+            mat = obj.active_material
+            mat_P_BSDF = mat.node_tree.nodes['Principled BSDF']
+
+            mat_P_BSDF.inputs['Base Color'].default_value = e.color
+            mat_P_BSDF.subsurface_method = e.mat_P_BSDF.Subsurface_method
+            mat_P_BSDF.distribution = e.mat_P_BSDF.Distribution
+            mat_P_BSDF.inputs['Subsurface'].default_value = e.mat_P_BSDF.Subsurface
+            mat_P_BSDF.inputs['Subsurface Color'].default_value = e.mat_P_BSDF.Subsurface_color
+            mat_P_BSDF.inputs['Subsurface Radius'].default_value = e.mat_P_BSDF.Subsurface_radius
+            mat_P_BSDF.inputs['Metallic'].default_value = e.mat_P_BSDF.Metallic
+            mat_P_BSDF.inputs['Specular'].default_value = e.mat_P_BSDF.Specular
+            mat_P_BSDF.inputs['Specular Tint'].default_value = e.mat_P_BSDF.Specular_tilt
+            mat_P_BSDF.inputs['Roughness'].default_value = e.mat_P_BSDF.Roughness
+            mat_P_BSDF.inputs['Anisotropic'].default_value = e.mat_P_BSDF.Anisotropic
+            mat_P_BSDF.inputs['Anisotropic Rotation'].default_value = e.mat_P_BSDF.Anisotropic_rotation
+            mat_P_BSDF.inputs['Sheen'].default_value = e.mat_P_BSDF.Sheen
+            mat_P_BSDF.inputs['Sheen Tint'].default_value = e.mat_P_BSDF.Sheen_tint
+            mat_P_BSDF.inputs['Clearcoat'].default_value = e.mat_P_BSDF.Clearcoat
+            mat_P_BSDF.inputs['Clearcoat Roughness'].default_value = e.mat_P_BSDF.Clearcoat_rough
+            mat_P_BSDF.inputs['IOR'].default_value = e.mat_P_BSDF.IOR
+            mat_P_BSDF.inputs['Transmission'].default_value = e.mat_P_BSDF.Trans
+            mat_P_BSDF.inputs['Transmission Roughness'].default_value = e.mat_P_BSDF.Trans_rough
+            mat_P_BSDF.inputs['Emission'].default_value = e.mat_P_BSDF.Emission
+            mat_P_BSDF.inputs['Emission Strength'].default_value = e.mat_P_BSDF.Emission_strength
+            mat_P_BSDF.inputs['Alpha'].default_value = e.mat_P_BSDF.Alpha
+
+            mat.use_backface_culling = e.mat_Eevee.use_backface
+            mat.blend_method = e.mat_Eevee.blend_method
+            mat.shadow_method = e.mat_Eevee.shadow_method
+            mat.alpha_threshold = e.mat_Eevee.clip_threshold
+            mat.use_screen_refraction = e.mat_Eevee.use_screen_refraction
+            mat.refraction_depth = e.mat_Eevee.refraction_depth
+            mat.use_sss_translucency = e.mat_Eevee.use_sss_translucency
+            mat.pass_index = e.mat_Eevee.pass_index
+
+            FLAG = False
+
+    bpy.ops.object.select_all(action='DESELECT')
 
 
 # Reading a custom data file and modifying the list 'ELEMENTS'.
@@ -1044,39 +1232,217 @@ def custom_datafile(path_datafile):
 
     for line in data_file_p:
 
+        if "#" == line[0]:
+            continue
+
         if "Atom" in line:
 
-            line = data_file_p.readline()
-            # Number
-            line = data_file_p.readline()
-            number = line[19:-1]
-            # Name
-            line = data_file_p.readline()
-            name = line[19:-1]
-            # Short name
-            line = data_file_p.readline()
-            short_name = line[19:-1]
-            # Color
-            line = data_file_p.readline()
-            color_value = line[19:-1].split(',')
-            color = [float(color_value[0]),
-                     float(color_value[1]),
-                     float(color_value[2]),
-                     float(color_value[3])]
-            # Used radius
-            line = data_file_p.readline()
-            radius_used = float(line[19:-1])
-            # Atomic radius
-            line = data_file_p.readline()
-            radius_atomic = float(line[19:-1])
-            # Van der Waals radius
-            line = data_file_p.readline()
-            radius_vdW = float(line[19:-1])
-            radii = [radius_used,radius_atomic,radius_vdW]
-            radii_ionic = []
+            list_radii_ionic = []
+            while True:
 
-            element = ElementProp(number,name,short_name,color,
-                                              radii, radii_ionic)
+                if len(line) in [0,1]:
+                    break
+
+                # Number
+                if "Number                       :" in line:
+                    pos = line.rfind(':') + 1
+                    number = line[pos:].strip()
+                # Name
+                if "Name                         :" in line:
+                    pos = line.rfind(':') + 1
+                    name = line[pos:].strip()
+                # Short name
+                if "Short name                   :" in line:
+                    pos = line.rfind(':') + 1
+                    short_name = line[pos:].strip()
+                # Color
+                if "Color                        :" in line:
+                    pos = line.rfind(':') + 1
+                    color_value = line[pos:].strip().split(',')
+                    color = [float(color_value[0]),
+                             float(color_value[1]),
+                             float(color_value[2]),
+                             float(color_value[3])]
+                # Used radius
+                if "Radius used                  :" in line:
+                    pos = line.rfind(':') + 1
+                    radius_used = float(line[pos:].strip())
+                # Covalent radius
+                if "Radius, covalent             :" in line:
+                    pos = line.rfind(':') + 1
+                    radius_covalent = float(line[pos:].strip())
+                # Atomic radius
+                if "Radius, atomic               :" in line:
+                    pos = line.rfind(':') + 1
+                    radius_atomic = float(line[pos:].strip())
+                if "Charge state                 :" in line:
+                    pos = line.rfind(':') + 1
+                    charge_state = float(line[pos:].strip())
+                    line = data_file_p.readline()
+                    pos = line.rfind(':') + 1
+                    radius_ionic = float(line[pos:].strip())
+                    list_radii_ionic.append(charge_state)
+                    list_radii_ionic.append(radius_ionic)
+
+                # Some Principled BSDF properties
+
+
+                if "P BSDF Subsurface method     :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_subsurface_method = line[pos:].strip()
+                if "P BSDF Distribution          :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_distribution = line[pos:].strip()
+                if "P BSDF Subsurface            :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_subsurface = float(line[pos:].strip())
+                if "P BSDF Subsurface Color      :" in line:
+                    pos = line.rfind(':') + 1
+                    color_value = line[pos:].strip().split(',')
+                    P_BSDF_subsurface_color = [float(color_value[0]),
+                                               float(color_value[1]),
+                                               float(color_value[2]),
+                                               float(color_value[3])]
+                if "P BSDF Subsurface Radius     :" in line:
+                    pos = line.rfind(':') + 1
+                    radii_values = line[pos:].strip().split(',')
+                    P_BSDF_subsurface_radius = [float(color_value[0]),
+                                                float(color_value[1]),
+                                                float(color_value[2])]
+                if "P BSDF Metallic              :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_metallic = float(line[pos:].strip())
+                if "P BSDF Specular              :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_specular = float(line[pos:].strip())
+                if "P BSDF Specular Tilt         :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_specular_tilt = float(line[pos:].strip())
+                if "P BSDF Roughness             :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_roughness = float(line[pos:].strip())
+                if "P BSDF Anisotropic           :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_anisotropic = float(line[pos:].strip())
+                if "P BSDF Anisotropic Rotation  :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_anisotropic_rotation = float(line[pos:].strip())
+                if "P BSDF Sheen                 : " in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_sheen = float(line[pos:].strip())
+                if "P BSDF Sheen Tint            : " in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_sheen_tint = float(line[pos:].strip())
+                if "P BSDF Clearcoat             :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_clearcoat = float(line[pos:].strip())
+                if "P BSDF Clearcoat Rough       :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_clearcoat_roughness = float(line[pos:].strip())
+                if "P BSDF IOR                   :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_IOR = float(line[pos:].strip())
+                if "P BSDF Trans                 :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_transparency = float(line[pos:].strip())
+                if "P BSDF Trans Roughness       :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_transparency_roughness = float(line[pos:].strip())
+                if "P BSDF Emisssion             : " in line:
+                    pos = line.rfind(':') + 1
+                    color_value = line[pos:].strip().split(',')
+                    P_BSDF_emission = [float(color_value[0]),
+                                       float(color_value[1]),
+                                       float(color_value[2]),
+                                       float(color_value[3])]
+                if "P BSDF Emission Strength     :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_emission_strength = float(line[pos:].strip())
+                if "P BSDF Alpha                 :" in line:
+                    pos = line.rfind(':') + 1
+                    P_BSDF_alpha = float(line[pos:].strip())
+
+                if "Eevee Use Backface Culling   :" in line:
+                    pos = line.rfind(':') + 1
+                    line = line[pos:].strip()
+                    if line.lower() in ("yes", "true", "1"):
+                        Eevee_use_backface = True
+                    else:
+                        Eevee_use_backface = False
+                if "Eevee Blend Method           :" in line:
+                    pos = line.rfind(':') + 1
+                    Eevee_blend_method = line[pos:].strip()
+                if "Eevee Shadow Method          :" in line:
+                    pos = line.rfind(':') + 1
+                    Eevee_shadow_method = line[pos:].strip()
+                if "Eevee Clip Threshold         :" in line:
+                    pos = line.rfind(':') + 1
+                    Eevee_clip_threshold = float(line[pos:].strip())
+                if "Eevee Use Screen Refraction  :" in line:
+                    pos = line.rfind(':') + 1
+                    line = line[pos:].strip()
+                    if line.lower() in ("yes", "true", "1"):
+                        Eevee_use_screen_refraction = True
+                    else:
+                        Eevee_use_screen_refraction = False
+                if "Eevee Refraction depth       : " in line:
+                    pos = line.rfind(':') + 1
+                    Eevee_refraction_depth = float(line[pos:].strip())
+                if "Eevee Use SSS Translucency   :" in line:
+                    pos = line.rfind(':') + 1
+                    line = line[pos:].strip()
+                    if line.lower() in ("yes", "true", "1"):
+                        Eevee_use_sss_translucency = True
+                    else:
+                        Eevee_use_sss_translucency = False
+                if "Eevee Pass Index             :" in line:
+                    pos = line.rfind(':') + 1
+                    Eevee_pass_index = int(line[pos:].strip())
+
+
+                line = data_file_p.readline()
+
+            list_radii = [radius_used, radius_covalent, radius_atomic]
+
+            Eevee_material = EeveeProp(Eevee_use_backface,
+                                       Eevee_blend_method,
+                                       Eevee_shadow_method,
+                                       Eevee_clip_threshold,
+                                       Eevee_use_screen_refraction,
+                                       Eevee_refraction_depth,
+                                       Eevee_use_sss_translucency,
+                                       Eevee_pass_index)
+
+            P_BSDF_material = PBSDFProp(P_BSDF_subsurface_method,
+                                        P_BSDF_distribution,
+                                        P_BSDF_subsurface,
+                                        P_BSDF_subsurface_color,
+                                        P_BSDF_subsurface_radius,
+                                        P_BSDF_metallic,
+                                        P_BSDF_specular,
+                                        P_BSDF_specular_tilt,
+                                        P_BSDF_roughness,
+                                        P_BSDF_anisotropic,
+                                        P_BSDF_anisotropic_rotation,
+                                        P_BSDF_sheen,
+                                        P_BSDF_sheen_tint,
+                                        P_BSDF_clearcoat,
+                                        P_BSDF_clearcoat_roughness,
+                                        P_BSDF_IOR,
+                                        P_BSDF_transparency,
+                                        P_BSDF_transparency_roughness,
+                                        P_BSDF_emission,
+                                        P_BSDF_emission_strength,
+                                        P_BSDF_alpha)
+
+            element = ElementProp(number,
+                                  name,
+                                  short_name,
+                                  color,
+                                  list_radii,
+                                  list_radii_ionic,
+                                  P_BSDF_material,
+                                  Eevee_material)
 
             ELEMENTS.append(element)
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e51864a35705')\n"
+"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -13874,6 +13874,10 @@ msgid "Jpeg"
 msgstr "Jpeg"
 
 
+msgid "To"
+msgstr "Ke"
+
+
 msgid "Use Object layer"
 msgstr "Gunakan layer Objek"
 
@@ -23281,10 +23285,6 @@ msgstr "Muat Pengaturan %d.%d"
 
 msgid "After"
 msgstr "Setelah"
-
-
-msgid "To"
-msgstr "Ke"
 
 
 msgid "Nothing to show yet..."
