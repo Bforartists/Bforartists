@@ -14192,7 +14192,7 @@ static int node_type_to_icon(int type)
       icon = ICON_PARTICLEBRUSH_LENGTH;
       break;
     case GEO_NODE_CURVE_PRIMITIVE_ARC:
-      icon = ICON_DELETE;
+      icon = ICON_CURVE_ARC;
       break;
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
       icon = ICON_CURVE_BEZCURVE;
@@ -14243,7 +14243,7 @@ static int node_type_to_icon(int type)
       icon = ICON_DUAL_MESH;
       break;
     case GEO_NODE_FIELD_AT_INDEX:
-      icon = ICON_DELETE;
+      icon = ICON_FIELD_AT_INDEX;
       break;
     case GEO_NODE_FILL_CURVE:
       icon = ICON_CURVE_FILL;
@@ -14252,7 +14252,7 @@ static int node_type_to_icon(int type)
       icon = ICON_CURVE_FILLET;
       break;
     case GEO_NODE_FLIP_FACES:
-      icon = ICON_DELETE;
+      icon = ICON_FLIP_NORMALS;
       break;
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
       icon = ICON_GEOMETRY_INSTANCE;
@@ -14408,7 +14408,7 @@ static int node_type_to_icon(int type)
       icon = ICON_CURVE_SAMPLE;
       break;
     case GEO_NODE_SCALE_ELEMENTS:
-      icon = ICON_DELETE;
+      icon = ICON_TRANSFORM_SCALE;
       break;
     case GEO_NODE_SCALE_INSTANCES:
       icon = ICON_SCALE_INSTANCE;

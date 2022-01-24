@@ -1323,8 +1323,8 @@ accumulate
 edge_angle
 color_space
 object_contents
-#~ DEF_ICON_BLANK(1342)
-#~ DEF_ICON_BLANK(1343)
+field_at_index
+curve_arc
 #~ DEF_ICON_BLANK(1344)
 #~ DEF_ICON_BLANK(1345)
 #~ DEF_ICON_BLANK(1346)
