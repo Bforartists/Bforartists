@@ -3611,11 +3611,11 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Arc                        ", icon = "CURVE_ARC")
             props.use_transform = True
             props.type = "GeometryNodeCurveArc"
-            
+
             props = col.operator("node.add_node", text=" Bezier Segment     ", icon = "CURVE_BEZCURVE")
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveBezierSegment"
@@ -3655,7 +3655,7 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_ARC")
             props.use_transform = True
             props.type = "GeometryNodeCurveArc"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCURVE")
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveBezierSegment"
@@ -4199,7 +4199,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Dual Mesh               ", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
-            
+
             props = col.operator("node.add_node", text=" Flip Faces               ", icon = "FLIP_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeFlipFaces"
@@ -4215,7 +4215,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh to Points          ", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4234,17 +4234,17 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
-            
+
             props = col.operator("node.add_node", text=" Scale Elements            ", icon = "TRANSFORM_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeScaleElements"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Edge Angle              ", icon = "EDGE_ANGLE")
             props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeAngle"        
+            props.type = "GeometryNodeInputMeshEdgeAngle"
 
             props = col.operator("node.add_node", text=" Edge Neighbors       ", icon = "EDGE_NEIGHBORS")
             props.use_transform = True
@@ -4261,7 +4261,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4292,7 +4292,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "FLIP_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeFlipFaces"
@@ -4324,7 +4324,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeScaleElements"
@@ -4806,10 +4806,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Compare          ", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeCompare"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Field at Index    ", icon = "FIELD_AT_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
@@ -4829,7 +4829,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4876,7 +4876,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeCompare"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "FIELD_AT_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
