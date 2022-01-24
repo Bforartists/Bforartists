@@ -1322,7 +1322,7 @@ swirl
 accumulate
 edge_angle
 color_space
-#~ DEF_ICON_BLANK(1341)
+object_contents
 #~ DEF_ICON_BLANK(1342)
 #~ DEF_ICON_BLANK(1343)
 #~ DEF_ICON_BLANK(1344)
