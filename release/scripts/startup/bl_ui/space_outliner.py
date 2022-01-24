@@ -125,7 +125,7 @@ class BFA_OUTLINER_PT_scene_ops(Panel):
     bl_label = "New Scene"
     bl_space_type = "OUTLINER"
     bl_region_type = "HEADER"
-    
+
     def draw(self, context):
         col = self.layout.column(align=True)
         col.label(text="New Scene")
@@ -515,7 +515,7 @@ class OUTLINER_PT_filter(Panel):
             row = sub.row()
             row.separator()
             row.separator()
-            row.label(icon='OBJECT_DATAMODE')
+            row.label(icon='OBJECT_CONTENTS')
             row.prop(space, "use_filter_object_content", text="Object Contents")
             row = sub.row()
             row.separator()
