@@ -147,10 +147,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
     misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
 
-    # THE ONE FLAG IN THE NODE EDITOR!
-    # Node Editor, text or icon buttons
+    # THE FLAGS IN THE DISPLAY PANEL IN THE NODE EDITOR!
 
-    Node_text_or_icon : BoolProperty(name="Icon / Text Buttons", default = False, description = "Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state")
+    Node_text_or_icon : BoolProperty(name="Icon / Text Buttons", default = False, description = "Display the buttons in the Node editor tool shelf as text or icon buttons")
+    Node_shader_add_common : BoolProperty(name="Common", default = False, description = "Display just the common shader nodes")
 
     # Outliner, show search prop
 
@@ -508,6 +508,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = col.row()
         row.separator()
         row.prop(self, "Node_text_or_icon")
+
+        row = col.row()
+        row.separator()
+        row.prop(self, "Node_shader_add_common")
 
 
     # Outliner, show search prop
