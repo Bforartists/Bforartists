@@ -24,7 +24,7 @@ from bpy import context
 from nodeitems_builtins import node_tree_group_type
 
 # Icon or text buttons in shader editor and compositor in the ADD panel
-class NODES_PT_shader_comp_textoricon_add(bpy.types.Panel):
+class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -34,7 +34,7 @@ class NODES_PT_shader_comp_textoricon_add(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type in {'ShaderNodeTree', 'CompositorNodeTree'})
+        return (context.space_data.tree_type in {'ShaderNodeTree'})
 
     @staticmethod
     def draw(self, context):
@@ -45,7 +45,35 @@ class NODES_PT_shader_comp_textoricon_add(bpy.types.Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
+        row = layout.row()
+        row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
+        row.prop(addon_prefs,"Node_shader_add_common", text = "Common")
+
+
+# Icon or text buttons in compositor in the ADD panel
+class NODES_PT_shader_comp_textoricon_compositor_add(bpy.types.Panel):
+    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_label = "Display"
+    bl_category = "Add"
+    #bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in {'CompositorNodeTree'})
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        row = layout.row()
+        row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
 
 # Icon or text buttons in shader editor and compositor in the RELATIONS panel
@@ -124,7 +152,7 @@ class NODES_PT_geom_textoricon_relations(bpy.types.Panel):
 
 
 # Shader editor, Input panel
-class NODES_PT_shader_add_output(bpy.types.Panel):
+class NODES_PT_shader_add_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -133,7 +161,11 @@ class NODES_PT_shader_add_output(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
     @staticmethod
     def draw(self, context):
@@ -337,7 +369,7 @@ class NODES_PT_shader_add_output(bpy.types.Panel):
 
 
 #Shader editor , Output panel
-class NODES_PT_Input_output_shader(bpy.types.Panel):
+class NODES_PT_shader_add_output(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -347,7 +379,11 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
     @staticmethod
     def draw(self, context):
@@ -834,7 +870,11 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
 
     @staticmethod
     def draw(self, context):
@@ -1104,7 +1144,11 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and texture mode
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and texture mode
 
     @staticmethod
     def draw(self, context):
@@ -1262,7 +1306,11 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree')
 
     @staticmethod
     def draw(self, context):
@@ -2192,7 +2240,11 @@ class NODES_PT_shader_add_vector(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and compositing mode
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
     @staticmethod
     def draw(self, context):
@@ -2308,7 +2360,11 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and compositing mode
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
     @staticmethod
     def draw(self, context):
@@ -2932,53 +2988,6 @@ class NODES_PT_comp_add_distort(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_MOVE")
             props.use_transform = True
             props.type = "CompositorNodeTranslate"
-
-
-#Shader Editor - Script panel
-class NODES_PT_shader_add_script(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Script"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Script               ", icon = "FILE_SCRIPT")
-            props.use_transform = True
-            props.type = "ShaderNodeScript"
-
-        ##### Icon Buttons
-
-        else:
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_SCRIPT")
-            props.use_transform = True
-            props.type = "ShaderNodeScript"
 
 
 # ------------- Relations tab -------------------------------
@@ -5079,13 +5088,729 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
             props.type = "GeometryNodeVolumeToMesh"
 
 
+# ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
+
+# Shader editor, Input panel
+class NODES_PT_shader_add_input_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Input"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+        ##### --------------------------------- Textures common ------------------------------------------- ####
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Fresnel              ", icon = "NODE_FRESNEL")
+            props.use_transform = True
+            props.type = "ShaderNodeFresnel"
+
+            props = col.operator("node.add_node", text=" Geometry        ", icon = "NODE_GEOMETRY")
+            props.use_transform = True
+            props.type = "ShaderNodeNewGeometry"
+
+            props = col.operator("node.add_node", text=" RGB                 ", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeRGB"
+
+            props = col.operator("node.add_node", text = "Texture Coordinate   ", icon = "NODE_TEXCOORDINATE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexCoord"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
+            props.use_transform = True
+            props.type = "ShaderNodeFresnel"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
+            props.use_transform = True
+            props.type = "ShaderNodeNewGeometry"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeRGB"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexCoord"
+
+
+#Shader editor , Output panel
+class NODES_PT_shader_add_output_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Output"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        engine = context.engine
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            if context.space_data.shader_type == 'OBJECT':
+
+                props = col.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIAL")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputMaterial"
+
+            elif context.space_data.shader_type == 'WORLD':
+
+                props = col.operator("node.add_node", text=" World Output    ", icon = "WORLD")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputWorld"
+
+            elif context.space_data.shader_type == 'LINESTYLE':
+
+                props = col.operator("node.add_node", text=" Line Style Output", icon = "NODE_LINESTYLE_OUTPUT")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputLineStyle"
+
+        #### Image Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            if context.space_data.shader_type == 'OBJECT':
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_MATERIAL")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputMaterial"
+
+            elif context.space_data.shader_type == 'WORLD':
+
+                props = flow.operator("node.add_node", text="", icon = "WORLD")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputWorld"
+
+            elif context.space_data.shader_type == 'LINESTYLE':
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_LINESTYLE_OUTPUT")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputLineStyle"
+
+
+#Shader Editor - Shader panel
+class NODES_PT_shader_add_shader_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Shader"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+        engine = context.engine
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Add                   ", icon = "NODE_ADD_SHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeAddShader"
+
+            if context.space_data.shader_type == 'OBJECT':
+
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Hair BSDF          ", icon = "HAIR")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfHairPrincipled"
+
+                props = col.operator("node.add_node", text=" Mix Shader        ", icon = "NODE_MIXSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeMixShader"
+
+                props = col.operator("node.add_node", text=" Principled BSDF", icon = "NODE_PRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeBsdfPrincipled"
+
+                col = layout.column(align=True)
+                col.scale_y = 1.5
+
+                props = col.operator("node.add_node", text=" Principled Volume", icon = "NODE_VOLUMEPRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumePrincipled"
+
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Toon BSDF           ", icon = "NODE_TOONSHADER")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfToon"
+
+                col = layout.column(align=True)
+                col.scale_y = 1.5
+
+
+                props = col.operator("node.add_node", text=" Volume Absorption ", icon = "NODE_VOLUMEABSORPTION")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumeAbsorption"
+
+                props = col.operator("node.add_node", text=" Volume Scatter   ", icon = "NODE_VOLUMESCATTER")
+                props.use_transform = True
+
+            props.type = "ShaderNodeVolumeScatter"
+
+            if context.space_data.shader_type == 'WORLD':
+                col = layout.column(align=True)
+                col.scale_y = 1.5
+
+                props = col.operator("node.add_node", text=" Background    ", icon = "NODE_BACKGROUNDSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeBackground"
+
+                props = col.operator("node.add_node", text=" Emission           ", icon = "NODE_EMISSION")
+                props.use_transform = True
+                props.type = "ShaderNodeEmission"
+
+                props = col.operator("node.add_node", text=" Principled Volume       ", icon = "NODE_VOLUMEPRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumePrincipled"
+
+                props = col.operator("node.add_node", text=" Mix                   ", icon = "NODE_MIXSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeMixShader"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_ADD_SHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeAddShader"
+
+            if context.space_data.shader_type == 'OBJECT':
+
+                if engine == 'CYCLES':
+
+                    props = flow.operator("node.add_node", text="", icon = "HAIR")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfHairPrincipled"
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeMixShader"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeBsdfPrincipled"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumePrincipled"
+
+                if engine == 'CYCLES':
+
+                    props = flow.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfToon"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEABSORPTION")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumeAbsorption"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMESCATTER")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumeScatter"
+
+            if context.space_data.shader_type == 'WORLD':
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeBackground"
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_EMISSION")
+                props.use_transform = True
+                props.type = "ShaderNodeEmission"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumePrincipled"
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
+                props.use_transform = True
+                props.type = "ShaderNodeMixShader"
+
+
+#Shader Editor - Texture panel
+class NODES_PT_shader_add_texture_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Texture"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and texture mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+        engine = context.engine
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Environment Texture", icon = "NODE_ENVIRONMENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexEnvironment"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Image Texture         ", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexImage"
+
+            props = col.operator("node.add_node", text=" Noise Texture         ", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Sky Texture             ", icon = "NODE_SKY")
+            props.use_transform = True
+            props.type = "ShaderNodeTexSky"
+
+            props = col.operator("node.add_node", text=" Voronoi Texture       ", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+
+        #### Icon Buttons
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexEnvironment"
+
+            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexImage"
+
+            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SKY")
+            props.use_transform = True
+            props.type = "ShaderNodeTexSky"
+
+            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+
+#Shader Editor - Color panel
+class NODES_PT_shader_add_color_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Color"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree'
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        ##### Textbuttons
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Bright / Contrast ", icon = "BRIGHTNESS_CONTRAST")
+            props.use_transform = True
+            props.type = "ShaderNodeBrightContrast"
+
+            props = col.operator("node.add_node", text=" Gamma             ", icon = "NODE_GAMMA")
+            props.use_transform = True
+            props.type = "ShaderNodeGamma"
+
+            props = col.operator("node.add_node", text=" Hue / Saturation ", icon = "NODE_HUESATURATION")
+            props.use_transform = True
+            props.type = "ShaderNodeHueSaturation"
+
+            props = col.operator("node.add_node", text=" Invert                 ", icon = "NODE_INVERT")
+            props.use_transform = True
+            props.type = "ShaderNodeInvert"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Mix RGB           ", icon = "NODE_MIXRGB")
+            props.use_transform = True
+            props.type = "ShaderNodeMixRGB"
+
+            props = col.operator("node.add_node", text="  RGB Curves        ", icon = "NODE_RGBCURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeRGBCurve"
+
+        ##### Icon Buttons
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
+            props.use_transform = True
+            props.type = "ShaderNodeBrightContrast"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GAMMA")
+            props.use_transform = True
+            props.type = "ShaderNodeGamma"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
+            props.use_transform = True
+            props.type = "ShaderNodeHueSaturation"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
+            props.use_transform = True
+            props.type = "ShaderNodeInvert"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
+            props.use_transform = True
+            props.type = "ShaderNodeMixRGB"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeRGBCurve"
+
+
+#Shader Editor - Vector panel
+class NODES_PT_shader_add_vector_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Mapping           ", icon = "NODE_MAPPING")
+            props.use_transform = True
+            props.type = "ShaderNodeMapping"
+
+            props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "ShaderNodeNormal"
+
+            props = col.operator("node.add_node", text=" Normal Map     ", icon = "NODE_NORMALMAP")
+            props.use_transform = True
+            props.type = "ShaderNodeNormalMap"
+
+        ##### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MAPPING")
+            props.use_transform = True
+            props.type = "ShaderNodeMapping"
+
+            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "ShaderNodeNormal"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
+            props.use_transform = True
+            props.type = "ShaderNodeNormalMap"
+
+
+#Shader Editor - Converter panel
+class NODES_PT_shader_add_converter_common(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Converter"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        engine = context.engine
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = col.operator("node.add_node", text=" ColorRamp       ", icon = "NODE_COLORRAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeValToRGB"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
+
+            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+            props = col.operator("node.add_node", text=" RGB to BW      ", icon = "NODE_RGBTOBW")
+            props.use_transform = True
+            props.type = "ShaderNodeRGBToBW"
+
+        ##### Icon Buttons
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeValToRGB"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
+            props.use_transform = True
+            props.type = "ShaderNodeRGBToBW"
+
+
+#Shader Editor - Script panel
+class NODES_PT_shader_add_script(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Script"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Script               ", icon = "FILE_SCRIPT")
+            props.use_transform = True
+            props.type = "ShaderNodeScript"
+
+        ##### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "FILE_SCRIPT")
+            props.use_transform = True
+            props.type = "ShaderNodeScript"
+
+
 classes = (
-    NODES_PT_shader_comp_textoricon_add,
+    NODES_PT_shader_comp_textoricon_shader_add,
+    NODES_PT_shader_comp_textoricon_compositor_add,
     NODES_PT_shader_comp_textoricon_relations,
     NODES_PT_geom_textoricon_add,
     NODES_PT_geom_textoricon_relations,
+    NODES_PT_shader_add_input,
     NODES_PT_shader_add_output,
-    NODES_PT_Input_output_shader,
     NODES_PT_comp_add_input,
     NODES_PT_comp_add_output,
     NODES_PT_Input_input_tex,
@@ -5107,7 +5832,7 @@ classes = (
     NODES_PT_comp_add_matte,
     NODES_PT_Modify_distort_tex,
     NODES_PT_comp_add_distort,
-    NODES_PT_shader_add_script,
+
     NODES_PT_Relations_group,
     NODES_PT_Input_node_group,
     NODES_PT_Relations_layout,
@@ -5128,6 +5853,17 @@ classes = (
     NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_vector,
     NODES_PT_geom_add_volume,
+
+    #- shader editor common classes
+    NODES_PT_shader_add_input_common,
+    NODES_PT_shader_add_output_common,
+    NODES_PT_shader_add_shader_common,
+    NODES_PT_shader_add_texture_common,
+    NODES_PT_shader_add_color_common,
+    NODES_PT_shader_add_vector_common,
+    NODES_PT_shader_add_converter_common,
+
+    NODES_PT_shader_add_script,
 )
 
 if __name__ == "__main__":  # only for live edit.
