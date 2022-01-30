@@ -13,6 +13,9 @@ if errorlevel 1 goto EOF
 call "%BLENDER_DIR%\build_files\windows\parse_arguments.cmd" %*
 if errorlevel 1 goto EOF
 
+call "%BLENDER_DIR%\build_files\windows\find_dependencies.cmd"
+if errorlevel 1 goto EOF
+
 REM if it is one of the convenience targets and BLENDER_BIN is set
 REM skip compiler detection
 if "%ICONS%%ICONS_GEOM%%DOC_PY%" == "1" (
@@ -20,9 +23,6 @@ if "%ICONS%%ICONS_GEOM%%DOC_PY%" == "1" (
 		goto convenience_targets
 	)
 )
-
-call "%BLENDER_DIR%\build_files\windows\find_dependencies.cmd"
-if errorlevel 1 goto EOF
 
 if "%BUILD_SHOW_HASHES%" == "1" (
 	call "%BLENDER_DIR%\build_files\windows\show_hashes.cmd"
@@ -88,6 +88,11 @@ if "%DOC_PY%" == "1" (
 	goto EOF
 )
 
+if "%CMAKE%" == "" (
+	echo Cmake not found in path, required for building, exiting...
+	exit /b 1
+)
+
 echo Building bforartists with VS%BUILD_VS_YEAR% for %BUILD_ARCH% in %BUILD_DIR%
 
 call "%BLENDER_DIR%\build_files\windows\check_libraries.cmd"
@@ -98,7 +103,7 @@ if "%TEST%" == "1" (
 	goto EOF
 )
 
-REM bfa - no sub modules - 
+REM bfa - no sub modules -
 REM call "%BLENDER_DIR%\build_files\windows\check_submodules.cmd"
 REM if errorlevel 1 goto EOF
 

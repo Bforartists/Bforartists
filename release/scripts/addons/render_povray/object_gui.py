@@ -21,13 +21,20 @@
 
 import bpy
 
-from bpy.utils import register_class, unregister_class
+import os
+
+from bpy.utils import (
+    register_class,
+    unregister_class,
+    register_tool,
+    unregister_tool
+)
 from bpy.types import (
     # Operator,
     Menu,
     Panel,
+    WorkSpaceTool,
 )
-
 
 # Example of wrapping every class 'as is'
 from bl_ui import properties_data_modifier
@@ -97,7 +104,8 @@ class PovDataButtonsPanel(properties_data_mesh.MeshButtonsPanel):
         'CONE',
         'TORUS',
         'BLOB',
-        'ISOSURFACE',
+        'ISOSURFACE_NODE',
+        'ISOSURFACE_VIEW',
         'SUPERELLIPSOID',
         'SUPERTORUS',
         'HEIGHT_FIELD',
@@ -170,7 +178,6 @@ class MODIFIERS_PT_POV_modifiers(ModifierButtonsPanel, Panel):
     """Use this class to define pov modifier buttons. (For booleans)"""
 
     bl_label = "POV-Ray"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # def draw_header(self, context):
     # scene = context.scene
@@ -180,15 +187,14 @@ class MODIFIERS_PT_POV_modifiers(ModifierButtonsPanel, Panel):
         # scene = context.scene
         layout = self.layout
         ob = context.object
-        mod = ob.modifiers
         col = layout.column()
         # Find Boolean Modifiers for displaying CSG option
-        onceCSG = 0
+        once_csg = 0
         for mod in ob.modifiers:
-            if onceCSG == 0 and mod:
+            if once_csg == 0 and mod:
                 if mod.type == 'BOOLEAN':
                     col.prop(ob.pov, "boolean_mod")
-                    onceCSG = 1
+                    once_csg = 1
 
                 if ob.pov.boolean_mod == "POV":
                     # split = layout.split() # better ?
@@ -201,7 +207,6 @@ class OBJECT_PT_POV_obj_parameters(ObjectButtonsPanel, Panel):
     """Use this class to define pov specific object level options buttons."""
 
     bl_label = "POV"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -531,11 +536,33 @@ class OBJECT_PT_POV_obj_supertorus(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "st_max_gradient")
 
 
+class OBJECT_PT_POV_obj_isosurface(PovDataButtonsPanel, Panel):
+    """Use this class to define pov generic isosurface primitive function user field."""
+
+    bl_label = "POV Isosurface"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    # bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.scene.render.engine
+        obj = context.object
+        return obj and obj.pov.object_as == 'ISOSURFACE_VIEW' and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        obj = context.object
+
+        col = layout.column()
+
+        if obj.pov.object_as == 'ISOSURFACE_VIEW':
+                col.prop(obj.pov, "isosurface_eq")
+
 class OBJECT_PT_POV_obj_parametric(PovDataButtonsPanel, Panel):
     """Use this class to define pov parametric surface primitive parameters buttons."""
 
     bl_label = "POV Parametric surface"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
 
     @classmethod
@@ -607,9 +634,7 @@ def check_add_mesh_extra_objects():
     This addon is currently used to generate the proxy for POV parametric
     surface which is almost the same principle as its Math xyz surface
     """
-    if "add_mesh_extra_objects" in bpy.context.preferences.addons.keys():
-        return True
-    return False
+    return "add_mesh_extra_objects" in bpy.context.preferences.addons.keys()
 
 
 def menu_func_add(self, context):
@@ -651,7 +676,7 @@ class VIEW_MT_POV_Basic_Shapes(Menu):
         layout.operator("pov.addbox", text="Box", icon='MESH_CUBE')
         layout.operator("pov.addsphere", text="Sphere", icon='SHADING_RENDERED')
         layout.operator("pov.addcylinder", text="Cylinder", icon="MESH_CYLINDER")
-        layout.operator("pov.cone_add", text="Cone", icon="MESH_CONE")
+        layout.operator("pov.addcone", text="Cone", icon="MESH_CONE")
         layout.operator("pov.addtorus", text="Torus", icon='MESH_TORUS')
         layout.separator()
         layout.operator("pov.addrainbow", text="Rainbow", icon="COLOR")
@@ -690,6 +715,463 @@ class VIEW_MT_POV_Basic_Shapes(Menu):
             return
         layout.operator("pov.addparametric", text="Parametric", icon='SCRIPTPLUGINS')
 
+# ------------ Tool bar button------------ #
+icon_path = (os.path.join(os.path.dirname(__file__), "icons"))
+class VIEW_WT_POV_plane_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addplane"
+    bl_label = "Add POV plane"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a plane of infinite dimension for POV"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.infinite_plane")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addplane", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_box_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addbox"
+    bl_label = "Add POV box"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV box solid primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.box")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addbox", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_sphere_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addsphere"
+    bl_label = "Add POV sphere"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add an untesselated sphere for POV"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.sphere")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addsphere", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_cylinder_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addcylinder"
+    bl_label = "Add POV cylinder"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add an untesselated cylinder for POV"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.cylinder")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addcylinder", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_cone_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addcone"
+    bl_label = "Add POV cone"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add an untesselated cone for POV"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.cone")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addcone", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_torus_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addtorus"
+    bl_label = "Add POV torus"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add an untesselated torus for POV"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.torus")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addtorus", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_rainbow_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addrainbow"
+    bl_label = "Add POV rainbow"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV rainbow primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.rainbow")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addrainbow", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_lathe_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addlathe"
+    bl_label = "Add POV lathe"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV lathe primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.lathe")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addlathe", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_prism_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addprism"
+    bl_label = "Add POV prism"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV prism primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.prism")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addprism", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_heightfield_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addheightfield"
+    bl_label = "Add POV heightfield"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV heightfield primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.heightfield")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addheightfield", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_superellipsoid_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addsuperellipsoid"
+    bl_label = "Add POV superquadric ellipsoid"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV superquadric ellipsoid primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.superellipsoid")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addsuperellipsoid", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_spheresweep_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addspheresweep"
+    bl_label = "Add POV spheresweep"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV spheresweep primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.spheresweep")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addspheresweep", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_loft_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addloft"
+    bl_label = "Add POV loft macro"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV loft macro between editable spline cross sections"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.loft")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addloft", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_polytocircle_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addpolytocircle"
+    bl_label = "Add POV poly to circle macro"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV regular polygon to circle blending macro"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.polytocircle")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addpolytocircle", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_parametric_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addparametric"
+    bl_label = "Add POV parametric surface"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV parametric surface primitive shaped from three equations (for x, y, z directions)"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.parametric")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addparametric", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_isosurface_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addisosurface"
+    bl_label = "Add POV generic isosurface"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV generic shaped isosurface primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.isosurface")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addisosurface", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_isosurfacebox_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addisosurfacebox"
+    bl_label = "Add POV isosurface box"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV box shaped isosurface primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.isosurfacebox")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addisosurfacebox", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_isosurfacesphere_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addisosurfacesphere"
+    bl_label = "Add POV isosurface sphere"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV sphere shaped isosurface primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.isosurfacesphere")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addisosurfacesphere", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_isosurfacesupertorus_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addsupertorus"
+    bl_label = "Add POV isosurface supertorus"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV torus shaped isosurface primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.isosurfacesupertorus")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addsupertorus", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_blobsphere_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addblobsphere"
+    bl_label = "Add POV blob sphere"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV sphere shaped blob primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.blobsphere")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addblobsphere", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_blobcapsule_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addblobcapsule"
+    bl_label = "Add POV blob capsule"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV capsule shaped blob primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.blobcapsule")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addblobcapsule", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_blobplane_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addblobplane"
+    bl_label = "Add POV blob plane"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV plane shaped blob primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.blobplane")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addblobplane", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_blobellipsoid_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addblobellipsoid"
+    bl_label = "Add POV blob ellipsoid"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV ellipsoid shaped blob primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.blobellipsoid")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addblobellipsoid", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
+
+class VIEW_WT_POV_blobcube_add(WorkSpaceTool):
+    bl_space_type='VIEW_3D'
+    bl_context_mode='OBJECT'
+
+    # The prefix of the idname should be your add-on name.
+    bl_idname = "pov.addsblobcube"
+    bl_label = "Add POV blob cube"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_description = (
+        "add a POV cube shaped blob primitive"
+    )
+    bl_icon = os.path.join(icon_path, "pov.add.blobcube")
+    bl_widget = None
+    bl_keymap = (
+        ("pov.addblobcube", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+    {"properties": None}),
+        )
+
 
 classes = (
     # ObjectButtonsPanel,
@@ -709,27 +1191,62 @@ classes = (
     OBJECT_PT_POV_obj_superellipsoid,
     OBJECT_PT_POV_obj_torus,
     OBJECT_PT_POV_obj_supertorus,
+    OBJECT_PT_POV_obj_isosurface,
     OBJECT_PT_POV_obj_parametric,
     OBJECT_PT_povray_replacement_text,
     VIEW_MT_POV_primitives_add,
     VIEW_MT_POV_Basic_Shapes,
 )
-
+tool_classes = (
+    VIEW_WT_POV_plane_add,
+    VIEW_WT_POV_box_add,
+    VIEW_WT_POV_sphere_add,
+    VIEW_WT_POV_cylinder_add,
+    VIEW_WT_POV_cone_add,
+    VIEW_WT_POV_torus_add,
+    VIEW_WT_POV_prism_add,
+    VIEW_WT_POV_lathe_add,
+    VIEW_WT_POV_spheresweep_add,
+    VIEW_WT_POV_heightfield_add,
+    VIEW_WT_POV_superellipsoid_add,
+    VIEW_WT_POV_rainbow_add,
+    VIEW_WT_POV_loft_add,
+    VIEW_WT_POV_polytocircle_add,
+    VIEW_WT_POV_parametric_add,
+    VIEW_WT_POV_isosurface_add,
+    VIEW_WT_POV_isosurfacebox_add,
+    VIEW_WT_POV_isosurfacesphere_add,
+    VIEW_WT_POV_isosurfacesupertorus_add,
+    VIEW_WT_POV_blobsphere_add,
+    VIEW_WT_POV_blobcapsule_add,
+    VIEW_WT_POV_blobplane_add,
+    VIEW_WT_POV_blobellipsoid_add,
+    VIEW_WT_POV_blobcube_add,
+)
 
 def register():
     for cls in classes:
         register_class(cls)
 
-    bpy.types.VIEW3D_MT_add.prepend(menu_func_add)
+    # Register tools
+    last_tool = {"builtin.measure"}
+    for index, wtl in enumerate(tool_classes):
+        # Only separate first and 12th tools and hide subtools only in 8th (isosurfaces)
+        register_tool(wtl, after=last_tool, separator=index in [0,7,11,12,14,19], group=index == 15)
+        last_tool = {wtl.bl_idname}
 
-    # was used for parametric objects but made the other addon unreachable on
-    # unregister for other tools to use created a user action call instead
+    bpy.types.VIEW3D_MT_add.prepend(menu_func_add)
+    # Below was used for parametric objects but made the other addon unreachable on
+    # unregister for other tools to use. Created a user action call instead
     # addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
 
 
 def unregister():
     # addon_utils.disable("add_mesh_extra_objects", default_set=False)
     bpy.types.VIEW3D_MT_add.remove(menu_func_add)
+
+    for wtl in reversed(tool_classes):
+        unregister_tool(wtl)
 
     for cls in reversed(classes):
         unregister_class(cls)

@@ -54,17 +54,13 @@ set(LIB
   bf_gpu
   bf_intern_guardedalloc
 
-  ${FREETYPE_LIBRARIES}
+  ${FREETYPE_LIBRARIES} ${BROTLI_LIBRARIES}
 )
 
 if(WIN32)
   list(APPEND SRC
     intern/blf_font_win32_compat.c
   )
-endif()
-
-if(WITH_INTERNATIONAL)
-  add_definitions(-DWITH_INTERNATIONAL)
 endif()
 
 if(WITH_PYTHON)

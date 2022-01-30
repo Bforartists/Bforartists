@@ -111,7 +111,7 @@ def export_hair(file, ob, mod, p_sys, global_matrix, write_matrix):
             )  # +2 because the first point needs tripling to be more than a handle in POV
         else:
             file.write('linear_spline ')
-            file.write('%i,\n' % (steps))
+            file.write('%i,\n' % steps)
         # changing world coordinates to object local coordinates by
         # multiplying with inverted matrix
         init_coord = ob.matrix_world.inverted() @ (p_sys.co_hair(ob, particle_no=pindex, step=0))
@@ -160,6 +160,8 @@ def export_hair(file, ob, mod, p_sys, global_matrix, write_matrix):
             elif step == 0:
                 hair_strand_diameter = strand_start
             else:
+                # still initialize variable
+                hair_strand_diameter = strand_start
                 if strand_shape != 0.0:
                     if strand_shape < 0.0:
                         fac = pow(step, (1.0 + strand_shape))

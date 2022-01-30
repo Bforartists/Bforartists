@@ -42,24 +42,15 @@ from mathutils import Vector, Matrix
 # import collections
 
 
-def write_object_modifiers(scene, ob, File):
+def write_object_modifiers(ob, File):
     """Translate some object level POV statements from Blender UI
     to POV syntax and write to exported file """
 
     # Maybe return that string to be added instead of directly written.
 
     '''XXX WIP
-    onceCSG = 0
-    for mod in ob.modifiers:
-        if onceCSG == 0:
-            if mod :
-                if mod.type == 'BOOLEAN':
-                    if ob.pov.boolean_mod == "POV":
-                        File.write("\tinside_vector <%.6g, %.6g, %.6g>\n" %
-                                   (ob.pov.inside_vector[0],
-                                    ob.pov.inside_vector[1],
-                                    ob.pov.inside_vector[2]))
-                        onceCSG = 1
+    # import .object_mesh_topology.write_object_csg_inside_vector
+    write_object_csg_inside_vector(ob, file)
     '''
 
     if ob.pov.hollow:
@@ -126,9 +117,9 @@ class POVRAY_OT_lathe_add(Operator):
 
     bl_idname = "pov.addlathe"
     bl_label = "Lathe"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "adds lathe"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
     def execute(self, context):
         # ayers=[False]*20
         # layers[0]=True
@@ -195,13 +186,13 @@ def pov_superellipsoid_define(context, op, ob):
             step += 1
             angSegment += stepSegment
             x = r * (abs(cos(angRing)) ** n1) * (abs(cos(angSegment)) ** n2)
-            if (cos(angRing) < 0 and cos(angSegment) > 0) or (
-                cos(angRing) > 0 and cos(angSegment) < 0
+            if (cos(angRing) < 0 < cos(angSegment)) or (
+                    cos(angRing) > 0 > cos(angSegment)
             ):
                 x = -x
             y = r * (abs(cos(angRing)) ** n1) * (abs(sin(angSegment)) ** n2)
-            if (cos(angRing) < 0 and sin(angSegment) > 0) or (
-                cos(angRing) > 0 and sin(angSegment) < 0
+            if (cos(angRing) < 0 < sin(angSegment)) or (
+                    cos(angRing) > 0 > sin(angSegment)
             ):
                 y = -y
             z = r * (abs(sin(angRing)) ** n1)
@@ -287,6 +278,7 @@ class POVRAY_OT_superellipsoid_add(Operator):
     # Keep in sync within object_properties.py section Superellipsoid
     # as this allows interactive update
     #     If someone knows how to define operators' props from a func, I'd be delighted to learn it!
+    # XXX ARE the first two used for import ? could we hide or suppress them otherwise?
     se_param1: FloatProperty(name="Parameter 1", description="", min=0.00, max=10.0, default=0.04)
 
     se_param2: FloatProperty(name="Parameter 2", description="", min=0.00, max=10.0, default=0.04)
@@ -704,11 +696,12 @@ class POVRAY_OT_plane_add(Operator):
     bl_label = "Plane"
     bl_description = "Add Plane"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
         # layers[0] = True
-        bpy.ops.mesh.primitive_plane_add(size=100000)
+        bpy.ops.mesh.primitive_plane_add(size=10000)
         ob = context.object
         ob.name = ob.data.name = 'PovInfinitePlane'
         bpy.ops.object.mode_set(mode="EDIT")
@@ -732,6 +725,7 @@ class POVRAY_OT_box_add(Operator):
     bl_label = "Box"
     bl_description = "Add Box"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
@@ -797,6 +791,7 @@ class POVRAY_OT_cylinder_add(Operator):
     bl_label = "Cylinder"
     bl_description = "Add Cylinder"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # Keep in sync within object_properties.py section Cylinder
     # as this allows interactive update
@@ -821,13 +816,12 @@ class POVRAY_OT_cylinder_add(Operator):
                 LOC = ob.pov.imported_cyl_loc
             if ob.pov.imported_cyl_loc_cap:
                 LOC_CAP = ob.pov.imported_cyl_loc_cap
+        elif not props.imported_cyl_loc:
+            LOC_CAP = LOC = bpy.context.scene.cursor.location
+            LOC_CAP[2] += 2.0
         else:
-            if not props.imported_cyl_loc:
-                LOC_CAP = LOC = bpy.context.scene.cursor.location
-                LOC_CAP[2] += 2.0
-            else:
-                LOC = props.imported_cyl_loc
-                LOC_CAP = props.imported_cyl_loc_cap
+            LOC = props.imported_cyl_loc
+            LOC_CAP = props.imported_cyl_loc_cap
             self.report(
                 {'INFO'},
                 "This native POV-Ray primitive " "won't have any vertex to show in edit mode",
@@ -928,6 +922,7 @@ class POVRAY_OT_sphere_add(Operator):
     bl_label = "Sphere"
     bl_description = "Add Sphere Shape"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # Keep in sync within object_properties.py section Sphere
     # as this allows interactive update
@@ -945,16 +940,15 @@ class POVRAY_OT_sphere_add(Operator):
         if ob:
             if ob.pov.imported_loc:
                 LOC = ob.pov.imported_loc
-        else:
-            if not props.imported_loc:
-                LOC = bpy.context.scene.cursor.location
+        elif not props.imported_loc:
+            LOC = bpy.context.scene.cursor.location
 
-            else:
-                LOC = props.imported_loc
-                self.report(
-                    {'INFO'},
-                    "This native POV-Ray primitive " "won't have any vertex to show in edit mode",
-                )
+        else:
+            LOC = props.imported_loc
+            self.report(
+                {'INFO'},
+                "This native POV-Ray primitive " "won't have any vertex to show in edit mode",
+            )
         pov_sphere_define(context, self, None, LOC)
 
         return {'FINISHED'}
@@ -1067,7 +1061,7 @@ def pov_cone_define(context, op, ob):
 class POVRAY_OT_cone_add(Operator):
     """Add the representation of POV cone using pov_cone_define() function."""
 
-    bl_idname = "pov.cone_add"
+    bl_idname = "pov.addcone"
     bl_label = "Cone"
     bl_description = "Add Cone"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1147,6 +1141,109 @@ class POVRAY_OT_cone_update(Operator):
 # ----------------------------------- ISOSURFACES ----------------------------------- #
 
 
+def pov_isosurface_view_define(context, op, ob, loc):
+    """create the representation of POV isosurface using a Blender empty."""
+
+    if op:
+        eq = op.isosurface_eq
+
+        loc = bpy.context.scene.cursor.location
+
+    else:
+        assert ob
+        eq = ob.pov.isosurface_eq
+
+        # keep object rotation and location for the add object operator
+        obrot = ob.rotation_euler
+        # obloc = ob.location
+        obscale = ob.scale
+
+        #bpy.ops.object.empty_add(type='CUBE', location=loc, rotation=obrot)
+        bpy.ops.mesh.primitive_emptyvert_add()
+
+        # bpy.ops.transform.rotate(axis=obrot,orient_type='GLOBAL')
+        bpy.ops.transform.resize(value=obscale)
+        # bpy.ops.transform.rotate(axis=obrot, proportional_size=1)
+        bpy.ops.object.mode_set(mode="OBJECT")
+    if not ob:
+        #bpy.ops.object.empty_add(type='CUBE', location=loc)
+        bpy.ops.mesh.primitive_emptyvert_add()
+        ob = context.object
+        ob.name = ob.data.name = "PovIsosurface"
+        ob.pov.object_as = "ISOSURFACE_VIEW"
+        ob.pov.isosurface_eq = eq
+        ob.pov.contained_by = 'box'
+        bpy.ops.object.mode_set(mode="OBJECT")
+
+class POVRAY_OT_isosurface_add(Operator):
+    """Add the representation of POV isosurface sphere by a Blender mesh icosphere.
+
+    Flag its primitive type with a specific pov.object_as attribute and lock edit mode
+    to keep proxy consistency by hiding edit geometry."""
+
+    bl_idname = "pov.addisosurface"
+    bl_label = "Generic Isosurface"
+    bl_description = "Add Isosurface"
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    # Keep in sync within object_properties.py section Sphere
+    # as this allows interactive update
+    isosurface_eq: StringProperty(
+        name="f(x,y,z)=",
+        description="Type the POV Isosurface function syntax for equation, "
+        "pattern,etc. ruling an implicit surface to be rendered",
+        default="sqrt(pow(x,2) + pow(y,2) + pow(z,2)) - 1.5",
+    )
+    imported_loc: FloatVectorProperty(
+        name="Imported Pov location", precision=6, default=(0.0, 0.0, 0.0)
+    )
+
+    def execute(self, context):
+        # layers = 20*[False]
+        # layers[0] = True
+        props = self.properties
+        ob = context.object
+        if ob:
+            if ob.pov.imported_loc:
+                LOC = ob.pov.imported_loc
+        elif not props.imported_loc:
+            LOC = bpy.context.scene.cursor.location
+        else:
+            LOC = props.imported_loc
+        pov_isosurface_view_define(context, self, None, LOC)
+        self.report(
+            {'INFO'}, "This native POV-Ray primitive " "is only an abstract proxy in Blender"
+        )
+        return {'FINISHED'}
+
+
+
+class POVRAY_OT_isosurface_update(Operator):
+    """Update the POV isosurface.
+
+    Rerun pov_isosurface_view_define() function
+    with the new parameters"""
+
+    bl_idname = "pov.isosurface_update"
+    bl_label = "Update"
+    bl_description = "Update Isosurface"
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.scene.render.engine
+        ob = context.object
+        return ob and ob.data and ob.type == 'ISOSURFACE_VIEW' and engine in cls.COMPAT_ENGINES
+
+    def execute(self, context):
+
+        pov_isosurface_view_define(context, None, context.object, context.object.location)
+
+        return {'FINISHED'}
+
+
 class POVRAY_OT_isosurface_box_add(Operator):
     """Add the representation of POV isosurface box using also just a Blender mesh cube.
 
@@ -1157,6 +1254,7 @@ class POVRAY_OT_isosurface_box_add(Operator):
     bl_label = "Isosurface Box"
     bl_description = "Add Isosurface contained by Box"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
@@ -1169,7 +1267,7 @@ class POVRAY_OT_isosurface_box_add(Operator):
         )
         bpy.ops.mesh.hide(unselected=False)
         bpy.ops.object.mode_set(mode="OBJECT")
-        ob.pov.object_as = "ISOSURFACE"
+        ob.pov.object_as = "ISOSURFACE_NODE"
         ob.pov.contained_by = 'box'
         ob.name = 'PovIsosurfaceBox'
         return {'FINISHED'}
@@ -1185,6 +1283,7 @@ class POVRAY_OT_isosurface_sphere_add(Operator):
     bl_label = "Isosurface Sphere"
     bl_description = "Add Isosurface contained by Sphere"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
@@ -1198,7 +1297,7 @@ class POVRAY_OT_isosurface_sphere_add(Operator):
         bpy.ops.mesh.hide(unselected=False)
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.shade_smooth()
-        ob.pov.object_as = "ISOSURFACE"
+        ob.pov.object_as = "ISOSURFACE_NODE"
         ob.pov.contained_by = 'sphere'
         ob.name = 'PovIsosurfaceSphere'
         return {'FINISHED'}
@@ -1214,6 +1313,7 @@ class POVRAY_OT_sphere_sweep_add(Operator):
     bl_label = "Sphere Sweep"
     bl_description = "Create Sphere Sweep along curve"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
@@ -1230,7 +1330,7 @@ class POVRAY_OT_sphere_sweep_add(Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_blob_add(Operator):
+class POVRAY_OT_blobsphere_add(Operator):
     """Add the representation of POV blob using a Blender meta ball.
 
     No need to flag its primitive type as meta are exported to blobs
@@ -1240,11 +1340,95 @@ class POVRAY_OT_blob_add(Operator):
     bl_label = "Blob Sphere"
     bl_description = "Add Blob Sphere"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         # layers = 20*[False]
         # layers[0] = True
         bpy.ops.object.metaball_add(type='BALL')
+        ob = context.object
+        ob.name = "PovBlob"
+        return {'FINISHED'}
+
+
+class POVRAY_OT_blobcapsule_add(Operator):
+    """Add the representation of POV blob using a Blender meta ball.
+
+    No need to flag its primitive type as meta are exported to blobs
+    and leave access to edit mode to keep user editable thresholds."""
+
+    bl_idname = "pov.addblobcapsule"
+    bl_label = "Blob Capsule"
+    bl_description = "Add Blob Capsule"
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    def execute(self, context):
+        # layers = 20*[False]
+        # layers[0] = True
+        bpy.ops.object.metaball_add(type='CAPSULE')
+        ob = context.object
+        ob.name = "PovBlob"
+        return {'FINISHED'}
+
+
+class POVRAY_OT_blobplane_add(Operator):
+    """Add the representation of POV blob using a Blender meta ball.
+
+    No need to flag its primitive type as meta are exported to blobs
+    and leave access to edit mode to keep user editable thresholds."""
+
+    bl_idname = "pov.addblobplane"
+    bl_label = "Blob Plane"
+    bl_description = "Add Blob Plane"
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    def execute(self, context):
+        # layers = 20*[False]
+        # layers[0] = True
+        bpy.ops.object.metaball_add(type='PLANE')
+        ob = context.object
+        ob.name = "PovBlob"
+        return {'FINISHED'}
+
+
+class POVRAY_OT_blobellipsoid_add(Operator):
+    """Add the representation of POV blob using a Blender meta ball.
+
+    No need to flag its primitive type as meta are exported to blobs
+    and leave access to edit mode to keep user editable thresholds."""
+
+    bl_idname = "pov.addblobellipsoid"
+    bl_label = "Blob Ellipsoid"
+    bl_description = "Add Blob Ellipsoid"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # layers = 20*[False]
+        # layers[0] = True
+        bpy.ops.object.metaball_add(type='ELLIPSOID')
+        ob = context.object
+        ob.name = "PovBlob"
+        return {'FINISHED'}
+
+
+class POVRAY_OT_blobcube_add(Operator):
+    """Add the representation of POV blob using a Blender meta ball.
+
+    No need to flag its primitive type as meta are exported to blobs
+    and leave access to edit mode to keep user editable thresholds."""
+
+    bl_idname = "pov.addblobcube"
+    bl_label = "Blob Cube"
+    bl_description = "Add Blob Cube"
+    bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    def execute(self, context):
+        # layers = 20*[False]
+        # layers[0] = True
+        bpy.ops.object.metaball_add(type='CUBE')
         ob = context.object
         ob.name = "PovBlob"
         return {'FINISHED'}
@@ -1264,6 +1448,7 @@ class POVRAY_OT_rainbow_add(Operator):
     bl_label = "Rainbow"
     bl_description = "Add Rainbow"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
         cam = context.scene.camera
@@ -1302,6 +1487,7 @@ class POVRAY_OT_height_field_add(bpy.types.Operator, ImportHelper):
     bl_label = "Height Field"
     bl_description = "Add Height Field"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # Keep in sync within object_properties.py section HeightFields
     # as this allows interactive update
@@ -1431,6 +1617,7 @@ class POVRAY_OT_torus_add(Operator):
     bl_label = "Torus"
     bl_description = "Add Torus"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # Keep in sync within object_properties.py section Torus
     # as this allows interactive update
@@ -1487,6 +1674,7 @@ class POVRAY_OT_prism_add(Operator):
     bl_label = "Prism"
     bl_description = "Create Prism"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     prism_n: IntProperty(name="Sides", description="Number of sides", default=5, min=3, max=720)
     prism_r: FloatProperty(name="Radius", description="Radius", default=1.0)
@@ -1617,6 +1805,7 @@ class POVRAY_OT_parametric_add(Operator):
     bl_label = "Parametric"
     bl_description = "Add Paramertic"
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # Keep in sync within object_properties.py section Parametric primitive
     # as this allows interactive update
@@ -1637,11 +1826,15 @@ class POVRAY_OT_parametric_add(Operator):
         x_eq = props.x_eq
         y_eq = props.y_eq
         z_eq = props.z_eq
-
-        pov_parametric_define(context, self, None)
-        self.report(
-            {'INFO'}, "This native POV-Ray primitive " "won't have any vertex to show in edit mode"
-        )
+        try:
+            pov_parametric_define(context, self, None)
+            self.report(
+                {'INFO'}, "This native POV-Ray primitive " "won't have any vertex to show in edit mode"
+            )
+        except AttributeError:
+            self.report(
+                {'INFO'}, "Please enable Add Mesh: Extra Objects addon"
+            )
         return {'FINISHED'}
 
 
@@ -1748,10 +1941,16 @@ classes = (
     POVRAY_OT_sphere_update,
     POVRAY_OT_cone_add,
     POVRAY_OT_cone_update,
+    POVRAY_OT_isosurface_add,
+    POVRAY_OT_isosurface_update,
     POVRAY_OT_isosurface_box_add,
     POVRAY_OT_isosurface_sphere_add,
     POVRAY_OT_sphere_sweep_add,
-    POVRAY_OT_blob_add,
+    POVRAY_OT_blobsphere_add,
+    POVRAY_OT_blobcapsule_add,
+    POVRAY_OT_blobplane_add,
+    POVRAY_OT_blobellipsoid_add,
+    POVRAY_OT_blobcube_add,
     POVRAY_OT_rainbow_add,
     POVRAY_OT_height_field_add,
     POVRAY_OT_torus_add,

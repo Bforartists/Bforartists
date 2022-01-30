@@ -21,7 +21,7 @@
 
 import bpy
 from bpy.utils import register_class, unregister_class
-from bpy.types import PropertyGroup
+from bpy.types import PropertyGroup, Scene
 from bpy.props import (
     BoolProperty,
     IntProperty,
@@ -31,6 +31,7 @@ from bpy.props import (
     EnumProperty,
     PointerProperty,
 )
+
 
 # ---------------------------------------------------------------- #
 # Scene POV properties.
@@ -180,7 +181,7 @@ class RenderPovSettingsScene(PropertyGroup):
         step=0.00000001,
         min=0.000000001,
         max=1.0,
-        default=(1.0),
+        default=1.0,
     )
 
     media_diffusion_color: FloatVectorProperty(
@@ -203,7 +204,7 @@ class RenderPovSettingsScene(PropertyGroup):
         step=0.000001,
         min=0.000000001,
         max=1.0,
-        default=(0.00002),
+        default=0.00002,
     )
 
     media_absorption_color: FloatVectorProperty(
@@ -229,7 +230,7 @@ class RenderPovSettingsScene(PropertyGroup):
         step=0.01,
         min=-1.0,
         max=1.0,
-        default=(0.0),
+        default=0.0,
         options={"ANIMATABLE"},
     )
 
@@ -680,10 +681,10 @@ classes = (
 def register():
     for cls in classes:
         register_class(cls)
-    bpy.types.Scene.pov = PointerProperty(type=RenderPovSettingsScene)
+    Scene.pov = PointerProperty(type=RenderPovSettingsScene)
 
 
 def unregister():
-    del bpy.types.Scene.pov
+    del Scene.pov
     for cls in reversed(classes):
         unregister_class(cls)
