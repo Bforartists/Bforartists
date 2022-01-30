@@ -93,6 +93,7 @@ set(SRC
   nodes/node_shader_output_material.cc
   nodes/node_shader_output_world.cc
   nodes/node_shader_particle_info.cc
+  nodes/node_shader_point_info.cc
   nodes/node_shader_rgb.cc
   nodes/node_shader_rgb_to_bw.cc
   nodes/node_shader_script.cc
@@ -155,10 +156,6 @@ if(WITH_PYTHON)
     ${PYTHON_LIBRARIES}
   )
   add_definitions(-DWITH_PYTHON)
-endif()
-
-if(WITH_INTERNATIONAL)
-  add_definitions(-DWITH_INTERNATIONAL)
 endif()
 
 if(WITH_FREESTYLE)

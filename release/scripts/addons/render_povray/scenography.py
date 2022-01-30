@@ -34,7 +34,7 @@ from .object_primitives import write_object_modifiers
 # -------- find image texture # used for export_world -------- #
 
 
-def image_format(imgF):
+def image_format(img_f):
     """Identify input image filetypes to transmit to POV."""
     # First use the below explicit extensions to identify image file prospects
     ext = {
@@ -50,13 +50,13 @@ def image_format(imgF):
         'TIF': "tiff",
         'EXR': "exr",
         'HDR': "hdr",
-    }.get(os.path.splitext(imgF)[-1].upper(), "")
+    }.get(os.path.splitext(img_f)[-1].upper(), "")
     # Then, use imghdr to really identify the filetype as it can be different
     if not ext:
         # maybe add a check for if path exists here?
         print(" WARNING: texture image has no extension")  # too verbose
 
-        ext = what(imgF)  # imghdr is a python lib to identify image file types
+        ext = what(img_f)  # imghdr is a python lib to identify image file types
     return ext
 
 
@@ -267,9 +267,8 @@ def export_lights(lamps, file, scene, global_matrix, write_matrix, tab_write):
     # Incremented after each lamp export to declare its target
     # currently used for Fresnel diffuse shader as their slope vector:
     global exported_lights_count
-    exported_lights_count = 0
-    # Get all lamps
-    for ob in lamps:
+    # Get all lamps and keep their count in a global variable
+    for exported_lights_count, ob in enumerate(lamps, start=1):
         lamp = ob.data
 
         matrix = global_matrix @ ob.matrix_world
@@ -374,16 +373,14 @@ def export_lights(lamps, file, scene, global_matrix, write_matrix, tab_write):
 
         tab_write("}\n")
 
-        exported_lights_count += 1
-
         # v(A,B) rotates vector A about origin by vector B.
         file.write(
             "#declare lampTarget%s= vrotate(<%.4g,%.4g,%.4g>,<%.4g,%.4g,%.4g>);\n"
             % (
                 exported_lights_count,
-                -(ob.location.x),
-                -(ob.location.y),
-                -(ob.location.z),
+                -ob.location.x,
+                -ob.location.y,
+                -ob.location.z,
                 ob.rotation_euler.x,
                 ob.rotation_euler.y,
                 ob.rotation_euler.z,
@@ -486,40 +483,39 @@ def export_world(world, scene, global_matrix, tab_write):
                         % (image_format(textures_blend), textures_blend, img_map_bg(t_blend))
                     )
                     tab_write("}\n")
-                    tab_write("%s\n" % (mapping_blend))
+                    tab_write("%s\n" % mapping_blend)
                     # The following layered pigment opacifies to black over the texture for
                     # transmit below 1 or otherwise adds to itself
-                    tab_write("pigment {rgb 0 transmit %s}\n" % (tex.intensity))
+                    tab_write("pigment {rgb 0 transmit %s}\n" % tex.intensity)
                     tab_write("}\n")
                     # tab_write("scale 2\n")
                     # tab_write("translate -1\n")
 
         # For only Background gradient
 
-        if world_tex_count == 0:
-            if world.pov.use_sky_blend:
-                tab_write("sky_sphere {\n")
-                tab_write("pigment {\n")
-                # maybe Should follow the advice of POV doc about replacing gradient
-                # for skysphere..5.5
-                tab_write("gradient y\n")
-                tab_write("color_map {\n")
-                # XXX Does not exists anymore
-                # if render.alpha_mode == 'STRAIGHT':
-                # tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.horizon_color[:]))
-                # tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.zenith_color[:]))
-                if render.alpha_mode == 'TRANSPARENT':
-                    tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.horizon_color[:]))
-                    # aa premult not solved with transmit 1
-                    tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.zenith_color[:]))
-                else:
-                    tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.horizon_color[:]))
-                    tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.zenith_color[:]))
-                tab_write("}\n")
-                tab_write("}\n")
-                tab_write("}\n")
-                # Sky_sphere alpha (transmit) is not translating into image alpha the same
-                # way as 'background'
+        if world_tex_count == 0 and world.pov.use_sky_blend:
+            tab_write("sky_sphere {\n")
+            tab_write("pigment {\n")
+            # maybe Should follow the advice of POV doc about replacing gradient
+            # for skysphere..5.5
+            tab_write("gradient y\n")
+            tab_write("color_map {\n")
+            # XXX Does not exists anymore
+            # if render.alpha_mode == 'STRAIGHT':
+            # tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.horizon_color[:]))
+            # tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.zenith_color[:]))
+            if render.alpha_mode == 'TRANSPARENT':
+                tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.horizon_color[:]))
+                # aa premult not solved with transmit 1
+                tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.zenith_color[:]))
+            else:
+                tab_write("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.horizon_color[:]))
+                tab_write("[1.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.zenith_color[:]))
+            tab_write("}\n")
+            tab_write("}\n")
+            tab_write("}\n")
+            # Sky_sphere alpha (transmit) is not translating into image alpha the same
+            # way as 'background'
 
         # if world.pov.light_settings.use_indirect_light:
         #    scene.pov.radio_enable=1
@@ -543,7 +539,7 @@ def export_world(world, scene, global_matrix, tab_write):
             tab_write("distance %.6f\n" % ((mist.start + mist.depth) ** 2 * 0.368))
         tab_write(
             "color rgbt<%.3g, %.3g, %.3g, %.3g>\n"
-            % (*world.pov.horizon_color, 1.0 - mist.intensity)
+            % (*world.pov.horizon_color, (1.0 - mist.intensity))
         )
         # tab_write("fog_offset %.6f\n" % mist.start) #create a pov property to prepend
         # tab_write("fog_alt %.6f\n" % mist.height) #XXX right?
@@ -557,7 +553,7 @@ def export_world(world, scene, global_matrix, tab_write):
             "scattering { %d, rgb %.12f*<%.4g, %.4g, %.4g>\n"
             % (
                 int(scene.pov.media_scattering_type),
-                (scene.pov.media_diffusion_scale),
+                scene.pov.media_diffusion_scale,
                 *(scene.pov.media_diffusion_color[:]),
             )
         )
@@ -636,7 +632,7 @@ def export_rainbows(rainbows, file, scene, global_matrix, write_matrix, tab_writ
         tab_write("}\n")
 
         # tab_write("texture {%s}\n"%pov_mat_name)
-        write_object_modifiers(scene, ob, file)
+        write_object_modifiers(ob, file)
         # tab_write("rotate x*90\n")
         # matrix = global_matrix @ ob.matrix_world
         # write_matrix(matrix)
@@ -684,10 +680,11 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
         # channeldata.append(v.real)
 
         resolution = mod_set.resolution_max
-        big_res = []
-        big_res.append(mod_set.domain_resolution[0])
-        big_res.append(mod_set.domain_resolution[1])
-        big_res.append(mod_set.domain_resolution[2])
+        big_res = [
+            mod_set.domain_resolution[0],
+            mod_set.domain_resolution[1],
+            mod_set.domain_resolution[2]
+        ]
 
         if mod_set.use_noise:
             big_res[0] = big_res[0] * (mod_set.noise_scale + 1)
@@ -791,7 +788,7 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
         file.write("               scattering{ 1, // Type\n")
         file.write("                  <1,1,1>*0.1\n")
         file.write("                } // end scattering\n")
-        file.write("                density{density_file df3 \"%s\"\n" % (smoke_path))
+        file.write("                density{density_file df3 \"%s\"\n" % smoke_path)
         file.write("                        color_map {\n")
         file.write("                        [0.00 rgb 0]\n")
         file.write("                        [0.05 rgb 0]\n")

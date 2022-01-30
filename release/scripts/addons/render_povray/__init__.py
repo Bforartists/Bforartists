@@ -33,8 +33,8 @@ base_ui.py :
 scenography_properties.py
     Initialize properties for translating Blender cam/light/environment parameters to pov
 
-scenography_gui.py
-    Display cam/light/environment properties from situation_properties.py for user to change them
+scenography_gui.py :
+    Display cam/light/environment properties from scenography_properties.py for user to change them
 
 scenography.py
     Translate  cam/light/environment properties to corresponding pov features
@@ -57,25 +57,25 @@ object_particles.py :
 object_gui.py :
     Display properties from object_properties.py for user to change them
 
-shading_properties.py
+shading_properties.py :
     Initialize properties for translating Blender materials parameters to pov
 
-shading_nodes.py
+shading_nodes.py :
     Translate node trees to the pov file
 
-shading_gui.py
+shading_gui.py :
     Display properties from shading_properties.py for user to change them
 
 shading.py
     Translate shading properties to declared textures at the top of a pov file
 
-texturing_properties.py
+texturing_properties.py :
     Initialize properties for translating Blender materials /world... texture influences to pov
 
-texturing_gui.py
+texturing_gui.py :
     Display properties from texturing_properties.py for user to change them
 
-texturing.py
+texturing.py :
     Translate blender texture influences into POV
 
 render_properties.py :
@@ -96,10 +96,10 @@ scripting_gui.py :
 scripting.py :
     Insert POV native scene description elements into blender scene or to exported POV file
 
-df3_library.py
+df3_library.py :
     Render smoke to *.df3 files
 
-update_files.py
+update_files.py :
     Update new variables to values from older API. This file needs an update
 
 
@@ -151,8 +151,8 @@ Blender stand up to other POV IDEs such as povwin or QTPOV
 
 
 bl_info = {
-    "name": "Persistence of Vision",
-    "author": "Campbell Barton, "
+    'name': "Persistence of Vision",
+    'author': "Campbell Barton, "
               "Maurice Raybaud, "
               "Leonid Desyatkov, "
               "Bastien Montagne, "
@@ -160,12 +160,12 @@ bl_info = {
               "Silvio Falcinelli,"
               "Paco García",
               "version": (0, 1, 2),
-    "blender": (2, 81, 0),
-    "location": "Render Properties > Render Engine > Persistence of Vision",
-    "description": "Persistence of Vision integration for blender",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/render/povray.html",
-    "category": "Render",
-    "warning": "Co-maintainers welcome",
+    'blender': (2, 81, 0),
+    'location': "Render Properties > Render Engine > Persistence of Vision",
+    'description': "Persistence of Vision integration for blender",
+    'doc_url': "{BLENDER_MANUAL_URL}/addons/render/povray.html",
+    'category': "Render",
+    'warning': "Co-maintainers welcome",
 }
 
 # Other occasional contributors, more or less in chronological order:
@@ -222,7 +222,7 @@ else:
 
 
 class POV_OT_update_addon(bpy.types.Operator):
-    """Update this add-on to the latest version"""
+    """Update this addon to the latest version"""
 
     bl_idname = "pov.update_addon"
     bl_label = "Update POV addon"
@@ -250,8 +250,8 @@ class POV_OT_update_addon(bpy.types.Operator):
             else:
                 shutil.copyfile(src, dest)
 
-        print('-' * 20)
-        print('Updating POV addon...')
+        print("-" * 20)
+        print("Updating POV addon...")
 
         with tempfile.TemporaryDirectory() as temp_dir_path:
             temp_zip_path = os.path.join(temp_dir_path, 'master.zip')
@@ -261,19 +261,19 @@ class POV_OT_update_addon(bpy.types.Operator):
             # switch this URL back to the BF hosted one as soon as gitweb snapshot gets fixed
             url = 'https://github.com/blender/blender-addons/archive/refs/heads/master.zip'
             try:
-                print('Downloading', url)
+                print("Downloading", url)
 
                 with urllib.request.urlopen(url, timeout=60) as url_handle, open(
                     temp_zip_path, 'wb'
                 ) as file_handle:
                     file_handle.write(url_handle.read())
             except urllib.error.URLError as err:
-                self.report({'ERROR'}, 'Could not download: %s' % err)
+                self.report({'ERROR'}, "Could not download: %s" % err)
 
             # Extract the zip
-            print('Extracting ZIP archive')
-            with zipfile.ZipFile(temp_zip_path) as zip:
-                for member in zip.namelist():
+            print("Extracting ZIP archive")
+            with zipfile.ZipFile(temp_zip_path) as zip_archive:
+                for member in zip_archive.namelist():
                     if 'blender-addons-master/render_povray' in member:
                         # Remove the first directory and the filename
                         # e.g. blender-addons-master/render_povray/shading_nodes.py
@@ -291,7 +291,7 @@ class POV_OT_update_addon(bpy.types.Operator):
                         if not os.path.exists(target_path):
                             os.makedirs(target_path)
 
-                        source = zip.open(member)
+                        source = zip_archive.open(member)
                         target = open(os.path.join(target_path, filename), "wb")
 
                         with source, target:
@@ -301,26 +301,26 @@ class POV_OT_update_addon(bpy.types.Operator):
             extracted_render_povray_path = os.path.join(temp_dir_path, 'render_povray')
 
             if not os.path.exists(extracted_render_povray_path):
-                self.report({'ERROR'}, 'Could not extract ZIP archive! Aborting.')
+                self.report({'ERROR'}, "Could not extract ZIP archive! Aborting.")
                 return {'FINISHED'}
 
             # Find the old POV addon files
             render_povray_dir = os.path.abspath(os.path.dirname(__file__))
-            print('POV addon addon folder:', render_povray_dir)
+            print("POV addon addon folder:", render_povray_dir)
 
             # TODO: Create backup
 
             # Delete old POV addon files
             # (only directories and *.py files, user might have other stuff in there!)
-            print('Deleting old POV addon files')
+            print("Deleting old POV addon files")
             # remove __init__.py
             os.remove(os.path.join(render_povray_dir, '__init__.py'))
             # remove all folders
             DIRNAMES = 1
-            for dir in next(os.walk(render_povray_dir))[DIRNAMES]:
-                shutil.rmtree(os.path.join(render_povray_dir, dir))
+            for directory in next(os.walk(render_povray_dir))[DIRNAMES]:
+                shutil.rmtree(os.path.join(render_povray_dir, directory))
 
-            print('Copying new POV addon files')
+            print("Copying new POV addon files")
             # copy new POV addon files
             # copy __init__.py
             shutil.copy2(
@@ -330,9 +330,9 @@ class POV_OT_update_addon(bpy.types.Operator):
             recursive_overwrite(extracted_render_povray_path, render_povray_dir)
 
         bpy.ops.preferences.addon_refresh()
-        print('POV addon update finished, restart Blender for the changes to take effect.')
-        print('-' * 20)
-        self.report({'WARNING'}, 'Restart Blender!')
+        print("POV addon update finished, restart Blender for the changes to take effect.")
+        print("-" * 20)
+        self.report({'WARNING'}, "Restart Blender!")
         return {'FINISHED'}
 
 
@@ -342,33 +342,33 @@ class POV_OT_update_addon(bpy.types.Operator):
 
 
 class PovrayPreferences(bpy.types.AddonPreferences):
-    """Declare preference variables to set up POV binary."""
+    """Declare preference variables to set up POV binary"""
 
     bl_idname = __name__
 
     branch_feature_set_povray: EnumProperty(
-        name="Feature Set",
-        description="Choose between official (POV-Ray) or (UberPOV) "
-        "development branch features to write in the pov file",
+        name='Feature Set',
+        description='Choose between official (POV-Ray) or (UberPOV) '
+                    'development branch features to write in the pov file',
         items=(
-            ("povray", "Official POV-Ray", "", "PLUGIN", 0),
-            ("uberpov", "Unofficial UberPOV", "", "PLUGIN", 1),
+            ('povray', 'Official POV-Ray', '', 'PLUGIN', 0),
+            ('uberpov', 'Unofficial UberPOV', '', 'PLUGIN', 1),
         ),
-        default="povray",
+        default='povray',
     )
 
     filepath_povray: StringProperty(
-        name="Binary Location", description="Path to renderer executable", subtype="FILE_PATH"
+        name='Binary Location', description='Path to renderer executable', subtype='FILE_PATH'
     )
 
     docpath_povray: StringProperty(
-        name="Includes Location", description="Path to Insert Menu files", subtype="FILE_PATH"
+        name='Includes Location', description='Path to Insert Menu files', subtype='FILE_PATH'
     )
 
     use_sounds: BoolProperty(
-        name="Use Sound",
-        description="Signaling end of the render process at various"
-        "stages can help if you're away from monitor",
+        name='Use Sound',
+        description='Signaling end of the render process at various'
+                    'stages can help if you\'re away from monitor',
         default=False,
     )
 
@@ -376,21 +376,21 @@ class PovrayPreferences(bpy.types.AddonPreferences):
     # And implement the three cases, left uncommented for a dummy
     # interface in case some doc screenshots get made for that area
     filepath_complete_sound: StringProperty(
-        name="Finish Render Sound",
-        description="Path to finished render sound file",
-        subtype="FILE_PATH",
+        name='Finish Render Sound',
+        description='Path to finished render sound file',
+        subtype='FILE_PATH',
     )
 
     filepath_parse_error_sound: StringProperty(
-        name="Parse Error Sound",
-        description="Path to parsing time error sound file",
-        subtype="FILE_PATH",
+        name='Parse Error Sound',
+        description='Path to parsing time error sound file',
+        subtype='FILE_PATH',
     )
 
     filepath_cancel_sound: StringProperty(
-        name="Cancel Render Sound",
-        description="Path to cancelled or render time error sound file",
-        subtype="FILE_PATH",
+        name='Cancel Render Sound',
+        description='Path to cancelled or render time error sound file',
+        subtype='FILE_PATH',
     )
 
     def draw(self, context):

@@ -61,14 +61,14 @@ for member in dir(properties_view_layer):
 del properties_view_layer
 
 # Use some of the existing buttons.
-from bl_ui import properties_render
+# from bl_ui import properties_render
 
 # DEPRECATED#properties_render.RENDER_PT_render.COMPAT_ENGINES.add('POVRAY_RENDER')
 # DEPRECATED#properties_render.RENDER_PT_format.COMPAT_ENGINES.add('POVRAY_RENDER')
 # properties_render.RENDER_PT_antialiasing.COMPAT_ENGINES.add('POVRAY_RENDER')
 # TORECREATE##DEPRECATED#properties_render.RENDER_PT_shading.COMPAT_ENGINES.add('POVRAY_RENDER')
 # DEPRECATED#properties_render.RENDER_PT_output.COMPAT_ENGINES.add('POVRAY_RENDER')
-del properties_render
+# del properties_render
 
 
 def check_render_freestyle_svg():
@@ -241,6 +241,29 @@ class RENDER_PT_POV_photons(RenderButtonsPanel, Panel):
         # end main photons
 
 
+def uberpov_only_qmc_til_pov38release(layout):
+    col = layout.column()
+    col.alignment = 'CENTER'
+    col.label(text="Stochastic Anti Aliasing is")
+    col.label(text="Only Available with UberPOV")
+    col.label(text="Feature Set in User Preferences.")
+    col.label(text="Using Type 2 (recursive) instead")
+
+
+def no_qmc_fallbacks(row, scene, layout):
+    row.prop(scene.pov, "jitter_enable", text="Jitter")
+
+    split = layout.split()
+    col = split.column()
+    col.prop(scene.pov, "antialias_depth", text="AA Depth")
+    sub = split.column()
+    sub.prop(scene.pov, "jitter_amount", text="Jitter Amount")
+    sub.enabled = bool(scene.pov.jitter_enable)
+    row = layout.row()
+    row.prop(scene.pov, "antialias_threshold", text="AA Threshold")
+    row.prop(scene.pov, "antialias_gamma", text="AA Gamma")
+
+
 class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
     """Use this class to define pov antialiasing buttons."""
 
@@ -258,27 +281,6 @@ class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
         else:
             self.layout.prop(scene.pov, "antialias_enable", text="", icon='ALIASED')
 
-    def uberpov_only_qmc_til_pov38release(self, layout):
-            col = layout.column()
-            col.alignment = 'CENTER'
-            col.label(text="Stochastic Anti Aliasing is")
-            col.label(text="Only Available with UberPOV")
-            col.label(text="Feature Set in User Preferences.")
-            col.label(text="Using Type 2 (recursive) instead")
-
-    def no_qmc_fallbacks(self, row, scene, layout):
-        row.prop(scene.pov, "jitter_enable", text="Jitter")
-
-        split = layout.split()
-        col = split.column()
-        col.prop(scene.pov, "antialias_depth", text="AA Depth")
-        sub = split.column()
-        sub.prop(scene.pov, "jitter_amount", text="Jitter Amount")
-        sub.enabled = bool(scene.pov.jitter_enable)
-        row = layout.row()
-        row.prop(scene.pov, "antialias_threshold", text="AA Threshold")
-        row.prop(scene.pov, "antialias_gamma", text="AA Gamma")
-
     def draw(self, context):
         prefs = bpy.context.preferences.addons[__package__].preferences
         layout = self.layout
@@ -290,13 +292,14 @@ class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
         row.prop(scene.pov, "antialias_method", text="")
 
         if prefs.branch_feature_set_povray != 'uberpov' and scene.pov.antialias_method == '2':
-            self.uberpov_only_qmc_til_pov38release(layout)
+            uberpov_only_qmc_til_pov38release(layout)
         else:
-            self.no_qmc_fallbacks(row, scene, layout)
+            no_qmc_fallbacks(row, scene, layout)
         if prefs.branch_feature_set_povray == 'uberpov':
             row = layout.row()
             row.prop(scene.pov, "antialias_confidence", text="AA Confidence")
             row.enabled = scene.pov.antialias_method == '2'
+
 
 class RENDER_PT_POV_radiosity(RenderButtonsPanel, Panel):
     """Use this class to define pov radiosity buttons."""

@@ -56,6 +56,40 @@ class MaterialButtonsPanel:
         return mat and (rd.engine in cls.COMPAT_ENGINES)
 
 
+class MATERIAL_PT_POV_shading(MaterialButtonsPanel, Panel):
+    bl_label = "Shading"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        engine = context.scene.render.engine
+        return check_material(mat) and (mat.pov.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = context.material  # FORMERLY : #active_node_mat(context.material)
+
+        if mat.pov.type in {'SURFACE', 'WIRE'}:
+            split = layout.split()
+
+            col = split.column()
+            sub = col.column()
+            sub.active = not mat.pov.use_shadeless
+            sub.prop(mat.pov, "emit")
+            sub.prop(mat.pov, "ambient")
+            sub = col.column()
+            sub.prop(mat.pov, "translucency")
+
+            col = split.column()
+            col.prop(mat.pov, "use_shadeless")
+            sub = col.column()
+            sub.active = not mat.pov.use_shadeless
+            sub.prop(mat.pov, "use_tangent_shading")
+            sub.prop(mat.pov, "use_cubic")
+
+
 class MATERIAL_MT_POV_sss_presets(Menu):
     """Use this class to define pov sss preset menu."""
 
@@ -115,7 +149,7 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         mat = context.material  # FORMERLY : #active_node_mat(context.material)
         sss = mat.pov_subsurface_scattering
 
-        layout.active = (sss.use) and (not mat.pov.use_shadeless)
+        layout.active = sss.use and (not mat.pov.use_shadeless)
 
         row = layout.row().split()
         sub = row.row(align=True).split(align=True, factor=0.75)
@@ -635,6 +669,7 @@ class MATERIAL_PT_POV_replacement_text(MaterialButtonsPanel, Panel):
 
 
 classes = (
+    MATERIAL_PT_POV_shading,
     MATERIAL_PT_POV_sss,
     MATERIAL_MT_POV_sss_presets,
     MATERIAL_OT_POV_sss_add_preset,

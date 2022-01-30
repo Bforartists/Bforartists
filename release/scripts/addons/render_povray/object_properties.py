@@ -283,7 +283,13 @@ class RenderPovSettingsObject(PropertyGroup):
     cone_base_z: FloatProperty()
 
     cone_cap_z: FloatProperty()
-
+    # -------- Generic isosurface
+    isosurface_eq: StringProperty(
+        name="f (x,y,z)=",
+        description="Type the POV Isosurface function syntax for equation, "
+        "pattern,etc. ruling an implicit surface to be rendered",
+        default="sqrt(pow(x,2) + pow(y,2) + pow(z,2)) - 1.5",
+    )
     # -------- Parametric
     def prop_update_parametric(self, context):
 

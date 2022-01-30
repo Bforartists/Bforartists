@@ -106,7 +106,7 @@ class WORLD_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
             # Note "data" names should never be translated!
             if slot:
-                layout.prop(item, "texture", text="", emboss=False, icon='TEXTURE')
+                layout.prop(slot, "texture", text="", emboss=False, icon='TEXTURE')
             else:
                 layout.label(text="New", translate=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
@@ -133,7 +133,7 @@ class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
             # Note "data" names should never be translated!
             if slot:
-                layout.prop(item, "texture", text="", emboss=False, icon='TEXTURE')
+                layout.prop(slot, "texture", text="", emboss=False, icon='TEXTURE')
             else:
                 layout.label(text="New", translate=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
@@ -203,7 +203,6 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
-        return engine in cls.COMPAT_ENGINES
         # if not (hasattr(context, "pov_texture_slot") or hasattr(context, "texture_node")):
         #     return False
         return (

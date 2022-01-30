@@ -38,7 +38,7 @@ class RenderPovSettingsText(PropertyGroup):
         name="Custom Code",
         description="rendered source: Both adds text at the " "top of the exported POV file",
         items=(("3dview", "View", ""), ("text", "Text", ""), ("both", "Both", "")),
-        default="text",
+        default="3dview",
     )
 
 

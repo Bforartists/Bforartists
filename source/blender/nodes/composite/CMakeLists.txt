@@ -54,9 +54,9 @@ set(SRC
   nodes/node_composite_color_spill.cc
   nodes/node_composite_colorbalance.cc
   nodes/node_composite_colorcorrection.cc
-  nodes/node_composite_convert_color_space.cc
   nodes/node_composite_common.cc
   nodes/node_composite_composite.cc
+  nodes/node_composite_convert_color_space.cc
   nodes/node_composite_cornerpin.cc
   nodes/node_composite_crop.cc
   nodes/node_composite_cryptomatte.cc
@@ -105,6 +105,7 @@ set(SRC
   nodes/node_composite_rgb.cc
   nodes/node_composite_rotate.cc
   nodes/node_composite_scale.cc
+  nodes/node_composite_scene_time.cc
   nodes/node_composite_sepcomb_hsva.cc
   nodes/node_composite_sepcomb_rgba.cc
   nodes/node_composite_sepcomb_ycca.cc
@@ -125,17 +126,12 @@ set(SRC
   nodes/node_composite_vec_blur.cc
   nodes/node_composite_viewer.cc
   nodes/node_composite_zcombine.cc
-  nodes/node_composite_scene_time.cc
 
   node_composite_tree.cc
   node_composite_util.cc
 
   node_composite_util.hh
 )
-
-if(WITH_INTERNATIONAL)
-  add_definitions(-DWITH_INTERNATIONAL)
-endif()
 
 if(WITH_IMAGE_OPENEXR)
   add_definitions(-DWITH_OPENEXR)
