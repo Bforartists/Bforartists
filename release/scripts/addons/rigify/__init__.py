@@ -149,6 +149,33 @@ class RigifyFeatureSets(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     module_name: bpy.props.StringProperty()
 
+    def toggle_featureset(self, context):
+        feature_set_list.call_register_function(self.module_name, self.enabled)
+        context.preferences.addons[__package__].preferences.update_external_rigs()
+
+    enabled: bpy.props.BoolProperty(
+        name = "Enabled", 
+        description = "Whether this feature-set is registered or not",
+        update = toggle_featureset,
+        default = True
+    )
+
+
+class RIGIFY_UL_FeatureSets(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        rigify_prefs = data
+        feature_sets = rigify_prefs.rigify_feature_sets
+        active_set = feature_sets[rigify_prefs.active_feature_set_index]
+        feature_set_entry = item
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            row = layout.row()
+            row.prop(feature_set_entry, 'name', text="", emboss=False)
+
+            icon = 'CHECKBOX_HLT' if feature_set_entry.enabled else 'CHECKBOX_DEHLT'
+            row.enabled = feature_set_entry.enabled
+            layout.prop(feature_set_entry, 'enabled', text="", icon=icon, emboss=False)
+        elif self.layout_type in {'GRID'}:
+            pass
 
 class RigifyPreferences(AddonPreferences):
     # this must match the addon name, use '__package__'
@@ -157,32 +184,50 @@ class RigifyPreferences(AddonPreferences):
 
     def register_feature_sets(self, register):
         """Call register or unregister of external feature sets"""
-        for set_name in feature_set_list.get_installed_list():
+        for set_name in feature_set_list.get_enabled_modules_names():
             feature_set_list.call_register_function(set_name, register)
 
-    def update_external_rigs(self, force=False):
+    def refresh_installed_feature_sets(self):
+        """Synchronize preferences entries with what's actually in the file system."""
+        feature_set_prefs = self.rigify_feature_sets
+
+        module_names = feature_set_list.get_installed_modules_names()
+
+        # If there is a feature set preferences entry with no corresponding 
+        # installed module, user must've manually removed it from the filesystem,
+        # so let's remove such entries.
+        to_delete = [ i for i, fs in enumerate(feature_set_prefs) if fs.module_name not in module_names ]
+        for i in reversed(to_delete):
+            feature_set_prefs.remove(i)
+
+        # If there is an installed feature set in the file system but no corresponding
+        # entry, user must've installed it manually. Make sure it has an entry.
+        for module_name in module_names:
+            for fs in feature_set_prefs:
+                if module_name == fs.module_name:
+                    break
+            else:
+                fs = feature_set_prefs.add()
+                fs.name = feature_set_list.get_ui_name(module_name)
+                fs.module_name = module_name
+
+    def update_external_rigs(self):
         """Get external feature sets"""
-        set_list = feature_set_list.get_installed_list()
 
-        # Update feature set list
-        self.rigify_feature_sets.clear()
+        self.refresh_installed_feature_sets()
 
-        for s in set_list:
-            list_entry = self.rigify_feature_sets.add()
-            list_entry.name = feature_set_list.get_ui_name(s)
-            list_entry.module_name = s
+        set_list = feature_set_list.get_enabled_modules_names()
 
-        if force or len(set_list) > 0:
-            # Reload rigs
-            print('Reloading external rigs...')
-            rig_lists.get_external_rigs(set_list)
+        # Reload rigs
+        print('Reloading external rigs...')
+        rig_lists.get_external_rigs(set_list)
 
-            # Reload metarigs
-            print('Reloading external metarigs...')
-            metarig_menu.get_external_metarigs(set_list)
+        # Reload metarigs
+        print('Reloading external metarigs...')
+        metarig_menu.get_external_metarigs(set_list)
 
-            # Re-register rig parameters
-            register_rig_parameters()
+        # Re-register rig parameters
+        register_rig_parameters()
 
     rigify_feature_sets: bpy.props.CollectionProperty(type=RigifyFeatureSets)
     active_feature_set_index: IntProperty()
@@ -196,8 +241,8 @@ class RigifyPreferences(AddonPreferences):
 
         row = layout.row()
         row.template_list(
-            "UI_UL_list",
-            "rigify_feature_sets",
+            'RIGIFY_UL_FeatureSets',
+            '',
             self, "rigify_feature_sets",
             self, 'active_feature_set_index'
         )
@@ -259,8 +304,7 @@ def draw_feature_set_prefs(layout, context, featureset: RigifyFeatureSets):
         op = row.operator('wm.url_open', text="Report a Bug", icon='URL')
         op.url = info['tracker_url']
 
-    op = row.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
-    op.featureset = featureset.module_name
+    row.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
 
 
 class RigifyName(bpy.types.PropertyGroup):
@@ -443,6 +487,7 @@ classes = (
     RigifyColorSet,
     RigifySelectionColors,
     RigifyArmatureLayer,
+    RIGIFY_UL_FeatureSets,
     RigifyFeatureSets,
     RigifyPreferences,
 )

@@ -1331,4 +1331,4 @@ void NODE_OT_find_node(wmOperatorType *ot)
 
 /** \} */
 
-}
+}  // namespace blender::ed::space_node

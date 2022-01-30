@@ -36,9 +36,8 @@ def check_material(mat):
     """Check that material node tree is not empty if use node button is on"""
     if mat is not None:
         if mat.use_nodes:
-            if not mat.node_tree:  # FORMERLY : #mat.active_node_material is not None:
-                return True
-            return False
+            # No active node material
+            return not mat.node_tree
         return True
     return False
 
@@ -66,11 +65,12 @@ def pov_context_tex_datablock(context):
     if context.particle_system and context.scene.texture_context == 'PARTICLES':
         idblock = context.particle_system.settings
 
-    return idblock
 
     idblock = context.line_style
     if idblock and context.scene.texture_context == 'LINESTYLE':
         return idblock
+
+    return idblock
 
 
 def active_texture_name_from_uilist(self, context):
@@ -105,7 +105,6 @@ def active_texture_name_from_search(self, context):
     except BaseException as e:
         print(e.__doc__)
         print('An exception occurred: {}'.format(e))
-        pass
 
 
 def brush_texture_update(self, context):
@@ -220,7 +219,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
 
     diffuse_color: FloatVectorProperty(
         name="Diffuse color",
-        description=("Diffuse color of the material"),
+        description="Diffuse color of the material",
         precision=4,
         step=0.01,
         min=0,  # max=inf, soft_max=1,
@@ -367,7 +366,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
 
     mirror_color: FloatVectorProperty(
         name="Mirror color",
-        description=("Mirror color of the material"),
+        description="Mirror color of the material",
         precision=4,
         step=0.01,
         min=0,  # max=inf, soft_max=1,
@@ -392,7 +391,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
 
     line_color: FloatVectorProperty(
         name="Line color",
-        description=("Line color used for Freestyle line rendering"),
+        description="Line color used for Freestyle line rendering",
         precision=4,
         step=0.01,
         min=0,  # max=inf, soft_max=1,
@@ -422,10 +421,11 @@ class RenderPovSettingsMaterial(PropertyGroup):
 
     specular_color: FloatVectorProperty(
         name="Specular color",
-        description=("Specular color of the material "),
+        description="Specular color of the material ",
         precision=4,
         step=0.01,
-        min=0,  # max=inf, soft_max=1,
+        min=0.0,
+        soft_max=1.0,
         default=(1.0, 1.0, 1.0),
         options={"ANIMATABLE"},
         subtype="COLOR",
@@ -1196,7 +1196,7 @@ class MaterialRaytraceMirror(PropertyGroup):
 
     mirror_color: FloatVectorProperty(
         name="Mirror color",
-        description=("Mirror color of the material"),
+        description="Mirror color of the material",
         precision=4,
         step=0.01,
         default=(1.0, 1.0, 1.0),
@@ -1240,7 +1240,7 @@ class MaterialSubsurfaceScattering(PropertyGroup):
 
     color: FloatVectorProperty(
         name="Scattering color",
-        description=("Scattering color"),
+        description="Scattering color",
         precision=4,
         step=0.01,
         default=(0.604, 0.604, 0.604),
@@ -1289,7 +1289,7 @@ class MaterialSubsurfaceScattering(PropertyGroup):
 
     radius: FloatVectorProperty(
         name="RGB Radius",
-        description=("Mean red/green/blue scattering path length"),
+        description="Mean red/green/blue scattering path length",
         precision=4,
         step=0.01,
         min=0.001,

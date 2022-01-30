@@ -23,9 +23,10 @@
 # import addon_utils
 # from time import sleep
 import bpy
-
+import os
 
 from bpy.app.handlers import persistent
+from pathlib import Path
 
 # from bpy.utils import register_class, unregister_class
 # from bpy.types import (
@@ -70,169 +71,182 @@ def pov_centric_moray_like_workspace(dummy):
     # we put all within a Try... Except AttributeErrors ? Any better solution ?
     # Should it simply not run when opening existing file? be a preferences operator to create
     # Moray like workspace
-    if 'Scripting' in bpy.data.workspaces:
-
-        wsp = bpy.data.workspaces.get('Scripting')
-        context = bpy.context
-        if context.scene.render.engine == 'POVRAY_RENDER' and wsp is not None:
-            bpy.ops.workspace.duplicate({'workspace': wsp})
-            bpy.data.workspaces['Scripting.001'].name = 'POV'
-            # Already done it would seem, but explicitly make this workspace the active one
-            context.window.workspace = bpy.data.workspaces['POV']
-            pov_screen = bpy.data.workspaces['POV'].screens[0]
-            pov_workspace = pov_screen.areas
-            pov_window = context.window
-            try:
-                # Already outliners but invert both types
-                pov_workspace[1].spaces[0].display_mode = 'LIBRARIES'
-                pov_workspace[3].spaces[0].display_mode = 'VIEW_LAYER'
-            except AttributeError:
-                # But not necessarily outliners in existing blend files
-                pass
-            override = bpy.context.copy()
-
-            for area in pov_workspace:
-                if area.type == 'VIEW_3D':
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        for space in area.spaces:
-                            if space.type == 'VIEW_3D':
-                                # override['screen'] = pov_screen
-                                override['area'] = area
-                                override['region'] = region
-                                # bpy.data.workspaces['POV'].screens[0].areas[6].spaces[0].width = 333 # Read only,
-                                # how do we set ?
-                                # This has a glitch:
-                                # bpy.ops.screen.area_move(override, x=(area.x + area.width), y=(area.y + 5), delta=100)
-                                # bpy.ops.screen.area_move(override, x=(area.x + 5), y=area.y, delta=-100)
-
-                                bpy.ops.screen.space_type_set_or_cycle(
-                                    override, space_type='TEXT_EDITOR'
-                                )
-                                space.show_region_ui = True
-                                # bpy.ops.screen.region_scale(override)
-                                # bpy.ops.screen.region_scale()
-                                break
-
-                elif area.type == 'CONSOLE':
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        for space in area.spaces:
-                            if space.type == 'CONSOLE':
-                                override['screen'] = pov_screen
-                                override['window'] = pov_window
-                                override['area'] = area
-                                override['region'] = region
-
-                                # area_x = area.x + (area.width / 2)
-                                # area_y = area.y + area.height
-                                bpy.ops.screen.space_type_set_or_cycle(override, space_type='INFO')
-                                try:
-                                    if area == pov_workspace[6] and bpy.ops.screen.area_move.poll(
-                                        override
-                                    ):
-                                        # bpy.ops.screen.area_move(override, x = area_x, y = area_y, delta = -300)
-                                        pass
-                                        # pov_window.cursor_warp(area_x, area_y-300) # Is manual move emulation necessary
-                                        # despite the delta?
-                                except IndexError:
-                                    # Not necessarily so many areas in existing blend files
-                                    pass
-
-                                break
-
-                elif area.type == 'INFO':
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        for space in area.spaces:
-                            if space.type == 'INFO':
-                                # override['screen'] = pov_screen
-                                override['area'] = area
-                                override['region'] = region
-                                bpy.ops.screen.space_type_set_or_cycle(
-                                    override, space_type='CONSOLE'
-                                )
-
-                                break
-
-                elif area.type == 'TEXT_EDITOR':
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        for space in area.spaces:
-                            if space.type == 'TEXT_EDITOR':
-                                # override['screen'] = pov_screen
-                                override['area'] = area
-                                override['region'] = region
-                                # bpy.ops.screen.space_type_set_or_cycle(space_type='VIEW_3D')
-                                # space.type = 'VIEW_3D'
-                                bpy.ops.screen.space_type_set_or_cycle(
-                                    override, space_type='VIEW_3D'
-                                )
-
-                                # bpy.ops.screen.area_join(override, cursor=(area.x, area.y + area.height))
-
-                                break
-
-                if area.type == 'VIEW_3D':
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        for space in area.spaces:
-                            if space.type == 'VIEW_3D':
-                                # override['screen'] = pov_screen
-                                override['area'] = area
-                                override['region'] = region
-                                bpy.ops.screen.region_quadview(override)
-                                space.region_3d.view_perspective = 'CAMERA'
-                                # bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'TEXT_EDITOR')
-                                # bpy.ops.screen.region_quadview(override)
-
-                elif area.type == 'OUTLINER':
-                    for region in [
-                        r for r in area.regions if r.type == 'HEADER' and (r.y - area.y)
-                    ]:
-                        for space in area.spaces:
-                            if space.display_mode == 'LIBRARIES':
-                                override['area'] = area
-                                override['region'] = region
-                                override['window'] = pov_window
-                                bpy.ops.screen.region_flip(override)
-
-            bpy.data.workspaces.update()
-
-            '''
-            for window in bpy.context.window_manager.windows:
-                for area in [a for a in window.screen.areas if a.type == 'VIEW_3D']:
-                    for region in [r for r in area.regions if r.type == 'WINDOW']:
-                        context_override = {
-                            'window': window,
-                            'screen': window.screen,
-                            'area': area,
-                            'region': region,
-                            'space_data': area.spaces.active,
-                            'scene': bpy.context.scene
-                            }
-                        bpy.ops.view3d.camera_to_view(context_override)
-            '''
-
-        else:
-            print(
-                "\nPOV centric workspace available if you set render option\n"
-                "and save it in default file with CTRL+U"
-            )
-
+    
+    available_workspaces = bpy.data.workspaces
+    
+    if all(tabs in available_workspaces for tabs in ['POV-Mo', 'POV-Ed']):
+        print("\nPOV-Mo and POV-Ed tabs respectively provide GUI and TEXT\n"
+              "oriented POV workspaces akin to Moray and POVWIN")
     else:
-        print(
-            "\nThe factory 'Scripting' workspace is needed before POV centric "
-            "\nworkspace may activate when POV is set as your default renderer"
-        )
+        if 'POV-Ed'not in available_workspaces:
+            print(
+                "\nTo use POV centric workspaces you can set POV render option\n"
+                "and save it with File > Defaults > Save Startup File menu"
+            )
+            try:
+                if all(othertabs not in available_workspaces for othertabs in ['Geometry Nodes', 'POV-Ed']):
+                    bpy.ops.workspace.append_activate(
+                        idname='Geometry Nodes',
+                        filepath=os.path.join(bpy.utils.user_resource('CONFIG'), 'startup.blend')
+                    )
+            except BaseException as e:
+                print(e.__doc__)
+                print('An exception occurred: {}'.format(e))
+                try:
+                    # Last resort: try to import from the blender templates
+                    for p in Path(next(bpy.utils.app_template_paths())).rglob("startup.blend"):
+                        bpy.ops.workspace.append_activate(
+                            idname=self.targetWorkspace,
+                            filepath=str(p))
+                except BaseException as e:
+                    print(e.__doc__)
+                    print('An exception occurred: {}'.format(e))
+                    # Giving up as prerequisites can't be found
+                    print(
+                        "\nFactory Geometry Nodes workspace needed for POV text centric"
+                        "\nworkspace to activate when POV is set as default renderer"
+                    )
+            finally:
+                # Create POVWIN like editor (text oriented editing)
+                if 'POV-Ed' not in available_workspaces and 'Geometry Nodes' in available_workspaces:
+                    wsp = available_workspaces.get('Geometry Nodes')
+                    context = bpy.context
+                    if context.scene.render.engine == 'POVRAY_RENDER' and wsp is not None:
+                        bpy.ops.workspace.duplicate({'workspace': wsp})
+                        available_workspaces['Geometry Nodes.001'].name = 'POV-Ed'
+                        # May be already done, but explicitly make this workspace the active one
+                        context.window.workspace = available_workspaces['POV-Ed']
+                        pov_screen = available_workspaces['POV-Ed'].screens[0]
+                        pov_workspace = pov_screen.areas
+                        pov_window = context.window
+                        # override = bpy.context.copy()  # crashes
+                        override = {}
+                        properties_area = pov_workspace[0]
+                        nodes_to_3dview_area = pov_workspace[1]
+                        view3d_to_text_area = pov_workspace[2]
+                        spreadsheet_to_console_area = pov_workspace[3]
+
+                        try:
+                            nodes_to_3dview_area.ui_type = 'VIEW_3D'
+                            override['window'] = pov_window
+                            override['screen'] = bpy.context.screen
+                            override['area'] = nodes_to_3dview_area
+                            override['region'] = nodes_to_3dview_area.regions[-1]
+                            bpy.ops.screen.space_type_set_or_cycle(
+                                override, 'INVOKE_DEFAULT', space_type='VIEW_3D'
+                            )
+                            space = nodes_to_3dview_area.spaces.active
+                            space.region_3d.view_perspective = 'CAMERA'
+
+                            override['window'] = pov_window
+                            override['screen'] = bpy.context.screen
+                            override['area'] = view3d_to_text_area
+                            override['region'] = view3d_to_text_area .regions[-1]
+                            override['scene'] = bpy.context.scene
+                            override['space_data'] = view3d_to_text_area .spaces.active
+                            bpy.ops.screen.space_type_set_or_cycle(
+                                override, 'INVOKE_DEFAULT', space_type='TEXT_EDITOR'
+                            )
+                            view3d_to_text_area.spaces.active.show_region_ui = True
+
+                            spreadsheet_to_console_area.ui_type = 'CONSOLE'
+                            override['window'] = pov_window
+                            override['screen'] = bpy.context.screen
+                            override['area'] = spreadsheet_to_console_area
+                            override['region'] = spreadsheet_to_console_area.regions[-1]
+                            bpy.ops.screen.space_type_set_or_cycle(
+                                override, 'INVOKE_DEFAULT', space_type='CONSOLE'
+                            )
+                            space = properties_area.spaces.active
+                            space.context = 'RENDER'
+                            bpy.ops.workspace.reorder_to_front({'workspace': available_workspaces['POV-Ed']})
+                        except AttributeError:
+                            # In case necessary area types lack in existing blend files
+                            pass
+
+        if 'POV-Mo'not in available_workspaces:
+            try:
+                if all(tab not in available_workspaces for tab in ['Rendering', 'POV-Mo']):
+                    bpy.ops.workspace.append_activate(
+                        idname='Rendering',
+                        filepath=os.path.join(bpy.utils.user_resource('CONFIG'), 'startup.blend')
+                    )
+            except BaseException as e:
+                print(e.__doc__)
+                print('An exception occurred: {}'.format(e))
+                try:
+                    # Last resort: try to import from the blender templates
+                    for p in Path(next(bpy.utils.app_template_paths())).rglob("startup.blend"):
+                        bpy.ops.workspace.append_activate(
+                            idname=self.targetWorkspace,
+                            filepath=str(p))
+                except BaseException as e:
+                    print(e.__doc__)
+                    print('An exception occurred: {}'.format(e))
+                    # Giving up
+                    print(
+                        "\nFactory 'Rendering' workspace needed for POV GUI centric"
+                        "\nworkspace to activate when POV is set as default renderer"
+                    )
+            finally:
+                # Create Moray like workspace (GUI oriented editing)
+                if 'POV-Mo' not in available_workspaces and 'Rendering' in available_workspaces:
+                    wsp1 = available_workspaces.get('Rendering')
+                    context = bpy.context
+                    if context.scene.render.engine == 'POVRAY_RENDER' and wsp1 is not None:
+                        bpy.ops.workspace.duplicate({'workspace': wsp1})
+                        available_workspaces['Rendering.001'].name = 'POV-Mo'
+                        # Already done it would seem, but explicitly make this workspace the active one
+                        context.window.workspace = available_workspaces['POV-Mo']
+                        pov_screen = available_workspaces['POV-Mo'].screens[0]
+                        pov_workspace = pov_screen.areas
+                        pov_window = context.window
+                        # override = bpy.context.copy()  # crashes
+                        override = {}
+                        properties_area = pov_workspace[0]
+                        image_editor_to_view3d_area = pov_workspace[2]
+
+                        try:
+                            image_editor_to_view3d_area.ui_type = 'VIEW_3D'
+                            override['window'] = pov_window
+                            override['screen'] = bpy.context.screen
+                            override['area'] = image_editor_to_view3d_area
+                            override['region'] = image_editor_to_view3d_area.regions[-1]
+                            bpy.ops.screen.space_type_set_or_cycle(
+                                override, 'INVOKE_DEFAULT', space_type='VIEW_3D'
+                            )
+                            space = image_editor_to_view3d_area.spaces.active  # Uncomment For non quad view
+                            space.region_3d.view_perspective = 'CAMERA'  # Uncomment For non quad view
+                            space.show_region_toolbar = True
+                            # bpy.ops.view3d.camera_to_view(override)  # Uncomment For non quad view ?
+                            for num, reg in enumerate(image_editor_to_view3d_area.regions):
+                                if reg.type != 'view3d':
+                                    override['region'] = image_editor_to_view3d_area.regions[num]
+                            bpy.ops.screen.region_quadview(override)  # Comment out for non quad
+                            propspace = properties_area.spaces.active
+                            propspace.context = 'MATERIAL'
+                            bpy.ops.workspace.reorder_to_front({'workspace': available_workspaces['POV-Mo']})
+                        except (AttributeError, TypeError):
+                            # In case necessary types lack in existing blend files
+                            pass
+                        # available_workspaces.update()
+
     # -----------------------------------UTF-8---------------------------------- #
     # Check and fix all strings in current .blend file to be valid UTF-8 Unicode
     # sometimes needed for old, 2.4x / 2.6x area files
-    bpy.ops.wm.blend_strings_utf8_validate()
+    try:
+        bpy.ops.wm.blend_strings_utf8_validate()
+    except BaseException as e:
+        print(e.__doc__)
+        print('An exception occurred: {}'.format(e))
+        pass
 
 
 def check_material(mat):
     """Allow use of material properties buttons rather than nodes."""
     if mat is not None:
         if mat.use_nodes:
-            if not mat.node_tree:  # FORMERLY : #mat.active_node_material is not None:
-                return True
-            return False
+            return not mat.node_tree
         return True
     return False
 
@@ -242,7 +256,7 @@ def simple_material(mat):
     return (mat is not None) and (not mat.use_nodes)
 
 
-def pov_context_tex_datablock(context):
+def pov_context_texblock(context):
     """Recreate texture context type as deprecated in blender 2.8."""
     idblock = context.brush
     if idblock and context.scene.texture_context == 'OTHER':
@@ -263,8 +277,7 @@ def pov_context_tex_datablock(context):
 
     if context.particle_system and context.scene.texture_context == 'PARTICLES':
         idblock = context.particle_system.settings
-
-    return idblock
+        return idblock
 
     idblock = context.line_style
     if idblock and context.scene.texture_context == 'LINESTYLE':
