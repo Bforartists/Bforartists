@@ -84,6 +84,25 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
         return mathutils.Vector((center_x, center_y))
 
+    def set_cam_view_offset_from_angle(self, context, angle):
+        '''apply inverse of the rotation on view offset in cam rotate from view center'''
+        neg = -angle
+        rot_mat2d = mathutils.Matrix([[math.cos(neg), -math.sin(neg)], [math.sin(neg), math.cos(neg)]])
+
+        # scale_mat = mathutils.Matrix([[1.0, 0.0], [0.0, self.ratio]])
+        new_cam_offset = self.view_cam_offset.copy()
+
+        ## area deformation correction
+        new_cam_offset = mathutils.Vector((new_cam_offset[0], new_cam_offset[1] * self.ratio))
+
+        ## rotate by matrix
+        new_cam_offset.rotate(rot_mat2d)
+
+        ## area deformation restore
+        new_cam_offset = mathutils.Vector((new_cam_offset[0], new_cam_offset[1] * self.ratio_inv))
+        
+        context.space_data.region_3d.view_camera_offset = new_cam_offset
+
     def execute(self, context):
         if self.hud:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
@@ -121,23 +140,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
                 self.cam.rotation_euler.rotate_axis("Z", self.angle)
 
                 if self.use_view_center:
-                    ## apply inverse of the rotation on view offset in cam rotate from view center
-                    neg = -self.angle
-                    rot_mat2d = mathutils.Matrix([[math.cos(neg), -math.sin(neg)], [math.sin(neg), math.cos(neg)]])
-
-                    # scale_mat = mathutils.Matrix([[1.0, 0.0], [0.0, self.ratio]])
-                    new_cam_offset = self.view_cam_offset.copy()
-
-                    ## area deformation correction
-                    new_cam_offset = mathutils.Vector((new_cam_offset[0], new_cam_offset[1] * self.ratio))
-
-                    ## rotate by matrix
-                    new_cam_offset.rotate(rot_mat2d)
-
-                    ## area deformation restore
-                    new_cam_offset = mathutils.Vector((new_cam_offset[0], new_cam_offset[1] * self.ratio_inv))
-
-                    context.space_data.region_3d.view_camera_offset = new_cam_offset
+                    ## apply inverse rotation on view offset
+                    self.set_cam_view_offset_from_angle(context, self.angle)
 
             else: # free view
                 context.space_data.region_3d.view_rotation = self._rotation
@@ -150,14 +154,24 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             # Trigger reset : Less than 150ms and less than 2 degrees move
             if time() - self.timer < 0.15 and abs(math.degrees(self.angle)) < 2:
                 # self.report({'INFO'}, 'Reset')
-                aim = context.space_data.region_3d.view_rotation @ mathutils.Vector((0.0, 0.0, 1.0))#view vector
-                z_up_quat = aim.to_track_quat('Z','Y')#track Z, up Y
+                aim = context.space_data.region_3d.view_rotation @ mathutils.Vector((0.0, 0.0, 1.0)) # view vector
+                z_up_quat = aim.to_track_quat('Z','Y') # track Z, up Y
                 if self.in_cam:
+
+                    q = self.cam.matrix_world.to_quaternion() # store current rotation
+
                     if self.cam.parent:
+                        q = self.cam.parent.matrix_world.inverted().to_quaternion() @ q
                         cam_quat = self.cam.parent.matrix_world.inverted().to_quaternion() @ z_up_quat
                     else:
                         cam_quat = z_up_quat
                     self.cam.rotation_euler = cam_quat.to_euler('XYZ')
+
+                    # get diff angle (might be better way to get view axis rot diff)
+                    diff_angle = q.rotation_difference(cam_quat).to_euler('ZXY').z
+                    # print('diff_angle: ', math.degrees(diff_angle))
+                    self.set_cam_view_offset_from_angle(context, diff_angle)
+
                 else:
                     context.space_data.region_3d.view_rotation = z_up_quat
             self.execute(context)
@@ -187,7 +201,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         # CORRECT UI OVERLAP FROM HEADER TOOLBAR
         regs = context.area.regions
         if context.preferences.system.use_region_overlap:
-            w = context.area.width
+            w = context.area.width 
             # minus tool header
             h = context.area.height - regs[0].height
         else:
@@ -195,9 +209,9 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             w = context.area.width - regs[2].width - regs[3].width
             # minus tool header + header
             h = context.area.height - regs[0].height - regs[1].height
-
+        
         self.ratio = h / w
-        self.ratio_inv = w / h
+        self.ratio_inv = w / h    
 
         if self.in_cam:
             # Get camera from scene
@@ -207,8 +221,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             if self.cam.lock_rotation[:] != (False, False, False):
                 self.report({'WARNING'}, 'Camera rotation is locked')
                 return {'CANCELLED'}
-
-            if self.use_view_center:
+            
+            if self.use_view_center:                
                 self.center = mathutils.Vector((w/2, h/2))
             else:
                 self.center = self.get_center_view(context, self.cam)
@@ -220,7 +234,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             # store camera matrix world
             self.cam_matrix = self.cam.matrix_world.copy()
             # self.cam_init_euler = self.cam.rotation_euler.copy()
-
+            
             ## initialize current view_offset in camera
             self.view_cam_offset = mathutils.Vector(context.space_data.region_3d.view_camera_offset)
 
@@ -235,7 +249,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         self.pos_current = mathutils.Vector((event.mouse_region_x, event.mouse_region_y))
 
         self.initial_pos = self.pos_current# for draw debug, else no need
-        # Calculate initial vector
+        # Calculate inital vector
         self.vector_initial = self.pos_current - self.center
         self.vector_initial.normalize()
 

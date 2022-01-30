@@ -542,7 +542,7 @@ def build_stick(radius, length, sectors, element_name):
     # Attention: the linking will be done a few moments later, after this
     # is done definition.
 
-    return (new_cylinder, new_cups)
+    return new_cylinder, new_cups
 
 
 # Rotate an object.
@@ -864,7 +864,8 @@ def draw_sticks_dupliverts(all_atoms,
         faces    = []
         i = 0
 
-        # What follows is school mathematics! :-)
+        # What follows is school mathematics! :-) We construct equidistant
+        # planes, on which the stcik sections (cylinders) are perpendicular on.
         for stick in stick_list:
 
             dv = stick[2]
@@ -881,11 +882,15 @@ def draw_sticks_dupliverts(all_atoms,
 
             for j in range(loops):
 
+                # The plane, which is normal to the length of the cylinder,
+                # will have a 1/100 of the stick diameter. => When decreasing
+                # the size of the stick diameter, the plane will not be visible.
+                f = 0.01
                 g  = v1 - n * dl / 2.0 - n * dl * j
-                p1 = g + n_b * Stick_diameter
-                p2 = g - n_b * Stick_diameter
-                p3 = g - n_b.cross(n) * Stick_diameter
-                p4 = g + n_b.cross(n) * Stick_diameter
+                p1 = g + n_b * Stick_diameter * f
+                p2 = g - n_b * Stick_diameter * f
+                p3 = g - n_b.cross(n) * Stick_diameter * f
+                p4 = g + n_b.cross(n) * Stick_diameter * f
 
                 vertices.append(p1)
                 vertices.append(p2)
@@ -914,25 +919,17 @@ def draw_sticks_dupliverts(all_atoms,
         # Link active object to the new collection
         coll.objects.link(new_mesh)
 
-        # Build the object.
-        # Get the cylinder from the 'build_stick' function.
-        object_stick = build_stick(Stick_diameter,
-                                   dl,
-                                   Stick_sectors,
-                                   stick[0][1:])
-        # Link active object to the new collection
-        coll.objects.link(object_stick[0])
-        coll.objects.link(object_stick[1])
+        # Build the object. Get the cylinder from the 'build_stick' function.
+        stick_cylinder, stick_cups = build_stick(Stick_diameter,
+                                                 dl,
+                                                 Stick_sectors,
+                                                 stick[0][1:])
+        # Link active object to the new collection.
+        coll.objects.link(stick_cylinder)
+        coll.objects.link(stick_cups)
 
-        # Hide these objects because their appearance has no meaning. They are
-        # just the representative objects. The cylinder and cups are visible at
-        # the vertices of the mesh. Rememmber, this is a dupliverts construct!
-        object_stick[0].hide_set(True)
-        object_stick[1].hide_set(True)
-
-        stick_cylinder = object_stick[0]
+        # Assign the material.
         stick_cylinder.active_material = stick[3]
-        stick_cups = object_stick[1]
         stick_cups.active_material = stick[3]
 
         # Smooth the cylinders.
@@ -941,6 +938,12 @@ def draw_sticks_dupliverts(all_atoms,
             stick_cylinder.select_set(True)
             stick_cups.select_set(True)
             bpy.ops.object.shade_smooth()
+
+        # Hide these objects because their appearance has no meaning. They are
+        # just the representative objects. The cylinder and cups are visible at
+        # the vertices of the mesh. Rememmber, this is a dupliverts construct!
+        stick_cylinder.hide_set(True)
+        stick_cups.hide_set(True)
 
         # Parenting the mesh to the cylinder.
         stick_cylinder.parent = new_mesh
@@ -1343,6 +1346,7 @@ def import_pdb(Ball_type,
     # (e.g. hydrogen)
     for atom_type in atom_all_types_list:
         material = bpy.data.materials.new(atom_type[1])
+        material.diffuse_color = atom_type[2]
         material.use_nodes = True
         mat_P_BSDF = material.node_tree.nodes['Principled BSDF']
         mat_P_BSDF.inputs['Base Color'].default_value = atom_type[2]

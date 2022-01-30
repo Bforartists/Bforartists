@@ -221,7 +221,7 @@ def write_material(
                     material.pov.specular_shader == "COOKTORR"
                     or material.pov.specular_shader == "PHONG"
                 ):
-                    tab_write("phong %.3g\n" % (material.pov.specular_intensity))
+                    tab_write("phong %.3g\n" % material.pov.specular_intensity)
                     tab_write("phong_size %.3g\n" % (material.pov.specular_hardness / 3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
@@ -259,7 +259,7 @@ def write_material(
                     material.pov.specular_shader == "COOKTORR"
                     or material.pov.specular_shader == "PHONG"
                 ):
-                    tab_write("phong 0\n")  #%.3g\n" % (material.pov.specular_intensity/5))
+                    tab_write("phong 0\n")  # %.3g\n" % (material.pov.specular_intensity/5))
                     tab_write("phong_size %.3g\n" % (material.pov.specular_hardness / 3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
@@ -293,13 +293,20 @@ def write_material(
             elif ref_level_bound == 3:
                 # Spec must be Max at ref_level_bound 3 so that white of mixing texture always shows specularity
                 # That's why it's multiplied by 255. maybe replace by texture's brightest pixel value?
-                tab_write(
-                    "specular %.3g\n"
-                    % (
-                        (material.pov.specular_intensity * material.pov.specular_color.v)
-                        * (255 * slot.specular_factor)
+                if material.pov_texture_slots:
+                    max_spec_factor = (
+                            material.pov.specular_intensity
+                            * material.pov.specular_color.v
+                            * 255
+                            * slot.specular_factor
                     )
-                )
+                else:
+                    max_spec_factor = (
+                            material.pov.specular_intensity
+                            * material.pov.specular_color.v
+                            * 255
+                    )
+                tab_write("specular %.3g\n" % max_spec_factor)
                 tab_write("roughness %.3g\n" % (1 / material.pov.specular_hardness))
             tab_write("diffuse %.3g %.3g\n" % (front_diffuse, back_diffuse))
 
@@ -328,7 +335,7 @@ def write_material(
                         tab_write("reflection {\n")
                         tab_write("rgb <%.3g, %.3g, %.3g>\n" % material.pov.mirror_color[:])
                         if material.pov.mirror_metallic:
-                            tab_write("metallic %.3g\n" % (raytrace_mirror.reflect_factor))
+                            tab_write("metallic %.3g\n" % raytrace_mirror.reflect_factor)
                         # Blurry reflections for UberPOV
                         if using_uberpov and raytrace_mirror.gloss_factor < 1.0:
                             # tab_write("#ifdef(unofficial) #if(unofficial = \"patch\") #if(patch(\"upov-reflection-roughness\") > 0)\n")
@@ -392,6 +399,7 @@ def write_material(
     if material:
         special_texture_found = False
         tmpidx = -1
+        slot = None
         for t in material.pov_texture_slots:
             tmpidx += 1
             # index = material.pov.active_texture_index
@@ -414,6 +422,7 @@ def write_material(
                         )
                     ):
                         special_texture_found = True
+
                         continue  # Some texture found
 
         if special_texture_found or colored_specular_found:
@@ -1048,7 +1057,7 @@ def string_strip_hyphen(name):
 
 
 # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-def write_nodes(scene, pov_mat_name, ntree, file):
+def write_nodes(pov_mat_name, ntree, file):
     """Translate Blender node trees to pov and write them to file."""
     # such function local inlined import are official guidelines
     # of Blender Foundation to lighten addons footprint at startup
@@ -1164,7 +1173,10 @@ def write_nodes(scene, pov_mat_name, ntree, file):
                             pass
                         else:
                             color = link.from_node.inputs["Color"].default_value[:]
-                        file.write("    <%.4g,%.4g,%.4g>\n" % color)
+                        file.write(
+                            "    <%.4g,%.4g,%.4g>\n"
+                            % (color[0], color[1], color[2])
+                        )
 
                         if link.from_node.inputs["Exponent"].is_linked:
                             pass
@@ -1255,7 +1267,7 @@ def write_nodes(scene, pov_mat_name, ntree, file):
         if node.bl_idname == "PovrayColorImageNode" and node.outputs["Pigment"].is_linked:
             declare_nodes.append(node.name)
             if node.image == "":
-                file.write("#declare %s = pigment { color rgb 0.8}\n" % (pov_node_name))
+                file.write("#declare %s = pigment { color rgb 0.8}\n" % pov_node_name)
             else:
                 im = bpy.data.images[node.image]
                 if im.filepath and path.exists(bpy.path.abspath(im.filepath)):  # (os.path)
@@ -1287,7 +1299,7 @@ def write_nodes(scene, pov_mat_name, ntree, file):
                     )
                     file.write("    %s\n" % once)
                     if node.map_type != "uv_mapping":
-                        file.write("    map_type %s\n" % (node.map_type))
+                        file.write("    map_type %s\n" % node.map_type)
                     file.write(
                         "    interpolate %s\n    filter all %.4g\n    transmit all %.4g\n"
                         % (
@@ -1335,7 +1347,7 @@ def write_nodes(scene, pov_mat_name, ntree, file):
                     )
                     file.write("    %s\n" % once)
                     if node.map_type != "uv_mapping":
-                        file.write("    map_type %s\n" % (node.map_type))
+                        file.write("    map_type %s\n" % node.map_type)
                     file.write("    interpolate %s\n" % node.interpolate)
                     file.write("    }\n")
                     file.write("    %s\n" % transform)
@@ -1369,7 +1381,7 @@ def write_nodes(scene, pov_mat_name, ntree, file):
                     file.write('    "%s"\n' % filepath)
                     file.write("    %s\n" % once)
                     if node.map_type != "uv_mapping":
-                        file.write("    map_type %s\n" % (node.map_type))
+                        file.write("    map_type %s\n" % node.map_type)
                     bump_size = node.inputs["Normal"].default_value
                     if node.inputs["Normal"].is_linked:
                         pass

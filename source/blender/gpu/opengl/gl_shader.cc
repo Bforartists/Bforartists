@@ -217,6 +217,8 @@ static void print_image_type(std::ostream &os,
     case ImageType::UINT_2D_ARRAY:
     case ImageType::SHADOW_2D:
     case ImageType::SHADOW_2D_ARRAY:
+    case ImageType::DEPTH_2D:
+    case ImageType::DEPTH_2D_ARRAY:
       os << "2D";
       break;
     case ImageType::FLOAT_3D:
@@ -232,6 +234,8 @@ static void print_image_type(std::ostream &os,
     case ImageType::UINT_CUBE_ARRAY:
     case ImageType::SHADOW_CUBE:
     case ImageType::SHADOW_CUBE_ARRAY:
+    case ImageType::DEPTH_CUBE:
+    case ImageType::DEPTH_CUBE_ARRAY:
       os << "Cube";
       break;
     default:
@@ -250,6 +254,8 @@ static void print_image_type(std::ostream &os,
     case ImageType::UINT_CUBE_ARRAY:
     case ImageType::SHADOW_2D_ARRAY:
     case ImageType::SHADOW_CUBE_ARRAY:
+    case ImageType::DEPTH_2D_ARRAY:
+    case ImageType::DEPTH_CUBE_ARRAY:
       os << "Array";
       break;
     default:
@@ -271,16 +277,16 @@ static void print_image_type(std::ostream &os,
 
 static std::ostream &print_qualifier(std::ostream &os, const Qualifier &qualifiers)
 {
-  if ((qualifiers & Qualifier::RESTRICT) != Qualifier::RESTRICT) {
-    os << "restrict";
+  if ((qualifiers & Qualifier::RESTRICT) == Qualifier::RESTRICT) {
+    os << "restrict ";
   }
-  if ((qualifiers & Qualifier::READ_ONLY) != Qualifier::READ_ONLY) {
-    os << "readonly";
+  if ((qualifiers & Qualifier::READ_ONLY) == Qualifier::READ_ONLY) {
+    os << "readonly ";
   }
-  if ((qualifiers & Qualifier::WRITE_ONLY) != Qualifier::WRITE_ONLY) {
-    os << "writeonly";
+  if ((qualifiers & Qualifier::WRITE_ONLY) == Qualifier::WRITE_ONLY) {
+    os << "writeonly ";
   }
-  return os << " ";
+  return os;
 }
 
 static void print_resource(std::ostream &os, const ShaderCreateInfo::Resource &res)
@@ -328,8 +334,8 @@ static void print_resource(std::ostream &os, const ShaderCreateInfo::Resource &r
       array_offset = res.storagebuf.name.find_first_of("[");
       name_no_array = (array_offset == -1) ? res.storagebuf.name :
                                              StringRef(res.storagebuf.name.c_str(), array_offset);
-      os << "buffer ";
       print_qualifier(os, res.storagebuf.qualifiers);
+      os << "buffer ";
       os << name_no_array << " { " << res.storagebuf.type_name << " _" << res.storagebuf.name
          << "; };\n";
       break;
@@ -403,9 +409,6 @@ std::string GLShader::resources_declare(const ShaderCreateInfo &info) const
   }
   ss << "\n/* Push Constants. */\n";
   for (const ShaderCreateInfo::PushConst &uniform : info.push_constants_) {
-    if (GLContext::explicit_location_support) {
-      ss << "layout(location = " << uniform.index << ") ";
-    }
     ss << "uniform " << to_string(uniform.type) << " " << uniform.name;
     if (uniform.array_size > 0) {
       ss << "[" << uniform.array_size << "]";
@@ -413,7 +416,9 @@ std::string GLShader::resources_declare(const ShaderCreateInfo &info) const
     ss << ";\n";
   }
   for (const ShaderCreateInfo::PushConst &uniform : info.push_constants_) {
-    ss << "#define " << uniform.name << " (" << uniform.name << ")\n";
+    /* T95278: Double macro to avoid some compilers think it is recursive. */
+    ss << "#define " << uniform.name << "_ " << uniform.name << "\n";
+    ss << "#define " << uniform.name << " (" << uniform.name << "_)\n";
   }
   ss << "\n";
   return ss.str();
@@ -492,17 +497,51 @@ std::string GLShader::geometry_layout_declare(const ShaderCreateInfo &info) cons
   return ss.str();
 }
 
+static StageInterfaceInfo *find_interface_by_name(const Vector<StageInterfaceInfo *> &ifaces,
+                                                  const StringRefNull &name)
+{
+  for (auto *iface : ifaces) {
+    if (iface->name == name) {
+      return iface;
+    }
+  }
+  return nullptr;
+}
+
 std::string GLShader::geometry_interface_declare(const ShaderCreateInfo &info) const
 {
+
   std::stringstream ss;
   ss << "\n/* Interfaces. */\n";
   for (const StageInterfaceInfo *iface : info.vertex_out_interfaces_) {
-    print_interface(ss, "in", *iface, "[]");
+    bool has_matching_output_iface = find_interface_by_name(info.geometry_out_interfaces_,
+                                                            iface->instance_name) != nullptr;
+    const char *suffix = (has_matching_output_iface) ? "_in[]" : "[]";
+    print_interface(ss, "in", *iface, suffix);
   }
   ss << "\n";
   for (const StageInterfaceInfo *iface : info.geometry_out_interfaces_) {
-    print_interface(ss, "out", *iface);
+    bool has_matching_input_iface = find_interface_by_name(info.vertex_out_interfaces_,
+                                                           iface->instance_name) != nullptr;
+    const char *suffix = (has_matching_input_iface) ? "_out" : "";
+    print_interface(ss, "out", *iface, suffix);
   }
+  ss << "\n";
+  return ss.str();
+}
+
+std::string GLShader::compute_layout_declare(const ShaderCreateInfo &info) const
+{
+  std::stringstream ss;
+  ss << "\n/* Compute Layout. */\n";
+  ss << "layout(local_size_x = " << info.compute_layout_.local_size_x;
+  if (info.compute_layout_.local_size_y != -1) {
+    ss << ", local_size_y = " << info.compute_layout_.local_size_y;
+  }
+  if (info.compute_layout_.local_size_z != -1) {
+    ss << ", local_size_y = " << info.compute_layout_.local_size_z;
+  }
+  ss << ") in;\n";
   ss << "\n";
   return ss.str();
 }
@@ -516,7 +555,7 @@ std::string GLShader::geometry_interface_declare(const ShaderCreateInfo &info) c
 static char *glsl_patch_default_get()
 {
   /** Used for shader patching. Init once. */
-  static char patch[512] = "\0";
+  static char patch[700] = "\0";
   if (patch[0] != '\0') {
     return patch;
   }
@@ -543,6 +582,7 @@ static char *glsl_patch_default_get()
   if (GLContext::shader_draw_parameters_support) {
     STR_CONCAT(patch, slen, "#extension GL_ARB_shader_draw_parameters : enable\n");
     STR_CONCAT(patch, slen, "#define GPU_ARB_shader_draw_parameters\n");
+    STR_CONCAT(patch, slen, "#define gpu_BaseInstance gl_BaseInstanceARB\n");
   }
   if (GLContext::geometry_shader_invocations) {
     STR_CONCAT(patch, slen, "#extension GL_ARB_gpu_shader5 : enable\n");
@@ -552,6 +592,21 @@ static char *glsl_patch_default_get()
     STR_CONCAT(patch, slen, "#extension GL_ARB_texture_cube_map_array : enable\n");
     STR_CONCAT(patch, slen, "#define GPU_ARB_texture_cube_map_array\n");
   }
+  if (GLEW_ARB_conservative_depth) {
+    STR_CONCAT(patch, slen, "#extension GL_ARB_conservative_depth : enable\n");
+  }
+  if (GPU_shader_image_load_store_support()) {
+    STR_CONCAT(patch, slen, "#extension GL_ARB_shader_image_load_store: enable\n");
+    STR_CONCAT(patch, slen, "#extension GL_ARB_shading_language_420pack: enable\n");
+  }
+
+  /* Fallbacks. */
+  if (!GLContext::shader_draw_parameters_support) {
+    STR_CONCAT(patch, slen, "uniform int gpu_BaseInstance;\n");
+  }
+
+  /* Vulkan GLSL compat. */
+  STR_CONCAT(patch, slen, "#define gpu_InstanceIndex (gl_InstanceID + gpu_BaseInstance)\n");
 
   /* Derivative sign can change depending on implementation. */
   STR_CONCATF(patch, slen, "#define DFDX_SIGN %1.1f\n", GLContext::derivative_signs[0]);

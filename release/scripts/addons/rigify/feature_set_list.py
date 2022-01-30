@@ -16,6 +16,8 @@
 #
 #======================= END GPL LICENSE BLOCK ========================
 
+from typing import List
+
 import bpy
 from bpy.props import StringProperty
 import os
@@ -44,7 +46,8 @@ def get_install_path(*, create=False):
     return INSTALL_PATH
 
 
-def get_installed_list():
+def get_installed_modules_names() -> List[str]:
+    """Return a list of module names of all feature sets in the file system."""
     features_path = get_install_path()
     if not features_path:
         return []
@@ -58,6 +61,17 @@ def get_installed_list():
                 sets.append(fs)
 
     return sets
+
+
+def get_enabled_modules_names() -> List[str]:
+    """Return a list of module names of all enabled feature sets."""
+    rigify_prefs = bpy.context.preferences.addons[__package__].preferences
+    installed_module_names = get_installed_modules_names()
+    rigify_feature_sets = rigify_prefs.rigify_feature_sets
+
+    enabled_module_names = { fs.module_name for fs in rigify_feature_sets if fs.enabled }
+
+    return [name for name in installed_module_names if name in enabled_module_names]
 
 
 def get_module(feature_set):
@@ -88,17 +102,17 @@ def get_info_dict(feature_set):
     return {}
 
 
-def call_function_safe(feature_set, name, args=[], kwargs={}):
-    module = get_module_safe(feature_set)
+def call_function_safe(module_name, func_name, args=[], kwargs={}):
+    module = get_module_safe(module_name)
 
     if module:
-        func = getattr(module, name, None)
+        func = getattr(module, func_name, None)
 
         if callable(func):
             try:
                 return func(*args, **kwargs)
             except Exception:
-                print("Rigify Error: Could not call function '%s' of feature set '%s': exception occurred.\n" % (name, feature_set))
+                print(f"Rigify Error: Could not call function '{func_name}' of feature set '{module_name}': exception occurred.\n")
                 traceback.print_exc()
                 print("")
 
@@ -128,7 +142,7 @@ def feature_set_items(scene, context):
         ('rigify', 'Rigify Built-in', 'Rigs bundled with Rigify'),
     ]
 
-    for fs in get_installed_list():
+    for fs in get_enabled_modules_names():
         ui_name = get_ui_name(fs)
         items.append((fs, ui_name, ui_name))
 
@@ -222,8 +236,7 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
 
             addon_prefs.update_external_rigs()
 
-            new_index = addon_prefs.rigify_feature_sets.find(get_ui_name(fixed_dirname))
-            addon_prefs.active_feature_set_index = new_index
+            addon_prefs.active_feature_set_index = len(addon_prefs.rigify_feature_sets)-1
 
         return {'FINISHED'}
 
@@ -234,8 +247,6 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
     bl_description = "Remove external feature set (rigs, metarigs, ui templates)"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
-    featureset: StringProperty(maxlen=1024, options={'HIDDEN', 'SKIP_SAVE'})
-
     @classmethod
     def poll(cls, context):
         return True
@@ -245,18 +256,29 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
 
     def execute(self, context):
         addon_prefs = context.preferences.addons[__package__].preferences
+        feature_sets = addon_prefs.rigify_feature_sets
+        active_idx = addon_prefs.active_feature_set_index
+        active_fs = feature_sets[active_idx]
 
-        # Call the unregister callback of the set being removed
-        call_register_function(self.featureset, False)
+        # Call the unregister callback of the set being removed.
+        if active_fs.enabled:
+            call_register_function(active_fs.module_name, register=False)
 
+        # Remove the feature set's folder from the file system.
         rigify_config_path = get_install_path()
         if rigify_config_path:
-            set_path = os.path.join(rigify_config_path, self.featureset)
+            set_path = os.path.join(rigify_config_path, active_fs.module_name)
             if os.path.exists(set_path):
                 rmtree(set_path)
 
-        addon_prefs.update_external_rigs(force=True)
-        addon_prefs.active_feature_set_index = 0
+        # Remove the feature set's entry from the addon preferences.
+        feature_sets.remove(active_idx)
+
+        # Remove the feature set's entries from the metarigs and rig types.
+        addon_prefs.update_external_rigs()
+
+        # Update active index.
+        addon_prefs.active_feature_set_index -= 1
 
         return {'FINISHED'}
 
