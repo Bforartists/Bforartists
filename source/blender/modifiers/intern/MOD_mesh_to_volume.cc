@@ -316,7 +316,6 @@ ModifierTypeInfo modifierType_MeshToVolume = {
     /* deformVertsEM */ nullptr,
     /* deformMatricesEM */ nullptr,
     /* modifyMesh */ nullptr,
-    /* modifyHair */ nullptr,
     /* modifyGeometrySet */ modifyGeometrySet,
 
     /* initData */ initData,

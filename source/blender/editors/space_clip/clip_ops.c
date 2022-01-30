@@ -1562,7 +1562,8 @@ static int clip_rebuild_proxy_exec(bContext *C, wmOperator *UNUSED(op))
                                                        clip->proxy.build_size_flag,
                                                        clip->proxy.quality,
                                                        true,
-                                                       NULL);
+                                                       NULL,
+                                                       false);
   }
 
   WM_jobs_customdata_set(wm_job, pj, proxy_freejob);

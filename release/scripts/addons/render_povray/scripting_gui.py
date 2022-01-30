@@ -112,12 +112,13 @@ class TEXT_OT_POV_insert(Operator):
 
     def execute(self, context):
         if self.filepath and isfile(self.filepath):
-            file = open(self.filepath, "r")
-            bpy.ops.text.insert(text=file.read())
+            with open(self.filepath, "r") as file:
+                bpy.ops.text.insert(text=file.read())
 
-            # places the cursor at the end without scrolling -.-
-            # context.space_data.text.write(file.read())
-            file.close()
+                # places the cursor at the end without scrolling -.-
+                # context.space_data.text.write(file.read())
+            if not file.closed:
+                file.close()
         return {'FINISHED'}
 
 
@@ -137,10 +138,9 @@ class TEXT_MT_POV_insert(Menu):
         prop = self.layout.operator("wm.path_open", text="Open folder", icon='FILE_FOLDER')
         prop.filepath = pov_documents
         self.layout.separator()
-
-        pov_insert_items_list = []
-        for root, dirs, files in os.walk(pov_documents):  # todo: structure submenus by dir
-            pov_insert_items_list.append(root)
+        
+        # todo: structure submenus by dir
+        pov_insert_items_list = [root for root, dirs, files in os.walk(pov_documents)]
         print(pov_insert_items_list)
         self.path_menu(
             pov_insert_items_list,

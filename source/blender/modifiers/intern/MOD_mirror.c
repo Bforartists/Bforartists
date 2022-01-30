@@ -120,9 +120,6 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
   result = mirrorModifier__doMirror(mmd, ctx->object, mesh);
 
-  if (result != mesh) {
-    BKE_mesh_normals_tag_dirty(result);
-  }
   return result;
 }
 
@@ -335,7 +332,6 @@ ModifierTypeInfo modifierType_Mirror = {
     /* deformVertsEM */ NULL,
     /* deformMatricesEM */ NULL,
     /* modifyMesh */ modifyMesh,
-    /* modifyHair */ NULL,
     /* modifyGeometrySet */ NULL,
 
     /* initData */ initData,

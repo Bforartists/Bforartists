@@ -214,17 +214,16 @@ def unregister():
     for mf in menu_funcs:
         bpy.types.VIEW3D_MT_armature_add.remove(mf)
 
-def get_external_metarigs(set_list):
+def get_external_metarigs(feature_module_names):
     unregister()
 
     # Clear and fill metarigs public variables
     metarigs.clear()
     get_internal_metarigs()
 
-
-    for feature_set in set_list:
+    for module_name in feature_module_names:
         try:
-            base_dir, base_path = feature_set_list.get_dir_path(feature_set, METARIG_DIR)
+            base_dir, base_path = feature_set_list.get_dir_path(module_name, METARIG_DIR)
 
             get_metarigs(metarigs['external'], base_dir, base_path)
         except Exception:
