@@ -43,10 +43,7 @@ def write_texture_influence(
 ):
     """Translate Blender texture influences to various POV texture tricks and write to pov file."""
     material_finish = material_names_dictionary[mater.name]
-    if mater.pov.use_transparency:
-        trans = 1.0 - mater.pov.alpha
-    else:
-        trans = 0.0
+    trans = 1.0 - mater.pov.alpha if mater.pov.use_transparency else 0.0
     if (mater.pov.specular_color.s == 0.0) or (mater.pov.diffuse_shader == "MINNAERT"):
         # No layered texture because of aoi pattern used for minnaert and pov can't layer patterned
         colored_specular_found = False
@@ -79,9 +76,8 @@ def write_texture_influence(
                 continue  # move to next slot
 
             # Implicit else-if (as not skipped by previous "continue")
-            # PROCEDURAL
             if tex.type != "IMAGE" and tex.type != "NONE":
-                procedural_flag = True
+                # PROCEDURAL TEXTURE
                 image_filename = "PAT_%s" % string_strip_hyphen(bpy.path.clean_name(tex.name))
                 if image_filename:
                     if t.use_map_color_diffuse:
@@ -106,10 +102,9 @@ def write_texture_influence(
                         # textDispName=tex.image.name + ".displ"
                         # was the above used? --MR
                         t_alpha = t
-
             # RASTER IMAGE
             elif tex.type == "IMAGE" and tex.image and tex.pov.tex_pattern_type == "emulator":
-                procedural_flag = False
+                # NOT A PROCEDURAL TEXTURE
                 # PACKED
                 if tex.image.packed_file:
                     orig_image_filename = tex.image.filepath_raw
@@ -131,12 +126,14 @@ def write_texture_influence(
                 else:
                     image_filename = path_image(tex.image)
                 # IMAGE SEQUENCE BEGINS
-                if image_filename:
-                    if bpy.data.images[tex.image.name].source == "SEQUENCE":
-                        korvaa = "." + str(tex.image_user.frame_offset + 1).zfill(3) + "."
-                        image_filename = image_filename.replace(".001.", korvaa)
-                        print(" seq debug ")
-                        print(image_filename)
+                if (
+                    image_filename
+                    and bpy.data.images[tex.image.name].source == "SEQUENCE"
+                ):
+                    korvaa = "." + str(tex.image_user.frame_offset + 1).zfill(3) + "."
+                    image_filename = image_filename.replace(".001.", korvaa)
+                    print(" seq debug ")
+                    print(image_filename)
                 # IMAGE SEQUENCE ENDS
                 img_gamma = ""
                 if image_filename:
@@ -169,7 +166,7 @@ def write_texture_influence(
 
     tab_write("\n")
     # THIS AREA NEEDS TO LEAVE THE TEXTURE OPEN UNTIL ALL MAPS ARE WRITTEN DOWN.
-    # --MR
+
     current_material_name = string_strip_hyphen(material_names_dictionary[mater.name])
     local_material_names.append(current_material_name)
     tab_write("\n#declare MAT_%s = \ntexture{\n" % current_material_name)
@@ -193,7 +190,7 @@ def write_texture_influence(
 
         c = 1
         while c <= exported_lights_count:
-            tab_write("slope { lampTarget%s }\n" % (c))
+            tab_write("slope { lampTarget%s }\n" % c)
             tab_write("texture_map {\n")
             # Diffuse Fresnel value and factor go up to five,
             # other kind of values needed: used the number 5 below to remap
@@ -292,18 +289,19 @@ def write_texture_influence(
                 tab_write("[0 color rgbft<0,0,0,1,1>]\n")
                 # if texture_alpha and texture_alpha.startswith("PAT_"):
                 # tab_write("[1 pigment{%s}]\n" %texture_dif)
-                if texture_dif and not texture_dif.startswith("PAT_"):
-                    tab_write(
-                        '[1 uv_mapping image_map {%s "%s" %s} %s]\n'
-                        % (
-                            image_format(texture_dif),
-                            texture_dif,
-                            (img_gamma + img_map(t_dif)),
-                            mapping_dif,
+                if texture_dif:
+                    if not texture_dif.startswith("PAT_"):
+                        tab_write(
+                            '[1 uv_mapping image_map {%s "%s" %s} %s]\n'
+                            % (
+                                image_format(texture_dif),
+                                texture_dif,
+                                (img_gamma + img_map(t_dif)),
+                                mapping_dif,
+                            )
                         )
-                    )
-                elif texture_dif and texture_dif.startswith("PAT_"):
-                    tab_write("[1 %s]\n" % texture_dif)
+                    elif texture_dif.startswith("PAT_"):
+                        tab_write("[1 %s]\n" % texture_dif)
                 tab_write("}\n")
                 tab_write("}\n")
                 if texture_alpha and texture_alpha.startswith("PAT_"):
@@ -452,9 +450,9 @@ def write_texture_influence(
                     and mater.pov_raytrace_mirror.gloss_factor < 1.0
                     and not using_uberpov
                 ):
-                    tab_write("]}}\n")
+                    tab_write(r"]}}"+"\n")
                 else:
-                    tab_write("]}\n")
+                    tab_write(r"}"+"\n")
     if texture_spec != "":
         tab_write("]\n")
         # -------- Second index for mapping specular max value -------- #
@@ -579,7 +577,7 @@ def write_texture_influence(
                 )  # Blurry reflection or not Proceed with user bump in either case...
                 tab_write(
                     "uv_mapping bump_map "
-                    '{%s "%s" %s  bump_size %.4g }%s]\n'
+                    '{%s "%s" %s  bump_size %.4g }%s\n'
                     % (
                         image_format(texture_norm),
                         texture_norm,
@@ -594,7 +592,7 @@ def write_texture_influence(
                 and mater.pov_raytrace_mirror.gloss_factor < 1.0
                 and not using_uberpov
             ):
-                tab_write("}}\n")
+                tab_write("]\n}}\n")
             else:
                 tab_write("}\n")
         elif colored_specular_found:
@@ -771,7 +769,7 @@ def write_texture_influence(
                 )  # Blurry reflection or not Proceed with user bump in either case...
             tab_write(
                 "uv_mapping bump_map "
-                '{%s "%s" %s  bump_size %.4g }%s]\n'
+                '{%s "%s" %s  bump_size %.4g }%s\n'
                 % (
                     image_format(texture_norm),
                     texture_norm,
@@ -786,7 +784,7 @@ def write_texture_influence(
                 and mater.pov_raytrace_mirror.gloss_factor < 1.0
                 and not using_uberpov
             ):
-                tab_write("}}\n")
+                tab_write("]}}\n")
             else:
                 tab_write("}\n")
     if texture_spec != "" and mater.pov.replacement_text == "":
@@ -853,7 +851,7 @@ def write_texture_influence(
         for t in mater.pov_texture_slots:
 
             if t and tex.pov.tex_pattern_type != "emulator":
-                procedural_flag = True
+                # PROCEDURAL TEXTURE
                 image_filename = string_strip_hyphen(bpy.path.clean_name(tex.name))
             if (
                 t
@@ -865,30 +863,29 @@ def write_texture_influence(
                 procedural_flag = False
                 image_filename = path_image(tex.image)
                 img_gamma = ""
-                if image_filename:
-                    if t.use_map_normal:
-                        texture_norm = image_filename
-                        # colvalue = t.normal_factor/10  # UNUSED   XXX *-9.5 !
-                        # textNormName=tex.image.name + ".normal"
-                        # was the above used? --MR
-                        t_nor = t
-                        if procedural_flag:
-                            tab_write(
-                                "normal{function"
-                                "{f%s(x,y,z).grey} bump_size %.4g}\n"
-                                % (texture_norm, (-t_nor.normal_factor * 9.5))
+                if image_filename and t.use_map_normal:
+                    texture_norm = image_filename
+                    # colvalue = t.normal_factor/10  # UNUSED   XXX *-9.5 !
+                    # textNormName=tex.image.name + ".normal"
+                    # was the above used? --MR
+                    t_nor = t
+                    if procedural_flag:
+                        tab_write(
+                            "normal{function"
+                            "{f%s(x,y,z).grey} bump_size %.4g}\n"
+                            % (texture_norm, (-t_nor.normal_factor * 9.5))
+                        )
+                    else:
+                        tab_write(
+                            "normal {uv_mapping bump_map "
+                            '{%s "%s" %s  bump_size %.4g }%s}\n'
+                            % (
+                                image_format(texture_norm),
+                                texture_norm,
+                                img_map(t_nor),
+                                (-t_nor.normal_factor * 9.5),
+                                mapping_normal,
                             )
-                        else:
-                            tab_write(
-                                "normal {uv_mapping bump_map "
-                                '{%s "%s" %s  bump_size %.4g }%s}\n'
-                                % (
-                                    image_format(texture_norm),
-                                    texture_norm,
-                                    img_map(t_nor),
-                                    (-t_nor.normal_factor * 9.5),
-                                    mapping_normal,
-                                )
-                            )
+                        )
 
         tab_write("}\n")  # THEN IT CAN CLOSE LAST LAYER OF TEXTURE

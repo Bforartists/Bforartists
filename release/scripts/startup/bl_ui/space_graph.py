@@ -482,6 +482,7 @@ class GRAPH_MT_key_snap(Menu):
         layout.operator("graph.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("graph.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
         layout.operator("graph.snap", text="Flatten Handles", icon = "FLATTEN_HANDLER").type= 'HORIZONTAL'
+        layout.operator("graph.equalize_handles", text="Equalize Handles").side = 'BOTH'
         layout.separator()
         layout.operator("graph.frame_jump", text="Cursor to Selection", icon = "JUMP_TO_KEYFRAMES")
         layout.operator("graph.snap_cursor_value", text="Cursor Value to Selection", icon = "VALUE_TO_SELECTION")

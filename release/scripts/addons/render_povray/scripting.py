@@ -212,7 +212,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                                 z1 = float(cache[8])
                                 r1 = float(cache[9])
                                 # Y is height in most pov files, not z
-                                bpy.ops.pov.cone_add(base=r0, cap=r1, height=(y1 - y0))
+                                bpy.ops.pov.addcone(base=r0, cap=r1, height=(y1 - y0))
                                 ob = context.object
                                 ob.location = (x0, y0, z0)
                                 # ob.scale = (r,r,r)
@@ -327,7 +327,9 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
 
                             except ValueError:
                                 pass
-                            except:
+                            except BaseException as e:
+                                print(e.__doc__)
+                                print('An exception occurred: {}'.format(e))
                                 x = y = z = float(cache[2])
                                 r = float(cache[3])
                             bpy.ops.pov.addsphere(R=r, imported_loc=(x, y, z))

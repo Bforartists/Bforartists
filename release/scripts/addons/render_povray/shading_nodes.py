@@ -608,7 +608,7 @@ def menu_func_nodes(self, context):
 
 
 class ObjectNodeTree(bpy.types.NodeTree):
-    '''Povray Material Nodes'''
+    """Povray Material Nodes"""
 
     bl_idname = 'ObjectNodeTree'
     bl_label = 'Povray Object Nodes'
@@ -637,7 +637,7 @@ class ObjectNodeTree(bpy.types.NodeTree):
 
 
 class PovrayOutputNode(Node, ObjectNodeTree):
-    '''Output'''
+    """Output"""
 
     bl_idname = 'PovrayOutputNode'
     bl_label = 'Output'
@@ -663,7 +663,7 @@ class PovrayOutputNode(Node, ObjectNodeTree):
 
 # -------- material # ---------------------------------------------------------------- #
 class PovrayTextureNode(Node, ObjectNodeTree):
-    '''Texture'''
+    """Texture"""
 
     bl_idname = 'PovrayTextureNode'
     bl_label = 'Simple texture'
@@ -685,7 +685,7 @@ class PovrayTextureNode(Node, ObjectNodeTree):
 
 
 class PovrayFinishNode(Node, ObjectNodeTree):
-    '''Finish'''
+    """Finish"""
 
     bl_idname = 'PovrayFinishNode'
     bl_label = 'Finish'
@@ -713,7 +713,7 @@ class PovrayFinishNode(Node, ObjectNodeTree):
 
 
 class PovrayDiffuseNode(Node, ObjectNodeTree):
-    '''Diffuse'''
+    """Diffuse"""
 
     bl_idname = 'PovrayDiffuseNode'
     bl_label = 'Diffuse'
@@ -735,7 +735,7 @@ class PovrayDiffuseNode(Node, ObjectNodeTree):
 
 
 class PovrayPhongNode(Node, ObjectNodeTree):
-    '''Phong'''
+    """Phong"""
 
     bl_idname = 'PovrayPhongNode'
     bl_label = 'Phong'
@@ -757,7 +757,7 @@ class PovrayPhongNode(Node, ObjectNodeTree):
 
 
 class PovraySpecularNode(Node, ObjectNodeTree):
-    '''Specular'''
+    """Specular"""
 
     bl_idname = 'PovraySpecularNode'
     bl_label = 'Specular'
@@ -779,7 +779,7 @@ class PovraySpecularNode(Node, ObjectNodeTree):
 
 
 class PovrayMirrorNode(Node, ObjectNodeTree):
-    '''Mirror'''
+    """Mirror"""
 
     bl_idname = 'PovrayMirrorNode'
     bl_label = 'Mirror'
@@ -803,7 +803,7 @@ class PovrayMirrorNode(Node, ObjectNodeTree):
 
 
 class PovrayAmbientNode(Node, ObjectNodeTree):
-    '''Ambient'''
+    """Ambient"""
 
     bl_idname = 'PovrayAmbientNode'
     bl_label = 'Ambient'
@@ -820,7 +820,7 @@ class PovrayAmbientNode(Node, ObjectNodeTree):
 
 
 class PovrayIridescenceNode(Node, ObjectNodeTree):
-    '''Iridescence'''
+    """Iridescence"""
 
     bl_idname = 'PovrayIridescenceNode'
     bl_label = 'Iridescence'
@@ -841,7 +841,7 @@ class PovrayIridescenceNode(Node, ObjectNodeTree):
 
 
 class PovraySubsurfaceNode(Node, ObjectNodeTree):
-    '''Subsurface'''
+    """Subsurface"""
 
     bl_idname = 'PovraySubsurfaceNode'
     bl_label = 'Subsurface'
@@ -871,7 +871,7 @@ class PovraySubsurfaceNode(Node, ObjectNodeTree):
 
 
 class PovrayMappingNode(Node, ObjectNodeTree):
-    '''Mapping'''
+    """Mapping"""
 
     bl_idname = 'PovrayMappingNode'
     bl_label = 'Mapping'
@@ -939,7 +939,7 @@ class PovrayMappingNode(Node, ObjectNodeTree):
 
 
 class PovrayMultiplyNode(Node, ObjectNodeTree):
-    '''Multiply'''
+    """Multiply"""
 
     bl_idname = 'PovrayMultiplyNode'
     bl_label = 'Multiply'
@@ -983,7 +983,7 @@ class PovrayMultiplyNode(Node, ObjectNodeTree):
 
 
 class PovrayTransformNode(Node, ObjectNodeTree):
-    '''Transform'''
+    """Transform"""
 
     bl_idname = 'PovrayTransformNode'
     bl_label = 'Transform'
@@ -1011,7 +1011,7 @@ class PovrayTransformNode(Node, ObjectNodeTree):
 
 
 class PovrayValueNode(Node, ObjectNodeTree):
-    '''Value'''
+    """Value"""
 
     bl_idname = 'PovrayValueNode'
     bl_label = 'Value'
@@ -1026,7 +1026,7 @@ class PovrayValueNode(Node, ObjectNodeTree):
 
 
 class PovrayModifierNode(Node, ObjectNodeTree):
-    '''Modifier'''
+    """Modifier"""
 
     bl_idname = 'PovrayModifierNode'
     bl_label = 'Modifier'
@@ -1057,7 +1057,7 @@ class PovrayModifierNode(Node, ObjectNodeTree):
 
 
 class PovrayPigmentNode(Node, ObjectNodeTree):
-    '''Pigment'''
+    """Pigment"""
 
     bl_idname = 'PovrayPigmentNode'
     bl_label = 'Color'
@@ -1076,7 +1076,7 @@ class PovrayPigmentNode(Node, ObjectNodeTree):
 
 
 class PovrayColorImageNode(Node, ObjectNodeTree):
-    '''ColorImage'''
+    """ColorImage"""
 
     bl_idname = 'PovrayColorImageNode'
     bl_label = 'Image map'
@@ -1162,7 +1162,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
 
 
 class PovrayBumpMapNode(Node, ObjectNodeTree):
-    '''BumpMap'''
+    """BumpMap"""
 
     bl_idname = 'PovrayBumpMapNode'
     bl_label = 'Bump map'
@@ -1242,7 +1242,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
 
 
 class PovrayImagePatternNode(Node, ObjectNodeTree):
-    '''ImagePattern'''
+    """ImagePattern"""
 
     bl_idname = 'PovrayImagePatternNode'
     bl_label = 'Image pattern'
@@ -1323,7 +1323,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
 
 
 class ShaderPatternNode(Node, ObjectNodeTree):
-    '''Pattern'''
+    """Pattern"""
 
     bl_idname = 'ShaderPatternNode'
     bl_label = 'Other patterns'
@@ -1407,7 +1407,7 @@ class ShaderPatternNode(Node, ObjectNodeTree):
 
 
 class ShaderTextureMapNode(Node, ObjectNodeTree):
-    '''Texture Map'''
+    """Texture Map"""
 
     bl_idname = 'ShaderTextureMapNode'
     bl_label = 'Texture map'
@@ -1459,7 +1459,7 @@ class ShaderTextureMapNode(Node, ObjectNodeTree):
 
 
 class ShaderNormalMapNode(Node, ObjectNodeTree):
-    '''Normal Map'''
+    """Normal Map"""
 
     bl_idname = 'ShaderNormalMapNode'
     bl_label = 'Normal map'
@@ -1507,7 +1507,7 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
 
 
 class ShaderNormalMapEntryNode(Node, ObjectNodeTree):
-    '''Normal Map Entry'''
+    """Normal Map Entry"""
 
     bl_idname = 'ShaderNormalMapEntryNode'
     bl_label = 'Normal map entry'
@@ -1521,7 +1521,7 @@ class ShaderNormalMapEntryNode(Node, ObjectNodeTree):
 
 
 class IsoPropsNode(Node, CompositorNodeTree):
-    '''ISO Props'''
+    """ISO Props"""
 
     bl_idname = 'IsoPropsNode'
     bl_label = 'Iso'
@@ -1546,7 +1546,7 @@ class IsoPropsNode(Node, CompositorNodeTree):
 
 
 class PovrayFogNode(Node, CompositorNodeTree):
-    '''Fog settings'''
+    """Fog settings"""
 
     bl_idname = 'PovrayFogNode'
     bl_label = 'Fog'
@@ -1579,7 +1579,7 @@ class PovrayFogNode(Node, CompositorNodeTree):
 
 
 class PovraySlopeNode(Node, TextureNodeTree):
-    '''Output'''
+    """Output"""
 
     bl_idname = 'PovraySlopeNode'
     bl_label = 'Slope Map'
@@ -1614,7 +1614,7 @@ class PovraySlopeNode(Node, TextureNodeTree):
 
 # -------- Texture nodes # ---------------------------------------------------------------- #
 class TextureOutputNode(Node, TextureNodeTree):
-    '''Output'''
+    """Output"""
 
     bl_idname = 'TextureOutputNode'
     bl_label = 'Color Map'
@@ -1645,7 +1645,7 @@ class NODE_OT_iso_add(Operator):
 
     def execute(self, context):
         ob = bpy.context.object
-        if bpy.context.scene.use_nodes == False:
+        if not bpy.context.scene.use_nodes:
             bpy.context.scene.use_nodes = True
         tree = bpy.context.scene.node_tree
         for node in tree.nodes:
@@ -1666,7 +1666,7 @@ class NODE_OT_map_create(Operator):
         space = context.space_data
         tree = space.edit_tree
         for node in tree.nodes:
-            if node.select == True:
+            if node.select:
                 x, y = node.location
             node.select = False
         tmap = tree.nodes.new('ShaderTextureMapNode')
@@ -1832,7 +1832,7 @@ class PovrayPatternNode(Operator):
         tree = space.edit_tree
         for node in tree.nodes:
             node.select = False
-        if self.add == True:
+        if self.add:
             tmap = tree.nodes.new('ShaderNodeValToRGB')
             tmap.label = "Pattern"
             for inp in tmap.inputs:
@@ -1878,7 +1878,7 @@ class PovrayPatternNode(Operator):
 
 
 class UpdatePreviewMaterial(Operator):
-    '''Operator update preview material'''
+    """Operator update preview material"""
 
     bl_idname = "node.updatepreview"
     bl_label = "Update preview"
@@ -1904,7 +1904,7 @@ class UpdatePreviewMaterial(Operator):
 
 
 class UpdatePreviewKey(Operator):
-    '''Operator update preview keymap'''
+    """Operator update preview keymap"""
 
     bl_idname = "wm.updatepreviewkey"
     bl_label = "Activate RMB"

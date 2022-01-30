@@ -203,7 +203,7 @@ class MaterialTextureSlot(PropertyGroup):
 
     offset: FloatVectorProperty(
         name="Offset",
-        description=("Fine tune of the texture mapping X, Y and Z locations "),
+        description="Fine tune of the texture mapping X, Y and Z locations ",
         precision=4,
         step=0.1,
         soft_min=-100.0,
@@ -507,7 +507,7 @@ class WorldTextureSlot(PropertyGroup):
 
     offset: FloatVectorProperty(
         name="Offset",
-        description=("Fine tune of the texture mapping X, Y and Z locations "),
+        description="Fine tune of the texture mapping X, Y and Z locations ",
         precision=4,
         step=0.1,
         soft_min=-100.0,
