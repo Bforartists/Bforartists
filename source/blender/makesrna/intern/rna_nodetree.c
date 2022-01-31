@@ -13658,6 +13658,7 @@ static int node_type_to_icon(int type)
       break;
     case SH_NODE_LIGHT_FALLOFF:
       icon = ICON_NODE_LIGHTFALLOFF;
+      icon = ICON_NODE_LIGHTFALLOFF;
       break;
     case SH_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
@@ -13669,7 +13670,7 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_HAIRINFO;
       break;
     case SH_NODE_POINT_INFO:
-      icon = ICON_DELETE;
+      icon = ICON_POINT_INFO;
       break;
     case SH_NODE_VOLUME_INFO:
       icon = ICON_NODE_VOLUME_INFO;
@@ -14326,7 +14327,7 @@ static int node_type_to_icon(int type)
       icon = ICON_DUAL_MESH;
       break;
     case GEO_NODE_EXTRUDE_MESH:
-      icon = ICON_DELETE;
+      icon = ICON_EXTRUDE_REGION;
       break;
     case GEO_NODE_FIELD_AT_INDEX:
       icon = ICON_FIELD_AT_INDEX;
@@ -14428,7 +14429,7 @@ static int node_type_to_icon(int type)
       icon = ICON_SELECT_BY_MATERIAL;
       break;
     case GEO_NODE_MERGE_BY_DISTANCE:
-      icon = ICON_DELETE;
+      icon = ICON_REMOVE_DOUBLES;
       break;
     case GEO_NODE_MESH_BOOLEAN:
       icon = ICON_MOD_BOOLEAN;
