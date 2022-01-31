@@ -1325,7 +1325,7 @@ color_space
 object_contents
 field_at_index
 curve_arc
-#~ DEF_ICON_BLANK(1344)
+equalize_handler
 #~ DEF_ICON_BLANK(1345)
 #~ DEF_ICON_BLANK(1346)
 #~ DEF_ICON_BLANK(1347)
