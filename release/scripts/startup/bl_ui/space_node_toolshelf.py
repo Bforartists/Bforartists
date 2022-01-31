@@ -235,6 +235,10 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Particle Info     ", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
+            
+            props = col.operator("node.add_node", text=" Point Info         ", icon = "POINT_INFO")
+            props.use_transform = True
+            props.type = "ShaderNodePointInfo"
 
             props = col.operator("node.add_node", text=" RGB                 ", icon = "NODE_RGB")
             props.use_transform = True
@@ -328,6 +332,10 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
+            
+            props = flow.operator("node.add_node", text = "", icon = "POINT_INFO")
+            props.use_transform = True
+            props.type = "ShaderNodePointInfo"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
             props.use_transform = True
@@ -3739,6 +3747,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Geometry to Instance    ", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
+            
+            props = col.operator("node.add_node", text=" Merge by Distance    ", icon = "REMOVE_DOUBLES")
+            props.use_transform = True
+            props.type = "GeometryNodeMergeByDistance"
 
             props = col.operator("node.add_node", text=" Geometry Proximity ", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
@@ -3798,10 +3810,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
+            
+            props = flow.operator("node.add_node", text = "", icon = "REMOVE_DOUBLES")
+            props.use_transform = True
+            props.type = "GeometryNodeGeometryToInstance"
 
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
             props.use_transform = True
-            props.type = "GeometryNodeProximity"
+            props.type = "GeometryNodeMergeByDistance"
 
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
@@ -4208,6 +4224,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Dual Mesh               ", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
+            
+            props = col.operator("node.add_node", text=" Extrude Mesh             ", icon = "EXTRUDE_REGION")
+            props.use_transform = True
+            props.type = "GeometryNodeExtrudeMesh"
 
             props = col.operator("node.add_node", text=" Flip Faces               ", icon = "FLIP_NORMALS")
             props.use_transform = True
@@ -4301,6 +4321,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
+            
+            props = flow.operator("node.add_node", text = "", icon = "EXTRUDE_REGION")
+            props.use_transform = True
+            props.type = "GeometryNodeExtrudeMesh"
 
             props = flow.operator("node.add_node", text = "", icon = "FLIP_NORMALS")
             props.use_transform = True
