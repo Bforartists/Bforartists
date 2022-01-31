@@ -1326,6 +1326,7 @@ object_contents
 field_at_index
 curve_arc
 equalize_handler
+point_info
 #~ DEF_ICON_BLANK(1345)
 #~ DEF_ICON_BLANK(1346)
 #~ DEF_ICON_BLANK(1347)
