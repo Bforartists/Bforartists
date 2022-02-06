@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -1001,6 +1001,10 @@ msgstr "여백"
 
 msgid "Extends the baked result as a post process filter"
 msgstr "후처리 필터로 베이크된 결과를 확장"
+
+
+msgid "Extend"
+msgstr "연장"
 
 
 msgid "Normal Space"
@@ -3405,6 +3409,10 @@ msgstr "UV 랜덤"
 
 msgid "Mode Type"
 msgstr "모드 유형"
+
+
+msgid "Active Layer"
+msgstr "활성 레이어"
 
 
 msgid "Object Path"
@@ -7136,10 +7144,6 @@ msgid "Clip Min Y"
 msgstr "클립 최소 Y"
 
 
-msgid "Extend"
-msgstr "연장"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "수평으로 확장된 또는 커브를 외삽법"
 
@@ -10597,12 +10601,12 @@ msgid "Freestyle Linestyles"
 msgstr "프리스타일 라인 스타일"
 
 
-msgid "Node Trees"
-msgstr "노드 트리"
-
-
 msgid "Particles Settings"
 msgstr "파티클 설정"
+
+
+msgid "Node Trees"
+msgstr "노드 트리"
 
 
 msgid "File Select Parameters"
@@ -14433,10 +14437,6 @@ msgid "Collection of grease pencil layers"
 msgstr "그리스 팬슬 레이어의 컬렉션"
 
 
-msgid "Active Layer"
-msgstr "활성 레이어"
-
-
 msgid "Active grease pencil layer"
 msgstr "활성 그리스 팬슬 레이어"
 
@@ -14455,14 +14455,6 @@ msgstr "활성 노트"
 
 msgid "Note/Layer to add annotation strokes to"
 msgstr "주석 스트로크를 추가 할 노트/레이어"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "이 폴리곤으로 사용된 루프의 수"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -17582,10 +17574,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "표면 모드에서 그리기 할 때의 오프셋 양"
 
 
-msgid "Attributes"
-msgstr "속성"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "외부 또는 포장된 이미지를 참조하는 이미지 데이터 블록"
 
@@ -18914,6 +18902,10 @@ msgstr "서브 표면에 반투명 이펙트를 추가"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "지오메트리 표면을 정의하는 메쉬 데이터 블록"
+
+
+msgid "Attributes"
+msgstr "속성"
 
 
 msgid "Auto Smooth Angle"
@@ -21261,10 +21253,6 @@ msgstr "씬 데이터 블록, 오브젝트 구성 및 시간 정의와 렌더 �
 
 msgid "Active Movie Clip"
 msgstr "활성 무비 클립"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "제약 및 뷰포트 그리기에 사용되는 활성 무비 클립"
 
 
 msgid "Distance Model"
@@ -27581,8 +27569,16 @@ msgid "Loop Start"
 msgstr "루프 시작"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "이 폴리곤의 첫 번째 루프의 인덱스"
+
+
 msgid "Loop Total"
 msgstr "루프 합계"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "이 폴리곤으로 사용된 루프의 수"
 
 
 msgid "Polygon Normal"
@@ -29927,10 +29923,6 @@ msgstr "변위가 저장되어있는 섭디비젼의 수"
 
 msgid "Use Creases"
 msgstr "크리스를 사용"
-
-
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "메쉬 에지 크리스 정보를 사용하여 에지를 선명하게합니다"
 
 
 msgid "UV Smooth"
@@ -34878,12 +34870,12 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Z 버퍼를 안티 앨리어싱하여 부자연스러운 결과를 피하려고 시도, 블렌더 렌더에 주로 유용합니다"
 
 
-msgid "Dot Product"
-msgstr "내적"
-
-
 msgid "Equal"
 msgstr "동일한"
+
+
+msgid "Dot Product"
+msgstr "내적"
 
 
 msgid "Input value used for unconnected socket"
@@ -38343,6 +38335,10 @@ msgstr "파일의 디렉토리"
 
 msgid "Select the file relative to the blend file"
 msgstr "Blend 파일에 상대적인 파일을 선택"
+
+
+msgid "Direction to move the active vertex group towards"
+msgstr "활성 버텍스 그룹을 향해 이동하는 방향"
 
 
 msgctxt "Operator"
@@ -42269,6 +42265,10 @@ msgid "Unlink active font data-block"
 msgstr "활성 데이터 블록을 연결 해제"
 
 
+msgid "Generic"
+msgstr "일반"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "기즈모 선택"
@@ -43531,6 +43531,14 @@ msgstr "스트로크를 다듬기"
 
 msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
+
+
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgctxt "Operator"
@@ -51522,10 +51530,6 @@ msgid "Move the active vertex group up/down in the list"
 msgstr "목록에서 활성 버텍스 그룹을 위/아래로 움직입니다"
 
 
-msgid "Direction to move the active vertex group towards"
-msgstr "활성 버텍스 그룹을 향해 이동하는 방향"
-
-
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
 msgstr "활성 버택스 그룹의 웨이트를 노멀라이즈하여 최고점이 1.0이 되도록 합니다"
 
@@ -54341,10 +54345,6 @@ msgstr "피스톤"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "하나의 축에 리지드 바디 옮기기 및 회전을 제한"
-
-
-msgid "Generic"
-msgstr "일반"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -61957,10 +61957,6 @@ msgstr "디렉토리 경로"
 
 msgid "Fluid Presets"
 msgstr "유체 프리셋"
-
-
-msgid "Extensions"
-msgstr "확장자"
 
 
 msgid "Active Tool"
@@ -71688,16 +71684,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -78870,6 +78858,10 @@ msgstr "선택을 반전"
 
 msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
+
+
+msgid "Extensions"
+msgstr "확장자"
 
 
 msgctxt "Operator"
@@ -88812,12 +88804,12 @@ msgid "Mixed selection"
 msgstr "조합된 선택"
 
 
-msgid "Strip None"
-msgstr "스트립 없음"
-
-
 msgid "(empty)"
 msgstr "(엠프티)"
+
+
+msgid "Strip None"
+msgstr "스트립 없음"
 
 
 msgid "Can't reload with running modal operators"
@@ -89096,6 +89088,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "베벨 모디파이어에 의해 사용된 버텍스 웨이트"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "섭디비젼 표면 모디파이어에 사용된 웨이트"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "스킨 모디파이어에 의해 사용된 X 반경"
 
@@ -89106,10 +89102,6 @@ msgstr "스킨 모디파이어에 의해 사용된 Y 반경"
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "베벨 모디파이어에 사용되는 에지 웨이트"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "섭디비젼 표면 모디파이어에 사용된 웨이트"
 
 
 msgid "Weight used for Soft Body Goal"

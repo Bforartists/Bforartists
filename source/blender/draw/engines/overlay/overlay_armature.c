@@ -191,20 +191,17 @@ void OVERLAY_armature_cache_init(OVERLAY_Data *vedata)
 
       sh = OVERLAY_shader_armature_sphere(false);
       grp = DRW_shgroup_create(sh, armature_ps);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_float_copy(grp, "alpha", 1.0f);
       cb->solid.point_fill = BUF_INSTANCE(grp, format, DRW_cache_bone_point_get());
 
       grp = DRW_shgroup_create(sh, armature_ps);
       DRW_shgroup_state_disable(grp, DRW_STATE_WRITE_DEPTH);
       DRW_shgroup_state_enable(grp, DRW_STATE_BLEND_ALPHA);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_float_copy(grp, "alpha", wire_alpha * 0.4f);
       cb->transp.point_fill = BUF_INSTANCE(grp, format, DRW_cache_bone_point_get());
 
       sh = OVERLAY_shader_armature_shape(false);
       grp = DRW_shgroup_create(sh, armature_ps);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_float_copy(grp, "alpha", 1.0f);
       cb->solid.custom_fill = grp;
       cb->solid.box_fill = BUF_INSTANCE(grp, format, DRW_cache_bone_box_get());
@@ -213,7 +210,6 @@ void OVERLAY_armature_cache_init(OVERLAY_Data *vedata)
       grp = DRW_shgroup_create(sh, armature_ps);
       DRW_shgroup_state_disable(grp, DRW_STATE_WRITE_DEPTH);
       DRW_shgroup_state_enable(grp, DRW_STATE_BLEND_ALPHA);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_float_copy(grp, "alpha", wire_alpha * 0.6f);
       cb->transp.custom_fill = grp;
       cb->transp.box_fill = BUF_INSTANCE(grp, format, DRW_cache_bone_box_get());
@@ -335,7 +331,6 @@ void OVERLAY_armature_cache_init(OVERLAY_Data *vedata)
       sh = OVERLAY_shader_armature_envelope(false);
       grp = DRW_shgroup_create(sh, armature_ps);
       DRW_shgroup_state_enable(grp, DRW_STATE_CULL_BACK);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_bool_copy(grp, "isDistance", false);
       DRW_shgroup_uniform_float_copy(grp, "alpha", 1.0f);
       cb->solid.envelope_fill = BUF_INSTANCE(grp, format, DRW_cache_bone_envelope_solid_get());
@@ -371,7 +366,6 @@ void OVERLAY_armature_cache_init(OVERLAY_Data *vedata)
 
       sh = OVERLAY_shader_armature_envelope(false);
       grp = DRW_shgroup_create(sh, armature_transp_ps);
-      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_float_copy(grp, "alpha", 1.0f);
       DRW_shgroup_uniform_bool_copy(grp, "isDistance", true);
       DRW_shgroup_state_enable(grp, DRW_STATE_CULL_FRONT);
@@ -2084,7 +2078,9 @@ static void draw_armature_edit(ArmatureDrawContext *ctx)
 
         boneflag &= ~BONE_DRAW_LOCKED_WEIGHT;
 
-        draw_bone_relations(ctx, eBone, NULL, arm, boneflag, constflag);
+        if (!is_select) {
+          draw_bone_relations(ctx, eBone, NULL, arm, boneflag, constflag);
+        }
 
         if (arm->drawtype == ARM_ENVELOPE) {
           draw_bone_update_disp_matrix_default(eBone, NULL);
@@ -2107,12 +2103,14 @@ static void draw_armature_edit(ArmatureDrawContext *ctx)
           draw_bone_octahedral(ctx, eBone, NULL, arm, boneflag, constflag, select_id);
         }
 
-        if (show_text && (arm->flag & ARM_DRAWNAMES)) {
-          draw_bone_name(ctx, eBone, NULL, arm, boneflag);
-        }
+        if (!is_select) {
+          if (show_text && (arm->flag & ARM_DRAWNAMES)) {
+            draw_bone_name(ctx, eBone, NULL, arm, boneflag);
+          }
 
-        if (arm->flag & ARM_DRAWAXES) {
-          draw_axes(ctx, eBone, NULL, arm);
+          if (arm->flag & ARM_DRAWAXES) {
+            draw_axes(ctx, eBone, NULL, arm);
+          }
         }
       }
     }
@@ -2221,7 +2219,9 @@ static void draw_armature_pose(ArmatureDrawContext *ctx)
           boneflag &= ~BONE_DRAW_LOCKED_WEIGHT;
         }
 
-        draw_bone_relations(ctx, NULL, pchan, arm, boneflag, constflag);
+        if (!is_pose_select) {
+          draw_bone_relations(ctx, NULL, pchan, arm, boneflag, constflag);
+        }
 
         if ((pchan->custom) && !(arm->flag & ARM_NO_CUSTOM)) {
           draw_bone_update_disp_matrix_custom(pchan);
@@ -2248,16 +2248,19 @@ static void draw_armature_pose(ArmatureDrawContext *ctx)
           draw_bone_octahedral(ctx, NULL, pchan, arm, boneflag, constflag, select_id);
         }
 
-        if (draw_dofs) {
-          draw_bone_degrees_of_freedom(ctx, pchan);
-        }
+        /* These aren't included in the selection. */
+        if (!is_pose_select) {
+          if (draw_dofs) {
+            draw_bone_degrees_of_freedom(ctx, pchan);
+          }
 
-        if (show_text && (arm->flag & ARM_DRAWNAMES)) {
-          draw_bone_name(ctx, NULL, pchan, arm, boneflag);
-        }
+          if (show_text && (arm->flag & ARM_DRAWNAMES)) {
+            draw_bone_name(ctx, NULL, pchan, arm, boneflag);
+          }
 
-        if (arm->flag & ARM_DRAWAXES) {
-          draw_axes(ctx, NULL, pchan, arm);
+          if (arm->flag & ARM_DRAWAXES) {
+            draw_axes(ctx, NULL, pchan, arm);
+          }
         }
       }
     }
@@ -2365,9 +2368,6 @@ static bool POSE_is_driven_by_active_armature(Object *ob)
   if (ob_arm) {
     const DRWContextState *draw_ctx = DRW_context_state_get();
     bool is_active = OVERLAY_armature_is_pose_mode(ob_arm, draw_ctx);
-    if (!is_active && ob_arm->proxy_from) {
-      is_active = OVERLAY_armature_is_pose_mode(ob_arm->proxy_from, draw_ctx);
-    }
     return is_active;
   }
 

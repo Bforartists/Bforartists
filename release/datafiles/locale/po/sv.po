@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -411,6 +411,10 @@ msgstr "Samplingsfrekvens"
 
 msgid "Margin"
 msgstr "Marginal"
+
+
+msgid "Extend"
+msgstr "Utvidga"
 
 
 msgid "Normal Space"
@@ -1083,6 +1087,10 @@ msgstr "Integrering:"
 
 msgid "Saturation"
 msgstr "Mättnad"
+
+
+msgid "Active Layer"
+msgstr "Flytta Till Lager"
 
 
 msgid "Path"
@@ -2720,10 +2728,6 @@ msgstr "Klippning"
 
 msgid "Clip Min Y"
 msgstr "Klippning"
-
-
-msgid "Extend"
-msgstr "Utvidga"
 
 
 msgid "Extrapolated"
@@ -4749,10 +4753,6 @@ msgstr "Delningar av rutnät"
 
 msgid "Grid Scale"
 msgstr "Rensa Förälder"
-
-
-msgid "Active Layer"
-msgstr "Flytta Till Lager"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -15200,6 +15200,14 @@ msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
 
 
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Markera Rad"
@@ -25299,14 +25307,6 @@ msgstr "Markera Länkad"
 
 msgid "Outline"
 msgstr "Kontur"
-
-
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
 
 
 msgid "Length of displaying path, in frames"
