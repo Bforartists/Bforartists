@@ -75,7 +75,7 @@ def pose_bone_autokey(pose_bone, attr_key, attr_lock):
         except IndexError:
             is_lock = False
 
-        ob_pose.keyframe_insert(data_path, i)
+        ob_pose.keyframe_insert(data_path, frame=i)
 
 
 def pose_bone_set_attr_with_locks(pose_bone, attr_key, attr_lock, value):

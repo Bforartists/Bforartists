@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1242,6 +1242,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Расширить результат запекания с помощью фильтра постобработки"
 
 
+msgid "Extend"
+msgstr "Расширить"
+
+
 msgid "Max Ray Distance"
 msgstr "Макс. расстояние луча"
 
@@ -1666,10 +1670,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Датаблоки Grease Pencil"
 
 
-msgid "Hairs"
-msgstr "Волосы"
-
-
 msgid "Images"
 msgstr "Изображения"
 
@@ -1840,10 +1840,6 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Sounds"
@@ -4032,6 +4028,10 @@ msgstr "Значение цвета атрибута геометрии"
 
 msgid "RGBA color in scene linear color space"
 msgstr "RGBA-цвет в линейном цветовом пространстве сцены"
+
+
+msgid "Active Layer"
+msgstr "Активный слой"
 
 
 msgid "Object Path"
@@ -7975,10 +7975,6 @@ msgid "Clip Min Y"
 msgstr "Мин. Y усечения"
 
 
-msgid "Extend"
-msgstr "Расширить"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "Экстраполяция кривой или её расширение по горизонтали"
 
@@ -11696,6 +11692,10 @@ msgid "Show Collection data-blocks"
 msgstr "Показать датаблоки коллекций"
 
 
+msgid "Hairs"
+msgstr "Волосы"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Показать/скрыть датаблоки волос"
 
@@ -11740,14 +11740,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Показать датаблоки видеофрагментов"
 
 
-msgid "Node Trees"
-msgstr "Системы нодов"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Показать датаблоки нодовых систем"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Показать датаблоки кривых рисования"
 
@@ -11770,6 +11762,10 @@ msgstr "Показать/скрыть датаблоки облаков точе
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
+
+
+msgid "Simulations"
+msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -11806,6 +11802,14 @@ msgstr "Показать датаблоки действий"
 
 msgid "Show Material data-blocks"
 msgstr "Показать датаблоки материалов"
+
+
+msgid "Node Trees"
+msgstr "Системы нодов"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Показать датаблоки нодовых систем"
 
 
 msgid "Show Object data-blocks"
@@ -17232,10 +17236,6 @@ msgid "Collection of grease pencil layers"
 msgstr "Коллекция слоёв Grease Pencil"
 
 
-msgid "Active Layer"
-msgstr "Активный слой"
-
-
 msgid "Active grease pencil layer"
 msgstr "Активный слой Grease Pencil"
 
@@ -17254,14 +17254,6 @@ msgstr "Активная заметка"
 
 msgid "Note/Layer to add annotation strokes to"
 msgstr "Заметка/слой, на которую добавляются штрихи аннотации"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Индекс первой петли этого полигона"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -20345,10 +20337,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Величина смещения при рисовании в режиме поверхности"
 
 
-msgid "Attributes"
-msgstr "Атрибуты"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Датаблок изображения, ссылающийся на внешнее или упакованное изображение"
 
@@ -21665,6 +21653,10 @@ msgstr "Добавить эффект просвечиваемости для п
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Датаблок меша, определяющий геометрические поверхности"
+
+
+msgid "Attributes"
+msgstr "Атрибуты"
 
 
 msgid "Auto Smooth Angle"
@@ -24052,10 +24044,6 @@ msgstr "Датаблок сцены, состоящий из объектов и
 
 msgid "Active Movie Clip"
 msgstr "Акт. видеофрагмент"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Активный видеофрагмент, используемый для ограничителей и при отрисовке во вьюпорте"
 
 
 msgid "Distance Model"
@@ -30357,8 +30345,16 @@ msgid "Loop Start"
 msgstr "Начало цикла"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Индекс первой петли этого полигона"
+
+
 msgid "Loop Total"
 msgstr "Всего в цикле"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Polygon Normal"
@@ -32559,10 +32555,6 @@ msgstr "Количество подразделений, для которых �
 
 msgid "Use Creases"
 msgstr "Со складками"
-
-
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "Использовать информацию о складках рёбер для того чтобы делать рёбра более острыми"
 
 
 msgid "UV Smooth"
@@ -37394,12 +37386,12 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Использовать сглаживание в z-буфере для предотвращения артефактов, полезно для рендеров в Blender"
 
 
-msgid "Dot Product"
-msgstr "Скал. произведение"
-
-
 msgid "Equal"
 msgstr "Равно"
+
+
+msgid "Dot Product"
+msgstr "Скал. произведение"
 
 
 msgid "Input value used for unconnected socket"
@@ -40853,6 +40845,10 @@ msgstr "Выбрать файл относительно текущего blend-
 msgctxt "Operator"
 msgid "Filter"
 msgstr "Фильтр"
+
+
+msgid "Direction to move the active vertex group towards"
+msgstr "Направление перемещения активной группы вершин"
 
 
 msgctxt "Operator"
@@ -44677,6 +44673,10 @@ msgid "Unlink active font data-block"
 msgstr "Отсоединить активный датаблок шрифта"
 
 
+msgid "Generic"
+msgstr "Общий тип"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Выделить манипулятор"
@@ -45985,6 +45985,14 @@ msgstr "Обрезать выделенный штрих до первой пе�
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Отразить цвета"
+
+
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgctxt "Operator"
@@ -53906,10 +53914,6 @@ msgid "Move the active vertex group up/down in the list"
 msgstr "Переместить активную группу вершин вверх или вниз по списку"
 
 
-msgid "Direction to move the active vertex group towards"
-msgstr "Направление перемещения активной группы вершин"
-
-
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
 msgstr "Нормализовать веса активной группы вершин, чтобы наибольший вес составлял 1.0"
 
@@ -56729,10 +56733,6 @@ msgstr "Поршень"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "Ограничить перемещение и вращение твёрдого тела одной осью"
-
-
-msgid "Generic"
-msgstr "Общий тип"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -74156,16 +74156,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -91563,12 +91555,12 @@ msgid "Mixed selection"
 msgstr "Смешанное выделение"
 
 
-msgid "Strip None"
-msgstr "Без дорожки"
-
-
 msgid "(empty)"
 msgstr "(пусто)"
+
+
+msgid "Strip None"
+msgstr "Без дорожки"
 
 
 msgid "Can't reload with running modal operators"
@@ -91839,6 +91831,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "Вес вершины, используемый модификатором фаски"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "Вес, используемый модификатором подразделения поверхности"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "Радиус по оси X, используемый модификатором скелетной оболочки"
 
@@ -91849,10 +91845,6 @@ msgstr "Радиус по оси Y, используемый модификат�
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "Вес ребра, используемый модификатором фаски"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "Вес, используемый модификатором подразделения поверхности"
 
 
 msgid "Weight used for Soft Body Goal"

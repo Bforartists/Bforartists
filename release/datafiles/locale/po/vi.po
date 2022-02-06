@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -1294,6 +1294,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Đem kết qủa nướng thành bộ lọc sau qúa trình"
 
 
+msgid "Extend"
+msgstr "Kéo Dài"
+
+
 msgid "Max Ray Distance"
 msgstr "Khoảng Cách Tia Cực Đại"
 
@@ -1718,10 +1722,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Các cục dữ liệu Bút Sáp"
 
 
-msgid "Hairs"
-msgstr "Tóc"
-
-
 msgid "Images"
 msgstr "Ảnh"
 
@@ -1892,10 +1892,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô phỏng"
 
 
 msgid "Sounds"
@@ -4084,6 +4080,10 @@ msgstr "Giá trị của màu trong đặc điểm hình dạng"
 
 msgid "RGBA color in scene linear color space"
 msgstr "Màu RGBA trong không gian màu bậc một của cảnh"
+
+
+msgid "Active Layer"
+msgstr "Lớp Hoạt Động"
 
 
 msgid "Object Path"
@@ -8047,10 +8047,6 @@ msgid "Clip Min Y"
 msgstr "Cắt Cực Tiểu Y"
 
 
-msgid "Extend"
-msgstr "Kéo Dài"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "Suy ngoại đường cong hay kéo dài nó ngang"
 
@@ -11848,6 +11844,10 @@ msgid "Show Collection data-blocks"
 msgstr "Hiện các cục dữ liệu Sưu Tập"
 
 
+msgid "Hairs"
+msgstr "Tóc"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Hiện/ẳn các cục dữ liệu Tóc"
 
@@ -11892,14 +11892,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Hiện các cục dữ liệu Đoạn Phim"
 
 
-msgid "Node Trees"
-msgstr "Cây Giao Điểm"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Hiện các cục dữ liệu Cây Giao Điểm"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Hiện các cục dữ liệu Đường Cong Sơn"
 
@@ -11922,6 +11914,10 @@ msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
 
 msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Simulations"
+msgstr "Mô phỏng"
 
 
 msgid "Show Simulation data-blocks"
@@ -11958,6 +11954,14 @@ msgstr "Hiện các cục dữ liệu Hành Động"
 
 msgid "Show Material data-blocks"
 msgstr "Hiện các cục dữ liệu vật Liệu"
+
+
+msgid "Node Trees"
+msgstr "Cây Giao Điểm"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Hiện các cục dữ liệu Cây Giao Điểm"
 
 
 msgid "Show Object data-blocks"
@@ -17676,10 +17680,6 @@ msgid "Collection of grease pencil layers"
 msgstr "Sưu tập lớp bút sáp"
 
 
-msgid "Active Layer"
-msgstr "Lớp Hoạt Động"
-
-
 msgid "Active grease pencil layer"
 msgstr "Lớp Bút Sáp hoạt động"
 
@@ -17714,14 +17714,6 @@ msgstr "Chi Số Mặt Nạ Lớp Hoạt Động"
 
 msgid "Active index in layer mask array"
 msgstr "Chỉ số hoạt động trong mảng mặt nạ lớp"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Chỉ số của vòng bắt đầu của đa giác này"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Số lượng vòng được dùng trong đa giác này"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -21745,14 +21737,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Mức dịch khi vẽ trong chế độ bề mặt"
 
 
-msgid "Attributes"
-msgstr "Các Đặc Điểm"
-
-
-msgid "Geometry attributes"
-msgstr "Các đặc điểm của hình dạng"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Cục dữ liệu ảnh đang tham chiếu một ảnh ngoài hay ảnh được gói lại"
 
@@ -23189,6 +23173,14 @@ msgstr "Thêm hiệu ứng trong suốt cho hạ bề mặt"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Cục dữ liệu cho chỉ định bề mặt hình dạng"
+
+
+msgid "Attributes"
+msgstr "Các Đặc Điểm"
+
+
+msgid "Geometry attributes"
+msgstr "Các đặc điểm của hình dạng"
 
 
 msgid "Auto Smooth Angle"
@@ -25940,10 +25932,6 @@ msgstr "Cục dữ liệu cảnh, gồm vật thể và chỉ định thời gia
 
 msgid "Active Movie Clip"
 msgstr "Khúc Phim Hoạt Động"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Đoạn phim hoạt động được dùng cho ràng buộc và vẽ trong màn chiếu"
 
 
 msgid "Distance Model"
@@ -33177,8 +33165,16 @@ msgid "Loop Start"
 msgstr "Đầu Vòng"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Chỉ số của vòng bắt đầu của đa giác này"
+
+
 msgid "Loop Total"
 msgstr "Tổng Vòng"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Số lượng vòng được dùng trong đa giác này"
 
 
 msgid "Material slot index of this polygon"
@@ -35919,10 +35915,6 @@ msgstr "Số lượng phân hóa mà chứa dịch"
 
 msgid "Use Creases"
 msgstr "Dùng Nhăn"
-
-
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "Dùng thông tin nhăn của mạng lưới để bén hóa cạnh"
 
 
 msgid "Use Custom Normals"
@@ -41722,20 +41714,16 @@ msgid "And"
 msgstr "Và"
 
 
-msgid "Outputs true only when both inputs are true"
-msgstr "Ngõ ra là đúng khi cả hai ngõ vào là đúng"
-
-
 msgid "Or"
 msgstr "Hoặc"
 
 
-msgid "Outputs or when at least one of the inputs is true"
-msgstr "Ngõ ra là đúng khi ít nhất một ngõ vào là đúng"
+msgid "Equal"
+msgstr "Bằng Nhau"
 
 
-msgid "Outputs the opposite of the input"
-msgstr "Ngõ ra là đảo nghịch của ngõ vào"
+msgid "Not Equal"
+msgstr "Khác Nhau"
 
 
 msgid "Input Type"
@@ -41770,16 +41758,8 @@ msgid "True when the first input is greater than the second input or equal"
 msgstr "Đúng khi ngõ vào thứ nhất lớn hơn hoặc bằng ngõ vào thứ hai"
 
 
-msgid "Equal"
-msgstr "Bằng Nhau"
-
-
 msgid "True when both inputs are approximately equal"
 msgstr "Đúng khi cả hai ngõ vào xấp xỉ bằng nhau"
-
-
-msgid "Not Equal"
-msgstr "Khác Nhau"
 
 
 msgid "True when both inputs are not approximately equal"
@@ -41974,6 +41954,10 @@ msgid "Convex Hull"
 msgstr "Vỏ Lồi"
 
 
+msgid "Method used to determine radius and placement"
+msgstr "Phương pháp dùng cho quyết định bán kính và vị trí"
+
+
 msgid "Endpoint Selection"
 msgstr "Sự Lựa Chọn Điểm Kết Thúc"
 
@@ -42032,10 +42016,6 @@ msgstr "Tay cầm đầu và cuối được nới từ các điểm kiểm soá
 
 msgid "Curve Circle"
 msgstr "Vòng Tròn Đường Cong"
-
-
-msgid "Method used to determine radius and placement"
-msgstr "Phương pháp dùng cho quyết định bán kính và vị trí"
 
 
 msgid "Define the radius and location with three points"
@@ -47198,6 +47178,10 @@ msgid "Keep the current data-block displayed"
 msgstr "Giữ hiển thị của cục dữ liệu hiện tại"
 
 
+msgid "Direction to move the active vertex group towards"
+msgstr "Hướng di chuyển đến cho nhóm đỉnh đang hoạt động"
+
+
 msgctxt "Operator"
 msgid "Open Cache File"
 msgstr "Mở Tập Tin Đệm Chứa"
@@ -51636,6 +51620,10 @@ msgid "Name of new attribute"
 msgstr "Tên của đặc điểm mới"
 
 
+msgid "Generic"
+msgstr "Tổng Quát"
+
+
 msgctxt "Operator"
 msgid "Remove Geometry Attribute"
 msgstr "Xóa Đặc Điểm Hình Dạng"
@@ -53637,6 +53625,107 @@ msgstr "Lật Màu"
 
 msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
+
+
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "Vẽ Lại Ảnh vào Bút Sáp"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "Rút nét Bút Sáp từ ảnh"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "Nó quyết định nếu vẽ lại một ảnh hay toàn bộ trình tự"
+
+
+msgid "Trace the current frame of the image"
+msgstr "Vẽ lại bức ảnh hiện tại"
+
+
+msgid "Trace full sequence"
+msgstr "Vẽ lại toàn bộ trình tự"
+
+
+msgid "Resolution of the generated curves"
+msgstr "Độ phân giải cửa đường cong được chế tạo"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "Khoảng cách đến điểm mẫu, đặt = 0 cho tắt"
+
+
+msgid "Scale of the final stroke"
+msgstr "Phóng to của nét cuối cùng"
+
+
+msgid "Color Threshold"
+msgstr "Ngưỡng Màu Sắc"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "Nó quyết định ngưỡng độ sáng cực tiểu cho chế tạo nét"
+
+
+msgid "Turn Policy"
+msgstr "Thủ Tục Thay Ca"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "Nó quyết định làm sao giải duyết sự không rõ khi phân tích ảnh điểm ảnh sang đường nét"
+
+
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "Prefers to connect black (foreground) components"
+msgstr "Ưu tiên kết nối thành phân màu đen (cảnh trước)"
+
+
+msgid "White"
+msgstr "Trắng"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "Ưu tiên kết nối thành phân màu trắng (cảnh sau)"
+
+
+msgid "Always take a left turn"
+msgstr "Lần nào cũng quẹo trái"
+
+
+msgid "Always take a right turn"
+msgstr "Lần nào cũng quẹo phải"
+
+
+msgid "Minority"
+msgstr "Thiểu Số"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "Ưu tiên kết nối màu nào (trắng và đen) có tần số ít hơn trong địa phương kề quanh vị trí hiện tại"
+
+
+msgid "Majority"
+msgstr "Đa Số"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "Ưu tiên kết nối màu (trắng hay đen) có tần số cao hơn trong địa phương kề vị trí hiện tại"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "Chọn ngẫu nhiên giả"
+
+
+msgid "Start At Current Frame"
+msgstr "Bắt Đầu Tại Bức Hiện Tại"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "Vẽ lại ảnh bắt đầu từ bức ảnh hiện tại"
 
 
 msgctxt "Operator"
@@ -63063,10 +63152,6 @@ msgid "Move the active vertex group up/down in the list"
 msgstr "Di chuyển nhóm đỉnh đang hoạt động lên/xuống trong danh sách"
 
 
-msgid "Direction to move the active vertex group towards"
-msgstr "Hướng di chuyển đến cho nhóm đỉnh đang hoạt động"
-
-
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
 msgstr "Đơn vị hóa quyền lượng của nhóm đỉnh đang hoạt động, cho giá trị lớn nhất bằng 1.0"
 
@@ -66459,10 +66544,6 @@ msgstr "Piton"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "Hạn chế di chuyển và xoay thân rắn theo hướng của một trục"
-
-
-msgid "Generic"
-msgstr "Tổng Quát"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -76697,10 +76778,6 @@ msgstr "Cài Đặt Bộ Lọc"
 
 msgid "Fluid Presets"
 msgstr "Đặt Sẵn Chất Lỏng"
-
-
-msgid "Extensions"
-msgstr "Đuôi Tập Tin"
 
 
 msgid "Active Tool"
@@ -88384,16 +88461,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -98122,6 +98191,10 @@ msgstr "Phong Cách Đồ Điều Khiển"
 
 msgid "Gamepad"
 msgstr "Đồ Bấm Đồ Chơi"
+
+
+msgid "Extensions"
+msgstr "Đuôi Tập Tin"
 
 
 msgid "HP Reverb G2"
@@ -111847,16 +111920,16 @@ msgid "Could not create library override from data-block '%s'"
 msgstr "Không thể chế tạo được đồ thay thế từ cục dữ liệu '%s'"
 
 
-msgid "Strip None"
-msgstr "Không Đoạn"
+msgid "Current File"
+msgstr "Tập Tin Hiện Tại"
 
 
 msgid "(empty)"
 msgstr "(rỗng)"
 
 
-msgid "Current File"
-msgstr "Tập Tin Hiện Tại"
+msgid "Strip None"
+msgstr "Không Đoạn"
 
 
 msgid "Can't reload with running modal operators"
@@ -112275,6 +112348,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "Quyền lượng đỉnh của cụ sửa đổi Xiên"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "Quyền lượng của cụ sửa đổi Phân Hóa Bề Mặt"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "Bán kính X của cụ sửa đổi Da"
 
@@ -112285,10 +112362,6 @@ msgstr "Bán kính Y của cụ sửa đổi Da"
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "Quyền lượng cạnh của cụ sửa đổi Xiên"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "Quyền lượng của cụ sửa đổi Phân Hóa Bề Mặt"
 
 
 msgid "Weight used for Soft Body Goal"
@@ -115139,14 +115212,6 @@ msgstr "Dư"
 
 msgid "Max Width"
 msgstr "Chiều Rộng Tối Đa"
-
-
-msgid "The target geometry must contain a mesh"
-msgstr "Mạng lưới mục tiêu phải chứa một mạng lưới"
-
-
-msgid "The target geometry must contain a mesh or a point cloud"
-msgstr "Hình dạng mục tiêu phải có một mạng lưới hay mây điểm"
 
 
 msgid "Missing Data-Block"

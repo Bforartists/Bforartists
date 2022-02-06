@@ -57,7 +57,7 @@ def main():
             "autopep8",
             "--ignore",
             ",".join((
-                # Info: Use "isinstance()" instead of comparing types directly.
+                # Info: Use `isinstance()` instead of comparing types directly.
                 # Why disable?: Changes code logic, in rare cases we want to compare exact types.
                 "E721",
                 # Info: Fix bare except.

@@ -153,7 +153,8 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
         for file in self.files:
             print("Importing file: " + file.name)
             file_pov = self.directory + file.name
-            for line in open(file_pov):
+            # Ignore any non unicode character
+            for line in open(file_pov, encoding='utf-8', errors='ignore'):
                 string = line.replace("{", " ")
                 string = string.replace("}", " ")
                 string = string.replace("<", " ")
@@ -184,7 +185,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                             ]
                             matrixes[index] = value
                             write_matrix = False
-            for line in open(file_pov):
+            for line in open(file_pov, encoding='utf-8', errors='ignore'):
                 S = line.replace("{", " { ")
                 S = S.replace("}", " } ")
                 S = S.replace(",", " ")
@@ -194,7 +195,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                 S = S.replace(";", " ; ")
                 S = S.split()
                 # lenS = len(S) # Not used... why written?
-                for word in enumerate(S):
+                for word in S:
                     # -------- Primitives Import -------- #
                     if word == 'cone':
                         cone_search = True

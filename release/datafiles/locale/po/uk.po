@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1210,6 +1210,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Поширити результат запікання як фільтр післяобробки"
 
 
+msgid "Extend"
+msgstr "Розширити"
+
+
 msgid "Max Ray Distance"
 msgstr "Макс Відстань Променя"
 
@@ -1634,10 +1638,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Блоки даних нарисного олівця"
 
 
-msgid "Hairs"
-msgstr "Волосинки"
-
-
 msgid "Images"
 msgstr "Зображення"
 
@@ -1808,10 +1808,6 @@ msgstr "Ключі форм"
 
 msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
 
 
 msgid "Sounds"
@@ -3900,6 +3896,10 @@ msgstr "Значення кольору в атрибуті геометрії"
 
 msgid "RGBA color in scene linear color space"
 msgstr "RGBA колір у лінеарному просторі кольорів сцени"
+
+
+msgid "Active Layer"
+msgstr "Активний шар"
 
 
 msgid "Object Path"
@@ -7755,10 +7755,6 @@ msgid "Clip Min Y"
 msgstr "Мін. Y відсікання"
 
 
-msgid "Extend"
-msgstr "Розширити"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "Екстраполювати криву або продовжити її горизонтально"
 
@@ -11456,6 +11452,10 @@ msgid "Show Collection data-blocks"
 msgstr "Показ блоків даних Колекції"
 
 
+msgid "Hairs"
+msgstr "Волосинки"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Показати/сховати блоки даних Волосся"
 
@@ -11500,14 +11500,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Показ блоків даних Відеокліпу"
 
 
-msgid "Node Trees"
-msgstr "Дерева вузлів"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Показ блоків даних Дерева Вузлів"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Показ блоків даних Кривої Малювання"
 
@@ -11530,6 +11522,10 @@ msgstr "Показати/сховати блоки даних Хмари Точ�
 
 msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
+
+
+msgid "Simulations"
+msgstr "Симуляції"
 
 
 msgid "Show Simulation data-blocks"
@@ -11566,6 +11562,14 @@ msgstr "Показ блоків даних Дії"
 
 msgid "Show Material data-blocks"
 msgstr "Показ блоків даних Матеріалу"
+
+
+msgid "Node Trees"
+msgstr "Дерева вузлів"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Показ блоків даних Дерева Вузлів"
 
 
 msgid "Show Object data-blocks"
@@ -16560,10 +16564,6 @@ msgid "Collection of grease pencil layers"
 msgstr "Колекція шарів нарисних олівців"
 
 
-msgid "Active Layer"
-msgstr "Активний шар"
-
-
 msgid "Active grease pencil layer"
 msgstr "Активний шар нарисного олівця"
 
@@ -16598,14 +16598,6 @@ msgstr "Активний Індекс Шару Маски"
 
 msgid "Active index in layer mask array"
 msgstr "Активний індекс у масиві шарів маски"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Індекс першої петлі цього багатобічника"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Кількість петель, що використовуються цим багатобічником"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -20493,14 +20485,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "Величина зсуву при рисуванні у режимі поверхні"
 
 
-msgid "Attributes"
-msgstr "Атрибути"
-
-
-msgid "Geometry attributes"
-msgstr "Атрибути геометрії"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Блок даних зображення, що посилається на зовнішнє або упаковане зображення"
 
@@ -21881,6 +21865,14 @@ msgstr "Додання ефекту півпрозорості для підпо
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Блок даних сіті, що визначає геометричну поверхню"
+
+
+msgid "Attributes"
+msgstr "Атрибути"
+
+
+msgid "Geometry attributes"
+msgstr "Атрибути геометрії"
 
 
 msgid "Auto Smooth Angle"
@@ -24468,10 +24460,6 @@ msgstr "Блок даних сцени, що складається з об'єк
 
 msgid "Active Movie Clip"
 msgstr "Активний відеокліп"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Активний відеокліп для примусів та прорису огляду"
 
 
 msgid "Distance Model"
@@ -31228,8 +31216,16 @@ msgid "Loop Start"
 msgstr "Старт Петель"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Індекс першої петлі цього багатобічника"
+
+
 msgid "Loop Total"
 msgstr "Петель Тотально"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Кількість петель, що використовуються цим багатобічником"
 
 
 msgid "Polygon Normal"
@@ -33930,10 +33926,6 @@ msgstr "Кількість поділів, для яких зберігають�
 
 msgid "Use Creases"
 msgstr "Вжити Складки"
-
-
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "Вжити інформацію складок ребер сіті для гострішання ребер "
 
 
 msgid "Use Custom Normals"
@@ -39561,20 +39553,16 @@ msgid "And"
 msgstr "І"
 
 
-msgid "Outputs true only when both inputs are true"
-msgstr "Виводить істину, лише коли обидва уводи є істиною"
-
-
 msgid "Or"
 msgstr "Або"
 
 
-msgid "Outputs or when at least one of the inputs is true"
-msgstr "Виводить істину, коли принаймні один з уводів є істиною"
+msgid "Equal"
+msgstr "Дорівнює"
 
 
-msgid "Outputs the opposite of the input"
-msgstr "Виводить протилежне до уводу"
+msgid "Not Equal"
+msgstr "Не Дорівнює"
 
 
 msgid "Input Type"
@@ -39609,16 +39597,8 @@ msgid "True when the first input is greater than the second input or equal"
 msgstr "Істина, коли перший увід є більшим, ніж другий увід або дорівнює йому"
 
 
-msgid "Equal"
-msgstr "Дорівнює"
-
-
 msgid "True when both inputs are approximately equal"
 msgstr "Істина, коли обидва уводи є приблизно рівними"
-
-
-msgid "Not Equal"
-msgstr "Не Дорівнює"
 
 
 msgid "True when both inputs are not approximately equal"
@@ -43936,6 +43916,10 @@ msgid "Keep the current data-block displayed"
 msgstr "Утримувати поточний блок даних показуваним"
 
 
+msgid "Direction to move the active vertex group towards"
+msgstr "Напрям для переміщення активної групи вершин"
+
+
 msgctxt "Operator"
 msgid "Open Cache File"
 msgstr "Відкрити файл кешу"
@@ -48246,6 +48230,10 @@ msgid "Name of new attribute"
 msgstr "Назва нового атрибута"
 
 
+msgid "Generic"
+msgstr "Параметризоване"
+
+
 msgctxt "Operator"
 msgid "Remove Geometry Attribute"
 msgstr "Вилучити Атрибут Геометрії"
@@ -50143,6 +50131,14 @@ msgstr "Переверт Кольорів"
 
 msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
+
+
+msgid "Black"
+msgstr "Чорне"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgctxt "Operator"
@@ -59199,10 +59195,6 @@ msgid "Move the active vertex group up/down in the list"
 msgstr "Пересунути активну групу вершин вгору/вниз у списку"
 
 
-msgid "Direction to move the active vertex group towards"
-msgstr "Напрям для переміщення активної групи вершин"
-
-
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
 msgstr "Нормалізувати вагомості активної групи вершин, щоб найбільша вагомість становила 1,0"
 
@@ -62441,10 +62433,6 @@ msgstr "Поршень"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "Обмежити переміщення та обертання твердого тіла однією віссю"
-
-
-msgid "Generic"
-msgstr "Параметризоване"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -71762,10 +71750,6 @@ msgstr "Устави Фільтра"
 
 msgid "Fluid Presets"
 msgstr "Передустави Рідини"
-
-
-msgid "Extensions"
-msgstr "Розширення"
 
 
 msgid "Active Tool"
@@ -82573,16 +82557,8 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -91054,6 +91030,10 @@ msgstr "Інвертувати Вибрання"
 
 msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
+
+
+msgid "Extensions"
+msgstr "Розширення"
 
 
 msgid "Note:"
@@ -103636,12 +103616,12 @@ msgid "Mixed selection"
 msgstr "Мішане вибрання"
 
 
-msgid "Strip None"
-msgstr "Без смужки"
-
-
 msgid "(empty)"
 msgstr "(порожньо)"
+
+
+msgid "Strip None"
+msgstr "Без смужки"
 
 
 msgid "Can't reload with running modal operators"
@@ -103972,6 +103952,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "Вагомість вершин для модифікатора Скіс"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "Вагомість, використовувана модифікатором поділу поверхні"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "Радіус X, що використовується модифікатором Оболонка"
 
@@ -103982,10 +103966,6 @@ msgstr "Радіус Y, що використовується модифікат
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "Вагомість ребер для модифікатора Скіс"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "Вагомість, використовувана модифікатором поділу поверхні"
 
 
 msgid "Weight used for Soft Body Goal"

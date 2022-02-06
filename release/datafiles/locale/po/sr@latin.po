@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -525,6 +525,10 @@ msgstr "Format slike"
 
 msgid "Margin"
 msgstr "Margina"
+
+
+msgid "Extend"
+msgstr "Produži"
 
 
 msgid "Normal Space"
@@ -1401,6 +1405,10 @@ msgstr "Iteracije"
 
 msgid "Saturation"
 msgstr "Zasićenost"
+
+
+msgid "Active Layer"
+msgstr "Aktivni sloj"
 
 
 msgid "Path"
@@ -2914,10 +2922,6 @@ msgstr "Min X isečka"
 
 msgid "Clip Min Y"
 msgstr "Min Y isečka"
-
-
-msgid "Extend"
-msgstr "Produži"
 
 
 msgid "Horizontal"
@@ -5284,10 +5288,6 @@ msgstr "Grupisano"
 
 msgid "Grid Scale"
 msgstr "Razmera mreže"
-
-
-msgid "Active Layer"
-msgstr "Aktivni sloj"
 
 
 msgid "R"
@@ -7780,10 +7780,6 @@ msgstr "Virtuelni roditelj"
 
 msgid "Active Movie Clip"
 msgstr "Aktivni filmski isečak"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Aktivni filmski isečak koji se koristi za ograničenja i iscrtavanje"
 
 
 msgid "Inverse"
@@ -14824,6 +14820,10 @@ msgid "Unlink"
 msgstr "Prekini vezu"
 
 
+msgid "Generic"
+msgstr "Početni NLA"
+
+
 msgid "Remove from selection"
 msgstr "Ukloni iz izbora"
 
@@ -15123,6 +15123,14 @@ msgstr "Izabor za kursor"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
+
+
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
 
 
 msgctxt "Operator"
@@ -18755,10 +18763,6 @@ msgstr "Šarka"
 
 msgid "Slider"
 msgstr "Klizaj"
-
-
-msgid "Generic"
-msgstr "Početni NLA"
 
 
 msgid "Connect selected objects to the active object"
@@ -23501,14 +23505,6 @@ msgstr "Lokacija 2D kursora"
 
 msgid "2D cursor location for this view"
 msgstr "Lokacija 2D kursora u ovom pogledu"
-
-
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
 
 
 msgid "Alpha Channel"
