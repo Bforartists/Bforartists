@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1166,6 +1166,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Prodlouží výsledek baking procesu jako filtr post procesu"
 
 
+msgid "Extend"
+msgstr "Přidat"
+
+
 msgid "Max Ray Distance"
 msgstr "Max Vzdálenost Ray Paprsku"
 
@@ -1482,10 +1486,6 @@ msgid "Grease Pencil"
 msgstr "Skicovací tužka"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1580,10 +1580,6 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -2852,6 +2848,10 @@ msgstr "Použít Sílu Tlaku"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Použít tlak tabletu pro sílu bravy"
+
+
+msgid "Active Layer"
+msgstr "Aktivní vrstva"
 
 
 msgid "Object Path"
@@ -5223,10 +5223,6 @@ msgid "Clip Min Y"
 msgstr "Ořezání Min Y"
 
 
-msgid "Extend"
-msgstr "Přidat"
-
-
 msgid "Horizontal"
 msgstr "Horizontální"
 
@@ -7052,12 +7048,20 @@ msgid "Fonts"
 msgstr "Fonts"
 
 
-msgid "Node Trees"
-msgstr "Větvení Uzlů"
+msgid "Hairs"
+msgstr "Vlasy"
 
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
+
+
+msgid "Simulations"
+msgstr "Simulace"
+
+
+msgid "Node Trees"
+msgstr "Větvení Uzlů"
 
 
 msgid "File Select Parameters"
@@ -8486,10 +8490,6 @@ msgstr "Nastavení Mřížky a Plátna"
 
 msgid "Grid Scale"
 msgstr "Původní velikost"
-
-
-msgid "Active Layer"
-msgstr "Aktivní vrstva"
 
 
 msgid "Luma"
@@ -9944,14 +9944,6 @@ msgid "Always Show Ghosts"
 msgstr "Vždy Zobrazit Duchy"
 
 
-msgid "Attributes"
-msgstr "Atributy"
-
-
-msgid "Geometry attributes"
-msgstr "Atributy geometrie"
-
-
 msgid "Alpha Mode"
 msgstr "Aplfa režim"
 
@@ -10604,6 +10596,14 @@ msgstr "Spustit renderovani"
 
 msgid "Subsurface Translucency"
 msgstr "Průsvitnost podpovrchu"
+
+
+msgid "Attributes"
+msgstr "Atributy"
+
+
+msgid "Geometry attributes"
+msgstr "Atributy geometrie"
 
 
 msgid "Auto Smooth Angle"
@@ -15867,10 +15867,6 @@ msgid "Use Creases"
 msgstr "Použít Záhyby"
 
 
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "Použít informace o záhybech hran sítě k ostření hran"
-
-
 msgid "Use Custom Normals"
 msgstr "Použít Vlastní Normály"
 
@@ -18306,20 +18302,16 @@ msgid "And"
 msgstr "A"
 
 
-msgid "Outputs true only when both inputs are true"
-msgstr "Výsledek je pravdivý pouze pokud oba dva vstupy jsou pravdivé"
-
-
 msgid "Or"
 msgstr "Nebo"
 
 
-msgid "Outputs or when at least one of the inputs is true"
-msgstr "Výsledek je pravdivý pokud alespoň jeden vstup je pravdivý"
+msgid "Equal"
+msgstr "Rovno"
 
 
-msgid "Outputs the opposite of the input"
-msgstr "Výsledek je opačný o proti vstupu"
+msgid "Not Equal"
+msgstr "Nerovná se"
 
 
 msgid "Less Than or Equal"
@@ -18342,16 +18334,8 @@ msgid "True when the first input is greater than the second input or equal"
 msgstr "Pravda pokud první vstup je větší, nebo rovno než druhý"
 
 
-msgid "Equal"
-msgstr "Rovno"
-
-
 msgid "True when both inputs are approximately equal"
 msgstr "Pravda pokud oba vstupy jsou přibližně stejné"
-
-
-msgid "Not Equal"
-msgstr "Nerovná se"
 
 
 msgid "True when both inputs are not approximately equal"
@@ -23517,6 +23501,14 @@ msgstr "Dělit Tah"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Překlopit Barvy"
+
+
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
 
 
 msgctxt "Operator"
@@ -33731,10 +33723,6 @@ msgid "Fluid Presets"
 msgstr "Přednastavení tekutin"
 
 
-msgid "Extensions"
-msgstr "Rozšíření"
-
-
 msgid "Active Tool"
 msgstr "Aktivní nástroj"
 
@@ -38583,14 +38571,6 @@ msgid "Outline"
 msgstr "Obrys"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -42011,6 +41991,10 @@ msgstr "Importovta PO..."
 msgctxt "Operator"
 msgid "Invert Selection"
 msgstr "Vybrat cestu"
+
+
+msgid "Extensions"
+msgstr "Rozšíření"
 
 
 msgid "Note:"

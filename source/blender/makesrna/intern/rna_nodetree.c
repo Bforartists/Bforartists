@@ -10522,7 +10522,7 @@ static void def_geo_object_info(StructRNA *srna)
   RNA_def_property_enum_items(prop, rna_node_geometry_object_info_transform_space_items);
   RNA_def_property_ui_text(
       prop, "Transform Space", "The transformation of the vector and geometry outputs");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update_relations");
 }
 
 static void def_geo_legacy_points_to_volume(StructRNA *srna)
@@ -10606,7 +10606,7 @@ static void def_geo_collection_info(StructRNA *srna)
   prop = RNA_def_property(srna, "transform_space", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_node_geometry_collection_info_transform_space_items);
   RNA_def_property_ui_text(prop, "Transform Space", "The transformation of the geometry output");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update_relations");
 }
 
 static void def_geo_legacy_attribute_proximity(StructRNA *srna)
@@ -14067,6 +14067,12 @@ static int node_type_to_icon(int type)
       break;
     case CMP_NODE_SCENE_TIME:
       icon = ICON_TIME;
+      break;
+    case CMP_NODE_COMBINE_XYZ:
+      icon = ICON_DELETE;
+      break;
+    case CMP_NODE_SEPARATE_XYZ:
+      icon = ICON_DELETE;
       break;
 
       /* bfa - TextureNode, we don't have these nodes iconized yet */
