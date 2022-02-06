@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1299,6 +1299,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "ポストプロセスフィルタとしてベイクされた結果(の端)を延長します"
 
 
+msgid "Extend"
+msgstr "拡張"
+
+
 msgid "Max Ray Distance"
 msgstr "レイの最大距離"
 
@@ -1727,14 +1731,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "グリースペンシルデータブロック"
 
 
-msgid "Hairs"
-msgstr "ヘアー"
-
-
-msgid "Hair data-blocks"
-msgstr "ヘアーデータブロック"
-
-
 msgid "Images"
 msgstr "画像"
 
@@ -1911,14 +1907,6 @@ msgid "Shape Key data-blocks"
 msgstr "シェイプキーデータブロック"
 
 
-msgid "Simulations"
-msgstr "シミュレーション"
-
-
-msgid "Simulation data-blocks"
-msgstr "シミュレーションデータブロック"
-
-
 msgid "Sounds"
 msgstr "サウンド"
 
@@ -2071,10 +2059,6 @@ msgid "Collection of grease pencils"
 msgstr "グリースペンシルの集合"
 
 
-msgid "Collection of hairs"
-msgstr "ヘアーの集合"
-
-
 msgid "Main Images"
 msgstr "メイン画像"
 
@@ -2225,14 +2209,6 @@ msgstr "メインスクリーン"
 
 msgid "Collection of screens"
 msgstr "スクリーンの集合"
-
-
-msgid "Main Simulations"
-msgstr "メインシミュレーション"
-
-
-msgid "Collection of simulations"
-msgstr "シミュレーションの集合"
 
 
 msgid "Main Sounds"
@@ -4146,6 +4122,10 @@ msgstr "ジオメトリ属性のカラー値"
 
 msgid "RGBA color in scene linear color space"
 msgstr "シーンのリニア色空間での RGBA カラー"
+
+
+msgid "Active Layer"
+msgstr "アクティブレイヤー"
 
 
 msgid "Object Path"
@@ -8211,10 +8191,6 @@ msgid "Clip Min Y"
 msgstr "クリップ最小値Y"
 
 
-msgid "Extend"
-msgstr "拡張"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "カーブを外挿、もしくは水平に延長します"
 
@@ -12033,6 +12009,10 @@ msgid "Show Collection data-blocks"
 msgstr "コレクションデータブロックを表示します"
 
 
+msgid "Hairs"
+msgstr "ヘアー"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "ヘアーデータブロックを表示/隠します"
 
@@ -12077,14 +12057,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "動画クリップデータブロックを表示します"
 
 
-msgid "Node Trees"
-msgstr "ノードツリー"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "ノードツリーデータブロックを表示します"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "ペイントカーブデータブロックを表示します"
 
@@ -12107,6 +12079,10 @@ msgstr "ポイントクラウドデータブロックを表示/隠します"
 
 msgid "Show Scene data-blocks"
 msgstr "シーンデータブロックを表示します"
+
+
+msgid "Simulations"
+msgstr "シミュレーション"
 
 
 msgid "Show Simulation data-blocks"
@@ -12143,6 +12119,14 @@ msgstr "アクションデータブロックを表示します"
 
 msgid "Show Material data-blocks"
 msgstr "マテリアルデータブロックを表示します"
+
+
+msgid "Node Trees"
+msgstr "ノードツリー"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "ノードツリーデータブロックを表示します"
 
 
 msgid "Show Object data-blocks"
@@ -18002,10 +17986,6 @@ msgid "Collection of grease pencil layers"
 msgstr "グリースペンシルレイヤーの集合"
 
 
-msgid "Active Layer"
-msgstr "アクティブレイヤー"
-
-
 msgid "Active grease pencil layer"
 msgstr "アクティブグリースペンシルレイヤー"
 
@@ -18040,50 +18020,6 @@ msgstr "アクティブレイヤーマスクインデックス"
 
 msgid "Active index in layer mask array"
 msgstr "レイヤーマスク配列内のアクティブインデックス"
-
-
-msgid "Hair Curve"
-msgstr "ヘアーカーブ"
-
-
-msgid "Hair curve"
-msgstr "ヘアーカーブ"
-
-
-msgid "First Point Index"
-msgstr "最初のポイントインデックス"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "このポリゴンの最初のループのインデックス"
-
-
-msgid "Index of this curve"
-msgstr "このカーブのインデックス"
-
-
-msgid "Number of Points"
-msgstr "ポイント数"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "このポリゴンで使用されているループ数"
-
-
-msgid "Control points of the curve"
-msgstr "カーブの制御点"
-
-
-msgid "Hair Point"
-msgstr "ヘアーポイント"
-
-
-msgid "Hair curve control point"
-msgstr "ヘアーカーブの制御点"
-
-
-msgid "Index of this points"
-msgstr "このポイントのインデックス"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -22187,26 +22123,6 @@ msgid "Offset amount when drawing in surface mode"
 msgstr "サーフェスモードでドローイング時のオフセット量"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "ヘアーカーブ用ヘアーデータブロック"
-
-
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "ジオメトリ属性"
-
-
-msgid "All hair curves"
-msgstr "全ヘアーカーブ"
-
-
-msgid "Control points of all hair curves"
-msgstr "全ヘアーカーブの制御点"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "外部またはパックされた画像を参照する画像データブロック"
 
@@ -23651,6 +23567,14 @@ msgstr "サブサーフェスに透過エフェクトを与えます"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "サーフェス形状を定義するメッシュデータブロック"
+
+
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "ジオメトリ属性"
 
 
 msgid "Auto Smooth Angle"
@@ -26442,10 +26366,6 @@ msgid "Active Movie Clip"
 msgstr "アクティブな動画クリップ"
 
 
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "コンストレイントとビュー描画に使用するアクティブ動画クリップ"
-
-
 msgid "Distance Model"
 msgstr "距離モデル"
 
@@ -26938,14 +26858,6 @@ msgstr "シーケンサーエディター"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上3Dビューのみ同期"
-
-
-msgid "Simulation data-block"
-msgstr "シミュレーションデータブロック"
-
-
-msgid "Node tree defining the simulation"
-msgstr "シミュレーションを定義するノードツリー"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33732,8 +33644,16 @@ msgid "Loop Start"
 msgstr "開始ループ"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "このポリゴンの最初のループのインデックス"
+
+
 msgid "Loop Total"
 msgstr "ループ合計"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "このポリゴンで使用されているループ数"
 
 
 msgid "Material slot index of this polygon"
@@ -36486,10 +36406,6 @@ msgstr "ディスプレイスメントが格納される細分化レベル数"
 
 msgid "Use Creases"
 msgstr "クリースを使用"
-
-
-msgid "Use mesh edge crease information to sharpen edges"
-msgstr "辺をシャープにするのに、メッシュの辺のクリース情報を使用します"
 
 
 msgid "Use Custom Normals"
@@ -42323,20 +42239,16 @@ msgid "And"
 msgstr "And"
 
 
-msgid "Outputs true only when both inputs are true"
-msgstr "両入力が true の時のみ true を出力します"
-
-
 msgid "Or"
 msgstr "Or"
 
 
-msgid "Outputs or when at least one of the inputs is true"
-msgstr "入力のうち最低一つが true の場合 true を出力します"
+msgid "Equal"
+msgstr "同じ"
 
 
-msgid "Outputs the opposite of the input"
-msgstr "出力が入力の反対になります"
+msgid "Not Equal"
+msgstr "違う"
 
 
 msgid "Input Type"
@@ -42391,16 +42303,8 @@ msgid "True when the first input is greater than the second input or equal"
 msgstr "最初の入力が2つめの入力以上だと true"
 
 
-msgid "Equal"
-msgstr "同じ"
-
-
 msgid "True when both inputs are approximately equal"
 msgstr "両入力がほぼ同じだと true"
-
-
-msgid "Not Equal"
-msgstr "違う"
 
 
 msgid "True when both inputs are not approximately equal"
@@ -42621,6 +42525,10 @@ msgid "Convex Hull"
 msgstr "凸包"
 
 
+msgid "Method used to determine radius and placement"
+msgstr "半径と配置を設定する方法"
+
+
 msgid "Endpoint Selection"
 msgstr "端を選択"
 
@@ -42679,10 +42587,6 @@ msgstr "開始と終了ハンドルの位置をスプラインの制御点から
 
 msgid "Curve Circle"
 msgstr "カーブ円"
-
-
-msgid "Method used to determine radius and placement"
-msgstr "半径と配置を設定する方法"
 
 
 msgid "Define the radius and location with three points"
@@ -47898,6 +47802,10 @@ msgid "Keep the current data-block displayed"
 msgstr "現在のデータブロックの表示を維持します"
 
 
+msgid "Direction to move the active vertex group towards"
+msgstr "アクティブ頂点グループの移動方向"
+
+
 msgctxt "Operator"
 msgid "Open Cache File"
 msgstr "キャッシュファイルを開く"
@@ -52400,6 +52308,10 @@ msgid "Name of new attribute"
 msgstr "新しい属性の名前"
 
 
+msgid "Generic"
+msgstr "汎用"
+
+
 msgctxt "Operator"
 msgid "Remove Geometry Attribute"
 msgstr "ジオメトリ属性を削除"
@@ -54427,6 +54339,107 @@ msgstr "カラー切替え"
 
 msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
+
+
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "グリースペンシルへ画像をトレース"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "画像からグリースペンシルのストロークを抽出します"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "単一画像または連番画像全体のどちらをトレースするかを決めます"
+
+
+msgid "Trace the current frame of the image"
+msgstr "画像の現在のフレームをトレースします"
+
+
+msgid "Trace full sequence"
+msgstr "連番画像全体をトレースします"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成するカーブの解像度"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "サンプルポイントへの距離。０で無効"
+
+
+msgid "Scale of the final stroke"
+msgstr "最終ストロークのスケール"
+
+
+msgid "Color Threshold"
+msgstr "色のしきい値"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "この輝度のしきい値より上の位置のストロークを生成します"
+
+
+msgid "Turn Policy"
+msgstr "ターンポリシー"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
+
+
+msgid "Black"
+msgstr "黒"
+
+
+msgid "Prefers to connect black (foreground) components"
+msgstr "黒（前面）成分につなげるようにします"
+
+
+msgid "White"
+msgstr "白"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "白（背景）成分につなげるようにします"
+
+
+msgid "Always take a left turn"
+msgstr "常に左にターンします"
+
+
+msgid "Always take a right turn"
+msgstr "常に右にターンします"
+
+
+msgid "Minority"
+msgstr "マイノリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
+
+
+msgid "Majority"
+msgstr "マジョリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "疑似乱数で選択します"
+
+
+msgid "Start At Current Frame"
+msgstr "現在のフレームから移動"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "現在のフレームの画像からトレースを開始します"
 
 
 msgctxt "Operator"
@@ -61292,16 +61305,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "メッシュ/テキストからカーブ"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "カーブ/サーフェス/メタボール/テキスト/ポイントクラウドオブジェクトからメッシュ"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "カーブ/メッシュからグリースペンシル"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "メッシュオブジェクトからポイントクラウド"
 
 
 msgctxt "Operator"
@@ -63976,10 +63981,6 @@ msgstr "頂点グループを移動"
 
 msgid "Move the active vertex group up/down in the list"
 msgstr "アクティブな頂点グループをリスト内で上下に移動します"
-
-
-msgid "Direction to move the active vertex group towards"
-msgstr "アクティブ頂点グループの移動方向"
 
 
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
@@ -67400,10 +67401,6 @@ msgstr "ピストン"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "リジッドボディの移動と回転を一軸に制限します"
-
-
-msgid "Generic"
-msgstr "汎用"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -77835,10 +77832,6 @@ msgid "Fluid Presets"
 msgstr "流体のプリセット"
 
 
-msgid "Extensions"
-msgstr "エクステンション"
-
-
 msgid "Active Tool"
 msgstr "アクティブツール"
 
@@ -80033,6 +80026,10 @@ msgstr "パスの集合"
 
 msgid "Point in a point cloud"
 msgstr "ポイントクラウド内のポイント"
+
+
+msgid "Index of this points"
+msgstr "このポイントのインデックス"
 
 
 msgid "Active Point Cache"
@@ -89722,16 +89719,8 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
-msgid "Black"
-msgstr "黒"
-
-
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
-
-
-msgid "White"
-msgstr "白"
 
 
 msgid "Display white edges"
@@ -99577,6 +99566,10 @@ msgstr "コントローラースタイル"
 
 msgid "Gamepad"
 msgstr "ゲームパッド"
+
+
+msgid "Extensions"
+msgstr "エクステンション"
 
 
 msgid "HP Reverb G2"
@@ -113418,16 +113411,16 @@ msgid "Could not create library override from data-block '%s'"
 msgstr "ライブラリオーバーライドをデータブロック「%s」から作成できません"
 
 
-msgid "Strip None"
-msgstr "ストリップなし"
+msgid "Current File"
+msgstr "現在のファイル"
 
 
 msgid "(empty)"
 msgstr "(なし)"
 
 
-msgid "Current File"
-msgstr "現在のファイル"
+msgid "Strip None"
+msgstr "ストリップなし"
 
 
 msgid "Can't reload with running modal operators"
@@ -113870,6 +113863,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "ベベルモディファイアーが使用する頂点ウェイト"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "サブディビジョンサーフェスモディファイアーが使用するウェイト"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "スキンモディファイアーが使用するX半径"
 
@@ -113880,10 +113877,6 @@ msgstr "スキンモディファイアーが使用するY半径"
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "ベベルモディファイアーが使用する辺ウェイト"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "サブディビジョンサーフェスモディファイアーが使用するウェイト"
 
 
 msgid "Weight used for Soft Body Goal"
@@ -116554,6 +116547,22 @@ msgid "Limit Radius"
 msgstr "半径を制限"
 
 
+msgid "Position of the first control point"
+msgstr "最初の制御点の位置"
+
+
+msgid "Position of the middle control point"
+msgstr "中央の制御点の位置"
+
+
+msgid "Position of the last control point"
+msgstr "最後の制御点の位置"
+
+
+msgid "Distance of the points from the origin"
+msgstr "原点からポイントまでの距離"
+
+
 msgid "The number of evaluated points on the curve"
 msgstr "カーブの評価済みのポイントの数"
 
@@ -116590,14 +116599,6 @@ msgid "Point 3"
 msgstr "ポイント 3"
 
 
-msgid "Distance of the points from the origin"
-msgstr "原点からポイントまでの距離"
-
-
-msgid "Position of the first control point"
-msgstr "最初の制御点の位置"
-
-
 msgid "Position of the second control point"
 msgstr "二つめの制御点の位置"
 
@@ -116608,14 +116609,6 @@ msgstr "このラインの進行方向。このベクトルの長さは関係あ
 
 msgid "Distance between the two points"
 msgstr "二つのポイント間の距離"
-
-
-msgid "Position of the middle control point"
-msgstr "中央の制御点の位置"
-
-
-msgid "Position of the last control point"
-msgstr "最後の制御点の位置"
 
 
 msgid "Bottom Width"
@@ -116738,10 +116731,6 @@ msgid "The parts of the geometry to be deleted"
 msgstr "削除するジオメトリの部分"
 
 
-msgid "Number of faces that contain the edge"
-msgstr "この辺を含む面の数"
-
-
 msgid "The index of the first vertex in the edge"
 msgstr "辺の最初の頂点のインデックス"
 
@@ -116780,10 +116769,6 @@ msgstr "面の中の辺またはポイント数"
 
 msgid "Number of faces which share an edge with the face"
 msgstr "この面の辺を共有する面の数"
-
-
-msgid "Vertex count and edge count are equal"
-msgstr "頂点数と辺数が同じ"
 
 
 msgid "Number of faces that contain the vertex"
@@ -117052,14 +117037,6 @@ msgstr "余り"
 
 msgid "Max Width"
 msgstr "最大幅"
-
-
-msgid "The target geometry must contain a mesh"
-msgstr "ターゲットジオメトリにメッシュが必要です"
-
-
-msgid "The target geometry must contain a mesh or a point cloud"
-msgstr "ターゲットジオメトリにメッシュまたはポイントクラウドが必要です"
 
 
 msgid "Missing Data-Block"

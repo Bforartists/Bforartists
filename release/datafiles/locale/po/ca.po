@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -884,6 +884,10 @@ msgstr "Esborrar"
 
 msgid "Saturation"
 msgstr "Esborrar Rotació"
+
+
+msgid "Active Layer"
+msgstr "Moure a Capa"
 
 
 msgid "Path"
@@ -4058,10 +4062,6 @@ msgstr "Dreta"
 
 msgid "Grid Scale"
 msgstr "Desparentar"
-
-
-msgid "Active Layer"
-msgstr "Moure a Capa"
 
 
 msgid "Red"
@@ -13130,6 +13130,14 @@ msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Seleccionar fila"
@@ -21850,14 +21858,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"
