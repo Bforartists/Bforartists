@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -410,10 +410,6 @@ msgid "Grease Pencil"
 msgstr "Vetkrijt"
 
 
-msgid "Hairs"
-msgstr "Haren"
-
-
 msgid "Images"
 msgstr "Afbeeldingen"
 
@@ -700,6 +696,10 @@ msgstr "Willekeurige Instellingen"
 
 msgid "Mode Type"
 msgstr "Type Modus"
+
+
+msgid "Active Layer"
+msgstr "Actieve Laag"
 
 
 msgid "Object Path"
@@ -1384,6 +1384,10 @@ msgid "Fonts"
 msgstr "Lettertypen"
 
 
+msgid "Hairs"
+msgstr "Haren"
+
+
 msgid "Particles Settings"
 msgstr "Deeltjes Instellingen"
 
@@ -1924,10 +1928,6 @@ msgstr "Ruimte"
 
 msgid "Lowest"
 msgstr "Laagste"
-
-
-msgid "Active Layer"
-msgstr "Actieve Laag"
 
 
 msgid "R"

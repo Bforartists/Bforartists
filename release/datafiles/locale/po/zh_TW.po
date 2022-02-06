@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-09 14:18+0800\n"
@@ -1026,6 +1026,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "將烘焙結果擴展為後製過濾"
 
 
+msgid "Extend"
+msgstr "擴展"
+
+
 msgid "Max Ray Distance"
 msgstr "最大光線距離"
 
@@ -1422,10 +1426,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "蠟筆資料塊"
 
 
-msgid "Hairs"
-msgstr "毛髮"
-
-
 msgid "Images"
 msgstr "影像"
 
@@ -1586,10 +1586,6 @@ msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
 
 
-msgid "Simulations"
-msgstr "模擬"
-
-
 msgid "Sounds"
 msgstr "聲音"
 
@@ -1728,14 +1724,6 @@ msgstr "主要蠟筆"
 
 msgid "Collection of grease pencils"
 msgstr "蠟筆的選集"
-
-
-msgid "Main Hairs"
-msgstr "主要毛髮"
-
-
-msgid "Collection of hairs"
-msgstr "毛髮選集"
 
 
 msgid "Main Images"
@@ -1880,14 +1868,6 @@ msgstr "主要螢幕"
 
 msgid "Collection of screens"
 msgstr "螢幕的選集"
-
-
-msgid "Main Simulations"
-msgstr "主要模擬"
-
-
-msgid "Collection of simulations"
-msgstr "模擬選集"
 
 
 msgid "Main Sounds"
@@ -3008,6 +2988,10 @@ msgstr "頂點色彩係數"
 
 msgid "Factor used to mix vertex color to get final color"
 msgstr "這個係數用於混合頂點色彩以獲得最終色彩"
+
+
+msgid "Active Layer"
+msgstr "作用分層"
 
 
 msgid "Object Path"
@@ -5939,10 +5923,6 @@ msgid "Clip Min Y"
 msgstr "剪輯最小 Y"
 
 
-msgid "Extend"
-msgstr "擴展"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "將曲線外推或將它水平延伸"
 
@@ -8736,6 +8716,14 @@ msgid "Fonts"
 msgstr "字型"
 
 
+msgid "Hairs"
+msgstr "毛髮"
+
+
+msgid "Simulations"
+msgstr "模擬"
+
+
 msgid "Show workspace data-blocks"
 msgstr "顯示工作空間資料塊"
 
@@ -10628,18 +10616,6 @@ msgstr "格線細分"
 
 msgid "Grid Scale"
 msgstr "格線縮放"
-
-
-msgid "Active Layer"
-msgstr "作用分層"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "此多角形的第一個迴圈索引"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "此多角形使用的迴圈數"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -15384,10 +15360,6 @@ msgid "Active Movie Clip"
 msgstr "作用中影片剪輯"
 
 
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "用於約束與視接口描繪的作用中影片剪輯"
-
-
 msgid "Distance Model"
 msgstr "距離模型"
 
@@ -19128,8 +19100,16 @@ msgid "Loop Start"
 msgstr "迴圈開始"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "此多角形的第一個迴圈索引"
+
+
 msgid "Loop Total"
 msgstr "迴圈總計"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "此多角形使用的迴圈數"
 
 
 msgid "Polygon Normal"
@@ -24672,12 +24652,12 @@ msgid "Anti-Alias Z"
 msgstr "抗鋸齒 Z"
 
 
-msgid "Dot Product"
-msgstr "內積"
-
-
 msgid "Equal"
 msgstr "等於"
+
+
+msgid "Dot Product"
+msgstr "內積"
 
 
 msgid "Input value used for unconnected socket"
@@ -30313,6 +30293,10 @@ msgid "Unlink"
 msgstr "取消連結"
 
 
+msgid "Generic"
+msgstr "通用"
+
+
 msgid "Remove from selection"
 msgstr "從選取項中移除"
 
@@ -30626,6 +30610,14 @@ msgstr "吸附選取項至格線"
 
 msgid "Dissolve Points"
 msgstr "消散點"
+
+
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgctxt "Operator"
@@ -38121,10 +38113,6 @@ msgstr "活塞"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "限制剛體僅沿繞一軸平移與旋轉"
-
-
-msgid "Generic"
-msgstr "通用"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -49141,14 +49129,6 @@ msgid "Outline"
 msgstr "外框"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -58986,12 +58966,12 @@ msgid "Mixed selection"
 msgstr "混合選取"
 
 
-msgid "Strip None"
-msgstr "片段無"
-
-
 msgid "(empty)"
 msgstr "(空)"
+
+
+msgid "Strip None"
+msgstr "片段無"
 
 
 msgid "Can't reload with running modal operators"

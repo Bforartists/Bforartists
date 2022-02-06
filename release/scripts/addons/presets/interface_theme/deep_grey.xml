@@ -9,6 +9,7 @@
         widget_emboss="#ffffff00"
         editor_outline="#303030"
         widget_text_cursor="#d9d9d9"
+        panel_roundness="0.4"
         transparent_checker_primary="#333333"
         transparent_checker_secondary="#262626"
         transparent_checker_size="8"
@@ -305,7 +306,7 @@
             outline="#202020"
             inner="#3f3f3f00"
             inner_sel="#c85130ff"
-            item="#ffffffff"
+            item="#333333ff"
             text="#b8b8b8"
             text_sel="#d9d9d9"
             show_shaded="FALSE"
@@ -943,18 +944,19 @@
         node_active="#ffaa18"
         wire="#808080"
         wire_inner="#808080"
-        wire_select="#ffffff"
+        wire_select="#ffffffb3"
         selected_text="#909090"
-        node_backdrop="#585858ff"
+        node_backdrop="#474747ff"
         converter_node="#7f8080"
         color_node="#4c5975"
-        group_node="#3a582cb9"
+        group_node="#3a582c"
         group_socket_node="#353b47"
         frame_node="#50505080"
         matte_node="#0076b6"
         distor_node="#292929"
         noodle_curving="2"
         grid_levels="2"
+        dash_alpha="0.5"
         input_node="#3471ae"
         output_node="#cc6666"
         filter_node="#0076b6"
@@ -964,7 +966,7 @@
         script_node="#141414"
         pattern_node="#008db6"
         layout_node="#3c3c3c"
-        geometry_node="#00d7a4"
+        geometry_node="#009975"
         attribute_node="#3f5980"
         >
         <space>
@@ -1324,14 +1326,14 @@
           <ThemeSpaceGeneric
             back="#474747"
             title="#ffffff"
-            text="#c3c3c3"
+            text="#b8b8b8"
             text_hi="#ffffff"
             header="#454545ff"
-            header_text="#eeeeee"
+            header_text="#b8b8b8"
             header_text_hi="#ffffff"
             button="#424242ff"
             button_title="#ffffff"
-            button_text="#e5e5e5"
+            button_text="#b8b8b8"
             button_text_hi="#ffffff"
             navigation_bar="#00000000"
             execution_buts="#00000000"
@@ -1350,6 +1352,15 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#303030"
+            list_title="#c3c3c3"
+            list_text="#b8b8b8"
+            list_text_hi="#ffaf23"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSpreadsheet>
     </spreadsheet>
     <bone_color_sets>
@@ -1528,6 +1539,44 @@
         >
       </ThemeCollectionColor>
     </collection_color>
+    <strip_color>
+      <ThemeStripColor
+        color="#e2605b"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#f1a355"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#f1dc55"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#7bcc7b"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#5db6ea"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#8d59da"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#c673b8"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#7a5441"
+        >
+      </ThemeStripColor>
+      <ThemeStripColor
+        color="#5f5f5f"
+        >
+      </ThemeStripColor>
+    </strip_color>
   </Theme>
   <ThemeStyle>
     <panel_title>

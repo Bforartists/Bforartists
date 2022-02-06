@@ -2001,6 +2001,10 @@ void ED_object_base_free_and_unlink(Main *bmain, Scene *scene, Object *ob)
         ob->id.name + 2);
     return;
   }
+  if (!BKE_lib_override_library_id_is_user_deletable(bmain, &ob->id)) {
+    /* Do not delete objects used by overrides of collections. */
+    return;
+  }
 
   DEG_id_tag_update_ex(bmain, &ob->id, ID_RECALC_BASE_FLAGS);
 
@@ -2041,10 +2045,9 @@ static int object_delete_exec(bContext *C, wmOperator *op)
     }
 
     if (!BKE_lib_override_library_id_is_user_deletable(bmain, &ob->id)) {
-      /* Can this case ever happen? */
       BKE_reportf(op->reports,
                   RPT_WARNING,
-                  "Cannot delete object '%s' as it used by override collections",
+                  "Cannot delete object '%s' as it is used by override collections",
                   ob->id.name + 2);
       continue;
     }
@@ -2360,11 +2363,6 @@ static void make_object_duplilist_real(bContext *C,
     BKE_animdata_free(&ob_dst->id, true);
     ob_dst->adt = NULL;
 
-    /* Proxies are not to be copied. */
-    ob_dst->proxy_from = NULL;
-    ob_dst->proxy_group = NULL;
-    ob_dst->proxy = NULL;
-
     ob_dst->parent = NULL;
     BKE_constraints_free(&ob_dst->constraints);
     ob_dst->runtime.curve_cache = NULL;
@@ -2479,13 +2477,6 @@ static void make_object_duplilist_real(bContext *C,
   }
 
   if (base->object->transflag & OB_DUPLICOLLECTION && base->object->instance_collection) {
-    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
-      if (ob->proxy_group == base->object) {
-        ob->proxy = NULL;
-        ob->proxy_from = NULL;
-        DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
-      }
-    }
     base->object->instance_collection = NULL;
   }
 
@@ -3751,6 +3742,7 @@ static bool object_join_poll(bContext *C)
 
 static int object_join_exec(bContext *C, wmOperator *op)
 {
+  Main *bmain = CTX_data_main(C);
   Object *ob = CTX_data_active_object(C);
 
   if (ob->mode & OB_MODE_EDIT) {
@@ -3761,6 +3753,14 @@ static int object_join_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports, RPT_ERROR, "Cannot edit external library data");
     return OPERATOR_CANCELLED;
   }
+  if (!BKE_lib_override_library_id_is_user_deletable(bmain, &ob->id)) {
+    BKE_reportf(op->reports,
+                RPT_WARNING,
+                "Cannot edit object '%s' as it is used by override collections",
+                ob->id.name + 2);
+    return OPERATOR_CANCELLED;
+  }
+
   if (ob->type == OB_GPENCIL) {
     bGPdata *gpd = (bGPdata *)ob->data;
     if ((!gpd) || GPENCIL_ANY_MODE(gpd)) {
@@ -3849,6 +3849,7 @@ static bool join_shapes_poll(bContext *C)
 
 static int join_shapes_exec(bContext *C, wmOperator *op)
 {
+  Main *bmain = CTX_data_main(C);
   Object *ob = CTX_data_active_object(C);
 
   if (ob->mode & OB_MODE_EDIT) {
@@ -3857,6 +3858,13 @@ static int join_shapes_exec(bContext *C, wmOperator *op)
   }
   if (BKE_object_obdata_is_libdata(ob)) {
     BKE_report(op->reports, RPT_ERROR, "Cannot edit external library data");
+    return OPERATOR_CANCELLED;
+  }
+  if (!BKE_lib_override_library_id_is_user_deletable(bmain, &ob->id)) {
+    BKE_reportf(op->reports,
+                RPT_WARNING,
+                "Cannot edit object '%s' as it is used by override collections",
+                ob->id.name + 2);
     return OPERATOR_CANCELLED;
   }
 

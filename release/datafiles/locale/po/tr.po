@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -352,6 +352,10 @@ msgstr "Dosya yolu"
 
 msgid "Image Format"
 msgstr "Arkaplan Resmi"
+
+
+msgid "Extend"
+msgstr "Tahmini Uzat"
 
 
 msgid "Normal Space"
@@ -912,6 +916,10 @@ msgstr "Hue"
 
 msgid "Saturation"
 msgstr "Doygunluk"
+
+
+msgid "Active Layer"
+msgstr "Aktif katmana ayarla"
 
 
 msgid "Path"
@@ -2121,10 +2129,6 @@ msgstr "Film Klibi"
 
 msgid "Clip Min Y"
 msgstr "Film Klibi"
-
-
-msgid "Extend"
-msgstr "Tahmini Uzat"
 
 
 msgid "Horizontal"
@@ -3842,10 +3846,6 @@ msgstr "Izgara Ekle"
 
 msgid "Grid Scale"
 msgstr "Döndürme & Ölçek"
-
-
-msgid "Active Layer"
-msgstr "Aktif katmana ayarla"
 
 
 msgid "R"
@@ -11873,6 +11873,10 @@ msgid "Unlink"
 msgstr "Resim bloğunu bağlama (Sil)"
 
 
+msgid "Generic"
+msgstr "NLA Editörü"
+
+
 msgid "Remove from selection"
 msgstr "Tümünü Sil"
 
@@ -12026,6 +12030,14 @@ msgstr "İmleci Merkez al"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
+
+
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
 
 
 msgctxt "Operator"
@@ -15681,10 +15693,6 @@ msgstr "Konum Kısıtlamaları"
 
 msgid "Slider"
 msgstr "Vertex Slide"
-
-
-msgid "Generic"
-msgstr "NLA Editörü"
 
 
 msgid "Chain by Distance"
@@ -20032,14 +20040,6 @@ msgstr "Diğer Pencerelerde Zamanı Kilitle"
 
 msgid "Outline"
 msgstr "Anahat"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgid "Pivot center for rotation/scaling"

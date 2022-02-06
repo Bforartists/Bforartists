@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1481,10 +1481,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Pensil grease data-blok"
 
 
-msgid "Hairs"
-msgstr "Rambut"
-
-
 msgid "Images"
 msgstr "Gambar"
 
@@ -1649,10 +1645,6 @@ msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
 
 
-msgid "Simulations"
-msgstr "Simulasi"
-
-
 msgid "Sounds"
 msgstr "Suara"
 
@@ -1803,14 +1795,6 @@ msgstr "Pensil Grease Utama"
 
 msgid "Collection of grease pencils"
 msgstr "Koleksi pensil grease"
-
-
-msgid "Main Hairs"
-msgstr "Rambut Utama"
-
-
-msgid "Collection of hairs"
-msgstr "Koleksi rambut"
 
 
 msgid "Main Images"
@@ -3527,6 +3511,10 @@ msgstr "Tipe Mode"
 
 msgid "Byte Color Attribute Value"
 msgstr "Nilai Atribut Warna Byte"
+
+
+msgid "Active Layer"
+msgstr "Layer Aktif"
 
 
 msgid "Object Path"
@@ -7467,6 +7455,10 @@ msgid "Show Collection data-blocks"
 msgstr "Tampilkan Koleksi data-blok"
 
 
+msgid "Hairs"
+msgstr "Rambut"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Tampilkan/sembunyikan Rambut data-blok"
 
@@ -7491,14 +7483,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Tampilkan Klip Film data-blok"
 
 
-msgid "Node Trees"
-msgstr "Pohon Node"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Tampilkan Pohon Node data-blok"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Tampilkan Kurva Cat data-blok"
 
@@ -7521,6 +7505,10 @@ msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -7557,6 +7545,14 @@ msgstr "Tampilkan Aksi data-blok"
 
 msgid "Show Material data-blocks"
 msgstr "Tampilkan Material data-blok"
+
+
+msgid "Node Trees"
+msgstr "Pohon Node"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Tampilkan Pohon Node data-blok"
 
 
 msgid "Show Object data-blocks"
@@ -9137,10 +9133,6 @@ msgstr "Layer Pensil Grease"
 
 msgid "Collection of grease pencil layers"
 msgstr "Koleksi layer pensil grease"
-
-
-msgid "Active Layer"
-msgstr "Layer Aktif"
 
 
 msgid "Active grease pencil layer"

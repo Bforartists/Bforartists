@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1190,6 +1190,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Étend le résultat pré-calculé comme filtre post-process"
 
 
+msgid "Extend"
+msgstr "Étendre"
+
+
 msgid "The maximum ray distance for matching points between the active and selected objects. If zero, there is no limit"
 msgstr "La distance de rayon maximale pour une correspondance de points entre l'objet actif et ceux sélectionnés. Si nulle, il n'y a pas de limite"
 
@@ -1760,10 +1764,6 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
-
-
-msgid "Simulations"
-msgstr "Simulations"
 
 
 msgid "Sounds"
@@ -3788,6 +3788,10 @@ msgstr "Trait & remplissage"
 
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "La couleur de vertex affecte le trait et le remplissage"
+
+
+msgid "Active Layer"
+msgstr "Calque Actif"
 
 
 msgid "Object Path"
@@ -7579,10 +7583,6 @@ msgid "Clip Min Y"
 msgstr "Min Y troncature"
 
 
-msgid "Extend"
-msgstr "Étendre"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "Extrapoler la courbe ou l’étendre horizontalement"
 
@@ -11212,14 +11212,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Afficher les blocs de données clip vidéo"
 
 
-msgid "Node Trees"
-msgstr "Arbres de nœuds"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Afficher les blocs de données arbre de nœuds"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Afficher les blocs de données courbes de peinture"
 
@@ -11238,6 +11230,10 @@ msgstr "Afficher les blocs de données réglages de particules"
 
 msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
+
+
+msgid "Simulations"
+msgstr "Simulations"
 
 
 msgid "Show Sound data-blocks"
@@ -11270,6 +11266,14 @@ msgstr "Afficher les blocs de données action"
 
 msgid "Show Material data-blocks"
 msgstr "Afficher les blocs de données matériau"
+
+
+msgid "Node Trees"
+msgstr "Arbres de nœuds"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Afficher les blocs de données arbre de nœuds"
 
 
 msgid "Show Object data-blocks"
@@ -15800,10 +15804,6 @@ msgid "Collection of grease pencil layers"
 msgstr "Collection de calques de crayon gras"
 
 
-msgid "Active Layer"
-msgstr "Calque Actif"
-
-
 msgid "Active grease pencil layer"
 msgstr "Calque de crayon gras actif"
 
@@ -15822,14 +15822,6 @@ msgstr "Note active"
 
 msgid "Note/Layer to add annotation strokes to"
 msgstr "Note/calque auquel ajouter les traits d’annotation"
-
-
-msgid "Index of the first loop of this polygon"
-msgstr "Indice de la première boucle de ce polygone"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Nombre de boucles utilisées par ce polygone"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -22402,10 +22394,6 @@ msgid "Active Movie Clip"
 msgstr "Clip vidéo actif"
 
 
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Clip vidéo actif utilisé pour les contraintes de l’affichage dans la vue"
-
-
 msgid "Distance Model"
 msgstr "Modèle de distance"
 
@@ -28304,8 +28292,16 @@ msgid "Loop Start"
 msgstr "Boucle départ"
 
 
+msgid "Index of the first loop of this polygon"
+msgstr "Indice de la première boucle de ce polygone"
+
+
 msgid "Loop Total"
 msgstr "Boucle total"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Nombre de boucles utilisées par ce polygone"
 
 
 msgid "Polygon Normal"
@@ -34833,12 +34829,12 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Anti-aliaser le z-buffer pour essayer d’éviter des artefacts, surtout utile pour les rendus Blender"
 
 
-msgid "Dot Product"
-msgstr "Produit scalaire"
-
-
 msgid "Equal"
 msgstr "Égal"
+
+
+msgid "Dot Product"
+msgstr "Produit scalaire"
 
 
 msgid "Input value used for unconnected socket"
@@ -38112,6 +38108,10 @@ msgstr "Sélectionner le fichier relatif au .blend"
 msgctxt "Operator"
 msgid "Filter"
 msgstr "Filtre"
+
+
+msgid "Direction to move the active vertex group towards"
+msgstr "Direction vers laquelle déplacer le groupe de vertices actif"
 
 
 msgctxt "Operator"
@@ -41509,6 +41509,10 @@ msgid "Unlink active font data-block"
 msgstr "Dé-lier le bloc de données police actif"
 
 
+msgid "Generic"
+msgstr "Générique"
+
+
 msgid "Remove from selection"
 msgstr "Enlever de la sélection"
 
@@ -42495,6 +42499,14 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
+
+
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -49403,10 +49415,6 @@ msgid "Move the active vertex group up/down in the list"
 msgstr "Déplacer le groupe de vertices actif vers le haut/le bas de la liste"
 
 
-msgid "Direction to move the active vertex group towards"
-msgstr "Direction vers laquelle déplacer le groupe de vertices actif"
-
-
 msgid "Normalize weights of the active vertex group, so that the highest ones are now 1.0"
 msgstr "Normaliser les poids du groupe de vertices actif, de façon que les plus hauts soient maintenant de 1.0"
 
@@ -52010,10 +52018,6 @@ msgstr "Piston"
 
 msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "Restreindre les translation et rotation de corps rigide à un seul axe"
-
-
-msgid "Generic"
-msgstr "Générique"
 
 
 msgid "Restrict translation and rotation to specified axes"
@@ -66535,14 +66539,6 @@ msgid "Outline"
 msgstr "Contour"
 
 
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
-
-
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -79640,16 +79636,16 @@ msgid "Mixed selection"
 msgstr "Sélection hétérogène"
 
 
-msgid "Strip None"
-msgstr "Aucune bande"
+msgid "Current File"
+msgstr "Fichier actuel"
 
 
 msgid "(empty)"
 msgstr "(vide)"
 
 
-msgid "Current File"
-msgstr "Fichier actuel"
+msgid "Strip None"
+msgstr "Aucune bande"
 
 
 msgid "Can't reload with running modal operators"
@@ -79920,6 +79916,10 @@ msgid "Vertex weight used by Bevel modifier"
 msgstr "Poids de vertex utilisé par le modificateur Biseau (Bevel)"
 
 
+msgid "Weight used by the Subdivision Surface modifier"
+msgstr "Poids utilisé par le modificateur Subdivision de Surface"
+
+
 msgid "X radius used by Skin modifier"
 msgstr "Rayon X utilisé par le modificateur Peau"
 
@@ -79930,10 +79930,6 @@ msgstr "Rayon Y utilisé par le modificateur Peau"
 
 msgid "Edge weight used by Bevel modifier"
 msgstr "Poids d’arête utilisé par le modificateur Biseau (Bevel)"
-
-
-msgid "Weight used by the Subdivision Surface modifier"
-msgstr "Poids utilisé par le modificateur Subdivision de Surface"
 
 
 msgid "Weight used for Soft Body Goal"
