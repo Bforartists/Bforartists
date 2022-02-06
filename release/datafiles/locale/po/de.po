@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1234,6 +1234,10 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Erweitert das Back-Ergebnis zu einem Post-Prozess-Filter"
 
 
+msgid "Extend"
+msgstr "Erweitern"
+
+
 msgid "Max Ray Distance"
 msgstr "Maximaler Strahlenabstand"
 
@@ -1658,10 +1662,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Wachsstift-Datenblock"
 
 
-msgid "Hairs"
-msgstr "Haare"
-
-
 msgid "Images"
 msgstr "Bilder"
 
@@ -1832,10 +1832,6 @@ msgstr "Formschlüssel"
 
 msgid "Shape Key data-blocks"
 msgstr "Formschlüssel-Datenblöcke"
-
-
-msgid "Simulations"
-msgstr "Simulationen"
 
 
 msgid "Sounds"
@@ -3960,6 +3956,10 @@ msgstr "Farbwert im Geometrieattribut"
 
 msgid "RGBA color in scene linear color space"
 msgstr "RGBA-Farbe im linearen Farbraum der Szene"
+
+
+msgid "Active Layer"
+msgstr "Aktive Ebene"
 
 
 msgid "Object Path"
@@ -7127,10 +7127,6 @@ msgid "For RGB curves, the color that black is mapped to"
 msgstr "Für RGB-Kurven die Farbe, auf die Schwarz abgebildet wird"
 
 
-msgid "Extend"
-msgstr "Erweitern"
-
-
 msgid "Extrapolate the curve or extend it horizontally"
 msgstr "Kurve extrapolieren oder horizontal erweitern"
 
@@ -9572,6 +9568,10 @@ msgid "Show Collection data-blocks"
 msgstr "Sammlungs-Datenblöcke anzeigen"
 
 
+msgid "Hairs"
+msgstr "Haare"
+
+
 msgid "Show/hide Hair data-blocks"
 msgstr "Haar-Datenblöcke anzeigen/verbergen"
 
@@ -9616,14 +9616,6 @@ msgid "Show Movie Clip data-blocks"
 msgstr "Film-Datenblöcke anzeigen"
 
 
-msgid "Node Trees"
-msgstr "Knotenbäume"
-
-
-msgid "Show Node Tree data-blocks"
-msgstr "Knotenbaum-Datenblöcke anzeigen"
-
-
 msgid "Show Paint Curve data-blocks"
 msgstr "Farbkurven-Datenblöcke anzeigen"
 
@@ -9646,6 +9638,10 @@ msgstr "Punkt Wolken-Datenblöcke anzeigen/verstecken"
 
 msgid "Show Scene data-blocks"
 msgstr "Szenen-Datenblöcke anzeigen"
+
+
+msgid "Simulations"
+msgstr "Simulationen"
 
 
 msgid "Show Simulation data-blocks"
@@ -9682,6 +9678,14 @@ msgstr "Aktionen-Datenblöcke anzeigen"
 
 msgid "Show Material data-blocks"
 msgstr "Material-Datenblöcke anzeigen"
+
+
+msgid "Node Trees"
+msgstr "Knotenbäume"
+
+
+msgid "Show Node Tree data-blocks"
+msgstr "Knotenbaum-Datenblöcke anzeigen"
 
 
 msgid "Show Object data-blocks"
@@ -12207,10 +12211,6 @@ msgid "Grease Pencil Layers"
 msgstr "Wachsstift-Ebenen"
 
 
-msgid "Active Layer"
-msgstr "Aktive Ebene"
-
-
 msgid "Active grease pencil layer"
 msgstr "Aktive Wachsstift-Ebene"
 
@@ -14280,10 +14280,6 @@ msgid "Surface Offset"
 msgstr "Oberflächenversatz"
 
 
-msgid "Attributes"
-msgstr "Eigenschaften"
-
-
 msgid "Alpha Mode"
 msgstr "Alphamodus"
 
@@ -15084,6 +15080,10 @@ msgstr "Shader-Knoten verwenden, um Material zu rendern"
 
 msgid "Preview World"
 msgstr "Weltvorschau"
+
+
+msgid "Attributes"
+msgstr "Eigenschaften"
 
 
 msgid "Auto Smooth Angle"
@@ -16567,10 +16567,6 @@ msgstr "Szenendatenblock, bestehend aus Objekten und Definition von Zeit- und Re
 
 msgid "Active Movie Clip"
 msgstr "Aktiver Filmclip"
-
-
-msgid "Active movie clip used for constraints and viewport drawing"
-msgstr "Aktiver Filmclip, der für Beschränkungen und Ansichtsfenster-Darstellung verwendet wird"
 
 
 msgid "Distance Model"
@@ -25375,6 +25371,14 @@ msgid "Or"
 msgstr "Oder"
 
 
+msgid "Equal"
+msgstr "Gleich"
+
+
+msgid "Not Equal"
+msgstr "Ungleich"
+
+
 msgid "Input Type"
 msgstr "Eingabetyp"
 
@@ -25407,16 +25411,8 @@ msgid "True when the first input is greater than the second input or equal"
 msgstr "Wahr, wenn der erste Eingang größer oder gleich dem zweiten Eingang ist"
 
 
-msgid "Equal"
-msgstr "Gleich"
-
-
 msgid "True when both inputs are approximately equal"
 msgstr "Wahr, wenn beide Eingänge in etwas gleich sind"
-
-
-msgid "Not Equal"
-msgstr "Ungleich"
 
 
 msgid "True when both inputs are not approximately equal"
@@ -30434,6 +30430,10 @@ msgid "Unlink active font data-block"
 msgstr "Aufheben der Verknüpfung des aktiven Schriftdatenblocks"
 
 
+msgid "Generic"
+msgstr "Generiert"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Gizmo auswählen"
@@ -31315,6 +31315,14 @@ msgstr "Striche unterteilen"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Farben umdrehen"
+
+
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgctxt "Operator"
@@ -37478,10 +37486,6 @@ msgid "Restrict rigid body translation and rotation to one axis"
 msgstr "Begrenzt Rigid Body Verschiebung und Rotation auf beine Achsen"
 
 
-msgid "Generic"
-msgstr "Generiert"
-
-
 msgid "Restrict translation and rotation to specified axes"
 msgstr "Begrenzt Verschiebung und Rotation auf bestimmte Achsen"
 
@@ -41838,10 +41842,6 @@ msgstr "Einstellungen filtern"
 
 msgid "Fluid Presets"
 msgstr "Flüssigkeits-Voreinstellungen"
-
-
-msgid "Extensions"
-msgstr "Erweiterungen"
 
 
 msgid "Active Tool"
@@ -48200,16 +48200,8 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgid "Display white edges"
@@ -53277,6 +53269,10 @@ msgstr "Steuerelemente"
 
 msgid "Gamepad"
 msgstr "Gamepad"
+
+
+msgid "Extensions"
+msgstr "Erweiterungen"
 
 
 msgid "HP Reverb G2"

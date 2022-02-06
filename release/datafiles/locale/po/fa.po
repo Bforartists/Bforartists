@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Alpha (b'e1e3043a51a6')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -406,6 +406,10 @@ msgstr "ﺭﺍﺩﺮﺑ"
 
 msgid "Image Format"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
+
+
+msgid "Extend"
+msgstr "ﺵﺮﺘﺴﮔ"
 
 
 msgid "Object"
@@ -1839,10 +1843,6 @@ msgstr "ﺭﺎﮐﺩﻮﺧ ﻪﺘﺳﺩ"
 
 msgid "Vector Handle"
 msgstr "ﺭﻮﺘﮐﻭ ﻪٔﺘﺳﺩ"
-
-
-msgid "Extend"
-msgstr "ﺵﺮﺘﺴﮔ"
 
 
 msgid "Horizontal"
