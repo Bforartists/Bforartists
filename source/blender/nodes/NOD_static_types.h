@@ -230,7 +230,7 @@ DefNode(CompositorNode, CMP_NODE_ANTIALIASING,   def_cmp_antialiasing,   "ANTIAL
 DefNode(CompositorNode, CMP_NODE_POSTERIZE,      0,                      "POSTERIZE",      Posterize,        "Posterize",         "Add a Posterize Node\nPosterize reduces the number of colors"              )
 DefNode(CompositorNode, CMP_NODE_CONVERT_COLOR_SPACE,def_cmp_convert_color_space, "CONVERT_COLORSPACE", ConvertColorSpace, "Color Space","Add a Color Space Node\nConvert the color space from one color space to another"       )
 DefNode(CompositorNode, CMP_NODE_SCENE_TIME,     0,                      "SCENE_TIME",      SceneTime,        "Scene Time",        "Add a Scene Time Node\nOutputs the current scene time in seconds or in frames"              )
-DefNode(CompositorNode, CMP_NODE_COMBINE_XYZ,    0,                      "COMBINE_XYZ",    CombineXYZ,       "Combine XYZ",       "Add a Combine XYZ Compositor Node\Not documented yet")
+DefNode(CompositorNode, CMP_NODE_COMBINE_XYZ,    0,                      "COMBINE_XYZ",    CombineXYZ,       "Combine XYZ",       "Add a Combine XYZ Compositor Node\nNot documented yet")
 DefNode(CompositorNode, CMP_NODE_SEPARATE_XYZ,   0,                      "SEPARATE_XYZ",   SeparateXYZ,      "Separate XYZ",      "Add a Separate XYZ Compositor Node\nNot documented yet")
 
 DefNode(TextureNode,    TEX_NODE_OUTPUT,         def_tex_output,         "OUTPUT",         Output,           "Output",            "Add a Output Texture node\nOutput for node textures"              )
