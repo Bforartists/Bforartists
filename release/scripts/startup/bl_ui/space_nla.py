@@ -284,6 +284,9 @@ class NLA_MT_edit(Menu):
         layout.operator("nla.duplicate", text="Duplicate", icon = "DUPLICATE").linked = False
         layout.operator("nla.duplicate", text="Linked Duplicate", icon = "DUPLICATE").linked = True
         layout.operator("nla.split", icon = "SPLIT")
+        props = layout.operator("wm.call_panel", text="Rename", icon = "RENAME")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
         layout.operator("nla.delete", icon = "DELETE")
         layout.operator("nla.tracks_delete", icon = "DELETE")
 
@@ -385,7 +388,7 @@ class NLA_MT_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename...")
+        props = layout.operator("wm.call_panel", text="Rename", icon = "RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
         layout.operator("nla.duplicate", text="Duplicate", icon = "DUPLICATE").linked = False
