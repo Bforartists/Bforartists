@@ -55,6 +55,8 @@
 
 #include "view3d_navigate.h" /* own include */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* -------------------------------------------------------------------- */
 /** \name Navigation Polls
  * \{ */
@@ -995,6 +997,18 @@ static int viewselected_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *view3d_ot_view_selected_get_description(bContext *UNUSED(C),
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_all_regions")) {
+    return BLI_strdup("Move the View to the selection center in all Quad View views");
+  }
+  return NULL;
+}
+
+
 void VIEW3D_OT_view_selected(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1004,6 +1018,7 @@ void VIEW3D_OT_view_selected(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = viewselected_exec;
+  ot->get_description = view3d_ot_view_selected_get_description; /*bfa - descriptions*/
   ot->poll = view3d_zoom_or_dolly_poll;
 
   /* flags */
