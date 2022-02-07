@@ -1863,6 +1863,10 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Combine RGBA ", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "CompositorNodeCombRGBA"
+            
+            props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeCombineXYZ"
 
             props = col.operator("node.add_node", text=" Combine YCbCrA ", icon = "NODE_COMBINEYCBCRA")
             props.use_transform = True
@@ -1897,6 +1901,10 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate RGBA ", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "CompositorNodeSepRGBA"
+            
+            props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeSeparateXYZ"
 
             props = col.operator("node.add_node", text=" Separate YCbCrA ", icon = "NODE_SEPARATE_YCBCRA")
             props.use_transform = True
@@ -1944,6 +1952,10 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "CompositorNodeCombRGBA"
+            
+            props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeCombineXYZ"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEYCBCRA")
             props.use_transform = True
@@ -1972,6 +1984,10 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "CompositorNodeSepRGBA"
+            
+            props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "CompositorNodeSeparateXYZ"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATE_YCBCRA")
             props.use_transform = True
