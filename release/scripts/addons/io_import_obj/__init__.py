@@ -237,7 +237,7 @@ class OBJ_PT_import_geometry(bpy.types.Panel):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)")
+    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)", icon = "LOAD_OBJ")
 
 
 classes = (

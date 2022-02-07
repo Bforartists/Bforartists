@@ -364,7 +364,6 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
             row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
-            #row.operator("import_scene.autodesk_3ds", text="", icon='LOAD_3DS') # bfa - not ported to 2.8 yet
             row.operator("import_scene.gltf", text="", icon='LOAD_GITF')
 
 
@@ -384,7 +383,7 @@ class TOOLBAR_MT_file(Menu):
 
             row = layout.row(align=True)
             row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
-            row.operator("export_scene.obj", text="", icon='SAVE_OBJ')
+            row.operator("wm.obj_export", text="", icon='SAVE_OBJ')
             row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
 
         if addon_prefs.file_export_common2:
@@ -393,7 +392,6 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
             row.operator("wm.usd_export", text="", icon='SAVE_USD')
-            #row.operator("export_scene.autodesk_3ds", text="", icon='SAVE_3DS') # bfa - not ported to 2.8 yet
             row.operator("export_scene.gltf", text="", icon='SAVE_GITF')
 
         ## ------------------ Export uncommon
