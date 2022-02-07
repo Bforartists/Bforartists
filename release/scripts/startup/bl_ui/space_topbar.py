@@ -271,7 +271,6 @@ class TOPBAR_MT_file(Menu):
         layout.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
         layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
-        layout.menu("TOPBAR_MT_file_recover")
         layout.operator("wm.recover_last_session", icon='RECOVER_LAST')
         layout.operator("wm.recover_auto_save", text="Recover Auto Save", icon='RECOVER_AUTO')
 
@@ -382,16 +381,6 @@ class TOPBAR_MT_file_new(Menu):
 
     def draw(self, context):
         TOPBAR_MT_file_new.draw_ex(self.layout, context)
-
-
-class TOPBAR_MT_file_recover(Menu):
-    bl_label = "Recover"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("wm.recover_last_session", text="Last Session")
-        layout.operator("wm.recover_auto_save", text="Auto Save")
 
 
 class TOPBAR_MT_templates_more(Menu):
@@ -820,7 +809,6 @@ classes = (
     TOPBAR_MT_editor_menus,
     TOPBAR_MT_file,
     TOPBAR_MT_file_new,
-    TOPBAR_MT_file_recover,
     TOPBAR_MT_templates_more,
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,
