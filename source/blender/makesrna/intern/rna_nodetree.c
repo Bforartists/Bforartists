@@ -14069,10 +14069,10 @@ static int node_type_to_icon(int type)
       icon = ICON_TIME;
       break;
     case CMP_NODE_COMBINE_XYZ:
-      icon = ICON_DELETE;
+      icon = ICON_NODE_COMBINEXYZ;
       break;
     case CMP_NODE_SEPARATE_XYZ:
-      icon = ICON_DELETE;
+      icon = ICON_NODE_SEPARATEXYZ;
       break;
 
       /* bfa - TextureNode, we don't have these nodes iconized yet */
