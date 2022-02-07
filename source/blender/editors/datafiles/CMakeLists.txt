@@ -98,7 +98,7 @@ attribute_texture
 collection_info
 point_to_volume
 volume_to_mesh
-proxy_override
+# ~ DEF_ICON_BLANK(117)
 attribute_combine_xyz
 attribute_separate_xyz
 
