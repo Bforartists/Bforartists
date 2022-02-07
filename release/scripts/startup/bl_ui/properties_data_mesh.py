@@ -85,7 +85,7 @@ class MESH_MT_attribute_context_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("geometry.attribute_convert")
+        layout.operator("geometry.attribute_convert", icon = "ATTRIBUTE_CONVERT")
 
 
 class MESH_UL_vgroups(UIList):
