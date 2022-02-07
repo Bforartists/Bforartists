@@ -290,7 +290,7 @@ class OBJ_PT_export_geometry(bpy.types.Panel):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj) - Old")
+    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj) - Old", icon = "SAVE_OBJ")
 
 
 classes = (
