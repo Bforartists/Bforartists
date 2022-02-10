@@ -1327,9 +1327,8 @@ field_at_index
 curve_arc
 equalize_handler
 point_info
-#~ DEF_ICON_BLANK(1345)
-#~ DEF_ICON_BLANK(1346)
-#~ DEF_ICON_BLANK(1347)
+paint_add
+paint_average
 
 # ------------------------- row 20 --------------------------*/
 
@@ -1388,14 +1387,14 @@ lightmappack
 projectfromview
 sphereproject
 
-#~ DEF_ICON_BLANK(1406)
-#~ DEF_ICON_BLANK(1407)
-#~ DEF_ICON_BLANK(1408)
-#~ DEF_ICON_BLANK(1409)
-#~ DEF_ICON_BLANK(1410)
-#~ DEF_ICON_BLANK(1411)
-#~ DEF_ICON_BLANK(1412)
-#~ DEF_ICON_BLANK(1413)
+paint_blur
+paint_darken
+paint_draw
+paint_lighten
+paint_mix
+paint_multiply
+paint_smear
+paint_subtract
 #~ DEF_ICON_BLANK(1414)
 #~ DEF_ICON_BLANK(1415)
 
