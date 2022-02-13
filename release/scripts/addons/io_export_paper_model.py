@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-# This script is Free software. Please share and reuse.
-# ♡2010-2021 Adam Dominec <adominec@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Copyright 2010-2021 Adam Dominec <adominec@gmail.com>
 
 ## Code structure
 # This file consists of several components, in this order:

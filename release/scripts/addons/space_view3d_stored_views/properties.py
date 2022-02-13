@@ -1,4 +1,6 @@
-# gpl authors: nfloyd, Francesco Siddi
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# authors: nfloyd, Francesco Siddi
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import (

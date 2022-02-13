@@ -1,4 +1,6 @@
-# gpl authors: nfloyd, Francesco Siddi
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Authors: nfloyd, Francesco Siddi
 
 import gzip
 import os

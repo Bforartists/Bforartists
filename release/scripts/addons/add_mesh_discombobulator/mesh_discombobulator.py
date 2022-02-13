@@ -1,4 +1,6 @@
-# GPL # Original Authors: Evan J. Rosky (syrux), Chichiri, Jace Priester #
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Original Authors: Evan J. Rosky (syrux), Chichiri, Jace Priester
 
 import bpy
 import random

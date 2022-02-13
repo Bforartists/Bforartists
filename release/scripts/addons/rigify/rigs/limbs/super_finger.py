@@ -1,20 +1,4 @@
-#====================== BEGIN GPL LICENSE BLOCK ======================
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-#======================= END GPL LICENSE BLOCK ========================
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # <pep8 compliant>
 
@@ -167,6 +151,12 @@ class Rig(SimpleChainRig):
             prop_id='IK_parent', prop_name='IK Parent', controls=[ ctrl.ik ],
             no_fix_rotation=True, no_fix_scale=True,
         )
+
+    @stage.parent_bones
+    def parent_ik_control(self):
+        if self.make_ik:
+            bone = self.get_bone(self.bones.ctrl.ik)
+            bone.use_local_location = self.params.ik_local_location
 
     @stage.configure_bones
     def configure_ik_control(self):
@@ -382,6 +372,12 @@ class Rig(SimpleChainRig):
             description = "Create an optional IK control"
         )
 
+        params.ik_local_location = bpy.props.BoolProperty(
+            name        = 'IK Local Location',
+            default     = True,
+            description = "Specifies the value of the Local Location option for IK controls, which decides if the location channels are aligned to the local control orientation or world",
+        )
+
         ControlLayersOption.TWEAK.add_parameters(params)
         ControlLayersOption.EXTRA_IK.add_parameters(params)
 
@@ -395,6 +391,9 @@ class Rig(SimpleChainRig):
 
         layout.prop(params, 'bbones')
         layout.prop(params, 'make_extra_ik_control', text='IK Control')
+
+        if params.make_extra_ik_control:
+            layout.prop(params, 'ik_local_location')
 
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
@@ -637,6 +636,10 @@ def create_sample(obj):
         pass
     try:
         pbone.rigify_parameters.tweak_extra_layers = False
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.ik_local_location = False
     except AttributeError:
         pass
     pbone = obj.pose.bones[bones['f_pinky.02.L']]

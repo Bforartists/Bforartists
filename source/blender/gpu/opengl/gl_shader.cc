@@ -1,21 +1,5 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * The Original Code is Copyright (C) 2020 Blender Foundation.
- * All rights reserved.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later
+ * Copyright 2020 Blender Foundation. All rights reserved. */
 
 /** \file
  * \ingroup gpu
@@ -85,7 +69,7 @@ static const char *to_string(const Interpolation &interp)
     case Interpolation::NO_PERSPECTIVE:
       return "noperspective";
     default:
-      return "unkown";
+      return "unknown";
   }
 }
 
@@ -123,7 +107,7 @@ static const char *to_string(const Type &type)
     case Type::BOOL:
       return "bool";
     default:
-      return "unkown";
+      return "unknown";
   }
 }
 
@@ -520,7 +504,7 @@ std::string GLShader::vertex_interface_declare(const ShaderCreateInfo &info) con
   ss << "\n/* Inputs. */\n";
   for (const ShaderCreateInfo::VertIn &attr : info.vertex_inputs_) {
     if (GLContext::explicit_location_support &&
-        /* Fix issue with amdgpu-pro + workbench_prepass_mesh_vert.glsl being quantized. */
+        /* Fix issue with AMDGPU-PRO + workbench_prepass_mesh_vert.glsl being quantized. */
         GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL) == false) {
       ss << "layout(location = " << attr.index << ") ";
     }

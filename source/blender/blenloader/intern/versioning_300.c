@@ -1,18 +1,4 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup blenloader
@@ -1103,6 +1089,15 @@ static bool seq_transform_origin_set(Sequence *seq, void *UNUSED(user_data))
   StripTransform *transform = seq->strip->transform;
   if (seq->strip->transform != NULL) {
     transform->origin[0] = transform->origin[1] = 0.5f;
+  }
+  return true;
+}
+
+static bool seq_transform_filter_set(Sequence *seq, void *UNUSED(user_data))
+{
+  StripTransform *transform = seq->strip->transform;
+  if (seq->strip->transform != NULL) {
+    transform->filter = SEQ_TRANSFORM_FILTER_BILINEAR;
   }
   return true;
 }
@@ -2545,6 +2540,14 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         version_node_output_socket_name(
             ntree, GEO_NODE_INPUT_MESH_ISLAND, "Index", "Island Index");
         version_node_input_socket_name(ntree, GEO_NODE_TRANSFER_ATTRIBUTE, "Target", "Source");
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 302, 2)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->ed != NULL) {
+        SEQ_for_each_callback(&scene->ed->seqbase, seq_transform_filter_set, NULL);
       }
     }
   }

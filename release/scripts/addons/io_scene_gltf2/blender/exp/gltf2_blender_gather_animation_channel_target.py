@@ -1,16 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 
 import bpy
@@ -86,13 +75,11 @@ def __gather_node(channels: typing.Tuple[bpy.types.FCurve],
 
         if isinstance(blender_bone, bpy.types.PoseBone):
             if export_settings["gltf_def_bones"] is False:
-                obj = blender_object.proxy if blender_object.proxy else blender_object
-                return gltf2_blender_gather_joints.gather_joint(obj, blender_bone, export_settings)
+                return gltf2_blender_gather_joints.gather_joint(blender_object, blender_bone, export_settings)
             else:
                 bones, _, _ = gltf2_blender_gather_skins.get_bone_tree(None, blender_object)
                 if blender_bone.name in [b.name for b in bones]:
-                    obj = blender_object.proxy if blender_object.proxy else blender_object
-                    return gltf2_blender_gather_joints.gather_joint(obj, blender_bone, export_settings)
+                    return gltf2_blender_gather_joints.gather_joint(blender_object, blender_bone, export_settings)
 
     return gltf2_blender_gather_nodes.gather_node(blender_object,
         blender_object.library.name if blender_object.library else None,
