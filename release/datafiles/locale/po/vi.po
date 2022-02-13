@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -108789,10 +108789,6 @@ msgstr "Biến hóa cuối của vật thể hoạt động có một trở lên
 
 msgid "Cannot delete indirectly linked object '%s'"
 msgstr "Không được xóa thư viện được liên kết với vật thể '%s' gián tiếp"
-
-
-msgid "Cannot delete object '%s' as it used by override collections"
-msgstr "Không thể xoá vật thể '%s' vì nó được dùng bởi sưu tập đồ thay thế"
 
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"

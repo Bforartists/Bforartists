@@ -1,18 +1,4 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup obj
@@ -102,30 +88,6 @@ class OBJWriter : NonMovable, NonCopyable {
    * \note Normal indices ares stored here, but written with polygons later.
    */
   void write_poly_normals(FormatHandler<eFileType::OBJ> &fh, OBJMesh &obj_mesh_data);
-  /**
-   * Write smooth group if polygon at the given index is shaded smooth else "s 0"
-   */
-  int write_smooth_group(FormatHandler<eFileType::OBJ> &fh,
-                         const OBJMesh &obj_mesh_data,
-                         int poly_index,
-                         int last_poly_smooth_group) const;
-  /**
-   * Write material name and material group of a polygon in the .OBJ file.
-   * \return #mat_nr of the polygon at the given index.
-   * \note It doesn't write to the material library.
-   */
-  int16_t write_poly_material(FormatHandler<eFileType::OBJ> &fh,
-                              const OBJMesh &obj_mesh_data,
-                              int poly_index,
-                              int16_t last_poly_mat_nr,
-                              std::function<const char *(int)> matname_fn) const;
-  /**
-   * Write the name of the deform group of a polygon.
-   */
-  int16_t write_vertex_group(FormatHandler<eFileType::OBJ> &fh,
-                             const OBJMesh &obj_mesh_data,
-                             int poly_index,
-                             int16_t last_poly_vertex_group) const;
   /**
    * Write polygon elements with at least vertex indices, and conditionally with UV vertex
    * indices and polygon normal indices. Also write groups: smooth, vertex, material.

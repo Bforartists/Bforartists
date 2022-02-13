@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-01-27 20:33-0300\n"
+"PO-Revision-Date: 2022-02-01 15:03-0300\n"
 "Last-Translator: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "Language-Team: Leandro Paganelli, Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
 "Language: pt_BR\n"
@@ -1409,6 +1409,10 @@ msgstr "Bibliotecas"
 
 msgid "Library data-blocks"
 msgstr "Blocos de dados de bibliotecas."
+
+
+msgid "Light Probe data-blocks"
+msgstr "Blocos de dados das sondas de luz"
 
 
 msgid "Lights"
@@ -3176,7 +3180,7 @@ msgstr "Mostrar em plano frontal"
 
 
 msgid "Show this image in front of objects in viewport"
-msgstr "Mostra esta imagem na frente de objetos na porta de visão."
+msgstr "Mostra esta imagem na frente de objetos na janela de exibição."
 
 
 msgid "Background Source"
@@ -6313,7 +6317,7 @@ msgstr "Gráfico de dependências"
 
 
 msgid "Viewport"
-msgstr "Porta de visão"
+msgstr "Janela de Exibição"
 
 
 msgid "Render"
@@ -6629,7 +6633,7 @@ msgstr "Ordenar blocos de dados"
 
 
 msgid "Alphabetically sorts data-blocks - mainly objects in the scene (disable to increase viewport speed)"
-msgstr "Ordena alfabeticamente os blocos de dados, principalmente os dos objetos presentes na cena. Desabilite para aumentar a velocidade na porta de visão."
+msgstr "Ordena alfabeticamente os blocos de dados, principalmente os dos objetos presentes na cena. Desabilite para aumentar a velocidade na janela de exibição."
 
 
 msgid "Invert"
@@ -9133,6 +9137,10 @@ msgid "Fonts"
 msgstr "Fontes"
 
 
+msgid "Show Light Probe data-blocks"
+msgstr "Mostra blocos de dados das sondas de luz"
+
+
 msgid "Freestyle Linestyles"
 msgstr "Freestyle - Estilos de linhas"
 
@@ -9221,6 +9229,10 @@ msgid "Particle"
 msgstr "Partículas"
 
 
+msgid "Light Probe"
+msgstr "Sonda de Luz"
+
+
 msgid "Simulation"
 msgstr "Simulação"
 
@@ -9247,6 +9259,10 @@ msgstr "Gerenciador de janelas"
 
 msgid "World"
 msgstr "Ambiente"
+
+
+msgid "Workspace"
+msgstr "Espaço de Trabalho"
 
 
 msgid "Icon ID"
@@ -10774,7 +10790,7 @@ msgstr "Os dados dos pontos de traço."
 
 
 msgid "Stroke is selected for viewport editing"
-msgstr "O traço está selecionado para a edição na porta de visão."
+msgstr "O traço está selecionado para a edição na janela de exibição."
 
 
 msgid "Start Cap"
@@ -10818,7 +10834,7 @@ msgstr "Pressão pontual na mesa de desenho ao desenhar."
 
 
 msgid "Point is selected for viewport editing"
-msgstr "O ponto está selecionado para edição na porta de visão."
+msgstr "O ponto está selecionado para edição na janela de exibição."
 
 
 msgid "Color intensity (alpha factor)"
@@ -10975,7 +10991,7 @@ msgstr "Usa o modificador durante a renderização."
 
 
 msgid "Display modifier in viewport"
-msgstr "Mostra o modificador na porta de visão."
+msgstr "Mostra o modificador na janela de exibição."
 
 
 msgid "Texture Mapping"
@@ -11930,7 +11946,7 @@ msgstr "Dimensões de máscara de estêncil"
 
 
 msgid "Dimensions of mask stencil in viewport"
-msgstr "As dimensões da máscara de estêncil dentro da porta de visão."
+msgstr "As dimensões da máscara de estêncil dentro da janela de exibição."
 
 
 msgid "Mask Stencil Position"
@@ -11938,7 +11954,7 @@ msgstr "Posição de máscara de estêncil"
 
 
 msgid "Position of mask stencil in viewport"
-msgstr "A posição da máscara de estêncil dentro da porta de visão."
+msgstr "A posição da máscara de estêncil dentro da janela de exibição."
 
 
 msgid "Mask Texture"
@@ -12126,7 +12142,7 @@ msgstr "Dimensões do estêncil"
 
 
 msgid "Dimensions of stencil in viewport"
-msgstr "As dimensões do estêncil dentro da porta de visão."
+msgstr "As dimensões do estêncil dentro da janela de exibição."
 
 
 msgid "Stencil Position"
@@ -12134,7 +12150,7 @@ msgstr "Posição do estêncil"
 
 
 msgid "Position of stencil in viewport"
-msgstr "A posição do estêncil dentro da porta de visão."
+msgstr "A posição do estêncil dentro da janela de exibição."
 
 
 msgid "How powerful the effect of the brush is when applied"
@@ -12234,7 +12250,7 @@ msgstr "Usar sobreposição de cursor"
 
 
 msgid "Show cursor in viewport"
-msgstr "Mostra o cursor na porta de visão."
+msgstr "Mostra o cursor na janela de exibição."
 
 
 msgid "Override Overlay"
@@ -12394,7 +12410,7 @@ msgstr "Usar sobreposição de textura"
 
 
 msgid "Show texture in viewport"
-msgstr "Mostra a textura na porta de visão."
+msgstr "Mostra a textura na janela de exibição."
 
 
 msgid "Restore Mesh"
@@ -13810,7 +13826,7 @@ msgstr "Modo edição de traço(s)"
 
 
 msgid "Edit Grease Pencil strokes instead of viewport data"
-msgstr "Permite a edição dos traços de lápis de cera ao invés dos dados na porta de visão."
+msgstr "Permite a edição dos traços de lápis de cera ao invés dos dados na janela de exibição."
 
 
 msgid "Image data-block referencing an external or packed image"
@@ -14487,6 +14503,10 @@ msgid "Cast a square spot light shape"
 msgstr "Projeta um foco de luz usando arestas de iluminação em formato de quadrado."
 
 
+msgid "Light Probe data-block for lighting capture objects"
+msgstr "Bloco de dados da sonda de luz para objetos de captura de luz"
+
+
 msgid "Resolution X"
 msgstr "Resolução X"
 
@@ -14497,6 +14517,22 @@ msgstr "Resolução Y"
 
 msgid "Intensity"
 msgstr "Intensidade"
+
+
+msgid "Type of light probe"
+msgstr "Tipo de sonda de luz"
+
+
+msgid "Reflection Cubemap"
+msgstr "Cubo de Mapa de Reflexão"
+
+
+msgid "Reflection Plane"
+msgstr "Plano de Reflexão"
+
+
+msgid "Irradiance Volume"
+msgstr "Volume de Irradiação"
 
 
 msgid "Bias for reducing light-bleed on variance shadow maps"
@@ -14892,7 +14928,7 @@ msgstr "Resolução do aramado"
 
 
 msgid "Polygonization resolution in the 3D viewport"
-msgstr "Resolução de poligonização dentro da porta de visão 3D."
+msgstr "Resolução de poligonização dentro da janela de exibição 3D."
 
 
 msgid "Update"
@@ -15352,7 +15388,7 @@ msgstr "Tamanho para mostrar vazio"
 
 
 msgid "Size of display for empties in the viewport"
-msgstr "Tamanho para mostrar os objetos do tipo vazio na porta de visão."
+msgstr "Tamanho para mostrar os objetos do tipo vazio na janela de exibição."
 
 
 msgid "Empty Display Type"
@@ -15360,7 +15396,7 @@ msgstr "Tipo de visualização para objeto vazio"
 
 
 msgid "Viewport display style for empties"
-msgstr "Estilo de visualização na porta de visão para objetos do tipo vazio."
+msgstr "Estilo de visualização na janela de exibição para objetos do tipo vazio."
 
 
 msgid "Plain Axes"
@@ -18161,7 +18197,7 @@ msgstr "Categoria"
 
 
 msgid "Filter add-ons by category"
-msgstr "Permite o filtro de complementos por categoria."
+msgstr "Filtrar complementos por categoria"
 
 
 msgid "Search"
@@ -21516,7 +21552,7 @@ msgstr "Restringir a visualização"
 
 
 msgid "Restrict visibility in the viewport"
-msgstr "Restringe a visibilidade na porta de visão ."
+msgstr "Restringe a visibilidade na janela de exibição ."
 
 
 msgid "Restrict Render"
@@ -21532,7 +21568,7 @@ msgstr "Restringir a seleção"
 
 
 msgid "Restrict selection in the viewport"
-msgstr "Restringe a a seleção a porta de visão."
+msgstr "Restringe a a seleção a janela de exibição."
 
 
 msgid "Invert the mask black/white"
@@ -22106,6 +22142,10 @@ msgid "Make Single User"
 msgstr "Tornar usuário único"
 
 
+msgid "Convert"
+msgstr "Converter"
+
+
 msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
@@ -22172,6 +22212,10 @@ msgstr "Predefinições de operadores"
 
 msgid "Splash"
 msgstr "Abertura"
+
+
+msgid "Quick Setup"
+msgstr "Configuração Rápida"
 
 
 msgid "Mesh Edge"
@@ -22768,6 +22812,10 @@ msgstr "Subdivisão de superfície"
 
 msgid "Triangulate"
 msgstr "Triangular"
+
+
+msgid "Convert all polygons to triangles"
+msgstr "Converte todos os polígonos para triângulos"
 
 
 msgid "Wireframe"
@@ -24327,7 +24375,7 @@ msgstr "Níveis"
 
 
 msgid "Number of subdivisions to use in the viewport"
-msgstr "Número de subdivisões para usar na porta de visão."
+msgstr "Número de subdivisões para usar na janela de exibição."
 
 
 msgid "Render Levels"
@@ -26771,7 +26819,7 @@ msgstr "Posição do encapsulamento reconstruído a partir desta trilha."
 
 
 msgid "Color of the track in the Movie Clip Editor and the 3D viewport after a solve"
-msgstr "Cor da trilha dentro do editor de clipes de filme e na porta de visão 3D após a solução."
+msgstr "Cor da trilha dentro do editor de clipes de filme e na janela de exibição 3D após a solução."
 
 
 msgid "Minimal value of correlation between matched pattern and reference that is still treated as successful tracking"
@@ -27196,6 +27244,10 @@ msgstr "Nós de composição"
 
 msgid "Alpha Over"
 msgstr "Alfa por cima"
+
+
+msgid "Convert Premultiplied"
+msgstr "Converter pré-multiplicadas"
 
 
 msgid "Bilateral Blur"
@@ -28847,6 +28899,14 @@ msgid "Edge Angle"
 msgstr "Ângulos das arestas"
 
 
+msgid "Is Viewport"
+msgstr "É Janela e Exibição"
+
+
+msgid "Attribute Convert"
+msgstr "Converter Atributos"
+
+
 msgid "Cross Product"
 msgstr "Produto vetorial"
 
@@ -30456,6 +30516,22 @@ msgid "Axis Range"
 msgstr "Alcance dos eixos"
 
 
+msgid "Set"
+msgstr "Definir"
+
+
+msgid "Set a new selection"
+msgstr "Definir nova seleção"
+
+
+msgid "Extend existing selection"
+msgstr "Estende a seleção existente"
+
+
+msgid "Subtract existing selection"
+msgstr "Subtrair da seleção existente"
+
+
 msgid "Wait for Input"
 msgstr "Aguardar entrada de dados"
 
@@ -31096,6 +31172,18 @@ msgstr "Definir quadro inicial"
 msgctxt "Operator"
 msgid "Update Animated Transform Constraints"
 msgstr "Atualizar as restrições de transformações de animação"
+
+
+msgid "Convert to Radians"
+msgstr "Converter para radianos"
+
+
+msgid ""
+"Convert f-curves/drivers affecting rotations to radians.\n"
+"Warning: Use this only once"
+msgstr ""
+"Converte controladores ou curvas-f que afetam as rotações para radianos.\n"
+"AVISO: use somente uma vez"
 
 
 msgctxt "Operator"
@@ -32936,7 +33024,7 @@ msgstr "Encaixar visualização"
 
 
 msgid "Fit frame to the viewport"
-msgstr "Encaixa o quadro para a porta de visão."
+msgstr "Encaixa o quadro para a janela de exibição."
 
 
 msgctxt "Operator"
@@ -35473,6 +35561,11 @@ msgid "Add Geometry Attribute"
 msgstr "Adicionar Atributo de Geometria"
 
 
+msgctxt "Operator"
+msgid "Convert Attribute"
+msgstr "Converter Atributo"
+
+
 msgid "Generic"
 msgstr "Genérico"
 
@@ -35484,7 +35577,7 @@ msgstr "Remover Atributo de Geometria"
 
 msgctxt "Operator"
 msgid "Gizmo Select"
-msgstr "Selecionar Apetrecho"
+msgstr "Apetrecho Selecionar"
 
 
 msgid "Remove from selection"
@@ -35501,7 +35594,7 @@ msgstr "Permite alternar a seleção"
 
 msgctxt "Operator"
 msgid "Gizmo Tweak"
-msgstr "Modificar Apetrecho"
+msgstr "Apetrecho Ajuste"
 
 
 msgctxt "Operator"
@@ -35586,7 +35679,7 @@ msgstr "Lado"
 
 
 msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
-msgstr "Reprojeta os trações para que sejam encerrados dentro do mesmo plano, como se fossem desenhados a partir da porta de visão atual usando o posicionamento dos traços no cursor."
+msgstr "Reprojeta os trações para que sejam encerrados dentro do mesmo plano, como se fossem desenhados a partir da janela de exibição atual usando o posicionamento dos traços no cursor."
 
 
 msgctxt "Operator"
@@ -35737,6 +35830,10 @@ msgid "Whether the converted Grease Pencil layer has valid timing data (internal
 msgstr "Verifica se a camada de lápis de cera convertida possui dados de temporização válidos (uso interno)."
 
 
+msgid "Convert 2.7x grease pencil files to 2.80"
+msgstr "Converter arquivos lápis de cera 2.7x para 2.80"
+
+
 msgctxt "Operator"
 msgid "Copy Strokes"
 msgstr "Copiar traços"
@@ -35818,6 +35915,10 @@ msgstr "Entra ou sai do modo de edição para os traços de lápis de cera."
 msgctxt "Operator"
 msgid "Extract Palette from Vertex Color"
 msgstr "Extrair Paleta da Cor do Vértice"
+
+
+msgid "Convert only selected strokes"
+msgstr "Apaga apenas os traços selecionados"
 
 
 msgctxt "Operator"
@@ -36171,7 +36272,7 @@ msgstr "Reprojetar traços"
 
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
-msgstr "Reprojeta os traços selecionados a partir da porta de visão atual como se eles fossem recém desenhados (por exemplo, para consertos de problemas gerados por movimentos acidentais do cursor 3D ou alterações acidentais da porta de visão, ou para combinação com geometrias deformantes)"
+msgstr "Reprojeta os traços selecionados a partir da janela de exibição atual como se eles fossem recém desenhados (por exemplo, para consertos de problemas gerados por movimentos acidentais do cursor 3D ou alterações acidentais da janela de exibição, ou para combinação com geometrias deformantes)"
 
 
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
@@ -36260,6 +36361,14 @@ msgstr "Alternado"
 
 msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Permite selecionar os traços de lápis de cera através do desenho de um retângulo definindo margens de abrangência."
+
+
+msgid "Inverts existing selection"
+msgstr "Inverte seleção existente"
+
+
+msgid "Intersect existing selection"
+msgstr "Intersecção com a seleção existente"
 
 
 msgid "Select Grease Pencil strokes using brush selection"
@@ -39728,7 +39837,7 @@ msgstr "Rosquear"
 
 
 msgid "Extrude selected vertices in screw-shaped rotation around the cursor in indicated viewport"
-msgstr "Executa uma extrusão nos vértices selecionados na porta de visão indicada, rotacionando-os em formato de rosca, usando a posição do cursor como referência tridimensional."
+msgstr "Executa uma extrusão nos vértices selecionados na janela de exibição indicada, rotacionando-os em formato de rosca, usando a posição do cursor como referência tridimensional."
 
 
 msgid "Turns"
@@ -40141,7 +40250,7 @@ msgstr "Reverte a ordem atual dos elementos selecionados."
 
 
 msgid "Extrude selected vertices in a circle around the cursor in indicated viewport"
-msgstr "Executa uma extrusão dos vértices selecionados dentro de um círculo em torno do cursor, dentro da porta de visão indicada."
+msgstr "Executa uma extrusão dos vértices selecionados dentro de um círculo em torno do cursor, dentro da janela de exibição indicada."
 
 
 msgid "Rotation for each step"
@@ -41567,6 +41676,10 @@ msgid "Add Collection Instance"
 msgstr "Acionar Instância de Coleção"
 
 
+msgid "Add a collection instance"
+msgstr "Adiciona uma instância de coleção"
+
+
 msgctxt "Operator"
 msgid "Link to Collection"
 msgstr "Vincular à Coleção"
@@ -41947,6 +42060,14 @@ msgid "Hide Collection"
 msgstr "Ocultar Coleção"
 
 
+msgid "Collection Index"
+msgstr "Índice da Coleção"
+
+
+msgid "Toggle visibility"
+msgstr "Alterar visibilidade"
+
+
 msgctxt "Operator"
 msgid "Clear All Restrict Render"
 msgstr "Limpar todas as restrições de renderização"
@@ -42101,6 +42222,10 @@ msgid "Add Light Probe"
 msgstr "Adicionar Sonda de Luz"
 
 
+msgid "Add a light probe object"
+msgstr "Adiciona um objeto sonda de luz"
+
+
 msgctxt "Operator"
 msgid "Bake Line Art"
 msgstr "Capturar Arte de Linha"
@@ -42124,6 +42249,10 @@ msgstr "Limpar Arte de Linhas Capturadas (tudo)"
 msgctxt "Operator"
 msgid "Load Background Image"
 msgstr "Abrir Imagem de plano de fundo"
+
+
+msgid "Align to View"
+msgstr "Alinhar para a vista"
 
 
 msgctxt "Operator"
@@ -42153,9 +42282,37 @@ msgid "Make Instance Face"
 msgstr "Fazer Face de Instância"
 
 
+msgid "Convert objects into instanced faces"
+msgstr "Converte objetos em duplicações por face instanciadas"
+
+
 msgctxt "Operator"
 msgid "Link/Transfer Data"
 msgstr "Vincular/Transferir Dados"
+
+
+msgid "Link Object Data"
+msgstr "Vincular Dados do objeto"
+
+
+msgid "Link Materials"
+msgstr "Vincular Materiais"
+
+
+msgid "Link Animation Data"
+msgstr "Vincular Dados de Animação"
+
+
+msgid "Link Collections"
+msgstr "Vincular Coleções"
+
+
+msgid "Link Instance Collection"
+msgstr "Vincular Coleções de Instância"
+
+
+msgid "Replace assigned Collection Instance"
+msgstr "Substitui Instância de Coleção atribuída"
 
 
 msgid "Link Fonts to Text"
@@ -42164,6 +42321,14 @@ msgstr "Vincular Fontes ao Texto"
 
 msgid "Replace Text object Fonts"
 msgstr "Substituir Fontes do objeto Texto"
+
+
+msgid "Copy Modifiers"
+msgstr "Copiar Modificadores"
+
+
+msgid "Replace Modifiers"
+msgstr "Substituir Modificadores"
 
 
 msgctxt "Operator"
@@ -42316,13 +42481,21 @@ msgid "Set Object Mode with Sub-mode"
 msgstr "Definir Modo de Objeto com Sub-modo"
 
 
+msgid "Mesh Mode"
+msgstr "Modo Malha"
+
+
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Adiciona um efeito ou operação procedural ao objeto ativo."
 
 
+msgid "Keep Modifier"
+msgstr "Manter Modificador"
+
+
 msgctxt "Operator"
 msgid "Convert Modifier"
-msgstr "Converter modificador"
+msgstr "Converter Modificador"
 
 
 msgid "Convert particles to a mesh object"
@@ -42584,6 +42757,14 @@ msgid "Paste Global Transform"
 msgstr "Colar Transformação Global"
 
 
+msgid "Paste Method"
+msgstr "Método de Colar"
+
+
+msgid "Selected Keys"
+msgstr "Chaves Selecionadas"
+
+
 msgctxt "Operator"
 msgid "Calculate Object Paths"
 msgstr "Calcular caminhos de objeto"
@@ -42637,6 +42818,10 @@ msgid "Edge Length"
 msgstr "Comprimentos da arestas"
 
 
+msgid "Smooth Normals"
+msgstr "Suavizar Normais"
+
+
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Gerar explosão rápida"
@@ -42686,6 +42871,10 @@ msgstr "Mantém os objetos de fumaça visíveis durante a renderização."
 
 msgid "Smoke Style"
 msgstr "Estilo de fumaça"
+
+
+msgid "Smoke & Fire"
+msgstr "Fogo e Fumaça"
 
 
 msgctxt "Operator"
@@ -42791,8 +42980,24 @@ msgid "Select all visible objects grouped by various properties"
 msgstr "Seleciona todos os objetos visíveis agrupados por diversas propriedades ."
 
 
+msgid "Shared parent"
+msgstr "Parentes compartilhados"
+
+
 msgid "Shared object type"
 msgstr "Tipos de objetos compartilhados."
+
+
+msgid "Shared collection"
+msgstr "Coleção compartilhada"
+
+
+msgid "Render pass index"
+msgstr "Índices de passos de renderização"
+
+
+msgid "Object color"
+msgstr "Cor do Objeto"
 
 
 msgid "Objects included in active Keying Set"
@@ -42887,6 +43092,10 @@ msgstr "Corlorizar"
 msgctxt "ID"
 msgid "Flip"
 msgstr "Virar"
+
+
+msgid "Flip image"
+msgstr "Virar Imagem"
 
 
 msgctxt "ID"
@@ -43367,6 +43576,10 @@ msgid "Invert the lock state of all vertex groups"
 msgstr "Inverte o estado de bloqueio de todos os grupos de vértices."
 
 
+msgid "Invert Unselected"
+msgstr "Inverter Desselecionados"
+
+
 msgctxt "Operator"
 msgid "Mirror Vertex Group"
 msgstr "Espelhar o grupo de vértices"
@@ -43637,6 +43850,10 @@ msgstr "Limpar controladores"
 msgctxt "Operator"
 msgid "Set Color Tag"
 msgstr "Definir Cor de Etiqueta"
+
+
+msgid "Color Tag"
+msgstr "Etiqueta de Cor"
 
 
 msgctxt "Operator"
@@ -44635,6 +44852,10 @@ msgid "Join Palette Swatches"
 msgstr "Juntar Amostras de Paletas"
 
 
+msgid "Name of the Palette"
+msgstr "Nome da Paleta"
+
+
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Adicionar uma nova paleta"
@@ -45022,6 +45243,10 @@ msgid "Create Pose Asset"
 msgstr "Criar Recurso de Pose"
 
 
+msgid "Activate New Action"
+msgstr "Ativar Nova Ação"
+
+
 msgid "Pose Name"
 msgstr "Nome da pose"
 
@@ -45124,6 +45349,10 @@ msgstr "Aplicar pose como pose de descanso"
 
 msgid "Apply the current pose as the new rest pose"
 msgstr "Aplica a pose atual como a nova pose de descanso."
+
+
+msgid "Selected Only"
+msgstr "Somente Selecionados"
 
 
 msgid "Axis Lock"
@@ -45696,6 +45925,21 @@ msgstr "Remove os modelos existentes com o mesmo identificador."
 
 
 msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Adicionar Biblioteca de Recursos"
+
+
+msgctxt "Operator"
+msgid "Remove Asset Library"
+msgstr "Remover Biblioteca de Recursos"
+
+
+msgctxt "Operator"
+msgid "Register File Association"
+msgstr "Registrar Associação de Arquivo"
+
+
+msgctxt "Operator"
 msgid "Copy Previous Settings"
 msgstr "Copiar as configurações anteriores"
 
@@ -45807,6 +46051,11 @@ msgstr "Redefine para as cores do tema padrão."
 
 
 msgctxt "Operator"
+msgid "Copy Studio Light Settings"
+msgstr "Copiar Definições de Luz de Estúdio"
+
+
+msgctxt "Operator"
 msgid "Install Light"
 msgstr "Instalar Luz"
 
@@ -45821,6 +46070,16 @@ msgstr "Instalar HDRIs personalizados"
 
 msgid "Studio"
 msgstr "Studio"
+
+
+msgctxt "Operator"
+msgid "Save Custom Studio Light"
+msgstr "Salvar Luz de Estúdio Personalizada"
+
+
+msgctxt "Operator"
+msgid "Uninstall Studio Light"
+msgstr "Desinstalar Luz de Estúdio"
 
 
 msgctxt "Operator"
@@ -45975,7 +46234,7 @@ msgstr "Usar a Janela de Exibição 3D"
 
 
 msgid "When inside a 3D viewport, use layers and camera of the viewport"
-msgstr "Quando o cursor estiver localizado dentro de uma porta de visão 3D, usa as camadas e a câmera da porta de visão."
+msgstr "Quando o cursor estiver localizado dentro de uma janela de exibição 3D, usa as camadas e a câmera da janela de exibição."
 
 
 msgctxt "Operator"
@@ -46496,6 +46755,11 @@ msgstr "Adiciona um modificador de espessura de linha para o estilo de linha ass
 
 
 msgctxt "Operator"
+msgid "Add Grease Pencil Material Preset"
+msgstr "Adicionar Material Predefinido de Lápis de Cera"
+
+
+msgctxt "Operator"
 msgid "Bake Light Cache"
 msgstr "Capturar Cache de luz"
 
@@ -46996,6 +47260,10 @@ msgid "Edit Face Set"
 msgstr "Editar Conjuntos de Faces"
 
 
+msgid "Use Cursor"
+msgstr "Usar Cursor"
+
+
 msgctxt "Operator"
 msgid "Mask Filter"
 msgstr "Filtro de Máscara"
@@ -47057,6 +47325,10 @@ msgstr "Redefine a cópia da malha que está sendo esculpida."
 
 msgid "Symmetrize the topology modifications"
 msgstr "Simetriza as modificações da topologia."
+
+
+msgid "Trim Mode"
+msgstr "Modo de Aparar"
 
 
 msgctxt "Operator"
@@ -49482,7 +49754,7 @@ msgstr "Limpa a afixação para a seleção ao invés de configurá-la."
 
 
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
-msgstr "Projeta os vértices UV da malha como vistos dentro da porta de visão 3D atual."
+msgstr "Projeta os vértices UV da malha como vistos dentro da janela de exibição 3D atual."
 
 
 msgid "Camera Bounds"
@@ -52034,7 +52306,7 @@ msgstr "Cor de estêncil"
 
 
 msgid "Stencil color in the viewport"
-msgstr "A cor do estêncil na porta de visão."
+msgstr "A cor do estêncil na janela de exibição."
 
 
 msgid "Stencil Image"
@@ -52523,7 +52795,7 @@ msgstr "Ajustar"
 
 msgctxt "Operator"
 msgid "Select Box"
-msgstr "Selecionar Caixa"
+msgstr "Caixa de Seleção"
 
 
 msgctxt "Operator"
@@ -52624,7 +52896,7 @@ msgstr "Compartimentos"
 
 
 msgid "Predefined node color"
-msgstr "Nós de cor predefinidos."
+msgstr "Nós de cor predefinidos"
 
 
 msgid "Delta Transform"
@@ -52667,6 +52939,10 @@ msgid "Movement"
 msgstr "Movimento"
 
 
+msgid "Deflection"
+msgstr "Deflexão"
+
+
 msgid "Springs"
 msgstr "Molas"
 
@@ -52675,8 +52951,28 @@ msgid "Viscoelastic Springs"
 msgstr "Molas viscoelásticas"
 
 
+msgid "Forces"
+msgstr "Forças"
+
+
+msgid "Timing"
+msgstr "Temporização"
+
+
 msgid "Border Collisions"
 msgstr "Margens de colisão"
+
+
+msgid "Diffusion"
+msgstr "Difusão"
+
+
+msgid "Waves"
+msgstr "Ondas"
+
+
+msgid "Paintmaps"
+msgstr "Mapas de pintura"
 
 
 msgid "Force Fields"
@@ -52687,6 +52983,10 @@ msgid "Sensitivity"
 msgstr "Sensibilidade"
 
 
+msgid "Surface Response"
+msgstr "Resposta da Superfície"
+
+
 msgid "Override Iterations"
 msgstr "Não usar interações"
 
@@ -52695,8 +52995,28 @@ msgid "Dynamics"
 msgstr "Dinâmicas"
 
 
+msgid "Deactivation"
+msgstr "Desativação"
+
+
 msgid "Self Collision"
 msgstr "Colisões consigo"
+
+
+msgid "Aerodynamics"
+msgstr "Aerodinâmicas"
+
+
+msgid "Strengths"
+msgstr "Forças"
+
+
+msgid "Diagnostics"
+msgstr "Diagnósticos"
+
+
+msgid "Helpers"
+msgstr "Assistentes"
 
 
 msgid "Viscosity"
@@ -52715,12 +53035,24 @@ msgid "Shadows"
 msgstr "Sombras"
 
 
+msgid "Volumetrics"
+msgstr "Volumétricas"
+
+
+msgid "Volumetric Shadows"
+msgstr "Sombras Volumétricas"
+
+
 msgid "Encoding"
 msgstr "Codificação"
 
 
 msgid "Audio"
 msgstr "Áudio"
+
+
+msgid "Video"
+msgstr "Vídeo"
 
 
 msgid "FFMPEG Presets"
@@ -53018,6 +53350,11 @@ msgstr "Máscara em laço"
 
 
 msgctxt "Operator"
+msgid "Line Mask"
+msgstr "Máscara de Linha"
+
+
+msgctxt "Operator"
 msgid "Box Hide"
 msgstr "Ocultar Caixa"
 
@@ -53169,6 +53506,10 @@ msgstr "Orientações de transformação"
 
 msgid "Face Marks"
 msgstr "Marcações de faces"
+
+
+msgid "Filter Add-ons"
+msgstr "Filtrar Complementos"
 
 
 msgid "Particle in a particle system"
@@ -54327,6 +54668,10 @@ msgid "Add/Replace"
 msgstr "Adicionar ou substituir"
 
 
+msgid "Collection Instance Empty Size"
+msgstr "Tamanho Vazio da Instância de Coleção"
+
+
 msgid "Grease Pencil Eraser Radius"
 msgstr "Raio do apagador do lápis de cera"
 
@@ -54457,6 +54802,14 @@ msgstr "Faz com que os dados da armação sejam duplicados com o objeto."
 
 msgid "Causes curve data to be duplicated with the object"
 msgstr "Faz com que os dados de curva sejam duplicados com o objeto."
+
+
+msgid "Duplicate Light Probe"
+msgstr "Duplicar Sonda de Luz"
+
+
+msgid "Causes light probe data to be duplicated with the object"
+msgstr "Faz com que os dados da sonda de luz sejam duplicadas com o objeto"
 
 
 msgid "Duplicate Material"
@@ -54756,7 +55109,7 @@ msgstr "Tipo de navegação da visualização"
 
 
 msgid "Which method to use for viewport navigation"
-msgstr "Qual método usar para a navegação na porta de visão."
+msgstr "Qual método usar para a navegação na janela de exibição."
 
 
 msgid "Interactively walk or free navigate around the scene"
@@ -54848,7 +55201,7 @@ msgstr "NDOF - Navegação da visualização"
 
 
 msgid "Navigation style in the viewport"
-msgstr "Estilo de navegação na porta de visão."
+msgstr "Estilo de navegação na janela de exibição."
 
 
 msgid "Use full 6 degrees of freedom by default"
@@ -54864,7 +55217,7 @@ msgstr "NDOF - Rotação da visualização"
 
 
 msgid "Rotation style in the viewport"
-msgstr "Estilo de rotação na porta de visão."
+msgstr "Estilo de rotação na janela de exibição."
 
 
 msgid "Turntable"
@@ -54872,11 +55225,11 @@ msgstr "Mesa rotativa"
 
 
 msgid "Use turntable style rotation in the viewport"
-msgstr "Usa a rotação em estilo de mesa rotativa dentro da porta de visão."
+msgstr "Usa a rotação em estilo de mesa rotativa dentro da janela de exibição."
 
 
 msgid "Use trackball style rotation in the viewport"
-msgstr "Usa a rotação tipo bola de tração na porta de visão."
+msgstr "Usa a rotação tipo bola de tração na janela de exibição."
 
 
 msgid "Invert Zoom"
@@ -54956,7 +55309,7 @@ msgstr "Estilo de ampliação"
 
 
 msgid "Which style to use for viewport scaling"
-msgstr "Qual estilo usar para alteração da escala da porta de visão."
+msgstr "Qual estilo usar para alteração da escala da janela de exibição."
 
 
 msgid "Continue"
@@ -55924,7 +56277,7 @@ msgstr "Divide as primitivas de hierarquias de volume circundante (BVH) por este
 
 
 msgid "Viewport BVH Type"
-msgstr "Tipo de BVH para porta de visão"
+msgstr "Tipo de BVH para janela de exibição"
 
 
 msgid "Choose between faster updates, or faster render"
@@ -56212,11 +56565,11 @@ msgstr "Pausar previsão"
 
 
 msgid "Pause all viewport preview renders"
-msgstr "Pausa todas as previsões de renderização na porta de visão."
+msgstr "Pausa todas as previsões de renderização na janela de exibição."
 
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
-msgstr "Número de amostras para renderizar dentro da porta de visão, ilimitado caso seja zero."
+msgstr "Número de amostras para renderizar dentro da janela de exibição, ilimitado caso seja zero."
 
 
 msgid "Rolling Shutter Duration"
@@ -56288,11 +56641,11 @@ msgstr "Usa a linguagem de sombreamento aberto (Renderização somente por CPU).
 
 
 msgid "Viewport Texture Limit"
-msgstr "Limitar texturas na porta de visão"
+msgstr "Limitar texturas na janela de exibição"
 
 
 msgid "Limit texture size used by viewport rendering"
-msgstr "Limita o tamanho das texturas usadas pela renderização na porta de visão."
+msgstr "Limita o tamanho das texturas usadas pela renderização na janela de exibição."
 
 
 msgid "No Limit"
@@ -56389,6 +56742,10 @@ msgstr "Número de amostras por camada de renderização envolto pela quantidade
 
 msgid "Ignore per render layer number of samples"
 msgstr "Ignora o número de amostras por camada de renderização."
+
+
+msgid "Use Viewport Denoising"
+msgstr "Usar Redução de Ruídos na Janela de Exibição"
 
 
 msgid "Denoise the image in the 3D viewport"
@@ -57096,7 +57453,7 @@ msgstr "Proporção de aspecto vertical - para saída de pixeis anamórficos ou 
 
 
 msgid "Pixel size for viewport rendering"
-msgstr "O tamanho do pixel para a renderização na porta de visão."
+msgstr "O tamanho do pixel para a renderização na janela de exibição."
 
 
 msgid "1x"
@@ -57144,7 +57501,7 @@ msgstr "Mostra os objetos usando as arestas em formato de aramados."
 
 
 msgid "Display render preview"
-msgstr "Mostra uma previsão de renderização dos objetos na porta de visão."
+msgstr "Mostra uma previsão de renderização dos objetos na janela de exibição."
 
 
 msgid "Simplify Child Particles"
@@ -58249,6 +58606,14 @@ msgstr "32 px"
 
 msgid "Factor for ambient occlusion blending"
 msgstr "Fator para a mesclagem de oclusão ambiente."
+
+
+msgid "Trace Precision"
+msgstr "Precisão do Traço"
+
+
+msgid "Viewport Denoising"
+msgstr "Redução de Ruídos na Janela de Exibição"
 
 
 msgid "Scene Objects"
@@ -59865,7 +60230,7 @@ msgstr "Bloquear na seleção"
 
 
 msgid "Lock viewport to selected markers during playback"
-msgstr "Bloqueia a porta de visão para os marcadores selecionados durante a reprodução."
+msgstr "Bloqueia a janela de exibição para os marcadores selecionados durante a reprodução."
 
 
 msgid "Lock to Time Cursor"
@@ -60932,6 +61297,10 @@ msgid "Properties space data"
 msgstr "Espaço de dados de propriedades."
 
 
+msgid "Active Tool and Workspace settings"
+msgstr "Ferramenta Ativa e Configurações do Espaço de Trabalho"
+
+
 msgid "Pin ID"
 msgstr "Afixar identificador"
 
@@ -61201,15 +61570,15 @@ msgstr "Câmera ativa usada nesta visualização (quando destravada da câmera a
 
 
 msgid "3D View far clipping distance"
-msgstr "Limite de corte da visibilidade na redução da porta de visão na janela de visualização 3D."
+msgstr "Limite de corte da visibilidade na redução da janela de exibição na janela de visualização 3D."
 
 
 msgid "3D View near clipping distance (perspective view only)"
-msgstr "Limite de corte de visibilidade na ampliação da porta de visão na janela de visualização 3D (somente para visão em perspectiva)."
+msgstr "Limite de corte de visibilidade na ampliação da janela de exibição na janela de visualização 3D (somente para visão em perspectiva)."
 
 
 msgid "Viewport lens angle"
-msgstr "Ângulo da lente para a porta de visão."
+msgstr "Ângulo da lente para a janela de exibição."
 
 
 msgid "Lock to Bone"
@@ -61225,7 +61594,7 @@ msgstr "Bloquear a câmera para a visualização"
 
 
 msgid "Enable view navigation within the camera view"
-msgstr "Habilita a navegação da porta de visão dentro da visão da câmera."
+msgstr "Habilita a navegação da janela de exibição dentro da visão da câmera."
 
 
 msgid "Lock to Cursor"
@@ -61333,7 +61702,7 @@ msgstr "Tipo de visualização das trilhas"
 
 
 msgid "Viewport display style for tracks"
-msgstr "Estilo de visualização na porta de visão para trilhas."
+msgstr "Estilo de visualização na janela de exibição para trilhas."
 
 
 msgid "Get the node tree path as a string"
@@ -63910,7 +64279,7 @@ msgstr "Configurações do Cycles"
 
 
 msgid "Viewport Shading"
-msgstr "Sombreamento na porta de visão"
+msgstr "Sombreamento na janela de exibição"
 
 
 msgid "Method to display/shade objects in the 3D View"
@@ -64440,6 +64809,11 @@ msgstr "Gerenc. de janelas :"
 
 
 msgctxt "Operator"
+msgid "Workspace:"
+msgstr "Espaço de Trabalho:"
+
+
+msgctxt "Operator"
 msgid "World:"
 msgstr "Ambientes:"
 
@@ -64482,6 +64856,76 @@ msgstr "Janela de visualização 3D"
 msgctxt "WindowManager"
 msgid "Object Mode"
 msgstr "Modo de objeto"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Box"
+msgstr "Ferramenta de Visualização 3d: Caixa de Seleção"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Box (fallback)"
+msgstr "Ferramenta de Visualização 3d: Caixa de Seleção (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Circle"
+msgstr "Ferramenta de Visualização 3d: Círculo de Seleção"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Circle (fallback)"
+msgstr "Ferramenta de Visualização 3d: Círculo de Seleção (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Lasso"
+msgstr "Ferramenta de Visualização 3d: Laço de Seleção"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Lasso (fallback)"
+msgstr "Ferramenta de Visualização 3d: Laço de Seleção (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Cursor"
+msgstr "Ferramenta de Visualização 3d: Cursor"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Cursor (fallback)"
+msgstr "Ferramenta de Visualização 3d: Cursor (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Move"
+msgstr "Ferramenta de Visualização 3d: Mover"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Move (fallback)"
+msgstr "Ferramenta de Visualização 3d: Mover (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Rotate"
+msgstr "Ferramenta de Visualização 3d: Rotação"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Rotate (fallback)"
+msgstr "Ferramenta de Visualização 3d: Rotação (substituta)"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Scale"
+msgstr "Ferramenta de Visualização 3d: Escalar"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Scale (fallback)"
+msgstr "Ferramenta de Visualização 3d: Escalar (substituta)"
 
 
 msgctxt "WindowManager"
@@ -64856,6 +65300,10 @@ msgstr "Ajuste de rugosidade"
 
 msgid "Denoising"
 msgstr "Redução de ruídos"
+
+
+msgid "Viewports"
+msgstr "Janelas de Exibição"
 
 
 msgid "No output node"
@@ -66633,6 +67081,11 @@ msgstr "Instância para Cena"
 
 
 msgctxt "Operator"
+msgid "ID Data"
+msgstr "Dados do ID"
+
+
+msgctxt "Operator"
 msgid "Hide One Level"
 msgstr "Ocultar um nível"
 
@@ -66776,8 +67229,28 @@ msgstr "Direita"
 
 
 msgctxt "Operator"
+msgid "Both Neighbors"
+msgstr "Ambos os Vizinhos"
+
+
+msgctxt "Operator"
 msgid "Left Neighbor"
 msgstr "Vizinho Esquerdo"
+
+
+msgctxt "Operator"
+msgid "Right Neighbor"
+msgstr "Vizinho Direito"
+
+
+msgctxt "Operator"
+msgid "Both Sides"
+msgstr "Ambos os Lados"
+
+
+msgctxt "Operator"
+msgid "Side of Frame..."
+msgstr "Lado do Quadro..."
 
 
 msgctxt "Operator"
@@ -66922,6 +67395,11 @@ msgstr "Cena"
 msgctxt "Operator"
 msgid "Clip"
 msgstr "Clipe"
+
+
+msgctxt "Operator"
+msgid "Move/Extend from Current Frame"
+msgstr "Mover/Estender a partir do Quadro Atual"
 
 
 msgid "Effect Fader"
@@ -68093,6 +68571,10 @@ msgid "View Selected"
 msgstr "Visualizar a seleção"
 
 
+msgid "Origins"
+msgstr "Origens"
+
+
 msgid "Creases"
 msgstr "Vincos"
 
@@ -68182,6 +68664,16 @@ msgstr "Armação"
 msgctxt "Operator"
 msgid "Lattice"
 msgstr "Treliça"
+
+
+msgctxt "Operator"
+msgid "Collection Instance..."
+msgstr "Instância de Coleção..."
+
+
+msgctxt "Operator"
+msgid "Collection Instance"
+msgstr "Instância de Coleção"
 
 
 msgctxt "Operator"
@@ -68541,6 +69033,14 @@ msgstr "Obter distância DOF"
 
 msgid "Layer:"
 msgstr "Camadas:"
+
+
+msgid "Affect Only"
+msgstr "Afeta Apenas"
+
+
+msgid "Locations"
+msgstr "Localizações"
 
 
 msgctxt "Operator"
@@ -69199,7 +69699,7 @@ msgstr "Controles das faixas de animação não linear"
 
 
 msgid "Grease Pencil layer is visible in the viewport"
-msgstr "A camada de lápis de cera está visível dentro da porta de visão."
+msgstr "A camada de lápis de cera está visível dentro da janela de exibição."
 
 
 msgid "Channels are visible in Graph Editor for editing"
@@ -69719,7 +70219,7 @@ msgstr "Superfície"
 
 
 msgid "Unable to access 3D viewport"
-msgstr "Não é possível obter acesso aos dados da porta de visão 3D."
+msgstr "Não é possível obter acesso aos dados da janela de exibição 3D."
 
 
 msgid "Unable to access depth buffer, using view plane"
@@ -69888,6 +70388,11 @@ msgstr "Alterar atalho"
 
 
 msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "Atribuir Atalho"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "Abrir o arquivo externamente"
 
@@ -69948,6 +70453,11 @@ msgstr "Apagar controlador"
 
 
 msgctxt "Operator"
+msgid "Open Drivers Editor"
+msgstr "Abrir Editor de Controladores"
+
+
+msgctxt "Operator"
 msgid "Add All to Keying Set"
 msgstr "Adicionar todos ao conjunto de inserção de chaves"
 
@@ -69980,6 +70490,16 @@ msgstr "Copiar único para seleção"
 msgctxt "Operator"
 msgid "Copy Full Data Path"
 msgstr "Copiar caminho dos dados"
+
+
+msgctxt "Operator"
+msgid "Remove from Quick Favorites"
+msgstr "Remover dos Favoritos Rápidos"
+
+
+msgctxt "Operator"
+msgid "Add to Quick Favorites"
+msgstr "Adicionar aos Favoritos Rápidos"
 
 
 msgctxt "Operator"
@@ -71721,6 +72241,10 @@ msgstr "Uma região da janela de visualização 3D e edição de malhas era espe
 
 msgid "expected a view3d region & editcurve"
 msgstr "Uma região da janela de visualização 3D e edição de curvas era esperada."
+
+
+msgid "Quick Favorites"
+msgstr "Favoritos Rápidos"
 
 
 msgctxt "Operator"
@@ -74602,6 +75126,10 @@ msgstr "Faixas devem possuir o mesmo número de entradas."
 
 msgid "Blur X"
 msgstr "Desfocar X"
+
+
+msgid "Wave Effect"
+msgstr "Efeito de Onda"
 
 
 msgid "Blender File View"

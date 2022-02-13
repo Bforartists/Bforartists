@@ -1,16 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import bpy
 
@@ -51,9 +40,8 @@ def __gather_scene(blender_scene, export_settings):
         nodes=[]
     )
 
-    for _blender_object in [obj for obj in blender_scene.objects if obj.proxy is None]:
-        if _blender_object.parent is None:
-            blender_object = _blender_object.proxy if _blender_object.proxy else _blender_object
+    for blender_object in blender_scene.objects:
+        if blender_object.parent is None:
             node = gltf2_blender_gather_nodes.gather_node(
                 blender_object,
                 blender_object.library.name if blender_object.library else None,
@@ -70,17 +58,14 @@ def __gather_animations(blender_scene, export_settings):
     animations = []
     merged_tracks = {}
 
-    for _blender_object in blender_scene.objects:
-
-        blender_object = _blender_object.proxy if _blender_object.proxy else _blender_object
+    for blender_object in blender_scene.objects:
 
         # First check if this object is exported or not. Do not export animation of not exported object
         obj_node = gltf2_blender_gather_nodes.gather_node(blender_object,
             blender_object.library.name if blender_object.library else None,
             blender_scene, None, export_settings)
         if obj_node is not None:
-            # Check was done on armature, but use here the _proxy object, because this is where the animation is
-            animations_, merged_tracks = gltf2_blender_gather_animations.gather_animations(_blender_object, merged_tracks, len(animations), export_settings)
+            animations_, merged_tracks = gltf2_blender_gather_animations.gather_animations(blender_object, merged_tracks, len(animations), export_settings)
             animations += animations_
 
     if export_settings['gltf_nla_strips'] is False:
