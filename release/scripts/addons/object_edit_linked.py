@@ -1,21 +1,4 @@
-# ***** BEGIN GPL LICENSE BLOCK *****
-#
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ***** END GPL LICENCE BLOCK *****
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
     "name": "Edit Linked Library",
@@ -81,8 +64,6 @@ class OBJECT_OT_EditLinked(bpy.types.Operator):
         return settings["original_file"] == "" and context.active_object is not None and (
                 (context.active_object.instance_collection and
                 context.active_object.instance_collection.library is not None) or
-                (context.active_object.proxy and
-                context.active_object.proxy.library is not None) or
                 context.active_object.library is not None or
                 (context.active_object.override_library and
                 context.active_object.override_library.reference.library is not None))
@@ -94,10 +75,6 @@ class OBJECT_OT_EditLinked(bpy.types.Operator):
             targetpath = target.instance_collection.library.filepath
             settings["linked_objects"].extend({ob.name for ob in target.instance_collection.objects})
         elif target.library:
-            targetpath = target.library.filepath
-            settings["linked_objects"].append(target.name)
-        elif target.proxy:
-            target = target.proxy
             targetpath = target.library.filepath
             settings["linked_objects"].append(target.name)
         elif target.override_library:
@@ -259,10 +236,7 @@ class VIEW3D_PT_PanelLinkedEdit(bpy.types.Panel):
 
         target = None
 
-        if context.active_object.proxy:
-            target = context.active_object.proxy
-        else:
-            target = context.active_object.instance_collection
+        target = context.active_object.instance_collection
 
         if settings["original_file"] == "" and (
                 (target and

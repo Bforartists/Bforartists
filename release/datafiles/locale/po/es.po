@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -42058,16 +42058,64 @@ msgid "And"
 msgstr "Y"
 
 
+msgid "True when both inputs are true"
+msgstr "Verdadero cuando ambas entradas sean verdaderas"
+
+
 msgid "Or"
 msgstr "O"
+
+
+msgid "True when at least one input is true"
+msgstr "Verdadero cuando al menos una de las entradas sea verdadera"
+
+
+msgid "Opposite of the input"
+msgstr "Opuesto de la entrada"
+
+
+msgid "Not And"
+msgstr "No Y"
+
+
+msgid "True when at least one input is false"
+msgstr "Verdadero cuando al menos una de las entradas sea falsa"
+
+
+msgid "Nor"
+msgstr "No O"
+
+
+msgid "True when both inputs are false"
+msgstr "Verdadero cuando ambas entradas sean falsas"
 
 
 msgid "Equal"
 msgstr "Igual"
 
 
+msgid "True when both inputs are equal (exclusive nor)"
+msgstr "Verdadero cuando ambas entradas sean equivalentes (No O Exclusivo)"
+
+
 msgid "Not Equal"
 msgstr "Distinto"
+
+
+msgid "True when both inputs are different (exclusive or)"
+msgstr "Verdadero cuando ambas entradas sean distintas (O Exclusivo)"
+
+
+msgid "Imply"
+msgstr "Implicación"
+
+
+msgid "True unless the first input is true and the second is false"
+msgstr "Verdadero a menos que la primera entrada sea verdadera y la segunda falsa"
+
+
+msgid "True when the first input is true and the second is false (not imply)"
+msgstr "Verdadero cuando la primera entrada sea verdadera y la segunda falsa (Implicación Opuesta)"
 
 
 msgid "Input Type"
@@ -43206,6 +43254,10 @@ msgid "Material Selection"
 msgstr "Selección de materiales"
 
 
+msgid "Merge by Distance"
+msgstr "Fusionar por distancia"
+
+
 msgid "Mesh Boolean"
 msgstr "Booleana (malla)"
 
@@ -43540,6 +43592,34 @@ msgstr "Escala el tamaño del texto para ajustarlo al ancho y altura especificad
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "Sólo producir curvas que quepan dentro del ancho y altura establecidos. Producir el resto de ellas dentro de la salida \"Resto\""
+
+
+msgid "Pivot point position relative to character"
+msgstr "Posición del punto de pivote con relación al caracter"
+
+
+msgid "Top Left"
+msgstr "Superior izquierda"
+
+
+msgid "Top Center"
+msgstr "Superior centro"
+
+
+msgid "Top Right"
+msgstr "Superior derecha"
+
+
+msgid "Bottom Left"
+msgstr "Inferior izquierda"
+
+
+msgid "Bottom Center"
+msgstr "Inferior centro"
+
+
+msgid "Bottom Right"
+msgstr "Inferior derecha"
 
 
 msgid "Subdivide Curve"
@@ -44013,6 +44093,10 @@ msgstr "Entorno"
 
 msgid "Particle Info"
 msgstr "Información de partículas"
+
+
+msgid "Point Info"
+msgstr "Identificador de puntos"
 
 
 msgid "Bytecode"
@@ -50073,6 +50157,15 @@ msgstr "Crea una previsualización automática para el bloque de datos seleccion
 
 
 msgctxt "Operator"
+msgid "Generate Preview from Object"
+msgstr "Generar previsualización a partir de objeto"
+
+
+msgid "Create a preview for this asset by rendering the active object"
+msgstr "Crea una previsualización para este recurso, procesando el objeto activo"
+
+
+msgctxt "Operator"
 msgid "Load Custom Preview"
 msgstr "Cargar previsualización personalizada"
 
@@ -54597,6 +54690,43 @@ msgstr "Reemplazar existente"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "Reemplaza las variables del controlador, en vez de simplemente anexarlas al final de la lista de las ya existentes"
+
+
+msgctxt "Operator"
+msgid "Equalize Handles"
+msgstr "Igualar asas"
+
+
+msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
+msgstr "Asegura que las asas de los claves seleccionados tengan la misma longitud, haciendo opcionalmente que sean horizontales"
+
+
+msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
+msgstr "Hace que el valor de las asas de los claves seleccionados sea el mismo que el de sus claves respectivos"
+
+
+msgid "Handle Length"
+msgstr "Longitud de asas"
+
+
+msgid "Length to make selected keyframes' bezier handles"
+msgstr "Longitud a asignar a las asas Bezier de los claves seleccionados"
+
+
+msgid "Side of the keyframes' bezier handles to affect"
+msgstr "Las asas de qué lado de los claves afectar"
+
+
+msgid "Equalize selected keyframes' left handles"
+msgstr "Ecualizar las asas a la izquierda de los claves seleccionados"
+
+
+msgid "Equalize selected keyframes' right handles"
+msgstr "Ecualizar las asas a la derecha de los claves seleccionados"
+
+
+msgid "Equalize both of a keyframe's handles"
+msgstr "Ecualizar las asas a ambos lados de los claves seleccionados"
 
 
 msgctxt "Operator"
@@ -61117,6 +61247,10 @@ msgstr "Tipo de objeto al cual convertir"
 
 msgid "Curve from Mesh or Text objects"
 msgstr "Curva a partir de mallas o textos"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Malla a partir de curvas, superficies, metabolas o textos"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -76224,12 +76358,44 @@ msgid "When checked, normals of exported meshes are included in the export"
 msgstr "Incluye las normales de las mallas exportadas"
 
 
+msgid "Export Textures"
+msgstr "Exportar texturas"
+
+
+msgid "If exporting materials, export textures referenced by material nodes to a 'textures' directory in the same directory as the USD file"
+msgstr "Al exportar materiales, exportar las texturas referenciadas por los nodos de sombreado a una carpeta 'textures' en el mismo directorio que el archivo USD"
+
+
 msgid "UV Maps"
 msgstr "Mapas UV"
 
 
 msgid "When checked, all UV maps of exported meshes are included in the export"
 msgstr "Incluye todos los mapas UV de las mallas exportadas"
+
+
+msgid "To USD Preview Surface"
+msgstr "A previsualización de superficies USD"
+
+
+msgid "Generate an approximate USD Preview Surface shader representation of a Principled BSDF node network"
+msgstr "Genera un sombreador de Previsualización de Superficies de USD para aproximar la representación de una red de nodos BSDF Principista"
+
+
+msgid "Overwrite Textures"
+msgstr "Sobrescribir texturas"
+
+
+msgid "Allow overwriting existing texture files when exporting textures"
+msgstr "Permite sobrescribir los archivos de textura existentes al exportar texturas"
+
+
+msgid "Relative Texture Paths"
+msgstr "Rutas de texturas relativas"
+
+
+msgid "Make texture asset paths relative to the USD file"
+msgstr "Hace que las rutas de los recursos de texturas sean relativas al archivo USD"
 
 
 msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
@@ -82788,40 +82954,20 @@ msgid "Fisheye Polynomial K0"
 msgstr "K0 (ojo de pez polinómico)"
 
 
-msgid "Coefficient K0 of the lens polinomial"
-msgstr "Coeficiente K0 del polinomio de la lente"
-
-
 msgid "Fisheye Polynomial K1"
 msgstr "K1 (ojo de pez polinómico)"
-
-
-msgid "Coefficient K1 of the lens polinomial"
-msgstr "Coeficiente K1 del polinomio de la lente"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "K2 (ojo de pez polinómico)"
 
 
-msgid "Coefficient K2 of the lens polinomial"
-msgstr "Coeficiente K2 del polinomio de la lente"
-
-
 msgid "Fisheye Polynomial K3"
 msgstr "K3 (ojo de pez polinómico)"
 
 
-msgid "Coefficient K3 of the lens polinomial"
-msgstr "Coeficiente K3 del polinomio de la lente"
-
-
 msgid "Fisheye Polynomial K4"
 msgstr "K4 (ojo de pez polinómico)"
-
-
-msgid "Coefficient K4 of the lens polinomial"
-msgstr "Coeficiente K4 del polinomio de la lente"
 
 
 msgid "Max Latitude"
@@ -82890,10 +83036,6 @@ msgstr "Usa un mapeo de esfera espejada"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "Ojo de pez polinómico"
-
-
-msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
-msgstr "Define la proyección de la lente como polinómica, para permitir simular lentes de cámara reales."
 
 
 msgid "Form of hair"
@@ -83298,6 +83440,14 @@ msgstr "BVH estática"
 
 msgid "Any object modification requires a complete BVH rebuild, but renders faster"
 msgstr "Cualquier modificación de un objeto requiere una reconstrucción completa de la BVH, pero se procesará más rápidamente"
+
+
+msgid "Use Compact BVH"
+msgstr "Usar BVH compacto"
+
+
+msgid "Use compact BVH structure (uses less ram but renders slower)"
+msgstr "Usa un BVH de estructura compacta (que usa menos memoria pero enlentece su procesamiento)"
 
 
 msgid "AVX"
@@ -95350,10 +95500,6 @@ msgid "Bone Wireframe Opacity"
 msgstr "Opacidad estructura huesos"
 
 
-msgid "Maximim opacity of bones in wireframe display mode"
-msgstr "Opacidad máxima de huesos en modo de visualización de estructuras"
-
-
 msgid "Display Handles"
 msgstr "Mostrar asas"
 
@@ -98449,10 +98595,6 @@ msgstr "Cuentagotas - Mapa punto banda de color"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "Ningún clave seleccionado, pegando sobre el rango de la escena"
-
-
-msgid "Clipboard does not contain a valid matrix."
-msgstr "El portapapeles no contiene una matriz válida."
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -102298,6 +102440,11 @@ msgid "Asset Details"
 msgstr "Detalles del recurso"
 
 
+msgctxt "Operator"
+msgid "Render Active Object"
+msgstr "Procesar objeto activo"
+
+
 msgid ".blend Files"
 msgstr ".blend"
 
@@ -103750,11 +103897,6 @@ msgstr "Auto guardado..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG como lápiz de cera"
-
-
-msgctxt "Operator"
-msgid "Wavefront OBJ (.obj) - New"
-msgstr "OBJ de Wavefront (.obj) - Nuevo"
 
 
 msgctxt "Operator"
@@ -106404,7 +106546,19 @@ msgstr "Colecciones de la escena"
 
 
 msgid "Const"
-msgstr "Restric"
+msgstr "Restr"
+
+
+msgid "Crazyspace transformation is only available for Mesh type of objects"
+msgstr "La transformación en crazyspace sólo se encuentra disponible para objetos de tipo malla"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range)"
+msgstr "Identificador de vértice inválido %d (se esperaba que estuviera dentro del rango de 0 a %d )"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range))"
+msgstr "Identificador de vértice inválido %d (se esperaba que estuviera dentro del rango de 0 a %d ))"
 
 
 msgid "UVMap"
@@ -108542,6 +108696,21 @@ msgstr "Eliminar una redefinición"
 
 
 msgctxt "Operator"
+msgid "Define Overrides"
+msgstr "Definir redefiniciones"
+
+
+msgctxt "Operator"
+msgid "Define Single Override"
+msgstr "Definir redefinición única"
+
+
+msgctxt "Operator"
+msgid "Define Override"
+msgstr "Definir redefinición"
+
+
+msgctxt "Operator"
 msgid "Reset All to Default Values"
 msgstr "Restablecer todo a los valores predefinidos"
 
@@ -109923,10 +110092,6 @@ msgstr "El objeto activo tiene un o más ejes con escala cero en sus transformac
 
 msgid "Cannot delete indirectly linked object '%s'"
 msgstr "No es posible borrar el objeto '%s' vinculado indirectamente"
-
-
-msgid "Cannot delete object '%s' as it used by override collections"
-msgstr "No es posible borrar el objeto '%s' porque está siendo usado por colecciones de redefiniciones"
 
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
@@ -113312,10 +113477,6 @@ msgid "Column"
 msgstr "Columna"
 
 
-msgid "Unkown column type"
-msgstr "Tipo de columna desconocido"
-
-
 msgid "File Modified Outside and Inside Blender"
 msgstr "Archivo modificado fuera y dentro de Blender"
 
@@ -114275,6 +114436,10 @@ msgstr "No es posible editar previsualizaciones de datos de biblioteca redefinid
 
 msgid "Data-block does not support previews"
 msgstr "El bloque de datos no soporta previsualizaciones"
+
+
+msgid "Can't generate automatic preview for node group"
+msgstr "No es posible generar una previsualización automática para el grupo de nodos"
 
 
 msgid "Incorrect context for running data-block fake user toggling"
@@ -116254,6 +116419,10 @@ msgid "Limit Radius"
 msgstr "Limitar radio"
 
 
+msgid "Limit the maximum value of the radius in order to avoid overlapping fillets"
+msgstr "Limita el valor máximo del radio, para evitar que la curva resultante se solape con sigo misma"
+
+
 msgid "The number of points on the arc"
 msgstr "Cantidad de puntos del arco"
 
@@ -116502,6 +116671,10 @@ msgid "NURBS must have minimum of 4 points for Bezier Conversion"
 msgstr "Las curvas NURBS deben tener un mínimo de 4 puntos para poder ser convertidas a Bezier"
 
 
+msgid "The number of control points to create on the segment following each point"
+msgstr "La cantidad de puntos de control a ser creados en los segmentos a continuación de cada punto"
+
+
 msgid "Profile Curve"
 msgstr "Curva de perfil"
 
@@ -116534,12 +116707,24 @@ msgid "Offset Scale"
 msgstr "Escala del desplazamiento"
 
 
+msgid "Output the handle positions relative to the corresponding control point instead of in the local space of the geometry"
+msgstr "Proporciona la posición de las asas relativa al punto de control correspondiente, en vez de hacerlo en el espacio local de la geometría"
+
+
+msgid "The values from the \"id\" attribute on points, or the index if that attribute does not exist"
+msgstr "El valor del atributo \"id\" de los puntos o su identificador, si ese atributo no estuviera definido"
+
+
 msgid "Unsigned Angle"
 msgstr "Ángulo sin signo"
 
 
 msgid "Signed Angle"
 msgstr "Ángulo con signo"
+
+
+msgid "The number of faces that use each edge as one of their sides"
+msgstr "La cantidad de caras que usa a cada borde como uno de sus lados"
 
 
 msgid "Vertex Index 1"
@@ -116594,12 +116779,20 @@ msgid "Island Index"
 msgstr "Identificador de isla"
 
 
+msgid "The index of the each vertex's island. Indices are based on the lowest vertex index contained in each island"
+msgstr "El identificador de la isla de cada vértice. Los identificadores están basados en el índice de vértice más bajo contenido en cada isla"
+
+
 msgid "Island Count"
 msgstr "Cantidad de islas"
 
 
 msgid "The total number of mesh islands"
 msgstr "La cantidad total de islas en la malla"
+
+
+msgid "The number of vertices connected to this vertex with an edge, equal to the number of connected edges"
+msgstr "La cantidad de vértices conectados a este vértice por medio de un borde, equivalente a la cantidad de bordes conectados"
 
 
 msgid "Number of faces that contain the vertex"
@@ -116624,6 +116817,10 @@ msgstr "Geometría que será instanciada en los puntos"
 
 msgid "Pick Instance"
 msgstr "Escoger instancia"
+
+
+msgid "Choose instances from the \"Instance\" input at each point instead of instancing the entire geometry"
+msgstr "Escoge instancias del conector de entrada \"Instancia\" en cada punto, en vez de instanciar en la geometría completa"
 
 
 msgid "Instance Index"
@@ -116904,6 +117101,18 @@ msgstr "Resto"
 
 msgid "Max Width"
 msgstr "Ancho máx"
+
+
+msgid "The source geometry must contain a mesh"
+msgstr "La geometría de origen debe contener una malla"
+
+
+msgid "The source mesh must have faces"
+msgstr "La malla de origen debe contener caras"
+
+
+msgid "The source geometry must contain a mesh or a point cloud"
+msgstr "La geometría de origen debe contener una malla o nube de puntos"
 
 
 msgid "Missing Data-Block"

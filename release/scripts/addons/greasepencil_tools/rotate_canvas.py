@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from .prefs import get_addon_prefs
 
 import bpy
@@ -100,7 +102,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
         ## area deformation restore
         new_cam_offset = mathutils.Vector((new_cam_offset[0], new_cam_offset[1] * self.ratio_inv))
-        
+
         context.space_data.region_3d.view_camera_offset = new_cam_offset
 
     def execute(self, context):
@@ -201,7 +203,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         # CORRECT UI OVERLAP FROM HEADER TOOLBAR
         regs = context.area.regions
         if context.preferences.system.use_region_overlap:
-            w = context.area.width 
+            w = context.area.width
             # minus tool header
             h = context.area.height - regs[0].height
         else:
@@ -209,9 +211,9 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             w = context.area.width - regs[2].width - regs[3].width
             # minus tool header + header
             h = context.area.height - regs[0].height - regs[1].height
-        
+
         self.ratio = h / w
-        self.ratio_inv = w / h    
+        self.ratio_inv = w / h
 
         if self.in_cam:
             # Get camera from scene
@@ -221,8 +223,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             if self.cam.lock_rotation[:] != (False, False, False):
                 self.report({'WARNING'}, 'Camera rotation is locked')
                 return {'CANCELLED'}
-            
-            if self.use_view_center:                
+
+            if self.use_view_center:
                 self.center = mathutils.Vector((w/2, h/2))
             else:
                 self.center = self.get_center_view(context, self.cam)
@@ -234,7 +236,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             # store camera matrix world
             self.cam_matrix = self.cam.matrix_world.copy()
             # self.cam_init_euler = self.cam.rotation_euler.copy()
-            
+
             ## initialize current view_offset in camera
             self.view_cam_offset = mathutils.Vector(context.space_data.region_3d.view_camera_offset)
 

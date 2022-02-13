@@ -7,6 +7,7 @@ import json
 
 from .errors import MetarigError
 from .naming import strip_prefix, make_derived_name
+from .bones import set_bone_orientation
 from .mechanism import MechanismUtilityMixin
 from .rig import rig_is_child
 from .misc import map_list, map_apply, force_lazy
@@ -16,6 +17,7 @@ from ..base_generate import GeneratorPlugin
 
 from collections import defaultdict
 from itertools import count, repeat, chain
+from mathutils import Matrix
 
 
 class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
@@ -80,7 +82,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
             self.local_parents[id(rig)].append(entry)
 
 
-    def build_child(self, rig, bone, *, use_parent_mch=True, **options):
+    def build_child(self, rig, bone, *, use_parent_mch=True, mch_orientation=None, **options):
         """
         Build a switchable parent mechanism for the specified bone.
 
@@ -89,6 +91,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
           bone              Name of the child bone.
           extra_parents     List of bone names or (name, user_name) pairs to use as additional parents.
           use_parent_mch    Create an intermediate MCH bone for the constraints and parent the child to it.
+          mch_orientation   Orientation matrix or bone name to align the MCH bone to; defaults to world.
           select_parent     Select the specified bone instead of the last one.
           select_tags       List of parent tags to try for default selection.
           ignore_global     Ignore the is_global flag of potential parents.
@@ -120,6 +123,9 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         # Create MCH proxy
         if use_parent_mch:
             mch_bone = rig.copy_bone(bone, make_derived_name(bone, 'mch', '.parent'), scale=1/3)
+
+            set_bone_orientation(rig.obj, mch_bone, mch_orientation or Matrix.Identity(4))
+
         else:
             mch_bone = bone
 

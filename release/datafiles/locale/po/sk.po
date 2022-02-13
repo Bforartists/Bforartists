@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-01-25 09:58+0100\n"
+"PO-Revision-Date: 2022-02-02 08:43+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -18120,7 +18120,7 @@ msgstr "Akcia je určená na použitie ako cyklus, ktorý prechádza v slučke v
 
 
 msgid "Manual Frame Range"
-msgstr "Rozsah manuálnej snímky"
+msgstr "Manuálny rozsah snímky"
 
 
 msgid "Manually specify the intended playback frame range for the action (this range is used by some tools, but does not affect animation evaluation)"
@@ -41265,7 +41265,7 @@ msgstr "Kľúčový jas"
 
 
 msgid "Map Range"
-msgstr "Mapovať rozsah"
+msgstr "Rozsah mapovania"
 
 
 msgid "Clamp result of the node to 0.0 to 1.0 range"
@@ -41273,11 +41273,11 @@ msgstr "Výsledná zarážka rozsahu uzla od 0,0 do 1,0"
 
 
 msgid "Map UV"
-msgstr "Mapovať UV"
+msgstr "UV mapovania"
 
 
 msgid "Map Value"
-msgstr "Mapovať hodnotu"
+msgstr "Hodnota mapovania"
 
 
 msgid "Use Maximum"
@@ -42060,16 +42060,64 @@ msgid "And"
 msgstr "AND"
 
 
+msgid "True when both inputs are true"
+msgstr "PRAVDA, keď sú oba vstupy PRAVDA"
+
+
 msgid "Or"
 msgstr "OR"
 
 
+msgid "True when at least one input is true"
+msgstr "PRAVDA, keď je aspoň jeden vstup PRAVDA"
+
+
+msgid "Opposite of the input"
+msgstr "Opačný vstup"
+
+
+msgid "Not And"
+msgstr "NOT AND"
+
+
+msgid "True when at least one input is false"
+msgstr "PRAVDA, keď je aspoň jeden vstup NEPRAVDA"
+
+
+msgid "Nor"
+msgstr "NOR"
+
+
+msgid "True when both inputs are false"
+msgstr "PRAVDA, keď sú oba vstupy NEPRAVDA"
+
+
 msgid "Equal"
-msgstr "Rovná sa"
+msgstr "EQUAL"
+
+
+msgid "True when both inputs are equal (exclusive nor)"
+msgstr "PRAVDA, keď sú oba vstupy rovnaké (EXCLUSIV NOR)"
 
 
 msgid "Not Equal"
-msgstr "Nerovná sa"
+msgstr "NOT EQUAL"
+
+
+msgid "True when both inputs are different (exclusive or)"
+msgstr "PRAVDA, keď sú oba vstupy rôzne (EXCLUSIV OR)"
+
+
+msgid "Imply"
+msgstr "IMPLY"
+
+
+msgid "True unless the first input is true and the second is false"
+msgstr "PRAVDA, pokiaľ nie je prvý vstup PRAVDA a druhý je NEPRAVDA"
+
+
+msgid "True when the first input is true and the second is false (not imply)"
+msgstr "PRAVDA, keď je prvý vstup PRAVDA a druhý NEPRAVDA (NOT IMPLY)"
 
 
 msgid "Input Type"
@@ -43208,6 +43256,10 @@ msgid "Material Selection"
 msgstr "Výber materiálu"
 
 
+msgid "Merge by Distance"
+msgstr "Zlúčiť podľa vzdialenosti"
+
+
 msgid "Mesh Boolean"
 msgstr "Logická hodnota povrchovej siete"
 
@@ -43542,6 +43594,34 @@ msgstr "Zmení veľkosť textu tak, aby sa prispôsobil šírke a výške"
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "Výstupné krivky sa vtesnajú len do šírky a výšky. Výstup zvyšku do výstupu \"Zvyšok\""
+
+
+msgid "Pivot point position relative to character"
+msgstr "Pozícia otočného bodu vzhľadom na postavu"
+
+
+msgid "Top Left"
+msgstr "Vľavo hore"
+
+
+msgid "Top Center"
+msgstr "V strede hore"
+
+
+msgid "Top Right"
+msgstr "Vpravo hore"
+
+
+msgid "Bottom Left"
+msgstr "Vľavo dole"
+
+
+msgid "Bottom Center"
+msgstr "V strede dole"
+
+
+msgid "Bottom Right"
+msgstr "Vpravo dole"
 
 
 msgid "Subdivide Curve"
@@ -44014,19 +44094,23 @@ msgstr "Výstup oblasti"
 
 
 msgid "Particle Info"
-msgstr "Info Častice"
+msgstr "Info častice"
+
+
+msgid "Point Info"
+msgstr "Info bodu"
 
 
 msgid "Bytecode"
-msgstr "Kód prenosu"
+msgstr "Kód bajtu"
 
 
 msgid "Compile bytecode for shader script node"
-msgstr "Kompiluje kód prenosu pre uzol skriptu Tieňovača"
+msgstr "Kompiluje kód bajtu pre uzol skriptu Tieňovača"
 
 
 msgid "Bytecode Hash"
-msgstr "Má kód prenosu"
+msgstr "Hašový súčet kódu bajtu"
 
 
 msgid "Hash of compile bytecode, for quick equality checking"
@@ -50075,6 +50159,15 @@ msgstr "Vytvorí automatický náhľad pre vybraný blok údajov"
 
 
 msgctxt "Operator"
+msgid "Generate Preview from Object"
+msgstr "Vygenerovať náhľad z objektu"
+
+
+msgid "Create a preview for this asset by rendering the active object"
+msgstr "Vytvorí náhľad tohto aktíva prekreslením aktívneho objektu"
+
+
+msgctxt "Operator"
 msgid "Load Custom Preview"
 msgstr "Načítať vlastný náhľad"
 
@@ -54599,6 +54692,43 @@ msgstr "Nahradiť existujúce"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "Nahradí existujúce premenné ovládača namiesto toho, aby boli len pripojené na koniec existujúceho zoznamu"
+
+
+msgctxt "Operator"
+msgid "Equalize Handles"
+msgstr "Zarovnať manipulátory"
+
+
+msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
+msgstr "Zabezpečí rovnakú dĺžky manipulátorov vybraných kľúčových snímok, prípadne ich vodorovne usporiada"
+
+
+msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
+msgstr "Vytvorí hodnoty manipulátorov vybraných kľúčových snímok rovnaké ako ich príslušné kľúčové snímky"
+
+
+msgid "Handle Length"
+msgstr "Dĺžka manipulátora"
+
+
+msgid "Length to make selected keyframes' bezier handles"
+msgstr "Dĺžka na vytvorenie Bézier manipulátorov vybraných kľúčových snímok"
+
+
+msgid "Side of the keyframes' bezier handles to affect"
+msgstr "Strana Bézier manipulátorov kľúčových snímok na ovplyvnenie"
+
+
+msgid "Equalize selected keyframes' left handles"
+msgstr "Zarovnanie ľavých manipulátorov vybraných kľúčových snímok"
+
+
+msgid "Equalize selected keyframes' right handles"
+msgstr "Zarovnanie pravých manipulátorov vybraných kľúčových snímok"
+
+
+msgid "Equalize both of a keyframe's handles"
+msgstr "Zarovnanie oboch manipulátorov kľúčových snímok"
 
 
 msgctxt "Operator"
@@ -61119,6 +61249,10 @@ msgstr "Konvertovanie na typ objektu"
 
 msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Povrchová sieť z objektov Krivka, Povrch, Meta guľa alebo Text"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -76226,12 +76360,44 @@ msgid "When checked, normals of exported meshes are included in the export"
 msgstr "Ak je zaškrtnuté, do exportu sú zahrnuté normály exportovaných povrchových sietí"
 
 
+msgid "Export Textures"
+msgstr "Export textúr"
+
+
+msgid "If exporting materials, export textures referenced by material nodes to a 'textures' directory in the same directory as the USD file"
+msgstr "Ak sú exportované materiály, exportujú sa textúry, na ktoré odkazujú uzly materiálu, do priečinka \"textures\" v rovnakom priečinku ako súbor USD"
+
+
 msgid "UV Maps"
 msgstr "UV mapy"
 
 
 msgid "When checked, all UV maps of exported meshes are included in the export"
 msgstr "Ak je zaškrtnuté, do exportu sú zahrnuté všetky UV mapy exportovaných povrchových sietí"
+
+
+msgid "To USD Preview Surface"
+msgstr "Pre náhľad USD povrchu"
+
+
+msgid "Generate an approximate USD Preview Surface shader representation of a Principled BSDF node network"
+msgstr "Vygeneruje približný náhľad USD povrchu tieňovača reprezentujúceho povrchové siete uzlov Principiálneho BSDF"
+
+
+msgid "Overwrite Textures"
+msgstr "Prepísať textúry"
+
+
+msgid "Allow overwriting existing texture files when exporting textures"
+msgstr "Pri exporte textúr povolí prepis existujúcich súborov textúr"
+
+
+msgid "Relative Texture Paths"
+msgstr "Relatívne cesty textúr"
+
+
+msgid "Make texture asset paths relative to the USD file"
+msgstr "Vytvorí cesty k textúram aktív relatívne k súboru USD"
 
 
 msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
@@ -82786,40 +82952,20 @@ msgid "Fisheye Polynomial K0"
 msgstr "Mnohočlen rybieho oka K0"
 
 
-msgid "Coefficient K0 of the lens polinomial"
-msgstr "Koeficient K0 mnohočlena šošovky"
-
-
 msgid "Fisheye Polynomial K1"
 msgstr "Mnohočlen rybieho oka K1"
-
-
-msgid "Coefficient K1 of the lens polinomial"
-msgstr "Koeficient K1 mnohočlena šošovky"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "Mnohočlen rybieho oka K2"
 
 
-msgid "Coefficient K2 of the lens polinomial"
-msgstr "Koeficient K2 mnohočlena šošovky"
-
-
 msgid "Fisheye Polynomial K3"
 msgstr "Mnohočlen rybieho oka K3"
 
 
-msgid "Coefficient K3 of the lens polinomial"
-msgstr "Koeficient K3 mnohočlena šošovky"
-
-
 msgid "Fisheye Polynomial K4"
 msgstr "Mnohočlen rybieho oka K4"
-
-
-msgid "Coefficient K4 of the lens polinomial"
-msgstr "Koeficient K4 mnohočlena šošovky"
 
 
 msgid "Max Latitude"
@@ -82888,10 +83034,6 @@ msgstr "Používa priradenie zrkadlovej lopty"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "Mnohočlenový objektív rybie oko"
-
-
-msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
-msgstr "Definuje premietanie objektívu ako mnohočlenové, aby bolo možné napodobniť objektívy kamier v reálnom svete."
 
 
 msgid "Form of hair"
@@ -83296,6 +83438,14 @@ msgstr "Statické BVH"
 
 msgid "Any object modification requires a complete BVH rebuild, but renders faster"
 msgstr "Akákoľvek úprava objektu vyžaduje kompletnú prestavbu BVH, ale rýchlejšie sa vykonáva prekreslenie"
+
+
+msgid "Use Compact BVH"
+msgstr "Použiť kompaktné BVH"
+
+
+msgid "Use compact BVH structure (uses less ram but renders slower)"
+msgstr "Použije špeciálny typ BVH (Bio Vision Motion) optimalizovaný pre vlasy (využíva viac pamäte RAM, ale rýchlejšie sa vykonáva prekreslenie)"
 
 
 msgid "AVX"
@@ -94601,7 +94751,7 @@ msgstr "Vedome cyklovať kľúčovanie"
 
 
 msgid "For channels with cyclic extrapolation, keyframe insertion is automatically remapped inside the cycle time range, and keeps ends in sync. Curves newly added to actions with a Manual Frame Range and Cyclic Animation are automatically made cyclic"
-msgstr "V prípade kanálov s cyklickou extrapoláciou sa vloženie kľúčovej snímky automaticky preloží do časového rozsahu cyklu a udržiava synchronizované konce. Novo pridané krivky do akcií s ručným rozsahom snímok a cyklickou animáciou sa automaticky vytvoria cyklické"
+msgstr "V prípade kanálov s cyklickou extrapoláciou sa vloženie kľúčovej snímky automaticky preloží do časového rozsahu cyklu a udržiava synchronizované konce. Novo pridané krivky do akcií s manuálnym rozsahom snímok a cyklickou animáciou sa automaticky vytvoria cyklické"
 
 
 msgid "Auto Keying"
@@ -95346,10 +95496,6 @@ msgstr "Nepriehľadnosť pri prekreslení priehľadných drôtov"
 
 msgid "Bone Wireframe Opacity"
 msgstr "Nepriehľadnosť drôteného rámu kostí"
-
-
-msgid "Maximim opacity of bones in wireframe display mode"
-msgstr "Maximálna nepriehľadnosť kostí v režime zobrazenia drôteného modelu"
 
 
 msgid "Display Handles"
@@ -98447,10 +98593,6 @@ msgstr "Mapa kvapkadla snímania bodu farebného spádu"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "Žiadne vybrané kľúče, prilepenie cez rozsah scény"
-
-
-msgid "Clipboard does not contain a valid matrix."
-msgstr "Schránka neobsahuje platnú matricu."
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -102292,6 +102434,11 @@ msgid "Asset Details"
 msgstr "Detaily aktív"
 
 
+msgctxt "Operator"
+msgid "Render Active Object"
+msgstr "Prekresliť aktívny objekt"
+
+
 msgid ".blend Files"
 msgstr ".blend súbory"
 
@@ -103744,11 +103891,6 @@ msgstr "Automaticky uložené..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG ako pastelka"
-
-
-msgctxt "Operator"
-msgid "Wavefront OBJ (.obj) - New"
-msgstr "Wavefront OBJ (.obj) - Nový"
 
 
 msgctxt "Operator"
@@ -106401,6 +106543,18 @@ msgid "Const"
 msgstr "Konšt"
 
 
+msgid "Crazyspace transformation is only available for Mesh type of objects"
+msgstr "Transformácia Crazyspace je k dispozícii len pre objekty typu Povrchová sieť"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range)"
+msgstr "Neplatný index vrcholu %d (očakáva sa v rozsahu 0 až %d)"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range))"
+msgstr "Neplatný index vrcholu %d (očakáva sa v rozsahu 0 až %d))"
+
+
 msgid "UVMap"
 msgstr "UVmapa"
 
@@ -108536,6 +108690,21 @@ msgstr "Odstrániť prepis jednotlivo"
 
 
 msgctxt "Operator"
+msgid "Define Overrides"
+msgstr "Definovať prepisy"
+
+
+msgctxt "Operator"
+msgid "Define Single Override"
+msgstr "Definovať jednoduchý prepis"
+
+
+msgctxt "Operator"
+msgid "Define Override"
+msgstr "Definovať prepis"
+
+
+msgctxt "Operator"
 msgid "Reset All to Default Values"
 msgstr "Znovu nastaviť všetko na predvolené hodnoty"
 
@@ -109917,10 +110086,6 @@ msgstr "Konečná transformácia aktívneho objektu má jednu alebo viac osí s 
 
 msgid "Cannot delete indirectly linked object '%s'"
 msgstr "Nie je možné odstrániť nepriamo prepojený objekt '%s'"
-
-
-msgid "Cannot delete object '%s' as it used by override collections"
-msgstr "Nemožno odstrániť objekt '%s', pretože ho používajú nadradené kolekcie"
 
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
@@ -113306,10 +113471,6 @@ msgid "Column"
 msgstr "Stĺpec"
 
 
-msgid "Unkown column type"
-msgstr "Neznámy typ stĺpca"
-
-
 msgid "File Modified Outside and Inside Blender"
 msgstr "Súbor upravený mimo a vnútri Blendera"
 
@@ -114269,6 +114430,10 @@ msgstr "Nemožno upravovať náhľady prepísaných údajov knižnice"
 
 msgid "Data-block does not support previews"
 msgstr "Blok údajov nepodporuje náhľady"
+
+
+msgid "Can't generate automatic preview for node group"
+msgstr "Nemožno vygenerovať automatický náhľad pre skupinu uzlov"
 
 
 msgid "Incorrect context for running data-block fake user toggling"
@@ -116248,6 +116413,10 @@ msgid "Limit Radius"
 msgstr "Limit polomeru"
 
 
+msgid "Limit the maximum value of the radius in order to avoid overlapping fillets"
+msgstr "Obmedzí maximálnu hodnotu polomeru, aby sa zabránilo prekrývaniu plátkov"
+
+
 msgid "The number of points on the arc"
 msgstr "Počet bodov na oblúku"
 
@@ -116496,6 +116665,10 @@ msgid "NURBS must have minimum of 4 points for Bezier Conversion"
 msgstr "NURBS musí mať minimálne 4 body pre Bézierovu konverziu"
 
 
+msgid "The number of control points to create on the segment following each point"
+msgstr "Počet riadiacich bodov, ktoré sa majú vytvoriť na úseku za každým bodom"
+
+
 msgid "Profile Curve"
 msgstr "Profil krivky"
 
@@ -116528,12 +116701,24 @@ msgid "Offset Scale"
 msgstr "Posuv mierky"
 
 
+msgid "Output the handle positions relative to the corresponding control point instead of in the local space of the geometry"
+msgstr "Výstup pozícií manipulátora na príslušný riadiaci bod namiesto v lokálnom priestore geometrie"
+
+
+msgid "The values from the \"id\" attribute on points, or the index if that attribute does not exist"
+msgstr "Hodnoty z atribútu \"id\" na bodoch alebo index, ak tento atribút neexistuje"
+
+
 msgid "Unsigned Angle"
 msgstr "Uhol bez znamienka"
 
 
 msgid "Signed Angle"
 msgstr "Uhol so znamienkom"
+
+
+msgid "The number of faces that use each edge as one of their sides"
+msgstr "Počet plôšok používajúcich každú hranu ako jednu zo svojich strán"
 
 
 msgid "Vertex Index 1"
@@ -116588,12 +116773,20 @@ msgid "Island Index"
 msgstr "Index ostrovov"
 
 
+msgid "The index of the each vertex's island. Indices are based on the lowest vertex index contained in each island"
+msgstr "Index každého vrcholu ostrova. Indexy sú založené na najnižšom indexe vrcholu obsiahnutého v každom ostrove"
+
+
 msgid "Island Count"
 msgstr "Počet ostrovov"
 
 
 msgid "The total number of mesh islands"
 msgstr "Celkový počet ostrovov povrchovej siete"
+
+
+msgid "The number of vertices connected to this vertex with an edge, equal to the number of connected edges"
+msgstr "Počet vrcholov spojených s týmto vrcholom hranou, rovnajúci sa počtu pripojených hrán"
 
 
 msgid "Number of faces that contain the vertex"
@@ -116618,6 +116811,10 @@ msgstr "Geometria vytvorená inštanciou na body"
 
 msgid "Pick Instance"
 msgstr "Nabrať inštanciu"
+
+
+msgid "Choose instances from the \"Instance\" input at each point instead of instancing the entire geometry"
+msgstr "Výber inštancií zo vstupu \"Inštancia\" v každom bode namiesto vytvárania inštancie celej geometrie"
 
 
 msgid "Instance Index"
@@ -116898,6 +117095,18 @@ msgstr "Zvyšok"
 
 msgid "Max Width"
 msgstr "Maximálna šírka"
+
+
+msgid "The source geometry must contain a mesh"
+msgstr "Zdrojová geometria musí obsahovať povrchovú sieť"
+
+
+msgid "The source mesh must have faces"
+msgstr "Zdrojová povrchová sieť musí mať plôšky"
+
+
+msgid "The source geometry must contain a mesh or a point cloud"
+msgstr "Zdrojová geometria musí obsahovať povrchovú sieť alebo mračno bodov"
 
 
 msgid "Missing Data-Block"

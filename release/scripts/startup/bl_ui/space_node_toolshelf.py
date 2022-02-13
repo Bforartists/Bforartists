@@ -1,20 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # <pep8 compliant>
 import bpy
@@ -235,7 +219,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Particle Info     ", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
-            
+
             props = col.operator("node.add_node", text=" Point Info         ", icon = "POINT_INFO")
             props.use_transform = True
             props.type = "ShaderNodePointInfo"
@@ -332,7 +316,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "POINT_INFO")
             props.use_transform = True
             props.type = "ShaderNodePointInfo"
@@ -1863,7 +1847,7 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Combine RGBA ", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "CompositorNodeCombRGBA"
-            
+
             props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
@@ -1901,7 +1885,7 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate RGBA ", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "CompositorNodeSepRGBA"
-            
+
             props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeSeparateXYZ"
@@ -1952,7 +1936,7 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "CompositorNodeCombRGBA"
-            
+
             props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
@@ -1984,7 +1968,7 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "CompositorNodeSepRGBA"
-            
+
             props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeSeparateXYZ"
@@ -3763,7 +3747,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Geometry to Instance    ", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
-            
+
             props = col.operator("node.add_node", text=" Merge by Distance    ", icon = "REMOVE_DOUBLES")
             props.use_transform = True
             props.type = "GeometryNodeMergeByDistance"
@@ -3826,7 +3810,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "REMOVE_DOUBLES")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
@@ -4240,7 +4224,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Dual Mesh               ", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
-            
+
             props = col.operator("node.add_node", text=" Extrude Mesh             ", icon = "EXTRUDE_REGION")
             props.use_transform = True
             props.type = "GeometryNodeExtrudeMesh"
@@ -4337,7 +4321,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "DUAL_MESH")
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "EXTRUDE_REGION")
             props.use_transform = True
             props.type = "GeometryNodeExtrudeMesh"

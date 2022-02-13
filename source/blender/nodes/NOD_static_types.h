@@ -1,18 +1,4 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup nodes
@@ -41,17 +27,17 @@ DefNode(ShaderNode,     SH_NODE_RGB,             0,                      "RGB", 
 DefNode(ShaderNode,     SH_NODE_VALUE,           0,                      "VALUE",          Value,            "Value",             "Add a Value Shader node\nInput numerical values to other nodes"              )
 DefNode(ShaderNode,     SH_NODE_MIX_RGB,         def_mix_rgb,            "MIX_RGB",        MixRGB,           "MixRGB",            "Add a Mix RGB Shader node\nMixes images by working on the individual and corresponding pixels of the two input images"              )
 DefNode(ShaderNode,     SH_NODE_VALTORGB,        def_colorramp,          "VALTORGB",       ValToRGB,         "ColorRamp",         "Add a Color Ramp Shader node\nMap values to colors with the use of a gradient"              )
-DefNode(ShaderNode,     SH_NODE_RGBTOBW,         0,                      "RGBTOBW",        RGBToBW,          "RGB to BW",         "Add a RGB to BW Shader node\nConverts an RGB color image to a gray-scale image based at its luminance."              )
+DefNode(ShaderNode,     SH_NODE_RGBTOBW,         0,                      "RGBTOBW",        RGBToBW,          "RGB to BW",         "Add a RGB to BW Shader node\nConverts an RGB color image to a gray-scale image based at its luminance"              )
 DefNode(ShaderNode,     SH_NODE_SHADERTORGB,     0,                      "SHADERTORGB",    ShaderToRGB,      "Shader to RGB",     "Add a Shader to RGB Shader node\nConverts a shader input to rgba values. Warning, this may breakt the PBR workflow"              )
 DefNode(ShaderNode,     SH_NODE_NORMAL,          0,                      "NORMAL",         Normal,           "Normal",            "Add a Normal Shader node\nGenerates a normal vector and a dot product"              )
 DefNode(ShaderNode,     SH_NODE_GAMMA,           0,                      "GAMMA",          Gamma,            "Gamma",             "Add a Gamma Shader node\nApply a gamma correction"              )
 DefNode(ShaderNode,     SH_NODE_BRIGHTCONTRAST,  0,                      "BRIGHTCONTRAST", BrightContrast,   "Bright Contrast",   "Add a Bright/Contrast Shader node\nAdjust brightness and contrast"              )
 DefNode(ShaderNode,     SH_NODE_MAPPING,         def_sh_mapping,         "MAPPING",        Mapping,          "Mapping",           "Add a Mapping Shader node\nTransforms the input vector by applying translation, rotation, and scaling"              )
-DefNode(ShaderNode,     SH_NODE_CURVE_VEC,       def_vector_curve,       "CURVE_VEC",      VectorCurve,      "Vector Curves",     "Add a Vector Curves Shader node\nMaps an input vector components to a curve."              )
+DefNode(ShaderNode,     SH_NODE_CURVE_VEC,       def_vector_curve,       "CURVE_VEC",      VectorCurve,      "Vector Curves",     "Add a Vector Curves Shader node\nMaps an input vector components to a curve"              )
 DefNode(ShaderNode,     SH_NODE_CURVE_RGB,       def_rgb_curve,          "CURVE_RGB",      RGBCurve,         "RGB Curves",        "Add a RGB Curves Shader node\nAllows color corrections for each color channel and levels adjustments in the compositing context"              )
-DefNode(ShaderNode,     SH_NODE_CAMERA,          0,                      "CAMERA",         CameraData,       "Camera Data",       "Add a Camera Data Shader node\nGet information about the position of the object relative to the camera."              )
+DefNode(ShaderNode,     SH_NODE_CAMERA,          0,                      "CAMERA",         CameraData,       "Camera Data",       "Add a Camera Data Shader node\nGet information about the position of the object relative to the camera"              )
 DefNode(ShaderNode,     SH_NODE_MAP_RANGE,       def_map_range,          "MAP_RANGE",      MapRange,         "Map Range",         "Add a Map Range Shader node\nRemaps a value from a source range to a target range"              )
-DefNode(ShaderNode,     SH_NODE_CLAMP,           def_clamp,              "CLAMP",          Clamp,            "Clamp",             "Add a Clamp Shader node\nClamps a value between a minimum and a maximum."              )
+DefNode(ShaderNode,     SH_NODE_CLAMP,           def_clamp,              "CLAMP",          Clamp,            "Clamp",             "Add a Clamp Shader node\nClamps a value between a minimum and a maximum"              )
 DefNode(ShaderNode,     SH_NODE_MATH,            def_math,               "MATH",           Math,             "Math",              "Add a Math Shader node\nPerforms math operations"              )
 DefNode(ShaderNode,     SH_NODE_VECTOR_MATH,     def_vector_math,        "VECT_MATH",      VectorMath,       "Vector Math",       "Add a Vector Math Shader node\nPerforms a selected math operation on the input vectors"              )
 DefNode(ShaderNode,     SH_NODE_SQUEEZE,         0,                      "SQUEEZE",        Squeeze,          "Squeeze Value",     "Add a Squeeze Value Shader node\nScale down high values of the camera data node"              )
@@ -65,7 +51,7 @@ DefNode(ShaderNode,     SH_NODE_EEVEE_SPECULAR,     0,                      "EEV
 DefNode(ShaderNode,     SH_NODE_OUTPUT_LIGHT,       def_sh_output,          "OUTPUT_LIGHT",       OutputLight,      "Light Output",      "Add a Light Output Shader node\nOutputs light information to a light object"       )
 DefNode(ShaderNode,     SH_NODE_OUTPUT_WORLD,       def_sh_output,          "OUTPUT_WORLD",       OutputWorld,      "World Output",      "Add a World Output Shader node\nOutputs light and color information to the scene’s World"       )
 DefNode(ShaderNode,     SH_NODE_OUTPUT_LINESTYLE,   def_sh_output_linestyle,"OUTPUT_LINESTYLE",   OutputLineStyle,  "Line Style Output", "Add a Line Style Output Shader node\nA Line Style shader"       )
-DefNode(ShaderNode,     SH_NODE_FRESNEL,            0,                      "FRESNEL",            Fresnel,          "Fresnel",           "Add a Fresnel Shader node\nAdds Fresnel effect. The more a face goes towards 180 degrees, the more it is reflecting."       )
+DefNode(ShaderNode,     SH_NODE_FRESNEL,            0,                      "FRESNEL",            Fresnel,          "Fresnel",           "Add a Fresnel Shader node\nAdds Fresnel effect. The more a face goes towards 180 degrees, the more it is reflecting"       )
 DefNode(ShaderNode,     SH_NODE_LAYER_WEIGHT,       0,                      "LAYER_WEIGHT",       LayerWeight,      "Layer Weight",      "Add a Layer Weight Shader node\nOutputs a weight. Typically used for layering shaders with the Mix Shader node"       )
 DefNode(ShaderNode,     SH_NODE_MIX_SHADER,         0,                      "MIX_SHADER",         MixShader,        "Mix Shader",        "Add a Mix Shader Shader node\nMix two shaders together by a factor"       )
 DefNode(ShaderNode,     SH_NODE_ADD_SHADER,         0,                      "ADD_SHADER",         AddShader,        "Add Shader",        "Add a Add Shader Shader node\nAdds two Shaders together"       )
@@ -85,12 +71,12 @@ DefNode(ShaderNode,     SH_NODE_BSDF_VELVET,        0,                      "BSD
 DefNode(ShaderNode,     SH_NODE_BSDF_TOON,          def_toon,               "BSDF_TOON",          BsdfToon,         "Toon BSDF",         "Add a Toon BSDF Shader node\nCreate Diffuse and Glossy materials with cartoon light effects"       )
 DefNode(ShaderNode,     SH_NODE_BSDF_HAIR,          def_hair,               "BSDF_HAIR",          BsdfHair,         "Hair BSDF",         "Add a Hair BSDF Shader node\nAdd shading for Hair"       )
 DefNode(ShaderNode,     SH_NODE_BSDF_HAIR_PRINCIPLED,  def_hair_principled, "BSDF_HAIR_PRINCIPLED", BsdfHairPrincipled,  "Principled Hair BSDF", "Add a Principled Hair BSDF Shader node\nShading for Hair and Fur")
-DefNode(ShaderNode,     SH_NODE_SUBSURFACE_SCATTERING, def_sh_subsurface,   "SUBSURFACE_SCATTERING",SubsurfaceScattering,"Subsurface Scattering","Add a Subsurface Scattering Shader node\nSimple subsurface multiple scattering, for skin, wax, etc.")
+DefNode(ShaderNode,     SH_NODE_SUBSURFACE_SCATTERING, def_sh_subsurface,   "SUBSURFACE_SCATTERING",SubsurfaceScattering,"Subsurface Scattering","Add a Subsurface Scattering Shader node\nSimple subsurface multiple scattering, for skin, wax, etc")
 DefNode(ShaderNode,     SH_NODE_VOLUME_ABSORPTION,  0,                      "VOLUME_ABSORPTION",  VolumeAbsorption, "Volume Absorption", "Add a Volume Absorption Shader node\nAllows light to be absorbed as it passes through the volume"       )
 DefNode(ShaderNode,     SH_NODE_VOLUME_SCATTER,     0,                      "VOLUME_SCATTER",     VolumeScatter,    "Volume Scatter",    "Add a Volume Scatter Shader node\nAllows light to be scattered as it passes through the volume"       )
 DefNode(ShaderNode,     SH_NODE_VOLUME_PRINCIPLED,  0,                      "PRINCIPLED_VOLUME",  VolumePrincipled, "Principled Volume", "Add a Principled Volume Shader node\nAll volume shading components in a single node"       )
 DefNode(ShaderNode,     SH_NODE_EMISSION,           0,                      "EMISSION",           Emission,         "Emission",          "Add a Emission Shader node\nThe Emission node emits light"       )
-DefNode(ShaderNode,     SH_NODE_NEW_GEOMETRY,       0,                      "NEW_GEOMETRY",       NewGeometry,      "Geometry",          "Add a Geometry Shader node\nGives geometric information about the current shading point."       )
+DefNode(ShaderNode,     SH_NODE_NEW_GEOMETRY,       0,                      "NEW_GEOMETRY",       NewGeometry,      "Geometry",          "Add a Geometry Shader node\nGives geometric information about the current shading point"       )
 DefNode(ShaderNode,     SH_NODE_LIGHT_PATH,         0,                      "LIGHT_PATH",         LightPath,        "Light Path",        "Add a Light Path Shader node\nRetreives for which kind of incoming ray the shader is being executed"       )
 DefNode(ShaderNode,     SH_NODE_LIGHT_FALLOFF,      0,                      "LIGHT_FALLOFF",      LightFalloff,     "Light Falloff",     "Add a Light Falloff Shader node\nAllows you to manipulate how light intensity decreases over distance"       )
 DefNode(ShaderNode,     SH_NODE_OBJECT_INFO,        0,                      "OBJECT_INFO",        ObjectInfo,       "Object Info",       "Add a Object Info Shader node\nRetreives information about the object instance"       )
@@ -103,7 +89,7 @@ DefNode(ShaderNode,     SH_NODE_WAVELENGTH,         0,                      "WAV
 DefNode(ShaderNode,     SH_NODE_BLACKBODY,          0,                      "BLACKBODY",          Blackbody,        "Blackbody",         "Add a Blackbody Shader node\nConverts a blackbody temperature to RGB value"       )
 DefNode(ShaderNode,     SH_NODE_BUMP,               def_sh_bump,            "BUMP",               Bump,             "Bump",              "Add a Bump Shader node\nGenerates a perturbed normal from a height texture, for bump mapping"       )
 DefNode(ShaderNode,     SH_NODE_NORMAL_MAP,         def_sh_normal_map,      "NORMAL_MAP",         NormalMap,        "Normal Map",        "Add a Normal Map Shader node\nGenerates a perturbed normal from an RGB normal map image"       )
-DefNode(ShaderNode,     SH_NODE_TANGENT,            def_sh_tangent,         "TANGENT",            Tangent,          "Tangent",           "Add a Tangent Shader node\nGenerates a tangent direction for the Anisotropic BSDF."       )
+DefNode(ShaderNode,     SH_NODE_TANGENT,            def_sh_tangent,         "TANGENT",            Tangent,          "Tangent",           "Add a Tangent Shader node\nGenerates a tangent direction for the Anisotropic BSDF"       )
 DefNode(ShaderNode,     SH_NODE_SCRIPT,             def_sh_script,          "SCRIPT",             Script,           "Script",            "Add a Script Shader node\nIn this node you can load OSL shaders"       )
 DefNode(ShaderNode,     SH_NODE_TEX_IMAGE,          def_sh_tex_image,       "TEX_IMAGE",          TexImage,         "Image Texture",     "Add a Image Texture Shader node\nAdd an image file as a texture"       )
 DefNode(ShaderNode,     SH_NODE_TEX_ENVIRONMENT,    def_sh_tex_environment, "TEX_ENVIRONMENT",    TexEnvironment,   "Environment Texture","Add a Environment Texture Shader node\nLoad an environment texture to light your scene"      )
@@ -149,7 +135,7 @@ DefNode(CompositorNode, CMP_NODE_BLUR,           def_cmp_blur,           "BLUR",
 DefNode(CompositorNode, CMP_NODE_FILTER,         def_cmp_filter,         "FILTER",         Filter,           "Filter",            "Add a Filter Compositor node\nProvides various common image enhancement filters"              )
 DefNode(CompositorNode, CMP_NODE_MAP_VALUE,      def_cmp_map_value,      "MAP_VALUE",      MapValue,         "Map Value",         "Add a Map Value Compositor node\nScale, offset and clamp values"              )
 DefNode(CompositorNode, CMP_NODE_MAP_RANGE,      def_cmp_map_range,      "MAP_RANGE",      MapRange,         "Map Range",         "Add a Map Range Compositor node\nRemaps a value from a source range to a target range"              )
-DefNode(CompositorNode, CMP_NODE_TIME,           def_time,               "TIME",           Time,             "Time Curve",          "Add a Time Curve Compositor node\ngenerates a factor value that changes according to the curve as time progresses through the Timeline."              )
+DefNode(CompositorNode, CMP_NODE_TIME,           def_time,               "TIME",           Time,             "Time Curve",          "Add a Time Curve Compositor node\ngenerates a factor value that changes according to the curve as time progresses through the Timeline"              )
 DefNode(CompositorNode, CMP_NODE_VECBLUR,        def_cmp_vector_blur,    "VECBLUR",        VecBlur,          "Vector Blur",       "Add a Vector Blur Compositor node\nUses the vector speed render pass to blur the image pixels in 2D"              )
 DefNode(CompositorNode, CMP_NODE_SEPRGBA,        0,                      "SEPRGBA",        SepRGBA,          "Separate RGBA",     "Add a Separate RGBA Compositor node\nSeparates the RGBA values from a single image"              )
 DefNode(CompositorNode, CMP_NODE_SEPHSVA,        0,                      "SEPHSVA",        SepHSVA,          "Separate HSVA",     "Add a Separate HSVA Compositor node\nSeparates the single RGB channels from a single image"              )
@@ -304,11 +290,11 @@ DefNode(GeometryNode, GEO_NODE_LEGACY_ATTRIBUTE_SEPARATE_XYZ, def_geo_attribute_
 DefNode(GeometryNode, GEO_NODE_LEGACY_ATTRIBUTE_TRANSFER, def_geo_attribute_transfer, "LEGACY_ATTRIBUTE_TRANSFER", LegacyAttributeTransfer, "Attribute Transfer", "Add a Attribute Transfer Geometry node\nTransfers several types of data from one mesh to another")
 DefNode(GeometryNode, GEO_NODE_LEGACY_ATTRIBUTE_VECTOR_MATH, def_geo_attribute_vector_math, "LEGACY_ATTRIBUTE_VECTOR_MATH", LegacyAttributeVectorMath, "Attribute Vector Math", "Add a Attribute Vector Math Geometry node\nModify an attribute with a math operation")
 DefNode(GeometryNode, GEO_NODE_LEGACY_ATTRIBUTE_VECTOR_ROTATE, def_geo_attribute_vector_rotate, "LEGACY_ATTRIBUTE_VECTOR_ROTATE", LegacyAttributeVectorRotate, "Attribute Vector Rotate", "Add a Attribute Vector Rotate Geometry node\nRotate by a vector")
-DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_ENDPOINTS, 0, "LEGACY_CURVE_ENDPOINTS", LegacyCurveEndpoints, "Curve Endpoints", "Add a Curve Endpoints Geometry node\nAllows you to grab the endpoints of a curve to instance geometry at.")
+DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_ENDPOINTS, 0, "LEGACY_CURVE_ENDPOINTS", LegacyCurveEndpoints, "Curve Endpoints", "Add a Curve Endpoints Geometry node\nAllows you to grab the endpoints of a curve to instance geometry at")
 DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_REVERSE, 0, "LEGACY_CURVE_REVERSE", LegacyCurveReverse, "Curve Reverse", "Add a Curve Reverse node\nReverses the curve direction")
 DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_SELECT_HANDLES, def_geo_curve_select_handles, "LEGACY_CURVE_SELECT_HANDLES", LegacyCurveSelectHandles, "Select by Handle Type", "Add a Select by Handle Type Node\nSelect handles by type")
 DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_SET_HANDLES, def_geo_legacy_curve_set_handles, "LEGACY_CURVE_SET_HANDLES", LegacyCurveSetHandles, "Set Handle Type", "Add a Set Handle Type Node\nAllows to define a handle type for the curve nodes")
-DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "LEGACY_CURVE_SPLINE_TYPE", LegacyCurveSplineType, "Set Spline Type", "Add a Set Spline Type Node\nSet the spline type.")
+DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "LEGACY_CURVE_SPLINE_TYPE", LegacyCurveSplineType, "Set Spline Type", "Add a Set Spline Type Node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_SUBDIVIDE, def_geo_legacy_curve_subdivide, "LEGACY_CURVE_SUBDIVIDE", LegacyCurveSubdivide, "Curve Subdivide", "Add a Curve Subdivide node\nSubdivides the curve")
 DefNode(GeometryNode, GEO_NODE_LEGACY_CURVE_TO_POINTS, def_geo_legacy_curve_to_points, "LEGACY_CURVE_TO_POINTS", LegacyCurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts the curve points to points")
 DefNode(GeometryNode, GEO_NODE_LEGACY_DELETE_GEOMETRY, 0, "LEGACY_DELETE_GEOMETRY", LegacyDeleteGeometry, "Delete Geometry", "Add a Delete Geometry Geometry node\nDelete the geometry")

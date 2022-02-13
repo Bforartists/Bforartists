@@ -1,14 +1,12 @@
-#
-#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2019  Shrinivas Kulkarni
+
 # This Blender add-on assigns one or more Bezier Curves as shape keys to another
 # Bezier Curve
 #
 # Supported Blender Versions: 2.8x
 #
-# Copyright (C) 2019  Shrinivas Kulkarni
-#
-# License: GPL-3.0 (https://github.com/Shriinivas/assignshapekey/blob/master/LICENSE)
-#
+# https://github.com/Shriinivas/assignshapekey/blob/master/LICENSE
 
 import bpy, bmesh, bgl, gpu
 from gpu_extras.batch import batch_for_shader

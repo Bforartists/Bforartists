@@ -1,4 +1,6 @@
-# GPL #  Author, Anthony D'Agostino
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author, Anthony D'Agostino
 
 import bpy
 from bpy.props import (

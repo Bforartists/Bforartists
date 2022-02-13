@@ -1,16 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import bpy
 import mathutils
@@ -174,8 +163,7 @@ def get_bone_matrix(blender_object_if_armature: typing.Optional[bpy.types.Object
 
 
         # If some drivers must be evaluated, do it here, to avoid to have to change frame by frame later
-        obj_driver = blender_object_if_armature.proxy if blender_object_if_armature.proxy else blender_object_if_armature
-        drivers_to_manage = get_sk_drivers(obj_driver)
+        drivers_to_manage = get_sk_drivers(blender_object_if_armature)
         for dr_obj, dr_fcurves in drivers_to_manage:
             vals = get_sk_driver_values(dr_obj, frame, dr_fcurves)
 
