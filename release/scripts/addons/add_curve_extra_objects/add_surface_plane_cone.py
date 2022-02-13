@@ -1,4 +1,4 @@
-# gpl: author Folkert de Vries
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
     "name": "Surface: Plane / Cone/ Star / Wedge",

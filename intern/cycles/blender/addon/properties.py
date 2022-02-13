@@ -1,18 +1,5 @@
-#
-# Copyright 2011-2013 Blender Foundation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2011-2022 Blender Foundation
 
 # <pep8 compliant>
 from __future__ import annotations
@@ -74,7 +61,7 @@ enum_panorama_types = (
                           "Similar to most fisheye modern lens, takes sensor dimensions into consideration"),
     ('MIRRORBALL', "Mirror Ball", "Uses the mirror ball mapping"),
     ('FISHEYE_LENS_POLYNOMIAL', "Fisheye Lens Polynomial",
-     "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."),
+     "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked"),
 )
 
 enum_curve_shape = (
@@ -904,27 +891,27 @@ class CyclesCameraSettings(bpy.types.PropertyGroup):
 
     fisheye_polynomial_k0: FloatProperty(
         name="Fisheye Polynomial K0",
-        description="Coefficient K0 of the lens polinomial",
+        description="Coefficient K0 of the lens polynomial",
         default=camera.default_fisheye_polynomial[0], precision=6, step=0.1, subtype='ANGLE',
     )
     fisheye_polynomial_k1: FloatProperty(
         name="Fisheye Polynomial K1",
-        description="Coefficient K1 of the lens polinomial",
+        description="Coefficient K1 of the lens polynomial",
         default=camera.default_fisheye_polynomial[1], precision=6, step=0.1, subtype='ANGLE',
     )
     fisheye_polynomial_k2: FloatProperty(
         name="Fisheye Polynomial K2",
-        description="Coefficient K2 of the lens polinomial",
+        description="Coefficient K2 of the lens polynomial",
         default=camera.default_fisheye_polynomial[2], precision=6, step=0.1, subtype='ANGLE',
     )
     fisheye_polynomial_k3: FloatProperty(
         name="Fisheye Polynomial K3",
-        description="Coefficient K3 of the lens polinomial",
+        description="Coefficient K3 of the lens polynomial",
         default=camera.default_fisheye_polynomial[3], precision=6, step=0.1, subtype='ANGLE',
     )
     fisheye_polynomial_k4: FloatProperty(
         name="Fisheye Polynomial K4",
-        description="Coefficient K4 of the lens polinomial",
+        description="Coefficient K4 of the lens polynomial",
         default=camera.default_fisheye_polynomial[4], precision=6, step=0.1, subtype='ANGLE',
     )
 
@@ -1377,6 +1364,12 @@ class CyclesPreferences(bpy.types.AddonPreferences):
         default=False,
     )
 
+    use_metalrt: BoolProperty(
+        name="MetalRT (Experimental)",
+        description="MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly",
+        default=False,
+    )
+
     def find_existing_device_entry(self, device):
         for device_entry in self.devices:
             if device_entry.id == device[2] and device_entry.type == device[1]:
@@ -1521,6 +1514,12 @@ class CyclesPreferences(bpy.types.AddonPreferences):
             row = layout.row()
             row.use_property_split = True
             row.prop(self, "peer_memory")
+
+        if compute_device_type == 'METAL':
+            row = layout.row()
+            row.use_property_split = True
+            row.prop(self, "use_metalrt")
+
 
     def draw(self, context):
         self.draw_impl(self.layout, context)

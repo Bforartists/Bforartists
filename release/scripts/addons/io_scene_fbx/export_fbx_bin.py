@@ -1,20 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # <pep8 compliant>
 
@@ -1874,7 +1858,7 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
             if mod.type not in {'ARMATURE'} or not mod.object:
                 continue
             # We only support vertex groups binding method, not bone envelopes one!
-            if mod.object in {arm_obj.bdata, arm_obj.bdata.proxy} and mod.use_vertex_groups:
+            if mod.object == arm_obj.bdata and mod.use_vertex_groups:
                 found = True
                 break
 

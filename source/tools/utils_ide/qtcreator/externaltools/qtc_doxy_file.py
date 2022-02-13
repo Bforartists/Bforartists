@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 This script takes 2-3 args: [--browse] <Doxyfile> <sourcefile>
 

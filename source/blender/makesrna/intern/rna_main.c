@@ -1,18 +1,4 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
  * \ingroup RNA
@@ -110,8 +96,8 @@ RNA_MAIN_LISTBASE_FUNCS_DEF(collections)
 RNA_MAIN_LISTBASE_FUNCS_DEF(curves)
 RNA_MAIN_LISTBASE_FUNCS_DEF(fonts)
 RNA_MAIN_LISTBASE_FUNCS_DEF(gpencils)
-#  ifdef WITH_HAIR_NODES
-RNA_MAIN_LISTBASE_FUNCS_DEF(hairs)
+#  ifdef WITH_NEW_CURVES_TYPE
+RNA_MAIN_LISTBASE_FUNCS_DEF(hair_curves)
 #  endif
 RNA_MAIN_LISTBASE_FUNCS_DEF(images)
 RNA_MAIN_LISTBASE_FUNCS_DEF(lattices)
@@ -195,7 +181,12 @@ void RNA_def_main(BlenderRNA *brna)
        "Cameras",
        "Camera data",
        RNA_def_main_cameras},
-      {"scenes", "Scene", "rna_Main_scenes_begin", "Scenes", "Scene data", RNA_def_main_scenes},
+      {"scenes",
+       "Scene",
+       "rna_Main_scenes_begin",
+       "Scenes",
+       "Scene data",
+       RNA_def_main_scenes},
       {"objects",
        "Object",
        "rna_Main_objects_begin",
@@ -214,8 +205,18 @@ void RNA_def_main(BlenderRNA *brna)
        "Node Groups",
        "Node group data",
        RNA_def_main_node_groups},
-      {"meshes", "Mesh", "rna_Main_meshes_begin", "Meshes", "Mesh data", RNA_def_main_meshes},
-      {"lights", "Light", "rna_Main_lights_begin", "Lights", "Light data", RNA_def_main_lights},
+      {"meshes",
+       "Mesh",
+       "rna_Main_meshes_begin",
+       "Meshes",
+       "Mesh data",
+       RNA_def_main_meshes},
+      {"lights",
+       "Light",
+       "rna_Main_lights_begin",
+       "Lights",
+       "Light data",
+       RNA_def_main_lights},
       {"libraries",
        "Library",
        "rna_Main_libraries_begin",
@@ -234,14 +235,24 @@ void RNA_def_main(BlenderRNA *brna)
        "Window Managers",
        "Window manager data",
        RNA_def_main_window_managers},
-      {"images", "Image", "rna_Main_images_begin", "Images", "Image data", RNA_def_main_images},
+      {"images",
+       "Image",
+       "rna_Main_images_begin",
+       "Images",
+       "Image data",
+       RNA_def_main_images},
       {"lattices",
        "Lattice",
        "rna_Main_lattices_begin",
        "Lattices",
        "Lattice data",
        RNA_def_main_lattices},
-      {"curves", "Curve", "rna_Main_curves_begin", "Curves", "Curve data", RNA_def_main_curves},
+      {"curves",
+       "Curve",
+       "rna_Main_curves_begin",
+       "Curves",
+       "Curve data",
+       RNA_def_main_curves},
       {"metaballs",
        "MetaBall",
        "rna_Main_metaballs_begin",
@@ -266,22 +277,37 @@ void RNA_def_main(BlenderRNA *brna)
        "Brushes",
        "Brush data",
        RNA_def_main_brushes},
-      {"worlds", "World", "rna_Main_worlds_begin", "Worlds", "World data", RNA_def_main_worlds},
+      {"worlds",
+       "World",
+       "rna_Main_worlds_begin",
+       "Worlds",
+       "World data",
+       RNA_def_main_worlds},
       {"collections",
        "Collection",
        "rna_Main_collections_begin",
        "Collections",
        "Collection data",
        RNA_def_main_collections},
-      {"shape_keys", "Key", "rna_Main_shapekeys_begin", "Shape Keys", "Shape Key data", NULL},
-      {"texts", "Text", "rna_Main_texts_begin", "Texts", "Text data", RNA_def_main_texts},
+      {"shape_keys",
+       "Key",
+       "rna_Main_shapekeys_begin",
+       "Shape Keys",
+       "Shape Key data",
+       NULL},
+      {"texts", "Text", "rna_Main_texts_begin", "Texts", "Text data-blocks", RNA_def_main_texts},
       {"speakers",
        "Speaker",
        "rna_Main_speakers_begin",
        "Speakers",
        "Speaker data",
        RNA_def_main_speakers},
-      {"sounds", "Sound", "rna_Main_sounds_begin", "Sounds", "Sound data", RNA_def_main_sounds},
+      {"sounds",
+       "Sound",
+       "rna_Main_sounds_begin",
+       "Sounds",
+       "Sound data",
+       RNA_def_main_sounds},
       {"armatures",
        "Armature",
        "rna_Main_armatures_begin",
@@ -346,11 +372,20 @@ void RNA_def_main(BlenderRNA *brna)
       {"lightprobes",
        "LightProbe",
        "rna_Main_lightprobes_begin",
-       "LightProbes",
-       "LightProbe data",
+       "Light Probes",
+       "Light Probe data",
        RNA_def_main_lightprobes},
-#  ifdef WITH_HAIR_NODES
-      {"hairs", "Hair", "rna_Main_hairs_begin", "Hairs", "Hair data", RNA_def_main_hairs},
+#  ifdef WITH_NEW_CURVES_TYPE
+      /**
+       * \note The name `hair_curves` is chosen to be different than `curves`,
+       * but they are generic curve data-blocks, not just for hair.
+       */
+      {"hair_curves",
+       "Curves",
+       "rna_Main_hair_curves_begin",
+       "Hair Curves",
+       "Hair curve data",
+       RNA_def_main_hair_curves},
 #  endif
       {"pointclouds",
        "PointCloud",
@@ -378,8 +413,9 @@ void RNA_def_main(BlenderRNA *brna)
   int i;
 
   srna = RNA_def_struct(brna, "BlendData", NULL);
-  RNA_def_struct_ui_text(
-      srna, "Blend-file Data", "Main data structure representing a .blend file and all its data");
+  RNA_def_struct_ui_text(srna,
+                         "Blend-File Data",
+                         "Main data structure representing a .blend file and all its data");
   RNA_def_struct_ui_icon(srna, ICON_BLENDER);
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);

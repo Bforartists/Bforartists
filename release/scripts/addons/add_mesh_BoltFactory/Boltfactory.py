@@ -1,23 +1,8 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 
 import bpy
+import bmesh
 from mathutils import Matrix
 from bpy.types import Operator
 from bpy_extras.object_utils import AddObjectHelper
@@ -431,20 +416,29 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                 (context.active_object.data is not None) and ('Bolt' in context.active_object.data.keys()) and \
                 (self.change == True):
                 obj = context.active_object
-                oldmesh = obj.data
-                oldmeshname = obj.data.name
+                use_auto_smooth = bool(obj.data.use_auto_smooth)        # Copy value, do not take a reference
+                use_smooth = bool(obj.data.polygons[0].use_smooth)      # Copy value, do not take a reference
+
                 mesh = createMesh.Create_New_Mesh(self, context)
-                obj.data = mesh
+
+                # Modify existing mesh data object by replacing geometry (but leaving materials etc)
+                bm = bmesh.new()
+                bm.from_mesh(mesh)
+                bm.to_mesh(obj.data)
+                bm.free()
+
+                # Preserve flat/smooth choice. New mesh is flat by default
+                obj.data.use_auto_smooth = use_auto_smooth
+                if use_smooth:
+                    bpy.ops.object.shade_smooth()
+
+                bpy.data.meshes.remove(mesh)
+
                 try:
                     bpy.ops.object.vertex_group_remove(all=True)
                 except:
                     pass
 
-                for material in oldmesh.materials:
-                    obj.data.materials.append(material)
-
-                bpy.data.meshes.remove(oldmesh)
-                obj.data.name = oldmeshname
             else:
                 mesh = createMesh.Create_New_Mesh(self, context)
                 obj = object_utils.object_data_add(context, mesh, operator=self)

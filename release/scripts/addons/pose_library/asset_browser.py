@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Functions for finding and working with Asset Browsers."""
 
 from typing import Iterable, Optional, Tuple
