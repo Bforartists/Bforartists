@@ -1,16 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import bpy
 import os
@@ -245,8 +234,10 @@ def _make_temp_image_copy(guard: TmpImageGuard, src_image: bpy.types.Image):
     tmp_image = guard.image
 
     tmp_image.update()
+    # See #1564 and T95616
+    tmp_image.scale(*src_image.size)
 
-    if src_image.is_dirty:
+    if src_image.is_dirty: # Warning, img size change doesn't make it dirty, see T95616
         # Unsaved changes aren't copied by .copy(), so do them ourselves
         tmp_buf = np.empty(src_image.size[0] * src_image.size[1] * 4, np.float32)
         src_image.pixels.foreach_get(tmp_buf)

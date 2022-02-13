@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 actionconfig_version = (3, 0, 39)
 actionconfig_data = \
 [("blender_default",

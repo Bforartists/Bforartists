@@ -1,16 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2018-2021 The glTF-Blender-IO authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import math
 import bpy
@@ -166,14 +155,12 @@ def __gather_children(blender_object, blender_scene, export_settings):
     children = []
     only_bone_children = True # True by default, will be set to False if needed
     # standard children
-    for _child_object in blender_object.children:
-        if _child_object.parent_bone:
+    for child_object in blender_object.children:
+        if child_object.parent_bone:
             # this is handled further down,
             # as the object should be a child of the specific bone,
             # not the Armature object
             continue
-
-        child_object = _child_object.proxy if _child_object.proxy else _child_object
 
         node = gather_node(child_object,
             child_object.library.name if child_object.library else None,
@@ -187,7 +174,7 @@ def __gather_children(blender_object, blender_scene, export_settings):
             if dupli_object.parent is not None:
                 continue
             if dupli_object.type == "ARMATURE":
-                continue # There is probably a proxy
+                continue # There is probably a proxy (no more existing)
             node = gather_node(dupli_object,
                 dupli_object.library.name if dupli_object.library else None,
                 blender_scene, blender_object.name, export_settings)

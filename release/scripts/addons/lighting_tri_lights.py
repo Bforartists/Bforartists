@@ -1,4 +1,6 @@
-# gpl: author Daniel Schalla, maintained by meta-androcto
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# author Daniel Schalla, maintained by meta-androcto
 
 bl_info = {
     "name": "Tri-lighting",

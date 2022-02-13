@@ -1,8 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ######################################################################################################
 # A simple add-on to auto cut in two and mirror an object                                            #
 # Actually partially uncommented (see further version)                                               #
 # Author: Lapineige, Bookyakuno                                                                      #
-# License: GPL v3                                                                                    #
 ######################################################################################################
 # 2.8 update by Bookyakuno, meta-androcto
 

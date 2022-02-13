@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 import os
 from typing import (
@@ -33,6 +34,7 @@ BLACKLIST = set(
         "build_files/utils/make_utils.py",
         "source/tools/check_source/check_descriptions.py",
         "source/tools/check_source/check_header_duplicate.py",
+        "source/tools/check_source/check_licenses.py",
         "source/tools/check_source/check_spelling.py",
         "source/tools/check_source/check_unused_defines.py",
         "source/tools/utils_maintenance/blender_menu_search_coverage.py",

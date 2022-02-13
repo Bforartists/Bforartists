@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'b9718899fa64')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -42061,16 +42061,64 @@ msgid "And"
 msgstr "和"
 
 
+msgid "True when both inputs are true"
+msgstr "当两个输入值均为真时输出真值"
+
+
 msgid "Or"
 msgstr "或"
+
+
+msgid "True when at least one input is true"
+msgstr "当两个输入值中至少一个为真时输出真值"
+
+
+msgid "Opposite of the input"
+msgstr "输出与输入值相反的结果"
+
+
+msgid "Not And"
+msgstr "与非"
+
+
+msgid "True when at least one input is false"
+msgstr "当两个输入值中至少一个为假时输出真值"
+
+
+msgid "Nor"
+msgstr "或非"
+
+
+msgid "True when both inputs are false"
+msgstr "当两个输入值均为假时输出真值"
 
 
 msgid "Equal"
 msgstr "相等"
 
 
+msgid "True when both inputs are equal (exclusive nor)"
+msgstr "当两个输入相等时为真(同门)"
+
+
 msgid "Not Equal"
 msgstr "不等于"
+
+
+msgid "True when both inputs are different (exclusive or)"
+msgstr "当两个输入值有差别时为真(异或门)"
+
+
+msgid "Imply"
+msgstr "蕴含"
+
+
+msgid "True unless the first input is true and the second is false"
+msgstr "除非第一个输入为真，第二个输入为假，否则输出真值"
+
+
+msgid "True when the first input is true and the second is false (not imply)"
+msgstr "当第一个输入为真，第二个输入为假时输出真值(非蕴含)"
 
 
 msgid "Input Type"
@@ -43209,6 +43257,10 @@ msgid "Material Selection"
 msgstr "材质选择"
 
 
+msgid "Merge by Distance"
+msgstr "按距离合并"
+
+
 msgid "Mesh Boolean"
 msgstr "网格布尔"
 
@@ -43543,6 +43595,34 @@ msgstr "缩放文本大小，以在宽度和高度上匹配"
 
 msgid "Only output curves that fit within the width and height. Output the remainder to the \"Remainder\" output"
 msgstr "仅输出匹配宽度和高度的曲线。将其余部分输出至\"其余\""
+
+
+msgid "Pivot point position relative to character"
+msgstr "轴心点相对于文本的位置"
+
+
+msgid "Top Left"
+msgstr "左上"
+
+
+msgid "Top Center"
+msgstr "中上"
+
+
+msgid "Top Right"
+msgstr "右上"
+
+
+msgid "Bottom Left"
+msgstr "左下"
+
+
+msgid "Bottom Center"
+msgstr "中下"
+
+
+msgid "Bottom Right"
+msgstr "右下"
 
 
 msgid "Subdivide Curve"
@@ -44016,6 +44096,10 @@ msgstr "世界输出"
 
 msgid "Particle Info"
 msgstr "粒子信息"
+
+
+msgid "Point Info"
+msgstr "点信息"
 
 
 msgid "Bytecode"
@@ -50076,6 +50160,15 @@ msgstr "为所选数据块创建自动预览"
 
 
 msgctxt "Operator"
+msgid "Generate Preview from Object"
+msgstr "从物体生成预览"
+
+
+msgid "Create a preview for this asset by rendering the active object"
+msgstr "通过渲染活动物体为该资产创建预览"
+
+
+msgctxt "Operator"
 msgid "Load Custom Preview"
 msgstr "加载自定义预览"
 
@@ -54600,6 +54693,43 @@ msgstr "替换已有项"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "替换现有驱动器变量,而不是仅追加到现有列表的末尾"
+
+
+msgctxt "Operator"
+msgid "Equalize Handles"
+msgstr "等长化控制柄"
+
+
+msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
+msgstr "确保被选中的关键帧控制柄有相等的长度，可选择性全部调整角度至水平"
+
+
+msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
+msgstr "使被选中关键帧的控制柄的数值与各自关键帧相同"
+
+
+msgid "Handle Length"
+msgstr "控制柄长度"
+
+
+msgid "Length to make selected keyframes' bezier handles"
+msgstr "对被选中的关键帧的贝塞尔控制柄调整后的长度"
+
+
+msgid "Side of the keyframes' bezier handles to affect"
+msgstr "要影响的关键帧贝塞尔控制柄对应侧"
+
+
+msgid "Equalize selected keyframes' left handles"
+msgstr "等长化被选中关键帧的左控制柄"
+
+
+msgid "Equalize selected keyframes' right handles"
+msgstr "等长化被选中关键帧的右控制柄"
+
+
+msgid "Equalize both of a keyframe's handles"
+msgstr "等长化被选中关键帧的两个控制柄"
 
 
 msgctxt "Operator"
@@ -61120,6 +61250,10 @@ msgstr "要转换的目标物体类型"
 
 msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "从曲线、曲面、融球、或文本物体转换为网格"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -76227,12 +76361,44 @@ msgid "When checked, normals of exported meshes are included in the export"
 msgstr "勾选后，导出时将包含网格法线"
 
 
+msgid "Export Textures"
+msgstr "导出纹理"
+
+
+msgid "If exporting materials, export textures referenced by material nodes to a 'textures' directory in the same directory as the USD file"
+msgstr "如果导出材质，将材质节点引用的纹理导出至与USD文件位于目录下的 'textures' 目录。"
+
+
 msgid "UV Maps"
 msgstr "UV 贴图"
 
 
 msgid "When checked, all UV maps of exported meshes are included in the export"
 msgstr "勾选后，导出时将包含所有被导出网格中的UV 贴图"
+
+
+msgid "To USD Preview Surface"
+msgstr "到USD预览表面"
+
+
+msgid "Generate an approximate USD Preview Surface shader representation of a Principled BSDF node network"
+msgstr "生成原理化 BSDF节点网络的近似USD预览表面着色描绘"
+
+
+msgid "Overwrite Textures"
+msgstr "覆盖纹理"
+
+
+msgid "Allow overwriting existing texture files when exporting textures"
+msgstr "允许在输出纹理里覆盖现有的纹理文件"
+
+
+msgid "Relative Texture Paths"
+msgstr "相对纹理路径"
+
+
+msgid "Make texture asset paths relative to the USD file"
+msgstr "创建相对于 USD 文件的纹理资产路径"
 
 
 msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
@@ -82789,40 +82955,20 @@ msgid "Fisheye Polynomial K0"
 msgstr "鱼眼多项式 K0"
 
 
-msgid "Coefficient K0 of the lens polinomial"
-msgstr "镜头多项式的系数K0"
-
-
 msgid "Fisheye Polynomial K1"
 msgstr "鱼眼多项式 K1"
-
-
-msgid "Coefficient K1 of the lens polinomial"
-msgstr "镜头多项式的系数K1"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "鱼眼多项式 K2"
 
 
-msgid "Coefficient K2 of the lens polinomial"
-msgstr "镜头多项式的系数K2"
-
-
 msgid "Fisheye Polynomial K3"
 msgstr "鱼眼多项式 K3"
 
 
-msgid "Coefficient K3 of the lens polinomial"
-msgstr "镜头多项式的系数K3"
-
-
 msgid "Fisheye Polynomial K4"
 msgstr "鱼眼多项式 K4"
-
-
-msgid "Coefficient K4 of the lens polinomial"
-msgstr "镜头多项式的系数K4"
 
 
 msgid "Max Latitude"
@@ -82891,10 +83037,6 @@ msgstr "使用镜像球贴图"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "鱼眼镜头多项式"
-
-
-msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked."
-msgstr "定义镜头投影为多项式，以允许模拟真实世界的相机镜头。"
 
 
 msgid "Form of hair"
@@ -83299,6 +83441,14 @@ msgstr "静态 BVH"
 
 msgid "Any object modification requires a complete BVH rebuild, but renders faster"
 msgstr "物体的修改操作需要一次完整的BVH重建, 但可提升渲染速度"
+
+
+msgid "Use Compact BVH"
+msgstr "使用紧凑BVH"
+
+
+msgid "Use compact BVH structure (uses less ram but renders slower)"
+msgstr "使用紧凑BVH结构(占用内存更少，但渲染更慢)"
 
 
 msgid "AVX"
@@ -95351,10 +95501,6 @@ msgid "Bone Wireframe Opacity"
 msgstr "骨骼线框不透明度"
 
 
-msgid "Maximim opacity of bones in wireframe display mode"
-msgstr "线框显示模式下骨骼的最大不透明度"
-
-
 msgid "Display Handles"
 msgstr "显示控制柄"
 
@@ -98450,10 +98596,6 @@ msgstr "吸管颜色渐变点采样映射"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "无选中的关键帧，在场景范围内粘贴"
-
-
-msgid "Clipboard does not contain a valid matrix."
-msgstr "剪贴板不包含有效的矩阵。"
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -102299,6 +102441,11 @@ msgid "Asset Details"
 msgstr "资产详情"
 
 
+msgctxt "Operator"
+msgid "Render Active Object"
+msgstr "渲染活动物体"
+
+
 msgid ".blend Files"
 msgstr ".blend 文件"
 
@@ -103751,11 +103898,6 @@ msgstr "自动保存..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG为蜡笔"
-
-
-msgctxt "Operator"
-msgid "Wavefront OBJ (.obj) - New"
-msgstr "Wavefront OBJ (.obj) - 新"
 
 
 msgctxt "Operator"
@@ -106408,6 +106550,18 @@ msgid "Const"
 msgstr "约束"
 
 
+msgid "Crazyspace transformation is only available for Mesh type of objects"
+msgstr "Crazyspace变换仅对网格类型的物体可用"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range)"
+msgstr "无效的顶点编号 %d (预期值为 0 到 %d 范围)"
+
+
+msgid "Invalid vertex index %d (expected to be within 0 to %d range))"
+msgstr "无效的顶点编号 %d (预期值为 0 到 %d 范围))"
+
+
 msgid "UVMap"
 msgstr "UV 贴图"
 
@@ -108543,6 +108697,21 @@ msgstr "移除单个重写"
 
 
 msgctxt "Operator"
+msgid "Define Overrides"
+msgstr "定义重写"
+
+
+msgctxt "Operator"
+msgid "Define Single Override"
+msgstr "定义单个重写"
+
+
+msgctxt "Operator"
+msgid "Define Override"
+msgstr "定义重写"
+
+
+msgctxt "Operator"
 msgid "Reset All to Default Values"
 msgstr "将多项重置为默认值"
 
@@ -109924,10 +110093,6 @@ msgstr "活动物体最终变换具有一个或多个零缩放轴"
 
 msgid "Cannot delete indirectly linked object '%s'"
 msgstr "无法删除间接关联的库 '%s'"
-
-
-msgid "Cannot delete object '%s' as it used by override collections"
-msgstr "无法删除物体 '%s' ，因为它被重写集合所使用"
 
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
@@ -113313,10 +113478,6 @@ msgid "Column"
 msgstr "列"
 
 
-msgid "Unkown column type"
-msgstr "未知列类型"
-
-
 msgid "File Modified Outside and Inside Blender"
 msgstr "在 Blender 外部及内部修改的文件"
 
@@ -114276,6 +114437,10 @@ msgstr "无法编辑重写库数据的预览"
 
 msgid "Data-block does not support previews"
 msgstr "数据块不支持预览"
+
+
+msgid "Can't generate automatic preview for node group"
+msgstr "无法为节点组生成自动预览"
 
 
 msgid "Incorrect context for running data-block fake user toggling"
@@ -116255,6 +116420,10 @@ msgid "Limit Radius"
 msgstr "限制半径"
 
 
+msgid "Limit the maximum value of the radius in order to avoid overlapping fillets"
+msgstr "限制半径的最大值以避免倒角重叠"
+
+
 msgid "The number of points on the arc"
 msgstr "弧上的点数"
 
@@ -116503,6 +116672,10 @@ msgid "NURBS must have minimum of 4 points for Bezier Conversion"
 msgstr "NURBS必须至少有4个点才能进行贝塞尔转换"
 
 
+msgid "The number of control points to create on the segment following each point"
+msgstr "沿各点在线段上创建的控制点数量"
+
+
 msgid "Profile Curve"
 msgstr "轮廓曲线"
 
@@ -116535,12 +116708,24 @@ msgid "Offset Scale"
 msgstr "偏移比例"
 
 
+msgid "Output the handle positions relative to the corresponding control point instead of in the local space of the geometry"
+msgstr "输出相对对应控制点的控制柄位置，而非相对几何体局部空间的位置"
+
+
+msgid "The values from the \"id\" attribute on points, or the index if that attribute does not exist"
+msgstr "来自点上 \"id\" 属性的数值，如该属性不存在则为其编号"
+
+
 msgid "Unsigned Angle"
 msgstr "无符号角度"
 
 
 msgid "Signed Angle"
 msgstr "带符号角度"
+
+
+msgid "The number of faces that use each edge as one of their sides"
+msgstr "各边分别参与构成的面数量"
 
 
 msgid "Vertex Index 1"
@@ -116595,12 +116780,20 @@ msgid "Island Index"
 msgstr "孤岛编号"
 
 
+msgid "The index of the each vertex's island. Indices are based on the lowest vertex index contained in each island"
+msgstr "各个顶点孤岛的编号。编号是基于各孤岛所包含的最小顶点编号"
+
+
 msgid "Island Count"
 msgstr "孤岛数量"
 
 
 msgid "The total number of mesh islands"
 msgstr "网格孤岛的总数"
+
+
+msgid "The number of vertices connected to this vertex with an edge, equal to the number of connected edges"
+msgstr "与该点以边相连的顶点数量，与其相连的边数相同"
 
 
 msgid "Number of faces that contain the vertex"
@@ -116625,6 +116818,10 @@ msgstr "在点上实例化的几何体"
 
 msgid "Pick Instance"
 msgstr "选择实例"
+
+
+msgid "Choose instances from the \"Instance\" input at each point instead of instancing the entire geometry"
+msgstr "从各点的\"实例\"输入中选择实例，而非实例化整个几何体"
 
 
 msgid "Instance Index"
@@ -116905,6 +117102,18 @@ msgstr "余数"
 
 msgid "Max Width"
 msgstr "最大宽度"
+
+
+msgid "The source geometry must contain a mesh"
+msgstr "源几何体必须包含网格"
+
+
+msgid "The source mesh must have faces"
+msgstr "源网格必须有面"
+
+
+msgid "The source geometry must contain a mesh or a point cloud"
+msgstr "源几何体必须包含网格或点云"
 
 
 msgid "Missing Data-Block"
