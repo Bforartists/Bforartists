@@ -1,20 +1,4 @@
-#====================== BEGIN GPL LICENSE BLOCK ======================
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-#======================= END GPL LICENSE BLOCK ========================
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # <pep8 compliant>
 
@@ -496,6 +480,20 @@ def align_bone_orientation(obj, bone_name, target_bone_name):
 
     bone1_e.tail = bone1_e.head + axis
     bone1_e.roll = bone2_e.roll
+
+
+def set_bone_orientation(obj, bone_name, orientation):
+    """ Aligns the orientation of bone to target bone or matrix. """
+    if isinstance(orientation, str):
+        align_bone_orientation(obj, bone_name, orientation)
+
+    else:
+        bone_e = obj.data.edit_bones[bone_name]
+
+        matrix = Matrix(orientation).to_4x4()
+        matrix.translation = bone_e.head
+
+        bone_e.matrix = matrix
 
 
 def align_bone_roll(obj, bone1, bone2):

@@ -1,21 +1,5 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * The Original Code is Copyright (C) 2009 Blender Foundation.
- * All rights reserved.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later
+ * Copyright 2009 Blender Foundation. All rights reserved. */
 
 /** \file
  * \ingroup RNA
@@ -46,9 +30,9 @@
 #  include "BKE_camera.h"
 #  include "BKE_collection.h"
 #  include "BKE_curve.h"
+#  include "BKE_curves.h"
 #  include "BKE_displist.h"
 #  include "BKE_gpencil.h"
-#  include "BKE_hair.h"
 #  include "BKE_icons.h"
 #  include "BKE_idtype.h"
 #  include "BKE_image.h"
@@ -86,8 +70,8 @@
 #  include "DNA_camera_types.h"
 #  include "DNA_collection_types.h"
 #  include "DNA_curve_types.h"
+#  include "DNA_curves_types.h"
 #  include "DNA_gpencil_types.h"
-#  include "DNA_hair_types.h"
 #  include "DNA_lattice_types.h"
 #  include "DNA_light_types.h"
 #  include "DNA_lightprobe_types.h"
@@ -226,8 +210,9 @@ static void rna_Main_scenes_remove(
 static Object *rna_Main_objects_new(Main *bmain, ReportList *reports, const char *name, ID *data)
 {
   if (data != NULL && (data->tag & LIB_TAG_NO_MAIN)) {
-    BKE_report(
-        reports, RPT_ERROR, "Can not create object in main database with an evaluated data");
+    BKE_report(reports,
+               RPT_ERROR,
+               "Can not create object in main database with an evaluated data data-block");
     return NULL;
   }
 
@@ -762,18 +747,18 @@ static bGPdata *rna_Main_gpencils_new(Main *bmain, const char *name)
   return gpd;
 }
 
-#  ifdef WITH_HAIR_NODES
-static Hair *rna_Main_hairs_new(Main *bmain, const char *name)
+#  ifdef WITH_NEW_CURVES_TYPE
+static Curves *rna_Main_hair_curves_new(Main *bmain, const char *name)
 {
   char safe_name[MAX_ID_NAME - 2];
   rna_idname_validate(name, safe_name);
 
-  Hair *hair = BKE_hair_add(bmain, safe_name);
-  id_us_min(&hair->id);
+  Curves *curves = BKE_curves_add(bmain, safe_name);
+  id_us_min(&curves->id);
 
   WM_main_add_notifier(NC_ID | NA_ADDED, NULL);
 
-  return hair;
+  return curves;
 }
 #  endif
 
@@ -860,8 +845,8 @@ RNA_MAIN_ID_TAG_FUNCS_DEF(cachefiles, cachefiles, ID_CF)
 RNA_MAIN_ID_TAG_FUNCS_DEF(paintcurves, paintcurves, ID_PC)
 RNA_MAIN_ID_TAG_FUNCS_DEF(workspaces, workspaces, ID_WS)
 RNA_MAIN_ID_TAG_FUNCS_DEF(lightprobes, lightprobes, ID_LP)
-#  ifdef WITH_HAIR_NODES
-RNA_MAIN_ID_TAG_FUNCS_DEF(hairs, hairs, ID_HA)
+#  ifdef WITH_NEW_CURVES_TYPE
+RNA_MAIN_ID_TAG_FUNCS_DEF(hair_curves, hair_curves, ID_CV)
 #  endif
 RNA_MAIN_ID_TAG_FUNCS_DEF(pointclouds, pointclouds, ID_PT)
 RNA_MAIN_ID_TAG_FUNCS_DEF(volumes, volumes, ID_VO)
@@ -1324,8 +1309,11 @@ void RNA_def_main_images(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string_file_path(
       func, "filepath", "File Path", 0, "", "Path of the file to load");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(
-      func, "check_existing", false, "", "Using existing data if this file is already loaded");
+  RNA_def_boolean(func,
+                  "check_existing",
+                  false,
+                  "",
+                  "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "image", "Image", "", "New image data");
   RNA_def_function_return(func, parm);
@@ -1497,8 +1485,11 @@ void RNA_def_main_fonts(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string_file_path(
       func, "filepath", "File Path", 0, "", "path of the font to load");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(
-      func, "check_existing", false, "", "Using existing data if this file is already loaded");
+  RNA_def_boolean(func,
+                  "check_existing",
+                  false,
+                  "",
+                  "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "vfont", "VectorFont", "", "New font data");
   RNA_def_function_return(func, parm);
@@ -1767,7 +1758,8 @@ void RNA_def_main_texts(BlenderRNA *brna, PropertyRNA *cprop)
   func = RNA_def_function(srna, "load", "rna_Main_texts_load");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   RNA_def_function_ui_description(func, "Add a new text to the main database from a file");
-  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(
+      func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   parm = RNA_def_boolean(
       func, "internal", 0, "Make internal", "Make text file internal after loading");
@@ -1794,10 +1786,14 @@ void RNA_def_main_sounds(BlenderRNA *brna, PropertyRNA *cprop)
   /* load func */
   func = RNA_def_function(srna, "load", "rna_Main_sounds_load");
   RNA_def_function_ui_description(func, "Add a new sound to the main database from a file");
-  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(
+      func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(
-      func, "check_existing", false, "", "Using existing data if this file is already loaded");
+  RNA_def_boolean(func,
+                  "check_existing",
+                  false,
+                  "",
+                  "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "sound", "Sound", "", "New text data");
   RNA_def_function_return(func, parm);
@@ -1919,7 +1915,8 @@ void RNA_def_main_particles(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string(func, "name", "ParticleSettings", 0, "", "New name for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
-  parm = RNA_def_pointer(func, "particle", "ParticleSettings", "", "New particle settings data");
+  parm = RNA_def_pointer(
+      func, "particle", "ParticleSettings", "", "New particle settings data");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
@@ -2039,7 +2036,8 @@ void RNA_def_main_gpencil(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string(func, "name", "GreasePencil", 0, "", "New name for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
-  parm = RNA_def_pointer(func, "grease_pencil", "GreasePencil", "", "New grease pencil data");
+  parm = RNA_def_pointer(
+      func, "grease_pencil", "GreasePencil", "", "New grease pencil data");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
@@ -2099,10 +2097,14 @@ void RNA_def_main_movieclips(BlenderRNA *brna, PropertyRNA *cprop)
       "Add a new movie clip to the main database from a file "
       "(while ``check_existing`` is disabled for consistency with other load functions, "
       "behavior with multiple movie-clips using the same file may incorrectly generate proxies)");
-  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(
+      func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(
-      func, "check_existing", false, "", "Using existing data if this file is already loaded");
+  RNA_def_boolean(func,
+                  "check_existing",
+                  false,
+                  "",
+                  "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "clip", "MovieClip", "", "New movie clip data");
   RNA_def_function_return(func, parm);
@@ -2250,47 +2252,47 @@ void RNA_def_main_lightprobes(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 }
 
-#  ifdef WITH_HAIR_NODES
-void RNA_def_main_hairs(BlenderRNA *brna, PropertyRNA *cprop)
+#  ifdef WITH_NEW_CURVES_TYPE
+void RNA_def_main_hair_curves(BlenderRNA *brna, PropertyRNA *cprop)
 {
   StructRNA *srna;
   FunctionRNA *func;
   PropertyRNA *parm;
 
-  RNA_def_property_srna(cprop, "BlendDataHairs");
-  srna = RNA_def_struct(brna, "BlendDataHairs", NULL);
+  RNA_def_property_srna(cprop, "BlendDataHairCurves");
+  srna = RNA_def_struct(brna, "BlendDataHairCurves", NULL);
   RNA_def_struct_sdna(srna, "Main");
-  RNA_def_struct_ui_text(srna, "Main Hairs", "Collection of hairs");
+  RNA_def_struct_ui_text(srna, "Main Hair Curves", "Collection of hair curves");
 
-  func = RNA_def_function(srna, "new", "rna_Main_hairs_new");
+  func = RNA_def_function(srna, "new", "rna_Main_hair_curves_new");
   RNA_def_function_ui_description(func, "Add a new hair to the main database");
-  parm = RNA_def_string(func, "name", "Hair", 0, "", "New name for the data");
+  parm = RNA_def_string(func, "name", "Curves", 0, "", "New name for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
-  parm = RNA_def_pointer(func, "hair", "Hair", "", "New hair data");
+  parm = RNA_def_pointer(func, "curves", "Curves", "", "New curves data");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
-  RNA_def_function_ui_description(func, "Remove a hair from the current blendfile");
-  parm = RNA_def_pointer(func, "hair", "Hair", "", "Hair to remove");
+  RNA_def_function_ui_description(func, "Remove a curves data from the current blendfile");
+  parm = RNA_def_pointer(func, "curves", "Curves", "", "Curves data to remove");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
   RNA_def_boolean(func,
                   "do_unlink",
                   true,
                   "",
-                  "Unlink all usages of this hair before deleting it "
-                  "(WARNING: will also delete objects instancing that hair data)");
+                  "Unlink all usages of this curves before deleting it "
+                  "(WARNING: will also delete objects instancing that curves data)");
   RNA_def_boolean(func,
                   "do_id_user",
                   true,
                   "",
-                  "Decrement user counter of all datablocks used by this hair data");
+                  "Decrement user counter of all datablocks used by this curves data");
   RNA_def_boolean(
-      func, "do_ui_user", true, "", "Make sure interface does not reference this hair data");
+      func, "do_ui_user", true, "", "Make sure interface does not reference this curves data");
 
-  func = RNA_def_function(srna, "tag", "rna_Main_hairs_tag");
+  func = RNA_def_function(srna, "tag", "rna_Main_hair_curves_tag");
   parm = RNA_def_boolean(func, "value", 0, "Value", "");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 }

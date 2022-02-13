@@ -1,20 +1,4 @@
-#====================== BEGIN GPL LICENSE BLOCK ======================
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-#======================= END GPL LICENSE BLOCK ========================
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # <pep8 compliant>
 
@@ -60,8 +44,8 @@ def build_type_list(context, rigify_types):
             a.name = r
 
 
-class DATA_PT_rigify_generate(bpy.types.Panel):
-    bl_label = "Rigify Generation"
+class DATA_PT_rigify(bpy.types.Panel):
+    bl_label = "Rigify"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -72,76 +56,79 @@ class DATA_PT_rigify_generate(bpy.types.Panel):
         if not context.object:
             return False
         return obj.type == 'ARMATURE' \
-            and obj.data.get("rig_id") is None \
-            and obj.mode in {'POSE', 'OBJECT'}
+            and obj.data.get("rig_id") is None
 
     def draw(self, context):
         C = context
         layout = self.layout
         obj = C.object
 
-        if obj.mode in {'POSE', 'OBJECT'}:
-            WARNING = "Warning: Some features may change after generation"
-            show_warning = False
-            show_update_metarig = False
-            show_not_updatable = False
-            show_upgrade_face = False
+        WARNING = "Warning: Some features may change after generation"
+        show_warning = False
+        show_update_metarig = False
+        show_not_updatable = False
+        show_upgrade_face = False
 
-            check_props = ['IK_follow', 'root/parent', 'FK_limb_follow', 'IK_Stretch']
+        check_props = ['IK_follow', 'root/parent', 'FK_limb_follow', 'IK_Stretch']
 
-            for bone in obj.pose.bones:
-                if bone.bone.layers[30] and (list(set(bone.keys()) & set(check_props))):
-                    show_warning = True
+        for posebone in obj.pose.bones:
+            bone = posebone.bone
+            if not bone:
+                # If we are in edit mode and the bone was just created,
+                # a pose bone won't exist yet.
+                continue
+            if bone.layers[30] and (list(set(posebone.keys()) & set(check_props))):
+                show_warning = True
+                break
+
+        for b in obj.pose.bones:
+            if b.rigify_type in outdated_types.keys():
+                old_bone = b.name
+                old_rig = b.rigify_type
+                if outdated_types[b.rigify_type]:
+                    show_update_metarig = True
+                else:
+                    show_update_metarig = False
+                    show_not_updatable = True
                     break
+            elif b.rigify_type == 'faces.super_face':
+                show_upgrade_face = True
 
-            for b in obj.pose.bones:
-                if b.rigify_type in outdated_types.keys():
-                    old_bone = b.name
-                    old_rig = b.rigify_type
-                    if outdated_types[b.rigify_type]:
-                        show_update_metarig = True
-                    else:
-                        show_update_metarig = False
-                        show_not_updatable = True
-                        break
-                elif b.rigify_type == 'faces.super_face':
-                    show_upgrade_face = True
+        if show_warning:
+            layout.label(text=WARNING, icon='ERROR')
 
-            if show_warning:
-                layout.label(text=WARNING, icon='ERROR')
+        enable_generate = not (show_not_updatable or show_update_metarig)
 
-            enable_generate = not (show_not_updatable or show_update_metarig)
+        if show_not_updatable:
+            layout.label(text="WARNING: This metarig contains deprecated rigify rig-types and cannot be upgraded automatically.", icon='ERROR')
+            layout.label(text="("+old_rig+" on bone "+old_bone+")")
+        elif show_update_metarig:
+            layout.label(text="This metarig contains old rig-types that can be automatically upgraded to benefit of rigify's new features.", icon='ERROR')
+            layout.label(text="("+old_rig+" on bone "+old_bone+")")
+            layout.operator("pose.rigify_upgrade_types", text="Upgrade Metarig")
+        elif show_upgrade_face:
+            layout.label(text="This metarig uses the old face rig.", icon='INFO')
+            layout.operator("pose.rigify_upgrade_face")
 
-            if show_not_updatable:
-                layout.label(text="WARNING: This metarig contains deprecated rigify rig-types and cannot be upgraded automatically.", icon='ERROR')
-                layout.label(text="("+old_rig+" on bone "+old_bone+")")
-            elif show_update_metarig:
-                layout.label(text="This metarig contains old rig-types that can be automatically upgraded to benefit of rigify's new features.", icon='ERROR')
-                layout.label(text="("+old_rig+" on bone "+old_bone+")")
-                layout.operator("pose.rigify_upgrade_types", text="Upgrade Metarig")
-            elif show_upgrade_face:
-                layout.label(text="This metarig uses the old face rig.", icon='INFO')
-                layout.operator("pose.rigify_upgrade_face")
+        row = layout.row()
+        # Rig type field
 
-            row = layout.row()
-            # Rig type field
+        col = layout.column(align=True)
+        col.active = (not 'rig_id' in C.object.data)
 
-            col = layout.column(align=True)
-            col.active = (not 'rig_id' in C.object.data)
-
-            col.separator()
-            row = col.row()
-            text = "Re-Generate Rig" if obj.data.rigify_target_rig else "Generate Rig"
-            row.operator("pose.rigify_generate", text=text, icon='POSE_HLT')
-            row.enabled = enable_generate
+        col.separator()
+        row = col.row()
+        text = "Re-Generate Rig" if obj.data.rigify_target_rig else "Generate Rig"
+        row.operator("pose.rigify_generate", text=text, icon='POSE_HLT')
+        row.enabled = enable_generate
 
 
-class DATA_PT_rigify_generate_advanced(bpy.types.Panel):
+class DATA_PT_rigify_advanced(bpy.types.Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
     bl_label = "Advanced"
-    bl_parent_id = 'DATA_PT_rigify_generate'
+    bl_parent_id = 'DATA_PT_rigify'
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -163,10 +150,12 @@ class DATA_PT_rigify_generate_advanced(bpy.types.Panel):
 
 
 class DATA_PT_rigify_samples(bpy.types.Panel):
-    bl_label = "Rigify Samples"
+    bl_label = "Samples"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
+    bl_parent_id = "DATA_PT_rigify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -202,11 +191,12 @@ class DATA_PT_rigify_samples(bpy.types.Panel):
 
 
 class DATA_PT_rigify_layer_names(bpy.types.Panel):
-    bl_label = "Rigify Layer Names"
+    bl_label = "Layer Names"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "DATA_PT_rigify"
 
     @classmethod
     def poll(cls, context):
@@ -540,11 +530,12 @@ class DATA_MT_rigify_bone_groups_context_menu(bpy.types.Menu):
 
 
 class DATA_PT_rigify_bone_groups(bpy.types.Panel):
-    bl_label = "Rigify Bone Groups"
+    bl_label = "Bone Groups"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "DATA_PT_rigify"
 
     @classmethod
     def poll(cls, context):
@@ -1387,10 +1378,10 @@ classes = (
     DATA_OT_rigify_bone_group_remove_all,
     DATA_UL_rigify_bone_groups,
     DATA_MT_rigify_bone_groups_context_menu,
+    DATA_PT_rigify,
+    DATA_PT_rigify_advanced,
     DATA_PT_rigify_bone_groups,
     DATA_PT_rigify_layer_names,
-    DATA_PT_rigify_generate,
-    DATA_PT_rigify_generate_advanced,
     DATA_PT_rigify_samples,
     BONE_PT_rigify_buttons,
     VIEW3D_PT_rigify_animation_tools,

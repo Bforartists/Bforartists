@@ -1,4 +1,4 @@
-# gpl authors: Oscurart, Greg
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
     "name": "Random Vertices",
