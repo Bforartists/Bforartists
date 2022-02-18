@@ -962,7 +962,9 @@ void uiTemplateImage(uiLayout *layout,
           ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
 
           if (ibuf && ibuf->rect_float && (ibuf->flags & IB_halffloat) == 0) {
+            uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
             uiItemR(col, &imaptr, "use_half_precision", 0, NULL, ICON_NONE);
+            uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
           }
           BKE_image_release_ibuf(ima, ibuf, lock);
         }
