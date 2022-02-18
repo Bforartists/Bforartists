@@ -2154,7 +2154,7 @@ static void rna_def_library(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "packed_file", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "packedfile");
-  RNA_def_property_ui_text(prop, "Packed File", "Packed File");
+  RNA_def_property_ui_text(prop, "Packed File", "");
 
   prop = RNA_def_int_vector(srna,
                             "version",
