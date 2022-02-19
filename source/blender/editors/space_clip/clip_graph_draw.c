@@ -212,10 +212,8 @@ static void draw_frame_curves(SpaceClip *sc, uint pos)
   /* Indicates whether immBegin() was called. */
   bool is_lines_segment_open = false;
 
-  immUniformColor3f(
-      0.0f,
-      1.0f,
-      1.0f); /*bfa - motion tracking. changed the show frames color from dark blue to turquise*/
+/*bfa - motion tracking. changed the show frames color from dark blue to turquise*/
+  immUniformColor3f(0.0f, 1.0f, 1.0f);
 
   for (int i = 0; i < reconstruction->camnr; i++) {
     MovieReconstructedCamera *camera = &reconstruction->cameras[i];
