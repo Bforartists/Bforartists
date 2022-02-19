@@ -4980,13 +4980,11 @@ static void draw_setting_widget(bAnimContext *ac,
       }
       else if ((ac) && (ac->spacetype == SPACE_NLA) && (ale->type != ANIMTYPE_NLATRACK)) {
         tooltip = TIP_(
-            "Mute\nTemporarily disable NLA stack evaluation (i.e. only the active action is "
-            "evaluated)");
+            "Mute\nTemporarily disable NLA stack evaluation (i.e. only the active action is evaluated)");
       }
       else if (ale->type == ANIMTYPE_GPLAYER) {
         tooltip = TIP_(
-            "Lock Channel\nShows all keyframes during animation playback and enabled all frames "
-            "for editing "
+            "Lock Channel\nShows all keyframes during animation playback and enabled all frames for editing "
             "(uncheck to use only the current keyframe during animation playback and editing)");
       }
       else {

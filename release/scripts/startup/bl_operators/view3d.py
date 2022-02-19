@@ -127,7 +127,7 @@ class VIEW3D_OT_edit_mesh_extrude_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
-    "Extrude Region Vertex Normals\nExtrude region together along local normalss"
+    """Extrude Region Vertex Normals\nExtrude region together along local normals"""
     bl_label = "Extrude and Move on Individual Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_shrink_fatten"
 
