@@ -732,6 +732,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 
+    /*bfa -  left aligned*/
     uiItemS(col);
     row = uiLayoutRow(col, true);
 
@@ -748,6 +749,7 @@ void uiTemplateMarker(uiLayout *layout,
     vcol = uiLayoutColumn(row, true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
+    /*bfa end*/
 
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,

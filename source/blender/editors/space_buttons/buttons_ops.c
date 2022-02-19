@@ -370,7 +370,7 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Browse";
+  ot->name = "Browse"; /*bfa - renamed from Accept to Browse*/
   ot->description =
       "Open a directory browser, hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_directory_browse";

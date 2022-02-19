@@ -511,17 +511,16 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY | OPTYPE_LOCK_BYPASS;
 
   /* properties */
-  RNA_def_float_vector(
-      ot->srna,
-      "offset",
-      2,
-      NULL,
-      -FLT_MAX,
-      FLT_MAX,
-      "Offset",
-      "Offset\nOffset in floating-point units, 1.0 is the width and height of the image",
-      -FLT_MAX,
-      FLT_MAX);
+  RNA_def_float_vector(ot->srna,
+                       "offset",
+                       2,
+                       NULL,
+                       -FLT_MAX,
+                       FLT_MAX,
+                       "Offset",
+                       "Offset\nOffset in floating-point units, 1.0 is the width and height of the image",
+                       -FLT_MAX,
+                       FLT_MAX);
 }
 
 /** \} */
