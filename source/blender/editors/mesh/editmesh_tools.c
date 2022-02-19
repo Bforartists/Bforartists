@@ -3501,11 +3501,11 @@ static int edbm_merge_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem merge_type_items[] = {
-    {MESH_MERGE_FIRST, "FIRST", ICON_MERGE_AT_FIRST, "At First", ""},
-    {MESH_MERGE_LAST, "LAST", ICON_MERGE_AT_LAST, "At Last", ""},
     {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
     {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
     {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
+    {MESH_MERGE_FIRST, "FIRST", ICON_MERGE_AT_FIRST, "At First", ""},
+    {MESH_MERGE_LAST, "LAST", ICON_MERGE_AT_LAST, "At Last", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -4862,7 +4862,7 @@ void MESH_OT_separate(wmOperatorType *ot)
   static const EnumPropertyItem prop_separate_types[] = {
       {MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
       {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", ""},
-      {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By loose parts", ""},
+      {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By Loose Parts", ""},
       {0, NULL, 0, NULL, NULL},
   };
 

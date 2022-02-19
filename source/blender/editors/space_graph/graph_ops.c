@@ -308,6 +308,7 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
 static char *graph_ot_hide_get_description(bContext *UNUSED(C),
                                            wmOperatorType *UNUSED(ot),
                                            PointerRNA *ptr)
@@ -317,7 +318,7 @@ static char *graph_ot_hide_get_description(bContext *UNUSED(C),
   }
   return NULL;
 }
-/*bfa - descriptions*/
+
 static void GRAPH_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
