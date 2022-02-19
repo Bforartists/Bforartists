@@ -45,7 +45,7 @@ void ED_spacetype_userpref(void);
 void ED_spacetype_clip(void);
 void ED_spacetype_statusbar(void);
 void ED_spacetype_topbar(void);
-void ED_spacetype_toolbar(void);
+void ED_spacetype_toolbar(void); /*bfa _toolbar*/
 void ED_spacetype_spreadsheet(void);
 
 /** \} */

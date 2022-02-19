@@ -70,7 +70,7 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
 
   style->paneltitle.uifont_id = uifont_id;
   style->paneltitle.points = UI_DEFAULT_TITLE_POINTS;
-  style->paneltitle.shadow = 1; /* bfa 3*/
+  style->paneltitle.shadow = 1; /* bfa - changed from 3 to 1*/
   style->paneltitle.shadx = 0;
   style->paneltitle.shady = -1;
   style->paneltitle.shadowalpha = 0.15f; /* bfa 0.5f*/
