@@ -639,7 +639,7 @@ void PAINTCURVE_OT_slide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Slide Paint Curve Point";
-  ot->description = "Select and slide a Paint Curve Point";
+  ot->description = "Select and slide a paint curve point";
   ot->idname = "PAINTCURVE_OT_slide";
 
   /* api callbacks */

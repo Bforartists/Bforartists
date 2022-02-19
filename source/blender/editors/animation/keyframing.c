@@ -2759,7 +2759,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {NULL};
   PropertyRNA *prop = NULL;
-  AnimData *adt = NULL;
+  AnimData *adt = NULL; /* bfa - Apply animation*/
   Main *bmain = CTX_data_main(C);
   char *path;
   float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
