@@ -592,7 +592,7 @@ void NLA_OT_action_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Remove Action";
+  ot->name = "Remove Action"; /*bfa - we remove, we don't unlink*/
   ot->idname = "NLA_OT_action_unlink";
   ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
 

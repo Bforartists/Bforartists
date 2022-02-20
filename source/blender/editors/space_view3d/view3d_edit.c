@@ -326,7 +326,7 @@ static int render_border_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Render Region";
+  ot->name = "Render Region"; /*bfa - no set*/ 
   ot->description =
       "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading "
       "rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport "

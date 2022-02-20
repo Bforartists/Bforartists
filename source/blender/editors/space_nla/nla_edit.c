@@ -157,7 +157,7 @@ static int nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *op)
   /* done */
   return OPERATOR_FINISHED;
 }
-
+/*bfa - description*/
 static char *nla_ot_tweakmode_enter_get_description(bContext *UNUSED(C),
                                                     wmOperatorType *UNUSED(ot),
                                                     PointerRNA *ptr)
