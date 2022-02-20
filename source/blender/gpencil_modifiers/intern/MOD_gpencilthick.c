@@ -198,6 +198,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiLayoutSetActive(sub, true);
     uiItemR(row, ptr, "use_weight_factor", 0, "", ICON_MOD_VERTEX_WEIGHT);
   }
+
   gpencil_modifier_panel_end(layout, ptr);
 }
 
