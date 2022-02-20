@@ -1,4 +1,6 @@
-# GPL # "author": "Pontiac, Fourmadmen, Dreampainter"
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Pontiac, Fourmadmen, Dreampainter
 
 import bpy
 from bpy.types import Operator

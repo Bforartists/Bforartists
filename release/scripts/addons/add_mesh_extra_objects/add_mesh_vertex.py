@@ -1,4 +1,6 @@
-# GPL # Originals by meta-androcto, Pablo Vazquez, Liero, Richard Wilks
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Originals by meta-androcto, Pablo Vazquez, Liero, Richard Wilks
 
 import bpy
 from bpy.types import Operator

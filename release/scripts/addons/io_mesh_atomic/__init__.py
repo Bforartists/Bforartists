@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# 
+#
 #
 #  Author            : Clemens Barth (Blendphys@root-1.de)
 #  Homepage(Wiki)    : http://development.root-1.de/Atomic_Blender.php

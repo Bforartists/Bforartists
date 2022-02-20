@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+
 __author__ = 'manfred'
 
 

@@ -106,6 +106,9 @@ wmKeyMap *WM_keymap_guess_from_context(const bContext *C)
       case CTX_MODE_EDIT_CURVE:
         km_id = "Curve";
         break;
+      case CTX_MODE_EDIT_CURVES:
+        km_id = "Curves";
+        break;
       case CTX_MODE_EDIT_SURFACE:
         km_id = "Curve";
         break;
@@ -156,6 +159,9 @@ wmKeyMap *WM_keymap_guess_from_context(const bContext *C)
         break;
       case CTX_MODE_VERTEX_GPENCIL:
         km_id = "Grease Pencil Stroke Vertex Mode";
+        break;
+      case CTX_MODE_SCULPT_CURVES:
+        km_id = "Curves Sculpt";
         break;
     }
   }

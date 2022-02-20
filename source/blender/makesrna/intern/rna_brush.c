@@ -243,6 +243,12 @@ const EnumPropertyItem rna_enum_brush_gpencil_weight_types_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
+const EnumPropertyItem rna_enum_brush_curves_sculpt_tool_items[] = {
+    {CURVES_SCULPT_TOOL_TEST1, "TEST1", ICON_NONE, "Test 1", ""},
+    {CURVES_SCULPT_TOOL_TEST2, "TEST2", ICON_NONE, "Test 2", ""},
+    {0, NULL, 0, NULL, NULL},
+};
+
 #ifndef RNA_RUNTIME
 static EnumPropertyItem rna_enum_gpencil_brush_eraser_modes_items[] = {
     {GP_BRUSH_ERASER_SOFT,
@@ -1620,12 +1626,13 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
       prop, "Stroke Extension", "Strokes end extension for closing gaps, use zero to disable");
   RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, 0);
 
-  /* Number of pixels to dilate fill area. */
+  /* Number of pixels to dilate fill area. Negative values contract the filled area. */
   prop = RNA_def_property(srna, "dilate", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "dilate_pixels");
-  RNA_def_property_range(prop, 0, 20);
+  RNA_def_property_range(prop, -40, 40);
   RNA_def_property_int_default(prop, 1);
-  RNA_def_property_ui_text(prop, "Dilate", "Number of pixels to dilate fill area");
+  RNA_def_property_ui_text(
+      prop, "Dilate/Contract", "Number of pixels to expand or contract fill area");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
@@ -2314,6 +2321,11 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, NULL, "gpencil_weight_tool");
   RNA_def_property_enum_items(prop, rna_enum_brush_gpencil_weight_types_items);
   RNA_def_property_ui_text(prop, "Grease Pencil Weight Paint Tool", "");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+
+  prop = RNA_def_property(srna, "curves_sculpt_tool", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_brush_curves_sculpt_tool_items);
+  RNA_def_property_ui_text(prop, "Curves Sculpt Tool", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
   /** End per mode tool properties. */

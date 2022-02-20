@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2014 Manfred Moitzi
+
 # Purpose: handle linetypes table
 # Created: 06.01.2014
-# Copyright (C) 2014, Manfred Moitzi
 # License: MIT License
 
 __author__ = "mozman <mozman@gmx.at>"

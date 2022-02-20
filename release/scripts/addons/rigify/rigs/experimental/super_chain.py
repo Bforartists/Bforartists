@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import bpy
 from mathutils import Vector
 from ...utils import copy_bone, put_bone, org, align_bone_y_axis, align_bone_x_axis, align_bone_z_axis

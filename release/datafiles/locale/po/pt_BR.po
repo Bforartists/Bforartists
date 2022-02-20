@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-02-01 15:03-0300\n"
+"PO-Revision-Date: 2022-02-08 21:10-0300\n"
 "Last-Translator: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "Language-Team: Leandro Paganelli, Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
 "Language: pt_BR\n"
@@ -3035,6 +3035,10 @@ msgid "Stroke & Fill"
 msgstr "Contorno e Preenchimento"
 
 
+msgid "Hide Layer"
+msgstr "Ocultar Camada"
+
+
 msgid "Active Layer"
 msgstr "Camada ativa"
 
@@ -3251,6 +3255,10 @@ msgid "Rotation of blades in aperture"
 msgstr "Rotação das lâminas na abertura."
 
 
+msgid "Focus Distance"
+msgstr "Distância do Foco"
+
+
 msgid "Distance to the focus point for depth of field"
 msgstr "Distância do ponto focal para o campo de visão."
 
@@ -3261,6 +3269,10 @@ msgstr "Focar Objeto"
 
 msgid "Use this object to define the depth of field focal point"
 msgstr "Usa este objeto para definir o ponto focal da profundidade de campo."
+
+
+msgid "Use Depth of Field"
+msgstr "Usar Profundidade de Campo"
 
 
 msgid "Stereo"
@@ -3497,6 +3509,10 @@ msgstr "Densidade máxima dos cabelos."
 
 msgid "Effector Weights"
 msgstr "Peso dos efetores"
+
+
+msgid "Fluid Density"
+msgstr "Densidade de Fluído"
 
 
 msgid "Goal Default"
@@ -6112,6 +6128,10 @@ msgid "Extrapolated"
 msgstr "Extrapolado"
 
 
+msgid "Tone"
+msgstr "Tom"
+
+
 msgid "Standard"
 msgstr "Padrão"
 
@@ -6268,6 +6288,10 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa as terminações iniciais dos traços para definir a profundidade."
 
 
+msgid "Preset"
+msgstr "Predefinições"
+
+
 msgid "Steps"
 msgstr "Passos"
 
@@ -6316,6 +6340,14 @@ msgid "Dependency Graph"
 msgstr "Gráfico de dependências"
 
 
+msgid "IDs"
+msgstr "IDs"
+
+
+msgid "Evaluation mode"
+msgstr "Modo de Avaliação"
+
+
 msgid "Viewport"
 msgstr "Janela de Exibição"
 
@@ -6334,6 +6366,14 @@ msgstr "Cena"
 
 msgid "Updates"
 msgstr "Atualizações"
+
+
+msgid "View Layer"
+msgstr "Ver Camada"
+
+
+msgid "Is Instance"
+msgstr "É Instância"
 
 
 msgid "Generated Matrix"
@@ -6550,6 +6590,10 @@ msgstr "Mostrar nós"
 
 msgid "Include visualization of node related animation data"
 msgstr "Inclui a visualização dos dados de animação relacionados aos nós."
+
+
+msgid "Only Show Errors"
+msgstr "Apenas Mostrar Erros"
 
 
 msgid "Only include F-Curves and drivers that are disabled or have errors"
@@ -6957,6 +7001,14 @@ msgstr "Transformações incluem efeitos de restrições mas não de parentescos
 
 msgid "Driver variable type"
 msgstr "Tipo de variável de controlador."
+
+
+msgid "W Rotation"
+msgstr "Rotação W"
+
+
+msgid "Average Scale"
+msgstr "Escala Média"
 
 
 msgid "Driver Variable"
@@ -8087,6 +8139,18 @@ msgid "FFmpeg audio codec to use"
 msgstr "Codificador de áudio FFmpeg para usar."
 
 
+msgid "No Audio"
+msgstr "Sem Áudio"
+
+
+msgid "AAC"
+msgstr "AAC"
+
+
+msgid "AC3"
+msgstr "AC3"
+
+
 msgid "Vorbis"
 msgstr "Vorbis"
 
@@ -8144,12 +8208,20 @@ msgid "MPEG-2"
 msgstr "MPEG-2"
 
 
+msgid "MPEG-4 (divx)"
+msgstr "MPEG-4 (divx)"
+
+
 msgid "QT rle / QT Animation"
 msgstr "Animação Quicktime / RLE"
 
 
 msgid "Theora"
 msgstr "Formato Ogg Theora"
+
+
+msgid "Output Quality"
+msgstr "Qualidade de Saída"
 
 
 msgid "Constant Rate Factor (CRF); tradeoff between video quality and file size"
@@ -8160,8 +8232,24 @@ msgid "Lossless"
 msgstr "Sem perdas"
 
 
+msgid "Perceptually Lossless"
+msgstr "Sem perdas perceptíveis"
+
+
 msgid "High Quality"
 msgstr "Alta qualidade"
+
+
+msgid "Medium Quality"
+msgstr "Média Qualidade"
+
+
+msgid "Low Quality"
+msgstr "Baixa Qualidade"
+
+
+msgid "Lowest Quality"
+msgstr "Qualidade Mais Baixa"
 
 
 msgid "Tradeoff between encoding speed and compression ratio"
@@ -8729,6 +8817,10 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "Limite inferior do envelope neste ponto de controle."
 
 
+msgid "Face Map"
+msgstr "Mapa de Face"
+
+
 msgid "Index"
 msgstr "Índice"
 
@@ -9121,6 +9213,10 @@ msgid "Adjust force strength based on smoke density"
 msgstr "Ajusta a potência da força com base na densidade da fumaça."
 
 
+msgid "Wind Factor"
+msgstr "Fator do Vento"
+
+
 msgid "Z Direction"
 msgstr "Direção Z"
 
@@ -9135,6 +9231,10 @@ msgstr "Ambos Z"
 
 msgid "Fonts"
 msgstr "Fontes"
+
+
+msgid "Hairs"
+msgstr "Cabelos"
 
 
 msgid "Show Light Probe data-blocks"
@@ -9173,12 +9273,20 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Permite definir se este caminho será salvo através da marcação de favoritos, ou gerado a partir do sistema operacional."
 
 
+msgid "A file viewable in the File Browser"
+msgstr "Arquivo visualizável no Navegador de Arquivos"
+
+
 msgid "Brush"
 msgstr "Pincel"
 
 
 msgid "Font"
 msgstr "Fonte"
+
+
+msgid "Collection"
+msgstr "Coleção"
 
 
 msgid "Key"
@@ -9293,12 +9401,16 @@ msgid "Miscellaneous"
 msgstr "Miscelânea"
 
 
+msgid "Show scenes"
+msgstr "Mostrar cenas"
+
+
 msgid "Directory"
 msgstr "Diretório"
 
 
 msgid "Directory displayed in the file browser"
-msgstr "Diretório exibido no navegador de arquivos."
+msgstr "Diretório exibido no navegador de arquivos"
 
 
 msgid "Display Size"
@@ -9346,7 +9458,7 @@ msgstr "Nome do arquivo"
 
 
 msgid "Active file in the file browser"
-msgstr "Arquivo ativo no navegador de arquivos."
+msgstr "Arquivo ativo no navegador de arquivos"
 
 
 msgid "Extension Filter"
@@ -9399,6 +9511,10 @@ msgstr "Três níveis"
 
 msgid "List all sub-directories' content, three levels of recursion"
 msgstr "Lista o conteúdo de todos os sub-diretórios, com três níveis de recursão."
+
+
+msgid "File Size"
+msgstr "Tamanho do Arquivo"
 
 
 msgid "Show hidden dot files"
@@ -9527,6 +9643,10 @@ msgstr "Navegador de bibliotecas"
 
 msgid "Whether we may browse blender files' content or not"
 msgstr "Permite definir se será possível ou não a navegação nos conteúdos dos arquivos Blender."
+
+
+msgid "Asset Library"
+msgstr "Biblioteca de Recursos"
 
 
 msgid "Link"
@@ -9923,6 +10043,10 @@ msgstr "Fogo"
 
 msgid "Add fire"
 msgstr "Adicionar fogo"
+
+
+msgid "Add liquid"
+msgstr "Adicionar líquido"
 
 
 msgid "Flame Rate"
@@ -11360,6 +11484,10 @@ msgid "Frame Offset"
 msgstr "Deslocamento de quadro"
 
 
+msgid "Factor for tinting"
+msgstr "O fator de tingimento"
+
+
 msgid "Space"
 msgstr "Espaço"
 
@@ -11458,6 +11586,10 @@ msgstr "B"
 
 msgid "Blue"
 msgstr "Azul"
+
+
+msgid "A"
+msgstr "A"
 
 
 msgid "Show Line"
@@ -12239,6 +12371,10 @@ msgstr "Espaçamento adaptativo"
 
 msgid "Space daubs according to surface orientation instead of screen space"
 msgstr "Divide o espaço entre as crostas de acordo com a orientação de superfície ao invés do espaço de tela."
+
+
+msgid "Affect Alpha"
+msgstr "Afeta Alfa"
 
 
 msgid "When this is disabled, lock alpha while painting"
@@ -22106,6 +22242,10 @@ msgid "Special Characters"
 msgstr "Caracteres especiais"
 
 
+msgid "Text Context Menu"
+msgstr "Menu de Contexto do Texto"
+
+
 msgid "Face Data"
 msgstr "Dados das faces"
 
@@ -22172,6 +22312,10 @@ msgstr "Limpar transformações"
 
 msgid "Proportional Editing Falloff"
 msgstr "Tipo de decaimento para edição proporcional"
+
+
+msgid "Random Mask"
+msgstr "Máscara Aleatória"
 
 
 msgid "Sculpt"
@@ -23010,6 +23154,14 @@ msgid "Bevel modifier to make edges and vertices more rounded"
 msgstr "Modificador de chanfro para fazer com que as arestas e vértices sejam mais arredondados."
 
 
+msgid "Affect"
+msgstr "Afeta"
+
+
+msgid "Affect only vertices"
+msgstr "Afeta apenas vértices"
+
+
 msgid "Angle above which to bevel edges"
 msgstr "Ângulo acima do qual chanfrar arestas."
 
@@ -23600,6 +23752,10 @@ msgstr "Distância máxima"
 
 msgid "Maximum allowed distance between source and destination element, for non-topology mappings"
 msgstr "Distância máxima permitida entre os elementos da fonte e destinação, para mapeamentos não topológicos."
+
+
+msgid "Factor to use when applying data to destination (exact behavior depends on mix mode, multiplied with weights from vertex group when defined)"
+msgstr "Fator a ser utilizado durante a aplicação dos dados na destinação (o comportamento exato dependerá do modo de mistura)"
 
 
 msgid "How to affect destination elements with source values"
@@ -28463,6 +28619,22 @@ msgid "Math"
 msgstr "Matemática"
 
 
+msgid "A + B"
+msgstr "A + B"
+
+
+msgid "A * B"
+msgstr "A * B"
+
+
+msgid "A / B"
+msgstr "A / B"
+
+
+msgid "A * B + C"
+msgstr "A * B + C"
+
+
 msgid "Logarithm"
 msgstr "Logarítmico"
 
@@ -28851,6 +29023,10 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Usa antisserrilhamento no buffer Z para tentar evitar artefatos, mais útil para renderizações com o motor interno Blender."
 
 
+msgid "And"
+msgstr "E"
+
+
 msgid "Equal"
 msgstr "Igual"
 
@@ -28861,6 +29037,10 @@ msgstr "Produto escalar"
 
 msgid "Input value used for unconnected socket"
 msgstr "Valor de entrada usado para soquete não conectado."
+
+
+msgid "Random Value"
+msgstr "Valor Aleatório"
 
 
 msgid "Component"
@@ -28927,8 +29107,24 @@ msgid "Align X"
 msgstr "Alinhar em X"
 
 
+msgid "Align text to the center"
+msgstr "Alinha o texto ao centro"
+
+
+msgid "Align text to the left and the right"
+msgstr "Alinha o texto para esquerda e para direita"
+
+
+msgid "Align text to the left and the right, with equal character spacing"
+msgstr "Alinha o texto para a esquerda e para a direita, com igual espaçamento entre caracteres"
+
+
 msgid "Align Y"
 msgstr "Alinhar em Y"
+
+
+msgid "Align text to the bottom baseline"
+msgstr "Alinha o texto pela base de cada linha existente"
 
 
 msgctxt "NodeTree"
@@ -29049,7 +29245,7 @@ msgstr "O método para renderizar o espalhamento de sub-superfície."
 
 
 msgid "Random Walk"
-msgstr "Caminhada aleatória"
+msgstr "Caminhada Aleatória"
 
 
 msgid "Refraction BSDF"
@@ -32051,6 +32247,10 @@ msgstr "Diretório do arquivo"
 
 msgid "Select the file relative to the blend file"
 msgstr "Seleciona o arquivo relativo ao arquivo Blender."
+
+
+msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
+msgstr "Abrir um navegador de arquivos, mantenha a tecla Shift pressionada para abrir o arquivo, e a tecla Alt para navegar no diretório recipiente"
 
 
 msgctxt "Operator"
@@ -39322,6 +39522,10 @@ msgstr "Remove as UVs de acordo com a fusão."
 msgctxt "Operator"
 msgid "Merge Normals"
 msgstr "Mesclar normais"
+
+
+msgid "Weak"
+msgstr "Fraco"
 
 
 msgid "Make face and vertex normals point either outside or inside the mesh"
@@ -46928,7 +47132,7 @@ msgstr "Dividir a área"
 
 
 msgid "Split selected area into new windows"
-msgstr "Divide a área selecionada em uma nova janela."
+msgstr "Divide a área selecionada em novas janelas"
 
 
 msgctxt "Operator"
@@ -48331,6 +48535,11 @@ msgstr "Mostra uma lista de textos usados no documento aberto."
 
 
 msgctxt "Operator"
+msgid "Toggle Comments"
+msgstr "Alternar Comentários"
+
+
+msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Converter os espaços em branco"
 
@@ -49006,7 +49215,11 @@ msgstr "Permite editar o código fonte do botão ativo da interface de usuário.
 
 msgctxt "Operator"
 msgid "Edit Translation"
-msgstr "Editar tradução (uso pessoal)"
+msgstr "Editar Tradução"
+
+
+msgid "Translate the label and tooltip of the given property"
+msgstr "Traduz o rótulo e a dica de uma dada propriedade"
 
 
 msgid "Label of the control"
@@ -49031,6 +49244,10 @@ msgstr "Dica do controle."
 
 msgid "Flags about the tip of the button"
 msgstr "Bandeiras sobre a dica do botão."
+
+
+msgid "Remove all local translation files, to be able to use the system ones again"
+msgstr "Limpa (remove) todos os arquivos de tradução local, para ser possível o uso de todos os presentes no sistema novamente"
 
 
 msgid "Label of the enum item of the control, if any"
@@ -49115,6 +49332,14 @@ msgstr "Bandeiras sobre a dica de RNA-definido do botão."
 
 msgid "Stats from opened po"
 msgstr "Estatísticas do po aberto"
+
+
+msgid "Try to rebuild mo file, and refresh Blender's UI"
+msgstr "Tenta reconstruir o arquivo mo, e atualiza a interface de usuário Blender"
+
+
+msgid "Update po file, try to rebuild mo file, and refresh Blender's UI"
+msgstr "Atualizar o arquivo po, tentar reconstruir o arquivo mo, e atualizar a interface de usuário Blender"
 
 
 msgid "Edit i18n in current language for the active button"
@@ -49215,7 +49440,7 @@ msgstr "Exporta os dados de tradução do complemento fornecidos como arquivos P
 
 
 msgid "Add-on to process"
-msgstr "Complemento para processar."
+msgstr "Complemento para processar"
 
 
 msgid "Export POT"
@@ -49293,7 +49518,7 @@ msgstr "Salva as configurações de tradução dentro de um arquivo persistente 
 
 msgctxt "Operator"
 msgid "Update I18n Branches"
-msgstr "Atualizar Branches I18n"
+msgstr "Atualizar Vertentes I18n"
 
 
 msgid "Update i18n svn's branches (po files)"
@@ -49348,11 +49573,11 @@ msgstr "Atualizar as estatísticas l18n"
 
 
 msgid "Check Branches"
-msgstr "Verificar vertentes"
+msgstr "Verificar Vertentes"
 
 
 msgid "Check po files in branches"
-msgstr "Verifica os arquivos po dentro das vertentes."
+msgstr "Verifica os arquivos po dentro das vertentes"
 
 
 msgid "Check Trunk"
@@ -49360,7 +49585,7 @@ msgstr "Verificar tronco"
 
 
 msgid "Check po files in trunk"
-msgstr "Verifica os arquivos po dentro do tronco."
+msgstr "Verifica os arquivos po dentro do tronco"
 
 
 msgctxt "Operator"
@@ -50327,6 +50552,10 @@ msgstr "Rotaciona a visualização"
 msgctxt "Operator"
 msgid "Ruler Add"
 msgstr "Adiciona Régua"
+
+
+msgid "Add ruler"
+msgstr "Adicionar régua"
 
 
 msgctxt "Operator"
@@ -51533,6 +51762,14 @@ msgstr "Gerar as previsões em lote"
 
 msgid "Generate selected .blend file's previews"
 msgstr "Gera as previsões de arquivos .blend selecionados usando tarefas em lote."
+
+
+msgid "Show Blender files in the File Browser"
+msgstr "Mostrar arquivos do Blender no Navegador de Arquivos"
+
+
+msgid "Show folders in the File Browser"
+msgstr "Mostrar pastas no Navegador de Arquivos"
 
 
 msgid "Keep a backup (.blend1) version of the files when saving with generated previews"
@@ -53100,6 +53337,27 @@ msgid "Development"
 msgstr "Desenvolvimento"
 
 
+msgid "Open on Mouse Over"
+msgstr "Abrir ao pairar o mouse"
+
+
+msgid "Pie Menus"
+msgstr "Menus Circulares"
+
+
+msgid "Temporary Editors"
+msgstr "Editores Temporários"
+
+
+msgid "Text Rendering"
+msgstr "Processamento de Texto"
+
+
+msgctxt "WindowManager"
+msgid "Translation"
+msgstr "Tradução"
+
+
 msgid "Walk"
 msgstr "Caminhada"
 
@@ -53162,6 +53420,11 @@ msgstr "Cores da gradiente"
 
 msgid "Motion Tracking"
 msgstr "Captura de movimentos"
+
+
+msgctxt "Operator"
+msgid "Scale Cage"
+msgstr "Gaiola de Escalonamento"
 
 
 msgctxt "Operator"
@@ -54616,6 +54879,10 @@ msgid "Active Section"
 msgstr "Seção ativa"
 
 
+msgid "Active section of the preferences shown in the user interface"
+msgstr "Seção ativa das preferências de usuário mostrada atualmente na interface"
+
+
 msgid "Application Template"
 msgstr "Modelos de aplicação"
 
@@ -54981,7 +55248,7 @@ msgstr "O caminho para o diretório de \"/branches\" de sua cópia local de trad
 
 
 msgid "Image Editor"
-msgstr "Editor de imagens e UVs"
+msgstr "Editor de Imagens"
 
 
 msgid "Path to an image editor"
@@ -55024,6 +55291,14 @@ msgid "Python Scripts Directory"
 msgstr "Diretório de scripts Python"
 
 
+msgid "Show Recent locations list in the File Browser"
+msgstr "Mostrar lista de localizações Recentes no Navegador de Arquivos"
+
+
+msgid "Show System locations list in the File Browser"
+msgstr "Mostrar lista das localizações de Sistema no Navegador de Arquivos"
+
+
 msgid "Sounds Directory"
 msgstr "Diretório de sons"
 
@@ -55058,6 +55333,10 @@ msgstr "Comprimir arquivos"
 
 msgid "Enable file compression when saving .blend files"
 msgstr "Habilita a compressão de arquivo ao salvar os arquivos Blender."
+
+
+msgid "Enable filtering of files in the File Browser"
+msgstr "Habilitar filtragem de arquivos no Navegador de Arquivos"
 
 
 msgid "Load user interface setup when loading .blend files"
@@ -55588,6 +55867,10 @@ msgid "Region Overlap"
 msgstr "Sobreposição de região"
 
 
+msgid "Display tool/property regions over the main region"
+msgstr "Desenha as regiões da estante de ferramentas e painéis de propriedade sobre a região principal"
+
+
 msgid "OpenGL Depth Picking"
 msgstr "Profundidade para a seleção OpenGL"
 
@@ -55644,12 +55927,36 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Um quadrado mostrando matiz e valor, com um deslizador de saturação."
 
 
+msgid "Factor Display Type"
+msgstr "Tipo de Exibição de Fator"
+
+
+msgid "How factor values are displayed"
+msgstr "Como os valores de fatores são mostrados"
+
+
+msgid "Display factors as values between 0 and 1"
+msgstr "Mostra fatores como valores entre 0 e 1"
+
+
 msgid "Percentage"
 msgstr "Porcentagem"
 
 
+msgid "Display factors as percentages"
+msgstr "Mostrar fatores como porcentagens"
+
+
+msgid "File Browser Display Type"
+msgstr "Tipo de Exibição do Navegador de Arquivos"
+
+
+msgid "Maximized Area"
+msgstr "Área Maximizada"
+
+
 msgid "New Window"
-msgstr "Nova janela"
+msgstr "Nova Janela"
 
 
 msgid "Open the temporary editor in a new window"
@@ -55662,6 +55969,30 @@ msgstr "Fonte da interface"
 
 msgid "Path to interface font"
 msgstr "Caminho para a fonte da interface."
+
+
+msgid "Monospaced Font"
+msgstr "Fonte mono espaçada"
+
+
+msgid "Path to interface monospaced Font"
+msgstr "Caminho para a fonte da interface mono espaçada"
+
+
+msgid "Header Position"
+msgstr "Posição do Cabeçalho"
+
+
+msgid "Default header position for new space-types"
+msgstr "Posição padrão do cabeçalho para novos espaços-tipo"
+
+
+msgid "Keep Existing"
+msgstr "Manter Existente"
+
+
+msgid "Keep existing header alignment"
+msgstr "Manter alinhamento do cabeçalho existente"
 
 
 msgid "Language used for translation"
@@ -55732,6 +56063,26 @@ msgid "Distance from center needed before a selection can be made"
 msgstr "Distância necessária a partir do centro antes que alguma seleção possa ser feita."
 
 
+msgid "Tap Key Timeout"
+msgstr "Tempo de Espera da Tecla de Toque"
+
+
+msgid "Keep User Interface"
+msgstr "Manter Interface do Usuário"
+
+
+msgid "Images are rendered without changing the user interface"
+msgstr "Imagens são renderizadas sem mudar a interface do usuário"
+
+
+msgid "Images are rendered in a maximized Image Editor"
+msgstr "Imagens são renderizadas em um Editor de Imagens maximizado"
+
+
+msgid "Images are rendered in an Image Editor"
+msgstr "Imagens são renderizadas em um Editor de Imagens"
+
+
 msgid "Images are rendered in a new window"
 msgstr "Imagens são renderizadas em uma nova janela"
 
@@ -55746,6 +56097,22 @@ msgstr "Esquema de colunas na caixa de ferramentas"
 
 msgid "Use a column layout for toolbox"
 msgstr "Usa um esquema em colunas para a caixa de ferramentas."
+
+
+msgid "Developer Extras"
+msgstr "Extras de Desenvolvedores"
+
+
+msgid "Show options for developers (edit source in context menu, geometry indices)"
+msgstr "Mostra opções para desenvolvedores (editar o código fonte no menu de contexto, índices de geometria)"
+
+
+msgid "Navigation Controls"
+msgstr "Controles de Navegação"
+
+
+msgid "Show navigation controls in 2D and 3D views which do not have scroll bars"
+msgstr "Mostra controles de navegação nas vistas 2D e 3D que não possuam barras de rolagem"
 
 
 msgid "Display Object Info"
@@ -55769,7 +56136,11 @@ msgstr "Mostrar tela de abertura"
 
 
 msgid "Display splash screen on startup"
-msgstr "Mostra tela de abertura ao iniciar."
+msgstr "Mostra tela de abertura ao iniciar"
+
+
+msgid "Show Blender version string"
+msgstr "Mostrar texto com a Versão do Blender"
 
 
 msgid "Tooltips"
@@ -55802,6 +56173,18 @@ msgstr "Suavizar visualização"
 
 msgid "Time to animate the view in milliseconds, zero to disable"
 msgstr "Tempo para animar a vista em microssegundos, zero para desabilitar."
+
+
+msgid "Text Hinting"
+msgstr "Definição do Texto"
+
+
+msgid "Method for making user interface text render sharp"
+msgstr "Método para tornar o texto da interface do usuário nítido"
+
+
+msgid "Slight"
+msgstr "Suave"
 
 
 msgid "TimeCode Style"
@@ -55872,6 +56255,10 @@ msgid "Thicker lines than the default"
 msgstr "Linhas mais espessas que o padrão."
 
 
+msgid "Changes the size of the fonts and widgets in the interface"
+msgstr "Altera o tamanho das fontes e botões na interface"
+
+
 msgid "Contents Follow Opening Direction"
 msgstr "Conteúdos seguem a direção de abertura"
 
@@ -55884,16 +56271,36 @@ msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Abre os botões de menu e menus suspensos automaticamente quando o ponteiro do mouse pairar sobre eles."
 
 
+msgid "Text Anti-Aliasing"
+msgstr "Antisserrilhamento em textos"
+
+
+msgid "Smooth jagged edges of user interface text"
+msgstr "Suaviza bordas denteadas do texto da interface do usuário"
+
+
 msgid "Translate Interface"
 msgstr "Traduzir interface"
+
+
+msgid "Translate all labels in menus, buttons and panels (note that this might make it hard to follow tutorials or the manual)"
+msgstr "Traduz todos os rótulos em menus, botões e painéis (note que isso pode dificultar o acompanhamento de tutoriais ou do manual)"
 
 
 msgid "Translate New Names"
 msgstr "Traduzir nomes novos"
 
 
+msgid "Translate the names of new data-blocks (objects, materials...)"
+msgstr "Traduz o nome de novos blocos de dados (objetos, materiais...)"
+
+
 msgid "Translate Tooltips"
 msgstr "Traduzir dicas de ferramentas"
+
+
+msgid "Translate the descriptions when hovering UI elements (recommended)"
+msgstr "Traduz as descrições quando o mouse passar sobre elementos da interface (recomendado)"
 
 
 msgid "Use Weight Color Range"
@@ -58584,6 +58991,22 @@ msgid "64 px"
 msgstr "64 px"
 
 
+msgid "128 px"
+msgstr "128 px"
+
+
+msgid "256 px"
+msgstr "256 px"
+
+
+msgid "1024 px"
+msgstr "1024 px"
+
+
+msgid "2048 px"
+msgstr "2048 px"
+
+
 msgid "Filter Quality"
 msgstr "Qualidade do Filtro"
 
@@ -59835,12 +60258,20 @@ msgid "Collection of Sequences"
 msgstr "Coleção de sequências"
 
 
+msgid "Factor of Blur"
+msgstr "Fator de Desfoque"
+
+
 msgid "Gray Scale"
 msgstr "Escala de cinza"
 
 
 msgid "Sepia"
 msgstr "Sépia"
+
+
+msgid "Amplitude of Wave"
+msgstr "Amplitude da Onda"
 
 
 msgid "Shape Key"
@@ -60709,7 +61140,7 @@ msgstr "Espaço do navegador de arquivos"
 
 
 msgid "File browser space data"
-msgstr "Espaço de dados do navegador de arquivos."
+msgstr "Espaço de dados do navegador de arquivos"
 
 
 msgid "Active Operator"
@@ -63193,6 +63624,10 @@ msgid "Transparency of icons in the interface, to reduce contrast"
 msgstr "Transparência dos ícones na interface, para reduzir contraste."
 
 
+msgid "Color of folders in the file browser"
+msgstr "Cor das pastas no navegador de arquivos"
+
+
 msgid "Menu Shadow Strength"
 msgstr "Potência das sombras dos menus"
 
@@ -63291,6 +63726,10 @@ msgstr "Enfatização dos assistentes"
 
 msgid "Color of the 1px shadow line underlying widgets"
 msgstr "A cor da linha de sublinhamento que sombreia a base dos assistentes, com tamanho de um pixel."
+
+
+msgid "Text Cursor"
+msgstr "Cursor do Texto"
 
 
 msgid "Theme 3D View"
@@ -65135,7 +65574,7 @@ msgstr "Previsão do editor de sequências"
 
 msgctxt "WindowManager"
 msgid "File Browser"
-msgstr "Navegador de arquivos"
+msgstr "Navegador de Arquivos"
 
 
 msgctxt "WindowManager"
@@ -65145,7 +65584,7 @@ msgstr "Navegador de arquivos principal"
 
 msgctxt "WindowManager"
 msgid "File Browser Buttons"
-msgstr "Botões do navegador de arquivos"
+msgstr "Botões do Navegador de Arquivos"
 
 
 msgctxt "WindowManager"
@@ -66333,6 +66772,16 @@ msgid "Free"
 msgstr "Liberar"
 
 
+msgctxt "Operator"
+msgid "Baking All - ESC to pause"
+msgstr "Capturar Tudo - ESC para pausar"
+
+
+msgctxt "Operator"
+msgid "Baking Data - ESC to pause"
+msgstr "Capturar Dados - ESC para pausar"
+
+
 msgid "Fuel"
 msgstr "Combustível"
 
@@ -66365,6 +66814,11 @@ msgstr "Apagar Cache de luz"
 
 msgid "Render Engine"
 msgstr "Motor de Render"
+
+
+msgctxt "Operator"
+msgid "Bake Cubemap Only"
+msgstr "Capturar Apenas Mapa Cúbico"
 
 
 msgid "Temperature"
@@ -66525,6 +66979,11 @@ msgstr "Localização"
 
 
 msgctxt "Operator"
+msgid "Affine"
+msgstr "Afim"
+
+
+msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Configurar piso"
 
@@ -66608,6 +67067,16 @@ msgstr "Ampliação %d:%d"
 msgctxt "Operator"
 msgid "Autocomplete"
 msgstr "Autocompletar"
+
+
+msgctxt "Operator"
+msgid "Move to Line Begin"
+msgstr "Mover para Início da Linha"
+
+
+msgctxt "Operator"
+msgid "Move to Line End"
+msgstr "Mover para Fim da Linha"
 
 
 msgid "Options:"
@@ -66717,6 +67186,10 @@ msgstr "Para frente"
 msgctxt "Operator"
 msgid "Go to Parent"
 msgstr "Ir para Parente"
+
+
+msgid "Text Files"
+msgstr "Arquivos de Texto"
 
 
 msgctxt "Operator"
@@ -67071,8 +67544,18 @@ msgstr "Mostrar Tudo Dentro"
 
 
 msgctxt "Operator"
+msgid "Enable in Viewports"
+msgstr "Habilitar nas Janelas de Exibição"
+
+
+msgctxt "Operator"
 msgid "Disable in Viewports"
 msgstr "Desabilitar na Janela de Exibição"
+
+
+msgctxt "Operator"
+msgid "Enable in Render"
+msgstr "Habilitar no Render"
 
 
 msgctxt "Operator"
@@ -67404,6 +67887,10 @@ msgstr "Mover/Estender a partir do Quadro Atual"
 
 msgid "Effect Fader"
 msgstr "Esmaecedor de efeitos"
+
+
+msgid "%dx%d"
+msgstr "%dx%d"
 
 
 msgid "Unpack"
@@ -67749,6 +68236,10 @@ msgid "Revert to Saved Preferences"
 msgstr "Reverter para Preferências Salvas"
 
 
+msgid "Resolution Scale"
+msgstr "Escala de Resolução"
+
+
 msgid "Splash Screen"
 msgstr "Tela de abertura"
 
@@ -67757,12 +68248,32 @@ msgid "User Tooltips"
 msgstr "Dicas de Ferramentas do Usuário"
 
 
+msgid "Hinting"
+msgstr "Definição"
+
+
 msgid "New Data"
 msgstr "Novos dados"
 
 
+msgid "Render In"
+msgstr "Renderizar Em"
+
+
 msgid "Scene Statistics"
 msgstr "Estatísticas da Cena"
+
+
+msgid "System Memory"
+msgstr "Memória do Sistema"
+
+
+msgid "Video Memory"
+msgstr "Memória de Vídeo"
+
+
+msgid "Blender Version"
+msgstr "Versão do Blender"
 
 
 msgid "Top Level"
@@ -68472,6 +68983,11 @@ msgstr "Conectar o caminho dos vértices"
 
 
 msgctxt "Operator"
+msgid "Extrude Faces"
+msgstr "Extrudar Faces"
+
+
+msgctxt "Operator"
 msgid "Weak"
 msgstr "Fraco"
 
@@ -68571,6 +69087,10 @@ msgid "View Selected"
 msgstr "Visualizar a seleção"
 
 
+msgid "Text Info"
+msgstr "Informação do Texto"
+
+
 msgid "Origins"
 msgstr "Origens"
 
@@ -68644,6 +69164,11 @@ msgstr "Superfícies não contíguas"
 msgctxt "Operator"
 msgid "Edge Rings"
 msgstr "Aros de arestas"
+
+
+msgctxt "Operator"
+msgid "Next Block"
+msgstr "Próximo Bloco"
 
 
 msgctxt "Operator"
@@ -68754,6 +69279,11 @@ msgstr "Colar pose invertida em X"
 msgctxt "Operator"
 msgid "Bevel Vertices"
 msgstr "Chanfrar Vertices"
+
+
+msgctxt "Operator"
+msgid "Bevel Edges"
+msgstr "Arredondar Bordas"
 
 
 msgctxt "Operator"
@@ -68997,6 +69527,11 @@ msgstr "Limpar marcações de faces Freestyle"
 
 
 msgctxt "Operator"
+msgid "Dissolve Between"
+msgstr "Dissolver Entre"
+
+
+msgctxt "Operator"
 msgid "Scale BBone"
 msgstr "Escalonar osso maleável"
 
@@ -69004,6 +69539,11 @@ msgstr "Escalonar osso maleável"
 msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Escala das lentes da câmera"
+
+
+msgctxt "Operator"
+msgid "Adjust Extrusion"
+msgstr "Ajustar Extrusão"
 
 
 msgctxt "Operator"
@@ -69029,6 +69569,46 @@ msgstr "Escalonar raio"
 msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "Obter distância DOF"
+
+
+msgctxt "Operator"
+msgid "Adjust Light Power"
+msgstr "Ajustar Potência da Luz"
+
+
+msgctxt "Operator"
+msgid "Adjust Spot Light Size"
+msgstr "Ajustar Tamanho da Luz de Spot"
+
+
+msgctxt "Operator"
+msgid "Adjust Spot Light Blend"
+msgstr "Ajustar Mesclagem da Luz de Spot"
+
+
+msgctxt "Operator"
+msgid "Adjust Area Light X Size"
+msgstr "Ajustar Tamanho X da Luz de Área"
+
+
+msgctxt "Operator"
+msgid "Adjust Area Light Y Size"
+msgstr "Ajustar Tamanhos Y da Luz de Área"
+
+
+msgctxt "Operator"
+msgid "Adjust Area Light Size"
+msgstr "Ajustar Tamanho da Luz de Área"
+
+
+msgctxt "Operator"
+msgid "Adjust Light Radius"
+msgstr "Ajustar Raio da Luz"
+
+
+msgctxt "Operator"
+msgid "Adjust Sun Light Angle"
+msgstr "Ajustar Ângulo da Luz do Sol"
 
 
 msgid "Layer:"
@@ -70531,6 +71111,10 @@ msgstr "Combinação de botão ativo não pode ser encontrada."
 
 msgid "Active button not found"
 msgstr "Botão ativo não encontrado."
+
+
+msgid "Please set your Preferences' 'Translation Branches Directory' path to a valid directory"
+msgstr "Por favor, configure as preferências de usuário de seu caminho de \"Diretório de vertentes de tradução\" para um diretório válido"
 
 
 msgid "File '%s' cannot be opened"
@@ -72116,7 +72700,7 @@ msgstr "Não é possível escrever um arquivo único com um formato de animaçã
 
 
 msgid "Cannot use OpenGL render in background mode (no opengl context)"
-msgstr "Não é possível renderizar usando OpenGL no modo de plano de fundo (sem contexto Opengl)."
+msgstr "Não é possível renderizar usando OpenGL no modo de plano de fundo (sem contexto Opengl)"
 
 
 msgid "Scene has no camera"
@@ -72548,6 +73132,10 @@ msgid "Height of marker's search in screen coordinates"
 msgstr "Altura dos marcadores de pesquisa em coordenadas de tela."
 
 
+msgid "%d x %d"
+msgstr "%d x %d"
+
+
 msgid ", %d float channel(s)"
 msgstr ", %d canais em ponto flutuante"
 
@@ -72881,6 +73469,10 @@ msgid "Can't Load Image"
 msgstr "Não é possível carregar a imagem"
 
 
+msgid "%d x %d, "
+msgstr "%d x %d, "
+
+
 msgid "%d float channel(s)"
 msgstr "%d canais em ponto flutuante"
 
@@ -73079,6 +73671,10 @@ msgstr "Falso"
 
 msgid "Integer field"
 msgstr "Campo Integral"
+
+
+msgid " based on:"
+msgstr "baseado em:"
 
 
 msgid "Number of users of this data-block"
@@ -74704,6 +75300,10 @@ msgstr "Fator"
 
 msgid "Dot"
 msgstr "Ponto"
+
+
+msgid "Add Input"
+msgstr "Adicionar Entrada"
 
 
 msgid "Val"

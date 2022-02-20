@@ -1,4 +1,6 @@
-# GPL # "author": "Buerbaum Martin (Pontiac)"
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Buerbaum Martin (Pontiac)
 
 import bpy, bmesh
 from math import sin, cos, tan, pi, radians

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # This try block allows for the script to psudo-intelligently select the
 # appropriate random to use.  If Numpy's random is present it will use that.
 # If Numpy's random is not present, it will through a "module not found"

@@ -495,36 +495,36 @@ def write_pov(filename, scene=None, info_callback=None):
 
         '''
                 meta = ob.data
-    
+
                 # important because no elements will break parsing.
                 elements = [elem for elem in meta.elements if elem.type in {'BALL', 'ELLIPSOID'}]
-    
+
                 if elements:
                     tab_write("blob {\n")
                     tab_write("threshold %.4g\n" % meta.threshold)
                     importance = ob.pov.importance_value
-    
+
                     try:
                         material = meta.materials[0]  # lame! - blender cant do enything else.
                     except:
                         material = None
-    
+
                     for elem in elements:
                         loc = elem.co
-    
+
                         stiffness = elem.stiffness
                         if elem.use_negative:
                             stiffness = - stiffness
-    
+
                         if elem.type == 'BALL':
-    
+
                             tab_write("sphere { <%.6g, %.6g, %.6g>, %.4g, %.4g }\n" %
                                      (loc.x, loc.y, loc.z, elem.radius, stiffness))
-    
+
                             # After this wecould do something simple like...
                             #     "pigment {Blue} }"
                             # except we'll write the color
-    
+
                         elif elem.type == 'ELLIPSOID':
                             # location is modified by scale
                             tab_write("sphere { <%.6g, %.6g, %.6g>, %.4g, %.4g }\n" %
@@ -534,7 +534,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                       elem.radius, stiffness))
                             tab_write("scale <%.6g, %.6g, %.6g> \n" %
                                      (elem.size_x, elem.size_y, elem.size_z))
-    
+
                     if material:
                         diffuse_color = material.diffuse_color
                         trans = 1.0 - material.pov.alpha
@@ -543,30 +543,30 @@ def write_pov(filename, scene=None, info_callback=None):
                             trans = (1.0 - material.pov.alpha) - pov_filter
                         else:
                             pov_filter = 0.0
-    
+
                         material_finish = material_names_dictionary[material.name]
-    
+
                         tab_write("pigment {srgbft<%.3g, %.3g, %.3g, %.3g, %.3g>} \n" %
                                  (diffuse_color[0], diffuse_color[1], diffuse_color[2],
                                   pov_filter, trans))
                         tab_write("finish {%s}\n" % safety(material_finish, ref_level_bound=2))
-    
+
                     else:
                         tab_write("pigment {srgb 1} \n")
                         # Write the finish last.
                         tab_write("finish {%s}\n" % (safety(DEF_MAT_NAME, ref_level_bound=2)))
-    
+
                     write_object_material_interior(material, elems[1])
-    
+
                     write_matrix(global_matrix @ ob.matrix_world)
                     # Importance for radiosity sampling added here
                     tab_write("radiosity { \n")
                     # importance > ob.pov.importance_value
                     tab_write("importance %3g \n" % importance)
                     tab_write("}\n")
-    
+
                     tab_write("}\n")  # End of Metaball block
-    
+
                     if comments and len(metas) >= 1:
                         file.write("\n")
         '''

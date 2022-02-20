@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 bl_info = {
     "name" : "Cut Faces",
     "author" : "Stanislav Blinov",

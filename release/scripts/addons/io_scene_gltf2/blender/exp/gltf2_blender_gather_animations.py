@@ -111,6 +111,8 @@ def __gather_animation(blender_action: bpy.types.Action,
         print_console("WARNING", "Animation '{}' could not be exported. Cause: {}".format(name, error))
         return None
 
+    export_user_extensions('pre_gather_animation_hook', export_settings, animation, blender_action, blender_object)
+
     if not animation.channels:
         return None
 
@@ -205,6 +207,8 @@ def __get_blender_actions(blender_object: bpy.types.Object,
     blender_tracks = {}
     action_on_type = {}
 
+    export_user_extensions('pre_gather_actions_hook', export_settings, blender_object)
+
     if blender_object.animation_data is not None:
         # Collect active action.
         if blender_object.animation_data.action is not None:
@@ -246,6 +250,8 @@ def __get_blender_actions(blender_object: bpy.types.Object,
                         blender_actions.append(strip.action)
                         blender_tracks[strip.action.name] = track.name # Always set after possible active action -> None will be overwrite
                         action_on_type[strip.action.name] = "SHAPEKEY"
+
+    export_user_extensions('gather_actions_hook', export_settings, blender_object, blender_actions, blender_tracks, action_on_type)
 
     # Remove duplicate actions.
     blender_actions = list(set(blender_actions))
