@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2012 Manfred Moitzi
+
 # Purpose: handle drawing data of DXF files
 # Created: 21.07.12
-# Copyright (C) 2012, Manfred Moitzi
-# License: MIT License
 
 __author__ = "mozman <mozman@gmx.at>"
 

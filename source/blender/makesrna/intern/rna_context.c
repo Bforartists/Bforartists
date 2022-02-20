@@ -21,6 +21,7 @@
 const EnumPropertyItem rna_enum_context_mode_items[] = {
     {CTX_MODE_EDIT_MESH, "EDIT_MESH", 0, "Mesh Edit", ""},
     {CTX_MODE_EDIT_CURVE, "EDIT_CURVE", 0, "Curve Edit", ""},
+    {CTX_MODE_EDIT_CURVES, "EDIT_CURVES", 0, "Curves Edit", ""},
     {CTX_MODE_EDIT_SURFACE, "EDIT_SURFACE", 0, "Surface Edit", ""},
     {CTX_MODE_EDIT_TEXT, "EDIT_TEXT", 0, "Text Edit", ""},
     /* PARSKEL reuse will give issues */
@@ -39,6 +40,7 @@ const EnumPropertyItem rna_enum_context_mode_items[] = {
     {CTX_MODE_SCULPT_GPENCIL, "SCULPT_GPENCIL", 0, "Grease Pencil Sculpt", ""},
     {CTX_MODE_WEIGHT_GPENCIL, "WEIGHT_GPENCIL", 0, "Grease Pencil Weight Paint", ""},
     {CTX_MODE_VERTEX_GPENCIL, "VERTEX_GPENCIL", 0, "Grease Pencil Vertex Paint", ""},
+    {CTX_MODE_SCULPT_CURVES, "SCULPT_CURVES", 0, "Curves Sculpt", ""},
     {0, NULL, 0, NULL, NULL},
 };
 

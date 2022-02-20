@@ -1,4 +1,5 @@
-# GPL # (c) 2009, 2010 Michel J. Anders (varkenvarken)
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright 2009-2010 Michel J. Anders (varkenvarken)
 
 import bpy
 from bpy.types import Operator

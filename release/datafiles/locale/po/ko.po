@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -18796,10 +18796,6 @@ msgid "Refraction Depth"
 msgstr "굴절 깊이"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "두 굴절 이벤트를 계산하기 위한 오브젝트의 두께를 근사화합니다 (0은 비활성화 됨)"
-
-
 msgid "Roughness"
 msgstr "거칠기"
 
@@ -18830,10 +18826,6 @@ msgstr "노이즈를 사용하여 바이너리 가시성을 떨어트리고 필�
 
 msgid "Show Backface"
 msgstr "백 페이스를 표시"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "단일 레이어로 투명도를 제한 (투명도 정렬 문제 방지)"
 
 
 msgid "Specular Color"
@@ -41282,10 +41274,6 @@ msgstr "재생 범위로 제한"
 
 msgid "Clips animations to selected playback range"
 msgstr "선택한 재생 범위로 애니메이션을 클립"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "이미지의 출력 형식. PNG는 무손실이며 일반적으로 선호되지만 JPEG는 파일 크기가 작기 때문에 웹 응용 프로그램에 적합 할 수 있습니다"
 
 
 msgid "JPEG Format (.jpg)"

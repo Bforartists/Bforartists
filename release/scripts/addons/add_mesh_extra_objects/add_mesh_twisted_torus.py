@@ -1,4 +1,6 @@
-# GPL # "author": Paulo_Gomes
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Paulo_Gomes
 
 import bpy
 from mathutils import Quaternion, Vector

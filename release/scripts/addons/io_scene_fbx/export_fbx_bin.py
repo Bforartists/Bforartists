@@ -674,6 +674,9 @@ def fbx_data_camera_elements(root, cam_obj, scene_data):
     # No need to convert to inches here...
     elem_props_template_set(tmpl, props, "p_double", b"FocalLength", cam_data.lens)
     elem_props_template_set(tmpl, props, "p_double", b"SafeAreaAspectRatio", aspect)
+    # Depth of field and Focus distance.
+    elem_props_template_set(tmpl, props, "p_bool", b"UseDepthOfField", cam_data.dof.use_dof)
+    elem_props_template_set(tmpl, props, "p_double", b"FocusDistance", cam_data.dof.focus_distance * 1000 * gscale)
     # Default to perspective camera.
     elem_props_template_set(tmpl, props, "p_enum", b"CameraProjectionType", 1 if cam_data.type == 'ORTHO' else 0)
     elem_props_template_set(tmpl, props, "p_double", b"OrthoZoom", cam_data.ortho_scale)
@@ -1923,6 +1926,7 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     depsgraph = scene_data.depsgraph
     force_keying = scene_data.settings.bake_anim_use_all_bones
     force_sek = scene_data.settings.bake_anim_force_startend_keying
+    gscale = scene_data.settings.global_scale
 
     if objects is not None:
         # Add bones and duplis!
@@ -1969,8 +1973,10 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     animdata_cameras = {}
     for cam_obj, cam_key in scene_data.data_cameras.items():
         cam = cam_obj.bdata.data
-        acnode = AnimationCurveNodeWrapper(cam_key, 'CAMERA_FOCAL', force_key, force_sek, (cam.lens,))
-        animdata_cameras[cam_key] = (acnode, cam)
+        acnode_lens = AnimationCurveNodeWrapper(cam_key, 'CAMERA_FOCAL', force_key, force_sek, (cam.lens,))
+        acnode_focus_distance = AnimationCurveNodeWrapper(cam_key, 'CAMERA_FOCUS_DISTANCE', force_key,
+                                                          force_sek, (cam.dof.focus_distance,))
+        animdata_cameras[cam_key] = (acnode_lens, acnode_focus_distance, cam)
 
     currframe = f_start
     while currframe <= f_end:
@@ -1989,8 +1995,9 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             anim_scale.add_keyframe(real_currframe, scale)
         for anim_shape, me, shape in animdata_shapes.values():
             anim_shape.add_keyframe(real_currframe, (shape.value * 100.0,))
-        for anim_camera, camera in animdata_cameras.values():
-            anim_camera.add_keyframe(real_currframe, (camera.lens,))
+        for anim_camera_lens, anim_camera_focus_distance, camera in animdata_cameras.values():
+            anim_camera_lens.add_keyframe(real_currframe, (camera.lens,))
+            anim_camera_focus_distance.add_keyframe(real_currframe, (camera.dof.focus_distance * 1000 * gscale,))
         currframe += bake_step
 
     scene.frame_set(back_currframe, subframe=0.0)
@@ -2018,15 +2025,21 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
             anim_data[1][fbx_group] = (group_key, group, fbx_gname)
 
-    # And cameras' lens keys.
-    for cam_key, (anim_camera, camera) in animdata_cameras.items():
+    # And cameras' lens and focus distance keys.
+    for cam_key, (anim_camera_lens, anim_camera_focus_distance, camera) in animdata_cameras.items():
         final_keys = {}
-        anim_camera.simplify(simplify_fac, bake_step, force_keep)
-        if not anim_camera:
-            continue
-        for elem_key, group_key, group, fbx_group, fbx_gname in anim_camera.get_final_data(scene, ref_id, force_keep):
-            anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
-            anim_data[1][fbx_group] = (group_key, group, fbx_gname)
+        anim_camera_lens.simplify(simplify_fac, bake_step, force_keep)
+        anim_camera_focus_distance.simplify(simplify_fac, bake_step, force_keep)
+        if anim_camera_lens:
+            for elem_key, group_key, group, fbx_group, fbx_gname in \
+                    anim_camera_lens.get_final_data(scene, ref_id, force_keep):
+                anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
+                anim_data[1][fbx_group] = (group_key, group, fbx_gname)
+        if anim_camera_focus_distance:
+            for elem_key, group_key, group, fbx_group, fbx_gname in \
+                    anim_camera_focus_distance.get_final_data(scene, ref_id, force_keep):
+                anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
+                anim_data[1][fbx_group] = (group_key, group, fbx_gname)
 
     astack_key = get_blender_anim_stack_key(scene, ref_id)
     alayer_key = get_blender_anim_layer_key(scene, ref_id)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23294,10 +23294,6 @@ msgid "Refraction Depth"
 msgstr "折射深度"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "估算物体的厚度来计算二次折射结果(0为禁用)"
-
-
 msgid "Roughness"
 msgstr "糙度"
 
@@ -23328,10 +23324,6 @@ msgstr "使用噪波方式丰富二元可见性并且使用过滤来减少噪点
 
 msgid "Show Backface"
 msgstr "显示背面"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "将透明效果限制为一层(避免透明层排序问题)"
 
 
 msgid "Specular Color"
@@ -51031,10 +51023,6 @@ msgstr "限制回放范围"
 
 msgid "Clips animations to selected playback range"
 msgstr "钳制动画到所选播放范围"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "图像的输出格式. PNG是无损的,通常是首选,但由于文件较小,JPEG可能更适合Web应用"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
@@ -82955,20 +82943,40 @@ msgid "Fisheye Polynomial K0"
 msgstr "鱼眼多项式 K0"
 
 
+msgid "Coefficient K0 of the lens polynomial"
+msgstr "镜头多项式的系数K0"
+
+
 msgid "Fisheye Polynomial K1"
 msgstr "鱼眼多项式 K1"
+
+
+msgid "Coefficient K1 of the lens polynomial"
+msgstr "镜头多项式的系数K1"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "鱼眼多项式 K2"
 
 
+msgid "Coefficient K2 of the lens polynomial"
+msgstr "镜头多项式的系数K2"
+
+
 msgid "Fisheye Polynomial K3"
 msgstr "鱼眼多项式 K3"
 
 
+msgid "Coefficient K3 of the lens polynomial"
+msgstr "镜头多项式的系数K3"
+
+
 msgid "Fisheye Polynomial K4"
 msgstr "鱼眼多项式 K4"
+
+
+msgid "Coefficient K4 of the lens polynomial"
+msgstr "镜头多项式的系数K4"
 
 
 msgid "Max Latitude"
@@ -83037,6 +83045,10 @@ msgstr "使用镜像球贴图"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "鱼眼镜头多项式"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked"
+msgstr "定义镜头投影为多项式，以允许模拟真实世界的相机镜头"
 
 
 msgid "Form of hair"
@@ -95501,6 +95513,10 @@ msgid "Bone Wireframe Opacity"
 msgstr "骨骼线框不透明度"
 
 
+msgid "Maximum opacity of bones in wireframe display mode"
+msgstr "线框显示模式下骨骼的最大不透明度"
+
+
 msgid "Display Handles"
 msgstr "显示控制柄"
 
@@ -98596,6 +98612,10 @@ msgstr "吸管颜色渐变点采样映射"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "无选中的关键帧，在场景范围内粘贴"
+
+
+msgid "Clipboard does not contain a valid matrix"
+msgstr "剪贴板不包含有效的矩阵"
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -103898,6 +103918,11 @@ msgstr "自动保存..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG为蜡笔"
+
+
+msgctxt "Operator"
+msgid "Wavefront OBJ (.obj)"
+msgstr "Wavefront OBJ (.obj)"
 
 
 msgctxt "Operator"
@@ -110095,12 +110120,20 @@ msgid "Cannot delete indirectly linked object '%s'"
 msgstr "无法删除间接关联的库 '%s'"
 
 
+msgid "Cannot delete object '%s' as it is used by override collections"
+msgstr "无法删除物体 '%s' ，因为它被重写集合所使用"
+
+
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "无法从场景 '%s' 删除物体 '%s', 需要至少一个用户间接使用物体"
 
 
 msgid "Deleted %u object(s)"
 msgstr "已删除 %u 个物体"
+
+
+msgid "Cannot edit object '%s' as it is used by override collections"
+msgstr "无法编辑物体 '%s' ，因为它被重写集合所使用"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -113476,6 +113509,10 @@ msgstr "数据集"
 
 msgid "Column"
 msgstr "列"
+
+
+msgid "Unknown column type"
+msgstr "未知列类型"
 
 
 msgid "File Modified Outside and Inside Blender"

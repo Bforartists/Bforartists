@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-02-02 08:43+0100\n"
+"PO-Revision-Date: 2022-02-07 12:00+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -23293,10 +23293,6 @@ msgid "Refraction Depth"
 msgstr "Hĺbka lomu"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Približná hrúbka objektu na výpočet dvoch udalostí lomu (0 je vypnutá)"
-
-
 msgid "Roughness"
 msgstr "Zdrsnenie"
 
@@ -23327,10 +23323,6 @@ msgstr "Použije šum na rozptyl farby binárnej viditeľnosti a používa filtr
 
 msgid "Show Backface"
 msgstr "Zobraziť obrátené plôšky"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Obmedzí priehľadnosť na jednu vrstvu (vyhýba sa problémom s triedením priehľadnosti)"
 
 
 msgid "Specular Color"
@@ -51032,10 +51024,6 @@ msgid "Clips animations to selected playback range"
 msgstr "Klipy animácie na vybraný rozsah prehrávania"
 
 
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "Výstupný formát pre obrázky .PNG je bezstratový a všeobecne preferovaný, ale JPEG môže byť vhodnejší pre webové aplikácie kvôli menšej veľkosti súboru"
-
-
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
 msgstr "Uloží PNG ako PNG a JPEG ako JPEG. Ak nie je ani jeden, použije PNG"
 
@@ -72508,11 +72496,11 @@ msgstr "Skryje (ne)vybrané UV vrcholy"
 
 msgctxt "Operator"
 msgid "Lightmap Pack"
-msgstr "Vtesnať mapu svetla"
+msgstr "Zbalí mapu svetla"
 
 
 msgid "Pack each faces UV's into the UV bounds"
-msgstr "Vtesná každú UV plôšku vnútri UV okrajov"
+msgstr "Zbalí každú UV plôšku vnútri UV okrajov"
 
 
 msgid "New Image"
@@ -72598,7 +72586,7 @@ msgstr "Počet opakovaní na spustenie, 0 je nelimitovaný pri interaktívnom sp
 
 msgctxt "Operator"
 msgid "Pack Islands"
-msgstr "Vtesnať ostrovy"
+msgstr "Zbaliť ostrovy"
 
 
 msgid "Transform all islands so that they fill up the UV/UDIM space as much as possible"
@@ -72614,7 +72602,7 @@ msgstr "Otáča ostrovmi pre najlepšie prispôsobenie"
 
 
 msgid "Pack to"
-msgstr "Vtesnať do"
+msgstr "Zbaliť do"
 
 
 msgid "Closest UDIM"
@@ -72622,7 +72610,7 @@ msgstr "Najbližší UDIM"
 
 
 msgid "Pack islands to closest UDIM"
-msgstr "Vtesná ostrovy do najbližšieho UDIM"
+msgstr "Zbalí ostrovy do najbližšieho UDIM"
 
 
 msgid "Active UDIM"
@@ -72630,7 +72618,7 @@ msgstr "Aktívny UDIM"
 
 
 msgid "Pack islands to active UDIM image tile or UDIM grid tile where 2D cursor is located"
-msgstr "Vtesná ostrovy do aktívnej dlaždice obrázku UDIM alebo dlaždice mriežky UDIM, kde sa nachádza 2D kurzor"
+msgstr "Zbalí ostrovy do aktívnej dlaždice obrázku UDIM alebo dlaždice mriežky UDIM, kde sa nachádza 2D kurzor"
 
 
 msgctxt "Operator"
@@ -82952,20 +82940,40 @@ msgid "Fisheye Polynomial K0"
 msgstr "Mnohočlen rybieho oka K0"
 
 
+msgid "Coefficient K0 of the lens polynomial"
+msgstr "Koeficient K0 mnohočlena šošovky"
+
+
 msgid "Fisheye Polynomial K1"
 msgstr "Mnohočlen rybieho oka K1"
+
+
+msgid "Coefficient K1 of the lens polynomial"
+msgstr "Koeficient K1 mnohočlena šošovky"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "Mnohočlen rybieho oka K2"
 
 
+msgid "Coefficient K2 of the lens polynomial"
+msgstr "Koeficient K2 mnohočlena šošovky"
+
+
 msgid "Fisheye Polynomial K3"
 msgstr "Mnohočlen rybieho oka K3"
 
 
+msgid "Coefficient K3 of the lens polynomial"
+msgstr "Koeficient K3 mnohočlena šošovky"
+
+
 msgid "Fisheye Polynomial K4"
 msgstr "Mnohočlen rybieho oka K4"
+
+
+msgid "Coefficient K4 of the lens polynomial"
+msgstr "Koeficient K4 mnohočlena šošovky"
 
 
 msgid "Max Latitude"
@@ -83034,6 +83042,10 @@ msgstr "Používa priradenie zrkadlovej lopty"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "Mnohočlenový objektív rybie oko"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked"
+msgstr "Definuje premietanie objektívu ako mnohočlenové, aby bolo možné napodobniť objektívy kamier v reálnom svete."
 
 
 msgid "Form of hair"
@@ -95498,6 +95510,10 @@ msgid "Bone Wireframe Opacity"
 msgstr "Nepriehľadnosť drôteného rámu kostí"
 
 
+msgid "Maximum opacity of bones in wireframe display mode"
+msgstr "Maximálna nepriehľadnosť kostí v režime zobrazenia drôteného modelu"
+
+
 msgid "Display Handles"
 msgstr "Zobraziť manipulátory"
 
@@ -98593,6 +98609,10 @@ msgstr "Mapa kvapkadla snímania bodu farebného spádu"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "Žiadne vybrané kľúče, prilepenie cez rozsah scény"
+
+
+msgid "Clipboard does not contain a valid matrix"
+msgstr "Schránka neobsahuje platnú matricu."
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -103891,6 +103911,11 @@ msgstr "Automaticky uložené..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG ako pastelka"
+
+
+msgctxt "Operator"
+msgid "Wavefront OBJ (.obj)"
+msgstr "Wavefront OBJ (.obj)"
 
 
 msgctxt "Operator"
@@ -110088,12 +110113,20 @@ msgid "Cannot delete indirectly linked object '%s'"
 msgstr "Nie je možné odstrániť nepriamo prepojený objekt '%s'"
 
 
+msgid "Cannot delete object '%s' as it is used by override collections"
+msgstr "Nemožno odstrániť objekt '%s', pretože ho používajú kolekcie prepisu"
+
+
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "Objekt '%s' sa nedá odstrániť zo scény '%s', nepriamo používané objekty potrebujú aspoň jedného užívateľa"
 
 
 msgid "Deleted %u object(s)"
 msgstr "Odstránených %u objekt(y)"
+
+
+msgid "Cannot edit object '%s' as it is used by override collections"
+msgstr "Nemožno odstrániť objekt '%s', pretože ho používajú kolekcie prepisu"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -113469,6 +113502,10 @@ msgstr "Nastavenie údajov"
 
 msgid "Column"
 msgstr "Stĺpec"
+
+
+msgid "Unknown column type"
+msgstr "Neznámy typ stĺpca"
 
 
 msgid "File Modified Outside and Inside Blender"

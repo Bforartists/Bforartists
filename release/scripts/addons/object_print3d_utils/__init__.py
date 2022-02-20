@@ -42,6 +42,12 @@ else:
 
 
 class SceneProperties(PropertyGroup):
+    use_alignxy_face_area: BoolProperty(
+        name="Face Areas",
+        description="Normalize normals proportional to face areas",
+        default=False,
+    )
+
     export_format: EnumProperty(
         name="Format",
         description="Format type to export to",
@@ -141,6 +147,7 @@ classes = (
     operators.MESH_OT_print3d_select_report,
     operators.MESH_OT_print3d_scale_to_volume,
     operators.MESH_OT_print3d_scale_to_bounds,
+    operators.MESH_OT_print3d_align_to_xy,
     operators.MESH_OT_print3d_export,
 )
 

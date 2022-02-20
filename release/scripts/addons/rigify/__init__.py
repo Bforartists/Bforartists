@@ -138,7 +138,7 @@ class RigifyFeatureSets(bpy.types.PropertyGroup):
         context.preferences.addons[__package__].preferences.update_external_rigs()
 
     enabled: bpy.props.BoolProperty(
-        name = "Enabled", 
+        name = "Enabled",
         description = "Whether this feature-set is registered or not",
         update = toggle_featureset,
         default = True
@@ -177,7 +177,7 @@ class RigifyPreferences(AddonPreferences):
 
         module_names = feature_set_list.get_installed_modules_names()
 
-        # If there is a feature set preferences entry with no corresponding 
+        # If there is a feature set preferences entry with no corresponding
         # installed module, user must've manually removed it from the filesystem,
         # so let's remove such entries.
         to_delete = [ i for i, fs in enumerate(feature_set_prefs) if fs.module_name not in module_names ]

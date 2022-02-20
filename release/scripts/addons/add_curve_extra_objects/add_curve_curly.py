@@ -1,4 +1,4 @@
-# gpl: author Cmomoney
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # DevBo Task https://developer.blender.org/T37299
 

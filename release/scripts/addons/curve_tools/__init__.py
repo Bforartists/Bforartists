@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# 
+#
 # Contributed to by guy lateur, Alexander Meißner (Lichtso),
 # Dealga McArdle (zeffii), Marvin.K.Breuer (MKB),
 # Spivak Vladimir (cwolf3d)

@@ -1,5 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Modified by Meta-Androcto.
 
 """ Copyright 2011 GPL licence applies"""
 

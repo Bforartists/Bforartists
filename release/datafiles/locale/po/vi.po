@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-11-20 07:29+0700\n"
@@ -23067,10 +23067,6 @@ msgid "Refraction Depth"
 msgstr "Độ Sâu Khúc Xạ"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Xấp xỉ bề dày của vật thể để tính hai sự kiện khúc xạ (0 = tắt)"
-
-
 msgid "Roughness"
 msgstr "Độ Nhám"
 
@@ -23101,10 +23097,6 @@ msgstr "Sử dụng huyên náo cho đẩu động sự hiển thị nhị phậ
 
 msgid "Show Backface"
 msgstr "Hiện mặt đàng sau"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Hạn chế độ trong suốt chỉ vào một lớp (để tránh vấn đề sắp xếp thứ tự trong suốt)"
 
 
 msgid "Specular Color"
@@ -50413,10 +50405,6 @@ msgstr "Hạn Chế đến Phạm Vi Hát Lại"
 
 msgid "Clips animations to selected playback range"
 msgstr "Cắt hoạt hình đến phạm vi hạt lại được chọn"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "Định dạng xuât cho ảnh. PNG không mất dữ liệu nguồn và tốt hơn, nhưng có lẻ JPEG tốt hơn cho ứng dụng trên mạng vì nó nhỏ gọn hơn"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
