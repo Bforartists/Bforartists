@@ -1,4 +1,4 @@
-# gpl: author Alejandro Omar Chocano Vasquez
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 """
 bl_info = {

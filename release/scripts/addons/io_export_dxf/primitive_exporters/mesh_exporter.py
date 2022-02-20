@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 import mathutils
 from .base_exporter import BasePrimitiveDXFExporter

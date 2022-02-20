@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from mathutils import Matrix
 from ..utils.widgets import create_widget, widget_generator
 

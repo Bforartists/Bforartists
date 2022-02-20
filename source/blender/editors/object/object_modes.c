@@ -94,6 +94,9 @@ static const char *object_mode_op_string(eObjectMode mode)
   if (mode == OB_MODE_VERTEX_GPENCIL) {
     return "GPENCIL_OT_vertexmode_toggle";
   }
+  if (mode == OB_MODE_SCULPT_CURVES) {
+    return "CURVES_OT_sculptmode_toggle";
+  }
   return NULL;
 }
 
@@ -115,7 +118,7 @@ bool ED_object_mode_compat_test(const Object *ob, eObjectMode mode)
         }
       }
       break;
-    case OB_CURVE:
+    case OB_CURVES_LEGACY:
     case OB_SURF:
     case OB_FONT:
     case OB_MBALL:
@@ -136,6 +139,11 @@ bool ED_object_mode_compat_test(const Object *ob, eObjectMode mode)
     case OB_GPENCIL:
       if (mode & (OB_MODE_EDIT_GPENCIL | OB_MODE_PAINT_GPENCIL | OB_MODE_SCULPT_GPENCIL |
                   OB_MODE_WEIGHT_GPENCIL | OB_MODE_VERTEX_GPENCIL)) {
+        return true;
+      }
+      break;
+    case OB_CURVES:
+      if (mode & (OB_MODE_EDIT | OB_MODE_SCULPT_CURVES)) {
         return true;
       }
       break;

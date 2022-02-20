@@ -845,7 +845,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_paint_mask")
             elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
                 layout.menu("VIEW3D_MT_select_paint_mask_vertex")
-        elif mode_string != 'SCULPT':
+        elif mode_string not in {'SCULPT', 'SCULPT_CURVES'}:
             layout.menu("VIEW3D_MT_select_%s" % mode_string.lower())
 
         if gp_edit:
@@ -888,7 +888,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_edit_curve_segments")
 
         elif obj:
-            if mode_string != 'PAINT_TEXTURE':
+            if mode_string not in {'PAINT_TEXTURE', 'SCULPT_CURVES'}:
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
             if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
                 layout.menu("VIEW3D_MT_brush")
@@ -2121,6 +2121,13 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon = "SELECT_UNGROUPED_VERTS")
+
+
+class VIEW3D_MT_select_edit_curves(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        pass
 
 
 class VIEW3D_MT_angle_control(Menu):
@@ -5854,6 +5861,13 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
         layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
 
 
+class VIEW3D_MT_edit_curves(Menu):
+    bl_label = "Curves"
+
+    def draw(self, _context):
+        pass
+
+
 class VIEW3D_MT_object_mode_pie(Menu):
     bl_label = "Mode"
 
@@ -8648,6 +8662,7 @@ classes = (
     VIEW3D_MT_select_gpencil_grouped,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_vertex,
+    VIEW3D_MT_select_edit_curves,
     VIEW3D_MT_angle_control,
     VIEW3D_MT_mesh_add,
     VIEW3D_MT_curve_add,
@@ -8787,6 +8802,7 @@ classes = (
     VIEW3D_MT_edit_armature_delete,
     VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_edit_gpencil_transform,
+    VIEW3D_MT_edit_curves,
     VIEW3D_MT_object_mode_pie,
     VIEW3D_MT_view_pie,
     VIEW3D_MT_transform_gizmo_pie,

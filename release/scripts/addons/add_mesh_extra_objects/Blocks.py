@@ -1,4 +1,6 @@
-# GPL # "authors": dudecon, jambay
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Authors: dudecon, jambay
 
 # Module notes:
 #

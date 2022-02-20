@@ -1,4 +1,6 @@
-# GPL # Author: Alain Ducharme (phymec)
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Alain Ducharme (phymec)
 
 import bpy
 from bpy_extras import object_utils

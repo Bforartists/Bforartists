@@ -130,7 +130,7 @@ class Generator(base_generate.BaseGenerator):
         if old_collection:
             # Rename the collection
             old_collection.name = wgts_group_name
-        
+
         return old_collection
 
     def ensure_widget_collection(self):

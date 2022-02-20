@@ -55,9 +55,9 @@ def pov_centric_moray_like_workspace(dummy):
     # we put all within a Try... Except AttributeErrors ? Any better solution ?
     # Should it simply not run when opening existing file? be a preferences operator to create
     # Moray like workspace
-    
+
     available_workspaces = bpy.data.workspaces
-    
+
     if all(tabs in available_workspaces for tabs in ['POV-Mo', 'POV-Ed']):
         print("\nPOV-Mo and POV-Ed tabs respectively provide GUI and TEXT\n"
               "oriented POV workspaces akin to Moray and POVWIN")

@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2014 Manfred Moitzi
+
 # Purpose: acdsdata section manager
 # Created: 05.05.2014
-# Copyright (C) 2014, Manfred Moitzi
-# License: MIT License
 
 from __future__ import unicode_literals
 __author__ = "mozman <mozman@gmx.at>"

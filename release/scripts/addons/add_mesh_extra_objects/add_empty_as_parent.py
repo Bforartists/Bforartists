@@ -1,4 +1,6 @@
-# GPL # Original Author Liero #
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Original Author Liero
 
 import bpy
 from bpy.types import Operator
