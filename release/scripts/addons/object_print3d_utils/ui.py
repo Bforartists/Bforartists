@@ -109,10 +109,15 @@ class VIEW3D_PT_print3d_transform(View3DPrintPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+        print_3d = context.scene.print_3d
+
         layout.label(text="Scale To")
         row = layout.row(align=True)
         row.operator("mesh.print3d_scale_to_volume", text="Volume")
         row.operator("mesh.print3d_scale_to_bounds", text="Bounds")
+        row = layout.row(align=True)
+        row.operator("mesh.print3d_align_to_xy", text="Align XY")
+        row.prop(print_3d, "use_alignxy_face_area")
 
 
 class VIEW3D_PT_print3d_export(View3DPrintPanel, Panel):

@@ -1,4 +1,6 @@
-# GPL # "author": revolt_randy, Jambay
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: revolt_randy, Jambay
 
 # Create "Beam" primitives. Based on original script by revolt_randy
 

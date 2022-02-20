@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 '''
 Quat/Euler Rotation Mode Converter v0.1
 

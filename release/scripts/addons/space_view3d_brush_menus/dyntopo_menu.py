@@ -1,4 +1,4 @@
-# gpl author: Ryan Inch (Imaginer)
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
 from bpy.types import Menu

@@ -1,4 +1,6 @@
-# GPL # "author": "Kayo Phoenix"
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Kayo Phoenix
 
 import bpy
 from bpy_extras import object_utils

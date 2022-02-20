@@ -1,4 +1,6 @@
-# GPL # original by Buerbaum Martin (Pontiac), Elod Csirmaz
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Original by Buerbaum Martin (Pontiac), Elod Csirmaz
 
 import bpy
 import math

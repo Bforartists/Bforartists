@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from math import sin, cos, sqrt
 from .vefm_271 import *
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -21547,10 +21547,6 @@ msgid "Refraction Depth"
 msgstr "Глубина преломления"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Приблизительная толщина объекта для расчёта двух преломлений (0 для отключения)"
-
-
 msgid "Roughness"
 msgstr "Шероховатость"
 
@@ -21581,10 +21577,6 @@ msgstr "Использовать шум для дизеринга ступенч
 
 msgid "Show Backface"
 msgstr "Показывать задние грани"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Ограничить видимость одним слоем (исправляет проблемы с сортировкой по прозрачности)"
 
 
 msgid "Specular Color"
@@ -43767,10 +43759,6 @@ msgstr "Ограничить диапазоном воспроизведения
 
 msgid "Clips animations to selected playback range"
 msgstr "Ограничить анимации выбранным диапазоном воспроизведения"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "Выходной формат для изображений. Рекомендуется формат сжатия PNG без потерь, но JPEG может быть предпочтительнее для веб-приложений из-за меньшего размера"
 
 
 msgid "JPEG Format (.jpg)"

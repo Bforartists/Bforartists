@@ -39,6 +39,8 @@ set(SRC
   ../include/ED_buttons.h
   ../include/ED_clip.h
   ../include/ED_curve.h
+  ../include/ED_curves.h
+  ../include/ED_curves_sculpt.h
   ../include/ED_datafiles.h
   ../include/ED_file_indexer.h
   ../include/ED_fileselect.h

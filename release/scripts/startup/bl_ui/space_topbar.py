@@ -381,7 +381,7 @@ class TOPBAR_MT_file_import(Menu):
 
     def draw(self, _context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)", icon = "LOAD_DAE")
+            self.layout.operator("wm.collada_import", text="Collada (.dae)", icon = "LOAD_DAE")
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_import", text="Alembic (.abc)", icon = "LOAD_ABC")
 
@@ -400,7 +400,7 @@ class TOPBAR_MT_file_export(Menu):
     def draw(self, _context):
         self.layout.operator("wm.obj_export", text="Wavefront OBJ (.obj)", icon = "SAVE_OBJ")
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon = "SAVE_DAE")
+            self.layout.operator("wm.collada_export", text="Collada (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon = "SAVE_ABC")
         if bpy.app.build_options.usd:
