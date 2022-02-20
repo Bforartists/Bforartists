@@ -932,12 +932,13 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         UI_but_unit_type_set(but, PROP_UNIT_ROTATION);
       }
 
-      UI_block_layout_set_current(block, layout);
+      UI_block_layout_set_current(block, layout); /*bfa*/
     }
     /* Lattice... */
     else if (totlattdata) {
       TransformMedian_Lattice *ve_median = &tfp->ve_median.lattice;
 
+    /*bfa*/
       row = uiLayoutRow(layout, false);
       col = uiLayoutColumn(row, false);
 

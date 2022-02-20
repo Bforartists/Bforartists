@@ -2593,7 +2593,7 @@ static int uv_select_split_exec(bContext *C, wmOperator *op)
 void UV_OT_select_split(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Split Selection";
+  ot->name = "Split Selection"; /*bfa - Split selection, not Select Split*/
   ot->description = "Splits the selected UV parts\nOnly entirely selected faces are split";
   ot->idname = "UV_OT_select_split";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
