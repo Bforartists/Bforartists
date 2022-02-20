@@ -2224,9 +2224,9 @@ void uiItemFullR(uiLayout *layout,
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          const bool use_prefix = (a == 0 && name && name[0]);
 
-	/*bfa -turned off code*/
+          /*bfa -turned off code*/
+          //const bool use_prefix = (a == 0 && name && name[0]);
           //if (use_prefix) {
             //char *s = name_with_suffix;
             //s += STRNCPY_RLEN(name_with_suffix, name);
