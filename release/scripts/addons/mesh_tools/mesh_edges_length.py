@@ -1,4 +1,6 @@
-# gpl author: Giuseppe De Marco [BlenderLab] inspired by NirenYang
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Giuseppe De Marco [BlenderLab] inspired by NirenYang
 
 bl_info = {
     "name": "Set edges length",

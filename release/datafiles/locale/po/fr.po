@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1194,8 +1194,20 @@ msgid "Extends the baked result as a post process filter"
 msgstr "Étend le résultat pré-calculé comme filtre post-process"
 
 
+msgid "Adjacent Faces"
+msgstr "Faces adjacentes"
+
+
+msgid "Use pixels from adjacent faces across UV seams"
+msgstr "Utiliser les pixels des faces adjacentes à travers les coutures UV"
+
+
 msgid "Extend"
 msgstr "Étendre"
+
+
+msgid "Extend border pixels outwards"
+msgstr "Étendre les pixels de la bordure vers l'extérieur"
 
 
 msgid "The maximum ray distance for matching points between the active and selected objects. If zero, there is no limit"
@@ -2811,7 +2823,7 @@ msgstr "Comment l’os hérite de l’échelle (taille) de l’os parent"
 
 
 msgid "Full"
-msgstr "Full"
+msgstr "Complet"
 
 
 msgid "Inherit all effects of parent scaling"
@@ -5635,6 +5647,54 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Comment les transformations existantes et les canaux d’action sont combinés"
 
 
+msgid "Before Original (Full)"
+msgstr "Avant original (Complet)"
+
+
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "Appliquer les canaux d'action avant la transformation originale, comme si cela était appliqué à un parent imaginaire avec le mode d'héritage complet de la taille. Du cisaillement sera créé lors de la combinaison d'une rotation et d'une mise à l'échelle non-uniforme"
+
+
+msgid "Before Original (Aligned)"
+msgstr "Avant original (Aligné)"
+
+
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "Appliquer les canaux d'action avant la transformation originale, comme si cela était appliqué à un parent imaginaire avec le mode d'héritage de la taille \"aligné\". Ceci utilise concrètement \"Complet\" pour la position et \"Séparer canaux\" pour la rotation et la taille"
+
+
+msgid "Before Original (Split Channels)"
+msgstr "Avant original (Séparer canaux)"
+
+
+msgid "Apply the action channels before the original transformation, handling location, rotation and scale separately"
+msgstr "Appliquer les canaux d'action avant la transformation originale, en manipulant la position, la rotation et la taille séparément."
+
+
+msgid "After Original (Full)"
+msgstr "Après original (Complet)"
+
+
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "Appliquer les canaux d’action après la transformation originale, comme si cela était appliqué à un enfant imaginaire en mode d'héritage complet de la taille. Du cisaillement sera créé lors de la combinaison de rotation et de mise à l'échelle non-uniforme"
+
+
+msgid "After Original (Aligned)"
+msgstr "Après original (Aligné)"
+
+
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "Appliquer les canaux d'action après la transformation originale, comme si cela était appliqué à un enfant imaginaire en mode d'héritage de la taille \"aligné\". Ceci utilise concrètement \"Complet\" pour la position et \"Séparer canaux\" pour la rotation et la taille"
+
+
+msgid "After Original (Split Channels)"
+msgstr "Après original (Séparer canaux)"
+
+
+msgid "Apply the action channels after the original transformation, handling location, rotation and scale separately"
+msgstr "Appliquer les canaux d'action après la transformation originale, en manipulant la position, la rotation et la taille séparément"
+
+
 msgid "Target object"
 msgstr "Objet cible"
 
@@ -6163,6 +6223,38 @@ msgid "Replace the original transformation with copied"
 msgstr "Remplacer la transformation originale par celle copiée"
 
 
+msgid "Apply copied transformation before original, using simple matrix multiplication as if the constraint target is a parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "Appliquer la transformation copiée avant l'original, en utilisant un simple produit matriciel comme si la cible de la contrainte était un parent dans le mode Héritage complet de la taille. Du cisaillement sera créé quand la combinaison rotation et taille non-uniforme est utilisée."
+
+
+msgid "Apply copied transformation before original, as if the constraint target is a parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "Appliquer la transformation copiée avant l'original, comme si la cible de la contrainte était un parent en mode Héritage de la taille \"aligné\". Ceci utilise concrètement \"Complet\" pour la position et \"Séparer canaux\" pour la rotation et la taille"
+
+
+msgid "Apply copied transformation before original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr "Appliquer la transformation copiée avant l'original, en manipulant la position, la rotation, et la taille séparément, comme le ferait une séquence de trois contraintes de copie distinctes"
+
+
+msgid "Apply copied transformation after original, using simple matrix multiplication as if the constraint target is a child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "Appliquer la transformation copiée après l'original, en utilisant un simple produit matriciel comme si la cible de la contrainte était un enfant en mode Héritage de la taille \"Complet\". Du cisaillement sera créé lors de la combinaison d'une rotation et d'une mise à l'échelle non-uniforme"
+
+
+msgid "Apply copied transformation after original, as if the constraint target is a child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "Appliquer la transformation copiée après l'original, comme si la cible de la contrainte était un enfant en mode Héritage de la taille \"aligné\". Ceci utilise concrètement \"Complet\" pour la position et \"Séparer canaux\" pour la rotation et la taille"
+
+
+msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr "Appliquer la transformation copiée après l'original, manipulant l'emplacement, la rotation et l'échelle séparément, comme le ferait une séquence de trois contraintes copie"
+
+
+msgid "Remove Target Shear"
+msgstr "Enlever cisaillement cible"
+
+
+msgid "Remove shear from the target transformation before combining"
+msgstr "Supprime le cisaillement de la transformation cible avant de combiner"
+
+
 msgid "Damped Track Constraint"
 msgstr "Contrainte Track amorti"
 
@@ -6507,6 +6599,10 @@ msgid "Limit the distance from target object"
 msgstr "Limiter la distance à l’objet cible"
 
 
+msgid "Affect Transform"
+msgstr "Affecte la transformation"
+
+
 msgid "Transforms are affected by this constraint as well"
 msgstr "Les transformations sont aussi affectées par cette contrainte"
 
@@ -6589,6 +6685,10 @@ msgstr "Utiliser la valeur Y minimale"
 
 msgid "Use the minimum Z value"
 msgstr "Utiliser la valeur Z minimale"
+
+
+msgid "Transform tools are affected by this constraint as well"
+msgstr "Les outils de transformation sont aussi affectés par cette contrainte"
 
 
 msgid "Limit Rotation Constraint"
@@ -16066,7 +16166,7 @@ msgstr "Spécifiez manuellement l'intervalle de lecture prévu de la frame pour 
 
 
 msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
-msgstr "Bloc de données armature contenant une hiérarchie d’os, généralement utilisé pour riguer des personnages"
+msgstr "Bloc de données armature contenant une hiérarchie d’os, généralement utilisé pour articuler des personnages"
 
 
 msgid "Animation data for this data-block"
@@ -17966,7 +18066,7 @@ msgstr "Laisser le texte déborder hors des boîtes de texte"
 
 
 msgid "Scale to Fit"
-msgstr "Redimensionner pour remplir"
+msgstr "Ajuster"
 
 
 msgid "Scale down the text to fit inside the text boxes"
@@ -20051,10 +20151,6 @@ msgid "Refraction Depth"
 msgstr "Profondeur de réfraction"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Approximer l’épaisseur de l’objet pour calculer deux événements de réfraction (0 pour désactiver)"
-
-
 msgid "Roughness"
 msgstr "Rugosité"
 
@@ -20085,10 +20181,6 @@ msgstr "Utiliser du bruit pour diffuser la visibilité binaire, et un filtre pou
 
 msgid "Show Backface"
 msgstr "Afficher face arrière"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Limiter la transparence à un seul calque (évite les problèmes d’ordre de transparence)"
 
 
 msgid "Specular Color"
@@ -26280,8 +26372,16 @@ msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "Insérer une image clé sur chacun des canaux de position et rotation"
 
 
+msgid "Location & Rotation"
+msgstr "Position & rotation"
+
+
 msgid "Insert a keyframe on each of the location and scale channels"
 msgstr "Insérer une image clé sur chacun des canaux de position et taille"
+
+
+msgid "Location & Scale"
+msgstr "Position & échelle"
 
 
 msgid "Insert a keyframe on each of the rotation and scale channels"
@@ -26289,7 +26389,7 @@ msgstr "Insérer une image clé sur chacun des canaux de rotation et taille"
 
 
 msgid "Rotation & Scale"
-msgstr "Rotation & taille"
+msgstr "Rotation & échelle"
 
 
 msgid "Insert a keyframe on each of the location channels, taking into account effects of constraints and relationships"
@@ -26304,6 +26404,26 @@ msgid "Insert a keyframe on each of the location and rotation channels, taking i
 msgstr "Insérer une image clé sur chacun des canaux de position et rotation, en prenant en compte les effets des contraintes et relations"
 
 
+msgid "Visual Location & Rotation"
+msgstr "Position & rotation visuelles"
+
+
+msgid "Insert a keyframe on each of the location, rotation and scale channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position, rotation et taille, en prenant en compte les effets des contraintes et relations"
+
+
+msgid "Visual Location, Rotation & Scale"
+msgstr "Position, rotation & échelle visuelles"
+
+
+msgid "Insert a keyframe on each of the location and scale channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position et taille, en prenant en compte les effets des contraintes et relations"
+
+
+msgid "Visual Location & Scale"
+msgstr "Position & échelle visuelles"
+
+
 msgid "Insert a keyframe on each of the rotation channels, taking into account effects of constraints and relationships"
 msgstr "Insérer une image clé sur chacun des canaux de rotation, en prenant en compte les effets des contraintes et relations"
 
@@ -26312,12 +26432,36 @@ msgid "Visual Rotation"
 msgstr "Rotation visuelle"
 
 
+msgid "Insert a keyframe on each of the rotation and scale channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de rotation et taille, en prenant en compte les effets des contraintes et relations"
+
+
+msgid "Visual Rotation & Scale"
+msgstr "Rotation & échelle visuelles"
+
+
 msgid "Insert a keyframe on each of the scale channels, taking into account effects of constraints and relationships"
 msgstr "Insérer une image clé sur chacun des canaux de taille, en prenant en compte les effets des contraintes et relations"
 
 
+msgid "Visual Scale"
+msgstr "Échelle visuelle"
+
+
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "Insérer une image clé sur chacun des canaux de position, rotation et taille"
+
+
+msgid "Location, Rotation & Scale"
+msgstr "Position, rotation & échelle"
+
+
+msgid "Key location/rotation/scale as well as custom properties"
+msgstr "Clé pour position/rotation/taille ainsi que les propriétés personnalisées"
+
+
+msgid "Location, Rotation, Scale & Custom Properties"
+msgstr "Position, rotation, échelle & propriétés personnalisées"
 
 
 msgid "Insert a keyframe on each of the location channels"
@@ -27828,6 +27972,14 @@ msgid "Attribute"
 msgstr "Attribut"
 
 
+msgid "Curve Primitives"
+msgstr "Courbes primitives"
+
+
+msgid "Mesh Primitives"
+msgstr "Mesh primitives"
+
+
 msgid "Utilities"
 msgstr "Utilitaires"
 
@@ -28070,6 +28222,10 @@ msgstr "Crochets"
 
 msgid "Add Image"
 msgstr "Ajouter image"
+
+
+msgid "Link/Transfer Data"
+msgstr "Lier/Transférer données"
 
 
 msgid "Make Single User"
@@ -28806,6 +28962,14 @@ msgstr "Divise les faces en plus petites parties, cela permet de donner une appa
 
 msgid "Triangulate"
 msgstr "Trianguler"
+
+
+msgid "Volume to Mesh"
+msgstr "Volume vers mesh"
+
+
+msgid "Weld"
+msgstr "Souder"
 
 
 msgid "Wireframe"
@@ -30444,6 +30608,10 @@ msgid "UV Smooth"
 msgstr "Adoucir UV"
 
 
+msgid "Keep Boundaries"
+msgstr "Conserver limites"
+
+
 msgid "Normal Edit Modifier"
 msgstr "Modificateur d’édition de normales"
 
@@ -31163,6 +31331,10 @@ msgstr "Nombre de subdivisions à effectuer"
 
 msgid "Number of subdivisions to perform when rendering"
 msgstr "Nombre de subdivisions à effectuer au rendu"
+
+
+msgid "Skip displaying interior subdivided edges"
+msgstr "Éviter l’affichage des arêtes subdivisées internes"
 
 
 msgid "SurfaceDeform Modifier"
@@ -35165,12 +35337,36 @@ msgid "Rotate around the X, Y, and Z axes"
 msgstr "Rotation autour des axes X,Y et Z"
 
 
+msgid "Slice String"
+msgstr "Découper chaîne"
+
+
+msgid "String Length"
+msgstr "Longueur chaîne"
+
+
+msgid "Value to String"
+msgstr "Valeur vers chaîne"
+
+
+msgid "Domain Size"
+msgstr "Taille du domaine"
+
+
 msgid "Component"
 msgstr "Composante"
 
 
 msgid "Attribute Statistic"
 msgstr "Statistique d'attribut"
+
+
+msgid "Transfer Attribute"
+msgstr "Transférer attribut"
+
+
+msgid "The type for the source and result data"
+msgstr "Le type de donnée pour la source et le résultat"
 
 
 msgid "Original"
@@ -35237,6 +35433,22 @@ msgid "Distribute the points randomly on the surface while taking a minimum dist
 msgstr "Distribuer les points aléatoirement sur la surface en prenant en compte une distance minimale entre les points"
 
 
+msgid "Dual Mesh"
+msgstr "Mesh dual"
+
+
+msgid "Extrude Mesh"
+msgstr "Extruder mesh"
+
+
+msgid "Fill Curve"
+msgstr "Remplir courbe"
+
+
+msgid "Flip Faces"
+msgstr "Inverser faces"
+
+
 msgid "Geometry to Instance"
 msgstr "Géométrie vers instance"
 
@@ -35255,6 +35467,22 @@ msgstr "Interpolation cubique"
 
 msgid "Edge Angle"
 msgstr "Angle entre arêtes"
+
+
+msgid "Edge Neighbors"
+msgstr "Voisins d'arête"
+
+
+msgid "Edge Vertices"
+msgstr "Vertices d'arête"
+
+
+msgid "Face Neighbors"
+msgstr "Voisins de face"
+
+
+msgid "Vertex Neighbors"
+msgstr "Voisins de vertex"
 
 
 msgid "Instance on Points"
@@ -35279,6 +35507,10 @@ msgstr "Produit vectoriel"
 
 msgid "Z Axis"
 msgstr "Axe Z"
+
+
+msgid "Mesh to Curve"
+msgstr "Mesh vers courbe"
 
 
 msgid "Points to Volume"
@@ -35385,12 +35617,96 @@ msgid "Set Position"
 msgstr "Définir position"
 
 
+msgid "Split Edges"
+msgstr "Séparer arêtes"
+
+
+msgid "Join Strings"
+msgstr "Joindre chaînes"
+
+
+msgid "String to Curves"
+msgstr "Chaîne vers courbes"
+
+
 msgid "Align X"
 msgstr "Aligner X"
 
 
+msgid "Align text to the center"
+msgstr "Aligner le texte au centre"
+
+
+msgid "Align text to the left and the right"
+msgstr "Aligner le texte à droite et à gauche"
+
+
+msgid "Align text to the left and the right, with equal character spacing"
+msgstr "Aligner le texte à droite et à gauche, avec un espacement égal entre caractères"
+
+
 msgid "Align Y"
 msgstr "Aligner Y"
+
+
+msgid "Top Baseline"
+msgstr "Line de base en haut"
+
+
+msgid "Align text to the top baseline"
+msgstr "Aligner le texte sur la ligne de base en haut"
+
+
+msgid "Middle"
+msgstr "Milieu"
+
+
+msgid "Bottom Baseline"
+msgstr "Line de base en bas"
+
+
+msgid "Align text to the bottom baseline"
+msgstr "Aligner le texte sur la ligne de base en bas"
+
+
+msgid "Font of the text. Falls back to the UI font by default"
+msgstr "Police du texte. Utilise la police de l'UI par défaut"
+
+
+msgid "Let the text use more space than the specified height"
+msgstr "Permettre au texte d'utiliser plus d'espace que la hauteur spécifiée"
+
+
+msgid "Scale To Fit"
+msgstr "Ajuster"
+
+
+msgid "Scale the text size to fit inside the width and height"
+msgstr "Mettre le texte à l'échelle de manière à tenir dans la largeur et hauteur disponibles"
+
+
+msgid "Top Left"
+msgstr "Haut gauche"
+
+
+msgid "Top Center"
+msgstr "Haut centré"
+
+
+msgid "Top Right"
+msgstr "Haut droite"
+
+
+msgid "Bottom Left"
+msgstr "Bas gauche"
+
+
+msgid "Bottom Center"
+msgstr "Bas centré"
+
+
+msgid "Bottom Right"
+msgstr "Bas droite"
 
 
 msgid "Translate Instances"
@@ -36096,6 +36412,10 @@ msgstr "Utiliser la texture vague standard, en bandes"
 
 msgid "Use wave texture in rings"
 msgstr "Utiliser la texture vague en anneaux"
+
+
+msgid "White Noise"
+msgstr "Bruit blanc"
 
 
 msgid "UV Along Stroke"
@@ -39946,6 +40266,15 @@ msgid "Add Target"
 msgstr "Ajouter cible"
 
 
+msgctxt "Operator"
+msgid "Apply Constraint"
+msgstr "Appliquer contrainte"
+
+
+msgid "Apply constraint and remove from the stack"
+msgstr "Appliquer la contrainte et la retirer de la pile"
+
+
 msgid "Constraint"
 msgstr "Contrainte"
 
@@ -39981,6 +40310,24 @@ msgstr "Définir inverse"
 
 
 msgctxt "Operator"
+msgid "Duplicate Constraint"
+msgstr "Dupliquer contrainte"
+
+
+msgid "Duplicate constraint at the same position in the stack"
+msgstr "Dupliquer la contrainte, à la même position dans la pile"
+
+
+msgctxt "Operator"
+msgid "Copy Constraint To Selected"
+msgstr "Copier contrainte vers sélectionnés"
+
+
+msgid "Copy constraint to other selected objects/bones"
+msgstr "Copier les contraintes vers les autres objets/os sélectionnés"
+
+
+msgctxt "Operator"
 msgid "Delete Constraint"
 msgstr "Supprimer contrainte"
 
@@ -39992,6 +40339,10 @@ msgstr "Enlever la contrainte de la pile des contraintes"
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
 msgstr "Désactiver et garder transformations"
+
+
+msgid "Set the influence of this constraint to zero while trying to maintain the object's transformation. Other active constraints can still influence the final transformation"
+msgstr "Définir l'influence de cette contrainte à zéro tout en essayant de maintenir la transformation de l'objet. D'autres contraintes actives peuvent encore influencer la transformation finale"
 
 
 msgctxt "Operator"
@@ -41607,12 +41958,31 @@ msgid "Highlight selected file(s)"
 msgstr "Surligner les fichiers sélectionnés"
 
 
+msgctxt "Operator"
+msgid "Make Paths Absolute"
+msgstr "Rendre tous les chemins absolus"
+
+
 msgid "Make all paths to external files absolute"
 msgstr "Rendre tous les chemins vers les fichiers externes absolus"
 
 
+msgctxt "Operator"
+msgid "Make Paths Relative"
+msgstr "Rendre tous les chemins relatifs"
+
+
 msgid "Make all paths to external files relative to current .blend"
 msgstr "Rendre tous les chemins vers les fichiers externes relatifs au .blend courant"
+
+
+msgctxt "Operator"
+msgid "Execute File"
+msgstr "Exécuter fichier"
+
+
+msgid "Perform the current execute action for the file under the cursor (e.g. open the file)"
+msgstr "Effectuer l'action d'exécution sur le fichier situé sous le curseur (p.ex ouvrir le fichier)"
 
 
 msgctxt "Operator"
@@ -41642,6 +42012,11 @@ msgid "Move to previous folder"
 msgstr "Aller au dossier précédent"
 
 
+msgctxt "Operator"
+msgid "Refresh File List"
+msgstr "Actualiser liste de fichiers"
+
+
 msgid "Refresh the file list"
 msgstr "Actualiser la liste des fichiers"
 
@@ -41667,6 +42042,10 @@ msgstr "Rapporter tous les fichiers externes manquants"
 msgctxt "Operator"
 msgid "Reset Recent"
 msgstr "Réinitialiser Récents"
+
+
+msgid "Reset recent files"
+msgstr "Réinitialiser fichiers récents"
 
 
 msgid "Handle mouse clicks to select and activate items"
@@ -42103,6 +42482,14 @@ msgid "Make annotations on the active data"
 msgstr "Faire des annotations sur les données actives"
 
 
+msgid "Arrow"
+msgstr "Flèche"
+
+
+msgid "Segment"
+msgstr "Segment"
+
+
 msgid "Way to interpret mouse movements"
 msgstr "Comment interpréter les mouvements de souris"
 
@@ -42151,6 +42538,14 @@ msgid "Reproject the strokes to end up on the same plane, as if drawn from the c
 msgstr "Re-projeter les traits sur un même plan, comme s’ils étaient dessinés depuis la vue courante avec le placement de trait “Curseur”"
 
 
+msgid "New Object"
+msgstr "Nouvel objet"
+
+
+msgid "Selected Object"
+msgstr "Objet sélectionné"
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "Insérer frame vide"
@@ -42162,6 +42557,11 @@ msgstr "Insérer une frame vide à la frame courante (toutes les frames suivante
 
 msgid "Create blank frame in all layers, not only active"
 msgstr "Créer une frame vide dans tous les calques, pas seulement l’actif"
+
+
+msgctxt "Operator"
+msgid "Reset All Brushes"
+msgstr "Réinitialiser toutes les brosses"
 
 
 msgctxt "Operator"
@@ -42293,6 +42693,10 @@ msgid "Convert 2.7x grease pencil files to 2.80"
 msgstr "Convertir les fichiers de crayon gras 2.7x vers 2.80"
 
 
+msgid "Convert to Annotations"
+msgstr "Convertir en annotations"
+
+
 msgctxt "Operator"
 msgid "Copy Strokes"
 msgstr "Copier trait"
@@ -42410,6 +42814,10 @@ msgstr "Dessiner au revers"
 
 msgid "All Frames"
 msgstr "Toutes les frames"
+
+
+msgid "Selected Frames"
+msgstr "Frames sélectionnées"
 
 
 msgid "Active Frame Only"
@@ -42705,6 +43113,11 @@ msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
 msgstr "Entrer/sortir du mode de sculpture pour les traits de crayon gras"
 
 
+msgctxt "Operator"
+msgid "Add Segment"
+msgstr "Ajouter segment"
+
+
 msgid "Modifier"
 msgstr "Modificateur"
 
@@ -42823,6 +43236,11 @@ msgstr "Sélectionner tous les points dans les mêmes traits que ceux déjà sé
 
 msgid "Grow sets of selected Grease Pencil points"
 msgstr "Agrandir l’ensemble de points de crayon gras sélectionnés"
+
+
+msgctxt "Operator"
+msgid "Random"
+msgstr "Aléatoire"
 
 
 msgid "Hide/Unhide selected points for Grease Pencil strokes setting alpha factor"
@@ -43689,6 +44107,15 @@ msgstr "Remplacer image"
 
 msgid "Replace current image by another one from disk"
 msgstr "Remplacer l’image courante par une autre sur le disque"
+
+
+msgctxt "Operator"
+msgid "Resize Image"
+msgstr "Redimensionner image"
+
+
+msgid "Resize the image"
+msgstr "Redimensionner l'image"
 
 
 msgctxt "Operator"
@@ -45238,6 +45665,22 @@ msgid "Split selected edges so that each neighbor face gets its own copy"
 msgstr "Diviser les arêtes sélectionnées de façon que chaque face voisine en ait sa propre copie"
 
 
+msgid "Faces by Edges"
+msgstr "Faces par arêtes"
+
+
+msgid "Split faces along selected edges"
+msgstr "Séparer les faces le long des arêtes sélectionnées"
+
+
+msgid "Faces & Edges by Vertices"
+msgstr "Faces & arêtes par vertices"
+
+
+msgid "Split faces and edges connected to selected vertices"
+msgstr "Séparer les faces et les arêtes connectées aux vertices sélectionnés"
+
+
 msgctxt "Operator"
 msgid "Edge Ring Select"
 msgstr "Sélectionner anneau d’arêtes"
@@ -45693,7 +46136,7 @@ msgstr "Sélectionner des régions plus grandes au lieu de plus petites"
 
 msgctxt "Operator"
 msgid "Loop Cut"
-msgstr "Découper boucle"
+msgstr "Découpage boucle"
 
 
 msgid "Add a new loop between existing loops"
@@ -45710,7 +46153,7 @@ msgstr "Indice d’objet"
 
 msgctxt "Operator"
 msgid "Loop Cut and Slide"
-msgstr "Découper boucle et glisser"
+msgstr "Découpage boucle et glisser"
 
 
 msgid "Cut mesh loop and slide it"
@@ -49205,6 +49648,19 @@ msgstr "N’effacer que les chemins des objets sélectionnés"
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Mettre à jour chemins d’objets"
+
+
+msgid "Recalculate motion paths for selected objects"
+msgstr "Recalculer les chemins de mouvement des objets sélectionnés"
+
+
+msgctxt "Operator"
+msgid "Update All Object Paths"
+msgstr "Mettre à jour chemins de tous les objets"
+
+
+msgid "Recalculate all visible motion paths for objects and poses"
+msgstr "Recalculer tous les chemins de mouvement visible pour les objets et les poses"
 
 
 msgctxt "Operator"
@@ -53441,6 +53897,19 @@ msgid "Save Screenshot"
 msgstr "Enregistrer capture d’écran"
 
 
+msgid "Capture a picture of the whole Blender window"
+msgstr "Capturer une image de toute la fenêtre Blender"
+
+
+msgctxt "Operator"
+msgid "Save Screenshot (Editor)"
+msgstr "Enregistrer capture d’écran (Éditeur)"
+
+
+msgid "Capture a picture of an editor"
+msgstr "Capturer une image de l'éditeur"
+
+
 msgctxt "Operator"
 msgid "Cycle Space Context"
 msgstr "Alterner entre les contextes d’espace"
@@ -55114,6 +55583,10 @@ msgstr "Cisailler"
 
 msgid "Shear selected items along the horizontal screen axis"
 msgstr "Cisailler les éléments sélectionnés le long de l’axe horizontal de l’écran"
+
+
+msgid "Axis Ortho"
+msgstr "Axe ortho"
 
 
 msgctxt "Operator"
@@ -73141,6 +73614,22 @@ msgid "Blender 2.6 doesn't support python constraints yet"
 msgstr "Blender 2.6 ne supporte pas encore les py-contraintes"
 
 
+msgid "Z Min"
+msgstr "Z min"
+
+
+msgid "X Source Axis"
+msgstr "Axe X source"
+
+
+msgid "Y Source Axis"
+msgstr "Axe Y source"
+
+
+msgid "Z Source Axis"
+msgstr "Axe Z source"
+
+
 msgid "Pivot Offset"
 msgstr "Décalage pivot"
 
@@ -73217,6 +73706,18 @@ msgstr "Rendu U"
 
 msgid "Bold & Italic"
 msgstr "Gras & italique"
+
+
+msgid "Character Spacing"
+msgstr "Espacement caractère"
+
+
+msgid "Word Spacing"
+msgstr "Espacement mot"
+
+
+msgid "Line Spacing"
+msgstr "Espacement ligne"
 
 
 msgid "Offset X"
@@ -75880,6 +76381,16 @@ msgstr "Calculer"
 
 
 msgctxt "Operator"
+msgid "Calculate Motion Paths"
+msgstr "Calculer chemins de mouvement"
+
+
+msgctxt "Operator"
+msgid "Clear Motion Paths"
+msgstr "Effacer chemins de mouvement"
+
+
+msgctxt "Operator"
 msgid "Sort Elements..."
 msgstr "Trier éléments…"
 
@@ -75890,8 +76401,18 @@ msgstr "Extruder les vertices"
 
 
 msgctxt "Operator"
+msgid "New Edge/Face from Vertices"
+msgstr "Nouvelle arête/face depuis vertices"
+
+
+msgctxt "Operator"
 msgid "Connect Vertex Path"
 msgstr "Connecter chemin de vertices"
+
+
+msgctxt "Operator"
+msgid "Connect Vertex Pairs"
+msgstr "Connecter paires de vertices"
 
 
 msgctxt "Operator"
@@ -76180,6 +76701,10 @@ msgstr "Sur marqueurs sélectionnés"
 msgctxt "Operator"
 msgid "Paste X-Flipped Pose"
 msgstr "Coller poses X-inversées"
+
+
+msgid "Mirror Vertices"
+msgstr "Mise en miroir des vertices"
 
 
 msgid "Snap Vertices"
@@ -80620,6 +81145,14 @@ msgid "• Mesh: %s vertices, %s edges, %s faces"
 msgstr "• Mesh: %s vertices, %s arêtes, %s faces"
 
 
+msgid "The socket value has not been computed yet"
+msgstr "La valeur du connecteur n'a pas encore été calculée"
+
+
+msgid "Clipboard is empty"
+msgstr "Le presse-papier est vide"
+
+
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
 msgstr "Impossible de supprimer la collection liée “%s”, elle est utilisée par d’autres scènes/collections liées"
 
@@ -82742,6 +83275,54 @@ msgstr "Géométrie 1"
 
 msgid "Geometry 2"
 msgstr "Géométrie 2"
+
+
+msgid "Sum"
+msgstr "Somme"
+
+
+msgid "Standard Deviation"
+msgstr "Écart type"
+
+
+msgid "Variance"
+msgstr "Variance"
+
+
+msgid "Mesh 1"
+msgstr "Mesh 1"
+
+
+msgid "Mesh 2"
+msgstr "Mesh 2"
+
+
+msgid "Vertex Count"
+msgstr "Nombre de vertex"
+
+
+msgid "Point Count"
+msgstr "Nombre de points"
+
+
+msgid "Delimiter"
+msgstr "Délimiteur"
+
+
+msgid "Strings"
+msgstr "Chaînes de caractère"
+
+
+msgid "Text Box Width"
+msgstr "Largeur boîte de texte"
+
+
+msgid "Text Box Height"
+msgstr "Hauteur boîte de texte"
+
+
+msgid "Curve Instances"
+msgstr "Instances de courbes"
 
 
 msgid "Shader Editor"

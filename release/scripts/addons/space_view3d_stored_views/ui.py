@@ -1,4 +1,6 @@
-# gpl authors: nfloyd, Francesco Siddi
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Authors: nfloyd, Francesco Siddi
 
 import logging
 module_logger = logging.getLogger(__name__)

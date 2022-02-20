@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # These forwarding imports are for backwards compatibility with legacy code
 # that expects a single utils.py file. New code should import directly from
 # the modules that contain the utilities. Also, don't add more imports here.

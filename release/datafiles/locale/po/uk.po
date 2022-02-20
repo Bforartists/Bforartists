@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -21759,10 +21759,6 @@ msgid "Refraction Depth"
 msgstr "Глибина Заломлення"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Наближення товщини об'єкта для обчислення двох подій заломлення (0 вимикає)"
-
-
 msgid "Roughness"
 msgstr "Шорсткість"
 
@@ -21793,10 +21789,6 @@ msgstr "Використання шуму для спотворення двій
 
 msgid "Show Backface"
 msgstr "Показ Звороту грані"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Лімітування прозорості для одиничного шару (запобігає проблемам сортування прозорості)"
 
 
 msgid "Specular Color"
@@ -47119,10 +47111,6 @@ msgstr "Лімітувати Діапазоном Програвання"
 
 msgid "Clips animations to selected playback range"
 msgstr "Затиснути анімації у вибраний діапазон програвання"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "Формат виводу для зображень. PNG є безвтратним і загалом переважним, але JPEG може бути бажаним для веб застосунків завдяки меншому розміру файлу"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"

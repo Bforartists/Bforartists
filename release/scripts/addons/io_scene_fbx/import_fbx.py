@@ -549,7 +549,7 @@ def blen_read_animations_curves_iter(fbx_curves, blen_start_offset, fbx_start_of
         yield (curr_blenkframe, curr_values)
 
 
-def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
+def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset, global_scale):
     """
     'Bake' loc/rot/scale into the action,
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
@@ -583,7 +583,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     elif isinstance(item, ShapeKey):
         props = [(item.path_from_id("value"), 1, "Key")]
     elif isinstance(item, Camera):
-        props = [(item.path_from_id("lens"), 1, "Camera")]
+        props = [(item.path_from_id("lens"), 1, "Camera"), (item.dof.path_from_id("focus_distance"), 1, "Camera")]
     else:  # Object or PoseBone:
         if item.is_bone:
             bl_obj = item.bl_obj.pose.bones[item.bl_bone]
@@ -633,13 +633,17 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
 
     elif isinstance(item, Camera):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            value = 0.0
+            focal_length = 0.0
+            focus_distance = 0.0
             for v, (fbxprop, channel, _fbx_acdata) in values:
-                assert(fbxprop == b'FocalLength')
+                assert(fbxprop == b'FocalLength' or fbxprop == b'FocusDistance' )
                 assert(channel == 0)
-                value = v
+                if (fbxprop == b'FocalLength' ):
+                    focal_length = v
+                elif(fbxprop == b'FocusDistance'):
+                    focus_distance = v / 1000 * global_scale
 
-            for fc, v in zip(blen_curves, (value,)):
+            for fc, v in zip(blen_curves, (focal_length, focus_distance)):
                 store_keyframe(fc, frame, v)
 
     else:  # Object or PoseBone:
@@ -715,7 +719,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
         fc.update()
 
 
-def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_offset):
+def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_offset, global_scale):
     """
     Recreate an action per stack/layer/object combinations.
     Only the first found action is linked to objects, more complex setups are not handled,
@@ -757,7 +761,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
                 if not id_data.animation_data.action:
                     id_data.animation_data.action = action
                 # And actually populate the action!
-                blen_read_animations_action_item(action, item, cnodes, scene.render.fps, anim_offset)
+                blen_read_animations_action_item(action, item, cnodes, scene.render.fps, anim_offset, global_scale)
 
 
 # ----
@@ -1539,6 +1543,10 @@ def blen_read_camera(fbx_tmpl, fbx_obj, global_scale):
     camera = bpy.data.cameras.new(name=elem_name_utf8)
 
     camera.type = 'ORTHO' if elem_props_get_enum(fbx_props, b'CameraProjectionType', 0) == 1 else 'PERSP'
+
+    camera.dof.focus_distance = elem_props_get_number(fbx_props, b'FocusDistance', 10 * 1000) / 1000 * global_scale
+    if (elem_props_get_bool(fbx_props, b'UseDepthOfField', False)):
+        camera.dof.use_dof = True
 
     camera.lens = elem_props_get_number(fbx_props, b'FocalLength', 35.0)
     camera.sensor_width = elem_props_get_number(fbx_props, b'FilmWidth', 32.0 * M2I) / M2I
@@ -2986,6 +2994,13 @@ def load(operator, context, filepath="",
                             continue
                         cam = fbx_item[1]
                         items.append((cam, lnk_prop))
+                    elif lnk_prop == b'FocusDistance':  # Camera focus.
+                        from bpy.types import Camera
+                        fbx_item = fbx_table_nodes.get(n_uuid, None)
+                        if fbx_item is None or not isinstance(fbx_item[1], Camera):
+                            continue
+                        cam = fbx_item[1]
+                        items.append((cam, lnk_prop))
                     elif lnk_prop == b'DiffuseColor':
                         from bpy.types import Material
                         fbx_item = fbx_table_nodes.get(n_uuid, None)
@@ -3024,14 +3039,15 @@ def load(operator, context, filepath="",
                     channel = {
                         b'd|X': 0, b'd|Y': 1, b'd|Z': 2,
                         b'd|DeformPercent': 0,
-                        b'd|FocalLength': 0
+                        b'd|FocalLength': 0,
+                        b'd|FocusDistance': 0
                     }.get(acn_ctype.props[3], None)
                     if channel is None:
                         continue
                     curvenodes[acn_uuid][ac_uuid] = (fbx_acitem, channel)
 
             # And now that we have sorted all this, apply animations!
-            blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, settings.anim_offset)
+            blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, settings.anim_offset, global_scale)
 
         _(); del _
 

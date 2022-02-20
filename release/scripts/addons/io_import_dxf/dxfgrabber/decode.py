@@ -1,7 +1,9 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2014 Manfred Moitzi
+
 # Purpose: decode DXF proprietary data
 # Created: 01.05.2014
-# Copyright (C) 2014, Manfred Moitzi
-# License: MIT License
+
 from __future__ import unicode_literals
 __author__ = "mozman <mozman@gmx.at>"
 

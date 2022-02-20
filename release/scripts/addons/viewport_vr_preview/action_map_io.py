@@ -36,12 +36,19 @@ def repr_f32(f):
             return "%.*f" % (i, f_test)
     return f_str
 
+
 def ami_args_as_data(ami):
     s = [
         f"\"type\": '{ami.type}'",
-        f"\"user_path0\": '{ami.user_path0}'",
-        f"\"user_path1\": '{ami.user_path1}'",
     ]
+
+    sup = f"\"user_paths\": ["
+    for user_path in ami.user_paths:
+        sup += f"'{user_path.path}', "
+    if len(ami.user_paths) > 0:
+        sup = sup[:-2]
+    sup += "]"
+    s.append(sup)
 
     if ami.type == 'FLOAT' or ami.type == 'VECTOR2D':
         s.append(f"\"op\": '{ami.op}'")
@@ -57,14 +64,14 @@ def ami_args_as_data(ami):
         s.append(f"\"pose_is_controller_grip\": '{ami.pose_is_controller_grip}'")
         s.append(f"\"pose_is_controller_aim\": '{ami.pose_is_controller_aim}'")
 
-
     return "{" + ", ".join(s) + "}"
 
 
 def ami_data_from_args(ami, args):
     ami.type = args["type"]
-    ami.user_path0 = args["user_path0"]
-    ami.user_path1 = args["user_path1"]
+    
+    for path in args["user_paths"]:
+        ami.user_paths.new(path)
 
     if ami.type == 'FLOAT' or ami.type == 'VECTOR2D':
         ami.op = args["op"]
@@ -134,9 +141,15 @@ def _ami_attrs_or_none(level, ami):
 def amb_args_as_data(amb, type):
     s = [
         f"\"profile\": '{amb.profile}'",
-        f"\"component_path0\": '{amb.component_path0}'",
-        f"\"component_path1\": '{amb.component_path1}'",
     ]
+
+    scp = f"\"component_paths\": ["
+    for component_path in amb.component_paths:
+        scp += f"'{component_path.path}', "
+    if len(amb.component_paths) > 0:
+        scp = scp[:-2]
+    scp += "]"
+    s.append(scp)
 
     if type == 'FLOAT' or type == 'VECTOR2D':
         s.append(f"\"threshold\": '{amb.threshold}'")
@@ -154,8 +167,9 @@ def amb_args_as_data(amb, type):
 
 def amb_data_from_args(amb, args, type):
     amb.profile = args["profile"]
-    amb.component_path0 = args["component_path0"]
-    amb.component_path1 = args["component_path1"]
+
+    for path in args["component_paths"]:
+        amb.component_paths.new(path)
 
     if type == 'FLOAT' or type == 'VECTOR2D':
         amb.threshold = float(args["threshold"])

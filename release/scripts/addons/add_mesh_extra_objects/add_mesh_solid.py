@@ -1,4 +1,6 @@
-# GPL # "author": "DreamPainter"
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: DreamPainter
 
 import bpy
 from math import sqrt

@@ -28,6 +28,8 @@
 #include "ED_asset.h"
 #include "ED_clip.h"
 #include "ED_curve.h"
+#include "ED_curves.h"
+#include "ED_curves_sculpt.h"
 #include "ED_fileselect.h"
 #include "ED_geometry.h"
 #include "ED_gizmo_library.h"
@@ -96,10 +98,12 @@ void ED_spacetypes_init(void)
   ED_operatortypes_mesh();
   ED_operatortypes_geometry();
   ED_operatortypes_sculpt();
+  ED_operatortypes_sculpt_curves();
   ED_operatortypes_uvedit();
   ED_operatortypes_paint();
   ED_operatortypes_physics();
   ED_operatortypes_curve();
+  ED_operatortypes_curves();
   ED_operatortypes_armature();
   ED_operatortypes_marker();
   ED_operatortypes_metaball();

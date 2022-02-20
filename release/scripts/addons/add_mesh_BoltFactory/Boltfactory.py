@@ -449,17 +449,14 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                 obj.data[prm] = getattr(self, prm)
 
         if bpy.context.mode == "EDIT_MESH":
-            active_object = context.active_object
-            name_active_object = active_object.name
-            bpy.ops.object.mode_set(mode='OBJECT')
+            obj = context.edit_object
             mesh = createMesh.Create_New_Mesh(self, context)
-            obj = object_utils.object_data_add(context, mesh, operator=self)
 
-            obj.select_set(True)
-            active_object.select_set(True)
-            bpy.ops.object.join()
-            context.active_object.name = name_active_object
-            bpy.ops.object.mode_set(mode='EDIT')
+            bm = bmesh.from_edit_mesh(obj.data)                 # Access edit mode's mesh data
+            bm.from_mesh(mesh)                                  # Append new mesh data
+            bmesh.update_edit_mesh(obj.data)                    # Flush changes (update edit mode's view)
+
+            bpy.data.meshes.remove(mesh)                        # Remove temporary mesh
 
         return {'FINISHED'}
 

@@ -103,6 +103,7 @@ set(SRC
   intern/cryptomatte.cc
   intern/curve.cc
   intern/curves.cc
+  intern/curves_geometry.cc
   intern/curve_bevel.c
   intern/curve_convert.c
   intern/curve_decimate.c
@@ -183,6 +184,7 @@ set(SRC
   intern/mball_tessellate.c
   intern/mesh.cc
   intern/mesh_boolean_convert.cc
+  intern/mesh_calc_edges.cc
   intern/mesh_convert.cc
   intern/mesh_debug.cc
   intern/mesh_evaluate.cc
@@ -199,7 +201,6 @@ set(SRC
   intern/mesh_tangent.c
   intern/mesh_tessellate.c
   intern/mesh_validate.c
-  intern/mesh_validate.cc
   intern/mesh_wrapper.c
   intern/modifier.c
   intern/movieclip.c
@@ -341,6 +342,7 @@ set(SRC
   BKE_cryptomatte.hh
   BKE_curve.h
   BKE_curves.h
+  BKE_curves.hh
   BKE_curve_to_mesh.hh
   BKE_curveprofile.h
   BKE_customdata.h

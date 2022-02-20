@@ -122,7 +122,7 @@ class TEXT_MT_POV_insert(Menu):
         prop = self.layout.operator("wm.path_open", text="Open folder", icon='FILE_FOLDER')
         prop.filepath = pov_documents
         self.layout.separator()
-        
+
         # todo: structure submenus by dir
         pov_insert_items_list = [root for root, dirs, files in os.walk(pov_documents)]
         print(pov_insert_items_list)

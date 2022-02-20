@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from .vefm_271 import mesh, vertex, edge, face
 from math import pi, acos, sin, cos, atan, tan, fabs, sqrt
 

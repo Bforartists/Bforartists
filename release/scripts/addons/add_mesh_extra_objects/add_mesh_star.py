@@ -1,4 +1,6 @@
-# GPL Original by Fourmadmen
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Original by Fourmadmen
 
 import bpy
 from mathutils import (
