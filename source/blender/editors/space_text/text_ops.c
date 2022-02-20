@@ -528,7 +528,7 @@ static int text_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 void TEXT_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Remove";
+  ot->name = "Remove"; /*bfa - remove, not unlink*/
   ot->idname = "TEXT_OT_unlink";
   ot->description = "Remove active text";
 
@@ -2343,7 +2343,7 @@ void TEXT_OT_jump(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Go To Line";
+  ot->name = "Go To Line"; /*bfa - go to line, not jump*/
   ot->idname = "TEXT_OT_jump";
   ot->description = "Go to a specific line number";
 
