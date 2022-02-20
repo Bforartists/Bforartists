@@ -137,7 +137,7 @@ void SCRIPT_OT_reload(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Reload Scripts";
-  ot->description = "Reload all Python Scripts, including the Bforartists UI";
+  ot->description = "Reload all Python Scripts, including the UI";
   ot->idname = "SCRIPT_OT_reload";
 
   /* api callbacks */

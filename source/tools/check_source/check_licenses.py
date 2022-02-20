@@ -11,6 +11,8 @@ This can be activated by calling "make check_licenses" from Blenders root direct
 import os
 import sys
 import argparse
+import datetime
+import re
 
 from dataclasses import dataclass
 
@@ -25,6 +27,12 @@ from typing import (
 
 # -----------------------------------------------------------------------------
 # Constants
+
+# Add one, maybe someone runs this on new-years in another timezone or so.
+YEAR_MAX = datetime.date.today().year + 1
+# Lets not worry about software written before this time.
+YEAR_MIN = 1950
+YEAR_RANGE = range(YEAR_MIN, YEAR_MAX + 1)
 
 # Faster bug makes exceptions and errors more difficult to troubleshoot.
 USE_MULTIPROCESS = False
@@ -50,11 +58,18 @@ with open(SPDX_IDENTIFIER_FILE, "r", encoding="utf-8") as fh:
     ACCEPTABLE_LICENSES = set(l.split()[0] for l in sorted(fh) if "https://spdx.org/licenses/" in l)
 del fh
 
+
+# -----------------------------------------------------------------------------
+# Global Variables
+
+# Count how many licenses are used.
+SPDX_IDENTIFIER_STATS: Dict[str, int] = {}
+
 # -----------------------------------------------------------------------------
 # File Type Checks
 
 
-# Use '/* .. */' style comments.
+# Use `/* .. */` style comments.
 def filename_is_c_compat(filename: str) -> bool:
     return filename.endswith(
         (
@@ -88,44 +103,6 @@ def filename_is_script_compat(filename: str) -> bool:
 
 # -----------------------------------------------------------------------------
 # Cursor Motion
-
-
-def next_line(text: str, index: int) -> int:
-    index = text.find("\n", index + 1)
-    if index == -1 or index + 1 == len(text):
-        return -1
-    return index + 1
-
-
-def next_line_non_empty(text: str, index: int) -> int:
-    while index < len(text):
-        index_prev = index
-        index = text.find("\n", index)
-        if index == -1:
-            index = index_prev
-            break
-        if text[index_prev:index].strip():
-            index = index_prev
-            break
-        # Step over the newline.
-        index = index + 1
-    return index
-
-
-def txt_prev_line_while_fn(text: str, index: int, fn: Callable[[str], bool]) -> int:
-    """
-    Return the next line where ``fn`` fails.
-    """
-    while index > 0:
-        index_prev = index
-        index = text.rfind("\n", index)
-        if index == -1:
-            index = 0
-        if not fn(text[index_prev:index]):
-            index = index_prev
-            break
-    return index
-
 
 def txt_next_line_while_fn(text: str, index: int, fn: Callable[[str], bool]) -> int:
     """
@@ -175,29 +152,29 @@ def txt_prev_bol(text: str, pos: int, limit: int) -> int:
     return pos_next + 1
 
 
-def txt_expand_to_line_bounds(
-    text: str,
-    *,
-    span: Tuple[int, int],
-    span_limit: Optional[Tuple[int, int]],
-) -> Tuple[int, int]:
-    return (
-        txt_prev_bol(text, span[0], span_limit[0] if span_limit else 0),
-        txt_next_eol(
-            text, span[1], span_limit[1] if span_limit else len(text), step_over=True
-        ),
-    )
-
-
 def txt_anonymous_years(text: str) -> str:
     """
     Replace year with text, since we don't want to consider them different when looking at unique headers.
     """
-    # Could use regex, this is OK in practice.
-    for year in range(1990, 2023):
-        year_as_string = str(year)
-        text = text.replace(year_as_string, "####")
-    text = text.replace("####-####", "####")
+
+    # Replace year ranges with `2005-2009`: `####`.
+    def key_replace_range(match: re.Match[str]) -> str:
+        values = match.groups()
+        if int(values[0]) in YEAR_RANGE and int(values[1]) in YEAR_RANGE:
+            return '#' * len(values[0])
+        return match.group()
+
+    text = re.sub(r'([0-9]+)-([0-9]+)', key_replace_range, text)
+
+    # Replace year ranges with `2005`: `####`.
+    def key_replace(match: re.Match[str]) -> str:
+        values = match.groups()
+        if int(values[0]) in YEAR_RANGE:
+            return '#' * len(values[0])
+        return match.group()
+
+    text = re.sub(r'([0-9]+)', key_replace, text)
+
     return text
 
 
@@ -218,7 +195,14 @@ def check_contents(filepath: str, text: str) -> None:
         # Allow completely empty files (sometimes `__init__.py`).
         if not text.rstrip():
             return
-        print("Missing:", filepath)
+        print("Missing 'SPDX-License-Identifier:'", filepath)
+
+        # Maintain statistics.
+        try:
+            SPDX_IDENTIFIER_STATS["*Unknown License*"] += 1
+        except KeyError:
+            SPDX_IDENTIFIER_STATS["*Unknown License*"] = 1
+
         return
     identifier_end = identifier_beg + len(identifier)
     line_end = txt_next_eol(text, identifier_end, len(text), step_over=False)
@@ -238,6 +222,11 @@ def check_contents(filepath: str, text: str) -> None:
                 "not in",
                 SPDX_IDENTIFIER_FILE,
             )
+
+        try:
+            SPDX_IDENTIFIER_STATS[license_id] += 1
+        except KeyError:
+            SPDX_IDENTIFIER_STATS[license_id] = 1
 
     # Check for blank lines:
     blank_lines = text[:identifier_beg].count("\n")
@@ -285,6 +274,25 @@ def check_contents(filepath: str, text: str) -> None:
             raise Exception("Unknown file type: {:s}".format(filepath))
 
         mapping.setdefault(txt_anonymous_years(comment_block), []).append(filepath)
+
+
+def report_statistics() -> None:
+    """
+    Report some final statistics of license usage.
+    """
+    print("")
+    files_total = sum(SPDX_IDENTIFIER_STATS.values())
+    title = "License Statistics in {:d} Files".format(files_total)
+    print("#" * len(title))
+    print(title)
+    print("#" * len(title))
+    print("")
+    max_length = max(len(k) for k in SPDX_IDENTIFIER_STATS.keys())
+    print("  License:" + (" " * (max_length - 7)) + "Files:")
+    print("")
+    for k, v in sorted(SPDX_IDENTIFIER_STATS.items()):
+        print("-", k + " " * (max_length - len(k)), v)
+    print("")
 
 
 # -----------------------------------------------------------------------------
@@ -363,8 +371,6 @@ def main() -> None:
             source_dirs_include=(".",),
             source_dirs_exclude=(
                 "./extern",
-                "./intern/cycles",
-                # "./release/scripts/addons",
                 "./release/scripts/addons_contrib",
                 "./source/tools",
                 # Needs manual handling as it mixes two licenses.
@@ -386,7 +392,6 @@ def main() -> None:
             source_dirs_exclude=(
                 # This is an exception, it has it's own CMake files we do not maintain.
                 "./extern",
-                "./intern/cycles",
                 "./release/scripts/addons_contrib",
                 # Just data.
                 "./doc/python_api/examples",
@@ -438,6 +443,8 @@ def main() -> None:
             for filepath in v:
                 print("-", filepath)
             print("")
+
+    report_statistics()
 
 
 if __name__ == "__main__":
