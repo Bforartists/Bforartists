@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """
 This package contains actual primitive exporter classes.
 They are imported and instantiated according object type

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -23517,10 +23517,6 @@ msgid "Refraction Depth"
 msgstr "屈折の深度"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "オブジェクトの厚みを近似し、二つの屈折イベントを計算します（0 で無効）"
-
-
 msgid "Roughness"
 msgstr "粗さ"
 
@@ -23551,10 +23547,6 @@ msgstr "ノイズを使用し二値の可視性をディザリングし、フィ
 
 msgid "Show Backface"
 msgstr "背面を表示"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "透過をシングルレイヤーに制限します（透過時のソートの問題を回避）"
 
 
 msgid "Specular Color"
@@ -51327,12 +51319,6 @@ msgstr "再生範囲に限定"
 
 msgid "Clips animations to selected playback range"
 msgstr "アニメーションを選択中の再生範囲でクリッピングします"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr ""
-"画像用の出力フォーマット。PNG はロスレスで一般的に好まれ、\n"
-"JPEG はファイルサイズが小さめで、Web 用途に適しています"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"

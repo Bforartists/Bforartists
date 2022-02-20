@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'1d59a7aa7779')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23291,10 +23291,6 @@ msgid "Refraction Depth"
 msgstr "Profundidad refracción"
 
 
-msgid "Approximate the thickness of the object to compute two refraction event (0 is disabled)"
-msgstr "Aproxima el grosor del objeto para calcular dos eventos de refracción (0 para deshabilitar)"
-
-
 msgid "Roughness"
 msgstr "Rugosidad"
 
@@ -23325,10 +23321,6 @@ msgstr "Usar un ruido para difuminar la visibilidad binaria y luego un filtro pa
 
 msgid "Show Backface"
 msgstr "Mostrar cara trasera"
-
-
-msgid "Limit transparency to a single layer (avoids transparency sorting problems)"
-msgstr "Limita la transparencia a una única cara (evitando problemas de ordenamiento de transparencia)"
 
 
 msgid "Specular Color"
@@ -51028,10 +51020,6 @@ msgstr "Limitar a rango de reproducción"
 
 msgid "Clips animations to selected playback range"
 msgstr "Recorta las animaciones exportadas al rango de reproducción seleccionado"
-
-
-msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size"
-msgstr "Formato de salida de imágenes. PNG no produce pérdida y por lo general es el preferido, pero es posible que JPEG sea preferido para aplicaciones web debido a su menor tamaño de archivo"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
@@ -82954,20 +82942,40 @@ msgid "Fisheye Polynomial K0"
 msgstr "K0 (ojo de pez polinómico)"
 
 
+msgid "Coefficient K0 of the lens polynomial"
+msgstr "Coeficiente K0 del polinomio de la lente"
+
+
 msgid "Fisheye Polynomial K1"
 msgstr "K1 (ojo de pez polinómico)"
+
+
+msgid "Coefficient K1 of the lens polynomial"
+msgstr "Coeficiente K1 del polinomio de la lente"
 
 
 msgid "Fisheye Polynomial K2"
 msgstr "K2 (ojo de pez polinómico)"
 
 
+msgid "Coefficient K2 of the lens polynomial"
+msgstr "Coeficiente K2 del polinomio de la lente"
+
+
 msgid "Fisheye Polynomial K3"
 msgstr "K3 (ojo de pez polinómico)"
 
 
+msgid "Coefficient K3 of the lens polynomial"
+msgstr "Coeficiente K3 del polinomio de la lente"
+
+
 msgid "Fisheye Polynomial K4"
 msgstr "K4 (ojo de pez polinómico)"
+
+
+msgid "Coefficient K4 of the lens polynomial"
+msgstr "Coeficiente K4 del polinomio de la lente"
 
 
 msgid "Max Latitude"
@@ -83036,6 +83044,10 @@ msgstr "Usa un mapeo de esfera espejada"
 
 msgid "Fisheye Lens Polynomial"
 msgstr "Ojo de pez polinómico"
+
+
+msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked"
+msgstr "Define la proyección de la lente como polinómica, para permitir simular lentes de cámara reales"
 
 
 msgid "Form of hair"
@@ -95500,6 +95512,10 @@ msgid "Bone Wireframe Opacity"
 msgstr "Opacidad estructura huesos"
 
 
+msgid "Maximum opacity of bones in wireframe display mode"
+msgstr "Opacidad máxima de los huesos en modo de visualización de estructuras"
+
+
 msgid "Display Handles"
 msgstr "Mostrar asas"
 
@@ -98595,6 +98611,10 @@ msgstr "Cuentagotas - Mapa punto banda de color"
 
 msgid "No selected keys, pasting over scene range"
 msgstr "Ningún clave seleccionado, pegando sobre el rango de la escena"
+
+
+msgid "Clipboard does not contain a valid matrix"
+msgstr "El portapapeles no contiene una matriz válida"
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -103897,6 +103917,11 @@ msgstr "Auto guardado..."
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG como lápiz de cera"
+
+
+msgctxt "Operator"
+msgid "Wavefront OBJ (.obj)"
+msgstr "OBJ de Wavefront (.obj)"
 
 
 msgctxt "Operator"
@@ -110094,12 +110119,20 @@ msgid "Cannot delete indirectly linked object '%s'"
 msgstr "No es posible borrar el objeto '%s' vinculado indirectamente"
 
 
+msgid "Cannot delete object '%s' as it is used by override collections"
+msgstr "No es posible borrar el objeto '%s' porque está siendo usado por colecciones de redefiniciones"
+
+
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "No es posible borrar el objeto '%s' de la escena '%s', los objetos usados indirectamente necesitan al menos un usuario"
 
 
 msgid "Deleted %u object(s)"
 msgstr "Se borraron %u objeto(s)"
+
+
+msgid "Cannot edit object '%s' as it is used by override collections"
+msgstr "No es posible editar el objeto '%s' porque está siendo usado por colecciones de redefiniciones"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -113475,6 +113508,10 @@ msgstr "Conjunto de datos"
 
 msgid "Column"
 msgstr "Columna"
+
+
+msgid "Unknown column type"
+msgstr "Tipo de columna desconocido"
 
 
 msgid "File Modified Outside and Inside Blender"

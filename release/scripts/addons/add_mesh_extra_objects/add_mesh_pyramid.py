@@ -1,4 +1,6 @@
-# GPL # "author": "Phil Cote, cotejrp1, (http://www.blenderaddons.com)"
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Author: Phil Cote, cotejrp1, (http://www.blenderaddons.com)
 
 import bpy
 import bmesh

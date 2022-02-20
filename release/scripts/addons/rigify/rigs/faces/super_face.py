@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import bpy, re
 from   mathutils      import Vector
 from   ...utils       import copy_bone, flip_bone

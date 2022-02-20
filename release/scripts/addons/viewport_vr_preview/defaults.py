@@ -46,7 +46,6 @@ class VRDefaultActions(Enum):
 
 # Default action bindings.
 class VRDefaultActionbindings(Enum):
-    COSMOS = "cosmos"
     GAMEPAD = "gamepad"
     HUAWEI = "huawei"
     INDEX = "index"
@@ -54,11 +53,12 @@ class VRDefaultActionbindings(Enum):
     REVERB_G2 = "reverb_g2"
     SIMPLE = "simple"
     VIVE = "vive"
+    VIVE_COSMOS = "vive_cosmos"
+    VIVE_FOCUS = "vive_focus"
     WMR = "wmr"
 
 
 class VRDefaultActionprofiles(Enum):
-    COSMOS = "/interaction_profiles/htc/vive_cosmos_controller"
     GAMEPAD = "/interaction_profiles/microsoft/xbox_controller"
     HUAWEI = "/interaction_profiles/huawei/controller"
     INDEX = "/interaction_profiles/valve/index_controller"
@@ -66,6 +66,8 @@ class VRDefaultActionprofiles(Enum):
     REVERB_G2 = "/interaction_profiles/hp/mixed_reality_controller"
     SIMPLE = "/interaction_profiles/khr/simple_controller"
     VIVE = "/interaction_profiles/htc/vive_controller"
+    VIVE_COSMOS = "/interaction_profiles/htc/vive_cosmos_controller"
+    VIVE_FOCUS = "/interaction_profiles/htc/vive_focus3_controller"
     WMR = "/interaction_profiles/microsoft/motion_controller"
 
 
@@ -77,8 +79,7 @@ def vr_defaults_actionmap_add(session_state, name):
 
 def vr_defaults_action_add(am,
                            name,
-                           user_path0,
-                           user_path1,
+                           user_paths,
                            op,
                            op_mode,
                            bimanual,
@@ -92,9 +93,9 @@ def vr_defaults_action_add(am,
 
     ami = am.actionmap_items.new(name, True)
     if ami:
-        ami.type = 'FLOAT'
-        ami.user_path0 = user_path0
-        ami.user_path1 = user_path1
+        ami.type = 'FLOAT'		
+        for path in user_paths:
+            ami.user_paths.new(path)
         ami.op = op
         ami.op_mode = op_mode
         ami.bimanual = bimanual
@@ -110,15 +111,14 @@ def vr_defaults_action_add(am,
 
 def vr_defaults_pose_action_add(am,
                                 name,
-                                user_path0,
-                                user_path1,
+                                user_paths,
                                 is_controller_grip,
                                 is_controller_aim):
     ami = am.actionmap_items.new(name, True)
     if ami:
         ami.type = 'POSE'
-        ami.user_path0 = user_path0
-        ami.user_path1 = user_path1
+        for path in user_paths:
+            ami.user_paths.new(path)
         ami.pose_is_controller_grip = is_controller_grip
         ami.pose_is_controller_aim = is_controller_aim
 
@@ -127,13 +127,12 @@ def vr_defaults_pose_action_add(am,
 
 def vr_defaults_haptic_action_add(am,
                                   name,
-                                  user_path0,
-                                  user_path1):
+                                  user_paths):
     ami = am.actionmap_items.new(name, True)
     if ami:
         ami.type = 'VIBRATION'
-        ami.user_path0 = user_path0
-        ami.user_path1 = user_path1
+        for path in user_paths:
+            ami.user_paths.new(path)
 
     return ami
 
@@ -141,16 +140,15 @@ def vr_defaults_haptic_action_add(am,
 def vr_defaults_actionbinding_add(ami,
                                   name,
                                   profile,
-                                  component_path0,
-                                  component_path1,
+                                  component_paths,
                                   threshold,
                                   axis0_region,
                                   axis1_region):
     amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
-        amb.component_path0 = component_path0
-        amb.component_path1 = component_path1
+        for path in component_paths:
+            amb.component_paths.new(path)
         amb.threshold = threshold
         amb.axis0_region = axis0_region
         amb.axis1_region = axis1_region
@@ -161,15 +159,14 @@ def vr_defaults_actionbinding_add(ami,
 def vr_defaults_pose_actionbinding_add(ami,
                                   name,
                                   profile,
-                                  component_path0,
-                                  component_path1,
+                                  component_paths,
                                   location,
                                   rotation):
     amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
-        amb.component_path0 = component_path0
-        amb.component_path1 = component_path1
+        for path in component_paths:
+            amb.component_paths.new(path)
         amb.pose_location = location
         amb.pose_rotation = rotation
 
@@ -179,14 +176,12 @@ def vr_defaults_pose_actionbinding_add(ami,
 def vr_defaults_haptic_actionbinding_add(ami,
                                          name,
                                          profile,
-                                         component_path0,
-                                         component_path1):
+                                         component_paths):
     amb = ami.bindings.new(name, True)
     if amb:
         amb.profile = profile
-        amb.component_path0 = component_path0
-        amb.component_path1 = component_path1
-
+        for path in component_paths:
+            amb.component_paths.new(path)
 
     return amb
 
@@ -199,136 +194,150 @@ def vr_defaults_create_default(session_state):
 
     ami = vr_defaults_pose_action_add(am,
                                       VRDefaultActions.CONTROLLER_GRIP.value,
-                                      "/user/hand/left",
-                                      "/user/hand/right",
+                                      ["/user/hand/left",
+                                      "/user/hand/right"],
                                       True,
                                       False)
     if ami:
         vr_defaults_pose_actionbinding_add(ami,
-                                           VRDefaultActionbindings.COSMOS.value,
-                                           VRDefaultActionprofiles.COSMOS.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
-                                           (0, 0, 0),
-                                           (0, 0, 0))
-        vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.HUAWEI.value,
                                            VRDefaultActionprofiles.HUAWEI.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.INDEX.value,
                                            VRDefaultActionprofiles.INDEX.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.OCULUS.value,
                                            VRDefaultActionprofiles.OCULUS.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.REVERB_G2.value,
                                            VRDefaultActionprofiles.REVERB_G2.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.SIMPLE.value,
                                            VRDefaultActionprofiles.SIMPLE.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.VIVE.value,
                                            VRDefaultActionprofiles.VIVE.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
+                                           (0, 0, 0),
+                                           (0, 0, 0))
+        vr_defaults_pose_actionbinding_add(ami,
+                                           VRDefaultActionbindings.VIVE_COSMOS.value,
+                                           VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
+                                           (0, 0, 0),
+                                           (0, 0, 0))
+        vr_defaults_pose_actionbinding_add(ami,
+                                           VRDefaultActionbindings.VIVE_FOCUS.value,
+                                           VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.WMR.value,
                                            VRDefaultActionprofiles.WMR.value,
-                                           "/input/grip/pose",
-                                           "/input/grip/pose",
+                                           ["/input/grip/pose",
+                                           "/input/grip/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
 
     ami = vr_defaults_pose_action_add(am,
                                       VRDefaultActions.CONTROLLER_AIM.value,
-                                      "/user/hand/left",
-                                      "/user/hand/right",
+                                      ["/user/hand/left",
+                                      "/user/hand/right"],
                                       False,
                                       True)
     if ami:
         vr_defaults_pose_actionbinding_add(ami,
-                                           VRDefaultActionbindings.COSMOS.value,
-                                           VRDefaultActionprofiles.COSMOS.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
-                                           (0, 0, 0),
-                                           (0, 0, 0))
-        vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.HUAWEI.value,
                                            VRDefaultActionprofiles.HUAWEI.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.INDEX.value,
                                            VRDefaultActionprofiles.INDEX.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.OCULUS.value,
                                            VRDefaultActionprofiles.OCULUS.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.REVERB_G2.value,
                                            VRDefaultActionprofiles.REVERB_G2.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.SIMPLE.value,
                                            VRDefaultActionprofiles.SIMPLE.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.VIVE.value,
                                            VRDefaultActionprofiles.VIVE.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
+                                           (0, 0, 0),
+                                           (0, 0, 0))
+        vr_defaults_pose_actionbinding_add(ami,
+                                           VRDefaultActionbindings.VIVE_COSMOS.value,
+                                           VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
+                                           (0, 0, 0),
+                                           (0, 0, 0))
+        vr_defaults_pose_actionbinding_add(ami,
+                                           VRDefaultActionbindings.VIVE_FOCUS.value,
+                                           VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
         vr_defaults_pose_actionbinding_add(ami,
                                            VRDefaultActionbindings.WMR.value,
                                            VRDefaultActionprofiles.WMR.value,
-                                           "/input/aim/pose",
-                                           "/input/aim/pose",
+                                           ["/input/aim/pose",
+                                           "/input/aim/pose"],
                                            (0, 0, 0),
                                            (0, 0, 0))
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.TELEPORT.value,
-                                 "/user/hand/left",
-                                 "/user/hand/right",
+                                 ["/user/hand/left",
+                                 "/user/hand/right"],
                                  "wm.xr_navigation_teleport",
                                  'MODAL',
                                  False,
@@ -340,74 +349,82 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
-                                      0.3,
-                                      'ANY',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.SIMPLE.value,
                                       VRDefaultActionprofiles.SIMPLE.value,
-                                      "/input/select/click",
-                                      "/input/select/click",
+                                      ["/input/select/click",
+                                      "/input/select/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/trigger/value",
-                                      "/input/trigger/value",
+                                      ["/input/trigger/value",
+                                      "/input/trigger/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.NAV_GRAB.value,
-                                 "/user/hand/left",
-                                 "/user/hand/right",
+                                 ["/user/hand/left",
+                                 "/user/hand/right"],
                                  "wm.xr_navigation_grab",
                                  'MODAL',
                                  True,
@@ -419,74 +436,81 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/squeeze/click",
-                                      "/input/squeeze/click",
-                                      0.3,
-                                      'ANY',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/click",
-                                      "/input/trackpad/click",
+                                      ["/input/trackpad/click",
+                                      "/input/trackpad/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/squeeze/force",
-                                      "/input/squeeze/force",
+                                      ["/input/squeeze/force",
+                                      "/input/squeeze/force"],
                                       0.5,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/squeeze/value",
-                                      "/input/squeeze/value",
+                                      ["/input/squeeze/value",
+                                      "/input/squeeze/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/squeeze/value",
-                                      "/input/squeeze/value",
+                                      ["/input/squeeze/value",
+                                      "/input/squeeze/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.SIMPLE.value,
                                       VRDefaultActionprofiles.SIMPLE.value,
-                                      "/input/menu/click",
-                                      "/input/menu/click",
+                                      ["/input/menu/click",
+                                      "/input/menu/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/squeeze/click",
-                                      "/input/squeeze/click",
+                                      ["/input/squeeze/click",
+                                      "/input/squeeze/click"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/squeeze/click",
+                                      "/input/squeeze/click"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/squeeze/click",
+                                      "/input/squeeze/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/squeeze/click",
-                                      "/input/squeeze/click",
+                                      ["/input/squeeze/click",
+                                      "/input/squeeze/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_FORWARD.value,
-                                 "/user/hand/left",
-                                 "",
+                                 ["/user/hand/left"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -498,66 +522,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/y",
-                                      "",
-                                      0.3,
-                                      'POSITIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/y"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_BACK.value,
-                                 "/user/hand/left",
-                                 "",
+                                 ["/user/hand/left"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -569,66 +592,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/y",
-                                      "",
-                                      0.3,
-                                      'NEGATIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/y"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_LEFT.value,
-                                 "/user/hand/left",
-                                 "",
+                                 ["/user/hand/left"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -640,66 +662,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/x",
-                                      "",
-                                      0.3,
-                                      'NEGATIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/x"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_RIGHT.value,
-                                 "/user/hand/left",
-                                 "",
+                                 ["/user/hand/left"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -711,66 +732,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/x",
-                                      "",
-                                      0.3,
-                                      'POSITIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/x"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_UP.value,
-                                 "/user/hand/right",
-                                 "",
+                                 ["/user/hand/right"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -782,66 +802,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/y",
-                                      "",
-                                      0.3,
-                                      'POSITIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/y"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_DOWN.value,
-                                 "/user/hand/right",
-                                 "",
+                                 ["/user/hand/right"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -853,66 +872,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/y",
-                                      "",
-                                      0.3,
-                                      'NEGATIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/y",
-                                      "",
+                                      ["/input/trackpad/y"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/y"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/y",
-                                      "",
+                                      ["/input/thumbstick/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_TURNLEFT.value,
-                                 "/user/hand/right",
-                                 "",
+                                 ["/user/hand/right"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -924,66 +942,65 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/x",
-                                      "",
-                                      0.3,
-                                      'NEGATIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/x"],
+                                      0.3,
+                                      'NEGATIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_TURNRIGHT.value,
-                                 "/user/hand/right",
-                                 "",
+                                 ["/user/hand/right"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -995,66 +1012,66 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/thumbstick/x",
-                                      "",
-                                      0.3,
-                                      'POSITIVE',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/trackpad/x",
-                                      "",
+                                      ["/input/trackpad/x"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/thumbstick/x"],
+                                      0.3,
+                                      'POSITIVE',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/thumbstick/x",
-                                      "",
+                                      ["/input/thumbstick/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.NAV_RESET.value,
-                                 "/user/hand/left",
-                                 "/user/hand/right",
+                                 ["/user/hand/left",
+                                 "/user/hand/right"],
                                  "wm.xr_navigation_reset",
                                  'PRESS',
                                  False,
@@ -1066,107 +1083,120 @@ def vr_defaults_create_default(session_state):
                                  'PRESS')
     if ami:
         vr_defaults_actionbinding_add(ami,
-                                      VRDefaultActionbindings.COSMOS.value,
-                                      VRDefaultActionprofiles.COSMOS.value,
-                                      "/input/x/click",
-                                      "/input/a/click",
-                                      0.3,
-                                      'ANY',
-                                      'ANY')
-        vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.HUAWEI.value,
                                       VRDefaultActionprofiles.HUAWEI.value,
-                                      "/input/back/click",
-                                      "/input/back/click",
+                                      ["/input/back/click",
+                                      "/input/back/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.INDEX.value,
                                       VRDefaultActionprofiles.INDEX.value,
-                                      "/input/a/click",
-                                      "/input/a/click",
+                                      ["/input/a/click",
+                                      "/input/a/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.OCULUS.value,
                                       VRDefaultActionprofiles.OCULUS.value,
-                                      "/input/x/click",
-                                      "/input/a/click",
+                                      ["/input/x/click",
+                                      "/input/a/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.REVERB_G2.value,
                                       VRDefaultActionprofiles.REVERB_G2.value,
-                                      "/input/x/click",
-                                      "/input/a/click",
+                                      ["/input/x/click",
+                                      "/input/a/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.VIVE.value,
                                       VRDefaultActionprofiles.VIVE.value,
-                                      "/input/menu/click",
-                                      "/input/menu/click",
+                                      ["/input/menu/click",
+                                      "/input/menu/click"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_COSMOS.value,
+                                      VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                      ["/input/x/click",
+                                      "/input/a/click"],
+                                      0.3,
+                                      'ANY',
+                                      'ANY')
+        vr_defaults_actionbinding_add(ami,
+                                      VRDefaultActionbindings.VIVE_FOCUS.value,
+                                      VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                      ["/input/x/click",
+                                      "/input/a/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.WMR.value,
                                       VRDefaultActionprofiles.WMR.value,
-                                      "/input/menu/click",
-                                      "/input/menu/click",
+                                      ["/input/menu/click",
+                                      "/input/menu/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami = vr_defaults_haptic_action_add(am,
                                         VRDefaultActions.HAPTIC.value,
-                                        "/user/hand/left",
-                                        "/user/hand/right")
+                                        ["/user/hand/left",
+                                        "/user/hand/right"])
     if ami:
-        vr_defaults_haptic_actionbinding_add(ami,
-                                             VRDefaultActionbindings.COSMOS.value,
-                                             VRDefaultActionprofiles.COSMOS.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.HUAWEI.value,
                                              VRDefaultActionprofiles.HUAWEI.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.INDEX.value,
                                              VRDefaultActionprofiles.INDEX.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.OCULUS.value,
                                              VRDefaultActionprofiles.OCULUS.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.REVERB_G2.value,
                                              VRDefaultActionprofiles.REVERB_G2.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.SIMPLE.value,
                                              VRDefaultActionprofiles.SIMPLE.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.VIVE.value,
                                              VRDefaultActionprofiles.VIVE.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
+        vr_defaults_haptic_actionbinding_add(ami,
+                                             VRDefaultActionbindings.VIVE_COSMOS.value,
+                                             VRDefaultActionprofiles.VIVE_COSMOS.value,
+                                             ["/output/haptic",
+                                             "/output/haptic"])
+        vr_defaults_haptic_actionbinding_add(ami,
+                                             VRDefaultActionbindings.VIVE_FOCUS.value,
+                                             VRDefaultActionprofiles.VIVE_FOCUS.value,
+                                             ["/output/haptic",
+                                             "/output/haptic"])
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.WMR.value,
                                              VRDefaultActionprofiles.WMR.value,
-                                             "/output/haptic",
-                                             "/output/haptic")
+                                             ["/output/haptic",
+                                             "/output/haptic"])
 
 
 def vr_defaults_create_default_gamepad(session_state):
@@ -1175,8 +1205,7 @@ def vr_defaults_create_default_gamepad(session_state):
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.TELEPORT.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_teleport",
                                  'MODAL',
                                  False,
@@ -1190,16 +1219,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/trigger_right/value",
-                                      "",
+                                      ["/input/trigger_right/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1213,16 +1240,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/trigger_left/value",
-                                      "",
+                                      ["/input/trigger_left/value"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_FORWARD.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1236,16 +1261,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_left/y",
-                                      "",
+                                      ["/input/thumbstick_left/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_BACK.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1259,16 +1282,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_left/y",
-                                      "",
+                                      ["/input/thumbstick_left/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_LEFT.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1282,16 +1303,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_left/x",
-                                      "",
+                                      ["/input/thumbstick_left/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_RIGHT.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1305,16 +1324,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_left/x",
-                                      "",
+                                      ["/input/thumbstick_left/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_UP.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1328,16 +1345,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_right/y",
-                                      "",
+                                      ["/input/thumbstick_right/y"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_DOWN.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1351,16 +1366,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_right/y",
-                                      "",
+                                      ["/input/thumbstick_right/y"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_TURNLEFT.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1374,16 +1387,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_right/x",
-                                      "",
+                                      ["/input/thumbstick_right/x"],
                                       0.3,
                                       'NEGATIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.FLY_TURNRIGHT.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_fly",
                                  'MODAL',
                                  False,
@@ -1397,16 +1408,14 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/thumbstick_right/x",
-                                      "",
+                                      ["/input/thumbstick_right/x"],
                                       0.3,
                                       'POSITIVE',
                                       'ANY')
 
     ami = vr_defaults_action_add(am,
                                  VRDefaultActions.NAV_RESET.value,
-                                 "/user/gamepad",
-                                 "",
+                                 ["/user/gamepad"],
                                  "wm.xr_navigation_reset",
                                  'PRESS',
                                  False,
@@ -1420,55 +1429,46 @@ def vr_defaults_create_default_gamepad(session_state):
         vr_defaults_actionbinding_add(ami,
                                       VRDefaultActionbindings.GAMEPAD.value,
                                       VRDefaultActionprofiles.GAMEPAD.value,
-                                      "/input/a/click",
-                                      "",
+                                      ["/input/a/click"],
                                       0.3,
                                       'ANY',
                                       'ANY')
 
     ami =vr_defaults_haptic_action_add(am,
                                        VRDefaultActions.HAPTIC_LEFT.value,
-                                       "/user/gamepad",
-                                       "")
+                                       ["/user/gamepad"])
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
                                              VRDefaultActionprofiles.GAMEPAD.value,
-                                             "/output/haptic_left",
-                                             "")
+                                             ["/output/haptic_left"])
 
     ami =vr_defaults_haptic_action_add(am,
                                        VRDefaultActions.HAPTIC_RIGHT.value,
-                                       "/user/gamepad",
-                                       "")
+                                       ["/user/gamepad"])
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
                                              VRDefaultActionprofiles.GAMEPAD.value,
-                                             "/output/haptic_right",
-                                             "")
+                                             ["/output/haptic_right"])
 
     ami = vr_defaults_haptic_action_add(am,
                                         VRDefaultActions.HAPTIC_LEFTTRIGGER.value,
-                                        "/user/gamepad",
-                                        "")
+                                        ["/user/gamepad"])
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
                                              VRDefaultActionprofiles.GAMEPAD.value,
-                                             "/output/haptic_left_trigger",
-                                             "")
+                                             ["/output/haptic_left_trigger"])
 
     ami = vr_defaults_haptic_action_add(am,
                                         VRDefaultActions.HAPTIC_RIGHTTRIGGER.value,
-                                        "/user/gamepad",
-                                        "")
+                                        ["/user/gamepad"])
     if ami:
         vr_defaults_haptic_actionbinding_add(ami,
                                              VRDefaultActionbindings.GAMEPAD.value,
                                              VRDefaultActionprofiles.GAMEPAD.value,
-                                             "/output/haptic_right_trigger",
-                                             "")
+                                             ["/output/haptic_right_trigger"])
 
 
 def vr_get_default_config_path():

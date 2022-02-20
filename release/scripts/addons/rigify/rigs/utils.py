@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from ..utils.rig import connected_children_names
 from ..utils.naming import strip_mch, strip_org, make_mechanism_name
 import re

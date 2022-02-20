@@ -1,5 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 
-#km_snap_utilities_modal_keymap = "Snap Utilities Modal Map"
+# km_snap_utilities_modal_keymap = "Snap Utilities Modal Map"
 
 km_tool_snap_utilities_line = "3D View Tool: Edit Mesh, Make Line"
 

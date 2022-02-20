@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2015 sugiany
-# This file is distributed under the MIT License. See the LICENSE.md for more details.
+# SPDX-License-Identifier: MIT
+# Copyright 2015 Sugiany
 
 import bpy
 

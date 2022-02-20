@@ -1,4 +1,4 @@
-# gpl: author Jared Forsyth <github.com/jaredly>
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 """
 bl_info = {

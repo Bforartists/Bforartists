@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # vert class and overloading experiments
 import bpy
 # PKHG>NEEDED?

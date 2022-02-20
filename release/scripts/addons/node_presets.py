@@ -69,6 +69,7 @@ def node_template_add(context, filepath, node_group, ungroup, report):
         "ShaderNodeTree": "ShaderNodeGroup",
         "CompositorNodeTree": "CompositorNodeGroup",
         "TextureNodeTree": "TextureNodeGroup",
+        "GeometryNodeTree": "GeometryNodeGroup",
     }[type(node_tree).__name__]
 
     node = node_tree.nodes.new(type=node_type_string)
