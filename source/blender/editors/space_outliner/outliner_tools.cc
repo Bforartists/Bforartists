@@ -428,7 +428,7 @@ static void outliner_do_libdata_operation(bContext *C,
 /** \name Scene Menu Operator
  * \{ */
 
-typedef enum eOutliner_PropSceneOps {
+typedef enum eOutliner_PropSceneOps {  /* bfa -  typedef enum*/
   OL_SCENE_OP_DELETE = 1,
   /* bfa - add scene outliner operators  */
   OL_SCENE_OP_NEW = 2,

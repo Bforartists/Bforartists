@@ -670,7 +670,7 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
         case CTX_MODE_PARTICLE:
           return "builtin_brush.Comb";
         case CTX_MODE_EDIT_TEXT:
-          return "builtin.select"; /*bfa - changed from builtin.cursor to builtin.select*/
+          return "builtin.select"; /*bfa - changed default from builtin.cursor to builtin.select*/
       }
       break;
     case SPACE_IMAGE:
@@ -691,11 +691,11 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
         case SEQ_VIEW_SEQUENCE_PREVIEW:
           return "builtin.select";
       }
-      return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
+      return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
     }
   }
 
-  return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
+  return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
 }
 
 /**
