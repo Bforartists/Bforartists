@@ -1598,7 +1598,7 @@ slide_vertex
 smooth_vertex
 point_separate
 snap_surface
-outliner_ob_hair
+outliner_ob_curves
 
 hair_data
 retopo
