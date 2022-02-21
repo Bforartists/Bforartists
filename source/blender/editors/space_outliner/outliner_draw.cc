@@ -2617,7 +2617,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_OUTLINER_OB_LIGHTPROBE;
           break;
         case OB_CURVES:
-          data.icon = ICON_OUTLINER_OB_HAIR;
+          data.icon = ICON_OUTLINER_OB_CURVES;
           break;
         case OB_POINTCLOUD:
           data.icon = ICON_OUTLINER_OB_POINTCLOUD;
