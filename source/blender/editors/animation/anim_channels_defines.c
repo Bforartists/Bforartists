@@ -685,7 +685,7 @@ static int acf_object_icon(bAnimListElem *ale)
     case OB_SURF:
       return ICON_OUTLINER_OB_SURFACE;
     case OB_CURVES:
-      return ICON_OUTLINER_OB_HAIR;
+      return ICON_OUTLINER_OB_CURVES;
     case OB_POINTCLOUD:
       return ICON_OUTLINER_OB_POINTCLOUD;
     case OB_VOLUME:
