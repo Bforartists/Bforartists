@@ -59,6 +59,10 @@ def add_object_align_init(context, operator):
         if properties.align == 'WORLD':
             rotation = properties.rotation.to_matrix().to_4x4()
         elif properties.align == 'VIEW':
+            # bfa - workaround to deactivate the VIEW alignment from the toolbar
+            if space_data is None:
+                return
+            # bfa end
             rotation = space_data.region_3d.view_matrix.to_3x3().inverted()
             rotation.resize_4x4()
             properties.rotation = rotation.to_euler()
@@ -100,6 +104,12 @@ def object_data_add(context, obdata, operator=None, name=None):
     layer_collection = context.layer_collection or layer.active_layer_collection
     scene_collection = layer_collection.collection
 
+    # bfa - workaround to deactivate the VIEW alignment from the toolbar
+    space_data = context.space_data
+    if space_data and space_data.type != 'VIEW_3D':
+        space_data = None
+    # bfa end
+
     for ob in layer.objects:
         ob.select_set(False)
 
@@ -110,6 +120,10 @@ def object_data_add(context, obdata, operator=None, name=None):
     obj_new = bpy.data.objects.new(name, obdata)
     scene_collection.objects.link(obj_new)
     obj_new.select_set(True)
+    # bfa - workaround to deactivate the VIEW alignment from the toolbar
+    if space_data is None:
+        return
+    # bfa end
     obj_new.matrix_world = add_object_align_init(context, operator)
 
     space_data = context.space_data
