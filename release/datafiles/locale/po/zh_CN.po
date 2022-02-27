@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -311,6 +311,14 @@ msgstr "跨设备分配内存"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "通过在互连的设备(例如通过 NVLink)之间分配内存，而不是复制内存，留出更多空间以适应大型场景"
+
+
+msgid "MetalRT (Experimental)"
+msgstr "MetalRT (试验)"
+
+
+msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
+msgstr "用于光线追踪的MetalRT 对于广泛使用曲线的场景使用较少的内存，并且可以在特定情况下提供更好的性能。但是，此支持是实验性的，某些场景可能会导致渲染偏差"
 
 
 msgid "Fribidi Library"
@@ -23294,6 +23302,10 @@ msgid "Refraction Depth"
 msgstr "折射深度"
 
 
+msgid "Approximate the thickness of the object to compute two refraction events (0 is disabled)"
+msgstr "估算物体的厚度来计算二次折射结果(0为禁用)"
+
+
 msgid "Roughness"
 msgstr "糙度"
 
@@ -23324,6 +23336,10 @@ msgstr "使用噪波方式丰富二元可见性并且使用过滤来减少噪点
 
 msgid "Show Backface"
 msgstr "显示背面"
+
+
+msgid "Render multiple transparent layers (may introduce transparency sorting problems)"
+msgstr "渲染多个透明图层(可能会引入透明度排序问题)"
 
 
 msgid "Specular Color"
@@ -51023,6 +51039,10 @@ msgstr "限制回放范围"
 
 msgid "Clips animations to selected playback range"
 msgstr "钳制动画到所选播放范围"
+
+
+msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size. Alternatively they can be omitted if they are not needed"
+msgstr "图像的输出格式. PNG是无损的,通常是首选,但由于文件较小,JPEG可能更适合Web应用。另外，如无需要可忽略该项"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
@@ -98704,10 +98724,6 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
 
 
-msgid "Requires Apple Silicon and macOS 12.0 or newer"
-msgstr "需要Apple Silicon 和 macOS 12.0 或更新版本"
-
-
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -107040,10 +107056,6 @@ msgstr "环境贴图"
 
 msgid "No valid formats found"
 msgstr "没有找到可用的格式"
-
-
-msgid "Error opening output file"
-msgstr "打开输出文件错误"
 
 
 msgid "Render width has to be 720 pixels for DV!"
@@ -117071,6 +117083,10 @@ msgstr "源位置"
 
 msgid "The target mesh must have faces"
 msgstr "目标网格必须有面"
+
+
+msgid "This node uses legacy behavior with regards to attributes on instances. The behavior can be changed in the node properties in the side bar. In most cases the new behavior is the same for files created in Blender 3.0"
+msgstr "此节点使用与实例上的属性相关的旧版行为。可以在侧栏的节点属性中更改行为。在大多数情况下，新行为与在Blender 3.0中创建的文件是相同的"
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"

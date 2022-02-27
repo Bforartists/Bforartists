@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-02-07 12:00+0100\n"
+"PO-Revision-Date: 2022-02-15 10:29+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -310,6 +310,14 @@ msgstr "Rozdeľujte pamäť medzi zariadeniami"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "Vytvorte viac priestoru pre prispôsobenie veľkých scén tak, že budete rozdeľovať pamäť medzi vzájomne prepojenými zariadeniami (napr. prostredníctvom NVLink) radšej ako vytvárať duplikáty"
+
+
+msgid "MetalRT (Experimental)"
+msgstr "MetalRT (experimentálne)"
+
+
+msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
+msgstr "MetalRT pre sledovanie lúče využíva menej pamäte pre scény, ktoré vo veľkej miere využívajú krivky, a v špecifických prípadoch môže poskytnúť lepší výkon. Táto podpora je však experimentálna a niektoré scény sa môžu prekresľovať nesprávne"
 
 
 msgid "Fribidi Library"
@@ -23293,6 +23301,10 @@ msgid "Refraction Depth"
 msgstr "Hĺbka lomu"
 
 
+msgid "Approximate the thickness of the object to compute two refraction events (0 is disabled)"
+msgstr "Približná hrúbka objektu na výpočet dvoch refrakčných udalostí (0 je vypnuté)"
+
+
 msgid "Roughness"
 msgstr "Zdrsnenie"
 
@@ -23323,6 +23335,10 @@ msgstr "Použije šum na rozptyl farby binárnej viditeľnosti a používa filtr
 
 msgid "Show Backface"
 msgstr "Zobraziť obrátené plôšky"
+
+
+msgid "Render multiple transparent layers (may introduce transparency sorting problems)"
+msgstr "Prekreslenie viacerých priehľadných vrstiev (môže spôsobiť problémy s triedením priehľadnosti)"
 
 
 msgid "Specular Color"
@@ -51022,6 +51038,10 @@ msgstr "Limit rozsahu prehrávania"
 
 msgid "Clips animations to selected playback range"
 msgstr "Klipy animácie na vybraný rozsah prehrávania"
+
+
+msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size. Alternatively they can be omitted if they are not needed"
+msgstr "Výstupný formát pre obrázky. PNG je bezstratový a všeobecne sa uprednostňuje, ale JPEG môže byť vhodnejší pre webové aplikácie kvôli menšej veľkosti súboru. Prípadne sa môžu vynechať, ak nie sú potrebné"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
@@ -98701,10 +98721,6 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "a ovládač AMD Radeon Pro 21.Q4 alebo novší"
 
 
-msgid "Requires Apple Silicon and macOS 12.0 or newer"
-msgstr "Vyžaduje Apple Silicon a macOS 12.0 alebo novší"
-
-
 msgid "Noise Threshold"
 msgstr "Prah šumu"
 
@@ -107033,10 +107049,6 @@ msgstr "Chyba pri zápise snímky"
 
 msgid "No valid formats found"
 msgstr "Nenašli sa žiadne platné formáty"
-
-
-msgid "Error opening output file"
-msgstr "Chyba pri otváraní výstupného súboru"
 
 
 msgid "Render width has to be 720 pixels for DV!"
@@ -117064,6 +117076,10 @@ msgstr "Zdroj Pozícia"
 
 msgid "The target mesh must have faces"
 msgstr "Cieľová povrchová sieť musí mať plôšky"
+
+
+msgid "This node uses legacy behavior with regards to attributes on instances. The behavior can be changed in the node properties in the side bar. In most cases the new behavior is the same for files created in Blender 3.0"
+msgstr "Tento uzol používa staršie správanie, pokiaľ ide o atribúty inštancií. Toto správanie je možné zmeniť vo vlastnostiach uzla na bočnom paneli. Vo väčšine prípadov je nové správanie rovnaké pre súbory vytvorené v programe Blender 3.0"
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"

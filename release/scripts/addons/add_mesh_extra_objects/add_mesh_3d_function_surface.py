@@ -546,8 +546,10 @@ class AddXYZFunctionSurface(Operator):
 
             obj = create_mesh_object(context, verts, [], faces, "XYZ Function")
 
-            if self.show_wire:
-                obj.show_wire = True
+        if self.show_wire:
+            context.active_object.show_wire = True
+        else:
+            context.active_object.show_wire = False
 
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')

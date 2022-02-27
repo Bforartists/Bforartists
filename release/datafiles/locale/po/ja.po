@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -99212,10 +99212,6 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "さらに AMD Radeon Pro 21.Q4 以降のドライバも必須"
 
 
-msgid "Requires Apple Silicon and macOS 12.0 or newer"
-msgstr "Apple Silicon と macOS 12.0以降が必要です"
-
-
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
 
@@ -107541,10 +107537,6 @@ msgstr "フレーム保存エラー"
 
 msgid "No valid formats found"
 msgstr "有効なフォーマットがありません"
-
-
-msgid "Error opening output file"
-msgstr "ファイルオープンエラー"
 
 
 msgid "Render width has to be 720 pixels for DV!"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -958,12 +958,24 @@ msgid "Additional data stored for an asset data-block"
 msgstr "Données supplémentaires stockées pour un bloc de données d'asset"
 
 
+msgid "Author"
+msgstr "Auteur"
+
+
 msgid "Name of the creator of the asset"
 msgstr "Nom du créateur de l'asset"
 
 
+msgid "Catalog UUID"
+msgstr "UUID du catalogue"
+
+
 msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122"
 msgstr "Identifiant pour le catalogue d'asset, utilisé par Blender pour retrouver le chemin du catalogue de l'asset. Doit être un UUID selon RFC4122"
+
+
+msgid "Catalog Simple Name"
+msgstr "Nom simple du catalogue"
 
 
 msgid "Simple name of the asset's catalog, for debugging and data recovery purposes"
@@ -3260,6 +3272,14 @@ msgstr "Courbe de force"
 
 msgid "Curve used for the strength"
 msgstr "Courbe utilisée pour la force"
+
+
+msgid "Dilate"
+msgstr "Dilater"
+
+
+msgid "Number of pixels to dilate fill area"
+msgstr "Nombre de pixels à utiliser pour dilater la zone remplie"
 
 
 msgid "Direction"
@@ -14810,6 +14830,14 @@ msgid "Create duplication of strokes"
 msgstr "Créer une duplication de traits"
 
 
+msgid "Dot Dash"
+msgstr "Pointillé"
+
+
+msgid "Generate dot-dash styled strokes"
+msgstr "Générer des tracés de style pointillé"
+
+
 msgid "Line Art"
 msgstr "Dessin au trait"
 
@@ -21488,11 +21516,11 @@ msgstr "N’afficher l’image que quand elle est alignée avec l’axe de vue"
 
 
 msgid "Display in Orthographic Mode"
-msgstr "Afficher en mode orthographique"
+msgstr "Afficher en mode orthogonal"
 
 
 msgid "Display image in orthographic mode"
-msgstr "Afficher l’image en mode orthographique"
+msgstr "Afficher l’image en mode orthogonal"
 
 
 msgid "Display in Perspective Mode"
@@ -71910,12 +71938,24 @@ msgid "Display X Axis"
 msgstr "Afficher axe X"
 
 
+msgid "Show the X axis line"
+msgstr "Afficher la ligne de l'axe X"
+
+
 msgid "Display Y Axis"
 msgstr "Afficher axe Y"
 
 
+msgid "Show the Y axis line"
+msgstr "Afficher la ligne de l'axe Y"
+
+
 msgid "Display Z Axis"
 msgstr "Afficher axe Z"
+
+
+msgid "Show the Z axis line"
+msgstr "Afficher la ligne de l'axe Z"
 
 
 msgid "Draw Normals"
@@ -71978,6 +72018,10 @@ msgid "Display Grid Floor"
 msgstr "Afficher grille de sol"
 
 
+msgid "Show the ground plane grid"
+msgstr "Afficher la grille du plan de sol"
+
+
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "Afficher les marques d’arêtes Freestyle, utilisées par le moteur de rendu Freestyle"
 
@@ -72008,6 +72052,14 @@ msgstr "Utiliser l’affichage du fil de fer caché"
 
 msgid "Show the Onion Skinning Overlay"
 msgstr "Afficher la superposition “peau d’oignon”"
+
+
+msgid "Display Grid"
+msgstr "Afficher grille"
+
+
+msgid "Show grid in orthographic side view"
+msgstr "Afficher la grille dans la vue orthogonale de côté"
 
 
 msgid "Outline Selected"
@@ -76391,6 +76443,11 @@ msgstr "Effacer chemins de mouvement"
 
 
 msgctxt "Operator"
+msgid "Update All Motion Paths"
+msgstr "Mettre à jour tous les chemins de mouvement"
+
+
+msgctxt "Operator"
 msgid "Sort Elements..."
 msgstr "Trier éléments…"
 
@@ -77505,10 +77562,6 @@ msgstr "Erreur à l’écriture de la frame"
 
 msgid "No valid formats found"
 msgstr "Aucun format valide de trouvé"
-
-
-msgid "Error opening output file"
-msgstr "Erreur à l’ouverture du fichier de sortie"
 
 
 msgid "Render width has to be 720 pixels for DV!"
@@ -81691,7 +81744,7 @@ msgstr "Pas d’objet actif trouvé"
 
 
 msgid "Front Orthographic"
-msgstr "Orthographique de face"
+msgstr "Orthogonale de face"
 
 
 msgid "Front Perspective"
@@ -81699,7 +81752,7 @@ msgstr "Perspective de face"
 
 
 msgid "Back Orthographic"
-msgstr "Orthographique arrière"
+msgstr "Orthogonale arrière"
 
 
 msgid "Back Perspective"
@@ -81707,7 +81760,7 @@ msgstr "Perspective arrière"
 
 
 msgid "Top Orthographic"
-msgstr "Orthographique du dessus"
+msgstr "Orthogonale du dessus"
 
 
 msgid "Top Perspective"
@@ -81715,7 +81768,7 @@ msgstr "Perspective du dessus"
 
 
 msgid "Bottom Orthographic"
-msgstr "Orthographique du dessous"
+msgstr "Orthogonale du dessous"
 
 
 msgid "Bottom Perspective"
@@ -81723,7 +81776,7 @@ msgstr "Perspective du dessous"
 
 
 msgid "Right Orthographic"
-msgstr "Orthographique de droite"
+msgstr "Orthogonale de droite"
 
 
 msgid "Right Perspective"
@@ -81731,7 +81784,7 @@ msgstr "Perspective de droite"
 
 
 msgid "Left Orthographic"
-msgstr "Orthographique de gauche"
+msgstr "Orthogonale de gauche"
 
 
 msgid "Left Perspective"
@@ -81743,7 +81796,7 @@ msgstr "Caméra perspective"
 
 
 msgid "Camera Orthographic"
-msgstr "Caméra orthographique"
+msgstr "Caméra orthogonale"
 
 
 msgid "Camera Panoramic"
