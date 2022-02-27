@@ -2462,7 +2462,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
   /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
-  bool alt_held = (win->eventstate->modifier & KM_ALT != 0); /*bfa - changed alt to modifier & KM_ALT*/
+  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
 
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -2754,7 +2754,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
 {
   /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
-  bool alt_held = (win->eventstate->modifier & KM_ALT != 0); /*bfa - changed from alt to modifier & KM_ALT*/
+  bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
 
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {NULL};
