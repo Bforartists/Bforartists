@@ -173,7 +173,7 @@ class Do:
     # type(self, dxf entity, blender curve data)
 
     def _cubic_bezier_closed(self, ptuple, curve):
-        count = (len(ptuple)-1)/3
+        count = int((len(ptuple) - 1) / 3)
         points = [ptuple[-2]]
         ptuples = ptuple[:-2]
         points += [p for p in ptuples]
@@ -188,7 +188,7 @@ class Do:
             b[i].handle_right = self.proj(points[j + 1])
 
     def _cubic_bezier_open(self, points, curve):
-        count = (len(points) - 1) / 3 + 1
+        count = int((len(points) - 1) / 3 + 1)
         spl = curve.splines.new('BEZIER')
         b = spl.bezier_points
         b.add(count - 1)
