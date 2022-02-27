@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -84245,10 +84245,6 @@ msgstr "프레임 쓰는 중 오류"
 
 msgid "No valid formats found"
 msgstr "올바른 형식을 찾을 수 없음"
-
-
-msgid "Error opening output file"
-msgstr "출력 파일 여는 중 오류"
 
 
 msgid "Render width has to be 720 pixels for DV!"

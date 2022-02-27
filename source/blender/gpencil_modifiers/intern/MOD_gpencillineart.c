@@ -525,7 +525,7 @@ static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_back_face_culling", 0, NULL, ICON_NONE);
+  uiItemR(row, ptr, "use_back_face_culling", 0, IFACE_("Force Backface Culling"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_back_face_culling", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }

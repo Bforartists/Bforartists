@@ -42,6 +42,7 @@ BLACKLIST = set(
         "source/tools/utils_maintenance/clang_format_paths.py",
         "source/tools/utils_maintenance/trailing_space_clean.py",
         "source/tools/utils_maintenance/trailing_space_clean_config.py",
+        "tests/python/bl_keymap_validate.py",
     )
 )
 

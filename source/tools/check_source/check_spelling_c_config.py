@@ -103,6 +103,7 @@ dict_custom = {
     "flushable",
     "formatter",
     "formatters",
+    "glitchy",
     "haptics",
     "highlightable",
     "homogenous",
@@ -246,6 +247,7 @@ dict_custom = {
     "unnormalized",
     "unparameterized",
     "unparsed",
+    "unpause",
     "unpaused"
     "unproject",
     "unregister",
