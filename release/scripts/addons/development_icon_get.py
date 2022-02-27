@@ -453,9 +453,9 @@ class IV_OT_icons_show(bpy.types.Operator):
         self.auto_focusable = True
 
         num_cols = self.get_num_cols(len(pr.popup_icons.filtered_icons))
-        self.width = min(
+        self.width = int(min(
             ui_scale() * (num_cols * ICON_SIZE + POPUP_PADDING),
-            context.window.width - WIN_PADDING)
+            context.window.width - WIN_PADDING))
 
         return context.window_manager.invoke_props_dialog(
             self, width=self.width)
