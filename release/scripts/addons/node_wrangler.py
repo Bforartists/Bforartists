@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 38),
+    "version": (3, 39),
     "blender": (2, 93, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
@@ -1137,6 +1137,22 @@ class NWPrincipledPreferences(bpy.types.PropertyGroup):
         name='Displacement',
         default='displacement displace disp dsp height heightmap',
         description='Naming Components for displacement maps')
+    transmission: StringProperty(
+        name='Transmission',
+        default='transmission transparency',
+        description='Naming Components for transmission maps')
+    emission: StringProperty(
+        name='Emission',
+        default='emission emissive emit',
+        description='Naming Components for emission maps')
+    alpha: StringProperty(
+        name='Alpha',
+        default='alpha opacity',
+        description='Naming Components for alpha maps')
+    ambient_occlusion: StringProperty(
+        name='Ambient Occlusion',
+        default='ao ambient occlusion',
+        description='Naming Components for AO maps')
 
 # Addon prefs
 class NWNodeWrangler(bpy.types.AddonPreferences):
@@ -1198,6 +1214,10 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
             col.prop(tags, "normal")
             col.prop(tags, "bump")
             col.prop(tags, "displacement")
+            col.prop(tags, "transmission")
+            col.prop(tags, "emission")
+            col.prop(tags, "alpha")
+            col.prop(tags, "ambient_occlusion")
 
         box = layout.box()
         col = box.column(align=True)
@@ -3230,6 +3250,10 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         ['Specular', tags.specular.split(' '), None],
         ['Roughness', rough_abbr + gloss_abbr, None],
         ['Normal', normal_abbr + bump_abbr, None],
+        ['Transmission', tags.transmission.split(' '), None],
+        ['Emission', tags.emission.split(' '), None],
+        ['Alpha', tags.alpha.split(' '), None],
+        ['Ambient Occlusion', tags.ambient_occlusion.split(' '), None],
         ]
 
         # Look through texture_types and set value as filename of first matched file
@@ -3266,6 +3290,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         print('\nMatched Textures:')
         texture_nodes = []
         disp_texture = None
+        ao_texture = None
         normal_node = None
         roughness_node = None
         for i, sname in enumerate(socketnames):
@@ -3282,7 +3307,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
                 # Add displacement offset nodes
                 disp_node = nodes.new(type='ShaderNodeDisplacement')
-                disp_node.location = active_node.location + Vector((0, -560))
+                # Align the Displacement node under the active Principled BSDF node
+                disp_node.location = active_node.location + Vector((100, -700))
                 link = links.new(disp_node.inputs[0], disp_texture.outputs[0])
 
                 # TODO Turn on true displacement in the material
@@ -3293,6 +3319,17 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 if output_node:
                     if not output_node[0].inputs[2].is_linked:
                         link = links.new(output_node[0].inputs[2], disp_node.outputs[0])
+
+                continue
+
+            # AMBIENT OCCLUSION TEXTURE
+            if sname[0] == 'Ambient Occlusion':
+                ao_texture = nodes.new(type='ShaderNodeTexImage')
+                img = bpy.data.images.load(path.join(import_path, sname[2]))
+                ao_texture.image = img
+                ao_texture.label = sname[0]
+                if ao_texture.image:
+                    ao_texture.image.colorspace_settings.is_data = True
 
                 continue
 
@@ -3343,7 +3380,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     link = links.new(active_node.inputs[sname[0]], texture_node.outputs[0])
 
                 # Use non-color for all but 'Base Color' Textures
-                if not sname[0] in ['Base Color'] and texture_node.image:
+                if not sname[0] in ['Base Color', 'Emission'] and texture_node.image:
                     texture_node.image.colorspace_settings.is_data = True
 
             else:
@@ -3356,6 +3393,10 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
         if disp_texture:
             texture_nodes.append(disp_texture)
+
+        if ao_texture:
+            # We want the ambient occlusion texture to be the top most texture node
+            texture_nodes.insert(0, ao_texture)
 
         # Alignment
         for i, texture_node in enumerate(texture_nodes):

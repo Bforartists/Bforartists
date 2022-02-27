@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6981,10 +6981,6 @@ msgstr "Błąd zapisu klatki"
 
 msgid "No valid formats found"
 msgstr "Nie odnaleziono poprawnych formatów"
-
-
-msgid "Error opening output file"
-msgstr "Błąd przy otwieraniu pliku docelowego"
 
 
 msgid "Render width has to be 720 pixels for DV!"
