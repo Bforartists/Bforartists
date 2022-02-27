@@ -14334,7 +14334,7 @@ static int node_type_to_icon(int type)
       icon = ICON_DELETE;
       break;
     case GEO_NODE_DUPLICATE_ELEMENTS:
-      icon = ICON_DELETE;
+      icon = ICON_DUPLICATE;
       break;
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       icon = ICON_POINT_DISTRIBUTE;
@@ -14397,7 +14397,7 @@ static int node_type_to_icon(int type)
       icon = ICON_FACEREGIONS;
       break;
     case GEO_NODE_INPUT_MESH_FACE_IS_PLANAR:
-      icon = ICON_DELETE;
+      icon = ICON_PLANAR;
       break;
     case GEO_NODE_INPUT_MESH_FACE_NEIGHBORS:
       icon = ICON_FACE_NEIGHBORS;
