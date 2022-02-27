@@ -3744,7 +3744,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDeleteGeometry"
 
-            props = col.operator("node.add_node", text=" Geometry to Instance    ", icon = "GEOMETRY_INSTANCE")
+            props = col.operator("node.add_node", text=" Duplicate Geometry ", icon = "DUPLICATE")
+            props.use_transform = True
+            props.type = "GeometryNodeDuplicateElements"
+
+            props = col.operator("node.add_node", text=" Geometry to Instance", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeGeometryToInstance"
 
@@ -3806,6 +3810,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "DELETE")
             props.use_transform = True
             props.type = "GeometryNodeDeleteGeometry"
+
+            props = flow.operator("node.add_node", text = "", icon = "DUPLICATE")
+            props.use_transform = True
+            props.type = "GeometryNodeDuplicateElements"
 
             props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
             props.use_transform = True
@@ -4287,6 +4295,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
 
+            props = col.operator("node.add_node", text=" Face is Planar           ", icon = "PLANAR")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceIsPlanar"
+
             props = col.operator("node.add_node", text=" Face Neighbors        ", icon = "FACE_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceNeighbors"
@@ -4373,6 +4385,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = flow.operator("node.add_node", text = "", icon = "PLANAR")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMeshFaceIsPlanar"
 
             props = flow.operator("node.add_node", text = "", icon = "EDGE_ANGLE")
             props.use_transform = True
