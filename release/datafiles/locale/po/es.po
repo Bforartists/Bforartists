@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'f0e32ef4ff34')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -308,6 +308,14 @@ msgstr "Distribuir en la memoria de dispositivos"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "Permite tener más espacio en donde colocar escenas grandes, distribuyendo la memoria de varios dispositivos interconectados (p.ej: a través de NVLink) en vez de duplicarla"
+
+
+msgid "MetalRT (Experimental)"
+msgstr "MetalRT (Experimental)"
+
+
+msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
+msgstr "MetalRT para trazado de rayos usa menos memoria en escenas que hagan un uso extensivo de curvas, y puede brindar un mejor rendimiento en algunos casos específicos. Sin embargo este soporte es experimental y algunas escenas podrían procesarse de forma incorrecta"
 
 
 msgid "Fribidi Library"
@@ -23291,6 +23299,10 @@ msgid "Refraction Depth"
 msgstr "Profundidad refracción"
 
 
+msgid "Approximate the thickness of the object to compute two refraction events (0 is disabled)"
+msgstr "Aproxima el grosor del objeto para calcular dos eventos de refracción (0 para deshabilitar)"
+
+
 msgid "Roughness"
 msgstr "Rugosidad"
 
@@ -23321,6 +23333,10 @@ msgstr "Usar un ruido para difuminar la visibilidad binaria y luego un filtro pa
 
 msgid "Show Backface"
 msgstr "Mostrar cara trasera"
+
+
+msgid "Render multiple transparent layers (may introduce transparency sorting problems)"
+msgstr "Procesa múltiples capas transparentes (puede introducir errores de ordenamiento de transparencias)"
 
 
 msgid "Specular Color"
@@ -51020,6 +51036,10 @@ msgstr "Limitar a rango de reproducción"
 
 msgid "Clips animations to selected playback range"
 msgstr "Recorta las animaciones exportadas al rango de reproducción seleccionado"
+
+
+msgid "Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web applications due to the smaller file size. Alternatively they can be omitted if they are not needed"
+msgstr "Formato de salida de imágenes. PNG no produce pérdida y por lo general es el preferido, pero es posible que se prefiera JPEG para aplicaciones web debido a su menor tamaño de archivo. Alternativamente podrán ser omitidos si no fueran necesarios"
 
 
 msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
@@ -98703,10 +98723,6 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "y un controlador AMD Radeon Pro 21.Q4 o más nuevo"
 
 
-msgid "Requires Apple Silicon and macOS 12.0 or newer"
-msgstr "Requiere Apple Silicon y macOS 12.0 o más nuevo"
-
-
 msgid "Noise Threshold"
 msgstr "Umbral de ruido"
 
@@ -107039,10 +107055,6 @@ msgstr "Error al guardar fotograma"
 
 msgid "No valid formats found"
 msgstr "No se encontraron formatos válidos"
-
-
-msgid "Error opening output file"
-msgstr "Error abriendo archivo de salida"
 
 
 msgid "Render width has to be 720 pixels for DV!"
@@ -117070,6 +117082,10 @@ msgstr "Posición original"
 
 msgid "The target mesh must have faces"
 msgstr "La malla objetivo debe contener caras"
+
+
+msgid "This node uses legacy behavior with regards to attributes on instances. The behavior can be changed in the node properties in the side bar. In most cases the new behavior is the same for files created in Blender 3.0"
+msgstr "Este nodo usa un comportamiento antiguo con respecto a atributos en instancias. El comportamiento puede ser cambiado en las propiedades del nodo, en el panel lateral. En la mayoría de los casos, el nuevo comportamiento es el mismo para los archivos creados en Blender 3.0"
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"

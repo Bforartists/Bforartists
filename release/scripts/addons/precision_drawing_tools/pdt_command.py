@@ -1043,7 +1043,8 @@ def fillet_geometry(context, pg, mode, obj, bm, verts, values):
     # Note that passing an empty parameter results in that parameter being seen as "0"
     # _offset <= 0 is ignored since a bevel/fillet radius must be > 0 to make sense
     _offset = float(values[0])
-    _segments = float(values[1])
+    # Force _segments to an integer (bug fix T95442)
+    _segments = int(float(values[1]))
     if _segments < 1:
         _segments = 1   # This is a single, flat segment (ignores profile)
     _profile = float(values[2])

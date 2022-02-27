@@ -182,7 +182,10 @@ class ImportData(Operator):
             f = open(os.path.join(getPresetpaths()[0], self.filename), 'r')
         except (FileNotFoundError, IOError):
             f = open(os.path.join(getPresetpaths()[1], self.filename), 'r')
-        settings = f.readline()
+        # Find the first non-comment, non-blank line, this must contain preset text (all on one line).
+        for settings in f:
+            if settings and (not settings.startswith("#")):
+                break
         f.close()
         # print(settings)
         settings = ast.literal_eval(settings)
