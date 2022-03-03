@@ -90,6 +90,10 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
         slot = context.material_slot
         space = context.space_data
 
+        #bfa - no remove in edit mode
+        obj = context.active_object
+        object_mode = 'OBJECT' if obj is None else obj.mode
+
         if ob:
             is_sortable = len(ob.material_slots) > 1
             rows = 3
@@ -102,7 +106,11 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
 
             col = row.column(align=True)
             col.operator("object.material_slot_add", icon='ADD', text="")
-            col.operator("object.material_slot_remove", icon='REMOVE', text="")
+
+            #bfa - no remove in edit mode
+            sub = col.column()
+            sub.active = (object_mode != 'EDIT')
+            sub.operator("object.material_slot_remove", icon='REMOVE', text="")
 
             col.separator()
 
