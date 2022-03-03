@@ -311,7 +311,6 @@ class TOOLBAR_MT_file(Menu):
 
             row = layout.row(align=True)
             row.operator("wm.revert_mainfile", text="", icon='FILE_REFRESH')
-            row.menu("TOPBAR_MT_file_recover", text = "", icon  = "DOWNARROW_HLT")
             row.operator("wm.recover_last_session", text="", icon='RECOVER_LAST')
             row.operator("wm.recover_auto_save", text="", icon='RECOVER_AUTO')
 
