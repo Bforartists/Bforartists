@@ -4,7 +4,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (3, 2, 7),
+    "version": (3, 2, 9),
     'blender': (3, 1, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -879,6 +879,8 @@ class GLTF_PT_export_animation_export(bpy.types.Panel):
         row = layout.row()
         row.active = operator.export_force_sampling
         row.prop(operator, 'export_def_bones')
+        if operator.export_force_sampling is False and operator.export_def_bones is True:
+            layout.label(text="Export only deformation bones is not possible when not sampling animation")
 
 
 class GLTF_PT_export_animation_shapekeys(bpy.types.Panel):

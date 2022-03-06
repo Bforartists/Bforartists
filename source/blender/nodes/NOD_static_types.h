@@ -331,7 +331,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER, 0, "CURVE_PRIMI
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL, def_geo_curve_primitive_quadrilateral, "CURVE_PRIMITIVE_QUADRILATERAL", CurvePrimitiveQuadrilateral, "Quadrilateral", "Add a Curve Quadrilateral node\nAllows you to create various geometric shaped curves")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_SPIRAL, 0, "CURVE_PRIMITIVE_SPIRAL", CurveSpiral, "Curve Spiral", "Add a Curve Spiral\nCreates a curve in the shape of a spiral")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_STAR, 0, "CURVE_PRIMITIVE_STAR", CurveStar, "Star", "Add a Star\nCreates a curve in the shape of a star")
-DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLES, def_geo_curve_set_handles, "CURVE_SET_HANDLES", CurveSetHandles, "Set Handle Type", "Add a Curve Set Handles Geometry node\nSet the curve handle type")
+DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLE_TYPE, def_geo_curve_set_handle_type, "CURVE_SET_HANDLES", CurveSetHandles, "Set Handle Type", "Add a Curve Set Handles Geometry node\nSet the curve handle type")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER, 0, "SPLINE_PARAMETER", SplineParameter, "Spline Parameter", "Add a Spline Paramenter Geometry node\nAdds extra curve parameters")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "CURVE_SPLINE_TYPE", CurveSplineType, "Set Spline Type", "Add a Curve Spline Type Geometry node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "Curve to Mesh", "Add a Curve to Mesh Geometry node\nConverts a curve object to a mesh object")

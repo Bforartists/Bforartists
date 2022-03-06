@@ -10062,7 +10062,7 @@ static void def_geo_curve_spline_type(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
 
-static void def_geo_curve_set_handles(StructRNA *srna)
+static void def_geo_curve_set_handle_type(StructRNA *srna)
 {
   PropertyRNA *prop;
 
@@ -14315,7 +14315,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PRIMITIVE_STAR:
       icon = ICON_CURVE_STAR;
       break;
-    case GEO_NODE_CURVE_SET_HANDLES:
+    case GEO_NODE_CURVE_SET_HANDLE_TYPE:
       icon = ICON_HANDLE_AUTO;
       break;
     case GEO_NODE_CURVE_SPLINE_PARAMETER:

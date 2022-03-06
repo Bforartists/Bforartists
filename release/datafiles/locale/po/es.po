@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3516,14 +3516,6 @@ msgstr "Curva intensidad"
 
 msgid "Curve used for the strength"
 msgstr "Curva usada para la intensidad"
-
-
-msgid "Dilate"
-msgstr "Dilatar"
-
-
-msgid "Number of pixels to dilate fill area"
-msgstr "Cantidad de píxeles a dilatar el relleno del área"
 
 
 msgid "Direction"
@@ -51054,6 +51046,10 @@ msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) 
 msgstr "Guarda las imágenes como JPEG. (Sin embargo las que requieran alfa se guardarán como PNG). Nótese que se podrá producir una pérdida de calidad"
 
 
+msgid "Don't export images"
+msgstr "No exportar imágenes"
+
+
 msgid "Keep original"
 msgstr "Conservar original"
 
@@ -64532,20 +64528,8 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Hace que todos los usuarios de los bloques de datos seleccionados usen en su lugar al bloque de datos actual (el resaltado)"
 
 
-msgid "Make Library Override"
-msgstr "Redefinir biblioteca"
-
-
-msgid "Make a local override of this linked data-block"
-msgstr "Hace una redefinición local de este bloque de datos vinculado a una biblioteca"
-
-
 msgid "Make Library Override Hierarchy"
 msgstr "Redefinir jerarquía de biblioteca"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "Hace una redefinición local de este bloque de datos vinculado a una biblioteca y de su jerarquía de dependencias"
 
 
 msgid "Convert Proxy to Override"
@@ -98723,6 +98707,14 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "y un controlador AMD Radeon Pro 21.Q4 o más nuevo"
 
 
+msgid "Requires Apple Silicon with macOS 12.2 or newer"
+msgstr "Requiere Apple Silicon con macOS 12.2 o más nuevo"
+
+
+msgid "or AMD with macOS 12.3 or newer"
+msgstr "o AMD con macOS 12.3 o más nuevo"
+
+
 msgid "Noise Threshold"
 msgstr "Umbral de ruido"
 
@@ -107057,6 +107049,10 @@ msgid "No valid formats found"
 msgstr "No se encontraron formatos válidos"
 
 
+msgid "Can't allocate ffmpeg format context"
+msgstr "No es posible asignar el contexto del formato FFmpeg"
+
+
 msgid "Render width has to be 720 pixels for DV!"
 msgstr "El ancho de la imagen procesada debe ser de 720 píxeles para DV!"
 
@@ -107119,6 +107115,10 @@ msgstr "¡El ID %s ya no se encuentra en la biblioteca %s!"
 
 msgid "ID %s uses shapekey %s, but its 'from' pointer is invalid (%p), fixing..."
 msgstr "El ID %s usa la Forma clave %s, pero su puntero de 'origen' (%p) es inválido, se corregirá..."
+
+
+msgid "Shapekey %s has an invalid 'from' pointer (%p), it will be deleted"
+msgstr "La Forma clave %s contiene un puntero 'desde' inválido (%p), será borrada"
 
 
 msgid "insufficient content"
@@ -108163,6 +108163,10 @@ msgstr "Superficie"
 
 msgid "Unable to access 3D viewport"
 msgstr "No es posible acceder a la vista 3D"
+
+
+msgid "The \"stroke\" cannot be empty"
+msgstr "El \"trazo\" no puede estar vacío"
 
 
 msgid "Unable to access depth buffer, using view plane"

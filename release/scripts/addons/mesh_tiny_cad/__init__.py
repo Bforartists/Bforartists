@@ -9,7 +9,7 @@ bl_info = {
     "version": (1, 3, 2),
     "blender": (2, 80, 0),
     "location": "View3D > EditMode Context Menu",
-    "doc_url": "http://zeffii.github.io/mesh_tiny_cad/",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/tinycad.html",
     "tracker_url": "https://github.com/zeffii/mesh_tiny_cad/issues",
     "category": "Mesh",
 }
