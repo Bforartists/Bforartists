@@ -17,12 +17,12 @@
 bl_info = {
     "name": "Tissue",
     "author": "Alessandro Zomparelli (Co-de-iT)",
-    "version": (0, 3, 25),
-    "blender": (2, 80, 0),
-    "location": "Sidebar > Edit Tab",
+    "version": (0, 3, 52),
+    "blender": (2, 93, 0),
+    "location": "",
     "description": "Tools for Computational Design",
     "warning": "",
-    "doc_url": "https://github.com/alessandro-zomparelli/tissue/wiki",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/tissue.html",
     "tracker_url": "https://github.com/alessandro-zomparelli/tissue/issues",
     "category": "Mesh",
 }
@@ -31,59 +31,107 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(tessellate_numpy)
-    importlib.reload(colors_groups_exchanger)
+    importlib.reload(tissue_properties)
+    importlib.reload(weight_tools)
     importlib.reload(dual_mesh)
     importlib.reload(lattice)
     importlib.reload(uv_to_mesh)
     importlib.reload(utils)
+    importlib.reload(config)
+    importlib.reload(material_tools)
+    importlib.reload(curves_tools)
+    importlib.reload(polyhedra)
 
 else:
     from . import tessellate_numpy
-    from . import colors_groups_exchanger
+    from . import tissue_properties
+    from . import weight_tools
     from . import dual_mesh
     from . import lattice
     from . import uv_to_mesh
     from . import utils
+    from . import config
+    from . import material_tools
+    from . import curves_tools
+    from . import polyhedra
 
 import bpy
 from bpy.props import PointerProperty, CollectionProperty, BoolProperty
 
-classes = (
-    tessellate_numpy.tissue_tessellate_prop,
-    tessellate_numpy.tessellate,
-    tessellate_numpy.update_tessellate,
-    tessellate_numpy.TISSUE_PT_tessellate,
-    tessellate_numpy.rotate_face,
-    tessellate_numpy.TISSUE_PT_tessellate_object,
 
-    colors_groups_exchanger.face_area_to_vertex_groups,
-    colors_groups_exchanger.vertex_colors_to_vertex_groups,
-    colors_groups_exchanger.vertex_group_to_vertex_colors,
-    colors_groups_exchanger.TISSUE_PT_weight,
-    colors_groups_exchanger.TISSUE_PT_color,
-    colors_groups_exchanger.weight_contour_curves,
-    colors_groups_exchanger.weight_contour_mask,
-    colors_groups_exchanger.weight_contour_displace,
-    colors_groups_exchanger.harmonic_weight,
-    colors_groups_exchanger.edges_deformation,
-    colors_groups_exchanger.edges_bending,
-    colors_groups_exchanger.weight_laplacian,
-    colors_groups_exchanger.reaction_diffusion,
-    colors_groups_exchanger.start_reaction_diffusion,
-    colors_groups_exchanger.TISSUE_PT_reaction_diffusion,
-    colors_groups_exchanger.reset_reaction_diffusion_weight,
-    colors_groups_exchanger.formula_prop,
-    colors_groups_exchanger.reaction_diffusion_prop,
-    colors_groups_exchanger.weight_formula,
-    colors_groups_exchanger.curvature_to_vertex_groups,
-    colors_groups_exchanger.weight_formula_wiki,
+classes = (
+    config.tissuePreferences,
+    config.tissue_install_numba,
+
+    tissue_properties.tissue_prop,
+    tissue_properties.tissue_tessellate_prop,
+    tessellate_numpy.tissue_tessellate,
+    tessellate_numpy.tissue_update_tessellate,
+    tessellate_numpy.tissue_update_tessellate_deps,
+    tessellate_numpy.TISSUE_PT_tessellate,
+    tessellate_numpy.tissue_rotate_face_left,
+    tessellate_numpy.tissue_rotate_face_right,
+    tessellate_numpy.tissue_rotate_face_flip,
+    tessellate_numpy.TISSUE_PT_tessellate_object,
+    tessellate_numpy.TISSUE_PT_tessellate_frame,
+    tessellate_numpy.TISSUE_PT_tessellate_component,
+    tessellate_numpy.TISSUE_PT_tessellate_thickness,
+    tessellate_numpy.TISSUE_PT_tessellate_direction,
+    tessellate_numpy.TISSUE_PT_tessellate_options,
+    tessellate_numpy.TISSUE_PT_tessellate_coordinates,
+    tessellate_numpy.TISSUE_PT_tessellate_rotation,
+    tessellate_numpy.TISSUE_PT_tessellate_selective,
+    tessellate_numpy.TISSUE_PT_tessellate_morphing,
+    tessellate_numpy.TISSUE_PT_tessellate_iterations,
+    tessellate_numpy.tissue_render_animation,
+
+    weight_tools.face_area_to_vertex_groups,
+    weight_tools.vertex_colors_to_vertex_groups,
+    weight_tools.vertex_group_to_vertex_colors,
+    weight_tools.vertex_group_to_uv,
+    weight_tools.TISSUE_PT_weight,
+    weight_tools.TISSUE_PT_color,
+    weight_tools.weight_contour_curves,
+    weight_tools.tissue_weight_contour_curves_pattern,
+    weight_tools.weight_contour_mask,
+    weight_tools.weight_contour_displace,
+    weight_tools.harmonic_weight,
+    weight_tools.edges_deformation,
+    weight_tools.edges_bending,
+    weight_tools.weight_laplacian,
+    weight_tools.reaction_diffusion,
+    weight_tools.start_reaction_diffusion,
+    weight_tools.TISSUE_PT_reaction_diffusion,
+    weight_tools.TISSUE_PT_reaction_diffusion_weight,
+    weight_tools.reset_reaction_diffusion_weight,
+    weight_tools.formula_prop,
+    weight_tools.reaction_diffusion_prop,
+    weight_tools.weight_formula,
+    weight_tools.update_weight_formula,
+    weight_tools.curvature_to_vertex_groups,
+    weight_tools.weight_formula_wiki,
+    weight_tools.tissue_weight_distance,
+    weight_tools.random_weight,
+    weight_tools.bake_reaction_diffusion,
+    weight_tools.reaction_diffusion_free_data,
+    weight_tools.tissue_weight_streamlines,
 
     dual_mesh.dual_mesh,
     dual_mesh.dual_mesh_tessellated,
 
     lattice.lattice_along_surface,
 
-    uv_to_mesh.uv_to_mesh
+    material_tools.random_materials,
+    material_tools.weight_to_materials,
+
+    curves_tools.tissue_to_curve_prop,
+    curves_tools.tissue_convert_to_curve,
+    curves_tools.tissue_convert_to_curve_update,
+    curves_tools.TISSUE_PT_convert_to_curve,
+
+    uv_to_mesh.uv_to_mesh,
+
+    polyhedra.polyhedra_wireframe
 )
 
 def register():
@@ -91,28 +139,29 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     #bpy.utils.register_module(__name__)
+    bpy.types.Object.tissue = PointerProperty(
+                                    type=tissue_properties.tissue_prop
+                                    )
     bpy.types.Object.tissue_tessellate = PointerProperty(
-                                            type=tessellate_numpy.tissue_tessellate_prop
+                                            type=tissue_properties.tissue_tessellate_prop
+                                            )
+    bpy.types.Object.tissue_to_curve = PointerProperty(
+                                            type=curves_tools.tissue_to_curve_prop
                                             )
     bpy.types.Object.formula_settings = CollectionProperty(
-                                            type=colors_groups_exchanger.formula_prop
+                                            type=weight_tools.formula_prop
                                             )
     bpy.types.Object.reaction_diffusion_settings = PointerProperty(
-                        type=colors_groups_exchanger.reaction_diffusion_prop
+                        type=weight_tools.reaction_diffusion_prop
                         )
-    # colors_groups_exchanger
-    bpy.app.handlers.frame_change_post.append(colors_groups_exchanger.reaction_diffusion_def)
+    # weight_tools
+    bpy.app.handlers.frame_change_post.append(weight_tools.reaction_diffusion_def)
     #bpy.app.handlers.frame_change_post.append(tessellate_numpy.anim_tessellate)
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    #tessellate_numpy.unregister()
-    #colors_groups_exchanger.unregister()
-    #dual_mesh.unregister()
-    #lattice.unregister()
-    #uv_to_mesh.unregister()
 
     del bpy.types.Object.tissue_tessellate
 

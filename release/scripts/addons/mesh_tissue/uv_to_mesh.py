@@ -12,7 +12,7 @@
 #                                                                              #
 # ############################################################################ #
 
-import bpy
+import bpy, bmesh
 import math
 from bpy.types import Operator
 from bpy.props import BoolProperty
@@ -48,48 +48,45 @@ class uv_to_mesh(Operator):
             )
 
     def execute(self, context):
+        if context.mode == 'EDIT_MESH': on_selection = True
+        else: on_selection = False
+
         bpy.ops.object.mode_set(mode='OBJECT')
-        for o in bpy.data.objects and bpy.context.view_layer.objects:
-            o.select_set(False)
-        bpy.context.object.select_set(True)
+        ob0 = context.object
+        for o in bpy.context.view_layer.objects: o.select_set(False)
+        ob0.select_set(True)
 
-        if self.apply_modifiers:
-            bpy.ops.object.duplicate_move()
-            bpy.ops.object.convert(target='MESH')
-        ob0 = bpy.context.object
-
-#        me0 = ob0.to_mesh(bpy.context.depsgraph, apply_modifiers=self.apply_modifiers)
-        #if self.apply_modifiers: me0 = simple_to_mesh(ob0)
-        #else: me0 = ob0.data.copy()
         name0 = ob0.name
         ob0 = convert_object_to_mesh(ob0, apply_modifiers=self.apply_modifiers, preserve_status=False)
         me0 = ob0.data
         area = 0
-
         verts = []
         faces = []
         face_materials = []
-        for face in me0.polygons:
+        if on_selection: polygons = [f for f in me0.polygons if f.select]
+        else: polygons = me0.polygons
+        bm = bmesh.new()
+
+        for face in polygons:
             area += face.area
             uv_face = []
             store = False
-            try:
+            if len(me0.uv_layers) > 0:
+                verts = []
                 for loop in face.loop_indices:
                     uv = me0.uv_layers.active.data[loop].uv
                     if uv.x != 0 and uv.y != 0:
                         store = True
-                    new_vert = Vector((uv.x, uv.y, 0))
+                    new_vert = bm.verts.new((uv.x, uv.y, 0))
                     verts.append(new_vert)
-                    uv_face.append(loop)
                 if store:
-                    faces.append(uv_face)
-                    face_materials.append(face.material_index)
-            except:
+                    new_face = bm.faces.new(verts)
+                    new_face.material_index = face.material_index
+            else:
                 self.report({'ERROR'}, "Missing UV Map")
-
                 return {'CANCELLED'}
 
-        name = name0 + 'UV'
+        name = name0 + '_UV'
         # Create mesh and object
         me = bpy.data.meshes.new(name + 'Mesh')
         ob = bpy.data.objects.new(name, me)
@@ -101,9 +98,10 @@ class uv_to_mesh(Operator):
         ob.select_set(True)
 
         # Create mesh from given verts, faces.
-        me.from_pydata(verts, [], faces)
+        bm.to_mesh(me)
         # Update mesh with new data
         me.update()
+
         if self.auto_scale:
             new_area = 0
             for p in me.polygons:
@@ -111,7 +109,6 @@ class uv_to_mesh(Operator):
             if new_area == 0:
                 self.report({'ERROR'}, "Impossible to generate mesh from UV")
                 bpy.data.objects.remove(ob0)
-
                 return {'CANCELLED'}
 
         # VERTEX GROUPS
@@ -119,7 +116,7 @@ class uv_to_mesh(Operator):
             for group in ob0.vertex_groups:
                 index = group.index
                 ob.vertex_groups.new(name=group.name)
-                for p in me0.polygons:
+                for p in polygons:
                     for vert, loop in zip(p.vertices, p.loop_indices):
                         try:
                             ob.vertex_groups[index].add([loop], group.weight(vert), 'REPLACE')
@@ -138,25 +135,12 @@ class uv_to_mesh(Operator):
 
         # MATERIALS
         if self.materials:
-            try:
+            if len(ob0.material_slots) > 0:
                 # assign old material
                 uv_materials = [slot.material for slot in ob0.material_slots]
                 for i in range(len(uv_materials)):
                     bpy.ops.object.material_slot_add()
                     bpy.context.object.material_slots[i].material = uv_materials[i]
-                for i in range(len(ob.data.polygons)):
-                    ob.data.polygons[i].material_index = face_materials[i]
-            except:
-                pass
-        '''
-        if self.apply_modifiers:
-            bpy.ops.object.mode_set(mode='OBJECT')
-            ob.select_set(False)
-            ob0.select_set(True)
-            bpy.ops.object.delete(use_global=False)
-            ob.select_set(True)
-            bpy.context.view_layer.objects.active = ob
-        '''
 
         bpy.data.objects.remove(ob0)
         bpy.data.meshes.remove(me0)

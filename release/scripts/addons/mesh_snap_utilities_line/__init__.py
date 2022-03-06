@@ -10,7 +10,7 @@ bl_info = {
     "blender": (3, 0, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
-    "doc_url" : "https://docs.blender.org/manual/en/latest/addons/mesh/snap_utilities_line.html",
+    "doc_url" : "{BLENDER_MANUAL_URL}/addons/mesh/snap_utilities_line.html",
     "category": "Mesh",
 }
 

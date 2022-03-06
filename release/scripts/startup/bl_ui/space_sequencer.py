@@ -130,7 +130,7 @@ class SEQUENCER_HT_tool_header(Header):
     bl_region_type = 'TOOL_HEADER'
 
     def draw(self, context):
-        layout = self.layout
+        # layout = self.layout
 
         self.draw_tool_settings(context)
 
@@ -213,7 +213,6 @@ class SEQUENCER_PT_gizmo_display(Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
         st = context.space_data
 
         col = layout.column()
@@ -575,7 +574,7 @@ class SEQUENCER_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
         st = _context.space_data
-        has_sequencer, has_preview = _space_view_types(st)
+        has_sequencer, _has_preview = _space_view_types(st)
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -917,7 +916,7 @@ class SEQUENCER_MT_strip(Menu):
     def draw(self, context):
         layout = self.layout
         st = context.space_data
-        has_sequencer, has_preview = _space_view_types(st)
+        has_sequencer, _has_preview = _space_view_types(st)
 
         layout.menu("SEQUENCER_MT_strip_transform")
         layout.separator()
@@ -1167,7 +1166,6 @@ class SEQUENCER_MT_pivot_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        tool_settings = context.tool_settings
         sequencer_tool_settings = context.tool_settings.sequencer_tool_settings
 
         pie.prop_enum(sequencer_tool_settings, "pivot_point", value='CENTER')
@@ -1733,7 +1731,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
         layout.use_property_decorate = False
         layout.active = not strip.mute
 
-        layout.template_ID(strip, "scene", text="Scene")
+        layout.template_ID(strip, "scene", text="Scene", new="scene.new_sequencer")
         layout.prop(strip, "scene_input", text="Input")
 
         if strip.scene_input == 'CAMERA':

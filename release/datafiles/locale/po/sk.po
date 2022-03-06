@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-02-15 10:29+0100\n"
+"PO-Revision-Date: 2022-02-22 16:10+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -3518,14 +3518,6 @@ msgstr "Krivka sily"
 
 msgid "Curve used for the strength"
 msgstr "Krivka používaná na silu"
-
-
-msgid "Dilate"
-msgstr "Dilatácia"
-
-
-msgid "Number of pixels to dilate fill area"
-msgstr "Počet pixelov na rozšírenie oblasti výplne"
 
 
 msgid "Direction"
@@ -51056,6 +51048,10 @@ msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) 
 msgstr "Uloží obrázky vo formáte JPEG. (Obrázky, ktoré potrebujú alfa, sa však uložia ako PNG.) Uvedomte si možnú stratu kvality"
 
 
+msgid "Don't export images"
+msgstr "Neexportovať obrázky"
+
+
 msgid "Keep original"
 msgstr "Zachovať originál"
 
@@ -64534,20 +64530,8 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Aby všetci používatelia vybraných blokov údajov použili namiesto jedného aktuálneho (kliknutie)"
 
 
-msgid "Make Library Override"
-msgstr "Vytvoriť prepis knižnice"
-
-
-msgid "Make a local override of this linked data-block"
-msgstr "Vytvorí lokálny prepis tohto prepojeného bloku údajov"
-
-
 msgid "Make Library Override Hierarchy"
 msgstr "Vytvoriť hierarchiu prepisov knižnice"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "Vytvorí lokálny prepis tohto prepojeného bloku údajov a jeho hierarchie závislostí"
 
 
 msgid "Convert Proxy to Override"
@@ -83065,7 +83049,7 @@ msgstr "Mnohočlenový objektív rybie oko"
 
 
 msgid "Defines the lens projection as polynomial to allow real world camera lenses to be mimicked"
-msgstr "Definuje premietanie objektívu ako mnohočlenové, aby bolo možné napodobniť objektívy kamier v reálnom svete."
+msgstr "Definuje premietanie objektívu ako mnohočlenové, aby bolo možné napodobniť objektívy kamier v reálnom svete"
 
 
 msgid "Form of hair"
@@ -98632,7 +98616,7 @@ msgstr "Žiadne vybrané kľúče, prilepenie cez rozsah scény"
 
 
 msgid "Clipboard does not contain a valid matrix"
-msgstr "Schránka neobsahuje platnú matricu."
+msgstr "Schránka neobsahuje platnú matricu"
 
 
 msgid "This mode requires auto-keying to work properly"
@@ -98719,6 +98703,14 @@ msgstr "Vyžaduje diskrétny grafický procesor AMD s architektúrou RDNA"
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "a ovládač AMD Radeon Pro 21.Q4 alebo novší"
+
+
+msgid "Requires Apple Silicon with macOS 12.2 or newer"
+msgstr "Vyžaduje Apple Silicon so systémom macOS 12.2 alebo novším"
+
+
+msgid "or AMD with macOS 12.3 or newer"
+msgstr "alebo AMD so systémom macOS 12.3 alebo novším"
 
 
 msgid "Noise Threshold"
@@ -107051,6 +107043,10 @@ msgid "No valid formats found"
 msgstr "Nenašli sa žiadne platné formáty"
 
 
+msgid "Can't allocate ffmpeg format context"
+msgstr "Nemožno prideliť kontext formátu ffmpeg"
+
+
 msgid "Render width has to be 720 pixels for DV!"
 msgstr "Šírka prekreslenia musí byť 720 pixelov pre DV!"
 
@@ -107113,6 +107109,10 @@ msgstr "Identifikátor %s sa nenašiel kdekoľvek v knižnici %s!"
 
 msgid "ID %s uses shapekey %s, but its 'from' pointer is invalid (%p), fixing..."
 msgstr "Identifikátor %s používa kľúčový tvar %s, ale ukazovateľ 'od' je neplatný (%p), upevnenie..."
+
+
+msgid "Shapekey %s has an invalid 'from' pointer (%p), it will be deleted"
+msgstr "Kľúčový tvar %s má neplatný ukazovateľ 'z' (%p), bude odstránený"
 
 
 msgid "insufficient content"
@@ -108157,6 +108157,10 @@ msgstr "Povrch"
 
 msgid "Unable to access 3D viewport"
 msgstr "Nedá sa získať prístup k 3D záberu"
+
+
+msgid "The \"stroke\" cannot be empty"
+msgstr "\"Ťah\" nemôže byť prázdny"
 
 
 msgid "Unable to access depth buffer, using view plane"
