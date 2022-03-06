@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3272,14 +3272,6 @@ msgstr "Courbe de force"
 
 msgid "Curve used for the strength"
 msgstr "Courbe utilisée pour la force"
-
-
-msgid "Dilate"
-msgstr "Dilater"
-
-
-msgid "Number of pixels to dilate fill area"
-msgstr "Nombre de pixels à utiliser pour dilater la zone remplie"
 
 
 msgid "Direction"
@@ -66989,6 +66981,14 @@ msgid "Override the scenes active camera"
 msgstr "Remplacer la caméra active de la scène"
 
 
+msgid "Use Annotations"
+msgstr "Utiliser annotations"
+
+
+msgid "Show Annotations in OpenGL previews"
+msgstr "Afficher les annotations dans les prévisualisations OpenGL"
+
+
 msgid "Sound Sequence"
 msgstr "Séquence son"
 
@@ -67363,6 +67363,14 @@ msgstr "Transformation de séquence"
 
 msgid "Transform parameters for a sequence strip"
 msgstr "Paramètres de transformation pour une bande de séquence"
+
+
+msgid "Show Annotation"
+msgstr "Afficher annotation"
+
+
+msgid "Show annotations for this view"
+msgstr "Afficher les annotations pour cette vue"
 
 
 msgid "Show Metadata"
@@ -69166,6 +69174,10 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Type de vue du séquenceur (séquenceur, prévisualisation ou les deux)"
 
 
+msgid "Context Path"
+msgstr "Chemin du contexte"
+
+
 msgid "Space Text Editor"
 msgstr "Espace de l’éditeur de texte"
 
@@ -69464,6 +69476,22 @@ msgstr "Afficher superpositions"
 
 msgid "Get the node tree path as a string"
 msgstr "Obtenir le chemin d’arborescence du nœud dans une chaîne de caractères"
+
+
+msgid "Display breadcrumbs for the editor's context"
+msgstr "Afficher le fil d'Ariane pour le contexte de l'éditeur"
+
+
+msgid "Show Timing"
+msgstr "Afficher timing"
+
+
+msgid "Display each node's last execution time"
+msgstr "Afficher le temps d'exécution de chaque nœud"
+
+
+msgid "Color node links based on their connected sockets"
+msgstr "Colorer les liens des nœuds en fonction du connecteur"
 
 
 msgid "Space UV Editor"
@@ -75052,6 +75080,10 @@ msgstr "Renommer…"
 msgctxt "Operator"
 msgid "Fit"
 msgstr "Ajuster"
+
+
+msgid "Wire Colors"
+msgstr "Câbles colorés"
 
 
 msgctxt "Operator"

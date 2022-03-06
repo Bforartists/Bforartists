@@ -79,7 +79,7 @@ bl_info = {
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",
     "warning": "",
-    "doc_url": "https://pablovazquez.art/amaranth",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/amaranth.html",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Interface",
 }
