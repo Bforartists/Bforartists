@@ -129,13 +129,13 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
-                col.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
+                col.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
+                col.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
                 col.operator_context = 'INVOKE_DEFAULT'
 
                 col.separator()
 
-                col.operator("transform.shear", icon = 'SHEAR')
+                col.operator("transform.shear", text = "", icon = 'SHEAR')
 
 
 class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
