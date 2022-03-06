@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3519,14 +3519,6 @@ msgstr "曲线强度"
 
 msgid "Curve used for the strength"
 msgstr "用于强度的曲线"
-
-
-msgid "Dilate"
-msgstr "膨胀"
-
-
-msgid "Number of pixels to dilate fill area"
-msgstr "填充面积膨胀的像素数"
 
 
 msgid "Direction"
@@ -51057,6 +51049,10 @@ msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) 
 msgstr "将图像另存为 JPEG。(需要alpha 的图像保存为 PNG。)注意可能带来的品质损失"
 
 
+msgid "Don't export images"
+msgstr "不导出图像"
+
+
 msgid "Keep original"
 msgstr "保留原有"
 
@@ -64535,20 +64531,8 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "使已选中的数据块的所有用户使用当前(点击的)数据块"
 
 
-msgid "Make Library Override"
-msgstr "创建库重写"
-
-
-msgid "Make a local override of this linked data-block"
-msgstr "添加一个此关联数据块的本地覆写"
-
-
 msgid "Make Library Override Hierarchy"
 msgstr "创建库重写层级"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "为该被关联数据块及其依赖项层级创建本地重写"
 
 
 msgid "Convert Proxy to Override"
@@ -98724,6 +98708,14 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
 
 
+msgid "Requires Apple Silicon with macOS 12.2 or newer"
+msgstr "需要Apple Silicon 和 macOS 12.2 或更新版本"
+
+
+msgid "or AMD with macOS 12.3 or newer"
+msgstr "或者AMD搭配 macOS 12.3 或更新版本"
+
+
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -107058,6 +107050,10 @@ msgid "No valid formats found"
 msgstr "没有找到可用的格式"
 
 
+msgid "Can't allocate ffmpeg format context"
+msgstr "无法分配ffmpeg格式上下文"
+
+
 msgid "Render width has to be 720 pixels for DV!"
 msgstr "对于 DV 的渲染宽度需要设置为 720 像素!"
 
@@ -107120,6 +107116,10 @@ msgstr "ID %s 未在库 %s 中找到!"
 
 msgid "ID %s uses shapekey %s, but its 'from' pointer is invalid (%p), fixing..."
 msgstr "ID %s使用了形态建 %s，但其 “from” 指针无效 (%p)，修复中..."
+
+
+msgid "Shapekey %s has an invalid 'from' pointer (%p), it will be deleted"
+msgstr "形态键 %s 有一个无效的 'from' 指针 (%p)，它将被删除"
 
 
 msgid "insufficient content"
@@ -108164,6 +108164,10 @@ msgstr "曲面"
 
 msgid "Unable to access 3D viewport"
 msgstr "无法访问3D 视图"
+
+
+msgid "The \"stroke\" cannot be empty"
+msgstr "\"笔画\"不能为空"
 
 
 msgid "Unable to access depth buffer, using view plane"
