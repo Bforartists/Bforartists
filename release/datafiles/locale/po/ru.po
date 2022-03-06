@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'bce810f05763')\n"
+"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -3420,14 +3420,6 @@ msgstr "Кривая интенсивности"
 
 msgid "Curve used for the strength"
 msgstr "Кривая, используемая для интенсивности"
-
-
-msgid "Dilate"
-msgstr "Расширить"
-
-
-msgid "Number of pixels to dilate fill area"
-msgstr "Расширить площадь заливки на это число пикселей"
 
 
 msgid "Direction"

@@ -3,7 +3,7 @@
 
 import bpy
 
-from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
+from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached, cached_by_key
 from io_scene_gltf2.io.com import gltf2_io
 from io_scene_gltf2.io.com.gltf2_io_extensions import Extension
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_texture_info, gltf2_blender_export_keys
@@ -16,8 +16,14 @@ from io_scene_gltf2.blender.exp import gltf2_blender_get
 from io_scene_gltf2.io.exp.gltf2_io_user_extensions import export_user_extensions
 from io_scene_gltf2.io.com.gltf2_io_debug import print_console
 
-
 @cached
+def get_material_cache_key(blender_material, export_settings):
+    # Use id of material
+    # Do not use bpy.types that can be unhashable
+    # Do not use material name, that can be not unique (when linked)
+    return ((id(blender_material),))
+
+@cached_by_key(key=get_material_cache_key)
 def gather_material(blender_material, export_settings):
     """
     Gather the material used by the blender primitive.
@@ -48,6 +54,12 @@ def gather_material(blender_material, export_settings):
         occlusion_texture=__gather_occlusion_texture(blender_material, orm_texture, export_settings),
         pbr_metallic_roughness=__gather_pbr_metallic_roughness(blender_material, orm_texture, export_settings)
     )
+
+    # If emissive is set, from an emissive node (not PBR)
+    # We need to set manually default values for 
+    # pbr_metallic_roughness.baseColor
+    if material.emissive_factor is not None and gltf2_blender_get.get_node_socket(blender_material, bpy.types.ShaderNodeBsdfPrincipled, "Base Color") is None:
+        material.pbr_metallic_roughness = gltf2_blender_gather_materials_pbr_metallic_roughness.get_default_pbr_for_emissive_node()
 
     export_user_extensions('gather_material_hook', export_settings, material, blender_material)
 
