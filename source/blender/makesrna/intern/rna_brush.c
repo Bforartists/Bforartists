@@ -1302,7 +1302,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Strength",
                            "Color strength for new strokes (affect alpha factor of color)\nHotkey "
-                           "in the default keymap: Shift + F");
+                           "in the default keymap: C");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
@@ -2535,7 +2535,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Strength",
                            "How powerful the effect of the brush is when applied\nHotkey in the "
-                           "default keymap: Shift F");
+                           "default keymap: C");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "flow", PROP_FLOAT, PROP_FACTOR);
