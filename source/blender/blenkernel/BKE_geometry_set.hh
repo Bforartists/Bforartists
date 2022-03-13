@@ -500,8 +500,8 @@ struct GeometrySet {
   /**
    * Clear the existing curves data-block and replace it with the given one.
    */
-  void replace_curve(Curves *curves,
-                     GeometryOwnershipType ownership = GeometryOwnershipType::Owned);
+  void replace_curves(Curves *curves,
+                      GeometryOwnershipType ownership = GeometryOwnershipType::Owned);
 
  private:
   /**
@@ -678,7 +678,7 @@ class CurveComponentLegacy : public GeometryComponent {
 };
 
 /**
- * A geometry component that stores a group of curves, corresponding the the #Curves and
+ * A geometry component that stores a group of curves, corresponding the #Curves and
  * #CurvesGeometry types.
  */
 class CurveComponent : public GeometryComponent {

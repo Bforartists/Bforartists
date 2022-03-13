@@ -306,7 +306,7 @@ class NODE_HT_header(Header):
 
         # Snap
         row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap", text="")
+        row.prop(tool_settings, "use_snap_node", text="")
         if tool_settings.use_snap:
             row.prop(tool_settings, "snap_node_element", icon_only=True)
             if tool_settings.snap_node_element != 'GRID':

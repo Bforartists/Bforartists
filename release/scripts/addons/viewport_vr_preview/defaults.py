@@ -93,7 +93,7 @@ def vr_defaults_action_add(am,
 
     ami = am.actionmap_items.new(name, True)
     if ami:
-        ami.type = 'FLOAT'		
+        ami.type = 'FLOAT'
         for path in user_paths:
             ami.user_paths.new(path)
         ami.op = op
