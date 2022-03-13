@@ -5,7 +5,7 @@
 bl_info = {
     "name": "Curly Curves",
     "author": "Cmomoney",
-    "version": (1, 1, 9),
+    "version": (1, 2, 0),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Curve > Curly Curve",
     "description": "Adds a new Curly Curve",
@@ -402,7 +402,7 @@ def make_curve(self, context, verts, lh, rh):
         for p in range(len(verts)):
             c = 0
             newSpline = Curve.data.splines.new(type='BEZIER')          # newSpline
-            newSpline.bezier_points.add(len(verts[p]) / 3 - 1)
+            newSpline.bezier_points.add(int(len(verts[p]) / 3 - 1))
             newSpline.bezier_points.foreach_set('co', verts[p])
 
             for bp in newSpline.bezier_points:
@@ -424,7 +424,7 @@ def make_curve(self, context, verts, lh, rh):
         for p in range(len(verts)):
             c = 0
             newSpline = dataCurve.splines.new(type='BEZIER')          # newSpline
-            newSpline.bezier_points.add(len(verts[p]) / 3 - 1)
+            newSpline.bezier_points.add(int(len(verts[p]) / 3 - 1))
             newSpline.bezier_points.foreach_set('co', verts[p])
 
             for bp in newSpline.bezier_points:

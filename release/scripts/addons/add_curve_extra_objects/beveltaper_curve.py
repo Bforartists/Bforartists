@@ -5,7 +5,7 @@
 bl_info = {
     "name": "Bevel/Taper Curve",
     "author": "Cmomoney",
-    "version": (1, 2),
+    "version": (1, 2, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Object > Bevel/Taper",
     "description": "Adds bevel and/or taper curve to active curve",
@@ -204,7 +204,7 @@ def make_curve(self, context, verts, lh, rh):
         c = 0
         spline = curve_data.splines.new(type='BEZIER')
         spline.use_cyclic_u = True
-        spline.bezier_points.add(len(verts[p]) / 3 - 1)
+        spline.bezier_points.add(int(len(verts[p]) / 3 - 1))
         spline.bezier_points.foreach_set('co', verts[p])
 
         for bp in spline.bezier_points:

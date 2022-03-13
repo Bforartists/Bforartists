@@ -1721,7 +1721,7 @@ static void outliner_draw_userbuts(uiBlock *block,
 
   LISTBASE_FOREACH (TreeElement *, te, lb) {
     TreeStoreElem *tselem = TREESTORE(te);
-    if (te->ys + 2 * UI_UNIT_Y >= region->v2d.cur.ymin && te->ys <= region->v2d.cur.ymax) {
+    if (outliner_is_element_in_view(te, &region->v2d)) {
       if (tselem->type == TSE_SOME_ID) {
         uiBut *bt;
         ID *id = tselem->id;
@@ -1792,8 +1792,7 @@ static bool outliner_draw_overrides_buts(uiBlock *block,
 
   LISTBASE_FOREACH (TreeElement *, te, lb) {
     bool item_has_warnings = false;
-    const bool do_draw = (te->ys + 2 * UI_UNIT_Y >= region->v2d.cur.ymin &&
-                          te->ys <= region->v2d.cur.ymax);
+    const bool do_draw = outliner_is_element_in_view(te, &region->v2d);
     int but_flag = UI_BUT_DRAG_LOCK;
     const char *tip = nullptr;
 
@@ -1903,7 +1902,7 @@ static void outliner_draw_rnabuts(
 
   LISTBASE_FOREACH (TreeElement *, te, lb) {
     TreeStoreElem *tselem = TREESTORE(te);
-    if (te->ys + 2 * UI_UNIT_Y >= region->v2d.cur.ymin && te->ys <= region->v2d.cur.ymax) {
+    if (outliner_is_element_in_view(te, &region->v2d)) {
       if (TreeElementRNAProperty *te_rna_prop = tree_element_cast<TreeElementRNAProperty>(te)) {
         ptr = te_rna_prop->getPointerRNA();
         prop = te_rna_prop->getPropertyRNA();
@@ -2348,10 +2347,8 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       if (text->filepath == nullptr || (text->flags & TXT_ISMEM)) {
         return ICON_FILE_TEXT;
       }
-      else {
-        /* Helps distinguish text-based formats like the file-browser does. */
-        return (BIFIconID)ED_file_extension_icon(text->filepath);
-      }
+      /* Helps distinguish text-based formats like the file-browser does. */
+      return (BIFIconID)ED_file_extension_icon(text->filepath);
     }
     case ID_GR:
       return ICON_OUTLINER_COLLECTION;

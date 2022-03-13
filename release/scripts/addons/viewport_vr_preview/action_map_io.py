@@ -69,7 +69,7 @@ def ami_args_as_data(ami):
 
 def ami_data_from_args(ami, args):
     ami.type = args["type"]
-    
+
     for path in args["user_paths"]:
         ami.user_paths.new(path)
 

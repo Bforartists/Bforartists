@@ -716,6 +716,11 @@ def autolink(node1, node2, links):
     print("Could not make a link from " + node1.name + " to " + node2.name)
     return link_made
 
+def abs_node_location(node):
+    abs_location = node.location
+    if node.parent is None:
+        return abs_location
+    return abs_location + abs_node_location(node.parent)
 
 def node_at_pos(nodes, context, event):
     nodes_under_mouse = []
@@ -730,23 +735,10 @@ def node_at_pos(nodes, context, event):
     for node in nodes:
         skipnode = False
         if node.type != 'FRAME':  # no point trying to link to a frame node
-            locx = node.location.x
-            locy = node.location.y
             dimx = node.dimensions.x/dpifac()
             dimy = node.dimensions.y/dpifac()
-            if node.parent:
-                locx += node.parent.location.x
-                locy += node.parent.location.y
-                if node.parent.parent:
-                    locx += node.parent.parent.location.x
-                    locy += node.parent.parent.location.y
-                    if node.parent.parent.parent:
-                        locx += node.parent.parent.parent.location.x
-                        locy += node.parent.parent.parent.location.y
-                        if node.parent.parent.parent.parent:
-                            # Support three levels or parenting
-                            # There's got to be a better way to do this...
-                            skipnode = True
+            locx, locy = abs_node_location(node)
+
             if not skipnode:
                 node_points_with_dist.append([node, hypot(x - locx, y - locy)])  # Top Left
                 node_points_with_dist.append([node, hypot(x - (locx + dimx), y - locy)])  # Top Right
@@ -762,13 +754,9 @@ def node_at_pos(nodes, context, event):
 
     for node in nodes:
         if node.type != 'FRAME' and skipnode == False:
-            locx = node.location.x
-            locy = node.location.y
+            locx, locy = abs_node_location(node)
             dimx = node.dimensions.x/dpifac()
             dimy = node.dimensions.y/dpifac()
-            if node.parent:
-                locx += node.parent.location.x
-                locy += node.parent.location.y
             if (locx <= x <= locx + dimx) and \
                (locy - dimy <= y <= locy):
                 nodes_under_mouse.append(node)
@@ -823,26 +811,19 @@ def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
     shader.uniform_float("color", colour)
     batch.draw(shader)
 
+
 def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
     area_width = bpy.context.area.width - (16*dpifac()) - 1
     bottom_bar = (16*dpifac()) + 1
     sides = 16
     radius = radius*dpifac()
 
-    nlocx = (node.location.x+1)*dpifac()
-    nlocy = (node.location.y+1)*dpifac()
+    nlocx, nlocy = abs_node_location(node)
+
+    nlocx = (nlocx+1)*dpifac()
+    nlocy = (nlocy+1)*dpifac()
     ndimx = node.dimensions.x
     ndimy = node.dimensions.y
-    # This is a stupid way to do this... TODO use while loop
-    if node.parent:
-        nlocx += node.parent.location.x
-        nlocy += node.parent.location.y
-        if node.parent.parent:
-            nlocx += node.parent.parent.location.x
-            nlocy += node.parent.parent.location.y
-            if node.parent.parent.parent:
-                nlocx += node.parent.parent.parent.location.x
-                nlocy += node.parent.parent.parent.location.y
 
     if node.hide:
         nlocx += -1
