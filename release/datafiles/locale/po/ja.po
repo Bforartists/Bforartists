@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
+"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -3536,6 +3536,14 @@ msgstr "強さカーブ"
 
 msgid "Curve used for the strength"
 msgstr "強さに使用されるカーブ"
+
+
+msgid "Dilate/Contract"
+msgstr "拡大/縮小"
+
+
+msgid "Number of pixels to expand or contract fill area"
+msgstr "フィルエリアを拡大、または縮小するピクセル数"
 
 
 msgid "Direction"
@@ -7996,11 +8004,11 @@ msgstr "Z 軸に向けるスイング回転と、それに追従するツイス�
 
 
 msgid "Map From"
-msgstr "マッピング元"
+msgstr "変換元"
 
 
 msgid "The transformation type to use from the target"
-msgstr "ターゲットから使用するトランスフォームタイプ"
+msgstr "使用するターゲットのトランスフォームタイプ"
 
 
 msgid "Location"
@@ -8008,7 +8016,7 @@ msgstr "位置"
 
 
 msgid "Map To"
-msgstr "マップ先"
+msgstr "変換先"
 
 
 msgid "The transformation type to affect of the constrained object"
@@ -8016,7 +8024,7 @@ msgstr "影響するコンストレイントオブジェクトのトランスフ
 
 
 msgid "Map To X From"
-msgstr "X軸への変換元"
+msgstr "X軸の変換元"
 
 
 msgid "The source axis constrained object's X axis uses"
@@ -8024,7 +8032,7 @@ msgstr "コンストレイントされるオブジェクトのX軸に変換さ�
 
 
 msgid "Map To Y From"
-msgstr "Y軸への変換元"
+msgstr "Y軸の変換元"
 
 
 msgid "The source axis constrained object's Y axis uses"
@@ -8032,7 +8040,7 @@ msgstr "コンストレイントのあるオブジェクトのY軸に変換さ�
 
 
 msgid "Map To Z From"
-msgstr "Z軸への変換元"
+msgstr "Z軸の変換元"
 
 
 msgid "The source axis constrained object's Z axis uses"
@@ -17083,11 +17091,11 @@ msgstr "生成するストロークの幅"
 
 
 msgid "Back Face Culling"
-msgstr "裏面を削除"
+msgstr "裏面を無視"
 
 
 msgid "Remove all back faces to speed up calculation, this will create edges in different occlusion levels than when disabled"
-msgstr "裏面をすべての削除し計算速度を上げます。無効時と比べ、遮蔽レベルに違いのあるエッジが作成されます"
+msgstr "裏面をすべて無視し計算速度を上げます。OFFの時とは遮蔽レベルに違いのあるエッジが作成されます"
 
 
 msgid "Use cached scene data from the first line art modifier in the stack. Certain settings will be unavailable"
@@ -43073,7 +43081,7 @@ msgstr "メッシュ押し出し"
 
 
 msgid "Field at Index"
-msgstr "フィールドインデックス"
+msgstr "インデックスからフィールド"
 
 
 msgid "Domain the field is evaluated in"
@@ -51665,6 +51673,14 @@ msgid "Export using glTF convention, +Y up"
 msgstr "glTF の仕様に従い、+Y を上にしてエクスポートします"
 
 
+msgid "Optimize Animation Size"
+msgstr "アニメーションサイズを最適化"
+
+
+msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
+msgstr "重複するキーフレームを削除し、エクスポートのファイルサイズを小さくします。アニメーションが滑らかでなくなる可能性があります"
+
+
 msgid "Export setting categories"
 msgstr "エクスポート設定のカテゴリ"
 
@@ -53821,7 +53837,7 @@ msgstr "マスクレイヤーを削除"
 
 msgctxt "Operator"
 msgid "Merge Down"
-msgstr "下とマージ"
+msgstr "下と統合"
 
 
 msgid "Combine Layers"
@@ -65116,8 +65132,20 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "選択中のデータブロックの全ユーザーが、現在の（クリックした）データブロックを使用するようにします"
 
 
+msgid "Make Library Override Single"
+msgstr "ライブラリオーバーライドをシングル化"
+
+
+msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
+msgstr "このリンクデータブロックに、階層外のシングルローカルオーバーライドを作成します（アウトライナーのアクティブアイテムのみ適用）"
+
+
 msgid "Make Library Override Hierarchy"
 msgstr "ライブラリオーバーライド階層を作成"
+
+
+msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
+msgstr "このリンクデータブロックのローカルオーバーライドと、その依存の階層を作成します（アクティブアウトライナーアイテムのみ適用）"
 
 
 msgid "Convert Proxy to Override"
@@ -99731,11 +99759,11 @@ msgstr "画像をクリア"
 
 
 msgid "Cycles built without Embree support"
-msgstr "CylesのEmbree対応なしでビルドされています"
+msgstr "Cyles が Embree 対応なしでビルドされています"
 
 
 msgid "CPU raytracing performance will be poor"
-msgstr "CPUレイトレーシングは低パフォーマンスです"
+msgstr "CPU レイトレーシングは低パフォーマンスです"
 
 
 msgctxt "Operator"
@@ -100968,15 +100996,15 @@ msgstr "Zの最小値"
 
 
 msgid "X Source Axis"
-msgstr "ソースのX軸"
+msgstr "Xの変換元"
 
 
 msgid "Y Source Axis"
-msgstr "ソースのY軸"
+msgstr "Yの変換元"
 
 
 msgid "Z Source Axis"
-msgstr "ソースのZ軸"
+msgstr "Zの変換元"
 
 
 msgid "Align to Normal"
@@ -101236,7 +101264,7 @@ msgstr "他を隠す"
 
 msgctxt "Operator"
 msgid "Merge All"
-msgstr "すべてマージ"
+msgstr "すべて統合"
 
 
 msgctxt "Operator"

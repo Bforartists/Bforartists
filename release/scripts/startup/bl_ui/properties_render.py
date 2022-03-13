@@ -509,6 +509,17 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
+def draw_hair_settings(self, context):
+    layout = self.layout
+    scene = context.scene
+    rd = scene.render
+
+    layout.use_property_split = True
+    layout.use_property_decorate = False  # No animation.
+
+    layout.prop(rd, "hair_type", text="Shape", expand=True)
+    layout.prop(rd, "hair_subdiv")
+
 
 class RENDER_PT_eevee_hair(RenderButtonsPanel, Panel):
     bl_label = "Hair"
@@ -520,14 +531,7 @@ class RENDER_PT_eevee_hair(RenderButtonsPanel, Panel):
         return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        rd = scene.render
-
-        layout.use_property_split = True
-
-        layout.prop(rd, "hair_type", expand=True)
-        layout.prop(rd, "hair_subdiv")
+        draw_hair_settings(self, context)
 
 
 class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
@@ -545,6 +549,7 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         rd = scene.render
 
         layout.use_property_split = False
+        layout.use_property_decorate = False  # No animation.
 
         row = layout.row()
         row.prop(rd, "use_high_quality_normals")

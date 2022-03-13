@@ -57,18 +57,21 @@
 
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
-static void uv_select_all_perform(Scene *scene, Object *obedit, int action);
+static void uv_select_all_perform(const Scene *scene, Object *obedit, int action);
 
-static void uv_select_all_perform_multi_ex(
-    Scene *scene, Object **objects, const uint objects_len, int action, const Object *ob_exclude);
-static void uv_select_all_perform_multi(Scene *scene,
+static void uv_select_all_perform_multi_ex(const Scene *scene,
+                                           Object **objects,
+                                           const uint objects_len,
+                                           int action,
+                                           const Object *ob_exclude);
+static void uv_select_all_perform_multi(const Scene *scene,
                                         Object **objects,
                                         const uint objects_len,
                                         int action);
 
-static void uv_select_flush_from_tag_face(Scene *scene, Object *obedit, const bool select);
-static void uv_select_flush_from_tag_loop(Scene *scene, Object *obedit, const bool select);
-static void uv_select_flush_from_loop_edge_flag(Scene *scene, BMEditMesh *em);
+static void uv_select_flush_from_tag_face(const Scene *scene, Object *obedit, const bool select);
+static void uv_select_flush_from_tag_loop(const Scene *scene, Object *obedit, const bool select);
+static void uv_select_flush_from_loop_edge_flag(const Scene *scene, BMEditMesh *em);
 
 static void uv_select_tag_update_for_object(Depsgraph *depsgraph,
                                             const ToolSettings *ts,
@@ -437,7 +440,7 @@ void uvedit_edge_select_shared_vert(const Scene *scene,
                                     const bool do_history,
                                     const int cd_loop_uv_offset)
 {
-  BLI_assert((sticky_flag == SI_STICKY_LOC) || (sticky_flag == SI_STICKY_VERTEX));
+  BLI_assert(ELEM(sticky_flag, SI_STICKY_LOC, SI_STICKY_VERTEX));
   /* Set edge flags. Rely on this for face visibility checks */
   uvedit_edge_select_set_noflush(scene, l, select, sticky_flag, cd_loop_uv_offset);
 
@@ -646,7 +649,7 @@ void uvedit_uv_select_shared_vert(const Scene *scene,
                                   const bool do_history,
                                   const int cd_loop_uv_offset)
 {
-  BLI_assert((sticky_flag == SI_STICKY_LOC) || (sticky_flag == SI_STICKY_VERTEX));
+  BLI_assert(ELEM(sticky_flag, SI_STICKY_LOC, SI_STICKY_VERTEX));
 
   BMEdge *e_first, *e_iter;
   e_first = e_iter = l->e;
@@ -1202,7 +1205,10 @@ bool uvedit_vert_is_all_other_faces_selected(const Scene *scene,
 /**
  * Clear specified UV flag (vert/edge/pinned).
  */
-static void bm_uv_flag_clear(Scene *scene, BMesh *bm, const int flag, const int cd_loop_uv_offset)
+static void bm_uv_flag_clear(const Scene *scene,
+                             BMesh *bm,
+                             const int flag,
+                             const int cd_loop_uv_offset)
 {
   BMFace *efa;
   BMLoop *l;
@@ -1225,9 +1231,9 @@ static void bm_uv_flag_clear(Scene *scene, BMesh *bm, const int flag, const int 
  *
  * \{ */
 
-void ED_uvedit_selectmode_flush(Scene *scene, BMEditMesh *em)
+void ED_uvedit_selectmode_flush(const Scene *scene, BMEditMesh *em)
 {
-  ToolSettings *ts = scene->toolsettings;
+  const ToolSettings *ts = scene->toolsettings;
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   BLI_assert((ts->uv_flag & UV_SYNC_SELECTION) == 0);
@@ -1264,14 +1270,15 @@ void ED_uvedit_selectmode_flush(Scene *scene, BMEditMesh *em)
 /** \name UV Flush selection (up/down)
  * \{ */
 
-/* Careful when using this in face select mode.
- * For face selections with sticky mode enabled, this can create invalid selection states. */
-void uvedit_select_flush(Scene *scene, BMEditMesh *em)
+void uvedit_select_flush(const Scene *scene, BMEditMesh *em)
 {
-  ToolSettings *ts = scene->toolsettings;
+  /* Careful when using this in face select mode.
+   * For face selections with sticky mode enabled, this can create invalid selection states. */
+  const ToolSettings *ts = scene->toolsettings;
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   BLI_assert((ts->uv_flag & UV_SYNC_SELECTION) == 0);
+  UNUSED_VARS_NDEBUG(ts);
 
   BMFace *efa;
   BMLoop *l;
@@ -1292,9 +1299,9 @@ void uvedit_select_flush(Scene *scene, BMEditMesh *em)
   }
 }
 
-void uvedit_deselect_flush(Scene *scene, BMEditMesh *em)
+void uvedit_deselect_flush(const Scene *scene, BMEditMesh *em)
 {
-  ToolSettings *ts = scene->toolsettings;
+  const ToolSettings *ts = scene->toolsettings;
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   BLI_assert((ts->uv_flag & UV_SYNC_SELECTION) == 0);
@@ -1715,7 +1722,7 @@ static int uv_select_edgering(Scene *scene, Object *obedit, UvNearestHit *hit, c
         if (select && uvedit_edge_select_test(scene, l_step, cd_loop_uv_offset)) {
           break;
         }
-        else if (!select && !uvedit_edge_select_test(scene, l_step, cd_loop_uv_offset)) {
+        if (!select && !uvedit_edge_select_test(scene, l_step, cd_loop_uv_offset)) {
           break;
         }
       }
@@ -2167,7 +2174,7 @@ void UV_OT_select_less(wmOperatorType *ot)
 /** \name (De)Select All Operator
  * \{ */
 
-bool uvedit_select_is_any_selected(Scene *scene, Object *obedit)
+bool uvedit_select_is_any_selected(const Scene *scene, Object *obedit)
 {
   const ToolSettings *ts = scene->toolsettings;
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
@@ -2195,7 +2202,9 @@ bool uvedit_select_is_any_selected(Scene *scene, Object *obedit)
   return false;
 }
 
-bool uvedit_select_is_any_selected_multi(Scene *scene, Object **objects, const uint objects_len)
+bool uvedit_select_is_any_selected_multi(const Scene *scene,
+                                         Object **objects,
+                                         const uint objects_len)
 {
   bool found = false;
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
@@ -2208,7 +2217,7 @@ bool uvedit_select_is_any_selected_multi(Scene *scene, Object **objects, const u
   return found;
 }
 
-static void uv_select_all(Scene *scene, BMEditMesh *em, bool select_all)
+static void uv_select_all(const Scene *scene, BMEditMesh *em, bool select_all)
 {
   BMFace *efa;
   BMLoop *l;
@@ -2227,7 +2236,7 @@ static void uv_select_all(Scene *scene, BMEditMesh *em, bool select_all)
   }
 }
 
-static void uv_select_invert(Scene *scene, BMEditMesh *em)
+static void uv_select_invert(const Scene *scene, BMEditMesh *em)
 {
   const ToolSettings *ts = scene->toolsettings;
   BLI_assert((ts->uv_flag & UV_SYNC_SELECTION) == 0);
@@ -2244,13 +2253,13 @@ static void uv_select_invert(Scene *scene, BMEditMesh *em)
     }
     BM_ITER_ELEM (l, &liter, efa, BM_LOOPS_OF_FACE) {
       luv = BM_ELEM_CD_GET_VOID_P(l, cd_loop_uv_offset);
-      if ((uv_selectmode == UV_SELECT_EDGE) || (uv_selectmode == UV_SELECT_FACE)) {
+      if (ELEM(uv_selectmode, UV_SELECT_EDGE, UV_SELECT_FACE)) {
         /* Use #MLOOPUV_EDGESEL to flag edges that must be selected. */
         luv->flag ^= MLOOPUV_EDGESEL;
         luv->flag &= ~MLOOPUV_VERTSEL;
       }
       /* Use #MLOOPUV_VERTSEL to flag verts that must be selected. */
-      else if ((uv_selectmode == UV_SELECT_VERTEX) || (uv_selectmode == UV_SELECT_ISLAND)) {
+      else if (ELEM(uv_selectmode, UV_SELECT_VERTEX, UV_SELECT_ISLAND)) {
         luv->flag ^= MLOOPUV_VERTSEL;
         luv->flag &= ~MLOOPUV_EDGESEL;
       }
@@ -2258,15 +2267,15 @@ static void uv_select_invert(Scene *scene, BMEditMesh *em)
   }
 
   /* Flush based on uv vert/edge flags and current UV select mode */
-  if ((uv_selectmode == UV_SELECT_EDGE) || (uv_selectmode == UV_SELECT_FACE)) {
+  if (ELEM(uv_selectmode, UV_SELECT_EDGE, UV_SELECT_FACE)) {
     uv_select_flush_from_loop_edge_flag(scene, em);
   }
-  else if ((uv_selectmode == UV_SELECT_VERTEX) || (uv_selectmode == UV_SELECT_ISLAND)) {
+  else if (ELEM(uv_selectmode, UV_SELECT_VERTEX, UV_SELECT_ISLAND)) {
     uvedit_select_flush(scene, em);
   }
 }
 
-static void uv_select_all_perform(Scene *scene, Object *obedit, int action)
+static void uv_select_all_perform(const Scene *scene, Object *obedit, int action)
 {
   const ToolSettings *ts = scene->toolsettings;
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
@@ -2307,8 +2316,11 @@ static void uv_select_all_perform(Scene *scene, Object *obedit, int action)
   }
 }
 
-static void uv_select_all_perform_multi_ex(
-    Scene *scene, Object **objects, const uint objects_len, int action, const Object *ob_exclude)
+static void uv_select_all_perform_multi_ex(const Scene *scene,
+                                           Object **objects,
+                                           const uint objects_len,
+                                           int action,
+                                           const Object *ob_exclude)
 {
   if (action == SEL_TOGGLE) {
     action = uvedit_select_is_any_selected_multi(scene, objects, objects_len) ? SEL_DESELECT :
@@ -2324,7 +2336,7 @@ static void uv_select_all_perform_multi_ex(
   }
 }
 
-static void uv_select_all_perform_multi(Scene *scene,
+static void uv_select_all_perform_multi(const Scene *scene,
                                         Object **objects,
                                         const uint objects_len,
                                         int action)
@@ -3158,7 +3170,7 @@ static void uv_select_tag_update_for_object(Depsgraph *depsgraph,
 /**
  * helper function for #uv_select_flush_from_tag_loop and uv_select_flush_from_tag_face
  */
-static void uv_select_flush_from_tag_sticky_loc_internal(Scene *scene,
+static void uv_select_flush_from_tag_sticky_loc_internal(const Scene *scene,
                                                          BMEditMesh *em,
                                                          UvVertMap *vmap,
                                                          const uint efa_index,
@@ -3216,7 +3228,7 @@ static void uv_select_flush_from_tag_sticky_loc_internal(Scene *scene,
  * \note This function is very similar to #uv_select_flush_from_tag_loop,
  * be sure to update both upon changing.
  */
-static void uv_select_flush_from_tag_face(Scene *scene, Object *obedit, const bool select)
+static void uv_select_flush_from_tag_face(const Scene *scene, Object *obedit, const bool select)
 {
   /* Selecting UV Faces with some modes requires us to change
    * the selection in other faces (depending on the sticky mode).
@@ -3232,7 +3244,7 @@ static void uv_select_flush_from_tag_face(Scene *scene, Object *obedit, const bo
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   if ((ts->uv_flag & UV_SYNC_SELECTION) == 0 &&
-      ((ts->uv_sticky == SI_STICKY_VERTEX) || (ts->uv_sticky == SI_STICKY_LOC))) {
+      ELEM(ts->uv_sticky, SI_STICKY_VERTEX, SI_STICKY_LOC)) {
 
     struct UvVertMap *vmap;
     uint efa_index;
@@ -3285,7 +3297,7 @@ static void uv_select_flush_from_tag_face(Scene *scene, Object *obedit, const bo
  * \note This function is very similar to #uv_select_flush_from_tag_face,
  * be sure to update both upon changing.
  */
-static void uv_select_flush_from_tag_loop(Scene *scene, Object *obedit, const bool select)
+static void uv_select_flush_from_tag_loop(const Scene *scene, Object *obedit, const bool select)
 {
   /* Selecting UV Loops with some modes requires us to change
    * the selection in other faces (depending on the sticky mode).
@@ -3367,7 +3379,7 @@ static void uv_select_flush_from_tag_loop(Scene *scene, Object *obedit, const bo
  *
  * \note Current behavior is selecting only; deselecting can be added but the behavior isn't
  * required anywhere.*/
-static void uv_select_flush_from_loop_edge_flag(Scene *scene, BMEditMesh *em)
+static void uv_select_flush_from_loop_edge_flag(const Scene *scene, BMEditMesh *em)
 {
   const ToolSettings *ts = scene->toolsettings;
   BMFace *efa;
@@ -3377,7 +3389,7 @@ static void uv_select_flush_from_loop_edge_flag(Scene *scene, BMEditMesh *em)
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   if ((ts->uv_flag & UV_SYNC_SELECTION) == 0 &&
-      ((ts->uv_sticky == SI_STICKY_LOC) || (ts->uv_sticky == SI_STICKY_VERTEX))) {
+      ELEM(ts->uv_sticky, SI_STICKY_LOC, SI_STICKY_VERTEX)) {
     /* Use the #MLOOPUV_EDGESEL flag to identify which verts must to be selected */
     struct UvVertMap *vmap;
     uint efa_index;
@@ -4380,7 +4392,7 @@ void UV_OT_select_overlap(wmOperatorType *ot)
  * So an edge that has two connected edge loops only assigns one loop in the array.
  * \{ */
 
-BMFace **ED_uvedit_selected_faces(Scene *scene, BMesh *bm, int len_max, int *r_faces_len)
+BMFace **ED_uvedit_selected_faces(const Scene *scene, BMesh *bm, int len_max, int *r_faces_len)
 {
   const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
   CLAMP_MAX(len_max, bm->totface);
@@ -4408,7 +4420,7 @@ finally:
   return faces;
 }
 
-BMLoop **ED_uvedit_selected_edges(Scene *scene, BMesh *bm, int len_max, int *r_edges_len)
+BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, int *r_edges_len)
 {
   const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
   CLAMP_MAX(len_max, bm->totloop);
@@ -4464,7 +4476,7 @@ finally:
   return edges;
 }
 
-BMLoop **ED_uvedit_selected_verts(Scene *scene, BMesh *bm, int len_max, int *r_verts_len)
+BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, int *r_verts_len)
 {
   const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
   CLAMP_MAX(len_max, bm->totloop);
@@ -4530,7 +4542,9 @@ finally:
  *
  * Use only when sync select disabled.
  */
-static void uv_isolate_selected_islands(Scene *scene, BMEditMesh *em, const int cd_loop_uv_offset)
+static void uv_isolate_selected_islands(const Scene *scene,
+                                        BMEditMesh *em,
+                                        const int cd_loop_uv_offset)
 {
   BLI_assert((scene->toolsettings->uv_flag & UV_SYNC_SELECTION) == 0);
   BMFace *efa;
@@ -4578,9 +4592,9 @@ static void uv_isolate_selected_islands(Scene *scene, BMEditMesh *em, const int 
   MEM_freeN(is_island_not_selected);
 }
 
-void ED_uvedit_selectmode_clean(Scene *scene, Object *obedit)
+void ED_uvedit_selectmode_clean(const Scene *scene, Object *obedit)
 {
-  ToolSettings *ts = scene->toolsettings;
+  const ToolSettings *ts = scene->toolsettings;
   BLI_assert((ts->uv_flag & UV_SYNC_SELECTION) == 0);
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   char sticky = ts->uv_sticky;
