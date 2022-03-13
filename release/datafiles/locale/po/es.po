@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
+"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3516,6 +3516,14 @@ msgstr "Curva intensidad"
 
 msgid "Curve used for the strength"
 msgstr "Curva usada para la intensidad"
+
+
+msgid "Dilate/Contract"
+msgstr "Dilatar / Contraer"
+
+
+msgid "Number of pixels to expand or contract fill area"
+msgstr "Cantidad de píxeles a expandir o contraer el relleno del área"
 
 
 msgid "Direction"
@@ -19562,7 +19570,7 @@ msgstr "Afectar sólo a los elementos topológicamente conectados"
 
 
 msgid "Use Cursor Overlay"
-msgstr "Superponer cursor"
+msgstr "Sobreimprimir cursor"
 
 
 msgid "Show cursor in viewport"
@@ -20158,7 +20166,7 @@ msgstr "Alfa del marco exterior"
 
 
 msgid "Opacity (alpha) of the darkened overlay in Camera view"
-msgstr "Opacidad (alfa) de la zona atenuada en la vista de cámara"
+msgstr "Opacidad (alfa) de la zona sobreimpresa en la vista de cámara"
 
 
 msgid "Sensor Fit"
@@ -20314,7 +20322,7 @@ msgstr "Mostrar marco exterior"
 
 
 msgid "Show a darkened overlay outside the image area in Camera view"
-msgstr "Muestra un marco atenuado por fuera del encuadre de la cámara"
+msgstr "Muestra un marco sobreimpreso por fuera del encuadre de la cámara"
 
 
 msgid "Show Safe Areas"
@@ -37095,19 +37103,19 @@ msgstr "Invertir la influencia del grupo de vértices"
 
 
 msgid "Material Offset"
-msgstr "Material (despl)"
+msgstr "Material Desplazam"
 
 
 msgid "Offset material index of generated faces"
-msgstr "Desplazamiento del identificador del material de las caras generadas"
+msgstr "Identificador del material para el desplazamiento"
 
 
 msgid "Rim Material Offset"
-msgstr "Material del canto (despl)"
+msgstr "Material Canto"
 
 
 msgid "Offset material index of generated rim faces"
-msgstr "Identificador de desplazamiento del material de las caras generadas para el canto"
+msgstr "Identificador del material para el canto"
 
 
 msgid "Boundary Shape"
@@ -51150,6 +51158,14 @@ msgid "Export using glTF convention, +Y up"
 msgstr "Exportar usando la convención de glTF con +Y hacia arriba"
 
 
+msgid "Optimize Animation Size"
+msgstr "Optimizar tamaño de animación"
+
+
+msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
+msgstr "Reduce el tamaño del archivo exportado, eliminando claves duplicados. Puede causar problemas de escalonamiento de la animación"
+
+
 msgid "Export setting categories"
 msgstr "Categorías de opciones de exportación"
 
@@ -64528,8 +64544,20 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Hace que todos los usuarios de los bloques de datos seleccionados usen en su lugar al bloque de datos actual (el resaltado)"
 
 
+msgid "Make Library Override Single"
+msgstr "Redefinir biblioteca (individual)"
+
+
+msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
+msgstr "Hace una redefinición local única y sin jerarquías de este bloque de datos vinculado desde una biblioteca - sólo se aplicará al elemento activo del Listado"
+
+
 msgid "Make Library Override Hierarchy"
-msgstr "Redefinir jerarquía de biblioteca"
+msgstr "Redefinir biblioteca (jerarquía)"
+
+
+msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
+msgstr "Hace una redefinición local de este bloque de datos vinculado desde una biblioteca y de su jerarquía de dependencias - sólo se aplicará al elemento activo del Listado"
 
 
 msgid "Convert Proxy to Override"
@@ -77304,7 +77332,7 @@ msgstr "Mostrar conjuntos de caras"
 
 
 msgid "Show Face Sets as overlay on object"
-msgstr "Muestra los conjuntos de caras superpuestos al objeto"
+msgstr "Muestra los conjuntos de caras sobreimpresos en el objeto"
 
 
 msgid "Show Mask"
@@ -88602,7 +88630,7 @@ msgstr "Escalar en el eje Y"
 
 
 msgid "Preview Overlay Settings"
-msgstr "Opciones de superposición de previsualización"
+msgstr "Opciones sobreimpresión de previsualización"
 
 
 msgid "Show Annotation"
@@ -88634,7 +88662,7 @@ msgstr "Muestra zonas de seguridad de títulos y acción para TV en la vista pre
 
 
 msgid "Timeline Overlay Settings"
-msgstr "Opciones de superposición de línea de tiempo"
+msgstr "Opciones sobreimpresión de línea de tiempo"
 
 
 msgid "Show F-Curves"
@@ -90335,11 +90363,11 @@ msgstr "Edición de máscaras"
 
 
 msgid "Overlay Settings"
-msgstr "Opciones de superposición"
+msgstr "Opciones de sobreimpresión"
 
 
 msgid "Settings for display of overlays in the UV/Image editor"
-msgstr "Opciones para la visualización de elementos superpuestos en los editores de UV e imágenes"
+msgstr "Opciones para la visualización de elementos sobreimpresos en los editores de UV e imágenes"
 
 
 msgid "Rotation/Scaling Pivot"
@@ -90579,7 +90607,7 @@ msgstr "Dirección en la que desplazar los nodos durante la inserción"
 
 
 msgid "Settings for display of overlays in the Node Editor"
-msgstr "Opciones para la visualización de elementos superpuestos en el Editor de nodos"
+msgstr "Opciones para la visualización de elementos sobreimpresos en el Editor de nodos"
 
 
 msgid "Path from the data-block to the currently edited node tree"
@@ -91076,15 +91104,15 @@ msgstr "Datos de lápiz de cera para esta región de previsualización"
 
 
 msgid "Overlay Type"
-msgstr "Tipo de superposición"
+msgstr "Tipo de sobreimpresión"
 
 
 msgid "Overlay display method"
-msgstr "Método de visualización de la superposición"
+msgstr "Método de visualización de sobreimpresos"
 
 
 msgid "Show rectangle area overlay"
-msgstr "Mostrar área rectangular superpuesta"
+msgstr "Mostrar área rectangular"
 
 
 msgid "Reference"
@@ -91108,7 +91136,7 @@ msgstr "Canales de la previsualización a ser mostrados"
 
 
 msgid "Settings for display of overlays"
-msgstr "Opciones para la visualización de elementos superpuestos"
+msgstr "Opciones para la visualización de elementos sobreimpresos"
 
 
 msgid "No display"
@@ -91516,7 +91544,7 @@ msgstr "Sincroniza la perspectiva del visor de sesiones de realidad virtual con 
 
 
 msgid "Settings for display of overlays in the 3D viewport"
-msgstr "Opciones para la visualización de elementos superpuestos en las vistas 3D"
+msgstr "Opciones para la visualización de elementos sobreimpresos en las vistas 3D"
 
 
 msgid "3D Region"
@@ -91720,11 +91748,11 @@ msgstr "Usar una región de procesamiento dentro del encuadre de la vista (cuand
 
 
 msgid "Show Overlays"
-msgstr "Mostrar elementos superpuestos"
+msgstr "Mostrar sobreimpresos"
 
 
 msgid "Display overlays like UV Maps and Metadata"
-msgstr "Superpone en pantalla elementos, tales como mapas UV y metadatos"
+msgstr "Sobreimprimir elementos tales como mapas UV y metadatos"
 
 
 msgid "Get the node tree path as a string"
@@ -91740,7 +91768,7 @@ msgstr "Mostrar migas de pan para el contexto del editor"
 
 
 msgid "Display overlays like colored or dashed wires"
-msgstr "Mostrar sobreimpresos, como conexiones coloreadas o punteadas"
+msgstr "Sobreimprimir elementos como conexiones coloreadas o punteadas"
 
 
 msgid "Show Timing"
@@ -91868,7 +91896,7 @@ msgstr "Mostrar UV al pintar texturas"
 
 
 msgid "Display overlay of texture paint uv layer"
-msgstr "Mostrar superpuesta la capa UV, al pintar texturas"
+msgstr "Sobreimprimir la capa UV, al pintar texturas"
 
 
 msgid "Sticky Selection Mode"
@@ -91924,7 +91952,7 @@ msgstr "Opacidad UV"
 
 
 msgid "Opacity of UV overlays"
-msgstr "Opacidad de sobreimpresos UV"
+msgstr "Opacidad de superposición de UV"
 
 
 msgid "Element of a curve, either NURBS, Bezier or Polyline or a character with text objects"
@@ -93096,7 +93124,7 @@ msgstr "Filas alternas"
 
 
 msgid "Overlay color on every other row"
-msgstr "Color superpuesto una fila por medio"
+msgstr "Color sobreimpreso una fila por medio"
 
 
 msgid "Selected File"
@@ -94288,7 +94316,7 @@ msgstr "Color de los fotogramas clave de objetos"
 
 
 msgid "View Overlay"
-msgstr "Vista - Superposición"
+msgstr "Vista - Sobreimpresión"
 
 
 msgid "Color for wireframe when in edit mode, but edge selection is active"
@@ -95501,7 +95529,7 @@ msgstr "Rotación 3D"
 
 
 msgid "3D View Overlay Settings"
-msgstr "Opciones de superposición en la vista 3D"
+msgstr "Opciones de sobreimpresión en la vista 3D"
 
 
 msgid "Backwire Opacity"
@@ -95629,7 +95657,7 @@ msgstr "Mostrar cursor 3D"
 
 
 msgid "Display 3D Cursor Overlay"
-msgstr "Muestra el cursor 3D superpuesto"
+msgstr "Muestra sobreimpreso el cursor 3D"
 
 
 msgid "Draw Normals"
@@ -95829,7 +95857,7 @@ msgstr "Muestra un contorno alrededor de los objetos seleccionados"
 
 
 msgid "Display overlays like gizmos and outlines"
-msgstr "Muestra elementos superpuestos como manipuladores y contornos"
+msgstr "Sobreimprime elementos como manipuladores y contornos"
 
 
 msgid "Show Wire"
@@ -95857,7 +95885,7 @@ msgstr "Muestra las normales de los vértices por cada cara"
 
 
 msgid "Display scene statistics overlay text"
-msgstr "Mostrar texto sobreimpreso con estadísticas de la escena"
+msgstr "Mostrar sobreimpreso texto con estadísticas de la escena"
 
 
 msgid "Stat Vis"
@@ -95873,7 +95901,7 @@ msgstr "Mostrar textos"
 
 
 msgid "Display overlay text"
-msgstr "Muestra textos superpuestos"
+msgstr "Muestra textos sobreimpresos"
 
 
 msgid "Display Vertex Normals"
@@ -95909,7 +95937,7 @@ msgstr "Mostrar rayos X de huesos"
 
 
 msgid "Show the bone selection overlay"
-msgstr "Muestra superpuesta la selección de huesos"
+msgstr "Sobreimprime la selección de huesos"
 
 
 msgid "Stencil Mask Opacity"
@@ -95917,7 +95945,7 @@ msgstr "Opacidad máscara de esténcil"
 
 
 msgid "Opacity of the texture paint mode stencil mask overlay"
-msgstr "Opacidad de la máscara del esténcil del modo de pintura de texturas"
+msgstr "Opacidad de superposición de la máscara del esténcil del modo de pintura de texturas"
 
 
 msgid "Canvas X-Ray"
@@ -96013,7 +96041,7 @@ msgstr "Opacidad pintura de influencias"
 
 
 msgid "Opacity of the weight paint mode overlay"
-msgstr "Opacidad del modo de pintura de influencias"
+msgstr "Opacidad de superposición del modo de pintura de influencias"
 
 
 msgid "Wireframe Opacity"
@@ -97297,11 +97325,11 @@ msgstr "Muestra los controladores de RV (requiere acciones de RV para las poses 
 
 
 msgid "Show Custom Overlays"
-msgstr "Mostrar superposiciones personalizadas"
+msgstr "Mostrar sobreimpresos personalizados"
 
 
 msgid "Show custom VR overlays"
-msgstr "Muestra superposiciones personalizadas de VR"
+msgstr "Muestra sobreimpresos personalizados de VR"
 
 
 msgid "Show Selection"
@@ -99386,7 +99414,7 @@ msgstr "Controladores"
 
 
 msgid "Custom Overlays"
-msgstr "Personalizar superpuestos"
+msgstr "Sobreimpresos personalizados"
 
 
 msgid "Controller Style"
@@ -102923,7 +102951,7 @@ msgstr "Ajustar"
 
 
 msgid "Node Editor Overlays"
-msgstr "Superposiciones del editor de nodos"
+msgstr "Sobreimpresos del editor de nodos"
 
 
 msgid "Wire Colors"
@@ -103260,7 +103288,7 @@ msgstr "Almacenamiento"
 
 msgctxt "Operator"
 msgid "Set Overlay Region"
-msgstr "Definir región de superposición"
+msgstr "Definir región de sobreimpresión"
 
 
 msgid "Muted Strips"
@@ -115967,7 +115995,7 @@ msgstr "Canto"
 
 
 msgid "Crease Inner"
-msgstr "Plegar interior"
+msgstr "Plegar  Interior"
 
 
 msgid "Outer"

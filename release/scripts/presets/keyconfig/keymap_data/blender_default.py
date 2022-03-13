@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+__all__ = (
+    "generate_keymaps",
+    "Params",
+)
+
 # ------------------------------------------------------------------------------
 # Developer Notes
 #
@@ -361,12 +366,12 @@ def _template_items_editmode_mesh_select_mode(params):
         return [
             (
                 "mesh.select_mode",
-                {"type": k, "value": 'PRESS', **key_expand, **key_extend},
+                {"type": NUMBERS_1[i], "value": 'PRESS', **key_expand, **key_extend},
                 {"properties": [*prop_extend, *prop_expand, ("type", e)]}
             )
             for key_expand, prop_expand in (({}, ()), ({"ctrl": True}, (("use_expand", True),)))
             for key_extend, prop_extend in (({}, ()), ({"shift": True}, (("use_extend", True),)))
-            for k, e in (('ONE', 'VERT'), ('TWO', 'EDGE'), ('THREE', 'FACE'))
+            for i, e in enumerate(('VERT', 'EDGE', 'FACE'))
         ]
 
 
@@ -385,9 +390,9 @@ def _template_items_uv_select_mode(params):
             *_template_items_editmode_mesh_select_mode(params),
             # Hack to prevent fall-through, when sync select isn't enabled (and the island button isn't visible).
             ("mesh.select_mode", {"type": 'FOUR', "value": 'PRESS'}, None),
-            *(("uv.select_mode", {"type": k, "value": 'PRESS'},
+            *(("uv.select_mode", {"type": NUMBERS_1[i], "value": 'PRESS'},
                {"properties": [("type", e)]})
-              for k, e in (('ONE', 'VERTEX'), ('TWO', 'EDGE'), ('THREE', 'FACE'), ('FOUR', 'ISLAND')))
+              for i, e in enumerate(('VERTEX', 'EDGE', 'FACE', 'ISLAND')))
         ]
 
 
@@ -421,13 +426,18 @@ def _template_items_change_frame(params):
 
 # Tool System Templates
 
-def _template_items_tool_select(params, operator, cursor_operator, *, extend):
+def _template_items_tool_select(params, operator, cursor_operator, fallback, *, extend):
     if params.select_mouse == 'LEFTMOUSE':
-        # Immediate select without quick delay.
+        # By default use 'PRESS' for immediate select without quick delay.
+        # Fallback key-maps 'CLICK' since 'PRESS' events passes through (allowing either click or drag).
+        #
+        # NOTE: When the active (non-fallback) tool uses a key-map that activates it's primary tool on drag,
+        # it's important that this key-map uses click and not press. Otherwise it becomes impossible to use
+        # the tool without selecting elements under the cursor.
         return [
-            (operator, {"type": 'LEFTMOUSE', "value": 'PRESS'},
+            (operator, {"type": 'LEFTMOUSE', "value": 'CLICK' if fallback else 'PRESS'},
              {"properties": [("deselect_all", True)]}),
-            (operator, {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+            (operator, {"type": 'LEFTMOUSE', "value": 'CLICK' if fallback else 'PRESS', "shift": True},
              {"properties": [(extend, True)]}),
         ]
     else:
@@ -1214,7 +1224,7 @@ def km_uv_editor(params):
         ("transform.shear", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
         ("transform.mirror", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
         ("wm.context_toggle", {"type": 'TAB', "value": 'PRESS', "shift": True},
-         {"properties": [("data_path", 'tool_settings.use_snap')]}),
+         {"properties": [("data_path", 'tool_settings.use_snap_uv')]}),
         ("wm.context_menu_enum", {"type": 'TAB', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("data_path", 'tool_settings.snap_uv_element')]}),
         *_template_items_context_menu("IMAGE_MT_uvs_context_menu", params.context_menu_event),
@@ -2079,7 +2089,7 @@ def km_node_editor(params):
          {"type": params.select_mouse, "value": 'CLICK_DRAG', "alt": True},
          {"properties": [("TRANSFORM_OT_translate", [("view2d_edge_pan", True)])]}),
         ("wm.context_toggle", {"type": 'TAB', "value": 'PRESS', "shift": True},
-         {"properties": [("data_path", 'tool_settings.use_snap')]}),
+         {"properties": [("data_path", 'tool_settings.use_snap_node')]}),
         ("wm.context_menu_enum", {"type": 'TAB', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("data_path", 'tool_settings.snap_node_element')]}),
         ("wm.context_toggle", {"type": 'Z', "value": 'PRESS', "alt": True, "shift": True},
@@ -3627,12 +3637,9 @@ def km_grease_pencil_stroke_edit_mode(params):
         # Vertex group menu
         op_menu("GPENCIL_MT_gpencil_vertex_group", {"type": 'G', "value": 'PRESS', "ctrl": True}),
         # Select mode
-        ("gpencil.selectmode_toggle", {"type": 'ONE', "value": 'PRESS'},
-         {"properties": [("mode", 0)]}),
-        ("gpencil.selectmode_toggle", {"type": 'TWO', "value": 'PRESS'},
-         {"properties": [("mode", 1)]}),
-        ("gpencil.selectmode_toggle", {"type": 'THREE', "value": 'PRESS'},
-         {"properties": [("mode", 2)]}),
+        *(("gpencil.selectmode_toggle", {"type": NUMBERS_1[i], "value": 'PRESS'},
+           {"properties": [("mode", i)]})
+          for i in range(3)),
         # Active layer
         op_menu("GPENCIL_MT_layer_active", {"type": 'Y', "value": 'PRESS'}),
         # Keyframe menu
@@ -6082,10 +6089,8 @@ def km_sculpt_expand_modal(_params):
         ("RECURSION_STEP_GEODESIC", {"type": 'R', "value": 'PRESS'}, None),
         ("RECURSION_STEP_TOPOLOGY", {"type": 'R', "value": 'PRESS', "alt": True}, None),
         ("MOVE_TOGGLE", {"type": 'SPACE', "value": 'ANY', "any": True}, None),
-        ("FALLOFF_GEODESICS", {"type": 'ONE', "value": 'PRESS', "any": True}, None),
-        ("FALLOFF_TOPOLOGY", {"type": 'TWO', "value": 'PRESS', "any": True}, None),
-        ("FALLOFF_TOPOLOGY_DIAGONALS", {"type": 'THREE', "value": 'PRESS', "any": True}, None),
-        ("FALLOFF_SPHERICAL", {"type": 'FOUR', "value": 'PRESS', "any": True}, None),
+        *((e, {"type": NUMBERS_1[i], "value": 'PRESS', "any": True}, None) for i, e in enumerate(
+            ("FALLOFF_GEODESICS", "FALLOFF_TOPOLOGY", "FALLOFF_TOPOLOGY_DIAGONALS", "FALLOFF_SPHERICAL"))),
         ("SNAP_TOGGLE", {"type": 'LEFT_CTRL', "value": 'ANY'}, None),
         ("LOOP_COUNT_INCREASE", {"type": 'W', "value": 'PRESS', "any": True, "repeat": True}, None),
         ("LOOP_COUNT_DECREASE", {"type": 'Q', "value": 'PRESS', "any": True, "repeat": True}, None),
@@ -6279,7 +6284,8 @@ def km_image_editor_tool_uv_select(params, *, fallback):
         _fallback_id("Image Editor Tool: Uv, Tweak", fallback),
         {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
-            *([] if fallback else _template_items_tool_select(params, "uv.select", "uv.cursor_set", extend="extend")),
+            *([] if (fallback and (params.select_mouse == 'RIGHTMOUSE')) else _template_items_tool_select(
+                params, "uv.select", "uv.cursor_set", fallback, extend="extend")),
             *([] if (not params.use_fallback_tool_rmb) else _template_uv_select(
                 type=params.select_mouse, value=params.select_mouse_value, legacy=params.legacy)),
         ]},
@@ -6400,7 +6406,7 @@ def km_node_editor_tool_select(params, *, fallback):
         _fallback_id("Node Tool: Tweak", fallback),
         {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
-            *([] if fallback else [
+            *([] if (fallback and (params.select_mouse == 'RIGHTMOUSE')) else [
                 ("node.select", {"type": params.select_mouse, "value": 'PRESS'},
                  {"properties": [("deselect_all", not params.legacy)]}),
             ]),
@@ -6485,8 +6491,8 @@ def km_3d_view_tool_select(params, *, fallback):
         _fallback_id("3D View Tool: Tweak", fallback),
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            *([] if fallback else _template_items_tool_select(
-                params, "view3d.select", "view3d.cursor3d", extend="toggle")),
+            *([] if (fallback and (params.select_mouse == 'RIGHTMOUSE')) else _template_items_tool_select(
+                params, "view3d.select", "view3d.cursor3d", fallback, extend="toggle")),
             *([] if (not params.use_fallback_tool_rmb) else _template_view3d_select(
                 type=params.select_mouse, value=params.select_mouse_value, legacy=params.legacy, exclude_mod="ctrl")),
         ]},
@@ -7397,8 +7403,8 @@ def km_3d_view_tool_edit_gpencil_select(params, *, fallback):
         _fallback_id("3D View Tool: Edit Gpencil, Tweak", fallback),
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            *([] if fallback else _template_items_tool_select(
-                params, "gpencil.select", "view3d.cursor3d", extend="toggle")),
+            *([] if (fallback and (params.select_mouse == 'RIGHTMOUSE')) else _template_items_tool_select(
+                params, "gpencil.select", "view3d.cursor3d", fallback, extend="toggle")),
             *([] if (not params.use_fallback_tool_rmb) else _template_view3d_gpencil_select(
                 type=params.select_mouse, value=params.select_mouse_value, legacy=params.legacy)),
         ]},
@@ -7536,7 +7542,7 @@ def km_3d_view_tool_sculpt_gpencil_select(params):
     return (
         "3D View Tool: Sculpt Gpencil, Tweak",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", extend="toggle")},
+        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", False, extend="toggle")},
     )
 
 
@@ -7575,11 +7581,11 @@ def km_sequencer_editor_tool_generic_select(params, *, fallback):
         _fallback_id("Sequencer Tool: Tweak", fallback),
         {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
-            *([] if fallback else _template_items_tool_select(
-                params, "sequencer.select", "sequencer.cursor_set", extend="toggle")),
+            *([] if (fallback and (params.select_mouse == 'RIGHTMOUSE')) else _template_items_tool_select(
+                params, "sequencer.select", "sequencer.cursor_set", fallback, extend="toggle")),
 
             *([] if (not params.use_fallback_tool_rmb) else _template_sequencer_preview_select(
-                type=params.select_mouse, value=params.select_mouse_value_fallback, legacy=params.legacy)),
+                type=params.select_mouse, value=params.select_mouse_value, legacy=params.legacy)),
             # Ignored for preview.
             *_template_items_change_frame(params),
         ]},

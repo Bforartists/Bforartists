@@ -244,9 +244,11 @@ const EnumPropertyItem rna_enum_brush_gpencil_weight_types_items[] = {
 };
 
 const EnumPropertyItem rna_enum_brush_curves_sculpt_tool_items[] = {
+    {CURVES_SCULPT_TOOL_COMB, "COMB", ICON_NONE, "Comb", ""},
+    {CURVES_SCULPT_TOOL_DELETE, "DELETE", ICON_NONE, "Delete", ""},
+    {CURVES_SCULPT_TOOL_SNAKE_HOOK, "SNAKE_HOOK", ICON_NONE, "Snake Hook", ""},
     {CURVES_SCULPT_TOOL_TEST1, "TEST1", ICON_NONE, "Test 1", ""},
     {CURVES_SCULPT_TOOL_TEST2, "TEST2", ICON_NONE, "Test 2", ""},
-    {CURVES_SCULPT_TOOL_TEST3, "TEST3", ICON_NONE, "Test 3", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -2990,7 +2992,7 @@ static void rna_def_brush(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "falloff_angle", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_float_sdna(prop, NULL, "falloff_angle");
-  RNA_def_property_range(prop, 0, M_PI / 2);
+  RNA_def_property_range(prop, 0, M_PI_2);
   RNA_def_property_ui_text(
       prop,
       "Falloff Angle",

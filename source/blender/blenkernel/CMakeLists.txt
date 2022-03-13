@@ -150,7 +150,7 @@ set(SRC
   intern/idprop_serialize.cc
   intern/idprop_utils.c
   intern/idtype.c
-  intern/image.c
+  intern/image.cc
   intern/image_partial_update.cc
   intern/image_gen.c
   intern/image_gpu.cc
@@ -807,6 +807,7 @@ if(WITH_GTESTS)
     intern/asset_test.cc
     intern/bpath_test.cc
     intern/cryptomatte_test.cc
+    intern/curves_geometry_test.cc
     intern/fcurve_test.cc
     intern/idprop_serialize_test.cc
     intern/image_partial_update_test.cc
