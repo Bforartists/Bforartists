@@ -19,23 +19,23 @@ bl_info = {
 import bpy
 
 
-def write_cameras(context, filepath, frame_start, frame_end, only_selected=False):
+def write_cameras(context, fh, frame_start, frame_end, only_selected=False):
 
     data_attrs = (
-        'lens',
-        'shift_x',
-        'shift_y',
-        'dof_distance',
-        'clip_start',
-        'clip_end',
-        'display_size',
-        )
+        "lens",
+        "shift_x",
+        "shift_y",
+        "dof.focus_distance",
+        "clip_start",
+        "clip_end",
+        "display_size",
+    )
 
     obj_attrs = (
-        'hide_render',
-        )
+        "hide_render",
+    )
 
-    fw = open(filepath, 'w').write
+    fw = fh.write
 
     scene = bpy.context.scene
 
@@ -60,7 +60,7 @@ def write_cameras(context, filepath, frame_start, frame_end, only_selected=False
     for obj, obj_data in cameras:
         fw("data = bpy.data.cameras.new(%r)\n" % obj.name)
         for attr in data_attrs:
-            fw("data.%s = %s\n" % (attr, repr(getattr(obj_data, attr))))
+            fw("data.%s = %s\n" % (attr, repr(obj_data.path_resolve(attr))))
 
         fw("obj = bpy.data.objects.new(%r, data)\n" % obj.name)
 
@@ -77,21 +77,21 @@ def write_cameras(context, filepath, frame_start, frame_end, only_selected=False
         fw("scene.frame_set(%d + frame)\n" % f)
 
         for obj, obj_data in cameras:
-            fw("obj = cameras['%s']\n" % obj.name)
+            fw("obj = cameras[%r]\n" % obj.name)
 
             matrix = obj.matrix_world.copy()
             fw("obj.location = %r, %r, %r\n" % matrix.to_translation()[:])
             fw("obj.scale = %r, %r, %r\n" % matrix.to_scale()[:])
             fw("obj.rotation_euler = %r, %r, %r\n" % matrix.to_euler()[:])
 
-            fw("obj.keyframe_insert('location')\n")
-            fw("obj.keyframe_insert('scale')\n")
-            fw("obj.keyframe_insert('rotation_euler')\n")
+            fw("obj.keyframe_insert(\"location\")\n")
+            fw("obj.keyframe_insert(\"scale\")\n")
+            fw("obj.keyframe_insert(\"rotation_euler\")\n")
 
             # only key the angle
             fw("data = obj.data\n")
             fw("data.lens = %s\n" % obj_data.lens)
-            fw("data.keyframe_insert('lens')\n")
+            fw("data.keyframe_insert(\"lens\")\n")
 
             fw("\n")
 
@@ -129,7 +129,8 @@ class CameraExporter(bpy.types.Operator, ExportHelper):
             default=True)
 
     def execute(self, context):
-        write_cameras(context, self.filepath, self.frame_start, self.frame_end, self.only_selected)
+        with open(self.filepath, 'w', encoding='utf-8') as fh:
+            write_cameras(context, fh, self.frame_start, self.frame_end, self.only_selected)
         return {'FINISHED'}
 
     def invoke(self, context, event):

@@ -569,7 +569,7 @@ def bvh_node_dict2armature(
 
             # For each location x, y, z.
             for axis_i in range(3):
-                curve = action.fcurves.new(data_path=data_path, index=axis_i)
+                curve = action.fcurves.new(data_path=data_path, index=axis_i, action_group=bvh_node.name)
                 keyframe_points = curve.keyframe_points
                 keyframe_points.add(num_frame)
 
@@ -615,7 +615,7 @@ def bvh_node_dict2armature(
 
             # For each euler angle x, y, z (or quaternion w, x, y, z).
             for axis_i in range(len(rotate[0])):
-                curve = action.fcurves.new(data_path=data_path, index=axis_i)
+                curve = action.fcurves.new(data_path=data_path, index=axis_i, action_group=bvh_node.name)
                 keyframe_points = curve.keyframe_points
                 keyframe_points.add(num_frame)
 

@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Beta (b'6bbf63f25195')\n"
+"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-02-22 16:10+0100\n"
+"PO-Revision-Date: 2022-03-02 09:34+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -3520,6 +3520,14 @@ msgid "Curve used for the strength"
 msgstr "Krivka používaná na silu"
 
 
+msgid "Dilate/Contract"
+msgstr "Rozšíriť/zmenšiť"
+
+
+msgid "Number of pixels to expand or contract fill area"
+msgstr "Počet pixelov na rozšírenie alebo zmenšenie oblasti výplne"
+
+
 msgid "Direction"
 msgstr "Smer"
 
@@ -4189,7 +4197,7 @@ msgstr "Obrázok pozadia"
 
 
 msgid "Image and settings for display in the 3D View background"
-msgstr "Obrázok a nastavenia pre zobrazenie pozadia 3D zobrazenia"
+msgstr "Obrázok a nastavenia pre zobrazenie pozadia 3D záberu"
 
 
 msgid "Opacity"
@@ -4277,7 +4285,7 @@ msgstr "Rotácia"
 
 
 msgid "Rotation for the background image (ortho view only)"
-msgstr "Otáčanie pre obrázok na pozadí (len pre kolmé zobrazenie)"
+msgstr "Otáčanie pre obrázok na pozadí (len pre kolmý pohľad)"
 
 
 msgid "Scale"
@@ -6410,7 +6418,7 @@ msgstr "Cyklicky"
 
 
 msgid "Treat curve as cyclic curve (no clamping to curve bounding box)"
-msgstr "Ošetrí krivku ako cyklickú krivku (bez zarážky na schránky ohraničenia krivky)"
+msgstr "Ošetrí krivku ako cyklickú krivku (bez zarážky na políčko ohraničenia krivky)"
 
 
 msgid "Copy Location Constraint"
@@ -18452,7 +18460,7 @@ msgstr "Režim rozostrenia"
 
 
 msgid "Box"
-msgstr "Schránka"
+msgstr "Políčko"
 
 
 msgid "Gaussian"
@@ -23010,7 +23018,7 @@ msgstr "Polomer paralaxy"
 
 
 msgid "Lowest corner of the parallax bounding box"
-msgstr "Najnižší roh schránky ohraničenia paralaxy"
+msgstr "Najnižší roh políčko ohraničenia paralaxy"
 
 
 msgid "Type of parallax volume"
@@ -24194,11 +24202,11 @@ msgstr "Index súčasného kľúčového tvaru"
 
 
 msgid "Bounding Box"
-msgstr "Schránka ohraničenia"
+msgstr "Políčko ohraničenia"
 
 
 msgid "Object's bounding box in object-space coordinates, all values are -1.0 when not available"
-msgstr "Schránka ohraničenia objektov v súradniciach priestoru objektu, všetky hodnoty sú -1,0 ak nie je k dispozícii"
+msgstr "Políčko ohraničenia objektov v súradniciach priestoru objektu, všetky hodnoty sú -1,0 ak nie je k dispozícii"
 
 
 msgid "Settings for using the object as a collider in physics simulation"
@@ -24269,7 +24277,7 @@ msgid ""
 "Absolute bounding box dimensions of the object.\n"
 "Warning: Assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data"
 msgstr ""
-"Absolútne rozmery schránky ohraničenia objektu.\n"
+"Absolútne rozmery políčka ohraničenia objektu.\n"
 "Upozornenie: Priradenie k nemu alebo jeho členom viackrát po sebe nebude fungovať správne, pretože potrebuje aktuálne vyhodnotené údaje"
 
 
@@ -24290,7 +24298,7 @@ msgstr "Zobrazí typ ohraničenia objektu"
 
 
 msgid "Display bounds as box"
-msgstr "Zobrazí hranice ako schránku"
+msgstr "Zobrazí hranice ako políčko"
 
 
 msgid "Display bounds as sphere"
@@ -26557,7 +26565,7 @@ msgstr "Použiť rozsah náhľadu"
 
 
 msgid "Use an alternative start/end frame range for animation playback and view renders"
-msgstr "Použije alternatívny rozsah počiatočnej/koncovej snímky pre prehrávanie animácie a zobrazenie prekreslenia"
+msgstr "Použije alternatívny rozsah počiatočnej/koncovej snímky pre prehrávanie animácie a prekreslenia pohľadu"
 
 
 msgid "Stamp Note"
@@ -31997,7 +32005,7 @@ msgstr "Lineárny dopad"
 
 
 msgid "Restrict View"
-msgstr "Obmedziť zobrazenie"
+msgstr "Obmedziť pohľad"
 
 
 msgid "Restrict visibility in the viewport"
@@ -32009,7 +32017,7 @@ msgstr "Obmedziť prekreslenie"
 
 
 msgid "Restrict renderability"
-msgstr "Obmedzí prevádzanie"
+msgstr "Obmedzí prekresľovanie"
 
 
 msgid "Restrict Select"
@@ -33128,19 +33136,19 @@ msgstr "UV mapovanie"
 
 
 msgid "Align View"
-msgstr "Zarovnať zobrazenie"
+msgstr "Zarovnať pohľad"
 
 
 msgid "Align View to Active"
-msgstr "Zarovnať zobrazenie na aktívne"
+msgstr "Zarovná pohľad na aktívne"
 
 
 msgid "Local View"
-msgstr "Lokálne zobrazenie"
+msgstr "Lokálny pohľad"
 
 
 msgid "View Regions"
-msgstr "Oblasti zobrazenia"
+msgstr "Oblasti pohľadu"
 
 
 msgid "Viewpoint"
@@ -34348,7 +34356,7 @@ msgstr "Pridá transformáciu ďalšieho objektu do celkového posuvu"
 
 
 msgid "Add an offset relative to the object's bounding box"
-msgstr "Pridá posuv vo vzťahu k schránke ohraničenia objektu"
+msgstr "Pridá posuv vo vzťahu k políčku ohraničenia objektu"
 
 
 msgid "Bevel Modifier"
@@ -38744,11 +38752,11 @@ msgstr "Je označené stlmenie aktuálnej snímky"
 
 
 msgid "Pattern Bounding Box"
-msgstr "Schránka ohraničenia vzorky"
+msgstr "Políčko ohraničenia vzorky"
 
 
 msgid "Pattern area bounding box in normalized coordinates"
-msgstr "Schránka ohraničenia vzorky oblasti v normalizovaných súradniciach"
+msgstr "Políčko ohraničenia vzorky oblasti v normalizovaných súradniciach"
 
 
 msgid "Pattern Corners"
@@ -39792,7 +39800,7 @@ msgstr "Vlastná farba tela uzla"
 
 
 msgid "Absolute bounding box dimensions of the node"
-msgstr "Absolútne rozmery schránky ohraničenia uzla"
+msgstr "Absolútne rozmery políčka ohraničenia uzla"
 
 
 msgid "Height of the node"
@@ -40632,11 +40640,11 @@ msgstr "Pravdivé, ak tento obrázok má akúkoľvek pomenovanú vrstvu"
 
 
 msgid "Has View"
-msgstr "Má zobrazenie"
+msgstr "Má pohľad"
 
 
 msgid "True if this image has multiple views"
-msgstr "Pravdivé, ak tento obrázok má viacero zobrazení"
+msgstr "Pravdivé, ak tento obrázok má viacero pohľadov"
 
 
 msgid "Placeholder"
@@ -41765,7 +41773,7 @@ msgstr "Vyp: prvá zásuvka, Zap: druhá zásuvka"
 
 
 msgid "Switch View"
-msgstr "Prepnúť zobrazenie"
+msgstr "Prepnúť pohľad"
 
 
 msgid "Node Output"
@@ -43666,7 +43674,7 @@ msgstr "Veľkosť písma použitá na zobrazenie menovky"
 
 
 msgid "Shrink the frame to minimal bounding box"
-msgstr "Zmenší snímku na minimálnu schránku ohraničenia"
+msgstr "Zmenší snímku na minimálne políčko ohraničenia"
 
 
 msgid "Group Input"
@@ -46136,7 +46144,7 @@ msgstr "Všetky snímky"
 
 
 msgid "Reset viewable area to show full keyframe range"
-msgstr "Znovu nastaví zobraziteľnú oblasť pre zobrazenie celého rozsahu kľúčovej snímky"
+msgstr "Resetuje zobraziteľnú oblasť pre zobrazenie celého rozsahu kľúčovej snímky"
 
 
 msgctxt "Operator"
@@ -46145,7 +46153,7 @@ msgstr "Prejsť na aktuálnu snímku"
 
 
 msgid "Move the view to the current frame"
-msgstr "Presunie zobrazenie na aktuálnu snímku"
+msgstr "Presunie pohľad na aktuálnu snímku"
 
 
 msgctxt "Operator"
@@ -46154,7 +46162,7 @@ msgstr "Vybrané snímky"
 
 
 msgid "Reset viewable area to show selected keyframes range"
-msgstr "Znovu nastaví zobraziteľnú oblasť na zobrazenie vybraného rozsahu kľúčových snímok"
+msgstr "Resetuje zobraziteľnú oblasť na zobrazenie vybraného rozsahu kľúčových snímok"
 
 
 msgctxt "Operator"
@@ -47604,7 +47612,7 @@ msgstr "Zaoblenie"
 
 msgctxt "Operator"
 msgid "Reset Brush"
-msgstr "Znovu nastaviť štetec"
+msgstr "Resetovať štetec"
 
 
 msgid "Return brush to defaults based on current tool"
@@ -47688,11 +47696,11 @@ msgstr "Použije hodnoty mierky textúry"
 
 msgctxt "Operator"
 msgid "Reset Transform"
-msgstr "Znovu nastaviť transformáciu"
+msgstr "Resetovať transformáciu"
 
 
 msgid "Reset the stencil transformation to the default"
-msgstr "Znovu nastaví zmenu polohy šablóny na predvolenú"
+msgstr "Resetuje zmenu polohy šablóny na predvolenú"
 
 
 msgctxt "Operator"
@@ -48197,7 +48205,7 @@ msgstr "Vystrediť súčasnú snímku"
 
 
 msgid "Scroll view so current frame would be centered"
-msgstr "Posunie zobrazenie tak, aby bola aktuálna snímka vycentrovaná"
+msgstr "Posunie pohľad tak, aby bola aktuálna snímka vycentrovaná"
 
 
 msgctxt "Operator"
@@ -48815,7 +48823,7 @@ msgstr "Zobrazí celý obrázok so značkami"
 
 
 msgid "Fit View"
-msgstr "Prispôsobiť zobrazenie"
+msgstr "Prispôsobiť pohľad"
 
 
 msgid "Fit frame to the viewport"
@@ -48824,11 +48832,11 @@ msgstr "Prispôsobí snímku na záber"
 
 msgctxt "Operator"
 msgid "Center View to Cursor"
-msgstr "Vycentrovať zobrazenie na kurzor"
+msgstr "Vycentrovať pohľad na kurzor"
 
 
 msgid "Center the view so that the cursor is in the middle of the view"
-msgstr "Vycentruje zobrazenie tak, aby kurzor bol v strede zobrazenia"
+msgstr "Vycentruje pohľad tak, aby kurzor bol v strede pohľadu"
 
 
 msgctxt "Operator"
@@ -48837,16 +48845,16 @@ msgstr "NDOF posun/priblíženie"
 
 
 msgid "Use a 3D mouse device to pan/zoom the view"
-msgstr "Použije zariadenie 3D myši na posuv/priblíženie zobrazenia"
+msgstr "Použije zariadenie 3D myši na posuv/priblíženie pohľadu"
 
 
 msgctxt "Operator"
 msgid "Pan View"
-msgstr "Panoramatické zobrazenie"
+msgstr "Panoramatický pohľad"
 
 
 msgid "Pan the view"
-msgstr "Panoramatické zobrazenie"
+msgstr "Panoramatický pohľad"
 
 
 msgid "View all selected elements"
@@ -48855,11 +48863,11 @@ msgstr "Zobrazí všetky vybrané prvky"
 
 msgctxt "Operator"
 msgid "View Zoom"
-msgstr "Priblížiť zobrazenie"
+msgstr "Priblížiť pohľad"
 
 
 msgid "Zoom in/out the view"
-msgstr "Priblíži/oddiali zobrazenie"
+msgstr "Priblíži/oddiali pohľad"
 
 
 msgid "Zoom factor, values higher than 1.0 zoom in, lower values zoom out"
@@ -48880,7 +48888,7 @@ msgstr "Priblížiť"
 
 
 msgid "Zoom in the view"
-msgstr "Priblíži zobrazenie"
+msgstr "Priblíži pohľad"
 
 
 msgid "Cursor location in screen coordinates"
@@ -48893,7 +48901,7 @@ msgstr "Oddialiť"
 
 
 msgid "Zoom out the view"
-msgstr "Oddiali zobrazenie"
+msgstr "Oddiali pohľad"
 
 
 msgid "Cursor location in normalized (0.0 to 1.0) coordinates"
@@ -48902,11 +48910,11 @@ msgstr "Poloha kurzora v normalizovaných súradniciach (0,0 - 1,0)"
 
 msgctxt "Operator"
 msgid "View Zoom Ratio"
-msgstr "Zobraziť pomer priblíženia"
+msgstr "Pohľad pomerom priblíženia"
 
 
 msgid "Set the zoom ratio (based on clip size)"
-msgstr "Nastaví pomer priblíženia (na základe veľkosti klipu)"
+msgstr "Nastaví priblíženie pomerom (na základe veľkosti klipu)"
 
 
 msgid "Zoom ratio, 1.0 is 1:1, higher is zoomed in, lower is zoomed out"
@@ -49362,11 +49370,11 @@ msgstr "Počet snímok, ktoré by dráha animácie mala trvať"
 
 msgctxt "Operator"
 msgid "Reset Distance"
-msgstr "Znovu nastaviť vzdialenosť"
+msgstr "Resetovať vzdialenosť"
 
 
 msgid "Reset limiting distance for Limit Distance Constraint"
-msgstr "Znovu nastaví limit vzdialenosti pre vynútenie Limit vzdialenosti"
+msgstr "Resetuje limit vzdialenosti pre vynútenie Limit vzdialenosti"
 
 
 msgctxt "Operator"
@@ -49428,11 +49436,11 @@ msgstr "Odstráni cieľ z vynútenia"
 
 msgctxt "Operator"
 msgid "Reset Original Length"
-msgstr "Znovu nastaviť originálnu dĺžku"
+msgstr "Resetovať originálnu dĺžku"
 
 
 msgid "Reset original length of bone for Stretch To Constraint"
-msgstr "Znovu nastaví pôvodnú dĺžku kosti pre vynútenie Roztiahnuť na"
+msgstr "Resetuje pôvodnú dĺžku kosti pre vynútenie Roztiahnuť na"
 
 
 msgctxt "Operator"
@@ -49668,7 +49676,7 @@ msgstr "Prispôsobiť priestor textúry"
 
 
 msgid "Match texture space to object's bounding box"
-msgstr "Prispôsobí priestor textúry na schránku ohraničenia objektu"
+msgstr "Prispôsobí priestor textúry na políčko ohraničenia objektu"
 
 
 msgctxt "Operator"
@@ -51152,6 +51160,14 @@ msgid "Export using glTF convention, +Y up"
 msgstr "Exportuje použitím glTF konvencie, +Y hore"
 
 
+msgid "Optimize Animation Size"
+msgstr "Optimalizácia veľkosti animácie"
+
+
+msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
+msgstr "Znižuje veľkosť exportovaných súborov odstránením duplicitných kľúčových snímok. Môže spôsobiť problémy s krokovou animáciou"
+
+
 msgid "Export setting categories"
 msgstr "Kategórie nastavenia exportu"
 
@@ -51670,11 +51686,11 @@ msgstr "Nahlási všetky chýbajúce externé súbory"
 
 msgctxt "Operator"
 msgid "Reset Recent"
-msgstr "Znovu nastaviť nedávne"
+msgstr "Resetovať nedávne"
 
 
 msgid "Reset recent files"
-msgstr "Znovu nastaví nedávne súbory"
+msgstr "Resetuje nedávne súbory"
 
 
 msgid "Handle mouse clicks to select and activate items"
@@ -52581,12 +52597,12 @@ msgstr "Vytvorí prázdnu snímku vo všetkých vrstvách a nielen v aktívnej"
 
 
 msgid "Reset brush to default parameters"
-msgstr "Znovu nastaví štetec na predvolené parametre"
+msgstr "Resetuje štetec na predvolené parametre"
 
 
 msgctxt "Operator"
 msgid "Reset All Brushes"
-msgstr "Znovu nastaviť všetky štetce"
+msgstr "Resetovať všetky štetce"
 
 
 msgid "Delete all mode brushes and recreate a default set"
@@ -53605,11 +53621,11 @@ msgstr "Znovu premietne ťahy na geometriu scény, akoby boli nakreslené použi
 
 msgctxt "Operator"
 msgid "Reset Fill Transformations"
-msgstr "Znovu nastaviť transformácie výplní"
+msgstr "Resetovať transformácie výplní"
 
 
 msgid "Reset any UV transformation and back to default values"
-msgstr "Znovu nastaví každú UV transformáciu a vráti na predvolené hodnoty"
+msgstr "Resetuje každú UV transformáciu a vráti na predvolené hodnoty"
 
 
 msgid "Show all Grease Pencil layers"
@@ -54145,23 +54161,23 @@ msgstr "Normalizuje nepriehľadnosť ťahu tak, že všetky body používajú ro
 
 msgctxt "Operator"
 msgid "Reset Vertex Color"
-msgstr "Znovu nastaviť farbu vrcholu"
+msgstr "Resetovať farbu vrcholu"
 
 
 msgid "Reset vertex color for all or selected strokes"
-msgstr "Znovu nastaví farbu vrcholu pre všetky alebo vybrané ťahy"
+msgstr "Resetuje farbu vrcholu pre všetky alebo vybrané ťahy"
 
 
 msgid "Reset Vertex Color to Stroke only"
-msgstr "Znovu nastaví iba farbu vrcholu pre ťah"
+msgstr "Resetuje iba farbu vrcholu pre ťah"
 
 
 msgid "Reset Vertex Color to Fill only"
-msgstr "Znovu nastaví iba farbu vrcholu"
+msgstr "Resetuje iba farbu vrcholu"
 
 
 msgid "Reset Vertex Color to Stroke and Fill"
-msgstr "Znovu nastaví farbu vrcholu pre ťah a vyplnenie"
+msgstr "Resetuje farbu vrcholu pre ťah a vyplnenie"
 
 
 msgctxt "Operator"
@@ -55008,7 +55024,7 @@ msgstr "Zahrnie manipulátory kľúčovej snímky pri výpočte dosahov"
 
 
 msgid "Reset viewable area to show selected keyframe range"
-msgstr "Znovu nastaví zobraziteľnú oblasť a zobrazí vybraný rozsah kľúčovej snímky"
+msgstr "Resetuje zobraziteľnú oblasť a zobrazí vybraný rozsah kľúčovej snímky"
 
 
 msgctxt "Operator"
@@ -56591,11 +56607,11 @@ msgstr "Odstráni snímku kľúčového tvaru masky pre aktívnu vrstvu masky v 
 
 msgctxt "Operator"
 msgid "Feather Reset Animation"
-msgstr "Znovu nastaviť zmäkčenie animácie"
+msgstr "Resetovať zmäkčenie animácie"
 
 
 msgid "Reset feather weights on all selected points animation values"
-msgstr "Znovu nastaví zmäkčenie váh na všetky vybrané hodnoty bodov animácie"
+msgstr "Resetuje zmäkčenie váh na všetky vybrané hodnoty bodov animácie"
 
 
 msgctxt "Operator"
@@ -58197,11 +58213,11 @@ msgstr "Viacnásobný vektor normálu pri výbere"
 
 
 msgid "Reset Normal"
-msgstr "Znovu nastaviť normál"
+msgstr "Resetovať normál"
 
 
 msgid "Reset buffer and/or normal of selected element"
-msgstr "Znovu nastaví zásobník a/alebo normál vybraného prvku"
+msgstr "Resetuje zásobník a/alebo normál vybraného prvku"
 
 
 msgctxt "Operator"
@@ -59860,7 +59876,7 @@ msgstr "Zmazať mierku"
 
 
 msgid "Reset scaling of selected strips"
-msgstr "Znovu nastaví mierku vybraných pásov"
+msgstr "Resetuje mierku vybraných pásov"
 
 
 msgid "Handle clicks to select NLA Strips"
@@ -60095,11 +60111,11 @@ msgstr "Zakáže 'sólo' na niektorú NLA stopu po ukončení režimu potiahnuti
 
 
 msgid "Reset viewable area to show full strips range"
-msgstr "Znovu nastaví zobraziteľnú oblasť na zobrazenie celého rozsahu pásov"
+msgstr "Resetuje zobraziteľnú oblasť na zobrazenie celého rozsahu pásov"
 
 
 msgid "Reset viewable area to show selected strips range"
-msgstr "Znovu nastaví zobraziteľnú oblasť a zobrazí vybraný rozsah pásov"
+msgstr "Resetuje zobraziteľnú oblasť a zobrazí vybraný rozsah pásov"
 
 
 msgctxt "Operator"
@@ -61012,7 +61028,7 @@ msgstr "Kladné strany"
 
 
 msgid "Enables high quality but slow calculation of the bounding box for perfect results on complex shape meshes with rotation/scale"
-msgstr "Povolí vysoko kvalitný, ale pomalý výpočet schránky ohraničenia pre dokonalé výsledky rotácie/zmeny mierky pri zložitých tvaroch povrchových sietí"
+msgstr "Povolí vysoko kvalitný, ale pomalý výpočet políčka ohraničenia pre dokonalé výsledky rotácie/zmeny mierky pri zložitých tvaroch povrchových sietí"
 
 
 msgid "Relative To"
@@ -61884,7 +61900,7 @@ msgstr "Číslo modifikátora na odstránenie"
 
 msgctxt "Operator"
 msgid "Reset Hook"
-msgstr "Znovu nastaviť hák"
+msgstr "Resetovať hák"
 
 
 msgid "Recalculate and clear offset transformation"
@@ -62548,7 +62564,7 @@ msgstr "Počiatok na geometriu"
 
 
 msgid "Calculate the center of geometry based on the current pivot point (median, otherwise bounding box)"
-msgstr "Vypočíta stred geometrie na základe aktuálneho otočného bodu (mediánu, inak schránky ohraničenia)"
+msgstr "Vypočíta stred geometrie na základe aktuálneho otočného bodu (mediánu, inak políčka ohraničenia)"
 
 
 msgid "Origin to 3D Cursor"
@@ -62596,7 +62612,7 @@ msgstr "Zmazať inverzného rodiča"
 
 
 msgid "Reset the transform corrections applied to the parenting relationship, does not remove parenting itself"
-msgstr "Znovu nastaví korekcie transformácie použité v rodičovskom vzťahu, neodstráni rodičovstvo samotné"
+msgstr "Resetuje korekcie transformácie použité v rodičovskom vzťahu, neodstráni rodičovstvo samotné"
 
 
 msgctxt "Operator"
@@ -63680,7 +63696,7 @@ msgstr "Prenesie len transformáciu mierky"
 
 
 msgid "Reset Values"
-msgstr "Znovu nastaviť hodnoty"
+msgstr "Resetovať hodnoty"
 
 
 msgid "Clear transform values after transferring to deltas"
@@ -64530,8 +64546,20 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Aby všetci používatelia vybraných blokov údajov použili namiesto jedného aktuálneho (kliknutie)"
 
 
+msgid "Make Library Override Single"
+msgstr "Vytvoriť jediný prepis knižnice"
+
+
+msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
+msgstr "Vytvorí jediný lokálny prepis tohto prepojeného bloku údajov mimo hierarchie - platí len pre aktívnu položku Líniového prehľadu"
+
+
 msgid "Make Library Override Hierarchy"
 msgstr "Vytvoriť hierarchiu prepisov knižnice"
+
+
+msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
+msgstr "Vytvorí lokálny prepis tohto prepojeného bloku údajov a jeho hierarchie závislostí - platí len pre aktívnu položku Líniového prehľadu"
 
 
 msgid "Convert Proxy to Override"
@@ -64543,19 +64571,19 @@ msgstr "Konvertuje objekt náhrady na úplný prepis knižnice vrátane všetký
 
 
 msgid "Reset Library Override"
-msgstr "Znovu nastaviť prepis knižnice"
+msgstr "Resetovať prepis knižnice"
 
 
 msgid "Reset this local override to its linked values"
-msgstr "Znovu nastaví tento lokálny prepis prepojeného bloku údajov"
+msgstr "Resetuje tento lokálny prepis prepojeného bloku údajov"
 
 
 msgid "Reset Library Override Hierarchy"
-msgstr "Znovu nastaviť hierarchiu prepisu knižnice"
+msgstr "Resetovať hierarchiu prepisu knižnice"
 
 
 msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "Znovu nastaví tento lokálny prepis na súvisiace hodnoty, ako aj na hierarchiu závislostí"
+msgstr "Resetuje tento lokálny prepis na súvisiace hodnoty, ako aj na hierarchiu závislostí"
 
 
 msgid "Resync Library Override Hierarchy"
@@ -65234,11 +65262,11 @@ msgstr "Prepnúť štetec na režim vyhladenia počas trvania ťahu"
 
 msgctxt "Operator"
 msgid "Mask Box Gesture"
-msgstr "Výraz schránky masky"
+msgstr "Výraz políčka masky"
 
 
 msgid "Add mask within the box as you move the brush"
-msgstr "Pridáva masku pri pohybe štetcom vnútri schránky"
+msgstr "Pridáva masku pri pohybe štetcom vnútri políčka"
 
 
 msgid "Set mask to the level specified by the 'value' property"
@@ -66411,7 +66439,7 @@ msgstr "Vymazať polohu pózy"
 
 
 msgid "Reset locations of selected bones to their default values"
-msgstr "Znovu nastaví umiestnenie vybraných kostí na ich predvolené hodnoty"
+msgstr "Resetuje umiestnenie vybraných kostí na ich predvolené hodnoty"
 
 
 msgctxt "Operator"
@@ -66611,7 +66639,7 @@ msgstr "Zmazať rotácie pózy"
 
 
 msgid "Reset rotations of selected bones to their default values"
-msgstr "Znovu nastaví rotácie vybraných kostí na ich predvolené hodnoty"
+msgstr "Resetuje rotácie vybraných kostí na ich predvolené hodnoty"
 
 
 msgctxt "Operator"
@@ -66629,7 +66657,7 @@ msgstr "Zmazať mierku pózy"
 
 
 msgid "Reset scaling of selected bones to their default values"
-msgstr "Znovu nastaví zmenu mierky vybraných kostí na ich predvolené hodnoty"
+msgstr "Resetuje zmenu mierky vybraných kostí na ich predvolené hodnoty"
 
 
 msgctxt "Operator"
@@ -66677,7 +66705,7 @@ msgstr "Zmazať transformáciu pózy"
 
 
 msgid "Reset location, rotation, and scaling of selected bones to their default values"
-msgstr "Znovu nastaví polohu, rotáciu a mierku vybraných kostí na ich predvolené hodnoty"
+msgstr "Resetuje polohu, rotáciu a mierku vybraných kostí na ich predvolené hodnoty"
 
 
 msgctxt "Operator"
@@ -66686,7 +66714,7 @@ msgstr "Zmazať transformácie užívateľov"
 
 
 msgid "Reset pose bone transforms to keyframed state"
-msgstr "Znovu nastaví transformáciu pózy kostí do stavu kľúčového snímkovania"
+msgstr "Resetuje transformáciu pózy kostí do stavu kľúčového snímkovania"
 
 
 msgid "Only visible/selected bones"
@@ -66953,11 +66981,11 @@ msgstr "Obnoviť všetky priradenia kláves na predvolené"
 
 msgctxt "Operator"
 msgid "Reset to Default Theme"
-msgstr "Znovu nastaviť predvolený motív"
+msgstr "Resetovať predvolený motív"
 
 
 msgid "Reset to the default theme colors"
-msgstr "Znovu nastaví predvolené farby motívu"
+msgstr "Resetuje predvolené farby motívu"
 
 
 msgctxt "Operator"
@@ -68671,20 +68699,20 @@ msgstr "Premiestni otočný bod transformácie sochárstva na okraj aktívnej ob
 
 msgctxt "Operator"
 msgid "Face Set Box Gesture"
-msgstr "Sústava plôšok pohybom v schránke"
+msgstr "Prejav sústavy plôšok v políčku"
 
 
 msgid "Add face set within the box as you move the brush"
-msgstr "Pridáva sústavu plôšok pri pohybe štetcom vnútri poľa"
+msgstr "Pridáva sústavu plôšok pri pohybe štetcom vnútri políčka"
 
 
 msgctxt "Operator"
 msgid "Face Sets Visibility"
-msgstr "Viditeľnosť nastavenia plôšok"
+msgstr "Viditeľnosť sústavy plôšok"
 
 
 msgid "Change the visibility of the Face Sets of the sculpt"
-msgstr "Zmení viditeľnosť nastavenia plôšok sochárstva"
+msgstr "Zmení viditeľnosť sústavy plôšok sochárstva"
 
 
 msgid "Toggle Visibility"
@@ -69313,7 +69341,7 @@ msgstr "Nastaviť trvalý základ"
 
 
 msgid "Reset the copy of the mesh that is being sculpted on"
-msgstr "Znovu nastaví kópiu vytesanú do povrchovej siete"
+msgstr "Resetuje kópiu vytesanú do povrchovej siete"
 
 
 msgctxt "Operator"
@@ -69379,7 +69407,7 @@ msgstr "Vzdialenosť, v ktorej sa spájajú symetrické vrcholy"
 
 msgctxt "Operator"
 msgid "Trim Box Gesture"
-msgstr "Orezanie pohybom s schránke"
+msgstr "Orezať pohybom v políčku"
 
 
 msgid "Trims the mesh within the box as you move the brush"
@@ -69424,7 +69452,7 @@ msgstr "Použije umiestnenie a polomer kurzora pre rozmery a polohu tvaru orezan
 
 msgctxt "Operator"
 msgid "Trim Lasso Gesture"
-msgstr "Orezanie pohybom v lase"
+msgstr "Orezať pohybom v lase"
 
 
 msgid "Trims the mesh within the lasso as you move the brush"
@@ -70412,7 +70440,7 @@ msgstr "Zmazať transformáciu pásov"
 
 
 msgid "Reset image transformation to default value"
-msgstr "Znovu nastaví transformáciu obrázka na predvolenú hodnotu"
+msgstr "Resetuje transformáciu obrázka na predvolenú hodnotu"
 
 
 msgid "Property"
@@ -70424,19 +70452,19 @@ msgstr "Vlastnosť transformácie pásu na znovu nastavenie"
 
 
 msgid "Reset strip transform location"
-msgstr "Znovu nastaviť transformáciu polohy pásu"
+msgstr "Resetovať transformáciu polohy pásu"
 
 
 msgid "Reset strip transform scale"
-msgstr "Znovu nastaviť transformáciu mierky pásu"
+msgstr "Resetovať transformáciu mierky pásu"
 
 
 msgid "Reset strip transform rotation"
-msgstr "Znovu nastaviť transformácie rotácie pásu"
+msgstr "Resetovať transformácie rotácie pásu"
 
 
 msgid "Reset strip transform location, scale and rotation"
-msgstr "Znovu nastaviť transformáciu polohy, mierky a rotácie pásu"
+msgstr "Resetovať transformáciu polohy, mierky a rotácie pásu"
 
 
 msgctxt "Operator"
@@ -72159,7 +72187,7 @@ msgstr "Odstráni operáciu prepisu"
 
 
 msgid "Reset to default values all elements of the array"
-msgstr "Znovu nastaví predvolené hodnoty všetkých prvkov poľa"
+msgstr "Resetuje predvolené hodnoty všetkých prvkov poľa"
 
 
 msgctxt "Operator"
@@ -72206,11 +72234,11 @@ msgstr "Obmedzí úplné znovunačítanie prekladu užívateľského rozhrania"
 
 msgctxt "Operator"
 msgid "Reset to Default Value"
-msgstr "Znovu nastaviť predvolenú hodnotu"
+msgstr "Resetovať predvolenú hodnotu"
 
 
 msgid "Reset this property's value to its default value"
-msgstr "Znovu nastaví túto hodnotu vlastností predvolenou hodnotou"
+msgstr "Resetuje túto hodnotu vlastností predvolenou hodnotou"
 
 
 msgctxt "Operator"
@@ -72520,7 +72548,7 @@ msgstr "Kvalita zbalenia"
 
 
 msgid "Pre-packing before the complex boxpack"
-msgstr "Predbežné zbalenie pred komplexným zbalením schránky"
+msgstr "Predbežné zbalenie pred komplexným zbalením políčka"
 
 
 msgid "Selected Faces"
@@ -72674,11 +72702,11 @@ msgstr "Maximálna vzdialenosť medzi zvarenými vrcholmi"
 
 msgctxt "Operator"
 msgid "Reset"
-msgstr "Znovu nastaviť"
+msgstr "Resetovať"
 
 
 msgid "Reset UV projection"
-msgstr "Znovu nastaví UV premietanie"
+msgstr "Resetuje UV premietanie"
 
 
 msgid "Reveal all hidden UV vertices"
@@ -72989,11 +73017,11 @@ msgstr "Zvarí dohromady vybrané UV vrcholy"
 
 msgctxt "Operator"
 msgid "View Edge Pan"
-msgstr "Posuv zobrazenia hrany"
+msgstr "Posunúť pohľad hrany"
 
 
 msgid "Pan the view when the mouse is held at an edge"
-msgstr "Posúva zobrazením, keď je myš držaná na hrane"
+msgstr "Posúva pohľadom, keď je myš držaná na hrane"
 
 
 msgid "Delta X"
@@ -73006,11 +73034,11 @@ msgstr "Delta Y"
 
 msgctxt "Operator"
 msgid "Reset View"
-msgstr "Znovu nastaviť zobrazenie"
+msgstr "Resetovať pohľad"
 
 
 msgid "Reset the view"
-msgstr "Znovu nastaví zobrazenie"
+msgstr "Resetuje pohľad"
 
 
 msgctxt "Operator"
@@ -73019,7 +73047,7 @@ msgstr "Posunúť nadol"
 
 
 msgid "Scroll the view down"
-msgstr "Posunie zobrazenie nadol"
+msgstr "Posunie pohľad nadol"
 
 
 msgid "Page"
@@ -73036,7 +73064,7 @@ msgstr "Posunúť doľava"
 
 
 msgid "Scroll the view left"
-msgstr "Posunie zobrazenie doľava"
+msgstr "Posunie pohľad doľava"
 
 
 msgctxt "Operator"
@@ -73045,7 +73073,7 @@ msgstr "Posunúť doprava"
 
 
 msgid "Scroll the view right"
-msgstr "Posunie zobrazenie doprava"
+msgstr "Posunie pohľad doprava"
 
 
 msgctxt "Operator"
@@ -73054,7 +73082,7 @@ msgstr "Posunúť nahor"
 
 
 msgid "Scroll the view up"
-msgstr "Posunie zobrazenie nahor"
+msgstr "Posunie pohľad nahor"
 
 
 msgctxt "Operator"
@@ -73063,17 +73091,17 @@ msgstr "Aktivovať posuvník"
 
 
 msgid "Scroll view by mouse click and drag"
-msgstr "Navigačné zobrazenie podľa kliknutia myšou a ťahania"
+msgstr "Posúva pohľadom podľa kliknutia myšou a ťahania"
 
 
 msgctxt "Operator"
 msgid "Smooth View 2D"
-msgstr "Vyhladiť 2D zobrazenie"
+msgstr "Vyhladiť 2D pohľad"
 
 
 msgctxt "Operator"
 msgid "Zoom 2D View"
-msgstr "Priblížiť 2D zobrazenie"
+msgstr "Priblížiť 2D pohľad"
 
 
 msgid "Zoom Factor X"
@@ -73126,11 +73154,11 @@ msgstr "Ponuka výberu kostí"
 
 msgctxt "Operator"
 msgid "Align Camera to View"
-msgstr "Zarovnať kameru do zobrazenia"
+msgstr "Zarovnať kameru do pohľadu"
 
 
 msgid "Set camera view to active view"
-msgstr "Nastaví záber kamery na aktívne zobrazenie"
+msgstr "Nastaví záber kamery na aktívny pohľad"
 
 
 msgctxt "Operator"
@@ -79051,7 +79079,7 @@ msgstr "Krivka"
 
 msgctxt "Operator"
 msgid "Box"
-msgstr "Schránka"
+msgstr "Políčko"
 
 
 msgctxt "Operator"
@@ -83709,7 +83737,7 @@ msgstr "Typ filtra pixelov"
 
 
 msgid "Box filter"
-msgstr "Schránkový filter"
+msgstr "Filter políčka"
 
 
 msgid "Gaussian filter"
@@ -84453,11 +84481,11 @@ msgstr "Cesta k súboru .pot šablóny"
 
 
 msgid "Hide BBoxes"
-msgstr "Skryť pole ohraničenia"
+msgstr "Skryť políčko ohraničenia"
 
 
 msgid "Hide the bounding boxes rendered for Matrix like items"
-msgstr "Skryje schránku ohraničenia vykonaného prekreslenia pre položky podobné matrici"
+msgstr "Skryje políčko ohraničenia vykonaného prekreslenia pre položky podobné matrici"
 
 
 msgid "Scale factor"
@@ -84465,7 +84493,7 @@ msgstr "Faktor mierky"
 
 
 msgid "Resize the Bounding Box and the coordinate lines for the display of Matrix items"
-msgstr "Zmení veľkosť Schránky ohraničenia a čiary súradníc na zobrazenie položiek matrice"
+msgstr "Zmení veľkosť políčka ohraničenia a čiary súradníc na zobrazenie položiek matrice"
 
 
 msgid "Always In Front"
@@ -88752,11 +88780,11 @@ msgstr "Rotácia alebo zmena mierky otočného bodu"
 
 
 msgid "Bounding Box Center"
-msgstr "Stred Schránky ohraničenia"
+msgstr "Stred políčka ohraničenia"
 
 
 msgid "Median Point"
-msgstr "Medián"
+msgstr "Bod mediánu"
 
 
 msgid "Pivot around the 2D cursor"
@@ -89622,7 +89650,7 @@ msgstr "Stred otočného bodu pre rotáciu/zmenu mierky"
 
 
 msgid "Pivot around bounding box center of selected object(s)"
-msgstr "Otočný bod okolo stredu schránky ohraničenia vybraného objektu"
+msgstr "Otočný bod okolo stredu políčka ohraničenia vybraného objektu"
 
 
 msgid "Pivot around each object's own origin"
@@ -92302,7 +92330,7 @@ msgstr "Textové pole"
 
 
 msgid "Text bounding box for layout"
-msgstr "Schránka ohraničenia textu pre vrstvu"
+msgstr "Políčko ohraničenia textu pre vrstvu"
 
 
 msgid "Textbox Height"
@@ -95015,7 +95043,7 @@ msgstr "Na uvoľnenie použije HC metódy"
 
 
 msgid "UV Sculpt"
-msgstr "UV sochárstva"
+msgstr "Sochárstvo UV"
 
 
 msgid "Sculpt All Islands"
@@ -96511,19 +96539,19 @@ msgstr "Nezobrazovať objem v režime drôteného rámu"
 
 
 msgid "Display single bounding box for the entire grid"
-msgstr "Zobraziť jedno schránka ohraničenia pre celú mriežku"
+msgstr "Zobraziť jedno políčko ohraničenia pre celú mriežku"
 
 
 msgid "Boxes"
-msgstr "Schránky"
+msgstr "Políčka"
 
 
 msgid "Display bounding boxes for nodes in the volume tree"
-msgstr "Zobraziť schránka ohraničenia pre uzly v strome objemov"
+msgstr "Zobrazí políčko ohraničenia pre uzly v strome objemov"
 
 
 msgid "Display points for nodes in the volume tree"
-msgstr "Zobraziť body uzlov v strome objemov"
+msgstr "Zobrazí body uzlov v strome objemov"
 
 
 msgid "Volume Grid"
@@ -98283,12 +98311,12 @@ msgstr "Nástroj radiča sekvencií: Prištipnúť (náhradné)"
 
 msgctxt "WindowManager"
 msgid "Sequencer Tool: Select Box"
-msgstr "Nástroj radiča sekvencií: Výber schránkou"
+msgstr "Nástroj radiča sekvencií: Výber políčkom"
 
 
 msgctxt "WindowManager"
 msgid "Sequencer Tool: Select Box (fallback)"
-msgstr "Nástroj radiča sekvencií: Výber schránkou (náhradné)"
+msgstr "Nástroj radiča sekvencií: Výber políčkom (náhradné)"
 
 
 msgctxt "WindowManager"
@@ -99319,7 +99347,7 @@ msgstr "Inicializačné nastavenia"
 
 msgctxt "Operator"
 msgid "Reset Settings"
-msgstr "Znovu nastaviť nastavenia"
+msgstr "Resetovať nastavenia"
 
 
 msgctxt "Operator"
@@ -100781,7 +100809,7 @@ msgstr "Prekľúčovať body tvaru"
 
 msgctxt "Operator"
 msgid "Reset Feather Animation"
-msgstr "Znovu nastaviť zmäkčenie animácie"
+msgstr "Resetovať zmäkčenie animácie"
 
 
 msgid "Parent:"
@@ -104971,12 +104999,12 @@ msgstr "Zamykanie"
 
 msgctxt "Operator"
 msgid "Show Bounding Box"
-msgstr "Zobraziť Schránku ohraničenia"
+msgstr "Zobraziť políčko ohraničenia"
 
 
 msgctxt "Operator"
 msgid "Hide Bounding Box"
-msgstr "Skryť Schránku ohraničenia"
+msgstr "Skryť políčko ohraničenia"
 
 
 msgctxt "Operator"
@@ -105218,7 +105246,7 @@ msgstr "Nastavenie kostí"
 
 msgctxt "Operator"
 msgid "Reset Unkeyed"
-msgstr "Znovu nastaviť nekľúčované"
+msgstr "Resetovať nekľúčované"
 
 
 msgctxt "Operator"
@@ -105472,7 +105500,7 @@ msgstr "Mierka hrúbky"
 
 msgctxt "Operator"
 msgid "Reset Fill Transform"
-msgstr "Znovu nastaviť transformáciu výplne"
+msgstr "Resetovať transformáciu výplne"
 
 
 msgctxt "Operator"
@@ -105881,7 +105909,7 @@ msgstr "Prilepiť vektory"
 
 msgctxt "Operator"
 msgid "Reset Vectors"
-msgstr "Znovu nastaviť vektory"
+msgstr "Resetovať vektory"
 
 
 msgctxt "Operator"
@@ -105996,7 +106024,7 @@ msgstr "Zvýšiť zhustenie"
 
 msgctxt "Operator"
 msgid "Reset Kerning"
-msgstr "Znovu nastaviť zhustenie"
+msgstr "Resetovať zhustenie"
 
 
 msgctxt "Operator"
@@ -108747,12 +108775,12 @@ msgstr "Definovať prepis"
 
 msgctxt "Operator"
 msgid "Reset All to Default Values"
-msgstr "Znovu nastaviť všetko na predvolené hodnoty"
+msgstr "Resetovať všetko na predvolené hodnoty"
 
 
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
-msgstr "Znovu nastaviť na predvolenú hodnotu jednotlivo"
+msgstr "Resetovať na predvolenú hodnotu jednotlivo"
 
 
 msgctxt "Operator"
@@ -108990,7 +109018,7 @@ msgstr "Žiadne vlastnosti"
 
 
 msgid "Reset"
-msgstr "Znovu nastaviť"
+msgstr "Resetovať"
 
 
 msgid "More..."
@@ -109022,7 +109050,7 @@ msgstr "Kvapkadlo"
 
 
 msgid "Reset Color Ramp"
-msgstr "Znovu nastaviť Farebný spád"
+msgstr "Resetovať Farebný spád"
 
 
 msgid "Pos"
@@ -109050,7 +109078,7 @@ msgstr "Max Y:"
 
 
 msgid "Reset View"
-msgstr "Znovu nastaviť zobrazenie"
+msgstr "Resetovať zobrazenie"
 
 
 msgid "Extend Horizontal"
@@ -109062,7 +109090,7 @@ msgstr "Extrapólované naťahovanie"
 
 
 msgid "Reset Curve"
-msgstr "Znovu nastaviť krivku"
+msgstr "Resetovať krivku"
 
 
 msgid "Sort By:"
@@ -109118,7 +109146,7 @@ msgstr "Nemožno upravovať údaje externej knižnice"
 
 
 msgid "Reset operator defaults"
-msgstr "Znovu nastaviť predvoľby operátora"
+msgstr "Resetovať predvoľby operátora"
 
 
 msgid "Proxy Protected"
@@ -109158,7 +109186,7 @@ msgstr "Odstrániť body"
 
 
 msgid "Reset Black/White point and curves"
-msgstr "Znovu nastaví čierny/biely bod a krivky"
+msgstr "Resetuje čierny/biely bod a krivky"
 
 
 msgid "Reverse Path"
@@ -116039,7 +116067,7 @@ msgstr "Vymedzovač"
 
 
 msgid "Bounding box"
-msgstr "Schránka ohraničenia"
+msgstr "Políčko ohraničenia"
 
 
 msgid "Color Space:"
