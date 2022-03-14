@@ -1919,13 +1919,15 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CREATE,
      "OVERRIDE_LIBRARY_CREATE",
      ICON_LIBRARY_DATA_OVERRIDE,
-     "Add Library Override",
-     "Add a local override of this linked data"},
+     "Make Library Override Single",
+     "Make a single, out-of-hierarchy local override of this linked data"
+     "/nOnly applies to active Outliner item"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
-     ICON_RESET,
-     "Convert Proxy to Override",
-     "Convert a Proxy object to a full library override, including all its dependencies"},
+     ICON_HIERARCHY,
+     "Make Library Override Hierarchy",
+     "Make a local override of this linked data, and its hierarchy of dependencies"
+     "\nOnly applies to active Outliner item"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESET,
      "OVERRIDE_LIBRARY_RESET",
      ICON_DECORATE_OVERRIDE,
@@ -1944,7 +1946,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "dependencies"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESYNC_HIERARCHY_ENFORCE,
      "OVERRIDE_LIBRARY_RESYNC_HIERARCHY_ENFORCE",
-     0,
+     ICON_SYNC,
      "Resync Library Override Hierarchy Enforce",
      "Rebuild this local override from its linked reference, as well as its hierarchy of "
      "dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting "
