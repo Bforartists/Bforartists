@@ -1921,7 +1921,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      ICON_LIBRARY_DATA_OVERRIDE,
      "Make Library Override Single",
      "Make a single, out-of-hierarchy local override of this linked data"
-     "/nOnly applies to active Outliner item"},
+     "\nOnly applies to active Outliner item"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
      ICON_HIERARCHY,
