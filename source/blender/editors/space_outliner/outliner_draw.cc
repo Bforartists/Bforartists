@@ -2351,7 +2351,7 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       return (BIFIconID)ED_file_extension_icon(text->filepath);
     }
     case ID_GR:
-      return ICON_OUTLINER_COLLECTION;
+      return ICON_GROUP_BRIGHT; /*bfa - the color coded collection icon*/
     case ID_CV:
       return ICON_OUTLINER_OB_CURVE;
     case ID_PT:
