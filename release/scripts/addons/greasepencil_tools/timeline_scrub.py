@@ -21,13 +21,13 @@ from bpy.props import (BoolProperty,
                        EnumProperty)
 
 
-def nearest(array, value):
+def nearest(array, value) -> int:
     '''
     Get a numpy array and a target value
     Return closest val found in array to passed value
     '''
     idx = (np.abs(array - value)).argmin()
-    return array[idx]
+    return int(array[idx])
 
 
 def draw_callback_px(self, context):
@@ -156,7 +156,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
         if ob:  # condition to allow empty scrubing
             if ob.type != 'GPENCIL' or self.evaluate_gp_obj_key:
-                # Get objet keyframe position
+                # Get object keyframe position
                 anim_data = ob.animation_data
                 action = None
 

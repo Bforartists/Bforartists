@@ -45,7 +45,7 @@ def imageConvertCompat(path):
 # rotation first defines axis then amount in radians
 
 
-# =============================== VRML Spesific
+# =============================== VRML Specific
 
 def vrml_split_fields(value):
     """

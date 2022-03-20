@@ -658,7 +658,7 @@ class PDT_OT_Angle2(Operator):
         Note:
             Uses 2 Selected Vertices to set pg.angle and pg.distance scene variables
             also sets delta offset from these 2 points using standard Numpy Routines
-            Works in Edit and Oject Modes.
+            Works in Edit and Object Modes.
 
         Args:
             context: Blender bpy.context instance.
@@ -685,7 +685,7 @@ class PDT_OT_Angle3(Operator):
         Note:
             Uses 3 Selected Vertices to set pg.angle and pg.distance scene variables
             also sets delta offset from these 3 points using standard Numpy Routines
-            Works in Edit and Oject Modes.
+            Works in Edit and Object Modes.
 
         Args:
             context: Blender bpy.context instance.

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -1275,10 +1275,6 @@ msgid "Error"
 msgstr "Hata"
 
 
-msgid "Proxy Local"
-msgstr "Yerel Bakış"
-
-
 msgid "Disable"
 msgstr "Pasif"
 
@@ -2179,6 +2175,10 @@ msgid "View"
 msgstr "Görünüş"
 
 
+msgid "Radius"
+msgstr "Yarıçap"
+
+
 msgid "Steps"
 msgstr "Adımlar"
 
@@ -2189,10 +2189,6 @@ msgstr "Aktif Kamera"
 
 msgid "Material Index"
 msgstr "Malzeme Endeksi"
-
-
-msgid "Radius"
-msgstr "Yarıçap"
 
 
 msgid "Render"
@@ -5296,10 +5292,6 @@ msgid "Pose Library"
 msgstr "Poz Ekle..."
 
 
-msgid "Proxy"
-msgstr "Vekil Korumalıdır"
-
-
 msgid "Rigid Body Settings"
 msgstr "Fabrika Ayarlarını Yükle"
 
@@ -6724,6 +6716,10 @@ msgstr "Klip:"
 
 msgid "Pivot Point"
 msgstr "Nokta Ekle"
+
+
+msgid "Proxy"
+msgstr "Vekil Korumalıdır"
 
 
 msgid "Select Grouped"
@@ -8835,10 +8831,6 @@ msgid "Ellipse Mask"
 msgstr "Kırpma Kullan"
 
 
-msgid "Sharpen"
-msgstr "Keskinlik"
-
-
 msgid "Shadow"
 msgstr "Gölge"
 
@@ -9187,10 +9179,6 @@ msgid "Edge Angle"
 msgstr "Çevirme Açısı: "
 
 
-msgid "Z Axis"
-msgstr "Z Eks"
-
-
 msgid "Fill Type"
 msgstr "Kesme Biçimi "
 
@@ -9425,6 +9413,10 @@ msgstr "Doku Boyama"
 
 msgid "Vector Math"
 msgstr "Vektör Tutamak"
+
+
+msgid "Z Axis"
+msgstr "Z Eks"
 
 
 msgid "Texture Node"
@@ -12030,14 +12022,6 @@ msgstr "İmleci Merkez al"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgctxt "Operator"
@@ -15953,6 +15937,10 @@ msgid "Dynamic Topology Toggle"
 msgstr "Vida Aracını çalıştırır"
 
 
+msgid "Sharpen"
+msgstr "Keskinlik"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Heykeltraşlık Modu"
@@ -16951,6 +16939,10 @@ msgstr "Seçimi İmlece"
 
 msgid "Select a loop of connected UV vertices"
 msgstr "Bağlantılı başka nokta(lar) seçmelisiniz "
+
+
+msgid "Island selection mode"
+msgstr "Kamera Uçuş Modu"
 
 
 msgctxt "Operator"
@@ -18447,10 +18439,6 @@ msgstr "Fırça Kütüphanesi"
 
 
 msgid "New Handles Type"
-msgstr "Nesne Tipini Değiştir..."
-
-
-msgid "New Interpolation Type"
 msgstr "Nesne Tipini Değiştir..."
 
 
@@ -20042,6 +20030,14 @@ msgid "Outline"
 msgstr "Anahat"
 
 
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
+
+
 msgid "Pivot center for rotation/scaling"
 msgstr "Çevirme/Ölçekleme Ekseni (Kısayollar: Virgül, Shift Virgül)"
 
@@ -20564,18 +20560,6 @@ msgstr "İmaj bağlarına gözat"
 
 msgid "Snap to Pixels"
 msgstr "Izgarayı yakala:"
-
-
-msgid "Sticky Selection Mode"
-msgstr "Kamera Uçuş Modu"
-
-
-msgid "Shared Location"
-msgstr "Konum Kısıtlamaları"
-
-
-msgid "Shared Vertex"
-msgstr "Nokta Boyama"
 
 
 msgid "Live Unwrap"
@@ -21498,8 +21482,16 @@ msgid "UV Selection Mode"
 msgstr "Kamera Uçuş Modu"
 
 
-msgid "Island selection mode"
+msgid "Sticky Selection Mode"
 msgstr "Kamera Uçuş Modu"
+
+
+msgid "Shared Location"
+msgstr "Konum Kısıtlamaları"
+
+
+msgid "Shared Vertex"
+msgstr "Nokta Boyama"
 
 
 msgid "Vertex Group Weight"
@@ -22555,11 +22547,6 @@ msgstr "Aktif Kamera"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Kamerayı Görüntüye Hizala"
 
@@ -22567,11 +22554,6 @@ msgstr "Kamerayı Görüntüye Hizala"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Aktif Kamerayı Seçilene Hizala"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Ön"
 
 
 msgctxt "Operator"
@@ -22692,6 +22674,11 @@ msgstr "Yol"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Kemik Kısıtlamaları"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -23429,10 +23416,6 @@ msgid "Reset operator defaults"
 msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
 
 
-msgid "Proxy Protected"
-msgstr "Vekil Korumalıdır"
-
-
 msgid "Delete the active position"
 msgstr "Aktif pozisyonu sil"
 
@@ -24158,12 +24141,12 @@ msgid "Tilt of curve control points"
 msgstr "Seçili yüzeylerin açılarını düzleştirir"
 
 
-msgid "Depth too large"
-msgstr "Kemik Katmanlarınını Değiştir..."
-
-
 msgid "Cannot fly an object with constraints"
 msgstr "Tüm Nesne Merkezleri"
+
+
+msgid "Depth too large"
+msgstr "Kemik Katmanlarınını Değiştir..."
 
 
 msgid "Auto Keying On"

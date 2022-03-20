@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -2976,6 +2976,14 @@ msgid "View"
 msgstr "Поглед"
 
 
+msgid "Index"
+msgstr "Индекс"
+
+
+msgid "Radius"
+msgstr "Радиус"
+
+
 msgid "Steps"
 msgstr "Корака"
 
@@ -2994,10 +3002,6 @@ msgstr "Испрекидано"
 
 msgid "Material Index"
 msgstr "Индекс материјала"
-
-
-msgid "Radius"
-msgstr "Радиус"
 
 
 msgid "Render"
@@ -3302,10 +3306,6 @@ msgstr "Променљива возача"
 
 msgid "Single Property"
 msgstr "Јединствена особина"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "Користи вредност РНК особине (подразумевано)"
 
 
 msgid "Final transformation value of object or bone"
@@ -4125,10 +4125,6 @@ msgid "Frame"
 msgstr "Кадар"
 
 
-msgid "Index"
-msgstr "Индекс"
-
-
 msgid "Maximum Distance"
 msgstr "Максимална удаљеност"
 
@@ -4355,10 +4351,6 @@ msgstr "Звук"
 
 msgid "Speaker"
 msgstr "Звучник"
-
-
-msgid "Hair"
-msgstr "Коса"
 
 
 msgid "Window Manager"
@@ -5250,6 +5242,10 @@ msgid "Merge"
 msgstr "Сједини"
 
 
+msgid "Sharp Threshold"
+msgstr "Праг оштрине"
+
+
 msgid "Subdivision Type"
 msgstr "Врста дељења"
 
@@ -5498,6 +5494,10 @@ msgid "Sharper"
 msgstr "Оштрије"
 
 
+msgid "Comb"
+msgstr "Чешаљ"
+
+
 msgid "Fill Threshold"
 msgstr "Праг испуне"
 
@@ -5612,10 +5612,6 @@ msgstr "Тканина"
 
 msgid "Secondary Color"
 msgstr "Споредна боја"
-
-
-msgid "Sharp Threshold"
-msgstr "Праг оштрине"
 
 
 msgid "Radius of the brush in pixels"
@@ -6714,6 +6710,10 @@ msgid "Cube"
 msgstr "Коцка"
 
 
+msgid "Hair"
+msgstr "Коса"
+
+
 msgid "Hair strands"
 msgstr "Нити косе"
 
@@ -7296,10 +7296,6 @@ msgstr "Текућа поза костура"
 
 msgid "Pose Library"
 msgstr "Збирка поза"
-
-
-msgid "Proxy"
-msgstr "Повежи..."
 
 
 msgid "Rigid Body Settings"
@@ -8792,6 +8788,38 @@ msgid "Control key pressed"
 msgstr "Тастер контрол је притиснут"
 
 
+msgid "North"
+msgstr "Север"
+
+
+msgid "North-East"
+msgstr "Северо-исток"
+
+
+msgid "East"
+msgstr "Исток"
+
+
+msgid "South-East"
+msgstr "Југо-исток"
+
+
+msgid "South"
+msgstr "Југ"
+
+
+msgid "South-West"
+msgstr "Југо-запад"
+
+
+msgid "West"
+msgstr "Запад"
+
+
+msgid "North-West"
+msgstr "Северо-запад"
+
+
 msgid "ID of the item"
 msgstr "ID ставке"
 
@@ -8864,38 +8892,6 @@ msgid "Double Click"
 msgstr "Дупли клик"
 
 
-msgid "North"
-msgstr "Север"
-
-
-msgid "North-East"
-msgstr "Северо-исток"
-
-
-msgid "East"
-msgstr "Исток"
-
-
-msgid "South-East"
-msgstr "Југо-исток"
-
-
-msgid "South"
-msgstr "Југ"
-
-
-msgid "South-West"
-msgstr "Југо-запад"
-
-
-msgid "West"
-msgstr "Запад"
-
-
-msgid "North-West"
-msgstr "Северо-запад"
-
-
 msgid "Left Handle"
 msgstr "Лева ручка"
 
@@ -8914,10 +8910,6 @@ msgstr "Десна ручка"
 
 msgid "Coordinates of the right handle (after the control point)"
 msgstr "Координате десне ручке (после контролне тачке)"
-
-
-msgid "Bounce"
-msgstr "Одбијање"
 
 
 msgid "Period"
@@ -9320,6 +9312,10 @@ msgstr "Уреди"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Исечак"
+
+
+msgid "Proxy"
+msgstr "Повежи..."
 
 
 msgid "Reconstruction"
@@ -11494,10 +11490,6 @@ msgid "Width of the ellipse"
 msgstr "Ширина елипсе"
 
 
-msgid "Sharpen"
-msgstr "Изоштрено"
-
-
 msgid "Sobel"
 msgstr "Собел"
 
@@ -11866,10 +11858,6 @@ msgid "Edge Angle"
 msgstr "Угао ивице"
 
 
-msgid "Z Axis"
-msgstr "Z оса"
-
-
 msgid "Fill Type"
 msgstr "Врста уклапања"
 
@@ -12132,6 +12120,10 @@ msgstr "Доња половина текстуре је за врхове пот
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV координате за мапирање"
+
+
+msgid "Z Axis"
+msgstr "Z оса"
 
 
 msgid "Vector Transform"
@@ -15123,14 +15115,6 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
-
-
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -19080,6 +19064,10 @@ msgid "Ignore Background Click"
 msgstr "Игнориши клик на позадину"
 
 
+msgid "Sharpen"
+msgstr "Изоштрено"
+
+
 msgctxt "Operator"
 msgid "Sample Detail Size"
 msgstr "Једноставна детаљност"
@@ -20229,6 +20217,14 @@ msgstr "Ласо UV избор"
 
 msgid "Select all UV vertices linked to the active UV map"
 msgstr "Означава сва UV темена повезана са активном UV мапом"
+
+
+msgid "Island"
+msgstr "Острво"
+
+
+msgid "Island selection mode"
+msgstr "Режим избора острва"
 
 
 msgctxt "Operator"
@@ -21556,10 +21552,6 @@ msgstr "Савет"
 
 msgid "Tip select mode"
 msgstr "Избор врхова"
-
-
-msgid "Comb"
-msgstr "Чешаљ"
 
 
 msgid "Comb hairs"
@@ -23507,6 +23499,14 @@ msgid "2D cursor location for this view"
 msgstr "Локација 2D курсора у овом погледу"
 
 
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
+
+
 msgid "Alpha Channel"
 msgstr "Алфа канал"
 
@@ -23974,14 +23974,6 @@ msgstr "Ограничи приказ да не излази из величин
 
 msgid "Snap to Pixels"
 msgstr "Лепи за пикселе"
-
-
-msgid "Shared Location"
-msgstr "Дељена локација"
-
-
-msgid "Shared Vertex"
-msgstr "Дељена темена"
 
 
 msgid "Live Unwrap"
@@ -24796,12 +24788,12 @@ msgid "UV selection and display mode"
 msgstr "UV избор и начин приказа"
 
 
-msgid "Island"
-msgstr "Острво"
+msgid "Shared Location"
+msgstr "Дељена локација"
 
 
-msgid "Island selection mode"
-msgstr "Режим избора острва"
+msgid "Shared Vertex"
+msgstr "Дељена темена"
 
 
 msgid "All Vertex Groups"
@@ -26277,11 +26269,6 @@ msgstr "Активна камера"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Камера"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Поравнај активну камеру са погледом"
 
@@ -26289,11 +26276,6 @@ msgstr "Поравнај активну камеру са погледом"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Поравнај активну камеру са избором"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Спреда"
 
 
 msgctxt "Operator"
@@ -26439,6 +26421,11 @@ msgstr "Nurbs торус"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Једна кост"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Камера"
 
 
 msgctxt "Operator"

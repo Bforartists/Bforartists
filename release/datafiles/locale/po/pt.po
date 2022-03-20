@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -4074,14 +4074,6 @@ msgid "Amount of influence constraint will have on the final solution"
 msgstr "A quantidade de influência que a restrição terá na solução final. O valor de 1.000 representa 100%."
 
 
-msgid "Proxy Local"
-msgstr "Aproximação local"
-
-
-msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "A restrição não foi adicionada nesta instância de aproximação (ou seja, não pertence a armação fonte)."
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "A restrição tem definições válidas e pode ser avaliada."
 
@@ -5578,10 +5570,6 @@ msgid "Method used for determining the scaling of the X and Z axes of the bones"
 msgstr "Método usado para determinar a escala dos eixos X e Z dos ossos."
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr "Não escalona os eixos X e Z (padrão)."
-
-
 msgid "Bone Original"
 msgstr "Original do osso"
 
@@ -6082,6 +6070,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa as terminações iniciais dos traços para definir a profundidade."
 
 
+msgid "Index"
+msgstr "Índice"
+
+
+msgid "Radius"
+msgstr "Raio"
+
+
 msgid "Steps"
 msgstr "Passos"
 
@@ -6112,10 +6108,6 @@ msgstr "Mostrador"
 
 msgid "Material Index"
 msgstr "Índice do material"
-
-
-msgid "Radius"
-msgstr "Raio"
 
 
 msgid "Dependency Graph"
@@ -6743,10 +6735,6 @@ msgstr "Fontes de dados de entrada para avaliação desta variável."
 
 msgid "Single Property"
 msgstr "Propriedade única"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "Usa o valor de alguma propriedade RNA (padrão)."
 
 
 msgid "Final transformation value of object or bone"
@@ -8406,10 +8394,6 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "Limite inferior do envelope neste ponto de controlo."
 
 
-msgid "Index"
-msgstr "Índice"
-
-
 msgid "Field Settings"
 msgstr "Definições de campo"
 
@@ -8912,10 +8896,6 @@ msgstr "Alto-falante"
 
 msgid "Text"
 msgstr "Texto"
-
-
-msgid "Hair"
-msgstr "Cabelo"
 
 
 msgid "Window Manager"
@@ -10912,6 +10892,10 @@ msgid "Merge"
 msgstr "Fundir"
 
 
+msgid "Sharp Threshold"
+msgstr "Ajuste de nitidez"
+
+
 msgid "Smooth Modifier"
 msgstr "Modificador - Suavizar"
 
@@ -11409,6 +11393,10 @@ msgid "Inverse Square"
 msgstr "Inverso quadrático"
 
 
+msgid "Comb"
+msgstr "Pentear"
+
+
 msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "Executa a pintura com mais potência nas faces que apontam na direção da visualização, de acordo com este ângulo."
 
@@ -11545,10 +11533,6 @@ msgid "Normal Weight"
 msgstr "Peso das normais"
 
 
-msgid "How much grab will pull vertexes out of surface during a grab"
-msgstr "Define quanto a operação de agarrar irá puxar os vértices da superfície enquanto os segura."
-
-
 msgid "Plane Offset"
 msgstr "Deslocamento de plano"
 
@@ -11667,10 +11651,6 @@ msgstr "Tecido"
 
 msgid "Secondary Color"
 msgstr "Cor secundária"
-
-
-msgid "Sharp Threshold"
-msgstr "Ajuste de nitidez"
 
 
 msgid "Threshold below which, no sharpening is done"
@@ -11851,10 +11831,6 @@ msgstr "Arrasta a âncora do pincel de arestas às arestas."
 
 msgid "Use Front-Face"
 msgstr "Usar a face-frontal"
-
-
-msgid "Brush only affects vertexes that face the viewer"
-msgstr "Pincel somente afeta os vértices que faceiam com a visualização."
 
 
 msgid "Inverse Smooth Pressure"
@@ -14113,6 +14089,10 @@ msgid "Cube"
 msgstr "Cubo"
 
 
+msgid "Hair"
+msgstr "Cabelo"
+
+
 msgid "Hair strands"
 msgstr "Vertentes de cabelo."
 
@@ -15035,14 +15015,6 @@ msgstr "Biblioteca de poses"
 
 msgid "Action used as a pose library for armatures"
 msgstr "Ação usada como uma biblioteca de poses para as armações de ossos."
-
-
-msgid "Proxy"
-msgstr "Aproximação"
-
-
-msgid "Library object this proxy object controls"
-msgstr "Objeto de biblioteca que este objeto de aproximação controla."
 
 
 msgid "Rigid Body Settings"
@@ -18203,6 +18175,38 @@ msgid "Control key pressed"
 msgstr "Tecla Ctrl pressionada"
 
 
+msgid "North"
+msgstr "Norte"
+
+
+msgid "North-East"
+msgstr "Nordeste"
+
+
+msgid "East"
+msgstr "Leste"
+
+
+msgid "South-East"
+msgstr "Sudeste"
+
+
+msgid "South"
+msgstr "Sul"
+
+
+msgid "South-West"
+msgstr "Sudoeste"
+
+
+msgid "West"
+msgstr "Oeste"
+
+
+msgid "North-West"
+msgstr "Noroeste"
+
+
 msgid "ID of the item"
 msgstr "Identificador do item"
 
@@ -18384,33 +18388,6 @@ msgstr "Rato - Rodar para trás"
 
 msgid "WhOut"
 msgstr "Rato - Rodar para trás"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Left"
-msgstr "Ajustar à esquerda"
-
-
-msgid "TwkL"
-msgstr "Ajustar à esquerda"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Middle"
-msgstr "Ajustar ao meio"
-
-
-msgid "TwkM"
-msgstr "Ajustar ao meio"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Right"
-msgstr "Ajustar à direita"
-
-
-msgid "TwkR"
-msgstr "Ajustar à direita"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -19101,42 +19078,6 @@ msgstr "NDOF - Menos"
 
 
 msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Esc"
-msgstr "NDOF - Esc"
-
-
-msgid "NdofEsc"
-msgstr "NDOF - Esc"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Alt"
-msgstr "NDOF - Alt"
-
-
-msgid "NdofAlt"
-msgstr "NDOF - Alt"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Shift"
-msgstr "NDOF - Shift"
-
-
-msgid "NdofShift"
-msgstr "NDOF - Shift"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Ctrl"
-msgstr "NDOF - Ctrl"
-
-
-msgid "NdofCtrl"
-msgstr "NDOF - Ctrl"
-
-
-msgctxt "UI_Events_KeyMaps"
 msgid "NDOF Button 1"
 msgstr "NDOF - Botão 1"
 
@@ -19334,38 +19275,6 @@ msgid "Double Click"
 msgstr "Duplo clique"
 
 
-msgid "North"
-msgstr "Norte"
-
-
-msgid "North-East"
-msgstr "Nordeste"
-
-
-msgid "East"
-msgstr "Leste"
-
-
-msgid "South-East"
-msgstr "Sudeste"
-
-
-msgid "South"
-msgstr "Sul"
-
-
-msgid "South-West"
-msgstr "Sudoeste"
-
-
-msgid "West"
-msgstr "Oeste"
-
-
-msgid "North-West"
-msgstr "Noroeste"
-
-
 msgid "KeyMap Items"
 msgstr "Itens de mapa de teclas"
 
@@ -19458,10 +19367,6 @@ msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Interpolação suave entre A e B, com algum controlo sobre o formato da curva."
 
 
-msgid "Sinusoidal"
-msgstr "Senoidal"
-
-
 msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
 msgstr "Facilitação senoidal (mais fraca, quase linear mas com uma leve curvatura)."
 
@@ -19474,24 +19379,12 @@ msgid "Cubic easing"
 msgstr "Facilitação cúbica."
 
 
-msgid "Quartic"
-msgstr "Quártico(a)"
-
-
 msgid "Quartic easing"
 msgstr "Facilitação quártica."
 
 
-msgid "Quintic"
-msgstr "Quíntico(a)"
-
-
 msgid "Quintic easing"
 msgstr "Facilitação quíntica."
-
-
-msgid "Exponential"
-msgstr "Exponencial"
 
 
 msgid "Exponential easing (dramatic)"
@@ -19504,10 +19397,6 @@ msgstr "Facilitação circular (mais forte e mais dinâmica)."
 
 msgid "Cubic easing with overshoot and settle"
 msgstr "Facilitação cúbica com permissão para ultrapassar valores e ajuste posterior."
-
-
-msgid "Bounce"
-msgstr "Rebatimentos"
 
 
 msgid "Exponentially decaying parabolic bounce, like when objects collide"
@@ -20991,6 +20880,10 @@ msgstr "Clipe"
 
 msgid "Pivot Point"
 msgstr "Pontos de pivô"
+
+
+msgid "Proxy"
+msgstr "Aproximação"
 
 
 msgid "Reconstruction"
@@ -26781,6 +26674,10 @@ msgid "Combine YUVA"
 msgstr "Combinar YUVA"
 
 
+msgid "Combine XYZ"
+msgstr "Combinar XYZ"
+
+
 msgid "Composite"
 msgstr "Composição"
 
@@ -27091,10 +26988,6 @@ msgstr "A posição X do meio da elipse."
 
 msgid "Y position of the middle of the ellipse"
 msgstr "A posição Y do meio da elipse."
-
-
-msgid "Sharpen"
-msgstr "Aguçar"
 
 
 msgid "Laplace"
@@ -27582,6 +27475,10 @@ msgid "Separate YUVA"
 msgstr "Separar YUVA"
 
 
+msgid "Separate XYZ"
+msgstr "Separar XYZ"
+
+
 msgid "Set Alpha"
 msgstr "Definir alfa"
 
@@ -27886,14 +27783,6 @@ msgid "Edge Angle"
 msgstr "Ângulos das arestas"
 
 
-msgid "Cross Product"
-msgstr "Produto vetorial"
-
-
-msgid "Z Axis"
-msgstr "Eixo Z"
-
-
 msgid "Fill Type"
 msgstr "Tipo de preenchimento"
 
@@ -28053,10 +27942,6 @@ msgstr "Combinar HSV"
 
 msgid "Combine RGB"
 msgstr "Combinar RGB"
-
-
-msgid "Combine XYZ"
-msgstr "Combinar XYZ"
 
 
 msgid "Object Space"
@@ -28221,10 +28106,6 @@ msgstr "Separar HSV"
 
 msgid "Separate RGB"
 msgstr "Separar RGB"
-
-
-msgid "Separate XYZ"
-msgstr "Separar XYZ"
 
 
 msgid "Squeeze Value"
@@ -28553,6 +28434,14 @@ msgstr "Quais coordenadas UV serão usadas para mapeamento."
 
 msgid "Vector Math"
 msgstr "Matemática vetorial"
+
+
+msgid "Cross Product"
+msgstr "Produto vetorial"
+
+
+msgid "Z Axis"
+msgstr "Eixo Z"
 
 
 msgid "Vector Transform"
@@ -34718,14 +34607,6 @@ msgstr "Subdividir traços"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
-
-
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
 
 
 msgctxt "Operator"
@@ -44128,6 +44009,10 @@ msgid "Dynamic topology alters the mesh topology while sculpting"
 msgstr "Topologia dinâmica altera a topologia da malha durante a escultura."
 
 
+msgid "Sharpen"
+msgstr "Aguçar"
+
+
 msgid "Recalculate the sculpt BVH to improve performance"
 msgstr "Recalcula a hierarquia de volume circundante da escultura para melhorar a performance."
 
@@ -46603,6 +46488,14 @@ msgstr "Seleciona todos os vértices UV conectados abaixo do rato."
 
 msgid "Select a loop of connected UV vertices"
 msgstr "Seleciona um anel de vértices UV conectados."
+
+
+msgid "Island"
+msgstr "Ilhas"
+
+
+msgid "Island selection mode"
+msgstr "Modo de seleção de ilhas"
 
 
 msgid "Select more UV vertices connected to initial selection"
@@ -49695,10 +49588,6 @@ msgid "Outer shape to use for tools"
 msgstr "Formato exterior a ser usado para as ferramentas."
 
 
-msgid "Comb"
-msgstr "Pentear"
-
-
 msgid "Comb hairs"
 msgstr "Permite pentear os cabelos."
 
@@ -50685,10 +50574,6 @@ msgstr "Tipo das hastes novas"
 
 msgid "Handle type for handles of new keyframes"
 msgstr "Define o tipo de hastes para os manípulos dos novos fotogramas chave."
-
-
-msgid "New Interpolation Type"
-msgstr "Tipo das novas interpolações"
 
 
 msgid "Interpolation mode used for first keyframe on newly added F-Curves (subsequent keyframes take interpolation from preceding keyframe)"
@@ -55893,6 +55778,14 @@ msgid "Outline"
 msgstr "Contorno"
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -57312,26 +57205,6 @@ msgid "Snap to Pixels"
 msgstr "Atrair para os pixeis"
 
 
-msgid "Sticky Selection Mode"
-msgstr "Modo de seleção adesivo"
-
-
-msgid "Sticky vertex selection disabled"
-msgstr "Modo adesivo de seleção de vértices desativado."
-
-
-msgid "Shared Location"
-msgstr "Localização compartilhada"
-
-
-msgid "Select UVs that are at the same location and share a mesh vertex"
-msgstr "Seleciona as UVs que estão na mesma localização e compartilham um vértice de malha."
-
-
-msgid "Shared Vertex"
-msgstr "Vértices compartilhados"
-
-
 msgid "Live Unwrap"
 msgstr "Desdobramento contínuo"
 
@@ -57432,16 +57305,8 @@ msgid "Bezier U"
 msgstr "Bézier U"
 
 
-msgid "Make this nurbs curve or surface act like a Bezier spline in the U direction (Order U must be 3 or 4, Cyclic U must be disabled)"
-msgstr "Faz com que esta curva Nurbs ou superfície aja como uma Spline Bézier na direção U (a ordem de U deve ser 3 ou 4, as opções cíclico(a) e U devem estar desativadas)."
-
-
 msgid "Bezier V"
 msgstr "Bézier V"
-
-
-msgid "Make this nurbs surface act like a Bezier spline in the V direction (Order V must be 3 or 4, Cyclic V must be disabled)"
-msgstr "Faz com que esta superfície Nurbs aja como uma Spline Bézier na direção V (a ordem V deve ser 3 ou 4, e as opções V e cíclico(a) devem estar desativadas)."
 
 
 msgid "Make this curve or surface a closed loop in the U direction"
@@ -57456,16 +57321,8 @@ msgid "Endpoint U"
 msgstr "Terminação U"
 
 
-msgid "Make this nurbs curve or surface meet the endpoints in the U direction (Cyclic U must be disabled)"
-msgstr "Faz com que esta superfície ou curva Nurbs encontre as terminações na direção U (as opções U e cíclico(a) devem estar desativadas)."
-
-
 msgid "Endpoint V"
 msgstr "Terminação V"
-
-
-msgid "Make this nurbs surface meet the endpoints in the V direction (Cyclic V must be disabled)"
-msgstr "Faz com que esta superfície Nurbs encontre as terminações na direção V (as opções V e cíclico(a) devem estar desativadas)."
 
 
 msgid "Smooth the normals of the surface or beveled curve"
@@ -59392,12 +59249,24 @@ msgid "UV selection and display mode"
 msgstr "Tipo de seleção UV e modo de visualização."
 
 
-msgid "Island"
-msgstr "Ilhas"
+msgid "Sticky Selection Mode"
+msgstr "Modo de seleção adesivo"
 
 
-msgid "Island selection mode"
-msgstr "Modo de seleção de ilhas"
+msgid "Sticky vertex selection disabled"
+msgstr "Modo adesivo de seleção de vértices desativado."
+
+
+msgid "Shared Location"
+msgstr "Localização compartilhada"
+
+
+msgid "Select UVs that are at the same location and share a mesh vertex"
+msgstr "Seleciona as UVs que estão na mesma localização e compartilham um vértice de malha."
+
+
+msgid "Shared Vertex"
+msgstr "Vértices compartilhados"
 
 
 msgid "Filter Vertex groups for Display"
@@ -62417,11 +62286,6 @@ msgstr "Guardar cópia..."
 
 
 msgctxt "Operator"
-msgid "Collada (Default) (.dae)"
-msgstr "COLLADA (padrão) (.dae)"
-
-
-msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
 
@@ -62600,11 +62464,6 @@ msgstr "Câmara ativa"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Câmara"
-
-
-msgctxt "Operator"
 msgid "Orbit Opposite"
 msgstr "Órbita oposta"
 
@@ -62617,11 +62476,6 @@ msgstr "Alinhar câmara ativa para a visualização"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Alinhar câmara ativa aos selecionados"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Frente"
 
 
 msgctxt "Operator"
@@ -62802,6 +62656,11 @@ msgstr "Objeto toroidal Nurbs"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Osso único"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Câmara"
 
 
 msgctxt "Operator"
@@ -64285,10 +64144,6 @@ msgid "Cannot pose libdata"
 msgstr "Não é possível fazer pose para dados de biblioteca."
 
 
-msgid "Undo of hiding can only be done with Reveal Selected"
-msgstr "Operações para desfazer a ocultação somente podem ser feitas com a opção de revelar seleção."
-
-
 msgid "Add New"
 msgstr "Adicionar novo(a)"
 
@@ -64921,14 +64776,6 @@ msgid "Reset operator defaults"
 msgstr "Redefine o operador a seus padrões."
 
 
-msgid "Proxy Protected"
-msgstr "Aproximação protegida"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "Não é possível editar restrições protegidas nas aproximações."
-
-
 msgid "Delete the active position"
 msgstr "Apaga a posição ativa."
 
@@ -65322,6 +65169,14 @@ msgstr "Não é possível separar as faces selecionadas."
 
 msgid "Cannot rip multiple disconnected vertices"
 msgstr "Não é possível romper múltiplos vértices desconectados."
+
+
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "Seleção de vértices - Shift + clique para múltiplos modos, Ctrl + clique contrai a seleção."
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "Seleção de faces - Shift + clique para múltiplos modos, Ctrl + clique expande a seleção."
 
 
 msgid "No face regions selected"
@@ -66358,20 +66213,20 @@ msgid "Palette. Use Left Click to sample more colors"
 msgstr "A paleta atual. Clique com o BEM para obter mais amostras de cor."
 
 
-msgid "Image requires 4 color channels to paint: %s"
-msgstr "Imagem requer 4 canais de cor para pintura: %s"
-
-
-msgid "Packed MultiLayer files cannot be painted: %s"
-msgstr "Ficheiros de multi-camadas empacotados não podem ser pintados: %s"
-
-
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Ficheiros de multi-camadas empacotados não podem ser pintados."
 
 
 msgid "Image requires 4 color channels to paint"
 msgstr "Imagem requer 4 canais de cor para pintura."
+
+
+msgid "Image requires 4 color channels to paint: %s"
+msgstr "Imagem requer 4 canais de cor para pintura: %s"
+
+
+msgid "Packed MultiLayer files cannot be painted: %s"
+msgstr "Ficheiros de multi-camadas empacotados não podem ser pintados: %s"
 
 
 msgid "Untitled"
@@ -67528,18 +67383,6 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Não é possível usar o carrinho quando o deslocamento de visão está bloqueado."
 
 
-msgid "Depth too large"
-msgstr "Profundidade muito grande."
-
-
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Seleção de vértices - Shift + clique para múltiplos modos, Ctrl + clique contrai a seleção."
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Seleção de faces - Shift + clique para múltiplos modos, Ctrl + clique expande a seleção."
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "Não é possível fazer voo de câmara a partir de uma biblioteca externa."
 
@@ -67562,6 +67405,10 @@ msgstr "Não é possível navegar quando o deslocamento de visão está bloquead
 
 msgid "Cannot navigate an object with constraints"
 msgstr "Não é possível navegar usando um objeto com restrições."
+
+
+msgid "Depth too large"
+msgstr "Profundidade muito grande."
 
 
 msgid "No active element found!"

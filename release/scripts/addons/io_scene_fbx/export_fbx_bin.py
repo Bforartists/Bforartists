@@ -1000,7 +1000,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         for e in me.edges:
             if e.key not in edges_map:
                 continue  # Only loose edges, in theory!
-            # Blender squares those values before sending them to OpenSubdiv, when other softwares don't,
+            # Blender squares those values before sending them to OpenSubdiv, when other software don't,
             # so we need to compensate that to get similar results through FBX...
             t_ec[edges_map[e.key]] = e.crease * e.crease
 

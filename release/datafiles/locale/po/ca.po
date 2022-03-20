@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1297,10 +1297,6 @@ msgstr "Seleccionar fila"
 
 msgid "Lin error"
 msgstr "Seleccionar fila"
-
-
-msgid "Proxy Local"
-msgstr "Pintura Vectorial"
 
 
 msgid "Disable"
@@ -5612,10 +5608,6 @@ msgid "Current pose for armatures"
 msgstr "Començar Joc"
 
 
-msgid "Proxy"
-msgstr "Pintura Vectorial"
-
-
 msgid "Rigid Body Settings"
 msgstr "Eines"
 
@@ -7281,6 +7273,10 @@ msgstr "Editar"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Esborrar Rotació"
+
+
+msgid "Proxy"
+msgstr "Pintura Vectorial"
 
 
 msgid "Reconstruction"
@@ -9688,10 +9684,6 @@ msgid "Ellipse Mask"
 msgstr "Esborrar Pista"
 
 
-msgid "Sharpen"
-msgstr "Desparentar"
-
-
 msgid "Laplace"
 msgstr "Mostrar propietats de les arestes"
 
@@ -10096,10 +10088,6 @@ msgid "Edge Angle"
 msgstr "Seleccionar fila"
 
 
-msgid "Z Axis"
-msgstr "Ampliar"
-
-
 msgid "Fill Type"
 msgstr "Arxiu"
 
@@ -10374,6 +10362,10 @@ msgstr "Seleccionar connectats"
 
 msgid "Vector Math"
 msgstr "Tangents lineals"
+
+
+msgid "Z Axis"
+msgstr "Ampliar"
 
 
 msgid "Texture Node"
@@ -13128,14 +13120,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -17594,6 +17578,10 @@ msgid "Sculpt a stroke into the geometry"
 msgstr "Amagar Seleccionats"
 
 
+msgid "Sharpen"
+msgstr "Desparentar"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Mode d'Edició"
@@ -18705,6 +18693,14 @@ msgstr "Seleccionar fila"
 
 msgid "Select UVs using lasso selection"
 msgstr "Seleccionar connectats"
+
+
+msgid "Island"
+msgstr "Guardar imatge"
+
+
+msgid "Island selection mode"
+msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"
@@ -21860,6 +21856,14 @@ msgid "Outline"
 msgstr "Perfilar"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Esborrar"
 
@@ -22414,18 +22418,6 @@ msgstr "Afegir Tira"
 
 msgid "Snap to Pixels"
 msgstr "Afegir Tira"
-
-
-msgid "Sticky Selection Mode"
-msgstr "Seleccionar connectats"
-
-
-msgid "Shared Location"
-msgstr "Esborrar Posició"
-
-
-msgid "Shared Vertex"
-msgstr "Moure a Capa"
 
 
 msgid "Bezier Points"
@@ -23524,12 +23516,16 @@ msgid "UV selection and display mode"
 msgstr "Seleccionar connectats"
 
 
-msgid "Island"
-msgstr "Guardar imatge"
+msgid "Sticky Selection Mode"
+msgstr "Seleccionar connectats"
 
 
-msgid "Island selection mode"
-msgstr "Amagar Seleccionats"
+msgid "Shared Location"
+msgstr "Esborrar Posició"
+
+
+msgid "Shared Vertex"
+msgstr "Moure a Capa"
 
 
 msgid "Vertex Group Weight"
@@ -24525,11 +24521,6 @@ msgstr "Moure a Capa"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Càmera"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Amagar Seleccionats"
 
@@ -24537,11 +24528,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Frontal"
 
 
 msgctxt "Operator"
@@ -24642,6 +24628,11 @@ msgstr "&gt;Cercle Nurbs"
 msgctxt "Operator"
 msgid "Path"
 msgstr "Camí"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Càmera"
 
 
 msgctxt "Operator"
@@ -25303,10 +25294,6 @@ msgid "Reset operator defaults"
 msgstr "Començar Joc"
 
 
-msgid "Proxy Protected"
-msgstr "Comprimir Dades"
-
-
 msgid "Delete the active position"
 msgstr "Esborrar Rotació"
 
@@ -25940,12 +25927,12 @@ msgid "Tilt of curve control points"
 msgstr "Seleccionar connectats"
 
 
-msgid "Depth too large"
-msgstr "Joc"
-
-
 msgid "Cannot fly an object with constraints"
 msgstr "Afegir Tira"
+
+
+msgid "Depth too large"
+msgstr "Joc"
 
 
 msgid "Auto Keying On"

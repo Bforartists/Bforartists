@@ -71,6 +71,7 @@ set(SRC
   intern/gpu_shader_interface.cc
   intern/gpu_shader_log.cc
   intern/gpu_state.cc
+  intern/gpu_storage_buffer.cc
   intern/gpu_texture.cc
   intern/gpu_uniform_buffer.cc
   intern/gpu_vertex_buffer.cc
@@ -92,6 +93,7 @@ set(SRC
   opengl/gl_shader_interface.cc
   opengl/gl_shader_log.cc
   opengl/gl_state.cc
+  opengl/gl_storage_buffer.cc
   opengl/gl_texture.cc
   opengl/gl_uniform_buffer.cc
   opengl/gl_vertex_array.cc
@@ -386,6 +388,8 @@ list(APPEND SRC ${glsl_source_list_file})
 list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SRC_SHADER_CREATE_INFOS
+  ../draw/engines/gpencil/shaders/infos/gpencil_info.hh
+  ../draw/engines/gpencil/shaders/infos/gpencil_vfx_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_composite_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_effect_antialiasing_info.hh
   ../draw/engines/workbench/shaders/infos/workbench_effect_cavity_info.hh

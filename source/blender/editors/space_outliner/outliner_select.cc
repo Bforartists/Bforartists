@@ -62,6 +62,7 @@
 
 #include "RNA_access.h"
 #include "RNA_define.h"
+#include "RNA_prototypes.h"
 
 #include "outliner_intern.hh"
 #include "tree/tree_element_seq.hh"
@@ -1550,7 +1551,7 @@ static bool outliner_is_co_within_restrict_columns(const SpaceOutliner *space_ou
                                                    const ARegion *region,
                                                    float view_co_x)
 {
-  return (view_co_x > region->v2d.cur.xmax - outliner_restrict_columns_width(space_outliner));
+  return (view_co_x > region->v2d.cur.xmax - outliner_right_columns_width(space_outliner));
 }
 
 bool outliner_is_co_within_mode_column(SpaceOutliner *space_outliner, const float view_mval[2])
