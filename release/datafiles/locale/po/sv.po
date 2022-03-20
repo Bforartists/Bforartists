@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1610,10 +1610,6 @@ msgid "Influence"
 msgstr "Inflytande"
 
 
-msgid "Proxy Local"
-msgstr "Vektor Måla"
-
-
 msgid "Disable"
 msgstr "Visa"
 
@@ -2766,6 +2762,10 @@ msgid "View"
 msgstr "Visa"
 
 
+msgid "Radius"
+msgstr "Radie"
+
+
 msgid "Steps"
 msgstr "Steg"
 
@@ -2784,10 +2784,6 @@ msgstr "Streckad"
 
 msgid "Material Index"
 msgstr "Spara som"
-
-
-msgid "Radius"
-msgstr "Radie"
 
 
 msgid "Viewport"
@@ -6535,10 +6531,6 @@ msgid "Pose Library"
 msgstr "Pose-bibliotek"
 
 
-msgid "Proxy"
-msgstr "Skapa Förälder"
-
-
 msgid "Rigid Body Settings"
 msgstr "Inställningar för mjuk kropp"
 
@@ -8512,6 +8504,10 @@ msgstr "Vänd:"
 
 msgid "Pivot Point"
 msgstr "Fast punkt"
+
+
+msgid "Proxy"
+msgstr "Skapa Förälder"
 
 
 msgid "Reconstruction"
@@ -11159,10 +11155,6 @@ msgid "Ellipse Mask"
 msgstr "Använd maximum"
 
 
-msgid "Sharpen"
-msgstr "Hårdhet"
-
-
 msgid "Laplace"
 msgstr "Visa inställningar för kant"
 
@@ -11599,10 +11591,6 @@ msgid "Edge Angle"
 msgstr "Kantvinkel"
 
 
-msgid "Z Axis"
-msgstr "Zooma In"
-
-
 msgid "Fill Type"
 msgstr "Arkiv"
 
@@ -11909,6 +11897,10 @@ msgstr "Klibbig texturkoordinat för meshvertex"
 
 msgid "Vector Math"
 msgstr "Vektor Handtag"
+
+
+msgid "Z Axis"
+msgstr "Zooma In"
 
 
 msgid "Texture Node"
@@ -15198,14 +15190,6 @@ msgstr "Markerade till markör"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
-
-
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
 
 
 msgctxt "Operator"
@@ -20363,6 +20347,10 @@ msgid "Ignore Background Click"
 msgstr "Spara Bild"
 
 
+msgid "Sharpen"
+msgstr "Hårdhet"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Redigerings Läge"
@@ -21745,6 +21733,14 @@ msgstr "Markera Länkad"
 
 msgid "Select a loop of connected UV vertices"
 msgstr "Markera Länkad"
+
+
+msgid "Island"
+msgstr "Ö"
+
+
+msgid "Island selection mode"
+msgstr "Göm Markerad"
 
 
 msgctxt "Operator"
@@ -25309,6 +25305,14 @@ msgid "Outline"
 msgstr "Kontur"
 
 
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Längd i antal rutor:"
 
@@ -25895,18 +25899,6 @@ msgstr "Lägg till Stripp"
 
 msgid "Snap to Pixels"
 msgstr "Lägg till Stripp"
-
-
-msgid "Sticky Selection Mode"
-msgstr "Markera Länkad"
-
-
-msgid "Shared Location"
-msgstr "Rensa Placering"
-
-
-msgid "Shared Vertex"
-msgstr "Flytta Till Lager"
 
 
 msgid "Bezier Points"
@@ -27037,12 +27029,16 @@ msgid "UV selection and display mode"
 msgstr "Markera Länkad"
 
 
-msgid "Island"
-msgstr "Ö"
+msgid "Sticky Selection Mode"
+msgstr "Markera Länkad"
 
 
-msgid "Island selection mode"
-msgstr "Göm Markerad"
+msgid "Shared Location"
+msgstr "Rensa Placering"
+
+
+msgid "Shared Vertex"
+msgstr "Flytta Till Lager"
 
 
 msgid "Vertex Group Weight"
@@ -28218,11 +28214,6 @@ msgstr "Flytta Till Lager"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Kamera"
 
@@ -28230,11 +28221,6 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Fram"
 
 
 msgctxt "Operator"
@@ -28360,6 +28346,11 @@ msgstr "Bana"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Enstaka ben"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -29061,10 +29052,6 @@ msgid "Reset operator defaults"
 msgstr "Förvalt övertoning"
 
 
-msgid "Proxy Protected"
-msgstr "Packa Data"
-
-
 msgid "Delete the active position"
 msgstr "Rensa Rotation"
 
@@ -29742,16 +29729,16 @@ msgid "Tilt of curve control points"
 msgstr "Markera Länkad"
 
 
-msgid "Depth too large"
-msgstr "Omfång"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "Markera Länkad"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Objektbegränsningar"
+
+
+msgid "Depth too large"
+msgstr "Omfång"
 
 
 msgid "Auto Keying On"

@@ -1113,7 +1113,7 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
         return False
 
     if fbx_layer_mapping == b'ByEdge':
-        # some models have bad edge data, we cant use this info...
+        # some models have bad edge data, we can't use this info...
         if not mesh.edges:
             print("warning skipping sharp edges data, no valid edges...")
             return False
@@ -1162,13 +1162,13 @@ def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
     layer_id = b'EdgeCrease'
     fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, layer_id))
 
-    # some models have bad edge data, we cant use this info...
+    # some models have bad edge data, we can't use this info...
     if not mesh.edges:
         print("warning skipping edge crease data, no valid edges...")
         return False
 
     if fbx_layer_mapping == b'ByEdge':
-        # some models have bad edge data, we cant use this info...
+        # some models have bad edge data, we can't use this info...
         if not mesh.edges:
             print("warning skipping edge crease data, no valid edges...")
             return False
@@ -1179,7 +1179,7 @@ def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
-            # Blender squares those values before sending them to OpenSubdiv, when other softwares don't,
+            # Blender squares those values before sending them to OpenSubdiv, when other software don't,
             # so we need to compensate that to get similar results through FBX...
             xform=sqrt,
             )
@@ -2666,7 +2666,7 @@ def load(operator, context, filepath="",
     def connection_filter_ex(fbx_uuid, fbx_id, dct):
         return [(c_found[0], c_found[1], c_type)
                 for (c_uuid, c_type) in dct.get(fbx_uuid, ())
-                # 0 is used for the root node, which isnt in fbx_table_nodes
+                # 0 is used for the root node, which isn't in fbx_table_nodes
                 for c_found in (() if c_uuid == 0 else (fbx_table_nodes.get(c_uuid, (None, None)),))
                 if (fbx_id is None) or (c_found[0] and c_found[0].id == fbx_id)]
 

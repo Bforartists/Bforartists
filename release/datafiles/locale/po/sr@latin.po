@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -2976,6 +2976,14 @@ msgid "View"
 msgstr "Pogled"
 
 
+msgid "Index"
+msgstr "Indeks"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
 msgid "Steps"
 msgstr "Koraka"
 
@@ -2994,10 +3002,6 @@ msgstr "Isprekidano"
 
 msgid "Material Index"
 msgstr "Indeks materijala"
-
-
-msgid "Radius"
-msgstr "Radius"
 
 
 msgid "Render"
@@ -3302,10 +3306,6 @@ msgstr "Promenljiva vozača"
 
 msgid "Single Property"
 msgstr "Jedinstvena osobina"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "Koristi vrednost RNK osobine (podrazumevano)"
 
 
 msgid "Final transformation value of object or bone"
@@ -4125,10 +4125,6 @@ msgid "Frame"
 msgstr "Kadar"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
 msgid "Maximum Distance"
 msgstr "Maksimalna udaljenost"
 
@@ -4355,10 +4351,6 @@ msgstr "Zvuk"
 
 msgid "Speaker"
 msgstr "Zvučnik"
-
-
-msgid "Hair"
-msgstr "Kosa"
 
 
 msgid "Window Manager"
@@ -5250,6 +5242,10 @@ msgid "Merge"
 msgstr "Sjedini"
 
 
+msgid "Sharp Threshold"
+msgstr "Prag oštrine"
+
+
 msgid "Subdivision Type"
 msgstr "Vrsta deljenja"
 
@@ -5498,6 +5494,10 @@ msgid "Sharper"
 msgstr "Oštrije"
 
 
+msgid "Comb"
+msgstr "Češalj"
+
+
 msgid "Fill Threshold"
 msgstr "Prag ispune"
 
@@ -5612,10 +5612,6 @@ msgstr "Tkanina"
 
 msgid "Secondary Color"
 msgstr "Sporedna boja"
-
-
-msgid "Sharp Threshold"
-msgstr "Prag oštrine"
 
 
 msgid "Radius of the brush in pixels"
@@ -6714,6 +6710,10 @@ msgid "Cube"
 msgstr "Kocka"
 
 
+msgid "Hair"
+msgstr "Kosa"
+
+
 msgid "Hair strands"
 msgstr "Niti kose"
 
@@ -7296,10 +7296,6 @@ msgstr "Tekuća poza kostura"
 
 msgid "Pose Library"
 msgstr "Zbirka poza"
-
-
-msgid "Proxy"
-msgstr "Poveži..."
 
 
 msgid "Rigid Body Settings"
@@ -8792,6 +8788,38 @@ msgid "Control key pressed"
 msgstr "Taster kontrol je pritisnut"
 
 
+msgid "North"
+msgstr "Sever"
+
+
+msgid "North-East"
+msgstr "Severo-istok"
+
+
+msgid "East"
+msgstr "Istok"
+
+
+msgid "South-East"
+msgstr "Jugo-istok"
+
+
+msgid "South"
+msgstr "Jug"
+
+
+msgid "South-West"
+msgstr "Jugo-zapad"
+
+
+msgid "West"
+msgstr "Zapad"
+
+
+msgid "North-West"
+msgstr "Severo-zapad"
+
+
 msgid "ID of the item"
 msgstr "ID stavke"
 
@@ -8864,38 +8892,6 @@ msgid "Double Click"
 msgstr "Dupli klik"
 
 
-msgid "North"
-msgstr "Sever"
-
-
-msgid "North-East"
-msgstr "Severo-istok"
-
-
-msgid "East"
-msgstr "Istok"
-
-
-msgid "South-East"
-msgstr "Jugo-istok"
-
-
-msgid "South"
-msgstr "Jug"
-
-
-msgid "South-West"
-msgstr "Jugo-zapad"
-
-
-msgid "West"
-msgstr "Zapad"
-
-
-msgid "North-West"
-msgstr "Severo-zapad"
-
-
 msgid "Left Handle"
 msgstr "Leva ručka"
 
@@ -8914,10 +8910,6 @@ msgstr "Desna ručka"
 
 msgid "Coordinates of the right handle (after the control point)"
 msgstr "Koordinate desne ručke (posle kontrolne tačke)"
-
-
-msgid "Bounce"
-msgstr "Odbijanje"
 
 
 msgid "Period"
@@ -9320,6 +9312,10 @@ msgstr "Uredi"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Isečak"
+
+
+msgid "Proxy"
+msgstr "Poveži..."
 
 
 msgid "Reconstruction"
@@ -11494,10 +11490,6 @@ msgid "Width of the ellipse"
 msgstr "Širina elipse"
 
 
-msgid "Sharpen"
-msgstr "Izoštreno"
-
-
 msgid "Sobel"
 msgstr "Sobel"
 
@@ -11866,10 +11858,6 @@ msgid "Edge Angle"
 msgstr "Ugao ivice"
 
 
-msgid "Z Axis"
-msgstr "Z osa"
-
-
 msgid "Fill Type"
 msgstr "Vrsta uklapanja"
 
@@ -12132,6 +12120,10 @@ msgstr "Donja polovina teksture je za vrhove poteza"
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV koordinate za mapiranje"
+
+
+msgid "Z Axis"
+msgstr "Z osa"
 
 
 msgid "Vector Transform"
@@ -15123,14 +15115,6 @@ msgstr "Izabor za kursor"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
-
-
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
 
 
 msgctxt "Operator"
@@ -19080,6 +19064,10 @@ msgid "Ignore Background Click"
 msgstr "Ignoriši klik na pozadinu"
 
 
+msgid "Sharpen"
+msgstr "Izoštreno"
+
+
 msgctxt "Operator"
 msgid "Sample Detail Size"
 msgstr "Jednostavna detaljnost"
@@ -20229,6 +20217,14 @@ msgstr "Laso UV izbor"
 
 msgid "Select all UV vertices linked to the active UV map"
 msgstr "Označava sva UV temena povezana sa aktivnom UV mapom"
+
+
+msgid "Island"
+msgstr "Ostrvo"
+
+
+msgid "Island selection mode"
+msgstr "Režim izbora ostrva"
 
 
 msgctxt "Operator"
@@ -21556,10 +21552,6 @@ msgstr "Savet"
 
 msgid "Tip select mode"
 msgstr "Izbor vrhova"
-
-
-msgid "Comb"
-msgstr "Češalj"
 
 
 msgid "Comb hairs"
@@ -23507,6 +23499,14 @@ msgid "2D cursor location for this view"
 msgstr "Lokacija 2D kursora u ovom pogledu"
 
 
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
+
+
 msgid "Alpha Channel"
 msgstr "Alfa kanal"
 
@@ -23974,14 +23974,6 @@ msgstr "Ograniči prikaz da ne izlazi iz veličine slike prilikom uređivanja"
 
 msgid "Snap to Pixels"
 msgstr "Lepi za piksele"
-
-
-msgid "Shared Location"
-msgstr "Deljena lokacija"
-
-
-msgid "Shared Vertex"
-msgstr "Deljena temena"
 
 
 msgid "Live Unwrap"
@@ -24796,12 +24788,12 @@ msgid "UV selection and display mode"
 msgstr "UV izbor i način prikaza"
 
 
-msgid "Island"
-msgstr "Ostrvo"
+msgid "Shared Location"
+msgstr "Deljena lokacija"
 
 
-msgid "Island selection mode"
-msgstr "Režim izbora ostrva"
+msgid "Shared Vertex"
+msgstr "Deljena temena"
 
 
 msgid "All Vertex Groups"
@@ -26277,11 +26269,6 @@ msgstr "Aktivna kamera"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Poravnaj aktivnu kameru sa pogledom"
 
@@ -26289,11 +26276,6 @@ msgstr "Poravnaj aktivnu kameru sa pogledom"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Poravnaj aktivnu kameru sa izborom"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Spreda"
 
 
 msgctxt "Operator"
@@ -26439,6 +26421,11 @@ msgstr "Nurbs torus"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Jedna kost"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
