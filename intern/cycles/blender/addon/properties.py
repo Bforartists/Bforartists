@@ -348,7 +348,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     scrambling_distance: FloatProperty(
         name="Scrambling Distance",
         default=1.0,
-        min=0.0, max=1.0,
+        min=0.0, soft_max=1.0,
         description="Speeds up rendering at the GPU by scrambling pixels that are farer away"
                     "\nLower values renders faster, with less noise"
                     "\nBut too low values can lead to artifacts"
@@ -363,7 +363,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     auto_scrambling_distance: BoolProperty(
         name="Automatic Scrambling Distance",
         default=False,
-        description="Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling",
+        description="Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts.",
     )
 
     use_layer_samples: EnumProperty(

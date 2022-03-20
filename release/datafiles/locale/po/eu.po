@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -641,10 +641,6 @@ msgid "Original"
 msgstr "Jatorrizkoa"
 
 
-msgid "Z Axis"
-msgstr "Z Ardatza"
-
-
 msgid "Reflection"
 msgstr "Islapena"
 
@@ -663,6 +659,10 @@ msgstr "Y ardatza"
 
 msgid "Z axis"
 msgstr "Z ardatza"
+
+
+msgid "Z Axis"
+msgstr "Z Ardatza"
 
 
 msgctxt "Operator"
@@ -1986,11 +1986,6 @@ msgstr "Akats baten berri eman"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
 msgid "Plane"
 msgstr "Planoa"
 
@@ -2028,6 +2023,11 @@ msgstr "Torua"
 msgctxt "Operator"
 msgid "Grid"
 msgstr "Sarea"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"

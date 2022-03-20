@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -823,10 +823,6 @@ msgid "Text"
 msgstr "Текст"
 
 
-msgid "Hair"
-msgstr "Чач"
-
-
 msgid "Window Manager"
 msgstr "Терезе менеджери"
 
@@ -1140,6 +1136,10 @@ msgid "Opaque"
 msgstr "Күңүрттүк"
 
 
+msgid "Hair"
+msgstr "Чач"
+
+
 msgid "Update"
 msgstr "Жаңылоо"
 
@@ -1210,10 +1210,6 @@ msgstr "Поза режими"
 
 msgid "Sculpt Mode"
 msgstr "Скульптинг режими"
-
-
-msgid "Proxy"
-msgstr "Прокси"
 
 
 msgid "Mass"
@@ -1420,6 +1416,10 @@ msgstr "Оңдоо"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Видеофрагмент"
+
+
+msgid "Proxy"
+msgstr "Прокси"
 
 
 msgid "Reconstruction"
@@ -2018,14 +2018,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -2645,6 +2637,10 @@ msgid "Reset"
 msgstr "Түшүрүү"
 
 
+msgid "Island"
+msgstr "Арал"
+
+
 msgctxt "Operator"
 msgid "Remove Background Image"
 msgstr "Фон сүрөтүн өчүрүү"
@@ -3020,6 +3016,14 @@ msgid "Gravitation"
 msgstr "Тартыш"
 
 
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
+
+
 msgid "Show Seconds"
 msgstr "Секундаларды көрсөтүү"
 
@@ -3091,10 +3095,6 @@ msgstr "Виджет стили"
 
 msgid "Icon Alpha"
 msgstr "Белги тунуктугу"
-
-
-msgid "Island"
-msgstr "Арал"
 
 
 msgid "Unit Scale"
@@ -3489,16 +3489,6 @@ msgstr "Активдүү камера"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Камера"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Алдынан"
-
-
-msgctxt "Operator"
 msgid "Plane"
 msgstr "Тегиздик"
 
@@ -3561,6 +3551,11 @@ msgstr "Жол"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Бир сөөк"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Камера"
 
 
 msgctxt "Operator"

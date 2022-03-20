@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5649,10 +5649,6 @@ msgid "Ellipse Mask"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 
 
-msgid "Sharpen"
-msgstr "ﯼﺰﯿﺗ"
-
-
 msgid "Laplace"
 msgstr "ﻦﯾﺰﮕﯾﺎﺟ"
 
@@ -5941,10 +5937,6 @@ msgid "Linear interpolation"
 msgstr "ﻡﺎﻏﺩﺍ"
 
 
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
-
-
 msgid "Fill Type"
 msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
 
@@ -6127,6 +6119,10 @@ msgstr "ﺭﺍﺩ ﺝﻮﻣ ﺖﻓﺎﺑ"
 
 msgid "Vector Math"
 msgstr "ﯽﻄﺧ"
+
+
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
 
 
 msgid "Texture Node"
@@ -10426,6 +10422,10 @@ msgid "Sculpt"
 msgstr "ﻥﺩﺮﮐ ﯼﺭﺎﺠﺣ"
 
 
+msgid "Sharpen"
+msgstr "ﯼﺰﯿﺗ"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
@@ -13281,16 +13281,6 @@ msgstr "ﻝﺎﻌﻓ ﻦﯿﺑﺭﻭﺩ"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "ﻦﯿﺑﺭﻭﺩ"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "ﻮﻠﺟ"
-
-
-msgctxt "Operator"
 msgid "Child"
 msgstr "ﺪﻧﺯﺮﻓ"
 
@@ -13403,6 +13393,11 @@ msgstr "ﺮﯿﺴﻣ"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﮏﺗ"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "ﻦﯿﺑﺭﻭﺩ"
 
 
 msgctxt "Operator"
@@ -14062,10 +14057,6 @@ msgstr "ﯽﻨﺤﻨﻣ ﯽﻧﺎﺸﻧﺯﺎﺑ"
 
 msgid "Anim Player"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺮﯿﻠﭘ"
-
-
-msgid "Proxy Protected"
-msgstr "ﻩﺪﺷ ﺖﻇﺎﻔﺣ ﯽﺴﮐﻭﺮﭘ"
 
 
 msgid "Delete the active position"
@@ -14789,12 +14780,12 @@ msgid "Tilt of curve control points"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﮓﻧﺭ ﻒﻗﻮﺗ ﺖﯿﻌﻗﻮﻣ ﻢﯿﻈﻨﺗ"
 
 
-msgid "Depth too large"
-msgstr "ﻑﺪﻫ ﻦﯿﯿﻌﺗ"
-
-
 msgid "Cannot fly an object with constraints"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
+
+
+msgid "Depth too large"
+msgstr "ﻑﺪﻫ ﻦﯿﯿﻌﺗ"
 
 
 msgid "Bone selection count error"

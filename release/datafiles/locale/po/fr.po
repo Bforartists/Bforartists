@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1792,6 +1792,10 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
+
+
+msgid "Simulations"
+msgstr "Simulations"
 
 
 msgid "Sounds"
@@ -5307,14 +5311,6 @@ msgid "Amount of influence constraint will have on the final solution"
 msgstr "Taux d'influence de la contrainte sur la solution finale"
 
 
-msgid "Proxy Local"
-msgstr "Local proxy"
-
-
-msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "La contrainte est ajoutée dans l'instance de proxy (n'appartient pas à la source Armature)"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "La contrainte a des réglages valides et peut être évaluée"
 
@@ -7199,10 +7195,6 @@ msgid "Method used for determining the scaling of the X and Z axes of the bones"
 msgstr "Méthode utilisée pour déterminer le redimensionnement des axes X et Z des os"
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr "Ne pas redimensionner le long des axes X et Z (par défaut)"
-
-
 msgid "Bone Original"
 msgstr "Originelle de l’os"
 
@@ -7887,6 +7879,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Utiliser le début du trait pour la profondeur"
 
 
+msgid "Index"
+msgstr "Indice"
+
+
+msgid "Radius"
+msgstr "Rayon"
+
+
 msgid "Profile Path editor used to build a profile path"
 msgstr "Éditeur de chemin de profil utilisé pour créer un chemin de profil"
 
@@ -8005,10 +8005,6 @@ msgstr "Pointillés"
 
 msgid "Material Index"
 msgstr "Indice de matériau"
-
-
-msgid "Radius"
-msgstr "Rayon"
 
 
 msgid "Dependency Graph"
@@ -8777,11 +8773,6 @@ msgstr "Texture"
 
 
 msgctxt "ID"
-msgid "Hair"
-msgstr "Cheveux"
-
-
-msgctxt "ID"
 msgid "Point Cloud"
 msgstr "Nuages de points"
 
@@ -8872,10 +8863,6 @@ msgstr "Sources de données d’entrée pour évaluer cette variable"
 
 msgid "Single Property"
 msgstr "Propriété unique"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "Utiliser la valeur d’une propriété RNA (par défaut)"
 
 
 msgid "Final transformation value of object or bone"
@@ -10760,10 +10747,6 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Groupe de faces, chaque face ne peut appartenir qu’à une seule carte"
 
 
-msgid "Index"
-msgstr "Indice"
-
-
 msgid "Index number of the face map"
 msgstr "Numéro d’indice de la carte de face"
 
@@ -11348,10 +11331,6 @@ msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
 
 
-msgid "Simulations"
-msgstr "Simulations"
-
-
 msgid "Show Sound data-blocks"
 msgstr "Afficher les blocs de données son"
 
@@ -11498,10 +11477,6 @@ msgstr "Haut-parleur"
 
 msgid "Text"
 msgstr "Texte"
-
-
-msgid "Hair"
-msgstr "Cheveux"
 
 
 msgid "Window Manager"
@@ -14088,10 +14063,6 @@ msgid "Solo Mode"
 msgstr "Mode solo"
 
 
-msgid "In Paint mode display only layers with keyframe in current frame"
-msgstr "En mode peinture, n’afficher que les calques avec une image-clé à la frame courante"
-
-
 msgid "Vertex Paint Opacity"
 msgstr "Opacité de peinture de vertices"
 
@@ -15720,6 +15691,10 @@ msgid "Simplify the stroke by merging vertices closer than a given distance"
 msgstr "Simplifier le trait en fusionnant les vertices plus proches que la distance donnée"
 
 
+msgid "Sharp Threshold"
+msgstr "Limite de dureté"
+
+
 msgid "Number of times to apply simplify"
 msgstr "Nombre de fois à appliquer la simplification"
 
@@ -16517,6 +16492,10 @@ msgid "Inverse Square"
 msgstr "Quadratique inverse"
 
 
+msgid "Comb"
+msgstr "Coiffer"
+
+
 msgid "Poisson ratio for elastic deformation. Higher values preserve volume more, but also lead to more bulging"
 msgstr "Coefficient de Poisson pour la déformation élastique. De plus fortes valeurs préservent mieux le volume, mais conduisent aussi à plus de gonflement"
 
@@ -16689,10 +16668,6 @@ msgid "Normal Weight"
 msgstr "Poids de la normale"
 
 
-msgid "How much grab will pull vertexes out of surface during a grab"
-msgstr "À quel point saisir tirera les vertices hors de la surface durant un saisissement"
-
-
 msgid "Plane Offset"
 msgstr "Décalage de plan"
 
@@ -16815,10 +16790,6 @@ msgstr "Tissu"
 
 msgid "Secondary Color"
 msgstr "Couleur secondaire"
-
-
-msgid "Sharp Threshold"
-msgstr "Limite de dureté"
 
 
 msgid "Threshold below which, no sharpening is done"
@@ -17015,10 +16986,6 @@ msgstr "Saisir la brosse ancre d’arête-en-arête"
 
 msgid "Use Front-Face"
 msgstr "Utiliser de face"
-
-
-msgid "Brush only affects vertexes that face the viewer"
-msgstr "La brosse n’affecte que les vertices faisant face à l’utilisateur"
 
 
 msgid "Use Front-Face Falloff"
@@ -18155,6 +18122,10 @@ msgstr "Édition rapide"
 
 msgid "Don't fill polygons while editing"
 msgstr "Ne pas remplir les polygone durant l’édition"
+
+
+msgid "Attributes"
+msgstr "Attributs"
 
 
 msgid "Freestyle Line Style"
@@ -20159,6 +20130,10 @@ msgid "Cube"
 msgstr "Cube"
 
 
+msgid "Hair"
+msgstr "Cheveux"
+
+
 msgid "Hair strands"
 msgstr "Fibres de cheveux"
 
@@ -20269,10 +20244,6 @@ msgstr "Ajouter un effet de translucence à la sub-surface"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloc de données mesh définissant des surfaces géométriques"
-
-
-msgid "Attributes"
-msgstr "Attributs"
 
 
 msgid "Auto Smooth Angle"
@@ -21369,22 +21340,6 @@ msgstr "Bibliothèque de poses"
 
 msgid "Action used as a pose library for armatures"
 msgstr "Action utilisée comme bibliothèque de poses pour les armatures"
-
-
-msgid "Proxy"
-msgstr "Proxy"
-
-
-msgid "Library object this proxy object controls"
-msgstr "Objet de bibliothèque que cet objet proxy contrôle"
-
-
-msgid "Proxy Collection"
-msgstr "Collection proxy"
-
-
-msgid "Library collection duplicator object this proxy object controls"
-msgstr "Objet bibliothèque collection duplicateur que cet objet proxy contrôle"
 
 
 msgid "Rigid Body Settings"
@@ -24788,6 +24743,38 @@ msgid "Control key pressed"
 msgstr "Touche ctrl (contrôle) pressée"
 
 
+msgid "North"
+msgstr "Nord"
+
+
+msgid "North-East"
+msgstr "Nord-Est"
+
+
+msgid "East"
+msgstr "Est"
+
+
+msgid "South-East"
+msgstr "Sud-Est"
+
+
+msgid "South"
+msgstr "Sud"
+
+
+msgid "South-West"
+msgstr "Sud-Ouest"
+
+
+msgid "West"
+msgstr "Ouest"
+
+
+msgid "North-West"
+msgstr "Nord-Ouest"
+
+
 msgid "ID of the item"
 msgstr "ID de l’élément"
 
@@ -24969,33 +24956,6 @@ msgstr "Molette extérieur"
 
 msgid "WhOut"
 msgstr "WhOut"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Left"
-msgstr "Ajustement gauche"
-
-
-msgid "TwkL"
-msgstr "TwkL"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Middle"
-msgstr "Ajustement milieu"
-
-
-msgid "TwkM"
-msgstr "TwkM"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Right"
-msgstr "Ajustement droite"
-
-
-msgid "TwkR"
-msgstr "TwkR"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -25830,42 +25790,6 @@ msgstr "Ndof-"
 
 
 msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Esc"
-msgstr "NDOF echap"
-
-
-msgid "NdofEsc"
-msgstr "NdofEsc"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Alt"
-msgstr "NDOF alt"
-
-
-msgid "NdofAlt"
-msgstr "NdofAlt"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Shift"
-msgstr "NDOF maj"
-
-
-msgid "NdofShift"
-msgstr "NdofShift"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Ctrl"
-msgstr "NDOF ctrl"
-
-
-msgid "NdofCtrl"
-msgstr "NdofCtrl"
-
-
-msgctxt "UI_Events_KeyMaps"
 msgid "NDOF Button 1"
 msgstr "NDOF bouton 1"
 
@@ -26068,38 +25992,6 @@ msgid "Double Click"
 msgstr "Double clic"
 
 
-msgid "North"
-msgstr "Nord"
-
-
-msgid "North-East"
-msgstr "Nord-Est"
-
-
-msgid "East"
-msgstr "Est"
-
-
-msgid "South-East"
-msgstr "Sud-Est"
-
-
-msgid "South"
-msgstr "Sud"
-
-
-msgid "South-West"
-msgstr "Sud-Ouest"
-
-
-msgid "West"
-msgstr "Ouest"
-
-
-msgid "North-West"
-msgstr "Nord-Ouest"
-
-
 msgid "KeyMap Items"
 msgstr "Éléments de raccourcis"
 
@@ -26192,10 +26084,6 @@ msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Interpolation lissée entre A et B, avec un contrôle sur la forme de la courbe"
 
 
-msgid "Sinusoidal"
-msgstr "Sinusoïdal"
-
-
 msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
 msgstr "Fondu sinusoïdal (le plus faible, presque linéaire mais avec une légère courbure)"
 
@@ -26208,24 +26096,12 @@ msgid "Cubic easing"
 msgstr "Fondu cubique"
 
 
-msgid "Quartic"
-msgstr "Quartique"
-
-
 msgid "Quartic easing"
 msgstr "Fondu quartique"
 
 
-msgid "Quintic"
-msgstr "Quintique"
-
-
 msgid "Quintic easing"
 msgstr "Fondu quintique"
-
-
-msgid "Exponential"
-msgstr "Exponentiel"
 
 
 msgid "Exponential easing (dramatic)"
@@ -26238,10 +26114,6 @@ msgstr "Fondu circulaire (le plus fort et dramatique)"
 
 msgid "Cubic easing with overshoot and settle"
 msgstr "Fondu cubique avec sur-réaction et tranquillisation"
-
-
-msgid "Bounce"
-msgstr "Rebond"
 
 
 msgid "Exponentially decaying parabolic bounce, like when objects collide"
@@ -27861,6 +27733,10 @@ msgstr "Réglages de marqueur"
 
 msgid "Pivot Point"
 msgstr "Point pivot"
+
+
+msgid "Proxy"
+msgstr "Proxy"
 
 
 msgid "Reconstruction"
@@ -34068,6 +33944,10 @@ msgid "Combine YUVA"
 msgstr "Combiner YUVA"
 
 
+msgid "Combine XYZ"
+msgstr "Combiner XYZ"
+
+
 msgid "Composite"
 msgstr "Compositing"
 
@@ -34386,10 +34266,6 @@ msgstr "Position X du centre de l’ellipse"
 
 msgid "Y position of the middle of the ellipse"
 msgstr "Position Y du centre de l’ellipse"
-
-
-msgid "Sharpen"
-msgstr "Durcir"
 
 
 msgid "Laplace"
@@ -34931,6 +34807,10 @@ msgstr "Séparer YCbCrA"
 
 msgid "Separate YUVA"
 msgstr "Séparer YUVA"
+
+
+msgid "Separate XYZ"
+msgstr "Séparer XYZ"
 
 
 msgid "Set Alpha"
@@ -35517,26 +35397,6 @@ msgid "Join Geometry"
 msgstr "Joindre géométrie"
 
 
-msgid "Min Max"
-msgstr "Min Max"
-
-
-msgid "Cross Product"
-msgstr "Produit vectoriel"
-
-
-msgid "Z Axis"
-msgstr "Axe Z"
-
-
-msgid "Mesh to Curve"
-msgstr "Mesh vers courbe"
-
-
-msgid "Points to Volume"
-msgstr "Points vers volume"
-
-
 msgid "Material Selection"
 msgstr "Sélection matériau"
 
@@ -35547,6 +35407,10 @@ msgstr "Fusionner selon distance"
 
 msgid "Fill Type"
 msgstr "Type de remplissage"
+
+
+msgid "Mesh to Curve"
+msgstr "Mesh vers courbe"
 
 
 msgid "Mesh to Points"
@@ -35563,6 +35427,10 @@ msgstr "Info objet"
 
 msgid "Points to Vertices"
 msgstr "Points vers vertices"
+
+
+msgid "Points to Volume"
+msgstr "Points vers volume"
 
 
 msgid "Replace Material"
@@ -35898,16 +35766,16 @@ msgid "Camera Data"
 msgstr "Données caméra"
 
 
+msgid "Min Max"
+msgstr "Min Max"
+
+
 msgid "Combine HSV"
 msgstr "Combiner HSV"
 
 
 msgid "Combine RGB"
 msgstr "Combiner RGB"
-
-
-msgid "Combine XYZ"
-msgstr "Combiner XYZ"
 
 
 msgid "Shader Custom Group"
@@ -36100,10 +35968,6 @@ msgstr "Séparer HSV"
 
 msgid "Separate RGB"
 msgstr "Séparer RGB"
-
-
-msgid "Separate XYZ"
-msgstr "Séparer XYZ"
 
 
 msgid "Squeeze Value"
@@ -36474,8 +36338,16 @@ msgid "Vector Math"
 msgstr "Math vectorielles"
 
 
+msgid "Cross Product"
+msgstr "Produit vectoriel"
+
+
 msgid "Vector Rotate"
 msgstr "Rotation vecteur"
+
+
+msgid "Z Axis"
+msgstr "Axe Z"
 
 
 msgid "Vector Transform"
@@ -43497,14 +43369,6 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
-
-
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -54050,6 +53914,10 @@ msgid "Dynamic topology alters the mesh topology while sculpting"
 msgstr "La topologie dynamique modifier la topologie du mesh durant la sculpture"
 
 
+msgid "Sharpen"
+msgstr "Durcir"
+
+
 msgid "Recalculate the sculpt BVH to improve performance"
 msgstr "Recalculer le BVH de sculpture pour améliorer les performances"
 
@@ -56654,6 +56522,14 @@ msgstr "Désélectionner les vertices UV liées au lieu de les sélectionner"
 
 msgid "Select a loop of connected UV vertices"
 msgstr "Sélectionner une boucle de vertices UV connectés"
+
+
+msgid "Island"
+msgstr "Île"
+
+
+msgid "Island selection mode"
+msgstr "Mode de sélection île"
 
 
 msgid "Select more UV vertices connected to initial selection"
@@ -60922,10 +60798,6 @@ msgid "Display actual particles"
 msgstr "Afficher les vraies particules"
 
 
-msgid "Comb"
-msgstr "Coiffer"
-
-
 msgid "Comb hairs"
 msgstr "Peigner les cheveux"
 
@@ -61952,10 +61824,6 @@ msgstr "Type de poignées pour nouvelles"
 
 msgid "Handle type for handles of new keyframes"
 msgstr "Le type de poignées pour les nouvelles images clé"
-
-
-msgid "New Interpolation Type"
-msgstr "Type d’interpolation pour nouvelles"
 
 
 msgid "Interpolation mode used for first keyframe on newly added F-Curves (subsequent keyframes take interpolation from preceding keyframe)"
@@ -63782,10 +63650,6 @@ msgid "AO Bounces Render"
 msgstr "Rendu rebonds OA"
 
 
-msgid "Automatically reduce the randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts. Only works when not using adaptive sampling"
-msgstr "Réduit automatiquement la répartition aléatoire entre les pixels afin d'améliorer les performances de rendu GPU, au prix de possibles artéfacts dans le rendu. Ne fonctionne que si l'échantillonnage adaptatif n'est pas utilisé"
-
-
 msgid "Bake Type"
 msgstr "Type de pré-calcul"
 
@@ -64220,10 +64084,6 @@ msgstr "Utiliser le motif d’échantillonnage aléatoire Sobol"
 
 msgid "Scrambling Distance"
 msgstr "Distance de brouillage"
-
-
-msgid "Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low. Only works when not using adaptive sampling"
-msgstr "Réduit la répartition aléatoire entre les pixels afin d'améliorer les performances de rendu GPU, au prix de possibles artéfacts dans le rendu si la valeur définie est trop basse. Ne fonctionne que si l'échantillonnage adaptatif n'est pas utilisé"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -67874,6 +67734,14 @@ msgid "Outline"
 msgstr "Contour"
 
 
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -69522,26 +69390,6 @@ msgid "Snap to Pixels"
 msgstr "Aimanter aux pixels"
 
 
-msgid "Sticky Selection Mode"
-msgstr "Mode de sélection collant"
-
-
-msgid "Sticky vertex selection disabled"
-msgstr "Sélection des vertices collants désactivée"
-
-
-msgid "Shared Location"
-msgstr "Position partagée"
-
-
-msgid "Select UVs that are at the same location and share a mesh vertex"
-msgstr "Sélectionner les UVs à la même position et partageant un vertex du mesh"
-
-
-msgid "Shared Vertex"
-msgstr "Vertex partagé"
-
-
 msgid "Live Unwrap"
 msgstr "Dépliage live"
 
@@ -69642,16 +69490,8 @@ msgid "Bezier U"
 msgstr "Bézier U"
 
 
-msgid "Make this nurbs curve or surface act like a Bezier spline in the U direction (Order U must be 3 or 4, Cyclic U must be disabled)"
-msgstr "Faire agir cette courbe ou surface NURBS comme une courbe de Bézier dans la direction U (Ordre en U doit être de 3 ou 4, Cyclique en U doit être désactivé)"
-
-
 msgid "Bezier V"
 msgstr "Bézier V"
-
-
-msgid "Make this nurbs surface act like a Bezier spline in the V direction (Order V must be 3 or 4, Cyclic V must be disabled)"
-msgstr "Faire agir cette surface NURBS comme une courbe de Bézier dans la direction V (Ordre en V doit être de 3 ou 4, Cyclique en V doit être désactivé)"
 
 
 msgid "Make this curve or surface a closed loop in the U direction"
@@ -69666,16 +69506,8 @@ msgid "Endpoint U"
 msgstr "Points terminaux U"
 
 
-msgid "Make this nurbs curve or surface meet the endpoints in the U direction (Cyclic U must be disabled)"
-msgstr "Faire en sorte que cette courbe ou surface NURBS rencontre les points terminaux dans la direction U (Cyclique en U doit être désactivé)"
-
-
 msgid "Endpoint V"
 msgstr "Points terminaux V"
-
-
-msgid "Make this nurbs surface meet the endpoints in the V direction (Cyclic V must be disabled)"
-msgstr "Faire en sorte que cette surface NURBS rencontre les points terminaux dans la direction V (Cyclique en V doit être désactivé)"
 
 
 msgid "Smooth the normals of the surface or beveled curve"
@@ -71658,12 +71490,24 @@ msgid "UV selection and display mode"
 msgstr "Mode de sélection et d’affichage UV"
 
 
-msgid "Island"
-msgstr "Île"
+msgid "Sticky Selection Mode"
+msgstr "Mode de sélection collant"
 
 
-msgid "Island selection mode"
-msgstr "Mode de sélection île"
+msgid "Sticky vertex selection disabled"
+msgstr "Sélection des vertices collants désactivée"
+
+
+msgid "Shared Location"
+msgstr "Position partagée"
+
+
+msgid "Select UVs that are at the same location and share a mesh vertex"
+msgstr "Sélectionner les UVs à la même position et partageant un vertex du mesh"
+
+
+msgid "Shared Vertex"
+msgstr "Vertex partagé"
 
 
 msgid "Filter Vertex groups for Display"
@@ -73586,6 +73430,11 @@ msgstr "Barre d’espace"
 
 
 msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Récupérer les paramètres de %d.%d"
+
+
+msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Enregistrer les nouveaux paramètres"
 
@@ -73622,11 +73471,6 @@ msgstr "Ajouter…"
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Manuel (en)"
-
-
-msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Récupérer les paramètres de %d.%d"
 
 
 msgid "Frame Numbers"
@@ -75033,6 +74877,11 @@ msgstr "Ordre des pistes…"
 
 
 msgctxt "Operator"
+msgid "Rename..."
+msgstr "Renommer…"
+
+
+msgctxt "Operator"
 msgid "Linked Duplicate"
 msgstr "Dupliquer lié"
 
@@ -75070,11 +74919,6 @@ msgstr "Joindre dans une nouvelle frame"
 msgctxt "Operator"
 msgid "Remove from Frame"
 msgstr "Enlever de la frame"
-
-
-msgctxt "Operator"
-msgid "Rename..."
-msgstr "Renommer…"
 
 
 msgctxt "Operator"
@@ -75701,11 +75545,6 @@ msgstr "Général"
 
 
 msgctxt "Operator"
-msgid "Collada (Default) (.dae)"
-msgstr "Collada (par défaut) (.dae)"
-
-
-msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
 
@@ -76047,11 +75886,6 @@ msgstr "Caméra active"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Caméra"
-
-
-msgctxt "Operator"
 msgid "Orbit Opposite"
 msgstr "Orbiter en sens opposé"
 
@@ -76064,11 +75898,6 @@ msgstr "Aligner caméra active avec vue"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Aligner caméra active avec sélection"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "De face"
 
 
 msgctxt "Operator"
@@ -76264,6 +76093,11 @@ msgstr "Tore NURBS"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Os unique"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Caméra"
 
 
 msgctxt "Operator"
@@ -78080,10 +77914,6 @@ msgid "Cannot pose libdata"
 msgstr "Impossible de poser des données de bibliothèque"
 
 
-msgid "Undo of hiding can only be done with Reveal Selected"
-msgstr "Annuler la dissimulation ne peut se faire que par “Révéler sélectionnés”"
-
-
 msgid "Add New"
 msgstr "Ajouter nouveau"
 
@@ -78858,14 +78688,6 @@ msgid "Reset operator defaults"
 msgstr "Réinitialiser opérateur aux valeurs par défaut"
 
 
-msgid "Proxy Protected"
-msgstr "Protégé par proxy"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "Impossible d’éditer une contrainte proxy-protégée"
-
-
 msgid "Add a new color stop to the color ramp"
 msgstr "Ajouter un nouveau marqueur couleur au dégradé"
 
@@ -79271,6 +79093,18 @@ msgstr "Impossible de déchirer les faces sélectionnées"
 
 msgid "Cannot rip multiple disconnected vertices"
 msgstr "Impossible de diviser plusieurs vertices non-connectés"
+
+
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "Sélection de vertex – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour réduire la sélection"
+
+
+msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection depending on the current mode"
+msgstr "Sélection d’arêtes – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour étendre/réduire la sélection dépendamment du mode sélectionné"
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "Sélection de faces – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour étendre la sélection"
 
 
 msgid "No face regions selected"
@@ -80393,20 +80227,20 @@ msgid "Palette. Use Left Click to sample more colors"
 msgstr "Palette. Utiliser clic gauche pour échantillonner plus de couleurs"
 
 
-msgid "Image requires 4 color channels to paint: %s"
-msgstr "L’image nécessite quatre canaux de couleur pour être peinte : %s"
-
-
-msgid "Packed MultiLayer files cannot be painted: %s"
-msgstr "Les fichiers multi-calques empaquetés ne peuvent être peints : %s"
-
-
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Les fichiers multi-calques empaquetés ne peuvent être peints"
 
 
 msgid "Image requires 4 color channels to paint"
 msgstr "L’image nécessite quatre canaux de couleur pour être peinte"
+
+
+msgid "Image requires 4 color channels to paint: %s"
+msgstr "L’image nécessite quatre canaux de couleur pour être peinte : %s"
+
+
+msgid "Packed MultiLayer files cannot be painted: %s"
+msgstr "Les fichiers multi-calques empaquetés ne peuvent être peints : %s"
 
 
 msgid "Untitled"
@@ -81238,10 +81072,6 @@ msgid "Clipboard is empty"
 msgstr "Le presse-papier est vide"
 
 
-msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
-msgstr "Impossible de supprimer la collection liée “%s”, elle est utilisée par d’autres scènes/collections liées"
-
-
 msgid "Link inside Collection"
 msgstr "Lier dans la collection"
 
@@ -81859,14 +81689,6 @@ msgid "fps: %i"
 msgstr "fps : %i"
 
 
-msgid "Cannot dolly when the view offset is locked"
-msgstr "Impossible de faire un travelling quand le décalage de la vue est verrouillé"
-
-
-msgid "Depth too large"
-msgstr "Profondeur trop grande"
-
-
 msgid "X-Ray not available in current mode"
 msgstr "Rayon X pas disponible dans le mode actuel"
 
@@ -81875,16 +81697,8 @@ msgid "Gizmos hidden in this view"
 msgstr "Gizmos cachés dans cette vue"
 
 
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Sélection de vertex – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour réduire la sélection"
-
-
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection depending on the current mode"
-msgstr "Sélection d’arêtes – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour étendre/réduire la sélection dépendamment du mode sélectionné"
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Sélection de faces – maj-cliquer pour en sélectionner plusieurs, ctrl-cliquer pour étendre la sélection"
+msgid "Cannot dolly when the view offset is locked"
+msgstr "Impossible de faire un travelling quand le décalage de la vue est verrouillé"
 
 
 msgid "Cannot fly a camera from an external library"
@@ -81909,6 +81723,10 @@ msgstr "Impossible de se déplacer quand le décalage de la vue est verrouillé"
 
 msgid "Cannot navigate an object with constraints"
 msgstr "Impossible de déplacer un objet avec des contraintes"
+
+
+msgid "Depth too large"
+msgstr "Profondeur trop grande"
 
 
 msgid "No objects to paste"
@@ -83342,26 +83160,6 @@ msgid "Rotate By"
 msgstr "Rotation de"
 
 
-msgid "Distance Min"
-msgstr "Distance Min"
-
-
-msgid "Density Max"
-msgstr "Densité Max"
-
-
-msgid "Density Attribute"
-msgstr "Attribut de densité"
-
-
-msgid "Geometry 1"
-msgstr "Géométrie 1"
-
-
-msgid "Geometry 2"
-msgstr "Géométrie 2"
-
-
 msgid "Sum"
 msgstr "Somme"
 
@@ -83380,6 +83178,14 @@ msgstr "Mesh 1"
 
 msgid "Mesh 2"
 msgstr "Mesh 2"
+
+
+msgid "Distance Min"
+msgstr "Distance Min"
+
+
+msgid "Density Max"
+msgstr "Densité Max"
 
 
 msgid "Vertex Count"
@@ -83682,6 +83488,10 @@ msgid "Color Attribute"
 msgstr "Attribut de couleur"
 
 
+msgid "Density Attribute"
+msgstr "Attribut de densité"
+
+
 msgid "Absorption Color"
 msgstr "Couleur d’absorption"
 
@@ -83904,6 +83714,10 @@ msgid "unable to open the file"
 msgstr "impossible d’ouvrir le fichier"
 
 
+msgid "File Not Found"
+msgstr "Fichier introuvable"
+
+
 msgid "For security reasons, automatic execution of Python scripts in this file was disabled:"
 msgstr "Pour des raisons de sécurité, l’exécution automatique des scripts Python dans ce fichier a été désactivée :"
 
@@ -83930,10 +83744,6 @@ msgstr "Continuer à utiliser le fichier sans les scripts Python"
 
 msgid "Save changes before closing?"
 msgstr "Enregistrer les changements avant de fermer ?"
-
-
-msgid "File Not Found"
-msgstr "Fichier introuvable"
 
 
 msgid "Unable to create user config path"

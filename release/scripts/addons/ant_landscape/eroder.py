@@ -154,7 +154,7 @@ class Grid:
         if abs(yscale) > 1e-6 :
             self.zscale = 1.0/yscale
 
-        # keep just the z-values and null any ofsset
+        # keep just the z-values and null any offset
         # we might catch a reshape error that will occur if nx*ny != # of vertices (if we are not dealing with a heightfield but with a mesh with duplicate x,y coords, like an axis aligned cube
         self.center = np.array([c[2] for c in verts],dtype=np.single).reshape(nx,ny)
         self.center = (self.center-np.amin(self.center))*self.zscale

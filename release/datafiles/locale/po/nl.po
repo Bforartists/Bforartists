@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -995,6 +995,10 @@ msgid "View"
 msgstr "Weergave"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Segments"
 msgstr "Segmenten"
 
@@ -1074,11 +1078,6 @@ msgstr "Luidspreker"
 msgctxt "ID"
 msgid "Text"
 msgstr "Tekst"
-
-
-msgctxt "ID"
-msgid "Hair"
-msgstr "Haar"
 
 
 msgctxt "ID"
@@ -1304,10 +1303,6 @@ msgid "Value Offset"
 msgstr "Waardeverschuiving"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Maximum Distance"
 msgstr "Maximale Afstand"
 
@@ -1446,10 +1441,6 @@ msgstr "Geluid"
 
 msgid "Text"
 msgstr "Tekst"
-
-
-msgid "Hair"
-msgstr "Haar"
 
 
 msgid "World"
@@ -2321,6 +2312,10 @@ msgid "Cube"
 msgstr "Kubus"
 
 
+msgid "Hair"
+msgstr "Haar"
+
+
 msgid "Roughness"
 msgstr "Ruwheid"
 
@@ -3135,10 +3130,6 @@ msgid "Y Axis"
 msgstr "Y As"
 
 
-msgid "Z Axis"
-msgstr "Z As"
-
-
 msgid "Set Position"
 msgstr "Zet Positie"
 
@@ -3161,6 +3152,10 @@ msgstr "Z as"
 
 msgid "Sun Rotation"
 msgstr "Rotatie Zon"
+
+
+msgid "Z Axis"
+msgstr "Z As"
 
 
 msgid "Node Socket"
@@ -4962,11 +4957,6 @@ msgstr "Kopieer Aanpasser"
 
 
 msgctxt "Operator"
-msgid "Add Hair"
-msgstr "Voeg Haar Toe"
-
-
-msgctxt "Operator"
 msgid "Hide Collection"
 msgstr "Verberg Collectie"
 
@@ -6139,6 +6129,10 @@ msgid "Pinned"
 msgstr "Vastgeprikt"
 
 
+msgid "Island"
+msgstr "Eiland"
+
+
 msgctxt "Operator"
 msgid "Select Split"
 msgstr "Selecteer Splits"
@@ -7237,10 +7231,6 @@ msgid "Transform Parents"
 msgstr "Transformeer Ouders"
 
 
-msgid "Island"
-msgstr "Eiland"
-
-
 msgid "All Vertex Groups"
 msgstr "Alle Punt Groepen"
 
@@ -7646,6 +7636,11 @@ msgstr "Eindpunt"
 
 
 msgctxt "Operator"
+msgid "Custom..."
+msgstr "Aangepast..."
+
+
+msgctxt "Operator"
 msgid "Show All"
 msgstr "Toon Alles"
 
@@ -7677,11 +7672,6 @@ msgstr "Nieuwe Laag"
 msgctxt "Operator"
 msgid "Remove All Groups"
 msgstr "Verwijder Alle Groepen"
-
-
-msgctxt "Operator"
-msgid "Custom..."
-msgstr "Aangepast..."
 
 
 msgctxt "Operator"
@@ -8524,16 +8514,6 @@ msgstr "Actieve Camera"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Camera"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Voorkant"
-
-
-msgctxt "Operator"
 msgid "Child"
 msgstr "Kind"
 
@@ -8626,6 +8606,11 @@ msgstr "Pad"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Eenvoudig Bot"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Camera"
 
 
 msgctxt "Operator"
@@ -8866,11 +8851,6 @@ msgstr "Rol Links"
 msgctxt "Operator"
 msgid "Roll Right"
 msgstr "Rol Rechts"
-
-
-msgctxt "Operator"
-msgid "Hair"
-msgstr "Haar"
 
 
 msgctxt "Operator"
@@ -9329,11 +9309,6 @@ msgstr "Nieuw"
 
 
 msgctxt "LightProbe"
-msgid "New"
-msgstr "Nieuw"
-
-
-msgctxt "Hair"
 msgid "New"
 msgstr "Nieuw"
 
@@ -9811,16 +9786,16 @@ msgid "unable to open the file"
 msgstr "kan het bestand niet openen"
 
 
+msgid "File Not Found"
+msgstr "Bestand Niet Gevonden"
+
+
 msgid "This may lead to unexpected behavior"
 msgstr "Dit kan leiden tot onverwacht gedrag"
 
 
 msgid "Save changes before closing?"
 msgstr "Wijzigingen opslaan voor sluiten?"
-
-
-msgid "File Not Found"
-msgstr "Bestand Niet Gevonden"
 
 
 msgid "Startup file saved"

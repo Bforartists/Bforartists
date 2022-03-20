@@ -40,6 +40,7 @@
 #include "BLI_math_color_blend.h"
 
 #include "RNA_access.h"
+#include "RNA_prototypes.h"
 
 #include "RE_pipeline.h"
 
@@ -3736,9 +3737,9 @@ int SEQ_effect_get_num_inputs(int seq_type)
 {
   struct SeqEffectHandle rval = get_sequence_effect_impl(seq_type);
 
-  int cnt = rval.num_inputs();
+  int count = rval.num_inputs();
   if (rval.execute || (rval.execute_slice && rval.init_execution)) {
-    return cnt;
+    return count;
   }
   return 0;
 }
