@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -762,12 +762,12 @@ msgid "View"
 msgstr "มุมมอง"
 
 
-msgid "Segments"
-msgstr "ส่วน"
-
-
 msgid "Radius"
 msgstr "รัศมี"
+
+
+msgid "Segments"
+msgstr "ส่วน"
 
 
 msgid "Viewport"
@@ -2433,10 +2433,6 @@ msgid "Translate"
 msgstr "เลื่อนขนาน"
 
 
-msgid "Z Axis"
-msgstr "แกน Z"
-
-
 msgid "Object Info"
 msgstr "ข้อมูลวัตถุ"
 
@@ -2450,6 +2446,10 @@ msgstr "ไซเคิล"
 
 
 msgid "Z axis"
+msgstr "แกน Z"
+
+
+msgid "Z Axis"
 msgstr "แกน Z"
 
 
@@ -4657,11 +4657,6 @@ msgstr "ทั่วไป"
 
 
 msgctxt "Operator"
-msgid "Collada (Default) (.dae)"
-msgstr "Collada (ค่าเริ่มต้น) (.dae)"
-
-
-msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
 
@@ -4815,11 +4810,6 @@ msgstr "กล้องที่กำลังใช้งาน"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "กล้อง"
-
-
-msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "ขอบเขตการซูม..."
 
@@ -4832,11 +4822,6 @@ msgstr "จัดกล้องที่ใช้งานไปยังมุ
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "จัดกล้องที่ใช้งานไปยังวัตถุที่เลือก"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "หน้า"
 
 
 msgctxt "Operator"
@@ -4942,6 +4927,11 @@ msgstr "เส้นทาง"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "กระดูกเดี่ยว"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "กล้อง"
 
 
 msgctxt "Operator"
@@ -5446,6 +5436,14 @@ msgid "Icosphere"
 msgstr "ทรงกลม Ico"
 
 
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "เลือกจุดยอด"
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "เลือกด้าน"
+
+
 msgid "%s %s to %s"
 msgstr "%s %s ไปยัง %s"
 
@@ -5593,14 +5591,6 @@ msgstr "ภาพฉาย"
 
 msgid "User Perspective"
 msgstr "ทัศนมิติ"
-
-
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "เลือกจุดยอด"
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "เลือกด้าน"
 
 
 msgid " along Y axis"

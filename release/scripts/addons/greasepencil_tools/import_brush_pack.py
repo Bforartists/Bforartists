@@ -103,7 +103,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
                 self.report({'WARNING'}, 'Brushes loaded from temp directory (No download)')
                 return {"FINISHED"}
 
-            self.report({'ERROR'}, f'Check your internet connexion, Impossible to connect to url: {dl_url}')
+            self.report({'ERROR'}, f'Check your internet connection, impossible to connect to url: {dl_url}')
             return {"CANCELLED"}
 
         if file_size is None:

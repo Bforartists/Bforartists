@@ -189,7 +189,7 @@ class VIEW3D_OT_add_camera_from_vr_landmark(Operator):
         scene.collection.objects.link(new_cam)
         angle = lm.base_pose_angle
         new_cam.location = lm.base_pose_location
-        new_cam.rotation_euler = (math.pi, 0, angle)
+        new_cam.rotation_euler = (math.pi / 2, 0, angle)
 
         return {'FINISHED'}
 

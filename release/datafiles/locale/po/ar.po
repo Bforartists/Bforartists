@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -3204,14 +3204,6 @@ msgid "Amount of influence constraint will have on the final solution"
 msgstr "ﺔﻴﺋﺎﻬﻨﻟﺍ ﺔﺠﻴﺘﻨﻟﺍ ﻰﻠﻋ ﺪﻴﻘﻟﺍ ﺮﻴﺛﺄﺗ ﺔﻴﻤﻛ"
 
 
-msgid "Proxy Local"
-msgstr "ﺏﻭﺪﻨﻤﻠﻟ ﻲﻠﺤﻣ"
-
-
-msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "(ﺭﺪﺼﻤﻟﺍ ﻞﻜﻴﻬﻟ ﺩﻮﻌﻳ ﻻ﻿ ﻪﻧﺍ ﺔﻟﺎﺣ ﻲﻓ ﻻ﻿ﺎﺜﻣ) ﺏﻭﺪﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻓ ﺪﻴﻗ ﺔﻓﺎﺿﺍ ﻢﺗ"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "ﻪﻤﻴﻴﻘﺗ ﻦﻜﻤﻳ ﻭ ﺔﺤﻟﺎﺻ ﺕﺍﺩﺍﺪﻋﺇ ﻪﻳﺪﻟ ﺪﻴﻘﻟﺍ"
 
@@ -4676,10 +4668,6 @@ msgid "Method used for determining the scaling of the X and Z axes of the bones"
 msgstr "ﻢﻈﻌﻠﻟ XZ ﺭﻭﺎﺤﻣ ﻰﻠﻋ ﻢﺠﺤﺘﻟﺍ ﺪﻳﺪﺤﺘﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺔﻠﻴﺳﻮﻟﺍ"
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr " (ﻲﺿﺍﺮﺘﻓﺍ) Y ﻭ X ﻦﻳﺭﻮﺤﻤﻟﺍ ﻰﻠﻋ ﻢﺠﺤﺗ ﻻ﻿"
-
-
 msgid "Bone Original"
 msgstr "ﻢﻈﻌﻟﺍ ﻞﺻﺍ"
 
@@ -5048,6 +5036,14 @@ msgid "View"
 msgstr "ﺮﻈﻨﻣ"
 
 
+msgid "Index"
+msgstr "ﺮﺷﺆﻤﻟﺍ"
+
+
+msgid "Radius"
+msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
+
+
 msgid "Steps"
 msgstr "ﺕﺍﻮﻄﺧ"
 
@@ -5066,10 +5062,6 @@ msgstr "ﻑﺬﻗﺍ"
 
 msgid "Material Index"
 msgstr "ﺔﻣﺎﺧ ﺮﺷﺆﻣ"
-
-
-msgid "Radius"
-msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
 
 
 msgid "Dependency Graph"
@@ -5502,10 +5494,6 @@ msgstr "ﺮﻴﻐﺘﻤﻟﺍ ﺍﺬﻫ ﻢﻴﻴﻘﺘﻟ ﺕﺎﻧﺎﻴﺒﻟ
 
 msgid "Single Property"
 msgstr "ﺓﺪﻴﺣﻭ ﺔﻴﺻﺎﺧ"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "(ﻲﺿﺍﺮﺘﻓﺍ) ﺍ.ﻥ.ﺮﻟﺍ ﺹﺍﻮﺧ ﺾﻌﺑ ﻦﻣ ﺔﻤﻴﻘﻟﺍ ﻞﻤﻌﺘﺳﺍ"
 
 
 msgid "Final transformation value of object or bone"
@@ -7085,10 +7073,6 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "ﻩﺬﻫ ﻢﻜﺤﺘﻟﺍ ﺔﻄﻘﻧ ﻲﻓ ﻒﻠﻐﻤﻠﻟ ﻰﻠﻔﺴﻟﺍ ﺩﻭﺪﺤﻟﺍ"
 
 
-msgid "Index"
-msgstr "ﺮﺷﺆﻤﻟﺍ"
-
-
 msgid "Field Settings"
 msgstr "ﻞﻘﺤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
@@ -7583,10 +7567,6 @@ msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
 
 msgid "Text"
 msgstr "ﺺﻧ"
-
-
-msgid "Hair"
-msgstr "ﺮﻌﺷ"
 
 
 msgid "Window Manager"
@@ -9067,6 +9047,10 @@ msgid "Merge"
 msgstr "ﺞﻣﺩﺇ"
 
 
+msgid "Sharp Threshold"
+msgstr "ﺓﺩﺎﺤﻟﺍ ﺔﺒﺘﻌﻟﺍ"
+
+
 msgid "Smooth Modifier"
 msgstr "ﺔﻣﻮﻌﻨﻟﺍ ﺮﻴﻐﻣ"
 
@@ -9483,6 +9467,10 @@ msgid "Inverse Square"
 msgstr "ﻲﺴﻜﻋ ﻲﻌﻴﺑﺮﺗ"
 
 
+msgid "Comb"
+msgstr "ﻂﺸﻣ"
+
+
 msgid "Fill Threshold"
 msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﺔﺒﺘﻋ"
 
@@ -9577,10 +9565,6 @@ msgstr "ﻉﺎﻨﻘﻟﺍ ﺓﺍﺩﺃ"
 
 msgid "Normal Weight"
 msgstr "ﻢﻇﺎﻨﻟﺍ ﻉﺎﻔﺗﺭﺍ"
-
-
-msgid "How much grab will pull vertexes out of surface during a grab"
-msgstr "ﺔﺒﺤﺴﻟﺍ ﻝﻼ﻿ﺧ ﺢﻄﺴﻟﺍ ﻦﻣ ﻂﻘﻨﻠﻟ ﺐﺤﺴﻟﺍ ﺔﻴﻤﻛ ﻢﻛ"
 
 
 msgid "Plane Offset"
@@ -9689,10 +9673,6 @@ msgstr "ﺵﺎﻤﻗ"
 
 msgid "Secondary Color"
 msgstr "ﻲﻧﺎﺜﻟﺍ ﻥﻮﻠّﻟﺍ"
-
-
-msgid "Sharp Threshold"
-msgstr "ﺓﺩﺎﺤﻟﺍ ﺔﺒﺘﻌﻟﺍ"
 
 
 msgid "Threshold below which, no sharpening is done"
@@ -9873,10 +9853,6 @@ msgstr "ﺔﻓﺎﺤﻠﻟ ﺔﻓﺎﺤﻟﺍ ﻦﻣ ﺓﺰﻜﺗﺮﻤﻟﺍ �
 
 msgid "Use Front-Face"
 msgstr "ﻲﻣﺎﻣﻻ﻿ﺍ ﻪﺟﻮﻟﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Brush only affects vertexes that face the viewer"
-msgstr "ﺮﻇﺎﻨﻠﻟ ﻪﺟﺍﻮﻤﻟﺍ ﻂﻘﻨﻟﺍ ﻰﻠﻏ ﻂﻘﻓ ﺓﺎﺷﺮﻔﻟﺍ ﺮﺛﺆﺗ"
 
 
 msgid "Inverse Smooth Pressure"
@@ -11931,6 +11907,10 @@ msgid "Cube"
 msgstr "ﺐﻌﻜﻣ"
 
 
+msgid "Hair"
+msgstr "ﺮﻌﺷ"
+
+
 msgid "Hair strands"
 msgstr "ﺮﻌﺸﻟﺍ ﻝﺎﺒﺣ"
 
@@ -12813,14 +12793,6 @@ msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
 
 msgid "Action used as a pose library for armatures"
 msgstr "ﻞﻛﺎﻴﻬﻠﻟ ﺔﻔﻗﻭ ﺔﺒﺘﻜﻤﻛ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺙﺪﺤﻟﺍ"
-
-
-msgid "Proxy"
-msgstr "ﺏﻭﺪﻨﻣ"
-
-
-msgid "Library object this proxy object controls"
-msgstr "ﺍﺬﻫ ﻦﺋﺎﻜﻟﺍ ﺏﻭﺪﻨﻣ ﻪﻴﻓ ﻢﻜﺤﺘﻳ ﻱﺬﻟﺍ ﺔﺒﺘﻜﻤﻟﺍ ﻦﺋﺎﻛ"
 
 
 msgid "Rigid Body Settings"
@@ -15745,6 +15717,10 @@ msgid "Control key pressed"
 msgstr "ﻁﻮﻐﻀﻣ ﻢﻜﺤﺘﻟﺍ ﺭﺯ"
 
 
+msgid "South-West"
+msgstr "ﺏﺮﻏ-ﺏﻮﻨﺟ"
+
+
 msgid "ID of the item"
 msgstr "ﺮﺼﻨﻌﻟﺍ ﻑﺮﻌﻣ"
 
@@ -15868,21 +15844,6 @@ msgstr "ﺝﺭﺎﺨﻠﻟ ﻞﺠﻌﻟﺍ"
 
 msgid "WhOut"
 msgstr "ﺝﺭﺎﺨﻠﻟ ﻞﺠﻌﻟﺍ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Left"
-msgstr "ﻂﺒﻀﻟﺍ ﺭﺎﺴﻳ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Middle"
-msgstr "ﻂﺒﻀﻟﺍ ﻂﺳﻭ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Tweak Right"
-msgstr "ﻂﺒﻀﻟﺍ ﻦﻴﻤﻳ"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -16343,26 +16304,6 @@ msgstr "NDOF ﺐﻟﺎﺳ"
 
 
 msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Esc"
-msgstr "NDOF ﺏﻭﺮﻫ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Alt"
-msgstr "NDOF ﻞﻳﺪﺑ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Shift"
-msgstr "NDOF ﻲﻟﺎﻋ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Ctrl"
-msgstr "NDOF ﻢﻜﺤﺗ"
-
-
-msgctxt "UI_Events_KeyMaps"
 msgid "NDOF Button 1"
 msgstr "NDOF 1 ﺭﺯ"
 
@@ -16508,10 +16449,6 @@ msgid "Double Click"
 msgstr "ﺝﻭﺩﺰﻤﻟﺍ ﻂﻐﻀﻟﺍ"
 
 
-msgid "South-West"
-msgstr "ﺏﺮﻏ-ﺏﻮﻨﺟ"
-
-
 msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "ﺔﻛﺮﺣ ﻰﻨﺤﻨﻣ ﻰﻠﻋ ﺡﺎﺘﻔﻣ ﺩﺪﺤﺗ ﻦﻴﻀﺒﻘﻤﺑ ﺮﻴﻳﺰﻴﺑ ﻰﻨﺤﻨﻣ ﺔﻄﻘﻧ"
 
@@ -16554,18 +16491,6 @@ msgstr "ﻥﻮﻠﻟﺍ ﺕﺎﻔﻗﻭ ﻦﻴﺑ ﺪﻴﻟﻮﺘﻟﺍ ﺩﺪ�
 
 msgid "Quadratic easing"
 msgstr "ﻲﻌﻴﺑﺮﺗ ﻞﻴﻬﺴﺗ"
-
-
-msgid "Quartic"
-msgstr "ﻲﺗﺭﺍﻮﻛ"
-
-
-msgid "Exponential"
-msgstr "ﻲﻔﻋﺎﻀﺗ"
-
-
-msgid "Bounce"
-msgstr "ﺪﺗﺮﻣ"
 
 
 msgid "Left handle selection status"
@@ -17180,6 +17105,10 @@ msgstr "ﺭﺮﺣ"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﻢﻠﻗ"
+
+
+msgid "Proxy"
+msgstr "ﺏﻭﺪﻨﻣ"
 
 
 msgid "Reconstruction"
@@ -20546,10 +20475,6 @@ msgid "Y position of the middle of the ellipse"
 msgstr "ﺺﻗﺎﻨﻟﺍ ﻊﻄﻘﻟﺍ ﻒﺼﺘﻨﻤﻟ Y ﻊﻗﻮﻣ"
 
 
-msgid "Sharpen"
-msgstr "ﺩﺎﺣ"
-
-
 msgid "Sobel"
 msgstr "ﻞﺑﻮﺳ"
 
@@ -20871,6 +20796,10 @@ msgid "Separate YUVA"
 msgstr "YUVA ﻞﺼﻓﺇ"
 
 
+msgid "Separate XYZ"
+msgstr "XYZ ﻞﺼﻓﺇ"
+
+
 msgid "Set Alpha"
 msgstr "ﺎﻔﻟﺍ ﺩﺪﺣ"
 
@@ -21025,10 +20954,6 @@ msgstr "ﻲﻄﺧ ﺪﻴﻟﻮﺗ"
 
 msgid "Edge Angle"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ"
-
-
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
 
 
 msgid "Fill Type"
@@ -21205,10 +21130,6 @@ msgstr "HSVA ﻞﺼﻓﺇ"
 
 msgid "Separate RGB"
 msgstr "RGB ﻞﺼﻓﺇ"
-
-
-msgid "Separate XYZ"
-msgstr "XYZ ﻞﺼﻓﺇ"
 
 
 msgid "Subsurface Scattering"
@@ -21429,6 +21350,10 @@ msgstr "ءﺎﺴﻛﻺ﻿ﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ UV ﺕﺎﻴﺛﺍﺪ�
 
 msgid "Vector Math"
 msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
+
+
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
 
 
 msgid "Vector Transform"
@@ -28702,6 +28627,10 @@ msgid "Detail Flood Fill"
 msgstr "ﻥﺎﻀﻴﻔﺑ ﻞﻴﺻﺎﻔﺘﻟﺍ ﺊﺒّﻋ"
 
 
+msgid "Sharpen"
+msgstr "ﺩﺎﺣ"
+
+
 msgctxt "Operator"
 msgid "Sample Detail Size"
 msgstr "ﺔﻠﻴﺼﻔﺘﻟﺍ ﻢﺠﺣ ﻦﻳﺎﻋ"
@@ -29711,6 +29640,14 @@ msgstr "ﻞﺒﺤﻟﺎﺑ UV's ـﻟﺍ ﺮﺘﺧﺍ"
 
 msgid "Select a loop of connected UV vertices"
 msgstr "ﺔﻠﺼﺘﻤﻟﺍ UV ـﻟﺍ ﻂﻘﻧ ﻦﻣ ﻞﺴﻠﺴﺗ ﺮﺘﺧﺇ"
+
+
+msgid "Island"
+msgstr "ﺓﺮﻳﺰﺟ"
+
+
+msgid "Island selection mode"
+msgstr "ﺓﺮﻳﺰﺠﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ"
 
 
 msgctxt "Operator"
@@ -31293,10 +31230,6 @@ msgid "Shape Object"
 msgstr "ﻞﻜﺸﻟﺍ ﻦﺋﺎﻛ"
 
 
-msgid "Comb"
-msgstr "ﻂﺸﻣ"
-
-
 msgid "Comb hairs"
 msgstr "ﺮﻌﺸﻟﺍ ﻂﺸﻣ"
 
@@ -32171,10 +32104,6 @@ msgstr "ﺓﺪﻳﺪﺟ ﺾﺑﺎﻘﻣ ﻉﺍﻮﻧﺃ"
 
 msgid "Handle type for handles of new keyframes"
 msgstr "ﺓﺪﻳﺪﺠﻟﺍ ﺢﻴﺗﺎﻔﻤﻠﻟ ﺾﺑﺎﻘﻤﻟﺍ ﻉﻮﻧ"
-
-
-msgid "New Interpolation Type"
-msgstr "ﺪﻳﺪﺟ ﺪﻴﻟﻮﺗ ﻉﻮﻧ"
 
 
 msgid "Interpolation mode used for first keyframe on newly added F-Curves (subsequent keyframes take interpolation from preceding keyframe)"
@@ -35413,10 +35342,6 @@ msgid "Snap to Pixels"
 msgstr "ﻂﻘﻨﻠﻟ ﻱﺫﺎﺣ"
 
 
-msgid "Select UVs that are at the same location and share a mesh vertex"
-msgstr "ﻢﺴﺠﻣ ﺔﻄﻘﻨﺑ ﻙﺭﺎﺸﺘﺗ ﻭ ﻊﻗﻮﻤﻟﺍ ﺲﻔﻧ ﺪﻨﻋ ﺪﺟﺍﻮﺘﺗ ﻲﺘﻟﺍ UVﻝﺍ ﺮﺘﺧﺇ"
-
-
 msgid "Location of this character in the text data (only for text curves)"
 msgstr "(ﺺﻨﻟﺍ ﺕﺎﻴﻨﺤﻨﻤﻟ ﻂﻘﻓ) ﺺﻨﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻲﻓ ﻑﺮﺤﻟﺍ ﺍﺬﻫ ﻊﻗﻮﻣ"
 
@@ -35427,10 +35352,6 @@ msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ �
 
 msgid "Tilt Interpolation"
 msgstr "ﻥﻼ﻿ﻴﻤﻟﺍ ﺪﻴﻟﻮﺗ"
-
-
-msgid "Make this nurbs surface act like a Bezier spline in the V direction (Order V must be 3 or 4, Cyclic V must be disabled)"
-msgstr "(ﻞﻄﻌﻳ ﻥﺍ ﺐﺠﻳ ﻱﺭﻭﺪﻟﺍ V ,4 ﻭﺃ 3 ﻥﻮﻜﻳ ﻥﺍ ﺐﺠﻳ ﺐﻴﺗﺮﺘﻟﺍ V (V ﻩﺎﺠﺗﺍ ﻰﻠﻋ ﺮﻴﻳﺰﻴﺑ ﻰﻨﺤﻨﻤﻛ ﻝﺎﻌﻔﺘﻳ nurbs ﺢﻄﺳ ﻞﻌﺟﺍ"
 
 
 msgid "Make this surface a closed loop in the V direction"
@@ -36521,12 +36442,8 @@ msgid "UV selection and display mode"
 msgstr "UV ﺽﺮﻋ ﻭ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ"
 
 
-msgid "Island"
-msgstr "ﺓﺮﻳﺰﺟ"
-
-
-msgid "Island selection mode"
-msgstr "ﺓﺮﻳﺰﺠﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ"
+msgid "Select UVs that are at the same location and share a mesh vertex"
+msgstr "ﻢﺴﺠﻣ ﺔﻄﻘﻨﺑ ﻙﺭﺎﺸﺘﺗ ﻭ ﻊﻗﻮﻤﻟﺍ ﺲﻔﻧ ﺪﻨﻋ ﺪﺟﺍﻮﺘﺗ ﻲﺘﻟﺍ UVﻝﺍ ﺮﺘﺧﺇ"
 
 
 msgid "All Vertex Groups"
@@ -38421,11 +38338,6 @@ msgstr "...ﺔﺨﺴﻧ ﻞﺠﺳ"
 
 
 msgctxt "Operator"
-msgid "Collada (Default) (.dae)"
-msgstr "Collada (ﻲﺿﺍﺮﺘﻓﺍ) (.dae)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "ﺓﺭﻮﺻ ﺮﻴّﺻ"
 
@@ -38574,11 +38486,6 @@ msgstr "ﺔﻴﻟﺎﺤﻟﺍ ﺍﺮﻤﻜﻟﺍ"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "ﺍﺮﻴﻤﻜﻟﺍ"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
 
@@ -38586,11 +38493,6 @@ msgstr "ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "ﻡﺎﻣﺃ"
 
 
 msgctxt "Operator"
@@ -38726,6 +38628,11 @@ msgstr "ﺲﺑﺮﻧ ﺢﻄﺳ"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "ﺓﺪﻴﺣﻭ ﺔﻤﻈﻋ"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "ﺍﺮﻴﻤﻜﻟﺍ"
 
 
 msgctxt "Operator"
@@ -39803,10 +39710,6 @@ msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻞﻐﺸﻣ"
 
 msgid "Reset operator defaults"
 msgstr "ﻞﻣﺎﻌﻠﻟ ﺔﻴﻠﺻﻻ﻿ﺍ ﻢﻴﻘﻠﻟ ﺮﻔﺻ"
-
-
-msgid "Proxy Protected"
-msgstr "ﻞﻴﻛﻮﻟﺍ ﻦﻣ ﻲﻤﺤﻣ"
 
 
 msgid "Delete the active position"
@@ -40893,10 +40796,6 @@ msgid "Vertex Weights"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﺍﺯﻭﺃ"
 
 
-msgid "Depth too large"
-msgstr "ﻖﻤﻌﻟﺍ ﺮﻴﻴﻐﺗ"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "ﻲﺟﺭﺎﺧ ﻊﻗﻮﻣ ﻦﻣ ﻦﻳﺰﺨﺘﻟﺍ ﺃﺮﻗﺇ"
 
@@ -40911,6 +40810,10 @@ msgstr "ﺔﻴﺟﺭﺎﺧ ﺔﺒﺘﻜﻣ ﻦﻣ ﺍﺮﻴﻣﺎﻜﻟﺍ ﺢ�
 
 msgid "Cannot navigate an object with constraints"
 msgstr "ﺩﻮﻴﻘﺑ ﻦﺋﺎﻜﻟﺍ ﺢﻔّﺼﺗ ﻦﻜﻤﻳ ﻻ﻿"
+
+
+msgid "Depth too large"
+msgstr "ﻖﻤﻌﻟﺍ ﺮﻴﻴﻐﺗ"
 
 
 msgid "No active camera"

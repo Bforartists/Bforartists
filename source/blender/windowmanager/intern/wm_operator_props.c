@@ -18,6 +18,7 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
+#include "RNA_prototypes.h"
 
 #include "ED_select_utils.h"
 
@@ -516,6 +517,14 @@ void WM_operator_properties_mouse_select(wmOperatorType *ot)
                          false,
                          "Deselect On Nothing",
                          "Deselect all when nothing under the cursor");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  /* TODO: currently only used for the 3D viewport. */
+  prop = RNA_def_boolean(ot->srna,
+                         "select_passthrough",
+                         false,
+                         "Only Select Unselected",
+                         "Ignore the select action when the element is already selected");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 

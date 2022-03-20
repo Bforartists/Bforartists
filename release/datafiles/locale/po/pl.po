@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -2887,14 +2887,6 @@ msgid "Amount of influence constraint will have on the final solution"
 msgstr "Wielkość wpływu jaki będzie miał ogranicznik na końcowe rozwiązanie"
 
 
-msgid "Proxy Local"
-msgstr "Lokalny proxy"
-
-
-msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "Ogranicznik został dodany w tej instancji proxy (np. nie należał do źródłowego szkieletu)"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ogranicznik ma prawidłowe ustawienia i może zostać wyliczony"
 
@@ -4303,10 +4295,6 @@ msgid "Method used for determining the scaling of the X and Z axes of the bones"
 msgstr "Metoda używana do określenia skalowania osi X oraz Z kości"
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr "Nie skaluj osi X i Z (domyślnie)"
-
-
 msgid "Bone Original"
 msgstr "Kość oryginalna"
 
@@ -4633,6 +4621,10 @@ msgstr "Dla krzywych RGB - jest to kolor na który mapowany jest kolor biały"
 
 msgid "Plane"
 msgstr "Płaszczyzna"
+
+
+msgid "Index"
+msgstr "Indeks"
 
 
 msgid "Scene"
@@ -5037,10 +5029,6 @@ msgstr "Źródła danych wejściowych do określenia w tej zmiennej"
 
 msgid "Single Property"
 msgstr "Pojedyncza właściwość"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "Użyj wartości z jakichś danych RNA (domyślnie)"
 
 
 msgid "Final transformation value of object or bone"
@@ -6052,10 +6040,6 @@ msgid "Scaling (in time) of the noise"
 msgstr "Skalowanie (w czasie) szumu"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
 msgid "Maximum Distance"
 msgstr "Maksymalna odległość"
 
@@ -6385,10 +6369,6 @@ msgid "Zoom"
 msgstr "Zbliżenie"
 
 
-msgid "Sharpen"
-msgstr "Wyostrzenie"
-
-
 msgid "Sobel"
 msgstr "Sobel"
 
@@ -6417,10 +6397,6 @@ msgid "Y Axis"
 msgstr "Oś Y"
 
 
-msgid "Z Axis"
-msgstr "Oś Z"
-
-
 msgid "Layer Weight"
 msgstr "Waga warstwy"
 
@@ -6438,6 +6414,10 @@ msgstr "Oś Y"
 
 
 msgid "Z axis"
+msgstr "Oś Z"
+
+
+msgid "Z Axis"
 msgstr "Oś Z"
 
 
@@ -6517,6 +6497,10 @@ msgstr "Potomek"
 
 msgid "Hinge"
 msgstr "Zawias"
+
+
+msgid "Sharpen"
+msgstr "Wyostrzenie"
 
 
 msgid "Property"
@@ -7387,10 +7371,6 @@ msgid "Cannot pose libdata"
 msgstr "Nie można ustawiać póz danych biblioteki"
 
 
-msgid "Undo of hiding can only be done with Reveal Selected"
-msgstr "Cofnięcie ukrywania może być przeprowadzone wyłącznie z Pokaż Zaznaczone"
-
-
 msgid "Add New"
 msgstr "Dodaj Nowy"
 
@@ -7921,14 +7901,6 @@ msgid "Reset operator defaults"
 msgstr "Resetuj domyślne dla operatora"
 
 
-msgid "Proxy Protected"
-msgstr "Zastępca Chroniony"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "Nie można edytować ogranicznika zabezpieczonego zastępcą"
-
-
 msgid "Delete the active position"
 msgstr "Usuń aktywną pozycję"
 
@@ -8302,6 +8274,14 @@ msgstr "Nie mogę rozpruć zaznaczonych ścian"
 
 msgid "Cannot rip multiple disconnected vertices"
 msgstr "Nie mogę rozpruć wielu rozłączonych wierzchołków"
+
+
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "Zaznaczanie wierzchołków - Shift-klik dla trybów mieszanych, Ctrl-klik zawęża wybór"
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
 
 
 msgid "No face regions selected"
@@ -9258,20 +9238,20 @@ msgid "expected a view3d region & editcurve"
 msgstr "Spodziewany region view3d oraz editcurve"
 
 
-msgid "Image requires 4 color channels to paint: %s"
-msgstr "Obraz wymaga 4 kanałów koloru do malowania: %s"
-
-
-msgid "Packed MultiLayer files cannot be painted: %s"
-msgstr "Spakowany plik MultiLayer nie może być malowany: %s"
-
-
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Spakowane pliki MultiLayer nie mogą być malowane"
 
 
 msgid "Image requires 4 color channels to paint"
 msgstr "Obraz wymaga 4 kanałów koloru do malowania"
+
+
+msgid "Image requires 4 color channels to paint: %s"
+msgstr "Obraz wymaga 4 kanałów koloru do malowania: %s"
+
+
+msgid "Packed MultiLayer files cannot be painted: %s"
+msgstr "Spakowany plik MultiLayer nie może być malowany: %s"
 
 
 msgid "No active mesh object"
@@ -10203,18 +10183,6 @@ msgid "fps: %i"
 msgstr "klatkaż: %i"
 
 
-msgid "Depth too large"
-msgstr "Za duża głębia"
-
-
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Zaznaczanie wierzchołków - Shift-klik dla trybów mieszanych, Ctrl-klik zawęża wybór"
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "Nie można oblatywać (fly) kamery z biblioteki zawnętrznej"
 
@@ -10237,6 +10205,10 @@ msgstr "Nie można nawigować gdy przesunięcie widoku jest zablokowane"
 
 msgid "Cannot navigate an object with constraints"
 msgstr "Nie można nawigować obiektem z ogranicznikami"
+
+
+msgid "Depth too large"
+msgstr "Za duża głębia"
 
 
 msgid "No active camera"

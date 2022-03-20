@@ -31,6 +31,7 @@ class Params:
         "context_menu_event",
         "cursor_set_event",
         "cursor_tweak_event",
+        "use_tweak_tool_lmb_interaction",
         "use_mouse_emulate_3_button",
 
         # User preferences:
@@ -102,6 +103,7 @@ class Params:
             use_gizmo_drag=True,
             use_fallback_tool=False,
             use_fallback_tool_rmb=False,
+            use_tweak_tool_lmb_interaction=False,
             use_v3d_tab_menu=False,
             use_v3d_shade_ex_pie=False,
             use_v3d_mmb_pan=False,
@@ -129,6 +131,7 @@ class Params:
                 self.tool_maybe_tweak_value = 'PRESS'
             else:
                 self.tool_maybe_tweak_value = 'CLICK_DRAG'
+            self.use_tweak_tool_lmb_interaction = use_tweak_tool_lmb_interaction
 
             self.context_menu_event = {"type": 'W', "value": 'PRESS'}
 
@@ -150,6 +153,7 @@ class Params:
             self.action_mouse = 'RIGHTMOUSE'
             self.tool_mouse = 'LEFTMOUSE'
             self.tool_maybe_tweak_value = 'CLICK_DRAG'
+            self.use_tweak_tool_lmb_interaction = False
 
             if self.legacy:
                 self.context_menu_event = {"type": 'W', "value": 'PRESS'}
@@ -326,6 +330,22 @@ def _template_items_hide_reveal_actions(op_hide, op_reveal):
     ]
 
 
+def _template_object_hide_collection_from_number_keys():
+    return [
+        ("object.hide_collection", {
+            "type": NUMBERS_1[i], "value": 'PRESS',
+            **({"shift": True} if extend else {}),
+            **({"alt": True} if add_10 else {}),
+        }, {"properties": [
+            ("collection_index", i + (11 if add_10 else 1)),
+            ("extend", extend),
+        ]})
+        for extend in (False, True)
+        for add_10 in (False, True)
+        for i in range(10)
+    ]
+
+
 def _template_items_object_subdivision_set():
     return [
         ("object.subdivision_set",
@@ -441,6 +461,19 @@ def _template_items_tool_select(params, operator, cursor_operator, fallback, *, 
              {"properties": [(extend, True)]}),
         ]
     else:
+        # Experimental support for LMB interaction for the tweak tool.
+        if params.use_tweak_tool_lmb_interaction and not fallback:
+            return [
+                (operator, {"type": 'LEFTMOUSE', "value": 'PRESS'},
+                 {"properties": [("deselect_all", True), ("select_passthrough", True)]}),
+                (operator, {"type": 'LEFTMOUSE', "value": 'CLICK'},
+                 {"properties": [("deselect_all", True)]}),
+                (operator, {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+                 {"properties": [("deselect_all", False), ("toggle", True)]}),
+                ("transform.translate", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'},
+                 {"properties": [("release_confirm", True)]}),
+            ]
+
         # For right mouse, set the cursor.
         return [
             (cursor_operator, {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
@@ -4410,13 +4443,7 @@ def km_pose(params):
         ("pose.breakdown", {"type": 'E', "value": 'PRESS', "shift": True}, None),
         ("pose.blend_to_neighbor", {"type": 'E', "value": 'PRESS', "shift": True, "alt": True}, None),
         op_menu("VIEW3D_MT_pose_propagate", {"type": 'P', "value": 'PRESS', "alt": True}),
-        *(
-            (("object.hide_collection",
-              {"type": NUMBERS_1[i], "value": 'PRESS', "any": True},
-              {"properties": [("collection_index", i + 1)]})
-             for i in range(10)
-             )
-        ),
+        *_template_object_hide_collection_from_number_keys(),
         *_template_items_context_menu("VIEW3D_MT_pose_context_menu", params.context_menu_event),
     ])
 
@@ -4486,13 +4513,7 @@ def km_object_mode(params):
         ("object.link_to_collection", {"type": 'M', "value": 'PRESS', "shift": True}, None),
         *_template_items_hide_reveal_actions("object.hide_view_set", "object.hide_view_clear"),
         ("object.hide_collection", {"type": 'H', "value": 'PRESS', "ctrl": True}, None),
-        *(
-            (("object.hide_collection",
-              {"type": NUMBERS_1[i], "value": 'PRESS', "any": True},
-              {"properties": [("collection_index", i + 1)]})
-             for i in range(10)
-             )
-        ),
+        *_template_object_hide_collection_from_number_keys(),
         *_template_items_context_menu("VIEW3D_MT_object_context_menu", params.context_menu_event),
     ])
 

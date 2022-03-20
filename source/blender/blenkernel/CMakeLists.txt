@@ -39,6 +39,8 @@ set(INC
 
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
+  # RNA_prototypes.h
+  ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
 set(INC_SYS
@@ -105,10 +107,13 @@ set(SRC
   intern/curves.cc
   intern/curves_geometry.cc
   intern/curve_bevel.c
+  intern/curve_bezier.cc
+  intern/curve_catmull_rom.cc
   intern/curve_convert.c
   intern/curve_decimate.c
   intern/curve_deform.c
   intern/curve_eval.cc
+  intern/curve_nurbs.cc
   intern/curve_to_mesh_convert.cc
   intern/curveprofile.cc
   intern/customdata.cc
@@ -794,6 +799,8 @@ blender_add_lib(bf_blenkernel "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 # Needed so we can use dna_type_offsets.h for defaults initialization.
 add_dependencies(bf_blenkernel bf_dna)
+# RNA_prototypes.h
+add_dependencies(bf_blenkernel bf_rna)
 
 
 if(WITH_GTESTS)
@@ -823,4 +830,7 @@ if(WITH_GTESTS)
   )
   include(GTestTesting)
   blender_add_test_lib(bf_blenkernel_tests "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB}")
+
+  # RNA_prototypes.h
+  add_dependencies(bf_blenkernel_tests bf_rna)
 endif()

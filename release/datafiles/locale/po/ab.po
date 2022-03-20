@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -455,11 +455,6 @@ msgstr "Аҭыԥ"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Акамера"
-
-
-msgctxt "Operator"
 msgid "Plane"
 msgstr "Аҟьаҟьа"
 
@@ -492,6 +487,11 @@ msgstr "Аконус"
 msgctxt "Operator"
 msgid "Monkey"
 msgstr "Амаамын"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Акамера"
 
 
 msgctxt "Operator"
