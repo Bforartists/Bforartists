@@ -201,11 +201,11 @@ class CharMap:
 
 
 class Constrain:
-    def __init__(self, peferences, scene, obj):
+    def __init__(self, prefs, scene, obj):
         self.last_type = None
         self.last_vec = None
         self.rotMat = None
-        self.preferences = peferences
+        self.preferences = prefs
         trans_orient = scene.transform_orientation_slots[0]
         self.orientation = [None, None]
         if trans_orient.type == 'LOCAL':

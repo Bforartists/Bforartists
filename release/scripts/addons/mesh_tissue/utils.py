@@ -1432,7 +1432,7 @@ def mod_preserve_shape(mod):
 
 def recurLayerCollection(layerColl, collName):
     '''
-    Recursivly transverse layer_collection for a particular name.
+    Recursively transverse layer_collection for a particular name.
     '''
     found = None
     if (layerColl.name == collName):

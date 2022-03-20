@@ -856,7 +856,7 @@ def pov_sphere_define(context, op, ob, loc):
     """create the representation of POV sphere using a Blender icosphere.
 
     Its nice platonic solid curvature better represents pov rendertime
-    tesselation than a UV sphere"""
+    tessellation than a UV sphere"""
 
     if op:
         R = op.R

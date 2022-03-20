@@ -20,14 +20,23 @@ class GP_PT_sidebarPanel(bpy.types.Panel):
         layout.operator('gp.straight_stroke', icon ="CURVE_PATH")# IPO_LINEAR
 
 
-        # Expose Native view operators
-        # if context.scene.camera:
+        # Expose native view operators
         row = layout.row(align=True)
-        row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS')# FULLSCREEN_EXIT?
+        row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS') # FULLSCREEN_EXIT
         row.operator('view3d.view_center_camera', text = 'Zoom Fit', icon = 'FULLSCREEN_ENTER')
+
+        # Rotation save/load
         row = layout.row(align=True)
         row.operator('view3d.rotate_canvas_reset', text = 'Reset Rotation', icon = 'FILE_REFRESH')
         row.operator('view3d.rotate_canvas_set', text = 'Save Rotation', icon = 'DRIVER_ROTATIONAL_DIFFERENCE')
+
+        # View flip
+        if context.scene.camera and context.scene.camera.scale.x < 0:
+            row = layout.row(align=True)
+            row.operator('gp.camera_flip_x', text = 'Camera Mirror Flip', icon = 'MOD_MIRROR')
+            row.label(text='', icon='LOOP_BACK')
+        else:
+            layout.operator('gp.camera_flip_x', text = 'Camera Mirror Flip', icon = 'MOD_MIRROR')
 
 
 def menu_boxdeform_entry(self, context):

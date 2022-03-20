@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1048,12 +1048,16 @@ msgid "View"
 msgstr "दृश्य"
 
 
-msgid "Steps"
-msgstr "कदम"
+msgid "Index"
+msgstr "सूचकांक"
 
 
 msgid "Radius"
 msgstr "त्रिज्या"
+
+
+msgid "Steps"
+msgstr "कदम"
 
 
 msgid "Render"
@@ -1361,10 +1365,6 @@ msgid "Frame"
 msgstr "गठन"
 
 
-msgid "Index"
-msgstr "सूचकांक"
-
-
 msgid "Maximum Distance"
 msgstr "अधिकतम दूरी"
 
@@ -1471,10 +1471,6 @@ msgstr "ध्वनि"
 
 msgid "Text"
 msgstr "पाठ"
-
-
-msgid "Hair"
-msgstr "बाल"
 
 
 msgid "Window Manager"
@@ -2254,6 +2250,10 @@ msgid "Cube"
 msgstr "घन"
 
 
+msgid "Hair"
+msgstr "बाल"
+
+
 msgid "Edges"
 msgstr "किनारों"
 
@@ -2388,10 +2388,6 @@ msgstr "शिल्प रूप"
 
 msgid "Motion Path"
 msgstr "गति पथ"
-
-
-msgid "Proxy"
-msgstr "प्रॉक्सी"
 
 
 msgid "Rigid Body Constraint"
@@ -2751,6 +2747,22 @@ msgid "Ctrl"
 msgstr "नियंत्रण"
 
 
+msgid "North"
+msgstr "उत्तर"
+
+
+msgid "East"
+msgstr "पूर्व"
+
+
+msgid "South"
+msgstr "दक्षिण"
+
+
+msgid "West"
+msgstr "पश्चिम"
+
+
 msgid "User Modified"
 msgstr "संशोधित प्रयोक्ता"
 
@@ -2769,22 +2781,6 @@ msgstr "प्रेस"
 
 msgid "Click"
 msgstr "क्लिक करें"
-
-
-msgid "North"
-msgstr "उत्तर"
-
-
-msgid "East"
-msgstr "पूर्व"
-
-
-msgid "South"
-msgstr "दक्षिण"
-
-
-msgid "West"
-msgstr "पश्चिम"
 
 
 msgid "Paths"
@@ -2874,6 +2870,10 @@ msgstr "संपादन"
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "छांटन"
+
+
+msgid "Proxy"
+msgstr "प्रॉक्सी"
 
 
 msgid "Reconstruction"
@@ -3861,14 +3861,6 @@ msgstr "उप विभाजन"
 
 msgid "Modifier"
 msgstr "संशोधक"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgid "Create a new image"
@@ -5151,6 +5143,14 @@ msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
 
 
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
+
+
 msgctxt "MovieClip"
 msgid "View"
 msgstr "दृश्य"
@@ -6056,16 +6056,6 @@ msgstr "सक्रिय प्रतिबिंबक"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "प्रतिबिंबक"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "सामने"
-
-
-msgctxt "Operator"
 msgid "Child"
 msgstr "कारक"
 
@@ -6118,6 +6108,11 @@ msgstr "बंदर"
 msgctxt "Operator"
 msgid "Path"
 msgstr "पथ"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "प्रतिबिंबक"
 
 
 msgctxt "Operator"

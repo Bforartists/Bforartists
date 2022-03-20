@@ -522,7 +522,7 @@ def set_angle_distance_two(context):
     Note:
         Uses 2 Selected Vertices to set pg.angle and pg.distance scene variables
         also sets delta offset from these 2 points using standard Numpy Routines
-        Works in Edit and Oject Modes.
+        Works in Edit and Object Modes.
 
     Args:
         context: Blender bpy.context instance.
@@ -603,7 +603,7 @@ def set_angle_distance_three(context):
     Note:
         Uses 3 Selected Vertices to set pg.angle and pg.distance scene variables
         also sets delta offset from these 3 points using standard Numpy Routines
-        Works in Edit and Oject Modes.
+        Works in Edit and Object Modes.
 
     Args:
         context: Blender bpy.context instance.

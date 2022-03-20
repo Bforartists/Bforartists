@@ -576,7 +576,7 @@ def tessellate_patch(props):
     for mat_id, _ob1 in enumerate(components):
         if _ob1 == None: continue
 
-        # Set original values (for next commponents)
+        # Set original values (for next components)
         com_modifiers = _com_modifiers
         bool_shapekeys = _bool_shapekeys
 
@@ -1252,7 +1252,7 @@ class tissue_tessellate(Operator):
             min=1,
             soft_max=5,
             description="Automatically repeat the Tessellation using the "
-                        + "generated geometry as new base object.\nUsefull for "
+                        + "generated geometry as new base object.\nUseful for "
                         + "for branching systems. Dangerous!"
             )
     bool_combine : BoolProperty(
@@ -1567,7 +1567,7 @@ class tissue_tessellate(Operator):
             if no_components:
                 layout = self.layout
                 layout.label(icon='OUTLINER_COLLECTION', text='Components from Active Collection')
-                layout.label(icon='INFO', text="The Active Collection does not containt any Mesh,")
+                layout.label(icon='INFO', text="The Active Collection does not contain any Mesh,")
                 layout.label(text="Curve, Surface, Meta or Text object.")
                 return
         elif self.component_mode == 'MATERIALS':
@@ -3725,7 +3725,7 @@ def offset_boundary_materials(bm, boundary_mat_offset=0, boundary_variable_offse
         bound_verts_value = [0]*len(bm.faces)
         bound_edges_value = [0]*len(bm.faces)
         shift_faces = [0]*len(bm.faces)
-        # store boundaries informations
+        # store boundaries information
         for v in bm.verts:
             if v.is_boundary:
                 for f in v.link_faces:
