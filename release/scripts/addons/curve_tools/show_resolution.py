@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 
-# LOAD MODUL #
+# LOAD MODULE #
 import bpy
 from bpy import *
 from bpy.props import *

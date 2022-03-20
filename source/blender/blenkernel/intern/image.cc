@@ -1124,7 +1124,7 @@ Image *BKE_image_add_generated(Main *bmain,
                                const bool is_data,
                                const bool tiled)
 {
-  /* on save, type is changed to FILE in editsima.c */
+  /* Saving the image changes it's #Image.source to #IMA_SRC_FILE (leave as generated here). */
   Image *ima;
   if (tiled) {
     ima = image_alloc(bmain, name, IMA_SRC_TILED, IMA_TYPE_IMAGE);
@@ -1161,7 +1161,7 @@ Image *BKE_image_add_generated(Main *bmain,
     int entry = tiled ? 1001 : 0;
     image_assign_ibuf(ima, ibuf, stereo3d ? view_id : index, entry);
 
-    /* image_assign_ibuf puts buffer to the cache, which increments user counter. */
+    /* #image_assign_ibuf puts buffer to the cache, which increments user counter. */
     IMB_freeImBuf(ibuf);
     if (!stereo3d) {
       break;
@@ -1175,7 +1175,6 @@ Image *BKE_image_add_generated(Main *bmain,
 
 Image *BKE_image_add_from_imbuf(Main *bmain, ImBuf *ibuf, const char *name)
 {
-  /* on save, type is changed to FILE in editsima.c */
   Image *ima;
 
   if (name == nullptr) {
@@ -1715,7 +1714,7 @@ char BKE_imtype_valid_depths(const char imtype)
       return R_IMF_CHAN_DEPTH_16 | R_IMF_CHAN_DEPTH_32;
     case R_IMF_IMTYPE_MULTILAYER:
       return R_IMF_CHAN_DEPTH_16 | R_IMF_CHAN_DEPTH_32;
-    /* eeh, cineon does some strange 10bits per channel */
+    /* NOTE: CINEON uses an unusual 10bits-LOG per channel. */
     case R_IMF_IMTYPE_DPX:
       return R_IMF_CHAN_DEPTH_8 | R_IMF_CHAN_DEPTH_10 | R_IMF_CHAN_DEPTH_12 | R_IMF_CHAN_DEPTH_16;
     case R_IMF_IMTYPE_CINEON:
@@ -1724,7 +1723,7 @@ char BKE_imtype_valid_depths(const char imtype)
       return R_IMF_CHAN_DEPTH_8 | R_IMF_CHAN_DEPTH_12 | R_IMF_CHAN_DEPTH_16;
     case R_IMF_IMTYPE_PNG:
       return R_IMF_CHAN_DEPTH_8 | R_IMF_CHAN_DEPTH_16;
-    /* most formats are 8bit only */
+    /* Most formats are 8bit only. */
     default:
       return R_IMF_CHAN_DEPTH_8;
   }
@@ -2721,7 +2720,7 @@ void BKE_image_stamp_buf(Scene *scene,
 
   if (TEXT_SIZE_CHECK(stamp_data.scene, w, h)) {
 
-    /* Bottom right corner, with an extra space because blenfont is too strict! */
+    /* Bottom right corner, with an extra space because the BLF API is too strict! */
     x = width - w - 2;
 
     /* extra space for background. */
@@ -2743,7 +2742,7 @@ void BKE_image_stamp_buf(Scene *scene,
 
   if (TEXT_SIZE_CHECK(stamp_data.strip, w, h)) {
 
-    /* Top right corner, with an extra space because blenfont is too strict! */
+    /* Top right corner, with an extra space because the BLF API is too strict! */
     x = width - w - pad;
     y = height - h;
 
@@ -5106,31 +5105,7 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
     RE_AcquireResultImage(re, &rres, actview);
   }
   else if ((slot = BKE_image_get_renderslot(ima, ima->render_slot))->render) {
-    /* Unfortunately each field needs to be set individually because RenderResult
-     * contains volatile fields and using memcpy would invoke undefined behavior with c++. */
-    rres.next = slot->render->next;
-    rres.prev = slot->render->prev;
-    rres.rectx = slot->render->rectx;
-    rres.recty = slot->render->recty;
-    rres.sample_nr = slot->render->sample_nr;
-    rres.rect32 = slot->render->rect32;
-    rres.rectf = slot->render->rectf;
-    rres.rectz = slot->render->rectz;
-    rres.tilerect = slot->render->tilerect;
-    rres.xof = slot->render->xof;
-    rres.yof = slot->render->yof;
-    rres.layers = slot->render->layers;
-    rres.views = slot->render->views;
-    rres.renrect.xmin = slot->render->renrect.xmin;
-    rres.renrect.xmax = slot->render->renrect.xmax;
-    rres.renrect.ymin = slot->render->renrect.ymin;
-    rres.renrect.ymax = slot->render->renrect.ymax;
-    rres.renlay = slot->render->renlay;
-    rres.framenr = slot->render->framenr;
-    rres.text = slot->render->text;
-    rres.error = slot->render->error;
-    rres.stamp_data = slot->render->stamp_data;
-    rres.passes_allocated = slot->render->passes_allocated;
+    rres = *(slot->render);
     rres.have_combined = ((RenderView *)rres.views.first)->rectf != nullptr;
   }
 
@@ -5293,7 +5268,7 @@ static int image_get_multiview_index(Image *ima, ImageUser *iuser)
   }
   if (is_backdrop) {
     if (BKE_image_is_stereo(ima)) {
-      /* backdrop hackaround (since there is no iuser */
+      /* Backdrop hack / workaround (since there is no `iuser`). */
       return ima->eye;
     }
   }

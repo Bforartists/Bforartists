@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1643,6 +1643,10 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Sounds"
@@ -4486,10 +4490,6 @@ msgid "Influence"
 msgstr "Pengaruh"
 
 
-msgid "Proxy Local"
-msgstr "Proxy Lokal"
-
-
 msgid "Disable"
 msgstr "Matikan"
 
@@ -5670,10 +5670,6 @@ msgid "XZ Scale Mode"
 msgstr "Modus Pahat"
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr "Jangan skalakan axes X and Z (Default)"
-
-
 msgid "Bone Original"
 msgstr "Tulang Asli"
 
@@ -6008,6 +6004,10 @@ msgstr "Bidang untuk garis luar yang terproyeksi"
 
 msgid "View"
 msgstr "Pandangan"
+
+
+msgid "Index"
+msgstr "Index"
 
 
 msgid "Steps"
@@ -6667,11 +6667,6 @@ msgstr "Teks"
 msgctxt "ID"
 msgid "Texture"
 msgstr "Tekstur"
-
-
-msgctxt "ID"
-msgid "Hair"
-msgstr "Rambut"
 
 
 msgctxt "ID"
@@ -7371,10 +7366,6 @@ msgid "Face Map"
 msgstr "Peta Wajah"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Face Maps"
 msgstr "Peta Wajah"
 
@@ -7505,10 +7496,6 @@ msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -10944,6 +10931,38 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 
+msgid "North"
+msgstr "Utara"
+
+
+msgid "North-East"
+msgstr "Timur Laut"
+
+
+msgid "East"
+msgstr "Timur"
+
+
+msgid "South-East"
+msgstr "Tenggara"
+
+
+msgid "South"
+msgstr "Selatan"
+
+
+msgid "South-West"
+msgstr "Barat Daya"
+
+
+msgid "West"
+msgstr "Barat"
+
+
+msgid "North-West"
+msgstr "Barat Laut"
+
+
 msgid "ID of the item"
 msgstr "ID Item"
 
@@ -11242,26 +11261,6 @@ msgstr "NDOF Minus"
 
 
 msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Esc"
-msgstr "NDOF Esc"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Alt"
-msgstr "NDOF Alt"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Shift"
-msgstr "NDOF Shift"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "NDOF Ctrl"
-msgstr "NDOF Ctrl"
-
-
-msgctxt "UI_Events_KeyMaps"
 msgid "NDOF Button 1"
 msgstr "NDOF Tombol 1"
 
@@ -11372,42 +11371,6 @@ msgstr "Klik"
 
 msgid "Double Click"
 msgstr "Klik Dua Kali"
-
-
-msgid "North"
-msgstr "Utara"
-
-
-msgid "North-East"
-msgstr "Timur Laut"
-
-
-msgid "East"
-msgstr "Timur"
-
-
-msgid "South-East"
-msgstr "Tenggara"
-
-
-msgid "South"
-msgstr "Selatan"
-
-
-msgid "South-West"
-msgstr "Barat Daya"
-
-
-msgid "West"
-msgstr "Barat"
-
-
-msgid "North-West"
-msgstr "Barat Laut"
-
-
-msgid "Bounce"
-msgstr "Lompat"
 
 
 msgid "UI Name"
@@ -11867,6 +11830,10 @@ msgid "Languages..."
 msgstr "Bahasa..."
 
 
+msgid "Add Attribute"
+msgstr "Tambahkan Atribut"
+
+
 msgid "Channel"
 msgstr "Saluran"
 
@@ -11901,10 +11868,6 @@ msgstr "Spesial Material"
 
 msgid "Move to Layer"
 msgstr "Pindah ke Layer"
-
-
-msgid "Add Attribute"
-msgstr "Tambahkan Atribut"
 
 
 msgid "Select Linked"
@@ -14010,10 +13973,6 @@ msgid "Ellipse Mask"
 msgstr "Hapus"
 
 
-msgid "Sharpen"
-msgstr "Pertajam"
-
-
 msgid "Flip X"
 msgstr "Balik X"
 
@@ -14503,10 +14462,6 @@ msgid "Component"
 msgstr "Komponen"
 
 
-msgid "Attribute Remove"
-msgstr "Hapus Atribut"
-
-
 msgid "Collection Info"
 msgstr "Info Koleksi"
 
@@ -14533,54 +14488,6 @@ msgstr "Orientasi Transformasi"
 
 msgid "Is Viewport"
 msgstr "Adalah Viewport"
-
-
-msgid "Min Max"
-msgstr "Min Maks"
-
-
-msgid "Input Type X"
-msgstr "Masukan Tipe X"
-
-
-msgid "Input Type Y"
-msgstr "Masukan Tipe Y"
-
-
-msgid "Input Type Z"
-msgstr "Masukan Tipe Z"
-
-
-msgid "Attribute Fill"
-msgstr "Isi Atribut"
-
-
-msgid "Interpolation Type"
-msgstr "Tipe Interpolasi"
-
-
-msgid "Attribute Randomize"
-msgstr "Acak Atribut"
-
-
-msgid "Replace/Create"
-msgstr "Ganti/Buat"
-
-
-msgid "Reflect"
-msgstr "Cerminkan"
-
-
-msgid "Refract"
-msgstr "Biaskan"
-
-
-msgid "Faceforward"
-msgstr "Wajahdepan"
-
-
-msgid "Length of A"
-msgstr "Panjang A"
 
 
 msgid "Fill Type"
@@ -14627,6 +14534,10 @@ msgid "Camera Data"
 msgstr "Kamera"
 
 
+msgid "Min Max"
+msgstr "Min Maks"
+
+
 msgid "Hair Info"
 msgstr "Partikel"
 
@@ -14637,6 +14548,10 @@ msgstr "Warna Standar"
 
 msgid "Light Path"
 msgstr "Kamera"
+
+
+msgid "Interpolation Type"
+msgstr "Tipe Interpolasi"
 
 
 msgid "Space of the input normal"
@@ -14709,6 +14624,22 @@ msgstr "Tekstur"
 
 msgid "Wave Texture"
 msgstr "Tekstur"
+
+
+msgid "Reflect"
+msgstr "Cerminkan"
+
+
+msgid "Refract"
+msgstr "Biaskan"
+
+
+msgid "Faceforward"
+msgstr "Wajahdepan"
+
+
+msgid "Length of A"
+msgstr "Panjang A"
 
 
 msgid "Vector Transform"
@@ -17146,11 +17077,6 @@ msgstr "Cari dan Tambah Node"
 
 
 msgctxt "Operator"
-msgid "Add Node Texture"
-msgstr "Tambah Tekstur Node"
-
-
-msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Gambar Latar"
 
@@ -18744,6 +18670,10 @@ msgstr "Haluskan Mesh"
 
 msgid "Scale mesh"
 msgstr "Skalakan mesh"
+
+
+msgid "Sharpen"
+msgstr "Pertajam"
 
 
 msgid "Detail Mode"
@@ -23219,6 +23149,11 @@ msgstr "Spasi"
 
 
 msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Muat Pengaturan %d.%d"
+
+
+msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Simpan Pengaturan Baru"
 
@@ -23268,11 +23203,6 @@ msgstr "Karakter"
 
 msgid "Date: %s %s"
 msgstr "Tanggal: %s %s"
-
-
-msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Muat Pengaturan %d.%d"
 
 
 msgid "After"
@@ -23388,6 +23318,11 @@ msgid "Interpolation Tilt"
 msgstr "Kemiringan Interpolasi"
 
 
+msgctxt "Operator"
+msgid "Custom..."
+msgstr "Kustom..."
+
+
 msgid "Only Axis Aligned"
 msgstr "Hanya Sumbu yang Disejajarkan"
 
@@ -23484,11 +23419,6 @@ msgstr "Hapus Kelompok Aktif"
 msgctxt "Operator"
 msgid "Remove All Groups"
 msgstr "Hapus Semua Kelompok"
-
-
-msgctxt "Operator"
-msgid "Custom..."
-msgstr "Kustom..."
 
 
 msgid "Interpolation U"
@@ -24793,13 +24723,13 @@ msgstr "Pisah Vertikal"
 
 
 msgctxt "Operator"
-msgid "Remove from Frame"
-msgstr "Hapus dari Frame"
+msgid "Rename..."
+msgstr "Ganti nama..."
 
 
 msgctxt "Operator"
-msgid "Rename..."
-msgstr "Ganti nama..."
+msgid "Remove from Frame"
+msgstr "Hapus dari Frame"
 
 
 msgid "Projection X"
@@ -25342,16 +25272,6 @@ msgstr "Kamera Aktif"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Depan"
-
-
-msgctxt "Operator"
 msgid "Child"
 msgstr "Anak"
 
@@ -25404,6 +25324,11 @@ msgstr "Tambah Gambar"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Tulang Tunggal"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -25602,11 +25527,6 @@ msgstr "Orientasi Transformasi"
 msgctxt "Operator"
 msgid "Non Manifold"
 msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Hair"
-msgstr "Rambut"
 
 
 msgctxt "Operator"
@@ -26152,11 +26072,6 @@ msgstr "Baru"
 
 
 msgctxt "LightProbe"
-msgid "New"
-msgstr "Baru"
-
-
-msgctxt "Hair"
 msgid "New"
 msgstr "Baru"
 
@@ -26869,12 +26784,12 @@ msgid "Tilt of curve control points"
 msgstr "Material"
 
 
-msgid "Depth too large"
-msgstr "Warna Standar"
-
-
 msgid "Cannot fly an object with constraints"
 msgstr "Data Objek"
+
+
+msgid "Depth too large"
+msgstr "Warna Standar"
 
 
 msgid "along local Z"
@@ -27172,10 +27087,6 @@ msgid "Val"
 msgstr "Val"
 
 
-msgid "Density Attribute"
-msgstr "Atribut Densitas"
-
-
 msgid "AO"
 msgstr "AO"
 
@@ -27258,6 +27169,10 @@ msgstr "Api"
 
 msgid "Color Attribute"
 msgstr "Atribut Warna"
+
+
+msgid "Density Attribute"
+msgstr "Atribut Densitas"
 
 
 msgid "Absorption Color"

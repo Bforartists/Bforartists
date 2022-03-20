@@ -1,20 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # ---------------------------- ADAPTIVE DUPLIFACES --------------------------- #
 # ------------------------------- version 0.84 ------------------------------- #
@@ -174,7 +158,7 @@ class polyhedra_wireframe(Operator):
                 verts1 = [v.index for v in f1.verts]
                 va1 = verts1.index(e.verts[0].index)
                 vb1 = verts1.index(e.verts[1].index)
-                # chech if order of the edge matches the order of the face
+                # check if order of the edge matches the order of the face
                 dir1 = va1 == (vb1+1)%len(verts1)
                 edge_vec1 = edge_vec if dir1 else -edge_vec
 
@@ -190,7 +174,7 @@ class polyhedra_wireframe(Operator):
                     verts2 = [v.index for v in f2.verts]
                     va2 = verts2.index(e.verts[0].index)
                     vb2 = verts2.index(e.verts[1].index)
-                    # chech if order of the edge matches the order of the face
+                    # check if order of the edge matches the order of the face
                     dir2 = va2 == (vb2+1)%len(verts2)
                     # check for normal consistency
                     if dir1 != dir2:

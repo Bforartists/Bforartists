@@ -1,17 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.1.0 Release Candidate (b'073d2390f0b8')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-01-09 14:18+0800\n"
-"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
+"PO-Revision-Date: 2022-03-13 16:02+0000\n"
+"Last-Translator: Cheng-Chia Tseng <zerngjia@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.11"
 
 
 msgid "Shader AOV"
@@ -308,6 +309,14 @@ msgstr "共享記憶體分發"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "以互連裝置間的共享記憶體 (例如: 透過 NVLink分發) 方式分發記憶體，以保留更多空間給大型場景"
+
+
+msgid "MetalRT (Experimental)"
+msgstr "MetalRT (測試版本)"
+
+
+msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
+msgstr "MetalRT 用於光跡追蹤運算時, 在大量使用曲線的場景可減少記憶體用量並在特定條件下有較佳效能。不過此支援功能目前還在測試階段並且某些場景可能無法正確算繪"
 
 
 msgid "Fribidi Library"
@@ -1026,12 +1035,36 @@ msgid "Extends the baked result as a post process filter"
 msgstr "將烘焙結果擴展為後製過濾"
 
 
+msgid "Margin Type"
+msgstr "邊緣類型"
+
+
+msgid "Algorithm to extend the baked result"
+msgstr "要用來延伸邊緣的演算法"
+
+
+msgid "Adjacent Faces"
+msgstr "相鄰面"
+
+
+msgid "Use pixels from adjacent faces across UV seams"
+msgstr "使用跨越 UV 接縫相鄰面的畫素"
+
+
 msgid "Extend"
 msgstr "擴展"
 
 
+msgid "Extend border pixels outwards"
+msgstr "向外延伸邊緣像素"
+
+
 msgid "Max Ray Distance"
 msgstr "最大光線距離"
+
+
+msgid "The maximum ray distance for matching points between the active and selected objects. If zero, there is no limit"
+msgstr "作用中物體與選取物體之間作比對的最大光線距離。 如果為零，則沒有限制"
 
 
 msgid "Normal Space"
@@ -1134,6 +1167,10 @@ msgid "Save Mode"
 msgstr "儲存模式"
 
 
+msgid "Where to save baked image textures"
+msgstr "儲存紋理影像檔的路徑"
+
+
 msgid "Internal"
 msgstr "內部"
 
@@ -1154,8 +1191,16 @@ msgid "Target"
 msgstr "目標"
 
 
+msgid "Bake to image data-blocks associated with active image texture nodes in materials"
+msgstr "烘焙至材質內作用中的影像紋理結點的關聯影像資料區塊"
+
+
 msgid "Vertex Colors"
 msgstr "頂點色彩"
+
+
+msgid "Bake to active vertex color layer on meshes"
+msgstr "烘焙至網格的作用中頂點色彩圖層"
 
 
 msgid "Automatic Name"
@@ -1195,7 +1240,7 @@ msgstr "添加直接光照貢獻"
 
 
 msgid "Add emission contribution"
-msgstr "添加發射貢獻"
+msgstr "添加發光效益"
 
 
 msgid "Add glossy contribution"
@@ -1466,6 +1511,14 @@ msgid "Library data-blocks"
 msgstr "藏庫資料塊"
 
 
+msgid "Light Probes"
+msgstr "燈光採樣器"
+
+
+msgid "Light Probe data-blocks"
+msgstr "燈光採樣器資料區塊"
+
+
 msgid "Lights"
 msgstr "光照"
 
@@ -1584,6 +1637,10 @@ msgstr "外形鍵"
 
 msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Sounds"
@@ -1868,6 +1925,14 @@ msgstr "主要螢幕"
 
 msgid "Collection of screens"
 msgstr "螢幕的選集"
+
+
+msgid "Main Simulations"
+msgstr "主要模擬"
+
+
+msgid "Collection of simulations"
+msgstr "模擬選集"
 
 
 msgid "Main Sounds"
@@ -2418,6 +2483,30 @@ msgid "Bone in an Armature data-block"
 msgstr "骨架資料塊內的骨骼"
 
 
+msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
+msgstr "B-骨骼曲線啟始端的 X 軸控制桿偏移，調整曲率"
+
+
+msgid "In Z"
+msgstr "進 Z"
+
+
+msgid "Z-axis handle offset for start of the B-Bone's curve, adjusts curvature"
+msgstr "B-骨骼曲線啟始端的 Z 軸控制桿偏移，調整曲率"
+
+
+msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
+msgstr "B-骨骼曲線末端的 X 軸控制桿偏移，調整曲率"
+
+
+msgid "Out Z"
+msgstr "出 Z"
+
+
+msgid "Z-axis handle offset for end of the B-Bone's curve, adjusts curvature"
+msgstr "B-骨骼曲線末端的 Z 軸控制桿偏移，調整曲率"
+
+
 msgid "Ease In"
 msgstr "緩入"
 
@@ -2458,6 +2547,38 @@ msgid "B-Bone Start Handle Type"
 msgstr "B-骨骼始端控制桿類型"
 
 
+msgid "End Handle Ease"
+msgstr "控制桿末端的緩和方式"
+
+
+msgid "Multiply the B-Bone Ease Out channel by the local Y scale value of the end handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "將末端控制桿的局部 Y 縮放值與 B 骨骼的緩出頻道相乘。這是在縮放緩和選項之後計算所以不受其影響"
+
+
+msgid "Start Handle Ease"
+msgstr "起始控制桿的緩和"
+
+
+msgid "Multiply the B-Bone Ease In channel by the local Y scale value of the start handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "將始端控制桿的局部 Y 縮放值與 B 骨骼的緩進頻道相乘。這是在縮放緩和選項之後計算所以不受其影響"
+
+
+msgid "End Handle Scale"
+msgstr "末端控制桿縮放"
+
+
+msgid "Multiply B-Bone Scale Out channels by the local scale values of the end handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "將末端控制桿的局部縮放值與 B 骨骼的縮放輸出頻道相乘。這是在縮放緩和選項之後計算所以不受其影響"
+
+
+msgid "Start Handle Scale"
+msgstr "B-骨骼始端控制桿縮放"
+
+
+msgid "Multiply B-Bone Scale In channels by the local scale values of the start handle. This is done after the Scale Easing option and isn't affected by it"
+msgstr "將始端控制桿的局部縮放值與 B 骨骼的縮放輸入頻道相乘。這是在縮放緩和選項之後計算所以不受其影響"
+
+
 msgid "Roll In"
 msgstr "捲入"
 
@@ -2472,6 +2593,22 @@ msgstr "捲出"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "為末端B-骨骼捲動偏移值，調整扭轉"
+
+
+msgid "Scale In"
+msgstr "縮放輸入"
+
+
+msgid "Scale factors for the start of the B-Bone, adjusts thickness (for tapering effects)"
+msgstr "始端 B 骨骼縮放係數，調整厚度 (用於錐變效果)"
+
+
+msgid "Scale Out"
+msgstr "縮放輸出"
+
+
+msgid "Scale factors for the end of the B-Bone, adjusts thickness (for tapering effects)"
+msgstr "末端 B 骨骼縮放係數，調整厚度 (用於錐變效果)"
 
 
 msgid "B-Bone Segments"
@@ -2562,6 +2699,10 @@ msgid "Inherit Scale"
 msgstr "繼承縮放"
 
 
+msgid "Specifies how the bone inherits scaling from the parent bone"
+msgstr "指定此骨骼如何繼承親代骨骼的縮放"
+
+
 msgid "Full"
 msgstr "完整"
 
@@ -2616,6 +2757,10 @@ msgstr "選取頭部"
 
 msgid "Select Tail"
 msgstr "選取尾部"
+
+
+msgid "Display Wire"
+msgstr "顯示連線"
 
 
 msgid "Tail"
@@ -2678,6 +2823,10 @@ msgid "Bone inherits rotation or scale from parent bone"
 msgstr "骨骼繼承親代骨骼的旋轉或縮放"
 
 
+msgid "DEPRECATED: Bone inherits scaling from parent bone"
+msgstr "過期棄用選項: 繼承親代骨骼的縮放"
+
+
 msgid "Local Location"
 msgstr "區域位置"
 
@@ -2694,6 +2843,14 @@ msgid "Object children will use relative transform, like deform"
 msgstr "物體子代將使用相對變換，像是變形等"
 
 
+msgid "Scale Easing"
+msgstr "緩和縮放"
+
+
+msgid "Multiply the final easing values by the Scale In/Out Y factors"
+msgstr "將 Y 的縮放輸入/輸出乘以最終緩和值"
+
+
 msgid "Bone Group"
 msgstr "骨骼群組"
 
@@ -2706,8 +2863,20 @@ msgid "Bone Groups"
 msgstr "骨骼群組"
 
 
+msgid "Bool Attribute Value"
+msgstr "布林屬性值"
+
+
+msgid "Bool value in geometry attribute"
+msgstr "幾何屬性的布林值"
+
+
 msgid "Brush Capabilities"
 msgstr "筆刷能力"
+
+
+msgid "Read-only indications of supported operations"
+msgstr "支援的操作的唯讀標示"
 
 
 msgid "Has Overlay"
@@ -2734,6 +2903,10 @@ msgid "Has Accumulate"
 msgstr "有累加"
 
 
+msgid "Has Color"
+msgstr "具備色彩"
+
+
 msgid "Has Radius"
 msgstr "有半徑"
 
@@ -2752,6 +2925,10 @@ msgstr "目前雕塑工具支援的何筆刷操作之唯讀指示"
 
 msgid "Has Auto Smooth"
 msgstr "有自動平滑"
+
+
+msgid "Has Direction"
+msgstr "具備方向"
 
 
 msgid "Has Gravity"
@@ -2794,6 +2971,26 @@ msgid "Has Strength Pressure"
 msgstr "有強度壓力"
 
 
+msgid "Has Tilt"
+msgstr "具備傾斜"
+
+
+msgid "Vertex Paint Capabilities"
+msgstr "頂點繪製能力"
+
+
+msgid "Weight Paint Capabilities"
+msgstr "權重繪製能力"
+
+
+msgid "Has Weight"
+msgstr "具備權重"
+
+
+msgid "Grease Pencil Brush Settings"
+msgstr "油性筆刷設定"
+
+
 msgid "Angle"
 msgstr "角度"
 
@@ -2818,8 +3015,24 @@ msgid "Material"
 msgstr "材質"
 
 
+msgid "Use always material mode"
+msgstr "啟用恆定材質模式"
+
+
 msgid "Vertex Color"
 msgstr "頂點色彩"
+
+
+msgid "Use always Vertex Color mode"
+msgstr "啟用恆用頂點色彩模式"
+
+
+msgid "Caps Type"
+msgstr "末端類型"
+
+
+msgid "The shape of the start and end of the stroke"
+msgstr "筆觸的啟始及結束的形狀"
 
 
 msgid "Round"
@@ -2828,6 +3041,26 @@ msgstr "圓"
 
 msgid "Flat"
 msgstr "扁平"
+
+
+msgid "Random Curve"
+msgstr "隨機曲線"
+
+
+msgid "Curve Strength"
+msgstr "曲線強度"
+
+
+msgid "Curve used for the strength"
+msgstr "用於強度的曲線"
+
+
+msgid "Dilate/Contract"
+msgstr "增厚/縮減"
+
+
+msgid "Number of pixels to expand or contract fill area"
+msgstr "填充區域擴張或縮減的畫素數量"
 
 
 msgid "Direction"
@@ -2850,12 +3083,40 @@ msgid "Dissolve"
 msgstr "消散"
 
 
+msgid "Erase stroke points"
+msgstr "擦除筆觸頂點"
+
+
 msgid "Stroke"
 msgstr "筆觸"
 
 
+msgid "Stroke Extension"
+msgstr "筆觸延伸"
+
+
+msgid "Strokes end extension for closing gaps, use zero to disable"
+msgstr "延伸筆觸終點以蓋上形狀, 設為零來取消"
+
+
+msgid "Direction of the fill"
+msgstr "填充的方向"
+
+
 msgid "Normal"
 msgstr "法線"
+
+
+msgid "Fill internal area"
+msgstr "填充內部區域"
+
+
+msgid "Fill inverted area"
+msgstr "填充反轉區域"
+
+
+msgid "Mode to draw boundary limits"
+msgstr "繪製邊緣限制的模式"
 
 
 msgid "All"
@@ -4097,14 +4358,6 @@ msgstr "影響"
 
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "約束對最終解決方案的影響量"
-
-
-msgid "Proxy Local"
-msgstr "代理區域"
-
-
-msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "此代理實體已添加的約束 (例：不屬於來源骨架)"
 
 
 msgid "Constraint has valid settings and can be evaluated"
@@ -5595,10 +5848,6 @@ msgid "Method used for determining the scaling of the X and Z axes of the bones"
 msgstr "用來決定骨骼 X 與 Z 軸縮放的方法"
 
 
-msgid "Don't scale the X and Z axes (Default)"
-msgstr "不要縮放 X 與 Z 軸 (預設)"
-
-
 msgid "Bone Original"
 msgstr "骨骼原始"
 
@@ -6003,6 +6252,14 @@ msgid "Detect Corners"
 msgstr "偵測角落"
 
 
+msgid "Index"
+msgstr "索引"
+
+
+msgid "Radius"
+msgstr "半徑"
+
+
 msgid "Steps"
 msgstr "步數"
 
@@ -6025,10 +6282,6 @@ msgstr "虛線"
 
 msgid "Material Index"
 msgstr "材質索引"
-
-
-msgid "Radius"
-msgstr "半徑"
 
 
 msgid "Dependency Graph"
@@ -6664,10 +6917,6 @@ msgstr "評估此變數用的輸入資料來源"
 
 msgid "Single Property"
 msgstr "單一屬性"
-
-
-msgid "Use the value from some RNA property (Default)"
-msgstr "使用來自一些 RNA 屬性的值 (預設)"
 
 
 msgid "Final transformation value of object or bone"
@@ -8312,10 +8561,6 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "此控制點上封套的下邊界"
 
 
-msgid "Index"
-msgstr "索引"
-
-
 msgid "Face Maps"
 msgstr "面圖群組"
 
@@ -8720,10 +8965,6 @@ msgid "Hairs"
 msgstr "毛髮"
 
 
-msgid "Simulations"
-msgstr "模擬"
-
-
 msgid "Show workspace data-blocks"
 msgstr "顯示工作空間資料塊"
 
@@ -8814,10 +9055,6 @@ msgstr "喇叭"
 
 msgid "Text"
 msgstr "文字"
-
-
-msgid "Hair"
-msgstr "毛髮"
 
 
 msgid "Window Manager"
@@ -9309,7 +9546,7 @@ msgstr "頂點群組"
 
 
 msgid "Name of vertex group which determines surface emission rate"
-msgstr "決定表面發散率的頂點群組其名稱"
+msgstr "決定表面發射率的頂點群組其名稱"
 
 
 msgid "Flow Type"
@@ -9354,6 +9591,14 @@ msgstr "從物體發射的粒子系統"
 
 msgid "Color of smoke"
 msgstr "煙霧的色彩"
+
+
+msgid "Surface Emission"
+msgstr "發射表面"
+
+
+msgid "Controls fluid emission from the mesh surface (higher value results in emission further away from the mesh surface"
+msgstr "控制來自網格表面的流體發射（較高的值會導致發射離網格表面更遠）"
 
 
 msgid "Temp. Diff."
@@ -9412,12 +9657,16 @@ msgid "Set particle size in simulation cells or use nearest cell"
 msgstr "設定模擬巢格中的粒子大小或使用最近的巢格"
 
 
+msgid "Treat this object as a planar and unclosed mesh. Fluid will only be emitted from the mesh surface and based on the surface emission value"
+msgstr "將此對象視為平面且未閉合的網格。 流體只會從網格表面發射並基於表面發射的數值"
+
+
 msgid "Use Texture"
 msgstr "使用紋理"
 
 
 msgid "Use a texture to control emission strength"
-msgstr "使用紋理控制發散強度"
+msgstr "使用紋理控制發射強度"
 
 
 msgid "Initial"
@@ -9430,6 +9679,14 @@ msgstr "法線方向速度的量"
 
 msgid "Amount of random velocity"
 msgstr "隨機速度的量"
+
+
+msgid "Volume Emission"
+msgstr "發射量"
+
+
+msgid "Controls fluid emission from within the mesh (higher value results in greater emissions from inside the mesh)"
+msgstr "控制網格內的流體排放（數值越高，網格內的排放量越大）"
 
 
 msgid "Freestyle Line Set"
@@ -10538,6 +10795,10 @@ msgid "Merge"
 msgstr "合併"
 
 
+msgid "Sharp Threshold"
+msgstr "銳化閾值"
+
+
 msgid "Smooth Modifier"
 msgstr "平滑修改器"
 
@@ -10979,6 +11240,10 @@ msgid "Inverse Square"
 msgstr "反轉平方"
 
 
+msgid "Comb"
+msgstr "合成"
+
+
 msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "大多根據此角度繪製在指向視圖的面上"
 
@@ -11081,10 +11346,6 @@ msgstr "法線半徑"
 
 msgid "Normal Weight"
 msgstr "法線權重"
-
-
-msgid "How much grab will pull vertexes out of surface during a grab"
-msgstr "抓取會將頂點拉出表面的抓取量"
 
 
 msgid "Plane Offset"
@@ -11205,10 +11466,6 @@ msgstr "繪製面集"
 
 msgid "Secondary Color"
 msgstr "次色"
-
-
-msgid "Sharp Threshold"
-msgstr "銳化閾值"
 
 
 msgid "Threshold below which, no sharpening is done"
@@ -11389,10 +11646,6 @@ msgstr "從邊線到邊線拖曳錨定筆刷"
 
 msgid "Use Front-Face"
 msgstr "使用前方的面"
-
-
-msgid "Brush only affects vertexes that face the viewer"
-msgstr "筆刷僅影響面對檢視器的頂點"
 
 
 msgid "Inverse Smooth Pressure"
@@ -13485,6 +13738,10 @@ msgid "Cube"
 msgstr "立方"
 
 
+msgid "Hair"
+msgstr "毛髮"
+
+
 msgid "Hair strands"
 msgstr "毛髮線股"
 
@@ -14391,14 +14648,6 @@ msgstr "姿勢庫"
 
 msgid "Action used as a pose library for armatures"
 msgstr "作為骨架姿勢庫的動作"
-
-
-msgid "Proxy"
-msgstr "代理"
-
-
-msgid "Library object this proxy object controls"
-msgstr "此代理物體控制庫物體"
 
 
 msgid "Rigid Body Settings"
@@ -17394,6 +17643,38 @@ msgid "Control key pressed"
 msgstr "按住 Ctrl 鍵"
 
 
+msgid "North"
+msgstr "北"
+
+
+msgid "North-East"
+msgstr "東北"
+
+
+msgid "East"
+msgstr "東"
+
+
+msgid "South-East"
+msgstr "東南"
+
+
+msgid "South"
+msgstr "南"
+
+
+msgid "South-West"
+msgstr "西南"
+
+
+msgid "West"
+msgstr "西"
+
+
+msgid "North-West"
+msgstr "西北"
+
+
 msgid "ID of the item"
 msgstr "項目的 ID"
 
@@ -17494,38 +17775,6 @@ msgid "Double Click"
 msgstr "雙擊"
 
 
-msgid "North"
-msgstr "北"
-
-
-msgid "North-East"
-msgstr "東北"
-
-
-msgid "East"
-msgstr "東"
-
-
-msgid "South-East"
-msgstr "東南"
-
-
-msgid "South"
-msgstr "南"
-
-
-msgid "South-West"
-msgstr "西南"
-
-
-msgid "West"
-msgstr "西"
-
-
-msgid "North-West"
-msgstr "西北"
-
-
 msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "以兩個控制桿於 F 曲線定義鍵幀的貝茲曲線點"
 
@@ -17578,16 +17827,8 @@ msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "A 與 B 之間平滑插補，以曲線外形做些微控制"
 
 
-msgid "Exponential"
-msgstr "指數"
-
-
 msgid "Exponential easing (dramatic)"
 msgstr "指數變換 (劇烈)"
-
-
-msgid "Bounce"
-msgstr "彈跳"
 
 
 msgid "Period"
@@ -18603,6 +18844,10 @@ msgstr "剪輯"
 
 msgid "Pivot Point"
 msgstr "樞紐點"
+
+
+msgid "Proxy"
+msgstr "代理"
 
 
 msgid "Reconstruction"
@@ -23623,6 +23868,10 @@ msgid "Combine YUVA"
 msgstr "合成 YUVA"
 
 
+msgid "Combine XYZ"
+msgstr "合成 XYZ"
+
+
 msgid "Composite"
 msgstr "合成"
 
@@ -23905,10 +24154,6 @@ msgstr "橢圓的旋轉角度"
 
 msgid "Width of the ellipse"
 msgstr "橢圓的寬"
-
-
-msgid "Sharpen"
-msgstr "銳利化"
 
 
 msgid "Laplace"
@@ -24408,6 +24653,10 @@ msgid "Separate YUVA"
 msgstr "分離 YUVA"
 
 
+msgid "Separate XYZ"
+msgstr "分離 XYZ"
+
+
 msgid "Set Alpha"
 msgstr "設定 Alpha"
 
@@ -24696,18 +24945,6 @@ msgid "Edge Angle"
 msgstr "線角"
 
 
-msgid "Min Max"
-msgstr "最小最大"
-
-
-msgid "Cross Product"
-msgstr "向量積"
-
-
-msgid "Z Axis"
-msgstr "Z 軸"
-
-
 msgid "Fill Type"
 msgstr "填入類型"
 
@@ -24845,6 +25082,10 @@ msgid "Camera Data"
 msgstr "攝影機資料"
 
 
+msgid "Min Max"
+msgstr "最小最大"
+
+
 msgid "Combine HSV"
 msgstr "合成 HSV"
 
@@ -24853,16 +25094,12 @@ msgid "Combine RGB"
 msgstr "合成 RGB"
 
 
-msgid "Combine XYZ"
-msgstr "合成 XYZ"
-
-
 msgid "Object Space"
 msgstr "物體空間"
 
 
 msgid "Emission"
-msgstr "發射"
+msgstr "散發"
 
 
 msgid "Fresnel"
@@ -25015,10 +25252,6 @@ msgstr "分離 HSVA"
 
 msgid "Separate RGB"
 msgstr "分離 RGB"
-
-
-msgid "Separate XYZ"
-msgstr "分離 XYZ"
 
 
 msgid "Squeeze Value"
@@ -25299,6 +25532,14 @@ msgstr "使用提示"
 
 msgid "Vector Math"
 msgstr "向量數學"
+
+
+msgid "Cross Product"
+msgstr "向量積"
+
+
+msgid "Z Axis"
+msgstr "Z 軸"
 
 
 msgid "Vector Transform"
@@ -30612,14 +30853,6 @@ msgid "Dissolve Points"
 msgstr "消散點"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -31209,12 +31442,20 @@ msgid "Load a SVG file"
 msgstr "載入一個 SVG 檔案"
 
 
+msgid "Brightness of Emission Texture"
+msgstr "發光紋理的亮度"
+
+
 msgid "Relative Paths"
 msgstr "相對路徑"
 
 
 msgid "Shadeless"
 msgstr "無陰影"
+
+
+msgid "Emission Shader"
+msgstr "散發光著色器"
 
 
 msgctxt "Operator"
@@ -39097,6 +39338,10 @@ msgid "Smooth the edges of all the Face Sets"
 msgstr "對所有的面集邊緣進行平滑"
 
 
+msgid "Sharpen"
+msgstr "銳利化"
+
+
 msgid "Recalculate the sculpt BVH to improve performance"
 msgstr "重新計算雕塑 BVH 以改善效能"
 
@@ -41341,6 +41586,14 @@ msgstr "選取滑鼠下連結的所有 UV 頂點"
 
 msgid "Select a loop of connected UV vertices"
 msgstr "選取一個連接的 UV 頂點圈"
+
+
+msgid "Island"
+msgstr "島塊"
+
+
+msgid "Island selection mode"
+msgstr "島塊選取模式"
 
 
 msgid "Select more UV vertices connected to initial selection"
@@ -44084,10 +44337,6 @@ msgid "Tip select mode"
 msgstr "末梢選取模式"
 
 
-msgid "Comb"
-msgstr "合成"
-
-
 msgid "Comb hairs"
 msgstr "合成毛髮"
 
@@ -44990,10 +45239,6 @@ msgstr "新控制桿類型"
 
 msgid "Handle type for handles of new keyframes"
 msgstr "新鍵幀的控制桿類型"
-
-
-msgid "New Interpolation Type"
-msgstr "新的插補類型"
 
 
 msgid "Interpolation mode used for first keyframe on newly added F-Curves (subsequent keyframes take interpolation from preceding keyframe)"
@@ -46408,6 +46653,10 @@ msgid "Max Steps"
 msgstr "最大步數"
 
 
+msgid "Show the Emission render pass"
+msgstr "顯示散發光通道"
+
+
 msgid "Diffuse Direct"
 msgstr "漫射直接"
 
@@ -46749,7 +46998,7 @@ msgstr "傳遞漫射間接通遞"
 
 
 msgid "Deliver emission pass"
-msgstr "傳遞發射通遞"
+msgstr "傳遞散發光通遞"
 
 
 msgid "Deliver environment lighting pass"
@@ -49129,6 +49378,14 @@ msgid "Outline"
 msgstr "外框"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -50468,26 +50725,6 @@ msgid "Snap to Pixels"
 msgstr "吸附像素點"
 
 
-msgid "Sticky Selection Mode"
-msgstr "黏性選取模式"
-
-
-msgid "Sticky vertex selection disabled"
-msgstr "黏性頂點選取已停用"
-
-
-msgid "Shared Location"
-msgstr "共享的位置"
-
-
-msgid "Select UVs that are at the same location and share a mesh vertex"
-msgstr "選取位在相同位置上並共享網格頂點的 UV"
-
-
-msgid "Shared Vertex"
-msgstr "共享的頂點"
-
-
 msgid "Live Unwrap"
 msgstr "即時拆解"
 
@@ -50588,16 +50825,8 @@ msgid "Bezier U"
 msgstr "貝茲 U"
 
 
-msgid "Make this nurbs curve or surface act like a Bezier spline in the U direction (Order U must be 3 or 4, Cyclic U must be disabled)"
-msgstr "讓這個 NURBS 曲線或表面於 U 方向如貝茲樣條般運作 (次數 U 必須為 3 或 4，循環 U 必須停用)"
-
-
 msgid "Bezier V"
 msgstr "貝茲 V"
-
-
-msgid "Make this nurbs surface act like a Bezier spline in the V direction (Order V must be 3 or 4, Cyclic V must be disabled)"
-msgstr "讓這個 NURBS 曲線或表面於 V 方向如貝茲樣條般運作 (次數 V 必須為 3 或 4，循環 V 必須停用)"
 
 
 msgid "Make this curve or surface a closed loop in the U direction"
@@ -50612,16 +50841,8 @@ msgid "Endpoint U"
 msgstr "端點 U"
 
 
-msgid "Make this nurbs curve or surface meet the endpoints in the U direction (Cyclic U must be disabled)"
-msgstr "讓此 NURBS 曲線或表面在 U 方向碰觸端點 (循環 U 必須停用)"
-
-
 msgid "Endpoint V"
 msgstr "端點 V"
-
-
-msgid "Make this nurbs surface meet the endpoints in the V direction (Cyclic V must be disabled)"
-msgstr "讓此 NURBS 曲線或表面在 V 方向碰觸端點 (循環 V 須停用)"
 
 
 msgid "Smooth the normals of the surface or beveled curve"
@@ -52365,12 +52586,24 @@ msgid "UV selection and display mode"
 msgstr "UV 選取與顯示模式"
 
 
-msgid "Island"
-msgstr "島塊"
+msgid "Sticky Selection Mode"
+msgstr "黏性選取模式"
 
 
-msgid "Island selection mode"
-msgstr "島塊選取模式"
+msgid "Sticky vertex selection disabled"
+msgstr "黏性頂點選取已停用"
+
+
+msgid "Shared Location"
+msgstr "共享的位置"
+
+
+msgid "Select UVs that are at the same location and share a mesh vertex"
+msgstr "選取位在相同位置上並共享網格頂點的 UV"
+
+
+msgid "Shared Vertex"
+msgstr "共享的頂點"
 
 
 msgid "Filter Vertex groups for Display"
@@ -54973,6 +55206,11 @@ msgstr "算繪動畫"
 
 
 msgctxt "Operator"
+msgid "Preferences..."
+msgstr "偏好設定..."
+
+
+msgctxt "Operator"
 msgid "Back to Previous"
 msgstr "返回上一步"
 
@@ -54980,11 +55218,6 @@ msgstr "返回上一步"
 msgctxt "Operator"
 msgid "Save Copy..."
 msgstr "儲存副本..."
-
-
-msgctxt "Operator"
-msgid "Collada (Default) (.dae)"
-msgstr "Collada (預設) (.dae)"
 
 
 msgctxt "Operator"
@@ -55163,11 +55396,6 @@ msgstr "作用中攝影機"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "攝影機"
-
-
-msgctxt "Operator"
 msgid "Orbit Opposite"
 msgstr "相反繞軌"
 
@@ -55180,11 +55408,6 @@ msgstr "將作用中攝影機對齊視圖"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "將作用中攝影機對齊所選項"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "前"
 
 
 msgctxt "Operator"
@@ -55345,6 +55568,11 @@ msgstr "Nurbs 環體"
 msgctxt "Operator"
 msgid "Single Bone"
 msgstr "單一骨骼"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "攝影機"
 
 
 msgctxt "Operator"
@@ -57253,14 +57481,6 @@ msgid "Reset operator defaults"
 msgstr "重設操作器為預設值"
 
 
-msgid "Proxy Protected"
-msgstr "受保護的代理"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "無法編輯代理受保護的約束"
-
-
 msgid "Delete the active position"
 msgstr "刪除作用中的姿勢"
 
@@ -57397,10 +57617,6 @@ msgid "Browse Paint Curve Data to be linked"
 msgstr "瀏覽要連結的繪製曲線資料"
 
 
-msgid "Browse Hair Data to be linked"
-msgstr "瀏覽要連結的毛髮資料"
-
-
 msgid "Browse ID data to be linked"
 msgstr "瀏覽要連結的 ID 資料"
 
@@ -57525,11 +57741,6 @@ msgid "New"
 msgstr "新增"
 
 
-msgctxt "Hair"
-msgid "New"
-msgstr "新增"
-
-
 msgid "%d items"
 msgstr "%d 項"
 
@@ -57617,6 +57828,10 @@ msgstr "找不到交錯"
 
 msgid "Selected faces required"
 msgstr "需要選取面"
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "面選取 - Shift+點擊 取得多種模式，Ctrl+點擊 擴展選取"
 
 
 msgid "Invalid selection order"
@@ -59294,10 +59509,6 @@ msgid "Depth too large"
 msgstr "深度過大"
 
 
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "面選取 - Shift+點擊 取得多種模式，Ctrl+點擊 擴展選取"
-
-
 msgid "No active camera"
 msgstr "無作用中攝影機"
 
@@ -60438,10 +60649,6 @@ msgid "Speed:"
 msgstr "速度："
 
 
-msgid "Density Attribute"
-msgstr "密度特性"
-
-
 msgid "Missing Data-Block"
 msgstr "遺失資料塊"
 
@@ -60491,7 +60698,7 @@ msgstr "穿透粗糙度"
 
 
 msgid "Emission Strength"
-msgstr "發射強度"
+msgstr "發光強度"
 
 
 msgid "Sigma"
@@ -60650,12 +60857,16 @@ msgid "Color Attribute"
 msgstr "色彩特性"
 
 
+msgid "Density Attribute"
+msgstr "密度特性"
+
+
 msgid "Absorption Color"
 msgstr "吸收色彩"
 
 
 msgid "Emission Color"
-msgstr "發射色彩"
+msgstr "發光色"
 
 
 msgid "Blackbody Intensity"

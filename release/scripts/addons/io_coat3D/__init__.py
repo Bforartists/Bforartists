@@ -1040,7 +1040,7 @@ def blender_3DC_blender(texturelist, file_applink_address):
 
 
 
-                    #tärkee että saadaan oikein käännettyä objekt
+                    #it is important to get the object translated correctly
 
                     objekti.select_set(True)
 

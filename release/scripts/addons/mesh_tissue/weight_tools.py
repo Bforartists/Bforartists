@@ -1,27 +1,11 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 #-------------------------- COLORS / GROUPS EXCHANGER -------------------------#
 #                                                                              #
-# Vertex Color to Vertex Group allow you to convert colors channles to weight  #
+# Vertex Color to Vertex Group allow you to convert colors channels to weight  #
 # maps.                                                                        #
 # The main purpose is to use vertex colors to store information when importing #
-# files from other softwares. The script works with the active vertex color    #
+# files from other software. The script works with the active vertex color     #
 # slot.                                                                        #
 # For use the command "Vertex Clors to Vertex Groups" use the search bar       #
 # (space bar).                                                                 #
@@ -229,27 +213,27 @@ class reaction_diffusion_prop(PropertyGroup):
 
     update_weight_a : BoolProperty(
         name="Update Vertex Group A", default=True,
-        description="Tranfer Cache to the Vertex Groups named A")
+        description="Transfer Cache to the Vertex Groups named A")
 
     update_weight_b : BoolProperty(
         name="Update Vertex Group B", default=True,
-        description="Tranfer Cache to the Vertex Groups named B")
+        description="Transfer Cache to the Vertex Groups named B")
 
     update_colors_a : BoolProperty(
         name="Update Vertex Color A", default=False,
-        description="Tranfer Cache to the Vertex Color named A")
+        description="Transfer Cache to the Vertex Color named A")
 
     update_colors_b : BoolProperty(
         name="Update Vertex Color B", default=False,
-        description="Tranfer Cache to the Vertex Color named B")
+        description="Transfer Cache to the Vertex Color named B")
 
     update_colors : BoolProperty(
         name="Update Vertex Color AB", default=False,
-        description="Tranfer Cache to the Vertex Color named AB")
+        description="Transfer Cache to the Vertex Color named AB")
 
     update_uv : BoolProperty(
         name="Update UV", default=False,
-        description="Tranfer Cache to the UV Map Layer named AB")
+        description="Transfer Cache to the UV Map Layer named AB")
 
     normalize : BoolProperty(
         name="Normalize values", default=False,

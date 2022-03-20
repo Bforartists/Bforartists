@@ -135,7 +135,7 @@ def randomizeTexture(texture, level=1):
     elif texture.type == 'VORONOI':
         metrics = ['DISTANCE', 'DISTANCE_SQUARED', 'MANHATTAN', 'CHEBYCHEV',
                    'MINKOVSKY_HALF', 'MINKOVSKY_FOUR', 'MINKOVSKY']
-        # Settings for first dispalcement level:
+        # Settings for first displacement level:
         if level == 0:
             tempInt = randint(0, 1)
             texture.distance_metric = metrics[tempInt]
