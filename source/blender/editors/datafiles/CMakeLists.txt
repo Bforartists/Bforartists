@@ -1380,7 +1380,7 @@ paint_mix
 paint_multiply
 paint_smear
 paint_subtract
-#~ DEF_ICON_BLANK(1414)
+blend_to_default
 #~ DEF_ICON_BLANK(1415)
 
 # ------------------------- row 21 --------------------------*/
