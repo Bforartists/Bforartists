@@ -117,7 +117,7 @@ class ShrinkOperation : public CurvesSculptStrokeOperation {
 
     threading::parallel_for(curves.curves_range(), 256, [&](const IndexRange curves_range) {
       for (const int curve_i : curves_range) {
-        const IndexRange curve_points = curves.range_for_curve(curve_i);
+        const IndexRange curve_points = curves.points_for_curve(curve_i);
         const int last_point_i = curve_points.last();
 
         const float3 old_tip_position = positions[last_point_i];
@@ -186,7 +186,7 @@ class ShrinkOperation : public CurvesSculptStrokeOperation {
   }
 };
 
-class AddOperation : public CurvesSculptStrokeOperation {
+class DensityAddOperation : public CurvesSculptStrokeOperation {
  private:
   /** Contains the root points of the curves that existed before this operation started. */
   KDTree_3d *old_kdtree_ = nullptr;
@@ -207,7 +207,7 @@ class AddOperation : public CurvesSculptStrokeOperation {
   };
 
  public:
-  ~AddOperation() override
+  ~DensityAddOperation() override
   {
     if (old_kdtree_ != nullptr) {
       BLI_kdtree_3d_free(old_kdtree_);
@@ -304,7 +304,7 @@ class AddOperation : public CurvesSculptStrokeOperation {
 
     if (old_kdtree_ == nullptr && minimum_distance > 0.0f) {
       old_kdtree_ = this->kdtree_from_curve_roots_and_positions(curves, curves.curves_range(), {});
-      old_kdtree_size_ = curves.curves_size();
+      old_kdtree_size_ = curves.curves_num();
     }
 
     float density;
@@ -525,7 +525,7 @@ class AddOperation : public CurvesSculptStrokeOperation {
   {
     Array<bool> elimination_mask(points.positions.size(), false);
 
-    const int curves_added_previously = curves.curves_size() - old_kdtree_size_;
+    const int curves_added_previously = curves.curves_num() - old_kdtree_size_;
     KDTree_3d *new_points_kdtree = this->kdtree_from_curve_roots_and_positions(
         curves, IndexRange(old_kdtree_size_, curves_added_previously), points.positions);
 
@@ -589,14 +589,14 @@ class AddOperation : public CurvesSculptStrokeOperation {
     const int tot_new_curves = new_points.positions.size();
 
     const int points_per_curve = 8;
-    curves.resize(curves.points_size() + tot_new_curves * points_per_curve,
-                  curves.curves_size() + tot_new_curves);
+    curves.resize(curves.points_num() + tot_new_curves * points_per_curve,
+                  curves.curves_num() + tot_new_curves);
 
     MutableSpan<int> offsets = curves.offsets();
     MutableSpan<float3> positions = curves.positions();
 
     for (const int i : IndexRange(tot_new_curves)) {
-      const int curve_i = curves.curves_size() - tot_new_curves + i;
+      const int curve_i = curves.curves_num() - tot_new_curves + i;
       const int first_point_i = offsets[curve_i];
       offsets[curve_i + 1] = offsets[curve_i] + points_per_curve;
 
@@ -624,8 +624,10 @@ static std::unique_ptr<CurvesSculptStrokeOperation> start_brush_operation(bConte
       return new_delete_operation();
     case CURVES_SCULPT_TOOL_SNAKE_HOOK:
       return new_snake_hook_operation();
+    case CURVES_SCULPT_TOOL_ADD:
+      return new_add_operation();
     case CURVES_SCULPT_TOOL_TEST1:
-      return std::make_unique<AddOperation>();
+      return std::make_unique<DensityAddOperation>();
     case CURVES_SCULPT_TOOL_TEST2:
       return std::make_unique<ShrinkOperation>();
   }
