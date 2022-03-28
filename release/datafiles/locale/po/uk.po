@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -49809,6 +49809,14 @@ msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
+msgid "White"
+msgstr "Біле"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Трансформа Заповнення Штриха"
@@ -82187,16 +82195,8 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -91101,11 +91101,6 @@ msgstr "Пробіл"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Завантажити Устави %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Зберегти Нові Устави"
 
@@ -91198,6 +91193,11 @@ msgstr "Гілка: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Недійсний регулярний вираз (знаходження):"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Завантажити Устави %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -97568,6 +97568,14 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Не записано, зображення не має \"%s\" та \"%s\" виглядів"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Помилка запису результатів рендера, %s (див. консоль)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Помилка рендера (%s), неможливо зберегти: '%s'"
+
+
 msgid "Key %d"
 msgstr "Ключ %d"
 
@@ -101196,22 +101204,6 @@ msgstr "Неможливо застосувати до багатокорист�
 
 msgid "Grease Pencil Object does not support this set origin option"
 msgstr "Об'єкт Нарисного Олівця не підтримує цю опцію задання початку"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Неможливо застосувати до багатокористувацького: об'єкт \"%s\", %s \"%s\"; припинення"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Неможливо застосувати до бібліотечних даних: об'єкт \"%s\", %s \"%s\"; припинення"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Оберт/місце неможливо застосувати до 2D-кривих: об'єкт \"%s\", %s \"%s\"; припинення"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Неможливо застосувати до кривої з ключами форм: об'єкт \"%s\", %s \"%s\"; припинення"
 
 
 msgid "Font's can only have scale applied: \"%s\""
@@ -105919,10 +105911,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "Кадри не рендерено; перезапис не виконано"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Помилка рендера (%s), неможливо зберегти: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "Камера \"%s\" не є багатовиглядною камерою"
 
@@ -105945,10 +105933,6 @@ msgstr "%s: неправильні розміри для часткової ко
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: не вдалося завантажити '%s'"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Помилка запису результатів рендера, %s (див. консоль)"
 
 
 msgctxt "Sequence"

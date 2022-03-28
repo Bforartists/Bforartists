@@ -38,6 +38,7 @@
 #include "BKE_global.h"
 #include "BKE_icons.h"
 #include "BKE_image.h"
+#include "BKE_image_format.h"
 #include "BKE_image_save.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
@@ -53,7 +54,7 @@
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 #include "IMB_moviecache.h"
-#include "intern/openexr/openexr_multi.h"
+#include "IMB_openexr.h"
 
 #include "RE_pipeline.h"
 
@@ -1749,7 +1750,7 @@ static int image_save_options_init(Main *bmain,
 
     if (ELEM(ima->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
       /* imtype */
-      opts->im_format = scene->r.im_format;
+      BKE_image_format_init_for_write(&opts->im_format, scene, NULL);
       is_depth_set = true;
       if (!BKE_image_is_multiview(ima)) {
         /* In case multiview is disabled,
@@ -1765,13 +1766,17 @@ static int image_save_options_init(Main *bmain,
         opts->im_format.planes = ibuf->planes;
       }
       else {
-        BKE_imbuf_to_image_format(&opts->im_format, ibuf);
+        BKE_image_format_from_imbuf(&opts->im_format, ibuf);
       }
 
       /* use the multiview image settings as the default */
       opts->im_format.stereo3d_format = *ima->stereo3d_format;
       opts->im_format.views_format = ima->views_format;
+
+      BKE_image_format_color_management_copy_from_scene(&opts->im_format, scene);
     }
+
+    opts->im_format.color_management = R_IMF_COLOR_MANAGEMENT_FOLLOW_SCENE;
 
     if (ima->source == IMA_SRC_TILED) {
       BLI_strncpy(opts->filepath, ima->filepath, sizeof(opts->filepath));
@@ -1822,13 +1827,6 @@ static int image_save_options_init(Main *bmain,
         STR_CONCAT(opts->filepath, len, ".<UDIM>");
       }
     }
-
-    /* color management */
-    BKE_color_managed_display_settings_copy(&opts->im_format.display_settings,
-                                            &scene->display_settings);
-
-    BKE_color_managed_view_settings_free(&opts->im_format.view_settings);
-    BKE_color_managed_view_settings_copy(&opts->im_format.view_settings, &scene->view_settings);
   }
 
   BKE_image_release_ibuf(ima, ibuf, lock);
@@ -1842,8 +1840,8 @@ static void image_save_options_from_op(Main *bmain,
                                        ImageFormatData *imf)
 {
   if (imf) {
-    BKE_color_managed_view_settings_free(&opts->im_format.view_settings);
-    opts->im_format = *imf;
+    BKE_image_format_free(&opts->im_format);
+    BKE_image_format_copy(&opts->im_format, imf);
   }
 
   if (RNA_struct_property_is_set(op->ptr, "filepath")) {
@@ -1856,8 +1854,8 @@ static void image_save_options_to_op(ImageSaveOptions *opts, wmOperator *op)
 {
   if (op->customdata) {
     ImageSaveData *isd = op->customdata;
-    BKE_color_managed_view_settings_free(&isd->im_format.view_settings);
-    isd->im_format = opts->im_format;
+    BKE_image_format_free(&isd->im_format);
+    BKE_image_format_copy(&isd->im_format, &opts->im_format);
   }
 
   RNA_string_set(op->ptr, "filepath", opts->filepath);
@@ -1891,7 +1889,7 @@ static void image_save_as_free(wmOperator *op)
 {
   if (op->customdata) {
     ImageSaveData *isd = op->customdata;
-    BKE_color_managed_view_settings_free(&isd->im_format.view_settings);
+    BKE_image_format_free(&isd->im_format);
 
     MEM_freeN(op->customdata);
     op->customdata = NULL;
@@ -1933,6 +1931,8 @@ static int image_save_as_exec(bContext *C, wmOperator *op)
     BKE_image_free_packedfiles(image);
   }
 
+  BKE_image_save_options_free(&opts);
+
   image_save_as_free(op);
 
   return OPERATOR_FINISHED;
@@ -1961,6 +1961,7 @@ static int image_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
   BKE_image_save_options_init(&opts, bmain, scene);
 
   if (image_save_options_init(bmain, &opts, ima, iuser, true, save_as_render) == 0) {
+    BKE_image_save_options_free(&opts);
     return OPERATOR_CANCELLED;
   }
   image_save_options_to_op(&opts, op);
@@ -1977,7 +1978,7 @@ static int image_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
   isd->image = ima;
   isd->iuser = iuser;
 
-  memcpy(&isd->im_format, &opts.im_format, sizeof(opts.im_format));
+  BKE_image_format_copy(&isd->im_format, &opts.im_format);
   op->customdata = isd;
 
   /* show multiview save options only if image has multiviews */
@@ -1987,6 +1988,7 @@ static int image_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
   RNA_property_boolean_set(op->ptr, prop, BKE_image_is_multiview(ima));
 
   image_filesel(C, op, opts.filepath);
+  BKE_image_save_options_free(&opts);
 
   return OPERATOR_RUNNING_MODAL;
 }
@@ -2014,14 +2016,20 @@ static void image_save_as_draw(bContext *UNUSED(C), wmOperator *op)
   ImageSaveData *isd = op->customdata;
   PointerRNA imf_ptr;
   const bool is_multiview = RNA_boolean_get(op->ptr, "show_multiview");
+  const bool use_color_management = RNA_boolean_get(op->ptr, "save_as_render");
 
-  /* image template */
-  RNA_pointer_create(NULL, &RNA_ImageFormatSettings, &isd->im_format, &imf_ptr);
-  uiTemplateImageSettings(layout, &imf_ptr, false);
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
 
   /* main draw call */
   uiDefAutoButsRNA(
       layout, op->ptr, image_save_as_draw_check_prop, NULL, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
+
+  uiItemS(layout);
+
+  /* image template */
+  RNA_pointer_create(NULL, &RNA_ImageFormatSettings, &isd->im_format, &imf_ptr);
+  uiTemplateImageSettings(layout, &imf_ptr, use_color_management);
 
   /* multiview template */
   if (is_multiview) {
@@ -2157,6 +2165,7 @@ static int image_save_exec(bContext *C, wmOperator *op)
 
   BKE_image_save_options_init(&opts, bmain, scene);
   if (image_save_options_init(bmain, &opts, image, iuser, false, false) == 0) {
+    BKE_image_save_options_free(&opts);
     return OPERATOR_CANCELLED;
   }
   image_save_options_from_op(bmain, &opts, op, NULL);
@@ -2172,7 +2181,7 @@ static int image_save_exec(bContext *C, wmOperator *op)
     ok = true;
   }
 
-  BKE_color_managed_view_settings_free(&opts.im_format.view_settings);
+  BKE_image_save_options_free(&opts);
 
   if (ok) {
     return OPERATOR_FINISHED;
@@ -2424,6 +2433,7 @@ bool ED_image_save_all_modified(const bContext *C, ReportList *reports)
             bool saved_successfully = BKE_image_save(reports, bmain, ima, NULL, &opts);
             ok = ok && saved_successfully;
           }
+          BKE_image_save_options_free(&opts);
         }
       }
     }
@@ -2809,8 +2819,7 @@ static int image_flip_exec(bContext *C, wmOperator *op)
 
   ED_image_undo_push_end();
 
-  /* force GPU re-upload, all image is invalid. */
-  BKE_image_free_gputextures(ima);
+  BKE_image_partial_update_mark_full_update(ima);
 
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
 
@@ -2929,8 +2938,7 @@ static int image_invert_exec(bContext *C, wmOperator *op)
 
   ED_image_undo_push_end();
 
-  /* Force GPU re-upload, all image is invalid. */
-  BKE_image_free_gputextures(ima);
+  BKE_image_partial_update_mark_full_update(ima);
 
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
 
@@ -3020,8 +3028,7 @@ static int image_scale_exec(bContext *C, wmOperator *op)
 
   ED_image_undo_push_end();
 
-  /* Force GPU re-upload, all image is invalid. */
-  BKE_image_free_gputextures(ima);
+  BKE_image_partial_update_mark_full_update(ima);
 
   DEG_id_tag_update(&ima->id, 0);
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);

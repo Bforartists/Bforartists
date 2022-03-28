@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -30853,6 +30853,14 @@ msgid "Dissolve Points"
 msgstr "消散點"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -49378,14 +49386,6 @@ msgid "Outline"
 msgstr "外框"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -56421,6 +56421,14 @@ msgid "Could not write image: %s"
 msgstr "無法寫入影像：%s"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "寫入算繪結果時發生錯誤，%s（請見主控臺）"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "算繪錯誤 (%s) 無法儲存：「%s」"
+
+
 msgid "Key %d"
 msgstr "鍵 %d"
 
@@ -58153,10 +58161,6 @@ msgstr "物體沒有資料可供轉換"
 
 msgid "Cannot apply to a multi user armature"
 msgstr "無法套用至多使用者骨架"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "無法套用至多使用者：物體「%s」，%s「%s」，即將中止"
 
 
 msgid "%i object(s) not centered, %i changed:"
@@ -60965,10 +60969,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "無算繪的框幀，跳過而不覆寫"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "算繪錯誤 (%s) 無法儲存：「%s」"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "「%s」攝影機不是多視圖攝影機"
 
@@ -60991,10 +60991,6 @@ msgstr "R%s：部份「%s」副本的維度不正確"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s：無法載入「%s」"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "寫入算繪結果時發生錯誤，%s（請見主控臺）"
 
 
 msgctxt "Sequence"

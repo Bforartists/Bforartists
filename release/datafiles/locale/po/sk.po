@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-02 09:34+0100\n"
@@ -44525,10 +44525,6 @@ msgid "Data type of the socket"
 msgstr "Typ údajov zásuvky"
 
 
-msgid "Link is muted and can be ignored"
-msgstr "Prepojenie je stlmené a možno ho ignorovať"
-
-
 msgid "From node"
 msgstr "Z uzla"
 
@@ -44543,6 +44539,10 @@ msgstr "Je skryté"
 
 msgid "Link is hidden due to invisible sockets"
 msgstr "Odkaz je skrytý kvôli neviditeľným zásuvkám"
+
+
+msgid "Link is muted and can be ignored"
+msgstr "Prepojenie je stlmené a možno ho ignorovať"
 
 
 msgid "To node"
@@ -53901,6 +53901,14 @@ msgid "Switch tint colors"
 msgstr "Prepínanie odtieňov farieb"
 
 
+msgid "Black"
+msgstr "Čierne"
+
+
+msgid "White"
+msgstr "Biele"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformovať výplň ťahu"
@@ -54091,11 +54099,6 @@ msgstr "Zapiecť krivku"
 
 msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
 msgstr "Zapečie vybrané F-krivky na nastavené snímacie body definujúce podobnú krivku"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Prelínať na susedné"
 
 
 msgid "Blend selected keyframes to their left or right neighbor"
@@ -74798,10 +74801,6 @@ msgid "Export Material Groups"
 msgstr "Export skupiny materiálov"
 
 
-msgid "Append mesh name and material name to object name, separated by a '_'"
-msgstr "Pripojí názov povrchovej siete a názvu materiálu k názvu objektu, oddelené znakom '_'"
-
-
 msgid "Export Materials"
 msgstr "Export materiálov"
 
@@ -80437,14 +80436,6 @@ msgstr "Kompozítor Plná snímka"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Povolí možnosti režimu vykonávania celého kompozítora (bez dlaždíc, znižuje čas vykonávania a využitie pamäte)"
-
-
-msgid "Geometry Nodes Legacy"
-msgstr "Zdediť uzly geometrie"
-
-
-msgid "Enable legacy geometry nodes in the menu"
-msgstr "Povolí dediť uzly geometrie v ponuke"
 
 
 msgid "New Point Cloud Type"
@@ -89024,16 +89015,8 @@ msgid "Display dashed black-white edges"
 msgstr "Zobrazí prerušované čiernobiele okraje"
 
 
-msgid "Black"
-msgstr "Čierne"
-
-
 msgid "Display black edges"
 msgstr "Zobrazí čierne okraje"
-
-
-msgid "White"
-msgstr "Biele"
 
 
 msgid "Display white edges"
@@ -99298,11 +99281,6 @@ msgstr "medzerník"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Načítať nastavenia %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Uložiť nové nastavenia"
 
@@ -99403,6 +99381,11 @@ msgstr "Vetva: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Neplatný regulárny výraz (hľadať): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Načítať nastavenia %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -106157,6 +106140,14 @@ msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker
 msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať platnú značku UDIM"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Chyba zápisu výsledku prekreslenia, %s (pozri konzolu)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Chyba prekreslenia (%s) nemožno uložiť: '%s'"
+
+
 msgid "Key %d"
 msgstr "Kľúč %d"
 
@@ -107252,10 +107243,6 @@ msgstr "Postrčiť pózu"
 
 msgid "Relax Pose"
 msgstr "Uvoľniť pózu"
-
-
-msgid "Blend To Neighbor"
-msgstr "Prelínať na susedné"
 
 
 msgid "Sliding-Tool"
@@ -110207,32 +110194,12 @@ msgid "Grease Pencil Object does not support this set origin option"
 msgstr "Objekt pastelky nepodporuje toto nastavenie voľby počiatku"
 
 
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nemožno použiť pre viacerých užívateľov: objekt \"%s\", %s \"%s\", prerušené"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nemožno použiť pre údaje knižnice: objekt \"%s\", %s \"%s\", prerušené"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Rotáciu/zmenu polohy nemožno použiť na 2D krivku: objekt \"%s\", %s \"%s\", prerušené"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nemožno použiť na krivku s kľúčovými tvarmi: Objekt \"%s\", %s \" %s\", prerušené"
-
-
 msgid "Font's can only have scale applied: \"%s\""
 msgstr "Písmo je možné použiť len v mierke: \"%s\""
 
 
 msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
 msgstr "Nemožno použiť na blok údajov GP, v ktorom sú všetky vrstvy rodičovské: Objekt \"%s\", %s \"%s\", prerušenie"
-
-
-msgid "Can't apply to GP data-block with no layers: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nemožno použiť na blok údajov GP bez vrstiev: Objekt \"%s\", %s \"%s\", prerušenie"
 
 
 msgid "Area Lights can only have scale applied: \"%s\""
@@ -116908,10 +116875,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "Nevykoná žiadne prekreslenie snímok, preskočené na neprepísané"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Chyba prekreslenia (%s) nemožno uložiť: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "Kamera \"%s\" nie je kamera viacnásobného zobrazovania"
 
@@ -116934,10 +116897,6 @@ msgstr "%s: nesprávne rozmery čiastočnej kópie '%s'"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: nepodarilo sa načítať '%s'"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Chyba zápisu výsledku prekreslenia, %s (pozri konzolu)"
 
 
 msgctxt "Sequence"

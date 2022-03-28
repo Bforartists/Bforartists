@@ -17,6 +17,7 @@
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
 #include "BLI_math.h"
+#include "BLI_sort.hh"
 
 #include "DEG_depsgraph_query.h"
 
@@ -32,7 +33,7 @@ OBJMesh::OBJMesh(Depsgraph *depsgraph, const OBJExportParams &export_params, Obj
 {
   /* We need to copy the object because it may be in temporary space. */
   Object *obj_eval = DEG_get_evaluated_object(depsgraph, mesh_object);
-  export_object_eval_ = *obj_eval;
+  export_object_eval_ = dna::shallow_copy(*obj_eval);
   export_mesh_eval_ = export_params.apply_modifiers ?
                           BKE_object_get_evaluated_mesh(&export_object_eval_) :
                           BKE_object_get_pre_modified_mesh(&export_object_eval_);
@@ -76,6 +77,7 @@ void OBJMesh::clear()
   uv_coords_.clear_and_make_inline();
   loop_to_normal_index_.clear_and_make_inline();
   normal_coords_.clear_and_make_inline();
+  poly_order_.clear_and_make_inline();
   if (poly_smooth_groups_) {
     MEM_freeN(poly_smooth_groups_);
     poly_smooth_groups_ = nullptr;
@@ -87,8 +89,13 @@ std::pair<Mesh *, bool> OBJMesh::triangulate_mesh_eval()
   if (export_mesh_eval_->totpoly <= 0) {
     return {export_mesh_eval_, false};
   }
-  const struct BMeshCreateParams bm_create_params = {0u};
-  const struct BMeshFromMeshParams bm_convert_params = {1u, 0, 0, 0};
+  const BMeshCreateParams bm_create_params = {false};
+  BMeshFromMeshParams bm_convert_params{};
+  bm_convert_params.calc_face_normal = true;
+  bm_convert_params.calc_vert_normal = true;
+  bm_convert_params.add_key_index = false;
+  bm_convert_params.use_shapekey = false;
+
   /* Lower threshold where triangulation of a polygon starts, i.e. a quadrilateral will be
    * triangulated here. */
   const int triangulate_min_verts = 4;
@@ -193,6 +200,25 @@ void OBJMesh::calc_smooth_groups(const bool use_bitflags)
                                                    use_bitflags);
 }
 
+void OBJMesh::calc_poly_order()
+{
+  const int tot_polys = tot_polygons();
+  poly_order_.resize(tot_polys);
+  for (int i = 0; i < tot_polys; ++i) {
+    poly_order_[i] = i;
+  }
+  const MPoly *mpolys = export_mesh_eval_->mpoly;
+  /* Sort polygons by their material index. */
+  blender::parallel_sort(poly_order_.begin(), poly_order_.end(), [&](int a, int b) {
+    int mat_a = mpolys[a].mat_nr;
+    int mat_b = mpolys[b].mat_nr;
+    if (mat_a != mat_b) {
+      return mat_a < mat_b;
+    }
+    return a < b;
+  });
+}
+
 const Material *OBJMesh::get_object_material(const int16_t mat_nr) const
 {
   /**
@@ -203,11 +229,6 @@ const Material *OBJMesh::get_object_material(const int16_t mat_nr) const
    */
   Object *obj = const_cast<Object *>(&export_object_eval_);
   const Material *r_mat = BKE_object_material_get(obj, mat_nr + 1);
-#ifdef DEBUG
-  if (!r_mat) {
-    std::cerr << "Material not found for mat_nr = " << mat_nr << std::endl;
-  }
-#endif
   return r_mat;
 }
 

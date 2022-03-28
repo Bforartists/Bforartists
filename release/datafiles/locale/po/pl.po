@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -8820,22 +8820,6 @@ msgstr "Obiekt nie posiada danych do transformacji"
 
 msgid "Cannot apply to a multi user armature"
 msgstr "Nie mogę zaaplikować do szkieletu z wieloma użytkownikami"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nie mogę zaaplikować do obiektu z wieloma użytkownikami: Obiekt %s\", %s \"%s\", rezygnuję"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nie mogę zaaplikować do danych biblioteki: Obiekt %s\", %s \"%s\", rezygnuję"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Rotacja/Lokacja nie mogę zaaplikować do krzywej 2D: Obiekt %s\", %s \"%s\", rezygnuję"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Nie mogę zaaplikować do krzywej z kluczami kształtu: Obiekt \"%s\", %s \"%s\", rezygnuję"
 
 
 msgid "%i object(s) not centered, %i changed:"
