@@ -1138,7 +1138,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
     }
 
     if (ob->data == nullptr) {
-      /* special support for dupligroups */
+      /* Special support for instanced collections. */
       if ((ob->transflag & OB_DUPLICOLLECTION) && ob->instance_collection &&
           (ob->instance_collection->id.tag & LIB_TAG_DOIT) == 0) {
         if (ID_IS_LINKED(ob->instance_collection)) {
@@ -1696,13 +1696,13 @@ static void object_apply_rotation(Object *ob, const float rmat[3][3])
 static void object_apply_location(Object *ob, const float loc[3])
 {
   /* quick but weak */
-  Object ob_prev = *ob;
+  Object ob_prev = blender::dna::shallow_copy(*ob);
   float mat[4][4];
   copy_m4_m4(mat, ob->obmat);
   copy_v3_v3(mat[3], loc);
   BKE_object_apply_mat4(ob, mat, true, true);
   copy_v3_v3(mat[3], ob->loc);
-  *ob = ob_prev;
+  *ob = blender::dna::shallow_copy(ob_prev);
   copy_v3_v3(ob->loc, mat[3]);
 }
 

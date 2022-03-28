@@ -44,6 +44,7 @@
 #include "BKE_dynamicpaint.h"
 #include "BKE_effect.h"
 #include "BKE_image.h"
+#include "BKE_image_format.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -3265,7 +3266,7 @@ static void dynamic_paint_output_surface_image_wetmap_cb(
 }
 
 void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
-                                     char *filename,
+                                     const char *filepath,
                                      short output_layer)
 {
   ImBuf *ibuf = NULL;
@@ -3285,7 +3286,7 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
     format = R_IMF_IMTYPE_PNG;
   }
 #endif
-  BLI_strncpy(output_file, filename, sizeof(output_file));
+  BLI_strncpy(output_file, filepath, sizeof(output_file));
   BKE_image_path_ensure_ext_from_imtype(output_file, format);
 
   /* Validate output file path */

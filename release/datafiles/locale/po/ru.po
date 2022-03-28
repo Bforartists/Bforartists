@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -45835,6 +45835,14 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Разблокировать все слои"
@@ -73996,16 +74004,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -81211,11 +81211,6 @@ msgstr "Пробел"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Загрузить настройки %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Сохранить новые настройки"
 
@@ -81278,6 +81273,11 @@ msgstr "Хэш: %s"
 
 msgid "Branch: %s"
 msgstr "Ветка: %s"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Загрузить настройки %d.%d"
 
 
 msgid "Frame Numbers"
@@ -86473,6 +86473,14 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Не записано, у изображения нет видов «%s» и «%s»"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Ошибка сохранения рендера, %s (смотрите консоль)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Ошибка рендера (%s) нельзя сохранить: «%s»"
+
+
 msgid "Key %d"
 msgstr "Ключ %d"
 
@@ -89622,22 +89630,6 @@ msgstr "Невозможно применить к арматуре с неск�
 
 msgid "Grease Pencil Object does not support this set origin option"
 msgstr "Объект Grease Pencil не поддерживает эту опцию установки центра"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Невозможно применить из-за множественного использования: объект «%s», %s «%s», операция остановлена"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Невозможно применить к библиотечным данным: объект «%s», %s «%s», операция остановлена"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Вращение/положение не может быть применено к 2D-кривой: объект «%s», %s «%s», операция остановлена"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Невозможно применить к кривой с ключами формы: объект «%s», %s «%s», операция остановлена"
 
 
 msgid "Font's can only have scale applied: \"%s\""
@@ -93743,10 +93735,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "Нет рендер-кадров, перезапись не осуществлена"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Ошибка рендера (%s) нельзя сохранить: «%s»"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "Камера «%s» не работает с несколькими видами"
 
@@ -93769,10 +93757,6 @@ msgstr "%s: некорректные размеры для частичной к
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: не удалось загрузить «%s»"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Ошибка сохранения рендера, %s (смотрите консоль)"
 
 
 msgctxt "Sequence"

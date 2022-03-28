@@ -552,15 +552,6 @@ class OUTLINER_PT_filter(Panel):
                 row.label(icon='OBJECT_DATAMODE')
                 row.prop(space, "use_filter_object_others", text="Others")
 
-            if bpy.data.libraries:
-                col.separator()
-                row = col.row()
-                row.label(icon='LIBRARY_DATA_OVERRIDE')
-                row.prop(space, "use_filter_lib_override", text="Library Overrides")
-                row = col.row()
-                row.label(icon='LIBRARY_DATA_OVERRIDE')
-                row.prop(space, "use_filter_lib_override_system", text="System Overrides")
-
 classes = (
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection,
