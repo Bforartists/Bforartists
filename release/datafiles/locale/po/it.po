@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -30105,6 +30105,14 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Sblocca Tutti i Livelli"
@@ -48914,14 +48922,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -56862,6 +56862,14 @@ msgid "Could not write image: %s"
 msgstr "Impossibile scrivere l'immagine: %s"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Errore scrivendo il risultato del render, %s (vedi console)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Errore di render (%s) impossibile salvare: '%s'"
+
+
 msgid "Key %d"
 msgstr "Chiave %d"
 
@@ -58723,22 +58731,6 @@ msgstr "L'oggetto attivo deve essere una luce"
 
 msgid "Cannot apply to a multi user armature"
 msgstr "Impossibile applicare ad una armatura multiutente"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Impossibile applicare ad un utente multiplo: Oggetto \"%s\", %s \"%s\", annullo"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Impossibile applicare a dati da libreria: Oggetto \"%s\", %s \"%s\", annullo"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Rotazione/Posizione non possono essere applicati a una curva 2D: Oggetto \"%s\", %s \"%s\", annullo"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Impossibile applicare ad una curva con chiavi-forma: Oggetto \"%s\", %s \"%s\", annullo"
 
 
 msgid "Font's can only have scale applied: \"%s\""
@@ -61439,20 +61431,12 @@ msgid "All render layers are disabled"
 msgstr "Tutti i livelli di render sono disabilitati"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Errore di render (%s) impossibile salvare: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "La Camera \"%s\" non è una camera multi-vista"
 
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: impossibile caricare '%s'"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Errore scrivendo il risultato del render, %s (vedi console)"
 
 
 msgctxt "Sequence"

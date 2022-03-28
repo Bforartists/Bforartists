@@ -2,12 +2,12 @@
  * Copyright 2006 Blender Foundation. All rights reserved. */
 
 /** \file
- * \ingroup openexr
+ * \ingroup imbuf
  */
 
 #pragma once
 
-/* Experiment with more advanced EXR API. */
+/* API for reading and writing multilayer EXR files. */
 
 /* XXX layer+pass name max 64? */
 /* This api also supports max 8 channels per pass now. easy to fix! */
@@ -44,12 +44,12 @@ void IMB_exr_add_channel(void *handle,
  * Read from file.
  */
 bool IMB_exr_begin_read(
-    void *handle, const char *filename, int *width, int *height, bool parse_channels);
+    void *handle, const char *filepath, int *width, int *height, bool parse_channels);
 /**
  * Used for output files (from #RenderResult) (single and multi-layer, single and multi-view).
  */
 bool IMB_exr_begin_write(void *handle,
-                         const char *filename,
+                         const char *filepath,
                          int width,
                          int height,
                          int compress,
@@ -59,7 +59,7 @@ bool IMB_exr_begin_write(void *handle,
  * (FSA and Save Buffers).
  */
 void IMB_exrtile_begin_write(
-    void *handle, const char *filename, int mipmap, int width, int height, int tilex, int tiley);
+    void *handle, const char *filepath, int mipmap, int width, int height, int tilex, int tiley);
 
 /**
  * Still clumsy name handling, layers/channels can be ordered as list in list later.

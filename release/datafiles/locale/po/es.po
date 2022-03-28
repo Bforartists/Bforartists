@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -44523,10 +44523,6 @@ msgid "Data type of the socket"
 msgstr "Tipo de dato del conector"
 
 
-msgid "Link is muted and can be ignored"
-msgstr "La conexión se encuentra silenciada y será ignorada"
-
-
 msgid "From node"
 msgstr "Desde nodo"
 
@@ -44541,6 +44537,10 @@ msgstr "Está oculto"
 
 msgid "Link is hidden due to invisible sockets"
 msgstr "El vínculo está oculto debido a conectores invisibles"
+
+
+msgid "Link is muted and can be ignored"
+msgstr "La conexión se encuentra silenciada y será ignorada"
 
 
 msgid "To node"
@@ -53899,6 +53899,14 @@ msgid "Switch tint colors"
 msgstr "Da vuelta los colores de tinte"
 
 
+msgid "Black"
+msgstr "Negro"
+
+
+msgid "White"
+msgstr "Blanco"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar relleno de trazo"
@@ -54089,11 +54097,6 @@ msgstr "Capturar curva"
 
 msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
 msgstr "Captura las curvas-f seleccionadas a un conjunto de puntos muestreados formando una curva similar"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Fundir a cercano"
 
 
 msgid "Blend selected keyframes to their left or right neighbor"
@@ -74796,10 +74799,6 @@ msgid "Export Material Groups"
 msgstr "Exportar grupos de materiales"
 
 
-msgid "Append mesh name and material name to object name, separated by a '_'"
-msgstr "Anexar los nombres de la malla y del material al nombre del objeto, separado por el caracter '_'"
-
-
 msgid "Export Materials"
 msgstr "Exportar materiales "
 
@@ -80435,14 +80434,6 @@ msgstr "Composición de imagen completa"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Habilita el modo de ejecución de imagen completa para el compositor (reduce el tempo de ejecución y el uso de memoria)"
-
-
-msgid "Geometry Nodes Legacy"
-msgstr "Nodos de geometría (antiguos)"
-
-
-msgid "Enable legacy geometry nodes in the menu"
-msgstr "Habilitar nodos de geometría antiguos en el menú"
 
 
 msgid "New Point Cloud Type"
@@ -89026,16 +89017,8 @@ msgid "Display dashed black-white edges"
 msgstr "Dibuja bordes discontinuos en blanco y negro"
 
 
-msgid "Black"
-msgstr "Negro"
-
-
 msgid "Display black edges"
 msgstr "Dibuja bordes negros"
-
-
-msgid "White"
-msgstr "Blanco"
 
 
 msgid "Display white edges"
@@ -99304,11 +99287,6 @@ msgstr "Barra espaciadora"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Cargar opciones %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Guardar nuevas opciones"
 
@@ -99409,6 +99387,11 @@ msgstr "Rama: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Expresión regular inválida (búsqueda): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Cargar opciones %d.%d"
 
 
 msgid "Type \"%s\" can not be found"
@@ -106163,6 +106146,14 @@ msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker
 msgstr "Al guardar una imagen compuesta, la ruta '%s' debe contener un marcador UDIM válido"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Error al guardar el resultado del procesamiento, %s (ver consola)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Error de procesamiento (%s) no es posible guardar: '%s'"
+
+
 msgid "Key %d"
 msgstr "Clave %d"
 
@@ -107258,10 +107249,6 @@ msgstr "Empujar pose"
 
 msgid "Relax Pose"
 msgstr "Distender pose"
-
-
-msgid "Blend To Neighbor"
-msgstr "Fusionar a cercano"
 
 
 msgid "Sliding-Tool"
@@ -110213,32 +110200,12 @@ msgid "Grease Pencil Object does not support this set origin option"
 msgstr "El objeto de lápiz de cera no soporta la opción de origen establecida"
 
 
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "No es posible aplicar a un multi usuario: Objeto \"%s\", %s \"%s\", abortando"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "No es posible aplicar a datos de biblioteca: Objeto \"%s\", %s \"%s\", abortando"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "No se puede aplicar la rotación/posición a una curva 2D: Objeto \"%s\", %s \"%s\", abortando"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "No se puede aplicar a una curva con formas clave: Objeto \"%s\", %s \"%s\", abortando"
-
-
 msgid "Font's can only have scale applied: \"%s\""
 msgstr "Sólo es posible aplicar la escala a las tipografías: \"%s\""
 
 
 msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
 msgstr "No es posible aplicar a un bloque de datos de lápiz de cera donde todas sus capas se encuentren subordinadas: Objeto \"%s\", %s \"%s\", abortando"
-
-
-msgid "Can't apply to GP data-block with no layers: Object \"%s\", %s \"%s\", aborting"
-msgstr "No se puede aplicar a un bloque de datos de lápiz de cera sin capas: Objeto \"%s\", %s \"%s\", abortando"
 
 
 msgid "Area Lights can only have scale applied: \"%s\""
@@ -116914,10 +116881,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "No se procesaron fotogramas, fueron omitidos para no sobrescribirlos"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Error de procesamiento (%s) no es posible guardar: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "La cámara \"%s\" no es una cámara de vistas múltiples"
 
@@ -116940,10 +116903,6 @@ msgstr "%s: dimensiones incorrectas de copia parcial '%s'"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: falla al cargar '%s'"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Error al guardar el resultado del procesamiento, %s (ver consola)"
 
 
 msgctxt "Sequence"

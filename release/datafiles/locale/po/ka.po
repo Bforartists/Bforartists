@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -12632,6 +12632,14 @@ msgid "Selected Strokes"
 msgstr "მონიშნული შტრიხები"
 
 
+msgid "Black"
+msgstr "შავი"
+
+
+msgid "White"
+msgstr "თეთრი"
+
+
 msgid "Transform grease pencil stroke fill"
 msgstr "გარდაქმენი ცვილის ფანქრის შტრიხის შევსება"
 
@@ -18924,14 +18932,6 @@ msgid "Outline"
 msgstr "მოხაზულობა"
 
 
-msgid "Black"
-msgstr "შავი"
-
-
-msgid "White"
-msgstr "თეთრი"
-
-
 msgid "Alpha Channel"
 msgstr "ალფა არხი"
 
@@ -20509,11 +20509,6 @@ msgstr "გამოტოვების კლავიში"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "ჩატვირთე %d.%d პარამეტრები"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "შეინახე ახალი პარამეტრები"
 
@@ -20574,6 +20569,11 @@ msgstr "მიაკუთვნე"
 msgctxt "Operator"
 msgid "Manual"
 msgstr "სახელმძღვანელო"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "ჩატვირთე %d.%d პარამეტრები"
 
 
 msgid "Layers:"

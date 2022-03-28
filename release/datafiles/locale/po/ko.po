@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -43394,6 +43394,14 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -71537,16 +71545,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -83873,6 +83873,14 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "작성하지 않음, 이미지에 \"%s\" 및 \"%s\" 뷰가 없습니다"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "렌더 결과를 쓰는 도중 오류, %s (콘솔 참조)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "렌더 오류 (%s)를 저장할 수 없음: '%s'"
+
+
 msgid "Key %d"
 msgstr "키 %d"
 
@@ -86906,22 +86914,6 @@ msgstr "다중 유저 아마튜어로 적용 할 수 없습니다"
 
 msgid "Grease Pencil Object does not support this set origin option"
 msgstr "그리스 팬슬 오브젝트가 이 오리진 설정 옵션을 지원하지 않습니다"
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "다중 유저로 적용 할 수 없음: 오브젝트 \"%s\", %s \"%s\", 중단 중"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "라이브러리 데이터에 적용 할 수 없음: 오브젝트 \"%s\", %s \"%s\", 중단 중"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "회전/위치는 2D 커브에 적용할 수 없음: 오브젝트 \"%s\", %s \"%s\", 중단"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "셰이프 키가 있는 커브에는 적용할 수 없음: 오브젝트 \"%s\", %s \"%s\", 중단"
 
 
 msgid "Font's can only have scale applied: \"%s\""
@@ -90906,10 +90898,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "렌더된 프레임이 없음, 덮어쓰기 생략"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "렌더 오류 (%s)를 저장할 수 없음: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "카메라 \"%s\" 은 멀티 뷰 카메라가 아님"
 
@@ -90932,10 +90920,6 @@ msgstr "%s: 부분적인 복사 '%s'에 대해 부정확한 크기"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: '%s' 불러오기 실패"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "렌더 결과를 쓰는 도중 오류, %s (콘솔 참조)"
 
 
 msgctxt "Sequence"

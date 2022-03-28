@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -15117,6 +15117,14 @@ msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
 
 
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
+
+
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "Pridruži grupu temena"
@@ -23497,14 +23505,6 @@ msgstr "Lokacija 2D kursora"
 
 msgid "2D cursor location for this view"
 msgstr "Lokacija 2D kursora u ovom pogledu"
-
-
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
 
 
 msgid "Alpha Channel"
