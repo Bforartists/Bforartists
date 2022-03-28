@@ -88,6 +88,7 @@ class VIEW3D_MT_vr_landmark_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("view3d.vr_camera_landmark_from_session")
         layout.operator("view3d.vr_landmark_from_camera")
         layout.operator("view3d.update_vr_landmark")
         layout.separator()
@@ -156,7 +157,7 @@ class VIEW3D_PT_vr_landmarks(Panel):
                             "base_scale", text="Scale")
 
 
-### View.
+### Actions.
 class VIEW3D_PT_vr_actionmaps(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

@@ -13,8 +13,8 @@ set(INC
   ../../gpu
   ../../imbuf
   ../../makesdna
-  ../../nodes
   ../../makesrna
+  ../../nodes
   ../../render
   ../../windowmanager
   ../../../../intern/atomic
@@ -27,6 +27,8 @@ set(INC
 )
 
 set(SRC
+  curves_sculpt_3d_brush.cc
+  curves_sculpt_add.cc
   curves_sculpt_comb.cc
   curves_sculpt_delete.cc
   curves_sculpt_ops.cc
@@ -36,9 +38,9 @@ set(SRC
   paint_curve_undo.c
   paint_hide.c
   paint_image.cc
-  paint_image_ops_paint.cc
   paint_image_2d.c
   paint_image_2d_curve_mask.cc
+  paint_image_ops_paint.cc
   paint_image_proj.c
   paint_mask.c
   paint_ops.c

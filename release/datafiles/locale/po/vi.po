@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -44523,10 +44523,6 @@ msgid "Data type of the socket"
 msgstr "Dữ liệu của ổ cắm"
 
 
-msgid "Link is muted and can be ignored"
-msgstr "Liên kết đã bị tắt tiếng và có thể không quan tâm"
-
-
 msgid "From node"
 msgstr "Từ giao điểm"
 
@@ -44541,6 +44537,10 @@ msgstr "Được Ẩn"
 
 msgid "Link is hidden due to invisible sockets"
 msgstr "Liên kết được ẩn vì ổ cắm ẩn"
+
+
+msgid "Link is muted and can be ignored"
+msgstr "Liên kết đã bị tắt tiếng và có thể không quan tâm"
 
 
 msgid "To node"
@@ -53899,6 +53899,14 @@ msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "White"
+msgstr "Trắng"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Biến Hóa Tô Đầy Nét"
@@ -54089,11 +54097,6 @@ msgstr "Nướng Đường Cong"
 
 msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
 msgstr "Nướng các Cong-F được chọn đến một tập mẫu vật được chỉ định một đường cong hơi giống"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Pha Trộn Đến Kề"
 
 
 msgid "Blend selected keyframes to their left or right neighbor"
@@ -74796,10 +74799,6 @@ msgid "Export Material Groups"
 msgstr "Xuất Nhóm Vật Liệu"
 
 
-msgid "Append mesh name and material name to object name, separated by a '_'"
-msgstr "Kèm tên mạng lưới và tên vật liệu với tên vật thể, dùng một '_' làm dấu cách"
-
-
 msgid "Export Materials"
 msgstr "Xuất vật liệu"
 
@@ -80435,14 +80434,6 @@ msgstr "Bộ Ghép Toàn Khung"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Bật tùy chọn cho chế độ thực hành bộ ghép toàn khung (không dùng ô, giảm thời gian thực hành và bớt sử dụng bộ nhớ)"
-
-
-msgid "Geometry Nodes Legacy"
-msgstr "Giao Điểm Hình Dạng Lỗi Thời"
-
-
-msgid "Enable legacy geometry nodes in the menu"
-msgstr "Bật giao điểm lỗi thời trong danh bạ"
 
 
 msgid "New Point Cloud Type"
@@ -89022,16 +89013,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -99300,11 +99283,6 @@ msgstr "Thanh Dấu Cách"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Nhập %d.%d Cài Đặt"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Lưu Cài Đặt Mới"
 
@@ -99405,6 +99383,11 @@ msgstr "Chi Nhánh: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "Biểu thức chính quy không hợp lệ (tìm kiếm): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Nhập %d.%d Cài Đặt"
 
 
 msgid "Type \"%s\" can not be found"
@@ -106159,6 +106142,14 @@ msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker
 msgstr "Khi lưu một ảnh láp ô, đường dẫn '%s' phải có một ký dấu UDIM hợp lệ"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Sai lầm lưu kết qủa kết xuất, %s (xem diện điều khiển)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Sai lầm kết xuất (%s) không thể lưu: '%s'"
+
+
 msgid "Key %d"
 msgstr "Bức Mẫu %d"
 
@@ -107254,10 +107245,6 @@ msgstr "Đẩy Dạng Đứng"
 
 msgid "Relax Pose"
 msgstr "Thả Dạng Đứng"
-
-
-msgid "Blend To Neighbor"
-msgstr "Pha Trộn Đến Kề"
 
 
 msgid "Sliding-Tool"
@@ -110209,32 +110196,12 @@ msgid "Grease Pencil Object does not support this set origin option"
 msgstr "Vật Thể Bút Sáp không hỗ trợ tùy chọn cho đặt gốc tọa độ này"
 
 
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Không thể áp dụng với đa người dùng: Vật thể \"%s\", %s \"%s\", đang hủy"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Không thể áp dụng với dữ liệu thư viện: Vật thể \"%s\", %s \"%s\", đang hủy"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Không thể áp dụng Xoay/Vị Trí với đường cong 2 chiều Vật thể \"%s\", %s \"%s\", đang hủy"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Không thể áp dụng với đường cong có mẫu dạng: Vật thể \"%s\", %s \"%s\", đang hủy"
-
-
 msgid "Font's can only have scale applied: \"%s\""
 msgstr "Phông chỉ được áp dụng phóng to: \"%s\""
 
 
 msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
 msgstr "Không thể áp dụng với một cục dữ liệu bút sáp khi hết lớp có phụ huynh: Vật thể \"%s\", %s \"%s\", đang hủy"
-
-
-msgid "Can't apply to GP data-block with no layers: Object \"%s\", %s \"%s\", aborting"
-msgstr "Không thể áp dụng với cục dữ liệu bút sáp không có lớp nào: Vật thể \"%s\", %s \"%s\", đang hủy"
 
 
 msgid "Area Lights can only have scale applied: \"%s\""
@@ -116888,10 +116855,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "Không có bức nào được kết xuất, đã bỏ qua cho không ghi lên trên"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Sai lầm kết xuất (%s) không thể lưu: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "Máy quay phim \"%s\" không phải lả máy quay phim đa màn"
 
@@ -116914,10 +116877,6 @@ msgstr "%s: kích thước không đúng cho chép miến của '%s'"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: nhập '%s' bị thất bại"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Sai lầm lưu kết qủa kết xuất, %s (xem diện điều khiển)"
 
 
 msgctxt "Sequence"

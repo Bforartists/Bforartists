@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-04 08:08-0300\n"
@@ -37363,6 +37363,14 @@ msgid "Flip Colors"
 msgstr "Inverter Cores"
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar Preenchimento de Traço"
@@ -37481,11 +37489,6 @@ msgstr "Gerar e gravar curva"
 
 msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
 msgstr "Gera e grava as curvas-f para um conjunto de amostra de pontos que definem uma curva similar."
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "Mesclar Com Vizinho"
 
 
 msgctxt "Operator"
@@ -61449,14 +61452,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -66937,11 +66932,6 @@ msgstr "Abrir..."
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "Abrir Configurações %d.%d"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Salvar Novas Configurações"
 
@@ -66994,6 +66984,11 @@ msgstr "Anexar..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Manual"
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Abrir Configurações %d.%d"
 
 
 msgctxt "Operator"
@@ -70852,6 +70847,14 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Não foi possível escrever, a imagem não possui as visualizações \"%s\" e \"%s\" "
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "Erro ao escrever resultado da renderização, %s (veja o console)."
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "Erro de renderização (%s). Não foi possível salvar o arquivo: '%s'"
+
+
 msgid "Key %d"
 msgstr "Chave %d"
 
@@ -73331,22 +73334,6 @@ msgstr "Objetos não possuem dados a ser transformados."
 
 msgid "Cannot apply to a multi user armature"
 msgstr "Não é possível aplicar a armações com múltiplos usuários."
-
-
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "Não é possível aplicar para múltiplos usuários: Objeto \"%s\", %s \"%s\", abortando."
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "Não é possível aplicar em dados de biblioteca: Objeto \"%s\", %s \"%s\", abortando."
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "Não é possível aplicar a rotação ou a localização para uma curva 2D: Objeto \"%s\", %s \"%s\", abortando."
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "Não é possível aplicar a uma curva com chaves de formato: Objeto \"%s\", %s \"%s\", abortando."
 
 
 msgid "Font's can only have scale applied: \"%s\""
@@ -76688,10 +76675,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "Sem quadros renderizados, os mesmos não foram usados para não sobrescrever os já existentes."
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "Erro de renderização (%s). Não foi possível salvar o arquivo: '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "A câmera \"%s\" não é uma câmera de múltipla visualização."
 
@@ -76714,10 +76697,6 @@ msgstr "%s: dimensões incorretas para uma cópia parcial '%s'"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: falha ao carregar '%s'"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "Erro ao escrever resultado da renderização, %s (veja o console)."
 
 
 msgctxt "Sequence"

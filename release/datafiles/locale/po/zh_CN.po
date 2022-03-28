@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -44526,10 +44526,6 @@ msgid "Data type of the socket"
 msgstr "槽位的数据类型"
 
 
-msgid "Link is muted and can be ignored"
-msgstr "连线已被屏蔽，可以忽略"
-
-
 msgid "From node"
 msgstr "来自节点"
 
@@ -44544,6 +44540,10 @@ msgstr "是隐藏项"
 
 msgid "Link is hidden due to invisible sockets"
 msgstr "鉴于插口不可见, 已将连线隐藏"
+
+
+msgid "Link is muted and can be ignored"
+msgstr "连线已被屏蔽，可以忽略"
 
 
 msgid "To node"
@@ -53902,6 +53902,14 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
@@ -54092,11 +54100,6 @@ msgstr "烘焙曲线"
 
 msgid "Bake selected F-Curves to a set of sampled points defining a similar curve"
 msgstr "将选择的函数曲线烘焙成全部由采样点组成的近似曲线"
-
-
-msgctxt "Operator"
-msgid "Blend To Neighbor"
-msgstr "与邻帧混合"
 
 
 msgid "Blend selected keyframes to their left or right neighbor"
@@ -74799,10 +74802,6 @@ msgid "Export Material Groups"
 msgstr "导出材质组"
 
 
-msgid "Append mesh name and material name to object name, separated by a '_'"
-msgstr "将网格名称和材质名称追加到物体名称，以\"_\"分隔"
-
-
 msgid "Export Materials"
 msgstr "导出材质"
 
@@ -80438,14 +80437,6 @@ msgstr "全画幅合成器"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "启用合成器全画幅执行模式选项(无分块，降低执行时间和内存使用）"
-
-
-msgid "Geometry Nodes Legacy"
-msgstr "旧版几何节点"
-
-
-msgid "Enable legacy geometry nodes in the menu"
-msgstr "在菜单中启用旧版几何节点"
 
 
 msgid "New Point Cloud Type"
@@ -89027,16 +89018,8 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
 msgid "Display black edges"
 msgstr "绘制黑色边线"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Display white edges"
@@ -99305,11 +99288,6 @@ msgstr "空格"
 
 
 msgctxt "Operator"
-msgid "Load %d.%d Settings"
-msgstr "加载 %d.%d 设置"
-
-
-msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "保存新设置"
 
@@ -99410,6 +99388,11 @@ msgstr "分支: %s"
 
 msgid "Invalid regular expression (find): "
 msgstr "无效正则表达式(查找): "
+
+
+msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "加载 %d.%d 设置"
 
 
 msgid "Type \"%s\" can not be found"
@@ -106164,6 +106147,14 @@ msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker
 msgstr "保存分块图像时，路径 '%s' 必须包含有效的UDIM 标记"
 
 
+msgid "Error writing render result, %s (see console)"
+msgstr "写入渲染结果出错, %s (见控制台)"
+
+
+msgid "Render error (%s) cannot save: '%s'"
+msgstr "写入错误：(%s)无法保存 '%s'"
+
+
 msgid "Key %d"
 msgstr "键 %d"
 
@@ -107259,10 +107250,6 @@ msgstr "Push Pose 扩大姿态"
 
 msgid "Relax Pose"
 msgstr "松弛姿态"
-
-
-msgid "Blend To Neighbor"
-msgstr "与邻帧混合"
 
 
 msgid "Sliding-Tool"
@@ -110214,32 +110201,12 @@ msgid "Grease Pencil Object does not support this set origin option"
 msgstr "蜡笔物体不支持此设置原点选项"
 
 
-msgid "Cannot apply to a multi user: Object \"%s\", %s \"%s\", aborting"
-msgstr "无法应用一个多用户：物体 \"%s\", %s \"%s\", 中止"
-
-
-msgid "Cannot apply to library data: Object \"%s\", %s \"%s\", aborting"
-msgstr "无法应用到库数据: 物体 \"%s\", %s \"%s\", 中止"
-
-
-msgid "Rotation/Location can't apply to a 2D curve: Object \"%s\", %s \"%s\", aborting"
-msgstr "旋转/位移无法应用到2D曲线：物体 \"%s\", %s \"%s\", 中止"
-
-
-msgid "Can't apply to a curve with shape-keys: Object \"%s\", %s \"%s\", aborting"
-msgstr "无法对曲线应用形态键: 物体 \"%s\", %s \"%s\", 中止"
-
-
 msgid "Font's can only have scale applied: \"%s\""
 msgstr "只能对字体应用缩放: \"%s\""
 
 
 msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
 msgstr "无法应用于所有图层都为父级的GP数据块: 物体 \"%s\", %s \"%s\", 中止"
-
-
-msgid "Can't apply to GP data-block with no layers: Object \"%s\", %s \"%s\", aborting"
-msgstr "无法应用于没有图层的 GP 数据块: 物体 \"%s\", %s \"%s\", 中止"
 
 
 msgid "Area Lights can only have scale applied: \"%s\""
@@ -116915,10 +116882,6 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "未渲染任何帧, 跳过以避免覆写"
 
 
-msgid "Render error (%s) cannot save: '%s'"
-msgstr "写入错误：(%s)无法保存 '%s'"
-
-
 msgid "Camera \"%s\" is not a multi-view camera"
 msgstr "摄像机 \"%s\" 不是多视角摄像机"
 
@@ -116941,10 +116904,6 @@ msgstr "%s: 尺寸出错因部分复制 '%s'"
 
 msgid "%s: failed to load '%s'"
 msgstr "%s: 加载 '%s' 失败"
-
-
-msgid "Error writing render result, %s (see console)"
-msgstr "写入渲染结果出错, %s (见控制台)"
 
 
 msgctxt "Sequence"

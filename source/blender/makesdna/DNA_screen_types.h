@@ -553,6 +553,8 @@ enum {
   HEADER_TOOLBAR_EDIT = (1 << 16),
   // bfa - show hide the Misc toolbars
   HEADER_TOOLBAR_MISC = (1 << 17),
+  /** For offscreen areas. */
+  AREA_FLAG_OFFSCREEN = (1 << 18),
 };
 
 #define AREAGRID 4
