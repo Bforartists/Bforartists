@@ -43,6 +43,7 @@ from bpy.props import (
     CollectionProperty,
     EnumProperty,
     FloatProperty,
+    FloatVectorProperty,
 )
 from bpy_extras.io_utils import (
     ImportHelper,
@@ -227,6 +228,12 @@ class ExportSTL(Operator, ExportHelper):
             ('OBJECT', "Object", "Each object as a file"),
         ),
     )
+    global_space: FloatVectorProperty(
+        name="Global Space",
+        description="Export in this reference space",
+        subtype='MATRIX',
+        size=(4, 4),
+    )
 
     @property
     def check_extension(self):
@@ -249,7 +256,8 @@ class ExportSTL(Operator, ExportHelper):
                 "filter_glob",
                 "use_scene_unit",
                 "use_mesh_modifiers",
-                "batch_mode"
+                "batch_mode",
+                "global_space",
             ),
         )
 
@@ -268,6 +276,9 @@ class ExportSTL(Operator, ExportHelper):
             to_forward=self.axis_forward,
             to_up=self.axis_up,
         ).to_4x4() @ Matrix.Scale(global_scale, 4)
+
+        if self.properties.is_property_set("global_space"):
+            global_matrix = global_matrix @ self.global_space.inverted()
 
         if self.batch_mode == 'OFF':
             faces = itertools.chain.from_iterable(

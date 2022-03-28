@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'79e74b14861e')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13122,6 +13122,14 @@ msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Seleccionar fila"
@@ -21854,14 +21862,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"
