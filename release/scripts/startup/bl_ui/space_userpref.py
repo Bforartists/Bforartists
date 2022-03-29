@@ -745,14 +745,23 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
 
+        layout.label(text = "Text Info Overlay")
+
+        col = layout.column()
+
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(view, "show_object_info", text="Object Info")
+        row = col.row()
+        row.separator()
+        row.prop(view, "show_view_name", text="View Name")
+        row = col.row()
+        row.separator()
+        row.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
+
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.label(text = "Text Info Overlay")
-
-        flow.use_property_split = False
-        flow.prop(view, "show_object_info", text="Object Info")
-        flow.prop(view, "show_view_name", text="View Name")
-        flow.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
 
         layout.separator()
 
