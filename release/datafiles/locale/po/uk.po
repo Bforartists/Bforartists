@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -11435,14 +11435,6 @@ msgid "Show Collection data-blocks"
 msgstr "Показ блоків даних Колекції"
 
 
-msgid "Hairs"
-msgstr "Волосинки"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Показати/сховати блоки даних Волосся"
-
-
 msgid "Show Image data-blocks"
 msgstr "Показ блоків даних Зображення"
 
@@ -12237,10 +12229,6 @@ msgstr "Розмір комірки"
 
 msgid "CFL"
 msgstr "CFL"
-
-
-msgid "Maximal velocity per cell (higher value results in greater timesteps)"
-msgstr "Максимальна скорість по комірках (вище значення призводить до більших кроків часу)"
 
 
 msgid "Clipping"
@@ -15313,6 +15301,10 @@ msgid "Create duplication of strokes"
 msgstr "Створює дублювання штрихів"
 
 
+msgid "Envelope"
+msgstr "Оболонка"
+
+
 msgid "Mirror"
 msgstr "Дзеркалення"
 
@@ -15721,6 +15713,14 @@ msgid "Color Value"
 msgstr "Значення Кольору"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Інверсія Групи Вершин"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "Назва групи вершин для керування деформацією"
+
+
 msgid "Hook Modifier"
 msgstr "Модифікатор Гачок"
 
@@ -15827,20 +15827,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "Компенсувати для не-однорідних масштабів об'єктів"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "Назва групи вершин для керування деформацією"
-
-
 msgid "Lattice Modifier"
 msgstr "Модифікатор Ґратка"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "Змінює штрих, використовуючи решітку до модифікатора Деформа"
-
-
-msgid "Inverse VertexGroup"
-msgstr "Інверсія Групи Вершин"
 
 
 msgid "Lattice object to deform with"
@@ -16217,6 +16209,10 @@ msgstr "Модифікатор задіює товщину точки"
 
 msgid "The modifier affects the UV rotation factor of the point"
 msgstr "Модифікатор задіює фактор обертання UV для точки"
+
+
+msgid "Keep Shape"
+msgstr "Зберегти форму"
 
 
 msgid "Subdivision Modifier"
@@ -16782,10 +16778,6 @@ msgstr "B-кістка"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Показати кістки, як паралелепіпеди, показуючи поділи та B-сплайни"
-
-
-msgid "Envelope"
-msgstr "Оболонка"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -26631,6 +26623,10 @@ msgid "32-bit color channels"
 msgstr "32-бітні колірні канали"
 
 
+msgid "Color Management"
+msgstr "Керування кольором"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Виберіть BW для збереження зображення у відтінках сірого, RGB для збереження червоного, зеленого і синього каналів або RGBA для збереження червоного, зеленого, синього та альфа-каналу"
 
@@ -34335,10 +34331,6 @@ msgstr "Створити примірники зі звичайних части
 
 msgid "Create instances along particle paths"
 msgstr "Створювати примірники вздовж траєкторій частинок"
-
-
-msgid "Keep Shape"
-msgstr "Зберегти форму"
 
 
 msgid "Don't stretch the object"
@@ -42064,10 +42056,6 @@ msgid "Selection to Nearest Frame"
 msgstr "Вибрання на Найближчий Кадр"
 
 
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
-msgstr "Підхопити вибрані ключові кадри до найближчого (цілого) кадру (використовуйте для усунення випадкових зміщень підкадрів)"
-
-
 msgid "Selection to Nearest Second"
 msgstr "Вибрання на Найближчу Секунду"
 
@@ -46628,6 +46616,14 @@ msgid "Export the last Catmull-Rom subdivision modifier as FBX subdivision (does
 msgstr "Експортувати останній модифікатор Catmull-Rom підподілення як підподілення FBX (не застосовує модифікатор навіть, якщо увімкнено 'Застосувати Модифікатори')"
 
 
+msgid "Triangulate Faces"
+msgstr "Тріангулювати грані"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Перетворити всі грані на трикутники"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Додати бінормальний та дотичний вектори, які разом з нормаллю утворюють простір дотичних (працює правильно тільки для сітей, що містять лише трикутники та чотирикутники)"
 
@@ -47044,14 +47040,6 @@ msgstr "Групи згладжування з біт-прапорцем"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "Те саме, що й «Групи згладжування», але генерувати ідентифікатори груп згладжування за допомогою бітових прапорців (дає не більше 32 різних груп згладжування, але цього зазвичай вистачає)"
-
-
-msgid "Triangulate Faces"
-msgstr "Тріангулювати грані"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Перетворити всі грані на трикутники"
 
 
 msgid "Include UVs"
@@ -50274,6 +50262,10 @@ msgstr "Вибрання до Значення Курсора"
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Встановити значення вибраних ключових кадрів за значенням курсора (Y/горизонтальна складова)"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Підхопити вибрані ключові кадри до найближчого (цілого) кадру (використовуйте для усунення випадкових зміщень підкадрів)"
 
 
 msgid "Flatten Handles"
@@ -70477,10 +70469,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Перемкнути повноекранний режим вікна"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Перемкнути поточне вікно на повний екран"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Нове Вікно"
@@ -71866,10 +71854,6 @@ msgstr "Створює Панель у контексті рендера ред�
 
 msgid "Freestyle SVG Export"
 msgstr "Експорт Freestyle у SVG"
-
-
-msgid "Color Management"
-msgstr "Керування кольором"
 
 
 msgid "Bloom"
@@ -74146,16 +74130,8 @@ msgid "Align Object To"
 msgstr "Вирівняти об'єкт за"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "При додаванні об'єктів з меню 3D-вигляду, вирівнювати їх за цим виглядом чи за світом"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Вирівнювати додані об'єкти у системі координат світу"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Вирівняти новододані об'єкти за напрямом активного 3D Огляду"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -74246,14 +74222,6 @@ msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Спричиняє дублювання даних нарисного олівця разом з об'єктом"
 
 
-msgid "Duplicate Hair"
-msgstr "Дублювати Волосся"
-
-
-msgid "Causes hair data to be duplicated with the object"
-msgstr "Спричиняє дублювання даних волосся разом з об'єктом"
-
-
 msgid "Duplicate Light"
 msgstr "Дублювати Освітлювач"
 
@@ -74332,10 +74300,6 @@ msgstr "Дублювати Об'єм"
 
 msgid "Causes volume data to be duplicated with the object"
 msgstr "Спричиняє дублювання разом з об'єктом даних об'єму"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Автоматично переходити після додавання об'єкта в режим редагування"
 
 
 msgid "Global Undo"
@@ -75002,14 +74966,6 @@ msgid "Show UI Key-Config"
 msgstr "Показ Клавіш-Конфіг КІ"
 
 
-msgid "Anisotropic Filter"
-msgstr "Анізотропний фільтр"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Якість анізотропної фільтрації (значення більше ніж 1.0 вмикає анізотропну фільтрацію)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -75354,14 +75310,6 @@ msgid "UI Scale"
 msgstr "Масштаб ГІК"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "Згладження дротів у режимі редагування"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "Увімкнути згладжування краю у режимі редагування, скорочує ступінчастість, вимагає перезапуску"
-
-
 msgid "Overlay Smooth Wires"
 msgstr "Накладання згладження дротів"
 
@@ -75372,14 +75320,6 @@ msgstr "Увімкнути накладання згладження дроті�
 
 msgid "Region Overlap"
 msgstr "Перекриття областей"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Вказування глибини OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Вживати буфер глибини для вказування вибору 3D Огляді (без цього перед більшості об'єктів може спершу не вибиратися)"
 
 
 msgid "Use Disk Cache"
@@ -75666,10 +75606,6 @@ msgid "Mini Axes Type"
 msgstr "Тип мініосей"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Показувати малі 3D осі обертання у верхньому правому кутку 3D Огляду"
-
-
 msgid "Simple Axis"
 msgstr "Проста Вісь"
 
@@ -75806,18 +75742,6 @@ msgid "Display Object Info"
 msgstr "Показати інформацію про об'єкт"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Показати назви об'єктів та номер кадру у 3D-перегляді"
-
-
-msgid "Show Playback FPS"
-msgstr "Частота кадрів відтворення"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Показати при відтворенні анімації частоту оновлення екрана в кадрах на секунду"
-
-
 msgid "Show Splash"
 msgstr "Показувати стартовий екран"
 
@@ -75862,24 +75786,12 @@ msgid "Tooltips"
 msgstr "Підказки"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Показувати підказки (якщо вимкнено, утримуйте Alt для примусового показу)"
-
-
 msgid "Python Tooltips"
 msgstr "Підказки Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Показати посилання на Python у спливних підказках"
-
-
-msgid "Show View Name"
-msgstr "Показати назву вигляду"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Показувати назву напряму зору в кожному 3D-вигляді"
 
 
 msgid "Smooth View"
@@ -78084,10 +77996,6 @@ msgstr "Стара карта кадрів"
 
 msgid "Old mapping value in frames"
 msgstr "Старе значення розкладки в кадрах"
-
-
-msgid "Additional Subdiv"
-msgstr "Додатковий Підподіл"
 
 
 msgid "Additional subdivision along the hair"
@@ -83399,14 +83307,6 @@ msgid "Show only data-blocks of one type"
 msgstr "Показувати блоки даних лише одного типу"
 
 
-msgid "Show Library Overrides"
-msgstr "Показ Заміщень Бібліотек"
-
-
-msgid "For libraries with overrides created, show the overridden values"
-msgstr "Для бібліотек зі створеними заміщеннями, показувати заміщені значення"
-
-
 msgid "Filter Objects"
 msgstr "Фільтр Об'єктів"
 
@@ -84983,10 +84883,6 @@ msgid "Active Theme Area"
 msgstr "Область активної теми"
 
 
-msgid "3D View"
-msgstr "3D-вигляд"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Тема набору кольорів кісток"
 
@@ -86377,14 +86273,6 @@ msgstr "Курсор Тексту"
 
 msgid "Color of the interface widgets text insertion cursor (caret)"
 msgstr "Колір віджетів інтерфейсу курсора вставки тексту (каретки)"
-
-
-msgid "Theme 3D View"
-msgstr "Тема 3D-вигляду"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Параметри теми для 3D-вигляду"
 
 
 msgid "Bone Locked Weight"
@@ -95219,10 +95107,6 @@ msgid "View Name"
 msgstr "Назва огляду"
 
 
-msgid "Playback FPS"
-msgstr "Частота кадрів Програвання"
-
-
 msgid "3D Viewport Axis"
 msgstr "Вісь 3D Оглядвікна"
 
@@ -97562,10 +97446,6 @@ msgstr "Не записано, неочікувана помилка під ча
 
 msgid "Could not write image: %s"
 msgstr "Неможливо зберегти зображення: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Не записано, зображення не має \"%s\" та \"%s\" виглядів"
 
 
 msgid "Error writing render result, %s (see console)"
@@ -101022,10 +100902,6 @@ msgid "Objects do not have the same number of vertices"
 msgstr "Кількість вершин у об'єктів не однакова"
 
 
-msgid "Not valid subdivisions found to rebuild a lower level"
-msgstr "Не дійсні підподілення знайдені для перебудування нижчого рівня"
-
-
 msgid "Not valid subdivisions found to rebuild lower levels"
 msgstr "Не дійсні підподілення знайдені для перебудування нижчих рівнів"
 
@@ -101572,6 +101448,10 @@ msgstr "Світ твердого тіла немає пов'язаних дан
 
 msgid "3D Local View"
 msgstr "3D Огляд Локально"
+
+
+msgid "3D View"
+msgstr "3D-вигляд"
 
 
 msgid "Frame:%d "

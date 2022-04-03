@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -10590,6 +10590,10 @@ msgid "Build"
 msgstr "Construir"
 
 
+msgid "Envelope"
+msgstr "Envelope"
+
+
 msgid "Mirror"
 msgstr "Espelhar"
 
@@ -10694,6 +10698,10 @@ msgid "Custom Curve"
 msgstr "Curva personalizada"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "Nome do grupo de vértices para modular a deformação."
+
+
 msgid "Hook Modifier"
 msgstr "Modificador - Gancho"
 
@@ -10786,10 +10794,6 @@ msgstr "Decaimento uniforme"
 
 msgid "Compensate for non-uniform object scale"
 msgstr "Usa uma compensação para escalonamentos não uniformes de objetos."
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "Nome do grupo de vértices para modular a deformação."
 
 
 msgid "Lattice Modifier"
@@ -10898,6 +10902,10 @@ msgstr "Ajuste de nitidez"
 
 msgid "Smooth Modifier"
 msgstr "Modificador - Suavizar"
+
+
+msgid "Keep Shape"
+msgstr "Manter formato"
 
 
 msgid "Subdivision Type"
@@ -11159,10 +11167,6 @@ msgstr "Osso-B"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Mostra os ossos como caixas, mostrando subdivisões e Splines-B."
-
-
-msgid "Envelope"
-msgstr "Envelope"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -17823,6 +17827,10 @@ msgid "Bit depth per channel"
 msgstr "Profundidade de bits por canal."
 
 
+msgid "Color Management"
+msgstr "Gerenciamento de cores"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Escolha BW (preto e branco) para guardar as imagens em escala de cinza, RGB (cores) para guardar os canais vermelho, verde e azul, e RGBA para guardar os canais vermelho, verde, azul e canal alfa (transparências)."
 
@@ -23633,10 +23641,6 @@ msgstr "Cria instâncias a partir das normais das partículas."
 
 msgid "Create instances along particle paths"
 msgstr "Cria instâncias ao longo dos caminhos das partículas."
-
-
-msgid "Keep Shape"
-msgstr "Manter formato"
 
 
 msgid "Don't stretch the object"
@@ -33175,6 +33179,14 @@ msgid "Use Metadata"
 msgstr "Usar Meta-Dados"
 
 
+msgid "Triangulate Faces"
+msgstr "Triangular faces"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Converte todas as faces para triângulos"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Adiciona vetores binormais e tangentes, juntamente com as normais que eles formam dentro do espaço tangente (só funciona corretamente com malhas formadas por triângulos ou quadriláteros !)."
 
@@ -33246,14 +33258,6 @@ msgstr "Grupos suavizados com Bitflag"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "O mesmo que \"Grupos suavizados\", mas gera identificadores de grupos suavizados como bandeiras em formato de bits (produz ao menos, 32 grupos diferentes de suavização, mas usualmente, muito menos)."
-
-
-msgid "Triangulate Faces"
-msgstr "Triangular faces"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Converte todas as faces para triângulos"
 
 
 msgid "Include UVs"
@@ -48462,10 +48466,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Alternar a janela para tela cheia"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Alterna a janela atual para uma em tela cheia."
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Novo ambiente (mundo)"
@@ -49251,10 +49251,6 @@ msgstr "Colisões consigo"
 
 msgid "Viscosity"
 msgstr "Viscosidade"
-
-
-msgid "Color Management"
-msgstr "Gerenciamento de cores"
 
 
 msgid "Indirect Lighting"
@@ -50608,10 +50604,6 @@ msgid "Align Object To"
 msgstr "Alinhar objetos para"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Durante as adições de objetos a partir do menu da janela de visualização 3D, define se os alinha com a vista ou com o ambiente (mundo)."
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Alinha os objetos recém adicionados para o sistema de coordenadas do ambiente."
 
@@ -50726,10 +50718,6 @@ msgstr "Duplicar texto"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Faz com que os dados de texto sejam duplicados com o objeto."
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Entra no modo de edição automaticamente após a adição de um novo objeto."
 
 
 msgid "Global Undo"
@@ -51196,14 +51184,6 @@ msgid "The name of the active key configuration"
 msgstr "O nome da definição de chave ativa."
 
 
-msgid "Anisotropic Filter"
-msgstr "Filtro anisotrópico"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Qualidade da filtragem anisotrópica (valores maiores que 1.0 ativam a filtragem anisotrópica)."
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -51448,10 +51428,6 @@ msgid "Region Overlap"
 msgstr "Sobreposição de região"
 
 
-msgid "OpenGL Depth Picking"
-msgstr "Profundidade para a seleção OpenGL"
-
-
 msgid "Color Picker Type"
 msgstr "Tipo de seletor de cores"
 
@@ -51600,18 +51576,6 @@ msgid "Display Object Info"
 msgstr "Mostrar informações do objeto"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Mostra o nome dos objetos e número do fotograma dentro da janela de visualização 3D."
-
-
-msgid "Show Playback FPS"
-msgstr "Mostrar fotogramas por segundo ao reproduzir"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Mostra a taxa de atualização de fotogramas por segundo da tela, durante a reprodução da animação."
-
-
 msgid "Show Splash"
 msgstr "Mostrar tela de abertura"
 
@@ -51624,24 +51588,12 @@ msgid "Tooltips"
 msgstr "Dicas"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Mostrar as dicas de ferramenta (quando desligado, manter a tecla \"Alt\" pressionada irá forçar a exibição)."
-
-
 msgid "Python Tooltips"
 msgstr "Dicas de ferramentas em Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Mostra as referências Python dentro das dicas de ferramenta."
-
-
-msgid "Show View Name"
-msgstr "Mostrar nome das vistas"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Mostra os nomes das direções das visões em cada uma das portas de visão 3D."
 
 
 msgid "Smooth View"
@@ -57825,10 +57777,6 @@ msgid "Active Theme Area"
 msgstr "Área de tema ativo"
 
 
-msgid "3D View"
-msgstr "Janela de visualização 3D"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Tema de cor de conjunto de ossos"
 
@@ -58707,14 +58655,6 @@ msgstr "Enfatização dos assistentes"
 
 msgid "Color of the 1px shadow line underlying widgets"
 msgstr "A cor da linha de sublinhamento que sombreia a base dos assistentes, com tamanho de um pixel."
-
-
-msgid "Theme 3D View"
-msgstr "Tema - Janela de visualização 3D"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Definições de tema para a janela de visualização 3D."
 
 
 msgid "Bone Pose"
@@ -62362,10 +62302,6 @@ msgid "View Name"
 msgstr "Visualizar nomes"
 
 
-msgid "Playback FPS"
-msgstr "Fotogramas por segundo ao reproduzir"
-
-
 msgid "Limit Size"
 msgstr "Limitar texturas"
 
@@ -63469,10 +63405,6 @@ msgstr "Não foi possível escrever, um erro não esperado foi encontrado ao gua
 
 msgid "Could not write image: %s"
 msgstr "Não foi possível escrever imagem: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Não foi possível escrever, a imagem não possui as visualizações \"%s\" e \"%s\" "
 
 
 msgid "Error writing render result, %s (see console)"
@@ -66047,6 +65979,10 @@ msgstr "Ambiente (mundo) de corpo rígido não possui dados de física associado
 
 msgid "3D Local View"
 msgstr "Visão local 3D"
+
+
+msgid "3D View"
+msgstr "Janela de visualização 3D"
 
 
 msgid "Frame:%d "

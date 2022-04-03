@@ -485,16 +485,12 @@ def register():
         bpy.utils.register_class(cls)
 
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
-    # Disabling the menu entry for this python exporter now that
-    # there is a C++ exporter. For now, leaving the actual
-    # export_scene.obj pointing at the python version.
-    # bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
-    # See comment above about menu for the python exporter
-    # bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
     for cls in classes:
         bpy.utils.unregister_class(cls)

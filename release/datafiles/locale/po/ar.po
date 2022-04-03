@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -8829,6 +8829,10 @@ msgid "Build"
 msgstr "ءﺎﻨﺑ"
 
 
+msgid "Envelope"
+msgstr "ﻒﻠﻐﻣ"
+
+
 msgid "Mirror"
 msgstr "ﻞﺛﺎﻣ"
 
@@ -9055,6 +9059,10 @@ msgid "Smooth Modifier"
 msgstr "ﺔﻣﻮﻌﻨﻟﺍ ﺮﻴﻐﻣ"
 
 
+msgid "Keep Shape"
+msgstr "ﻞﻜﺸﻟﺍ ﻰﻠﻋ ﻆﻓﺎﺣ"
+
+
 msgid "Subdivision Type"
 msgstr "ﻢﻴﺴﻘﺘﻟﺍ ﻉﻮﻧ"
 
@@ -9241,10 +9249,6 @@ msgstr "ﻥﻮﺑ ﻲﺑ"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "ﺏ-ﺕﺎﻴﻨﺤﻨﻣ ﻭ ﺕﺎﻤﻴﺴﻘﺘﻟﺍ ﺮﻬﻈﺗ ,ﻖﻳﺩﺎﻨﺼﻛ ﻡﺎﻈﻌﻟﺍ ﺮﻬﻇﺍ"
-
-
-msgid "Envelope"
-msgstr "ﻒﻠﻐﻣ"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -15481,6 +15485,10 @@ msgid "Bit depth per channel"
 msgstr "ﺓﺎﻨﻘﻟﺍ ﻲﻓ ﺖﺒﻟﺍ ﻖﻤﻋ"
 
 
+msgid "Color Management"
+msgstr "ﻥﺍﻮﻟﻷ﻿ﺍ ﺓﺭﺍﺩﺇ"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "ﺎﻔﻟﻷ﻿ﺍ ﻭ ﻕﺭﺯﻷ﻿ﺍ ،ﺮﻀﺧﻷ﻿ﺍ ،ﺮﻤﺣﻷ﻿ﺍ ﺕﺍﻮﻨﻗ ﻆﻔﺤﻟ RGBA ﻭ،ﻕﺭﺯﻷ﻿ﺍ ﻭ ﺮﻀﺧﻷ﻿ﺍ،ﺮﻤﺣﻷ﻿ﺍ ﺕﺍﻮﻨﻗ ﻆﻔﺤﻟ RGB ،ﻱﺩﺎﻣﺮﻟﺍ ﻦﻣ ﺔﺟﺭﺪﺘﻤﻟﺍ ﺭﻮﺼﻟﺍ ﻆﻔﺤﻟ ﺩﻮﺳﻷ﻿ﺍ ﻭ ﺾﻴﺑﻷ﻿ﺍ ﻡﺪﺨﺘﺳﺇ"
 
@@ -18538,10 +18546,6 @@ msgstr "ﻢﻇﺎﻨﻟﺍ ﺕﺎﺌﻳﺰﺟ ﻦﻣ ﺦﺴﻧ ﺊﺸﻧﺍ"
 
 msgid "Create instances along particle paths"
 msgstr "ءﻱﺰﺠﻟﺍ ﺕﺍﺭﺎﺴﻣ ﻝﻮﺣ ﺝﺫﺎﻤﻨﻟﺍ ﺊﺸﻧﺍ"
-
-
-msgid "Keep Shape"
-msgstr "ﻞﻜﺸﻟﺍ ﻰﻠﻋ ﻆﻓﺎﺣ"
 
 
 msgid "Use particle size to scale the instances"
@@ -30933,10 +30937,6 @@ msgid "Viscosity"
 msgstr "ﺔﺟﻭﺰﻠﻟﺍ"
 
 
-msgid "Color Management"
-msgstr "ﻥﺍﻮﻟﻷ﻿ﺍ ﺓﺭﺍﺩﺇ"
-
-
 msgid "Indirect Lighting"
 msgstr "ﺓﺮﺷﺎﺒﻣ ﺮﻴﻏ ﺓءﺎﺿﺇ"
 
@@ -32122,10 +32122,6 @@ msgid "Align Object To"
 msgstr "ﻰﻟﺇ ﻦﺋﺎﻜﻟﺍ ﻱﺫﺎﺣ"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr " ﻢﻟﺎﻌﻠﻟ ﻭﺍ ,ﺎﻬﻟ ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻣ ﺔﻤﺋﺎﻗ ﻦﻣ ﺔﻓﺎﺿﻻ﻿ﺍ ﺪﻨﻋ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻱﺫﺎﺣ"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "ﻢﻟﺎﻌﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﺇ ﻡﺎﻈﻧ ﻊﻣ ﺎﺜﻳﺪﺣ ﺔﻓﺎﻀﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻱﺫﺎﺣ"
 
@@ -32228,10 +32224,6 @@ msgstr "ﺺﻨﻟﺍ ﺦﺴﻧﺍ"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﺺﻨﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺦﺴﻧ ﻰﻟﺇ ﻱﺩﺆﻳ"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "ﺓﺪﻳﺪﺟ ﺕﺎﻨﺋﺎﻛ ﺔﻓﺎﺿﺇ ﺪﻌﺑ ﺎﻴﺗﺍﺫ ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻞﺧﺩﺃ"
 
 
 msgid "Global Undo"
@@ -32642,14 +32634,6 @@ msgid "The name of the active key configuration"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﺣﻮﻟ ﺩﺍﺪﻋﺇ ﻢﺳﺇ"
 
 
-msgid "Anisotropic Filter"
-msgstr "ﻦﻳﺎﺒﺘﻟﺍ ﻒّﺼﻣ"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "(ﻦﻳﺎﺒﺘﻟﺍ ﻒﺼﻣ ﻞﻌّﻔﺗ 1.0 ﻦﻣ ﺮﺒﻛﻷ﻿ﺍ ﻢﻴﻘﻟﺍ) ﻦﻳﺎﺒﺘﻟﺍ ﻒﺼﻣ ﺓﺩﻮﺟ"
-
-
 msgid "Audio Device"
 msgstr "ﺕﻮﺼﻟﺍ ﺯﺎﻬﺟ"
 
@@ -32938,18 +32922,6 @@ msgid "Display Object Info"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺎﻣﻮﻠﻌﻣ ﺮﻬﻇﺃ"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻟﺍ ﻲﻓ ﺭﺎﻃﻹ﻿ﺍ ﻢﻗﺭ ﻭ ﻦﺋﺎﻜﻟﺍ ﻢﺳﺍ ﺮﻬﻇﺃ"
-
-
-msgid "Show Playback FPS"
-msgstr "ﺓءﺍﺮﻘﻟﺍ FPS ﺮﻬﻇﺃ"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr " ﻚﻳﺮﺤﺘﻟﺍ ﺓءﺍﺮﻗ ﺪﻨﻋ ،ﺔﻴﻧﺎﺜﻟﺎﺑ ﺮﻃﻷ﻿ﺍ ﺩﺪﻌﺑ ﺔﺷﺎﺸﻟﺍ ﺚﻳﺪﺤﺗ ﻝﺪﻌﻣ  ﺮﻬﻇﺃ"
-
-
 msgid "Show Splash"
 msgstr "ﺔﻳﺍﺪﺒﻟﺍ ﺓﺬﻓﺎﻧ ﺮﻬﻇﺃ"
 
@@ -32968,14 +32940,6 @@ msgstr "ﻥﻮﺜﻳﺎﺑ ﺕﺎﻈﺣﻼ﻿ﻣ"
 
 msgid "Show Python references in tooltips"
 msgstr "ﺕﺎﻣﻮﻠﻌﻤﻟﺍ ﺐﻠﻋ ﻲﻓ ﻥﻮﺜﻳﺎﺒﻟﺍ ﻊﺟﺍﺮﻣ ﺮﻬﻇﺃ"
-
-
-msgid "Show View Name"
-msgstr "ﺮﻈﻨﻤﻟﺍ ﻢﺳﺍ ﺮﻬﻇﺃ"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "ﻲﺛﻼ﻿ﺛ ﺮﻈﻨﻣ ﻞﻛ ﻲﻓ ﺮﻈﻨﻤﻟﺍ ﻩﺎﺠﺗﺍ ﻢﺳﺍ ﺮﻬﻇﺍ"
 
 
 msgid "Smooth View"
@@ -35602,10 +35566,6 @@ msgid "Clip Editor"
 msgstr "ﻢﻴﻠﻘﺘﻟﺍ ﺭﺮﺤﻣ"
 
 
-msgid "3D View"
-msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
-
-
 msgid "Color used for active bones"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﻡﺎﻈﻌﻠﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻥﻮﻠﻟﺍ"
 
@@ -36040,14 +36000,6 @@ msgstr "ﺓﺍﺩﻷ﻿ﺍ ﺡﻮﻟ ﻥﺍﻮﻟﺃ"
 
 msgid "Tooltip Colors"
 msgstr "ﺕﺍﻭﺩﻻ﻿ﺍ ﺕﺎﻈﺣﻼ﻿ﻣ ﻥﺍﻮﻟﺍ"
-
-
-msgid "Theme 3D View"
-msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻟﺍ ﻂﻤﻧ"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻠﻟ ﻂﻤﻨﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgid "Bone Pose"
@@ -38405,10 +38357,6 @@ msgid "View Name"
 msgstr "ﺽﺮﻌﻟﺍ ﻢﺳﺍ"
 
 
-msgid "Playback FPS"
-msgstr "ﺓءﺍﺮﻘﻟﺍ ﺙ.ﺃ.ﻉ"
-
-
 msgid "Limit Size"
 msgstr "ﻢﺠﺤﻟﺍ ﺪﺣ"
 
@@ -40305,6 +40253,10 @@ msgstr "ﺐﺸﺧ"
 
 msgid "3D Local View"
 msgstr "ﻲﺛﻼ﻿ﺛ ﻲﻠّﺤﻣ ﺮﻈﻨﻣ"
+
+
+msgid "3D View"
+msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
 
 
 msgid "Frame:%d "

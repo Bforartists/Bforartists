@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4193,6 +4193,10 @@ msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 msgid "Color Depth"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
+
+
+msgid "Color Management"
+msgstr "ﮓﻧﺭ ﺖﯾﺮﯾﺪﻣ"
 
 
 msgid "Z Buffer"
@@ -11671,10 +11675,6 @@ msgid "Dynamics"
 msgstr "ﺎﯾﻮﭘ"
 
 
-msgid "Color Management"
-msgstr "ﮓﻧﺭ ﺖﯾﺮﯾﺪﻣ"
-
-
 msgid "Shadows"
 msgstr "ﺎﻫ‌ﻪﯾﺎﺳ"
 
@@ -12328,10 +12328,6 @@ msgstr "ﻩﺭﺫ/ﻪﺘﺷﺭ"
 
 msgid "Clip Editor"
 msgstr "ﻑﺍﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
-
-
-msgid "3D View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgid "Theme Clip Editor"
@@ -14446,6 +14442,10 @@ msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "ﺎﯾﻮﭘ"
+
+
+msgid "3D View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgid "Scene has no camera"

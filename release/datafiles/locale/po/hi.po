@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1693,6 +1693,10 @@ msgid "Build"
 msgstr "निर्माण"
 
 
+msgid "Envelope"
+msgstr "आवरण"
+
+
 msgid "Mirror"
 msgstr "दर्पण"
 
@@ -1812,10 +1816,6 @@ msgstr "हड्डियों"
 
 msgid "Stick"
 msgstr "छड़ी"
-
-
-msgid "Envelope"
-msgstr "आवरण"
 
 
 msgid "Wire"
@@ -2717,6 +2717,10 @@ msgstr "अधिकतम कदम"
 
 msgid "Min Step"
 msgstr "न्यूनतम कदम"
+
+
+msgid "Color Management"
+msgstr "रंग प्रबंधन"
 
 
 msgid "Codec"
@@ -4762,10 +4766,6 @@ msgid "Self Collision"
 msgstr "आत्म टक्कर"
 
 
-msgid "Color Management"
-msgstr "रंग प्रबंधन"
-
-
 msgid "Audio"
 msgstr "श्रव्य"
 
@@ -5259,10 +5259,6 @@ msgstr "अशुद्ध"
 
 msgid "Clip Editor"
 msgstr "छांटन संपादक"
-
-
-msgid "3D View"
-msgstr "त्रि-आयाम दृश्य"
 
 
 msgid "Theme Bone Color Set"
@@ -6867,6 +6863,10 @@ msgstr "इस्पात"
 
 msgid "Stone"
 msgstr "पत्थर"
+
+
+msgid "3D View"
+msgstr "त्रि-आयाम दृश्य"
 
 
 msgid "Scene has no camera"

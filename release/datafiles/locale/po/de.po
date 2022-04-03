@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8637,6 +8637,10 @@ msgid "Muted"
 msgstr "Stumm"
 
 
+msgid "Disable F-Curve evaluation"
+msgstr "Deaktivieren der F-Kurven Auswertung"
+
+
 msgid "Sampled Points"
 msgstr "Abgetastete Punkte"
 
@@ -9585,14 +9589,6 @@ msgstr "Wachsstift-Datenblöcke anzeigen"
 
 msgid "Show Collection data-blocks"
 msgstr "Sammlungs-Datenblöcke anzeigen"
-
-
-msgid "Hairs"
-msgstr "Haare"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Haar-Datenblöcke anzeigen/verbergen"
 
 
 msgid "Show Image data-blocks"
@@ -11612,6 +11608,10 @@ msgid "Build"
 msgstr "Bauen"
 
 
+msgid "Envelope"
+msgstr "Einhüllende"
+
+
 msgid "Mirror"
 msgstr "Spiegeln"
 
@@ -11800,6 +11800,10 @@ msgid "Color Value"
 msgstr "Farbwert"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Eckpunktgruppe invertieren"
+
+
 msgid "Hook Modifier"
 msgstr "Haken Modifikator"
 
@@ -11870,12 +11874,12 @@ msgid "Lattice Modifier"
 msgstr "Gitter Modifikator"
 
 
-msgid "Inverse VertexGroup"
-msgstr "Eckpunktgruppe invertieren"
-
-
 msgid "Strength of modifier effect"
 msgstr "Stärke des Kraftfelds"
+
+
+msgid "Length Modifier"
+msgstr "Längenmodifikator"
 
 
 msgid "Invert Curvature"
@@ -12084,6 +12088,10 @@ msgstr "Weicher Modifikator"
 
 msgid "Smooth effect modifier"
 msgstr "Smooth-Effekt-Modifikator"
+
+
+msgid "Keep Shape"
+msgstr "Form"
 
 
 msgid "Subdivision Modifier"
@@ -12385,10 +12393,6 @@ msgstr "Knochen als einfache 2D-Linien mit Punkten anzeigen"
 
 msgid "B-Bone"
 msgstr "B-Knochen"
-
-
-msgid "Envelope"
-msgstr "Einhüllende"
 
 
 msgid "Wire"
@@ -17854,6 +17858,10 @@ msgid "32-bit color channels"
 msgstr "32-Bit-Farbtiefe"
 
 
+msgid "Color Management"
+msgstr "Farbmanagement"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "S/W zum Speichern von Graustufenbildern, RGB zum Speichern von Rot-, Grün- und Blaukanälen, und RGBA zum Speichern von Rot-, Grün-, Blau- und Alphakanälen wählen"
 
@@ -22127,10 +22135,6 @@ msgid "Children"
 msgstr "Kinder"
 
 
-msgid "Keep Shape"
-msgstr "Form"
-
-
 msgid "Don't stretch the object"
 msgstr "Dehnen Sie das Objekt nicht"
 
@@ -25461,6 +25465,10 @@ msgstr "Konvexe Hülse"
 
 msgid "Curve Length"
 msgstr "Kurvenlänge"
+
+
+msgid "Curve Line"
+msgstr "Kurvenlinie"
 
 
 msgid "Parallelogram"
@@ -39842,6 +39850,10 @@ msgid "Clear seams of stitched edges"
 msgstr "Ausgewählte Knoten löschen"
 
 
+msgid "Snap at Midpoint"
+msgstr "In der Mitte ausrichten"
+
+
 msgid "Operation Mode"
 msgstr "Operatorknoten"
 
@@ -40796,6 +40808,10 @@ msgid "Print memory statistics to the console"
 msgstr "Speicherstatistik auf der Konsole ausgeben"
 
 
+msgid "Export Animation"
+msgstr "Animation Exportieren"
+
+
 msgid "Object Properties"
 msgstr "Objekteigenschaften"
 
@@ -41310,10 +41326,6 @@ msgstr "Aktuelles Fenster schließen"
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "Vollbild aktivieren/deaktivieren"
-
-
-msgid "Toggle the current window fullscreen"
-msgstr "Vollbildmodus für aktuelles Fenster aktivieren/deaktivieren"
 
 
 msgctxt "Operator"
@@ -42211,10 +42223,6 @@ msgid "Viscosity"
 msgstr "Zähigkeit"
 
 
-msgid "Color Management"
-msgstr "Farbmanagement"
-
-
 msgid "Indirect Lighting"
 msgstr "Indirekte Beleuchtung"
 
@@ -42490,6 +42498,10 @@ msgstr "Benutzeroberfläche"
 
 msgid "Gradient Colors"
 msgstr "Malfarbe"
+
+
+msgid "Global Transform"
+msgstr "Globales transformieren"
 
 
 msgid "Brush Presets"
@@ -43687,16 +43699,8 @@ msgid "Align Object To"
 msgstr "Objekte ausrichten an"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Wenn Objekte vom 3D-Ansichtmenü hinzugefügt werden, werden diese an der Welt oder der Ansicht ausgerichtet"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Neu hinzugefügte Objekte am Weltkoordinatensystem ausrichten"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Neu hinzugefügte Objekte an der 3D-Ansicht ausrichten"
 
 
 msgid "Sculpt/Paint Overlay Color"
@@ -43769,14 +43773,6 @@ msgstr "Veranlasst Kurvendaten dazu mit einem Objekt dupliziert zu werden"
 
 msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Bewirkt, dass Wachsstiftdaten mit dem Objekt dupliziert werden"
-
-
-msgid "Duplicate Hair"
-msgstr "Haar duplizieren"
-
-
-msgid "Causes hair data to be duplicated with the object"
-msgstr "Veranlasst Haar Daten dazu, mit einem Objekt dupliziert zu werden"
 
 
 msgid "Duplicate Light"
@@ -43861,10 +43857,6 @@ msgstr "Volumen duplizieren"
 
 msgid "Causes volume data to be duplicated with the object"
 msgstr "Veranlasst Volumendaten dazu, mit einem Objekt dupliziert zu werden"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "In Bearbeitungsmodus wechseln, wenn neue Objekte eingefügt werden"
 
 
 msgid "Global Undo"
@@ -44325,14 +44317,6 @@ msgstr "Name der aktiven Tasten-Konfiguraton"
 
 msgid "Show UI Key-Config"
 msgstr "UI Tasten-Konfiguration anzeigen"
-
-
-msgid "Anisotropic Filter"
-msgstr "Anisotropischer Filter"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Qualität der anisotropischer Filterung (Werte größer als 1.0 erlauben anisotropische Filterung)"
 
 
 msgid "2x"
@@ -44819,10 +44803,6 @@ msgid "Mini Axes Type"
 msgstr "Mini Achsentyp"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Kleines, rotierendes 3D-Koordinatensystem in der linken oberen Ecke der 3D-Ansicht zeigen"
-
-
 msgid "Simple Axis"
 msgstr "Einfache Achse"
 
@@ -44879,18 +44859,6 @@ msgid "Display Object Info"
 msgstr "Objektinformation anzeigen"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Objektnamen und Bildnummer in der 3D-Ansicht anzeigen"
-
-
-msgid "Show Playback FPS"
-msgstr "Abspiel-FPS anzeigen"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Bilder pro Sekunde, der Bildaufbaurate anzeigen, während die Animation abgespielt wird"
-
-
 msgid "Show Splash"
 msgstr "Startbildschirm zeigen"
 
@@ -44935,20 +44903,12 @@ msgid "Tooltips"
 msgstr "Werkzeugtipps"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Werkzeugtipps anzeigen (falls deaktiviert, Alt halten um Anzeige zu erzwingen)"
-
-
 msgid "Python Tooltips"
 msgstr "Python-Tooltips"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Python-Referenzen in Tooltips zeigen"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Die Namen der Ansichtenrichtung in jeder 3D-Ansicht anzeigen"
 
 
 msgid "Smooth View"
@@ -45561,6 +45521,10 @@ msgstr "Farbübertragung"
 
 msgid "Sample Count"
 msgstr "Beispielzähler"
+
+
+msgid "Show Active Pixels"
+msgstr "Aktive Pixel anzeigen"
 
 
 msgid "Object visibility for camera rays"
@@ -49011,6 +48975,10 @@ msgid "Show curves, lattices, light probes, fonts, ..."
 msgstr "Zeige Kurven, Gitter, Lichtsonden, Schriften, ..."
 
 
+msgid "Show All View Layers"
+msgstr "Alle Anzeige Ebenen anzeigen"
+
+
 msgid "Sort Alphabetically"
 msgstr "Alphabetisch sortieren"
 
@@ -49661,10 +49629,6 @@ msgstr "Name des Themas"
 
 msgid "Active Theme Area"
 msgstr "Aktives Themengebiet"
-
-
-msgid "3D View"
-msgstr "3D Ansicht"
 
 
 msgid "Colored Constraints"
@@ -50565,14 +50529,6 @@ msgstr "Tooltipp Farben"
 
 msgid "Text Cursor"
 msgstr "Text Cursor"
-
-
-msgid "Theme 3D View"
-msgstr "3D-Ansicht-Thema"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Themeneinstellungen für die 3D-Ansicht"
 
 
 msgid "Bone Pose"
@@ -53668,6 +53624,11 @@ msgstr "Leertaste"
 
 
 msgctxt "Operator"
+msgid "Load %d.%d SettingsOperator"
+msgstr "Lade %d.%d Einstellungsoperator"
+
+
+msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Speichere neue Einstellungen"
 
@@ -55622,6 +55583,11 @@ msgid "New Folder"
 msgstr "Neuer Ordner"
 
 
+msgctxt "Operator"
+msgid "Render Active Object"
+msgstr "Aktives Objekt rendern"
+
+
 msgid ".blend Files"
 msgstr ".blend Dateien"
 
@@ -57016,10 +56982,6 @@ msgstr "Pufferlimit"
 
 msgid "View Name"
 msgstr "Ansichtnamen"
-
-
-msgid "Playback FPS"
-msgstr "Wiedergabe-FPS"
 
 
 msgid "3D Viewport Axis"
@@ -58891,10 +58853,6 @@ msgstr "WS-Ebene"
 
 msgid "Could not write image: %s"
 msgstr "Bild konnte nicht geschrieben werden: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Das Bild wurde nicht geschrieben, es hat keine \"%s\" und \"%s\" Ansichten"
 
 
 msgid "MaskLayer"
@@ -61128,6 +61086,10 @@ msgid "3D Local View"
 msgstr "3D Lokale Ansicht"
 
 
+msgid "3D View"
+msgstr "3D Ansicht"
+
+
 msgid "Frame:%d "
 msgstr "Einzelbild:%d "
 
@@ -61940,6 +61902,10 @@ msgstr "Aktuell implementiert"
 
 msgid "Mixed selection"
 msgstr "Auswahl mischen"
+
+
+msgid "Current File"
+msgstr "Aktuelle Datei"
 
 
 msgid "(empty)"

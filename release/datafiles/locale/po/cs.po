@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7043,10 +7043,6 @@ msgid "Fonts"
 msgstr "Fonts"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
 
@@ -8141,6 +8137,10 @@ msgid "Build"
 msgstr "Stavět"
 
 
+msgid "Envelope"
+msgstr "Plášť"
+
+
 msgid "Line Art"
 msgstr "Kresba Tužkou"
 
@@ -8257,6 +8257,10 @@ msgid "Custom Curve"
 msgstr "Vlastní Křivka"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "Žádné skupiny vertexů"
+
+
 msgid "Hook Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -8317,10 +8321,6 @@ msgstr "Konstantní"
 
 msgid "Matrix"
 msgstr "Matice"
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "Žádné skupiny vertexů"
 
 
 msgid "Lattice Modifier"
@@ -8409,6 +8409,10 @@ msgstr "Přesunout modifikátor"
 
 msgid "The modifier affects the position of the point"
 msgstr "Modifikátor ovlivní pozici bodu"
+
+
+msgid "Keep Shape"
+msgstr "Tvar"
 
 
 msgid "Number of subdivisions"
@@ -8577,10 +8581,6 @@ msgstr "Vyhladit"
 
 msgid "B-Bone"
 msgstr "Kost"
-
-
-msgid "Envelope"
-msgstr "Plášť"
 
 
 msgid "Wire"
@@ -13070,6 +13070,10 @@ msgid "32-bit color channels"
 msgstr "32-bitové barevné kanály"
 
 
+msgid "Color Management"
+msgstr "Správa barev"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Zvolte BW pro ukládání obrazů ve stupních šedi, RGB pro ukládání červených, zelených a modrých kanálů a RGBA pro ukládání červených, zelených, modrých a alfa kanálů"
 
@@ -16034,10 +16038,6 @@ msgstr "Vytváření instancí z normálních částic"
 
 msgid "Create instances along particle paths"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
-
-
-msgid "Keep Shape"
-msgstr "Tvar"
 
 
 msgid "Don't stretch the object"
@@ -22286,6 +22286,14 @@ msgid "Export Subdivision Surface"
 msgstr "Exportovat Dělení Povrchu"
 
 
+msgid "Triangulate Faces"
+msgstr "Trojúhleníkové plošky"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Převede vybrané čtyřúhleníky na trojúhelníky"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "Exportovat glTF 2.0"
@@ -22390,14 +22398,6 @@ msgstr "Obnovit Křivku"
 
 msgid "Smooth Groups"
 msgstr "Přidat do skupiny"
-
-
-msgid "Triangulate Faces"
-msgstr "Trojúhleníkové plošky"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Převede vybrané čtyřúhleníky na trojúhelníky"
 
 
 msgid "Include UVs"
@@ -33054,10 +33054,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Přepnout na celou obrazovku"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Přepne současné okno na celou obrazovku"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Nové okno"
@@ -33907,10 +33903,6 @@ msgstr "Pomocníci"
 
 msgid "Viscosity"
 msgstr "Viskozita"
-
-
-msgid "Color Management"
-msgstr "Správa barev"
 
 
 msgid "Indirect Lighting"
@@ -35309,10 +35301,6 @@ msgid "Align Object To"
 msgstr "Zarovnat objekt k"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Při přidávání objektu z nabídky 3D Pohledu, buď, zarovnat s tímto pohledem nebo s okolím"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Přidat objekt(y) do aktivní vrstvy"
 
@@ -35371,10 +35359,6 @@ msgstr "Zdvojit povrch"
 
 msgid "Duplicate Text"
 msgstr "Zdvojit text"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Přejít do režimu úprav automaticky po přidání objektu"
 
 
 msgid "Global Undo"
@@ -35611,10 +35595,6 @@ msgstr "Pokračovat"
 
 msgid "The name of the active key configuration"
 msgstr "Poslední frame animace"
-
-
-msgid "Anisotropic Filter"
-msgstr "Anizotropní Filtr"
 
 
 msgid "Audio Device"
@@ -35913,18 +35893,6 @@ msgid "Display Object Info"
 msgstr "Zobrazit informace o objektu"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Zobrazit jméno objektu a snímku v 3D pohledu"
-
-
-msgid "Show Playback FPS"
-msgstr "Přehrávka"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Zobrazit snímky za sekundu podle obnovovací frekvence obrazovky, když je spuštěná animace"
-
-
 msgid "Show Splash"
 msgstr "Zobrazit Uvítací Okno"
 
@@ -35969,24 +35937,12 @@ msgid "Tooltips"
 msgstr "Nápověda"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Zobrazit nápovědy (při nestisknuté klávesy Alt, vynutíte zobrazení)"
-
-
 msgid "Python Tooltips"
 msgstr "Tipy pro Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Zobrazit referenci k jazyku Python v nápovědách"
-
-
-msgid "Show View Name"
-msgstr "Zobrazit jméno"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Zobrazit jméno směru pohledu v každém 3D pohledu"
 
 
 msgid "Smooth View"
@@ -36719,10 +36675,6 @@ msgstr "Určuje zůžení násladované vlny"
 
 msgid "Frame Map Old"
 msgstr "Poslední frame"
-
-
-msgid "Additional Subdiv"
-msgstr "Další Subdiv"
 
 
 msgid "Additional subdivision along the hair"
@@ -39654,10 +39606,6 @@ msgid "Active Theme Area"
 msgstr "Aktivní vrstva"
 
 
-msgid "3D View"
-msgstr "3D pohled"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Barva "
 
@@ -40340,14 +40288,6 @@ msgstr "Použít světlo pro plošky"
 
 msgid "Tooltip Colors"
 msgstr "Multivrstva"
-
-
-msgid "Theme 3D View"
-msgstr "Téma 3D pohledu"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Zobrazit nastavení vláken pro statické částice"
 
 
 msgid "Bone Pose"
@@ -44271,10 +44211,6 @@ msgid "View Name"
 msgstr "Zobrazit Název"
 
 
-msgid "Playback FPS"
-msgstr "FPS Přehrávání"
-
-
 msgid "3D Viewport Axis"
 msgstr "Osy 3D Pohledu"
 
@@ -47417,6 +47353,10 @@ msgstr "Kámen (drcený)"
 
 msgid "Timber"
 msgstr "Dřevo"
+
+
+msgid "3D View"
+msgstr "3D pohled"
 
 
 msgid "Scene has no camera"
