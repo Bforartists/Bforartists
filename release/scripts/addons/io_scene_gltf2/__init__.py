@@ -4,7 +4,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (3, 2, 15),
+    "version": (3, 2, 22),
     'blender': (3, 1, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -375,8 +375,8 @@ class ExportGLTF2_Base:
     optimize_animation_size: BoolProperty(
         name='Optimize Animation Size',
         description=(
-            "Reduces exported filesize by removing duplicate keyframes"
-            "Can cause problems with stepped animation"
+            "Reduce exported file-size by removing duplicate keyframes"
+            "(can cause problems with stepped animation)"
         ),
         default=True
     )

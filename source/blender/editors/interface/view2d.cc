@@ -5,10 +5,10 @@
  * \ingroup edinterface
  */
 
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <string.h>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -123,7 +123,7 @@ static void view2d_masks(View2D *v2d, const rcti *mask_scroll)
 
   /* mask - view frame */
   UI_view2d_mask_from_win(v2d, &v2d->mask);
-  if (mask_scroll == NULL) {
+  if (mask_scroll == nullptr) {
     mask_scroll = &v2d->mask;
   }
 
@@ -356,7 +356,7 @@ void UI_view2d_region_reinit(View2D *v2d, short type, int winx, int winy)
   v2d->winx = winx;
   v2d->winy = winy;
 
-  view2d_masks(v2d, NULL);
+  view2d_masks(v2d, nullptr);
 
   if (do_init) {
     /* Visible by default. */
@@ -820,7 +820,7 @@ static void ui_view2d_curRect_validate_resize(View2D *v2d, bool resize)
   }
 
   /* set masks */
-  view2d_masks(v2d, NULL);
+  view2d_masks(v2d, nullptr);
 }
 
 void UI_view2d_curRect_validate(View2D *v2d)
@@ -834,7 +834,7 @@ void UI_view2d_curRect_changed(const bContext *C, View2D *v2d)
 
   ARegion *region = CTX_wm_region(C);
 
-  if (region->type->on_view2d_changed != NULL) {
+  if (region->type->on_view2d_changed != nullptr) {
     region->type->on_view2d_changed(C, region);
   }
 }
@@ -1268,59 +1268,67 @@ static void grid_axis_start_and_count(
   }
 }
 
-typedef struct DotGridLevelInfo {
-  /* The factor applied to the #min_step argument. This could be easily computed in runtime,
-   * but seeing it together with the other values is helpful. */
-  float step_factor;
-  /* The normalized zoom level at which the grid level starts to fade in.
-   * At lower zoom levels, the points will not be visible and the level will be skipped. */
-  float fade_in_start_zoom;
-  /* The normalized zoom level at which the grid finishes fading in.
-   * At higher zoom levels, the points will be opaque. */
-  float fade_in_end_zoom;
-} DotGridLevelInfo;
-
-static const DotGridLevelInfo level_info[9] = {
-    {6.4f, -0.1f, 0.01f},
-    {3.2f, 0.0f, 0.025f},
-    {1.6f, 0.025f, 0.15f},
-    {0.8f, 0.05f, 0.2f},
-    {0.4f, 0.1f, 0.25f},
-    {0.2f, 0.125f, 0.3f},
-    {0.1f, 0.25f, 0.5f},
-    {0.05f, 0.7f, 0.9f},
-    {0.025f, 0.6f, 0.9f},
-};
-
 void UI_view2d_dot_grid_draw(const View2D *v2d,
                              const int grid_color_id,
                              const float min_step,
-                             const int grid_levels)
+                             const int grid_subdivisions)
 {
-  BLI_assert(grid_levels >= 0 && grid_levels < 10);
+  BLI_assert(grid_subdivisions >= 0 && grid_subdivisions < 4);
+  if (grid_subdivisions == 0) {
+    return;
+  }
+
   const float zoom_x = (float)(BLI_rcti_size_x(&v2d->mask) + 1) / BLI_rctf_size_x(&v2d->cur);
-  const float zoom_normalized = (zoom_x - v2d->minzoom) / (v2d->maxzoom - v2d->minzoom);
 
   GPUVertFormat *format = immVertexFormat();
   const uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
   const uint color_id = GPU_vertformat_attr_add(format, "color", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
   immBindBuiltinProgram(GPU_SHADER_2D_FLAT_COLOR);
-  GPU_point_size(3.0f * UI_DPI_FAC);
 
-  float color[4];
-  UI_GetThemeColor3fv(grid_color_id, color);
+  /* Scaling the dots fully with the zoom looks too busy, but a bit of size variation is nice. */
+  const float min_point_size = 2.0f * UI_DPI_FAC;
+  const float point_size_factor = 1.5f;
+  const float max_point_size = point_size_factor * min_point_size;
 
-  for (int level = 0; level < grid_levels; level++) {
-    const DotGridLevelInfo *info = &level_info[level];
-    const float step = min_step * info->step_factor * U.widget_unit;
+  /* Each consecutive grid level is five times larger than the previous. */
+  const int subdivision_scale = 5;
 
-    const float alpha_factor = (zoom_normalized - info->fade_in_start_zoom) /
-                               (info->fade_in_end_zoom - info->fade_in_start_zoom);
-    color[3] = clamp_f(BLI_easing_cubic_ease_in_out(alpha_factor, 0.0f, 1.0f, 1.0f), 0.0f, 1.0f);
-    if (color[3] == 0.0f) {
+  const float view_level = logf(min_step / zoom_x) / logf(subdivision_scale);
+  const int largest_visible_level = (int)view_level;
+
+  for (int level_offset = 0; level_offset <= grid_subdivisions; level_offset++) {
+    const int level = largest_visible_level - level_offset;
+
+    if (level < 0) {
       break;
     }
 
+    const float level_scale = powf(subdivision_scale, level);
+    const float point_size_precise = min_point_size * level_scale * zoom_x;
+    const float point_size_draw = ceilf(
+        clamp_f(point_size_precise, min_point_size, max_point_size));
+
+    /* To compensate the for the clamped point_size we adjust the alpha to make the overall
+     * brightness of the grid background more consistent. */
+    const float alpha = pow2f(point_size_precise / point_size_draw);
+
+    /* Make sure we don't draw points once the alpha gets too low. */
+    const float alpha_cutoff = 0.01f;
+    if (alpha < alpha_cutoff) {
+      break;
+    }
+    const float alpha_clamped = clamp_f((1.0f + alpha_cutoff) * alpha - alpha_cutoff, 0.0f, 1.0f);
+
+    /* If we have don't draw enough subdivision levels so they fade out naturally, we apply an
+     * additional fade to the last level to avoid pop in. */
+    const bool last_level = level_offset == grid_subdivisions;
+    const float subdivision_fade = last_level ? (1.0f - fractf(view_level)) : 1.0f;
+
+    float color[4];
+    UI_GetThemeColor3fv(grid_color_id, color);
+    color[3] = alpha_clamped * subdivision_fade;
+
+    const float step = min_step * level_scale;
     int count_x;
     float start_x;
     grid_axis_start_and_count(step, v2d->cur.xmin, v2d->cur.xmax, &start_x, &count_x);
@@ -1331,6 +1339,7 @@ void UI_view2d_dot_grid_draw(const View2D *v2d,
       continue;
     }
 
+    GPU_point_size(point_size_draw);
     immBegin(GPU_PRIM_POINTS, count_x * count_y);
 
     /* Theoretically drawing on top of lower grid levels could be avoided, but it would also
@@ -1653,7 +1662,8 @@ void UI_view2d_region_to_view(
 void UI_view2d_region_to_view_rctf(const View2D *v2d, const rctf *rect_src, rctf *rect_dst)
 {
   const float cur_size[2] = {BLI_rctf_size_x(&v2d->cur), BLI_rctf_size_y(&v2d->cur)};
-  const float mask_size[2] = {BLI_rcti_size_x(&v2d->mask), BLI_rcti_size_y(&v2d->mask)};
+  const float mask_size[2] = {(float)BLI_rcti_size_x(&v2d->mask),
+                              (float)BLI_rcti_size_y(&v2d->mask)};
 
   rect_dst->xmin = (v2d->cur.xmin +
                     (cur_size[0] * (rect_src->xmin - v2d->mask.xmin) / mask_size[0]));
@@ -1728,7 +1738,8 @@ void UI_view2d_view_to_region_fl(
 void UI_view2d_view_to_region_rcti(const View2D *v2d, const rctf *rect_src, rcti *rect_dst)
 {
   const float cur_size[2] = {BLI_rctf_size_x(&v2d->cur), BLI_rctf_size_y(&v2d->cur)};
-  const float mask_size[2] = {BLI_rcti_size_x(&v2d->mask), BLI_rcti_size_y(&v2d->mask)};
+  const float mask_size[2] = {(float)BLI_rcti_size_x(&v2d->mask),
+                              (float)BLI_rcti_size_y(&v2d->mask)};
   rctf rect_tmp;
 
   /* Step 1: express given coordinates as proportional values. */
@@ -1757,7 +1768,8 @@ void UI_view2d_view_to_region_m4(const View2D *v2d, float matrix[4][4])
 bool UI_view2d_view_to_region_rcti_clip(const View2D *v2d, const rctf *rect_src, rcti *rect_dst)
 {
   const float cur_size[2] = {BLI_rctf_size_x(&v2d->cur), BLI_rctf_size_y(&v2d->cur)};
-  const float mask_size[2] = {BLI_rcti_size_x(&v2d->mask), BLI_rcti_size_y(&v2d->mask)};
+  const float mask_size[2] = {(float)BLI_rcti_size_x(&v2d->mask),
+                              (float)BLI_rcti_size_y(&v2d->mask)};
   rctf rect_tmp;
 
   BLI_assert(rect_src->xmin <= rect_src->xmax && rect_src->ymin <= rect_src->ymax);
@@ -1796,11 +1808,11 @@ View2D *UI_view2d_fromcontext(const bContext *C)
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
-  if (area == NULL) {
-    return NULL;
+  if (area == nullptr) {
+    return nullptr;
   }
-  if (region == NULL) {
-    return NULL;
+  if (region == nullptr) {
+    return nullptr;
   }
   return &(region->v2d);
 }
@@ -1810,15 +1822,15 @@ View2D *UI_view2d_fromcontext_rwin(const bContext *C)
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
-  if (area == NULL) {
-    return NULL;
+  if (area == nullptr) {
+    return nullptr;
   }
-  if (region == NULL) {
-    return NULL;
+  if (region == nullptr) {
+    return nullptr;
   }
   if (region->regiontype != RGN_TYPE_WINDOW) {
     ARegion *region_win = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-    return region_win ? &(region_win->v2d) : NULL;
+    return region_win ? &(region_win->v2d) : nullptr;
   }
   return &(region->v2d);
 }
@@ -1988,7 +2000,7 @@ char UI_view2d_rect_in_scrollers(const ARegion *region, const View2D *v2d, const
 /** \name View2D Text Drawing Cache
  * \{ */
 
-typedef struct View2DString {
+struct View2DString {
   struct View2DString *next;
   union {
     uchar ub[4];
@@ -1999,11 +2011,11 @@ typedef struct View2DString {
 
   /* str is allocated past the end */
   char str[0];
-} View2DString;
+};
 
 /* assumes caches are used correctly, so for time being no local storage in v2d */
-static MemArena *g_v2d_strings_arena = NULL;
-static View2DString *g_v2d_strings = NULL;
+static MemArena *g_v2d_strings_arena = nullptr;
+static View2DString *g_v2d_strings = nullptr;
 
 void UI_view2d_text_cache_add(
     View2D *v2d, float x, float y, const char *str, size_t str_len, const uchar col[4])
@@ -2014,13 +2026,13 @@ void UI_view2d_text_cache_add(
 
   if (UI_view2d_view_to_region_clip(v2d, x, y, &mval[0], &mval[1])) {
     const int alloc_len = str_len + 1;
-    View2DString *v2s;
 
-    if (g_v2d_strings_arena == NULL) {
+    if (g_v2d_strings_arena == nullptr) {
       g_v2d_strings_arena = BLI_memarena_new(MEM_SIZE_OPTIMAL(1 << 14), __func__);
     }
 
-    v2s = BLI_memarena_alloc(g_v2d_strings_arena, sizeof(View2DString) + alloc_len);
+    View2DString *v2s = static_cast<View2DString *>(
+        BLI_memarena_alloc(g_v2d_strings_arena, sizeof(View2DString) + alloc_len));
 
     BLI_LINKS_PREPEND(g_v2d_strings, v2s);
 
@@ -2044,13 +2056,13 @@ void UI_view2d_text_cache_add_rectf(
 
   if (UI_view2d_view_to_region_rcti_clip(v2d, rect_view, &rect)) {
     const int alloc_len = str_len + 1;
-    View2DString *v2s;
 
-    if (g_v2d_strings_arena == NULL) {
+    if (g_v2d_strings_arena == nullptr) {
       g_v2d_strings_arena = BLI_memarena_new(MEM_SIZE_OPTIMAL(1 << 14), __func__);
     }
 
-    v2s = BLI_memarena_alloc(g_v2d_strings_arena, sizeof(View2DString) + alloc_len);
+    View2DString *v2s = static_cast<View2DString *>(
+        BLI_memarena_alloc(g_v2d_strings_arena, sizeof(View2DString) + alloc_len));
 
     BLI_LINKS_PREPEND(g_v2d_strings, v2s);
 
@@ -2107,11 +2119,11 @@ void UI_view2d_text_cache_draw(ARegion *region)
       BLF_disable(font_id, BLF_CLIPPING);
     }
   }
-  g_v2d_strings = NULL;
+  g_v2d_strings = nullptr;
 
   if (g_v2d_strings_arena) {
     BLI_memarena_free(g_v2d_strings_arena);
-    g_v2d_strings_arena = NULL;
+    g_v2d_strings_arena = nullptr;
   }
 }
 

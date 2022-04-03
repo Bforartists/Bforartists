@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11951,14 +11951,6 @@ msgid "Show Collection data-blocks"
 msgstr "Mostrar bloques de datos de colecciones"
 
 
-msgid "Hairs"
-msgstr "Pelos"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Mostrar bloques de datos de pelos"
-
-
 msgid "Show Image data-blocks"
 msgstr "Mostrar bloques de datos de imágenes"
 
@@ -12809,10 +12801,6 @@ msgstr "Tamaño de celdas"
 
 msgid "CFL"
 msgstr "CFL"
-
-
-msgid "Maximal velocity per cell (higher value results in greater timesteps)"
-msgstr "Velocidad máxima por celda (valores mayores producirán intervalos de tiempo mayores)"
 
 
 msgid "Clipping"
@@ -16009,6 +15997,10 @@ msgid "Generate dot-dash styled strokes"
 msgstr "Genera trazos discontinuos de línea y punto"
 
 
+msgid "Envelope"
+msgstr "Envolventes"
+
+
 msgid "Extend or shrink strokes"
 msgstr "Extiende o contrae trazos"
 
@@ -16449,6 +16441,14 @@ msgid "Active index in the segment list"
 msgstr "Identificador del segmento activo en la lista de segmentos"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Invertir grupo vértices"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "Limita la deformación a vértices pertenecientes a este grupo"
+
+
 msgid "Hook Modifier"
 msgstr "Modificador Gancho"
 
@@ -16555,20 +16555,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "Permite compensar la escala no uniforme de un objeto"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "Limita la deformación a vértices pertenecientes a este grupo"
-
-
 msgid "Lattice Modifier"
 msgstr "Modificador Jaula"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "Modificador para deformar trazos usando una jaula"
-
-
-msgid "Inverse VertexGroup"
-msgstr "Invertir grupo vértices"
 
 
 msgid "Lattice object to deform with"
@@ -17479,6 +17471,10 @@ msgid "The modifier affects the UV rotation factor of the point"
 msgstr "El modificador afectará al factor de rotación de la UV del punto"
 
 
+msgid "Keep Shape"
+msgstr "Mantener forma"
+
+
 msgid "Subdivision Modifier"
 msgstr "Modificador Subdividir"
 
@@ -18154,10 +18150,6 @@ msgstr "Huesos flexibles"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Muestra los huesos como cajas, mostrando las subdivisiones y B-splines"
-
-
-msgid "Envelope"
-msgstr "Envolventes"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -28491,6 +28483,10 @@ msgid "32-bit color channels"
 msgstr "Canales de color de 32 bits"
 
 
+msgid "Color Management"
+msgstr "Administración de color"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Elegir ByN para guardar imágenes en escala de gris, RVA para guardar canales rojo, verde y azul , y RVAα para guardar canales rojo, verde, azul y alfa"
 
@@ -36652,10 +36648,6 @@ msgstr "Crea instancias desde partículas normales"
 
 msgid "Create instances along particle paths"
 msgstr "Crea instancias a lo largo de la trayectoria de las partículas"
-
-
-msgid "Keep Shape"
-msgstr "Mantener forma"
 
 
 msgid "Don't stretch the object"
@@ -45690,10 +45682,6 @@ msgid "Selection to Nearest Frame"
 msgstr "Selección al fotograma más cercano"
 
 
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
-msgstr "Adherir los fotogramas clave seleccionados al fotograma (entero) más cercano (usar para corregir desplazamientos accidentales hacia sub fotogramas)"
-
-
 msgid "Selection to Nearest Second"
 msgstr "Selección al segundo más cercano"
 
@@ -50477,6 +50465,14 @@ msgid "Export the last Catmull-Rom subdivision modifier as FBX subdivision (does
 msgstr "Exporta el último modificador Subdividir superficie que use el modo Catmull-Rom como subdivisión de FBX. (No aplicará el modificador aunque la opción 'Aplicar modificadores' se encontrara activa)"
 
 
+msgid "Triangulate Faces"
+msgstr "Triangular caras"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Convierte todas las caras en triángulos"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Agregar vectores binormales y tangentes, que conjuntamente con el vector normal conforman el espacio tangencial (funciona correctamente con mallas que sólo contengan triángulos o cuadriláteros)"
 
@@ -50774,10 +50770,6 @@ msgid "Optimize Animation Size"
 msgstr "Optimizar tamaño de animación"
 
 
-msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
-msgstr "Reduce el tamaño del archivo exportado, eliminando claves duplicados. Puede causar problemas de escalonamiento de la animación"
-
-
 msgid "Export setting categories"
 msgstr "Categorías de opciones de exportación"
 
@@ -50929,14 +50921,6 @@ msgstr "Grupos de suavizado con indicadores de bits"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "Similar a los 'Grupos de suavizado', pero genera ID de grupos de suavizado en forma de indicadores de bits (puede producir un máximo de 32 grupos de suavizado distintos, usualmente muchos menos)"
-
-
-msgid "Triangulate Faces"
-msgstr "Triangular caras"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Convierte todas las caras en triángulos"
 
 
 msgid "Include UVs"
@@ -54438,6 +54422,10 @@ msgstr "Selección al valor del cursor"
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Coloca el valor del cursor como valor de los fotogramas clave seleccionados (Y/componente horizontal)"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Adherir los fotogramas clave seleccionados al fotograma (entero) más cercano (usar para corregir desplazamientos accidentales hacia sub fotogramas)"
 
 
 msgid "Flatten Handles"
@@ -76011,10 +75999,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Ventana a pantalla completa"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Permite alternar la ventana actual a pantalla completa"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Nueva ventana"
@@ -77700,10 +77684,6 @@ msgstr "Crea un panel en el contexto de Procesamiento del editor de propiedades"
 
 msgid "Freestyle SVG Export"
 msgstr "Freestyle - Exportar a SVG"
-
-
-msgid "Color Management"
-msgstr "Administración de color"
 
 
 msgid "Bloom"
@@ -80108,16 +80088,8 @@ msgid "Align Object To"
 msgstr "Alinear objeto a"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Al agregar objetos desde el menú de una vista 3D, alinearlos a esa vista o a las coordenadas globales"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Alinea los nuevos objetos al sistema de coordenadas globales"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Alinea los nuevos objetos a la dirección de la vista 3D activa"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -80216,14 +80188,6 @@ msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Los datos de lápiz de cera serán duplicados junto al objeto"
 
 
-msgid "Duplicate Hair"
-msgstr "Duplicar pelo"
-
-
-msgid "Causes hair data to be duplicated with the object"
-msgstr "Los datos de pelo serán duplicados junto al objeto"
-
-
 msgid "Duplicate Lattice"
 msgstr "Duplicar jaula"
 
@@ -80320,10 +80284,6 @@ msgid "Causes volume data to be duplicated with the object"
 msgstr "Los datos de volumen serán duplicados junto al objeto"
 
 
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Ingresar al modo Edición automáticamente luego de agregar un nuevo objeto"
-
-
 msgid "Global Undo"
 msgstr "Deshacer global"
 
@@ -80370,14 +80330,6 @@ msgstr "Permitir fotogramas negativos"
 
 msgid "Current frame number can be manually set to a negative value"
 msgstr "El número del fotograma actual puede ser manualmente definido a un valor negativo"
-
-
-msgid "Auto Close"
-msgstr "Cerrado automático"
-
-
-msgid "Auto close relevant characters inside the text editor"
-msgstr "Cierra automáticamente los caracteres relevantes dentro del editor de texto"
 
 
 msgid "Use Visual keying automatically for constrained objects"
@@ -81128,14 +81080,6 @@ msgid "Show UI Key-Config"
 msgstr "Mostrar la config teclas de la interfaz"
 
 
-msgid "Anisotropic Filter"
-msgstr "Filtro anisótropo"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "La calidad del filtro anisótropo (valores mayores de 1.0 habilitan el filtrado anisótropo)"
-
-
 msgid "2x"
 msgstr "x2"
 
@@ -81528,14 +81472,6 @@ msgstr ""
 "Este valor está basado en las opciones de PPP del sistema operativo y en la escala de visualización de la interfaz de Blender"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "Estructura suavizada en Modo edición"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "Habilita el suavizado de bordes de estructuras en Modo edición, reduciendo defectos de imagen, requiere reiniciar"
-
-
 msgid "GPU Subdivision"
 msgstr "Subdivisión por GPU"
 
@@ -81558,14 +81494,6 @@ msgstr "Superponer regiones"
 
 msgid "Display tool/property regions over the main region"
 msgstr "Mostrar regiones de herramientas y propiedades superpuestas a la región principal"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Usar profundidad OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Usa el buffer de profundidad para seleccionar en la vista 3D (sin esto es posible que el elemento de más adelante no sea el primero en ser seleccionado)"
 
 
 msgid "Use Disk Cache"
@@ -81852,10 +81780,6 @@ msgid "Mini Axes Type"
 msgstr "Tipo de mini ejes"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Muestra pequeños ejes 3D rotatorios en la esquina superior derecha de la vista 3D"
-
-
 msgid "Simple Axis"
 msgstr "Ejes simples"
 
@@ -81992,18 +81916,6 @@ msgid "Display Object Info"
 msgstr "Mostrar información de objeto"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Mostrar nombre de objeto y número de fotograma en la vista 3D"
-
-
-msgid "Show Playback FPS"
-msgstr "Mostrar FPS de reproducción"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Muestra la frecuencia de actualización de la pantalla, en fotogramas por segundo, mientras se reproduce la animación"
-
-
 msgid "Show Splash"
 msgstr "Mostrar bienvenida"
 
@@ -82048,24 +81960,12 @@ msgid "Tooltips"
 msgstr "Descripciones"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Mostrar descripciones de herramientas (al estar desactivadas, presionar Alt para forzar su visualización)"
-
-
 msgid "Python Tooltips"
 msgstr "Descripciones Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Mostrar comandos Python en las descripciones"
-
-
-msgid "Show View Name"
-msgstr "Mostrar nombre de la vista"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Muestra el nombre de la dirección de la vista en cada vista 3D"
 
 
 msgid "Smooth View"
@@ -84666,10 +84566,6 @@ msgstr "Mapeo fotogramas viejo"
 
 msgid "Old mapping value in frames"
 msgstr "Duración original (en porcentaje)"
-
-
-msgid "Additional Subdiv"
-msgstr "Subdivisión adicional"
 
 
 msgid "Additional subdivision along the hair"
@@ -90237,14 +90133,6 @@ msgid "Show only data-blocks of one type"
 msgstr "Mostrar sólo bloques de datos de un único tipo"
 
 
-msgid "Show Library Overrides"
-msgstr "Mostrar redefiniciones de biblioteca"
-
-
-msgid "For libraries with overrides created, show the overridden values"
-msgstr "Muestra los valores redefinidos, para bibliotecas que contengan valores que hayan sido redefinidos"
-
-
 msgid "Show System Overrides"
 msgstr "Mostrar redefiniciones del sistema"
 
@@ -92097,10 +91985,6 @@ msgid "Active Theme Area"
 msgstr "Área del tema activo"
 
 
-msgid "3D View"
-msgstr "Vista 3D"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Conjuntos de colores de huesos"
 
@@ -93527,14 +93411,6 @@ msgstr "Cursor de texto"
 
 msgid "Color of the interface widgets text insertion cursor (caret)"
 msgstr "Color del cursor de ingreso de texto en los controles de la interfaz"
-
-
-msgid "Theme 3D View"
-msgstr "Vista 3D"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Opciones del tema para la vista 3D"
 
 
 msgid "Bone Locked Weight"
@@ -98091,10 +97967,6 @@ msgstr "Requiere una GPU NVIDIA con capacidades de cálculo 5.0"
 
 msgid "and NVIDIA driver version 470 or newer"
 msgstr "y controladores NVIDIA versión 470 o más nuevo"
-
-
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "Requiere una GPU discreta de AMD con arquitectura RDNA"
 
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
@@ -103657,10 +103529,6 @@ msgid "View Name"
 msgstr "Nombre de vista"
 
 
-msgid "Playback FPS"
-msgstr "FPS de reproducción"
-
-
 msgid "3D Viewport Axis"
 msgstr "Ejes de vista 3D"
 
@@ -106136,10 +106004,6 @@ msgstr "No se guardó, error inesperado al guardar la imagen estéreoscópica"
 
 msgid "Could not write image: %s"
 msgstr "No fue posible guardar la imagen: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "No se guardó, la imagen no contiene vistas \"%s\" y \"%s\""
 
 
 msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker"
@@ -109968,10 +109832,6 @@ msgid "Objects do not have the same number of vertices"
 msgstr "Los objetos no tienen la misma cantidad de vértices"
 
 
-msgid "Not valid subdivisions found to rebuild a lower level"
-msgstr "No se encontraron subdivisiones válidas para reconstruir un nivel inferior"
-
-
 msgid "Not valid subdivisions found to rebuild lower levels"
 msgstr "No se encontraron subdivisiones válidas para reconstruir niveles inferiores"
 
@@ -110574,6 +110434,10 @@ msgstr "El entorno de cuerpos rígidos no contiene datos dinámicos asociados qu
 
 msgid "3D Local View"
 msgstr "Vista local 3D"
+
+
+msgid "3D View"
+msgstr "Vista 3D"
 
 
 msgid "Frame:%d "

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -1377,10 +1377,6 @@ msgstr "2D"
 
 msgid "Fonts"
 msgstr "Lettertypen"
-
-
-msgid "Hairs"
-msgstr "Haren"
 
 
 msgid "Particles Settings"
@@ -6445,10 +6441,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Volledig Scherm aan/uit"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Schakel Fullscreen in/uit"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Nieuw Scherm"
@@ -6717,10 +6709,6 @@ msgstr "Dupliceer Actie"
 
 msgid "Duplicate Armature"
 msgstr "Dupliceer Skellet"
-
-
-msgid "Duplicate Hair"
-msgstr "Dupliceer Haar"
 
 
 msgid "Duplicate Light"

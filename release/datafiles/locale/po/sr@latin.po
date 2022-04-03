@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5073,6 +5073,10 @@ msgid "Build"
 msgstr "Napravi"
 
 
+msgid "Envelope"
+msgstr "Koverat"
+
+
 msgid "Mirror"
 msgstr "Ogledalo"
 
@@ -5246,6 +5250,10 @@ msgid "Sharp Threshold"
 msgstr "Prag oštrine"
 
 
+msgid "Keep Shape"
+msgstr "Zadrži oblik"
+
+
 msgid "Subdivision Type"
 msgstr "Vrsta deljenja"
 
@@ -5360,10 +5368,6 @@ msgstr "B-kost"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Prikazuje kosti kao kocke, prikazujući podele i B-krive"
-
-
-msgid "Envelope"
-msgstr "Koverat"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -8648,6 +8652,10 @@ msgid "Bit depth per channel"
 msgstr "Bitska dubina po kanalu"
 
 
+msgid "Color Management"
+msgstr "Upravljanje bojama"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Izaberite BW za čuvanje crno-bele slike, RGB za slike u boji i RGBA za slike u boji sa providnošću (alfa kanalom)"
 
@@ -10417,10 +10425,6 @@ msgstr "Nasumična pozicija duž putanje"
 
 msgid "Show instances when particles are dead"
 msgstr "Visina Fh područja"
-
-
-msgid "Keep Shape"
-msgstr "Zadrži oblik"
 
 
 msgid "Don't stretch the object"
@@ -14419,6 +14423,14 @@ msgid "Use Metadata"
 msgstr "Koristi metapodatke"
 
 
+msgid "Triangulate Faces"
+msgstr "Trouglaste stranice"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Pretvroi sve stranice u trouglove"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "Izvoz OBJ"
@@ -14446,14 +14458,6 @@ msgstr "Upisuj normale"
 
 msgid "Smooth Groups"
 msgstr "Grupe umekšanja"
-
-
-msgid "Triangulate Faces"
-msgstr "Trouglaste stranice"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Pretvroi sve stranice u trouglove"
 
 
 msgid "Include UVs"
@@ -20986,10 +20990,6 @@ msgid "UV Maps"
 msgstr "UV Mape"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Prikazuje tekući prozor preko celog ekrana"
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Novi svet"
@@ -21320,10 +21320,6 @@ msgstr "Dinamičko"
 
 msgid "Self Collision"
 msgstr "Samoodbijanje"
-
-
-msgid "Color Management"
-msgstr "Upravljanje bojama"
 
 
 msgid "Indirect Lighting"
@@ -22190,10 +22186,6 @@ msgid "Walk Navigation"
 msgstr "Navigacija šetnje"
 
 
-msgid "Anisotropic Filter"
-msgstr "Anizotropski filter"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -22412,10 +22404,6 @@ msgstr "Jezik prevoda"
 
 msgid "Display Object Info"
 msgstr "Prikaži podatke o objektu"
-
-
-msgid "Display objects name and frame number in 3D view"
-msgstr "Prikazuje ime objekta i broj kadra u 3D pogledu"
 
 
 msgid "Show Splash"
@@ -24184,10 +24172,6 @@ msgid "Name of the theme"
 msgstr "Naziv teme"
 
 
-msgid "3D View"
-msgstr "3D pogled"
-
-
 msgid "Color used for active bones"
 msgstr "Boja aktivnih kostiju"
 
@@ -24566,14 +24550,6 @@ msgstr "Boje stavke menija"
 
 msgid "Tooltip Colors"
 msgstr "Boje saveta"
-
-
-msgid "Theme 3D View"
-msgstr "Tema 3D pogleda"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Podešavanje teme 3D pogleda"
 
 
 msgid "Bone Pose"
@@ -26197,10 +26173,6 @@ msgid "View Name"
 msgstr "Naziv pogleda"
 
 
-msgid "Playback FPS"
-msgstr "Učestalost kadrova FPS"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Obrnuti smer približavanja točkićem"
 
@@ -27707,6 +27679,10 @@ msgstr "Drvo"
 
 msgid "3D Local View"
 msgstr "3D lokalni pogled"
+
+
+msgid "3D View"
+msgstr "3D pogled"
 
 
 msgid "Frame:%d "
