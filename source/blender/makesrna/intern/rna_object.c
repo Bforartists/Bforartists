@@ -214,12 +214,6 @@ static EnumPropertyItem instance_items_nogroup[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
-static EnumPropertyItem instance_items_pointcloud[] = {
-    {0, "NONE", 0, "None", ""},
-    {OB_DUPLIVERTS, "POINTS", 0, "Points", "Instantiate child objects on all points"},
-    {0, NULL, 0, NULL, NULL},
-};
-
 static EnumPropertyItem instance_items_empty[] = {
     {0, "NONE", 0, "None", ""},
     INSTANCE_ITEM_COLLECTION,
@@ -666,7 +660,7 @@ static void rna_Object_parent_set(PointerRNA *ptr,
   }
 }
 
-static bool rna_Object_parent_override_apply(Main *UNUSED(bmain),
+static bool rna_Object_parent_override_apply(Main *bmain,
                                              PointerRNA *ptr_dst,
                                              PointerRNA *ptr_src,
                                              PointerRNA *ptr_storage,
@@ -703,6 +697,7 @@ static bool rna_Object_parent_override_apply(Main *UNUSED(bmain),
   else {
     ob->parent = parent_src;
   }
+  RNA_property_update_main(bmain, NULL, ptr_dst, prop_dst);
   return true;
 }
 
@@ -773,9 +768,6 @@ static const EnumPropertyItem *rna_Object_instance_type_itemf(bContext *UNUSED(C
 
   if (ob->type == OB_EMPTY) {
     item = instance_items_empty;
-  }
-  else if (ob->type == OB_POINTCLOUD) {
-    item = instance_items_pointcloud;
   }
   else if (ob->type == OB_FONT) {
     item = instance_items_font;
@@ -1690,11 +1682,11 @@ static bConstraint *rna_Object_constraints_copy(Object *object, Main *bmain, Poi
   return new_con;
 }
 
-bool rna_Object_constraints_override_apply(Main *UNUSED(bmain),
+bool rna_Object_constraints_override_apply(Main *bmain,
                                            PointerRNA *ptr_dst,
                                            PointerRNA *ptr_src,
                                            PointerRNA *UNUSED(ptr_storage),
-                                           PropertyRNA *UNUSED(prop_dst),
+                                           PropertyRNA *prop_dst,
                                            PropertyRNA *UNUSED(prop_src),
                                            PropertyRNA *UNUSED(prop_storage),
                                            const int UNUSED(len_dst),
@@ -1739,6 +1731,7 @@ bool rna_Object_constraints_override_apply(Main *UNUSED(bmain),
   BKE_constraint_unique_name(con_dst, &ob_dst->constraints);
 
   //  printf("%s: We inserted a constraint...\n", __func__);
+  RNA_property_update_main(bmain, NULL, ptr_dst, prop_dst);
   return true;
 }
 
@@ -1809,7 +1802,7 @@ bool rna_Object_modifiers_override_apply(Main *bmain,
                                          PointerRNA *ptr_dst,
                                          PointerRNA *ptr_src,
                                          PointerRNA *UNUSED(ptr_storage),
-                                         PropertyRNA *UNUSED(prop_dst),
+                                         PropertyRNA *prop_dst,
                                          PropertyRNA *UNUSED(prop_src),
                                          PropertyRNA *UNUSED(prop_storage),
                                          const int UNUSED(len_dst),
@@ -1870,6 +1863,7 @@ bool rna_Object_modifiers_override_apply(Main *bmain,
   BLI_insertlinkafter(&ob_dst->modifiers, mod_anchor, mod_dst);
 
   //  printf("%s: We inserted a modifier '%s'...\n", __func__, mod_dst->name);
+  RNA_property_update_main(bmain, NULL, ptr_dst, prop_dst);
   return true;
 }
 
@@ -1906,7 +1900,7 @@ bool rna_Object_greasepencil_modifiers_override_apply(Main *bmain,
                                                       PointerRNA *ptr_dst,
                                                       PointerRNA *ptr_src,
                                                       PointerRNA *UNUSED(ptr_storage),
-                                                      PropertyRNA *UNUSED(prop_dst),
+                                                      PropertyRNA *prop_dst,
                                                       PropertyRNA *UNUSED(prop_src),
                                                       PropertyRNA *UNUSED(prop_storage),
                                                       const int UNUSED(len_dst),
@@ -1955,6 +1949,7 @@ bool rna_Object_greasepencil_modifiers_override_apply(Main *bmain,
   BLI_insertlinkafter(&ob_dst->greasepencil_modifiers, mod_anchor, mod_dst);
 
   //  printf("%s: We inserted a gpencil modifier '%s'...\n", __func__, mod_dst->name);
+  RNA_property_update_main(bmain, NULL, ptr_dst, prop_dst);
   return true;
 }
 
@@ -1990,7 +1985,7 @@ static void rna_Object_shaderfx_clear(Object *object, bContext *C)
 static void rna_Object_boundbox_get(PointerRNA *ptr, float *values)
 {
   Object *ob = (Object *)ptr->owner_id;
-  BoundBox *bb = BKE_object_boundbox_get(ob);
+  const BoundBox *bb = BKE_object_boundbox_get(ob);
   if (bb) {
     memcpy(values, bb->vec, sizeof(bb->vec));
   }
@@ -2309,6 +2304,21 @@ static int rna_Object_mesh_symmetry_yz_editable(PointerRNA *ptr, const char **UN
   }
 
   return PROP_EDITABLE;
+}
+
+void rna_Object_lightgroup_get(PointerRNA *ptr, char *value)
+{
+  BKE_lightgroup_membership_get(((Object *)ptr->owner_id)->lightgroup, value);
+}
+
+int rna_Object_lightgroup_length(PointerRNA *ptr)
+{
+  return BKE_lightgroup_membership_length(((Object *)ptr->owner_id)->lightgroup);
+}
+
+void rna_Object_lightgroup_set(PointerRNA *ptr, const char *value)
+{
+  BKE_lightgroup_membership_set(&((Object *)ptr->owner_id)->lightgroup, value);
 }
 
 #else
@@ -3796,6 +3806,15 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_editable_func(prop, "rna_Object_mesh_symmetry_yz_editable");
   RNA_def_property_ui_text(prop, "Z", "Enable mesh symmetry in the Z axis");
+
+  /* Lightgroup Membership */
+  prop = RNA_def_property(srna, "lightgroup", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_funcs(prop,
+                                "rna_Object_lightgroup_get",
+                                "rna_Object_lightgroup_length",
+                                "rna_Object_lightgroup_set");
+  RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Lightgroup", "Lightgroup that the object belongs to");
 
   RNA_define_lib_overridable(false);
 

@@ -955,7 +955,7 @@
         matte_node="#404040"
         distor_node="#404040"
         noodle_curving="5"
-        grid_levels="7"
+        grid_levels="3"
         dash_alpha="0.5"
         input_node="#404040"
         output_node="#404040"

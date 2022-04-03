@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -13479,6 +13479,10 @@ msgid "Create duplication of strokes"
 msgstr "스트로크의 복제를 생성"
 
 
+msgid "Envelope"
+msgstr "엔벨로프"
+
+
 msgid "Mirror"
 msgstr "미러"
 
@@ -13839,6 +13843,14 @@ msgid "Color Value"
 msgstr "컬러 값"
 
 
+msgid "Inverse VertexGroup"
+msgstr "반전된 버택스그룹"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "변형 변조에 대한 버텍스 그룹 이름"
+
+
 msgid "Hook Modifier"
 msgstr "후크 모디파이어"
 
@@ -13945,20 +13957,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "불균일 오브젝트 축적에 대해 보완"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "변형 변조에 대한 버텍스 그룹 이름"
-
-
 msgid "Lattice Modifier"
 msgstr "래티스 모디파이어"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "모디파이어를 변형하기 위해 레티스를 사용하여 스트로크를 바꿉니다"
-
-
-msgid "Inverse VertexGroup"
-msgstr "반전된 버택스그룹"
 
 
 msgid "Lattice object to deform with"
@@ -14223,6 +14227,10 @@ msgstr "모디파이어는 포인트의 두께에 영향을 줍니다"
 
 msgid "The modifier affects the UV rotation factor of the point"
 msgstr "모디파이어는 포인트의 UV 회전 계수에 영향을 줍니다"
+
+
+msgid "Keep Shape"
+msgstr "셰이프를 유지"
 
 
 msgid "Subdivision Modifier"
@@ -14632,10 +14640,6 @@ msgstr "B-본"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "박스로 본을 표시, 표시 섭디비젼 및 B-스플라인"
-
-
-msgid "Envelope"
-msgstr "엔벨로프"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -23225,6 +23229,10 @@ msgid "Bit depth per channel"
 msgstr "채널 당 비트 깊이"
 
 
+msgid "Color Management"
+msgstr "컬러 매니지먼트"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "그레이스케일 이미지를 저장하기 위해 BW를 선택, 레드, 그린, 블루 체널을 저장할 때 RGB를 선택, 레드, 그린, 블루, 알파 체널을 저장할 겨우 RGBA를 선택"
 
@@ -30181,10 +30189,6 @@ msgstr "노멀 파티클에서 인스턴스를 생성"
 
 msgid "Create instances along particle paths"
 msgstr "파티클 경로를 따라 인스턴스를 생성"
-
-
-msgid "Keep Shape"
-msgstr "셰이프를 유지"
 
 
 msgid "Don't stretch the object"
@@ -40988,6 +40992,14 @@ msgid "Export Subdivision Surface"
 msgstr "섭디비젼 표면을 내보내기"
 
 
+msgid "Triangulate Faces"
+msgstr "페이스를 삼각분할"
+
+
+msgid "Convert all faces to triangles"
+msgstr "모든 페이스를 삼각형으로 변환"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "바이노멀 및 노멀 벡터를 추가, 노멀과 함께 노멀 공간을 형성합니다 (삼각형/사각형의 메쉬에서 만 올바르게 작동합니다)"
 
@@ -41316,14 +41328,6 @@ msgstr "비트플래그 스무스 그룹"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "'스무스 그룹'과 동일하지만, 비트 플래그로 매끈한 그룹 ID를 생성 (대부분 32 가지 스무스 그룹으로 생산, 일반적으로 훨씬 적은)"
-
-
-msgid "Triangulate Faces"
-msgstr "페이스를 삼각분할"
-
-
-msgid "Convert all faces to triangles"
-msgstr "모든 페이스를 삼각형으로 변환"
 
 
 msgid "Include UVs"
@@ -60976,10 +60980,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "창 전체 화면을 토글"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "현재 창 전체 화면을 토글"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "새로운 창"
@@ -62268,10 +62268,6 @@ msgstr "속성 에디터의 렌더 컨텍스트에 패널을 생성합니다"
 
 msgid "Freestyle SVG Export"
 msgstr "프리스타일 SVG 내보내기"
-
-
-msgid "Color Management"
-msgstr "컬러 매니지먼트"
 
 
 msgid "Bloom"
@@ -64317,16 +64313,8 @@ msgid "Align Object To"
 msgstr "다음으로 오브젝트를 정렬"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "3D뷰 메뉴에서 오브젝트를 추가할 때 해당 뷰 또는 월드를 정렬"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "월드 좌표 시스템에 새로 추가된 오브젝트를 정렬"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "새로 추가된 오브젝트를 활성 3D 뷰 방향에 맞춥니다"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -64467,10 +64455,6 @@ msgstr "텍스트를 복제"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "텍스트 데이터가 오브젝트와 함께 복제되도록 합니다"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "새로운 오브젝트를 추가 한 이후에 자동으로 에디트 모드 들어가기"
 
 
 msgid "Global Undo"
@@ -65077,14 +65061,6 @@ msgid "Show UI Key-Config"
 msgstr "UI 키-구성을 표시"
 
 
-msgid "Anisotropic Filter"
-msgstr "비등방성 필터"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "비등방성 필터링의 품질 (1.0보다 큰 값은 이방성 필터링을 가능하게 함)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -65337,14 +65313,6 @@ msgid "UI Scale"
 msgstr "UI 축적"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "에디트 모드의 스무스 와이어"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "에디트 모드 에지 스무딩 사용, 앨리어싱 감소, 재시작 필요"
-
-
 msgid "Overlay Smooth Wires"
 msgstr "부드러운 와이어 오버레이"
 
@@ -65355,14 +65323,6 @@ msgstr "앨리어싱을 줄여 오버레이 스무스 와이어를 사용"
 
 msgid "Region Overlap"
 msgstr "지역 겹침"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "OpenGL 깊이 선택하기"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "3D 뷰 선택시 대상 선택을 위해 깊이 버퍼를 사용합니다 (이 옵션을 사용하지 않으면 가장 앞쪽에있는 오브젝트가 먼저 선택되지 않을 수 있습니다)"
 
 
 msgid "Edit Studio Light"
@@ -65617,10 +65577,6 @@ msgid "Mini Axes Type"
 msgstr "미니 축 유형"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "3D뷰의 오른쪽 상단 구석에 작은 회전 3D 축을 표시"
-
-
 msgid "Simple Axis"
 msgstr "심플 축"
 
@@ -65753,18 +65709,6 @@ msgid "Display Object Info"
 msgstr "오브젝트 정보를 표시합니다"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "3D 뷰에서 오브젝트 이름과 프레임 번호를 표시합니다"
-
-
-msgid "Show Playback FPS"
-msgstr "재생 FPS를 표시"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "무비이 재생될 때, 화면 재생 비율로 초 당 프레임을 표시"
-
-
 msgid "Show Splash"
 msgstr "스플래쉬를 표시"
 
@@ -65777,24 +65721,12 @@ msgid "Tooltips"
 msgstr "도움말"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "툴팁 표시합니다 (Alt 키를 눌러 강제 표시)"
-
-
 msgid "Python Tooltips"
 msgstr "Python 툴팁"
 
 
 msgid "Show Python references in tooltips"
 msgstr "툴팁에 Python 참조를 표시합니다"
-
-
-msgid "Show View Name"
-msgstr "뷰 이름을 표시"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "각 3D 뷰에서 뷰 방향의 이름 표시"
 
 
 msgid "Smooth View"
@@ -67811,10 +67743,6 @@ msgstr "오래된 프레임 맵"
 
 msgid "Old mapping value in frames"
 msgstr "프레임에서 오래된 맵핑 값"
-
-
-msgid "Additional Subdiv"
-msgstr "추가적인 섭디비젼"
 
 
 msgid "Additional subdivision along the hair"
@@ -74180,10 +74108,6 @@ msgid "Active Theme Area"
 msgstr "활성 테마 영역"
 
 
-msgid "3D View"
-msgstr "3D 뷰"
-
-
 msgid "Theme Bone Color Set"
 msgstr "테마 본 컬러 설정"
 
@@ -75238,14 +75162,6 @@ msgstr "텍스트 커서"
 
 msgid "Color of the interface widgets text insertion cursor (caret)"
 msgstr "인터페이스 위젯 텍스트 삽입 커서 (캐럿)의 컬러"
-
-
-msgid "Theme 3D View"
-msgstr "테마 3D 뷰"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "3D 뷰에 대한 테마 설정"
 
 
 msgid "Bone Pose"
@@ -81987,10 +81903,6 @@ msgid "View Name"
 msgstr "뷰 이름"
 
 
-msgid "Playback FPS"
-msgstr "재생 FPS"
-
-
 msgid "3D Viewport Axis"
 msgstr "3D 뷰포트 축"
 
@@ -83867,10 +83779,6 @@ msgstr "작성하지 않음, 스테레오 이미지를 저장할 때 예기치 �
 
 msgid "Could not write image: %s"
 msgstr "이미지를 쓸 수 없음: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "작성하지 않음, 이미지에 \"%s\" 및 \"%s\" 뷰가 없습니다"
 
 
 msgid "Error writing render result, %s (see console)"
@@ -87238,6 +87146,10 @@ msgstr "리지드 바디 월드에 내보낼 피직스 데이터가 없음"
 
 msgid "3D Local View"
 msgstr "3D 로컬 뷰"
+
+
+msgid "3D View"
+msgstr "3D 뷰"
 
 
 msgid "Frame:%d "

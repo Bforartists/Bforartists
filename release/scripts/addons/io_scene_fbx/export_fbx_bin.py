@@ -2266,12 +2266,14 @@ def fbx_data_from_scene(scene, depsgraph, settings):
 
         is_ob_material = any(ms.link == 'OBJECT' for ms in ob.material_slots)
 
-        if settings.use_mesh_modifiers or ob.type in BLENDER_OTHER_OBJECT_TYPES or is_ob_material:
+        if settings.use_mesh_modifiers or settings.use_triangles or ob.type in BLENDER_OTHER_OBJECT_TYPES or is_ob_material:
             # We cannot use default mesh in that case, or material would not be the right ones...
             use_org_data = not (is_ob_material or ob.type in BLENDER_OTHER_OBJECT_TYPES)
             backup_pose_positions = []
             tmp_mods = []
             if use_org_data and ob.type == 'MESH':
+                if settings.use_triangles:
+                    use_org_data = False
                 # No need to create a new mesh in this case, if no modifier is active!
                 last_subsurf = None
                 for mod in ob.modifiers:
@@ -2316,6 +2318,14 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                 # free them afterwards. Not ideal but ensures correct ownerwhip.
                 tmp_me = bpy.data.meshes.new_from_object(
                             ob_to_convert, preserve_all_data_layers=True, depsgraph=depsgraph)
+                # Triangulate the mesh if requested
+                if settings.use_triangles:
+                    import bmesh
+                    bm = bmesh.new()
+                    bm.from_mesh(tmp_me)
+                    bmesh.ops.triangulate(bm, faces=bm.faces)
+                    bm.to_mesh(tmp_me)
+                    bm.free()
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Change armatures back.
             for armature, pose_position in backup_pose_positions:
@@ -3008,6 +3018,7 @@ def save_single(operator, scene, depsgraph, filepath="",
                 path_mode='AUTO',
                 use_mesh_edges=True,
                 use_tspace=True,
+                use_triangles=False,
                 embed_textures=False,
                 use_custom_props=False,
                 bake_space_transform=False,
@@ -3074,7 +3085,7 @@ def save_single(operator, scene, depsgraph, filepath="",
         operator.report, (axis_up, axis_forward), global_matrix, global_scale, apply_unit_scale, unit_scale,
         bake_space_transform, global_matrix_inv, global_matrix_inv_transposed,
         context_objects, object_types, use_mesh_modifiers, use_mesh_modifiers_render,
-        mesh_smooth_type, use_subsurf, use_mesh_edges, use_tspace,
+        mesh_smooth_type, use_subsurf, use_mesh_edges, use_tspace, use_triangles,
         armature_nodetype, use_armature_deform_only,
         add_leaf_bones, bone_correction_matrix, bone_correction_matrix_inv,
         bake_anim, bake_anim_use_all_bones, bake_anim_use_nla_strips, bake_anim_use_all_actions,
@@ -3148,6 +3159,7 @@ def defaults_unity3d():
         "mesh_smooth_type": 'FACE',
         "use_subsurf": False,
         "use_tspace": False,  # XXX Why? Unity is expected to support tspace import...
+        "use_triangles": False,
 
         "use_armature_deform_only": True,
 

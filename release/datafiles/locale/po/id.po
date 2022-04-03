@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -7446,14 +7446,6 @@ msgid "Show Collection data-blocks"
 msgstr "Tampilkan Koleksi data-blok"
 
 
-msgid "Hairs"
-msgstr "Rambut"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Tampilkan/sembunyikan Rambut data-blok"
-
-
 msgid "Show Image data-blocks"
 msgstr "Tampilkan Gambar data-blok"
 
@@ -8874,6 +8866,10 @@ msgid "Create array of duplicate instances"
 msgstr "Buat larik instansi duplikat"
 
 
+msgid "Envelope"
+msgstr "Amplop"
+
+
 msgid "Mirror"
 msgstr "Cermin"
 
@@ -9221,10 +9217,6 @@ msgstr "Batang"
 
 msgid "B-Bone"
 msgstr "Tulang"
-
-
-msgid "Envelope"
-msgstr "Amplop"
 
 
 msgid "Wire"
@@ -10765,6 +10757,10 @@ msgstr "Saluran warna 16-bit"
 
 msgid "32-bit color channels"
 msgstr "Saluran warna 32-bit"
+
+
+msgid "Color Management"
+msgstr "Manajemen Warna"
 
 
 msgid "Codec"
@@ -20442,10 +20438,6 @@ msgid "Dynamics"
 msgstr "Dinamika"
 
 
-msgid "Color Management"
-msgstr "Manajemen Warna"
-
-
 msgid "Audio"
 msgstr "Audio"
 
@@ -20703,10 +20695,6 @@ msgstr "Duplikasi PensilG"
 
 msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Menyebabkan data pensil grease diduplikasi dengan objek"
-
-
-msgid "Duplicate Hair"
-msgstr "Duplikasi Rambut"
 
 
 msgid "Duplicate Light"
@@ -21705,10 +21693,6 @@ msgstr "Pengaturan styling dan warna antarmuka pengguna"
 
 msgid "Clip Editor"
 msgstr "Penyunting Grafik"
-
-
-msgid "3D View"
-msgstr "Tampilan 3D"
 
 
 msgid "Theme Clip Editor"
@@ -26486,6 +26470,10 @@ msgstr "Batu"
 
 msgid "Stone (Crushed)"
 msgstr "Batu (Hancur)"
+
+
+msgid "3D View"
+msgstr "Tampilan 3D"
 
 
 msgid "Frame:%d "
