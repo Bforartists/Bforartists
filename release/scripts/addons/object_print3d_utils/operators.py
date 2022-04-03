@@ -781,9 +781,9 @@ class MESH_OT_print3d_align_to_xy(Operator):
             for name in skip_invalid:
                 print(f"Align to XY: Skipping object {name}. No faces selected.")
             if len(skip_invalid) == 1:
-                self.report({'WARNING'}, f"Skipping object {skip_invalid[0]}. No faces selected.")
+                self.report({'WARNING'}, "Skipping object. No faces selected" % skip_invalid[0])
             else:
-                self.report({'WARNING'}, f"Skipping some objects. No faces selected. See terminal.")
+                self.report({'WARNING'}, "Skipping some objects. No faces selected. See terminal")
         return {'FINISHED'}
 
     def invoke(self, context, event):

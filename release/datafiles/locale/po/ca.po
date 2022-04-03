@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3856,6 +3856,10 @@ msgid "Time Offset"
 msgstr "Joc"
 
 
+msgid "Envelope"
+msgstr "Afegir Tira"
+
+
 msgid "Mirror"
 msgstr "Seleccionar fila"
 
@@ -3932,6 +3936,10 @@ msgid "Custom Curve"
 msgstr "Desparentar"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "Pintura Vectorial"
+
+
 msgid "Hook Modifier"
 msgstr "Esborrar tot"
 
@@ -3942,10 +3950,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Matrix"
 msgstr "Càmera"
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "Pintura Vectorial"
 
 
 msgid "Lattice Modifier"
@@ -4014,6 +4018,10 @@ msgstr "Unir"
 
 msgid "Smooth Modifier"
 msgstr "Seleccionar fila"
+
+
+msgid "Keep Shape"
+msgstr "Moure a Capa"
 
 
 msgid "Subdivision Type"
@@ -4114,10 +4122,6 @@ msgstr "&gt;Cercle Nurbs"
 
 msgid "B-Bone"
 msgstr "Corba de Bezier"
-
-
-msgid "Envelope"
-msgstr "Afegir Tira"
 
 
 msgid "Edit Bones"
@@ -6882,6 +6886,10 @@ msgid "Color Depth"
 msgstr "Desparentar"
 
 
+msgid "Color Management"
+msgstr "Desparentar"
+
+
 msgid "Z Buffer"
 msgstr "Buffer Z"
 
@@ -8234,10 +8242,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Create instances from normal particles"
 msgstr "Seleccionar connectats"
-
-
-msgid "Keep Shape"
-msgstr "Moure a Capa"
 
 
 msgid "Don't stretch the object"
@@ -12601,6 +12605,14 @@ msgid "Custom Properties"
 msgstr "Image Displist"
 
 
+msgid "Triangulate Faces"
+msgstr "Comprimir Dades"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Amagar Seleccionats"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "Seleccionar fila"
@@ -12628,14 +12640,6 @@ msgstr "Joc"
 
 msgid "Smooth Groups"
 msgstr "Afegir Tira"
-
-
-msgid "Triangulate Faces"
-msgstr "Comprimir Dades"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Amagar Seleccionats"
 
 
 msgid "Include UVs"
@@ -19729,10 +19733,6 @@ msgid "Dynamics"
 msgstr "Image Displist"
 
 
-msgid "Color Management"
-msgstr "Desparentar"
-
-
 msgid "Indirect Lighting"
 msgstr "Desparentar"
 
@@ -20556,10 +20556,6 @@ msgid "Zoom Style"
 msgstr "Reduir"
 
 
-msgid "Anisotropic Filter"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Audio output device"
 msgstr "Duplicar"
 
@@ -20616,20 +20612,12 @@ msgid "Display Object Info"
 msgstr "Comprimir Dades"
 
 
-msgid "Show Playback FPS"
-msgstr "Finestra de Render"
-
-
 msgid "Show Splash"
 msgstr "Mostra+Selecciona"
 
 
 msgid "Tooltips"
 msgstr "Eines"
-
-
-msgid "Show View Name"
-msgstr "Arxiu"
 
 
 msgid "Only Seconds"
@@ -22660,10 +22648,6 @@ msgid "Active Theme Area"
 msgstr "Moure a Capa"
 
 
-msgid "3D View"
-msgstr "Vista"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Desparentar"
 
@@ -23250,14 +23234,6 @@ msgstr "Comprimir Dades"
 
 msgid "Tooltip Colors"
 msgstr "Moure a Capa"
-
-
-msgid "Theme 3D View"
-msgstr "Vista"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "Bone Pose"
@@ -24473,10 +24449,6 @@ msgid "View Name"
 msgstr "Arxiu"
 
 
-msgid "Playback FPS"
-msgstr "Finestra de Render"
-
-
 msgid "description"
 msgstr "Seleccionar connectats"
 
@@ -25609,6 +25581,10 @@ msgstr "Esborrar"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Rotar"
+
+
+msgid "3D View"
+msgstr "Vista"
 
 
 msgid "Scene has no camera"

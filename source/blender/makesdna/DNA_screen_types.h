@@ -379,13 +379,18 @@ typedef struct ScrArea {
   /** Rect bound by v1 v2 v3 v4. */
   rcti totrct;
 
+/*bfa - keep this at the current place*/
   int flag;              /* bfa - short to int, we need int for our flags*/
-  int region_active_win; /* bfa -short to int - index of last used region of 'RGN_TYPE_WINDOW' */
+  int region_active_win; /* bfa - changed short to int - index of last used region of 'RGN_TYPE_WINDOW' */
 
-  char spacetype; /* eSpace_Type (SPACE_FOO) */
-  /* Temporarily used while switching area type, otherwise this should be
-   * SPACE_EMPTY. Also, versioning uses it to nicely replace deprecated
-   * editors. It's been there for ages, name doesn't fit any more... */
+  /**
+   * eSpace_Type (SPACE_FOO).
+   *
+   * Temporarily used while switching area type, otherwise this should be SPACE_EMPTY.
+   * Also, versioning uses it to nicely replace deprecated * editors.
+   * It's been there for ages, name doesn't fit any more.
+   */
+  char spacetype;
   /** #eSpace_Type (SPACE_FOO). */
   char butspacetype;
   short butspacetype_subtype;
@@ -553,7 +558,7 @@ enum {
   HEADER_TOOLBAR_EDIT = (1 << 16),
   // bfa - show hide the Misc toolbars
   HEADER_TOOLBAR_MISC = (1 << 17),
-  /** For offscreen areas. */
+  /** For off-screen areas. */
   AREA_FLAG_OFFSCREEN = (1 << 18),
 };
 
