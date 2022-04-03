@@ -52,7 +52,11 @@ class OUTLINER_HT_header(Header):
                 text="",
                 icon='FILTER',
             )
-        if display_mode in {'LIBRARIES', 'LIBRARY_OVERRIDES', 'ORPHAN_DATA'}:
+        if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':
+            # Don't add ID type filter for library overrides hierarchies mode. Point of it is to see a hierarchy that is
+            # usually constructed out of different ID types.
+            pass
+        elif display_mode in {'LIBRARIES', 'LIBRARY_OVERRIDES', 'ORPHAN_DATA'}:
             row.prop(space, "use_filter_id_type", text="", icon='FILTER')
             sub = row.row(align=True)
             if space.use_filter_id_type:
@@ -131,6 +135,9 @@ class OUTLINER_MT_editor_menus(Menu):
 
         if display_mode == 'DATA_API':
             layout.menu("OUTLINER_MT_edit_datablocks")
+
+        if display_mode == 'LIBRARY_OVERRIDES':
+            layout.prop(space, "lib_override_view_mode", text="")
 
         elif display_mode in ('SCENES','VIEW_LAYER' ):
 
@@ -447,7 +454,7 @@ class OUTLINER_PT_filter(Panel):
         row.separator()
         row.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
-        if display_mode in {'LIBRARY_OVERRIDES'} and bpy.data.libraries:
+        if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'PROPERTIES' and bpy.data.libraries:
             col.separator()
             row = col.row()
             row.label(icon='LIBRARY_DATA_OVERRIDE')
