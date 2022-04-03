@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3898,10 +3898,6 @@ msgid "3D"
 msgstr "สามมิติ"
 
 
-msgid "3D View"
-msgstr "มุมมองสามมิติ"
-
-
 msgid "Selected Text"
 msgstr "ข้อความที่ถูกเลือก"
 
@@ -5454,6 +5450,10 @@ msgstr "ตกลง?"
 
 msgid "Paper"
 msgstr "กระดาษ"
+
+
+msgid "3D View"
+msgstr "มุมมองสามมิติ"
 
 
 msgid "| Last:%s "

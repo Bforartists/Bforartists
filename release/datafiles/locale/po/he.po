@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -299,6 +299,10 @@ msgid "Mist"
 msgstr "לפרע"
 
 
+msgid "Color Management"
+msgstr "עבצ לוהינ"
+
+
 msgctxt "Operator"
 msgid "Add"
 msgstr "ףסוה"
@@ -513,10 +517,6 @@ msgstr "בוביס"
 
 msgid "Detail Size"
 msgstr "טוריפ"
-
-
-msgid "Color Management"
-msgstr "עבצ לוהינ"
 
 
 msgid "Text Style"

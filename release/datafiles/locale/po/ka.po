@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -7295,10 +7295,6 @@ msgid "Weights"
 msgstr "წონები"
 
 
-msgid "Hairs"
-msgstr "თმები"
-
-
 msgid "Show Light Probe data-blocks"
 msgstr "მაჩვენე სინათლის ზონდის მონაცემთა ბლოკები"
 
@@ -11886,6 +11882,10 @@ msgid "Export custom properties"
 msgstr "დააექსპორტირე მორგებული თვისებები"
 
 
+msgid "Triangulate Faces"
+msgstr "გაასამკუთხედე წახნაგები"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "glTF 2.0-ის ექსპორტირება"
@@ -11934,10 +11934,6 @@ msgstr "Wavefront OBJ ფაილის შენახვა"
 
 msgid "Material Groups"
 msgstr "მასალის ჯგუფები"
-
-
-msgid "Triangulate Faces"
-msgstr "გაასამკუთხედე წახნაგები"
 
 
 msgctxt "Operator"
@@ -17441,10 +17437,6 @@ msgstr "დახურე მიმდინარე ფანჯარა"
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "სრულ ეკრანზე ჩვენების ჩართვა-გამორთვა"
-
-
-msgid "Toggle the current window fullscreen"
-msgstr "მიმდინარე ფანჯრის მთელ ეკრანზე ჩვენების ჩართვა-გამორთვა"
 
 
 msgctxt "Operator"

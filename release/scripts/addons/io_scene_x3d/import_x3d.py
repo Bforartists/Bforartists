@@ -2007,23 +2007,18 @@ def importMesh_IndexedFaceSet(geom, ancestry):
                     for v in f
                     for co in tex_coord_points[v]]
     else:
-        x_min = x_max = y_min = y_max = z_min = z_max = None
+        x_min = y_min = z_min =  math.inf
+        x_max = y_max = z_max = -math.inf
         for f in faces:
             # Unused vertices don't participate in size; X3DOM does so
             for v in f:
                 (x, y, z) = points[v]
-                if x_min is None or x < x_min:
-                    x_min = x
-                if x_max is None or x > x_max:
-                    x_max = x
-                if y_min is None or y < y_min:
-                    y_min = y
-                if y_max is None or y > y_max:
-                    y_max = y
-                if z_min is None or z < z_min:
-                    z_min = z
-                if z_max is None or z > z_max:
-                    z_max = z
+                x_min = min(x_min, x)
+                x_max = max(x_max, x)
+                y_min = min(y_min, y)
+                y_max = max(y_max, y)
+                z_min = min(z_min, z)
+                z_max = max(z_max, z)
 
         mins = (x_min, y_min, z_min)
         deltas = (x_max - x_min, y_max - y_min, z_max - z_min)

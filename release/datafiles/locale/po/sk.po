@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-02 09:34+0100\n"
@@ -11953,14 +11953,6 @@ msgid "Show Collection data-blocks"
 msgstr "Ukáže blok údajov kolekcie"
 
 
-msgid "Hairs"
-msgstr "Vlasy"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Ukáže/skryje bloky údajov vlasov"
-
-
 msgid "Show Image data-blocks"
 msgstr "Ukáže blok údajov obrázka"
 
@@ -12811,10 +12803,6 @@ msgstr "Veľkosť bunky"
 
 msgid "CFL"
 msgstr "CFL"
-
-
-msgid "Maximal velocity per cell (higher value results in greater timesteps)"
-msgstr "Maximálna rýchlosť na bunku (vyššia hodnota vedie k vyšším časom)"
 
 
 msgid "Clipping"
@@ -16011,6 +15999,10 @@ msgid "Generate dot-dash styled strokes"
 msgstr "Generovanie ťahov v štýle bodkočiarky"
 
 
+msgid "Envelope"
+msgstr "Plášť"
+
+
 msgid "Extend or shrink strokes"
 msgstr "Rozšíriť alebo zúžiť ťahy"
 
@@ -16451,6 +16443,14 @@ msgid "Active index in the segment list"
 msgstr "Aktívny index v zozname segmentov"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Inverzia skupiny vrcholov"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "Názov skupiny vrcholov na moduláciu deformácie"
+
+
 msgid "Hook Modifier"
 msgstr "Modifikátor háku"
 
@@ -16557,20 +16557,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "Kompenzuje nerovnomernú zmenu mierky objektu"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "Názov skupiny vrcholov na moduláciu deformácie"
-
-
 msgid "Lattice Modifier"
 msgstr "Modifikátor drôtenej mriežky"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "Zmena ťahu modifikátora deformácie použitím mriežky"
-
-
-msgid "Inverse VertexGroup"
-msgstr "Inverzia skupiny vrcholov"
 
 
 msgid "Lattice object to deform with"
@@ -17481,6 +17473,10 @@ msgid "The modifier affects the UV rotation factor of the point"
 msgstr "Modifikátor ovplyvňuje faktor UV rotácie bodu"
 
 
+msgid "Keep Shape"
+msgstr "Zachovať tvar"
+
+
 msgid "Subdivision Modifier"
 msgstr "Modifikátor Delenie"
 
@@ -18156,10 +18152,6 @@ msgstr "Kosť ohybu"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Zobrazí kosti ako hranoly, ukazuje rozdelenie a Drážky ohybu"
-
-
-msgid "Envelope"
-msgstr "Plášť"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -28493,6 +28485,10 @@ msgid "32-bit color channels"
 msgstr "32 bitové farebné kanály"
 
 
+msgid "Color Management"
+msgstr "Správa farieb"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Vyberie ČB pre ukladanie obrázkov v odtieňoch sivej, RGB pre ukladanie červených, zelených a modrých kanálov, RGBA pre ukladanie červených, zelených, modrých a alfa kanálov"
 
@@ -36654,10 +36650,6 @@ msgstr "Vytvorí inštancie z normálnych častíc"
 
 msgid "Create instances along particle paths"
 msgstr "Vytvorí inštancie pozdĺž dráhy častíc"
-
-
-msgid "Keep Shape"
-msgstr "Zachovať tvar"
 
 
 msgid "Don't stretch the object"
@@ -45692,10 +45684,6 @@ msgid "Selection to Nearest Frame"
 msgstr "Výber na najbližšiu snímku"
 
 
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
-msgstr "Prichytí vybrané kľúče k najbližšej (celej) snímke (používa sa na opravu náhodných polsnímok)"
-
-
 msgid "Selection to Nearest Second"
 msgstr "Výber na najbližšiu druhú"
 
@@ -50479,6 +50467,14 @@ msgid "Export the last Catmull-Rom subdivision modifier as FBX subdivision (does
 msgstr "Exportujte posledný modifikátor rozdelenia Catmull-Rom ako rozdelenie FBX (neuplatňuje sa modifikátor, aj keď je povolená možnosť „Použiť modifikátory“)."
 
 
+msgid "Triangulate Faces"
+msgstr "Prepočítať plôšky na trojuholníky"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Konvertuje všetky plôšky na trojuholníky"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Pridá vektory dvoj-normálov a dotyčníc, spolu s normálom tvoria priestor dotyku (funguje správne len pre trojuholníkové/štvoruholníkové povrchové siete!)"
 
@@ -50776,10 +50772,6 @@ msgid "Optimize Animation Size"
 msgstr "Optimalizácia veľkosti animácie"
 
 
-msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
-msgstr "Znižuje veľkosť exportovaných súborov odstránením duplicitných kľúčových snímok. Môže spôsobiť problémy s krokovou animáciou"
-
-
 msgid "Export setting categories"
 msgstr "Kategórie nastavenia exportu"
 
@@ -50931,14 +50923,6 @@ msgstr "Bit príznaku skupín vyhladenia"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "Rovnaké ako 'skupiny vyhladenia', ale vytvára ID hladených skupín ID ako bit príznakov (produkuje najviac 32 rôznych skupín vyhladenia, zvyčajne oveľa menej)"
-
-
-msgid "Triangulate Faces"
-msgstr "Prepočítať plôšky na trojuholníky"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Konvertuje všetky plôšky na trojuholníky"
 
 
 msgid "Include UVs"
@@ -54440,6 +54424,10 @@ msgstr "Výber na hodnotu kurzora"
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Nastaví hodnoty vybraných kľúčových snímok na hodnotu kurzora (Y/horizontálnu súčasť)"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Prichytí vybrané kľúče k najbližšej (celej) snímke (používa sa na opravu náhodných polsnímok)"
 
 
 msgid "Flatten Handles"
@@ -76013,10 +76001,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Prepnúť na celú obrazovku"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Prepne aktuálne okno na celú obrazovku"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Nové okno"
@@ -77702,10 +77686,6 @@ msgstr "Vytvorí panel v kontexte prekreslenia editora vlastností"
 
 msgid "Freestyle SVG Export"
 msgstr "Export SVG Voľným štýlom"
-
-
-msgid "Color Management"
-msgstr "Správa farieb"
 
 
 msgid "Bloom"
@@ -80110,16 +80090,8 @@ msgid "Align Object To"
 msgstr "Zarovnať na objekt"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Pri pridávaní objektov z ponuky 3D zobrazenia, zarovná ich buď s týmto zobrazením alebo s oblasťou"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Zarovná novo pridané objekty podľa systému súradníc oblasti"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Zarovná novo pridané objekty podľa aktívneho smeru 3D zobrazenia"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -80218,14 +80190,6 @@ msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Spôsobí vytvorenie údajov pastelky s objektom"
 
 
-msgid "Duplicate Hair"
-msgstr "Vytvárať kópiu vlasov"
-
-
-msgid "Causes hair data to be duplicated with the object"
-msgstr "Spôsobí vytvorenie kópie údajov vlasov s objektom"
-
-
 msgid "Duplicate Lattice"
 msgstr "Vytvoriť kópiu mriežky"
 
@@ -80322,10 +80286,6 @@ msgid "Causes volume data to be duplicated with the object"
 msgstr "Spôsobí vytvorenie kópie údajov objemu s objektom"
 
 
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Po pridaní nového objektu automaticky prejde do režimu editácie"
-
-
 msgid "Global Undo"
 msgstr "Globálne späť"
 
@@ -80372,14 +80332,6 @@ msgstr "Povoliť záporné snímky"
 
 msgid "Current frame number can be manually set to a negative value"
 msgstr "Aktuálne číslo snímky možno manuálne nastaviť na zápornú hodnotu"
-
-
-msgid "Auto Close"
-msgstr "Automaticky zatvoriť"
-
-
-msgid "Auto close relevant characters inside the text editor"
-msgstr "Automaticky uzatvára príslušné znaky v textovom editore"
 
 
 msgid "Use Visual keying automatically for constrained objects"
@@ -81130,14 +81082,6 @@ msgid "Show UI Key-Config"
 msgstr "Ukáže konfiguráciu klávesy užívateľského rozhrania"
 
 
-msgid "Anisotropic Filter"
-msgstr "Anizotropný filter"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Kvalita anizotropné filtrovania (hodnoty väčšie ako 1,0 povolia anizotropné filtrovanie)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -81526,14 +81470,6 @@ msgid "Size multiplier to use when displaying custom user interface elements, so
 msgstr "Násobič veľkosti, ktorý sa má použiť pri vlastnom zobrazovaní prvkov užívateľského rozhrania, aby boli správne zmenšené na obrazovkách s rôznymi DPI. Táto hodnota je založená na nastaveniach DPI operačného systému a mierke zobrazenia Blenderu"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "Vyhladiť drôty v režime editácie"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "Povolí režimu editácie vyhladenie hrán, zníženie aliasingu, vyžaduje reštart"
-
-
 msgid "GPU Subdivision"
 msgstr "Delenie GPU"
 
@@ -81556,14 +81492,6 @@ msgstr "Prekrytie oblasti"
 
 msgid "Display tool/property regions over the main region"
 msgstr "Zobrazí oblasti nástrojov/vlastností nad hlavnou oblasťou"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Naberanie hĺbky OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Použije zásobník hĺbky na naberanie výberu 3D zobrazenia (bez toho, aby sa celkom predný objekt nemohol vybrať prvý)"
 
 
 msgid "Use Disk Cache"
@@ -81850,10 +81778,6 @@ msgid "Mini Axes Type"
 msgstr "Typ mini osí"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Zobrazenie malých rotujúcich 3D osí v pravom hornom rohu 3D zobrazenia"
-
-
 msgid "Simple Axis"
 msgstr "Jednoduchá os"
 
@@ -81990,18 +81914,6 @@ msgid "Display Object Info"
 msgstr "Zobraziť informácie o objekte"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Zobrazí názov objektu a čísla snímok v 3D zobrazení"
-
-
-msgid "Show Playback FPS"
-msgstr "Zobraziť prehrávanie FPS"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Pri prehrávaní animácie zobrazuje obnovovaciu frekvenciu obrazovky v snímkach za sekundu"
-
-
 msgid "Show Splash"
 msgstr "Zobraziť úvod"
 
@@ -82046,24 +81958,12 @@ msgid "Tooltips"
 msgstr "Popisy"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Zobrazí popisy (pri vypnutí pridržte kláves ALT na vynútenie zobrazenia)"
-
-
 msgid "Python Tooltips"
 msgstr "Python popisy"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Ukáže doporučenia jazyka Python v popisoch"
-
-
-msgid "Show View Name"
-msgstr "Zobraziť názov zobrazenia"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Ukáže názov smeru zobrazenia do 3D zobrazení"
 
 
 msgid "Smooth View"
@@ -84664,10 +84564,6 @@ msgstr "Staré priradenie snímok"
 
 msgid "Old mapping value in frames"
 msgstr "Stará hodnota priradenia snímok"
-
-
-msgid "Additional Subdiv"
-msgstr "Ďalšie delenie"
 
 
 msgid "Additional subdivision along the hair"
@@ -90235,14 +90131,6 @@ msgid "Show only data-blocks of one type"
 msgstr "Ukáže iba bloky údajov jedného typu"
 
 
-msgid "Show Library Overrides"
-msgstr "Zobraziť prepisy knižnice"
-
-
-msgid "For libraries with overrides created, show the overridden values"
-msgstr "V prípade knižníc s vytvorenými prepisami zobrazí prepísané hodnoty"
-
-
 msgid "Show System Overrides"
 msgstr "Zobraziť prepisy systému"
 
@@ -92095,10 +91983,6 @@ msgid "Active Theme Area"
 msgstr "Oblasť aktívneho motívu"
 
 
-msgid "3D View"
-msgstr "3D zobrazenie"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Motív sústavy farieb kostí"
 
@@ -93525,14 +93409,6 @@ msgstr "Kurzor textu"
 
 msgid "Color of the interface widgets text insertion cursor (caret)"
 msgstr "Farba kurzora na vloženie textu pre ovládacie prvky rozhrania (zástupný znak)"
-
-
-msgid "Theme 3D View"
-msgstr "Motív 3D zobrazenia"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Nastavenie motívu pre 3D zobrazenie"
 
 
 msgid "Bone Locked Weight"
@@ -98089,10 +97965,6 @@ msgstr "Vyžaduje sa grafický procesor NVIDIA s výpočtovou kapacitou 5.0"
 
 msgid "and NVIDIA driver version 470 or newer"
 msgstr "a ovládač NVIDIA vo verzii 470 alebo novšej"
-
-
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "Vyžaduje diskrétny grafický procesor AMD s architektúrou RDNA"
 
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
@@ -103651,10 +103523,6 @@ msgid "View Name"
 msgstr "Zobraziť názov"
 
 
-msgid "Playback FPS"
-msgstr "Prehrávanie v snímkach za sekundu"
-
-
 msgid "3D Viewport Axis"
 msgstr "Osi 3D záberu"
 
@@ -106130,10 +105998,6 @@ msgstr "Nezapísané, neočakávaná chyba pri ukladaní stereo obrázku"
 
 msgid "Could not write image: %s"
 msgstr "Nemožno zapísať obrázok: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Nezapísané, obrázok nemá \"%s\" a \"%s\" zobrazenia"
 
 
 msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker"
@@ -109962,10 +109826,6 @@ msgid "Objects do not have the same number of vertices"
 msgstr "Objekty nemajú rovnaký počet vrcholov"
 
 
-msgid "Not valid subdivisions found to rebuild a lower level"
-msgstr "Nájdené neplatné delenie na prebudovanie nižšej úrovne"
-
-
 msgid "Not valid subdivisions found to rebuild lower levels"
 msgstr "Nájdené neplatné delenie na prebudovanie nižšej úrovne"
 
@@ -110568,6 +110428,10 @@ msgstr "Pevné teleso sveta nemá žiadne súvisiace údaje fyziky na exportovan
 
 msgid "3D Local View"
 msgstr "Lokálne 3D zobrazenie"
+
+
+msgid "3D View"
+msgstr "3D zobrazenie"
 
 
 msgid "Frame:%d "

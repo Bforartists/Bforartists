@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -8961,10 +8961,6 @@ msgid "Fonts"
 msgstr "字型"
 
 
-msgid "Hairs"
-msgstr "毛髮"
-
-
 msgid "Show workspace data-blocks"
 msgstr "顯示工作空間資料塊"
 
@@ -10489,6 +10485,10 @@ msgid "Build"
 msgstr "建置"
 
 
+msgid "Envelope"
+msgstr "封套"
+
+
 msgid "Mirror"
 msgstr "鏡像"
 
@@ -10589,6 +10589,10 @@ msgid "Custom Curve"
 msgstr "自訂曲線"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "調節變形的頂點群組名稱"
+
+
 msgid "Hook Modifier"
 msgstr "鉤修改器"
 
@@ -10669,10 +10673,6 @@ msgstr "鉤的相對力"
 
 msgid "Name of Parent Bone for hook (if applicable), also recalculates and clears offset"
 msgstr "鉤其親代骨骼的名稱 (如果可用的話)，也會重新計算並清除偏移"
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "調節變形的頂點群組名稱"
 
 
 msgid "Lattice Modifier"
@@ -10801,6 +10801,10 @@ msgstr "銳化閾值"
 
 msgid "Smooth Modifier"
 msgstr "平滑修改器"
+
+
+msgid "Keep Shape"
+msgstr "保持外形"
 
 
 msgid "Subdivision Type"
@@ -11010,10 +11014,6 @@ msgstr "B 骨骼"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "將骨骼顯示為方塊，顯示其細分與 B 樣條"
-
-
-msgid "Envelope"
-msgstr "封套"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -17367,6 +17367,10 @@ msgid "Bit depth per channel"
 msgstr "每個通道的位元深度"
 
 
+msgid "Color Management"
+msgstr "色彩管理"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "選擇黑白來儲存灰階影像，選擇 RGB 來儲存紅、綠、藍通道，選擇 RGBA 來儲存紅、綠、藍與 alpha 通道"
 
@@ -21099,10 +21103,6 @@ msgstr "從法線粒子建立實體"
 
 msgid "Create instances along particle paths"
 msgstr "沿粒子路徑建立實體"
-
-
-msgid "Keep Shape"
-msgstr "保持外形"
 
 
 msgid "Don't stretch the object"
@@ -29809,6 +29809,14 @@ msgid "Use Metadata"
 msgstr "使用中介資料"
 
 
+msgid "Triangulate Faces"
+msgstr "把面分成三角形"
+
+
+msgid "Convert all faces to triangles"
+msgstr "將所有的面轉換為三角形"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "匯出 glTF 2.0"
@@ -29873,14 +29881,6 @@ msgstr "平滑群組"
 
 msgid "Write sharp edges as smooth groups"
 msgstr "以平滑群組寫入銳利邊線"
-
-
-msgid "Triangulate Faces"
-msgstr "把面分成三角形"
-
-
-msgid "Convert all faces to triangles"
-msgstr "將所有的面轉換為三角形"
 
 
 msgid "Include UVs"
@@ -43165,10 +43165,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "切換視窗全螢幕"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "切換目前的視窗為全螢幕"
-
-
 msgctxt "Operator"
 msgid "Toggle VR Session"
 msgstr "切換 VR 作業階段"
@@ -43923,10 +43919,6 @@ msgstr "輔助器"
 
 msgid "Viscosity"
 msgstr "黏滯度"
-
-
-msgid "Color Management"
-msgstr "色彩管理"
 
 
 msgid "Indirect Lighting"
@@ -45265,10 +45257,6 @@ msgid "Align Object To"
 msgstr "對齊物體至"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "當從 3D 視圖選單中添加物體時，是否將其對齊該視圖或對齊世界"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "將新添加的物體對齊世界座標系"
 
@@ -45375,10 +45363,6 @@ msgstr "製作文字複本"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "使文字資料可隨物體一同製作出複本"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "在添加一個新物體後自動進入編輯模式"
 
 
 msgid "Global Undo"
@@ -45805,14 +45789,6 @@ msgid "The name of the active key configuration"
 msgstr "作用中按鍵組態其名稱"
 
 
-msgid "Anisotropic Filter"
-msgstr "各向異性過濾器"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "各向異性過濾處理的品質 (值大於 1.0 時才會啟用各向異性過濾處理)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -46181,18 +46157,6 @@ msgid "Display Object Info"
 msgstr "顯示物體資訊"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "在 3D 視圖中顯示物體名稱和幀號"
-
-
-msgid "Show Playback FPS"
-msgstr "顯示播放 FPS"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "當動畫播放時，顯示螢幕更新率的每秒幀數"
-
-
 msgid "Show Splash"
 msgstr "顯示歡迎畫面"
 
@@ -46205,24 +46169,12 @@ msgid "Tooltips"
 msgstr "提示框"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "顯示提示框 (當關閉時若按住 Alt 可強制顯示)"
-
-
 msgid "Python Tooltips"
 msgstr "Python 提示框"
 
 
 msgid "Show Python references in tooltips"
 msgstr "在提示框中顯示 Python 參照"
-
-
-msgid "Show View Name"
-msgstr "顯示視圖名稱"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "在 3D 視圖中顯示目前的視圖方向"
 
 
 msgid "Smooth View"
@@ -51281,10 +51233,6 @@ msgid "Active Theme Area"
 msgstr "作用中主題區域"
 
 
-msgid "3D View"
-msgstr "3D 視圖"
-
-
 msgid "Theme Bone Color Set"
 msgstr "主題骨骼色彩集"
 
@@ -52155,14 +52103,6 @@ msgstr "工具小工具色彩"
 
 msgid "Tooltip Colors"
 msgstr "提示框色彩"
-
-
-msgid "Theme 3D View"
-msgstr "主題 3D 視圖"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "主題設定中的 3D 視圖選項"
 
 
 msgid "Bone Pose"
@@ -55297,10 +55237,6 @@ msgid "View Name"
 msgstr "視圖名稱"
 
 
-msgid "Playback FPS"
-msgstr "播放控制 FPS"
-
-
 msgid "Limit Size"
 msgstr "限制大小"
 
@@ -58417,6 +58353,10 @@ msgstr "剛體世界沒有相關聯的物理資料可匯出"
 
 msgid "3D Local View"
 msgstr "3D 區域檢視"
+
+
+msgid "3D View"
+msgstr "3D 視圖"
 
 
 msgid "Frame:%d "

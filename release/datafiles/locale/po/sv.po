@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4539,6 +4539,10 @@ msgid "Build"
 msgstr "Bygg upp"
 
 
+msgid "Envelope"
+msgstr "Omslutningar"
+
+
 msgid "Mirror"
 msgstr "Spegel"
 
@@ -4615,6 +4619,10 @@ msgid "Custom Curve"
 msgstr "Färguppsättning:"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "Vektor Måla"
+
+
 msgid "Hook Modifier"
 msgstr "Radera Allt"
 
@@ -4625,10 +4633,6 @@ msgstr "Avtagandekurva"
 
 msgid "Matrix"
 msgstr "Kamera"
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "Vektor Måla"
 
 
 msgid "Lattice Modifier"
@@ -4697,6 +4701,10 @@ msgstr "Flytta Till Lager"
 
 msgid "Smooth Modifier"
 msgstr "Markera Rad"
+
+
+msgid "Keep Shape"
+msgstr "Flytta Till Lager"
 
 
 msgid "Subdivision Type"
@@ -4809,10 +4817,6 @@ msgstr "Tjocklek"
 
 msgid "B-Bone"
 msgstr "Ben"
-
-
-msgid "Envelope"
-msgstr "Omslutningar"
 
 
 msgid "Wire"
@@ -8085,6 +8089,10 @@ msgid "Color Depth"
 msgstr "Färguppsättning:"
 
 
+msgid "Color Management"
+msgstr "Färgstyrning"
+
+
 msgid "Codec"
 msgstr "Kodek"
 
@@ -9601,10 +9609,6 @@ msgstr "Markera Länkad"
 
 msgid "Create instances from normal particles"
 msgstr "Markera Länkad"
-
-
-msgid "Keep Shape"
-msgstr "Flytta Till Lager"
 
 
 msgid "Don't stretch the object"
@@ -14589,6 +14593,14 @@ msgid "Use Metadata"
 msgstr "Använd maximum"
 
 
+msgid "Triangulate Faces"
+msgstr "Triangelnät"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Konvertera markerade fyrhörningar till trianglar"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "Exportera"
@@ -14616,14 +14628,6 @@ msgstr "Spel"
 
 msgid "Smooth Groups"
 msgstr "Vektor Måla"
-
-
-msgid "Triangulate Faces"
-msgstr "Triangelnät"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Konvertera markerade fyrhörningar till trianglar"
 
 
 msgid "Include UVs"
@@ -22651,10 +22655,6 @@ msgid "UV Maps"
 msgstr "Mappning"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Växla fullskrmsläge för aktivt fönster"
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Nästa"
@@ -22996,10 +22996,6 @@ msgstr "Självkrock"
 
 msgid "Viscosity"
 msgstr "Viskositet"
-
-
-msgid "Color Management"
-msgstr "Färgstyrning"
 
 
 msgid "Indirect Lighting"
@@ -23889,10 +23885,6 @@ msgid "Zoom Style"
 msgstr "Zooma Ut"
 
 
-msgid "Anisotropic Filter"
-msgstr "Visa inställningar för kant"
-
-
 msgid "Audio output device"
 msgstr "Duplicera"
 
@@ -23949,20 +23941,12 @@ msgid "Display Object Info"
 msgstr "Visa info om objekt"
 
 
-msgid "Show Playback FPS"
-msgstr "Visa bildfrekvens vid uppspelning"
-
-
 msgid "Show Splash"
 msgstr "Visa+markera"
 
 
 msgid "Tooltips"
 msgstr "Verktygstips"
-
-
-msgid "Show View Name"
-msgstr "Visa namn för vy"
 
 
 msgid "Only Seconds"
@@ -26161,10 +26145,6 @@ msgid "Active Theme Area"
 msgstr "Aktiv temadel"
 
 
-msgid "3D View"
-msgstr "Visa"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Rensa Förälder"
 
@@ -26763,14 +26743,6 @@ msgstr "Packa Data"
 
 msgid "Tooltip Colors"
 msgstr "Multiplicera"
-
-
-msgid "Theme 3D View"
-msgstr "Visa"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Materialets volym-inställningar"
 
 
 msgid "Bone Pose"
@@ -28146,10 +28118,6 @@ msgid "View Name"
 msgstr "Arkiv"
 
 
-msgid "Playback FPS"
-msgstr "Renderings Fönster"
-
-
 msgid "Limit Size"
 msgstr "Rensa Förälder"
 
@@ -29379,6 +29347,10 @@ msgstr "Animationsnycklar"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Rotera"
+
+
+msgid "3D View"
+msgstr "Visa"
 
 
 msgid "Scene has no camera"

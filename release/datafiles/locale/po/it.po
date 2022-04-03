@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -9926,6 +9926,10 @@ msgid "Build"
 msgstr "Costruzione"
 
 
+msgid "Envelope"
+msgstr "Inviluppo"
+
+
 msgid "Mirror"
 msgstr "Specchia"
 
@@ -10030,6 +10034,10 @@ msgid "Custom Curve"
 msgstr "Curva Personalizzata"
 
 
+msgid "Vertex group name for modulating the deform"
+msgstr "Nome del gruppo di vertici per modulare la deformazione"
+
+
 msgid "Hook Modifier"
 msgstr "Modificatore Gancio"
 
@@ -10114,10 +10122,6 @@ msgstr "Forza relativa del gancio"
 
 msgid "Uniform Falloff"
 msgstr "Decadimento Uniforme"
-
-
-msgid "Vertex group name for modulating the deform"
-msgstr "Nome del gruppo di vertici per modulare la deformazione"
 
 
 msgid "Lattice Modifier"
@@ -10234,6 +10238,10 @@ msgstr "Modificatore Leviga"
 
 msgid "Smooth effect modifier"
 msgstr "Modificatore effetto levigatura"
+
+
+msgid "Keep Shape"
+msgstr "Mantieni Forma"
 
 
 msgid "Subdivision Modifier"
@@ -10507,10 +10515,6 @@ msgstr "Ossa-B"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Ossa-Bezier - Mostra le ossa come scatole, mostrando le suddivisioni e le B-Spline"
-
-
-msgid "Envelope"
-msgstr "Inviluppo"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -16364,6 +16368,10 @@ msgid "Bit depth per channel"
 msgstr "Profondità colore per canale"
 
 
+msgid "Color Management"
+msgstr "Gestione Colore"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Scegli BW per salvare immagini in valori di grigio, RGB per salvare con i canali rosso, verde e blu, e RGBA per salvare con i canali rosso, verde, blu e alfa"
 
@@ -21125,10 +21133,6 @@ msgstr "Crea istanze da particelle normali"
 
 msgid "Create instances along particle paths"
 msgstr "Crea istanze lungo i percorsi delle particelle"
-
-
-msgid "Keep Shape"
-msgstr "Mantieni Forma"
 
 
 msgid "Don't stretch the object"
@@ -28879,6 +28883,14 @@ msgid "Use Metadata"
 msgstr "Usa Metadati"
 
 
+msgid "Triangulate Faces"
+msgstr "Triangola Facce"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Converte tutte le facce in triangoli"
+
+
 msgid "General"
 msgstr "Generale"
 
@@ -28930,14 +28942,6 @@ msgstr "Scrivi Nurbs"
 
 msgid "Write nurbs curves as OBJ nurbs rather than converting to geometry"
 msgstr "Scrivi curve nurbs come OBJ nurbs anziché convertire la geometria"
-
-
-msgid "Triangulate Faces"
-msgstr "Triangola Facce"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Converte tutte le facce in triangoli"
 
 
 msgid "Include UVs"
@@ -42591,10 +42595,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Alterna Finestra a Schermo Intero"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Alterna la finestra corrente a pieno schermo"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Nuova Finestra"
@@ -43388,10 +43388,6 @@ msgstr "Diagnostiche"
 
 msgid "Viscosity"
 msgstr "Viscosità"
-
-
-msgid "Color Management"
-msgstr "Gestione Colore"
 
 
 msgid "Indirect Lighting"
@@ -44828,10 +44824,6 @@ msgid "Align Object To"
 msgstr "Allinea Oggetto A"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Quando viene aggiunto un oggetto dal menu della Vista 3D, o si allineano con quella vista o col mondo"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Allinea gli oggetti appena aggiunti al sistema di coordinate del mondo"
 
@@ -44934,10 +44926,6 @@ msgstr "Duplica Testo"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Fa sì che i dati del testo siano duplicati con l'oggetto"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Entra automaticamente in Modalità Modifica dopo aver aggiunto un nuovo oggetto"
 
 
 msgid "Global Undo"
@@ -45372,14 +45360,6 @@ msgid "The name of the active key configuration"
 msgstr "Nome della chiave di configurazione attiva"
 
 
-msgid "Anisotropic Filter"
-msgstr "Filtro Anisotropico"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Qualità del filtro anisotropico (valori superiori a 1.0 attivano il filtro anisotropico)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -45756,18 +45736,6 @@ msgid "Display Object Info"
 msgstr "Mostra Informazioni Oggetto"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Mostra il nome degli oggetti e il numero del fotogramma nella vista 3D"
-
-
-msgid "Show Playback FPS"
-msgstr "Mostra FPS Riproduzione"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Mostra i fotogrammi al secondo di aggiornamento dello schermo, mentre l'animazione è in esecuzione"
-
-
 msgid "Show Splash"
 msgstr "Mostra Splash"
 
@@ -45780,24 +45748,12 @@ msgid "Tooltips"
 msgstr "Suggerimenti"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Mostra i fumetti di suggerimento (quando disattivati, premi Alt per forzarne la visualizzazione)"
-
-
 msgid "Python Tooltips"
 msgstr "Mostra Riferimenti Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Mostra riferimenti Python nei suggerimenti"
-
-
-msgid "Show View Name"
-msgstr "Mostra Nome della Vista"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Mostra il nome della direzione visuale in ogni vista 3D"
 
 
 msgid "Smooth View"
@@ -50565,10 +50521,6 @@ msgid "Active Theme Area"
 msgstr "Area Tema Attivo"
 
 
-msgid "3D View"
-msgstr "Vista 3D"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Impostazione Tema Colore Ossa"
 
@@ -51355,14 +51307,6 @@ msgstr "Rilievo Widget"
 
 msgid "Color of the 1px shadow line underlying widgets"
 msgstr "Colore dell'ombra di 1px che sottolinea i widgets"
-
-
-msgid "Theme 3D View"
-msgstr "Tema Vista 3D"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Impostazioni del tema per la vista 3D"
 
 
 msgid "Bone Pose"
@@ -55327,10 +55271,6 @@ msgid "View Name"
 msgstr "Nome Vista"
 
 
-msgid "Playback FPS"
-msgstr "FPS Riproduzione"
-
-
 msgid "3D Viewport Axis"
 msgstr "Assi Vista 3D"
 
@@ -58967,6 +58907,10 @@ msgstr "Legname"
 
 msgid "3D Local View"
 msgstr "Vista Locale 3D"
+
+
+msgid "3D View"
+msgstr "Vista 3D"
 
 
 msgid "Frame:%d "

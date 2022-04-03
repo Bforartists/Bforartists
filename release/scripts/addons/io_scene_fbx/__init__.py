@@ -5,7 +5,7 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 34, 2),
+    "version": (4, 35, 0),
     "blender": (3, 2, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
@@ -477,6 +477,11 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
                         "(will only work correctly with tris/quads only meshes!)",
             default=False,
             )
+    use_triangles: BoolProperty(
+            name="Triangulate Faces",
+            description="Convert all faces to triangles",
+            default=False,
+            )
     use_custom_props: BoolProperty(
             name="Custom Properties",
             description="Export custom properties",
@@ -754,6 +759,7 @@ class FBX_PT_export_geometry(bpy.types.Panel):
         #sub.enabled = operator.use_mesh_modifiers and False  # disabled in 2.8...
         #sub.prop(operator, "use_mesh_modifiers_render")
         layout.prop(operator, "use_mesh_edges")
+        layout.prop(operator, "use_triangles")
         sub = layout.row()
         #~ sub.enabled = operator.mesh_smooth_type in {'OFF'}
         sub.prop(operator, "use_tspace")
