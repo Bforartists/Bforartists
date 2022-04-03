@@ -512,7 +512,7 @@ render_still
 library_data_broken
 boids
 gizmo
-library_data_indirect
+# DEF_ICON_BLANK(531)
 greasepencil
 line_data
 hide_renderview

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3704,6 +3704,10 @@ msgid "Array"
 msgstr "Dizi"
 
 
+msgid "Envelope"
+msgstr "Ölçek Zarfı/BBone"
+
+
 msgid "Mirror"
 msgstr "Yansıtma"
 
@@ -3798,6 +3802,10 @@ msgstr "Birleştir"
 
 msgid "Smooth Modifier"
 msgstr "Değiştirici Ekle"
+
+
+msgid "Keep Shape"
+msgstr "Orijinali Koru"
 
 
 msgid "Subdivision Type"
@@ -3902,10 +3910,6 @@ msgstr "Kemik:"
 
 msgid "B-Bone"
 msgstr "Kemik"
-
-
-msgid "Envelope"
-msgstr "Ölçek Zarfı/BBone"
 
 
 msgid "Wire"
@@ -6269,6 +6273,10 @@ msgid "Color Depth"
 msgstr "Ekran Rengi:"
 
 
+msgid "Color Management"
+msgstr "Ekran Rengi:"
+
+
 msgid "Images are saved with RGB (color) data"
 msgstr "İşlenen görüntüyü normal kaydet"
 
@@ -7601,10 +7609,6 @@ msgstr "Aktif pozisyonu sil"
 
 msgid "Random Position"
 msgstr "Rasgele Bozulma"
-
-
-msgid "Keep Shape"
-msgstr "Orijinali Koru"
 
 
 msgid "Don't stretch the object"
@@ -11497,6 +11501,10 @@ msgid "Use Metadata"
 msgstr "Kırpma Kullan"
 
 
+msgid "Triangulate Faces"
+msgstr "Yüzeyleri Vurgula"
+
+
 msgid "Save a Wavefront OBJ File"
 msgstr "Dosya kaydı olanaksız"
 
@@ -11523,10 +11531,6 @@ msgstr "NURBS Çember"
 
 msgid "Smooth Groups"
 msgstr "Grup yok"
-
-
-msgid "Triangulate Faces"
-msgstr "Yüzeyleri Vurgula"
 
 
 msgid "Compress"
@@ -17895,10 +17899,6 @@ msgid "Viscosity"
 msgstr "Viskozite"
 
 
-msgid "Color Management"
-msgstr "Ekran Rengi:"
-
-
 msgid "Audio"
 msgstr "Ses:"
 
@@ -18766,10 +18766,6 @@ msgid "Key Config"
 msgstr "Anahtar Ekle"
 
 
-msgid "Anisotropic Filter"
-msgstr "Dosya Uzantılarını Filtrele"
-
-
 msgid "Audio Device"
 msgstr "Ses (HD)"
 
@@ -18878,28 +18874,12 @@ msgid "Display Object Info"
 msgstr "Ayrıntılı bilgi göster"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "3D Görünümünde etkin nesne ismini ve kare numarasını görüntüler"
-
-
-msgid "Show Playback FPS"
-msgstr "Stop animation playback"
-
-
 msgid "Show Splash"
 msgstr "Başlangıç Penceresini Göster"
 
 
 msgid "Tooltips"
 msgstr "İpuçları"
-
-
-msgid "Show View Name"
-msgstr "İşareti (Tekrar) Adlandır"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Her 3D görünüm (penceresinde), görüntü yönünün (Ön, Üst, Sağ, Serbest) ismini gösterir"
 
 
 msgid "Smooth View"
@@ -20738,10 +20718,6 @@ msgid "Active Theme Area"
 msgstr "Aktif pozisyonu sil"
 
 
-msgid "3D View"
-msgstr "3D Görünüm "
-
-
 msgid "Colored Constraints"
 msgstr "Kemik Kısıtlamaları"
 
@@ -21256,10 +21232,6 @@ msgstr "3D Dönüşüm İşleci:"
 
 msgid "Tool Widget Colors"
 msgstr "3D Dönüşüm İşleci:"
-
-
-msgid "Theme 3D View"
-msgstr "Anim 3D Grnmde oynat"
 
 
 msgid "Bone Pose"
@@ -22493,10 +22465,6 @@ msgstr "Tampon Karıştırma"
 
 msgid "View Name"
 msgstr "Görünüş İsmi"
-
-
-msgid "Playback FPS"
-msgstr "Animasyonu Oynat"
 
 
 msgid "Limit Size"
@@ -23831,6 +23799,10 @@ msgstr "Anahtar Kareler:"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Fark Değiştirici Ekle"
+
+
+msgid "3D View"
+msgstr "3D Görünüm "
 
 
 msgid "Scene has no camera"

@@ -464,7 +464,7 @@
     </view_3d>
     <graph_editor>
       <ThemeGraphEditor
-        grid="#303030"
+        grid="#383838"
         frame_current="#4c9933"
         time_scrub_background="#333333e6"
         time_marker_line="#b8b8b880"
@@ -955,7 +955,7 @@
         matte_node="#0076b6"
         distor_node="#292929"
         noodle_curving="2"
-        grid_levels="2"
+        grid_levels="3"
         dash_alpha="0.5"
         input_node="#3471ae"
         output_node="#cc6666"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -11951,14 +11951,6 @@ msgid "Show Collection data-blocks"
 msgstr "Hiện các cục dữ liệu Sưu Tập"
 
 
-msgid "Hairs"
-msgstr "Tóc"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Hiện/ẳn các cục dữ liệu Tóc"
-
-
 msgid "Show Image data-blocks"
 msgstr "Hiện các cục dữ liệu Ảnh"
 
@@ -12809,10 +12801,6 @@ msgstr "Kích Cỡ Tế Bào"
 
 msgid "CFL"
 msgstr "CFL"
-
-
-msgid "Maximal velocity per cell (higher value results in greater timesteps)"
-msgstr "Vận tốc cực đại từng tế bào (giá trị càng cao bước thời gian càng dài)"
 
 
 msgid "Clipping"
@@ -16009,6 +15997,10 @@ msgid "Generate dot-dash styled strokes"
 msgstr "Chế tạo nét kiểu gạnh ngang chấm"
 
 
+msgid "Envelope"
+msgstr "Bao Bì"
+
+
 msgid "Extend or shrink strokes"
 msgstr "Kéo dài hay rút ngắn các nét"
 
@@ -16449,6 +16441,14 @@ msgid "Active index in the segment list"
 msgstr "Chỉ số hoạt động trong danh sách khúc"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Đảo Nghịch Nhóm Đỉnh"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "Tên nhóm đỉnh cho biến đổi dạng làn sóng"
+
+
 msgid "Hook Modifier"
 msgstr "Cụ Sửa Đổi Móc"
 
@@ -16555,20 +16555,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "Bù cho phóng to vật thể rỗng đều"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "Tên nhóm đỉnh cho biến đổi dạng làn sóng"
-
-
 msgid "Lattice Modifier"
 msgstr "Cụ Sửa Đổi Rào Lưới"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "Đổi nét bằng dùng rào lưới để méo hóa cụ sửa đổi "
-
-
-msgid "Inverse VertexGroup"
-msgstr "Đảo Nghịch Nhóm Đỉnh"
 
 
 msgid "Lattice object to deform with"
@@ -17479,6 +17471,10 @@ msgid "The modifier affects the UV rotation factor of the point"
 msgstr "Cụ sửa đổi được ảnh hượng hệ số xoay UV của điểm"
 
 
+msgid "Keep Shape"
+msgstr "Giữ Hình Dạng"
+
+
 msgid "Subdivision Modifier"
 msgstr "Cụ Sửa Đổi Phân Hóa"
 
@@ -18154,10 +18150,6 @@ msgstr "Xương-B"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Hiển thị xương như hợp, đang hiện phân hóa và Mẫu Cong-B"
-
-
-msgid "Envelope"
-msgstr "Bao Bì"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -28491,6 +28483,10 @@ msgid "32-bit color channels"
 msgstr "Kênh màu 32 bit"
 
 
+msgid "Color Management"
+msgstr "Quản Lý Màu Sắc"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Chọn Trắng Đen cho lưư ảnh độ xám, RGB cho lưu kênh đỏ, lục, xanh, và RGBA cho lưu kênh đỏ, lục, xanh, và đục"
 
@@ -36652,10 +36648,6 @@ msgstr "Chế tạo thực thể từ hạt bình thường"
 
 msgid "Create instances along particle paths"
 msgstr "Chế tạo thực thể theo hướng của hạt"
-
-
-msgid "Keep Shape"
-msgstr "Giữ Hình Dạng"
 
 
 msgid "Don't stretch the object"
@@ -45690,10 +45682,6 @@ msgid "Selection to Nearest Frame"
 msgstr "Sự Lựa Chọn đến Bức Gần Nhất"
 
 
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
-msgstr "Hút dính bức mẫu được chọn đến bức (nguyên) gần nhất (dùng để sửa địch đến hạ bức không cố ý)"
-
-
 msgid "Selection to Nearest Second"
 msgstr "Sự Lực Chọn đến Giây Gần Nhất"
 
@@ -50477,6 +50465,14 @@ msgid "Export the last Catmull-Rom subdivision modifier as FBX subdivision (does
 msgstr "Xuất cụ sửa đổi phân hóa Catmull-Rom cuối bằng phân hóa FBX (không áp dụng cự sửa đổi mặc dù đã bật 'Áp Dụng Cụ Sửa Đổi')"
 
 
+msgid "Triangulate Faces"
+msgstr "Tam Giác Hoá Mặt"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Biến đổi hết mặt thành tam giác"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Thêm vectơ nhị pháp tuyến và tiếp tuyến chúng với pháp tuyến để hình thành không gian tiếp tuyến (nó chỉ họa động với mạng lưới chỉ có tam giác/tư giác!) "
 
@@ -50774,10 +50770,6 @@ msgid "Optimize Animation Size"
 msgstr "Tối Ưu Cỡ Thước Hoạt Hình"
 
 
-msgid "Reduces exported filesize by removing duplicate keyframesCan cause problems with stepped animation"
-msgstr "Giảm cỡ thước tệp tin xuất bằng xóa các bức mẫu sao chép. Có thể tạo vấn đề với hoạt hình từng bước"
-
-
 msgid "Export setting categories"
 msgstr "Xuất loại cài đặt"
 
@@ -50929,14 +50921,6 @@ msgstr "Nhóm Cờ Bit Mịn"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "Giống 'Nhóm Mịn' nhưng chế tạo các ID nhóm mịn bằng cờ bit (chỉ được sản xuất nhiều nhất 32 nhóm mịn, thường ít hơn nhiều)"
-
-
-msgid "Triangulate Faces"
-msgstr "Tam Giác Hoá Mặt"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Biến đổi hết mặt thành tam giác"
 
 
 msgid "Include UVs"
@@ -54438,6 +54422,10 @@ msgstr "Sự Lựa Chọn đến Giá Trị Con Trỏ"
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Đặt giá trị của các bức mẫu được chọn đến giá trị con trỏ (Y/Thành Phần Ngang)"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Hút dính bức mẫu được chọn đến bức (nguyên) gần nhất (dùng để sửa địch đến hạ bức không cố ý)"
 
 
 msgid "Flatten Handles"
@@ -76011,10 +75999,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Bật/Tắt Cửa Sổ Toàn Màn"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Bật/tắt cứa sổ hiện tại thành toàn màn"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Cửa Sổ Mới"
@@ -77700,10 +77684,6 @@ msgstr "Chế tạo một Bảng trong bối cảnh kết xuất của bộ biê
 
 msgid "Freestyle SVG Export"
 msgstr "Xuất Nét Tự Do SVG"
-
-
-msgid "Color Management"
-msgstr "Quản Lý Màu Sắc"
 
 
 msgid "Bloom"
@@ -80108,16 +80088,8 @@ msgid "Align Object To"
 msgstr "Sắp Xếp Vật Thể Đến"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Khi thêm vật thể từ danh bạ Màn 3D, sắp xếp chúng nó với màn đó hay với thế giới "
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Sắp xếp vật thể mới thêm với hệ thống tọa độ thế giới"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Sắp xếp vật thể mới thêm với định hướng của Màn Chiếu 3D hoạt động"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -80216,14 +80188,6 @@ msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Chép lại dữ liệu bút sáp với vật thể"
 
 
-msgid "Duplicate Hair"
-msgstr "Sao Chép Tóc"
-
-
-msgid "Causes hair data to be duplicated with the object"
-msgstr "Chép lại dữ liệu tóc với vật thể"
-
-
 msgid "Duplicate Lattice"
 msgstr "Sao Chép Lưới Rào"
 
@@ -80320,10 +80284,6 @@ msgid "Causes volume data to be duplicated with the object"
 msgstr "Chép lại dữ liệu thể tích với vật thể"
 
 
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Vào Chế Độ Biên Tập tự động sau thêm một vật thể mới"
-
-
 msgid "Global Undo"
 msgstr "Hủy Bước Toàn Cầu"
 
@@ -80370,14 +80330,6 @@ msgstr "Cho Bức Âm"
 
 msgid "Current frame number can be manually set to a negative value"
 msgstr "Số bức hiện tại có thể đặt thành giá trị âm"
-
-
-msgid "Auto Close"
-msgstr "Tự Động Đóng"
-
-
-msgid "Auto close relevant characters inside the text editor"
-msgstr "Tự động đóng các ký tự liên quan trong bộ biên tập văn bản"
 
 
 msgid "Use Visual keying automatically for constrained objects"
@@ -81128,14 +81080,6 @@ msgid "Show UI Key-Config"
 msgstr "Hiện Cấu Hình Phím Giao Diện"
 
 
-msgid "Anisotropic Filter"
-msgstr "Bộ Lọc Dị Hướng"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Chất lượng của bộ lọc dị hướng (giá trị hơn 1.0 bật bộ lọc dị hướng)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -81524,14 +81468,6 @@ msgid "Size multiplier to use when displaying custom user interface elements, so
 msgstr "Hệ số nhân để sử dụng khi hiển thị phần tử giao diện người dùng được tùy chọn, cho chúng nó được phóng to đúng cho màn hình có độ phân giải khác nào. Giá trị này tùy cơ sở cài đặt độ phân giải của hệ điều hành và phóng to hiển thị của Blender"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "Dây Mịn Chế Độ Biên Tập"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "Bật mịn hóa cạnh của Chế Độ Biên Tập, giảm răng cưa, cần khởi động lại"
-
-
 msgid "GPU Subdivision"
 msgstr "Phân Hóa GPU"
 
@@ -81554,14 +81490,6 @@ msgstr "Vùng Che Trên"
 
 msgid "Display tool/property regions over the main region"
 msgstr "Hiển thị vùng dụng cụ/đặc tính trên vùng chánh"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Chọn Bằng Độ Sâu OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Dùng đệm độ sâu cho sự lựa chọn Màn 3D (nếu không sử dụng, có lẻ vật thể phía trước nhất không được chọn trước)"
 
 
 msgid "Use Disk Cache"
@@ -81848,10 +81776,6 @@ msgid "Mini Axes Type"
 msgstr "Loại Tiểu Trục"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Cho xem một bộ trục 3D xoay trong góc trên phải của Màn Chiếu 3D"
-
-
 msgid "Simple Axis"
 msgstr "Trục Đơn Giản"
 
@@ -81988,18 +81912,6 @@ msgid "Display Object Info"
 msgstr "Hiện Thông Tin Vật Thể"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Hiện tên vật thể và số bức trong màn 3D"
-
-
-msgid "Show Playback FPS"
-msgstr "Hiện Tốc Độ Hảt"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Hiện tốc độ vẽ lại màn (bức/giây) khi đang hát lại hoạt hình"
-
-
 msgid "Show Splash"
 msgstr "Hiện Ảnh Giới Thiệu"
 
@@ -82044,24 +81956,12 @@ msgid "Tooltips"
 msgstr "Đề Thị Dụng Cụ"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Hiển thị đề thị dụng cụ (khi được tắt bấm Alt cho bắt hiển thị)"
-
-
 msgid "Python Tooltips"
 msgstr "Đề Thị Dụng Cụ Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Hiện tham khảo Python trong đề thị dụng cụ"
-
-
-msgid "Show View Name"
-msgstr "Hiện Tên Màn"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Hiện tên của định hướng màn trong mỗi màn 3D"
 
 
 msgid "Smooth View"
@@ -84662,10 +84562,6 @@ msgstr "Ánh Xạ Bức Cũ"
 
 msgid "Old mapping value in frames"
 msgstr "Giá trị ánh xạ cũ bằng số bức"
-
-
-msgid "Additional Subdiv"
-msgstr "Phân Hóa Thêm"
 
 
 msgid "Additional subdivision along the hair"
@@ -90233,14 +90129,6 @@ msgid "Show only data-blocks of one type"
 msgstr "Hiện chỉ một loại cục dữ liệu"
 
 
-msgid "Show Library Overrides"
-msgstr "Hiện Thay Thế Cho Thư Viện"
-
-
-msgid "For libraries with overrides created, show the overridden values"
-msgstr "Cho thư viện đã có thay thế, hiện các giá trị được thay thé"
-
-
 msgid "Show System Overrides"
 msgstr "Hiện Đồ Thay Thế Hệ Thống"
 
@@ -92093,10 +91981,6 @@ msgid "Active Theme Area"
 msgstr "Khu Vực Phong Cách Hoạt Động"
 
 
-msgid "3D View"
-msgstr "Màn 3D"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Tập Phong Cách Màu Sắc Xương"
 
@@ -93523,14 +93407,6 @@ msgstr "Con Trỏ Văn Bản"
 
 msgid "Color of the interface widgets text insertion cursor (caret)"
 msgstr "Màu của con trỏ chèn văn bản của khiển tố giao diện"
-
-
-msgid "Theme 3D View"
-msgstr "Phong Cách Màn 3D"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Cài đặt phong cách cho màn 3D"
 
 
 msgid "Bone Locked Weight"
@@ -98087,10 +97963,6 @@ msgstr "Yêu cầu GPU NVIDIA có khả năng tính toán 5.0"
 
 msgid "and NVIDIA driver version 470 or newer"
 msgstr "và trình điều khiển NVIDIA phiên bản 470 hay mới hơn"
-
-
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "Yêu cầu GPU AMD riêng biệt có kiến trúc RDNA"
 
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
@@ -103653,10 +103525,6 @@ msgid "View Name"
 msgstr "Hiện Tên"
 
 
-msgid "Playback FPS"
-msgstr "Hát Lại Bức Ành/Giây"
-
-
 msgid "3D Viewport Axis"
 msgstr "Trục Màn Chiếu 3D"
 
@@ -106132,10 +106000,6 @@ msgstr "Chưa được lưu, có sai lầm bất nhờ khi lưu ảnh nhị kên
 
 msgid "Could not write image: %s"
 msgstr "Không lưu được ảnh: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Chưa được lưu, ảnh không có một màn \"%s\" và \"%s\""
 
 
 msgid "When saving a tiled image, the path '%s' must contain a valid UDIM marker"
@@ -109964,10 +109828,6 @@ msgid "Objects do not have the same number of vertices"
 msgstr "Số lượng đỉnh vật thể không giống nhau"
 
 
-msgid "Not valid subdivisions found to rebuild a lower level"
-msgstr "Đã tìm được các phân hóa không hợp lệ để xây dựng lại một tầng thấp hơn"
-
-
 msgid "Not valid subdivisions found to rebuild lower levels"
 msgstr "Đã tìm được các phân hóa không hợp lệ để xây dựng lại các tầng thấp hơn"
 
@@ -110570,6 +110430,10 @@ msgstr "Thế Giới Thân Rắn không có dữ liệu vật lý liên quan đ�
 
 msgid "3D Local View"
 msgstr "Màn 3D Điạ Phương"
+
+
+msgid "3D View"
+msgstr "Màn 3D"
 
 
 msgid "Frame:%d "

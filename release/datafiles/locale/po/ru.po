@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'f92e3b39f18a')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -11667,14 +11667,6 @@ msgid "Show Collection data-blocks"
 msgstr "Показать датаблоки коллекций"
 
 
-msgid "Hairs"
-msgstr "Волосы"
-
-
-msgid "Show/hide Hair data-blocks"
-msgstr "Показать/скрыть датаблоки волос"
-
-
 msgid "Show Image data-blocks"
 msgstr "Показать датаблоки изображений"
 
@@ -12505,10 +12497,6 @@ msgstr "Размер клетки"
 
 msgid "CFL"
 msgstr "КФЛ"
-
-
-msgid "Maximal velocity per cell (higher value results in greater timesteps)"
-msgstr "Максимальная скорость на ячейку (чем выше значение, тем длиннее временные шаги)"
 
 
 msgid "Clipping"
@@ -15633,6 +15621,10 @@ msgid "Create duplication of strokes"
 msgstr "Создать повторение штрихов"
 
 
+msgid "Envelope"
+msgstr "Оболочка"
+
+
 msgid "Extend or shrink strokes"
 msgstr "Удлинить или уменьшить штрихи"
 
@@ -16049,6 +16041,14 @@ msgid "Color Value"
 msgstr "Значение цвета"
 
 
+msgid "Inverse VertexGroup"
+msgstr "Инвертировать группу вершин"
+
+
+msgid "Vertex group name for modulating the deform"
+msgstr "Имя группы вершин, регулирующей деформацию"
+
+
 msgid "Hook Modifier"
 msgstr "Модификатор крюка"
 
@@ -16155,20 +16155,12 @@ msgid "Compensate for non-uniform object scale"
 msgstr "Компенсировать неравномерное масштабирование объекта"
 
 
-msgid "Vertex group name for modulating the deform"
-msgstr "Имя группы вершин, регулирующей деформацию"
-
-
 msgid "Lattice Modifier"
 msgstr "Модификатор решётки"
 
 
 msgid "Change stroke using lattice to deform modifier"
 msgstr "Изменить штрихи с помощью модификатора деформации по решётке"
-
-
-msgid "Inverse VertexGroup"
-msgstr "Инвертировать группу вершин"
 
 
 msgid "Lattice object to deform with"
@@ -16879,6 +16871,10 @@ msgid "The modifier affects the UV rotation factor of the point"
 msgstr "Модификатор влияет на коэффициент вращения UV точек"
 
 
+msgid "Keep Shape"
+msgstr "Поддерживать форму"
+
+
 msgid "Subdivision Modifier"
 msgstr "Модификатор подразделения"
 
@@ -17418,10 +17414,6 @@ msgstr "B-кость"
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
 msgstr "Отображать кости к виде прямоугольных параллелепипедов, показывающих подразделения и B-сплайны"
-
-
-msgid "Envelope"
-msgstr "Оболочка"
 
 
 msgid "Display bones as extruded spheres, showing deformation influence volume"
@@ -26007,6 +25999,10 @@ msgid "Bit depth per channel"
 msgstr "Битовая глубина на канал"
 
 
+msgid "Color Management"
+msgstr "Управление цветом"
+
+
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Выберите BW для сохранения изображений в градациях серого, RGB для сохранения каналов красного, зелёного и синего, RGBA для сохранения каналов красного, зелёного, синего и альфа-канала"
 
@@ -32824,10 +32820,6 @@ msgstr "Создавать экземпляры из обычных частиц
 
 msgid "Create instances along particle paths"
 msgstr "Создавать экземпляры вдоль путей частиц"
-
-
-msgid "Keep Shape"
-msgstr "Поддерживать форму"
 
 
 msgid "Don't stretch the object"
@@ -43472,6 +43464,14 @@ msgid "Export Subdivision Surface"
 msgstr "Экспортировать подразделение поверхности"
 
 
+msgid "Triangulate Faces"
+msgstr "Меш из треугольников"
+
+
+msgid "Convert all faces to triangles"
+msgstr "Преобразовать все грани в треугольники"
+
+
 msgid "Add binormal and tangent vectors, together with normal they form the tangent space (will only work correctly with tris/quads only meshes!)"
 msgstr "Добавить вектора бинормалей и касательных для формирования пространства касательных вместе с нормалями (работает правильно только для мешей из треугольников и четырёхугольников!)"
 
@@ -43784,14 +43784,6 @@ msgstr "Битовый флаг группы сглаживания"
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
 msgstr "То же, что и «Группы сглаживания», но генерировать идентификаторы групп сглаживания с помощью битовых флагов (даёт не больше 32 различных групп сглаживания, но обычно этого достаточно)"
-
-
-msgid "Triangulate Faces"
-msgstr "Меш из треугольников"
-
-
-msgid "Convert all faces to triangles"
-msgstr "Преобразовать все грани в треугольники"
 
 
 msgid "Include UVs"
@@ -63346,10 +63338,6 @@ msgid "Toggle Window Fullscreen"
 msgstr "Полноэкранный режим"
 
 
-msgid "Toggle the current window fullscreen"
-msgstr "Переключить полноэкранный режим для текущего окна"
-
-
 msgctxt "Operator"
 msgid "New Window"
 msgstr "Новое окно"
@@ -64630,10 +64618,6 @@ msgstr "Создать панель в рендер-контексте реда�
 
 msgid "Freestyle SVG Export"
 msgstr "SVG-экспорт Freestyle'а"
-
-
-msgid "Color Management"
-msgstr "Управление цветом"
 
 
 msgid "Bloom"
@@ -66680,16 +66664,8 @@ msgid "Align Object To"
 msgstr "Выравнивание новых объектов"
 
 
-msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Способ выравнивания (к мировой системе координат или к текущему окну) при добавлении объекта"
-
-
 msgid "Align newly added objects to the world coordinate system"
 msgstr "Выравнивать добавляемые объекты по мировой системе координат"
-
-
-msgid "Align newly added objects to the active 3D View direction"
-msgstr "Выравнивать добавляемые объекты по направлению активного 3D-вида"
 
 
 msgid "Align newly added objects to the 3D Cursor's rotation"
@@ -66830,10 +66806,6 @@ msgstr "Дублировать текст"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Дублировать данные текста вместе с объектом"
-
-
-msgid "Enter Edit Mode automatically after adding a new object"
-msgstr "Автоматически переключаться в режим редактирования при добавлении объекта"
 
 
 msgid "Global Undo"
@@ -67452,14 +67424,6 @@ msgid "Show UI Key-Config"
 msgstr "Показать интерфейс конфигурации клавиш"
 
 
-msgid "Anisotropic Filter"
-msgstr "Анизотропный фильтр"
-
-
-msgid "Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)"
-msgstr "Качество анизотропной фильтрации (значение больше 1.0 включает фильтрацию)"
-
-
 msgid "2x"
 msgstr "2x"
 
@@ -67712,24 +67676,8 @@ msgid "UI Scale"
 msgstr "Масштаб интерфейса"
 
 
-msgid "Edit-Mode Smooth Wires"
-msgstr "Сглаживать линии в режиме редактирования"
-
-
-msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
-msgstr "Включить режим сглаживания краев в режиме редактирования, уменьшает алиасинг, требуется перезапуск"
-
-
 msgid "Region Overlap"
 msgstr "Разрешить перекрытие регионов"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Выбор по глубине OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection (without this the front most object may not be selected first)"
-msgstr "Использовать буфер глубины для выбора в 3D-виде (без этого самый передний объект может быть не выбран первым)"
 
 
 msgid "Edit Studio Light"
@@ -67992,10 +67940,6 @@ msgid "Mini Axes Type"
 msgstr "Тип миниосей"
 
 
-msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
-msgstr "Отображать небольшие вращающиеся 3D-оси в верхнем правом углу 3D-вида"
-
-
 msgid "Simple Axis"
 msgstr "Простые оси"
 
@@ -68128,18 +68072,6 @@ msgid "Display Object Info"
 msgstr "Отображать информацию об объекте"
 
 
-msgid "Display objects name and frame number in 3D view"
-msgstr "Отображать имя объекта и номер кадра в 3D-виде"
-
-
-msgid "Show Playback FPS"
-msgstr "Отображать FPS воспроизведения"
-
-
-msgid "Show the frames per second screen refresh rate, while animation is played back"
-msgstr "Отображать частоту обновления экрана в кадрах/c при воспроизведении анимации"
-
-
 msgid "Show Splash"
 msgstr "Отображать заставку"
 
@@ -68152,24 +68084,12 @@ msgid "Tooltips"
 msgstr "Подсказки"
 
 
-msgid "Display tooltips (when off hold Alt to force display)"
-msgstr "Отображать подсказки (если отключено, удерживайте Alt для принудительного отображения)"
-
-
 msgid "Python Tooltips"
 msgstr "Подсказки Python"
 
 
 msgid "Show Python references in tooltips"
 msgstr "Отображать Python-идентификаторы в подсказках"
-
-
-msgid "Show View Name"
-msgstr "Отображать имя вида"
-
-
-msgid "Show the name of the view's direction in each 3D View"
-msgstr "Отображать имя направления вида в каждом 3D-виде"
 
 
 msgid "Smooth View"
@@ -70206,10 +70126,6 @@ msgstr "Старая карта кадров"
 
 msgid "Old mapping value in frames"
 msgstr "Старые значения карты в кадрах"
-
-
-msgid "Additional Subdiv"
-msgstr "Доп. подразделение"
 
 
 msgid "Additional subdivision along the hair"
@@ -76627,10 +76543,6 @@ msgid "Active Theme Area"
 msgstr "Область активной темы"
 
 
-msgid "3D View"
-msgstr "3D-вид"
-
-
 msgid "Theme Bone Color Set"
 msgstr "Тема набора цветов костей"
 
@@ -77673,14 +77585,6 @@ msgstr "Выступ виджетов"
 
 msgid "Color of the 1px shadow line underlying widgets"
 msgstr "Цвет однопиксельной линии тени под виджетами"
-
-
-msgid "Theme 3D View"
-msgstr "Тема 3D-вида"
-
-
-msgid "Theme settings for the 3D View"
-msgstr "Настройки темы для 3D-вида"
 
 
 msgid "Bone Pose"
@@ -84490,10 +84394,6 @@ msgid "View Name"
 msgstr "Имена видов"
 
 
-msgid "Playback FPS"
-msgstr "FPS воспроизведения"
-
-
 msgid "3D Viewport Axis"
 msgstr "Оси 3D-вьюпорта"
 
@@ -86467,10 +86367,6 @@ msgstr "Не записано, непредвиденная ошибка при 
 
 msgid "Could not write image: %s"
 msgstr "Не удалось сохранить изображение: %s"
-
-
-msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
-msgstr "Не записано, у изображения нет видов «%s» и «%s»"
 
 
 msgid "Error writing render result, %s (see console)"
@@ -89922,6 +89818,10 @@ msgstr "У среды твёрдых тел нет связанных физич
 
 msgid "3D Local View"
 msgstr "Локальный 3D-вид"
+
+
+msgid "3D View"
+msgstr "3D-вид"
 
 
 msgid "Frame:%d "
