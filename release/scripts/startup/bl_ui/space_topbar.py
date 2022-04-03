@@ -398,7 +398,7 @@ class TOPBAR_MT_file_export(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        self.layout.operator("wm.obj_export", text="Wavefront OBJ (.obj)", icon = "SAVE_OBJ")
+        self.layout.operator("wm.obj_export", text="Wavefront OBJ (.obj) (experimental)", icon = "SAVE_OBJ")
         if bpy.app.build_options.collada:
             self.layout.operator("wm.collada_export", text="Collada (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
