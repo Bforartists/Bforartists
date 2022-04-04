@@ -1000,9 +1000,9 @@ static void init_internal_icons(void)
   def_internal_vicon(ICON_SEQUENCE_COLOR_08, vicon_strip_color_draw_08);
   def_internal_vicon(ICON_SEQUENCE_COLOR_09, vicon_strip_color_draw_09);
 
-  def_internal_vicon(ICON_LIBRARY_DATA_INDIRECT, vicon_strip_color_draw_library_data_indirect);
-  def_internal_vicon(ICON_LIBRARY_DATA_OVERRIDE_NONEDITABLE,
-                     vicon_strip_color_draw_library_data_override_noneditable);
+  /*bfa - the programmatically icon creation nonsense happens without Bforartists*/
+  //def_internal_vicon(ICON_LIBRARY_DATA_INDIRECT, vicon_strip_color_draw_library_data_indirect);
+  def_internal_vicon(ICON_LIBRARY_DATA_OVERRIDE_NONEDITABLE, vicon_strip_color_draw_library_data_override_noneditable);
 }
 
 static void init_iconfile_list(struct ListBase *list)
