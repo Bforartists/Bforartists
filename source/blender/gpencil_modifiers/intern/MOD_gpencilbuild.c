@@ -774,7 +774,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   row = uiLayoutRow(split, false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_percentage", 0, "Use Factor", ICON_NONE);
+  uiItemR(row, ptr, "use_percentage", 0, "Factor", ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);
