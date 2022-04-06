@@ -1416,7 +1416,7 @@ static int area_dupli_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
   /* Create new window. No need to set space_type since it will be copied over. */
   wmWindow *newwin = WM_window_open(C,
-                                    "Blender",
+                                    "Bforartists",
                                     area->totrct.xmin,
                                     area->totrct.ymin,
                                     area->winx,
@@ -4703,7 +4703,7 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void *UNUSED(arg)
     uiItemR(layout, &ptr, "show_statusbar_vram", 0, IFACE_("Video Memory"), ICON_NONE);
   }
 /*bfa - bforartists version, not blender version*/
-  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Bforartists Version"), ICON_NONE); 
+  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Bforartists Version"), ICON_NONE);
 }
 
 static int screen_context_menu_invoke(bContext *C,
