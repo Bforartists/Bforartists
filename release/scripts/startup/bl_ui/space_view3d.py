@@ -1256,10 +1256,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
-        layout.operator("view3d.switchactivecamto", text="Set Active Camera", icon ="VIEW_SWITCHACTIVECAM")
-        layout.operator("view3d.view_camera", text="Active Camera", icon = 'VIEW_SWITCHTOCAM')
-        layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
+        layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
 
         layout.separator()
 
@@ -1318,6 +1315,18 @@ class VIEW3D_MT_view_pie_menus(Menu):
 
         layout.operator("wm.toolbar_fallback_pie", text = "Fallback Tool", icon = "MENU_PANEL")
         layout.operator("view3d.object_mode_pie_or_toggle", text = "Modes", icon = "MENU_PANEL")
+
+
+class VIEW3D_MT_view_cameras(Menu):
+    bl_label = "Cameras"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
+        layout.operator("view3d.switchactivecamto", text="Set Active Camera", icon ="VIEW_SWITCHACTIVECAM")
+        layout.operator("view3d.view_camera", text="Active Camera", icon = 'VIEW_SWITCHTOCAM')
+        layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
 
 
 class VIEW3D_MT_view_navigation_legacy(Menu):
@@ -8716,6 +8725,7 @@ classes = (
     VIEW3D_MT_switchactivecamto,
     VIEW3D_MT_view_legacy,
     VIEW3D_MT_view,
+    VIEW3D_MT_view_cameras,
     VIEW3D_MT_view_pie_menus,
     VIEW3D_MT_view_navigation_legacy,
     VIEW3D_MT_view_navigation,
