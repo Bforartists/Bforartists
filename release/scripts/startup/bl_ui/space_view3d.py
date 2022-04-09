@@ -4285,7 +4285,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_show_hide")
+        layout.menu("VIEW3D_MT_edit_mesh_showhide")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
@@ -5034,7 +5034,7 @@ class VIEW3D_MT_edit_mesh_split(Menu):
         layout.operator_enum("mesh.edge_split", "type")
 
 
-class VIEW3D_MT_edit_mesh_show_hide(Menu):
+class VIEW3D_MT_edit_mesh_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
@@ -8858,7 +8858,7 @@ classes = (
     VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_split,
     VIEW3D_MT_edit_mesh_dissolve,
-    VIEW3D_MT_edit_mesh_show_hide,
+    VIEW3D_MT_edit_mesh_showhide,
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_draw_gpencil,
     VIEW3D_MT_edit_gpencil_showhide,
