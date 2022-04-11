@@ -6,7 +6,7 @@ bl_info = {
     "name": "Dynamic Brush Menus",
     "description": "Fast access to brushes & tools in Sculpt and Paint Modes",
     "author": "Ryan Inch (Imaginer)",
-    "version": (1, 1, 8),
+    "version": (1, 1, 10),
     "blender": (2, 80, 0),
     "location": "Spacebar in Sculpt/Paint Modes",
     "warning": '',

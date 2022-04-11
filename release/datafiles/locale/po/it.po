@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -10026,10 +10026,6 @@ msgid "Grow"
 msgstr "Accresci"
 
 
-msgid "Fade"
-msgstr "Dissolvenza"
-
-
 msgid "Custom Curve"
 msgstr "Curva Personalizzata"
 
@@ -10150,6 +10146,10 @@ msgstr "Bordi"
 
 msgid "Mirror Modifier"
 msgstr "Modificatore Specchia"
+
+
+msgid "Fade"
+msgstr "Dissolvenza"
 
 
 msgid "Shrinkwrap Modifier"
@@ -28108,6 +28108,18 @@ msgid "Recalculate handle length"
 msgstr "Ricalcola la lunghezza della maniglia"
 
 
+msgid "Remove from selection"
+msgstr "Rimuovi dalla selezione"
+
+
+msgid "Toggle Selection"
+msgstr "Cambia selezionato"
+
+
+msgid "Toggle the selection"
+msgstr "Cambia la selezionabilità"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Aggiunge Cerchio Bezier"
@@ -29532,18 +29544,6 @@ msgid "Generic"
 msgstr "NLA Generico"
 
 
-msgid "Remove from selection"
-msgstr "Rimuovi dalla selezione"
-
-
-msgid "Toggle Selection"
-msgstr "Cambia selezionato"
-
-
-msgid "Toggle the selection"
-msgstr "Cambia la selezionabilità"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Cancella Fotogramma Attivo"
@@ -30107,14 +30107,6 @@ msgstr "Unisci punti per distanza"
 msgctxt "Operator"
 msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
-
-
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
 
 
 msgctxt "Operator"
@@ -43024,6 +43016,10 @@ msgid "Cloth Presets"
 msgstr "Preimpostazioni Stoffa"
 
 
+msgid "Caustics"
+msgstr "Caustiche"
+
+
 msgid "Ray Visibility"
 msgstr "Visibilità Raggio"
 
@@ -43046,10 +43042,6 @@ msgstr "Trasparente"
 
 msgid "Light Paths"
 msgstr "Percorsi Luce"
-
-
-msgid "Caustics"
-msgstr "Caustiche"
 
 
 msgid "Max Bounces"
@@ -48876,6 +48868,14 @@ msgstr "L'immagine è mostrata e modificata in questo spazio"
 
 msgid "Outline"
 msgstr "Contorno"
+
+
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
 
 
 msgid "Overlay Mode"
@@ -55847,26 +55847,6 @@ msgstr "Cambia Livelli Osso..."
 
 msgid "Bone Settings"
 msgstr "Impostazioni Osso"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Naviga Pose..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Aggiungi Posa..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Rinomina Posa..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Rimuovi Posa..."
 
 
 msgctxt "Operator"

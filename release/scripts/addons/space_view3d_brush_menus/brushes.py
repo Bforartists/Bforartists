@@ -32,10 +32,16 @@ brush_datapath = {
 brush_icon = {
     'SCULPT': {
     "BLOB": 'BRUSH_BLOB',
+    "BOUNDARY": 'BRUSH_GRAB',
     "CLAY": 'BRUSH_CLAY',
     "CLAY_STRIPS": 'BRUSH_CLAY_STRIPS',
+    "CLAY_THUMB": 'BRUSH_CLAY_STRIPS',
+    "CLOTH": 'BRUSH_SCULPT_DRAW',
     "CREASE": 'BRUSH_CREASE',
+    "DISPLACEMENT_ERASER": 'BRUSH_SCULPT_DRAW',
+    "DISPLACEMENT_SMEAR": 'BRUSH_SCULPT_DRAW',
     "DRAW": 'BRUSH_SCULPT_DRAW',
+    "DRAW_FACE_SETS": 'BRUSH_MASK',
     "DRAW_SHARP": 'BRUSH_SCULPT_DRAW',
     "ELASTIC_DEFORM": 'BRUSH_GRAB',
     "FILL": 'BRUSH_FILL',
@@ -44,7 +50,9 @@ brush_icon = {
     "INFLATE": 'BRUSH_INFLATE',
     "LAYER": 'BRUSH_LAYER',
     "MASK": 'BRUSH_MASK',
+    "MULTIPLANE_SCRAPE": 'BRUSH_SCRAPE',
     "NUDGE": 'BRUSH_NUDGE',
+    "PAINT": 'BRUSH_SCULPT_DRAW',
     "PINCH": 'BRUSH_PINCH',
     "POSE": 'BRUSH_GRAB',
     "ROTATE": 'BRUSH_ROTATE',
@@ -52,21 +60,22 @@ brush_icon = {
     "SIMPLIFY": 'BRUSH_DATA',
     "SMOOTH": 'BRUSH_SMOOTH',
     "SNAKE_HOOK": 'BRUSH_SNAKE_HOOK',
-    "THUMB": 'BRUSH_THUMB'
+    "THUMB": 'BRUSH_THUMB',
+    "TOPOLOGY": 'BRUSH_GRAB',
     },
 
     'VERTEX_PAINT': {
     "AVERAGE": 'BRUSH_BLUR',
     "BLUR": 'BRUSH_BLUR',
     "DRAW": 'BRUSH_MIX',
-    "SMEAR": 'BRUSH_BLUR'
+    "SMEAR": 'BRUSH_BLUR',
     },
 
     'WEIGHT_PAINT': {
     "AVERAGE": 'BRUSH_BLUR',
     "BLUR": 'BRUSH_BLUR',
     "DRAW": 'BRUSH_MIX',
-    "SMEAR": 'BRUSH_BLUR'
+    "SMEAR": 'BRUSH_BLUR',
     },
 
     'TEXTURE_PAINT': {
@@ -75,9 +84,25 @@ brush_icon = {
     "FILL": 'BRUSH_TEXFILL',
     "MASK": 'BRUSH_TEXMASK',
     "SMEAR": 'BRUSH_SMEAR',
-    "SOFTEN": 'BRUSH_SOFTEN'
-    }
+    "SOFTEN": 'BRUSH_SOFTEN',
+    },
 }
+
+def get_brush_icon(mode, tool):
+    mode_icons = brush_icon.get(mode, None)
+
+    if mode_icons == None:
+        print(f"Warning: icons for mode {mode} aren't supported")
+        return 'BRUSH_DATA'
+
+    icon = mode_icons.get(tool, None)
+
+    if icon == None:
+        print(f"Warning: Could not find icon for tool {tool} in mode {mode}")
+        return 'BRUSH_DATA'
+
+
+    return icon
 
 
 class BrushesMenu(Menu):
@@ -120,7 +145,7 @@ class BrushesMenu(Menu):
                         utils_core.menuprop(
                                 column_flow.row(), item.name,
                                 'bpy.data.brushes["%s"]' % item.name,
-                                brush_datapath[mode], icon=brush_icon[mode][item.sculpt_tool],
+                                brush_datapath[mode], icon=get_brush_icon(mode, item.sculpt_tool),
                                 disable=True, custom_disable_exp=(item.name, current_brush),
                                 path=True
                                 )
@@ -131,7 +156,7 @@ class BrushesMenu(Menu):
                         utils_core.menuprop(
                                 column_flow.row(), item.name,
                                 'bpy.data.brushes["%s"]' % item.name,
-                                brush_datapath[mode], icon=brush_icon[mode][item.vertex_tool],
+                                brush_datapath[mode], icon=get_brush_icon(mode, item.vertex_tool),
                                 disable=True, custom_disable_exp=(item.name, current_brush),
                                 path=True
                                 )
@@ -142,7 +167,7 @@ class BrushesMenu(Menu):
                         utils_core.menuprop(
                                 column_flow.row(), item.name,
                                 'bpy.data.brushes["%s"]' % item.name,
-                                brush_datapath[mode], icon=brush_icon[mode][item.vertex_tool],
+                                brush_datapath[mode], icon=get_brush_icon(mode, item.weight_tool),
                                 disable=True, custom_disable_exp=(item.name, current_brush),
                                 path=True
                                 )
@@ -153,7 +178,7 @@ class BrushesMenu(Menu):
                         utils_core.menuprop(
                                 column_flow.row(), item.name,
                                 'bpy.data.brushes["%s"]' % item.name,
-                                brush_datapath[mode], icon=brush_icon[mode][item.image_tool],
+                                brush_datapath[mode], icon=get_brush_icon(mode, item.image_tool),
                                 disable=True, custom_disable_exp=(item.name, current_brush),
                                 path=True
                                 )

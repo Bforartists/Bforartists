@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# (c) 2009 At Mind B.V. - Jeroen Bakker. (c) 2014 Blender Foundation - Campbell Barton.
+# Copyright 2009 At Mind B.V. - Jeroen Bakker.
+#           2014 Blender Foundation. - Campbell Barton.
 
 # -----------------------------------------------------------------------------
 # NOTICE: this module is expanded upon in Blender Asset Tracer.
@@ -107,7 +108,7 @@ class BlendFile:
         "is_modified",
         # bool (is file gzipped)
         "is_compressed",
-        )
+    )
 
     def __init__(self, handle):
         log.debug("initializing reading blend-file")
@@ -158,7 +159,7 @@ class BlendFile:
 
     def find_block_from_offset(self, offset):
         # same as looking looping over all blocks,
-        # then checking ``block.addr_old == offset``
+        # then checking `block.addr_old == offset`.
         assert(type(offset) is int)
         return self.block_from_offset.get(offset)
 
@@ -187,7 +188,7 @@ class BlendFile:
     def ensure_subtype_smaller(self, sdna_index_curr, sdna_index_next):
         # never refine to a smaller type
         if (self.structs[sdna_index_curr].size >
-            self.structs[sdna_index_next].size):
+                self.structs[sdna_index_next].size):
 
             raise RuntimeError("cant refine to smaller type (%s -> %s)" %
                                (self.structs[sdna_index_curr].dna_type_id.decode('ascii'),
@@ -292,7 +293,7 @@ class BlendFileBlock:
         "count",
         "file_offset",
         "user_data",
-        )
+    )
 
     def __str__(self):
         return ("<%s.%s (%s), size=%d at %s>" %
@@ -369,11 +370,12 @@ class BlendFileBlock:
         assert(type(dna_type_id) is bytes)
         self.refine_type_from_index(self.file.sdna_index_from_id[dna_type_id])
 
-    def get_file_offset(self, path,
+    def get_file_offset(
+            self, path,
             default=...,
             sdna_index_refine=None,
             base_index=0,
-            ):
+    ):
         """
         Return (offset, length)
         """
@@ -392,7 +394,7 @@ class BlendFileBlock:
 
         dna_struct = self.file.structs[sdna_index_refine]
         field = dna_struct.field_from_path(
-                self.file.header, self.file.handle, path)
+            self.file.header, self.file.handle, path)
 
         return (self.file.handle.tell(), field.dna_name.array_size)
 
@@ -416,10 +418,10 @@ class BlendFileBlock:
 
         dna_struct = self.file.structs[sdna_index_refine]
         return dna_struct.field_get(
-                self.file.header, self.file.handle, path,
-                default=default,
-                use_nil=use_nil, use_str=use_str,
-                )
+            self.file.header, self.file.handle, path,
+            default=default,
+            use_nil=use_nil, use_str=use_str,
+        )
 
     def get_recursive_iter(self, path, path_root=b"",
                            default=...,
@@ -429,8 +431,8 @@ class BlendFileBlock:
                            ):
         if path_root:
             path_full = (
-                    (path_root if type(path_root) is tuple else (path_root, )) +
-                    (path if type(path) is tuple else (path, )))
+                (path_root if type(path_root) is tuple else (path_root, )) +
+                (path if type(path) is tuple else (path, )))
         else:
             path_full = path
 
@@ -466,9 +468,10 @@ class BlendFileBlock:
         # TODO This implementation is most likely far from optimal... and CRC32 is not renown as the best hashing
         #      algo either. But for now does the job!
         import zlib
+
         def _is_pointer(self, k):
             return self.file.structs[self.sdna_index].field_from_path(
-                    self.file.header, self.file.handle, k).dna_name.is_pointer
+                self.file.header, self.file.handle, k).dna_name.is_pointer
 
         hsh = 1
         for k, v in self.items_recursive_iter():
@@ -489,7 +492,7 @@ class BlendFileBlock:
         self.file.handle.seek(self.file_offset, os.SEEK_SET)
         self.file.is_modified = True
         return dna_struct.field_set(
-                self.file.header, self.file.handle, path, value)
+            self.file.header, self.file.handle, path, value)
 
     # ---------------
     # Utility get/set
@@ -500,7 +503,7 @@ class BlendFileBlock:
             default=...,
             sdna_index_refine=None,
             base_index=0,
-            ):
+    ):
         if sdna_index_refine is None:
             sdna_index_refine = self.sdna_index
         result = self.get(path, default, sdna_index_refine=sdna_index_refine, base_index=base_index)
@@ -510,7 +513,7 @@ class BlendFileBlock:
             return result
 
         assert(self.file.structs[sdna_index_refine].field_from_path(
-                self.file.header, self.file.handle, path).dna_name.is_pointer)
+            self.file.header, self.file.handle, path).dna_name.is_pointer)
         if result != 0:
             # possible (but unlikely)
             # that this fails and returns None
@@ -576,7 +579,7 @@ class BlendFileHeader:
         "endian_str",
         # int, used to index common types
         "endian_index",
-        )
+    )
 
     def __init__(self, handle):
         FILEHEADER = struct.Struct(b'7s1s1s3s')
@@ -608,11 +611,11 @@ class BlendFileHeader:
 
     def create_block_header_struct(self):
         return struct.Struct(b''.join((
-                self.endian_str,
-                b'4sI',
-                b'I' if self.pointer_size == 4 else b'Q',
-                b'II',
-                )))
+            self.endian_str,
+            b'4sI',
+            b'I' if self.pointer_size == 4 else b'Q',
+            b'II',
+        )))
 
 
 class DNAName:
@@ -625,7 +628,7 @@ class DNAName:
         "is_pointer",
         "is_method_pointer",
         "array_size",
-        )
+    )
 
     def __init__(self, name_full):
         self.name_full = name_full
@@ -688,7 +691,7 @@ class DNAField:
         "dna_size",
         # cached info (avoid looping over fields each time)
         "dna_offset",
-        )
+    )
 
     def __init__(self, dna_type, dna_name, dna_size, dna_offset):
         self.dna_type = dna_type
@@ -707,7 +710,7 @@ class DNAStruct:
         "fields",
         "field_from_name",
         "user_data",
-        )
+    )
 
     def __init__(self, dna_type_id):
         self.dna_type_id = dna_type_id
@@ -767,7 +770,7 @@ class DNAStruct:
                 return default
             else:
                 raise KeyError("%r not found in %r (%r)" %
-                        (path, [f.dna_name.name_only for f in self.fields], self.dna_type_id))
+                               (path, [f.dna_name.name_only for f in self.fields], self.dna_type_id))
 
         dna_type = field.dna_type
         dna_name = field.dna_name
@@ -807,7 +810,7 @@ class DNAStruct:
                     return DNA_IO.read_bytes(handle, dna_name.array_size)
         else:
             raise NotImplementedError("%r exists but isn't pointer, can't resolve field %r" %
-                    (path, dna_name.name_only), dna_name, dna_type)
+                                      (path, dna_name.name_only), dna_name, dna_type)
 
     def field_set(self, header, handle, path, value):
         assert(type(path) == bytes)
@@ -815,7 +818,7 @@ class DNAStruct:
         field = self.field_from_path(header, handle, path)
         if field is None:
             raise KeyError("%r not found in %r" %
-                    (path, [f.dna_name.name_only for f in self.fields]))
+                           (path, [f.dna_name.name_only for f in self.fields]))
 
         dna_type = field.dna_type
         dna_name = field.dna_name

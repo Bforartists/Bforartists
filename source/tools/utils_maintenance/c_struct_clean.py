@@ -40,6 +40,7 @@ SOURCE_EXT = (
 re_words = re.compile("[A-Za-z_][A-Za-z_0-9]*")
 re_match_struct = re.compile(r"struct\s+([A-Za-z_][A-Za-z_0-9]*)\s*;")
 
+
 def clean_structs(fn: str, data_src: str) -> Optional[str]:
     import re
 

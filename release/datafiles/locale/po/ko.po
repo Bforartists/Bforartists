@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -13791,10 +13791,6 @@ msgid "Hide points from the end of each stroke to the start (e.g. for animating 
 msgstr "각 스트로크 끝에서 시작점까지 포인트를 숨깁니다 (예: 선을 애니메이션으로 지우는 경우)"
 
 
-msgid "Fade"
-msgstr "페이드"
-
-
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
 msgstr "각 스트로크에서 발생하는 순서대로 포인트를 숨 깁니다 (예: 잉크 페이드 효과 또는 그려진 후 사라지는 애니메이션)"
 
@@ -14031,6 +14027,10 @@ msgstr "스트로크 불투명도의 페이드 영향"
 
 msgid "Fade influence of stroke's thickness"
 msgstr "스트로크 두께의 페이드 영향"
+
+
+msgid "Fade"
+msgstr "페이드"
 
 
 msgid "Noise Modifier"
@@ -39919,6 +39919,18 @@ msgid "Recalculate handle length"
 msgstr "핸들 길이를 재계산"
 
 
+msgid "Remove from selection"
+msgstr "선택에서 제거"
+
+
+msgid "Toggle Selection"
+msgstr "선택을 토글"
+
+
+msgid "Toggle the selection"
+msgstr "선택을 토글"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "베지어 원형을 추가"
@@ -42143,18 +42155,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "현재 강조 표시된 기즈모를 선택"
 
 
-msgid "Remove from selection"
-msgstr "선택에서 제거"
-
-
-msgid "Toggle Selection"
-msgstr "선택을 토글"
-
-
-msgid "Toggle the selection"
-msgstr "선택을 토글"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "기즈모 트윅"
@@ -43396,14 +43396,6 @@ msgstr "스트로크를 다듬기"
 
 msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
-
-
-msgid "Black"
-msgstr "블랙"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgctxt "Operator"
@@ -57135,6 +57127,10 @@ msgid "Sequence Slide"
 msgstr "시퀀스 슬라이드"
 
 
+msgid "Axis Ortho"
+msgstr "축 정사"
+
+
 msgctxt "Operator"
 msgid "Shear"
 msgstr "전단"
@@ -57142,10 +57138,6 @@ msgstr "전단"
 
 msgid "Shear selected items along the horizontal screen axis"
 msgstr "수평 화면 축을 따라 선택한 항목을 전단"
-
-
-msgid "Axis Ortho"
-msgstr "축 정사"
 
 
 msgctxt "Operator"
@@ -61664,6 +61656,10 @@ msgid "Aperture"
 msgstr "조리개"
 
 
+msgid "Caustics"
+msgstr "커스틱"
+
+
 msgid "Ray Visibility"
 msgstr "광선 가시성"
 
@@ -61686,10 +61682,6 @@ msgstr "투명"
 
 msgid "Light Paths"
 msgstr "라이트 경로"
-
-
-msgid "Caustics"
-msgstr "커스틱"
 
 
 msgid "Clamping"
@@ -71473,8 +71465,16 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -82593,26 +82593,6 @@ msgstr "키가 없는 항목을 재설정"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "포즈 찾아보기..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "포즈를 추가..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "포즈 이름을 변경..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "포즈를 제거..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "계산"
 
@@ -86312,10 +86292,6 @@ msgid "Not implemented"
 msgstr "구현되지 않음"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "연결된 오브젝트/오브젝트 데이터를 변환하여 '원본 유지' 옵션을 True로 적용"
-
-
 msgid "Object not found"
 msgstr "오브젝트를 찾을 수 없습니다"
 
@@ -86550,10 +86526,6 @@ msgstr "라이브러리 데이터를 편집할 수 없습니다"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "작업자가 고정되어 있으며 설정을 변경하면 고정 해제할 때까지 변경 사항이 적용되지 않습니다"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "오브젝트 '%s'를 건너 뛰는 중, 연결된 데이터 '%s'는 수정할 수 없습니다"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -88306,10 +88278,6 @@ msgid "Move inside collection (Ctrl to link, Shift to parent)"
 msgstr "컬렉션 내부로 이동 (Ctrl 키를 눌러 연결, Shift 부모로 이동)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "라이브러리가 링크된 오브젝트를 편집 할 수 없습니다"
-
-
 msgid "Use view layer for rendering"
 msgstr "렌더링을 위해 뷰 레이어 사용"
 
@@ -88943,20 +88911,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "뷰 오프셋이 잠길 때 돌리를 사용할 수 없습니다"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "외부 라이브러리에서 카메라를 조종 할수 없습니다"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "뷰 오프셋이 잠겨있을 때 비행 할 수 없습니다"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "제약 있는 오브젝트는 비행 할 수 없습니다"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "외부 라이브러리에서 카메라를 탐색할 수 없습니다"
 
 
 msgid "Cannot navigate when the view offset is locked"

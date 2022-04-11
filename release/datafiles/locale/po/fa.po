@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -7202,6 +7202,18 @@ msgid "Make Segment"
 msgstr "ﺎﻫ‌ﺶﺨﺑ ﻑﺬﺣ"
 
 
+msgid "Remove from selection"
+msgstr "ﻪﻤﻫ ﺯﺍ ﻑﺬﺣ"
+
+
+msgid "Toggle Selection"
+msgstr "ﻝﺎﻌﻓ ﻉﻮﻧ ﭻﯾﻮﺳ"
+
+
+msgid "Toggle the selection"
+msgstr "ﻝﺎﻌﻓ ﻉﻮﻧ ﭻﯾﻮﺳ"
+
+
 msgctxt "Operator"
 msgid "Add Bezier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
@@ -7577,18 +7589,6 @@ msgstr "UV ﺖﻓﺎﺑ"
 msgctxt "Operator"
 msgid "Paste File"
 msgstr "ﺮﺘﻠﯿﻓ ﻉﻮﻧ"
-
-
-msgid "Remove from selection"
-msgstr "ﻪﻤﻫ ﺯﺍ ﻑﺬﺣ"
-
-
-msgid "Toggle Selection"
-msgstr "ﻝﺎﻌﻓ ﻉﻮﻧ ﭻﯾﻮﺳ"
-
-
-msgid "Toggle the selection"
-msgstr "ﻝﺎﻌﻓ ﻉﻮﻧ ﭻﯾﻮﺳ"
 
 
 msgctxt "Operator"
@@ -13528,21 +13528,6 @@ msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 msgid "Bone Settings"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "ﺖﺳﮊ ﻥﺩﻭﺰﻓﺍ..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "ﺖﺳﮊ ﻡﺎﻧ ﺮﯿﯿﻐﺗ"
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "ﺖﺳﮊ ﻑﺬﺣ"
 
 
 msgctxt "Operator"
