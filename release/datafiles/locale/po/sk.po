@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-02 09:34+0100\n"
@@ -11949,10 +11949,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Ukáže blok údajov pastelky"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Ukáže blok údajov kolekcie"
-
-
 msgid "Show Image data-blocks"
 msgstr "Ukáže blok údajov obrázka"
 
@@ -12047,6 +12043,10 @@ msgstr "Ukáže blok údajov pracovného priestoru"
 
 msgid "Show Action data-blocks"
 msgstr "Ukáže blok údajov akcie"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Ukáže blok údajov kolekcie"
 
 
 msgid "Show Material data-blocks"
@@ -16335,6 +16335,10 @@ msgid "Number of frames after each GP keyframe before the modifier has any effec
 msgstr "Počet snímok po každej kľúčovej snímke pastelky majúce nejaký vplyv pred modifikátorom efektu"
 
 
+msgid "Output Vertex group"
+msgstr "Výstupná skupina vrcholov"
+
+
 msgid "Transition"
 msgstr "Prechod"
 
@@ -16353,10 +16357,6 @@ msgstr "Ukáže body v poradí výskytu v každom ťahu (napr. pre nakreslené a
 
 msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
 msgstr "Skryje body od konca každého ťahu po začiatok (napr. pri vymazaní animovaných čiar)"
-
-
-msgid "Fade"
-msgstr "Vytrácať"
 
 
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
@@ -17173,6 +17173,10 @@ msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Posuv duplikátov. -1 až 1: vnútorné až vonkajšie"
 
 
+msgid "Fade"
+msgstr "Vytrácať"
+
+
 msgid "Fade the stroke thickness for each generated stroke"
 msgstr "Zníži hrúbku ťahu pre každý vygenerovaný ťah"
 
@@ -17739,10 +17743,6 @@ msgstr "Priestor"
 
 msgid "Coordinates space"
 msgstr "Priestor súradníc"
-
-
-msgid "Output Vertex group"
-msgstr "Výstupná skupina vrcholov"
 
 
 msgid "Invert output weight values"
@@ -49292,6 +49292,18 @@ msgid "Recalculate handle length"
 msgstr "Prepočítať dĺžku manipulátora"
 
 
+msgid "Remove from selection"
+msgstr "Odstrániť z výberu"
+
+
+msgid "Toggle Selection"
+msgstr "Prepínač výberu"
+
+
+msgid "Toggle the selection"
+msgstr "Prepne výber"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Pridať bézierov kruh"
@@ -51888,18 +51900,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "Vyberie aktuálne zvýraznený ohraničujúci blok ()"
 
 
-msgid "Remove from selection"
-msgstr "Odstrániť z výberu"
-
-
-msgid "Toggle Selection"
-msgstr "Prepínač výberu"
-
-
-msgid "Toggle the selection"
-msgstr "Prepne výber"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Ťahať manipulátorom polohy"
@@ -53883,14 +53883,6 @@ msgstr "Preklopiť farby"
 
 msgid "Switch tint colors"
 msgstr "Prepínanie odtieňov farieb"
-
-
-msgid "Black"
-msgstr "Čierne"
-
-
-msgid "White"
-msgstr "Biele"
 
 
 msgctxt "Operator"
@@ -60645,6 +60637,10 @@ msgid "Add an object to a new collection"
 msgstr "Pridá objekt do novej kolekcie"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "UUID relácia kolekcie na pridanie"
+
+
 msgctxt "Operator"
 msgid "Add Collection Instance"
 msgstr "Pridať inštanciu kolekcie"
@@ -60656,10 +60652,6 @@ msgstr "Pridá inštanciu kolekcie"
 
 msgid "Collection name to add"
 msgstr "Názov kolekcie na pridanie"
-
-
-msgid "Session UUID of the collection to add"
-msgstr "UUID relácia kolekcie na pridanie"
 
 
 msgctxt "Operator"
@@ -64054,10 +64046,6 @@ msgstr "Vynútiť hierarchiu opätovnej synchronizácie prepisu knižnice"
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
 msgstr "Znovu zostaví tento lokálny prepis z jeho prepojenej referencie, ako aj z jeho hierarchie závislostí, vynútenie tejto hierarchie tak, aby zodpovedala prepojeným údajom (t. j. ignorovanie ukončenia prepisu na vlastnosti ukazovateľa blokov údajov)"
-
-
-msgid "Delete Library Override Hierarchy"
-msgstr "Odstrániť hierarchiu prepisu knižnice"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
@@ -70923,15 +70911,6 @@ msgid "Sequence Slide"
 msgstr "Posúvanie sekvencie"
 
 
-msgctxt "Operator"
-msgid "Shear"
-msgstr "Strihať"
-
-
-msgid "Shear selected items along the horizontal screen axis"
-msgstr "Strihá vybranými prvkami pozdĺž vodorovnej osi obrazovky"
-
-
 msgid "Axis Ortho"
 msgstr "Ortografická os"
 
@@ -70942,6 +70921,15 @@ msgstr "Posúvanie hrany"
 
 msgid "Enable edge panning in 2D view"
 msgstr "Povolí posúvania hrany v 2D zobrazení"
+
+
+msgctxt "Operator"
+msgid "Shear"
+msgstr "Strihať"
+
+
+msgid "Shear selected items along the horizontal screen axis"
+msgstr "Strihá vybranými prvkami pozdĺž vodorovnej osi obrazovky"
 
 
 msgctxt "Operator"
@@ -77026,6 +77014,10 @@ msgid "Beam Shape"
 msgstr "Tvar lúča"
 
 
+msgid "Caustics"
+msgstr "Vyžiarenia svetla"
+
+
 msgid "Fast GI Approximation"
 msgstr "Rýchla aproximácia Globálneho osvetlenia"
 
@@ -77056,10 +77048,6 @@ msgstr "Priehľadnosť"
 
 msgid "Light Paths"
 msgstr "Dráhy svetla"
-
-
-msgid "Caustics"
-msgstr "Vyžiarenia svetla"
 
 
 msgid "Clamping"
@@ -88911,8 +88899,16 @@ msgid "Display dashed black-white edges"
 msgstr "Zobrazí prerušované čiernobiele okraje"
 
 
+msgid "Black"
+msgstr "Čierne"
+
+
 msgid "Display black edges"
 msgstr "Zobrazí čierne okraje"
+
+
+msgid "White"
+msgstr "Biele"
 
 
 msgid "Display white edges"
@@ -103183,11 +103179,6 @@ msgstr "SVG ako pastelka"
 
 
 msgctxt "Operator"
-msgid "Wavefront OBJ (.obj)"
-msgstr "Wavefront OBJ (.obj)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Prekresliť animáciu"
 
@@ -104466,26 +104457,6 @@ msgstr "Nastavenie kostí"
 msgctxt "Operator"
 msgid "Reset Unkeyed"
 msgstr "Resetovať nekľúčované"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Vyhľadať pózu..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Pridať pózu..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Premenovať pózu..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Odstrániť pózu..."
 
 
 msgctxt "Operator"
@@ -109318,10 +109289,6 @@ msgid "Not implemented"
 msgstr "Neimplementované"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Konverzia niektorého prepojeného objektu/údajov objektu, presadzovanie možnosti PRAVDA 'zachovať originál'"
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "Konvertovanie povrchov na pastelku nie je podporované"
 
@@ -109640,10 +109607,6 @@ msgstr "Nie sú vybrané žiadne iné objekty"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "Operátor je zmrazený, zmeny nastavenia sa prejavia až po jeho rozmrazení"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Vynechanie objektu '%s', prepojené údaje '%s' nie je možné upraviť"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -110652,10 +110615,6 @@ msgstr "očakávaná aktívna oblasť časovej osi/animácie"
 
 msgid "Context missing active object"
 msgstr "Chýbajúci kontext aktívneho objektu"
-
-
-msgid "Cannot edit library linked object"
-msgstr "Nemožno upraviť prepojený objekt knižnice"
 
 
 msgid "Cannot edit hidden object"
@@ -112204,10 +112163,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "Presunúť do kolekcie (kliknutím Ctrl na odkaz)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "Nie je možné upravovať objekty prepojené s knižnicami"
-
-
 msgid "Use view layer for rendering"
 msgstr "Použiť vrstvu zobrazenia na prekreslenie"
 
@@ -113101,20 +113056,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Nemožno použiť dolly, keď je uzamknutý posuv zobrazenia"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Nemožno lietať kamerou z externej knižnice"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Nemožno lietať, keď je uzamknutý posuv zobrazenia"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Nemožno oblietavať objekt s vynúteniami"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Nemožno prechádzať kamerou z externej knižnice"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -113750,10 +113697,6 @@ msgid "Bone Envelopes"
 msgstr "Plášte kostí"
 
 
-msgid "Use Factor"
-msgstr "Použiť faktor"
-
-
 msgid "Random Offset Start"
 msgstr "Začiatok náhodného posuvu"
 
@@ -114196,10 +114139,6 @@ msgstr "Skupiny: Pre tento ťah nie sú žiadne skupiny"
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "Body ťahu pastelky: index mimo rozsah"
-
-
-msgid "Groups: index out of range"
-msgstr "Skupiny: index je mimo rozsahu"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -115759,10 +115698,6 @@ msgid "An attribute field with a selection of the outer points"
 msgstr "Pole atribútov s výberom vonkajších bodov"
 
 
-msgid "No Bezier splines in input curve"
-msgstr "Žiadne Bézierove drážky vo vstupnej krivke"
-
-
 msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
 msgstr "V prípade bodov je to časť celkovej dĺžky drážky v riadiacom bode. V prípade drážok faktor tejto drážky v rámci celej krivky"
 
@@ -116205,10 +116140,6 @@ msgstr "Časti geometrie vo výbere"
 
 msgid "The parts of the geometry not in the selection"
 msgstr "Časti geometrie, ktoré nie sú vo výbere"
-
-
-msgid "The input geometry does not contain a Bezier spline"
-msgstr "Vstupná geometria neobsahuje Bézierovu drážku"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"

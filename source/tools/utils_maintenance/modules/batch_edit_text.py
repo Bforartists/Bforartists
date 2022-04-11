@@ -48,7 +48,6 @@ def run(*,
                 if is_text(filepath):
                     yield filepath
 
-
     if use_multiprocess:
         args = [
             (fn, text_operation) for directory in directories

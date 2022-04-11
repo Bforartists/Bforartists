@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -8622,10 +8622,6 @@ msgid "Cannot edit library data"
 msgstr "Nie można edytować danych biblioteki"
 
 
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Pomijam obiekt '%s', powiązane dane '%s' nie mogą być modyfikowane"
-
-
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
 msgstr "Pomijam obiekt '%s', dane '%s' zostały już przerobione z poprzednim obiektem"
 
@@ -10167,20 +10163,12 @@ msgid "fps: %i"
 msgstr "klatkaż: %i"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Nie można oblatywać (fly) kamery z biblioteki zawnętrznej"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Nie można oblatywać (fly) gdy przesunięcie widoku zablokowane"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Nie można oblatywać (fly) obiektu z ogranicznikami"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Nie można nawigować kamerą z biblioteki zewnętrznej"
 
 
 msgid "Cannot navigate when the view offset is locked"

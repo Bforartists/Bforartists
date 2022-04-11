@@ -168,7 +168,6 @@ class AttributeBuilder_Seq(AttributeBuilder):
         return 0
 
 
-
 _attribute_builder_overrides = {
     "context.gpencil.layers": AttributeBuilder_Seq("context.gpencil.layers", "layers"),
     "context.gpencil_data.layers": AttributeBuilder_Seq("context.gpencil_data.layers", "layers"),
@@ -188,6 +187,7 @@ _attribute_builder_overrides = {
 def NewAttr(attr, attr_single):
     obj = AttributeBuilder(attr, attr_single)
     return obj
+
 
 def NewAttr_Seq(attr, attr_single):
     obj = AttributeBuilder_Seq(attr, attr_single)
@@ -235,6 +235,7 @@ class Menu(BaseFakeUI):
     @classmethod
     def is_extended(cls):
         return False
+
 
 class Operator(BaseFakeUI):
     pass

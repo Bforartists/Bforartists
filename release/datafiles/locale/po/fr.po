@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11267,10 +11267,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Afficher les blocs de données crayon gras"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Afficher les blocs de données collection"
-
-
 msgid "Show Image data-blocks"
 msgstr "Afficher les blocs de données image"
 
@@ -11357,6 +11353,10 @@ msgstr "Afficher les blocs de données espace de travail"
 
 msgid "Show Action data-blocks"
 msgstr "Afficher les blocs de données action"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Afficher les blocs de données collection"
 
 
 msgid "Show Material data-blocks"
@@ -15129,10 +15129,6 @@ msgid "Hide points from the end of each stroke to the start (e.g. for animating 
 msgstr "Cacher les points depuis la fin de chaque trait vers son début (par ex. pour animer l’effacement de lignes)"
 
 
-msgid "Fade"
-msgstr "Fondu"
-
-
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
 msgstr "Cacher les points dans l’ordre dans lequel ils sont dans le trait (par ex. pour animer de l’encre s’effaçant ou disparaissant après avoir été déposée)"
 
@@ -15509,6 +15505,10 @@ msgstr "Atténuer l’influence de l’épaisseur du trait"
 
 msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Décalage des copies, de -1 à 1 : de l’intérieur vers l’extérieur"
+
+
+msgid "Fade"
+msgstr "Fondu"
 
 
 msgid "Fade the stroke thickness for each generated stroke"
@@ -40588,6 +40588,18 @@ msgid "Recalculate handle length"
 msgstr "Recalculer les longueur des poignées"
 
 
+msgid "Remove from selection"
+msgstr "Enlever de la sélection"
+
+
+msgid "Toggle Selection"
+msgstr "Inverser sélection"
+
+
+msgid "Toggle the selection"
+msgstr "Inverser la sélection"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Ajouter cercle de Bézier"
@@ -42436,18 +42448,6 @@ msgid "Remove attribute from geometry"
 msgstr "Supprimer l'attribut de la géométrie"
 
 
-msgid "Remove from selection"
-msgstr "Enlever de la sélection"
-
-
-msgid "Toggle Selection"
-msgstr "Inverser sélection"
-
-
-msgid "Toggle the selection"
-msgstr "Inverser la sélection"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Supprimer frame active"
@@ -43465,14 +43465,6 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
-
-
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -55816,6 +55808,10 @@ msgid "Sequence Slide"
 msgstr "Glisser séquence"
 
 
+msgid "Axis Ortho"
+msgstr "Axe ortho"
+
+
 msgctxt "Operator"
 msgid "Shear"
 msgstr "Cisailler"
@@ -55823,10 +55819,6 @@ msgstr "Cisailler"
 
 msgid "Shear selected items along the horizontal screen axis"
 msgstr "Cisailler les éléments sélectionnés le long de l’axe horizontal de l’écran"
-
-
-msgid "Axis Ortho"
-msgstr "Axe ortho"
 
 
 msgctxt "Operator"
@@ -68159,6 +68151,14 @@ msgid "Outline"
 msgstr "Contour"
 
 
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -76861,26 +76861,6 @@ msgstr "Réinitialiser sans-clé"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Parcourir poses…"
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Ajouter pose…"
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Renommer pose…"
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Enlever pose…"
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Calculer"
 
@@ -79981,10 +79961,6 @@ msgid "Not implemented"
 msgstr "Pas implémenté"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Conversion d’objets/données d’objet liés, option “Conserver original” forcée à Vrai"
-
-
 msgid "Object not found"
 msgstr "Objet introuvable"
 
@@ -80191,10 +80167,6 @@ msgstr "Impossible d’éditer les données de bibliothèque"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "L’opérateur est gelé, les modifications de ses réglages ne prendront pas effets avant que vous ne le dégeliez"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Objet “%s” ignoré, les données liées “%s” ne peuvent être modifiées"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -82496,20 +82468,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Impossible de faire un travelling quand le décalage de la vue est verrouillé"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Impossible de faire voler une caméra provenant d’une bibliothèque externe"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Impossible de voler quand le décalage de la vue est verrouillé"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Impossible de faire voler un objet avec des contraintes"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Impossible de déplacer une caméra provenant d’une bibliothèque externe"
 
 
 msgid "Cannot navigate when the view offset is locked"

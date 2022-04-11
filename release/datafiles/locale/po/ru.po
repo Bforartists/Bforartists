@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -11663,10 +11663,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Показать датаблоки Grease Pencil"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Показать датаблоки коллекций"
-
-
 msgid "Show Image data-blocks"
 msgstr "Показать датаблоки изображений"
 
@@ -11761,6 +11757,10 @@ msgstr "Показать датаблоки рабочих пространст�
 
 msgid "Show Action data-blocks"
 msgstr "Показать датаблоки действий"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Показать датаблоки коллекций"
 
 
 msgid "Show Material data-blocks"
@@ -15973,10 +15973,6 @@ msgid "Hide points from the end of each stroke to the start (e.g. for animating 
 msgstr "Скрывать точки с концов каждого штриха до начала (т. е. анимировать стирание штрихов)"
 
 
-msgid "Fade"
-msgstr "Исчезание"
-
-
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
 msgstr "Скрывать точки в порядке появления в каждом штрихе (т. е. анимировать выцветание чернил или исчезновение после рисования)"
 
@@ -16589,6 +16585,10 @@ msgstr "Спад влияния на толщину штриха"
 
 msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Смещение дубликатов от -1 (внутри) до 1 (снаружи)"
+
+
+msgid "Fade"
+msgstr "Исчезание"
 
 
 msgid "Fade the stroke thickness for each generated stroke"
@@ -42395,6 +42395,18 @@ msgid "Recalculate handle length"
 msgstr "Пересчитать длины рукояток"
 
 
+msgid "Remove from selection"
+msgstr "Убрать из выделения"
+
+
+msgid "Toggle Selection"
+msgstr "Переключить выделение"
+
+
+msgid "Toggle the selection"
+msgstr "Переключить выделение"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Добавить окружность Безье"
@@ -44526,18 +44538,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "Выделить подсвеченный в текущий момент манипулятор"
 
 
-msgid "Remove from selection"
-msgstr "Убрать из выделения"
-
-
-msgid "Toggle Selection"
-msgstr "Переключить выделение"
-
-
-msgid "Toggle the selection"
-msgstr "Переключить выделение"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Подстройка манипулятора"
@@ -45825,14 +45825,6 @@ msgstr "Обрезать выделенный штрих до первой пе�
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Отразить цвета"
-
-
-msgid "Black"
-msgstr "Чёрный"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgctxt "Operator"
@@ -59495,6 +59487,10 @@ msgid "Sequence Slide"
 msgstr "Сдвинуть последовательность"
 
 
+msgid "Axis Ortho"
+msgstr "Ортографические оси"
+
+
 msgctxt "Operator"
 msgid "Shear"
 msgstr "Скос"
@@ -59502,10 +59498,6 @@ msgstr "Скос"
 
 msgid "Shear selected items along the horizontal screen axis"
 msgstr "Скосить выделенные элементы вдоль горизонтальной оси экрана"
-
-
-msgid "Axis Ortho"
-msgstr "Ортографические оси"
 
 
 msgctxt "Operator"
@@ -64022,6 +64014,10 @@ msgid "Aperture"
 msgstr "Диафрагма"
 
 
+msgid "Caustics"
+msgstr "Каустика"
+
+
 msgid "Ray Visibility"
 msgstr "Видимость лучей"
 
@@ -64044,10 +64040,6 @@ msgstr "С прозрачностью"
 
 msgid "Light Paths"
 msgstr "Пути света"
-
-
-msgid "Caustics"
-msgstr "Каустика"
 
 
 msgid "Clamping"
@@ -73920,8 +73912,16 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -85124,26 +85124,6 @@ msgstr "Сбросить без ключей"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Обзор поз…"
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Добавить позу…"
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Переименовать позу…"
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Удалить позу…"
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Рассчитать"
 
@@ -89016,10 +88996,6 @@ msgid "Not implemented"
 msgstr "Не реализовано"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Конвертирование некоторых связанных объектов / данных объекта включает сохранение оригинала"
-
-
 msgid "Object not found"
 msgstr "Объект не найден"
 
@@ -89254,10 +89230,6 @@ msgstr "Невозможно изменить данные библиотеки"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "Оператор заморожен, изменения в его настройках не будут иметь эффект, пока вы не разморозите его"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Пропуск объекта «%s», связанные данные «%s» нельзя изменить"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -91014,10 +90986,6 @@ msgid "Move inside collection (Ctrl to link, Shift to parent)"
 msgstr "Переместить в коллекцию (Ctrl — связать, Shift — родительская связь)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "Невозможно отредактировать связанные библиотечные объекты"
-
-
 msgid "Use view layer for rendering"
 msgstr "Использовать слой визуализации для рендера"
 
@@ -91655,20 +91623,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Приближение невозможно при заблокированном смещении вида"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Режим полёта недоступен для камеры из внешней библиотеки"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Облёт невозможен при заблокированном смещении вида"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Режим полёта невозможен для объекта с ограничителями"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Навигация не работает для камер из внешних библиотек"
 
 
 msgid "Cannot navigate when the view offset is locked"
