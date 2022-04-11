@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -11431,10 +11431,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Показ блоків даних Нарисного олівця"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Показ блоків даних Колекції"
-
-
 msgid "Show Image data-blocks"
 msgstr "Показ блоків даних Зображення"
 
@@ -11529,6 +11525,10 @@ msgstr "Показ блоків даних робпростору"
 
 msgid "Show Action data-blocks"
 msgstr "Показ блоків даних Дії"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Показ блоків даних Колекції"
 
 
 msgid "Show Material data-blocks"
@@ -15645,10 +15645,6 @@ msgid "Hide points from the end of each stroke to the start (e.g. for animating 
 msgstr "Ховає точки кожного штриха у порядку з кінця до початку (наприклад, для анімування стирання ліній)"
 
 
-msgid "Fade"
-msgstr "Зникання"
-
-
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
 msgstr "Ховає точки у порядку, як вони трапляються у кожному штриху (наприклад, для анімування вицвітання чорнила або зникання після нарисування)"
 
@@ -15929,6 +15925,10 @@ msgstr "Вплив зникання товщини штриха"
 
 msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Зсув дублікатів. від -1 до 1: ізсередини до назовні"
+
+
+msgid "Fade"
+msgstr "Зникання"
 
 
 msgid "Fade the stroke thickness for each generated stroke"
@@ -45463,6 +45463,18 @@ msgid "Recalculate handle length"
 msgstr "Перерахувати довжину ручки"
 
 
+msgid "Remove from selection"
+msgstr "Вилучити з вибраного"
+
+
+msgid "Toggle Selection"
+msgstr "Перемкнути вибір"
+
+
+msgid "Toggle the selection"
+msgstr "Перемкнути вибір"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Додати коло Безьє"
@@ -47916,18 +47928,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "Вибрати поточне підсвічене гізмо"
 
 
-msgid "Remove from selection"
-msgstr "Вилучити з вибраного"
-
-
-msgid "Toggle Selection"
-msgstr "Перемкнути вибір"
-
-
-msgid "Toggle the selection"
-msgstr "Перемкнути вибір"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Підправлення Гізмо"
@@ -49795,14 +49795,6 @@ msgstr "Переверт Кольорів"
 
 msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
-
-
-msgid "Black"
-msgstr "Чорне"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgctxt "Operator"
@@ -59469,10 +59461,6 @@ msgid "Rebuild this local override from its linked reference, as well as its hie
 msgstr "Перебудувати це локальне заміщення з його пов'язаного посилання, а також його ієрархію залежностей"
 
 
-msgid "Delete Library Override Hierarchy"
-msgstr "Видалити Ієрархію Заміщення Бібліотеки"
-
-
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
 msgstr "Видалити це локальне заміщення (включаючи його ієрархію залежностей заміщення) та перепов'язати його використання з пов'язаними блоками даних"
 
@@ -65964,6 +65952,10 @@ msgid "Sequence Slide"
 msgstr "Пересунути послідовність"
 
 
+msgid "Axis Ortho"
+msgstr "Вісь Орто"
+
+
 msgctxt "Operator"
 msgid "Shear"
 msgstr "Зріз"
@@ -65971,10 +65963,6 @@ msgstr "Зріз"
 
 msgid "Shear selected items along the horizontal screen axis"
 msgstr "Зсунути по зрізу вибрані елементи вздовж горизонтальної осі екрана"
-
-
-msgid "Axis Ortho"
-msgstr "Вісь Орто"
 
 
 msgctxt "Operator"
@@ -71218,6 +71206,10 @@ msgid "Aperture"
 msgstr "Апертура"
 
 
+msgid "Caustics"
+msgstr "Каустика"
+
+
 msgid "Ray Visibility"
 msgstr "Видимість Променя"
 
@@ -71240,10 +71232,6 @@ msgstr "Прозоре"
 
 msgid "Light Paths"
 msgstr "Шляхи Освітлення"
-
-
-msgid "Caustics"
-msgstr "Каустика"
 
 
 msgid "Clamping"
@@ -82103,8 +82091,16 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -95999,26 +95995,6 @@ msgstr "Скинути Неключоване"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Проглянути Пози..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Додати Позу..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Перейменувати Позу..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Вилучити Позу..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Розрахування"
 
@@ -100434,10 +100410,6 @@ msgid "Not implemented"
 msgstr "Не реалізовано"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Конвертувати деякі пов'язані об'єкти/дані об'єктів, встановивши параметр 'Зберегти оригінал'"
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "Конвертування Поверхонь у Нарисний Олівець не підтримується"
 
@@ -100716,10 +100688,6 @@ msgstr "Неможливо редагувати примуси, що поход�
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "Оператор заморожено, зміни його параметрів не будуть мати сили допоки ви його не розморозите"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Пропуск об'єкта '%s', пов'язані дані '%s' неможливо змінити"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -102812,10 +102780,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "Перемістити всередину колекції (Ctrl для пов'язання)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "Неможливо змінити об'єкт(и), приєднані з бібліотеки"
-
-
 msgid "Use view layer for rendering"
 msgstr "Вжити шар огляду для рендерингу"
 
@@ -103538,20 +103502,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Операторський візок не діє, коли зсув вигляду заблоковано"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Камера із зовнішньої бібліотеки не може літати"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Політ неможливий, коли зсув вигляду заблоковано"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Об'єкт з примусами не може літати"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Для камер із зовнішніх бібліотек навігація не працює"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -104119,10 +104075,6 @@ msgid "Bone Envelopes"
 msgstr "Оболонки кісток"
 
 
-msgid "Use Factor"
-msgstr "Вжити Фактор"
-
-
 msgid "Custom Camera"
 msgstr "Власна камера"
 
@@ -104433,10 +104385,6 @@ msgstr "Групи: Нема груп для цього штриха"
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "ТочкиШтрихаНарОлівця: індекс за межами діапазону"
-
-
-msgid "Groups: index out of range"
-msgstr "Групи: індекс за межами діапазону"
 
 
 msgid "Stroke not found in grease pencil frame"

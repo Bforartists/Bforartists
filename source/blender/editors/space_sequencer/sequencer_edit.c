@@ -32,6 +32,7 @@
 
 #include "SEQ_add.h"
 #include "SEQ_animation.h"
+#include "SEQ_channels.h"
 #include "SEQ_clipboard.h"
 #include "SEQ_edit.h"
 #include "SEQ_effects.h"
@@ -348,6 +349,7 @@ static int sequencer_snap_exec(bContext *C, wmOperator *op)
 
   Editing *ed = SEQ_editing_get(scene);
   ListBase *seqbase = SEQ_active_seqbase_get(ed);
+  ListBase *channels = SEQ_channels_displayed_get(ed);
   Sequence *seq;
   int snap_frame;
 
@@ -355,7 +357,7 @@ static int sequencer_snap_exec(bContext *C, wmOperator *op)
 
   /* Check meta-strips. */
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
-    if (seq->flag & SELECT && !(seq->flag & SEQ_LOCK) &&
+    if (seq->flag & SELECT && !SEQ_transform_is_locked(channels, seq) &&
         SEQ_transform_sequence_can_be_translated(seq)) {
       if ((seq->flag & (SEQ_LEFTSEL + SEQ_RIGHTSEL)) == 0) {
         SEQ_transform_translate_sequence(
@@ -377,7 +379,7 @@ static int sequencer_snap_exec(bContext *C, wmOperator *op)
 
   /* Test for effects and overlap. */
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
-    if (seq->flag & SELECT && !(seq->flag & SEQ_LOCK)) {
+    if (seq->flag & SELECT && !SEQ_transform_is_locked(channels, seq)) {
       seq->flag &= ~SEQ_OVERLAP;
       if (SEQ_transform_test_overlap(ed->seqbasep, seq)) {
         SEQ_transform_seqbase_shuffle(ed->seqbasep, seq, scene);
@@ -921,13 +923,14 @@ static int sequencer_mute_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = SEQ_editing_get(scene);
+  ListBase *channels = SEQ_channels_displayed_get(ed);
   Sequence *seq;
   bool selected;
 
   selected = !RNA_boolean_get(op->ptr, "unselected");
 
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
-    if ((seq->flag & SEQ_LOCK) == 0) {
+    if (!SEQ_transform_is_locked(channels, seq)) {
       if (selected) {
         if (seq->flag & SELECT) {
           seq->flag |= SEQ_MUTE;
@@ -977,13 +980,14 @@ static int sequencer_unmute_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = SEQ_editing_get(scene);
+  ListBase *channels = SEQ_channels_displayed_get(ed);
   Sequence *seq;
   bool selected;
 
   selected = !RNA_boolean_get(op->ptr, "unselected");
 
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {
-    if ((seq->flag & SEQ_LOCK) == 0) {
+    if (!SEQ_transform_is_locked(channels, seq)) {
       if (selected) {
         if (seq->flag & SELECT) {
           seq->flag &= ~SEQ_MUTE;
@@ -1711,6 +1715,7 @@ static int sequencer_add_duplicate_exec(bContext *C, wmOperator *UNUSED(op))
       SEQ_select_active_set(scene, seq);
     }
     seq->flag &= ~(SEQ_LEFTSEL + SEQ_RIGHTSEL + SEQ_LOCK);
+    seq->flag |= SEQ_IGNORE_CHANNEL_LOCK;
     SEQ_animation_duplicate(scene, seq, &fcurves_original_backup);
     SEQ_ensure_unique_name(seq, scene);
   }
@@ -1987,6 +1992,7 @@ static int sequencer_meta_toggle_exec(bContext *C, wmOperator *UNUSED(op))
     /* Enter meta-strip. */
     SEQ_meta_stack_alloc(ed, active_seq);
     SEQ_seqbase_active_set(ed, &active_seq->seqbase);
+    SEQ_channels_displayed_set(ed, &active_seq->channels);
     SEQ_select_active_set(scene, NULL);
   }
   else {
@@ -1997,6 +2003,7 @@ static int sequencer_meta_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 
     MetaStack *ms = SEQ_meta_stack_active_get(ed);
     SEQ_seqbase_active_set(ed, ms->oldbasep);
+    SEQ_channels_displayed_set(ed, ms->old_channels);
     SEQ_select_active_set(scene, ms->parseq);
     SEQ_meta_stack_free(ed, ms);
   }
@@ -2512,6 +2519,9 @@ static void sequencer_copy_animation(Scene *scene, Sequence *seq)
   }
 
   GSet *fcurves = SEQ_fcurves_by_strip_get(seq, &scene->adt->action->curves);
+  if (fcurves == NULL) {
+    return;
+  }
 
   GSET_FOREACH_BEGIN (FCurve *, fcu, fcurves) {
     BLI_addtail(&fcurves_clipboard, BKE_fcurve_copy(fcu));
@@ -3163,8 +3173,10 @@ typedef struct Seq_get_text_cb_data {
 static bool seq_get_text_strip_cb(Sequence *seq, void *user_data)
 {
   Seq_get_text_cb_data *cd = (Seq_get_text_cb_data *)user_data;
+  Editing *ed = SEQ_editing_get(cd->scene);
+  ListBase *channels = SEQ_channels_displayed_get(ed);
   /* Only text strips that are not muted and don't end with negative frame. */
-  if ((seq->type == SEQ_TYPE_TEXT) && ((seq->flag & SEQ_MUTE) == 0) &&
+  if ((seq->type == SEQ_TYPE_TEXT) && !SEQ_render_is_muted(channels, seq) &&
       (seq->enddisp > cd->scene->r.sfra)) {
     BLI_addtail(cd->text_seq, MEM_dupallocN(seq));
   }

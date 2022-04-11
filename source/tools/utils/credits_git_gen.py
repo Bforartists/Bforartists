@@ -9,7 +9,7 @@ Example use:
    credits_git_gen.py --source=/src/blender --range=SHA1..HEAD
 """
 
-from git_log import GitCommit, GitCommitIter
+from git_log import GitCommitIter
 import unicodedata as ud
 
 # -----------------------------------------------------------------------------
@@ -203,8 +203,9 @@ def main():
         "<b>Adidas</b> - Principled BSDF shader in Cycles",
         "<b>AMD</b> - Cycles HIP GPU rendering, CPU optimizations",
         "<b>Intel</b> - Cycles ray-tracing optimization",
-        "<b>NVidia</b> - Cycles OptiX GPU rendering, USD importer",
+        "<b>NVIDIA</b> - Cycles OptiX GPU rendering, USD importer",
         "<b>Facebook</b> - Cycles subsurface scattering improvements",
+        "<b>Apple</b> - Cycles Metal GPU backend",
     )
 
     credits = Credits()

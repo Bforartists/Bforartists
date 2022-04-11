@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -11947,10 +11947,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Hiện các cục dữ liệu Bút Sáp"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Hiện các cục dữ liệu Sưu Tập"
-
-
 msgid "Show Image data-blocks"
 msgstr "Hiện các cục dữ liệu Ảnh"
 
@@ -12045,6 +12041,10 @@ msgstr "Hiện các cục dữ liệu công trường"
 
 msgid "Show Action data-blocks"
 msgstr "Hiện các cục dữ liệu Hành Động"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Hiện các cục dữ liệu Sưu Tập"
 
 
 msgid "Show Material data-blocks"
@@ -16333,6 +16333,10 @@ msgid "Number of frames after each GP keyframe before the modifier has any effec
 msgstr "Số lượng bức sau mỗi bức bút sáp trước cụ sửa đổi được ảnh hưởng"
 
 
+msgid "Output Vertex group"
+msgstr "Nhóm Đỉnh Ngõ Ra"
+
+
 msgid "Transition"
 msgstr "Chuyển Tiếp"
 
@@ -16351,10 +16355,6 @@ msgstr "Hiện điểm theo thứ tự của chúng nó trong mỗi nét (ví d�
 
 msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
 msgstr "Ẩn điểm từ điểm cuối của mỗi nét đến điểm đầu (ví dụ cho làm hoạt hình nét đang xóa)"
-
-
-msgid "Fade"
-msgstr "Phai"
 
 
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
@@ -17171,6 +17171,10 @@ msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Dịch của các bản sao. -1 đến 1: nội đến ngoại"
 
 
+msgid "Fade"
+msgstr "Phai"
+
+
 msgid "Fade the stroke thickness for each generated stroke"
 msgstr "Phai bề dầy nét cho mỗi nét được chế tạo"
 
@@ -17737,10 +17741,6 @@ msgstr "Không Gian"
 
 msgid "Coordinates space"
 msgstr "Không gian tọa độ"
-
-
-msgid "Output Vertex group"
-msgstr "Nhóm Đỉnh Ngõ Ra"
 
 
 msgid "Invert output weight values"
@@ -49290,6 +49290,18 @@ msgid "Recalculate handle length"
 msgstr "Tính lại bề dài tay cầm"
 
 
+msgid "Remove from selection"
+msgstr "Xóa từ sự lựa chọn"
+
+
+msgid "Toggle Selection"
+msgstr "Bật/Tắt Sự Lựa Chọn"
+
+
+msgid "Toggle the selection"
+msgstr "Chọn/thả sự lựa chọn"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Thêm Vòng Tròn Bezier"
@@ -51886,18 +51898,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "Chọn đồ đạc hiện tại đang nổi bật"
 
 
-msgid "Remove from selection"
-msgstr "Xóa từ sự lựa chọn"
-
-
-msgid "Toggle Selection"
-msgstr "Bật/Tắt Sự Lựa Chọn"
-
-
-msgid "Toggle the selection"
-msgstr "Chọn/thả sự lựa chọn"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Chỉnh Đồ Đạc"
@@ -53881,14 +53881,6 @@ msgstr "Lật Màu"
 
 msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
-
-
-msgid "Black"
-msgstr "Đèn"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgctxt "Operator"
@@ -60643,6 +60635,10 @@ msgid "Add an object to a new collection"
 msgstr "Thêm một vật thể vào một sưu tập mới"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "Phiên chạy UUID của sưu tập để thêm"
+
+
 msgctxt "Operator"
 msgid "Add Collection Instance"
 msgstr "Thêm Thực Thể Sưu Tập"
@@ -60654,10 +60650,6 @@ msgstr "Thêm một thực thể sưu tập"
 
 msgid "Collection name to add"
 msgstr "Tên của sưu tập thêm"
-
-
-msgid "Session UUID of the collection to add"
-msgstr "Phiên chạy UUID của sưu tập để thêm"
 
 
 msgctxt "Operator"
@@ -64052,10 +64044,6 @@ msgstr "Buộc Đồng Bộ Lại Tầng Bậc Đồ Thay Thế Của Thư Việ
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
 msgstr "Xây dựng lại đồ thay thế địa phương này từ tham chiếu được liên kết, và tầng bậc nhờ của nó, bắt buộc tầng bậc đó có dữ lệu giống dữ liệu được liên kết (ví dụ không quan tâm đồ thay thế hiện tại của đặc tính của con trỏ cục dữ liệu)"
-
-
-msgid "Delete Library Override Hierarchy"
-msgstr "Xóa Tầng Bậc Đồ Thay Thế Của Thư Viện"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
@@ -70921,15 +70909,6 @@ msgid "Sequence Slide"
 msgstr "Trượt Trình Tự"
 
 
-msgctxt "Operator"
-msgid "Shear"
-msgstr "Méo Mó"
-
-
-msgid "Shear selected items along the horizontal screen axis"
-msgstr "Méo mó mặt hàng được chọn theo trục ngang của màn"
-
-
 msgid "Axis Ortho"
 msgstr "Trục Trực Giao"
 
@@ -70940,6 +70919,15 @@ msgstr "Dời Cạnh"
 
 msgid "Enable edge panning in 2D view"
 msgstr "Bật dời cạnh trong màn 2D"
+
+
+msgctxt "Operator"
+msgid "Shear"
+msgstr "Méo Mó"
+
+
+msgid "Shear selected items along the horizontal screen axis"
+msgstr "Méo mó mặt hàng được chọn theo trục ngang của màn"
 
 
 msgctxt "Operator"
@@ -77024,6 +77012,10 @@ msgid "Beam Shape"
 msgstr "Hình Dạng Cột"
 
 
+msgid "Caustics"
+msgstr "Các Tiêu Điểm"
+
+
 msgid "Fast GI Approximation"
 msgstr "Xấp Xỉ GI Nhanh"
 
@@ -77054,10 +77046,6 @@ msgstr "Trong Suốt"
 
 msgid "Light Paths"
 msgstr "Đường Ánh Sáng"
-
-
-msgid "Caustics"
-msgstr "Các Tiêu Điểm"
 
 
 msgid "Clamping"
@@ -88909,8 +88897,16 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
+
+
+msgid "White"
+msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -103185,11 +103181,6 @@ msgstr "SVG là Bút Sáp"
 
 
 msgctxt "Operator"
-msgid "Wavefront OBJ (.obj)"
-msgstr "Wavefront OBJ (.obj)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Kết Xuất Hoạt Hình"
 
@@ -104468,26 +104459,6 @@ msgstr "Cài Đặt Xương"
 msgctxt "Operator"
 msgid "Reset Unkeyed"
 msgstr "Đặt Lại Chưa Có Bức Mẫu"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Trình Duyệt Dạng Đứng..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Thêm Dạng Đứng..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Đổi Tên Dạng Đứng..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Xóa Dạng Đứng…"
 
 
 msgctxt "Operator"
@@ -109320,10 +109291,6 @@ msgid "Not implemented"
 msgstr "Chưa được thành lập"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Biến đổi vài vật thể kết/dữ liệu vật thể được liên kết, đang ép buộc tùy chọn 'Giữ Nguyên' cho Đúng"
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "Không hỗ trợ biến đổi Bề Mặt sang Bút Sáp"
 
@@ -109642,10 +109609,6 @@ msgstr "Không có vật thể nào khác được chọn"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "Thao tác bị 'đóng băng', không thực hành sự thay đổi trước bạn 'tan băng' nó"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Đang bỏ qua vật thể '%s', dữ liệu được liên kết '%s' không thể sửa đổi"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -110654,10 +110617,6 @@ msgstr "Định có vùng thời biểu/hoạt hình được hoạt động"
 
 msgid "Context missing active object"
 msgstr "Bối cảnh đang thiếu vật thể hoạt động"
-
-
-msgid "Cannot edit library linked object"
-msgstr "Không thể biên tập vật thể có thư viện liên kết"
 
 
 msgid "Cannot edit hidden object"
@@ -112206,10 +112165,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "Di chuyển trong sưu tập (Ctrl để liên kết)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "Không thể biên tập (các) vật thể thư viện được liên kết"
-
-
 msgid "Use view layer for rendering"
 msgstr "Dùng lớp màn để kết xuất"
 
@@ -113081,20 +113036,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Không thể trượt khi dịch màn chiếu bị khóa"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Không thể lái máy quay phim bay từ một thư viện ngoài"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Không thể bay khi dịch màn chiếu bị khóa"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Không thể lái vật thể bay bằng ràng buộc"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Không thể chuyển hướng một máy quay phim từ một thư viện ngoài"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -113730,10 +113677,6 @@ msgid "Bone Envelopes"
 msgstr "Bao Bì Xương"
 
 
-msgid "Use Factor"
-msgstr "Dùng Hệ Số"
-
-
 msgid "Random Offset Start"
 msgstr "Bắt Đầu Nới Ngẫu Nhiên"
 
@@ -114176,10 +114119,6 @@ msgstr "Các Nhóm: Không có nhóm nào cho nét này"
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "ĐiểmNétBútSáp: chỉ số ngoài phạm vi"
-
-
-msgid "Groups: index out of range"
-msgstr "Các Nhóm: chỉ số ra ngoài phạm vi"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -115739,10 +115678,6 @@ msgid "An attribute field with a selection of the outer points"
 msgstr "Trường đặc điểm có một sự lựa chọn của điểm ngoại"
 
 
-msgid "No Bezier splines in input curve"
-msgstr "Không có mẫu cong Bezier trong đường cong ngõ vào"
-
-
 msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
 msgstr "Cho điểm, phần của toàn chiều dài của mẫu cong tại điểm kiểm soát. Cho mẫu cong, hệ số của mẫu cong đó trong toàn bộ đường cong "
 
@@ -116185,10 +116120,6 @@ msgstr "Bộ phận của hình dạng có trong sự lựa chọn"
 
 msgid "The parts of the geometry not in the selection"
 msgstr "Bộ phận của hình dạng không có trong sự lựa chọn"
-
-
-msgid "The input geometry does not contain a Bezier spline"
-msgstr "Hình dạng ngõ vào không chứa một mẫu cong Bezier"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"

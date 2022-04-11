@@ -98,9 +98,9 @@ def dna_rename_defs(blend):
     import re
     re_dna_struct_rename_elem = re.compile(
         r'DNA_STRUCT_RENAME_ELEM+\('
-        r'([a-zA-Z0-9_]+)' ',\s*'
-        r'([a-zA-Z0-9_]+)' ',\s*'
-        r'([a-zA-Z0-9_]+)' '\)',
+        r'([a-zA-Z0-9_]+)' r',\s*'
+        r'([a-zA-Z0-9_]+)' r',\s*'
+        r'([a-zA-Z0-9_]+)' r'\)',
     )
     with open(dna_rename_defs_h, 'r', encoding='utf-8') as fh:
         data = fh.read()

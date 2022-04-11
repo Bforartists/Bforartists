@@ -12,6 +12,7 @@ Example use:
    (gdb) print_struct_c99 scene->toolsettings
 '''
 
+
 class PrintStructC99(gdb.Command):
     def __init__(self):
         super(PrintStructC99, self).__init__(
