@@ -11,7 +11,7 @@ from bl_ui.utils import PresetPanel
 from bpy.types import Panel
 
 from bl_ui.properties_grease_pencil_common import GreasePencilSimplifyPanel
-from bl_ui.properties_render import draw_hair_settings
+from bl_ui.properties_render import draw_curves_settings
 from bl_ui.properties_view_layer import ViewLayerCryptomattePanel, ViewLayerAOVPanel, ViewLayerLightgroupsPanel
 
 
@@ -368,8 +368,8 @@ class CYCLES_RENDER_PT_subdivision(CyclesButtonsPanel, Panel):
         col.prop(cscene, "dicing_camera")
 
 
-class CYCLES_RENDER_PT_hair(CyclesButtonsPanel, Panel):
-    bl_label = "Hair"
+class CYCLES_RENDER_PT_curves(CyclesButtonsPanel, Panel):
+    bl_label = "Curves"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -385,13 +385,13 @@ class CYCLES_RENDER_PT_hair(CyclesButtonsPanel, Panel):
         if ccscene.shape == 'RIBBONS':
             col.prop(ccscene, "subdivisions", text="Curve Subdivisions")
 
-class CYCLES_RENDER_PT_hair_viewport_display(CyclesButtonsPanel, Panel):
+class CYCLES_RENDER_PT_curves_viewport_display(CyclesButtonsPanel, Panel):
     bl_label = "Viewport Display"
-    bl_parent_id = "CYCLES_RENDER_PT_hair"
+    bl_parent_id = "CYCLES_RENDER_PT_curves"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        draw_hair_settings(self, context)
+        draw_curves_settings(self, context)
 
 class CYCLES_RENDER_PT_volumes(CyclesButtonsPanel, Panel):
     bl_label = "Volumes"
@@ -818,7 +818,7 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         row.prop(view_layer, "use_solid", text="Surfaces")
         row = col.row()
         row.separator()
-        row.prop(view_layer, "use_strand", text="Hair")
+        row.prop(view_layer, "use_strand", text="Curves")
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_volumes", text="Volumes")
@@ -1350,8 +1350,15 @@ class CYCLES_OBJECT_PT_lightgroup(CyclesButtonsPanel, Panel):
 
         view_layer = context.view_layer
 
-        col = layout.column(align=True)
-        col.prop_search(ob, "lightgroup", view_layer, "lightgroups", text="Light Group")
+        row = layout.row(align=True)
+        row.use_property_decorate = False
+
+        sub = row.column(align=True)
+        sub.prop_search(ob, "lightgroup", view_layer, "lightgroups", text="Light Group", results_are_suggestions=True)
+
+        sub = row.column(align=True)
+        sub.active = bool(ob.lightgroup) and not any(lg.name == ob.lightgroup for lg in view_layer.lightgroups)
+        sub.operator("scene.view_layer_add_lightgroup", icon='ADD', text="").name = ob.lightgroup
 
 
 class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
@@ -1644,8 +1651,15 @@ class CYCLES_WORLD_PT_surface(CyclesButtonsPanel, Panel):
         if not panel_node_draw(layout, world, 'OUTPUT_WORLD', 'Surface'):
             layout.prop(world, "color")
 
-        col = layout.column(align=True)
-        col.prop_search(world, "lightgroup", view_layer, "lightgroups", text="Light Group")
+        row = layout.row(align=True)
+        row.use_property_decorate = False
+
+        sub = row.column(align=True)
+        sub.prop_search(world, "lightgroup", view_layer, "lightgroups", text="Light Group", results_are_suggestions=True)
+
+        sub = row.column(align=True)
+        sub.active = bool(world.lightgroup) and not any(lg.name == world.lightgroup for lg in view_layer.lightgroups)
+        sub.operator("scene.view_layer_add_lightgroup", icon='ADD', text="").name = world.lightgroup
 
 
 class CYCLES_WORLD_PT_volume(CyclesButtonsPanel, Panel):
@@ -2456,8 +2470,8 @@ classes = (
     CYCLES_RENDER_PT_light_paths_fast_gi,
     CYCLES_RENDER_PT_volumes,
     CYCLES_RENDER_PT_subdivision,
-    CYCLES_RENDER_PT_hair,
-    CYCLES_RENDER_PT_hair_viewport_display,
+    CYCLES_RENDER_PT_curves,
+    CYCLES_RENDER_PT_curves_viewport_display,
     CYCLES_RENDER_PT_simplify,
     CYCLES_RENDER_PT_simplify_viewport,
     CYCLES_RENDER_PT_simplify_render,

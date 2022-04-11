@@ -13,24 +13,33 @@ class MasterSymmetryMenu(Menu):
     def poll(self, context):
         return utils_core.get_mode() in (
                         'SCULPT',
-                        'TEXTURE_PAINT'
+                        'VERTEX_PAINT',
+                        'WEIGHT_PAINT',
+                        'TEXTURE_PAINT',
+                        'PARTICLE_EDIT',
                         )
 
     def draw(self, context):
         layout = self.layout
 
-        if utils_core.get_mode() == 'TEXTURE_PAINT':
-            layout.row().prop(context.tool_settings.image_paint,
-                              "use_symmetry_x", toggle=True)
-            layout.row().prop(context.tool_settings.image_paint,
-                              "use_symmetry_y", toggle=True)
-            layout.row().prop(context.tool_settings.image_paint,
-                              "use_symmetry_z", toggle=True)
+        if utils_core.get_mode() == 'PARTICLE_EDIT':
+            layout.row().prop(context.active_object.data, "use_mirror_x",
+                              text="Mirror X", toggle=True)
+
+        elif utils_core.get_mode() == 'TEXTURE_PAINT':
+            layout.row().prop(context.active_object, "use_mesh_mirror_x",
+                              text="Symmetry X", toggle=True)
+            layout.row().prop(context.active_object, "use_mesh_mirror_y",
+                              text="Symmetry Y", toggle=True)
+            layout.row().prop(context.active_object, "use_mesh_mirror_z",
+                              text="Symmetry Z", toggle=True)
         else:
             layout.row().menu(SymmetryMenu.bl_idname)
             layout.row().menu(SymmetryRadialMenu.bl_idname)
-            layout.row().prop(context.tool_settings.sculpt,
-                              "use_symmetry_feather", toggle=True)
+
+            if utils_core.get_mode() == 'SCULPT':
+                layout.row().prop(context.tool_settings.sculpt, "use_symmetry_feather",
+                                  toggle=True)
 
 
 class SymmetryMenu(Menu):
@@ -43,12 +52,12 @@ class SymmetryMenu(Menu):
         layout.row().label(text="Symmetry")
         layout.row().separator()
 
-        layout.row().prop(context.tool_settings.sculpt,
-                          "use_symmetry_x", toggle=True)
-        layout.row().prop(context.tool_settings.sculpt,
-                          "use_symmetry_y", toggle=True)
-        layout.row().prop(context.tool_settings.sculpt,
-                          "use_symmetry_z", toggle=True)
+        layout.row().prop(context.active_object, "use_mesh_mirror_x",
+                          text="Symmetry X", toggle=True)
+        layout.row().prop(context.active_object, "use_mesh_mirror_y",
+                          text="Symmetry Y", toggle=True)
+        layout.row().prop(context.active_object, "use_mesh_mirror_z",
+                          text="Symmetry Z", toggle=True)
 
 
 class SymmetryRadialMenu(Menu):
@@ -61,8 +70,9 @@ class SymmetryRadialMenu(Menu):
         layout.row().label(text="Radial")
         layout.row().separator()
 
-        layout.column().prop(context.tool_settings.sculpt,
-                             "radial_symmetry", text="", slider=True)
+        mode_tool_settings = getattr(context.tool_settings, utils_core.get_mode().lower())
+
+        layout.column().prop(mode_tool_settings, "radial_symmetry", text="", slider=True)
 
 
 classes = (

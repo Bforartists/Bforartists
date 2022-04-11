@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -7442,10 +7442,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Tampilkan Pensil grease data-blok"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Tampilkan Koleksi data-blok"
-
-
 msgid "Show Image data-blocks"
 msgstr "Tampilkan Gambar data-blok"
 
@@ -7520,6 +7516,10 @@ msgstr "Tampilkan ruang kerja data-blok"
 
 msgid "Show Action data-blocks"
 msgstr "Tampilkan Aksi data-blok"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Tampilkan Koleksi data-blok"
 
 
 msgid "Show Material data-blocks"
@@ -15615,6 +15615,10 @@ msgid "Make Segment"
 msgstr "Hapus Titik"
 
 
+msgid "Remove from selection"
+msgstr "Menghapus dari seleksi"
+
+
 msgctxt "Operator"
 msgid "Add Bezier"
 msgstr "Tambah Gambar"
@@ -15887,10 +15891,6 @@ msgstr "Hapus Kotak Teks"
 
 msgid "Remove the text box"
 msgstr "Hapus kotak teks"
-
-
-msgid "Remove from selection"
-msgstr "Menghapus dari seleksi"
 
 
 msgctxt "Operator"
@@ -26867,10 +26867,6 @@ msgstr "Tidak dapat menggunakan ajah area-nol"
 
 msgid "UV Vertex"
 msgstr "Vertex UV"
-
-
-msgid "Use Factor"
-msgstr "Gunakan Faktor"
 
 
 msgid "Material Borders"

@@ -12,6 +12,8 @@
 #include "DNA_brush_enums.h"
 #include "DNA_object_enums.h"
 
+#include "BKE_attribute.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -493,6 +495,11 @@ typedef struct SculptSession {
 
   struct KeyBlock *shapekey_active;
   struct MPropCol *vcol;
+  struct MLoopCol *mcol;
+
+  AttributeDomain vcol_domain;
+  CustomDataType vcol_type;
+
   float *vmask;
 
   /* Mesh connectivity maps. */
@@ -633,6 +640,14 @@ typedef struct SculptSession {
    * Set #Main.is_memfile_undo_flush_needed when enabling.
    */
   char needs_flush_to_id;
+
+  /**
+   * Some tools follows the shading chosen by the last used tool canvas.
+   * When not set the viewport shading color would be used.
+   *
+   * NOTE: This setting is temporarily until paint mode is added.
+   */
+  bool sticky_shading_color;
 
 } SculptSession;
 

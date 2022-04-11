@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1717,10 +1717,6 @@ msgid "Grow"
 msgstr "विस्तार"
 
 
-msgid "Fade"
-msgstr "धुंधलापन"
-
-
 msgctxt "Curve"
 msgid "Curve"
 msgstr "वक्र"
@@ -1748,6 +1744,10 @@ msgstr "पैना"
 
 msgid "Step"
 msgstr "कदम"
+
+
+msgid "Fade"
+msgstr "धुंधलापन"
 
 
 msgid "Negative"
@@ -3867,14 +3867,6 @@ msgid "Modifier"
 msgstr "संशोधक"
 
 
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
-
-
 msgid "Create a new image"
 msgstr "एक नई छवि बनाएँ"
 
@@ -5151,6 +5143,14 @@ msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
 
 
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
+
+
 msgctxt "MovieClip"
 msgid "View"
 msgstr "दृश्य"
@@ -6163,16 +6163,6 @@ msgstr "वस्तु"
 msgctxt "Operator"
 msgid "Clean"
 msgstr "साफ"
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "मुद्रा का नाम बदलें..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "मुद्रा हटाएँ..."
 
 
 msgctxt "Operator"
