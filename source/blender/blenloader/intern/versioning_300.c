@@ -30,6 +30,7 @@
 #include "DNA_lineart_types.h"
 #include "DNA_listBase.h"
 #include "DNA_material_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -41,8 +42,10 @@
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_asset.h"
+#include "BKE_attribute.h"
 #include "BKE_collection.h"
 #include "BKE_curve.h"
+#include "BKE_data_transfer.h"
 #include "BKE_deform.h"
 #include "BKE_fcurve.h"
 #include "BKE_fcurve_driver.h"
@@ -53,6 +56,7 @@
 #include "BKE_main.h"
 #include "BKE_modifier.h"
 #include "BKE_node.h"
+#include "BKE_screen.h"
 
 #include "RNA_access.h"
 #include "RNA_enum_types.h"
@@ -62,6 +66,7 @@
 #include "MEM_guardedalloc.h"
 #include "readfile.h"
 
+#include "SEQ_channels.h"
 #include "SEQ_iterator.h"
 #include "SEQ_sequencer.h"
 #include "SEQ_time.h"
@@ -940,6 +945,14 @@ static bool seq_transform_filter_set(Sequence *seq, void *UNUSED(user_data))
   StripTransform *transform = seq->strip->transform;
   if (seq->strip->transform != NULL) {
     transform->filter = SEQ_TRANSFORM_FILTER_BILINEAR;
+  }
+  return true;
+}
+
+static bool seq_meta_channels_ensure(Sequence *seq, void *UNUSED(user_data))
+{
+  if (seq->type == SEQ_TYPE_META) {
+    SEQ_channels_ensure(&seq->channels);
   }
   return true;
 }
@@ -2485,6 +2498,172 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         }
       }
     }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 302, 9)) {
+    /* Sequencer channels region. */
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype != SPACE_SEQ) {
+            continue;
+          }
+          if (ELEM(((SpaceSeq *)sl)->view, SEQ_VIEW_PREVIEW, SEQ_VIEW_SEQUENCE_PREVIEW)) {
+            continue;
+          }
+
+          ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                 &sl->regionbase;
+          ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_CHANNELS);
+          if (!region) {
+            ARegion *tools_region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+            region = do_versions_add_region(RGN_TYPE_CHANNELS, "channels region");
+            BLI_insertlinkafter(regionbase, tools_region, region);
+            region->alignment = RGN_ALIGN_LEFT;
+            region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL;
+          }
+
+          ARegion *timeline_region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+          if (timeline_region != NULL) {
+            timeline_region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL;
+          }
+        }
+      }
+    }
+
+    /* Initialize channels. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      Editing *ed = SEQ_editing_get(scene);
+      if (ed == NULL) {
+        continue;
+      }
+      SEQ_channels_ensure(&ed->channels);
+      SEQ_for_each_callback(&scene->ed->seqbase, seq_meta_channels_ensure, NULL);
+
+      ed->displayed_channels = &ed->channels;
+
+      ListBase *previous_channels = &ed->channels;
+      LISTBASE_FOREACH (MetaStack *, ms, &ed->metastack) {
+        ms->old_channels = previous_channels;
+        previous_channels = &ms->parseq->channels;
+        /* If `MetaStack` exists, active channels must point to last link. */
+        ed->displayed_channels = &ms->parseq->channels;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 302, 10)) {
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype != SPACE_FILE) {
+            continue;
+          }
+          SpaceFile *sfile = (SpaceFile *)sl;
+          if (sfile->browse_mode != FILE_BROWSE_MODE_ASSETS) {
+            continue;
+          }
+          sfile->asset_params->base_params.filter_id |= FILTER_ID_GR;
+        }
+      }
+    }
+
+    /* While vertex-colors were experimental the smear tool became corrupt due
+     * to bugs in the wm_toolsystem API (auto-creation of sculpt brushes
+     * was broken).  Go through and reset all smear brushes. */
+    LISTBASE_FOREACH (Brush *, br, &bmain->brushes) {
+      if (br->sculpt_tool == SCULPT_TOOL_SMEAR) {
+        br->alpha = 1.0f;
+        br->spacing = 5;
+        br->flag &= ~BRUSH_ALPHA_PRESSURE;
+        br->flag &= ~BRUSH_SPACE_ATTEN;
+        br->curve_preset = BRUSH_CURVE_SPHERE;
+      }
+    }
+
+    /* Rebuild active/render color attribute references. */
+    LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
+      for (int step = 0; step < 2; step++) {
+        CustomDataLayer *actlayer = NULL;
+
+        int vact1, vact2;
+
+        if (step) {
+          vact1 = CustomData_get_render_layer_index(&me->vdata, CD_PROP_COLOR);
+          vact2 = CustomData_get_render_layer_index(&me->ldata, CD_MLOOPCOL);
+        }
+        else {
+          vact1 = CustomData_get_active_layer_index(&me->vdata, CD_PROP_COLOR);
+          vact2 = CustomData_get_active_layer_index(&me->ldata, CD_MLOOPCOL);
+        }
+
+        if (vact1 != -1) {
+          actlayer = me->vdata.layers + vact1;
+        }
+        else if (vact2 != -1) {
+          actlayer = me->ldata.layers + vact2;
+        }
+
+        if (actlayer) {
+          if (step) {
+            BKE_id_attributes_render_color_set(&me->id, actlayer);
+          }
+          else {
+            BKE_id_attributes_active_color_set(&me->id, actlayer);
+          }
+        }
+      }
+    }
+
+    /* Update data transfer modifiers */
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+        if (md->type == eModifierType_DataTransfer) {
+          DataTransferModifierData *dtmd = (DataTransferModifierData *)md;
+
+          for (int i = 0; i < DT_MULTILAYER_INDEX_MAX; i++) {
+            if (dtmd->layers_select_src[i] == 0) {
+              dtmd->layers_select_src[i] = DT_LAYERS_ALL_SRC;
+            }
+
+            if (dtmd->layers_select_dst[i] == 0) {
+              dtmd->layers_select_dst[i] = DT_LAYERS_NAME_DST;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 302, 12)) {
+    /* UV/Image show background grid option. */
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+          if (space->spacetype == SPACE_IMAGE) {
+            SpaceImage *sima = (SpaceImage *)space;
+            sima->overlay.flag |= SI_OVERLAY_SHOW_GRID_BACKGROUND;
+          }
+        }
+      }
+    }
+
+    /* Add node storage for the merge by distance node. */
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (node->type == GEO_NODE_MERGE_BY_DISTANCE) {
+            if (node->storage == NULL) {
+              NodeGeometryMergeByDistance *data = MEM_callocN(sizeof(NodeGeometryMergeByDistance),
+                                                              __func__);
+              data->mode = GEO_NODE_MERGE_BY_DISTANCE_MODE_ALL;
+              node->storage = data;
+            }
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 
   /**

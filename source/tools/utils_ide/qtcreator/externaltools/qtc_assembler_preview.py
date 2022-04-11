@@ -133,7 +133,7 @@ def main():
                 ("-fno-common", 1),
                 ("-DDEBUG", 1), ("-D_DEBUG", 1),
 
-                # asan flags
+                # ASAN flags.
                 (re.compile(r"\-fsanitize=.*"), 1),
         ):
             if isinstance(arg, str):

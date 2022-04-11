@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4611,10 +4611,6 @@ msgid "Transition"
 msgstr "Markera Länkad"
 
 
-msgid "Fade"
-msgstr "Toningstid"
-
-
 msgid "Custom Curve"
 msgstr "Färguppsättning:"
 
@@ -4657,6 +4653,10 @@ msgstr "Steg"
 
 msgid "Mirror Modifier"
 msgstr "Radera Allt"
+
+
+msgid "Fade"
+msgstr "Toningstid"
 
 
 msgid "Shrinkwrap Modifier"
@@ -14140,6 +14140,18 @@ msgid "Join two curves by their selected ends"
 msgstr "Markera Länkad"
 
 
+msgid "Remove from selection"
+msgstr "Ta bort från samtliga"
+
+
+msgid "Toggle Selection"
+msgstr "Markerbar av/på"
+
+
+msgid "Toggle the selection"
+msgstr "Markerbarhet av/på"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Bezier Cirkel"
@@ -15029,18 +15041,6 @@ msgid "Unlink"
 msgstr "Göm Markerad"
 
 
-msgid "Remove from selection"
-msgstr "Ta bort från samtliga"
-
-
-msgid "Toggle Selection"
-msgstr "Markerbar av/på"
-
-
-msgid "Toggle the selection"
-msgstr "Markerbarhet av/på"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Flytta Till Lager"
@@ -15194,14 +15194,6 @@ msgstr "Markerade till markör"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
-
-
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
 
 
 msgctxt "Operator"
@@ -25297,6 +25289,14 @@ msgid "Outline"
 msgstr "Kontur"
 
 
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Längd i antal rutor:"
 
@@ -28471,26 +28471,6 @@ msgstr "Verktyg"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Bezier Kurva"
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Duplicera"
 
@@ -29698,10 +29678,6 @@ msgstr "Markera Länkad"
 
 
 msgid "Tilt of curve control points"
-msgstr "Markera Länkad"
-
-
-msgid "Cannot fly a camera from an external library"
 msgstr "Markera Länkad"
 
 

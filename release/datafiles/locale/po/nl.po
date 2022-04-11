@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -1779,10 +1779,6 @@ msgid "Grow"
 msgstr "Groeien"
 
 
-msgid "Fade"
-msgstr "Vervagen"
-
-
 msgid "Color Hue"
 msgstr "Kleurverzadiging"
 
@@ -1899,6 +1895,10 @@ msgstr "Spiegel de Z as"
 
 msgid "Duplicates"
 msgstr "Duplicaten"
+
+
+msgid "Fade"
+msgstr "Vervagen"
 
 
 msgid "Simple"
@@ -3817,6 +3817,10 @@ msgid "Edge Slide"
 msgstr "Glij over Rand"
 
 
+msgid "Toggle Selection"
+msgstr "Selectie Aan/Uit"
+
+
 msgctxt "Operator"
 msgid "Add Bezier"
 msgstr "Voeg Bezier Toe"
@@ -4107,10 +4111,6 @@ msgstr "Plak Bestand"
 msgctxt "Operator"
 msgid "Unlink"
 msgstr "Ontkoppel"
-
-
-msgid "Toggle Selection"
-msgstr "Selectie Aan/Uit"
 
 
 msgctxt "Operator"

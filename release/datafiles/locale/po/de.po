@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9587,10 +9587,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Wachsstift-Datenblöcke anzeigen"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Sammlungs-Datenblöcke anzeigen"
-
-
 msgid "Show Image data-blocks"
 msgstr "Bild-Datenblöcke anzeigen"
 
@@ -9685,6 +9681,10 @@ msgstr "Arbeitsplatz-Datenblöcke anzeigen"
 
 msgid "Show Action data-blocks"
 msgstr "Aktionen-Datenblöcke anzeigen"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Sammlungs-Datenblöcke anzeigen"
 
 
 msgid "Show Material data-blocks"
@@ -11776,10 +11776,6 @@ msgid "Grow"
 msgstr "Wachsen"
 
 
-msgid "Fade"
-msgstr "Verblassen"
-
-
 msgid "Hue/Saturation Modifier"
 msgstr "Farbton/Sättigungsmodifikator"
 
@@ -11968,6 +11964,10 @@ msgstr "Multiplizieren Modifier"
 
 msgid "Duplicates"
 msgstr "Duplikate"
+
+
+msgid "Fade"
+msgstr "Verblassen"
 
 
 msgid "Noise Modifier"
@@ -29137,6 +29137,10 @@ msgid "Recalculate the direction of selected handles"
 msgstr "Neuberechnung der Richtung der selektierten Griffe"
 
 
+msgid "Remove from selection"
+msgstr "Von Auswahl entfernen"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Bezier-Kreis hinzufügen"
@@ -30401,10 +30405,6 @@ msgid "Gizmo Select"
 msgstr "Gizmo auswählen"
 
 
-msgid "Remove from selection"
-msgstr "Von Auswahl entfernen"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Gizmo optimieren"
@@ -31287,14 +31287,6 @@ msgstr "Striche unterteilen"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Farben umdrehen"
-
-
-msgid "Black"
-msgstr "Schwarz"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgctxt "Operator"
@@ -41720,6 +41712,10 @@ msgid "Aperture"
 msgstr "Blende"
 
 
+msgid "Caustics"
+msgstr "Kaustiken"
+
+
 msgid "Ray Visibility"
 msgstr "Strahlensichtbarkeit"
 
@@ -41742,10 +41738,6 @@ msgstr "Transparent"
 
 msgid "Light Paths"
 msgstr "Lichtpfade"
-
-
-msgid "Caustics"
-msgstr "Kaustiken"
 
 
 msgid "Clamping"
@@ -48200,8 +48192,16 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
+msgid "Black"
+msgstr "Schwarz"
+
+
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgid "Display white edges"
@@ -57774,26 +57774,6 @@ msgstr "Knocheneinstellungen"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Posen durchsuchen..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Pose hinzufügen..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Pose umbenennen..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Pose entfernen..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Berechnen"
 
@@ -62236,10 +62216,6 @@ msgid "fps: %i"
 msgstr "fps: %i"
 
 
-msgid "Cannot navigate a camera from an external library"
-msgstr "Navigation einer Kamera von einer externen Bibliothek ist nicht möglich"
-
-
 msgid "Cannot navigate when the view offset is locked"
 msgstr "Navigieren ist nicht möglich wenn der Sichtversatz gesperrt ist"
 
@@ -62575,10 +62551,6 @@ msgstr "Binden an"
 
 msgid "Bone Envelopes"
 msgstr "Knochen-Einhüllende"
-
-
-msgid "Use Factor"
-msgstr "Verwende Faktor"
 
 
 msgid "Curvature"

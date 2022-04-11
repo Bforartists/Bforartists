@@ -850,6 +850,7 @@ struct uiPopupBlockHandle {
 /* exposed as public API in UI_interface.h */
 
 /* interface_region_color_picker.c */
+
 void ui_color_picker_rgb_to_hsv_compat(const float rgb[3], float r_cp[3]);
 void ui_color_picker_rgb_to_hsv(const float rgb[3], float r_cp[3]);
 void ui_color_picker_hsv_to_rgb(const float r_cp[3], float rgb[3]);
@@ -1282,7 +1283,8 @@ uiBut *ui_but_add_search(uiBut *but,
                          PointerRNA *ptr,
                          PropertyRNA *prop,
                          PointerRNA *searchptr,
-                         PropertyRNA *searchprop);
+                         PropertyRNA *searchprop,
+                         bool results_are_suggestions);
 /**
  * Check all buttons defined in this layout,
  * and set any button flagged as UI_BUT_LIST_ITEM as active/selected.
@@ -1514,6 +1516,7 @@ uiButTreeRow *ui_block_view_find_treerow_in_old_block(const uiBlock *new_block,
                                                       const uiTreeViewItemHandle *new_item_handle);
 
 /* interface_templates.c */
+
 struct uiListType *UI_UL_cache_file_layers(void);
 
 #ifdef __cplusplus

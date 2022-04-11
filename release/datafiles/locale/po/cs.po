@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8249,10 +8249,6 @@ msgid "Grow"
 msgstr "Skupina"
 
 
-msgid "Fade"
-msgstr "Útlum"
-
-
 msgid "Custom Curve"
 msgstr "Vlastní Křivka"
 
@@ -8345,6 +8341,10 @@ msgstr "Krok"
 
 msgid "Mirror Modifier"
 msgstr "Kopírovat modifikátor"
+
+
+msgid "Fade"
+msgstr "Útlum"
 
 
 msgid "Noise Offset"
@@ -21650,6 +21650,18 @@ msgid "Recalculate Handles"
 msgstr "Přepočítat Úchyty"
 
 
+msgid "Remove from selection"
+msgstr "Odstranit ze všech"
+
+
+msgid "Toggle Selection"
+msgstr "Přepnout označené"
+
+
+msgid "Toggle the selection"
+msgstr "Mód vybírání hran"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Bezieruv kruh"
@@ -22909,18 +22921,6 @@ msgid "Remove Geometry Attribute"
 msgstr "Odebrat Atribut Geometrie"
 
 
-msgid "Remove from selection"
-msgstr "Odstranit ze všech"
-
-
-msgid "Toggle Selection"
-msgstr "Přepnout označené"
-
-
-msgid "Toggle the selection"
-msgstr "Mód vybírání hran"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Renderovat plošky z obou stran"
@@ -23349,14 +23349,6 @@ msgstr "Dělit Tah"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Překlopit Barvy"
-
-
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
 
 
 msgctxt "Operator"
@@ -33422,6 +33414,10 @@ msgid "Aperture"
 msgstr "Clony"
 
 
+msgid "Caustics"
+msgstr "Kaustika"
+
+
 msgid "Ray Visibility"
 msgstr "Viditelnost Ray paprsku"
 
@@ -33440,10 +33436,6 @@ msgstr "Průhledný"
 
 msgid "Light Paths"
 msgstr "Světelné Cesty"
-
-
-msgid "Caustics"
-msgstr "Kaustika"
 
 
 msgid "Clamping"
@@ -38368,6 +38360,14 @@ msgstr "Zamknout ke kurzoru"
 
 msgid "Outline"
 msgstr "Obrys"
+
+
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
 
 
 msgid "Editing context being displayed"
@@ -44841,26 +44841,6 @@ msgstr "Změnit vrstvu kostí..."
 
 msgid "Bone Settings"
 msgstr "Nastavení kosti"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Procházet pozice..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Přidat pózu..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Přejmenovat pózu..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Odebrat pózu..."
 
 
 msgctxt "Operator"

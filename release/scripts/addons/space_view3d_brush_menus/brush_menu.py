@@ -51,7 +51,7 @@ class BrushOptionsMenu(Menu):
 
     def sculpt(self, mode, layout, context):
         has_brush = utils_core.get_brush_link(context, types="brush")
-        icons = brushes.brush_icon[mode][has_brush.sculpt_tool] if \
+        icons = brushes.get_brush_icon(mode, has_brush.sculpt_tool) if \
                 has_brush else "BRUSH_DATA"
 
         layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
@@ -73,7 +73,7 @@ class BrushOptionsMenu(Menu):
 
     def vw_paint(self, mode, layout, context):
         has_brush = utils_core.get_brush_link(context, types="brush")
-        icons = brushes.brush_icon[mode][has_brush.vertex_tool] if \
+        icons = brushes.get_brush_icon(mode, has_brush.vertex_tool) if \
                 has_brush else "BRUSH_DATA"
 
         if mode == 'VERTEX_PAINT':
@@ -105,11 +105,13 @@ class BrushOptionsMenu(Menu):
                 layout.row().menu("VIEW3D_MT_sv3_stroke_options")
                 layout.row().menu("VIEW3D_MT_sv3_brush_curve_menu")
 
+        layout.row().menu("VIEW3D_MT_sv3_master_symmetry_menu")
+
     def texpaint(self, mode, layout, context):
         toolsettings = context.tool_settings.image_paint
 
         has_brush = utils_core.get_brush_link(context, types="brush")
-        icons = brushes.brush_icon[mode][has_brush.image_tool] if \
+        icons = brushes.get_brush_icon(mode, has_brush.image_tool) if \
                     has_brush else "BRUSH_DATA"
 
         if context.image_paint_object and not toolsettings.detect_data():
@@ -193,6 +195,8 @@ class BrushOptionsMenu(Menu):
             layout.row().separator()
             layout.row().menu(ParticlePuffMenu.bl_idname)
             layout.row().prop(particle_edit.brush, "use_puff_volume", toggle=True)
+
+        layout.row().menu("VIEW3D_MT_sv3_master_symmetry_menu")
 
 
 class BrushRadiusMenu(Menu):

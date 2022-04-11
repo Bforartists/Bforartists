@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5133,10 +5133,6 @@ msgid "Grow"
 msgstr "Раст"
 
 
-msgid "Fade"
-msgstr "Нестајање"
-
-
 msgid "Custom Curve"
 msgstr "Прилагођена крива"
 
@@ -5212,6 +5208,10 @@ msgstr "Густина тачака"
 
 msgid "Step"
 msgstr "Корак"
+
+
+msgid "Fade"
+msgstr "Нестајање"
 
 
 msgid "Shrinkwrap Modifier"
@@ -13977,6 +13977,18 @@ msgid "Match Texture Space"
 msgstr "Препознај простор текстуре"
 
 
+msgid "Remove from selection"
+msgstr "Уклони из избора"
+
+
+msgid "Toggle Selection"
+msgstr "Изабери/поништи избор"
+
+
+msgid "Toggle the selection"
+msgstr "Бира или поништава избор"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Додај базиеров круг"
@@ -14820,18 +14832,6 @@ msgid "Generic"
 msgstr "Почетни NLA"
 
 
-msgid "Remove from selection"
-msgstr "Уклони из избора"
-
-
-msgid "Toggle Selection"
-msgstr "Изабери/поништи избор"
-
-
-msgid "Toggle the selection"
-msgstr "Бира или поништава избор"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Избриши активан кадар"
@@ -15119,14 +15119,6 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
-
-
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -23495,6 +23487,14 @@ msgid "2D cursor location for this view"
 msgstr "Локација 2D курсора у овом погледу"
 
 
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
+
+
 msgid "Alpha Channel"
 msgstr "Алфа канал"
 
@@ -26534,26 +26534,6 @@ msgstr "Подешавање кости"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Разгледај позе..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Додај позу..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Преименуј позу..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Уклони позу..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Израчунај"
 
@@ -28010,16 +27990,8 @@ msgid "Object as Camera"
 msgstr "Објекат као камера"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Читај складиште са спољне локације"
-
-
 msgid "Cannot fly an object with constraints"
 msgstr "Ограничења објекта"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Не можете да управљате камером из спољне збирке"
 
 
 msgid "No active camera"
