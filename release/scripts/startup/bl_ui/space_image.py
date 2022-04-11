@@ -1697,25 +1697,37 @@ class IMAGE_PT_overlay_guides(Panel):
 
         layout.active = overlay.show_overlays
 
-        row = layout.row()
-        row_el = row.column()
-        row_el.prop(overlay, "show_grid_background", text="Grid")
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(overlay, "show_grid_background", text="Grid")
+        col = split.column()
+        if overlay.show_grid_background:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if overlay.show_grid_background:
-            layout.use_property_split = True
-            col = layout.column(align=False, heading="Fixed Subdivisions")
-            col.use_property_decorate = False
-
-            row = col.row(align=True)
-            sub = row.row(align=True)
-            sub.prop(uvedit, "use_custom_grid", text="")
-            sub = sub.row(align=True)
-            sub.active = uvedit.use_custom_grid
-            sub.prop(uvedit, "custom_grid_subdivisions", text="")
+            split = layout.split()
+            split.use_property_split = False
+            split.use_property_decorate = False
+            col = split.column()
+            row = col.row()
+            row.separator()
+            row.separator()
+            row.prop(uvedit, "use_custom_grid", text = "Fixed Subdivisions")
+            col = split.column()
+            if uvedit.use_custom_grid:
+                col.prop(uvedit, "custom_grid_subdivisions", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             row = layout.row()
             row.use_property_split = True
             row.use_property_decorate = False
+            row.separator()
             row.prop(uvedit, "tile_grid_shape", text="Tiles")
 
 
@@ -1741,11 +1753,17 @@ class IMAGE_PT_overlay_uv_edit(Panel):
         layout.active = overlay.show_overlays
 
         # UV Stretching
-        row = layout.row()
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
         row.prop(uvedit, "show_stretch")
-        subrow = row.row(align=True)
-        subrow.active = uvedit.show_stretch
-        subrow.prop(uvedit, "display_stretch_type", text="")
+        col = split.column()
+        if uvedit.show_stretch:
+            col.prop(uvedit, "display_stretch_type", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class IMAGE_PT_overlay_uv_edit_geometry(Panel):
@@ -1770,13 +1788,20 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
 
         # Edges
         col = layout.column()
-        col.prop(uvedit, "uv_opacity")
-        col.prop(uvedit, "edge_display_type", text="")
-        col.prop(uvedit, "show_modified_edges", text="Modified Edges")
+        row = col.row()
+        row.separator()
+        row.prop(uvedit, "uv_opacity")
+        row = col.row()
+        row.separator()
+        row.prop(uvedit, "edge_display_type", text="")
+        row = col.row()
+        row.separator()
+        row.prop(uvedit, "show_modified_edges", text="Modified Edges")
 
         # Faces
         row = col.row()
         row.active = not uvedit.show_stretch
+        row.separator()
         row.prop(uvedit, "show_faces", text="Faces")
 
 
@@ -1816,7 +1841,9 @@ class IMAGE_PT_overlay_image(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        layout.prop(uvedit, "show_metadata")
+        row = layout.row()
+        row.separator()
+        row.prop(uvedit, "show_metadata")
 
 
 # Grease Pencil properties
