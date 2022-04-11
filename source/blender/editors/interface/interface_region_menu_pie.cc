@@ -303,7 +303,7 @@ int UI_pie_menu_invoke_from_rna_enum(struct bContext *C,
  * - Julian (Feb 2016)
  * \{ */
 
- struct PieMenuLevelData {
+struct PieMenuLevelData {
   char title[UI_MAX_NAME_STR]; /* parent pie title, copied for level */
   int icon;                    /* parent pie icon, copied for level */
   int totitem;                 /* total count of *remaining* items */
@@ -313,7 +313,7 @@ int UI_pie_menu_invoke_from_rna_enum(struct bContext *C,
   const char *propname;
   IDProperty *properties;
   wmOperatorCallContext context, flag;
-} ;
+};
 
 /**
  * Invokes a new pie menu for a new level.
@@ -332,7 +332,7 @@ static void ui_pie_menu_level_invoke(bContext *C, void *argN, void *arg2)
   PointerRNA ptr;
 
   WM_operator_properties_create_ptr(&ptr, lvl->ot);
-  /* so the context is passed to itemf functions (some need it) */
+  /* So the context is passed to `itemf` functions (some need it). */
   WM_operator_properties_sanitize(&ptr, false);
   PropertyRNA *prop = RNA_struct_find_property(&ptr, lvl->propname);
 

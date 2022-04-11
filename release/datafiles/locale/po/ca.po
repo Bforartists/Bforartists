@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12236,6 +12236,18 @@ msgid "Join two curves by their selected ends"
 msgstr "Seleccionar connectats"
 
 
+msgid "Remove from selection"
+msgstr "Seleccionar fila"
+
+
+msgid "Toggle Selection"
+msgstr "Amagar Seleccionats"
+
+
+msgid "Toggle the selection"
+msgstr "Seleccionar amb límit"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Cercle de Bezier"
@@ -12979,18 +12991,6 @@ msgid "Unlink"
 msgstr "Amagar Seleccionats"
 
 
-msgid "Remove from selection"
-msgstr "Seleccionar fila"
-
-
-msgid "Toggle Selection"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Toggle the selection"
-msgstr "Seleccionar amb límit"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Finestra de Render"
@@ -13124,14 +13124,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -21852,6 +21844,14 @@ msgid "Outline"
 msgstr "Perfilar"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Esborrar"
 
@@ -24749,21 +24749,6 @@ msgstr "Render"
 
 msgid "Bone Settings"
 msgstr "Eines"
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Corba de Bezier"
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"

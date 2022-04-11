@@ -159,9 +159,9 @@ re_ignore = re.compile(
     # Doxygen style #SOME_CODE.
     r'#\S+|'
     # Doxygen commands: \param foo
-    r"\\(section|subsection|subsubsection|ingroup|param|tparam|page|a|see)\s+\S+|"
+    r"\\(section|subsection|subsubsection|defgroup|ingroup|param|tparam|page|a|see)\s+\S+|"
     # Doxygen commands without any arguments after them: \command
-    r"\\(retval|todo)\b|"
+    r"\\(retval|todo|name)\b|"
     # Doxygen 'param' syntax used rarely: \param foo[in,out]
     r"\\param\[[a-z,]+\]\S*|"
 
@@ -327,10 +327,6 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
     END = "*/"
     TABSIZE = 4
     SINGLE_LINE = False
-    SKIP_COMMENTS = (
-        # GPL header.
-        "This program is free software; you can",
-    )
 
     # reverse these to find blocks we won't parse
     PRINT_NON_ALIGNED = False
@@ -377,26 +373,17 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
 
     for i, i_next in code_ranges:
         for match in re_vars.finditer(text[i:i_next]):
-            code_words.add(match.group(0))
+            w = match.group(0)
+            code_words.add(w)
             # Allow plurals of these variables too.
-            code_words.add(match.group(0) + "'s")
+            code_words.add(w + "'s")
 
     comments = []
 
     slineno = 0
     i_prev = 0
     for i, i_next in comment_ranges:
-
-        ok = True
         block = text[i:i_next]
-        for c in SKIP_COMMENTS:
-            if c in block:
-                ok = False
-                break
-
-        if not ok:
-            continue
-
         # Add white-space in front of the block (for alignment test)
         # allow for -1 being not found, which results as zero.
         j = text.rfind("\n", 0, i) + 1

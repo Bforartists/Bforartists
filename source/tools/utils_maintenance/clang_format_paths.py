@@ -141,11 +141,12 @@ def clang_format(files):
     cpu_count = multiprocessing.cpu_count()
     chunk_size = min(max(len(files) // cpu_count // 2, 1), 32)
     for i in range(0, len(files), chunk_size):
-        files_chunk = files[i:i+chunk_size];
+        files_chunk = files[i:i + chunk_size]
         pool.apply_async(clang_format_file, args=[files_chunk], callback=clang_print_output)
 
     pool.close()
     pool.join()
+
 
 def argparse_create():
     import argparse

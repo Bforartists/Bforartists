@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 
+
 class COLORS:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -18,10 +19,12 @@ class COLORS:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 VERBOSE = False
 
 #########################################
 # Generic helper functions.
+
 
 def logVerbose(*args):
     if VERBOSE:
@@ -101,6 +104,7 @@ def humanReadableTimeToSeconds(time):
 #########################################
 # Benchmark specific helper functions.
 
+
 def configureArgumentParser():
     parser = argparse.ArgumentParser(
         description="Cycles benchmark helper script.")
@@ -120,10 +124,10 @@ def benchmarkFile(blender, blendfile, stats):
     logHeader("Begin benchmark of file {}" . format(blendfile))
     # Prepare some regex for parsing
     re_path_tracing = re.compile(".*Path Tracing Tile ([0-9]+)/([0-9]+)$")
-    re_total_render_time = re.compile(".*Total render time: ([0-9]+(\.[0-9]+)?)")
+    re_total_render_time = re.compile(r".*Total render time: ([0-9]+(\.[0-9]+)?)")
     re_render_time_no_sync = re.compile(
         ".*Render time \(without synchronization\): ([0-9]+(\.[0-9]+)?)")
-    re_pipeline_time = re.compile("Time: ([0-9:\.]+) \(Saving: ([0-9:\.]+)\)")
+    re_pipeline_time = re.compile(r"Time: ([0-9:\.]+) \(Saving: ([0-9:\.]+)\)")
     # Prepare output folder.
     # TODO(sergey): Use some proper output folder.
     output_folder = "/tmp/"

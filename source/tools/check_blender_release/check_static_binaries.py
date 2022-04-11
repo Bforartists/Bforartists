@@ -147,7 +147,7 @@ class UnitTesting(unittest.TestCase):
 
     def checkDirectory(self, directory):
         """
-        Recursively traverse directory and check every binary in in.
+        Recursively traverse directory and check every binary in.
         """
 
         for path in Path(directory).rglob("*"):

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -11418,10 +11418,6 @@ msgid "Grow"
 msgstr "Crescer"
 
 
-msgid "Fade"
-msgstr "Esmaecer"
-
-
 msgid "Custom Curve"
 msgstr "Curva personalizada"
 
@@ -11558,6 +11554,10 @@ msgstr "Todas as linhas"
 
 msgid "Mirror Modifier"
 msgstr "Modificador - Espelho"
+
+
+msgid "Fade"
+msgstr "Esmaecer"
 
 
 msgid "Strength Factor"
@@ -34561,6 +34561,18 @@ msgid "Recalculate handle length"
 msgstr "Recalcula o comprimento do manípulo."
 
 
+msgid "Remove from selection"
+msgstr "Remove da seleção"
+
+
+msgid "Toggle Selection"
+msgstr "Alternar seleção"
+
+
+msgid "Toggle the selection"
+msgstr "Permite alternar a seleção"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Adicionar círculo Bézier"
@@ -36436,18 +36448,6 @@ msgid "Gizmo Select"
 msgstr "Apetrecho Selecionar"
 
 
-msgid "Remove from selection"
-msgstr "Remove da seleção"
-
-
-msgid "Toggle Selection"
-msgstr "Alternar seleção"
-
-
-msgid "Toggle the selection"
-msgstr "Permite alternar a seleção"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Apetrecho Ajuste"
@@ -37675,14 +37675,6 @@ msgstr "Aparar Traço"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Inverter Cores"
-
-
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
 
 
 msgctxt "Operator"
@@ -61869,6 +61861,14 @@ msgid "Outline"
 msgstr "Contorno"
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -70369,26 +70369,6 @@ msgstr "Redefinir os que estão sem chaves"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Navegar poses..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Adicionar pose..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Mudar o nome da pose..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Remover pose..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "Calcular"
 
@@ -73494,10 +73474,6 @@ msgid "Not implemented"
 msgstr "Não implementado."
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Convertendo alguns objetos e / ou dados de objetos vinculados, priorizando a opção \"Manter original\" com a marcação \"Verdadeiro\"."
-
-
 msgid "Object not found"
 msgstr "Objeto não encontrado."
 
@@ -73704,10 +73680,6 @@ msgstr "Não é possível editar os dados da biblioteca."
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "O operador está congelado, as alterações em suas definições não terão efeito até que você as descongele."
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Saltando objeto '%s', os dados vinculados '%s' não podem ser modificados."
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -75681,20 +75653,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "Não é possível mover-se como em carrinho quando o deslocamento de visão está bloqueado."
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "Não é possível fazer voo de câmera a partir de uma biblioteca externa."
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "Não é possível voar quando o deslocamento de visão está bloqueado."
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "Não é possível fazer voo de um objeto com restrições."
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "Não é possível navegar com a câmera vinculada a partir de uma biblioteca externa."
 
 
 msgid "Cannot navigate when the view offset is locked"

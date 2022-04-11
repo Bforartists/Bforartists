@@ -34,6 +34,7 @@ SOURCE_EXT = (
     ".m", ".mm",
 )
 
+
 def sort_cmake_file_lists(fn: str, data_src: str) -> Optional[str]:
     fn_dir = os.path.dirname(fn)
     lines = data_src.splitlines(keepends=True)
@@ -57,7 +58,7 @@ def sort_cmake_file_lists(fn: str, data_src: str) -> Optional[str]:
         a = a.split("#", 1)[0]
         b = b.split("#", 1)[0]
 
-        # Compare leading whitespace.
+        # Compare leading white-space.
         if a[:-(len(a.lstrip()))] == b[:-(len(b.lstrip()))]:
             # return False
 

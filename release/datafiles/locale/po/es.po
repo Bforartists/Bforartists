@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11947,10 +11947,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "Mostrar bloques de datos de lápiz de cera"
 
 
-msgid "Show Collection data-blocks"
-msgstr "Mostrar bloques de datos de colecciones"
-
-
 msgid "Show Image data-blocks"
 msgstr "Mostrar bloques de datos de imágenes"
 
@@ -12045,6 +12041,10 @@ msgstr "Mostrar bloques de datos de espacios de trabajo"
 
 msgid "Show Action data-blocks"
 msgstr "Mostrar bloques de datos de acciones"
+
+
+msgid "Show Collection data-blocks"
+msgstr "Mostrar bloques de datos de colecciones"
 
 
 msgid "Show Material data-blocks"
@@ -16333,6 +16333,10 @@ msgid "Number of frames after each GP keyframe before the modifier has any effec
 msgstr "Cantidad de fotogramas luego de cada clave de lápiz de cera antes de que el modificador realice cualquier efecto"
 
 
+msgid "Output Vertex group"
+msgstr "Grupo de vértices de salida"
+
+
 msgid "Transition"
 msgstr "Transición"
 
@@ -16351,10 +16355,6 @@ msgstr "Muestra los puntos del trazo en el orden en el que fueron dibujados (par
 
 msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
 msgstr "Oculta los puntos del trazo desde el final hacia el comienzo (para animar líneas siendo borradas)"
-
-
-msgid "Fade"
-msgstr "Fundido"
 
 
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
@@ -17171,6 +17171,10 @@ msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "Desplazamiento de los duplicados. -1 a 1: de adentro hacia afuera"
 
 
+msgid "Fade"
+msgstr "Fundido"
+
+
 msgid "Fade the stroke thickness for each generated stroke"
 msgstr "Permite fundir el grosor de cada trazo generado"
 
@@ -17737,10 +17741,6 @@ msgstr "Espacio"
 
 msgid "Coordinates space"
 msgstr "Espacio de coordenadas"
-
-
-msgid "Output Vertex group"
-msgstr "Grupo de vértices de salida"
 
 
 msgid "Invert output weight values"
@@ -49290,6 +49290,18 @@ msgid "Recalculate handle length"
 msgstr "Recalcula la longitud de las asas"
 
 
+msgid "Remove from selection"
+msgstr "Eliminar de la selección"
+
+
+msgid "Toggle Selection"
+msgstr "Alternar selección"
+
+
+msgid "Toggle the selection"
+msgstr "Permite alternar la selección"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "Agregar círculo Bezier"
@@ -51886,18 +51898,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "Permite seleccionar el manipulador actualmente resaltado"
 
 
-msgid "Remove from selection"
-msgstr "Eliminar de la selección"
-
-
-msgid "Toggle Selection"
-msgstr "Alternar selección"
-
-
-msgid "Toggle the selection"
-msgstr "Permite alternar la selección"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Arrastrar manipulador"
@@ -53881,14 +53881,6 @@ msgstr "Invertir colores"
 
 msgid "Switch tint colors"
 msgstr "Da vuelta los colores de tinte"
-
-
-msgid "Black"
-msgstr "Negro"
-
-
-msgid "White"
-msgstr "Blanco"
 
 
 msgctxt "Operator"
@@ -60643,6 +60635,10 @@ msgid "Add an object to a new collection"
 msgstr "Agrega un objeto a una nueva colección"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "UUID de sesión de la colección a agregar"
+
+
 msgctxt "Operator"
 msgid "Add Collection Instance"
 msgstr "Agregar instancia de colección"
@@ -60654,10 +60650,6 @@ msgstr "Agrega una instancia de una colección"
 
 msgid "Collection name to add"
 msgstr "Nombre de la colección a agregar"
-
-
-msgid "Session UUID of the collection to add"
-msgstr "UUID de sesión de la colección a agregar"
 
 
 msgctxt "Operator"
@@ -64052,10 +64044,6 @@ msgstr "Resincronizar forzosamente jerarquía de redefiniciones de biblioteca"
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
 msgstr "Reconstruye esta redefinición local a partir de su referencia, así como su jerarquía completa de dependencias, forzando a que dicha jerarquía coincida con los datos vinculados (p.ej: ignorando redefiniciones existentes de propiedades que apunten a los bloques de datos)"
-
-
-msgid "Delete Library Override Hierarchy"
-msgstr "Borrar jerarquía de redefiniciones de biblioteca"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
@@ -70921,15 +70909,6 @@ msgid "Sequence Slide"
 msgstr "Deslizar secuencia"
 
 
-msgctxt "Operator"
-msgid "Shear"
-msgstr "Inclinar"
-
-
-msgid "Shear selected items along the horizontal screen axis"
-msgstr "Inclina los elementos seleccionados a lo largo del eje horizontal de la pantalla"
-
-
 msgid "Axis Ortho"
 msgstr "Eje ortogonal"
 
@@ -70940,6 +70919,15 @@ msgstr "Desplazamiento de borde"
 
 msgid "Enable edge panning in 2D view"
 msgstr "Habilita el desplazamiento del borde en una vista 2D"
+
+
+msgctxt "Operator"
+msgid "Shear"
+msgstr "Inclinar"
+
+
+msgid "Shear selected items along the horizontal screen axis"
+msgstr "Inclina los elementos seleccionados a lo largo del eje horizontal de la pantalla"
 
 
 msgctxt "Operator"
@@ -77024,6 +77012,10 @@ msgid "Beam Shape"
 msgstr "Forma del haz"
 
 
+msgid "Caustics"
+msgstr "Cáusticas"
+
+
 msgid "Fast GI Approximation"
 msgstr "Aceleración de iluminación global"
 
@@ -77054,10 +77046,6 @@ msgstr "Transparentar"
 
 msgid "Light Paths"
 msgstr "Trayectoria de rayos"
-
-
-msgid "Caustics"
-msgstr "Cáusticas"
 
 
 msgid "Clamping"
@@ -88913,8 +88901,16 @@ msgid "Display dashed black-white edges"
 msgstr "Dibuja bordes discontinuos en blanco y negro"
 
 
+msgid "Black"
+msgstr "Negro"
+
+
 msgid "Display black edges"
 msgstr "Dibuja bordes negros"
+
+
+msgid "White"
+msgstr "Blanco"
 
 
 msgid "Display white edges"
@@ -103189,11 +103185,6 @@ msgstr "SVG como lápiz de cera"
 
 
 msgctxt "Operator"
-msgid "Wavefront OBJ (.obj)"
-msgstr "OBJ de Wavefront (.obj)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Procesar animación"
 
@@ -104472,26 +104463,6 @@ msgstr "Opciones de huesos"
 msgctxt "Operator"
 msgid "Reset Unkeyed"
 msgstr "Restablecer no animado"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "Explorar poses..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "Agregar pose..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "Renombrar pose..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "Eliminar pose..."
 
 
 msgctxt "Operator"
@@ -109324,10 +109295,6 @@ msgid "Not implemented"
 msgstr "No implementado"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Convirtiendo algunos objetos o datos de objetos vinculados, imponiendo la activación de la opción \"Conservar original\""
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "No se soporta la conversión de superficies a lápiz de cera"
 
@@ -109646,10 +109613,6 @@ msgstr "Ningún otro objeto seleccionado"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "El operador está congelado, los cambios a sus opciones no tendrán efecto hasta que sea descongelado"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "Omitiendo al objeto '%s', los datos vinculados '%s' no puede ser modificados"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -110658,10 +110621,6 @@ msgstr "se esperaba que un área de la línea de tiempo o animación estuviera a
 
 msgid "Context missing active object"
 msgstr "Contexto objeto activo faltante"
-
-
-msgid "Cannot edit library linked object"
-msgstr "No es posible editar un objeto vinculado desde una biblioteca"
 
 
 msgid "Cannot edit hidden object"
@@ -112210,10 +112169,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "Mover dentro de una colección (Ctrl para vincular)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "No es posible editar un objeto vinculado desde una biblioteca"
-
-
 msgid "Use view layer for rendering"
 msgstr "Usar la capa de visualización durante el procesamiento"
 
@@ -113107,20 +113062,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "No es posible avanzar cuando el desplazamiento de la vista se encuentra bloqueado"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "No es posible volar desde una cámara de una biblioteca externa"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "No es posible volar cuando el desplazamiento de la vista se encuentra bloqueado"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "No es posible volar desde un objeto con restricciones"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "No es posible navegar una cámara de una biblioteca externa"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -113756,10 +113703,6 @@ msgid "Bone Envelopes"
 msgstr "Envolventes del hueso"
 
 
-msgid "Use Factor"
-msgstr "Usar factor"
-
-
 msgid "Random Offset Start"
 msgstr "Inicio desp aleatorio"
 
@@ -114202,10 +114145,6 @@ msgstr "Grupos: No existen grupos para este trazo"
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: Identificador fuera de rango"
-
-
-msgid "Groups: index out of range"
-msgstr "Grupos: Identificador fuera de rango"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -115765,10 +115704,6 @@ msgid "An attribute field with a selection of the outer points"
 msgstr "Un campo de atributo conteniendo una selección con los puntos exteriores"
 
 
-msgid "No Bezier splines in input curve"
-msgstr "No hay curvas Bezier en la curva de entrada"
-
-
 msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
 msgstr "Para puntos, la porción de la longitud total de la curva en el punto de control. Para curvas, el factor de esa sección curva dentro de la curva completa"
 
@@ -116211,10 +116146,6 @@ msgstr "Las partes de la geometría en la selección"
 
 msgid "The parts of the geometry not in the selection"
 msgstr "Las partes de la geometría fuera de la selección"
-
-
-msgid "The input geometry does not contain a Bezier spline"
-msgstr "La geometría de entrada no contiene una curva Bezier"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"

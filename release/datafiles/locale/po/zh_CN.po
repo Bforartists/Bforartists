@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12059,10 +12059,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "显示蜡笔数据块"
 
 
-msgid "Show Collection data-blocks"
-msgstr "显示集合数据块"
-
-
 msgid "Show Image data-blocks"
 msgstr "显示图像数据块"
 
@@ -12157,6 +12153,10 @@ msgstr "显示工作区数据块"
 
 msgid "Show Action data-blocks"
 msgstr "显示动作数据块"
+
+
+msgid "Show Collection data-blocks"
+msgstr "显示集合数据块"
 
 
 msgid "Show Material data-blocks"
@@ -16453,6 +16453,10 @@ msgid "Number of frames after each GP keyframe before the modifier has any effec
 msgstr "在修改器拥有任意效果前蜡笔关键帧后的帧数量"
 
 
+msgid "Output Vertex group"
+msgstr "输出顶点组"
+
+
 msgid "Transition"
 msgstr "过渡"
 
@@ -16471,10 +16475,6 @@ msgstr "显示每个笔画中出现的点的顺序(例如:用于绘制的动画�
 
 msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
 msgstr "从各笔画的终点隐藏点到起点 (比如用于模拟擦除线条的效果)"
-
-
-msgid "Fade"
-msgstr "淡化"
 
 
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
@@ -17291,6 +17291,10 @@ msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "副本偏移量。-1到1：从内到外"
 
 
+msgid "Fade"
+msgstr "淡化"
+
+
 msgid "Fade the stroke thickness for each generated stroke"
 msgstr "淡出每个生成的笔画的宽度"
 
@@ -17861,10 +17865,6 @@ msgstr "间隔(空间)"
 
 msgid "Coordinates space"
 msgstr "坐标空间"
-
-
-msgid "Output Vertex group"
-msgstr "输出顶点组"
 
 
 msgid "Invert output weight values"
@@ -49430,6 +49430,18 @@ msgid "Recalculate handle length"
 msgstr "重新计算控制柄长度"
 
 
+msgid "Remove from selection"
+msgstr "从选定中移除"
+
+
+msgid "Toggle Selection"
+msgstr "切换选区"
+
+
+msgid "Toggle the selection"
+msgstr "切换选中的对象"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "添加贝塞尔圆"
@@ -52026,18 +52038,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "选择当前高亮gizmo"
 
 
-msgid "Remove from selection"
-msgstr "从选定中移除"
-
-
-msgid "Toggle Selection"
-msgstr "切换选区"
-
-
-msgid "Toggle the selection"
-msgstr "切换选中的对象"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "Gizmo调整"
@@ -54021,14 +54021,6 @@ msgstr "翻转颜色"
 
 msgid "Switch tint colors"
 msgstr "切换染色"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgctxt "Operator"
@@ -60783,6 +60775,10 @@ msgid "Add an object to a new collection"
 msgstr "将物体添加到新集合"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "要添加的集合的会话UUID"
+
+
 msgctxt "Operator"
 msgid "Add Collection Instance"
 msgstr "添加集合实例"
@@ -60794,10 +60790,6 @@ msgstr "添加集合实例"
 
 msgid "Collection name to add"
 msgstr "要添加的集合名称"
-
-
-msgid "Session UUID of the collection to add"
-msgstr "要添加的集合的会话UUID"
 
 
 msgctxt "Operator"
@@ -64192,10 +64184,6 @@ msgstr "强制重新同步库重写层级"
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
 msgstr "从其关联引用以及依赖关系的层次结构中重建此本地覆写，强制该层次结构匹配关联数据(即忽略数据块指针属性上的退出覆写)"
-
-
-msgid "Delete Library Override Hierarchy"
-msgstr "删除库重写层级"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
@@ -71061,15 +71049,6 @@ msgid "Sequence Slide"
 msgstr "滑动序列"
 
 
-msgctxt "Operator"
-msgid "Shear"
-msgstr "切变"
-
-
-msgid "Shear selected items along the horizontal screen axis"
-msgstr "根据屏幕的水平坐标轴修剪选择的项目"
-
-
 msgid "Axis Ortho"
 msgstr "正交轴向"
 
@@ -71080,6 +71059,15 @@ msgstr "视图边平移"
 
 msgid "Enable edge panning in 2D view"
 msgstr "在 2D视图中启用对象超出视图边后自动平移"
+
+
+msgctxt "Operator"
+msgid "Shear"
+msgstr "切变"
+
+
+msgid "Shear selected items along the horizontal screen axis"
+msgstr "根据屏幕的水平坐标轴修剪选择的项目"
 
 
 msgctxt "Operator"
@@ -77164,6 +77152,10 @@ msgid "Beam Shape"
 msgstr "光束形状"
 
 
+msgid "Caustics"
+msgstr "焦散"
+
+
 msgid "Fast GI Approximation"
 msgstr "快速GI近似"
 
@@ -77194,10 +77186,6 @@ msgstr "透明"
 
 msgid "Light Paths"
 msgstr "光程"
-
-
-msgid "Caustics"
-msgstr "焦散"
 
 
 msgid "Clamping"
@@ -89051,8 +89039,16 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
 msgid "Display black edges"
 msgstr "绘制黑色边线"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgid "Display white edges"
@@ -103327,11 +103323,6 @@ msgstr "SVG为蜡笔"
 
 
 msgctxt "Operator"
-msgid "Wavefront OBJ (.obj)"
-msgstr "Wavefront OBJ (.obj)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "渲染动画"
 
@@ -104610,26 +104601,6 @@ msgstr "骨骼设置"
 msgctxt "Operator"
 msgid "Reset Unkeyed"
 msgstr "重置非关键帧"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "浏览姿态..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "添加姿态..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "重命名姿态..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "移除姿态..."
 
 
 msgctxt "Operator"
@@ -109462,10 +109433,6 @@ msgid "Not implemented"
 msgstr "还未部署"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "转换一些链接的物体/物体数据, 增强'保留源物体'为真"
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "目前不支持曲面转蜡笔"
 
@@ -109784,10 +109751,6 @@ msgstr "无其他被选中物体"
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "操作符被冻结, 在您解冻之前, 对其设置的更改不会生效"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "跳过物体'%s', 链接数据'%s'不能被修改"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -110796,10 +110759,6 @@ msgstr "需要一个活动的时间线 / 动画区域"
 
 msgid "Context missing active object"
 msgstr "上下文缺失活动物体"
-
-
-msgid "Cannot edit library linked object"
-msgstr "无法编辑与库关联的物体"
 
 
 msgid "Cannot edit hidden object"
@@ -112348,10 +112307,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "移动到集合内 (Ctrl 为关联,)"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "无法编辑与物体关联的库"
-
-
 msgid "Use view layer for rendering"
 msgstr "使用用于渲染的视图层"
 
@@ -113245,20 +113200,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "无法在视图偏移被锁定时滑动"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "从外部读取缓存数据"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "无法在视图锁定至一个物体时开启飞行模式"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "清除物体约束"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "无法使用外部库的摄像机开启飞行模式"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -113894,10 +113841,6 @@ msgid "Bone Envelopes"
 msgstr "骨骼封套"
 
 
-msgid "Use Factor"
-msgstr "使用系数"
-
-
 msgid "Random Offset Start"
 msgstr "随机偏开始"
 
@@ -114340,10 +114283,6 @@ msgstr "组: 此笔画无分组"
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: 编号超出范围"
-
-
-msgid "Groups: index out of range"
-msgstr "组: 编号超出范围"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -115903,10 +115842,6 @@ msgid "An attribute field with a selection of the outer points"
 msgstr "带有外部点选中项的属性场"
 
 
-msgid "No Bezier splines in input curve"
-msgstr "输入曲线中没有贝塞尔样条线"
-
-
 msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
 msgstr "对于点，指的是控制点处样条线总长度的部分。对于样条线，指的是该样条线在整个曲线中的系数"
 
@@ -116349,10 +116284,6 @@ msgstr "选中项中的几何部分"
 
 msgid "The parts of the geometry not in the selection"
 msgstr "不在选中项中的几何部分"
-
-
-msgid "The input geometry does not contain a Bezier spline"
-msgstr "输入几何不包含贝塞尔样条线"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"

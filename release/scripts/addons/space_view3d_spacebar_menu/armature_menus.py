@@ -88,7 +88,6 @@ class VIEW3D_MT_Pose(Menu):
         layout.menu("VIEW3D_MT_object_animation")
         layout.menu("VIEW3D_MT_pose_slide")
         layout.menu("VIEW3D_MT_pose_propagate")
-        layout.menu("VIEW3D_MT_pose_library")
         layout.menu("VIEW3D_MT_pose_motion")
         layout.separator()
         layout.menu("VIEW3D_MT_pose_group")

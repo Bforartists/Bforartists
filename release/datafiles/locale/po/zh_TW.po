@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -10581,10 +10581,6 @@ msgid "Grow"
 msgstr "增長"
 
 
-msgid "Fade"
-msgstr "淡化"
-
-
 msgid "Custom Curve"
 msgstr "自訂曲線"
 
@@ -10701,6 +10697,10 @@ msgstr "邊界"
 
 msgid "Mirror Modifier"
 msgstr "鏡像修改器"
+
+
+msgid "Fade"
+msgstr "淡化"
 
 
 msgid "Strength Factor"
@@ -29069,6 +29069,18 @@ msgid "Recalculate handle length"
 msgstr "重新計算控制桿長度"
 
 
+msgid "Remove from selection"
+msgstr "從選取項中移除"
+
+
+msgid "Toggle Selection"
+msgstr "切換選取"
+
+
+msgid "Toggle the selection"
+msgstr "切換選取"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "添加貝茲圓"
@@ -30538,18 +30550,6 @@ msgid "Generic"
 msgstr "通用"
 
 
-msgid "Remove from selection"
-msgstr "從選取項中移除"
-
-
-msgid "Toggle Selection"
-msgstr "切換選取"
-
-
-msgid "Toggle the selection"
-msgstr "切換選取"
-
-
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "刪除作用中框幀"
@@ -30851,14 +30851,6 @@ msgstr "吸附選取項至格線"
 
 msgid "Dissolve Points"
 msgstr "消散點"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgctxt "Operator"
@@ -49338,6 +49330,14 @@ msgid "Outline"
 msgstr "外框"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -55833,26 +55833,6 @@ msgstr "骨骼設定"
 
 
 msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "瀏覽姿勢..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "添加姿勢..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "重新命名姿勢..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "移除姿勢..."
-
-
-msgctxt "Operator"
 msgid "Calculate"
 msgstr "計算"
 
@@ -59062,10 +59042,6 @@ msgstr "移除連接至該輸入的節點"
 
 msgid "Disconnect nodes connected to the input"
 msgstr "斷開連接至該輸入的節點"
-
-
-msgid "Can't edit library linked object(s)"
-msgstr "無法編輯藏庫連結的物體"
 
 
 msgid "Use view layer for rendering"

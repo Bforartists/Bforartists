@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'da130d751f5b')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -12157,10 +12157,6 @@ msgid "Show Grease pencil data-blocks"
 msgstr "グリースペンシルデータブロックを表示します"
 
 
-msgid "Show Collection data-blocks"
-msgstr "コレクションデータブロックを表示します"
-
-
 msgid "Show Image data-blocks"
 msgstr "画像データブロックを表示します"
 
@@ -12255,6 +12251,10 @@ msgstr "ワークスペースデータブロックを表示します"
 
 msgid "Show Action data-blocks"
 msgstr "アクションデータブロックを表示します"
+
+
+msgid "Show Collection data-blocks"
+msgstr "コレクションデータブロックを表示します"
 
 
 msgid "Show Material data-blocks"
@@ -16656,6 +16656,10 @@ msgstr ""
 "各グリースペンシルキーフレーム後のフレーム数"
 
 
+msgid "Output Vertex group"
+msgstr "出力頂点グループ"
+
+
 msgid "Transition"
 msgstr "トランジション"
 
@@ -16674,10 +16678,6 @@ msgstr "ストローク毎に先頭からポイントを表示していきます
 
 msgid "Hide points from the end of each stroke to the start (e.g. for animating lines being erased)"
 msgstr "ストローク毎に終端からポイントを消していきます（例：線が消されていくアニメーション）"
-
-
-msgid "Fade"
-msgstr "フェード"
 
 
 msgid "Hide points in the order they occur in each stroke (e.g. for animating ink fading or vanishing after getting drawn)"
@@ -17496,6 +17496,10 @@ msgid "Offset of duplicates. -1 to 1: inner to outer"
 msgstr "複製のオフセット。-1（内部）から 1（外部）"
 
 
+msgid "Fade"
+msgstr "フェード"
+
+
 msgid "Fade the stroke thickness for each generated stroke"
 msgstr "生成された各ストロークの幅をフェードします"
 
@@ -18064,10 +18068,6 @@ msgstr "スペース"
 
 msgid "Coordinates space"
 msgstr "座標系"
-
-
-msgid "Output Vertex group"
-msgstr "出力頂点グループ"
 
 
 msgid "Invert output weight values"
@@ -49989,6 +49989,22 @@ msgid "Recalculate handle length"
 msgstr "ハンドルの長さを再計算します"
 
 
+msgid "Remove from selection"
+msgstr "選択から除外"
+
+
+msgid "Ignore the select action when the element is already selected"
+msgstr "すでに要素が選択中であれば、選択アクションを無視します"
+
+
+msgid "Toggle Selection"
+msgstr "選択を切替え"
+
+
+msgid "Toggle the selection"
+msgstr "選択を切り替えます"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "ベジエ円を追加"
@@ -52640,22 +52656,6 @@ msgid "Select the currently highlighted gizmo"
 msgstr "現在ハイライト中のギズモを選択します"
 
 
-msgid "Remove from selection"
-msgstr "選択から除外"
-
-
-msgid "Ignore the select action when the element is already selected"
-msgstr "すでに要素が選択中であれば、選択アクションを無視します"
-
-
-msgid "Toggle Selection"
-msgstr "選択を切替え"
-
-
-msgid "Toggle the selection"
-msgstr "選択を切り替えます"
-
-
 msgctxt "Operator"
 msgid "Gizmo Tweak"
 msgstr "ギズモ長押し"
@@ -54743,103 +54743,6 @@ msgstr "カラー切替え"
 
 msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
-
-
-msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "グリースペンシルへ画像をトレース"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "画像からグリースペンシルのストロークを抽出します"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "単一画像または連番画像全体のどちらをトレースするかを決めます"
-
-
-msgid "Trace the current frame of the image"
-msgstr "画像の現在のフレームをトレースします"
-
-
-msgid "Trace full sequence"
-msgstr "連番画像全体をトレースします"
-
-
-msgid "Resolution of the generated curves"
-msgstr "生成するカーブの解像度"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "サンプルポイントへの距離。０で無効"
-
-
-msgid "Scale of the final stroke"
-msgstr "最終ストロークのスケール"
-
-
-msgid "Color Threshold"
-msgstr "色のしきい値"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "この輝度のしきい値より上の位置のストロークを生成します"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
-
-
-msgid "Black"
-msgstr "黒"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "黒（前面）成分につなげるようにします"
-
-
-msgid "White"
-msgstr "白"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "白（背景）成分につなげるようにします"
-
-
-msgid "Always take a left turn"
-msgstr "常に左にターンします"
-
-
-msgid "Always take a right turn"
-msgstr "常に右にターンします"
-
-
-msgid "Minority"
-msgstr "マイノリティ"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
-
-
-msgid "Majority"
-msgstr "マジョリティ"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "疑似乱数で選択します"
-
-
-msgid "Start At Current Frame"
-msgstr "現在のフレームから開始"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "現在のフレームの画像からトレースを開始します"
 
 
 msgctxt "Operator"
@@ -61644,6 +61547,10 @@ msgid "Add an object to a new collection"
 msgstr "オブジェクトを新規コレクションに追加します"
 
 
+msgid "Session UUID of the collection to add"
+msgstr "追加するコレクションのセッション UUID"
+
+
 msgctxt "Operator"
 msgid "Add Collection Instance"
 msgstr "コレクションインスタンスを追加"
@@ -61655,10 +61562,6 @@ msgstr "コレクションインスタンスを追加します"
 
 msgid "Collection name to add"
 msgstr "追加するコレクション名"
-
-
-msgid "Session UUID of the collection to add"
-msgstr "追加するコレクションのセッション UUID"
 
 
 msgctxt "Operator"
@@ -65098,10 +65001,6 @@ msgstr ""
 "適合するようリンクの参照から強制的に再構築します\n"
 "（要はデータブロックポインタプロパティの既存のオーバーライドを\n"
 "　無視します）"
-
-
-msgid "Delete Library Override Hierarchy"
-msgstr "ライブラリオーバーライド階層を削除"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
@@ -72008,15 +71907,6 @@ msgid "Sequence Slide"
 msgstr "シーケンスをスライド"
 
 
-msgctxt "Operator"
-msgid "Shear"
-msgstr "せん断"
-
-
-msgid "Shear selected items along the horizontal screen axis"
-msgstr "画面の水平方向に選択物をせん断します"
-
-
 msgid "Axis Ortho"
 msgstr "平行の軸"
 
@@ -72027,6 +71917,15 @@ msgstr "エッジパン"
 
 msgid "Enable edge panning in 2D view"
 msgstr "2Dビューでエッジパンを有効にします"
+
+
+msgctxt "Operator"
+msgid "Shear"
+msgstr "せん断"
+
+
+msgid "Shear selected items along the horizontal screen axis"
+msgstr "画面の水平方向に選択物をせん断します"
 
 
 msgctxt "Operator"
@@ -78234,6 +78133,10 @@ msgid "Beam Shape"
 msgstr "発光の形状"
 
 
+msgid "Caustics"
+msgstr "コースティクス"
+
+
 msgid "Fast GI Approximation"
 msgstr "高速 GI 近似"
 
@@ -78264,10 +78167,6 @@ msgstr "透過"
 
 msgid "Light Paths"
 msgstr "ライトパス"
-
-
-msgid "Caustics"
-msgstr "コースティクス"
 
 
 msgid "Clamping"
@@ -90281,8 +90180,16 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
+msgid "Black"
+msgstr "黒"
+
+
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
+
+
+msgid "White"
+msgstr "白"
 
 
 msgid "Display white edges"
@@ -104661,11 +104568,6 @@ msgstr "SVGをグリースペンシルへ"
 
 
 msgctxt "Operator"
-msgid "Wavefront OBJ (.obj)"
-msgstr "Wavefront OBJ (.obj)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "アニメーションレンダリング"
 
@@ -105958,26 +105860,6 @@ msgstr "ボーン設定"
 msgctxt "Operator"
 msgid "Reset Unkeyed"
 msgstr "未キー状態にリセット"
-
-
-msgctxt "Operator"
-msgid "Browse Poses..."
-msgstr "ポーズを閲覧..."
-
-
-msgctxt "Operator"
-msgid "Add Pose..."
-msgstr "ポーズを追加..."
-
-
-msgctxt "Operator"
-msgid "Rename Pose..."
-msgstr "ポーズをリネーム..."
-
-
-msgctxt "Operator"
-msgid "Remove Pose..."
-msgstr "ポーズを削除..."
 
 
 msgctxt "Operator"
@@ -110876,10 +110758,6 @@ msgid "Not implemented"
 msgstr "未実装です"
 
 
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "強制的に「オリジナルを保持」オプションを True にし、リンク中のオブジェクトやオブジェクトデータをいくつか変換しました"
-
-
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "サーフェスからグリースペンシルへの変換は未対応です"
 
@@ -111204,10 +111082,6 @@ msgstr ""
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "オペレーターは凍結中です。あなたが凍結を解除するまで設定の変更は反映されません"
-
-
-msgid "Skipping object '%s', linked data '%s' cannot be modified"
-msgstr "オブジェクト「%s」をスキップしました。リンクデータ「%s」は変更できません"
 
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
@@ -112262,10 +112136,6 @@ msgstr "タイムライン/アニメーションエリアがアクティブで�
 
 msgid "Context missing active object"
 msgstr "コンテクストにアクティブオブジェクトがありません"
-
-
-msgid "Cannot edit library linked object"
-msgstr "ライブラリリンクオブジェクトは編集できません"
 
 
 msgid "Cannot edit hidden object"
@@ -113830,10 +113700,6 @@ msgid "Move inside collection (Ctrl to link)"
 msgstr "コレクション内部で移動します（[Ctrl]でリンク）"
 
 
-msgid "Can't edit library linked object(s)"
-msgstr "ライブラリリンクオブジェクトは編集できません"
-
-
 msgid "Use view layer for rendering"
 msgstr "レンダリングに使用するビューレイヤー"
 
@@ -114735,20 +114601,12 @@ msgid "Cannot dolly when the view offset is locked"
 msgstr "ビューオフセットがロック中はドリーできません"
 
 
-msgid "Cannot fly a camera from an external library"
-msgstr "外部ライブラリのカメラはフライナビゲーションできません"
-
-
 msgid "Cannot fly when the view offset is locked"
 msgstr "ビューオフセットがロック中はフライできません"
 
 
 msgid "Cannot fly an object with constraints"
 msgstr "コンストレイントのあるオブジェクトはフライできません"
-
-
-msgid "Cannot navigate a camera from an external library"
-msgstr "外部ライブラリのカメラはナビゲートできません"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -115388,10 +115246,6 @@ msgid "Bone Envelopes"
 msgstr "ボーンエンベロープ"
 
 
-msgid "Use Factor"
-msgstr "係数を使用"
-
-
 msgid "Random Offset Start"
 msgstr "ランダムオフセット開始"
 
@@ -115834,10 +115688,6 @@ msgstr "グループ：このストローク用のグループがありません
 
 msgid "GPencilStrokePoints: index out of range"
 msgstr "GPencilStrokePoints: インデックスが範囲外です"
-
-
-msgid "Groups: index out of range"
-msgstr "グループ：インデックスが範囲外です"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -117405,10 +117255,6 @@ msgid "An attribute field with a selection of the outer points"
 msgstr "外側のポイントの選択の付いた属性フィールド"
 
 
-msgid "No Bezier splines in input curve"
-msgstr "入力カーブにベジエスプラインがありません"
-
-
 msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
 msgstr ""
 "ポイントでは、その制御点でのスプラインの一部の全長\n"
@@ -117871,10 +117717,6 @@ msgstr "ジオメトリの選択中の部分"
 
 msgid "The parts of the geometry not in the selection"
 msgstr "ジオメトリの未選択の部分"
-
-
-msgid "The input geometry does not contain a Bezier spline"
-msgstr "入力ジオメトリにベジエスプラインがありません"
 
 
 msgid "Volumes only support a single material; selection input can not be a field"
