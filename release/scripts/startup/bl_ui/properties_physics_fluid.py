@@ -324,7 +324,7 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         md = context.fluid
         domain = md.domain_settings
@@ -335,12 +335,29 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
         col = layout.column(align=True)
         col.enabled = not is_baking_any and not has_baked_data
 
-        col.prop(domain, "use_collision_border_front")
-        col.prop(domain, "use_collision_border_back")
-        col.prop(domain, "use_collision_border_right")
-        col.prop(domain, "use_collision_border_left")
-        col.prop(domain, "use_collision_border_top")
-        col.prop(domain, "use_collision_border_bottom")
+        row = col.row()
+        row.prop(domain, "use_collision_border_front")
+        row.prop_decorator(domain, "use_collision_border_front")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_back")
+        row.prop_decorator(domain, "use_collision_border_back")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_right")
+        row.prop_decorator(domain, "use_collision_border_right")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_left")
+        row.prop_decorator(domain, "use_collision_border_left")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_top")
+        row.prop_decorator(domain, "use_collision_border_top")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_bottom")
+        row.prop_decorator(domain, "use_collision_border_bottom")
 
 
 class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
