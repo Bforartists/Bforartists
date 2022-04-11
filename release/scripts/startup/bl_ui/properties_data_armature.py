@@ -201,9 +201,10 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
         col = layout.column(align=True)
         col.label(text="This panel is a remainder of the old pose library,")
         col.label(text="which was replaced by the Asset Browser.")
+        col.label(text="This panel will be removed with version 3.3")
 
-        url = self.get_manual_url()
-        col.operator('wm.url_open', text="More Info", icon="URL").url = url
+        #url = self.get_manual_url()
+        #col.operator('wm.url_open', text="More Info", icon="URL").url = url
 
         layout.separator()
 
