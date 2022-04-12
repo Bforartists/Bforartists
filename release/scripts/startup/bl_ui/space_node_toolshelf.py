@@ -197,7 +197,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeNewGeometry"
 
-            props = col.operator("node.add_node", text=" Hair Info           ", icon = "NODE_HAIRINFO")
+            props = col.operator("node.add_node", text=" Curves Info       ", icon = "NODE_HAIRINFO")
             props.use_transform = True
             props.type = "ShaderNodeHairInfo"
 
