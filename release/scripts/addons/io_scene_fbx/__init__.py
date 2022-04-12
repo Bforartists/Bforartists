@@ -376,7 +376,8 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
     use_selection: BoolProperty(
             name="Selected Objects",
             description="Export selected and visible objects only",
-            default=True, # bfa - only selected
+            default=True,
+            ) # bfa - only selected
     use_visible: BoolProperty(
             name='Visible Objects',
             description='Export visible objects only',
