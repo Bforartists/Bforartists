@@ -831,6 +831,7 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         row.active = rd.use_motion_blur
 
         row = col.row()
+        row.separator()
         row.prop(view_layer.cycles, 'use_denoising', text='Denoising')
         row.active = scene.cycles.use_denoising
 
