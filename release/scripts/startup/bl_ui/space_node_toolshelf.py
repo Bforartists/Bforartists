@@ -178,13 +178,17 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
 
-            props = col.operator("node.add_node", text=" Bevel             ", icon = "BEVEL")
+            props = col.operator("node.add_node", text=" Bevel               ", icon = "BEVEL")
             props.use_transform = True
             props.type = "ShaderNodeBevel"
 
             props = col.operator("node.add_node", text=" Camera Data   ", icon = "CAMERA_DATA")
             props.use_transform = True
             props.type = "ShaderNodeCameraData"
+
+            props = col.operator("node.add_node", text=" Color Attribute ", icon = "NODE_VERTEX_COLOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVertexColor"
 
             props = col.operator("node.add_node", text=" Fresnel              ", icon = "NODE_FRESNEL")
             props.use_transform = True
@@ -253,10 +257,6 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValue"
 
-            props = col.operator("node.add_node", text=" Vertex Color    ", icon = "NODE_VERTEX_COLOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVertexColor"
-
             props = col.operator("node.add_node", text=" Volume Info    ", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
@@ -288,6 +288,10 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "CAMERA_DATA")
             props.use_transform = True
             props.type = "ShaderNodeCameraData"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVertexColor"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
             props.use_transform = True
@@ -346,10 +350,6 @@ class NODES_PT_shader_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
             props.type = "ShaderNodeValue"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVertexColor"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
