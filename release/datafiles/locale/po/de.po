@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1380,14 +1380,6 @@ msgstr "Texturen abbilden"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Backe zu Bilddatenblöcken verbunden mit aktiven Bildtexturknoten in Materialien"
-
-
-msgid "Vertex Colors"
-msgstr "Punktfarben"
-
-
-msgid "Bake to active vertex color layer on meshes"
-msgstr "Backe aktive Punktfarbebene auf die Masche"
 
 
 msgid "Automatic Name"
@@ -13375,10 +13367,6 @@ msgid "Millimeters"
 msgstr "Millimeter"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "Breite des CCD-Sensors in Millimeter"
-
-
 msgid "Orthographic Scale"
 msgstr "Orthographisch skalieren"
 
@@ -15289,6 +15277,10 @@ msgid "All UV loop layers"
 msgstr "Alle UV Schleifenebenen"
 
 
+msgid "Vertex Colors"
+msgstr "Punktfarben"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Punktmalereimaske"
 
@@ -16697,14 +16689,6 @@ msgstr "Cycles-Rendereinstellungen"
 
 
 msgid "Cycles render settings"
-msgstr "Cycles-Rendereinstellungen"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Cycles-Rendereinstellungen"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "Cycles-Rendereinstellungen"
 
 
@@ -25784,10 +25768,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Zeileninfo"
-
-
 msgid "Layer Weight"
 msgstr "Ebenen Gewichtung"
 
@@ -26298,6 +26278,10 @@ msgstr "Konvertieren von"
 
 msgid "Convert To"
 msgstr "Konvertieren zu"
+
+
+msgid "Color Attribute"
+msgstr "Farbeigenschaft"
 
 
 msgid "Volume Info"
@@ -29777,6 +29761,10 @@ msgid "Export selected and visible objects only"
 msgstr "Nur ausgewählte und sichtbare Objekte exportieren"
 
 
+msgid "Visible Objects"
+msgstr "Sichtbare Objekte"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "Exportiere glTF 2.0"
@@ -29844,10 +29832,6 @@ msgstr "Lose Punkte"
 
 msgid "Renderable Objects"
 msgstr "Renderfähige Objekte"
-
-
-msgid "Visible Objects"
-msgstr "Sichtbare Objekte"
 
 
 msgid "Remember Export Settings"
@@ -32563,10 +32547,6 @@ msgstr "Umkehrrichtung der Punktfarben innerhalb von Flächen"
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "Farben drehen"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "Punktfarben innerhalb von Flächen drehen"
 
 
 msgid "Counter Clockwise"
@@ -36529,10 +36509,6 @@ msgid "Vertex Paint"
 msgstr "Knoten-Malerei"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Strich in die aktive Knoten-Farbebene malen"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Knoten-Malereimodus"
@@ -36782,22 +36758,8 @@ msgid "Set the weight of selected keys"
 msgstr "Winkel der ausgewählten Knoten abflachen"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Bibliothek"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Anwenden der angegebenen Pose Library-Pose auf das Rig"
-
-
 msgid "Activate New Action"
 msgstr "Aktiviere neue Aktion"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Bibliothek"
 
 
 msgid "The pose to move"
@@ -36806,10 +36768,6 @@ msgstr "Die Pose zu bewegen"
 
 msgid "The pose to remove"
 msgstr "Die Pose zum löschen"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Spezifizierte Pose aus der aktiven Posenbibliothek umbenennen"
 
 
 msgid "New name for pose"
@@ -40387,10 +40345,6 @@ msgid "Export UVs"
 msgstr "UVs exportieren"
 
 
-msgid "Export vertex colors"
-msgstr "Knotenfarben exportieren"
-
-
 msgid "Visible Objects Only"
 msgstr "Nur sichtbare Objekte"
 
@@ -41880,12 +41834,12 @@ msgid "Active Tool"
 msgstr "Aktives Werkzeug"
 
 
-msgid "Custom Grid"
-msgstr "Benutzerdefiniertes Raster"
-
-
 msgid "Overlays"
 msgstr "Überlagerungen"
+
+
+msgid "Guides"
+msgstr "Hilfslinien"
 
 
 msgid "UV Editing"
@@ -42025,10 +41979,6 @@ msgstr "Kacheln"
 
 msgid "Texture Mask"
 msgstr "Texturmaske"
-
-
-msgid "UDIM Grid"
-msgstr "UDIM Raster"
 
 
 msgid "Histogram"
@@ -42173,10 +42123,6 @@ msgstr "Kraftfelder"
 
 msgid "Flow Source"
 msgstr "Ausflussquelle"
-
-
-msgid "Guides"
-msgstr "Hilfslinien"
 
 
 msgid "Sensitivity"
@@ -45079,10 +45025,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Flächenausrichtung umkehren"
 
 
-msgid "Form of hair"
-msgstr "Form der Haare"
-
-
 msgid "3D Curves"
 msgstr "3D Kurven"
 
@@ -45225,10 +45167,6 @@ msgstr "SSE41"
 
 msgid "Adaptive Compile"
 msgstr "Adaptive Kompilierung"
-
-
-msgid "Use Hair BVH"
-msgstr "Haar BVH verwenden"
 
 
 msgid "Use Spatial Splits"
@@ -46005,14 +45943,6 @@ msgstr "Frame-Map alt"
 
 msgid "Old mapping value in frames"
 msgstr "Alter Mapping-Wert in Einzelbilder"
-
-
-msgid "Hair Shape Type"
-msgstr "Haarform Typ"
-
-
-msgid "Hair shape type"
-msgstr "Haarform Typ"
 
 
 msgid "Multiple Engines"
@@ -49391,6 +49321,10 @@ msgid "Display UV coordinates in pixels rather than from 0.0 to 1.0"
 msgstr "Zeigt die UV-Koordinaten in Pixeln anstatt in 0,0 bis 1,0 an"
 
 
+msgid "Custom Grid"
+msgstr "Benutzerdefiniertes Raster"
+
+
 msgid "Live Unwrap"
 msgstr "Echtzeit Abwicklung"
 
@@ -51394,10 +51328,6 @@ msgstr "Objektfarbe anzeigen"
 
 msgid "Show random object color"
 msgstr "Irgendeine Objektfarbe anzeigen"
-
-
-msgid "Show active vertex color"
-msgstr "Aktive Eckpunktfarbe anzeigen"
 
 
 msgid "Show texture"
@@ -55726,10 +55656,6 @@ msgid "Selection"
 msgstr "Auswahl"
 
 
-msgid "Grid Shape"
-msgstr "Rasterschärfe"
-
-
 msgid "Modified Edges"
 msgstr "Modifizierte Kanten"
 
@@ -58095,11 +58021,6 @@ msgstr "Vorheriger Bereich"
 msgctxt "Operator"
 msgid "Next Block"
 msgstr "Nächster Bereich"
-
-
-msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Eckpunktfarbe"
 
 
 msgctxt "Operator"
@@ -63428,10 +63349,6 @@ msgid "Flame"
 msgstr "Flamme"
 
 
-msgid "Color Attribute"
-msgstr "Farbeigenschaft"
-
-
 msgid "Density Attribute"
 msgstr "Dichteneigenschaft"
 
@@ -63498,14 +63415,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkalieren"
-
-
-msgid ""
-"%s: %s\n"
-"location: %s:%d"
-msgstr ""
-"%s: %s\n"
-"Ort: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"

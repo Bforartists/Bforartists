@@ -76,6 +76,11 @@ class CurvesGeometryRuntime {
   mutable Vector<float3> evaluated_position_cache;
   mutable std::mutex position_cache_mutex;
   mutable bool position_cache_dirty = true;
+  /**
+   * The evaluated positions result, using a separate span in case all curves are poly curves,
+   * in which case a separate array of evaluated positions is unnecessary.
+   */
+  mutable Span<float3> evaluated_positions_span;
 
   /**
    * Cache of lengths along each evaluated curve for for each evaluated point. If a curve is
@@ -176,6 +181,13 @@ class CurvesGeometry : public ::CurvesGeometry {
   VArray<int> resolution() const;
   /** Mutable access to curve resolution. Call #tag_topology_changed after changes. */
   MutableSpan<int> resolution_for_write();
+
+  /**
+   * The angle used to rotate evaluated normals around the tangents after their calculation.
+   * Call #tag_normals_changed after changes.
+   */
+  VArray<float> tilt() const;
+  MutableSpan<float> tilt_for_write();
 
   /**
    * Which method to use for calculating the normals of evaluated points (#NormalMode).
@@ -316,6 +328,10 @@ class CurvesGeometry : public ::CurvesGeometry {
    * calculated. That can be ensured with #ensure_evaluated_offsets.
    */
   void interpolate_to_evaluated(int curve_index, GSpan src, GMutableSpan dst) const;
+  /**
+   * Evaluate generic data for curve control points to the standard evaluated points of the curves.
+   */
+  void interpolate_to_evaluated(GSpan src, GMutableSpan dst) const;
 
  private:
   /**
@@ -377,6 +393,7 @@ namespace curves {
  */
 inline int curve_segment_size(const int points_num, const bool cyclic)
 {
+  BLI_assert(points_num > 0);
   return cyclic ? points_num : points_num - 1;
 }
 
@@ -431,6 +448,13 @@ bool segment_is_vector(Span<int8_t> handle_types_left,
  * This only makes a difference in the shape of cyclic curves.
  */
 bool last_cylic_segment_is_vector(Span<int8_t> handle_types_left, Span<int8_t> handle_types_right);
+
+/**
+ * Return true if the handle types at the index are free (#BEZIER_HANDLE_FREE) or vector
+ * (#BEZIER_HANDLE_VECTOR). In these cases, directional continuitity from the previous and next
+ * evaluated segments is assumed not to be desired.
+ */
+bool point_is_sharp(Span<int8_t> handle_types_left, Span<int8_t> handle_types_right, int index);
 
 /**
  * Calculate offsets into the curve's evaluated points for each control point. While most control
@@ -681,8 +705,7 @@ inline IndexRange CurvesGeometry::lengths_range_for_curve(const int curve_index,
   BLI_assert(cyclic == this->cyclic()[curve_index]);
   const IndexRange points = this->evaluated_points_for_curve(curve_index);
   const int start = points.start() + curve_index;
-  const int size = curves::curve_segment_size(points.size(), cyclic);
-  return {start, size};
+  return {start, points.is_empty() ? 0 : curves::curve_segment_size(points.size(), cyclic)};
 }
 
 inline Span<float> CurvesGeometry::evaluated_lengths_for_curve(const int curve_index,
@@ -700,6 +723,24 @@ inline float CurvesGeometry::evaluated_length_total_for_curve(const int curve_in
   /* Check for curves that have no evaluated segments. */
   return lengths.is_empty() ? 0.0f : lengths.last();
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Bezier Inline Methods
+ * \{ */
+
+namespace curves::bezier {
+
+inline bool point_is_sharp(const Span<int8_t> handle_types_left,
+                           const Span<int8_t> handle_types_right,
+                           const int index)
+{
+  return ELEM(handle_types_left[index], BEZIER_HANDLE_VECTOR, BEZIER_HANDLE_FREE) ||
+         ELEM(handle_types_right[index], BEZIER_HANDLE_VECTOR, BEZIER_HANDLE_FREE);
+}
+
+}  // namespace curves::bezier
 
 /** \} */
 

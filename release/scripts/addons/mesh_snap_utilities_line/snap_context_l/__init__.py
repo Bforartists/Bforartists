@@ -335,6 +335,8 @@ class SnapContext():
         if clear_offscreen:
             self._offscreen.clear()
 
+        _Internal.gpu_Indices_use_clip_planes(self.rv3d, True)
+
     def tag_update_drawn_snap_object(self, snap_obj):
         if len(snap_obj.data) > 1:
             snap_obj.data[1].free()
@@ -359,9 +361,6 @@ class SnapContext():
         snap_obj.data.append(data)
 
         _Internal.gpu_Indices_restore_state()
-
-    def use_clip_planes(self, value):
-        _Internal.gpu_Indices_use_clip_planes(self.rv3d, value)
 
     def set_pixel_dist(self, dist_px):
         self._dist_px = int(dist_px)

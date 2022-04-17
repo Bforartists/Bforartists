@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1348,10 +1348,6 @@ msgstr "Cible"
 
 msgid "Image Textures"
 msgstr "Textures d'image"
-
-
-msgid "Vertex Colors"
-msgstr "Couleurs de vertex"
 
 
 msgid "Automatic Name"
@@ -17336,10 +17332,6 @@ msgid "Focal Length"
 msgstr "Longueur focale"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Focale de l’objectif de la caméra perspective, en millimètres"
-
-
 msgid "Lens Unit"
 msgstr "Unité de focale"
 
@@ -17350,10 +17342,6 @@ msgstr "Unité utilisée pour éditer la focale dans l’interface utilisateur"
 
 msgid "Millimeters"
 msgstr "Millimètres"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Spécifier la focale en millimètres"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -20522,6 +20510,10 @@ msgid "All UV loop layers"
 msgstr "Tous les calques UV de boucle"
 
 
+msgid "Vertex Colors"
+msgstr "Couleurs de vertex"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Masque de peinture des vertices"
 
@@ -21380,10 +21372,6 @@ msgstr "Pose courante pour les armatures"
 
 msgid "Pose Library"
 msgstr "Bibliothèque de poses"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "Action utilisée comme bibliothèque de poses pour les armatures"
 
 
 msgid "Rigid Body Settings"
@@ -22699,14 +22687,6 @@ msgstr "Réglages de rendu Cycles"
 
 msgid "Cycles render settings"
 msgstr "Réglages de rendu de Cycles"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Réglages de rendu de cheveux Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Réglages du rendu des cheveux Cycles"
 
 
 msgid "Scene Display"
@@ -29564,10 +29544,6 @@ msgid "Transfer custom normals"
 msgstr "Transférer les normales personnalisées"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Couleurs de vertex (coin de face)"
-
-
 msgid "UVs"
 msgstr "UVs"
 
@@ -35902,10 +35878,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Info cheveux"
-
-
 msgid "Layer Weight"
 msgstr "Calque de poids"
 
@@ -36472,6 +36444,10 @@ msgstr "Transformer un vecteur direction"
 
 msgid "Transform a normal vector with unit length"
 msgstr "Transformer un vecteur normale de longueur unitaire"
+
+
+msgid "Color Attribute"
+msgstr "Attribut de couleur"
 
 
 msgid "Volume Absorption"
@@ -45340,10 +45316,6 @@ msgid "Rotate Colors"
 msgstr "Tourner couleurs"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "Faire tourner les couleurs de vertices dans les faces"
-
-
 msgid "Counter Clockwise"
 msgstr "Sens anti-horaire"
 
@@ -45612,10 +45584,6 @@ msgstr "Dupliquer"
 msgctxt "Operator"
 msgid "Collapse Edges & Faces"
 msgstr "Replier arêtes & faces"
-
-
-msgid "Collapse isolated edge and face regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
-msgstr "Replier les régions isolées d'arêtes et de faces, fusionnant ainsi les données telles que les UV et les couleurs des vertices. Ceci peut replier en sommets à la fois des anneaux d'arêtes ainsi que des régions de faces connectées"
 
 
 msgctxt "Operator"
@@ -51640,10 +51608,6 @@ msgid "Vertex Paint"
 msgstr "Peinture des vertices"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Peindre un trait dans le calque de couleurs de vertices actif"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Mode de peinture de vertices"
@@ -52074,48 +52038,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "Facteur d’interpolation entre le poids de la brosse courante, et les poids des clés"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Assainir action de bibliothèque de poses"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Rendre une action utilisable au sein d’une librairie de poses"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Appliquer pose de bibliothèque"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Appliquer la pose spécifiée de la bib. à l’armature"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Indice de la pose à appliquer (-2 pour aucun changement de la pose, -1 pour la pose active de la bib.)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Parcourir poses de bibliothèque"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Parcourir interactivement les poses, en vue 3D"
-
-
 msgid "Pose Name"
 msgstr "Nom de la pose"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Nouvelle bibliothèque de poses"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Ajouter une nouvelle bibliothèque de poses à l’objet actif"
 
 
 msgctxt "Operator"
@@ -52127,30 +52055,12 @@ msgid "Paste the Asset that was previously copied using Copy As Asset"
 msgstr "Coller l'asset qui avait été copié avec la fonction Copier en tant qu'asset"
 
 
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Ajouter pose à bibliothèque"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Ajouter la pose courante à la bibliothèque de poses active"
-
-
 msgid "Frame to store pose on"
 msgstr "Frame à laquelle stocker la pose"
 
 
 msgid "Name of newly added Pose"
 msgstr "Nom de la pose nouvellement ajoutée"
-
-
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Déplacer pose de bibliothèque"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Déplacer vers le haut ou le bas la pose dans la bibliothèque de poses active"
 
 
 msgid "Direction to move the chosen pose towards"
@@ -52161,26 +52071,8 @@ msgid "The pose to move"
 msgstr "La pose à déplacer"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Enlever pose de bibliothèque"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Enlever la pose n de la bibliothèque de poses active"
-
-
 msgid "The pose to remove"
 msgstr "La pose à enlever"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Renommer pose de bibliothèque"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Renommer la pose spécifié dans la bibliothèque de poses active"
 
 
 msgid "New Pose Name"
@@ -52193,15 +52085,6 @@ msgstr "Nouveau nom pour la pose"
 
 msgid "The pose to rename"
 msgstr "La pose à renommer"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Délier bibliothèque de poses"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Enlever une bibliothèque de poses de l’objet actif"
 
 
 msgctxt "Operator"
@@ -57899,10 +57782,6 @@ msgstr "Exporter les meshes en utilisant le schéma de subdivision d’Alembic"
 
 msgid "Export UVs"
 msgstr "Exporter UVs"
-
-
-msgid "Export vertex colors"
-msgstr "Exporter les couleurs de vertices"
 
 
 msgid "Transform Samples"
@@ -63839,10 +63718,6 @@ msgid "Uses the mirror ball mapping"
 msgstr "Utiliser le placage de “boule miroir”"
 
 
-msgid "Form of hair"
-msgstr "Forme de cheveux"
-
-
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Nombre de sub-divisions utilisées dans les intersections de courbes cardinales (puissance de 2)"
 
@@ -64165,14 +64040,6 @@ msgstr "SSE41"
 
 msgid "Adaptive Compile"
 msgstr "Compilation adaptative"
-
-
-msgid "Use Hair BVH"
-msgstr "Utiliser BVH cheveux"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "Utiliser un type de BVH spécial optimisé pour les cheveux (utilise plus de RAM mais rend plus rapidement)"
 
 
 msgid "Use Spatial Splits"
@@ -74422,11 +74289,6 @@ msgid "Invert"
 msgstr "Inverser"
 
 
-msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Convertir matériaux en couleur de vertices"
-
-
 msgid "Tracking Axis"
 msgstr "Axes de suivi"
 
@@ -78241,6 +78103,10 @@ msgstr "Faire que les canaux contribuent au résultat ((dés)activation de canal
 
 msgid "Display action without any time remapping (when unpinned)"
 msgstr "Afficher l’action sans aucune conversion de temps (si non-épinglée)"
+
+
+msgid "Can't edit this property from a linked data-block"
+msgstr "Impossible d’éditer cette propriété dans un bloc de donnés lié"
 
 
 msgid "<invalid>"
@@ -82172,10 +82038,6 @@ msgid "Could not reopen file"
 msgstr "Impossible de ré-ouvrir le fichier"
 
 
-msgid "Python script failed, check the message in the system console"
-msgstr "Le script Python a échoué, vérifiez le message dans la console système"
-
-
 msgid "Python disabled in this build"
 msgstr "Python est désactivé dans cette build"
 
@@ -83047,10 +82909,6 @@ msgstr "%s n’est pas compatible avec les options %s de “rafraîchissement”
 
 msgid "This property is for internal use only and can't be edited"
 msgstr "Cette propriété est à usage interne uniquement et ne peut être éditée"
-
-
-msgid "Can't edit this property from a linked data-block"
-msgstr "Impossible d’éditer cette propriété dans un bloc de donnés lié"
 
 
 msgid "Can't edit this property from an override data-block"
@@ -84287,10 +84145,6 @@ msgid "Flame"
 msgstr "Flamme"
 
 
-msgid "Color Attribute"
-msgstr "Attribut de couleur"
-
-
 msgid "Density Attribute"
 msgstr "Attribut de densité"
 
@@ -84357,14 +84211,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iÉchelle"
-
-
-msgid ""
-"%s: %s\n"
-"location: %s:%d"
-msgstr ""
-"%s: %s\n"
-"emplacement: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1227,10 +1227,6 @@ msgstr "Tekstur Gambar"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Bakar data-blok gambar yang berkaitan dengan node tekstur gambar aktif di material"
-
-
-msgid "Vertex Colors"
-msgstr "Warna Vertex"
 
 
 msgid "Automatic Name"
@@ -10024,6 +10020,10 @@ msgid "UV Loop Layers"
 msgstr "Warna Standar"
 
 
+msgid "Vertex Colors"
+msgstr "Warna Vertex"
+
+
 msgid "Render Size"
 msgstr "Ukurang"
 
@@ -10381,14 +10381,6 @@ msgstr "Gambar Latar"
 
 msgid "Background set scene"
 msgstr "Gambar Latar"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Kamera"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Kamera"
 
 
 msgid "Display Settings"
@@ -14534,10 +14526,6 @@ msgid "Min Max"
 msgstr "Min Maks"
 
 
-msgid "Hair Info"
-msgstr "Partikel"
-
-
 msgid "Light Falloff"
 msgstr "Warna Standar"
 
@@ -14640,6 +14628,10 @@ msgstr "Panjang A"
 
 msgid "Vector Transform"
 msgstr "Ubah-bentuk Vektor"
+
+
+msgid "Color Attribute"
+msgstr "Atribut Warna"
 
 
 msgid "Texture Node"
@@ -15760,6 +15752,10 @@ msgid "Use Space Transform"
 msgstr "Gunakan Transformasi Spasi"
 
 
+msgid "Visible Objects"
+msgstr "Objek yang Terlihat"
+
+
 msgid "Export cameras"
 msgstr "Ekspor kamera"
 
@@ -15770,10 +15766,6 @@ msgstr "Gunakan Frame Sekarang"
 
 msgid "Renderable Objects"
 msgstr "Objek yang Dapat Dirender"
-
-
-msgid "Visible Objects"
-msgstr "Objek yang Terlihat"
 
 
 msgctxt "Operator"
@@ -16615,10 +16607,6 @@ msgstr "Warna Standar"
 
 msgctxt "Operator"
 msgid "Rotate Colors"
-msgstr "Warna Standar"
-
-
-msgid "Rotate vertex colors inside faces"
 msgstr "Warna Standar"
 
 
@@ -19768,10 +19756,6 @@ msgstr "Ekspor normal"
 
 msgid "Export UVs"
 msgstr "Ekspor UV"
-
-
-msgid "Export vertex colors"
-msgstr "Ekspor warna vertex"
 
 
 msgid "Visible Objects Only"
@@ -23688,11 +23672,6 @@ msgstr "Kunci yang Tidak Terpakai"
 
 
 msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Ubah Material ke Warna Vertex"
-
-
-msgctxt "Operator"
 msgid "Merge Similar"
 msgstr "Gabungkan yang Mirip"
 
@@ -27151,10 +27130,6 @@ msgid "Flame"
 msgstr "Api"
 
 
-msgid "Color Attribute"
-msgstr "Atribut Warna"
-
-
 msgid "Density Attribute"
 msgstr "Atribut Densitas"
 
@@ -27209,14 +27184,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
-
-
-msgid ""
-"%s: %s\n"
-"location: %s:%d"
-msgstr ""
-"%s: %s\n"
-"lokasi: %s:%d"
 
 
 msgid "| Time:%s | "

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1388,14 +1388,6 @@ msgstr "Изображение-текстура"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Запечь в датаблоки изображений, связанных с активным нодом изобрежения-текстуры в материалах"
-
-
-msgid "Vertex Colors"
-msgstr "Цвета вершин"
-
-
-msgid "Bake to active vertex color layer on meshes"
-msgstr "Запечь активный слой вершин на меши"
 
 
 msgid "Automatic Name"
@@ -18712,10 +18704,6 @@ msgid "Focal Length"
 msgstr "Фокусное расстояние"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Значение фокусного расстояния перспективы для объектива камеры в миллиметрах"
-
-
 msgid "Lens Unit"
 msgstr "Единицы объектива"
 
@@ -18726,10 +18714,6 @@ msgstr "Единицы для редактирования объектива в
 
 msgid "Millimeters"
 msgstr "Миллиметры"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Определение объектива в миллиметрах"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -21874,6 +21858,10 @@ msgid "All UV loop layers"
 msgstr "Все слои UV-петель"
 
 
+msgid "Vertex Colors"
+msgstr "Цвета вершин"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Маска рисования по вершинам"
 
@@ -22724,10 +22712,6 @@ msgstr "Текущая поза для арматур"
 
 msgid "Pose Library"
 msgstr "Библиотека поз"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "Действие, используемое в качестве позовой библиотеки для скелетов"
 
 
 msgid "Rigid Body Settings"
@@ -24071,14 +24055,6 @@ msgstr "Настройки рендера Cycles"
 
 msgid "Cycles render settings"
 msgstr "Настройки рендера Cycles"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Настройки рендеринга волос в Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Настройки рендеринга волос в Cycles"
 
 
 msgid "Scene Display"
@@ -31349,10 +31325,6 @@ msgid "Transfer custom normals"
 msgstr "Перенести настраиваемые нормали"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Цвета вершин (углов граней)"
-
-
 msgid "UVs"
 msgstr "UV"
 
@@ -37531,10 +37503,6 @@ msgid "Fresnel"
 msgstr "Френель"
 
 
-msgid "Hair Info"
-msgstr "Информация о волосе"
-
-
 msgid "Layer Weight"
 msgstr "Вес слоя"
 
@@ -38225,6 +38193,10 @@ msgstr "Преобразовать вектор направления"
 
 msgid "Transform a normal vector with unit length"
 msgstr "Преобразовать единичный вектор нормали"
+
+
+msgid "Color Attribute"
+msgstr "Атрибут цвета"
 
 
 msgid "Volume Absorption"
@@ -45412,10 +45384,6 @@ msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Выделить штрихи Grease Pencil внутри прямоугольной области"
 
 
-msgid "Inverts existing selection"
-msgstr "Инвертировать текущее выделение"
-
-
 msgid "Intersect existing selection"
 msgstr "Пересечь с текущим выделением"
 
@@ -48033,10 +48001,6 @@ msgstr "Перевернуть направление цветов вершин 
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "Повернуть цвета"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "Повернуть цвета вершин внутри граней"
 
 
 msgid "Counter Clockwise"
@@ -54996,10 +54960,6 @@ msgid "Vertex Paint"
 msgstr "Рисовать по вершинам"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Рисовать штрих на активной слое цветов вершин"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Режим рисования по вершинам"
@@ -55409,57 +55369,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "Коэффициент интерполяции между текущим весом кисти и весами ключей"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Привести в норму действие библиотеки поз"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Обработать действие для его использования в качестве библиотеки поз"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Применить позу из библиотеки поз"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Применить указанную позу из библиотеки поз к анимируемому объекту"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Индекс применяемой позы (−2 для неизменной позы, −1 для активной позы библиотеки поз)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Обзор поз библиотеки поз"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Интерактивный просмотр поз в 3D-виде"
-
-
 msgid "Pose Name"
 msgstr "Имя позы"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Создать библиотеку поз"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Добавить новую библиотеку поз к активному объекту"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Добавить позу в библиотеку поз"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Добавить текущую позу в библиотеку поз"
 
 
 msgid "Frame to store pose on"
@@ -55470,15 +55385,6 @@ msgid "Name of newly added Pose"
 msgstr "Имя только что добавленной позы"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Переместить позу в библиотеке поз"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Переместить позу вверх или вниз в активной библиотеки поз"
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "Направление перемещения выбранной позы"
 
@@ -55487,26 +55393,8 @@ msgid "The pose to move"
 msgstr "Перемещаемая поза"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Удалить позу из библиотеки поз"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Удалить n-ю позу из активной библиотеки поз"
-
-
 msgid "The pose to remove"
 msgstr "Удаляемая поза"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Переименовать позу из библиотеки поз"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Переименовать указанную позу в активной библиотеке поз"
 
 
 msgid "New Pose Name"
@@ -55519,15 +55407,6 @@ msgstr "Новое имя позы"
 
 msgid "The pose to rename"
 msgstr "Переименовываемая поза"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Отсоединить библиотеку поз"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Удалить библиотеку поз с активного объекта"
 
 
 msgctxt "Operator"
@@ -61710,10 +61589,6 @@ msgid "Export UVs"
 msgstr "Экспортировать UV-развёртки"
 
 
-msgid "Export vertex colors"
-msgstr "Экспортировать цвета вершин"
-
-
 msgid "Transform Samples"
 msgstr "Сэмплы трансформации"
 
@@ -64198,6 +64073,10 @@ msgid "Overlays"
 msgstr "Наложения"
 
 
+msgid "Guides"
+msgstr "Направляющие"
+
+
 msgid "Clone from Image/UV Map"
 msgstr "Клонировать от изображения/UV-карты"
 
@@ -64546,10 +64425,6 @@ msgstr "Силовые поля"
 
 msgid "Flow Source"
 msgstr "Источник потока"
-
-
-msgid "Guides"
-msgstr "Направляющие"
 
 
 msgid "Sensitivity"
@@ -68436,10 +68311,6 @@ msgid "Uses the mirror ball mapping"
 msgstr "Использовать наложение зеркального шара"
 
 
-msgid "Form of hair"
-msgstr "Форма волос"
-
-
 msgid "Rounded Ribbons"
 msgstr "Скруглённые ленты"
 
@@ -68780,14 +68651,6 @@ msgid "Adaptive Compile"
 msgstr "Адаптивная компиляция"
 
 
-msgid "Use Hair BVH"
-msgstr "Включить BVH волос"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "Использовать специальный тип BVH, оптимизированный для волос (использует больше памяти, но рендерится быстрее)"
-
-
 msgid "Use Spatial Splits"
 msgstr "Простр. разбивка"
 
@@ -68952,16 +68815,8 @@ msgid "Min Light Bounces"
 msgstr "Мин. отскоков света"
 
 
-msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Минимальное количество световых отскоков. Более высокое значение уменьшает шум для первых отскоков, но может уменьшить производительность для сложной геометрии, например, волос и объёмов"
-
-
 msgid "Min Transparent Bounces"
 msgstr "Мин. прозр. отскоков"
-
-
-msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Минимальное количество прозрачных отскоков. Более высокое значение уменьшает шум для первых отскоков, но может уменьшить производительность для сложной геометрии, например, волос и объёмов"
 
 
 msgid "Motion Blur Position"
@@ -70118,18 +69973,6 @@ msgstr "Старая карта кадров"
 
 msgid "Old mapping value in frames"
 msgstr "Старые значения карты в кадрах"
-
-
-msgid "Additional subdivision along the hair"
-msgstr "Дополнительные подразделения вдоль волоса"
-
-
-msgid "Hair Shape Type"
-msgstr "Тип формы волоса"
-
-
-msgid "Hair shape type"
-msgstr "Тип формы волоса"
 
 
 msgid "Multiple Engines"
@@ -79196,10 +79039,6 @@ msgid "Show random object color"
 msgstr "Показывать случайный цвет объектов"
 
 
-msgid "Show active vertex color"
-msgstr "Показать цвет активной вершины"
-
-
 msgid "Show texture"
 msgstr "Показать текстуру"
 
@@ -85453,11 +85292,6 @@ msgstr "Следующий блок"
 
 
 msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Цвета вершин"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "Облако точек"
 
@@ -86864,6 +86698,10 @@ msgstr "Включить влияние каналов на результат (
 
 msgid "Display action without any time remapping (when unpinned)"
 msgstr "Показывать действие без преобразования времени (если незакреплено)"
+
+
+msgid "Can't edit this property from a linked data-block"
+msgstr "Невозможно отредактировать свойство из связанного датаблока"
 
 
 msgid "<invalid>"
@@ -91335,10 +91173,6 @@ msgid "Could not reopen file"
 msgstr "Не удалось переоткрыть файл"
 
 
-msgid "Python script failed, check the message in the system console"
-msgstr "Ошибка Python-скрипта, проверьте дополнительную информацию в системной консоли…"
-
-
 msgid "Python disabled in this build"
 msgstr "Python отключён в этой сборке"
 
@@ -92202,10 +92036,6 @@ msgstr "%s не совместим с %s с действиями по обнов
 
 msgid "This property is for internal use only and can't be edited"
 msgstr "Это свойство только для внутреннего использования и не может быть изменено"
-
-
-msgid "Can't edit this property from a linked data-block"
-msgstr "Невозможно отредактировать свойство из связанного датаблока"
 
 
 msgid "Can't edit this property from an override data-block"
@@ -93469,10 +93299,6 @@ msgstr "Высота ряда"
 
 msgid "Flame"
 msgstr "Пламя"
-
-
-msgid "Color Attribute"
-msgstr "Атрибут цвета"
 
 
 msgid "Density Attribute"

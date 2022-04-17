@@ -232,11 +232,11 @@ def snap_utilities(
             r_loc = t_loc[0]
 
         elif _snap_cache.edge.v2dperp and\
-            abs(_snap_cache.edge.v2dperp[0] - mcursor[0]) < 10 and abs(_snap_cache.edge.v2dperp[1] - mcursor[1]) < 10:
+            abs(_snap_cache.edge.v2dperp[0] - mcursor[0]) < sctx._dist_px and abs(_snap_cache.edge.v2dperp[1] - mcursor[1]) < sctx._dist_px:
                 r_type = 'PERPENDICULAR'
                 r_loc = _snap_cache.edge.vperp
 
-        elif abs(_snap_cache.edge.v2dmid[0] - mcursor[0]) < 10 and abs(_snap_cache.edge.v2dmid[1] - mcursor[1]) < 10:
+        elif abs(_snap_cache.edge.v2dmid[0] - mcursor[0]) < sctx._dist_px and abs(_snap_cache.edge.v2dmid[1] - mcursor[1]) < sctx._dist_px:
                 r_type = 'CENTER'
                 r_loc = _snap_cache.edge.vmid
 
