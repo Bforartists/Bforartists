@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -1024,10 +1024,6 @@ msgstr "Esterno"
 
 msgid "Target"
 msgstr "Obiettivo"
-
-
-msgid "Vertex Colors"
-msgstr "Colori Vertice"
 
 
 msgid "Automatic Name"
@@ -11269,10 +11265,6 @@ msgid "Focal Length"
 msgstr "Lunghezza Focale"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Valore in millimetri della lente della Camera Prospettica"
-
-
 msgid "Lens Unit"
 msgstr "Unità Lenti"
 
@@ -11283,10 +11275,6 @@ msgstr "Unità di misura per modificare la lente per l'interfaccia utente"
 
 msgid "Millimeters"
 msgstr "Millimetri"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Valore in millimetri della lente della Camera Prospettica"
 
 
 msgid "Orthographic Scale"
@@ -13183,6 +13171,10 @@ msgid "All UV loop layers"
 msgstr "Tutti i Livelli anello UV"
 
 
+msgid "Vertex Colors"
+msgstr "Colori Vertice"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Maschera Pittura Vertici"
 
@@ -14892,14 +14884,6 @@ msgstr "Impostazioni Render Cycles"
 
 msgid "Cycles render settings"
 msgstr "Impostazioni render Cycles"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Impostazioni Render Capelli Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Impostazioni render capelli Cycles"
 
 
 msgid "Display Settings"
@@ -19935,10 +19919,6 @@ msgid "Transfer custom normals"
 msgstr "Trasferisce le normali personalizzate"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Colori vertice (angoli faccia)"
-
-
 msgid "UVs"
 msgstr "UVs"
 
@@ -24348,10 +24328,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Info Capelli"
-
-
 msgid "Layer Weight"
 msgstr "Peso Livello"
 
@@ -24786,6 +24762,10 @@ msgstr "Trasforma un vettore direzione"
 
 msgid "Transform a normal vector with unit length"
 msgstr "Trasforma un vettore normale con unità di lunghezza"
+
+
+msgid "Color Attribute"
+msgstr "Attributo Colore"
 
 
 msgid "Volume Absorption"
@@ -29915,10 +29895,6 @@ msgid "(De)select All Strokes"
 msgstr "(De)Seleziona Tutti i Tratti"
 
 
-msgid "Inverts existing selection"
-msgstr "Inverte la selezione esistente"
-
-
 msgid "Intersect existing selection"
 msgstr "Interseca la selezione esistente"
 
@@ -31578,10 +31554,6 @@ msgstr "Scambia la direzione dei colori di vertice all'interno delle facce"
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "Ruota Colori"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "Ruota i colori di vertice all'interno delle facce"
 
 
 msgid "Counter Clockwise"
@@ -36669,10 +36641,6 @@ msgid "Vertex Paint"
 msgstr "Pittura Vertici"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Dipingi un tratto sul livello colore vertice attivo"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Modalità Pittura Vertici"
@@ -36997,57 +36965,12 @@ msgid "Set the weight of selected keys"
 msgstr "Imposta il peso delle chiavi selezionate"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Sanifica l'Azione per Libreria Posa"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Rende l'azione adatta all'uso come Libreria Posa"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Applica Posa da Libreria Posa"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Applica una specifica posa dalla Libreria Posa al rig"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Indice della posa da applicare (-2 per non cambiare la posa, -1 per la posa attiva della lib. posa)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Sfoglia le pose da LibPosa"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Sfoglia interattivamente le pose nella vista 3D"
-
-
 msgid "Pose Name"
 msgstr "Nome Posa"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Nuova Libreria Posa"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Agg. una nuova Libreria Posa all'oggetto attivo"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Agg. posa PoseLib"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Agg. la posa corrente alla Libreria Posa attiva"
 
 
 msgid "Frame to store pose on"
@@ -37058,15 +36981,6 @@ msgid "Name of newly added Pose"
 msgstr "Nome della nuova posa aggiunta"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Muovi Posa PoseLib"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Muove la posa su o giù nella Libreria Posa attiva"
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "Direzione in cui muovere la posa scelta"
 
@@ -37075,26 +36989,8 @@ msgid "The pose to move"
 msgstr "La posa da muovere"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Rimuovi Posa PoseLib"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Rimuove n-esima posa dalla Libreria Posa attiva"
-
-
 msgid "The pose to remove"
 msgstr "La posa da rimuovere"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Rinomina Posa PoseLib"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Rinomina posa specifica dalla Libreria Posa attiva"
 
 
 msgid "New Pose Name"
@@ -37107,15 +37003,6 @@ msgstr "Nuovo nome per la posa"
 
 msgid "The pose to rename"
 msgstr "La posa da rinominare"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Scollega Libreria Posa"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Rimuove la Libreria Posa dall'Oggetto attivo"
 
 
 msgctxt "Operator"
@@ -41708,10 +41595,6 @@ msgid "Export UVs"
 msgstr "Esporta UVs"
 
 
-msgid "Export vertex colors"
-msgstr "Esporta i colori vertice"
-
-
 msgid "Transform Samples"
 msgstr "Campioni Trasformazione"
 
@@ -45932,10 +45815,6 @@ msgid "Uses the mirror ball mapping"
 msgstr "Usa la mappatura sfera a specchio"
 
 
-msgid "Form of hair"
-msgstr "Forma dei capelli"
-
-
 msgid "Cast Shadow"
 msgstr "Proietta Ombre"
 
@@ -46150,10 +46029,6 @@ msgstr "SSE41"
 
 msgid "Adaptive Compile"
 msgstr "Compilaz. Adattabile"
-
-
-msgid "Use Hair BVH"
-msgstr "Usa Capelli BVH"
 
 
 msgid "Albedo"
@@ -56094,11 +55969,6 @@ msgstr "Fascia di Spigoli (ring)"
 
 
 msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Colore Vertice"
-
-
-msgctxt "Operator"
 msgid "Armature"
 msgstr "Armatura"
 
@@ -61265,10 +61135,6 @@ msgstr "Scala Dettaglio"
 
 msgid "Flame"
 msgstr "Fiamma"
-
-
-msgid "Color Attribute"
-msgstr "Attributo Colore"
 
 
 msgid "Absorption Color"
