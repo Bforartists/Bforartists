@@ -1806,9 +1806,9 @@ void BKE_image_stamp_buf(Scene *scene,
                          int channels)
 {
   struct StampData stamp_data;
-  float w, h, pad;
+  int w, h, pad;
   int x, y, y_ofs;
-  float h_fixed;
+  int h_fixed;
   const int mono = blf_mono_font_render; /* XXX */
   struct ColorManagedDisplay *display;
   const char *display_device;
@@ -1816,20 +1816,20 @@ void BKE_image_stamp_buf(Scene *scene,
   /* vars for calculating wordwrap */
   struct {
     struct ResultBLF info;
-    rctf rect;
+    rcti rect;
   } wrap;
 
   /* this could be an argument if we want to operate on non linear float imbuf's
    * for now though this is only used for renders which use scene settings */
 
 #define TEXT_SIZE_CHECK(str, w, h) \
-  ((str[0]) && ((void)(h = h_fixed), (w = BLF_width(mono, str, sizeof(str)))))
+  ((str[0]) && ((void)(h = h_fixed), (w = (int)BLF_width(mono, str, sizeof(str)))))
 
   /* must enable BLF_WORD_WRAP before using */
 #define TEXT_SIZE_CHECK_WORD_WRAP(str, w, h) \
   ((str[0]) && (BLF_boundbox_ex(mono, str, sizeof(str), &wrap.rect, &wrap.info), \
                 (void)(h = h_fixed * wrap.info.lines), \
-                (w = BLI_rctf_size_x(&wrap.rect))))
+                (w = BLI_rcti_size_x(&wrap.rect))))
 
 #define BUFF_MARGIN_X 2
 #define BUFF_MARGIN_Y 1
@@ -3096,7 +3096,7 @@ void BKE_image_get_tile_label(Image *ima, ImageTile *tile, char *label, int len_
   }
 }
 
-bool BKE_image_get_tile_info(char *filepath, ListBase *tiles, int *tile_start, int *tile_range)
+bool BKE_image_get_tile_info(char *filepath, ListBase *tiles, int *r_tile_start, int *r_tile_range)
 {
   char filename[FILE_MAXFILE], dirname[FILE_MAXDIR];
   BLI_split_dirfile(filepath, dirname, filename, sizeof(dirname), sizeof(filename));
@@ -3106,7 +3106,7 @@ bool BKE_image_get_tile_info(char *filepath, ListBase *tiles, int *tile_start, i
   eUDIM_TILE_FORMAT tile_format;
   char *udim_pattern = BKE_image_get_tile_strformat(filename, &tile_format);
 
-  bool is_udim = true;
+  bool all_valid_udim = true;
   int min_udim = IMA_UDIM_MAX + 1;
   int max_udim = 0;
   int id;
@@ -3124,7 +3124,7 @@ bool BKE_image_get_tile_info(char *filepath, ListBase *tiles, int *tile_start, i
     }
 
     if (id < 1001 || id > IMA_UDIM_MAX) {
-      is_udim = false;
+      all_valid_udim = false;
       break;
     }
 
@@ -3135,11 +3135,14 @@ bool BKE_image_get_tile_info(char *filepath, ListBase *tiles, int *tile_start, i
   BLI_filelist_free(dirs, dirs_num);
   MEM_SAFE_FREE(udim_pattern);
 
-  if (is_udim && min_udim <= IMA_UDIM_MAX) {
+  /* Ensure that all discovered UDIMs are valid and that there's at least 2 files in total.
+   * Downstream code checks the range value to determine tiled-ness; it's important we match that
+   * expectation here too (T97366). */
+  if (all_valid_udim && min_udim <= IMA_UDIM_MAX && max_udim > min_udim) {
     BLI_join_dirfile(filepath, FILE_MAX, dirname, filename);
 
-    *tile_start = min_udim;
-    *tile_range = max_udim - min_udim + 1;
+    *r_tile_start = min_udim;
+    *r_tile_range = max_udim - min_udim + 1;
     return true;
   }
   return false;

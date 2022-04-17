@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -3921,16 +3921,16 @@ msgid "Custom Properties"
 msgstr "Aangepaste Eigenschappen"
 
 
+msgid "Visible Objects"
+msgstr "Zichtbare Objecten"
+
+
 msgid "General"
 msgstr "Algemeen"
 
 
 msgid "Animation settings"
 msgstr "Animatie-instellingen"
-
-
-msgid "Visible Objects"
-msgstr "Zichtbare Objecten"
 
 
 msgctxt "Operator"
@@ -5410,21 +5410,6 @@ msgstr "Dupliceer Instellingen"
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "Spiegel"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Pas Pose van Poseer Bibliotheek Toe"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Nieuwe Poses Bibliotheek"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Ontkoppel Poses Bibliotheek"
 
 
 msgctxt "Operator"

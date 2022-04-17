@@ -759,7 +759,7 @@ class MATLIB_MT_CatsMenu(Menu):
 #  def poll(cls, context):
 #    return context.active_object is not None
 #
-#  def exectute(self, context):
+#  def execute(self, context):
 #    print("executing")
 #    return {"FINISHED"}
 

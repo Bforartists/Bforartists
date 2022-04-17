@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1284,10 +1284,6 @@ msgstr "Cíl"
 
 msgid "Image Textures"
 msgstr "Obrázkové Textury"
-
-
-msgid "Vertex Colors"
-msgstr "Barvy Vertexů"
 
 
 msgid "Automatic Name"
@@ -9311,10 +9307,6 @@ msgid "Focal Length"
 msgstr "Ohnisková vzdálenost"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Hodnota čočky Perspektivní kamery v milimetrech"
-
-
 msgid "Lens Unit"
 msgstr "Jednotky čočky"
 
@@ -9325,10 +9317,6 @@ msgstr "Přesunout modifikátor výše v zásobníku modifikátorů"
 
 msgid "Millimeters"
 msgstr "Milimetry"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Specifikovat čočku v milimetrech"
 
 
 msgid "Orthographic Scale"
@@ -10761,6 +10749,10 @@ msgid "All UV loop layers"
 msgstr "Vrstvy"
 
 
+msgid "Vertex Colors"
+msgstr "Barvy Vertexů"
+
+
 msgid "Vertices"
 msgstr "Vertexy"
 
@@ -11989,14 +11981,6 @@ msgstr "Vycentrovat pohled"
 
 
 msgid "Cycles render settings"
-msgstr "Vycentrovat pohled"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Vycentrovat pohled"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "Vycentrovat pohled"
 
 
@@ -18535,10 +18519,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Informace o vlasech"
-
-
 msgid "Layer Weight"
 msgstr "Váha vrstvy"
 
@@ -22306,6 +22286,10 @@ msgid "Convert all faces to triangles"
 msgstr "Převede vybrané čtyřúhleníky na trojúhelníky"
 
 
+msgid "Visible Objects"
+msgstr "Viditelné objekty"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "Exportovat glTF 2.0"
@@ -22361,10 +22345,6 @@ msgstr "Nastavení Animace"
 
 msgid "Renderable Objects"
 msgstr "Vykreslovatelné objekty"
-
-
-msgid "Visible Objects"
-msgstr "Viditelné objekty"
 
 
 msgid "Remember Export Settings"
@@ -23238,10 +23218,6 @@ msgstr "Původni pozice"
 msgctxt "Operator"
 msgid "Alternated"
 msgstr "Střídavě"
-
-
-msgid "Inverts existing selection"
-msgstr "Převrátí existující výběr"
 
 
 msgid "Intersect existing selection"
@@ -24383,10 +24359,6 @@ msgstr "Přepíná směr vybraných ploškových vrcholů a ploškových normál
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "Vložit barvu"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "Načíst uložené Render Hladiny"
 
 
 msgid "Counter Clockwise"
@@ -28455,10 +28427,6 @@ msgid "Vertex Paint"
 msgstr "Kreslení Vertexů"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Malovat v aktivní vrstvě barvě vertexů"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Režim Kreslení Vertexů"
@@ -28780,59 +28748,12 @@ msgid "Set the weight of selected keys"
 msgstr "Vyrovná úhly označených plošek"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Přidat ze souboru"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Není knihovnou"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Vložit"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Interaktivně stahuje vertexy k sobě v dané oblasti"
-
-
 msgid "Pose Name"
 msgstr "Póza"
 
 
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Není knihovnou"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Přidat vazbu aktivní kosti"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Vložit"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Přidat vazbu aktivní kosti"
-
-
 msgid "Frame to store pose on"
 msgstr "Krok Snímku"
-
-
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Vložit"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Vložit"
 
 
 msgid "New Pose Name"
@@ -28841,11 +28762,6 @@ msgstr "Póza"
 
 msgid "New name for pose"
 msgstr "Přejmenovat značku"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Přidat ze souboru"
 
 
 msgctxt "Operator"
@@ -32315,10 +32231,6 @@ msgid "Export UVs"
 msgstr "Exportovat UV"
 
 
-msgid "Export vertex colors"
-msgstr "Exportovat barvy vertexů"
-
-
 msgid "Visible Objects Only"
 msgstr "Pouze Viditelné Objekty"
 
@@ -33574,6 +33486,10 @@ msgid "Overlays"
 msgstr "Překrytí"
 
 
+msgid "Guides"
+msgstr "Vodítka"
+
+
 msgid "UV Editing"
 msgstr "Úpravy UV"
 
@@ -33851,10 +33767,6 @@ msgstr "Silová pole"
 
 msgid "Flow Source"
 msgstr "Zdroj Toku"
-
-
-msgid "Guides"
-msgstr "Vodítka"
 
 
 msgid "Sensitivity"
@@ -36129,10 +36041,6 @@ msgid "Static BVH"
 msgstr "Rotace"
 
 
-msgid "Use Hair BVH"
-msgstr "Použít Vlasy BVH"
-
-
 msgid "Use Spatial Splits"
 msgstr "Použít Prostorové Rozdělení"
 
@@ -36667,18 +36575,6 @@ msgstr "Určuje zůžení násladované vlny"
 
 msgid "Frame Map Old"
 msgstr "Poslední frame"
-
-
-msgid "Additional subdivision along the hair"
-msgstr "Další dělení podél vlasů"
-
-
-msgid "Hair Shape Type"
-msgstr "Typ tvaru vlasů"
-
-
-msgid "Hair shape type"
-msgstr "Typ tvaru vlasů"
 
 
 msgid "Multiple Engines"
@@ -42306,11 +42202,6 @@ msgstr "Uzamknout Nevybrané"
 
 
 msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Konvertovat Materiály na Barvu Vertexu"
-
-
-msgctxt "Operator"
 msgid "Merge Similar"
 msgstr "Sloučit Podobné"
 
@@ -45099,11 +44990,6 @@ msgstr "Převalit doprava"
 msgctxt "Operator"
 msgid "Non Manifold"
 msgstr "Vybrat non-manifold"
-
-
-msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Barva Vertexu"
 
 
 msgctxt "Operator"

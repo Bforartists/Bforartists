@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1356,14 +1356,6 @@ msgstr "Текстури Зображень"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Запекти у блоки даних зображення, асоційовані з активними вузлами текстур зображення в матеріалах"
-
-
-msgid "Vertex Colors"
-msgstr "Кольори вершин"
-
-
-msgid "Bake to active vertex color layer on meshes"
-msgstr "Запекти в активний шар кольорів вершин на сітях"
 
 
 msgid "Automatic Name"
@@ -18692,10 +18684,6 @@ msgid "Focal Length"
 msgstr "Фокусна відстань"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Фокусна відстань перспективної камери у міліметрах"
-
-
 msgid "Lens Unit"
 msgstr "Одиниці об'єктива"
 
@@ -18706,10 +18694,6 @@ msgstr "Одиниці, в яких редагувати лінзи в інте�
 
 msgid "Millimeters"
 msgstr "Міліметри"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Фокусна відстань об'єктива у міліметрах"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -22126,6 +22110,10 @@ msgid "All UV loop layers"
 msgstr "Всі шари UV-циклів"
 
 
+msgid "Vertex Colors"
+msgstr "Кольори вершин"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Маска малювання вершин"
 
@@ -23028,10 +23016,6 @@ msgstr "Поточна поза для арматур"
 
 msgid "Pose Library"
 msgstr "Бібліотека поз"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "Дія, що використовується як бібліотека поз для арматури"
 
 
 msgid "Rigid Body Settings"
@@ -24495,14 +24479,6 @@ msgstr "Устави Рендера з Cycles"
 
 msgid "Cycles render settings"
 msgstr "Устави рендера з Cycles"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Устави Рендерингу Волосся з Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Устави рендерингу волосся з Cycles"
 
 
 msgid "Scene Display"
@@ -32584,10 +32560,6 @@ msgid "Transfer custom normals"
 msgstr "Перенести власні нормалі"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Кольори вершин (кутків граней)"
-
-
 msgid "UVs"
 msgstr "UV"
 
@@ -39914,10 +39886,6 @@ msgid "Fresnel"
 msgstr "Френель"
 
 
-msgid "Hair Info"
-msgstr "Інформація волосся"
-
-
 msgid "Layer Weight"
 msgstr "Вагомість шару"
 
@@ -40892,6 +40860,10 @@ msgstr "Трансформації вектора напряму"
 
 msgid "Transform a normal vector with unit length"
 msgstr "Трансформації одиничного вектора нормалі"
+
+
+msgid "Color Attribute"
+msgstr "Атрибут Кольору"
 
 
 msgid "Volume Absorption"
@@ -46640,6 +46612,10 @@ msgid "Add binormal and tangent vectors, together with normal they form the tang
 msgstr "Додати бінормальний та дотичний вектори, які разом з нормаллю утворюють простір дотичних (працює правильно тільки для сітей, що містять лише трикутники та чотирикутники)"
 
 
+msgid "Visible Objects"
+msgstr "Видимі Об'єкти"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "Експорт glTF 2.0"
@@ -46951,10 +46927,6 @@ msgstr "Експорт незв'язаних точок як точок glTF, в
 
 msgid "Renderable Objects"
 msgstr "Рендероздатні Об'єкти"
-
-
-msgid "Visible Objects"
-msgstr "Видимі Об'єкти"
 
 
 msgid "Remember Export Settings"
@@ -49279,10 +49251,6 @@ msgstr "Не вибирати першу та останню точки штри
 
 msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Вибрати штрихи Нарисного олівця у межах прямокутної ділянки"
-
-
-msgid "Inverts existing selection"
-msgstr "Інвертує наявне вибрання"
 
 
 msgid "Intersect existing selection"
@@ -52351,10 +52319,6 @@ msgid "Rotate Colors"
 msgstr "Повернути кольори"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "Повернути кольори вершин у межах граней"
-
-
 msgid "Counter Clockwise"
 msgstr "Проти годинникової стрілки"
 
@@ -52644,10 +52608,6 @@ msgstr "Дублювання"
 msgctxt "Operator"
 msgid "Collapse Edges & Faces"
 msgstr "Стягнути Ребра та Грані"
-
-
-msgid "Collapse isolated edge and face regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
-msgstr "Стягнути ізольовані регіони ребер та граней, зливаючи дані, такі як UV та кольори вершин. Це може стягувати кільця ребер, а також регіони з'єднаних граней у вершини"
 
 
 msgctxt "Operator"
@@ -60298,10 +60258,6 @@ msgid "Vertex Paint"
 msgstr "Фарбування вершин"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Намалювати лінію на активному шарі кольору вершин"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Режим Малювання Вершин"
@@ -60816,57 +60772,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "Коефіцієнт інтерполяції між поточною вагою пензля та вагою ключів"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Обробити дію бібліотеки поз"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Зробити дію придатною для використання в якості бібліотеки поз"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Застосувати позу з бібліотеки поз"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Застосувати вказану позу з бібліотеки до анімованого об'єкта"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Індекс застосовуваної пози (-2 - не змінювати позу; -1 - активна поза з бібліотеки)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Огляд поз бібліотеки поз"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Інтерактивно переглядати пози у 3D-вікні"
-
-
 msgid "Pose Name"
 msgstr "Назва пози"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Нова бібліотека поз"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Додати нову бібліотеку поз до активного об'єкта"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Додати позу до бібліотеки"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Додати поточну позу до активної бібліотеки поз"
 
 
 msgid "Frame to store pose on"
@@ -60877,15 +60788,6 @@ msgid "Name of newly added Pose"
 msgstr "Назва доданої пози"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Перемістити позу у бібліотеці поз"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Перемістити позу уверх або вниз в активній бібліотеці поз"
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "Напрям для переміщення обраної пози"
 
@@ -60894,26 +60796,8 @@ msgid "The pose to move"
 msgstr "Поза для переміщення"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Вилучити позу з бібліотеки"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Вилучити n-ну позу з активної бібліотеки поз"
-
-
 msgid "The pose to remove"
 msgstr "Поза для вилучення"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Перейменувати позу у бібліотеці"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Перейменувати зазначену позу з активної бібліотеки поз"
 
 
 msgid "New Pose Name"
@@ -60926,15 +60810,6 @@ msgstr "Нова назва пози"
 
 msgid "The pose to rename"
 msgstr "Поза для перейменування"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Відв'язати бібліотеку поз"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Вилучити бібліотеку поз з активного об'єкта"
 
 
 msgctxt "Operator"
@@ -68602,10 +68477,6 @@ msgid "Export UVs"
 msgstr "Експортувати UV-ти"
 
 
-msgid "Export vertex colors"
-msgstr "Експортувати кольори вершин"
-
-
 msgid "Visible Objects Only"
 msgstr "Лише Видимі Об'єкти"
 
@@ -70691,10 +70562,6 @@ msgid "Paint using the active material base color"
 msgstr "Малювати за допомогою базового кольору активного матеріалу"
 
 
-msgid "Paint the material with custom vertex color"
-msgstr "Малювати матеріал за допомогою власного кольору вершин"
-
-
 msgid "Grease Pencil Sculpt Paint"
 msgstr "Малювання Ліплення Нарисного Олівця"
 
@@ -71398,6 +71265,10 @@ msgid "Overlays"
 msgstr "Накладки"
 
 
+msgid "Guides"
+msgstr "Напрямні"
+
+
 msgid "UV Editing"
 msgstr "Редагування UV"
 
@@ -71548,10 +71419,6 @@ msgstr "Плиткування"
 
 msgid "Texture Mask"
 msgstr "Текстурна маска"
-
-
-msgid "UDIM Grid"
-msgstr "Сітка UDIM"
 
 
 msgid "Histogram"
@@ -71774,10 +71641,6 @@ msgstr "Силові поля"
 
 msgid "Flow Source"
 msgstr "Джерело Потоку"
-
-
-msgid "Guides"
-msgstr "Напрямні"
 
 
 msgid "Sensitivity"
@@ -74370,10 +74233,6 @@ msgid "Support for pen tablet tilt events in Sculpt Mode"
 msgstr "Підтримка для подій відхилу графічного планшета у Режимі Ліплення"
 
 
-msgid "Use the new Vertex Painting system"
-msgstr "Вжити нову систему Малювання Вершин"
-
-
 msgid "Undo Legacy"
 msgstr "Скасування Застаріле"
 
@@ -76142,24 +76001,12 @@ msgid "Uses the mirror ball mapping"
 msgstr "Використати дзеркальне кульове розкладання"
 
 
-msgid "Form of hair"
-msgstr "Форма волосся"
-
-
 msgid "Rounded Ribbons"
 msgstr "Округлені Стрічки"
 
 
-msgid "Render hair as flat ribbon with rounded normals, for fast rendering"
-msgstr "Рендерити волосся як плоску стрічку з округленими нормалями, для швидшого рендерингу"
-
-
 msgid "3D Curves"
 msgstr "3D Криві"
-
-
-msgid "Render hair as 3D curve, for accurate results when viewing hair close up"
-msgstr "Рендерити волосся як 3D криву, для акуратних результатів при огляданні волосся зблизька"
 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
@@ -76514,14 +76361,6 @@ msgid "Adaptive Compile"
 msgstr "Адаптивне Компілювання"
 
 
-msgid "Use Hair BVH"
-msgstr "Вжити BVH волосся"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "Використати спеціальний тип BVH, що оптимізований для волосся (використовує більше оперативної пам'яті але рендер здійснюється швидше)"
-
-
 msgid "Use Spatial Splits"
 msgstr "Вжити просторові поділи"
 
@@ -76694,16 +76533,8 @@ msgid "Min Light Bounces"
 msgstr "Мін відскоків світла"
 
 
-msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Мінімальна кількість відскоків світла. Задання цього вище скорочує шум у перших відскоках, але може також бути менш ефективним для більш складної геометрії, такої як волосся та об'єми"
-
-
 msgid "Min Transparent Bounces"
 msgstr "Мін відскоків прозорості"
-
-
-msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Мінімальна кількість відскоків прозорості. Задання цього вище скорочує шум у перших відскоках, але може також бути менш ефективним для більш складної геометрії, такої як волосся та об'єми"
 
 
 msgid "Motion Blur Position"
@@ -77984,18 +77815,6 @@ msgstr "Стара карта кадрів"
 
 msgid "Old mapping value in frames"
 msgstr "Старе значення розкладки в кадрах"
-
-
-msgid "Additional subdivision along the hair"
-msgstr "Додаткове підподілення уздовж волосся"
-
-
-msgid "Hair Shape Type"
-msgstr "Тип Форми Волосся"
-
-
-msgid "Hair shape type"
-msgstr "Тип форми волосся"
 
 
 msgid "Multiple Engines"
@@ -87052,10 +86871,6 @@ msgid "Correct Face Attributes"
 msgstr "Коректувати Атрибути Граней"
 
 
-msgid "Correct data such as UV's and vertex colors when transforming"
-msgstr "Коректувати такі дані, як UVи та кольори вершин при трансформуванні"
-
-
 msgid "Keep Connected"
 msgstr "Утримати З'єднане"
 
@@ -88162,10 +87977,6 @@ msgstr "Показати колір об'єкта"
 
 msgid "Show random object color"
 msgstr "Показати випадковий колір об'єкта"
-
-
-msgid "Show active vertex color"
-msgstr "Показувати колір активної вершини"
 
 
 msgid "Show texture"
@@ -91526,16 +91337,6 @@ msgid "Lock Invert All"
 msgstr "Інвертувати Блокування Усіх"
 
 
-msgctxt "Operator"
-msgid "Store Sculpt Vertex Color"
-msgstr "Зберігати Колір Вершин Ліплення"
-
-
-msgctxt "Operator"
-msgid "Load Sculpt Vertex Color"
-msgstr "Завантажити Колір Вершин Ліплення"
-
-
 msgid "Store"
 msgstr "Зберігання"
 
@@ -91879,11 +91680,6 @@ msgstr "Блокувати Невибране"
 msgctxt "Operator"
 msgid "Lock Unused"
 msgstr "Блокувати Невикористане"
-
-
-msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Конвертувати Матеріали у Колір Вершин"
 
 
 msgctxt "Operator"
@@ -93594,10 +93390,6 @@ msgstr "За Відстанню"
 msgctxt "Operator"
 msgid "Selection"
 msgstr "Вибрання"
-
-
-msgid "Grid Shape"
-msgstr "Форма Сітки"
 
 
 msgid "Modified Edges"
@@ -96375,11 +96167,6 @@ msgstr "Наступний Блок"
 
 
 msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Колір Вершин"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "Хмара Точок"
 
@@ -97991,6 +97778,10 @@ msgstr "Увімкнути вплив каналів на результат (п
 
 msgid "Display action without any time remapping (when unpinned)"
 msgstr "Показувати дію без перетворення часу (якщо не закріплено)"
+
+
+msgid "Can't edit this property from a linked data-block"
+msgstr "Неможливо редагувати цю властивістю з пов'язаного блоку даних"
 
 
 msgid "<invalid>"
@@ -103198,10 +102989,6 @@ msgid "Could not reopen file"
 msgstr "Неможливо повторно відкрити файл"
 
 
-msgid "Python script failed, check the message in the system console"
-msgstr "Збій скрипта Python, перевірте повідомлення у консолі системи"
-
-
 msgid "Python disabled in this build"
 msgstr "У цій збірці Python вимкнено"
 
@@ -104121,10 +103908,6 @@ msgstr "%s є не сумісне з  %s опцій 'освіження'"
 
 msgid "This property is for internal use only and can't be edited"
 msgstr "Ця властивість призначена лише для внутрішнього використання та не може бути редагована"
-
-
-msgid "Can't edit this property from a linked data-block"
-msgstr "Неможливо редагувати цю властивістю з пов'язаного блоку даних"
 
 
 msgid "Can't edit this property from an override data-block"
@@ -105607,10 +105390,6 @@ msgid "Flame"
 msgstr "Полум'я"
 
 
-msgid "Color Attribute"
-msgstr "Атрибут Кольору"
-
-
 msgid "Density Attribute"
 msgstr "Атрибут Щільності"
 
@@ -105677,14 +105456,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Сила"
-
-
-msgid ""
-"%s: %s\n"
-"location: %s:%d"
-msgstr ""
-"%s: %s\n"
-"локація: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"

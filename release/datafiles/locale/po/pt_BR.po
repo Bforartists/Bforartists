@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -1121,10 +1121,6 @@ msgstr "Salva o mapa gerado e gravado em um arquivo externo."
 
 msgid "Target"
 msgstr "Alvo(s)"
-
-
-msgid "Vertex Colors"
-msgstr "Cores de vértices"
 
 
 msgid "Automatic Name"
@@ -12957,10 +12953,6 @@ msgid "Focal Length"
 msgstr "Comprimento focal"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Valor de perspectiva da lente da câmera em milímetros."
-
-
 msgid "Lens Unit"
 msgstr "Unidade de lentes"
 
@@ -12971,10 +12963,6 @@ msgstr "Unidade para editar lentes internas para a interface de usuário."
 
 msgid "Millimeters"
 msgstr "Milímetros"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Especificar a lente em milímetros."
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -15339,6 +15327,10 @@ msgid "All UV loop layers"
 msgstr "Todas as camadas de anéis UV."
 
 
+msgid "Vertex Colors"
+msgstr "Cores de vértices"
+
+
 msgid "Vertex Paint Mask"
 msgstr "Máscara de pintura de vértices"
 
@@ -16041,10 +16033,6 @@ msgstr "Pose atual para armações."
 
 msgid "Pose Library"
 msgstr "Biblioteca de poses"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "Ação usada como uma biblioteca de poses para as armações de ossos."
 
 
 msgid "Rigid Body Settings"
@@ -17240,14 +17228,6 @@ msgstr "Configurações de renderização Cycles"
 
 msgid "Cycles render settings"
 msgstr "Configurações de renderização do renderizador Cycles."
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Configurações de renderização de cabelo para Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "As configurações de renderização de cabelos para o renderizador Cycles."
 
 
 msgid "Scene display settings for 3D viewport"
@@ -23965,10 +23945,6 @@ msgid "Transfer custom normals"
 msgstr "Transfere as normais personalizadas."
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Cores de vértices (para junções de face)."
-
-
 msgid "UVs"
 msgstr "UVs"
 
@@ -29869,10 +29845,6 @@ msgstr "Emissão"
 
 msgid "Fresnel"
 msgstr "Fresnel"
-
-
-msgid "Hair Info"
-msgstr "Informações de cabelos"
 
 
 msgid "Layer Weight"
@@ -37349,10 +37321,6 @@ msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Permite selecionar os traços de lápis de cera através do desenho de um retângulo definindo margens de abrangência."
 
 
-msgid "Inverts existing selection"
-msgstr "Inverte seleção existente"
-
-
 msgid "Intersect existing selection"
 msgstr "Intersecção com a seleção existente"
 
@@ -39483,10 +39451,6 @@ msgstr "Alterna a direção da pintura das cores dos vértices nas faces selecio
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "Rotacionar cores"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "Rotaciona a direção da pintura das cores dos vértices nas faces selecionadas."
 
 
 msgid "Counter Clockwise"
@@ -43076,11 +43040,6 @@ msgstr "Move o modificador para cima na pilha."
 
 
 msgctxt "Operator"
-msgid "Add Hair Curves"
-msgstr "Adicionar Curva de Pelos"
-
-
-msgctxt "Operator"
 msgid "Hide Collection"
 msgstr "Ocultar Coleção"
 
@@ -45794,10 +45753,6 @@ msgid "Vertex Paint"
 msgstr "Pintura de vértices"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Permite a pintura de traços dentro da camada ativa de cores de vértices."
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Modo de pintura de vértices"
@@ -46259,44 +46214,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "Fator de interpolação entre o peso do pincel atual, e o peso das chaves."
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Sanitizar as ações na biblioteca de poses"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Faz com que a ação seja passível de ser usada como uma biblioteca de poses."
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Aplicar a pose à biblioteca de poses"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Aplica a pose especificada na biblioteca de poses para o arranjo."
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Índice de poses para aplicar (-2 para nenhuma alteração na pose, -1 para a pose ativa na biblioteca de poses )."
 
 
 msgid "Apply Flipped"
 msgstr "Aplicar Virado"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Navegar nas poses da biblioteca"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Permite a navegação interativa das poses na janela de visualização 3D."
-
-
-msgctxt "Operator"
-msgid "Convert Old-Style Pose Library"
-msgstr "Converter Biblioteca Antiga de Poses"
 
 
 msgctxt "Operator"
@@ -46318,26 +46241,8 @@ msgstr "Nome da pose"
 
 
 msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Nova biblioteca de poses"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Adiciona uma nova biblioteca de poses ao objeto ativo."
-
-
-msgctxt "Operator"
 msgid "Paste As New Asset"
 msgstr "Colar Como Novo Recurso"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Adicionar pose à biblioteca de poses"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Adiciona a pose atual à biblioteca de poses ativa."
 
 
 msgid "Frame to store pose on"
@@ -46348,15 +46253,6 @@ msgid "Name of newly added Pose"
 msgstr "Nome da nova pose adicionada."
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Mover pose na biblioteca de poses"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Permite mover as poses acima ou abaixo na biblioteca de poses ativa."
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "A direção na qual mover a pose escolhida."
 
@@ -46365,26 +46261,8 @@ msgid "The pose to move"
 msgstr "A pose a ser movida."
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Remover pose da biblioteca de poses"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Remove a enésima pose a partir da biblioteca de poses ativa."
-
-
 msgid "The pose to remove"
 msgstr "A pose a ser removida"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Renomear pose na biblioteca de poses"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Permite renomear a pose especificada a partir da biblioteca de poses ativa."
 
 
 msgid "New Pose Name"
@@ -46397,15 +46275,6 @@ msgstr "Um nome novo para a pose"
 
 msgid "The pose to rename"
 msgstr "A pose para renomear"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Desvincular biblioteca de pose"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Remover biblioteca de pose do objeto ativo"
 
 
 msgctxt "Operator"
@@ -51898,10 +51767,6 @@ msgid "Export UVs"
 msgstr "Exportar UVs"
 
 
-msgid "Export vertex colors"
-msgstr "Exporta as cores dos vértices."
-
-
 msgid "Transform Samples"
 msgstr "Amostras de transformações"
 
@@ -54750,11 +54615,6 @@ msgid "Test 1"
 msgstr "Teste 1"
 
 
-msgctxt "Operator"
-msgid "Test 2"
-msgstr "Teste 2"
-
-
 msgid "Clone from Paint Slot"
 msgstr "Clona a partir do compartimento de pintura."
 
@@ -57488,10 +57348,6 @@ msgid "Uses the mirror ball mapping"
 msgstr "Usa o mapeamento em formato de esfera espelhada."
 
 
-msgid "Form of hair"
-msgstr "Forma do cabelo"
-
-
 msgid "3D Curves"
 msgstr "Curvas 3D"
 
@@ -57794,14 +57650,6 @@ msgstr "SSE 4.1"
 
 msgid "Adaptive Compile"
 msgstr "Compilação adaptativa"
-
-
-msgid "Use Hair BVH"
-msgstr "Usar cabelo BVH"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "Usa um tipo especial de hierarquia de volume circundante (BVH) para os cabelos. Usa mais memória, mas renderiza mais rapidamente."
 
 
 msgid "Use Spatial Splits"
@@ -70598,11 +70446,6 @@ msgstr "Bloco Anterior"
 msgctxt "Operator"
 msgid "Next Block"
 msgstr "Próximo Bloco"
-
-
-msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Cor dos vértices"
 
 
 msgctxt "Operator"
