@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -1125,10 +1125,6 @@ msgstr "외부 파일에 배이킹 맵을 저장"
 
 msgid "Target"
 msgstr "대상"
-
-
-msgid "Vertex Colors"
-msgstr "버텍스 컬러"
 
 
 msgid "Automatic Name"
@@ -16002,10 +15998,6 @@ msgid "Focal Length"
 msgstr "초점의 길이"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "밀리미터의 원근법 카메라 렌즈 값"
-
-
 msgid "Lens Unit"
 msgstr "렌즈 단위"
 
@@ -16016,10 +16008,6 @@ msgstr "사용자 인터페이스에서 렌즈를 편집하는 단위"
 
 msgid "Millimeters"
 msgstr "밀리미터"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "밀리미터 단위 렌즈 지정"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -19140,6 +19128,10 @@ msgid "All UV loop layers"
 msgstr "모든 UV 루프 레이어"
 
 
+msgid "Vertex Colors"
+msgstr "버텍스 컬러"
+
+
 msgid "Vertex Paint Mask"
 msgstr "버텍스 페인트 마스크"
 
@@ -19990,10 +19982,6 @@ msgstr "아마튜어에 대한 현재 포즈"
 
 msgid "Pose Library"
 msgstr "포즈 라이브러리"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "아마튜어들에 대한 라이브러리 포즈로 사용된 액션"
 
 
 msgid "Rigid Body Settings"
@@ -21305,14 +21293,6 @@ msgstr "Cycles 렌더 설정"
 
 msgid "Cycles render settings"
 msgstr "Cycles 렌더 설정"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Cycles 헤어 렌더링 설정"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Cycles 헤어 렌더링 설정"
 
 
 msgid "Scene Display"
@@ -28742,10 +28722,6 @@ msgid "Transfer custom normals"
 msgstr "커스텀 노멀을 전송"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "버텍스 (페이스 코너) 컬러"
-
-
 msgid "UVs"
 msgstr "UV"
 
@@ -35048,10 +35024,6 @@ msgid "Fresnel"
 msgstr "프레넬"
 
 
-msgid "Hair Info"
-msgstr "헤어 정보"
-
-
 msgid "Layer Weight"
 msgstr "레이어 웨이트"
 
@@ -35770,6 +35742,10 @@ msgstr "방향 벡터를 변환"
 
 msgid "Transform a normal vector with unit length"
 msgstr "단위 길이와 노멀 벡터를 변환"
+
+
+msgid "Color Attribute"
+msgstr "컬러 속성"
 
 
 msgid "Volume Absorption"
@@ -42988,10 +42964,6 @@ msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "직사각형의 지역 내에서 그리스 팬슬 스트로크를 선택"
 
 
-msgid "Inverts existing selection"
-msgstr "기존 선택을 반전"
-
-
 msgid "Intersect existing selection"
 msgstr "기존 선택을 교차"
 
@@ -45673,10 +45645,6 @@ msgstr "페이스 내부의 버텍스 컬러의 방향을 뒤집기"
 msgctxt "Operator"
 msgid "Rotate Colors"
 msgstr "컬러를 회전"
-
-
-msgid "Rotate vertex colors inside faces"
-msgstr "페이스 내부 버텍스 컬러를 회전"
 
 
 msgid "Counter Clockwise"
@@ -52633,10 +52601,6 @@ msgid "Vertex Paint"
 msgstr "버텍스 페인트"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "활성 버텍스 컬러 레이어에서 스트로크를 페인트"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "버텍스 페인트 모드"
@@ -53046,57 +53010,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "현재 브러시 웨이트와 키 웨이트 사이의 보간 팩터"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "라이브러리 액션 포즈 소독"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "포즈 라이브러리로 사용하기 위해 액션이 적합하도록 만들기"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "라이브러리 포즈로 포즈를 적용"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "리그에 지정된 포즈 라이브러리 포즈를 적용"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "적용할 포즈의 인덱스 (포즈를 변경하지 않을 경우 -2, 포즈 라이브러리 활성 포즈의 경우 -1)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "PoseLib 찾기 포즈"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "3D 뷰에서 포즈를 상호적인 찾아보기"
-
-
 msgid "Pose Name"
 msgstr "포즈 이름"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "새로운 포즈 라이브러리"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "활성 오브젝트에 새로운 포즈 라이브러리를 추가"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "PoseLib 추가 포즈"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "활성 포즈 라이브러리에 현제 포즈를 추가"
 
 
 msgid "Frame to store pose on"
@@ -53107,15 +53026,6 @@ msgid "Name of newly added Pose"
 msgstr "새로 추가된 포즈의 이름"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "PoseLib 이동 포즈"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "활성 포즈 라이브러리에서 포즈를 위나 아래로 움직입니다"
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "선택한 포즈를 앞으로 움직이는 방향"
 
@@ -53124,26 +53034,8 @@ msgid "The pose to move"
 msgstr "움직이는 포즈"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "PoseLib 제거 포즈"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "활성 포즈 라이브러리에서 N 번째 포즈 제거"
-
-
 msgid "The pose to remove"
 msgstr "제거하는 포즈"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "PoseLib 포즈 이름을 변경"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "활성 포즈 라이브러리에서 지정된 포즈 이름을 변경"
 
 
 msgid "New Pose Name"
@@ -53156,15 +53048,6 @@ msgstr "포즈에 대한 새로운 이름"
 
 msgid "The pose to rename"
 msgstr "이름을 변경할 포즈"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "포즈 라이브러리를 연결 해제"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "활성 오브젝트에서 라이브러리를 포즈를 제거"
 
 
 msgctxt "Operator"
@@ -59355,10 +59238,6 @@ msgid "Export UVs"
 msgstr "UVs을 내보내기"
 
 
-msgid "Export vertex colors"
-msgstr "버텍스 컬러를 내보내기"
-
-
 msgid "Visible Objects Only"
 msgstr "보이는 오브젝트 만"
 
@@ -61832,6 +61711,10 @@ msgid "Overlays"
 msgstr "오버레이"
 
 
+msgid "Guides"
+msgstr "가이드"
+
+
 msgid "Clone from Image/UV Map"
 msgstr "이미지/UV 맵에서 클론"
 
@@ -61974,10 +61857,6 @@ msgstr "타일링"
 
 msgid "Texture Mask"
 msgstr "텍스처 마스크"
-
-
-msgid "UDIM Grid"
-msgstr "UDIM 그리드"
 
 
 msgid "Histogram"
@@ -62196,10 +62075,6 @@ msgstr "포스 필드"
 
 msgid "Flow Source"
 msgstr "흐름 소스"
-
-
-msgid "Guides"
-msgstr "가이드"
 
 
 msgid "Sensitivity"
@@ -66073,10 +65948,6 @@ msgid "Uses the mirror ball mapping"
 msgstr "미러 볼 매핑을 사용합니다"
 
 
-msgid "Form of hair"
-msgstr "헤어의 형태"
-
-
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "카디날 커브 교차 지점에서 사용된 섭디비젼들의 수 (2의 파워)"
 
@@ -66393,14 +66264,6 @@ msgid "Adaptive Compile"
 msgstr "적응 컴파일"
 
 
-msgid "Use Hair BVH"
-msgstr "헤어 BVH를 사용"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "헤어에 최적화된 특수 유형 BVH를 사용 (램을 더 많이 사용하지만 렌더링은 더 빠름)"
-
-
 msgid "Use Spatial Splits"
 msgstr "공간의 분할을 사용"
 
@@ -66565,16 +66428,8 @@ msgid "Min Light Bounces"
 msgstr "최소 라이트 바운스"
 
 
-msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "라이트 바운스의 최소 수. 이 값을 높게 설정하면 첫 번째 바운스에서 노이즈가 줄어들지 만 머리카락이나 볼륨과 같이 더 복잡한 지오메트리에는 효율성이 떨어질 수 있습니다"
-
-
 msgid "Min Transparent Bounces"
 msgstr "최소 투명 바운스"
-
-
-msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "투명한 바우스의 최소 횟수입니다. 이 값을 높게 설정하면 첫 번째 바운스에서 노이즈가 줄어들지 만 머리카락이나 볼륨과 같이 더 복잡한 지오메트리에는 효율성이 떨어질 수 있습니다"
 
 
 msgid "Motion Blur Position"
@@ -67735,18 +67590,6 @@ msgstr "오래된 프레임 맵"
 
 msgid "Old mapping value in frames"
 msgstr "프레임에서 오래된 맵핑 값"
-
-
-msgid "Additional subdivision along the hair"
-msgstr "해어를 따라 추가 섭디비젼"
-
-
-msgid "Hair Shape Type"
-msgstr "헤어 셰이프 유형"
-
-
-msgid "Hair shape type"
-msgstr "헤어 셰이프 유형"
 
 
 msgid "Multiple Engines"
@@ -76805,10 +76648,6 @@ msgid "Show random object color"
 msgstr "렌덤 오브젝트 컬러를 표시"
 
 
-msgid "Show active vertex color"
-msgstr "활성 버텍스 컬러를 표시"
-
-
 msgid "Show texture"
 msgstr "택스처를 표시"
 
@@ -80723,10 +80562,6 @@ msgid "By Distance"
 msgstr "거리에 의해"
 
 
-msgid "Grid Shape"
-msgstr "격자 모양"
-
-
 msgid "Show Same Material"
 msgstr "같은 매테리얼을 표시"
 
@@ -84276,6 +84111,10 @@ msgstr "결과에 기여하는 채널을 수행 (채널 음소거를 토글)"
 
 msgid "Display action without any time remapping (when unpinned)"
 msgstr "시간 재매핑없이 액션을 표시 (고정 해제시)"
+
+
+msgid "Can't edit this property from a linked data-block"
+msgstr "재정의 데이터 블록에서 이 속성을 편집할 수 없습니다"
 
 
 msgid "<invalid>"
@@ -88623,10 +88462,6 @@ msgid "Could not reopen file"
 msgstr "파일을 다시 열 수 없음"
 
 
-msgid "Python script failed, check the message in the system console"
-msgstr "Python 스크립트 실패, 시스템 콘솔에서 메시지를 확인하십시오"
-
-
 msgid "Python disabled in this build"
 msgstr "이 빌드에서 Python 사용 중지됨"
 
@@ -89490,10 +89325,6 @@ msgstr "\"%s\"는 %s 새로 고침 옵션과 호환되지 않습니다"
 
 msgid "This property is for internal use only and can't be edited"
 msgstr "이 속성은 내부용이므로 편집할 수 없습니다"
-
-
-msgid "Can't edit this property from a linked data-block"
-msgstr "재정의 데이터 블록에서 이 속성을 편집할 수 없습니다"
 
 
 msgid "Can't edit this property from an override data-block"
@@ -90648,10 +90479,6 @@ msgstr "행 높이"
 
 msgid "Flame"
 msgstr "플래임"
-
-
-msgid "Color Attribute"
-msgstr "컬러 속성"
 
 
 msgid "Density Attribute"

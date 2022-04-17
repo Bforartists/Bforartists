@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -597,10 +597,6 @@ msgstr "Спољно"
 
 msgid "Target"
 msgstr "Циљ"
-
-
-msgid "Vertex Colors"
-msgstr "Боје темена"
 
 
 msgid "Automatic Name"
@@ -5814,10 +5810,6 @@ msgid "Millimeters"
 msgstr "Милиметри"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "Изабери систем кретања"
-
-
 msgid "Orthographic Scale"
 msgstr "Ортогонална размера"
 
@@ -6828,6 +6820,10 @@ msgstr "Слојеви UV петље"
 
 msgid "All UV loop layers"
 msgstr "Сви слојеви UV петљи"
+
+
+msgid "Vertex Colors"
+msgstr "Боје темена"
 
 
 msgid "Vertex Paint Mask"
@@ -18290,32 +18286,8 @@ msgid "Weight Set"
 msgstr "Збирка тежина"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Очисти збирку акција поза"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Примени позу из збирке"
-
-
 msgid "Pose Name"
 msgstr "Назив позе"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Нова збирка поза"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Збирка поза - додај позу"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Додај текућу позу у активну збирку поза"
 
 
 msgid "Frame to store pose on"
@@ -18326,31 +18298,12 @@ msgid "Name of newly added Pose"
 msgstr "Назив новоформиране позе"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Збирка поза - додај позу"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Збирка поза - додај позу"
-
-
 msgid "New Pose Name"
 msgstr "Нови назив позе"
 
 
 msgid "New name for pose"
 msgstr "Нови назив позе"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Збирка поза"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Уклони збирку поза из активног објекта"
 
 
 msgctxt "Operator"

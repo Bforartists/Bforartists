@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -447,10 +447,6 @@ msgstr "Yta"
 
 msgid "External"
 msgstr "Packa extern data"
-
-
-msgid "Vertex Colors"
-msgstr "Vertexfärger"
 
 
 msgid "Clear"
@@ -5247,10 +5243,6 @@ msgid "Millimeters"
 msgstr "Filter"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "Markera Rad"
-
-
 msgid "Passepartout Alpha"
 msgstr "Passepartout"
 
@@ -6129,6 +6121,10 @@ msgstr "Rendera"
 
 msgid "All UV loop layers"
 msgstr "Flytta Till Lager"
+
+
+msgid "Vertex Colors"
+msgstr "Vertexfärger"
 
 
 msgid "Vertices of the mesh"
@@ -7192,14 +7188,6 @@ msgstr "Visa"
 
 
 msgid "Cycles render settings"
-msgstr "Visa"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Visa"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "Visa"
 
 
@@ -11683,10 +11671,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Markera Rad"
-
-
 msgid "Layer Weight"
 msgstr "Höger"
 
@@ -16040,10 +16024,6 @@ msgid "Rotate Colors"
 msgstr "Rotera"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "Rendera"
-
-
 msgctxt "Operator"
 msgid "Convex Hull"
 msgstr "Konvext hölje"
@@ -19189,10 +19169,6 @@ msgid "Vertex Paint"
 msgstr "Vektor Måla"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Rendera"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Vektor Måla"
@@ -19425,37 +19401,8 @@ msgid "Set the weight of selected keys"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Pose-bibliotek"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Pose-bibliotek"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Packa Data"
-
-
 msgid "Pose Name"
 msgstr "Filnamn"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Pose-bibliotek"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Markera Rad"
 
 
 msgid "Frame to store pose on"
@@ -19466,39 +19413,12 @@ msgid "Name of newly added Pose"
 msgstr "Bild Displist"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Markera Rad"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Markera Länkad"
-
-
 msgid "The pose to remove"
 msgstr "Bild Displist"
 
 
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Markera Rad"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Markera Länkad"
-
-
 msgid "New Pose Name"
 msgstr "Filnamn"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Pose-bibliotek"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Markera Länkad"
 
 
 msgctxt "Operator"

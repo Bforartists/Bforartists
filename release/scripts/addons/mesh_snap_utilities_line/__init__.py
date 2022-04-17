@@ -6,8 +6,8 @@
 bl_info = {
     "name": "Snap_Utilities_Line",
     "author": "Germano Cavalcante",
-    "version": (6, 9, 5),
-    "blender": (3, 0, 0),
+    "version": (6, 9, 8),
+    "blender": (3, 2, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
     "doc_url" : "{BLENDER_MANUAL_URL}/addons/mesh/snap_utilities_line.html",

@@ -3078,6 +3078,7 @@ class VIEW3D_MT_object_apply(Menu):
 
         layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
         layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
+        layout.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default)
 
 
 class VIEW3D_MT_object_parent(Menu):
@@ -7789,8 +7790,10 @@ class VIEW3D_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_backface_culling")
 
             if obj:
-                if object_mode == 'EDIT':
-                    col.prop(tool_settings, "use_snap_self")
+                if object_mode == 'EDIT' and obj.type not in {'LATTICE', 'META', 'FONT'}:
+                    sub = col.column()
+                    sub.active = not (tool_settings.use_proportional_edit and obj.type == 'MESH')
+                    sub.prop(tool_settings, "use_snap_self")
                 if object_mode in {'OBJECT', 'POSE', 'EDIT', 'WEIGHT_PAINT'}:
                     col.prop(tool_settings, "use_snap_align_rotation")
 

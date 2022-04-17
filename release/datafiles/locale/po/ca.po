@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -396,10 +396,6 @@ msgstr "Superfície"
 
 msgid "External"
 msgstr "Crear Meta"
-
-
-msgid "Vertex Colors"
-msgstr "Separar"
 
 
 msgid "Clear"
@@ -4484,10 +4480,6 @@ msgid "Millimeters"
 msgstr "Duplicar"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "Seleccionar fila"
-
-
 msgid "Passepartout Alpha"
 msgstr "Seleccionar fila"
 
@@ -5234,6 +5226,10 @@ msgstr "Render"
 
 msgid "All UV loop layers"
 msgstr "Moure a Capa"
+
+
+msgid "Vertex Colors"
+msgstr "Separar"
 
 
 msgid "Vertices of the mesh"
@@ -6161,14 +6157,6 @@ msgstr "Mostrar"
 
 
 msgid "Cycles render settings"
-msgstr "Mostrar"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Mostrar"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "Mostrar"
 
 
@@ -10172,10 +10160,6 @@ msgid "Object Space"
 msgstr "Comprimir Dades"
 
 
-msgid "Hair Info"
-msgstr "Seleccionar fila"
-
-
 msgid "Layer Weight"
 msgstr "Dreta"
 
@@ -13888,10 +13872,6 @@ msgid "Rotate Colors"
 msgstr "Rotar"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "Render"
-
-
 msgid "Counter Clockwise"
 msgstr "Antihorària"
 
@@ -16671,10 +16651,6 @@ msgid "Vertex Paint"
 msgstr "Pintura Vectorial"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Render"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Pintura Vectorial"
@@ -16876,31 +16852,6 @@ msgstr "Pintura Vectorial"
 
 msgid "Set the weight of selected keys"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Arxiu"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Aplicar Deformació"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Arxiu"
-
-
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Seleccionar fila"
 
 
 msgid "New Pose Name"

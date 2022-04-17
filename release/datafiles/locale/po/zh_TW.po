@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -1193,14 +1193,6 @@ msgstr "目標"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "烘焙至材質內作用中的影像紋理結點的關聯影像資料區塊"
-
-
-msgid "Vertex Colors"
-msgstr "頂點色彩"
-
-
-msgid "Bake to active vertex color layer on meshes"
-msgstr "烘焙至網格的作用中頂點色彩圖層"
 
 
 msgid "Automatic Name"
@@ -11904,10 +11896,6 @@ msgid "Focal Length"
 msgstr "焦長"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "透視法攝影機鏡頭值，單位為 mm"
-
-
 msgid "Lens Unit"
 msgstr "鏡頭單位"
 
@@ -11918,10 +11906,6 @@ msgstr "在使用者介面中用來編輯鏡頭的單位"
 
 msgid "Millimeters"
 msgstr "公釐"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "指定鏡頭的單位為公釐 (mm)"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -13974,6 +13958,10 @@ msgid "All UV loop layers"
 msgstr "所有 UV 迴圈分層"
 
 
+msgid "Vertex Colors"
+msgstr "頂點色彩"
+
+
 msgid "Vertex Paint Mask"
 msgstr "頂點繪製遮罩"
 
@@ -14644,10 +14632,6 @@ msgstr "骨架的目前姿勢"
 
 msgid "Pose Library"
 msgstr "姿勢庫"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "作為骨架姿勢庫的動作"
 
 
 msgid "Rigid Body Settings"
@@ -15703,14 +15687,6 @@ msgstr "Cycles 算繪設定"
 
 msgid "Cycles render settings"
 msgstr "Cycles 算繪設定"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Cycles 毛髮算繪設定"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Cycles 毛髮算繪設定"
 
 
 msgid "Scene Display"
@@ -20099,10 +20075,6 @@ msgstr "傳輸 Freestyle 邊線標記"
 
 msgid "Face Corner Data Types"
 msgstr "面角資料類型"
-
-
-msgid "Vertex (face corners) colors"
-msgstr "頂點 (面角) 色彩"
 
 
 msgid "UVs"
@@ -25106,10 +25078,6 @@ msgid "Fresnel"
 msgstr "菲涅爾"
 
 
-msgid "Hair Info"
-msgstr "毛髮資訊"
-
-
 msgid "Layer Weight"
 msgstr "層權重"
 
@@ -25568,6 +25536,10 @@ msgstr "轉換方向向量"
 
 msgid "Transform a normal vector with unit length"
 msgstr "以單位長度轉換一般向量"
+
+
+msgid "Color Attribute"
+msgstr "色彩特性"
 
 
 msgid "Volume Absorption"
@@ -32204,10 +32176,6 @@ msgid "Rotate Colors"
 msgstr "旋轉色彩"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "旋轉面內部的頂點色彩"
-
-
 msgid "Counter Clockwise"
 msgstr "逆時針"
 
@@ -36946,10 +36914,6 @@ msgid "Vertex Paint"
 msgstr "頂點繪製"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "在作用中頂點色彩分層中繪製一道筆觸"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "頂點繪製模式"
@@ -37308,57 +37272,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "在目前筆刷權重，以及眾鍵權重之間的插補係數"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "整頓姿勢庫動作"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "讓動作適合作為姿勢庫使用"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "套用姿勢庫姿勢"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "套用指定的姿勢庫姿勢至索具"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "要套用的姿勢索引 (-2 不更改姿勢，-1 則採姿勢庫作用中的姿勢)"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "姿勢庫瀏覽姿勢"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "以互動方式在 3D 視圖中瀏覽姿勢"
-
-
 msgid "Pose Name"
 msgstr "姿勢名稱"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "新增姿勢庫"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "將新的姿勢庫添加至作用中物體"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "姿勢庫添加姿勢"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "添加目前的姿勢至作用中姿勢庫"
 
 
 msgid "Frame to store pose on"
@@ -37369,35 +37288,12 @@ msgid "Name of newly added Pose"
 msgstr "新添加姿勢的名稱"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "姿勢庫移動姿勢"
-
-
 msgid "The pose to move"
 msgstr "要移動的姿勢"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "姿勢庫移除姿勢"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "從作用中姿勢庫移除第 n 個姿勢"
-
-
 msgid "The pose to remove"
 msgstr "要移除的姿勢"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "姿勢庫重新命名姿勢"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "從作用中姿勢庫重新命名指定的姿勢"
 
 
 msgid "New Pose Name"
@@ -37410,15 +37306,6 @@ msgstr "姿勢的新名稱"
 
 msgid "The pose to rename"
 msgstr "要重新命名的姿勢"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "取消姿勢庫連結"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "從作用中物體移除姿勢庫"
 
 
 msgctxt "Operator"
@@ -46351,10 +46238,6 @@ msgstr "魚眼等距"
 
 msgid "Fisheye Equisolid"
 msgstr "魚眼等立體角"
-
-
-msgid "Form of hair"
-msgstr "毛髮形式"
 
 
 msgid "Cast Shadow"
@@ -60771,10 +60654,6 @@ msgstr "細節縮放"
 
 msgid "Flame"
 msgstr "火焰"
-
-
-msgid "Color Attribute"
-msgstr "色彩特性"
 
 
 msgid "Density Attribute"
