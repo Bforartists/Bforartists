@@ -431,8 +431,8 @@ class SnapUtilities:
 
         #Create Snap Context
         self.sctx = global_snap_context_get(context.evaluated_depsgraph_get(), context.region, context.space_data)
-        self.sctx.set_pixel_dist(12)
-        self.sctx.use_clip_planes(True)
+        ui_scale = context.preferences.system.ui_scale
+        self.sctx.set_pixel_dist(12 * ui_scale)
 
         if SnapUtilities.snapwidgets:
             widget = SnapUtilities.snapwidgets[-1]
@@ -470,7 +470,8 @@ class SnapUtilities:
                 tuple(context.preferences.themes[0].user_interface.axis_x) + (1.0,),
                 tuple(context.preferences.themes[0].user_interface.axis_y) + (1.0,),
                 tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,),
-                self.sctx.rv3d)
+                self.sctx.rv3d,
+                ui_scale)
 
         self.snap_vert = self.snap_edge = snap_edge_and_vert
 

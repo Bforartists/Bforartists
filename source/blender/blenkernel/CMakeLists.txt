@@ -126,7 +126,7 @@ set(SRC
   intern/editlattice.c
   intern/editmesh.c
   intern/editmesh_bvh.c
-  intern/editmesh_cache.c
+  intern/editmesh_cache.cc
   intern/editmesh_tangent.c
   intern/effect.c
   intern/fcurve.c
@@ -203,12 +203,12 @@ set(SRC
   intern/mesh_normals.cc
   intern/mesh_remap.c
   intern/mesh_remesh_voxel.cc
-  intern/mesh_runtime.c
+  intern/mesh_runtime.cc
   intern/mesh_sample.cc
   intern/mesh_tangent.c
   intern/mesh_tessellate.c
   intern/mesh_validate.cc
-  intern/mesh_wrapper.c
+  intern/mesh_wrapper.cc
   intern/modifier.c
   intern/movieclip.c
   intern/multires.c
@@ -235,6 +235,7 @@ set(SRC
   intern/outliner_treehash.c
   intern/packedFile.c
   intern/paint.c
+  intern/paint_canvas.cc
   intern/paint_toolslots.c
   intern/particle.c
   intern/particle_child.c
@@ -243,6 +244,7 @@ set(SRC
   intern/pbvh.cc
   intern/pbvh.c
   intern/pbvh_bmesh.c
+  intern/pbvh_pixels.cc
   intern/pointcache.c
   intern/pointcloud.cc
   intern/preferences.c

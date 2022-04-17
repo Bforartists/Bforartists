@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -396,10 +396,6 @@ msgstr "Harici Düzenleme:"
 
 msgid "Target"
 msgstr "Hedef"
-
-
-msgid "Vertex Colors"
-msgstr "Nokta Boyama"
 
 
 msgid "Clear"
@@ -4252,10 +4248,6 @@ msgid "Lens Unit"
 msgstr "Lens Ölçeği"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "Harekete bağlı bulanıklığı da işle"
-
-
 msgid "Orthographic Scale"
 msgstr "Döndürme & Ölçek"
 
@@ -4978,6 +4970,10 @@ msgstr "Seçim Çevresi"
 
 msgid "UV Loop Layers"
 msgstr "Tüm Katmanları Göster"
+
+
+msgid "Vertex Colors"
+msgstr "Nokta Boyama"
 
 
 msgid "Vertices"
@@ -5733,14 +5729,6 @@ msgstr "Fabrika Ayarlarını Yükle"
 
 
 msgid "Cycles render settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "Fabrika Ayarlarını Yükle"
 
 
@@ -9253,10 +9241,6 @@ msgstr "Nesne Verileri"
 
 msgid "Object Space"
 msgstr "Nesne Kısıtlamaları"
-
-
-msgid "Hair Info"
-msgstr "Nesne Bilgisi"
 
 
 msgid "Layer Weight"
@@ -15084,10 +15068,6 @@ msgid "Vertex Paint"
 msgstr "Nokta Boyama"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Yeni bir nokta rengi katmanı oluştur"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Kamera Uçuş Modu"
@@ -15262,38 +15242,8 @@ msgid "Set the weight of selected keys"
 msgstr "Seçili yüzeyleri yarım ya da çeyrek dilimlere ayırır"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Eylem bağlarına gözat"
-
-
 msgid "Pose Name"
 msgstr "Dosya adı"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Aktif Grubu Sil"
 
 
 msgid "The pose to remove"
@@ -15309,11 +15259,6 @@ msgstr "Arabirim için yeni bir yazıtipi seçin"
 
 
 msgid "The pose to rename"
-msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
 msgstr "Kütüphaneye Ekle"
 
 

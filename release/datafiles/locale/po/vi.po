@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -1472,14 +1472,6 @@ msgstr "Họa Tiết Ảnh"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Nướng vào cục dữ liệu ảnh liên quan với giao điểm họa tiết ảnh đang hoạt động trong vật liệu"
-
-
-msgid "Vertex Colors"
-msgstr "Màu Đỉnh"
-
-
-msgid "Bake to active vertex color layer on meshes"
-msgstr "Nướng vào lớp màu đỉnh đang hoạt động trên mạng lưới"
 
 
 msgid "Automatic Name"
@@ -20092,10 +20084,6 @@ msgid "Focal Length"
 msgstr "Quãng Tiêu Điểm"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "Giá trị thấu kính Máy Quay Phim cho chiếu phối cảnh (mm)"
-
-
 msgid "Lens Unit"
 msgstr "Đơn Vị Thấu Kính"
 
@@ -20106,10 +20094,6 @@ msgstr "Đơn vị của thấu kinh trong giao diện"
 
 msgid "Millimeters"
 msgstr "Mili Mét"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "Xác định thấu kinh bằng mili mét"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -23694,6 +23678,10 @@ msgid "All UV loop layers"
 msgstr "Hết Lớp Vòng Lặp UV"
 
 
+msgid "Vertex Colors"
+msgstr "Màu Đỉnh"
+
+
 msgid "Vertex Creases"
 msgstr "Nhăn Đỉnh"
 
@@ -24672,10 +24660,6 @@ msgstr "Dạng đứng hiện tại cho cốt"
 
 msgid "Pose Library"
 msgstr "Thư Viện Dạng Đứng"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "Hành Động được dùng làm thư viện đạng đứng cho cốt"
 
 
 msgid "Rigid Body Settings"
@@ -26255,14 +26239,6 @@ msgstr "Cài Đặt Kết Xuất Cycles"
 
 msgid "Cycles render settings"
 msgstr "Cài đặt kết xuất Cycles"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "Cài Đặc Kết Xuất Tóc Cycles"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "Cài đặt cho kết xuất tóc của Cycles"
 
 
 msgid "Scene Display"
@@ -34873,10 +34849,6 @@ msgid "Transfer custom normals"
 msgstr "Truyền pháp tuyến tùy chọn"
 
 
-msgid "Vertex (face corners) colors"
-msgstr "Màu Đỉnh (góc giác mặt)"
-
-
 msgid "UVs"
 msgstr "UV"
 
@@ -43403,10 +43375,6 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
-msgid "Hair Info"
-msgstr "Thông Tin Tóc"
-
-
 msgid "Layer Weight"
 msgstr "Quyền Lượng Lớp"
 
@@ -44417,6 +44385,10 @@ msgstr "Biến hóa một vectơ chỉ hướng"
 
 msgid "Transform a normal vector with unit length"
 msgstr "Biến hóa pháp tuyến đã được đơn vị hóa"
+
+
+msgid "Color Attribute"
+msgstr "Đặc Điểm Màu"
 
 
 msgid "Volume Absorption"
@@ -50489,6 +50461,14 @@ msgid "Add binormal and tangent vectors, together with normal they form the tang
 msgstr "Thêm vectơ nhị pháp tuyến và tiếp tuyến chúng với pháp tuyến để hình thành không gian tiếp tuyến (nó chỉ họa động với mạng lưới chỉ có tam giác/tư giác!) "
 
 
+msgid "Visible Objects"
+msgstr "Vật Thể Hiển Thị"
+
+
+msgid "Export visible objects only"
+msgstr "Chỉ xuất vật thể hiển thị"
+
+
 msgctxt "Operator"
 msgid "Export glTF 2.0"
 msgstr "Xuất glTF 2.0"
@@ -50828,14 +50808,6 @@ msgstr "Vật Thể Có Thể Kết Xuất"
 
 msgid "Export renderable objects only"
 msgstr "Chỉ xuất vật thể có thể kết xuất"
-
-
-msgid "Visible Objects"
-msgstr "Vật Thể Hiển Thị"
-
-
-msgid "Export visible objects only"
-msgstr "Chỉ xuất vật thể hiển thị"
 
 
 msgid "Remember Export Settings"
@@ -53331,10 +53303,6 @@ msgstr "Không chọn điểm đầu và cuối của nét"
 
 msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Chọn nét Bút sáp trong một vùng chữ nhật"
-
-
-msgid "Inverts existing selection"
-msgstr "Đảo nghịch sự lựa chọn hiện tại"
 
 
 msgid "Intersect existing selection"
@@ -56528,10 +56496,6 @@ msgid "Rotate Colors"
 msgstr "Xoay Màu"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "Xoay màu đỉnh ở trong mặt"
-
-
 msgid "Counter Clockwise"
 msgstr "Nghịch Hướng Kim Đồng Hồ"
 
@@ -56821,10 +56785,6 @@ msgstr "Dao Chép"
 msgctxt "Operator"
 msgid "Collapse Edges & Faces"
 msgstr "Tóp Cạnh & Mặt"
-
-
-msgid "Collapse isolated edge and face regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
-msgstr "Tóp các vùng có cạnh và mặt cô lập, gồm dữ liệu như UV và màu đỉnh. Cái này có thể tóp vòng lặp cạnh và vùng có mặt kết nối nhau vào đỉnh"
 
 
 msgctxt "Operator"
@@ -64891,10 +64851,6 @@ msgid "Vertex Paint"
 msgstr "Sơn Đỉnh"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "Sơn một nét trong lớp màu đỉnh hoạt động"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "Chế Độ Sơn Đỉnh"
@@ -65409,24 +65365,6 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "Hệ số suy nội giữa quyền lượng bút hiện tại, và quyền lượng bức mẫu"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "Làm sạch Hành Động Thư Viện Dạng Đứng"
-
-
-msgid "Make action suitable for use as a Pose Library"
-msgstr "Làm hành động phù hợp dùng làm Thư Viện Dạng Đứng"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "Áp Dụng Dạng Đứng Từ Thư Viện Dạng Đứng"
-
-
-msgid "Apply specified Pose Library pose to the rig"
-msgstr "Áp dụng dạng đứng từ Thư Viện Dạng Đứng được xác định với giàn"
-
-
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "Chỉ số của dạng đứng để áp dụng (-2 cho không đổi dạng đứng, -1 cho đạng đứng hoạt động từ thư viện dạng đứng)"
 
@@ -65461,20 +65399,6 @@ msgid "Blend the given Pose Action to the rig"
 msgstr "Pha trộn Hành Động Dạng Đứng được giao cho giàn"
 
 
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "Thư Viện Dạng Đứng - Xem Dạng Đứng"
-
-
-msgid "Interactively browse poses in 3D-View"
-msgstr "Xem dạng đứng kiểu tương tác trong Màn 3D"
-
-
-msgctxt "Operator"
-msgid "Convert Old-Style Pose Library"
-msgstr "Biến Đổi Thư Viện Dạng Đứng Kiểu Cũ"
-
-
 msgid "Create a pose asset for each pose marker in the current action"
 msgstr "Chế tạo một tích sản dạng đứng cho mỗi cái dấu trong hành động hiện tại"
 
@@ -65506,30 +65430,12 @@ msgstr "Tên Dạng Đứng"
 
 
 msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "Thư Viện Dạng Đứng Mới"
-
-
-msgid "Add New Pose Library to active Object"
-msgstr "Thêm Thư Viện Dạng Đứng Mới cho Vật Thể hoạt động"
-
-
-msgctxt "Operator"
 msgid "Paste As New Asset"
 msgstr "Dàn Làm Tích Sản Mới"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
 msgstr "Dán Tích Sản được chép trước đây bởi Chép Làm Tích Sản"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "Thư Viện Dạng Đứng - Thêm Dạng Đứng"
-
-
-msgid "Add the current Pose to the active Pose Library"
-msgstr "Thêm Dạng Đứng hiện tại vào Thư Viện Dạng Đứng hoạt động"
 
 
 msgid "Frame to store pose on"
@@ -65549,15 +65455,6 @@ msgid "Select those bones that are used in this pose"
 msgstr "Chọn các xương được dùng trong dạng đứng này"
 
 
-msgctxt "Operator"
-msgid "PoseLib Move Pose"
-msgstr "Thư Viện Dạng Đứng - Di Chuyển Dạng Đứng"
-
-
-msgid "Move the pose up or down in the active Pose Library"
-msgstr "Di chuyển dạng đứng lên xuống trong Thư Viện Dạng Đứng hoạt động"
-
-
 msgid "Direction to move the chosen pose towards"
 msgstr "Hướng để di chuyển dạng đứng được chọn"
 
@@ -65566,26 +65463,8 @@ msgid "The pose to move"
 msgstr "Dạng đứng để di chuyển"
 
 
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "Thư Viện Dạng Đứng - Xóa Dạng Đứng"
-
-
-msgid "Remove nth pose from the active Pose Library"
-msgstr "Xóa dạng đứng thứ n từ Thư Viện Dạng Đứng hoạt động"
-
-
 msgid "The pose to remove"
 msgstr "Dạng đứng để xóa"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "Thư Viện Dạng Đứng - Đặt Tên Mới Cho Dạng Đứng"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "Đặt tên mới cho dạng đứng được xác định từ Thư Viện Dạng Đứng hoạt động"
 
 
 msgid "New Pose Name"
@@ -65607,15 +65486,6 @@ msgstr "Hoàn Lại Hành Động Trước"
 
 msgid "Switch back to the previous Action, after creating a pose asset"
 msgstr "Trở lại đến Hành Động trước, sau được chế tạo một tích sản dạng đứng"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "Gỡ Liên Kết Thư Viện Dạng Đứng"
-
-
-msgid "Remove Pose Library from active Object"
-msgstr "Xóa Thư Viện Dạng Đứng từ Vật Thể hoạt động"
 
 
 msgctxt "Operator"
@@ -73675,10 +73545,6 @@ msgid "Export UVs"
 msgstr "Xuất UV"
 
 
-msgid "Export vertex colors"
-msgstr "Xuất màu đỉnh"
-
-
 msgid "Visible Objects Only"
 msgstr "Chỉ Các Vật Thể Hiển Thị"
 
@@ -75953,10 +75819,6 @@ msgid "Import only the subset of the USD scene rooted at the given primitive"
 msgstr "Chỉ nhập hạ tập hợp của cảnh USD có rể tại vật thể cơ bản"
 
 
-msgid "Read mesh vertex colors"
-msgstr "Đọc màu của đỉnh mạng lưới"
-
-
 msgid "Read mesh UV coordinates"
 msgstr "Đọc tọa độ UV của mạng lưới"
 
@@ -76475,10 +76337,6 @@ msgstr "Chế Độ Sơn"
 
 msgid "Paint using the active material base color"
 msgstr "Sơn bằng màu cơ sở vật liệu hoạt động"
-
-
-msgid "Paint the material with custom vertex color"
-msgstr "Sơn vật liệu bằng màu đỉnh tùy chọn"
 
 
 msgid "Grease Pencil Sculpt Paint"
@@ -77220,12 +77078,12 @@ msgid "Active Tool"
 msgstr "Dụng Cụ Hoạt Động"
 
 
-msgid "Custom Grid"
-msgstr "Đồ Thị Tùy Chọn"
-
-
 msgid "Overlays"
 msgstr "Lớp Che Trên"
+
+
+msgid "Guides"
+msgstr "Đường Hướng Dẫn"
 
 
 msgid "UV Editing"
@@ -77378,10 +77236,6 @@ msgstr "Ô Hóa"
 
 msgid "Texture Mask"
 msgstr "Mặt Nạ Họa Tiết"
-
-
-msgid "UDIM Grid"
-msgstr "Đồ Thị UDIM"
 
 
 msgid "Histogram"
@@ -77604,10 +77458,6 @@ msgstr "Lực Trường"
 
 msgid "Flow Source"
 msgstr "Nguồn Lưu"
-
-
-msgid "Guides"
-msgstr "Đường Hướng Dẫn"
 
 
 msgid "Sensitivity"
@@ -80400,10 +80250,6 @@ msgid "Support for pen tablet tilt events in Sculpt Mode"
 msgstr "Hỗ trợ sự kiện bảng vẽ nghiêng trong Chế Độ Khắc"
 
 
-msgid "Use the new Vertex Painting system"
-msgstr "Dùng hệ thống Sơn Đỉnh mới"
-
-
 msgid "Undo Legacy"
 msgstr "Hủy Bước Xưa"
 
@@ -82384,24 +82230,12 @@ msgid "Defines the lens projection as polynomial to allow real world camera lens
 msgstr "Chỉ định phép chiếu của thấu kính bằng một đa thức cho xấp xỉ thấu kính máy quay phim thế giới thật"
 
 
-msgid "Form of hair"
-msgstr "Hình Dạng Tóc"
-
-
 msgid "Rounded Ribbons"
 msgstr "Dải Tròn Hóa"
 
 
-msgid "Render hair as flat ribbon with rounded normals, for fast rendering"
-msgstr "Kết xuất tóc bằng dải bằng phẳng có pháp tuyến tròn hóa, cho kết xuất nhanh hơn"
-
-
 msgid "3D Curves"
 msgstr "Đường Cong 3D"
-
-
-msgid "Render hair as 3D curve, for accurate results when viewing hair close up"
-msgstr "Kết xuất tóc bằng đường cong 3D, cho kết qủa chính xác khi nhìn tóc gần"
 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
@@ -82816,14 +82650,6 @@ msgid "Adaptive Compile"
 msgstr "Biên Địch Ứng Phó"
 
 
-msgid "Use Hair BVH"
-msgstr "Dùng BVH Tóc"
-
-
-msgid "Use special type BVH optimized for hair (uses more ram but renders faster)"
-msgstr "Dùng BVH đặc biệt tối ưu cho tóc (nó dùng bộ nhớ nhiều hơn nhưng kết xuất nhanh hơn)"
-
-
 msgid "OptiX Module Debug"
 msgstr "Sửa Lỗi Mô Khối Optix"
 
@@ -83092,16 +82918,8 @@ msgid "Min Light Bounces"
 msgstr "Nhồi Ánh Sáng Tối Thiểu"
 
 
-msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Số lượng nhồi ánh sáng tối thiểu. Đặt giá trị cao hơn để giảm huyên náo trong các nhồi đầu, và có thể mất hiệu suất cho hình dạng phức tạp như tóc và thể tích"
-
-
 msgid "Min Transparent Bounces"
 msgstr "Nhồi Trong Suốt Tối Thiểu"
-
-
-msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Số lượng nhồi trong suốt tối thiểu. Đặt giá trị này cao hơn để giảm huyên náo trong các nhồi đầu, nhưng có thể mất hiệu suất cho hình dạng phức tạp hơn như tóc và thể tích"
 
 
 msgid "Motion Blur Position"
@@ -84550,18 +84368,6 @@ msgstr "Ánh Xạ Bức Cũ"
 
 msgid "Old mapping value in frames"
 msgstr "Giá trị ánh xạ cũ bằng số bức"
-
-
-msgid "Additional subdivision along the hair"
-msgstr "Phân hóa thêm theo hướng tóc"
-
-
-msgid "Hair Shape Type"
-msgstr "Loại Hình Dạng Tóc"
-
-
-msgid "Hair shape type"
-msgstr "Loại hình dạng tóc"
 
 
 msgid "Multiple Engines"
@@ -91193,6 +90999,10 @@ msgid "How many tiles will be shown in the background"
 msgstr "Số lượng ô sẽ được hiện trong nền"
 
 
+msgid "Custom Grid"
+msgstr "Đồ Thị Tùy Chọn"
+
+
 msgid "Use a grid with a user-defined number of steps"
 msgstr "Dùng một đồ thị với một số lượng bước được người dùng xác định"
 
@@ -94210,10 +94020,6 @@ msgid "Correct Face Attributes"
 msgstr "Sửa Đặc Điểm Mặt"
 
 
-msgid "Correct data such as UV's and vertex colors when transforming"
-msgstr "Sửa dữ liệu như UV và màu đỉnh khi đang biến hóa"
-
-
 msgid "Keep Connected"
 msgstr "Giữ Được Kết Nối"
 
@@ -95404,10 +95210,6 @@ msgstr "Hiện màu vật thể"
 
 msgid "Show random object color"
 msgstr "Hiện màu vật thể ngẫu nhiên"
-
-
-msgid "Show active vertex color"
-msgstr "Hiện màu đỉnh hoạt động"
 
 
 msgid "Show texture"
@@ -99728,16 +99530,6 @@ msgid "Lock Invert All"
 msgstr "Đảo Nghịch Khóa Hết"
 
 
-msgctxt "Operator"
-msgid "Store Sculpt Vertex Color"
-msgstr "Chứa Màu Đỉnh Khắc"
-
-
-msgctxt "Operator"
-msgid "Load Sculpt Vertex Color"
-msgstr "Nhập Màu Đỉnh Khắc"
-
-
 msgid "Store"
 msgstr "Kho Chứa"
 
@@ -99752,10 +99544,6 @@ msgstr "Quyền Lượng Xiên Cạnh"
 
 msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
-
-
-msgid "Name collisions: {}, "
-msgstr "Các va chạm tên: {},"
 
 
 msgctxt "Operator"
@@ -100133,11 +99921,6 @@ msgstr "Khóa Không Được Chọn"
 msgctxt "Operator"
 msgid "Lock Unused"
 msgstr "Khóa Không Được Dùng"
-
-
-msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Biến Đổi Vật Liệu sang Màu Đỉnh"
 
 
 msgctxt "Operator"
@@ -101900,10 +101683,6 @@ msgstr "Bằng Khoảng Cách"
 msgctxt "Operator"
 msgid "Selection"
 msgstr "Sự Lựa Chọn"
-
-
-msgid "Grid Shape"
-msgstr "Hình Dạng Đồ Thị"
 
 
 msgid "Modified Edges"
@@ -104861,11 +104640,6 @@ msgstr "Cục Tiếp"
 
 
 msgctxt "Operator"
-msgid "Vertex Color"
-msgstr "Màu Đỉnh"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "Mây Điểm"
 
@@ -106620,6 +106394,10 @@ msgstr "Các kênh có góp phần cho kết qủa hay không (bật/tắt cắt
 
 msgid "Display action without any time remapping (when unpinned)"
 msgstr "Hiển thị hành động mà không ánh xạ lại thời gian (khi gở đóng đinh)"
+
+
+msgid "Can't edit this property from a linked data-block"
+msgstr "Không thể biên tập đặc tính này từ một cục dữ liệu được liên kết"
 
 
 msgid "<invalid>"
@@ -112704,10 +112482,6 @@ msgid "Could not reopen file"
 msgstr "Không thể mở lại tập tin"
 
 
-msgid "Python script failed, check the message in the system console"
-msgstr "Văn thảo Python bị thât bại, xem tin nhắn trong diện điều khiển của hệ thống"
-
-
 msgid "Python disabled in this build"
 msgstr "Python bị tắt trong xây dựng này"
 
@@ -113843,10 +113617,6 @@ msgstr "%s không phù hợp vởi tùy chọn %s 'hoàn lại'"
 
 msgid "This property is for internal use only and can't be edited"
 msgstr "Đặc tính này chỉ cho sử dụng nội bộ và không thể biên tập"
-
-
-msgid "Can't edit this property from a linked data-block"
-msgstr "Không thể biên tập đặc tính này từ một cục dữ liệu được liên kết"
 
 
 msgid "Can't edit this property from an override data-block"
@@ -116514,10 +116284,6 @@ msgid "Flame"
 msgstr "Ngón Lửa"
 
 
-msgid "Color Attribute"
-msgstr "Đặc Điểm Màu"
-
-
 msgid "Density Attribute"
 msgstr "Đặc Điểm Tỉ Trọng"
 
@@ -116588,14 +116354,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "Phóng To"
-
-
-msgid ""
-"%s: %s\n"
-"location: %s:%d"
-msgstr ""
-"%s: %s\n"
-"vị trí: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"

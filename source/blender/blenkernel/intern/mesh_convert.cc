@@ -25,6 +25,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_DerivedMesh.h"
+#include "BKE_curves.hh"
 #include "BKE_deform.h"
 #include "BKE_displist.h"
 #include "BKE_editmesh.h"
@@ -700,7 +701,7 @@ void BKE_mesh_to_curve_nurblist(const Mesh *me, ListBase *nurblist, const int ed
         VertLink *vl;
 
         /* create new 'nurb' within the curve */
-        nu = MEM_cnew<Nurb>("MeshNurb");
+        nu = MEM_new<Nurb>("MeshNurb", blender::dna::shallow_zero_initialize());
 
         nu->pntsu = totpoly;
         nu->pntsv = 1;
@@ -970,8 +971,7 @@ static Mesh *mesh_new_from_evaluated_curve_type_object(const Object *evaluated_o
   }
   const Curves *curves = get_evaluated_curves_from_object(evaluated_object);
   if (curves) {
-    std::unique_ptr<CurveEval> curve = curves_to_curve_eval(*curves);
-    return blender::bke::curve_to_wire_mesh(*curve);
+    return blender::bke::curve_to_wire_mesh(blender::bke::CurvesGeometry::wrap(curves->geometry));
   }
   return nullptr;
 }
@@ -1446,8 +1446,7 @@ void BKE_mesh_nomain_to_mesh(Mesh *mesh_src,
   /* mesh_src might depend on mesh_dst, so we need to do everything with a local copy */
   /* TODO(Sybren): the above claim came from 2.7x derived-mesh code (DM_to_mesh);
    * check whether it is still true with Mesh */
-  Mesh tmp;
-  memcpy(&tmp, mesh_dst, sizeof(tmp));
+  Mesh tmp = blender::dna::shallow_copy(*mesh_dst);
   int totvert, totedge /*, totface */ /* UNUSED */, totloop, totpoly;
   bool did_shapekeys = false;
   eCDAllocType alloctype = CD_DUPLICATE;
