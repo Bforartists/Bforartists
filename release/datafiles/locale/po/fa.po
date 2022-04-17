@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2894,10 +2894,6 @@ msgid "Focal Length"
 msgstr "ﺍﺯﺍﺭﺩ"
 
 
-msgid "Specify the lens in millimeters"
-msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
-
-
 msgid "Vertical"
 msgstr "ﯼﺩﻮﻤﻋ"
 
@@ -3755,14 +3751,6 @@ msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
 msgid "Cycles render settings"
-msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Cycles hair rendering settings"
 msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
@@ -5993,10 +5981,6 @@ msgid "Camera Data"
 msgstr "ﻦﯿﺑﺭﻭﺩ ﻩﺩﺍﺩ"
 
 
-msgid "Hair Info"
-msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
-
-
 msgid "Layer Weight"
 msgstr "ﻪﯾﻻ﻿ ﻥﺯﻭ"
 
@@ -8221,10 +8205,6 @@ msgid "Rotate Colors"
 msgstr "ﻞﻨﭘ ﮓﻧﺭ"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
-
-
 msgctxt "Operator"
 msgid "Convex Hull"
 msgstr "Premul ﻞﯾﺪﺒﺗ"
@@ -9955,31 +9935,6 @@ msgstr "ﯽﻨﯿﮕﻨﺳ"
 
 msgid "Set the weight of selected keys"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﮓﻧﺭ ﻒﻗﻮﺗ ﺖﯿﻌﻗﻮﻣ ﻢﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "ﻪﻧﺎﺨﺑﺎﺘﮐ ﻪﺑ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "ﻪﻧﺎﺨﺑﺎﺘﮐ ﻪﺑ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "ﺖﺳﮊ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "PoseLib Rename Pose"
-msgstr "ﺖﺳﮊ ﻡﺎﻧ ﺮﯿﯿﻐﺗ"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "ﻪﻧﺎﺨﺑﺎﺘﮐ ﻪﺑ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgctxt "Operator"

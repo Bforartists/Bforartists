@@ -30,7 +30,9 @@ struct EdgeSet;
 struct EnumPropertyItem;
 struct GHash;
 struct GridPaintMask;
+struct Image;
 struct ImagePool;
+struct ImageUser;
 struct ListBase;
 struct MLoop;
 struct MLoopTri;
@@ -42,6 +44,7 @@ struct Object;
 struct PBVH;
 struct Paint;
 struct PaintCurve;
+struct PaintModeSettings;
 struct Palette;
 struct PaletteColor;
 struct Scene;
@@ -649,6 +652,11 @@ typedef struct SculptSession {
    */
   bool sticky_shading_color;
 
+  /**
+   * Last used painting canvas key.
+   */
+  char *last_paint_canvas_key;
+
 } SculptSession;
 
 void BKE_sculptsession_free(struct Object *ob);
@@ -724,6 +732,20 @@ enum {
   SCULPT_MASK_LAYER_CALC_VERT = (1 << 0),
   SCULPT_MASK_LAYER_CALC_LOOP = (1 << 1),
 };
+
+/* paint_canvas.cc */
+/**
+ * Create a key that can be used to compare with previous ones to identify changes.
+ * The resulting 'string' is owned by the caller.
+ */
+char *BKE_paint_canvas_key_get(struct PaintModeSettings *settings, struct Object *ob);
+
+bool BKE_paint_canvas_image_get(struct PaintModeSettings *settings,
+                                struct Object *ob,
+                                struct Image **r_image,
+                                struct ImageUser **r_image_user);
+int BKE_paint_canvas_uvmap_layer_index_get(const struct PaintModeSettings *settings,
+                                           struct Object *ob);
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'a824c076b7b2')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -881,10 +881,6 @@ msgstr "ﻲﺟﺭﺎﺧ ﻒﻠﻣ ﻲﻓ ﺰﺒﺨﻟﺍ ﺔﻄﻳﺮﺧ ﻆﻔ�
 
 msgid "Target"
 msgstr "ﻑﺪﻫ"
-
-
-msgid "Vertex Colors"
-msgstr "ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺃ"
 
 
 msgid "Automatic Name"
@@ -10091,10 +10087,6 @@ msgid "Focal Length"
 msgstr "ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ"
 
 
-msgid "Perspective Camera lens value in millimeters"
-msgstr "ﺕﺍﺮﺘﻤﻴﻠﻴﻤﻟﺎﺑ ﺭﻮﻈﻨﻤﻟﺍ ﺓﺮﻴﻣﺎﻛ ﺔﺳﺪﻋ ﺔﻤﻴﻗ"
-
-
 msgid "Lens Unit"
 msgstr "ﺔﺳﺪﻌﻟﺍ ﺓﺪﺣﻭ"
 
@@ -10105,10 +10097,6 @@ msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻮﻟ ﺔﺳﺪﻌﻟﺍ ﺮﻳﺮ
 
 msgid "Millimeters"
 msgstr "ﺕﺍﺮﺘﻤﻴﻠﻴﻣ"
-
-
-msgid "Specify the lens in millimeters"
-msgstr "ﺕﺍﺮﺘﻤﻴﻠﻴﻤﻟﺎﺑ ﺭﻮﻈﻨﻤﻟﺍ ﺓﺮﻴﻣﺎﻛ ﺔﺳﺪﻋ ﺔﻤﻴﻗ"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -12135,6 +12123,10 @@ msgid "All UV loop layers"
 msgstr "UV ـﻟﺍ ﻞﺴﻠﺴﺗ ﺕﺎﻘﺒﻃ ﻞﻛ"
 
 
+msgid "Vertex Colors"
+msgstr "ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺃ"
+
+
 msgid "Vertex Paint Mask"
 msgstr "ﻂﻘﻨﻟﺍ ﻦﻳﻮﻠﺗ ﻉﺎﻨﻗ"
 
@@ -12793,10 +12785,6 @@ msgstr "ﻞﻛﺎﻴﻬﻠﻟ ﺔﻴﻟﺎﺤﻟﺍ ﺔﻔﻗﻮﻟﺍ"
 
 msgid "Pose Library"
 msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
-
-
-msgid "Action used as a pose library for armatures"
-msgstr "ﻞﻛﺎﻴﻬﻠﻟ ﺔﻔﻗﻭ ﺔﺒﺘﻜﻤﻛ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺙﺪﺤﻟﺍ"
 
 
 msgid "Rigid Body Settings"
@@ -13889,14 +13877,6 @@ msgstr "ﺰﻠﻜﻳﺎﺳ ﺮﻴﻴﺼﺗ ﺕﺍﺩﺍﺪﻋﺇ"
 
 msgid "Cycles render settings"
 msgstr "ﺰﻠﻜﻳﺎﺳ ﺮﻴﻴﺼﺗ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Cycles Hair Rendering Settings"
-msgstr "ﺰﻠﻜﻳﺎﺴﻟ ﺮﻌﺸﻟﺍ ﺮﻴﻴﺼﺗ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Cycles hair rendering settings"
-msgstr "ﺰﻠﻜﻳﺎﺴﻟ ﺮﻌﺸﻟﺍ ﺮﻴﻴﺼﺗ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgid "Display Settings"
@@ -21040,10 +21020,6 @@ msgid "Fresnel"
 msgstr "ﻞﻨﺳﺮﻓ"
 
 
-msgid "Hair Info"
-msgstr "ءﻱﺰﺠﻟﺍ ﺕﺎﻣﻮﻠﻌﻣ"
-
-
 msgid "Layer Weight"
 msgstr "ﺔﻘﺒﻄﻟﺍ ﻥﺯﻭ"
 
@@ -24992,10 +24968,6 @@ msgid "Rotate Colors"
 msgstr "ﻥﺍﻮﻟﻻ﻿ﺍ ﺭﻭّﺩ"
 
 
-msgid "Rotate vertex colors inside faces"
-msgstr "ﻪﺟﻭﻻ﻿ﺍ ﻞﺧﺍﺩ ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺍ ﺭﻭﺩ"
-
-
 msgctxt "Operator"
 msgid "Convex Hull"
 msgstr "ﺏﺪّﺤﺘﻟﺍ ﻑﻼ﻿ﻏ"
@@ -27674,10 +27646,6 @@ msgid "Vertex Paint"
 msgstr "ﻂﻘﻨﻟﺍ ﻦﻳﻮﻠﺗ"
 
 
-msgid "Paint a stroke in the active vertex color layer"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺔﻄﻘﻨﻟﺍ ﻥﻮﻟ ﺔﻘﺒﻃ ﻲﻓ ﺔﺒﻄﺷ ﻢﺳﺭﺇ"
-
-
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻦﻳﻮﻠﺗ ﻊﺿﻭ"
@@ -27886,51 +27854,12 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻥﺍﺯﻭﺍ ﻭ ﻲﻟﺎﺤﻟﺍ ﺓﺎﺷﺮﻔﻟﺍ ﻥﺯﻭ ﻦﻴﺑ ﺪﻴﻟﻮﺘﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
-msgctxt "Operator"
-msgid "Sanitize Pose Library Action"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﺙﺪﺣ ﻒﻈّﻧ"
-
-
-msgctxt "Operator"
-msgid "Apply Pose Library Pose"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﺔﻔﻗﻭ ﻖﺒﻃ"
-
-
-msgctxt "Operator"
-msgid "PoseLib Browse Poses"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﺕﺎﻔﻗﻭ ﺢﻔﺼﺗ"
-
-
-msgctxt "Operator"
-msgid "New Pose Library"
-msgstr "ﺓﺪﻳﺪﺟ ﺕﺎﻔﻗﻭ ﺔﺒﺘﻜﻣ"
-
-
-msgctxt "Operator"
-msgid "PoseLib Add Pose"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﻰﻟﺇ ﺔﻔﻗﻭ ﻒﺿﺃ"
-
-
-msgctxt "Operator"
-msgid "PoseLib Remove Pose"
-msgstr "ﺔﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻤﻟ ﺔﻔﻗﻮﻟﺍ ﻝﺯﺍ"
-
-
-msgid "Rename specified pose from the active Pose Library"
-msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﻦﻣ ﺓﺩﺪﺤﻤﻟﺍ ﺔﻔﻗﻮﻟﺍ ﺔﻴﻤﺴﺗ ﺪﻋﺃ"
-
-
 msgid "New Pose Name"
 msgstr "ﺔﻔﻗﻮﻠﻟ ﺪﻳﺪﺟ ﻢﺳﺍ"
 
 
 msgid "The pose to rename"
 msgstr "ﺎﻬﺘﻴﻤﺴﺗ ﺩﺍﺮﻤﻟﺍ ﺔﻔﻘﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Unlink Pose Library"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ ﻁﺎﺒﺗﺭﺍ ﻚﻓ"
 
 
 msgctxt "Operator"

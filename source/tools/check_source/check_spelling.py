@@ -349,6 +349,23 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
         else:
             pass
 
+    if PRINT_NON_ALIGNED:
+        for i, i_next in comment_ranges:
+            # Seek i back to the line start.
+            i_bol = text.rfind("\n", 0, i) + 1
+            l_ofs_first = i - i_bol
+            star_offsets = set()
+            block = text[i_bol:i_next]
+            for line_index, l in enumerate(block.split("\n")):
+                star_offsets.add(l.find("*", l_ofs_first))
+                l_ofs_first = 0
+                if len(star_offsets) > 1:
+                    print("%s:%d" % (filepath, line_index + text.count("\n", 0, i)))
+                    break
+
+    if not PRINT_SPELLING:
+        return [], []
+
     # Collect variables from code, so we can reference variables from code blocks
     # without this generating noise from the spell checker.
 
