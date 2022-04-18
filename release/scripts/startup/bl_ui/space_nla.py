@@ -72,7 +72,7 @@ class NLA_HT_header(Header):
                 row.operator("nla.tweakmode_exit", text="Tweak", icon = "ACTION_TWEAK")
                 row.label(icon = "CHECKBOX_DEHLT", text = "Isolate")
             else:
-                row.operator("nla.tweakmode_enter", text="Tweak", icon = "ACTION_TWEAK")
+                row.operator("nla.tweakmode_enter", text="Tweak", icon = "ACTION_TWEAK").use_upper_stack_evaluation = False
                 row.prop(addon_prefs, "nla_tweak_isolate_action")
 
         ##########################
@@ -311,6 +311,10 @@ class NLA_MT_edit(Menu):
         layout.separator()
         layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
         layout.operator("anim.channels_clean_empty", icon = "CLEAN_CHANNELS")
+
+        layout.separator()
+
+        layout.operator("nla.tweakmode_enter", text="Tweak (Full Stack)", icon = "ACTION_TWEAK").use_upper_stack_evaluation = True
 
 
 class NLA_MT_add(Menu):
