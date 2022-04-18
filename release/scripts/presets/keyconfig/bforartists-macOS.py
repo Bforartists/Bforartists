@@ -1,4 +1,4 @@
-keyconfig_version = (3, 2, 5)
+keyconfig_version = (3, 2, 12)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3853,8 +3853,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("marker.select_all", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("marker.select_all", {"type": 'I', "value": 'PRESS', "oskey": True}, None),
+    ("marker.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("marker.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("marker.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
