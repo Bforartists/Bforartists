@@ -3853,8 +3853,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("marker.select_all", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("marker.select_all", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("marker.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("marker.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("marker.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
