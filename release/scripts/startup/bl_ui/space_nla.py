@@ -258,14 +258,14 @@ class NLA_MT_marker_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("marker.select_all", text="All").action = 'SELECT'
-        layout.operator("marker.select_all", text="None").action = 'DESELECT'
-        layout.operator("marker.select_all", text="Invert").action = 'INVERT'
+        layout.operator("marker.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("marker.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("marker.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("marker.select_leftright", text="Before Current Frame").mode = 'LEFT'
-        layout.operator("marker.select_leftright", text="After Current Frame").mode = 'RIGHT'
+        layout.operator("marker.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME").mode = 'LEFT'
+        layout.operator("marker.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME").mode = 'RIGHT'
 
 
 
