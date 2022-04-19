@@ -3078,7 +3078,7 @@ class VIEW3D_MT_object_apply(Menu):
 
         layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
         layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
-        layout.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default)
+        layout.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon = "APPLY_PARENT_INVERSE")
 
 
 class VIEW3D_MT_object_parent(Menu):
