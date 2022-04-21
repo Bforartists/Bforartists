@@ -268,7 +268,6 @@ class NLA_MT_marker_select(Menu):
         layout.operator("marker.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME").mode = 'RIGHT'
 
 
-
 class NLA_MT_edit(Menu):
     bl_label = "Edit"
 

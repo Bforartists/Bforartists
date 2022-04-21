@@ -457,6 +457,11 @@ class SEQUENCER_MT_view(Menu):
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
 
+        if st.view_type == 'PREVIEW':
+            # See above (T32595)
+            layout.operator_context = 'INVOKE_REGION_PREVIEW'
+        layout.operator("sequencer.view_selected", text="Frame Selected")
+
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
@@ -465,6 +470,7 @@ class SEQUENCER_MT_view(Menu):
 
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
+
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
@@ -2011,7 +2017,6 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             col.prop(sound, "use_mono")
             if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
                 col.prop(strip, "show_waveform")
-
 
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
     bl_label = "Compositing"
