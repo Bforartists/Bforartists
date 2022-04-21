@@ -640,7 +640,7 @@ class MESH_UL_color_attributes(UIList, ColorAttributesListBase):
         sub.label(text="%s ▶ %s" % (domain_name, data_type.name))
 
         active_render = _index == data.color_attributes.render_color_index
-        
+
         row = layout.row()
         row.emboss = 'NONE'
         prop = row.operator(
