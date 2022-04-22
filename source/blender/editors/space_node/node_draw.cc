@@ -2089,7 +2089,7 @@ static void node_draw_basis(const bContext &C,
                  "");
     UI_block_emboss_set(&block, UI_EMBOSS);
   }
-/* -------- bfa end ------------------ */
+  /* -------- bfa end ------------------ */
 
   node_add_error_message_button(C, node, block, rct, iconofs);
 
