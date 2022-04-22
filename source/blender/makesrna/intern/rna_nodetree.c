@@ -12611,7 +12611,7 @@ static int node_type_to_icon(int type)
     case SH_NODE_VECTOR_MATH:
       icon = ICON_NODE_VECTORMATH;
       break;
-    //case SH_NODE_SQUEEZE:
+    // case SH_NODE_SQUEEZE:
     //  icon = ICON_DELETE;
     //  break;
     case SH_NODE_INVERT:
@@ -13194,7 +13194,7 @@ static int node_type_to_icon(int type)
       icon = ICON_VALUE_TO_STRING;
       break;
 
-    /* bfa - GeometryNode */
+      /* bfa - GeometryNode */
 
     case GEO_NODE_ATTRIBUTE_DOMAIN_SIZE:
       icon = ICON_DOMAIN_SIZE;
@@ -13538,7 +13538,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
       break;
-     case GEO_NODE_TRIM_CURVE:
+    case GEO_NODE_TRIM_CURVE:
       icon = ICON_CURVE_TRIM;
       break;
     case GEO_NODE_VIEWER:
@@ -13550,7 +13550,7 @@ static int node_type_to_icon(int type)
   }
   return icon;
 }
- /*bfa - const int ui_icon,*/
+/*bfa - const int ui_icon,*/
 static StructRNA *define_specific_node(BlenderRNA *brna,
                                        const char *struct_name,
                                        const char *base_name,
@@ -13675,7 +13675,7 @@ void RNA_def_nodetree(BlenderRNA *brna)
   /* Node group types need to be defined for shader, compositor, texture, geometry nodes
    * individually. Cannot use the static types header for this, since they share the same int id.
    */
-/*bfa - icons*/
+  /*bfa - icons*/
   define_specific_node(brna, "ShaderNodeGroup", "ShaderNode", "Group", "", ICON_NONE, def_group);
   define_specific_node(
       brna, "CompositorNodeGroup", "CompositorNode", "Group", "", ICON_NONE, def_group);

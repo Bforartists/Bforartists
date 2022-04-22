@@ -180,7 +180,8 @@ static char *nla_ot_tweakmode_enter_get_description(bContext *UNUSED(C),
   if (RNA_boolean_get(ptr, "use_upper_stack_evaluation")) {
     return BLI_strdup(
         "Enter tweak (Full Stack) mode to edit the keyframes of the action strips of this object"
-        "\nAllows you to insert keyframes and preserve the pose that you visually keyed while upper strips are evaluating"
+        "\nAllows you to insert keyframes and preserve the pose that you visually keyed while "
+        "upper strips are evaluating"
         "\nSwitch to Dope Sheet editor to edit the keyframes "
         "\nWhen done switch back to NLA editor and leave tweak mode");
   }

@@ -467,7 +467,7 @@ static void advanced_panel_draw(const bContext *C, Panel *panel)
   uiItemDecoratorR(row, ptr, "use_limit_surface", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  //uiLayout *col = uiLayoutColumn(layout, true); /*bfa - layout defined at the top*/
+  // uiLayout *col = uiLayoutColumn(layout, true); /*bfa - layout defined at the top*/
   /*bfa made row active an if*/
   if (RNA_boolean_get(ptr, "use_limit_surface")) {
     col = uiLayoutColumn(layout, true);
@@ -480,8 +480,8 @@ static void advanced_panel_draw(const bContext *C, Panel *panel)
   uiItemR(layout, ptr, "boundary_smooth", 0, NULL, ICON_NONE);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_creases", 0, NULL, ICON_NONE);
-  //uiItemR(layout, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_creases", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
