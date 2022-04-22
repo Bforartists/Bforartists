@@ -629,7 +629,6 @@ static char *view3d_ot_snap_selected_to_cursor_get_description(bContext *UNUSED(
   return NULL;
 }
 
-
 void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {
   /* identifiers */

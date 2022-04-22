@@ -120,8 +120,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   col = uiLayoutColumn(layout, true);
   /*------------------- bfa - original props */
-  //uiItemR(col, ptr, "use_boundary", 0, IFACE_("Boundary"), ICON_NONE);
-  //uiItemR(col, ptr, "use_replace", 0, IFACE_("Replace Original"), ICON_NONE);
+  // uiItemR(col, ptr, "use_boundary", 0, IFACE_("Boundary"), ICON_NONE);
+  // uiItemR(col, ptr, "use_replace", 0, IFACE_("Replace Original"), ICON_NONE);
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
@@ -135,9 +135,9 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Thickness"));
-  //uiItemR(col, ptr, "use_even_offset", 0, IFACE_("Even"), ICON_NONE);
-  //uiItemR(col, ptr, "use_relative_offset", 0, IFACE_("Relative"), ICON_NONE);
+  // col = uiLayoutColumnWithHeading(layout, true, IFACE_("Thickness"));
+  // uiItemR(col, ptr, "use_even_offset", 0, IFACE_("Even"), ICON_NONE);
+  // uiItemR(col, ptr, "use_relative_offset", 0, IFACE_("Relative"), ICON_NONE);
 
   uiItemL(col, TIP_("Thickness"), ICON_NONE);
 
@@ -155,11 +155,11 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Crease Edges"));
-  //uiItemR(row, ptr, "use_crease", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
-  //uiItemR(sub, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Crease Edges"));
+  // uiItemR(row, ptr, "use_crease", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
+  // uiItemR(sub, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -182,9 +182,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
   // ------------------------------- end bfa
-
-
-
 
   uiItemR(layout, ptr, "material_offset", 0, IFACE_("Material Offset"), ICON_NONE);
 

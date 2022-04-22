@@ -233,8 +233,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(row, ptr, "use_project_z", toggles_flag, NULL, ICON_NONE);
 
     /*------------------- bfa - original props */
-    //uiItemR(col, ptr, "use_negative_direction", 0, NULL, ICON_NONE);
-    //uiItemR(col, ptr, "use_positive_direction", 0, NULL, ICON_NONE);
+    // uiItemR(col, ptr, "use_negative_direction", 0, NULL, ICON_NONE);
+    // uiItemR(col, ptr, "use_positive_direction", 0, NULL, ICON_NONE);
 
     row = uiLayoutRow(col, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
@@ -262,7 +262,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(row, ptr, "use_invert_cull", 0, NULL, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/
     /* ------------ end bfa */
-
   }
 
   uiItemR(layout, ptr, "target", 0, NULL, ICON_NONE);
