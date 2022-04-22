@@ -4702,7 +4702,7 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void *UNUSED(arg)
   if (GPU_mem_stats_supported()) {
     uiItemR(layout, &ptr, "show_statusbar_vram", 0, IFACE_("Video Memory"), ICON_NONE);
   }
-/*bfa - bforartists version, not blender version*/
+  /*bfa - bforartists version, not blender version*/
   uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Bforartists Version"), ICON_NONE);
 }
 

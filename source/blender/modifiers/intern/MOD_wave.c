@@ -373,15 +373,15 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Along Normals"));
-  //uiItemR(row, ptr, "use_normal", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
-  //uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-  //uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-  //uiItemR(sub, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Along Normals"));
+  // uiItemR(row, ptr, "use_normal", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
+  // uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
+  // uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
+  // uiItemR(sub, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -403,7 +403,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   }
   else {
     uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
-    uiItemL(row, TIP_(""), ICON_NONE);/* bfa - aligns the decorator right...*/
+    uiItemL(row, TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
     uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   // ------------------------------- end bfa

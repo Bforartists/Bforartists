@@ -1169,7 +1169,7 @@ static int edbm_mark_sharp_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "clear")) {
@@ -1190,13 +1190,14 @@ static const char *mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *p
 
 /*bfa - descriptions*/
 static char *mesh_ot_mark_sharp_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "clear")) {
     if (RNA_boolean_get(ptr, "use_verts")) {
-      return BLI_strdup("Clear as Sharp marked selected edges from their Vertices"
-        "\nThe calculation happens from the selected vertices instead of the edges");
+      return BLI_strdup(
+          "Clear as Sharp marked selected edges from their Vertices"
+          "\nThe calculation happens from the selected vertices instead of the edges");
     }
     else {
       return BLI_strdup("Clear as Sharp marked edges");
@@ -1204,8 +1205,9 @@ static char *mesh_ot_mark_sharp_get_description(bContext *UNUSED(C),
   }
   else {
     if (RNA_boolean_get(ptr, "use_verts")) {
-      return BLI_strdup("Mark selected edges as sharp from their Vertices"
-        "\nThe calculation happens from the selected vertices instead of the edges");
+      return BLI_strdup(
+          "Mark selected edges as sharp from their Vertices"
+          "\nThe calculation happens from the selected vertices instead of the edges");
     }
   }
   return NULL;
@@ -1222,7 +1224,7 @@ void MESH_OT_mark_sharp(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = edbm_mark_sharp_exec;
-  ot->get_name = mesh_ot_mark_sharp_get_name;                /*bfa - tool name*/
+  ot->get_name = mesh_ot_mark_sharp_get_name;               /*bfa - tool name*/
   ot->get_description = mesh_ot_mark_sharp_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
@@ -2452,7 +2454,7 @@ static int edbm_edge_rotate_selected_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_ccw")) {
@@ -2463,12 +2465,11 @@ static const char *mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *
 
 /*bfa - descriptions*/
 static char *mesh_ot_edge_rotate_get_description(bContext *UNUSED(C),
-                                          wmOperatorType *UNUSED(ot),
-                                          PointerRNA *ptr)
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_ccw")) {
-    return BLI_strdup(
-        "Rotate selected edge in counter clock wise direction");
+    return BLI_strdup("Rotate selected edge in counter clock wise direction");
   }
   return NULL;
 }
@@ -2482,7 +2483,7 @@ void MESH_OT_edge_rotate(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = edbm_edge_rotate_selected_exec;
-  ot->get_name = mesh_ot_edge_rotate_get_name;        /*bfa - tool name*/
+  ot->get_name = mesh_ot_edge_rotate_get_name;               /*bfa - tool name*/
   ot->get_description = mesh_ot_edge_rotate_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 

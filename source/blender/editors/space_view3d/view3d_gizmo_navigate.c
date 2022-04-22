@@ -53,7 +53,7 @@ enum {
   GZ_INDEX_ORTHO = 4,
   GZ_INDEX_CAMERA = 5,
 
-/*bfa - lock camera to view in navigation element*/
+  /*bfa - lock camera to view in navigation element*/
   /* overlaps GZ_INDEX_ORTHO (switch between) */
   GZ_INDEX_CAMERA_LOCK = 6,
   GZ_INDEX_CAMERA_UNLOCK = 7,
@@ -110,7 +110,7 @@ static struct NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
         .gizmo = "GIZMO_GT_button_2d",
         .icon = ICON_VIEW_CAMERA,
 
-	/*bfa - lock camera to view in navigation element*/
+        /*bfa - lock camera to view in navigation element*/
         .op_prop_fn = NULL,
     },
     {
@@ -133,7 +133,7 @@ struct NavigateWidgetGroup {
   struct {
     rcti rect_visible;
     struct {
-	/*bfa - lock camera to view in navigation element*/
+      /*bfa - lock camera to view in navigation element*/
       int flag2;
     } v3d;
     struct {
@@ -207,7 +207,7 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
     }
 
     wmOperatorType *ot = WM_operatortype_find(info->opname, true);
-/*bfa - lock camera to view in navigation element*/
+    /*bfa - lock camera to view in navigation element*/
     PointerRNA *ptr = WM_gizmo_operator_set(gz, 0, ot, NULL);
     if (info->op_prop_fn != NULL) {
       info->op_prop_fn(ptr);
@@ -221,7 +221,7 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
 
   /* Click only buttons (not modal). */
   {
-/*bfa - lock camera to view in navigation element*/
+    /*bfa - lock camera to view in navigation element*/
     int gz_ids[] = {
         GZ_INDEX_PERSP,
         GZ_INDEX_ORTHO,
@@ -276,7 +276,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   struct NavigateWidgetGroup *navgroup = gzgroup->customdata;
   ARegion *region = CTX_wm_region(C);
   const RegionView3D *rv3d = region->regiondata;
-/*bfa - lock camera to view in navigation element*/
+  /*bfa - lock camera to view in navigation element*/
   View3D *v3d = CTX_wm_view3d(C);
   const int v3d_flag2_test = V3D_LOCK_CAMERA;
 
@@ -287,12 +287,14 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   const rcti *rect_visible = ED_region_visible_rect(region);
 
   /* Ensure types match so bits are never lost on assignment. */
-  CHECK_TYPE_PAIR(navgroup->state.v3d.flag2, v3d->flag2); /*bfa - lock camera to view in navigation element*/
+  CHECK_TYPE_PAIR(navgroup->state.v3d.flag2,
+                  v3d->flag2); /*bfa - lock camera to view in navigation element*/
   CHECK_TYPE_PAIR(navgroup->state.rv3d.viewlock, rv3d->viewlock);
 
   if ((navgroup->state.rect_visible.xmax == rect_visible->xmax) &&
       (navgroup->state.rect_visible.ymax == rect_visible->ymax) &&
-      (navgroup->state.v3d.flag2 == (v3d->flag2 & v3d_flag2_test)) && /*bfa - lock camera to view in navigation element*/
+      (navgroup->state.v3d.flag2 ==
+       (v3d->flag2 & v3d_flag2_test)) && /*bfa - lock camera to view in navigation element*/
       (navgroup->state.rv3d.is_persp == rv3d->is_persp) &&
       (navgroup->state.rv3d.is_camera == (rv3d->persp == RV3D_CAMOB)) &&
       (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d))) {
@@ -300,7 +302,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   }
 
   navgroup->state.rect_visible = *rect_visible;
-  navgroup->state.v3d.flag2 = v3d->flag2 & v3d_flag2_test; /*bfa - lock camera to view in navigation element*/
+  navgroup->state.v3d.flag2 = v3d->flag2 &
+                              v3d_flag2_test; /*bfa - lock camera to view in navigation element*/
   navgroup->state.rv3d.is_persp = rv3d->is_persp;
   navgroup->state.rv3d.is_camera = (rv3d->persp == RV3D_CAMOB);
   navgroup->state.rv3d.viewlock = RV3D_LOCK_FLAGS(rv3d);
@@ -388,7 +391,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
         WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
       }
     }
-/*bfa - lock camera to view in navigation element*/
+    /*bfa - lock camera to view in navigation element*/
     if (navgroup->state.rv3d.is_camera == true) {
       gz = navgroup->gz_array[(v3d->flag2 & V3D_LOCK_CAMERA) ? GZ_INDEX_CAMERA_UNLOCK :
                                                                GZ_INDEX_CAMERA_LOCK];
