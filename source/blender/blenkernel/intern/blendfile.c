@@ -610,26 +610,16 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
   /*here you define the by default activated addons*/
   {
     const char *addons[] = {
-        "io_anim_bvh",
-        "io_curve_svg",
-        "io_mesh_ply",
-        "io_mesh_stl",
-        "io_mesh_uv_layout",
-        "io_scene_fbx",
-        "io_scene_gltf2",
-        "io_scene_obj",
-        "io_scene_x3d",
-        "cycles",
-        "pose_library",
-        "materials_library_vx",
-        "minilightlib",
-        "bforartists_toolbar_settings",
-        "createisocam",
-        "edit_dimensions",
-        "reset3dview",
-        "smartdelete_bfa",
-        "align_view_buttons",
-        "important_hotkeys_BFA",
+        "io_anim_bvh",        "io_curve_svg",
+        "io_mesh_ply",        "io_mesh_stl",
+        "io_mesh_uv_layout",  "io_scene_fbx",
+        "io_scene_gltf2",     "io_scene_obj",
+        "io_scene_x3d",       "cycles",
+        "pose_library",       "materials_library_vx",
+        "minilightlib",       "bforartists_toolbar_settings",
+        "createisocam",       "edit_dimensions",
+        "reset3dview",        "smartdelete_bfa",
+        "align_view_buttons", "important_hotkeys_BFA",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();

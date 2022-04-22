@@ -2160,8 +2160,7 @@ static void rna_def_mloopcol(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "MeshLoopColorLayer", NULL);
-  RNA_def_struct_ui_text(
-      srna, "Mesh Vertex Color Layer", "Layer of vertex colors in a Mesh data");
+  RNA_def_struct_ui_text(srna, "Mesh Vertex Color Layer", "Layer of vertex colors in a Mesh data");
   RNA_def_struct_sdna(srna, "CustomDataLayer");
   RNA_def_struct_path_func(srna, "rna_MeshLoopColorLayer_path");
   RNA_def_struct_ui_icon(srna, ICON_GROUP_VCOL);
@@ -2219,8 +2218,8 @@ static void rna_def_MPropCol(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "MeshVertColorLayer", NULL);
-  RNA_def_struct_ui_text(srna,
-                         "Mesh Sculpt Vertex Color Layer", "Layer of sculpt vertex colors in a Mesh data");
+  RNA_def_struct_ui_text(
+      srna, "Mesh Sculpt Vertex Color Layer", "Layer of sculpt vertex colors in a Mesh data");
   RNA_def_struct_sdna(srna, "CustomDataLayer");
   RNA_def_struct_path_func(srna, "rna_MeshVertColorLayer_path");
   RNA_def_struct_ui_icon(srna, ICON_GROUP_VCOL);
@@ -3507,8 +3506,7 @@ static void rna_def_mesh(BlenderRNA *brna)
       "Auto Smooth",
       "Either smooth edges based on the angle of the adjacent faces, "
       "\nor use custom split normals data if available"
-      "\nThe shading needs to be set to smooth. Auto smooth will not work with flat shading"
-        );
+      "\nThe shading needs to be set to smooth. Auto smooth will not work with flat shading");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_geom_and_params");
 
   prop = RNA_def_property(srna, "auto_smooth_angle", PROP_FLOAT, PROP_ANGLE);

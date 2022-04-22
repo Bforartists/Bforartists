@@ -1964,7 +1964,7 @@ static int gpencil_blank_frame_add_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "all_layers")) {
@@ -1977,8 +1977,8 @@ static const char *GPENCIL_OT_blank_frame_add_name(wmOperatorType *ot, PointerRN
 
 /*bfa - descriptions*/
 static char *GPENCIL_OT_blank_frame_add_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+                                                        wmOperatorType *UNUSED(ot),
+                                                        PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "all_layers")) {
     return BLI_strdup(
@@ -2001,7 +2001,7 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = gpencil_blank_frame_add_exec;
-  ot->get_name = GPENCIL_OT_blank_frame_add_name; /*bfa - tool name*/
+  ot->get_name = GPENCIL_OT_blank_frame_add_name;                   /*bfa - tool name*/
   ot->get_description = GPENCIL_OT_blank_frame_add_get_description; /*bfa - descriptions*/
   ot->poll = gpencil_add_poll;
 
