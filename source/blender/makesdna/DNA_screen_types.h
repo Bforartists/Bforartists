@@ -379,9 +379,10 @@ typedef struct ScrArea {
   /** Rect bound by v1 v2 v3 v4. */
   rcti totrct;
 
-/*bfa - keep this at the current place*/
+  /*bfa - keep this at the current place*/
   int flag;              /* bfa - short to int, we need int for our flags*/
-  int region_active_win; /* bfa - changed short to int - index of last used region of 'RGN_TYPE_WINDOW' */
+  int region_active_win; /* bfa - changed short to int - index of last used region of
+                            'RGN_TYPE_WINDOW' */
 
   /**
    * eSpace_Type (SPACE_FOO).

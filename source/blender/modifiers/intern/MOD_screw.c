@@ -384,7 +384,6 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
   mvert_new = result->mvert;
   float(*vert_normals_new)[3] = BKE_mesh_vertex_normals_for_write(result);
-  BKE_mesh_vertex_normals_clear_dirty(result);
   mpoly_new = result->mpoly;
   mloop_new = result->mloop;
   medge_new = result->medge;
@@ -1120,7 +1119,6 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   }
 
   if ((ltmd->flag & MOD_SCREW_MERGE) && (screw_ofs == 0.0f)) {
-    Mesh *result_prev = result;
     result = mesh_remove_doubles_on_axis(result,
                                          mvert_new,
                                          totvert,
@@ -1128,13 +1126,10 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
                                          axis_vec,
                                          ob_axis != NULL ? mtx_tx[3] : NULL,
                                          ltmd->merge_dist);
-    if (result != result_prev) {
-      BKE_mesh_normals_tag_dirty(result);
-    }
   }
 
-  if ((ltmd->flag & MOD_SCREW_NORMAL_CALC) == 0) {
-    BKE_mesh_normals_tag_dirty(result);
+  if ((ltmd->flag & MOD_SCREW_NORMAL_CALC)) {
+    BKE_mesh_vertex_normals_clear_dirty(mesh);
   }
 
   return result;
@@ -1207,13 +1202,13 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemS(layout);
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
-  //uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
-  //uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
+  // uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
+  // uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -1253,12 +1248,12 @@ static void normals_panel_draw(const bContext *UNUSED(C), Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
 
   /*------------------- bfa - original props */
-  //uiLayoutSetPropSep(layout, true);
+  // uiLayoutSetPropSep(layout, true);
 
-  //col = uiLayoutColumn(layout, false);
-  //uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
+  // col = uiLayoutColumn(layout, false);
+  // uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);

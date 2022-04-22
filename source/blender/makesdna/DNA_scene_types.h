@@ -1014,23 +1014,8 @@ typedef struct Sculpt {
   struct Object *gravity_object;
 } Sculpt;
 
-typedef enum CurvesSculptFlag {
-  CURVES_SCULPT_FLAG_INTERPOLATE_LENGTH = (1 << 0),
-  CURVES_SCULPT_FLAG_INTERPOLATE_SHAPE = (1 << 1),
-} CurvesSculptFlag;
-
 typedef struct CurvesSculpt {
   Paint paint;
-  /** Minimum distance between newly added curves on a surface. */
-  float distance;
-
-  /** CurvesSculptFlag. */
-  uint32_t flag;
-
-  /** Length of newly added curves when it is not interpolated from other curves. */
-  float curve_length;
-
-  char _pad[4];
 } CurvesSculpt;
 
 typedef struct UvSculpt {

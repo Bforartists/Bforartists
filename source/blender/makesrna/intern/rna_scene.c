@@ -3092,7 +3092,10 @@ static void rna_def_tool_settings(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "lock_object_mode", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "object_flag", SCE_OBJECT_MODE_LOCK);
-  RNA_def_property_ui_text(prop, "Lock Object Modes", "Restrict select to the current mode");
+  RNA_def_property_ui_text(prop,
+                           "Lock Object Modes",
+                           "Restrict selection to objects using the same mode as the active "
+                           "object,\nto prevent accidental mode switch when selecting");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
 
   static const EnumPropertyItem workspace_tool_items[] = {
@@ -6272,10 +6275,10 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "film_transparent", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "alphamode", R_ALPHAPREMUL);
-  RNA_def_property_ui_text(
-      prop,
-      "Transparent",
-      "Render the world background as transparent. This allows compositing the rendered image over another background");
+  RNA_def_property_ui_text(prop,
+                           "Transparent",
+                           "Render the world background as transparent. This allows compositing "
+                           "the rendered image over another background");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
 
   prop = RNA_def_property(srna, "use_freestyle", PROP_BOOLEAN, PROP_NONE);

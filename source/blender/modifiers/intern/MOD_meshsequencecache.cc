@@ -314,7 +314,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
     uiItemR(layout, ptr, "read_data", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
 
-      /*------------------- bfa - original props */
+    /*------------------- bfa - original props */
     // uiItemR(layout, ptr, "use_vertex_interpolation", 0, NULL, ICON_NONE);
 
     col = uiLayoutColumn(layout, true);
