@@ -308,19 +308,19 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(layout, ptr, "default_weight", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 
- /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Add"));
-  //row = uiLayoutRow(col, true);
-  //uiLayoutSetPropDecorate(row, false);
-  //sub = uiLayoutRow(row, true);
-  //uiItemR(sub, ptr, "use_add", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(sub, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
-  //uiLayoutSetPropSep(sub, false);
-  //uiItemR(sub, ptr, "add_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
-  //uiItemDecoratorR(row, ptr, "add_threshold", 0);
+  /*------------------- bfa - original props */
+  // col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Add"));
+  // row = uiLayoutRow(col, true);
+  // uiLayoutSetPropDecorate(row, false);
+  // sub = uiLayoutRow(row, true);
+  // uiItemR(sub, ptr, "use_add", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(sub, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
+  // uiLayoutSetPropSep(sub, false);
+  // uiItemR(sub, ptr, "add_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
+  // uiItemDecoratorR(row, ptr, "add_threshold", 0);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -341,19 +341,19 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   // ------------------------------- end bfa
 
- /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Remove"));
-  //row = uiLayoutRow(col, true);
-  //uiLayoutSetPropDecorate(row, false);
-  //sub = uiLayoutRow(row, true);
-  //uiItemR(sub, ptr, "use_remove", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(sub, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
-  //uiLayoutSetPropSep(sub, false);
-  //uiItemR(sub, ptr, "remove_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
-  //uiItemDecoratorR(row, ptr, "remove_threshold", 0);
+  /*------------------- bfa - original props */
+  // col = uiLayoutColumnWithHeading(layout, false, IFACE_("Group Remove"));
+  // row = uiLayoutRow(col, true);
+  // uiLayoutSetPropDecorate(row, false);
+  // sub = uiLayoutRow(row, true);
+  // uiItemR(sub, ptr, "use_remove", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(sub, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
+  // uiLayoutSetPropSep(sub, false);
+  // uiItemR(sub, ptr, "remove_threshold", UI_ITEM_R_SLIDER, "Threshold", ICON_NONE);
+  // uiItemDecoratorR(row, ptr, "remove_threshold", 0);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   split = uiLayoutSplit(layout, 0.385f, true);

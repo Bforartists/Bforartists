@@ -119,11 +119,11 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   }
 
   /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, false, IFACE_("Rim"));
-  //uiItemR(col, ptr, "use_rim", 0, IFACE_("Fill"), ICON_NONE);
-  //sub = uiLayoutColumn(col, false);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
-  //uiItemR(sub, ptr, "use_rim_only", 0, NULL, ICON_NONE);
+  // col = uiLayoutColumnWithHeading(layout, false, IFACE_("Rim"));
+  // uiItemR(col, ptr, "use_rim", 0, IFACE_("Fill"), ICON_NONE);
+  // sub = uiLayoutColumn(col, false);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
+  // uiItemR(sub, ptr, "use_rim_only", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
@@ -253,7 +253,7 @@ static void clamp_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetActive(row, RNA_float_get(ptr, "thickness_clamp") > 0.0f);
 
   /*------------------- bfa - original props */
-  //uiItemR(row, ptr, "use_thickness_angle_clamp", 0, NULL, ICON_NONE);
+  // uiItemR(row, ptr, "use_thickness_angle_clamp", 0, NULL, ICON_NONE);
 
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
