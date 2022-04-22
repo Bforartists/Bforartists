@@ -1381,7 +1381,7 @@ paint_multiply
 paint_smear
 paint_subtract
 blend_to_default
-#~ DEF_ICON_BLANK(1415)
+apply_parent_inverse
 
 # ------------------------- row 21 --------------------------*/
 

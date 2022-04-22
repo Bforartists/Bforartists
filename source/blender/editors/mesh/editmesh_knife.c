@@ -1088,7 +1088,7 @@ static void knife_update_header(bContext *C, wmOperator *op, KnifeTool_OpData *k
            "%s: panning, %s%s%s: orientation lock (%s), "
            "%s: distance/angle measurements (%s), "
            "%s: x-ray (%s), "
-            "Rotate: Alt + MMB"), /* bfa, added hardcoded tooltip for rotation*/
+           "Rotate: Alt + MMB"), /* bfa, added hardcoded tooltip for rotation*/
       WM_MODALKEY(KNF_MODAL_CONFIRM),
       WM_MODALKEY(KNF_MODAL_CANCEL),
       WM_MODALKEY(KNF_MODAL_UNDO),

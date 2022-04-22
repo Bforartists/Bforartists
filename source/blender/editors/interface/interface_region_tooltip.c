@@ -805,7 +805,9 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
     if (STRPREFIX(but->drawstr, but_label.strinfo)) {
       field->text = BLI_sprintfN("%s", but_label.strinfo);
     }
-    else if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
+    /* Buttons with dynamic tooltips also don't get their default label here since they
+     * can already provide more accurate and specific tooltip content. */
+    else if (!STRPREFIX(but->drawstr, but_label.strinfo) && (!but->tip_func)) {
       field->text = BLI_sprintfN("%s.", but_label.strinfo);
     }
   }

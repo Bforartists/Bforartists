@@ -716,8 +716,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   col = uiLayoutColumn(layout, false);
 
   /*------------------- bfa - original props */
-  //uiItemR(col, ptr, "keep_sharp", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_face_influence", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "keep_sharp", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_face_influence", 0, NULL, ICON_NONE);
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
