@@ -1641,7 +1641,7 @@ struct CollectionAddInfo {
   ushort local_view_bits;
   /* The transform that should be applied to the collection, determined through operator properties
    * if set (e.g. to place the collection under the cursor), otherwise through context (e.g. 3D
-   * cursor location).  */
+   * cursor location). */
   float loc[3], rot[3];
 };
 
@@ -4029,7 +4029,9 @@ void OBJECT_OT_join(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Join";
-  ot->description = "Join selected objects into active object\nSelect first object, hold down shift, select second object\nThen perform the join tool";
+  ot->description =
+      "Join selected objects into active object\nSelect first object, hold down shift, select "
+      "second object\nThen perform the join tool";
   ot->idname = "OBJECT_OT_join";
 
   /* api callbacks */

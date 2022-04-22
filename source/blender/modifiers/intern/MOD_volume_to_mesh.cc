@@ -116,7 +116,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(row, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
     /* ------------ end bfa */
-
   }
 
   modifier_panel_end(layout, ptr);

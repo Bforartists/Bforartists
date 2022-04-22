@@ -212,8 +212,6 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   TIMEIT_END(decim);
 #endif
 
-  BKE_mesh_normals_tag_dirty(result);
-
   return result;
 }
 
@@ -238,16 +236,17 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
     /*------------------- bfa - original props */
 
-    //row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
-    //uiLayoutSetPropDecorate(row, false);
-    //sub = uiLayoutRow(row, true);
-    //uiItemR(sub, ptr, "use_symmetry", 0, "", ICON_NONE);
-    //sub = uiLayoutRow(sub, true);
-    //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
-    //uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
-    //uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    // row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
+    // uiLayoutSetPropDecorate(row, false);
+    // sub = uiLayoutRow(row, true);
+    // uiItemR(sub, ptr, "use_symmetry", 0, "", ICON_NONE);
+    // sub = uiLayoutRow(sub, true);
+    // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
+    // uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+    // uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
 
-    // ------------------ bfa new left aligned prop with triangle button to hide the inactive content
+    // ------------------ bfa new left aligned prop with triangle button to hide the inactive
+    // content
 
     /* NOTE: split amount here needs to be synced with normal labels */
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -275,7 +274,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     /* ------------ end bfa */
 
     /*------------------- bfa - original props */
-    //uiItemR(layout, ptr, "use_collapse_triangulate", 0, NULL, ICON_NONE);
+    // uiItemR(layout, ptr, "use_collapse_triangulate", 0, NULL, ICON_NONE);
 
     col = uiLayoutColumn(layout, true);
     row = uiLayoutRow(col, true);
@@ -300,7 +299,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
     uiItemR(col, ptr, "delimit", 0, NULL, ICON_NONE);
 
     /*------------------- bfa - original prop */
-    //uiItemR(layout, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
+    // uiItemR(layout, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
     row = uiLayoutRow(layout, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);

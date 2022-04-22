@@ -780,8 +780,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_only_smooth", 0, NULL, ICON_NONE);
-  //uiItemR(layout, ptr, "use_pin_boundary", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_only_smooth", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_pin_boundary", 0, NULL, ICON_NONE);
 
   uiLayout *row;
   row = uiLayoutRow(layout, true);

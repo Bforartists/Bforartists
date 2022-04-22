@@ -595,8 +595,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "lambda_border", 0, NULL, ICON_NONE);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
-  //uiItemR(layout, ptr, "use_normalized", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_volume_preserve", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_normalized", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);

@@ -224,7 +224,7 @@ class NODE_HT_header(Header):
                 active_modifier = ob.modifiers.active
                 if active_modifier and active_modifier.type == 'NODES':
                     if active_modifier.node_group:
-                        row.template_ID(active_modifier, "node_group", new="node.copy_geometry_node_group_assign")
+                        row.template_ID(active_modifier, "node_group", new="object.geometry_node_tree_copy_assign")
                     else:
                         row.template_ID(active_modifier, "node_group", new="node.new_geometry_node_group_assign")
                 else:
@@ -965,7 +965,7 @@ class NodeTreeInterfacePanel:
                 "node.tree_socket_change_type",
                 "socket_type",
                 text=active_socket.bl_label if active_socket.bl_label else active_socket.bl_idname
-                )
+            )
             props.in_out = in_out
 
             layout.use_property_split = True
@@ -1005,6 +1005,7 @@ class NODE_PT_node_tree_interface_inputs(NodeTreeInterfacePanel, Panel):
 
     def draw(self, context):
         self.draw_socket_list(context, "IN", "inputs", "active_input")
+
 
 class NODE_PT_node_tree_interface_outputs(NodeTreeInterfacePanel, Panel):
     bl_space_type = 'NODE_EDITOR'

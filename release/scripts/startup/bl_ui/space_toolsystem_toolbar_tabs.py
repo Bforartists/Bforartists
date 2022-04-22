@@ -755,6 +755,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
 
             col.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
             col.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
+            col.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon = "APPLY_PARENT_INVERSE")
 
         # icon buttons
         else:
@@ -777,6 +778,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                 row.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
+                row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
 
             elif column_count == 2:
 
@@ -795,6 +797,9 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                 row.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
 
+                row = col.row(align=True)
+                row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
+
             elif column_count == 1:
 
                 col.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
@@ -807,6 +812,8 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
 
                 col.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                 col.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
+                col.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
+
 
 
 class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):

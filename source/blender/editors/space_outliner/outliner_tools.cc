@@ -433,13 +433,13 @@ static void outliner_do_libdata_operation(bContext *C,
 /** \name Scene Menu Operator
  * \{ */
 
-typedef enum eOutliner_PropSceneOps {  /* bfa -  typedef enum*/
-  OL_SCENE_OP_DELETE = 1,
-  /* bfa - add scene outliner operators  */
-  OL_SCENE_OP_NEW = 2,
-  OL_SCENE_OP_COPY_SETTINGS = 3,
-  OL_SCENE_OP_COPY_LINKED = 4,
-  OL_SCENE_OP_COPY_FULL = 5
+typedef enum eOutliner_PropSceneOps { /* bfa -  typedef enum*/
+                                      OL_SCENE_OP_DELETE = 1,
+                                      /* bfa - add scene outliner operators  */
+                                      OL_SCENE_OP_NEW = 2,
+                                      OL_SCENE_OP_COPY_SETTINGS = 3,
+                                      OL_SCENE_OP_COPY_LINKED = 4,
+                                      OL_SCENE_OP_COPY_FULL = 5
 } eOutliner_PropSceneOps;
 
 static const EnumPropertyItem prop_scene_op_types[] = {
@@ -528,7 +528,7 @@ static bool scene_fn(bContext *C,
   else if (event == OL_SCENE_OP_COPY_FULL) {
     scene_add_ex(scene, bmain, C, SCE_COPY_FULL);
   }
-/*bfa end*/
+  /*bfa end*/
 
   return true;
 }
@@ -560,7 +560,7 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
     outliner_cleanup_tree(space_outliner);
     WM_main_add_notifier(NC_SCENE | ND_LAYER, nullptr);
   }
-/*bfa end*/
+  /*bfa end*/
   else {
     BLI_assert(0);
     return OPERATOR_CANCELLED;
