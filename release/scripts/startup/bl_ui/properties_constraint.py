@@ -1361,6 +1361,7 @@ class ConstraintButtonsSubPanel:
 
 # Child Of Constraint
 
+
 class OBJECT_PT_bChildOfConstraint(ObjectConstraintPanel, ConstraintButtonsPanel, Panel):
     def draw(self, context):
         self.draw_childof(context)

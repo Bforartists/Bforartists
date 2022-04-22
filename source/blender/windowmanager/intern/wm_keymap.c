@@ -440,7 +440,7 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
   }
 
   /*bfa - removed the empty keymap warning*/
-  //if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
+  // if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
   //  /* Empty key-maps may be missing more there may be a typo in the name.
   //   * Warn early to avoid losing time investigating each case.
   //   * When developing a customized Blender though you may want empty keymaps. */
@@ -450,7 +450,6 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
   //    CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
   //  }
   //}
-
 
   if (keymap->poll != NULL) {
     return keymap->poll(C);

@@ -229,8 +229,6 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 
   BM_mesh_free(bm);
 
-  BKE_mesh_normals_tag_dirty(result);
-
   return result;
 }
 
@@ -361,10 +359,10 @@ static void geometry_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(row, ptr, "vmesh_method", 0, IFACE_("Intersections"), ICON_NONE);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_clamp_overlap", 0, NULL, ICON_NONE);
-  //row = uiLayoutRow(layout, false);
-  //uiLayoutSetActive(row, edge_bevel);
-  //uiItemR(row, ptr, "loop_slide", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_clamp_overlap", 0, NULL, ICON_NONE);
+  // row = uiLayoutRow(layout, false);
+  // uiLayoutSetActive(row, edge_bevel);
+  // uiItemR(row, ptr, "loop_slide", 0, NULL, ICON_NONE);
 
   uiLayout *col;
   col = uiLayoutColumn(layout, true);
@@ -392,7 +390,7 @@ static void shading_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original prop */
-  //uiItemR(layout, ptr, "harden_normals", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "harden_normals", 0, NULL, ICON_NONE);
 
   uiLayout *row;
   row = uiLayoutRow(layout, true);
@@ -402,10 +400,10 @@ static void shading_panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Mark"));
-  //uiLayoutSetActive(col, edge_bevel);
-  //uiItemR(col, ptr, "mark_seam", 0, IFACE_("Seam"), ICON_NONE);
-  //uiItemR(col, ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
+  // col = uiLayoutColumnWithHeading(layout, true, IFACE_("Mark"));
+  // uiLayoutSetActive(col, edge_bevel);
+  // uiItemR(col, ptr, "mark_seam", 0, IFACE_("Seam"), ICON_NONE);
+  // uiItemR(col, ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   uiLayoutSetActive(col, edge_bevel);
