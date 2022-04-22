@@ -260,7 +260,11 @@ static EnumPropertyItem scene_new_items[] = {
      ICON_LINKED,
      "Linked Copy",
      "Link in the collections from the current scene (shallow copy)"},
-    {SCE_COPY_FULL, "FULL_COPY", ICON_DUPLICATE_ALL, "Full Copy", "Make a full copy of the current scene"},
+    {SCE_COPY_FULL,
+     "FULL_COPY",
+     ICON_DUPLICATE_ALL,
+     "Full Copy",
+     "Make a full copy of the current scene"},
     {0, NULL, 0, NULL, NULL},
 };
 

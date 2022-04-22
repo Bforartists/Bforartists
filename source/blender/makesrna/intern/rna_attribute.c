@@ -28,7 +28,7 @@ const EnumPropertyItem rna_enum_attribute_type_items[] = {
     {CD_PROP_INT32, "INT", 0, "Integer", "32-bit integer"},
     {CD_PROP_FLOAT3, "FLOAT_VECTOR", 0, "Vector", "3D vector with floating-point values"},
     {CD_PROP_COLOR, "FLOAT_COLOR", 0, "Color", "RGBA color with floating-point values"},
-    {CD_MLOOPCOL, "BYTE_COLOR", 0, "Byte Color", "RGBA color with 8-bit values"},
+    {CD_PROP_BYTE_COLOR, "BYTE_COLOR", 0, "Byte Color", "RGBA color with 8-bit values"},
     {CD_PROP_STRING, "STRING", 0, "String", "Text string"},
     {CD_PROP_BOOL, "BOOLEAN", 0, "Boolean", "True or false"},
     {CD_PROP_FLOAT2, "FLOAT2", 0, "2D Vector", "2D vector with floating-point values"},
@@ -42,7 +42,7 @@ const EnumPropertyItem rna_enum_attribute_type_with_auto_items[] = {
     {CD_PROP_INT32, "INT", 0, "Integer", "32-bit integer"},
     {CD_PROP_FLOAT3, "FLOAT_VECTOR", 0, "Vector", "3D vector with floating-point values"},
     {CD_PROP_COLOR, "FLOAT_COLOR", 0, "Color", "RGBA color with floating-point values"},
-    {CD_MLOOPCOL, "BYTE_COLOR", 0, "Byte Color", "RGBA color with 8-bit values"},
+    {CD_PROP_BYTE_COLOR, "BYTE_COLOR", 0, "Byte Color", "RGBA color with 8-bit values"},
     {CD_PROP_STRING, "STRING", 0, "String", "Text string"},
     {CD_PROP_BOOL, "BOOLEAN", 0, "Boolean", "True or false"},
     {CD_PROP_FLOAT2, "FLOAT2", 0, "2D Vector", "2D vector with floating-point values"},
@@ -113,7 +113,7 @@ static StructRNA *srna_by_custom_data_layer_type(const CustomDataType type)
       return &RNA_FloatVectorAttribute;
     case CD_PROP_COLOR:
       return &RNA_FloatColorAttribute;
-    case CD_MLOOPCOL:
+    case CD_PROP_BYTE_COLOR:
       return &RNA_ByteColorAttribute;
     case CD_PROP_STRING:
       return &RNA_StringAttribute;
@@ -231,7 +231,7 @@ static void rna_Attribute_data_begin(CollectionPropertyIterator *iter, PointerRN
     case CD_PROP_COLOR:
       struct_size = sizeof(MPropCol);
       break;
-    case CD_MLOOPCOL:
+    case CD_PROP_BYTE_COLOR:
       struct_size = sizeof(MLoopCol);
       break;
     case CD_PROP_STRING:
@@ -339,9 +339,17 @@ static int rna_Attributes_layer_skip(CollectionPropertyIterator *UNUSED(iter), v
   return !(CD_TYPE_AS_MASK(layer->type) & CD_MASK_PROP_ALL);
 }
 
-static int rna_Attributes_noncolor_layer_skip(CollectionPropertyIterator *UNUSED(iter), void *data)
+static int rna_Attributes_noncolor_layer_skip(CollectionPropertyIterator *iter, void *data)
 {
   CustomDataLayer *layer = (CustomDataLayer *)data;
+
+  /* Check valid domain here, too, keep in line with rna_AttributeGroup_color_length(). */
+  ID *id = iter->parent.owner_id;
+  AttributeDomain domain = BKE_id_attribute_domain(id, layer);
+  if (!ELEM(domain, ATTR_DOMAIN_POINT, ATTR_DOMAIN_CORNER)) {
+    return 1;
+  }
+
   return !(CD_TYPE_AS_MASK(layer->type) & CD_MASK_COLOR_ALL) || (layer->flag & CD_FLAG_TEMPORARY);
 }
 
@@ -423,7 +431,7 @@ int rna_AttributeGroup_color_length(PointerRNA *ptr)
 {
   return BKE_id_attributes_length(ptr->owner_id,
                                   ATTR_DOMAIN_MASK_POINT | ATTR_DOMAIN_MASK_CORNER,
-                                  CD_MASK_PROP_COLOR | CD_MASK_MLOOPCOL);
+                                  CD_MASK_PROP_COLOR | CD_MASK_PROP_BYTE_COLOR);
 }
 
 int rna_AttributeGroup_length(PointerRNA *ptr)

@@ -102,7 +102,6 @@ Mesh *doEdgeSplit(const Mesh *mesh, EdgeSplitModifierData *emd)
   result = BKE_mesh_from_bmesh_for_eval_nomain(bm, NULL, mesh);
   BM_mesh_free(bm);
 
-  BKE_mesh_normals_tag_dirty(result);
   return result;
 }
 
@@ -131,7 +130,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *UNUSED(ctx)
 
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  //uiLayout *row, *sub;
+  // uiLayout *row, *sub;
   uiLayout *row, *col; /*bfa, added *col, removed *sub*/
   uiLayout *layout = panel->layout;
 
@@ -140,11 +139,11 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
-  //uiItemR(row, ptr, "use_edge_angle", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
-  //uiItemR(sub, ptr, "split_angle", 0, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
+  // uiItemR(row, ptr, "use_edge_angle", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
+  // uiItemR(sub, ptr, "split_angle", 0, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -169,9 +168,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   // ------------------------------- end bfa
 
-
-
-      /*------------------- bfa - original props */
+  /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_edge_sharp", 0, IFACE_("Sharp Edges"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);

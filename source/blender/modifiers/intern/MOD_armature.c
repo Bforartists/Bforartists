@@ -243,9 +243,9 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", NULL);
 
   /*------------------- bfa - original props */
-  //col = uiLayoutColumn(layout, true);
-  //uiItemR(col, ptr, "use_deform_preserve_volume", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_multi_modifier", 0, NULL, ICON_NONE);
+  // col = uiLayoutColumn(layout, true);
+  // uiItemR(col, ptr, "use_deform_preserve_volume", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_multi_modifier", 0, NULL, ICON_NONE);
 
   uiLayout *row;
   col = uiLayoutColumn(layout, true);
@@ -261,14 +261,14 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind To"));
-  //uiItemR(col, ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
-  //uiItemR(col, ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
+  // col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind To"));
+  // uiItemR(col, ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+  // uiItemR(col, ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
 
-  uiItemL(col, TIP_("Bind To"),ICON_NONE);
+  uiItemL(col, TIP_("Bind To"), ICON_NONE);
 
   row = uiLayoutRow(col, true);
   uiItemS(row);

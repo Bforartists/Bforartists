@@ -1102,7 +1102,6 @@ static Mesh *explodeMesh(ExplodeModifierData *emd,
   /* finalization */
   BKE_mesh_calc_edges_tessface(explode);
   BKE_mesh_convert_mfaces_to_mpolys(explode);
-  BKE_mesh_normals_tag_dirty(explode);
 
   if (psmd->psys->lattice_deform_data) {
     BKE_lattice_deform_data_destroy(psmd->psys->lattice_deform_data);
@@ -1200,8 +1199,8 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   col = uiLayoutColumn(layout, false);
 
   /*------------------- bfa - original props */
-  //uiItemR(col, ptr, "use_edge_cut", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_size", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_edge_cut", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_size", 0, NULL, ICON_NONE);
 
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */

@@ -245,7 +245,7 @@ static void read_mpolys(CDStreamConfig &config, const AbcMeshData &mesh_data)
 static void process_no_normals(CDStreamConfig &config)
 {
   /* Absence of normals in the Alembic mesh is interpreted as 'smooth'. */
-  BKE_mesh_calc_normals(config.mesh);
+  BKE_mesh_normals_tag_dirty(config.mesh);
 }
 
 static void process_loop_normals(CDStreamConfig &config, const N3fArraySamplePtr loop_normals_ptr)
@@ -382,7 +382,7 @@ static void *add_customdata_cb(Mesh *mesh, const char *name, int data_type)
   int numloops;
 
   /* unsupported custom data type -- don't do anything. */
-  if (!ELEM(cd_data_type, CD_MLOOPUV, CD_MLOOPCOL)) {
+  if (!ELEM(cd_data_type, CD_MLOOPUV, CD_PROP_BYTE_COLOR)) {
     return nullptr;
   }
 
