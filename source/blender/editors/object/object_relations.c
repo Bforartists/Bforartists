@@ -920,7 +920,8 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #if 0
   uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_OBJECT);
 #else
-  uiItemFullO_ptr(layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
+  uiItemFullO_ptr(
+      layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
@@ -1615,7 +1616,11 @@ void OBJECT_OT_make_links_scene(wmOperatorType *ot)
 void OBJECT_OT_make_links_data(wmOperatorType *ot)
 {
   static const EnumPropertyItem make_links_items[] = {
-      {MAKE_LINKS_OBDATA, "OBDATA", ICON_LINK_DATA, "Link Object Data", "Replace assigned Object Data"},
+      {MAKE_LINKS_OBDATA,
+       "OBDATA",
+       ICON_LINK_DATA,
+       "Link Object Data",
+       "Replace assigned Object Data"},
       {MAKE_LINKS_MATERIALS,
        "MATERIAL",
        ICON_LINK_DATA,
@@ -1626,7 +1631,11 @@ void OBJECT_OT_make_links_data(wmOperatorType *ot)
        ICON_LINK_DATA,
        "Link Animation Data",
        "Replace assigned Animation Data"},
-      {MAKE_LINKS_GROUP, "GROUPS", ICON_LINK_DATA, "Link Collections", "Replace assigned Collections"},
+      {MAKE_LINKS_GROUP,
+       "GROUPS",
+       ICON_LINK_DATA,
+       "Link Collections",
+       "Replace assigned Collections"},
       {MAKE_LINKS_DUPLICOLLECTION,
        "DUPLICOLLECTION",
        ICON_LINK_DATA,
@@ -2566,7 +2575,11 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "object", 0, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", 0, "Object Data", "Make single user object data");
   RNA_def_boolean(ot->srna, "material", 0, "Materials", "Make materials local to each data");
-  RNA_def_boolean(ot->srna, "animation", 0, "Object Animation", "Make object animation data local to each object");
+  RNA_def_boolean(ot->srna,
+                  "animation",
+                  0,
+                  "Object Animation",
+                  "Make object animation data local to each object");
   RNA_def_boolean(ot->srna,
                   "obdata_animation",
                   0,

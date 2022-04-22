@@ -2191,9 +2191,9 @@ void uiItemFullR(uiLayout *layout,
       uiLayout *layout_split;
       uiLayout *layout_sub;
       bool label_added = false;
-	// bfa - old blender prop
-      //uiLayout *layout_sub = uiLayoutColumn(layout_split, true);
-      //layout_sub->space = 0;
+      // bfa - old blender prop
+      // uiLayout *layout_sub = uiLayoutColumn(layout_split, true);
+      // layout_sub->space = 0;
 
       if (!use_prop_sep_split_label) {
         /* bfa - keep other props the same */
@@ -2227,19 +2227,19 @@ void uiItemFullR(uiLayout *layout,
           str[0] = RNA_property_array_item_char(prop, a);
 
           /*bfa -turned off code*/
-          //const bool use_prefix = (a == 0 && name && name[0]);
-          //if (use_prefix) {
-            //char *s = name_with_suffix;
-            //s += STRNCPY_RLEN(name_with_suffix, name);
-            //*s++ = ' ';
-           // *s++ = str[0];
-           // *s++ = '\0';
+          // const bool use_prefix = (a == 0 && name && name[0]);
+          // if (use_prefix) {
+          // char *s = name_with_suffix;
+          // s += STRNCPY_RLEN(name_with_suffix, name);
+          //*s++ = ' ';
+          // *s++ = str[0];
+          // *s++ = '\0';
           //}
           but = uiDefBut(block,
                          UI_BTYPE_LABEL,
                          0,
                          /* bfa - don't prefix X with prop name */
-                         //use_prefix ? name_with_suffix : str,
+                         // use_prefix ? name_with_suffix : str,
                          str,
                          0,
                          0,

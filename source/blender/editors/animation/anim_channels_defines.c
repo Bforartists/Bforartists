@@ -4983,11 +4983,13 @@ static void draw_setting_widget(bAnimContext *ac,
       }
       else if ((ac) && (ac->spacetype == SPACE_NLA) && (ale->type != ANIMTYPE_NLATRACK)) {
         tooltip = TIP_(
-            "Mute\nTemporarily disable NLA stack evaluation (i.e. only the active action is evaluated)");
+            "Mute\nTemporarily disable NLA stack evaluation (i.e. only the active action is "
+            "evaluated)");
       }
       else if (ale->type == ANIMTYPE_GPLAYER) {
         tooltip = TIP_(
-            "Lock Channel\nShows all keyframes during animation playback and enabled all frames for editing "
+            "Lock Channel\nShows all keyframes during animation playback and enabled all frames "
+            "for editing "
             "(uncheck to use only the current keyframe during animation playback and editing)");
       }
       else {
@@ -5187,7 +5189,7 @@ void ANIM_channel_draw_widgets(const bContext *C,
       }
       /* Visibility toggle. */
       if (acf->has_setting(ac, ale, ACHANNEL_SETTING_VISIBLE)) {
-        /* For F-curves, add the extra space for the color bands. */
+        /* For F-Curves, add the extra space for the color bands. */
         if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
           offset += GRAPH_ICON_VISIBILITY_OFFSET;
         }

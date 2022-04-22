@@ -155,11 +155,11 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(col, true, IFACE_("Merge"));
-  //uiItemR(row, ptr, "use_mirror_merge", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_merge"));
-  //uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(col, true, IFACE_("Merge"));
+  // uiItemR(row, ptr, "use_mirror_merge", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_merge"));
+  // uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -187,7 +187,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   RNA_boolean_get_array(ptr, "use_bisect_axis", is_bisect_set);
 
   col = uiLayoutRow(layout, true); /*bfa - col, not sub*/
-  uiLayoutSetPropSep(col, true);  /* bfa - use_property_split = true */
+  uiLayoutSetPropSep(col, true);   /* bfa - use_property_split = true */
   uiLayoutSetActive(col, is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
   uiItemR(col, ptr, "bisect_threshold", 0, IFACE_("Bisect Distance"), ICON_NONE);
 
@@ -205,15 +205,15 @@ static void data_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   col = uiLayoutColumn(layout, true);
 
-/*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(col, true, IFACE_("Mirror U"));
-  //uiLayoutSetPropDecorate(row, false);
-  //sub = uiLayoutRow(row, true);
-  //uiItemR(sub, ptr, "use_mirror_u", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(sub, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_u"));
-  //uiItemR(sub, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
-  //uiItemDecoratorR(row, ptr, "mirror_offset_u", 0);
+  /*------------------- bfa - original props */
+  // row = uiLayoutRowWithHeading(col, true, IFACE_("Mirror U"));
+  // uiLayoutSetPropDecorate(row, false);
+  // sub = uiLayoutRow(row, true);
+  // uiItemR(sub, ptr, "use_mirror_u", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(sub, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_u"));
+  // uiItemR(sub, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  // uiItemDecoratorR(row, ptr, "mirror_offset_u", 0);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -238,14 +238,14 @@ static void data_panel_draw(const bContext *UNUSED(C), Panel *panel)
   // ------------------------------- end bfa
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(col, true, IFACE_("V"));
-  //uiLayoutSetPropDecorate(row, false);
-  //sub = uiLayoutRow(row, true);
-  //uiItemR(sub, ptr, "use_mirror_v", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(sub, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_v"));
-  //uiItemR(sub, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
-  //uiItemDecoratorR(row, ptr, "mirror_offset_v", 0);
+  // row = uiLayoutRowWithHeading(col, true, IFACE_("V"));
+  // uiLayoutSetPropDecorate(row, false);
+  // sub = uiLayoutRow(row, true);
+  // uiItemR(sub, ptr, "use_mirror_v", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(sub, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_v"));
+  // uiItemR(sub, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
+  // uiItemDecoratorR(row, ptr, "mirror_offset_v", 0);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -274,8 +274,8 @@ static void data_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_mirror_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
-  //uiItemR(layout, ptr, "use_mirror_udim", 0, IFACE_("Flip UDIM"), ICON_NONE);
+  // uiItemR(layout, ptr, "use_mirror_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
+  // uiItemR(layout, ptr, "use_mirror_udim", 0, IFACE_("Flip UDIM"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
