@@ -73,10 +73,10 @@ files_ignore = {
 # -----------------------------------------------------------------------------
 # Dictionary Utilities
 
+
 def dictionary_create():  # type: ignore
     import enchant  # type: ignore
     dict_spelling = enchant.Dict("en_US")
-
 
     # Don't add ignore to the dictionary, since they will be suggested.
     for w in dict_custom:

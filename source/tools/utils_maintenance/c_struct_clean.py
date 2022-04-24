@@ -71,6 +71,7 @@ def clean_structs(fn: str, data_src: str) -> Optional[str]:
         return data_dst
     return None
 
+
 run(
     directories=[os.path.join(SOURCE_DIR, d) for d in SOURCE_DIRS],
     is_text=lambda fn: fn.endswith(SOURCE_EXT),

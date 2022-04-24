@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -5348,10 +5348,6 @@ msgstr "Không gian ACES tuyến tính"
 
 msgid "Non-Color"
 msgstr "Vô Màu Sắc"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Không gian màu sắc cho ảnh có chứa dữ liệu không phải là dữ liệu màu (ví dụ, bản đồ pháp tuyến)"
 
 
 msgid "Raw"
@@ -62036,12 +62032,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Đặt phụ huynh của vật thể nhưng không đặt chỉnh sửa đảo nghịch của phụ huynh"
 
 
-msgid "Set the object's parenting"
-msgstr "Đặt phụ huynh vật thể"
-
-
 msgid "Keep Transform"
 msgstr "Giữ Biến Hóa"
+
+
+msgid "Set the object's parenting"
+msgstr "Đặt phụ huynh vật thể"
 
 
 msgid "Apply transformation before parenting"
@@ -63972,10 +63968,6 @@ msgstr "Làmi Tầng Bậc Đồ Thay Thế Thư Viện"
 
 msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
 msgstr "Làm một đồ thay thế địa phương của cục dữ liệu được liên kết này, và tầng bậc nhờ của nó - chỉ cho áp dụng mặt hàng Mục Lục hoạt động"
-
-
-msgid "Reset Library Override"
-msgstr "Đặt Lại Đồ Thay Thế Của Thư Viện"
 
 
 msgid "Reset this local override to its linked values"
@@ -75666,22 +75658,6 @@ msgid "Export current scene in a USD archive"
 msgstr "Xuất cảnh hiện tại vào một kho USD"
 
 
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Khi được chọn, xuất phạm vi bức kết xuất. Khi không chọn, chỉ xuất bức hiện tại"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "Khi được chọn, xuất tóc bằng đường cong USD"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Khi được chọn, xuất cài đặt của màn chiếu của vật thể bằng vật liệu dự khán USD, và xuất chỉ định vật liệu bằng hạ tập hợp hình dạng"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "Khi được chọn, gồm pháp tuyến của mạng lưới khi xuất"
-
-
 msgid "Export Textures"
 msgstr "Xuất Họa Tiết"
 
@@ -75692,10 +75668,6 @@ msgstr "Nếu đang xuất vật liệu, xuất họa tiết được tham chi�
 
 msgid "UV Maps"
 msgstr "Bản Đồ UV"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "Khi được chọn, tất cả bản đồ UV được gồm với mạng lưới khi kết xuất"
 
 
 msgid "To USD Preview Surface"
@@ -75722,24 +75694,12 @@ msgid "Make texture asset paths relative to the USD file"
 msgstr "Đặt đường dẫn tích sản họa tiết tương đối với tập tin USD"
 
 
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Chỉ vật thể đã chọn được kết xuất. Xuất các phụ huynh của vật thể chưa chọn bằng biến hóa trống rỗng"
-
-
 msgid "Instancing"
 msgstr "Thực Thể Hóa"
 
 
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Khi được chọn, xuất vật thể thực thể bằng tham chiếu trong USD. Khi không được chọn, xuất vật thể thực thể bằng vật thể thật"
-
-
 msgid "Visible Only"
 msgstr "Chỉ Được Hiển Thị"
-
-
-msgid "Only visible objects are exported. Invisible parents of exported objects are exported as empty transform"
-msgstr "Chỉ vật thể hiển thị được kết xuất. Xuất các phụ huynh ẩn của vật thể được xuất bằng biến hóa trống rỗng"
 
 
 msgctxt "Operator"
@@ -101916,11 +101876,6 @@ msgstr "Nghỉ Chỉnh Hành Động Đoạn"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Bắt Đầu Chỉnh Hành Động Đoạn"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Thêm Theo Gõi Trên Được Chọn"
 
@@ -106534,10 +106489,6 @@ msgstr "<Thiếu cục ID>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "Không có con chỉ RNA để lấy lại giá trị cho Cong-F này"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "Không thể chèn bức mẫu vì sự ảnh hưởng NLA hay giá trị cơ sở bằng không"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -116090,14 +116041,6 @@ msgstr "Pháp Tuyến Lớp Trong Suốt"
 
 msgid "Sigma"
 msgstr "Xichma"
-
-
-msgid "Height_dx"
-msgstr "ChiềuCao_dx"
-
-
-msgid "Height_dy"
-msgstr "ChiềuCao_dy"
 
 
 msgid "View Vector"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -50289,12 +50289,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "반전 부모 보정을 설정하지 않고 오브젝트의 부모 지정을 설정"
 
 
-msgid "Set the object's parenting"
-msgstr "오브젝트의 부모 지정을 설정"
-
-
 msgid "Keep Transform"
 msgstr "변환을 유지"
+
+
+msgid "Set the object's parenting"
+msgstr "오브젝트의 부모 지정을 설정"
 
 
 msgid "Apply transformation before parenting"
@@ -80759,11 +80759,6 @@ msgstr "트위킹 스트립 액션을 중지"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "스트립 액션 조정을 시작"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "트랙을 선택된 위에 추가"
 
@@ -84219,10 +84214,6 @@ msgstr "<Missing ID block>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "이 F-커브의 값을 검색할 수 있는 RNA 포인터가 없습니다"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "NLA 영향 또는 기본 값이 0이므로 키 프레임을 삽입 할 수 없습니다"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -90315,14 +90306,6 @@ msgstr "클리어코트 노멀"
 
 msgid "Sigma"
 msgstr "시그마"
-
-
-msgid "Height_dx"
-msgstr "Height_dx"
-
-
-msgid "Height_dy"
-msgstr "Height_dy"
 
 
 msgid "View Vector"

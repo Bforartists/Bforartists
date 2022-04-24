@@ -1789,6 +1789,7 @@ void BKE_object_free_derived_caches(Object *ob)
         BKE_mesh_eval_delete((Mesh *)data_eval);
       }
       else {
+        BKE_libblock_free_data(data_eval, false);
         BKE_libblock_free_datablock(data_eval, 0);
         MEM_freeN(data_eval);
       }
@@ -3564,19 +3565,19 @@ void BKE_object_apply_parent_inverse(struct Object *ob)
    * Use parent's world transform as the child's origin.
    *
    * Let:
-   *    local = identity
-   *    world = orthonormalized(parent)
+   *    `local = identity`
+   *    `world = orthonormalized(parent)`
    *
    * Then:
-   *    world = parent @ parentinv @ local
-   *    inv(parent) @ world = parentinv
-   *    parentinv = inv(parent) @ world
+   *    `world = parent @ parentinv @ local`
+   *    `inv(parent) @ world = parentinv`
+   *    `parentinv = inv(parent) @ world`
    *
-   * NOTE: If ob->obmat has shear, then this `parentinv` is insufficient because
-   *    parent @ parentinv => shearless result
+   * NOTE: If `ob->obmat` has shear, then this `parentinv` is insufficient because
+   *    `parent @ parentinv => shearless result`
    *
    *    Thus, local will have shear which cannot be decomposed into TRS:
-   *    local = inv(parent @ parentinv) @ world
+   *    `local = inv(parent @ parentinv) @ world`
    *
    *    This is currently not supported for consistency in the handling of shear during the other
    *    parenting ops: Parent (Keep Transform), Clear [Parent] and Keep Transform.
@@ -3591,11 +3592,11 @@ void BKE_object_apply_parent_inverse(struct Object *ob)
 
   /* Now, preserve `world` given the new `parentinv`.
    *
-   * world = parent @ parentinv @ local
-   * inv(parent) @ world = parentinv @ local
-   * inv(parentinv) @ inv(parent) @ world = local
+   * `world = parent @ parentinv @ local`
+   * `inv(parent) @ world = parentinv @ local`
+   * `inv(parentinv) @ inv(parent) @ world = local`
    *
-   * local = inv(parentinv) @ inv(parent) @ world
+   * `local = inv(parentinv) @ inv(parent) @ world`
    */
   float ob_local[4][4];
   copy_m4_m4(ob_local, ob->parentinv);
@@ -3974,8 +3975,9 @@ bool BKE_object_empty_image_data_is_visible_in_view3d(const Object *ob, const Re
   }
 
   if (visibility_flag & OB_EMPTY_IMAGE_HIDE_NON_AXIS_ALIGNED) {
-    float3 proj;
-    project_plane_v3_v3v3(proj, ob->obmat[2], rv3d->viewinv[2]);
+    float3 proj, ob_z_axis;
+    normalize_v3_v3(ob_z_axis, ob->obmat[2]);
+    project_plane_v3_v3v3(proj, ob_z_axis, rv3d->viewinv[2]);
     const float proj_length_sq = len_squared_v3(proj);
     if (proj_length_sq > 1e-5f) {
       return false;

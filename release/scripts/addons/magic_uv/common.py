@@ -4,8 +4,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 from collections import defaultdict
 from pprint import pprint
@@ -17,6 +17,7 @@ from mathutils import Vector
 import bmesh
 
 from .utils import compatibility as compat
+from .utils.graph import Graph, Node
 
 
 __DEBUG_MODE = False
@@ -286,6 +287,30 @@ def get_island_info(obj, only_selected=True):
     return get_island_info_from_bmesh(bm, only_selected)
 
 
+# Return island info.
+#
+# Format:
+#
+# [
+#   {
+#     faces: [
+#       {
+#         face: BMFace
+#         max_uv: Vector (2D)
+#         min_uv: Vector (2D)
+#         ave_uv: Vector (2D)
+#       },
+#       ...
+#     ]
+#     center: Vector (2D)
+#     size: Vector (2D)
+#     num_uv: int
+#     group: int
+#     max: Vector (2D)
+#     min: Vector (2D)
+#   },
+#   ...
+# ]
 def get_island_info_from_bmesh(bm, only_selected=True):
     if not bm.loops.layers.uv:
         return None
@@ -1184,12 +1209,22 @@ def __is_polygon_flipped(points):
 
 
 def __is_point_in_polygon(point, subject_points):
+    """Return true when point is inside of the polygon by using
+    'Crossing number algorithm'.
+    """
+
     count = 0
     for i in range(len(subject_points)):
         uv_start1 = subject_points.get(i)
         uv_end1 = subject_points.get(i + 1)
         uv_start2 = point
         uv_end2 = Vector((1000000.0, point.y))
+
+        # If the point exactly matches to the point of the polygon,
+        # this point is not in polygon.
+        if uv_start1.x == uv_start2.x and uv_start1.y == uv_start2.y:
+            return False
+
         intersected, _ = __is_segment_intersect(uv_start1, uv_end1,
                                                 uv_start2, uv_end2)
         if intersected:
@@ -1239,7 +1274,7 @@ def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list,
             overlapped_uv_layer_pairs.append([uv_layer_1, uv_layer_2])
             overlapped_bm_paris.append([bm_1, bm_2])
 
-    # next, check polygon overlapped
+    # check polygon overlapped (inter UV islands)
     overlapped_uvs = []
     for oip, uvlp, bmp in zip(overlapped_isl_pairs,
                               overlapped_uv_layer_pairs,
@@ -1269,6 +1304,41 @@ def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list,
                                            "subject_face": f_subject,
                                            "clip_uv_layer": uvlp[0],
                                            "subject_uv_layer": uvlp[1],
+                                           "subject_uvs": subject_uvs,
+                                           "polygons": polygons})
+
+    # check polygon overlapped (intra UV island)
+    for info, uv_layer, bm in isl:
+        for i in range(len(info["faces"])):
+            clip = info["faces"][i]
+            f_clip = clip["face"]
+            clip_uvs = [l[uv_layer].uv.copy() for l in f_clip.loops]
+            for j in range(len(info["faces"])):
+                if j <= i:
+                    continue
+
+                subject = info["faces"][j]
+                f_subject = subject["face"]
+
+                # fast operation, apply bounding box algorithm
+                if (clip["max_uv"].x < subject["min_uv"].x) or \
+                   (subject["max_uv"].x < clip["min_uv"].x) or \
+                   (clip["max_uv"].y < subject["min_uv"].y) or \
+                   (subject["max_uv"].y < clip["min_uv"].y):
+                    continue
+
+                subject_uvs = [l[uv_layer].uv.copy() for l in f_subject.loops]
+                # slow operation, apply Weiler-Atherton cliping algorithm
+                result, polygons = \
+                    __do_weiler_atherton_cliping(clip_uvs, subject_uvs,
+                                                 mode, same_polygon_threshold)
+                if result:
+                    overlapped_uvs.append({"clip_bmesh": bm,
+                                           "subject_bmesh": bm,
+                                           "clip_face": f_clip,
+                                           "subject_face": f_subject,
+                                           "clip_uv_layer": uv_layer,
+                                           "subject_uv_layer": uv_layer,
                                            "subject_uvs": subject_uvs,
                                            "polygons": polygons})
 
@@ -1308,3 +1378,64 @@ def __is_polygon_same(points1, points2, threshold):
             return False
 
     return True
+
+
+def _is_uv_loop_connected(l1, l2, uv_layer):
+    uv1 = l1[uv_layer].uv
+    uv2 = l2[uv_layer].uv
+    return uv1.x == uv2.x and uv1.y == uv2.y
+
+
+def create_uv_graph(loops, uv_layer):
+    # For looking up faster.
+    loop_index_to_loop = {}     # { loop index: loop }
+    for l in loops:
+        loop_index_to_loop[l.index] = l
+
+    # Setup relationship between uv_vert and loops.
+    # uv_vert is a representative of the loops which shares same
+    # UV coordinate.
+    uv_vert_to_loops = {}   # { uv_vert: loops belonged to uv_vert }
+    loop_to_uv_vert = {}    # { loop: uv_vert belonged to }
+    for l in loops:
+        found = False
+        for k in uv_vert_to_loops.keys():
+            if _is_uv_loop_connected(k, l, uv_layer):
+                uv_vert_to_loops[k].append(l)
+                loop_to_uv_vert[l] = k
+                found = True
+                break
+        if not found:
+            uv_vert_to_loops[l] = [l]
+            loop_to_uv_vert[l] = l
+
+    # Collect adjacent uv_vert.
+    uv_adj_verts = {}       # { uv_vert: adj uv_vert list }
+    for v, vs in uv_vert_to_loops.items():
+        uv_adj_verts[v] = []
+        for ll in vs:
+            ln = ll.link_loop_next
+            lp = ll.link_loop_prev
+            uv_adj_verts[v].append(loop_to_uv_vert[ln])
+            uv_adj_verts[v].append(loop_to_uv_vert[lp])
+        uv_adj_verts[v] = list(set(uv_adj_verts[v]))
+
+    # Setup uv_vert graph.
+    graph = Graph()
+    for v in uv_adj_verts.keys():
+        graph.add_node(
+            Node(v.index, {"uv_vert": v, "loops": uv_vert_to_loops[v]})
+        )
+    edges = []
+    for v, adjs in uv_adj_verts.items():
+        n1 = graph.get_node(v.index)
+        for a in adjs:
+            n2 = graph.get_node(a.index)
+            edges.append(tuple(sorted((n1.key, n2.key))))
+    edges = list(set(edges))
+    for e in edges:
+        n1 = graph.get_node(e[0])
+        n2 = graph.get_node(e[1])
+        graph.add_edge(n1, n2)
+
+    return graph
