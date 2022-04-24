@@ -1584,6 +1584,7 @@ class _defs_sculpt:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.mask_by_color")
             layout.prop(props, "threshold")
+            layout.use_property_split = False
             layout.prop(props, "contiguous")
             layout.prop(props, "invert")
             layout.prop(props, "preserve_previous_mask")
