@@ -3189,7 +3189,6 @@ class VIEW3D_MT_object_cleanup(Menu):
 
         layout.operator("object.material_slot_remove_unused", text="Remove Unused Material Slots", icon = 'DELETE')
 
-
 class VIEW3D_MT_object_asset(Menu):
     bl_label = "Asset"
 
