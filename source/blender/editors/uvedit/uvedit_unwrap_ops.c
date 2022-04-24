@@ -1928,25 +1928,24 @@ static int unwrap_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *uv_ot_unwrap_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "method")) {
-      return CTX_IFACE_(ot->translation_context, "Unwrap Conformal");
+    return CTX_IFACE_(ot->translation_context, "Unwrap Conformal");
   }
   return NULL;
 }
 
 /*bfa - descriptions*/
 static char *uv_ot_unwrap_get_description(bContext *UNUSED(C),
-                                                               wmOperatorType *UNUSED(ot),
-                                                               PointerRNA *ptr)
+                                          wmOperatorType *UNUSED(ot),
+                                          PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "method")) {
-      return BLI_strdup(
-          "Unwrap Conformal unwraps the "
-          "mesh with the method Least Square Conformal Mapping (LSCM)");
+    return BLI_strdup(
+        "Unwrap Conformal unwraps the "
+        "mesh with the method Least Square Conformal Mapping (LSCM)");
   }
   return NULL;
 }
@@ -1961,24 +1960,18 @@ void UV_OT_unwrap(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Unwrap ABF";
-  ot->description =
-      "ABF unwraps the mesh with the method Angle Based Flattening (ABF)";
+  ot->description = "ABF unwraps the mesh with the method Angle Based Flattening (ABF)";
   ot->idname = "UV_OT_unwrap";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* api callbacks */
   ot->exec = unwrap_exec;
-  ot->get_name = uv_ot_unwrap_get_name; /*bfa - tool name*/
+  ot->get_name = uv_ot_unwrap_get_name;               /*bfa - tool name*/
   ot->get_description = uv_ot_unwrap_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_uvmap;
 
   /* properties */
-  RNA_def_enum(ot->srna,
-               "method",
-               method_items,
-               0,
-               "Method",
-               "Unwrapping method");
+  RNA_def_enum(ot->srna, "method", method_items, 0, "Method", "Unwrapping method");
   RNA_def_boolean(ot->srna,
                   "fill_holes",
                   1,

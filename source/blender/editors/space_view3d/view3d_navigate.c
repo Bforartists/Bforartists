@@ -994,7 +994,6 @@ static char *view3d_ot_view_selected_get_description(bContext *UNUSED(C),
   return NULL;
 }
 
-
 void VIEW3D_OT_view_selected(wmOperatorType *ot)
 {
   /* identifiers */
