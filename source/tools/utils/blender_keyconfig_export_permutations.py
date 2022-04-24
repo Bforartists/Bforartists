@@ -126,7 +126,7 @@ def permutation_as_filename(preset, values):
     return quote(
         preset + "_" + ".".join([
             "-".join((str(key), str(val)))
-                for key, val in values
+            for key, val in values
         ]),
         # Needed so forward slashes aren't included in the resulting name.
         safe="",

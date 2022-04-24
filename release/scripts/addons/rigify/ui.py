@@ -227,7 +227,7 @@ class DATA_PT_rigify_layer_names(bpy.types.Panel):
         for i in range(32):
             if i == 16 or i == 29:
                 col1.label()
-            col1.label(text=str(i+1) + '.')
+            col1.label(text=str(i))
 
         for i, rigify_layer in enumerate(arm.rigify_layers):
             # note: rigify_layer == arm.rigify_layers[i]
@@ -563,8 +563,8 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
         row.template_list("DATA_UL_rigify_bone_groups", "", obj.data, "rigify_colors", obj.data, "rigify_colors_index")
 
         col = row.column(align=True)
-        col.operator("armature.rigify_bone_group_add", icon='ZOOM_IN', text="")
-        col.operator("armature.rigify_bone_group_remove", icon='ZOOM_OUT', text="").idx = obj.data.rigify_colors_index
+        col.operator("armature.rigify_bone_group_add", icon='ADD', text="")
+        col.operator("armature.rigify_bone_group_remove", icon='REMOVE', text="").idx = obj.data.rigify_colors_index
         col.menu("DATA_MT_rigify_bone_groups_context_menu", icon='DOWNARROW_HLT', text="")
         row = layout.row()
         row.prop(armature, 'rigify_theme_to_add', text = 'Theme')

@@ -71,6 +71,7 @@ set(CMAKE_PREFIX_PATH ${LIB_SUBDIRS})
 # Find precompiled libraries, and avoid system or user-installed ones.
 
 if(EXISTS ${LIBDIR})
+  include(platform_old_libs_update)
   without_system_libs_begin()
 endif()
 
@@ -214,7 +215,7 @@ if(WITH_SDL)
   find_package(SDL2)
   set(SDL_INCLUDE_DIR ${SDL2_INCLUDE_DIRS})
   set(SDL_LIBRARY ${SDL2_LIBRARIES})
-  string(APPEND PLATFORM_LINKFLAGS " -framework ForceFeedback")
+  string(APPEND PLATFORM_LINKFLAGS " -framework ForceFeedback -framework GameController -framework CoreHaptics")
 endif()
 
 set(PNG_ROOT ${LIBDIR}/png)

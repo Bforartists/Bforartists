@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5348,10 +5348,6 @@ msgstr "Espacio lineal ACES"
 
 msgid "Non-Color"
 msgstr "No es color"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Espacio de color usado para imágenes que contienen datos, en vez de colores (p.ej: mapas de normales)"
 
 
 msgid "Raw"
@@ -62036,12 +62032,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Define un superior para el objeto, sin compensar para mantener la posición"
 
 
-msgid "Set the object's parenting"
-msgstr "Define un superior para el objeto"
-
-
 msgid "Keep Transform"
 msgstr "Mantener transformaciones"
+
+
+msgid "Set the object's parenting"
+msgstr "Define un superior para el objeto"
 
 
 msgid "Apply transformation before parenting"
@@ -63972,10 +63968,6 @@ msgstr "Redefinir biblioteca (jerarquía)"
 
 msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
 msgstr "Hace una redefinición local de este bloque de datos vinculado desde una biblioteca y de su jerarquía de dependencias - sólo se aplicará al elemento activo del Listado"
-
-
-msgid "Reset Library Override"
-msgstr "Restablecer redefinición de biblioteca"
 
 
 msgid "Reset this local override to its linked values"
@@ -75666,22 +75658,6 @@ msgid "Export current scene in a USD archive"
 msgstr "Exportar la escena actual a una archivo de Universal Scene Description"
 
 
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Exporta el rango de procesamiento completo. Si está inactiva, se exportará sólo el fotograma actual"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "Exporta el pelo como curvas USD"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Exporta las opciones de Visualización en vistas de los materiales como materiales de previsualización USD, y los materiales asignados se exportarán como subconjuntos de geometría"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "Incluye las normales de las mallas exportadas"
-
-
 msgid "Export Textures"
 msgstr "Exportar texturas"
 
@@ -75692,10 +75668,6 @@ msgstr "Al exportar materiales, exportar las texturas referenciadas por los nodo
 
 msgid "UV Maps"
 msgstr "Mapas UV"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "Incluye todos los mapas UV de las mallas exportadas"
 
 
 msgid "To USD Preview Surface"
@@ -75722,24 +75694,12 @@ msgid "Make texture asset paths relative to the USD file"
 msgstr "Hace que las rutas de los recursos de texturas sean relativas al archivo USD"
 
 
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Exporta sólo los objetos seleccionados. Los superiores de dichos objetos, que no se encontraran también seleccionados, serán exportados como transformaciones vacías"
-
-
 msgid "Instancing"
 msgstr "Instanciado"
 
 
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Exporta los objetos instanciados como referencias en el USD. Si está inactiva, los mismos serán exportados como objetos reales"
-
-
 msgid "Visible Only"
 msgstr "Sólo objetos visibles"
-
-
-msgid "Only visible objects are exported. Invisible parents of exported objects are exported as empty transform"
-msgstr "Exportar sólo los objetos visibles. Los superiores de dichos objetos, que no se encontraran también visibles, serán exportados como transformaciones vacías"
 
 
 msgctxt "Operator"
@@ -101920,11 +101880,6 @@ msgstr "Terminar de retocar acciones de clips"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Comenzar a retocar acciones de clips"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Agregar pistas sobre la seleccionada"
 
@@ -106538,10 +106493,6 @@ msgstr "<Bloque de ID faltante>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "Ningún puntero RNA disponible de donde obtener valores para esta curva"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "No fue posible insertar un fotograma clave debido a una influencia nula de ANL o del valor base"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -116116,14 +116067,6 @@ msgstr "Normal barniz"
 
 msgid "Sigma"
 msgstr "Sigma"
-
-
-msgid "Height_dx"
-msgstr "Altura_dx"
-
-
-msgid "Height_dy"
-msgstr "Altura_dy"
 
 
 msgid "View Vector"
