@@ -949,7 +949,7 @@ static void symmetry_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(col, ptr, "merge_threshold", 0, IFACE_("Distance"), ICON_NONE);
 
   /*------------------- bfa - original prop */
-  //uiItemR(col, ptr, "use_merge_vertices_cap", 0, IFACE_("First and Last Copies"), ICON_NONE);
+  // uiItemR(col, ptr, "use_merge_vertices_cap", 0, IFACE_("First and Last Copies"), ICON_NONE);
 
   uiLayout *row;
   row = uiLayoutRow(col, true);

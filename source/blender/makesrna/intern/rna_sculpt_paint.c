@@ -1348,8 +1348,7 @@ static void rna_def_particle_edit(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, 0.001, 1.0);
-  RNA_def_property_ui_text(
-      prop, "Strength", "Brush strength\nHotkey in the default keymap: C");
+  RNA_def_property_ui_text(prop, "Strength", "Brush strength\nHotkey in the default keymap: C");
 
   prop = RNA_def_property(srna, "count", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 1, 1000);

@@ -506,7 +506,7 @@ static void falloff_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(row, ptr, "falloff_radius", 0, NULL, ICON_NONE);
 
   /*------------------- bfa - original props */
-  //uiItemR(layout, ptr, "use_falloff_uniform", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_falloff_uniform", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);

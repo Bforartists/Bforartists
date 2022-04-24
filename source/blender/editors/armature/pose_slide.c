@@ -928,7 +928,7 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
 
   switch (pso->channels) {
     case PS_TFM_LOC:
-	/*bfa - changed keys from grs to wer*/
+      /*bfa - changed keys from grs to wer*/
       BLI_snprintf(limits_str,
                    sizeof(limits_str),
                    TIP_("[W]/E/R/B/C - Location only (W to clear) | %s"),
@@ -947,15 +947,14 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
                    axis_str);
       break;
     case PS_TFM_BBONE_SHAPE:
-	/*bfa - changed keys from grs to wer*/
+      /*bfa - changed keys from grs to wer*/
       STRNCPY(limits_str, TIP_("W/E/R/[B]/C - Bendy Bone properties only (B to clear) | %s"));
       break;
     case PS_TFM_PROPS:
       STRNCPY(limits_str, TIP_("W/E/R/B/[C] - Custom Properties only (C to clear) | %s"));
       break;
     default:
-      STRNCPY(
-          limits_str, TIP_("W/E/R/B/C - Limit to Transform/Property Set"));
+      STRNCPY(limits_str, TIP_("W/E/R/B/C - Limit to Transform/Property Set"));
       break;
   }
 

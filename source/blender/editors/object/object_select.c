@@ -750,7 +750,11 @@ static const EnumPropertyItem prop_select_grouped_types[] = {
     {OBJECT_GRPSEL_HOOK, "HOOK", ICON_HOOK, "Hook", ""},
     {OBJECT_GRPSEL_PASS, "PASS", ICON_PASS, "Pass", "Render pass index"},
     {OBJECT_GRPSEL_COLOR, "COLOR", ICON_COLOR, "Color", "Object color"},
-    {OBJECT_GRPSEL_KEYINGSET, "KEYINGSET", ICON_KEYINGSET,"Keying Set", "Objects included in active Keying Set"},
+    {OBJECT_GRPSEL_KEYINGSET,
+     "KEYINGSET",
+     ICON_KEYINGSET,
+     "Keying Set",
+     "Objects included in active Keying Set"},
     {OBJECT_GRPSEL_LIGHT_TYPE, "LIGHT_TYPE", ICON_LIGHT, "Light Type", "Matching light types"},
     {0, NULL, 0, NULL, NULL},
 };
