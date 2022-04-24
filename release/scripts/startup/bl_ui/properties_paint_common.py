@@ -440,7 +440,7 @@ class FalloffPanel(BrushPanel):
             row.operator("brush.curve_preset", icon='LINCURVE', text="").shape = 'LINE'
             row.operator("brush.curve_preset", icon='NOCURVE', text="").shape = 'MAX'
 
-        if mode in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT'} and brush.sculpt_tool != 'POSE':
+        if mode in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'SCULPT_CURVES'} and brush.sculpt_tool != 'POSE':
             col.separator()
             row = col.row(align=True)
             row.use_property_split = True
@@ -858,6 +858,11 @@ def brush_shared_settings(layout, context, brush, popover=False):
         size = True
         strength = True
 
+    # Sculpt Curves #
+    if mode == 'SCULPT_CURVES':
+        size = True
+        strength = True
+
     ### Draw settings. ###
     ups = context.scene.tool_settings.unified_paint_settings
 
@@ -976,6 +981,16 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             row.prop(brush, "use_original_plane", text="Plane")
 
             layout.separator()
+
+    elif mode == 'SCULPT_CURVES':
+        if brush.curves_sculpt_tool == 'ADD':
+            layout.prop(brush.curves_sculpt_settings, "add_amount")
+            layout.prop(brush.curves_sculpt_settings, "curve_length")
+            layout.prop(brush.curves_sculpt_settings, "interpolate_length")
+            layout.prop(brush.curves_sculpt_settings, "interpolate_shape")
+        elif brush.curves_sculpt_tool == 'GROW_SHRINK':
+            layout.prop(brush.curves_sculpt_settings, "scale_uniform")
+            layout.prop(brush.curves_sculpt_settings, "minimum_length")
 
     # 3D and 2D Texture Paint.
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:

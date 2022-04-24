@@ -2087,7 +2087,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESET,
      "OVERRIDE_LIBRARY_RESET",
      ICON_RESET,
-     "Reset Library Override",
+      "Reset Library Override Single",
      "Reset this local override to its linked values"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESET_HIERARCHY,
      "OVERRIDE_LIBRARY_RESET_HIERARCHY",
@@ -2107,18 +2107,18 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "Rebuild this local override from its linked reference, as well as its hierarchy of "
      "dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting "
      "overrides on data-blocks pointer properties)"},
-    {OUTLINER_IDOP_OVERRIDE_LIBRARY_CLEAR_HIERARCHY,
-     "OVERRIDE_LIBRARY_CLEAR_HIERARCHY",
-     ICON_DELETE,
-     "Delete Library Override Hierarchy",
-     "Delete this local override (including its hierarchy of override dependencies) and relink "
-     "its usages to the linked data"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CLEAR_SINGLE,
      "OVERRIDE_LIBRARY_CLEAR_SINGLE",
      ICON_CLEAR,
-     "Clear Single Library Override",
+     "Clear Library Override Single",
      "Delete this local override if possible, else reset it and mark it as non editable, and "
-     "relink its usages to the linked data-blocks"},
+     "relink its usages to the linked data"},
+    {OUTLINER_IDOP_OVERRIDE_LIBRARY_CLEAR_HIERARCHY,
+     "OVERRIDE_LIBRARY_CLEAR_HIERARCHY",
+     ICON_DELETE,
+     "Clear Library Override Hierarchy",
+     "Delete this local override (including its hierarchy of override dependencies) and relink "
+     "its usages to the linked data"},
     {0, "", 0, nullptr, nullptr},
     {OUTLINER_IDOP_COPY, "COPY", ICON_COPYDOWN, "Copy", ""},
     {OUTLINER_IDOP_PASTE, "PASTE", ICON_PASTEDOWN, "Paste", ""},

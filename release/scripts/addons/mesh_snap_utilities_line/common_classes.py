@@ -5,14 +5,14 @@ import bpy
 from mathutils import (
     Vector,
     Matrix,
-    )
+)
 from mathutils.geometry import intersect_point_line
 from .drawing_utilities import SnapDrawn
 from .common_utilities import (
     convert_distance,
     get_units_info,
     location_3d_to_region_2d,
-    )
+)
 
 
 class SnapNavigation():
@@ -25,7 +25,6 @@ class SnapNavigation():
         '_ndof_orbit',
         '_ndof_orbit_zoom',
         '_ndof_pan')
-
 
     @staticmethod
     def debug_key(key):
@@ -53,34 +52,44 @@ class SnapNavigation():
 
         for key in context.window_manager.keyconfigs.user.keymaps['3D View'].keymap_items:
             if key.idname == 'view3d.rotate':
-                self._rotate.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type, key.value))
+                self._rotate.add((self.convert_to_flag(
+                    key.shift, key.ctrl, key.alt), key.type, key.value))
             elif key.idname == 'view3d.move':
-                self._move.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type, key.value))
+                self._move.add((self.convert_to_flag(
+                    key.shift, key.ctrl, key.alt), key.type, key.value))
             elif key.idname == 'view3d.zoom':
                 if key.type == 'WHEELINMOUSE':
-                    self._zoom.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), 'WHEELUPMOUSE', key.value, key.properties.delta))
+                    self._zoom.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), 'WHEELUPMOUSE', key.value, key.properties.delta))
                 elif key.type == 'WHEELOUTMOUSE':
-                    self._zoom.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), 'WHEELDOWNMOUSE', key.value, key.properties.delta))
+                    self._zoom.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), 'WHEELDOWNMOUSE', key.value, key.properties.delta))
                 else:
-                    self._zoom.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type, key.value, key.properties.delta))
+                    self._zoom.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), key.type, key.value, key.properties.delta))
 
             elif self.use_ndof:
                 if key.idname == 'view3d.ndof_all':
-                    self._ndof_all.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type))
+                    self._ndof_all.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), key.type))
                 elif key.idname == 'view3d.ndof_orbit':
-                    self._ndof_orbit.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type))
+                    self._ndof_orbit.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), key.type))
                 elif key.idname == 'view3d.ndof_orbit_zoom':
-                    self._ndof_orbit_zoom.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type))
+                    self._ndof_orbit_zoom.add(
+                        (self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type))
                 elif key.idname == 'view3d.ndof_pan':
-                    self._ndof_pan.add((self.convert_to_flag(key.shift, key.ctrl, key.alt), key.type))
-
+                    self._ndof_pan.add((self.convert_to_flag(
+                        key.shift, key.ctrl, key.alt), key.type))
 
     def run(self, context, event, snap_location):
-        evkey = (self.convert_to_flag(event.shift, event.ctrl, event.alt), event.type, event.value)
+        evkey = (self.convert_to_flag(event.shift, event.ctrl,
+                 event.alt), event.type, event.value)
 
         if evkey in self._rotate:
             if snap_location:
-                bpy.ops.view3d.rotate_custom_pivot('INVOKE_DEFAULT', pivot=snap_location)
+                bpy.ops.view3d.rotate_custom_pivot(
+                    'INVOKE_DEFAULT', pivot=snap_location)
             else:
                 bpy.ops.view3d.rotate('INVOKE_DEFAULT', use_cursor_init=True)
             return True
@@ -93,7 +102,8 @@ class SnapNavigation():
             if evkey == key[0:3]:
                 if key[3]:
                     if snap_location:
-                        bpy.ops.view3d.zoom_custom_target('INVOKE_DEFAULT', delta=key[3], target=snap_location)
+                        bpy.ops.view3d.zoom_custom_target(
+                            'INVOKE_DEFAULT', delta=key[3], target=snap_location)
                     else:
                         bpy.ops.view3d.zoom('INVOKE_DEFAULT', delta=key[3])
                 else:
@@ -132,11 +142,11 @@ class CharMap:
         "c", "m", "d", "k", "h", "a",
         " ", "/", "*", "'", "\""
         # "="
-        }
+    }
     type = {
         'BACK_SPACE', 'DEL',
         'LEFT_ARROW', 'RIGHT_ARROW'
-        }
+    }
 
     def __init__(self, context):
         scale = context.scene.unit_settings.scale_length
@@ -155,28 +165,34 @@ class CharMap:
                     pos = self.line_pos
                     if ascii == ",":
                         ascii = "."
-                    self.length_entered = self.length_entered[:pos] + ascii + self.length_entered[pos:]
+                    self.length_entered = self.length_entered[:pos] + \
+                        ascii + self.length_entered[pos:]
                     self.line_pos += 1
 
                 if self.length_entered:
                     pos = self.line_pos
                     if type == 'BACK_SPACE':
-                        self.length_entered = self.length_entered[:pos - 1] + self.length_entered[pos:]
+                        self.length_entered = self.length_entered[:pos -
+                                                                  1] + self.length_entered[pos:]
                         self.line_pos -= 1
 
                     elif type == 'DEL':
-                        self.length_entered = self.length_entered[:pos] + self.length_entered[pos + 1:]
+                        self.length_entered = self.length_entered[:pos] + \
+                            self.length_entered[pos + 1:]
 
                     elif type == 'LEFT_ARROW':
-                        self.line_pos = (pos - 1) % (len(self.length_entered) + 1)
+                        self.line_pos = (
+                            pos - 1) % (len(self.length_entered) + 1)
 
                     elif type == 'RIGHT_ARROW':
-                        self.line_pos = (pos + 1) % (len(self.length_entered) + 1)
+                        self.line_pos = (
+                            pos + 1) % (len(self.length_entered) + 1)
 
                     try:
-                        self.length_entered_value = bpy.utils.units.to_value(self.unit_system, 'LENGTH', self.length_entered)
+                        self.length_entered_value = bpy.utils.units.to_value(
+                            self.unit_system, 'LENGTH', self.length_entered)
                     except:  # ValueError:
-                        self.length_entered_value = 0.0 #invalid
+                        self.length_entered_value = 0.0  # invalid
                         #self.report({'INFO'}, "Operation not supported yet")
                 else:
                     self.length_entered_value = 0.0
@@ -236,7 +252,7 @@ class Constrain:
             vec = self.orientation[self.orientation_id][1]
             type = 'Y'
 
-        else: # dot_z > dot_y and dot_z > dot_x:
+        else:  # dot_z > dot_y and dot_z > dot_x:
             vec = self.orientation[self.orientation_id][2]
             type = 'Z'
 
@@ -280,7 +296,7 @@ class Constrain:
         return True
 
     def toggle(self):
-        self.rotMat = None # update
+        self.rotMat = None  # update
         if self.preferences.auto_constrain:
             self.orientation_id = (self.orientation_id + 1) % 2
             self.preferences.auto_constrain = self.orientation_id != 0
@@ -292,14 +308,18 @@ class Constrain:
             self.rotMat = rv3d.view_matrix.copy()
 
             self.center = center.copy()
-            self.center_2d = location_3d_to_region_2d(region, rv3d, self.center)
+            self.center_2d = location_3d_to_region_2d(
+                region, rv3d, self.center)
 
             vec = self.center + self.orientation[self.orientation_id][0]
-            self.projected_vecs[0] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+            self.projected_vecs[0] = location_3d_to_region_2d(
+                region, rv3d, vec) - self.center_2d
             vec = self.center + self.orientation[self.orientation_id][1]
-            self.projected_vecs[1] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+            self.projected_vecs[1] = location_3d_to_region_2d(
+                region, rv3d, vec) - self.center_2d
             vec = self.center + self.orientation[self.orientation_id][2]
-            self.projected_vecs[2] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+            self.projected_vecs[2] = location_3d_to_region_2d(
+                region, rv3d, vec) - self.center_2d
 
             self.projected_vecs[0].normalize()
             self.projected_vecs[1].normalize()
@@ -331,12 +351,12 @@ class SnapUtilities:
     """
 
     constrain_keys = {
-        'X': Vector((1,0,0)),
-        'Y': Vector((0,1,0)),
-        'Z': Vector((0,0,1)),
+        'X': Vector((1, 0, 0)),
+        'Y': Vector((0, 1, 0)),
+        'Z': Vector((0, 0, 1)),
         'RIGHT_SHIFT': 'shift',
         'LEFT_SHIFT': 'shift',
-        }
+    }
 
     snapwidgets = []
     constrain = None
@@ -363,7 +383,6 @@ class SnapUtilities:
                 widget.normal = SnapUtilities.constrain_keys[key]
 
         SnapUtilities.constrain = key
-
 
     def snap_context_update_and_return_moving_objects(self, context):
         moving_objects = set()
@@ -405,7 +424,6 @@ class SnapUtilities:
         del children
         return moving_objects, moving_snp_objects
 
-
     def snap_context_update(self, context):
         def visible_objects_and_duplis():
             if self.preferences.outer_verts:
@@ -425,12 +443,12 @@ class SnapUtilities:
         for obj, matrix in visible_objects_and_duplis():
             self.sctx.add_obj(obj, matrix)
 
-
     def snap_context_init(self, context, snap_edge_and_vert=True):
         from .snap_context_l import global_snap_context_get
 
-        #Create Snap Context
-        self.sctx = global_snap_context_get(context.evaluated_depsgraph_get(), context.region, context.space_data)
+        # Create Snap Context
+        self.sctx = global_snap_context_get(
+            context.evaluated_depsgraph_get(), context.region, context.space_data)
         ui_scale = context.preferences.system.ui_scale
         self.sctx.set_pixel_dist(12 * ui_scale)
 
@@ -448,7 +466,7 @@ class SnapUtilities:
                 self.normal = widget.normal
 
         else:
-            #init these variables to avoid errors
+            # init these variables to avoid errors
             self.obj = context.active_object
             self.bm = None
             self.geom = None
@@ -458,7 +476,7 @@ class SnapUtilities:
             preferences = context.preferences.addons[__package__].preferences
             self.preferences = preferences
 
-            #Init DrawCache
+            # Init DrawCache
             self.draw_cache = SnapDrawn(
                 preferences.out_color,
                 preferences.face_color,
@@ -467,26 +485,32 @@ class SnapUtilities:
                 preferences.center_color,
                 preferences.perpendicular_color,
                 preferences.constrain_shift_color,
-                tuple(context.preferences.themes[0].user_interface.axis_x) + (1.0,),
-                tuple(context.preferences.themes[0].user_interface.axis_y) + (1.0,),
-                tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,),
+                tuple(
+                    context.preferences.themes[0].user_interface.axis_x) + (1.0,),
+                tuple(
+                    context.preferences.themes[0].user_interface.axis_y) + (1.0,),
+                tuple(
+                    context.preferences.themes[0].user_interface.axis_z) + (1.0,),
                 self.sctx.rv3d,
                 ui_scale)
 
         self.snap_vert = self.snap_edge = snap_edge_and_vert
 
         shading = context.space_data.shading
-        self.snap_face = not (snap_edge_and_vert and (shading.show_xray or shading.type == 'WIREFRAME'))
+        self.snap_face = not (snap_edge_and_vert and (
+            shading.show_xray or shading.type == 'WIREFRAME'))
 
         self.sctx.set_snap_mode(self.snap_vert, self.snap_edge, self.snap_face)
 
-        #Configure the unit of measure
+        # Configure the unit of measure
         unit_system = context.scene.unit_settings.system
         scale = context.scene.unit_settings.scale_length
         scale /= context.space_data.overlay.grid_scale
-        self.rd = bpy.utils.units.to_value(unit_system, 'LENGTH', str(1 / scale))
+        self.rd = bpy.utils.units.to_value(
+            unit_system, 'LENGTH', str(1 / scale))
 
-        self.incremental = bpy.utils.units.to_value(unit_system, 'LENGTH', str(self.preferences.incremental))
+        self.incremental = bpy.utils.units.to_value(
+            unit_system, 'LENGTH', str(self.preferences.incremental))
 
     def snap_to_grid(self):
         if self.type == 'OUT' and self.preferences.increments_grid:

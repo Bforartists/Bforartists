@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -5299,10 +5299,6 @@ msgstr "ACES სწორხაზოვანი სივრცე"
 
 msgid "Non-Color"
 msgstr "არა-ფერული"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "ფერითი სივრცე გამოყენებული იმ გამოსახულებებისათვის, რომლებიც შეიცავენ არა-ფერით მონაცემებს"
 
 
 msgid "Raw"
@@ -14754,12 +14750,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "დააყენე ობიექტის მშობლობა მობლის ინვერსიული კორექციის დაუყენებლად"
 
 
-msgid "Set the object's parenting"
-msgstr "დააყენე ობიექტის მშობლობა"
-
-
 msgid "Keep Transform"
 msgstr "დატოვე გარდაქმნა"
+
+
+msgid "Set the object's parenting"
+msgstr "დააყენე ობიექტის მშობლობა"
 
 
 msgid "Apply transformation before parenting"

@@ -245,7 +245,7 @@ def check_contents(filepath: str, text: str) -> None:
                 print("Comment Block:", filepath, "failed to find comment end")
                 return
             comment_end += 2
-            comment_block = text[comment_beg + 2 : comment_end - 2]
+            comment_block = text[comment_beg + 2: comment_end - 2]
             comment_block = "\n".join(
                 [l.removeprefix(" *") for l in comment_block.split("\n")]
             )

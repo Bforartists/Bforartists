@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -35277,12 +35277,12 @@ msgid "Make Parent without Inverse"
 msgstr "Kopie ohne Objekte erstellen"
 
 
-msgid "Set the object's parenting"
-msgstr "Objekt als Elternteil festlegen"
-
-
 msgid "Keep Transform"
 msgstr "Visuelle Transformation"
+
+
+msgid "Set the object's parenting"
+msgstr "Objekt als Elternteil festlegen"
 
 
 msgid "Apply transformation before parenting"
@@ -63183,14 +63183,6 @@ msgstr "Klarlack-Normale"
 
 msgid "Sigma"
 msgstr "Sigma"
-
-
-msgid "Height_dx"
-msgstr "Höhe_dx"
-
-
-msgid "Height_dy"
-msgstr "Höhe_dy"
 
 
 msgid "View Vector"

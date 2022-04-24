@@ -449,13 +449,14 @@ class BlendFileBlock:
                     for index in range(dna_name.array_size):
                         for f in struct.fields:
                             yield from self.get_recursive_iter(
-                                    (index, f.dna_name.name_only), path_full,
-                                    default, None, use_nil, use_str, 0)
+                                (index, f.dna_name.name_only), path_full,
+                                default, None, use_nil, use_str, 0)
                 else:
                     for f in struct.fields:
                         yield from self.get_recursive_iter(
-                                f.dna_name.name_only, path_full,
-                                default, None, use_nil, use_str, 0)
+                            f.dna_name.name_only, path_full,
+                            default, None, use_nil, use_str, 0)
+
     def items_recursive_iter(self, use_nil=True):
         for k in self.keys():
             yield from self.get_recursive_iter(k, use_nil=use_nil, use_str=False)

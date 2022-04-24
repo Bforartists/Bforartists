@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -4029,10 +4029,6 @@ msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
 
 msgid "ACES linear space"
 msgstr "ACES 線性空間"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "影像使用的色彩空間，包含非色彩資料 (例如：法向映射)"
 
 
 msgid "Standard RGB Display Space"
@@ -35476,12 +35472,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "以不設定反向親代校正來設定物體的親子關係"
 
 
-msgid "Set the object's parenting"
-msgstr "設定物體的親子關係"
-
-
 msgid "Keep Transform"
 msgstr "保持變換"
+
+
+msgid "Set the object's parenting"
+msgstr "設定物體的親子關係"
 
 
 msgid "Apply transformation before parenting"
@@ -54778,11 +54774,6 @@ msgstr "已連結複本"
 msgctxt "Operator"
 msgid "Stop Tweaking Strip Actions"
 msgstr "停止調校片段動作"
-
-
-msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "開始調校片段動作"
 
 
 msgctxt "Operator"

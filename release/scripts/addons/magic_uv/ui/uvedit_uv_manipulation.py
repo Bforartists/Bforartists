@@ -4,8 +4,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 import bpy
 
@@ -184,10 +184,18 @@ class MUV_PT_UVEdit_UVManipulation(bpy.types.Panel):
                 sc.muv_pack_uv_allowable_center_deviation
             ops.allowable_size_deviation = \
                 sc.muv_pack_uv_allowable_size_deviation
+            ops.accurate_island_copy = \
+                sc.muv_pack_uv_accurate_island_copy
+            ops.stride = sc.muv_pack_uv_stride
+            ops.apply_pack_uv = sc.muv_pack_uv_apply_pack_uv
+            box.prop(sc, "muv_pack_uv_apply_pack_uv")
+            box.prop(sc, "muv_pack_uv_accurate_island_copy")
             box.label(text="Allowable Center Deviation:")
             box.prop(sc, "muv_pack_uv_allowable_center_deviation", text="")
             box.label(text="Allowable Size Deviation:")
             box.prop(sc, "muv_pack_uv_allowable_size_deviation", text="")
+            box.label(text="Stride:")
+            box.prop(sc, "muv_pack_uv_stride", text="")
 
         box = layout.box()
         box.prop(sc, "muv_clip_uv_enabled", text="Clip UV")

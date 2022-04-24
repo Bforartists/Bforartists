@@ -11,17 +11,20 @@ class VIEW3D_OT_rotate_custom_pivot(bpy.types.Operator):
     __slots__ = 'rv3d', 'init_coord', 'pos1', 'view_rot'
 
     pivot: bpy.props.FloatVectorProperty("Pivot", subtype='XYZ')
-    g_up_axis: bpy.props.FloatVectorProperty("up_axis", default=(0.0, 0.0, 1.0), subtype='XYZ')
+    g_up_axis: bpy.props.FloatVectorProperty(
+        "up_axis", default=(0.0, 0.0, 1.0), subtype='XYZ')
     sensitivity: bpy.props.FloatProperty("sensitivity", default=0.007)
 
     def modal(self, context, event):
         from mathutils import Matrix
-        if event.value == 'PRESS' and event.type in {'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'}:
+        if event.type in {'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'}:
             dx = self.init_coord[0] - event.mouse_region_x
             dy = self.init_coord[1] - event.mouse_region_y
-            rot_ver = Matrix.Rotation(-dx * self.sensitivity, 3, self.g_up_axis)
-            rot_hor = Matrix.Rotation(dy * self.sensitivity, 3, self.view_rot[0])
-            rot_mat =  rot_hor @ rot_ver
+            rot_ver = Matrix.Rotation(-dx *
+                                      self.sensitivity, 3, self.g_up_axis)
+            rot_hor = Matrix.Rotation(
+                dy * self.sensitivity, 3, self.view_rot[0])
+            rot_mat = rot_hor @ rot_ver
             view_matrix = self.view_rot @ rot_mat
 
             pos = self.pos1 @ rot_mat + self.pivot
@@ -64,13 +67,15 @@ class VIEW3D_OT_zoom_custom_target(bpy.types.Operator):
                 self.heigt_up = context.area.height - self.init_mouse_region_y
                 self.rv3d.view_location = self.target
 
-            fac = (event.mouse_region_y - self.init_mouse_region_y) / self.heigt_up
+            fac = (event.mouse_region_y -
+                   self.init_mouse_region_y) / self.heigt_up
             ret = 'RUNNING_MODAL'
         else:
             fac = self.step_factor * self.delta
             ret = 'FINISHED'
 
-        self.rv3d.view_location = self.init_loc + (self.target - self.init_loc) * fac
+        self.rv3d.view_location = self.init_loc + \
+            (self.target - self.init_loc) * fac
         self.rv3d.view_distance = self.init_dist - self.init_dist * fac
 
         context.area.tag_redraw()
@@ -82,10 +87,10 @@ class VIEW3D_OT_zoom_custom_target(bpy.types.Operator):
         self.rv3d = context.region_data
         self.init_dist = self.rv3d.view_distance
         if ((self.delta <= 0 and self.init_dist < dist_range[1]) or
-            (self.delta >  0 and self.init_dist > dist_range[0])):
-                self.init_loc = self.rv3d.view_location.copy()
+                (self.delta > 0 and self.init_dist > dist_range[0])):
+            self.init_loc = self.rv3d.view_location.copy()
 
-                context.window_manager.modal_handler_add(self)
-                return {'RUNNING_MODAL'}
+            context.window_manager.modal_handler_add(self)
+            return {'RUNNING_MODAL'}
 
         return {'FINISHED'}

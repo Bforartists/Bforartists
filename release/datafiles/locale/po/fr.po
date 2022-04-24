@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -49584,12 +49584,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Définir l’apparentement de l’objet sans régler la correction de parenté inverse"
 
 
-msgid "Set the object's parenting"
-msgstr "Définir l’apparentement de l’objet"
-
-
 msgid "Keep Transform"
 msgstr "Conserver transformation"
+
+
+msgid "Set the object's parenting"
+msgstr "Définir l’apparentement de l’objet"
 
 
 msgid "Apply transformation before parenting"
@@ -75255,11 +75255,6 @@ msgstr "Dupliquer lié"
 msgctxt "Operator"
 msgid "Stop Tweaking Strip Actions"
 msgstr "Arrêter ajustage des bandes d’action"
-
-
-msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Commencer ajustage des bandes d’action"
 
 
 msgctxt "Operator"

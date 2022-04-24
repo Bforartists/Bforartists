@@ -615,9 +615,6 @@ typedef struct SculptSession {
   union {
     struct {
       struct SculptVertexPaintGeomMap gmap;
-
-      /* For non-airbrush painting to re-apply from the original (MLoop aligned). */
-      unsigned int *previous_color;
     } vpaint;
 
     struct {
@@ -734,6 +731,7 @@ enum {
 };
 
 /* paint_canvas.cc */
+
 /**
  * Create a key that can be used to compare with previous ones to identify changes.
  * The resulting 'string' is owned by the caller.
