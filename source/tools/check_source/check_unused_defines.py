@@ -33,22 +33,25 @@ defines = {}
 
 import re
 re_words = re.compile("[A-Za-z_][A-Za-z_0-9]*")
-re_defines = re.compile("^\s*#define\s+([A-Za-z_][A-Za-z_0-9]*)", re.MULTILINE)
+re_defines = re.compile("^\\s*#define\\s+([A-Za-z_][A-Za-z_0-9]*)", re.MULTILINE)
 
 # From
 # https://stackoverflow.com/a/18381470/432509
+
+
 def remove_comments(string):
     pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
     # first group captures quoted strings (double or single)
     # second group captures comments (//single-line or /* multi-line */)
-    regex = re.compile(pattern, re.MULTILINE|re.DOTALL)
+    regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
+
     def _replacer(match):
         # if the 2nd group (capturing comments) is not None,
         # it means we have captured a non-quoted (real) comment string.
         if match.group(2) is not None:
-            return "" # so we will return empty to remove the comment
+            return ""  # so we will return empty to remove the comment
         else:  # otherwise, we will return the 1st group
-            return match.group(1) # capture
+            return match.group(1)  # capture
     return regex.sub(_replacer, string)
 
 
@@ -66,6 +69,7 @@ def extract_terms(fn, data_src):
 
     # Don't edit the file.
     return None
+
 
 run(
     directories=[os.path.join(SOURCE_DIR, d) for d in SOURCE_DIRS],

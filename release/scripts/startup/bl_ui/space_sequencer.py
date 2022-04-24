@@ -478,6 +478,7 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
+            layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
 
             layout.separator()
 

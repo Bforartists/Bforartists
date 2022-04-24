@@ -4,8 +4,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 from math import fabs
 
@@ -21,23 +21,24 @@ from mathutils import Vector
 
 from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
+from ..utils.graph import graph_is_isomorphic
 from ..utils import compatibility as compat
 from .. import common
 
 
 def _is_valid_context(context):
+    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
+    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
+    # after the execution
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
+        return False
+
     objs = common.get_uv_editable_objects(context)
     if not objs:
         return False
 
     # only edit mode is allowed to execute
     if context.object.mode != 'EDIT':
-        return False
-
-    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
-    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
-    # after the execution
-    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -137,15 +138,36 @@ class _Properties:
             min=0.000001,
             max=10.0,
             default=(0.001, 0.001),
-            size=2
+            size=2,
+            subtype='XYZ'
         )
         scene.muv_pack_uv_allowable_size_deviation = FloatVectorProperty(
             name="Allowable Size Deviation",
-            description="Allowable sizse deviation to judge same UV island",
+            description="Allowable sizes deviation to judge same UV island",
             min=0.000001,
             max=10.0,
             default=(0.001, 0.001),
-            size=2
+            size=2,
+            subtype='XYZ'
+        )
+        scene.muv_pack_uv_accurate_island_copy = BoolProperty(
+            name="Accurate Island Copy",
+            description="Copy islands topologically",
+            default=True
+        )
+        scene.muv_pack_uv_stride = FloatVectorProperty(
+            name="Stride",
+            description="Stride UV coordinates",
+            min=-100.0,
+            max=100.0,
+            default=(0.0, 0.0),
+            size=2,
+            subtype='XYZ'
+        )
+        scene.muv_pack_uv_apply_pack_uv = BoolProperty(
+            name="Apply Pack UV",
+            description="Apply Pack UV operation intrinsic to Blender itself",
+            default=True
         )
 
     @classmethod
@@ -153,6 +175,9 @@ class _Properties:
         del scene.muv_pack_uv_enabled
         del scene.muv_pack_uv_allowable_center_deviation
         del scene.muv_pack_uv_allowable_size_deviation
+        del scene.muv_pack_uv_accurate_island_copy
+        del scene.muv_pack_uv_stride
+        del scene.muv_pack_uv_apply_pack_uv
 
 
 @BlClassRegistry()
@@ -188,7 +213,8 @@ class MUV_OT_PackUV(bpy.types.Operator):
         min=0.000001,
         max=10.0,
         default=(0.001, 0.001),
-        size=2
+        size=2,
+        subtype='XYZ'
     )
     allowable_size_deviation = FloatVectorProperty(
         name="Allowable Size Deviation",
@@ -196,7 +222,27 @@ class MUV_OT_PackUV(bpy.types.Operator):
         min=0.000001,
         max=10.0,
         default=(0.001, 0.001),
-        size=2
+        size=2,
+        subtype='XYZ'
+    )
+    accurate_island_copy = BoolProperty(
+        name="Accurate Island Copy",
+        description="Copy islands topologically",
+        default=True
+    )
+    stride = FloatVectorProperty(
+        name="Stride",
+        description="Stride UV coordinates",
+        min=-100.0,
+        max=100.0,
+        default=(0.0, 0.0),
+        size=2,
+        subtype='XYZ'
+    )
+    apply_pack_uv = BoolProperty(
+        name="Apply Pack UV",
+        description="Apply Pack UV operation intrinsic to Blender itself",
+        default=True
     )
 
     @classmethod
@@ -249,7 +295,8 @@ class MUV_OT_PackUV(bpy.types.Operator):
         for obj in objs:
             bmesh.update_edit_mesh(obj.data)
         bpy.ops.uv.select_all(action='SELECT')
-        bpy.ops.uv.pack_islands(rotate=self.rotate, margin=self.margin)
+        if self.apply_pack_uv:
+            bpy.ops.uv.pack_islands(rotate=self.rotate, margin=self.margin)
 
         # copy/paste UV among same islands
         for gidx in range(num_group):
@@ -260,16 +307,57 @@ class MUV_OT_PackUV(bpy.types.Operator):
             src_bm = island_to_bm[group[0]["id"]]
             src_uv_layer = island_to_uv_layer[group[0]["id"]]
             src_loop_lists = bm_to_loop_lists[src_bm]
-            for g in group[1:]:
+
+            src_loops = []
+            for f in group[0]["faces"]:
+                for l in f["face"].loops:
+                    src_loops.append(l)
+
+            src_uv_graph = common.create_uv_graph(src_loops, src_uv_layer)
+
+            for stride_idx, g in enumerate(group[1:]):
                 dst_bm = island_to_bm[g["id"]]
                 dst_uv_layer = island_to_uv_layer[g["id"]]
                 dst_loop_lists = bm_to_loop_lists[dst_bm]
-                for (src_face, dest_face) in zip(
-                        group[0]['sorted'], g['sorted']):
-                    for (src_loop, dest_loop) in zip(
-                            src_face['face'].loops, dest_face['face'].loops):
-                        dst_loop_lists[dest_loop.index][dst_uv_layer].uv = \
-                            src_loop_lists[src_loop.index][src_uv_layer].uv
+
+                dst_loops = []
+                for f in g["faces"]:
+                    for l in f["face"].loops:
+                        dst_loops.append(l)
+
+                dst_uv_graph = common.create_uv_graph(dst_loops, dst_uv_layer)
+
+                uv_stride = Vector(((stride_idx + 1) * self.stride.x,
+                                    (stride_idx + 1) * self.stride.y))
+                if self.accurate_island_copy:
+                    # Check if the graph is isomorphic.
+                    # If the graph is isomorphic, matching pair is returned.
+                    result, pairs = graph_is_isomorphic(
+                        src_uv_graph, dst_uv_graph)
+                    if not result:
+                        self.report(
+                            {'WARNING'},
+                            "Island does not match. "
+                            "Disable 'Accurate Island Copy' and try again")
+                        return {'CANCELLED'}
+
+                    # Paste UV island.
+                    for n1, n2 in pairs.items():
+                        uv1 = n1.value["uv_vert"][src_uv_layer].uv
+                        l2 = n2.value["loops"]
+                        for l in l2:
+                            l[dst_uv_layer].uv = uv1 + uv_stride
+                else:
+                    for (src_face, dest_face) in zip(
+                            group[0]['sorted'], g['sorted']):
+                        for (src_loop, dest_loop) in zip(
+                                src_face['face'].loops,
+                                dest_face['face'].loops):
+                            src_lidx = src_loop.index
+                            dst_lidx = dest_loop.index
+                            dst_loop_lists[dst_lidx][dst_uv_layer].uv = \
+                                src_loop_lists[src_lidx][src_uv_layer].uv + \
+                                uv_stride
 
         # restore face/UV selection
         bpy.ops.uv.select_all(action='DESELECT')

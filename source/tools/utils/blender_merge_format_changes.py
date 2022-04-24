@@ -11,11 +11,13 @@ format_commits = (
     'e12c08e8d170b7ca40f204a5b0423c23a9fbc2c1',
     '91a9cd0a94000047248598394c41ac30f893f147',
     '3076d95ba441cd32706a27d18922a30f8fd28b8a',
-    )
+)
 pre_format_commit = format_commits[0] + '~1'
+
 
 def get_string(cmd):
     return subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf8').strip()
+
 
 # Parse arguments.
 mode = None
@@ -73,7 +75,7 @@ if mode == 'rebase':
     mode_cmd = 'rebase'
 else:
     branch = get_string(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    mode_cmd = 'merge --no-edit -m "Merge \'' + base_branch + '\' into \'' + branch + '\'"';
+    mode_cmd = 'merge --no-edit -m "Merge \'' + base_branch + '\' into \'' + branch + '\'"'
 
 # Rebase up to the clang-format commit.
 code = os.system('git merge-base --is-ancestor ' + pre_format_commit + ' HEAD')

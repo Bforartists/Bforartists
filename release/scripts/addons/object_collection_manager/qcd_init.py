@@ -104,8 +104,8 @@ def register_qcd():
     if prefs.enable_qcd_view_edit_mode_hotkeys:
         register_qcd_view_edit_mode_hotkeys()
 
-    bpy.types.VIEW3D_HT_header.append(ui.view3d_header_qcd_slots)
-    bpy.types.TOPBAR_HT_upper_bar.append(ui.view_layer_update)
+    if prefs.enable_qcd_3dview_header_widget:
+        register_qcd_3dview_header_widget()
 
 
 def register_qcd_view_hotkeys():
@@ -247,10 +247,14 @@ def register_qcd_view_edit_mode_hotkeys():
         addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
 
 
+def register_qcd_3dview_header_widget():
+    bpy.types.VIEW3D_HT_header.append(ui.view3d_header_qcd_slots)
+    bpy.types.TOPBAR_HT_upper_bar.append(ui.view_layer_update)
+
+
 
 def unregister_qcd():
-    bpy.types.VIEW3D_HT_header.remove(ui.view3d_header_qcd_slots)
-    bpy.types.TOPBAR_HT_upper_bar.remove(ui.view_layer_update)
+    unregister_qcd_3dview_header_widget()
 
     for cls in qcd_classes:
         bpy.utils.unregister_class(cls)
@@ -288,3 +292,8 @@ def unregister_qcd_view_edit_mode_hotkeys():
     for km, kmi in addon_qcd_view_edit_mode_hotkey_keymaps:
         km.keymap_items.remove(kmi)
     addon_qcd_view_edit_mode_hotkey_keymaps.clear()
+
+
+def unregister_qcd_3dview_header_widget():
+    bpy.types.VIEW3D_HT_header.remove(ui.view3d_header_qcd_slots)
+    bpy.types.TOPBAR_HT_upper_bar.remove(ui.view_layer_update)

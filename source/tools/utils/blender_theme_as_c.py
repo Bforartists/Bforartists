@@ -71,6 +71,7 @@ def repr_f32(f):
             return "%.*f" % (i, f_test)
     return f_str
 
+
 import os
 
 # Avoid maintaining multiple blendfile modules

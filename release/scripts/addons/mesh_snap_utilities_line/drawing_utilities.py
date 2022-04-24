@@ -4,7 +4,7 @@ from mathutils import Vector, Matrix
 
 
 class SnapDrawn():
-    __slots__ = (\
+    __slots__ = (
         'out_color',
         'face_color',
         'edge_color',
@@ -50,11 +50,14 @@ class SnapDrawn():
         self._line_width = 3 * ui_scale
 
         self._format_pos = gpu.types.GPUVertFormat()
-        self._format_pos.attr_add(id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
+        self._format_pos.attr_add(
+            id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
 
         self._format_pos_and_color = gpu.types.GPUVertFormat()
-        self._format_pos_and_color.attr_add(id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
-        self._format_pos_and_color.attr_add(id="color", comp_type='F32', len=4, fetch_mode='FLOAT')
+        self._format_pos_and_color.attr_add(
+            id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
+        self._format_pos_and_color.attr_add(
+            id="color", comp_type='F32', len=4, fetch_mode='FLOAT')
 
         self._UBO = None
 
@@ -63,8 +66,10 @@ class SnapDrawn():
     def _gl_state_push(self, ob_mat=None):
         clip_planes = self.rv3d.clip_planes if self.rv3d.use_clip_planes else None
         config = 'CLIPPED' if clip_planes else 'DEFAULT'
-        self._program_unif_col = gpu.shader.from_builtin("3D_UNIFORM_COLOR", config=config)
-        self._program_smooth_col = gpu.shader.from_builtin("3D_SMOOTH_COLOR", config=config)
+        self._program_unif_col = gpu.shader.from_builtin(
+            "3D_UNIFORM_COLOR", config=config)
+        self._program_smooth_col = gpu.shader.from_builtin(
+            "3D_SMOOTH_COLOR", config=config)
 
         gpu.state.program_point_size_set(False)
         gpu.state.blend_set('ALPHA')
@@ -76,6 +81,7 @@ class SnapDrawn():
             gpu.state.clip_distances_set(4)
             if self._UBO is None:
                 import ctypes
+
                 class _GPUClipPlanes(ctypes.Structure):
                     _pack_ = 16
                     _fields_ = [
@@ -118,9 +124,9 @@ class SnapDrawn():
             GPUBatch,
         )
 
-        vbo = GPUVertBuf(self._format_pos, len = len(coords))
-        vbo.attr_fill(0, data = coords)
-        batch_lines = GPUBatch(type = "LINE_STRIP", buf = vbo)
+        vbo = GPUVertBuf(self._format_pos, len=len(coords))
+        vbo.attr_fill(0, data=coords)
+        batch_lines = GPUBatch(type="LINE_STRIP", buf=vbo)
         return batch_lines
 
     def batch_lines_smooth_color_create(self, coords, colors):
@@ -129,10 +135,10 @@ class SnapDrawn():
             GPUBatch,
         )
 
-        vbo = GPUVertBuf(self._format_pos_and_color, len = len(coords))
-        vbo.attr_fill(0, data = coords)
-        vbo.attr_fill(1, data = colors)
-        batch_lines = GPUBatch(type = "LINES", buf = vbo)
+        vbo = GPUVertBuf(self._format_pos_and_color, len=len(coords))
+        vbo.attr_fill(0, data=coords)
+        vbo.attr_fill(1, data=colors)
+        batch_lines = GPUBatch(type="LINES", buf=vbo)
         return batch_lines
 
     def batch_triangles_create(self, coords):
@@ -141,9 +147,9 @@ class SnapDrawn():
             GPUBatch,
         )
 
-        vbo = GPUVertBuf(self._format_pos, len = len(coords))
-        vbo.attr_fill(0, data = coords)
-        batch_tris = GPUBatch(type = "TRIS", buf = vbo)
+        vbo = GPUVertBuf(self._format_pos, len=len(coords))
+        vbo.attr_fill(0, data=coords)
+        batch_tris = GPUBatch(type="TRIS", buf=vbo)
         return batch_tris
 
     def batch_point_get(self):
@@ -152,9 +158,9 @@ class SnapDrawn():
                 GPUVertBuf,
                 GPUBatch,
             )
-            vbo = GPUVertBuf(self._format_pos, len = 1)
+            vbo = GPUVertBuf(self._format_pos, len=1)
             vbo.attr_fill(0, ((0.0, 0.0, 0.0),))
-            self._batch_point = GPUBatch(type = "POINTS", buf = vbo)
+            self._batch_point = GPUBatch(type="POINTS", buf=vbo)
         return self._batch_point
 
     def draw(self, type, location, list_verts_co, vector_constrain, prevloc):
@@ -171,7 +177,8 @@ class SnapDrawn():
             gpu.matrix.load_projection_matrix(winmat)
             gpu.state.line_width_set(self._line_width)
 
-            batch = self.batch_line_strip_create([v.to_tuple() for v in list_verts_co] + [location.to_tuple()])
+            batch = self.batch_line_strip_create(
+                [v.to_tuple() for v in list_verts_co] + [location.to_tuple()])
 
             self._program_unif_col.bind()
             self._program_unif_col.uniform_float("color", (1.0, 0.8, 0.0, 0.5))
@@ -189,7 +196,8 @@ class SnapDrawn():
                 gpu.matrix.translate(prevloc)
 
                 self._program_unif_col.bind()
-                self._program_unif_col.uniform_float("color", (1.0, 1.0, 1.0, 0.5))
+                self._program_unif_col.uniform_float(
+                    "color", (1.0, 1.0, 1.0, 0.5))
 
                 point_batch.draw(self._program_unif_col)
                 gpu.matrix.translate(-prevloc)
@@ -215,7 +223,7 @@ class SnapDrawn():
                 Color4f = self.center_color
             elif type == 'PERPENDICULAR':
                 Color4f = self.perpendicular_color
-            else: # type == None
+            else:  # type == None
                 Color4f = self.out_color
 
         gpu.state.point_size_set(2 * self._point_size)
@@ -233,7 +241,7 @@ class SnapDrawn():
         self._gl_state_restore()
 
     def draw_elem(self, snap_obj, bm, elem):
-        #TODO: Cache coords (because antialiasing)
+        # TODO: Cache coords (because antialiasing)
         import gpu
         from bmesh.types import(
             BMVert,
@@ -249,16 +257,19 @@ class SnapDrawn():
                 import numpy as np
 
                 color = self.vert_color
-                edges = np.empty((len(elem.link_edges), 2), [("pos", "f4", 3), ("color", "f4", 4)])
+                edges = np.empty((len(elem.link_edges), 2), [
+                                 ("pos", "f4", 3), ("color", "f4", 4)])
                 edges["pos"][:, 0] = elem.co
-                edges["pos"][:, 1] = [e.other_vert(elem).co for e in elem.link_edges]
+                edges["pos"][:, 1] = [e.other_vert(
+                    elem).co for e in elem.link_edges]
                 edges["color"][:, 0] = color
                 edges["color"][:, 1] = (color[0], color[1], color[2], 0.0)
                 edges.shape = -1
 
                 self._program_smooth_col.bind()
                 gpu.state.line_width_set(self._line_width)
-                batch = self.batch_lines_smooth_color_create(edges["pos"], edges["color"])
+                batch = self.batch_lines_smooth_color_create(
+                    edges["pos"], edges["color"])
                 batch.draw(self._program_smooth_col)
                 gpu.state.line_width_set(1.0)
         else:
@@ -267,7 +278,8 @@ class SnapDrawn():
                 self._program_unif_col.uniform_float("color", self.edge_color)
 
                 gpu.state.line_width_set(self._line_width)
-                batch = self.batch_line_strip_create([v.co for v in elem.verts])
+                batch = self.batch_line_strip_create(
+                    [v.co for v in elem.verts])
                 batch.draw(self._program_unif_col)
                 gpu.state.line_width_set(1.0)
 

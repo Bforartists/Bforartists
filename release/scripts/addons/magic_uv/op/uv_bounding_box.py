@@ -4,8 +4,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 from enum import IntEnum
 import math
@@ -30,6 +30,12 @@ MAX_VALUE = 100000.0
 
 
 def _is_valid_context(context):
+    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
+    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
+    # after the execution
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
+        return False
+
     obj = context.object
 
     # only edit mode is allowed to execute
@@ -38,12 +44,6 @@ def _is_valid_context(context):
     if obj.type != 'MESH':
         return False
     if context.object.mode != 'EDIT':
-        return False
-
-    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
-    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
-    # after the execution
-    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True

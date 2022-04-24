@@ -15,6 +15,7 @@ TextOpFn = Callable[
     Optional[str]
 ]
 
+
 def operation_wrap(args: Tuple[str, TextOpFn]) -> None:
     fn, text_operation = args
     with open(fn, "r", encoding="utf-8") as f:
@@ -27,7 +28,9 @@ def operation_wrap(args: Tuple[str, TextOpFn]) -> None:
     with open(fn, "w", encoding="utf-8") as f:
         f.write(data_dst)
 
-def run(*,
+
+def run(
+        *,
         directories: Sequence[str],
         is_text: Callable[[str], bool],
         text_operation: TextOpFn,

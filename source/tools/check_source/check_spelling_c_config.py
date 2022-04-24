@@ -143,6 +143,7 @@ dict_custom = {
     "occluders",
     "optionals",
     "orthogonalize",
+    "orthonormalized",
     "overridable",
     "paddings",
     "pannable",
@@ -189,6 +190,7 @@ dict_custom = {
     "rasterizer",
     "rasterizes",
     "rasterizing",
+    "reallocations",
     "rebalancing",
     "recomputation",
     "recurse",
@@ -258,6 +260,7 @@ dict_custom = {
     "unpause",
     "unpaused"
     "unproject",
+    "unquantifiable",
     "unregister",
     "unregisters",
     "unselected",
