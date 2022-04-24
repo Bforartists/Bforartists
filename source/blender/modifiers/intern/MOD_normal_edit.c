@@ -699,7 +699,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
 
-
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "use_direction_parallel", 0, NULL, ICON_NONE);
 

@@ -2904,7 +2904,8 @@ static int panel_draw_width_from_max_width_get(const ARegion *region,
   else {
     /* With a background, we want some extra padding*/
     return UI_panel_should_show_background(region, panel_type) ?
-      max_width - UI_PANEL_MARGIN_X * 2.0f : max_width;
+               max_width - UI_PANEL_MARGIN_X * 2.0f :
+               max_width;
   }
 }
 

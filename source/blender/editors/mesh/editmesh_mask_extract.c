@@ -579,7 +579,7 @@ static int paint_mask_slice_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
@@ -599,8 +599,6 @@ static const char *wm_paint_mask_slide_get_name(wmOperatorType *ot, PointerRNA *
   }
   return NULL;
 }
-
-
 
 /*bfa - descriptions*/
 static char *wm_paint_mask_slide_get_description(bContext *UNUSED(C),

@@ -1588,13 +1588,14 @@ static const char *SEQUENCER_OT_split_get_name(wmOperatorType *ot, PointerRNA *p
 
 /*bfa - descriptions*/
 static char *SEQUENCER_OT_split_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "type") == SEQ_SPLIT_HARD) {
     return BLI_strdup(
-        "Split the selected strips in two\nBut you cannot drag the endpoints to show the frames past the split of each resulting strip");
+        "Split the selected strips in two\nBut you cannot drag the endpoints to show the frames "
+        "past the split of each resulting strip");
   }
 
   return NULL;
@@ -1610,7 +1611,7 @@ void SEQUENCER_OT_split(struct wmOperatorType *ot)
   /* Api callbacks. */
   ot->invoke = sequencer_split_invoke;
   ot->exec = sequencer_split_exec;
-  ot->get_name = SEQUENCER_OT_split_get_name;                   /*bfa - tool name*/
+  ot->get_name = SEQUENCER_OT_split_get_name;               /*bfa - tool name*/
   ot->get_description = SEQUENCER_OT_split_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
   ot->ui = sequencer_split_ui;
@@ -2390,18 +2391,16 @@ static const char *SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *pt
 
 /*bfa - descriptions*/
 static char *SEQUENCER_OT_swap_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+                                               wmOperatorType *UNUSED(ot),
+                                               PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "side") == SEQ_SIDE_RIGHT) {
-    return BLI_strdup(
-        "Swap active strip with strip to the right");
+    return BLI_strdup("Swap active strip with strip to the right");
   }
   /*Deselect*/
   else if (RNA_enum_get(ptr, "side") == SEQ_SIDE_LEFT) {
-    return BLI_strdup(
-        "Swap active strip with strip to the left");
+    return BLI_strdup("Swap active strip with strip to the left");
   }
   return NULL;
 }
@@ -2415,7 +2414,7 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
 
   /* Api callbacks. */
   ot->exec = sequencer_swap_exec;
-  ot->get_name = SEQUENCER_OT_swap_get_name;                    /*bfa - tool name*/
+  ot->get_name = SEQUENCER_OT_swap_get_name;               /*bfa - tool name*/
   ot->get_description = SEQUENCER_OT_swap_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
 
@@ -3451,8 +3450,16 @@ void SEQUENCER_OT_strip_transform_clear(struct wmOperatorType *ot)
 
 static const EnumPropertyItem scale_fit_methods[] = {
     {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale the image so that it fits in the preview"},
-    {SEQ_SCALE_TO_FILL, "FILL", 0, "Scale to Fill", "Scale the image so that it fills the preview completely"},
-    {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch the image so that it fills the preview"},
+    {SEQ_SCALE_TO_FILL,
+     "FILL",
+     0,
+     "Scale to Fill",
+     "Scale the image so that it fills the preview completely"},
+    {SEQ_STRETCH_TO_FILL,
+     "STRETCH",
+     0,
+     "Stretch to Fill",
+     "Stretch the image so that it fills the preview"},
     {0, NULL, 0, NULL, NULL},
 };
 

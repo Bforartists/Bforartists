@@ -187,7 +187,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemDecoratorR(row, ptr, "use_keep_loop", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-
   gpencil_modifier_panel_end(layout, ptr);
 }
 
