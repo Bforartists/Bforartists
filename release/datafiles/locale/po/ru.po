@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -52652,12 +52652,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Установить родителя объекта без инвертирования родительских координат"
 
 
-msgid "Set the object's parenting"
-msgstr "Установить родителя объекта"
-
-
 msgid "Keep Transform"
 msgstr "Сохранить трансформацию"
+
+
+msgid "Set the object's parenting"
+msgstr "Установить родителя объекта"
 
 
 msgid "Apply transformation before parenting"
@@ -63171,24 +63171,12 @@ msgid "Site"
 msgstr "Сайт"
 
 
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Если отмечено, экспортировать диапазон кадров рендера. Если отключено, экспортировать только текущий кадр"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Экспортировать настройки вьюпорта для материалов в качестве материалы предпросмотра USD, а применения материалов — как подмножества геометрий"
-
-
 msgid "UV Maps"
 msgstr "UV-карты"
 
 
 msgid "Instancing"
 msgstr "Создание экземпляров"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Экспортировать экземпляры объектов как ссылки в USD. Если выключено, экземпляры объектов экспортируются как реальные объекты"
 
 
 msgctxt "Operator"
@@ -83208,11 +83196,6 @@ msgstr "Остановить настройку действий дорожки"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Начать настройку действий дорожки"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Добавить треки над выделением"
 
@@ -86806,10 +86789,6 @@ msgstr "<Отсутствующий ID-блок>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "Нет доступного RNA-указателя для получения значений этой f-кривой"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "Не удалось вставить ключевой кадр из-за нулевого влияния NLA или базового значения"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -93135,14 +93114,6 @@ msgstr "Нормаль лака"
 
 msgid "Sigma"
 msgstr "Сигма"
-
-
-msgid "Height_dx"
-msgstr "Height_dx"
-
-
-msgid "Height_dy"
-msgstr "Height_dy"
 
 
 msgid "View Vector"

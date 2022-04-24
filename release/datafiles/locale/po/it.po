@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -34970,12 +34970,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Imposta la parentela degli oggetti senza impostare la correzione della parentela inversa"
 
 
-msgid "Set the object's parenting"
-msgstr "Imposta la parentela dell'oggetto"
-
-
 msgid "Keep Transform"
 msgstr "Mantieni Trasformazione"
+
+
+msgid "Set the object's parenting"
+msgstr "Imposta la parentela dell'oggetto"
 
 
 msgid "Apply transformation before parenting"
@@ -54451,11 +54451,6 @@ msgstr "Termina la Modifica della Striscia Azioni"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Inizia la Modifica della Striscia Azione"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Aggiunge Traccia Sopra Selezionato"
 
@@ -60995,14 +60990,6 @@ msgstr "Normale Rivest. Traspar."
 
 msgid "Sigma"
 msgstr "Sigma"
-
-
-msgid "Height_dx"
-msgstr "Altezza_dx"
-
-
-msgid "Height_dy"
-msgstr "Altezza_dy"
 
 
 msgid "View Vector"

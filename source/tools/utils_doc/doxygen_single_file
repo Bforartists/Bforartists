@@ -14,6 +14,7 @@ import tempfile
 
 print(sys.argv)
 
+
 def find_gitroot(filepath_reference):
     path = filepath_reference
     path_prev = ""
@@ -21,6 +22,7 @@ def find_gitroot(filepath_reference):
         path_prev = path
         path = os.path.dirname(path)
     return path
+
 
 doxyfile, sourcefile = sys.argv[-2:]
 

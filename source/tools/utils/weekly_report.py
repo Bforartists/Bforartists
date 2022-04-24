@@ -41,9 +41,9 @@ class PhabTransaction:
 
         # Parse `text` var
         # Typical strings are:
-        # Richard Antalik (ISS) added a comment to T75265: Movie Clip Editor not loading full image sequences.
-        # Richard Antalik (ISS) created D7318: Cleanup: Change callback suffix to `_fn` in sequencer.
-        # Richard Antalik (ISS) committed rB188ccfb0dd67: Fix T74662: Prefetching causes random crashes (authored by Richard Antalik (ISS)).
+        # Joe Bloggs (ISS) added a comment to T75265: Movie Clip Editor not loading full image sequences.
+        # Joe Bloggs (ISS) created D7318: Cleanup: Change callback suffix to `_fn` in sequencer.
+        # Joe Bloggs (ISS) committed rB188ccfb0dd67: Fix T123456: Foo crashes (authored by Joe Bloggs (ISS)).
         text_unparsed = story_data['text']
 
         # Chop off author part

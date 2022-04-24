@@ -36,138 +36,138 @@ WITH_GUI = True
 PRESETS = {
     "sanitize_address": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=address",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=address",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=address",), ()),
         "CMAKE_EXE_LINKER_FLAGS": (("-lasan",), ()),
     },
     "sanitize_leak": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=leak",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=leak",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=leak",), ()),
     },
     "sanitize_undefined": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=undefined",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=undefined",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=undefined",), ()),
     },
     "sanitize_thread": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=thread",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=thread",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=thread",), ()),
     },
 
     # GCC5
     "sanitize_float_divide_by_zero": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=float-divide-by-zero",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=float-divide-by-zero",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=float-divide-by-zero",), ()),
     },
     "sanitize_float_cast_overflow": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=float-cast-overflow",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=float-cast-overflow",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=float-cast-overflow",), ()),
     },
     "sanitize_int_overflow": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=signed-integer-overflow",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=signed-integer-overflow",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=signed-integer-overflow",), ()),
     },
     "sanitize_bool": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=bool",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=bool",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=bool",), ()),
     },
     "sanitize_enum": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=enum",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=enum",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=enum",), ()),
     },
     "sanitize_bounds": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=bounds",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=bounds",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=bounds",), ()),
     },
     "sanitize_bounds_strict": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=bounds-strict",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=bounds-strict",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=bounds-strict",), ()),
     },
     "sanitize_vla_bound": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=vla-bound",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=vla-bound",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=vla-bound",), ()),
     },
     "sanitize_alignment": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=alignment",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=alignment",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=alignment",), ()),
     },
     "sanitize_object_size": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=object-size",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=object-size",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=object-size",), ()),
     },
     "sanitize_nonull_attribute": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=nonnull-attribute",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=nonnull-attribute",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=nonnull-attribute",), ()),
     },
     "sanitize_returns_nonull_attribute": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=returns-nonnull-attribute",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=returns-nonnull-attribute",), ()),
+        "CMAKE_C_FLAGS": (("-fsanitize=returns-nonnull-attribute",), ()),
     },
 
     "warn_all": {
         "CMAKE_CXX_FLAGS": (("-Wall",), ()),
-        "CMAKE_C_FLAGS":   (("-Wall",), ()),
+        "CMAKE_C_FLAGS": (("-Wall",), ()),
     },
     "warn_extra": {
         "CMAKE_CXX_FLAGS": (("-Wextra",), ()),
-        "CMAKE_C_FLAGS":   (("-Wextra",), ()),
+        "CMAKE_C_FLAGS": (("-Wextra",), ()),
     },
     "warn_unused_macros": {
         "CMAKE_CXX_FLAGS": (("-Wunused-macros",), ()),
-        "CMAKE_C_FLAGS":   (("-Wunused-macros",), ()),
+        "CMAKE_C_FLAGS": (("-Wunused-macros",), ()),
     },
     "warn_undefined_macros": {
         "CMAKE_CXX_FLAGS": (("-Wundef",), ()),
-        "CMAKE_C_FLAGS":   (("-Wundef",), ()),
+        "CMAKE_C_FLAGS": (("-Wundef",), ()),
     },
     "warn_unused_local_typedefs": {
         "CMAKE_CXX_FLAGS": (("-Wunused-local-typedefs",), ()),
-        "CMAKE_C_FLAGS":   (("-Wunused-local-typedefs",), ()),
+        "CMAKE_C_FLAGS": (("-Wunused-local-typedefs",), ()),
     },
     "warn_pointer_sign": {
         "CMAKE_CXX_FLAGS": (("",), ()),
-        "CMAKE_C_FLAGS":   (("-Wpointer-sign",), ()),
+        "CMAKE_C_FLAGS": (("-Wpointer-sign",), ()),
     },
     "warn_sizeof_pointer_memaccess": {
         "CMAKE_CXX_FLAGS": (("-Wsizeof-pointer-memaccess",), ()),
-        "CMAKE_C_FLAGS":   (("-Wsizeof-pointer-memaccess",), ()),
+        "CMAKE_C_FLAGS": (("-Wsizeof-pointer-memaccess",), ()),
     },
     "warn_no_null": {
         "CMAKE_CXX_FLAGS": (("-Wnonnull",), ()),
-        "CMAKE_C_FLAGS":   (("-Wnonnull",), ()),
+        "CMAKE_C_FLAGS": (("-Wnonnull",), ()),
     },
     "warn_init_self": {
         "CMAKE_CXX_FLAGS": (("-Winit-self",), ()),
-        "CMAKE_C_FLAGS":   (("-Winit-self",), ()),
+        "CMAKE_C_FLAGS": (("-Winit-self",), ()),
     },
     "warn_format": {
         "CMAKE_CXX_FLAGS": (("-Wformat=2", "-Wno-format-nonliteral", "-Wno-format-y2k"), ()),
-        "CMAKE_C_FLAGS":   (("-Wformat=2", "-Wno-format-nonliteral", "-Wno-format-y2k"), ()),
+        "CMAKE_C_FLAGS": (("-Wformat=2", "-Wno-format-nonliteral", "-Wno-format-y2k"), ()),
     },
     "warn_format": {
         "CMAKE_CXX_FLAGS": (("-Wwrite-strings",), ()),
-        "CMAKE_C_FLAGS":   (("-Wwrite-strings",), ()),
+        "CMAKE_C_FLAGS": (("-Wwrite-strings",), ()),
     },
     "warn_logical_op": {
         "CMAKE_CXX_FLAGS": (("-Wlogical-op",), ()),
-        "CMAKE_C_FLAGS":   (("-Wlogical-op",), ()),
+        "CMAKE_C_FLAGS": (("-Wlogical-op",), ()),
     },
     "warn_error": {
         "CMAKE_CXX_FLAGS": (("-Werror",), ()),
-        "CMAKE_C_FLAGS":   (("-Werror",), ()),
+        "CMAKE_C_FLAGS": (("-Werror",), ()),
     },
     "warn_shadow": {
         "CMAKE_CXX_FLAGS": (("-Wshadow", "-Wno-error=shadow"), ()),
-        "CMAKE_C_FLAGS":   (("-Wshadow", "-Wno-error=shadow"), ()),
+        "CMAKE_C_FLAGS": (("-Wshadow", "-Wno-error=shadow"), ()),
     },
     "warn_missing_include_dirs": {
         "CMAKE_CXX_FLAGS": (("-Wmissing-include-dirs",), ()),
-        "CMAKE_C_FLAGS":   (("-Wmissing-include-dirs",), ()),
+        "CMAKE_C_FLAGS": (("-Wmissing-include-dirs",), ()),
     },
     "warn_double_promotion": {
         "CMAKE_CXX_FLAGS": (("-Wdouble-promotion",), ()),
-        "CMAKE_C_FLAGS":   (("-Wdouble-promotion",), ()),
+        "CMAKE_C_FLAGS": (("-Wdouble-promotion",), ()),
     },
     "warn_declaration_after_statement": {
-        "CMAKE_C_FLAGS":   (("-Wdeclaration-after-statement",), ()),
+        "CMAKE_C_FLAGS": (("-Wdeclaration-after-statement",), ()),
     },
     "warn_zero_as_null_pointer_constant": {
         "CMAKE_CXX_FLAGS": (("-Wzero-as-null-pointer-constant",), ()),
@@ -180,14 +180,14 @@ PRESETS = {
     # Optimize
     "optimize_whole_program": {
         "CMAKE_CXX_FLAGS": (("-flto",), ()),
-        "CMAKE_C_FLAGS":   (("-flto",), ()),
+        "CMAKE_C_FLAGS": (("-flto",), ()),
         "CMAKE_EXE_LINKER_FLAGS": (("-flto", "-fwhole-program",), ()),
     },
 
     # Profile
     "profile_gprof": {
         "CMAKE_CXX_FLAGS": (("-pg",), ()),
-        "CMAKE_C_FLAGS":   (("-pg",), ()),
+        "CMAKE_C_FLAGS": (("-pg",), ()),
         "CMAKE_EXE_LINKER_FLAGS": (("-pg",), ()),
     },
 }

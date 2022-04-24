@@ -311,6 +311,20 @@ AttributeDomain BKE_id_attribute_domain(const ID *id, const CustomDataLayer *lay
 
 int BKE_id_attribute_data_length(ID *id, CustomDataLayer *layer)
 {
+  /* When in mesh editmode, attributes point to bmesh customdata layers, the attribute data is
+   * empty since custom data is stored per element instead of a single array there (same es UVs
+   * etc.), see D11998. */
+  switch (GS(id->name)) {
+    case ID_ME: {
+      Mesh *mesh = (Mesh *)id;
+      if (mesh->edit_mesh != NULL) {
+        return 0;
+      }
+    }
+    default:
+      break;
+  }
+
   DomainInfo info[ATTR_DOMAIN_NUM];
   get_domains(id, info);
 
@@ -622,10 +636,10 @@ CustomDataLayer *BKE_id_attributes_color_find(const ID *id, const char *name)
     layer = BKE_id_attribute_find(id, name, CD_PROP_COLOR, ATTR_DOMAIN_CORNER);
   }
   if (layer == NULL) {
-    layer = BKE_id_attribute_find(id, name, CD_MLOOPCOL, ATTR_DOMAIN_POINT);
+    layer = BKE_id_attribute_find(id, name, CD_PROP_BYTE_COLOR, ATTR_DOMAIN_POINT);
   }
   if (layer == NULL) {
-    layer = BKE_id_attribute_find(id, name, CD_MLOOPCOL, ATTR_DOMAIN_CORNER);
+    layer = BKE_id_attribute_find(id, name, CD_PROP_BYTE_COLOR, ATTR_DOMAIN_CORNER);
   }
   return layer;
 }

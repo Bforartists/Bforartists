@@ -4,16 +4,17 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 
 bl_info = {
     "name": "Magic UV",
-    "author": "Nutti, Mifth, Jace Priester, kgeogeo, mem, imdjs"
+    "author": "Nutti, Mifth, Jace Priester, kgeogeo, mem, imdjs, "
               "Keith (Wahooney) Boshoff, McBuff, MaxRobinot, "
-              "Alexander Milovsky, Dusan Stevanovic, MatthiasThDs",
-    "version": (6, 5, 0),
+              "Alexander Milovsky, Dusan Stevanovic, MatthiasThDs, "
+              "theCryingMan, PratikBorhade302",
+    "version": (6, 6, 0),
     "blender": (2, 80, 0),
     "location": "See Add-ons Preferences",
     "description": "UV Toolset. See Add-ons Preferences for details",

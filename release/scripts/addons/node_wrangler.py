@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 39),
+    "version": (3, 40),
     "blender": (2, 93, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
@@ -4555,9 +4555,9 @@ class NWLinkUseOutputsNamesMenu(Menu, NWBase):
         props.use_outputs_names = True
 
 
-class NWVertColMenu(bpy.types.Menu):
-    bl_idname = "NODE_MT_nw_node_vertex_color_menu"
-    bl_label = "Vertex Colors"
+class NWAttributeMenu(bpy.types.Menu):
+    bl_idname = "NODE_MT_nw_node_attribute_menu"
+    bl_label = "Attributes"
 
     @classmethod
     def poll(cls, context):
@@ -4577,18 +4577,18 @@ class NWVertColMenu(bpy.types.Menu):
             for slot in obj.material_slots:
                 if slot.material == mat:
                     objs.append(obj)
-        vcols = []
+        attrs = []
         for obj in objs:
-            if obj.data.vertex_colors:
-                for vcol in obj.data.vertex_colors:
-                    vcols.append(vcol.name)
-        vcols = list(set(vcols))  # get a unique list
+            if obj.data.attributes:
+                for attr in obj.data.attributes:
+                    attrs.append(attr.name)
+        attrs = list(set(attrs))  # get a unique list
 
-        if vcols:
-            for vcol in vcols:
-                l.operator(NWAddAttrNode.bl_idname, text=vcol).attr_name = vcol
+        if attrs:
+            for attr in attrs:
+                l.operator(NWAddAttrNode.bl_idname, text=attr).attr_name = attr
         else:
-            l.label(text="No Vertex Color layers on objects with this material")
+            l.label(text="No attributes on objects with this material")
 
 
 class NWSwitchNodeTypeMenu(Menu, NWBase):
@@ -5011,7 +5011,7 @@ def select_parent_children_buttons(self, context):
 
 def attr_nodes_menu_func(self, context):
     col = self.layout.column(align=True)
-    col.menu("NODE_MT_nw_node_vertex_color_menu")
+    col.menu("NODE_MT_nw_node_attribute_menu")
     col.separator()
 
 
@@ -5297,7 +5297,7 @@ classes = (
     NWLinkStandardMenu,
     NWLinkUseNodeNameMenu,
     NWLinkUseOutputsNamesMenu,
-    NWVertColMenu,
+    NWAttributeMenu,
     NWSwitchNodeTypeMenu,
     NWSwitchShadersInputSubmenu,
     NWSwitchShadersOutputSubmenu,

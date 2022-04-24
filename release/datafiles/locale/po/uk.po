@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -57571,12 +57571,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Встановити приріднення об'єкта без встановлення зворотної корекції приріднення"
 
 
-msgid "Set the object's parenting"
-msgstr "Задати приріднення об'єкта"
-
-
 msgid "Keep Transform"
 msgstr "Утримувати трансформацію"
+
+
+msgid "Set the object's parenting"
+msgstr "Задати приріднення об'єкта"
 
 
 msgid "Apply transformation before parenting"
@@ -59395,10 +59395,6 @@ msgstr "Перерозкласти користувачів"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Зробити усіх користувачів виділених блоків даних для використання замість поточного (клацнутого)"
-
-
-msgid "Reset Library Override"
-msgstr "Скинути Заміщення Бібліотеки"
 
 
 msgid "Reset this local override to its linked values"
@@ -70270,48 +70266,16 @@ msgid "Export current scene in a USD archive"
 msgstr "Експорт поточної сцени в архів USD"
 
 
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "При увімкненні діапазон кадрів рендера експортується. При вимкненні лише поточний кадр експортується"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "При увімкненні волосся експортується як криві USD"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "При увімкненні устави оглядвікна для матеріалів експортуються як матеріали передогляду USD, а призначення матеріалів експортуються як підмножини геометрії"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "При увімкненні нормалі експортованих сітей включаються в експорт"
-
-
 msgid "UV Maps"
 msgstr "UV-карти"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "При увімкненні всі розкладки UV експортованих сітей включаються в експорт"
-
-
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Лише вибрані об'єкти експортуються. Невибрані предки вибраних об'єктів експортуються як порожня трансформа"
 
 
 msgid "Instancing"
 msgstr "Примірникування"
 
 
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "При увімкненні примірниковані об'єкти експортуються як посилання в USD. При вимкненні примірниковані об'єкти експортуються як реальні об'єкти"
-
-
 msgid "Visible Only"
 msgstr "Лише Видиме"
-
-
-msgid "Only visible objects are exported. Invisible parents of exported objects are exported as empty transform"
-msgstr "Лише вибрані об'єкти експортуються. Невибрані предки вибраних об'єктів експортуються як порожня трансформа"
 
 
 msgctxt "Operator"
@@ -93618,11 +93582,6 @@ msgstr "Зупинити Підправлення Дій Смужок"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Стартувати Підправлення Дій Смужок"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Додати Відстеження Над Вибраним"
 
@@ -97914,10 +97873,6 @@ msgstr "<Відсутній ID-блок>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "Немає RNA-вказівника для отримання значень для цієї Ф-кривої"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "Неможливо вставити ключкадр через те, що вплив НЛА або базове значення нульові"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -105224,14 +105179,6 @@ msgstr "Нормаль Полакованості"
 
 msgid "Sigma"
 msgstr "Сигма"
-
-
-msgid "Height_dx"
-msgstr "Height_dx"
-
-
-msgid "Height_dy"
-msgstr "Height_dy"
 
 
 msgid "View Vector"

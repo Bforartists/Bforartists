@@ -6,7 +6,7 @@ from .common_classes import SnapUtilities
 from .common_utilities import snap_utilities
 
 
-#def mesh_runtime_batchcache_isdirty(me):
+# def mesh_runtime_batchcache_isdirty(me):
 #    import ctypes
 #    batch_cache = ctypes.c_void_p.from_address(me.as_pointer() + 1440)
 #    if batch_cache:
@@ -15,7 +15,7 @@ from .common_utilities import snap_utilities
 
 
 class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
-#    __slots__ = ('inited', 'mode', 'last_mval')
+    #    __slots__ = ('inited', 'mode', 'last_mval')
 
     snap_to_update = False
 
@@ -24,9 +24,9 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         if cls.snap_to_update is False:
             last_operator = self.wm_operators[-1] if self.wm_operators else None
             if (not last_operator or
-                last_operator.name not in {'Select', 'Loop Select', '(De)select All'}):
-                    cls.snap_to_update = depsgraph.id_type_updated('MESH') or \
-                                         depsgraph.id_type_updated('OBJECT')
+                    last_operator.name not in {'Select', 'Loop Select', '(De)select All'}):
+                cls.snap_to_update = depsgraph.id_type_updated('MESH') or \
+                    depsgraph.id_type_updated('OBJECT')
 
     def draw_point_and_elem(self):
         if self.bm:
@@ -76,7 +76,7 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
             self.last_mval = mval
 
         if (SnapWidgetCommon.snap_to_update):
-            ## Something has changed since the last time.
+            # Something has changed since the last time.
             # Has the mesh been changed?
             # In the doubt lets clear the snap context.
             self.snap_context_update(context)
@@ -84,22 +84,24 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
 
         #print('test_select', mval)
         space = context.space_data
-        self.sctx.update_viewport_context(context.evaluated_depsgraph_get(), context.region, space, True)
+        self.sctx.update_viewport_context(
+            context.evaluated_depsgraph_get(), context.region, space, True)
 
         shading = space.shading
         snap_face = not ((self.snap_vert or self.snap_edge) and
-                        (shading.show_xray or shading.type == 'WIREFRAME'))
+                         (shading.show_xray or shading.type == 'WIREFRAME'))
 
         if snap_face != self.snap_face:
             self.snap_face = snap_face
-            self.sctx.set_snap_mode(self.snap_vert, self.snap_edge, self.snap_face)
+            self.sctx.set_snap_mode(
+                self.snap_vert, self.snap_edge, self.snap_face)
 
         snap_utilities.cache.clear()
         self.snap_obj, prev_loc, self.location, self.type, self.bm, self.geom, len = snap_utilities(
-                self.sctx,
-                None,
-                mval,
-                increment=self.incremental
+            self.sctx,
+            None,
+            mval,
+            increment=self.incremental
         )
 
 
