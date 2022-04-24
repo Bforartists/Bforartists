@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -43678,12 +43678,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "Configura o parentesco do objeto sem configurar a correção inversa do parente."
 
 
-msgid "Set the object's parenting"
-msgstr "Configura o parentesco do objeto"
-
-
 msgid "Keep Transform"
 msgstr "Manter transformações"
+
+
+msgid "Set the object's parenting"
+msgstr "Configura o parentesco do objeto"
 
 
 msgid "Apply transformation before parenting"
@@ -54608,11 +54608,6 @@ msgstr "Força"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Torção"
-
-
-msgctxt "Operator"
-msgid "Test 1"
-msgstr "Teste 1"
 
 
 msgid "Clone from Paint Slot"
@@ -68657,11 +68652,6 @@ msgstr "Interromper os ajustes de faixa de ações"
 
 
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "Iniciar os ajustes de faixa de ações"
-
-
-msgctxt "Operator"
 msgid "Add Tracks Above Selected"
 msgstr "Adicionar trilhas acima da seleção"
 
@@ -76910,14 +76900,6 @@ msgstr "Tinta protetiva normal"
 
 msgid "Sigma"
 msgstr "Sigma"
-
-
-msgid "Height_dx"
-msgstr "Altura_dx"
-
-
-msgid "Height_dy"
-msgstr "Altura_dy"
 
 
 msgid "View Vector"

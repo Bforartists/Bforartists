@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1281,6 +1281,14 @@ msgid "Active attribute"
 msgstr "活动属性"
 
 
+msgid "Active Color"
+msgstr "活动颜色"
+
+
+msgid "Active color attribute"
+msgstr "活动颜色属性"
+
+
 msgid "Bake Data"
 msgstr "烘焙数据"
 
@@ -1495,6 +1503,14 @@ msgstr "图像纹理"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "烘焙到与材质中的活动图像纹理节点关联的图像数据块"
+
+
+msgid "Color Attributes"
+msgstr "颜色属性"
+
+
+msgid "Bake to active color attribute layer on meshes"
+msgstr "烘焙到网格上的活动颜色属性图层"
 
 
 msgid "Automatic Name"
@@ -3461,6 +3477,22 @@ msgid "Number of curves added by the Add brush"
 msgstr "使用添加笔刷添加的曲线数"
 
 
+msgid "Minimum Length"
+msgstr "最小长度"
+
+
+msgid "Avoid shrinking curves shorter than this length"
+msgstr "避免收缩的曲线短于此长度"
+
+
+msgid "Scale Uniform"
+msgstr "均匀缩放"
+
+
+msgid "Grow or shrink curves by changing their size uniformly instead of using trimming or extrapolation"
+msgstr "通过均匀更改曲线的大小而非使用修剪或外插来增大或缩小曲线"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "蜡笔笔刷设置"
 
@@ -5419,10 +5451,6 @@ msgstr "ACES 线性空间"
 
 msgid "Non-Color"
 msgstr "非彩色"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "包含非色彩数据(即, 法线贴图)的图像所使用的色彩空间"
 
 
 msgid "Raw"
@@ -16657,6 +16685,14 @@ msgid "Add fill segments to create the envelope. Don't keep the original stroke"
 msgstr "添加填充段以创建封套。不保留原始笔画"
 
 
+msgid "Skip Segments"
+msgstr "跳过段数"
+
+
+msgid "The number of generated segments to skip to reduce complexity"
+msgstr "要跳过以降低复杂性的生成段数"
+
+
 msgid "Spread Length"
 msgstr "伸展长度"
 
@@ -18936,8 +18972,8 @@ msgid "Comb"
 msgstr "梳理"
 
 
-msgid "Test 1"
-msgstr "测试 1"
+msgid "Grow / Shrink"
+msgstr "生长/收缩"
 
 
 msgid "Dash Ratio"
@@ -20348,6 +20384,10 @@ msgid "Focal Length"
 msgstr "焦距"
 
 
+msgid "Perspective Camera focal length value in millimeters"
+msgstr "透视摄像机焦距长度值，单位为毫米"
+
+
 msgid "Lens Unit"
 msgstr "镜头单位"
 
@@ -20358,6 +20398,10 @@ msgstr "用户界面的镜头编辑单位"
 
 msgid "Millimeters"
 msgstr "毫米"
+
+
+msgid "Specify focal length of the lens in millimeters"
+msgstr "指定镜头焦距长度，单位为毫米"
 
 
 msgid "Specify the lens as the field of view's angle"
@@ -21318,6 +21362,10 @@ msgstr "属性"
 
 msgid "Geometry attributes"
 msgstr "几何属性"
+
+
+msgid "Geometry color attributes"
+msgstr "几何颜色属性"
 
 
 msgid "All curves in the data-block"
@@ -22366,6 +22414,14 @@ msgstr "TIFF"
 
 msgid "Output image in TIFF format"
 msgstr "输出图像为 TIFF 文件格式"
+
+
+msgid "WebP"
+msgstr "WebP"
+
+
+msgid "Output image in WebP format"
+msgstr "输出图像为 WebP 文件格式"
 
 
 msgid "AVI JPEG"
@@ -24950,6 +25006,10 @@ msgid "Pose Library"
 msgstr "姿态库"
 
 
+msgid "Deprecated, will be removed in Blender 3.3. Action used as a pose library for armatures"
+msgstr "已弃用，将在Blender 3.3中删除。用作骨架姿态库的动作"
+
+
 msgid "Rigid Body Settings"
 msgstr "刚体设置"
 
@@ -26527,6 +26587,14 @@ msgstr "Cycles 渲染设置"
 
 msgid "Cycles render settings"
 msgstr "Cycles 渲染设置"
+
+
+msgid "Cycles Curves Rendering Settings"
+msgstr "Cycles 曲线渲染设置"
+
+
+msgid "Cycles curves rendering settings"
+msgstr "Cycles 曲线渲染设置"
 
 
 msgid "Scene Display"
@@ -33439,6 +33507,10 @@ msgid "Landmark Controls"
 msgstr "地标控件"
 
 
+msgid "Lightgroup Sync"
+msgstr "灯光组同步"
+
+
 msgid "Operator Presets"
 msgstr "操作项预设"
 
@@ -35281,6 +35353,10 @@ msgstr "自定义法向"
 
 msgid "Transfer custom normals"
 msgstr "传递自定义法向"
+
+
+msgid "Transfer color attributes"
+msgstr "传输颜色属性"
 
 
 msgid "UVs"
@@ -43104,6 +43180,14 @@ msgid "Merge by Distance"
 msgstr "按距离合并"
 
 
+msgid "Merge all close selected points, whether or not they are connected"
+msgstr "合并所有接近的选中点，无论它们是否相连"
+
+
+msgid "Only merge mesh vertices along existing edges. This method can be much faster"
+msgstr "仅沿现有边合并网格顶点。这种方法可以快得多"
+
+
 msgid "Mesh Boolean"
 msgstr "网格布尔"
 
@@ -43859,6 +43943,10 @@ msgstr "浮点曲线"
 
 msgid "Fresnel"
 msgstr "菲涅尔"
+
+
+msgid "Curves Info"
+msgstr "曲线信息"
 
 
 msgid "Layer Weight"
@@ -49534,6 +49622,31 @@ msgstr "进入/退出曲线的雕刻模式"
 
 
 msgctxt "Operator"
+msgid "Snap Curves to Surface"
+msgstr "吸附曲线至表面"
+
+
+msgid "Move curves so that the first point is exactly on the surface mesh"
+msgstr "移动曲线，使第一个点正好位于表面网格上"
+
+
+msgid "Attach Mode"
+msgstr "附着模式"
+
+
+msgid "How to find the point on the surface to attach to"
+msgstr "如何在表面上找到要附着的点"
+
+
+msgid "Find the closest point on the surface for the root point of every curve and move the root there"
+msgstr "在表面上找到每条曲线的根点的最近点，并将根移动到那里"
+
+
+msgid "Re-attach curves to a deformed surface using the existing attachment information. This only works when the topology of the surface mesh has not changed"
+msgstr "使用现有附着信息将曲线重新附着到形变的表面上。这仅在表面网格的拓扑未更改时才有效"
+
+
+msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "切换循环"
 
@@ -52510,6 +52623,28 @@ msgid "Remove attribute from geometry"
 msgstr "从几何体中删除属性"
 
 
+msgid "Name of color attribute"
+msgstr "颜色属性的名称"
+
+
+msgctxt "Operator"
+msgid "Remove Color Attribute"
+msgstr "删除颜色属性"
+
+
+msgid "Remove color attribute from geometry"
+msgstr "从几何体中删除颜色属性"
+
+
+msgctxt "Operator"
+msgid "Set Render Color Attribute"
+msgstr "设置渲染颜色属性"
+
+
+msgid "Set default color attribute used for rendering"
+msgstr "设置用于渲染的默认颜色属性"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Gizmo选择"
@@ -54042,6 +54177,10 @@ msgstr "不选择笔画的起点和末点"
 
 msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "使用一个矩形范围来选择蜡笔线条"
+
+
+msgid "Invert existing selection"
+msgstr "反转现有选中项"
 
 
 msgid "Intersect existing selection"
@@ -57253,6 +57392,10 @@ msgid "Rotate Colors"
 msgstr "旋转顶点着色"
 
 
+msgid "Rotate color attributes inside faces"
+msgstr "旋转面内侧的颜色属性"
+
+
 msgid "Counter Clockwise"
 msgstr "逆时针"
 
@@ -57542,6 +57685,10 @@ msgstr "复制"
 msgctxt "Operator"
 msgid "Collapse Edges & Faces"
 msgstr "塌陷边线&面"
+
+
+msgid "Collapse isolated edge and face regions, merging data such as UV's and color attributes. This can collapse edge-rings as well as regions of connected faces into vertices"
+msgstr "塌陷隔离的边&面区域，合并UV和颜色属性等数据。这可以将循环边以及相连的面区域塌陷到顶点"
 
 
 msgctxt "Operator"
@@ -61520,6 +61667,24 @@ msgstr "在矫正平滑修改器中绑定基础姿势"
 
 
 msgctxt "Operator"
+msgid "Add Empty Curves"
+msgstr "添加空白曲线"
+
+
+msgid "Add an empty curve object to the scene with the selected mesh as surface"
+msgstr "将空白曲线物体添加到场景中，将所选网格作为曲面"
+
+
+msgctxt "Operator"
+msgid "Add Random Curves"
+msgstr "添加随机曲线"
+
+
+msgid "Add a curves object with random curves to the scene"
+msgstr "将带有随机曲线的曲线物体添加到场景中"
+
+
+msgctxt "Operator"
 msgid "Add Object Data Instance"
 msgstr "添加物体数据实例"
 
@@ -61785,7 +61950,7 @@ msgstr "移除面映射"
 
 
 msgid "Remove a face map from the active object"
-msgstr "器"
+msgstr "从活动物体中删除面映射"
 
 
 msgctxt "Operator"
@@ -62840,12 +63005,12 @@ msgid "Set the object's parenting without setting the inverse parent correction"
 msgstr "不经过父级反向纠正而设置物体的父子关系"
 
 
-msgid "Set the object's parenting"
-msgstr "设置物体的父级关联"
-
-
 msgid "Keep Transform"
 msgstr "保持变换"
+
+
+msgid "Set the object's parenting"
+msgstr "设置物体的父级关联"
 
 
 msgid "Apply transformation before parenting"
@@ -64794,10 +64959,6 @@ msgid "Make the library override data-block editable"
 msgstr "使库重写数据块可编辑"
 
 
-msgid "Reset Library Override"
-msgstr "重置库重写"
-
-
 msgid "Reset this local override to its linked values"
 msgstr "重置此本地重写为其关联数值"
 
@@ -64832,14 +64993,6 @@ msgstr "清除库重写层级"
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
 msgstr "删除此本地重写(包括其重写依赖项的层次结构），并将其用法重新关联到被关联的数据块"
-
-
-msgid "Clear Single Library Override"
-msgstr "清除单一库重写"
-
-
-msgid "Delete this local override if possible, else reset it and mark it as non editable, and relink its usages to the linked data-blocks"
-msgstr "如果可能，请删除此本地重写，否则将其重置并将其标记为不可编辑，并将其重新关联到关联的数据块"
 
 
 msgid "Paste"
@@ -65683,6 +65836,10 @@ msgid "Vertex Paint"
 msgstr "顶点绘制"
 
 
+msgid "Paint a stroke in the active color attribute layer"
+msgstr "在活动颜色属性层绘制笔画"
+
+
 msgctxt "Operator"
 msgid "Vertex Paint Mode"
 msgstr "顶点绘制模式"
@@ -66197,6 +66354,24 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "当前笔刷权重与键权重之间的插值系数"
 
 
+msgctxt "Operator"
+msgid "Sanitize Legacy Pose Library Action"
+msgstr "清理旧版姿态库操作"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Make action suitable for use as a Legacy Pose Library"
+msgstr "已弃用，将在Blender 3.3中删除。使动作适合用作旧版姿态库"
+
+
+msgctxt "Operator"
+msgid "Apply Legacy Pose Library Pose"
+msgstr "应用旧版姿态库姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Apply specified Legacy Pose Library pose to the rig"
+msgstr "已弃用，将在Blender 3.3中删除。将指定的旧版姿态库姿态应用于绑定"
+
+
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
 msgstr "要应用的姿态编号(-2则不改变姿态, -1则使用poselib中活动姿态)"
 
@@ -66231,6 +66406,24 @@ msgid "Blend the given Pose Action to the rig"
 msgstr "将给定的姿态动作混合到绑定中"
 
 
+msgctxt "Operator"
+msgid "Legacy PoseLib Browse Poses"
+msgstr "旧版姿态库中浏览姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Interactively browse Legacy Pose Library poses in 3D-View"
+msgstr "已弃用，将在Blender 3.3中删除。以交互方式浏览 3D 视图中的旧版姿态库姿态"
+
+
+msgctxt "Operator"
+msgid "Convert Legacy Pose Library"
+msgstr "转换旧版姿态库"
+
+
+msgid "Create a pose asset for each pose marker in this legacy pose library data-block"
+msgstr "为此旧姿态库数据块中的每个姿态标记创建一个姿态资产"
+
+
 msgid "Create a pose asset for each pose marker in the current action"
 msgstr "为当前动作中的每个姿态标记创建姿态资产"
 
@@ -66262,12 +66455,30 @@ msgstr "姿态名称"
 
 
 msgctxt "Operator"
+msgid "New Legacy Pose Library"
+msgstr "新建旧版姿态库"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Add New Legacy Pose Library to active Object"
+msgstr "已弃用，将在Blender 3.3中删除。添加新的旧版姿态库至活动物体"
+
+
+msgctxt "Operator"
 msgid "Paste As New Asset"
 msgstr "粘贴为新资产"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
 msgstr "粘贴之前使用复制为资产操作复制的资产"
+
+
+msgctxt "Operator"
+msgid "Legacy PoseLib Add Pose"
+msgstr "旧版姿态库中新增姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Add the current Pose to the active Legacy Pose Library"
+msgstr "已弃用，将在Blender 3.3中删除。将当前姿态添加到活动的旧版姿态库"
 
 
 msgid "Frame to store pose on"
@@ -66287,6 +66498,15 @@ msgid "Select those bones that are used in this pose"
 msgstr "选择此姿态中使用的骨骼"
 
 
+msgctxt "Operator"
+msgid "Legacy PoseLib Move Pose"
+msgstr "旧版姿态库移动姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Move the pose up or down in the active Legacy Pose Library"
+msgstr "已弃用，将在Blender 3.3中删除。在活动的旧版姿态库中上下移动姿态"
+
+
 msgid "Direction to move the chosen pose towards"
 msgstr "移动所选姿态朝向的方向"
 
@@ -66295,8 +66515,26 @@ msgid "The pose to move"
 msgstr "要移动的姿态"
 
 
+msgctxt "Operator"
+msgid "Legacy PoseLib Remove Pose"
+msgstr "旧版姿态库中移除姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Remove nth pose from the active Legacy Pose Library"
+msgstr "已弃用，将在Blender 3.3中删除。从活动的旧姿态库中删除第n个姿态"
+
+
 msgid "The pose to remove"
 msgstr "要移除的姿态"
+
+
+msgctxt "Operator"
+msgid "Legacy PoseLib Rename Pose"
+msgstr "旧版姿态库中重命名姿态"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Rename specified pose from the active Legacy Pose Library"
+msgstr "已弃用，将在Blender 3.3中删除。从活动的旧版姿态库中重命名指定的姿态"
 
 
 msgid "New Pose Name"
@@ -66318,6 +66556,15 @@ msgstr "恢复上一步动作"
 
 msgid "Switch back to the previous Action, after creating a pose asset"
 msgstr "创建姿态资产后，切换回前一步操作"
+
+
+msgctxt "Operator"
+msgid "Unlink Legacy Pose Library"
+msgstr "断开旧版姿态库关联"
+
+
+msgid "Deprecated, will be removed in Blender 3.3. Remove Legacy Pose Library from active Object"
+msgstr "已弃用，将在Blender 3.3中删除。从活动物体中删除旧版姿态库"
 
 
 msgctxt "Operator"
@@ -68088,6 +68335,19 @@ msgid "Add a Light Group"
 msgstr "添加一个灯光组"
 
 
+msgid "Name of newly created lightgroup"
+msgstr "新创建的灯光组的名称"
+
+
+msgctxt "Operator"
+msgid "Add Used Lightgroups"
+msgstr "添加已用灯光组"
+
+
+msgid "Add all used Light Groups"
+msgstr "添加所有已使用的灯光组"
+
+
 msgctxt "Operator"
 msgid "Remove View Layer"
 msgstr "删除视图层"
@@ -68113,6 +68373,15 @@ msgstr "删除灯光组"
 
 msgid "Remove Active Lightgroup"
 msgstr "删除活动灯光组"
+
+
+msgctxt "Operator"
+msgid "Remove Unused Lightgroups"
+msgstr "删除未使用的灯光组"
+
+
+msgid "Remove all unused Light Groups"
+msgstr "删除所有未使用的灯光组"
 
 
 msgctxt "Operator"
@@ -68181,7 +68450,7 @@ msgstr "依据定位的步进动画"
 
 msgctxt "Operator"
 msgid "Close Area"
-msgstr "闭合区域"
+msgstr "关闭区域"
 
 
 msgid "Close selected area"
@@ -74475,6 +74744,10 @@ msgid "Export UVs"
 msgstr "导出UV"
 
 
+msgid "Export color attributes"
+msgstr "导出颜色属性"
+
+
 msgid "Visible Objects Only"
 msgstr "仅可见物体"
 
@@ -76653,22 +76926,6 @@ msgid "Export current scene in a USD archive"
 msgstr "将当前场景导出为USD档"
 
 
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "勾选后，将导出整个渲染帧范围。取消勾选，仅导出当前帧"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "选中后，毛发将导出为USD曲线"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "勾选后，材质的视图设置将导出为USD预览材质，材质指定将导出为几何子集"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "勾选后，导出时将包含网格法线"
-
-
 msgid "Export Textures"
 msgstr "导出纹理"
 
@@ -76679,10 +76936,6 @@ msgstr "如果导出材质，将材质节点引用的纹理导出至与USD文件
 
 msgid "UV Maps"
 msgstr "UV 贴图"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "勾选后，导出时将包含所有被导出网格中的UV 贴图"
 
 
 msgid "To USD Preview Surface"
@@ -76709,24 +76962,12 @@ msgid "Make texture asset paths relative to the USD file"
 msgstr "创建相对于 USD 文件的纹理资产路径"
 
 
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "仅导出选中的物体。所选物体的未选定父级物体将导出为空变换"
-
-
 msgid "Instancing"
 msgstr "实例化"
 
 
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "勾选后，实例化物体将作为引用导出至USD。不勾选，实例化物体将作为真实物体导出"
-
-
 msgid "Visible Only"
 msgstr "仅可见"
-
-
-msgid "Only visible objects are exported. Invisible parents of exported objects are exported as empty transform"
-msgstr "仅导出可见物体。被导出物体的不可见父级物体将导出为空变换"
 
 
 msgctxt "Operator"
@@ -76804,6 +77045,10 @@ msgstr "路径遮罩"
 
 msgid "Import only the subset of the USD scene rooted at the given primitive"
 msgstr "仅导入植根于给定基本体的USD场景的子集"
+
+
+msgid "Read mesh color attributes"
+msgstr "读取网格颜色属性"
 
 
 msgid "Read mesh UV coordinates"
@@ -77358,6 +77603,10 @@ msgid "Paint using the active material base color"
 msgstr "使用活动材质基础颜色绘制"
 
 
+msgid "Paint the material with a color attribute"
+msgstr "使用颜色属性绘制材质"
+
+
 msgid "Grease Pencil Sculpt Paint"
 msgstr "蜡笔雕刻绘制"
 
@@ -77688,6 +77937,18 @@ msgstr "限定"
 
 msgid "Restrict painting to vertices in the group"
 msgstr "限制绘制操作仅作用于组中的顶点"
+
+
+msgid "Properties of paint mode"
+msgstr "绘制模式的属性"
+
+
+msgid "Image used as as painting target"
+msgstr "用作绘制目标的图像"
+
+
+msgid "Source to select canvas from"
+msgstr "要从中选择画布的源"
 
 
 msgid "Paint Tool Slot"
@@ -79258,6 +79519,11 @@ msgstr "多精度置换涂抹"
 
 
 msgctxt "Operator"
+msgid "Paint"
+msgstr "绘制"
+
+
+msgctxt "Operator"
 msgid "Draw Face Sets"
 msgstr "绘制面组"
 
@@ -79422,8 +79688,8 @@ msgstr "扭曲"
 
 
 msgctxt "Operator"
-msgid "Test 1"
-msgstr "测试 1"
+msgid "Grow / Shrink"
+msgstr "生长/收缩"
 
 
 msgid "Clone from Paint Slot"
@@ -81345,14 +81611,6 @@ msgstr "雕刻模式倾斜支持"
 
 msgid "Support for pen tablet tilt events in Sculpt Mode"
 msgstr "在雕刻模式下支持数位板倾斜事件"
-
-
-msgid "Object Select Nearest on First Click"
-msgstr "首次单击时选择最近物体"
-
-
-msgid "When enabled, always select the front-most object on the first click"
-msgstr "启用后，始终在第一次单击时选择最前面的物体"
 
 
 msgid "Undo Legacy"
@@ -83405,12 +83663,24 @@ msgid "Defines the lens projection as polynomial to allow real world camera lens
 msgstr "定义镜头投影为多项式，以允许模拟真实世界的相机镜头"
 
 
+msgid "Form of curves"
+msgstr "曲线的形式"
+
+
 msgid "Rounded Ribbons"
 msgstr "圆滑丝带"
 
 
+msgid "Render curves as flat ribbons with rounded normals, for fast rendering"
+msgstr "将曲线渲染为带圆化法向的平直丝带，用于快速渲染"
+
+
 msgid "3D Curves"
 msgstr "3D曲线"
+
+
+msgid "Render curves as circular 3D geometry, for accurate results when viewing closely"
+msgstr "将曲线渲染为环形三维几何体，以便在近距查看时获得准确的结果"
 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
@@ -83853,6 +84123,14 @@ msgid "Adaptive Compile"
 msgstr "自适应编译"
 
 
+msgid "Use Curves BVH"
+msgstr "使用曲线 BVH"
+
+
+msgid "Use special type BVH optimized for curves (uses more ram but renders faster)"
+msgstr "对曲线使用优化过的特殊类型 BVH(占用更多内，但渲染速度更快)"
+
+
 msgid "OptiX Module Debug"
 msgstr "OptiX模块调试"
 
@@ -84121,8 +84399,16 @@ msgid "Min Light Bounces"
 msgstr "最小光线反弹"
 
 
+msgid "Minimum number of light bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like curves and volumes"
+msgstr "光线反弹的最小次数。设置较高的数值可降低第一次反弹时的噪波，但对于曲线和体积等更复杂的几何形状，效率也会降低"
+
+
 msgid "Min Transparent Bounces"
 msgstr "最小透明反弹"
+
+
+msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like curves and volumes"
+msgstr "透明反弹的最小次数。设置较高的数值可降低第一次反弹时的噪波，但对于曲线和体积等更复杂的几何形状，效率也会降低"
 
 
 msgid "Motion Blur Position"
@@ -85587,6 +85873,18 @@ msgstr "帧中的旧映射值"
 
 msgid "Additional Subdivision"
 msgstr "附加细分"
+
+
+msgid "Additional subdivision along the curves"
+msgstr "沿着曲线附加细分"
+
+
+msgid "Curves Shape Type"
+msgstr "曲线形状类型"
+
+
+msgid "Curves shape type"
+msgstr "曲线形状类型"
 
 
 msgid "Multiple Engines"
@@ -92090,6 +92388,14 @@ msgid "Use a region within the frame size for rendered viewport (when not viewin
 msgstr "在框选尺寸内使用一个区域作为渲染视窗(当不通过摄像机观看时)"
 
 
+msgid "Display Background"
+msgstr "显示背景图"
+
+
+msgid "Show the grid background and borders"
+msgstr "显示网格背景和边框"
+
+
 msgid "Show Overlays"
 msgstr "显示叠加层"
 
@@ -92642,8 +92948,20 @@ msgid "Slot that contains information about texture painting"
 msgstr "包含有关纹理绘制信息的槽"
 
 
+msgid "Icon"
+msgstr "图标"
+
+
+msgid "Paint slot icon"
+msgstr "绘制槽图标"
+
+
 msgid "Slot has a valid image and UV map"
-msgstr "插槽具有有效的图像和 UV 贴图"
+msgstr "槽具有有效的图像和 UV 贴图"
+
+
+msgid "Name of the slot"
+msgstr "槽名称"
 
 
 msgid "Text Box"
@@ -95307,6 +95625,10 @@ msgid "Correct Face Attributes"
 msgstr "校正面属性"
 
 
+msgid "Correct data such as UV's and color attributes when transforming"
+msgstr "变换时修正数据(如UV以及颜色属性)"
+
+
 msgid "Keep Connected"
 msgstr "保留已连接项"
 
@@ -96499,6 +96821,10 @@ msgid "Show random object color"
 msgstr "随机显示物体颜色"
 
 
+msgid "Show active color attribute"
+msgstr "显示活动颜色属性"
+
+
 msgid "Show texture"
 msgstr "显示纹理"
 
@@ -97137,6 +97463,14 @@ msgstr "标识符回退"
 
 msgid "Tool Mode"
 msgstr "工具模式"
+
+
+msgid "Use Paint Canvas"
+msgstr "使用画布"
+
+
+msgid "Does this tool use an painting canvas"
+msgstr "此工具是否使用绘制画布"
 
 
 msgid "Widget"
@@ -99121,10 +99455,6 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "以及Nvidia驱动程序470版本或更新"
 
 
-msgid "Requires discrete AMD GPU with Vega architecture"
-msgstr "需要Vega架构的独立AMD GPU"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
 
@@ -100630,6 +100960,14 @@ msgid "Convert to Pose Assets"
 msgstr "转换为姿态资产"
 
 
+msgid "Enable the Pose Library add-on to convert"
+msgstr "启用姿态库加载项以进行转换"
+
+
+msgid "this legacy pose library to pose assets."
+msgstr "该旧版姿态库用于姿态资产。"
+
+
 msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
 msgstr "错误: 潜在损坏的库, 运行 'Sanitize' 操作修复"
 
@@ -100946,6 +101284,10 @@ msgstr "倒角边权重"
 
 msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
+
+
+msgid "Name collisions: , "
+msgstr "名称冲突: , "
 
 
 msgctxt "Operator"
@@ -101323,6 +101665,16 @@ msgstr "未选中项"
 msgctxt "Operator"
 msgid "Lock Unused"
 msgstr "锁定未使用"
+
+
+msgctxt "Operator"
+msgid "Convert Materials to Color Attribute"
+msgstr "转换材质为颜色属性"
+
+
+msgctxt "Operator"
+msgid "Extract Palette from Color Attribute"
+msgstr "从颜色属性中提取调色板"
 
 
 msgctxt "Operator"
@@ -103232,6 +103584,14 @@ msgid "Repeat Image"
 msgstr "重复图像"
 
 
+msgid "Fixed Subdivisions"
+msgstr "固定细分"
+
+
+msgid "Tiles"
+msgstr "分块"
+
+
 msgctxt "Operator"
 msgid "Render Slot Cycle Previous"
 msgstr "向前循环滚动渲染槽"
@@ -103315,11 +103675,6 @@ msgstr "关联副本"
 msgctxt "Operator"
 msgid "Stop Tweaking Strip Actions"
 msgstr "停止调节动作段"
-
-
-msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
-msgstr "开始调节动作段"
 
 
 msgctxt "Operator"
@@ -105085,6 +105440,11 @@ msgstr "相似项"
 
 
 msgctxt "Operator"
+msgid "Set Color Attribute"
+msgstr "设置颜色属性"
+
+
+msgctxt "Operator"
 msgid "Levels"
 msgstr "层级"
 
@@ -105162,6 +105522,11 @@ msgstr "NURBS 圆环"
 msgctxt "Operator"
 msgid "Path"
 msgstr "路径曲线"
+
+
+msgctxt "Operator"
+msgid "Empty Hair"
+msgstr "空白毛发"
 
 
 msgctxt "Operator"
@@ -105439,6 +105804,11 @@ msgstr "设置轴心点"
 msgctxt "Operator"
 msgid "Transfer Sculpt Mode"
 msgstr "传递雕刻模式"
+
+
+msgctxt "Operator"
+msgid "Convert to Particle System"
+msgstr "转换为粒子系统"
 
 
 msgctxt "Operator"
@@ -106066,6 +106436,11 @@ msgstr "上一块"
 msgctxt "Operator"
 msgid "Next Block"
 msgstr "下一块"
+
+
+msgctxt "Operator"
+msgid "Color Attribute"
+msgstr "颜色属性"
 
 
 msgctxt "Operator"
@@ -107730,6 +108105,10 @@ msgid "Edge-rings are not connected"
 msgstr "循环边未相连"
 
 
+msgid "color_index is invalid"
+msgstr "color_index无效"
+
+
 msgid "Compositing | Tile %u-%u"
 msgstr "合成中 | 分块 %u-%u"
 
@@ -108000,10 +108379,6 @@ msgstr "<缺失的 ID 块>"
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
 msgstr "对该F曲线没有有效的 RNA 指针返回值"
-
-
-msgid "Could not insert keyframe due to zero NLA influence or base value"
-msgstr "不能插入关键帧, 因为NLA影响或基值为0"
 
 
 msgid "No F-Curve to add keyframes to"
@@ -108668,6 +109043,10 @@ msgstr "打开文件失败 '%s'"
 
 msgid "File too long %s"
 msgstr "文件过长 %s"
+
+
+msgid "Could not snap some curves to the surface"
+msgstr "无法将某些曲线吸附到表面"
 
 
 msgid "Cannot convert to the selected type"
@@ -109766,10 +110145,6 @@ msgstr "浏览要关联的工作区"
 
 msgid "Browse LightProbe to be linked"
 msgstr "浏览要关联的光照探头"
-
-
-msgid "Browse Hair Curves Data to be linked"
-msgstr "浏览要关联的毛发曲线数据"
 
 
 msgid "Browse Point Cloud Data to be linked"
@@ -117789,14 +118164,6 @@ msgid "Sigma"
 msgstr "西格玛"
 
 
-msgid "Height_dx"
-msgstr "高度_dx"
-
-
-msgid "Height_dy"
-msgstr "高度_dy"
-
-
 msgid "View Vector"
 msgstr "视图矢量"
 
@@ -118055,6 +118422,18 @@ msgstr "缩放"
 
 msgid "Unknown py-exception, could not convert"
 msgstr "未知的 PY 异常, 无法转换"
+
+
+msgid ""
+"%s: %.*s\n"
+"Location: %s:%d"
+msgstr ""
+"%s: %.*s\n"
+"位置: %s:%d"
+
+
+msgid "%s: %.*s"
+msgstr "%s: %.*s"
 
 
 msgid "Could not resolve path (%s)"

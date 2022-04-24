@@ -22,12 +22,14 @@
 
 namespace blender::bke::pbvh::pixels {
 
-/** Durind debugging this check could be enabled. It will write to each image pixel that is covered
- * by the pbvh. */
+/**
+ * During debugging this check could be enabled.
+ * It will write to each image pixel that is covered by the PBVH.
+ */
 constexpr bool USE_WATERTIGHT_CHECK = false;
 
 /**
- * Calculate the delta of two neighbour uv coordinates in the given image buffer.
+ * Calculate the delta of two neighbor UV coordinates in the given image buffer.
  */
 static float2 calc_barycentric_delta(const float2 uvs[3],
                                      const float2 start_uv,
@@ -273,11 +275,7 @@ static void apply_watertight_check(PBVH *pbvh, Image *image, ImageUser *image_us
   BKE_image_partial_update_mark_full_update(image);
 }
 
-static void update_pixels(PBVH *pbvh,
-                          const struct MLoop *mloop,
-                          struct CustomData *ldata,
-                          struct Image *image,
-                          struct ImageUser *image_user)
+static void update_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image_user)
 {
   Vector<PBVHNode *> nodes_to_update;
 
@@ -285,14 +283,14 @@ static void update_pixels(PBVH *pbvh,
     return;
   }
 
-  MLoopUV *ldata_uv = static_cast<MLoopUV *>(CustomData_get_layer(ldata, CD_MLOOPUV));
+  MLoopUV *ldata_uv = static_cast<MLoopUV *>(CustomData_get_layer(&mesh->ldata, CD_MLOOPUV));
   if (ldata_uv == nullptr) {
     return;
   }
 
   for (PBVHNode *node : nodes_to_update) {
     NodeData *node_data = static_cast<NodeData *>(node->pixels.node_data);
-    init_triangles(pbvh, node, node_data, mloop);
+    init_triangles(pbvh, node, node_data, mesh->mloop);
   }
 
   EncodePixelsUserData user_data;
@@ -375,13 +373,9 @@ void BKE_pbvh_pixels_mark_image_dirty(PBVHNode &node, Image &image, ImageUser &i
 extern "C" {
 using namespace blender::bke::pbvh::pixels;
 
-void BKE_pbvh_build_pixels(PBVH *pbvh,
-                           const struct MLoop *mloop,
-                           struct CustomData *ldata,
-                           struct Image *image,
-                           struct ImageUser *image_user)
+void BKE_pbvh_build_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image_user)
 {
-  update_pixels(pbvh, mloop, ldata, image, image_user);
+  update_pixels(pbvh, mesh, image, image_user);
 }
 
 void pbvh_pixels_free(PBVHNode *node)

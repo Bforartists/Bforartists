@@ -4,8 +4,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Jace Priester"
 __status__ = "production"
-__version__ = "6.5"
-__date__ = "6 Mar 2021"
+__version__ = "6.6"
+__date__ = "22 Apr 2022"
 
 import bmesh
 import bpy.utils
@@ -23,6 +23,10 @@ from ..utils import compatibility as compat
 
 
 def _is_valid_context(context):
+    # only 'VIEW_3D' space is allowed to execute
+    if not common.is_valid_space(context, ['VIEW_3D']):
+        return False
+
     # Multiple objects editing mode is not supported in this feature.
     objs = common.get_uv_editable_objects(context)
     if len(objs) != 1:
@@ -30,10 +34,6 @@ def _is_valid_context(context):
 
     # only edit mode is allowed to execute
     if context.object.mode != 'EDIT':
-        return False
-
-    # only 'VIEW_3D' space is allowed to execute
-    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True

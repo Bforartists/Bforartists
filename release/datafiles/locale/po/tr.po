@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -14289,12 +14289,12 @@ msgid "Clear Parent Inverse"
 msgstr "Ebeveyn Nokta Oluştur"
 
 
-msgid "Set the object's parenting"
-msgstr "Seçili Kamerayı Aktif Yap"
-
-
 msgid "Keep Transform"
 msgstr "Görsel Dönüşüm"
+
+
+msgid "Set the object's parenting"
+msgstr "Seçili Kamerayı Aktif Yap"
 
 
 msgid "Apply transformation before parenting"

@@ -4,6 +4,7 @@
 
 km_tool_snap_utilities_line = "3D View Tool: Edit Mesh, Make Line"
 
+
 def km_mesh_snap_utilities_operators():
     return (
         "Mesh",
@@ -14,6 +15,7 @@ def km_mesh_snap_utilities_operators():
               "active":False}),
         ]},
     )
+
 
 """
 def km_snap_utilities_modal_map():
@@ -50,6 +52,7 @@ def km_snap_utilities_modal_map():
     return keymap
 """
 
+
 def km_3d_view_tool_snap_utilities_line(tool_mouse):
     return (
         km_tool_snap_utilities_line,
@@ -59,6 +62,7 @@ def km_3d_view_tool_snap_utilities_line(tool_mouse):
              {"properties": [("wait_for_input", False)]}),
         ]},
     )
+
 
 def km_view3d_empty(km_name):
     return (
@@ -70,30 +74,34 @@ def km_view3d_empty(km_name):
 # ------------------------------------------------------------------------------
 # Full Configuration
 
+
 def generate_empty_snap_utilities_tools_keymaps():
     return [
-        #km_view3d_empty(km_snap_utilities_modal_keymap),
+        # km_view3d_empty(km_snap_utilities_modal_keymap),
 
         km_view3d_empty(km_tool_snap_utilities_line),
     ]
 
-def generate_snap_utilities_global_keymaps(tool_mouse = 'LEFTMOUSE'):
+
+def generate_snap_utilities_global_keymaps(tool_mouse='LEFTMOUSE'):
     return [
         km_mesh_snap_utilities_operators(),
     ]
 
-def generate_snap_utilities_tools_keymaps(tool_mouse = 'LEFTMOUSE'):
+
+def generate_snap_utilities_tools_keymaps(tool_mouse='LEFTMOUSE'):
     return [
         # Tool System.
         km_3d_view_tool_snap_utilities_line(tool_mouse),
     ]
 
-def generate_snap_utilities_keymaps(tool_mouse = 'LEFTMOUSE'):
+
+def generate_snap_utilities_keymaps(tool_mouse='LEFTMOUSE'):
     return [
         km_mesh_snap_utilities_operators(),
 
         # Modal maps.
-        #km_snap_utilities_modal_map(),
+        # km_snap_utilities_modal_map(),
 
         # Tool System.
         km_3d_view_tool_snap_utilities_line(tool_mouse),

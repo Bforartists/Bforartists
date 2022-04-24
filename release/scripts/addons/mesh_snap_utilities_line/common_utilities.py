@@ -1,17 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#python tip: from-imports don't save memory.
-#They execute and cache the entire module just like a regular import.
+# python tip: from-imports don't save memory.
+# They execute and cache the entire module just like a regular import.
 
 import bpy
 import bmesh
 
 from mathutils import Vector
 from mathutils.geometry import (
-        intersect_point_line,
-        intersect_line_line,
-        intersect_ray_tri,
-        )
+    intersect_point_line,
+    intersect_line_line,
+    intersect_ray_tri,
+)
 
 from .snap_context_l import SnapContext
 
@@ -19,10 +19,10 @@ from .snap_context_l import SnapContext
 def get_units_info(scale, unit_system, separate_units):
     if unit_system == 'METRIC':
         scale_steps = ((1000, 'km'), (1, 'm'), (1 / 100, 'cm'),
-            (1 / 1000, 'mm'), (1 / 1000000, '\u00b5m'))
+                       (1 / 1000, 'mm'), (1 / 1000000, '\u00b5m'))
     elif unit_system == 'IMPERIAL':
         scale_steps = ((5280, 'mi'), (1, '\''),
-            (1 / 12, '"'), (1 / 12000, 'thou'))
+                       (1 / 12, '"'), (1 / 12000, 'thou'))
         scale /= 0.3048  # BU to feet
     else:
         scale_steps = ((1, ' BU'),)
@@ -71,14 +71,17 @@ def location_3d_to_region_2d(region, rv3d, coord):
 
 def out_Location(rv3d, orig, vector):
     view_matrix = rv3d.view_matrix
-    v1 = (int(view_matrix[0][0]*1.5), int(view_matrix[0][1]*1.5), int(view_matrix[0][2]*1.5))
-    v2 = (int(view_matrix[1][0]*1.5), int(view_matrix[1][1]*1.5), int(view_matrix[1][2]*1.5))
+    v1 = (int(view_matrix[0][0]*1.5), int(view_matrix[0]
+          [1]*1.5), int(view_matrix[0][2]*1.5))
+    v2 = (int(view_matrix[1][0]*1.5), int(view_matrix[1]
+          [1]*1.5), int(view_matrix[1][2]*1.5))
 
-    hit = intersect_ray_tri((1,0,0), (0,1,0), (0,0,0), (vector), (orig), False)
+    hit = intersect_ray_tri((1, 0, 0), (0, 1, 0),
+                            (0, 0, 0), (vector), (orig), False)
     if hit is None:
-        hit = intersect_ray_tri(v1, v2, (0,0,0), (vector), (orig), False)
+        hit = intersect_ray_tri(v1, v2, (0, 0, 0), (vector), (orig), False)
     if hit is None:
-        hit = intersect_ray_tri(v1, v2, (0,0,0), (-vector), (orig), False)
+        hit = intersect_ray_tri(v1, v2, (0, 0, 0), (-vector), (orig), False)
     if hit is None:
         hit = Vector()
     return hit
@@ -114,7 +117,8 @@ def get_snap_bm_geom(sctx, main_snap_obj, mcursor):
                     r_bm.verts[r_elem[2]],
                 ]
 
-                faces = set(tri[0].link_faces).intersection(tri[1].link_faces, tri[2].link_faces)
+                faces = set(tri[0].link_faces).intersection(
+                    tri[1].link_faces, tri[2].link_faces)
                 if len(faces) == 1:
                     r_bm_geom = faces.pop()
                 else:
@@ -162,17 +166,19 @@ class SnapCache(object):
     def clear(self):
         self.edge.snp_obj = self.face.bm_face = None
 
+
 _snap_cache = SnapCache()
 
 
 def snap_utilities(
         sctx, main_snap_obj,
         mcursor,
-        constrain = None,
-        previous_vert = None,
-        increment = 0.0):
+        constrain=None,
+        previous_vert=None,
+        increment=0.0):
 
-    snp_obj, loc, elem, elem_co, view_vector, orig, bm, bm_geom = get_snap_bm_geom(sctx, main_snap_obj, mcursor)
+    snp_obj, loc, elem, elem_co, view_vector, orig, bm, bm_geom = get_snap_bm_geom(
+        sctx, main_snap_obj, mcursor)
 
     is_increment = False
     r_loc = None
@@ -209,40 +215,43 @@ def snap_utilities(
             v1 = elem_co[1]
             _snap_cache.edge.vmid = 0.5 * (v0 + v1)
             _snap_cache.edge.v2dmid = location_3d_to_region_2d(
-                    sctx.region, sctx.rv3d, _snap_cache.edge.vmid)
+                sctx.region, sctx.rv3d, _snap_cache.edge.vmid)
 
             if previous_vert and (not bm_geom or previous_vert not in bm_geom.verts):
                 pvert_co = main_snap_obj.mat @ previous_vert.co
                 perp_point = intersect_point_line(pvert_co, v0, v1)
                 _snap_cache.edge.vperp = perp_point[0]
                 #factor = point_perpendicular[1]
-                _snap_cache.edge.v2dperp = location_3d_to_region_2d(sctx.region, sctx.rv3d, perp_point[0])
+                _snap_cache.edge.v2dperp = location_3d_to_region_2d(
+                    sctx.region, sctx.rv3d, perp_point[0])
                 _snap_cache.edge.is_increment = False
             else:
                 _snap_cache.edge.is_increment = True
 
-            #else: _snap_cache.edge.v2dperp = None
+            # else: _snap_cache.edge.v2dperp = None
 
         if constrain:
-            t_loc = intersect_line_line(constrain[0], constrain[1], elem_co[0], elem_co[1])
+            t_loc = intersect_line_line(
+                constrain[0], constrain[1], elem_co[0], elem_co[1])
             if t_loc is None:
                 is_increment = True
                 end = orig + view_vector
-                t_loc = intersect_line_line(constrain[0], constrain[1], orig, end)
+                t_loc = intersect_line_line(
+                    constrain[0], constrain[1], orig, end)
             r_loc = t_loc[0]
 
         elif _snap_cache.edge.v2dperp and\
-            abs(_snap_cache.edge.v2dperp[0] - mcursor[0]) < sctx._dist_px and abs(_snap_cache.edge.v2dperp[1] - mcursor[1]) < sctx._dist_px:
-                r_type = 'PERPENDICULAR'
-                r_loc = _snap_cache.edge.vperp
+                abs(_snap_cache.edge.v2dperp[0] - mcursor[0]) < sctx._dist_px and abs(_snap_cache.edge.v2dperp[1] - mcursor[1]) < sctx._dist_px:
+            r_type = 'PERPENDICULAR'
+            r_loc = _snap_cache.edge.vperp
 
         elif abs(_snap_cache.edge.v2dmid[0] - mcursor[0]) < sctx._dist_px and abs(_snap_cache.edge.v2dmid[1] - mcursor[1]) < sctx._dist_px:
-                r_type = 'CENTER'
-                r_loc = _snap_cache.edge.vmid
+            r_type = 'CENTER'
+            r_loc = _snap_cache.edge.vmid
 
         else:
-                r_loc = loc
-                is_increment = _snap_cache.edge.is_increment
+            r_loc = loc
+            is_increment = _snap_cache.edge.is_increment
 
     elif len(elem) == 3:
         r_type = 'FACE'
@@ -282,5 +291,6 @@ def snap_utilities(
             r_len = vec.length
 
     return snp_obj, loc, r_loc, r_type, bm, bm_geom, r_len
+
 
 snap_utilities.cache = _snap_cache

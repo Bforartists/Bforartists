@@ -216,7 +216,6 @@ def cmake_get_src(f: str) -> None:
                 f_rel_key = f_rel_key.replace(os.sep, "/")
             local_ignore_source_missing = global_ignore_source_missing.get(f_rel_key, [])
 
-
             for l, line_number in tokens:
                 # Replace directories.
                 l = l.replace("${CMAKE_SOURCE_DIR}", SOURCE_DIR)

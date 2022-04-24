@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'0d0a45b89d51')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -27154,12 +27154,12 @@ msgid "Make Parent without Inverse"
 msgstr "Odstranit Rodiče Inverzně"
 
 
-msgid "Set the object's parenting"
-msgstr "Nastaví rodičovskou vazbu objektu"
-
-
 msgid "Keep Transform"
 msgstr "Viditelné transformace"
+
+
+msgid "Set the object's parenting"
+msgstr "Nastaví rodičovskou vazbu objektu"
 
 
 msgid "Apply transformation before parenting"
@@ -43341,11 +43341,6 @@ msgstr "Přejmenovat..."
 
 msgctxt "Operator"
 msgid "Stop Tweaking Strip Actions"
-msgstr "Zrušit Akci"
-
-
-msgctxt "Operator"
-msgid "Start Tweaking Strip Actions"
 msgstr "Zrušit Akci"
 
 

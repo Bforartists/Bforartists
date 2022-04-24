@@ -39,6 +39,12 @@ def update_qcd_view_edit_mode_hotkeys_status(self, context):
     else:
         qcd_init.unregister_qcd_view_edit_mode_hotkeys()
 
+def update_qcd_3dview_header_widget_status(self, context):
+    if self.enable_qcd_3dview_header_widget:
+        qcd_init.register_qcd_3dview_header_widget()
+    else:
+        qcd_init.unregister_qcd_3dview_header_widget()
+
 def get_tool_text(self):
     if self.tool_text_override:
         return self["tool_text_color"]
@@ -188,7 +194,7 @@ class CMPreferences(AddonPreferences):
     # ENABLE QCD BOOLS
     enable_qcd: BoolProperty(
         name="QCD",
-        description="Enable/Disable QCD System.\nThe Quick Content Display system allows you to specify collections as QCD \"slots\" up to a maximum of 20. You can then interact with them through numerical hotkeys, a popup move widget, and a 3D View header widget",
+        description="Enable/Disable QCD System.\nThe Quick Content Display system allows you to specify collections as QCD \"slots\" up to a maximum of 20. You can then interact with them through numerical hotkeys, a popup move widget, and a 3D Viewport header widget",
         default=True,
         update=update_qcd_status,
         )
@@ -205,6 +211,13 @@ class CMPreferences(AddonPreferences):
         description="Enable/Disable the numerical hotkeys to view QCD slots in Edit Mode",
         default=False,
         update=update_qcd_view_edit_mode_hotkeys_status,
+        )
+
+    enable_qcd_3dview_header_widget: BoolProperty(
+        name="QCD 3D Viewport Header Widget",
+        description="Enable/Disable the 3D Viewport header widget.  This widget graphically represents the 20 QCD slots and allows you to interact with them through the GUI",
+        default=True,
+        update=update_qcd_3dview_header_widget_status,
         )
 
 
@@ -431,6 +444,7 @@ class CMPreferences(AddonPreferences):
 
         box.row().prop(self, "enable_qcd_view_hotkeys")
         box.row().prop(self, "enable_qcd_view_edit_mode_hotkeys")
+        box.row().prop(self, "enable_qcd_3dview_header_widget")
 
         box.row().label(text="QCD Move Widget")
 

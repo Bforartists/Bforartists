@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import subprocess
 import os
 from os.path import join, splitext
 
 from autopep8_clean_config import PATHS, BLACKLIST
+
+# Useful to disable when debugging warnings.
+USE_MULTIPROCESS = True
 
 print(PATHS)
 SOURCE_EXT = (
@@ -13,8 +17,11 @@ SOURCE_EXT = (
 )
 
 
-def is_source(filename):
-    return filename.endswith(SOURCE_EXT)
+def is_source_and_included(filename):
+    return (
+        filename.endswith(SOURCE_EXT) and
+        filename not in BLACKLIST
+    )
 
 
 def path_iter(path, filename_check=None):
@@ -40,43 +47,50 @@ def path_expand(paths, filename_check=None):
             yield f
 
 
+def autopep8_format_file(f):
+    print(f)
+    subprocess.call((
+        "autopep8",
+        "--ignore",
+        ",".join((
+            # Info: Use `isinstance()` instead of comparing types directly.
+            # Why disable?: Changes code logic, in rare cases we want to compare exact types.
+            "E721",
+            # Info: Fix bare except.
+            # Why disable?: Disruptive, leave our exceptions alone.
+            "E722",
+            # Info: Fix module level import not at top of file.
+            # Why disable?: re-ordering imports is disruptive and breaks some scripts
+            # that need to check if a module has already been loaded in the case of reloading.
+            "E402",
+            # Info: Fix various deprecated code (via lib2to3)
+            # Why disable?: causes imports to be added/re-arranged.
+            "W690",
+        )),
+        "--aggressive",
+        "--in-place",
+        "--max-line-length", "120",
+        f,
+    ))
+
+
 def main():
     import sys
     import subprocess
 
     if os.path.samefile(sys.argv[-1], __file__):
-        paths = path_expand(PATHS, is_source)
+        paths = path_expand(PATHS, is_source_and_included)
     else:
-        paths = path_expand(sys.argv[1:], is_source)
+        paths = path_expand(sys.argv[1:], is_source_and_included)
 
-    for f in paths:
-        if f in BLACKLIST:
-            continue
-
-        print(f)
-        subprocess.call((
-            "autopep8",
-            "--ignore",
-            ",".join((
-                # Info: Use `isinstance()` instead of comparing types directly.
-                # Why disable?: Changes code logic, in rare cases we want to compare exact types.
-                "E721",
-                # Info: Fix bare except.
-                # Why disable?: Disruptive, leave our exceptions alone.
-                "E722",
-                # Info: Put imports on separate lines.
-                # Why disable?: Disruptive, we manage our own imports.
-                "E401",
-                # Info: Fix various deprecated code (via lib2to3)
-                # Why disable?: causes imports to be added/re-arranged.
-                "W690",
-            )),
-            "--aggressive",
-            "--in-place",
-            # Prefer to manually handle line wrapping
-            "--max-line-length", "200",
-            f,
-        ))
+    if USE_MULTIPROCESS:
+        import multiprocessing
+        job_total = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=job_total * 2)
+        pool.map(autopep8_format_file, paths)
+    else:
+        for f in paths:
+            autopep8_format_file(f)
 
 
 if __name__ == "__main__":
