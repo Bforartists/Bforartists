@@ -12,6 +12,7 @@
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
+#include "BLI_string.h"
 #include "BLT_translation.h"
 #include "BLI_string.h"
 
@@ -1046,14 +1047,14 @@ static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP | P_GPENCIL_EDIT | P_CENTER);
 }
 
-  /*bfa - tool name*/
+/*bfa - tool name*/
 static const char *transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "orient_type")) {
     return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Local");
   }
   else {
-      return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
+    return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
   }
 
   return NULL;
@@ -1073,7 +1074,6 @@ static char *transform_ot_mirror_get_description(bContext *UNUSED(C),
   return NULL;
 }
 
-
 static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
 {
   /* identifiers */
@@ -1085,7 +1085,7 @@ static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = transform_invoke;
   ot->exec = transform_exec;
-  ot->get_name = transform_ot_mirror_get_name;              /*bfa - tool name*/
+  ot->get_name = transform_ot_mirror_get_name;               /*bfa - tool name*/
   ot->get_description = transform_ot_mirror_get_description; /*bfa - descriptions*/
   ot->modal = transform_modal;
   ot->cancel = transform_cancel;

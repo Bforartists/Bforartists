@@ -419,7 +419,7 @@ static void face_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
 static void advanced_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
-  //uiLayout *row, *sub; /* bfa - no sub, see below*/
+  // uiLayout *row, *sub; /* bfa - no sub, see below*/
   uiLayout *row;
   uiLayout *layout = panel->layout;
 
@@ -428,11 +428,11 @@ static void advanced_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Max Distance"));
-  //uiItemR(row, ptr, "use_max_distance", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
-  //uiItemR(sub, ptr, "max_distance", 0, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Max Distance"));
+  // uiItemR(row, ptr, "use_max_distance", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
+  // uiItemR(sub, ptr, "max_distance", 0, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 

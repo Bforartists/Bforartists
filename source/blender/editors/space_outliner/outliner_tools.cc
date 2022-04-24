@@ -433,13 +433,13 @@ static void outliner_do_libdata_operation(bContext *C,
 /** \name Scene Menu Operator
  * \{ */
 
-typedef enum eOutliner_PropSceneOps {  /* bfa -  typedef enum*/
-  OL_SCENE_OP_DELETE = 1,
-  /* bfa - add scene outliner operators  */
-  OL_SCENE_OP_NEW = 2,
-  OL_SCENE_OP_COPY_SETTINGS = 3,
-  OL_SCENE_OP_COPY_LINKED = 4,
-  OL_SCENE_OP_COPY_FULL = 5
+typedef enum eOutliner_PropSceneOps { /* bfa -  typedef enum*/
+                                      OL_SCENE_OP_DELETE = 1,
+                                      /* bfa - add scene outliner operators  */
+                                      OL_SCENE_OP_NEW = 2,
+                                      OL_SCENE_OP_COPY_SETTINGS = 3,
+                                      OL_SCENE_OP_COPY_LINKED = 4,
+                                      OL_SCENE_OP_COPY_FULL = 5
 } eOutliner_PropSceneOps;
 
 static const EnumPropertyItem prop_scene_op_types[] = {
@@ -528,7 +528,7 @@ static bool scene_fn(bContext *C,
   else if (event == OL_SCENE_OP_COPY_FULL) {
     scene_add_ex(scene, bmain, C, SCE_COPY_FULL);
   }
-/*bfa end*/
+  /*bfa end*/
 
   return true;
 }
@@ -560,7 +560,7 @@ static int outliner_scene_operation_exec(bContext *C, wmOperator *op)
     outliner_cleanup_tree(space_outliner);
     WM_main_add_notifier(NC_SCENE | ND_LAYER, nullptr);
   }
-/*bfa end*/
+  /*bfa end*/
   else {
     BLI_assert(0);
     return OPERATOR_CANCELLED;
@@ -2087,7 +2087,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESET,
      "OVERRIDE_LIBRARY_RESET",
      ICON_RESET,
-      "Reset Library Override Single",
+     "Reset Library Override",
      "Reset this local override to its linked values"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_RESET_HIERARCHY,
      "OVERRIDE_LIBRARY_RESET_HIERARCHY",
@@ -2112,7 +2112,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      ICON_CLEAR,
      "Clear Library Override Single",
      "Delete this local override if possible, else reset it and mark it as non editable, and "
-     "relink its usages to the linked data"},
+     "relink its usages to the linked data-blocks"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CLEAR_HIERARCHY,
      "OVERRIDE_LIBRARY_CLEAR_HIERARCHY",
      ICON_DELETE,

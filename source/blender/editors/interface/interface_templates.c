@@ -2822,13 +2822,13 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
   uiLayoutSetUnitsX(layout, 4.0f);
 
   /* Apply. */
-/*bfa - we have the apply button in the header*/
-/*
-  uiItemO(layout,
-          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-          ICON_CHECKMARK,
-          "CONSTRAINT_OT_apply");
-*/
+  /*bfa - we have the apply button in the header*/
+  /*
+    uiItemO(layout,
+            CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
+            ICON_CHECKMARK,
+            "CONSTRAINT_OT_apply");
+  */
 
   /* Duplicate. */
   uiItemO(layout,
@@ -2909,10 +2909,8 @@ static void draw_constraint_header(uiLayout *layout, Object *ob, bConstraint *co
   /* Extra operators menu. */
   uiItemMenuF(row, "", ICON_DOWNARROW_HLT, constraint_ops_extra_draw, con);
 
-
   /* Apply. */
   uiItemO(row, "", ICON_CHECKMARK, "CONSTRAINT_OT_apply"); /*bfa - apply*/
-
 
   /* Close 'button' - emboss calls here disable drawing of 'button' behind X */
   sub = uiLayoutRow(row, false);
@@ -6632,16 +6630,16 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetPropDecorate(sub, false);
-  //uiItemR(sub, fileptr, "override_frame", 0, "", ICON_NONE);
-  //subsub = uiLayoutRow(sub, true);
-  //uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
-  //uiItemR(subsub, fileptr, "frame", 0, "", ICON_NONE);
-  //uiItemDecoratorR(row, fileptr, "frame", 0);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetPropDecorate(sub, false);
+  // uiItemR(sub, fileptr, "override_frame", 0, "", ICON_NONE);
+  // subsub = uiLayoutRow(sub, true);
+  // uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
+  // uiItemR(subsub, fileptr, "frame", 0, "", ICON_NONE);
+  // uiItemDecoratorR(row, fileptr, "frame", 0);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);

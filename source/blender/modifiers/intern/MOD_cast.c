@@ -543,7 +543,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "size", 0, NULL, ICON_NONE);
 
   /*------------------- bfa - original prop */
-  //uiItemR(layout, ptr, "use_radius_as_size", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_radius_as_size", 0, NULL, ICON_NONE);
 
   row = uiLayoutRow(layout, true);
   uiItemS(row);

@@ -330,7 +330,7 @@ static void curvature_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  //uiLayout *col = uiLayoutColumn(layout, false); /*bfa*/
+  // uiLayout *col = uiLayoutColumn(layout, false); /*bfa*/
   col = uiLayoutColumn(layout, false);
 
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_curvature"));
