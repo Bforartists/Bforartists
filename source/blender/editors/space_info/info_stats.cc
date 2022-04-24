@@ -674,10 +674,11 @@ static const char *info_statusbar_string(Main *bmain,
       ofs += BLI_snprintf_rlen(info + ofs, len - ofs, " | ");
     }
     /*ofs += BLI_snprintf_rlen(info + ofs, len - ofs, TIP_("%s"), BKE_blender_version_string());*/
-    ofs += BLI_snprintf_rlen(info + ofs,
-                        len - ofs,
-                        TIP_("%s"),
-                        BKE_bforartists_version_string()); /*bfa - bforartists version string*/
+    ofs += BLI_snprintf_rlen(
+        info + ofs,
+        len - ofs,
+        TIP_("%s"),
+        BKE_bforartists_version_string()); /*bfa - bforartists version string*/
   }
 
   return info;

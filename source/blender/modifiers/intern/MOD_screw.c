@@ -1202,13 +1202,13 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemS(layout);
 
   /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
-  //uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
-  //uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Merge"));
+  // uiItemR(row, ptr, "use_merge_vertices", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_merge_vertices"));
+  // uiItemR(sub, ptr, "merge_threshold", 0, "", ICON_NONE);
 
-// ------------------ bfa new left aligned prop with triangle button to hide the slider
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
@@ -1248,12 +1248,12 @@ static void normals_panel_draw(const bContext *UNUSED(C), Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
 
   /*------------------- bfa - original props */
-  //uiLayoutSetPropSep(layout, true);
+  // uiLayoutSetPropSep(layout, true);
 
-  //col = uiLayoutColumn(layout, false);
-  //uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
-  //uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
+  // col = uiLayoutColumn(layout, false);
+  // uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_normal_calculate", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_normal_flip", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);

@@ -756,14 +756,14 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemS(layout);
 
- /*------------------- bfa - original props */
-  //row = uiLayoutRowWithHeading(layout, true, IFACE_("Factor"));
-  //uiLayoutSetPropDecorate(row, false);
-  //uiItemR(row, ptr, "use_percentage", 0, "", ICON_NONE);
-  //sub = uiLayoutRow(row, true);
-  //uiLayoutSetActive(sub, use_percentage);
-  //uiItemR(sub, ptr, "percentage_factor", 0, "", ICON_NONE);
-  //uiItemDecoratorR(row, ptr, "percentage_factor", 0);
+  /*------------------- bfa - original props */
+  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Factor"));
+  // uiLayoutSetPropDecorate(row, false);
+  // uiItemR(row, ptr, "use_percentage", 0, "", ICON_NONE);
+  // sub = uiLayoutRow(row, true);
+  // uiLayoutSetActive(sub, use_percentage);
+  // uiItemR(sub, ptr, "percentage_factor", 0, "", ICON_NONE);
+  // uiItemDecoratorR(row, ptr, "percentage_factor", 0);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 

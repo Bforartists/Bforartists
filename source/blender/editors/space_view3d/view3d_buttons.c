@@ -939,7 +939,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     else if (totlattdata) {
       TransformMedian_Lattice *ve_median = &tfp->ve_median.lattice;
 
-    /*bfa*/
+      /*bfa*/
       row = uiLayoutRow(layout, false);
       col = uiLayoutColumn(row, false);
 

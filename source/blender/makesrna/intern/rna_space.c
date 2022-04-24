@@ -3396,7 +3396,8 @@ static void rna_def_space(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(prop, "rna_Space_view2d_sync_get", "rna_Space_view2d_sync_set");
   RNA_def_property_ui_text(prop,
                            "Sync Visible Range",
-                           "Synchronize the visible timeline range with other time-based editors\nEach editor to sync needs to have Sync Visible Range on");
+                           "Synchronize the visible timeline range with other time-based "
+                           "editors\nEach editor to sync needs to have Sync Visible Range on");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Space_view2d_sync_update");
 
   rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_HEADER));
@@ -3465,7 +3466,11 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem pixel_snap_mode_items[] = {
-      {SI_PIXEL_SNAP_DISABLED, "DISABLED",  ICON_SNAPTOPIXEL_OFF, "Disabled", "Don't snap to pixels"},
+      {SI_PIXEL_SNAP_DISABLED,
+       "DISABLED",
+       ICON_SNAPTOPIXEL_OFF,
+       "Disabled",
+       "Don't snap to pixels"},
       {SI_PIXEL_SNAP_CORNER, "CORNER", ICON_SNAPTOPIXEL_CORNER, "Corner", "Snap to pixel corners"},
       {SI_PIXEL_SNAP_CENTER, "CENTER", ICON_SNAPTOPIXEL_CENTER, "Center", "Snap to pixel centers"},
       {0, NULL, 0, NULL, NULL},
@@ -4171,7 +4176,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_ortho_grid", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_ORTHO_GRID);
-/*bfa - we show or hide the grid in all views with the ortho grid flag*/
+  /*bfa - we show or hide the grid in all views with the ortho grid flag*/
   RNA_def_property_ui_text(prop, "Display Grid", "Show the ground grid in the viewport");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 

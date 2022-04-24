@@ -568,7 +568,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetEnabled(col, !is_bound);
   uiItemR(col, ptr, "precision", 0, NULL, ICON_NONE);
 
-      /*------------------- bfa - original props */
+  /*------------------- bfa - original props */
   // uiItemR(col, ptr, "use_dynamic_bind", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
@@ -578,7 +578,6 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemDecoratorR(row, ptr, "use_dynamic_bind", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
-
 
   uiItemO(layout,
           is_bound ? IFACE_("Unbind") : IFACE_("Bind"),
