@@ -6711,6 +6711,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("sequencer.view_selected", {"type": 'F', "value": 'PRESS'}, None),
     ],
    },
   ),
