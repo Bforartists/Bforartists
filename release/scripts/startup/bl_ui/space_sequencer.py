@@ -434,11 +434,13 @@ class SEQUENCER_MT_view(Menu):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        if st.view_type == 'PREVIEW':
-            # Specifying the REGION_PREVIEW context is needed in preview-only
-            # mode, else the lookup for the shortcut will fail in
-            # wm_keymap_item_find_props() (see T32595).
-            layout.operator_context = 'INVOKE_REGION_PREVIEW'
+        # bfa - we have it already separated with correct invoke.
+
+        # if st.view_type == 'PREVIEW':
+        #     # Specifying the REGION_PREVIEW context is needed in preview-only
+        #     # mode, else the lookup for the shortcut will fail in
+        #     # wm_keymap_item_find_props() (see T32595).
+        #     layout.operator_context = 'INVOKE_REGION_PREVIEW'
         layout.prop(st, "show_region_toolbar")
         layout.prop(st, "show_region_tool_header")
         layout.prop(st, "show_region_ui")
@@ -456,11 +458,6 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
-
-        if st.view_type == 'PREVIEW':
-            # See above (T32595)
-            layout.operator_context = 'INVOKE_REGION_PREVIEW'
-        layout.operator("sequencer.view_selected", text="Frame Selected")
 
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
