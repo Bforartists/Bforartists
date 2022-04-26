@@ -1440,7 +1440,7 @@ automerge_off
 automerge_on
 node_white_noise
 
-#~ DEF_ICON_BLANK(1474)
+delete_duplicate
 #~ DEF_ICON_BLANK(1475)
 #~ DEF_ICON_BLANK(1476)
 #~ DEF_ICON_BLANK(1477)
