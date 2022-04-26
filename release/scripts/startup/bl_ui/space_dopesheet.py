@@ -871,7 +871,7 @@ class DOPESHEET_MT_context_menu(Menu):
 
         if st.mode == 'GPENCIL':
             layout.operator("gpencil.interpolate_reverse")
-            layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicate Frames")
+            layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon = "DELETE_DUPLICATE")
 
         layout.separator()
 
