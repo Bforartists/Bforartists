@@ -1456,7 +1456,7 @@ DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge ic
 DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*/
 DEF_ICON_COLOR(NODE_WHITE_NOISE)
 
-DEF_ICON_BLANK(1474)
+DEF_ICON_COLOR(DELETE_DUPLICATE)
 DEF_ICON_BLANK(1475)
 DEF_ICON_BLANK(1476)
 DEF_ICON_BLANK(1477)

@@ -3843,7 +3843,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE")
+            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE_DUPLICATE")
             col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
             col.operator("gpencil.reproject", icon = "REPROJECT")
 
@@ -3863,7 +3863,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.stroke_merge_by_distance", text="", icon = "MERGE")
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
                 row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
 
                 row = col.row(align=True)
@@ -3880,7 +3880,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("gpencil.stroke_merge_by_distance", text="", icon = "MERGE")
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
                 row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
 
                 row = col.row(align=True)
@@ -4536,7 +4536,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
             col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
             col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
             col.operator("gpencil.frame_clean_loose", text="Delete Loose Points", icon = "DELETE_LOOSE")
-            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE")
+            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE_DUPLICATE")
             col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
 
         # icon buttons
@@ -4554,7 +4554,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
                 row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
                 row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
 
             elif column_count == 2:
@@ -4565,7 +4565,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
 
                 row = col.row(align=True)
                 row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
@@ -4575,7 +4575,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
                 col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
                 col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
                 col.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
-                col.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
+                col.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
                 col.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
 
 
