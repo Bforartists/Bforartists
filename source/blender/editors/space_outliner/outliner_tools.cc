@@ -449,7 +449,7 @@ static const EnumPropertyItem prop_scene_op_types[] = {
     // {OL_SCENE_OP_NEW, "NEW", ICON_NEW, "New", ""},
     {OL_SCENE_OP_COPY_SETTINGS, "COPY_SETTINGS", ICON_COPYDOWN, "Copy Settings", ""},
     {OL_SCENE_OP_COPY_LINKED, "COPY_LINKED", ICON_LINKED, "Linked Copy", ""},
-    {OL_SCENE_OP_COPY_LINKED, "COPY_FULL", ICON_DUPLICATE_ALL, "Full Copy", ""},
+    {OL_SCENE_OP_COPY_FULL, "COPY_FULL", ICON_DUPLICATE_ALL, "Full Copy", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
