@@ -65,6 +65,12 @@ static int brush_add_exec(bContext *C, wmOperator *UNUSED(op))
 
   BKE_paint_brush_set(paint, br);
 
+  /* bfa - hackish: force screen refresh to fix brush panel addon not refreshing on adding brushes,
+   * we could make brush data change emit a message and catch it with msgbus, but it is a hassle */
+  wmWindowManager *wm = CTX_wm_manager(C);
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    ED_screen_refresh(wm, win);
+  }
   return OPERATOR_FINISHED;
 }
 
