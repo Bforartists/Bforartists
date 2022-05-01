@@ -986,9 +986,11 @@ class NodeTreeInterfacePanel:
                     active_socket.bl_socket_idname.startswith(prefix)
                     for prefix in field_socket_prefixes
                 )
-                if in_out == 'OUT' and is_field_type:
-                    layout.prop(active_socket, "attribute_domain")
-            layout.use_property_split = False
+                if is_field_type:
+                    if in_out == 'OUT':
+                        layout.prop(active_socket, "attribute_domain")
+                    layout.prop(active_socket, "default_attribute_name")
+            layout.use_property_split = True
             active_socket.draw(context, layout)
 
 

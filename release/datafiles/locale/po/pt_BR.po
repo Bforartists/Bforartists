@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -37645,6 +37645,14 @@ msgid "Flip Colors"
 msgstr "Inverter Cores"
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar Preenchimento de Traço"
@@ -41996,11 +42004,6 @@ msgid "Toggle collapsed nodes and hide unused sockets"
 msgstr "Alterna os nós encolhidos e oculta os conectores não usados."
 
 
-msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "Copiar Grupo de Nós Geométricos"
-
-
 msgid "Delete selected nodes"
 msgstr "Apaga os nós selecionados."
 
@@ -42949,6 +42952,11 @@ msgstr "Alternar o campo de força"
 
 msgid "Toggle object's force field"
 msgstr "Alterna o campo de força do objeto."
+
+
+msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "Copiar Grupo de Nós Geométricos"
 
 
 msgctxt "Operator"
@@ -61704,14 +61712,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -67764,16 +67764,16 @@ msgid "Source Clone UV Map"
 msgstr "Mapa UV clone da fonte"
 
 
-msgid "Mask Value"
-msgstr "Valor de máscara"
-
-
 msgid "CCW"
 msgstr "Sentido anti-horário"
 
 
 msgid "CW"
 msgstr "Sentido horário"
+
+
+msgid "Mask Value"
+msgstr "Valor de máscara"
 
 
 msgctxt "Operator"
@@ -72589,10 +72589,6 @@ msgstr "Redefinir curva"
 
 msgid "Anim Player"
 msgstr "Rep. animação"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "Bloco de dados de biblioteca indireta, não é possível alterar."
 
 
 msgid "Packed File, click to unpack"

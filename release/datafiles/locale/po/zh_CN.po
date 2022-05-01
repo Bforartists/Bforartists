@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3477,6 +3477,30 @@ msgid "Number of curves added by the Add brush"
 msgstr "使用添加笔刷添加的曲线数"
 
 
+msgid "Curve Length"
+msgstr "曲线长度"
+
+
+msgid "Length of newly added curves when it is not interpolated from other curves"
+msgstr "未从其他曲线插值时，新添加的曲线的长度"
+
+
+msgid "Interpolate Length"
+msgstr "插值长度"
+
+
+msgid "Use length of the curves in close proximity"
+msgstr "使用曲线的近距离长度"
+
+
+msgid "Interpolate Shape"
+msgstr "插值形状"
+
+
+msgid "Use shape of the curves in close proximity"
+msgstr "使用曲线的近距离形状"
+
+
 msgid "Minimum Length"
 msgstr "最小长度"
 
@@ -5445,12 +5469,12 @@ msgid "Linear ACES"
 msgstr "线性ACES"
 
 
-msgid "ACES linear space"
-msgstr "ACES 线性空间"
-
-
 msgid "Non-Color"
 msgstr "非彩色"
+
+
+msgid "Color space used for images which contains non-color data (i.e. normal maps)"
+msgstr "包含非色彩数据(即, 法线贴图)的图像所使用的色彩空间"
 
 
 msgid "Raw"
@@ -14035,6 +14059,10 @@ msgid "Smoke velocity grid"
 msgstr "烟雾速率栅格"
 
 
+msgid "Velocity Scale"
+msgstr "速度比"
+
+
 msgid "Viscosity Base"
 msgstr "速率基数"
 
@@ -19528,16 +19556,16 @@ msgid "Cloth"
 msgstr "布料"
 
 
+msgid "Draw Face Sets"
+msgstr "绘制面组"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "多精度置换橡皮擦"
 
 
 msgid "Multires Displacement Smear"
 msgstr "多精度置换涂抹"
-
-
-msgid "Draw Face Sets"
-msgstr "绘制面组"
 
 
 msgid "Secondary Color"
@@ -36331,10 +36359,6 @@ msgid "Allow interpolation of vertex positions"
 msgstr "允许对顶点位置进行插值"
 
 
-msgid "Velocity Scale"
-msgstr "速度比"
-
-
 msgid "Multiplier used to control the magnitude of the velocity vectors for time effects"
 msgstr "用于控制时间效应的速度矢量的乘数"
 
@@ -42822,10 +42846,6 @@ msgstr "使用左控制柄"
 
 msgid "Use the right handles"
 msgstr "使用右控制柄"
-
-
-msgid "Curve Length"
-msgstr "曲线长度"
 
 
 msgid "Bezier Segment"
@@ -54729,6 +54749,14 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
@@ -56715,6 +56743,15 @@ msgstr "框选标记"
 
 msgid "Select all time markers using box selection"
 msgstr "框选所有时间标记"
+
+
+msgctxt "Operator"
+msgid "Select Markers Before/After Current Frame"
+msgstr "选择当前帧之前/之后的标记"
+
+
+msgid "Select markers on and left/right of the current frame"
+msgstr "选择当前帧左/右的标记"
 
 
 msgctxt "Operator"
@@ -60462,13 +60499,21 @@ msgid "Enable 'solo' on the NLA Track containing the active strip, to edit it wi
 msgstr "在包含活动片段的NLA轨道上启用 \"孤立模式\"，以编辑它而不看到NLA堆栈的效果"
 
 
+msgid "Evaluate Upper Stack"
+msgstr "计算上层堆叠"
+
+
+msgid "In tweak mode, display the effects of the tracks above the tweak strip"
+msgstr "在调整模式下，在调整条上方显示轨道的效果"
+
+
 msgctxt "Operator"
 msgid "Exit Tweak Mode"
-msgstr "退出拖拽模式"
+msgstr "退出调整模式"
 
 
 msgid "Exit tweaking mode for the action referenced by the active strip"
-msgstr "退出以活动片段为参照的动作块拖拽模式"
+msgstr "退出以活动片段为参照的动作块调整模式"
 
 
 msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get things back to normal"
@@ -60665,15 +60710,6 @@ msgstr "显示 / 隐藏节点接口"
 
 msgid "Toggle collapsed nodes and hide unused sockets"
 msgstr "切换已收起节点, 并隐藏闲置接口"
-
-
-msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "复制几何节点组"
-
-
-msgid "Copy the active geometry node group and assign it to the active modifier"
-msgstr "复制活动几何节点组，并为其指定活动修改器"
 
 
 msgctxt "Operator"
@@ -61981,6 +62017,15 @@ msgstr "切换到物体的力场"
 
 
 msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "复制几何节点组"
+
+
+msgid "Copy the active geometry node group and assign it to the active modifier"
+msgstr "复制活动几何节点组，并为其指定活动修改器"
+
+
+msgctxt "Operator"
 msgid "Input Attribute Toggle"
 msgstr "输入属性切换"
 
@@ -62997,6 +63042,11 @@ msgstr "重置应用于父子级关系的变换修正，但不删除亲子关系
 
 
 msgctxt "Operator"
+msgid "Apply Parent Inverse"
+msgstr "应用父级反校正"
+
+
+msgctxt "Operator"
 msgid "Make Parent without Inverse"
 msgstr "不使用反转方式建立父子关系"
 
@@ -63007,6 +63057,10 @@ msgstr "不经过父级反向纠正而设置物体的父子关系"
 
 msgid "Keep Transform"
 msgstr "保持变换"
+
+
+msgid "Preserve the world transform throughout parenting"
+msgstr "在整个父子关系中保留世界变换"
 
 
 msgid "Set the object's parenting"
@@ -64959,6 +65013,10 @@ msgid "Make the library override data-block editable"
 msgstr "使库重写数据块可编辑"
 
 
+msgid "Reset Library Override Single"
+msgstr "重置单一库重写"
+
+
 msgid "Reset this local override to its linked values"
 msgstr "重置此本地重写为其关联数值"
 
@@ -64985,6 +65043,14 @@ msgstr "强制重新同步库重写层级"
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
 msgstr "从其关联引用以及依赖关系的层次结构中重建此本地覆写，强制该层次结构匹配关联数据(即忽略数据块指针属性上的退出覆写)"
+
+
+msgid "Clear Library Override Single"
+msgstr "清除单一库重写"
+
+
+msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
+msgstr "如果可能，请删除此本地重写，并将其重新关联到已关联的数据块，否则将其重置并将其标记为不可编辑，"
 
 
 msgid "Clear Library Override Hierarchy"
@@ -75953,10 +76019,6 @@ msgid "Clamp Bounding Box"
 msgstr "钳制边界框"
 
 
-msgid "Resize the objects to keep bounding box under this value. Value 0 diables clamping"
-msgstr "调整物体大小以使边界框保持在该值以下。数值为0 禁用钳制"
-
-
 msgctxt "Operator"
 msgid "Open"
 msgstr "打开"
@@ -76926,6 +76988,22 @@ msgid "Export current scene in a USD archive"
 msgstr "将当前场景导出为USD档"
 
 
+msgid "Export all frames in the render frame range, rather than only the current frame"
+msgstr "导出渲染帧范围内的所有帧，而非仅当前帧"
+
+
+msgid "Export hair particle systems as USD curves"
+msgstr "导出毛发粒子系统为USD曲线"
+
+
+msgid "Export viewport settings of materials as USD preview materials, and export material assignments as geometry subsets"
+msgstr "将材质的视图设置导出为 USD 预览材质，并将材质指定导出为几何体子集"
+
+
+msgid "Include normals of exported meshes in the export"
+msgstr "在导出中包含被导出网格的法向"
+
+
 msgid "Export Textures"
 msgstr "导出纹理"
 
@@ -76936,6 +77014,10 @@ msgstr "如果导出材质，将材质节点引用的纹理导出至与USD文件
 
 msgid "UV Maps"
 msgstr "UV 贴图"
+
+
+msgid "Include all mesh UV maps in the export"
+msgstr "在导出中包含全部网格UV 贴图"
 
 
 msgid "To USD Preview Surface"
@@ -76962,12 +77044,24 @@ msgid "Make texture asset paths relative to the USD file"
 msgstr "创建相对于 USD 文件的纹理资产路径"
 
 
+msgid "Only export selected objects. Unselected parents of selected objects are exported as empty transform"
+msgstr "仅导出选中的物体。所选物体的未选定父级将导出为空变换"
+
+
 msgid "Instancing"
 msgstr "实例化"
 
 
+msgid "Export instanced objects as references in USD rather than real objects"
+msgstr "将实例化物体导出为USD中的引用，而非真实物体"
+
+
 msgid "Visible Only"
 msgstr "仅可见"
+
+
+msgid "Only export visible objects. Invisible parents of exported objects are exported as empty transforms"
+msgstr "仅导出可见物体。被导出物体的不可见父级将导出为空变换"
 
 
 msgctxt "Operator"
@@ -77565,30 +77659,6 @@ msgstr "沿 Z 轴镜像笔刷"
 
 msgid "Curves Sculpt Paint"
 msgstr "曲线雕刻绘制"
-
-
-msgid "Length of newly added curves when it is not interpolated from other curves"
-msgstr "未从其他曲线插值时，新添加的曲线的长度"
-
-
-msgid "Radius around curves roots in which no new curves can be added"
-msgstr "曲线根周围的半径，其中不能添加新曲线"
-
-
-msgid "Interpolate Length"
-msgstr "插值长度"
-
-
-msgid "Use length of the curves in close proximity"
-msgstr "使用曲线的近距离长度"
-
-
-msgid "Interpolate Shape"
-msgstr "插值形状"
-
-
-msgid "Use shape of the curves in close proximity"
-msgstr "使用曲线的近距离形状"
 
 
 msgid "Grease Pencil Paint"
@@ -78949,6 +79019,10 @@ msgid "Rename Active Item"
 msgstr "重命名活动项"
 
 
+msgid "Rename Marker"
+msgstr "重命名标记"
+
+
 msgid ""
 "\n"
 "    Popover panel for adding extra options that don't fit in the tool settings header\n"
@@ -79509,6 +79583,11 @@ msgstr "简化"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "绘制面组"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "多精度置换橡皮擦"
 
@@ -79521,11 +79600,6 @@ msgstr "多精度置换涂抹"
 msgctxt "Operator"
 msgid "Paint"
 msgstr "绘制"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "绘制面组"
 
 
 msgctxt "Operator"
@@ -90232,16 +90306,8 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
 msgid "Display black edges"
 msgstr "绘制黑色边线"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Display white edges"
@@ -92414,6 +92480,14 @@ msgstr "显示树路径"
 
 msgid "Display breadcrumbs for the editor's context"
 msgstr "显示编辑器上下文的面包屑导航"
+
+
+msgid "Show Named Attributes"
+msgstr "显示已命名属性"
+
+
+msgid "Show when nodes are using named attributes"
+msgstr "当节点使用命名属性时显示"
 
 
 msgid "Display overlays like colored or dashed wires"
@@ -95202,10 +95276,6 @@ msgstr "阻止编辑标记"
 
 msgid "Lock Object Modes"
 msgstr "锁定物体模式"
-
-
-msgid "Restrict select to the current mode"
-msgstr "限制选择"
 
 
 msgid "Mesh Selection Mode"
@@ -99365,10 +99435,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "吸管颜色渐变点采样映射"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM 数据 (.hgt) 作为网格和/或图像"
-
-
 msgid "No selected keys, pasting over scene range"
 msgstr "无选中的关键帧，在场景范围内粘贴"
 
@@ -99453,6 +99519,10 @@ msgstr "要求具有计算能力5.0 的Nvidia GPU"
 
 msgid "and NVIDIA driver version 470 or newer"
 msgstr "以及Nvidia驱动程序470版本或更新"
+
+
+msgid "Requires discrete AMD GPU with RDNA architecture"
+msgstr "需要RDNA架构的独立AMD GPU"
 
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
@@ -100946,10 +101016,6 @@ msgid "This panel is a remainder of the old pose library,"
 msgstr "此面板是旧姿态库的遗留部分，"
 
 
-msgid "which was replaced by the Asset Browser."
-msgstr "它已被资产浏览器取代。"
-
-
 msgctxt "Operator"
 msgid "More Info"
 msgstr "更多信息"
@@ -100962,10 +101028,6 @@ msgstr "转换为姿态资产"
 
 msgid "Enable the Pose Library add-on to convert"
 msgstr "启用姿态库加载项以进行转换"
-
-
-msgid "this legacy pose library to pose assets."
-msgstr "该旧版姿态库用于姿态资产。"
 
 
 msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
@@ -101831,16 +101893,16 @@ msgid "Gradient Mapping"
 msgstr "渐变映射"
 
 
-msgid "Mask Value"
-msgstr "遮罩值"
-
-
 msgid "CCW"
 msgstr "逆时针"
 
 
 msgid "CW"
 msgstr "顺时针"
+
+
+msgid "Mask Value"
+msgstr "遮罩值"
 
 
 msgid "Invert to Fill"
@@ -103693,6 +103755,16 @@ msgstr "开始编辑暂存的动作"
 
 
 msgctxt "Operator"
+msgid "Start Tweaking Strip Actions (Full Stack)"
+msgstr "开始调节动作片段(全队列)"
+
+
+msgctxt "Operator"
+msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgstr "开始调节动作片段(下层队列)"
+
+
+msgctxt "Operator"
 msgid "Join in New Frame"
 msgstr "并入新框"
 
@@ -103760,6 +103832,10 @@ msgstr "输入项:"
 
 msgid "Timings"
 msgstr "时序"
+
+
+msgid "Named Attributes"
+msgstr "已命名属性"
 
 
 msgctxt "Operator"
@@ -104791,6 +104867,10 @@ msgid "Next Workspace"
 msgstr "后一个工作区"
 
 
+msgid "Marker Name"
+msgstr "标记名称"
+
+
 msgctxt "Operator"
 msgid "Back to Previous"
 msgstr "返回前一视图"
@@ -104877,6 +104957,10 @@ msgstr "序列片段名称"
 
 msgid "No active item"
 msgstr "无活动项"
+
+
+msgid "No active marker"
+msgstr "无活动标记"
 
 
 msgctxt "Operator"
@@ -105671,6 +105755,10 @@ msgstr "平直"
 
 msgid "Visual Transform"
 msgstr "可视变换"
+
+
+msgid "Parent Inverse"
+msgstr "父级反校正"
 
 
 msgctxt "Operator"
@@ -108421,6 +108509,10 @@ msgid "Could not update flags for this fcurve, as RNA path is invalid for the gi
 msgstr "无法对该曲线更新标记，因为对于指定的ID无法找到有效的RNA路径(ID = %s, 路径 = %s)"
 
 
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "由于零 NLA 影响、基值，或值重新映射失败，无法插入 %i 个关键帧: %s.%s 对于编号 [%s]"
+
+
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
 msgstr "路径为'%s[%d]'的F曲线不能插入关键帧, 请确保它不是锁定的或者被采样的, 并且请尝试移除F修改器"
 
@@ -109043,6 +109135,10 @@ msgstr "打开文件失败 '%s'"
 
 msgid "File too long %s"
 msgstr "文件过长 %s"
+
+
+msgid "Some curves could not be converted because they were not attached to the surface"
+msgstr "某些曲线无法转换，因为其未附着在表面上"
 
 
 msgid "Could not snap some curves to the surface"
@@ -109935,10 +110031,6 @@ msgstr ""
 "%s"
 
 
-msgid "Indirect library data-block, cannot change"
-msgstr "间接的库数据块, 无法更改"
-
-
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "直接关联的库数据块，单击转为本地项，Shift+单击创建库重写"
 
@@ -110145,6 +110237,10 @@ msgstr "浏览要关联的工作区"
 
 msgid "Browse LightProbe to be linked"
 msgstr "浏览要关联的光照探头"
+
+
+msgid "Browse Curves Data to be linked"
+msgstr "浏览要关联的曲线数据"
 
 
 msgid "Browse Point Cloud Data to be linked"
@@ -111499,10 +111595,6 @@ msgid "Modifiers cannot be applied on override data"
 msgstr "修改器无法应用至覆写数据"
 
 
-msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
-msgstr "不支持\"碰撞\"或\"钩挂\"修改器"
-
-
 msgid "No selected object is active"
 msgstr "无选中物体处于活动状态"
 
@@ -111521,6 +111613,10 @@ msgstr "物体 (保持变换)"
 
 msgid "Object (Without Inverse)"
 msgstr "物体(无反向)"
+
+
+msgid "Object (Keep Transform Without Inverse)"
+msgstr "物体(保持变换无反向)"
 
 
 msgid "OK?"
@@ -113751,6 +113847,22 @@ msgstr "• 体积"
 
 msgid "The socket value has not been computed yet"
 msgstr "接口值尚未经计算"
+
+
+msgid "read"
+msgstr "读取"
+
+
+msgid "write"
+msgstr "写入"
+
+
+msgid "remove"
+msgstr "移除"
+
+
+msgid "Attributes with these names used within the group may conflict with existing attributes"
+msgstr "组内使用这些名称的属性可能与现有属性冲突"
 
 
 msgid "The execution time from the node tree's latest evaluation. For frame and group nodes, the time for all sub-nodes"
@@ -117940,10 +118052,6 @@ msgid "Attribute does not exist: \""
 msgstr "属性不存在: \""
 
 
-msgid "Cannot delete attribute with name \""
-msgstr "无法删除属性名称包含 \""
-
-
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"
 msgstr "每个元素的缩放原点。如果多个元素相连，则对其中心取平均值"
 
@@ -117970,6 +118078,10 @@ msgstr "体积只支持单个材质；选中项输入不能是一个场"
 
 msgid "Point clouds only support a single material; selection input can not be a field"
 msgstr "点云只支持单个材质；选中项输入不能是一个场"
+
+
+msgid "Curves only support a single material; selection input can not be a field"
+msgstr "曲线只支持单个材质；选中项输入不能是一个场"
 
 
 msgid "Shade Smooth"
@@ -118972,10 +119084,6 @@ msgstr "添加网格"
 
 msgid "Import-Export"
 msgstr "导入 - 导出"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -45795,6 +45795,14 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Разблокировать все слои"
@@ -73743,16 +73751,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -77754,10 +77754,6 @@ msgid "Lock Object Modes"
 msgstr "Блокировать режимы у объектов"
 
 
-msgid "Restrict select to the current mode"
-msgstr "Ограничить выделение текущим режимом"
-
-
 msgid "Mesh Selection Mode"
 msgstr "Режим выделения меша"
 
@@ -81736,16 +81732,16 @@ msgid "Gradient Mapping"
 msgstr "Наложение градиента"
 
 
-msgid "Mask Value"
-msgstr "Значение маски"
-
-
 msgid "CCW"
 msgstr "Против часовой"
 
 
 msgid "CW"
 msgstr "По часовой"
+
+
+msgid "Mask Value"
+msgstr "Значение маски"
 
 
 msgctxt "Operator"
@@ -88007,10 +88003,6 @@ msgstr "Сортировать по:"
 
 msgid "Anim Player"
 msgstr "Остановить"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "Невозможно изменить датаблок из не напрямую соединённой библиотеки"
 
 
 msgid "Can't edit external library data"
