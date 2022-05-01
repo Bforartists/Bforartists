@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3164,6 +3164,10 @@ msgstr "Capacités de peinture de poids"
 
 msgid "Has Weight"
 msgstr "A poids"
+
+
+msgid "Curve Length"
+msgstr "Longeur de courbe"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -35341,10 +35345,6 @@ msgid "Convex Hull"
 msgstr "Coque convexe"
 
 
-msgid "Curve Length"
-msgstr "Longeur de courbe"
-
-
 msgid "Curve to Mesh"
 msgstr "Courbe vers Mesh"
 
@@ -43441,6 +43441,14 @@ msgstr "Subdiviser trait"
 
 msgid "Subdivide between continuous selected points of the stroke adding a point half way between them"
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
+
+
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -59299,10 +59307,6 @@ msgid "Mirror brush across the Z axis"
 msgstr "Miroir de la brosse le long de l’axe Z"
 
 
-msgid "Radius around curves roots in which no new curves can be added"
-msgstr "Rayon autour des racines des courbes dans lequel aucune nouvelles courbes ne peut être ajoutée"
-
-
 msgid "Grease Pencil Paint"
 msgstr "Peinture de crayon gras"
 
@@ -68018,14 +68022,6 @@ msgid "Outline"
 msgstr "Contour"
 
 
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
-
-
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -71474,10 +71470,6 @@ msgid "Lock Object Modes"
 msgstr "Verrouiller les objets dans les modes"
 
 
-msgid "Restrict select to the current mode"
-msgstr "Restreindre la sélection dans le mode actuel"
-
-
 msgid "Mesh Selection Mode"
 msgstr "Mode de sélection de mesh"
 
@@ -74353,16 +74345,16 @@ msgid "Source Clone UV Map"
 msgstr "Carte UV source de clonage"
 
 
-msgid "Mask Value"
-msgstr "Valeur de masque"
-
-
 msgid "CCW"
 msgstr "CCW"
 
 
 msgid "CW"
 msgstr "CW"
+
+
+msgid "Mask Value"
+msgstr "Valeur de masque"
 
 
 msgid "Invert to Fill"
@@ -79156,10 +79148,6 @@ msgstr "Réinitialiser courbe"
 
 msgid "Anim Player"
 msgstr "Lecteur d’anim"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "Bloc de données de bibliothèque indirect, non-modifiable"
 
 
 msgid "Unlink data-block (Shift + Click to set users to zero, data will then not be saved)"

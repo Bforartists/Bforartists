@@ -14,7 +14,7 @@ from bl_ui import properties_material
 for member in dir(properties_material):
     subclass = getattr(properties_material, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_material
 
 from .shading_properties import check_material
@@ -28,10 +28,10 @@ def simple_material(mat):
 class MaterialButtonsPanel:
     """Use this class to define buttons from the material tab of properties window."""
 
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
     bl_context = "material"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -42,20 +42,24 @@ class MaterialButtonsPanel:
 
 class MATERIAL_PT_POV_shading(MaterialButtonsPanel, Panel):
     bl_label = "Shading"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.pov.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return (
+            check_material(mat)
+            and (mat.pov.type in {"SURFACE", "WIRE"})
+            and (engine in cls.COMPAT_ENGINES)
+        )
 
     def draw(self, context):
         layout = self.layout
 
         mat = context.material  # FORMERLY : #active_node_mat(context.material)
 
-        if mat.pov.type in {'SURFACE', 'WIRE'}:
+        if mat.pov.type in {"SURFACE", "WIRE"}:
             split = layout.split()
 
             col = split.column()
@@ -107,8 +111,8 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
     """Use this class to define pov sss buttons panel."""
 
     bl_label = "Subsurface Scattering"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"DEFAULT_CLOSED"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -116,7 +120,7 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         engine = context.scene.render.engine
         return (
             check_material(mat)
-            and (mat.pov.type in {'SURFACE', 'WIRE'})
+            and (mat.pov.type in {"SURFACE", "WIRE"})
             and (engine in cls.COMPAT_ENGINES)
         )
 
@@ -138,9 +142,9 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         row = layout.row().split()
         sub = row.row(align=True).split(align=True, factor=0.75)
         sub.menu(MATERIAL_MT_POV_sss_presets.__name__, text=MATERIAL_MT_POV_sss_presets.bl_label)
-        sub.operator(MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon='ADD')
+        sub.operator(MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon="ADD")
         sub.operator(
-            MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon='REMOVE'
+            MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon="REMOVE"
         ).remove_active = True
 
         split = layout.split()
@@ -168,8 +172,8 @@ class MATERIAL_PT_POV_activate_node(MaterialButtonsPanel, Panel):
 
     bl_label = "Activate Node Settings"
     bl_context = "material"
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"HIDE_HEADER"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -188,7 +192,7 @@ class MATERIAL_PT_POV_activate_node(MaterialButtonsPanel, Panel):
         # layout.operator("pov.material_use_nodes", icon='SOUND')#'NODETREE')
         # the above replaced with a context hook below:
         layout.operator(
-            "WM_OT_context_toggle", text="Use POV-Ray Nodes", icon='NODETREE'
+            "WM_OT_context_toggle", text="Use POV-Ray Nodes", icon="NODETREE"
         ).data_path = "material.pov.material_use_nodes"
 
 
@@ -197,8 +201,8 @@ class MATERIAL_PT_POV_active_node(MaterialButtonsPanel, Panel):
 
     bl_label = "Active Node Settings"
     bl_context = "material"
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"HIDE_HEADER"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -216,20 +220,16 @@ class MATERIAL_PT_POV_active_node(MaterialButtonsPanel, Panel):
         node_tree = mat.node_tree
         if node_tree and mat.use_nodes:
             layout = self.layout
-            node = node_tree.nodes.active
-            if node:
+            if node := node_tree.nodes.active:
                 layout.prop(mat.pov, "material_active_node")
                 layout.context_pointer_set("node", node)
                 if hasattr(node, "draw_buttons_ext"):
                     node.draw_buttons_ext(context, layout)
                 elif hasattr(node, "draw_buttons"):
                     node.draw_buttons(context, layout)
-                value_inputs = [
-                    socket
-                    for socket in node.inputs
-                    if socket.enabled and not socket.is_linked
-                ]
-                if value_inputs:
+                if value_inputs := [
+                    socket for socket in node.inputs if socket.enabled and not socket.is_linked
+                ]:
                     layout.separator()
                     layout.label(text="Inputs:")
                     for socket in value_inputs:
@@ -243,7 +243,7 @@ class MATERIAL_PT_POV_specular(MaterialButtonsPanel, Panel):
     """Use this class to define standard material specularity (highlights) buttons."""
 
     bl_label = "Specular"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -251,16 +251,16 @@ class MATERIAL_PT_POV_specular(MaterialButtonsPanel, Panel):
         engine = context.scene.render.engine
         return (
             check_material(mat)
-            and (mat.pov.type in {'SURFACE', 'WIRE'})
+            and (mat.pov.type in {"SURFACE", "WIRE"})
             and (engine in cls.COMPAT_ENGINES)
         )
 
     def draw(self, context):
         layout = self.layout
 
-        mat = context.material.pov
+        mat = context.material
 
-        layout.active = not mat.use_shadeless
+        layout.active = not mat.pov.use_shadeless
 
         split = layout.split()
 
@@ -269,26 +269,26 @@ class MATERIAL_PT_POV_specular(MaterialButtonsPanel, Panel):
         col.prop(mat, "specular_intensity", text="Intensity")
 
         col = split.column()
-        col.prop(mat, "specular_shader", text="")
-        col.prop(mat, "use_specular_ramp", text="Ramp")
+        col.prop(mat.pov, "specular_shader", text="")
+        col.prop(mat.pov, "use_specular_ramp", text="Ramp")
 
         col = layout.column()
-        if mat.specular_shader in {'COOKTORR', 'PHONG'}:
-            col.prop(mat, "specular_hardness", text="Hardness")
-        elif mat.specular_shader == 'BLINN':
+        if mat.pov.specular_shader in {"COOKTORR", "PHONG"}:
+            col.prop(mat.pov, "specular_hardness", text="Hardness")
+        elif mat.pov.specular_shader == "BLINN":
             row = col.row()
-            row.prop(mat, "specular_hardness", text="Hardness")
-            row.prop(mat, "specular_ior", text="IOR")
-        elif mat.specular_shader == 'WARDISO':
-            col.prop(mat, "specular_slope", text="Slope")
-        elif mat.specular_shader == 'TOON':
+            row.prop(mat.pov, "specular_hardness", text="Hardness")
+            row.prop(mat.pov, "specular_ior", text="IOR")
+        elif mat.pov.specular_shader == "WARDISO":
+            col.prop(mat.pov, "specular_slope", text="Slope")
+        elif mat.pov.specular_shader == "TOON":
             row = col.row()
-            row.prop(mat, "specular_toon_size", text="Size")
-            row.prop(mat, "specular_toon_smooth", text="Smooth")
+            row.prop(mat.pov, "specular_toon_size", text="Size")
+            row.prop(mat.pov, "specular_toon_smooth", text="Smooth")
 
-        if mat.use_specular_ramp:
+        if mat.pov.use_specular_ramp:
             layout.separator()
-            layout.template_color_ramp(mat, "specular_ramp", expand=True)
+            layout.template_color_ramp(mat.pov, "specular_ramp", expand=True)
             layout.separator()
 
             row = layout.row()
@@ -302,9 +302,9 @@ class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, Panel):
     """Use this class to define standard material reflectivity (mirror) buttons."""
 
     bl_label = "Mirror"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {"DEFAULT_CLOSED"}
     bl_idname = "MATERIAL_PT_POV_raytrace_mirror"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -312,7 +312,7 @@ class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, Panel):
         engine = context.scene.render.engine
         return (
             check_material(mat)
-            and (mat.pov.type in {'SURFACE', 'WIRE'})
+            and (mat.pov.type in {"SURFACE", "WIRE"})
             and (engine in cls.COMPAT_ENGINES)
         )
 
@@ -368,7 +368,7 @@ class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
     """Use this class to define pov material transparency (alpha) buttons."""
 
     bl_label = "Transparency"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -376,7 +376,7 @@ class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
         engine = context.scene.render.engine
         return (
             check_material(mat)
-            and (mat.pov.type in {'SURFACE', 'WIRE'})
+            and (mat.pov.type in {"SURFACE", "WIRE"})
             and (engine in cls.COMPAT_ENGINES)
         )
 
@@ -404,7 +404,7 @@ class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
         col = split.column()
         col.prop(mat.pov, "alpha")
         row = col.row()
-        row.active = (base_mat.pov.transparency_method != 'MASK') and (not mat.pov.use_shadeless)
+        row.active = (base_mat.pov.transparency_method != "MASK") and (not mat.pov.use_shadeless)
         row.prop(mat.pov, "specular_alpha", text="Specular")
 
         col = split.column()
@@ -414,7 +414,7 @@ class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
         sub.active = rayt.fresnel > 0.0
         sub.prop(rayt, "fresnel_factor", text="Blend")
 
-        if base_mat.pov.transparency_method == 'RAYTRACE':
+        if base_mat.pov.transparency_method == "RAYTRACE":
             layout.separator()
             split = layout.split()
             split.active = base_mat.pov.use_transparency
@@ -440,7 +440,7 @@ class MATERIAL_PT_POV_reflection(MaterialButtonsPanel, Panel):
 
     bl_label = "POV-Ray Reflection"
     bl_parent_id = "MATERIAL_PT_POV_raytrace_mirror"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -472,13 +472,13 @@ class MATERIAL_PT_POV_reflection(MaterialButtonsPanel, Panel):
         col2.active = mat.pov_raytrace_mirror.use
         col2.prop(mat.pov, "mirror_use_IOR")
         if mat.pov.mirror_use_IOR:
-            col2.alignment = 'CENTER'
+            col2.alignment = "CENTER"
             col2.label(text="The current Raytrace ")
             col2.label(text="Transparency IOR is: " + str(mat.pov_raytrace_transparency.ior))
-        col2.prop(mat.pov, "mirror_metallic")
 
 
-'''
+
+"""
 #group some native Blender (SSS) and POV (Fade)settings under such a parent panel?
 class MATERIAL_PT_POV_interior(MaterialButtonsPanel, Panel):
     bl_label = "POV-Ray Interior"
@@ -496,14 +496,14 @@ class MATERIAL_PT_POV_interior(MaterialButtonsPanel, Panel):
 
     def draw_header(self, context):
         mat = context.material
-'''
+"""
 
 
 class MATERIAL_PT_POV_fade_color(MaterialButtonsPanel, Panel):
     """Use this class to define pov fading (absorption) color buttons."""
 
     bl_label = "POV-Ray Absorption"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
     # bl_parent_id = "material.pov_interior"
 
     @classmethod
@@ -537,7 +537,7 @@ class MATERIAL_PT_POV_caustics(MaterialButtonsPanel, Panel):
     """Use this class to define pov caustics buttons."""
 
     bl_label = "Caustics"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -580,7 +580,7 @@ class MATERIAL_PT_POV_caustics(MaterialButtonsPanel, Panel):
 
             if not mat.pov.refraction_caustics and not mat.pov.photons_reflection:
                 col = layout.column()
-                col.alignment = 'CENTER'
+                col.alignment = "CENTER"
                 col.label(text="Caustics override is on, ")
                 col.label(text="but you didn't chose any !")
 
@@ -589,15 +589,15 @@ class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
     """Use this class to define Blender strand antialiasing buttons."""
 
     bl_label = "Strand"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"DEFAULT_CLOSED"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
         return (
-            mat and (mat.pov.type in {'SURFACE', 'WIRE', 'HALO'}) and (engine in cls.COMPAT_ENGINES)
+            mat and (mat.pov.type in {"SURFACE", "WIRE", "HALO"}) and (engine in cls.COMPAT_ENGINES)
         )
 
     def draw(self, context):
@@ -624,7 +624,7 @@ class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
         col.label(text="Shading:")
         col.prop(tan, "width_fade")
         ob = context.object
-        if ob and ob.type == 'MESH':
+        if ob and ob.type == "MESH":
             col.prop_search(tan, "uv_layer", ob.data, "uv_layers", text="")
         else:
             col.prop(tan, "uv_layer", text="")
@@ -640,16 +640,16 @@ class MATERIAL_PT_POV_replacement_text(MaterialButtonsPanel, Panel):
     """Use this class to define pov custom code declared name field."""
 
     bl_label = "Custom POV Code"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
         mat = context.material
         col = layout.column()
-        col.alignment = 'RIGHT'
+        col.alignment = "RIGHT"
         col.label(text="Override properties with this")
         col.label(text="text editor {pov code} block")
-        layout.prop(mat.pov, "replacement_text", text="#declare name", icon='SYNTAX_ON')
+        layout.prop(mat.pov, "replacement_text", text="#declare name", icon="SYNTAX_ON")
 
 
 classes = (

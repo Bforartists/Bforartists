@@ -13,9 +13,9 @@ bl_info = {
 }
 
 
-#if "bpy" in locals():
-#    import importlib
-#    importlib.reload(fracture_cell_setup)
+# if "bpy" in locals():
+#     import importlib
+#     importlib.reload(fracture_cell_setup)
 
 import bpy
 from bpy.props import (
@@ -28,6 +28,7 @@ from bpy.props import (
 )
 
 from bpy.types import Operator
+
 
 def main_object(context, collection, obj, level, **kw):
     import random
@@ -79,7 +80,7 @@ def main_object(context, collection, obj, level, **kw):
             center='MEDIAN',
         )
 
-    #----------
+    # ----------
     # Recursion
     if level == 0:
         for level_sub in range(1, recursion + 1):
@@ -99,8 +100,7 @@ def main_object(context, collection, obj, level, **kw):
                         objects_recurse_input.reverse()
                 elif recursion_chance_select in {'CURSOR_MIN', 'CURSOR_MAX'}:
                     c = scene.cursor.location.copy()
-                    objects_recurse_input.sort(key=lambda ob_pair:
-                        (ob_pair[1].location - c).length_squared)
+                    objects_recurse_input.sort(key=lambda ob_pair: (ob_pair[1].location - c).length_squared)
                     if recursion_chance_select == 'CURSOR_MAX':
                         objects_recurse_input.reverse()
 
@@ -124,7 +124,7 @@ def main_object(context, collection, obj, level, **kw):
             if recursion_clamp and len(objects) > recursion_clamp:
                 break
 
-    #--------------
+    # --------------
     # Level Options
     if level == 0:
         # import pdb; pdb.set_trace()
@@ -182,6 +182,7 @@ def main(context, **kw):
                 rb.mass = mass
     elif mass_mode == 'VOLUME':
         from mathutils import Vector
+
         def _get_volume(obj_cell):
             def _getObjectBBMinMax():
                 min_co = Vector((1000000.0, 1000000.0, 1000000.0))
@@ -206,7 +207,6 @@ def main(context, **kw):
                 return volume
 
             return _getObjectVolume()
-
 
         obj_volume_ls = [_get_volume(obj_cell) for obj_cell in objects]
         obj_volume_tot = sum(obj_volume_ls)
@@ -387,7 +387,6 @@ class FractureCell(Operator):
         default=1.0,
     )
 
-
     # -------------------------------------------------------------------------
     # Object Options
 
@@ -444,7 +443,6 @@ class FractureCell(Operator):
 
         return {'FINISHED'}
 
-
     def invoke(self, context, event):
         # print(self.recursion_chance_select)
         wm = context.window_manager
@@ -492,7 +490,6 @@ class FractureCell(Operator):
         rowsub.prop(self, "margin")
         rowsub.prop(self, "use_island_split")
 
-
         box = layout.box()
         col = box.column()
         col.label(text="Physics")
@@ -500,13 +497,11 @@ class FractureCell(Operator):
         rowsub.prop(self, "mass_mode")
         rowsub.prop(self, "mass")
 
-
         box = layout.box()
         col = box.column()
         col.label(text="Object")
         rowsub = col.row(align=True)
         rowsub.prop(self, "use_recenter")
-
 
         box = layout.box()
         col = box.column()

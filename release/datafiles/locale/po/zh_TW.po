@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -4025,10 +4025,6 @@ msgstr "輸入色彩空間"
 
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
-
-
-msgid "ACES linear space"
-msgstr "ACES 線性空間"
 
 
 msgid "Standard RGB Display Space"
@@ -30821,6 +30817,14 @@ msgid "Dissolve Points"
 msgstr "消散點"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -49207,14 +49211,6 @@ msgstr "遮罩此空間中顯示的與編輯的物體"
 
 msgid "Outline"
 msgstr "外框"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Overlay Mode"

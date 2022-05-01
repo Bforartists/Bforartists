@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -3494,6 +3494,30 @@ msgid "Number of curves added by the Add brush"
 msgstr "追加ブラシで追加されるヘアーカーブの数"
 
 
+msgid "Curve Length"
+msgstr "カーブ長"
+
+
+msgid "Length of newly added curves when it is not interpolated from other curves"
+msgstr "他のヘアーカーブから補間されない時の新規ヘアーカーブの長さ"
+
+
+msgid "Interpolate Length"
+msgstr "長さを補間"
+
+
+msgid "Use length of the curves in close proximity"
+msgstr "近くのヘアーカーブの長さを使用します"
+
+
+msgid "Interpolate Shape"
+msgstr "形状を補間"
+
+
+msgid "Use shape of the curves in close proximity"
+msgstr "近くのヘアーカーブの形状を使用します"
+
+
 msgid "Minimum Length"
 msgstr "最短の長さ"
 
@@ -5490,12 +5514,12 @@ msgid "Linear ACES"
 msgstr "ACESリニア"
 
 
-msgid "ACES linear space"
-msgstr "ACESリニア空間"
-
-
 msgid "Non-Color"
 msgstr "非カラー"
+
+
+msgid "Color space used for images which contains non-color data (i.e. normal maps)"
+msgstr "非カラーデータ（ノーマルマップなど）を含む画像用に使用される色空間"
 
 
 msgid "Raw"
@@ -14224,6 +14248,10 @@ msgid "Smoke velocity grid"
 msgstr "煙の速度グリッド"
 
 
+msgid "Velocity Scale"
+msgstr "速度スケール"
+
+
 msgid "Viscosity Base"
 msgstr "粘度基本"
 
@@ -19773,16 +19801,16 @@ msgid "Cloth"
 msgstr "クロス"
 
 
+msgid "Draw Face Sets"
+msgstr "面セットドロー"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "マルチレゾディスプレイスメント消しゴム"
 
 
 msgid "Multires Displacement Smear"
 msgstr "マルチレゾディスプレイスメントスミア"
-
-
-msgid "Draw Face Sets"
-msgstr "面セットドロー"
 
 
 msgid "Secondary Color"
@@ -34573,7 +34601,7 @@ msgstr "ケージで"
 
 
 msgid "Adjust edit cage to modifier result"
-msgstr "編集ケージをモディファイアーの結果に適応させます"
+msgstr "編集ケージをモディファイアーの結果に適合させます"
 
 
 msgid "Data Transfer"
@@ -36678,10 +36706,6 @@ msgstr "頂点の補間"
 
 msgid "Allow interpolation of vertex positions"
 msgstr "頂点の位置を補間できるようにします"
-
-
-msgid "Velocity Scale"
-msgstr "速度スケール"
 
 
 msgid "Multiplier used to control the magnitude of the velocity vectors for time effects"
@@ -43213,10 +43237,6 @@ msgid "Use the right handles"
 msgstr "右のハンドルを使用します"
 
 
-msgid "Curve Length"
-msgstr "カーブ長"
-
-
 msgid "Bezier Segment"
 msgstr "ベジエセグメント"
 
@@ -43573,6 +43593,10 @@ msgstr "距離でマージ"
 
 msgid "Merge all close selected points, whether or not they are connected"
 msgstr "選択中の距離の近いポイント群を、つながっていなくてもすべてマージします"
+
+
+msgid "Only merge mesh vertices along existing edges. This method can be much faster"
+msgstr "既存の辺の間のメッシュ頂点のみマージします。非常に高速な方法です"
 
 
 msgid "Mesh Boolean"
@@ -55215,6 +55239,14 @@ msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgid "Black"
+msgstr "黒"
+
+
+msgid "White"
+msgstr "白"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "ストロークフィルをトランスフォーム"
@@ -57220,6 +57252,15 @@ msgstr "マーカーをボックス選択"
 
 msgid "Select all time markers using box selection"
 msgstr "ボックス選択を使用し、すべてのタイムマーカーを選択します"
+
+
+msgctxt "Operator"
+msgid "Select Markers Before/After Current Frame"
+msgstr "現在のフレームの前後マーカーを選択"
+
+
+msgid "Select markers on and left/right of the current frame"
+msgstr "現在のフレームの左右いずれかのマーカーを選択します"
 
 
 msgctxt "Operator"
@@ -60971,6 +61012,14 @@ msgid "Enable 'solo' on the NLA Track containing the active strip, to edit it wi
 msgstr "アクティブストリップを含む NLA トラック上で「★」(ソロ)を有効にし、NLA スタックの影響なしで編集します"
 
 
+msgid "Evaluate Upper Stack"
+msgstr "上のスタックを評価"
+
+
+msgid "In tweak mode, display the effects of the tracks above the tweak strip"
+msgstr "調整モード時、調整ストリップより上のトラックのエフェクトを表示します"
+
+
 msgctxt "Operator"
 msgid "Exit Tweak Mode"
 msgstr "調整モードから出る"
@@ -61174,15 +61223,6 @@ msgstr "未使用ソケットの折りたたみと非表示"
 
 msgid "Toggle collapsed nodes and hide unused sockets"
 msgstr "ノードの折りたたみと未使用ソケットの非表示を切り替えます"
-
-
-msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "ジオメトリノードグループをコピー"
-
-
-msgid "Copy the active geometry node group and assign it to the active modifier"
-msgstr "アクティブジオメトリノードグループをコピーし、アクティブモディファイアーに割り当てます"
 
 
 msgctxt "Operator"
@@ -62496,6 +62536,15 @@ msgstr "オブジェクトのフォースフィールドを切り替えます"
 
 
 msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "ジオメトリノードグループをコピー"
+
+
+msgid "Copy the active geometry node group and assign it to the active modifier"
+msgstr "アクティブジオメトリノードグループをコピーし、アクティブモディファイアーに割り当てます"
+
+
+msgctxt "Operator"
 msgid "Input Attribute Toggle"
 msgstr "入力属性切り替え"
 
@@ -63519,15 +63568,19 @@ msgstr "親子関係に適用されたトランスフォーム補正をリセッ
 
 msgctxt "Operator"
 msgid "Make Parent without Inverse"
-msgstr "逆補正を付けず親に"
+msgstr "逆行列を付けず親に"
 
 
 msgid "Set the object's parenting without setting the inverse parent correction"
-msgstr "親に逆補正は設定せずに、オブジェクトの親子関係を設定します"
+msgstr "親に逆行列は設定せずに、オブジェクトの親子関係を設定します"
 
 
 msgid "Keep Transform"
 msgstr "トランスフォーム維持"
+
+
+msgid "Preserve the world transform throughout parenting"
+msgstr "ペアレント中にずっとワールドトランスフォームを維持します"
 
 
 msgid "Set the object's parenting"
@@ -65522,6 +65575,10 @@ msgstr ""
 "　無視します）"
 
 
+msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
+msgstr "このローカルオーバーライドを削除し、可能ならリンク中のデータブロックのユーザーに再リンクします。"
+
+
 msgid "Clear Library Override Hierarchy"
 msgstr "ライブラリオーバーライド階層をクリア"
 
@@ -66375,6 +66432,10 @@ msgstr "複数の頂点にわたる色を滑らかにします"
 msgctxt "Operator"
 msgid "Vertex Paint"
 msgstr "頂点ペイント"
+
+
+msgid "Paint a stroke in the active color attribute layer"
+msgstr "アクティブなカラー属性レイヤーにストロークをペイントします"
 
 
 msgctxt "Operator"
@@ -76537,10 +76598,6 @@ msgid "Clamp Bounding Box"
 msgstr "バウンディングボックスで制限"
 
 
-msgid "Resize the objects to keep bounding box under this value. Value 0 diables clamping"
-msgstr "この値にバウンディングボックスが収まるようオブジェクトをリサイズします。０で無効"
-
-
 msgctxt "Operator"
 msgid "Open"
 msgstr "開く"
@@ -77514,6 +77571,18 @@ msgid "Export current scene in a USD archive"
 msgstr "現在のシーンを USD アーカイブでエクスポートします"
 
 
+msgid "Export all frames in the render frame range, rather than only the current frame"
+msgstr "現在のフレームだけではなく、レンダーフレーム範囲内の全フレームをエクスポートします"
+
+
+msgid "Export hair particle systems as USD curves"
+msgstr "ヘアーパーティクルシステムを USD カーブとしてエクスポートします"
+
+
+msgid "Include normals of exported meshes in the export"
+msgstr "エクスポートするメッシュの法線を含みます"
+
+
 msgid "Export Textures"
 msgstr "テクスチャをエクスポート"
 
@@ -77524,6 +77593,10 @@ msgstr "マテリアルをエクスポートする際、マテリアルノード
 
 msgid "UV Maps"
 msgstr "UVマップ"
+
+
+msgid "Include all mesh UV maps in the export"
+msgstr "すべてのメッシュ UV マップもエクスポートします"
 
 
 msgid "To USD Preview Surface"
@@ -77554,6 +77627,10 @@ msgstr "テクスチャアセットパスを USD ファイルとの相対パス�
 
 msgid "Instancing"
 msgstr "インスタンス化"
+
+
+msgid "Export instanced objects as references in USD rather than real objects"
+msgstr "インスタンスオブジェクトを実際のオブジェクトではなく、参照として USD にエクスポートします"
 
 
 msgid "Visible Only"
@@ -78157,30 +78234,6 @@ msgstr "Z軸に沿ってブラシをミラーします"
 
 msgid "Curves Sculpt Paint"
 msgstr "カーブスカルプトペイント"
-
-
-msgid "Length of newly added curves when it is not interpolated from other curves"
-msgstr "他のヘアーカーブから補間されない時の新規ヘアーカーブの長さ"
-
-
-msgid "Radius around curves roots in which no new curves can be added"
-msgstr "新規ヘアーカーブが追加されない、ヘアーカーブの根元からの半径"
-
-
-msgid "Interpolate Length"
-msgstr "長さを補間"
-
-
-msgid "Use length of the curves in close proximity"
-msgstr "近くのヘアーカーブの長さを使用します"
-
-
-msgid "Interpolate Shape"
-msgstr "形状を補間"
-
-
-msgid "Use shape of the curves in close proximity"
-msgstr "近くのヘアーカーブの形状を使用します"
 
 
 msgid "Grease Pencil Paint"
@@ -79535,6 +79588,10 @@ msgid "Rename Active Item"
 msgstr "アクティブアイテムをリネーム"
 
 
+msgid "Rename Marker"
+msgstr "マーカーをリネーム"
+
+
 msgid ""
 "\n"
 "    Popover panel for adding extra options that don't fit in the tool settings header\n"
@@ -80095,6 +80152,11 @@ msgstr "簡略化"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "面セットをドロー"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "マルチレゾディスプレイスメント消しゴム"
 
@@ -80107,11 +80169,6 @@ msgstr "マルチレゾディスプレイスメントスミア"
 msgctxt "Operator"
 msgid "Paint"
 msgstr "ペイント"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "面セットをドロー"
 
 
 msgctxt "Operator"
@@ -90927,16 +90984,8 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
-msgid "Black"
-msgstr "黒"
-
-
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
-
-
-msgid "White"
-msgstr "白"
 
 
 msgid "Display white edges"
@@ -93117,6 +93166,10 @@ msgstr "ツリーパスを表示"
 
 msgid "Display breadcrumbs for the editor's context"
 msgstr "エディターのコンテクスト用のパンくずリストを表示します"
+
+
+msgid "Show Named Attributes"
+msgstr "名前付き属性を表示"
 
 
 msgid "Display overlays like colored or dashed wires"
@@ -95903,10 +95956,6 @@ msgstr "マーカーの編集を防ぎます"
 
 msgid "Lock Object Modes"
 msgstr "オブジェクトモードをロック"
-
-
-msgid "Restrict select to the current mode"
-msgstr "現在のモードに選択を制限します"
 
 
 msgid "Mesh Selection Mode"
@@ -100091,10 +100140,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "カラーランプのカラーストップ用スポイトマップ"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM データ（.hgt）をメッシュまたは画像で"
-
-
 msgid "No selected keys, pasting over scene range"
 msgstr "選択中のキーがありません。シーンの範囲に貼り付けます"
 
@@ -100179,6 +100224,10 @@ msgstr "Compute Capability 5.0の NVIDIA GPU が必要です"
 
 msgid "and NVIDIA driver version 470 or newer"
 msgstr "。NVIDIA ドライバーVer.470以降も必要です"
+
+
+msgid "Requires discrete AMD GPU with RDNA architecture"
+msgstr "RDNA アーキテクチャの AMD GPU カードが必要です"
 
 
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
@@ -101675,10 +101724,6 @@ msgid "This panel is a remainder of the old pose library,"
 msgstr "このパネルはアセットブラウザーで置き換えられた"
 
 
-msgid "which was replaced by the Asset Browser."
-msgstr "旧ポーズライブラリの残りです"
-
-
 msgctxt "Operator"
 msgid "More Info"
 msgstr "詳細情報"
@@ -101691,10 +101736,6 @@ msgstr "ポーズアセットに変換"
 
 msgid "Enable the Pose Library add-on to convert"
 msgstr "この旧ポーズライブラリをポーズアセットに変換するため"
-
-
-msgid "this legacy pose library to pose assets."
-msgstr "Pose Library アドオンを有効にします"
 
 
 msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
@@ -102560,16 +102601,16 @@ msgid "Gradient Mapping"
 msgstr "グラデーションマッピング"
 
 
-msgid "Mask Value"
-msgstr "マスクの値"
-
-
 msgid "CCW"
 msgstr "反時計回り"
 
 
 msgid "CW"
 msgstr "時計回り"
+
+
+msgid "Mask Value"
+msgstr "マスクの値"
 
 
 msgid "Invert to Fill"
@@ -104483,6 +104524,10 @@ msgid "Timings"
 msgstr "タイミング"
 
 
+msgid "Named Attributes"
+msgstr "名前付き属性"
+
+
 msgctxt "Operator"
 msgid "Backdrop Zoom In"
 msgstr "背景をズームイン"
@@ -105512,6 +105557,10 @@ msgid "Next Workspace"
 msgstr "次のワークスペース"
 
 
+msgid "Marker Name"
+msgstr "マーカー名"
+
+
 msgctxt "Operator"
 msgid "Back to Previous"
 msgstr "戻る"
@@ -105598,6 +105647,10 @@ msgstr "シーケンスストリップ名"
 
 msgid "No active item"
 msgstr "アクティブアイテムがありません"
+
+
+msgid "No active marker"
+msgstr "アクティブマーカーがありません"
 
 
 msgctxt "Operator"
@@ -107659,7 +107712,7 @@ msgstr "選択部分を表示（四分割ビュー）"
 
 msgctxt "Operator"
 msgid "Set Active Camera"
-msgstr "アクティブカメラを設定"
+msgstr "アクティブカメラに設定"
 
 
 msgctxt "Operator"
@@ -110663,10 +110716,6 @@ msgstr ""
 "%s"
 
 
-msgid "Indirect library data-block, cannot change"
-msgstr "間接ライブラリデータブロック。変更できません"
-
-
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "直接リンクライブラリデータブロック。クリックでローカル化、[Shift]＋クリックでライブラリオーバーライドを作成"
 
@@ -112233,10 +112282,6 @@ msgid "Modifiers cannot be applied on override data"
 msgstr "モディファイアーはオーバーライドデータには適用できません"
 
 
-msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
-msgstr "「コリジョン」や「フック」モディファイアーには未対応です"
-
-
 msgid "No selected object is active"
 msgstr "アクティブな選択オブジェクトがありません"
 
@@ -112255,6 +112300,10 @@ msgstr "オブジェクト(トランスフォーム維持)"
 
 msgid "Object (Without Inverse)"
 msgstr "オブジェクト(逆行列なし)"
+
+
+msgid "Object (Keep Transform Without Inverse)"
+msgstr "オブジェクト(逆行列なしでトランスフォーム維持)"
 
 
 msgid "OK?"
@@ -114485,6 +114534,18 @@ msgstr "・ボリューム"
 
 msgid "The socket value has not been computed yet"
 msgstr "このソケットの値は未計算です"
+
+
+msgid "read"
+msgstr "読込"
+
+
+msgid "write"
+msgstr "書込"
+
+
+msgid "remove"
+msgstr "削除"
 
 
 msgid "The execution time from the node tree's latest evaluation. For frame and group nodes, the time for all sub-nodes"
@@ -118686,10 +118747,6 @@ msgid "Attribute does not exist: \""
 msgstr "属性がありません: \""
 
 
-msgid "Cannot delete attribute with name \""
-msgstr "この名前で属性を削除できません: \""
-
-
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"
 msgstr "各要素のスケーリング原点。複数の要素がつながっている場合はその平均値が中心になります"
 
@@ -119718,10 +119775,6 @@ msgstr "追加メッシュ"
 
 msgid "Import-Export"
 msgstr "インポート/エクスポート"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"

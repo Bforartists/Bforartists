@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -30085,6 +30085,14 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Sblocca Tutti i Livelli"
@@ -48745,14 +48753,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -53601,16 +53601,16 @@ msgid "Source Clone UV Map"
 msgstr "Sorgente Clona Mappa UV"
 
 
-msgid "Mask Value"
-msgstr "Valore Maschera"
-
-
 msgid "CCW"
 msgstr "Senso Antiorario"
 
 
 msgid "CW"
 msgstr "Senso Orario"
+
+
+msgid "Mask Value"
+msgstr "Valore Maschera"
 
 
 msgctxt "Operator"
@@ -57634,10 +57634,6 @@ msgstr "Ripristina Curva"
 
 msgid "Anim Player"
 msgstr "Riproduttore Animazione"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "Blocco-Dati libreria indiretto, non può cambiare"
 
 
 msgid "Reset operator defaults"
