@@ -16,7 +16,7 @@ from bl_ui import properties_data_camera
 for member in dir(properties_data_camera):
     subclass = getattr(properties_data_camera, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_data_camera
 
 # -------- Use only a subset of the world panels
@@ -34,7 +34,7 @@ from bl_ui import properties_physics_common
 for member in dir(properties_physics_common):
     subclass = getattr(properties_physics_common, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_common
 
 # Physics Rigid Bodies wrapping every class 'as is'
@@ -43,7 +43,7 @@ from bl_ui import properties_physics_rigidbody
 for member in dir(properties_physics_rigidbody):
     subclass = getattr(properties_physics_rigidbody, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_rigidbody
 
 # Physics Rigid Body Constraint wrapping every class 'as is'
@@ -52,7 +52,7 @@ from bl_ui import properties_physics_rigidbody_constraint
 for member in dir(properties_physics_rigidbody_constraint):
     subclass = getattr(properties_physics_rigidbody_constraint, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_rigidbody_constraint
 
 # Physics Smoke and fluids wrapping every class 'as is'
@@ -61,7 +61,7 @@ from bl_ui import properties_physics_fluid
 for member in dir(properties_physics_fluid):
     subclass = getattr(properties_physics_fluid, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_fluid
 
 # Physics softbody wrapping every class 'as is'
@@ -70,7 +70,7 @@ from bl_ui import properties_physics_softbody
 for member in dir(properties_physics_softbody):
     subclass = getattr(properties_physics_softbody, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_softbody
 
 # Physics Field wrapping every class 'as is'
@@ -79,7 +79,7 @@ from bl_ui import properties_physics_field
 for member in dir(properties_physics_field):
     subclass = getattr(properties_physics_field, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_field
 
 # Physics Cloth wrapping every class 'as is'
@@ -88,7 +88,7 @@ from bl_ui import properties_physics_cloth
 for member in dir(properties_physics_cloth):
     subclass = getattr(properties_physics_cloth, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_cloth
 
 # Physics Dynamic Paint wrapping every class 'as is'
@@ -97,7 +97,7 @@ from bl_ui import properties_physics_dynamicpaint
 for member in dir(properties_physics_dynamicpaint):
     subclass = getattr(properties_physics_dynamicpaint, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_physics_dynamicpaint
 
 from bl_ui import properties_particle
@@ -105,7 +105,7 @@ from bl_ui import properties_particle
 for member in dir(properties_particle):  # add all "particle" panels from blender
     subclass = getattr(properties_particle, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_particle
 
 
@@ -113,10 +113,10 @@ class CameraDataButtonsPanel:
     """Use this class to define buttons from the camera data tab of
     properties window."""
 
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
     bl_context = "data"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -129,10 +129,10 @@ class WorldButtonsPanel:
     """Use this class to define buttons from the world tab of
     properties window."""
 
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
     bl_context = "world"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -148,9 +148,9 @@ class CAMERA_PT_POV_cam_dof(CameraDataButtonsPanel, Panel):
     """Use this class for camera depth of field focal blur buttons."""
 
     bl_label = "POV Aperture"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
     bl_parent_id = "DATA_PT_camera_dof_aperture"
-    bl_options = {'HIDE_HEADER'}
+    bl_options = {"HIDE_HEADER"}
     # def draw_header(self, context):
     # cam = context.camera
 
@@ -183,7 +183,7 @@ class CAMERA_PT_POV_cam_nor(CameraDataButtonsPanel, Panel):
     """Use this class for camera normal perturbation buttons."""
 
     bl_label = "POV Perturbation"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw_header(self, context):
         cam = context.camera
@@ -207,7 +207,7 @@ class CAMERA_PT_POV_replacement_text(CameraDataButtonsPanel, Panel):
     """Use this class for camera text replacement field."""
 
     bl_label = "Custom POV Code"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
@@ -229,7 +229,7 @@ class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
 
     bl_label = "World"
 
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
@@ -238,8 +238,8 @@ class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
 
         row = layout.row(align=True)
         row.menu(WORLD_MT_POV_presets.__name__, text=WORLD_MT_POV_presets.bl_label)
-        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon='ADD')
-        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
+        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon="ADD")
+        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon="REMOVE").remove_active = True
 
         row = layout.row()
         row.prop(world, "use_sky_paper")
@@ -262,8 +262,8 @@ class WORLD_PT_POV_mist(WorldButtonsPanel, Panel):
     """Use this class to define pov mist buttons."""
 
     bl_label = "Mist"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"DEFAULT_CLOSED"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw_header(self, context):
         world = context.world
@@ -337,7 +337,7 @@ class RENDER_PT_POV_media(WorldButtonsPanel, Panel):
     """Use this class to define a pov global atmospheric media buttons."""
 
     bl_label = "Atmosphere Media"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw_header(self, context):
         scene = context.scene
@@ -364,7 +364,7 @@ class RENDER_PT_POV_media(WorldButtonsPanel, Panel):
         col.label(text="Absorption:")
         col.prop(scene.pov, "media_absorption_scale")
         col.prop(scene.pov, "media_absorption_color", text="")
-        if scene.pov.media_scattering_type == '5':
+        if scene.pov.media_scattering_type == "5":
             col = layout.column()
             col.prop(scene.pov, "media_eccentricity", text="Eccentricity")
 
@@ -400,8 +400,8 @@ class PovLightButtonsPanel(properties_data_light.DataButtonsPanel):
     """Use this class to define buttons from the light data tab of
     properties window."""
 
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-    POV_OBJECT_TYPES = {'RAINBOW'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+    POV_OBJECT_TYPES = {"RAINBOW"}
 
     @classmethod
     def poll(cls, context):
@@ -429,8 +429,8 @@ from bl_ui import properties_data_light
 # pass
 
 # Now only These panels are kept
-properties_data_light.DATA_PT_custom_props_light.COMPAT_ENGINES.add('POVRAY_RENDER')
-properties_data_light.DATA_PT_context_light.COMPAT_ENGINES.add('POVRAY_RENDER')
+properties_data_light.DATA_PT_custom_props_light.COMPAT_ENGINES.add("POVRAY_RENDER")
+properties_data_light.DATA_PT_context_light.COMPAT_ENGINES.add("POVRAY_RENDER")
 
 
 class LIGHT_PT_POV_preview(PovLightButtonsPanel, Panel):
@@ -464,25 +464,25 @@ class LIGHT_PT_POV_light(PovLightButtonsPanel, Panel):
         sub.prop(light, "color", text="")
         sub.prop(light, "energy")
 
-        if light.type in {'POINT', 'SPOT'}:
+        if light.type in {"POINT", "SPOT"}:
             sub.label(text="Falloff:")
             sub.prop(light, "falloff_type", text="")
             sub.prop(light, "distance")
 
-            if light.falloff_type == 'LINEAR_QUADRATIC_WEIGHTED':
+            if light.falloff_type == "LINEAR_QUADRATIC_WEIGHTED":
                 col.label(text="Attenuation Factors:")
                 sub = col.column(align=True)
                 sub.prop(light, "linear_attenuation", slider=True, text="Linear")
                 sub.prop(light, "quadratic_attenuation", slider=True, text="Quadratic")
 
-            elif light.falloff_type == 'INVERSE_COEFFICIENTS':
+            elif light.falloff_type == "INVERSE_COEFFICIENTS":
                 col.label(text="Inverse Coefficients:")
                 sub = col.column(align=True)
                 sub.prop(light, "constant_coefficient", text="Constant")
                 sub.prop(light, "linear_coefficient", text="Linear")
                 sub.prop(light, "quadratic_coefficient", text="Quadratic")
 
-        if light.type == 'AREA':
+        if light.type == "AREA":
             col.prop(light, "distance")
 
         # restore later as interface to POV light groups ?
@@ -523,11 +523,11 @@ def light_panel_func(self, context):
 
     row = layout.row(align=True)
     row.menu(LIGHT_MT_POV_presets.__name__, text=LIGHT_MT_POV_presets.bl_label)
-    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon='ADD')
-    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
+    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon="ADD")
+    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon="REMOVE").remove_active = True
 
 
-'''#TORECREATE##DEPRECATED#
+"""#TORECREATE##DEPRECATED#
 class LIGHT_PT_POV_sunsky(PovLightButtonsPanel, Panel):
     bl_label = properties_data_light.DATA_PT_sunsky.bl_label
 
@@ -539,7 +539,7 @@ class LIGHT_PT_POV_sunsky(PovLightButtonsPanel, Panel):
 
     draw = properties_data_light.DATA_PT_sunsky.draw
 
-'''
+"""
 
 
 class LIGHT_PT_POV_shadow(PovLightButtonsPanel, Panel):
@@ -567,7 +567,7 @@ class LIGHT_PT_POV_shadow(PovLightButtonsPanel, Panel):
         sub.active = light.pov.use_halo
         sub.prop(light.pov, "halo_intensity", text="Intensity")
 
-        if light.pov.shadow_method == 'NOSHADOW' and light.type == 'AREA':
+        if light.pov.shadow_method == "NOSHADOW" and light.type == "AREA":
             split = layout.split()
 
             col = split.column()
@@ -575,13 +575,13 @@ class LIGHT_PT_POV_shadow(PovLightButtonsPanel, Panel):
 
             sub = col.row(align=True)
 
-            if light.shape == 'SQUARE':
+            if light.shape == "SQUARE":
                 sub.prop(light, "shadow_ray_samples_x", text="Samples")
-            elif light.shape == 'RECTANGLE':
+            elif light.shape == "RECTANGLE":
                 sub.prop(light.pov, "shadow_ray_samples_x", text="Samples X")
                 sub.prop(light.pov, "shadow_ray_samples_y", text="Samples Y")
 
-        if light.pov.shadow_method != 'NOSHADOW':
+        if light.pov.shadow_method != "NOSHADOW":
             split = layout.split()
 
             col = split.column()
@@ -591,25 +591,25 @@ class LIGHT_PT_POV_shadow(PovLightButtonsPanel, Panel):
             # col.prop(light.pov, "use_shadow_layer", text="This Layer Only")
             # col.prop(light.pov, "use_only_shadow")
 
-        if light.pov.shadow_method == 'RAY_SHADOW':
+        if light.pov.shadow_method == "RAY_SHADOW":
             split = layout.split()
 
             col = split.column()
             col.label(text="Sampling:")
 
-            if light.type in {'POINT', 'SUN', 'SPOT'}:
+            if light.type in {"POINT", "SUN", "SPOT"}:
                 sub = col.row()
 
                 sub.prop(light.pov, "shadow_ray_samples_x", text="Samples")
                 # any equivalent in pov?
                 # sub.prop(light, "shadow_soft_size", text="Soft Size")
 
-            elif light.type == 'AREA':
+            elif light.type == "AREA":
                 sub = col.row(align=True)
 
-                if light.shape == 'SQUARE':
+                if light.shape == "SQUARE":
                     sub.prop(light.pov, "shadow_ray_samples_x", text="Samples")
-                elif light.shape == 'RECTANGLE':
+                elif light.shape == "RECTANGLE":
                     sub.prop(light.pov, "shadow_ray_samples_x", text="Samples X")
                     sub.prop(light.pov, "shadow_ray_samples_y", text="Samples Y")
 
@@ -625,7 +625,7 @@ class LIGHT_PT_POV_area(PovLightButtonsPanel, Panel):
     def poll(cls, context):
         lamp = context.light
         engine = context.scene.render.engine
-        return (lamp and lamp.type == 'AREA') and (engine in cls.COMPAT_ENGINES)
+        return (lamp and lamp.type == "AREA") and (engine in cls.COMPAT_ENGINES)
 
     draw = properties_data_light.DATA_PT_area.draw
 
@@ -639,7 +639,7 @@ class LIGHT_PT_POV_spot(PovLightButtonsPanel, Panel):
     def poll(cls, context):
         lamp = context.light
         engine = context.scene.render.engine
-        return (lamp and lamp.type == 'SPOT') and (engine in cls.COMPAT_ENGINES)
+        return (lamp and lamp.type == "SPOT") and (engine in cls.COMPAT_ENGINES)
 
     draw = properties_data_light.DATA_PT_spot.draw
 
@@ -654,7 +654,7 @@ class LIGHT_PT_POV_falloff_curve(PovLightButtonsPanel, Panel):
         engine = context.scene.render.engine
 
         return (
-            lamp and lamp.type in {'POINT', 'SPOT'} and lamp.falloff_type == 'CUSTOM_CURVE'
+            lamp and lamp.type in {"POINT", "SPOT"} and lamp.falloff_type == "CUSTOM_CURVE"
         ) and (engine in cls.COMPAT_ENGINES)
 
     draw = properties_data_light.DATA_PT_falloff_curve.draw
@@ -665,14 +665,14 @@ class OBJECT_PT_POV_rainbow(PovLightButtonsPanel, Panel):
     properties window. inheriting lamp buttons panel class"""
 
     bl_label = "POV-Ray Rainbow"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
     # bl_options = {'HIDE_HEADER'}
 
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
         obj = context.object
-        return obj and obj.pov.object_as == 'RAINBOW' and (engine in cls.COMPAT_ENGINES)
+        return obj and obj.pov.object_as == "RAINBOW" and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -681,10 +681,10 @@ class OBJECT_PT_POV_rainbow(PovLightButtonsPanel, Panel):
 
         col = layout.column()
 
-        if obj.pov.object_as == 'RAINBOW':
+        if obj.pov.object_as == "RAINBOW":
             if not obj.pov.unlock_parameters:
                 col.prop(
-                    obj.pov, "unlock_parameters", text="Exported parameters below", icon='LOCKED'
+                    obj.pov, "unlock_parameters", text="Exported parameters below", icon="LOCKED"
                 )
                 col.label(text="Rainbow projection angle: " + str(obj.data.spot_size))
                 col.label(text="Rainbow width: " + str(obj.data.spot_blend))
@@ -694,7 +694,7 @@ class OBJECT_PT_POV_rainbow(PovLightButtonsPanel, Panel):
 
             else:
                 col.prop(
-                    obj.pov, "unlock_parameters", text="Edit exported parameters", icon='UNLOCKED'
+                    obj.pov, "unlock_parameters", text="Edit exported parameters", icon="UNLOCKED"
                 )
                 col.label(text="3D view proxy may get out of synch")
                 col.active = obj.pov.unlock_parameters

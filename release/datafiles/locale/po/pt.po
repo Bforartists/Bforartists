@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -34585,6 +34585,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas as camadas"
@@ -55597,14 +55605,6 @@ msgid "Outline"
 msgstr "Contorno"
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -61106,16 +61106,16 @@ msgid "Source Clone UV Map"
 msgstr "Mapa UV clone da fonte"
 
 
-msgid "Mask Value"
-msgstr "Valor de máscara"
-
-
 msgid "CCW"
 msgstr "Sentido anti-horário"
 
 
 msgid "CW"
 msgstr "Sentido horário"
+
+
+msgid "Mask Value"
+msgstr "Valor de máscara"
 
 
 msgctxt "Operator"
@@ -64548,10 +64548,6 @@ msgstr "Redefinir curva"
 
 msgid "Anim Player"
 msgstr "Rep. animação"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "Bloco de dados biblioteca indireta, não é possível alterar."
 
 
 msgid "Reset operator defaults"

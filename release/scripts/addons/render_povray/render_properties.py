@@ -332,15 +332,26 @@ class RenderPovSettingsScene(PropertyGroup):
         default=2.5,
     )
 
+    alpha_filter: FloatProperty(
+        name="Alpha",
+        description="User defined color associated background alpha",
+        min=0.0,
+        max=1.0,
+        soft_min=0.01,
+        soft_max=1.0,
+        default=0.75,
+    )
+
     alpha_mode: EnumProperty(
         name="Alpha",
         description="Representation of alpha information in the RGBA pixels",
         items=(
             ("SKY", "Sky", "Transparent pixels are filled with sky color"),
+            ("STRAIGHT", "Straight", "Transparent pixels are not premultiplied"),
             (
                 "TRANSPARENT",
                 "Transparent",
-                "Transparent, World background is transparent with premultiplied alpha",
+                "World background has user defined  premultiplied alpha",
             ),
         ),
         default="SKY",
@@ -657,9 +668,7 @@ class RenderPovSettingsScene(PropertyGroup):
     )
 
 
-classes = (
-    RenderPovSettingsScene,
-)
+classes = (RenderPovSettingsScene,)
 
 
 def register():

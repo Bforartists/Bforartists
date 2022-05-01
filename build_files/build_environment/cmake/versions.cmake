@@ -225,6 +225,9 @@ set(CYTHON_VERSION 0.29.26)
 # The version of the zstd library used to build the Python package should match ZSTD_VERSION defined below.
 # At this time of writing, 0.17.0 was already released, but built against zstd 1.5.1, while we use 1.5.0.
 set(ZSTANDARD_VERSION 0.16.0)
+set(AUTOPEP8_VERSION 1.6.0)
+set(PYCODESTYLE_VERSION 2.8.0)
+set(TOML_VERSION 0.10.2)
 
 set(NUMPY_VERSION 1.22.0)
 set(NUMPY_SHORT_VERSION 1.22)

@@ -60,6 +60,12 @@ struct BasisCache {
 class CurvesGeometryRuntime {
  public:
   /**
+   * The cached number of curves with each type. Unlike other caches here, this is not computed
+   * lazily, since it is needed so often and types are not adjusted much anyway.
+   */
+  std::array<int, CURVE_TYPES_NUM> type_counts;
+
+  /**
    * Cache of offsets into the evaluated array for each curve, accounting for all previous
    * evaluated points, Bezier curve vector segments, different resolutions per curve, etc.
    */
@@ -156,15 +162,23 @@ class CurvesGeometry : public ::CurvesGeometry {
 
   /** The type (#CurveType) of each curve, or potentially a single if all are the same type. */
   VArray<int8_t> curve_types() const;
-  /** Mutable access to curve types. Call #tag_topology_changed after changing any type. */
+  /**
+   * Mutable access to curve types. Call #tag_topology_changed and #update_curve_types after
+   * changing any type. Consider using the other methods to change types below.
+   * */
   MutableSpan<int8_t> curve_types_for_write();
+  /** Set all curve types to the value and call #update_curve_types. */
+  void fill_curve_types(CurveType type);
+  /** Set the types for the curves in the selection and call #update_curve_types. */
+  void fill_curve_types(IndexMask selection, CurveType type);
+  /** Update the cached count of curves of each type, necessary after #curve_types_for_write. */
+  void update_curve_types();
 
   bool has_curve_with_type(const CurveType type) const;
-  /** Return the number of curves with each type. */
-  std::array<int, CURVE_TYPES_NUM> count_curve_types() const;
-
   /** Return true if all of the curves have the provided type. */
   bool is_single_type(CurveType type) const;
+  /** Return the number of curves with each type. */
+  const std::array<int, CURVE_TYPES_NUM> &curve_type_counts() const;
 
   Span<float3> positions() const;
   MutableSpan<float3> positions_for_write();
@@ -387,6 +401,10 @@ class CurvesGeometry : public ::CurvesGeometry {
 
 namespace curves {
 
+/* -------------------------------------------------------------------- */
+/** \name Inline Curve Methods
+ * \{ */
+
 /**
  * The number of segments between control points, accounting for the last segment of cyclic
  * curves. The logic is simple, but this function should be used to make intentions clearer.
@@ -407,6 +425,12 @@ inline float3 decode_surface_bary_coord(const float2 &v)
 {
   return {v.x, v.y, 1.0f - v.x - v.y};
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Curve Poly Methods
+ * \{ */
 
 namespace poly {
 
@@ -432,6 +456,12 @@ void calculate_normals_minimum(Span<float3> tangents, bool cyclic, MutableSpan<f
 void calculate_normals_z_up(Span<float3> tangents, MutableSpan<float3> normals);
 
 }  // namespace poly
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Curve Bezier Methods
+ * \{ */
 
 namespace bezier {
 
@@ -533,6 +563,12 @@ void interpolate_to_evaluated(GSpan src, Span<int> evaluated_offsets, GMutableSp
 
 }  // namespace bezier
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Curve Catmull-Rom Methods
+ * \{ */
+
 namespace catmull_rom {
 
 /**
@@ -549,6 +585,12 @@ int calculate_evaluated_size(int points_num, bool cyclic, int resolution);
 void interpolate_to_evaluated(GSpan src, bool cyclic, int resolution, GMutableSpan dst);
 
 }  // namespace catmull_rom
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Curve NURBS Methods
+ * \{ */
 
 namespace nurbs {
 
@@ -615,6 +657,8 @@ void interpolate_to_evaluated(const BasisCache &basis_cache,
 
 }  // namespace nurbs
 
+/** \} */
+
 }  // namespace curves
 
 Curves *curves_new_nomain(int points_num, int curves_num);
@@ -624,7 +668,7 @@ Curves *curves_new_nomain(int points_num, int curves_num);
  */
 Curves *curves_new_nomain_single(int points_num, CurveType type);
 
-/** \} */
+std::array<int, CURVE_TYPES_NUM> calculate_type_counts(const VArray<int8_t> &types);
 
 /* -------------------------------------------------------------------- */
 /** \name #CurvesGeometry Inline Methods
@@ -649,7 +693,18 @@ inline IndexRange CurvesGeometry::curves_range() const
 
 inline bool CurvesGeometry::is_single_type(const CurveType type) const
 {
-  return this->count_curve_types()[type] == this->curves_num();
+  return this->curve_type_counts()[type] == this->curves_num();
+}
+
+inline bool CurvesGeometry::has_curve_with_type(const CurveType type) const
+{
+  return this->curve_type_counts()[type] > 0;
+}
+
+inline const std::array<int, CURVE_TYPES_NUM> &CurvesGeometry::curve_type_counts() const
+{
+  BLI_assert(this->runtime->type_counts == calculate_type_counts(this->curve_types()));
+  return this->runtime->type_counts;
 }
 
 inline IndexRange CurvesGeometry::points_for_curve(const int index) const
@@ -740,8 +795,8 @@ inline bool point_is_sharp(const Span<int8_t> handle_types_left,
          ELEM(handle_types_right[index], BEZIER_HANDLE_VECTOR, BEZIER_HANDLE_FREE);
 }
 
-}  // namespace curves::bezier
-
 /** \} */
+
+}  // namespace curves::bezier
 
 }  // namespace blender::bke

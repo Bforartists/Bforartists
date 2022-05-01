@@ -63,6 +63,12 @@ def autopep8_format_file(f):
             # Why disable?: re-ordering imports is disruptive and breaks some scripts
             # that need to check if a module has already been loaded in the case of reloading.
             "E402",
+            # Info: Try to make lines fit within --max-line-length characters.
+            # Why disable? Causes lines to be wrapped, where long lines have the
+            # trailing bracket moved to the end of the line.
+            # If trailing commas were respected as they are by clang-format this might be acceptable.
+            # Note that this doesn't disable all line wrapping.
+            "E501",
             # Info: Fix various deprecated code (via lib2to3)
             # Why disable?: causes imports to be added/re-arranged.
             "W690",

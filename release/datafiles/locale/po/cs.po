@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23327,6 +23327,14 @@ msgid "Flip Colors"
 msgstr "Překlopit Barvy"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Odemknout Všechny Vrstvy"
@@ -26041,11 +26049,6 @@ msgid "Collapse and Hide Unused Sockets"
 msgstr "Sbalit a skrýt nepoužené sokety"
 
 
-msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "Kopírovat Skupinu s Geometrickými Uzly"
-
-
 msgid "Delete selected nodes"
 msgstr "Odstranit označené Objekt(y)"
 
@@ -26658,6 +26661,11 @@ msgstr "Přepíná silové pole"
 
 msgid "Toggle object's force field"
 msgstr "Přepíní objekty silového pole"
+
+
+msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "Kopírovat Skupinu s Geometrickými Uzly"
 
 
 msgctxt "Operator"
@@ -38256,14 +38264,6 @@ msgstr "Zamknout ke kurzoru"
 
 msgid "Outline"
 msgstr "Obrys"
-
-
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
 
 
 msgid "Editing context being displayed"

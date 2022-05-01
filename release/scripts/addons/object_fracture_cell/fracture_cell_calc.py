@@ -5,11 +5,13 @@
 # Script copyright (C) Blender Foundation 2012
 
 
-def points_as_bmesh_cells(verts,
-                          points,
-                          points_scale=None,
-                          margin_bounds=0.05,
-                          margin_cell=0.0):
+def points_as_bmesh_cells(
+        verts,
+        points,
+        points_scale=None,
+        margin_bounds=0.05,
+        margin_cell=0.0,
+):
     from math import sqrt
     import mathutils
     from mathutils import Vector
@@ -42,7 +44,7 @@ def points_as_bmesh_cells(verts,
             Vector((0.0, -1.0, 0.0, +ymin)),
             Vector((0.0, 0.0, +1.0, -zmax)),
             Vector((0.0, 0.0, -1.0, +zmin)),
-            ]
+        ]
 
     for i, point_cell_current in enumerate(points):
         planes = [None] * len(convexPlanes)

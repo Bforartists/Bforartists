@@ -14,6 +14,11 @@ from bpy.types import (
     Panel,
     UIList,
 )
+# Add space_view3d.py to module search path for VIEW3D_PT_object_type_visibility import.  
+import os.path, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../startup/bl_ui')))
+from space_view3d import VIEW3D_PT_object_type_visibility
+
 
 ### Session.
 class VIEW3D_PT_vr_session(Panel):
@@ -72,6 +77,15 @@ class VIEW3D_PT_vr_session_view(Panel):
         col.prop(session_settings, "show_selection", text="Selection")
         col.prop(session_settings, "show_controllers", text="Controllers")
         col.prop(session_settings, "show_custom_overlays", text="Custom Overlays")
+        col.prop(session_settings, "show_object_extras", text="Object Extras")
+
+        col = col.row(align=True, heading=" ")
+        col.scale_x = 2.0
+        col.popover(
+            panel="VIEW3D_PT_vr_session_view_object_type_visibility",
+            icon_value=session_settings.icon_from_show_object_viewport,
+            text="",
+        )
 
         col = layout.column(align=True)
         col.prop(session_settings, "controller_draw_style", text="Controller Style")
@@ -79,6 +93,12 @@ class VIEW3D_PT_vr_session_view(Panel):
         col = layout.column(align=True)
         col.prop(session_settings, "clip_start", text="Clip Start")
         col.prop(session_settings, "clip_end", text="End")
+
+
+class VIEW3D_PT_vr_session_view_object_type_visibility(VIEW3D_PT_object_type_visibility):
+    def draw(self, context):
+        session_settings = context.window_manager.xr_session_settings
+        self.draw_ex(context, session_settings, False) # Pass session settings instead of 3D view.
 
 
 ### Landmarks.
@@ -228,6 +248,7 @@ class VIEW3D_PT_vr_info(bpy.types.Panel):
 classes = (
     VIEW3D_PT_vr_session,
     VIEW3D_PT_vr_session_view,
+    VIEW3D_PT_vr_session_view_object_type_visibility,
     VIEW3D_PT_vr_landmarks,
     VIEW3D_PT_vr_actionmaps,
     VIEW3D_PT_vr_viewport_feedback,

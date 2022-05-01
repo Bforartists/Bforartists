@@ -628,6 +628,10 @@ static void init_socket_cpp_value_from_property(const IDProperty &property,
 void MOD_nodes_update_interface(Object *object, NodesModifierData *nmd)
 {
   if (nmd->node_group == nullptr) {
+    if (nmd->settings.properties) {
+      IDP_FreeProperty(nmd->settings.properties);
+      nmd->settings.properties = nullptr;
+    }
     return;
   }
 
@@ -680,7 +684,13 @@ void MOD_nodes_update_interface(Object *object, NodesModifierData *nmd)
       IDProperty *attribute_prop = IDP_New(IDP_STRING, &idprop, attribute_name_id.c_str());
       IDP_AddToGroup(nmd->settings.properties, attribute_prop);
 
-      if (old_properties != nullptr) {
+      if (old_properties == nullptr) {
+        if (socket->default_attribute_name && socket->default_attribute_name[0] != '\0') {
+          IDP_AssignString(attribute_prop, socket->default_attribute_name, MAX_NAME);
+          IDP_Int(use_attribute_prop) = 1;
+        }
+      }
+      else {
         IDProperty *old_prop_use_attribute = IDP_GetPropertyFromGroup(old_properties,
                                                                       use_attribute_id.c_str());
         if (old_prop_use_attribute != nullptr) {
@@ -709,7 +719,12 @@ void MOD_nodes_update_interface(Object *object, NodesModifierData *nmd)
     }
     IDP_AddToGroup(nmd->settings.properties, new_prop);
 
-    if (old_properties != nullptr) {
+    if (old_properties == nullptr) {
+      if (socket->default_attribute_name && socket->default_attribute_name[0] != '\0') {
+        IDP_AssignString(new_prop, socket->default_attribute_name, MAX_NAME);
+      }
+    }
+    else {
       IDProperty *old_prop = IDP_GetPropertyFromGroup(old_properties, idprop_name.c_str());
       if (old_prop != nullptr) {
         /* #IDP_CopyPropertyContent replaces the UI data as well, which we don't (we only
@@ -1457,7 +1472,7 @@ static void add_attribute_search_or_value_buttons(const bContext &C,
   }
   else {
     uiItemR(row, md_ptr, rna_path.c_str(), 0, "", ICON_NONE);
-    uiItemDecoratorR(row, md_ptr, rna_path.c_str(), 0);
+    uiItemDecoratorR(row, md_ptr, rna_path.c_str(), -1);
   }
 }
 
@@ -1624,7 +1639,7 @@ static void output_attribute_panel_draw(const bContext *C, Panel *panel)
   }
 }
 
-static void used_attributes_panel_draw(const bContext *UNUSED(C), Panel *panel)
+static void internal_dependencies_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
 
@@ -1648,15 +1663,24 @@ static void used_attributes_panel_draw(const bContext *UNUSED(C), Panel *panel)
     return;
   }
 
-  Vector<std::pair<StringRefNull, NamedAttributeUsage>> sorted_used_attribute;
+  struct NameWithUsage {
+    StringRefNull name;
+    NamedAttributeUsage usage;
+  };
+
+  Vector<NameWithUsage> sorted_used_attribute;
   for (auto &&item : usage_by_attribute.items()) {
     sorted_used_attribute.append({item.key, item.value});
   }
-  std::sort(sorted_used_attribute.begin(), sorted_used_attribute.end());
+  std::sort(sorted_used_attribute.begin(),
+            sorted_used_attribute.end(),
+            [](const NameWithUsage &a, const NameWithUsage &b) {
+              return BLI_strcasecmp_natural(a.name.c_str(), b.name.c_str()) <= 0;
+            });
 
-  for (const auto &pair : sorted_used_attribute) {
-    const StringRefNull attribute_name = pair.first;
-    const NamedAttributeUsage usage = pair.second;
+  for (const NameWithUsage &attribute : sorted_used_attribute) {
+    const StringRefNull attribute_name = attribute.name;
+    const NamedAttributeUsage usage = attribute.usage;
 
     /* #uiLayoutRowWithHeading doesn't seem to work in this case. */
     uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
@@ -1699,10 +1723,10 @@ static void panelRegister(ARegionType *region_type)
                              output_attribute_panel_draw,
                              panel_type);
   modifier_subpanel_register(region_type,
-                             "used_attributes",
-                             N_("Used Attributes"),
+                             "internal_dependencies",
+                             N_("Internal Dependencies"),
                              nullptr,
-                             used_attributes_panel_draw,
+                             internal_dependencies_panel_draw,
                              panel_type);
 }
 
@@ -1719,8 +1743,13 @@ static void blendWrite(BlendWriter *writer, const ModifierData *md)
 static void blendRead(BlendDataReader *reader, ModifierData *md)
 {
   NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
-  BLO_read_data_address(reader, &nmd->settings.properties);
-  IDP_BlendDataRead(reader, &nmd->settings.properties);
+  if (nmd->node_group == nullptr) {
+    nmd->settings.properties = nullptr;
+  }
+  else {
+    BLO_read_data_address(reader, &nmd->settings.properties);
+    IDP_BlendDataRead(reader, &nmd->settings.properties);
+  }
   nmd->runtime_eval_log = nullptr;
 }
 
