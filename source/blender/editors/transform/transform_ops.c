@@ -14,7 +14,6 @@
 
 #include "BLI_string.h"
 #include "BLT_translation.h"
-#include "BLI_string.h"
 
 #include "BKE_context.h"
 #include "BKE_editmesh.h"

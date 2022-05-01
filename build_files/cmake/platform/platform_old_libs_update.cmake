@@ -25,6 +25,7 @@ if(UNIX AND
   unset_cache_variables("^PNG")
   unset_cache_variables("^USD")
   unset_cache_variables("^WEBP")
+  unset_cache_variables("^NANOVDB")
 endif()
 
 # Automatically set WebP on/off depending if libraries are available.
@@ -34,4 +35,12 @@ if(EXISTS ${LIBDIR}/webp)
   endif()
 else()
   set(WITH_IMAGE_WEBP OFF)
+endif()
+
+# NanoVDB moved into openvdb.
+if(UNIX AND DEFINED NANOVDB_INCLUDE_DIR)
+  if(NOT EXISTS ${NANOVDB_INCLUDE_DIR} AND
+     EXISTS ${LIBDIR}/openvdb/include/nanovdb)
+    unset_cache_variables("^NANOVDB")
+  endif()
 endif()

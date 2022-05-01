@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3260,6 +3260,10 @@ msgstr "Malereieinflussfähigkeit"
 
 msgid "Has Weight"
 msgstr "Hat Einfluss"
+
+
+msgid "Curve Length"
+msgstr "Kurvenlänge"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -10573,6 +10577,10 @@ msgstr "Rastergeschwindigkeit"
 
 msgid "Smoke velocity grid"
 msgstr "Rauchgeschwindigkeit am Raster"
+
+
+msgid "Velocity Scale"
+msgstr "Geschwindigkeitsskalierung"
 
 
 msgid "Viscosity Base"
@@ -21790,10 +21798,6 @@ msgid "Vertex Interpolation"
 msgstr "Eckpunkt Interpolation"
 
 
-msgid "Velocity Scale"
-msgstr "Geschwindigkeitsskalierung"
-
-
 msgid "Resolution Mode"
 msgstr "Auflösungsmodus"
 
@@ -25445,10 +25449,6 @@ msgstr "Original"
 
 msgid "Convex Hull"
 msgstr "Konvexe Hülse"
-
-
-msgid "Curve Length"
-msgstr "Kurvenlänge"
 
 
 msgid "Curve Line"
@@ -31271,6 +31271,14 @@ msgstr "Striche unterteilen"
 msgctxt "Operator"
 msgid "Flip Colors"
 msgstr "Farben umdrehen"
+
+
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgctxt "Operator"
@@ -48122,16 +48130,8 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgid "Display white edges"
@@ -54385,16 +54385,16 @@ msgid "Source Clone UV Map"
 msgstr "Quell-UV-Textur klonen"
 
 
-msgid "Mask Value"
-msgstr "Maskiere Wert"
-
-
 msgid "CCW"
 msgstr "CCW"
 
 
 msgid "CW"
 msgstr "CW"
+
+
+msgid "Mask Value"
+msgstr "Maskiere Wert"
 
 
 msgid "Invert to Fill"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3398,6 +3398,10 @@ msgid "Has Weight"
 msgstr "Tiene influencia"
 
 
+msgid "Curve Length"
+msgstr "Longitud de curva"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "Opciones del pincel de lápiz de cera"
 
@@ -5340,10 +5344,6 @@ msgstr "Rec. 709 (rango completo), espacio nativo de Blender"
 
 msgid "Linear ACES"
 msgstr "ACES lineal"
-
-
-msgid "ACES linear space"
-msgstr "Espacio lineal ACES"
 
 
 msgid "Non-Color"
@@ -13867,6 +13867,10 @@ msgid "Smoke velocity grid"
 msgstr "Cuadrícula de velocidad del humo"
 
 
+msgid "Velocity Scale"
+msgstr "Escala de velocidad"
+
+
 msgid "Viscosity Base"
 msgstr "Viscosidad base"
 
@@ -19228,16 +19232,16 @@ msgid "Cloth"
 msgstr "Ropa"
 
 
+msgid "Draw Face Sets"
+msgstr "Mostrar conjuntos de caras"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "Borrar desplazam (multires)"
 
 
 msgid "Multires Displacement Smear"
 msgstr "Manchar desplazam (multires)"
-
-
-msgid "Draw Face Sets"
-msgstr "Mostrar conjuntos de caras"
 
 
 msgid "Secondary Color"
@@ -35817,10 +35821,6 @@ msgid "Allow interpolation of vertex positions"
 msgstr "Permite interpolar las posiciones de los vértices"
 
 
-msgid "Velocity Scale"
-msgstr "Escala de velocidad"
-
-
 msgid "Multiplier used to control the magnitude of the velocity vectors for time effects"
 msgstr "Multiplicador usado para controlar la magnitud de los vectores de velocidad para efectos con el tiempo"
 
@@ -42284,10 +42284,6 @@ msgstr "Usar las asas izquierdas"
 
 msgid "Use the right handles"
 msgstr "Usar las asas derechas"
-
-
-msgid "Curve Length"
-msgstr "Longitud de curva"
 
 
 msgid "Bezier Segment"
@@ -53847,6 +53843,14 @@ msgid "Switch tint colors"
 msgstr "Da vuelta los colores de tinte"
 
 
+msgid "Black"
+msgstr "Negro"
+
+
+msgid "White"
+msgstr "Blanco"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar relleno de trazo"
@@ -59751,15 +59755,6 @@ msgstr "Alterna los nodos colapsados y oculta los conectores no usados"
 
 
 msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "Copiar grupo de nodos de geometría"
-
-
-msgid "Copy the active geometry node group and assign it to the active modifier"
-msgstr "Copia el grupo de nodos de geometría activo y lo asigna al modificador activo"
-
-
-msgctxt "Operator"
 msgid "Add Cryptomatte Socket"
 msgstr "Agregar conector Cryptomatte"
 
@@ -61017,6 +61012,15 @@ msgstr "Habilitar / Deshabilitar campo de fuerza"
 
 msgid "Toggle object's force field"
 msgstr "Habilita o deshabilita el campo de fuerza del objeto"
+
+
+msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "Copiar grupo de nodos de geometría"
+
+
+msgid "Copy the active geometry node group and assign it to the active modifier"
+msgstr "Copia el grupo de nodos de geometría activo y lo asigna al modificador activo"
 
 
 msgctxt "Operator"
@@ -78181,6 +78185,11 @@ msgstr "Simplificar"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "Dibujar conjuntos de caras"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "Borrar desplazam (multires)"
 
@@ -78188,11 +78197,6 @@ msgstr "Borrar desplazam (multires)"
 msgctxt "Operator"
 msgid "Multires Displacement Smear"
 msgstr "Manchar desplazam (multires)"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "Dibujar conjuntos de caras"
 
 
 msgctxt "Operator"
@@ -88667,16 +88671,8 @@ msgid "Display dashed black-white edges"
 msgstr "Dibuja bordes discontinuos en blanco y negro"
 
 
-msgid "Black"
-msgstr "Negro"
-
-
 msgid "Display black edges"
 msgstr "Dibuja bordes negros"
-
-
-msgid "White"
-msgstr "Blanco"
 
 
 msgid "Display white edges"
@@ -93569,10 +93565,6 @@ msgstr "Permite prevenir la edición de los marcadores"
 
 msgid "Lock Object Modes"
 msgstr "Bloquear modos de objetos"
-
-
-msgid "Restrict select to the current mode"
-msgstr "Restringe la selección al modo actual"
 
 
 msgid "Mesh Selection Mode"
@@ -100041,16 +100033,16 @@ msgid "Gradient Mapping"
 msgstr "Mapeo de gradiente"
 
 
-msgid "Mask Value"
-msgstr "Valor de máscara"
-
-
 msgid "CCW"
 msgstr "Antihorario"
 
 
 msgid "CW"
 msgstr "Horario"
+
+
+msgid "Mask Value"
+msgstr "Valor de máscara"
 
 
 msgid "Invert to Fill"
@@ -108025,10 +108017,6 @@ msgstr ""
 "%s"
 
 
-msgid "Indirect library data-block, cannot change"
-msgstr "Bloque de datos indirecto de una biblioteca, no es posible cambiarlo"
-
-
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "Bloque de datos vinculado directamente a una biblioteca, clic para hacer local, Mayúsculas + clic para crear una redefinicion de biblioteca"
 
@@ -109562,10 +109550,6 @@ msgstr "Esta operación de modificador no es permitida en modo Edición"
 
 msgid "Modifiers cannot be applied on override data"
 msgstr "Los modificadores no pueden ser aplicados a datos redefinidos"
-
-
-msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
-msgstr "No soportado para modificadores \"Colisión\" o \"Gancho\""
 
 
 msgid "No selected object is active"
@@ -115843,10 +115827,6 @@ msgstr "Distancia de impacto"
 
 msgid "This node uses legacy behavior with regards to attributes on instances. The behavior can be changed in the node properties in the side bar. In most cases the new behavior is the same for files created in Blender 3.0"
 msgstr "Este nodo usa un comportamiento antiguo con respecto a atributos en instancias. El comportamiento puede ser cambiado en las propiedades del nodo, en el panel lateral. En la mayoría de los casos, el nuevo comportamiento es el mismo para los archivos creados en Blender 3.0"
-
-
-msgid "Cannot delete attribute with name \""
-msgstr "No es posible borrar el atributo de nombre \""
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"

@@ -21,8 +21,7 @@ def locate_docpath():
 
     addon_prefs = bpy.context.preferences.addons[__package__].preferences
     # Use the system preference if its set.
-    pov_documents = addon_prefs.docpath_povray
-    if pov_documents:
+    if pov_documents := addon_prefs.docpath_povray:
         if os.path.exists(pov_documents):
             return pov_documents
         # Implicit else, as here return was still not triggered:
@@ -31,7 +30,7 @@ def locate_docpath():
         )
 
     # Windows Only
-    if platform.startswith('win'):
+    if platform.startswith("win"):
         import winreg
 
         try:
@@ -47,7 +46,7 @@ def locate_docpath():
     # search the path all os's
     pov_documents_default = "include"
 
-    os_path_ls = os.getenv("PATH").split(':') + [""]
+    os_path_ls = os.getenv("PATH").split(":") + [""]
 
     for dir_name in os_path_ls:
         pov_documents = os.path.join(dir_name, pov_documents_default)
@@ -63,10 +62,10 @@ class TextButtonsPanel:
     """Use this class to define buttons from the side tab of
     text window."""
 
-    bl_space_type = 'TEXT_EDITOR'
-    bl_region_type = 'UI'
+    bl_space_type = "TEXT_EDITOR"
+    bl_region_type = "UI"
     bl_label = "POV-Ray"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -86,12 +85,12 @@ class TEXT_OT_POV_insert(Operator):
     bl_idname = "text.povray_insert"
     bl_label = "Insert"
 
-    filepath: bpy.props.StringProperty(name="Filepath", subtype='FILE_PATH')
+    filepath: bpy.props.StringProperty(name="Filepath", subtype="FILE_PATH")
 
     @classmethod
     def poll(cls, context):
         text = context.space_data.text
-        return context.area.type == 'TEXT_EDITOR' and text is not None
+        return context.area.type == "TEXT_EDITOR" and text is not None
         # return bpy.ops.text.insert.poll() this Bpy op has no poll()
 
     def execute(self, context):
@@ -103,7 +102,7 @@ class TEXT_OT_POV_insert(Operator):
                 # context.space_data.text.write(file.read())
             if not file.closed:
                 file.close()
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 def validinsert(ext):
@@ -119,7 +118,7 @@ class TEXT_MT_POV_insert(Menu):
 
     def draw(self, context):
         pov_documents = locate_docpath()
-        prop = self.layout.operator("wm.path_open", text="Open folder", icon='FILE_FOLDER')
+        prop = self.layout.operator("wm.path_open", text="Open folder", icon="FILE_FOLDER")
         prop.filepath = pov_documents
         self.layout.separator()
 
@@ -140,15 +139,18 @@ class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
     only or adds to 3d scene."""
 
     bl_label = "POV"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
 
         text = context.space_data.text
 
-        pov_documents = locate_docpath()
-        if not pov_documents:
+        if pov_documents := locate_docpath():
+            # print(pov_documents)
+            layout.menu(TEXT_MT_POV_insert.bl_idname)
+
+        else:
             layout.label(text="Please configure ", icon="INFO")
             layout.label(text="default pov include path ")
             layout.label(text="in addon preferences")
@@ -159,24 +161,19 @@ class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
                 icon="PREFERENCES",
             ).module = "render_povray"
 
-            # layout.separator()
-        else:
-            # print(pov_documents)
-            layout.menu(TEXT_MT_POV_insert.bl_idname)
-
         if text:
             box = layout.box()
-            box.label(text='Source to render:', icon='RENDER_STILL')
+            box.label(text="Source to render:", icon="RENDER_STILL")
             row = box.row()
             row.prop(text.pov, "custom_code", expand=True)
-            if text.pov.custom_code in {'3dview'}:
-                box.operator("render.render", icon='OUTLINER_DATA_ARMATURE')
-            if text.pov.custom_code in {'text'}:
+            if text.pov.custom_code in {"3dview"}:
+                box.operator("render.render", icon="OUTLINER_DATA_ARMATURE")
+            if text.pov.custom_code in {"text"}:
                 rtext = bpy.context.space_data.text  # is r a typo ? or why written, not used
-                box.operator("text.run", icon='ARMATURE_DATA')
+                box.operator("text.run", icon="ARMATURE_DATA")
             # layout.prop(text.pov, "custom_code")
-            elif text.pov.custom_code in {'both'}:
-                box.operator("render.render", icon='POSE_HLT')
+            elif text.pov.custom_code in {"both"}:
+                box.operator("render.render", icon="POSE_HLT")
                 layout.label(text="Please specify declared", icon="INFO")
                 layout.label(text="items in properties ")
                 # layout.label(text="")
@@ -218,14 +215,14 @@ class VIEW_MT_POV_import(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_context = "INVOKE_REGION_WIN"
         layout.operator("import_scene.pov", icon="FORCE_LENNARDJONES")
 
 
 def menu_func_import(self, context):
     """Add the import operator to menu"""
     engine = context.scene.render.engine
-    if engine == 'POVRAY_RENDER':
+    if engine == "POVRAY_RENDER":
         self.layout.operator("import_scene.pov", icon="FORCE_LENNARDJONES")
 
 
