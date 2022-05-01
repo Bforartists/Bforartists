@@ -26,9 +26,7 @@ class RenderPovSettingsText(PropertyGroup):
     )
 
 
-classes = (
-    RenderPovSettingsText,
-)
+classes = (RenderPovSettingsText,)
 
 
 def register():

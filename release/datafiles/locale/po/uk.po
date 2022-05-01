@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -13291,6 +13291,10 @@ msgid "Smoke velocity grid"
 msgstr "Сітка швидкості диму"
 
 
+msgid "Velocity Scale"
+msgstr "Масштаб Скорості"
+
+
 msgid "Viscosity Base"
 msgstr "База в'язкості"
 
@@ -17860,16 +17864,16 @@ msgid "Cloth"
 msgstr "Тканина"
 
 
+msgid "Draw Face Sets"
+msgstr "Рисувати Набори Граней"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "Стирач Зміщення Багатороздільності"
 
 
 msgid "Multires Displacement Smear"
 msgstr "Розмазування Зміщення Багатороздільності"
-
-
-msgid "Draw Face Sets"
-msgstr "Рисувати Набори Граней"
 
 
 msgid "Secondary Color"
@@ -33514,10 +33518,6 @@ msgstr "Інтерполяція Вершин"
 
 msgid "Allow interpolation of vertex positions"
 msgstr "Дозволити інтерполяцію позицій вершин"
-
-
-msgid "Velocity Scale"
-msgstr "Масштаб Скорості"
 
 
 msgid "Multiplier used to control the magnitude of the velocity vectors for time effects"
@@ -49763,6 +49763,14 @@ msgstr "Переверт Кольорів"
 
 msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
+
+
+msgid "Black"
+msgstr "Чорне"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgctxt "Operator"
@@ -72348,6 +72356,11 @@ msgstr "Спростити"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "Рисувати Набори Граней"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "Стирач Зміщення Мультироздільності"
 
@@ -72355,11 +72368,6 @@ msgstr "Стирач Зміщення Мультироздільності"
 msgctxt "Operator"
 msgid "Multires Displacement Smear"
 msgstr "Розмазування Зміщення Мультироздільності"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "Рисувати Набори Граней"
 
 
 msgctxt "Operator"
@@ -81874,16 +81882,8 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -86440,10 +86440,6 @@ msgstr "Заблокувати зміну міток"
 
 msgid "Lock Object Modes"
 msgstr "Блокувати Режими Об'єкта"
-
-
-msgid "Restrict select to the current mode"
-msgstr "Обмежити вибирання поточним режимом"
 
 
 msgid "Mesh Selection Mode"
@@ -91787,16 +91783,16 @@ msgid "Gradient Mapping"
 msgstr "Розкладання Градієнта"
 
 
-msgid "Mask Value"
-msgstr "Значення Маски"
-
-
 msgid "CCW"
 msgstr "ПротиГС"
 
 
 msgid "CW"
 msgstr "ЗаГС"
+
+
+msgid "Mask Value"
+msgstr "Значення Маски"
 
 
 msgid "Invert to Fill"
@@ -99245,10 +99241,6 @@ msgstr ""
 "%s"
 
 
-msgid "Indirect library data-block, cannot change"
-msgstr "Непрямий бібліотечний блок даних, зміна неможлива"
-
-
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "Безпосередньо пов'язаний блок даних бібліотеки, клацніть, щоб зробити локальним, Shift + Click для створення заміщення бібліотеки"
 
@@ -100654,10 +100646,6 @@ msgstr "Ця операція модифікатора не дозволяєть
 
 msgid "Modifiers cannot be applied on override data"
 msgstr "Модифікатори неможливо застосувати до даних заміщення"
-
-
-msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
-msgstr "Не підтримується для модифікаторів «Зіткнення» або «Гачок»"
 
 
 msgid "No selected object is active"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -43370,6 +43370,14 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -71308,16 +71316,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -75347,10 +75347,6 @@ msgid "Lock Object Modes"
 msgstr "오브젝트 모드를 잠금"
 
 
-msgid "Restrict select to the current mode"
-msgstr "현재 모드로 선택을 제한"
-
-
 msgid "Mesh Selection Mode"
 msgstr "메쉬 선택 모드"
 
@@ -79226,16 +79222,16 @@ msgid "Gradient Mapping"
 msgstr "그라디언트 매핑"
 
 
-msgid "Mask Value"
-msgstr "마스크 값"
-
-
 msgid "CCW"
 msgstr "CCW"
 
 
 msgid "CW"
 msgstr "CW"
+
+
+msgid "Mask Value"
+msgstr "마스크 값"
 
 
 msgid "Invert to Fill"
@@ -85412,10 +85408,6 @@ msgstr "커브 초기화"
 
 msgid "Anim Player"
 msgstr "Anim 플레이어"
-
-
-msgid "Indirect library data-block, cannot change"
-msgstr "간접 라이브러리 데이터 블록, 변경할 수 없습니다"
 
 
 msgid "Can't edit external library data"

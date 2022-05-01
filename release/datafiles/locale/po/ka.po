@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -5293,10 +5293,6 @@ msgid "Linear ACES"
 msgstr "სწორხაზოვანი ACES"
 
 
-msgid "ACES linear space"
-msgstr "ACES სწორხაზოვანი სივრცე"
-
-
 msgid "Non-Color"
 msgstr "არა-ფერული"
 
@@ -8377,16 +8373,16 @@ msgid "Cloth"
 msgstr "ქსოვილი"
 
 
+msgid "Draw Face Sets"
+msgstr "დახატე წახნაგთა წყებები"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "მულტირეზ. გადანაცვლების საშლელი"
 
 
 msgid "Multires Displacement Smear"
 msgstr "მულტირეზ. გადანაცვლების გადღაბნა"
-
-
-msgid "Draw Face Sets"
-msgstr "დახატე წახნაგთა წყებები"
 
 
 msgid "Secondary Color"
@@ -12792,6 +12788,14 @@ msgstr "მონიშნული წერტილები"
 
 msgid "Selected Strokes"
 msgstr "მონიშნული შტრიხები"
+
+
+msgid "Black"
+msgstr "შავი"
+
+
+msgid "White"
+msgstr "თეთრი"
 
 
 msgid "Transform grease pencil stroke fill"
@@ -18598,6 +18602,11 @@ msgstr "გამარტივება"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "წახნაგთა წყებების დახატვა"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "მულტირეზ. გადაადგილების საშლელი"
 
@@ -18605,11 +18614,6 @@ msgstr "მულტირეზ. გადაადგილების სა
 msgctxt "Operator"
 msgid "Multires Displacement Smear"
 msgstr "მულტირეზ. გადაადგილების გადღაბნა"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "წახნაგთა წყებების დახატვა"
 
 
 msgctxt "Operator"
@@ -19727,14 +19731,6 @@ msgid "Outline"
 msgstr "მოხაზულობა"
 
 
-msgid "Black"
-msgstr "შავი"
-
-
-msgid "White"
-msgstr "თეთრი"
-
-
 msgid "Alpha Channel"
 msgstr "ალფა არხი"
 
@@ -20202,10 +20198,6 @@ msgstr "ავტომატური შერწყმის ზღვრუ�
 
 msgid "Lock Object Modes"
 msgstr "ობიექტების რეჟიმების ჩაკეტვა"
-
-
-msgid "Restrict select to the current mode"
-msgstr "მონიშვნის შეზღუდვა მიმდინარე რეჟიმით"
 
 
 msgid "Snap Element"

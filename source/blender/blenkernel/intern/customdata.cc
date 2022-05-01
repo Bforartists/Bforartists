@@ -765,7 +765,12 @@ static void layerFree_grid_paint_mask(void *data, int count, int UNUSED(size))
   }
 }
 
-/* --------- */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Callbacks for (#MLoopCol, #CD_PROP_BYTE_COLOR)
+ * \{ */
+
 static void layerCopyValue_mloopcol(const void *source,
                                     void *dest,
                                     const int mixmode,
@@ -953,6 +958,12 @@ static int layerMaxNum_mloopcol()
 {
   return MAX_MCOL;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Callbacks for (#MLoopUV, #CD_MLOOPUV)
+ * \{ */
 
 static void layerCopyValue_mloopuv(const void *source,
                                    void *dest,
@@ -2869,24 +2880,6 @@ void CustomData_free_layers(CustomData *data, int type, int totelem)
   const int index = CustomData_get_layer_index(data, type);
   while (CustomData_free_layer(data, type, totelem, index)) {
     /* pass */
-  }
-}
-
-void CustomData_free_layers_anonymous(struct CustomData *data, int totelem)
-{
-  while (true) {
-    bool found_anonymous_layer = false;
-    for (int i = 0; i < data->totlayer; i++) {
-      const CustomDataLayer *layer = &data->layers[i];
-      if (layer->anonymous_id != nullptr) {
-        CustomData_free_layer(data, layer->type, totelem, i);
-        found_anonymous_layer = true;
-        break;
-      }
-    }
-    if (!found_anonymous_layer) {
-      break;
-    }
   }
 }
 
@@ -5334,6 +5327,11 @@ void CustomData_blend_read(BlendDataReader *reader, CustomData *data, int count)
       i++;
     }
   }
+
+  /* Ensure allocated size is set to the size of the read array. While this should always be the
+   * case (see #CustomData_blend_write_prepare), there can be some corruption in rare cases (e.g.
+   * files saved between ff3d535bc2a63092 and 945f32e66d6ada2a). */
+  data->maxlayer = data->totlayer;
 
   CustomData_update_typemap(data);
 }

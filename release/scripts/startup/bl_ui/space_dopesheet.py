@@ -690,6 +690,9 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         col.prop(tool_settings, "lock_markers")
         col.prop(st, "use_marker_sync")
 
+        layout.separator()
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+
 
 class DOPESHEET_MT_key_transform(Menu):
     bl_label = "Transform"

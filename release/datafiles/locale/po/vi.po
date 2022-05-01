@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'933fed2a17a3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -3398,6 +3398,10 @@ msgid "Has Weight"
 msgstr "Có Quyền Lượng"
 
 
+msgid "Curve Length"
+msgstr "Chiều Dài Đường Cong"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "Cài Đặt Bút Sáp"
 
@@ -5340,10 +5344,6 @@ msgstr "Rec. 709 (Toàn Bộ Phạm vi), không gian tuyến tính thuộc đị
 
 msgid "Linear ACES"
 msgstr "ACES Tuyến Tính"
-
-
-msgid "ACES linear space"
-msgstr "Không gian ACES tuyến tính"
 
 
 msgid "Non-Color"
@@ -13867,6 +13867,10 @@ msgid "Smoke velocity grid"
 msgstr "Đồ thị vận tốc khói"
 
 
+msgid "Velocity Scale"
+msgstr "Phóng To Vận Tốc"
+
+
 msgid "Viscosity Base"
 msgstr "Cơ Sở Độ Nhớt"
 
@@ -19228,16 +19232,16 @@ msgid "Cloth"
 msgstr "Vải"
 
 
+msgid "Draw Face Sets"
+msgstr "Vẽ Tập Hợp Mặt"
+
+
 msgid "Multires Displacement Eraser"
 msgstr "Đồ Bôi Dịch Đa Độ Phân Giải"
 
 
 msgid "Multires Displacement Smear"
 msgstr "Nhẹp Dịch Đa Độ Phân Giải"
-
-
-msgid "Draw Face Sets"
-msgstr "Vẽ Tập Hợp Mặt"
 
 
 msgid "Secondary Color"
@@ -35817,10 +35821,6 @@ msgid "Allow interpolation of vertex positions"
 msgstr "Cho suy nội vị trí của đỉnh"
 
 
-msgid "Velocity Scale"
-msgstr "Phóng To Vận Tốc"
-
-
 msgid "Multiplier used to control the magnitude of the velocity vectors for time effects"
 msgstr "Hệ số để kiểm soát độ lớn của vectơ vận tốc cho hiệu ứng thời gian"
 
@@ -42284,10 +42284,6 @@ msgstr "Dùng các tay cầm trái"
 
 msgid "Use the right handles"
 msgstr "Dùng các tay cầm phải"
-
-
-msgid "Curve Length"
-msgstr "Chiều Dài Đường Cong"
 
 
 msgid "Bezier Segment"
@@ -53847,6 +53843,14 @@ msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "White"
+msgstr "Trắng"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Biến Hóa Tô Đầy Nét"
@@ -59751,15 +59755,6 @@ msgstr "Bật/tắt tóp giao điểm và ẩn ổ cắm chưa dùng"
 
 
 msgctxt "Operator"
-msgid "Copy Geometry Node Group"
-msgstr "Chép Nhóm Giao Điểm Hình Dạng Học"
-
-
-msgid "Copy the active geometry node group and assign it to the active modifier"
-msgstr "Chép nhóm giao điểm hình dạng hoạt động và chỉ định nó cho cụ sửa đổi hoạt động"
-
-
-msgctxt "Operator"
 msgid "Add Cryptomatte Socket"
 msgstr "Thêm Ổ Cắm Mặt Nạ Mã"
 
@@ -61017,6 +61012,15 @@ msgstr "Bật/Tắt Lực Trường"
 
 msgid "Toggle object's force field"
 msgstr "Bật/tắt lực trường của vật thể"
+
+
+msgctxt "Operator"
+msgid "Copy Geometry Node Group"
+msgstr "Chép Nhóm Giao Điểm Hình Dạng Học"
+
+
+msgid "Copy the active geometry node group and assign it to the active modifier"
+msgstr "Chép nhóm giao điểm hình dạng hoạt động và chỉ định nó cho cụ sửa đổi hoạt động"
 
 
 msgctxt "Operator"
@@ -78181,6 +78185,11 @@ msgstr "Đơn Giản Hóa"
 
 
 msgctxt "Operator"
+msgid "Draw Face Sets"
+msgstr "Vẽ Tập Hợp Mặt"
+
+
+msgctxt "Operator"
 msgid "Multires Displacement Eraser"
 msgstr "Đồ Bôi Dịch Đa Độ Phân Giải"
 
@@ -78188,11 +78197,6 @@ msgstr "Đồ Bôi Dịch Đa Độ Phân Giải"
 msgctxt "Operator"
 msgid "Multires Displacement Smear"
 msgstr "Nhẹp Dịch Đa Độ Phân Giải"
-
-
-msgctxt "Operator"
-msgid "Draw Face Sets"
-msgstr "Vẽ Tập Hợp Mặt"
 
 
 msgctxt "Operator"
@@ -88663,16 +88667,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -93565,10 +93561,6 @@ msgstr "Không cho biên tập ký hiệu"
 
 msgid "Lock Object Modes"
 msgstr "Khóa Chế Độ Vật Thể"
-
-
-msgid "Restrict select to the current mode"
-msgstr "Hạn chế sự lựa chọn ở trong chế độ hiện tại"
 
 
 msgid "Mesh Selection Mode"
@@ -100037,16 +100029,16 @@ msgid "Gradient Mapping"
 msgstr "AÁnh Xạ Chuyển Sắc"
 
 
-msgid "Mask Value"
-msgstr "Giá Trị Mặt Nạ"
-
-
 msgid "CCW"
 msgstr "Nghích Hướng Kim Đồng Hồ"
 
 
 msgid "CW"
 msgstr "Hướng Kim Đồng Hồ"
+
+
+msgid "Mask Value"
+msgstr "Giá Trị Mặt Nạ"
 
 
 msgid "Invert to Fill"
@@ -108021,10 +108013,6 @@ msgstr ""
 "%s"
 
 
-msgid "Indirect library data-block, cannot change"
-msgstr "Cục dữ liệu thư viện gián tiếp, không thể đổi"
-
-
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "Cục dữ liệu thư viện được liên kết trực tiếp, bấm cho địa phương hóa, Shift + Bấm để tạo một đồ thay thế thư viện"
 
@@ -109558,10 +109546,6 @@ msgstr "Không cho dùng thao tác cụ sửa đổi này trong Chế Độ Biê
 
 msgid "Modifiers cannot be applied on override data"
 msgstr "Không thể áp dụng cụ sửa đổi với dữ liệu thay thế"
-
-
-msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
-msgstr "Không hỗ trợ cho cụ sửa đổi \"Collision\" hay \"Hook\""
 
 
 msgid "No selected object is active"
@@ -115817,10 +115801,6 @@ msgstr "Khoảng Cách Trúng"
 
 msgid "This node uses legacy behavior with regards to attributes on instances. The behavior can be changed in the node properties in the side bar. In most cases the new behavior is the same for files created in Blender 3.0"
 msgstr "Giao điểm này dùng hành vi lỗi thời cho các đặc điểm của thực thể. Hành vi có thể đổi trong thanh hong của đặc tính giao điểm. Đa số trường hợp hành vi mới giống hệt cho tập tin được chế tạo trong Blender 3.0"
-
-
-msgid "Cannot delete attribute with name \""
-msgstr "Không thể xóa đặc điểm có tên \""
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"
