@@ -29,7 +29,7 @@ class MaterialTextureSlot(PropertyGroup):
     """Declare material texture slot level properties for UI and translated to POV."""
 
     bl_idname = ("pov_texture_slots",)
-    bl_description = ("Texture_slots from Blender-2.79",)
+    bl_description = ("Nodeless texture slots",)
 
     # Adding a "real" texture datablock as property is not possible
     # (or at least not easy through a dynamically populated EnumProperty).
@@ -367,86 +367,17 @@ class MaterialTextureSlot(PropertyGroup):
         description="Amount texture affects texture coordinates of next channels",
         default=0.0,
     )
-
     # ---------------------------------------------------------------- #
-
-    blend_factor: FloatProperty(
-        name="Blend",
-        description="Amount texture affects color progression of the " "background",
-        soft_min=0.0,
-        soft_max=1.0,
-        default=1.0,
-    )
-
-    horizon_factor: FloatProperty(
-        name="Horizon",
-        description="Amount texture affects color of the horizon" "",
-        soft_min=0.0,
-        soft_max=1.0,
-        default=1.0,
-    )
-
-    object: StringProperty(
-        name="Object",
-        description="Object to use for mapping with Object texture coordinates",
-        default="",
-    )
-
-    texture_coords: EnumProperty(
-        name="Coordinates",
-        description="Texture coordinates used to map the texture onto the background",
-        items=(
-            ("VIEW", "View", "Use view vector for the texture coordinates"),
-            (
-                "GLOBAL",
-                "Global",
-                "Use global coordinates for the texture coordinates (interior mist)",
-            ),
-            (
-                "ANGMAP",
-                "AngMap",
-                "Use 360 degree angular coordinates, e.g. for spherical light probes",
-            ),
-            ("SPHERE", "Sphere", "For 360 degree panorama sky, spherical mapped, only top half"),
-            ("EQUIRECT", "Equirectangular", "For 360 degree panorama sky, equirectangular mapping"),
-            ("TUBE", "Tube", "For 360 degree panorama sky, cylindrical mapped, only top half"),
-            ("OBJECT", "Object", "Use linked object’s coordinates for texture coordinates"),
-        ),
-        default="VIEW",
-    )
-
-    use_map_blend: BoolProperty(
-        name="Blend Map", description="Affect the color progression of the background", default=True
-    )
-
-    use_map_horizon: BoolProperty(
-        name="Horizon Map", description="Affect the color of the horizon", default=False
-    )
-
-    use_map_zenith_down: BoolProperty(
-        name="", description="Affect the color of the zenith below", default=False
-    )
-
-    use_map_zenith_up: BoolProperty(
-        name="Zenith Up Map", description="Affect the color of the zenith above", default=False
-    )
-
-    zenith_down_factor: FloatProperty(
-        name="Zenith Down",
-        description="Amount texture affects color of the zenith below",
-        soft_min=0.0,
-        soft_max=1.0,
-        default=1.0,
-    )
-
-    zenith_up_factor: FloatProperty(
-        name="Zenith Up",
-        description="Amount texture affects color of the zenith above",
-        soft_min=0.0,
-        soft_max=1.0,
-        default=1.0,
-    )
-
+    # so that its for loop stays one level less nested
+    # used_texture_slots generator expression requires :
+    def __iter__(self):
+        return self
+    def __next__(self):
+        tex = bpy.data.textures[self.texture]
+        while tex.pov.active_texture_index < len(bpy.data.textures): # XXX should use slots count
+            tex.pov.active_texture_index += 1
+        raise StopIteration
+    # ---------------------------------------------------------------- #
 
 # ---------------------------------------------------------------- #
 # Texture slots (World context) exported as POV texture properties.

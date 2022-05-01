@@ -33,6 +33,7 @@ dict_custom = {
     # Correct spelling, update the dictionary, here:
     # https://github.com/en-wl/wordlist
     "accessor",
+    "additively",
     "adjoint",
     "adjugate",
     "affectable",
@@ -90,6 +91,8 @@ dict_custom = {
     "dihedral",
     "discoverability",
     "discretization",
+    "discretized",
+    "discretizes",
     "downcasting",
     "durations",
     "eachother",
@@ -143,6 +146,7 @@ dict_custom = {
     "occluders",
     "optionals",
     "orthogonalize",
+    "orthonormalize",
     "orthonormalized",
     "overridable",
     "paddings",

@@ -34,17 +34,17 @@ from bl_ui import properties_texture
 for member in dir(properties_texture):
     subclass = getattr(properties_texture, member)
     if hasattr(subclass, "COMPAT_ENGINES"):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        subclass.COMPAT_ENGINES.add("POVRAY_RENDER")
 del properties_texture
 
 
 class TextureButtonsPanel:
     """Use this class to define buttons from the texture tab properties."""
 
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
     bl_context = "texture"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -57,19 +57,19 @@ class TEXTURE_MT_POV_specials(Menu):
     """Use this class to define pov texture slot operations buttons."""
 
     bl_label = "Texture Specials"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("texture.slot_copy", icon='COPYDOWN')
-        layout.operator("texture.slot_paste", icon='PASTEDOWN')
+        layout.operator("texture.slot_copy", icon="COPYDOWN")
+        layout.operator("texture.slot_paste", icon="PASTEDOWN")
 
 
 class WORLD_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
     """Use this class to show pov texture slots list."""
 
-    index: bpy.props.IntProperty(name='index')
+    index: bpy.props.IntProperty(name="index")
     # should active_propname be index or..?
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
@@ -84,18 +84,18 @@ class WORLD_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
         slot = item
         # ma = slot.name
         # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
             # You should always start your row layout by a label (icon + text), or a non-embossed text field,
             # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
             # Note "data" names should never be translated!
             if slot:
-                layout.prop(slot, "texture", text="", emboss=False, icon='TEXTURE')
+                layout.prop(slot, "texture", text="", emboss=False, icon="TEXTURE")
             else:
                 layout.label(text="New", translate=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
             layout.label(text="", icon_value=icon)
 
 
@@ -103,7 +103,7 @@ class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
     """Use this class to show pov texture slots list."""
 
     #    texture_slots:
-    index: bpy.props.IntProperty(name='index')
+    index: bpy.props.IntProperty(name="index")
     # foo  = random prop
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
@@ -111,18 +111,18 @@ class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
         slot = item
         # ma = slot.name
         # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
             # You should always start your row layout by a label (icon + text), or a non-embossed text field,
             # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
             # Note "data" names should never be translated!
             if slot:
-                layout.prop(slot, "texture", text="", emboss=False, icon='TEXTURE')
+                layout.prop(slot, "texture", text="", emboss=False, icon="TEXTURE")
             else:
                 layout.label(text="New", translate=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
             layout.label(text="", icon_value=icon)
 
 
@@ -131,8 +131,8 @@ class TEXTURE_PT_context(TextureButtonsPanel, Panel):
 
     bl_label = ""
     bl_context = "texture"
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'POVRAY_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {"HIDE_HEADER"}
+    COMPAT_ENGINES = {"POVRAY_RENDER", "BLENDER_EEVEE", "BLENDER_WORKBENCH"}
     # register but not unregistered because
     # the modified parts concern only POVRAY_RENDER
 
@@ -140,8 +140,8 @@ class TEXTURE_PT_context(TextureButtonsPanel, Panel):
     def poll(cls, context):
         return (
             context.scene.texture_context
-            not in ('MATERIAL', 'WORLD', 'LIGHT', 'PARTICLES', 'LINESTYLE')
-            or context.scene.render.engine != 'POVRAY_RENDER'
+            not in ("MATERIAL", "WORLD", "LIGHT", "PARTICLES", "LINESTYLE")
+            or context.scene.render.engine != "POVRAY_RENDER"
         )
 
     def draw(self, context):
@@ -181,8 +181,8 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
     """Use this class to show pov texture context buttons."""
 
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"HIDE_HEADER"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -208,7 +208,7 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
         wld = context.scene.world
 
         layout.prop(scene, "texture_context", expand=True)
-        if scene.texture_context == 'MATERIAL' and mat is not None:
+        if scene.texture_context == "MATERIAL" and mat is not None:
 
             row = layout.row()
             row.template_list(
@@ -223,8 +223,8 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                 type="DEFAULT",
             )
             col = row.column(align=True)
-            col.operator("pov.textureslotadd", icon='ADD', text='')
-            col.operator("pov.textureslotremove", icon='REMOVE', text='')
+            col.operator("pov.textureslotadd", icon="ADD", text="")
+            col.operator("pov.textureslotremove", icon="REMOVE", text="")
             # XXX todo: recreate for pov_texture_slots?
             # col.operator("texture.slot_move", text="", icon='TRIA_UP').type = 'UP'
             # col.operator("texture.slot_move", text="", icon='TRIA_DOWN').type = 'DOWN'
@@ -236,26 +236,29 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                 try:
                     povtex = slot.texture  # slot.name
                     tex = bpy.data.textures[povtex]
-                    col.prop(tex, 'use_fake_user', text='')
+                    col.prop(tex, "use_fake_user", text="")
                     # layout.label(text='Linked Texture data browser:')
                     # propname = slot.texture_search
                     # if slot.texture was a pointer to texture data rather than just a name string:
                     # layout.template_ID(povtex, "texture", new="texture.new")
                 except KeyError:
                     tex = None
-                layout.prop_search(
-                    slot, 'texture_search', bpy.data, 'textures', text='', icon='TEXTURE'
+                row = layout.row(align=True)
+                row.prop_search(
+                    slot, "texture_search", bpy.data, "textures", text="", icon="TEXTURE"
                 )
-                try:
-                    bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[
-                        slot.texture_search
-                    ]
-                    bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[
-                        slot.texture_search
-                    ]
-                except KeyError:
-                    # texture not hand-linked by user
-                    pass
+
+                row.operator("pov.textureslotupdate", icon="FILE_REFRESH", text="")
+                # try:
+                #     bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[
+                #         slot.texture_search
+                #     ]
+                #     bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[
+                #         slot.texture_search
+                #     ]
+                # except KeyError:
+                #     # texture not hand-linked by user
+                #     pass
 
                 if tex:
                     layout.separator()
@@ -266,7 +269,7 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
             # else:
             # for i in range(18):  # length of material texture slots
             # mat.pov_texture_slots.add()
-        elif scene.texture_context == 'WORLD' and wld is not None:
+        elif scene.texture_context == "WORLD" and wld is not None:
 
             row = layout.row()
             row.template_list(
@@ -281,8 +284,8 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                 type="DEFAULT",
             )
             col = row.column(align=True)
-            col.operator("pov.textureslotadd", icon='ADD', text='')
-            col.operator("pov.textureslotremove", icon='REMOVE', text='')
+            col.operator("pov.textureslotadd", icon="ADD", text="")
+            col.operator("pov.textureslotremove", icon="REMOVE", text="")
 
             # todo: recreate for pov_texture_slots?
             # col.operator("texture.slot_move", text="", icon='TRIA_UP').type = 'UP'
@@ -294,14 +297,14 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                 slot = wld.pov_texture_slots[index]
                 povtex = slot.texture  # slot.name
                 tex = bpy.data.textures[povtex]
-                col.prop(tex, 'use_fake_user', text='')
+                col.prop(tex, "use_fake_user", text="")
                 # layout.label(text='Linked Texture data browser:')
                 # propname = slot.texture_search # NOT USED
                 # if slot.texture was a pointer to texture data rather than just a name string:
                 # layout.template_ID(povtex, "texture", new="texture.new")
 
                 layout.prop_search(
-                    slot, 'texture_search', bpy.data, 'textures', text='', icon='TEXTURE'
+                    slot, "texture_search", bpy.data, "textures", text="", icon="TEXTURE"
                 )
                 try:
                     bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[
@@ -321,9 +324,42 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                     split.prop(tex, "type", text="")
 
 
+class TEXTURE_OT_POV_context_texture_update(Operator):
+    """Use this class for the texture slot update button."""
+
+    bl_idname = "pov.textureslotupdate"
+    bl_label = "Update"
+    bl_description = "Update texture_slot"
+    bl_options = {"REGISTER", "UNDO"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.scene.render.engine
+        mate = context.view_layer.objects.active.active_material
+        return mate and engine in cls.COMPAT_ENGINES
+
+    def execute(self, context):
+        # tex.use_fake_user = True
+        mat = context.view_layer.objects.active.active_material
+        index = mat.pov.active_texture_index
+        slot = mat.pov_texture_slots[index]
+        povtex = slot.texture  # slot.name
+        tex = bpy.data.textures[povtex]
+
+        # Switch paint brush and paint brush mask
+        # to this texture so settings remain contextual
+        bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[slot.texture_search]
+        bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[
+            slot.texture_search
+        ]
+
+        return {"FINISHED"}
+
+
 # Commented out below is a reminder of what existed in Blender Internal
 # attributes need to be recreated
-'''
+"""
         slot = getattr(context, "texture_slot", None)
         node = getattr(context, "texture_node", None)
         space = context.space_data
@@ -428,15 +464,15 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                     split.prop(slot, "output_node", text="")
             else:
                 split.label(text="Type:")
-'''
+"""
 
 
 class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
     """Use this class to show pov color ramps."""
 
     bl_label = "Colors"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"DEFAULT_CLOSED"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         layout = self.layout
@@ -475,12 +511,14 @@ class TEXTURE_OT_POV_texture_slot_add(Operator):
     bl_idname = "pov.textureslotadd"
     bl_label = "Add"
     bl_description = "Add texture_slot"
-    bl_options = {'REGISTER', 'UNDO'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"REGISTER", "UNDO"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def execute(self, context):
         idblock = pov_context_tex_datablock(context)
-        tex = bpy.data.textures.new(name='Texture', type='IMAGE')
+        slot_brush = bpy.data.brushes.new("POVtextureSlot")
+        context.tool_settings.image_paint.brush = slot_brush
+        tex = bpy.data.textures.new(name="Texture", type="IMAGE")
         # tex.use_fake_user = True
         # mat = context.view_layer.objects.active.active_material
         slot = idblock.pov_texture_slots.add()
@@ -497,7 +535,7 @@ class TEXTURE_OT_POV_texture_slot_add(Operator):
         # if area.type in ['PROPERTIES']:
         # area.tag_redraw()
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class TEXTURE_OT_POV_texture_slot_remove(Operator):
@@ -506,32 +544,35 @@ class TEXTURE_OT_POV_texture_slot_remove(Operator):
     bl_idname = "pov.textureslotremove"
     bl_label = "Remove"
     bl_description = "Remove texture_slot"
-    bl_options = {'REGISTER', 'UNDO'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"REGISTER", "UNDO"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def execute(self, context):
         idblock = pov_context_tex_datablock(context)
         # mat = context.view_layer.objects.active.active_material
         # tex_slot = idblock.pov_texture_slots.remove(idblock.pov.active_texture_index) # not used
+        # tex_to_delete = context.tool_settings.image_paint.brush.texture
+        # bpy.data.textures.remove(tex_to_delete, do_unlink=True, do_id_user=True, do_ui_user=True)
+        idblock.pov_texture_slots.remove(idblock.pov.active_texture_index)
         if idblock.pov.active_texture_index > 0:
             idblock.pov.active_texture_index -= 1
-        try:
-            tex = idblock.pov_texture_slots[idblock.pov.active_texture_index].texture
-        except IndexError:
+            # try:
+            # tex = idblock.pov_texture_slots[idblock.pov.active_texture_index].texture
+            # except IndexError:
             # No more slots
-            return {'FINISHED'}
+            return {"FINISHED"}
         # Switch paint brush to previous texture so settings remain contextual
         # if 'tex' in locals(): # Would test is the tex variable is assigned / exists
-        bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[tex]
-        bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[tex]
+        # bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[tex]
+        # bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[tex]
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class TextureSlotPanel(TextureButtonsPanel):
     """Use this class to show pov texture slots panel."""
 
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     @classmethod
     def poll(cls, context):
@@ -547,8 +588,8 @@ class TEXTURE_PT_POV_type(TextureButtonsPanel, Panel):
     """Use this class to define pov texture type buttons."""
 
     bl_label = "POV Textures"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+    bl_options = {"HIDE_HEADER"}
 
     def draw(self, context):
         layout = self.layout
@@ -568,8 +609,8 @@ class TEXTURE_PT_POV_preview(TextureButtonsPanel, Panel):
     """Use this class to define pov texture preview panel."""
 
     bl_label = "Preview"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+    bl_options = {"HIDE_HEADER"}
 
     @classmethod
     def poll(cls, context):
@@ -578,7 +619,7 @@ class TEXTURE_PT_POV_preview(TextureButtonsPanel, Panel):
             return False
         tex = context.texture
         # mat = bpy.context.active_object.active_material #unused
-        return tex and (tex.pov.tex_pattern_type != 'emulator') and (engine in cls.COMPAT_ENGINES)
+        return tex and (tex.pov.tex_pattern_type != "emulator") and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         tex = context.texture
@@ -587,7 +628,7 @@ class TEXTURE_PT_POV_preview(TextureButtonsPanel, Panel):
         layout = self.layout
         # if idblock:
         # layout.template_preview(tex, parent=idblock, slot=slot)
-        if tex.pov.tex_pattern_type != 'emulator':
+        if tex.pov.tex_pattern_type != "emulator":
             layout.operator("tex.preview_update")
         else:
             layout.template_preview(tex, slot=slot)
@@ -597,28 +638,28 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
     """Use this class to define pov texture pattern buttons."""
 
     bl_label = "POV Pattern Options"
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_options = {"HIDE_HEADER"}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw(self, context):
         # mat = bpy.context.active_object.active_material # Unused
         tex = context.texture
-        if tex is not None and tex.pov.tex_pattern_type != 'emulator':
+        if tex is not None and tex.pov.tex_pattern_type != "emulator":
             layout = self.layout
-            if tex.pov.tex_pattern_type == 'agate':
+            if tex.pov.tex_pattern_type == "agate":
                 layout.prop(tex.pov, "modifier_turbulence", text="Agate Turbulence")
-            if tex.pov.tex_pattern_type in {'spiral1', 'spiral2'}:
+            if tex.pov.tex_pattern_type in {"spiral1", "spiral2"}:
                 layout.prop(tex.pov, "modifier_numbers", text="Number of arms")
-            if tex.pov.tex_pattern_type == 'tiling':
+            if tex.pov.tex_pattern_type == "tiling":
                 layout.prop(tex.pov, "modifier_numbers", text="Pattern number")
-            if tex.pov.tex_pattern_type == 'magnet':
+            if tex.pov.tex_pattern_type == "magnet":
                 layout.prop(tex.pov, "magnet_style", text="Magnet style")
             align = True
-            if tex.pov.tex_pattern_type == 'quilted':
+            if tex.pov.tex_pattern_type == "quilted":
                 row = layout.row(align=align)
                 row.prop(tex.pov, "modifier_control0", text="Control0")
                 row.prop(tex.pov, "modifier_control1", text="Control1")
-            if tex.pov.tex_pattern_type == 'brick':
+            if tex.pov.tex_pattern_type == "brick":
                 col = layout.column(align=align)
                 row = col.row()
                 row.prop(tex.pov, "brick_size_x", text="Brick size X")
@@ -626,20 +667,20 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
                 row = col.row()
                 row.prop(tex.pov, "brick_size_z", text="Brick size Z")
                 row.prop(tex.pov, "brick_mortar", text="Brick mortar")
-            if tex.pov.tex_pattern_type in {'julia', 'mandel', 'magnet'}:
+            if tex.pov.tex_pattern_type in {"julia", "mandel", "magnet"}:
                 col = layout.column(align=align)
-                if tex.pov.tex_pattern_type == 'julia':
+                if tex.pov.tex_pattern_type == "julia":
                     row = col.row()
                     row.prop(tex.pov, "julia_complex_1", text="Complex 1")
                     row.prop(tex.pov, "julia_complex_2", text="Complex 2")
-                if tex.pov.tex_pattern_type == 'magnet' and tex.pov.magnet_style == 'julia':
+                if tex.pov.tex_pattern_type == "magnet" and tex.pov.magnet_style == "julia":
                     row = col.row()
                     row.prop(tex.pov, "julia_complex_1", text="Complex 1")
                     row.prop(tex.pov, "julia_complex_2", text="Complex 2")
                 row = col.row()
-                if tex.pov.tex_pattern_type in {'julia', 'mandel'}:
+                if tex.pov.tex_pattern_type in {"julia", "mandel"}:
                     row.prop(tex.pov, "f_exponent", text="Exponent")
-                if tex.pov.tex_pattern_type == 'magnet':
+                if tex.pov.tex_pattern_type == "magnet":
                     row.prop(tex.pov, "magnet_type", text="Type")
                 row.prop(tex.pov, "f_iter", text="Iterations")
                 row = col.row()
@@ -648,43 +689,43 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
                 row = col.row()
                 row.prop(tex.pov, "f_eor", text="Exterior")
                 row.prop(tex.pov, "f_eor_fac", text="Factor E")
-            if tex.pov.tex_pattern_type == 'gradient':
+            if tex.pov.tex_pattern_type == "gradient":
                 layout.label(text="Gradient orientation:")
                 column_flow = layout.column_flow(columns=3, align=True)
                 column_flow.prop(tex.pov, "grad_orient_x", text="X")
                 column_flow.prop(tex.pov, "grad_orient_y", text="Y")
                 column_flow.prop(tex.pov, "grad_orient_z", text="Z")
-            if tex.pov.tex_pattern_type == 'pavement':
+            if tex.pov.tex_pattern_type == "pavement":
                 layout.prop(tex.pov, "pave_sides", text="Pavement:number of sides")
                 col = layout.column(align=align)
                 column_flow = col.column_flow(columns=3, align=True)
                 column_flow.prop(tex.pov, "pave_tiles", text="Tiles")
-                if tex.pov.pave_sides == '4' and tex.pov.pave_tiles == 6:
+                if tex.pov.pave_sides == "4" and tex.pov.pave_tiles == 6:
                     column_flow.prop(tex.pov, "pave_pat_35", text="Pattern")
-                if tex.pov.pave_sides == '6' and tex.pov.pave_tiles == 5:
+                if tex.pov.pave_sides == "6" and tex.pov.pave_tiles == 5:
                     column_flow.prop(tex.pov, "pave_pat_22", text="Pattern")
-                if tex.pov.pave_sides == '4' and tex.pov.pave_tiles == 5:
+                if tex.pov.pave_sides == "4" and tex.pov.pave_tiles == 5:
                     column_flow.prop(tex.pov, "pave_pat_12", text="Pattern")
-                if tex.pov.pave_sides == '3' and tex.pov.pave_tiles == 6:
+                if tex.pov.pave_sides == "3" and tex.pov.pave_tiles == 6:
                     column_flow.prop(tex.pov, "pave_pat_12", text="Pattern")
-                if tex.pov.pave_sides == '6' and tex.pov.pave_tiles == 4:
+                if tex.pov.pave_sides == "6" and tex.pov.pave_tiles == 4:
                     column_flow.prop(tex.pov, "pave_pat_7", text="Pattern")
-                if tex.pov.pave_sides == '4' and tex.pov.pave_tiles == 4:
+                if tex.pov.pave_sides == "4" and tex.pov.pave_tiles == 4:
                     column_flow.prop(tex.pov, "pave_pat_5", text="Pattern")
-                if tex.pov.pave_sides == '3' and tex.pov.pave_tiles == 5:
+                if tex.pov.pave_sides == "3" and tex.pov.pave_tiles == 5:
                     column_flow.prop(tex.pov, "pave_pat_4", text="Pattern")
-                if tex.pov.pave_sides == '6' and tex.pov.pave_tiles == 3:
+                if tex.pov.pave_sides == "6" and tex.pov.pave_tiles == 3:
                     column_flow.prop(tex.pov, "pave_pat_3", text="Pattern")
-                if tex.pov.pave_sides == '3' and tex.pov.pave_tiles == 4:
+                if tex.pov.pave_sides == "3" and tex.pov.pave_tiles == 4:
                     column_flow.prop(tex.pov, "pave_pat_3", text="Pattern")
-                if tex.pov.pave_sides == '4' and tex.pov.pave_tiles == 3:
+                if tex.pov.pave_sides == "4" and tex.pov.pave_tiles == 3:
                     column_flow.prop(tex.pov, "pave_pat_2", text="Pattern")
-                if tex.pov.pave_sides == '6' and tex.pov.pave_tiles == 6:
+                if tex.pov.pave_sides == "6" and tex.pov.pave_tiles == 6:
                     column_flow.label(text="!!! 5 tiles!")
                 column_flow.prop(tex.pov, "pave_form", text="Form")
-            if tex.pov.tex_pattern_type == 'function':
+            if tex.pov.tex_pattern_type == "function":
                 layout.prop(tex.pov, "func_list", text="Functions")
-            if tex.pov.tex_pattern_type == 'function' and tex.pov.func_list != "NONE":
+            if tex.pov.tex_pattern_type == "function" and tex.pov.func_list != "NONE":
                 func = None
                 if tex.pov.func_list in {"f_noise3d", "f_ph", "f_r", "f_th"}:
                     func = 0
@@ -864,9 +905,9 @@ class TEXTURE_PT_POV_mapping(TextureSlotPanel, Panel):
     """Use this class to define POV texture mapping buttons."""
 
     bl_label = "Mapping"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
 
     @classmethod
     def poll(cls, context):
@@ -894,7 +935,7 @@ class TEXTURE_PT_POV_mapping(TextureSlotPanel, Panel):
             col = split.column()
             col.prop(tex, "texture_coords", text="")
 
-            if tex.texture_coords == 'ORCO':
+            if tex.texture_coords == "ORCO":
                 """
                 ob = context.object
                 if ob and ob.type == 'MESH':
@@ -902,21 +943,21 @@ class TEXTURE_PT_POV_mapping(TextureSlotPanel, Panel):
                     split.label(text="Mesh:")
                     split.prop(ob.data, "texco_mesh", text="")
                 """
-            elif tex.texture_coords == 'UV':
+            elif tex.texture_coords == "UV":
                 split = layout.split(percentage=0.3)
                 split.label(text="Map:")
                 ob = context.object
-                if ob and ob.type == 'MESH':
+                if ob and ob.type == "MESH":
                     split.prop_search(tex, "uv_layer", ob.data, "uv_textures", text="")
                 else:
                     split.prop(tex, "uv_layer", text="")
 
-            elif tex.texture_coords == 'OBJECT':
+            elif tex.texture_coords == "OBJECT":
                 split = layout.split(percentage=0.3)
                 split.label(text="Object:")
                 split.prop(tex, "object", text="")
 
-            elif tex.texture_coords == 'ALONG_STROKE':
+            elif tex.texture_coords == "ALONG_STROKE":
                 split = layout.split(percentage=0.3)
                 split.label(text="Use Tips:")
                 split.prop(tex, "use_tips", text="")
@@ -945,13 +986,13 @@ class TEXTURE_PT_POV_mapping(TextureSlotPanel, Panel):
                 split = layout.split()
 
                 col = split.column()
-                if tex.texture_coords in {'ORCO', 'UV'}:
+                if tex.texture_coords in {"ORCO", "UV"}:
                     col.prop(tex, "use_from_dupli")
-                    if idblock.type == 'VOLUME' and tex.texture_coords == 'ORCO':
+                    if idblock.type == "VOLUME" and tex.texture_coords == "ORCO":
                         col.prop(tex, "use_map_to_bounds")
-                elif tex.texture_coords == 'OBJECT':
+                elif tex.texture_coords == "OBJECT":
                     col.prop(tex, "use_from_original")
-                    if idblock.type == 'VOLUME':
+                    if idblock.type == "VOLUME":
                         col.prop(tex, "use_map_to_bounds")
                 else:
                     col.label()
@@ -971,9 +1012,9 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
     """Use this class to define pov texture influence buttons."""
 
     bl_label = "Influence"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
     # bl_context = 'texture'
 
     @classmethod
@@ -982,7 +1023,7 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
         if (
             # isinstance(idblock, Brush) and # Brush used for everything since 2.8
             context.scene.texture_context
-            == 'OTHER'
+            == "OTHER"
         ):  # XXX replace by isinstance(idblock, bpy.types.Brush) and ...
             return False
 
@@ -1006,7 +1047,9 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
         ]  # bpy.data.textures[mat.active_texture_index]
         # below tex unused yet ...maybe for particles?
         try:
-            tex = bpy.data.textures[idblock.pov_texture_slots[idblock.pov.active_texture_index].texture]  # NOT USED
+            tex = bpy.data.textures[
+                idblock.pov_texture_slots[idblock.pov.active_texture_index].texture
+            ]  # NOT USED
         except KeyError:
             tex = None  # NOT USED
 
@@ -1022,7 +1065,7 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
             split = layout.split()
 
             col = split.column()
-            if idblock.pov.type in {'SURFACE', 'WIRE'}:
+            if idblock.pov.type in {"SURFACE", "WIRE"}:
 
                 split = layout.split()
 
@@ -1054,7 +1097,7 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
                 factor_but(col, "use_map_warp", "warp_factor", "Warp")
                 factor_but(col, "use_map_displacement", "displacement_factor", "Displace")
 
-            elif idblock.pov.type == 'HALO':
+            elif idblock.pov.type == "HALO":
                 layout.label(text="Halo:")
 
                 split = layout.split()
@@ -1067,7 +1110,7 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
                 factor_but(col, "use_map_raymir", "raymir_factor", "Size")
                 factor_but(col, "use_map_hardness", "hardness_factor", "Hardness")
                 factor_but(col, "use_map_translucency", "translucency_factor", "Add")
-            elif idblock.pov.type == 'VOLUME':
+            elif idblock.pov.type == "VOLUME":
                 layout.label(text="Volume:")
 
                 split = layout.split()
@@ -1182,12 +1225,12 @@ class TEXTURE_PT_POV_tex_gamma(TextureButtonsPanel, Panel):
     """Use this class to define pov texture gamma buttons."""
 
     bl_label = "Image Gamma"
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    COMPAT_ENGINES = {"POVRAY_RENDER"}
 
     def draw_header(self, context):
         tex = context.texture
 
-        self.layout.prop(tex.pov, "tex_gamma_enable", text="", icon='SEQ_LUMA_WAVEFORM')
+        self.layout.prop(tex.pov, "tex_gamma_enable", text="", icon="SEQ_LUMA_WAVEFORM")
 
     def draw(self, context):
         layout = self.layout
@@ -1226,6 +1269,7 @@ classes = (
     MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist,
     TEXTURE_OT_POV_texture_slot_add,
     TEXTURE_OT_POV_texture_slot_remove,
+    TEXTURE_OT_POV_context_texture_update,
     TEXTURE_PT_POV_influence,
     TEXTURE_PT_POV_mapping,
 )

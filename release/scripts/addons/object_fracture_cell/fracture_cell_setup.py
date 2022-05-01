@@ -7,11 +7,14 @@
 import bpy
 import bmesh
 
-
-def _redraw_yasiamevil():
-    _redraw_yasiamevil.opr(**_redraw_yasiamevil.arg)
-_redraw_yasiamevil.opr = bpy.ops.wm.redraw_timer
-_redraw_yasiamevil.arg = dict(type='DRAW_WIN_SWAP', iterations=1)
+if bpy.app.background:
+    def _redraw_yasiamevil():
+        pass
+else:
+    def _redraw_yasiamevil():
+        _redraw_yasiamevil.opr(**_redraw_yasiamevil.arg)
+    _redraw_yasiamevil.opr = bpy.ops.wm.redraw_timer
+    _redraw_yasiamevil.arg = dict(type='DRAW_WIN_SWAP', iterations=1)
 
 
 def _points_from_object(depsgraph, scene, obj, source):
@@ -20,7 +23,7 @@ def _points_from_object(depsgraph, scene, obj, source):
         'PARTICLE_OWN', 'PARTICLE_CHILD',
         'PENCIL',
         'VERT_OWN', 'VERT_CHILD',
-        }
+    }
 
     # print(source - _source_all)
     # print(source)
@@ -98,29 +101,28 @@ def _points_from_object(depsgraph, scene, obj, source):
         # Used to be from object in 2.7x, now from scene.
         gp = scene.grease_pencil
         if gp:
-            points.extend([p for spline in get_splines(gp)
-                             for p in spline])
+            points.extend([p for spline in get_splines(gp) for p in spline])
 
     print("Found %d points" % len(points))
 
     return points
 
 
-def cell_fracture_objects(context, collection, obj,
-                          source={'PARTICLE_OWN'},
-                          source_limit=0,
-                          source_noise=0.0,
-                          clean=True,
-                          # operator options
-                          use_smooth_faces=False,
-                          use_data_match=False,
-                          use_debug_points=False,
-                          margin=0.0,
-                          material_index=0,
-                          use_debug_redraw=False,
-                          cell_scale=(1.0, 1.0, 1.0),
-                          ):
-
+def cell_fracture_objects(
+        context, collection, obj,
+        source={'PARTICLE_OWN'},
+        source_limit=0,
+        source_noise=0.0,
+        clean=True,
+        # operator options
+        use_smooth_faces=False,
+        use_data_match=False,
+        use_debug_points=False,
+        margin=0.0,
+        material_index=0,
+        use_debug_redraw=False,
+        cell_scale=(1.0, 1.0, 1.0),
+):
     from . import fracture_cell_calc
     depsgraph = context.evaluated_depsgraph_get()
     scene = context.scene
@@ -182,10 +184,12 @@ def cell_fracture_objects(context, collection, obj,
     matrix = obj.matrix_world.copy()
     verts = [matrix @ v.co for v in mesh.vertices]
 
-    cells = fracture_cell_calc.points_as_bmesh_cells(verts,
-                                                     points,
-                                                     cell_scale,
-                                                     margin_cell=margin)
+    cells = fracture_cell_calc.points_as_bmesh_cells(
+        verts,
+        points,
+        cell_scale,
+        margin_cell=margin,
+    )
 
     # some hacks here :S
     cell_name = obj.name + "_cell"
@@ -203,6 +207,7 @@ def cell_fracture_objects(context, collection, obj,
         # WORKAROUND FOR CONVEX HULL BUG/LIMIT
         # XXX small noise
         import random
+
         def R():
             return (random.random() - 0.5) * 0.001
         # XXX small noise
@@ -240,7 +245,6 @@ def cell_fracture_objects(context, collection, obj,
         if material_index != 0:
             for bm_face in bm.faces:
                 bm_face.material_index = material_index
-
 
         # ---------------------------------------------------------------------
         # MESH
@@ -290,15 +294,16 @@ def cell_fracture_objects(context, collection, obj,
     return objects
 
 
-def cell_fracture_boolean(context, collection, obj, objects,
-                          use_debug_bool=False,
-                          clean=True,
-                          use_island_split=False,
-                          use_interior_hide=False,
-                          use_debug_redraw=False,
-                          level=0,
-                          remove_doubles=True
-                          ):
+def cell_fracture_boolean(
+        context, collection, obj, objects,
+        use_debug_bool=False,
+        clean=True,
+        use_island_split=False,
+        use_interior_hide=False,
+        use_debug_redraw=False,
+        level=0,
+        remove_doubles=True
+):
 
     objects_boolean = []
     scene = context.scene
@@ -393,11 +398,12 @@ def cell_fracture_boolean(context, collection, obj, objects,
     return objects_boolean
 
 
-def cell_fracture_interior_handle(objects,
-                                  use_interior_vgroup=False,
-                                  use_sharp_edges=False,
-                                  use_sharp_edges_apply=False,
-                                  ):
+def cell_fracture_interior_handle(
+        objects,
+        use_interior_vgroup=False,
+        use_sharp_edges=False,
+        use_sharp_edges_apply=False,
+):
     """Run after doing _all_ booleans"""
 
     assert(use_interior_vgroup or use_sharp_edges or use_sharp_edges_apply)
