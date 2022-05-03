@@ -805,7 +805,7 @@
         effect_strip="#598f4c"
         color_strip="#8f8f8f"
         meta_strip="#5b4d91"
-        mask_strip="#666666"
+        mask_strip="#8f5656"
         text_strip="#824c8f"
         active_strip="#ffffff"
         selected_strip="#ff8f0d"
@@ -851,6 +851,15 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#2c2c2c"
+            list_title="#ffffff"
+            list_text="#ffffff"
+            list_text_hi="#ffffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
@@ -949,7 +958,7 @@
         node_backdrop="#4d4d4dff"
         converter_node="#66c4ff"
         color_node="#ccb83d"
-        group_node="#426628bf"
+        group_node="#426628"
         group_socket_node="#1a1a1a"
         frame_node="#1a1a1a7d"
         matte_node="#975b5b"
