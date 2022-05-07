@@ -1,0 +1,35 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Dependencies
+      run: |
+        sudo apt update
+        sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev
+
+    - name: Install CUDA
+    - uses: Jimver/cuda-toolkit@v0.2.5
+      id: cuda-toolkit
+      with:
+        cuda: '11.1.1'
+
+    - name: Build release
+      run: |
+        mkdir ~/bforartistsrepo
+        cd ~/bforartistsrepo
+        git clone https://github.com/Bforartists/Bforartists
+        mkdir ~/bforartistsrepo/lib
+        cd ~/bforartistsrepo/lib
+        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+        
+        ~/bforartistsrepo/Bforartists/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh --skip-license --prefix=~/bforartistsrepo/optix
+
+        cd ~/bforartistsrepo/Bforartists
+        make release BUILD_CMAKE_ARGS=-DOPTIX_ROOT_DIR=~/bforartistsrepo/optix
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      with:
+        name: Bforartists-Release-${{ runner.os }}
+        path: /home/runner/bforartistsrepo/build_linux/bin/
