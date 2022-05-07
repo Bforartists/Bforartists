@@ -11,7 +11,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev
+        sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libjack-jackd2-dev libpulse-dev
 
     - name: Install CUDA
       uses: Jimver/cuda-toolkit@v0.2.5
@@ -30,6 +30,11 @@ jobs:
         chmod +x ./optix_installer.sh
         mkdir optix
         ./optix_installer.sh --skip-license --prefix="./optix"
+
+        echo "Installing HIP compiler (ROCm)..."
+        wget https://repo.radeon.com/amdgpu-install/22.10/ubuntu/focal/amdgpu-install_22.10.50100-1_all.deb
+        sudo apt-get install ./amdgpu-install_22.10.50100-1_all.deb
+        sudo amdgpu-install --usecase=rocm
 
         mkdir ~/bforartistsrepo/lib
         cd ~/bforartistsrepo/lib
