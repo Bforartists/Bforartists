@@ -511,7 +511,7 @@ class AddPresetNodeColor(AddPresetBase, Operator):
 
 
 class AddPresetInterfaceTheme(AddPresetBase, Operator):
-    """Add Theme Preset\nAdd or remove a theme preset"""
+    """Add or remove a theme preset"""
     bl_idname = "wm.interface_theme_preset_add"
     bl_label = "Add Theme Preset"
     preset_menu = "USERPREF_MT_interface_theme_presets"
