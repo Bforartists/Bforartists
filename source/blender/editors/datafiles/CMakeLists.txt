@@ -1441,7 +1441,7 @@ automerge_on
 node_white_noise
 
 delete_duplicate
-#~ DEF_ICON_BLANK(1475)
+attribute_store
 #~ DEF_ICON_BLANK(1476)
 #~ DEF_ICON_BLANK(1477)
 #~ DEF_ICON_BLANK(1478)
