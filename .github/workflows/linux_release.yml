@@ -24,12 +24,15 @@ jobs:
         mkdir ~/bforartistsrepo
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
+
         echo "Installing OptiX..."
-        sudo ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh --skip-license --prefix=~/bforartistsrepo/optix
+        chmod +x ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh
+        mkdir optix
+        ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh --skip-license --prefix="./optix"
 
         cd ~/bforartistsrepo/Bforartists
         make update
-        make release BUILD_CMAKE_ARGS=-DOPTIX_ROOT_DIR=~/bforartistsrepo/optix
+        make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/bforartistsrepo/optix/include
 
     - name: Upload Build
       uses: actions/upload-artifact@v2
