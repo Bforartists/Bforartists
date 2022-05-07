@@ -13307,7 +13307,7 @@ static int node_type_to_icon(int type)
       icon = ICON_IMAGE_DATA;
       break;
     case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
-      icon = ICON_DELETE;
+      icon = ICON_NAMED_ATTRIBUTE;
       break;
     case GEO_NODE_INPUT_CURVE_HANDLES:
       icon = ICON_CURVE_HANDLE_POSITIONS;
