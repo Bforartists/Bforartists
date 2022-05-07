@@ -25,7 +25,7 @@ jobs:
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
         echo "Installing OptiX..."
-        ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh --skip-license --prefix=~/bforartistsrepo/optix
+        sudo ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh --skip-license --prefix=~/bforartistsrepo/optix
 
         cd ~/bforartistsrepo/Bforartists
         make update
