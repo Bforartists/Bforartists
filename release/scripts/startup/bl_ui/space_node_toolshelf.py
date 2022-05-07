@@ -3231,6 +3231,14 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeDomainSize"
 
+            props = col.operator("node.add_node", text=" Remove Attribute      ", icon = "ATTRIBUTE_REMOVE")
+            props.use_transform = True
+            props.type = "GeometryNodeRemoveAttribute"
+
+            props = col.operator("node.add_node", text=" Store Named Attribute ", icon = "ATTRIBUTE_STORE")
+            props.use_transform = True
+            props.type = "GeometryNodeStoreNamedAttribute"
+
             props = col.operator("node.add_node", text=" Transfer Attribute   ", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
@@ -3239,7 +3247,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
 
         else:
 
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
@@ -3254,6 +3262,14 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeDomainSize"
+
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
+            props.use_transform = True
+            props.type = "GeometryNodeRemoveAttribute"
+
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STORE")
+            props.use_transform = True
+            props.type = "GeometryNodeStoreNamedAttribute"
 
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
@@ -3940,6 +3956,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
 
+            props = col.operator("node.add_node", text=" Named Attribute ", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
+
             props = col.operator("node.add_node", text=" Normal                ", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
@@ -3952,7 +3972,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
-            props = col.operator("node.add_node", text=" Scene Time             ", icon = "TIME")
+            props = col.operator("node.add_node", text=" Scene Time        ", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
 
@@ -4015,6 +4035,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
+
+            props = flow.operator("node.add_node", text = "", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
 
             props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
