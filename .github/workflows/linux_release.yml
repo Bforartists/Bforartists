@@ -9,7 +9,7 @@ jobs:
         sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev
 
     - name: Install CUDA
-    - uses: Jimver/cuda-toolkit@v0.2.5
+      uses: Jimver/cuda-toolkit@v0.2.5
       id: cuda-toolkit
       with:
         cuda: '11.1.1'
