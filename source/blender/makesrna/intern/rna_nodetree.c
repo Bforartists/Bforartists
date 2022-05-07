@@ -13307,7 +13307,7 @@ static int node_type_to_icon(int type)
       icon = ICON_IMAGE_DATA;
       break;
     case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
-      icon = ICON_DELETE;
+      icon = ICON_NAMED_ATTRIBUTE;
       break;
     case GEO_NODE_INPUT_CURVE_HANDLES:
       icon = ICON_CURVE_HANDLE_POSITIONS;
@@ -13445,7 +13445,7 @@ static int node_type_to_icon(int type)
       icon = ICON_RAYCAST;
       break;
     case GEO_NODE_REMOVE_ATTRIBUTE:
-      icon = ICON_DELETE;
+      icon = ICON_ATTRIBUTE_REMOVE;
       break;
     case GEO_NODE_REALIZE_INSTANCES:
       icon = ICON_MOD_INSTANCE;
@@ -13514,7 +13514,7 @@ static int node_type_to_icon(int type)
       icon = ICON_SPLITEDGE;
       break;
     case GEO_NODE_STORE_NAMED_ATTRIBUTE:
-      icon = ICON_DELETE;
+      icon = ICON_ATTRIBUTE_STORE;
       break;
     case GEO_NODE_STRING_JOIN:
       icon = ICON_STRING_JOIN;
