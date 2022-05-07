@@ -3238,7 +3238,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Store Named Attribute ", icon = "ATTRIBUTE_STORE")
             props.use_transform = True
             props.type = "GeometryNodeStoreNamedAttribute"
-            
+
             props = col.operator("node.add_node", text=" Transfer Attribute   ", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
@@ -3956,6 +3956,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
 
+            props = col.operator("node.add_node", text=" Named Attribute ", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
+
             props = col.operator("node.add_node", text=" Normal                ", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "GeometryNodeInputNormal"
@@ -3968,7 +3972,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputRadius"
 
-            props = col.operator("node.add_node", text=" Scene Time             ", icon = "TIME")
+            props = col.operator("node.add_node", text=" Scene Time        ", icon = "TIME")
             props.use_transform = True
             props.type = "GeometryNodeInputSceneTime"
 
@@ -4031,6 +4035,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "INDEX")
             props.use_transform = True
             props.type = "GeometryNodeInputIndex"
+
+            props = flow.operator("node.add_node", text = "", icon = "NAMED_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedAttribute"
 
             props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
