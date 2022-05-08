@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1126,20 +1126,8 @@ msgid "Float Vector Attribute"
 msgstr "Attribut de vecteur flottant"
 
 
-msgid "Int Attribute"
-msgstr "Attribut Entier"
-
-
-msgid "Integer geometry attribute"
-msgstr "Attribut de géométrie entier"
-
-
 msgid "String Attribute"
 msgstr "Attribut Chaîne"
-
-
-msgid "String geometry attribute"
-msgstr "Attribut de géométrie chaîne de caractères"
 
 
 msgid "Attribute Group"
@@ -16492,10 +16480,6 @@ msgid "Inverse Square"
 msgstr "Quadratique inverse"
 
 
-msgid "Comb"
-msgstr "Coiffer"
-
-
 msgid "Poisson ratio for elastic deformation. Higher values preserve volume more, but also lead to more bulging"
 msgstr "Coefficient de Poisson pour la déformation élastique. De plus fortes valeurs préservent mieux le volume, mais conduisent aussi à plus de gonflement"
 
@@ -28698,10 +28682,6 @@ msgstr "Clone actif"
 
 msgid "Set the map as active for cloning"
 msgstr "Définir la carte comme active pour le clonage"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Définir la carte comme active au rendu"
 
 
 msgid "Name of UV map"
@@ -42385,11 +42365,6 @@ msgid "Unlink active font data-block"
 msgstr "Dé-lier le bloc de données police actif"
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "Ajouter attribut géométrique"
-
-
 msgid "Add attribute to geometry"
 msgstr "Ajouter un attribut à la géométrie"
 
@@ -42413,11 +42388,6 @@ msgstr "L'élément géométrique sur lequel déplacer l'attribut"
 
 msgid "Generic"
 msgstr "Générique"
-
-
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "Supprimer attribut géométrique"
 
 
 msgid "Remove attribute from geometry"
@@ -49667,23 +49637,6 @@ msgstr "Enlever le système de particules sélectionné"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Calculer chemins d’objets"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Calculer les chemins de mouvement pour les objets sélectionnés"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Dernière frame à laquelle calculer les chemins d’objet"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Première frame à laquelle calculer les chemin d’objet"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Effacer chemins d’objets"
 
@@ -52389,14 +52342,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Quel point des os est utilisé lors du calcul des chemins"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Dernière frame à laquelle calculer les chemins d’os"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Première frame à laquelle calculer les chemins d’os"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Effacer chemins d’os"
@@ -54803,12 +54748,12 @@ msgid "Add a modifier to the strip"
 msgstr "Ajouter un modificateur à la bande"
 
 
-msgid "White Balance"
-msgstr "Balance des blancs"
-
-
 msgid "Tone Map"
 msgstr "Carte de tons"
+
+
+msgid "White Balance"
+msgstr "Balance des blancs"
 
 
 msgctxt "Operator"
@@ -59639,6 +59584,10 @@ msgid "Sampling Presets"
 msgstr "Pré-réglages d’échantillonnage"
 
 
+msgid "View Object Types"
+msgstr "Voir types d’objet"
+
+
 msgid "Asset Metadata"
 msgstr "Métadonnées d'asset"
 
@@ -60589,10 +60538,6 @@ msgid "Sculpt Context Menu"
 msgstr "Menu contextuel de sculpture"
 
 
-msgid "View Object Types"
-msgstr "Voir types d’objet"
-
-
 msgid "Curve Edit Mode"
 msgstr "Mode d’édition courbe"
 
@@ -61116,6 +61061,10 @@ msgstr "Afficher particules"
 
 msgid "Display actual particles"
 msgstr "Afficher les vraies particules"
+
+
+msgid "Comb"
+msgstr "Coiffer"
 
 
 msgid "Comb hairs"
@@ -64166,26 +64115,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "La transmission transparente, conserver les surfaces ayant une rugosité au-dessus du seuil opaque"
 
 
-msgid "Pixel filter type"
-msgstr "Type de filtre de pixel"
-
-
-msgid "Box filter"
-msgstr "Filtre boîte"
-
-
-msgid "Gaussian filter"
-msgstr "Filtre gaussien"
-
-
-msgid "Blackman-Harris"
-msgstr "Blackman-Harris"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Filtre Blackman-Harris"
-
-
 msgid "Filter Width"
 msgstr "Largeur de filtre"
 
@@ -64268,6 +64197,26 @@ msgstr "Échelle de découpage en dés hors-écran"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "Multiplicateur pour le taux de découpage de la géométrie hors de la vue caméra. Le taux de découpage des objets est graduellement augmenté à mesure qu’ils s’éloignent de la vue caméra. De plus faibles valeurs donnent une meilleure qualité de réflexions et d’ombres pour les objets hors caméra, alors que de plus fortes valeurs réduisent l’utilisation mémoire"
+
+
+msgid "Pixel filter type"
+msgstr "Type de filtre de pixel"
+
+
+msgid "Box filter"
+msgstr "Filtre boîte"
+
+
+msgid "Gaussian filter"
+msgstr "Filtre gaussien"
+
+
+msgid "Blackman-Harris"
+msgstr "Blackman-Harris"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Filtre Blackman-Harris"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on noise threshold, for viewport renders"
@@ -71918,18 +71867,6 @@ msgid "Sort items by their name"
 msgstr "Trier les éléments par leurs noms"
 
 
-msgid "Collection of uv loop layers"
-msgstr "Collection de claques boucle d’UV"
-
-
-msgid "Active UV loop layer"
-msgstr "Calque UV de boucle actif"
-
-
-msgid "Active UV loop layer index"
-msgstr "Indice du calque UV de boucle actif"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "Projecteur UV utilisé par le modificateur UVproject"
 
@@ -73790,11 +73727,6 @@ msgstr "+ Images clé non groupées"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Mettre à jour chemins"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Calculer…"
 
@@ -74872,6 +74804,11 @@ msgstr "Mode d’interpolation"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Filtre de discontinuité (Euler)"
+
+
+msgctxt "Operator"
 msgid "Push Down"
 msgstr "Empiler"
 
@@ -75010,11 +74947,6 @@ msgstr "Thème de Feuille d'exposition"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Type de fondu/interpolation"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Filtre de discontinuité (Euler)"
 
 
 msgctxt "Operator"
