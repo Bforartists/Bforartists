@@ -19,6 +19,7 @@ jobs:
 
       - name: Install OptiX
         run: |
+          cd ~
           git clone git@github.com:iyadahmed/optix_installers.git
           chmod +x ./optix_installers/NVIDIA-OptiX-SDK-7.3.0-linux64-x86_64.sh
           mkdir optix
@@ -52,7 +53,7 @@ jobs:
       - name: Build Release
         run: |
           cd ~/bforartistsrepo/Bforartists
-          make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/bforartistsrepo/optix/include
+          make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/optix/include
 
       - name: Upload Build
         uses: actions/upload-artifact@v2
