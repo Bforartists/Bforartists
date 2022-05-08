@@ -12,6 +12,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libjack-jackd2-dev libpulse-dev
 
+      - name: Clone Repository
+        run: |
+          mkdir ~/bforartistsrepo
+          cd ~/bforartistsrepo
+          git clone https://github.com/Bforartists/Bforartists
+
+      - name: Download Pre-compiled Headers
+        run: |
+          mkdir ~/bforartistsrepo/lib
+          cd ~/bforartistsrepo/lib
+          svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+
       - name: Install CUDA
         uses: Jimver/cuda-toolkit@v0.2.5
         id: cuda-toolkit
@@ -33,14 +45,6 @@ jobs:
 
       - name: Build Release
         run: |
-          mkdir ~/bforartistsrepo
-          cd ~/bforartistsrepo
-          git clone https://github.com/Bforartists/Bforartists
-
-          mkdir ~/bforartistsrepo/lib
-          cd ~/bforartistsrepo/lib
-          svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
-
           cd ~/bforartistsrepo/Bforartists
           make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/bforartistsrepo/optix/include
 
