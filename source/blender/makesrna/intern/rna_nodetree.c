@@ -12700,10 +12700,10 @@ static int node_type_to_icon(int type)
     case SH_NODE_INVERT:
       icon = ICON_NODE_INVERT;
       break;
-    case SH_NODE_SEPRGB:
+    case SH_NODE_SEPRGB_LEGACY:
       icon = ICON_NODE_SEPARATERGB;
       break;
-    case SH_NODE_COMBRGB:
+    case SH_NODE_COMBRGB_LEGACY:
       icon = ICON_NODE_COMBINERGB;
       break;
     case SH_NODE_HUE_SAT:
@@ -12891,10 +12891,10 @@ static int node_type_to_icon(int type)
     case SH_NODE_VECT_TRANSFORM:
       icon = ICON_NODE_VECTOR_TRANSFORM;
       break;
-    case SH_NODE_SEPHSV:
+    case SH_NODE_SEPHSV_LEGACY:
       icon = ICON_NODE_SEPARATEHSV;
       break;
-    case SH_NODE_COMBHSV:
+    case SH_NODE_COMBHSV_LEGACY:
       icon = ICON_NODE_COMBINEHSV;
       break;
     case SH_NODE_UVMAP:
@@ -12983,10 +12983,10 @@ static int node_type_to_icon(int type)
     case CMP_NODE_VECBLUR:
       icon = ICON_NODE_VECTOR_BLUR;
       break;
-    case CMP_NODE_SEPRGBA:
+    case CMP_NODE_SEPRGBA_LEGACY:
       icon = ICON_NODE_SEPARATERGB;
       break;
-    case CMP_NODE_SEPHSVA:
+    case CMP_NODE_SEPHSVA_LEGACY:
       icon = ICON_NODE_SEPARATEHSV;
       break;
     case CMP_NODE_SETALPHA:
@@ -13017,7 +13017,7 @@ static int node_type_to_icon(int type)
     case CMP_NODE_ZCOMBINE:
       icon = ICON_NODE_ZCOMBINE;
       break;
-    case CMP_NODE_COMBRGBA:
+    case CMP_NODE_COMBRGBA_LEGACY:
       icon = ICON_NODE_COMBINERGB;
       break;
     case CMP_NODE_DILATEERODE:
@@ -13035,16 +13035,16 @@ static int node_type_to_icon(int type)
     case CMP_NODE_SCALE:
       icon = ICON_TRANSFORM_SCALE;
       break;
-    case CMP_NODE_SEPYCCA:
+    case CMP_NODE_SEPYCCA_LEGACY:
       icon = ICON_NODE_SEPARATE_YCBCRA;
       break;
-    case CMP_NODE_COMBYCCA:
+    case CMP_NODE_COMBYCCA_LEGACY:
       icon = ICON_NODE_COMBINEYCBCRA;
       break;
-    case CMP_NODE_SEPYUVA:
+    case CMP_NODE_SEPYUVA_LEGACY:
       icon = ICON_NODE_SEPARATE_YUVA;
       break;
-    case CMP_NODE_COMBYUVA:
+    case CMP_NODE_COMBYUVA_LEGACY:
       icon = ICON_NODE_COMBINEYUVA;
       break;
     case CMP_NODE_DIFF_MATTE:
@@ -13080,7 +13080,7 @@ static int node_type_to_icon(int type)
     case CMP_NODE_DISPLACE:
       icon = ICON_MOD_DISPLACE;
       break;
-    case CMP_NODE_COMBHSVA:
+    case CMP_NODE_COMBHSVA_LEGACY:
       icon = ICON_NODE_COMBINEHSV;
       break;
     case CMP_NODE_MATH:
