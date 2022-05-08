@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8841,10 +8841,6 @@ msgstr "Klona aktivt"
 
 msgid "Set the map as active for cloning"
 msgstr "Renderings Fönster"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Renderingsmotor"
 
 
 msgid "Name of UV map"
@@ -18245,23 +18241,6 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Duplicera"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Markera Länkad"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Radera"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Radera"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Duplicera"
 
@@ -19597,14 +19576,6 @@ msgstr "Beräkna banor"
 
 msgid "Calculate paths for the selected bones"
 msgstr "Markera Länkad"
-
-
-msgid "Last frame to calculate bone paths on"
-msgstr "Duplicera"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Radera"
 
 
 msgctxt "Operator"
@@ -23977,14 +23948,6 @@ msgid "Image brightness scale"
 msgstr "Solstyrka"
 
 
-msgid "Pixel filter type"
-msgstr "Pixelfilter"
-
-
-msgid "Box filter"
-msgstr "Pixelfilter"
-
-
 msgid "Filter Width"
 msgstr "Duplicera"
 
@@ -23995,6 +23958,14 @@ msgstr "Pixelfilter"
 
 msgid "Glossy Bounces"
 msgstr "Mitten"
+
+
+msgid "Pixel filter type"
+msgstr "Pixelfilter"
+
+
+msgid "Box filter"
+msgstr "Pixelfilter"
 
 
 msgid "Pause Preview"
@@ -27180,11 +27151,6 @@ msgstr "Efter"
 
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ ej grupperade nycklar"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Rensa Rotation"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -633,6 +633,10 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "是否有任何骨骼路径需要更新(只读)"
 
 
+msgid "Selected Keys"
+msgstr "选中的关键帧"
+
+
 msgid "Show Frame Numbers"
 msgstr "显示帧序号"
 
@@ -1089,16 +1093,8 @@ msgid "3D vector with floating-point values"
 msgstr "以浮点数值表示的三维矢量"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "以浮点数值表示的RGB颜色"
-
-
 msgid "Byte Color"
 msgstr "字节颜色"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "8位精度的RGBA颜色"
 
 
 msgid "String"
@@ -1197,72 +1193,28 @@ msgid "Bool Attribute"
 msgstr "布尔属性"
 
 
-msgid "Bool geometry attribute"
-msgstr "布尔几何属性"
-
-
 msgid "Byte Color Attribute"
 msgstr "字节颜色属性"
-
-
-msgid "Color geometry attribute, with 8-bit values"
-msgstr "颜色几何属性，8位精度"
-
-
-msgid "8-bit Int Attribute"
-msgstr "8位整型属性"
-
-
-msgid "8-bit int geometry attribute"
-msgstr "8位整型几何属性"
 
 
 msgid "Float2 Attribute"
 msgstr "二维浮点属性"
 
 
-msgid "2D vector geometry attribute, with floating-point values"
-msgstr "浮点精度的二维矢量几何属性"
-
-
 msgid "Float Attribute"
 msgstr "浮点属性"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "浮点数值表示的几何属性"
 
 
 msgid "Float Color Attribute"
 msgstr "浮点颜色属性"
 
 
-msgid "Color geometry attribute, with floating-point values"
-msgstr "浮点数值表示的颜色几何属性"
-
-
 msgid "Float Vector Attribute"
 msgstr "浮点矢量属性"
 
 
-msgid "Vector geometry attribute, with floating-point values"
-msgstr "浮点精度的矢量几何属性"
-
-
-msgid "Int Attribute"
-msgstr "整型属性"
-
-
-msgid "Integer geometry attribute"
-msgstr "整型几何属性"
-
-
 msgid "String Attribute"
 msgstr "字符串属性"
-
-
-msgid "String geometry attribute"
-msgstr "字符串几何属性"
 
 
 msgid "Attribute Group"
@@ -1283,10 +1235,6 @@ msgstr "活动属性"
 
 msgid "Active Color"
 msgstr "活动颜色"
-
-
-msgid "Active color attribute"
-msgstr "活动颜色属性"
 
 
 msgid "Bake Data"
@@ -5467,6 +5415,18 @@ msgstr "Rec. 709 (全范围), Blender 原生线性空间"
 
 msgid "Linear ACES"
 msgstr "线性ACES"
+
+
+msgid "ACES2065-1 linear space"
+msgstr "ACES2065-1 线性空间"
+
+
+msgid "Linear ACEScg"
+msgstr "线性 ACEScg"
+
+
+msgid "ACEScg linear space"
+msgstr "ACEScg 线性空间"
 
 
 msgid "Non-Color"
@@ -14063,6 +14023,10 @@ msgid "Velocity Scale"
 msgstr "速度比"
 
 
+msgid "Factor to control the amount of motion blur"
+msgstr "控制运动模糊程度的系数"
+
+
 msgid "Viscosity Base"
 msgstr "速率基数"
 
@@ -18994,14 +18958,6 @@ msgstr "曲线雕刻设置"
 
 msgid "Curves Sculpt Tool"
 msgstr "曲线雕刻工具"
-
-
-msgid "Comb"
-msgstr "梳理"
-
-
-msgid "Grow / Shrink"
-msgstr "生长/收缩"
 
 
 msgid "Dash Ratio"
@@ -28267,6 +28223,34 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "重复帧，每隔一个周期反转播放方向"
 
 
+msgid "Name of the velocity field, or the base name if the velocity is split into multiple grids"
+msgstr "速度场的名称，或速度拆分为多维栅格时的基项名称"
+
+
+msgid "Velocity X Grid"
+msgstr "速度X向栅格"
+
+
+msgid "Name of the grid for the X axis component of the velocity field if it was split into multiple grids"
+msgstr "速度场的X轴分量的栅格名称(如果该速度场被拆分为多维栅格)"
+
+
+msgid "Velocity Y Grid"
+msgstr "速度Y向栅格"
+
+
+msgid "Name of the grid for the Y axis component of the velocity field if it was split into multiple grids"
+msgstr "速度场的Y轴分量的栅格名称(如果该速度场被拆分为多维栅格)"
+
+
+msgid "Velocity Z Grid"
+msgstr "速度Z向栅格"
+
+
+msgid "Name of the grid for the Z axis component of the velocity field if it was split into multiple grids"
+msgstr "速度场的Z轴分量的栅格名称(如果该速度场被拆分为多维栅格)"
+
+
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "窗口管理器数据块, 定义了打开的窗口以及其他的用户界面数据"
 
@@ -34057,10 +34041,6 @@ msgstr "活动克隆"
 
 msgid "Set the map as active for cloning"
 msgstr "将贴图设置为活动项, 用于克隆"
-
-
-msgid "Set the map as active for rendering"
-msgstr "将贴图设置为活动项, 用于渲染"
 
 
 msgid "Name of UV map"
@@ -43372,10 +43352,6 @@ msgid "Behave like before instance attributes existed"
 msgstr "行为与实例属性存在之前类似"
 
 
-msgid "Remove Attribute"
-msgstr "删除属性"
-
-
 msgid "Replace Material"
 msgstr "替换材质"
 
@@ -51572,6 +51548,14 @@ msgid "Export objects in the active collection only"
 msgstr "将导出位于活动集合中的物体"
 
 
+msgid "Active Scene"
+msgstr "活动场景"
+
+
+msgid "Export active scene only"
+msgstr "仅导出活动场景"
+
+
 msgid "Export loose edges as lines, using the material from the first material slot"
 msgstr "使用第一个材质槽中的材质输出松散边为线条"
 
@@ -52600,11 +52584,6 @@ msgid "Unlink active font data-block"
 msgstr "断开活动字体数据块的关联"
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "添加几何属性"
-
-
 msgid "Add attribute to geometry"
 msgstr "向几何体添加属性"
 
@@ -52634,17 +52613,8 @@ msgid "Generic"
 msgstr "泛型"
 
 
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "删除几何属性"
-
-
 msgid "Remove attribute from geometry"
 msgstr "从几何体中删除属性"
-
-
-msgid "Name of color attribute"
-msgstr "颜色属性的名称"
 
 
 msgctxt "Operator"
@@ -52656,13 +52626,12 @@ msgid "Remove color attribute from geometry"
 msgstr "从几何体中删除颜色属性"
 
 
-msgctxt "Operator"
-msgid "Set Render Color Attribute"
-msgstr "设置渲染颜色属性"
-
-
 msgid "Set default color attribute used for rendering"
 msgstr "设置用于渲染的默认颜色属性"
+
+
+msgid "Name of color attribute"
+msgstr "颜色属性的名称"
 
 
 msgctxt "Operator"
@@ -54749,12 +54718,105 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "识别图像至蜡笔"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "从图像提取蜡笔笔画"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "确定是识别简单图像还是完整序列"
+
+
+msgid "Trace the current frame of the image"
+msgstr "识别图像的当前帧"
+
+
+msgid "Trace full sequence"
+msgstr "识别完整序列"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成的曲线的分辨率"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "到采样点的距离，零为禁用"
+
+
+msgid "Scale of the final stroke"
+msgstr "最终笔画的范围"
+
+
+msgid "Color Threshold"
+msgstr "颜色阈值"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "确定生成笔画上方的光度阈值"
+
+
+msgid "Turn Policy"
+msgstr "转向策略"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "确定在将位图分解为路径时如何解决分歧"
+
+
 msgid "Black"
 msgstr "黑色"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "首选连接黑色(前景)元素"
+
+
 msgid "White"
 msgstr "白色"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "首选连接白色(背景)元素"
+
+
+msgid "Always take a left turn"
+msgstr "总是左转"
+
+
+msgid "Always take a right turn"
+msgstr "总是右转"
+
+
+msgid "Minority"
+msgstr "少数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较低的颜色(黑色或白色)"
+
+
+msgid "Majority"
+msgstr "多数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较高的颜色(黑色或白色)"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "选择伪随机"
+
+
+msgid "Start At Current Frame"
+msgstr "从当前帧开始"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "从当前图像帧开始追踪图像"
 
 
 msgctxt "Operator"
@@ -55097,10 +55159,6 @@ msgstr "替换现有驱动器变量,而不是仅追加到现有列表的末尾"
 msgctxt "Operator"
 msgid "Equalize Handles"
 msgstr "等长化控制柄"
-
-
-msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
-msgstr "确保被选中的关键帧控制柄有相等的长度，可选择性全部调整角度至水平"
 
 
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
@@ -63046,6 +63104,10 @@ msgid "Apply Parent Inverse"
 msgstr "应用父级反校正"
 
 
+msgid "Apply the object's parent inverse to its data"
+msgstr "将物体的父级反校正应用于其数据"
+
+
 msgctxt "Operator"
 msgid "Make Parent without Inverse"
 msgstr "不使用反转方式建立父子关系"
@@ -63162,10 +63224,6 @@ msgid "Paste onto the current values only, only manipulating the animation data 
 msgstr "仅粘贴到当前值上，仅当启用了自动插帧时才操作动画数据"
 
 
-msgid "Selected Keys"
-msgstr "选中的关键帧"
-
-
 msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "粘贴到具有选定帧的帧上，可能会在这些帧上创建新关键帧"
 
@@ -63179,23 +63237,6 @@ msgstr "粘贴到第一个和最后一个选定关键帧之间的所有帧上，
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "计算物体路径"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "为选中的物体计算运动路径"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "缝合线所在帧"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "缝合线所在帧"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "清除物体路径"
 
@@ -63206,15 +63247,6 @@ msgstr "清除所有对象的路径缓存,按住Shift仅对已选中的对象"
 
 msgid "Only clear paths from selected objects"
 msgstr "从选中的物体清除路径"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "从场景更新区间"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "从场景的当前帧范围更新运动路径的帧范围"
 
 
 msgctxt "Operator"
@@ -66935,14 +66967,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "对于姿态骨骼的路径, 当计算此路径时, 使用骨骼的头位置"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "用于计算骨骼路径所在的末帧"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "用于计算骨骼路径所在的首帧"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "清空骨骼路径"
@@ -66954,6 +66978,15 @@ msgstr "清楚所有骨骼的路径缓存，按住shift键只选择骨骼"
 
 msgid "Only clear paths from selected bones"
 msgstr "仅清空所选骨骼的路径"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "从场景更新区间"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "从场景的当前帧范围更新运动路径的帧范围"
 
 
 msgctxt "Operator"
@@ -70904,12 +70937,12 @@ msgid "Add a modifier to the strip"
 msgstr "为片段添加一个修改器"
 
 
-msgid "White Balance"
-msgstr "白平衡"
-
-
 msgid "Tone Map"
 msgstr "色调映射"
+
+
+msgid "White Balance"
+msgstr "白平衡"
 
 
 msgctxt "Operator"
@@ -76019,6 +76052,10 @@ msgid "Clamp Bounding Box"
 msgstr "钳制边界框"
 
 
+msgid "Resize the objects to keep bounding box under this value. Value 0 disables clamping"
+msgstr "调整物体大小以使边界框保持在该值以下。数值为0禁用钳制"
+
+
 msgctxt "Operator"
 msgid "Open"
 msgstr "打开"
@@ -78061,6 +78098,10 @@ msgid "Viewport Sampling Presets"
 msgstr "视图采样预设"
 
 
+msgid "View Object Types"
+msgstr "查看物体类型"
+
+
 msgid "Asset Metadata"
 msgstr "资产元数据"
 
@@ -79327,10 +79368,6 @@ msgid "Masking"
 msgstr "遮罩"
 
 
-msgid "View Object Types"
-msgstr "查看物体类型"
-
-
 msgid "Curve Edit Mode"
 msgstr "曲线编辑模式"
 
@@ -79761,11 +79798,6 @@ msgid "Twist"
 msgstr "扭曲"
 
 
-msgctxt "Operator"
-msgid "Grow / Shrink"
-msgstr "生长/收缩"
-
-
 msgid "Clone from Paint Slot"
 msgstr "从绘制槽克隆"
 
@@ -80080,6 +80112,10 @@ msgstr "显示粒子"
 
 msgid "Display actual particles"
 msgstr "显示实际粒子"
+
+
+msgid "Comb"
+msgstr "梳理"
 
 
 msgid "Comb hairs"
@@ -81637,14 +81673,6 @@ msgstr "全画幅合成器"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "启用合成器全画幅执行模式选项(无分块，降低执行时间和内存使用）"
-
-
-msgid "Named Attribute Nodes"
-msgstr "已命名属性节点"
-
-
-msgid "Enable named attribute nodes in the geometry nodes add menu"
-msgstr "在几何节点添加菜单中启用已命名属性节点"
 
 
 msgid "New Curves Type"
@@ -84413,26 +84441,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "对于透明效果，使高于不透明度阈值的表面保持粗糙"
 
 
-msgid "Pixel filter type"
-msgstr "像素过滤类型"
-
-
-msgid "Box filter"
-msgstr "方形过滤"
-
-
-msgid "Gaussian filter"
-msgstr "高斯过滤"
-
-
-msgid "Blackman-Harris"
-msgstr "布莱克曼-哈里斯"
-
-
-msgid "Blackman-Harris filter"
-msgstr "布莱克曼-哈里斯过滤"
-
-
 msgid "Filter Width"
 msgstr "过滤宽度"
 
@@ -84523,6 +84531,26 @@ msgstr "画面以外的切割比例"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "用于摄像机视图外几何的分切率的乘数。物体的分切率会随着物体在摄像机视图之外的进一步增加而逐渐增加。值越低，屏幕外对象提供更高质量的反射和阴影，而较高的值则使用更少的内存"
+
+
+msgid "Pixel filter type"
+msgstr "像素过滤类型"
+
+
+msgid "Box filter"
+msgstr "方形过滤"
+
+
+msgid "Gaussian filter"
+msgstr "高斯过滤"
+
+
+msgid "Blackman-Harris"
+msgstr "布莱克曼-哈里斯"
+
+
+msgid "Blackman-Harris filter"
+msgstr "布莱克曼-哈里斯过滤"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on noise threshold, for viewport renders"
@@ -92870,6 +92898,10 @@ msgid "Boolean Value"
 msgstr "布尔值"
 
 
+msgid "Byte Color Value"
+msgstr "字节颜色值"
+
+
 msgid "Float Value"
 msgstr "浮点值"
 
@@ -95278,6 +95310,10 @@ msgid "Lock Object Modes"
 msgstr "锁定物体模式"
 
 
+msgid "Restrict selection to objects using the same mode as the active object, to prevent accidental mode switch when selecting"
+msgstr "将选择限制为使用与活动物体相同模式的物体，以防止在选择时意外切换模式"
+
+
 msgid "Mesh Selection Mode"
 msgstr "网格选择模式"
 
@@ -95993,26 +96029,6 @@ msgstr "锁定已显示项目的顺序(用户无法更改)"
 
 msgid "Reverse the order of shown items"
 msgstr "倒转显示条目的顺序"
-
-
-msgid "Collection of uv loop layers"
-msgstr "UV 循环层集合"
-
-
-msgid "Active UV Loop Layer"
-msgstr "活动UV 循环层"
-
-
-msgid "Active UV loop layer"
-msgstr "活动UV 循环层"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "遮罩 UV 循环层编号"
-
-
-msgid "Active UV loop layer index"
-msgstr "遮罩 UV 循环层编号"
 
 
 msgid "UV projector used by the UV project modifier"
@@ -99537,6 +99553,10 @@ msgid "or AMD with macOS 12.3 or newer"
 msgstr "或者AMD搭配 macOS 12.3 或更新版本"
 
 
+msgid "and AMD driver version 22.10 or newer"
+msgstr "以及AMD驱动程序22.10版本或更新"
+
+
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
@@ -100852,11 +100872,6 @@ msgid "Invalid regular expression (replace): "
 msgstr "无效正则表达式(替换): "
 
 
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "更新全部路径"
-
-
 msgid "Frame Numbers"
 msgstr "帧序号"
 
@@ -100877,25 +100892,17 @@ msgid "Nothing to show yet..."
 msgstr "无可显示的内容..."
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "更新全部路径"
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "扩展至非群组关键帧"
 
 
 msgid "Frame Range Start"
 msgstr "帧范围起始帧"
-
-
-msgid "Bone Cache From"
-msgstr "骨骼缓存来自"
-
-
-msgid "Cache From"
-msgstr "缓存来自"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "更新路径"
 
 
 msgctxt "Operator"
@@ -101016,6 +101023,10 @@ msgid "This panel is a remainder of the old pose library,"
 msgstr "此面板是旧姿态库的遗留部分，"
 
 
+msgid "which was replaced by the Asset Browser"
+msgstr "它已被资产浏览器取代"
+
+
 msgctxt "Operator"
 msgid "More Info"
 msgstr "更多信息"
@@ -101028,6 +101039,10 @@ msgstr "转换为姿态资产"
 
 msgid "Enable the Pose Library add-on to convert"
 msgstr "启用姿态库加载项以进行转换"
+
+
+msgid "this legacy pose library to pose assets"
+msgstr "该旧版姿态库用于姿态资产"
 
 
 msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
@@ -103171,6 +103186,11 @@ msgid "Easing Mode"
 msgstr "缓动模式"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "不连续项(欧拉)过滤器"
+
+
 msgid "Extrapolation Mode"
 msgstr "外插模式"
 
@@ -103409,11 +103429,6 @@ msgstr "框选(包括控制柄)"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "缓动类型"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "不连续项(欧拉)过滤器"
 
 
 msgctxt "Operator"
@@ -107937,6 +107952,294 @@ msgid "Original Mode"
 msgstr "原始模式"
 
 
+msgid "Kilometers"
+msgstr "千米"
+
+
+msgid "100 Meters"
+msgstr "100 米"
+
+
+msgid "10 Meters"
+msgstr "10 米"
+
+
+msgid "Meters"
+msgstr "米"
+
+
+msgid "10 Centimeters"
+msgstr "10 厘米"
+
+
+msgid "Centimeters"
+msgstr "厘米"
+
+
+msgid "Micrometers"
+msgstr "微米"
+
+
+msgid "Miles"
+msgstr "英里"
+
+
+msgid "Furlongs"
+msgstr "弗隆"
+
+
+msgid "Chains"
+msgstr "链"
+
+
+msgid "Yards"
+msgstr "码"
+
+
+msgid "Thou"
+msgstr "毫英寸"
+
+
+msgid "Square Kilometers"
+msgstr "平方公里"
+
+
+msgid "Square Hectometers"
+msgstr "公顷"
+
+
+msgid "Square Dekameters"
+msgstr "公亩"
+
+
+msgid "Square Meters"
+msgstr "平方米"
+
+
+msgid "Square Decimeters"
+msgstr "平方分米"
+
+
+msgid "Square Centimeters"
+msgstr "平方厘米"
+
+
+msgid "Square Micrometers"
+msgstr "平方微米"
+
+
+msgid "Square Miles"
+msgstr "平方英里"
+
+
+msgid "Square Furlongs"
+msgstr "平方弗隆"
+
+
+msgid "Square Chains"
+msgstr "平方链"
+
+
+msgid "Square Yards"
+msgstr "平方码"
+
+
+msgid "Square Feet"
+msgstr "平方英尺"
+
+
+msgid "Square Inches"
+msgstr "平方英寸"
+
+
+msgid "Square Thou"
+msgstr "平方毫英寸"
+
+
+msgid "Cubic Kilometers"
+msgstr "立方千米"
+
+
+msgid "Cubic Hectometers"
+msgstr "立方百米"
+
+
+msgid "Cubic Dekameters"
+msgstr "立方十米"
+
+
+msgid "Cubic Meters"
+msgstr "立方米"
+
+
+msgid "Cubic Decimeters"
+msgstr "立方分米"
+
+
+msgid "Cubic Centimeters"
+msgstr "立方厘米"
+
+
+msgid "Cubic Micrometers"
+msgstr "立方微米"
+
+
+msgid "Cubic Miles"
+msgstr "立方英里"
+
+
+msgid "Cubic Furlongs"
+msgstr "立方弗隆"
+
+
+msgid "Cubic Chains"
+msgstr "立方链"
+
+
+msgid "Cubic Yards"
+msgstr "立方码"
+
+
+msgid "Cubic Feet"
+msgstr "立方英尺"
+
+
+msgid "Cubic Inches"
+msgstr "立方英寸"
+
+
+msgid "Cubic Thou"
+msgstr "立方毫英寸"
+
+
+msgid "Tonnes"
+msgstr "吨"
+
+
+msgid "100 Kilograms"
+msgstr "100千克"
+
+
+msgid "Kilograms"
+msgstr "千克"
+
+
+msgid "Hectograms"
+msgstr "百克"
+
+
+msgid "10 Grams"
+msgstr "10克"
+
+
+msgid "Grams"
+msgstr "克"
+
+
+msgid "Milligrams"
+msgstr "毫克"
+
+
+msgid "Centum weights"
+msgstr "英担"
+
+
+msgid "Stones"
+msgstr "英石"
+
+
+msgid "Pounds"
+msgstr "英镑"
+
+
+msgid "Ounces"
+msgstr "盎司"
+
+
+msgid "Meters per second"
+msgstr "米/秒"
+
+
+msgid "Kilometers per hour"
+msgstr "公里/小时"
+
+
+msgid "Feet per second"
+msgstr "英尺/秒"
+
+
+msgid "Miles per hour"
+msgstr "英里/小时"
+
+
+msgid "Meters per second squared"
+msgstr "m/s²"
+
+
+msgid "Feet per second squared"
+msgstr "英尺/s²"
+
+
+msgid "Days"
+msgstr "天"
+
+
+msgid "Hours"
+msgstr "小时"
+
+
+msgid "Minutes"
+msgstr "分钟"
+
+
+msgid "Milliseconds"
+msgstr "毫秒"
+
+
+msgid "Microseconds"
+msgstr "微秒"
+
+
+msgid "Gigawatts"
+msgstr "吉瓦"
+
+
+msgid "Megawatts"
+msgstr "兆瓦"
+
+
+msgid "Kilowatts"
+msgstr "千瓦"
+
+
+msgid "Watts"
+msgstr "瓦特"
+
+
+msgid "Milliwatts"
+msgstr "毫瓦"
+
+
+msgid "Microwatts"
+msgstr "微瓦"
+
+
+msgid "Nanowatts"
+msgstr "纳瓦"
+
+
+msgid "Kelvin"
+msgstr "开"
+
+
+msgid "Celsius"
+msgstr "摄氏度"
+
+
+msgid "Fahrenheit"
+msgstr "华氏"
+
+
 msgid "Could not load volume for writing"
 msgstr "无法加载用于写入的体积"
 
@@ -110029,6 +110332,10 @@ msgid ""
 msgstr ""
 "来源库: %s\n"
 "%s"
+
+
+msgid "Indirect library data-block, cannot be made local, Shift + Click to create a library override hierarchy"
+msgstr "间接库数据块，无法转为本地项，Shift+单击创建库重写层级"
 
 
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
@@ -112580,6 +112887,14 @@ msgid "No active vertex group for painting, aborting"
 msgstr "没有用于绘画的激活顶点组, 操作终止"
 
 
+msgid "Not supported in dynamic topology mode"
+msgstr "在动态拓扑模式下不受支持"
+
+
+msgid "Not supported in multiresolution mode"
+msgstr "在多级精度模式下不受支持"
+
+
 msgid "Click on the mesh to set the detail"
 msgstr "单击网格设置细节"
 
@@ -113847,6 +114162,10 @@ msgstr "• 体积"
 
 msgid "The socket value has not been computed yet"
 msgstr "接口值尚未经计算"
+
+
+msgid "Accessed named attributes:"
+msgstr "已访问的命名属性:"
 
 
 msgid "read"
@@ -115907,10 +116226,6 @@ msgid "Tag '%s' not found in given asset"
 msgstr "未在已有资产中找到标签 '%s'"
 
 
-msgid "Can't modify name of required geometry attribute"
-msgstr "无法修改所需几何属性的名称"
-
-
 msgid "Layer '%s' not found in object '%s'"
 msgstr "在物体 '%s' 中找不到层 '%s'"
 
@@ -116901,8 +117216,20 @@ msgid "Save External..."
 msgstr "保存外部文件..."
 
 
+msgid "No named attributes used"
+msgstr "无被使用的已命名属性"
+
+
 msgid "No group output attributes connected"
 msgstr "没有连接组输出属性"
+
+
+msgid "Read"
+msgstr "读取"
+
+
+msgid "Write"
+msgstr "写入"
 
 
 msgid "Output Attributes"
@@ -118050,6 +118377,10 @@ msgstr "此节点使用与实例上的属性相关的旧版行为。可以在侧
 
 msgid "Attribute does not exist: \""
 msgstr "属性不存在: \""
+
+
+msgid "Cannot delete built-in attribute with name \""
+msgstr "无法删除具有名称的内置属性“"
 
 
 msgid "Origin of the scaling for each element. If multiple elements are connected, their center is averaged"

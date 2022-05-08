@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1021,10 +1021,6 @@ msgid "Bool Attribute"
 msgstr "Atribut Bool"
 
 
-msgid "Bool geometry attribute"
-msgstr "Atribut geometri bool"
-
-
 msgid "Byte Color Attribute"
 msgstr "Atribut Warna Byte"
 
@@ -1037,10 +1033,6 @@ msgid "Float Attribute"
 msgstr "Atribut Float"
 
 
-msgid "Geometry attribute with floating-point values"
-msgstr "Atribut geometri dengan nilai titik-floating"
-
-
 msgid "Float Color Attribute"
 msgstr "Atribut Warna Float"
 
@@ -1049,20 +1041,8 @@ msgid "Float Vector Attribute"
 msgstr "Atribut Vektor Float"
 
 
-msgid "Int Attribute"
-msgstr "Atribut Int"
-
-
-msgid "Integer geometry attribute"
-msgstr "Atribut geometri integer"
-
-
 msgid "String Attribute"
 msgstr "Atribut String"
-
-
-msgid "String geometry attribute"
-msgstr "Atribut geometri string"
 
 
 msgid "Attribute Group"
@@ -23179,11 +23159,6 @@ msgstr "Setelah"
 
 msgid "Nothing to show yet..."
 msgstr "Tidak ada yang ditampilkan sekarang..."
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Kamera"
 
 
 msgctxt "Operator"

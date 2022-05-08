@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -15038,10 +15038,6 @@ msgid "Inverse Square"
 msgstr "제곱 반전"
 
 
-msgid "Comb"
-msgstr "빗"
-
-
 msgid "Dash Ratio"
 msgstr "대시 비율"
 
@@ -27624,10 +27620,6 @@ msgstr "활성 클론"
 
 msgid "Set the map as active for cloning"
 msgstr "복제를 위해 맵을 활성으로 설정"
-
-
-msgid "Set the map as active for rendering"
-msgstr "렌더링하기위한 맵를 활성으로 설정"
 
 
 msgid "Name of UV map"
@@ -50372,23 +50364,6 @@ msgstr "선택된 파티클 시스템을 제거"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "오브젝트 경로 계산"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "선택된 오브젝트에 대한 모션 경로를 계산합니다"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "다음에서 오브젝트 경로를 계산하는 마지막 프레임"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "다음에서 오브젝트 경로를 계산하는 첫 번째 프레임"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "오브젝트 경로를 지우기"
 
@@ -50399,15 +50374,6 @@ msgstr "모든 오브젝트에 대한 경로 캐시를 지우기, 선택된 본�
 
 msgid "Only clear paths from selected objects"
 msgstr "선택된 오브젝트에서 경로만 지우기"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "씬에서 범위를 업데이트"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "씬의 현재 프레임 범위에서 모션 경로의 프레임 범위를 업데이트"
 
 
 msgctxt "Operator"
@@ -53356,14 +53322,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "경로를 계산할 때 본에서 어느 포인트를 사용할지 지정합니다"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "다음에서 본 경로를 계산하는 마지막 프레임"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "다음에 본 경로를 계산하는 첫 번째 프레임"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "본 경로를 지우기"
@@ -53375,6 +53333,15 @@ msgstr "모든 본에 대한 경로 캐시를 지우기, 선택된 본에 대해
 
 msgid "Only clear paths from selected bones"
 msgstr "선택된 본에서 경로만 지우기"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "씬에서 범위를 업데이트"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "씬의 현재 프레임 범위에서 모션 경로의 프레임 범위를 업데이트"
 
 
 msgctxt "Operator"
@@ -56102,12 +56069,12 @@ msgid "Add a modifier to the strip"
 msgstr "스트립에 모디파이어를 추가"
 
 
-msgid "White Balance"
-msgstr "화이트 밸런스"
-
-
 msgid "Tone Map"
 msgstr "톤맵"
+
+
+msgid "White Balance"
+msgstr "화이트 밸런스"
 
 
 msgctxt "Operator"
@@ -61412,6 +61379,10 @@ msgid "Sampling Presets"
 msgstr "샘플링 프리셋"
 
 
+msgid "View Object Types"
+msgstr "오브젝트 유형을 보기"
+
+
 msgid "Bone Constraints"
 msgstr "본 제약"
 
@@ -62509,10 +62480,6 @@ msgid "Vertex Paint Context Menu"
 msgstr "버텍스 페인트 컨텍스트 메뉴"
 
 
-msgid "View Object Types"
-msgstr "오브젝트 유형을 보기"
-
-
 msgid "Curve Edit Mode"
 msgstr "커브 에디트 모드"
 
@@ -63082,6 +63049,10 @@ msgstr "파티클을 표시"
 
 msgid "Display actual particles"
 msgstr "실제 파티클을 표시"
+
+
+msgid "Comb"
+msgstr "빗"
 
 
 msgid "Comb hairs"
@@ -66376,26 +66347,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "투명한 전송에 대해 임계 값을 초과하는 거친 표면은 불투명하게 유지합니다"
 
 
-msgid "Pixel filter type"
-msgstr "픽셀 필터 유형"
-
-
-msgid "Box filter"
-msgstr "박스 필터"
-
-
-msgid "Gaussian filter"
-msgstr "가우스 필터"
-
-
-msgid "Blackman-Harris"
-msgstr "블랙맨-해리스"
-
-
-msgid "Blackman-Harris filter"
-msgstr "블랙맨-해리스 필터"
-
-
 msgid "Filter Width"
 msgstr "폭을 필터"
 
@@ -66478,6 +66429,26 @@ msgstr "오프스크린 다이싱 축적"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "카메라 뷰 외부의 형상 비율을 다이 싱하는 배율입니다. 오브젝트의 다이 싱 속도는 카메라 뷰 바깥 쪽을 향해 점차 증가합니다. 값이 낮을수록 오프 스크린 오브젝트의 경우 더 높은 수준의 반사 및 섀도우를 제공하지만 값이 클수록 메모리가 적게 사용됩니다"
+
+
+msgid "Pixel filter type"
+msgstr "픽셀 필터 유형"
+
+
+msgid "Box filter"
+msgstr "박스 필터"
+
+
+msgid "Gaussian filter"
+msgstr "가우스 필터"
+
+
+msgid "Blackman-Harris"
+msgstr "블랙맨-해리스"
+
+
+msgid "Blackman-Harris filter"
+msgstr "블랙맨-해리스 필터"
 
 
 msgid "Size of a micropolygon in pixels during preview render"
@@ -75952,26 +75923,6 @@ msgid "Reverse the order of shown items"
 msgstr "표시된 항목의 순서를 반전"
 
 
-msgid "Collection of uv loop layers"
-msgstr "UV 루프 레이어의 컬렉션"
-
-
-msgid "Active UV Loop Layer"
-msgstr "활성 UV 루프 레이어"
-
-
-msgid "Active UV loop layer"
-msgstr "활성 UV 루프 레이어"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "활성 UV 루프 레이어 인덱스"
-
-
-msgid "Active UV loop layer index"
-msgstr "활성 UV 루프 레이어 인덱스"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "UV 프로젝트 모디파이어로 사용된 UV 프로젝터"
 
@@ -78517,19 +78468,6 @@ msgid "Frame Range Start"
 msgstr "프레임 범위 시작"
 
 
-msgid "Bone Cache From"
-msgstr "본 캐시 시작"
-
-
-msgid "Cache From"
-msgstr "캐시 시작"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "경로 업데이트"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "계산..."
@@ -80320,6 +80258,11 @@ msgid "Interpolation Mode"
 msgstr "보간 모드"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "불연속 (오일러) 필터"
+
+
 msgid "Grease Pencil Objects"
 msgstr "그리스 펜슬 오브젝트"
 
@@ -80491,11 +80434,6 @@ msgstr "박스 선택 (핸들을 포함)"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "완화 유형"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "불연속 (오일러) 필터"
 
 
 msgctxt "Operator"

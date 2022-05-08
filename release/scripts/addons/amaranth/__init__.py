@@ -74,8 +74,8 @@ from amaranth.misc import (
 bl_info = {
     "name": "Amaranth Toolset",
     "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez, CansecoGPC",
-    "version": (1, 0, 8),
-    "blender": (2, 81, 0),
+    "version": (1, 0, 10),
+    "blender": (3, 2, 0),
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",
     "warning": "",

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -5089,11 +5089,6 @@ msgstr "X Spiegel"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Bereken Object paden"
-
-
-msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Snel Explosie"
 
@@ -7567,11 +7562,6 @@ msgstr "Na"
 
 msgid "Frame Range Start"
 msgstr "Framebereik Start"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Update Paden"
 
 
 msgctxt "Operator"

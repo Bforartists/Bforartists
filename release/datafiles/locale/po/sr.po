@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5494,10 +5494,6 @@ msgid "Sharper"
 msgstr "Оштрије"
 
 
-msgid "Comb"
-msgstr "Чешаљ"
-
-
 msgid "Fill Threshold"
 msgstr "Праг испуне"
 
@@ -9709,10 +9705,6 @@ msgstr "Активан клон"
 
 msgid "Set the map as active for cloning"
 msgstr "Поставља активну мапу за клонирање"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Поставља активну мапу за рендеровање"
 
 
 msgid "Name of UV map"
@@ -18473,14 +18465,6 @@ msgid "Calculate Bone Paths"
 msgstr "Израчунај путање костију"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Израчунај путање костију на основу глава"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Израчунај путање костију на основу глава"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Очисти путање костију"
@@ -21509,6 +21493,10 @@ msgstr "Савет"
 
 msgid "Tip select mode"
 msgstr "Избор врхова"
+
+
+msgid "Comb"
+msgstr "Чешаљ"
 
 
 msgid "Comb hairs"
@@ -25354,11 +25342,6 @@ msgstr "После"
 
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ Негруписани кључни кадрови"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Релативне путање"
 
 
 msgctxt "Operator"
