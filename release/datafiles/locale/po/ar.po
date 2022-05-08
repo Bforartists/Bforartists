@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -9467,10 +9467,6 @@ msgid "Inverse Square"
 msgstr "ﻲﺴﻜﻋ ﻲﻌﻴﺑﺮﺗ"
 
 
-msgid "Comb"
-msgstr "ﻂﺸﻣ"
-
-
 msgid "Fill Threshold"
 msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﺔﺒﺘﻋ"
 
@@ -17566,10 +17562,6 @@ msgstr "ﺔﻴﻟﺎﺤﻟﺍ ﺔﺨﺴﻨﻟﺍ"
 
 msgid "Set the map as active for cloning"
 msgstr "ﺦﺴﻨﻠﻟ ﺔﻟﺎﻌﻓ ﺔﻄﻳﺮﺨﻟﺍ ﻊﺿ"
-
-
-msgid "Set the map as active for rendering"
-msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﺔﻟﺎﻌﻓ ﺔﻄﻳﺮﺨﻟﺍ ﻊﺿ"
 
 
 msgid "Name of UV map"
@@ -26777,23 +26769,6 @@ msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ ﺔﺤﺘﻓ ﻑﺬﺣﺍ"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺐﺴﺣﺃ"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺔﻛﺮﺤﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺐﺴﺣﺍ"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺐﺴﺤﻟ ﺔﻳﺎﻬﻨﻟﺍ ﺭﺎﻃﺍ"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺐﺴﺤﻟ ﺔﻳﺍﺪﺒﻟﺍ ﺭﺎﻃﺍ"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﻑﺬﺣﺃ"
 
@@ -27965,14 +27940,6 @@ msgstr "ﺔﻤﻈﻌﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺐﺴﺣﺍ"
 
 msgid "Which point on the bones is used when calculating paths"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﺏﺎﺴﺤﻟ ﻡﺪﺨﺘﺴﺗ ﻢﻈﻌﻟﺍ ﻰﻠﻋ ﺔﻄﻘﻧ ﻱﺍ"
-
-
-msgid "Last frame to calculate bone paths on"
-msgstr "ﺔﻤﻈﻌﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺏﺎﺴﺤﻟ ﺭﺎﻃﺇ ﺮﺧﺃ"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "ﺔﻤﻈﻌﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺏﺎﺴﺤﻟ ﺭﺎﻃﺇ ﻝﻭﺃ"
 
 
 msgctxt "Operator"
@@ -31159,6 +31126,10 @@ msgid "Shape Object"
 msgstr "ﻞﻜﺸﻟﺍ ﻦﺋﺎﻛ"
 
 
+msgid "Comb"
+msgstr "ﻂﺸﻣ"
+
+
 msgid "Comb hairs"
 msgstr "ﺮﻌﺸﻟﺍ ﻂﺸﻣ"
 
@@ -33119,14 +33090,6 @@ msgid "Image brightness scale"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻉﻮﻄﺳ ﻢﺠﺣ"
 
 
-msgid "Pixel filter type"
-msgstr "ﻞﺴﻜﺒﻟﺍ ﻲﻔﺼﻣ ﻉﻮﻧ"
-
-
-msgid "Box filter"
-msgstr "ﻕﻭﺪﻨﺼﻟﺍ ﻲﻔﺼﻣ"
-
-
 msgid "Filter Width"
 msgstr "ﻲﻔﺼﻤﻟﺍ ﺽﺮﻋ"
 
@@ -33149,6 +33112,14 @@ msgstr "ﺭﺎﻃﻻ﻿ﺍ ﻒﺼّﻧ"
 
 msgid "End on Frame"
 msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺪﻨﻋ ﻲﻬﻧﺍ"
+
+
+msgid "Pixel filter type"
+msgstr "ﻞﺴﻜﺒﻟﺍ ﻲﻔﺼﻣ ﻉﻮﻧ"
+
+
+msgid "Box filter"
+msgstr "ﻕﻭﺪﻨﺼﻟﺍ ﻲﻔﺼﻣ"
 
 
 msgid "Pause Preview"
@@ -37173,11 +37144,6 @@ msgstr "ﺔﻌﻤﺠﻣ ﺮﻴﻏ ﺢﻴﺗﺎﻔﻣ +"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﺙﺪّﺣ"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "...ﺐﺴﺣﺍ"
 
@@ -37771,6 +37737,11 @@ msgstr "ﺪﻴﻟﻮﺘﻟﺍ ﻊﺿﻭ"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "(ﺮﻟﻮﻳ) ﻉﺎﻄﻘﻧﻻ﻿ﺍ ﻲﻔﺼﻣ"
+
+
+msgctxt "Operator"
 msgid "Stash"
 msgstr "ﻥﺰﺧ"
 
@@ -37823,11 +37794,6 @@ msgstr "ﻒﻠﺧ"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "ﻞﻴﻬﺴﺘﻟﺍ ﻉﻮﻧ"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "(ﺮﻟﻮﻳ) ﻉﺎﻄﻘﻧﻻ﻿ﺍ ﻲﻔﺼﻣ"
 
 
 msgctxt "Operator"

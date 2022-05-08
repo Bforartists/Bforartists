@@ -351,14 +351,13 @@ def objects_loop(
                     % povdataname,
                 )
                 continue  # Don't render empty object but this is later addition, watch it.
-            if mesh_eval_exported := model_poly_topology.export_mesh(file, ob, povdataname,
+            if ob.pov.object_as:
+                pass
+            else:
+                model_poly_topology.export_mesh(file, ob, povdataname,
                                                                   material_names_dictionary,
                                                                   unpacked_images,
-                                                                  tab_level, tab_write, linebreaksinlists):
-                pass # XXX Caution pass may write both proxy mesh and primitive, so propagate a test
-                # for non mesh_eval_exported  or switch back other primitives before meshes
-            else:
-                continue
+                                                                  tab_level, tab_write, linebreaksinlists)
 
         # ------------ Povray Primitives ------------ #
         #  Also implicit elif (continue) clauses and sorted after mesh

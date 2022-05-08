@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -626,6 +626,10 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "Có đường xương nào cần nên cấp (chỉ đọc được)"
 
 
+msgid "Selected Keys"
+msgstr "Bức Mẫu Được Chọn"
+
+
 msgid "Show Frame Numbers"
 msgstr "Hiện Số Bức"
 
@@ -1082,16 +1086,8 @@ msgid "3D vector with floating-point values"
 msgstr "Vectơ 3D dùng giá trị dấu phẫy động"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "Màu RGBA giá trị số thật dấu phẫy động"
-
-
 msgid "Byte Color"
 msgstr "Màu Byte"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "Màu RGBA có giá trị 8-bit"
 
 
 msgid "String"
@@ -1182,64 +1178,28 @@ msgid "Bool Attribute"
 msgstr "Đặc Điểm Bool"
 
 
-msgid "Bool geometry attribute"
-msgstr "Đặc điểm hình dạng bool"
-
-
 msgid "Byte Color Attribute"
 msgstr "Đặc Điểm Màu Byte"
-
-
-msgid "Color geometry attribute, with 8-bit values"
-msgstr "Đặc điểm màu hình dạng, có giá trị 8-bit"
 
 
 msgid "Float2 Attribute"
 msgstr "Đặc Điểm 2 Số Dấu Phẫy Động"
 
 
-msgid "2D vector geometry attribute, with floating-point values"
-msgstr "Đặc điểm hình dạng vectơ 2D, có giá trị số thật dấu phẫy động"
-
-
 msgid "Float Attribute"
 msgstr "Đặc Điểm Dấu Phẫy Động"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "Đặc điểm hình dạng có giá trị dấu phẫy động"
 
 
 msgid "Float Color Attribute"
 msgstr "Đặc Điểm Màu Dấu Phẫy Động"
 
 
-msgid "Color geometry attribute, with floating-point values"
-msgstr "Đặc điểm hình dạng có giá trị số thật dấu phẫy động"
-
-
 msgid "Float Vector Attribute"
 msgstr "Đặc Điểm Vectơ Dấu Phẫy"
 
 
-msgid "Vector geometry attribute, with floating-point values"
-msgstr "Đặc điểm hình dạng vectơ, có giá trị số thật dấu phẫy động"
-
-
-msgid "Int Attribute"
-msgstr "Đặc Điểm Số Nguyên"
-
-
-msgid "Integer geometry attribute"
-msgstr "Đặc điểm hình dạng số nguyên"
-
-
 msgid "String Attribute"
 msgstr "Đặc Điểm Xâu"
-
-
-msgid "String geometry attribute"
-msgstr "Đặc điểm xâu"
 
 
 msgid "Attribute Group"
@@ -18680,10 +18640,6 @@ msgid "Inverse Square"
 msgstr "Nghịch Biến Bậc Hai"
 
 
-msgid "Comb"
-msgstr "Lược"
-
-
 msgid "Dash Ratio"
 msgstr "Tỉ Số Gạch Ngang"
 
@@ -33523,10 +33479,6 @@ msgstr "Bản Sao Hoạt Động"
 
 msgid "Set the map as active for cloning"
 msgstr "Đặt bản đồ hoạt động cho bản sao"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Đặt bản đồ là hoạt động cho kết xuất"
 
 
 msgid "Name of UV map"
@@ -51810,11 +51762,6 @@ msgid "Unlink active font data-block"
 msgstr "Cắt liên kết với cục dữ liệu hoạt động "
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "Thêm Đặc Điểm Hình Dạng"
-
-
 msgid "Add attribute to geometry"
 msgstr "Thêm đặc điểm cho hình dạng"
 
@@ -51842,11 +51789,6 @@ msgstr "Phần tử hình dạng nào để di chuyển đặc điểm đến"
 
 msgid "Generic"
 msgstr "Tổng Quát"
-
-
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "Xóa Đặc Điểm Hình Dạng"
 
 
 msgid "Remove attribute from geometry"
@@ -54173,10 +54115,6 @@ msgstr "Thay thế cho biến của đồ dắt đang tồn tại, thay thé ch�
 msgctxt "Operator"
 msgid "Equalize Handles"
 msgstr "Bằng Hóa Các Tay Cầm"
-
-
-msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
-msgstr "Làm hết tay cầm Bezier của các bức mẫu có độ dài bằng nhau, và theo tùy chọn, làm chúng nó ngang"
 
 
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
@@ -62139,10 +62077,6 @@ msgid "Paste onto the current values only, only manipulating the animation data 
 msgstr "Chỉ dán các giá trị hiện tại, chỉ xử lý dữ liệu hoạt hình nếu đã bật mẫu bức tự động"
 
 
-msgid "Selected Keys"
-msgstr "Bức Mẫu Được Chọn"
-
-
 msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "Dán trên các bức có một mẫu bức đã chọn, có lẻ sẽ chế tạo mẫu bức mới tại các bức đó"
 
@@ -62156,23 +62090,6 @@ msgstr "Dán trên các bức giữa mẫu bức đầu và cuối được ch�
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Tính Đường Đi Vật Thể"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Tính đường chuyển động cho vật thể được chọn "
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Số bức cuối cho tính đường chuyển động vật thể"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Số bức đầu cho tính đường chuyển động vật thể"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Xóa Đường Đi Vật Thể"
 
@@ -62183,15 +62100,6 @@ msgstr "Xóa đệm đường đi cho hết vật thể, bấm phím Shift chỉ
 
 msgid "Only clear paths from selected objects"
 msgstr "Chỉ xóa đường đi của các vật thể được chọn"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "Nâng Cấp Phạm Vi từ Cảnh"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "Nâng cấp phạm vi cho đường chuyển động từ phạm vi hiện tại của Cảnh"
 
 
 msgctxt "Operator"
@@ -65786,14 +65694,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Dùng điểm nào trên xương khi tính đường đi"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Bức cuối cho tính đường đi của xương"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Bức đầu cho tính đường đi của xương"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Xóa Đường Dẫn Xương"
@@ -65805,6 +65705,15 @@ msgstr "Xóa đệm chứa đường đi cho hết xương, bấm phím Shift ch
 
 msgid "Only clear paths from selected bones"
 msgstr "Chỉ xóa đường đi của các xương được chọn"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "Nâng Cấp Phạm Vi từ Cảnh"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "Nâng cấp phạm vi cho đường chuyển động từ phạm vi hiện tại của Cảnh"
 
 
 msgctxt "Operator"
@@ -69697,12 +69606,12 @@ msgid "Add a modifier to the strip"
 msgstr "Thêm một cụ sửa đổi cho đoạn"
 
 
-msgid "White Balance"
-msgstr "Thăng Bằng Trắng"
-
-
 msgid "Tone Map"
 msgstr "Ánh Xạ Độ Xám"
+
+
+msgid "White Balance"
+msgstr "Thăng Bằng Trắng"
 
 
 msgctxt "Operator"
@@ -76671,6 +76580,10 @@ msgid "Viewport Sampling Presets"
 msgstr "Đặt Sẵn Mẫu Màn Chiếu"
 
 
+msgid "View Object Types"
+msgstr "Loại Vật Thể Màn"
+
+
 msgid "Asset Metadata"
 msgstr "Dữ Liệu Tích Sản"
 
@@ -77929,10 +77842,6 @@ msgid "Masking"
 msgstr "Mạt Nạ"
 
 
-msgid "View Object Types"
-msgstr "Loại Vật Thể Màn"
-
-
 msgid "Curve Edit Mode"
 msgstr "Chế Đồ Biên Tập Đường Cong"
 
@@ -78672,6 +78581,10 @@ msgstr "Hiển Thị Hạt"
 
 msgid "Display actual particles"
 msgstr "Hiển thị hạt thật sự"
+
+
+msgid "Comb"
+msgstr "Lược"
 
 
 msgid "Comb hairs"
@@ -82822,26 +82735,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "Cho truyền ánh sáng trong suốt, kết xuất đục các mặt có độ nhám cao hơn ngưỡng"
 
 
-msgid "Pixel filter type"
-msgstr "Loại bộ lọc điểm ảnh"
-
-
-msgid "Box filter"
-msgstr "Bộ lọc hộp"
-
-
-msgid "Gaussian filter"
-msgstr "Bộ lọc Gauss"
-
-
-msgid "Blackman-Harris"
-msgstr "Blackman-Harris"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Bộ lọc Blackman-Harris"
-
-
 msgid "Filter Width"
 msgstr "Bề Rộng Bộ Lọc"
 
@@ -82924,6 +82817,26 @@ msgstr "Phóng To Phân Hóa Cho Ngoài Màn"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "Tỉ số cho phân hóa hình dạng ở ngoài tấm nhìn máy quay phim. Lượng phân hóa càng tăng càng xa từ tấm nhìn của máy quay phim. Giá trị nhỏ tăng chất lượng phản xạ và bóng tối cho vật thể ở ngoài màn, nhưng giá trị cao tiết kiệm bộ nhớ"
+
+
+msgid "Pixel filter type"
+msgstr "Loại bộ lọc điểm ảnh"
+
+
+msgid "Box filter"
+msgstr "Bộ lọc hộp"
+
+
+msgid "Gaussian filter"
+msgstr "Bộ lọc Gauss"
+
+
+msgid "Blackman-Harris"
+msgstr "Blackman-Harris"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Bộ lọc Blackman-Harris"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on noise threshold, for viewport renders"
@@ -94268,26 +94181,6 @@ msgid "Reverse the order of shown items"
 msgstr "Lật ngược thứ tự của mặt hàng được hiện"
 
 
-msgid "Collection of uv loop layers"
-msgstr "Sưu tập lớp vòng lặp UV"
-
-
-msgid "Active UV Loop Layer"
-msgstr "Lớp Vòng Lặp UV Hoạt Động"
-
-
-msgid "Active UV loop layer"
-msgstr "Lớp vòng lặp UV hoạt động"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "Chỉ Số Lớp Vòng Lặp UV Hoạt Động"
-
-
-msgid "Active UV loop layer index"
-msgstr "Chỉ số của lớp vòng lặp UV hoạt động"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "Cụ sửa đổi chiếu UV được dùng đồ chiều nào"
 
@@ -99020,11 +98913,6 @@ msgid "Invalid regular expression (replace): "
 msgstr "Biểu thức chính quy không hợp lệ (thay thế): "
 
 
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Nâng Cấp Hết Đường Dẫn"
-
-
 msgid "Frame Numbers"
 msgstr "Số Bức"
 
@@ -99045,25 +98933,17 @@ msgid "Nothing to show yet..."
 msgstr "Không có gì để hiện..."
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Nâng Cấp Hết Đường Dẫn"
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ Mẫu Hóa Chưa-Nhóm Lại"
 
 
 msgid "Frame Range Start"
 msgstr "Đầu Phạm Vi Bức"
-
-
-msgid "Bone Cache From"
-msgstr "Đệm Chứa Xương Từ"
-
-
-msgid "Cache From"
-msgstr "Đệm Chứa Từ"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Nâng Cấp Đường Dẫn"
 
 
 msgctxt "Operator"
@@ -101307,6 +101187,11 @@ msgid "Easing Mode"
 msgstr "Chế Độ Xoa Dịu"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Bộ Lọc Không Liên Tiếp (Euler)"
+
+
 msgid "Extrapolation Mode"
 msgstr "Chế Độ Suy Ngoại"
 
@@ -101545,11 +101430,6 @@ msgstr "Chọn Kiểu Hộp (Gồm Tay Cầm)"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Loại Xoa Dịu"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Bộ Lọc Không Liên Tiếp (Euler)"
 
 
 msgctxt "Operator"
@@ -113684,10 +113564,6 @@ msgstr "Thẻ '%s' đang tồn tại rồi cho tích sản"
 
 msgid "Tag '%s' not found in given asset"
 msgstr "Không tìm được thẻ '%s' trong tích sản đã cấp"
-
-
-msgid "Can't modify name of required geometry attribute"
-msgstr "Không thể đổi tên của đặc điểm hình dạng yêu cầu"
 
 
 msgid "Layer '%s' not found in object '%s'"

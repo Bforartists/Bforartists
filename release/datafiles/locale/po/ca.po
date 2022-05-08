@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7541,10 +7541,6 @@ msgstr "Moure a Capa"
 
 
 msgid "Set the map as active for cloning"
-msgstr "Finestra de Render"
-
-
-msgid "Set the map as active for rendering"
 msgstr "Finestra de Render"
 
 
@@ -15843,23 +15839,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Duplicar"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Seleccionar connectats"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Duplicar"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Duplicar"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Duplicar"
 
@@ -16986,14 +16965,6 @@ msgstr "Duplicar"
 
 msgid "Calculate paths for the selected bones"
 msgstr "Seleccionar connectats"
-
-
-msgid "Last frame to calculate bone paths on"
-msgstr "Duplicar"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"
@@ -20671,14 +20642,6 @@ msgid "Feature set to use for rendering"
 msgstr "Guardar com"
 
 
-msgid "Pixel filter type"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Box filter"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Filter Width"
 msgstr "Duplicar"
 
@@ -20689,6 +20652,14 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Glossy Bounces"
 msgstr "Centre"
+
+
+msgid "Pixel filter type"
+msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Box filter"
+msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Pause Preview"
@@ -23688,11 +23659,6 @@ msgstr "Joc"
 
 msgid "+ Non-Grouped Keyframes"
 msgstr "Esborrar"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"
