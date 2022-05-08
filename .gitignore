@@ -1,5 +1,7 @@
 # generic files to ignore
 .*
+# Bforartists: include .github folder
+!.github
 
 # python temp paths
 __pycache__/
