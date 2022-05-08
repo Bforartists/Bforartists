@@ -12,7 +12,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libjack-jackd2-dev libpulse-dev
 
-      - name: Setup OptixX Installers Repo. SSH key
+      - name: Setup OptiX Installers Repo. SSH key
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{secrets.OPTIX_INSTALLERS_REPO_SSH_KEY}}
