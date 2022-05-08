@@ -1300,6 +1300,8 @@ def km_uv_editor(params):
          {"properties": [("data_path", 'tool_settings.use_snap_uv')]}),
         ("wm.context_menu_enum", {"type": 'TAB', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("data_path", 'tool_settings.snap_uv_element')]}),
+        ("wm.context_toggle", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "ctrl": True},
+         {"properties": [("data_path", 'space_data.show_gizmo')]}),
         *_template_items_context_menu("IMAGE_MT_uvs_context_menu", params.context_menu_event),
     ])
 
@@ -1967,6 +1969,8 @@ def km_image(params):
         ),
         ("image.render_border", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
         ("image.clear_render_border", {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+        ("wm.context_toggle", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "ctrl": True},
+         {"properties": [("data_path", 'space_data.show_gizmo')]}),
         *_template_items_context_menu("IMAGE_MT_mask_context_menu", params.context_menu_event),
     ])
 
@@ -3977,6 +3981,8 @@ def km_grease_pencil_stroke_sculpt_mode(params):
         ("gpencil.active_frames_delete_all", {"type": 'DEL', "value": 'PRESS', "shift": True}, None),
         # Active layer
         op_menu("GPENCIL_MT_layer_active", {"type": 'Y', "value": 'PRESS'}),
+        # Active material
+        op_menu("GPENCIL_MT_material_active", {"type": 'U', "value": 'PRESS'}),
         # Merge Layer
         ("gpencil.layer_merge", {"type": 'M', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         # Keyframe menu
