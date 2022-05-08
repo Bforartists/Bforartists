@@ -1,55 +1,61 @@
-# on:
-#   push:
-#     branches: [master]
+on:
+  push:
+    branches: [master]
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Install Dependencies
-#         run: |
-#           sudo apt-get update
-#           sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libjack-jackd2-dev libpulse-dev
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libjack-jackd2-dev libpulse-dev
 
-#       - name: Clone Repository
-#         run: |
-#           mkdir ~/bforartistsrepo
-#           cd ~/bforartistsrepo
-#           git clone https://github.com/Bforartists/Bforartists
+      # TODO: checkout code that triggered the action instead
+      - name: Clone Repository
+        run: |
+          mkdir ~/bforartistsrepo
+          cd ~/bforartistsrepo
+          git clone https://github.com/Bforartists/Bforartists
 
-#       - name: Download Pre-compiled Headers
-#         run: |
-#           mkdir ~/bforartistsrepo/lib
-#           cd ~/bforartistsrepo/lib
-#           svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      - name: Download Pre-compiled Headers
+        run: |
+          mkdir ~/bforartistsrepo/lib
+          cd ~/bforartistsrepo/lib
+          svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
-#       - name: Install CUDA
-#         uses: Jimver/cuda-toolkit@v0.2.5
-#         id: cuda-toolkit
-#         with:
-#           cuda: "11.1.1"
+      - name: Install CUDA
+        uses: Jimver/cuda-toolkit@v0.2.5
+        id: cuda-toolkit
+        with:
+          cuda: "11.1.1"
 
-#       - name: Install OptiX
-#         run: |
-#           cp ~/bforartistsrepo/Bforartists/.github/workflows/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64.sh ./optix_installer.sh
-#           chmod +x ./optix_installer.sh
-#           mkdir optix
-#           ./optix_installer.sh --skip-license --prefix="./optix"
+      - name: Setup OptixX Installers Repo. SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.OPTIX_INSTALLERS_REPO_SSH_KEY}}
 
-#       - name: Install HIP compiler (ROCm)
-#         run: |
-#           wget https://repo.radeon.com/amdgpu-install/22.10/ubuntu/focal/amdgpu-install_22.10.50100-1_all.deb
-#           sudo apt-get install ./amdgpu-install_22.10.50100-1_all.deb
-#           sudo amdgpu-install --usecase=rocm
+      - name: Install OptiX
+        run: |
+          git clone git@github.com:iyadahmed/optix_installers.git
+          chmod +x ./optix_installers/NVIDIA-OptiX-SDK-7.3.0-linux64-x86_64.sh
+          mkdir optix
+          ./optix_installers/NVIDIA-OptiX-SDK-7.3.0-linux64-x86_64.sh --skip-license --prefix="./optix"
 
-#       - name: Build Release
-#         run: |
-#           cd ~/bforartistsrepo/Bforartists
-#           make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/bforartistsrepo/optix/include
+      - name: Install HIP compiler (ROCm)
+        run: |
+          wget https://repo.radeon.com/amdgpu-install/22.10/ubuntu/focal/amdgpu-install_22.10.50100-1_all.deb
+          sudo apt-get install ./amdgpu-install_22.10.50100-1_all.deb
+          sudo amdgpu-install --usecase=rocm
 
-#       - name: Upload Build
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: Bforartists-Release-${{ runner.os }}
-#           path: /home/runner/bforartistsrepo/build_linux_release_release/bin/
+      - name: Build Release
+        run: |
+          cd ~/bforartistsrepo/Bforartists
+          make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/bforartistsrepo/optix/include
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: Bforartists-Release-${{ runner.os }}
+          path: /home/runner/bforartistsrepo/build_linux_release_release/bin/
