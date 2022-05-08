@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1070,20 +1070,12 @@ msgid "Bool Attribute"
 msgstr "Bool Atribut"
 
 
-msgid "Bool geometry attribute"
-msgstr "Bool Atribut Geometrie"
-
-
 msgid "Byte Color Attribute"
 msgstr "Atribut bytové barvy"
 
 
 msgid "Float Attribute"
 msgstr "Atribut Float"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "Atribut Geometrie s hodnotami s plovoucím bodem"
 
 
 msgid "Float Color Attribute"
@@ -1094,20 +1086,8 @@ msgid "Float Vector Attribute"
 msgstr "Atribut Float Vektor"
 
 
-msgid "Int Attribute"
-msgstr "Atribut Int"
-
-
-msgid "Integer geometry attribute"
-msgstr "Atribut integrálu geometrie"
-
-
 msgid "String Attribute"
 msgstr "String Attribute"
-
-
-msgid "String geometry attribute"
-msgstr "Atribut řetězce geometrie"
 
 
 msgid "Attribute Group"
@@ -8787,10 +8767,6 @@ msgid "Inverse Square"
 msgstr "Opustit Editační mód"
 
 
-msgid "Comb"
-msgstr "Hřeben"
-
-
 msgid "Falloff Angle"
 msgstr "Úhel Poklesu"
 
@@ -14981,10 +14957,6 @@ msgstr "Aktivní kosti"
 
 msgid "Set the map as active for cloning"
 msgstr "Renderovat plošky z obou stran"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Spustit renderovani"
 
 
 msgid "Name of UV map"
@@ -22892,16 +22864,6 @@ msgstr "Skrýt označené"
 
 
 msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "Přidat Atribut Geometrie"
-
-
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "Odebrat Atribut Geometrie"
-
-
-msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Renderovat plošky z obou stran"
 
@@ -27221,30 +27183,8 @@ msgstr "Zobrazit a vybrat klíče"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Normály směrem ven"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Vypočítá trasy pro vybrané kosti"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Krok Snímku"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Krok Snímku"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Normály směrem ven"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "Aktualizovat Vzdálenost ze Scény"
 
 
 msgctxt "Operator"
@@ -28982,17 +28922,14 @@ msgid "Calculate paths for the selected bones"
 msgstr "Vypočítá trasy pro vybrané kosti"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Normály směrem ven"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Krok Snímku"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Odstranit Rodiče"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "Aktualizovat Vzdálenost ze Scény"
 
 
 msgctxt "Operator"
@@ -33213,6 +33150,10 @@ msgid "Sampling Presets"
 msgstr "Přednastavení vzorkování"
 
 
+msgid "View Object Types"
+msgstr "Zobrazit Typy Objektů"
+
+
 msgid "Asset Metadata"
 msgstr "Metadata assetu"
 
@@ -34083,10 +34024,6 @@ msgid "Masking"
 msgstr "Maskování"
 
 
-msgid "View Object Types"
-msgstr "Zobrazit Typy Objektů"
-
-
 msgid "Curve Edit Mode"
 msgstr "Editační Režim Křivky"
 
@@ -34567,6 +34504,10 @@ msgstr "Zobrazit částice"
 
 msgid "Display actual particles"
 msgstr "Zobrazit skutečné částice"
+
+
+msgid "Comb"
+msgstr "Hřeben"
 
 
 msgid "Comb hairs"
@@ -36101,14 +36042,6 @@ msgid "Transparent Roughness Threshold"
 msgstr "Práh Hrubosti Průhlednosti"
 
 
-msgid "Pixel filter type"
-msgstr "Překládat nápovědu tlačítek"
-
-
-msgid "Box filter"
-msgstr "Překládat nápovědu tlačítek"
-
-
 msgid "Filter Width"
 msgstr "Filtr skriptů"
 
@@ -36155,6 +36088,14 @@ msgstr "Konec na snímku"
 
 msgid "The shutter closes at the current frame"
 msgstr "Závěrka se zavře na aktuálním snímku"
+
+
+msgid "Pixel filter type"
+msgstr "Překládat nápovědu tlačítek"
+
+
+msgid "Box filter"
+msgstr "Překládat nápovědu tlačítek"
 
 
 msgid "Viewport Denoiser"
@@ -41795,11 +41736,6 @@ msgstr "Zobrazit klíče"
 
 msgid "Frame Range Start"
 msgstr "Začátek rozsahu snímků"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Aktualizovat Cesty"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1134,10 +1134,6 @@ msgid "Bool Attribute"
 msgstr "Булевый атрибут"
 
 
-msgid "Bool geometry attribute"
-msgstr "Атрибут булевой геометрии"
-
-
 msgid "Byte Color Attribute"
 msgstr "Атрибут байтового цвета"
 
@@ -1150,10 +1146,6 @@ msgid "Float Attribute"
 msgstr "Числовой атрибут с плавающей точкой"
 
 
-msgid "Geometry attribute with floating-point values"
-msgstr "Атрибут геометрии с числовыми значениями с плавающей точкой"
-
-
 msgid "Float Color Attribute"
 msgstr "Атрибут цвета с плавающей точкой"
 
@@ -1162,20 +1154,8 @@ msgid "Float Vector Attribute"
 msgstr "Атрибут вектора чисел с плавающей точкой"
 
 
-msgid "Int Attribute"
-msgstr "Целочисленный атрибут"
-
-
-msgid "Integer geometry attribute"
-msgstr "Целочисленный атрибут геометрии"
-
-
 msgid "String Attribute"
 msgstr "Строковой атрибут"
-
-
-msgid "String geometry attribute"
-msgstr "Строковой атрибут геометрии"
 
 
 msgid "Attribute Group"
@@ -17808,10 +17788,6 @@ msgid "Inverse Square"
 msgstr "Обратно-квадратично"
 
 
-msgid "Comb"
-msgstr "Расчёска"
-
-
 msgid "Ratio of samples in a cycle that the brush is enabled"
 msgstr "Число сэмплов на цикли при включении кисти"
 
@@ -30371,10 +30347,6 @@ msgstr "Активировать для клонирования"
 
 msgid "Set the map as active for cloning"
 msgstr "Активировать карту для клонирования"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Активировать эту UV-карту для рендера"
 
 
 msgid "Name of UV map"
@@ -52735,23 +52707,6 @@ msgstr "Удалить выбранную систему частиц"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Рассчитать пути объектов"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Рассчитать траектории движения выделенных объектов"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Последний кадр расчёта пути объекта"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Первый кадр расчёта пути объекта"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Очистить пути объектов"
 
@@ -52762,15 +52717,6 @@ msgstr "Удалить кэши линий движения у всех объе
 
 msgid "Only clear paths from selected objects"
 msgstr "Очистить линии движения только с выделенных объектов"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "Обновить пути в сцене"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "Установить диапазон кадров для траекторий движения равным текущему диапазону кадров сцены"
 
 
 msgctxt "Operator"
@@ -55715,14 +55661,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Точка на костях, используемая при вычислении путей"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Последний кадр для вычисления путей кости"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Первый кадр для вычисления путей кости"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Очистить пути костей"
@@ -55734,6 +55672,15 @@ msgstr "Очистить кэши путей для всех костей; за�
 
 msgid "Only clear paths from selected bones"
 msgstr "Очистить пути только для выделенных костей"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "Обновить пути в сцене"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "Установить диапазон кадров для траекторий движения равным текущему диапазону кадров сцены"
 
 
 msgctxt "Operator"
@@ -58458,12 +58405,12 @@ msgid "Add a modifier to the strip"
 msgstr "Добавить модификатор к дорожке"
 
 
-msgid "White Balance"
-msgstr "Баланс белого"
-
-
 msgid "Tone Map"
 msgstr "Тональное отображение"
+
+
+msgid "White Balance"
+msgstr "Баланс белого"
 
 
 msgctxt "Operator"
@@ -63754,6 +63701,10 @@ msgid "Sampling Presets"
 msgstr "Предустановки сэмплирования"
 
 
+msgid "View Object Types"
+msgstr "Показать типы объектов"
+
+
 msgid "Bone Constraints"
 msgstr "Ограничители кости"
 
@@ -64841,10 +64792,6 @@ msgid "Vertex Paint Context Menu"
 msgstr "Контекстное меню рисования на вершинах"
 
 
-msgid "View Object Types"
-msgstr "Показать типы объектов"
-
-
 msgid "Curve Edit Mode"
 msgstr "Режим редактирования кривой"
 
@@ -65425,6 +65372,10 @@ msgstr "Показывать частицы"
 
 msgid "Display actual particles"
 msgstr "Показывать фактические частицы"
+
+
+msgid "Comb"
+msgstr "Расчёска"
 
 
 msgid "Comb hairs"
@@ -68751,26 +68702,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "Для светопропускаемости, оставлять поверхности с шероховатостью более порога прозрачности"
 
 
-msgid "Pixel filter type"
-msgstr "Тип фильтра пикселей"
-
-
-msgid "Box filter"
-msgstr "Усредняющий фильтр"
-
-
-msgid "Gaussian filter"
-msgstr "Фильтр Гаусса"
-
-
-msgid "Blackman-Harris"
-msgstr "Блэкман-Харрис"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Фильтр Блэкмана-Харриса"
-
-
 msgid "Filter Width"
 msgstr "Ширина фильтра"
 
@@ -68853,6 +68784,26 @@ msgstr "Масштаб дробления вне экрана"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "Множитель уровня дробления геометрии находящейся вне зоны видимости камеры. Коэффициент дробления геометрии постепенно увеличивается по мере того, как она выходит вне поля зрения камеры. Более низкие значения обеспечивают более высокое качество отражений и теней для объектов вне экрана, в то время как более высокие значения используют меньше памяти"
+
+
+msgid "Pixel filter type"
+msgstr "Тип фильтра пикселей"
+
+
+msgid "Box filter"
+msgstr "Усредняющий фильтр"
+
+
+msgid "Gaussian filter"
+msgstr "Фильтр Гаусса"
+
+
+msgid "Blackman-Harris"
+msgstr "Блэкман-Харрис"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Фильтр Блэкмана-Харриса"
 
 
 msgid "Size of a micropolygon in pixels during preview render"
@@ -78327,26 +78278,6 @@ msgid "Reverse the order of shown items"
 msgstr "Развернуть порядок отображаемых элементов"
 
 
-msgid "Collection of uv loop layers"
-msgstr "Коллекция слоёв петель UV"
-
-
-msgid "Active UV Loop Layer"
-msgstr "Активный слой UV-петель"
-
-
-msgid "Active UV loop layer"
-msgstr "Активный слой UV-петель"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "Индекс активного слоя UV-петель"
-
-
-msgid "Active UV loop layer index"
-msgstr "Индекс активного слоя UV-петель"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "Проектор UV, используемый модификатором UV-проецирования"
 
@@ -81035,19 +80966,6 @@ msgid "Frame Range Start"
 msgstr "Начало диапазона кадров"
 
 
-msgid "Bone Cache From"
-msgstr "Начало кэша костей"
-
-
-msgid "Cache From"
-msgstr "Начало кэша"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Обновить пути"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Рассчитать…"
@@ -82709,6 +82627,11 @@ msgid "Interpolation Mode"
 msgstr "Режим интерполяции"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Удаление отсутствия непрерывности (фильтр Эйлера)"
+
+
 msgid "Extrapolation Mode"
 msgstr "Метод экстраполяции"
 
@@ -82908,11 +82831,6 @@ msgstr "Прямоугольное выделение (включая рычаг
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Тип ослабления"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Удаление отсутствия непрерывности (фильтр Эйлера)"
 
 
 msgctxt "Operator"

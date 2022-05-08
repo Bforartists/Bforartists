@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -631,6 +631,10 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "更新が必要なボーンパスがあるかどうか（読み込みのみ）"
 
 
+msgid "Selected Keys"
+msgstr "選択中のキー"
+
+
 msgid "Show Frame Numbers"
 msgstr "フレーム数を表示"
 
@@ -1089,16 +1093,8 @@ msgid "3D vector with floating-point values"
 msgstr "浮動小数点数値の3Dベクトル"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "浮動小数点数値の RGBA カラー"
-
-
 msgid "Byte Color"
 msgstr "Byteカラー"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "8ビット数値の RGBA カラー"
 
 
 msgid "String"
@@ -1197,72 +1193,28 @@ msgid "Bool Attribute"
 msgstr "ブール属性"
 
 
-msgid "Bool geometry attribute"
-msgstr "ブールジオメトリ属性"
-
-
 msgid "Byte Color Attribute"
 msgstr "Byteカラー属性"
-
-
-msgid "Color geometry attribute, with 8-bit values"
-msgstr "8ビット数値のカラージオメトリ属性"
-
-
-msgid "8-bit Int Attribute"
-msgstr "8ビット整数属性"
-
-
-msgid "8-bit int geometry attribute"
-msgstr "8ビット整数値のジオメトリ属性"
 
 
 msgid "Float2 Attribute"
 msgstr "Float2属性"
 
 
-msgid "2D vector geometry attribute, with floating-point values"
-msgstr "浮動小数点数値の2Dベクトルジオメトリ属性"
-
-
 msgid "Float Attribute"
 msgstr "Float属性"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "浮動小数点数値のジオメトリ属性"
 
 
 msgid "Float Color Attribute"
 msgstr "Floatカラー属性"
 
 
-msgid "Color geometry attribute, with floating-point values"
-msgstr "浮動小数点数値のカラージオメトリ属性"
-
-
 msgid "Float Vector Attribute"
 msgstr "Floatベクトル属性"
 
 
-msgid "Vector geometry attribute, with floating-point values"
-msgstr "浮動小数点数値のベクトルジオメトリ属性"
-
-
-msgid "Int Attribute"
-msgstr "整数属性"
-
-
-msgid "Integer geometry attribute"
-msgstr "整数型のジオメトリ属性"
-
-
 msgid "String Attribute"
 msgstr "文字列属性"
-
-
-msgid "String geometry attribute"
-msgstr "文字列型ジオメトリ属性"
 
 
 msgid "Attribute Group"
@@ -1283,10 +1235,6 @@ msgstr "アクティブな属性"
 
 msgid "Active Color"
 msgstr "アクティブカラー"
-
-
-msgid "Active color attribute"
-msgstr "アクティブカラー属性"
 
 
 msgid "Bake Data"
@@ -5512,6 +5460,18 @@ msgstr "Rec. 709 (フルレンジ)、Blender 本来のリニア空間"
 
 msgid "Linear ACES"
 msgstr "ACESリニア"
+
+
+msgid "ACES2065-1 linear space"
+msgstr "ACES2065-1 リニア空間"
+
+
+msgid "Linear ACEScg"
+msgstr "ACEScgリニア"
+
+
+msgid "ACEScg linear space"
+msgstr "ACEScg リニア空間"
 
 
 msgid "Non-Color"
@@ -14252,6 +14212,10 @@ msgid "Velocity Scale"
 msgstr "速度スケール"
 
 
+msgid "Factor to control the amount of motion blur"
+msgstr "モーションブラーの量をコントロールする係数"
+
+
 msgid "Viscosity Base"
 msgstr "粘度基本"
 
@@ -19231,14 +19195,6 @@ msgstr "ヘアーカーブスカルプト設定"
 
 msgid "Curves Sculpt Tool"
 msgstr "ヘアーカーブスカルプトツール"
-
-
-msgid "Comb"
-msgstr "くし"
-
-
-msgid "Grow / Shrink"
-msgstr "伸長 / 収縮"
 
 
 msgid "Dash Ratio"
@@ -28586,6 +28542,30 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "ループ毎に再生方向を逆にしてフレームを繰り返します。"
 
 
+msgid "Name of the velocity field, or the base name if the velocity is split into multiple grids"
+msgstr "速度フィールドの名前、速度が複数のグリッドに分離されている場合はベース名"
+
+
+msgid "Velocity X Grid"
+msgstr "速度 X グリッド"
+
+
+msgid "Velocity Y Grid"
+msgstr "速度 Y グリッド"
+
+
+msgid "Name of the grid for the Y axis component of the velocity field if it was split into multiple grids"
+msgstr "速度の Y 軸成分のグリッド名（速度が複数のグリッドに分離されていた場合）"
+
+
+msgid "Velocity Z Grid"
+msgstr "速度 Z グリッド"
+
+
+msgid "Name of the grid for the Z axis component of the velocity field if it was split into multiple grids"
+msgstr "速度の Z 軸成分のグリッド名（速度が複数のグリッドに分離されていた場合）"
+
+
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "開いているウィンドウやその他のユーザーインタフェースのデータを定義するウィンドウマネージャデータブロック"
 
@@ -34396,10 +34376,6 @@ msgstr "アクティブクローン"
 
 msgid "Set the map as active for cloning"
 msgstr "このマップをクローン用にアクティブにします"
-
-
-msgid "Set the map as active for rendering"
-msgstr "マップをレンダリングでアクティブに設定します"
 
 
 msgid "Name of UV map"
@@ -43763,10 +43739,6 @@ msgid "Behave like before instance attributes existed"
 msgstr "インスタンス属性が存在する以前の挙動にします"
 
 
-msgid "Remove Attribute"
-msgstr "属性削除"
-
-
 msgid "Replace Material"
 msgstr "マテリアル置換"
 
@@ -52046,6 +52018,14 @@ msgid "Export objects in the active collection only"
 msgstr "アクティブコレクション内のオブジェクトのみエクスポートします"
 
 
+msgid "Active Scene"
+msgstr "アクティブシーン"
+
+
+msgid "Export active scene only"
+msgstr "アクティブシーンのみエクスポートします"
+
+
 msgid "Export loose edges as lines, using the material from the first material slot"
 msgstr "分離した辺を最初のマテリアルスロットのマテリアルを使用し、LINE としてエクスポートします"
 
@@ -53076,11 +53056,6 @@ msgid "Unlink active font data-block"
 msgstr "アクティブなフォントのデータブロックのリンクを解除します"
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "ジオメトリ属性を追加"
-
-
 msgid "Add attribute to geometry"
 msgstr "形状に属性を追加します"
 
@@ -53110,17 +53085,8 @@ msgid "Generic"
 msgstr "汎用"
 
 
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "ジオメトリ属性を削除"
-
-
 msgid "Remove attribute from geometry"
 msgstr "形状から属性を削除します"
-
-
-msgid "Name of color attribute"
-msgstr "カラー属性の名前"
 
 
 msgctxt "Operator"
@@ -53132,13 +53098,12 @@ msgid "Remove color attribute from geometry"
 msgstr "形状からカラー属性を削除します"
 
 
-msgctxt "Operator"
-msgid "Set Render Color Attribute"
-msgstr "レンダーカラー属性を設定"
-
-
 msgid "Set default color attribute used for rendering"
 msgstr "レンダリングに使用するデフォルトカラー属性を設定します"
+
+
+msgid "Name of color attribute"
+msgstr "カラー属性の名前"
 
 
 msgctxt "Operator"
@@ -55239,12 +55204,105 @@ msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "グリースペンシルへ画像をトレース"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "画像からグリースペンシルのストロークを抽出します"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "単一画像と連番画像のどちらをトレースするかを決めます"
+
+
+msgid "Trace the current frame of the image"
+msgstr "画像の現在のフレームをトレースします"
+
+
+msgid "Trace full sequence"
+msgstr "連番画像全体をトレースします"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成するカーブの解像度"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "サンプルポイントへの距離。０で無効"
+
+
+msgid "Scale of the final stroke"
+msgstr "最終ストロークのスケール"
+
+
+msgid "Color Threshold"
+msgstr "色のしきい値"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "この輝度のしきい値より上の位置のストロークを生成します"
+
+
+msgid "Turn Policy"
+msgstr "ターンポリシー"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
+
+
 msgid "Black"
 msgstr "黒"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "黒（前面）成分につなげるようにします"
+
+
 msgid "White"
 msgstr "白"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "白（背景）成分につなげるようにします"
+
+
+msgid "Always take a left turn"
+msgstr "常に左にターンします"
+
+
+msgid "Always take a right turn"
+msgstr "常に右にターンします"
+
+
+msgid "Minority"
+msgstr "マイノリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
+
+
+msgid "Majority"
+msgstr "マジョリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "疑似乱数で選択します"
+
+
+msgid "Start At Current Frame"
+msgstr "現在のフレームから開始"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "現在のフレームの画像からトレースを開始します"
 
 
 msgctxt "Operator"
@@ -55587,10 +55645,6 @@ msgstr "現在のドライバー変数のリストの最後に追加せず、置
 msgctxt "Operator"
 msgid "Equalize Handles"
 msgstr "ハンドルを均一化"
-
-
-msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
-msgstr "選択中のキーフレームのハンドルを同じ長さにし、オプションで水平にします"
 
 
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
@@ -63567,6 +63621,15 @@ msgstr "親子関係に適用されたトランスフォーム補正をリセッ
 
 
 msgctxt "Operator"
+msgid "Apply Parent Inverse"
+msgstr "親の逆行列を適用"
+
+
+msgid "Apply the object's parent inverse to its data"
+msgstr "オブジェクトの親の逆行列を（このオブジェクトの）データに適用します"
+
+
+msgctxt "Operator"
 msgid "Make Parent without Inverse"
 msgstr "逆行列を付けず親に"
 
@@ -63682,10 +63745,6 @@ msgid "Paste onto the current values only, only manipulating the animation data 
 msgstr "現在の値にのみ貼り付けを行い、自動キーイング有効時はアニメーションデータを操作します"
 
 
-msgid "Selected Keys"
-msgstr "選択中のキー"
-
-
 msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "選択中のキーがあるフレームに貼り付けます。これらのフレームには新しいキーが作成される可能性があります"
 
@@ -63696,23 +63755,6 @@ msgstr "キー範囲にベイク"
 
 msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "選択中の最初と最後のキーの間の全フレームに貼り付けます。必要であれば新しいキーフレームを作成します"
-
-
-msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "オブジェクトパスを計算"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "選択したオブジェクトのモーションパスを計算します"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "オブジェクトパス計算末尾フレーム"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "オブジェクトパス計算先頭フレーム"
 
 
 msgctxt "Operator"
@@ -63728,15 +63770,6 @@ msgstr ""
 
 msgid "Only clear paths from selected objects"
 msgstr "選択オブジェクトのパスのみクリアします"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "シーンの範囲を更新"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "シーンの現在のフレーム範囲でモーションパスのフレーム範囲を更新します"
 
 
 msgctxt "Operator"
@@ -67469,14 +67502,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "パス計算にボーンのどの部分が使用されるか"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "ボーンパスの計算終了フレーム"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "ボーンパスの計算開始フレーム"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "ボーンのパスをクリア"
@@ -67490,6 +67515,15 @@ msgstr ""
 
 msgid "Only clear paths from selected bones"
 msgstr "選択ボーンのパスのみクリアします"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "シーンの範囲を更新"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "シーンの現在のフレーム範囲でモーションパスのフレーム範囲を更新します"
 
 
 msgctxt "Operator"
@@ -71447,12 +71481,12 @@ msgid "Add a modifier to the strip"
 msgstr "ストリップにモディファイアーを追加します"
 
 
-msgid "White Balance"
-msgstr "ホワイトバランス"
-
-
 msgid "Tone Map"
 msgstr "トーンマップ"
+
+
+msgid "White Balance"
+msgstr "ホワイトバランス"
 
 
 msgctxt "Operator"
@@ -78630,6 +78664,10 @@ msgid "Viewport Sampling Presets"
 msgstr "ビュー用サンプリングプリセット"
 
 
+msgid "View Object Types"
+msgstr "オブジェクトタイプを表示"
+
+
 msgid "Asset Metadata"
 msgstr "アセットメタデータ"
 
@@ -79896,10 +79934,6 @@ msgid "Masking"
 msgstr "マスキング"
 
 
-msgid "View Object Types"
-msgstr "オブジェクトタイプを表示"
-
-
 msgid "Curve Edit Mode"
 msgstr "カーブ編集モード"
 
@@ -80330,11 +80364,6 @@ msgid "Twist"
 msgstr "ツイスト"
 
 
-msgctxt "Operator"
-msgid "Grow / Shrink"
-msgstr "伸長 / 収縮"
-
-
 msgid "Clone from Paint Slot"
 msgstr "ペイントスロットからクローン"
 
@@ -80645,6 +80674,10 @@ msgstr "パーティクルを表示"
 
 msgid "Display actual particles"
 msgstr "実際のパーティクルを表示します"
+
+
+msgid "Comb"
+msgstr "くし"
 
 
 msgid "Comb hairs"
@@ -82212,14 +82245,6 @@ msgstr "フルフレームコンポジター"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "コンポジターのフルフレーム処理モードオプションを有効にします（タイリングなし。実行時間とメモリ消費量が減ります）"
-
-
-msgid "Named Attribute Nodes"
-msgstr "名前付き属性ノード"
-
-
-msgid "Enable named attribute nodes in the geometry nodes add menu"
-msgstr "ジオメトリノードの追加メニューで名前付き属性ノードを利用可能にします"
 
 
 msgid "New Curves Type"
@@ -85057,26 +85082,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "光が透過する部分を、しきい値以上の粗さの部分だけ不透明のままにします"
 
 
-msgid "Pixel filter type"
-msgstr "ピクセルフィルターの種類"
-
-
-msgid "Box filter"
-msgstr "ボックスフィルター"
-
-
-msgid "Gaussian filter"
-msgstr "ガウシアンフィルター"
-
-
-msgid "Blackman-Harris"
-msgstr "ブラックマンハリス"
-
-
-msgid "Blackman-Harris filter"
-msgstr "ブラックマンハリスフィルター"
-
-
 msgid "Filter Width"
 msgstr "フィルター幅"
 
@@ -85177,6 +85182,26 @@ msgid "Multiplier for dicing rate of geometry outside of the camera view. The di
 msgstr ""
 "カメラビュー外の形状のダイシング率への乗数。オブジェクトのダイシング率はカメラのビューの外側に離れていくにつれ、増えていきます。\n"
 "低い値で、スクリーン外のオブジェクトの反射と影の品質が上がり、一方、高い値ではメモリ消費量が減ります"
+
+
+msgid "Pixel filter type"
+msgstr "ピクセルフィルターの種類"
+
+
+msgid "Box filter"
+msgstr "ボックスフィルター"
+
+
+msgid "Gaussian filter"
+msgstr "ガウシアンフィルター"
+
+
+msgid "Blackman-Harris"
+msgstr "ブラックマンハリス"
+
+
+msgid "Blackman-Harris filter"
+msgstr "ブラックマンハリスフィルター"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on noise threshold, for viewport renders"
@@ -86623,6 +86648,14 @@ msgstr "さらに細分化"
 
 msgid "Additional subdivision along the curves"
 msgstr "カーブに沿ってさらに細分化します"
+
+
+msgid "Curves Shape Type"
+msgstr "カーブの形状タイプ"
+
+
+msgid "Curves shape type"
+msgstr "カーブの形状タイプ"
 
 
 msgid "Multiple Engines"
@@ -93172,6 +93205,10 @@ msgid "Show Named Attributes"
 msgstr "名前付き属性を表示"
 
 
+msgid "Show when nodes are using named attributes"
+msgstr "ノードが使用中の名前付き属性を表示します"
+
+
 msgid "Display overlays like colored or dashed wires"
 msgstr "色や破線などのオーバーレイを表示します"
 
@@ -93548,6 +93585,10 @@ msgstr "等しいとみなすのに必要な浮動小数点数"
 
 msgid "Boolean Value"
 msgstr "ブーリアン値"
+
+
+msgid "Byte Color Value"
+msgstr "バイトカラー値"
 
 
 msgid "Float Value"
@@ -95955,7 +95996,7 @@ msgstr "マーカーの編集を防ぎます"
 
 
 msgid "Lock Object Modes"
-msgstr "オブジェクトモードをロック"
+msgstr "オブジェクトのモードをロック"
 
 
 msgid "Mesh Selection Mode"
@@ -96681,26 +96722,6 @@ msgstr "表示アイテムの順序を固定します（ユーザーが変更で
 
 msgid "Reverse the order of shown items"
 msgstr "表示アイテムのソート順を反転します"
-
-
-msgid "Collection of uv loop layers"
-msgstr "UVループレイヤーの集合"
-
-
-msgid "Active UV Loop Layer"
-msgstr "アクティブUVループレイヤー"
-
-
-msgid "Active UV loop layer"
-msgstr "アクティブUVループレイヤー"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "アクティブUVループレイヤーインデックス"
-
-
-msgid "Active UV loop layer index"
-msgstr "アクティブなUVループレイヤーのインデックス"
 
 
 msgid "UV projector used by the UV project modifier"
@@ -101560,11 +101581,6 @@ msgid "Invalid regular expression (replace): "
 msgstr "無効な正規表現（置換）: "
 
 
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "すべてのパスを更新"
-
-
 msgid "Frame Numbers"
 msgstr "フレーム番号"
 
@@ -101585,25 +101601,17 @@ msgid "Nothing to show yet..."
 msgstr "まだ何もありません..."
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "すべてのパスを更新"
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "＋非グループキーフレームも"
 
 
 msgid "Frame Range Start"
 msgstr "フレーム範囲の開始"
-
-
-msgid "Bone Cache From"
-msgstr "ボーンキャッシュ元"
-
-
-msgid "Cache From"
-msgstr "キャッシュ元"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "パスを更新"
 
 
 msgctxt "Operator"
@@ -103879,6 +103887,11 @@ msgid "Easing Mode"
 msgstr "イージングモード"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "不連続(オイラー)フィルター"
+
+
 msgid "Extrapolation Mode"
 msgstr "外挿モード"
 
@@ -104117,11 +104130,6 @@ msgstr "ボックス選択（ハンドルを含む）"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "イージングタイプ"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "不連続(オイラー)フィルター"
 
 
 msgctxt "Operator"
@@ -116584,10 +116592,6 @@ msgstr "タグ「%s」はすでにアセットにあります"
 
 msgid "Tag '%s' not found in given asset"
 msgstr "タグ「%s」がアセット内にありません"
-
-
-msgid "Can't modify name of required geometry attribute"
-msgstr "必要なジオメトリ属性の名前は変更できません"
 
 
 msgid "Layer '%s' not found in object '%s'"

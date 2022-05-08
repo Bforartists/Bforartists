@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -11224,10 +11224,6 @@ msgid "Inverse Square"
 msgstr "反轉平方"
 
 
-msgid "Comb"
-msgstr "合成"
-
-
 msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "大多根據此角度繪製在指向視圖的面上"
 
@@ -19459,10 +19455,6 @@ msgstr "作用中拓製"
 
 msgid "Set the map as active for cloning"
 msgstr "為拓製處理將映射設為作用中"
-
-
-msgid "Set the map as active for rendering"
-msgstr "為算繪處理將映射設為作用中"
 
 
 msgid "Name of UV map"
@@ -35551,23 +35543,6 @@ msgstr "移除選取的粒子系統"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "計算物體路徑"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "為所選物體計算運動路徑"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "計算物體路徑的末幀"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "計算物體路徑的首幀"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "清除物體路徑"
 
@@ -37576,14 +37551,6 @@ msgstr "計算所選骨骼的路徑"
 
 msgid "Which point on the bones is used when calculating paths"
 msgstr "當計算路徑時要使用骨骼上的哪一點"
-
-
-msgid "Last frame to calculate bone paths on"
-msgstr "要計算骨骼路徑的末幀"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "要計算骨骼路徑的首幀"
 
 
 msgctxt "Operator"
@@ -44216,6 +44183,10 @@ msgid "Tip select mode"
 msgstr "末梢選取模式"
 
 
+msgid "Comb"
+msgstr "合成"
+
+
 msgid "Comb hairs"
 msgstr "合成毛髮"
 
@@ -46392,18 +46363,6 @@ msgid "Image brightness scale"
 msgstr "影像亮度縮放"
 
 
-msgid "Pixel filter type"
-msgstr "像素過濾類型"
-
-
-msgid "Box filter"
-msgstr "方塊過濾"
-
-
-msgid "Gaussian filter"
-msgstr "高斯過濾"
-
-
 msgid "Filter Width"
 msgstr "過濾寬度"
 
@@ -46422,6 +46381,18 @@ msgstr "光澤反射反彈的最大次數，以總最大數為界"
 
 msgid "Total maximum number of bounces"
 msgstr "總最大反彈數"
+
+
+msgid "Pixel filter type"
+msgstr "像素過濾類型"
+
+
+msgid "Box filter"
+msgstr "方塊過濾"
+
+
+msgid "Gaussian filter"
+msgstr "高斯過濾"
 
 
 msgid "Pause Preview"
@@ -53874,11 +53845,6 @@ msgstr "+ 未群組的鍵幀"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "更新路徑"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "計算..."
 
@@ -54550,6 +54516,11 @@ msgstr "插補模式"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "不連續性 (尤拉) 過濾器"
+
+
+msgctxt "Operator"
 msgid "Columns on Selected Keys"
 msgstr "所選鍵所在欄"
 
@@ -54582,11 +54553,6 @@ msgstr "滑動"
 msgctxt "Operator"
 msgid "Back"
 msgstr "後"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "不連續性 (尤拉) 過濾器"
 
 
 msgctxt "Operator"
