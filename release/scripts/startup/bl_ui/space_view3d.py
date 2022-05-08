@@ -428,8 +428,8 @@ class VIEW3D_HT_tool_header(Header):
             if is_valid_context:
                 brush = context.tool_settings.gpencil_sculpt_paint.brush
                 tool = brush.gpencil_sculpt_tool
-                if tool in {'SMOOTH', 'RANDOMIZE'}:
-                    layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_options")
+                if tool != 'CLONE':
+                    layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
                 layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
         elif tool_mode == 'WEIGHT_GPENCIL':
             if is_valid_context:
@@ -468,6 +468,11 @@ class VIEW3D_HT_tool_header(Header):
                 row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
             elif mode_string == 'PAINT_VERTEX':
                 row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
+        elif mode_string == 'SCULPT_CURVES':
+            _row, sub = row_for_mirror()
+            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            sub.prop(context.object.data, "use_mirror_y", text="Y", toggle=True)
+            sub.prop(context.object.data, "use_mirror_z", text="Z", toggle=True)
 
         # Expand panels from the side-bar as popovers.
         popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
@@ -833,9 +838,10 @@ class _draw_tool_settings_context_mode:
             layout.prop(brush, "curve_preset")
 
         if brush.curves_sculpt_tool == 'ADD':
-            layout.prop(brush, "use_frontface")
+            layout.prop(brush, "use_frontface", text="Front Faces Only")
             layout.prop(brush, "falloff_shape", expand=True)
             layout.prop(brush.curves_sculpt_settings, "add_amount")
+            layout.prop(brush.curves_sculpt_settings, "points_per_curve")
             layout.prop(brush.curves_sculpt_settings, "curve_length")
             layout.prop(brush.curves_sculpt_settings, "interpolate_length")
             layout.prop(brush.curves_sculpt_settings, "interpolate_shape")
@@ -850,6 +856,9 @@ class _draw_tool_settings_context_mode:
         if brush.curves_sculpt_tool == 'SNAKE_HOOK':
             layout.prop(brush, "falloff_shape", expand=True)
             layout.prop(brush, "curve_preset")
+
+        if brush.curves_sculpt_tool == 'DELETE':
+            layout.prop(brush, "falloff_shape", expand=True)
 
 
 # bfa - show hide the editormenu
@@ -2266,7 +2275,7 @@ class VIEW3D_MT_curve_add(Menu):
     bl_idname = "VIEW3D_MT_curve_add"
     bl_label = "Curve"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -2280,18 +2289,14 @@ class VIEW3D_MT_curve_add(Menu):
         layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle", icon='CURVE_NCIRCLE')
         layout.operator("curve.primitive_nurbs_path_add", text="Path", icon='CURVE_PATH')
 
+        experimental = context.preferences.experimental
+        if experimental.use_new_curves_type:
+            layout.separator()
 
-class VIEW3D_MT_curves_add(Menu):
-    bl_idname = "VIEW3D_MT_curves_add"
-    bl_label = "Curves"
+            layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon='CURVES_DATA')
 
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon='CURVES_DATA')
-        layout.operator("object.curves_random_add", text="Random", icon='CURVES_DATA')
+            if experimental.use_new_curves_tools:
+                layout.operator("object.curves_random_add", text="Random", icon='CURVES_DATA')
 
 
 class VIEW3D_MT_surface_add(Menu):
@@ -2445,8 +2450,6 @@ class VIEW3D_MT_add(Menu):
 
         # layout.operator_menu_enum("object.curve_add", "type", text="Curve", icon='OUTLINER_OB_CURVE')
         layout.menu("VIEW3D_MT_curve_add", icon='OUTLINER_OB_CURVE')
-        if context.preferences.experimental.use_new_curves_type:
-            layout.menu("VIEW3D_MT_curves_add", icon='OUTLINER_OB_CURVES')
         # layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
         layout.menu("VIEW3D_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("VIEW3D_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
@@ -3634,7 +3637,9 @@ class VIEW3D_MT_sculpt_curves(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("curves.snap_curves_to_surface")
+        layout.operator("curves.snap_curves_to_surface", text="Snap to Deformed Surface").attach_mode = 'DEFORM'
+        layout.operator("curves.snap_curves_to_surface", text="Snap to Nearest Surface").attach_mode = 'NEAREST'
+        layout.separator()
         layout.operator("curves.convert_to_particle_system", text="Convert to Particle System")
 
 
@@ -6433,7 +6438,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
     bl_label = "View Object Types"
     bl_ui_units_x = 7
 
-    # Allows derived classes to pass view data other than context.space_data. 
+    # Allows derived classes to pass view data other than context.space_data.
     # This is used by the official VR add-on, which passes XrSessionSettings
     # since VR has a 3D view that only exists for the duration of the VR session.
     def draw_ex(self, context, view, show_select):
@@ -8781,7 +8786,6 @@ classes = (
     VIEW3D_MT_angle_control,
     VIEW3D_MT_mesh_add,
     VIEW3D_MT_curve_add,
-    VIEW3D_MT_curves_add,
     VIEW3D_MT_surface_add,
     VIEW3D_MT_edit_metaball_context_menu,
     VIEW3D_MT_metaball_add,

@@ -126,6 +126,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_NLAACTION:
       case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
@@ -183,6 +184,7 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_NLAACTION:
       case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale && ale->adt) {
@@ -200,7 +202,6 @@ void ANIM_set_active_channel(bAnimContext *ac,
       /* unhandled currently, but may be interesting */
       case ANIMTYPE_MASKLAYER:
       case ANIMTYPE_SHAPEKEY:
-      case ANIMTYPE_NLAACTION:
         break;
 
       /* other types */
@@ -313,6 +314,7 @@ static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListB
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_NLAACTION:
       case ANIMTYPE_DSSIMULATION: {
         if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
           return ACHANNEL_SETFLAG_CLEAR;
@@ -421,6 +423,7 @@ static void anim_channels_select_set(bAnimContext *ac,
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_NLAACTION:
       case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
