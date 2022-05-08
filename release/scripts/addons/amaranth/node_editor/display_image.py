@@ -20,14 +20,19 @@ image_nodes = ("CompositorNodeRLayers",
                "CompositorNodeViewer",
                "CompositorNodeComposite",
                "ShaderNodeTexImage",
-               "ShaderNodeTexEnvironment")
+               "ShaderNodeTexEnvironment",
+               "GeometryNodeImageTexture")
 
 
 class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
     """Show active image node image in the image editor"""
     bl_idname = "node.show_active_node_image"
-    bl_label = "Show Active Node Node"
+    bl_label = "Preview Image from Node"
     bl_options = {"UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_node is not None
 
     def execute(self, context):
         return {'FINISHED'}
@@ -66,8 +71,17 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
                                     elif active_node.bl_idname in ["CompositorNodeComposite", "CompositorNodeRLayers"]:
                                         space.image = bpy.data.images[
                                             "Render Result"]
+                                    elif active_node.bl_idname == "GeometryNodeImageTexture":
+                                        if active_node.inputs['Image'].is_linked:
+                                            self.report({'INFO'}, "Previewing linked sockets is not supported yet")
+                                            break
+                                        if active_node.inputs['Image'].default_value:
+                                            space.image = active_node.inputs['Image'].default_value
                                     elif active_node.image:
                                         space.image = active_node.image
+                                    else:
+                                        self.report({'INFO'}, "No image detected")
+                                        break
                                 break
                         else:
                             return {'CANCELLED'}

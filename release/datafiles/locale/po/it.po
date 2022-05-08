@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -10741,10 +10741,6 @@ msgid "Inverse Square"
 msgstr "Quadratico Inverso"
 
 
-msgid "Comb"
-msgstr "Pettina"
-
-
 msgid "Falloff Angle"
 msgstr "Angolo Decadimento"
 
@@ -19213,10 +19209,6 @@ msgstr "Clona Attivo"
 
 msgid "Set the map as active for cloning"
 msgstr "Imposta la mappa come attiva per la clonazione"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Imposta la mappa come attiva per il rendering"
 
 
 msgid "Name of UV map"
@@ -35053,23 +35045,6 @@ msgstr "Rimuove il sistema particellare selezionato"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Calcola Percorsi Oggetto"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Calcola i percorsi di movimento per gli oggetti selezionati"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Ultimo fotogramma su cui calcolare i percorsi oggetto"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Primo fotogramma su cui calcolare i percorsi oggetto"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Cancella Percorsi Oggetto"
 
@@ -37295,14 +37270,6 @@ msgid "Calculate paths for the selected bones"
 msgstr "Calcola il percorso per le ossa selezionate"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Ultimo fotogramma su cui calcolare i percorsi dell'osso"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Primo fotogramma su cui calcolare i percorsi dell'osso"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Cancella Percorsi Osso"
@@ -39212,12 +39179,12 @@ msgid "Add a modifier to the strip"
 msgstr "Aggiunge un modificatore allo spezzone"
 
 
-msgid "White Balance"
-msgstr "Bilanciamento del Bianco"
-
-
 msgid "Tone Map"
 msgstr "Mappa Toni"
+
+
+msgid "White Balance"
+msgstr "Bilanciamento del Bianco"
 
 
 msgctxt "Operator"
@@ -43855,6 +43822,10 @@ msgid "Outer shape to use for tools"
 msgstr "Forma esterna da usare per gli strumenti"
 
 
+msgid "Comb"
+msgstr "Pettina"
+
+
 msgid "Comb hairs"
 msgstr "Pettina i capelli"
 
@@ -46111,26 +46082,6 @@ msgid "Image brightness scale"
 msgstr "Scala della luminosità dell'immagine"
 
 
-msgid "Pixel filter type"
-msgstr "Tipo di filtro pixel"
-
-
-msgid "Box filter"
-msgstr "Filtro Scatola"
-
-
-msgid "Gaussian filter"
-msgstr "Filtro Gaussiano"
-
-
-msgid "Blackman-Harris"
-msgstr "Blackman-Harris"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Filtro Blackman-Harris"
-
-
 msgid "Filter Width"
 msgstr "Larghezza Filtro"
 
@@ -46205,6 +46156,26 @@ msgstr "Fine sul Fotogramma"
 
 msgid "The shutter closes at the current frame"
 msgstr "L'otturatore chiude al fotogramma corrente"
+
+
+msgid "Pixel filter type"
+msgstr "Tipo di filtro pixel"
+
+
+msgid "Box filter"
+msgstr "Filtro Scatola"
+
+
+msgid "Gaussian filter"
+msgstr "Filtro Gaussiano"
+
+
+msgid "Blackman-Harris"
+msgstr "Blackman-Harris"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Filtro Blackman-Harris"
 
 
 msgid "Size of a micropolygon in pixels during preview render"
@@ -53225,11 +53196,6 @@ msgstr "+ Fotogrammi Chiave Non Raggruppati"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Aggiorna Percorsi"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Calcola..."
 
@@ -54100,6 +54066,11 @@ msgstr "Modo Interpolazione"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Filtro di Discontinuità (Eulero)"
+
+
+msgctxt "Operator"
 msgid "Push Down"
 msgstr "Spingi Giù"
 
@@ -54212,11 +54183,6 @@ msgstr "File di Testo"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Tipo Curva di Raccordo"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Filtro di Discontinuità (Eulero)"
 
 
 msgctxt "Operator"

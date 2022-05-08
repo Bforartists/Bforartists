@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1102,10 +1102,6 @@ msgid "Bool Attribute"
 msgstr "Булевий Атрибут"
 
 
-msgid "Bool geometry attribute"
-msgstr "Булевий атрибут геометрії"
-
-
 msgid "Byte Color Attribute"
 msgstr "Атрибут Байтного Кольору"
 
@@ -1118,10 +1114,6 @@ msgid "Float Attribute"
 msgstr "Дійсночисловий Атрибут"
 
 
-msgid "Geometry attribute with floating-point values"
-msgstr "Атрибут геометрії з дійсночисловими значеннями"
-
-
 msgid "Float Color Attribute"
 msgstr "Атрибут Дійсночислового Кольору"
 
@@ -1130,20 +1122,8 @@ msgid "Float Vector Attribute"
 msgstr "Атрибут Дійсночислового Вектора"
 
 
-msgid "Int Attribute"
-msgstr "Цілочисловий Атрибут"
-
-
-msgid "Integer geometry attribute"
-msgstr "Цілочисловий атрибут геометрії"
-
-
 msgid "String Attribute"
 msgstr "Рядковий Атрибут"
-
-
-msgid "String geometry attribute"
-msgstr "Рядковий атрибут геометрії"
 
 
 msgid "Attribute Group"
@@ -17312,10 +17292,6 @@ msgid "Inverse Square"
 msgstr "Обернено до квадрату"
 
 
-msgid "Comb"
-msgstr "Гребінець"
-
-
 msgid "Dash Ratio"
 msgstr "Пропорція Риски"
 
@@ -31262,10 +31238,6 @@ msgstr "Активний клон"
 
 msgid "Set the map as active for cloning"
 msgstr "Зробити карту активною для клонування"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Установити розкладку як активну для рендерингу"
 
 
 msgid "Name of UV map"
@@ -47861,11 +47833,6 @@ msgid "Unlink active font data-block"
 msgstr "Відв'язати активний блок даних шрифту"
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "Додати Атрибут Геометрії"
-
-
 msgid "Add attribute to geometry"
 msgstr "Додати атрибут для геометрії"
 
@@ -47880,11 +47847,6 @@ msgstr "Назва нового атрибута"
 
 msgid "Generic"
 msgstr "Параметризоване"
-
-
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "Вилучити Атрибут Геометрії"
 
 
 msgid "Remove attribute from geometry"
@@ -57654,23 +57616,6 @@ msgstr "Вилучити вибрану систему частинок"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Розрахувати шляхи об'єктів"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Розрахувати шляхи руху для вибраних об'єктів"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Останній кадр для розрахунку шляхів об'єкта"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Перший кадр для розрахунку шляхів об'єкта"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Зчистити шляхи об'єктів"
 
@@ -57681,15 +57626,6 @@ msgstr "Зчистити кеші шляхів для всіх об'єктів, 
 
 msgid "Only clear paths from selected objects"
 msgstr "Зчистити шляхи тільки для вибраних об'єктів"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "Оновити Діапазон згідно Сцени"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "Оновити діапазон кадрів для шляхів руху відповідно до поточного діапазону кадрів цієї Сцени"
 
 
 msgctxt "Operator"
@@ -61114,14 +61050,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Які точки кісток використовувати при розрахунку шляху"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Останній кадр для розрахунку шляхів кісток"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Перший кадр для розрахунку шляхів кісток"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Зчистити шляхи кісток"
@@ -61133,6 +61061,15 @@ msgstr "Зчистити кеші шляхів для всіх кісток, у�
 
 msgid "Only clear paths from selected bones"
 msgstr "Зчистити шляхи тільки для вибраних кісток"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "Оновити Діапазон згідно Сцени"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "Оновити діапазон кадрів для шляхів руху відповідно до поточного діапазону кадрів цієї Сцени"
 
 
 msgctxt "Operator"
@@ -64801,12 +64738,12 @@ msgid "Add a modifier to the strip"
 msgstr "Додати модифікатор до смужки"
 
 
-msgid "White Balance"
-msgstr "Баланс білого"
-
-
 msgid "Tone Map"
 msgstr "Карта тонів"
+
+
+msgid "White Balance"
+msgstr "Баланс білого"
 
 
 msgctxt "Operator"
@@ -70898,6 +70835,10 @@ msgid "Sampling Presets"
 msgstr "Передустави Відбору"
 
 
+msgid "View Object Types"
+msgstr "Типи Об'єктів Огляду"
+
+
 msgid "Asset Metadata"
 msgstr "Метадані Активу"
 
@@ -72100,10 +72041,6 @@ msgid "Masking"
 msgstr "Маскування"
 
 
-msgid "View Object Types"
-msgstr "Типи Об'єктів Огляду"
-
-
 msgid "Curve Edit Mode"
 msgstr "Режим Редагування Кривої"
 
@@ -72799,6 +72736,10 @@ msgstr "Показ Частинок"
 
 msgid "Display actual particles"
 msgstr "Показувати фактичні частинки"
+
+
+msgid "Comb"
+msgstr "Гребінець"
 
 
 msgid "Comb hairs"
@@ -76445,26 +76386,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "Для прозорого пропускання, зберігає поверхні з шорсткістю над цим порогом безпрозорості"
 
 
-msgid "Pixel filter type"
-msgstr "Тип фільтра пікселів"
-
-
-msgid "Box filter"
-msgstr "Фільтр усереднення"
-
-
-msgid "Gaussian filter"
-msgstr "Фільтр Гауса"
-
-
-msgid "Blackman-Harris"
-msgstr "Блекмен-Харріс"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Фільтр Блекмена-Харріса"
-
-
 msgid "Filter Width"
 msgstr "Ширина фільтра"
 
@@ -76547,6 +76468,26 @@ msgstr "Масштаб Нарізання Поза екраном"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "Множник для норми нарізання геометрії поза оглядом камери. Ця норма нарізання об'єктів поступово збільшується з відстанню, коли вони є поза оглядом камери. Нижчі значення забезпечують відбиття та тіні з вищою якістю для поза екранних об'єктів, тоді як вищі значення використовують менше пам'яті"
+
+
+msgid "Pixel filter type"
+msgstr "Тип фільтра пікселів"
+
+
+msgid "Box filter"
+msgstr "Фільтр усереднення"
+
+
+msgid "Gaussian filter"
+msgstr "Фільтр Гауса"
+
+
+msgid "Blackman-Harris"
+msgstr "Блекмен-Харріс"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Фільтр Блекмена-Харріса"
 
 
 msgid "Viewport Denoiser"
@@ -87115,26 +87056,6 @@ msgid "Reverse the order of shown items"
 msgstr "Розвернути порядок показуваних елементів"
 
 
-msgid "Collection of uv loop layers"
-msgstr "Колекція шарів UV-петель"
-
-
-msgid "Active UV Loop Layer"
-msgstr "Активний Шар Петлі UV"
-
-
-msgid "Active UV loop layer"
-msgstr "Активний шар UV-петлі"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "Індекс Активного Шару Петлі UV"
-
-
-msgid "Active UV loop layer index"
-msgstr "Індекс активного шару UV-петлі"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "UV-проєктор, що використовується модифікатором UV-проєкції"
 
@@ -90891,19 +90812,6 @@ msgid "Frame Range Start"
 msgstr "Діапазон Кадрів Старт"
 
 
-msgid "Bone Cache From"
-msgstr "Кеш Кісток Із"
-
-
-msgid "Cache From"
-msgstr "Кеш Із"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Оновити Шляхи"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Розрахування..."
@@ -93057,6 +92965,11 @@ msgid "Easing Mode"
 msgstr "Режим Полегшування"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Фільтр Переривчатості (Ейлер)"
+
+
 msgid "Extrapolation Mode"
 msgstr "Режим Екстраполяції"
 
@@ -93260,11 +93173,6 @@ msgstr "Вибір Коробкою (Включно Держаки)"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Тип Полегшування"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Фільтр Переривчатості (Ейлер)"
 
 
 msgctxt "Operator"
@@ -103979,10 +103887,6 @@ msgstr "Значник '%s' вже присутній для даного акт
 
 msgid "Tag '%s' not found in given asset"
 msgstr "Значник '%s' не знайдено в даному активі"
-
-
-msgid "Can't modify name of required geometry attribute"
-msgstr "Неможливо модифікувати назву необхідного атрибуту геометрії"
 
 
 msgid "Background image cannot be removed"

@@ -126,6 +126,7 @@ class POV_OT_plane_add(Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "PLANE"
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -154,6 +155,7 @@ class POV_OT_box_add(Operator):
         bpy.ops.mesh.hide(unselected=False)
         bpy.ops.object.mode_set(mode="OBJECT")
         ob.pov.object_as = "BOX"
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -180,6 +182,7 @@ def pov_cylinder_define(context, op, ob, radius, loc, loc_cap):
         ob.pov.cylinder_location_cap = vec
         ob.data.use_auto_smooth = True
         ob.pov.object_as = "CYLINDER"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
     else:
         ob.location = loc
@@ -326,6 +329,7 @@ def pov_sphere_define(context, op, ob, loc):
         ob.data.use_auto_smooth = True
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "SPHERE"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 
 class POV_OT_sphere_add(Operator):
@@ -379,6 +383,7 @@ class POV_OT_sphere_add(Operator):
     # bpy.ops.object.mode_set(mode="OBJECT")
     # bpy.ops.object.shade_smooth()
     # ob.pov.object_as = "SPHERE"
+    # ob.update_tag() # as prop set via python not updated in depsgraph
     # ob.name = ob.data.name = 'PovSphere'
     # return {'FINISHED'}
 
@@ -469,6 +474,7 @@ def pov_cone_define(context, op, ob):
         ob.data.use_auto_smooth = True
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "CONE"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 class POV_OT_cone_add(Operator):
     """Add the representation of POV cone using pov_cone_define() function."""
@@ -584,6 +590,7 @@ class POV_OT_rainbow_add(Operator):
         ob.data.energy = 0
         ob.name = ob.data.name = "PovRainbow"
         ob.pov.object_as = "RAINBOW"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
         # obj = context.object
         bpy.ops.object.constraint_add(type="DAMPED_TRACK")
@@ -656,6 +663,7 @@ def pov_torus_define(context, op, ob):
         ob.data.auto_smooth_angle = 0.6
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "TORUS"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 class POV_OT_torus_add(Operator):
     """Add the representation of POV torus using using pov_torus_define() function."""

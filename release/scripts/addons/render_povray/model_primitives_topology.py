@@ -56,6 +56,7 @@ class POV_OT_lathe_add(Operator):
         mod = ob.modifiers[-1]
         mod.axis = "Y"
         mod.show_render = False
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -173,6 +174,7 @@ def pov_superellipsoid_define(context, op, ob):
         ob.data.auto_smooth_angle = 1.3
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "SUPERELLIPSOID"
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 class POV_OT_superellipsoid_add(Operator):
     """Add the representation of POV superellipsoid using the pov_superellipsoid_define()."""
@@ -376,6 +378,7 @@ def pov_supertorus_define(context, op, ob):
         ob.pov.st_cross = st_n2
         ob.pov.st_ie = st_ie
         ob.pov.st_edit = st_edit
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 
 class POV_OT_supertorus_add(Operator):
@@ -624,6 +627,7 @@ def pov_isosurface_view_define(context, op, ob, loc):
         ob.pov.isosurface_eq = eq
         ob.pov.contained_by = "box"
         bpy.ops.object.mode_set(mode="OBJECT")
+        ob.update_tag() # as prop set via python not updated in depsgraph
 
 
 class POV_OT_isosurface_add(Operator):
@@ -722,6 +726,7 @@ class POV_OT_isosurface_box_add(Operator):
         ob.pov.object_as = "ISOSURFACE_NODE"
         ob.pov.contained_by = "box"
         ob.name = "PovIsosurfaceBox"
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -752,6 +757,7 @@ class POV_OT_isosurface_sphere_add(Operator):
         ob.pov.object_as = "ISOSURFACE_NODE"
         ob.pov.contained_by = "sphere"
         ob.name = "PovIsosurfaceSphere"
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -960,6 +966,7 @@ class POV_OT_height_field_add(bpy.types.Operator, ImportHelper):
         # POV-Ray will soon use only forwards slashes on every OS and already can
         forward_impath = impath.replace(os.sep, "/")
         ob.pov.hf_filename = forward_impath
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 
@@ -1047,6 +1054,8 @@ def pov_parametric_define(context, op, ob):
         ob.data.auto_smooth_angle = 0.6
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "PARAMETRIC"
+        ob.update_tag() # as prop set via python not updated in depsgraph
+        return{'FINISHED'}
 
 class POV_OT_parametric_add(Operator):
     """Add the representation of POV parametric surfaces using pov_parametric_define() function."""
@@ -1174,6 +1183,7 @@ class POV_OT_polygon_to_circle_add(Operator):
         #ob.data.auto_smooth_angle = 0.1
         #bpy.ops.object.shade_smooth()
         ob.pov.object_as = "POLYCIRCLE"
+        ob.update_tag() # as prop set via python not updated in depsgraph
         return {"FINISHED"}
 
 

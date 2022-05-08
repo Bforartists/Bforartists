@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -9367,23 +9367,6 @@ msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﺕﺍﺭﺫ ﻢﺘﺴﯿﺳ �
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 
@@ -10019,10 +10002,6 @@ msgstr "ﺎﻫ ﮎﺮﺗِ ﻥﺪﻧﺎﺒﺴﭼ"
 msgctxt "Operator"
 msgid "Calculate Bone Paths"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "ﺝﻭﺮﺧ ﯼﺍﺮﺑ ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
 
 msgctxt "Operator"
@@ -11809,12 +11788,12 @@ msgid "Supported"
 msgstr "ﻩﺪﺷ ﯽﻧﺎﺒﯿﺘﺸﭘ"
 
 
-msgid "Box filter"
-msgstr "ﻪﺒﻌﺟ ﺮﺘﻠﯿﻓ"
-
-
 msgid "Filter Width"
 msgstr "ﯼﺪﻌﺑ 2 ﺮﺘﻠﯿﻓ"
+
+
+msgid "Box filter"
+msgstr "ﻪﺒﻌﺟ ﺮﺘﻠﯿﻓ"
 
 
 msgid "Pause Preview"
@@ -12584,11 +12563,6 @@ msgstr "ﻥﺩﺮﮐ ﺯﺎﺑ..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ"
 
 
 msgctxt "Operator"

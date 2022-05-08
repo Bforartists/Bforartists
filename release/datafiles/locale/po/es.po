@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -626,6 +626,10 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "Existen algunas trayectorias de huesos que necesitarán ser actualizadas (sólo lectura)"
 
 
+msgid "Selected Keys"
+msgstr "Claves seleccionados"
+
+
 msgid "Show Frame Numbers"
 msgstr "Mostrar números fotogramas"
 
@@ -1082,16 +1086,8 @@ msgid "3D vector with floating-point values"
 msgstr "Vector 3D con valores decimales"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "Color RVAα con valores decimales de punto flotante"
-
-
 msgid "Byte Color"
 msgstr "Color byte"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "Color RVAα con valores de 1 byte (8 bits)"
 
 
 msgid "String"
@@ -1182,64 +1178,28 @@ msgid "Bool Attribute"
 msgstr "Atributo booleano"
 
 
-msgid "Bool geometry attribute"
-msgstr "Atributo booleano de una geometría"
-
-
 msgid "Byte Color Attribute"
 msgstr "Atributo de color byte"
-
-
-msgid "Color geometry attribute, with 8-bit values"
-msgstr "Atributo de color de una geometría, con valores de 1 byte (8 bits)"
 
 
 msgid "Float2 Attribute"
 msgstr "Atributo vectorial 2D decimal"
 
 
-msgid "2D vector geometry attribute, with floating-point values"
-msgstr "Atributo vectorial 2D de una geometría, con valores decimales de punto flotante"
-
-
 msgid "Float Attribute"
 msgstr "Atributo decimal"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "Atributo de una geometría, con valores decimales de punto flotante"
 
 
 msgid "Float Color Attribute"
 msgstr "Atributo de color decimal"
 
 
-msgid "Color geometry attribute, with floating-point values"
-msgstr "Atributo de color de una geometría, con valores decimales de punto flotante"
-
-
 msgid "Float Vector Attribute"
 msgstr "Atributo vectorial decimal"
 
 
-msgid "Vector geometry attribute, with floating-point values"
-msgstr "Atributo vectorial de una geometría, con valores decimales de punto flotante"
-
-
-msgid "Int Attribute"
-msgstr "Atributo entero"
-
-
-msgid "Integer geometry attribute"
-msgstr "Atributo de una geometría, con valores enteros"
-
-
 msgid "String Attribute"
 msgstr "Atributo de texto"
-
-
-msgid "String geometry attribute"
-msgstr "Atributo de una geometría, de tipo cadena de texto"
 
 
 msgid "Attribute Group"
@@ -18680,10 +18640,6 @@ msgid "Inverse Square"
 msgstr "Inverso al cuadrado"
 
 
-msgid "Comb"
-msgstr "Peinar"
-
-
 msgid "Dash Ratio"
 msgstr "Tasa punteado"
 
@@ -33523,10 +33479,6 @@ msgstr "Activa clonar"
 
 msgid "Set the map as active for cloning"
 msgstr "Definir el mapa como activo para el clonado"
-
-
-msgid "Set the map as active for rendering"
-msgstr "Definir el mapa como activo para el procesamiento"
 
 
 msgid "Name of UV map"
@@ -51810,11 +51762,6 @@ msgid "Unlink active font data-block"
 msgstr "Desvincular el bloque de datos activo de tipografía"
 
 
-msgctxt "Operator"
-msgid "Add Geometry Attribute"
-msgstr "Agregar atributo de geometría"
-
-
 msgid "Add attribute to geometry"
 msgstr "Agregar un atributo a la geometría"
 
@@ -51842,11 +51789,6 @@ msgstr "Hacia qué elemento de la geometría mover el atributo"
 
 msgid "Generic"
 msgstr "Genérica"
-
-
-msgctxt "Operator"
-msgid "Remove Geometry Attribute"
-msgstr "Eliminar atributo de geometría"
 
 
 msgid "Remove attribute from geometry"
@@ -54173,10 +54115,6 @@ msgstr "Reemplaza las variables del controlador, en vez de simplemente anexarlas
 msgctxt "Operator"
 msgid "Equalize Handles"
 msgstr "Igualar asas"
-
-
-msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal"
-msgstr "Asegura que las asas de los claves seleccionados tengan la misma longitud, haciendo opcionalmente que sean horizontales"
 
 
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
@@ -62139,10 +62077,6 @@ msgid "Paste onto the current values only, only manipulating the animation data 
 msgstr "Pegar únicamente sobre los valores actuales, sólo manipulando los datos de animación en caso de que se encuentre habilitada la opción Claves automáticos"
 
 
-msgid "Selected Keys"
-msgstr "Claves seleccionados"
-
-
 msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "Pegar sobre fotogramas que contengan un clave seleccionado, creando potencialmente nuevos claves en los mismos"
 
@@ -62156,23 +62090,6 @@ msgstr "Pegar sobre todos los fotogramas entre el primer y el último clave sele
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Calcular trayectoria de objeto"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Calcula la trayectoria para los objetos seleccionados"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Último fotograma sobre el que calcular la trayectoria"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Primer fotograma sobre el que calcular la trayectoria"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Eliminar trayectoria objetos"
 
@@ -62183,15 +62100,6 @@ msgstr "Permite eliminar los cachés de trayectoria de todos los objetos, manten
 
 msgid "Only clear paths from selected objects"
 msgstr "Sólo eliminar las trayectorias de los objetos seleccionados"
-
-
-msgctxt "Operator"
-msgid "Update Range from Scene"
-msgstr "Actualizar rango desde escena"
-
-
-msgid "Update frame range for motion paths from the Scene's current frame range"
-msgstr "Actualiza el rango de fotogramas de las trayectorias de movimiento desde el rango de fotogramas actual de la escena"
 
 
 msgctxt "Operator"
@@ -65786,14 +65694,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Que punto de los huesos usar al calcular las trayectorias"
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Último fotograma en el cual calcular las trayectorias de huesos"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Primer fotograma a partir del cual calcular las trayectorias de los huesos"
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Eliminar trayectoria huesos"
@@ -65805,6 +65705,15 @@ msgstr "Permite eliminar los cachés de trayectoria de todos los huesos, mantene
 
 msgid "Only clear paths from selected bones"
 msgstr "Sólo eliminar las trayectorias de los huesos seleccionados"
+
+
+msgctxt "Operator"
+msgid "Update Range from Scene"
+msgstr "Actualizar rango desde escena"
+
+
+msgid "Update frame range for motion paths from the Scene's current frame range"
+msgstr "Actualiza el rango de fotogramas de las trayectorias de movimiento desde el rango de fotogramas actual de la escena"
 
 
 msgctxt "Operator"
@@ -69697,12 +69606,12 @@ msgid "Add a modifier to the strip"
 msgstr "Agrega un modificador al clip"
 
 
-msgid "White Balance"
-msgstr "Balance de blancos"
-
-
 msgid "Tone Map"
 msgstr "Mapeo tonal"
+
+
+msgid "White Balance"
+msgstr "Balance de blancos"
 
 
 msgctxt "Operator"
@@ -76671,6 +76580,10 @@ msgid "Viewport Sampling Presets"
 msgstr "Ajustes muestreo vista"
 
 
+msgid "View Object Types"
+msgstr "Ver tipos de objeto"
+
+
 msgid "Asset Metadata"
 msgstr "Metadatos de recurso"
 
@@ -77929,10 +77842,6 @@ msgid "Masking"
 msgstr "Máscaras"
 
 
-msgid "View Object Types"
-msgstr "Ver tipos de objeto"
-
-
 msgid "Curve Edit Mode"
 msgstr "Modo Edición de Trazos"
 
@@ -78672,6 +78581,10 @@ msgstr "Mostrar partículas"
 
 msgid "Display actual particles"
 msgstr "Muestra las partículas reales"
+
+
+msgid "Comb"
+msgstr "Peinar"
 
 
 msgid "Comb hairs"
@@ -82826,26 +82739,6 @@ msgid "For transparent transmission, keep surfaces with roughness above the thre
 msgstr "Mantiene opacas a las superficies con una rugosidad mayor que este umbral"
 
 
-msgid "Pixel filter type"
-msgstr "Tipo de filtrado de píxeles"
-
-
-msgid "Box filter"
-msgstr "Filtro caja"
-
-
-msgid "Gaussian filter"
-msgstr "Filtro Gaussiano"
-
-
-msgid "Blackman-Harris"
-msgstr "Blackman-Harris"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Filtro Blackman-Harris"
-
-
 msgid "Filter Width"
 msgstr "Ancho de filtro"
 
@@ -82928,6 +82821,26 @@ msgstr "Escala subdivisión fuera de pantalla"
 
 msgid "Multiplier for dicing rate of geometry outside of the camera view. The dicing rate of objects is gradually increased the further they are outside the camera view. Lower values provide higher quality reflections and shadows for off screen objects, while higher values use less memory"
 msgstr "Multiplicador para el factor de subdivisión de la geometría que se encuentra fuera del encuadre de la cámara. La tasa de subdivisión se incrementa gradualmente cuanto más lejos se encuentren del encuadre de la cámara. Valores menores producen mejores reflejos y sombras de objetos que se encuentran fuera de la vista, mientras que valores mayores utilizan menos memoria"
+
+
+msgid "Pixel filter type"
+msgstr "Tipo de filtrado de píxeles"
+
+
+msgid "Box filter"
+msgstr "Filtro caja"
+
+
+msgid "Gaussian filter"
+msgstr "Filtro Gaussiano"
+
+
+msgid "Blackman-Harris"
+msgstr "Blackman-Harris"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Filtro Blackman-Harris"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on noise threshold, for viewport renders"
@@ -94272,26 +94185,6 @@ msgid "Reverse the order of shown items"
 msgstr "Invierte el orden de los elementos mostrados"
 
 
-msgid "Collection of uv loop layers"
-msgstr "Colección de capas de UV"
-
-
-msgid "Active UV Loop Layer"
-msgstr "Capa de UV activa"
-
-
-msgid "Active UV loop layer"
-msgstr "Capa de UV activa"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "Identificador de la capa de UV activa"
-
-
-msgid "Active UV loop layer index"
-msgstr "Identificador de la capa de UV activa"
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "Proyector UV usado por el modificador de proyección UV"
 
@@ -99024,11 +98917,6 @@ msgid "Invalid regular expression (replace): "
 msgstr "Expresión regular inválida (reemplazo): "
 
 
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Actualizar todas las trayectorias"
-
-
 msgid "Frame Numbers"
 msgstr "Nº de fotogramas"
 
@@ -99049,25 +98937,17 @@ msgid "Nothing to show yet..."
 msgstr "Nada que mostrar aún..."
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Actualizar todas las trayectorias"
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ Claves no agrupados"
 
 
 msgid "Frame Range Start"
 msgstr "Rango  Inicio"
-
-
-msgid "Bone Cache From"
-msgstr "Caché de hueso desde"
-
-
-msgid "Cache From"
-msgstr "Caché desde"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Actualizar trayectorias"
 
 
 msgctxt "Operator"
@@ -101311,6 +101191,11 @@ msgid "Easing Mode"
 msgstr "Modo de aceleración"
 
 
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Filtro de discontinuidad (Euler)"
+
+
 msgid "Extrapolation Mode"
 msgstr "Modo de extrapolación"
 
@@ -101549,11 +101434,6 @@ msgstr "Marco de selección (incluyendo asas)"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Tipo de aceleración"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Filtro de discontinuidad (Euler)"
 
 
 msgctxt "Operator"
@@ -113710,10 +113590,6 @@ msgstr "La etiqueta '%s' ya se encuentra presente en el recurso indicado"
 
 msgid "Tag '%s' not found in given asset"
 msgstr "No se encontró la etiqueta '%s' en el recurso indicado"
-
-
-msgid "Can't modify name of required geometry attribute"
-msgstr "No es posible modificar el nombre del atributo requerido de la geometría"
 
 
 msgid "Layer '%s' not found in object '%s'"
