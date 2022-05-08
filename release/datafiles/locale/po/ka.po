@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1073,16 +1073,8 @@ msgid "3D vector with floating-point values"
 msgstr "3გ ვექტორი ათწილადი სიდიდეებით"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "RGBA ფერი ათწილადი სიდიდეებით"
-
-
 msgid "Byte Color"
 msgstr "ბაიტებიანი ფერი"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "RGBA ფერი 8-ბიტიანი სიდიდეებით"
 
 
 msgid "String"
@@ -1173,64 +1165,28 @@ msgid "Bool Attribute"
 msgstr "ლოგიკური ატრიბუტი"
 
 
-msgid "Bool geometry attribute"
-msgstr "გეომეტრიის ლოგიკური ატრიბუტი"
-
-
 msgid "Byte Color Attribute"
 msgstr "ბაიტებიანი ფერის ატრიბუტი"
-
-
-msgid "Color geometry attribute, with 8-bit values"
-msgstr "გეომეტრიის ფერის ტრიბუტი, 8-ბიტიანი სიდიდეებით"
 
 
 msgid "Float2 Attribute"
 msgstr "ათწილადი2 ატრიბუტი"
 
 
-msgid "2D vector geometry attribute, with floating-point values"
-msgstr "გეომეტრიის 2გ ვექტორული ატრიბუტი, ათწილადი სიდიდეებით"
-
-
 msgid "Float Attribute"
 msgstr "ათწილადი ატრიბუტი"
-
-
-msgid "Geometry attribute with floating-point values"
-msgstr "გეომეტრიის ატრიბუტი ათწილადი სიდიდეებით"
 
 
 msgid "Float Color Attribute"
 msgstr "ფერის ათწილადი ატრიბუტი"
 
 
-msgid "Color geometry attribute, with floating-point values"
-msgstr "გეომეტრიის ფერის ატრიბუტი, ათწილადი სიდიდეებით"
-
-
 msgid "Float Vector Attribute"
 msgstr "ათწილადი ვექტორის ატრიბუტი"
 
 
-msgid "Vector geometry attribute, with floating-point values"
-msgstr "გეომეტრიის ვექტორული ატრიბუტი, ათწილადი სიდიდეებით"
-
-
-msgid "Int Attribute"
-msgstr "მთელი ატრიბუტი"
-
-
-msgid "Integer geometry attribute"
-msgstr "გეომეტრიის მთელ რიცხვიანი ატრიბუტი"
-
-
 msgid "String Attribute"
 msgstr "სტრიქონი ატრიბუტი"
-
-
-msgid "String geometry attribute"
-msgstr "გეომეტრიის ტექსტური ატრიბუტი"
 
 
 msgid "Attribute Group"
@@ -17868,6 +17824,10 @@ msgid "UV Sculpting"
 msgstr "UV-ის ძერწვა"
 
 
+msgid "View Object Types"
+msgstr "მაჩვენე ობიექტების ტიპები"
+
+
 msgid "Bendy Bones"
 msgstr "დრეკადი ძვლები"
 
@@ -18356,10 +18316,6 @@ msgstr "წონების ხატვის კონტექსტურ�
 
 msgid "Masking"
 msgstr "შენიღბვა"
-
-
-msgid "View Object Types"
-msgstr "მაჩვენე ობიექტების ტიპები"
 
 
 msgid "Curve Edit Mode"
@@ -19083,10 +19039,6 @@ msgid "Transparent Glass"
 msgstr "გამჭვირვალე მინა"
 
 
-msgid "Blackman-Harris"
-msgstr "ბლექმენ-ჰერისი"
-
-
 msgid "Max Subdivisions"
 msgstr "ქვედანაყოფების მაქსიმუმი"
 
@@ -19113,6 +19065,10 @@ msgstr "ცენტრი კადრზე"
 
 msgid "End on Frame"
 msgstr "დასასრული კადრზე"
+
+
+msgid "Blackman-Harris"
+msgstr "ბლექმენ-ჰერისი"
 
 
 msgid "Viewport Denoiser"

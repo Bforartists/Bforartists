@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1046,16 +1046,8 @@ msgid "3D vector with floating-point values"
 msgstr "3D Vektor mit Fließkomma Variable"
 
 
-msgid "RGBA color with floating-point values"
-msgstr "RGBA Farbe mit Fließkomma Werten"
-
-
 msgid "Byte Color"
 msgstr "Byte Farbe"
-
-
-msgid "RGBA color with 8-bit values"
-msgstr "RGBA Farbe mit 8-Bit Werten"
 
 
 msgid "String"
@@ -1126,10 +1118,6 @@ msgid "Bool Attribute"
 msgstr "Bool Eigenschaft"
 
 
-msgid "Bool geometry attribute"
-msgstr "Bool Geometrie Einstellungen"
-
-
 msgid "Byte Color Attribute"
 msgstr "Byte Farben Einstellung"
 
@@ -1142,10 +1130,6 @@ msgid "Float Attribute"
 msgstr "Float Eigenschaft"
 
 
-msgid "Geometry attribute with floating-point values"
-msgstr "Geometrie Einstellung mit Fließkomma Variable"
-
-
 msgid "Float Color Attribute"
 msgstr "Fließkomma Farben Einstellung"
 
@@ -1154,20 +1138,8 @@ msgid "Float Vector Attribute"
 msgstr "Fließkomma Vektor Eigenschaft"
 
 
-msgid "Int Attribute"
-msgstr "Ganzzahl Einstellung"
-
-
-msgid "Integer geometry attribute"
-msgstr "Ganzzahl Geometrie Einstellung"
-
-
 msgid "String Attribute"
 msgstr "Zeichenketten Einstellung"
-
-
-msgid "String geometry attribute"
-msgstr "Zeichenketten Geometrie Einstellung"
 
 
 msgid "Attribute Group"
@@ -35356,23 +35328,6 @@ msgstr "Einfügemethode"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Objektpfade berechnen"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Bewegungspfad für ausgewählte Objekte berechnen"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Objektpfade berechnen"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Erstes Einzelbild, um Objektpfade darauf zu berechnen"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Objektpfade entfernen"
 
@@ -36941,10 +36896,6 @@ msgstr "Nur auf Ausgewähltes"
 msgctxt "Operator"
 msgid "Calculate Bone Paths"
 msgstr "Knochenpfade berechnen"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Erstes Einzelbild, um Knochen-Pfade darauf zu berechnen"
 
 
 msgctxt "Operator"
@@ -41565,6 +41516,10 @@ msgid "Sampling Presets"
 msgstr "Abtastung-Voreinstellungen"
 
 
+msgid "View Object Types"
+msgstr "Objekttypen anzeigen"
+
+
 msgid "Asset Metadata"
 msgstr "Asset-Metadaten"
 
@@ -42476,10 +42431,6 @@ msgstr "Malereieinfluss Kontextmenü"
 
 msgid "Masking"
 msgstr "Maskieren"
-
-
-msgid "View Object Types"
-msgstr "Objekttypen anzeigen"
 
 
 msgid "Curve Edit Mode"
@@ -45249,18 +45200,6 @@ msgid "Transparent Glass"
 msgstr "Transparentes Glas"
 
 
-msgid "Pixel filter type"
-msgstr "Pixel-Filtertyp"
-
-
-msgid "Box filter"
-msgstr "Verzeichnisse zeigen"
-
-
-msgid "Gaussian filter"
-msgstr "Gauß'scher Filter"
-
-
 msgid "Filter Width"
 msgstr "Filterbreite"
 
@@ -45299,6 +45238,18 @@ msgstr "Auf Einzelbild zentrieren"
 
 msgid "End on Frame"
 msgstr "Ende auf Einzelbild"
+
+
+msgid "Pixel filter type"
+msgstr "Pixel-Filtertyp"
+
+
+msgid "Box filter"
+msgstr "Verzeichnisse zeigen"
+
+
+msgid "Gaussian filter"
+msgstr "Gauß'scher Filter"
 
 
 msgid "Viewport Denoiser"
@@ -50962,22 +50913,6 @@ msgid "Lock Order"
 msgstr "Befehl sperren"
 
 
-msgid "Active UV Loop Layer"
-msgstr "UV Schleifenebene aktivieren"
-
-
-msgid "Active UV loop layer"
-msgstr "UV Schleifenebene aktivieren"
-
-
-msgid "Active UV Loop Layer Index"
-msgstr "UV Schleifenebenenindex aktivieren"
-
-
-msgid "Active UV loop layer index"
-msgstr "UV Schleifenebenenindex aktivieren"
-
-
 msgid "Radius of the brush"
 msgstr "Radius des Pinsels"
 
@@ -53680,19 +53615,6 @@ msgstr "Aktuell gibt es nichts zu zeigen..."
 
 msgid "Frame Range Start"
 msgstr "Einzelbildbereich Start"
-
-
-msgid "Bone Cache From"
-msgstr "Knochenpuffer von"
-
-
-msgid "Cache From"
-msgstr "Puffer von"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Pfade aktualisieren"
 
 
 msgctxt "Operator"

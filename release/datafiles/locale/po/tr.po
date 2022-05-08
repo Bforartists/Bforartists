@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -14360,23 +14360,6 @@ msgstr "Parçacık Sistemleri bağına gözat"
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Tüm Nesne Merkezleri"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Seçili Nesne ve Bilgileri"
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Tüm Nesne Merkezleri"
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Tüm Nesne Merkezleri"
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Tüm Nesne Merkezleri"
 
@@ -15375,10 +15358,6 @@ msgstr "Seçili Anahtarlarda"
 msgctxt "Operator"
 msgid "Calculate Bone Paths"
 msgstr "Aktif Kemik Yok"
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Geçerli Kareyi Ortala"
 
 
 msgctxt "Operator"
@@ -18959,18 +18938,6 @@ msgid "Image brightness scale"
 msgstr "Resmi Oranlı Ölçekle"
 
 
-msgid "Pixel filter type"
-msgstr "Nesne Tipini Değiştir..."
-
-
-msgid "Box filter"
-msgstr "Kutusal Sınır "
-
-
-msgid "Gaussian filter"
-msgstr "Dosya Uzantılarını Filtrele"
-
-
 msgid "Filter Width"
 msgstr "Genişlik Boyutu"
 
@@ -18981,6 +18948,18 @@ msgstr "Dosya Uzantılarını Filtrele"
 
 msgid "Total maximum number of bounces"
 msgstr "En fazla dahili konsol satır sayısı"
+
+
+msgid "Pixel filter type"
+msgstr "Nesne Tipini Değiştir..."
+
+
+msgid "Box filter"
+msgstr "Kutusal Sınır "
+
+
+msgid "Gaussian filter"
+msgstr "Dosya Uzantılarını Filtrele"
 
 
 msgid "Pause Preview"
@@ -21641,11 +21620,6 @@ msgstr "Anahtar Kareyi Seç ve Göster"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Dizinler"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Dizinler"
 
@@ -22037,6 +22011,11 @@ msgstr "Aradeğerleme Modu"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Dosya Uzantılarını Filtrele"
+
+
+msgctxt "Operator"
 msgid "Column on Current Frame"
 msgstr "Geçerli Kareyi Ortala"
 
@@ -22064,11 +22043,6 @@ msgstr "Vertex Slide"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Arka"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Dosya Uzantılarını Filtrele"
 
 
 msgctxt "Operator"

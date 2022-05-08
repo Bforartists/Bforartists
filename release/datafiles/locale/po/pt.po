@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'e99cb91530f3')\n"
+"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -11393,10 +11393,6 @@ msgid "Inverse Square"
 msgstr "Inverso quadrático"
 
 
-msgid "Comb"
-msgstr "Pentear"
-
-
 msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "Executa a pintura com mais potência nas faces que apontam na direção da visualização, de acordo com este ângulo."
 
@@ -21577,10 +21573,6 @@ msgstr "Clone ativo"
 
 msgid "Set the map as active for cloning"
 msgstr "Define o mapa como o ativo para clonagem."
-
-
-msgid "Set the map as active for rendering"
-msgstr "Define o mapa como o ativo para renderização."
 
 
 msgid "Name of UV map"
@@ -40065,23 +40057,6 @@ msgstr "Remove o sistema de partículas selecionado."
 
 
 msgctxt "Operator"
-msgid "Calculate Object Paths"
-msgstr "Calcular caminhos de objeto"
-
-
-msgid "Calculate motion paths for the selected objects"
-msgstr "Calcula os caminhos de movimento para os objetos selecionados."
-
-
-msgid "Last frame to calculate object paths on"
-msgstr "Último fotograma para calcular os caminhos dos objetos."
-
-
-msgid "First frame to calculate object paths on"
-msgstr "Primeiro fotograma para calcular os caminhos dos objetos."
-
-
-msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Limpar caminhos de objeto"
 
@@ -42422,14 +42397,6 @@ msgid "Which point on the bones is used when calculating paths"
 msgstr "Qual ponto nos ossos é usado durante os cálculos dos caminhos."
 
 
-msgid "Last frame to calculate bone paths on"
-msgstr "Último fotograma para calcular os caminhos de ossos."
-
-
-msgid "First frame to calculate bone paths on"
-msgstr "Primeiro fotograma sobre o qual calcular os caminhos dos ossos."
-
-
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Limpar os caminhos dos ossos"
@@ -44542,12 +44509,12 @@ msgid "Add a modifier to the strip"
 msgstr "Adiciona um modificador para a faixa."
 
 
-msgid "White Balance"
-msgstr "Balanço dos tons brancos"
-
-
 msgid "Tone Map"
 msgstr "Mapa de tonalidades"
+
+
+msgid "White Balance"
+msgstr "Balanço dos tons brancos"
 
 
 msgctxt "Operator"
@@ -49471,6 +49438,10 @@ msgid "Outer shape to use for tools"
 msgstr "Formato exterior a ser usado para as ferramentas."
 
 
+msgid "Comb"
+msgstr "Pentear"
+
+
 msgid "Comb hairs"
 msgstr "Permite pentear os cabelos."
 
@@ -52035,26 +52006,6 @@ msgid "Image brightness scale"
 msgstr "Escala de brilho da imagem"
 
 
-msgid "Pixel filter type"
-msgstr "Tipo de filtro de pixel"
-
-
-msgid "Box filter"
-msgstr "Filtro caixa"
-
-
-msgid "Gaussian filter"
-msgstr "Filtro gaussiano"
-
-
-msgid "Blackman-Harris"
-msgstr "Blackman-Harris"
-
-
-msgid "Blackman-Harris filter"
-msgstr "Usa o filtro proposto por Ralph Beebe Blackman e Fredric J. Harris (método de janela)."
-
-
 msgid "Filter Width"
 msgstr "Largura do filtro"
 
@@ -52121,6 +52072,26 @@ msgstr "Finalizar no fotograma"
 
 msgid "The shutter closes at the current frame"
 msgstr "O obturador fecha no fotograma atual"
+
+
+msgid "Pixel filter type"
+msgstr "Tipo de filtro de pixel"
+
+
+msgid "Box filter"
+msgstr "Filtro caixa"
+
+
+msgid "Gaussian filter"
+msgstr "Filtro gaussiano"
+
+
+msgid "Blackman-Harris"
+msgstr "Blackman-Harris"
+
+
+msgid "Blackman-Harris filter"
+msgstr "Usa o filtro proposto por Ralph Beebe Blackman e Fredric J. Harris (método de janela)."
 
 
 msgid "Size of a micropolygon in pixels during preview render"
@@ -59188,18 +59159,6 @@ msgid "Sort items by their name"
 msgstr "Ordena os itens pelos seus nomes."
 
 
-msgid "Collection of uv loop layers"
-msgstr "Coleção de camadas de anéis UV."
-
-
-msgid "Active UV loop layer"
-msgstr "Índice de camada de anéis UV"
-
-
-msgid "Active UV loop layer index"
-msgstr "O índice de camada de anéis UV ativos."
-
-
 msgid "UV projector used by the UV project modifier"
 msgstr "Projetor UV usado pelo modificador de projeção UV."
 
@@ -60775,11 +60734,6 @@ msgstr "Somar os fotogramas chave não agrupados"
 
 
 msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Atualizar caminhos"
-
-
-msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Calcular..."
 
@@ -61505,6 +61459,11 @@ msgstr "Modo de interpolação"
 
 
 msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "Filtro de descontinuidade (Euler)"
+
+
+msgctxt "Operator"
 msgid "Push Down"
 msgstr "Empurrar para baixo"
 
@@ -61562,11 +61521,6 @@ msgstr "Trás"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Tipos de facilitação"
-
-
-msgctxt "Operator"
-msgid "Discontinuity (Euler) Filter"
-msgstr "Filtro de descontinuidade (Euler)"
 
 
 msgctxt "Operator"
