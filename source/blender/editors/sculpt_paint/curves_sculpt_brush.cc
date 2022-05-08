@@ -116,8 +116,11 @@ static std::optional<float3> find_curves_brush_position(const CurvesGeometry &cu
 
             const float distance_sq_re = math::distance_squared(brush_pos_re, closest_re);
 
+            float3 brush_position_cu;
+            closest_to_line_segment_v3(brush_position_cu, closest_cu, ray_start_cu, ray_end_cu);
+
             BrushPositionCandidate candidate;
-            candidate.position_cu = closest_cu;
+            candidate.position_cu = brush_position_cu;
             candidate.depth_sq_cu = depth_sq_cu;
             candidate.distance_sq_re = distance_sq_re;
 
@@ -227,6 +230,34 @@ std::optional<CurvesBrush3D> sample_curves_3d_brush(bContext &C,
   brush_3d.position_cu = brush_position_cu;
   brush_3d.radius_cu = dist_to_line_v3(brush_position_cu, radius_ray_start_cu, radius_ray_end_cu);
   return brush_3d;
+}
+
+Vector<float4x4> get_symmetry_brush_transforms(const eCurvesSymmetryType symmetry)
+{
+  Vector<float4x4> matrices;
+
+  auto symmetry_to_factors = [&](const eCurvesSymmetryType type) -> Span<float> {
+    if (symmetry & type) {
+      static std::array<float, 2> values = {1.0f, -1.0f};
+      return values;
+    }
+    static std::array<float, 1> values = {1.0f};
+    return values;
+  };
+
+  for (const float x : symmetry_to_factors(CURVES_SYMMETRY_X)) {
+    for (const float y : symmetry_to_factors(CURVES_SYMMETRY_Y)) {
+      for (const float z : symmetry_to_factors(CURVES_SYMMETRY_Z)) {
+        float4x4 matrix = float4x4::identity();
+        matrix.values[0][0] = x;
+        matrix.values[1][1] = y;
+        matrix.values[2][2] = z;
+        matrices.append(matrix);
+      }
+    }
+  }
+
+  return matrices;
 }
 
 }  // namespace blender::ed::sculpt_paint

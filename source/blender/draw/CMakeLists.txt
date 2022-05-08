@@ -134,6 +134,13 @@ set(SRC
   engines/eevee/eevee_temporal_sampling.c
   engines/eevee/eevee_volumes.c
   engines/eevee_next/eevee_engine.cc
+  engines/eevee_next/eevee_instance.cc
+  engines/eevee_next/eevee_material.cc
+  engines/eevee_next/eevee_pipeline.cc
+  engines/eevee_next/eevee_shader.cc
+  engines/eevee_next/eevee_sync.cc
+  engines/eevee_next/eevee_view.cc
+  engines/eevee_next/eevee_world.cc
   engines/workbench/workbench_data.c
   engines/workbench/workbench_effect_antialiasing.c
   engines/workbench/workbench_effect_cavity.c
@@ -343,6 +350,18 @@ set(GLSL_SRC
   engines/eevee/shaders/volumetric_integration_frag.glsl
   engines/eevee/shaders/world_vert.glsl
 
+  engines/eevee_next/shaders/eevee_attributes_lib.glsl
+  engines/eevee_next/shaders/eevee_geom_curves_vert.glsl
+  engines/eevee_next/shaders/eevee_geom_gpencil_vert.glsl
+  engines/eevee_next/shaders/eevee_geom_mesh_vert.glsl
+  engines/eevee_next/shaders/eevee_geom_world_vert.glsl
+  engines/eevee_next/shaders/eevee_nodetree_lib.glsl
+  engines/eevee_next/shaders/eevee_surf_deferred_frag.glsl
+  engines/eevee_next/shaders/eevee_surf_depth_frag.glsl
+  engines/eevee_next/shaders/eevee_surf_forward_frag.glsl
+  engines/eevee_next/shaders/eevee_surf_lib.glsl
+  engines/eevee_next/shaders/eevee_surf_world_frag.glsl
+
   engines/workbench/shaders/workbench_cavity_lib.glsl
   engines/workbench/shaders/workbench_common_lib.glsl
   engines/workbench/shaders/workbench_composite_frag.glsl
@@ -402,8 +421,8 @@ set(GLSL_SRC
   intern/shaders/common_subdiv_vbo_lnor_comp.glsl
   intern/shaders/common_subdiv_vbo_sculpt_data_comp.glsl
 
-  intern/draw_shader_shared.h
   intern/draw_common_shader_shared.h
+  intern/draw_shader_shared.h
 
   engines/gpencil/shaders/gpencil_frag.glsl
   engines/gpencil/shaders/gpencil_vert.glsl
@@ -424,6 +443,7 @@ set(GLSL_SRC
 
   engines/basic/shaders/conservative_depth_geom.glsl
   engines/basic/shaders/depth_vert.glsl
+  engines/basic/shaders/depth_pointcloud_vert.glsl
   engines/basic/shaders/depth_frag.glsl
 
   engines/overlay/shaders/common_overlay_lib.glsl
@@ -494,6 +514,7 @@ set(GLSL_SRC
   engines/overlay/shaders/grid_vert.glsl
   engines/overlay/shaders/image_vert.glsl
   engines/overlay/shaders/image_frag.glsl
+  engines/overlay/shaders/motion_path_line_frag.glsl
   engines/overlay/shaders/motion_path_line_geom.glsl
   engines/overlay/shaders/motion_path_line_vert.glsl
   engines/overlay/shaders/motion_path_point_vert.glsl
