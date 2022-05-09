@@ -57,9 +57,10 @@ jobs:
           sudo amdgpu-install --usecase=rocm
 
       - name: Build Release
+      - uses: seanmiddleditch/gha-setup-ninja@master
         run: |
           cd ~/bforartistsrepo/Bforartists
-          make release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/optix/include
+          make ninja release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/optix/include
 
       - name: Upload Build
         uses: actions/upload-artifact@v2
