@@ -40,7 +40,7 @@ jobs:
 
       - name: Download Pre-compiled Headers
         run: |
-          mkdir ~/bforartistsrepo/lib
+          mkdir -p ~/bforartistsrepo/lib
           cd ~/bforartistsrepo/lib
           svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
