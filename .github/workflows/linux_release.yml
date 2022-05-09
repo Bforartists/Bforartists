@@ -32,6 +32,12 @@ jobs:
           cd ~/bforartistsrepo
           git clone --depth=1 https://github.com/Bforartists/Bforartists
 
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ~/bforartistsrepo/lib
+          key: ${{ runner.os }}
+
       - name: Download Pre-compiled Headers
         run: |
           mkdir ~/bforartistsrepo/lib
