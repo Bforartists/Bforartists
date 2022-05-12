@@ -3539,7 +3539,7 @@ static void object_convert_ui(bContext *UNUSED(C), wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
-  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
 
   uiItemR(layout, op->ptr, "target", 0, nullptr, ICON_NONE);
   uiItemR(layout, op->ptr, "keep_original", 0, nullptr, ICON_NONE);
