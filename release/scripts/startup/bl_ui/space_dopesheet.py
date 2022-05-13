@@ -644,6 +644,9 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")
 
+        layout.separator()
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+
 
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
