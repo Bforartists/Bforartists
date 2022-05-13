@@ -1443,8 +1443,8 @@ node_white_noise
 delete_duplicate
 attribute_store
 named_attribute
-#~ DEF_ICON_BLANK(1477)
-#~ DEF_ICON_BLANK(1478)
+combine_color
+separate_color
 #~ DEF_ICON_BLANK(1479)
 #~ DEF_ICON_BLANK(1480)
 #~ DEF_ICON_BLANK(1481)
