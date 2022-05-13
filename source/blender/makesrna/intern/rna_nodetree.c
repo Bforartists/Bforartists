@@ -12933,6 +12933,12 @@ static int node_type_to_icon(int type)
     case SH_NODE_CURVE_FLOAT:
       icon = ICON_FLOAT_CURVE;
       break;
+    case SH_NODE_COMBINE_COLOR:
+      icon = ICON_COMBINE_COLOR;
+      break;
+    case SH_NODE_SEPARATE_COLOR:
+      icon = ICON_SEPARATE_COLOR;
+      break;
 
     /* bfa - CompositorNode */
     case CMP_NODE_VIEWER:
@@ -13224,6 +13230,12 @@ static int node_type_to_icon(int type)
     case CMP_NODE_SEPARATE_XYZ:
       icon = ICON_NODE_SEPARATEXYZ;
       break;
+    case CMP_NODE_SEPARATE_COLOR:
+      icon = ICON_SEPARATE_COLOR;
+      break;
+    case CMP_NODE_COMBINE_COLOR:
+      icon = ICON_COMBINE_COLOR;
+      break;
 
       /* bfa - TextureNode, we don't have these nodes iconized yet */
 
@@ -13233,6 +13245,9 @@ static int node_type_to_icon(int type)
       break;
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
+      break;
+    case FN_NODE_COMBINE_COLOR:
+      icon = ICON_COMBINE_COLOR;
       break;
     case FN_NODE_COMPARE:
       icon = ICON_FLOAT_COMPARE;
@@ -13266,6 +13281,9 @@ static int node_type_to_icon(int type)
       break;
     case FN_NODE_ROTATE_EULER:
       icon = ICON_ROTATE_EULER;
+      break;
+    case FN_NODE_SEPARATE_COLOR:
+      icon = ICON_SEPARATE_COLOR;
       break;
     case FN_NODE_SLICE_STRING:
       icon = ICON_STRING_SUBSTRING;
