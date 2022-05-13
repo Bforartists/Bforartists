@@ -1840,25 +1840,13 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Combine HSVA ", icon = "NODE_COMBINEHSV")
+            props = col.operator("node.add_node", text=" Combine Color ", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "CompositorNodeCombHSVA"
-
-            props = col.operator("node.add_node", text=" Combine RGBA ", icon = "NODE_COMBINERGB")
-            props.use_transform = True
-            props.type = "CompositorNodeCombRGBA"
+            props.type = "CompositorNodeCombineColor"
 
             props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
-
-            props = col.operator("node.add_node", text=" Combine YCbCrA ", icon = "NODE_COMBINEYCBCRA")
-            props.use_transform = True
-            props.type = "CompositorNodeCombYCCA"
-
-            props = col.operator("node.add_node", text=" Combine YUVA ", icon = "NODE_COMBINEYUVA")
-            props.use_transform = True
-            props.type = "CompositorNodeCombYUVA"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -1878,25 +1866,13 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Separate HSVA ", icon = "NODE_SEPARATEHSV")
+            props = col.operator("node.add_node", text=" Separate Color", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "CompositorNodeSepHSVA"
-
-            props = col.operator("node.add_node", text=" Separate RGBA ", icon = "NODE_SEPARATERGB")
-            props.use_transform = True
-            props.type = "CompositorNodeSepRGBA"
+            props.type = "CompositorNodeSeparateColor"
 
             props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeSeparateXYZ"
-
-            props = col.operator("node.add_node", text=" Separate YCbCrA ", icon = "NODE_SEPARATE_YCBCRA")
-            props.use_transform = True
-            props.type = "CompositorNodeSepYCCA"
-
-            props = col.operator("node.add_node", text=" Separate YUVA ", icon = "NODE_SEPARATE_YUVA")
-            props.use_transform = True
-            props.type = "CompositorNodeSepYUVA"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -1929,25 +1905,13 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeValToRGB"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "CompositorNodeCombHSVA"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
-            props.use_transform = True
-            props.type = "CompositorNodeCombRGBA"
+            props.type = "CompositorNodeCombineColor"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEYCBCRA")
-            props.use_transform = True
-            props.type = "CompositorNodeCombYCCA"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEYUVA")
-            props.use_transform = True
-            props.type = "CompositorNodeCombYUVA"
 
             props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
             props.use_transform = True
@@ -1961,25 +1925,13 @@ class NODES_PT_comp_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeRGBToBW"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "CompositorNodeSepHSVA"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
-            props.use_transform = True
-            props.type = "CompositorNodeSepRGBA"
+            props.type = "CompositorNodeSeparateColor"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "CompositorNodeSeparateXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATE_YCBCRA")
-            props.use_transform = True
-            props.type = "CompositorNodeSepYCCA"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEYUVA")
-            props.use_transform = True
-            props.type = "CompositorNodeSepYUVA"
 
             props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
             props.use_transform = True
@@ -2404,13 +2356,9 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = col.operator("node.add_node", text=" Combine HSV   ", icon = "NODE_COMBINEHSV")
+            props = col.operator("node.add_node", text=" Combine Color ", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeCombineHSV"
-
-            props = col.operator("node.add_node", text=" Combine RGB   ", icon = "NODE_COMBINERGB")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineRGB"
+            props.type = "ShaderNodeCombineColor"
 
             props = col.operator("node.add_node", text=" Combine XYZ   ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
@@ -2438,13 +2386,9 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Separate HSV   ", icon = "NODE_SEPARATEHSV")
+            props = col.operator("node.add_node", text=" Separate Color ", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateHSV"
-
-            props = col.operator("node.add_node", text=" Separate RGB   ", icon = "NODE_SEPARATERGB")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateRGB"
+            props.type = "ShaderNodeSeparateColor"
 
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
@@ -2483,13 +2427,9 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeCombineHSV"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineRGB"
+            props.type = "ShaderNodeCombineColor"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
@@ -2511,13 +2451,9 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeRGBToBW"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateHSV"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateRGB"
+            props.type = "ShaderNodeSeparateColor"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
@@ -3310,9 +3246,9 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = col.operator("node.add_node", text=" Combine RGB      ", icon = "NODE_COMBINERGB")
+            props = col.operator("node.add_node", text=" Combine Color      ", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeCombineRGB"
+            props.type = "FunctionNodeCombineColor"
 
             props = col.operator("node.add_node", text=" Mix RGB              ", icon = "NODE_MIXRGB")
             props.use_transform = True
@@ -3322,9 +3258,9 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
-            props = col.operator("node.add_node", text=" Separate RGB       ", icon = "NODE_SEPARATERGB")
+            props = col.operator("node.add_node", text=" Separate Color       ", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateRGB"
+            props.type = "FunctionNodeSeparateColor"
 
         #### Icon Buttons
 
@@ -3338,9 +3274,9 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
+            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeCombineRGB"
+            props.type = "FunctionNodeCombineColor"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
             props.use_transform = True
@@ -3350,9 +3286,9 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateRGB"
+            props.type = "FunctionNodeSeparateColor"
 
 
 #add Curves panel
