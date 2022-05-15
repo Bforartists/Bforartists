@@ -1021,6 +1021,7 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
   ot->invoke = sequencer_select_invoke;
   ot->modal = WM_generic_select_modal;
   ot->poll = ED_operator_sequencer_active;
+  ot->get_name = ED_select_pick_get_name;
 
   /* Flags. */
   ot->flag = OPTYPE_UNDO;

@@ -1856,7 +1856,7 @@ class NWPreviewNode(Operator, NWBase):
         shader_types = [x[1] for x in shaders_shader_nodes_props]
         mlocx = event.mouse_region_x
         mlocy = event.mouse_region_y
-        select_node = bpy.ops.node.select(mouse_x=mlocx, mouse_y=mlocy, extend=False)
+        select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
         if 'FINISHED' in select_node:  # only run if mouse click is on a node
             active_tree, path_to_tree = get_active_tree(context)
             nodes, links = active_tree.nodes, active_tree.links
@@ -4026,7 +4026,7 @@ class NWViewerFocus(bpy.types.Operator):
         if viewers:
             mlocx = event.mouse_region_x
             mlocy = event.mouse_region_y
-            select_node = bpy.ops.node.select(mouse_x=mlocx, mouse_y=mlocy, extend=False)
+            select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
 
             if not 'FINISHED' in select_node:  # only run if we're not clicking on a node
                 region_x = context.region.width

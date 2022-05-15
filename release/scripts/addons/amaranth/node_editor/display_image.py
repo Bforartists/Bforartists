@@ -40,7 +40,7 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
     def invoke(self, context, event):
         mlocx = event.mouse_region_x
         mlocy = event.mouse_region_y
-        select_node = bpy.ops.node.select(mouse_x=mlocx, mouse_y=mlocy, extend=False)
+        select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
 
         if 'FINISHED' in select_node:  # Only run if we're clicking on a node
             get_addon = "amaranth" in context.preferences.addons.keys()
