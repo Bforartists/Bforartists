@@ -644,8 +644,10 @@ typedef struct EEVEE_MotionBlurData {
 } EEVEE_MotionBlurData;
 
 typedef struct EEVEE_ObjectKey {
-  /** Object or source object for duplis */
-  struct Object *ob;
+  /** Object or source object for duplis. */
+  /** WORKAROUND: The pointer is different for particle systems and do not point to the real
+   * object. (See T97380) */
+  void *ob;
   /** Parent object for duplis */
   struct Object *parent;
   /** Dupli objects recursive unique identifier */
@@ -1093,7 +1095,9 @@ EEVEE_ViewLayerData *EEVEE_view_layer_data_ensure_ex(struct ViewLayer *view_laye
 EEVEE_ViewLayerData *EEVEE_view_layer_data_ensure(void);
 EEVEE_ObjectEngineData *EEVEE_object_data_get(Object *ob);
 EEVEE_ObjectEngineData *EEVEE_object_data_ensure(Object *ob);
-EEVEE_ObjectMotionData *EEVEE_motion_blur_object_data_get(EEVEE_MotionBlurData *mb, Object *ob);
+EEVEE_ObjectMotionData *EEVEE_motion_blur_object_data_get(EEVEE_MotionBlurData *mb,
+                                                          Object *ob,
+                                                          bool is_psys);
 EEVEE_GeometryMotionData *EEVEE_motion_blur_geometry_data_get(EEVEE_ObjectMotionData *mb_data);
 EEVEE_HairMotionData *EEVEE_motion_blur_hair_data_get(EEVEE_ObjectMotionData *mb_data, Object *ob);
 EEVEE_HairMotionData *EEVEE_motion_blur_curves_data_get(EEVEE_ObjectMotionData *mb_data);
@@ -1141,6 +1145,7 @@ void EEVEE_material_bind_resources(DRWShadingGroup *shgrp,
                                    EEVEE_Data *vedata,
                                    const int *ssr_id,
                                    const float *refract_depth,
+                                   const float alpha_clip_threshold,
                                    bool use_ssrefraction,
                                    bool use_alpha_blend);
 /* eevee_lights.c */

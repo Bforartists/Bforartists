@@ -158,6 +158,7 @@ dict_custom = {
     "parentless",
     "passepartout",
     "passthrough",
+    "performant",
     "pixelate",
     "pixelated",
     "pixelisation",

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-13 16:02+0000\n"
@@ -1631,10 +1631,6 @@ msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
 
 
-msgid "Simulations"
-msgstr "模擬"
-
-
 msgid "Sounds"
 msgstr "聲音"
 
@@ -1917,14 +1913,6 @@ msgstr "主要螢幕"
 
 msgid "Collection of screens"
 msgstr "螢幕的選集"
-
-
-msgid "Main Simulations"
-msgstr "主要模擬"
-
-
-msgid "Collection of simulations"
-msgstr "模擬選集"
 
 
 msgid "Main Sounds"
@@ -6236,14 +6224,6 @@ msgid "Detect Corners"
 msgstr "偵測角落"
 
 
-msgid "Index"
-msgstr "索引"
-
-
-msgid "Radius"
-msgstr "半徑"
-
-
 msgid "Steps"
 msgstr "步數"
 
@@ -6266,6 +6246,10 @@ msgstr "虛線"
 
 msgid "Material Index"
 msgstr "材質索引"
+
+
+msgid "Radius"
+msgstr "半徑"
 
 
 msgid "Dependency Graph"
@@ -8545,6 +8529,10 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "此控制點上封套的下邊界"
 
 
+msgid "Index"
+msgstr "索引"
+
+
 msgid "Face Maps"
 msgstr "面圖群組"
 
@@ -8943,6 +8931,10 @@ msgstr "雙向 Z"
 
 msgid "Fonts"
 msgstr "字型"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Show workspace data-blocks"
@@ -13222,10 +13214,6 @@ msgstr "算繪槽"
 
 msgid "Render slots of the image"
 msgstr "影像的算繪槽"
-
-
-msgid "X/Y pixels per meter"
-msgstr "每公尺 X/Y 像素數"
 
 
 msgid "Where the image comes from"
@@ -18801,11 +18789,6 @@ msgstr "編輯"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "剪輯"
 
@@ -18887,11 +18870,6 @@ msgstr "顯示/隱藏面"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "添加"
 
@@ -18902,16 +18880,6 @@ msgstr "外形鍵特殊項"
 
 msgid "Vertex Group Specials"
 msgstr "頂點群組特殊項"
-
-
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -18948,11 +18916,6 @@ msgstr "幀率預置"
 
 msgid "Lineset Specials"
 msgstr "線條集特殊項"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -18997,11 +18960,6 @@ msgstr "Python"
 
 msgid "System"
 msgstr "系統"
-
-
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
 
 
 msgid "File"
@@ -19050,11 +19008,6 @@ msgstr "按鍵預置"
 
 msgid "Save & Load"
 msgstr "儲存與載入"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Disable Bone Options"
@@ -30506,6 +30459,10 @@ msgid "Generic"
 msgstr "通用"
 
 
+msgid "Default fill color"
+msgstr "預設填入色彩"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "刪除作用中框幀"
@@ -31138,10 +31095,6 @@ msgstr "建立一個影像"
 
 msgid "Create an image with an alpha channel"
 msgstr "建立一個帶 Alpha 通道的影像"
-
-
-msgid "Default fill color"
-msgstr "預設填入色彩"
 
 
 msgid "32-bit Float"
@@ -43366,18 +43319,8 @@ msgid "Solve"
 msgstr "解算"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Transforms"
 msgstr "變換"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
