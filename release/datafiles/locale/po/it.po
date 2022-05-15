@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -5923,18 +5923,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa la parte iniziale del tratto per la profondità"
 
 
-msgid "Index"
-msgstr "Indice"
-
-
-msgid "Index of this points"
-msgstr "Indice di questi punti"
-
-
-msgid "Radius"
-msgstr "Raggio"
-
-
 msgid "Steps"
 msgstr "Passi"
 
@@ -5961,6 +5949,10 @@ msgstr "Tratteggiato"
 
 msgid "Material Index"
 msgstr "Indice Materiale"
+
+
+msgid "Radius"
+msgstr "Raggio"
 
 
 msgid "Dependency Graph"
@@ -8080,6 +8072,10 @@ msgstr "Limite superiore dell'inviluppo a questo punto di controllo"
 
 msgid "Lower bound of envelope at this control-point"
 msgstr "Limite inferiore dell'inviluppo a questo punto di controllo"
+
+
+msgid "Index"
+msgstr "Indice"
 
 
 msgid "Field Settings"
@@ -12387,10 +12383,6 @@ msgstr "Pixels"
 
 msgid "Render Slots"
 msgstr "Slot Render"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Pixel X/Y per metro"
 
 
 msgid "Where the image comes from"
@@ -29516,6 +29508,10 @@ msgid "Generic"
 msgstr "NLA Generico"
 
 
+msgid "Default fill color"
+msgstr "Colore di riempimento predefinito"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Cancella Fotogramma Attivo"
@@ -30468,10 +30464,6 @@ msgstr "Crea una nuova immagine"
 
 msgid "Create an image with an alpha channel"
 msgstr "Crea un'immagine con un canale alpha"
-
-
-msgid "Default fill color"
-msgstr "Colore di riempimento predefinito"
 
 
 msgid "32-bit Float"
@@ -44248,6 +44240,10 @@ msgstr "Compara Percorsi"
 
 msgid "Collection of paths"
 msgstr "Raccolta di percorsi"
+
+
+msgid "Index of this points"
+msgstr "Indice di questi punti"
 
 
 msgid "Cache Compression"

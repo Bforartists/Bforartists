@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1855,10 +1855,6 @@ msgstr "ფორმის გასაღებები"
 
 msgid "Shape Key data-blocks"
 msgstr "ფორმის გასაღებების მონაცემთა ბლოკები"
-
-
-msgid "Simulations"
-msgstr "სიმულაციები"
 
 
 msgid "Sounds"
@@ -6694,10 +6690,6 @@ msgid "Only First"
 msgstr "მხოლოდ პირველი"
 
 
-msgid "Radius"
-msgstr "რადიუსი"
-
-
 msgid "Preset"
 msgstr "წინასწარ აწყობილი"
 
@@ -6720,6 +6712,10 @@ msgstr "თავისუფალი სახელური"
 
 msgid "Material Index"
 msgstr "მასალის ინდექსი"
+
+
+msgid "Radius"
+msgstr "რადიუსი"
 
 
 msgid "Viewport"
@@ -7253,6 +7249,10 @@ msgstr "წონები"
 
 msgid "Show Light Probe data-blocks"
 msgstr "მაჩვენე სინათლის ზონდის მონაცემთა ბლოკები"
+
+
+msgid "Simulations"
+msgstr "სიმულაციები"
 
 
 msgid "Save"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1556,10 +1556,6 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -5255,14 +5251,6 @@ msgid "Only First"
 msgstr "Pouze První"
 
 
-msgid "Index"
-msgstr "Index"
-
-
-msgid "Radius"
-msgstr "Poloměr"
-
-
 msgid "Support Loops"
 msgstr "Podporovat Smyčky"
 
@@ -5285,6 +5273,10 @@ msgstr "Aktivní Křivka"
 
 msgid "Material Index"
 msgstr "Index Materiálu"
+
+
+msgid "Radius"
+msgstr "Poloměr"
 
 
 msgid "Viewport"
@@ -6787,6 +6779,10 @@ msgid "Frame"
 msgstr "Snímek"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Face Maps"
 msgstr "Mapy Obličeje"
 
@@ -7021,6 +7017,10 @@ msgstr "Fonts"
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "Node Trees"
@@ -9807,14 +9807,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Typ filtru"
 
 
-msgid "Attributes"
-msgstr "Atributy"
-
-
-msgid "Geometry attributes"
-msgstr "Atributy geometrie"
-
-
 msgid "Active Texture"
 msgstr "Aktivní textový soubor"
 
@@ -10121,10 +10113,6 @@ msgstr "Rodič"
 
 msgid "Pixels"
 msgstr "Pixely"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Zobrazit jméno"
 
 
 msgid "Where the image comes from"
@@ -10563,6 +10551,14 @@ msgstr "Spustit renderovani"
 
 msgid "Subsurface Translucency"
 msgstr "Průsvitnost podpovrchu"
+
+
+msgid "Attributes"
+msgstr "Atributy"
+
+
+msgid "Geometry attributes"
+msgstr "Atributy geometrie"
 
 
 msgid "Auto Smooth Angle"
@@ -14583,11 +14579,6 @@ msgstr "Rozbalit"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_přidat"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Přidat"
 
@@ -14598,16 +14589,6 @@ msgstr "Zaklíčovat tvar"
 
 msgid "Vertex Group Specials"
 msgstr "Skupina vertexů"
-
-
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_přidat"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_přidat"
 
 
 msgid "Converter"
@@ -14648,11 +14629,6 @@ msgstr "Materiál"
 
 msgid "Frame Rate Presets"
 msgstr "Předvolby snímkové frekvence"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEKVENCER_MT_přidat"
 
 
 msgid "Effect Strip"
@@ -22863,6 +22839,10 @@ msgid "Unlink"
 msgstr "Skrýt označené"
 
 
+msgid "Default fill color"
+msgstr "Vynásobí jednotlivé barevné složky"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Renderovat plošky z obou stran"
@@ -23539,10 +23519,6 @@ msgstr "Vytvořit nový obrázek"
 
 msgid "Create an image with an alpha channel"
 msgstr "Vytvořit obrázek s alfa kanálem"
-
-
-msgid "Default fill color"
-msgstr "Vynásobí jednotlivé barevné složky"
 
 
 msgid "Image height"

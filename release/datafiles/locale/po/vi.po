@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-02-24 15:56+0700\n"
@@ -1880,10 +1880,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô Phỏng"
 
 
 msgid "Sounds"
@@ -8299,18 +8295,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Sử dụng điểm đầu của nét cho độ sâu"
 
 
-msgid "Index"
-msgstr "Chỉ Số"
-
-
-msgid "Index of this points"
-msgstr "Chỉ số của các điểm này"
-
-
-msgid "Radius"
-msgstr "Bán Kính"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Bộ biên tập Đường Trình Bày được dùng để xây một đường trình bày"
 
@@ -8469,6 +8453,10 @@ msgstr "Tên của khúc gạch ngang"
 
 msgid "The factor to apply to the original point's opacity for the new points"
 msgstr "Hệ số cho áp dụng với độ đục của điểm ban đầu cho các điểm mới"
+
+
+msgid "Radius"
+msgstr "Bán Kính"
 
 
 msgid "The factor to apply to the original point's radius for the new points"
@@ -11363,6 +11351,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Nhóm mặt, mỗi mặt chỉ được làm thành phần của một bản đồ"
 
 
+msgid "Index"
+msgstr "Chỉ Số"
+
+
 msgid "Index number of the face map"
 msgstr "Chỉ số của bản đồ mặt"
 
@@ -11957,6 +11949,10 @@ msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
 
 msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Simulations"
+msgstr "Mô Phỏng"
 
 
 msgid "Show Simulation data-blocks"
@@ -21000,14 +20996,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Không tô đầy đa giác khi đang biên tập"
 
 
-msgid "Attributes"
-msgstr "Các Đặc Điểm"
-
-
-msgid "Geometry attributes"
-msgstr "Các đặc điểm của hình dạng"
-
-
 msgid "Freestyle Line Style"
 msgstr "Phong Cách Nét Vẽ Tự Do"
 
@@ -22192,24 +22180,12 @@ msgid "Pixels"
 msgstr "Điểm Ảnh"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "Điểm ảnh bằng giá trị số thật dấu phẫy động"
-
-
 msgid "Render Slots"
 msgstr "Khe Kết Xuất"
 
 
 msgid "Render slots of the image"
 msgstr "Các khe kết xuất của ảnh"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Điểm ảnh X/Y mỗi mét"
-
-
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "Chiều rộng và cao (điểm ảnh), nó bằng không khi không thể nhập dữ liệu ảnh"
 
 
 msgid "Where the image comes from"
@@ -23322,6 +23298,14 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Cục dữ liệu cho chỉ định bề mặt hình dạng"
 
 
+msgid "Attributes"
+msgstr "Các Đặc Điểm"
+
+
+msgid "Geometry attributes"
+msgstr "Các đặc điểm của hình dạng"
+
+
 msgid "Auto Smooth Angle"
 msgstr "Góc Tự Động Mịn Hóa"
 
@@ -23764,6 +23748,10 @@ msgstr "Số bức cảnh toàn cầu thì phim này sẽ bắt đầu hát (nó
 
 msgid "Grease pencil data for this movie clip"
 msgstr "Dữ liệu bút sáp cho đoạn phim này"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "Chiều rộng và cao (điểm ảnh), nó bằng không khi không thể nhập dữ liệu ảnh"
 
 
 msgid "Where the clip comes from"
@@ -32275,11 +32263,6 @@ msgstr "Biên Tập"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "ĐOẠN_PHIM_MT_đoạn_phim"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Đoạn Phim"
 
@@ -32461,11 +32444,6 @@ msgstr "Danh Bạ Bối Cảnh Thông Tin"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MẶTNẠ_MT_thêm"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Cộng"
 
@@ -32482,22 +32460,12 @@ msgid "Vertex Group Specials"
 msgstr "Đồ Đặc Biệt Nhóm Đỉnh"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_thêm"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "Danh Bạ Bối Cảnh Kênh NLA"
 
 
 msgid "NLA Context Menu"
 msgstr "Danh Bạ Bối Cảnh NLA"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "GIAO_ĐIỂM_MT_thêm"
 
 
 msgid "Converter"
@@ -32566,11 +32534,6 @@ msgstr "Tôc Độ Bức Đặt Sẵn"
 
 msgid "Lineset Specials"
 msgstr "Tập Đường Đặc Biệt"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "BỘ_TRÌNH_TỰ_MT_thêm"
 
 
 msgid "Effect Strip"
@@ -32653,11 +32616,6 @@ msgid "System"
 msgstr "Hệ Thống"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "THANH_TRÊN_MT_thêm_đường_cong_biên_tập"
-
-
 msgid "File"
 msgstr "Tập Tin"
 
@@ -32726,11 +32684,6 @@ msgstr "Phím Đặt Sẵn"
 
 msgid "Save & Load"
 msgstr "Lưu & Nhập"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "HIỂN_THỊ_3D_MT_thêm"
 
 
 msgid "Angle Control"
@@ -51795,6 +51748,10 @@ msgid "Remove attribute from geometry"
 msgstr "Xóa đặc điểm từ hình dạng"
 
 
+msgid "Default fill color"
+msgstr "Màu mặc định cho tô tràn"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Chọn Đồ Đạc"
@@ -54557,10 +54514,6 @@ msgstr "Chế tạo ảnh mới"
 
 msgid "Create an image with an alpha channel"
 msgstr "Chế tạo ảnh có kênh độ đục"
-
-
-msgid "Default fill color"
-msgstr "Màu mặc định cho tô tràn"
 
 
 msgid "32-bit Float"
@@ -76676,22 +76629,12 @@ msgid "Solve"
 msgstr "Giải"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Dụng Cụ Mặt Nạ"
 
 
 msgid "Transforms"
 msgstr "Biến Hóa"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -77184,11 +77127,6 @@ msgid "Boid Brain"
 msgstr "Ốc Quần thể"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "HẠT_PT_con_cái"
-
-
 msgid "Clumping"
 msgstr "Dính Bó"
 
@@ -77618,11 +77556,6 @@ msgstr "Bộ Biên Tập Tạm Thời"
 
 msgid "Text Rendering"
 msgstr "Kết Xuất Văn Bản"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "TÙY_CHỌN_NGƯỜI_DÙNG_PT_tùy_chọn"
 
 
 msgctxt "WindowManager"
@@ -79129,6 +79062,10 @@ msgstr "Sưu tập đường dẫn"
 
 msgid "Point in a point cloud"
 msgstr "Điểm trong một mây điểm"
+
+
+msgid "Index of this points"
+msgstr "Chỉ số của các điểm này"
 
 
 msgid "Active Point Cache"

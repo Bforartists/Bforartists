@@ -745,8 +745,8 @@ struct DRWCacheBuildingContext {
   /* Origindex layers from the mesh to directly look up during traversal the origindex from the
    * base mesh for edit data so that we do not have to handle yet another GPU buffer and do this in
    * the shaders. */
-  int *v_origindex;
-  int *e_origindex;
+  const int *v_origindex;
+  const int *e_origindex;
 };
 
 static bool draw_subdiv_topology_info_cb(const SubdivForeachContext *foreach_context,
@@ -1904,7 +1904,6 @@ static bool draw_subdiv_create_requested_buffers(const Scene *scene,
                                                  const float obmat[4][4],
                                                  const bool do_final,
                                                  const bool do_uvedit,
-                                                 const bool /*use_subsurf_fdots*/,
                                                  const ToolSettings *ts,
                                                  const bool /*use_hide*/,
                                                  OpenSubdiv_EvaluatorCache *evaluator_cache)
@@ -2103,7 +2102,6 @@ void DRW_create_subdivision(const Scene *scene,
                             const float obmat[4][4],
                             const bool do_final,
                             const bool do_uvedit,
-                            const bool use_subsurf_fdots,
                             const ToolSettings *ts,
                             const bool use_hide)
 {
@@ -2128,7 +2126,6 @@ void DRW_create_subdivision(const Scene *scene,
                                             obmat,
                                             do_final,
                                             do_uvedit,
-                                            use_subsurf_fdots,
                                             ts,
                                             use_hide,
                                             g_evaluator_cache)) {

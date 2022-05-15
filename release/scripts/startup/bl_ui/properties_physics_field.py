@@ -77,7 +77,6 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
 
         elif field.type == 'GUIDE':
             col = flow.column()
-            col.prop(field, "guide_minimum")
             col.prop(field, "guide_free")
             col.prop(field, "falloff_power")
 
