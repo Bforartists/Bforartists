@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1739,14 +1739,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "グリースペンシルデータブロック"
 
 
-msgid "Hair Curves"
-msgstr "ヘアーカーブ"
-
-
-msgid "Hair curve data-blocks"
-msgstr "ヘアーカーブデータブロック"
-
-
 msgid "Images"
 msgstr "画像"
 
@@ -1923,14 +1915,6 @@ msgid "Shape Key data-blocks"
 msgstr "シェイプキーデータブロック"
 
 
-msgid "Simulations"
-msgstr "シミュレーション"
-
-
-msgid "Simulation data-blocks"
-msgstr "シミュレーションデータブロック"
-
-
 msgid "Sounds"
 msgstr "サウンド"
 
@@ -2083,14 +2067,6 @@ msgid "Collection of grease pencils"
 msgstr "グリースペンシルの集合"
 
 
-msgid "Main Hair Curves"
-msgstr "メインヘアーカーブ"
-
-
-msgid "Collection of hair curves"
-msgstr "ヘアーカーブの集合"
-
-
 msgid "Main Images"
 msgstr "メイン画像"
 
@@ -2241,14 +2217,6 @@ msgstr "メインスクリーン"
 
 msgid "Collection of screens"
 msgstr "スクリーンの集合"
-
-
-msgid "Main Simulations"
-msgstr "メインシミュレーション"
-
-
-msgid "Collection of simulations"
-msgstr "シミュレーションの集合"
 
 
 msgid "Main Sounds"
@@ -8527,26 +8495,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "深度にストロークの最初を使用します"
 
 
-msgid "Curve Point"
-msgstr "カーブポイント"
-
-
-msgid "Curve curve control point"
-msgstr "カーブの制御点"
-
-
-msgid "Index"
-msgstr "インデックス"
-
-
-msgid "Index of this points"
-msgstr "このポイントのインデックス"
-
-
-msgid "Radius"
-msgstr "半径"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "断面パスの作成に使用する断面パスエディター"
 
@@ -8651,34 +8599,6 @@ msgid "Collection of Profile Points"
 msgstr "断面ポイントの集合"
 
 
-msgid "Curve Slice"
-msgstr "カーブスライス"
-
-
-msgid "First Point Index"
-msgstr "最初のインデックス"
-
-
-msgid "The index of this curve's first control point"
-msgstr "このカーブの最初の制御点のインデックス"
-
-
-msgid "Index of this curve"
-msgstr "このカーブのインデックス"
-
-
-msgid "Control points of the curve"
-msgstr "カーブの制御点"
-
-
-msgid "Number of Points"
-msgstr "ポイント数"
-
-
-msgid "Number of control points in the curve"
-msgstr "カーブ中の制御点の数"
-
-
 msgid "Curve Splines"
 msgstr "カーブスプライン"
 
@@ -8735,6 +8655,10 @@ msgstr "点線セグメントの名前"
 
 msgid "The factor to apply to the original point's opacity for the new points"
 msgstr "元のポイントの不透明度を新しいポイントに適用する係数"
+
+
+msgid "Radius"
+msgstr "半径"
 
 
 msgid "The factor to apply to the original point's radius for the new points"
@@ -11654,6 +11578,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "面のグループ。各面は一つのマップにのみ属せます"
 
 
+msgid "Index"
+msgstr "インデックス"
+
+
 msgid "Index number of the face map"
 msgstr "フェイスマップのインデックス番号"
 
@@ -12177,6 +12105,10 @@ msgid "Show Curve data-blocks"
 msgstr "カーブデータブロックを表示します"
 
 
+msgid "Hair Curves"
+msgstr "ヘアーカーブ"
+
+
 msgid "Show/hide Curves data-blocks"
 msgstr "ヘアーカーブデータブロックを表示/隠します"
 
@@ -12255,6 +12187,10 @@ msgstr "ポイントクラウドデータブロックを表示/隠します"
 
 msgid "Show Scene data-blocks"
 msgstr "シーンデータブロックを表示します"
+
+
+msgid "Simulations"
+msgstr "シミュレーション"
 
 
 msgid "Show Simulation data-blocks"
@@ -21602,34 +21538,6 @@ msgid "Don't fill polygons while editing"
 msgstr "編集中はポリゴンを埋めない"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "ヘアーカーブ用のヘアーデータブロック"
-
-
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "ジオメトリ属性"
-
-
-msgid "Geometry color attributes"
-msgstr "ジオメトリカラー属性"
-
-
-msgid "All curves in the data-block"
-msgstr "データブロック内の全ヘアーカーブ"
-
-
-msgid "Control points of all curves"
-msgstr "全カーブの制御点"
-
-
-msgid "Mesh object that the curves can be attached to"
-msgstr "カーブが付着可能なメッシュオブジェクト"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyleラインスタイル"
 
@@ -22830,24 +22738,12 @@ msgid "Pixels"
 msgstr "ピクセル"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "画像のピクセル数（浮動小数点数値）"
-
-
 msgid "Render Slots"
 msgstr "レンダースロット"
 
 
 msgid "Render slots of the image"
 msgstr "画像のレンダースロット"
-
-
-msgid "X/Y pixels per meter"
-msgstr "メートル当たりの X と Y のピクセル数"
-
-
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "幅と高さ（ピクセル数）。画像データが読み込めないときは0"
 
 
 msgid "Where the image comes from"
@@ -23966,12 +23862,24 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "サーフェス形状を定義するメッシュデータブロック"
 
 
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "ジオメトリ属性"
+
+
 msgid "Auto Smooth Angle"
 msgstr "自動スムーズの角度"
 
 
 msgid "Maximum angle between face normals that will be considered as smooth (unused if custom split normals data are available)"
 msgstr "スムーズとみなされる、面の法線間の最大角度（カスタム分割法線データが利用可能な場合は無視されます）"
+
+
+msgid "Geometry color attributes"
+msgstr "ジオメトリカラー属性"
 
 
 msgid "Edges"
@@ -24414,6 +24322,10 @@ msgstr ""
 
 msgid "Grease pencil data for this movie clip"
 msgstr "この動画クリップのグリースペンシルデータ"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "幅と高さ（ピクセル数）。画像データが読み込めないときは0"
 
 
 msgid "Where the clip comes from"
@@ -27281,14 +27193,6 @@ msgstr "シーケンサーエディター"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上3Dビューのみ同期"
-
-
-msgid "Simulation data-block"
-msgstr "シミュレーションデータブロック"
-
-
-msgid "Node tree defining the simulation"
-msgstr "シミュレーションを定義するノードツリー"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -33162,11 +33066,6 @@ msgstr "編集"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "クリップ"
 
@@ -33348,11 +33247,6 @@ msgstr "情報コンテクストメニュー"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "追加"
 
@@ -33369,22 +33263,12 @@ msgid "Vertex Group Specials"
 msgstr "頂点グループスペシャル"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "NLAチャンネルコンテクストメニュー"
 
 
 msgid "NLA Context Menu"
 msgstr "NLAコンテクストメニュー"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -33453,11 +33337,6 @@ msgstr "フレームレートのプリセット"
 
 msgid "Lineset Specials"
 msgstr "ラインセットスペシャル"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -33540,11 +33419,6 @@ msgid "System"
 msgstr "システム"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "ファイル"
 
@@ -33613,11 +33487,6 @@ msgstr "キープリセット"
 
 msgid "Save & Load"
 msgstr "セーブ＆ロード"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -53089,6 +52958,10 @@ msgid "Remove attribute from geometry"
 msgstr "形状から属性を削除します"
 
 
+msgid "Default fill color"
+msgstr "デフォルトの塗りつぶし色"
+
+
 msgctxt "Operator"
 msgid "Remove Color Attribute"
 msgstr "カラー属性を削除"
@@ -56089,10 +55962,6 @@ msgstr "新しい画像を作成します"
 
 msgid "Create an image with an alpha channel"
 msgstr "アルファチャンネル付きで画像を作成します"
-
-
-msgid "Default fill color"
-msgstr "デフォルトの塗りつぶし色"
 
 
 msgid "32-bit Float"
@@ -62243,16 +62112,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "メッシュ/テキストからカーブ"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "カーブ/サーフェス/メタボール/テキスト/ポイントクラウドからメッシュ"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "カーブ/メッシュからグリースペンシル"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "メッシュからポイントクラウド"
 
 
 msgctxt "Operator"
@@ -78760,22 +78621,12 @@ msgid "Solve"
 msgstr "解析"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "マスクツール"
 
 
 msgid "Transforms"
 msgstr "トランスフォーム"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -79272,11 +79123,6 @@ msgid "Boid Brain"
 msgstr "ボイドAI"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "集結"
 
@@ -79710,11 +79556,6 @@ msgstr "一時エディター"
 
 msgid "Text Rendering"
 msgstr "テキストレンダリング"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"
@@ -81222,6 +81063,10 @@ msgstr "パスの集合"
 
 msgid "Point in a point cloud"
 msgstr "ポイントクラウド内のポイント"
+
+
+msgid "Index of this points"
+msgstr "このポイントのインデックス"
 
 
 msgid "Active Point Cache"

@@ -21,6 +21,7 @@
 #include "BKE_collection.h"
 #include "BKE_customdata.h"
 #include "BKE_deform.h"
+#include "BKE_duplilist.h"
 #include "BKE_editmesh.h"
 #include "BKE_global.h"
 #include "BKE_gpencil.h"
@@ -2358,18 +2359,21 @@ static void lineart_geometry_load_assign_thread(LineartObjectLoadTaskInfo *olti_
 static bool lineart_geometry_check_visible(double (*model_view_proj)[4],
                                            double shift_x,
                                            double shift_y,
-                                           Object *use_ob)
+                                           Mesh *use_mesh)
 {
-  const BoundBox *bb = BKE_object_boundbox_get(use_ob);
-  if (!bb) {
-    /* For lights and empty stuff there will be no bbox. */
+  if (!use_mesh) {
     return false;
   }
+  float mesh_min[3], mesh_max[3];
+  INIT_MINMAX(mesh_min, mesh_max);
+  BKE_mesh_minmax(use_mesh, mesh_min, mesh_max);
+  BoundBox bb = {0};
+  BKE_boundbox_init_from_minmax(&bb, mesh_min, mesh_max);
 
   double co[8][4];
   double tmp[3];
   for (int i = 0; i < 8; i++) {
-    copy_v3db_v3fl(co[i], bb->vec[i]);
+    copy_v3db_v3fl(co[i], bb.vec[i]);
     copy_v3_v3_db(tmp, co[i]);
     mul_v4_m4v3_db(co[i], model_view_proj, tmp);
     co[i][0] -= shift_x * 2 * co[i][3];
@@ -2393,6 +2397,64 @@ static bool lineart_geometry_check_visible(double (*model_view_proj)[4],
     }
   }
   return true;
+}
+
+static void lineart_object_load_single_instance(LineartRenderBuffer *rb,
+                                                Depsgraph *depsgraph,
+                                                Scene *scene,
+                                                Object *ob,
+                                                Object *ref_ob,
+                                                float use_mat[4][4],
+                                                bool is_render,
+                                                LineartObjectLoadTaskInfo *olti,
+                                                int thread_count)
+{
+  LineartObjectInfo *obi = lineart_mem_acquire(&rb->render_data_pool, sizeof(LineartObjectInfo));
+  obi->usage = lineart_usage_check(scene->master_collection, ob, is_render);
+  obi->override_intersection_mask = lineart_intersection_mask_check(scene->master_collection, ob);
+  Mesh *use_mesh;
+
+  if (obi->usage == OBJECT_LRT_EXCLUDE) {
+    return;
+  }
+
+  /* Prepare the matrix used for transforming this specific object (instance). This has to be
+   * done before mesh boundbox check because the function needs that. */
+  mul_m4db_m4db_m4fl_uniq(obi->model_view_proj, rb->view_projection, use_mat);
+  mul_m4db_m4db_m4fl_uniq(obi->model_view, rb->view, use_mat);
+
+  if (!ELEM(ob->type, OB_MESH, OB_MBALL, OB_CURVES_LEGACY, OB_SURF, OB_FONT)) {
+    return;
+  }
+  if (ob->type == OB_MESH) {
+    use_mesh = BKE_object_get_evaluated_mesh(ob);
+  }
+  else {
+    use_mesh = BKE_mesh_new_from_object(depsgraph, ob, true, true);
+  }
+
+  /* In case we still can not get any mesh geometry data from the object */
+  if (!use_mesh) {
+    return;
+  }
+
+  if (!lineart_geometry_check_visible(obi->model_view_proj, rb->shift_x, rb->shift_y, use_mesh)) {
+    return;
+  }
+
+  if (ob->type != OB_MESH) {
+    obi->free_use_mesh = true;
+  }
+
+  /* Make normal matrix. */
+  float imat[4][4];
+  invert_m4_m4(imat, use_mat);
+  transpose_m4(imat);
+  copy_m4d_m4(obi->normal, imat);
+
+  obi->original_me = use_mesh;
+  obi->original_ob = (ref_ob->id.orig_id ? (Object *)ref_ob->id.orig_id : (Object *)ref_ob);
+  lineart_geometry_load_assign_thread(olti, obi, thread_count, use_mesh->totpoly);
 }
 
 static void lineart_main_load_geometries(
@@ -2443,14 +2505,6 @@ static void lineart_main_load_geometries(
   BLI_listbase_clear(&rb->triangle_buffer_pointers);
   BLI_listbase_clear(&rb->vertex_buffer_pointers);
 
-  int flags = DEG_ITER_OBJECT_FLAG_LINKED_DIRECTLY | DEG_ITER_OBJECT_FLAG_LINKED_VIA_SET |
-              DEG_ITER_OBJECT_FLAG_VISIBLE;
-
-  /* Instance duplicated & particles. */
-  if (allow_duplicates) {
-    flags |= DEG_ITER_OBJECT_FLAG_DUPLI;
-  }
-
   int thread_count = rb->thread_count;
 
   /* This memory is in render buffer memory pool. so we don't need to free those after loading.
@@ -2458,69 +2512,34 @@ static void lineart_main_load_geometries(
   LineartObjectLoadTaskInfo *olti = lineart_mem_acquire(
       &rb->render_data_pool, sizeof(LineartObjectLoadTaskInfo) * thread_count);
 
-  bool is_render = DEG_get_mode(depsgraph) == DAG_EVAL_RENDER;
+  eEvaluationMode eval_mode = DEG_get_mode(depsgraph);
+  bool is_render = eval_mode == DAG_EVAL_RENDER;
 
-  DEG_OBJECT_ITER_BEGIN (depsgraph, ob, flags) {
-    LineartObjectInfo *obi = lineart_mem_acquire(&rb->render_data_pool, sizeof(LineartObjectInfo));
-    obi->usage = lineart_usage_check(scene->master_collection, ob, is_render);
-    obi->override_intersection_mask = lineart_intersection_mask_check(scene->master_collection,
-                                                                      ob);
-    Mesh *use_mesh;
+  FOREACH_SCENE_OBJECT_BEGIN (scene, ob) {
+    Object *eval_ob = DEG_get_evaluated_object(depsgraph, ob);
 
-    if (obi->usage == OBJECT_LRT_EXCLUDE) {
+    if (!eval_ob) {
       continue;
     }
 
-    Object *use_ob = DEG_get_evaluated_object(depsgraph, ob);
-    /* Prepare the matrix used for transforming this specific object (instance). This has to be
-     * done before mesh boundbox check because the function needs that. */
-    mul_m4db_m4db_m4fl_uniq(obi->model_view_proj, rb->view_projection, ob->obmat);
-    mul_m4db_m4db_m4fl_uniq(obi->model_view, rb->view, ob->obmat);
-
-    if (!ELEM(use_ob->type, OB_MESH, OB_MBALL, OB_CURVES_LEGACY, OB_SURF, OB_FONT)) {
-      continue;
+    if (BKE_object_visibility(eval_ob, eval_mode) & OB_VISIBLE_SELF) {
+      lineart_object_load_single_instance(
+          rb, depsgraph, scene, eval_ob, eval_ob, eval_ob->obmat, is_render, olti, thread_count);
     }
-
-    if (!lineart_geometry_check_visible(obi->model_view_proj, rb->shift_x, rb->shift_y, use_ob)) {
-      if (G.debug_value == 4000) {
-        bound_box_discard_count++;
+    if (allow_duplicates) {
+      ListBase *dupli = object_duplilist(depsgraph, scene, eval_ob);
+      LISTBASE_FOREACH (DupliObject *, dob, dupli) {
+        if (BKE_object_visibility(eval_ob, eval_mode) &
+            (OB_VISIBLE_PARTICLES | OB_VISIBLE_INSTANCES)) {
+          Object *ob_ref = (dob->type & OB_DUPLIPARTS) ? eval_ob : dob->ob;
+          lineart_object_load_single_instance(
+              rb, depsgraph, scene, dob->ob, ob_ref, dob->mat, is_render, olti, thread_count);
+        }
       }
-      continue;
+      free_object_duplilist(dupli);
     }
-
-    if (use_ob->type == OB_MESH) {
-      use_mesh = BKE_object_get_evaluated_mesh(use_ob);
-    }
-    else {
-      /* If DEG_ITER_OBJECT_FLAG_DUPLI is set, some curve objects may also have an evaluated mesh
-       * object in the list. To avoid adding duplicate geometry, ignore evaluated curve objects
-       * in those cases. */
-      if (allow_duplicates && BKE_object_get_evaluated_mesh(ob) != NULL) {
-        continue;
-      }
-      use_mesh = BKE_mesh_new_from_object(depsgraph, use_ob, true, true);
-    }
-
-    /* In case we still can not get any mesh geometry data from the object */
-    if (!use_mesh) {
-      continue;
-    }
-
-    if (ob->type != OB_MESH) {
-      obi->free_use_mesh = true;
-    }
-
-    /* Make normal matrix. */
-    float imat[4][4];
-    invert_m4_m4(imat, ob->obmat);
-    transpose_m4(imat);
-    copy_m4d_m4(obi->normal, imat);
-
-    obi->original_me = use_mesh;
-    obi->original_ob = (ob->id.orig_id ? (Object *)ob->id.orig_id : (Object *)ob);
-    lineart_geometry_load_assign_thread(olti, obi, thread_count, use_mesh->totpoly);
   }
-  DEG_OBJECT_ITER_END;
+  FOREACH_SCENE_OBJECT_END;
 
   TaskPool *tp = BLI_task_pool_create(NULL, TASK_PRIORITY_HIGH);
 

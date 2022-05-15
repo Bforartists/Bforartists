@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -5032,14 +5032,6 @@ msgid "View"
 msgstr "ﺮﻈﻨﻣ"
 
 
-msgid "Index"
-msgstr "ﺮﺷﺆﻤﻟﺍ"
-
-
-msgid "Radius"
-msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
-
-
 msgid "Steps"
 msgstr "ﺕﺍﻮﻄﺧ"
 
@@ -5058,6 +5050,10 @@ msgstr "ﻑﺬﻗﺍ"
 
 msgid "Material Index"
 msgstr "ﺔﻣﺎﺧ ﺮﺷﺆﻣ"
+
+
+msgid "Radius"
+msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
 
 
 msgid "Dependency Graph"
@@ -7067,6 +7063,10 @@ msgstr "ﻩﺬﻫ ﻢﻜﺤﺘﻟﺍ ﺔﻄﻘﻧ ﻲﻓ ﻒﻠﻐﻤﻠﻟ ﺎ�
 
 msgid "Lower bound of envelope at this control-point"
 msgstr "ﻩﺬﻫ ﻢﻜﺤﺘﻟﺍ ﺔﻄﻘﻧ ﻲﻓ ﻒﻠﻐﻤﻠﻟ ﻰﻠﻔﺴﻟﺍ ﺩﻭﺪﺤﻟﺍ"
+
+
+msgid "Index"
+msgstr "ﺮﺷﺆﻤﻟﺍ"
 
 
 msgid "Field Settings"
@@ -11437,10 +11437,6 @@ msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺬﻓﺎﻨﻣ"
 
 msgid "Render slots of the image"
 msgstr "ﺓﺭﻮﺼﻠﻟ ﺮﻴﻴﺼﺘﻟﺍ ﺕﺎﺤﺘﻓ"
-
-
-msgid "X/Y pixels per meter"
-msgstr "X/Y ﺮﺘﻣ ﻞﻜﻟ ﺕﻼ﻿ﺴﻜﺑ"
 
 
 msgid "Where the image comes from"

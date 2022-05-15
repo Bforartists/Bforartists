@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1880,10 +1880,6 @@ msgstr "Formas clave"
 
 msgid "Shape Key data-blocks"
 msgstr "Bloques de datos de Forma clave"
-
-
-msgid "Simulations"
-msgstr "Simulaciones"
 
 
 msgid "Sounds"
@@ -8299,18 +8295,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Permite usar el inicio del trazo para definir la profundidad"
 
 
-msgid "Index"
-msgstr "Identificador"
-
-
-msgid "Index of this points"
-msgstr "Identificador de este punto"
-
-
-msgid "Radius"
-msgstr "Radio"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Editor de curva de perfil usado para construir una curva de perfil"
 
@@ -8469,6 +8453,10 @@ msgstr "Nombre del segmento del punteado"
 
 msgid "The factor to apply to the original point's opacity for the new points"
 msgstr "El factor a ser aplicado a la opacidad original del punto para los nuevos puntos"
+
+
+msgid "Radius"
+msgstr "Radio"
 
 
 msgid "The factor to apply to the original point's radius for the new points"
@@ -11363,6 +11351,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Grupo de caras, cada una sólo puede ser parte de un mapa"
 
 
+msgid "Index"
+msgstr "Identificador"
+
+
 msgid "Index number of the face map"
 msgstr "Identificador numérico del mapa de caras"
 
@@ -11957,6 +11949,10 @@ msgstr "Mostrar bloques de datos de nubes de puntos"
 
 msgid "Show Scene data-blocks"
 msgstr "Mostrar bloques de datos de escena"
+
+
+msgid "Simulations"
+msgstr "Simulaciones"
 
 
 msgid "Show Simulation data-blocks"
@@ -21000,14 +20996,6 @@ msgid "Don't fill polygons while editing"
 msgstr "No rellenar los polígonos durante la edición"
 
 
-msgid "Attributes"
-msgstr "Atributos"
-
-
-msgid "Geometry attributes"
-msgstr "Atributos de la geometría"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyle - Estilo de línea"
 
@@ -22192,24 +22180,12 @@ msgid "Pixels"
 msgstr "Píxeles"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "Píxeles de la imagen usando valores decimales"
-
-
 msgid "Render Slots"
 msgstr "Contenedores de procesamiento"
 
 
 msgid "Render slots of the image"
 msgstr "Contenedores de procesamiento de la imagen"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Píxeles en X e Y por metro"
-
-
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "Ancho y altura en píxeles, cero cuando los datos de la imagen no puedan ser cargados"
 
 
 msgid "Where the image comes from"
@@ -23322,6 +23298,14 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloque de datos de malla que define la superficie de la geometría"
 
 
+msgid "Attributes"
+msgstr "Atributos"
+
+
+msgid "Geometry attributes"
+msgstr "Atributos de la geometría"
+
+
 msgid "Auto Smooth Angle"
 msgstr "Ángulo suavizado automático"
 
@@ -23764,6 +23748,10 @@ msgstr "Número del fotograma global de la escena en el cual esta película comi
 
 msgid "Grease pencil data for this movie clip"
 msgstr "Datos del lápiz de cera para este clip de película"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "Ancho y altura en píxeles, cero cuando los datos de la imagen no puedan ser cargados"
 
 
 msgid "Where the clip comes from"
@@ -32275,11 +32263,6 @@ msgstr "Editar"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Clip"
 
@@ -32461,11 +32444,6 @@ msgstr "Información - Menú contextual"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Agregar"
 
@@ -32482,22 +32460,12 @@ msgid "Vertex Group Specials"
 msgstr "Especiales de grupos de vértices"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "Canal de ANL - menú contextual"
 
 
 msgid "NLA Context Menu"
 msgstr "ANL - menú contextual"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -32566,11 +32534,6 @@ msgstr "Ajustes de velocidad"
 
 msgid "Lineset Specials"
 msgstr "Especiales de conjuntos de líneas"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -32653,11 +32616,6 @@ msgid "System"
 msgstr "Sistema"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "Archivo"
 
@@ -32726,11 +32684,6 @@ msgstr "Ajustes de claves"
 
 msgid "Save & Load"
 msgstr "Guardar y cargar"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -51795,6 +51748,10 @@ msgid "Remove attribute from geometry"
 msgstr "Elimina un atributo de la geometría"
 
 
+msgid "Default fill color"
+msgstr "Color predefinido de relleno"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Seleccionar manipulador"
@@ -54557,10 +54514,6 @@ msgstr "Crea una nueva imagen"
 
 msgid "Create an image with an alpha channel"
 msgstr "Crea una imagen con canal alfa"
-
-
-msgid "Default fill color"
-msgstr "Color predefinido de relleno"
 
 
 msgid "32-bit Float"
@@ -76676,22 +76629,12 @@ msgid "Solve"
 msgstr "Calcular"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Herramientas de máscara"
 
 
 msgid "Transforms"
 msgstr "Transformaciones"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -77184,11 +77127,6 @@ msgid "Boid Brain"
 msgstr "Cerebro Boid"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "Mechones"
 
@@ -77618,11 +77556,6 @@ msgstr "Editores temporales"
 
 msgid "Text Rendering"
 msgstr "Procesamiento de texto"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"
@@ -79129,6 +79062,10 @@ msgstr "Colección de rutas"
 
 msgid "Point in a point cloud"
 msgstr "Punto de una nube de puntos"
+
+
+msgid "Index of this points"
+msgstr "Identificador de este punto"
 
 
 msgid "Active Point Cache"

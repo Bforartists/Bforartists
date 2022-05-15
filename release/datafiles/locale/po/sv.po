@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2758,10 +2758,6 @@ msgid "View"
 msgstr "Visa"
 
 
-msgid "Radius"
-msgstr "Radie"
-
-
 msgid "Steps"
 msgstr "Steg"
 
@@ -2780,6 +2776,10 @@ msgstr "Streckad"
 
 msgid "Material Index"
 msgstr "Spara som"
+
+
+msgid "Radius"
+msgstr "Radie"
 
 
 msgid "Viewport"
@@ -5713,10 +5713,6 @@ msgstr "Radera Allt"
 
 msgid "Pixels"
 msgstr "Lägg till Stripp"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Starta Spel"
 
 
 msgid "Where the image comes from"
@@ -15021,6 +15017,10 @@ msgid "Unlink"
 msgstr "Göm Markerad"
 
 
+msgid "Default fill color"
+msgstr "Special"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Flytta Till Lager"
@@ -15387,10 +15387,6 @@ msgstr "Bild Zoom"
 
 msgid "Create a new image"
 msgstr "Rensa Rotation"
-
-
-msgid "Default fill color"
-msgstr "Special"
 
 
 msgid "32-bit Float"
