@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1796,10 +1796,6 @@ msgstr "Formschlüssel"
 
 msgid "Shape Key data-blocks"
 msgstr "Formschlüssel-Datenblöcke"
-
-
-msgid "Simulations"
-msgstr "Simulationen"
 
 
 msgid "Sounds"
@@ -7219,14 +7215,6 @@ msgid "Only First"
 msgstr "Nur erstes"
 
 
-msgid "Index"
-msgstr "Index"
-
-
-msgid "Radius"
-msgstr "Radius"
-
-
 msgid "Profile control points"
 msgstr "Profil Kontrollpunkte"
 
@@ -7289,6 +7277,10 @@ msgstr "Lücke"
 
 msgid "Material Index"
 msgstr "Material-Index"
+
+
+msgid "Radius"
+msgstr "Radius"
 
 
 msgid "IDs"
@@ -9251,6 +9243,10 @@ msgid "Face Map"
 msgstr "Oberflächenkarte"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Index number of the face map"
 msgstr "Indexnummer einer Oberflächenkarte"
 
@@ -9617,6 +9613,10 @@ msgstr "Punkt Wolken-Datenblöcke anzeigen/verstecken"
 
 msgid "Show Scene data-blocks"
 msgstr "Szenen-Datenblöcke anzeigen"
+
+
+msgid "Simulations"
+msgstr "Simulationen"
 
 
 msgid "Show Simulation data-blocks"
@@ -13799,10 +13799,6 @@ msgid "Fast Editing"
 msgstr "Schnellbearbeitung"
 
 
-msgid "Attributes"
-msgstr "Eigenschaften"
-
-
 msgid "Active Texture"
 msgstr "Aktive Textur"
 
@@ -14547,10 +14543,6 @@ msgid "Render slots of the image"
 msgstr "Rendersteckplatz des Bildes"
 
 
-msgid "X/Y pixels per meter"
-msgstr "X/Y Pixel pro Meter"
-
-
 msgid "Where the image comes from"
 msgstr "Woher das Bild stammt"
 
@@ -15091,6 +15083,10 @@ msgstr "Shader-Knoten verwenden, um Material zu rendern"
 
 msgid "Preview World"
 msgstr "Weltvorschau"
+
+
+msgid "Attributes"
+msgstr "Eigenschaften"
 
 
 msgid "Auto Smooth Angle"
@@ -20075,11 +20071,6 @@ msgstr "Bearbeiten"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Clip"
 
@@ -20218,11 +20209,6 @@ msgstr "Auspacken"
 
 msgid "Info Context Menu"
 msgstr "Info Kontextmenü"
-
-
-msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
 
 
 msgctxt "Operator"

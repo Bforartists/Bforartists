@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -1545,10 +1545,6 @@ msgstr "Chaves de formato"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocos de dados de chaves de formato."
-
-
-msgid "Simulations"
-msgstr "Simulações"
 
 
 msgid "Sounds"
@@ -6368,14 +6364,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa as terminações iniciais dos traços para definir a profundidade."
 
 
-msgid "Index"
-msgstr "Índice"
-
-
-msgid "Radius"
-msgstr "Raio"
-
-
 msgid "Preset"
 msgstr "Predefinições"
 
@@ -6418,6 +6406,10 @@ msgstr "Índice do material"
 
 msgid "Name of the dash segment"
 msgstr "Nome do tracejado"
+
+
+msgid "Radius"
+msgstr "Raio"
 
 
 msgid "Dependency Graph"
@@ -8921,6 +8913,10 @@ msgid "Face Map"
 msgstr "Mapa de Face"
 
 
+msgid "Index"
+msgstr "Índice"
+
+
 msgid "Field Settings"
 msgstr "Configurações de campo"
 
@@ -9339,6 +9335,10 @@ msgstr "Freestyle - Estilos de linhas"
 
 msgid "Particles Settings"
 msgstr "Configurações de partículas"
+
+
+msgid "Simulations"
+msgstr "Simulações"
 
 
 msgid "Node Trees"
@@ -14463,10 +14463,6 @@ msgstr "Compartimentos de renderização"
 
 msgid "Render slots of the image"
 msgstr "Compartimentos de renderização da imagem."
-
-
-msgid "X/Y pixels per meter"
-msgstr "Pixeis por metro em X e Y."
 
 
 msgid "Where the image comes from"
@@ -22332,11 +22328,6 @@ msgstr "Nome do compartimento do material."
 
 msgid "Edit"
 msgstr "Editar"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "Clipe de captura de movimentos"
 
 
 msgctxt "MovieClip"
@@ -36397,6 +36388,10 @@ msgid "Generic"
 msgstr "Genérico"
 
 
+msgid "Default fill color"
+msgstr "Cor de preenchimento padrão."
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Apetrecho Selecionar"
@@ -38137,10 +38132,6 @@ msgstr "Cria uma nova imagem."
 
 msgid "Create an image with an alpha channel"
 msgstr "Cria uma imagem com um canal alfa."
-
-
-msgid "Default fill color"
-msgstr "Cor de preenchimento padrão."
 
 
 msgid "32-bit Float"
@@ -53622,18 +53613,8 @@ msgid "Solve"
 msgstr "Solucionar"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "Painel com definições de clipes para o rastreamento"
-
-
 msgid "Transforms"
 msgstr "Transformações"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "Painel com definições de cena para o rastreamento"
 
 
 msgctxt "MovieClip"

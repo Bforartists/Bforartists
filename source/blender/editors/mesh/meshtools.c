@@ -107,7 +107,7 @@ static void join_mesh_single(Depsgraph *depsgraph,
 
     /* vertex groups */
     MDeformVert *dvert = CustomData_get(vdata, *vertofs, CD_MDEFORMVERT);
-    MDeformVert *dvert_src = CustomData_get(&me->vdata, 0, CD_MDEFORMVERT);
+    const MDeformVert *dvert_src = CustomData_get(&me->vdata, 0, CD_MDEFORMVERT);
 
     /* Remap to correct new vgroup indices, if needed. */
     if (dvert_src) {
@@ -255,7 +255,7 @@ static void join_mesh_single(Depsgraph *depsgraph,
 
     /* Face maps. */
     int *fmap = CustomData_get(pdata, *polyofs, CD_FACEMAP);
-    int *fmap_src = CustomData_get(&me->pdata, 0, CD_FACEMAP);
+    const int *fmap_src = CustomData_get(&me->pdata, 0, CD_FACEMAP);
 
     /* Remap to correct new face-map indices, if needed. */
     if (fmap_src) {
@@ -1273,7 +1273,6 @@ bool ED_mesh_pick_face_vert(
     MLoop *me_eval_mloop;
     MVert *me_eval_mvert;
     uint me_eval_mpoly_len;
-    const int *index_mp_to_orig;
 
     me_eval_mpoly = me_eval->mpoly;
     me_eval_mloop = me_eval->mloop;
@@ -1281,7 +1280,7 @@ bool ED_mesh_pick_face_vert(
 
     me_eval_mpoly_len = me_eval->totpoly;
 
-    index_mp_to_orig = CustomData_get_layer(&me_eval->pdata, CD_ORIGINDEX);
+    const int *index_mp_to_orig = CustomData_get_layer(&me_eval->pdata, CD_ORIGINDEX);
 
     /* tag all verts using this face */
     if (index_mp_to_orig) {
@@ -1313,8 +1312,7 @@ bool ED_mesh_pick_face_vert(
 
     /* map 'dm -> me' r_index if possible */
     if (v_idx_best != ORIGINDEX_NONE) {
-      const int *index_mv_to_orig;
-      index_mv_to_orig = CustomData_get_layer(&me_eval->vdata, CD_ORIGINDEX);
+      const int *index_mv_to_orig = CustomData_get_layer(&me_eval->vdata, CD_ORIGINDEX);
       if (index_mv_to_orig) {
         v_idx_best = index_mv_to_orig[v_idx_best];
       }

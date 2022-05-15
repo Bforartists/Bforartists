@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -995,10 +995,6 @@ msgid "View"
 msgstr "Weergave"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Segments"
 msgstr "Segmenten"
 
@@ -1301,6 +1297,10 @@ msgstr "Standaard Minimum"
 
 msgid "Value Offset"
 msgstr "Waardeverschuiving"
+
+
+msgid "Index"
+msgstr "Index"
 
 
 msgid "Maximum Distance"
@@ -2737,11 +2737,6 @@ msgstr "Bereken Gaten"
 
 msgid "Edit"
 msgstr "Bewerken"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
 
 
 msgctxt "MovieClip"

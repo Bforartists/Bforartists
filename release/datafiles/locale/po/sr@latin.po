@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -2972,14 +2972,6 @@ msgid "View"
 msgstr "Pogled"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
-msgid "Radius"
-msgstr "Radius"
-
-
 msgid "Steps"
 msgstr "Koraka"
 
@@ -2998,6 +2990,10 @@ msgstr "Isprekidano"
 
 msgid "Material Index"
 msgstr "Indeks materijala"
+
+
+msgid "Radius"
+msgstr "Radius"
 
 
 msgid "Render"
@@ -4119,6 +4115,10 @@ msgstr "Kontrolne tačke koverte"
 
 msgid "Frame"
 msgstr "Kadar"
+
+
+msgid "Index"
+msgstr "Indeks"
 
 
 msgid "Maximum Distance"
@@ -14820,6 +14820,10 @@ msgid "Generic"
 msgstr "Početni NLA"
 
 
+msgid "Default fill color"
+msgstr "Tekuća boja ispune"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Izbriši aktivan kadar"
@@ -15246,10 +15250,6 @@ msgstr "Nova slika"
 
 msgid "Create a new image"
 msgstr "Kreira novu sliku"
-
-
-msgid "Default fill color"
-msgstr "Tekuća boja ispune"
 
 
 msgid "Image height"

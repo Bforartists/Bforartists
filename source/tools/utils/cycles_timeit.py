@@ -143,7 +143,7 @@ def benchmarkFile(blender, blendfile, stats):
                "--render-format", "PNG",
                "-f", "1")
     # Run Blender with configured command line.
-    logVerbose("About to execuet command: {}" . format(command))
+    logVerbose("About to execute command: {}" . format(command))
     start_time = time.time()
     process = subprocess.Popen(command,
                                stdout=subprocess.PIPE,

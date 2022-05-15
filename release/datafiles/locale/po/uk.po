@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1780,10 +1780,6 @@ msgstr "Ключі форм"
 
 msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
 
 
 msgid "Sounds"
@@ -7915,14 +7911,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Використати старт штриха для глибини"
 
 
-msgid "Index"
-msgstr "Індекс"
-
-
-msgid "Radius"
-msgstr "Радіус"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Редактор Шляху Профілю, використовуваний для побудови шляху профілю"
 
@@ -8049,6 +8037,10 @@ msgstr "Пунктир"
 
 msgid "Material Index"
 msgstr "Індекс матеріалу"
+
+
+msgid "Radius"
+msgstr "Радіус"
 
 
 msgid "Dependency Graph"
@@ -10879,6 +10871,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Група граней, кожна грань може бути частиною лише однієї розкладки"
 
 
+msgid "Index"
+msgstr "Індекс"
+
+
 msgid "Index number of the face map"
 msgstr "Індексний номер розкладки граней"
 
@@ -11465,6 +11461,10 @@ msgstr "Показати/сховати блоки даних Хмари Точ�
 
 msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
+
+
+msgid "Simulations"
+msgstr "Симуляції"
 
 
 msgid "Show Simulation data-blocks"
@@ -19544,14 +19544,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Не заповнювати багатокутників при редагуванні"
 
 
-msgid "Attributes"
-msgstr "Атрибути"
-
-
-msgid "Geometry attributes"
-msgstr "Атрибути геометрії"
-
-
 msgid "Freestyle Line Style"
 msgstr "Стиль лінії Freestyle"
 
@@ -20716,20 +20708,12 @@ msgid "Pixels"
 msgstr "Пікселі"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "Пікселі зображення у дійсночислових значеннях"
-
-
 msgid "Render Slots"
 msgstr "Гнізда Рендера"
 
 
 msgid "Render slots of the image"
 msgstr "Гнізда рендера зображення"
-
-
-msgid "X/Y pixels per meter"
-msgstr "X/Y пікселів на метр"
 
 
 msgid "Where the image comes from"
@@ -21792,6 +21776,14 @@ msgstr "Додання ефекту півпрозорості для підпо
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Блок даних сіті, що визначає геометричну поверхню"
+
+
+msgid "Attributes"
+msgstr "Атрибути"
+
+
+msgid "Geometry attributes"
+msgstr "Атрибути геометрії"
 
 
 msgid "Auto Smooth Angle"
@@ -30096,11 +30088,6 @@ msgstr "Редагувати"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Кліп"
 
@@ -30278,11 +30265,6 @@ msgstr "Контекстне Меню Інфо"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Додати"
 
@@ -30295,22 +30277,12 @@ msgid "Vertex Group Specials"
 msgstr "Параметри груп вершин"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "Контекстне Меню Каналів НЛА"
 
 
 msgid "NLA Context Menu"
 msgstr "Контекстне Меню НЛА"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -30367,11 +30339,6 @@ msgstr "Передустави Частоти Кадрів"
 
 msgid "Lineset Specials"
 msgstr "Параметри набору ліній"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -30446,11 +30413,6 @@ msgid "System"
 msgstr "Система"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "Файл"
 
@@ -30505,11 +30467,6 @@ msgstr "Передустави Клавіш"
 
 msgid "Save & Load"
 msgstr "Збереження і Завантаження"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -47853,6 +47810,10 @@ msgid "Remove attribute from geometry"
 msgstr "Вилучити атрибут з геометрії"
 
 
+msgid "Default fill color"
+msgstr "Стандартний колір заливки"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Вибір гізмо"
@@ -50429,10 +50390,6 @@ msgstr "Створити нове зображення"
 
 msgid "Create an image with an alpha channel"
 msgstr "Створити зображення з альфа-каналом"
-
-
-msgid "Default fill color"
-msgstr "Стандартний колір заливки"
 
 
 msgid "32-bit Float"
@@ -70923,22 +70880,12 @@ msgid "Solve"
 msgstr "Обчислення"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Засоби масок"
 
 
 msgid "Transforms"
 msgstr "Трансформи"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -71403,11 +71350,6 @@ msgid "Boid Brain"
 msgstr "Інтелект рою"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "Скупчення"
 
@@ -71829,11 +71771,6 @@ msgstr "Тимчасові Редактори"
 
 msgid "Text Rendering"
 msgstr "Рендеринг Тексту"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"

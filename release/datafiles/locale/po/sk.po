@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-04-26 08:43+0200\n"
+"PO-Revision-Date: 2022-05-03 08:51+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -632,8 +632,36 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "Existujú nejaké dráhy kostí, ktoré sa budú musieť aktualizovať (iba na čítanie)"
 
 
+msgid "Paths Range"
+msgstr "Rozsah dráh"
+
+
+msgid "Type of range to calculate for Motion Paths"
+msgstr "Typ rozsahu na vypočet pre dráhy pohybu"
+
+
+msgid "All Keys"
+msgstr "Všetky kľúče"
+
+
+msgid "From the first keyframe to the last"
+msgstr "Od prvej kľúčovej snímky po poslednú"
+
+
 msgid "Selected Keys"
 msgstr "Vybrané kľúče"
+
+
+msgid "From the first selected keyframe to the last"
+msgstr "Od prvej vybranej kľúčovej snímky po poslednú"
+
+
+msgid "Scene Frame Range"
+msgstr "Rozsah snímok scény"
+
+
+msgid "The entire Scene / Preview range"
+msgstr "Celý rozsah scén / náhľadov"
 
 
 msgid "Show Frame Numbers"
@@ -1092,8 +1120,16 @@ msgid "3D vector with floating-point values"
 msgstr "3D vektor s hodnotami s pohyblivou čiarkou"
 
 
+msgid "RGBA color with 32-bit floating-point values"
+msgstr "Farba RGBA s 32-bitovými hodnotami na pohyblivej desatinnej čiarke"
+
+
 msgid "Byte Color"
 msgstr "Farby bajtu"
+
+
+msgid "RGBA color with 8-bit positive integer values"
+msgstr "Farba RGBA s 8-bitovými kladnými celočíselnými hodnotami"
 
 
 msgid "String"
@@ -1192,28 +1228,72 @@ msgid "Bool Attribute"
 msgstr "Logický atribút"
 
 
+msgid "Geometry attribute that stores booleans"
+msgstr "Atribút geometrie, ktorý uchováva logické symboly"
+
+
 msgid "Byte Color Attribute"
 msgstr "Atribút farby bajtu"
+
+
+msgid "Geometry attribute that stores RGBA colors as positive integer values using 8-bits per channel"
+msgstr "Atribút geometrie, ktorý ukladá farby RGBA ako kladné celočíselné hodnoty s použitím 8 bitov na kanál"
+
+
+msgid "8-bit Integer Attribute"
+msgstr "Atribút 8-bitového celého čísla"
+
+
+msgid "Geometry attribute that stores 8-bit integers"
+msgstr "Atribút geometrie, ktorý ukladá 8-bitové celé čísla"
 
 
 msgid "Float2 Attribute"
 msgstr "Atribút na pohyblivej čiarke 2"
 
 
+msgid "Geometry attribute that stores floating-point 2D vectors"
+msgstr "Atribút geometrie, ktorý ukladá 2D vektory s pohyblivou desatinnou čiarkou"
+
+
 msgid "Float Attribute"
 msgstr "Atribút na pohyblivej čiarke"
+
+
+msgid "Geometry attribute that stores floating-point values"
+msgstr "Atribút geometrie, ktorý uchováva hodnoty na pohyblivej desatinnej čiarke"
 
 
 msgid "Float Color Attribute"
 msgstr "Atribút farby na pohyblivej čiarke"
 
 
+msgid "Geometry attribute that stores RGBA colors as floating-point values using 32-bits per channel"
+msgstr "Atribút geometrie, ktorý ukladá farby RGBA ako hodnoty na pohyblivej desatinnej čiarke s použitím 32 bitov na kanál"
+
+
 msgid "Float Vector Attribute"
 msgstr "Atribút vektoru na pohyblivej čiarke"
 
 
+msgid "Geometry attribute that stores floating-point 3D vectors"
+msgstr "Atribút geometrie, ktorý uchováva 3D vektory na pohyblivej desatinnej čiarke"
+
+
+msgid "Integer Attribute"
+msgstr "Atribút celého čísla"
+
+
+msgid "Geometry attribute that stores integer values"
+msgstr "Atribút geometrie, ktorý uchováva celočíselné hodnoty"
+
+
 msgid "String Attribute"
 msgstr "Reťazec atribútu"
+
+
+msgid "Geometry attribute that stores strings"
+msgstr "Atribút geometrie, ktorý ukladá reťazce"
 
 
 msgid "Attribute Group"
@@ -1234,6 +1314,34 @@ msgstr "Aktívny atribút"
 
 msgid "Active Color"
 msgstr "Aktívna farba"
+
+
+msgid "Active color attribute for display and editing"
+msgstr "Aktívny atribút farby na zobrazenie a editáciu"
+
+
+msgid "Active Color Index"
+msgstr "Index aktívnej farby"
+
+
+msgid "Active color attribute index"
+msgstr "Index atribútu aktívnej farby"
+
+
+msgid "Active Attribute Index"
+msgstr "Index aktívneho atribútu"
+
+
+msgid "Active attribute index"
+msgstr "Index aktívneho atribútu"
+
+
+msgid "Active Render Color Index"
+msgstr "Index farieb aktívneho prekreslenia"
+
+
+msgid "The index of the color attribute used as a fallback for rendering"
+msgstr "Index atribútu farby používaný ako náhradný pre prekresľovanie"
 
 
 msgid "Bake Data"
@@ -1732,14 +1840,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "Blok údajov pastelky"
 
 
-msgid "Hair Curves"
-msgstr "Krivky vlasov"
-
-
-msgid "Hair curve data-blocks"
-msgstr "Bloky údajov krivky vlasov"
-
-
 msgid "Images"
 msgstr "Obrázky"
 
@@ -1916,14 +2016,6 @@ msgid "Shape Key data-blocks"
 msgstr "Bloky údajov kľúčového tvaru"
 
 
-msgid "Simulations"
-msgstr "Simulácia"
-
-
-msgid "Simulation data-blocks"
-msgstr "Bloky údajov simulácie"
-
-
 msgid "Sounds"
 msgstr "Zvuky"
 
@@ -2076,14 +2168,6 @@ msgid "Collection of grease pencils"
 msgstr "Kolekcia pasteliek"
 
 
-msgid "Main Hair Curves"
-msgstr "Hlavné krivky vlasov"
-
-
-msgid "Collection of hair curves"
-msgstr "Kolekcia kriviek vlasov"
-
-
 msgid "Main Images"
 msgstr "Hlavné obrázky"
 
@@ -2234,14 +2318,6 @@ msgstr "Hlavné obrazovky"
 
 msgid "Collection of screens"
 msgstr "Kolekcia obrazoviek"
-
-
-msgid "Main Simulations"
-msgstr "Hlavná simulácia"
-
-
-msgid "Collection of simulations"
-msgstr "Kolekcia simulácií"
 
 
 msgid "Main Sounds"
@@ -8429,26 +8505,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Použije počiatočný ťah pre hĺbku"
 
 
-msgid "Curve Point"
-msgstr "Bod krivky"
-
-
-msgid "Curve curve control point"
-msgstr "Riadiaci bod krivky"
-
-
-msgid "Index"
-msgstr "Index"
-
-
-msgid "Index of this points"
-msgstr "Index týchto bodov"
-
-
-msgid "Radius"
-msgstr "Polomer"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Editor profilových ciest použitý na zostavenie profilovej dráhy"
 
@@ -8553,38 +8609,6 @@ msgid "Collection of Profile Points"
 msgstr "Kolekcia profilových bodov"
 
 
-msgid "Curve Slice"
-msgstr "Odrezok krivky"
-
-
-msgid "A single curve from a curves data-block"
-msgstr "Jedna krivka z bloku údajov kriviek"
-
-
-msgid "First Point Index"
-msgstr "Index prvého bodu"
-
-
-msgid "The index of this curve's first control point"
-msgstr "Index prvého riadiaceho bodu tejto krivky"
-
-
-msgid "Index of this curve"
-msgstr "Index tejto krivky"
-
-
-msgid "Control points of the curve"
-msgstr "Riadiace body krivky"
-
-
-msgid "Number of Points"
-msgstr "Počet bodov"
-
-
-msgid "Number of control points in the curve"
-msgstr "Počet riadiacich bodov v krivke"
-
-
 msgid "Curve Splines"
 msgstr "Drážky krivky"
 
@@ -8639,6 +8663,10 @@ msgstr "Názov segmentu čiarky"
 
 msgid "The factor to apply to the original point's opacity for the new points"
 msgstr "Faktor na použitie pre nepriehľadnosť pôvodného bodu pre nové body"
+
+
+msgid "Radius"
+msgstr "Polomer"
 
 
 msgid "The factor to apply to the original point's radius for the new points"
@@ -11546,6 +11574,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Skupina plôšok, každá plôška môže byť súčasťou len jednej mapy"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Index number of the face map"
 msgstr "Číslo indexu mapy plôšky"
 
@@ -12066,6 +12098,10 @@ msgid "Show Curve data-blocks"
 msgstr "Ukáže blok údajov krivky"
 
 
+msgid "Hair Curves"
+msgstr "Krivky vlasov"
+
+
 msgid "Show/hide Curves data-blocks"
 msgstr "Ukáže/skryje blok údajov krivky"
 
@@ -12144,6 +12180,10 @@ msgstr "Ukáže/skryje bloky údajov mračno bodov"
 
 msgid "Show Scene data-blocks"
 msgstr "Ukáže blok údajov scény"
+
+
+msgid "Simulations"
+msgstr "Simulácia"
 
 
 msgid "Show Simulation data-blocks"
@@ -18142,6 +18182,10 @@ msgid "Active index in layer mask array"
 msgstr "Aktívny index v poli vrstiev masky"
 
 
+msgid "Editor header containing UI elements"
+msgstr "Záhlavie editora obsahujúce prvky užívateľského rozhrania"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "Štatistické zobrazenie úrovne farieb v obrázku"
 
@@ -18944,7 +18988,7 @@ msgstr "Ostré"
 
 
 msgid "Sharper"
-msgstr "Brúsič"
+msgstr "Ostrejšie"
 
 
 msgid "Inverse Square"
@@ -18957,6 +19001,26 @@ msgstr "Nastavenia tvarovania kriviek"
 
 msgid "Curves Sculpt Tool"
 msgstr "Nástroj tvarovania kriviek"
+
+
+msgid "Comb Curves"
+msgstr "Hrebeňové krivky"
+
+
+msgid "Delete Curves"
+msgstr "Odstrániť krivky"
+
+
+msgid "Curves Snake Hook"
+msgstr "Krivky Hadí háčik"
+
+
+msgid "Add Curves"
+msgstr "Pridať krivky"
+
+
+msgid "Grow / Shrink Curves"
+msgstr "Nárast / Zmrštenie krivky"
 
 
 msgid "Dash Ratio"
@@ -21335,34 +21399,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Počas editácie nevyplňuje polygóny"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "Blok údajov vlasov pre krivky vlasov"
-
-
-msgid "Attributes"
-msgstr "Atribúty"
-
-
-msgid "Geometry attributes"
-msgstr "Atribúty geometrie"
-
-
-msgid "Geometry color attributes"
-msgstr "Atribúty farby geometrie"
-
-
-msgid "All curves in the data-block"
-msgstr "Všetky krivky v bloku údajov"
-
-
-msgid "Control points of all curves"
-msgstr "Riadiace body všetkých kriviek"
-
-
-msgid "Mesh object that the curves can be attached to"
-msgstr "Objekt povrchovej siete, ku ktorému možno krivky pripojiť"
-
-
 msgid "Freestyle Line Style"
 msgstr "Štýl čiary Voľného štýlu"
 
@@ -22555,24 +22591,12 @@ msgid "Pixels"
 msgstr "Pixely"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "Pixely obrázka v hodnotách bodov na pohyblivej čiarke"
-
-
 msgid "Render Slots"
 msgstr "Zásuvky prekreslenia"
 
 
 msgid "Render slots of the image"
 msgstr "Zásuvky prekreslení obrázkov"
-
-
-msgid "X/Y pixels per meter"
-msgstr "X/Y pixelov na meter"
-
-
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "Šírka a výška v pixeloch, nula, keď sa obrazové údaje nedajú načítať"
 
 
 msgid "Where the image comes from"
@@ -23685,12 +23709,24 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Blok údajov povrchovej siete definujúci geometrické plochy"
 
 
+msgid "Attributes"
+msgstr "Atribúty"
+
+
+msgid "Geometry attributes"
+msgstr "Atribúty geometrie"
+
+
 msgid "Auto Smooth Angle"
 msgstr "Uhol automatického vyhladenia"
 
 
 msgid "Maximum angle between face normals that will be considered as smooth (unused if custom split normals data are available)"
 msgstr "Maximálny uhol medzi normálmi plôšky, ktorý sa bude považovať za vyhladený (nepoužité, ak sú k dispozícii vlastné údaje delenia normálov)"
+
+
+msgid "Geometry color attributes"
+msgstr "Atribúty farby geometrie"
 
 
 msgid "Edges"
@@ -24127,6 +24163,10 @@ msgstr "Číslo globálnej scény snímky, od ktorej sa spustí prehrávanie toh
 
 msgid "Grease pencil data for this movie clip"
 msgstr "Údaje pastelky pre tento filmový klip"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "Šírka a výška v pixeloch, nula, keď sa obrazové údaje nedajú načítať"
 
 
 msgid "Where the clip comes from"
@@ -26966,14 +27006,6 @@ msgstr "Editory sekvencií"
 
 msgid "Top-Left 3D Editor"
 msgstr "3D editor hore-vľavo"
-
-
-msgid "Simulation data-block"
-msgstr "Blok údajov simulácie"
-
-
-msgid "Node tree defining the simulation"
-msgstr "Strom uzlov definujúcich simuláciu"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -32819,17 +32851,16 @@ msgid "Material slot name"
 msgstr "Názov zásuvky materiálu"
 
 
+msgid "Editor menu containing buttons"
+msgstr "Ponuka editora obsahujúca tlačidlá"
+
+
 msgid "Assets Context Menu"
 msgstr "Kontextová ponuka Aktíva"
 
 
 msgid "Edit"
 msgstr "Upraviť"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
 
 
 msgctxt "MovieClip"
@@ -33014,11 +33045,6 @@ msgstr "Kontextová ponuka informácií"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Pridať"
 
@@ -33035,22 +33061,12 @@ msgid "Vertex Group Specials"
 msgstr "Špeciálne skupiny vrcholov"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "Kontextová ponuka pre kanál NLA"
 
 
 msgid "NLA Context Menu"
 msgstr "Kontextová ponuka NLA"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -33119,11 +33135,6 @@ msgstr "Predvoľby snímkovej frekvencie"
 
 msgid "Lineset Specials"
 msgstr "Špeciality sústavy čiar"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -33206,11 +33217,6 @@ msgid "System"
 msgstr "Systém"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "Súbor"
 
@@ -33279,11 +33285,6 @@ msgstr "Predvoľby kláves"
 
 msgid "Save & Load"
 msgstr "Uložiť a načítať"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -34040,6 +34041,10 @@ msgstr "Aktívny klon"
 
 msgid "Set the map as active for cloning"
 msgstr "Nastaví mapu ako aktívnu pre klonovanie"
+
+
+msgid "Set the UV map as active for rendering"
+msgstr "Nastaví UV mapy ako aktívne pre prekresľovanie"
 
 
 msgid "Name of UV map"
@@ -43351,6 +43356,10 @@ msgid "Behave like before instance attributes existed"
 msgstr "Správanie sa ako pred existenciou atribútov inštancie"
 
 
+msgid "Remove Named Attribute"
+msgstr "Odstrániť pomenovaný atribút"
+
+
 msgid "Replace Material"
 msgstr "Nahradiť materiál"
 
@@ -45386,6 +45395,14 @@ msgstr "Atribút Oblasť vplyvu"
 
 msgid "Attribute domain used by the geometry nodes modifier to create an attribute output"
 msgstr "Atribút oblasti vplyvu používaný modifikátorom uzlov geometrie na vytvorenie výstupu atribútu"
+
+
+msgid "Default Attribute"
+msgstr "Predvolený atribút"
+
+
+msgid "The attribute name used by default when the node group is used by a geometry nodes modifier"
+msgstr "Názov atribútu, ktorý sa predvolene používa, keď je skupina uzlov použitá modifikátorom uzlov geometrie"
 
 
 msgid "Hide the socket input value even when the socket is not connected"
@@ -50512,6 +50529,15 @@ msgstr "Vyberie obrázok, ktorý pomôže vizuálne identifikovať blok údajov"
 
 
 msgctxt "Operator"
+msgid "Toggle Library Override Editable"
+msgstr "Prepnúť Upraviteľnosť prepisu knižnice"
+
+
+msgid "Set if this library override data-block can be edited"
+msgstr "Nastavuje možnosť editácie bloku údajov prepisu knižnice"
+
+
+msgctxt "Operator"
 msgid "Unlink Data-Block"
 msgstr "Odpojiť blok údajov"
 
@@ -52583,6 +52609,11 @@ msgid "Unlink active font data-block"
 msgstr "Odpojí blok údajov aktívneho písma"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "Pridať atribút"
+
+
 msgid "Add attribute to geometry"
 msgstr "Pridá atribút do geometrie"
 
@@ -52612,8 +52643,30 @@ msgid "Generic"
 msgstr "Všeobecný"
 
 
+msgctxt "Operator"
+msgid "Remove Attribute"
+msgstr "Odstrániť atribút"
+
+
 msgid "Remove attribute from geometry"
 msgstr "Odstráni atribút z geometrie"
+
+
+msgctxt "Operator"
+msgid "Add Color Attribute"
+msgstr "Pridať atribút farby"
+
+
+msgid "Add color attribute to geometry"
+msgstr "Pridá atribút farby do geometrie"
+
+
+msgid "Default fill color"
+msgstr "Predvolená farba výplne"
+
+
+msgid "Name of new color attribute"
+msgstr "Názov nového atribútu farby"
 
 
 msgctxt "Operator"
@@ -52623,6 +52676,11 @@ msgstr "Odstrániť atribút farby"
 
 msgid "Remove color attribute from geometry"
 msgstr "Odstráni atribút farby z geometrie"
+
+
+msgctxt "Operator"
+msgid "Set Render Color"
+msgstr "Nastaviť farbu prekresľovania"
 
 
 msgid "Set default color attribute used for rendering"
@@ -55160,6 +55218,10 @@ msgid "Equalize Handles"
 msgstr "Zarovnať manipulátory"
 
 
+msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal. Automatic, Automatic Clamped, or Vector handle types will be converted to Aligned"
+msgstr "Zabezpečí rovnakú dĺžku manipulátorov vybraných kľúčových snímok, prípadne aby boli vodorovné. Automatické, automaticky prichytené alebo vektorové typy manipulátorov sa konvertujú na zarovnané"
+
+
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
 msgstr "Vytvorí hodnoty manipulátorov vybraných kľúčových snímok rovnaké ako ich príslušné kľúčové snímky"
 
@@ -55600,10 +55662,6 @@ msgstr "Vytvorí nový obrázok"
 
 msgid "Create an image with an alpha channel"
 msgstr "Vytvorí obrázok s alfa kanálom"
-
-
-msgid "Default fill color"
-msgstr "Predvolená farba výplne"
 
 
 msgid "32-bit Float"
@@ -61729,16 +61787,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "Povrchová sieť z objektov krivky, povrchu, meta gule, textu alebo mračna bodov"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "Pastelka z objektov krivky alebo povrchovej siete objektu"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "Mračno bodov z povrchovej siete objektu"
 
 
 msgctxt "Operator"
@@ -63233,6 +63283,23 @@ msgstr "Zapiecť na kľúčový rozsah"
 
 msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "Prilepí na všetky snímky medzi prvým a posledným vybraným kľúčom, v prípade potreby vytvoriť nové kľúčové snímky"
+
+
+msgctxt "Operator"
+msgid "Calculate Object Motion Paths"
+msgstr "Vypočítať dráhy pohybu objektu"
+
+
+msgid "Generate motion paths for the selected objects"
+msgstr "Vygeneruje dráhy pohybu pre vybrané objekty"
+
+
+msgid "Display type"
+msgstr "Typ zobrazenia"
+
+
+msgid "Computation Range"
+msgstr "Rozsah výpočtu"
 
 
 msgctxt "Operator"
@@ -70243,6 +70310,10 @@ msgstr "Povoliť prekrytie"
 
 msgid "Don't correct overlap on new sequence strips"
 msgstr "Neopravuje prekrytie nových sekvencií"
+
+
+msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
+msgstr "Použitím nastavení nástroja overlap_mode (režim prekrytia) určíte, ako sa majú prekrývajúce sa pásy premiešať"
 
 
 msgid "Replace Selection"
@@ -78193,22 +78264,12 @@ msgid "Solve"
 msgstr "Vyriešiť"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Nástroje masky"
 
 
 msgid "Transforms"
 msgstr "Transformácia"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -78705,11 +78766,6 @@ msgid "Boid Brain"
 msgstr "Rozum kŕdľa"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "CASTICE_PT_potomok"
-
-
 msgid "Clumping"
 msgstr "Zhlukovanie"
 
@@ -79143,11 +79199,6 @@ msgstr "Dočasné editory"
 
 msgid "Text Rendering"
 msgstr "Prekreslenie textu"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"
@@ -79795,6 +79846,31 @@ msgstr "Intenzita"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Zakrútiť"
+
+
+msgctxt "Operator"
+msgid "Comb Curves"
+msgstr "Hrebeňové krivky"
+
+
+msgctxt "Operator"
+msgid "Delete Curves"
+msgstr "Odstrániť krivky"
+
+
+msgctxt "Operator"
+msgid "Curves Snake Hook"
+msgstr "Krivky Hadí háčik"
+
+
+msgctxt "Operator"
+msgid "Add Curves"
+msgstr "Pridať krivky"
+
+
+msgctxt "Operator"
+msgid "Grow / Shrink Curves"
+msgstr "Nárast / Zmrštenie kriviek"
 
 
 msgid "Clone from Paint Slot"
@@ -80659,6 +80735,10 @@ msgstr "Kolekcia dráh"
 
 msgid "Point in a point cloud"
 msgstr "Bod v mračne bodov"
+
+
+msgid "Index of this points"
+msgstr "Index týchto bodov"
 
 
 msgid "Active Point Cache"
@@ -91951,6 +92031,14 @@ msgid "Show preview of the transformed frames"
 msgstr "Zobrazí náhľad transformovaných snímok"
 
 
+msgid "Limit View to Contents"
+msgstr "Obmedzenie zobrazenia na obsah"
+
+
+msgid "Limit timeline height to maximum used channel slot"
+msgstr "Obmedzuje výšku časovej osi na maximálnu použitú zásuvku kanálu"
+
+
 msgid "Transform markers as well as strips"
 msgstr "Transformuje značky, ako aj pásy"
 
@@ -96028,6 +96116,30 @@ msgid "Reverse the order of shown items"
 msgstr "Stornuje poradie zobrazených položiek"
 
 
+msgid "UV Map Layers"
+msgstr "Vrstvy UV mapy"
+
+
+msgid "Collection of UV map layers"
+msgstr "Kolekcia vrstiev UV mapy"
+
+
+msgid "Active UV Map Layer"
+msgstr "Aktívna vrstva UV mapy"
+
+
+msgid "Active UV Map layer"
+msgstr "Aktívna vrstva UV mapy"
+
+
+msgid "Active UV Map Index"
+msgstr "Index aktívnej UV mapy"
+
+
+msgid "Active UV map index"
+msgstr "Index aktívnej UV mapy"
+
+
 msgid "UV projector used by the UV project modifier"
 msgstr "UV projektor používaný modifikátorom UV premietania"
 
@@ -98106,6 +98218,14 @@ msgstr "Zobraziť vlastné prekrytia"
 
 msgid "Show custom VR overlays"
 msgstr "Zobrazí vlastné prekrytia VR"
+
+
+msgid "Show Object Extras"
+msgstr "Zobraziť príslušenstvo objektu"
+
+
+msgid "Show object extras, including empties, lights, and cameras"
+msgstr "Zobrazí príslušenstvo objektov vrátane prázdnych priestorov, svetiel a kamier"
 
 
 msgid "Show Selection"
@@ -100241,6 +100361,10 @@ msgid "Custom Overlays"
 msgstr "Vlastné prekrytia"
 
 
+msgid "Object Extras"
+msgstr "Príslušenstvo objektu"
+
+
 msgid "Controller Style"
 msgstr "Štýl riadiaceho"
 
@@ -100869,6 +100993,10 @@ msgid "Invalid regular expression (replace): "
 msgstr "Neplatný regulárny výraz (nahradiť): "
 
 
+msgid "Calculation Range"
+msgstr "Rozsah výpočtu"
+
+
 msgid "Frame Numbers"
 msgstr "Čísla snímok"
 
@@ -100883,6 +101011,10 @@ msgstr "Rozsah snímky Pred"
 
 msgid "After"
 msgstr "Po"
+
+
+msgid "Cached Range"
+msgstr "Rozsah zásobníka"
 
 
 msgid "Nothing to show yet..."
@@ -100900,6 +101032,11 @@ msgstr "+ nezoskupené kľúčové snímky"
 
 msgid "Frame Range Start"
 msgstr "Rozsah snímok Začiatok"
+
+
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "Aktualizovať dráhu"
 
 
 msgctxt "Operator"
@@ -108589,6 +108726,10 @@ msgid "Channels are visible in Graph Editor for editing"
 msgstr "Kanály sú viditeľné v editore grafov pre úpravu"
 
 
+msgid "Display channel regardless of object selection"
+msgstr "Zobrazuje kanál bez ohľadu na výber objektu"
+
+
 msgid "Enable F-Curve modifiers"
 msgstr "Povoliť modifikátory F-krivky"
 
@@ -111845,6 +111986,10 @@ msgstr "Aplikovaný modifikátor zmenil iba CV body, nie mozaikované/skosené v
 
 msgid "Constructive modifiers cannot be applied"
 msgstr "Konštruktívne modifikátory nemožno použiť"
+
+
+msgid "Evaluated geometry from modifier does not contain curves"
+msgstr "Vyhodnotená geometria z modifikátora neobsahuje krivky"
 
 
 msgid "Modifiers cannot be applied in edit mode"
@@ -116235,6 +116380,10 @@ msgid "Tag '%s' not found in given asset"
 msgstr "Príznak '%s' sa v danom aktíve nenašiel"
 
 
+msgid "Cannot modify name of required geometry attribute"
+msgstr "Nemožno upraviť názov požadovaného atribútu geometrie"
+
+
 msgid "Layer '%s' not found in object '%s'"
 msgstr "Vrstva '%s' nebola nájdená v objekte '%s'"
 
@@ -117243,6 +117392,10 @@ msgstr "Zápis"
 
 msgid "Output Attributes"
 msgstr "Atribúty výstupu"
+
+
+msgid "Internal Dependencies"
+msgstr "Interné závislosti"
 
 
 msgid "Coverage"
