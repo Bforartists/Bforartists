@@ -61,8 +61,18 @@ jobs:
           cd ~/bforartistsrepo/Bforartists
           make ninja release BUILD_CMAKE_ARGS=-DOPTIX_INCLUDE_DIR=~/optix/include
 
-      - name: Upload Build
-        uses: actions/upload-artifact@v2
+      - name: Create ZIP Package
+        run: |
+          cd /home/runner/bforartistsrepo/build_linux_release_release/bin/
+          cpack -G ZIP
+
+      # - name: Upload Build
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Bforartists-Release-${{ runner.os }}
+      #     path: /home/runner/bforartistsrepo/build_linux_release_release/bin/
+
+      - name: Upload ZIP Package
+        uses: softprops/action-gh-release@v1
         with:
-          name: Bforartists-Release-${{ runner.os }}
-          path: /home/runner/bforartistsrepo/build_linux_release_release/bin/
+          files: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
