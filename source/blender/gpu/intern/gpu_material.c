@@ -168,6 +168,7 @@ static void gpu_material_free_single(GPUMaterial *material)
   if (material->sss_tex_profile != NULL) {
     GPU_texture_free(material->sss_tex_profile);
   }
+  MEM_freeN(material);
 }
 
 void GPU_material_free(ListBase *gpumaterial)
@@ -176,7 +177,6 @@ void GPU_material_free(ListBase *gpumaterial)
     GPUMaterial *material = link->data;
     DRW_deferred_shader_remove(material);
     gpu_material_free_single(material);
-    MEM_freeN(material);
   }
   BLI_freelistN(gpumaterial);
 }
@@ -626,7 +626,7 @@ eGPUMaterialFlag GPU_material_flag(const GPUMaterial *mat)
   return mat->flag;
 }
 
-/* Note: Consumes the flags. */
+/* NOTE: Consumes the flags. */
 bool GPU_material_recalc_flag_get(GPUMaterial *mat)
 {
   bool updated = (mat->flag & GPU_MATFLAG_UPDATED) != 0;

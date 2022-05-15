@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1812,10 +1812,6 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Sounds"
@@ -8127,14 +8123,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Использовать начало штрихов для глубины"
 
 
-msgid "Index"
-msgstr "Индекс"
-
-
-msgid "Radius"
-msgstr "Радиус"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Редактор профильных кривых, используемый для построения профильных кривых"
 
@@ -8261,6 +8249,10 @@ msgstr "Штрихи"
 
 msgid "Material Index"
 msgstr "Индекс материала"
+
+
+msgid "Radius"
+msgstr "Радиус"
 
 
 msgid "Dependency Graph"
@@ -11111,6 +11103,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Группа граней, каждая из которых может быть частью одной карты"
 
 
+msgid "Index"
+msgstr "Индекс"
+
+
 msgid "Index number of the face map"
 msgstr "Порядковый номер карты граней"
 
@@ -11697,6 +11693,10 @@ msgstr "Показать/скрыть датаблоки облаков точе
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
+
+
+msgid "Simulations"
+msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -19444,10 +19444,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Не заполнять полигоны во время редактирования"
 
 
-msgid "Attributes"
-msgstr "Атрибуты"
-
-
 msgid "Freestyle Line Style"
 msgstr "Стиль линий Freestyle"
 
@@ -20548,10 +20544,6 @@ msgid "Render slots of the image"
 msgstr "Слоты рендера изображения"
 
 
-msgid "X/Y pixels per meter"
-msgstr "X/Y пикселей на метр"
-
-
 msgid "Where the image comes from"
 msgstr "Источник изображения"
 
@@ -21564,6 +21556,10 @@ msgstr "Добавить эффект просвечиваемости для п
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Датаблок меша, определяющий геометрические поверхности"
+
+
+msgid "Attributes"
+msgstr "Атрибуты"
 
 
 msgid "Auto Smooth Angle"
@@ -29313,11 +29309,6 @@ msgstr "Правка"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Видеофрагмент"
 
@@ -29467,11 +29458,6 @@ msgstr "Контекстное меню информации"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "Добавить"
 
@@ -29484,22 +29470,12 @@ msgid "Vertex Group Specials"
 msgstr "Настройка группы вершин"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "Контекстное меню канала НЛА"
 
 
 msgid "NLA Context Menu"
 msgstr "Контекстное меню НЛА"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -29544,11 +29520,6 @@ msgstr "Предустановки частоты смены кадров"
 
 msgid "Lineset Specials"
 msgstr "Инструменты набора линий"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -29619,11 +29590,6 @@ msgid "System"
 msgstr "Система"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "Файл"
 
@@ -29678,11 +29644,6 @@ msgstr "Предустановки клавиш"
 
 msgid "Save & Load"
 msgstr "Сохранение и загрузка"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -44473,6 +44434,10 @@ msgid "Generic"
 msgstr "Общий тип"
 
 
+msgid "Default fill color"
+msgstr "Цвет заливки по умолчанию"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "Выделить манипулятор"
@@ -46308,10 +46273,6 @@ msgstr "Создать новое изображение"
 
 msgid "Create an image with an alpha channel"
 msgstr "Создать изображение с альфа-каналом"
-
-
-msgid "Default fill color"
-msgstr "Цвет заливки по умолчанию"
 
 
 msgid "32-bit Float"
@@ -63773,22 +63734,12 @@ msgid "Solve"
 msgstr "Решение"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Инструменты маски"
 
 
 msgid "Transforms"
 msgstr "Трансформации"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -64233,11 +64184,6 @@ msgid "Boid Brain"
 msgstr "Муравьиный рой"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "Скопление"
 
@@ -64596,11 +64542,6 @@ msgstr "Временные редакторы"
 
 msgid "Text Rendering"
 msgstr "Рендеринг текста"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"

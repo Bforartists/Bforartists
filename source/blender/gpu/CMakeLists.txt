@@ -85,6 +85,7 @@ set(SRC
   GPU_buffers.h
   GPU_capabilities.h
   GPU_common.h
+  GPU_common_types.h
   GPU_compute.h
   GPU_context.h
   GPU_debug.h
@@ -189,6 +190,7 @@ set(METAL_SRC
   metal/mtl_backend.mm
   metal/mtl_context.mm
   metal/mtl_debug.mm
+  metal/mtl_state.mm
   metal/mtl_texture.mm
   metal/mtl_texture_util.mm
 
@@ -197,6 +199,7 @@ set(METAL_SRC
   metal/mtl_common.hh
   metal/mtl_context.hh
   metal/mtl_debug.hh
+  metal/mtl_state.hh
   metal/mtl_texture.hh
 )
 
@@ -300,8 +303,6 @@ set(GLSL_SRC
   shaders/gpu_shader_keyframe_shape_frag.glsl
 
   shaders/gpu_shader_codegen_lib.glsl
-
-  shaders/gpu_shader_geometry.glsl
 
   shaders/common/gpu_shader_common_color_ramp.glsl
   shaders/common/gpu_shader_common_color_utils.glsl
@@ -498,6 +499,7 @@ set(SRC_SHADER_CREATE_INFOS
   shaders/infos/gpu_shader_2D_widget_info.hh
   shaders/infos/gpu_shader_3D_depth_only_info.hh
   shaders/infos/gpu_shader_3D_flat_color_info.hh
+  shaders/infos/gpu_shader_3D_image_info.hh
   shaders/infos/gpu_shader_3D_image_modulate_alpha_info.hh
   shaders/infos/gpu_shader_3D_point_info.hh
   shaders/infos/gpu_shader_3D_polyline_info.hh

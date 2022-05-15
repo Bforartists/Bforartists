@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -7316,14 +7316,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "깊이에 대해 스트로크의 시작을 사용"
 
 
-msgid "Index"
-msgstr "인덱스"
-
-
-msgid "Radius"
-msgstr "반경"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "프로파일 경로를 작성하는 데 사용되는 프로파일 경로 에디터"
 
@@ -7430,6 +7422,10 @@ msgstr "돌진"
 
 msgid "Material Index"
 msgstr "매테리얼 인댁스"
+
+
+msgid "Radius"
+msgstr "반경"
 
 
 msgid "Dependency Graph"
@@ -10099,6 +10095,10 @@ msgstr "페이스 맵"
 
 msgid "Group of faces, each face can only be part of one map"
 msgstr "페이스의 그룹, 각각의 페이스는 하나의 맵에만 포함될 수 있습니다"
+
+
+msgid "Index"
+msgstr "인덱스"
 
 
 msgid "Index number of the face map"
@@ -16730,10 +16730,6 @@ msgid "Don't fill polygons while editing"
 msgstr "편집하는 동안 폴리곤을 작성하지 않음"
 
 
-msgid "Attributes"
-msgstr "속성"
-
-
 msgid "Freestyle Line Style"
 msgstr "프리스타일 라인 스타일"
 
@@ -17834,10 +17830,6 @@ msgid "Render slots of the image"
 msgstr "이미지의 렌더 슬롯"
 
 
-msgid "X/Y pixels per meter"
-msgstr "미터 당 X/Y 픽셀"
-
-
 msgid "Where the image comes from"
 msgstr "다음에서 어디에 이미지 제공"
 
@@ -18862,6 +18854,10 @@ msgstr "서브 표면에 반투명 이펙트를 추가"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "지오메트리 표면을 정의하는 메쉬 데이터 블록"
+
+
+msgid "Attributes"
+msgstr "속성"
 
 
 msgid "Auto Smooth Angle"
@@ -26586,11 +26582,6 @@ msgstr "편집"
 
 
 msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
-
-
-msgctxt "MovieClip"
 msgid "Clip"
 msgstr "클립"
 
@@ -26740,11 +26731,6 @@ msgstr "정보 컨텍스트 메뉴"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "추가"
 
@@ -26757,22 +26743,12 @@ msgid "Vertex Group Specials"
 msgstr "버텍스 그룹 지정"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "NLA 채널 컨텍스트 메뉴"
 
 
 msgid "NLA Context Menu"
 msgstr "NLA 컨텍스트 메뉴"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -26817,11 +26793,6 @@ msgstr "프레임 비율 프리셋"
 
 msgid "Lineset Specials"
 msgstr "라인 설정 지정"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -26892,11 +26863,6 @@ msgid "System"
 msgstr "시스템"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "파일"
 
@@ -26951,11 +26917,6 @@ msgstr "키 프리셋"
 
 msgid "Save & Load"
 msgstr "저장 & 불러오기"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -42114,6 +42075,10 @@ msgid "Generic"
 msgstr "일반"
 
 
+msgid "Default fill color"
+msgstr "기본 채우기 컬러"
+
+
 msgctxt "Operator"
 msgid "Gizmo Select"
 msgstr "기즈모 선택"
@@ -43927,10 +43892,6 @@ msgstr "새로운 이미지를 생성"
 
 msgid "Create an image with an alpha channel"
 msgstr "알파 채널을 가진 이미지를 생성"
-
-
-msgid "Default fill color"
-msgstr "기본 채우기 컬러"
 
 
 msgid "32-bit Float"
@@ -61451,22 +61412,12 @@ msgid "Solve"
 msgstr "솔브"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "마스크 도구"
 
 
 msgid "Transforms"
 msgstr "변환"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -61907,11 +61858,6 @@ msgid "Boid Brain"
 msgstr "보이드 지능"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "응집"
 
@@ -62284,11 +62230,6 @@ msgstr "파이 메뉴"
 
 msgid "Text Rendering"
 msgstr "텍스트 렌더링"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_interface_translation"
 
 
 msgctxt "WindowManager"

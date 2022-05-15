@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1619,10 +1619,6 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Sounds"
@@ -5982,10 +5978,6 @@ msgid "View"
 msgstr "Pandangan"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Steps"
 msgstr "Langkah"
 
@@ -7342,6 +7334,10 @@ msgid "Face Map"
 msgstr "Peta Wajah"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Face Maps"
 msgstr "Peta Wajah"
 
@@ -7460,6 +7456,10 @@ msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -9849,10 +9849,6 @@ msgstr "Benar jika gambar ini disimpan di buffer floating-point"
 
 msgid "Pixels"
 msgstr "Pixel"
-
-
-msgid "Image pixels in floating-point values"
-msgstr "Pixel gambar di nilai floating-point"
 
 
 msgid "Movie"

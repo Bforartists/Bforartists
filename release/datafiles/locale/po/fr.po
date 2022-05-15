@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1776,10 +1776,6 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
-
-
-msgid "Simulations"
-msgstr "Simulations"
 
 
 msgid "Sounds"
@@ -7867,14 +7863,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Utiliser le début du trait pour la profondeur"
 
 
-msgid "Index"
-msgstr "Indice"
-
-
-msgid "Radius"
-msgstr "Rayon"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "Éditeur de chemin de profil utilisé pour créer un chemin de profil"
 
@@ -7993,6 +7981,10 @@ msgstr "Pointillés"
 
 msgid "Material Index"
 msgstr "Indice de matériau"
+
+
+msgid "Radius"
+msgstr "Rayon"
 
 
 msgid "Dependency Graph"
@@ -10735,6 +10727,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Groupe de faces, chaque face ne peut appartenir qu’à une seule carte"
 
 
+msgid "Index"
+msgstr "Indice"
+
+
 msgid "Index number of the face map"
 msgstr "Numéro d’indice de la carte de face"
 
@@ -11313,6 +11309,10 @@ msgstr "Afficher les blocs de données réglages de particules"
 
 msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
+
+
+msgid "Simulations"
+msgstr "Simulations"
 
 
 msgid "Show Sound data-blocks"
@@ -18144,10 +18144,6 @@ msgid "Don't fill polygons while editing"
 msgstr "Ne pas remplir les polygone durant l’édition"
 
 
-msgid "Attributes"
-msgstr "Attributs"
-
-
 msgid "Freestyle Line Style"
 msgstr "Style de ligne Freestyle"
 
@@ -19240,10 +19236,6 @@ msgid "Render slots of the image"
 msgstr "Emplacements de rendu de l’image"
 
 
-msgid "X/Y pixels per meter"
-msgstr "Pixels X/Y par mètre"
-
-
 msgid "Where the image comes from"
 msgstr "D’où provient l’image"
 
@@ -20264,6 +20256,10 @@ msgstr "Ajouter un effet de translucence à la sub-surface"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloc de données mesh définissant des surfaces géométriques"
+
+
+msgid "Attributes"
+msgstr "Attributs"
 
 
 msgid "Auto Smooth Angle"
@@ -27743,11 +27739,6 @@ msgstr "Menu contextuel des assets"
 
 msgid "Edit"
 msgstr "Éditer"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
 
 
 msgctxt "MovieClip"
@@ -42394,6 +42385,10 @@ msgid "Remove attribute from geometry"
 msgstr "Supprimer l'attribut de la géométrie"
 
 
+msgid "Default fill color"
+msgstr "Couleur de remplissage par défaut"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Supprimer frame active"
@@ -43937,10 +43932,6 @@ msgstr "Créer une nouvelle image"
 
 msgid "Create an image with an alpha channel"
 msgstr "Créer une image avec un canal alpha"
-
-
-msgid "Default fill color"
-msgstr "Couleur de remplissage par défaut"
 
 
 msgid "32-bit Float"
@@ -59652,22 +59643,12 @@ msgid "Solve"
 msgstr "Résoudre"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "Outils de masque"
 
 
 msgid "Transforms"
 msgstr "Transformations"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"

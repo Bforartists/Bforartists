@@ -44,7 +44,7 @@ Filters are evaluated in the order they are given, that is, if a block does not 
 it is immediately rejected and no further check is done on it.
 
 You can add some recursivity to a filter (that is, if an 'include' filter is successful over a 'pointer' property,
-it will also automatically include pointed data, with a level of recusivity), by adding either
+it will also automatically include pointed data, with a level of recursivity), by adding either
 '*' (for infinite recursion) or a number (to specify the maximum level of recursion) to the include/exclude toggle.
 Note that it only makes sense in 'include' case, and gets ignored for 'exclude' one.
 

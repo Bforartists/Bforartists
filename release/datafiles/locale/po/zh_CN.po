@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -633,8 +633,36 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "是否有任何骨骼路径需要更新(只读)"
 
 
+msgid "Paths Range"
+msgstr "路径范围"
+
+
+msgid "Type of range to calculate for Motion Paths"
+msgstr "要为运动路径计算的范围类型"
+
+
+msgid "All Keys"
+msgstr "全部关键帧"
+
+
+msgid "From the first keyframe to the last"
+msgstr "从第一个到最后一个关键帧"
+
+
 msgid "Selected Keys"
 msgstr "选中的关键帧"
+
+
+msgid "From the first selected keyframe to the last"
+msgstr "从第一个选定的关键帧到最后一个关键帧"
+
+
+msgid "Scene Frame Range"
+msgstr "场景帧范围"
+
+
+msgid "The entire Scene / Preview range"
+msgstr "整个场景/预览范围"
 
 
 msgid "Show Frame Numbers"
@@ -1093,8 +1121,16 @@ msgid "3D vector with floating-point values"
 msgstr "以浮点数值表示的三维矢量"
 
 
+msgid "RGBA color with 32-bit floating-point values"
+msgstr "以32位浮点数值表示的RGBA颜色"
+
+
 msgid "Byte Color"
 msgstr "字节颜色"
+
+
+msgid "RGBA color with 8-bit positive integer values"
+msgstr "8位正整数表示的RGBA颜色"
 
 
 msgid "String"
@@ -1193,28 +1229,72 @@ msgid "Bool Attribute"
 msgstr "布尔属性"
 
 
+msgid "Geometry attribute that stores booleans"
+msgstr "存储布尔值的几何属性"
+
+
 msgid "Byte Color Attribute"
 msgstr "字节颜色属性"
+
+
+msgid "Geometry attribute that stores RGBA colors as positive integer values using 8-bits per channel"
+msgstr "使用单通道 8 位将RGBA颜色存储为正整数值的几何属性"
+
+
+msgid "8-bit Integer Attribute"
+msgstr "8位整型属性"
+
+
+msgid "Geometry attribute that stores 8-bit integers"
+msgstr "存储8位整数的几何属性"
 
 
 msgid "Float2 Attribute"
 msgstr "二维浮点属性"
 
 
+msgid "Geometry attribute that stores floating-point 2D vectors"
+msgstr "存储浮点二维矢量的几何属性"
+
+
 msgid "Float Attribute"
 msgstr "浮点属性"
+
+
+msgid "Geometry attribute that stores floating-point values"
+msgstr "存储浮点值的几何属性"
 
 
 msgid "Float Color Attribute"
 msgstr "浮点颜色属性"
 
 
+msgid "Geometry attribute that stores RGBA colors as floating-point values using 32-bits per channel"
+msgstr "使用单通道32位将RGBA颜色存储为浮点值的几何属性"
+
+
 msgid "Float Vector Attribute"
 msgstr "浮点矢量属性"
 
 
+msgid "Geometry attribute that stores floating-point 3D vectors"
+msgstr "存储浮点三维矢量的几何属性"
+
+
+msgid "Integer Attribute"
+msgstr "整型属性"
+
+
+msgid "Geometry attribute that stores integer values"
+msgstr "存储整数值的几何属性"
+
+
 msgid "String Attribute"
 msgstr "字符串属性"
+
+
+msgid "Geometry attribute that stores strings"
+msgstr "存储字符串的几何属性"
 
 
 msgid "Attribute Group"
@@ -1235,6 +1315,34 @@ msgstr "活动属性"
 
 msgid "Active Color"
 msgstr "活动颜色"
+
+
+msgid "Active color attribute for display and editing"
+msgstr "用于显示和编辑的活动颜色属性"
+
+
+msgid "Active Color Index"
+msgstr "活动颜色编号"
+
+
+msgid "Active color attribute index"
+msgstr "活动颜色属性编号"
+
+
+msgid "Active Attribute Index"
+msgstr "活动属性编号"
+
+
+msgid "Active attribute index"
+msgstr "活动属性编号"
+
+
+msgid "Active Render Color Index"
+msgstr "活动渲染颜色编号"
+
+
+msgid "The index of the color attribute used as a fallback for rendering"
+msgstr "在渲染时用作回退的颜色属性编号"
 
 
 msgid "Bake Data"
@@ -1733,14 +1841,6 @@ msgid "Grease Pencil data-blocks"
 msgstr "蜡笔数据块"
 
 
-msgid "Hair Curves"
-msgstr "毛发曲线"
-
-
-msgid "Hair curve data-blocks"
-msgstr "毛发曲线数据块"
-
-
 msgid "Images"
 msgstr "图像"
 
@@ -1917,14 +2017,6 @@ msgid "Shape Key data-blocks"
 msgstr "形态键数据块"
 
 
-msgid "Simulations"
-msgstr "模拟"
-
-
-msgid "Simulation data-blocks"
-msgstr "模拟数据块"
-
-
 msgid "Sounds"
 msgstr "声音"
 
@@ -2077,14 +2169,6 @@ msgid "Collection of grease pencils"
 msgstr "蜡笔集合"
 
 
-msgid "Main Hair Curves"
-msgstr "主毛发曲线"
-
-
-msgid "Collection of hair curves"
-msgstr "毛发曲线集合"
-
-
 msgid "Main Images"
 msgstr "主图像"
 
@@ -2235,14 +2319,6 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
-
-
-msgid "Main Simulations"
-msgstr "主模拟"
-
-
-msgid "Collection of simulations"
-msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -8430,26 +8506,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "使用笔画起点确定绘制平面深度"
 
 
-msgid "Curve Point"
-msgstr "曲线控制点"
-
-
-msgid "Curve curve control point"
-msgstr "曲线控制点"
-
-
-msgid "Index"
-msgstr "编号"
-
-
-msgid "Index of this points"
-msgstr "该点的编号"
-
-
-msgid "Radius"
-msgstr "半径"
-
-
 msgid "Profile Path editor used to build a profile path"
 msgstr "用于生成轮廓路径的轮廓路径编辑器"
 
@@ -8554,38 +8610,6 @@ msgid "Collection of Profile Points"
 msgstr "轮廓点集合"
 
 
-msgid "Curve Slice"
-msgstr "曲线切片"
-
-
-msgid "A single curve from a curves data-block"
-msgstr "曲线数据块中的单条曲线"
-
-
-msgid "First Point Index"
-msgstr "第一点编号"
-
-
-msgid "The index of this curve's first control point"
-msgstr "此曲线的第一个控制点的编号"
-
-
-msgid "Index of this curve"
-msgstr "该曲线编号"
-
-
-msgid "Control points of the curve"
-msgstr "曲线的控制点"
-
-
-msgid "Number of Points"
-msgstr "点数"
-
-
-msgid "Number of control points in the curve"
-msgstr "曲线中的控制点数"
-
-
 msgid "Curve Splines"
 msgstr "曲线样条"
 
@@ -8640,6 +8664,10 @@ msgstr "虚线段名称"
 
 msgid "The factor to apply to the original point's opacity for the new points"
 msgstr "对新点应用原始点不透明度的系数"
+
+
+msgid "Radius"
+msgstr "半径"
 
 
 msgid "The factor to apply to the original point's radius for the new points"
@@ -10438,7 +10466,7 @@ msgstr "风影响权重"
 
 
 msgid "Enum Item Definition"
-msgstr "数值条目定义"
+msgstr "枚举项定义"
 
 
 msgid "Definition of a choice in an RNA enum property"
@@ -11547,6 +11575,10 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "面组，每个面只能是一个映射里的一部分"
 
 
+msgid "Index"
+msgstr "编号"
+
+
 msgid "Index number of the face map"
 msgstr "面映射的索引数字"
 
@@ -12067,6 +12099,10 @@ msgid "Show Curve data-blocks"
 msgstr "显示曲面数据块"
 
 
+msgid "Hair Curves"
+msgstr "毛发曲线"
+
+
 msgid "Show/hide Curves data-blocks"
 msgstr "显示/隐藏曲线数据块"
 
@@ -12145,6 +12181,10 @@ msgstr "显示/隐藏点云数据块"
 
 msgid "Show Scene data-blocks"
 msgstr "显示场景数据块"
+
+
+msgid "Simulations"
+msgstr "模拟"
 
 
 msgid "Show Simulation data-blocks"
@@ -18143,6 +18183,10 @@ msgid "Active index in layer mask array"
 msgstr "层遮罩数组中的活动编号"
 
 
+msgid "Editor header containing UI elements"
+msgstr "包含UI元素的编辑器标题栏"
+
+
 msgid "Statistical view of the levels of color in an image"
 msgstr "图像统计视图范围"
 
@@ -18958,6 +19002,26 @@ msgstr "曲线雕刻设置"
 
 msgid "Curves Sculpt Tool"
 msgstr "曲线雕刻工具"
+
+
+msgid "Comb Curves"
+msgstr "梳理曲线"
+
+
+msgid "Delete Curves"
+msgstr "删除曲线"
+
+
+msgid "Curves Snake Hook"
+msgstr "曲线蛇形钩"
+
+
+msgid "Add Curves"
+msgstr "添加曲线"
+
+
+msgid "Grow / Shrink Curves"
+msgstr "生长/收缩曲线"
 
 
 msgid "Dash Ratio"
@@ -21336,34 +21400,6 @@ msgid "Don't fill polygons while editing"
 msgstr "编辑时不填充多边形"
 
 
-msgid "Hair data-block for hair curves"
-msgstr "毛发曲线的毛发数据块"
-
-
-msgid "Attributes"
-msgstr "属性"
-
-
-msgid "Geometry attributes"
-msgstr "几何属性"
-
-
-msgid "Geometry color attributes"
-msgstr "几何颜色属性"
-
-
-msgid "All curves in the data-block"
-msgstr "数据块中的所有曲线"
-
-
-msgid "Control points of all curves"
-msgstr "所有曲线的控制点"
-
-
-msgid "Mesh object that the curves can be attached to"
-msgstr "曲线可以附加到的网格物体"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyle 线条样式"
 
@@ -22556,24 +22592,12 @@ msgid "Pixels"
 msgstr "像素点"
 
 
-msgid "Image pixels in floating-point values"
-msgstr "图像像素, 以浮点值表示"
-
-
 msgid "Render Slots"
 msgstr "渲染槽"
 
 
 msgid "Render slots of the image"
 msgstr "图像渲染槽"
-
-
-msgid "X/Y pixels per meter"
-msgstr "每米的X 向/Y 向像素"
-
-
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "像素的宽和高, 当无法加载图像数据时, 值为零"
 
 
 msgid "Where the image comes from"
@@ -23686,12 +23710,24 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "定义几何体表面的网格数据块"
 
 
+msgid "Attributes"
+msgstr "属性"
+
+
+msgid "Geometry attributes"
+msgstr "几何属性"
+
+
 msgid "Auto Smooth Angle"
 msgstr "自动平滑角度"
 
 
 msgid "Maximum angle between face normals that will be considered as smooth (unused if custom split normals data are available)"
 msgstr "将被视为平滑的面法向的最大角度(如果有自定义分割法线数据，则不使用)"
+
+
+msgid "Geometry color attributes"
+msgstr "几何颜色属性"
 
 
 msgid "Edges"
@@ -24128,6 +24164,10 @@ msgstr "此影片在全局场景中的起始播放帧号 (影响所有与剪辑�
 
 msgid "Grease pencil data for this movie clip"
 msgstr "用于该影片剪辑的蜡笔数据"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "像素的宽和高, 当无法加载图像数据时, 值为零"
 
 
 msgid "Where the clip comes from"
@@ -26967,14 +27007,6 @@ msgstr "序列编辑器"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
-
-
-msgid "Simulation data-block"
-msgstr "模拟数据块"
-
-
-msgid "Node tree defining the simulation"
-msgstr "定义模拟的节点树"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -32820,17 +32852,16 @@ msgid "Material slot name"
 msgstr "材质槽名称"
 
 
+msgid "Editor menu containing buttons"
+msgstr "包含按钮的编辑器菜单"
+
+
 msgid "Assets Context Menu"
 msgstr "资产上下文菜单"
 
 
 msgid "Edit"
 msgstr "编辑"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_MT_clip"
-msgstr "CLIP_MT_clip"
 
 
 msgctxt "MovieClip"
@@ -33015,11 +33046,6 @@ msgstr "信息上下文菜单"
 
 
 msgctxt "Operator"
-msgid "MASK_MT_add"
-msgstr "MASK_MT_add"
-
-
-msgctxt "Operator"
 msgid "Add"
 msgstr "添加"
 
@@ -33036,22 +33062,12 @@ msgid "Vertex Group Specials"
 msgstr "特殊顶点组"
 
 
-msgctxt "Operator"
-msgid "NLA_MT_add"
-msgstr "NLA_MT_add"
-
-
 msgid "NLA Channel Context Menu"
 msgstr "NLA通道上下文菜单"
 
 
 msgid "NLA Context Menu"
 msgstr "NLA上下文菜单"
-
-
-msgctxt "Operator"
-msgid "NODE_MT_add"
-msgstr "NODE_MT_add"
 
 
 msgid "Converter"
@@ -33120,11 +33136,6 @@ msgstr "帧率预设"
 
 msgid "Lineset Specials"
 msgstr "线条样式专用项"
-
-
-msgctxt "Operator"
-msgid "SEQUENCER_MT_add"
-msgstr "SEQUENCER_MT_add"
 
 
 msgid "Effect Strip"
@@ -33207,11 +33218,6 @@ msgid "System"
 msgstr "系统"
 
 
-msgctxt "Operator"
-msgid "TOPBAR_MT_edit_curve_add"
-msgstr "TOPBAR_MT_edit_curve_add"
-
-
 msgid "File"
 msgstr "文件"
 
@@ -33280,11 +33286,6 @@ msgstr "键预设"
 
 msgid "Save & Load"
 msgstr "保存&加载"
-
-
-msgctxt "Operator"
-msgid "VIEW3D_MT_add"
-msgstr "VIEW3D_MT_add"
 
 
 msgid "Angle Control"
@@ -34041,6 +34042,10 @@ msgstr "活动克隆"
 
 msgid "Set the map as active for cloning"
 msgstr "将贴图设置为活动项, 用于克隆"
+
+
+msgid "Set the UV map as active for rendering"
+msgstr "将UV贴图设置为活动状态以用于渲染"
 
 
 msgid "Name of UV map"
@@ -43352,6 +43357,10 @@ msgid "Behave like before instance attributes existed"
 msgstr "行为与实例属性存在之前类似"
 
 
+msgid "Remove Named Attribute"
+msgstr "删除已命名属性"
+
+
 msgid "Replace Material"
 msgstr "替换材质"
 
@@ -45387,6 +45396,14 @@ msgstr "属性域"
 
 msgid "Attribute domain used by the geometry nodes modifier to create an attribute output"
 msgstr "几何节点修改器用于创建属性输出的属性域"
+
+
+msgid "Default Attribute"
+msgstr "默认属性"
+
+
+msgid "The attribute name used by default when the node group is used by a geometry nodes modifier"
+msgstr "几何节点修改器使用节点组时默认使用的属性名称"
 
 
 msgid "Hide the socket input value even when the socket is not connected"
@@ -50513,6 +50530,15 @@ msgstr "选择一个图像来帮助直观地识别数据块"
 
 
 msgctxt "Operator"
+msgid "Toggle Library Override Editable"
+msgstr "切换库重写可编辑"
+
+
+msgid "Set if this library override data-block can be edited"
+msgstr "使库重写数据块是否可编辑"
+
+
+msgctxt "Operator"
 msgid "Unlink Data-Block"
 msgstr "取消关联数据块"
 
@@ -52584,6 +52610,11 @@ msgid "Unlink active font data-block"
 msgstr "断开活动字体数据块的关联"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "添加属性"
+
+
 msgid "Add attribute to geometry"
 msgstr "向几何体添加属性"
 
@@ -52613,8 +52644,30 @@ msgid "Generic"
 msgstr "泛型"
 
 
+msgctxt "Operator"
+msgid "Remove Attribute"
+msgstr "删除属性"
+
+
 msgid "Remove attribute from geometry"
 msgstr "从几何体中删除属性"
+
+
+msgctxt "Operator"
+msgid "Add Color Attribute"
+msgstr "添加颜色属性"
+
+
+msgid "Add color attribute to geometry"
+msgstr "向几何体添加颜色属性"
+
+
+msgid "Default fill color"
+msgstr "默认填充色彩"
+
+
+msgid "Name of new color attribute"
+msgstr "新颜色属性的名称"
 
 
 msgctxt "Operator"
@@ -52624,6 +52677,11 @@ msgstr "删除颜色属性"
 
 msgid "Remove color attribute from geometry"
 msgstr "从几何体中删除颜色属性"
+
+
+msgctxt "Operator"
+msgid "Set Render Color"
+msgstr "设置渲染颜色"
 
 
 msgid "Set default color attribute used for rendering"
@@ -55161,6 +55219,10 @@ msgid "Equalize Handles"
 msgstr "等长化控制柄"
 
 
+msgid "Ensure selected keyframes' handles have equal length, optionally making them horizontal. Automatic, Automatic Clamped, or Vector handle types will be converted to Aligned"
+msgstr "确保所选关键帧的控制柄具有相等的长度，可以选择使其水平、自动、自动钳制或矢量控制柄类型转换为对齐"
+
+
 msgid "Make the values of the selected keyframes' handles the same as their respective keyframes"
 msgstr "使被选中关键帧的控制柄的数值与各自关键帧相同"
 
@@ -55601,10 +55663,6 @@ msgstr "创建一个新的图像"
 
 msgid "Create an image with an alpha channel"
 msgstr "创建一个带 Alpha 通道的图像"
-
-
-msgid "Default fill color"
-msgstr "默认填充色彩"
 
 
 msgid "32-bit Float"
@@ -61730,16 +61788,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "网格 -> 点云"
 
 
 msgctxt "Operator"
@@ -63234,6 +63284,23 @@ msgstr "在帧范围内烘焙"
 
 msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "粘贴到第一个和最后一个选定关键帧之间的所有帧上，如有必要，可创建新的关键帧"
+
+
+msgctxt "Operator"
+msgid "Calculate Object Motion Paths"
+msgstr "计算物体运动路径"
+
+
+msgid "Generate motion paths for the selected objects"
+msgstr "为选中的物体生成运动路径"
+
+
+msgid "Display type"
+msgstr "显示类型"
+
+
+msgid "Computation Range"
+msgstr "计算范围"
 
 
 msgctxt "Operator"
@@ -70244,6 +70311,10 @@ msgstr "允许重叠"
 
 msgid "Don't correct overlap on new sequence strips"
 msgstr "不在新序列片段上校正叠加"
+
+
+msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
+msgstr "使用overlap_mode工具设置确定如何随机排列重叠片段"
 
 
 msgid "Replace Selection"
@@ -78194,22 +78265,12 @@ msgid "Solve"
 msgstr "解算"
 
 
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_clip"
-msgstr "CLIP_PT_tools_clip"
-
-
 msgid "Mask Tools"
 msgstr "遮罩工具"
 
 
 msgid "Transforms"
 msgstr "变换"
-
-
-msgctxt "MovieClip"
-msgid "CLIP_PT_tools_scenesetup"
-msgstr "CLIP_PT_tools_scenesetup"
 
 
 msgctxt "MovieClip"
@@ -78706,11 +78767,6 @@ msgid "Boid Brain"
 msgstr "群集行为逻辑"
 
 
-msgctxt "ParticleSettings"
-msgid "PARTICLE_PT_children"
-msgstr "PARTICLE_PT_children"
-
-
 msgid "Clumping"
 msgstr "簇集"
 
@@ -79144,11 +79200,6 @@ msgstr "临时编辑器"
 
 msgid "Text Rendering"
 msgstr "文本渲染"
-
-
-msgctxt "WindowManager"
-msgid "USERPREF_PT_interface_translation"
-msgstr "USERPREF_PT_界面翻译"
 
 
 msgctxt "WindowManager"
@@ -79796,6 +79847,31 @@ msgstr "强度/力度"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "扭曲"
+
+
+msgctxt "Operator"
+msgid "Comb Curves"
+msgstr "梳理曲线"
+
+
+msgctxt "Operator"
+msgid "Delete Curves"
+msgstr "删除曲线"
+
+
+msgctxt "Operator"
+msgid "Curves Snake Hook"
+msgstr "曲线蛇形钩"
+
+
+msgctxt "Operator"
+msgid "Add Curves"
+msgstr "添加曲线"
+
+
+msgctxt "Operator"
+msgid "Grow / Shrink Curves"
+msgstr "生长/收缩曲线"
 
 
 msgid "Clone from Paint Slot"
@@ -80660,6 +80736,10 @@ msgstr "路径集合"
 
 msgid "Point in a point cloud"
 msgstr "点云中的点"
+
+
+msgid "Index of this points"
+msgstr "该点的编号"
 
 
 msgid "Active Point Cache"
@@ -91954,6 +92034,14 @@ msgid "Show preview of the transformed frames"
 msgstr "显示变换帧的预览"
 
 
+msgid "Limit View to Contents"
+msgstr "限制视图为内容"
+
+
+msgid "Limit timeline height to maximum used channel slot"
+msgstr "将时间轴高度限制为最大已用通道槽"
+
+
 msgid "Transform markers as well as strips"
 msgstr "在视频段上也应用标记变换"
 
@@ -96031,6 +96119,30 @@ msgid "Reverse the order of shown items"
 msgstr "倒转显示条目的顺序"
 
 
+msgid "UV Map Layers"
+msgstr "UV 贴图层"
+
+
+msgid "Collection of UV map layers"
+msgstr "UV 贴图层集合"
+
+
+msgid "Active UV Map Layer"
+msgstr "活动UV贴图层"
+
+
+msgid "Active UV Map layer"
+msgstr "活动UV贴图层"
+
+
+msgid "Active UV Map Index"
+msgstr "活动UV贴图编号"
+
+
+msgid "Active UV map index"
+msgstr "活动UV贴图编号"
+
+
 msgid "UV projector used by the UV project modifier"
 msgstr "用于 UV 投射修改器的 UV 投射"
 
@@ -98111,6 +98223,14 @@ msgid "Show custom VR overlays"
 msgstr "显示自定义VR叠加层"
 
 
+msgid "Show Object Extras"
+msgstr "显示物体杂项"
+
+
+msgid "Show object extras, including empties, lights, and cameras"
+msgstr "显示物体杂项，包括空物体、灯光和摄像机"
+
+
 msgid "Show Selection"
 msgstr "显示选择"
 
@@ -100107,7 +100227,7 @@ msgstr "RNA 标签:"
 
 
 msgid "Enum Item Label:"
-msgstr "列举型条目标签:"
+msgstr "枚举项标签:"
 
 
 msgid "Button Tip:"
@@ -100119,7 +100239,7 @@ msgstr "RNA 提示:"
 
 
 msgid "Enum Item Tip:"
-msgstr "列矩形条目提示:"
+msgstr "枚举项提示:"
 
 
 msgid "Could not write to po file ({})"
@@ -100242,6 +100362,10 @@ msgstr "控制器"
 
 msgid "Custom Overlays"
 msgstr "自定义叠加层"
+
+
+msgid "Object Extras"
+msgstr "物体杂项"
 
 
 msgid "Controller Style"
@@ -100872,6 +100996,10 @@ msgid "Invalid regular expression (replace): "
 msgstr "无效正则表达式(替换): "
 
 
+msgid "Calculation Range"
+msgstr "解算范围"
+
+
 msgid "Frame Numbers"
 msgstr "帧序号"
 
@@ -100886,6 +101014,10 @@ msgstr "帧范围前"
 
 msgid "After"
 msgstr "后显帧数"
+
+
+msgid "Cached Range"
+msgstr "缓存范围"
 
 
 msgid "Nothing to show yet..."
@@ -100903,6 +101035,11 @@ msgstr "扩展至非群组关键帧"
 
 msgid "Frame Range Start"
 msgstr "帧范围起始帧"
+
+
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "更新路径"
 
 
 msgctxt "Operator"
@@ -108592,6 +108729,10 @@ msgid "Channels are visible in Graph Editor for editing"
 msgstr "通道在曲线编辑器中可见, 以进行编辑"
 
 
+msgid "Display channel regardless of object selection"
+msgstr "无论选中任何物体均显示当前通道"
+
+
 msgid "Enable F-Curve modifiers"
 msgstr "启用函数曲线修改器"
 
@@ -111836,6 +111977,10 @@ msgstr "应用修改器仅修改 CV 点,而不是倒角点"
 
 msgid "Constructive modifiers cannot be applied"
 msgstr "无法应用构造性修改器"
+
+
+msgid "Evaluated geometry from modifier does not contain curves"
+msgstr "来自修改器被解算几何体不包含曲线"
 
 
 msgid "Modifiers cannot be applied in edit mode"
@@ -116226,6 +116371,10 @@ msgid "Tag '%s' not found in given asset"
 msgstr "未在已有资产中找到标签 '%s'"
 
 
+msgid "Cannot modify name of required geometry attribute"
+msgstr "无法修改所需几何属性的名称"
+
+
 msgid "Layer '%s' not found in object '%s'"
 msgstr "在物体 '%s' 中找不到层 '%s'"
 
@@ -117234,6 +117383,10 @@ msgstr "写入"
 
 msgid "Output Attributes"
 msgstr "输出属性"
+
+
+msgid "Internal Dependencies"
+msgstr "内部依赖"
 
 
 msgid "Coverage"

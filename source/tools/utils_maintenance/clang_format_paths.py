@@ -64,7 +64,7 @@ def compute_paths(paths, use_default_paths):
         # "Operating" on files that will be filtered out later on.
         paths = [
             f for f in paths
-            if os.path.isfile(f) and f.endswith(extensions)
+            if os.path.isdir(f) or (os.path.isfile(f) and f.endswith(extensions))
         ]
 
     if os.sep != "/":

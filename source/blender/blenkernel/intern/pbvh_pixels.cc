@@ -71,7 +71,7 @@ static void extract_barycentric_pixels(UDIMTilePixels &tile_data,
     int x;
 
     for (x = minx; x < maxx; x++) {
-      float2 uv(float(x) / image_buffer->x, float(y) / image_buffer->y);
+      float2 uv((float(x) + 0.5f) / image_buffer->x, (float(y) + 0.5f) / image_buffer->y);
       float3 barycentric_weights;
       barycentric_weights_v2(uvs[0], uvs[1], uvs[2], uv, barycentric_weights);
 
@@ -108,7 +108,7 @@ struct EncodePixelsUserData {
   ImageUser *image_user;
   PBVH *pbvh;
   Vector<PBVHNode *> *nodes;
-  MLoopUV *ldata_uv;
+  const MLoopUV *ldata_uv;
 };
 
 static void do_encode_pixels(void *__restrict userdata,
@@ -283,7 +283,8 @@ static void update_pixels(PBVH *pbvh, Mesh *mesh, Image *image, ImageUser *image
     return;
   }
 
-  MLoopUV *ldata_uv = static_cast<MLoopUV *>(CustomData_get_layer(&mesh->ldata, CD_MLOOPUV));
+  const MLoopUV *ldata_uv = static_cast<const MLoopUV *>(
+      CustomData_get_layer(&mesh->ldata, CD_MLOOPUV));
   if (ldata_uv == nullptr) {
     return;
   }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Alpha (b'8ece0816d9dd')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -2171,10 +2171,6 @@ msgid "View"
 msgstr "Görünüş"
 
 
-msgid "Radius"
-msgstr "Yarıçap"
-
-
 msgid "Steps"
 msgstr "Adımlar"
 
@@ -2185,6 +2181,10 @@ msgstr "Aktif Kamera"
 
 msgid "Material Index"
 msgstr "Malzeme Endeksi"
+
+
+msgid "Radius"
+msgstr "Yarıçap"
 
 
 msgid "Render"
@@ -4638,10 +4638,6 @@ msgstr "Görüntü genişliği"
 
 msgid "Packed File"
 msgstr "Dosya adı"
-
-
-msgid "X/Y pixels per meter"
-msgstr "Saniyede kare sayısı"
 
 
 msgid "Single Image"
@@ -11869,6 +11865,10 @@ msgid "Generic"
 msgstr "NLA Editörü"
 
 
+msgid "Default fill color"
+msgstr "Arabellek rengini yapıştır"
+
+
 msgctxt "Operator"
 msgid "Delete Active Frame"
 msgstr "Aktif pozisyonu sil"
@@ -12172,10 +12172,6 @@ msgstr "Resim seç"
 
 msgid "Create a new image"
 msgstr "Yeni dosya oluştur"
-
-
-msgid "Default fill color"
-msgstr "Arabellek rengini yapıştır"
 
 
 msgid "Image height"
