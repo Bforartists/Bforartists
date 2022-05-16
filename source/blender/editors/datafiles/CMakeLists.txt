@@ -145,7 +145,7 @@ huecorrect
 particlebrush_none
 
 groundgrid
-geometry_nodes_active
+nodetree_active
 node_compositing_active
 texture_active
 spreadsheet
@@ -1446,7 +1446,7 @@ named_attribute
 combine_color
 separate_color
 geometry_nodes
-#~ DEF_ICON_BLANK(1480)
+geometry_nodes_active
 #~ DEF_ICON_BLANK(1481)
 #~ DEF_ICON_BLANK(1482)
 #~ DEF_ICON_BLANK(1483)
