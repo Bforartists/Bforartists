@@ -1445,7 +1445,7 @@ attribute_store
 named_attribute
 combine_color
 separate_color
-#~ DEF_ICON_BLANK(1479)
+geometry_nodes
 #~ DEF_ICON_BLANK(1480)
 #~ DEF_ICON_BLANK(1481)
 #~ DEF_ICON_BLANK(1482)
