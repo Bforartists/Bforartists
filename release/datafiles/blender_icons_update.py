@@ -9,9 +9,9 @@ import subprocess
 import sys
 
 
-def run(cmd):
+def run(cmd, *, env=None):
     print("   ", " ".join(cmd))
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, env=env)
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -30,7 +30,7 @@ inkscape_bin = "inkscape"
 blender_bin = "blender"
 
 if sys.platform == 'darwin':
-    inkscape_app_path = '/Applications/Inkscape.app/Contents/Resources/script'
+    inkscape_app_path = '/Applications/Inkscape.app/Contents/MacOS/inkscape'
     if os.path.exists(inkscape_app_path):
         inkscape_bin = inkscape_app_path
     blender_app_path = '/Applications/Blender.app/Contents/MacOS/Blender'
@@ -47,8 +47,8 @@ cmd = (
     os.path.join(BASEDIR, "blender_icons.svg"),
     "--export-width=1270",
     "--export-height=640",
-    "--without-gui",
-    "--export-png=" + os.path.join(BASEDIR, "blender_icons16.png"),
+    "--export-type=png",
+    "--export-filename=" + os.path.join(BASEDIR, "blender_icons16.png"),
 )
 run(cmd)
 
@@ -57,10 +57,10 @@ cmd = (
     os.path.join(BASEDIR, "blender_icons.svg"),
     "--export-width=2540",
     "--export-height=1280",
-    "--without-gui",
-    "--export-png=" + os.path.join(BASEDIR, "blender_icons32.png"),
+    "--export-type=png",
+    "--export-filename=" + os.path.join(BASEDIR, "blender_icons32.png"),
 )
-run(cmd)
+run(cmd, env=env)
 
 
 # For testing it can be good to clear all old
@@ -82,7 +82,7 @@ cmd = (
     "--minx_icon", "2", "--maxx_icon", "2", "--miny_icon", "2", "--maxy_icon", "2",
     "--spacex_icon", "1", "--spacey_icon", "1",
 )
-run(cmd)
+run(cmd, env=env)
 
 cmd = (
     blender_bin, "--background", "--factory-startup", "-noaudio",
@@ -96,7 +96,7 @@ cmd = (
     "--minx_icon", "4", "--maxx_icon", "4", "--miny_icon", "4", "--maxy_icon", "4",
     "--spacex_icon", "2", "--spacey_icon", "2",
 )
-run(cmd)
+run(cmd, env=env)
 
 os.remove(os.path.join(BASEDIR, "blender_icons16.png"))
 os.remove(os.path.join(BASEDIR, "blender_icons32.png"))
