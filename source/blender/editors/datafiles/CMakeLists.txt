@@ -145,7 +145,7 @@ huecorrect
 particlebrush_none
 
 groundgrid
-nodetree_active
+geometry_nodes_active
 node_compositing_active
 texture_active
 spreadsheet
