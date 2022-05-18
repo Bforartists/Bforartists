@@ -63,7 +63,7 @@ jobs:
 
       - name: Create ZIP Package
         run: |
-          cd /home/runner/bforartistsrepo/build_linux_release_release/bin/
+          cd /home/runner/bforartistsrepo/build_linux_release_release/
           cpack -G ZIP
 
       # - name: Upload Build
