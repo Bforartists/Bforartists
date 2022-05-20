@@ -69,9 +69,9 @@ jobs:
       - name: Upload Build
         uses: actions/upload-artifact@v3
         with:
-          path: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
+          path: /home/runner/bforartistsrepo/build_linux_release_release/*.zip
 
       # - name: Upload ZIP Package
       #   uses: softprops/action-gh-release@v1
       #   with:
-      #     files: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
+      #     files: /home/runner/bforartistsrepo/build_linux_release_release/*.zip
