@@ -1,0 +1,50 @@
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Install Ninja build system
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Setup OptiX installers repo. SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.OPTIX_INSTALLERS_REPO_SSH_KEY}}
+
+      - name: Install OptiX
+        shell: cmd
+        run: |
+          git clone git@github.com:iyadahmed/optix_installers.git
+          .\optix_installers\NVIDIA-OptiX-SDK-7.3.0-win64.exe /s
+
+      # TODO: checkout code that triggered the action instead
+      - name: Clone Repository
+        shell: cmd
+        run: |
+          mkdir .\bforartistsrepo
+          pushd .\bforartistsrepo
+          git clone --depth=1 https://github.com/Bforartists/Bforartists
+          popd
+
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: .\bforartistsrepo\lib
+          key: ${{ runner.os }}
+
+      - name: Download Pre-compiled Headers
+        run: |
+          mkdir -p .\bforartistsrepo\lib
+          cd .\bforartistsrepo\lib
+          svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
+
+      - name: Build release
+        shell: cmd
+        run: |
+          pushd .\bforartistsrepo\Bforartists
+          .\make ninja release 2019
+          popd
