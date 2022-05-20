@@ -66,13 +66,12 @@ jobs:
           cd /home/runner/bforartistsrepo/build_linux_release_release/
           cpack -G ZIP
 
-      # - name: Upload Build
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Bforartists-Release-${{ runner.os }}
-      #     path: /home/runner/bforartistsrepo/build_linux_release_release/bin/
-
-      - name: Upload ZIP Package
-        uses: softprops/action-gh-release@v1
+      - name: Upload Build
+        uses: actions/upload-artifact@v3
         with:
-          files: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
+          path: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
+
+      # - name: Upload ZIP Package
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: /home/iyad/bforartistsrepo/build_linux_release_release/*.zip
