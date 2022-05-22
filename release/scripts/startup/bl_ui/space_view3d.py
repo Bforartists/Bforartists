@@ -2524,7 +2524,7 @@ class VIEW3D_MT_object_relations(Menu):
 
         layout.operator("object.make_override_library", text="Make Library Override", icon = "LIBRARY_DATA_OVERRIDE")
         layout.operator("object.make_override_library",
-                        text="Make Library Override - Fully Editable").do_fully_editable=True
+                        text="Make Library Override - Fully Editable", icon = "LIBRARY_DATA_OVERRIDE").do_fully_editable=True
 
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
