@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
+"""
+This script runs autopep8 on multiple files/directories.
+
+While it can be called directly, you may prefer to run this from Blender's root directory with the command:
+
+   make format
+
+Otherwise you may call this script directly, for example:
+
+   ./source/tools/utils_maintenance/autopep8_format_paths.py --changed-only tests/python
+"""
 
 import os
 import sys
@@ -57,7 +68,8 @@ def autopep8_ensure_version(autopep8_format_cmd_argument):
     global AUTOPEP8_FORMAT_CMD
     autopep8_format_cmd = None
     version_output = None
-    # Attempt to use `AUTOPEP8_BIN` passed in from "make format"
+    version = None
+    # Attempt to use `--autopep8-command` passed in from `make format`
     # so the autopep8 distributed with Blender will be used.
     for is_default in (True, False):
         if is_default:
@@ -79,17 +91,26 @@ def autopep8_ensure_version(autopep8_format_cmd_argument):
             continue
         AUTOPEP8_FORMAT_CMD = autopep8_format_cmd
         break
-    version = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
+    if version_output is not None:
+        version = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
     if version is not None:
         version = version.split("-")[0]
         version = tuple(int(n) for n in version.split("."))
-    if version is not None:
+        version = (version + (0, 0, 0))[:3]  # Ensure exactly 3 numbers.
         print("Using %s (%d.%d.%d)..." % (AUTOPEP8_FORMAT_CMD, version[0], version[1], version[2]))
     return version
 
 
 def autopep8_format(files):
-    cmd = [AUTOPEP8_FORMAT_CMD, "--recursive", "--in-place", "--jobs=0"] + files
+    cmd = [
+        AUTOPEP8_FORMAT_CMD,
+        # Operate on all directories recursively.
+        "--recursive",
+        # Update the files in-place.
+        "--in-place",
+        # Auto-detect the number of jobs to use.
+        "--jobs=0",
+    ] + files
 
     # Support executing from the module directory because Blender does not distribute the command.
     if cmd[0].endswith(".py"):
@@ -101,13 +122,12 @@ def autopep8_format(files):
 def argparse_create():
     import argparse
 
-    # When --help or no args are given, print this help
-    usage_text = "Format source code"
-    epilog = (
-        "This script runs autopep8 on multiple files/directories.\n"
-        "Set AUTOPEP8_BIN environment variable to define the command used to run autopep8."
+    parser = argparse.ArgumentParser(
+        description="Format Python source code.",
+        epilog=__doc__,
+        # Don't re-wrap text, keep newlines & indentation.
+        formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser = argparse.ArgumentParser(description=usage_text, epilog=epilog)
     parser.add_argument(
         "--changed-only",
         dest="changed_only",
@@ -123,7 +143,7 @@ def argparse_create():
     parser.add_argument(
         "--autopep8-command",
         dest="autopep8_command",
-        default="autopep8",
+        default=AUTOPEP8_FORMAT_CMD,
         help="The command to call autopep8.",
         required=False,
     )
@@ -170,7 +190,8 @@ def main():
         if f not in ignore_files
     ]
 
-    # Happens when users run "make format" passing in individual C/C++ files.
+    # Happens when users run "make format" passing in individual C/C++ files
+    # (and no Python files).
     if not files:
         return
 

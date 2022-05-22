@@ -148,7 +148,7 @@ class POV(StoredView):
         view3d.lock_cursor = stored_view.lock_cursor
         if stored_view.lock_cursor is True:
             # update cursor only if view is locked to cursor
-            view3d.cursor_location = stored_view.cursor_location
+            self.scene.cursor.location = stored_view.cursor_location
 
         if stored_view.perspective == "CAMERA":
 

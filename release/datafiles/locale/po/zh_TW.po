@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-03-13 16:02+0000\n"
-"Last-Translator: Cheng-Chia Tseng <zerngjia@gmail.com>\n"
+"PO-Revision-Date: 2022-05-10 19:36+0800\n"
+"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11"
+"X-Generator: Poedit 3.0.1"
 
 
 msgid "Shader AOV"
@@ -317,6 +317,10 @@ msgstr "MetalRT (測試版本)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT 用於光跡追蹤運算時, 在大量使用曲線的場景可減少記憶體用量並在特定條件下有較佳效能。不過此支援功能目前還在測試階段並且某些場景可能無法正確算繪"
+
+
+msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
+msgstr "在著色器編輯器中顯示 glTF 設定節點 (選單 添加 > 輸出)"
 
 
 msgid "Fribidi Library"
@@ -871,6 +875,10 @@ msgid "Spreadsheet"
 msgstr "試算表"
 
 
+msgid "Explore geometry data in a table"
+msgstr "在表格中瀏覽幾何資料"
+
+
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -939,6 +947,10 @@ msgid "Armature Deform Constraint Targets"
 msgstr "骨架變形約束目標"
 
 
+msgid "Collection of target bones and weights"
+msgstr "目標骨骼與權重選集"
+
+
 msgid "Armature EditBones"
 msgstr "骨架編輯骨骼"
 
@@ -977,6 +989,10 @@ msgstr "字串"
 
 msgid "Boolean"
 msgstr "布林"
+
+
+msgid "Smaller integer with a range from -128 to 127"
+msgstr "範圍從 -128 至 127 的較小整數"
 
 
 msgid "Domain"
@@ -2967,6 +2983,10 @@ msgid "Has Weight"
 msgstr "具備權重"
 
 
+msgid "Grow or shrink curves by changing their size uniformly instead of using trimming or extrapolation"
+msgstr "透過均一地改變尺寸來擴大或收縮曲線, 而不是修剪或延伸曲線"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "油性筆刷設定"
 
@@ -3103,24 +3123,60 @@ msgid "All"
 msgstr "全部"
 
 
+msgid "Use both visible strokes and edit lines as fill boundary limits"
+msgstr "同時採用可見的筆觸以及編輯的線段來做為填充界限"
+
+
 msgid "Strokes"
 msgstr "筆觸"
+
+
+msgid "Use visible strokes as fill boundary limits"
+msgstr "採用可見的筆觸來做為填充界限"
+
+
+msgid "Use edit lines as fill boundary limits"
+msgstr "採用編輯的線段來做為填充界限"
 
 
 msgid "Precision"
 msgstr "精度"
 
 
+msgid "Factor for fill boundary accuracy, higher values are more accurate but slower"
+msgstr "填充界限的精確係數，數字愈高愈精確但運算愈慢"
+
+
 msgid "Visible"
 msgstr "可見"
+
+
+msgid "Leak Size"
+msgstr "溢出尺寸"
+
+
+msgid "Size in pixels to consider the leak closed"
+msgstr "以畫素為單位的溢出尺寸"
 
 
 msgid "Simplify"
 msgstr "簡化"
 
 
+msgid "Number of simplify steps (large values reduce fill accuracy)"
+msgstr "簡化步驟次數 (數量大會降低填充精確度)"
+
+
 msgid "Threshold"
 msgstr "閾值"
+
+
+msgid "Threshold to consider color transparent for filling"
+msgstr "填充時色彩透明度的判斷閥值"
+
+
+msgid "Pen"
+msgstr "筆"
 
 
 msgid "Marker"
@@ -3129,6 +3185,10 @@ msgstr "標記"
 
 msgid "Airbrush"
 msgstr "噴槍"
+
+
+msgid "Chisel"
+msgstr "鑿刻"
 
 
 msgid "Fill"
@@ -3183,36 +3243,148 @@ msgid "Hardness"
 msgstr "硬度"
 
 
+msgid "Gradient from the center of Dot and Box strokes (set to 1 for a solid stroke)"
+msgstr "從點或矩形筆觸中心向外的漸層 (設為 1 是硬筆觸)"
+
+
 msgid "Input Samples"
 msgstr "輸入樣本"
+
+
+msgid "Generate intermediate points for very fast mouse movements. Set to 0 to disable"
+msgstr "對於非常快速的滑鼠移動產生中介點。設為 0 停用"
+
+
+msgid "Material used for strokes drawn using this brush"
+msgstr "使用此筆刷畫出筆觸所用的材質"
 
 
 msgid "Jitter"
 msgstr "抖動"
 
 
+msgid "Jitter factor for new strokes"
+msgstr "新筆觸的抖動係數"
+
+
+msgid "Amount of smoothing to apply after finish newly created strokes, to reduce jitter/noise"
+msgstr "新筆觸建立完成之後套用的平滑強度，為了減少抖動/噪訊"
+
+
 msgid "Iterations"
 msgstr "迭代"
+
+
+msgid "Color strength for new strokes (affect alpha factor of color)"
+msgstr "新筆觸的色彩力度 (影響色彩的 alpha 係數)"
 
 
 msgid "Subdivision Steps"
 msgstr "細分步數"
 
 
+msgid "Number of times to subdivide newly created strokes, for less jagged strokes"
+msgstr "新建筆觸的細分次數，為了改善鋸齒狀筆觸"
+
+
 msgid "Hue"
 msgstr "色相"
+
+
+msgid "Random factor to modify original hue"
+msgstr "修改原始色相的隨機係數"
 
 
 msgid "Pressure Randomness"
 msgstr "壓力隨機度"
 
 
+msgid "Randomness factor for pressure in new strokes"
+msgstr "新筆觸的壓力隨機變化係數"
+
+
 msgid "Saturation"
 msgstr "飽和度"
 
 
+msgid "Random factor to modify original saturation"
+msgstr "修改原始飽和度的隨機係數"
+
+
+msgid "Strength Randomness"
+msgstr "力度的隨機值"
+
+
+msgid "Randomness factor strength in new strokes"
+msgstr "筆觸力度的隨機係數"
+
+
+msgid "Random factor to modify original value"
+msgstr "修改原始明度的隨機係數"
+
+
+msgid "Show transparent lines to use as boundary for filling"
+msgstr "顯示作為填充邊界的透明線條"
+
+
+msgid "Show help lines for filling to see boundaries"
+msgstr "顯示填充輔助線來檢視邊界"
+
+
+msgid "Show Lasso"
+msgstr "顯示套索"
+
+
+msgid "Factor of Simplify using adaptive algorithm"
+msgstr "使用適應性演算法的簡化係數"
+
+
+msgid "Use this brush when enable eraser with fast switch key"
+msgstr "當啟用橡皮擦快速切換鍵時使用此筆刷"
+
+
+msgid "The brush affects the position of the point"
+msgstr "影響點位置的筆刷"
+
+
+msgid "The brush affects the color strength of the point"
+msgstr "影響點顏色力度的筆刷"
+
+
+msgid "Affect Thickness"
+msgstr "影響厚度"
+
+
+msgid "The brush affects the thickness of the point"
+msgstr "影響點厚度的筆刷"
+
+
+msgid "Affect UV"
+msgstr "影響 UV"
+
+
+msgid "The brush affects the UV rotation of the point"
+msgstr "影響點 UV 旋轉的筆刷"
+
+
 msgid "Use Pressure Jitter"
 msgstr "使用壓力抖動"
+
+
+msgid "Use tablet pressure for jitter"
+msgstr "啟用繪圖板壓力控制抖動"
+
+
+msgid "Keep material assigned to brush"
+msgstr "保留指定給筆刷的材質"
+
+
+msgid "Occlude Eraser"
+msgstr "遮擋橡皮擦"
+
+
+msgid "Erase only strokes visible and not occluded"
+msgstr "只擦除可見並且不受遮擋的筆觸"
 
 
 msgid "Use Pressure"
@@ -3223,12 +3395,72 @@ msgid "Use tablet pressure"
 msgstr "使用繪圖板壓力"
 
 
+msgid "Use pressure to modulate randomness"
+msgstr "使用感壓來調整隨機值"
+
+
+msgid "Use Post-Process Settings"
+msgstr "使用後期處理設定"
+
+
+msgid "Additional post processing options for new strokes"
+msgstr "新筆觸的額外後期處理選項"
+
+
+msgid "Random brush settings"
+msgstr "隨機筆刷設定"
+
+
+msgid "Use Stabilizer"
+msgstr "使用穩定器"
+
+
+msgid "Draw lines with a delay to allow smooth strokes. Press Shift key to override while drawing"
+msgstr "延遲繪製線條以允許筆觸平滑。繪製時可按 Shift 鍵覆寫"
+
+
+msgid "Use Pressure Strength"
+msgstr "使用感壓力度"
+
+
+msgid "Use tablet pressure for color strength"
+msgstr "使用繪圖板感壓控制色彩力度"
+
+
+msgid "Use randomness at stroke level"
+msgstr "筆觸層級使用隨機度"
+
+
+msgid "Trim intersecting stroke ends"
+msgstr "修剪交叉的筆觸端點"
+
+
 msgid "Vertex Color Factor"
 msgstr "頂點色彩係數"
 
 
 msgid "Factor used to mix vertex color to get final color"
 msgstr "這個係數用於混合頂點色彩以獲得最終色彩"
+
+
+msgid "Defines how vertex color affect to the strokes"
+msgstr "定義頂點色彩如何影響筆觸"
+
+
+msgid "Vertex Color affects to Stroke only"
+msgstr "頂點色彩僅影響筆觸"
+
+
+msgid "Vertex Color affects to Fill only"
+msgstr "頂點色彩僅影響填充"
+
+
+msgid "Vertex Color affects to Stroke and Fill"
+msgstr "頂點色彩影響筆觸及填充"
+
+
+msgid "Layer of the cache, used to load or override data from the first the first layer"
+msgstr "快取的圖層，用於載入或覆蓋第一個圖層的資料"
 
 
 msgid "Active Layer"
@@ -3355,6 +3587,10 @@ msgid "Scale"
 msgstr "縮放"
 
 
+msgid "Scale the background image"
+msgstr "縮放背景影像"
+
+
 msgid "Show Background Image"
 msgstr "顯示背景影像"
 
@@ -3439,12 +3675,20 @@ msgid "Ratio"
 msgstr "比率"
 
 
+msgid "Distortion to simulate anamorphic lens bokeh"
+msgstr "透過變形來模擬電影變形鏡頭的散景"
+
+
 msgid "Rotation of blades in aperture"
 msgstr "光圈中葉片的旋轉"
 
 
 msgid "Distance to the focus point for depth of field"
 msgstr "景深離焦點距離"
+
+
+msgid "Focus Object"
+msgstr "焦點物體"
 
 
 msgid "Use this object to define the depth of field focal point"
@@ -3461,6 +3705,14 @@ msgstr "交叉平面距離"
 
 msgid "The converge point for the stereo cameras (often the distance between a projector and the projection screen)"
 msgstr "立體攝影機的交叉點 (通常是投影機與螢幕之間的距離)"
+
+
+msgid "Off-Axis"
+msgstr "偏離軸"
+
+
+msgid "Off-axis frustums converging in a plane"
+msgstr "收斂至平面的軸向偏離錐體"
 
 
 msgid "Parallel"
@@ -3499,6 +3751,38 @@ msgid "Center"
 msgstr "中心"
 
 
+msgid "Pole Merge Start Angle"
+msgstr "極向合併起始角度"
+
+
+msgid "Angle at which interocular distance starts to fade to 0"
+msgstr "瞳孔距離開始淡出至零的角度"
+
+
+msgid "Pole Merge End Angle"
+msgstr "極向合併終止角度"
+
+
+msgid "Angle at which interocular distance is 0"
+msgstr "瞳孔間距為零的角度"
+
+
+msgid "Use Pole Merge"
+msgstr "使用極向合併"
+
+
+msgid "Fade interocular distance to 0 after the given cutoff angle"
+msgstr "根據指定的裁切角度來淡出瞳孔間距至零"
+
+
+msgid "Spherical Stereo"
+msgstr "球形立體"
+
+
+msgid "Render every pixel rotating the camera around the middle of the interocular distance"
+msgstr "繞著瞳孔間距的中點轉動攝影機來算繪每個畫素"
+
+
 msgid "Child Particle"
 msgstr "子代粒子"
 
@@ -3513,6 +3797,10 @@ msgstr "布料碰撞設定"
 
 msgid "Cloth simulation settings for self collision and collision with other objects"
 msgstr "布料自身碰撞以及與其他物體碰撞的模擬設定"
+
+
+msgid "Collision Collection"
+msgstr "碰撞集合"
 
 
 msgid "Collision Quality"
@@ -3587,16 +3875,36 @@ msgid "Bending Spring Damping"
 msgstr "彎折彈簧阻尼"
 
 
+msgid "Amount of damping in bending behavior"
+msgstr "彎曲表現的阻尼量"
+
+
+msgid "Physical model for simulating bending forces"
+msgstr "模擬彎曲應力的物理模型"
+
+
 msgid "Angular"
 msgstr "角度"
+
+
+msgid "Cloth model with angular bending springs"
+msgstr "帶有角彎曲彈簧的布料模型"
 
 
 msgid "Linear"
 msgstr "線性"
 
 
+msgid "Cloth model with linear bending springs (legacy)"
+msgstr "帶有線性彎曲彈簧的布料模型 (舊版)"
+
+
 msgid "Bending Stiffness"
 msgstr "抗彎剛度"
+
+
+msgid "How much the material resists bending"
+msgstr "此材料抗彎曲的程度"
 
 
 msgid "Bending Stiffness Maximum"
@@ -3609,6 +3917,26 @@ msgstr "最大的抗彎剛度值"
 
 msgid "Collider Friction"
 msgstr "碰撞子摩擦"
+
+
+msgid "Compression Spring Damping"
+msgstr "彈簧擠壓的阻尼"
+
+
+msgid "Amount of damping in compression behavior"
+msgstr "壓縮表現的阻尼大小"
+
+
+msgid "Compression Stiffness"
+msgstr "壓縮剛度"
+
+
+msgid "How much the material resists compression"
+msgstr "此材料抵抗壓縮的程度"
+
+
+msgid "Compression Stiffness Maximum"
+msgstr "最大壓縮剛度"
 
 
 msgid "Target Density Strength"
@@ -3629,6 +3957,10 @@ msgstr "毛髮的最大密度"
 
 msgid "Effector Weights"
 msgstr "作用器權重"
+
+
+msgid "Density (kg/l) of the fluid contained inside the object, used to create a hydrostatic pressure gradient simulating the weight of the internal fluid, or buoyancy from the surrounding fluid if negative"
+msgstr "物體內部裝盛的流體密度 (kg/l)，用於建立水靜壓梯度來模擬內部流體的重量, 如果是負數的話則是周圍流體的浮力"
 
 
 msgid "Goal Default"
@@ -3683,6 +4015,42 @@ msgid "Internal Friction"
 msgstr "內部摩擦"
 
 
+msgid "Internal Spring Max Diversion"
+msgstr "內部彈簧的最大分量"
+
+
+msgid "How much the rays used to connect the internal points can diverge from the vertex normal"
+msgstr "連接內部點的射線可以從頂點法線拆分出來的數量"
+
+
+msgid "Internal Spring Max Length"
+msgstr "內部彈簧的最大長度"
+
+
+msgid "The maximum length an internal spring can have during creation. If the distance between internal points is greater than this, no internal spring will be created between these points. A length of zero means that there is no length limit"
+msgstr "彈簧在創建時可以用的最大長度。如果內部點的距離大於此長度，這些點之間就不會創建彈簧。設為零表示長度不設限"
+
+
+msgid "Check Internal Spring Normals"
+msgstr "檢查內部彈簧的法線"
+
+
+msgid "Require the points the internal springs connect to have opposite normal directions"
+msgstr "要求內部彈簧連接的點要有相反方向的法線"
+
+
+msgid "How much the material resists stretching"
+msgstr "此材料抵抗拉伸的程度"
+
+
+msgid "Vertex Mass"
+msgstr "頂點質量"
+
+
+msgid "The mass of each vertex on the cloth material"
+msgstr "布料上的每個頂點的質量"
+
+
 msgid "Pin Stiffness"
 msgstr "釘剛度"
 
@@ -3693,6 +4061,10 @@ msgstr "釘 (頂點目標位置) 彈簧剛度"
 
 msgid "Pressure Scale"
 msgstr "壓力縮放"
+
+
+msgid "Ambient pressure (kPa) that balances out between the inside and outside of the object when it has the target volume"
+msgstr "當物體具有目標體積時, 平衡物體內部與外部的周遭壓力 (kPa)"
 
 
 msgid "Quality"
@@ -3719,8 +4091,20 @@ msgid "Maximum sewing force"
 msgstr "最大的縫合力"
 
 
+msgid "Amount of damping in shearing behavior"
+msgstr "剪力表現的阻尼量"
+
+
 msgid "Shear Stiffness"
 msgstr "切變剛度"
+
+
+msgid "How much the material resists shearing"
+msgstr "此材料抵抗剪力的程度"
+
+
+msgid "Maximum shear scaling value"
+msgstr "剪力縮放最大值"
 
 
 msgid "Shrink Factor Max"
@@ -3735,8 +4119,56 @@ msgid "Shrink Factor"
 msgstr "收縮係數"
 
 
+msgid "Factor by which to shrink cloth"
+msgstr "布料收縮係數"
+
+
+msgid "Target Volume"
+msgstr "目標物體積"
+
+
+msgid "The mesh volume where the inner/outer pressure will be the same. If set to zero the change in volume will not affect pressure"
+msgstr "內部/外部壓力相等時的網格體積。如果設為零則體積變化將不影響壓力"
+
+
+msgid "Amount of damping in stretching behavior"
+msgstr "拉伸表現的阻尼量"
+
+
+msgid "Cloth speed is multiplied by this value"
+msgstr "布料速度會乘上此數值"
+
+
 msgid "Pressure"
 msgstr "壓力"
+
+
+msgid "The uniform pressure that is constantly applied to the mesh, in units of Pressure Scale. Can be negative"
+msgstr "持續作用在物體上的均勻壓力, 單位是壓力規模。可以為負值"
+
+
+msgid "Dynamic Base Mesh"
+msgstr "動態基礎網格"
+
+
+msgid "Make simulation respect deformations in the base mesh"
+msgstr "將基礎網格的變形納入模擬運算"
+
+
+msgid "Create Internal Springs"
+msgstr "建立內部彈簧"
+
+
+msgid "Simulate an internal volume structure by creating springs connecting the opposite sides of the mesh"
+msgstr "透過建立連接網格相對側的彈簧來模擬內部體積結構"
+
+
+msgid "Simulate pressure inside a closed cloth mesh"
+msgstr "模擬封閉布料網格內部的壓力"
+
+
+msgid "Use Custom Volume"
+msgstr "使用自訂體積"
 
 
 msgid "Sew Cloth"
@@ -6262,6 +6694,10 @@ msgstr "視接口"
 
 msgid "Render"
 msgstr "算繪"
+
+
+msgid "Object Instances"
+msgstr "使用物體實例"
 
 
 msgid "Scene"
@@ -18902,6 +19338,22 @@ msgid "Attribute"
 msgstr "特性"
 
 
+msgid "Instances"
+msgstr "實例化"
+
+
+msgid "Curve Primitives"
+msgstr "曲線原形"
+
+
+msgid "Mesh Primitives"
+msgstr "網格原形"
+
+
+msgid "Utilities"
+msgstr "效用"
+
+
 msgid "Node"
 msgstr "節點"
 
@@ -24870,6 +25322,10 @@ msgid "Align Y"
 msgstr "對齊 Y"
 
 
+msgid "Subdivide Mesh"
+msgstr "細分網格"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "框幀"
@@ -25569,6 +26025,10 @@ msgstr "為隱藏"
 
 msgid "Link is hidden due to invisible sockets"
 msgstr "連結因不可見接口而隱藏"
+
+
+msgid "Link is valid"
+msgstr "連結無效"
 
 
 msgid "To node"
@@ -30729,6 +31189,11 @@ msgstr "移除遮罩分層"
 
 msgid "Subdivisions"
 msgstr "細分"
+
+
+msgctxt "Operator"
+msgid "Recalculate internal geometry"
+msgstr "重新計算內部幾何結構"
 
 
 msgid "Modifier"
@@ -43758,6 +44223,10 @@ msgid "Playback"
 msgstr "播放"
 
 
+msgid "Primitives"
+msgstr "原形"
+
+
 msgid "Rename Active Item"
 msgstr "重新命名作用中項目"
 
@@ -50686,6 +51155,10 @@ msgid "Slot that contains information about texture painting"
 msgstr "包含紋理繪製有關資訊的槽"
 
 
+msgid "Icon"
+msgstr "圖示"
+
+
 msgid "Text Box"
 msgstr "文字方塊"
 
@@ -54008,6 +54481,21 @@ msgstr "游標至格線"
 
 
 msgctxt "Operator"
+msgid "Delete Loose Points"
+msgstr "刪除鬆散的點"
+
+
+msgctxt "Operator"
+msgid "Delete Duplicated Frames"
+msgstr "刪除重複影格"
+
+
+msgctxt "Operator"
+msgid "Recalculate Geometry"
+msgstr "重計幾何結構"
+
+
+msgctxt "Operator"
 msgid "Poly"
 msgstr "多角形"
 
@@ -54015,6 +54503,16 @@ msgstr "多角形"
 msgctxt "Operator"
 msgid "Selection to Cursor"
 msgstr "選取項至游標"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes"
+msgstr "筆畫邊界"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes all Frames"
+msgstr "所有影格的筆劃邊界"
 
 
 msgid "Data Source:"
@@ -54636,6 +55134,10 @@ msgid "Aspect Ratio"
 msgstr "長寬比"
 
 
+msgid "Tiles"
+msgstr "鋪排"
+
+
 msgctxt "Operator"
 msgid "Render Slot Cycle Previous"
 msgstr "算繪槽循環中的上一個"
@@ -54930,8 +55432,8 @@ msgstr "偏好設定..."
 
 
 msgctxt "Operator"
-msgid "Back to Previous"
-msgstr "返回上一步"
+msgid "Reorder to Back"
+msgstr "重新排列至最後面"
 
 
 msgctxt "Operator"
@@ -54996,6 +55498,10 @@ msgid "Only Insert Needed"
 msgstr "只在需要時插入"
 
 
+msgid "Auto-Keyframing"
+msgstr "自動鍵幀處理"
+
+
 msgid "Only Insert Available"
 msgstr "只在可行之處插入"
 
@@ -55016,8 +55522,44 @@ msgid "View Name"
 msgstr "視圖名稱"
 
 
+msgid "3D Viewport Axis"
+msgstr "3D 視接口座標軸"
+
+
 msgid "Limit Size"
 msgstr "限制大小"
+
+
+msgid "Shadow Offset X"
+msgstr "陰影 X 偏移"
+
+
+msgid "Panel Title"
+msgstr "面板標題"
+
+
+msgid "Widget Label"
+msgstr "小工具標籤"
+
+
+msgid "Scripts"
+msgstr "指令稿"
+
+
+msgid "Render Output"
+msgstr "算繪輸出"
+
+
+msgid "Render Cache"
+msgstr "算繪快取"
+
+
+msgid "Excluded Paths"
+msgstr "排除的路徑"
+
+
+msgid "Color Set %d"
+msgstr "色彩集 %d"
 
 
 msgid "Invert Wheel Zoom Direction"
@@ -55126,6 +55668,11 @@ msgstr "將作用中攝影機對齊所選項"
 
 
 msgctxt "Operator"
+msgid "Render Region..."
+msgstr "算繪區域…"
+
+
+msgctxt "Operator"
 msgid "Child"
 msgstr "子代"
 
@@ -55138,6 +55685,11 @@ msgstr "擴展親代"
 msgctxt "Operator"
 msgid "Extend Child"
 msgstr "擴展子代"
+
+
+msgctxt "Operator"
+msgid "Select All by Type"
+msgstr "依類型全選"
 
 
 msgctxt "Operator"
@@ -55306,6 +55858,11 @@ msgstr "喇叭"
 
 
 msgctxt "Operator"
+msgid "Make Library Override..."
+msgstr "製作庫覆寫…"
+
+
+msgctxt "Operator"
 msgid "Make Local..."
 msgstr "設為區域..."
 
@@ -55336,6 +55893,11 @@ msgstr "烘焙動作..."
 
 
 msgctxt "Operator"
+msgid "Bake Object Transform to Grease Pencil..."
+msgstr "烘焙物體變換為油性筆…"
+
+
+msgctxt "Operator"
 msgid "Copy from Active"
 msgstr "從作用項複製"
 
@@ -55353,6 +55915,11 @@ msgstr "連接"
 msgctxt "Operator"
 msgid "Origin"
 msgstr "原點"
+
+
+msgctxt "Operator"
+msgid "Rename Active Object..."
+msgstr "重新命名作用中物體…"
 
 
 msgctxt "Operator"
@@ -55617,6 +56184,11 @@ msgstr "計算"
 
 
 msgctxt "Operator"
+msgid "Rename Active Bone..."
+msgstr "重新命名作用中骨骼…"
+
+
+msgctxt "Operator"
 msgid "Sort Elements..."
 msgstr "排序元素..."
 
@@ -55665,6 +56237,10 @@ msgstr "網格分析"
 
 msgid "Edge Marks"
 msgstr "邊線標記"
+
+
+msgid "Zero Weights"
+msgstr "顯示零權重"
 
 
 msgctxt "Operator"
@@ -55754,6 +56330,10 @@ msgstr "於所選標記"
 msgctxt "Operator"
 msgid "Paste X-Flipped Pose"
 msgstr "貼上 X 軸向翻轉的姿勢"
+
+
+msgid "UV Unwrap Faces"
+msgstr "針對所選面進行 UV 拆解"
 
 
 msgctxt "Operator"
@@ -55997,6 +56577,14 @@ msgstr "，無法有單框幀路徑"
 
 msgid "Motion path frame extents invalid for %s (%d to %d)%s"
 msgstr "%s 運動路徑框幀範圍無效 (%d 到 %d)%s"
+
+
+msgid " attribute from geometry"
+msgstr " 幾何的屬性"
+
+
+msgid " from "
+msgstr " 來自 "
 
 
 msgid "Unable to create userpref path"
@@ -56987,6 +57575,10 @@ msgid "Failed to set value"
 msgstr "無法設定數值"
 
 
+msgid "Menu Missing:"
+msgstr "目錄遺失:"
+
+
 msgid "Active button is not from a script, cannot edit source"
 msgstr "作用中按鈕不是源自指令稿，無法編輯來源"
 
@@ -57166,6 +57758,10 @@ msgstr "擴展外推"
 
 msgid "Reset Curve"
 msgstr "重設曲線"
+
+
+msgid "Sort By:"
+msgstr "排序方式:"
 
 
 msgid "Anim Player"
@@ -57458,6 +58054,10 @@ msgstr "無法建立匯出檔"
 
 msgid "Can't overwrite export file"
 msgstr "無法覆寫匯出檔"
+
+
+msgid "Export Options"
+msgstr "匯出資料選項"
 
 
 msgctxt "Mesh"
@@ -58422,6 +59022,10 @@ msgid "File path"
 msgstr "檔案路徑"
 
 
+msgid "Path to asset library does not exist:"
+msgstr "資產庫路徑不存在:"
+
+
 msgid "File does not exist"
 msgstr "檔案不存在"
 
@@ -58476,6 +59080,14 @@ msgstr "值："
 
 msgid "Update Dependencies"
 msgstr "更新相依關係"
+
+
+msgid "Driven Property:"
+msgstr "被驅動屬性:"
+
+
+msgid "Driver Settings:"
+msgstr "驅動器設定:"
 
 
 msgid "Add Modifier"
@@ -58763,6 +59375,30 @@ msgid "Node tree type %s undefined"
 msgstr "節點樹類型 %s 尚未定義"
 
 
+msgid " (Integer)"
+msgstr " (整數)"
+
+
+msgid " (Float)"
+msgstr " (浮點)"
+
+
+msgid " (Vector)"
+msgstr " (向量)"
+
+
+msgid " (Boolean)"
+msgstr " (布林)"
+
+
+msgid " (String)"
+msgstr " (字串)"
+
+
+msgid "Geometry:"
+msgstr "幾何:"
+
+
 msgid "Clipboard is empty"
 msgstr "剪貼簿為空白"
 
@@ -58825,6 +59461,14 @@ msgstr "斷開連接至該輸入的節點"
 
 msgid "Use view layer for rendering"
 msgstr "使用視圖層來算繪"
+
+
+msgid ""
+"Restrict selection in the 3D View\n"
+"* Shift to set children"
+msgstr ""
+"限制/允許在 3D 視圖中選取\n"
+"* 按 Shift 來指定子代"
 
 
 msgctxt "Action"
@@ -59048,6 +59692,10 @@ msgid "Mean Bevel Weight:"
 msgstr "平均倒角權重："
 
 
+msgid "Vertex Crease:"
+msgstr "頂點轉折:"
+
+
 msgid "Radius X:"
 msgstr "半徑 X："
 
@@ -59194,6 +59842,10 @@ msgstr "使用者正視法"
 
 msgid "User Perspective"
 msgstr "使用者透視法"
+
+
+msgid " (Clipped)"
+msgstr " (已裁切)"
 
 
 msgid "fps: %.2f"
@@ -60163,6 +60815,10 @@ msgid "Coverage"
 msgstr "收斂"
 
 
+msgid "Create Instances"
+msgstr "創建實例化"
+
+
 msgid "Create Along Paths"
 msgstr "沿路徑建立"
 
@@ -60250,6 +60906,10 @@ msgstr "右上"
 
 msgid "Bokeh Type:"
 msgstr "散景類型："
+
+
+msgid "Prefilter:"
+msgstr "前期濾鏡:"
 
 
 msgid "Image 1"
@@ -60716,6 +61376,10 @@ msgid "Strips must have the same number of inputs"
 msgstr "片段必須有相同的輸入數"
 
 
+msgid "Input pending "
+msgstr "等候輸入 "
+
+
 msgid "Blender File View"
 msgstr "Blender 檔案檢視"
 
@@ -60869,7 +61533,7 @@ msgstr "OS"
 
 
 msgid "Bksp"
-msgstr "Bksp"
+msgstr "倒退鍵"
 
 
 msgid "Esc"
