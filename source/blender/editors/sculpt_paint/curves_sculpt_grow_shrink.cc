@@ -70,10 +70,10 @@ class CurvesEffect {
  */
 class ShrinkCurvesEffect : public CurvesEffect {
  private:
-  Brush &brush_;
+  const Brush &brush_;
 
  public:
-  ShrinkCurvesEffect(Brush &brush) : brush_(brush)
+  ShrinkCurvesEffect(const Brush &brush) : brush_(brush)
   {
   }
 
@@ -205,10 +205,10 @@ class ExtrapolateCurvesEffect : public CurvesEffect {
 class ScaleCurvesEffect : public CurvesEffect {
  private:
   bool scale_up_;
-  Brush &brush_;
+  const Brush &brush_;
 
  public:
-  ScaleCurvesEffect(bool scale_up, Brush &brush) : scale_up_(scale_up), brush_(brush)
+  ScaleCurvesEffect(bool scale_up, const Brush &brush) : scale_up_(scale_up), brush_(brush)
   {
   }
 
@@ -263,7 +263,7 @@ class CurvesEffectOperation : public CurvesSculptStrokeOperation {
   {
   }
 
-  void on_stroke_extended(bContext *C, const StrokeExtension &stroke_extension) override;
+  void on_stroke_extended(const bContext &C, const StrokeExtension &stroke_extension) override;
 };
 
 /**
@@ -272,17 +272,17 @@ class CurvesEffectOperation : public CurvesSculptStrokeOperation {
  */
 struct CurvesEffectOperationExecutor {
   CurvesEffectOperation *self_ = nullptr;
-  Depsgraph *depsgraph_ = nullptr;
-  Scene *scene_ = nullptr;
-  Object *object_ = nullptr;
+  const Depsgraph *depsgraph_ = nullptr;
+  const Scene *scene_ = nullptr;
   ARegion *region_ = nullptr;
-  View3D *v3d_ = nullptr;
-  RegionView3D *rv3d_ = nullptr;
+  const View3D *v3d_ = nullptr;
+  const RegionView3D *rv3d_ = nullptr;
 
+  Object *object_ = nullptr;
   Curves *curves_id_ = nullptr;
   CurvesGeometry *curves_ = nullptr;
 
-  Brush *brush_ = nullptr;
+  const Brush *brush_ = nullptr;
   float brush_radius_re_;
   float brush_radius_sq_re_;
   float brush_strength_;
@@ -299,17 +299,19 @@ struct CurvesEffectOperationExecutor {
     Vector<float> move_distances_cu;
   };
 
-  void execute(CurvesEffectOperation &self, bContext *C, const StrokeExtension &stroke_extension)
+  void execute(CurvesEffectOperation &self,
+               const bContext &C,
+               const StrokeExtension &stroke_extension)
   {
     BLI_SCOPED_DEFER([&]() { self.last_mouse_position_ = stroke_extension.mouse_position; });
 
     self_ = &self;
-    depsgraph_ = CTX_data_depsgraph_pointer(C);
-    scene_ = CTX_data_scene(C);
-    object_ = CTX_data_active_object(C);
-    region_ = CTX_wm_region(C);
-    v3d_ = CTX_wm_view3d(C);
-    rv3d_ = CTX_wm_region_view3d(C);
+    depsgraph_ = CTX_data_depsgraph_pointer(&C);
+    scene_ = CTX_data_scene(&C);
+    object_ = CTX_data_active_object(&C);
+    region_ = CTX_wm_region(&C);
+    v3d_ = CTX_wm_view3d(&C);
+    rv3d_ = CTX_wm_region_view3d(&C);
 
     curves_id_ = static_cast<Curves *>(object_->data);
     curves_ = &CurvesGeometry::wrap(curves_id_->geometry);
@@ -317,10 +319,10 @@ struct CurvesEffectOperationExecutor {
       return;
     }
 
-    CurvesSculpt &curves_sculpt = *scene_->toolsettings->curves_sculpt;
-    brush_ = BKE_paint_brush(&curves_sculpt.paint);
-    brush_radius_re_ = BKE_brush_size_get(scene_, brush_);
-    brush_strength_ = BKE_brush_alpha_get(scene_, brush_);
+    const CurvesSculpt &curves_sculpt = *scene_->toolsettings->curves_sculpt;
+    brush_ = BKE_paint_brush_for_read(&curves_sculpt.paint);
+    brush_radius_re_ = brush_radius_get(*scene_, *brush_, stroke_extension);
+    brush_strength_ = brush_strength_get(*scene_, *brush_, stroke_extension);
     brush_radius_sq_re_ = pow2f(brush_radius_re_);
     falloff_shape_ = eBrushFalloffShape(brush_->falloff_shape);
 
@@ -333,7 +335,13 @@ struct CurvesEffectOperationExecutor {
     if (stroke_extension.is_first) {
       if (falloff_shape_ == PAINT_FALLOFF_SHAPE_SPHERE) {
         if (std::optional<CurvesBrush3D> brush_3d = sample_curves_3d_brush(
-                *C, *object_, stroke_extension.mouse_position, brush_radius_re_)) {
+                *depsgraph_,
+                *region_,
+                *v3d_,
+                *rv3d_,
+                *object_,
+                stroke_extension.mouse_position,
+                brush_radius_re_)) {
           self.brush_3d_ = *brush_3d;
         }
       }
@@ -382,13 +390,12 @@ struct CurvesEffectOperationExecutor {
 
       for (const int curve_i : curves_range) {
         const IndexRange points = curves_->points_for_curve(curve_i);
-        const int tot_segments = points.size() - 1;
-        float max_move_distance_cu = 0.0f;
 
+        float max_move_distance_cu = 0.0f;
         for (const float4x4 &brush_transform_inv : symmetry_brush_transforms_inv) {
-          for (const int segment_i : IndexRange(tot_segments)) {
-            const float3 &p1_cu = brush_transform_inv * positions_cu[points[segment_i]];
-            const float3 &p2_cu = brush_transform_inv * positions_cu[points[segment_i] + 1];
+          for (const int segment_i : points.drop_back(1)) {
+            const float3 p1_cu = brush_transform_inv * positions_cu[segment_i];
+            const float3 p2_cu = brush_transform_inv * positions_cu[segment_i + 1];
 
             float2 p1_re, p2_re;
             ED_view3d_project_float_v2_m4(region_, p1_cu, p1_re, projection.values);
@@ -477,15 +484,15 @@ struct CurvesEffectOperationExecutor {
 
       for (const int curve_i : curves_range) {
         const IndexRange points = curves_->points_for_curve(curve_i);
-        const int tot_segments = points.size() - 1;
+
         float max_move_distance_cu = 0.0f;
         for (const float4x4 &brush_transform : symmetry_brush_transforms) {
           const float3 brush_pos_start_transformed_cu = brush_transform * brush_pos_start_cu;
           const float3 brush_pos_end_transformed_cu = brush_transform * brush_pos_end_cu;
 
-          for (const int segment_i : IndexRange(tot_segments)) {
-            const float3 &p1_cu = positions_cu[points[segment_i]];
-            const float3 &p2_cu = positions_cu[points[segment_i] + 1];
+          for (const int segment_i : points.drop_back(1)) {
+            const float3 &p1_cu = positions_cu[segment_i];
+            const float3 &p2_cu = positions_cu[segment_i + 1];
 
             float3 closest_on_segment_cu;
             float3 closest_on_brush_cu;
@@ -520,7 +527,7 @@ struct CurvesEffectOperationExecutor {
   }
 };
 
-void CurvesEffectOperation::on_stroke_extended(bContext *C,
+void CurvesEffectOperation::on_stroke_extended(const bContext &C,
                                                const StrokeExtension &stroke_extension)
 {
   CurvesEffectOperationExecutor executor;
@@ -528,10 +535,10 @@ void CurvesEffectOperation::on_stroke_extended(bContext *C,
 }
 
 std::unique_ptr<CurvesSculptStrokeOperation> new_grow_shrink_operation(
-    const BrushStrokeMode brush_mode, bContext *C)
+    const BrushStrokeMode brush_mode, const bContext &C)
 {
-  Scene &scene = *CTX_data_scene(C);
-  Brush &brush = *BKE_paint_brush(&scene.toolsettings->curves_sculpt->paint);
+  const Scene &scene = *CTX_data_scene(&C);
+  const Brush &brush = *BKE_paint_brush_for_read(&scene.toolsettings->curves_sculpt->paint);
   const bool use_scale_uniform = brush.curves_sculpt_settings->flag &
                                  BRUSH_CURVES_SCULPT_FLAG_SCALE_UNIFORM;
   const bool use_grow = (brush_mode == BRUSH_STROKE_INVERT) == ((brush.flag & BRUSH_DIR_IN) != 0);
