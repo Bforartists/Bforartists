@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "BLI_utildefines.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -256,6 +258,7 @@ typedef enum {
    */
   V3D_PROJ_TEST_CLIP_CONTENT = (1 << 5),
 } eV3DProjTest;
+ENUM_OPERATORS(eV3DProjTest, V3D_PROJ_TEST_CLIP_CONTENT);
 
 #define V3D_PROJ_TEST_CLIP_DEFAULT \
   (V3D_PROJ_TEST_CLIP_BB | V3D_PROJ_TEST_CLIP_WIN | V3D_PROJ_TEST_CLIP_NEAR)
@@ -1080,6 +1083,16 @@ bool ED_view3d_quat_to_axis_view(const float viewquat[4],
                                  float epsilon,
                                  char *r_view,
                                  char *r_view_axis_rotation);
+/**
+ * A version of #ED_view3d_quat_to_axis_view that updates `viewquat`
+ * if it's within `epsilon` to an axis-view.
+ *
+ * \note Include the special case function since most callers need to perform these operations.
+ */
+bool ED_view3d_quat_to_axis_view_and_reset_quat(float viewquat[4],
+                                                float epsilon,
+                                                char *r_view,
+                                                char *r_view_axis_rotation);
 
 char ED_view3d_lock_view_from_index(int index);
 char ED_view3d_axis_view_opposite(char view);
