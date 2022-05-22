@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -18323,6 +18323,14 @@ msgid "Tools can use this to tag data for their own purposes (initial state is u
 msgstr "可用标记数据的工具(不定义初始的状态)"
 
 
+msgid "Extra User"
+msgstr "额外用户"
+
+
+msgid "Indicates whether an extra user is set or not (mainly for internal/debug usages)"
+msgstr "指示是否设置了额外用户(主要用于内部/调试用途)"
+
+
 msgid "Fake User"
 msgstr "伪用户"
 
@@ -22592,12 +22600,24 @@ msgid "Pixels"
 msgstr "像素点"
 
 
+msgid "Image buffer pixels in floating-point values"
+msgstr "图像缓冲像素, 以浮点值表示"
+
+
 msgid "Render Slots"
 msgstr "渲染槽"
 
 
 msgid "Render slots of the image"
 msgstr "图像渲染槽"
+
+
+msgid "X/Y pixels per meter, for the image buffer"
+msgstr "每米的X/Y向像素，用于图像缓冲"
+
+
+msgid "Width and height of the image buffer in pixels, zero when image data can't be loaded"
+msgstr "图像缓冲的宽和高(单位为像素), 当无法加载图像数据时, 值为零"
 
 
 msgid "Where the image comes from"
@@ -61780,12 +61800,24 @@ msgid "Keep original objects instead of replacing them"
 msgstr "保留原物体, 而不是替换"
 
 
+msgid "Merge UV's"
+msgstr "合并UV"
+
+
+msgid "Merge UV coordinates that share a vertex to account for imprecision in some modifiers"
+msgstr "合并共用一个顶点的 UV 坐标，以将某些修改器中的不精确性考虑在内"
+
+
 msgid "Type of object to convert to"
 msgstr "要转换的目标物体类型"
 
 
 msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "从曲线、曲面、融球、或文本物体转换为网格"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -70311,6 +70343,10 @@ msgstr "允许重叠"
 
 msgid "Don't correct overlap on new sequence strips"
 msgstr "不在新序列片段上校正叠加"
+
+
+msgid "Override Overlap Shuffle Behavior"
+msgstr "覆盖重叠随机播放行为"
 
 
 msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
@@ -105543,6 +105579,11 @@ msgstr "切换局部视图"
 msgctxt "Operator"
 msgid "Active Camera"
 msgstr "活动摄像机"
+
+
+msgctxt "View3D"
+msgid "Camera"
+msgstr "摄像机"
 
 
 msgctxt "Operator"

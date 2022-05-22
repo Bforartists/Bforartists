@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b1b699412979')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-05-03 08:51+0200\n"
+"PO-Revision-Date: 2022-05-10 08:07+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -3949,7 +3949,7 @@ msgstr "Rozostriť"
 
 
 msgid "Smear"
-msgstr "Rozmazať"
+msgstr "Rozotrieť"
 
 
 msgid "Hardness"
@@ -8802,7 +8802,7 @@ msgstr "Trvalý ID"
 
 
 msgid "Persistent identifier for inter-frame matching of objects with motion blur"
-msgstr "Trvalý identifikátor pre mimosnímkové prispôsobenie objektov rozmazaním pohybu"
+msgstr "Trvalý identifikátor pre medzi-snímkové prispôsobenie objektov rozostrením pohybom"
 
 
 msgid "Instance Random ID"
@@ -13947,7 +13947,7 @@ msgstr "Vektory rýchlosti"
 
 
 msgid "Caches velocities of mesh vertices. These will be used (automatically) when rendering with motion blur enabled"
-msgstr "Zásobník rýchlosti vrcholov povrchovej siete. Tieto sa použijú (automaticky) pri prekreslení s povoleným rozmazaním pohybu"
+msgstr "Zásobník rýchlosti vrcholov povrchovej siete. Tieto sa použijú (automaticky) pri prekreslení s povoleným rozostrením pohybom"
 
 
 msgid "Spray"
@@ -18322,6 +18322,14 @@ msgid "Tools can use this to tag data for their own purposes (initial state is u
 msgstr "Nástroje možného použitia údajov označenia pre svoje vlastné účely (počiatočný stav je nedefinovaný)"
 
 
+msgid "Extra User"
+msgstr "Extra užívateľ"
+
+
+msgid "Indicates whether an extra user is set or not (mainly for internal/debug usages)"
+msgstr "Označuje, či je alebo nie je nastavený extra užívateľ (hlavne pre interné/ladenie použitie)"
+
+
 msgid "Fake User"
 msgstr "Falošný užívateľ"
 
@@ -19584,7 +19592,7 @@ msgstr "Zmazať viacnásobným posunutím"
 
 
 msgid "Multires Displacement Smear"
-msgstr "Rozmazať viacnásobným posunutím"
+msgstr "Rozotrieť viacnásobným posunutím"
 
 
 msgid "Secondary Color"
@@ -20348,7 +20356,7 @@ msgstr "Atribút rýchlosti"
 
 
 msgid "Name of the Alembic attribute used for generating motion blur data"
-msgstr "Názov atribútu Alembic, ktorý sa používa na generovanie údajov o rozmazaní pohybu"
+msgstr "Názov atribútu Alembic, ktorý sa používa na generovanie údajov o rozostrení pohybom"
 
 
 msgid "Velocity Unit"
@@ -22591,12 +22599,24 @@ msgid "Pixels"
 msgstr "Pixely"
 
 
+msgid "Image buffer pixels in floating-point values"
+msgstr "Pixely zásobníka obrázkov v hodnotách s pohyblivou desatinnou čiarkou"
+
+
 msgid "Render Slots"
 msgstr "Zásuvky prekreslenia"
 
 
 msgid "Render slots of the image"
 msgstr "Zásuvky prekreslení obrázkov"
+
+
+msgid "X/Y pixels per meter, for the image buffer"
+msgstr "X/Y pixelov na meter pre zásobník obrázkov"
+
+
+msgid "Width and height of the image buffer in pixels, zero when image data can't be loaded"
+msgstr "Šírka a výška zásobníka obrázkov v pixeloch, nula, keď sa obrazové údaje nedajú načítať"
 
 
 msgid "Where the image comes from"
@@ -61779,12 +61799,24 @@ msgid "Keep original objects instead of replacing them"
 msgstr "Zachová pôvodné objekty namiesto ich nahradenia"
 
 
+msgid "Merge UV's"
+msgstr "Zlúčiť UV"
+
+
+msgid "Merge UV coordinates that share a vertex to account for imprecision in some modifiers"
+msgstr "Zlúči UV súradnice, ktoré majú spoločný vrchol, aby sa zohľadnila nepresnosť niektorých modifikátorov"
+
+
 msgid "Type of object to convert to"
 msgstr "Konvertovanie na typ objektu"
 
 
 msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Povrchová sieť z objektov Krivka, Povrch, Meta guľa alebo Text"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -65929,11 +65961,11 @@ msgstr "Vygeneruje mapu stupňa rozmazania na základe dutiny"
 
 
 msgid "Blur Iterations"
-msgstr "Rozmazať opakovane"
+msgstr "Rozostriť opakovane"
 
 
 msgid "Number of times to blur the colors (higher blurs more)"
-msgstr "Počet rozmazaní farby (vyšší rozmaže viackrát)"
+msgstr "Počet rozostrení farby (vyšší rozmaže viackrát)"
 
 
 msgid "Blur Strength"
@@ -70310,6 +70342,10 @@ msgstr "Povoliť prekrytie"
 
 msgid "Don't correct overlap on new sequence strips"
 msgstr "Neopravuje prekrytie nových sekvencií"
+
+
+msgid "Override Overlap Shuffle Behavior"
+msgstr "Prepísať správanie náhodného prekrytia"
 
 
 msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
@@ -78672,7 +78708,7 @@ msgstr "Zjemniť"
 
 msgctxt "Operator"
 msgid "Smear"
-msgstr "Rozmazať"
+msgstr "Rozotrieť"
 
 
 msgctxt "Operator"
@@ -79681,7 +79717,7 @@ msgstr "Zmazať viacnásobným posunutím"
 
 msgctxt "Operator"
 msgid "Multires Displacement Smear"
-msgstr "Rozmazať viacnásobným posunutím"
+msgstr "Rozotrieť viacnásobným posunutím"
 
 
 msgctxt "Operator"
@@ -84087,7 +84123,7 @@ msgstr "Použiť deformáciu pohybu"
 
 
 msgid "Use deformation motion blur for this object"
-msgstr "Použije pre tento objekt deformáciu pohybu rozmazaním"
+msgstr "Použije pre tento objekt deformáciu rozostrením pohybom"
 
 
 msgid "Use Distance Cull"
@@ -87939,7 +87975,7 @@ msgstr "Prah vyhladzovania hrán"
 
 
 msgid "Threshold for edge detection algorithm (higher values might over-blur some part of the image)"
-msgstr "Prahová hodnota pre algoritmus detekcie hrán (vyššie hodnoty môžu nadmerne rozmazať niektorú časť obrázka)"
+msgstr "Prahová hodnota pre algoritmus detekcie hrán (vyššie hodnoty môžu nadmerne rozostriť niektorú časť obrázka)"
 
 
 msgid "Scene Objects"
@@ -99495,7 +99531,7 @@ msgstr "Ťah vrcholov pastelkou (priemer)"
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Vertex (Smear)"
-msgstr "Ťah vrcholov pastelkou (rozmazanie)"
+msgstr "Ťah vrcholov pastelkou (rozotrieť)"
 
 
 msgctxt "WindowManager"
@@ -105540,6 +105576,11 @@ msgstr "Prepnúť lokálne zobrazenie"
 msgctxt "Operator"
 msgid "Active Camera"
 msgstr "Aktívna kamera"
+
+
+msgctxt "View3D"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"

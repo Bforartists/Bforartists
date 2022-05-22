@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
+"""
+This script runs clang-format on multiple files/directories.
+
+While it can be called directly, you may prefer to run this from Blender's root directory with the command:
+
+   make format
+
+"""
 
 import multiprocessing
 import os
@@ -127,13 +135,19 @@ def clang_format_ensure_version():
     if version is not None:
         version = version.split("-")[0]
         version = tuple(int(n) for n in version.split("."))
-    if version is not None:
+        version = (version + (0, 0, 0))[:3]  # Ensure exactly 3 numbers.
         print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version[0], version[1], version[2]))
     return version
 
 
 def clang_format_file(files):
-    cmd = [CLANG_FORMAT_CMD, "-i", "-verbose"] + files
+    cmd = [
+        CLANG_FORMAT_CMD,
+        # Update the files in-place.
+        "-i",
+        # Shows the list of processed files.
+        "-verbose",
+    ] + files
     return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
@@ -158,10 +172,13 @@ def clang_format(files):
 def argparse_create():
     import argparse
 
-    # When --help or no args are given, print this help
-    usage_text = "Format source code"
-    epilog = "This script runs clang-format on multiple files/directories"
-    parser = argparse.ArgumentParser(description=usage_text, epilog=epilog)
+    parser = argparse.ArgumentParser(
+        description="Format C/C++/GLSL & Objective-C source code.",
+        epilog=__doc__,
+        # Don't re-wrap text, keep newlines & indentation.
+        formatter_class=argparse.RawTextHelpFormatter,
+
+    )
     parser.add_argument(
         "--expand-tabs",
         dest="expand_tabs",
