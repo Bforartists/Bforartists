@@ -971,7 +971,7 @@ class SEQUENCER_MT_strip(Menu):
         strip = context.active_sequence_strip
 
         if strip and strip.type == 'SCENE':
-            layout.operator("sequencer.delete", text="Delete Strip & Data").delete_data = True
+            layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
 
         if has_sequencer:
             if strip:
@@ -1099,7 +1099,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         strip = context.active_sequence_strip
         if strip and strip.type == 'SCENE':
-            layout.operator("sequencer.delete", text="Delete Strip & Data").delete_data = True
+            layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
 
         layout.separator()
 
