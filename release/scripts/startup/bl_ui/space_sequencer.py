@@ -638,7 +638,7 @@ class SEQUENCER_MT_change(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
         layout.operator_menu_enum("sequencer.change_effect_type", "type")
-        prop = layout.operator("sequencer.change_path", text="Path/Files")
+        prop = layout.operator("sequencer.change_path", text="Path/Files", icon='FILE_MOVIE')
 
         if strip:
             strip_type = strip.type
@@ -762,7 +762,7 @@ class SEQUENCER_MT_add_scene(Menu):
         if bpy_data_scenes_len > 10:
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT'
-            layout.operator("sequencer.scene_strip_add", text="Scene...", icon='SCENE_DATA')
+            layout.operator("sequencer.scene_strip_add", text="Scene...")
         elif bpy_data_scenes_len > 1:
             layout.separator()
             scene = context.scene
@@ -928,8 +928,6 @@ class SEQUENCER_MT_strip_effect(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_menu_enum("sequencer.change_effect_input", "swap")
-        layout.operator_menu_enum("sequencer.change_effect_type", "type")
         layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
         layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
 
@@ -972,6 +970,9 @@ class SEQUENCER_MT_strip(Menu):
 
         if strip and strip.type == 'SCENE':
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
+
+        layout.separator()
+        layout.menu("SEQUENCER_MT_change")
 
         if has_sequencer:
             if strip:
@@ -1100,6 +1101,9 @@ class SEQUENCER_MT_context_menu(Menu):
         strip = context.active_sequence_strip
         if strip and strip.type == 'SCENE':
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon='DELETE_DUPLICATE').delete_data = True
+
+        layout.separator()
+        layout.menu("SEQUENCER_MT_change")
 
         layout.separator()
 
@@ -1724,7 +1728,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
 
                 col.prop(strip, "alpha_mode", text="Alpha")
                 sub = col.column(align=True)
-                sub.operator("sequencer.change_path", text="Change Data/Files", icon='FILEBROWSER').filter_image = True
+                sub.operator("sequencer.change_path", text="Change Data/Files", icon='FILE_MOVIE').filter_image = True
             else:  # elif strip_type == 'MOVIE':
                 elem = strip.elements[0]
 
