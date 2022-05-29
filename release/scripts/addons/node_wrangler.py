@@ -158,7 +158,7 @@ shaders_texture_nodes_props = (
 shaders_color_nodes_props = (
     ('ShaderNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright Contrast'),
     ('ShaderNodeGamma', 'GAMMA', 'Gamma'),
-    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue/Saturation'),
+    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
     ('ShaderNodeInvert', 'INVERT', 'Invert'),
     ('ShaderNodeLightFalloff', 'LIGHT_FALLOFF', 'Light Falloff'),
     ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
@@ -366,7 +366,7 @@ blender_mat_color_nodes_props = (
     ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
     ('ShaderNodeRGBCurve', 'CURVE_RGB', 'RGB Curves'),
     ('ShaderNodeInvert', 'INVERT', 'Invert'),
-    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue/Saturation'),
+    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
 )
 
 # (rna_type.identifier, type, rna_type.name)
@@ -420,7 +420,7 @@ texture_color_nodes_props = (
     ('TextureNodeMixRGB', 'MIX_RGB', 'Mix RGB'),
     ('TextureNodeCurveRGB', 'CURVE_RGB', 'RGB Curves'),
     ('TextureNodeInvert', 'INVERT', 'Invert'),
-    ('TextureNodeHueSaturation', 'HUE_SAT', 'Hue/Saturation'),
+    ('TextureNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
     ('TextureNodeCompose', 'COMPOSE', 'Combine RGBA'),
     ('TextureNodeDecompose', 'DECOMPOSE', 'Separate RGBA'),
 )
