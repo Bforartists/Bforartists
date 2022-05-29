@@ -36,7 +36,6 @@ def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
 
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors),) * 3)))
         mesh.use_auto_smooth = True
-        mesh.show_edge_sharp = True
         mesh.free_normals_split()
 
     mesh.update()

@@ -2,14 +2,8 @@
 
 import gpu
 import bmesh
+import ctypes
 from mathutils import Matrix
-
-
-def load_shader(shadername):
-    from os import path
-
-    with open(path.join(path.dirname(__file__), "shaders", shadername), "r") as f:
-        return f.read()
 
 
 def get_mesh_vert_co_array(me):
@@ -183,10 +177,14 @@ class GPU_Indices_Mesh:
 
     _Hash = {}
     shader = None
+    UBO_data = None
+    UBO = None
 
     @classmethod
     def end_opengl(cls):
         del cls.shader
+        del cls.UBO
+        del cls.UBO_data
 
         del cls
 
@@ -203,14 +201,79 @@ class GPU_Indices_Mesh:
         atexit.unregister(cls.end_opengl)
         atexit.register(cls.end_opengl)
 
-        cls.shader = gpu.types.GPUShader(
-            load_shader("ID_color_vert.glsl"),
-            load_shader("ID_color_frag.glsl"),
-            defines="#define USE_CLIP_PLANES\n",
+        shader_info = gpu.types.GPUShaderCreateInfo()
+
+        shader_info.define("USE_CLIP_PLANES")
+        shader_info.typedef_source(
+            "struct Data {\n"
+            "#ifdef USE_CLIP_PLANES\n"
+            "  mat4 ModelMatrix;"
+            "  vec4 WorldClipPlanes[4];\n"
+            "#endif\n"
+            "  int offset;\n"
+            "#ifdef USE_CLIP_PLANES\n"
+            "  bool use_clip_planes;\n"
+            "#endif\n"
+            "};\n"
+        )
+        shader_info.push_constant("MAT4", "ModelViewProjectionMatrix")
+        shader_info.uniform_buf(0, "Data", "g_data")
+        shader_info.vertex_in(0, "VEC3", "pos")
+        shader_info.vertex_source(
+            # #define USE_CLIP_PLANES
+            # uniform mat4 ModelViewProjectionMatrix;
+            # layout(binding = 1, std140) uniform _g_data { Data g_data; };;
+            # in vec3 pos;
+            "void main()"
+            "{\n"
+            "#ifdef USE_CLIP_PLANES\n"
+            "  if (g_data.use_clip_planes) {"
+            "    vec4 wpos = g_data.ModelMatrix * vec4(pos, 1.0);"
+            "    gl_ClipDistance[0] = dot(g_data.WorldClipPlanes[0], wpos);"
+            "    gl_ClipDistance[1] = dot(g_data.WorldClipPlanes[1], wpos);"
+            "    gl_ClipDistance[2] = dot(g_data.WorldClipPlanes[2], wpos);"
+            "    gl_ClipDistance[3] = dot(g_data.WorldClipPlanes[3], wpos);"
+            "  }\n"
+            "#endif\n"
+            "  gl_Position = ModelViewProjectionMatrix * vec4(pos, 1.0);"
+            "}"
         )
 
-        cls.unif_offset = cls.shader.uniform_from_name("offset")
-        cls.use_clip_planes = False
+        shader_info.fragment_out(0, "UINT", "fragColor")
+        shader_info.fragment_source(
+            # out uint fragColor;
+            "void main() {fragColor = uint(gl_PrimitiveID + g_data.offset);}"
+        )
+
+        cls.shader = gpu.shader.create_from_info(shader_info)
+
+        class _UBO_struct(ctypes.Structure):
+            _pack_ = 16
+            _fields_ = [
+                ("ModelMatrix", 4 * (4 * ctypes.c_float)),
+                ("WorldClipPlanes", 4 * (4 * ctypes.c_float)),
+                ("offset", ctypes.c_int),
+                ("use_clip_planes", ctypes.c_int),
+                ("_pad", ctypes.c_int * 2),
+            ]
+
+        cls.UBO_data = _UBO_struct()
+        cls.UBO = gpu.types.GPUUniformBuf(
+            gpu.types.Buffer("UBYTE", ctypes.sizeof(cls.UBO_data), cls.UBO_data)
+        )
+
+    @staticmethod
+    def update_UBO():
+        cls = GPU_Indices_Mesh
+        cls.UBO.update(
+            gpu.types.Buffer(
+                "UBYTE",
+                ctypes.sizeof(cls.UBO_data),
+                cls.UBO_data,
+            )
+        )
+        cls.shader.bind()
+        cls.shader.uniform_block("g_data", cls.UBO)
 
     def __init__(self, depsgraph, obj, draw_tris, draw_edges, draw_verts):
         self.ob_data = obj.original.data
@@ -326,12 +389,17 @@ class GPU_Indices_Mesh:
         gpu.matrix.multiply_matrix(ob_mat)
 
         self.shader.bind()
-        if GPU_Indices_Mesh.use_clip_planes:
+        if GPU_Indices_Mesh.UBO_data.use_clip_planes:
             gpu.state.clip_distances_set(4)
-            self.shader.uniform_float("ModelMatrix", ob_mat)
+            self.UBO_data.ModelMatrix[0] = ob_mat[0][:]
+            self.UBO_data.ModelMatrix[1] = ob_mat[1][:]
+            self.UBO_data.ModelMatrix[2] = ob_mat[2][:]
+            self.UBO_data.ModelMatrix[3] = ob_mat[3][:]
 
         if self.draw_tris:
-            self.shader.uniform_int("offset", (index_offset,))
+            self.UBO_data.offset = index_offset
+            self.update_UBO()
+
             self.batch_tris.draw(self.shader)
             index_offset += len(self.tri_verts)
 
@@ -356,17 +424,21 @@ class GPU_Indices_Mesh:
             gpu.matrix.load_projection_matrix(winmat)
 
         if self.draw_edges:
-            self.shader.uniform_int("offset", (index_offset,))
+            self.UBO_data.offset = index_offset
+            self.update_UBO()
+
             # bgl.glLineWidth(3.0)
             self.batch_edges.draw(self.shader)
             # bgl.glLineWidth(1.0)
             index_offset += len(self.edge_verts)
 
         if self.draw_verts:
-            self.shader.uniform_int("offset", (index_offset,))
+            self.UBO_data.offset = index_offset
+            self.update_UBO()
+
             self.batch_lverts.draw(self.shader)
 
-        if GPU_Indices_Mesh.use_clip_planes:
+        if GPU_Indices_Mesh.UBO_data.use_clip_planes:
             gpu.state.clip_distances_set(0)
 
         gpu.matrix.pop()
@@ -384,7 +456,7 @@ class GPU_Indices_Mesh:
     def get_loop_tri_co_by_bmface(self, bm, bmface):
         l_tri_layer = bm.faces.layers.int["l_tri"]
         tri = bmface[l_tri_layer]
-        return self.verts_co[self.tri_verts[tri : tri + len(bmface.verts) - 2]]
+        return self.verts_co[self.tri_verts[tri: tri + len(bmface.verts) - 2]]
 
     def get_tri_verts(self, index):
         return self.tri_verts[index]
@@ -426,18 +498,16 @@ def gpu_Indices_restore_state():
 
 def gpu_Indices_use_clip_planes(rv3d, value):
     GPU_Indices_Mesh.init_opengl()
-    shader = GPU_Indices_Mesh.shader
-    shader.bind()
     if value and rv3d.use_clip_planes:
-        GPU_Indices_Mesh.use_clip_planes = True
-        planes = gpu.types.Buffer("FLOAT", (6, 4), rv3d.clip_planes)
-        shader.uniform_vector_float(
-            shader.uniform_from_name("WorldClipPlanes"), planes, 4, 4
-        )
+        GPU_Indices_Mesh.UBO_data.use_clip_planes = True
+        GPU_Indices_Mesh.UBO_data.WorldClipPlanes[0] = rv3d.clip_planes[0][:]
+        GPU_Indices_Mesh.UBO_data.WorldClipPlanes[1] = rv3d.clip_planes[1][:]
+        GPU_Indices_Mesh.UBO_data.WorldClipPlanes[2] = rv3d.clip_planes[2][:]
+        GPU_Indices_Mesh.UBO_data.WorldClipPlanes[3] = rv3d.clip_planes[3][:]
     else:
-        GPU_Indices_Mesh.use_clip_planes = False
+        GPU_Indices_Mesh.UBO_data.use_clip_planes = False
 
-    shader.uniform_bool("use_clip_planes", (GPU_Indices_Mesh.use_clip_planes,))
+    GPU_Indices_Mesh.update_UBO()
 
 
 def gpu_Indices_mesh_cache_clear():

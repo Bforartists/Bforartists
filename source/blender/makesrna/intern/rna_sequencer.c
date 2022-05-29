@@ -508,7 +508,7 @@ static Sequence *sequence_get_by_transform(Editing *ed, StripTransform *transfor
   return data.seq;
 }
 
-static char *rna_SequenceTransform_path(PointerRNA *ptr)
+static char *rna_SequenceTransform_path(const PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   Editing *ed = SEQ_editing_get(scene);
@@ -560,7 +560,7 @@ static Sequence *sequence_get_by_crop(Editing *ed, StripCrop *crop)
   return data.seq;
 }
 
-static char *rna_SequenceCrop_path(PointerRNA *ptr)
+static char *rna_SequenceCrop_path(const PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   Editing *ed = SEQ_editing_get(scene);
@@ -704,9 +704,9 @@ static StructRNA *rna_Sequence_refine(struct PointerRNA *ptr)
   }
 }
 
-static char *rna_Sequence_path(PointerRNA *ptr)
+static char *rna_Sequence_path(const PointerRNA *ptr)
 {
-  Sequence *seq = (Sequence *)ptr->data;
+  const Sequence *seq = (Sequence *)ptr->data;
 
   /* sequencer data comes from scene...
    * TODO: would be nice to make SequenceEditor data a data-block of its own (for shorter paths)
@@ -1038,7 +1038,7 @@ static Sequence *sequence_get_by_colorbalance(Editing *ed,
   return data.seq;
 }
 
-static char *rna_SequenceColorBalance_path(PointerRNA *ptr)
+static char *rna_SequenceColorBalance_path(const PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   SequenceModifierData *smd;
@@ -1182,7 +1182,7 @@ static StructRNA *rna_SequenceModifier_refine(struct PointerRNA *ptr)
   }
 }
 
-static char *rna_SequenceModifier_path(PointerRNA *ptr)
+static char *rna_SequenceModifier_path(const PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   Editing *ed = SEQ_editing_get(scene);
@@ -1400,7 +1400,7 @@ static void rna_SequenceTimelineChannel_name_set(PointerRNA *ptr, const char *va
                  sizeof(channel->name));
 }
 
-static char *rna_SeqTimelineChannel_path(PointerRNA *ptr)
+static char *rna_SeqTimelineChannel_path(const PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
   Editing *ed = SEQ_editing_get(scene);
