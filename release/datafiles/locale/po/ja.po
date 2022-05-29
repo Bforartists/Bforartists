@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -192,7 +192,7 @@ msgstr "固定のテーマ色セットの代わりにユーザー定義の色セ
 
 
 msgid "Lock"
-msgstr "固定"
+msgstr "ロック"
 
 
 msgid "Action group is locked"
@@ -16929,7 +16929,7 @@ msgstr "エンベロープ形状に最もマッチするようにストローク
 
 
 msgid "Add segments to create the envelope. Keep the original stroke"
-msgstr "エンベロープを生成するためセグメントを追加します。元のストロークを維持します"
+msgstr "セグメントを追加しエンベロープを生成します。元のストロークを維持します"
 
 
 msgid "Fills"
@@ -16937,7 +16937,7 @@ msgstr "フィル"
 
 
 msgid "Add fill segments to create the envelope. Don't keep the original stroke"
-msgstr "エンベロープを生成するためフィルセグメントを追加します。元のストロークは維持しません"
+msgstr "フィルセグメントを追加しエンベロープを生成します。元のストロークは維持しません"
 
 
 msgid "Skip Segments"
@@ -16945,7 +16945,11 @@ msgstr "スキップ数"
 
 
 msgid "The number of generated segments to skip to reduce complexity"
-msgstr "生成されたセグメントをこの数だけスキップし、簡略化します"
+msgstr "簡略化のためにスキップするセグメント数"
+
+
+msgid "Spread Length"
+msgstr "散乱の長さ"
 
 
 msgid "Spread Length"
@@ -20186,8 +20190,16 @@ msgid "Use pressure to modulate flow"
 msgstr "筆圧をフローの調整に使用します"
 
 
+msgid "Use Front-Face"
+msgstr "向きを使用"
+
+
 msgid "Brush only affects vertices that face the viewer"
-msgstr "ビューに向く頂点のみブラシの影響を受けます"
+msgstr "画面に向く頂点のみブラシの影響を受けます"
+
+
+msgid "Use Front-Face Falloff"
+msgstr "向きで減衰"
 
 
 msgid "Blend brush influence by how much they face the front"
@@ -28894,6 +28906,10 @@ msgid "Is System Override"
 msgstr "システムオーバーライド"
 
 
+msgid "Whether this library override exists only for the override hierarchy, or if it is actually editable by the user"
+msgstr "このライブラリオーバーライドがライブラリ階層用としてのみの存在なのか、もしくは実際にユーザーが編集可能な物なのか"
+
+
 msgid "List of overridden properties"
 msgstr "オーバーライドされるプロパティのリスト"
 
@@ -29328,6 +29344,10 @@ msgstr "DWAB (不可逆)"
 
 msgid "File format to save the rendered images as"
 msgstr "レンダリングした画像を保存するフォーマット"
+
+
+msgid "File format expects linear color space"
+msgstr "リニア色空間を要求するファイルフォーマットかどうか"
 
 
 msgid "File format expects linear color space"
@@ -34408,7 +34428,11 @@ msgstr "アクティブクローン"
 
 
 msgid "Set the map as active for cloning"
-msgstr "このマップをクローン用にアクティブにします"
+msgstr "このマップをクローン用にアクティブに設定します"
+
+
+msgid "Set the UV map as active for rendering"
+msgstr "この UV マップをレンダリング用にアクティブに設定します"
 
 
 msgid "Name of UV map"
@@ -50384,6 +50408,10 @@ msgid "Close Spline Method"
 msgstr "スプラインを閉じる方法"
 
 
+msgid "The condition for close spline to activate"
+msgstr "スプラインを閉じる条件"
+
+
 msgid "On Press"
 msgstr "押下"
 
@@ -50986,6 +51014,15 @@ msgstr "カスタムプレビューを読込"
 
 msgid "Choose an image to help identify the data-block visually"
 msgstr "データブロックを視覚的に判別するための画像を選択します"
+
+
+msgid "Set if this library override data-block can be edited"
+msgstr "このライブラリオーバーライドデータブロックが編集可能かどうかを切り替えます"
+
+
+msgctxt "Operator"
+msgid "Toggle Library Override Editable"
+msgstr "ライブラリオーバーライドの編集可不可切替え"
 
 
 msgid "Set if this library override data-block can be edited"
@@ -54732,7 +54769,7 @@ msgstr "すでに選択中のポイントと同じストローク内のポイン
 
 
 msgid "Unselect Ends"
-msgstr "端を非選択"
+msgstr "端を選択解除"
 
 
 msgid "Do not select the first and last point of the stroke"
@@ -55480,7 +55517,7 @@ msgstr "頂点グループを選択解除"
 
 
 msgid "Deselect all selected vertices assigned to the active vertex group"
-msgstr "アクティブ頂点グループに属するすべての選択中の頂点を非選択にします"
+msgstr "アクティブ頂点グループに属する、選択中の全頂点を選択解除します"
 
 
 msgctxt "Operator"
@@ -55848,7 +55885,7 @@ msgstr "選択中のカーブをグラフエディターのビューから隠し
 
 
 msgid "Hide unselected rather than selected curves"
-msgstr "選択中の物ではなく、非選択のカーブを隠します"
+msgstr "非選択のカーブを隠します"
 
 
 msgid "Insert a keyframe on all visible and editable F-Curves using each curve's current value"
@@ -58376,6 +58413,12 @@ msgid "Collapse Edges & Faces"
 msgstr "辺や面を統合"
 
 
+msgid "Collapse isolated edge and face regions, merging data such as UV's and color attributes. This can collapse edge-rings as well as regions of connected faces into vertices"
+msgstr ""
+"孤立した辺や面の領域をまとめ、UVやカラー属性などのデータを統合します\n"
+"つながる面の頂点の統合だけでなく、辺リングも統合できます"
+
+
 msgctxt "Operator"
 msgid "Make Edge/Face"
 msgstr "辺/面作成"
@@ -58857,7 +58900,7 @@ msgstr "カット"
 
 
 msgid "Cut into geometry keeping each side separate (Selected/Unselected only)"
-msgstr "各側を分離したまま形状をカットします（選択/非選択のみ）"
+msgstr "各側を分離したまま形状をカットします（「非選択でカット」のみ）"
 
 
 msgid "Merge all geometry from the intersection"
@@ -62328,6 +62371,10 @@ msgid "Merge UV's"
 msgstr "UVをマージ"
 
 
+msgid "Merge UV coordinates that share a vertex to account for imprecision in some modifiers"
+msgstr "一つの頂点を共有する UV 座標をマージし、一部モディファイアーでの精度の問題を解決します"
+
+
 msgid "Type of object to convert to"
 msgstr "変換するオブジェクトの種類"
 
@@ -62882,6 +62929,10 @@ msgstr "コレクションインデックス"
 
 msgid "Index of the collection to change visibility"
 msgstr "表示切替え用のコレクションインデックス"
+
+
+msgid "Extend visibility"
+msgstr "可視性を拡大"
 
 
 msgid "Toggle visibility"
@@ -65662,6 +65713,10 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "選択中のデータブロックの全ユーザーが、現在の（クリックした）データブロックを使用するようにします"
 
 
+msgid "Make Library Override Single"
+msgstr "ライブラリオーバーライドを単一化"
+
+
 msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
 msgstr "このリンクデータブロックに、階層外の単一ローカルオーバーライドを作成します（アウトライナーのアクティブアイテムのみ適用）"
 
@@ -67747,6 +67802,10 @@ msgid "Flip Quats"
 msgstr "クォータニオンを反転"
 
 
+msgid "Flip quaternion values to achieve desired rotations, while maintaining the same orientations"
+msgstr "同じ方向を維持しつつ、希望の回転にするためクォータニオンの値を反転します"
+
+
 msgctxt "Operator"
 msgid "Relax Pose to Breakdown"
 msgstr "中割方向にポーズをリラックス"
@@ -69095,6 +69154,11 @@ msgstr "ライトグループを追加"
 
 msgid "Name of newly created lightgroup"
 msgstr "新しく作成されたライトグループの名前"
+
+
+msgctxt "Operator"
+msgid "Add Used Lightgroups"
+msgstr "使用ライトグループを追加"
 
 
 msgid "Add all used Light Groups"
@@ -70912,6 +70976,14 @@ msgstr "オーバーラップを許可"
 
 msgid "Don't correct overlap on new sequence strips"
 msgstr "新規シーケンスストリップ上のオーバーラップを補正しません"
+
+
+msgid "Override Overlap Shuffle Behavior"
+msgstr "オーバーラップのシャッフル方法を上書き"
+
+
+msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
+msgstr "オーバーラップするストリップのシャッフル方法を決めるのにオーバーラップモードツール設定を使用します"
 
 
 msgid "Replace Selection"
@@ -76735,6 +76807,18 @@ msgid "Negative Z axis"
 msgstr "負の Z 軸"
 
 
+msgid "Write relative paths where possible"
+msgstr "相対パスで出力（可能な場合）"
+
+
+msgid "Write filename only"
+msgstr "ファイル名のみ出力します"
+
+
+msgid "Copy the file to the destination path"
+msgstr "対象のパスにファイルをコピーします"
+
+
 msgid "Upscale the object by this factor"
 msgstr "この係数っでオブジェクトをアップスケールします"
 
@@ -76758,6 +76842,10 @@ msgstr "Wavefront OBJ シーンを読み込みます"
 
 msgid "Clamp Bounding Box"
 msgstr "バウンディングボックスで制限"
+
+
+msgid "Resize the objects to keep bounding box under this value. Value 0 disables clamping"
+msgstr "この値にバウンディングボックスが収まるようオブジェクトをリサイズします。０で無効"
 
 
 msgctxt "Operator"
@@ -77793,6 +77881,13 @@ msgid "Make texture asset paths relative to the USD file"
 msgstr "テクスチャアセットパスを USD ファイルとの相対パスにします"
 
 
+msgid "Only export selected objects. Unselected parents of selected objects are exported as empty transform"
+msgstr ""
+"選択中のオブジェクトのみエクスポートします\n"
+"選択オブジェクトの非選択の親は\n"
+"空の transform としてエクスポートされます"
+
+
 msgid "Instancing"
 msgstr "インスタンス化"
 
@@ -77803,6 +77898,13 @@ msgstr "インスタンスオブジェクトを実際のオブジェクトでは
 
 msgid "Visible Only"
 msgstr "可視のみ"
+
+
+msgid "Only export visible objects. Invisible parents of exported objects are exported as empty transforms"
+msgstr ""
+"可視オブジェクトのみエクスポートします\n"
+"エクスポートするオブジェクトの不可視の親は\n"
+"空の transform としてエクスポートされます"
 
 
 msgctxt "Operator"
@@ -78414,6 +78516,10 @@ msgstr "ペイントモード"
 
 msgid "Paint using the active material base color"
 msgstr "アクティブマテリアルのベースカラーを使用しペイントします"
+
+
+msgid "Paint the material with a color attribute"
+msgstr "単色のカラー属性でマテリアルをペイントします"
 
 
 msgid "Grease Pencil Sculpt Paint"
@@ -80511,6 +80617,10 @@ msgid "Clone from Paint Slot"
 msgstr "ペイントスロットからクローン"
 
 
+msgid "Front-Face Falloff"
+msgstr "向きの減衰"
+
+
 msgid "Normal Falloff"
 msgstr "法線方向の減衰"
 
@@ -82374,6 +82484,14 @@ msgstr "Cyclesデバッグ"
 
 msgid "Enable Cycles debugging options for developers"
 msgstr "開発者向けの Cycles デバッグオプションを有効にします"
+
+
+msgid "Draw Manager Locking"
+msgstr "描画マネージャーのロック"
+
+
+msgid "Don't lock UI during background rendering"
+msgstr "背景のレンダリング中、UI をロックしません"
 
 
 msgid "Extended Asset Browser"
@@ -86231,6 +86349,10 @@ msgid "Face Areas"
 msgstr "面積"
 
 
+msgid "Normalize normals proportional to face areas"
+msgstr "面積に比例し法線を正規化します"
+
+
 msgid "Apply Scale"
 msgstr "スケールを適用"
 
@@ -86397,10 +86519,6 @@ msgstr "クリップ平面"
 
 msgid "Is Axis Aligned"
 msgstr "軸と平行"
-
-
-msgid "Is current view an orthographic side view"
-msgstr "現在のビューが平行投影のサイドビューかどうか"
 
 
 msgid "Is Perspective"
@@ -92350,6 +92468,12 @@ msgid "Choose different visualizations of library override data"
 msgstr "ライブラリオーバーライドデータの表示方法の選択"
 
 
+msgid "Display all local override data-blocks with their overridden properties and buttons to edit them"
+msgstr ""
+"編集用に、全ローカルオーバーライドデータブロックと\n"
+"オーバーライドされたプロパティ、ボタンを表示します"
+
+
 msgid "Hierarchies"
 msgstr "階層"
 
@@ -95083,11 +95207,11 @@ msgstr "メタストリップ"
 
 
 msgid "Unselected Meta Strip (for grouping related strips)"
-msgstr "未選択メタストリップ（関連するストリップのグループ化用）"
+msgstr "非選択メタストリップ（関連するストリップのグループ化用）"
 
 
 msgid "Meta Strips Selected"
-msgstr "選択されたストリップ"
+msgstr "選択メタストリップ"
 
 
 msgid "Selected Meta Strip (for grouping related strips)"
@@ -108436,6 +108560,10 @@ msgid "Must have more control points than Order"
 msgstr "階数以上の個数の制御点が必要です"
 
 
+msgid "%d more %s row(s) needed for Bezier"
+msgstr "ベジエに %d 個より多い %s が必要です"
+
+
 msgid "%d more point(s) needed for Bezier"
 msgstr "ベジエに %d 個より多い制御点が必要です"
 
@@ -109751,6 +109879,10 @@ msgid "Could not update flags for this fcurve, as RNA path is invalid for the gi
 msgstr "このFカーブ用のフラグが更新できませんでした。このIDのRNAパスは無効です(ID＝%s、パス＝%s)"
 
 
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "%i個のキーフレームを挿入できませんでした（NLA の影響やベース値が０、または値のリマッピング失敗のため）%s.%s（インデックス[%s]）"
+
+
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
 msgstr "パス '%s[%d]' のFカーブをキーフレーム挿入できません。ロックやサンプリングされていないか確かめ、Fモディファイアーを削除してみてください"
 
@@ -110375,6 +110507,10 @@ msgstr "ファイル「%s」を開くのに失敗しました"
 
 msgid "File too long %s"
 msgstr "ファイル「%s」が長すぎです"
+
+
+msgid "Some curves could not be converted because they were not attached to the surface"
+msgstr "一部のカーブが表面に付着していないため、変換できませんでした"
 
 
 msgid "Could not snap some curves to the surface"
@@ -111491,6 +111627,10 @@ msgstr "リンクするワークスペースを閲覧"
 
 msgid "Browse LightProbe to be linked"
 msgstr "リンクするライトプローブを閲覧"
+
+
+msgid "Browse Curves Data to be linked"
+msgstr "リンクするカーブデータを閲覧"
 
 
 msgid "Browse Point Cloud Data to be linked"
@@ -113086,23 +113226,27 @@ msgstr "すべて"
 
 
 msgid "selected"
-msgstr "選択"
+msgstr "選択頂点グループ"
 
 
 msgid "unselected"
-msgstr "非選択"
+msgstr "非選択頂点グループ"
 
 
 msgid "selected and unlock unselected"
-msgstr "選択と未ロックの非選択"
+msgstr "選択頂点グループ（非選択はロック解除）"
 
 
 msgid "selected and lock unselected"
-msgstr "選択とロックの非選択"
+msgstr "選択頂点グループ（非選択はロック）"
+
+
+msgid "all and invert unselected"
+msgstr "全頂点グループ（非選択は反転）"
 
 
 msgid "%s %s vertex groups of the active object"
-msgstr "%s：%sの点グループ（アクティブオブジェクト内）"
+msgstr "%s、対象：%s"
 
 
 msgid "No vertex groups to operate on"
@@ -115596,6 +115740,10 @@ msgid "Could not create library override from data-block '%s'"
 msgstr "ライブラリオーバーライドをデータブロック「%s」から作成できません"
 
 
+msgid "Cannot clear embedded library override id '%s', only overrides of real data-blocks can be directly deleted"
+msgstr "添付されたライブラリオーバーライド ID「%s」はクリアできません。直接削除可能なのは実在のデータブロックのオーバーライドのみです"
+
+
 msgid "Current File"
 msgstr "現在のファイル"
 
@@ -117171,6 +117319,10 @@ msgstr "タグ「%s」はすでにアセットにあります"
 
 msgid "Tag '%s' not found in given asset"
 msgstr "タグ「%s」がアセット内にありません"
+
+
+msgid "Cannot modify name of required geometry attribute"
+msgstr "必要なジオメトリ属性の名前は変更できません"
 
 
 msgid "Layer '%s' not found in object '%s'"

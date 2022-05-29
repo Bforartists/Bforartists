@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -76134,6 +76134,18 @@ msgid "Negative Z axis"
 msgstr "负Z轴"
 
 
+msgid "Write relative paths where possible"
+msgstr "尽可能写入相对路径"
+
+
+msgid "Write filename only"
+msgstr "仅写入文件名"
+
+
+msgid "Copy the file to the destination path"
+msgstr "将文件复制到目标路径"
+
+
 msgid "Upscale the object by this factor"
 msgstr "依此系数放大物体"
 
@@ -81775,6 +81787,14 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "为开发人员启用Cycles调试选项"
 
 
+msgid "Draw Manager Locking"
+msgstr "绘制管理器锁定"
+
+
+msgid "Don't lock UI during background rendering"
+msgstr "在后台渲染期间不锁定 UI"
+
+
 msgid "Extended Asset Browser"
 msgstr "扩展资产浏览器"
 
@@ -85699,10 +85719,6 @@ msgstr "钳制平面"
 
 msgid "Is Axis Aligned"
 msgstr "是否轴对齐"
-
-
-msgid "Is current view an orthographic side view"
-msgstr "当前视图是否正交侧视图"
 
 
 msgid "Is Perspective"

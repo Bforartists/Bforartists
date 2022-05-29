@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'a2dacefb4636')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-05-10 08:07+0200\n"
+"PO-Revision-Date: 2022-05-19 08:50+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -24678,7 +24678,7 @@ msgstr "Zobrazí objekt ako drôtený rám"
 
 
 msgid "Solid"
-msgstr "Pevný"
+msgstr "Plný"
 
 
 msgid "Display the object as a solid (if solid drawing is enabled in the viewport)"
@@ -34300,7 +34300,7 @@ msgstr "Upravuje smer normálov povrchu"
 
 
 msgid "Weighted Normal"
-msgstr "Váženie normálov"
+msgstr "Vážené normály"
 
 
 msgid "Modify the direction of the surface normals using a weighting method"
@@ -34308,7 +34308,7 @@ msgstr "Upravuje smer normálov povrchu použitím metódy váženia"
 
 
 msgid "UV Project"
-msgstr "UV premietanie"
+msgstr "UV premietnutie"
 
 
 msgid "Project the UV map coordinates from the negative Z axis of another object"
@@ -50257,7 +50257,7 @@ msgstr "Menej"
 
 msgctxt "Operator"
 msgid "Separate"
-msgstr "Samostatne"
+msgstr "Osamostatniť"
 
 
 msgid "Separate selected points from connected unselected points into a new object"
@@ -72997,7 +72997,7 @@ msgstr "Priemerná veľkosť oddelených UV ostrovov, na základe ich plochy v 3
 
 msgctxt "Operator"
 msgid "Cube Projection"
-msgstr "Premietnutie kocky"
+msgstr "Premietnuť kocku"
 
 
 msgid "Project the UV vertices of the mesh over the six faces of a cube"
@@ -73038,7 +73038,7 @@ msgstr "Mierka UV súradníc okrajov po rozvinutí"
 
 msgctxt "Operator"
 msgid "Cylinder Projection"
-msgstr "Premietnutie valca"
+msgstr "Premietnuť valec"
 
 
 msgid "Project the UV vertices of the mesh over the curved wall of a cylinder"
@@ -73193,7 +73193,7 @@ msgstr "Skryje (ne)vybrané UV vrcholy"
 
 msgctxt "Operator"
 msgid "Lightmap Pack"
-msgstr "Zbalí mapu svetla"
+msgstr "Zbaliť mapu svetla"
 
 
 msgid "Pack each faces UV's into the UV bounds"
@@ -73333,11 +73333,11 @@ msgstr "Odstráni pripnutie výberu namiesto nastavenia"
 
 msgctxt "Operator"
 msgid "Project from View"
-msgstr "Premietnutie zo zobrazenia"
+msgstr "Premietnuť z pohľadu"
 
 
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
-msgstr "Premietne UV vrcholy povrchovej siete, ako ich vidieť v aktuálnom 3D zobrazení"
+msgstr "Premietne UV vrcholy povrchovej siete tak, ako ich vidieť v aktuálnom 3D zobrazení"
 
 
 msgid "Camera Bounds"
@@ -73371,7 +73371,7 @@ msgstr "Resetovať"
 
 
 msgid "Reset UV projection"
-msgstr "Resetuje UV premietanie"
+msgstr "Resetuje UV premietnutie"
 
 
 msgid "Reveal all hidden UV vertices"
@@ -73524,11 +73524,11 @@ msgstr "Vyberie iba úplne vybrané plôšky"
 
 msgctxt "Operator"
 msgid "Smart UV Project"
-msgstr "Chytré UV premietanie"
+msgstr "Chytré UV premietnutie"
 
 
 msgid "Projection unwraps the selected faces of mesh objects"
-msgstr "Premietanie rozvinie vybrané plôšky povrchovej siete objektov"
+msgstr "Premietnutie rozvinie vybrané plôšky povrchovej siete objektov"
 
 
 msgid "Lower for more projection groups, higher for less distortion"
@@ -73583,7 +73583,7 @@ msgstr "Nevybrané priľahlé"
 
 msgctxt "Operator"
 msgid "Sphere Projection"
-msgstr "Premietnutie gule"
+msgstr "Premietnuť guľu"
 
 
 msgid "Project the UV vertices of the mesh over the curved surface of a sphere"
@@ -76131,6 +76131,18 @@ msgstr "Záporná os Y"
 
 msgid "Negative Z axis"
 msgstr "Záporná os Z"
+
+
+msgid "Write relative paths where possible"
+msgstr "Ak je to možné, zapíše relatívne cesty"
+
+
+msgid "Write filename only"
+msgstr "Zapíše iba názov súboru"
+
+
+msgid "Copy the file to the destination path"
+msgstr "Skopírujte súbor do cieľovej cesty"
 
 
 msgid "Upscale the object by this factor"
@@ -81774,6 +81786,14 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Povolí vývojárom možnosť ladenia cyklov"
 
 
+msgid "Draw Manager Locking"
+msgstr "Uzamknutie správcu kreslenia"
+
+
+msgid "Don't lock UI during background rendering"
+msgstr "Nezamykajte užívateľské rozhranie počas prekresľovania na pozadí"
+
+
 msgid "Extended Asset Browser"
 msgstr "Rozšírený prehliadač aktív"
 
@@ -85696,10 +85716,6 @@ msgstr "Roviny klipu"
 
 msgid "Is Axis Aligned"
 msgstr "Je zarovnaná os"
-
-
-msgid "Is current view an orthographic side view"
-msgstr "Aktuálny pohľad je ortografický bočný pohľad"
 
 
 msgid "Is Perspective"
@@ -106673,7 +106689,7 @@ msgstr "Zarovnať na orientáciu transformácie"
 
 msgctxt "Operator"
 msgid "Project from View (Bounds)"
-msgstr "Premietnuť zo zobrazenia (okraje)"
+msgstr "Premietnuť z pohľadu (okraje)"
 
 
 msgctxt "Operator"
