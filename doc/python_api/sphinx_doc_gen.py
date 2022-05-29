@@ -13,10 +13,10 @@ API dump in RST files
   providing ./blender is or links to the blender executable
 
   To choose sphinx-in directory:
-    blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py -- --output ../python_api
+    blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py -- --output=../python_api
 
   For quick builds:
-    blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py -- --partial bmesh.*
+    blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py -- --partial=bmesh.*
 
 
 Sphinx: HTML generation
@@ -98,8 +98,9 @@ def handle_args():
         type=str,
         default="",
         help="Use a wildcard to only build specific module(s)\n"
-        "Example: --partial bmesh*\n",
-        required=False,)
+        "Example: --partial\"=bmesh*\"\n",
+        required=False,
+    )
 
     parser.add_argument(
         "-f", "--fullrebuild",
@@ -287,7 +288,7 @@ else:
     if FILTER_BPY_TYPES:
         EXCLUDE_MODULES.remove("bpy.types")
 
-    print(FILTER_BPY_TYPES)
+    # print(FILTER_BPY_TYPES)
 
     EXCLUDE_INFO_DOCS = (not fnmatch.fnmatchcase("info", ARGS.partial))
 
@@ -369,6 +370,23 @@ INFO_DOCS = (
 RNA_BLACKLIST = {
     # XXX messes up PDF!, really a bug but for now just workaround.
     "PreferencesSystem": {"language", }
+}
+
+# Support suppressing errors when attributes collide with methods,
+# use `noindex` on the attributes / data declarations.
+#
+# NOTE: in general this should be avoided but changing it would break the API,
+# so explicitly suppress warnings instead.
+#
+# NOTE: Currently some API generation doesn't support this is it is not used yet,
+# see references to `RST_NOINDEX_ATTR` in code comments.
+#
+# A set of tuple identifiers: `(module, type, attr)`.
+RST_NOINDEX_ATTR = {
+    # Render is both a method and an attribute, from looking into this
+    # having both doesn't cause problems in practice since the `render` method
+    # is registered and called from C code where the attribute is accessed from the instance.
+    ("bpy.types", "RenderEngine", "render"),
 }
 
 MODULE_GROUPING = {
@@ -746,10 +764,12 @@ def py_descr2sphinx(ident, fw, descr, module_name, type_name, identifier):
 
     if type(descr) == GetSetDescriptorType:
         fw(ident + ".. attribute:: %s\n\n" % identifier)
+        # NOTE: `RST_NOINDEX_ATTR` currently not supported (as it's not used).
         write_indented_lines(ident + "   ", fw, doc, False)
         fw("\n")
     elif type(descr) == MemberDescriptorType:  # same as above but use "data"
         fw(ident + ".. data:: %s\n\n" % identifier)
+        # NOTE: `RST_NOINDEX_ATTR` currently not supported (as it's not used).
         write_indented_lines(ident + "   ", fw, doc, False)
         fw("\n")
     elif type(descr) in {MethodDescriptorType, ClassMethodDescriptorType}:
@@ -792,6 +812,8 @@ def pyprop2sphinx(ident, fw, identifier, py_prop):
         fw(ident + ".. data:: %s\n\n" % identifier)
     else:
         fw(ident + ".. attribute:: %s\n\n" % identifier)
+
+    # NOTE: `RST_NOINDEX_ATTR` currently not supported (as it's not used).
     write_indented_lines(ident + "   ", fw, py_prop.__doc__)
     fw("\n")
     if py_prop.fset is None:
@@ -976,7 +998,7 @@ def pymodule2sphinx(basepath, module_name, module, title, module_all_extra):
             write_indented_lines("   ", fw, "Constant value %s" % repr(value), False)
             fw("\n")
         else:
-            BPY_LOGGER.debug("\tnot documenting %s.%s of %r type", (module_name, attribute, value_type.__name__))
+            BPY_LOGGER.debug("\tnot documenting %s.%s of %r type", module_name, attribute, value_type.__name__)
             continue
 
         attribute_set.add(attribute)
@@ -1444,17 +1466,23 @@ def pyrna2sphinx(basepath):
         struct_blacklist = RNA_BLACKLIST.get(struct_id, ())
 
         for prop in sorted_struct_properties:
+            identifier = prop.identifier
 
             # Support blacklisting props.
-            if prop.identifier in struct_blacklist:
+            if identifier in struct_blacklist:
                 continue
 
             type_descr = prop.get_type_description(class_fmt=":class:`%s`", collection_id=_BPY_PROP_COLLECTION_ID)
             # Read-only properties use "data" directive, variables properties use "attribute" directive.
             if "readonly" in type_descr:
-                fw("   .. data:: %s\n\n" % prop.identifier)
+                fw("   .. data:: %s\n" % identifier)
             else:
-                fw("   .. attribute:: %s\n\n" % prop.identifier)
+                fw("   .. attribute:: %s\n" % identifier)
+            # Also write `noindex` on requerst.
+            if ("bpy.types", struct_id, identifier) in RST_NOINDEX_ATTR:
+                fw("      :noindex:\n")
+            fw("\n")
+
             if prop.description:
                 write_indented_lines("      ", fw, prop.description, False)
                 fw("\n")
