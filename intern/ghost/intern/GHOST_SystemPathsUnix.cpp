@@ -17,8 +17,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include <cstdio>  /* for fprintf only */
 #include <cstdlib> /* for exit */
+#include <stdio.h> /* for fprintf only */
 
 #include <pwd.h> /* for get home without use getenv() */
 #include <string>
@@ -28,7 +28,7 @@ using std::string;
 #ifdef PREFIX
 static const char *static_path = PREFIX "/share";
 #else
-static const char *static_path = nullptr;
+static const char *static_path = NULL;
 #endif
 
 GHOST_SystemPathsUnix::GHOST_SystemPathsUnix()
@@ -39,7 +39,7 @@ GHOST_SystemPathsUnix::~GHOST_SystemPathsUnix()
 {
 }
 
-const char *GHOST_SystemPathsUnix::getSystemDir(int /*version*/, const char *versionstr) const
+const char *GHOST_SystemPathsUnix::getSystemDir(int, const char *versionstr) const
 {
   /* no prefix assumes a portable build which only uses bundled scripts */
   if (static_path) {
@@ -47,7 +47,7 @@ const char *GHOST_SystemPathsUnix::getSystemDir(int /*version*/, const char *ver
     return system_path.c_str();
   }
 
-  return nullptr;
+  return NULL;
 }
 
 const char *GHOST_SystemPathsUnix::getUserDir(int version, const char *versionstr) const
@@ -67,31 +67,32 @@ const char *GHOST_SystemPathsUnix::getUserDir(int version, const char *versionst
         user_path = string(home) + "/.bforartists/" + versionstr;
       }
       else {
-        return nullptr;
+        return NULL;
       }
     }
     return user_path.c_str();
   }
-  if (user_path.empty() || last_version != version) {
-    const char *home = getenv("XDG_CONFIG_HOME");
+  else {
+    if (user_path.empty() || last_version != version) {
+      const char *home = getenv("XDG_CONFIG_HOME");
 
-    last_version = version;
+      last_version = version;
 
-    if (home) {
-      user_path = string(home) + "/bforartists/" + versionstr;
+      if (home) {
+        user_path = string(home) + "/bforartists/" + versionstr;
+      }
+      else {
+        home = getenv("HOME");
+
+        if (home == NULL)
+          home = getpwuid(getuid())->pw_dir;
+
+        user_path = string(home) + "/.config/bforartists/" + versionstr;
+      }
     }
-    else {
-      home = getenv("HOME");
 
-      if (home == NULL)
-        home = getpwuid(getuid())->pw_dir;
-
-      user_path = string(home) + "/.config/bforartists/" + versionstr;
-    }
+    return user_path.c_str();
   }
-}
-
-return user_path.c_str();
 }
 
 const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes type) const
@@ -134,7 +135,7 @@ const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes 
       GHOST_ASSERT(
           false,
           "GHOST_SystemPathsUnix::getUserSpecialDir(): Invalid enum value for type parameter");
-      return nullptr;
+      return NULL;
   }
 
   static string path = "";
@@ -142,8 +143,8 @@ const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes 
   string command = string("xdg-user-dir ") + type_str + " 2> /dev/null";
 
   FILE *fstream = popen(command.c_str(), "r");
-  if (fstream == nullptr) {
-    return nullptr;
+  if (fstream == NULL) {
+    return NULL;
   }
   std::stringstream path_stream;
   while (!feof(fstream)) {
@@ -156,7 +157,7 @@ const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes 
   }
   if (pclose(fstream) == -1) {
     perror("GHOST_SystemPathsUnix::getUserSpecialDir failed at pclose()");
-    return nullptr;
+    return NULL;
   }
 
   if (!add_path.empty()) {
@@ -164,12 +165,12 @@ const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes 
   }
 
   path = path_stream.str();
-  return path[0] ? path.c_str() : nullptr;
+  return path[0] ? path.c_str() : NULL;
 }
 
 const char *GHOST_SystemPathsUnix::getBinaryDir() const
 {
-  return nullptr;
+  return NULL;
 }
 
 void GHOST_SystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) const
