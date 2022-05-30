@@ -82,16 +82,14 @@ const char *GHOST_SystemPathsUnix::getUserDir(int version, const char *versionst
     }
     else {
       home = getenv("HOME");
-
-      if (home == NULL)
+      if (home == nullptr) {
         home = getpwuid(getuid())->pw_dir;
-
+      }
       user_path = string(home) + "/.config/bforartists/" + versionstr;
     }
   }
-}
 
-return user_path.c_str();
+  return user_path.c_str();
 }
 
 const char *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDirTypes type) const
