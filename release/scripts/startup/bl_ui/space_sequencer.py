@@ -742,7 +742,7 @@ class SEQUENCER_MT_add(Menu):
 
         col = layout.column()
         #col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
-        col.menu("SEQUENCER_MT_fades_add")
+        col.menu("SEQUENCER_MT_fades_add", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
 
         col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
@@ -1144,7 +1144,7 @@ class SEQUENCER_MT_context_menu(Menu):
             if selected_sequences_count >= 1:
                 col = layout.column()
                 #col.operator_menu_enum("sequencer.fades_add", "type", text="Fade")
-                col.menu("SEQUENCER_MT_fades_add", text ="Fade")
+                col.menu("SEQUENCER_MT_fades_add", text ="Fade", icon='IPO_EASE_IN_OUT')
                 layout.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
             if strip_type in {
