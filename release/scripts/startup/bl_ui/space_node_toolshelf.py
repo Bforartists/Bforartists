@@ -4270,7 +4270,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshIsland"
 
-            props = col.operator("node.add_node", text=" Is Shade Smoooth   ", icon = "SHADING_SMOOTH")
+            props = col.operator("node.add_node", text=" Is Shade Smooth   ", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
 

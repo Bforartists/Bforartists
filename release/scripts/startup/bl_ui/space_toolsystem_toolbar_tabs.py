@@ -1066,7 +1066,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
 
             col.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
             col.operator("object.shade_flat", icon ='SHADING_FLAT')
-            col.popover(panel="TOOLBAR_PT_normals_autosmooth", text="Autosmoooth", icon="NORMAL_SMOOTH")
+            col.popover(panel="TOOLBAR_PT_normals_autosmooth", text="Auto Smooth", icon="NORMAL_SMOOTH")
 
         # icon buttons
         else:
