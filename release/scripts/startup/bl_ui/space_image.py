@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 import bpy
 import math
 
@@ -88,7 +86,7 @@ class IMAGE_MT_view(Menu):
         layout.prop(sima, "show_region_hud")
         if sima.mode == 'UV':
             layout.prop(addon_prefs, "uv_show_toolshelf_tabs")
-            #layout.prop(overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs") # bfa - the toolshelf tabs.
+            # layout.prop(overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs") # bfa - the toolshelf tabs.
 
         layout.separator()
 
@@ -102,9 +100,9 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("image.view_zoom_in", text = "Zoom In", icon = "ZOOM_IN")
-        layout.operator("image.view_zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
-        layout.operator("image.view_zoom_border", icon = "ZOOM_BORDER")
+        layout.operator("image.view_zoom_in", text="Zoom In", icon="ZOOM_IN")
+        layout.operator("image.view_zoom_out", text="Zoom Out", icon="ZOOM_OUT")
+        layout.operator("image.view_zoom_border", icon="ZOOM_BORDER")
 
         layout.separator()
 
@@ -113,28 +111,31 @@ class IMAGE_MT_view(Menu):
         layout.separator()
 
         if show_uvedit:
-            layout.operator("image.view_selected", text = "View Selected", icon='VIEW_SELECTED')
+            layout.operator("image.view_selected", text="View Selected", icon='VIEW_SELECTED')
 
-        layout.operator("image.view_all", text="Frame All", icon = "VIEWALL")
-        layout.operator("image.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
+        layout.operator("image.view_all", text="Frame All", icon="VIEWALL")
+        layout.operator("image.view_all", text="View Fit", icon="VIEW_FIT").fit_view = True
 
         if sima.mode != 'UV':
             if sima.ui_mode == 'MASK':
-                layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+                layout.operator("image.view_center_cursor", text="Center View to Cursor", icon="CENTERTOCURSOR")
         elif sima.mode == 'UV':
-            layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+            layout.operator("image.view_center_cursor", text="Center View to Cursor", icon="CENTERTOCURSOR")
             layout.operator("image.view_cursor_center", icon='CURSORTOCENTER')
 
         layout.separator()
 
         if show_render:
-            layout.operator("image.render_border", icon = "RENDERBORDER")
-            layout.operator("image.clear_render_border", icon = "RENDERBORDER_CLEAR")
+            layout.operator("image.render_border", icon="RENDERBORDER")
+            layout.operator("image.clear_render_border", icon="RENDERBORDER_CLEAR")
 
             layout.separator()
 
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next", icon = "FRAME_NEXT")
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous", icon = "FRAME_PREV").reverse = True
+            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next", icon="FRAME_NEXT")
+            layout.operator(
+                "image.cycle_render_slot",
+                text="Render Slot Cycle Previous",
+                icon="FRAME_PREV").reverse = True
 
             layout.separator()
 
@@ -148,9 +149,9 @@ class IMAGE_MT_view_pie_menus(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'IMAGE_MT_pivot_pie'
-        layout.operator("wm.call_menu_pie", text = "UV's snap", icon = "MENU_PANEL").name = 'IMAGE_MT_uvs_snap_pie'
-        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'IMAGE_MT_view_pie'
+        layout.operator("wm.call_menu_pie", text="Pivot", icon="MENU_PANEL").name = 'IMAGE_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text="UV's snap", icon="MENU_PANEL").name = 'IMAGE_MT_uvs_snap_pie'
+        layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = 'IMAGE_MT_view_pie'
 
 
 class IMAGE_MT_view_zoom(Menu):
@@ -167,7 +168,7 @@ class IMAGE_MT_view_zoom(Menu):
 
             layout.operator(
                 "image.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
+                text=iface_("Zoom %d:%d") % (a, b), icon="ZOOM_SET",
                 translate=False,
             ).ratio = a / b
 
@@ -187,26 +188,26 @@ class IMAGE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("uv.select_box", text = "Box Select Pinned", icon='BORDER_RECT').pinned = True
+        layout.operator("uv.select_box", text="Box Select Pinned", icon='BORDER_RECT').pinned = True
 
         layout.separator()
 
         layout.menu("IMAGE_MT_select_linked")
-        myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED")
+        myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon="LINKED")
         myop.extend = True
         myop.deselect = False
 
         layout.separator()
 
-        layout.operator("uv.select_pinned", text = "Pinned", icon = "PINNED")
-        layout.operator("uv.select_split", text = "Split", icon = "SPLIT")
-        layout.operator("uv.select_overlap", text = "Overlap", icon = "OVERLAP")
-        layout.operator("uv.shortest_path_pick", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+        layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
+        layout.operator("uv.select_split", text="Split", icon="SPLIT")
+        layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
+        layout.operator("uv.shortest_path_pick", text="Shortest Path", icon="SELECT_SHORTESTPATH")
 
         layout.separator()
 
-        layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
-        layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
+        layout.operator("uv.select_more", text="More", icon="SELECTMORE")
+        layout.operator("uv.select_less", text="Less", icon="SELECTLESS")
 
 
 class IMAGE_MT_select_legacy(Menu):
@@ -215,8 +216,8 @@ class IMAGE_MT_select_legacy(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.select_box", text = "Box Select", icon='BORDER_RECT').pinned = False
-        layout.operator("uv.select_circle", icon = "CIRCLE_SELECT")
+        layout.operator("uv.select_box", text="Box Select", icon='BORDER_RECT').pinned = False
+        layout.operator("uv.select_circle", icon="CIRCLE_SELECT")
 
 
 class IMAGE_MT_select_linked(Menu):
@@ -225,8 +226,8 @@ class IMAGE_MT_select_linked(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.select_linked", text="Linked", icon = "LINKED")
-        layout.operator("uv.shortest_path_select", text="Shortest Path", icon = "LINKED")
+        layout.operator("uv.select_linked", text="Linked", icon="LINKED")
+        layout.operator("uv.shortest_path_select", text="Shortest Path", icon="LINKED")
 
 
 class IMAGE_MT_brush(Menu):
@@ -235,8 +236,8 @@ class IMAGE_MT_brush(Menu):
     def draw(self, context):
         layout = self.layout
 
-        #radial control button brush size
-        myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+        # radial control button brush size
+        myvar = layout.operator("wm.radial_control", text="Brush Radius", icon="BRUSHSIZE")
         myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
         myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
         myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
@@ -249,8 +250,8 @@ class IMAGE_MT_brush(Menu):
         myvar.image_id = 'tool_settings.image_paint.brush'
         myvar.secondary_tex = True
 
-        #radial control button brush strength
-        myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+        # radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text="Brush Strength", icon="BRUSHSTRENGTH")
         myvar.data_path_primary = 'tool_settings.image_paint.brush.strength'
         myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
         myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
@@ -263,8 +264,8 @@ class IMAGE_MT_brush(Menu):
         myvar.image_id = 'tool_settings.image_paint.brush'
         myvar.secondary_tex = True
 
-        #radial control button brush angle
-        myvar = layout.operator("wm.radial_control", text = "Texture Brush Angle", icon = "BRUSHANGLE")
+        # radial control button brush angle
+        myvar = layout.operator("wm.radial_control", text="Texture Brush Angle", icon="BRUSHANGLE")
         myvar.data_path_primary = 'tool_settings.image_paint.brush.texture_slot.angle'
         myvar.data_path_secondary = ''
         myvar.use_secondary = ''
@@ -277,8 +278,8 @@ class IMAGE_MT_brush(Menu):
         myvar.image_id = 'tool_settings.image_paint.brush'
         myvar.secondary_tex = False
 
-        #radial control button brush angle secondary texture
-        myvar = layout.operator("wm.radial_control", text = "Texture Brush Angle", icon = "BRUSHANGLE")
+        # radial control button brush angle secondary texture
+        myvar = layout.operator("wm.radial_control", text="Texture Brush Angle", icon="BRUSHANGLE")
         myvar.data_path_primary = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
         myvar.data_path_secondary = ''
         myvar.use_secondary = ''
@@ -305,14 +306,14 @@ class IMAGE_MT_image(Menu):
         layout.operator("image.new", text="New", icon='IMAGE_DATA')
         layout.operator("image.open", text="Open...", icon='FILE_FOLDER')
 
-        layout.operator("image.read_viewlayers", icon = "RENDERLAYERS")
+        layout.operator("image.read_viewlayers", icon="RENDERLAYERS")
 
         if ima:
             layout.separator()
 
             if not show_render:
                 layout.operator("image.replace", text="Replace", icon='FILE_FOLDER')
-                layout.operator("image.reload", text="Reload",icon = "FILE_REFRESH")
+                layout.operator("image.reload", text="Reload", icon="FILE_REFRESH")
 
             # bfa TODO: move this to image.external_edit poll
             # bfa - hide disfunctional tools and settings for render result
@@ -339,7 +340,7 @@ class IMAGE_MT_image(Menu):
                 can_edit = False
 
             if can_edit:
-                layout.operator("image.external_edit", text="Edit Externally", icon = "EDIT_EXTERNAL")
+                layout.operator("image.external_edit", text="Edit Externally", icon="EDIT_EXTERNAL")
 
         layout.separator()
 
@@ -351,7 +352,7 @@ class IMAGE_MT_image(Menu):
         if ima and ima.source == 'SEQUENCE':
             layout.operator("image.save_sequence", icon='SAVE_All')
 
-        layout.operator("image.save_all_modified", text="Save All Images", icon = "SAVE_ALL")
+        layout.operator("image.save_all_modified", text="Save All Images", icon="SAVE_ALL")
 
         # bfa - hide disfunctional tools and settings for render result
         if ima:
@@ -359,24 +360,27 @@ class IMAGE_MT_image(Menu):
                 layout.separator()
 
                 layout.menu("IMAGE_MT_image_invert")
-                layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
+                layout.operator("image.resize", text="Resize", icon="MAN_SCALE")
                 layout.menu("IMAGE_MT_image_flip")
 
                 if not show_render:
                     if ima.packed_file:
                         if ima.filepath:
                             layout.separator()
-                            layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
+                            layout.operator("image.unpack", text="Unpack", icon="PACKAGE")
                     else:
                         layout.separator()
-                        layout.operator("image.pack", text="Pack", icon = "PACKAGE")
+                        layout.operator("image.pack", text="Pack", icon="PACKAGE")
 
                 if context.area.ui_type == 'IMAGE_EDITOR':
 
                     layout.separator()
 
-                    layout.operator("palette.extract_from_image", text="Extract Palette", icon = "PALETTE")
-                    layout.operator("gpencil.image_to_grease_pencil", text="Generate Grease Pencil", icon = "GREASEPENCIL")
+                    layout.operator("palette.extract_from_image", text="Extract Palette", icon="PALETTE")
+                    layout.operator(
+                        "gpencil.image_to_grease_pencil",
+                        text="Generate Grease Pencil",
+                        icon="GREASEPENCIL")
 
 
 class IMAGE_MT_image_flip(Menu):
@@ -384,8 +388,8 @@ class IMAGE_MT_image_flip(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("image.flip", text="Horizontally", icon = "FLIP_Y").use_flip_x = True
-        layout.operator("image.flip", text="Vertically", icon = "FLIP_X").use_flip_y = True
+        layout.operator("image.flip", text="Horizontally", icon="FLIP_Y").use_flip_x = True
+        layout.operator("image.flip", text="Vertically", icon="FLIP_X").use_flip_y = True
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -413,9 +417,9 @@ class IMAGE_MT_uvs_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.reveal", icon = "HIDE_OFF")
-        layout.operator("uv.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
+        layout.operator("uv.reveal", icon="HIDE_OFF")
+        layout.operator("uv.hide", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("uv.hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class IMAGE_MT_uvs_transform(Menu):
@@ -425,13 +429,13 @@ class IMAGE_MT_uvs_transform(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
-        layout.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
+        layout.operator("transform.rotate", text="Rotate +90°", icon="ROTATE_PLUS_90").value = math.pi / 2
+        layout.operator("transform.rotate", text="Rotate  - 90°", icon="ROTATE_MINUS_90").value = math.pi / -2
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
 
-        layout.operator("transform.shear", icon = 'SHEAR')
+        layout.operator("transform.shear", icon='SHEAR')
 
 
 class IMAGE_MT_uvs_snap(Menu):
@@ -442,15 +446,17 @@ class IMAGE_MT_uvs_snap(Menu):
 
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        layout.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
-        layout.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
-        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+        layout.operator("uv.snap_selected", text="Selected to Pixels", icon="SNAP_TO_PIXELS").target = 'PIXELS'
+        layout.operator("uv.snap_selected", text="Selected to Cursor", icon="SELECTIONTOCURSOR").target = 'CURSOR'
+        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)",
+                        icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected",
+                        icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
         layout.separator()
 
-        layout.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
-        layout.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
+        layout.operator("uv.snap_cursor", text="Cursor to Pixels", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
+        layout.operator("uv.snap_cursor", text="Cursor to Selected", icon="CURSORTOSELECTION").target = 'SELECTED'
 
 
 class IMAGE_MT_uvs_mirror(Menu):
@@ -459,14 +465,14 @@ class IMAGE_MT_uvs_mirror(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.faces_mirror_uv", icon = "COPYMIRRORED")
+        layout.operator("mesh.faces_mirror_uv", icon="COPYMIRRORED")
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        layout.operator("transform.mirror", text="X Axis", icon = "MIRROR_X").constraint_axis[0] = True
-        layout.operator("transform.mirror", text="Y Axis", icon = "MIRROR_Y").constraint_axis[1] = True
+        layout.operator("transform.mirror", text="X Axis", icon="MIRROR_X").constraint_axis[0] = True
+        layout.operator("transform.mirror", text="Y Axis", icon="MIRROR_Y").constraint_axis[1] = True
 
 
 class IMAGE_MT_uvs_align(Menu):
@@ -499,7 +505,7 @@ class IMAGE_MT_uvs_split(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.select_split", text="Selection", icon = 'SPLIT')
+        layout.operator("uv.select_split", text="Selection", icon='SPLIT')
 
 
 # Tooltip and operator for Clear Seam.
@@ -520,22 +526,22 @@ class IMAGE_MT_uvs_unwrap(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-        layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+        layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+        layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("uv.smart_project", icon = "MOD_UVPROJECT")
-        layout.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
-        layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
+        layout.operator("uv.smart_project", icon="MOD_UVPROJECT")
+        layout.operator("uv.lightmap_pack", icon="LIGHTMAPPACK")
+        layout.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("uv.cube_project", icon = "CUBEPROJECT")
-        layout.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
-        layout.operator("uv.sphere_project", icon = "SPHEREPROJECT")
+        layout.operator("uv.cube_project", icon="CUBEPROJECT")
+        layout.operator("uv.cylinder_project", icon="CYLINDERPROJECT")
+        layout.operator("uv.sphere_project", icon="SPHEREPROJECT")
 
 
 class IMAGE_MT_uvs(Menu):
@@ -555,23 +561,23 @@ class IMAGE_MT_uvs(Menu):
 
         layout.menu("IMAGE_MT_uvs_unwrap")
 
-        layout.operator("uv.pin", icon = "PINNED").clear = False
-        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
+        layout.operator("uv.pin", icon="PINNED").clear = False
+        layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
         layout.menu("IMAGE_MT_uvs_merge")
-        layout.operator("uv.select_split", text="Split Selection", icon = 'SPLIT')
+        layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
         layout.separator()
 
-        layout.operator("uv.pack_islands", icon ="PACKISLAND")
-        layout.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
-        layout.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
-        layout.operator("uv.stitch", icon = "STITCH")
+        layout.operator("uv.pack_islands", icon="PACKISLAND")
+        layout.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
+        layout.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
+        layout.operator("uv.stitch", icon="STITCH")
 
         layout.separator()
 
-        layout.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
-        layout.operator("uv.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
-        layout.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
+        layout.operator("uv.mark_seam", icon="MARK_SEAM").clear = False
+        layout.operator("uv.clear_seam", text="Clear Seam", icon='CLEAR_SEAM')
+        layout.operator("uv.seams_from_islands", icon="SEAMSFROMISLAND")
 
         layout.separator()
 
@@ -581,7 +587,7 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_showhide")
-        layout.operator("uv.reset", icon = "RESET")
+        layout.operator("uv.reset", icon="RESET")
 
 
 class IMAGE_MT_uvs_select_mode(Menu):
@@ -633,13 +639,13 @@ class IMAGE_MT_uvs_context_menu(Menu):
         if sima.show_uvedit:
             # Add
             layout.operator("uv.unwrap", icon='UNWRAP_ABF')
-            layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
+            layout.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
 
             layout.separator()
 
             # Modify
-            layout.operator("uv.pin", icon = "PINNED").clear = False
-            layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
+            layout.operator("uv.pin", icon="PINNED").clear = False
+            layout.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
 
             layout.separator()
 
@@ -647,8 +653,8 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("transform.mirror", text="Mirror X", icon = "MIRROR_X").constraint_axis[0] = True
-            layout.operator("transform.mirror", text="Mirror Y", icon = "MIRROR_Y").constraint_axis[1] = True
+            layout.operator("transform.mirror", text="Mirror X", icon="MIRROR_X").constraint_axis[0] = True
+            layout.operator("transform.mirror", text="Mirror Y", icon="MIRROR_Y").constraint_axis[1] = True
 
             layout.separator()
 
@@ -658,7 +664,7 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
             # Remove
             layout.menu("IMAGE_MT_uvs_merge")
-            layout.operator("uv.stitch", icon = "STITCH")
+            layout.operator("uv.stitch", icon="STITCH")
             layout.menu("IMAGE_MT_uvs_split")
 
 
@@ -886,13 +892,13 @@ class IMAGE_HT_header(Header):
            # proportional editing settings
             if tool_settings.use_proportional_edit is True:
                 sub = row.row(align=True)
-                sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
+                sub.prop_with_popover(tool_settings, "proportional_edit_falloff", text="",
+                                      icon_only=True, panel="VIEW3D_PT_proportional_edit")
             if show_uvedit:
                 uvedit = sima.uv_editor
 
                 mesh = context.edit_object.data
                 layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
-
 
     def draw(self, context):
         layout = self.layout
@@ -908,7 +914,7 @@ class IMAGE_HT_header(Header):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
 
         # bfa - hide disfunctional tools and settings for render result
         is_render = False
@@ -916,7 +922,7 @@ class IMAGE_HT_header(Header):
             is_render = ima.type == 'RENDER_RESULT'
 
         if sima.mode != 'UV':
-            row = layout.row(align = True)
+            row = layout.row(align=True)
             row.operator("wm.switch_editor_to_uv", text="", icon='UV')
             if is_render:
                 layout.prop(sima, "ui_non_render_mode", text="")
@@ -924,7 +930,7 @@ class IMAGE_HT_header(Header):
                 layout.prop(sima, "ui_mode", text="")
 
         else:
-            row = layout.row(align = True)
+            row = layout.row(align=True)
             row.operator("wm.switch_editor_to_image", text="", icon='IMAGE')
 
         # UV editing.
@@ -937,16 +943,20 @@ class IMAGE_HT_header(Header):
             else:
                 row = layout.row(align=True)
                 uv_select_mode = tool_settings.uv_select_mode[:]
-                row.operator("uv.select_mode", text="", icon='UV_VERTEXSEL', depress=(uv_select_mode == 'VERTEX')).type = 'VERTEX'
-                row.operator("uv.select_mode", text="", icon='UV_EDGESEL', depress=(uv_select_mode == 'EDGE')).type = 'EDGE'
-                row.operator("uv.select_mode", text="", icon='UV_FACESEL', depress=(uv_select_mode == 'FACE')).type = 'FACE'
-                row.operator("uv.select_mode", text="", icon='UV_ISLANDSEL', depress=(uv_select_mode == 'ISLAND')).type = 'ISLAND'
+                row.operator("uv.select_mode", text="", icon='UV_VERTEXSEL',
+                             depress=(uv_select_mode == 'VERTEX')).type = 'VERTEX'
+                row.operator("uv.select_mode", text="", icon='UV_EDGESEL',
+                             depress=(uv_select_mode == 'EDGE')).type = 'EDGE'
+                row.operator("uv.select_mode", text="", icon='UV_FACESEL',
+                             depress=(uv_select_mode == 'FACE')).type = 'FACE'
+                row.operator("uv.select_mode", text="", icon='UV_ISLANDSEL',
+                             depress=(uv_select_mode == 'ISLAND')).type = 'ISLAND'
 
                 layout.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
 
         IMAGE_MT_editor_menus.draw_collapsible(context, layout)
 
-        #layout.separator_spacer()
+        # layout.separator_spacer()
 
         IMAGE_HT_header.draw_xform_template(layout, context)
 
@@ -990,7 +1000,7 @@ class IMAGE_HT_header(Header):
             row = layout.row()
             row.prop(sima, "display_channels", icon_only=True)
 
-        row.popover(panel = "IMAGE_PT_image_options", text = "Options")
+        row.popover(panel="IMAGE_PT_image_options", text="Options")
 
 
 # bfa - show hide the editormenu
@@ -1004,7 +1014,8 @@ class ALL_MT_editormenu(Menu):
     def draw_menus(layout, context):
 
         row = layout.row(align=True)
-        row.template_header() # editor type menus
+        row.template_header()  # editor type menus
+
 
 class IMAGE_MT_editor_menus(Menu):
     bl_idname = "IMAGE_MT_editor_menus"
@@ -1018,7 +1029,7 @@ class IMAGE_MT_editor_menus(Menu):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
         layout.menu("IMAGE_MT_view")
 
         if show_uvedit:
@@ -1142,17 +1153,17 @@ class IMAGE_PT_image_options(Panel):
         show_render = sima.show_render
 
         if sima.mode == 'UV':
-            col = layout.column(align = True)
+            col = layout.column(align=True)
             col.prop(uv, "lock_bounds")
             col.prop(uv, "use_live_unwrap")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         col.prop(sima, "use_realtime_update")
         col.prop(uv, "show_metadata")
 
         if sima.mode == 'UV':
-            row = layout.row(heading = "Snap to Pixels")
-            row.prop(uv, "pixel_snap_mode", expand = True, text="")
+            row = layout.row(heading="Snap to Pixels")
+            row.prop(uv, "pixel_snap_mode", expand=True, text="")
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")
@@ -1580,8 +1591,8 @@ class IMAGE_PT_view_waveform(ImageScopesPanel, Panel):
 
         layout.template_waveform(sima, "scopes")
         row = layout.split(factor=0.5)
-        row.label(text = "Opacity")
-        row.prop(sima.scopes, "waveform_alpha", text = "")
+        row.label(text="Opacity")
+        row.prop(sima.scopes, "waveform_alpha", text="")
         layout.prop(sima.scopes, "waveform_mode", text="")
 
 
@@ -1600,8 +1611,8 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
         layout.template_vectorscope(sima, "scopes")
 
         row = layout.split(factor=0.5)
-        row.label(text = "Opacity")
-        row.prop(sima.scopes, "vectorscope_alpha", text = "")
+        row.label(text="Opacity")
+        row.prop(sima.scopes, "vectorscope_alpha", text="")
 
 
 class IMAGE_PT_sample_line(ImageScopesPanel, Panel):
@@ -1744,7 +1755,7 @@ class IMAGE_PT_overlay_guides(Panel):
             row = col.row()
             row.separator()
             row.separator()
-            row.prop(uvedit, "use_custom_grid", text = "Fixed Subdivisions")
+            row.prop(uvedit, "use_custom_grid", text="Fixed Subdivisions")
             col = split.column()
             if uvedit.use_custom_grid:
                 col.prop(uvedit, "custom_grid_subdivisions", text="")
@@ -1756,7 +1767,6 @@ class IMAGE_PT_overlay_guides(Panel):
             row.use_property_decorate = False
             row.separator()
             row.prop(uvedit, "tile_grid_shape", text="Tiles")
-
 
 
 class IMAGE_PT_overlay_uv_edit(Panel):
