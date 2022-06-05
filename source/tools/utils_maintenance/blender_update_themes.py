@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # this script updates XML themes once new settings are added
 #
 #  ./blender.bin --background --python ./source/tools/utils_maintenance/blender_update_themes.py

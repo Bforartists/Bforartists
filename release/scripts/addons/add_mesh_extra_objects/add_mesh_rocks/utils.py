@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # Converts a formatted string to a float tuple:
 #   IN - '(0.5, 0.2)' -> CONVERT -> OUT - (0.5, 0.2)
 def toTuple(stringIn):

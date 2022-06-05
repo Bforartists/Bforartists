@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 '''
 Define the command 'print_struct_c99' for gdb,
 useful for creating a literal for a nested runtime struct.

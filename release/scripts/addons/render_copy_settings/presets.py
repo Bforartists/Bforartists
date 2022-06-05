@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 
 class CopyPreset(object):
     def __init__(self, ui_name, rna_enum, elements):

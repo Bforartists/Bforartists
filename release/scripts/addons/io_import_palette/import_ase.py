@@ -6,8 +6,6 @@
 # http://iamacamera.org/default.aspx?id=109 by Carl Camera and
 # http://www.colourlovers.com/ase.phps by Chris Williams
 
-# <pep8 compliant>
-
 
 """
 This script imports a ASE Palette to Blender.

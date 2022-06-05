@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # ----------------------------------------------------------
 # Automatic generation of curtains
 # Author: Antonio Vazquez (antonioya)

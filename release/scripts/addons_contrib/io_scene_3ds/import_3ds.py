@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 # Script copyright (C) Bob Holcomb
 # Contributors: Bob Holcomb, Richard L?rk?ng, Damien McGinnes, Sebastian Sille
 # Campbell Barton, Mario Lapin, Dominique Lorre, Andreas Atteneder

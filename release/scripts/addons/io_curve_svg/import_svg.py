@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 import re
 import xml.dom.minidom
 from math import cos, sin, tan, atan2, pi, ceil

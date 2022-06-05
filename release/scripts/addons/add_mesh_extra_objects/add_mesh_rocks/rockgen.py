@@ -90,8 +90,6 @@
 #   Functional code comes before fast code.  Once it works, then worry about
 #   making it faster/more efficient.
 
-# <pep8 compliant>
-
 import bpy
 import time
 from . import (

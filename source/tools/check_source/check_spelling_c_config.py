@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # these must be all lower case for comparisons
 
 dict_custom = {
@@ -35,6 +33,7 @@ dict_custom = {
     "accessor",
     "additively",
     "adjoint",
+    "orthogonally",
     "adjugate",
     "affectable",
     "alignable",
@@ -137,6 +136,7 @@ dict_custom = {
     "minimalistic",
     "misconfiguration",
     "misconfigured",
+    "modally",
     "monoscopy",
     "monospaced",
     "mutators",
@@ -181,6 +181,7 @@ dict_custom = {
     "prefiltered",
     "prefiltering",
     "premutliplied",
+    "preorder",
     "prepend",
     "prepending",
     "preprocess",
@@ -231,6 +232,7 @@ dict_custom = {
     "subclassing",
     "subdirectories",
     "subdirectory",
+    "teleporting",
     "templating",
     "tertiarily",
     "tokenize",
@@ -420,6 +422,7 @@ dict_custom = {
     "emissive",
     "fresnel",
     "gaussian",
+    "grayscale",
     "kerning",
     "lacunarity",
     "lossless",

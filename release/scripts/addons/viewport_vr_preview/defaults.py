@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 if "bpy" in locals():
     import importlib
     importlib.reload(action_map)

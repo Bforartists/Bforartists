@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # Script copyright (C) Campbell Barton
 # Contributors: Campbell Barton, Jiri Hnidek, Paolo Ciccone
 
