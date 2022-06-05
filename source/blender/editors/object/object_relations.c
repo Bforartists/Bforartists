@@ -1646,7 +1646,7 @@ void OBJECT_OT_make_links_data(wmOperatorType *ot)
        ICON_OUTLINER_OB_FONT,
        "Link Fonts to Text",
        "Replace Text object Fonts"},
-      {0, "", 0, NULL, NULL},
+      RNA_ENUM_ITEM_SEPR,
       {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Copy Modifiers", "Replace Modifiers"},
       {MAKE_LINKS_SHADERFX,
        "EFFECTS",
