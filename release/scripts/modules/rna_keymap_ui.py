@@ -386,8 +386,8 @@ def draw_keymaps(context, layout):
 
     # layout.context_pointer_set("keyconfig", wm.keyconfigs.active)
     # row.operator("preferences.keyconfig_remove", text="", icon='X')
-    #rowsub = row.split(factor=0.3, align=True) # bfa - turned off, puts the filter_type buttons underneath
-    rowsub = layout.row(align=True) # bfa - put the buttons for the filter_type prop in row
+    # rowsub = row.split(factor=0.3, align=True) # bfa - turned off, puts the filter_type buttons underneath
+    rowsub = layout.row(align=True)  # bfa - put the buttons for the filter_type prop in row
 
     # postpone drawing into rowsub, so we can set alert!
 
@@ -404,7 +404,7 @@ def draw_keymaps(context, layout):
 
     # go back and fill in rowsub
     rowsubsub = rowsub.row(align=True)
-    rowsubsub.prop(spref, "filter_type", expand=True)# bfa - radio buttons instead of dropdown
+    rowsubsub.prop(spref, "filter_type", expand=True)  # bfa - radio buttons instead of dropdown
     rowsubsub = rowsub.row(align=True)
     if not ok:
         rowsubsub.alert = True
