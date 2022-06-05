@@ -3,8 +3,6 @@
 
 # The Blender Edgetools is to bring CAD tools to Blender.
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "EdgeTools",
     "author": "Paul Marshall",

@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Translate Blender meta balls to POV blobs."""
 
 import bpy

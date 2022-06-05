@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 
 def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
     """

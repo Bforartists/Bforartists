@@ -2,8 +2,6 @@
 
 # Updated for 2.8 jan 5 2019
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "F2",
     "author": "Bart Crouch, Alexander Nedovizin, Paul Kotelevets "

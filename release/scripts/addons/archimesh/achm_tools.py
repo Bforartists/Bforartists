@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # ----------------------------------------------------------
 # support routines and general functions
 # Author: Antonio Vazquez (antonioya)

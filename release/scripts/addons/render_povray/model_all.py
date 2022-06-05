@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Translate to POV the control point compound geometries.
 
 Such as polygon meshes or curve based shapes.

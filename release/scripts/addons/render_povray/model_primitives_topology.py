@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """ Get POV-Ray specific objects In and Out of Blender """
 
 from math import pi, cos, sin

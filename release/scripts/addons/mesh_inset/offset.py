@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Creating offset polygons inside faces."""
 
 __author__ = "howard.trickey@gmail.com"
