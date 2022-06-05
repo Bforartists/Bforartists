@@ -1,6 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# <pep8 compliant>
 from bpy.types import Header, Panel, Menu
 
 
@@ -13,7 +11,7 @@ class PROPERTIES_HT_header(Header):
         region = context.region
         ui_scale = context.preferences.system.ui_scale
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
 
         # bfa - The tab to switch to outliner
         row = layout.row(align=True)
@@ -86,7 +84,7 @@ class ALL_MT_editormenu(Menu):
     def draw_menus(layout, context):
 
         row = layout.row(align=True)
-        row.template_header() # editor type menus
+        row.template_header()  # editor type menus
 
 
 classes = (

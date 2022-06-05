@@ -1311,7 +1311,7 @@ static void knife_bvh_raycast_cb(void *userdata,
                                  const BVHTreeRay *ray,
                                  BVHTreeRayHit *hit)
 {
-  if (index != -1) {
+  if (index == -1) {
     return;
   }
 
@@ -4673,6 +4673,7 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
       case MOUSEMOVE: /* Mouse moved somewhere to select another loop. */
         if (kcd->mode != MODE_PANNING) {
           knifetool_update_mval_i(kcd, event->mval);
+          knife_update_header(C, op, kcd);
 
           if (kcd->is_drag_hold) {
             if (kcd->totlinehit >= 2) {
@@ -4755,6 +4756,7 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
     /* We don't really need to update mval,
      * but this happens to be the best way to refresh at the moment. */
     knifetool_update_mval_i(kcd, event->mval);
+    knife_update_header(C, op, kcd);
   }
 
   /* Keep going until the user confirms. */
