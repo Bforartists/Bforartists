@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """
 Generates 'userdef_default_theme.c' from a 'userpref.blend' file.
 
@@ -15,17 +13,6 @@ eg:
 .. or find the latest:
 
     ./source/tools/utils/blender_theme_as_c.py $(find ~/.config/blender -name "userpref.blend" | sort | tail -1)
-
-################## BFORARTISTS ########################
-
-bfa - first navigate to the utils folder. Create a new userpref.blend and replace the one here.
-- Open console, and navigate to the utils folder.
-- windows does not auto detect the required python version. So with windows the useage in the console is as follow:
-
-py -3 blender_theme_as_c.py userpref.blend
-
-You can also define the full path to the updated userpref.blend as mentioned above.
-
 """
 
 C_SOURCE_HEADER = r'''/* SPDX-License-Identifier: GPL-2.0-or-later */

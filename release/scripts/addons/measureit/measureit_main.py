@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # ----------------------------------------------------------
 # File: measureit_main.py
 # Main panel for different Measureit general actions

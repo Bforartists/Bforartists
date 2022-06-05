@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # ----------------------------------------------------------
 # Main panel for windows
 # Author: Antonio Vazquez (antonioya)

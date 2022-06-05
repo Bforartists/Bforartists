@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Write the POV file using this file's functions and some from other modules then render it."""
 
 import bpy

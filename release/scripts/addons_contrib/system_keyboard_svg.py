@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 # this script creates Keyboard layout images of the current keyboard configuration.
 # first implementation done by jbakker
 # version 0.2 - file manager directory on export, modified the SVG layout (lijenstina)

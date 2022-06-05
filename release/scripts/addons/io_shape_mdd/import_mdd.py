@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # mdd importer by Bill L.Nieuwendorp
 # conversion to blender 2.5: Ivo Grigull (loolarge)
 #

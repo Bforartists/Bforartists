@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
 """Declare rendering properties controllable in UI"""
 
 import bpy

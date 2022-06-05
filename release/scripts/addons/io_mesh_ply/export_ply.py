@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 """
 This script exports Stanford PLY files from Blender. It supports normals,
 colors, and texture coordinates per face or per vertex.

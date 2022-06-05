@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Render to Print",
     "author": "Marco Crippa <thekrypt77@tiscali.it>, Dealga McArdle, zebus3d",

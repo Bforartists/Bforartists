@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 """Geometry classes and operations.
 Also, vector file representation (Art).
 """

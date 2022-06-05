@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 
 def line_merger(lines, precision=6):
     merger = _LineMerger(lines, precision)

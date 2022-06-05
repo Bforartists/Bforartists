@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """
 This is a tool for reviewing commit ranges, writing into accept/reject files,
 and optionally generate release-log-ready data.

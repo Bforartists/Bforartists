@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
 """Declare stage set and surrounding (camera, lights, environment) properties controllable in UI"""
 import bpy
 from bpy.utils import register_class, unregister_class
