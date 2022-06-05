@@ -1,7 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# <pep8 compliant>
-import bpy
 from bpy.types import Header, Menu
 
 
@@ -11,7 +8,7 @@ class INFO_HT_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout)  # bfa - show hide the editormenu
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
 
@@ -40,14 +37,14 @@ class INFO_MT_info(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("info.select_all", text="All", icon = "SELECT_ALL").action = 'SELECT'
-        layout.operator("info.select_all", text="None", icon = "SELECT_NONE").action = 'DESELECT'
-        layout.operator("info.select_all", text="Inverse", icon = "INVERSE").action = 'INVERT'
-        layout.operator("info.select_all", text="Toggle Selection", icon = "RESTRICT_SELECT_OFF").action = 'TOGGLE'
+        layout.operator("info.select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
+        layout.operator("info.select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
+        layout.operator("info.select_all", text="Inverse", icon="INVERSE").action = 'INVERT'
+        layout.operator("info.select_all", text="Toggle Selection", icon="RESTRICT_SELECT_OFF").action = 'TOGGLE'
 
         layout.separator()
 
-        layout.operator("info.select_box", icon = 'BORDER_RECT')
+        layout.operator("info.select_box", icon='BORDER_RECT')
 
         layout.separator()
 
@@ -58,7 +55,7 @@ class INFO_MT_info(Menu):
         # layout.operator("info.report_replay")
         # layout.separator()
 
-        layout.operator("info.report_delete", text="Delete", icon = "DELETE")
+        layout.operator("info.report_delete", text="Delete", icon="DELETE")
         layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
 
 
@@ -73,7 +70,7 @@ class ALL_MT_editormenu(Menu):
     def draw_menus(layout, context):
 
         row = layout.row(align=True)
-        row.template_header() # editor type menus
+        row.template_header()  # editor type menus
 
 
 class INFO_MT_area(Menu):
@@ -82,21 +79,24 @@ class INFO_MT_area(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("screen.area_split", text="Horizontal Split", icon = "SPLIT_HORIZONTAL").direction = 'HORIZONTAL'
-        layout.operator("screen.area_split", text="Vertical Split", icon = "SPLIT_VERTICAL").direction = 'VERTICAL'
+        layout.operator("screen.area_split", text="Horizontal Split", icon="SPLIT_HORIZONTAL").direction = 'HORIZONTAL'
+        layout.operator("screen.area_split", text="Vertical Split", icon="SPLIT_VERTICAL").direction = 'VERTICAL'
 
         layout.separator()
 
-        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.area_dupli", icon="NEW_WINDOW")
 
         layout.separator()
 
         layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon='FULLSCREEN_ENTER').use_hide_panels = True
+        layout.operator(
+            "screen.screen_full_area",
+            text="Toggle Fullscreen Area",
+            icon='FULLSCREEN_ENTER').use_hide_panels = True
 
         layout.separator()
 
-        layout.operator("screen.area_close", icon = "PANEL_CLOSE")
+        layout.operator("screen.area_close", icon="PANEL_CLOSE")
 
 
 class INFO_MT_context_menu(Menu):

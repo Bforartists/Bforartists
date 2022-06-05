@@ -71,6 +71,7 @@
 #include "BKE_mball.h"
 #include "BKE_modifier.h"
 #include "BKE_node.h"
+#include "BKE_node_runtime.hh"
 #include "BKE_object.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
@@ -1136,6 +1137,7 @@ void DepsgraphRelationBuilder::build_constraints(ID *id,
   /* Add dependencies for each constraint in turn. */
   for (bConstraint *con = (bConstraint *)constraints->first; con; con = con->next) {
     const bConstraintTypeInfo *cti = BKE_constraint_typeinfo_get(con);
+    ListBase targets = {nullptr, nullptr};
     /* Invalid constraint type. */
     if (cti == nullptr) {
       continue;
@@ -1187,9 +1189,7 @@ void DepsgraphRelationBuilder::build_constraints(ID *id,
         add_relation(cache_key, constraint_op_key, cti->name);
       }
     }
-    else if (cti->get_constraint_targets) {
-      ListBase targets = {nullptr, nullptr};
-      cti->get_constraint_targets(con, &targets);
+    else if (BKE_constraint_targets_get(con, &targets)) {
       LISTBASE_FOREACH (bConstraintTarget *, ct, &targets) {
         if (ct->tar == nullptr) {
           continue;
@@ -1299,9 +1299,7 @@ void DepsgraphRelationBuilder::build_constraints(ID *id,
           add_relation(target_transform_key, constraint_op_key, cti->name);
         }
       }
-      if (cti->flush_constraint_targets) {
-        cti->flush_constraint_targets(con, &targets, true);
-      }
+      BKE_constraint_targets_flush(con, &targets, true);
     }
   }
 }
@@ -1459,7 +1457,8 @@ void DepsgraphRelationBuilder::build_animation_images(ID *id)
   bool has_image_animation = false;
   if (ELEM(GS(id->name), ID_MA, ID_WO)) {
     bNodeTree *ntree = *BKE_ntree_ptr_from_id(id);
-    if (ntree != nullptr && ntree->runtime_flag & NTREE_RUNTIME_FLAG_HAS_IMAGE_ANIMATION) {
+    if (ntree != nullptr &&
+        ntree->runtime->runtime_flag & NTREE_RUNTIME_FLAG_HAS_IMAGE_ANIMATION) {
       has_image_animation = true;
     }
   }
