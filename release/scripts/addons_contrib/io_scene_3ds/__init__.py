@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8-80 compliant>
-
 from bpy_extras.io_utils import (
     ImportHelper,
     ExportHelper,

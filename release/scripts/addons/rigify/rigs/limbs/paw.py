@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 import bpy
 
 from ...utils.bones import compute_chain_x_axis, align_bone_x_axis, align_bone_z_axis

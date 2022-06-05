@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "VR Scene Inspection",
     "author": "Julian Eisel (Severin), Sebastian Koenig, Peter Kim (muxed-reality)",

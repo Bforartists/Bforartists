@@ -11,8 +11,6 @@
 # Coded in IDLE, tested in Blender 2.59.  NumPy Recommended.
 # Search for "@todo" to quickly find sections that need work.
 
-# <pep8 compliant>
-
 import inspect
 import shutil
 from . import utils

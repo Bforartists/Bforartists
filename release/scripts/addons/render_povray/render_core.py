@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Define the POV render engine from generic Blender RenderEngine class."""
 import faulthandler
 faulthandler.enable()

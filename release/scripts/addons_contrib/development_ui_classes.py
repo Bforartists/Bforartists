@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "UI Classes Overview",
     "author": "lijenstina",

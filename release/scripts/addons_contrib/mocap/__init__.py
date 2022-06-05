@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Motion Capture Tools",
     "author": "Benjy Cook",

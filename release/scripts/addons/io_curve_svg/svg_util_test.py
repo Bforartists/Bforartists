@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # XXX Not really nice, but that hack is needed to allow execution of that test
 #     from both automated CTest and by directly running the file manually.
 if __name__ == '__main__':

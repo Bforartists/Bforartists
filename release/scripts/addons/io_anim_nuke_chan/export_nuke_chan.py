@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 """ This script is an exporter to the nuke's .chan files.
 It takes the currently active object and writes it's transformation data
 into a text file with .chan extension."""

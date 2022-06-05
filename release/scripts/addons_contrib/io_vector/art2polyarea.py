@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 """Convert an Art object to a list of PolyArea objects.
 """
 

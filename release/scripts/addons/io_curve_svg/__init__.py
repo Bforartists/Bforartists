@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Scalable Vector Graphics (SVG) 1.1 format",
     "author": "JM Soler, Sergey Sharybin",

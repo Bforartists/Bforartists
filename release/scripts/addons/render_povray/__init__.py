@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Import, export and render to POV engines.
 
 These engines can be POV-Ray, Uberpov, HgPovray but others too, since POV is a
