@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
 """Declare object level properties controllable in UI and translated to POV"""
 import bpy
 from bpy.utils import register_class, unregister_class

@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """Geometry classes and operations.
 Also, vector file representation (Art).
 """

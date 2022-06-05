@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """update new variables to values from older API.
 
 It does not have a UI and used to be found with F3 search field.

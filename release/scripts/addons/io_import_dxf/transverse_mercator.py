@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 from math import sin, cos, atan, atanh, radians, tan, sinh, asin, cosh, degrees
 
 # see conversion formulas at

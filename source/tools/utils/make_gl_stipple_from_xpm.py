@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 # Converts 32x32 XPM images written be the gimp to GL stipples
 # takes XPM files as arguments, prints out C style definitions.
 

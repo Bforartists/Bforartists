@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 """ This script is an importer for the nuke's .chan files"""
 
 from mathutils import Vector, Matrix, Euler

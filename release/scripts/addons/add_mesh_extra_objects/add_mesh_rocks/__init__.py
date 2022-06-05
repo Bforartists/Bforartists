@@ -11,8 +11,6 @@
 # Coded in IDLE, tested in Blender 2.68a.  NumPy Recommended.
 # Search for "@todo" to quickly find sections that need work.
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Rock Generator",
     "author": "Paul Marshall (brikbot)",

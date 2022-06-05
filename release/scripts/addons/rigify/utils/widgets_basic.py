@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 from .misc import shuffle_matrix
 from .widgets import (create_widget, widget_generator, register_widget,
                       generate_circle_geometry)

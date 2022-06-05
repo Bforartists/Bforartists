@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright 2014-2018 Blender Foundation.
 
-# <pep8 compliant>
-
 bl_info = {
     'name': 'Blender ID authentication',
     'author': 'Sybren A. Stüvel, Francesco Siddi, and Inês Almeida',
