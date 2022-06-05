@@ -16952,8 +16952,8 @@ msgid "Spread Length"
 msgstr "散乱の長さ"
 
 
-msgid "The number of points to skip to create straight segments"
-msgstr "直線セグメント生成のためにスキップするポイント数"
+msgid "Spread Length"
+msgstr "散乱の長さ"
 
 
 msgid "Multiplier for the strength of the new strokes"
@@ -29346,8 +29346,8 @@ msgid "File format to save the rendered images as"
 msgstr "レンダリングした画像を保存するフォーマット"
 
 
-msgid "Has Linear Color Space"
-msgstr "リニア色空間の有無"
+msgid "File format expects linear color space"
+msgstr "リニア色空間を要求するファイルフォーマットかどうか"
 
 
 msgid "File format expects linear color space"
@@ -51014,6 +51014,10 @@ msgstr "カスタムプレビューを読込"
 
 msgid "Choose an image to help identify the data-block visually"
 msgstr "データブロックを視覚的に判別するための画像を選択します"
+
+
+msgid "Set if this library override data-block can be edited"
+msgstr "このライブラリオーバーライドデータブロックが編集可能かどうかを切り替えます"
 
 
 msgctxt "Operator"
