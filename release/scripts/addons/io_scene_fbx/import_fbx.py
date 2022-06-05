@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # Script copyright (C) Blender Foundation
 
 # FBX 7.1.0 -> 7.4.0 loader for Blender

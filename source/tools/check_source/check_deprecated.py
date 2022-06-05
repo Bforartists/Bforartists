@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """
 Utility for reporting deprecated code which should be removed,
 noted by the date which must be included with the *DEPRECATED* comment.

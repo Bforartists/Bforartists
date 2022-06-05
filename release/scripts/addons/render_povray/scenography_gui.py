@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """User interface to camera frame, optics distortions, and environment
 
 with world, sky, atmospheric effects such as rainbows or smoke """

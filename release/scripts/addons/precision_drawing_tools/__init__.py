@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
 #
 # -----------------------------------------------------------------------
 # Author: Alan Odom (Clockmender), Rune Morling (ermo) Copyright (c) 2019

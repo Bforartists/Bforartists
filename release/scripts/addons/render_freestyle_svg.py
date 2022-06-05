@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Freestyle SVG Exporter",
     "author": "Folkert de Vries",

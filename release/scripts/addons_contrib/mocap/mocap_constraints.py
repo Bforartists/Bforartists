@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 import bpy
 from mathutils import Vector
 from bpy_extras import anim_utils

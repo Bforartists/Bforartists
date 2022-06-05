@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Export: Adobe After Effects (.jsx)",
     "description": "Export cameras, selected objects & camera solution "

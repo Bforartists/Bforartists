@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # Contributors: bart:neeneenee*de, http://www.neeneenee.de/vrml, Campbell Barton
 
 """

@@ -13,8 +13,6 @@
 # http://hoegners.de/Maxi/geo/
 # --------------------------------------------------------------------------
 
-# <pep8 compliant>
-
 bl_info = {
     "name": "Sun Position",
     "author": "Michael Martin",

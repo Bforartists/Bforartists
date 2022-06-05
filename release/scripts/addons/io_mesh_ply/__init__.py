@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8-80 compliant>
-
 bl_info = {
     "name": "Stanford PLY format",
     "author": "Bruce Merry, Campbell Barton, Bastien Montagne, Mikhail Rachinsky",

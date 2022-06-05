@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 import bpy
 
 from ...utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone

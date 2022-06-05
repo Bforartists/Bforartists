@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 """With respect to camera frame and optics distortions, also export environment
 
 with world, sky, atmospheric effects such as rainbows or smoke """

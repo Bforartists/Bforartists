@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# <pep8 compliant>
-
 # ----------------------------------------------------------
 # Automatic generation of rooms
 # Author: Antonio Vazquez (antonioya) and Eduardo Gutierrez
