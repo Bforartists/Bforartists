@@ -1,10 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-
-# <pep8 compliant>
-from bpy.types import (
-    Menu,
-    Panel,
-)
+from bpy.types import Menu, Panel
 
 
 class UnifiedPaintPanel:
@@ -483,7 +478,7 @@ class DisplayPanel(BrushPanel):
         if self.is_popover:
             row = layout.row(align=True)
             # bfa - align props left
-            row.use_property_split=False
+            row.use_property_split = False
             row.prop(settings, "show_brush", text="Display Cursor")
 
         col = layout.column()
@@ -610,7 +605,7 @@ def brush_settings(layout, context, brush, popover=False):
 
             layout.separator()
 
-            split = layout.split(factor = 0.36)
+            split = layout.split(factor=0.36)
             col = split.column()
             col.use_property_split = False
             col.prop(brush, "use_plane_trim", text="Plane Trim")
@@ -619,7 +614,6 @@ def brush_settings(layout, context, brush, popover=False):
                 col.prop(brush, "plane_trim", slider=True, text="")
             else:
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
-
 
         # height
         if capabilities.has_height:
@@ -894,7 +888,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
     if mode == 'SCULPT_CURVES':
         size = True
         strength = True
-        direction = brush.curves_sculpt_tool == 'GROW_SHRINK'
+        direction = brush.curves_sculpt_tool in {'GROW_SHRINK', 'SELECTION_PAINT'}
 
     ### Draw settings. ###
     ups = context.scene.tool_settings.unified_paint_settings
@@ -974,7 +968,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         use_accumulate = capabilities.has_accumulate
 
         col = layout.column()
-        col.label(text = "Auto Masking")
+        col.label(text="Auto Masking")
 
         # topology automasking
         col.use_property_split = False
@@ -1004,7 +998,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             col.use_property_split = False
 
             col = layout.column()
-            col.label(text = "Use Original")
+            col.label(text="Use Original")
             col.use_property_split = False
             row = col.row()
             row.separator()
@@ -1060,8 +1054,6 @@ def brush_settings_advanced(layout, context, brush, popover=False):
     if use_accumulate:
         layout.use_property_split = False
         layout.prop(brush, "use_accumulate")
-
-
 
 
 def draw_color_settings(context, layout, brush, color_type=False):
@@ -1268,7 +1260,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
 
         sub_row = row.row(align=True)
         if settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR':
-            sub = row.row(align = True)
+            sub = row.row(align=True)
             sub.scale_x = 0.33
             sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
             sub.prop(brush, "secondary_color", text="")
