@@ -388,7 +388,7 @@ class TOPBAR_MT_file_import(Menu):
                 "wm.usd_import", text="Universal Scene Description (.usd, .usdc, .usda)", icon = "LOAD_USD")
 
         self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon = "LOAD_SVG_GPENCIL")
-        self.layout.operator("wm.obj_import", text="Wavefront (.obj) (experimental)")
+        self.layout.operator("wm.obj_import", text="Wavefront (.obj) (experimental)", icon="LOAD_OBJ")
 
 
 class TOPBAR_MT_file_export(Menu):
