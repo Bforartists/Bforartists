@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23848,10 +23848,6 @@ msgstr "用于体积计算的物体空间中的体素大小。值越低，细节
 
 msgid "Sculpt Vertex Colors"
 msgstr "雕刻顶点色"
-
-
-msgid "All vertex colors"
-msgstr "所有顶点色"
 
 
 msgid "Skin Vertices"
@@ -61514,10 +61510,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "复制物体但不包括数据, 而是连接到原始数据"
 
 
-msgid "Object name to add"
-msgstr "要添加的物体名称"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "对齐物体"
@@ -61995,10 +61987,6 @@ msgstr "要指定的图像的名称"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "将已命名材质拖放到物体上"
-
-
-msgid "Material name to assign"
-msgstr "要指定的材质名称"
 
 
 msgctxt "Operator"
@@ -64230,10 +64218,6 @@ msgstr "放置物体于鼠标下方"
 
 msgid "Snap selected item(s) to the mouse location"
 msgstr "吸附选中项到鼠标位置"
-
-
-msgid "Object name to place (when unset use the active object)"
-msgstr "要放置的物体名称(当取消设置使用活动物体时)"
 
 
 msgctxt "Operator"
@@ -69172,10 +69156,6 @@ msgid "Filter Color"
 msgstr "颜色滤镜"
 
 
-msgid "Applies a filter to modify the current sculpt vertex colors"
-msgstr "应用滤镜来修改当前雕刻顶点色"
-
-
 msgid "Fill with a specific color"
 msgstr "填充特定颜色"
 
@@ -69588,10 +69568,6 @@ msgstr "将活动循环颜色层复制到顶点色"
 msgctxt "Operator"
 msgid "Mask by Color"
 msgstr "按颜色遮罩"
-
-
-msgid "Creates a mask based on the sculpt vertex colors"
-msgstr "基于雕刻顶点色创建遮罩"
 
 
 msgid "Contiguous"
@@ -85719,6 +85695,10 @@ msgstr "钳制平面"
 
 msgid "Is Axis Aligned"
 msgstr "是否轴对齐"
+
+
+msgid "Is current view aligned to an axis (does not check the view is orthographic use \"is_perspective\" for that). Assignment sets the \"view_rotation\" to the closest axis aligned view"
+msgstr "当前视图是否与轴对齐(不检查视图是否正交使用“is_perspective”）。指定将“view_rotation”设置为最接近的轴对齐视图"
 
 
 msgid "Is Perspective"
@@ -111760,6 +111740,14 @@ msgid "Could not add the collection because of dependency cycle detected"
 msgstr "无法添加集合, 因为检测到从属循环"
 
 
+msgid "Cannot remove an object from a linked or library override collection"
+msgstr "无法从关联的集合或库重写集合中删除物体"
+
+
+msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
+msgstr "无法取消关联不是其重写层次结构根的库重写集合"
+
+
 msgid "Add IK"
 msgstr "添加 IK"
 
@@ -111886,6 +111874,10 @@ msgstr "无选中集合"
 
 msgid "Unexpected error, collection not found"
 msgstr "意外错误，无法找到集合"
+
+
+msgid "Cannot add objects to a library override collection"
+msgstr "无法向库重写集合添加物体"
 
 
 msgid "No objects selected"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -3967,7 +3967,7 @@ msgstr "ぼかし"
 
 
 msgid "Smear"
-msgstr "にじみ"
+msgstr "スミア"
 
 
 msgid "Hardness"
@@ -16952,8 +16952,8 @@ msgid "Spread Length"
 msgstr "散乱の長さ"
 
 
-msgid "Spread Length"
-msgstr "散乱の長さ"
+msgid "The number of points to skip to create straight segments"
+msgstr "直線セグメント生成のためにスキップするポイント数"
 
 
 msgid "Multiplier for the strength of the new strokes"
@@ -24148,10 +24148,6 @@ msgid "Sculpt Vertex Colors"
 msgstr "スカルプト頂点カラー"
 
 
-msgid "All vertex colors"
-msgstr "全頂点カラー"
-
-
 msgid "Skin Vertices"
 msgstr "スキン頂点"
 
@@ -29346,8 +29342,8 @@ msgid "File format to save the rendered images as"
 msgstr "レンダリングした画像を保存するフォーマット"
 
 
-msgid "File format expects linear color space"
-msgstr "リニア色空間を要求するファイルフォーマットかどうか"
+msgid "Has Linear Color Space"
+msgstr "リニア色空間の有無"
 
 
 msgid "File format expects linear color space"
@@ -46785,7 +46781,7 @@ msgstr "現在のフレームにビューを移動します"
 
 msgctxt "Operator"
 msgid "Frame Selected"
-msgstr "選択を表示"
+msgstr "選択をフレームイン"
 
 
 msgid "Reset viewable area to show selected keyframes range"
@@ -51014,10 +51010,6 @@ msgstr "カスタムプレビューを読込"
 
 msgid "Choose an image to help identify the data-block visually"
 msgstr "データブロックを視覚的に判別するための画像を選択します"
-
-
-msgid "Set if this library override data-block can be edited"
-msgstr "このライブラリオーバーライドデータブロックが編集可能かどうかを切り替えます"
 
 
 msgctxt "Operator"
@@ -62077,10 +62069,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "オブジェクトを複製しますが、オブジェクトデータは複製せずデータへのリンクのみ行います"
 
 
-msgid "Object name to add"
-msgstr "追加するオブジェクト名"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "オブジェクトを整列"
@@ -62564,10 +62552,6 @@ msgstr "割り当てる画像名"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "名付きのマテリアルをオブジェクトにドロップ"
-
-
-msgid "Material name to assign"
-msgstr "割り当てるマテリアル名"
 
 
 msgctxt "Operator"
@@ -64817,10 +64801,6 @@ msgstr "マウス下にオブジェクトを配置"
 
 msgid "Snap selected item(s) to the mouse location"
 msgstr "選択したアイテムをマウス位置にスナップします"
-
-
-msgid "Object name to place (when unset use the active object)"
-msgstr "配置するオブジェクト名（アクティブオブジェクトを使用しない場合）"
 
 
 msgctxt "Operator"
@@ -69791,10 +69771,6 @@ msgid "Filter Color"
 msgstr "カラーフィルター"
 
 
-msgid "Applies a filter to modify the current sculpt vertex colors"
-msgstr "フィルターを適用し、現在のスカルプト頂点カラーを変更します"
-
-
 msgid "Fill with a specific color"
 msgstr "指定の色でフィルします"
 
@@ -70215,10 +70191,6 @@ msgstr "アクティブループカラーレイヤーを頂点カラーにコピ
 msgctxt "Operator"
 msgid "Mask by Color"
 msgstr "色でマスク"
-
-
-msgid "Creates a mask based on the sculpt vertex colors"
-msgstr "スカルプト頂点カラーを元にマスクを生成します"
 
 
 msgid "Contiguous"
@@ -79412,7 +79384,7 @@ msgstr "ぼかし"
 
 msgctxt "Operator"
 msgid "Smear"
-msgstr "にじみ"
+msgstr "スミア"
 
 
 msgctxt "Operator"
@@ -86519,6 +86491,10 @@ msgstr "クリップ平面"
 
 msgid "Is Axis Aligned"
 msgstr "軸と平行"
+
+
+msgid "Is current view aligned to an axis (does not check the view is orthographic use \"is_perspective\" for that). Assignment sets the \"view_rotation\" to the closest axis aligned view"
+msgstr "現在のビューが軸と平行か（ビューが平行投影かのチェックはしませんので「is_perspective」を使用してください）。割当がビューと平行な一番近い軸に「view_rotation」をセットします"
 
 
 msgid "Is Perspective"
@@ -112645,6 +112621,14 @@ msgid "Could not add the collection because of dependency cycle detected"
 msgstr "循環依存があるため、コレクションを追加できませんでした"
 
 
+msgid "Cannot remove an object from a linked or library override collection"
+msgstr "リンクコレクションやライブラリオーバーライドコレクションのオブジェクトは削除できません"
+
+
+msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
+msgstr "オーバーライド階層のルートではないライブラリオーバーライドコレクションはリンク解除できません"
+
+
 msgid "Add IK"
 msgstr "IKのターゲット選択"
 
@@ -112773,6 +112757,10 @@ msgstr "コレクションが未選択です"
 
 msgid "Unexpected error, collection not found"
 msgstr "予期せぬエラー、コレクションが見つかりません"
+
+
+msgid "Cannot add objects to a library override collection"
+msgstr "ライブラリオーバーライドコレクションにはオブジェクトを追加できません"
 
 
 msgid "No objects selected"

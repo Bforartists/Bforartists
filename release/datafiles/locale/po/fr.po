@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -20420,10 +20420,6 @@ msgstr "Taille de voxel"
 
 msgid "Size of the voxel in object space used for volume evaluation. Lower values preserve finer details"
 msgstr "Taille en espace objet du voxel utilisé pour l’évaluation du volume. De plus faibles valeurs préservent des détails plus fins"
-
-
-msgid "All vertex colors"
-msgstr "Toutes les couleurs vertices"
 
 
 msgid "Skin Vertices"
@@ -48840,10 +48836,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Dupliquer l’objet, mais pas les données objet, lier aux données originales"
 
 
-msgid "Object name to add"
-msgstr "Nom de l’objet à ajouter"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Aligner objets"
@@ -49174,10 +49166,6 @@ msgstr "Nom de l’image à assigner"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Lâcher matériau nommé sur objet"
-
-
-msgid "Material name to assign"
-msgstr "Nom du matériau à assigner"
 
 
 msgctxt "Operator"
