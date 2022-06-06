@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -21884,10 +21884,6 @@ msgstr "Розмір вокселя в просторі об'єкта, що ви
 
 msgid "Sculpt Vertex Colors"
 msgstr "Кольори Вершин Ліплення"
-
-
-msgid "All vertex colors"
-msgstr "Всі кольори вершин"
 
 
 msgid "Skin Vertices"
@@ -56017,10 +56013,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Дублювати об'єкт, але не дані об'єкта, пов'язавши з оригінальними даними"
 
 
-msgid "Object name to add"
-msgstr "Назва об'єкта для додання"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Вирівняти об'єкти"
@@ -56430,10 +56422,6 @@ msgstr "Назва призначуваного зображення"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Застосувати іменований матеріал на об'єкті"
-
-
-msgid "Material name to assign"
-msgstr "Назва матеріалу для присвоєння"
 
 
 msgctxt "Operator"
@@ -63003,10 +62991,6 @@ msgid "Filter Color"
 msgstr "Фільтр Кольору"
 
 
-msgid "Applies a filter to modify the current sculpt vertex colors"
-msgstr "Застосовує фільтр для модифікування кольорів вершин поточного ліплення"
-
-
 msgid "Fill with a specific color"
 msgstr "Заповнити специфічним кольором"
 
@@ -63322,10 +63306,6 @@ msgstr "Копіювати шар кольорів активної петлі �
 msgctxt "Operator"
 msgid "Mask by Color"
 msgstr "Маска За Кольором"
-
-
-msgid "Creates a mask based on the sculpt vertex colors"
-msgstr "Створює маску на основі кольорів вершин ліплення"
 
 
 msgid "Contiguous"
