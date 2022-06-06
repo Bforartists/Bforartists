@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -9956,10 +9956,6 @@ msgid "Has Custom Normals"
 msgstr "Punya Normal Kustom"
 
 
-msgid "All vertex colors"
-msgstr "Semua Tampilan"
-
-
 msgid "Skin Vertices"
 msgstr "Partikel"
 
@@ -17338,10 +17334,6 @@ msgstr "Nama gambar untuk ditugaskan"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Menjatuhkan Material yang Bernama di Objek"
-
-
-msgid "Material name to assign"
-msgstr "Nama material untuk ditugaskan"
 
 
 msgctxt "Operator"
