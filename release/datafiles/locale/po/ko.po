@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -18954,10 +18954,6 @@ msgstr "복셀 크기"
 
 msgid "Size of the voxel in object space used for volume evaluation. Lower values preserve finer details"
 msgstr "볼륨 평가에 사용되는 오브젝트 공간의 복셀 크기. 값이 낮을 수록 세밀한 부분이 보존됩니다"
-
-
-msgid "All vertex colors"
-msgstr "모든 버텍스 컬러"
 
 
 msgid "Skin Vertices"
@@ -49041,10 +49037,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "오브젝트 가 복제되었지만 오브젝트 데이터가 아니라 원본 데이터에 연결"
 
 
-msgid "Object name to add"
-msgstr "추가하는 오브젝트 이름"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "오브젝트를 정렬"
@@ -49392,10 +49384,6 @@ msgstr "할당하는 이미지 이름"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "오브젝트에 대한 명명된 매테리얼을 드롭"
-
-
-msgid "Material name to assign"
-msgstr "할당하는 매테리얼 이름"
 
 
 msgctxt "Operator"

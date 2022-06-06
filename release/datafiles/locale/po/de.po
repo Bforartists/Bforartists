@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15195,10 +15195,6 @@ msgstr "Voxelgröße"
 
 msgid "Sculpt Vertex Colors"
 msgstr "Skulpturknotenfarben"
-
-
-msgid "All vertex colors"
-msgstr "Alle Punktfarben"
 
 
 msgid "Skin Vertices"
@@ -34771,10 +34767,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Objekt duplizieren, aber Objektdaten mit den Originaldaten verknüpfen"
 
 
-msgid "Object name to add"
-msgstr "Hinzuzufügender Objektname"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Objekte ausrichten"
@@ -34946,10 +34938,6 @@ msgstr "Globales Löschen"
 
 msgid "Remove object from all scenes"
 msgstr "Objekt aus allen Szenen entfernen"
-
-
-msgid "Material name to assign"
-msgstr "Zuzuordnender Materialname"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -4886,10 +4886,6 @@ msgstr "Tüm Katmanları Göster"
 
 msgid "Polygons of the mesh"
 msgstr "Mesh Araçları"
-
-
-msgid "All vertex colors"
-msgstr "Ebeveyn Nokta Oluştur"
 
 
 msgid "Skin Vertices"
@@ -13878,10 +13874,6 @@ msgid "Add named object"
 msgstr "Nesneyi bir Gruba ekle"
 
 
-msgid "Object name to add"
-msgstr "Nesneyi bir Gruba ekle"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Nesneleri Birleştir"
@@ -13962,10 +13954,6 @@ msgstr "Dosya kaydı olanaksız"
 
 
 msgid "Image name to assign"
-msgstr "Aktif Gruba Ata"
-
-
-msgid "Material name to assign"
 msgstr "Aktif Gruba Ata"
 
 
