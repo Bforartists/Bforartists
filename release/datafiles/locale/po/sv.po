@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6025,10 +6025,6 @@ msgstr "Markera Rad"
 
 msgid "Polygons of the mesh"
 msgstr "Markera Länkad"
-
-
-msgid "All vertex colors"
-msgstr "Vertexfärger"
 
 
 msgid "Skin Vertices"
@@ -17624,10 +17620,6 @@ msgid "Add named object"
 msgstr "Packa Data"
 
 
-msgid "Object name to add"
-msgstr "Packa Data"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Räta upp objekt"
@@ -17752,10 +17744,6 @@ msgstr "Spara som"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Duplicera"
-
-
-msgid "Material name to assign"
-msgstr "Spara som"
 
 
 msgctxt "Operator"

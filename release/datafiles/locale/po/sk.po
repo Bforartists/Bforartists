@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-05-19 08:50+0200\n"
+"PO-Revision-Date: 2022-05-24 08:21+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -23847,10 +23847,6 @@ msgstr "Veľkosť voxelu v objekte použitého na vyhodnotenie objemu. Nižšie 
 
 msgid "Sculpt Vertex Colors"
 msgstr "Farby vrcholov tvarovania"
-
-
-msgid "All vertex colors"
-msgstr "Všetky farby vrcholov"
 
 
 msgid "Skin Vertices"
@@ -61513,10 +61509,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Vytvorí kópiu objektu, ale nie údaje objektu, prepojí ho s pôvodnými údajmi"
 
 
-msgid "Object name to add"
-msgstr "Názov objektu na pridanie"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Zarovnať objekty"
@@ -61994,10 +61986,6 @@ msgstr "Názov obrázka na priradenie"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Vypustiť pomenovaný materiál na objekt"
-
-
-msgid "Material name to assign"
-msgstr "Názov materiálu na priradenie"
 
 
 msgctxt "Operator"
@@ -64229,10 +64217,6 @@ msgstr "Umiestniť objekt pod myš"
 
 msgid "Snap selected item(s) to the mouse location"
 msgstr "Prichytí vybranú položku (položky) na polohu myši"
-
-
-msgid "Object name to place (when unset use the active object)"
-msgstr "Názov objektu na umiestnenie (ak nie je nastavený, použije sa aktívny objekt)"
 
 
 msgctxt "Operator"
@@ -69171,10 +69155,6 @@ msgid "Filter Color"
 msgstr "Filter farby"
 
 
-msgid "Applies a filter to modify the current sculpt vertex colors"
-msgstr "Použije filter na úpravu aktuálnych farieb vrcholov tvarovania"
-
-
 msgid "Fill with a specific color"
 msgstr "Vyplniť určenou farbou"
 
@@ -69587,10 +69567,6 @@ msgstr "Skopíruje vrstvu farieb aktívnej slučky na farby vrcholov"
 msgctxt "Operator"
 msgid "Mask by Color"
 msgstr "Maskovať podľa farby"
-
-
-msgid "Creates a mask based on the sculpt vertex colors"
-msgstr "Vytvorí masku založenú na farbách vrcholov tvarovania"
 
 
 msgid "Contiguous"
@@ -85716,6 +85692,10 @@ msgstr "Roviny klipu"
 
 msgid "Is Axis Aligned"
 msgstr "Je zarovnaná os"
+
+
+msgid "Is current view aligned to an axis (does not check the view is orthographic use \"is_perspective\" for that). Assignment sets the \"view_rotation\" to the closest axis aligned view"
+msgstr "Je aktuálny pohľad zarovnaný na os (nekontroluje, či je pohľad ortografický, na to použite \"is_perspective\" - Je perspektívne). Priradenie nastaví \"view_rotation\" (otočenie pohľadu) na najbližší pohľad zarovnaný na os"
 
 
 msgid "Is Perspective"
@@ -111769,6 +111749,14 @@ msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Kolekciu nebolo možné pridať z dôvodu zisteného zacyklenia závislosti"
 
 
+msgid "Cannot remove an object from a linked or library override collection"
+msgstr "Nemožno odstrániť objekt z kolekcie prepojenej alebo prepísanej knižnice"
+
+
+msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
+msgstr "Nemožno zrušiť prepojenie kolekcie prepisu knižnice, ktorá nie je koreňom hierarchie prepisu"
+
+
 msgid "Add IK"
 msgstr "Pridať IK"
 
@@ -111895,6 +111883,10 @@ msgstr "Nie je vybratá žiadna kolekcia"
 
 msgid "Unexpected error, collection not found"
 msgstr "Neočakávaná chyba, kolekcia sa nenašla"
+
+
+msgid "Cannot add objects to a library override collection"
+msgstr "Nemožno pridať objekty do kolekcie prepisov knižnice"
 
 
 msgid "No objects selected"

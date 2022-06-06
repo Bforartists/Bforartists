@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -6748,10 +6748,6 @@ msgstr "Slojevi tekstualne osobine"
 
 msgid "Polygons of the mesh"
 msgstr "Određuje tvrdoću sjaja"
-
-
-msgid "All vertex colors"
-msgstr "Sve boje temena"
 
 
 msgid "Skin Vertices"
@@ -17062,10 +17058,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Udvostruči objekat, ali ne i podatke o objektu povezane sa izvornim podacima"
 
 
-msgid "Object name to add"
-msgstr "Naziv objekta za dodavanje"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Poravnaj objekte"
@@ -17160,10 +17152,6 @@ msgstr "Putanja do datoteke slike"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Vezuje materijal za objekat"
-
-
-msgid "Material name to assign"
-msgstr "Ime materijal za dodeljivanje"
 
 
 msgctxt "Operator"

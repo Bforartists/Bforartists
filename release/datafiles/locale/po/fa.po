@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -3196,10 +3196,6 @@ msgstr "ﯽﮔﮋﯾﻭ ﻥﻭﺪﺑ"
 
 msgid "Polygons"
 msgstr "ﯼﺍ ﻪﺷﻮﮔ"
-
-
-msgid "All vertex colors"
-msgstr "ﺱﻮﺋﺭ ﻡﺎﻤﺗ"
 
 
 msgid "Skin Vertices"
@@ -9018,10 +9014,6 @@ msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 msgctxt "Operator"
 msgid "Add Object"
 msgstr "ءﯽﺷ ﻥﺩﻭﺰﻓﺍ"
-
-
-msgid "Object name to add"
-msgstr "ﻥﺩﻭﺰﻓﺍ ﯼﺍﺮﺑ ﯽﺷ ﻡﺎﻧ"
 
 
 msgctxt "Operator"
