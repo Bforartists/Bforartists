@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -15185,10 +15185,6 @@ msgstr "Quad"
 
 msgid "Adaptivity"
 msgstr "Adaptatividade"
-
-
-msgid "All vertex colors"
-msgstr "Todas as cores dos vértices."
 
 
 msgid "Skin Vertices"
@@ -42500,10 +42496,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "Duplica os objetos mas não os dados do objeto, vinculando-os aos dados originais."
 
 
-msgid "Object name to add"
-msgstr "Nome do objeto a adicionar."
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "Alinhar objetos"
@@ -42825,10 +42817,6 @@ msgstr "Nome da imagem para atribuir"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Descarregar material nomeado no objeto"
-
-
-msgid "Material name to assign"
-msgstr "O nome de material para atribuir."
 
 
 msgctxt "Operator"

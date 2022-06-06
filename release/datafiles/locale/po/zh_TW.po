@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'b81f1b8cf171')\n"
+"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -14240,10 +14240,6 @@ msgstr "體素大小"
 
 msgid "Size of the voxel in object space used for volume evaluation. Lower values preserve finer details"
 msgstr "用於評估體積，物體空間中體素使用的大小。值越低越可以保留細節"
-
-
-msgid "All vertex colors"
-msgstr "所有頂點色彩"
 
 
 msgid "Skin Vertices"
@@ -35153,10 +35149,6 @@ msgid "Duplicate object but not object data, linking to the original data"
 msgstr "製作物體複本但不包括資料，而是連結至原始資料"
 
 
-msgid "Object name to add"
-msgstr "要添加的物體名稱"
-
-
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "對齊物體"
@@ -35332,10 +35324,6 @@ msgstr "要指派的影像名稱"
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "將已命名材質拖放到物體上"
-
-
-msgid "Material name to assign"
-msgstr "要指派的材質名稱"
 
 
 msgctxt "Operator"
