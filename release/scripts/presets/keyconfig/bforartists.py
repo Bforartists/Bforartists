@@ -1,4 +1,4 @@
-keyconfig_version = (3, 2, 12)
+keyconfig_version = (3, 3, 0)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -841,6 +841,8 @@ keyconfig_data = \
        ],
       },
      ),
+    ("armature.parent_set", {"type": 'P', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("armature.parent_clear", {"type": 'P', "value": 'PRESS', "alt": True, "repeat": True}, None),
     ],
    },
   ),
