@@ -29,13 +29,14 @@ const EnumPropertyItem rna_enum_nla_mode_blend_items[] = {
      "REPLACE",
      0,
      "Replace",
-     "The strip values replace the accumulated results by amount specified by influence"},
+     "The strip values replace the accumulated results by amount specified by influence,"}, 
     {NLASTRIP_MODE_COMBINE,
      "COMBINE",
      0,
      "Combine",
      "The strip values are combined with accumulated results by appropriately using addition, "
-     "multiplication, or quaternion math, based on channel type"},
+     "multiplication, or quaternion math, based on channel type. "
+     "Recommended method for layered animation."}, /*BFA - Clarify the use*/
     RNA_ENUM_ITEM_SEPR,
     {NLASTRIP_MODE_ADD,
      "ADD",
