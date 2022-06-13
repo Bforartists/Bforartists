@@ -1165,7 +1165,8 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
     hotkey_list_filter: StringProperty(
         name="        Filter by Name",
         default="",
-        description="Show only hotkeys that have this text in their name"
+        description="Show only hotkeys that have this text in their name",
+        options={'TEXTEDIT_UPDATE'}
     )
     show_principled_lists: BoolProperty(
         name="Show Principled naming tags",
@@ -3747,7 +3748,7 @@ class NWLinkToOutputNode(Operator):
     @classmethod
     def poll(cls, context):
         valid = False
-        if nw_check(context) and context.space_data.tree_type != 'GeometryNodeTree':
+        if nw_check(context):
             if context.active_node is not None:
                 for out in context.active_node.outputs:
                     if is_visible_socket(out):
@@ -3761,11 +3762,14 @@ class NWLinkToOutputNode(Operator):
         output_node = None
         output_index = None
         tree_type = context.space_data.tree_type
-        output_types_shaders = [x[1] for x in shaders_output_nodes_props]
-        output_types_compo = ['COMPOSITE']
-        output_types_blender_mat = ['OUTPUT']
-        output_types_textures = ['OUTPUT']
-        output_types = output_types_shaders + output_types_compo + output_types_blender_mat
+        if tree_type == 'ShaderNodeTree':
+            output_types = [x[1] for x in shaders_output_nodes_props] + ['OUTPUT']
+        elif tree_type == 'CompositorNodeTree':
+            output_types = ['COMPOSITE']
+        elif tree_type == 'TextureNodeTree':
+            output_types = ['OUTPUT']
+        elif tree_type == 'GeometryNodeTree':
+            output_types = ['GROUP_OUTPUT']
         for node in nodes:
             if node.type in output_types:
                 output_node = node
@@ -3773,11 +3777,16 @@ class NWLinkToOutputNode(Operator):
         if not output_node:
             bpy.ops.node.select_all(action="DESELECT")
             if tree_type == 'ShaderNodeTree':
-                output_node = nodes.new('ShaderNodeOutputMaterial')
+                if context.space_data.shader_type == 'OBJECT':
+                    output_node = nodes.new('ShaderNodeOutputMaterial')
+                elif context.space_data.shader_type == 'WORLD':
+                    output_node = nodes.new('ShaderNodeOutputWorld')
             elif tree_type == 'CompositorNodeTree':
                 output_node = nodes.new('CompositorNodeComposite')
             elif tree_type == 'TextureNodeTree':
                 output_node = nodes.new('TextureNodeOutput')
+            elif tree_type == 'GeometryNodeTree':
+                output_node = nodes.new('NodeGroupOutput')
             output_node.location.x = active.location.x + active.dimensions.x + 80
             output_node.location.y = active.location.y
         if (output_node and active.outputs):
@@ -3796,6 +3805,9 @@ class NWLinkToOutputNode(Operator):
                     out_input_index = 1
                 elif active.outputs[output_index].type != 'SHADER':  # connect to displacement if not a shader
                     out_input_index = 2
+            elif tree_type == 'GeometryNodeTree':
+                if active.outputs[output_index].type != 'GEOMETRY':
+                    return {'CANCELLED'}
             links.new(active.outputs[output_index], output_node.inputs[out_input_index])
 
         force_update(context)  # viewport render does not update
@@ -3861,6 +3873,17 @@ class NWAddSequence(Operator, NWBase, ImportHelper):
         type=bpy.types.OperatorFileListElement,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
+    relative_path: BoolProperty(
+        name='Relative Path',
+        description='Set the file path relative to the blend file, when possible',
+        default=True
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.alignment = 'LEFT'
+
+        layout.prop(self, 'relative_path')
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3936,7 +3959,15 @@ class NWAddSequence(Operator, NWBase, ImportHelper):
         node = nodes.active
         node.label = name_with_hashes
 
-        img = bpy.data.images.load(directory+(without_ext+'.'+extension))
+        filepath = directory+(without_ext+'.'+extension)
+        if self.relative_path:
+            if bpy.data.filepath:
+                try:
+                    filepath = bpy.path.relpath(filepath)
+                except ValueError:
+                    pass
+
+        img = bpy.data.images.load(filepath)
         img.source = 'SEQUENCE'
         img.name = name_with_hashes
         node.image = img

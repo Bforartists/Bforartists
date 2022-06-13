@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1782,6 +1782,10 @@ msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
 
 
+msgid "Simulations"
+msgstr "Симуляції"
+
+
 msgid "Sounds"
 msgstr "Звуки"
 
@@ -3168,6 +3172,10 @@ msgstr "Здатності Малювання Вершин"
 
 msgid "Has Weight"
 msgstr "Має Вагомість"
+
+
+msgid "Count"
+msgstr "Кількість"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -7911,6 +7919,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Використати старт штриха для глибини"
 
 
+msgid "Index"
+msgstr "Індекс"
+
+
+msgid "Radius"
+msgstr "Радіус"
+
+
 msgid "Profile Path editor used to build a profile path"
 msgstr "Редактор Шляху Профілю, використовуваний для побудови шляху профілю"
 
@@ -8037,10 +8053,6 @@ msgstr "Пунктир"
 
 msgid "Material Index"
 msgstr "Індекс матеріалу"
-
-
-msgid "Radius"
-msgstr "Радіус"
 
 
 msgid "Dependency Graph"
@@ -10871,10 +10883,6 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Група граней, кожна грань може бути частиною лише однієї розкладки"
 
 
-msgid "Index"
-msgstr "Індекс"
-
-
 msgid "Index number of the face map"
 msgstr "Індексний номер розкладки граней"
 
@@ -10951,16 +10959,16 @@ msgid "Fall-Off"
 msgstr "Зменшення"
 
 
+msgid "Cone"
+msgstr "Конус"
+
+
 msgid "Sphere"
 msgstr "Сфера"
 
 
 msgid "Tube"
 msgstr "Труба"
-
-
-msgid "Cone"
-msgstr "Конус"
 
 
 msgid "Flow"
@@ -11023,6 +11031,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "Тип періодичного зміщення на кривій"
 
 
+msgid "Braid"
+msgstr "Шнур"
+
+
 msgid "Curl"
 msgstr "Завиток"
 
@@ -11033,10 +11045,6 @@ msgstr "Радіальна"
 
 msgid "Wave"
 msgstr "Хвиля"
-
-
-msgid "Braid"
-msgstr "Шнур"
 
 
 msgid "The distance from which particles are affected fully"
@@ -11199,48 +11207,16 @@ msgid "Type of field"
 msgstr "Тип поля"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Радіальне поле у напрямі до центра об'єкта"
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "Постійна сила, спрямована вздовж локальної осі Z об'єкта сили"
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "Спіральна сила, що діє навколо локальної осі Z об'єкта сили"
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "Силове поле залежить від швидкості частинок"
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "Джерелом цього силового поля є нульова точка гармонічного осцилятора"
+msgid "Create a force that acts as a boid's predators or target"
+msgstr "Створити силу, що діє як хижаки рою на ціль"
 
 
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "Сферичне силове поле на основі заряду частинок; впливає лише на силові поля інших зарядів"
 
 
-msgid "Forcefield based on the Lennard-Jones potential"
-msgstr "Силове поле на основі потенціалу Леннарда-Джонса"
-
-
-msgid "Force field based on a texture"
-msgstr "Силове поле на основі текстури"
-
-
 msgid "Create a force along a curve object"
 msgstr "Створити сили уздовж об'єкту кривої"
-
-
-msgid "Create a force that acts as a boid's predators or target"
-msgstr "Створити силу, що діє як хижаки рою на ціль"
-
-
-msgid "Create turbulence with a noise field"
-msgstr "Створити турбулентність з шумовим полем"
 
 
 msgid "Create a force that dampens motion"
@@ -11249,6 +11225,38 @@ msgstr "Створити силу опору руху"
 
 msgid "Create a force based on fluid simulation velocities"
 msgstr "Створити силу на основі скоростей симуляції флюїду"
+
+
+msgid "Radial field toward the center of object"
+msgstr "Радіальне поле у напрямі до центра об'єкта"
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "Джерелом цього силового поля є нульова точка гармонічного осцилятора"
+
+
+msgid "Forcefield based on the Lennard-Jones potential"
+msgstr "Силове поле на основі потенціалу Леннарда-Джонса"
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "Силове поле залежить від швидкості частинок"
+
+
+msgid "Force field based on a texture"
+msgstr "Силове поле на основі текстури"
+
+
+msgid "Create turbulence with a noise field"
+msgstr "Створити турбулентність з шумовим полем"
+
+
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "Спіральна сила, що діє навколо локальної осі Z об'єкта сили"
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "Постійна сила, спрямована вздовж локальної осі Z об'єкта сили"
 
 
 msgid "2D"
@@ -11461,10 +11469,6 @@ msgstr "Показати/сховати блоки даних Хмари Точ�
 
 msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
 
 
 msgid "Show Simulation data-blocks"
@@ -15415,10 +15419,6 @@ msgstr "Постійне зміщення"
 
 msgid "Value for the distance between items"
 msgstr "Значення для відстані між елементами"
-
-
-msgid "Count"
-msgstr "Кількість"
 
 
 msgid "Number of items"
@@ -19544,6 +19544,26 @@ msgid "Don't fill polygons while editing"
 msgstr "Не заповнювати багатокутників при редагуванні"
 
 
+msgid "Attributes"
+msgstr "Атрибути"
+
+
+msgid "Geometry attributes"
+msgstr "Атрибути геометрії"
+
+
+msgid "Enable symmetry in the X axis"
+msgstr "Увімкнути симетрію по осі X"
+
+
+msgid "Enable symmetry in the Y axis"
+msgstr "Увімкнути симетрію по осі Y"
+
+
+msgid "Enable symmetry in the Z axis"
+msgstr "Увімкнути симетрію по осі Z"
+
+
 msgid "Freestyle Line Style"
 msgstr "Стиль лінії Freestyle"
 
@@ -21778,14 +21798,6 @@ msgid "Mesh data-block defining geometric surfaces"
 msgstr "Блок даних сіті, що визначає геометричну поверхню"
 
 
-msgid "Attributes"
-msgstr "Атрибути"
-
-
-msgid "Geometry attributes"
-msgstr "Атрибути геометрії"
-
-
 msgid "Auto Smooth Angle"
 msgstr "Кут автозгладжування"
 
@@ -21972,18 +21984,6 @@ msgstr "Вжити віддзеркалення на основі тополог
 
 msgid "Mirror Vertex Groups"
 msgstr "Віддзеркалити групи вершин"
-
-
-msgid "Enable symmetry in the X axis"
-msgstr "Увімкнути симетрію по осі X"
-
-
-msgid "Enable symmetry in the Y axis"
-msgstr "Увімкнути симетрію по осі Y"
-
-
-msgid "Enable symmetry in the Z axis"
-msgstr "Увімкнути симетрію по осі Z"
 
 
 msgid "Paint Mask"
@@ -30339,6 +30339,11 @@ msgstr "Параметри набору ліній"
 
 msgid "Effect Strip"
 msgstr "Смужка ефекту"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Сцена"
 
 
 msgid "Change"
@@ -40221,18 +40226,6 @@ msgstr "Текстура Масгрейва"
 
 msgid "Use the scalar value W as input"
 msgstr "Вжити скалярне значення W як увід"
-
-
-msgid "Use the 2D vector (x, y) as input. The z component is ignored"
-msgstr "Вжити 2D вектор (x, y) як увід. Компонент z ігнорується"
-
-
-msgid "Use the 4D vector (x, y, z, w) as input"
-msgstr "Вжити 4D вектор (x, y, z, w) як увід"
-
-
-msgid "The dimensions of the space to evaluate the noise in"
-msgstr "Розмірності простору для обчислення шуму у ньому"
 
 
 msgid "Object to take point data from"
@@ -55281,10 +55274,6 @@ msgid "Start transform operator after inserting the node"
 msgstr "Запустити трансформації після вставляння вузла"
 
 
-msgid "Data-block name to assign"
-msgstr "Назва блоку даних для призначення"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Додати вузол файлу"
@@ -56304,10 +56293,6 @@ msgid "Add an object data instance"
 msgstr "Додати примірник даних об'єкта"
 
 
-msgid "ID name to add"
-msgstr "Назва ідентифікатора для додання"
-
-
 msgctxt "Operator"
 msgid "Transfer Mesh Data"
 msgstr "Перенести дані сіті"
@@ -56415,10 +56400,6 @@ msgid "Path to image file"
 msgstr "Шлях до файлу зображення"
 
 
-msgid "Image name to assign"
-msgstr "Назва призначуваного зображення"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Застосувати іменований матеріал на об'єкті"
@@ -56431,10 +56412,6 @@ msgstr "Дублювати об'єкти"
 
 msgid "Duplicate selected objects"
 msgstr "Дублювати вибрані об'єкти"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Дублювати вибрані об'єкти та перемістити їх"
 
 
 msgid "Duplicate Objects"
@@ -57245,11 +57222,6 @@ msgstr "Утримати Модифікатор"
 
 msgid "Do not remove the modifier from stack"
 msgstr "Не вилучати модифікатор зі стеку"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Перетворити модифікатор"
 
 
 msgid "Convert particles to a mesh object"
@@ -59772,15 +59744,6 @@ msgstr "Додати Прості UVи"
 
 msgid "Add cube map uvs on mesh"
 msgstr "Додати кубічну карту UV на сіть"
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Додати гніздо малювання текстури"
-
-
-msgid "Add a texture paint slot"
-msgstr "Додати гніздо текстурного малювання"
 
 
 msgctxt "Operator"
@@ -65907,10 +65870,6 @@ msgid "Copy to Selected"
 msgstr "Копіювати на Вибране"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Скопіювати властивість цього об'єкта до вибраних об'єктів або кісток"
-
-
 msgid "Copy to selected all elements of the array"
 msgstr "Копіювати у всі вибрані елементи масиву"
 
@@ -68904,10 +68863,6 @@ msgstr "Задати контекстне значення масиву (зру�
 
 msgid "Context Attributes"
 msgstr "Атрибути контексту"
-
-
-msgid "RNA context string"
-msgstr "Рядок контексту RNA"
 
 
 msgid "Cycle backwards"
@@ -72397,10 +72352,6 @@ msgstr "Спад Нормалі"
 
 msgid "Post-Processing"
 msgstr "Після-Оброблення"
-
-
-msgid "Sculpt Strokes"
-msgstr "Ліпка штрихів"
 
 
 msgid "Particle Tool"
@@ -79655,14 +79606,6 @@ msgid "X position where the strip begins"
 msgstr "Позиція X початку смужки"
 
 
-msgid "End Still"
-msgstr "Кінець беззмінно"
-
-
-msgid "Start Still"
-msgstr "Старт беззмінно"
-
-
 msgid "Lock strip so that it cannot be transformed"
 msgstr "Заблокувати смужку, щоб її не можна було трансформувати"
 
@@ -82511,6 +82454,22 @@ msgid "Scopes to visualize image statistics"
 msgstr "Області для показу статистики зображення"
 
 
+msgid "Show Gizmo"
+msgstr "Показ Гізмо"
+
+
+msgid "Show gizmos of all types"
+msgstr "Показати гізмо всіх типів"
+
+
+msgid "Navigate Gizmo"
+msgstr "Гізмо Навігації"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Гізмо навігації оглядвікна"
+
+
 msgid "Show Mask Editor"
 msgstr "Показати редактор маски"
 
@@ -83228,28 +83187,12 @@ msgid "Display frames rather than seconds"
 msgstr "Показувати кадри, а не секунди"
 
 
-msgid "Show Gizmo"
-msgstr "Показ Гізмо"
-
-
-msgid "Show gizmos of all types"
-msgstr "Показати гізмо всіх типів"
-
-
 msgid "Context Gizmo"
 msgstr "Контекстне Гізмо"
 
 
 msgid "Context sensitive gizmos for the active item"
 msgstr "Контекстно чутливі гізмо для активного елемента"
-
-
-msgid "Navigate Gizmo"
-msgstr "Гізмо Навігації"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Гізмо навігації оглядвікна"
 
 
 msgid "Tool Gizmo"
@@ -91247,6 +91190,10 @@ msgid "Stroke Placement:"
 msgstr "Розміщення Штриха:"
 
 
+msgid "Auto-Masking"
+msgstr "Авто-Маскування"
+
+
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Вибрання до Сітки"
@@ -91548,10 +91495,6 @@ msgid "Falloff Opacity"
 msgstr "Безпрозорість Спаду"
 
 
-msgid "Auto-Masking"
-msgstr "Авто-Маскування"
-
-
 msgid "Mesh Boundary"
 msgstr "Рубіж Сіті"
 
@@ -91604,16 +91547,16 @@ msgid "Gradient Mapping"
 msgstr "Розкладання Градієнта"
 
 
+msgid "Mask Value"
+msgstr "Значення Маски"
+
+
 msgid "CCW"
 msgstr "ПротиГС"
 
 
 msgid "CW"
 msgstr "ЗаГС"
-
-
-msgid "Mask Value"
-msgstr "Значення Маски"
 
 
 msgid "Invert to Fill"
@@ -93173,6 +93116,14 @@ msgid "Selection"
 msgstr "Вибрання"
 
 
+msgid "Viewport Gizmos"
+msgstr "Гізмо Оглядвікна"
+
+
+msgid "Navigate"
+msgstr "Навігація"
+
+
 msgid "Modified Edges"
 msgstr "Модифіковані Ребра"
 
@@ -93600,14 +93551,6 @@ msgid "Gain:"
 msgstr "Підсил:"
 
 
-msgid "Viewport Gizmos"
-msgstr "Гізмо Оглядвікна"
-
-
-msgid "Navigate"
-msgstr "Навігація"
-
-
 msgid "Active Tools"
 msgstr "Активні Засоби"
 
@@ -93822,11 +93765,6 @@ msgstr "Держак"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Сцена..."
-
-
-msgctxt "Operator"
 msgid "Clip..."
 msgstr "Кліп..."
 
@@ -93849,6 +93787,11 @@ msgstr "Текст"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Шар Наладження"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Сцена..."
 
 
 msgctxt "Operator"
@@ -93981,11 +93924,6 @@ msgstr "Фракційний Зум Передогляду"
 
 msgid "Show Separate Color Channels"
 msgstr "Показ Каналів Кольорів Окремо"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Сцена"
 
 
 msgctxt "Operator"
@@ -97071,10 +97009,6 @@ msgid "Unable to pack file, source path '%s' not found"
 msgstr "Неможливо упакувати файл, шлях джерела '%s' не знайдено"
 
 
-msgid "Image '%s' skipped, movies, image sequences and packed files not supported"
-msgstr "Зображення '%s' пропущено, фільми та послідовності зображень та запаковані файли не підтримуються"
-
-
 msgid "Packed %d file(s)"
 msgstr "Упаковано %d файл(ів)"
 
@@ -100005,6 +99939,10 @@ msgid "Deleted %u object(s)"
 msgstr "Видалено %u об'єкт(ів)"
 
 
+msgid "No active mesh object"
+msgstr "Немає активного сітьового об'єкта"
+
+
 msgid "Baking of multires data only works with an active mesh object"
 msgstr "Запікання даних багатороздільності працює лише з активною сіттю"
 
@@ -100487,10 +100425,6 @@ msgstr "Об'єкт (утримувати трансформацію)"
 
 msgid "Object (Without Inverse)"
 msgstr "Об'єкт (Без Інверсії)"
-
-
-msgid "OK?"
-msgstr "Гаразд?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -101240,10 +101174,6 @@ msgstr "Неможливо малювати по упакованих багат
 
 msgid "Untitled"
 msgstr "Без назви"
-
-
-msgid "No active mesh object"
-msgstr "Немає активного сітьового об'єкта"
 
 
 msgid "Image could not be found"
@@ -102029,14 +101959,6 @@ msgstr "Неможливо зберегти багатошарові послі�
 
 msgid "No images have been changed"
 msgstr "Жодне зображення не змінено"
-
-
-msgid "Packing movies, image sequences or tiled images not supported"
-msgstr "Пакування фільмів, послідовностей зображень або плиткових зображень не підтримується"
-
-
-msgid "Unpacking movies, image sequences or tiled images not supported"
-msgstr "Розпаковування фільмів, послідовностей зображень або плиткових зображень не підтримується"
 
 
 msgid "Can not set border from a cropped render"
@@ -103954,24 +103876,12 @@ msgid "Modify"
 msgstr "Змінити"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Неможливо отримати буфер з зображення"
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "Сцена не в контексті; неможливо отримати параметри збереження"
-
-
 msgid "Image not packed"
 msgstr "Зображення не упаковано"
 
 
 msgid "Could not save packed file to disk as '%s'"
 msgstr "Не можу зберегти запакований файл на диск як '%s'"
-
-
-msgid "Could not write image: %s, '%s'"
-msgstr "Неможливо зберегти зображення: %s, '%s'"
 
 
 msgid "Image '%s' could not be saved to '%s'"
@@ -105528,6 +105438,10 @@ msgid "OFF"
 msgstr "Вимкн."
 
 
+msgid "OK?"
+msgstr "Гаразд?"
+
+
 msgid "unsupported format"
 msgstr "непідтримуваний формат"
 
@@ -105790,10 +105704,6 @@ msgstr "Болгарська (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Грецька (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Корейська (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

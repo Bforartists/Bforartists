@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -955,6 +955,10 @@ msgstr "Redigerings Läge"
 
 msgid "Has Secondary Color"
 msgstr "Starta Spel"
+
+
+msgid "Count"
+msgstr "Mängd"
 
 
 msgid "Angle"
@@ -2758,6 +2762,10 @@ msgid "View"
 msgstr "Visa"
 
 
+msgid "Radius"
+msgstr "Radie"
+
+
 msgid "Steps"
 msgstr "Steg"
 
@@ -2776,10 +2784,6 @@ msgstr "Streckad"
 
 msgid "Material Index"
 msgstr "Spara som"
-
-
-msgid "Radius"
-msgstr "Radie"
 
 
 msgid "Viewport"
@@ -3783,16 +3787,16 @@ msgid "Fall-Off"
 msgstr "Avtagande:"
 
 
+msgid "Cone"
+msgstr "Kon"
+
+
 msgid "Sphere"
 msgstr "UVsfär"
 
 
 msgid "Tube"
 msgstr "Tub"
-
-
-msgid "Cone"
-msgstr "Kon"
 
 
 msgid "Amount"
@@ -4577,10 +4581,6 @@ msgstr "Vektor Måla"
 
 msgid "Constant Offset"
 msgstr "Startförskjutning"
-
-
-msgid "Count"
-msgstr "Mängd"
 
 
 msgid "Object Offset"
@@ -17737,10 +17737,6 @@ msgid "Path to image file"
 msgstr "Visa fart på nyckelbilder och profil"
 
 
-msgid "Image name to assign"
-msgstr "Spara som"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Duplicera"
@@ -17752,10 +17748,6 @@ msgstr "Duplicera"
 
 
 msgid "Duplicate selected objects"
-msgstr "Markera Länkad"
-
-
-msgid "Duplicate selected objects and move them"
 msgstr "Markera Länkad"
 
 
@@ -18045,11 +18037,6 @@ msgstr "Packa Data"
 
 msgid "Sets the object interaction mode"
 msgstr "Renderings Fönster"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Markera Rad"
 
 
 msgctxt "Operator"
@@ -21293,10 +21280,6 @@ msgid "Copy Data Path"
 msgstr "Bana"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Markera Länkad"
-
-
 msgctxt "Operator"
 msgid "Edit Source"
 msgstr "Rotera"
@@ -22162,10 +22145,6 @@ msgstr "Importera"
 
 msgid "Context Attributes"
 msgstr "Attribut:"
-
-
-msgid "RNA context string"
-msgstr "Verktyg"
 
 
 msgid "Cycle backwards"
@@ -24538,14 +24517,6 @@ msgstr "Spel"
 
 msgid "Start Offset"
 msgstr "Startförskjutning"
-
-
-msgid "End Still"
-msgstr "Stillbild"
-
-
-msgid "Start Still"
-msgstr "Stillbild från ruta"
 
 
 msgid "Left Handle Selected"
@@ -27785,11 +27756,6 @@ msgstr "Höger"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scen…"
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Färg"
 
@@ -27802,6 +27768,11 @@ msgstr "Text"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Justeringslager"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Scen…"
 
 
 msgctxt "Operator"
@@ -29070,6 +29041,10 @@ msgid "Cannot create editmode armature"
 msgstr "Duplicera"
 
 
+msgid "No active mesh object"
+msgstr "Materialets volym-inställningar"
+
+
 msgid "Child Of constraint not found"
 msgstr "Lägg till Stripp"
 
@@ -29220,10 +29195,6 @@ msgstr "Arkiv"
 
 msgid "Flip to Top"
 msgstr "Krockgränser"
-
-
-msgid "No active mesh object"
-msgstr "Materialets volym-inställningar"
 
 
 msgid "Image data could not be found"
@@ -29658,10 +29629,6 @@ msgid "Modify"
 msgstr "Radera Allt"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Göm Markerad"
-
-
 msgid "Image not packed"
 msgstr "Bild Displist"
 
@@ -29997,10 +29964,6 @@ msgstr "Bulgariska (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Grekiska (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Koreanska (한국 언어)"
 
 
 msgid "Brazilian Portuguese (Português do Brasil)"

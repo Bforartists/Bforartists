@@ -116,6 +116,13 @@ def undo_redo_post_handler(dummy):
     internals.move_active = None
 
 
+@persistent
+def global_load_pre_handler(dummy):
+    internals.move_triggered = False
+    internals.move_selection.clear()
+    internals.move_active = None
+
+
 def menu_addition(self, context):
     layout = self.layout
 
@@ -180,6 +187,7 @@ def register_cm():
     bpy.app.handlers.depsgraph_update_post.append(depsgraph_update_post_handler)
     bpy.app.handlers.undo_post.append(undo_redo_post_handler)
     bpy.app.handlers.redo_post.append(undo_redo_post_handler)
+    bpy.app.handlers.load_pre.append(global_load_pre_handler)
 
     preferences = bpy.context.preferences.addons[__package__].preferences
     if preferences.enable_disable_objects_override:
@@ -202,6 +210,7 @@ def unregister_cm():
     bpy.app.handlers.depsgraph_update_post.remove(depsgraph_update_post_handler)
     bpy.app.handlers.undo_post.remove(undo_redo_post_handler)
     bpy.app.handlers.redo_post.remove(undo_redo_post_handler)
+    bpy.app.handlers.load_pre.remove(global_load_pre_handler)
 
     del bpy.types.Scene.collection_manager
 
