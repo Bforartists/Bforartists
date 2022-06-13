@@ -387,8 +387,13 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator(
                 "wm.usd_import", text="Universal Scene Description (.usd, .usdc, .usda)", icon = "LOAD_USD")
 
-        self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon = "LOAD_SVG_GPENCIL")
-        self.layout.operator("wm.obj_import", text="Wavefront (.obj) (experimental)", icon="LOAD_OBJ")
+        if bpy.app.build_options.io_gpencil:
+            self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon = "LOAD_SVG_GPENCIL")
+
+        if bpy.app.build_options.io_wavefront_obj:
+            self.layout.operator("wm.obj_import", text="Wavefront (.obj) (experimental)", icon="LOAD_OBJ")
+        if bpy.app.build_options.io_stl:
+            self.layout.operator("wm.stl_import", text="STL (.stl) (experimental)", icon="LOAD_STL")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -397,7 +402,6 @@ class TOPBAR_MT_file_export(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        self.layout.operator("wm.obj_export", text="Wavefront OBJ (.obj) (experimental)", icon = "SAVE_OBJ")
         if bpy.app.build_options.collada:
             self.layout.operator("wm.collada_export", text="Collada (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
@@ -406,12 +410,16 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator(
                 "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)", icon = "SAVE_USD")
 
-        # Pugixml lib dependency
-        if bpy.app.build_options.pugixml:
-            self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG", icon = "SAVE_SVG")
-        # Haru lib dependency
-        if bpy.app.build_options.haru:
-            self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon = "SAVE_PDF")
+        if bpy.app.build_options.io_gpencil:
+            # Pugixml lib dependency
+            if bpy.app.build_options.pugixml:
+                self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG", icon = "SAVE_SVG")
+            # Haru lib dependency
+            if bpy.app.build_options.haru:
+                self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon = "SAVE_PDF")
+
+        if bpy.app.build_options.io_wavefront_obj:
+            self.layout.operator("wm.obj_export", text="Wavefront (.obj) (experimental)", icon = "SAVE_OBJ")
 
 
 class TOPBAR_MT_file_external_data(Menu):

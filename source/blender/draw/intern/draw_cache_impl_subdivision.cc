@@ -39,10 +39,10 @@
 #include "opensubdiv_evaluator_capi.h"
 #include "opensubdiv_topology_refiner_capi.h"
 
-#include "draw_cache_extract.h"
+#include "draw_cache_extract.hh"
 #include "draw_cache_impl.h"
 #include "draw_cache_inline.h"
-#include "mesh_extractors/extract_mesh.h"
+#include "mesh_extractors/extract_mesh.hh"
 
 extern "C" char datatoc_common_subdiv_custom_data_interp_comp_glsl[];
 extern "C" char datatoc_common_subdiv_ibo_lines_comp_glsl[];
@@ -1837,6 +1837,7 @@ void draw_subdiv_build_lnor_buffer(const DRWSubdivCache *cache,
   GPU_vertbuf_bind_as_ssbo(cache->subdiv_polygon_offset_buffer, binding_point++);
   GPU_vertbuf_bind_as_ssbo(pos_nor, binding_point++);
   GPU_vertbuf_bind_as_ssbo(cache->extra_coarse_face_data, binding_point++);
+  GPU_vertbuf_bind_as_ssbo(cache->verts_orig_index, binding_point++);
 
   /* Outputs */
   GPU_vertbuf_bind_as_ssbo(lnor, binding_point++);
@@ -2099,7 +2100,7 @@ static bool draw_subdiv_create_requested_buffers(const Scene *scene,
 
   draw_subdiv_cache_update_extra_coarse_face_data(draw_cache, mesh_eval, mr);
 
-  mesh_buffer_cache_create_requested_subdiv(batch_cache, mbc, draw_cache, mr);
+  blender::draw::mesh_buffer_cache_create_requested_subdiv(batch_cache, mbc, draw_cache, mr);
 
   mesh_render_data_free(mr);
 
