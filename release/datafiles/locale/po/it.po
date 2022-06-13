@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -2624,6 +2624,10 @@ msgstr "Ha Piano Scultura"
 
 msgid "Has Secondary Color"
 msgstr "Ha Colore Secondario"
+
+
+msgid "Count"
+msgstr "Conteggio"
 
 
 msgid "Angle"
@@ -5923,6 +5927,18 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa la parte iniziale del tratto per la profondità"
 
 
+msgid "Index"
+msgstr "Indice"
+
+
+msgid "Index of this points"
+msgstr "Indice di questi punti"
+
+
+msgid "Radius"
+msgstr "Raggio"
+
+
 msgid "Steps"
 msgstr "Passi"
 
@@ -5949,10 +5965,6 @@ msgstr "Tratteggiato"
 
 msgid "Material Index"
 msgstr "Indice Materiale"
-
-
-msgid "Radius"
-msgstr "Raggio"
 
 
 msgid "Dependency Graph"
@@ -8074,10 +8086,6 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "Limite inferiore dell'inviluppo a questo punto di controllo"
 
 
-msgid "Index"
-msgstr "Indice"
-
-
 msgid "Field Settings"
 msgstr "Impostazioni Campo"
 
@@ -8106,16 +8114,16 @@ msgid "Fall-Off"
 msgstr "Decadimento"
 
 
+msgid "Cone"
+msgstr "Cono"
+
+
 msgid "Sphere"
 msgstr "Sfera"
 
 
 msgid "Tube"
 msgstr "Tubo"
-
-
-msgid "Cone"
-msgstr "Cono"
 
 
 msgid "Flow"
@@ -8178,6 +8186,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "Tipo di scostamento periodico sulla curva"
 
 
+msgid "Braid"
+msgstr "Treccia"
+
+
 msgid "Curl"
 msgstr "Ricciolo"
 
@@ -8188,10 +8200,6 @@ msgstr "Radiale"
 
 msgid "Wave"
 msgstr "Onda"
-
-
-msgid "Braid"
-msgstr "Treccia"
 
 
 msgid "The distance from which particles are affected fully"
@@ -8326,44 +8334,44 @@ msgid "Type of field"
 msgstr "Tipo di campo"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Campo radiale verso il centro di oggetto"
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "Forza costante lungo la forza dell'asse locale Z degli oggetti"
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "Forza a spirale che distorce la forza dell'asse locale Z degli oggetti"
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "Il campo di forza dipende dalla velocità delle particelle"
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "La sorgente di questo campo di forza è il punto zero di un oscillatore armonico"
-
-
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "Un campo di forza sferico basato sulla carica delle particelle, ha influenza solamente sulla carica degli altri campi di forza"
-
-
-msgid "Forcefield based on the Lennard-Jones potential"
-msgstr "Campo di forza basato sul potenziale Lennard-Jones"
 
 
 msgid "Create a force along a curve object"
 msgstr "Crea una forza lungo un oggetto curva"
 
 
+msgid "Create a force that dampens motion"
+msgstr "Crea una forza che smorza il movimento"
+
+
+msgid "Radial field toward the center of object"
+msgstr "Campo radiale verso il centro di oggetto"
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "La sorgente di questo campo di forza è il punto zero di un oscillatore armonico"
+
+
+msgid "Forcefield based on the Lennard-Jones potential"
+msgstr "Campo di forza basato sul potenziale Lennard-Jones"
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "Il campo di forza dipende dalla velocità delle particelle"
+
+
 msgid "Create turbulence with a noise field"
 msgstr "Crea una turbolenza con un campo di rumore"
 
 
-msgid "Create a force that dampens motion"
-msgstr "Crea una forza che smorza il movimento"
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "Forza a spirale che distorce la forza dell'asse locale Z degli oggetti"
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "Forza costante lungo la forza dell'asse locale Z degli oggetti"
 
 
 msgid "2D"
@@ -9972,10 +9980,6 @@ msgstr "Nome del Gruppo di Vertici che determina l'influenza del modificatore pe
 
 msgid "Constant Offset"
 msgstr "Scostamento Costante"
-
-
-msgid "Count"
-msgstr "Conteggio"
 
 
 msgid "Pass"
@@ -18677,6 +18681,11 @@ msgstr "Speciali Gruppo Linee"
 
 msgid "Effect Strip"
 msgstr "Spezzone Effetto"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Scena"
 
 
 msgid "Apply"
@@ -34362,10 +34371,6 @@ msgid "Path to image file"
 msgstr "Percorso del file immagine"
 
 
-msgid "Image name to assign"
-msgstr "Nome immagine da assegnare"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Assegna Materiale Nominato all'Oggetto"
@@ -34378,10 +34383,6 @@ msgstr "Duplica Oggetti"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica gli oggetti selezionati"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Duplica gli oggetti selezionati e li muove"
 
 
 msgid "Duplicate Objects"
@@ -34772,11 +34773,6 @@ msgstr "Imposta la modalità di interazione oggetto"
 
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Aggiunge operazioni/effetti procedurali all'oggetto attivo (modificatori)"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Converti Modificatore"
 
 
 msgid "Convert particles to a mesh object"
@@ -36338,15 +36334,6 @@ msgstr "Allinea Maniglie"
 
 msgid "Add cube map uvs on mesh"
 msgstr "Aggiunge una mappa UV cubica sulla mesh"
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Aggiungi Slot Pittura Texture"
-
-
-msgid "Add a texture paint slot"
-msgstr "Aggiunge uno slot pittura texture"
 
 
 msgctxt "Operator"
@@ -40095,10 +40082,6 @@ msgid "Copy the Python command matching this button"
 msgstr "Copia il comando Python corrispondente a questo bottone"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Copia le proprietà da questo oggetto agli oggetti o alle ossa selezionate"
-
-
 msgid "Copy to selected all elements of the array"
 msgstr "Copia al selezionato tutti gli elementi della serie"
 
@@ -43618,10 +43601,6 @@ msgid "Post-Processing"
 msgstr "Post Elaborazione"
 
 
-msgid "Sculpt Strokes"
-msgstr "Scultura Tratti"
-
-
 msgid "Particle Tool"
 msgstr "Strumenti particelle"
 
@@ -44228,10 +44207,6 @@ msgstr "Compara Percorsi"
 
 msgid "Collection of paths"
 msgstr "Raccolta di percorsi"
-
-
-msgid "Index of this points"
-msgstr "Indice di questi punti"
 
 
 msgid "Cache Compression"
@@ -53551,16 +53526,20 @@ msgid "Source Clone UV Map"
 msgstr "Sorgente Clona Mappa UV"
 
 
+msgid "Point Count"
+msgstr "Conteggio Punto"
+
+
+msgid "Mask Value"
+msgstr "Valore Maschera"
+
+
 msgid "CCW"
 msgstr "Senso Antiorario"
 
 
 msgid "CW"
 msgstr "Senso Orario"
-
-
-msgid "Mask Value"
-msgstr "Valore Maschera"
 
 
 msgctxt "Operator"
@@ -54604,11 +54583,6 @@ msgstr "Destra"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scena..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Colore"
 
@@ -54621,6 +54595,11 @@ msgstr "Testo"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Livello Aggiustamento"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Scena..."
 
 
 msgctxt "Operator"
@@ -54700,11 +54679,6 @@ msgstr "Rotazione"
 
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervallo fotogrammi originale: %d-%d (%d)"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Scena"
 
 
 msgctxt "Operator"
@@ -58224,6 +58198,10 @@ msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need a
 msgstr "Impossibile cancellare l'oggetto '%s' dalla scena '%s', gli oggetti usati indirettamente necessitano di almeno un utente"
 
 
+msgid "No active mesh object"
+msgstr "Nessun oggetto mesh attivo"
+
+
 msgid "Mesh should be unwrapped before multires data baking"
 msgstr "La mesh va scucita/sviluppata prima del precalcolo dei dati multires"
 
@@ -58414,10 +58392,6 @@ msgstr "Imposta Parentela A"
 
 msgid "Object (Keep Transform)"
 msgstr "Oggetto (Mantieni Trasformazione)"
-
-
-msgid "OK?"
-msgstr "OK?"
 
 
 msgid "Loop in parents"
@@ -58811,10 +58785,6 @@ msgstr "Tavolozza. Usa Click Sinistro per campionare più colori"
 
 msgid "Untitled"
 msgstr "Senza Titolo"
-
-
-msgid "No active mesh object"
-msgstr "Nessun oggetto mesh attivo"
 
 
 msgid "No active camera set"
@@ -60312,10 +60282,6 @@ msgid "Could not save packed file to disk as '%s'"
 msgstr "Impossibile salvare su disco il file incorporato come '%s'"
 
 
-msgid "Could not write image: %s, '%s'"
-msgstr "Impossibile scrivere l'immagine: %s, '%s'"
-
-
 msgid "Image '%s' could not be saved to '%s'"
 msgstr "L'immagine '%s' non può essere salvata in '%s'"
 
@@ -60762,10 +60728,6 @@ msgid "Vertex Count"
 msgstr "Conteggio Vertice"
 
 
-msgid "Point Count"
-msgstr "Conteggio Punto"
-
-
 msgid "Pick Instance"
 msgstr "Scegli Istanza"
 
@@ -60844,10 +60806,6 @@ msgstr "Istanze Curve"
 
 msgid "Remainder"
 msgstr "Rimanente"
-
-
-msgid "Max Width"
-msgstr "Larghezza Max"
 
 
 msgid " node"
@@ -61320,6 +61278,10 @@ msgid "OFF"
 msgstr "OFF"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "unsupported format"
 msgstr "formato non supportato"
 
@@ -61491,10 +61453,6 @@ msgstr "Bulgaro (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Greco (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Coreano (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

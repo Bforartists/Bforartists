@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1558,6 +1558,10 @@ msgid "Shape Keys"
 msgstr "Tvarové klávesy"
 
 
+msgid "Simulations"
+msgstr "Simulace"
+
+
 msgid "Sounds"
 msgstr "Zvuky"
 
@@ -2380,6 +2384,10 @@ msgstr "Řezbářský mód"
 
 msgid "Has Secondary Color"
 msgstr "Hvězda"
+
+
+msgid "Count"
+msgstr "Počet"
 
 
 msgid "Active Smooth"
@@ -5251,6 +5259,14 @@ msgid "Only First"
 msgstr "Pouze První"
 
 
+msgid "Index"
+msgstr "Index"
+
+
+msgid "Radius"
+msgstr "Poloměr"
+
+
 msgid "Support Loops"
 msgstr "Podporovat Smyčky"
 
@@ -5273,10 +5289,6 @@ msgstr "Aktivní Křivka"
 
 msgid "Material Index"
 msgstr "Index Materiálu"
-
-
-msgid "Radius"
-msgstr "Poloměr"
 
 
 msgid "Viewport"
@@ -6779,10 +6791,6 @@ msgid "Frame"
 msgstr "Snímek"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Face Maps"
 msgstr "Mapy Obličeje"
 
@@ -6807,16 +6815,16 @@ msgid "Fall-Off"
 msgstr "Pokles"
 
 
+msgid "Cone"
+msgstr "Kužel"
+
+
 msgid "Sphere"
 msgstr "Koule"
 
 
 msgid "Tube"
 msgstr "Trubka"
-
-
-msgid "Cone"
-msgstr "Kužel"
 
 
 msgid "Flow"
@@ -6851,6 +6859,10 @@ msgid "Adjust the offset to the beginning/end"
 msgstr "Vyhlazuje hrany textury"
 
 
+msgid "Braid"
+msgstr "Mřížka"
+
+
 msgid "Curl"
 msgstr "Křivka"
 
@@ -6861,10 +6873,6 @@ msgstr "Radiální"
 
 msgid "Wave"
 msgstr "Vlnění"
-
-
-msgid "Braid"
-msgstr "Mřížka"
 
 
 msgid "Harmonic Damping"
@@ -6943,16 +6951,16 @@ msgid "Type of field"
 msgstr "Typ pole"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Přidat vazbu aktivní kosti"
-
-
 msgid "Create a force along a curve object"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
 
 
 msgid "Create a force that dampens motion"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
+
+
+msgid "Radial field toward the center of object"
+msgstr "Přidat vazbu aktivní kosti"
 
 
 msgid "Use Global Coordinates"
@@ -7017,10 +7025,6 @@ msgstr "Fonts"
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Node Trees"
@@ -8175,10 +8179,6 @@ msgstr "Žádné skupiny vertexů"
 
 msgid "Constant Offset"
 msgstr "Konstantní odsazení"
-
-
-msgid "Count"
-msgstr "Počet"
 
 
 msgid "Pass"
@@ -9807,6 +9807,26 @@ msgid "Don't fill polygons while editing"
 msgstr "Typ filtru"
 
 
+msgid "Attributes"
+msgstr "Atributy"
+
+
+msgid "Geometry attributes"
+msgstr "Atributy geometrie"
+
+
+msgid "Enable symmetry in the X axis"
+msgstr "Povolit symetrii podle osy X"
+
+
+msgid "Enable symmetry in the Y axis"
+msgstr "Povolit symetrii podle osy Y"
+
+
+msgid "Enable symmetry in the Z axis"
+msgstr "Povolit symetrii podle osy Z"
+
+
 msgid "Active Texture"
 msgstr "Aktivní textový soubor"
 
@@ -10553,14 +10573,6 @@ msgid "Subsurface Translucency"
 msgstr "Průsvitnost podpovrchu"
 
 
-msgid "Attributes"
-msgstr "Atributy"
-
-
-msgid "Geometry attributes"
-msgstr "Atributy geometrie"
-
-
 msgid "Auto Smooth Angle"
 msgstr "Automaticky vyhladit úhel"
 
@@ -10667,18 +10679,6 @@ msgstr "Kopírovat logiku"
 
 msgid "Mirror Vertex Groups"
 msgstr "Aktuální skupina vertexů"
-
-
-msgid "Enable symmetry in the X axis"
-msgstr "Povolit symetrii podle osy X"
-
-
-msgid "Enable symmetry in the Y axis"
-msgstr "Povolit symetrii podle osy Y"
-
-
-msgid "Enable symmetry in the Z axis"
-msgstr "Povolit symetrii podle osy Z"
 
 
 msgid "Paint Mask"
@@ -14629,6 +14629,11 @@ msgstr "Předvolby snímkové frekvence"
 
 msgid "Effect Strip"
 msgstr "NLA Proužky"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Scéna"
 
 
 msgid "Apply"
@@ -26493,10 +26498,6 @@ msgid "Path to image file"
 msgstr "Načíst tento soubor"
 
 
-msgid "Image name to assign"
-msgstr "Název materiálu"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Použít materiál u objektu"
@@ -26508,10 +26509,6 @@ msgstr "Zdvojit objekty"
 
 
 msgid "Duplicate selected objects"
-msgstr "Zdvojí vybrané objekty"
-
-
-msgid "Duplicate selected objects and move them"
 msgstr "Zdvojí vybrané objekty"
 
 
@@ -26921,11 +26918,6 @@ msgstr "Vyberte cíl pomocí LMB"
 
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Přidání procedurální operace/efektu k aktivnímu objektu"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Převést modifikátor na"
 
 
 msgid "Convert particles to a mesh object"
@@ -28123,11 +28115,6 @@ msgstr "(Od)označit vše"
 msgctxt "Operator"
 msgid "Add Simple UVs"
 msgstr "Přidat jednoduché UV mapy"
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Přidat Slot pro Kresbu Textury"
 
 
 msgctxt "Operator"
@@ -31063,10 +31050,6 @@ msgstr "Kopírovat Python Příkaz"
 msgctxt "Operator"
 msgid "Copy to Selected"
 msgstr "Kopírovat na Označené"
-
-
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
 
 
 msgctxt "Operator"
@@ -37310,14 +37293,6 @@ msgid "Start Offset"
 msgstr "Začátek Odsazení"
 
 
-msgid "End Still"
-msgstr "Soubor"
-
-
-msgid "Start Still"
-msgstr "Poslední frame"
-
-
 msgid "Modifiers affecting this strip"
 msgstr "Nelze kopírovat modifikátory do objektu jiného typu"
 
@@ -38542,6 +38517,14 @@ msgid "Pivot around active object"
 msgstr "Aktivnímu objektu"
 
 
+msgid "Show Gizmo"
+msgstr "Zobrazit Gizmo"
+
+
+msgid "Show gizmos of all types"
+msgstr "Zobrazit gizma všech typů"
+
+
 msgid "Show Mask Editor"
 msgstr "Zobrazit Editor Masky"
 
@@ -38897,14 +38880,6 @@ msgstr "Zobrazit:"
 
 msgid "Scene size"
 msgstr "Velikost scény"
-
-
-msgid "Show Gizmo"
-msgstr "Zobrazit Gizmo"
-
-
-msgid "Show gizmos of all types"
-msgstr "Zobrazit gizma všech typů"
 
 
 msgid "Separate Colors"
@@ -41971,6 +41946,10 @@ msgid "Draw:"
 msgstr "Kreslit:"
 
 
+msgid "Auto-Masking"
+msgstr "Auto-Maska"
+
+
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Výběr na mřížku"
@@ -42148,10 +42127,6 @@ msgstr "Mapování Masky"
 
 msgid "Pressure Masking"
 msgstr "Maskovat tlakem"
-
-
-msgid "Auto-Masking"
-msgstr "Auto-Maska"
 
 
 msgid "Mesh Boundary"
@@ -43060,6 +43035,10 @@ msgid "Selection"
 msgstr "Výběr"
 
 
+msgid "Navigate"
+msgstr "Navigovat"
+
+
 msgid "Modified Edges"
 msgstr "Upravené hrany"
 
@@ -43336,10 +43315,6 @@ msgid "Gamma:"
 msgstr "Gama:"
 
 
-msgid "Navigate"
-msgstr "Navigovat"
-
-
 msgid "Active Tools"
 msgstr "Aktivní nástroje"
 
@@ -43455,11 +43430,6 @@ msgstr "Obě strany"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scéna..."
-
-
-msgctxt "Operator"
 msgid "Mask..."
 msgstr "Maska..."
 
@@ -43477,6 +43447,11 @@ msgstr "Text"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Vrstva úprav"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Scéna..."
 
 
 msgctxt "Operator"
@@ -43540,11 +43515,6 @@ msgstr "Původní rozsah snímků: %d-%d (%d)"
 
 msgid "Resolutions"
 msgstr "Rozlišení"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Scéna"
 
 
 msgctxt "Operator"
@@ -46728,6 +46698,10 @@ msgid "Deleted %u object(s)"
 msgstr "Odstraněn(é) %u objekt(y)"
 
 
+msgid "No active mesh object"
+msgstr "Velikost štětce"
+
+
 msgid "No valid selected objects"
 msgstr "Žádné platné vybrané objekty"
 
@@ -46910,10 +46884,6 @@ msgstr "Není aktivní žádný vybraný objekt"
 
 msgid "Object (Keep Transform)"
 msgstr "Viditelné transformace"
-
-
-msgid "OK?"
-msgstr "OK?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -47146,10 +47116,6 @@ msgstr "Předvolby Blenderu"
 
 msgid "No more keyframes to jump to in this direction"
 msgstr "Uložit současný soubor na vybrané umístění"
-
-
-msgid "No active mesh object"
-msgstr "Velikost štětce"
 
 
 msgid "Image data could not be found"
@@ -47937,10 +47903,6 @@ msgid "Modify"
 msgstr "Modifikátory"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Přiblíží/oddálí pohled"
-
-
 msgid "Image not packed"
 msgstr "Název obrázku"
 
@@ -48311,6 +48273,10 @@ msgid "Win"
 msgstr "Win"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "unsupported format"
 msgstr "nepodporovaný formát"
 
@@ -48436,10 +48402,6 @@ msgstr "Bulharština (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Řečtina (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Korejština (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -2171,6 +2171,10 @@ msgid "View"
 msgstr "Görünüş"
 
 
+msgid "Radius"
+msgstr "Yarıçap"
+
+
 msgid "Steps"
 msgstr "Adımlar"
 
@@ -2181,10 +2185,6 @@ msgstr "Aktif Kamera"
 
 msgid "Material Index"
 msgstr "Malzeme Endeksi"
-
-
-msgid "Radius"
-msgstr "Yarıçap"
 
 
 msgid "Render"
@@ -2988,16 +2988,16 @@ msgid "Falloff Power"
 msgstr "Doğrusal Bozulma"
 
 
+msgid "Cone"
+msgstr "Koni"
+
+
 msgid "Sphere"
 msgstr "Küresel"
 
 
 msgid "Tube"
 msgstr "Tüp"
-
-
-msgid "Cone"
-msgstr "Koni"
 
 
 msgid "Amount"
@@ -13953,20 +13953,12 @@ msgid "Path to image file"
 msgstr "Dosya kaydı olanaksız"
 
 
-msgid "Image name to assign"
-msgstr "Aktif Gruba Ata"
-
-
 msgctxt "Operator"
 msgid "Duplicate Objects"
 msgstr "Nesneleri Çoğalt"
 
 
 msgid "Duplicate selected objects"
-msgstr "Seçili Nesne ve Bilgileri"
-
-
-msgid "Duplicate selected objects and move them"
 msgstr "Seçili Nesne ve Bilgileri"
 
 
@@ -14195,11 +14187,6 @@ msgstr "Nesneyi bir Gruba ekle"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "Seçili Kamerayı Aktif Yap"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Değiştirici Ekle"
 
 
 msgctxt "Operator"
@@ -17290,10 +17277,6 @@ msgid "Context Attributes"
 msgstr "Nitelik Kopyala"
 
 
-msgid "RNA context string"
-msgstr "Kemik Ayarları"
-
-
 msgid "Cycle backwards"
 msgstr "Yolu sil..."
 
@@ -19399,14 +19382,6 @@ msgstr "Bitiş Zamanı"
 
 
 msgid "Start Offset"
-msgstr "Başlangıç Zamanı"
-
-
-msgid "End Still"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Start Still"
 msgstr "Başlangıç Zamanı"
 
 
@@ -22196,11 +22171,6 @@ msgstr "Yörüngede Sağa"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Sahne..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Renk"
 
@@ -22213,6 +22183,11 @@ msgstr "Metin"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Katman Sil"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Sahne..."
 
 
 msgctxt "Operator"
@@ -23560,6 +23535,10 @@ msgid "Cannot create editmode armature"
 msgstr "Bağlantılı Çoğalt"
 
 
+msgid "No active mesh object"
+msgstr "Aktif nesneyi göster."
+
+
 msgid "Baking to unsupported image type"
 msgstr "Nesne Tipini Değiştir..."
 
@@ -23630,10 +23609,6 @@ msgstr "Ayarlanan boyutun %50 si ölçeğinde işle"
 
 msgid "Object (Keep Transform)"
 msgstr "Görsel Dönüşüm"
-
-
-msgid "OK?"
-msgstr "TAMAM?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -23714,10 +23689,6 @@ msgstr "Kütüphaneye Ekle"
 
 msgid "No more keyframes to jump to in this direction"
 msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
-msgid "No active mesh object"
-msgstr "Aktif nesneyi göster."
 
 
 msgid "Image data could not be found"
@@ -24096,10 +24067,6 @@ msgid "Modify"
 msgstr "Değiştirici"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
 msgid "Image not packed"
 msgstr "Dosya adı"
 
@@ -24334,6 +24301,10 @@ msgstr "Poz Ekle..."
 
 msgid "Nothing indicated"
 msgstr "Hiçbirşey seçilmedi"
+
+
+msgid "OK?"
+msgstr "TAMAM?"
 
 
 msgid "unsupported format"

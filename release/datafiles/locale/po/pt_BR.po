@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -1547,6 +1547,10 @@ msgid "Shape Key data-blocks"
 msgstr "Blocos de dados de chaves de formato."
 
 
+msgid "Simulations"
+msgstr "Simulações"
+
+
 msgid "Sounds"
 msgstr "Sons"
 
@@ -2745,6 +2749,10 @@ msgstr "Há cor secundária"
 
 msgid "Has Strength Pressure"
 msgstr "Há força de pressão"
+
+
+msgid "Count"
+msgstr "Contagem"
 
 
 msgid "Angle"
@@ -6364,6 +6372,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Usa as terminações iniciais dos traços para definir a profundidade."
 
 
+msgid "Index"
+msgstr "Índice"
+
+
+msgid "Radius"
+msgstr "Raio"
+
+
 msgid "Preset"
 msgstr "Predefinições"
 
@@ -6406,10 +6422,6 @@ msgstr "Índice do material"
 
 msgid "Name of the dash segment"
 msgstr "Nome do tracejado"
-
-
-msgid "Radius"
-msgstr "Raio"
 
 
 msgid "Dependency Graph"
@@ -8913,10 +8925,6 @@ msgid "Face Map"
 msgstr "Mapa de Face"
 
 
-msgid "Index"
-msgstr "Índice"
-
-
 msgid "Field Settings"
 msgstr "Configurações de campo"
 
@@ -8945,16 +8953,16 @@ msgid "Fall-Off"
 msgstr "Cair para fora"
 
 
+msgid "Cone"
+msgstr "Cone"
+
+
 msgid "Sphere"
 msgstr "Esfera"
 
 
 msgid "Tube"
 msgstr "Tubo"
-
-
-msgid "Cone"
-msgstr "Cone"
 
 
 msgid "Flow"
@@ -9017,6 +9025,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "Tipo do deslocamento periódico na curva."
 
 
+msgid "Braid"
+msgstr "Trançar"
+
+
 msgid "Curl"
 msgstr "Encaracolar"
 
@@ -9027,10 +9039,6 @@ msgstr "Radial"
 
 msgid "Wave"
 msgstr "Ondas"
-
-
-msgid "Braid"
-msgstr "Trançar"
 
 
 msgid "The distance from which particles are affected fully"
@@ -9169,44 +9177,44 @@ msgid "Type of field"
 msgstr "Tipo de campo"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Campo radial apontando para o centro do objeto."
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "Força constante ao longo da força do eixo local Z do objeto."
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "Força rotacional para as torções no eixo local Z do objeto que irão gerar as espirais."
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "Campo de força depende da velocidade das partículas."
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "A fonte deste campo de força é o ponto zero de um oscilador harmônico."
-
-
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "Campo de força esférico com base na carga das partículas, apenas influencia a carga de outros campos de força."
-
-
-msgid "Forcefield based on the Lennard-Jones potential"
-msgstr "O campo de força é embasado no potencial de Lennard-Jones."
 
 
 msgid "Create a force along a curve object"
 msgstr "Cria uma força ao longo de um objeto de curva."
 
 
+msgid "Create a force that dampens motion"
+msgstr "Cria uma força que amortece o movimento."
+
+
+msgid "Radial field toward the center of object"
+msgstr "Campo radial apontando para o centro do objeto."
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "A fonte deste campo de força é o ponto zero de um oscilador harmônico."
+
+
+msgid "Forcefield based on the Lennard-Jones potential"
+msgstr "O campo de força é embasado no potencial de Lennard-Jones."
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "Campo de força depende da velocidade das partículas."
+
+
 msgid "Create turbulence with a noise field"
 msgstr "Cria turbulência com um campo de ruídos."
 
 
-msgid "Create a force that dampens motion"
-msgstr "Cria uma força que amortece o movimento."
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "Força rotacional para as torções no eixo local Z do objeto que irão gerar as espirais."
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "Força constante ao longo da força do eixo local Z do objeto."
 
 
 msgid "2D"
@@ -9335,10 +9343,6 @@ msgstr "Freestyle - Estilos de linhas"
 
 msgid "Particles Settings"
 msgstr "Configurações de partículas"
-
-
-msgid "Simulations"
-msgstr "Simulações"
 
 
 msgid "Node Trees"
@@ -11360,10 +11364,6 @@ msgstr "Nome do grupo de vértices que determina a influência do modificador po
 
 msgid "Constant Offset"
 msgstr "Deslocamento constante"
-
-
-msgid "Count"
-msgstr "Contagem"
 
 
 msgid "Pass"
@@ -22470,6 +22470,11 @@ msgstr "Especiais para conjunto de linhas"
 
 msgid "Effect Strip"
 msgstr "Faixa de efeito"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Cena"
 
 
 msgid "Apply"
@@ -41856,10 +41861,6 @@ msgid "Add Node Collection"
 msgstr "Adicionar Coleção de Nós"
 
 
-msgid "Data-block name to assign"
-msgstr "Nome do bloco de dados para atribuir."
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Adicionar nó de arquivo"
@@ -42810,10 +42811,6 @@ msgid "Path to image file"
 msgstr "Caminho para arquivo de imagem"
 
 
-msgid "Image name to assign"
-msgstr "Nome da imagem para atribuir"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Descarregar material nomeado no objeto"
@@ -42826,10 +42823,6 @@ msgstr "Duplicar objetos"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica os objetos selecionados."
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Duplica os objetos selecionados e permite movê-los."
 
 
 msgid "Duplicate Objects"
@@ -43456,11 +43449,6 @@ msgstr "Adiciona um efeito ou operação procedural ao objeto ativo."
 
 msgid "Keep Modifier"
 msgstr "Manter Modificador"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Converter Modificador"
 
 
 msgid "Convert particles to a mesh object"
@@ -45375,15 +45363,6 @@ msgstr "Adicionar UVs simples"
 
 msgid "Add cube map uvs on mesh"
 msgstr "Adicionar UVs de mapeamento cúbico na malha."
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Adicionar compartimento de pintura de textura"
-
-
-msgid "Add a texture paint slot"
-msgstr "Adiciona um novo compartimento de pintura de textura."
 
 
 msgctxt "Operator"
@@ -49903,10 +49882,6 @@ msgid "Copy the Python command matching this button"
 msgstr "Copia o comando em linguagem de programação Python que referencia a funcionalidade deste botão."
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Copia a propriedade a partir deste objeto para os objetos selecionados ou ossos."
-
-
 msgid "Copy to selected all elements of the array"
 msgstr "Copia todos os elementos da matriz para a seleção atual."
 
@@ -52000,10 +51975,6 @@ msgstr "Configura um valor para matriz de contexto (útil para reciclagem do mod
 
 msgid "Context Attributes"
 msgstr "Atributos de contexto"
-
-
-msgid "RNA context string"
-msgstr "Variável de texto de contexto RNA."
 
 
 msgid "Cycle backwards"
@@ -54542,10 +54513,6 @@ msgstr "Torção"
 
 msgid "Clone from Paint Slot"
 msgstr "Clona a partir do compartimento de pintura."
-
-
-msgid "Sculpt Strokes"
-msgstr "Escultura de traços"
 
 
 msgid "Default tools for particle mode"
@@ -60113,14 +60080,6 @@ msgid "X position where the strip begins"
 msgstr "A posição no eixo X onde a faixa é iniciada."
 
 
-msgid "End Still"
-msgstr "Terminar imóvel"
-
-
-msgid "Start Still"
-msgstr "Iniciar imóvel"
-
-
 msgid "Lock strip so that it cannot be transformed"
 msgstr "Trava a faixa de maneira que esta não possa ser transformada."
 
@@ -62321,6 +62280,18 @@ msgid "Scopes to visualize image statistics"
 msgstr "Escopos para visualizar estatísticas de imagem."
 
 
+msgid "Show Gizmo"
+msgstr "Mostrar Apetrecho"
+
+
+msgid "Show gizmos of all types"
+msgstr "Mostrar apetrechos de todos os tipos"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Apetrecho de navegação na janela de exibição"
+
+
 msgid "Show Mask Editor"
 msgstr "Mostrar o editor de máscara"
 
@@ -62770,24 +62741,12 @@ msgid "Display result under strips"
 msgstr "Mostrar resultado abaixo das faixas."
 
 
-msgid "Show Gizmo"
-msgstr "Mostrar Apetrecho"
-
-
-msgid "Show gizmos of all types"
-msgstr "Mostrar apetrechos de todos os tipos"
-
-
 msgid "Context Gizmo"
 msgstr "Apetrecho de Contexto"
 
 
 msgid "Context sensitive gizmos for the active item"
 msgstr "Apetrechos sensíveis ao contexto para o item ativo"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Apetrecho de navegação na janela de exibição"
 
 
 msgid "Tool Gizmo"
@@ -67673,16 +67632,16 @@ msgid "Source Clone UV Map"
 msgstr "Mapa UV clone da fonte"
 
 
+msgid "Mask Value"
+msgstr "Valor de máscara"
+
+
 msgid "CCW"
 msgstr "Sentido anti-horário"
 
 
 msgid "CW"
 msgstr "Sentido horário"
-
-
-msgid "Mask Value"
-msgstr "Valor de máscara"
 
 
 msgctxt "Operator"
@@ -68869,11 +68828,6 @@ msgstr "Lado do Quadro..."
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Cena..."
-
-
-msgctxt "Operator"
 msgid "Clip..."
 msgstr "Clipes..."
 
@@ -68896,6 +68850,11 @@ msgstr "Texto"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Camada de ajuste"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Cena..."
 
 
 msgctxt "Operator"
@@ -69000,11 +68959,6 @@ msgstr "Esticar para preencher"
 
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervalo de quadros original: %d-%d (%d)"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Cena"
 
 
 msgctxt "Operator"
@@ -69316,16 +69270,6 @@ msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil as SVG"
-msgstr "Lápis de cera como SVG"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil as PDF"
-msgstr "Lápis de cera como PDF"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Renderizar imagem"
 
@@ -69363,6 +69307,16 @@ msgstr "Referência de API Python"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "Relatar defeito (em inglês)"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as SVG"
+msgstr "Lápis de cera como SVG"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as PDF"
+msgstr "Lápis de cera como PDF"
 
 
 msgctxt "Operator"
@@ -73228,6 +73182,10 @@ msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need a
 msgstr "Não é possível apagar o objeto '%s' a partir da cena '%s'. Objetos utilizados indiretamente necessitam ao menos um usuário."
 
 
+msgid "No active mesh object"
+msgstr "Nenhum objeto de malha ativa."
+
+
 msgid "Baking of multires data only works with an active mesh object"
 msgstr "Geração e gravação dos dados de multirresolução somente funciona com um objeto de malha ativa."
 
@@ -73550,10 +73508,6 @@ msgstr "Definir parentesco para"
 
 msgid "Object (Keep Transform)"
 msgstr "Objeto (manter transformações)"
-
-
-msgid "OK?"
-msgstr "Confirma ?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -74107,10 +74061,6 @@ msgstr "Arquivos de multi-camadas empacotados não podem ser pintados: %s"
 
 msgid "Untitled"
 msgstr "Sem título"
-
-
-msgid "No active mesh object"
-msgstr "Nenhum objeto de malha ativa."
 
 
 msgid "Image could not be found"
@@ -76116,24 +76066,12 @@ msgid "Modify"
 msgstr "Modificar"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Não foi possível adquirir o contingenciador a partir da imagem."
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "Cena não está no contexto, não foi possível obter parâmetros salvos."
-
-
 msgid "Image not packed"
 msgstr "Imagem não empacotada."
 
 
 msgid "Could not save packed file to disk as '%s'"
 msgstr "Não é possível salvar o arquivo empacotado para o disco como '%s'."
-
-
-msgid "Could not write image: %s, '%s'"
-msgstr "Não foi possível escrever imagem: %s,  '%s'."
 
 
 msgid "Image '%s' could not be saved to '%s'"
@@ -77253,6 +77191,10 @@ msgid "OFF"
 msgstr "DESLIGADO"
 
 
+msgid "OK?"
+msgstr "Confirma ?"
+
+
 msgid "unsupported format"
 msgstr "formato não suportado"
 
@@ -77484,10 +77426,6 @@ msgstr "Búlgaro (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Grego (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Koreano (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

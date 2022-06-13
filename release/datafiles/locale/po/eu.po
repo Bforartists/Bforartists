@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -373,12 +373,12 @@ msgid "Force"
 msgstr "Indarra"
 
 
-msgid "Sphere"
-msgstr "Esfera"
-
-
 msgid "Cone"
 msgstr "Konoa"
+
+
+msgid "Sphere"
+msgstr "Esfera"
 
 
 msgid "Axis"
@@ -1919,11 +1919,6 @@ msgstr "Gorde honela..."
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Eszena"
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Kolorea"
 
@@ -1931,6 +1926,11 @@ msgstr "Kolorea"
 msgctxt "Operator"
 msgid "Text"
 msgstr "Testua"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Eszena"
 
 
 msgctxt "Operator"
@@ -2508,10 +2508,6 @@ msgstr "Bulgariera (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Greziera (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Koreera (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

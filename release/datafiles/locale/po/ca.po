@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -816,6 +816,10 @@ msgstr "Mode d'Edició"
 
 msgid "Has Secondary Color"
 msgstr "Començar Joc"
+
+
+msgid "Count"
+msgstr "Seleccionar fila"
 
 
 msgid "Mode"
@@ -3240,16 +3244,16 @@ msgid "Fall-Off"
 msgstr "Mostrar propietats de les arestes"
 
 
+msgid "Cone"
+msgstr "Con"
+
+
 msgid "Sphere"
 msgstr "Esfera UV"
 
 
 msgid "Tube"
 msgstr "Tub"
-
-
-msgid "Cone"
-msgstr "Con"
 
 
 msgid "Wave"
@@ -3894,10 +3898,6 @@ msgstr "Pintura Vectorial"
 
 msgid "Constant Offset"
 msgstr "Joc"
-
-
-msgid "Count"
-msgstr "Seleccionar fila"
 
 
 msgid "Object Offset"
@@ -15412,10 +15412,6 @@ msgid "Filepath"
 msgstr "Arxiu"
 
 
-msgid "Image name to assign"
-msgstr "Guardar com"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Duplicar"
@@ -15427,10 +15423,6 @@ msgstr "Duplicar"
 
 
 msgid "Duplicate selected objects"
-msgstr "Seleccionar connectats"
-
-
-msgid "Duplicate selected objects and move them"
 msgstr "Seleccionar connectats"
 
 
@@ -15686,11 +15678,6 @@ msgstr "Primitiu"
 
 msgctxt "Operator"
 msgid "Set Object Mode"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
 msgstr "Comprimir Dades"
 
 
@@ -19038,10 +19025,6 @@ msgid "Import COLLADA"
 msgstr "Seleccionar fila"
 
 
-msgid "RNA context string"
-msgstr "Eines"
-
-
 msgid "Toggle a context value"
 msgstr "Comprimir Dades"
 
@@ -21171,14 +21154,6 @@ msgstr "Joc"
 
 
 msgid "Start Offset"
-msgstr "Joc"
-
-
-msgid "End Still"
-msgstr "Joc"
-
-
-msgid "Start Still"
 msgstr "Joc"
 
 
@@ -24223,11 +24198,6 @@ msgstr "Dreta"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Escena"
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Color"
 
@@ -24240,6 +24210,11 @@ msgstr "Texte"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Escena"
 
 
 msgctxt "Operator"
@@ -25352,6 +25327,10 @@ msgid "Cannot create editmode armature"
 msgstr "Duplicar"
 
 
+msgid "No active mesh object"
+msgstr "Seleccionar connectats"
+
+
 msgid "Child Of constraint not found"
 msgstr "Afegir Tira"
 
@@ -25494,10 +25473,6 @@ msgstr "Arxiu"
 
 msgid "Flip to Top"
 msgstr "Arxiu"
-
-
-msgid "No active mesh object"
-msgstr "Seleccionar connectats"
 
 
 msgid "Image data could not be found"
@@ -25886,10 +25861,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Modify"
 msgstr "Esborrar tot"
-
-
-msgid "Could not acquire buffer from image"
-msgstr "Amagar Seleccionats"
 
 
 msgid "Image not packed"

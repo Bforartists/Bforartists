@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -618,6 +618,14 @@ msgid "Are there any bone paths that will need updating (read-only)"
 msgstr "Es gibt einige Knochen-Bewegungspfade, welche eine Aktualisierung benötigen (read-only)"
 
 
+msgid "Type of range to calculate for Motion Paths"
+msgstr "Art des Bereichs, der für Bewegungspfade berechnet werden soll"
+
+
+msgid "Selected Keys"
+msgstr "Ausgewählte Tasten"
+
+
 msgid "Show Frame Numbers"
 msgstr "Einzelbildnummern anzeigen"
 
@@ -974,6 +982,10 @@ msgid "Author"
 msgstr "Autor"
 
 
+msgid "Catalog UUID"
+msgstr "Katalog UUID"
+
+
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1072,6 +1084,10 @@ msgstr "2D Vektor"
 
 msgid "2D vector with floating-point values"
 msgstr "2D Vektor mit Fließkomma Variable"
+
+
+msgid "8-Bit Integer"
+msgstr "8-Bit Integer"
 
 
 msgid "Domain"
@@ -1802,6 +1818,10 @@ msgid "Point Clouds"
 msgstr "Punkt Wolken"
 
 
+msgid "Point cloud data-blocks"
+msgstr "Punkt Wolken Datenblöcke"
+
+
 msgid "Scenes"
 msgstr "Szenen"
 
@@ -1824,6 +1844,10 @@ msgstr "Formschlüssel"
 
 msgid "Shape Key data-blocks"
 msgstr "Formschlüssel-Datenblöcke"
+
+
+msgid "Simulations"
+msgstr "Simulationen"
 
 
 msgid "Sounds"
@@ -3262,6 +3286,10 @@ msgid "Has Weight"
 msgstr "Hat Einfluss"
 
 
+msgid "Count"
+msgstr "Anzahl"
+
+
 msgid "Curve Length"
 msgstr "Kurvenlänge"
 
@@ -3978,8 +4006,20 @@ msgid "RGBA color in scene linear color space"
 msgstr "RGBA-Farbe im linearen Farbraum der Szene"
 
 
+msgid "8-bit value in geometry attribute"
+msgstr "8-Bit-Wert im Geometrie-Attribut"
+
+
+msgid "Cache Layer"
+msgstr "Cache-Ebene"
+
+
 msgid "Hide Layer"
 msgstr "Ebene ausblenden"
+
+
+msgid "Cache Layers"
+msgstr "Cache-Ebenen"
 
 
 msgid "Active Layer"
@@ -5887,6 +5927,10 @@ msgid "Object Action"
 msgstr "Objektaktion"
 
 
+msgid "Use Evaluation Time"
+msgstr "Evaluierungszeit verwenden"
+
+
 msgid "Targets"
 msgstr "Ziele"
 
@@ -5997,6 +6041,10 @@ msgstr "Z-Skalierung"
 
 msgid "Use Z Scale of Parent"
 msgstr "Z-Skalierung des Elternteils verwenden"
+
+
+msgid "Clamp To Constraint"
+msgstr "An Bedingung anhängen"
 
 
 msgid "Constrain an object's location to the nearest point along the target path"
@@ -7163,6 +7211,14 @@ msgid "Extrapolated"
 msgstr "Hochrechnen"
 
 
+msgid "Standard"
+msgstr "Standard"
+
+
+msgid "Filmlike"
+msgstr "Filmähnlich"
+
+
 msgid "Clip"
 msgstr "Clip"
 
@@ -7211,6 +7267,14 @@ msgid "Method"
 msgstr "Methode"
 
 
+msgid "Curve fitting method"
+msgstr "Kurven Einpassmethode"
+
+
+msgid "Refit"
+msgstr "Erneut einpassen"
+
+
 msgid "Split"
 msgstr "Teilen"
 
@@ -7255,6 +7319,14 @@ msgid "Only First"
 msgstr "Nur erstes"
 
 
+msgid "Index"
+msgstr "Index"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
 msgid "Profile control points"
 msgstr "Profil Kontrollpunkte"
 
@@ -7295,8 +7367,16 @@ msgid "X/Y coordinates of the path point"
 msgstr "X/Y-Koordinaten des Pfadpunktes"
 
 
+msgid "Profile Point"
+msgstr "Profilpunkt"
+
+
 msgid "Collection of Profile Points"
 msgstr "Sammlung von Profilpunkten"
+
+
+msgid "Number of Points"
+msgstr "Anzahl der Punkte"
 
 
 msgid "Active Spline"
@@ -7317,10 +7397,6 @@ msgstr "Lücke"
 
 msgid "Material Index"
 msgstr "Material-Index"
-
-
-msgid "Radius"
-msgstr "Radius"
 
 
 msgid "IDs"
@@ -7407,12 +7483,24 @@ msgid "Geometry"
 msgstr "Geometrie"
 
 
+msgid "Object geometry is updated"
+msgstr "Objektgeometrie wurde aktualisiert"
+
+
 msgid "Shading"
 msgstr "Shading"
 
 
+msgid "Object shading is updated"
+msgstr "Objektschattierung wurde aktualisiert"
+
+
 msgid "Transform"
 msgstr "Transformieren"
+
+
+msgid "Object transformation is updated"
+msgstr "Objekttransformation wurde aktualisiert"
 
 
 msgid "Safe Areas"
@@ -8021,6 +8109,14 @@ msgid "Object Center"
 msgstr "Objektmitte"
 
 
+msgid "Proximity"
+msgstr "Abstand"
+
+
+msgid "Mesh Volume + Proximity"
+msgstr "Maschenvolumen + Abstand"
+
+
 msgid "Mesh Volume"
 msgstr "Maschenvolumen"
 
@@ -8087,6 +8183,10 @@ msgstr "Partikel"
 
 msgid "Only Use Alpha"
 msgstr "Nur Alpha verwenden"
+
+
+msgid "Only read color ramp alpha"
+msgstr "Nur Farbrampe Alpha lesen"
 
 
 msgid "Replace Color"
@@ -8241,6 +8341,10 @@ msgid "File Format"
 msgstr "Dateiformat"
 
 
+msgid "PNG"
+msgstr "PNG"
+
+
 msgid "OpenEXR"
 msgstr "OpenEXR"
 
@@ -8301,6 +8405,10 @@ msgid "Output Name"
 msgstr "Ausgabename"
 
 
+msgid "Name used to save output from this surface"
+msgstr "Name, der zum Speichern der Ausgabe von dieser Oberfläche verwendet wird"
+
+
 msgid "Point Cache"
 msgstr "Punktpuffer"
 
@@ -8309,8 +8417,16 @@ msgid "Shrink Speed"
 msgstr "Schrumpfgeschwindigkeit"
 
 
+msgid "How fast shrink effect moves on the canvas surface"
+msgstr "Wie schnell sich der Verkleinerungseffekt auf der Leinwandoberfläche bewegt"
+
+
 msgid "Spread Speed"
 msgstr "Spritzgeschwindigkeit"
+
+
+msgid "How fast spread effect moves on the canvas surface"
+msgstr "Wie schnell sich der Spread-Effekt auf der Canvas-Oberfläche bewegt"
 
 
 msgid "Format"
@@ -8341,6 +8457,10 @@ msgid "Anti-Aliasing"
 msgstr "Antialiasing"
 
 
+msgid "Use 5x multisampling to smooth paint edges"
+msgstr "Verwenden Sie 5x Multisampling zum Glätten von Lackkanten"
+
+
 msgid "Slow"
 msgstr "Langsam"
 
@@ -8355,6 +8475,10 @@ msgstr "Trocken"
 
 msgid "Enable to make surface wetness dry over time"
 msgstr "Oberflächentrocknungszeit aktivieren"
+
+
+msgid "Incremental"
+msgstr "Schrittweise"
 
 
 msgid "Use Output"
@@ -8753,12 +8877,32 @@ msgid "Disables audio output, for video-only renders"
 msgstr "Deaktivieren vom Audioausgang, für 'Nur Video' Renderer"
 
 
+msgid "AAC"
+msgstr "AAC"
+
+
+msgid "AC3"
+msgstr "AC3"
+
+
+msgid "FLAC"
+msgstr "FLAC"
+
+
 msgid "MP2"
 msgstr "MP2"
 
 
+msgid "MP3"
+msgstr "MP3"
+
+
 msgid "Opus"
 msgstr "Opus"
+
+
+msgid "PCM"
+msgstr "PCM"
 
 
 msgid "Vorbis"
@@ -8808,6 +8952,10 @@ msgstr "Deaktivieren vom Videoausgang, für 'Nur Audio' Renderer"
 
 msgid "DNxHD"
 msgstr "DNxHD"
+
+
+msgid "DV"
+msgstr "DV"
 
 
 msgid "FFmpeg video codec #1"
@@ -8870,6 +9018,10 @@ msgid "Lossless"
 msgstr "Verlustfrei"
 
 
+msgid "Perceptually Lossless"
+msgstr "Wahrnehmungsgemäß Verlustfrei"
+
+
 msgid "High Quality"
 msgstr "Hohe Qualität"
 
@@ -8924,6 +9076,10 @@ msgstr "Ausgabe Dateikontainer"
 
 msgid "MPEG-4"
 msgstr "MPEG-4"
+
+
+msgid "AVI"
+msgstr "AVI"
 
 
 msgid "QuickTime"
@@ -9215,8 +9371,20 @@ msgid "Coefficients"
 msgstr "Koeffizienten"
 
 
+msgid "Coefficients for 'x' (starting from lowest power of x^0)"
+msgstr "Koeffizienten für 'x' (ausgehend von der niedrigsten Potenz von x^0)"
+
+
 msgid "Type of generator to use"
 msgstr "Zu verwendender Generatortyp"
+
+
+msgid "Expanded Polynomial"
+msgstr "Erweitertes Polynom"
+
+
+msgid "Factorized Polynomial"
+msgstr "Faktorisiertes Polynom"
 
 
 msgid "Polynomial Order"
@@ -9283,10 +9451,6 @@ msgid "Face Map"
 msgstr "Oberflächenkarte"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Index number of the face map"
 msgstr "Indexnummer einer Oberflächenkarte"
 
@@ -9335,16 +9499,16 @@ msgid "Fall-Off"
 msgstr "Abfall"
 
 
+msgid "Cone"
+msgstr "Kegel"
+
+
 msgid "Sphere"
 msgstr "Kugel"
 
 
 msgid "Tube"
 msgstr "Rohr"
-
-
-msgid "Cone"
-msgstr "Kegel"
 
 
 msgid "Flow"
@@ -9483,12 +9647,12 @@ msgid "Type of field"
 msgstr "Feldtyp"
 
 
-msgid "Force field based on a texture"
-msgstr "Kraftfeld basierend auf einer Textur"
-
-
 msgid "Create a force along a curve object"
 msgstr "Eine Kraft entlang eines Kurvenobjekts erstellen"
+
+
+msgid "Force field based on a texture"
+msgstr "Kraftfeld basierend auf einer Textur"
 
 
 msgid "2D"
@@ -9655,10 +9819,6 @@ msgid "Show Scene data-blocks"
 msgstr "Szenen-Datenblöcke anzeigen"
 
 
-msgid "Simulations"
-msgstr "Simulationen"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "Simulations-Datenblöcke anzeigen"
 
@@ -9723,6 +9883,10 @@ msgid "Save"
 msgstr "Speichern"
 
 
+msgid "File Select Entry"
+msgstr "Eintrag zur Dateiauswahl"
+
+
 msgid "Data-block Type"
 msgstr "Datenblocktyp"
 
@@ -9779,6 +9943,10 @@ msgid "Paint Curve"
 msgstr "Mal-Kurve"
 
 
+msgid "Palette"
+msgstr "Palette"
+
+
 msgid "Particle"
 msgstr "Partikel"
 
@@ -9801,6 +9969,10 @@ msgstr "Lautsprecher"
 
 msgid "Text"
 msgstr "Text"
+
+
+msgid "Point Cloud"
+msgstr "Punkt Wolke"
 
 
 msgid "Window Manager"
@@ -9845,6 +10017,10 @@ msgstr "Masche, Kurven, Gitter, Anker und Metaball-Daten anzeigen"
 
 msgid "Images & Sounds"
 msgstr "Bilder & Sounds"
+
+
+msgid "Miscellaneous"
+msgstr "Verschiedenes"
 
 
 msgid "Show other data types"
@@ -9959,12 +10135,24 @@ msgid "One Level"
 msgstr "Eine Stufe"
 
 
+msgid "List all sub-directories' content, one level of recursion"
+msgstr "Auflisten des Inhalts aller Unterverzeichnisse von einer Rekursion"
+
+
 msgid "Two Levels"
 msgstr "Zwei Stufen"
 
 
+msgid "List all sub-directories' content, two levels of recursion"
+msgstr "Auflisten des Inhalts aller Unterverzeichnisse von zwei Rekursionen"
+
+
 msgid "Three Levels"
 msgstr "Drei Stufen"
+
+
+msgid "List all sub-directories' content, three levels of recursion"
+msgstr "Auflisten des Inhalts aller Unterverzeichnisse von drei Rekursionen"
 
 
 msgid "File Modification Date"
@@ -9973,6 +10161,10 @@ msgstr "Datei Modifikationsdatum"
 
 msgid "File Size"
 msgstr "Dateigröße"
+
+
+msgid "Show a column listing the size of each file"
+msgstr "Anzeigen einer Spalte, in der die Größe der einzelnen Dateien aufgeführt ist"
 
 
 msgid "Show hidden dot files"
@@ -10021,6 +10213,14 @@ msgstr "Dateien filtern"
 
 msgid "Enable filtering of files"
 msgstr "Dateifilter aktivieren"
+
+
+msgid "Only Assets"
+msgstr "Nur Assets"
+
+
+msgid "Hide .blend files items that are not data-blocks with asset metadata"
+msgstr "Ausblenden von .blend-Dateien, die keine Datenblöcke mit Asset-Metadaten sind"
 
 
 msgid "Filter Blender Backup Files"
@@ -10115,6 +10315,10 @@ msgid "Library Browser"
 msgstr "Bibliotheksbrowser"
 
 
+msgid "Whether we may browse blender files' content or not"
+msgstr "Ob wir den Inhalt von Blender-Dateien durchsuchen dürfen oder nicht"
+
+
 msgid "Reverse Sorting"
 msgstr "Rückwärts sortieren"
 
@@ -10181,6 +10385,10 @@ msgstr "Ende"
 
 msgid "Start"
 msgstr "Start"
+
+
+msgid "Resumable"
+msgstr "Wiederaufnehmbar"
 
 
 msgid "Replay"
@@ -11351,8 +11559,16 @@ msgid "Circular"
 msgstr "Kreisähnlich"
 
 
+msgid "Parallel lines"
+msgstr "Parallele Linien"
+
+
 msgid "Grid"
 msgstr "Raster"
+
+
+msgid "Isometric"
+msgstr "Isometisch"
 
 
 msgid "Use Guides"
@@ -11439,7 +11655,15 @@ msgid "Triangles"
 msgstr "Triangulieren"
 
 
+msgid "Rotation of the UV"
+msgstr "UV Rotation"
+
+
 msgid "UV Scale"
+msgstr "UV Skalierung"
+
+
+msgid "Scale of the UV"
 msgstr "UV Skalierung"
 
 
@@ -11459,12 +11683,25 @@ msgid "Coordinates"
 msgstr "Koordinaten"
 
 
+msgid "UV Fill"
+msgstr "UV füllen"
+
+
+msgid "Internal UV factor for filling"
+msgstr "Interner UV Faktor zum füllen"
+
+
 msgid "Grease Pencil Stroke Points"
 msgstr "Wachsstift-Strichpunkte"
 
 
 msgid "Triangle"
 msgstr "Dreieck"
+
+
+msgctxt "Operator"
+msgid "Gizmo"
+msgstr "Gizmo"
 
 
 msgid "Collection of gizmos"
@@ -11540,6 +11777,14 @@ msgid "Depth 3D"
 msgstr "3D Tiefe"
 
 
+msgid "Persistent"
+msgstr "Beharrlich"
+
+
+msgid "Tool Init"
+msgstr "Werkzeug init"
+
+
 msgid "Window"
 msgstr "Fenster"
 
@@ -11550,6 +11795,10 @@ msgstr "Kopfleiste"
 
 msgid "Temporary"
 msgstr "Temporär"
+
+
+msgid "UI"
+msgstr "UI"
 
 
 msgid "Tools"
@@ -11570,6 +11819,10 @@ msgstr "Navigationsbar"
 
 msgid "Footer"
 msgstr "Fußzeile"
+
+
+msgid "XR"
+msgstr "XR"
 
 
 msgid "Gizmos"
@@ -11620,8 +11873,16 @@ msgid "Vertex Weight Proximity"
 msgstr "Punkt-Gewicht-Umgebung"
 
 
+msgid "Array"
+msgstr "Array"
+
+
 msgid "Build"
 msgstr "Bauen"
+
+
+msgid "Dot Dash"
+msgstr "Punkt Strich"
 
 
 msgid "Envelope"
@@ -11686,10 +11947,6 @@ msgstr "Konstanter Versatz"
 
 msgid "Value for the distance between items"
 msgstr "Wert für den Abstand zwischen Elementen"
-
-
-msgid "Count"
-msgstr "Anzahl"
 
 
 msgid "Number of items"
@@ -11774,6 +12031,14 @@ msgstr "Ausrichten des Starts"
 
 msgid "Align End"
 msgstr "Ausrichten des Endes"
+
+
+msgid "Fade Factor"
+msgstr "Fade-Faktor"
+
+
+msgid "Opacity Strength"
+msgstr "Opazitätsstärke"
 
 
 msgid "Concurrent"
@@ -11922,6 +12187,10 @@ msgid "Step"
 msgstr "Schritt"
 
 
+msgid "Use Curvature"
+msgstr "Krümmung verwenden"
+
+
 msgid "Image Threshold"
 msgstr "Bildschwelle"
 
@@ -11952,6 +12221,10 @@ msgstr "Grenzen"
 
 msgid "Keep Contour"
 msgstr "Kontur beibehalten"
+
+
+msgid "All Lines"
+msgstr "Alle Linien"
 
 
 msgid "Use Intersection"
@@ -12190,8 +12463,20 @@ msgid "First frame of the range"
 msgstr "Erstes Einzelbild des Bereiches"
 
 
+msgid "Reverse"
+msgstr "Rückgängig"
+
+
 msgid "Frame Offset"
 msgstr "Einzelbild-Versatz"
+
+
+msgid "Custom Range"
+msgstr "Benutzerdefinierter Bereich"
+
+
+msgid "Keep Loop"
+msgstr "Schleife beibehalten"
 
 
 msgid "Tint Modifier"
@@ -12326,6 +12611,10 @@ msgid "Blue"
 msgstr "Blau"
 
 
+msgid "A"
+msgstr "A"
+
+
 msgid "Show Line"
 msgstr "Zeilen zeigen"
 
@@ -12338,8 +12627,16 @@ msgid "Additional data for an asset data-block"
 msgstr "Zusätzliche Daten für einen Asset-Datenblock"
 
 
+msgid "Is Evaluated"
+msgstr "Wird evaluiert"
+
+
 msgid "Is Indirect"
 msgstr "Ist Indirekt"
+
+
+msgid "Library file the data-block is linked from"
+msgstr "Bibliotheksdatei, von der aus der Datenblock verknüpft ist"
 
 
 msgid "Unique data-block ID name"
@@ -12352,6 +12649,18 @@ msgstr "Vollständiger Name"
 
 msgid "Original ID"
 msgstr "Originale ID"
+
+
+msgid "Library Override"
+msgstr "Bibliothek überschreiben"
+
+
+msgid "Library override data"
+msgstr "Bibliotheksüberschreibungsdaten"
+
+
+msgid "Tag"
+msgstr "Tag"
 
 
 msgid "Fake User"
@@ -12387,8 +12696,16 @@ msgid "ID Root Type"
 msgstr "ID-Stammtyp"
 
 
+msgid "Type of ID block that action can be used on - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING"
+msgstr "Typ des ID-Blocks, für den die Aktion verwendet werden kann - NICHT ÄNDERN, ES SEI DENN, SIE WISSEN, WAS SIE TUN"
+
+
 msgid "Pose Markers"
 msgstr "Posenmarker"
+
+
+msgid "Cyclic Animation"
+msgstr "Zyklische Animation"
 
 
 msgid "Animation data for this data-block"
@@ -12655,6 +12972,10 @@ msgid "Inflate"
 msgstr "Aufblasen"
 
 
+msgid "Loop"
+msgstr "Schleife"
+
+
 msgid "Boundary Origin Offset"
 msgstr "Grenzursprungs-Versatz"
 
@@ -12769,6 +13090,14 @@ msgstr "Schärfer"
 
 msgid "Inverse Square"
 msgstr "Invers"
+
+
+msgid "Delete Curves"
+msgstr "Kurven löschen"
+
+
+msgid "Add Curves"
+msgstr "Kurven hinzufügen"
 
 
 msgid "Dash Length"
@@ -12935,8 +13264,16 @@ msgid "Plane Trim"
 msgstr "Fläche trimmen"
 
 
+msgid "Rotate/Twist"
+msgstr "Drehen/Verdrehen"
+
+
 msgid "Scale/Translate"
 msgstr "Skalieren/Übersetzen"
+
+
+msgid "Topology"
+msgstr "Topologie"
 
 
 msgid "Smooth Iterations"
@@ -13323,6 +13660,10 @@ msgid "Wet Persistence"
 msgstr "Nasse Ausdauer"
 
 
+msgid "Forward"
+msgstr "Vorwärts"
+
+
 msgid "Sequence"
 msgstr "Sequenz"
 
@@ -13623,6 +13964,10 @@ msgid "Fill Mode"
 msgstr "Füllmodus"
 
 
+msgid "Half"
+msgstr "Halb"
+
+
 msgid "Path Length"
 msgstr "Pfadlänge"
 
@@ -13853,6 +14198,10 @@ msgstr "Vertikale Position des Unterstriches"
 
 msgid "Fast Editing"
 msgstr "Schnellbearbeitung"
+
+
+msgid "Attributes"
+msgstr "Eigenschaften"
 
 
 msgid "Active Texture"
@@ -14459,6 +14808,14 @@ msgid "Output image in TIFF format"
 msgstr "Bild im TIFF-Format ausgeben"
 
 
+msgid "WebP"
+msgstr "WebP"
+
+
+msgid "Output image in WebP format"
+msgstr "Bild im WebP Format ausgeben"
+
+
 msgid "AVI JPEG"
 msgstr "AVI JPEG"
 
@@ -14597,6 +14954,10 @@ msgstr "Rendersteckplatz"
 
 msgid "Render slots of the image"
 msgstr "Rendersteckplatz des Bildes"
+
+
+msgid "X/Y pixels per meter, for the image buffer"
+msgstr "X/Y-Pixel pro Meter, für den Bildpuffer"
 
 
 msgid "Where the image comes from"
@@ -15141,10 +15502,6 @@ msgid "Preview World"
 msgstr "Weltvorschau"
 
 
-msgid "Attributes"
-msgstr "Eigenschaften"
-
-
 msgid "Auto Smooth Angle"
 msgstr "Winkel automatisch glätten"
 
@@ -15503,6 +15860,10 @@ msgstr "Niedrig"
 
 msgid "Low quality"
 msgstr "Niedrige Qualität"
+
+
+msgid "Execution Mode"
+msgstr "Ausführungsmodus"
 
 
 msgid "Tiled"
@@ -16356,6 +16717,10 @@ msgid "Material slot used for rendering particles"
 msgstr "Materialsteckplatz wird verwendet zum rendern von Partikeln"
 
 
+msgid "Dummy"
+msgstr "Dummy"
+
+
 msgid "Object Aligned"
 msgstr "Objekt ausgerichtet"
 
@@ -16624,6 +16989,10 @@ msgid "Virtual Parents"
 msgstr "Virtuelle Eltern"
 
 
+msgid "Point cloud data-block"
+msgstr "Punkt Wolken Datenblock"
+
+
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "Szenendatenblock, bestehend aus Objekten und Definition von Zeit- und Rendereinstellungen"
 
@@ -16840,6 +17209,10 @@ msgid "How to sync playback"
 msgstr "Wie die Synchronisation abgespielt wird"
 
 
+msgid "Play Every Frame"
+msgstr "Jeden Frame abspielen"
+
+
 msgid "Do not sync, play every frame"
 msgstr "Keine Synchronisation, spielt jedes Einzelbild ab"
 
@@ -16850,6 +17223,10 @@ msgstr "Einzelbild überspringen"
 
 msgid "Drop frames if playback is too slow"
 msgstr "Einzelbilder werden bei zu langsamer Wiedergabe übersprungen"
+
+
+msgid "Sync to Audio"
+msgstr "Mit Audio synchronisieren"
 
 
 msgid "Sync to audio playback, dropping frames"
@@ -16885,11 +17262,11 @@ msgstr "Ton vom Sequenzeditor beim Abspielen stumm schalten"
 
 
 msgid "Audio Scrubbing"
-msgstr "Ton Schruppen"
+msgstr "Audio Schruppen"
 
 
 msgid "Play audio from Sequence Editor while scrubbing"
-msgstr "Tom vom Sequenzeditor beim beim Schruppen abspielen"
+msgstr "Spielen Sie Audio aus dem Sequenzeditor ab, während Sie schrubben"
 
 
 msgid "Global Gravity"
@@ -16932,6 +17309,14 @@ msgid "Animation Playing"
 msgstr "Animationsdaten"
 
 
+msgid "Show Status Bar"
+msgstr "Statusleiste anzeigen"
+
+
+msgid "Show status bar"
+msgstr "Show Status Bar"
+
+
 msgid "All 3D Viewports"
 msgstr "Alle 3D Ansichtsfenster"
 
@@ -16962,6 +17347,18 @@ msgstr "Sequenzeditor"
 
 msgid "Top-Left 3D Editor"
 msgstr "3D-Editor oben links"
+
+
+msgid "Audio channels"
+msgstr "Audiokanäle"
+
+
+msgid "5 Channels"
+msgstr "5 Kanäle"
+
+
+msgid "6.1 Surround"
+msgstr "6.1 Surround"
 
 
 msgid "Caching"
@@ -17304,6 +17701,10 @@ msgstr "Bestimmt, ob das Rauschen in Graustufen oder RGB-Werte zurückgegeben wi
 
 msgid "Grayscale"
 msgstr "Graustufen"
+
+
+msgid "Blender Original"
+msgstr "Blender Original"
 
 
 msgid "Voronoi F1"
@@ -17654,6 +18055,22 @@ msgid "Sequence Mode"
 msgstr "Sequenzmodus"
 
 
+msgid "Ping-Pong"
+msgstr "Ping-Pong"
+
+
+msgid "Velocity X Grid"
+msgstr "Velocity X-Raster"
+
+
+msgid "Velocity Y Grid"
+msgstr "Velocity Y-Raster"
+
+
+msgid "Velocity Z Grid"
+msgstr "Velocity Z-Raster"
+
+
 msgid "Category"
 msgstr "Kategorie"
 
@@ -17826,6 +18243,10 @@ msgid "Epsilon"
 msgstr "Epsilon"
 
 
+msgid "Feedback"
+msgstr "Feedback"
+
+
 msgid "Animation"
 msgstr "Animation"
 
@@ -17888,6 +18309,10 @@ msgstr "32-Bit-Farbtiefe"
 
 msgid "Color Management"
 msgstr "Farbmanagement"
+
+
+msgid "Follow Scene"
+msgstr "Szene folgen"
 
 
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
@@ -18958,8 +19383,18 @@ msgid "Stop"
 msgstr "Stop"
 
 
+msgctxt "UI_Events_KeyMaps"
+msgid "Media First"
+msgstr "Media als erstes"
+
+
 msgid "|<<"
 msgstr "|<<"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Media Last"
+msgstr "Media als letztes"
 
 
 msgid ">>|"
@@ -19382,6 +19817,10 @@ msgid "Back"
 msgstr "Zurück"
 
 
+msgid "Ease In and Out"
+msgstr "Leichtes Ein- und Aussteigen"
+
+
 msgid "Left Handle"
 msgstr "Linker Griff"
 
@@ -19417,8 +19856,18 @@ msgid "Linear"
 msgstr "Linear"
 
 
+msgctxt "Action"
+msgid "Bezier"
+msgstr "Bézier"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Interpolation zwischen zwei Farbstoppern festlegen"
+
+
+msgctxt "Action"
+msgid "Sinusoidal"
+msgstr "Sinusförmig"
 
 
 msgctxt "Action"
@@ -19451,8 +19900,17 @@ msgstr "Zirkular"
 
 
 msgctxt "Action"
+msgid "Bounce"
+msgstr "Springen"
+
+
+msgctxt "Action"
 msgid "Elastic"
 msgstr "Elastisch"
+
+
+msgid "Period"
+msgstr "Periode"
 
 
 msgid "Keying Set"
@@ -20388,6 +20846,11 @@ msgstr "Bildraten-Voreinstellungen"
 
 msgid "Effect Strip"
 msgstr "Effektstreifen"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Szene"
 
 
 msgid "Change"
@@ -22331,6 +22794,10 @@ msgid "Do not allow deformation along the Y axis"
 msgstr "Deformation entlang der Y-Achse verbieten"
 
 
+msgid "Do not allow deformation along the Z axis"
+msgstr "Verformung entlang der Z-Achse nicht zulassen"
+
+
 msgid "Origin"
 msgstr "Ursprung"
 
@@ -23090,6 +23557,10 @@ msgid "Plane Tracks"
 msgstr "Ebene Spuren"
 
 
+msgid "Collection of plane tracks in this tracking data object"
+msgstr "Erfassung von Ebenenspuren in diesem Tracking-Datenobjekt"
+
+
 msgid "Tracks"
 msgstr "Spuren"
 
@@ -23346,12 +23817,20 @@ msgid "Active Track"
 msgstr "Aktive Spur"
 
 
+msgid "Active track in this tracking data object"
+msgstr "Aktive Spur in diesem Tracking-Datenobjekt"
+
+
 msgid "Movie Tracks"
 msgstr "Firmverfolgung"
 
 
 msgid "Movie Objects"
 msgstr "Filmobjekte"
+
+
+msgid "Active object in this tracking data object"
+msgstr "Aktives Objekt in diesem Überwachungsdatenobjekt"
 
 
 msgid "Image Opacity"
@@ -23376,6 +23855,10 @@ msgstr "Eindeutiger Spurname"
 
 msgid "Auto Keyframe"
 msgstr "Auto-Schlüsselbilder"
+
+
+msgid "Active plane track in this tracking data object"
+msgstr "Aktive Ebenenspur in diesem Tracking-Datenobjekt"
 
 
 msgid "Reconstructed"
@@ -23448,6 +23931,10 @@ msgstr "Standard Bewegungsmodell, das zur Verfolgung verwendet wird"
 
 msgid "Search for markers that are perspectively deformed (homography) between frames"
 msgstr "Sucht nach Markern, die zwischen den Einzelbildern perspektivisch deformiert sind (Homografie)"
+
+
+msgid "Affine"
+msgstr "Affin"
 
 
 msgid "Search for markers that are affine-deformed (t, r, k, and skew) between frames"
@@ -23940,6 +24427,10 @@ msgstr "Sigmaraum"
 
 msgid "Aspect Correction"
 msgstr "Seitenkorrektur"
+
+
+msgid "Type of aspect correction to use"
+msgstr "Art der zu verwendenden Aspektkorrektur"
 
 
 msgid "Relative Size X"
@@ -25283,6 +25774,10 @@ msgid "Node Output"
 msgstr "Knotenausgabe"
 
 
+msgid "Time Curve"
+msgstr "Zeitkurve"
+
+
 msgid "Adaptation"
 msgstr "Anpassung"
 
@@ -25535,6 +26030,10 @@ msgid "Geometry Node"
 msgstr "Geometrieknoten"
 
 
+msgid "Accumulate Field"
+msgstr "Feld \"Kumulieren\""
+
+
 msgid "Component"
 msgstr "Komponente"
 
@@ -25587,6 +26086,10 @@ msgid "Fill Curve"
 msgstr "Kurve füllen"
 
 
+msgid "Fillet Curve"
+msgstr "Kurve filetieren"
+
+
 msgid "Linear interpolation"
 msgstr "Biliniear interpolieren"
 
@@ -25601,6 +26104,14 @@ msgstr "Kubisch interpolieren"
 
 msgid "Edge Angle"
 msgstr "Kantenwinkel"
+
+
+msgid "Named Attribute"
+msgstr "Benanntes Attribut"
+
+
+msgid "Spline Resolution"
+msgstr "Spline-Auflösung"
 
 
 msgid "Is Viewport"
@@ -25687,6 +26198,10 @@ msgid "Scale Instances"
 msgstr "Skaliere Instanzen"
 
 
+msgid "Set Handle Positions"
+msgstr "Festlegen von Griffpositionen"
+
+
 msgid "Set Curve Radius"
 msgstr "Setze Kurvenradius"
 
@@ -25713,6 +26228,10 @@ msgstr "Zentrum"
 
 msgid "Top Right"
 msgstr "Oben rechts"
+
+
+msgid "Trim Curve"
+msgstr "Kurve trimmen"
 
 
 msgctxt "NodeTree"
@@ -25832,6 +26351,10 @@ msgid "Toon BSDF"
 msgstr "Zeichentrick BSDF"
 
 
+msgid "Use diffuse BSDF"
+msgstr "Diffuses BSDF verwenden"
+
+
 msgid "Translucent BSDF"
 msgstr "Transluzent BSDF"
 
@@ -25882,6 +26405,10 @@ msgstr "Objektraum"
 
 msgid "Emission"
 msgstr "Emission"
+
+
+msgid "Float Curve"
+msgstr "Kurven freigeben"
 
 
 msgid "Fresnel"
@@ -26600,6 +27127,10 @@ msgid "Attribute Domain"
 msgstr "Attributdomäne"
 
 
+msgid "Default Attribute"
+msgstr "Standardattribut"
+
+
 msgid "Maximum value"
 msgstr "Maximalwert"
 
@@ -27004,6 +27535,10 @@ msgstr "Alle Schlüsselbilder von einem bestimmten Bereich(e) auswählen"
 
 msgid "Selection to Nearest Frame"
 msgstr "Auswahl zum nähesten Einzelbild"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
+msgstr "Ausgewählte Keyframes am nächsten (ganzen) Frame ausrichten (zum Beheben versehentlicher Subframe-Offsets)"
 
 
 msgid "Snap selected keyframes to the nearest second"
@@ -27751,6 +28286,11 @@ msgstr "Setze fake Benutzer"
 
 
 msgctxt "Operator"
+msgid "Refresh Asset Library"
+msgstr "Asset Library aktualisieren"
+
+
+msgctxt "Operator"
 msgid "Open Blend File"
 msgstr "Blender-Datei öffnen"
 
@@ -27962,6 +28502,11 @@ msgstr "Pufferdatei laden"
 
 
 msgctxt "Operator"
+msgid "Refresh Archive"
+msgstr "Archiv aktualisieren"
+
+
+msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Kameravorlage hinzufügen"
 
@@ -28017,6 +28562,11 @@ msgstr "Lösungsskalierung anwenden"
 
 msgid "Distance between selected tracks"
 msgstr "Entfernung zwischen zwei Knochen oder Objekten"
+
+
+msgctxt "Operator"
+msgid "Average Tracks"
+msgstr "Durchschnittliche Tracks"
 
 
 msgctxt "Operator"
@@ -28083,6 +28633,11 @@ msgstr "Spuren kopieren"
 
 msgid "Copy selected tracks to clipboard"
 msgstr "Ausgewählte Spuren in die Zwischenablage kopieren"
+
+
+msgctxt "Operator"
+msgid "Create Plane Track"
+msgstr "Ebenenspur erstellen"
 
 
 msgctxt "Operator"
@@ -28886,6 +29441,11 @@ msgstr "Vier Leerzeichen zum Zeilenanfang hinzufügen"
 
 
 msgctxt "Operator"
+msgid "Indent or Autocomplete"
+msgstr "Einzug oder Autovervollständigung"
+
+
+msgctxt "Operator"
 msgid "Insert"
 msgstr "Einfügen"
 
@@ -29001,6 +29561,11 @@ msgstr "Beschränkung löschen"
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
 msgstr "Deaktivieren und Transformation beibehalten"
+
+
+msgctxt "Operator"
+msgid "Auto Animate Path"
+msgstr "Pfad automatisch animieren"
 
 
 msgid "First frame of path animation"
@@ -29185,6 +29750,10 @@ msgid "Time Slide"
 msgstr "Zeitgleiter"
 
 
+msgid "Time Extend"
+msgstr "Zeit erweitern"
+
+
 msgid "Bake Time"
 msgstr "Backzeit"
 
@@ -29246,12 +29815,20 @@ msgid "Recalculate the direction of selected handles"
 msgstr "Neuberechnung der Richtung der selektierten Griffe"
 
 
+msgid "Delete Point"
+msgstr "Punkt löschen"
+
+
 msgid "Remove from selection"
 msgstr "Von Auswahl entfernen"
 
 
 msgid "Move Point"
 msgstr "Punkt bewegen"
+
+
+msgid "Select Point"
+msgstr "Punkt auswählen"
 
 
 msgid "Toggle Vector"
@@ -29546,6 +30123,26 @@ msgstr "Vorschau generieren"
 
 
 msgctxt "Operator"
+msgid "Generate Preview from Object"
+msgstr "Vorschau aus Objekt generieren"
+
+
+msgctxt "Operator"
+msgid "Load Custom Preview"
+msgstr "Benutzerdefinierte Vorschau laden"
+
+
+msgctxt "Operator"
+msgid "Toggle Library Override Editable"
+msgstr "Umschalten der Bibliotheksüberschreibung Bearbeitbar"
+
+
+msgctxt "Operator"
+msgid "Unlink Data-Block"
+msgstr "Datenblockverknüpfung auflösen"
+
+
+msgctxt "Operator"
 msgid "Redo"
 msgstr "Wiederherstellen"
 
@@ -29640,6 +30237,10 @@ msgid "Convert rotations to euler XZY"
 msgstr "Rotationen zu Euler-XZY konvertieren"
 
 
+msgid "Euler (YXZ)"
+msgstr "Euler (YXZ)"
+
+
 msgid "Convert rotations to euler YXZ"
 msgstr "Rotationen zu Euler-YXZ konvertieren"
 
@@ -29658,6 +30259,10 @@ msgstr "Euler (ZXY)"
 
 msgid "Convert rotations to euler ZXY"
 msgstr "Rotationen zu Euler-ZXY konvertieren"
+
+
+msgid "Euler (ZYX)"
+msgstr "Euler (ZYX)"
 
 
 msgid "Convert rotations to euler ZYX"
@@ -29723,6 +30328,10 @@ msgstr "ASCII"
 
 msgid "Export the active vertex color layer"
 msgstr "Aktive Punkt-Farbebene exportieren"
+
+
+msgid "Selection Only"
+msgstr "Nur Auswahl"
 
 
 msgid "Export selected objects only"
@@ -30145,8 +30754,23 @@ msgid "Toggle hide hidden dot files"
 msgstr "Versteckte Punkt-Dateien verbergen/zeigen"
 
 
+msgctxt "Operator"
+msgid "Highlight File"
+msgstr "Datei hervorheben"
+
+
+msgctxt "Operator"
+msgid "Make Paths Absolute"
+msgstr "Pfade absolut machen"
+
+
 msgid "Make all paths to external files absolute"
 msgstr "Alle Pfade zu externen Dateien absolut machen"
+
+
+msgctxt "Operator"
+msgid "Make Paths Relative"
+msgstr "Pfade relativ machen"
 
 
 msgctxt "Operator"
@@ -30253,6 +30877,11 @@ msgid "Smooth Scroll"
 msgstr "Weich scrollen"
 
 
+msgctxt "Operator"
+msgid "Unpack Resources"
+msgstr "Ressourcen entpacken"
+
+
 msgid "How to unpack"
 msgstr "Wie entpackt werden soll"
 
@@ -30352,6 +30981,10 @@ msgid "Pause Bake"
 msgstr "Backe Pause"
 
 
+msgid "Pause Bake"
+msgstr "Backen pausieren"
+
+
 msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Flüssigkeits-Voreinstellung hinzufügen"
@@ -30364,6 +30997,10 @@ msgstr "Flüssigkeits-Voreinstellung hinzufügen oder entfernen"
 msgctxt "Operator"
 msgid "Set Case"
 msgstr "Kamera auswählen"
+
+
+msgid "Case"
+msgstr "Fall"
 
 
 msgid "Upper"
@@ -30445,6 +31082,10 @@ msgid "Style"
 msgstr "Stil"
 
 
+msgid "Bold"
+msgstr "Fett"
+
+
 msgid "Italic"
 msgstr "Kursiv"
 
@@ -30524,6 +31165,11 @@ msgstr "Verknüpfung aufheben"
 
 msgid "Unlink active font data-block"
 msgstr "Aufheben der Verknüpfung des aktiven Schriftdatenblocks"
+
+
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "Attribut hinzufügen"
 
 
 msgctxt "Operator"
@@ -30922,8 +31568,32 @@ msgstr "Ausgabe bestätigen"
 
 
 msgctxt "GPencil"
+msgid "Easing"
+msgstr "Lockerung"
+
+
+msgctxt "GPencil"
+msgid "Ease In and Out"
+msgstr "Leichtes Ein- und Aussteigen"
+
+
+msgid "Number of frames between generated interpolated frames"
+msgstr "Anzahl der Frames zwischen generierten interpolierten Frames"
+
+
+msgctxt "GPencil"
+msgid "Type"
+msgstr "Typ"
+
+
+msgctxt "GPencil"
 msgid "Linear"
 msgstr "Linear"
+
+
+msgctxt "GPencil"
+msgid "Sinusoidal"
+msgstr "Sinusförmig"
 
 
 msgctxt "GPencil"
@@ -30954,6 +31624,11 @@ msgstr "Zirkular"
 msgctxt "GPencil"
 msgid "Back"
 msgstr "Zurück"
+
+
+msgctxt "GPencil"
+msgid "Bounce"
+msgstr "Springen"
 
 
 msgctxt "GPencil"
@@ -31035,6 +31710,10 @@ msgid "Merge Down"
 msgstr "Unten zusammenführen"
 
 
+msgid "Combine Layers"
+msgstr "Kombinieren von Ebenen"
+
+
 msgctxt "Operator"
 msgid "Move Grease Pencil Layer"
 msgstr "Wachsstift-Ebene verschieben"
@@ -31108,6 +31787,11 @@ msgstr "Nicht verwendete Materialien entfernen"
 msgctxt "Operator"
 msgid "Unlock All Materials"
 msgstr "Alle Materialien entsperren"
+
+
+msgctxt "Operator"
+msgid "Copy Materials to Selected Object"
+msgstr "Materialien in ausgewähltes Objekt kopieren"
 
 
 msgctxt "Operator"
@@ -31324,6 +32008,10 @@ msgid "Snap Selection to Grid"
 msgstr "Auswahl an Raster einrasten"
 
 
+msgid "Snap selected points to the nearest grid points"
+msgstr "Ausgewählte Punkte an den nächstgelegenen Rasterpunkten ausrichten"
+
+
 msgid "Name of the material"
 msgstr "Name des Materials"
 
@@ -31505,6 +32193,10 @@ msgid "Assign to Vertex Group"
 msgstr "Der Punktgruppe zuweißen"
 
 
+msgid "Assign the selected vertices to the active vertex group"
+msgstr "Zuweisen der ausgewählten Scheitelpunkte zur aktiven Vertexgruppe"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Punktgruppe abwählen"
@@ -31561,6 +32253,16 @@ msgstr "Anfangen/Beenden vom Malereieinflussmodus für Wachsstiftstriche"
 msgctxt "Operator"
 msgid "Bake Curve"
 msgstr "Kurve backen"
+
+
+msgctxt "Operator"
+msgid "Blend to Default Value"
+msgstr "Mit Standardwert verschmelzen"
+
+
+msgctxt "Operator"
+msgid "Breakdown"
+msgstr "Panne"
 
 
 msgid "Insert new keyframe at the cursor position for the active F-Curve"
@@ -31670,6 +32372,10 @@ msgstr "Schlüssel glätten"
 
 msgid "Selection to Cursor Value"
 msgstr "Auswahl auf Cursorwert"
+
+
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Ausgewählte Keyframes am nächsten (ganzen) Frame ausrichten (zum Beheben versehentlicher Subframe-Offsets)"
 
 
 msgctxt "Operator"
@@ -33050,6 +33756,10 @@ msgid "Fill"
 msgstr "Füllen"
 
 
+msgid "Fill a selected edge loop with faces"
+msgstr "Füllen einer ausgewählten Kantenschleife mit Flächen"
+
+
 msgid "Span"
 msgstr "Abstand"
 
@@ -33296,6 +34006,10 @@ msgid "Proportional Editing"
 msgstr "Proportionales Bearbeiten"
 
 
+msgid "Projected (2D)"
+msgstr "Projektiert (2D)"
+
+
 msgctxt "Operator"
 msgid "Transform at Cursor Move"
 msgstr "Transformieren bei Cursorbewegung"
@@ -33476,6 +34190,11 @@ msgstr "UV-Kugel hinzufügen"
 
 msgid "Construct a UV sphere mesh"
 msgstr "UV Kugelmasche erzeugen"
+
+
+msgctxt "Operator"
+msgid "Align (rotate) object to XY plane"
+msgstr "Objekt an XY-Ebene ausrichten (drehen)"
 
 
 msgctxt "Operator"
@@ -33674,6 +34393,10 @@ msgid "Positive Axis"
 msgstr "Positive Achse"
 
 
+msgid "Negative Axis"
+msgstr "Negative Achse"
+
+
 msgctxt "Operator"
 msgid "Select Faces by Sides"
 msgstr "Berichte nach Index auswählen"
@@ -33689,6 +34412,14 @@ msgstr "Anzahl von Punkten"
 
 msgid "Type of comparison to make"
 msgstr "Darzustellender Informationstyp"
+
+
+msgid "Equal To"
+msgstr "Gleich"
+
+
+msgid "Not Equal To"
+msgstr "Ungleich"
 
 
 msgctxt "Operator"
@@ -33919,6 +34650,10 @@ msgid "Un-Subdivide"
 msgstr "Unterteilen"
 
 
+msgid "Un-subdivide selected edges and faces"
+msgstr "Unterteilen ausgewählter Kanten und Flächen aufheben"
+
+
 msgctxt "Operator"
 msgid "Add UV Map"
 msgstr "UV Map hinzufügen"
@@ -34101,6 +34836,10 @@ msgid "Add F-Modifier"
 msgstr "F-Modifikator hinzufügen"
 
 
+msgid "Add F-Modifier to the active/selected NLA-Strips"
+msgstr "Hinzufügen eines F-Modifikators zu den aktiven/ausgewählten NLA-Streifen"
+
+
 msgid "Add copied F-Modifiers to the selected NLA-Strips"
 msgstr "Kopierte F-Modifikatoren zu den ausgewählten NLA-Streifen hinzufügen"
 
@@ -34220,10 +34959,6 @@ msgstr "Knotentyp"
 msgctxt "Operator"
 msgid "Add Node Collection"
 msgstr "Knotensammlung hinzufügen"
-
-
-msgid "Data-block name to assign"
-msgstr "Datenblockname zum Zuweisen"
 
 
 msgctxt "Operator"
@@ -34845,6 +35580,11 @@ msgid "Add Collection"
 msgstr "Sammlung hinzufügen"
 
 
+msgctxt "Operator"
+msgid "Link to Collection"
+msgstr "Zur Kollektion verknüpfen"
+
+
 msgid "Add an object to an existing collection"
 msgstr "Ein Objekt zu einer bestehenden Sammlung hinzufügen"
 
@@ -34908,10 +35648,6 @@ msgid "Add Object Data Instance"
 msgstr "Objektdateninstanzen hinzufügen"
 
 
-msgid "ID name to add"
-msgstr "Zu fügender ID-Name"
-
-
 msgid "Vertex Group(s)"
 msgstr "Eckpunktgruppe(n)"
 
@@ -34947,10 +35683,6 @@ msgstr "Objekte duplizieren"
 
 msgid "Duplicate selected objects"
 msgstr "Ausgewählte Objekte duplizieren"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Ausgewählte Objekte duplizieren und bewegen"
 
 
 msgid "Duplicate Objects"
@@ -35036,6 +35768,10 @@ msgstr "Modifikator anwenden"
 
 msgid "Apply modifier and remove from the stack"
 msgstr "Modifikator anwenden und vom Stapel entfernen"
+
+
+msgid "Apply As"
+msgstr "Anwenden wie"
 
 
 msgid "How to apply the modifier to the geometry"
@@ -35260,6 +35996,10 @@ msgid "Make Local"
 msgstr "Lokal machen"
 
 
+msgid "Make library linked data-blocks local to this file"
+msgstr "Erstellen von bibliotheksverknüpften Datenblöcken in dieser Datei"
+
+
 msgid "Selected Objects and Data"
 msgstr "Ausgewählte Objekte und Daten"
 
@@ -35310,6 +36050,10 @@ msgstr "Aktive Kamera an Ausgewählten ausrichten"
 msgctxt "Operator"
 msgid "Copy Material to Selected"
 msgstr "Kopieren von Material zum Ausgewählten"
+
+
+msgid "Copy material to selected objects"
+msgstr "Material in ausgewählte Objekte kopieren"
 
 
 msgctxt "Operator"
@@ -35395,11 +36139,6 @@ msgstr "Modifier als Formschlüssel anwenden"
 
 msgid "Keep Modifier"
 msgstr "Modifikator beibehalten"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Modifikator"
 
 
 msgctxt "Operator"
@@ -35571,6 +36310,14 @@ msgid "Paste Method"
 msgstr "Einfügemethode"
 
 
+msgid "Current Transform"
+msgstr "Aktuelle Transformation"
+
+
+msgid "Display type"
+msgstr "Anzeigetyp"
+
+
 msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "Objektpfade entfernen"
@@ -35600,6 +36347,10 @@ msgid "Edge Length"
 msgstr "Kantenlänge"
 
 
+msgid "Number of Faces"
+msgstr "Anzahl der Gesichter"
+
+
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Schnelle Explosion"
@@ -35618,6 +36369,10 @@ msgid "Heavy"
 msgstr "Schwer"
 
 
+msgid "View %"
+msgstr "Ansicht %"
+
+
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Schneller Rauch"
@@ -35629,6 +36384,10 @@ msgstr "Rauch-Objekte rendern"
 
 msgid "Smoke Style"
 msgstr "Rauchstil"
+
+
+msgid "Smoke & Fire"
+msgstr "Rauch & Feuer"
 
 
 msgctxt "Operator"
@@ -35943,6 +36702,10 @@ msgid "Apply Properties"
 msgstr "Eigenschaften anwenden"
 
 
+msgid "Snap selected item(s) to the mouse location"
+msgstr "Ausgewählte Elemente an der Mausposition ausrichten"
+
+
 msgid "All Transforms"
 msgstr "Alle Transformationen"
 
@@ -35959,6 +36722,10 @@ msgstr "Eine neue Knotengruppe zum aktiven Objekt hinzufügen"
 msgctxt "Operator"
 msgid "Assign to New Group"
 msgstr "Zur Gruppe übertragen"
+
+
+msgid "Assign the selected vertices to a new vertex group"
+msgstr "Zuweisen der ausgewählten Scheitelpunkte zu einer neuen Scheitelpunktgruppe"
 
 
 msgid "Subset"
@@ -36078,6 +36845,10 @@ msgstr "Alle Knotengruppen löschen"
 
 msgid "All Unlocked"
 msgstr "Alles entsperren"
+
+
+msgid "Remove all unlocked vertex groups"
+msgstr "Entfernen Sie alle entsperrten Scheitelpunktgruppen"
 
 
 msgid "Remove from all groups"
@@ -36378,6 +37149,30 @@ msgid "Make Local"
 msgstr "Lokal machen"
 
 
+msgid "Make Library Override Single"
+msgstr "Bibliotheksüberschreibung als Single festlegen"
+
+
+msgid "Make Library Override Hierarchy"
+msgstr "Hierarchie zum Überschreiben von Bibliotheken"
+
+
+msgid "Make Library Override Editable"
+msgstr "Bibliotheksüberschreibung bearbeitbar machen"
+
+
+msgid "Reset Library Override Single"
+msgstr "Bibliothek zurücksetzen Außerkraftsetzung Single"
+
+
+msgid "Clear Library Override Single"
+msgstr "Löschen von Bibliotheksüberschreibungs-Single"
+
+
+msgid "Clear Library Override Hierarchy"
+msgstr "Löschen der Bibliotheksüberschreibungshierarchie"
+
+
 msgid "Paste"
 msgstr "Einfügen"
 
@@ -36392,6 +37187,16 @@ msgstr "Unechten Benutzer löschen"
 
 msgid "Rename"
 msgstr "Umbenennen"
+
+
+msgctxt "Operator"
+msgid "Drag and Drop"
+msgstr "Drag and Drop"
+
+
+msgctxt "Operator"
+msgid "Open/Close"
+msgstr "Öffnen/Schließen"
 
 
 msgctxt "Operator"
@@ -36478,6 +37283,16 @@ msgid "Scene Operation"
 msgstr "Szenenoperation"
 
 
+msgctxt "Operator"
+msgid "Scroll Page"
+msgstr "Eine Seite runterscrollen"
+
+
+msgctxt "Operator"
+msgid "Toggle Selected"
+msgstr "Auswählbar ein/aus"
+
+
 msgid "Use box selection to select tree elements"
 msgstr "Boxauswahl verwenden, um Baumelemente auszuwählen"
 
@@ -36520,6 +37335,11 @@ msgstr "Alle Einträge um eine Ebene ein-/ausklappen"
 
 msgid "Expand all entries one level deep"
 msgstr "Alle Einträge eine Ebene tief ausklappen"
+
+
+msgctxt "Operator"
+msgid "Unhide All"
+msgstr "Alles verstecken"
 
 
 msgctxt "Operator"
@@ -36573,6 +37393,11 @@ msgstr "Verschieben Zeichenkurvenpunkt"
 
 msgid "Align Handles"
 msgstr "Griffe ausrichten"
+
+
+msgctxt "Operator"
+msgid "Add Simple UVs"
+msgstr "Einfache UVs hinzufügen"
 
 
 msgctxt "Operator"
@@ -36975,8 +37800,23 @@ msgid "Set the weight of selected keys"
 msgstr "Winkel der ausgewählten Knoten abflachen"
 
 
+msgctxt "Operator"
+msgid "Sanitize Legacy Pose Library Action"
+msgstr "Aktion \"Legacy-Pose-Bibliothek bereinigen\""
+
+
+msgctxt "Operator"
+msgid "Apply Pose Asset"
+msgstr "Pose Asset anwenden"
+
+
 msgid "Activate New Action"
 msgstr "Aktiviere neue Aktion"
+
+
+msgctxt "Operator"
+msgid "New Legacy Pose Library"
+msgstr "Neue Legacy-Pose-Bibliothek"
 
 
 msgctxt "Operator"
@@ -37002,6 +37842,10 @@ msgstr "Pose die umbenannt werden soll"
 
 msgid "Selected Only"
 msgstr "Nur ausgewähltes"
+
+
+msgid "All axes are affected"
+msgstr "Alle Achsen werden beeinflusst"
 
 
 msgid "All Properties"
@@ -37436,6 +38280,16 @@ msgid "Reset to Default Theme"
 msgstr "Zum Standard-Thema zurücksetzen"
 
 
+msgctxt "Operator"
+msgid "Copy Studio Light Settings"
+msgstr "Studiolicht Einstellungen kopieren"
+
+
+msgctxt "Operator"
+msgid "Install Light"
+msgstr "Licht installieren"
+
+
 msgid "Filter Folders"
 msgstr "Verzeichnisse filtern"
 
@@ -37446,6 +38300,11 @@ msgstr "Benutzerdefinierte MatCaps installieren"
 
 msgid "Studio"
 msgstr "Studio"
+
+
+msgctxt "Operator"
+msgid "Save Custom Studio Light"
+msgstr "Benutzerdefiniertes Studiolicht speichern"
 
 
 msgid "Show light preferences"
@@ -37527,6 +38386,15 @@ msgstr "Abtast-Voreinstellung hinzufügen"
 
 msgid "Add a Sampling Preset"
 msgstr "Fügt eine Abtast-Voreinstellung hinzu"
+
+
+msgctxt "Operator"
+msgid "Add Viewport Sampling Preset"
+msgstr "Ansichtsfenster-Sampling-Vorgabe hinzufügen"
+
+
+msgid "Add a Viewport Sampling Preset"
+msgstr "Hinzufügen einer Viewport-Sampling-Vorgabe"
 
 
 msgctxt "Operator"
@@ -37882,6 +38750,15 @@ msgid "Remove Active AOV"
 msgstr "Aktive AOV entfernen"
 
 
+msgid "Remove Active Lightgroup"
+msgstr "Aktive Lichtgruppe entfernen"
+
+
+msgctxt "Operator"
+msgid "Remove Unused Lightgroups"
+msgstr "Unbenutzte Lichtgruppen entfernen"
+
+
 msgid "Modifier state"
 msgstr "Modifikatorzustand"
 
@@ -37919,6 +38796,15 @@ msgstr "Frames verwerfen, um Framerate beizubehalten"
 msgctxt "Operator"
 msgid "Animation Step"
 msgstr "Animationsschritt"
+
+
+msgctxt "Operator"
+msgid "Close Area"
+msgstr "Bereich schließen"
+
+
+msgid "Close selected area"
+msgstr "Ausgewählten Bereich schließen"
 
 
 msgctxt "Operator"
@@ -38359,6 +39245,10 @@ msgid "Filter Mesh"
 msgstr "Masche filtern"
 
 
+msgid "Curvature Smooth Iterations"
+msgstr "Krümmungsglatte Iterationen"
+
+
 msgid "Smooth Ratio"
 msgstr "Radius glätten"
 
@@ -38429,6 +39319,10 @@ msgstr "Maus Position Y"
 
 msgid "Symmetrize the topology modifications"
 msgstr "Spiegelt den Topologie-Modifikator"
+
+
+msgid "Trim Mode"
+msgstr "Trim-Modus"
 
 
 msgctxt "Operator"
@@ -38515,6 +39409,10 @@ msgstr "Streifen entfernen"
 
 msgid "Erase selected strips from the sequencer"
 msgstr "Ausgewählte Streifen vom Sequenzer löschen"
+
+
+msgid "Delete Data"
+msgstr "Daten löschen"
 
 
 msgid "Duplicate selected strips and move them"
@@ -39067,6 +39965,10 @@ msgid "Update animation flags"
 msgstr "Aktualisieren von Animationsflags"
 
 
+msgid "Attribute Domain Type"
+msgstr "Attributdomänentyp"
+
+
 msgctxt "Operator"
 msgid "Toggle Pin"
 msgstr "Pin umschalten"
@@ -39471,6 +40373,10 @@ msgid "Correct UV coordinates when transforming"
 msgstr "Korrigiere UV Koordinaten beim Transformieren"
 
 
+msgid "Mirror selected items around one or more axes"
+msgstr "Spiegeln ausgewählter Elemente um eine oder mehrere Achsen"
+
+
 msgctxt "Operator"
 msgid "Push/Pull"
 msgstr "Drücken/Ziehen"
@@ -39614,10 +40520,6 @@ msgid "Copy to Selected"
 msgstr "Kopieren in Ausgewähltes"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Eigenschaft von diesem Objekt zu ausgewählten Objekten oder Knochen kopieren"
-
-
 msgctxt "Operator"
 msgid "Drop Color"
 msgstr "Farbe verwerfen"
@@ -39713,8 +40615,26 @@ msgid "Grease Pencil Eyedropper"
 msgstr "Wachsstift Pipette"
 
 
+msgctxt "Operator"
+msgid "I18n Add-on Export"
+msgstr "I18n Add-on exportieren"
+
+
+msgid "Add-on to process"
+msgstr "Add-on zu Prozess"
+
+
 msgid "Export POT"
 msgstr "POT exportieren"
+
+
+msgid "Update Existing"
+msgstr "Vorhandenes aktualisieren"
+
+
+msgctxt "Operator"
+msgid "I18n Add-on Import"
+msgstr "I18n Add-on importieren"
 
 
 msgid "Operator Name"
@@ -39727,8 +40647,22 @@ msgstr "Verschieben"
 
 
 msgctxt "Operator"
+msgid "I18n Load Settings"
+msgstr "I18n lade Einstellungen"
+
+
+msgctxt "Operator"
+msgid "I18n Save Settings"
+msgstr "I18n speichere Einstellungen"
+
+
+msgctxt "Operator"
 msgid "Update I18n Branches"
 msgstr "Update I18n Branches"
+
+
+msgid "Update i18n svn's branches (po files)"
+msgstr "Aktualisieren Sie die Branches von i18n svn (PO-Dateien)"
 
 
 msgid "Invert Selection"
@@ -40340,6 +41274,14 @@ msgid "Snap Selection to Active"
 msgstr "Auswahl am aktiven einrasten"
 
 
+msgid "Snap selected item(s) to the 3D cursor"
+msgstr "Ausgewählte Elemente am 3D-Cursor ausrichten"
+
+
+msgid "Snap selected item(s) to their nearest grid division"
+msgstr "Ausgewählte Elemente an der nächstgelegenen Rasterteilung ausrichten"
+
+
 msgid "Material Preview"
 msgstr "Materialbeispiel"
 
@@ -40363,6 +41305,11 @@ msgstr "Zwischen ausgewählten Markierungen"
 msgctxt "Operator"
 msgid "View Axis"
 msgstr "Achsen anzeigen"
+
+
+msgctxt "View3D"
+msgid "View"
+msgstr "Ansicht"
 
 
 msgctxt "View3D"
@@ -40469,16 +41416,32 @@ msgid "Orbit Left"
 msgstr "Nach links drehen"
 
 
+msgid "Orbit the view around to the left"
+msgstr "Umkreisen Sie die Ansicht nach links"
+
+
 msgid "Orbit Right"
 msgstr "Nach rechts drehen"
+
+
+msgid "Orbit the view around to the right"
+msgstr "Umkreisen Sie die Ansicht nach rechts"
 
 
 msgid "Orbit Up"
 msgstr "Nach oben drehen"
 
 
+msgid "Orbit the view up"
+msgstr "Umkreisen Sie die Ansicht nach oben"
+
+
 msgid "Orbit Down"
 msgstr "Nach unter drehen"
+
+
+msgid "Orbit the view down"
+msgstr "Umkreisen Sie die Ansicht nach unten"
 
 
 msgid "Pan"
@@ -40794,10 +41757,6 @@ msgid "Context Attributes"
 msgstr "Kontext  Attribut"
 
 
-msgid "RNA context string"
-msgstr "Spieleinstellungen"
-
-
 msgid "Header Text"
 msgstr "Kopfleistentext"
 
@@ -41019,6 +41978,10 @@ msgstr "Verknüpfen einer Bibliothek .blend Datei"
 
 msgid "Print memory statistics to the console"
 msgstr "Speicherstatistik auf der Konsole ausgeben"
+
+
+msgid "Apply modifiers to exported meshes"
+msgstr "Anwenden von Modifikatoren auf exportierte Netze"
 
 
 msgid "Export Animation"
@@ -41575,6 +42538,14 @@ msgid "Viewer Right"
 msgstr "Betrachter rechts"
 
 
+msgid "Speed Interpolation 0"
+msgstr "Geschwindigkeitsinterpolation 0"
+
+
+msgid "Speed Interpolation 1"
+msgstr "Geschwindigkeitsinterpolation 1"
+
+
 msgid "Maximum Speed"
 msgstr "Maximale Geschwindigkeit"
 
@@ -41836,6 +42807,10 @@ msgid "Sampling Presets"
 msgstr "Abtastung-Voreinstellungen"
 
 
+msgid "Viewport Sampling Presets"
+msgstr "Viewport-Sampling-Vorgabe"
+
+
 msgid "View Object Types"
 msgstr "Objekttypen anzeigen"
 
@@ -41846,6 +42821,10 @@ msgstr "Asset-Metadaten"
 
 msgid "Chain Scaling"
 msgstr "Kettenskalierung"
+
+
+msgid "Override Layers"
+msgstr "Überschreiben von Ebenen"
 
 
 msgid "Bone Constraints"
@@ -41943,6 +42922,10 @@ msgstr "Verfolger-Voreinstellungen"
 
 msgid "Cloth Presets"
 msgstr "Gewebe-Voreinstellungen"
+
+
+msgid "Restrictions"
+msgstr "Einschränkungen"
 
 
 msgid "Aperture"
@@ -43085,16 +44068,6 @@ msgid "Twist"
 msgstr "Verdrehen"
 
 
-msgctxt "Operator"
-msgid "Delete Curves"
-msgstr "Kurven löschen"
-
-
-msgctxt "Operator"
-msgid "Add Curves"
-msgstr "Kurven hinzufügen"
-
-
 msgid "Normal Falloff"
 msgstr "Normaler Abfall"
 
@@ -43121,6 +44094,10 @@ msgstr "Ansicht sperren"
 
 msgid "VR"
 msgstr "VR"
+
+
+msgid "Action Maps"
+msgstr "Aktionskarten"
 
 
 msgid "VR Session"
@@ -43153,6 +44130,10 @@ msgstr "Freestyle Geometrie"
 
 msgid "Freestyle Strokes"
 msgstr "Freestyle Striche"
+
+
+msgid "Splitting"
+msgstr "Spaltung"
 
 
 msgid "Filter Add-ons"
@@ -44008,6 +44989,10 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Veranlasst Kurvendaten dazu mit einem Objekt dupliziert zu werden"
 
 
+msgid "Duplicate Curves"
+msgstr "Kurven duplizieren"
+
+
 msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Bewirkt, dass Wachsstiftdaten mit dem Objekt dupliziert werden"
 
@@ -44300,8 +45285,16 @@ msgid "Mouse Drag Threshold"
 msgstr "Maus Schwellwert ziehen"
 
 
+msgid "Number of pixels to drag before a drag event is triggered for mouse/track-pad input (otherwise click events are detected)"
+msgstr "Anzahl der Pixel, die gezogen werden müssen, bevor ein Ziehereignis für die Maus-/Trackpad-Eingabe ausgelöst wird (andernfalls werden Klickereignisse erkannt)"
+
+
 msgid "Tablet Drag Threshold"
 msgstr "Tablet Schwellwert ziehen"
+
+
+msgid "Number of pixels to drag before a drag event is triggered for tablet input (otherwise click events are detected)"
+msgstr "Anzahl der Pixel, die gezogen werden müssen, bevor ein Ziehereignis für die Tablet-Eingabe ausgelöst wird (andernfalls werden Klickereignisse erkannt)"
 
 
 msgid "Invert Zoom Direction"
@@ -44554,6 +45547,10 @@ msgstr "Name der aktiven Tasten-Konfiguraton"
 
 msgid "Show UI Key-Config"
 msgstr "UI Tasten-Konfiguration anzeigen"
+
+
+msgid "Anisotropic Filtering"
+msgstr "Anisotrope Filterung"
 
 
 msgid "2x"
@@ -47284,6 +48281,10 @@ msgid "Light Cache Info"
 msgstr "Lichtpuffer Info"
 
 
+msgid "Cubemap Display Size"
+msgstr "Cubemap-Anzeigegröße"
+
+
 msgid "Cubemap Size"
 msgstr "Würfelkartengröße"
 
@@ -47850,6 +48851,10 @@ msgstr "Szenen-Sequenz"
 
 msgid "Camera Override"
 msgstr "Kamera überschreiben"
+
+
+msgid "Use Annotations"
+msgstr "Anmerkungen verwenden"
 
 
 msgid "Sound Sequence"
@@ -48687,8 +49692,16 @@ msgid "Nearest Frame"
 msgstr "Nächstes Einzelbild"
 
 
+msgid "Snap to actual frames (nla-action time)"
+msgstr "An tatsächlichen Frames ausrichten (nla-Aktionszeit)"
+
+
 msgid "Nearest Second"
 msgstr "Nächste Sekunde"
+
+
+msgid "Snap to actual seconds (nla-action time)"
+msgstr "Auf tatsächliche Sekunden ausrichten (nla-Aktionszeit)"
 
 
 msgid "Nearest Marker"
@@ -48879,6 +49892,10 @@ msgid "Display Channels"
 msgstr "Kanäle anzeigen"
 
 
+msgid "Channels of the image to display"
+msgstr "Kanäle des anzuzeigenden Bildes"
+
+
 msgid "Color and Alpha"
 msgstr "Farbe und Alpha"
 
@@ -48933,6 +49950,10 @@ msgstr "Drehpunkt um das aktive Objekt"
 
 msgid "Line Sample"
 msgstr "Linienbeispiel"
+
+
+msgid "Navigate Gizmo"
+msgstr "Gizmo steuern"
 
 
 msgid "Show Mask Editor"
@@ -49336,16 +50357,16 @@ msgid "Show current frame only"
 msgstr "Nur aktuelles Einzelbild anzeigen"
 
 
+msgid "Channels of the preview to display"
+msgstr "Kanäle der anzuzeigenden Vorschau"
+
+
 msgid "Scene size"
 msgstr "Szenengröße"
 
 
 msgid "Display Frames"
 msgstr "Einzelbilder anzeigen"
-
-
-msgid "Navigate Gizmo"
-msgstr "Gizmo steuern"
 
 
 msgid "Separate Colors"
@@ -49564,6 +50585,14 @@ msgid "Display a different set of collections in this viewport"
 msgstr "In diesem Ansichtsfenster werden andere Sammlungen angezeigt"
 
 
+msgid "Display Background"
+msgstr "Hintergrund anzeigen"
+
+
+msgid "Show Named Attributes"
+msgstr "Benannte Attribute anzeigen"
+
+
 msgid "Show Wire Colors"
 msgstr "Zeige Drahtfarbe"
 
@@ -49658,6 +50687,14 @@ msgstr "Bezier U"
 
 msgid "NURBS weight"
 msgstr "NURBS-Gewicht"
+
+
+msgid "Spreadsheet Column"
+msgstr "Spalte \"Tabelle\""
+
+
+msgid "Type of the context"
+msgstr "Art des Kontexts"
 
 
 msgid "Byte Color Value"
@@ -50078,6 +51115,10 @@ msgstr "Schlüsselbildrand"
 
 msgid "Keyframe Border Selected"
 msgstr "Schlüsselbildrand auswählt"
+
+
+msgid "Breakdown Keyframe"
+msgstr "Aufschlüsselungs-Keyframe"
 
 
 msgid "Jitter Keyframe Selected"
@@ -50768,6 +51809,10 @@ msgid "Menu Shadow Width"
 msgstr "Generierte Breite"
 
 
+msgid "Panel Roundness"
+msgstr "Rundheit der Paneele"
+
+
 msgid "Menu Backdrop Colors"
 msgstr "Kulissenfarben-Menü"
 
@@ -50966,6 +52011,10 @@ msgstr "Fensterereignis-Timer"
 
 msgid "Time Step"
 msgstr "Zeitschritt"
+
+
+msgid "Stick stroke to the image"
+msgstr "Strich an das Bild anheften"
 
 
 msgid "Draw stroke at 3D cursor location"
@@ -51177,6 +52226,10 @@ msgid "Align rotation with the snapping target"
 msgstr "Rotation mit dem Einrastziel ausrichten"
 
 
+msgid "Snap onto itself (Edit Mode Only)"
+msgstr "An sich selbst ausrichten (nur Bearbeitungsmodus)"
+
+
 msgid "Keep Connected"
 msgstr "Verknüpftes beibehalten"
 
@@ -51287,6 +52340,10 @@ msgstr "Objekte nach Namen sortieren"
 
 msgid "Lock Order"
 msgstr "Befehl sperren"
+
+
+msgid "Active UV map index"
+msgstr "Aktiver UV-Kartenindex"
 
 
 msgid "Radius of the brush"
@@ -51965,6 +53022,10 @@ msgid "Selected Item"
 msgstr "Ausgewähltes Element"
 
 
+msgid "Bindings"
+msgstr "Bindung"
+
+
 msgid "Haptic Duration"
 msgstr "Haptische Dauer"
 
@@ -51977,12 +53038,20 @@ msgid "Vibration"
 msgstr "Vibrationen"
 
 
+msgid "User Paths"
+msgstr "Benutzerpfade"
+
+
 msgid "OpenXR user paths"
 msgstr "ÖffneXR Benutzerpfade"
 
 
 msgid "Action Set"
 msgstr "Aktion setzen"
+
+
+msgid "User Path"
+msgstr "Benutzerpfad"
 
 
 msgid "VR viewport far clipping distance"
@@ -52005,12 +53074,24 @@ msgid "Positional Tracking"
 msgstr "Positionsverfolgung"
 
 
+msgid "Active Action Map"
+msgstr "Aktive Aktionskarte"
+
+
 msgid "Navigation Scale"
 msgstr "Navigationsskalierung"
 
 
+msgid "XR User Path"
+msgstr "XR Benutzerpfad"
+
+
 msgid "OpenXR user path"
 msgstr "ÖffneXR Benutzerpfad"
+
+
+msgid "XR User Paths"
+msgstr "XR Benutzerpfade"
 
 
 msgid "Collection of OpenXR user paths"
@@ -53116,6 +54197,11 @@ msgid "Gesture Box"
 msgstr "Gesten Box"
 
 
+msgctxt "Operator"
+msgid "Paste and Bake"
+msgstr "Einfügen und backen"
+
+
 msgid "Denoising completed"
 msgstr "Entrauschen abgeschlossen"
 
@@ -53182,6 +54268,10 @@ msgstr "Ausführungen"
 
 msgid "No output node"
 msgstr "Kein Ausgabeknoten"
+
+
+msgid "Viewport BVH"
+msgstr "Ansichtsfenster BVH"
 
 
 msgid "Max Subdivision"
@@ -53367,6 +54457,11 @@ msgstr "Exportieren"
 
 msgid "Result"
 msgstr "Ergebnis"
+
+
+msgctxt "Operator"
+msgid "Apply Pose"
+msgstr "Pose anwenden"
 
 
 msgctxt "Operator"
@@ -54221,6 +55316,10 @@ msgid "Render U"
 msgstr "Render U"
 
 
+msgid "Mapping Start"
+msgstr "Mapping-Start"
+
+
 msgid "Bold & Italic"
 msgstr "Fett & Kursiv"
 
@@ -54300,6 +55399,16 @@ msgstr "Alles zusammenführen"
 
 
 msgctxt "Operator"
+msgid "Copy Layer to Selected"
+msgstr "Ebene in ausgewählte kopieren"
+
+
+msgctxt "Operator"
+msgid "Copy All Layers to Selected"
+msgstr "Alle Ebenen in ausgewählte Ebenen kopieren"
+
+
+msgctxt "Operator"
 msgid "New Layer"
 msgstr "Neue Ebene"
 
@@ -54344,6 +55453,10 @@ msgstr "Alle Gruppen entfernen"
 
 msgid "Interpolation U"
 msgstr "Interpolation U"
+
+
+msgid "Clipping Start"
+msgstr "Clipping-Start"
 
 
 msgid "Arrow Size"
@@ -54454,6 +55567,10 @@ msgstr "Bildrand"
 
 msgid "Draw:"
 msgstr "Zeichnen:"
+
+
+msgid "Auto-Masking"
+msgstr "Automatisches Maskieren"
 
 
 msgctxt "Operator"
@@ -54633,6 +55750,11 @@ msgid "Lock Unused"
 msgstr "Sperre unbenutztes"
 
 
+msgctxt "Operator"
+msgid "Copy All Materials to Selected"
+msgstr "Alle Materialien nach Ausgewählt kopieren"
+
+
 msgid "Flip Colors"
 msgstr "Farben umdrehen"
 
@@ -54697,10 +55819,6 @@ msgid "Pressure Masking"
 msgstr "Druck maskierung"
 
 
-msgid "Auto-Masking"
-msgstr "Automatisches Maskieren"
-
-
 msgid "Sample Bias"
 msgstr "Beispielausrichtung"
 
@@ -54729,16 +55847,16 @@ msgid "Source Clone UV Map"
 msgstr "Quell-UV-Textur klonen"
 
 
+msgid "Mask Value"
+msgstr "Maskiere Wert"
+
+
 msgid "CCW"
 msgstr "CCW"
 
 
 msgid "CW"
 msgstr "CW"
-
-
-msgid "Mask Value"
-msgstr "Maskiere Wert"
 
 
 msgid "Invert to Fill"
@@ -55060,6 +56178,10 @@ msgstr "Verwende max. Winkel"
 
 msgid "Field Absorption"
 msgstr "Feldabsorption"
+
+
+msgid "Thickness Outer"
+msgstr "Dicke Außen"
 
 
 msgid "Heat"
@@ -56005,6 +57127,10 @@ msgid "Selection"
 msgstr "Auswahl"
 
 
+msgid "Navigate"
+msgstr "Navigiere"
+
+
 msgid "Modified Edges"
 msgstr "Modifizierte Kanten"
 
@@ -56282,6 +57408,10 @@ msgid "Timings"
 msgstr "Timings"
 
 
+msgid "Named Attributes"
+msgstr "Benannte Attribute"
+
+
 msgctxt "Operator"
 msgid "Backdrop Zoom In"
 msgstr "Hintergrund hereinzoomen"
@@ -56386,10 +57516,6 @@ msgstr "Gamma:"
 
 msgid "Gain:"
 msgstr "Verstärkung:"
-
-
-msgid "Navigate"
-msgstr "Navigiere"
 
 
 msgid "Active Tools"
@@ -56590,11 +57716,6 @@ msgstr "Griff"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Szene..."
-
-
-msgctxt "Operator"
 msgid "Clip..."
 msgstr "Clip..."
 
@@ -56617,6 +57738,11 @@ msgstr "Text"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Ebene Ausrichten"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Szene..."
 
 
 msgctxt "Operator"
@@ -56685,6 +57811,11 @@ msgstr "Rotation"
 
 
 msgctxt "Operator"
+msgid "All Transforms"
+msgstr "Alle Transformationen"
+
+
+msgctxt "Operator"
 msgid "Scale To Fit"
 msgstr "Skalieren zum einpassen"
 
@@ -56705,11 +57836,6 @@ msgstr "Verfolger"
 
 msgid "Resolutions"
 msgstr "Auflösung"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Szene"
 
 
 msgctxt "Operator"
@@ -56983,16 +58109,6 @@ msgstr "Automatisch Speichern..."
 
 
 msgctxt "Operator"
-msgid "SVG as Grease Pencil"
-msgstr "SVG als Wachsstift"
-
-
-msgctxt "Operator"
-msgid "Wavefront (.obj) (experimental)"
-msgstr "Wavefront (.obj) (experimentell)"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Animation rendern"
 
@@ -57083,13 +58199,13 @@ msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil as SVG"
-msgstr "Wachsstift als SVG"
+msgid "SVG as Grease Pencil"
+msgstr "SVG als Wachsstift"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil as PDF"
-msgstr "Wachsstift als PDF"
+msgid "Wavefront (.obj) (experimental)"
+msgstr "Wavefront (.obj) (experimentell)"
 
 
 msgctxt "Operator"
@@ -57134,6 +58250,16 @@ msgstr "Fehler melden"
 
 msgid "No active item"
 msgstr "Kein aktives Element"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as SVG"
+msgstr "Wachsstift als SVG"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as PDF"
+msgstr "Wachsstift als PDF"
 
 
 msgctxt "Operator"
@@ -57809,6 +58935,11 @@ msgstr "Backe Masche zu Wachsstift...."
 
 
 msgctxt "Operator"
+msgid "Bake Object Transform to Grease Pencil..."
+msgstr "Backobjekt in Fettstift umwandeln..."
+
+
+msgctxt "Operator"
 msgid "Change Shape"
 msgstr "Form ändern"
 
@@ -58465,6 +59596,11 @@ msgstr "Sammlungsinstanz"
 
 
 msgctxt "Operator"
+msgid "Make Library Override - Fully Editable..."
+msgstr "Bibliothek überschreiben - Vollständig editierbar..."
+
+
+msgctxt "Operator"
 msgid "Delete Global"
 msgstr "Lösche Global"
 
@@ -58502,6 +59638,11 @@ msgstr "Zum nächsten Schlüsselbild"
 msgctxt "Operator"
 msgid "To Last Keyframe (Make Cyclic)"
 msgstr "Zum letzten Schlüsselbild (zyklisch machen)"
+
+
+msgctxt "Operator"
+msgid "On Selected Keyframes"
+msgstr "Auf ausgewählten Keyframes"
 
 
 msgctxt "Operator"
@@ -58735,6 +59876,11 @@ msgstr "Unterstrich an/aus"
 
 
 msgctxt "Operator"
+msgid "Set Roll"
+msgstr "Rolle einstellen"
+
+
+msgctxt "Operator"
 msgid "With Empty Groups"
 msgstr "Mit leeren Gruppen"
 
@@ -58864,6 +60010,10 @@ msgstr "Zwischen auflösen"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Unselektiertes auflösen"
+
+
+msgid "Scaling"
+msgstr "Skalierung"
 
 
 msgctxt "Operator"
@@ -59326,6 +60476,14 @@ msgid "Stones"
 msgstr "Steine"
 
 
+msgid "Pounds"
+msgstr "Pfund"
+
+
+msgid "Ounces"
+msgstr "Unzen"
+
+
 msgid "Kilometers per hour"
 msgstr "Kilometer pro Stunde"
 
@@ -59400,6 +60558,10 @@ msgstr "Celsius"
 
 msgid "Fahrenheit"
 msgstr "Fahrenheit"
+
+
+msgid "Could not load volume for writing"
+msgstr "Volume zum Schreiben konnte nicht geladen werden"
 
 
 msgid "Could not write volume: %s"
@@ -59566,6 +60728,10 @@ msgid "Select ID"
 msgstr "ID Auswählen"
 
 
+msgid "Display channel regardless of object selection"
+msgstr "Anzeigekanal unabhängig von Objektauswahl"
+
+
 msgid "Enable F-Curve modifiers"
 msgstr "Aktiviere F-Kurven Modifikator"
 
@@ -59600,6 +60766,10 @@ msgstr "Modifier löschen"
 
 msgid "Delete envelope control point"
 msgstr "Einhüllenden-Kontrollpunkt löschen"
+
+
+msgid "Coefficient"
+msgstr "Koeffizient"
 
 
 msgid "No animation data in buffer to paste"
@@ -61109,6 +62279,10 @@ msgid "Deleted %u object(s)"
 msgstr "Gelöschte %u Objekte"
 
 
+msgid "No active mesh object"
+msgstr "Kein aktives Maschenobjekt"
+
+
 msgid "Baking to unsupported image type"
 msgstr "Backe zu nicht unterstütztem Bildformat"
 
@@ -61201,6 +62375,10 @@ msgid "No supported objects were selected"
 msgstr "Nicht unterstütztes Objekt ist ausgewählt"
 
 
+msgid "Requires selected vertices or active vertex group"
+msgstr "Erfordert ausgewählte Scheitelpunkte oder aktive Scheitelpunktgruppen"
+
+
 msgid "Armature has no active object bone"
 msgstr "Skelett hat keinen aktiven Objektknochen"
 
@@ -61247,10 +62425,6 @@ msgstr "Objekt (Transformation beibehalten)"
 
 msgid "Object (Without Inverse)"
 msgstr "Objekt (ohne Inversion)"
-
-
-msgid "OK?"
-msgstr "OK?"
 
 
 msgid "Loop in parents"
@@ -61307,6 +62481,14 @@ msgstr "|%i verknüpfte(s) Bibliothekobjekt(e)"
 
 msgid "|%i multiuser armature object(s)"
 msgstr "|%i Mehrfachbenutzer Skelettobjekt(e)"
+
+
+msgid "all"
+msgstr "alle"
+
+
+msgid "selected"
+msgstr "ausgewählt"
 
 
 msgid "All groups are locked"
@@ -61686,10 +62868,6 @@ msgid "Packed MultiLayer files cannot be painted: %s"
 msgstr "Gepackte Mehrfachebenen Dateien können nicht gemalt werden: %s"
 
 
-msgid "No active mesh object"
-msgstr "Kein aktives Maschenobjekt"
-
-
 msgid "Image could not be found"
 msgstr "Bild konnte nicht gefunden werden"
 
@@ -62050,6 +63228,10 @@ msgid "Decimate Keyframes"
 msgstr "Dezimierte Schlüsselbilder"
 
 
+msgid "Blend to Default Value"
+msgstr "Mit Standardwert verschmelzen"
+
+
 msgid "Discard"
 msgstr "Verwerfen"
 
@@ -62130,14 +63312,6 @@ msgid "No images have been changed"
 msgstr "Keine Bilder wurden verändert"
 
 
-msgid "Packing movies, image sequences or tiled images not supported"
-msgstr "Packen von Film- oder Bildsequenzen wird nicht unterstützt"
-
-
-msgid "Unpacking movies, image sequences or tiled images not supported"
-msgstr "Entpackten von Film- oder Bildsequenzen wird nicht unterstützt"
-
-
 msgid "Cannot save image, path \"%s\" is not writable"
 msgstr "Bild konnte nicht gespeichert werden, Pfad \"%s\" ist nicht beschreibbar"
 
@@ -62212,6 +63386,10 @@ msgstr "Einzelbild: %d"
 
 msgid "Matte Objects:"
 msgstr "Matte Objekte:"
+
+
+msgid "Remove Crypto Layer"
+msgstr "Crypto Layer entfernen"
 
 
 msgid "Group Input "
@@ -62361,6 +63539,10 @@ msgstr "Auswahl mischen"
 
 msgid "Current File"
 msgstr "Aktuelle Datei"
+
+
+msgid "No Library Overrides"
+msgstr "Keine Bibliotheksüberschreibungen"
 
 
 msgid "(empty)"
@@ -63112,10 +64294,6 @@ msgid "Modify"
 msgstr "Modifizieren"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Der Puffer vom Bild konnte nicht in Besitz genommen werden"
-
-
 msgid "Image not packed"
 msgstr "Bild nicht verpackt"
 
@@ -63342,8 +64520,16 @@ msgid "Save External..."
 msgstr "Speichern Extern..."
 
 
+msgid "No named attributes used"
+msgstr "Keine benannten Attribute verwendet"
+
+
 msgid "Read"
 msgstr "Lesen"
+
+
+msgid "Internal Dependencies"
+msgstr "Interne Abhängigkeiten"
 
 
 msgid "Delete Bake"
@@ -63491,6 +64677,22 @@ msgid "Buffer Edge:"
 msgstr "Pufferkante:"
 
 
+msgid "From Min"
+msgstr "Von Minimum"
+
+
+msgid "From Max"
+msgstr "Vom Maximum"
+
+
+msgid "To Min"
+msgstr "Bis Minimum"
+
+
+msgid "To Max"
+msgstr "Bis Maximum"
+
+
 msgid "Offset Y"
 msgstr "Y-Versatz"
 
@@ -63583,6 +64785,10 @@ msgid "Point 3"
 msgstr "Punkt 3"
 
 
+msgid "Distance between the two points"
+msgstr "Abstand zwischen den beiden Punkten"
+
+
 msgid "Bottom Width"
 msgstr "Bodendicke"
 
@@ -63607,6 +64813,10 @@ msgid "Inner Radius"
 msgstr "Innenradius"
 
 
+msgid "Outer Radius"
+msgstr "Anzahl der Punkte"
+
+
 msgid "Cuts"
 msgstr "Ausschnitte"
 
@@ -63625,6 +64835,10 @@ msgstr "Ende (Länge)"
 
 msgid "Distance Min"
 msgstr "Distanz Minimum"
+
+
+msgid "Density Max"
+msgstr "Max. Dichte"
 
 
 msgid "Signed Angle"
@@ -63683,6 +64897,10 @@ msgid "Source Position"
 msgstr "Quellposition"
 
 
+msgid "Hit Position"
+msgstr "Trefferposition"
+
+
 msgid "Hit Normal"
 msgstr "Normale treffen"
 
@@ -63693,6 +64911,10 @@ msgstr "Treffe Entfernung"
 
 msgid "Attribute does not exist: \""
 msgstr "Attribut existiert nicht: \""
+
+
+msgid "Delimiter"
+msgstr "Trennzeichen"
 
 
 msgid "Strings"
@@ -64307,6 +65529,10 @@ msgid "OFF"
 msgstr "AUS"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "unsupported format"
 msgstr "Nicht unterstütztes Format"
 
@@ -64517,10 +65743,6 @@ msgstr "Bulgarisch (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Griechisch (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Koreanisch (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"
