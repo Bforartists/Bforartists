@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -1647,6 +1647,10 @@ msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
 
 
+msgid "Simulations"
+msgstr "模擬"
+
+
 msgid "Sounds"
 msgstr "聲音"
 
@@ -2981,6 +2985,10 @@ msgstr "權重繪製能力"
 
 msgid "Has Weight"
 msgstr "具備權重"
+
+
+msgid "Count"
+msgstr "計數"
 
 
 msgid "Grow or shrink curves by changing their size uniformly instead of using trimming or extrapolation"
@@ -4445,10 +4453,6 @@ msgstr "輸入色彩空間"
 
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
-
-
-msgid "Standard RGB Display Space"
-msgstr "標準 RGB 顯示空間"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -6656,6 +6660,14 @@ msgid "Detect Corners"
 msgstr "偵測角落"
 
 
+msgid "Index"
+msgstr "索引"
+
+
+msgid "Radius"
+msgstr "半徑"
+
+
 msgid "Steps"
 msgstr "步數"
 
@@ -6678,10 +6690,6 @@ msgstr "虛線"
 
 msgid "Material Index"
 msgstr "材質索引"
-
-
-msgid "Radius"
-msgstr "半徑"
 
 
 msgid "Dependency Graph"
@@ -8965,10 +8973,6 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "此控制點上封套的下邊界"
 
 
-msgid "Index"
-msgstr "索引"
-
-
 msgid "Face Maps"
 msgstr "面圖群組"
 
@@ -9001,16 +9005,16 @@ msgid "Fall-Off"
 msgstr "衰減"
 
 
+msgid "Cone"
+msgstr "圓錐體"
+
+
 msgid "Sphere"
 msgstr "球體"
 
 
 msgid "Tube"
 msgstr "管面"
-
-
-msgid "Cone"
-msgstr "圓錐體"
 
 
 msgid "Flow"
@@ -9073,6 +9077,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "曲線上的週期性偏移類型"
 
 
+msgid "Braid"
+msgstr "編織"
+
+
 msgid "Curl"
 msgstr "捲曲"
 
@@ -9083,10 +9091,6 @@ msgstr "放射"
 
 msgid "Wave"
 msgstr "波浪"
-
-
-msgid "Braid"
-msgstr "編織"
 
 
 msgid "The distance from which particles are affected fully"
@@ -9225,44 +9229,44 @@ msgid "Type of field"
 msgstr "場域的類型"
 
 
-msgid "Radial field toward the center of object"
-msgstr "朝向物體中心的半徑場"
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "沿著外力物體其區域 Z 軸的恆定力"
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "扭轉外力物體其區域 Z 軸的螺旋力"
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "力場取決於粒子的速度"
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "此力場的來源為諧振子的零點"
-
-
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "基於粒子電荷的球體力場，僅影響其他電荷力場"
-
-
-msgid "Forcefield based on the Lennard-Jones potential"
-msgstr "基於蘭納瓊斯位能的力場"
 
 
 msgid "Create a force along a curve object"
 msgstr "沿曲線物體建立外力"
 
 
+msgid "Create a force that dampens motion"
+msgstr "建立減緩運動用的外力"
+
+
+msgid "Radial field toward the center of object"
+msgstr "朝向物體中心的半徑場"
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "此力場的來源為諧振子的零點"
+
+
+msgid "Forcefield based on the Lennard-Jones potential"
+msgstr "基於蘭納瓊斯位能的力場"
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "力場取決於粒子的速度"
+
+
 msgid "Create turbulence with a noise field"
 msgstr "建立噪訊場的擾動"
 
 
-msgid "Create a force that dampens motion"
-msgstr "建立減緩運動用的外力"
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "扭轉外力物體其區域 Z 軸的螺旋力"
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "沿著外力物體其區域 Z 軸的恆定力"
 
 
 msgid "2D"
@@ -9367,10 +9371,6 @@ msgstr "雙向 Z"
 
 msgid "Fonts"
 msgstr "字型"
-
-
-msgid "Simulations"
-msgstr "模擬"
 
 
 msgid "Show workspace data-blocks"
@@ -10947,10 +10947,6 @@ msgstr "決定每個點修改器的影響之頂點群組其名稱"
 
 msgid "Constant Offset"
 msgstr "常量偏移"
-
-
-msgid "Count"
-msgstr "計數"
 
 
 msgid "Pass"
@@ -35317,10 +35313,6 @@ msgid "Path to image file"
 msgstr "影像檔的路徑"
 
 
-msgid "Image name to assign"
-msgstr "要指派的影像名稱"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "將已命名材質拖放到物體上"
@@ -35333,10 +35325,6 @@ msgstr "製作物體複本"
 
 msgid "Duplicate selected objects"
 msgstr "為所選物體製作複本"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "為所選物體的製作複本並移動它們"
 
 
 msgid "Duplicate Objects"
@@ -35725,11 +35713,6 @@ msgstr "設定物體模式"
 
 msgid "Sets the object interaction mode"
 msgstr "設定物體的互動模式"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "轉換修改器"
 
 
 msgid "Convert particles to a mesh object"
@@ -41085,10 +41068,6 @@ msgid "Copy the RNA data path for this property to the clipboard"
 msgstr "為此屬性複製 RNA 資料路徑至剪貼簿中"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "將來自此物體的屬性複製至選取的物體或骨骼上"
-
-
 msgctxt "Operator"
 msgid "Drop Color"
 msgstr "拖放色彩"
@@ -42656,10 +42635,6 @@ msgstr "設定一個情境陣列值 (對於循環切換作用中網格編輯模�
 
 msgid "Context Attributes"
 msgstr "情境特性"
-
-
-msgid "RNA context string"
-msgstr "RNA 情境字串"
 
 
 msgid "Cycle backwards"
@@ -48353,14 +48328,6 @@ msgstr "結束偏移"
 
 msgid "Start Offset"
 msgstr "起始偏移"
-
-
-msgid "End Still"
-msgstr "結束靜止"
-
-
-msgid "Start Still"
-msgstr "起始靜止"
 
 
 msgid "Modifiers affecting this strip"
@@ -55246,11 +55213,6 @@ msgstr "右"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "場景..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "色彩"
 
@@ -55263,6 +55225,11 @@ msgstr "文字"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "調節層"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "場景..."
 
 
 msgctxt "Operator"
@@ -58290,6 +58257,10 @@ msgid "Cannot delete indirectly linked object '%s'"
 msgstr "無法刪除間接連結物體「%s」"
 
 
+msgid "No active mesh object"
+msgstr "作用中網格物體"
+
+
 msgid "Baking to unsupported image type"
 msgstr "烘焙成尚未支援的影像類型"
 
@@ -58396,10 +58367,6 @@ msgstr "設定親代為"
 
 msgid "Object (Keep Transform)"
 msgstr "物體 (保持變換)"
-
-
-msgid "OK?"
-msgstr "確定？"
 
 
 msgid "Loop in parents"
@@ -58800,10 +58767,6 @@ msgstr "找不到全螢幕面積"
 
 msgid "Untitled"
 msgstr "無標題"
-
-
-msgid "No active mesh object"
-msgstr "作用中網格物體"
 
 
 msgid "Image could not be found"
@@ -60477,14 +60440,6 @@ msgid "Modify"
 msgstr "修改"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "無法從影像獲取緩衝"
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "場景不在情境中，無法取得儲存參數"
-
-
 msgid "Image not packed"
 msgstr "影像未打包"
 
@@ -61540,6 +61495,10 @@ msgid "OFF"
 msgstr "關"
 
 
+msgid "OK?"
+msgstr "確定？"
+
+
 msgid "unsupported format"
 msgstr "尚未支援的格式"
 
@@ -61770,10 +61729,6 @@ msgstr "保加利亞文 (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "希臘文 (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "韓文 (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

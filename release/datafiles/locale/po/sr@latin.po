@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1257,6 +1257,10 @@ msgstr "Ima gravitaciju"
 
 msgid "Has Height"
 msgstr "Ima visinu"
+
+
+msgid "Count"
+msgstr "Broj"
 
 
 msgid "Angle"
@@ -2972,6 +2976,14 @@ msgid "View"
 msgstr "Pogled"
 
 
+msgid "Index"
+msgstr "Indeks"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
 msgid "Steps"
 msgstr "Koraka"
 
@@ -2990,10 +3002,6 @@ msgstr "Isprekidano"
 
 msgid "Material Index"
 msgstr "Indeks materijala"
-
-
-msgid "Radius"
-msgstr "Radius"
 
 
 msgid "Render"
@@ -4117,10 +4125,6 @@ msgid "Frame"
 msgstr "Kadar"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
 msgid "Maximum Distance"
 msgstr "Maksimalna udaljenost"
 
@@ -4133,16 +4137,16 @@ msgid "Fall-Off"
 msgstr "Opadanje"
 
 
+msgid "Cone"
+msgstr "Kupa"
+
+
 msgid "Sphere"
 msgstr "Sfera"
 
 
 msgid "Tube"
 msgstr "Cev"
-
-
-msgid "Cone"
-msgstr "Kupa"
 
 
 msgid "Amount"
@@ -5103,10 +5107,6 @@ msgstr "Koristi grupe temena"
 
 msgid "Constant Offset"
 msgstr "Stalno rastojanje"
-
-
-msgid "Count"
-msgstr "Broj"
 
 
 msgid "Pass"
@@ -17163,10 +17163,6 @@ msgid "Duplicate selected objects"
 msgstr "Udvostruči izabrane objekte"
 
 
-msgid "Duplicate selected objects and move them"
-msgstr "Udvostruči izabrane objekte"
-
-
 msgid "Duplicate Objects"
 msgstr "Udvostruči objekte"
 
@@ -17393,11 +17389,6 @@ msgstr "Podesi režim objekta"
 
 msgid "Sets the object interaction mode"
 msgstr "Postavlja mapiranje teksture u modu slikanja"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Pretvori modifikator"
 
 
 msgctxt "Operator"
@@ -20610,10 +20601,6 @@ msgstr "Uvoz"
 
 msgid "Context Attributes"
 msgstr "Atributi:"
-
-
-msgid "RNA context string"
-msgstr "Podešavanje kosti"
 
 
 msgid "Cycle backwards"
@@ -25924,13 +25911,13 @@ msgstr "Desno"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scena..."
+msgid "Color"
+msgstr "Boja"
 
 
 msgctxt "Operator"
-msgid "Color"
-msgstr "Boja"
+msgid "Scene..."
+msgstr "Scena..."
 
 
 msgctxt "Operator"
@@ -27353,6 +27340,10 @@ msgid "Object not found"
 msgstr "Objekat nije pronađen"
 
 
+msgid "No active mesh object"
+msgstr "Bez aktivnog meš objekta"
+
+
 msgid "To Active Bone"
 msgstr "Na aktivnu kost"
 
@@ -27371,10 +27362,6 @@ msgstr "Bez cilja"
 
 msgid "Object (Keep Transform)"
 msgstr "Objekat (zadrži transformaciju)"
-
-
-msgid "OK?"
-msgstr "U redu?"
 
 
 msgid "No active bone"
@@ -27615,10 +27602,6 @@ msgstr "Obrni ka dnu"
 
 msgid "Flip to Top"
 msgstr "Obrni ka vrhu"
-
-
-msgid "No active mesh object"
-msgstr "Bez aktivnog meš objekta"
 
 
 msgid "No active camera set"
@@ -28071,10 +28054,6 @@ msgid "Modify"
 msgstr "Izmenjen"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Približi/udalji pogled"
-
-
 msgid "Image not packed"
 msgstr "Naziv slike"
 
@@ -28391,6 +28370,10 @@ msgid "Not a library"
 msgstr "Nije zbirka"
 
 
+msgid "OK?"
+msgstr "U redu?"
+
+
 msgid "unsupported format"
 msgstr "nepodržan format"
 
@@ -28490,10 +28473,6 @@ msgstr "Arapski (ﺔﻴﺑﺮﻌﻟﺍ)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Grčki (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Korejski (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

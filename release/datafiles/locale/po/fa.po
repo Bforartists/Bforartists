@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -9081,10 +9081,6 @@ msgid "Duplicate selected objects"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
-msgid "Duplicate selected objects and move them"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
-
-
 msgid "Duplicate Objects"
 msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
@@ -9257,11 +9253,6 @@ msgstr "MetaBall"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "ءﯽﺷ ﺖﻟﺎﺣ"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgctxt "Operator"
@@ -11217,10 +11208,6 @@ msgid "Import COLLADA"
 msgstr "COLLADA ﻥﺩﺮﮐ ﺩﺭﺍﻭ"
 
 
-msgid "RNA context string"
-msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
 msgid "Cycle backwards"
 msgstr "ﻪﻧﻭﺭﺍﻭ"
 
@@ -13001,11 +12988,6 @@ msgstr "ﺖﺳﺍﺭ"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "ﻪﻨﺤﺻ"
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "ﮓﻧﺭ"
 
@@ -13013,6 +12995,11 @@ msgstr "ﮓﻧﺭ"
 msgctxt "Operator"
 msgid "Text"
 msgstr "ﻦﺘﻣ"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "ﻪﻨﺤﺻ"
 
 
 msgctxt "Operator"
@@ -14242,6 +14229,10 @@ msgid "Cannot create editmode armature"
 msgstr "ﺮﭽﯿﻣﺭﺁ"
 
 
+msgid "No active mesh object"
+msgstr "ﯽﺷﺭﺎﻔﺳ ﮓﻧﺭ ﻪﻋﻮﻤﺠﻣ ﺺﺧﺎﺷ"
+
+
 msgid "Child Of constraint not found"
 msgstr "ﺖﯾﺩﻭﺪﺤﻣ"
 
@@ -14300,10 +14291,6 @@ msgstr "ﻊﺒﻨﻣ"
 
 msgid "Object (Keep Transform)"
 msgstr "ﻞﯾﺪﺒﺗ:"
-
-
-msgid "OK?"
-msgstr "؟ﺪﯿﯾﺄﺗ"
 
 
 msgid "Loop in parents"
@@ -14372,10 +14359,6 @@ msgstr "ﻦﯿﯾﺎﭘ"
 
 msgid "Flip to Top"
 msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgid "No active mesh object"
-msgstr "ﯽﺷﺭﺎﻔﺳ ﮓﻧﺭ ﻪﻋﻮﻤﺠﻣ ﺺﺧﺎﺷ"
 
 
 msgid "No active camera set"
@@ -14974,6 +14957,10 @@ msgid "Nothing indicated"
 msgstr "ﻩﺪﺸﻧ ﺏﺎﺨﺘﻧﺍ ﺰﯿﭼ ﭻﯿﻫ"
 
 
+msgid "OK?"
+msgstr "؟ﺪﯿﯾﺄﺗ"
+
+
 msgid "unsupported format"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
@@ -15081,10 +15068,6 @@ msgstr "(Български) ﯼﺭﺎﻐﻠﺑ"
 
 msgid "Greek (Ελληνικά)"
 msgstr "(Ελληνικά) ﯽﻧﺎﻧﻮﯾ"
-
-
-msgid "Korean (한국 언어)"
-msgstr "(한국 언어) ﯼﺍ ﻩﺮﮐ"
 
 
 msgid "Persian (ﯽﺳﺭﺎﻓ)"

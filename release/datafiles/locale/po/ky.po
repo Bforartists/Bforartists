@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -3371,11 +3371,6 @@ msgstr "Оңдон"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Сахна..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Түс"
 
@@ -3383,6 +3378,11 @@ msgstr "Түс"
 msgctxt "Operator"
 msgid "Text"
 msgstr "Текст"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Сахна..."
 
 
 msgctxt "Operator"
@@ -4128,10 +4128,6 @@ msgstr "Болгар (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Грек (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Корей (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

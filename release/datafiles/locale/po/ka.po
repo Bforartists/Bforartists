@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1857,6 +1857,10 @@ msgid "Shape Key data-blocks"
 msgstr "ფორმის გასაღებების მონაცემთა ბლოკები"
 
 
+msgid "Simulations"
+msgstr "სიმულაციები"
+
+
 msgid "Sounds"
 msgstr "ხმები"
 
@@ -3327,6 +3331,10 @@ msgstr "წონის ხატვის შესაძლებლობე�
 
 msgid "Has Weight"
 msgstr "აქვს წონა"
+
+
+msgid "Count"
+msgstr "რაოდენობა"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -5253,10 +5261,6 @@ msgid "Raw"
 msgstr "უფორმატო"
 
 
-msgid "Standard RGB Display Space"
-msgstr "სტანდარტული RGB ამსახველის სივრცე"
-
-
 msgid "XYZ"
 msgstr "XYZ"
 
@@ -6690,6 +6694,10 @@ msgid "Only First"
 msgstr "მხოლოდ პირველი"
 
 
+msgid "Radius"
+msgstr "რადიუსი"
+
+
 msgid "Preset"
 msgstr "წინასწარ აწყობილი"
 
@@ -6712,10 +6720,6 @@ msgstr "თავისუფალი სახელური"
 
 msgid "Material Index"
 msgstr "მასალის ინდექსი"
-
-
-msgid "Radius"
-msgstr "რადიუსი"
 
 
 msgid "Viewport"
@@ -7187,12 +7191,12 @@ msgid "Face Map"
 msgstr "წახნაგების რუკა"
 
 
-msgid "Sphere"
-msgstr "სფერო"
-
-
 msgid "Cone"
 msgstr "კონუსი"
+
+
+msgid "Sphere"
+msgstr "სფერო"
 
 
 msgid "Shape"
@@ -7207,6 +7211,10 @@ msgid "Frequency"
 msgstr "სიხშირე"
 
 
+msgid "Braid"
+msgstr "ნაწნავი"
+
+
 msgid "Curl"
 msgstr "კულულა"
 
@@ -7217,10 +7225,6 @@ msgstr "რადიალური"
 
 msgid "Wave"
 msgstr "ტალღოვანი"
-
-
-msgid "Braid"
-msgstr "ნაწნავი"
 
 
 msgid "Noise"
@@ -7249,10 +7253,6 @@ msgstr "წონები"
 
 msgid "Show Light Probe data-blocks"
 msgstr "მაჩვენე სინათლის ზონდის მონაცემთა ბლოკები"
-
-
-msgid "Simulations"
-msgstr "სიმულაციები"
 
 
 msgid "Save"
@@ -7703,10 +7703,6 @@ msgid "Hue/Saturation"
 msgstr "ელფერი/სიხასხასე"
 
 
-msgid "Count"
-msgstr "რაოდენობა"
-
-
 msgid "Pass"
 msgstr "გადავლა"
 
@@ -7795,10 +7791,6 @@ msgstr "საფეხური"
 
 msgid "Overscan"
 msgstr "გადასკანირება"
-
-
-msgid "Remove Doubles"
-msgstr "წაშალე დუბლიორები"
 
 
 msgid "Fixed"
@@ -8713,6 +8705,18 @@ msgid "Shear"
 msgstr "წანაცვლება"
 
 
+msgid "Enable symmetry in the X axis"
+msgstr "ჩართე სიმეტრია X ღერძში"
+
+
+msgid "Enable symmetry in the Y axis"
+msgstr "ჩართე სიმეტრია Y ღერძში"
+
+
+msgid "Enable symmetry in the Z axis"
+msgstr "ჩართე სიმეტრია Z ღერძში"
+
+
 msgid "Caps"
 msgstr "დაბოლოებები"
 
@@ -8925,18 +8929,6 @@ msgstr "ტოპოლოგიური სარკე"
 
 msgid "Use topology based mirroring (for when both sides of mesh have matching, unique topology)"
 msgstr "გამოიყენე ტოპოლოგიაზე დაფუძნებული სარკისებრი არეკლვა (როდესაც მეშის ორივე მხარეს აქვს ერთგვაროვანი, უნიკალური ტოპოლოგია)"
-
-
-msgid "Enable symmetry in the X axis"
-msgstr "ჩართე სიმეტრია X ღერძში"
-
-
-msgid "Enable symmetry in the Y axis"
-msgstr "ჩართე სიმეტრია Y ღერძში"
-
-
-msgid "Enable symmetry in the Z axis"
-msgstr "ჩართე სიმეტრია Z ღერძში"
 
 
 msgid "Paint Mask"
@@ -9915,6 +9907,11 @@ msgstr "მონიშნე მიბმული"
 msgctxt "Operator"
 msgid "Add"
 msgstr "დამატება"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "სცენა"
 
 
 msgid "Apply"
@@ -14058,10 +14055,6 @@ msgid "Add an object data instance"
 msgstr "დაამატე ობიექტის მონაცემთა ინსტანცია"
 
 
-msgid "ID name to add"
-msgstr "დასამატებელი ID სახელი"
-
-
 msgctxt "Operator"
 msgid "Transfer Mesh Data"
 msgstr "გადაიტანე მეშის მონაცემები"
@@ -14132,10 +14125,6 @@ msgstr "მოახდინე ობიექტების დუბლი�
 
 msgid "Duplicate selected objects"
 msgstr "მოახდინე არჩეული ობიექტების დუბლირება"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "მოახდინე არჩეული ობიექტების დუბლირება და გადააადგილე"
 
 
 msgid "Duplicate Objects"
@@ -18747,10 +18736,6 @@ msgid "Post-Processing"
 msgstr "თანამდევი დამუშავება"
 
 
-msgid "Sculpt Strokes"
-msgstr "მძერწავი შტრიხები"
-
-
 msgid "Particle Tool"
 msgstr "ნაწილაკის ხელსაწყო"
 
@@ -19776,6 +19761,22 @@ msgid "Pivot around active object"
 msgstr "აბრუნე აქტიური ობიექტის გარშემო"
 
 
+msgid "Show Gizmo"
+msgstr "აჩვენე მანიპულატორი"
+
+
+msgid "Show gizmos of all types"
+msgstr "აჩვენე ყველა ტიპის მანიპულატორები"
+
+
+msgid "Navigate Gizmo"
+msgstr "ნავიგაციის მანიპულატორი"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "სარკმელში ნავიგაციის მანიპულატორი"
+
+
 msgid "Show objects"
 msgstr "ობიექტების ჩვენება"
 
@@ -19872,24 +19873,8 @@ msgid "Current"
 msgstr "მიმდინარე"
 
 
-msgid "Show Gizmo"
-msgstr "აჩვენე მანიპულატორი"
-
-
-msgid "Show gizmos of all types"
-msgstr "აჩვენე ყველა ტიპის მანიპულატორები"
-
-
 msgid "Context sensitive gizmos for the active item"
 msgstr "კონტექსტის მიმართ მგრძნობიარე მანიპულატორები აქტიური ელემენტისთვის"
-
-
-msgid "Navigate Gizmo"
-msgstr "ნავიგაციის მანიპულატორი"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "სარკმელში ნავიგაციის მანიპულატორი"
 
 
 msgid "Tool Gizmo"
@@ -21543,6 +21528,10 @@ msgid "Detail"
 msgstr "დეტალი"
 
 
+msgid "Auto-Masking"
+msgstr "ავტომატური შენიღბვა"
+
+
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "მონიშნული ცხრილს"
@@ -21725,10 +21714,6 @@ msgstr "ზეწოლითი შენიღბვა"
 
 msgid "Falloff Opacity"
 msgstr "მინავლების გაუმჭვირვალობა"
-
-
-msgid "Auto-Masking"
-msgstr "ავტომატური შენიღბვა"
 
 
 msgid "Mesh Boundary"
@@ -21956,6 +21941,14 @@ msgid "Selection"
 msgstr "მონიშვნა"
 
 
+msgid "Viewport Gizmos"
+msgstr "სარკმლის მანიპულატორები"
+
+
+msgid "Navigate"
+msgstr "ნავიგაცია"
+
+
 msgid "Modified Edges"
 msgstr "მოდიფიცირებული წიბოები"
 
@@ -22038,14 +22031,6 @@ msgid "Sync with Outliner"
 msgstr "დაასინქრონირე მონახაზთან"
 
 
-msgid "Viewport Gizmos"
-msgstr "სარკმლის მანიპულატორები"
-
-
-msgid "Navigate"
-msgstr "ნავიგაცია"
-
-
 msgid "Active Tools"
 msgstr "აქტიური ხელსაწყოები"
 
@@ -22122,11 +22107,6 @@ msgstr "ბრუნვა"
 msgctxt "Operator"
 msgid "All Transforms"
 msgstr "ყველა გარდაქმნა"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "სცენა"
 
 
 msgctxt "Operator"
@@ -22328,11 +22308,6 @@ msgstr "ავტომატური შენახვები"
 
 
 msgctxt "Operator"
-msgid "SVG as Grease Pencil"
-msgstr "SVG როგორც ცვილის ფანქარი"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "ანიმაციის რენდერი"
 
@@ -22433,13 +22408,8 @@ msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil as SVG"
-msgstr "ცვილის ფანქარი როგორც SVG"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil as PDF"
-msgstr "ცვილის ფანქარი როგორც PDF"
+msgid "SVG as Grease Pencil"
+msgstr "SVG როგორც ცვილის ფანქარი"
 
 
 msgctxt "Operator"
@@ -22484,6 +22454,16 @@ msgstr "შეტყობინება ხარვეზის შესა�
 
 msgid "No active item"
 msgstr "აქტიური ელემენტი არაა"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as SVG"
+msgstr "ცვილის ფანქარი როგორც SVG"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as PDF"
+msgstr "ცვილის ფანქარი როგორც PDF"
 
 
 msgctxt "Operator"
@@ -24858,8 +24838,8 @@ msgid "Field"
 msgstr "ველი"
 
 
-msgid "OK?"
-msgstr "კარგი?"
+msgid "No active mesh object"
+msgstr "აქტიური მეშის ობიექტი არ არსებობს"
 
 
 msgid "Object has no vertex groups"
@@ -25052,10 +25032,6 @@ msgstr "ბლენდერის პარამეტრები"
 
 msgid "Untitled"
 msgstr "უსათაურო"
-
-
-msgid "No active mesh object"
-msgstr "აქტიური მეშის ობიექტი არ არსებობს"
 
 
 msgid "Image could not be found"
@@ -25409,6 +25385,10 @@ msgid "OFF"
 msgstr "OFF"
 
 
+msgid "OK?"
+msgstr "კარგი?"
+
+
 msgid "unsupported format"
 msgstr "მხარდაუჭერელი ფორმატი"
 
@@ -25591,10 +25571,6 @@ msgstr "ბულგარული (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "ბერძნული (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "კორეული (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"
