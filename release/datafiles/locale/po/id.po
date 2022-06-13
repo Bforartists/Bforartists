@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1621,6 +1621,10 @@ msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
 
 
+msgid "Simulations"
+msgstr "Simulasi"
+
+
 msgid "Sounds"
 msgstr "Suara"
 
@@ -2931,6 +2935,10 @@ msgstr "Kemampuan Cat Beban"
 
 msgid "Has Weight"
 msgstr "Punya Beban"
+
+
+msgid "Count"
+msgstr "Hitung"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -5978,6 +5986,10 @@ msgid "View"
 msgstr "Pandangan"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Steps"
 msgstr "Langkah"
 
@@ -7334,10 +7346,6 @@ msgid "Face Map"
 msgstr "Peta Wajah"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Face Maps"
 msgstr "Peta Wajah"
 
@@ -7456,10 +7464,6 @@ msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -8856,10 +8860,6 @@ msgstr "Kait"
 
 msgid "Constant Offset"
 msgstr "Kamera"
-
-
-msgid "Count"
-msgstr "Hitung"
 
 
 msgid "Number of items"
@@ -11897,6 +11897,11 @@ msgstr "Preset Frame Rate"
 
 msgid "Effect Strip"
 msgstr "Strip Efek"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Adegan"
 
 
 msgid "Change"
@@ -17266,10 +17271,6 @@ msgid "Add an object data instance"
 msgstr "Tambah instansi data objek"
 
 
-msgid "ID name to add"
-msgstr "Nama ID untuk ditambahkan"
-
-
 msgctxt "Operator"
 msgid "Transfer Mesh Data"
 msgstr "Transfer Data Mesh"
@@ -17325,10 +17326,6 @@ msgstr "Jalurdokumen"
 
 msgid "Path to image file"
 msgstr "Jalur ke dokumen gambar"
-
-
-msgid "Image name to assign"
-msgstr "Nama gambar untuk ditugaskan"
 
 
 msgctxt "Operator"
@@ -17558,11 +17555,6 @@ msgstr "Modus Objek"
 
 msgid "Mesh Mode"
 msgstr "Mode Mesh"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Modus Objek"
 
 
 msgctxt "Operator"
@@ -19929,10 +19921,6 @@ msgstr "Hubungkan Koneksi"
 
 msgid "Context Attributes"
 msgstr "Atribut Konteks"
-
-
-msgid "RNA context string"
-msgstr "Tekstur"
 
 
 msgid "Header Text"
@@ -24497,6 +24485,10 @@ msgid "Selection"
 msgstr "Seleksi"
 
 
+msgid "Viewport Gizmos"
+msgstr "Gizmos Viewport"
+
+
 msgid "Show Same Material"
 msgstr "Tampilkan Material yang Sama"
 
@@ -24774,10 +24766,6 @@ msgid "Gamma:"
 msgstr "Gamma:"
 
 
-msgid "Viewport Gizmos"
-msgstr "Gizmos Viewport"
-
-
 msgid "Offsets"
 msgstr "Offset"
 
@@ -24860,11 +24848,6 @@ msgstr "Kedua Sisi"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Adegan..."
-
-
-msgctxt "Operator"
 msgid "Clip..."
 msgstr "Klip..."
 
@@ -24882,6 +24865,11 @@ msgstr "Warna"
 msgctxt "Operator"
 msgid "Text"
 msgstr "Teks"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Adegan..."
 
 
 msgctxt "Operator"
@@ -24910,11 +24898,6 @@ msgstr "Pelacak"
 
 msgid "Resolutions"
 msgstr "Resolusi"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Adegan"
 
 
 msgctxt "Operator"
@@ -26290,10 +26273,6 @@ msgid "Object (Keep Transform)"
 msgstr "Orientasi Transformasi"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Operation cannot be performed in edit mode"
 msgstr "Penyunting Teks"
 
@@ -27277,6 +27256,10 @@ msgid "OFF"
 msgstr "OFF"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "unsupported format"
 msgstr "format yang tidak terdukung"
 
@@ -27399,10 +27382,6 @@ msgstr "Arab (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Yunani (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Korea (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"
