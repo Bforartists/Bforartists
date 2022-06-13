@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1782,6 +1782,10 @@ msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
 
 
+msgid "Simulations"
+msgstr "Simulations"
+
+
 msgid "Sounds"
 msgstr "Sons"
 
@@ -2072,6 +2076,10 @@ msgstr "Écrans du Main"
 
 msgid "Collection of screens"
 msgstr "Collection d’écrans"
+
+
+msgid "Collection of simulations"
+msgstr "Collection de simulations"
 
 
 msgid "Main Sounds"
@@ -3154,8 +3162,8 @@ msgid "Has Weight"
 msgstr "A poids"
 
 
-msgid "Add Amount"
-msgstr "Quantité d'ajout"
+msgid "Count"
+msgstr "Nombre"
 
 
 msgid "Number of curves added by the Add brush"
@@ -3192,6 +3200,14 @@ msgstr "Longueur minimale"
 
 msgid "Avoid shrinking curves shorter than this length"
 msgstr "Ne pas rétrécir les courbes en dessous de cette longeur"
+
+
+msgid "Points per Curve"
+msgstr "Points par courbe"
+
+
+msgid "Number of control points in a newly added curve"
+msgstr "Nombre de points de contrôle dans une courbe nouvellement ajoutée"
 
 
 msgid "Scale Uniform"
@@ -7911,6 +7927,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Utiliser le début du trait pour la profondeur"
 
 
+msgid "Index"
+msgstr "Indice"
+
+
+msgid "Radius"
+msgstr "Rayon"
+
+
 msgid "Profile Path editor used to build a profile path"
 msgstr "Éditeur de chemin de profil utilisé pour créer un chemin de profil"
 
@@ -8029,10 +8053,6 @@ msgstr "Pointillés"
 
 msgid "Material Index"
 msgstr "Indice de matériau"
-
-
-msgid "Radius"
-msgstr "Rayon"
 
 
 msgid "Dependency Graph"
@@ -10775,10 +10795,6 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Groupe de faces, chaque face ne peut appartenir qu’à une seule carte"
 
 
-msgid "Index"
-msgstr "Indice"
-
-
 msgid "Index number of the face map"
 msgstr "Numéro d’indice de la carte de face"
 
@@ -10851,16 +10867,16 @@ msgid "Fall-Off"
 msgstr "Atténuation"
 
 
+msgid "Cone"
+msgstr "Cône"
+
+
 msgid "Sphere"
 msgstr "Sphère"
 
 
 msgid "Tube"
 msgstr "Tube"
-
-
-msgid "Cone"
-msgstr "Cône"
 
 
 msgid "Flow"
@@ -10923,6 +10939,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "Type de décalage périodique sur la courbe"
 
 
+msgid "Braid"
+msgstr "Tresse"
+
+
 msgid "Curl"
 msgstr "Boucle"
 
@@ -10933,10 +10953,6 @@ msgstr "Radial"
 
 msgid "Wave"
 msgstr "Vague"
-
-
-msgid "Braid"
-msgstr "Tresse"
 
 
 msgid "The distance from which particles are affected fully"
@@ -11095,52 +11111,52 @@ msgid "Type of field"
 msgstr "Type de champ"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Champ radial dirigé vers le centre de l’objet"
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "Force constante le long de l’axe Z local de l’objet force"
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "Force spiralante qui s’enroule autour de l’axe Z local de l’objet force"
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "Le champ de force dépend de la vitesse des particules"
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "La source de ce champ de force est le point zéro d’un oscillateur harmonique"
+msgid "Create a force that acts as a boid's predators or target"
+msgstr "Créer une force agissant comme un prédateur ou une cible des “boids”"
 
 
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "Champ de force sphérique basé sur la charge des particules, n’influence que les autres champs de force Charge"
 
 
+msgid "Create a force along a curve object"
+msgstr "Créer une force le long d’un objet courbe"
+
+
+msgid "Create a force that dampens motion"
+msgstr "Créer une force qui amortit le mouvement"
+
+
+msgid "Radial field toward the center of object"
+msgstr "Champ radial dirigé vers le centre de l’objet"
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "La source de ce champ de force est le point zéro d’un oscillateur harmonique"
+
+
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "Champ de force basé sur le potentiel de Lennard-Jones"
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "Le champ de force dépend de la vitesse des particules"
 
 
 msgid "Force field based on a texture"
 msgstr "Champ de force basé sur une texture"
 
 
-msgid "Create a force along a curve object"
-msgstr "Créer une force le long d’un objet courbe"
-
-
-msgid "Create a force that acts as a boid's predators or target"
-msgstr "Créer une force agissant comme un prédateur ou une cible des “boids”"
-
-
 msgid "Create turbulence with a noise field"
 msgstr "Créer des turbulences avec un champ de bruit"
 
 
-msgid "Create a force that dampens motion"
-msgstr "Créer une force qui amortit le mouvement"
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "Force spiralante qui s’enroule autour de l’axe Z local de l’objet force"
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "Force constante le long de l’axe Z local de l’objet force"
 
 
 msgid "2D"
@@ -11357,10 +11373,6 @@ msgstr "Afficher les blocs de données réglages de particules"
 
 msgid "Show Scene data-blocks"
 msgstr "Afficher les blocs de données scène"
-
-
-msgid "Simulations"
-msgstr "Simulations"
 
 
 msgid "Show Sound data-blocks"
@@ -14985,10 +14997,6 @@ msgid "Value for the distance between items"
 msgstr "Valeur pour la distance entre les éléments"
 
 
-msgid "Count"
-msgstr "Nombre"
-
-
 msgid "Number of items"
 msgstr "Nombre d’éléments"
 
@@ -18208,6 +18216,22 @@ msgid "Don't fill polygons while editing"
 msgstr "Ne pas remplir les polygone durant l’édition"
 
 
+msgid "Attributes"
+msgstr "Attributs"
+
+
+msgid "Enable symmetry in the X axis"
+msgstr "Activer la symétrie dans l'axe X"
+
+
+msgid "Enable symmetry in the Y axis"
+msgstr "Activer la symétrie dans l'axe Y"
+
+
+msgid "Enable symmetry in the Z axis"
+msgstr "Activer la symétrie dans l'axe Z"
+
+
 msgid "Freestyle Line Style"
 msgstr "Style de ligne Freestyle"
 
@@ -20324,10 +20348,6 @@ msgstr "Ajouter un effet de translucence à la sub-surface"
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Bloc de données mesh définissant des surfaces géométriques"
-
-
-msgid "Attributes"
-msgstr "Attributs"
 
 
 msgid "Auto Smooth Angle"
@@ -23045,8 +23065,36 @@ msgid "Sound data-block referencing an external or packed sound file"
 msgstr "Bloc de données son référençant un fichier son externe ou empaqueté"
 
 
+msgid "Audio channels"
+msgstr "Canaux audio"
+
+
+msgid "Definition of audio channels"
+msgstr "Définition des canaux audio"
+
+
+msgid "Stereo LFE"
+msgstr "Stéréo LFE"
+
+
+msgid "Stereo FX"
+msgstr "Stéréo FX"
+
+
+msgid "5 Channels"
+msgstr "5 canaux"
+
+
+msgid "6.1 Surround"
+msgstr "6.1 surround"
+
+
 msgid "Sound sample file used by this Sound data-block"
 msgstr "Fichier de son utilisé par ce bloc de données Son"
+
+
+msgid "Samplerate of the audio in Hz"
+msgstr "Taux d'échantillonnage de l'audio en Hz"
 
 
 msgid "Caching"
@@ -28110,6 +28158,11 @@ msgstr "Spécialité ensemble de lignes"
 
 msgid "Effect Strip"
 msgstr "Bande d’effet"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Scène"
 
 
 msgid "Change"
@@ -36188,6 +36241,14 @@ msgstr "BSDF réfraction"
 
 msgid "Toon BSDF"
 msgstr "BSDF Toon"
+
+
+msgid "Use diffuse BSDF"
+msgstr "Utiliser BSDF diffus"
+
+
+msgid "Use glossy BSDF"
+msgstr "Utiliser BSDF brillant"
 
 
 msgid "Translucent BSDF"
@@ -48206,10 +48267,6 @@ msgid "Start transform operator after inserting the node"
 msgstr "Lancer l’opérateur de transformation après insertion du nœud"
 
 
-msgid "Data-block name to assign"
-msgstr "Nom du bloc de données à assigner"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Ajouter nœud Fichier"
@@ -49159,10 +49216,6 @@ msgid "Path to image file"
 msgstr "Chemin vers le fichier image"
 
 
-msgid "Image name to assign"
-msgstr "Nom de l’image à assigner"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Lâcher matériau nommé sur objet"
@@ -49175,10 +49228,6 @@ msgstr "Dupliquer objets"
 
 msgid "Duplicate selected objects"
 msgstr "Dupliquer les objets sélectionnés"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Dupliquer les objets sélectionnés et les déplacer"
 
 
 msgid "Duplicate Objects"
@@ -49818,8 +49867,8 @@ msgstr "Ajouter une opération/effet procédural à l’objet actif"
 
 
 msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Convertir modificateur"
+msgid "Convert Particles to Mesh"
+msgstr "Convertir particules en mesh"
 
 
 msgid "Convert particles to a mesh object"
@@ -51696,15 +51745,6 @@ msgstr "Essayer de sélectionner une poignée avant la transformation"
 
 msgid "Add cube map uvs on mesh"
 msgstr "Ajouter une carte UV cubique au mesh"
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Ajouter emplacement de texture de peinture"
-
-
-msgid "Add a texture paint slot"
-msgstr "Ajouter un emplacement de texture de peinture"
 
 
 msgctxt "Operator"
@@ -54686,6 +54726,14 @@ msgid "Erase selected strips from the sequencer"
 msgstr "Effacer les bandes sélectionnées du séquenceur"
 
 
+msgid "Delete Data"
+msgstr "Supprimer données"
+
+
+msgid "After removing the Strip, delete the associated data also"
+msgstr "Après la suppression de la bande, effacer également les données associées"
+
+
 msgid "Duplicate the selected strips"
 msgstr "Dupliquer les bandes sélectionnées"
 
@@ -56240,10 +56288,6 @@ msgstr "Copier la commande Python correspondant à ce bouton"
 msgctxt "Operator"
 msgid "Copy to Selected"
 msgstr "Copier vers sélectionnés"
-
-
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Copier la propriété de cet objet vers les objets ou os sélectionnés"
 
 
 msgid "Copy to selected all elements of the array"
@@ -58505,10 +58549,6 @@ msgid "Context Attributes"
 msgstr "Attributs de contexte"
 
 
-msgid "RNA context string"
-msgstr "Chaîne RNA de contexte"
-
-
 msgid "Cycle backwards"
 msgstr "Circuler à l’envers"
 
@@ -58908,6 +58948,78 @@ msgstr "Afficher les statistiques mémoire dans la console"
 
 msgid "Object Properties"
 msgstr "Propriétés de l'objet"
+
+
+msgid "Export objects as they appear in render"
+msgstr "Exporter les objets tels qu'ils apparaissent dans le rendu"
+
+
+msgid "Export objects as they appear in the viewport"
+msgstr "Exporter les objets tels qu'ils apparaissent dans la vue"
+
+
+msgid "Export Material Groups"
+msgstr "Exporter groupes de matériaux"
+
+
+msgid "Export Materials"
+msgstr "Exporter matériaux"
+
+
+msgid "Export Normals"
+msgstr "Exporter normales"
+
+
+msgid "Export Selected Objects"
+msgstr "Exporter objets sélectionnés"
+
+
+msgid "Export only selected objects instead of all supported objects"
+msgstr "Exporter seulement les objets sélectionnés au lieu d'exporter tous les objets supportés"
+
+
+msgid "Export Smooth Groups"
+msgstr "Exporter groupes de lissage"
+
+
+msgid "Export Vertex Groups"
+msgstr "Exporter groupes de vertices"
+
+
+msgid "Positive X axis"
+msgstr "Axe X positif"
+
+
+msgid "Positive Y axis"
+msgstr "Axe Y positif"
+
+
+msgid "Positive Z axis"
+msgstr "Axe Z positif"
+
+
+msgid "Negative X axis"
+msgstr "Axe X négatif"
+
+
+msgid "Negative Y axis"
+msgstr "Axe Y négatif"
+
+
+msgid "Negative Z axis"
+msgstr "Axe Z négatif"
+
+
+msgid "Write relative paths where possible"
+msgstr "Écrire des chemins relatifs lorsque possible"
+
+
+msgid "Write filename only"
+msgstr "Écrire le nom du fichier uniquement"
+
+
+msgid "Copy the file to the destination path"
+msgstr "Copier le fichier vers le chemin de destination"
 
 
 msgctxt "Operator"
@@ -61310,21 +61422,6 @@ msgid "Twist"
 msgstr "Vriller"
 
 
-msgctxt "Operator"
-msgid "Delete Curves"
-msgstr "Supprimer courbes"
-
-
-msgctxt "Operator"
-msgid "Add Curves"
-msgstr "Ajouter courbes"
-
-
-msgctxt "Operator"
-msgid "Grow / Shrink Curves"
-msgstr "Agrandir / Rétrécir courbes"
-
-
 msgid "Clone from Paint Slot"
 msgstr "Cloner depuis emplacement de peinture"
 
@@ -61335,10 +61432,6 @@ msgstr "Atténuation normale"
 
 msgid "Post-Processing"
 msgstr "Post-processing"
-
-
-msgid "Sculpt Strokes"
-msgstr "Sculpture des traits"
 
 
 msgid "Default tools for particle mode"
@@ -62839,6 +62932,10 @@ msgstr "Infos debug d'asset"
 
 msgid "Enable some extra fields in the Asset Browser to aid in debugging"
 msgstr "Active quelques champs supplémentaires dans l'explorateur d'asset pour aider au débogage"
+
+
+msgid "Don't lock UI during background rendering"
+msgstr "Ne pas verrouiller l'UI lors du rendu en arrière-plan"
 
 
 msgid "Extended Asset Browser"
@@ -67089,14 +67186,6 @@ msgid "X position where the strip begins"
 msgstr "Position X où la bande débute"
 
 
-msgid "End Still"
-msgstr "Statiques de fin"
-
-
-msgid "Start Still"
-msgstr "Images statiques au début"
-
-
 msgid "Lock strip so that it cannot be transformed"
 msgstr "Verrouiller la bande de façon qu’elle ne puisse plus être transformée"
 
@@ -69304,6 +69393,18 @@ msgid "Scopes to visualize image statistics"
 msgstr "Graphiques pour visualiser les statistiques de l’image"
 
 
+msgid "Show Gizmo"
+msgstr "Afficher gizmo"
+
+
+msgid "Show gizmos of all types"
+msgstr "Afficher les gizmos de tous les types"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Gizmo de navigation dans la vue"
+
+
 msgid "Show Mask Editor"
 msgstr "Afficher éditeur de masque"
 
@@ -69873,24 +69974,12 @@ msgid "Display result under strips"
 msgstr "Afficher le résultat en-dessous des bandes"
 
 
-msgid "Show Gizmo"
-msgstr "Afficher gizmo"
-
-
-msgid "Show gizmos of all types"
-msgstr "Afficher les gizmos de tous les types"
-
-
 msgid "Context Gizmo"
 msgstr "Gizmo de contexte"
 
 
 msgid "Context sensitive gizmos for the active item"
 msgstr "Gizmos dépendants du contexte pour l'élément actif"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Gizmo de navigation dans la vue"
 
 
 msgid "Tool Gizmo"
@@ -74996,16 +75085,20 @@ msgid "Source Clone UV Map"
 msgstr "Carte UV source de clonage"
 
 
+msgid "Point Count"
+msgstr "Nombre de points"
+
+
+msgid "Mask Value"
+msgstr "Valeur de masque"
+
+
 msgid "CCW"
 msgstr "CCW"
 
 
 msgid "CW"
 msgstr "CW"
-
-
-msgid "Mask Value"
-msgstr "Valeur de masque"
 
 
 msgid "Invert to Fill"
@@ -75712,6 +75805,14 @@ msgid "Invert Image Colors"
 msgstr "Inverser couleurs image"
 
 
+msgid "Viewport Gizmos"
+msgstr "Gizmos de la vue"
+
+
+msgid "Navigate"
+msgstr "Navigation"
+
+
 msgid "Show Same Material"
 msgstr "Afficher même matériau"
 
@@ -76102,14 +76203,6 @@ msgid "Gain:"
 msgstr "Gain :"
 
 
-msgid "Viewport Gizmos"
-msgstr "Gizmos de la vue"
-
-
-msgid "Navigate"
-msgstr "Navigation"
-
-
 msgid "Active Tools"
 msgstr "Outils actif"
 
@@ -76215,11 +76308,6 @@ msgstr "Droite"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scène…"
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Couleur"
 
@@ -76232,6 +76320,11 @@ msgstr "Texte"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Calque d’ajustement"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Scène…"
 
 
 msgctxt "Operator"
@@ -76323,11 +76416,6 @@ msgstr "Traqueur"
 
 msgid "Resolutions"
 msgstr "Résolutions"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Scène"
 
 
 msgctxt "Operator"
@@ -76609,16 +76697,6 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil as SVG"
-msgstr "Crayon gras en SVG"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil as PDF"
-msgstr "Crayon gras en PDF"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Rendre image"
 
@@ -76660,6 +76738,16 @@ msgstr "Rapporter un bug (en)"
 
 msgid "No active item"
 msgstr "Pas d'élément actif"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as SVG"
+msgstr "Crayon gras en SVG"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil as PDF"
+msgstr "Crayon gras en PDF"
 
 
 msgid "Resolution Scale"
@@ -80689,6 +80777,10 @@ msgid "Deleted %u object(s)"
 msgstr "%u objet(s) supprimé(s)"
 
 
+msgid "No active mesh object"
+msgstr "Pas d’objet mesh actif"
+
+
 msgid "Baking of multires data only works with an active mesh object"
 msgstr "Le pré-calcul des données multi-résolution ne fonctionne qu’avec un objet mesh actif"
 
@@ -81027,10 +81119,6 @@ msgstr "Définir parent à"
 
 msgid "Object (Keep Transform)"
 msgstr "Objet (conserver transformation)"
-
-
-msgid "OK?"
-msgstr "Ok ?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -81632,10 +81720,6 @@ msgstr "Les fichiers multi-calques empaquetés ne peuvent être peints : %s"
 
 msgid "Untitled"
 msgstr "Sans nom"
-
-
-msgid "No active mesh object"
-msgstr "Pas d’objet mesh actif"
 
 
 msgid "Image could not be found"
@@ -84001,24 +84085,12 @@ msgid "Modify"
 msgstr "Modifier"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Impossible d’acquérir un tampon depuis l’image"
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "La scène n’est pas dans le contexte, impossible de récupérer les paramètres d’enregistrement"
-
-
 msgid "Image not packed"
 msgstr "Image non empaquetée"
 
 
 msgid "Could not save packed file to disk as '%s'"
 msgstr "Impossible d’enregistrer le fichier empaqueté vers le disque sous “%s”"
-
-
-msgid "Could not write image: %s, '%s'"
-msgstr "Impossible d’écrire l’image : %s, “%s”"
 
 
 msgid "Image '%s' could not be saved to '%s'"
@@ -84839,10 +84911,6 @@ msgid "Vertex Count"
 msgstr "Nombre de vertex"
 
 
-msgid "Point Count"
-msgstr "Nombre de points"
-
-
 msgid "Pick Instance"
 msgstr "Choisir instance"
 
@@ -85529,6 +85597,10 @@ msgid "OFF"
 msgstr "OFF"
 
 
+msgid "OK?"
+msgstr "Ok ?"
+
+
 msgid "unsupported format"
 msgstr "format non supporté"
 
@@ -85580,6 +85652,10 @@ msgstr "Impossible de lire %s “%s” : %s"
 
 msgid "%s '%s' not found"
 msgstr "%s “%s” introuvable"
+
+
+msgid "%s not found"
+msgstr "%s introuvable"
 
 
 msgid "Operator '%s' does not have register enabled, incorrect invoke function"
@@ -85795,10 +85871,6 @@ msgstr "Bulgare (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Grec (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Coréen (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

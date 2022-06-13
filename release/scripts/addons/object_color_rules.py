@@ -172,7 +172,7 @@ def object_colors_select(rule, objects):
     test_cb = getattr(rule_test, rule_type)
 
     for obj in objects:
-        obj.select = test_cb(obj, rule, cache)
+        obj.select_set(test_cb(obj, rule, cache))
 
 
 def object_colors_rule_validate(rule, report):

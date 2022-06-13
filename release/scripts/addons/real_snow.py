@@ -4,11 +4,11 @@ bl_info = {
     "name": "Real Snow",
     "description": "Generate snow mesh",
     "author": "Marco Pavanello, Drew Perttula",
-    "version": (1, 2),
-    "blender": (2, 83, 0),
+    "version": (1, 3),
+    "blender": (3, 1, 0),
     "location": "View 3D > Properties Panel",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/object/real_snow.html",
-    "tracker_url": "https://github.com/marcopavanello/real-snow/issues",
+    "tracker_url": "https://gitlab.com/marcopavanello/real-snow/-/issues",
     "support": "COMMUNITY",
     "category": "Object",
     }
@@ -240,9 +240,9 @@ def add_material(obj: bpy.types.Object):
     add2 = nodes.new('ShaderNodeMath')
     mul2 = nodes.new('ShaderNodeMath')
     mul3 = nodes.new('ShaderNodeMath')
-    ramp1 = nodes.new('ShaderNodeValToRGB')
-    ramp2 = nodes.new('ShaderNodeValToRGB')
-    ramp3 = nodes.new('ShaderNodeValToRGB')
+    range1 = nodes.new('ShaderNodeMapRange')
+    range2 = nodes.new('ShaderNodeMapRange')
+    range3 = nodes.new('ShaderNodeMapRange')
     vor = nodes.new('ShaderNodeTexVoronoi')
     noise1 = nodes.new('ShaderNodeTexNoise')
     noise2 = nodes.new('ShaderNodeTexNoise')
@@ -251,7 +251,7 @@ def add_material(obj: bpy.types.Object):
     coord = nodes.new('ShaderNodeTexCoord')
     # Change location
     output.location = (100, 0)
-    principled.location = (-200, 500)
+    principled.location = (-200, 600)
     vec_math.location = (-400, 400)
     com_xyz.location = (-600, 400)
     dis.location = (-200, -100)
@@ -260,13 +260,13 @@ def add_material(obj: bpy.types.Object):
     add2.location = (-800, -100)
     mul2.location = (-1000, -100)
     mul3.location = (-1000, -300)
-    ramp1.location = (-500, 150)
-    ramp2.location = (-1300, -300)
-    ramp3.location = (-1000, -500)
+    range1.location = (-400, 200)
+    range2.location = (-1200, -300)
+    range3.location = (-800, -300)
     vor.location = (-1500, 200)
     noise1.location = (-1500, 0)
-    noise2.location = (-1500, -200)
-    noise3.location = (-1500, -400)
+    noise2.location = (-1500, -250)
+    noise3.location = (-1500, -500)
     mapping.location = (-1700, 0)
     coord.location = (-1900, 0)
     # Change node parameters
@@ -282,9 +282,9 @@ def add_material(obj: bpy.types.Object):
     principled.inputs[3].default_value[0] = 0.904
     principled.inputs[3].default_value[1] = 0.904
     principled.inputs[3].default_value[2] = 0.904
-    principled.inputs[5].default_value = 0.224
-    principled.inputs[7].default_value = 0.1
-    principled.inputs[13].default_value = 0.1
+    principled.inputs[7].default_value = 0.224
+    principled.inputs[9].default_value = 0.1
+    principled.inputs[15].default_value = 0.1
     vec_math.operation = "MULTIPLY"
     vec_math.inputs[1].default_value[0] = 0.5
     vec_math.inputs[1].default_value[1] = 0.5
@@ -300,12 +300,12 @@ def add_material(obj: bpy.types.Object):
     mul2.inputs[1].default_value = 0.6
     mul3.operation = "MULTIPLY"
     mul3.inputs[1].default_value = 0.4
-    ramp1.color_ramp.elements[0].position = 0.525
-    ramp1.color_ramp.elements[1].position = 0.58
-    ramp2.color_ramp.elements[0].position = 0.069
-    ramp2.color_ramp.elements[1].position = 0.757
-    ramp3.color_ramp.elements[0].position = 0.069
-    ramp3.color_ramp.elements[1].position = 0.757
+    range1.inputs[1].default_value = 0.525
+    range1.inputs[2].default_value = 0.58
+    range2.inputs[1].default_value = 0.069
+    range2.inputs[2].default_value = 0.757
+    range3.inputs[1].default_value = 0.069
+    range3.inputs[2].default_value = 0.757
     vor.feature = "N_SPHERE_RADIUS"
     vor.inputs[2].default_value = 30
     noise1.inputs[2].default_value = 12
@@ -327,13 +327,13 @@ def add_material(obj: bpy.types.Object):
     link.new(add2.outputs[0], add1.inputs[0])
     link.new(mul2.outputs[0], add2.inputs[0])
     link.new(mul3.outputs[0], add2.inputs[1])
-    link.new(ramp1.outputs[0], principled.inputs[12])
-    link.new(ramp2.outputs[0], mul3.inputs[0])
-    link.new(ramp3.outputs[0], add1.inputs[1])
-    link.new(vor.outputs[4], ramp1.inputs[0])
+    link.new(range1.outputs[0], principled.inputs[14])
+    link.new(range2.outputs[0], mul3.inputs[0])
+    link.new(range3.outputs[0], add1.inputs[1])
+    link.new(vor.outputs[4], range1.inputs[0])
     link.new(noise1.outputs[0], mul2.inputs[0])
-    link.new(noise2.outputs[0], ramp2.inputs[0])
-    link.new(noise3.outputs[0], ramp3.inputs[0])
+    link.new(noise2.outputs[0], range2.inputs[0])
+    link.new(noise3.outputs[0], range3.inputs[0])
     link.new(mapping.outputs[0], vor.inputs[0])
     link.new(mapping.outputs[0], noise1.inputs[0])
     link.new(mapping.outputs[0], noise2.inputs[0])

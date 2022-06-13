@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1814,6 +1814,10 @@ msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
 
 
+msgid "Simulations"
+msgstr "Симуляции"
+
+
 msgid "Sounds"
 msgstr "Звуки"
 
@@ -3276,6 +3280,10 @@ msgstr "Возможности рисования весов"
 
 msgid "Has Weight"
 msgstr "С весом"
+
+
+msgid "Count"
+msgstr "Количество"
 
 
 msgid "Grease Pencil Brush Settings"
@@ -8123,6 +8131,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Использовать начало штрихов для глубины"
 
 
+msgid "Index"
+msgstr "Индекс"
+
+
+msgid "Radius"
+msgstr "Радиус"
+
+
 msgid "Profile Path editor used to build a profile path"
 msgstr "Редактор профильных кривых, используемый для построения профильных кривых"
 
@@ -8249,10 +8265,6 @@ msgstr "Штрихи"
 
 msgid "Material Index"
 msgstr "Индекс материала"
-
-
-msgid "Radius"
-msgstr "Радиус"
 
 
 msgid "Dependency Graph"
@@ -11103,10 +11115,6 @@ msgid "Group of faces, each face can only be part of one map"
 msgstr "Группа граней, каждая из которых может быть частью одной карты"
 
 
-msgid "Index"
-msgstr "Индекс"
-
-
 msgid "Index number of the face map"
 msgstr "Порядковый номер карты граней"
 
@@ -11183,16 +11191,16 @@ msgid "Fall-Off"
 msgstr "Спад"
 
 
+msgid "Cone"
+msgstr "Конус"
+
+
 msgid "Sphere"
 msgstr "Сфера"
 
 
 msgid "Tube"
 msgstr "Цилиндр"
-
-
-msgid "Cone"
-msgstr "Конус"
 
 
 msgid "Flow"
@@ -11255,6 +11263,10 @@ msgid "Type of periodic offset on the curve"
 msgstr "Тип периодического смещения на кривой"
 
 
+msgid "Braid"
+msgstr "Оплётка"
+
+
 msgid "Curl"
 msgstr "Завиток"
 
@@ -11265,10 +11277,6 @@ msgstr "Радиально"
 
 msgid "Wave"
 msgstr "Волна"
-
-
-msgid "Braid"
-msgstr "Оплётка"
 
 
 msgid "The distance from which particles are affected fully"
@@ -11431,48 +11439,16 @@ msgid "Type of field"
 msgstr "Тип поля"
 
 
-msgid "Radial field toward the center of object"
-msgstr "Радиальное поле, направленное к центру объекта"
-
-
-msgid "Constant force along the force object's local Z axis"
-msgstr "Постоянная сила, направленная вдоль локальной оси Z объекта силы"
-
-
-msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "Спиральная сила вокруг локальной оси Z объекта силы"
-
-
-msgid "Forcefield depends on the speed of the particles"
-msgstr "Силовое поле, зависящее от скорости частиц"
-
-
-msgid "The source of this force field is the zero point of a harmonic oscillator"
-msgstr "Источником силового поля является нулевая точка гармонического осциллятора"
+msgid "Create a force that acts as a boid's predators or target"
+msgstr "Создать силу, имитирующую рой хищников или цель"
 
 
 msgid "Spherical forcefield based on the charge of particles, only influences other charge force fields"
 msgstr "Сферическое силовое поле на основе заряда частиц; влияет только на другие зарядовые силовые поля"
 
 
-msgid "Forcefield based on the Lennard-Jones potential"
-msgstr "Силовое поле на основе потенциала Леннарда-Джонса"
-
-
-msgid "Force field based on a texture"
-msgstr "Силовое поле на основе текстуры"
-
-
 msgid "Create a force along a curve object"
 msgstr "Создать силу вдоль объекта кривой"
-
-
-msgid "Create a force that acts as a boid's predators or target"
-msgstr "Создать силу, имитирующую рой хищников или цель"
-
-
-msgid "Create turbulence with a noise field"
-msgstr "Создать турбулентность с шумовым полем"
 
 
 msgid "Create a force that dampens motion"
@@ -11481,6 +11457,38 @@ msgstr "Создать силу сопротивления движению"
 
 msgid "Create a force based on fluid simulation velocities"
 msgstr "Создать силу на основе скоростей симуляции жидкости"
+
+
+msgid "Radial field toward the center of object"
+msgstr "Радиальное поле, направленное к центру объекта"
+
+
+msgid "The source of this force field is the zero point of a harmonic oscillator"
+msgstr "Источником силового поля является нулевая точка гармонического осциллятора"
+
+
+msgid "Forcefield based on the Lennard-Jones potential"
+msgstr "Силовое поле на основе потенциала Леннарда-Джонса"
+
+
+msgid "Forcefield depends on the speed of the particles"
+msgstr "Силовое поле, зависящее от скорости частиц"
+
+
+msgid "Force field based on a texture"
+msgstr "Силовое поле на основе текстуры"
+
+
+msgid "Create turbulence with a noise field"
+msgstr "Создать турбулентность с шумовым полем"
+
+
+msgid "Spiraling force that twists the force object's local Z axis"
+msgstr "Спиральная сила вокруг локальной оси Z объекта силы"
+
+
+msgid "Constant force along the force object's local Z axis"
+msgstr "Постоянная сила, направленная вдоль локальной оси Z объекта силы"
 
 
 msgid "2D"
@@ -11693,10 +11701,6 @@ msgstr "Показать/скрыть датаблоки облаков точе
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -15741,10 +15745,6 @@ msgid "Value for the distance between items"
 msgstr "Значение для расстояния между элементами"
 
 
-msgid "Count"
-msgstr "Количество"
-
-
 msgid "Number of items"
 msgstr "Количество элементов"
 
@@ -16481,14 +16481,6 @@ msgstr "Типы перекрывающихся рёбер"
 
 msgid "Allow an edge to have multiple overlapping types. This will create a separate stroke for each overlapping type"
 msgstr "Разрешить ребру иметь несколько перекрывающихся типов. Для каждого типа перекрытия будет создан отдельный штрих"
-
-
-msgid "Remove Doubles"
-msgstr "Удалить двойные вершины"
-
-
-msgid "Remove doubles from the source geometry before generating stokes"
-msgstr "Удалить двойные вершины из геометрии источника перед генерацией штрихов"
 
 
 msgid "Vertex group name for selected strokes"
@@ -19444,6 +19436,10 @@ msgid "Don't fill polygons while editing"
 msgstr "Не заполнять полигоны во время редактирования"
 
 
+msgid "Attributes"
+msgstr "Атрибуты"
+
+
 msgid "Freestyle Line Style"
 msgstr "Стиль линий Freestyle"
 
@@ -21556,10 +21552,6 @@ msgstr "Добавить эффект просвечиваемости для п
 
 msgid "Mesh data-block defining geometric surfaces"
 msgstr "Датаблок меша, определяющий геометрические поверхности"
-
-
-msgid "Attributes"
-msgstr "Атрибуты"
 
 
 msgid "Auto Smooth Angle"
@@ -29520,6 +29512,11 @@ msgstr "Инструменты набора линий"
 
 msgid "Effect Strip"
 msgstr "Дорожка эффектов"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Сцена"
 
 
 msgid "Change"
@@ -37794,18 +37791,6 @@ msgstr "Текстура «Масгрейв»"
 
 msgid "Use the scalar value W as input"
 msgstr "Использовать линейное значение W в качестве входа"
-
-
-msgid "Use the 2D vector (x, y) as input. The z component is ignored"
-msgstr "Использовать двумерный вектор (x, y) как в качестве входа. Компонент z игнорируется"
-
-
-msgid "Use the 4D vector (x, y, z, w) as input"
-msgstr "Использовать четырёхмерный вектор в качестве входа (x, y, z, w)"
-
-
-msgid "The dimensions of the space to evaluate the noise in"
-msgstr "Размерность пространства, в котором рассчитывается шум"
 
 
 msgid "Object to take point data from"
@@ -50713,10 +50698,6 @@ msgid "Start transform operator after inserting the node"
 msgstr "Запустить оператор трансформации после вставки ноды"
 
 
-msgid "Data-block name to assign"
-msgstr "Назначаемое имя датаблока"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Добавить ноду файла"
@@ -51706,10 +51687,6 @@ msgid "Path to image file"
 msgstr "Путь к файлу изображения"
 
 
-msgid "Image name to assign"
-msgstr "Имя назначаемого изображения"
-
-
 msgctxt "Operator"
 msgid "Drop Named Material on Object"
 msgstr "Бросить именованный материал на объект"
@@ -51722,10 +51699,6 @@ msgstr "Дублировать"
 
 msgid "Duplicate selected objects"
 msgstr "Дублировать выделенные объекты"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Дублировать выделенные объекты и переместить их"
 
 
 msgid "Duplicate Objects"
@@ -52390,11 +52363,6 @@ msgstr "Режим меша"
 
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Добавить процедурную операцию/эффект на активный объект"
-
-
-msgctxt "Operator"
-msgid "Convert Modifier"
-msgstr "Преобразовать модификатор"
 
 
 msgid "Convert particles to a mesh object"
@@ -54547,15 +54515,6 @@ msgstr "Добавить простую UV-карту"
 
 msgid "Add cube map uvs on mesh"
 msgstr "Добавить кубическую развёртку в меше"
-
-
-msgctxt "Operator"
-msgid "Add Texture Paint Slot"
-msgstr "Добавить слот текстурного рисования"
-
-
-msgid "Add a texture paint slot"
-msgstr "Добавить слот текстурного рисования"
 
 
 msgctxt "Operator"
@@ -59460,10 +59419,6 @@ msgid "Copy to Selected"
 msgstr "Копировать на выделенное"
 
 
-msgid "Copy property from this object to selected objects or bones"
-msgstr "Копировать свойство объекта на выделенные объекты или кости"
-
-
 msgid "Copy to selected all elements of the array"
 msgstr "Копировать на выделенное все элементы массива"
 
@@ -62002,10 +61957,6 @@ msgstr "Установить значение массива контекста 
 
 msgid "Context Attributes"
 msgstr "Атрибуты контекста"
-
-
-msgid "RNA context string"
-msgstr "Строка контекста RNA"
 
 
 msgid "Cycle backwards"
@@ -65077,10 +65028,6 @@ msgstr "Спад по нормали"
 
 msgid "Post-Processing"
 msgstr "Постобработка"
-
-
-msgid "Sculpt Strokes"
-msgstr "Скульптинг штрихов"
 
 
 msgid "Default tools for particle mode"
@@ -71719,14 +71666,6 @@ msgid "X position where the strip begins"
 msgstr "Координата X начала дорожки"
 
 
-msgid "End Still"
-msgstr "Конечный простой"
-
-
-msgid "Start Still"
-msgstr "Начальный простой"
-
-
 msgid "Lock strip so that it cannot be transformed"
 msgstr "Заблокировать дорожку, чтобы её нельзя было случайно подвинуть"
 
@@ -74370,6 +74309,22 @@ msgid "Scopes to visualize image statistics"
 msgstr "Области для визуализации статистики изображения"
 
 
+msgid "Show Gizmo"
+msgstr "Показать манипулятор"
+
+
+msgid "Show gizmos of all types"
+msgstr "Показывать манипуляторы всех типов"
+
+
+msgid "Navigate Gizmo"
+msgstr "Манипулятор навигации"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Манипуляторы навигации во вьюпорте"
+
+
 msgid "Show Mask Editor"
 msgstr "Показать редактор масок"
 
@@ -75030,28 +74985,12 @@ msgid "Display frames rather than seconds"
 msgstr "Показывать кадры вместо секунд"
 
 
-msgid "Show Gizmo"
-msgstr "Показать манипулятор"
-
-
-msgid "Show gizmos of all types"
-msgstr "Показывать манипуляторы всех типов"
-
-
 msgid "Context Gizmo"
 msgstr "Контекстный манипулятор"
 
 
 msgid "Context sensitive gizmos for the active item"
 msgstr "Контекстный манипулятор для активного элемента"
-
-
-msgid "Navigate Gizmo"
-msgstr "Манипулятор навигации"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Манипуляторы навигации во вьюпорте"
 
 
 msgid "Tool Gizmo"
@@ -81575,16 +81514,16 @@ msgid "Gradient Mapping"
 msgstr "Наложение градиента"
 
 
+msgid "Mask Value"
+msgstr "Значение маски"
+
+
 msgid "CCW"
 msgstr "Против часовой"
 
 
 msgid "CW"
 msgstr "По часовой"
-
-
-msgid "Mask Value"
-msgstr "Значение маски"
 
 
 msgctxt "Operator"
@@ -82833,6 +82772,14 @@ msgid "Selection"
 msgstr "Выделение"
 
 
+msgid "Viewport Gizmos"
+msgstr "Манипуляторы вьюпорта"
+
+
+msgid "Navigate"
+msgstr "Навигация"
+
+
 msgid "Show Same Material"
 msgstr "Показать тот же материал"
 
@@ -83228,14 +83175,6 @@ msgid "Gain:"
 msgstr "Уровень белого:"
 
 
-msgid "Viewport Gizmos"
-msgstr "Манипуляторы вьюпорта"
-
-
-msgid "Navigate"
-msgstr "Навигация"
-
-
 msgid "Active Tools"
 msgstr "Активные инструменты"
 
@@ -83394,11 +83333,6 @@ msgstr "Рукоятка"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Сцена…"
-
-
-msgctxt "Operator"
 msgid "Clip..."
 msgstr "Видеофрагмент…"
 
@@ -83421,6 +83355,11 @@ msgstr "Текст"
 msgctxt "Operator"
 msgid "Adjustment Layer"
 msgstr "Корректирующий слой"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Сцена…"
 
 
 msgctxt "Operator"
@@ -83530,11 +83469,6 @@ msgstr "Выбор масштаба предпросмотра"
 
 msgid "Show Separate Color Channels"
 msgstr "Показать отдельные цветовые каналы"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Сцена"
 
 
 msgctxt "Operator"
@@ -88676,6 +88610,10 @@ msgid "Deleted %u object(s)"
 msgstr "Удалено %u объект(ов)"
 
 
+msgid "No active mesh object"
+msgstr "Нет активного меш-объекта"
+
+
 msgid "Baking of multires data only works with an active mesh object"
 msgstr "Запекание данных мультиразрешения работает только с активным меш-объектом"
 
@@ -89046,10 +88984,6 @@ msgstr "Объект (с сохранением трансформации)"
 
 msgid "Object (Without Inverse)"
 msgstr "Объект (без инверсии)"
-
-
-msgid "OK?"
-msgstr "Уверены?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -89703,10 +89637,6 @@ msgstr "Рисование невозможно для многослойных 
 
 msgid "Untitled"
 msgstr "Без имени"
-
-
-msgid "No active mesh object"
-msgstr "Нет активного меш-объекта"
 
 
 msgid "Image could not be found"
@@ -92076,24 +92006,12 @@ msgid "Modify"
 msgstr "Изменить"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Не удалось получить буфер от изображения"
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "Сцена не в контексте, невозможно получить параметры сохранения"
-
-
 msgid "Image not packed"
 msgstr "Изображение не упаковано"
 
 
 msgid "Could not save packed file to disk as '%s'"
 msgstr "Упакованный файл не может быть сохранен на диск в «%s»"
-
-
-msgid "Could not write image: %s, '%s'"
-msgstr "Нельзя сохранить изображение: %s, «%s»"
 
 
 msgid "Image '%s' could not be saved to '%s'"
@@ -93477,6 +93395,10 @@ msgid "OFF"
 msgstr "выкл."
 
 
+msgid "OK?"
+msgstr "Уверены?"
+
+
 msgid "unsupported format"
 msgstr "неподдерживаемый формат"
 
@@ -93739,10 +93661,6 @@ msgstr "Болгарский (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Греческий (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Корейский (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

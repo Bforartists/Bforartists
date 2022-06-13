@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -4623,6 +4623,10 @@ msgid "Plane"
 msgstr "Płaszczyzna"
 
 
+msgid "Index"
+msgstr "Indeks"
+
+
 msgid "Scene"
 msgstr "Scena"
 
@@ -6036,10 +6040,6 @@ msgid "Scaling (in time) of the noise"
 msgstr "Skalowanie (w czasie) szumu"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
 msgid "Maximum Distance"
 msgstr "Maksymalna odległość"
 
@@ -6485,10 +6485,6 @@ msgstr "Dodaj ogranicznik do aktywnego obiektu"
 
 msgid "Delete selected objects"
 msgstr "Usuń zaznaczone obiekty"
-
-
-msgid "Duplicate selected objects and move them"
-msgstr "Duplikuj zaznaczone obiekty i przesuń je"
 
 
 msgid "Child"
@@ -8450,6 +8446,10 @@ msgid "This data does not support joining in edit mode"
 msgstr "Te dane nie obsługują łączenia w trybie edycji"
 
 
+msgid "No active mesh object"
+msgstr "Brak aktywnego obiektu siatka"
+
+
 msgid "Baking of multires data only works with an active mesh object"
 msgstr "Wypalanie danych multires działa wyłącznie z aktywnym obiektem siatka"
 
@@ -8744,10 +8744,6 @@ msgstr "Ustaw rodzica"
 
 msgid "Object (Keep Transform)"
 msgstr "Obiekt (Zachowaj transformację)"
-
-
-msgid "OK?"
-msgstr "OK?"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -9232,10 +9228,6 @@ msgstr "Obraz wymaga 4 kanałów koloru do malowania: %s"
 
 msgid "Packed MultiLayer files cannot be painted: %s"
 msgstr "Spakowany plik MultiLayer nie może być malowany: %s"
-
-
-msgid "No active mesh object"
-msgstr "Brak aktywnego obiektu siatka"
 
 
 msgid "Image could not be found"
@@ -10796,14 +10788,6 @@ msgid "Modify"
 msgstr "Modyfikuj"
 
 
-msgid "Could not acquire buffer from image"
-msgstr "Nie można było uzyskać bufora obrazu"
-
-
-msgid "Scene not in context, could not get save parameters"
-msgstr "Scena nie w kontekście, nie można było pobrać parametrów zapisu"
-
-
 msgid "Image not packed"
 msgstr "Obraz nie spakowany"
 
@@ -11506,6 +11490,10 @@ msgid "OFF"
 msgstr "WYŁ"
 
 
+msgid "OK?"
+msgstr "OK?"
+
+
 msgid "unsupported format"
 msgstr "Nieobsługiwany format"
 
@@ -11701,10 +11689,6 @@ msgstr "Bułgarski (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "Grecki (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "Koreański (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"
