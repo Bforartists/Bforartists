@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -607,6 +607,10 @@ msgid "Bone Groups"
 msgstr "अस्थि समूह"
 
 
+msgid "Count"
+msgstr "गिनती"
+
+
 msgid "Angle"
 msgstr "कोण"
 
@@ -1048,12 +1052,16 @@ msgid "View"
 msgstr "दृश्य"
 
 
-msgid "Steps"
-msgstr "कदम"
+msgid "Index"
+msgstr "सूचकांक"
 
 
 msgid "Radius"
 msgstr "त्रिज्या"
+
+
+msgid "Steps"
+msgstr "कदम"
 
 
 msgid "Render"
@@ -1361,12 +1369,12 @@ msgid "Frame"
 msgstr "गठन"
 
 
-msgid "Index"
-msgstr "सूचकांक"
-
-
 msgid "Maximum Distance"
 msgstr "अधिकतम दूरी"
+
+
+msgid "Cone"
+msgstr "शंकु"
 
 
 msgid "Sphere"
@@ -1375,10 +1383,6 @@ msgstr "गोला"
 
 msgid "Tube"
 msgstr "नलिका"
-
-
-msgid "Cone"
-msgstr "शंकु"
 
 
 msgid "Flow"
@@ -1703,10 +1707,6 @@ msgstr "दर्पण"
 
 msgid "Hook"
 msgstr "हुक"
-
-
-msgid "Count"
-msgstr "गिनती"
 
 
 msgid "Shift"
@@ -5933,11 +5933,6 @@ msgstr "दाईं ओर"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "दृश्य..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "रंग"
 
@@ -5945,6 +5940,11 @@ msgstr "रंग"
 msgctxt "Operator"
 msgid "Text"
 msgstr "पाठ"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "दृश्य..."
 
 
 msgctxt "Operator"
@@ -6699,10 +6699,6 @@ msgid "To New Empty Object"
 msgstr "नया रिक्त ऑब्जेक्ट के लिए"
 
 
-msgid "OK?"
-msgstr "ठीक है?"
-
-
 msgid "Could not find scene"
 msgstr "दृश्य ढूँढ नहीं सकता"
 
@@ -7163,6 +7159,10 @@ msgid "OFF"
 msgstr "बंद"
 
 
+msgid "OK?"
+msgstr "ठीक है?"
+
+
 msgctxt "Operator"
 msgid "Toggle System Console"
 msgstr "बंद/बुझ प्रणाली कंसोल"
@@ -7270,10 +7270,6 @@ msgstr "बुल्गारियाई (Български)"
 
 msgid "Greek (Ελληνικά)"
 msgstr "ग्रीक (Ελληνικά)"
-
-
-msgid "Korean (한국 언어)"
-msgstr "कोरियाई (한국 언어)"
 
 
 msgid "Nepali (नेपाली)"

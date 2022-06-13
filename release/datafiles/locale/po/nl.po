@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.2.0 Beta (b'18a17d42911d')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -995,6 +995,10 @@ msgid "View"
 msgstr "Weergave"
 
 
+msgid "Index"
+msgstr "Index"
+
+
 msgid "Segments"
 msgstr "Segmenten"
 
@@ -1299,20 +1303,16 @@ msgid "Value Offset"
 msgstr "Waardeverschuiving"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Maximum Distance"
 msgstr "Maximale Afstand"
 
 
-msgid "Sphere"
-msgstr "Bol"
-
-
 msgid "Cone"
 msgstr "Kegel"
+
+
+msgid "Sphere"
+msgstr "Bol"
 
 
 msgid "Amount"
@@ -1867,10 +1867,6 @@ msgstr "Alle Lijnen"
 
 msgid "Use Material"
 msgstr "Gebruik Materiaal"
-
-
-msgid "Remove Doubles"
-msgstr "Verwijder Dubbelen"
 
 
 msgid "Mirror Modifier"
@@ -2775,6 +2771,11 @@ msgstr "Converteerder"
 
 msgid "Layout"
 msgstr "Indeling"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "Scene"
 
 
 msgid "Navigation"
@@ -8153,11 +8154,6 @@ msgstr "Beide Zijden"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "Scene..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Kleur"
 
@@ -8165,6 +8161,11 @@ msgstr "Kleur"
 msgctxt "Operator"
 msgid "Text"
 msgstr "Tekst"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "Scene..."
 
 
 msgctxt "Operator"
@@ -8228,11 +8229,6 @@ msgstr "Standaard VervagingFit Preview in Window"
 
 msgid "Resolutions"
 msgstr "Resoluties"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "Scene"
 
 
 msgctxt "Operator"
@@ -9410,10 +9406,6 @@ msgid "Without Targets"
 msgstr "Zonder Doelen"
 
 
-msgid "OK?"
-msgstr "OK?"
-
-
 msgid "Brass"
 msgstr "Messing"
 
@@ -9770,6 +9762,10 @@ msgstr "\"%s\" Opgeslagen"
 
 msgid "Not a library"
 msgstr "Geen bibliotheek"
+
+
+msgid "OK?"
+msgstr "OK?"
 
 
 msgid "Toggle System Console"
