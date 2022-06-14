@@ -4078,7 +4078,7 @@ class VIEW3D_MT_particle(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_particle_show_hide")
+        layout.menu("VIEW3D_MT_particle_showhide")
 
         layout.separator()
 
@@ -4138,7 +4138,7 @@ class VIEW3D_MT_particle_context_menu(Menu):
             layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
 
 
-class VIEW3D_MT_particle_show_hide(Menu):
+class VIEW3D_MT_particle_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
@@ -4201,7 +4201,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_pose_show_hide")
+        layout.menu("VIEW3D_MT_pose_showhide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
@@ -4333,7 +4333,7 @@ class VIEW3D_MT_pose_names(Menu):
         layout.operator("pose.flip_names", icon="FLIP")
 
 
-class VIEW3D_MT_pose_show_hide(Menu):
+class VIEW3D_MT_pose_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
@@ -5359,7 +5359,7 @@ def draw_curve(self, _context):
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_show_hide")
+    layout.menu("VIEW3D_MT_edit_curve_showhide")
 
     layout.separator()
 
@@ -5511,7 +5511,7 @@ class VIEW3D_MT_edit_curve_delete(Menu):
         layout.operator("curve.delete", text="Segment", icon="DELETE").type = 'SEGMENT'
 
 
-class VIEW3D_MT_edit_curve_show_hide(Menu):
+class VIEW3D_MT_edit_curve_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
@@ -5790,7 +5790,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
-        layout.menu("VIEW3D_MT_armature_show_hide")  # bfa - the new show hide menu with split tooltip
+        layout.menu("VIEW3D_MT_armature_showhide")  # bfa - the new show hide menu with split tooltip
 
         layout.separator()
 
@@ -5798,7 +5798,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.dissolve", icon="DELETE")
 
 
-class VIEW3D_MT_armature_show_hide(Menu):
+class VIEW3D_MT_armature_showhide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
@@ -9193,7 +9193,7 @@ classes = (
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,
-    VIEW3D_MT_particle_show_hide,
+    VIEW3D_MT_particle_showhide,
     VIEW3D_MT_pose,
     VIEW3D_MT_pose_transform,
     VIEW3D_MT_pose_slide,
@@ -9203,7 +9203,7 @@ classes = (
     VIEW3D_MT_pose_ik,
     VIEW3D_MT_pose_constraints,
     VIEW3D_MT_pose_names,
-    VIEW3D_MT_pose_show_hide,
+    VIEW3D_MT_pose_showhide,
     VIEW3D_MT_pose_apply,
     VIEW3D_MT_pose_context_menu,
     VIEW3D_MT_bone_options_toggle,
@@ -9252,7 +9252,7 @@ classes = (
     VIEW3D_MT_edit_curve_segments,
     VIEW3D_MT_edit_curve_context_menu,
     VIEW3D_MT_edit_curve_delete,
-    VIEW3D_MT_edit_curve_show_hide,
+    VIEW3D_MT_edit_curve_showhide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
     VIEW3D_MT_edit_font_chars,
@@ -9265,7 +9265,7 @@ classes = (
     VIEW3D_MT_edit_lattice,
     VIEW3D_MT_edit_lattice_flip,
     VIEW3D_MT_edit_armature,
-    VIEW3D_MT_armature_show_hide,
+    VIEW3D_MT_armature_showhide,
     VIEW3D_MT_armature_context_menu,
     VIEW3D_MT_edit_armature_roll,
     VIEW3D_MT_edit_armature_names,
