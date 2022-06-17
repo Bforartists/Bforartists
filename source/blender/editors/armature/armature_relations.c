@@ -787,7 +787,7 @@ static void bone_connect_to_new_parent(ListBase *edbo,
 }
 
 static const EnumPropertyItem prop_editarm_make_parent_types[] = {
-    {ARM_PAR_CONNECT, "CONNECTED", ICON_PARENT_BONE, "Connected", ""},
+    {ARM_PAR_CONNECT, "CONNECTED", ICON_PARENT_SET, "Connected", ""},
     {ARM_PAR_OFFSET, "OFFSET", ICON_PARENT_BONE, "Keep Offset", ""},
     {0, NULL, 0, NULL, NULL},
 };
@@ -918,11 +918,11 @@ static int armature_parent_set_invoke(bContext *C,
 
   uiLayout *row_offset = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row_offset, enable_offset);
-  uiItemEnumO(row_offset, "ARMATURE_OT_parent_set", NULL, 0, "type", ARM_PAR_OFFSET);
+  uiItemEnumO(row_offset, "ARMATURE_OT_parent_set", NULL, ICON_PARENT_SET, "type", ARM_PAR_OFFSET);
 
   uiLayout *row_connect = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row_connect, enable_connect);
-  uiItemEnumO(row_connect, "ARMATURE_OT_parent_set", NULL, 0, "type", ARM_PAR_CONNECT);
+  uiItemEnumO(row_connect, "ARMATURE_OT_parent_set", NULL, ICON_PARENT_BONE, "type", ARM_PAR_CONNECT);
 
   UI_popup_menu_end(C, pup);
 
@@ -949,8 +949,8 @@ void ARMATURE_OT_parent_set(wmOperatorType *ot)
 }
 
 static const EnumPropertyItem prop_editarm_clear_parent_types[] = {
-    {ARM_PAR_CLEAR, "CLEAR", 0, "Clear Parent", ""},
-    {ARM_PAR_CLEAR_DISCONNECT, "DISCONNECT", 0, "Disconnect Bone", ""},
+    {ARM_PAR_CLEAR, "CLEAR", ICON_CLEAR, "Clear Parent", ""},
+    {ARM_PAR_CLEAR_DISCONNECT, "DISCONNECT", ICON_PARENT_CLEAR, "Disconnect Bone", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -1039,12 +1039,12 @@ static int armature_parent_clear_invoke(bContext *C,
 
   uiLayout *row_clear = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row_clear, enable_clear);
-  uiItemEnumO(row_clear, "ARMATURE_OT_parent_clear", NULL, 0, "type", ARM_PAR_CLEAR);
+  uiItemEnumO(row_clear, "ARMATURE_OT_parent_clear", NULL, ICON_CLEAR, "type", ARM_PAR_CLEAR);
 
   uiLayout *row_disconnect = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row_disconnect, enable_disconnect);
   uiItemEnumO(
-      row_disconnect, "ARMATURE_OT_parent_clear", NULL, 0, "type", ARM_PAR_CLEAR_DISCONNECT);
+      row_disconnect, "ARMATURE_OT_parent_clear", NULL, ICON_PARENT_CLEAR, "type", ARM_PAR_CLEAR_DISCONNECT);
 
   UI_popup_menu_end(C, pup);
 
