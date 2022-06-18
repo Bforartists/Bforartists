@@ -4046,6 +4046,17 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Translate Instances      ", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+            
+            props = col.operator("node.add_node", text = " Instance Rotation     ", icon = "INSTANCE_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceRotation"
+            
+            props = col.operator("node.add_node", text = " Instance Scale      ", icon = "INSTANCE_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceScale"
 
         #### Icon Buttons
 
@@ -4078,6 +4089,15 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
+            
+            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceRotation"
+            
+            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceScale"
+
 
 
 #add input panel
