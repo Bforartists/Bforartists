@@ -1447,8 +1447,8 @@ combine_color
 separate_color
 geometry_nodes
 geometry_nodes_active
-#~ DEF_ICON_BLANK(1481)
-#~ DEF_ICON_BLANK(1482)
+instance_rotate
+instance_scale
 #~ DEF_ICON_BLANK(1483)
 
 # ------------------------- row 22 --------------------------*/
