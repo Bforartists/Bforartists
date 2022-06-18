@@ -2069,13 +2069,13 @@ enum eOutlinerIdOpTypes {
 
 /* TODO: implement support for changing the ID-block used. */
 static const EnumPropertyItem prop_id_op_types[] = {
-    {OUTLINER_IDOP_UNLINK, "UNLINK", 0, "Unlink", ""},
-    {OUTLINER_IDOP_LOCAL, "LOCAL", 0, "Make Local", ""},
-    {OUTLINER_IDOP_SINGLE, "SINGLE", 0, "Make Single User", ""},
-    {OUTLINER_IDOP_DELETE, "DELETE", ICON_X, "Delete", ""},
+    {OUTLINER_IDOP_UNLINK, "UNLINK", ICON_UNLINKED, "Unlink", ""},
+    {OUTLINER_IDOP_LOCAL, "LOCAL", ICON_MAKE_LOCAL, "Make Local", ""},
+    {OUTLINER_IDOP_SINGLE, "SINGLE", ICON_MAKE_SINGLE_USER, "Make Single User", ""},
+    {OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
     {OUTLINER_IDOP_REMAP,
      "REMAP",
-     0,
+     ICON_USER,
      "Remap Users",
      "Make all users of selected data-blocks to use instead current (clicked) one"},
     RNA_ENUM_ITEM_SEPR,
