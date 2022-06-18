@@ -13472,6 +13472,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_INDEX:
       icon = ICON_INDEX;
       break;
+    case GEO_NODE_INPUT_INSTANCE_ROTATION:
+      icon = ICON_INSTANCE_ROTATE;
+      break;
+    case GEO_NODE_INPUT_INSTANCE_SCALE:
+      icon = ICON_INSTANCE_SCALE;
+      break;
     case GEO_NODE_INPUT_MATERIAL_INDEX:
       icon = ICON_MATERIAL_INDEX;
       break;
