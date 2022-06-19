@@ -397,6 +397,7 @@ DefNode(GeometryNode, GEO_NODE_TRANSLATE_INSTANCES, 0, "TRANSLATE_INSTANCES", Tr
 DefNode(GeometryNode, GEO_NODE_TRIANGULATE, def_geo_triangulate, "TRIANGULATE", Triangulate, "Triangulate",  "Add a Triangulate Geometry node\nTriangulates all faces in a mesh")
 DefNode(GeometryNode, GEO_NODE_TRIM_CURVE, def_geo_curve_trim, "TRIM_CURVE", TrimCurve, "Trim Curve", "Add a Curve Trim node\nTrim the curve")
 DefNode(GeometryNode, GEO_NODE_VIEWER, 0, "VIEWER", Viewer, "Viewer", "Add a Viewer node\nThe Viewer node allows to show the result of the current node output")
+DefNode(GeometryNode, GEO_NODE_VOLUME_CUBE, 0, "VOLUME_CUBE", VolumeCube, "Volume Cube", "")
 DefNode(GeometryNode, GEO_NODE_VOLUME_TO_MESH, def_geo_volume_to_mesh, "VOLUME_TO_MESH", VolumeToMesh, "Volume to Mesh", "Add a Volume to Mesh Geometry node\nGenerates a mesh on the “surface” of a volume")
 
 /* undefine macros */

@@ -219,6 +219,15 @@ const bTheme U_theme_default = {
       .text_sel = RGBA(0xffffffff),
       .roundness = 0.2f,
     },
+    .wcol_view_item = {
+      .outline = RGBA(0x2d2d2dff),
+      .inner = RGBA(0x303030ff),
+      .inner_sel = RGBA(0x4772b3ff),
+      .item = RGBA(0x4772b3ff),
+      .text = RGBA(0xccccccff),
+      .text_sel = RGBA(0xffffffff),
+      .roundness = 0.2f,
+    },
     .wcol_pie_menu = {
       .outline = RGBA(0x252525ff),
       .inner = RGBA(0x161616e6),
