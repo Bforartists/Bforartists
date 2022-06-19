@@ -112,21 +112,28 @@ RIGHT_HAND_AXES = {
 }
 
 
+# NOTE: Not fully in enum value order, since when exporting the first entry matching the framerate value is used
+# (e.g. better have NTSC fullframe than NTSC drop frame for 29.97 framerate).
 FBX_FRAMERATES = (
+    #(-1.0, 0),  # Default framerate.
     (-1.0, 14),  # Custom framerate.
     (120.0, 1),
     (100.0, 2),
     (60.0, 3),
     (50.0, 4),
     (48.0, 5),
-    (30.0, 6),  # BW NTSC.
-    (30.0 / 1.001, 9),  # Color NTSC.
+    (30.0, 6),  # BW NTSC, full frame.
+    (30.0, 7),  # Drop frame.
+    (30.0 / 1.001, 9),  # Color NTSC, full frame.
+    (30.0 / 1.001, 8),  # Color NTSC, drop frame.
     (25.0, 10),
     (24.0, 11),
+    #(1.0, 12),  # 1000 milli/s (use for date time?).
     (24.0 / 1.001, 13),
     (96.0, 15),
     (72.0, 16),
     (60.0 / 1.001, 17),
+    (120.0 / 1.001, 18),
 )
 
 
