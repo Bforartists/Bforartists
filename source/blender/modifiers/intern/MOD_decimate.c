@@ -295,8 +295,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   }
   else { /* decimate_type == MOD_DECIM_MODE_DISSOLVE. */
     uiItemR(layout, ptr, "angle_limit", 0, NULL, ICON_NONE);
-    uiLayout *col = uiLayoutColumn(layout, false);
-    uiItemR(col, ptr, "delimit", 0, NULL, ICON_NONE);
+    uiItemR(uiLayoutColumn(layout, false), ptr, "delimit", 0, NULL, ICON_NONE);
 
     /*------------------- bfa - original prop */
     // uiItemR(layout, ptr, "use_dissolve_boundaries", 0, NULL, ICON_NONE);
