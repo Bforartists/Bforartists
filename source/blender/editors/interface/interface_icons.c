@@ -466,14 +466,16 @@ DEF_ICON_STRIP_COLOR_DRAW(09, SEQUENCE_COLOR_09);
 
 #  define ICON_INDIRECT_DATA_ALPHA 0.6f
 
-static void vicon_strip_color_draw_library_data_indirect(
-    int x, int y, int w, int UNUSED(h), float alpha)
-{
-  const float aspect = (float)ICON_DEFAULT_WIDTH / (float)w;
+/* bfa - Use our own static icon for indirect libraries */
+// static void vicon_strip_color_draw_library_data_indirect(
+//     int x, int y, int w, int UNUSED(h), float alpha)
+// {
+//   const float aspect = (float)ICON_DEFAULT_WIDTH / (float)w;
 
-  UI_icon_draw_ex(
-      x, y, ICON_LIBRARY_DATA_DIRECT, aspect, ICON_INDIRECT_DATA_ALPHA * alpha, 0.0f, NULL, false);
-}
+//   UI_icon_draw_ex(
+//       x, y, ICON_LIBRARY_DATA_DIRECT, aspect, ICON_INDIRECT_DATA_ALPHA * alpha, 0.0f, NULL,
+//       false);
+// }
 
 static void vicon_strip_color_draw_library_data_override_noneditable(
     int x, int y, int w, int UNUSED(h), float alpha)
@@ -1014,7 +1016,7 @@ static void init_internal_icons(void)
   def_internal_vicon(ICON_SEQUENCE_COLOR_08, vicon_strip_color_draw_08);
   def_internal_vicon(ICON_SEQUENCE_COLOR_09, vicon_strip_color_draw_09);
 
-  /*bfa - the programmatically icon creation nonsense happens without Bforartists*/
+  /* bfa - Use our own static icon for indirect libraries */
   // def_internal_vicon(ICON_LIBRARY_DATA_INDIRECT, vicon_strip_color_draw_library_data_indirect);
   def_internal_vicon(ICON_LIBRARY_DATA_OVERRIDE_NONEDITABLE,
                      vicon_strip_color_draw_library_data_override_noneditable);
