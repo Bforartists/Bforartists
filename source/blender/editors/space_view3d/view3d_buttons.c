@@ -502,7 +502,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     const int butw = 200;
     const int buth = 20 * UI_DPI_FAC;
     const int but_margin = 2;
-    const char *c;
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 

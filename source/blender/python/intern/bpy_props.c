@@ -53,37 +53,9 @@
   "   :arg options: Enumerator in :ref:`rna_enum_property_flag_enum_items`.\n" \
   "   :type options: set\n"
 
-static const EnumPropertyItem property_flag_override_items[] = {
-    {PROPOVERRIDE_OVERRIDABLE_LIBRARY,
-     "LIBRARY_OVERRIDABLE",
-     0,
-     "Library Overridable",
-     "Make that property editable in library overrides of linked data"},
-    {0, NULL, 0, NULL, NULL},
-};
-
 #define BPY_PROPDEF_OPTIONS_OVERRIDE_DOC \
   "   :arg override: Enumerator in :ref:`rna_enum_property_override_flag_items`.\n" \
   "   :type override: set\n"
-
-static const EnumPropertyItem property_flag_override_collection_items[] = {
-    {PROPOVERRIDE_OVERRIDABLE_LIBRARY,
-     "LIBRARY_OVERRIDABLE",
-     0,
-     "Library Overridable",
-     "Make that property editable in library overrides of linked data"},
-    {PROPOVERRIDE_NO_PROP_NAME,
-     "NO_PROPERTY_NAME",
-     0,
-     "No Name",
-     "Do not use the names of the items, only their indices in the collection"},
-    {PROPOVERRIDE_LIBRARY_INSERTION,
-     "USE_INSERTION",
-     0,
-     "Use Insertion",
-     "Allow users to add new items in that collection in library overrides"},
-    {0, NULL, 0, NULL, NULL},
-};
 
 #define BPY_PROPDEF_OPTIONS_OVERRIDE_COLLECTION_DOC \
   "   :arg override: Enumerator in :ref:`rna_enum_property_override_flag_collection_items`.\n" \

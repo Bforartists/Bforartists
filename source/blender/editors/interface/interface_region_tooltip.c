@@ -815,7 +815,7 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
       field->text = BLI_sprintfN("%s.", but_label.strinfo);
     }
     else {
-      field->text = BLI_sprintfN("");
+      field->text = BLI_strdup("\n");
     }
   }
 

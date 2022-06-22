@@ -12687,6 +12687,7 @@ static int node_type_to_icon(int type)
     /* bfa - Node */
     case NODE_FRAME:
       icon = ICON_NODE_FRAME;
+      break;
     case NODE_GROUP:
       icon = ICON_NODE_MAKEGROUP;
       break;
