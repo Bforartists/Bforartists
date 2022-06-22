@@ -1633,18 +1633,6 @@ static int graphkeys_select_leftright_invoke(bContext *C, wmOperator *op, const 
 }
 
 /*bfa - descriptions*/
-static char *wm_save_as_mainfile_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "copy")) {
-    return BLI_strdup(
-        "Save the current file in the desired location but do not make the saved file active");
-  }
-  return NULL;
-}
-
-/*bfa - descriptions*/
 static char *graph_ot_select_leftright_get_description(bContext *UNUSED(C),
                                                        wmOperatorType *UNUSED(ot),
                                                        PointerRNA *ptr)

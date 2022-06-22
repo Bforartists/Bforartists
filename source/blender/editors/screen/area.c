@@ -2865,7 +2865,7 @@ static bool panel_add_check(const bContext *C,
   return true;
 }
 
-static bool region_uses_category_tabs(const ScrArea *area, const ARegion *region)
+static bool region_uses_category_tabs(const ScrArea *UNUSED(area), const ARegion *region)
 {
   /* bfa - readd tabs to tools area */
   return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK);
