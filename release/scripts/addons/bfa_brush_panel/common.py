@@ -1,6 +1,9 @@
-import os
+
+from dataclasses import dataclass
 
 import bpy
+
+from .icon_manager import BrushIcon
 
 
 def column_count(region: bpy.types.Region):
@@ -19,3 +22,28 @@ def column_count(region: bpy.types.Region):
         column_count = 1
 
     return column_count
+
+
+@dataclass
+class BrushButton:
+    brush_name: str
+    brush_icon: BrushIcon
+    tool_settings_attribute_name: str
+    """Attribute used to set brush (e.g 'weight_paint')"""
+
+    def draw(self, context: bpy.types.Context, layout: bpy.types.UILayout, icon_only=False):
+        active_brush = context.tool_settings.weight_paint.brush
+        is_active = False
+        if active_brush is not None:
+            is_active = active_brush.name == self.brush_name
+
+        op = layout.operator(
+            "bfa.set_brush",
+            text="" if icon_only else self.brush_name,
+            icon=self.brush_icon.icon_name,
+            icon_value=self.brush_icon.icon_value,
+            depress=is_active,
+        )
+        op.paint_settings_attr_name = self.tool_settings_attribute_name
+        op.brush_name = self.brush_name
+        op.dynamic_description = self.brush_name if icon_only else "Set Brush"
