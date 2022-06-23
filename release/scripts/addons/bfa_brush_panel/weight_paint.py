@@ -4,7 +4,7 @@ from typing import Dict, List
 import bpy
 
 from .common import BrushButton, column_count
-from .icon_manager import get_brush_icon
+from .icon_system import get_brush_icon
 
 
 def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
