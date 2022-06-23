@@ -1,4 +1,4 @@
-keyconfig_version = (3, 3, 0)
+keyconfig_version = (3, 3, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1794,6 +1794,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -4448,6 +4449,14 @@ keyconfig_data = \
        ],
       },
      ),
+    ("nla.tracks_add", {"type": 'A', "value": 'PRESS', "shift": True}, None),
+    ("nla.tracks_add",
+     {"type": 'A', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("above_selected", True),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -4580,6 +4589,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("nla.actionclip_add", {"type": 'A', "value": 'PRESS', "shift": True}, None),
     ],
    },
   ),
