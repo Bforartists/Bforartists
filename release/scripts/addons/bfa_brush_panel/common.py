@@ -1,9 +1,9 @@
 
-from dataclasses import dataclass
+from typing import Callable
 
 import bpy
 
-from .icon_system import BrushIcon
+from .icon_system import get_brush_icon
 
 
 def column_count(region: bpy.types.Region):
@@ -24,12 +24,12 @@ def column_count(region: bpy.types.Region):
     return column_count
 
 
-@dataclass
 class BrushButton:
-    brush_name: str
-    brush_icon: BrushIcon
-    tool_settings_attribute_name: str
-    """Attribute used to set brush (e.g 'weight_paint')"""
+    def __init__(self, brush: bpy.types.Brush, tool_settings_attribute_name: str,
+                 icon_name_from_brush: Callable[[bpy.types.Brush], str]):
+        self.brush_name = brush.name
+        self.tool_settings_attribute_name = tool_settings_attribute_name
+        self.icon = get_brush_icon(brush, icon_name_from_brush)
 
     def draw(self, context: bpy.types.Context, layout: bpy.types.UILayout, icon_only=False):
         active_brush = context.tool_settings.weight_paint.brush
@@ -40,8 +40,8 @@ class BrushButton:
         op = layout.operator(
             "bfa.set_brush",
             text="" if icon_only else self.brush_name,
-            icon=self.brush_icon.icon_name,
-            icon_value=self.brush_icon.icon_value,
+            icon=self.icon.icon_name,
+            icon_value=self.icon.icon_value,
             depress=is_active,
         )
         op.paint_settings_attr_name = self.tool_settings_attribute_name
