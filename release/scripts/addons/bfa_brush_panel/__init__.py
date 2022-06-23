@@ -32,7 +32,7 @@ import sys
 
 from bpy.utils import register_submodule_factory
 
-submodule_names = ["operators", "weight_paint"]
+submodule_names = ["operators", "icon_manager", "weight_paint"]
 
 
 register, _unregister = register_submodule_factory(__name__, submodule_names)
