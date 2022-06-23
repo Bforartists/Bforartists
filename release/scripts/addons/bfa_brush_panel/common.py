@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import bpy
 
-from .icon_manager import BrushIcon
+from .icon_system import BrushIcon
 
 
 def column_count(region: bpy.types.Region):
