@@ -4,7 +4,6 @@ from typing import Dict, List
 import bpy
 
 from .common import BrushButton, column_count
-from .icon_system import get_brush_icon
 
 
 def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
@@ -23,12 +22,7 @@ def get_weight_brush_buttons():
     for brush in sorted(bpy.data.brushes, key=lambda b: b.name):
         if not brush.use_paint_weight:
             continue
-        # TODO: since #get_weight_brush_buttons is currently called every draw anyways
-        # we can move #get_brush_icon into draw method of brush button.
-        # Alternatively we can also just load icons only once when the addon loads
-        # this would have worked if we don't want to support dynamic and custom icons
-        icon = get_brush_icon(brush, icon_name_from_weight_brush)
-        buttons[brush.weight_tool].append(BrushButton(brush.name, icon, "weight_paint"))
+        buttons[brush.weight_tool].append(BrushButton(brush, "weight_paint", icon_name_from_weight_brush))
         # TODO: support linked brushes
     return buttons
 
