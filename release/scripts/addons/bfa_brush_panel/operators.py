@@ -8,6 +8,7 @@ class BFA_OT_set_brush(bpy.types.Operator):
 
     paint_settings_attr_name: bpy.props.StringProperty()
     brush_name: bpy.props.StringProperty()
+    dynamic_description: bpy.props.StringProperty()
 
     def execute(self, context):
         paint_settings = getattr(context.tool_settings, self.paint_settings_attr_name)
@@ -16,7 +17,7 @@ class BFA_OT_set_brush(bpy.types.Operator):
 
     @classmethod
     def description(cls, context, properties):
-        return properties.brush_name
+        return properties.dynamic_description
 
 
 def register():
