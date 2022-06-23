@@ -38,8 +38,13 @@ class WeightBrushButton:
             icon_value=self.icon_value,
             depress=is_active,
         )
+        # TODO: make "weight_paint" variable to support other paint modes
         op.paint_settings_attr_name = "weight_paint"
         op.brush_name = self.brush_name
+        if icon_only:
+            op.dynamic_description = self.brush_name
+        else:
+            op.dynamic_description = "Set Brush"
 
 
 def get_weight_brush_buttons():
