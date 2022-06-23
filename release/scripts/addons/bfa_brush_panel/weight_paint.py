@@ -6,7 +6,7 @@ from typing import Dict, List, Union
 import bpy
 import bpy.utils.previews
 
-from .common import DEFAULT_ICON_FOR_BLEND_MODE, DEFAULT_ICON_FOR_IDNAME, _icon_value_from_icon_name
+from .common import DEFAULT_ICON_FOR_BLEND_MODE, DEFAULT_ICON_FOR_IDNAME, _icon_value_from_icon_name, column_count
 
 
 def get_weight_brush_icon(weight_brush: bpy.types.Brush):
@@ -61,7 +61,6 @@ def get_weight_brush_buttons():
             icon_value = preview.icon_id
             icon_name = "NONE"
         else:
-            # Assign icon
             # TODO: refactor
             icon_value = 0
             if brush.blend == "MIX":
@@ -76,48 +75,7 @@ def get_weight_brush_buttons():
     return buttons
 
 
-class BFA_OT_set_brush(bpy.types.Operator):
-    bl_label = "Set Brush"
-    bl_idname = "bfa.set_brush"
-    bl_options = {"UNDO"}
-
-    paint_settings_attr_name: bpy.props.StringProperty()
-    brush_name: bpy.props.StringProperty()
-
-    def execute(self, context):
-        paint_settings = getattr(context.tool_settings, self.paint_settings_attr_name)
-        paint_settings.brush = bpy.data.brushes[self.brush_name]
-        return {"FINISHED"}
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.brush_name
-
-
 # From BFA space_toolbar_tabs
-def column_count(region: bpy.types.Region):
-    """
-    Choose an appropriate layout for the toolbar.
-    """
-    # Currently this just checks the width,
-    # we could have different layouts as preferences too.
-    system = bpy.context.preferences.system
-    view2d = region.view2d
-    view2d_scale = view2d.region_to_view(1.0, 0.0)[0] - view2d.region_to_view(0.0, 0.0)[0]
-    width_scale = region.width * view2d_scale / system.ui_scale
-
-    # how many rows. 4 is text buttons.
-
-    if width_scale > 160.0:
-        column_count = 4
-    elif width_scale > 120.0:
-        column_count = 3
-    elif width_scale > 80:
-        column_count = 2
-    else:
-        column_count = 1
-
-    return column_count
 
 
 # TODO: create brush panels dynamically, instead of repeating code
@@ -261,7 +219,6 @@ preview_collections: Dict[
 def register():
     pcoll = bpy.utils.previews.new()
     preview_collections["main"] = pcoll
-    bpy.utils.register_class(BFA_OT_set_brush)
     bpy.utils.register_class(BFA_PT_brush_weight)
     bpy.utils.register_class(BFA_PT_brush_weight_smear)
     bpy.utils.register_class(BFA_PT_brush_weight_average)
@@ -272,7 +229,6 @@ def unregister():
     for pcoll in preview_collections.values():
         bpy.utils.previews.remove(pcoll)
     preview_collections.clear()
-    bpy.utils.unregister_class(BFA_OT_set_brush)
     bpy.utils.unregister_class(BFA_PT_brush_weight)
     bpy.utils.unregister_class(BFA_PT_brush_weight_smear)
     bpy.utils.unregister_class(BFA_PT_brush_weight_average)
