@@ -1,11 +1,10 @@
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Dict, List
 
 import bpy
 
-from .common import column_count
-from .icon_manager import BrushIcon, get_brush_icon
+from .common import BrushButton, column_count
+from .icon_manager import get_brush_icon
 
 
 def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
@@ -17,43 +16,24 @@ def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
     return icon_name
 
 
-@dataclass
-class WeightBrushButton:
-    brush_name: str
-    brush_icon: BrushIcon
-
-    def draw(self, context: bpy.types.Context, layout: bpy.types.UILayout, icon_only=False):
-        active_brush = context.tool_settings.weight_paint.brush
-        is_active = False
-        if active_brush is not None:
-            is_active = active_brush.name == self.brush_name
-
-        op = layout.operator(
-            "bfa.set_brush",
-            text="" if icon_only else self.brush_name,
-            icon=self.brush_icon.icon_name,
-            icon_value=self.brush_icon.icon_value,
-            depress=is_active,
-        )
-        # TODO: make "weight_paint" variable to support other paint modes
-        op.paint_settings_attr_name = "weight_paint"
-        op.brush_name = self.brush_name
-        op.dynamic_description = self.brush_name if icon_only else "Set Brush"
-
-
 def get_weight_brush_buttons():
     """Get mapping from tool name to weight brush buttons from brushes in the blend file"""
-    buttons: Dict[str, List[WeightBrushButton]] = defaultdict(list)
+    buttons: Dict[str, List[BrushButton]] = defaultdict(list)
     brush: bpy.types.Brush
     for brush in sorted(bpy.data.brushes, key=lambda b: b.name):
         if not brush.use_paint_weight:
             continue
+        # TODO: since #get_weight_brush_buttons is currently called every draw anyways
+        # we can move #get_brush_icon into draw method of brush button.
+        # Alternatively we can also just load icons only once when the addon loads
+        # this would have worked if we don't want to support dynamic and custom icons
         icon = get_brush_icon(brush, icon_name_from_weight_brush)
-        buttons[brush.weight_tool].append(WeightBrushButton(brush.name, icon))
+        buttons[brush.weight_tool].append(BrushButton(brush.name, icon, "weight_paint"))
         # TODO: support linked brushes
     return buttons
 
 
+# TODO: generalize this base calss to work with all modes
 class WeightBrushPanelBase(bpy.types.Panel):
     bl_label = "Brush"  # Override this
     bl_region_type = "TOOLS"
@@ -84,9 +64,17 @@ class WeightBrushPanelBase(bpy.types.Panel):
 
 
 WEIGHT_TOOLS = ["DRAW", "SMEAR", "AVERAGE", "BLUR"]
-panel_classes = [type(f"BFA_PT_brush_weight_{tool_name}", (WeightBrushPanelBase,),
-                      {"bl_label": tool_name.capitalize(), "tool_name": tool_name})
-                 for tool_name in WEIGHT_TOOLS]
+panel_classes = [
+    type(
+        f"BFA_PT_brush_weight_{tool_name}",
+        (WeightBrushPanelBase,),
+        {
+            "bl_label": tool_name.capitalize(),
+            "tool_name": tool_name,
+        },
+    )
+    for tool_name in WEIGHT_TOOLS
+]
 
 
 def register():
