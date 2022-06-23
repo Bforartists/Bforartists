@@ -48,7 +48,7 @@ class WeightBrushButton:
 
 
 def get_weight_brush_buttons():
-    """Get list of weight brush buttons from brushes in the blend file"""
+    """Get mapping from tool name to weight brush buttons from brushes in the blend file"""
     buttons: Dict[str, List[WeightBrushButton]] = defaultdict(list)
     brush: bpy.types.Brush
     for brush in sorted(bpy.data.brushes, key=lambda b: b.name):
@@ -80,17 +80,13 @@ def get_weight_brush_buttons():
     return buttons
 
 
-# From BFA space_toolbar_tabs
-
-
-# TODO: create brush panels dynamically, instead of repeating code
-# Weight Draw Brush panel
-class BFA_PT_brush_weight(bpy.types.Panel):
-    bl_label = "Draw"
+class WeightBrushPanelBase(bpy.types.Panel):
     bl_region_type = "TOOLS"
     bl_space_type = "VIEW_3D"
     bl_category = "Brushes"
     bl_options = {"HIDE_BG"}
+
+    tool_name = ""
 
     @classmethod
     def poll(cls, context):
@@ -100,116 +96,22 @@ class BFA_PT_brush_weight(bpy.types.Panel):
         layout = self.layout
         layout.scale_y = 2
         buttons = get_weight_brush_buttons()
-
         num_cols = column_count(context.region)
-
-        # TODO: fix icon_value icons not centered
-
         if num_cols == 4:
             col = layout.column(align=True)
-            for but in buttons["DRAW"]:
-                but.draw(context, col)
-
+            icon_only = False
         else:
             col = layout.column_flow(columns=num_cols, align=True)
-            for but in buttons["DRAW"]:
-                but.draw(context, col, icon_only=True)
+            icon_only = True
+
+        for but in buttons[self.tool_name]:
+            but.draw(context, col, icon_only=icon_only)
 
 
-# Weight Smear Brush panel
-class BFA_PT_brush_weight_smear(bpy.types.Panel):
-    bl_label = "Smear"
-    bl_region_type = "TOOLS"
-    bl_space_type = "VIEW_3D"
-    bl_category = "Brushes"
-    bl_options = {"HIDE_BG"}
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == "PAINT_WEIGHT"
-
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
-        layout.scale_y = 2
-        buttons = get_weight_brush_buttons()
-
-        num_cols = column_count(context.region)
-
-        # TODO: fix icon_value icons not centered
-
-        if num_cols == 4:
-            col = layout.column(align=True)
-            for but in buttons["SMEAR"]:
-                but.draw(context, col)
-        else:
-            col = layout.column_flow(columns=num_cols, align=True)
-            for but in buttons["SMEAR"]:
-                but.draw(context, col, icon_only=True)
-
-
-# Weight Average brush panel
-class BFA_PT_brush_weight_average(bpy.types.Panel):
-    bl_label = "Average"
-    bl_region_type = "TOOLS"
-    bl_space_type = "VIEW_3D"
-    bl_category = "Brushes"
-    bl_options = {"HIDE_BG"}
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == "PAINT_WEIGHT"
-
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
-        layout.scale_y = 2
-        buttons = get_weight_brush_buttons()
-
-        num_cols = column_count(context.region)
-
-        # TODO: fix icon_value icons not centered
-
-        if num_cols == 4:
-            col = layout.column(align=True)
-            for but in buttons["AVERAGE"]:
-                but.draw(context, col)
-
-        else:
-
-            col = layout.column_flow(columns=num_cols, align=True)
-            for but in buttons["AVERAGE"]:
-                but.draw(context, col, icon_only=True)
-
-
-# Weight Blur Brush panel
-class BFA_PT_brush_weight_blur(bpy.types.Panel):
-    bl_label = "Blur"
-    bl_region_type = "TOOLS"
-    bl_space_type = "VIEW_3D"
-    bl_category = "Brushes"
-    bl_options = {"HIDE_BG"}
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == "PAINT_WEIGHT"
-
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
-        layout.scale_y = 2
-        buttons = get_weight_brush_buttons()
-
-        num_cols = column_count(context.region)
-
-        # TODO: fix icon_value icons not centered
-
-        if num_cols == 4:
-            col = layout.column(align=True)
-            for but in buttons["BLUR"]:
-                but.draw(context, col)
-
-        else:
-            col = layout.column_flow(columns=num_cols, align=True)
-            for but in buttons["BLUR"]:
-                but.draw(context, col, icon_only=True)
+WEIGHT_TOOLS = ["DRAW", "SMEAR", "AVERAGE", "BLUR"]
+panel_classes = [type(f"BFA_PT_brush_weight_{tool_name}", (WeightBrushPanelBase,),
+                      {"bl_label": tool_name.capitalize(), "tool_name": tool_name})
+                 for tool_name in WEIGHT_TOOLS]
 
 
 # Custom Image Previews
@@ -218,23 +120,18 @@ preview_collections: Dict[
     Union[bpy.utils.previews.ImagePreviewCollection, Dict[str, bpy.types.ImagePreview]],
 ] = {}
 
-# Register and unregister
-
 
 def register():
     pcoll = bpy.utils.previews.new()
     preview_collections["main"] = pcoll
-    bpy.utils.register_class(BFA_PT_brush_weight)
-    bpy.utils.register_class(BFA_PT_brush_weight_smear)
-    bpy.utils.register_class(BFA_PT_brush_weight_average)
-    bpy.utils.register_class(BFA_PT_brush_weight_blur)
+    for cls in panel_classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
+    for cls in panel_classes:
+        bpy.utils.unregister_class(cls)
+
     for pcoll in preview_collections.values():
         bpy.utils.previews.remove(pcoll)
     preview_collections.clear()
-    bpy.utils.unregister_class(BFA_PT_brush_weight)
-    bpy.utils.unregister_class(BFA_PT_brush_weight_smear)
-    bpy.utils.unregister_class(BFA_PT_brush_weight_average)
-    bpy.utils.unregister_class(BFA_PT_brush_weight_blur)
