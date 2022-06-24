@@ -49,6 +49,6 @@ def draw_brush_button(
         depress=is_active,
     )
 
-    op.paint_settings_attr_name = tool_settings_attribute_name
+    op.tool_settings_attribute_name = tool_settings_attribute_name
     op.brush_name = brush_name
     op.dynamic_description = brush_name if icon_only else "Set Brush"

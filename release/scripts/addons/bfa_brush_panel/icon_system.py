@@ -94,6 +94,7 @@ def get_brush_icon(brush: bpy.types.Brush, icon_name_from_brush: Callable[[bpy.t
         return BrushIcon("NONE", preview.icon_id)
 
     if brush.blend == "MIX":
+        # FIXME: generalize weight paint specific code to work with other modes
         icon_name = DEFAULT_ICON_FOR_IDNAME.get(brush.weight_tool, None)
     else:
         icon_name = DEFAULT_ICON_FOR_BLEND_MODE.get(brush.blend, None)
