@@ -32,9 +32,10 @@ def draw_brush_button(
     brush: bpy.types.Brush,
     tool_settings_attribute_name: str,
     icon_name_from_brush: Callable[[bpy.types.Brush], str],
+    tool_name_from_brush: Callable[[bpy.types.Brush], str],
 ):
     brush_name = brush.name
-    icon = get_brush_icon(brush, icon_name_from_brush)
+    icon = get_brush_icon(brush, icon_name_from_brush, tool_name_from_brush)
     active_brush = getattr(context.tool_settings, tool_settings_attribute_name).brush
 
     is_active = False
