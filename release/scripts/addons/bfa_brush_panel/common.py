@@ -53,3 +53,59 @@ def draw_brush_button(
     op.tool_settings_attribute_name = tool_settings_attribute_name
     op.brush_name = brush_name
     op.dynamic_description = brush_name if icon_only else "Set Brush"
+
+
+class BrushPanelBase(bpy.types.Panel):
+    bl_label = "Brush"  # Override this
+    bl_region_type = "TOOLS"
+    bl_space_type = "VIEW_3D"
+    bl_category = "Brushes"
+    bl_options = {"HIDE_BG"}
+
+    tool_name = ""  # Override this
+    mode = ""  # Override this
+    tool_settings_attribute_name = ""  # Override this
+
+    @staticmethod
+    def icon_name_from_brush(brush: bpy.types.Brush):
+        # Override this
+        raise NotImplementedError
+
+    @staticmethod
+    def tool_name_from_brush(brush: bpy.types.Brush):
+        # Override this
+        raise NotImplementedError
+
+    @staticmethod
+    def filter_brush(brush: bpy.types.Brush):
+        # Override this
+        raise NotImplementedError
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == cls.mode
+
+    def draw(self, context: bpy.types.Context):
+        layout = self.layout
+        layout.scale_y = 2
+        num_cols = column_count(context.region)
+        if num_cols == 4:
+            col = layout.column(align=True)
+            icon_only = False
+        else:
+            col = layout.column_flow(columns=num_cols, align=True)
+            icon_only = True
+
+        for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name):
+            if not self.filter_brush(brush):
+                continue
+            if self.tool_name_from_brush(brush) == self.tool_name:
+                draw_brush_button(
+                    context,
+                    col,
+                    icon_only,
+                    brush,
+                    self.tool_settings_attribute_name,
+                    self.icon_name_from_brush,
+                    self.tool_name_from_brush,
+                )
