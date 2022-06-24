@@ -1,6 +1,6 @@
 import bpy
 
-from .common import column_count, draw_brush_button
+from .common import BrushPanelBase
 
 
 def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
@@ -16,54 +16,23 @@ def tool_name_from_weight_brush(weight_brush: bpy.types.Brush):
     return weight_brush.weight_tool
 
 
-# TODO: generalize this base class to work with all modes
-class WeightBrushPanelBase(bpy.types.Panel):
-    bl_label = "Brush"  # Override this
-    bl_region_type = "TOOLS"
-    bl_space_type = "VIEW_3D"
-    bl_category = "Brushes"
-    bl_options = {"HIDE_BG"}
-
-    tool_name = ""  # Override this
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == "PAINT_WEIGHT"
-
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
-        layout.scale_y = 2
-        num_cols = column_count(context.region)
-        if num_cols == 4:
-            col = layout.column(align=True)
-            icon_only = False
-        else:
-            col = layout.column_flow(columns=num_cols, align=True)
-            icon_only = True
-
-        for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name):
-            if not brush.use_paint_weight:
-                continue
-            if brush.weight_tool == self.tool_name:
-                draw_brush_button(
-                    context,
-                    col,
-                    icon_only,
-                    brush,
-                    "weight_paint",
-                    icon_name_from_weight_brush,
-                    tool_name_from_weight_brush,
-                )
+def filter_weight_brush(weight_brush: bpy.types.Brush):
+    return weight_brush.use_paint_weight
 
 
 WEIGHT_TOOLS = ["DRAW", "SMEAR", "AVERAGE", "BLUR"]
 panel_classes = [
     type(
         f"BFA_PT_brush_weight_{tool_name}",
-        (WeightBrushPanelBase,),
+        (BrushPanelBase,),
         {
             "bl_label": tool_name.capitalize(),
             "tool_name": tool_name,
+            "mode": "PAINT_WEIGHT",
+            "tool_settings_attribute_name": "weight_paint",
+            "filter_brush": staticmethod(filter_weight_brush),
+            "icon_name_from_brush": staticmethod(icon_name_from_weight_brush),
+            "tool_name_from_brush": staticmethod(tool_name_from_weight_brush),
         },
     )
     for tool_name in WEIGHT_TOOLS
