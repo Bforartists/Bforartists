@@ -35,7 +35,8 @@ def draw_brush_button(
 ):
     brush_name = brush.name
     icon = get_brush_icon(brush, icon_name_from_brush)
-    active_brush = context.tool_settings.weight_paint.brush
+    active_brush = getattr(context.tool_settings, tool_settings_attribute_name).brush
+
     is_active = False
     if active_brush is not None:
         is_active = active_brush.name == brush_name
