@@ -12,6 +12,10 @@ def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
     return icon_name
 
 
+def tool_name_from_weight_brush(weight_brush: bpy.types.Brush):
+    return weight_brush.weight_tool
+
+
 # TODO: generalize this base class to work with all modes
 class WeightBrushPanelBase(bpy.types.Panel):
     bl_label = "Brush"  # Override this
@@ -48,6 +52,7 @@ class WeightBrushPanelBase(bpy.types.Panel):
                     brush,
                     "weight_paint",
                     icon_name_from_weight_brush,
+                    tool_name_from_weight_brush,
                 )
 
 
