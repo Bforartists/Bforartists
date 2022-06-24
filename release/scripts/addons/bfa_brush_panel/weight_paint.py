@@ -28,6 +28,9 @@ panel_classes = [
         {
             "bl_label": tool_name.capitalize(),
             "tool_name": tool_name,
+            # TODO: Refactor and group related values and functions together for each paint mode
+            # for example each paint mode has a context mode (e.g. PAINT_WEIGHT)
+            # an icon prefix, an attribute to access brush tool name, etc
             "mode": "PAINT_WEIGHT",
             "tool_settings_attribute_name": "weight_paint",
             "filter_brush": staticmethod(filter_weight_brush),
