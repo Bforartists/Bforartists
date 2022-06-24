@@ -6,12 +6,12 @@ class BFA_OT_set_brush(bpy.types.Operator):
     bl_idname = "bfa.set_brush"
     bl_options = {"UNDO"}
 
-    paint_settings_attr_name: bpy.props.StringProperty()
+    tool_settings_attribute_name: bpy.props.StringProperty()
     brush_name: bpy.props.StringProperty()
     dynamic_description: bpy.props.StringProperty()
 
     def execute(self, context):
-        paint_settings = getattr(context.tool_settings, self.paint_settings_attr_name)
+        paint_settings = getattr(context.tool_settings, self.tool_settings_attribute_name)
         paint_settings.brush = bpy.data.brushes[self.brush_name]
         return {"FINISHED"}
 
