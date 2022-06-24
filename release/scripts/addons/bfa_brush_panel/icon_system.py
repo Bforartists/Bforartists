@@ -34,7 +34,7 @@ DEFAULT_ICON_FOR_BLEND_MODE = {
 }
 
 
-DEFAULT_ICON_FOR_IDNAME = {
+DEFAULT_ICON_FOR_TOOLNAME = {
     "AVERAGE": "PAINT_AVERAGE",
     "SMEAR": "PAINT_SMEAR",
     "DRAW": "PAINT_DRAW",
@@ -95,7 +95,7 @@ def get_brush_icon(brush: bpy.types.Brush, icon_name_from_brush: Callable[[bpy.t
 
     if brush.blend == "MIX":
         # FIXME: generalize weight paint specific code to work with other modes
-        icon_name = DEFAULT_ICON_FOR_IDNAME.get(brush.weight_tool, None)
+        icon_name = DEFAULT_ICON_FOR_TOOLNAME.get(brush.weight_tool, None)
     else:
         icon_name = DEFAULT_ICON_FOR_BLEND_MODE.get(brush.blend, None)
 
