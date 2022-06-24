@@ -7,12 +7,12 @@ def icon_name_from_weight_brush(weight_brush: bpy.types.Brush):
     # Values should match toolsystem
     # release\scripts\startup\bl_ui\space_toolsystem_toolbar.py
     icon_prefix = "brush.paint_weight."
-    idname = weight_brush.weight_tool
-    icon_name = icon_prefix + idname.lower()
+    tool_name = weight_brush.weight_tool
+    icon_name = icon_prefix + tool_name.lower()
     return icon_name
 
 
-# TODO: generalize this base calss to work with all modes
+# TODO: generalize this base class to work with all modes
 class WeightBrushPanelBase(bpy.types.Panel):
     bl_label = "Brush"  # Override this
     bl_region_type = "TOOLS"
