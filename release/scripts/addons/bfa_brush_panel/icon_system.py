@@ -81,7 +81,11 @@ def _icon_value_from_icon_name(icon_name):
     return icon_value
 
 
-def get_brush_icon(brush: bpy.types.Brush, icon_name_from_brush: Callable[[bpy.types.Brush], str]):
+def get_brush_icon(
+    brush: bpy.types.Brush,
+    icon_name_from_brush: Callable[[bpy.types.Brush], str],
+    tool_name_from_brush: Callable[[bpy.types.Brush], str],
+):
     if brush.use_custom_icon and brush.icon_filepath:
         pcoll = preview_collections["main"]
         filepath = os.path.abspath(bpy.path.abspath(brush.icon_filepath))
@@ -94,8 +98,7 @@ def get_brush_icon(brush: bpy.types.Brush, icon_name_from_brush: Callable[[bpy.t
         return BrushIcon("NONE", preview.icon_id)
 
     if brush.blend == "MIX":
-        # FIXME: generalize weight paint specific code to work with other modes
-        icon_name = DEFAULT_ICON_FOR_TOOLNAME.get(brush.weight_tool, None)
+        icon_name = DEFAULT_ICON_FOR_TOOLNAME.get(tool_name_from_brush(brush), None)
     else:
         icon_name = DEFAULT_ICON_FOR_BLEND_MODE.get(brush.blend, None)
 
