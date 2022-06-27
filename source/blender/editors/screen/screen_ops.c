@@ -659,32 +659,6 @@ bool ED_operator_editmball(bContext *C)
   return false;
 }
 
-bool ED_operator_mask(bContext *C)
-{
-  ScrArea *area = CTX_wm_area(C);
-  if (area && area->spacedata.first) {
-    switch (area->spacetype) {
-      case SPACE_CLIP: {
-        SpaceClip *space_clip = area->spacedata.first;
-        return ED_space_clip_check_show_maskedit(space_clip);
-      }
-      case SPACE_SEQ: {
-        SpaceSeq *sseq = area->spacedata.first;
-        Scene *scene = CTX_data_scene(C);
-        return ED_space_sequencer_check_show_maskedit(sseq, scene);
-      }
-      case SPACE_IMAGE: {
-        SpaceImage *sima = area->spacedata.first;
-        ViewLayer *view_layer = CTX_data_view_layer(C);
-        Object *obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
-        return ED_space_image_check_show_maskedit(sima, obedit);
-      }
-    }
-  }
-
-  return false;
-}
-
 bool ED_operator_camera_poll(bContext *C)
 {
   struct Camera *cam = CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data;
@@ -913,14 +887,16 @@ static AZone *area_actionzone_refresh_xy(ScrArea *area, const int xy[2], const b
             float dist_fac = 0.0f, alpha = 0.0f;
 
             if (az->direction == AZ_SCROLL_HOR) {
-              dist_fac = BLI_rcti_length_y(&v2d->hor, local_xy[1]) / AZONEFADEIN;
+              float hide_width = (az->y2 - az->y1) / 2.0f;
+              dist_fac = BLI_rcti_length_y(&v2d->hor, local_xy[1]) / hide_width;
               CLAMP(dist_fac, 0.0f, 1.0f);
               alpha = 1.0f - dist_fac;
 
               v2d->alpha_hor = alpha * 255;
             }
             else if (az->direction == AZ_SCROLL_VERT) {
-              dist_fac = BLI_rcti_length_x(&v2d->vert, local_xy[0]) / AZONEFADEIN;
+              float hide_width = (az->x2 - az->x1) / 2.0f;
+              dist_fac = BLI_rcti_length_x(&v2d->vert, local_xy[0]) / hide_width;
               CLAMP(dist_fac, 0.0f, 1.0f);
               alpha = 1.0f - dist_fac;
 
