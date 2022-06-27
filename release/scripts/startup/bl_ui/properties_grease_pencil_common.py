@@ -235,6 +235,11 @@ class GPENCIL_MT_move_to_layer(Menu):
         layout = self.layout
         gpd = context.gpencil_data
         if gpd:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("gpencil.move_to_layer", text="New Layer", icon='ADD').layer = -1
+
+            layout.separator()
+
             gpl_active = context.active_gpencil_layer
             tot_layers = len(gpd.layers)
             i = tot_layers - 1
@@ -247,11 +252,6 @@ class GPENCIL_MT_move_to_layer(Menu):
                 layout.operator("gpencil.move_to_layer", text=gpl.info, icon=icon, translate=False).layer = i
                 i -= 1
 
-            layout.separator()
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("gpencil.move_to_layer", text="New Layer", icon='ADD').layer = -1
-
 
 class GPENCIL_MT_layer_active(Menu):
     bl_label = "Change Active Layer"
@@ -262,6 +262,10 @@ class GPENCIL_MT_layer_active(Menu):
 
         gpd = context.gpencil_data
         if gpd:
+            layout.operator("gpencil.layer_add", text="New Layer", icon='ADD')
+
+            layout.separator()
+
             gpl_active = context.active_gpencil_layer
             tot_layers = len(gpd.layers)
             i = tot_layers - 1
@@ -273,10 +277,6 @@ class GPENCIL_MT_layer_active(Menu):
                     icon = 'NONE'
                 layout.operator("gpencil.layer_active", text=gpl.info, icon=icon).layer = i
                 i -= 1
-
-            layout.separator()
-
-        layout.operator("gpencil.layer_add", text="New Layer", icon='ADD')
 
 
 class GPENCIL_MT_material_active(Menu):
@@ -297,7 +297,7 @@ class GPENCIL_MT_material_active(Menu):
 
         for slot in ob.material_slots:
             mat = slot.material
-            if mat:
+            if mat and mat.id_data and mat.id_data.preview:
                 icon = mat.id_data.preview.icon_id
                 layout.operator("gpencil.material_set", text=mat.name, icon_value=icon).slot = mat.name
 
