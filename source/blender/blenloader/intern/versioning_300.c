@@ -30,6 +30,7 @@
 #include "DNA_gpencil_modifier_types.h"
 #include "DNA_lineart_types.h"
 #include "DNA_listBase.h"
+#include "DNA_mask_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
@@ -45,6 +46,7 @@
 #include "BKE_asset.h"
 #include "BKE_attribute.h"
 #include "BKE_collection.h"
+#include "BKE_colortools.h"
 #include "BKE_curve.h"
 #include "BKE_data_transfer.h"
 #include "BKE_deform.h"
@@ -796,13 +798,16 @@ void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
             continue;
           }
           SpaceSeq *sseq = (SpaceSeq *)sl;
+          ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                 &sl->regionbase;
           sseq->flag |= SEQ_CLAMP_VIEW;
 
           if (ELEM(sseq->view, SEQ_VIEW_PREVIEW, SEQ_VIEW_SEQUENCE_PREVIEW)) {
             continue;
           }
 
-          ARegion *timeline_region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+          ARegion *timeline_region = BKE_region_find_in_listbase_by_type(regionbase,
+                                                                         RGN_TYPE_WINDOW);
 
           if (timeline_region == NULL) {
             continue;
@@ -1615,6 +1620,31 @@ static void versioning_replace_legacy_combined_and_separate_color_nodes(bNodeTre
           break;
         }
       }
+    }
+  }
+}
+
+static void version_fix_image_format_copy(Main *bmain, ImageFormatData *format)
+{
+  /* Fix bug where curves in image format were not properly copied to file output
+   * node, incorrectly sharing a pointer with the scene settings. Copy the data
+   * structure now as it should have been done in the first place. */
+  if (format->view_settings.curve_mapping) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (format != &scene->r.im_format && ELEM(format->view_settings.curve_mapping,
+                                                scene->view_settings.curve_mapping,
+                                                scene->r.im_format.view_settings.curve_mapping)) {
+        format->view_settings.curve_mapping = BKE_curvemapping_copy(
+            format->view_settings.curve_mapping);
+        break;
+      }
+    }
+
+    /* Remove any invalid curves with missing data. */
+    if (format->view_settings.curve_mapping->cm[0].curve == NULL) {
+      BKE_curvemapping_free(format->view_settings.curve_mapping);
+      format->view_settings.curve_mapping = NULL;
+      format->view_settings.flag &= ~COLORMANAGE_VIEW_USE_CURVES;
     }
   }
 }
@@ -2842,16 +2872,19 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
           ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
                                                                  &sl->regionbase;
-          ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_CHANNELS);
+          ARegion *region = BKE_region_find_in_listbase_by_type(regionbase, RGN_TYPE_CHANNELS);
           if (!region) {
-            ARegion *tools_region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+            /* Find sequencer tools region. */
+            ARegion *tools_region = BKE_region_find_in_listbase_by_type(regionbase,
+                                                                        RGN_TYPE_TOOLS);
             region = do_versions_add_region(RGN_TYPE_CHANNELS, "channels region");
             BLI_insertlinkafter(regionbase, tools_region, region);
             region->alignment = RGN_ALIGN_LEFT;
             region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL;
           }
 
-          ARegion *timeline_region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+          ARegion *timeline_region = BKE_region_find_in_listbase_by_type(regionbase,
+                                                                         RGN_TYPE_WINDOW);
           if (timeline_region != NULL) {
             timeline_region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL;
           }
@@ -3084,6 +3117,60 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     FOREACH_NODETREE_END;
   }
 
+  if (!MAIN_VERSION_ATLEAST(bmain, 303, 2)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_CLIP) {
+            ((SpaceClip *)sl)->mask_info.blend_factor = 1.0;
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 303, 3)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_CLIP) {
+            ((SpaceClip *)sl)->mask_info.draw_flag |= MASK_DRAWFLAG_SPLINE;
+          }
+          else if (sl->spacetype == SPACE_IMAGE) {
+            ((SpaceImage *)sl)->mask_info.draw_flag |= MASK_DRAWFLAG_SPLINE;
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 303, 4)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_COMPOSIT) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (node->type == CMP_NODE_OUTPUT_FILE) {
+            LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
+              if (sock->storage) {
+                NodeImageMultiFileSocket *sockdata = (NodeImageMultiFileSocket *)sock->storage;
+                version_fix_image_format_copy(bmain, &sockdata->format);
+              }
+            }
+
+            if (node->storage) {
+              NodeImageMultiFile *nimf = (NodeImageMultiFile *)node->storage;
+              version_fix_image_format_copy(bmain, &nimf->format);
+            }
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      version_fix_image_format_copy(bmain, &scene->r.im_format);
+    }
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -3095,5 +3182,24 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+
+    /* Fix for T98925 - remove channels region, that was initialized in incorrect editor types. */
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (ELEM(sl->spacetype, SPACE_ACTION, SPACE_CLIP, SPACE_GRAPH, SPACE_NLA, SPACE_SEQ)) {
+            continue;
+          }
+
+          ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                 &sl->regionbase;
+          ARegion *channels_region = BKE_region_find_in_listbase_by_type(regionbase,
+                                                                         RGN_TYPE_CHANNELS);
+          if (channels_region) {
+            BLI_freelinkN(regionbase, channels_region);
+          }
+        }
+      }
+    }
   }
 }

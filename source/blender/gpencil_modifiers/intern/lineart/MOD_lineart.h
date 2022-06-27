@@ -167,7 +167,7 @@ typedef struct LineartEdgeChainItem {
   float gpos[3];
   float normal[3];
   uint16_t line_type;
-  int8_t occlusion;
+  uint8_t occlusion;
   uint8_t material_mask_bits;
   uint8_t intersection_mask;
   size_t index;
@@ -309,7 +309,7 @@ typedef struct LineartData {
   LineartElementLinkNode *isect_scheduled_up_to;
   int isect_scheduled_up_to_index;
 
-  /* Note: Data inside #pending_edges are allocated with MEM_xxx call instead of in pool. */
+  /* NOTE: Data inside #pending_edges are allocated with MEM_xxx call instead of in pool. */
   struct LineartPendingEdges pending_edges;
   int scheduled_count;
 
@@ -330,7 +330,7 @@ typedef struct LineartCache {
   ListBase chains;
 
   /** Cache only contains edge types specified in this variable. */
-  int8_t rb_edge_types;
+  uint16_t all_enabled_edge_types;
 } LineartCache;
 
 #define DBL_TRIANGLE_LIM 1e-8
@@ -382,7 +382,7 @@ typedef struct LineartObjectInfo {
 
   bool free_use_mesh;
 
-  /* Note: Data inside #pending_edges are allocated with MEM_xxx call instead of in pool. */
+  /** NOTE: Data inside #pending_edges are allocated with MEM_xxx call instead of in pool. */
   struct LineartPendingEdges pending_edges;
 
 } LineartObjectInfo;
