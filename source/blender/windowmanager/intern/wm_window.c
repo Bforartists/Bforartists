@@ -963,7 +963,7 @@ typedef enum {
 /* check if specified modifier key type is pressed */
 static int query_qual(modifierKeyType qual)
 {
-  GHOST_TModifierKeyMask left, right;
+  GHOST_TModifierKey left, right;
   switch (qual) {
     case SHIFT:
       left = GHOST_kModifierKeyLeftShift;
@@ -2021,15 +2021,6 @@ void WM_cursor_warp(wmWindow *win, int x, int y)
 
     win->eventstate->xy[0] = oldx;
     win->eventstate->xy[1] = oldy;
-  }
-}
-
-void WM_cursor_compatible_xy(wmWindow *win, int *x, int *y)
-{
-  float f = GHOST_GetNativePixelSize(win->ghostwin);
-  if (f != 1.0f) {
-    *x = (int)(*x / f) * f;
-    *y = (int)(*y / f) * f;
   }
 }
 

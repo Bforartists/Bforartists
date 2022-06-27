@@ -116,7 +116,7 @@ void MASK_OT_new(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = mask_new_exec;
-  ot->poll = ED_operator_mask;
+  ot->poll = ED_maskedit_poll;
 
   /* properties */
   RNA_def_string(ot->srna, "name", NULL, MAX_ID_NAME - 2, "Name", "Name of new mask");
@@ -910,7 +910,7 @@ void MASK_OT_slide_point(wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = slide_point_invoke;
   ot->modal = slide_point_modal;
-  ot->poll = ED_operator_mask;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1300,7 +1300,7 @@ void MASK_OT_slide_spline_curvature(wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = slide_spline_curvature_invoke;
   ot->modal = slide_spline_curvature_modal;
-  ot->poll = ED_operator_mask;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1339,7 +1339,7 @@ void MASK_OT_cyclic_toggle(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = cyclic_toggle_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1496,7 +1496,7 @@ void MASK_OT_delete(wmOperatorType *ot)
   /* api callbacks */
   /* ot->invoke = WM_operator_confirm; */ /*bfa - we don't confirm delete*/
   ot->exec = delete_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1554,7 +1554,7 @@ void MASK_OT_switch_direction(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = mask_switch_direction_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1616,7 +1616,7 @@ void MASK_OT_normals_make_consistent(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = mask_normals_make_consistent_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1696,7 +1696,7 @@ void MASK_OT_handle_type_set(wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
   ot->exec = set_handle_type_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1852,7 +1852,7 @@ void MASK_OT_feather_weight_clear(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = mask_feather_weight_clear_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -2046,7 +2046,7 @@ void MASK_OT_duplicate(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = mask_duplicate_exec;
-  ot->poll = ED_maskedit_mask_poll;
+  ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -2087,7 +2087,7 @@ void MASK_OT_copy_splines(wmOperatorType *ot)
 
 static bool paste_splines_poll(bContext *C)
 {
-  if (ED_maskedit_mask_poll(C)) {
+  if (ED_maskedit_mask_visible_splines_poll(C)) {
     return BKE_mask_clipboard_is_empty() == false;
   }
 
