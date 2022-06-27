@@ -48,7 +48,7 @@ Object *MeshFromGeometry::create_mesh(Main *bmain,
   obj->data = BKE_object_obdata_add_from_type(bmain, OB_MESH, ob_name.c_str());
 
   create_vertices(mesh);
-  create_polys_loops(obj, mesh, import_params.import_vertex_groups);
+  create_polys_loops(mesh, import_params.import_vertex_groups);
   create_edges(mesh);
   create_uv_verts(mesh);
   create_normals(mesh);
@@ -70,7 +70,7 @@ Object *MeshFromGeometry::create_mesh(Main *bmain,
   BKE_mesh_nomain_to_mesh(mesh, dst, obj, &CD_MASK_EVERYTHING, true);
   dst->flag |= autosmooth;
 
-  /* Note: vertex groups have to be created after final mesh is assigned to the object. */
+  /* NOTE: vertex groups have to be created after final mesh is assigned to the object. */
   create_vertex_groups(obj);
 
   return obj;
@@ -167,7 +167,7 @@ void MeshFromGeometry::create_vertices(Mesh *mesh)
   }
 }
 
-void MeshFromGeometry::create_polys_loops(Object *obj, Mesh *mesh, bool use_vertex_groups)
+void MeshFromGeometry::create_polys_loops(Mesh *mesh, bool use_vertex_groups)
 {
   mesh->dvert = nullptr;
   const int64_t total_verts = mesh_geometry_.vertex_count_;
