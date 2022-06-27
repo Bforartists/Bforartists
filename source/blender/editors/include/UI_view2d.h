@@ -49,10 +49,22 @@ enum eView2D_CommonViewTypes {
 /* ------ Defines for Scrollers ----- */
 
 /** Scroll bar area. */
-#define V2D_SCROLL_HEIGHT \
-  (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
-#define V2D_SCROLL_WIDTH \
-  (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
+
+/* Maximum has to include outline which varies with line width. */
+/* bfa - scrollbar width and height - changed from 0.45 to 0.55 */
+#define V2D_SCROLL_HEIGHT ((0.55f * U.widget_unit) + (2.0f * U.pixelsize))
+#define V2D_SCROLL_WIDTH ((0.55f * U.widget_unit) + (2.0f * U.pixelsize))
+
+/* Alpha of scrollbar when at minimum size. */
+#define V2D_SCROLL_MIN_ALPHA (0.4f)
+
+/* Minimum size needs to include outline which varies with line width. */
+#define V2D_SCROLL_MIN_WIDTH ((5.0f * U.dpi_fac) + (2.0f * U.pixelsize))
+
+/* When to start showing the full-width scroller. */
+#define V2D_SCROLL_HIDE_WIDTH (AREAMINX * U.dpi_fac)
+#define V2D_SCROLL_HIDE_HEIGHT (HEADERY * U.dpi_fac)
+
 /** Scroll bars with 'handles' used for scale (zoom). */
 #define V2D_SCROLL_HANDLE_HEIGHT (0.6f * U.widget_unit)
 #define V2D_SCROLL_HANDLE_WIDTH (0.6f * U.widget_unit)
@@ -238,9 +250,13 @@ void UI_view2d_draw_scale_x__frames_or_seconds(const struct ARegion *region,
 void UI_view2d_scrollers_calc(struct View2D *v2d,
                               const struct rcti *mask_custom,
                               struct View2DScrollers *r_scrollers);
+
 /**
  * Draw scroll-bars in the given 2D-region.
  */
+void UI_view2d_scrollers_draw_ex(struct View2D *v2d,
+                                 const struct rcti *mask_custom,
+                                 bool use_full_hide);
 void UI_view2d_scrollers_draw(struct View2D *v2d, const struct rcti *mask_custom);
 
 /* List view tools. */
@@ -331,8 +347,10 @@ struct View2D *UI_view2d_fromcontext_rwin(const struct bContext *C);
 /**
  * Get scrollbar sizes of the current 2D view.
  * The size will be zero if the view has its scrollbars disabled.
+ *
+ * \param mapped: whether to use view2d_scroll_mapped which changes flags
  */
-void UI_view2d_scroller_size_get(const struct View2D *v2d, float *r_x, float *r_y);
+void UI_view2d_scroller_size_get(const struct View2D *v2d, bool mapped, float *r_x, float *r_y);
 /**
  * Calculate the scale per-axis of the drawing-area
  *
