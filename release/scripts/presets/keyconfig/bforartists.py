@@ -548,6 +548,7 @@ keyconfig_data = \
       },
      ),
     ("view3d.toggle_xray", {"type": 'Z', "value": 'PRESS', "alt": True}, None),
+    ("view3d.toggle_xray", {"type": 'Y', "value": 'PRESS', "alt": True}, None),
     ("transform.translate", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
     ("transform.rotate", {"type": 'E', "value": 'PRESS', "ctrl": True}, None),
     ("transform.resize", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
