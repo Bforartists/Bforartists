@@ -1449,7 +1449,7 @@ geometry_nodes
 geometry_nodes_active
 instance_rotate
 instance_scale
-#~ DEF_ICON_BLANK(1483)
+volume_cube
 
 # ------------------------- row 22 --------------------------*/
 
