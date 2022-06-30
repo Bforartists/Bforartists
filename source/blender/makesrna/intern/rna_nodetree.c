@@ -13729,6 +13729,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_VIEWER:
       icon = ICON_NODE_VIEWER;
       break;
+    case GEO_NODE_VOLUME_CUBE:
+      icon = ICON_VOLUME_CUBE;
+      break;
     case GEO_NODE_VOLUME_TO_MESH:
       icon = ICON_VOLUME_TO_MESH;
       break;
