@@ -1839,7 +1839,7 @@ class CYCLES_WORLD_PT_settings_light_group(CyclesButtonsPanel, Panel):
         )
 
         sub = row.column(align=True)
-        sub.active = not(bool(world.lightgroup) and any(lg.name == ob.lightgroup for lg in view_layer.lightgroups)) #BFA - Changed to activate this operator
+        sub.active = not(bool(world.lightgroup) and any(lg.name == world.lightgroup for lg in view_layer.lightgroups)) #BFA - Changed to activate this operator
         sub.operator("scene.view_layer_add_lightgroup", icon='ADD', text="").name = world.lightgroup
 
 
