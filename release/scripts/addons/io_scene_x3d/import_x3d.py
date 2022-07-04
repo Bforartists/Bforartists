@@ -1003,13 +1003,13 @@ class vrmlNode(object):
                     print('\tWarning: Inline URL could not be found:', url)
                 else:
                     if url == self.getFilename():
-                        print('\tWarning: cant Inline yourself recursively:', url)
+                        print('\tWarning: can\'t Inline yourself recursively:', url)
                     else:
 
                         try:
                             data = gzipOpen(url)
                         except:
-                            print('\tWarning: cant open the file:', url)
+                            print('\tWarning: can\'t open the file:', url)
                             data = None
 
                         if data:

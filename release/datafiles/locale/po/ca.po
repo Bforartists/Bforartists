@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3356,20 +3356,20 @@ msgid "Save"
 msgstr "Guardar"
 
 
-msgid "Light"
-msgstr "Dreta"
-
-
 msgid "Lattice"
 msgstr "Lattice"
 
 
-msgid "Metaball"
-msgstr "MetaBall"
+msgid "Light"
+msgstr "Dreta"
 
 
 msgid "Mesh"
 msgstr "Malla"
+
+
+msgid "Metaball"
+msgstr "MetaBall"
 
 
 msgid "Node Tree"
@@ -8530,10 +8530,6 @@ msgstr "Arxiu"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Seleccionar connectats"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Texte"
 
 
 msgid "Use Channel"

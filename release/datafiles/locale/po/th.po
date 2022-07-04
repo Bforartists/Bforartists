@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -810,13 +810,18 @@ msgstr "แปรง"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "ไฟล์แคช"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "กล้อง"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "ไฟล์แคช"
+msgid "Collection"
+msgstr "ชุด"
 
 
 msgctxt "ID"
@@ -830,11 +835,6 @@ msgstr "ฟอนต์"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "ชุด"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "ภาพ"
 
@@ -845,8 +845,8 @@ msgstr "คีย์"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "แสง"
+msgid "Lattice"
+msgstr "ช่องตาข่าย"
 
 
 msgctxt "ID"
@@ -855,13 +855,13 @@ msgstr "คลัง"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "สไตล์เส้น"
+msgid "Light"
+msgstr "แสง"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "ช่องตาข่าย"
+msgid "Line Style"
+msgstr "สไตล์เส้น"
 
 
 msgctxt "ID"
@@ -875,13 +875,13 @@ msgstr "วัสดุ"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "เมต้าบอล"
+msgid "Mesh"
+msgstr "เมช"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "เมช"
+msgid "Metaball"
+msgstr "เมต้าบอล"
 
 
 msgctxt "ID"
@@ -940,13 +940,13 @@ msgstr "ตัวจัดการหน้าต่าง"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "โลก"
+msgid "Workspace"
+msgstr "พื้นที่ใช้งาน"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "พื้นที่ใช้งาน"
+msgid "World"
+msgstr "โลก"
 
 
 msgid "Rotation Mode"
@@ -1128,12 +1128,12 @@ msgid "Mask"
 msgstr "หน้ากาก"
 
 
-msgid "Metaball"
-msgstr "เมตาบอล"
-
-
 msgid "Mesh"
 msgstr "เมช"
+
+
+msgid "Metaball"
+msgstr "เมตาบอล"
 
 
 msgid "Palette"
@@ -1156,12 +1156,12 @@ msgid "Text"
 msgstr "ช้อความ"
 
 
-msgid "World"
-msgstr "โลก"
-
-
 msgid "Workspace"
 msgstr "พื้นที่ใช้งาน"
+
+
+msgid "World"
+msgstr "โลก"
 
 
 msgid "Miscellaneous"

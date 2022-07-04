@@ -652,7 +652,7 @@ static int nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
   }
 
   scene = ac.scene;
-  cfra = (float)CFRA;
+  cfra = (float)scene->r.cfra;
 
   /* get action to use */
   act = BLI_findlink(&bmain->actions, RNA_enum_get(op->ptr, "action"));
@@ -928,7 +928,7 @@ static int nlaedit_add_sound_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   scene = ac.scene;
-  cfra = CFRA;
+  cfra = scene->r.cfra;
 
   /* get a list of the editable tracks being shown in the NLA */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_SEL |
@@ -2427,7 +2427,7 @@ static int nlaedit_snap_exec(bContext *C, wmOperator *op)
         /* calculate new start position based on snapping mode */
         switch (mode) {
           case NLAEDIT_SNAP_CFRA: /* to current frame */
-            strip->start = (float)CFRA;
+            strip->start = (float)scene->r.cfra;
             break;
           case NLAEDIT_SNAP_NEAREST_FRAME: /* to nearest frame */
             strip->start = floorf(start + 0.5f);

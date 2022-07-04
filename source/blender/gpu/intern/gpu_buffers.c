@@ -881,13 +881,14 @@ void GPU_pbvh_grid_buffers_update(PBVHGPUFormat *vbo_id,
   buffers->show_overlay = !empty_mask || !default_face_set;
 }
 
-GPU_PBVH_Buffers *GPU_pbvh_grid_buffers_build(int totgrid, BLI_bitmap **grid_hidden)
+GPU_PBVH_Buffers *GPU_pbvh_grid_buffers_build(int totgrid, BLI_bitmap **grid_hidden, bool smooth)
 {
   GPU_PBVH_Buffers *buffers;
 
   buffers = MEM_callocN(sizeof(GPU_PBVH_Buffers), "GPU_Buffers");
   buffers->grid_hidden = grid_hidden;
   buffers->totgrid = totgrid;
+  buffers->smooth = smooth;
 
   buffers->show_overlay = false;
 
@@ -1181,9 +1182,9 @@ GPU_PBVH_Buffers *GPU_pbvh_bmesh_buffers_build(bool smooth_shading)
  * Builds a list of attributes from a set of domains and a set of
  * customdata types.
  *
- * \param active_only Returns only one item, a GPUAttrRef to active_layer
- * \param active_layer CustomDataLayer to use for the active layer
- * \param active_layer CustomDataLayer to use for the render layer
+ * \param active_only: Returns only one item, a #GPUAttrRef to active_layer.
+ * \param active_layer: #CustomDataLayer to use for the active layer.
+ * \param active_layer: #CustomDataLayer to use for the render layer.
  */
 static int gpu_pbvh_make_attr_offs(eAttrDomainMask domain_mask,
                                    eCustomDataMask type_mask,
