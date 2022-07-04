@@ -203,12 +203,21 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.shortest_path_pick", text="Shortest Path", icon="SELECT_SHORTESTPATH")
-        layout.operator("uv.select_similar")
+        layout.menu("IMAGE_MT_select_similar")
 
         layout.separator()
 
         layout.operator("uv.select_more", text="More", icon="SELECTMORE")
         layout.operator("uv.select_less", text="Less", icon="SELECTLESS")
+
+
+class IMAGE_MT_select_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("uv.select_similar", text = "Pinned", icon = "PINNED").type = 'PIN'
 
 
 class IMAGE_MT_select_legacy(Menu):
@@ -1932,6 +1941,7 @@ classes = (
     IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
     IMAGE_MT_select,
+    IMAGE_MT_select_similar,
     IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
     IMAGE_MT_image,
