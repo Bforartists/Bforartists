@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -1086,13 +1086,13 @@ msgstr "Volume"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Wereld"
+msgid "Workspace"
+msgstr "Werkomgeving"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Werkomgeving"
+msgid "World"
+msgstr "Wereld"
 
 
 msgid "Rotation Mode"
@@ -1391,24 +1391,24 @@ msgid "Brush"
 msgstr "Kwast"
 
 
-msgid "Font"
-msgstr "Lettertype"
-
-
 msgid "Collection"
 msgstr "Collectie"
+
+
+msgid "Font"
+msgstr "Lettertype"
 
 
 msgid "Key"
 msgstr "Sleutel"
 
 
-msgid "Light"
-msgstr "Licht"
-
-
 msgid "Library"
 msgstr "Bibliotheek"
+
+
+msgid "Light"
+msgstr "Licht"
 
 
 msgid "Line Style"
@@ -1439,12 +1439,12 @@ msgid "Text"
 msgstr "Tekst"
 
 
-msgid "World"
-msgstr "Wereld"
-
-
 msgid "Workspace"
 msgstr "Werkomgeving"
+
+
+msgid "World"
+msgstr "Wereld"
 
 
 msgid "Animations"

@@ -190,7 +190,7 @@ class DemoModeRun(bpy.types.Operator):
         if extern_demo_mode_run():
             return {'FINISHED'}
         else:
-            self.report({'ERROR'}, "Cant load demo.py config, run: File -> Demo Mode (Setup)")
+            self.report({'ERROR'}, "Can't load demo.py config, run: File -> Demo Mode (Setup)")
             return {'CANCELLED'}
 
 

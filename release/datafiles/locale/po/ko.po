@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -8029,13 +8029,18 @@ msgstr "브러시"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "캐시 파일"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "카메라"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "캐시 파일"
+msgid "Collection"
+msgstr "컬렉션"
 
 
 msgctxt "ID"
@@ -8054,11 +8059,6 @@ msgstr "그리스 펜슬"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "컬렉션"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "이미지"
 
@@ -8069,8 +8069,8 @@ msgstr "키"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "라이트"
+msgid "Lattice"
+msgstr "래티스"
 
 
 msgctxt "ID"
@@ -8079,13 +8079,18 @@ msgstr "라이브러리"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "라인 스타일"
+msgid "Light"
+msgstr "라이트"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "래티스"
+msgid "Light Probe"
+msgstr "라이트 프로브"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "라인 스타일"
 
 
 msgctxt "ID"
@@ -8099,13 +8104,13 @@ msgstr "매테리얼"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "메타볼"
+msgid "Mesh"
+msgstr "메쉬"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "메쉬"
+msgid "Metaball"
+msgstr "메타볼"
 
 
 msgctxt "ID"
@@ -8139,11 +8144,6 @@ msgstr "파티클"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "라이트 프로브"
-
-
-msgctxt "ID"
 msgid "Scene"
 msgstr "씬"
 
@@ -8174,13 +8174,13 @@ msgstr "창 관리자"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "월드"
+msgid "Workspace"
+msgstr "작업공간"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "작업공간"
+msgid "World"
+msgstr "월드"
 
 
 msgid "Rotation Mode"
@@ -10613,44 +10613,48 @@ msgid "Brush"
 msgstr "브러시"
 
 
-msgid "Font"
-msgstr "폰트"
-
-
 msgid "Collection"
 msgstr "컬렉션"
+
+
+msgid "Font"
+msgstr "폰트"
 
 
 msgid "Key"
 msgstr "키"
 
 
-msgid "Light"
-msgstr "라이트"
+msgid "Lattice"
+msgstr "래티스"
 
 
 msgid "Library"
 msgstr "라이브러리"
 
 
+msgid "Light"
+msgstr "라이트"
+
+
+msgid "Light Probe"
+msgstr "라이트 프로브"
+
+
 msgid "Line Style"
 msgstr "라인 스타일"
-
-
-msgid "Lattice"
-msgstr "래티스"
 
 
 msgid "Mask"
 msgstr "마스크"
 
 
-msgid "Metaball"
-msgstr "메타볼"
-
-
 msgid "Mesh"
 msgstr "메쉬"
+
+
+msgid "Metaball"
+msgstr "메타볼"
 
 
 msgid "Node Tree"
@@ -10667,10 +10671,6 @@ msgstr "팔레트"
 
 msgid "Particle"
 msgstr "파티클"
-
-
-msgid "Light Probe"
-msgstr "라이트 프로브"
 
 
 msgid "Simulation"
@@ -10693,12 +10693,12 @@ msgid "Window Manager"
 msgstr "창 관리자"
 
 
-msgid "World"
-msgstr "월드"
-
-
 msgid "Workspace"
 msgstr "작업공간"
+
+
+msgid "World"
+msgstr "월드"
 
 
 msgid "Icon ID"
@@ -30816,10 +30816,6 @@ msgid "Use local generated coordinates of another object"
 msgstr "다른 오브젝트의 로컬 생성된 좌표를 사용"
 
 
-msgid "Use coordinates from an UV layer"
-msgstr "UV 레이어의 좌표를 사용"
-
-
 msgid "Use Channel"
 msgstr "채널을 사용"
 
@@ -40981,10 +40977,6 @@ msgstr "현재 프레임을 사용"
 
 msgid "Export the scene in the current animation frame"
 msgstr "현재 애니메이션 프레임에서 씬을 내보내기"
-
-
-msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "변형 본만 내보내기 (및 계층 구조에 필요한 본)"
 
 
 msgid "Displacement Textures (EXPERIMENTAL)"
@@ -60237,10 +60229,6 @@ msgid "Edit Property"
 msgstr "속성을 편집"
 
 
-msgid "Is Library Overridable"
-msgstr "Is 라이브러리 재정의성"
-
-
 msgid "Property Name"
 msgstr "속성 이름"
 
@@ -60251,10 +60239,6 @@ msgstr "속성 이름 편집"
 
 msgid "Subtype"
 msgstr "하위 유형"
-
-
-msgid "Use Soft Limits"
-msgstr "소프트 제한을 사용"
 
 
 msgctxt "Operator"
@@ -71301,10 +71285,6 @@ msgstr "마커에 대한 검색 바운드 박스를 표시"
 
 msgid "Show Mask Overlay"
 msgstr "마스크 오버레이를 표시"
-
-
-msgid "Display Smooth Splines"
-msgstr "스무스 스플라인을 표시"
 
 
 msgid "Show metadata of clip"
@@ -83420,10 +83400,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "탄젠트 공간 계산에는 루프 노멀이 필요함, 발견된 건 없음, 중단 합니다"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "탄젠트 공간 계산에 UV맵이 필요함, \"%s\"을 찾을 수 없음, 중단합니다"
-
-
 msgid "NlaTrack"
 msgstr "Nla트랙"
 
@@ -86359,10 +86335,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "손실을 피하기 위해 현재 씬에 추가된 고아 라이브러리 오브젝트"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "참조된 오브젝트 나 컬렉션에 대해서만 라이브러리를 재정의 할 수 있습니다"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "실행중인 오브젝트 데이터의 연결이 잘못되었습니다"
 
@@ -86373,10 +86345,6 @@ msgstr "이 오브젝트는 데이터를 연결을 해제할 수 없습니다"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "컬렉션 '%s'(활성 오브젝트로 인스턴스화 됨)을 재정의 할 수 없습니다"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "활성 오브젝트 '%s'은 무시할 수 없습니다"
 
 
 msgid "Select Collection"
