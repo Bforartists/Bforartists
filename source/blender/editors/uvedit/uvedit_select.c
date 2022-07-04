@@ -60,6 +60,9 @@
 
 #include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
+#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 static void uv_select_all_perform(const Scene *scene, Object *obedit, int action);
 
 static void uv_select_all_perform_multi_ex(const Scene *scene,
@@ -4947,19 +4950,20 @@ static int uv_select_similar_exec(bContext *C, wmOperator *op)
   return uv_select_similar_vert_exec(C, op);
 }
 
-static EnumPropertyItem prop_vert_similar_types[] = {{UV_SSIM_PIN, "PIN", 0, "Pinned", ""}, {0}};
+static EnumPropertyItem prop_vert_similar_types[] = {
+    {UV_SSIM_PIN, "PIN", ICON_PINNED, "Pinned", ""}, {0}};
 
 static EnumPropertyItem prop_edge_similar_types[] = {
-    {UV_SSIM_LENGTH_UV, "LENGTH", 0, "Length", ""},
-    {UV_SSIM_LENGTH_3D, "LENGTH_3D", 0, "Length 3D", ""},
-    {UV_SSIM_PIN, "PIN", 0, "Pinned", ""},
+    {UV_SSIM_LENGTH_UV, "LENGTH", ICON_PARTICLEBRUSH_LENGTH, "Length", ""},
+    {UV_SSIM_LENGTH_3D, "LENGTH_3D", ICON_PARTICLEBRUSH_LENGTH, "Length 3D", ""},
+    {UV_SSIM_PIN, "PIN", ICON_PINNED, "Pinned", ""},
     {0}};
 
 static EnumPropertyItem prop_face_similar_types[] = {
-    {UV_SSIM_AREA_UV, "AREA", 0, "Area", ""},
-    {UV_SSIM_AREA_3D, "AREA_3D", 0, "Area 3D", ""},
-    {UV_SSIM_SIDES, "SIDES", 0, "Polygon Sides", ""},
-    {UV_SSIM_MATERIAL, "MATERIAL", 0, "Material", ""},
+    {UV_SSIM_AREA_UV, "AREA", ICON_AREA, "Area", ""},
+    {UV_SSIM_AREA_3D, "AREA_3D", ICON_AREA, "Area 3D", ""},
+    {UV_SSIM_SIDES, "SIDES", ICON_SELECT_FACES_BY_SIDE, "Polygon Sides", ""},
+    {UV_SSIM_MATERIAL, "MATERIAL", ICON_MATERIAL_DATA, "Material", ""},
     {0}};
 
 static EnumPropertyItem prop_similar_compare_types[] = {{SIM_CMP_EQ, "EQUAL", 0, "Equal", ""},
