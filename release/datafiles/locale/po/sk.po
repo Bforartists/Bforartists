@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-06-09 11:47+0200\n"
+"PO-Revision-Date: 2022-06-14 08:31+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -1565,14 +1565,6 @@ msgstr "Textúra Obrázok"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Zapečie do blokov údajov obrázka asociovanými s aktívnymi uzlami textúry obrázku v materiáloch"
-
-
-msgid "Color Attributes"
-msgstr "Atribúty farieb"
-
-
-msgid "Bake to active color attribute layer on meshes"
-msgstr "Zapečie do aktívnej vrstvy atribútu farby na povrchových sieťach"
 
 
 msgid "Automatic Name"
@@ -9493,13 +9485,18 @@ msgstr "Štetec"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Súbor zásobníka"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Kamera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Súbor zásobníka"
+msgid "Collection"
+msgstr "Kolekcia"
 
 
 msgctxt "ID"
@@ -9518,11 +9515,6 @@ msgstr "Pastelka"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Kolekcia"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Obrázok"
 
@@ -9533,8 +9525,8 @@ msgstr "Klávesa"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Svetlo"
+msgid "Lattice"
+msgstr "Mriežka"
 
 
 msgctxt "ID"
@@ -9543,13 +9535,18 @@ msgstr "Knižnica"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Štýl čiary"
+msgid "Light"
+msgstr "Svetlo"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Mriežka"
+msgid "Light Probe"
+msgstr "Snímač svetla"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Štýl čiary"
 
 
 msgctxt "ID"
@@ -9563,13 +9560,13 @@ msgstr "Materiál"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Meta guľa"
+msgid "Mesh"
+msgstr "Povrchová sieť"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Povrchová sieť"
+msgid "Metaball"
+msgstr "Meta guľa"
 
 
 msgctxt "ID"
@@ -9603,8 +9600,8 @@ msgstr "Častica"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Snímač svetla"
+msgid "Point Cloud"
+msgstr "Mračno bodov"
 
 
 msgctxt "ID"
@@ -9638,16 +9635,6 @@ msgstr "Textúra"
 
 
 msgctxt "ID"
-msgid "Hair Curves"
-msgstr "Krivky vlasov"
-
-
-msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Mračno bodov"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Objem"
 
@@ -9658,13 +9645,13 @@ msgstr "Manažér okna"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Svet"
+msgid "Workspace"
+msgstr "Pracovný priestor"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Pracovný priestor"
+msgid "World"
+msgstr "Svet"
 
 
 msgid "Rotation Mode"
@@ -12413,44 +12400,48 @@ msgid "Brush"
 msgstr "Štetec"
 
 
-msgid "Font"
-msgstr "Písmo"
-
-
 msgid "Collection"
 msgstr "Kolekcia"
+
+
+msgid "Font"
+msgstr "Písmo"
 
 
 msgid "Key"
 msgstr "Kľúč"
 
 
-msgid "Light"
-msgstr "Svetlo"
+msgid "Lattice"
+msgstr "Mriežka"
 
 
 msgid "Library"
 msgstr "Knižnica"
 
 
+msgid "Light"
+msgstr "Svetlo"
+
+
+msgid "Light Probe"
+msgstr "Snímač svetla"
+
+
 msgid "Line Style"
 msgstr "Štýl čiary"
-
-
-msgid "Lattice"
-msgstr "Mriežka"
 
 
 msgid "Mask"
 msgstr "Maska"
 
 
-msgid "Metaball"
-msgstr "Meta guľa"
-
-
 msgid "Mesh"
 msgstr "Povrchová sieť"
+
+
+msgid "Metaball"
+msgstr "Meta guľa"
 
 
 msgid "Node Tree"
@@ -12469,8 +12460,8 @@ msgid "Particle"
 msgstr "Častica"
 
 
-msgid "Light Probe"
-msgstr "Snímač svetla"
+msgid "Point Cloud"
+msgstr "Mračno bodov"
 
 
 msgid "Simulation"
@@ -12489,20 +12480,16 @@ msgid "Text"
 msgstr "Text"
 
 
-msgid "Point Cloud"
-msgstr "Mračno bodov"
-
-
 msgid "Window Manager"
 msgstr "Manažér okna"
 
 
-msgid "World"
-msgstr "Svet"
-
-
 msgid "Workspace"
 msgstr "Pracovný priestor"
+
+
+msgid "World"
+msgstr "Svet"
 
 
 msgid "The local data-block this file represents; only valid if that is a data-block in this file"
@@ -21566,6 +21553,10 @@ msgid "Geometry attributes"
 msgstr "Atribúty geometrie"
 
 
+msgid "Color Attributes"
+msgstr "Atribúty farieb"
+
+
 msgid "Geometry color attributes"
 msgstr "Atribúty farby geometrie"
 
@@ -25452,6 +25443,11 @@ msgstr "Typ objektu"
 msgctxt "ID"
 msgid "Surface"
 msgstr "Povrch"
+
+
+msgctxt "ID"
+msgid "Hair Curves"
+msgstr "Krivky vlasov"
 
 
 msgctxt "ID"
@@ -33300,6 +33296,10 @@ msgid "Attribute Specials"
 msgstr "Špeciálne atribúty"
 
 
+msgid "Color Attribute Specials"
+msgstr "Špeciálne atribúty farieb"
+
+
 msgid "Shape Key Specials"
 msgstr "Špeciálne kľúčové tvary"
 
@@ -38253,10 +38253,6 @@ msgstr "Použiť globálne súradnice"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Použije lokálne generované súradnice iného objektu"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Použije súradnice z UV vrstvy"
 
 
 msgid "Use Channel"
@@ -43218,6 +43214,14 @@ msgstr "Špirála krivky"
 
 msgid "Set Spline Type"
 msgstr "Nastaviť typ drážky"
+
+
+msgid "The curve type to change the selected curves to"
+msgstr "Typ krivky, na ktorý chcete zmeniť vybrané krivky"
+
+
+msgid "Catmull Rom"
+msgstr "Catmull Rom"
 
 
 msgid "NURBS"
@@ -51684,10 +51688,6 @@ msgid "Export Deformation Bones Only"
 msgstr "Exportovať iba deformácie kostí"
 
 
-msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "Exportuje iba deformácie kostí (a potrebné kosti pre hierarchiu)"
-
-
 msgid "Displacement Textures (EXPERIMENTAL)"
 msgstr "Posunutie textúr (EXPERIMENTÁLNE)"
 
@@ -53054,6 +53054,15 @@ msgstr "Farba RGBA 32-bitové hodnotami na pohyblivej desatinnej čiarke"
 
 msgid "Name of new color attribute"
 msgstr "Názov nového atribútu farby"
+
+
+msgctxt "Operator"
+msgid "Duplicate Color Attribute"
+msgstr "Vytvoriť kópiu atribútu farby"
+
+
+msgid "Duplicate color attribute"
+msgstr "Vytvorí kópiu atribútu farby"
 
 
 msgctxt "Operator"
@@ -62855,6 +62864,24 @@ msgstr "Nastaví posuv používané pre inštancie kolekcie na základe pozície
 
 
 msgctxt "Operator"
+msgid "Set Offset from Object"
+msgstr "Nastaviť posuv od objektu"
+
+
+msgid "Set offset used for collection instances based on the active object position"
+msgstr "Nastaví posuv použitý pre inštancie kolekcie na základe pozície aktívneho objektu"
+
+
+msgctxt "Operator"
+msgid "Set Cursor to Offset"
+msgstr "Nastaviť kurzora na posuv"
+
+
+msgid "Set cursor position to the offset used for collection instances"
+msgstr "Nastaví pozíciu kurzora na posuv použitý pre inštancie kolekcie"
+
+
+msgctxt "Operator"
 msgid "Restrict Render Unselected"
 msgstr "Obmedziť prekreslenie nevybraných"
 
@@ -63139,10 +63166,6 @@ msgstr "Vytvorí lokálny prepis tejto knižnice prepojením blokov údajov"
 
 msgid "Override Collection"
 msgstr "Prepísať kolekciu"
-
-
-msgid "Name of directly linked collection containing the selected object, to make an override from"
-msgstr "Názov priamo prepojenej kolekcie obsahujúcej vybraný objekt, podľa ktorého má byť prepísaná"
 
 
 msgid "Create Fully Editable"
@@ -72806,6 +72829,10 @@ msgid "Copy to Selected"
 msgstr "Skopírovať do vybraných"
 
 
+msgid "Copy the property's value from the active item to the same property of all selected items if the same property exists"
+msgstr "Skopíruje hodnotu vlastnosti z aktívnej položky do rovnakej vlastnosti všetkých vybraných položiek, ak existuje rovnaká vlastnosť"
+
+
 msgid "Copy to selected all elements of the array"
 msgstr "Kopírovať na vybrané všetky prvky poľa"
 
@@ -76912,10 +76939,6 @@ msgid "Python value for unsupported custom property types"
 msgstr "Hodnota jazyka Python pre nepodporované vlastné typy vlastností"
 
 
-msgid "Is Library Overridable"
-msgstr "Knižnica je prepisovateľná"
-
-
 msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "Povolí prepísanie vlastnosti pri prepojenom bloku údajov"
 
@@ -77006,10 +77029,6 @@ msgstr "Eulerove uhly rotácie v radiánoch"
 
 msgid "Quaternion rotation (affects NLA blending)"
 msgstr "Rotácia štvoríc (ovplyvňuje zmiešavanie NLA)"
-
-
-msgid "Use Soft Limits"
-msgstr "Použiť mäkké limity"
 
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
@@ -77760,6 +77779,30 @@ msgstr "Mierka intenzity svetla"
 
 msgid "Scale for the intensity of imported lights"
 msgstr "Mierka pre intenzitu importovaných svetiel"
+
+
+msgid "Material Name Collision"
+msgstr "Kolízia názvu materiálu"
+
+
+msgid "Behavior when the name of an imported material conflicts with an existing material"
+msgstr "Správanie, keď je názov importovaného materiálu v konflikte s existujúcim materiálom"
+
+
+msgid "Make Unique"
+msgstr "Vytvoriť jedinečné"
+
+
+msgid "Import each USD material as a unique Blender material"
+msgstr "Importovať každý materiál USD ako jedinečný materiál Blenderu"
+
+
+msgid "Reference Existing"
+msgstr "Referencia existujúcich"
+
+
+msgid "If a material with the same name already exists, reference that instead of importing"
+msgstr "Ak už existuje materiál s rovnakým názvom, namiesto importu sa naňho odvoláva"
 
 
 msgid "Path Mask"
@@ -91084,10 +91127,6 @@ msgstr "Ukáže pole ohraničenia vyhľadávania značiek"
 
 msgid "Show Mask Overlay"
 msgstr "Zobraziť prekrytie masky"
-
-
-msgid "Display Smooth Splines"
-msgstr "Zobraziť vyhladené drážky"
 
 
 msgid "Show metadata of clip"
@@ -108509,10 +108548,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Vypočítanie priestoru dotyku potrebuje normály slučiek. Žiadne nájdené. Prerušené"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Vypočítanie priestoru dotyku potrebuje UV mapu. \"%s\" nájdená. Prerušené"
-
-
 msgid "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)"
 msgstr "Pri ukladaní tohto súboru môže dôjsť k strate údajov! Modifikátor %s je zastaraný (Object: %s)."
 
@@ -110232,6 +110267,10 @@ msgstr "Nemožno prichytiť niektoré krivky k povrchu"
 
 msgid "Cannot convert to the selected type"
 msgstr "Nemožno konvertovať na vybraný typ"
+
+
+msgid "Operation is not allowed in edit mode"
+msgstr "Operácia v režime editácie nie je povolená"
 
 
 msgid "Annotation Create Poly: LMB click to place next stroke vertex | ESC/Enter to end  (or click outside this area)"
@@ -112256,14 +112295,6 @@ msgid "Baking map saved to internal image, save it externally or pack it"
 msgstr "Zapečenie máp uložené na interný obrázok, uložte ho externe alebo zbaľte"
 
 
-msgid "Vertex color baking not support with object types other than mesh"
-msgstr "Zapečenie farieb vrcholov nepodporovaných pri iných druhoch objektov ako je povrchová sieť"
-
-
-msgid "No vertex colors layer found to bake to"
-msgstr "Nenašla sa žiadna vrstva farieb vrcholov na zapečenie"
-
-
 msgid "Current render engine does not support baking"
 msgstr "Súčasný mechanizmus prekreslenia nepodporuje zapečenie"
 
@@ -112294,10 +112325,6 @@ msgstr "Objekt \"%s\" nie je povrchová sieť"
 
 msgid "No faces found in the object \"%s\""
 msgstr "V objekte \"%s\" sa nenašli žiadne plôšky."
-
-
-msgid "No vertex colors layer found in the object \"%s\""
-msgstr "V objekte \"%s\" sa nenašla žiadna vrstva farieb vrcholov"
 
 
 msgid "No active UV layer found in the object \"%s\""
@@ -112800,10 +112827,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "Objekty knižnice Orphan pridané do aktuálnej scény, aby sa predišlo strate"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "Môže prepísať knižnicu iba pre referenčný objekt alebo kolekciu"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "Nesprávny kontext pre spúšťanie údajov o zrušení prepojenia objektu"
 
@@ -112814,18 +112837,6 @@ msgstr "Nemožno odpojiť tieto údaje objektu"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "Kolekciu '%s' (vytvorenú podľa aktívneho objektu) nie je možné prepísať"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "Aktívny objekt '%s' nie je možné prepísať"
-
-
-msgid "Could not find an overridable collection containing object '%s'"
-msgstr "Nepodarilo sa nájsť nahraditeľnú kolekciu obsahujúcu objekt '%s'"
-
-
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Pohybom myši zmeníte veľkosť voxelu. ĽTM: potvrdenie veľkosti, ESC/PTM: zrušenie"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"

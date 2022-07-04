@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5556,13 +5556,18 @@ msgstr "Štětec"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Soubor mezipaměti"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Kamera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Soubor mezipaměti"
+msgid "Collection"
+msgstr "Kolekce"
 
 
 msgctxt "ID"
@@ -5581,11 +5586,6 @@ msgstr "Skicovací tužka"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Kolekce"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Obrázek"
 
@@ -5596,8 +5596,8 @@ msgstr "Klíč"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Světlo"
+msgid "Lattice"
+msgstr "Mříž"
 
 
 msgctxt "ID"
@@ -5606,13 +5606,18 @@ msgstr "Knihovna"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Styl čáry"
+msgid "Light"
+msgstr "Světlo"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Mříž"
+msgid "Light Probe"
+msgstr "Světelná sonda"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Styl čáry"
 
 
 msgctxt "ID"
@@ -5626,13 +5631,13 @@ msgstr "Materiál"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Metaball"
+msgid "Mesh"
+msgstr "Geometrická síť"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Geometrická síť"
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgctxt "ID"
@@ -5666,8 +5671,8 @@ msgstr "Částice"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Světelná sonda"
+msgid "Point Cloud"
+msgstr "Bodový Mrak"
 
 
 msgctxt "ID"
@@ -5701,11 +5706,6 @@ msgstr "Textura"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Bodový Mrak"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Objem"
 
@@ -5716,13 +5716,13 @@ msgstr "Správce oken"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Okolí"
+msgid "Workspace"
+msgstr "Pracovní prostor"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Pracovní prostor"
+msgid "World"
+msgstr "Okolí"
 
 
 msgid "Transform Space"
@@ -7043,40 +7043,40 @@ msgid "Brush"
 msgstr "Štětec"
 
 
-msgid "Font"
-msgstr "Písmo"
-
-
 msgid "Collection"
 msgstr "Kolekce"
+
+
+msgid "Font"
+msgstr "Písmo"
 
 
 msgid "Key"
 msgstr "Klíč"
 
 
-msgid "Light"
-msgstr "Světlo"
+msgid "Lattice"
+msgstr "Mříž"
 
 
 msgid "Library"
 msgstr "Knihovna"
 
 
-msgid "Lattice"
-msgstr "Mříž"
+msgid "Light"
+msgstr "Světlo"
 
 
 msgid "Mask"
 msgstr "Maska"
 
 
-msgid "Metaball"
-msgstr "Meta objekt"
-
-
 msgid "Mesh"
 msgstr "Síť"
+
+
+msgid "Metaball"
+msgstr "Meta objekt"
 
 
 msgid "Node Tree"
@@ -7095,6 +7095,10 @@ msgid "Particle"
 msgstr "Částice"
 
 
+msgid "Point Cloud"
+msgstr "Bodový Mrak"
+
+
 msgid "Simulation"
 msgstr "Simulace"
 
@@ -7111,20 +7115,16 @@ msgid "Text"
 msgstr "Text"
 
 
-msgid "Point Cloud"
-msgstr "Bodový Mrak"
-
-
 msgid "Window Manager"
 msgstr "Správce oken"
 
 
-msgid "World"
-msgstr "Okolí"
-
-
 msgid "Workspace"
 msgstr "Pracovní prostor"
+
+
+msgid "World"
+msgstr "Okolí"
 
 
 msgid "Icon ID"
@@ -16341,10 +16341,6 @@ msgstr "Použít celkové souřadnice"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Odstranit označené Objekt(y)"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Zobrazit nastaveni hran"
 
 
 msgid "Use Channel"
@@ -32520,10 +32516,6 @@ msgstr "Kontex"
 msgctxt "Operator"
 msgid "Edit Property"
 msgstr "Upravit Vlastnost"
-
-
-msgid "Is Library Overridable"
-msgstr "Je Knihovna Přepsatelná"
 
 
 msgid "Property Name"

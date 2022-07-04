@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -6813,13 +6813,18 @@ msgstr "ფუნჯი"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "ქეშ ფაილი"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "კამერა"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "ქეშ ფაილი"
+msgid "Collection"
+msgstr "კოლექცია"
 
 
 msgctxt "ID"
@@ -6838,18 +6843,13 @@ msgstr "ცვილის ფანქარი"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "კოლექცია"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "გამოსახულება"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "სინათლე"
+msgid "Lattice"
+msgstr "გისოსები"
 
 
 msgctxt "ID"
@@ -6858,8 +6858,13 @@ msgstr "ბიბლიოთეკა"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "გისოსები"
+msgid "Light"
+msgstr "სინათლე"
+
+
+msgctxt "ID"
+msgid "Light Probe"
+msgstr "სინათლის ზონდი"
 
 
 msgctxt "ID"
@@ -6873,13 +6878,13 @@ msgstr "მასალა"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "მეტაბურთი"
+msgid "Mesh"
+msgstr "მეში"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "მეში"
+msgid "Metaball"
+msgstr "მეტაბურთი"
 
 
 msgctxt "ID"
@@ -6898,8 +6903,8 @@ msgstr "ნაწილაკი"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "სინათლის ზონდი"
+msgid "Point Cloud"
+msgstr "წერტილების ღრუბელი"
 
 
 msgctxt "ID"
@@ -6928,11 +6933,6 @@ msgstr "ტექსტურა"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "წერტილების ღრუბელი"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "მოცულობა"
 
@@ -6943,13 +6943,13 @@ msgstr "ფანჯრის მენეჯერი"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "სამყარო"
+msgid "Workspace"
+msgstr "სამუშაო სივრცე"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "სამუშაო სივრცე"
+msgid "World"
+msgstr "სამყარო"
 
 
 msgid "Rotation Mode"
@@ -7263,40 +7263,44 @@ msgid "Brush"
 msgstr "ფუნჯი"
 
 
-msgid "Font"
-msgstr "შრიფტი"
-
-
 msgid "Collection"
 msgstr "კოლექცია"
 
 
-msgid "Light"
-msgstr "სინათლე"
-
-
-msgid "Library"
-msgstr "ბიბლიოთეკა"
-
-
-msgid "Line Style"
-msgstr "ხაზის სტილი"
+msgid "Font"
+msgstr "შრიფტი"
 
 
 msgid "Lattice"
 msgstr "გისოსები"
 
 
+msgid "Library"
+msgstr "ბიბლიოთეკა"
+
+
+msgid "Light"
+msgstr "სინათლე"
+
+
+msgid "Light Probe"
+msgstr "სინათლის ზონდი"
+
+
+msgid "Line Style"
+msgstr "ხაზის სტილი"
+
+
 msgid "Mask"
 msgstr "ნიღაბი"
 
 
-msgid "Metaball"
-msgstr "მეტაბურთი"
-
-
 msgid "Mesh"
 msgstr "მეში"
+
+
+msgid "Metaball"
+msgstr "მეტაბურთი"
 
 
 msgid "Palette"
@@ -7307,8 +7311,8 @@ msgid "Particle"
 msgstr "ნაწილაკი"
 
 
-msgid "Light Probe"
-msgstr "სინათლის ზონდი"
+msgid "Point Cloud"
+msgstr "წერტილების ღრუბელი"
 
 
 msgid "Simulation"
@@ -7327,20 +7331,16 @@ msgid "Text"
 msgstr "ტექსტი"
 
 
-msgid "Point Cloud"
-msgstr "წერტილების ღრუბელი"
-
-
 msgid "Window Manager"
 msgstr "ფანჯრის მენეჯერი"
 
 
-msgid "World"
-msgstr "სამყარო"
-
-
 msgid "Workspace"
 msgstr "სამუშაო სივრცე"
+
+
+msgid "World"
+msgstr "სამყარო"
 
 
 msgid "Icon ID"
@@ -17332,10 +17332,6 @@ msgid "Python value for unsupported custom property types"
 msgstr "პითონის მნიშვნელობა მხარდაუჭერელი მორგებული თვისების ტიპებისთვის"
 
 
-msgid "Is Library Overridable"
-msgstr "თუ არის ბიბლიოთეკა უკუგდებადი"
-
-
 msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "ნებადართული იყოს თვისების უკუგდება, როცა მონაცემთა ბლოკია ბმულით დაკავშირებული"
 
@@ -17390,10 +17386,6 @@ msgstr "რბილი მინიმუმი"
 
 msgid "Subtype"
 msgstr "ქვეტიპი"
-
-
-msgid "Use Soft Limits"
-msgstr "გამოიყენე რბილი შეზღუდვები"
 
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
