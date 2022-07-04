@@ -1508,7 +1508,7 @@ togglecaps_start
 snap_step
 snap_step_second
 
-#~ DEF_ICON_BLANK(1542)
+similar
 #~ DEF_ICON_BLANK(1543)
 #~ DEF_ICON_BLANK(1544)
 #~ DEF_ICON_BLANK(1545)
