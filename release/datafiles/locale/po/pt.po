@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -6547,13 +6547,13 @@ msgstr "Pincel"
 
 
 msgctxt "ID"
-msgid "Camera"
-msgstr "Câmara"
+msgid "Cache File"
+msgstr "Ficheiros de cache"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Ficheiros de cache"
+msgid "Camera"
+msgstr "Câmara"
 
 
 msgctxt "ID"
@@ -6582,6 +6582,11 @@ msgstr "Chave"
 
 
 msgctxt "ID"
+msgid "Lattice"
+msgstr "Treliça"
+
+
+msgctxt "ID"
 msgid "Library"
 msgstr "Biblioteca"
 
@@ -6589,11 +6594,6 @@ msgstr "Biblioteca"
 msgctxt "ID"
 msgid "Line Style"
 msgstr "Estilo de linha"
-
-
-msgctxt "ID"
-msgid "Lattice"
-msgstr "Treliça"
 
 
 msgctxt "ID"
@@ -6607,13 +6607,13 @@ msgstr "Material"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Esfera-meta"
+msgid "Mesh"
+msgstr "Malha"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Malha"
+msgid "Metaball"
+msgstr "Esfera-meta"
 
 
 msgctxt "ID"
@@ -8838,32 +8838,32 @@ msgid "Key"
 msgstr "Chave"
 
 
-msgid "Light"
-msgstr "Leve"
+msgid "Lattice"
+msgstr "Treliça"
 
 
 msgid "Library"
 msgstr "Biblioteca"
 
 
+msgid "Light"
+msgstr "Leve"
+
+
 msgid "Line Style"
 msgstr "Estilo de linha"
-
-
-msgid "Lattice"
-msgstr "Treliça"
 
 
 msgid "Mask"
 msgstr "Máscara"
 
 
-msgid "Metaball"
-msgstr "Esfera-meta"
-
-
 msgid "Mesh"
 msgstr "Malha"
+
+
+msgid "Metaball"
+msgstr "Esfera-meta"
 
 
 msgid "Node Tree"
@@ -24192,10 +24192,6 @@ msgstr "Usa as coordenadas globais"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Usa as coordenadas geradas localmente de outro objeto."
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Usa as coordenadas a partir de uma camada UV."
 
 
 msgid "Use Channel"
@@ -47892,10 +47888,6 @@ msgid "Property name edit"
 msgstr "Permite a edição do nome da propriedade."
 
 
-msgid "Use Soft Limits"
-msgstr "Usar limitações concebíveis"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Remover propriedade"
@@ -63152,10 +63144,6 @@ msgstr "Mikktspace falhou ao gerar tangentes para esta malha !"
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "A computação do espaço da tangente necessita de anéis de normais, nenhum foi encontrado, abortando."
-
-
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "A computação do espaço da tangente necessita de um mapa UV, \"%s\" não encontrado, abortando."
 
 
 msgid "NlaTrack"

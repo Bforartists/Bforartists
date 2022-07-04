@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -6515,13 +6515,18 @@ msgstr "Kuas"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Dokumen Cache"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Kamera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Dokumen Cache"
+msgid "Collection"
+msgstr "Koleksi"
 
 
 msgctxt "ID"
@@ -6540,11 +6545,6 @@ msgstr "Pensil Grease"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Koleksi"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Gambar"
 
@@ -6555,13 +6555,13 @@ msgstr "Kunci"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Cahaya"
+msgid "Library"
+msgstr "Perpustakaan"
 
 
 msgctxt "ID"
-msgid "Library"
-msgstr "Perpustakaan"
+msgid "Light"
+msgstr "Cahaya"
 
 
 msgctxt "ID"
@@ -6580,13 +6580,13 @@ msgstr "Material"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Metabola"
+msgid "Mesh"
+msgstr "Mesh"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Mesh"
+msgid "Metaball"
+msgstr "Metabola"
 
 
 msgctxt "ID"
@@ -6620,6 +6620,11 @@ msgstr "Partikel"
 
 
 msgctxt "ID"
+msgid "Point Cloud"
+msgstr "Titik Awan"
+
+
+msgctxt "ID"
 msgid "Scene"
 msgstr "Adegan"
 
@@ -6650,11 +6655,6 @@ msgstr "Tekstur"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Titik Awan"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Volume"
 
@@ -6665,13 +6665,13 @@ msgstr "Pengelola Jendela"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Dunia"
+msgid "Workspace"
+msgstr "Spasi Kerja"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Spasi Kerja"
+msgid "World"
+msgstr "Dunia"
 
 
 msgid "Rotation Mode"
@@ -7530,24 +7530,24 @@ msgid "Brush"
 msgstr "Kuas"
 
 
-msgid "Font"
-msgstr "Font"
-
-
 msgid "Collection"
 msgstr "Koleksi"
+
+
+msgid "Font"
+msgstr "Font"
 
 
 msgid "Key"
 msgstr "Kunci"
 
 
-msgid "Light"
-msgstr "Cahaya"
-
-
 msgid "Library"
 msgstr "Perpustakaan"
+
+
+msgid "Light"
+msgstr "Cahaya"
 
 
 msgid "Line Style"

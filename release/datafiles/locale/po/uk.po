@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -8712,13 +8712,18 @@ msgstr "Пензель"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Файл кешу"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Камера"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Файл кешу"
+msgid "Collection"
+msgstr "Колекція"
 
 
 msgctxt "ID"
@@ -8737,11 +8742,6 @@ msgstr "Нарисний олівець"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Колекція"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Зображення"
 
@@ -8752,8 +8752,8 @@ msgstr "Ключ"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Освітлювач"
+msgid "Lattice"
+msgstr "Ґратка"
 
 
 msgctxt "ID"
@@ -8762,13 +8762,18 @@ msgstr "Бібліотека"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Стиль лінії"
+msgid "Light"
+msgstr "Освітлювач"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Ґратка"
+msgid "Light Probe"
+msgstr "Проба Освітлення"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Стиль лінії"
 
 
 msgctxt "ID"
@@ -8782,13 +8787,13 @@ msgstr "Матеріал"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Метакуля"
+msgid "Mesh"
+msgstr "Сіть"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Сіть"
+msgid "Metaball"
+msgstr "Метакуля"
 
 
 msgctxt "ID"
@@ -8822,8 +8827,8 @@ msgstr "Частинка"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Проба Освітлення"
+msgid "Point Cloud"
+msgstr "Хмара Точок"
 
 
 msgctxt "ID"
@@ -8857,11 +8862,6 @@ msgstr "Текстура"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Хмара Точок"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Об'єм"
 
@@ -8872,13 +8872,13 @@ msgstr "Віконний менеджер"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Світ"
+msgid "Workspace"
+msgstr "Робпростір"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Робпростір"
+msgid "World"
+msgstr "Світ"
 
 
 msgid "Rotation Mode"
@@ -11559,44 +11559,48 @@ msgid "Brush"
 msgstr "Пензель"
 
 
-msgid "Font"
-msgstr "Шрифт"
-
-
 msgid "Collection"
 msgstr "Колекція"
+
+
+msgid "Font"
+msgstr "Шрифт"
 
 
 msgid "Key"
 msgstr "Ключ"
 
 
-msgid "Light"
-msgstr "Слабко"
+msgid "Lattice"
+msgstr "Ґратка"
 
 
 msgid "Library"
 msgstr "Бібліотека"
 
 
+msgid "Light"
+msgstr "Слабко"
+
+
+msgid "Light Probe"
+msgstr "Проба Освітлення"
+
+
 msgid "Line Style"
 msgstr "Стиль Лінії"
-
-
-msgid "Lattice"
-msgstr "Ґратка"
 
 
 msgid "Mask"
 msgstr "Маска"
 
 
-msgid "Metaball"
-msgstr "Метакуля"
-
-
 msgid "Mesh"
 msgstr "Сіть"
+
+
+msgid "Metaball"
+msgstr "Метакуля"
 
 
 msgid "Node Tree"
@@ -11615,8 +11619,8 @@ msgid "Particle"
 msgstr "Частинка"
 
 
-msgid "Light Probe"
-msgstr "Проба Освітлення"
+msgid "Point Cloud"
+msgstr "Хмара Точок"
 
 
 msgid "Simulation"
@@ -11635,20 +11639,16 @@ msgid "Text"
 msgstr "Текст"
 
 
-msgid "Point Cloud"
-msgstr "Хмара Точок"
-
-
 msgid "Window Manager"
 msgstr "Віконний менеджер"
 
 
-msgid "World"
-msgstr "Світ"
-
-
 msgid "Workspace"
 msgstr "Робпростір"
+
+
+msgid "World"
+msgstr "Світ"
 
 
 msgid "Icon ID"
@@ -35042,10 +35042,6 @@ msgid "Use local generated coordinates of another object"
 msgstr "Використати локально створені координати іншого об'єкта"
 
 
-msgid "Use coordinates from an UV layer"
-msgstr "Використати координати з UV-шару"
-
-
 msgid "Use Channel"
 msgstr "Вжити канал"
 
@@ -46587,10 +46583,6 @@ msgid "Export Deformation Bones Only"
 msgstr "Експорт Лише Деформувальних Кісток"
 
 
-msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "Експорт лише кісток Деформації (і необхідних кісток для ієрархії)"
-
-
 msgid "Displacement Textures (EXPERIMENTAL)"
 msgstr "Текстури Зміщення (ЕКСПЕРИМЕНТАЛЬНО)"
 
@@ -57066,10 +57058,6 @@ msgstr "Виконати локальне заміщення цієї біблі
 
 msgid "Override Collection"
 msgstr "Заміщення Колекції"
-
-
-msgid "Name of directly linked collection containing the selected object, to make an override from"
-msgstr "Назва прямо пов'язаної колекції, що містить вибраний об'єкт, з якого зробити заміщення"
 
 
 msgid "Make linked data local to each object"
@@ -69491,10 +69479,6 @@ msgid "Edit Property"
 msgstr "Редагувати властивість"
 
 
-msgid "Is Library Overridable"
-msgstr "Є заміщуваноздатною бібліотекою"
-
-
 msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "Дозволити властивості бути заміщеною, коли блок даних пов'язаний"
 
@@ -69513,10 +69497,6 @@ msgstr "М'яко Мін"
 
 msgid "Subtype"
 msgstr "Підтип"
-
-
-msgid "Use Soft Limits"
-msgstr "Вжити м'які ліміти"
 
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
@@ -81821,10 +81801,6 @@ msgstr "Показати межі пошуку для міток"
 
 msgid "Show Mask Overlay"
 msgstr "Показ Накладання Маски"
-
-
-msgid "Display Smooth Splines"
-msgstr "Показ Згладжених Сплайнів"
 
 
 msgid "Show metadata of clip"
@@ -96953,10 +96929,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Для розрахунку простору дотичних необхідні нормалі петель, але вони не знайдені; припинення"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Для розрахунку простору дотичних необхідна UV-карта; \"%s\" не знайдено; припинення"
-
-
 msgid "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)"
 msgstr "Можлива втрата даних при зберіганні цього файлу! Модифікатор  %s не рекомендується (Об'єкт: %s)."
 
@@ -99995,14 +99967,6 @@ msgid "Baking map saved to internal image, save it externally or pack it"
 msgstr "Карта запікання збережена як внутрішнє зображення; збережіть зовнішньо або запакуйте її"
 
 
-msgid "Vertex color baking not support with object types other than mesh"
-msgstr "Запікання кольору вершин не підтримується з інакшими типами об'єктів, ніж сіть"
-
-
-msgid "No vertex colors layer found to bake to"
-msgstr "Не знайдено шару кольорів вершин, на який запікати"
-
-
 msgid "Current render engine does not support baking"
 msgstr "Поточний рушій рендера не підтримує запікання"
 
@@ -100033,10 +99997,6 @@ msgstr "Об'єкт \"%s\" не є сіттю"
 
 msgid "No faces found in the object \"%s\""
 msgstr "Жодних граней не знайдено в об'єкті \"%s\""
-
-
-msgid "No vertex colors layer found in the object \"%s\""
-msgstr "Жодного шару кольорів вершин не знайдено в об'єкті \"%s\""
 
 
 msgid "No active UV layer found in the object \"%s\""
@@ -100467,10 +100427,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "Щоб уникнути втрат, до поточної сцени додано одинокі бібліотечні об'єкти"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "Можна зробити заміщення бібліотеки лише для орієнтованих об'єкта або колекції"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "Неправильний контекст для виконання від'єднання даних об'єкта"
 
@@ -100481,14 +100437,6 @@ msgstr "Неможливо від'єднати ці дані об'єкта"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "Колекція '%s' (примірникована за активним об'єктом) не є заміщуваноздатною"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "Активний об'єкт '%s' не є заміщуваноздатним"
-
-
-msgid "Could not find an overridable collection containing object '%s'"
-msgstr "Неможливо знайти колекцію, придатну для заміщення, що містить об'єкт '%s'"
 
 
 msgid "Select Collection"

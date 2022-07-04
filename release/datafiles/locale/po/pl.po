@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6076,16 +6076,16 @@ msgid "Key"
 msgstr "Klucz"
 
 
+msgid "Lattice"
+msgstr "Kratownica"
+
+
 msgid "Library"
 msgstr "Biblioteka"
 
 
 msgid "Line Style"
 msgstr "Styl linii"
-
-
-msgid "Lattice"
-msgstr "Kratownica"
 
 
 msgid "Mask"
@@ -6796,10 +6796,6 @@ msgstr "Mikktspace nie zdołał wygenerować stycznych dla tej siatki!"
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Kalkulacja przestrzeni stycznej wymaga pętli normalnych, żadna nie odnaleziona, przerywam"
-
-
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Kalkulacja przestrzeni stycznej wymaga MapyUV, \"%s\" nie odnalezione, przerywam"
 
 
 msgid "NlaTrack"
