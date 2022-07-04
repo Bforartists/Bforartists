@@ -411,6 +411,27 @@ class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):
         col.prop(props, "use_taa_reprojection")
 
 
+class RENDER_PT_eevee_next_sampling(RenderButtonsPanel, Panel):
+    bl_label = "Sampling"
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+        props = scene.eevee
+
+        col = layout.column(align=True)
+        col.prop(props, "taa_render_samples", text="Render")
+        col.prop(props, "taa_samples", text="Viewport")
+
+
 class RENDER_PT_eevee_indirect_lighting(RenderButtonsPanel, Panel):
     bl_label = "Indirect Lighting"
     bl_options = {'DEFAULT_CLOSED'}
@@ -506,6 +527,27 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
             row.prop(props, "overscan_size", text="")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
+    bl_label = "Film"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        scene = context.scene
+        rd = scene.render
+        props = scene.eevee
+
+        col = layout.column()
+        col.prop(rd, "filter_size")
+
 
 def draw_curves_settings(self, context):
     layout = self.layout
@@ -727,6 +769,9 @@ classes = (
     RENDER_PT_eevee_indirect_lighting,
     RENDER_PT_eevee_indirect_lighting_display,
     RENDER_PT_eevee_film,
+
+    RENDER_PT_eevee_next_sampling,
+    RENDER_PT_eevee_next_film,
 
     RENDER_PT_gpencil,
     RENDER_PT_opengl_sampling,

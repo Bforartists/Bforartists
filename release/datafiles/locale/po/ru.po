@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -8940,13 +8940,18 @@ msgstr "Кисть"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Файл кэша"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Камера"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Файл кэша"
+msgid "Collection"
+msgstr "Коллекция"
 
 
 msgctxt "ID"
@@ -8965,11 +8970,6 @@ msgstr "Grease Pencil"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Коллекция"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Изображение"
 
@@ -8980,8 +8980,8 @@ msgstr "Ключ"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Свет"
+msgid "Lattice"
+msgstr "Решётка"
 
 
 msgctxt "ID"
@@ -8990,13 +8990,18 @@ msgstr "Библиотека"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Стиль линий"
+msgid "Light"
+msgstr "Свет"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Решётка"
+msgid "Light Probe"
+msgstr "Зонд освещения"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Стиль линий"
 
 
 msgctxt "ID"
@@ -9010,13 +9015,13 @@ msgstr "Материал"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Метасфера"
+msgid "Mesh"
+msgstr "Меш"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Меш"
+msgid "Metaball"
+msgstr "Метасфера"
 
 
 msgctxt "ID"
@@ -9050,8 +9055,8 @@ msgstr "Частица"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Зонд освещения"
+msgid "Point Cloud"
+msgstr "Облако точек"
 
 
 msgctxt "ID"
@@ -9085,11 +9090,6 @@ msgstr "Текстура"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Облако точек"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Объём"
 
@@ -9100,13 +9100,13 @@ msgstr "Менеджер окон"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Мир"
+msgid "Workspace"
+msgstr "Рабочее пространство"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Рабочее пространство"
+msgid "World"
+msgstr "Мир"
 
 
 msgid "Rotation Mode"
@@ -11799,44 +11799,48 @@ msgid "Brush"
 msgstr "Кисть"
 
 
-msgid "Font"
-msgstr "Шрифт"
-
-
 msgid "Collection"
 msgstr "Коллекция"
+
+
+msgid "Font"
+msgstr "Шрифт"
 
 
 msgid "Key"
 msgstr "Ключ"
 
 
-msgid "Light"
-msgstr "Свет"
+msgid "Lattice"
+msgstr "Решётка"
 
 
 msgid "Library"
 msgstr "Библиотека"
 
 
+msgid "Light"
+msgstr "Свет"
+
+
+msgid "Light Probe"
+msgstr "Зонд освещения"
+
+
 msgid "Line Style"
 msgstr "Стиль линий"
-
-
-msgid "Lattice"
-msgstr "Решётка"
 
 
 msgid "Mask"
 msgstr "Маска"
 
 
-msgid "Metaball"
-msgstr "Метасфера"
-
-
 msgid "Mesh"
 msgstr "Меш"
+
+
+msgid "Metaball"
+msgstr "Метасфера"
 
 
 msgid "Node Tree"
@@ -11855,8 +11859,8 @@ msgid "Particle"
 msgstr "Частица"
 
 
-msgid "Light Probe"
-msgstr "Зонд освещения"
+msgid "Point Cloud"
+msgstr "Облако точек"
 
 
 msgid "Simulation"
@@ -11875,20 +11879,16 @@ msgid "Text"
 msgstr "Текст"
 
 
-msgid "Point Cloud"
-msgstr "Облако точек"
-
-
 msgid "Window Manager"
 msgstr "Менеджер окон"
 
 
-msgid "World"
-msgstr "Мир"
-
-
 msgid "Workspace"
 msgstr "Рабочее пространство"
+
+
+msgid "World"
+msgstr "Мир"
 
 
 msgid "The local data-block this file represents; only valid if that is a data-block in this file"
@@ -33357,10 +33357,6 @@ msgstr "Использовать глобальные координаты"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Использовать локальные сгенерированные координаты другого объекта"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Использовать координаты из UV-слоя"
 
 
 msgid "Use Channel"
@@ -62568,10 +62564,6 @@ msgid "Edit Property"
 msgstr "Редактировать свойство"
 
 
-msgid "Is Library Overridable"
-msgstr "Является ли библиотека переопределяемой"
-
-
 msgid "Property Name"
 msgstr "Имя свойства"
 
@@ -62582,10 +62574,6 @@ msgstr "Редактировать имя свойства"
 
 msgid "Subtype"
 msgstr "Подтип"
-
-
-msgid "Use Soft Limits"
-msgstr "Нестрогие ограничения"
 
 
 msgctxt "Operator"
@@ -73708,10 +73696,6 @@ msgstr "Отображать границы поиска для маркеров
 
 msgid "Show Mask Overlay"
 msgstr "Показывать перекрытие маски"
-
-
-msgid "Display Smooth Splines"
-msgstr "Отображать сглаженные сплайны"
 
 
 msgid "Show metadata of clip"
@@ -85967,10 +85951,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Для расчёта пространства касательных необходимы нормали к петлям, но они не найдены; операция остановлена"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Для расчёта пространства касательных необходима UV-карта, «%s» не найдена; операция отменена"
-
-
 msgid "NlaTrack"
 msgstr "Трек НЛА"
 
@@ -89026,10 +89006,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "Для избежания потери данных в текущую сцену добавлены объекты-сироты из библиотеки"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "Создание библиотечного переопределения возможно только для объекта или коллекции"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "Неверный контекст для разрыва связи с данными объекта"
 
@@ -89040,10 +89016,6 @@ msgstr "Не удалось отсоединить данные объекта"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "Коллекцию «%s» (экземпляр которой используется активным объектом) нельзя переопределить"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "Активный объект «%s» нельзя переопределить"
 
 
 msgid "Select Collection"

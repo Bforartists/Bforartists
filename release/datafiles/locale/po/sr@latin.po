@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4309,28 +4309,28 @@ msgid "Key"
 msgstr "Ključ"
 
 
-msgid "Light"
-msgstr "Svetlost"
+msgid "Lattice"
+msgstr "Kavez"
 
 
 msgid "Library"
 msgstr "Zbirka"
 
 
-msgid "Lattice"
-msgstr "Kavez"
+msgid "Light"
+msgstr "Svetlost"
 
 
 msgid "Mask"
 msgstr "Maska"
 
 
-msgid "Metaball"
-msgstr "Meta lopta"
-
-
 msgid "Mesh"
 msgstr "Meš"
+
+
+msgid "Metaball"
+msgstr "Meta lopta"
 
 
 msgid "Node Tree"
@@ -10612,10 +10612,6 @@ msgstr "Lokalne koordinate"
 
 msgid "Use global coordinates"
 msgstr "Lokalne koordinate"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Koristi koordinate sa UV sloja"
 
 
 msgid "Use Channel"

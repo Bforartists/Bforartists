@@ -239,7 +239,7 @@ void ED_annotation_draw_ex(
 
 /* ----------- Grease-Pencil AnimEdit API ------------------ */
 /**
- * Loops over the gp-frames for a gp-layer, and applies the given callback.
+ * Loops over the GP-frames for a GP-layer, and applies the given callback.
  */
 bool ED_gpencil_layer_frames_looper(struct bGPDlayer *gpl,
                                     struct Scene *scene,
@@ -279,6 +279,11 @@ void ED_gpencil_select_frames(struct bGPDlayer *gpl, short select_mode);
  * Select the frame in this layer that occurs on this frame (there should only be one at most).
  */
 void ED_gpencil_select_frame(struct bGPDlayer *gpl, int selx, short select_mode);
+
+/**
+ * Set the layer's channel as active
+ */
+void ED_gpencil_set_active_channel(struct bGPdata *gpd, struct bGPDlayer *gpl);
 
 /**
  * Delete selected frames.

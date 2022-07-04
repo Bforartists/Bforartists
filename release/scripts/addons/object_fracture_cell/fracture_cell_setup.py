@@ -145,7 +145,7 @@ def cell_fracture_objects(
         random.shuffle(points)
         points[source_limit:] = []
 
-    # saddly we cant be sure there are no doubles
+    # sadly we can't be sure there are no doubles
     from mathutils import Vector
     to_tuple = Vector.to_tuple
     points = list({to_tuple(p, 4): p for p in points}.values())
