@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -6889,13 +6889,18 @@ msgstr "Pincel"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Arquivo(s) de cache"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Câmera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Arquivo(s) de cache"
+msgid "Collection"
+msgstr "Coleção"
 
 
 msgctxt "ID"
@@ -6914,11 +6919,6 @@ msgstr "Lápis de cera"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Coleção"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Imagem"
 
@@ -6929,8 +6929,8 @@ msgstr "Chave"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Luz"
+msgid "Lattice"
+msgstr "Treliça"
 
 
 msgctxt "ID"
@@ -6939,13 +6939,18 @@ msgstr "Biblioteca"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Estilo de linha"
+msgid "Light"
+msgstr "Luz"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Treliça"
+msgid "Light Probe"
+msgstr "Sonda de Luz"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Estilo de linha"
 
 
 msgctxt "ID"
@@ -6959,13 +6964,13 @@ msgstr "Materiais"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Meta-esfera"
+msgid "Mesh"
+msgstr "Malha"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Malha"
+msgid "Metaball"
+msgstr "Meta-esfera"
 
 
 msgctxt "ID"
@@ -6999,8 +7004,8 @@ msgstr "Partículas"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Sonda de Luz"
+msgid "Point Cloud"
+msgstr "Nuvem de Pontos"
 
 
 msgctxt "ID"
@@ -7034,16 +7039,6 @@ msgstr "Texturas"
 
 
 msgctxt "ID"
-msgid "Hair Curves"
-msgstr "Curvas de Pelos"
-
-
-msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Nuvem de Pontos"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Volume"
 
@@ -7054,13 +7049,13 @@ msgstr "Gerenciador de janelas"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Ambiente"
+msgid "Workspace"
+msgstr "Espaço de Trabalho"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Espaço de Trabalho"
+msgid "World"
+msgstr "Ambiente"
 
 
 msgid "Rotation Mode"
@@ -9373,44 +9368,48 @@ msgid "Brush"
 msgstr "Pincel"
 
 
-msgid "Font"
-msgstr "Fonte"
-
-
 msgid "Collection"
 msgstr "Coleção"
+
+
+msgid "Font"
+msgstr "Fonte"
 
 
 msgid "Key"
 msgstr "Chave"
 
 
-msgid "Light"
-msgstr "Luz"
+msgid "Lattice"
+msgstr "Treliça"
 
 
 msgid "Library"
 msgstr "Biblioteca"
 
 
+msgid "Light"
+msgstr "Luz"
+
+
+msgid "Light Probe"
+msgstr "Sonda de Luz"
+
+
 msgid "Line Style"
 msgstr "Estilo de linha"
-
-
-msgid "Lattice"
-msgstr "Treliça"
 
 
 msgid "Mask"
 msgstr "Máscara"
 
 
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
 msgid "Mesh"
 msgstr "Malha"
+
+
+msgid "Metaball"
+msgstr "Meta-esfera"
 
 
 msgid "Node Tree"
@@ -9429,8 +9428,8 @@ msgid "Particle"
 msgstr "Partículas"
 
 
-msgid "Light Probe"
-msgstr "Sonda de Luz"
+msgid "Point Cloud"
+msgstr "Nuvem de Pontos"
 
 
 msgid "Simulation"
@@ -9449,20 +9448,16 @@ msgid "Text"
 msgstr "Texto"
 
 
-msgid "Point Cloud"
-msgstr "Nuvem de Pontos"
-
-
 msgid "Window Manager"
 msgstr "Gerenciador de janelas"
 
 
-msgid "World"
-msgstr "Ambiente"
-
-
 msgid "Workspace"
 msgstr "Espaço de Trabalho"
+
+
+msgid "World"
+msgstr "Ambiente"
 
 
 msgid "Icon ID"
@@ -16151,6 +16146,11 @@ msgstr "Tipo de objeto"
 msgctxt "ID"
 msgid "Surface"
 msgstr "Superfície"
+
+
+msgctxt "ID"
+msgid "Hair Curves"
+msgstr "Curvas de Pelos"
 
 
 msgctxt "ID"
@@ -25907,10 +25907,6 @@ msgstr "Usa as coordenadas globais"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Usa as coordenadas geradas localmente de outro objeto."
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Usa as coordenadas a partir de uma camada UV."
 
 
 msgid "Use Channel"
@@ -52566,10 +52562,6 @@ msgid "Property name edit"
 msgstr "Permite a edição do nome da propriedade."
 
 
-msgid "Use Soft Limits"
-msgstr "Usar limitações concebíveis"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Remover propriedade"
@@ -71098,10 +71090,6 @@ msgstr "Mikktspace falhou ao gerar tangentes para esta malha !"
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "A computação do espaço da tangente necessita de anéis de normais, nenhum foi encontrado, abortando."
-
-
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "A computação do espaço da tangente necessita de um mapa UV, \"%s\" não encontrado, abortando."
 
 
 msgid "NlaTrack"

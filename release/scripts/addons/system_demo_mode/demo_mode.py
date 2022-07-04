@@ -523,7 +523,7 @@ def load_config(cfg_name=DEMO_CFG):
         if not os.path.exists(filepath_test):
             filepath_test = lookup_file(filepath_test)  # attempt to get from searchpath
         if not os.path.exists(filepath_test):
-            print("Cant find %r or %r, skipping!")
+            print("Can't find %r or %r, skipping!")
             continue
 
         filecfg["file"] = os.path.normpath(filepath_test)

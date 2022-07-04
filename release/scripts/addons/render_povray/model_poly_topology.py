@@ -52,7 +52,7 @@ def export_mesh(file,
     except BaseException as e:
         print(e.__doc__)
         print("An exception occurred: {}".format(e))
-        # also happens when curves cant be made into meshes because of no-data
+        # also happens when curves can't be made into meshes because of no-data
         return False  # To continue object loop
     if me:
         me.calc_loop_triangles()
