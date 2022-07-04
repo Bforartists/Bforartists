@@ -40,7 +40,7 @@ def as_string(dirpath, random_order, exit, **kwargs):
         "# generated file\n",
         "\n",
         "# edit the search path so other systems may find the files below\n",
-        "# based on name only if the absolute paths cant be found\n",
+        "# based on name only if the absolute paths cannot be found\n",
         "# Use '//' for current blend file path.\n",
         "\n",
         "search_path = %r\n" % dirpath,

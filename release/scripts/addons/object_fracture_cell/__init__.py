@@ -482,7 +482,7 @@ class FractureCell(Operator):
         rowsub.prop(self, "use_data_match")
         rowsub = col.row()
 
-        # on same row for even layout but infact are not all that related
+        # on same row for even layout but in fact are not all that related
         rowsub.prop(self, "material_index")
         rowsub.prop(self, "use_interior_vgroup")
 

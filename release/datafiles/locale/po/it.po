@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -6380,13 +6380,18 @@ msgstr "Pennello"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Cache File"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Camera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Cache File"
+msgid "Collection"
+msgstr "Raccolta"
 
 
 msgctxt "ID"
@@ -6405,11 +6410,6 @@ msgstr "Matita"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Raccolta"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Immagine"
 
@@ -6420,8 +6420,8 @@ msgstr "Chiave"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Luce"
+msgid "Lattice"
+msgstr "Lattice"
 
 
 msgctxt "ID"
@@ -6430,13 +6430,13 @@ msgstr "Libreria"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Stile Linea"
+msgid "Light"
+msgstr "Luce"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Lattice"
+msgid "Line Style"
+msgstr "Stile Linea"
 
 
 msgctxt "ID"
@@ -6450,13 +6450,13 @@ msgstr "Materiale"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Metaball"
+msgid "Mesh"
+msgstr "Mesh"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Mesh"
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgctxt "ID"
@@ -8510,44 +8510,44 @@ msgid "Brush"
 msgstr "Pennello"
 
 
-msgid "Font"
-msgstr "Carattere"
-
-
 msgid "Collection"
 msgstr "Raccolta"
+
+
+msgid "Font"
+msgstr "Carattere"
 
 
 msgid "Key"
 msgstr "Chiave"
 
 
-msgid "Light"
-msgstr "Luce"
+msgid "Lattice"
+msgstr "Lattice"
 
 
 msgid "Library"
 msgstr "Libreria"
 
 
+msgid "Light"
+msgstr "Luce"
+
+
 msgid "Line Style"
 msgstr "Stile Linea"
-
-
-msgid "Lattice"
-msgstr "Lattice"
 
 
 msgid "Mask"
 msgstr "Maschera"
 
 
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Mesh"
 msgstr "Mesh"
+
+
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgid "Node Tree"
@@ -21637,10 +21637,6 @@ msgstr "Usa coordinate globali"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Usa le coordinate generate localmente di un altro oggetto"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Usa le coordinate da un livello UV"
 
 
 msgid "Use Channel"
@@ -42053,10 +42049,6 @@ msgid "Property name edit"
 msgstr "Modifica il nome della proprietà"
 
 
-msgid "Use Soft Limits"
-msgstr "Usa Limiti Morbidi"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Rimuovi Proprietà"
@@ -48773,10 +48765,6 @@ msgstr "Mostra canale verde nel fotogramma"
 
 msgid "Show search boundbox for markers"
 msgstr "Mostra l'area di ricerca per i marcatori"
-
-
-msgid "Display Smooth Splines"
-msgstr "Mostra Splines Levigate"
 
 
 msgid "Show Names"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -133,8 +133,8 @@ msgstr "Асахьанҵа"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Алашара"
+msgid "Lattice"
+msgstr "Аҭыџьеихац"
 
 
 msgctxt "ID"
@@ -143,8 +143,8 @@ msgstr "Ашәҟәыԥхьарҭа"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Аҭыџьеихац"
+msgid "Light"
+msgstr "Алашара"
 
 
 msgctxt "ID"
@@ -173,24 +173,24 @@ msgid "Sphere"
 msgstr "Асфера"
 
 
-msgid "Light"
-msgstr "Алашара"
+msgid "Lattice"
+msgstr "Аҭыџьеихац"
 
 
 msgid "Library"
 msgstr "Ашәҟәыԥхьарҭа"
 
 
-msgid "Lattice"
-msgstr "Аҭыџьеихац"
-
-
-msgid "Metaball"
-msgstr "Метампыл"
+msgid "Light"
+msgstr "Алашара"
 
 
 msgid "Mesh"
 msgstr "Аҿарҧага"
+
+
+msgid "Metaball"
+msgstr "Метампыл"
 
 
 msgid "Speaker"
