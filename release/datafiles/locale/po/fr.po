@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1336,10 +1336,6 @@ msgstr "Cible"
 
 msgid "Image Textures"
 msgstr "Textures d'image"
-
-
-msgid "Color Attributes"
-msgstr "Attributs de couleur"
 
 
 msgid "Automatic Name"
@@ -8676,13 +8672,18 @@ msgstr "Brosse"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Fichier cache"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Caméra"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Fichier cache"
+msgid "Collection"
+msgstr "Collection"
 
 
 msgctxt "ID"
@@ -8701,11 +8702,6 @@ msgstr "Crayon gras"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Collection"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Image"
 
@@ -8716,8 +8712,8 @@ msgstr "Clé"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Lumière"
+msgid "Lattice"
+msgstr "Lattice"
 
 
 msgctxt "ID"
@@ -8726,13 +8722,18 @@ msgstr "Bibliothèque"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Style de ligne"
+msgid "Light"
+msgstr "Lumière"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Lattice"
+msgid "Light Probe"
+msgstr "Sonde lumière"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Style de ligne"
 
 
 msgctxt "ID"
@@ -8746,13 +8747,13 @@ msgstr "Matériau"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Métaballe"
+msgid "Mesh"
+msgstr "Mesh"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Mesh"
+msgid "Metaball"
+msgstr "Métaballe"
 
 
 msgctxt "ID"
@@ -8786,8 +8787,8 @@ msgstr "Particules"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Sonde lumière"
+msgid "Point Cloud"
+msgstr "Nuages de points"
 
 
 msgctxt "ID"
@@ -8821,11 +8822,6 @@ msgstr "Texture"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Nuages de points"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Volume"
 
@@ -8836,13 +8832,13 @@ msgstr "Gestionnaire de fenêtre"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Monde"
+msgid "Workspace"
+msgstr "Espace de travail"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Espace de travail"
+msgid "World"
+msgstr "Monde"
 
 
 msgid "Rotation Mode"
@@ -11451,44 +11447,48 @@ msgid "Brush"
 msgstr "Brosse"
 
 
-msgid "Font"
-msgstr "Police"
-
-
 msgid "Collection"
 msgstr "Collection"
+
+
+msgid "Font"
+msgstr "Police"
 
 
 msgid "Key"
 msgstr "Clé"
 
 
-msgid "Light"
-msgstr "Lampe"
+msgid "Lattice"
+msgstr "Lattice"
 
 
 msgid "Library"
 msgstr "Bibliothèque"
 
 
+msgid "Light"
+msgstr "Lampe"
+
+
+msgid "Light Probe"
+msgstr "Sonde lumière"
+
+
 msgid "Line Style"
 msgstr "Style de ligne"
-
-
-msgid "Lattice"
-msgstr "Lattice"
 
 
 msgid "Mask"
 msgstr "Masquer"
 
 
-msgid "Metaball"
-msgstr "Métaballe"
-
-
 msgid "Mesh"
 msgstr "Mesh"
+
+
+msgid "Metaball"
+msgstr "Métaballe"
 
 
 msgid "Node Tree"
@@ -11505,10 +11505,6 @@ msgstr "Palette"
 
 msgid "Particle"
 msgstr "Particules"
-
-
-msgid "Light Probe"
-msgstr "Sonde lumière"
 
 
 msgid "Simulation"
@@ -18218,6 +18214,10 @@ msgstr "Ne pas remplir les polygone durant l’édition"
 
 msgid "Attributes"
 msgstr "Attributs"
+
+
+msgid "Color Attributes"
+msgstr "Attributs de couleur"
 
 
 msgid "Enable symmetry in the X axis"
@@ -28080,6 +28080,14 @@ msgid "Add"
 msgstr "Ajouter"
 
 
+msgid "Attribute Specials"
+msgstr "Attributs – Spécialités"
+
+
+msgid "Color Attribute Specials"
+msgstr "Attributs de couleurs – Spécialités"
+
+
 msgid "Shape Key Specials"
 msgstr "Clé de forme – Spécialités"
 
@@ -31879,10 +31887,6 @@ msgstr "Utiliser les coordonnées globales"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Utiliser les coordonnées générées locales d’un autre objet"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Utiliser le coordonnées d’un calque UV"
 
 
 msgid "Use Channel"
@@ -35718,6 +35722,22 @@ msgid "Create a parallelogram"
 msgstr "Créer un parallélogramme"
 
 
+msgid "Set Handle Type"
+msgstr "Définir type de poignée"
+
+
+msgid "Set Spline Type"
+msgstr "Définir type de spline"
+
+
+msgid "The curve type to change the selected curves to"
+msgstr "Le type de courbe vers lequel transformer les courbes sélectionnées"
+
+
+msgid "NURBS"
+msgstr "NURBS"
+
+
 msgid "Star"
 msgstr "Étoile"
 
@@ -35728,6 +35748,10 @@ msgstr "Courbe vers Mesh"
 
 msgid "Curve to Points"
 msgstr "Courbe vers points"
+
+
+msgid "Evaluated"
+msgstr "Évalué"
 
 
 msgid "Delete Geometry"
@@ -35938,6 +35962,10 @@ msgid "Separate Geometry"
 msgstr "Séparer géométrie"
 
 
+msgid "Set Handle Positions"
+msgstr "Définir positions des poignées"
+
+
 msgid "Set Curve Radius"
 msgstr "Définir rayon de courbe"
 
@@ -35976,6 +36004,10 @@ msgstr "Définir résolution spline"
 
 msgid "Spline Length"
 msgstr "Longueur spline"
+
+
+msgid "Spline Parameter"
+msgstr "Paramètre de spline"
 
 
 msgid "Split Edges"
@@ -42116,6 +42148,10 @@ msgid "Animation settings"
 msgstr "Réglages animation"
 
 
+msgid "Active Scene"
+msgstr "Scène active"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "Exporter OBJ"
@@ -42820,6 +42856,10 @@ msgid "Insert Text"
 msgstr "Insérer texte"
 
 
+msgid "Accent Mode"
+msgstr "Mode accent"
+
+
 msgid "Next typed character will strike through previous, for special character input"
 msgstr "Le prochain caractère tapé sera superposé au précédent, pour les caractères spéciaux"
 
@@ -42855,6 +42895,11 @@ msgid "Unlink active font data-block"
 msgstr "Dé-lier le bloc de données police actif"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "Ajouter attribut"
+
+
 msgid "Add attribute to geometry"
 msgstr "Ajouter un attribut à la géométrie"
 
@@ -42880,12 +42925,57 @@ msgid "Generic"
 msgstr "Générique"
 
 
+msgctxt "Operator"
+msgid "Remove Attribute"
+msgstr "Supprimer attribut"
+
+
 msgid "Remove attribute from geometry"
 msgstr "Supprimer l'attribut de la géométrie"
 
 
+msgctxt "Operator"
+msgid "Add Color Attribute"
+msgstr "Ajouter attribut de couleur"
+
+
+msgid "Add color attribute to geometry"
+msgstr "Ajouter un attribut de couleur à la géométrie"
+
+
 msgid "Default fill color"
 msgstr "Couleur de remplissage par défaut"
+
+
+msgid "Name of new color attribute"
+msgstr "Nom du nouvel attribut de couleur"
+
+
+msgctxt "Operator"
+msgid "Duplicate Color Attribute"
+msgstr "Dupliquer attribut de couleur"
+
+
+msgid "Duplicate color attribute"
+msgstr "Dupliquer attribut de couleur"
+
+
+msgctxt "Operator"
+msgid "Remove Color Attribute"
+msgstr "Supprimer attribut de couleur"
+
+
+msgid "Remove color attribute from geometry"
+msgstr "Supprimer l'attribut de couleur de la géométrie"
+
+
+msgctxt "Operator"
+msgid "Set Render Color"
+msgstr "Définir couleur de rendu"
+
+
+msgid "Name of color attribute"
+msgstr "Nom de l'attribut de couleur"
 
 
 msgctxt "Operator"
@@ -49535,8 +49625,31 @@ msgid "Select affected vertices on mesh"
 msgstr "Sélectionner les vertices affectés sur le mesh"
 
 
+msgctxt "Operator"
+msgid "Set Offset from Cursor"
+msgstr "Définir décalage à partir du curseur"
+
+
 msgid "Set offset used for collection instances based on cursor position"
 msgstr "Définir le décalage utilisé pour les instances de collection d’après la position du curseur"
+
+
+msgctxt "Operator"
+msgid "Set Offset from Object"
+msgstr "Définir décalage à partir de l'objet"
+
+
+msgid "Set offset used for collection instances based on the active object position"
+msgstr "Définir le décalage utilisé pour les instances de collection en se basant sur la position active de l'objet"
+
+
+msgctxt "Operator"
+msgid "Set Cursor to Offset"
+msgstr "Définir curseur vers décalage"
+
+
+msgid "Set cursor position to the offset used for collection instances"
+msgstr "Définir la position du curseur sur le décalage utilisé pour les instances de collection"
 
 
 msgctxt "Operator"
@@ -59229,10 +59342,6 @@ msgid "Property name edit"
 msgstr "Édition du “name” de la propriété"
 
 
-msgid "Use Soft Limits"
-msgstr "Utiliser limites douces"
-
-
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Enlever propriété"
@@ -59608,6 +59717,18 @@ msgid "Open a window with information about Blender"
 msgstr "Ouvrir une fenêtre avec des informations sur Blender"
 
 
+msgid "Import an STL file as an object"
+msgstr "Importer un fichier STL en tant qu'objet"
+
+
+msgid "Validate Mesh"
+msgstr "Valider meshes"
+
+
+msgid "Validate and correct imported mesh (slow)"
+msgstr "Valider et corriger les meshes importés (lent)"
+
+
 msgctxt "Operator"
 msgid "Save System Info"
 msgstr "Enregistrer infos système"
@@ -59662,6 +59783,22 @@ msgid "Add all imported objects to a new collection"
 msgstr "Ajouter tous les objets importés à une nouvelle collection"
 
 
+msgid "Behavior when the name of an imported material conflicts with an existing material"
+msgstr "Comportement lorsque le nom d'un matériau importé entre en conflit avec un matériau existant"
+
+
+msgid "Make Unique"
+msgstr "Rendre unique"
+
+
+msgid "Reference Existing"
+msgstr "Référencer existant"
+
+
+msgid "If a material with the same name already exists, reference that instead of importing"
+msgstr "Si un matériau avec le même nom existe déjà, référencer celui-ci au-lieu de l'importer"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fermer fenêtre"
@@ -59688,6 +59825,10 @@ msgstr "Créer une nouvelle fenêtre"
 msgctxt "Operator"
 msgid "New Main Window"
 msgstr "Nouvelle fenêtre principale"
+
+
+msgid "Lock Direction"
+msgstr "Verrouiller direction"
 
 
 msgctxt "Operator"
@@ -76697,6 +76838,16 @@ msgstr "Alembic (.abc)"
 
 
 msgctxt "Operator"
+msgid "Wavefront (.obj) (experimental)"
+msgstr "Wavefront (.obj) (expérimental)"
+
+
+msgctxt "Operator"
+msgid "STL (.stl) (experimental)"
+msgstr "STL (.stl) (expérimental)"
+
+
+msgctxt "Operator"
 msgid "Render Image"
 msgstr "Rendre image"
 
@@ -78212,6 +78363,22 @@ msgid "Motion path frame extents invalid for %s (%d to %d)%s"
 msgstr "L’intervalle d’images de chemin de mouvement est invalide pour %s (%d à %d)%s"
 
 
+msgid "Documents"
+msgstr "Documents"
+
+
+msgid "Attribute is not part of this geometry"
+msgstr "L'attribut ne fait pas partie de cette géométrie"
+
+
+msgid "Attribute domain not supported by this geometry type"
+msgstr "Le domaine de l'attribut n'est pas supporté par ce type de géométrie"
+
+
+msgid "Attribute is required and can't be removed"
+msgstr "L'attribut est requis et ne peut pas être enlevé"
+
+
 msgid "Library file, loading empty scene"
 msgstr "Fichier bibliothèque, chargement d’une scène vide"
 
@@ -78256,6 +78423,10 @@ msgid "Path '%s' not found"
 msgstr "Le chemin “%s” est introuvable"
 
 
+msgid "Could not open the directory '%s'"
+msgstr "Impossible d’ouvrir le dossier '%s'"
+
+
 msgid "Could not find '%s' in '%s'"
 msgstr "“%s” est introuvable dans “%s”"
 
@@ -78278,6 +78449,10 @@ msgstr "Collection de scène"
 
 msgid "Const"
 msgstr "Cont"
+
+
+msgid "At least two points required"
+msgstr "Un minimum de deux points sont requis"
 
 
 msgid "Must have more control points than Order"
@@ -78492,10 +78667,6 @@ msgstr "Mikktspace n’a pu générer les tangentes pour ce mesh !"
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Le calcul de l’espace tangent nécessite les normales de loop, aucune trouvée, abandon"
-
-
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Le calcul de l’espace tangent nécessite une carte UV, “%s” introuvable, abandon"
 
 
 msgid "NlaTrack"
@@ -80419,6 +80590,10 @@ msgstr "Aucun nom de fichier donné"
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Impossible de déterminer la longueur de la séquence ABC"
+
+
+msgid "No filepath given"
+msgstr "Aucun chemin de fichier donné"
 
 
 msgid "Can't create export file"

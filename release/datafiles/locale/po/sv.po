@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3955,20 +3955,20 @@ msgid "Font"
 msgstr "Typsnitt"
 
 
-msgid "Light"
-msgstr "Ljus"
-
-
 msgid "Lattice"
 msgstr "Lattice"
 
 
-msgid "Metaball"
-msgstr "Metaball"
+msgid "Light"
+msgstr "Ljus"
 
 
 msgid "Mesh"
 msgstr "Mesh"
+
+
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgid "Node Tree"
@@ -9905,10 +9905,6 @@ msgstr "Lokala koordinater"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Markera Länkad"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Texturkoordinater:"
 
 
 msgid "Use Channel"

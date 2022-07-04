@@ -29,7 +29,7 @@ class Edge:
             raise RuntimeError("Loop edge in {} is not supported."
                                .format(node.key))
         if node not in (self.node_1, self.node_2):
-            raise RuntimeError("Node {} does not belog this edge."
+            raise RuntimeError("Node {} does not belong to this edge."
                                .format(node.key))
         if self.node_1 == node:
             return self.node_2
