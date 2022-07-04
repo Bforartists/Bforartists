@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -7121,13 +7121,18 @@ msgstr "筆刷"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "快取檔案"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "攝影機"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "快取檔案"
+msgid "Collection"
+msgstr "選集"
 
 
 msgctxt "ID"
@@ -7146,11 +7151,6 @@ msgstr "蠟筆"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "選集"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "影像"
 
@@ -7161,8 +7161,8 @@ msgstr "鍵"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "光照"
+msgid "Lattice"
+msgstr "晶格"
 
 
 msgctxt "ID"
@@ -7171,13 +7171,18 @@ msgstr "藏庫"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "線條樣式"
+msgid "Light"
+msgstr "光照"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "晶格"
+msgid "Light Probe"
+msgstr "光照探測"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "線條樣式"
 
 
 msgctxt "ID"
@@ -7191,13 +7196,13 @@ msgstr "材質"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "變幻球"
+msgid "Mesh"
+msgstr "網格"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "網格"
+msgid "Metaball"
+msgstr "變幻球"
 
 
 msgctxt "ID"
@@ -7231,11 +7236,6 @@ msgstr "粒子"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "光照探測"
-
-
-msgctxt "ID"
 msgid "Scene"
 msgstr "場景"
 
@@ -7266,13 +7266,13 @@ msgstr "視窗管理器"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "世界"
+msgid "Workspace"
+msgstr "工作空間"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "工作空間"
+msgid "World"
+msgstr "世界"
 
 
 msgid "Rotation Mode"
@@ -9405,32 +9405,32 @@ msgid "Key"
 msgstr "鍵"
 
 
-msgid "Light"
-msgstr "光照"
+msgid "Lattice"
+msgstr "晶格"
 
 
 msgid "Library"
 msgstr "藏庫"
 
 
+msgid "Light"
+msgstr "光照"
+
+
 msgid "Line Style"
 msgstr "線條樣式"
-
-
-msgid "Lattice"
-msgstr "晶格"
 
 
 msgid "Mask"
 msgstr "遮罩"
 
 
-msgid "Metaball"
-msgstr "變幻球"
-
-
 msgid "Mesh"
 msgstr "網格"
+
+
+msgid "Metaball"
+msgstr "變幻球"
 
 
 msgid "Node Tree"
@@ -9469,12 +9469,12 @@ msgid "Window Manager"
 msgstr "視窗管理器"
 
 
-msgid "World"
-msgstr "世界"
-
-
 msgid "Workspace"
 msgstr "工作空間"
+
+
+msgid "World"
+msgstr "世界"
 
 
 msgid "Icon ID"
@@ -22019,10 +22019,6 @@ msgstr "使用全域座標系"
 
 msgid "Use local generated coordinates of another object"
 msgstr "使用另一個物體的區域生成座標系"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "使用來自 UV 分層的座標系"
 
 
 msgid "Use Channel"

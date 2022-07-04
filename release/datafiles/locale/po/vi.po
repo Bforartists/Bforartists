@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -1556,14 +1556,6 @@ msgstr "Họa Tiết Ảnh"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Nướng vào cục dữ liệu ảnh liên quan với giao điểm họa tiết ảnh đang hoạt động trong vật liệu"
-
-
-msgid "Color Attributes"
-msgstr "Đặc Điểm Màu"
-
-
-msgid "Bake to active color attribute layer on meshes"
-msgstr "Nướng vào lớp đặc điểm màu đang hoạt động trên các mạng lưới"
 
 
 msgid "Automatic Name"
@@ -9360,13 +9352,18 @@ msgstr "Bút"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Tập Tin Đệm Chứa"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Máy Quay Phim"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Tập Tin Đệm Chứa"
+msgid "Collection"
+msgstr "Sưu Tập"
 
 
 msgctxt "ID"
@@ -9385,11 +9382,6 @@ msgstr "Bút Sáp"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Sưu Tập"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Ảnh"
 
@@ -9400,8 +9392,8 @@ msgstr "Phím"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Đèn"
+msgid "Lattice"
+msgstr "Lưới Rào"
 
 
 msgctxt "ID"
@@ -9410,13 +9402,18 @@ msgstr "Thư Viện"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Phong Cách Nét"
+msgid "Light"
+msgstr "Đèn"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Lưới Rào"
+msgid "Light Probe"
+msgstr "Quang Kế"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Phong Cách Nét"
 
 
 msgctxt "ID"
@@ -9430,13 +9427,13 @@ msgstr "Vật Liệu"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Siêu Cầu"
+msgid "Mesh"
+msgstr "Mạng Lưới"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Mạng Lưới"
+msgid "Metaball"
+msgstr "Siêu Cầu"
 
 
 msgctxt "ID"
@@ -9470,8 +9467,8 @@ msgstr "Hạt"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Quang Kế"
+msgid "Point Cloud"
+msgstr "Điểm Mây"
 
 
 msgctxt "ID"
@@ -9505,16 +9502,6 @@ msgstr "Họa Tiết"
 
 
 msgctxt "ID"
-msgid "Hair Curves"
-msgstr "Đường Cong Tóc"
-
-
-msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Điểm Mây"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Thể Tích"
 
@@ -9525,13 +9512,13 @@ msgstr "Bộ Quản Lý Cửa Sổ"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Thế Giới"
+msgid "Workspace"
+msgstr "Công Trường"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Công Trường"
+msgid "World"
+msgstr "Thế Giới"
 
 
 msgid "Rotation Mode"
@@ -12280,44 +12267,48 @@ msgid "Brush"
 msgstr "Bút"
 
 
-msgid "Font"
-msgstr "Phông"
-
-
 msgid "Collection"
 msgstr "Sưu Tập"
+
+
+msgid "Font"
+msgstr "Phông"
 
 
 msgid "Key"
 msgstr "Bức Ảnh Mẫu"
 
 
-msgid "Light"
-msgstr "Nhẹ"
+msgid "Lattice"
+msgstr "Lưới Rào"
 
 
 msgid "Library"
 msgstr "Thư Viện"
 
 
+msgid "Light"
+msgstr "Nhẹ"
+
+
+msgid "Light Probe"
+msgstr "Quang Kế"
+
+
 msgid "Line Style"
 msgstr "Phong Cách Đường"
-
-
-msgid "Lattice"
-msgstr "Lưới Rào"
 
 
 msgid "Mask"
 msgstr "Mặt Nạ"
 
 
-msgid "Metaball"
-msgstr "Siêu Cầu"
-
-
 msgid "Mesh"
 msgstr "Mạng Lưới"
+
+
+msgid "Metaball"
+msgstr "Siêu Cầu"
 
 
 msgid "Node Tree"
@@ -12336,8 +12327,8 @@ msgid "Particle"
 msgstr "Hạt"
 
 
-msgid "Light Probe"
-msgstr "Quang Kế"
+msgid "Point Cloud"
+msgstr "Điểm Mây"
 
 
 msgid "Simulation"
@@ -12356,20 +12347,16 @@ msgid "Text"
 msgstr "Văn Bản"
 
 
-msgid "Point Cloud"
-msgstr "Điểm Mây"
-
-
 msgid "Window Manager"
 msgstr "Bộ Quản Lý Cửa Sổ"
 
 
-msgid "World"
-msgstr "Thế Giới"
-
-
 msgid "Workspace"
 msgstr "Công Trường"
+
+
+msgid "World"
+msgstr "Thế Giới"
 
 
 msgid "The local data-block this file represents; only valid if that is a data-block in this file"
@@ -21401,6 +21388,10 @@ msgid "Geometry attributes"
 msgstr "Các đặc điểm của hình dạng"
 
 
+msgid "Color Attributes"
+msgstr "Đặc Điểm Màu"
+
+
 msgid "Geometry color attributes"
 msgstr "Các đặc điểm màu sắc của hình dạng"
 
@@ -25251,6 +25242,11 @@ msgstr "Loại vật thể"
 msgctxt "ID"
 msgid "Surface"
 msgstr "Bề Mặt"
+
+
+msgctxt "ID"
+msgid "Hair Curves"
+msgstr "Đường Cong Tóc"
 
 
 msgctxt "ID"
@@ -38004,10 +38000,6 @@ msgstr "Dùng tọa độ toàn cầu"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Dùng tọa độ địa phương được chế tạo của vật thể khác"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Dùng tọa dộ từ một lớp UV"
 
 
 msgid "Use Channel"
@@ -51280,10 +51272,6 @@ msgid "Export Deformation Bones Only"
 msgstr "Chỉ Xuất Xương Méo Hóa"
 
 
-msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "hỉ xuất xương Méo Hóa (và xương cần thiết cho tầng bậc)"
-
-
 msgid "Displacement Textures (EXPERIMENTAL)"
 msgstr "Họa Tiết Dịch (ĐỒ THỬ NGHIỆM)"
 
@@ -62690,10 +62678,6 @@ msgstr "Chế tạo một thay thế địa phương của cục dữ liệu th�
 
 msgid "Override Collection"
 msgstr "Thay Thế Sưu Tập"
-
-
-msgid "Name of directly linked collection containing the selected object, to make an override from"
-msgstr "Tên của sưu tập được liên kết trực tiếp đang chứa vật thê đã chọn, để làm một thay thế từ nó"
 
 
 msgid "Make linked data local to each object"
@@ -76331,10 +76315,6 @@ msgid "Python value for unsupported custom property types"
 msgstr "Giá trị Python cho loại đặc tính tùy chọn không được hỗ trợ"
 
 
-msgid "Is Library Overridable"
-msgstr "Có Thể Thay Thế Cho Thư Viện"
-
-
 msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "Cho thay thế cho đặc tính khi cục dữ liệu được liên kết"
 
@@ -76425,10 +76405,6 @@ msgstr "Góc Euler đơn vị radian"
 
 msgid "Quaternion rotation (affects NLA blending)"
 msgstr "Xoay quaternion (nó ảnh hưởng pha trộn NLA)"
-
-
-msgid "Use Soft Limits"
-msgstr "Dùng Giới Hạn Mềm"
 
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
@@ -90445,10 +90421,6 @@ msgstr "Hiện hộp bao quanh tìm kiếm cho ký hiệu"
 
 msgid "Show Mask Overlay"
 msgstr "Hiện Mặt Nạ Che Trên"
-
-
-msgid "Display Smooth Splines"
-msgstr "Hiển Thị Mẫu Cong Mịn"
 
 
 msgid "Show metadata of clip"
@@ -107761,10 +107733,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "Để tính không gian tiếp tuyến cần có pháp tuyến vòng, và không thể kiếm được cái nào, đang hủy qúa trình"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "Để tính không gian tiếp tuyến cần có bản đồ UV, và không thể kiếm được \"%s\", đang hủy qúa trình"
-
-
 msgid "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)"
 msgstr "Có thể mất dữ liệu khi lưu tập tin này! Cụ sửa đổi %s là lỗi thời (Vật Thể: %s)"
 
@@ -111488,14 +111456,6 @@ msgid "Baking map saved to internal image, save it externally or pack it"
 msgstr "Bản đồ nướng được lưu vào ảnh nội bộ, lưu nó ra ngoài hay gói lại nó"
 
 
-msgid "Vertex color baking not support with object types other than mesh"
-msgstr "Chỉ hỗ trợ nướn màu đỉnh cho loại vật thể mạng lưới"
-
-
-msgid "No vertex colors layer found to bake to"
-msgstr "Không có lớp màu định để nướng đến "
-
-
 msgid "Current render engine does not support baking"
 msgstr "Động cơ kết xuất hiện tại không hỗ trợ nướng"
 
@@ -111526,10 +111486,6 @@ msgstr "Vật thể \"%s\" không phải là mạng lưới"
 
 msgid "No faces found in the object \"%s\""
 msgstr "Không tìm được mật nào trong vật thể \"%s\""
-
-
-msgid "No vertex colors layer found in the object \"%s\""
-msgstr "Không tìm được lớp màu đỉnh nào trong vật thể \"%s\""
 
 
 msgid "No active UV layer found in the object \"%s\""
@@ -112032,10 +111988,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "Vật thể thư viện mồ côi được thêm vào cảnh hiện tại để không bị mất"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "Chỉ có thể làm đồ thay thế thư viện cho một vật thể hay sưu tập được tham chiếu"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "Bối cảnh không đúng cho chạy gở liên kết dữ liệu vật thể"
 
@@ -112046,18 +111998,6 @@ msgstr "Không thể gở liên kết dữ liệu vật hể này"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "Không thể thay thế cho sưu Tập '%s' (được thực thể hóa bằng vật thể hoạt động)"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "Không thể thay thế cho Vật thể hoạt động '%s'"
-
-
-msgid "Could not find an overridable collection containing object '%s'"
-msgstr "Không tìm được một sưu tập thay thế nào mà chứa vật thể '%s'"
-
-
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Di chuyển chuột để đổi cỡ thước của thể tích tử. CNT: xác nhận kích thước, ESC/CHP: hủy"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"

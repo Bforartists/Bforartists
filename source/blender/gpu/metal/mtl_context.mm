@@ -16,44 +16,25 @@ using namespace blender::gpu;
 
 namespace blender::gpu {
 
-/* -------------------------------------------------------------------- */
-/** \name Memory Management
- * \{ */
-
-bool MTLTemporaryBufferRange::requires_flush()
-{
-  /* We do not need to flush shared memory. */
-  return this->options & MTLResourceStorageModeManaged;
-}
-
-void MTLTemporaryBufferRange::flush()
-{
-  if (this->requires_flush()) {
-    BLI_assert(this->metal_buffer);
-    BLI_assert((this->buffer_offset + this->size) <= [this->metal_buffer length]);
-    BLI_assert(this->buffer_offset >= 0);
-    [this->metal_buffer
-        didModifyRange:NSMakeRange(this->buffer_offset, this->size - this->buffer_offset)];
-  }
-}
-
-/** \} */
+/* Global memory mamnager */
+MTLBufferPool MTLContext::global_memory_manager;
 
 /* -------------------------------------------------------------------- */
 /** \name MTLContext
  * \{ */
 
 /* Placeholder functions */
-MTLContext::MTLContext(void *ghost_window)
+MTLContext::MTLContext(void *ghost_window) : memory_manager(*this), main_command_buffer(*this)
 {
   /* Init debug. */
   debug::mtl_debug_init();
 
-  /* Initialise command buffer state. */
-  this->main_command_buffer.prepare(this);
+  /* Initialize command buffer state. */
+  this->main_command_buffer.prepare();
 
   /* Frame management. */
   is_inside_frame_ = false;
+  current_frame_index_ = 0;
 
   /* Create FrameBuffer handles. */
   MTLFrameBuffer *mtl_front_left = new MTLFrameBuffer(this, "front_left");
@@ -61,14 +42,19 @@ MTLContext::MTLContext(void *ghost_window)
   this->front_left = mtl_front_left;
   this->back_left = mtl_back_left;
   this->active_fb = this->back_left;
-  /* Prepare platform and capabilities. (Note: With METAL, this needs to be done after CTX
-   * initialisation). */
+  /* Prepare platform and capabilities. (NOTE: With METAL, this needs to be done after CTX
+   * initialization). */
   MTLBackend::platform_init(this);
   MTLBackend::capabilities_init(this);
+
   /* Initialize Metal modules. */
+  this->memory_manager.init();
   this->state_manager = new MTLStateManager(this);
 
-  /* Initialise texture read/update structures. */
+  /* Ensure global memory manager is initialied */
+  MTLContext::global_memory_manager.init(this->device);
+
+  /* Initialize texture read/update structures. */
   this->get_texture_utils().init();
 
   /* Bound Samplers struct. */
@@ -77,7 +63,7 @@ MTLContext::MTLContext(void *ghost_window)
     samplers_.mtl_sampler_flags[i] = DEFAULT_SAMPLER_STATE;
   }
 
-  /* Initialise samplers. */
+  /* Initialize samplers. */
   for (uint i = 0; i < GPU_SAMPLER_MAX; i++) {
     MTLSamplerState state;
     state.state = static_cast<eGPUSamplerState>(i);
@@ -93,7 +79,7 @@ MTLContext::~MTLContext()
     this->finish();
 
     /* End frame. */
-    if (is_inside_frame_) {
+    if (this->get_inside_frame()) {
       this->end_frame();
     }
   }
@@ -112,7 +98,7 @@ MTLContext::~MTLContext()
 void MTLContext::begin_frame()
 {
   BLI_assert(MTLBackend::get()->is_inside_render_boundary());
-  if (is_inside_frame_) {
+  if (this->get_inside_frame()) {
     return;
   }
 
@@ -122,9 +108,9 @@ void MTLContext::begin_frame()
 
 void MTLContext::end_frame()
 {
-  BLI_assert(is_inside_frame_);
+  BLI_assert(this->get_inside_frame());
 
-  /* Ensure pre-present work is commited. */
+  /* Ensure pre-present work is committed. */
   this->flush();
 
   /* Increment frame counter. */
@@ -136,20 +122,20 @@ void MTLContext::check_error(const char *info)
   /* TODO(Metal): Implement. */
 }
 
-void MTLContext::activate(void)
+void MTLContext::activate()
 {
   /* TODO(Metal): Implement. */
 }
-void MTLContext::deactivate(void)
+void MTLContext::deactivate()
 {
   /* TODO(Metal): Implement. */
 }
 
-void MTLContext::flush(void)
+void MTLContext::flush()
 {
   /* TODO(Metal): Implement. */
 }
-void MTLContext::finish(void)
+void MTLContext::finish()
 {
   /* TODO(Metal): Implement. */
 }
@@ -180,7 +166,7 @@ id<MTLRenderCommandEncoder> MTLContext::ensure_begin_render_pass()
   BLI_assert(this);
 
   /* Ensure the rendering frame has started. */
-  if (!is_inside_frame_) {
+  if (!this->get_inside_frame()) {
     this->begin_frame();
   }
 

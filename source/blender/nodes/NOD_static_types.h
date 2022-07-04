@@ -357,6 +357,7 @@ DefNode(GeometryNode, GEO_NODE_MESH_PRIMITIVE_LINE, def_geo_mesh_line, "MESH_PRI
 DefNode(GeometryNode, GEO_NODE_MESH_PRIMITIVE_UV_SPHERE, 0,  "MESH_PRIMITIVE_UV_SPHERE", MeshUVSphere, "UV Sphere", "Add a UV Sphere Geometry node\ncreates a UV Sphere mesh")
 DefNode(GeometryNode, GEO_NODE_MESH_TO_CURVE, 0, "MESH_TO_CURVE", MeshToCurve, "Mesh to Curve", "Add a Mesh to Curve Geometry node\nconverts a mesh to a curve")
 DefNode(GeometryNode, GEO_NODE_MESH_TO_POINTS, def_geo_mesh_to_points, "MESH_TO_POINTS", MeshToPoints, "Mesh to Points", "Add a Mesh to Points Geometry node")
+DefNode(GeometryNode, GEO_NODE_MESH_TO_VOLUME, def_geo_mesh_to_volume, "MESH_TO_VOLUME", MeshToVolume, "Mesh To Volume", "")
 DefNode(GeometryNode, GEO_NODE_OBJECT_INFO, def_geo_object_info, "OBJECT_INFO", ObjectInfo, "Object Info", "Add a Object Info Geometry node\nRetreives information from objects")
 DefNode(GeometryNode, GEO_NODE_POINTS, 0, "POINTS", Points, "Points", "")
 DefNode(GeometryNode, GEO_NODE_POINTS_TO_VERTICES, 0, "POINTS_TO_VERTICES", PointsToVertices, "Points to Vertices", "Add a Points to Vertices Geometry node\nAdds points to vertices of a geometry")
@@ -401,6 +402,8 @@ DefNode(GeometryNode, GEO_NODE_TRIM_CURVE, def_geo_curve_trim, "TRIM_CURVE", Tri
 DefNode(GeometryNode, GEO_NODE_VIEWER, def_geo_viewer, "VIEWER", Viewer, "Viewer", "Add a Viewer node\nThe Viewer node allows to show the result of the current node output")
 DefNode(GeometryNode, GEO_NODE_VOLUME_CUBE, 0, "VOLUME_CUBE", VolumeCube, "Volume Cube", "Add a Volume Cube node\nThe volume cube creates a voxel volume primitive to work in combination with the Volume to Mesh node")
 DefNode(GeometryNode, GEO_NODE_VOLUME_TO_MESH, def_geo_volume_to_mesh, "VOLUME_TO_MESH", VolumeToMesh, "Volume to Mesh", "Add a Volume to Mesh Geometry node\nGenerates a mesh on the “surface” of a volume")
+DefNode(GeometryNode, GEO_NODE_UV_PACK_ISLANDS, 0, "UV_PACK_ISLANDS", UVPackIslands, "Pack UV Islands", "")
+DefNode(GeometryNode, GEO_NODE_UV_UNWRAP, def_geo_uv_unwrap, "UV_UNWRAP", UVUnwrap, "UV Unwrap", "")
 
 /* undefine macros */
 #undef DefNode

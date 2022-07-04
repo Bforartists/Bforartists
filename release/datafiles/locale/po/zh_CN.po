@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "<<<<<< .minX-Generator: Poedit 1.6.9\n"
 "=====X-Generator: Poedit 1.6.9\n"
-"X-Generator: Poedit 3.0.1"
+"X-Generator: Poedit 3.1"
 
 
 msgid "Shader AOV"
@@ -1221,6 +1221,14 @@ msgid "Attribute on instance"
 msgstr "实例上的属性"
 
 
+msgid "Is Internal"
+msgstr "是内部"
+
+
+msgid "The attribute is meant for internal use by Blender"
+msgstr "该属性供Blender内部使用"
+
+
 msgid "Name of the Attribute"
 msgstr "属性名称"
 
@@ -1561,14 +1569,6 @@ msgid "Bake to image data-blocks associated with active image texture nodes in m
 msgstr "烘焙到与材质中的活动图像纹理节点关联的图像数据块"
 
 
-msgid "Color Attributes"
-msgstr "颜色属性"
-
-
-msgid "Bake to active color attribute layer on meshes"
-msgstr "烘焙到网格上的活动颜色属性图层"
-
-
 msgid "Automatic Name"
 msgstr "自动命名"
 
@@ -1845,6 +1845,10 @@ msgid "Hair Curves"
 msgstr "毛发曲线"
 
 
+msgid "Hair curve data-blocks"
+msgstr "毛发曲线数据块"
+
+
 msgid "Images"
 msgstr "图像"
 
@@ -2025,6 +2029,10 @@ msgid "Simulations"
 msgstr "模拟"
 
 
+msgid "Simulation data-blocks"
+msgstr "模拟数据块"
+
+
 msgid "Sounds"
 msgstr "声音"
 
@@ -2177,6 +2185,14 @@ msgid "Collection of grease pencils"
 msgstr "蜡笔集合"
 
 
+msgid "Main Hair Curves"
+msgstr "主毛发曲线"
+
+
+msgid "Collection of hair curves"
+msgstr "毛发曲线集合"
+
+
 msgid "Main Images"
 msgstr "主图像"
 
@@ -2327,6 +2343,14 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
+
+
+msgid "Main Simulations"
+msgstr "主模拟"
+
+
+msgid "Collection of simulations"
+msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -3525,6 +3549,14 @@ msgid "Use length of the curves in close proximity"
 msgstr "使用曲线的近距离长度"
 
 
+msgid "Interpolate Point Count"
+msgstr "插值点数"
+
+
+msgid "Use the number of points from the curves in close proximity"
+msgstr "使用曲线中近距离的点数"
+
+
 msgid "Interpolate Shape"
 msgstr "插值形状"
 
@@ -3539,6 +3571,14 @@ msgstr "最小长度"
 
 msgid "Avoid shrinking curves shorter than this length"
 msgstr "避免收缩的曲线短于此长度"
+
+
+msgid "Points per Curve"
+msgstr "单线点数"
+
+
+msgid "Number of control points in a newly added curve"
+msgstr "新添加的曲线中的控制点数"
 
 
 msgid "Scale Uniform"
@@ -4093,6 +4133,30 @@ msgid "Factor of Simplify using adaptive algorithm"
 msgstr "使用自适应算法的简化系数"
 
 
+msgid "Auto-Masking Layer"
+msgstr "自动遮罩层"
+
+
+msgid "Mask strokes using active layer"
+msgstr "使用活动层遮罩笔画"
+
+
+msgid "Auto-Masking Material"
+msgstr "自动遮罩材质"
+
+
+msgid "Mask strokes using active material"
+msgstr "使用活动材质的遮罩笔画"
+
+
+msgid "Auto-Masking Strokes"
+msgstr "自动遮罩笔画"
+
+
+msgid "Mask strokes below brush cursor"
+msgstr "笔刷光标下方的遮罩笔画"
+
+
 msgid "Default Eraser"
 msgstr "默认橡皮擦"
 
@@ -4427,6 +4491,14 @@ msgstr "图像用户"
 
 msgid "Parameters defining which layer, pass and frame of the image is displayed"
 msgstr "用于定义显示哪一个层, 通道和帧的参数"
+
+
+msgid "Override Background Image"
+msgstr "重写背景图像"
+
+
+msgid "In a local override camera, whether this background image comes from the linked reference camera, or is local to the override"
+msgstr "在本地重写摄像机中，此背景图像是来自关联的参考摄像机，还是来自重写的本地"
 
 
 msgid "Offset"
@@ -5493,6 +5565,14 @@ msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dyna
 msgstr "基于filmic shaper的log，使用16.5stops的宽容度，以及25 stops的动态范围"
 
 
+msgid "Filmic sRGB"
+msgstr "Filmic sRGB"
+
+
+msgid "sRGB display space with Filmic view transform"
+msgstr "带有Filmic视图变换的sRGB显示空间"
+
+
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Rec. 709 (全范围), Blender 原生线性空间"
 
@@ -5523,6 +5603,10 @@ msgstr "包含非色彩数据(即, 法线贴图)的图像所使用的色彩空�
 
 msgid "Raw"
 msgstr "Raw"
+
+
+msgid "sRGB display space"
+msgstr "sRGB 显示空间"
 
 
 msgid "XYZ"
@@ -8510,6 +8594,14 @@ msgid "Use the start of the stroke for the depth"
 msgstr "使用笔画起点确定绘制平面深度"
 
 
+msgid "Curve Point"
+msgstr "曲线控制点"
+
+
+msgid "Curve curve control point"
+msgstr "曲线控制点"
+
+
 msgid "Index"
 msgstr "编号"
 
@@ -8624,6 +8716,38 @@ msgstr "轮廓点"
 
 msgid "Collection of Profile Points"
 msgstr "轮廓点集合"
+
+
+msgid "Curve Slice"
+msgstr "曲线切片"
+
+
+msgid "A single curve from a curves data-block"
+msgstr "曲线数据块中的单条曲线"
+
+
+msgid "First Point Index"
+msgstr "第一点编号"
+
+
+msgid "The index of this curve's first control point"
+msgstr "此曲线的第一个控制点的编号"
+
+
+msgid "Index of this curve"
+msgstr "该曲线编号"
+
+
+msgid "Control points of the curve"
+msgstr "曲线的控制点"
+
+
+msgid "Number of Points"
+msgstr "点数"
+
+
+msgid "Number of control points in the curve"
+msgstr "曲线中的控制点数"
 
 
 msgid "Curve Splines"
@@ -9363,13 +9487,18 @@ msgstr "笔刷"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "缓存文件"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "摄像机"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "缓存文件"
+msgid "Collection"
+msgstr "集合"
 
 
 msgctxt "ID"
@@ -9388,11 +9517,6 @@ msgstr "蜡笔"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "集合"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "图像"
 
@@ -9403,8 +9527,8 @@ msgstr "按键"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "灯光"
+msgid "Lattice"
+msgstr "晶格"
 
 
 msgctxt "ID"
@@ -9413,13 +9537,18 @@ msgstr "库"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "线条样式"
+msgid "Light"
+msgstr "灯光"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "晶格"
+msgid "Light Probe"
+msgstr "光照探头"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "线条样式"
 
 
 msgctxt "ID"
@@ -9433,13 +9562,13 @@ msgstr "材质"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "融球"
+msgid "Mesh"
+msgstr "网格"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "网格"
+msgid "Metaball"
+msgstr "融球"
 
 
 msgctxt "ID"
@@ -9473,8 +9602,8 @@ msgstr "粒子"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "光照探头"
+msgid "Point Cloud"
+msgstr "点云"
 
 
 msgctxt "ID"
@@ -9508,16 +9637,6 @@ msgstr "纹理"
 
 
 msgctxt "ID"
-msgid "Hair Curves"
-msgstr "毛发曲线"
-
-
-msgctxt "ID"
-msgid "Point Cloud"
-msgstr "点云"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "体积"
 
@@ -9528,13 +9647,13 @@ msgstr "窗口管理器"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "世界环境"
+msgid "Workspace"
+msgstr "工作区"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "工作区"
+msgid "World"
+msgstr "世界环境"
 
 
 msgid "Rotation Mode"
@@ -12283,44 +12402,48 @@ msgid "Brush"
 msgstr "笔刷"
 
 
-msgid "Font"
-msgstr "字体"
-
-
 msgid "Collection"
 msgstr "集合"
+
+
+msgid "Font"
+msgstr "字体"
 
 
 msgid "Key"
 msgstr "关键帧"
 
 
-msgid "Light"
-msgstr "灯光"
+msgid "Lattice"
+msgstr "晶格"
 
 
 msgid "Library"
 msgstr "库"
 
 
+msgid "Light"
+msgstr "灯光"
+
+
+msgid "Light Probe"
+msgstr "光照探头"
+
+
 msgid "Line Style"
 msgstr "线条样式"
-
-
-msgid "Lattice"
-msgstr "晶格"
 
 
 msgid "Mask"
 msgstr "遮罩"
 
 
-msgid "Metaball"
-msgstr "融球"
-
-
 msgid "Mesh"
 msgstr "网格"
+
+
+msgid "Metaball"
+msgstr "融球"
 
 
 msgid "Node Tree"
@@ -12339,8 +12462,8 @@ msgid "Particle"
 msgstr "粒子"
 
 
-msgid "Light Probe"
-msgstr "光照探头"
+msgid "Point Cloud"
+msgstr "点云"
 
 
 msgid "Simulation"
@@ -12359,20 +12482,16 @@ msgid "Text"
 msgstr "文本"
 
 
-msgid "Point Cloud"
-msgstr "点云"
-
-
 msgid "Window Manager"
 msgstr "窗口管理器"
 
 
-msgid "World"
-msgstr "世界环境"
-
-
 msgid "Workspace"
 msgstr "工作区"
+
+
+msgid "World"
+msgstr "世界环境"
 
 
 msgid "The local data-block this file represents; only valid if that is a data-block in this file"
@@ -17507,8 +17626,24 @@ msgid "Scale the noise frequency"
 msgstr "缩放噪波频率"
 
 
+msgid "Where to perform randomization"
+msgstr "在何处执行随机化"
+
+
+msgid "Randomize every number of frames"
+msgstr "随机化每个帧数"
+
+
+msgid "Randomize on keyframes only"
+msgstr "仅在关键帧上随机化"
+
+
 msgid "Noise Seed"
 msgstr "噪波随机种"
+
+
+msgid "Number of frames between randomization steps"
+msgstr "随机化步数之间的帧数"
 
 
 msgid "Use a custom curve to define noise effect along the strokes"
@@ -17949,6 +18084,14 @@ msgstr "固定帧"
 
 msgid "Keep frame and do not change with time"
 msgstr "保持帧, 且不随时间改变"
+
+
+msgid "Ping Pong"
+msgstr "乒乓"
+
+
+msgid "Loop back and forth"
+msgstr "来回循环"
 
 
 msgid "Frame Offset"
@@ -19018,6 +19161,10 @@ msgstr "添加曲线"
 
 msgid "Grow / Shrink Curves"
 msgstr "生长/收缩曲线"
+
+
+msgid "Paint Selection"
+msgstr "绘制选择"
 
 
 msgid "Dash Ratio"
@@ -21396,6 +21543,10 @@ msgid "Don't fill polygons while editing"
 msgstr "编辑时不填充多边形"
 
 
+msgid "Hair data-block for hair curves"
+msgstr "毛发曲线的毛发数据块"
+
+
 msgid "Attributes"
 msgstr "属性"
 
@@ -21404,8 +21555,24 @@ msgid "Geometry attributes"
 msgstr "几何属性"
 
 
+msgid "Color Attributes"
+msgstr "颜色属性"
+
+
 msgid "Geometry color attributes"
 msgstr "几何颜色属性"
+
+
+msgid "All curves in the data-block"
+msgstr "数据块中的所有曲线"
+
+
+msgid "Control points of all curves"
+msgstr "所有曲线的控制点"
+
+
+msgid "Selection Domain"
+msgstr "选中项域"
 
 
 msgid "Enable symmetry in the X axis"
@@ -21418,6 +21585,10 @@ msgstr "在 Y 轴向上启用对称"
 
 msgid "Enable symmetry in the Z axis"
 msgstr "在 Z 轴向上启用对称"
+
+
+msgid "Use Sculpt Selection"
+msgstr "使用雕刻选中项"
 
 
 msgid "Freestyle Line Style"
@@ -25254,6 +25425,11 @@ msgstr "物体类型"
 msgctxt "ID"
 msgid "Surface"
 msgstr "表面"
+
+
+msgctxt "ID"
+msgid "Hair Curves"
+msgstr "毛发曲线"
 
 
 msgctxt "ID"
@@ -38007,10 +38183,6 @@ msgstr "使用全局坐标系"
 
 msgid "Use local generated coordinates of another object"
 msgstr "使用取自其他物体的局部坐标"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "使用 UV 层的坐标系"
 
 
 msgid "Use Channel"
@@ -51283,10 +51455,6 @@ msgid "Export Deformation Bones Only"
 msgstr "仅导出变形骨骼"
 
 
-msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "仅导出变形骨骼(和层次结构所需的骨骼)"
-
-
 msgid "Displacement Textures (EXPERIMENTAL)"
 msgstr "置换纹理(实验)"
 
@@ -62693,10 +62861,6 @@ msgstr "将库关联的数据块覆写为本地数据块"
 
 msgid "Override Collection"
 msgstr "重写集合"
-
-
-msgid "Name of directly linked collection containing the selected object, to make an override from"
-msgstr "包含选中物体的直接关联的集合名称，将被重写的目标"
 
 
 msgid "Make linked data local to each object"
@@ -76334,10 +76498,6 @@ msgid "Python value for unsupported custom property types"
 msgstr "用于不受支持的自定义属性类型的Python值"
 
 
-msgid "Is Library Overridable"
-msgstr "库是否可重写"
-
-
 msgid "Allow the property to be overridden when the data-block is linked"
 msgstr "允许在关联数据块时重写属性"
 
@@ -76428,10 +76588,6 @@ msgstr "欧拉旋转角度(单位为弧度)"
 
 msgid "Quaternion rotation (affects NLA blending)"
 msgstr "四元数旋转(影响 NLA 混合)"
-
-
-msgid "Use Soft Limits"
-msgstr "使用软限制"
 
 
 msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
@@ -90450,10 +90606,6 @@ msgstr "显示用于标记的搜索区块边界盒"
 
 msgid "Show Mask Overlay"
 msgstr "显示遮罩叠加"
-
-
-msgid "Display Smooth Splines"
-msgstr "显示平滑的样条"
 
 
 msgid "Show metadata of clip"
@@ -107766,10 +107918,6 @@ msgid "Tangent space computation needs loop normals, none found, aborting"
 msgstr "切向空间计算需要循环法线，未找到，中止"
 
 
-msgid "Tangent space computation needs an UVMap, \"%s\" not found, aborting"
-msgstr "切向空间计算需要一个UV贴图， \"%s\" 未找到, 中止"
-
-
 msgid "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)"
 msgstr "保存此文件时可能丢失数据！%s 修改器已弃用(物体：%s)。"
 
@@ -111481,14 +111629,6 @@ msgid "Baking map saved to internal image, save it externally or pack it"
 msgstr "将烘焙贴图保存为内部、外部图像文件或将其打包"
 
 
-msgid "Vertex color baking not support with object types other than mesh"
-msgstr "顶点颜色烘焙不支持网格以外的物体类型"
-
-
-msgid "No vertex colors layer found to bake to"
-msgstr "未找到要烘焙的顶点颜色层"
-
-
 msgid "Current render engine does not support baking"
 msgstr "当前渲染引擎不支持烘焙"
 
@@ -111519,10 +111659,6 @@ msgstr "物体 \"%s\" 不是一个网格物体"
 
 msgid "No faces found in the object \"%s\""
 msgstr "未在物体 \"%s\" 中找到面"
-
-
-msgid "No vertex colors layer found in the object \"%s\""
-msgstr "未在物体 \"%s\" 中找到顶点色层"
 
 
 msgid "No active UV layer found in the object \"%s\""
@@ -112025,10 +112161,6 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "将孤立库对象添加到当前场景以避免丢失"
 
 
-msgid "Can only make library override for a referenced object or collection"
-msgstr "只能为被引用的物体或集合创建库重写"
-
-
 msgid "Incorrect context for running object data unlink"
 msgstr "未关联物体数据的运行环境不正确"
 
@@ -112039,18 +112171,6 @@ msgstr "无法断开该物体数据的关联"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "集合 ‘%s’ (由活动物体实例化) 不可重写"
-
-
-msgid "Active object '%s' is not overridable"
-msgstr "活动物体 '%s' 不可重写"
-
-
-msgid "Could not find an overridable collection containing object '%s'"
-msgstr "找不到包含物体 '%s' 的可重写集合"
-
-
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "移动鼠标以更改体素大小。LBM：确认大小，ESC/RMB：取消"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"

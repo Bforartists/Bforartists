@@ -1251,7 +1251,7 @@ def get_weight(vertex_group, n_verts):
     :type vertex_group: :class:'bpy.types.VertexGroup'
     :arg n_verts: Number of Vertices (output list size).
     :type n_verts: int
-    :return: Readed weight values.
+    :return: Read weight values.
     :rtype: list
     """
     weight = [0]*n_verts
@@ -1267,7 +1267,7 @@ def get_weight_numpy(vertex_group, n_verts):
     :type vertex_group: :class:'bpy.types.VertexGroup'
     :arg n_verts: Number of Vertices (output list size).
     :type n_verts: int
-    :return: Readed weight values as numpy array.
+    :return: Read weight values as numpy array.
     :rtype: :class:'numpy.ndarray'
     """
     weight = [0]*n_verts
