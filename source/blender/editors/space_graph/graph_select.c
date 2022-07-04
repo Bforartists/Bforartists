@@ -174,7 +174,8 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac, const int mval[2], L
    * - if the option to only show keyframes that belong to selected F-Curves is enabled,
    *   include the 'only selected' flag...
    */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY);
   if (sipo->flag &
       SIPO_SELCUVERTSONLY) { /* FIXME: this should really be check for by the filtering code... */
     filter |= ANIMFILTER_SEL;
@@ -344,7 +345,8 @@ void deselect_graph_keys(bAnimContext *ac, bool test, short sel, bool do_channel
   KeyframeEditFunc test_cb, sel_cb;
 
   /* determine type-based settings */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
 
   /* filter data */
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
@@ -521,7 +523,8 @@ static rctf initialize_box_select_coords(const bAnimContext *ac, const rctf *rec
 
 static int initialize_animdata_selection_filter(const SpaceGraph *sipo)
 {
-  int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+                ANIMFILTER_NODUPLIS);
   if (sipo->flag & SIPO_SELCUVERTSONLY) {
     filter |= ANIMFILTER_FOREDIT | ANIMFILTER_SELEDIT;
   }
@@ -1173,7 +1176,8 @@ static void markers_selectkeys_between(bAnimContext *ac)
   ked.f2 = max;
 
   /* filter data */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* select keys in-between */
@@ -1212,7 +1216,8 @@ static void columnselect_graph_keys(bAnimContext *ac, short mode)
   /* build list of columns */
   switch (mode) {
     case GRAPHKEYS_COLUMNSEL_KEYS: /* list of selected keys */
-      filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+      filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+                ANIMFILTER_NODUPLIS);
       ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
       for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1227,7 +1232,7 @@ static void columnselect_graph_keys(bAnimContext *ac, short mode)
       ce = MEM_callocN(sizeof(CfraElem), "cfraElem");
       BLI_addtail(&ked.list, ce);
 
-      ce->cfra = (float)CFRA;
+      ce->cfra = (float)scene->r.cfra;
       break;
 
     case GRAPHKEYS_COLUMNSEL_MARKERS_COLUMN: /* list of selected markers */
@@ -1245,7 +1250,8 @@ static void columnselect_graph_keys(bAnimContext *ac, short mode)
   /* loop through all of the keys and select additional keyframes
    * based on the keys found to be selected above
    */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1337,7 +1343,8 @@ static int graphkeys_select_linked_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* loop through all of the keys and select additional keyframes based on these */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1395,7 +1402,8 @@ static void select_moreless_graph_keys(bAnimContext *ac, short mode)
   memset(&ked, 0, sizeof(KeyframeEditData));
 
   /* loop through all of the keys and select additional keyframes based on these */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1536,15 +1544,15 @@ static void graphkeys_select_leftright(bAnimContext *ac, short leftright, short 
 
   if (leftright == GRAPHKEYS_LRSEL_LEFT) {
     ked.f1 = MINAFRAMEF;
-    ked.f2 = (float)(CFRA + 0.1f);
+    ked.f2 = (float)(scene->r.cfra + 0.1f);
   }
   else {
-    ked.f1 = (float)(CFRA - 0.1f);
+    ked.f1 = (float)(scene->r.cfra - 0.1f);
     ked.f2 = MAXFRAMEF;
   }
 
   /* filter data */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* select keys */
@@ -1620,7 +1628,7 @@ static int graphkeys_select_leftright_invoke(bContext *C, wmOperator *op, const 
 
     /* determine which side of the current frame mouse is on */
     x = UI_view2d_region_to_view_x(v2d, event->mval[0]);
-    if (x < CFRA) {
+    if (x < scene->r.cfra) {
       RNA_enum_set(op->ptr, "mode", GRAPHKEYS_LRSEL_LEFT);
     }
     else {
@@ -1833,7 +1841,8 @@ static int mouse_graph_keys(bAnimContext *ac,
    * otherwise the active flag won't be set T26452. */
   if (!run_modal && (nvi->fcu->flag & FCURVE_SELECTED) && something_was_selected) {
     /* NOTE: Sync the filter flags with findnearest_fcurve_vert. */
-    int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+    int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+                  ANIMFILTER_NODUPLIS);
     ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, nvi->fcu, nvi->ctype);
   }
 
@@ -1909,7 +1918,8 @@ static int graphkeys_mselect_column(bAnimContext *ac,
   /* loop through all of the keys and select additional keyframes
    * based on the keys found to be selected above
    */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   for (ale = anim_data.first; ale; ale = ale->next) {

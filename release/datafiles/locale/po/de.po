@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7860,13 +7860,18 @@ msgstr "Pinsel"
 
 
 msgctxt "ID"
+msgid "Cache File"
+msgstr "Puffer Datei"
+
+
+msgctxt "ID"
 msgid "Camera"
 msgstr "Kamera"
 
 
 msgctxt "ID"
-msgid "Cache File"
-msgstr "Puffer Datei"
+msgid "Collection"
+msgstr "Sammlung"
 
 
 msgctxt "ID"
@@ -7885,11 +7890,6 @@ msgstr "Wachsstift"
 
 
 msgctxt "ID"
-msgid "Collection"
-msgstr "Sammlung"
-
-
-msgctxt "ID"
 msgid "Image"
 msgstr "Bild"
 
@@ -7900,8 +7900,8 @@ msgstr "Taste"
 
 
 msgctxt "ID"
-msgid "Light"
-msgstr "Leicht"
+msgid "Lattice"
+msgstr "Gitter"
 
 
 msgctxt "ID"
@@ -7910,13 +7910,18 @@ msgstr "Bibliothek"
 
 
 msgctxt "ID"
-msgid "Line Style"
-msgstr "Linienstil"
+msgid "Light"
+msgstr "Leicht"
 
 
 msgctxt "ID"
-msgid "Lattice"
-msgstr "Gitter"
+msgid "Light Probe"
+msgstr "Lichtsonde"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Linienstil"
 
 
 msgctxt "ID"
@@ -7930,13 +7935,13 @@ msgstr "Material"
 
 
 msgctxt "ID"
-msgid "Metaball"
-msgstr "Metaball"
+msgid "Mesh"
+msgstr "Masche"
 
 
 msgctxt "ID"
-msgid "Mesh"
-msgstr "Masche"
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgctxt "ID"
@@ -7970,8 +7975,8 @@ msgstr "Partikel"
 
 
 msgctxt "ID"
-msgid "Light Probe"
-msgstr "Lichtsonde"
+msgid "Point Cloud"
+msgstr "Punkt Wolke"
 
 
 msgctxt "ID"
@@ -8005,11 +8010,6 @@ msgstr "Textur"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Punkt Wolke"
-
-
-msgctxt "ID"
 msgid "Volume"
 msgstr "Volumen"
 
@@ -8020,13 +8020,13 @@ msgstr "Fensterverwaltung"
 
 
 msgctxt "ID"
-msgid "World"
-msgstr "Welt"
+msgid "Workspace"
+msgstr "Arbeitsbereich"
 
 
 msgctxt "ID"
-msgid "Workspace"
-msgstr "Arbeitsbereich"
+msgid "World"
+msgstr "Welt"
 
 
 msgid "Rotation Mode"
@@ -9895,44 +9895,48 @@ msgid "Brush"
 msgstr "Pinsel"
 
 
-msgid "Font"
-msgstr "Schrift"
-
-
 msgid "Collection"
 msgstr "Sammlung"
+
+
+msgid "Font"
+msgstr "Schrift"
 
 
 msgid "Key"
 msgstr "Schlüsselbild"
 
 
-msgid "Light"
-msgstr "Licht"
+msgid "Lattice"
+msgstr "Gitter"
 
 
 msgid "Library"
 msgstr "Bibliothek"
 
 
+msgid "Light"
+msgstr "Licht"
+
+
+msgid "Light Probe"
+msgstr "Lichtsonde"
+
+
 msgid "Line Style"
 msgstr "Linienstil"
-
-
-msgid "Lattice"
-msgstr "Gitter"
 
 
 msgid "Mask"
 msgstr "Maske"
 
 
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Mesh"
 msgstr "Masche"
+
+
+msgid "Metaball"
+msgstr "Metaball"
 
 
 msgid "Node Tree"
@@ -9951,8 +9955,8 @@ msgid "Particle"
 msgstr "Partikel"
 
 
-msgid "Light Probe"
-msgstr "Lichtsonde"
+msgid "Point Cloud"
+msgstr "Punkt Wolke"
 
 
 msgid "Simulation"
@@ -9971,20 +9975,16 @@ msgid "Text"
 msgstr "Text"
 
 
-msgid "Point Cloud"
-msgstr "Punkt Wolke"
-
-
 msgid "Window Manager"
 msgstr "Fensterverwaltung"
 
 
-msgid "World"
-msgstr "Welt"
-
-
 msgid "Workspace"
 msgstr "Arbeitsplatz"
+
+
+msgid "World"
+msgstr "Welt"
 
 
 msgid "Icon ID"
@@ -23095,10 +23095,6 @@ msgstr "Globale Koordinaten verwenden"
 
 msgid "Use local generated coordinates of another object"
 msgstr "Lokal erzeugte Koordinaten eines anderen Objektes verwenden"
-
-
-msgid "Use coordinates from an UV layer"
-msgstr "Koordinaten von einer UV-Ebene verwenden"
 
 
 msgid "Use Channel"
@@ -42154,10 +42150,6 @@ msgstr "Ein string Wert"
 
 msgid "Soft Min"
 msgstr "Weiches minimum"
-
-
-msgid "Use Soft Limits"
-msgstr "Weiche Begrenzung verwenden"
 
 
 msgctxt "Operator"

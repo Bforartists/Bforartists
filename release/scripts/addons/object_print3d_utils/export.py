@@ -79,7 +79,7 @@ def write_mesh(context, report_cb):
     # first ensure the path is created
     if export_path:
         # this can fail with strange errors,
-        # if the dir cant be made then we get an error later.
+        # if the dir can't be made then we get an error later.
         try:
             os.makedirs(export_path, exist_ok=True)
         except:

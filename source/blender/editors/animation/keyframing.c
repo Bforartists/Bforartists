@@ -1947,7 +1947,8 @@ static int insert_key_exec(bContext *C, wmOperator *op)
   Object *obedit = CTX_data_edit_object(C);
   bool ob_edit_mode = false;
 
-  float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
+  float cfra = (float)
+                   scene->r.cfra; /* XXX for now, don't bother about all the yucky offset crap */
   int num_channels;
   const bool confirm = op->flag & OP_IS_INVOKE;
 
@@ -2168,7 +2169,8 @@ static int delete_key_exec(bContext *C, wmOperator *op)
 static int delete_key_using_keying_set(bContext *C, wmOperator *op, KeyingSet *ks)
 {
   Scene *scene = CTX_data_scene(C);
-  float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
+  float cfra = (float)
+                   scene->r.cfra; /* XXX for now, don't bother about all the yucky offset crap */
   int num_channels;
   const bool confirm = op->flag & OP_IS_INVOKE;
 
@@ -2344,7 +2346,7 @@ void ANIM_OT_keyframe_clear_v3d(wmOperatorType *ot)
 static int delete_key_v3d_without_keying_set(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  float cfra = (float)CFRA;
+  float cfra = (float)scene->r.cfra;
 
   int selected_objects_len = 0;
   int selected_objects_success_len = 0;
@@ -2604,7 +2606,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   char *path;
   uiBut *but;
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
-      CTX_data_depsgraph_pointer(C), (float)CFRA);
+      CTX_data_depsgraph_pointer(C), (float)scene->r.cfra);
   bool changed = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
@@ -2894,7 +2896,8 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
   AnimData *adt = NULL; /* bfa - Apply animation*/
   Main *bmain = CTX_data_main(C);
   char *path;
-  float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
+  float cfra = (float)
+                   scene->r.cfra; /* XXX for now, don't bother about all the yucky offset crap */
   bool changed = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
@@ -3090,7 +3093,7 @@ void ANIM_OT_keyframe_clear_button(wmOperatorType *ot)
 
 bool autokeyframe_cfra_can_key(const Scene *scene, ID *id)
 {
-  float cfra = (float)CFRA; /* XXX for now, this will do */
+  float cfra = (float)scene->r.cfra; /* XXX for now, this will do */
 
   /* only filter if auto-key mode requires this */
   if (IS_AUTOKEY_ON(scene) == 0) {
@@ -3320,7 +3323,7 @@ bool ED_autokeyframe_object(bContext *C, Scene *scene, Object *ob, KeyingSet *ks
      * 3) Free the extra info.
      */
     ANIM_relative_keyingset_add_source(&dsources, &ob->id, NULL, NULL);
-    ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, (float)CFRA);
+    ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, (float)scene->r.cfra);
     BLI_freelistN(&dsources);
 
     return true;
@@ -3340,7 +3343,7 @@ bool ED_autokeyframe_pchan(
      * 3) Free the extra info.
      */
     ANIM_relative_keyingset_add_source(&dsources, &ob->id, &RNA_PoseBone, pchan);
-    ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, (float)CFRA);
+    ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, (float)scene->r.cfra);
     BLI_freelistN(&dsources);
 
     return true;
