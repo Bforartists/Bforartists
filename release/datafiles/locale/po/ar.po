@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'16f5d51109bc')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -7509,32 +7509,32 @@ msgid "Key"
 msgstr "ﺡﺎﺘﻔﻣ"
 
 
-msgid "Light"
-msgstr "ءﻮﺿ"
+msgid "Lattice"
+msgstr "ﺔﻜﺒﺷ"
 
 
 msgid "Library"
 msgstr "ﺔﺒﺘﻜﻣ"
 
 
+msgid "Light"
+msgstr "ءﻮﺿ"
+
+
 msgid "Line Style"
 msgstr "ﻂﺨﻟﺍ ﻂﻤﻧ"
-
-
-msgid "Lattice"
-msgstr "ﺔﻜﺒﺷ"
 
 
 msgid "Mask"
 msgstr "ءﺎﻄﻏ"
 
 
-msgid "Metaball"
-msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
-
-
 msgid "Mesh"
 msgstr "ﻢﺴﺠﻣ"
+
+
+msgid "Metaball"
+msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
 
 
 msgid "Node Tree"
@@ -18887,10 +18887,6 @@ msgid "Use local generated coordinates of another object"
 msgstr "ﺮﺧﺍ ﻦﺋﺎﻜﻟ ﺔﻴﻠﺤﻣ ﺓﺪﻟّﻮﻣ ﺕﺎﻴﺛﺍﺪﺣﺇ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Use coordinates from an UV layer"
-msgstr "UV ﺔﻘﺒﻃ ﺕﺎﻴﺛﺍﺪﺣﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
 msgid "Use Channel"
 msgstr "ﺓﺎﻨﻘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
@@ -30229,10 +30225,6 @@ msgstr "ﺔﻤﺴﻟﺍ ﻢﺳﺇ"
 
 msgid "Property name edit"
 msgstr "ﺔﻤﺴﻟﺍ ﻢﺳﺇ ﻞﻳﺪﻌﺗ"
-
-
-msgid "Use Soft Limits"
-msgstr "ﺔﻴﺧﺍﺮﺘﻣ ﺩﻭﺪﺣ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgctxt "Operator"
