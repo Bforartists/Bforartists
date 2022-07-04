@@ -211,6 +211,35 @@ class SCENE_OT_depsgraph_stats_image(Operator,
         return True
 
 
+class SCENE_OT_depsgraph_relations_svg(Operator,
+                                       SCENE_OT_depsgraph_image_common):
+    bl_idname = "scene.depsgraph_relations_svg"
+    bl_label = "Depsgraph as SVG in Browser"
+    bl_description = "Create an SVG image from the dependency graph and open it in the web browser"
+
+    def performSave(self, context, depsgraph):
+        import os
+        import subprocess
+        import webbrowser
+        # Create temporary file.
+        dot_filepath = self._createTempFile(suffix=".dot")
+        # Save dependency graph to graphviz file.
+        depsgraph.debug_relations_graphviz(dot_filepath)
+        # Convert graphviz to SVG image.
+        svg_filepath = os.path.join(bpy.app.tempdir, "depsgraph.svg")
+        command = ("dot", "-Tsvg", dot_filepath, "-o", svg_filepath)
+        try:
+            subprocess.run(command)
+            webbrowser.open_new_tab("file://" + os.path.abspath(svg_filepath))
+        except:
+            self.report({'ERROR'}, "Error invoking dot command")
+            return False
+        finally:
+            # Remove graphviz file.
+            os.remove(dot_filepath)
+        return True
+
+
 ###############################################################################
 # Interface.
 
@@ -224,6 +253,7 @@ class SCENE_PT_depsgraph_common:
         row = col.row()
         row.operator("scene.depsgraph_relations_graphviz")
         row.operator("scene.depsgraph_relations_image")
+        col.operator("scene.depsgraph_relations_svg")
         # Everything related on evaluaiton statistics.
         col.label(text="Statistics:")
         row = col.row()
@@ -264,6 +294,7 @@ class RENDERLAYER_PT_depsgraph(bpy.types.Panel, SCENE_PT_depsgraph_common):
 def register():
     bpy.utils.register_class(SCENE_OT_depsgraph_relations_graphviz)
     bpy.utils.register_class(SCENE_OT_depsgraph_relations_image)
+    bpy.utils.register_class(SCENE_OT_depsgraph_relations_svg)
     bpy.utils.register_class(SCENE_OT_depsgraph_stats_gnuplot)
     bpy.utils.register_class(SCENE_OT_depsgraph_stats_image)
     bpy.utils.register_class(SCENE_PT_depsgraph)
@@ -273,6 +304,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SCENE_OT_depsgraph_relations_graphviz)
     bpy.utils.unregister_class(SCENE_OT_depsgraph_relations_image)
+    bpy.utils.unregister_class(SCENE_OT_depsgraph_relations_svg)
     bpy.utils.unregister_class(SCENE_OT_depsgraph_stats_gnuplot)
     bpy.utils.unregister_class(SCENE_OT_depsgraph_stats_image)
     bpy.utils.unregister_class(SCENE_PT_depsgraph)
