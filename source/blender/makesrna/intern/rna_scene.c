@@ -158,7 +158,7 @@ const EnumPropertyItem rna_enum_snap_element_items[] = {
      "Snap by projecting onto faces"},
     {SCE_SNAP_MODE_FACE_NEAREST,
      "FACE_NEAREST",
-     ICON_NONE,
+     ICON_SNAP_FACE_NEAREST,
      "Face Nearest",
      "Snap to nearest point on faces"},
     {SCE_SNAP_MODE_VOLUME, "VOLUME", ICON_SNAP_VOLUME, "Volume", "Snap to volume"},
