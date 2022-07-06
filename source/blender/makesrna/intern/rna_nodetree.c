@@ -13515,6 +13515,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_FIELD_AT_INDEX:
       icon = ICON_FIELD_AT_INDEX;
       break;
+    case GEO_NODE_FIELD_ON_DOMAIN:
+      icon = ICON_FIELD_DOMAIN;
+      break;
     case GEO_NODE_FILL_CURVE:
       icon = ICON_CURVE_FILL;
       break;
@@ -13661,6 +13664,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
+      break;
+    case GEO_NODE_POINTS:
+      icon = ICON_DECORATE;
       break;
     case GEO_NODE_POINTS_TO_VERTICES:
       icon = ICON_POINTS_TO_VERTICES;

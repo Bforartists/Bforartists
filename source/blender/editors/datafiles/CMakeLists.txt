@@ -1510,7 +1510,7 @@ snap_step_second
 
 similar
 snap_face_nearest
-#~ DEF_ICON_BLANK(1544)
+field_domain
 #~ DEF_ICON_BLANK(1545)
 #~ DEF_ICON_BLANK(1546)
 #~ DEF_ICON_BLANK(1547)
