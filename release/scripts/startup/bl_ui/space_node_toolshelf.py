@@ -4535,6 +4535,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
 
+            props = col.operator("node.add_node", text=" Points         ", icon = "DECORATE")
+            props.use_transform = True
+            props.type = "GeometryNodePoints"
+            
             props = col.operator("node.add_node", text=" Points to Vertices         ", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodePointsToVertices"
@@ -4558,6 +4562,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
+
+            props = flow.operator("node.add_node", text="", icon = "DECORATE")
+            props.use_transform = True
+            props.type = "GeometryNodePoints"
 
             props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
@@ -4843,6 +4851,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
 
+            props = col.operator("node.add_node", text=" Field on Domain    ", icon = "FIELD_DOMAIN")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldOnDomain"
+
             props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
             props.use_transform = True
             props.type = "ShaderNodeFloatCurve"
@@ -4909,6 +4921,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FIELD_AT_INDEX")
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
+
+            props = flow.operator("node.add_node", text="", icon = "FIELD_DOMAIN")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldOnDomain"
 
             props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
             props.use_transform = True
