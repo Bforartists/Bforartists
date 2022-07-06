@@ -3819,6 +3819,10 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_subdivision_set")
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
 
         layout.separator()
