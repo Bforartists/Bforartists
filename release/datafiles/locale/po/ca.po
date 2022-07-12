@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -822,6 +822,10 @@ msgid "Count"
 msgstr "Seleccionar fila"
 
 
+msgid "Minimum Distance"
+msgstr "Mostrar propietats de les arestes"
+
+
 msgid "Mode"
 msgstr "Mode d'Edició"
 
@@ -1008,10 +1012,6 @@ msgstr "Eines"
 
 msgid "Restitution"
 msgstr "Seleccionar connectats"
-
-
-msgid "Minimum Distance"
-msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Friction"
@@ -3392,10 +3392,6 @@ msgid "Window Manager"
 msgstr "Duplicar"
 
 
-msgid "Regular"
-msgstr "Crear aresta/cara"
-
-
 msgid "Display Mode"
 msgstr "Mostrar propietats de les arestes"
 
@@ -3714,6 +3710,10 @@ msgstr "Moure a Capa"
 
 msgid "Blend Mode"
 msgstr "Comprimir Dades"
+
+
+msgid "Regular"
+msgstr "Crear aresta/cara"
 
 
 msgid "Set layer Visibility"
@@ -10078,6 +10078,14 @@ msgstr "Duplicar"
 
 msgid "Align Y"
 msgstr "Duplicar"
+
+
+msgid "Angle Based"
+msgstr "Cíclic"
+
+
+msgid "Conformal"
+msgstr "Calcular Normals"
 
 
 msgid "Label Font Size"
@@ -16467,11 +16475,6 @@ msgstr "Deseleccionar Enllaçats"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Desplaçador"
 
@@ -18704,14 +18707,6 @@ msgid "Unwrap"
 msgstr "Contreure/Engreixar"
 
 
-msgid "Angle Based"
-msgstr "Cíclic"
-
-
-msgid "Conformal"
-msgstr "Calcular Normals"
-
-
 msgctxt "Operator"
 msgid "Weld"
 msgstr "Duplicar"
@@ -19691,6 +19686,11 @@ msgstr "Moure a Capa"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Cercle"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Costat"
 
 
 msgid "Pose Options"
@@ -23261,10 +23261,6 @@ msgid "Snap to edges"
 msgstr "Afegir Tira"
 
 
-msgid "Snap to faces"
-msgstr "Afegir Tira"
-
-
 msgid "Snap to volume"
 msgstr "Afegir Tira"
 
@@ -24011,11 +24007,6 @@ msgstr "Menú Esborrar"
 msgctxt "Operator"
 msgid "Between Selected Markers"
 msgstr "Menú Esborrar"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Costat"
 
 
 msgctxt "Operator"
@@ -24865,10 +24856,6 @@ msgid "Delete envelope control point"
 msgstr "Afegir Tira"
 
 
-msgid "No selected F-Curves to paste into"
-msgstr "Seleccionar connectats"
-
-
 msgid "No F-Curve to add keyframes to"
 msgstr "Esborrar"
 
@@ -24983,10 +24970,6 @@ msgstr "Rotar"
 
 msgid "Cannot paint stroke"
 msgstr "Image Displist"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Seleccionar connectats"
 
 
 msgid "No Grease Pencil data to work on"
@@ -25493,6 +25476,14 @@ msgstr "Moure a Capa"
 
 msgid "Active Keyframe"
 msgstr "Moure a Capa"
+
+
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Seleccionar connectats"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Seleccionar connectats"
 
 
 msgid "Fields"

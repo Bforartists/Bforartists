@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -698,6 +698,10 @@ msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
 
 msgid "Has Secondary Color"
 msgstr "ﻪﯾﻮﻧﺎﺛ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
+
+
+msgid "Remove"
+msgstr "ﻑﺬﺣ"
 
 
 msgid "Mode"
@@ -5567,10 +5571,6 @@ msgstr "ﻩﺪﺷ ﺐﯿﮐﺮﺗ"
 
 msgid "To"
 msgstr "ﻻ﻿ﺎﺑ"
-
-
-msgid "Remove"
-msgstr "ﻑﺬﺣ"
 
 
 msgid "RGB Curves"
@@ -11647,6 +11647,11 @@ msgid "Circle"
 msgstr "ﻩﺮﯾﺍﺩ"
 
 
+msgctxt "Operator"
+msgid "Slide"
+msgstr "ﺪﻣﺎﺟ"
+
+
 msgid "Pose Options"
 msgstr "ﺖﺳﮊ ﯼﺎﻫ‌ﻪﻨﯾﺰﮔ"
 
@@ -12855,11 +12860,6 @@ msgstr "ﺵﺮﺘﺴﮔ"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "ﺪﻣﺎﺟ"
-
-
-msgctxt "Operator"
 msgid "Back"
 msgstr "ﺐﻘﻋ"
 
@@ -13654,10 +13654,6 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ﻦﯿﺑﺭﻭﺩ ﮏﯾ ﻥﺩﻭﺰﻓﺍ"
 
 
-msgid "No selected F-Curves to paste into"
-msgstr "ﻪﻨﺤﺻ ﻪﺑ ﺮﮕﻧﺎﺸﻧ ﺮﯿﺜﮑﺗ..."
-
-
 msgid "No suitable context info for active keying set"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
@@ -14387,6 +14383,10 @@ msgstr "ﻝﺎﻌﻓ ﻦﯿﺑﺭﻭﺩ"
 
 msgid "Active Keyframe"
 msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "ﻪﻨﺤﺻ ﻪﺑ ﺮﮕﻧﺎﺸﻧ ﺮﯿﺜﮑﺗ..."
 
 
 msgid "Track is locked"

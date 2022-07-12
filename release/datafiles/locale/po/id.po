@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -2941,6 +2941,10 @@ msgid "Count"
 msgstr "Hitung"
 
 
+msgid "Minimum Distance"
+msgstr "Jarak Minimal"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "Pengaturan Kuas Pensil Grease"
 
@@ -3779,10 +3783,6 @@ msgstr "Kualitas Tabrakan"
 
 msgid "Restitution"
 msgstr "Restitusi"
-
-
-msgid "Minimum Distance"
-msgstr "Jarak Minimal"
 
 
 msgid "Friction"
@@ -7642,10 +7642,6 @@ msgid "Small"
 msgstr "Kecil"
 
 
-msgid "Regular"
-msgstr "Biasa"
-
-
 msgid "Large"
 msgstr "Besar"
 
@@ -8516,6 +8512,10 @@ msgstr "Mode Blend"
 
 msgid "Blend mode"
 msgstr "Mode blend"
+
+
+msgid "Regular"
+msgstr "Biasa"
 
 
 msgid "Hard Light"
@@ -20617,6 +20617,11 @@ msgid "Curve"
 msgstr "Kurva"
 
 
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Slide/Menggeser"
+
+
 msgid "Auto IK"
 msgstr "Otomatis"
 
@@ -21249,6 +21254,10 @@ msgstr "Ganda"
 msgctxt "Sequence"
 msgid "Clock"
 msgstr "Jam"
+
+
+msgid "Speed Factor"
+msgstr "Faktor Kecepatan"
 
 
 msgid "Show Cache"
@@ -21933,10 +21942,6 @@ msgstr "Render Volume"
 
 msgid "Jump Height"
 msgstr "Tinggi Lompatan"
-
-
-msgid "Speed Factor"
-msgstr "Faktor Kecepatan"
 
 
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
@@ -24304,11 +24309,6 @@ msgstr "Memperluas"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "Slide/Menggeser"
-
-
-msgctxt "Operator"
 msgid "Delete Duplicate Frames"
 msgstr "Hapus Frame Duplikat"
 
@@ -25558,10 +25558,6 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "Adegan"
 
 
-msgid "No selected F-Curves to paste into"
-msgstr "Hapus"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Tekstur"
 
@@ -26499,6 +26495,10 @@ msgstr "Tekstur"
 
 msgid "Active Keyframe"
 msgstr "Tekstur"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Hapus"
 
 
 msgid "Width:"

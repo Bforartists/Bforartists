@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -2003,6 +2003,14 @@ msgid "Count"
 msgstr "ءﺎﺼﺣﺇ"
 
 
+msgid "Remove"
+msgstr "ﺔﻟﺍﺯﺇ"
+
+
+msgid "Minimum Distance"
+msgstr "ﻞﻗﻷ﻿ﺍ ﺔﻓﺎﺴﻤﻟﺍ"
+
+
 msgid "Angle"
 msgstr "ﺔﻳﻭﺍﺯ"
 
@@ -2429,10 +2437,6 @@ msgstr "ﺔﻗﺪﻟﺍ"
 
 msgid "Amount of velocity lost on collision"
 msgstr "ﻡﺍﺪﺘﺻﻻ﻿ﺍ ﺪﻨﻋ ﺓﺩﻮﻘﻔﻤﻟﺍ ﺔﻋﺮﺴﻟﺍ ﺔﻴﻤﻛ"
-
-
-msgid "Minimum Distance"
-msgstr "ﻞﻗﻷ﻿ﺍ ﺔﻓﺎﺴﻤﻟﺍ"
 
 
 msgid "Friction"
@@ -7605,8 +7609,8 @@ msgid "Small"
 msgstr "ﺮﻴﻐﺻ"
 
 
-msgid "Regular"
-msgstr "ﻱﺩﺎﻋ"
+msgid "Medium"
+msgstr "ﻂﺳﻮﺘﻣ"
 
 
 msgid "Large"
@@ -8585,6 +8589,10 @@ msgid "Blend Mode"
 msgstr "ﺞﻣﺪﻟﺍ ﻂﻤﻧ"
 
 
+msgid "Regular"
+msgstr "ﻱﺩﺎﻋ"
+
+
 msgid "Frames"
 msgstr "ﺮﻃﺃ"
 
@@ -8985,6 +8993,10 @@ msgstr "ﺔﻄﻘﻨﻟﺍ ﺔﻓﺎﺜﻛ"
 
 msgid "Step"
 msgstr "ﺓﻮﻄﺨﻟﺍ"
+
+
+msgid "Shaded"
+msgstr "ﻞﻠﻈﻣ"
 
 
 msgid "Boundaries"
@@ -12381,10 +12393,6 @@ msgstr "ﻲﻟﺎﻋ"
 
 msgid "High quality"
 msgstr "ﺔﻴﻟﺎﻋ ﺓﺩﻮﺟ"
-
-
-msgid "Medium"
-msgstr "ﻂﺳﻮﺘﻣ"
 
 
 msgid "Medium quality"
@@ -20263,10 +20271,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "ﻞﺧﺪﻟﺍ ﺓﺭﻮﺻ ﻢﺠﺣ ﺺﻗ ﺎﻣ ﺍﺫﺍ"
 
 
-msgid "Remove"
-msgstr "ﺔﻟﺍﺯﺇ"
-
-
 msgid "Has Layers"
 msgstr "ﺕﺎﻘﺒﻃ ﺎﻬﻳﺪﻟ"
 
@@ -20922,6 +20926,10 @@ msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ"
 
 msgid "Fill Type"
 msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﻉﻮﻧ"
+
+
+msgid "Conformal"
+msgstr "ﻒﻴﻜﺘﻣ"
 
 
 msgid "Label Font Size"
@@ -27460,15 +27468,6 @@ msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺮﺘﺧﺇ"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "ﻪﺟﻮﻟﺍ ﺭﺎﻴﺘﺧﺇ ﺮﻬﻇﺍ"
-
-
-msgid "Reveal hidden faces"
-msgstr "ﺔﻴﻔﺨﻤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ ﻒﺸﻛﺍ"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "ﺔﺨﺴﻨﻟﺍ ﺮﺘﺧﺍ"
 
@@ -29604,10 +29603,6 @@ msgid "Unwrap"
 msgstr "ﻁﺎﻘﺳﺇ"
 
 
-msgid "Conformal"
-msgstr "ﻒﻴﻜﺘﻣ"
-
-
 msgctxt "Operator"
 msgid "Weld"
 msgstr "ﻡﺎﺤﻠﻟﺍ"
@@ -30863,10 +30858,6 @@ msgid "Panel Colors"
 msgstr "ﺡﺍﻮﻟﻻ﻿ﺍ ﻥﺍﻮﻟﺍ"
 
 
-msgid "Shaded"
-msgstr "ﻞﻠﻈﻣ"
-
-
 msgid "Styles"
 msgstr "ﺐﻴﻟﺎﺳﻷ﻿ﺍ"
 
@@ -30906,6 +30897,11 @@ msgstr "ﺓﺮﺋﺍﺩ ﻒﺿﺍ"
 msgctxt "Operator"
 msgid "Thickness"
 msgstr "ﺔﻛﺎﻤﺴﻟﺍ"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "ﺡﺯﺃ"
 
 
 msgid "Pose Options"
@@ -34465,6 +34461,10 @@ msgid "In"
 msgstr "ﻲﻓ"
 
 
+msgid "Speed Factor"
+msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
+
+
 msgid "Mask Sequence"
 msgstr "ﻉﺎﻨﻘﻟﺍ ﻞﺴﻠﺴﺗ"
 
@@ -36088,10 +36088,6 @@ msgid "Type of element to snap to"
 msgstr "ﻪﻴﻟﺍ ﺓﺍﺫﺎﺤﻤﻟﺍ ﺮﺼﻨﻌﻟﺍ ﻉﻮﻧ"
 
 
-msgid "Snap to faces"
-msgstr "ﻪﺟﻭﻸ﻿ﻟ ﻱﺫﺎﺣ"
-
-
 msgid "Snap Node Element"
 msgstr "ﺓﺪﻘﻌﻟﺍ ﺮﺼﻨﻋ ﻱﺫﺎﺣ"
 
@@ -36538,10 +36534,6 @@ msgstr "ﺓﺭﺄﻔﻟﺍ ﺲﻜﻋﺍ"
 
 msgid "View Height"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻉﺎﻔﺗﺭﺇ"
-
-
-msgid "Speed Factor"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
 msgid "Lighting for a World data-block"
@@ -37740,11 +37732,6 @@ msgstr "ﺕﺍﻮﻨﻘﻟﺍ ﻒﻈّﻧ"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "ﺪﻣُ"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "ﺡﺯﺃ"
 
 
 msgctxt "Operator"
@@ -39081,14 +39068,6 @@ msgid "Delete envelope control point"
 msgstr "ﻒﻠﻐﻤﻟﺍ ﻢﻜﺤﺗ ﺔﻄﻘﻧ ﻑﺬﺣﺍ"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "ﻩﺬﻫ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻠﺘﻜﻟ ﻚﻳﺮﺤﺘﻟﺍ ﺕﺎﻧﺎﻴﺑ"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "ﺓﺪﻳﺪﺟ ﺓﺬﻓﺎﻨﻛ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻖﻃﺎﻨﻤﻟﺍ ﺞﻣﺩﺍ"
-
-
 msgid "<Missing ID block>"
 msgstr "ﺓﺩﻮﻘﻔﻣ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻠﺘﻛ"
 
@@ -40157,6 +40136,10 @@ msgstr "ﻝﺎﻌﻔﻟﺍ ﺕﺎﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻣ"
 
 msgid "Active Keyframe"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﺡﺎﺘﻔﻤﻟﺍ"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "ﺓﺪﻳﺪﺟ ﺓﺬﻓﺎﻨﻛ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻖﻃﺎﻨﻤﻟﺍ ﺞﻣﺩﺍ"
 
 
 msgid "Fields"

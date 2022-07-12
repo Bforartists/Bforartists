@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "<<<<<< .minX-Generator: Poedit 1.6.9\n"
 "=====X-Generator: Poedit 1.6.9\n"
-"X-Generator: Poedit 3.1"
+"X-Generator: Poedit 3.1.1"
 
 
 msgid "Shader AOV"
@@ -321,7 +321,7 @@ msgid "MetalRT for ray tracing uses less memory for scenes which use curves exte
 msgstr "用于光线追踪的MetalRT 对于广泛使用曲线的场景使用较少的内存，并且可以在特定情况下提供更好的性能。但是，此支持是实验性的，某些场景可能会导致渲染偏差"
 
 
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
+msgid "Displays glTF Settings node in Shader Editor (Menu Add > Output)"
 msgstr "在着色器编辑器中显示 glTF 设置节点（菜单添加>输出）"
 
 
@@ -1567,6 +1567,14 @@ msgstr "图像纹理"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "烘焙到与材质中的活动图像纹理节点关联的图像数据块"
+
+
+msgid "Active Color Attribute"
+msgstr "活动颜色属性"
+
+
+msgid "Bake to the active color attribute on meshes"
+msgstr "烘焙到网格上的活动颜色属性"
 
 
 msgid "Automatic Name"
@@ -3541,6 +3549,38 @@ msgid "Length of newly added curves when it is not interpolated from other curve
 msgstr "未从其他曲线插值时，新添加的曲线的长度"
 
 
+msgid "Density Add Attempts"
+msgstr "密度添加尝试"
+
+
+msgid "How many times the Density brush tries to add a new curve"
+msgstr "密度笔刷尝试添加新曲线的次数"
+
+
+msgid "Density Mode"
+msgstr "密度模式"
+
+
+msgid "Determines whether the brush adds or removes curves"
+msgstr "确定笔刷是添加还是删除曲线"
+
+
+msgid "Either add or remove curves depending on the minimum distance of the curves under the cursor"
+msgstr "根据光标下曲线的最小距离添加或删除曲线"
+
+
+msgid "Add new curves between existing curves, taking the minimum distance into account"
+msgstr "在现有曲线之间添加新曲线，将最小距离考虑在内"
+
+
+msgid "Remove"
+msgstr "删除"
+
+
+msgid "Remove curves whose root points are too close"
+msgstr "删除根点过近的曲线"
+
+
 msgid "Interpolate Length"
 msgstr "插值长度"
 
@@ -3563,6 +3603,14 @@ msgstr "插值形状"
 
 msgid "Use shape of the curves in close proximity"
 msgstr "使用曲线的近距离形状"
+
+
+msgid "Minimum Distance"
+msgstr "最小距离"
+
+
+msgid "Goal distance between curve roots for the Density brush"
+msgstr "密度笔刷的曲线根之间的目标距离"
 
 
 msgid "Minimum Length"
@@ -4787,10 +4835,6 @@ msgstr "分辨率"
 
 msgid "Amount of velocity lost on collision"
 msgstr "碰撞时损失的速率"
-
-
-msgid "Minimum Distance"
-msgstr "最小距离"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -9507,6 +9551,11 @@ msgstr "曲线"
 
 
 msgctxt "ID"
+msgid "Curves"
+msgstr "曲线"
+
+
+msgctxt "ID"
 msgid "Font"
 msgstr "字体"
 
@@ -12598,8 +12647,8 @@ msgid "Small"
 msgstr "小"
 
 
-msgid "Regular"
-msgstr "常规"
+msgid "Medium"
+msgstr "中等"
 
 
 msgid "Large"
@@ -15214,6 +15263,10 @@ msgid "Blend mode"
 msgstr "混合模式"
 
 
+msgid "Regular"
+msgstr "常规"
+
+
 msgid "Hard Light"
 msgstr "硬光"
 
@@ -17126,8 +17179,8 @@ msgid "Crease Threshold"
 msgstr "折痕阈值"
 
 
-msgid "Angles smaller than this will be treated as creases"
-msgstr "小于该值的角度将被视为折痕"
+msgid "Angles smaller than this will be treated as creases. Crease angle priority: object line art crease override > mesh auto smooth angle > line art default crease"
+msgstr "小于此角度的角度将被视为折痕。折痕角度优先级: 物体线条画折痕重写>网格自动平滑角度>线条画默认折痕"
 
 
 msgid "Invert Vertex Group"
@@ -17162,6 +17215,14 @@ msgid "Minimum number of occlusions for the generated strokes"
 msgstr "生成的笔画的最小遮挡数量"
 
 
+msgid "Light Object"
+msgstr "灯光物体"
+
+
+msgid "Use this light object to generate light contour"
+msgstr "使用此灯光物体生成灯光轮廓"
+
+
 msgid "The strength value for the generate strokes"
 msgstr "生成笔画的强度值"
 
@@ -17172,6 +17233,58 @@ msgstr "过扫描"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "防止笔画在图像边缘突然断开的边距"
+
+
+msgid "Shadow Camera Far"
+msgstr "阴影摄像机远裁"
+
+
+msgid "Far clipping distance of shadow camera"
+msgstr "阴影摄像机的远裁距离"
+
+
+msgid "Shadow Camera Near"
+msgstr "阴影摄像机近裁"
+
+
+msgid "Near clipping distance of shadow camera"
+msgstr "阴影摄像机的近裁距离"
+
+
+msgid "Shadow Camera Size"
+msgstr "阴影摄像机尺寸"
+
+
+msgid "This value represent the \"Orthographic Scale\" of an ortho camera.If the camera is put at the lamps position with this scale, it will represent the coverage of the shadow \"camera\" "
+msgstr "此值表示正交摄像机的“正交缩放”。如果将此缩放值的摄像机放在灯光位置，它将表示阴影“摄像机”的覆盖范围"
+
+
+msgid "Shadow Region Filtering"
+msgstr "阴影区域过滤"
+
+
+msgid "Select feature lines that comes from lit or shaded regions. Will not affect cast shadow and light contour since they are at the border"
+msgstr "选择来自照明或阴影区域的要素线。不会影响投射阴影和光线轮廓，因为它们位于边界"
+
+
+msgid "Lit"
+msgstr "明亮"
+
+
+msgid "Shaded"
+msgstr "着色"
+
+
+msgid "Silhouette Filtering"
+msgstr "剪影过滤"
+
+
+msgid "Select contour or silhouette"
+msgstr "选择轮廓或剪影"
+
+
+msgid "Individual Silhouette"
+msgstr "单个剪影"
 
 
 msgid "Smooth Tolerance"
@@ -17414,6 +17527,22 @@ msgid "Select everything except lines from specified collection"
 msgstr "选择除来自指定集合中行之外的所有内容"
 
 
+msgid "Invert Silhouette Filtering"
+msgstr "反转轮廓过滤"
+
+
+msgid "Select anti-silhouette lines"
+msgstr "选择防剪影线"
+
+
+msgid "Use Light Contour"
+msgstr "使用灯光轮廓"
+
+
+msgid "Generate light/shadow separation lines from a reference light object"
+msgstr "从参考灯光物体生成光/阴影分隔线"
+
+
 msgid "Use Loose"
 msgstr "使用松散"
 
@@ -17504,6 +17633,18 @@ msgstr "重叠边缘类型"
 
 msgid "Allow an edge to have multiple overlapping types. This will create a separate stroke for each overlapping type"
 msgstr "允许边缘具有多个重叠类型。这将为每个重叠类型创建一个单独的笔画"
+
+
+msgid "Use Shadow"
+msgstr "使用阴影"
+
+
+msgid "Shadow Enclosed Shapes"
+msgstr "阴影封闭形状"
+
+
+msgid "Reproject visible lines again to get enclosed shadow shapes"
+msgstr "重新投影可见线以获得封闭的阴影形状"
 
 
 msgid "Vertex group name for selected strokes"
@@ -19165,6 +19306,26 @@ msgstr "生长/收缩曲线"
 
 msgid "Paint Selection"
 msgstr "绘制选择"
+
+
+msgid "Pinch Curves"
+msgstr "夹捏曲线"
+
+
+msgid "Smooth Curves"
+msgstr "平滑曲线"
+
+
+msgid "Puff Curves"
+msgstr "蓬松曲线"
+
+
+msgid "Density Curves"
+msgstr "密度曲线"
+
+
+msgid "Slide Curves"
+msgstr "滑动曲线"
 
 
 msgid "Dash Ratio"
@@ -20907,6 +21068,14 @@ msgid "Intersection generated by this collection will have this mask value"
 msgstr "此集合生成的交叉将具有此遮罩值"
 
 
+msgid "Intersection Priority"
+msgstr "交叉优先级"
+
+
+msgid "The intersection line will be included into the object with the higher intersection priority value"
+msgstr "交叉线将包含在具有较高交叉优先级值的物体中"
+
+
 msgid "Usage"
 msgstr "用法"
 
@@ -20965,6 +21134,14 @@ msgstr "在此集合中使用自定义交叉遮罩进行遮罩"
 
 msgid "Objects that are directly in this collection"
 msgstr "直接位于此集合中的物体"
+
+
+msgid "Use Intersection Priority"
+msgstr "使用交叉优先级"
+
+
+msgid "Assign intersection priority value for this collection"
+msgstr "为此集合分配交叉优先级数值"
 
 
 msgid "Curve data-block storing curves, splines and NURBS"
@@ -21573,6 +21750,18 @@ msgstr "所有曲线的控制点"
 
 msgid "Selection Domain"
 msgstr "选中项域"
+
+
+msgid "Mesh object that the curves can be attached to"
+msgstr "曲线可以附加到的网格物体"
+
+
+msgid "Surface UV Map"
+msgstr "表面UV 贴图"
+
+
+msgid "The name of the attribute on the surface mesh used to define the attachment of each curve"
+msgstr "表面网格上用于定义每条曲线的连接的属性名称"
 
 
 msgid "Enable symmetry in the X axis"
@@ -24021,6 +24210,10 @@ msgid "Sculpt Vertex Colors"
 msgstr "雕刻顶点色"
 
 
+msgid "Sculpt vertex color layers. Deprecated, use color attributes instead"
+msgstr "雕刻顶点颜色层。已弃用，改用颜色属性"
+
+
 msgid "Skin Vertices"
 msgstr "皮肤顶点"
 
@@ -24211,6 +24404,10 @@ msgstr "所有 UV 循环层"
 
 msgid "Vertex Colors"
 msgstr "顶点色"
+
+
+msgid "Legacy vertex color layers. Deprecated, use color attributes instead"
+msgstr "旧版顶点颜色图层。已弃用，改用颜色属性"
 
 
 msgid "Vertex Creases"
@@ -24547,10 +24744,6 @@ msgstr "高"
 
 msgid "High quality"
 msgstr "高质量"
-
-
-msgid "Medium"
-msgstr "中等"
 
 
 msgid "Medium quality"
@@ -27189,12 +27382,48 @@ msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
 
 
+msgid "Simulation data-block"
+msgstr "模拟数据块"
+
+
+msgid "Node tree defining the simulation"
+msgstr "定义模拟的节点数"
+
+
 msgid "Sound data-block referencing an external or packed sound file"
 msgstr "引用外部或打包的声音文件的声音数据块"
 
 
+msgid "Audio channels"
+msgstr "音频声道"
+
+
+msgid "Definition of audio channels"
+msgstr "音频声道的定义"
+
+
+msgid "Stereo LFE"
+msgstr "LFE立体声"
+
+
+msgid "Stereo FX"
+msgstr "立体声FX"
+
+
+msgid "5 Channels"
+msgstr "5 声道"
+
+
+msgid "6.1 Surround"
+msgstr "6.1声道环绕"
+
+
 msgid "Sound sample file used by this Sound data-block"
 msgstr "供声音数据块所使用的声音采样文件"
+
+
+msgid "Samplerate of the audio in Hz"
+msgstr "音频采样率(单位Hz）"
 
 
 msgid "Caching"
@@ -29253,6 +29482,14 @@ msgstr "保存每个像素的Z深度(32位无符号整型Z缓冲)"
 
 msgid "Format of multiview media"
 msgstr "多视图媒体格式"
+
+
+msgid "Tile Number"
+msgstr "分块号"
+
+
+msgid "View Index"
+msgstr "视图编号"
 
 
 msgid "Image Preview"
@@ -33016,6 +33253,10 @@ msgid "Faces with this material will behave as if it has set number of layers in
 msgstr "带有此材质的面将表现得好像它已设置遮挡层数"
 
 
+msgid "Override object and collection intersection priority value"
+msgstr "重写物体和集合交叉优先级灵敏值"
+
+
 msgid "Material slot in an object"
 msgstr "物体上的材质槽"
 
@@ -33055,6 +33296,10 @@ msgstr "标记设置"
 
 msgid "Pivot Point"
 msgstr "轴心点"
+
+
+msgid "Plane Track Image Specials"
+msgstr "平面追踪图像专用项"
 
 
 msgid "Proxy"
@@ -33232,6 +33477,10 @@ msgstr "添加"
 
 msgid "Attribute Specials"
 msgstr "属性专用项"
+
+
+msgid "Color Attribute Specials"
+msgstr "颜色属性专用项"
 
 
 msgid "Shape Key Specials"
@@ -33867,6 +34116,10 @@ msgstr "网格顶点的颜色"
 
 msgid "Vertex loop colors in a Mesh"
 msgstr "网格中的循环点颜色"
+
+
+msgid "Color in sRGB color space"
+msgstr "sRGB 色彩空间中的颜色"
 
 
 msgid "Mesh Vertex Color Layer"
@@ -38185,6 +38438,10 @@ msgid "Use local generated coordinates of another object"
 msgstr "使用取自其他物体的局部坐标"
 
 
+msgid "Use coordinates from a UV layer"
+msgstr "使用 UV 层的坐标系"
+
+
 msgid "Use Channel"
 msgstr "使用通道"
 
@@ -41093,6 +41350,38 @@ msgid "Combine YUVA"
 msgstr "合并 YUVA"
 
 
+msgid "Combine Color"
+msgstr "合并颜色"
+
+
+msgid "Mode of color processing"
+msgstr "颜色处理模式"
+
+
+msgid "Use RGB color processing"
+msgstr "使用RGB颜色处理"
+
+
+msgid "Use HSV color processing"
+msgstr "使用HSV颜色处理"
+
+
+msgid "Use HSL color processing"
+msgstr "使用HSL颜色处理"
+
+
+msgid "Use YCbCr color processing"
+msgstr "使用YCbCr颜色处理"
+
+
+msgid "Use YUV color processing"
+msgstr "使用YUV颜色处理"
+
+
+msgid "Color space used for YCbCrA processing"
+msgstr "用于YCbCrA处理的色彩空间"
+
+
 msgid "Combine XYZ"
 msgstr "合并 XYZ"
 
@@ -41167,10 +41456,6 @@ msgstr "蒙版物体"
 
 msgid "List of object and material crypto IDs to include in matte"
 msgstr "包含了蒙版用的物体和材质的crypto ID列表"
-
-
-msgid "Remove"
-msgstr "移除"
 
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
@@ -42278,6 +42563,10 @@ msgid "Separate YUVA"
 msgstr "分离 YUVA"
 
 
+msgid "Separate Color"
+msgstr "分离颜色"
+
+
 msgid "Separate XYZ"
 msgstr "分离 XYZ"
 
@@ -43110,6 +43399,14 @@ msgid "Set Spline Type"
 msgstr "设置样条线类型"
 
 
+msgid "The curve type to change the selected curves to"
+msgstr "要将所选曲线更改为的曲线类型"
+
+
+msgid "Catmull Rom"
+msgstr "卡特姆-罗(Catmull-Rom)"
+
+
 msgid "NURBS"
 msgstr "NURBS"
 
@@ -43222,6 +43519,10 @@ msgid "Domain the field is evaluated in"
 msgstr "解算场所在的域"
 
 
+msgid "Field on Domain"
+msgstr "域上的场"
+
+
 msgid "Fill Curve"
 msgstr "填充曲线"
 
@@ -43276,6 +43577,14 @@ msgstr "曲线控制柄位置"
 
 msgid "Curve Tilt"
 msgstr "曲线倾斜"
+
+
+msgid "Instance Rotation"
+msgstr "实例旋转"
+
+
+msgid "Instance Scale"
+msgstr "实例缩放"
 
 
 msgid "Edge Angle"
@@ -43434,6 +43743,14 @@ msgid "Create a point in the point cloud for each selected face corner"
 msgstr "为每个选定面拐在点云中创建点"
 
 
+msgid "Mesh To Volume"
+msgstr "网格 -> 体积"
+
+
+msgid "How the voxel size is specified"
+msgstr "如何指定体素大小"
+
+
 msgid "UV Sphere"
 msgstr "经纬球"
 
@@ -43460,10 +43777,6 @@ msgstr "点 -> 顶点"
 
 msgid "Points to Volume"
 msgstr "点到体积"
-
-
-msgid "How the voxel size is specified"
-msgstr "如何指定体素大小"
 
 
 msgid "Specify the approximate number of voxels along the diagonal"
@@ -43806,6 +44119,34 @@ msgid "Find the endpoint positions using a length from the start of each spline"
 msgstr "使用到每个样条线的起点的长度查找终点位置"
 
 
+msgid "Pack UV Islands"
+msgstr "拼排UV孤岛"
+
+
+msgid "UV Unwrap"
+msgstr "UV展开"
+
+
+msgid "Angle Based"
+msgstr "基于角度"
+
+
+msgid "This method gives a good 2D representation of a mesh"
+msgstr "该方法提供了不错的网格的二维表达"
+
+
+msgid "Conformal"
+msgstr "共形"
+
+
+msgid "Uses LSCM (Least Squares Conformal Mapping). This usually gives a less accurate UV mapping than Angle Based, but works better for simpler objects"
+msgstr "使用LSCM (Least Squared Conformal Mapping)。UV映射效果通常没有基于角度准确，不过对于简单物体效果更好。"
+
+
+msgid "Volume Cube"
+msgstr "体积立方体"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "框"
@@ -43915,6 +44256,10 @@ msgid "Anisotropic BSDF"
 msgstr "各向异性 BSDF"
 
 
+msgid "Light scattering distribution on rough surface"
+msgstr "粗糙表面上的光散射分布"
+
+
 msgid "Beckmann"
 msgstr "贝克曼"
 
@@ -43925,6 +44270,10 @@ msgstr "GGX"
 
 msgid "Multiscatter GGX"
 msgstr "多重散射GGX"
+
+
+msgid "Slower than GGX but gives a more energy conserving results, which would otherwise be visible as excessive darkening"
+msgstr "比GGX慢，但提供更节能的结果，否则会呈现为过度暗化"
 
 
 msgid "Ashikhmin-Shirley"
@@ -43939,6 +44288,10 @@ msgid "Glass BSDF"
 msgstr "玻璃 BSDF"
 
 
+msgid "Results in perfectly sharp reflections like a mirror. The Roughness value is not used"
+msgstr "可产生完美的镜面反射。 不使用糙度值。"
+
+
 msgid "Glossy BSDF"
 msgstr "光泽 BSDF"
 
@@ -43947,8 +44300,20 @@ msgid "Hair BSDF"
 msgstr "毛发 BSDF"
 
 
+msgid "Hair BSDF component to use"
+msgstr "要使用的毛发 BSDF分量"
+
+
 msgid "Reflection"
 msgstr "反射"
+
+
+msgid "The light that bounces off the surface of the hair"
+msgstr "从毛发表面反射的光线。"
+
+
+msgid "The light that passes through the hair and exits on the other side"
+msgstr "穿过毛发并从另一侧出来的光线。"
 
 
 msgid "Principled Hair BSDF"
@@ -44029,6 +44394,18 @@ msgstr "折射 BSDF"
 
 msgid "Toon BSDF"
 msgstr "卡通 BSDF"
+
+
+msgid "Toon BSDF component to use"
+msgstr "要使用的卡通BSDF分量"
+
+
+msgid "Use diffuse BSDF"
+msgstr "使用漫射 BSDF"
+
+
+msgid "Use glossy BSDF"
+msgstr "使用光泽 BSDF"
 
 
 msgid "Translucent BSDF"
@@ -44539,8 +44916,32 @@ msgid "Musgrave Texture"
 msgstr "马氏分形纹理"
 
 
+msgid "Number of dimensions to output noise for"
+msgstr "输出噪波的维度数"
+
+
 msgid "Use the scalar value W as input"
 msgstr "使用标量值 W 作为输入"
+
+
+msgid "Use the 2D vector (X, Y) as input. The Z component is ignored"
+msgstr "使用二维矢量 (X, Y) 作为输入。忽略Z向分量"
+
+
+msgid "Use the 3D vector (X, Y, Z) as input"
+msgstr "使用三维矢量 (X, Y, Z) 作为输入"
+
+
+msgid "Use the 4D vector (X, Y, Z, W) as input"
+msgstr "使用四维矢量 (X, Y, Z, W) 作为输入"
+
+
+msgid "Type of the Musgrave texture"
+msgstr "马氏分形纹理类型"
+
+
+msgid "More uneven result (varies with location), more similar to a real terrain"
+msgstr "更不均匀的结果(随位置变化)，更类似于真实地形"
 
 
 msgid "Object to take point data from"
@@ -44771,6 +45172,10 @@ msgid "Voronoi Texture"
 msgstr "沃罗诺伊纹理"
 
 
+msgid "The distance metric used to compute the texture"
+msgstr "用于计算纹理的距离度量"
+
+
 msgid "Euclidean"
 msgstr "欧几里德"
 
@@ -44793,6 +45198,10 @@ msgstr "闵可夫斯基间距"
 
 msgid "Feature Output"
 msgstr "特性输出"
+
+
+msgid "The Voronoi feature that the node will compute"
+msgstr "节点将计算的沃罗诺伊特征"
 
 
 msgid "F1"
@@ -45709,6 +46118,10 @@ msgstr "物体线条画"
 
 msgid "Object line art settings"
 msgstr "物体线条画设置"
+
+
+msgid "Angles smaller than this will be treated as creases"
+msgstr "小于该值的角度将被视为折痕"
 
 
 msgid "How to use this object in line art calculation"
@@ -51453,14 +51866,6 @@ msgstr "导出当前动画帧中的场景"
 
 msgid "Export Deformation Bones Only"
 msgstr "仅导出变形骨骼"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "置换纹理(实验)"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "实验: 导出置换纹理。使用不完全 \"KHR_materials_displacement\" glTF 扩展"
 
 
 msgid "Color quantization bits"
@@ -65801,15 +66206,6 @@ msgstr "选择光标下的相连面"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "选取面并恢复显示"
-
-
-msgid "Reveal hidden faces"
-msgstr "恢复显示面"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "攫取克隆"
 
@@ -69130,6 +69526,10 @@ msgstr "笔画曲线雕刻"
 
 msgid "Sculpt curves using a brush"
 msgstr "使用笔刷雕刻曲线"
+
+
+msgid "Probability"
+msgstr "慨率"
 
 
 msgctxt "Operator"
@@ -73732,14 +74132,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "展开方法(基于角度的算法通常比共形模式效果更好,但是运算速度会更慢)"
 
 
-msgid "Angle Based"
-msgstr "基于角度"
-
-
-msgid "Conformal"
-msgstr "共形"
-
-
 msgid "Use Subdivision Surface"
 msgstr "使用表面细分"
 
@@ -74943,10 +75335,6 @@ msgstr "导出法向"
 
 msgid "Export undeformed mesh vertex coordinates"
 msgstr "导出未变形的网格顶点坐标"
-
-
-msgid "Pack UV Islands"
-msgstr "拼排UV孤岛"
 
 
 msgid "Export UVs with packed island"
@@ -79382,10 +79770,6 @@ msgid "Icon Colors"
 msgstr "图标颜色"
 
 
-msgid "Shaded"
-msgstr "着色"
-
-
 msgid "Styles"
 msgstr "样式"
 
@@ -79930,6 +80314,11 @@ msgstr "强度/力度"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "扭曲"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "滑移"
 
 
 msgid "Clone from Paint Slot"
@@ -81811,14 +82200,6 @@ msgstr "全画幅合成器"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "启用合成器全画幅执行模式选项(无分块，降低执行时间和内存使用）"
-
-
-msgid "New Curves Type"
-msgstr "新曲线类型"
-
-
-msgid "Enable the new curves data type in the UI"
-msgstr "在 UI 中启用新的曲线数据类型"
 
 
 msgid "New Point Cloud Type"
@@ -88830,6 +89211,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "加载一个或多个图像的序列片段"
 
 
+msgid "Speed Factor"
+msgstr "速度系数"
+
+
 msgid "Mask Sequence"
 msgstr "遮罩序列"
 
@@ -93032,10 +93417,6 @@ msgid "Boolean Value"
 msgstr "布尔值"
 
 
-msgid "Byte Color Value"
-msgstr "字节颜色值"
-
-
 msgid "Float Value"
 msgstr "浮点值"
 
@@ -95501,10 +95882,6 @@ msgid "Snap to edges"
 msgstr "吸附至边"
 
 
-msgid "Snap to faces"
-msgstr "吸附至面"
-
-
 msgid "Snap to volume"
 msgstr "吸附至体积"
 
@@ -95835,14 +96212,6 @@ msgstr "对缩放使用吸附"
 
 msgid "Scale is affected by snapping settings"
 msgstr "缩放受吸附设置影响"
-
-
-msgid "Project onto Self"
-msgstr "投影至自身"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "吸附至本身(仅编辑模式)"
 
 
 msgid "Snap to strip edges or current frame"
@@ -97683,10 +98052,6 @@ msgstr "步行速度"
 
 msgid "Base speed for walking and flying"
 msgstr "行走或飞行的基本速度"
-
-
-msgid "Speed Factor"
-msgstr "速度系数"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -99703,12 +100068,12 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "以及Nvidia驱动程序470版本或更新"
 
 
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "需要RDNA架构的独立AMD GPU"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
+
+
+msgid "and AMD driver version 22.10 or newer"
+msgstr "以及AMD驱动程序22.10版本或更新"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -99717,10 +100082,6 @@ msgstr "需要Apple Silicon 和 macOS 12.2 或更新版本"
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "或者AMD搭配 macOS 12.3 或更新版本"
-
-
-msgid "and AMD driver version 22.10 or newer"
-msgstr "以及AMD驱动程序22.10版本或更新"
 
 
 msgid "Noise Threshold"
@@ -103437,11 +103798,6 @@ msgstr "扩展"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "滑移"
-
-
-msgctxt "Operator"
 msgid "Delete Duplicate Frames"
 msgstr "清理重复帧"
 
@@ -105094,11 +105450,6 @@ msgstr "SVG为蜡笔"
 
 
 msgctxt "Operator"
-msgid "Wavefront (.obj) (experimental)"
-msgstr "Wavefront (.obj) (实验性)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "渲染图像"
 
@@ -105808,6 +106159,11 @@ msgstr "NURBS 圆环"
 msgctxt "Operator"
 msgid "Path"
 msgstr "路径曲线"
+
+
+msgctxt "Operator"
+msgid "Empty Hair"
+msgstr "空白毛发"
 
 
 msgctxt "Operator"
@@ -106729,11 +107085,6 @@ msgstr "颜色属性"
 
 
 msgctxt "Operator"
-msgid "Empty Hair"
-msgstr "空白毛发"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "点云"
 
@@ -107201,10 +107552,6 @@ msgid "Fade Geometry"
 msgstr "淡化几何体"
 
 
-msgid "Snap With"
-msgstr "吸附基准点"
-
-
 msgid "Reference Point"
 msgstr "参考点"
 
@@ -107293,6 +107640,10 @@ msgstr "清除 Freestyle 面"
 
 msgid "Specular Lighting"
 msgstr "高光光照"
+
+
+msgid "Snap With"
+msgstr "吸附基准点"
 
 
 msgid "Custom Location"
@@ -107426,6 +107777,10 @@ msgstr "调整灯光半径"
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "调整日光角度"
+
+
+msgid "Distance Min"
+msgstr "距离最小值"
 
 
 msgid "Layer:"
@@ -108931,14 +109286,6 @@ msgid "Coefficient"
 msgstr "系数"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "没有用于粘贴的缓存动画数据"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "没有用于粘贴的选中的函数曲线"
-
-
 msgid "<No ID pointer>"
 msgstr "<缺少 ID 指针>"
 
@@ -109669,14 +110016,6 @@ msgstr "未能找到用于绘制的标注数据"
 
 msgid "Active region not set"
 msgstr "未设置活动范围"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "关键帧复制 / 粘贴缓存中没有已复制的关键帧数据"
-
-
-msgid "No data in buffer to paste"
-msgstr "缓存中无可供粘贴的数据"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -113174,12 +113513,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "动作 '%s' 将不被保存, 创建一个假用户或者存放在NLA堆栈中来保留"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "关键帧复制 / 粘贴缓存中没有已复制的关键帧数据"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "在遮罩模式下无法使用关键帧粘贴"
 
 
+msgid "No data in buffer to paste"
+msgstr "缓存中无可供粘贴的数据"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "在铅笔或遮罩模式下无法使用关键帧粘贴"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "没有用于粘贴的选中的函数曲线"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -114471,16 +114822,12 @@ msgid "Link all to object"
 msgstr "全部关联到物体"
 
 
-msgid "Link inside Collection"
-msgstr "关联内部集合"
+msgid "Move before collection"
+msgstr "移动到集合前"
 
 
 msgid "Move between collections"
 msgstr "在集合之间移动"
-
-
-msgid "Move before collection"
-msgstr "移动到集合前"
 
 
 msgid "Move after collection"
@@ -116079,10 +116426,6 @@ msgstr "曲率"
 
 msgid "Material Borders"
 msgstr "材质边界"
-
-
-msgid "Angle Cached"
-msgstr "已缓存角度"
 
 
 msgid "Custom Camera"
@@ -117738,10 +118081,6 @@ msgid "Line Break"
 msgstr "换行符"
 
 
-msgid "Probability"
-msgstr "慨率"
-
-
 msgid "The string to find in the input string"
 msgstr "输入字符串中要查找的字符串"
 
@@ -118130,10 +118469,6 @@ msgid "The parts of the geometry to be deleted"
 msgstr "要删除的几何部分"
 
 
-msgid "Distance Min"
-msgstr "距离最小值"
-
-
 msgid "Density Max"
 msgstr "密度最大值"
 
@@ -118470,6 +118805,10 @@ msgid "Disabled, Blender was compiled without OpenSubdiv"
 msgstr "已禁用, 未使用OpenSubdiv编译Blender"
 
 
+msgid "Disabled, Blender was compiled without OpenVDB"
+msgstr "已禁用, 未使用OpenVDB编译Blender"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "无法从修改器物体中检索几何体"
 
@@ -118480,10 +118819,6 @@ msgstr "作为实例"
 
 msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
 msgstr "将整个物体输出为单个实例。这允许实例化非几何物体类型"
-
-
-msgid "Disabled, Blender was compiled without OpenVDB"
-msgstr "已禁用, 未使用OpenVDB编译Blender"
 
 
 msgid "Source Position"
