@@ -2929,7 +2929,7 @@ def load(operator, context, filepath="",
                             mod.levels = preview_levels
                             mod.render_levels = render_levels
                             boundary_rule = elem_prop_first(elem_find_first(fbx_sdata, b'BoundaryRule'), default=1)
-                            if boundary_rule == 2:
+                            if boundary_rule == 1:
                                 mod.boundary_smooth = "PRESERVE_CORNERS"
                             else:
                                 mod.boundary_smooth = "ALL"

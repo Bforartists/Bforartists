@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -2755,6 +2755,14 @@ msgid "Count"
 msgstr "Contagem"
 
 
+msgid "Remove"
+msgstr "Remover"
+
+
+msgid "Minimum Distance"
+msgstr "Distância mínima"
+
+
 msgid "Angle"
 msgstr "Ângulo"
 
@@ -3473,10 +3481,6 @@ msgstr "Restituição"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Quantidade de velocidade perdida nas colisões."
-
-
-msgid "Minimum Distance"
-msgstr "Distância mínima"
 
 
 msgid "Friction"
@@ -9516,8 +9520,8 @@ msgid "Small"
 msgstr "Pequenas"
 
 
-msgid "Regular"
-msgstr "Regular"
+msgid "Medium"
+msgstr "Médio(a)"
 
 
 msgid "Large"
@@ -10832,6 +10836,10 @@ msgid "Blend Mode"
 msgstr "Modo de mesclagem"
 
 
+msgid "Regular"
+msgstr "Regular"
+
+
 msgid "Hard Light"
 msgstr "Luz direta"
 
@@ -11529,6 +11537,10 @@ msgstr "Ponto de densidade"
 
 msgid "Step"
 msgstr "Passos"
+
+
+msgid "Shaded"
+msgstr "Sombreamento"
 
 
 msgid "Preserve Details"
@@ -15596,10 +15608,6 @@ msgstr "Alto(a)"
 
 msgid "High quality"
 msgstr "Alta qualidade."
-
-
-msgid "Medium"
-msgstr "Médio(a)"
 
 
 msgid "Medium quality"
@@ -28413,10 +28421,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "Permite definir se há recorte do tamanho da imagem de entrada."
 
 
-msgid "Remove"
-msgstr "Remover"
-
-
 msgid "Has Layers"
 msgstr "Possui camadas"
 
@@ -29640,6 +29644,18 @@ msgstr "Subdividir Malha"
 
 msgid "Trim Curve"
 msgstr "Aparar Curva"
+
+
+msgid "Pack UV Islands"
+msgstr "Empacotar as ilhas UV"
+
+
+msgid "Angle Based"
+msgstr "Usar ângulos como base"
+
+
+msgid "Conformal"
+msgstr "Conformante"
 
 
 msgctxt "NodeTree"
@@ -45414,15 +45430,6 @@ msgstr "Seleciona as faces vinculadas abaixo do cursor."
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Revelar a seleção de faces"
-
-
-msgid "Reveal hidden faces"
-msgstr "Revela as faces ocultas."
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Agarrar clone"
 
@@ -50937,14 +50944,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Método de desdobramento (quando embasados em ângulos, usualmente fornecem melhores resultados do que os conformantes, mas são minimamente mais lentos)."
 
 
-msgid "Angle Based"
-msgstr "Usar ângulos como base"
-
-
-msgid "Conformal"
-msgstr "Conformante"
-
-
 msgid "Map UVs taking vertex position after Subdivision Surface modifier has been applied"
 msgstr "Mapeia as UVs obtendo a posição do vértices após o modificador de subdivisão de superfície ter sido aplicado."
 
@@ -51628,10 +51627,6 @@ msgstr "Número de vezes que os dados de amostra são tomados por quadro."
 
 msgid "Export normals"
 msgstr "Exportar as normais"
-
-
-msgid "Pack UV Islands"
-msgstr "Empacotar as ilhas UV"
 
 
 msgid "Export UVs with packed island"
@@ -54138,10 +54133,6 @@ msgid "Panel Colors"
 msgstr "Cores do painel"
 
 
-msgid "Shaded"
-msgstr "Sombreamento"
-
-
 msgid "Styles"
 msgstr "Estilos"
 
@@ -54501,6 +54492,11 @@ msgstr "Força"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Torção"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Deslizar"
 
 
 msgid "Clone from Paint Slot"
@@ -60623,6 +60619,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "Faixa de sequência para carregar uma ou mais imagens."
 
 
+msgid "Speed Factor"
+msgstr "Fator de velocidade"
+
+
 msgid "Mask Sequence"
 msgstr "Sequência de máscara"
 
@@ -64934,10 +64934,6 @@ msgid "Snap to edges"
 msgstr "Atrai para as arestas."
 
 
-msgid "Snap to faces"
-msgstr "Atrai para as faces."
-
-
 msgid "Snap to volume"
 msgstr "Atrai para os volumes."
 
@@ -65732,10 +65728,6 @@ msgstr "Velocidade da caminhada"
 
 msgid "Base speed for walking and flying"
 msgstr "Velocidade base para caminhada e voo."
-
-
-msgid "Speed Factor"
-msgstr "Fator de velocidade"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -68224,11 +68216,6 @@ msgstr "Limpar canais"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Estender"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Deslizar"
 
 
 msgctxt "Operator"
@@ -71549,14 +71536,6 @@ msgid "Delete envelope control point"
 msgstr "Apaga os pontos de controle do envelope."
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Sem dados de animação na área de transferência para colar."
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "Sem curvas-f selecionadas para as quais colar."
-
-
 msgid "<No ID pointer>"
 msgstr "<Sem ponteiro para o identificador >"
 
@@ -71995,14 +71974,6 @@ msgstr "Não é possível pintar traço."
 
 msgid "Active region not set"
 msgstr "Região ativa não configurada."
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Sem quadros-chave copiados para a área de transferência."
-
-
-msgid "No data in buffer to paste"
-msgstr "Sem dados presentes na área de transferência para colar"
 
 
 msgid "No Grease Pencil data to work on"
@@ -74191,12 +74162,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "A ação '%s' não será salva, por favor, crie um usuário virtual ou armazenamento dentro da pilha de animação não linear para reter a ação no arquivo."
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Sem quadros-chave copiados para a área de transferência."
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "A operação de colar quadros-chave não está disponível para o modo de máscara."
 
 
+msgid "No data in buffer to paste"
+msgstr "Sem dados presentes na área de transferência para colar"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "A operação de colar quadros-chave não está disponível para o modo de lápis de cera ou máscara."
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Sem curvas-f selecionadas para as quais colar."
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"

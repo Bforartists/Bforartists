@@ -136,7 +136,7 @@ class SunPosProperties(PropertyGroup):
 
     object_collection_type: EnumProperty(
         name="Display type",
-        description="Show object group as sun motion",
+        description="Show object collection as sun motion",
         items=(
             ('ANALEMMA', "Analemma", ""),
             ('DIURNAL', "Diurnal", ""),

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -316,10 +316,6 @@ msgstr "MetalRT (Đồ Thí Nghiệm)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "Dùng MetalRT cho dò tia để giảm sử dụng bộ nhớ cho cảnh có đường cong nhiều,Nhưng nó là đồ thí nghiệm và có lẽ kết xuất một số cảnh không đúng"
-
-
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
-msgstr "Hiền thị Giao Điểm Cài Đặt glTF trong Bộ Biện Tâp Bộ Tô Sắc (Danh Bạ Thêm > Ngõ Ra)"
 
 
 msgid "Fribidi Library"
@@ -3506,6 +3502,10 @@ msgid "Length of newly added curves when it is not interpolated from other curve
 msgstr "Độ dài của đường cong mới được thêm khi không nội suy từ các đường khác"
 
 
+msgid "Remove"
+msgstr "Xóa"
+
+
 msgid "Interpolate Length"
 msgstr "Độ Dài Nội Suy"
 
@@ -3520,6 +3520,10 @@ msgstr "Nội Suy Hình Dạng"
 
 msgid "Use shape of the curves in close proximity"
 msgstr "Dùng hình dạng của những đường cong gần xung quanh"
+
+
+msgid "Minimum Distance"
+msgstr "Khoảng Cách Tối Thiểu"
 
 
 msgid "Minimum Length"
@@ -4704,10 +4708,6 @@ msgstr "Độ Nhồi"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Mức vận tốc được mất khi va chạm"
-
-
-msgid "Minimum Distance"
-msgstr "Khoảng Cách Tối Thiểu"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -12463,8 +12463,8 @@ msgid "Small"
 msgstr "Nhỏ"
 
 
-msgid "Regular"
-msgstr "Bình Thường"
+msgid "Medium"
+msgstr "Trung bình"
 
 
 msgid "Large"
@@ -15079,6 +15079,10 @@ msgid "Blend mode"
 msgstr "Chế độ pha trộn"
 
 
+msgid "Regular"
+msgstr "Bình Thường"
+
+
 msgid "Hard Light"
 msgstr "Ánh Sáng Cứng"
 
@@ -16991,10 +16995,6 @@ msgid "Crease Threshold"
 msgstr "Ngưỡng Nhăn"
 
 
-msgid "Angles smaller than this will be treated as creases"
-msgstr "Goc nhỏ hơn giá trị này được xở lý như nhăn"
-
-
 msgid "Invert Vertex Group"
 msgstr "Đảo Nghịch Nhóm Đỉnh"
 
@@ -17037,6 +17037,10 @@ msgstr "Quét Ra Ngoài"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "Một lề cho tránh nét kết thúc ngay lập tức tại cạnh của ảnh"
+
+
+msgid "Shaded"
+msgstr "Được Tô Sắc"
 
 
 msgid "Smooth Tolerance"
@@ -24364,10 +24368,6 @@ msgstr "Cao"
 
 msgid "High quality"
 msgstr "Chất lượng cao"
-
-
-msgid "Medium"
-msgstr "Trung bình"
 
 
 msgid "Medium quality"
@@ -40986,10 +40986,6 @@ msgid "List of object and material crypto IDs to include in matte"
 msgstr "Danh sách của ID mặt nạ mã vật thể và vật liệu để gồm trong mặt nạ"
 
 
-msgid "Remove"
-msgstr "Xóa"
-
-
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Xá vật thể hay vật liệu từ mặt nạ, bằng chọn một màu từ Sự Rút ngõ ra"
 
@@ -43251,6 +43247,10 @@ msgid "Create a point in the point cloud for each selected face corner"
 msgstr "Chế tạo một điểm trong mây điểm cho mỗi góc giác của mặt được chọn"
 
 
+msgid "How the voxel size is specified"
+msgstr "Làm sao xác định cỡ thước của thể tích tử"
+
+
 msgid "UV Sphere"
 msgstr "Hình Cầu UV"
 
@@ -43277,10 +43277,6 @@ msgstr "Điểm đến Đỉnh"
 
 msgid "Points to Volume"
 msgstr "Điểm sang Thể Tích"
-
-
-msgid "How the voxel size is specified"
-msgstr "Làm sao xác định cỡ thước của thể tích tử"
 
 
 msgid "Specify the approximate number of voxels along the diagonal"
@@ -43621,6 +43617,18 @@ msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một hệ số c�
 
 msgid "Find the endpoint positions using a length from the start of each spline"
 msgstr "Tìm điểm vị trí đầu và cuối bằng dùng một chiều dài từ đầu mỗi mẫu cong"
+
+
+msgid "Pack UV Islands"
+msgstr "Gói Đảo UV"
+
+
+msgid "Angle Based"
+msgstr "Cơ Sở Góc"
+
+
+msgid "Conformal"
+msgstr "Bảo Giác"
 
 
 msgctxt "NodeTree"
@@ -45526,6 +45534,10 @@ msgstr "Vật Thể Nghệ Thuật Đường Nét"
 
 msgid "Object line art settings"
 msgstr "Cài đặt vật thể nghệ thuật đường nét"
+
+
+msgid "Angles smaller than this will be treated as creases"
+msgstr "Goc nhỏ hơn giá trị này được xở lý như nhăn"
 
 
 msgid "How to use this object in line art calculation"
@@ -51270,14 +51282,6 @@ msgstr "Xuất cảnh trong bức ảnh hiện tại"
 
 msgid "Export Deformation Bones Only"
 msgstr "Chỉ Xuất Xương Méo Hóa"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "Họa Tiết Dịch (ĐỒ THỬ NGHIỆM)"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "ĐỒ THỬ NGHIỆM: Xuất họa tiết dịch. Nó dùng duôi \"KHR_materials_displacement\" glTF chưa được làm xong"
 
 
 msgid "Color quantization bits"
@@ -65618,15 +65622,6 @@ msgstr "Chọn mặt được liên kết ở dưới con trỏ"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Hiện Mặt Chọn"
-
-
-msgid "Reveal hidden faces"
-msgstr "Hiện các mặt bị ẩn"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Bắt Bản Sao"
 
@@ -68947,6 +68942,10 @@ msgstr "Khắc Đường Cong Nét"
 
 msgid "Sculpt curves using a brush"
 msgstr "Khắc đường cong bằng một bút"
+
+
+msgid "Probability"
+msgstr "Xác Suất"
 
 
 msgctxt "Operator"
@@ -73549,14 +73548,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Phương pháp mở gói (Cơ Sở Góc được kết qủa tốt hơn Bảo Giác nhưng hơi chậm hơn)"
 
 
-msgid "Angle Based"
-msgstr "Cơ Sở Góc"
-
-
-msgid "Conformal"
-msgstr "Bảo Giác"
-
-
 msgid "Use Subdivision Surface"
 msgstr "Dùng Phân Hóa Bề Mặt"
 
@@ -74760,10 +74751,6 @@ msgstr "Xuất Pháp Tuyến"
 
 msgid "Export undeformed mesh vertex coordinates"
 msgstr "Xuất tọa đồ mạng lưới không bị méo hó"
-
-
-msgid "Pack UV Islands"
-msgstr "Gói Đảo UV"
 
 
 msgid "Export UVs with packed island"
@@ -79199,10 +79186,6 @@ msgid "Icon Colors"
 msgstr "Màu Biểu Tượng"
 
 
-msgid "Shaded"
-msgstr "Được Tô Sắc"
-
-
 msgid "Styles"
 msgstr "Phong Cách"
 
@@ -79747,6 +79730,11 @@ msgstr "Sức Lực"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Xoắn"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Trượt"
 
 
 msgid "Clone from Paint Slot"
@@ -81628,14 +81616,6 @@ msgstr "Bộ Ghép Toàn Khung"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Bật tùy chọn cho chế độ thực hành bộ ghép toàn khung (không dùng ô, giảm thời gian thực hành và bớt sử dụng bộ nhớ)"
-
-
-msgid "New Curves Type"
-msgstr "Kiểu Đường Cong Mới"
-
-
-msgid "Enable the new curves data type in the UI"
-msgstr "Bật kiểu dữ liệu đường cong mới trong giao diện"
 
 
 msgid "New Point Cloud Type"
@@ -88645,6 +88625,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "Đoạn trình tự cho nhập một ảnh trở lên"
 
 
+msgid "Speed Factor"
+msgstr "Hệ Số Tốc Độ"
+
+
 msgid "Mask Sequence"
 msgstr "Trình Tự Mặt Nạ"
 
@@ -92847,10 +92831,6 @@ msgid "Boolean Value"
 msgstr "Giá Trị Bool"
 
 
-msgid "Byte Color Value"
-msgstr "Giá Trị Màu Byte"
-
-
 msgid "Float Value"
 msgstr "Giá Trị Dấu Phẫy Động"
 
@@ -95316,10 +95296,6 @@ msgid "Snap to edges"
 msgstr "Hút dính đến cạnh"
 
 
-msgid "Snap to faces"
-msgstr "Hút dính đến mặt"
-
-
 msgid "Snap to volume"
 msgstr "Hút dính đến thể tích"
 
@@ -95650,14 +95626,6 @@ msgstr "Dùng Hút Dính cho Phóng To"
 
 msgid "Scale is affected by snapping settings"
 msgstr "Phóng to được ảnh hưởng bằng cài đặt hút dính"
-
-
-msgid "Project onto Self"
-msgstr "Chiếu Trên Một Mình"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "Hút dính đến một mình (Chỉ Chế Độ Biên Tập)"
 
 
 msgid "Snap to strip edges or current frame"
@@ -97498,10 +97466,6 @@ msgstr "Tốc Độ Đi Bộ"
 
 msgid "Base speed for walking and flying"
 msgstr "Tốc độ cơ sở cho đi bộ và bay"
-
-
-msgid "Speed Factor"
-msgstr "Hệ Số Tốc Độ"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -99518,12 +99482,12 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "và trình điều khiển NVIDIA phiên bản 470 hay mới hơn"
 
 
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "Yêu cầu GPU AMD riêng biệt có kiến trúc RDNA"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "và trình điều khiển AMD Pro 21.Q4 hay mới hơn"
+
+
+msgid "and AMD driver version 22.10 or newer"
+msgstr "và trình điều khiển AMD phiên bản 22.10 hay mới hơn"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -99532,10 +99496,6 @@ msgstr "Yêu Cầu Silic Hãng Táo và hệ điều hành MacOS 12.2 trở lên
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "hoặc AMD với hệ điều hành MacOS 12.3 trở lên"
-
-
-msgid "and AMD driver version 22.10 or newer"
-msgstr "và trình điều khiển AMD phiên bản 22.10 hay mới hơn"
 
 
 msgid "Noise Threshold"
@@ -103252,11 +103212,6 @@ msgstr "Kéo Ra"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "Trượt"
-
-
-msgctxt "Operator"
 msgid "Delete Duplicate Frames"
 msgstr "Xoá Bức Ảnh Được Sao Chép"
 
@@ -104909,11 +104864,6 @@ msgstr "SVG là Bút Sáp"
 
 
 msgctxt "Operator"
-msgid "Wavefront (.obj) (experimental)"
-msgstr "Wavefront (.obj) (đồ thí nghiệm)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Kết Xuất Ảnh"
 
@@ -105623,6 +105573,11 @@ msgstr "Vòng Tròn NURBS"
 msgctxt "Operator"
 msgid "Path"
 msgstr "Đường Cong"
+
+
+msgctxt "Operator"
+msgid "Empty Hair"
+msgstr "Tóc Rỗng"
 
 
 msgctxt "Operator"
@@ -106544,11 +106499,6 @@ msgstr "Đặc Điểm Màu"
 
 
 msgctxt "Operator"
-msgid "Empty Hair"
-msgstr "Tóc Rỗng"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "Mây Điểm"
 
@@ -107016,10 +106966,6 @@ msgid "Fade Geometry"
 msgstr "Phai Hình Dạng"
 
 
-msgid "Snap With"
-msgstr "Hút Dính Với"
-
-
 msgid "Reference Point"
 msgstr "Điểm Tham Chiếu"
 
@@ -107108,6 +107054,10 @@ msgstr "Xóa Mặt Phong Cách Tự Do"
 
 msgid "Specular Lighting"
 msgstr "Ánh Sáng Cao Quang"
+
+
+msgid "Snap With"
+msgstr "Hút Dính Với"
 
 
 msgid "Custom Location"
@@ -107241,6 +107191,10 @@ msgstr "Chỉnh Bán Kính Đèn"
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "Chỉnh Góc Nắng Mặt Trời"
+
+
+msgid "Distance Min"
+msgstr "Khoảng Cách Cực Tiểu"
 
 
 msgid "Layer:"
@@ -108746,14 +108700,6 @@ msgid "Coefficient"
 msgstr "Hệ Số"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Không có dữ liệu họat hình trong đệm để dán"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "Chưa chọn Cong-F nào để dán vào"
-
-
 msgid "<No ID pointer>"
 msgstr "<Không con trỏ ID>"
 
@@ -109484,14 +109430,6 @@ msgstr "Tìm dữ liệu Ghi Chú để vẽ vào đã thất bại"
 
 msgid "Active region not set"
 msgstr "Chưa được đặt vùng hoạt động"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Không chép được bức ảnh mẫu đến đệm chép/dán bức ảnh mẫu"
-
-
-msgid "No data in buffer to paste"
-msgstr "Không có dữ liệu trong đệm để dán"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -113001,12 +112939,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "Sẽ không lưu hành động '%s', chế tạo Người Dùng Giả hay Cất Chứa trong Xếp Đống NLA cho duy trì"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Không chép được bức ảnh mẫu đến đệm chép/dán bức ảnh mẫu"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "Không thể dán bức ảnh trong chế độ mặt nạ"
 
 
+msgid "No data in buffer to paste"
+msgstr "Không có dữ liệu trong đệm để dán"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "Không thể dán bức ảnh trong chế độ bút sáp hay mặt nạ"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Chưa chọn Cong-F nào để dán vào"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -114298,16 +114248,12 @@ msgid "Link all to object"
 msgstr "Liên kết đến hết vật thể"
 
 
-msgid "Link inside Collection"
-msgstr "Liên kết trong Sưu Tập"
+msgid "Move before collection"
+msgstr "Truyền đến phía trước sưu tập"
 
 
 msgid "Move between collections"
 msgstr "Truyền giữa sưu tập"
-
-
-msgid "Move before collection"
-msgstr "Truyền đến phía trước sưu tập"
 
 
 msgid "Move after collection"
@@ -115884,10 +115830,6 @@ msgstr "Độ Cong"
 
 msgid "Material Borders"
 msgstr "Biên Giới Vật Liệu"
-
-
-msgid "Angle Cached"
-msgstr "Được Chứa Góc"
 
 
 msgid "Custom Camera"
@@ -117543,10 +117485,6 @@ msgid "Line Break"
 msgstr "Ngắt Dòng"
 
 
-msgid "Probability"
-msgstr "Xác Suất"
-
-
 msgid "The string to find in the input string"
 msgstr "Xâu cho tìm trong xâu ngõ vào"
 
@@ -117935,10 +117873,6 @@ msgid "The parts of the geometry to be deleted"
 msgstr "Các bộ phận của hình dạng để xóa"
 
 
-msgid "Distance Min"
-msgstr "Khoảng Cách Cực Tiểu"
-
-
 msgid "Density Max"
 msgstr "Tỉ Trọng Cực Đại"
 
@@ -118275,6 +118209,10 @@ msgid "Disabled, Blender was compiled without OpenSubdiv"
 msgstr "Đã tắt, Blender được biên dịch thiếu OpenSubdiv"
 
 
+msgid "Disabled, Blender was compiled without OpenVDB"
+msgstr "Đã tắt, Blender được biên dịch thiếu OpenVDB"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "Hình dạng không thể rút từ vật thể cụ sửa đổi"
 
@@ -118285,10 +118223,6 @@ msgstr "Như Thực Thể"
 
 msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
 msgstr "Xuất toàn bộ vất thể bằng một thực thể. Cai này cho thực thể hóa các loại vật thể không phải là hình dạng"
-
-
-msgid "Disabled, Blender was compiled without OpenVDB"
-msgstr "Đã tắt, Blender được biên dịch thiếu OpenVDB"
 
 
 msgid "Source Position"
