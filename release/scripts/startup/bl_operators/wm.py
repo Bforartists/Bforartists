@@ -18,6 +18,7 @@ from bpy.props import (
     FloatVectorProperty,
 )
 from bpy.app.translations import pgettext_iface as iface_
+from bpy.app.translations import pgettext_tip as tip_
 
 
 def _rna_path_prop_search_for_context_impl(context, edit_text, unique_attrs):
@@ -1060,20 +1061,20 @@ class WM_OT_url_open_preset(Operator):
     # Allow dynamically extending.
     preset_items = [
         # Dynamic URL's.
-        (('BUG', "Bug",
-          "Report a bug with pre-filled version information"),
+        (('BUG', iface_("Bug"),
+          tip_("Report a bug with pre-filled version information")),
          _url_from_bug),
-        (('BUG_ADDON', "Add-on Bug",
-          "Report a bug in an add-on"),
+        (('BUG_ADDON', iface_("Add-on Bug"),
+          tip_("Report a bug in an add-on")),
          _url_from_bug_addon),
-        (('RELEASE_NOTES', "Release Notes",
-          "Read about what's new in this version of Blender"),
+        (('RELEASE_NOTES', iface_("Release Notes"),
+          tip_("Read about what's new in this version of Blender")),
          _url_from_release_notes),
-        (('MANUAL', "User Manual",
-          "The reference manual for this version of Blender"),
+        (('MANUAL', iface_("User Manual"),
+          tip_("The reference manual for this version of Blender")),
          _url_from_manual),
-        (('API', "Python API Reference",
-          "The API reference manual for this version of Blender"),
+        (('API', iface_("Python API Reference"),
+          tip_("The API reference manual for this version of Blender")),
          _url_from_api),
 
 # BFA - we are not the Blender money collectors. Turned off the usual links.

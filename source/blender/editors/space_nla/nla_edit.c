@@ -63,7 +63,8 @@ void ED_nla_postop_refresh(bAnimContext *ac)
 {
   ListBase anim_data = {NULL, NULL};
   bAnimListElem *ale;
-  short filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA | ANIMFILTER_FOREDIT);
+  short filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA | ANIMFILTER_FOREDIT |
+                  ANIMFILTER_FCURVESONLY);
 
   /* get blocks to work on */
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
@@ -110,7 +111,7 @@ static int nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the AnimData blocks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA | ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* if no blocks, popup error? */
@@ -238,7 +239,7 @@ bool nlaedit_disable_tweakmode(bAnimContext *ac, bool do_solo)
   int filter;
 
   /* get a list of the AnimData blocks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ANIMDATA | ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* if no blocks, popup error? */
@@ -345,7 +346,8 @@ static void get_nlastrip_extents(bAnimContext *ac, float *min, float *max, const
   bool found_bounds = false;
 
   /* get data to filter */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_NODUPLIS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_NODUPLIS |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* set large values to try to override */
@@ -463,7 +465,8 @@ static bool nla_channels_get_selected_extents(bAnimContext *ac, float *r_min, fl
   short found = 0;
 
   /* get all items - we need to do it this way */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* loop through all channels, finding the first one that's selected */
@@ -681,7 +684,8 @@ static int nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
   /* get a list of the editable tracks being shown in the NLA
    * - this is limited to active ones for now, but could be expanded to
    */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ACTIVE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ACTIVE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   items = ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   if (items == 0) {
@@ -798,7 +802,8 @@ static int nlaedit_add_transition_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each track, find pairs of strips to add transitions to */
@@ -932,7 +937,7 @@ static int nlaedit_add_sound_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* get a list of the editable tracks being shown in the NLA */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_SEL |
-            ANIMFILTER_FOREDIT);
+            ANIMFILTER_FOREDIT | ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each track, add sound clips if it belongs to a speaker */
@@ -1021,7 +1026,8 @@ static int nlaedit_add_meta_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each track, find pairs of strips to add transitions to */
@@ -1097,7 +1103,8 @@ static int nlaedit_remove_meta_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each track, find pairs of strips to add transitions to */
@@ -1167,7 +1174,8 @@ static int nlaedit_duplicate_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* duplicate strips in tracks starting from the last one so that we're
@@ -1294,7 +1302,8 @@ static int nlaedit_delete_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, delete all selected strips */
@@ -1457,7 +1466,8 @@ static int nlaedit_split_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, split all selected strips into two strips */
@@ -1545,7 +1555,8 @@ static int nlaedit_toggle_mute_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* go over all selected strips */
@@ -1614,7 +1625,8 @@ static int nlaedit_swap_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* consider each track in turn */
@@ -1796,7 +1808,8 @@ static int nlaedit_move_up_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* since we're potentially moving strips from lower tracks to higher tracks, we should
@@ -1887,7 +1900,8 @@ static int nlaedit_move_down_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* loop through the tracks in normal order, since we're pushing strips down,
@@ -1979,7 +1993,8 @@ static int nlaedit_sync_actlen_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   if (active_only) {
     filter |= ANIMFILTER_ACTIVE;
   }
@@ -2074,7 +2089,8 @@ static int nlaedit_make_single_user_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* Ensure that each action used only has a single user
@@ -2182,7 +2198,8 @@ static int nlaedit_apply_scale_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, apply scale of all selected strips */
@@ -2292,7 +2309,8 @@ static int nlaedit_clear_scale_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, reset scale of all selected strips */
@@ -2389,7 +2407,8 @@ static int nlaedit_snap_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* get some necessary vars */
@@ -2583,7 +2602,8 @@ static int nla_fmodifier_add_exec(bContext *C, wmOperator *op)
   }
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, add the specified modifier to all selected strips */
@@ -2694,7 +2714,8 @@ static int nla_fmodifier_copy_exec(bContext *C, wmOperator *op)
   ANIM_fmodifiers_copybuf_free();
 
   /* get a list of the editable tracks being shown in the NLA */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
+            ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, add the specified modifier to all selected strips */
@@ -2773,7 +2794,7 @@ static int nla_fmodifier_paste_exec(bContext *C, wmOperator *op)
 
   /* get a list of the editable tracks being shown in the NLA */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT |
-            ANIMFILTER_NODUPLIS);
+            ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   /* for each NLA-Track, add the specified modifier to all selected strips */
