@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -57,6 +57,10 @@ msgstr "המצוע"
 
 msgid "Random"
 msgstr "יארקא"
+
+
+msgid "Remove"
+msgstr "רסה"
 
 
 msgid "Vertex Color"
@@ -366,10 +370,6 @@ msgstr "יוליע"
 
 msgid "Color Key"
 msgstr "עבצ"
-
-
-msgid "Remove"
-msgstr "רסה"
 
 
 msgid "Hue Saturation Value"

@@ -14,7 +14,15 @@ Otherwise you may call this script directly, for example:
 
 import os
 import sys
+
 import subprocess
+import argparse
+
+from typing import (
+    List,
+    Tuple,
+    Optional,
+)
 
 VERSION_MIN = (1, 6, 0)
 VERSION_MAX_RECOMMENDED = (1, 6, 0)
@@ -33,17 +41,17 @@ ignore_files = {
 }
 
 
-def compute_paths(paths, use_default_paths):
+def compute_paths(paths: List[str], use_default_paths: bool) -> List[str]:
     # Optionally pass in files to operate on.
     if use_default_paths:
-        paths = (
+        paths = [
             "build_files",
             "intern",
             "release",
             "doc",
             "source",
             "tests",
-        )
+        ]
     else:
         paths = [
             f for f in paths
@@ -55,7 +63,7 @@ def compute_paths(paths, use_default_paths):
     return paths
 
 
-def source_files_from_git(paths, changed_only):
+def source_files_from_git(paths: List[str], changed_only: bool) -> List[str]:
     if changed_only:
         cmd = ("git", "diff", "HEAD", "--name-only", "-z", "--", *paths)
     else:
@@ -64,11 +72,10 @@ def source_files_from_git(paths, changed_only):
     return [f.decode('ascii') for f in files]
 
 
-def autopep8_ensure_version(autopep8_format_cmd_argument):
+def autopep8_ensure_version(autopep8_format_cmd_argument: str) -> Optional[Tuple[int, int, int]]:
     global AUTOPEP8_FORMAT_CMD
     autopep8_format_cmd = None
     version_output = None
-    version = None
     # Attempt to use `--autopep8-command` passed in from `make format`
     # so the autopep8 distributed with Blender will be used.
     for is_default in (True, False):
@@ -92,16 +99,16 @@ def autopep8_ensure_version(autopep8_format_cmd_argument):
         AUTOPEP8_FORMAT_CMD = autopep8_format_cmd
         break
     if version_output is not None:
-        version = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
-    if version is not None:
-        version = version.split("-")[0]
-        version = tuple(int(n) for n in version.split("."))
-        version = (version + (0, 0, 0))[:3]  # Ensure exactly 3 numbers.
-        print("Using %s (%d.%d.%d)..." % (AUTOPEP8_FORMAT_CMD, version[0], version[1], version[2]))
-    return version
+        version_str = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
+    if version_str is not None:
+        # Ensure exactly 3 numbers.
+        major, minor, patch = (tuple(int(n) for n in version_str.split("-")[0].split(".")) + (0, 0, 0))[0:3]
+        print("Using %s (%d.%d.%d)..." % (AUTOPEP8_FORMAT_CMD, major, minor, patch))
+        return major, minor, patch
+    return None
 
 
-def autopep8_format(files):
+def autopep8_format(files: List[str]) -> bytes:
     cmd = [
         AUTOPEP8_FORMAT_CMD,
         # Operate on all directories recursively.
@@ -119,8 +126,7 @@ def autopep8_format(files):
     return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
-def argparse_create():
-    import argparse
+def argparse_create() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
         description="Format Python source code.",
@@ -156,7 +162,7 @@ def argparse_create():
     return parser
 
 
-def main():
+def main() -> None:
     args = argparse_create().parse_args()
 
     version = autopep8_ensure_version(args.autopep8_command)

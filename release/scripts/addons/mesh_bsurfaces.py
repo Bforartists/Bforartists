@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 8, 0),
+    "version": (1, 8, 1),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -2517,7 +2517,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
                           self.average_gp_segment_length
                         )
                 for t in range(2):
-                    bpy.ops.curve.subdivide('INVOKE_REGION_WIN', number_cuts=segments)
+                    bpy.ops.curve.subdivide('INVOKE_REGION_WIN', number_cuts=int(segments))
 
                 # Delete the other vertices and make it non-cyclic to
                 # keep only the needed verts of the "closing segment"

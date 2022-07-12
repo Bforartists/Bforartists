@@ -303,9 +303,9 @@ class OBJECT_OT_particletrace(Operator):
                 spline = tracer[0].splines.new('BEZIER')
 
                 # add point to spline based on step size
-                spline.bezier_points.add((x.lifetime - 1) // particle_step)
+                spline.bezier_points.add(int((x.lifetime - 1) // particle_step))
                 for t in list(range(int(x.lifetime))):
-                    bpy.context.scene.frame_set(t + x.birth_time)
+                    bpy.context.scene.frame_set(int(t + x.birth_time))
 
                     if not t % particle_step:
                         p = spline.bezier_points[t // particle_step]
