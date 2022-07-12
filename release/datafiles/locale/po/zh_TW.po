@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -317,10 +317,6 @@ msgstr "MetalRT (測試版本)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT 用於光跡追蹤運算時, 在大量使用曲線的場景可減少記憶體用量並在特定條件下有較佳效能。不過此支援功能目前還在測試階段並且某些場景可能無法正確算繪"
-
-
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
-msgstr "在著色器編輯器中顯示 glTF 設定節點 (選單 添加 > 輸出)"
 
 
 msgid "Fribidi Library"
@@ -2991,6 +2987,14 @@ msgid "Count"
 msgstr "計數"
 
 
+msgid "Remove"
+msgstr "移除"
+
+
+msgid "Minimum Distance"
+msgstr "最小距離"
+
+
 msgid "Grow or shrink curves by changing their size uniformly instead of using trimming or extrapolation"
 msgstr "透過均一地改變尺寸來擴大或收縮曲線, 而不是修剪或延伸曲線"
 
@@ -3821,10 +3825,6 @@ msgstr "碰撞應該迭代的次數。(較高代表品質比較好，但速度�
 
 msgid "Amount of velocity lost on collision"
 msgstr "碰撞時速度的喪失量"
-
-
-msgid "Minimum Distance"
-msgstr "最小距離"
 
 
 msgid "Friction"
@@ -9505,8 +9505,8 @@ msgid "Small"
 msgstr "小"
 
 
-msgid "Regular"
-msgstr "一般"
+msgid "Medium"
+msgstr "中"
 
 
 msgid "Large"
@@ -10617,6 +10617,10 @@ msgid "Blend Mode"
 msgstr "混合模式"
 
 
+msgid "Regular"
+msgstr "一般"
+
+
 msgid "Frames"
 msgstr "框幀"
 
@@ -11097,6 +11101,10 @@ msgstr "點密度"
 
 msgid "Step"
 msgstr "步"
+
+
+msgid "Shaded"
+msgstr "光影"
 
 
 msgid "Boundaries"
@@ -14636,10 +14644,6 @@ msgstr "高"
 
 msgid "High quality"
 msgstr "高品質"
-
-
-msgid "Medium"
-msgstr "中"
 
 
 msgid "Medium quality"
@@ -24261,10 +24265,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "是否要裁切輸入影像的大小"
 
 
-msgid "Remove"
-msgstr "移除"
-
-
 msgid "Placeholder"
 msgstr "佔位子"
 
@@ -25312,6 +25312,14 @@ msgstr "對齊 Y"
 
 msgid "Subdivide Mesh"
 msgstr "細分網格"
+
+
+msgid "Angle Based"
+msgstr "基於角度"
+
+
+msgid "Conformal"
+msgstr "共形"
 
 
 msgctxt "NodeTree"
@@ -37042,15 +37050,6 @@ msgstr "選取游標下連結的面"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "面選取揭開"
-
-
-msgid "Reveal hidden faces"
-msgstr "揭開隱藏的面"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "抓取拓製"
 
@@ -41983,14 +41982,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "拆解方法 (「基於角度」通常比「共形」有更佳的結果，但確實有點緩慢)"
 
 
-msgid "Angle Based"
-msgstr "基於角度"
-
-
-msgid "Conformal"
-msgstr "共形"
-
-
 msgctxt "Operator"
 msgid "Weld"
 msgstr "焊接"
@@ -44254,10 +44245,6 @@ msgid "Panel Colors"
 msgstr "面板色彩"
 
 
-msgid "Shaded"
-msgstr "光影"
-
-
 msgid "Styles"
 msgstr "樣式"
 
@@ -44360,6 +44347,11 @@ msgstr "插補"
 msgctxt "Operator"
 msgid "Thickness"
 msgstr "厚度"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "滑動"
 
 
 msgid "Default tools for particle mode"
@@ -48758,6 +48750,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "載入一個或多個影像的序段片段"
 
 
+msgid "Speed Factor"
+msgstr "速度係數"
+
+
 msgid "Mask Sequence"
 msgstr "遮罩序段"
 
@@ -52547,10 +52543,6 @@ msgid "Snap to edges"
 msgstr "吸附邊線"
 
 
-msgid "Snap to faces"
-msgstr "吸附面"
-
-
 msgid "Snap to volume"
 msgstr "吸附體積"
 
@@ -53189,10 +53181,6 @@ msgstr "行走速度"
 
 msgid "Base speed for walking and flying"
 msgstr "步行與飛行的基礎速度"
-
-
-msgid "Speed Factor"
-msgstr "速度係數"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -54935,11 +54923,6 @@ msgstr "在所選標記之間"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "擴展"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "滑動"
 
 
 msgctxt "Operator"
@@ -56996,14 +56979,6 @@ msgid "Delete envelope control point"
 msgstr "刪除封套控制點"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "緩衝中無動畫資料可供貼上"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "無選取的 F 曲線可貼入"
-
-
 msgid "<No ID pointer>"
 msgstr "<無 ID 指標>"
 
@@ -58827,6 +58802,10 @@ msgstr "作用中鍵幀"
 
 msgid "Could not find current NLA Track"
 msgstr "找不到目前的 NLA 軌道"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "無選取的 F 曲線可貼入"
 
 
 msgid "Cannot activate a file selector, one already open"

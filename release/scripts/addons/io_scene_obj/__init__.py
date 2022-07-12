@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
-    "name": "Wavefront OBJ format",
+    "name": "Wavefront OBJ format (legacy)",
     "author": "Campbell Barton, Bastien Montagne",
     "version": (3, 9, 0),
     "blender": (3, 0, 0),

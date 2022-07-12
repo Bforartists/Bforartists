@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1783,6 +1783,10 @@ msgid "Text"
 msgstr "Testua"
 
 
+msgid "Speed Factor"
+msgstr "Azelerazio-faktorea"
+
+
 msgid "Gray Scale"
 msgstr "Gris-eskala"
 
@@ -1801,10 +1805,6 @@ msgstr "Alfabetikoki Ordenatu"
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "Speed Factor"
-msgstr "Azelerazio-faktorea"
 
 
 msgctxt "WindowManager"

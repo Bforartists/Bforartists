@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -814,6 +814,14 @@ msgid "Has Secondary Color"
 msgstr "Arabellek rengini yapıştır"
 
 
+msgid "Remove"
+msgstr "Çıkar"
+
+
+msgid "Minimum Distance"
+msgstr "Falloff Mesafesi"
+
+
 msgid "Angle"
 msgstr "Açı"
 
@@ -1024,10 +1032,6 @@ msgstr "Fabrika Ayarlarını Yükle"
 
 msgid "Restitution"
 msgstr "Çözünürlük"
-
-
-msgid "Minimum Distance"
-msgstr "Falloff Mesafesi"
 
 
 msgid "Self Minimum Distance"
@@ -3770,6 +3774,10 @@ msgstr "Fark Değiştirici Ekle"
 
 msgid "Point Density"
 msgstr "Nokta Ekle"
+
+
+msgid "Shaded"
+msgstr "Gölgeli "
 
 
 msgid "Mirror Modifier"
@@ -8707,10 +8715,6 @@ msgid "Crop Image Size"
 msgstr "Arkaplan resminin boyut (genişlik) ayarı"
 
 
-msgid "Remove"
-msgstr "Çıkar"
-
-
 msgid "Auto-Refresh"
 msgstr "Otomatik Yenile"
 
@@ -9177,6 +9181,10 @@ msgstr "Düzen"
 
 msgid "Align Y"
 msgstr "Düzen"
+
+
+msgid "Angle Based"
+msgstr "Çevirme Açısı: "
 
 
 msgid "Label Font Size"
@@ -14900,15 +14908,6 @@ msgstr "Bağlı Malzemeler:"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Anahtarları Seç"
-
-
-msgid "Reveal hidden faces"
-msgstr "Yalnızca Görülen Yüzey"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Taşı"
 
@@ -16923,10 +16922,6 @@ msgid "Unwrap"
 msgstr "Açılım"
 
 
-msgid "Angle Based"
-msgstr "Çevirme Açısı: "
-
-
 msgctxt "Operator"
 msgid "Reset View"
 msgstr "Görünüşü Sıfırla"
@@ -17830,10 +17825,6 @@ msgid "Panel Colors"
 msgstr "Panel Hizalama"
 
 
-msgid "Shaded"
-msgstr "Gölgeli "
-
-
 msgid "Text Style"
 msgstr "Özellik Seti"
 
@@ -17863,6 +17854,11 @@ msgstr "Tam Doğrultu"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Çember"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Vertex Slide"
 
 
 msgid "Pose Options"
@@ -21253,10 +21249,6 @@ msgid "Snap to edges"
 msgstr "Izgarayı yakala:"
 
 
-msgid "Snap to faces"
-msgstr "Izgarayı yakala:"
-
-
 msgid "Snap to volume"
 msgstr "Izgarayı yakala:"
 
@@ -21992,11 +21984,6 @@ msgstr "Seçili İşaretler arasında"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Tahmini Uzat"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Vertex Slide"
 
 
 msgctxt "Operator"
@@ -22924,10 +22911,6 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "Nesneyi bir Gruba ekle"
 
 
-msgid "No selected F-Curves to paste into"
-msgstr "Seçili eğrileri birleştir"
-
-
 msgid "<Missing ID block>"
 msgstr "Bağlama verileri eksik."
 
@@ -23713,6 +23696,10 @@ msgstr "Aktif F-Eğrisi"
 
 msgid "Active Keyframe"
 msgstr "Aktif Anahtarkare"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Seçili eğrileri birleştir"
 
 
 msgid "File Path:"
