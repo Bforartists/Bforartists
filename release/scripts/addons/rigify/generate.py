@@ -76,7 +76,7 @@ class Generator(base_generate.BaseGenerator):
             target_rig.display_type = 'WIRE'
 
         # If the object is already added to the scene, switch to its collection
-        if target_rig.name in self.context.scene.collection.all_objects:
+        if target_rig in list(self.context.scene.collection.all_objects):
             self.__switch_to_usable_collection(target_rig)
         else:
             # Otherwise, add to the selected collection or the metarig collection if unusable
@@ -117,11 +117,14 @@ class Generator(base_generate.BaseGenerator):
         wgts_group_name = "WGTS_" + self.obj.name
         old_collection = bpy.data.collections.get(wgts_group_name)
 
+        if old_collection.library:
+            old_collection = None
+
         if not old_collection:
             # Update the old 'Widgets' collection
             legacy_collection = bpy.data.collections.get('Widgets')
 
-            if legacy_collection and wgts_group_name in legacy_collection.objects:
+            if legacy_collection and wgts_group_name in legacy_collection.objects and not legacy_collection.library:
                 legacy_collection.name = wgts_group_name
                 old_collection = legacy_collection
 

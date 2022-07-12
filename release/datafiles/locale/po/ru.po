@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -3286,6 +3286,14 @@ msgid "Count"
 msgstr "Количество"
 
 
+msgid "Remove"
+msgstr "Удалить"
+
+
+msgid "Minimum Distance"
+msgstr "Мин. расстояние"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "Настройки кисти Grease Pencil"
 
@@ -4400,10 +4408,6 @@ msgstr "Восстановление"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Величина скорости, потерянной при столкновениях"
-
-
-msgid "Minimum Distance"
-msgstr "Мин. расстояние"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -11991,8 +11995,8 @@ msgid "Small"
 msgstr "Маленькие"
 
 
-msgid "Regular"
-msgstr "Обычный"
+msgid "Medium"
+msgstr "Средне"
 
 
 msgid "Large"
@@ -14559,6 +14563,10 @@ msgid "Blend mode"
 msgstr "Режим смеси"
 
 
+msgid "Regular"
+msgstr "Обычный"
+
+
 msgid "Hard Light"
 msgstr "Жёсткий свет"
 
@@ -16199,10 +16207,6 @@ msgid "Crease Threshold"
 msgstr "Порог складки"
 
 
-msgid "Angles smaller than this will be treated as creases"
-msgstr "Углы меньше этого значения будут рассматриваться как складки"
-
-
 msgid "Invert Vertex Group"
 msgstr "Инвертировать группу вершин"
 
@@ -16245,6 +16249,10 @@ msgstr "Вылет за кадр"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "Отступ для предотвращения резкого окончания штрихов у края изображения"
+
+
+msgid "Shaded"
+msgstr "С затенением"
 
 
 msgid "Generate strokes from the objects in this collection"
@@ -22108,10 +22116,6 @@ msgstr "Высоко"
 
 msgid "High quality"
 msgstr "Высокое качество"
-
-
-msgid "Medium"
-msgstr "Средне"
 
 
 msgid "Medium quality"
@@ -35983,10 +35987,6 @@ msgid "List of object and material crypto IDs to include in matte"
 msgstr "Список крипто-идентификаторов объектов и материалов, включённых в матте"
 
 
-msgid "Remove"
-msgstr "Удалить"
-
-
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Удалить объект или материал из матте с помощью выбора цвета на выходе выбора"
 
@@ -37202,6 +37202,18 @@ msgstr "Выровнять по Y"
 
 msgid "Font of the text. Falls back to the UI font by default"
 msgstr "Шрифт текста. По умолчанию используется шрифт интерфейса"
+
+
+msgid "Pack UV Islands"
+msgstr "Упаковать UV-острова"
+
+
+msgid "Angle Based"
+msgstr "На основе углов"
+
+
+msgid "Conformal"
+msgstr "Согласованно"
 
 
 msgctxt "NodeTree"
@@ -38547,6 +38559,10 @@ msgstr "Модификаторы объекта Grease Pencil"
 
 msgid "Collection of object grease pencil modifiers"
 msgstr "Коллекция модификаторов объекта Grease Pencil"
+
+
+msgid "Angles smaller than this will be treated as creases"
+msgstr "Углы меньше этого значения будут рассматриваться как складки"
 
 
 msgid "Object Modifiers"
@@ -43417,14 +43433,6 @@ msgstr "Использовать текущий кадр"
 
 msgid "Export the scene in the current animation frame"
 msgstr "Экспортировать сцену на текущем кадре анимации"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "Текстуры смещения (экспериментально)"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "Экспериментально: экспортировать текстуры смещения. Использует незавершённое расширение glTF «KHR_materials_displacement»"
 
 
 msgid "Draco mesh compression"
@@ -54561,15 +54569,6 @@ msgstr "Выделить связанные грани под курсором"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Отобразить скрытые выделенные грани"
-
-
-msgid "Reveal hidden faces"
-msgstr "Отобразить скрытые грани"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Клонировать с захватом"
 
@@ -60570,14 +60569,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Метод развёртки (развёртка на основе углов обычно даёт результат лучше, чем согласованная развёртка, но немного медленнее)"
 
 
-msgid "Angle Based"
-msgstr "На основе углов"
-
-
-msgid "Conformal"
-msgstr "Согласованно"
-
-
 msgid "Map UVs taking vertex position after Subdivision Surface modifier has been applied"
 msgstr "Разместить UV с учётом положения вершин после применения модификатора подразделения поверхности"
 
@@ -61394,10 +61385,6 @@ msgstr "Сколько раз за кадр данные объекта буду
 
 msgid "Export normals"
 msgstr "Экспортировать нормали"
-
-
-msgid "Pack UV Islands"
-msgstr "Упаковать UV-острова"
 
 
 msgid "Export UVs with packed island"
@@ -64560,10 +64547,6 @@ msgid "Icon Colors"
 msgstr "Цвета иконок"
 
 
-msgid "Shaded"
-msgstr "С затенением"
-
-
 msgid "Styles"
 msgstr "Стили"
 
@@ -65004,6 +64987,11 @@ msgstr "Интенсивность"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Скручивание"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Передвинуть"
 
 
 msgid "Clone from Paint Slot"
@@ -72245,6 +72233,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "Дорожка видеоредактора, загружающая одно или более изображений"
 
 
+msgid "Speed Factor"
+msgstr "Множитель скорости"
+
+
 msgid "Mask Sequence"
 msgstr "Последовательность маски"
 
@@ -77606,10 +77598,6 @@ msgid "Snap to edges"
 msgstr "Привязка к рёбрам"
 
 
-msgid "Snap to faces"
-msgstr "Привязка к граням"
-
-
 msgid "Snap to volume"
 msgstr "Привязка к объёму"
 
@@ -77892,14 +77880,6 @@ msgstr "Использовать привязку для масштабиров�
 
 msgid "Scale is affected by snapping settings"
 msgstr "Настройки привязки виляют на масштабирование"
-
-
-msgid "Project onto Self"
-msgstr "Проецировать на себя"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "Привязываться к самому себе (в режиме редактирования)"
 
 
 msgid "Use Snap for Translation"
@@ -79128,10 +79108,6 @@ msgstr "Скорость ходьбы"
 
 msgid "Base speed for walking and flying"
 msgstr "Базовая скорость ходьбы и полёта"
-
-
-msgid "Speed Factor"
-msgstr "Множитель скорости"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -82536,11 +82512,6 @@ msgstr "Очистить каналы"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Расширить"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Передвинуть"
 
 
 msgctxt "Operator"
@@ -86524,14 +86495,6 @@ msgid "Delete envelope control point"
 msgstr "Удалить контрольную точку оболочки"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Нет данных анимации в буфере для вставки"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "Не выделены F-кривые в качестве места вставки"
-
-
 msgid "<No ID pointer>"
 msgstr "<Нет ID-указателя>"
 
@@ -87118,14 +87081,6 @@ msgstr "Оператор аннотаций уже активен"
 
 msgid "Active region not set"
 msgstr "Активный регион не задан"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Отсутствуют ключевые кадры, которые можно было бы добавить в буфер обмена"
-
-
-msgid "No data in buffer to paste"
-msgstr "Нет данных в буфере для вставки"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -89767,12 +89722,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "Действие «%s» не будет сохранено, создайте фиктивного пользователя или используйте функцию размещения в стеке НЛА для сохранения"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Отсутствуют ключевые кадры, которые можно было бы добавить в буфер обмена"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "Вставка ключевых кадров недоступна в режиме маски"
 
 
+msgid "No data in buffer to paste"
+msgstr "Нет данных в буфере для вставки"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "Вставка ключевых кадров недоступна в режиме Grease Pencil или режиме маски"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Не выделены F-кривые в качестве места вставки"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -90520,16 +90487,12 @@ msgid "Could not find a valid parent collection for the new duplicate, it won't 
 msgstr "Не удалось найти корректную родительскую коллекцию для нового дубликата, поэтому он не будет связан и с каким слоём вида"
 
 
-msgid "Link inside Collection"
-msgstr "Связать с коллекцией"
+msgid "Move before collection"
+msgstr "Переместить перед коллекцией"
 
 
 msgid "Move between collections"
 msgstr "Переместить между коллекциями"
-
-
-msgid "Move before collection"
-msgstr "Переместить перед коллекцией"
 
 
 msgid "Move after collection"

@@ -33,7 +33,6 @@ dict_custom = {
     "accessor",
     "additively",
     "adjoint",
-    "orthogonally",
     "adjugate",
     "affectable",
     "alignable",
@@ -43,6 +42,7 @@ dict_custom = {
     "anisotropic",
     "anisotropy",
     "atomicity",
+    "bitwise",
     "boolean",
     "borderless",
     "breaked",
@@ -60,6 +60,7 @@ dict_custom = {
     "confusticate",
     "confusticated",
     "constructability",
+    "constructible",
     "coplanarity",
     "copyable",
     "counterforce",
@@ -93,6 +94,8 @@ dict_custom = {
     "discretized",
     "discretizes",
     "downcasting",
+    "draggable",
+    "drawable",
     "durations",
     "eachother",
     "editability",
@@ -116,6 +119,7 @@ dict_custom = {
     "incrementation",
     "initializer",
     "initializers",
+    "inlining",
     "instancer",
     "instancers",
     "instantiable",
@@ -129,6 +133,8 @@ dict_custom = {
     "iteratively",
     "jitteryness",
     "linkable",
+    "lockless",
+    "losslessly",
     "luminances",
     "mappable",
     "merchantability",
@@ -146,6 +152,7 @@ dict_custom = {
     "occluders",
     "optionals",
     "orthogonalize",
+    "orthogonally",
     "orthonormalize",
     "orthonormalized",
     "overridable",
@@ -192,6 +199,7 @@ dict_custom = {
     "probabilistically",
     "procedurally",
     "profiler",
+    "purgeability",
     "quadratically",
     "rasterizer",
     "rasterizes",
@@ -204,6 +212,7 @@ dict_custom = {
     "recurses",
     "recursing",
     "recursivity",
+    "redefinitions",
     "redistributions",
     "registerable",
     "remappable",
@@ -260,6 +269,7 @@ dict_custom = {
     "unlinkable",
     "unlinked",
     "unlinking",
+    "unmatching",
     "unmaximized",
     "unnormalized",
     "unparameterized",
@@ -324,11 +334,13 @@ dict_custom = {
     "unparent",
 
     # Accepted abbreviations.
+    # "dir",  # direction/directory? Too ambiguous, don't use this.
     "anim",  # animation.
+    "attr",
+    "attrs",
     "config",  # configuration.
     "coord",
     "coords",
-    # "dir",  # direction/directory.
     "iter",  # iteration.
     "multi",
     "numpad",  # numeric-pad.

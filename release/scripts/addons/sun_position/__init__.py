@@ -29,39 +29,35 @@ if "bpy" in locals():
     importlib.reload(properties)
     importlib.reload(ui_sun)
     importlib.reload(hdr)
+    importlib.reload(translations)
 
 else:
-    from . import properties, ui_sun, hdr
+    from . import properties, ui_sun, hdr, translations
 
 import bpy
 
 
+register_classes, unregister_classes = bpy.utils.register_classes_factory(
+    (properties.SunPosProperties,
+     properties.SunPosAddonPreferences, ui_sun.SUNPOS_OT_AddPreset,
+     ui_sun.SUNPOS_MT_Presets, ui_sun.SUNPOS_PT_Panel,
+     ui_sun.SUNPOS_PT_Location, ui_sun.SUNPOS_PT_Time, hdr.SUNPOS_OT_ShowHdr))
+
+
 def register():
-    bpy.utils.register_class(properties.SunPosProperties)
+    register_classes()
     bpy.types.Scene.sun_pos_properties = (
         bpy.props.PointerProperty(type=properties.SunPosProperties,
                         name="Sun Position",
                         description="Sun Position Settings"))
-    bpy.utils.register_class(properties.SunPosAddonPreferences)
-    bpy.utils.register_class(ui_sun.SUNPOS_OT_AddPreset)
-    bpy.utils.register_class(ui_sun.SUNPOS_MT_Presets)
-    bpy.utils.register_class(ui_sun.SUNPOS_PT_Panel)
-    bpy.utils.register_class(ui_sun.SUNPOS_PT_Location)
-    bpy.utils.register_class(ui_sun.SUNPOS_PT_Time)
-    bpy.utils.register_class(hdr.SUNPOS_OT_ShowHdr)
 
+    bpy.app.translations.register(__name__, translations.translations_dict)
     bpy.app.handlers.frame_change_post.append(sun_calc.sun_handler)
 
 
 def unregister():
-    bpy.utils.unregister_class(hdr.SUNPOS_OT_ShowHdr)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Panel)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Location)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Time)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_MT_Presets)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_OT_AddPreset)
-    bpy.utils.unregister_class(properties.SunPosAddonPreferences)
     del bpy.types.Scene.sun_pos_properties
-    bpy.utils.unregister_class(properties.SunPosProperties)
+    unregister_classes()
 
+    bpy.app.translations.unregister(__name__)
     bpy.app.handlers.frame_change_post.remove(sun_calc.sun_handler)
