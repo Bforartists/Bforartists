@@ -300,6 +300,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLE_TYPE, def_geo_curve_set_handle_t
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER, 0, "SPLINE_PARAMETER", SplineParameter, "Spline Parameter", "Add a Spline Paramenter Geometry node\nAdds extra curve parameters")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "CURVE_SPLINE_TYPE", CurveSplineType, "Set Spline Type", "Add a Curve Spline Type Geometry node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "Curve to Mesh", "Add a Curve to Mesh Geometry node\nConverts a curve object to a mesh object")
+DefNode(GeometryNode, GEO_NODE_DEFORM_CURVES_ON_SURFACE, 0, "DEFORM_CURVES_ON_SURFACE", DeformCurvesOnSurface, "Deform Curves on Surface", "")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud")
 DefNode(GeometryNode, GEO_NODE_DELETE_GEOMETRY, def_geo_delete_geometry, "DELETE_GEOMETRY", DeleteGeometry, "Delete Geometry", "Add a Delete Geometry Node\nDeletes Geometry")
 DefNode(GeometryNode, GEO_NODE_DUPLICATE_ELEMENTS, def_geo_duplicate_elements, "DUPLICATE_ELEMENTS", DuplicateElements, "Duplicate Elements", "Add a Duplicate Elements Geometry Node\nDuplicates the selected mesh element")
