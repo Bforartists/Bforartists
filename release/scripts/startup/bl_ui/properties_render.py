@@ -549,6 +549,27 @@ class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
         col.prop(rd, "filter_size")
 
 
+class RENDER_PT_eevee_next_film(RenderButtonsPanel, Panel):
+    bl_label = "Film"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        scene = context.scene
+        rd = scene.render
+        props = scene.eevee
+
+        col = layout.column()
+        col.prop(rd, "filter_size")
+
+
 def draw_curves_settings(self, context):
     layout = self.layout
     scene = context.scene

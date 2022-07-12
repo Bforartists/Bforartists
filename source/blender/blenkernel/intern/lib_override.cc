@@ -937,11 +937,6 @@ static void lib_override_linked_group_tag(LibOverrideGroupTagData *data)
     id_root->tag |= data->tag;
   }
 
-  /* Only objects and groups are currently considered as 'keys' in override hierarchies. */
-  if (!ELEM(GS(id_root->name), ID_OB, ID_GR)) {
-    return;
-  }
-
   /* Tag all collections and objects recursively. */
   lib_override_linked_group_tag_recursive(data);
 
@@ -1775,6 +1770,11 @@ static bool lib_override_library_resync(Main *bmain,
             default:
               break;
           }
+        }
+        if (reference_id == nullptr) {
+          /* Can happen e.g. when there is a local override of a shapekey, but the matching linked
+           * obdata (mesh etc.) does not have any shapekey anymore. */
+          continue;
         }
         BLI_assert(GS(reference_id->name) == GS(id->name));
 

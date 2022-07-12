@@ -73,6 +73,7 @@ def curve_node_items(context):
     yield NodeItem("GeometryNodeCurveLength")
     yield NodeItem("GeometryNodeCurveToMesh")
     yield NodeItem("GeometryNodeCurveToPoints")
+    yield NodeItem("GeometryNodeDeformCurvesWithSurface")
     yield NodeItem("GeometryNodeFillCurve")
     yield NodeItem("GeometryNodeFilletCurve")
     yield NodeItem("GeometryNodeResampleCurve")
@@ -164,8 +165,8 @@ def uv_node_items(context):
     space = context.space_data
     if not space:
         return
-    yield NodeItem("GeometryNodeUVUnwrap")
     yield NodeItem("GeometryNodeUVPackIslands")
+    yield NodeItem("GeometryNodeUVUnwrap")
 
 
 # Custom Menu for Geometry Node Input Nodes.
@@ -721,6 +722,7 @@ geometry_node_categories = [
         NodeItem("FunctionNodeRandomValue"),
         NodeItem("FunctionNodeAlignEulerToVector"),
     ]),
+    GeometryNodeCategory("GEO_UV", "UV", items=uv_node_items),
     GeometryNodeCategory("GEO_VECTOR", "Vector", items=[
         NodeItem("ShaderNodeVectorCurve"),
         NodeItem("ShaderNodeSeparateXYZ"),
