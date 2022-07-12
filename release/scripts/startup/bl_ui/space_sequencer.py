@@ -1718,7 +1718,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 if sound.samplerate <= 0:
                     split.label(text="Unknown")
                 else:
-                    split.label(text="%d Hz." % sound.samplerate, translate=False)
+                    split.label(text="%d Hz" % sound.samplerate, translate=False)
 
                 split = col.split(factor=0.5, align=False)
                 split.alignment = 'RIGHT'

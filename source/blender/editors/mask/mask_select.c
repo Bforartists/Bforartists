@@ -31,16 +31,16 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "DEG_depsgraph.h"
-
-#include "BLI_string.h"  /*bfa - needed for BLI_strdup */
 #include "mask_intern.h" /* own include */
 
-/* -------------------------------------------------------------------- */
-/** \name Public Mask Selection API
- * \{ */
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
-bool ED_mask_spline_select_check(const MaskSpline *spline)
+    /* -------------------------------------------------------------------- */
+    /** \name Public Mask Selection API
+     * \{ */
+
+    bool
+    ED_mask_spline_select_check(const MaskSpline *spline)
 {
   for (int i = 0; i < spline->tot_point; i++) {
     MaskSplinePoint *point = &spline->points[i];

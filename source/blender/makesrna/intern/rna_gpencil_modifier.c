@@ -87,12 +87,12 @@ const EnumPropertyItem rna_enum_object_greasepencil_modifier_type_items[] = {
      "Create an envelope shape"},
     {eGpencilModifierType_Length,
      "GP_LENGTH",
-     ICON_PARTICLEBRUSH_LENGTH,
+     ICON_NONE,
      "Length",
      "Extend or shrink strokes"},
     {eGpencilModifierType_Lineart,
      "GP_LINEART",
-     ICON_LINEART_OBJECT,
+     ICON_NONE,
      "Line Art",
      "Generate line art strokes from selected source"},
     {eGpencilModifierType_Mirror,
@@ -774,7 +774,7 @@ static bool dash_segment_name_exists_fn(void *arg, const char *name)
 {
   const DashGpencilModifierData *dmd = (const DashGpencilModifierData *)arg;
   for (int i = 0; i < dmd->segments_len; i++) {
-    if (STREQ(dmd->segments[i].name, name)) {
+    if (STREQ(dmd->segments[i].name, name) && dmd->segments[i].name != name) {
       return true;
     }
   }
@@ -3214,7 +3214,7 @@ static void rna_def_modifier_gpencillineart(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Line Art Modifier", "Generate line art strokes from selected source");
   RNA_def_struct_sdna(srna, "LineartGpencilModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_LINEART_OBJECT);
+  RNA_def_struct_ui_icon(srna, ICON_NONE);
 
   RNA_define_lib_overridable(true);
 
@@ -3452,7 +3452,7 @@ static void rna_def_modifier_gpencillineart(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_shadow", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", LRT_EDGE_FLAG_PROJECTED_SHADOW);
   RNA_def_property_ui_text(
-      prop, "Use Shadow", "Project contour lines using a light shource object");
+      prop, "Use Shadow", "Project contour lines using a light source object");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_update");
 
   prop = RNA_def_property(srna, "shadow_region_filtering", PROP_ENUM, PROP_NONE);
@@ -3662,7 +3662,7 @@ static void rna_def_modifier_gpencillength(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "LengthGpencilModifier", "GpencilModifier");
   RNA_def_struct_ui_text(srna, "Length Modifier", "Stretch or shrink strokes");
   RNA_def_struct_sdna(srna, "LengthGpencilModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_PARTICLEBRUSH_LENGTH);
+  RNA_def_struct_ui_icon(srna, ICON_NONE);
 
   RNA_define_lib_overridable(true);
 
