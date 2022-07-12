@@ -1051,7 +1051,7 @@ def get_internal_socket(socket):
     return iterator[i]
 
 def is_viewer_link(link, output_node):
-    if "Emission Viewer" in link.to_node.name or link.to_node == output_node and link.to_socket == output_node.inputs[0]:
+    if link.to_node == output_node and link.to_socket == output_node.inputs[0]:
         return True
     if link.to_node.type == 'GROUP_OUTPUT':
         socket = get_internal_socket(link.to_socket)
@@ -1068,8 +1068,6 @@ def get_output_location(tree):
     # get right-most location
     sorted_by_xloc = (sorted(tree.nodes, key=lambda x: x.location.x))
     max_xloc_node = sorted_by_xloc[-1]
-    if max_xloc_node.name == 'Emission Viewer':
-        max_xloc_node = sorted_by_xloc[-2]
 
     # get average y location
     sum_yloc = 0
@@ -1686,7 +1684,7 @@ class NWAddAttrNode(Operator, NWBase):
 class NWPreviewNode(Operator, NWBase):
     bl_idname = "node.nw_preview_node"
     bl_label = "Preview Node"
-    bl_description = "Connect active node to Emission Shader for shadeless previews, or to the geometry node tree's output"
+    bl_description = "Connect active node to the Node Group output or the Material Output"
     bl_options = {'REGISTER', 'UNDO'}
 
     # If false, the operator is not executed if the current node group happens to be a geometry nodes group.
@@ -1697,7 +1695,6 @@ class NWPreviewNode(Operator, NWBase):
     def __init__(self):
         self.shader_output_type = ""
         self.shader_output_ident = ""
-        self.shader_viewer_ident = ""
 
     @classmethod
     def poll(cls, context):
@@ -1748,16 +1745,13 @@ class NWPreviewNode(Operator, NWBase):
             if space.id not in [light for light in bpy.data.lights]:  # cannot use bpy.data.lights directly as iterable
                 self.shader_output_type = "OUTPUT_MATERIAL"
                 self.shader_output_ident = "ShaderNodeOutputMaterial"
-                self.shader_viewer_ident = "ShaderNodeEmission"
             else:
                 self.shader_output_type = "OUTPUT_LIGHT"
                 self.shader_output_ident = "ShaderNodeOutputLight"
-                self.shader_viewer_ident = "ShaderNodeEmission"
 
         elif shader_type == 'WORLD':
             self.shader_output_type = "OUTPUT_WORLD"
             self.shader_output_ident = "ShaderNodeOutputWorld"
-            self.shader_viewer_ident = "ShaderNodeBackground"
 
     def get_shader_output_node(self, tree):
         for node in tree.nodes:
@@ -1820,8 +1814,7 @@ class NWPreviewNode(Operator, NWBase):
             self.used_viewer_sockets_active_mat = []
             materialout = self.get_shader_output_node(bpy.context.space_data.node_tree)
             if materialout:
-                emission = self.get_viewer_node(materialout)
-                self.search_sockets((emission if emission else materialout), self.used_viewer_sockets_active_mat)
+                self.search_sockets(materialout, self.used_viewer_sockets_active_mat)
         return socket in self.used_viewer_sockets_active_mat
 
     def is_socket_used_other_mats(self, socket):
@@ -1834,17 +1827,8 @@ class NWPreviewNode(Operator, NWBase):
                 # get viewer node
                 materialout = self.get_shader_output_node(mat.node_tree)
                 if materialout:
-                    emission = self.get_viewer_node(materialout)
-                    self.search_sockets((emission if emission else materialout), self.used_viewer_sockets_other_mats)
+                    self.search_sockets(materialout, self.used_viewer_sockets_other_mats)
         return socket in self.used_viewer_sockets_other_mats
-
-    @staticmethod
-    def get_viewer_node(materialout):
-        input_socket = materialout.inputs[0]
-        if len(input_socket.links) > 0:
-            node = input_socket.links[0].from_node
-            if node.type == 'EMISSION' and node.name == "Emission Viewer":
-                return node
 
     def invoke(self, context, event):
         space = context.space_data
@@ -1864,8 +1848,7 @@ class NWPreviewNode(Operator, NWBase):
             base_node_tree = space.node_tree
             active = nodes.active
 
-            # For geometry node trees we just connect to the group output,
-            # because there is no "viewer node" yet.
+            # For geometry node trees we just connect to the group output
             if space.tree_type == "GeometryNodeTree":
                 valid = False
                 if active:
@@ -1903,7 +1886,6 @@ class NWPreviewNode(Operator, NWBase):
                                     out_i = valid_outputs[0]
 
                 make_links = []  # store sockets for new links
-                delete_nodes = [] # store unused nodes to delete in the end
                 if active.outputs:
                     # If there is no 'GEOMETRY' output type - We can't preview the node
                     if out_i is None:
@@ -1944,10 +1926,6 @@ class NWPreviewNode(Operator, NWBase):
                     tree = socket.id_data
                     tree.outputs.remove(socket)
 
-                # Delete nodes
-                for tree, node in delete_nodes:
-                    tree.nodes.remove(node)
-
                 nodes.active = active
                 active.select = True
                 force_update(context)
@@ -1958,7 +1936,7 @@ class NWPreviewNode(Operator, NWBase):
             output_types = [x[1] for x in shaders_output_nodes_props]
             valid = False
             if active:
-                if (active.name != "Emission Viewer") and (active.type not in output_types):
+                if active.type not in output_types:
                     for out in active.outputs:
                         if is_visible_socket(out):
                             valid = True
@@ -1976,7 +1954,7 @@ class NWPreviewNode(Operator, NWBase):
                     materialout = base_node_tree.nodes.new(self.shader_output_ident)
                     materialout.location = get_output_location(base_node_tree)
                     materialout.select = False
-                # Analyze outputs, add "Emission Viewer" if needed, make links
+                # Analyze outputs
                 out_i = None
                 valid_outputs = []
                 for i, out in enumerate(active.outputs):
@@ -1994,56 +1972,11 @@ class NWPreviewNode(Operator, NWBase):
                                     out_i = valid_outputs[0]
 
                 make_links = []  # store sockets for new links
-                delete_nodes = [] # store unused nodes to delete in the end
                 if active.outputs:
-                    # If output type not 'SHADER' - "Emission Viewer" needed
-                    if active.outputs[out_i].type != 'SHADER':
-                        socket_type = 'NodeSocketColor'
-                        # get Emission Viewer node
-                        emission_exists = False
-                        emission_placeholder = base_node_tree.nodes[0]
-                        for node in base_node_tree.nodes:
-                            if "Emission Viewer" in node.name:
-                                emission_exists = True
-                                emission_placeholder = node
-                        if not emission_exists:
-                            emission = base_node_tree.nodes.new(self.shader_viewer_ident)
-                            emission.hide = True
-                            emission.location = [materialout.location.x, (materialout.location.y + 40)]
-                            emission.label = "Viewer"
-                            emission.name = "Emission Viewer"
-                            emission.use_custom_color = True
-                            emission.color = (0.6, 0.5, 0.4)
-                            emission.select = False
-                        else:
-                            emission = emission_placeholder
-                        output_socket = emission.inputs[0]
-
-                        # If Viewer is connected to output by user, don't change those connections (patch by gandalf3)
-                        if emission.outputs[0].links.__len__() > 0:
-                            if not emission.outputs[0].links[0].to_node == materialout:
-                                make_links.append((emission.outputs[0], materialout.inputs[0]))
-                        else:
-                            make_links.append((emission.outputs[0], materialout.inputs[0]))
-
-                        # Set brightness of viewer to compensate for Film and CM exposure
-                        if context.scene.render.engine == 'CYCLES' and hasattr(context.scene, 'cycles'):
-                            intensity = 1/context.scene.cycles.film_exposure  # Film exposure is a multiplier
-                        else:
-                            intensity = 1
-
-                        intensity /= pow(2, (context.scene.view_settings.exposure))  # CM exposure is measured in stops/EVs (2^x)
-                        emission.inputs[1].default_value = intensity
-
-                    else:
-                        # Output type is 'SHADER', no Viewer needed. Delete Viewer if exists.
-                        socket_type = 'NodeSocketShader'
-                        materialout_index = 1 if active.outputs[out_i].name == "Volume" else 0
-                        make_links.append((active.outputs[out_i], materialout.inputs[materialout_index]))
-                        output_socket = materialout.inputs[materialout_index]
-                        for node in base_node_tree.nodes:
-                            if node.name == 'Emission Viewer':
-                                delete_nodes.append((base_node_tree, node))
+                    socket_type = 'NodeSocketShader'
+                    materialout_index = 1 if active.outputs[out_i].name == "Volume" else 0
+                    make_links.append((active.outputs[out_i], materialout.inputs[materialout_index]))
+                    output_socket = materialout.inputs[materialout_index]
                     for li_from, li_to in make_links:
                         base_node_tree.links.new(li_from, li_to)
 
@@ -2069,10 +2002,6 @@ class NWPreviewNode(Operator, NWBase):
                         tree = socket.id_data
                         tree.outputs.remove(socket)
 
-                # Delete nodes
-                for tree, node in delete_nodes:
-                    tree.nodes.remove(node)
-
                 nodes.active = active
                 active.select = True
 
@@ -2094,13 +2023,26 @@ class NWFrameSelected(Operator, NWBase):
         description='The visual name of the frame node',
         default=' '
     )
+    use_custom_color_prop: BoolProperty(
+        name="Custom Color",
+        description="Use custom color for the frame node",
+        default=False
+    )
     color_prop: FloatVectorProperty(
         name="Color",
         description="The color of the frame node",
-        default=(0.6, 0.6, 0.6),
+        default=(0.604, 0.604, 0.604),
         min=0, max=1, step=1, precision=3,
         subtype='COLOR_GAMMA', size=3
     )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'label_prop')
+        layout.prop(self, 'use_custom_color_prop')
+        col = layout.column()
+        col.active = self.use_custom_color_prop
+        col.prop(self, 'color_prop', text="")
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2112,7 +2054,7 @@ class NWFrameSelected(Operator, NWBase):
         bpy.ops.node.add_node(type='NodeFrame')
         frm = nodes.active
         frm.label = self.label_prop
-        frm.use_custom_color = True
+        frm.use_custom_color = self.use_custom_color_prop
         frm.color = self.color_prop
 
         for node in selected:
@@ -4417,12 +4359,10 @@ class NWConnectionListOutputs(Menu, NWBase):
         nodes, links = get_nodes_links(context)
 
         n1 = nodes[context.scene.NWLazySource]
-        index=0
-        for o in n1.outputs:
+        for index, output in enumerate(n1.outputs):
             # Only show sockets that are exposed.
-            if o.enabled:
-                layout.operator(NWCallInputsMenu.bl_idname, text=o.name, icon="RADIOBUT_OFF").from_socket=index
-            index+=1
+            if output.enabled:
+                layout.operator(NWCallInputsMenu.bl_idname, text=output.name, icon="RADIOBUT_OFF").from_socket=index
 
 
 class NWConnectionListInputs(Menu, NWBase):
@@ -4435,17 +4375,15 @@ class NWConnectionListInputs(Menu, NWBase):
 
         n2 = nodes[context.scene.NWLazyTarget]
 
-        index = 0
-        for i in n2.inputs:
+        for index, input in enumerate(n2.inputs):
             # Only show sockets that are exposed.
             # This prevents, for example, the scale value socket
             # of the vector math node being added to the list when
             # the mode is not 'SCALE'.
-            if i.enabled:
-                op = layout.operator(NWMakeLink.bl_idname, text=i.name, icon="FORWARD")
+            if input.enabled:
+                op = layout.operator(NWMakeLink.bl_idname, text=input.name, icon="FORWARD")
                 op.from_socket = context.scene.NWSourceSocket
                 op.to_socket = index
-                index+=1
 
 
 class NWMergeMathMenu(Menu, NWBase):

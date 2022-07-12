@@ -73,7 +73,9 @@ class NodeMerger(GeneratorPlugin):
             while pending:
                 added = set()
                 for j in pending:
-                    for co, idx, dist in tree.find_range(nodes[j].point, self.epsilon):
+                    point = nodes[j].point
+                    eps = max(1, point.length) * self.epsilon
+                    for co, idx, dist in tree.find_range(point, eps):
                         added.add(idx)
                 pending = added.difference(merge_set)
                 merge_set.update(added)

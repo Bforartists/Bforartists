@@ -4,7 +4,7 @@
 bl_info = {
     "name": "BTracer",
     "author": "liero, crazycourier, Atom, Meta-Androcto, MacKracken",
-    "version": (1, 2, 3),
+    "version": (1, 2, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Create Tab",
     "description": "Tools for converting/animating objects/particles into curves",

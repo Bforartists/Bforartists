@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -291,6 +291,10 @@ msgstr "Көлөм"
 
 msgid "Full"
 msgstr "Толук"
+
+
+msgid "Remove"
+msgstr "Өчүрүү"
 
 
 msgid "Angle"
@@ -1601,10 +1605,6 @@ msgstr "X1"
 
 msgid "Y1"
 msgstr "Y1"
-
-
-msgid "Remove"
-msgstr "Өчүрүү"
 
 
 msgid "Shadow"

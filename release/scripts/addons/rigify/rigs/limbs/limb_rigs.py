@@ -52,6 +52,7 @@ class BaseLimbRig(BaseRig):
         self.segments = self.params.segments
         self.bbone_segments = self.params.bbones
         self.use_ik_pivot = self.params.make_custom_pivot
+        self.use_uniform_scale = self.params.limb_uniform_scale
 
         rot_axis = self.params.rotation_axis
 
@@ -144,6 +145,8 @@ class BaseLimbRig(BaseRig):
     #     FK chain parents (or None)
     #   ik_pivot
     #     Custom IK pivot result (optional).
+    #   ik_scale
+    #     Helper bone that implements uniform scaling.
     #   ik_swing
     #     Bone that tracks ik_target to manually handle limb swing.
     #   ik_target
@@ -178,14 +181,15 @@ class BaseLimbRig(BaseRig):
         bone = self.get_bone(self.bones.ctrl.master)
         bone.lock_location = (True, True, True)
         bone.lock_rotation = (True, True, True)
-        bone.lock_scale = (False, False, False)
+        bone.lock_scale = (not self.use_uniform_scale,) * 3
         bone.lock_rotation_w = True
 
     @stage.rig_bones
     def rig_master_control(self):
         mch = self.bones.mch
         self.make_constraint(mch.master, 'COPY_SCALE', 'root', use_make_uniform=True)
-        self.make_constraint(mch.master, 'COPY_SCALE', self.bones.ctrl.master, use_offset=True, space='LOCAL')
+        if self.use_uniform_scale:
+            self.make_constraint(mch.master, 'COPY_SCALE', self.bones.ctrl.master, use_offset=True, space='LOCAL')
 
     @stage.generate_widgets
     def make_master_control_widget(self):
@@ -221,10 +225,12 @@ class BaseLimbRig(BaseRig):
         mch = self.bones.mch.follow
 
         self.make_constraint(mch, 'COPY_SCALE', 'root', use_make_uniform=True)
-        self.make_constraint(
-            mch, 'COPY_SCALE', self.bones.ctrl.master,
-            use_make_uniform=True, use_offset=True, space='LOCAL'
-        )
+
+        if self.use_uniform_scale:
+            self.make_constraint(
+                mch, 'COPY_SCALE', self.bones.ctrl.master,
+                use_make_uniform=True, use_offset=True, space='LOCAL'
+            )
 
         con = self.make_constraint(mch, 'COPY_ROTATION', 'root')
 
@@ -361,9 +367,12 @@ class BaseLimbRig(BaseRig):
 
         self.bones.ctrl.ik_base = self.make_ik_base_bone(orgs)
         self.bones.ctrl.ik_pole = self.make_ik_pole_bone(orgs)
-        self.bones.ctrl.ik = ik_name = self.make_ik_control_bone(orgs)
+        self.bones.ctrl.ik = ik_name = parent = self.make_ik_control_bone(orgs)
 
-        self.component_ik_pivot = self.build_ik_pivot(ik_name)
+        if self.use_uniform_scale:
+            self.bones.mch.ik_scale = parent = self.make_ik_scale_bone(ik_name, orgs)
+
+        self.component_ik_pivot = self.build_ik_pivot(ik_name, parent=parent)
         self.build_ik_parent_switch(SwitchParentBuilder(self.generator))
 
     def make_ik_base_bone(self, orgs):
@@ -382,13 +391,18 @@ class BaseLimbRig(BaseRig):
     def make_ik_control_bone(self, orgs):
         return self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_ik'))
 
+    def make_ik_scale_bone(self, ctrl, orgs):
+        return self.copy_bone(ctrl, make_derived_name(orgs[2], 'mch', '_ik_scale'), scale=1/2)
+
     def build_ik_pivot(self, ik_name, **args):
         if self.use_ik_pivot:
-            return CustomPivotControl(self, 'ik_pivot', ik_name, parent=ik_name, **args)
+            return CustomPivotControl(self, 'ik_pivot', ik_name, **args)
 
     def get_ik_control_output(self):
         if self.component_ik_pivot:
             return self.component_ik_pivot.output
+        elif self.use_uniform_scale:
+            return self.bones.mch.ik_scale
         else:
             return self.bones.ctrl.ik
 
@@ -430,6 +444,9 @@ class BaseLimbRig(BaseRig):
         else:
             self.set_bone_parent(self.bones.ctrl.ik_base, self.bones.mch.ik_swing)
 
+        if self.use_uniform_scale:
+            self.set_bone_parent(self.bones.mch.ik_scale, self.bones.ctrl.ik)
+
         self.set_ik_local_location(self.bones.ctrl.ik)
         self.set_ik_local_location(self.bones.ctrl.ik_pole)
 
@@ -445,11 +462,13 @@ class BaseLimbRig(BaseRig):
     @stage.rig_bones
     def rig_ik_controls(self):
         self.rig_hide_pole_control(self.bones.ctrl.ik_pole)
-        self.rig_ik_control_scale(self.bones.ctrl.ik)
 
-    def rig_ik_control_scale(self, ctrl):
+        if self.use_uniform_scale:
+            self.rig_ik_control_scale(self.bones.mch.ik_scale)
+
+    def rig_ik_control_scale(self, mch):
         self.make_constraint(
-            ctrl, 'COPY_SCALE', self.bones.ctrl.master,
+            mch, 'COPY_SCALE', self.bones.ctrl.master,
             use_make_uniform=True, use_offset=True, space='LOCAL',
         )
 
@@ -937,6 +956,12 @@ class BaseLimbRig(BaseRig):
             description = "Specifies the value of the Local Location option for IK controls, which decides if the location channels are aligned to the local control orientation or world",
         )
 
+        params.limb_uniform_scale = bpy.props.BoolProperty(
+            name        = "Support Uniform Scaling",
+            default     = False,
+            description = "Suport uniformly scaling the limb via the gear control at the base"
+        )
+
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.FK.add_parameters(params)
         ControlLayersOption.TWEAK.add_parameters(params)
@@ -958,6 +983,7 @@ class BaseLimbRig(BaseRig):
         r = layout.row()
         r.prop(params, "bbones")
 
+        layout.prop(params, 'limb_uniform_scale')
         layout.prop(params, 'make_custom_pivot', text="Custom IK Pivot")
         layout.prop(params, 'ik_local_location')
 

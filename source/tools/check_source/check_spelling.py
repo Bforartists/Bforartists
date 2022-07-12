@@ -83,7 +83,7 @@ def dictionary_create():  # type: ignore
     return dict_spelling
 
 
-def dictionary_check(w: str) -> bool:
+def dictionary_check(w: str, code_words: Set[str]) -> bool:
     w_lower = w.lower()
     if w_lower in dict_ignore:
         return True
@@ -106,6 +106,8 @@ def dictionary_check(w: str) -> bool:
 
             for w_sub in w_split:
                 if w_sub:
+                    if w_sub in code_words:
+                        continue
                     w_sub_lower = w_sub.lower()
                     if w_sub_lower in dict_ignore:
                         continue
@@ -454,7 +456,7 @@ def spell_check_file(
             if w_lower in dict_ignore:
                 continue
 
-            is_good_spelling = dictionary_check(w)
+            is_good_spelling = dictionary_check(w, code_words)
             if not is_good_spelling:
                 # Ignore literals that show up in code,
                 # gets rid of a lot of noise from comments that reference variables.

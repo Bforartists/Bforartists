@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1838,6 +1838,14 @@ msgid "Has Spacing"
 msgstr "Odstępy"
 
 
+msgid "Remove"
+msgstr "Usuń"
+
+
+msgid "Minimum Distance"
+msgstr "Minimalna odległość"
+
+
 msgid "Mode"
 msgstr "Tryb"
 
@@ -2120,10 +2128,6 @@ msgstr "Restytucja"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Jak wiele prędkości traci się podczas kolizji"
-
-
-msgid "Minimum Distance"
-msgstr "Minimalna odległość"
 
 
 msgid "Friction"
@@ -6361,10 +6365,6 @@ msgid "To"
 msgstr "Do"
 
 
-msgid "Remove"
-msgstr "Usuń"
-
-
 msgid "Zoom"
 msgstr "Zbliżenie"
 
@@ -7171,14 +7171,6 @@ msgid "Delete envelope control point"
 msgstr "Usuń punkt kontrolny otoczki"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Brak danych animacji do wklejenia w buforze"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "Brak zaznaczonej krzywej-F na którą można wkleić"
-
-
 msgid "<No ID pointer>"
 msgstr "<Brak wskaźników ID>"
 
@@ -7569,10 +7561,6 @@ msgstr "Nie mogę narysować kreski"
 
 msgid "Active region not set"
 msgstr "Nie ustawiony aktywny region"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Nie skopiowano klatek kluczowych do bufora kopiuj/wklej klatek kluczowych"
 
 
 msgid "No Grease Pencil data to work on"
@@ -9318,12 +9306,20 @@ msgid "Action has already been stashed"
 msgstr "Akcja została już przytrzymana (stashed)"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Nie skopiowano klatek kluczowych do bufora kopiuj/wklej klatek kluczowych"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "Wklejanie klatek kluczowych nie dostępne dla trybu maski"
 
 
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "Wklejanie klatek kluczowych nie dostępne dla szkicownika lub w trybie maski"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Brak zaznaczonej krzywej-F na którą można wkleić"
 
 
 msgid "Not implemented for Masks"

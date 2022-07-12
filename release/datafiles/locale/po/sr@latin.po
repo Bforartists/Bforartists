@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1263,6 +1263,14 @@ msgid "Count"
 msgstr "Broj"
 
 
+msgid "Remove"
+msgstr "Ukloni"
+
+
+msgid "Minimum Distance"
+msgstr "Minimalna razdaljina"
+
+
 msgid "Angle"
 msgstr "Ugao"
 
@@ -1589,10 +1597,6 @@ msgstr "Broj iteracija sudara. (što više to je bolji kvalitet, ali sporije"
 
 msgid "Restitution"
 msgstr "Rezolucija"
-
-
-msgid "Minimum Distance"
-msgstr "Minimalna razdaljina"
 
 
 msgid "Friction"
@@ -4381,8 +4385,8 @@ msgid "Small"
 msgstr "Malo"
 
 
-msgid "Regular"
-msgstr "Normalno"
+msgid "Medium"
+msgstr "Srednji"
 
 
 msgid "Large"
@@ -4909,6 +4913,10 @@ msgid "Frames Before"
 msgstr "Prethodni kadrovi"
 
 
+msgid "Regular"
+msgstr "Normalno"
+
+
 msgid "Frames"
 msgstr "Kadrova"
 
@@ -5204,6 +5212,10 @@ msgstr "Gustina tačaka"
 
 msgid "Step"
 msgstr "Korak"
+
+
+msgid "Shaded"
+msgstr "Senčeno"
 
 
 msgid "Fade"
@@ -7000,10 +7012,6 @@ msgstr "Visok"
 
 msgid "High quality"
 msgstr "Visok kvalitet"
-
-
-msgid "Medium"
-msgstr "Srednji"
 
 
 msgid "Medium quality"
@@ -11358,10 +11366,6 @@ msgid "Y1"
 msgstr "Y1"
 
 
-msgid "Remove"
-msgstr "Ukloni"
-
-
 msgid "Auto-Refresh"
 msgstr "Auto-osveži"
 
@@ -11848,6 +11852,14 @@ msgstr "Vrsta uklapanja"
 
 msgid "Object Info"
 msgstr "Informacije o objektu"
+
+
+msgid "Angle Based"
+msgstr "Na osnovu ugla"
+
+
+msgid "Conformal"
+msgstr "Zaštitni"
 
 
 msgid "Label Font Size"
@@ -17989,15 +18001,6 @@ msgstr "Sakriva izabrane stranice"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Obrni izbor stranica"
-
-
-msgid "Reveal hidden faces"
-msgstr "Otkriva sakrivene stranice"
-
-
-msgctxt "Operator"
 msgid "Hide/Show"
 msgstr "Sakrij/prikaži"
 
@@ -20192,14 +20195,6 @@ msgid "Unwrap"
 msgstr "Rastvori"
 
 
-msgid "Angle Based"
-msgstr "Na osnovu ugla"
-
-
-msgid "Conformal"
-msgstr "Zaštitni"
-
-
 msgctxt "Operator"
 msgid "Weld"
 msgstr "Spoji"
@@ -21282,10 +21277,6 @@ msgid "Panel Colors"
 msgstr "Boje panela"
 
 
-msgid "Shaded"
-msgstr "Senčeno"
-
-
 msgid "Styles"
 msgstr "Stilovi"
 
@@ -21320,6 +21311,11 @@ msgstr "Krug"
 msgctxt "Operator"
 msgid "Thickness"
 msgstr "Debljina"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Klizaj"
 
 
 msgid "Pose Options"
@@ -23158,6 +23154,10 @@ msgid "In"
 msgstr "Unutra"
 
 
+msgid "Speed Factor"
+msgstr "Faktor brzine"
+
+
 msgid "Mask Sequence"
 msgstr "Meta sekvenca"
 
@@ -24580,10 +24580,6 @@ msgid "Snap to edges"
 msgstr "Lepi za ivice"
 
 
-msgid "Snap to faces"
-msgstr "Lepi za stranice"
-
-
 msgid "Snap to volume"
 msgstr "Lepi za oblik"
 
@@ -24894,10 +24890,6 @@ msgstr "Brzina šetnje"
 
 msgid "Base speed for walking and flying"
 msgstr "Osnovna brzina šetnje ili letenja"
-
-
-msgid "Speed Factor"
-msgstr "Faktor brzine"
 
 
 msgid "World Mist"
@@ -25715,11 +25707,6 @@ msgstr "Interpolacija"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Nastavi"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Klizaj"
 
 
 msgctxt "Operator"

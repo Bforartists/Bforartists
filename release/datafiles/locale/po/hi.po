@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -611,6 +611,14 @@ msgid "Count"
 msgstr "गिनती"
 
 
+msgid "Remove"
+msgstr "हटाएँ"
+
+
+msgid "Minimum Distance"
+msgstr "न्यूनतम दूरी"
+
+
 msgid "Angle"
 msgstr "कोण"
 
@@ -789,10 +797,6 @@ msgstr "कारक कण"
 
 msgid "Collision Quality"
 msgstr "टकराव की गुणवत्ता"
-
-
-msgid "Minimum Distance"
-msgstr "न्यूनतम दूरी"
 
 
 msgid "Friction"
@@ -1497,10 +1501,6 @@ msgid "Directory displayed in the file browser"
 msgstr "निर्देशिका संचिका विचरक में प्रदर्शित"
 
 
-msgid "Regular"
-msgstr "नियमित"
-
-
 msgid "Display Mode"
 msgstr "प्रदर्शित रूप"
 
@@ -1645,6 +1645,10 @@ msgid "Grease Pencil Layer"
 msgstr "तैलीय पेंसिल परत"
 
 
+msgid "Regular"
+msgstr "नियमित"
+
+
 msgid "Frames"
 msgstr "गठन"
 
@@ -1744,6 +1748,10 @@ msgstr "पैना"
 
 msgid "Step"
 msgstr "कदम"
+
+
+msgid "Shaded"
+msgstr "छायांकित"
 
 
 msgid "Fade"
@@ -3278,10 +3286,6 @@ msgid "Y1"
 msgstr "Y1"
 
 
-msgid "Remove"
-msgstr "हटाएँ"
-
-
 msgid "Spin"
 msgstr "चक्रण"
 
@@ -4786,10 +4790,6 @@ msgid "Bone Color Sets"
 msgstr "हड्डी रंग समूह"
 
 
-msgid "Shaded"
-msgstr "छायांकित"
-
-
 msgid "Text Style"
 msgstr "पाठ शैली"
 
@@ -4811,6 +4811,11 @@ msgstr "रेखा"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "चक्र"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "सरकाएँ"
 
 
 msgid "Default tools for particle mode"
@@ -5824,11 +5829,6 @@ msgstr "स्नैप"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "विस्तृत करें"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "सरकाएँ"
 
 
 msgctxt "Operator"

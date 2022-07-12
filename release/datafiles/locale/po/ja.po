@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -317,10 +317,6 @@ msgstr "MetalRT（実験的）"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT はレイトレーシングに使用され、カーブを広範囲に使用するシーンでのメモリ消費量を抑え、特定の場合でのパフォーマンスを向上できます。ただしこれは実験的対応であり、一部のシーンのレンダリングが正しく行われない可能性があります"
-
-
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
-msgstr "シェーダーエディターに glTF 設定ノードを表示します（追加メニュー→出力）"
 
 
 msgid "Fribidi Library"
@@ -3554,6 +3550,10 @@ msgid "Length of newly added curves when it is not interpolated from other curve
 msgstr "他のヘアーカーブから補間されない時の新規ヘアーカーブの長さ"
 
 
+msgid "Remove"
+msgstr "削除"
+
+
 msgid "Interpolate Length"
 msgstr "長さを補間"
 
@@ -3572,6 +3572,10 @@ msgstr "形状を補間"
 
 msgid "Use shape of the curves in close proximity"
 msgstr "近くのヘアーカーブの形状を使用します"
+
+
+msgid "Minimum Distance"
+msgstr "最小距離"
 
 
 msgid "Minimum Length"
@@ -4782,10 +4786,6 @@ msgstr "反射性"
 
 msgid "Amount of velocity lost on collision"
 msgstr "衝突時の速度の減衰量"
-
-
-msgid "Minimum Distance"
-msgstr "最小距離"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -12670,8 +12670,8 @@ msgid "Small"
 msgstr "小"
 
 
-msgid "Regular"
-msgstr "標準"
+msgid "Medium"
+msgstr "中"
 
 
 msgid "Large"
@@ -15381,6 +15381,10 @@ msgid "Blend mode"
 msgstr "ブレンドモード"
 
 
+msgid "Regular"
+msgstr "標準"
+
+
 msgid "Hard Light"
 msgstr "ハードライト"
 
@@ -17301,10 +17305,6 @@ msgid "Crease Threshold"
 msgstr "クリースのしきい値"
 
 
-msgid "Angles smaller than this will be treated as creases"
-msgstr "この値より小さい角度はクリースとして処理されます"
-
-
 msgid "Invert Vertex Group"
 msgstr "頂点グループを反転"
 
@@ -17347,6 +17347,10 @@ msgstr "オーバースキャン"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "画面端でストロークが突然切れるのを防ぐマージン"
+
+
+msgid "Shaded"
+msgstr "陰影付き"
 
 
 msgid "Smooth Tolerance"
@@ -24789,10 +24793,6 @@ msgstr "高"
 
 msgid "High quality"
 msgstr "高品質"
-
-
-msgid "Medium"
-msgstr "中"
 
 
 msgid "Medium quality"
@@ -41578,10 +41578,6 @@ msgid "List of object and material crypto IDs to include in matte"
 msgstr "マットに入れるオブジェクトとマテリアルのCrypto IDのリスト"
 
 
-msgid "Remove"
-msgstr "削除"
-
-
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "ピック出力から色を拾い、マットからオブジェクトやマテリアルを除外します"
 
@@ -43873,6 +43869,10 @@ msgid "Create a point in the point cloud for each selected face corner"
 msgstr "選択中の各面の角からポイントクラウド内にポイントを生成します"
 
 
+msgid "How the voxel size is specified"
+msgstr "ボクセルサイズを指定する方法"
+
+
 msgid "UV Sphere"
 msgstr "UV球"
 
@@ -43899,10 +43899,6 @@ msgstr "ポイントから頂点へ"
 
 msgid "Points to Volume"
 msgstr "ポイントからボリューム"
-
-
-msgid "How the voxel size is specified"
-msgstr "ボクセルサイズを指定する方法"
 
 
 msgid "Specify the approximate number of voxels along the diagonal"
@@ -44246,6 +44242,18 @@ msgstr "各スプラインの長さの係数を使用し、終点の位置を求
 
 msgid "Find the endpoint positions using a length from the start of each spline"
 msgstr "各スプラインの始点からの長さを使用し、終点の位置を求めます"
+
+
+msgid "Pack UV Islands"
+msgstr "UVアイランドを梱包"
+
+
+msgid "Angle Based"
+msgstr "アングルベース"
+
+
+msgid "Conformal"
+msgstr "等角"
 
 
 msgctxt "NodeTree"
@@ -46187,6 +46195,10 @@ msgstr "オブジェクトラインアート"
 
 msgid "Object line art settings"
 msgstr "オブジェクトラインアート設定"
+
+
+msgid "Angles smaller than this will be treated as creases"
+msgstr "この値より小さい角度はクリースとして処理されます"
 
 
 msgid "How to use this object in line art calculation"
@@ -51996,14 +52008,6 @@ msgstr "シーンを現在のアニメーションフレームでエクスポー
 
 msgid "Export Deformation Bones Only"
 msgstr "変形ボーンのみエクスポート"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "デイスプレイスメントテクスチャ（実験的）"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "実験的機能：ディスプレイメントテクスチャをエクスポートします（未完成の「KHR_materials_displacement」glTF エクステンションを使用）"
 
 
 msgid "Color quantization bits"
@@ -65917,10 +65921,6 @@ msgid "Make a local override of this linked data-block, and its hierarchy of dep
 msgstr "このリンクデータブロックのローカルオーバーライドと、その依存の階層を作成します（アクティブアウトライナーアイテムのみ適用）"
 
 
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies, making them all fully user-editable - only applies to active Outliner item"
-msgstr "このリンクデータブロックのローカルオーバーライドと、その依存の階層を完全にユーザー編集可能で作成します（アクティブアウトライナーアイテムのみ適用）"
-
-
 msgid "Make Library Override Editable"
 msgstr "ライブラリオーバーライドを編集可能に"
 
@@ -66538,15 +66538,6 @@ msgstr "つながっている物を選択"
 
 msgid "Select linked faces under the cursor"
 msgstr "カーソル下のつながっている面を選択します"
-
-
-msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "表示"
-
-
-msgid "Reveal hidden faces"
-msgstr "隠した面を再表示します"
 
 
 msgctxt "Operator"
@@ -69882,6 +69873,10 @@ msgstr "ストロークカーブスカルプト"
 
 msgid "Sculpt curves using a brush"
 msgstr "ブラシを使用しカーブでスカルプトします"
+
+
+msgid "Probability"
+msgstr "確率"
 
 
 msgctxt "Operator"
@@ -74556,14 +74551,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "展開方法（通常アングルベースの方が等角よりもいい結果になりますが、若干遅くなります）"
 
 
-msgid "Angle Based"
-msgstr "アングルベース"
-
-
-msgid "Conformal"
-msgstr "等角"
-
-
 msgid "Use Subdivision Surface"
 msgstr "サブディビジョンサーフェスを使用"
 
@@ -75785,10 +75772,6 @@ msgstr "法線をエクスポート"
 
 msgid "Export undeformed mesh vertex coordinates"
 msgstr "メッシュのデフォーム前の頂点座標をエクスポートします"
-
-
-msgid "Pack UV Islands"
-msgstr "UVアイランドを梱包"
 
 
 msgid "Export UVs with packed island"
@@ -80288,10 +80271,6 @@ msgid "Icon Colors"
 msgstr "アイコンカラー"
 
 
-msgid "Shaded"
-msgstr "陰影付き"
-
-
 msgid "Styles"
 msgstr "スタイル"
 
@@ -80836,6 +80815,11 @@ msgstr "強さ"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "ツイスト"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "スライド"
 
 
 msgid "Clone from Paint Slot"
@@ -82731,10 +82715,6 @@ msgstr "コンポジターのフルフレーム処理モードオプションを
 
 msgid "Enable additional features for the new curves data block"
 msgstr "新しいカーブデータブロック用の追加の機能を有効にします"
-
-
-msgid "Enable the new curves data type in the UI"
-msgstr "新しいカーブデータタイプを UI で有効にします"
 
 
 msgid "New Point Cloud Type"
@@ -89859,6 +89839,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "1枚または多数の画像を読み込むシーケンスストリップ"
 
 
+msgid "Speed Factor"
+msgstr "速度係数"
+
+
 msgid "Mask Sequence"
 msgstr "マスクシーケンス"
 
@@ -94079,10 +94063,6 @@ msgid "Boolean Value"
 msgstr "ブーリアン値"
 
 
-msgid "Byte Color Value"
-msgstr "バイトカラー値"
-
-
 msgid "Float Value"
 msgstr "Float値"
 
@@ -96552,10 +96532,6 @@ msgid "Snap to edges"
 msgstr "辺にスナップ"
 
 
-msgid "Snap to faces"
-msgstr "面にスナップ"
-
-
 msgid "Snap to volume"
 msgstr "ボリュームにスナップ"
 
@@ -96894,14 +96870,6 @@ msgstr "拡大縮小にスナップを使用"
 
 msgid "Scale is affected by snapping settings"
 msgstr "スケールがスナップ設定の影響を受けます"
-
-
-msgid "Project onto Self"
-msgstr "自分自身に投影"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "自分自身にスナップします（編集モードのみ）"
 
 
 msgid "Snap to strip edges or current frame"
@@ -98773,10 +98741,6 @@ msgstr "歩行速度"
 
 msgid "Base speed for walking and flying"
 msgstr "ウォークまたはフライ時の基本速度"
-
-
-msgid "Speed Factor"
-msgstr "速度係数"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -100811,12 +100775,12 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "。NVIDIA ドライバーVer.470以降も必要です"
 
 
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "RDNA アーキテクチャの AMD GPU カードが必要です"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "さらに AMD Radeon Pro 21.Q4 以降のドライバも必須"
+
+
+msgid "and AMD driver version 22.10 or newer"
+msgstr "。AMD ドライバーVer.22.10以降も必要です"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -100825,10 +100789,6 @@ msgstr "Apple Silicon と macOS 12.0以降が必要です"
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "AMD と macOS 12.3以降が必要です"
-
-
-msgid "and AMD driver version 22.10 or newer"
-msgstr "。AMD ドライバーVer.22.10以降も必要です"
 
 
 msgid "Noise Threshold"
@@ -104553,11 +104513,6 @@ msgstr "延長"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "スライド"
-
-
-msgctxt "Operator"
 msgid "Delete Duplicate Frames"
 msgstr "重複フレームを削除"
 
@@ -106220,11 +106175,6 @@ msgstr "SVGをグリースペンシルへ"
 
 
 msgctxt "Operator"
-msgid "Wavefront (.obj) (experimental)"
-msgstr "Wavefront (.obj)（実験的機能）"
-
-
-msgctxt "Operator"
 msgid "STL (.stl) (experimental)"
 msgstr "STL (.stl)（実験的機能）"
 
@@ -106939,6 +106889,11 @@ msgstr "NURBS円"
 msgctxt "Operator"
 msgid "Path"
 msgstr "パス"
+
+
+msgctxt "Operator"
+msgid "Empty Hair"
+msgstr "空のヘアー"
 
 
 msgctxt "Operator"
@@ -107860,11 +107815,6 @@ msgstr "カラー属性"
 
 
 msgctxt "Operator"
-msgid "Empty Hair"
-msgstr "空のヘアー"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "ポイントクラウド"
 
@@ -108337,10 +108287,6 @@ msgid "Fade Geometry"
 msgstr "形状をフェード"
 
 
-msgid "Snap With"
-msgstr "スナップ方法"
-
-
 msgid "Reference Point"
 msgstr "参照ポイント"
 
@@ -108429,6 +108375,10 @@ msgstr "Freestyle面をクリア"
 
 msgid "Specular Lighting"
 msgstr "スペキュラー照明"
+
+
+msgid "Snap With"
+msgstr "スナップ方法"
 
 
 msgid "Custom Location"
@@ -108562,6 +108512,10 @@ msgstr "ライトの範囲を調整"
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "サンライトの角度調整"
+
+
+msgid "Distance Min"
+msgstr "最小距離"
 
 
 msgid "Layer:"
@@ -110079,14 +110033,6 @@ msgid "Coefficient"
 msgstr "定数項"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "バッファ内に貼り付けるアニメーションデータがありません"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "貼り付ける F カーブが選択されていません"
-
-
 msgid "<No ID pointer>"
 msgstr "＜IDポインタなし＞"
 
@@ -110819,14 +110765,6 @@ msgstr "ドローするアノテーションデータブロックがありませ
 
 msgid "Active region not set"
 msgstr "アクティブ領域が未設定です"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "コピー・ペーストバッファーにコピーするキーフレームがありません"
-
-
-msgid "No data in buffer to paste"
-msgstr "バッファ内に貼り付けるデータがありません"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -114342,12 +114280,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "アクション「%s」は保存されません。残すならフェイクユーザーを作成、またはNLAスタック内に保留してください"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "コピー・ペーストバッファーにコピーするキーフレームがありません"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "マスクモードではキーフレームの貼り付けはできません"
 
 
+msgid "No data in buffer to paste"
+msgstr "バッファ内に貼り付けるデータがありません"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "グリースペンシルやマスクモードではキーフレームの貼り付けはできません"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "貼り付ける F カーブが選択されていません"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -115649,16 +115599,12 @@ msgid "Link all to object"
 msgstr "オブジェクトにすべてリンク"
 
 
-msgid "Link inside Collection"
-msgstr "コレクション内でリンク"
+msgid "Move before collection"
+msgstr "コレクション内の前に移動"
 
 
 msgid "Move between collections"
 msgstr "コレクション間を移動"
-
-
-msgid "Move before collection"
-msgstr "コレクション内の前に移動"
 
 
 msgid "Move after collection"
@@ -117257,10 +117203,6 @@ msgstr "曲率"
 
 msgid "Material Borders"
 msgstr "マテリアル境界"
-
-
-msgid "Angle Cached"
-msgstr "角度キャッシュ済"
 
 
 msgid "Custom Camera"
@@ -118918,10 +118860,6 @@ msgid "Line Break"
 msgstr "改行"
 
 
-msgid "Probability"
-msgstr "確率"
-
-
 msgid "The string to find in the input string"
 msgstr "入力文字列内を検索する文字列"
 
@@ -119320,10 +119258,6 @@ msgid "The parts of the geometry to be deleted"
 msgstr "削除するジオメトリの部分"
 
 
-msgid "Distance Min"
-msgstr "最小距離"
-
-
 msgid "Density Max"
 msgstr "最大密度"
 
@@ -119664,6 +119598,10 @@ msgid "Disabled, Blender was compiled without OpenSubdiv"
 msgstr "無効時、Blender は OpenSubdiv なしでコンパイルされています"
 
 
+msgid "Disabled, Blender was compiled without OpenVDB"
+msgstr "無効時、Blender は OpenVDB なしでコンパイルされています"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "モディファイアーオブジェクトからジオメトリを取得できません"
 
@@ -119674,10 +119612,6 @@ msgstr "インスタンスとして"
 
 msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
 msgstr "オブジェクト全体を一つのインスタンスとして出力します。これにより、非ジオメトリオブジェクトタイプをインスタンス化できます"
-
-
-msgid "Disabled, Blender was compiled without OpenVDB"
-msgstr "無効時、Blender は OpenVDB なしでコンパイルされています"
 
 
 msgid "Source Position"

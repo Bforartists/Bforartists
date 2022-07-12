@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -616,6 +616,10 @@ msgstr "Groep van Botten"
 
 msgid "Has Color"
 msgstr "Heeft Kleur"
+
+
+msgid "Remove"
+msgstr "Verwijder"
 
 
 msgid "Mode"
@@ -1463,10 +1467,6 @@ msgid "Small"
 msgstr "Klein"
 
 
-msgid "Regular"
-msgstr "Normaal"
-
-
 msgid "Large"
 msgstr "Groot"
 
@@ -1677,6 +1677,10 @@ msgstr "Actieve Frame"
 
 msgid "Before Color"
 msgstr "Voor Kleur"
+
+
+msgid "Regular"
+msgstr "Normaal"
 
 
 msgid "Frames"
@@ -3047,10 +3051,6 @@ msgstr "X1"
 
 msgid "Y1"
 msgstr "Y1"
-
-
-msgid "Remove"
-msgstr "Verwijder"
 
 
 msgid "Center X"

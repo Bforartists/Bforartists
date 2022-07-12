@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -2919,6 +2919,14 @@ msgid "Count"
 msgstr "개수"
 
 
+msgid "Remove"
+msgstr "제거"
+
+
+msgid "Minimum Distance"
+msgstr "최소의 거리"
+
+
 msgid "Grease Pencil Brush Settings"
 msgstr "그리스 펜슬 브러시 설정"
 
@@ -3809,10 +3817,6 @@ msgstr "반환"
 
 msgid "Amount of velocity lost on collision"
 msgstr "충돌시 속도 손실의 양"
-
-
-msgid "Minimum Distance"
-msgstr "최소의 거리"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -10757,8 +10761,8 @@ msgid "Small"
 msgstr "작은"
 
 
-msgid "Regular"
-msgstr "정규"
+msgid "Medium"
+msgstr "중간"
 
 
 msgid "Large"
@@ -12665,6 +12669,10 @@ msgid "Blend mode"
 msgstr "혼합 모드"
 
 
+msgid "Regular"
+msgstr "정규"
+
+
 msgid "Hard Light"
 msgstr "하드 라이트"
 
@@ -13979,6 +13987,10 @@ msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
 
 msgid "Overscan"
 msgstr "오버스캔"
+
+
+msgid "Shaded"
+msgstr "셰이드"
 
 
 msgid "Boundaries"
@@ -19406,10 +19418,6 @@ msgstr "높은"
 
 msgid "High quality"
 msgstr "높은 품질"
-
-
-msgid "Medium"
-msgstr "중간"
 
 
 msgid "Medium quality"
@@ -33424,10 +33432,6 @@ msgid "List of object and material crypto IDs to include in matte"
 msgstr "매트에 포함시킬 개체 및 재료 크립토 ID 목록"
 
 
-msgid "Remove"
-msgstr "제거"
-
-
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "선택 출력에서 색상을 골라 매트 또는 대상에서 매테리얼을 제거합니다"
 
@@ -34743,6 +34747,18 @@ msgstr "정렬 Y"
 
 msgid "Font of the text. Falls back to the UI font by default"
 msgstr "텍스트의 폰트. 기본적으로 UI폰트로 돌아갑니다"
+
+
+msgid "Pack UV Islands"
+msgstr "UV 아일랜드를 포장"
+
+
+msgid "Angle Based"
+msgstr "각도 베이스"
+
+
+msgid "Conformal"
+msgstr "컨포멀"
 
 
 msgctxt "NodeTree"
@@ -40977,14 +40993,6 @@ msgstr "현재 프레임을 사용"
 
 msgid "Export the scene in the current animation frame"
 msgstr "현재 애니메이션 프레임에서 씬을 내보내기"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "변위 텍스처 (실험적)"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "실험: 변위 텍스처 내보내기. 불완전한 \"KHR_materials_displacement\" glTF 확장자 사용"
 
 
 msgid "Generic quantization bits"
@@ -52226,15 +52234,6 @@ msgstr "커서 아래에 연결된 페이스를 선택"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "페이스 선택 보이기"
-
-
-msgid "Reveal hidden faces"
-msgstr "숨겨진 페이스를 보이기"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "잡기 클론"
 
@@ -58247,14 +58246,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "펼치기하는 방법 (각도 기반은 등각보다 좋은 결과를 보여 주지만 다소 느립니다)"
 
 
-msgid "Angle Based"
-msgstr "각도 베이스"
-
-
-msgid "Conformal"
-msgstr "컨포멀"
-
-
 msgid "Map UVs taking vertex position after Subdivision Surface modifier has been applied"
 msgstr "섭디비젼 표면 모디파이어가 적용된 후 버텍스 위치를 취하는 UV 매핑"
 
@@ -59067,10 +59058,6 @@ msgstr "프레임 오브젝트 데이터 당 샘플된 횟수"
 
 msgid "Export normals"
 msgstr "노멀을 내보내기"
-
-
-msgid "Pack UV Islands"
-msgstr "UV 아일랜드를 포장"
 
 
 msgid "Export UVs with packed island"
@@ -62252,10 +62239,6 @@ msgid "Icon Colors"
 msgstr "아이콘 컬러"
 
 
-msgid "Shaded"
-msgstr "셰이드"
-
-
 msgid "Styles"
 msgstr "스타일"
 
@@ -62681,6 +62664,11 @@ msgstr "강도"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "비틀기"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "슬라이드"
 
 
 msgid "Clone from Paint Slot"
@@ -69842,6 +69830,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "하나 또는 더 많은 이미지들 불러오는 시퀀스 스트립"
 
 
+msgid "Speed Factor"
+msgstr "속력 팩터"
+
+
 msgid "Mask Sequence"
 msgstr "마스크 시퀀스"
 
@@ -75223,10 +75215,6 @@ msgid "Snap to edges"
 msgstr "에지에 스냅"
 
 
-msgid "Snap to faces"
-msgstr "페이스에 스냅"
-
-
 msgid "Snap to volume"
 msgstr "볼륨에 스냅"
 
@@ -75505,14 +75493,6 @@ msgstr "축적에 대해 스냅을 사용"
 
 msgid "Scale is affected by snapping settings"
 msgstr "축적이 스냅 설정에 의해 영향을받습니다"
-
-
-msgid "Project onto Self"
-msgstr "자체에 투사"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "자체에 스냅 (에디트 모드 전용)"
 
 
 msgid "Use Snap for Translation"
@@ -76761,10 +76741,6 @@ msgstr "걷기 속력"
 
 msgid "Base speed for walking and flying"
 msgstr "걷기 및 비행하기에 대한 베이스 속력"
-
-
-msgid "Speed Factor"
-msgstr "속력 팩터"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -80167,11 +80143,6 @@ msgstr "채널을 정리"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "확장"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "슬라이드"
 
 
 msgctxt "Operator"
@@ -83969,14 +83940,6 @@ msgid "Delete envelope control point"
 msgstr "엔벨로프 컨트롤 포인트를 삭제"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "붙여 넣을 버퍼에서 애니메이션 데이터가 없음"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "다음으로 붙여 넣기 하는 선택된 F-커브가 없음"
-
-
 msgid "<No ID pointer>"
 msgstr "<No ID pointer>"
 
@@ -84555,14 +84518,6 @@ msgstr "주석 작업자가 이미 활성화되었습니다"
 
 msgid "Active region not set"
 msgstr "활성 지역이 설정되지 않음"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "키 프레임 복사/붙여 넣기 버퍼에 복사된 키 프레임이 없음"
-
-
-msgid "No data in buffer to paste"
-msgstr "붙여 넣을 버퍼에 데이터가 없음"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -87124,12 +87079,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "액션 '%s'가 저장되지 않습니다. NLA 스택에 페이크 유저 또는 제외을 만들어 저장하십시오"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "키 프레임 복사/붙여 넣기 버퍼에 복사된 키 프레임이 없음"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "키 프레임 붙여 넣기는 마스크 모드를 이용 할 수 없음"
 
 
+msgid "No data in buffer to paste"
+msgstr "붙여 넣을 버퍼에 데이터가 없음"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "그리스 펜슬 또는 마스크 모드에서는 키 프레임 붙여 넣기를 사용할 수 없습니다"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "다음으로 붙여 넣기 하는 선택된 F-커브가 없음"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -87841,16 +87808,12 @@ msgid "Could not find a valid parent collection for the new duplicate, it won't 
 msgstr "새 복제본에 대한 유효한 상위 컬렉션을 찾을 수 없으며, 어떤 뷰 레이어에도 연결되지 않습니다"
 
 
-msgid "Link inside Collection"
-msgstr "내부 컬렉션을 연결"
+msgid "Move before collection"
+msgstr "컬렉션 이전으로 이동"
 
 
 msgid "Move between collections"
 msgstr "컬렉션 사이로 이동"
-
-
-msgid "Move before collection"
-msgstr "컬렉션 이전으로 이동"
 
 
 msgid "Move after collection"

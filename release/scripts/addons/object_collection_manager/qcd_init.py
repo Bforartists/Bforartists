@@ -135,8 +135,8 @@ def register_qcd_view_hotkeys():
             ["ZERO", True, "20"],
         ]
 
-        for key in qcd_hotkeys:
-            for mode in ['Object Mode', 'Pose', 'Weight Paint']:
+        for mode in ['Object Mode', 'Pose', 'Weight Paint']:
+            for key in qcd_hotkeys:
                 km = wm.keyconfigs.addon.keymaps.new(name=mode)
                 kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
                 kmi.properties.slot = key[2]
@@ -149,34 +149,34 @@ def register_qcd_view_hotkeys():
                 kmi.properties.toggle = True
                 addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.enable_all_qcd_slots', 'PLUS', 'PRESS', shift=True)
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.enable_all_qcd_slots', 'PLUS', 'PRESS', shift=True)
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.isolate_selected_objects_collections', 'EQUAL', 'PRESS')
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.isolate_selected_objects_collections', 'EQUAL', 'PRESS')
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.disable_selected_objects_collections', 'MINUS', 'PRESS')
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.disable_selected_objects_collections', 'MINUS', 'PRESS')
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.disable_all_non_qcd_slots', 'PLUS', 'PRESS', shift=True, alt=True)
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.disable_all_non_qcd_slots', 'PLUS', 'PRESS', shift=True, alt=True)
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.disable_all_collections', 'EQUAL', 'PRESS', alt=True, ctrl=True)
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.disable_all_collections', 'EQUAL', 'PRESS', alt=True, ctrl=True)
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.select_all_qcd_objects', 'PLUS', 'PRESS', shift=True, ctrl=True)
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.select_all_qcd_objects', 'PLUS', 'PRESS', shift=True, ctrl=True)
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
 
-                km = wm.keyconfigs.addon.keymaps.new(name=mode)
-                kmi = km.keymap_items.new('view3d.discard_qcd_history', 'EQUAL', 'PRESS', alt=True)
-                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.discard_qcd_history', 'EQUAL', 'PRESS', alt=True)
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
 
 def register_qcd_view_edit_mode_hotkeys():

@@ -201,14 +201,12 @@ class SUNPOS_PT_Location(bpy.types.Panel):
 
         if p.show_az_el:
             col = flow.column(align=True)
-            row = col.row()
-            row.alignment = 'RIGHT'
-            row.label(text="Azimuth: " +
-                     str(round(sun.azimuth, 3)) + "°")
-            row = col.row()
-            row.alignment = 'RIGHT'
-            row.label(text="Elevation: " +
-                     str(round(sun.elevation, 3)) + "°")
+            split = col.split(factor=0.4, align=True)
+            split.label(text="Azimuth:")
+            split.label(text=str(round(sun.azimuth, 3)) + "°")
+            split = col.split(factor=0.4, align=True)
+            split.label(text="Elevation:")
+            split.label(text=str(round(sun.elevation, 3)) + "°")
             col.separator()
 
         if p.show_refraction:
@@ -266,16 +264,27 @@ class SUNPOS_PT_Time(bpy.types.Panel):
                          sp.longitude,
                          sp.UTC_zone)
         col.alignment = 'CENTER'
-        col.label(text="Local: " + lt, icon='TIME')
-        col.label(text="  UTC: " + ut, icon='PREVIEW_RANGE')
+
+        split = col.split(factor=0.5, align=True)
+        split.label(text="Local:", icon='TIME')
+        split.label(text=lt)
+        split = col.split(factor=0.5, align=True)
+        split.label(text="UTC:", icon='PREVIEW_RANGE')
+        split.label(text=ut)
         col.separator()
+
 
         col = flow.column(align=True)
         col.alignment = 'CENTER'
         if p.show_rise_set:
             sr = format_hms(sun.sunrise.time)
             ss = format_hms(sun.sunset.time)
-            tsr = "Sunrise: " + sr
-            tss = " Sunset: " + ss
-            col.label(text=tsr, icon='LIGHT_SUN')
-            col.label(text=tss, icon='SOLO_ON')
+
+            split = col.split(factor=0.5, align=True)
+            split.label(text="Sunrise:", icon='LIGHT_SUN')
+            split.label(text=sr)
+            split = col.split(factor=0.5, align=True)
+            split.label(text="Sunset:", icon='SOLO_ON')
+            split.label(text=ss)
+
+        col.separator()

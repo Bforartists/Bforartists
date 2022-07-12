@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2390,6 +2390,14 @@ msgid "Count"
 msgstr "Počet"
 
 
+msgid "Remove"
+msgstr "Odstranit"
+
+
+msgid "Minimum Distance"
+msgstr "Minimální vzdálenost"
+
+
 msgid "Active Smooth"
 msgstr "Aktivní vyhlazení"
 
@@ -3108,10 +3116,6 @@ msgstr "Restituce"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Rychlost ztracená při kolizi"
-
-
-msgid "Minimum Distance"
-msgstr "Minimální vzdálenost"
 
 
 msgid "Friction"
@@ -7207,8 +7211,8 @@ msgid "Small"
 msgstr "Malý"
 
 
-msgid "Regular"
-msgstr "Normální"
+msgid "Medium"
+msgstr "Střední"
 
 
 msgid "Large"
@@ -7899,6 +7903,10 @@ msgid "Blend Mode"
 msgstr "Režim prolnutí"
 
 
+msgid "Regular"
+msgstr "Normální"
+
+
 msgid "Custom Channel Color"
 msgstr "Náhodná Barva Kanálu"
 
@@ -8313,6 +8321,10 @@ msgstr "Hustota bodů"
 
 msgid "Step"
 msgstr "Krok"
+
+
+msgid "Shaded"
+msgstr "Stínovaný"
 
 
 msgid "Mirror Modifier"
@@ -10863,10 +10875,6 @@ msgstr "Výška"
 
 msgid "High quality"
 msgstr "Vysoká kvalita"
-
-
-msgid "Medium"
-msgstr "Střední"
 
 
 msgid "Medium quality"
@@ -17531,10 +17539,6 @@ msgid "Crop Image Size"
 msgstr "Oříznout velikost obrázku"
 
 
-msgid "Remove"
-msgstr "Odstranit"
-
-
 msgid "Placeholder"
 msgstr "Filtry"
 
@@ -18309,6 +18313,14 @@ msgstr "Zarovnat X"
 
 msgid "Align Y"
 msgstr "Zarovnat Y"
+
+
+msgid "Angle Based"
+msgstr "Přivlastnění"
+
+
+msgid "Conformal"
+msgstr "Dle normály"
 
 
 msgctxt "NodeTree"
@@ -28139,10 +28151,6 @@ msgid "Select linked faces"
 msgstr "Vybrat propojené plochy"
 
 
-msgid "Reveal hidden faces"
-msgstr "Odkrýt skryté plochy"
-
-
 msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Uchopit klon"
@@ -31548,14 +31556,6 @@ msgid "Unwrap"
 msgstr "Metoda rozbalení"
 
 
-msgid "Angle Based"
-msgstr "Přivlastnění"
-
-
-msgid "Conformal"
-msgstr "Dle normály"
-
-
 msgid "Use Subdivision Surface"
 msgstr "Použít Dělení Povrchu"
 
@@ -33903,10 +33903,6 @@ msgid "Collection Colors"
 msgstr "Barvy kolekce"
 
 
-msgid "Shaded"
-msgstr "Stínovaný"
-
-
 msgid "Styles"
 msgstr "Styly"
 
@@ -34263,6 +34259,11 @@ msgstr "Síla"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Zakroutit"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Z"
 
 
 msgid "Particle Tool"
@@ -37608,6 +37609,10 @@ msgid "In"
 msgstr "V"
 
 
+msgid "Speed Factor"
+msgstr "Faktor Rychlosti"
+
+
 msgid "Mask Sequence"
 msgstr "Sekvence "
 
@@ -40242,10 +40247,6 @@ msgid "Snap to edges"
 msgstr "Přichytit k hranám"
 
 
-msgid "Snap to faces"
-msgstr "Přichytit k plochám"
-
-
 msgid "Snap to volume"
 msgstr "Přichytit k objemu"
 
@@ -40728,10 +40729,6 @@ msgstr "Zobrazit výšku"
 
 msgid "Walk Speed"
 msgstr "Rychlost chůze"
-
-
-msgid "Speed Factor"
-msgstr "Faktor Rychlosti"
 
 
 msgid "Use Ambient Occlusion"
@@ -42875,11 +42872,6 @@ msgstr "Zatlačit Dolů"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Rozšířit"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Z"
 
 
 msgctxt "Operator"
@@ -45410,14 +45402,6 @@ msgid "Delete envelope control point"
 msgstr "Zobrazit neoznačení řídící body"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Přejmenovat Datablock"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "Rozdělí vybranou oblast na dvě nová okna"
-
-
 msgid "No F-Curve to add keyframes to"
 msgstr "Krok Snímku"
 
@@ -45642,10 +45626,6 @@ msgstr "Nelze malovat tah"
 
 msgid "Nothing to erase"
 msgstr "Není co vymazat"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Konvertuje označené trojúhlníky na čtyřúhelníky"
 
 
 msgid "No Grease Pencil data to work on"
@@ -47148,6 +47128,14 @@ msgstr "Aktivní snímek"
 
 msgid "Active Keyframe"
 msgstr "Aktivní snímek"
+
+
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Konvertuje označené trojúhlníky na čtyřúhelníky"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "Rozdělí vybranou oblast na dvě nová okna"
 
 
 msgid "Brush Mask"

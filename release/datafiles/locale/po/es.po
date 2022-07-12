@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -316,10 +316,6 @@ msgstr "MetalRT (Experimental)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT para trazado de rayos usa menos memoria en escenas que hagan un uso extensivo de curvas, y puede brindar un mejor rendimiento en algunos casos específicos. Sin embargo este soporte es experimental y algunas escenas podrían procesarse de forma incorrecta"
-
-
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Ouput)"
-msgstr "Muestra el nodo de opciones de glTF en el editor de Nodos de sombreado (menú Agregar > Salida)"
 
 
 msgid "Fribidi Library"
@@ -3506,6 +3502,10 @@ msgid "Length of newly added curves when it is not interpolated from other curve
 msgstr "Longitud de las nuevas curvas agregadas, cuando éstas no estén siendo interpoladas desde otras ya existentes"
 
 
+msgid "Remove"
+msgstr "Eliminar"
+
+
 msgid "Interpolate Length"
 msgstr "Interpolar longitud"
 
@@ -3520,6 +3520,10 @@ msgstr "Interpolar forma"
 
 msgid "Use shape of the curves in close proximity"
 msgstr "Usa la forma de las curvas en las proximidades más cercanas"
+
+
+msgid "Minimum Distance"
+msgstr "Distancia mínima"
 
 
 msgid "Minimum Length"
@@ -4704,10 +4708,6 @@ msgstr "Restitución"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Cantidad de velocidad perdida durante la colisión"
-
-
-msgid "Minimum Distance"
-msgstr "Distancia mínima"
 
 
 msgid "Minimum distance between collision objects before collision response takes effect"
@@ -12463,8 +12463,8 @@ msgid "Small"
 msgstr "Pequeño"
 
 
-msgid "Regular"
-msgstr "Regular"
+msgid "Medium"
+msgstr "Media"
 
 
 msgid "Large"
@@ -15079,6 +15079,10 @@ msgid "Blend mode"
 msgstr "Modo de fundido"
 
 
+msgid "Regular"
+msgstr "Regular"
+
+
 msgid "Hard Light"
 msgstr "Luz fuerte"
 
@@ -16991,10 +16995,6 @@ msgid "Crease Threshold"
 msgstr "Umbral plegado"
 
 
-msgid "Angles smaller than this will be treated as creases"
-msgstr "Los ángulos menores que el aquí indicado serán tratados como pliegues"
-
-
 msgid "Invert Vertex Group"
 msgstr "Invertir grupo de vértices"
 
@@ -17037,6 +17037,10 @@ msgstr "Sobrebarrido"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "Margen para prevenir que los trazos finalicen abruptamente en los bordes de la imagen"
+
+
+msgid "Shaded"
+msgstr "Sombreado"
 
 
 msgid "Smooth Tolerance"
@@ -24364,10 +24368,6 @@ msgstr "Alta"
 
 msgid "High quality"
 msgstr "Calidad alta"
-
-
-msgid "Medium"
-msgstr "Media"
 
 
 msgid "Medium quality"
@@ -40986,10 +40986,6 @@ msgid "List of object and material crypto IDs to include in matte"
 msgstr "Lista de ID de objetos y materiales de Cryptomatte a incluir en el mate"
 
 
-msgid "Remove"
-msgstr "Eliminar"
-
-
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Elimina un objeto o material del mate, al escoger un color con el cuentagotas"
 
@@ -43251,6 +43247,10 @@ msgid "Create a point in the point cloud for each selected face corner"
 msgstr "Crear un punto en la nube de puntos para cada esquina de la cara seleccionada"
 
 
+msgid "How the voxel size is specified"
+msgstr "Modo de especificar el tamaño de los vóxeles"
+
+
 msgid "UV Sphere"
 msgstr "Esfera"
 
@@ -43277,10 +43277,6 @@ msgstr "Puntos a vértices"
 
 msgid "Points to Volume"
 msgstr "Puntos a volumen"
-
-
-msgid "How the voxel size is specified"
-msgstr "Modo de especificar el tamaño de los vóxeles"
 
 
 msgid "Specify the approximate number of voxels along the diagonal"
@@ -43621,6 +43617,18 @@ msgstr "Encontrar las posiciones de los extremos usando un factor para la longit
 
 msgid "Find the endpoint positions using a length from the start of each spline"
 msgstr "Encontrar las posiciones de los extremos usando una longitud desde el inicio de cada curva"
+
+
+msgid "Pack UV Islands"
+msgstr "Empacar islas UV"
+
+
+msgid "Angle Based"
+msgstr "Basado en ángulos"
+
+
+msgid "Conformal"
+msgstr "Conforme"
 
 
 msgctxt "NodeTree"
@@ -45526,6 +45534,10 @@ msgstr "Objeto - Arte lineal"
 
 msgid "Object line art settings"
 msgstr "Opciones de arte lineal de objetos"
+
+
+msgid "Angles smaller than this will be treated as creases"
+msgstr "Los ángulos menores que el aquí indicado serán tratados como pliegues"
 
 
 msgid "How to use this object in line art calculation"
@@ -51270,14 +51282,6 @@ msgstr "Exportar la escena en el fotograma actual de la animación"
 
 msgid "Export Deformation Bones Only"
 msgstr "Exportar sólo huesos de deformación"
-
-
-msgid "Displacement Textures (EXPERIMENTAL)"
-msgstr "Texturas de desplazamiento (EXPERIMENTAL)"
-
-
-msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
-msgstr "EXPERIMENTAL: Exportar texturas de desplazamiento. Usa la extensión (aún incompleta) \"KHR_materials_displacement\" del formato glTF"
 
 
 msgid "Color quantization bits"
@@ -65618,15 +65622,6 @@ msgstr "Selecciona las caras vinculadas bajo el cursor"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Revelar caras seleccionadas"
-
-
-msgid "Reveal hidden faces"
-msgstr "Revelar caras ocultas"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Arrastrar clon"
 
@@ -68947,6 +68942,10 @@ msgstr "Esculpir curvas"
 
 msgid "Sculpt curves using a brush"
 msgstr "Permite esculpir curvas usando un pincel"
+
+
+msgid "Probability"
+msgstr "Probabilidad"
 
 
 msgctxt "Operator"
@@ -73549,14 +73548,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Método de despliegue (Basado en ángulos normalmente produce mejores resultados que Conforme, si bien es algo más lento)"
 
 
-msgid "Angle Based"
-msgstr "Basado en ángulos"
-
-
-msgid "Conformal"
-msgstr "Conforme"
-
-
 msgid "Use Subdivision Surface"
 msgstr "Usar Subdividir superficie"
 
@@ -74760,10 +74751,6 @@ msgstr "Exportar normales"
 
 msgid "Export undeformed mesh vertex coordinates"
 msgstr "Exporta las coordenadas de los vértices de la malla no deformada"
-
-
-msgid "Pack UV Islands"
-msgstr "Empacar islas UV"
 
 
 msgid "Export UVs with packed island"
@@ -79199,10 +79186,6 @@ msgid "Icon Colors"
 msgstr "Colores de íconos"
 
 
-msgid "Shaded"
-msgstr "Sombreado"
-
-
 msgid "Styles"
 msgstr "Estilos"
 
@@ -79747,6 +79730,11 @@ msgstr "Intensidad"
 msgctxt "Operator"
 msgid "Twist"
 msgstr "Torsionar"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Deslizar"
 
 
 msgid "Clone from Paint Slot"
@@ -81628,14 +81616,6 @@ msgstr "Composición de imagen completa"
 
 msgid "Enable compositor full frame execution mode option (no tiling, reduces execution time and memory usage)"
 msgstr "Habilita el modo de ejecución de imagen completa para el compositor (reduce el tempo de ejecución y el uso de memoria)"
-
-
-msgid "New Curves Type"
-msgstr "Nuevo tipo de curvas"
-
-
-msgid "Enable the new curves data type in the UI"
-msgstr "Habilita el nuevo tipo de datos de curvas en la interfaz"
 
 
 msgid "New Point Cloud Type"
@@ -88649,6 +88629,10 @@ msgid "Sequence strip to load one or more images"
 msgstr "Clip de secuencia para cargar una o más imágenes"
 
 
+msgid "Speed Factor"
+msgstr "Factor de velocidad"
+
+
 msgid "Mask Sequence"
 msgstr "Máscara"
 
@@ -92851,10 +92835,6 @@ msgid "Boolean Value"
 msgstr "Booleanos"
 
 
-msgid "Byte Color Value"
-msgstr "Colores byte"
-
-
 msgid "Float Value"
 msgstr "Decimales"
 
@@ -95320,10 +95300,6 @@ msgid "Snap to edges"
 msgstr "Adherir a bordes"
 
 
-msgid "Snap to faces"
-msgstr "Adherir a caras"
-
-
 msgid "Snap to volume"
 msgstr "Adherir a volumen"
 
@@ -95654,14 +95630,6 @@ msgstr "Usar adherencia para escala"
 
 msgid "Scale is affected by snapping settings"
 msgstr "La escala será afectada por las opciones de adherencia"
-
-
-msgid "Project onto Self"
-msgstr "Proyectar sobre sí mismo"
-
-
-msgid "Snap onto itself (Edit Mode Only)"
-msgstr "Adherir a sí mismo (sólo en modo Edición)"
 
 
 msgid "Snap to strip edges or current frame"
@@ -97502,10 +97470,6 @@ msgstr "Velocidad al transitar"
 
 msgid "Base speed for walking and flying"
 msgstr "Velocidad de base al transitar o volar"
-
-
-msgid "Speed Factor"
-msgstr "Factor de velocidad"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -99522,12 +99486,12 @@ msgid "and NVIDIA driver version 470 or newer"
 msgstr "y controladores NVIDIA versión 470 o más nuevo"
 
 
-msgid "Requires discrete AMD GPU with RDNA architecture"
-msgstr "Requiere una GPU discreta de AMD con arquitectura RDNA"
-
-
 msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "y un controlador AMD Radeon Pro 21.Q4 o más nuevo"
+
+
+msgid "and AMD driver version 22.10 or newer"
+msgstr "y controladores AMD versión 22.10 o más nuevo"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -99536,10 +99500,6 @@ msgstr "Requiere Apple Silicon con macOS 12.2 o más nuevo"
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "o AMD con macOS 12.3 o más nuevo"
-
-
-msgid "and AMD driver version 22.10 or newer"
-msgstr "y controladores AMD versión 22.10 o más nuevo"
 
 
 msgid "Noise Threshold"
@@ -103256,11 +103216,6 @@ msgstr "Extender"
 
 
 msgctxt "Operator"
-msgid "Slide"
-msgstr "Deslizar"
-
-
-msgctxt "Operator"
 msgid "Delete Duplicate Frames"
 msgstr "Borrar fotogramas duplicados"
 
@@ -104913,11 +104868,6 @@ msgstr "SVG como lápiz de cera"
 
 
 msgctxt "Operator"
-msgid "Wavefront (.obj) (experimental)"
-msgstr "Wavefront (.obj) (experimental)"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Procesar fotograma"
 
@@ -105627,6 +105577,11 @@ msgstr "Círculo NURBS"
 msgctxt "Operator"
 msgid "Path"
 msgstr "Trayectoria"
+
+
+msgctxt "Operator"
+msgid "Empty Hair"
+msgstr "Pelo vacío"
 
 
 msgctxt "Operator"
@@ -106548,11 +106503,6 @@ msgstr "Atributo de color"
 
 
 msgctxt "Operator"
-msgid "Empty Hair"
-msgstr "Pelo vacío"
-
-
-msgctxt "Operator"
 msgid "Point Cloud"
 msgstr "Nube de puntos"
 
@@ -107020,10 +106970,6 @@ msgid "Fade Geometry"
 msgstr "Desvanecer geometría"
 
 
-msgid "Snap With"
-msgstr "Adherir usando"
-
-
 msgid "Reference Point"
 msgstr "Punto de referencia"
 
@@ -107112,6 +107058,10 @@ msgstr "Desmarcar como cara de Freestyle"
 
 msgid "Specular Lighting"
 msgstr "Iluminación especular"
+
+
+msgid "Snap With"
+msgstr "Adherir usando"
 
 
 msgid "Custom Location"
@@ -107245,6 +107195,10 @@ msgstr "Ajustar radio de la luz"
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "Ajustar ángulo del Sol"
+
+
+msgid "Distance Min"
+msgstr "Distancia  Mín"
 
 
 msgid "Layer:"
@@ -108750,14 +108704,6 @@ msgid "Coefficient"
 msgstr "Coeficiente"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "No hay datos de animación en el buffer para pegar"
-
-
-msgid "No selected F-Curves to paste into"
-msgstr "No hay curvas-f seleccionadas donde pegar"
-
-
 msgid "<No ID pointer>"
 msgstr "<Sin puntero de ID>"
 
@@ -109488,14 +109434,6 @@ msgstr "No fue posible encontrar datos de anotación dónde dibujar"
 
 msgid "Active region not set"
 msgstr "Región activa no definida"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Ningún fotograma clave copiado al buffer de fotogramas clave"
-
-
-msgid "No data in buffer to paste"
-msgstr "No hay datos en el buffer para pegar"
 
 
 msgid "Unable to add a new Armature modifier to object"
@@ -113005,12 +112943,24 @@ msgid "Action '%s' will not be saved, create Fake User or Stash in NLA Stack to 
 msgstr "La acción '%s' no será guardada, crear un usuario Ficticio o Escondido en la lista de ANL para poder retenerla"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Ningún fotograma clave copiado al buffer de fotogramas clave"
+
+
 msgid "Keyframe pasting is not available for mask mode"
 msgstr "Pegar fotogramas claves no está disponible en el modo máscara"
 
 
+msgid "No data in buffer to paste"
+msgstr "No hay datos en el buffer para pegar"
+
+
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "Pegar fotogramas claves no está disponible en los modos lápiz de cera o máscara"
+
+
+msgid "No selected F-Curves to paste into"
+msgstr "No hay curvas-f seleccionadas donde pegar"
 
 
 msgid "Insert Keyframes is not yet implemented for this mode"
@@ -114302,16 +114252,12 @@ msgid "Link all to object"
 msgstr "Vincular todo a objeto"
 
 
-msgid "Link inside Collection"
-msgstr "Vincular dentro de colección"
+msgid "Move before collection"
+msgstr "Mover antes de una colección"
 
 
 msgid "Move between collections"
 msgstr "Mover en medio de dos colecciones"
-
-
-msgid "Move before collection"
-msgstr "Mover antes de una colección"
 
 
 msgid "Move after collection"
@@ -115910,10 +115856,6 @@ msgstr "Curvatura"
 
 msgid "Material Borders"
 msgstr "Límites de materiales"
-
-
-msgid "Angle Cached"
-msgstr "Basado en ángulos"
 
 
 msgid "Custom Camera"
@@ -117569,10 +117511,6 @@ msgid "Line Break"
 msgstr "Salto de línea"
 
 
-msgid "Probability"
-msgstr "Probabilidad"
-
-
 msgid "The string to find in the input string"
 msgstr "El texto a buscar en la cadena de entrada"
 
@@ -117961,10 +117899,6 @@ msgid "The parts of the geometry to be deleted"
 msgstr "Partes de la geometría a ser borradas"
 
 
-msgid "Distance Min"
-msgstr "Distancia  Mín"
-
-
 msgid "Density Max"
 msgstr "Densidad  Máx"
 
@@ -118301,6 +118235,10 @@ msgid "Disabled, Blender was compiled without OpenSubdiv"
 msgstr "Deshabilitado, Blender fue compilado sin soporte para OpenSubdiv"
 
 
+msgid "Disabled, Blender was compiled without OpenVDB"
+msgstr "Deshabilitado, Blender fue compilado sin soporte para OpenVDB"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "No es posible recuperar geometría desde el objeto modificador"
 
@@ -118311,10 +118249,6 @@ msgstr "Como instancia"
 
 msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
 msgstr "Producir el objeto completo como una única instancia. Esto permite instanciar tipos de objeto que no contengan geometría"
-
-
-msgid "Disabled, Blender was compiled without OpenVDB"
-msgstr "Deshabilitado, Blender fue compilado sin soporte para OpenVDB"
 
 
 msgid "Source Position"

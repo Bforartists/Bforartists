@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'0124de9d0e5f')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -2630,6 +2630,14 @@ msgid "Count"
 msgstr "Conteggio"
 
 
+msgid "Remove"
+msgstr "Rimuovi"
+
+
+msgid "Minimum Distance"
+msgstr "Distanza Minima"
+
+
 msgid "Angle"
 msgstr "Angolo"
 
@@ -3244,10 +3252,6 @@ msgstr "Restituzione"
 
 msgid "Amount of velocity lost on collision"
 msgstr "Ammontare della velocità persa nella collisione"
-
-
-msgid "Minimum Distance"
-msgstr "Distanza Minima"
 
 
 msgid "Friction"
@@ -8646,8 +8650,8 @@ msgid "Small"
 msgstr "Piccole"
 
 
-msgid "Regular"
-msgstr "Regolare"
+msgid "Medium"
+msgstr "Medio"
 
 
 msgid "Large"
@@ -9578,6 +9582,10 @@ msgid "Blend Mode"
 msgstr "Modalità Fusione"
 
 
+msgid "Regular"
+msgstr "Regolare"
+
+
 msgid "Hard Light"
 msgstr "Luce Intensa"
 
@@ -10134,6 +10142,10 @@ msgstr "Densità Punto"
 
 msgid "Step"
 msgstr "Passo"
+
+
+msgid "Shaded"
+msgstr "Ombreggiato"
 
 
 msgid "Boundaries"
@@ -13373,10 +13385,6 @@ msgstr "Alto"
 
 msgid "High quality"
 msgstr "Alta qualità"
-
-
-msgid "Medium"
-msgstr "Medio"
 
 
 msgid "Medium quality"
@@ -23415,10 +23423,6 @@ msgid "Crop Image Size"
 msgstr "Dim. Ritaglio Immagine"
 
 
-msgid "Remove"
-msgstr "Rimuovi"
-
-
 msgid "Has Layers"
 msgstr "Ha Livelli"
 
@@ -24162,6 +24166,18 @@ msgstr "Allinea X"
 
 msgid "Align Y"
 msgstr "Allinea Y"
+
+
+msgid "Pack UV Islands"
+msgstr "Compatta Isole UV"
+
+
+msgid "Angle Based"
+msgstr "Basato sull'Angolo"
+
+
+msgid "Conformal"
+msgstr "Conforme"
 
 
 msgctxt "NodeTree"
@@ -36376,15 +36392,6 @@ msgstr "Seleziona facce connesse sotto il cursore"
 
 
 msgctxt "Operator"
-msgid "Face Select Reveal"
-msgstr "Rivela facce selezionate"
-
-
-msgid "Reveal hidden faces"
-msgstr "Rivela facce nascoste"
-
-
-msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Sposta Clone"
 
@@ -38520,6 +38527,10 @@ msgstr "Esegue file python"
 msgctxt "Operator"
 msgid "Reload Scripts"
 msgstr "Ricarica Script"
+
+
+msgid "Probability"
+msgstr "Probabilità"
 
 
 msgctxt "Operator"
@@ -40875,14 +40886,6 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Metodo di sviluppo-scucitura (quello Basato sull'Angolo dà risultati miglior del Conforme, pur essendo un po' più lento)"
 
 
-msgid "Angle Based"
-msgstr "Basato sull'Angolo"
-
-
-msgid "Conformal"
-msgstr "Conforme"
-
-
 msgctxt "Operator"
 msgid "Weld"
 msgstr "Salda"
@@ -41499,10 +41502,6 @@ msgstr "Campioni Geometria"
 
 msgid "Export normals"
 msgstr "Esporta normali"
-
-
-msgid "Pack UV Islands"
-msgstr "Compatta Isole UV"
 
 
 msgid "Selected Objects Only"
@@ -43388,10 +43387,6 @@ msgid "Icon Colors"
 msgstr "Colori Icone"
 
 
-msgid "Shaded"
-msgstr "Ombreggiato"
-
-
 msgid "Styles"
 msgstr "Stili"
 
@@ -43587,6 +43582,11 @@ msgstr "Spessore"
 msgctxt "Operator"
 msgid "Strength"
 msgstr "Forza"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "Scorri"
 
 
 msgid "Post-Processing"
@@ -48070,6 +48070,10 @@ msgid "In"
 msgstr "Ingresso"
 
 
+msgid "Speed Factor"
+msgstr "Fattore di Velocità"
+
+
 msgid "Mask Sequence"
 msgstr "Maschera Sequenza"
 
@@ -51338,10 +51342,6 @@ msgid "Snap to edges"
 msgstr "Snap agli spigoli"
 
 
-msgid "Snap to faces"
-msgstr "Snap alle facce"
-
-
 msgid "Snap to volume"
 msgstr "Snap al volume"
 
@@ -52004,10 +52004,6 @@ msgstr "Altezza Vista"
 
 msgid "Walk Speed"
 msgstr "Velocità Camminata"
-
-
-msgid "Speed Factor"
-msgstr "Fattore di Velocità"
 
 
 msgid "Widget"
@@ -54059,11 +54055,6 @@ msgstr "Pulisci Canali"
 msgctxt "Operator"
 msgid "Extend"
 msgstr "Estendi"
-
-
-msgctxt "Operator"
-msgid "Slide"
-msgstr "Scorri"
 
 
 msgid "Recursions"
@@ -56327,6 +56318,10 @@ msgid "Adjust Focus Distance"
 msgstr "Regola Distanza Focale"
 
 
+msgid "Distance Min"
+msgstr "Distanza Min"
+
+
 msgid "Layer:"
 msgstr "Livello:"
 
@@ -56903,10 +56898,6 @@ msgid "Coefficient"
 msgstr "Coefficiente"
 
 
-msgid "No animation data in buffer to paste"
-msgstr "Nessun dato animazione nel buffer da incollare"
-
-
 msgid "<Missing ID block>"
 msgstr "<ID Blocco Mancante>"
 
@@ -57129,14 +57120,6 @@ msgstr "Impossibile dipingere tratto"
 
 msgid "Active region not set"
 msgstr "Regione attiva non impostata"
-
-
-msgid "No keyframes copied to keyframes copy/paste buffer"
-msgstr "Nessun fotogramma chiave copiato nel buffer di copia/incolla"
-
-
-msgid "No data in buffer to paste"
-msgstr "Nessun dato nel buffer da incollare"
 
 
 msgid "No Grease Pencil data to work on"
@@ -58875,6 +58858,14 @@ msgid "Action has already been stashed"
 msgstr "L'azione è già stata accantonata"
 
 
+msgid "No keyframes copied to keyframes copy/paste buffer"
+msgstr "Nessun fotogramma chiave copiato nel buffer di copia/incolla"
+
+
+msgid "No data in buffer to paste"
+msgstr "Nessun dato nel buffer da incollare"
+
+
 msgid "Not implemented for Masks"
 msgstr "Non Implementato per Maschere"
 
@@ -60584,10 +60575,6 @@ msgid "Line Break"
 msgstr "Interruzione Linea"
 
 
-msgid "Probability"
-msgstr "Probabilità"
-
-
 msgid "Rotate By"
 msgstr "Ruota Di"
 
@@ -60686,10 +60673,6 @@ msgstr "Fine (Fattore)"
 
 msgid "End (Length)"
 msgstr "Fine (Lunghezza)"
-
-
-msgid "Distance Min"
-msgstr "Distanza Min"
 
 
 msgid "Density Max"

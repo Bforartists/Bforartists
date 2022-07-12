@@ -292,6 +292,8 @@ class Rig(BaseHeadTailRig):
             influence=nfactor, space='LOCAL'
         )
 
+        self.make_constraint(mch, 'COPY_SCALE', ctrl.neck)
+
     ####################################################
     # Tweak bones
 
