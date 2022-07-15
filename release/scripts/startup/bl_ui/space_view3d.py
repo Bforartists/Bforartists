@@ -2370,11 +2370,11 @@ class VIEW3D_MT_curve_add(Menu):
 
         layout.separator()
 
-        layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon='CURVES_DATA')
+        layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon='OUTLINER_OB_CURVES')
 
         experimental = context.preferences.experimental
         if experimental.use_new_curves_tools:
-            layout.operator("object.curves_random_add", text="Random", icon='CURVES_DATA')
+            layout.operator("object.curves_random_add", text="Random", icon='OUTLINER_OB_CURVES')
 
 
 class VIEW3D_MT_surface_add(Menu):
