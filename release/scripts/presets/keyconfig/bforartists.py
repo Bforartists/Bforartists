@@ -1,4 +1,4 @@
-keyconfig_version = (3, 3, 1)
+keyconfig_version = (3, 3, 5)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -7,7 +7,7 @@ keyconfig_data = \
     ("view3d.cursor3d", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True}, None),
     ("view3d.localview", {"type": 'NUMPAD_SLASH', "value": 'PRESS', "repeat": True}, None),
     ("view3d.localview_remove_from", {"type": 'NUMPAD_SLASH', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
-    ("view3d.rotate", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+    ("view3d.rotate", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG'}, None),
     ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True}, None),
     ("view3d.zoom", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("view3d.dolly", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
@@ -1795,7 +1795,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
