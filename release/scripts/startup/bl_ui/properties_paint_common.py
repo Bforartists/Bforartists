@@ -822,7 +822,9 @@ def brush_settings(layout, context, brush, popover=False):
             col.active = not brush.curves_sculpt_settings.interpolate_point_count
             col.prop(brush.curves_sculpt_settings, "points_per_curve")
         elif brush.curves_sculpt_tool == 'GROW_SHRINK':
+            layout.use_property_split = False
             layout.prop(brush.curves_sculpt_settings, "scale_uniform")
+            layout.use_property_split = True
             layout.prop(brush.curves_sculpt_settings, "minimum_length")
 
 
