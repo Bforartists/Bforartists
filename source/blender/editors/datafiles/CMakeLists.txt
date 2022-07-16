@@ -1511,7 +1511,7 @@ snap_step_second
 similar
 snap_face_nearest
 field_domain
-#~ DEF_ICON_BLANK(1545)
+deform_curves
 #~ DEF_ICON_BLANK(1546)
 #~ DEF_ICON_BLANK(1547)
 #~ DEF_ICON_BLANK(1548)

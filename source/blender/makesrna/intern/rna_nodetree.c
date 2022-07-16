@@ -13494,6 +13494,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TO_POINTS:
       icon = ICON_POINTCLOUD_DATA;
       break;
+    case GEO_NODE_DEFORM_CURVES_ON_SURFACE:
+      icon = ICON_DEFORM_CURVES;
+      break;
     case GEO_NODE_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;

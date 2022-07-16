@@ -300,8 +300,8 @@ DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLE_TYPE, def_geo_curve_set_handle_t
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER, 0, "SPLINE_PARAMETER", SplineParameter, "Spline Parameter", "Add a Spline Paramenter Geometry node\nAdds extra curve parameters")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_TYPE, def_geo_curve_spline_type, "CURVE_SPLINE_TYPE", CurveSplineType, "Set Spline Type", "Add a Curve Spline Type Geometry node\nSet the spline type")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_MESH, 0, "CURVE_TO_MESH", CurveToMesh, "Curve to Mesh", "Add a Curve to Mesh Geometry node\nConverts a curve object to a mesh object")
-DefNode(GeometryNode, GEO_NODE_DEFORM_CURVES_ON_SURFACE, 0, "DEFORM_CURVES_ON_SURFACE", DeformCurvesOnSurface, "Deform Curves on Surface", "")
 DefNode(GeometryNode, GEO_NODE_CURVE_TO_POINTS, def_geo_curve_to_points, "CURVE_TO_POINTS", CurveToPoints, "Curve to Points", "Add a Curve to Points Geometry node\nConverts a curve object to a points cloud")
+DefNode(GeometryNode, GEO_NODE_DEFORM_CURVES_ON_SURFACE, 0, "DEFORM_CURVES_ON_SURFACE", DeformCurvesOnSurface, "Deform Curves on Surface", "Add a Deform Curves on Surface Geometry node\nDeforms a curve so that it follows the surface of an object")
 DefNode(GeometryNode, GEO_NODE_DELETE_GEOMETRY, def_geo_delete_geometry, "DELETE_GEOMETRY", DeleteGeometry, "Delete Geometry", "Add a Delete Geometry Node\nDeletes Geometry")
 DefNode(GeometryNode, GEO_NODE_DUPLICATE_ELEMENTS, def_geo_duplicate_elements, "DUPLICATE_ELEMENTS", DuplicateElements, "Duplicate Elements", "Add a Duplicate Elements Geometry Node\nDuplicates the selected mesh element")
 DefNode(GeometryNode, GEO_NODE_DISTRIBUTE_POINTS_ON_FACES, def_geo_distribute_points_on_faces, "DISTRIBUTE_POINTS_ON_FACES", DistributePointsOnFaces, "Distribute Points on Faces", "Add a Distribute Points on Faces Geometry node\nDistribute geometry at the center of faces")
@@ -357,8 +357,8 @@ DefNode(GeometryNode, GEO_NODE_MESH_PRIMITIVE_ICO_SPHERE, 0,  "MESH_PRIMITIVE_IC
 DefNode(GeometryNode, GEO_NODE_MESH_PRIMITIVE_LINE, def_geo_mesh_line, "MESH_PRIMITIVE_LINE", MeshLine, "Mesh Line", "Add a Mesh Line Geometry node\ncreates a Line mesh")
 DefNode(GeometryNode, GEO_NODE_MESH_PRIMITIVE_UV_SPHERE, 0,  "MESH_PRIMITIVE_UV_SPHERE", MeshUVSphere, "UV Sphere", "Add a UV Sphere Geometry node\ncreates a UV Sphere mesh")
 DefNode(GeometryNode, GEO_NODE_MESH_TO_CURVE, 0, "MESH_TO_CURVE", MeshToCurve, "Mesh to Curve", "Add a Mesh to Curve Geometry node\nconverts a mesh to a curve")
-DefNode(GeometryNode, GEO_NODE_MESH_TO_POINTS, def_geo_mesh_to_points, "MESH_TO_POINTS", MeshToPoints, "Mesh to Points", "Add a Mesh to Points Geometry node")
-DefNode(GeometryNode, GEO_NODE_MESH_TO_VOLUME, def_geo_mesh_to_volume, "MESH_TO_VOLUME", MeshToVolume, "Mesh To Volume", "")
+DefNode(GeometryNode, GEO_NODE_MESH_TO_POINTS, def_geo_mesh_to_points, "MESH_TO_POINTS", MeshToPoints, "Mesh to Points", "Add a Mesh to Points Geometry node\nConverts a Mesh to points")
+DefNode(GeometryNode, GEO_NODE_MESH_TO_VOLUME, def_geo_mesh_to_volume, "MESH_TO_VOLUME", MeshToVolume, "Mesh To Volume", "Add a Mesh to Volume Geometry node\nConverts a Mesh to a volume")
 DefNode(GeometryNode, GEO_NODE_OBJECT_INFO, def_geo_object_info, "OBJECT_INFO", ObjectInfo, "Object Info", "Add a Object Info Geometry node\nRetreives information from objects")
 DefNode(GeometryNode, GEO_NODE_POINTS, 0, "POINTS", Points, "Points", "Add a single point or points with position, count and radius")
 DefNode(GeometryNode, GEO_NODE_POINTS_TO_VERTICES, 0, "POINTS_TO_VERTICES", PointsToVertices, "Points to Vertices", "Add a Points to Vertices Geometry node\nAdds points to vertices of a geometry")
@@ -403,8 +403,8 @@ DefNode(GeometryNode, GEO_NODE_TRIM_CURVE, def_geo_curve_trim, "TRIM_CURVE", Tri
 DefNode(GeometryNode, GEO_NODE_VIEWER, def_geo_viewer, "VIEWER", Viewer, "Viewer", "Add a Viewer node\nThe Viewer node allows to show the result of the current node output")
 DefNode(GeometryNode, GEO_NODE_VOLUME_CUBE, 0, "VOLUME_CUBE", VolumeCube, "Volume Cube", "Add a Volume Cube node\nThe volume cube creates a voxel volume primitive to work in combination with the Volume to Mesh node")
 DefNode(GeometryNode, GEO_NODE_VOLUME_TO_MESH, def_geo_volume_to_mesh, "VOLUME_TO_MESH", VolumeToMesh, "Volume to Mesh", "Add a Volume to Mesh Geometry node\nGenerates a mesh on the “surface” of a volume")
-DefNode(GeometryNode, GEO_NODE_UV_PACK_ISLANDS, 0, "UV_PACK_ISLANDS", UVPackIslands, "Pack UV Islands", "")
-DefNode(GeometryNode, GEO_NODE_UV_UNWRAP, def_geo_uv_unwrap, "UV_UNWRAP", UVUnwrap, "UV Unwrap", "")
+DefNode(GeometryNode, GEO_NODE_UV_PACK_ISLANDS, 0, "UV_PACK_ISLANDS", UVPackIslands, "Pack UV Islands", "Add a Pack UV Islands Geometry node\nAllows you to pack UV islands")
+DefNode(GeometryNode, GEO_NODE_UV_UNWRAP, def_geo_uv_unwrap, "UV_UNWRAP", UVUnwrap, "UV Unwrap", "Add a UV Unwrap Geometry node\nAllows you to unwrap selected geometry")
 
 /* undefine macros */
 #undef DefNode
