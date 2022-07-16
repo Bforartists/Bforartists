@@ -3332,6 +3332,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
+            
+            props = col.operator("node.add_node", text=" Deform Curves on Surface ", icon = "DEFORM_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeDeformCurvesOnSurface"
 
             props = col.operator("node.add_node", text=" Fill Curve                   ", icon = "CURVE_FILL")
             props.use_transform = True
@@ -3449,6 +3453,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
+            
+            props = flow.operator("node.add_node", text = "", icon = "DEFORM_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeDeformCurvesOnSurface"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_FILL")
             props.use_transform = True
