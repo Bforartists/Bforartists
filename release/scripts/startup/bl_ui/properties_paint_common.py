@@ -809,10 +809,20 @@ def brush_settings(layout, context, brush, popover=False):
     elif mode == 'SCULPT_CURVES':
         if brush.curves_sculpt_tool == 'ADD':
             layout.prop(brush.curves_sculpt_settings, "add_amount")
-            col = layout.column(heading="Interpolate", align=True)
-            col.prop(brush.curves_sculpt_settings, "interpolate_length", text="Length")
-            col.prop(brush.curves_sculpt_settings, "interpolate_shape", text="Shape")
-            col.prop(brush.curves_sculpt_settings, "interpolate_point_count", text="Point Count")
+                    
+            col = layout.column()
+            col.use_property_split = False
+            col.label(text = "Interpolate")
+            
+            row = col.row()
+            row.separator()
+            row.prop(brush.curves_sculpt_settings, "interpolate_length", text="Length")
+            row = col.row()
+            row.separator()
+            row.prop(brush.curves_sculpt_settings, "interpolate_shape", text="Shape")
+            row = col.row()
+            row.separator()
+            row.prop(brush.curves_sculpt_settings, "interpolate_point_count", text="Point Count")
 
             col = layout.column()
             col.active = not brush.curves_sculpt_settings.interpolate_length
