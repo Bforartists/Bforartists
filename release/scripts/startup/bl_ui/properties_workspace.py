@@ -26,7 +26,7 @@ class WORKSPACE_PT_main(WorkSpaceButtonsPanel, Panel):
         workspace = context.workspace
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         layout.prop(workspace, "use_pin_scene")
