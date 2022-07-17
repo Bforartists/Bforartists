@@ -3332,7 +3332,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
-            
+
             props = col.operator("node.add_node", text=" Deform Curves on Surface ", icon = "DEFORM_CURVES")
             props.use_transform = True
             props.type = "GeometryNodeDeformCurvesOnSurface"
@@ -3453,7 +3453,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "DEFORM_CURVES")
             props.use_transform = True
             props.type = "GeometryNodeDeformCurvesOnSurface"
@@ -4054,14 +4054,14 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Translate Instances      ", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text = " Instance Rotation     ", icon = "INSTANCE_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeInputInstanceRotation"
-            
+
             props = col.operator("node.add_node", text = " Instance Scale      ", icon = "INSTANCE_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeInputInstanceScale"
@@ -4097,11 +4097,11 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "INSTANCE_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeInputInstanceRotation"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "INSTANCE_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeInputInstanceScale"
@@ -4546,7 +4546,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Points         ", icon = "DECORATE")
             props.use_transform = True
             props.type = "GeometryNodePoints"
-            
+
             props = col.operator("node.add_node", text=" Points to Vertices         ", icon = "POINTS_TO_VERTICES")
             props.use_transform = True
             props.type = "GeometryNodePointsToVertices"
@@ -4957,6 +4957,61 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
+
+
+#add volume panel
+class NODES_PT_geom_add_uv(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "UV"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Pack UV Islands  ", icon = "PACKISLAND")
+            props.use_transform = True
+            props.type = "GeometryNodeUVPackIslands"
+
+            props = col.operator("node.add_node", text=" UV Unwrap      ", icon = "UNWRAP_ABF")
+            props.use_transform = True
+            props.type = "GeometryNodeUVUnwrap"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_CUBE")
+            props.use_transform = True
+            props.type = "GeometryNodeUVPackIslands"
+
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeUVUnwrap"
 
 
 #add vector panel
@@ -5903,6 +5958,7 @@ classes = (
     NODES_PT_geom_add_text,
     NODES_PT_geom_add_texture,
     NODES_PT_geom_add_utilities,
+    NODES_PT_geom_add_uv,
     NODES_PT_geom_add_vector,
     NODES_PT_geom_add_volume,
 
