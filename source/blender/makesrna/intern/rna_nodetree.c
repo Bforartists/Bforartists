@@ -13797,6 +13797,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_VOLUME_TO_MESH:
       icon = ICON_VOLUME_TO_MESH;
       break;
+    case GEO_NODE_UV_PACK_ISLANDS:
+      icon = ICON_PACKISLAND;
+      break;
+    case GEO_NODE_UV_UNWRAP:
+      icon = ICON_UNWRAP_ABF;
+      break;
   }
   return icon;
 }
