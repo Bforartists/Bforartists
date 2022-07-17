@@ -168,12 +168,28 @@ class VIEW3D_HT_header(Header):
 
         layout.template_header_3D_mode()
 
-        # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode
+        # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode...
         if obj:
             # Particle edit
             if object_mode == 'PARTICLE_EDIT':
                 row = layout.row()
                 row.prop(tool_settings.particle_edit, "select_mode", text="", expand=True)
+            elif object_mode == 'SCULPT_CURVES' and obj.type == 'CURVES':
+                curves = obj.data
+
+                row = layout.row(align=True)
+
+                # Combine the "use selection" toggle with the "set domain" operators
+                # to allow turning selection off directly.
+                domain = curves.selection_domain
+                if domain == 'POINT':
+                    row.prop(curves, "use_sculpt_selection", text="", icon='CURVE_BEZCIRCLE')
+                else:
+                    row.operator("curves.set_selection_domain", text="", icon='CURVE_BEZCIRCLE').domain = 'POINT'
+                if domain == 'CURVE':
+                    row.prop(curves, "use_sculpt_selection", text="", icon='CURVE_PATH')
+                else:
+                    row.operator("curves.set_selection_domain", text="", icon='CURVE_PATH').domain = 'CURVE'
 
         # Grease Pencil
         if obj and obj.type == 'GPENCIL' and context.gpencil_data:
