@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -25485,14 +25485,6 @@ msgstr "Категория"
 
 msgid "Filter add-ons by category"
 msgstr "Фильтровать аддоны по категории"
-
-
-msgid "Search"
-msgstr "Поиск"
-
-
-msgid "Search within the selected filter"
-msgstr "Поиск по выбранному фильтру"
 
 
 msgid "Support"
@@ -59049,6 +59041,38 @@ msgid "Align with Point Normal"
 msgstr "Выровнять по нормалям точек"
 
 
+msgid "Snap to increments of grid"
+msgstr "Привязка к делениям сетки"
+
+
+msgid "Snap to vertices"
+msgstr "Привязка к вершинам"
+
+
+msgid "Snap to edges"
+msgstr "Привязка к рёбрам"
+
+
+msgid "Snap to volume"
+msgstr "Привязка к объёму"
+
+
+msgid "Edge Center"
+msgstr "Центр рёбер"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Привязка к середине ребра"
+
+
+msgid "Edge Perpendicular"
+msgstr "Перпендикулярно ребру"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Привязка к ближайшей точке на ребре"
+
+
 msgid "Snap closest point onto target"
 msgstr "Перемещать к ближайшей точке цели"
 
@@ -59063,6 +59087,10 @@ msgstr "Перемещать медиану к цели"
 
 msgid "Snap active onto target"
 msgstr "Перемещать активный элемент к цели"
+
+
+msgid "Project Individual Elements"
+msgstr "Проецировать отдельные элементы"
 
 
 msgctxt "Operator"
@@ -77586,38 +77614,6 @@ msgid "Type of element to snap to"
 msgstr "Тип элемента, к которому осуществлять привязку"
 
 
-msgid "Snap to increments of grid"
-msgstr "Привязка к делениям сетки"
-
-
-msgid "Snap to vertices"
-msgstr "Привязка к вершинам"
-
-
-msgid "Snap to edges"
-msgstr "Привязка к рёбрам"
-
-
-msgid "Snap to volume"
-msgstr "Привязка к объёму"
-
-
-msgid "Edge Center"
-msgstr "Центр рёбер"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Привязка к середине ребра"
-
-
-msgid "Edge Perpendicular"
-msgstr "Перпендикулярно ребру"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Привязка к ближайшей точке на ребре"
-
-
 msgid "Snap Node Element"
 msgstr "Элемент привязки нодов"
 
@@ -77856,10 +77852,6 @@ msgstr "Привязать к поверхностному объекту"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "Рассматривать объекты как единое целое при нахождении центра объёма"
-
-
-msgid "Project Individual Elements"
-msgstr "Проецировать отдельные элементы"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -82128,6 +82120,10 @@ msgstr "Неизвестные аддоны"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "Поиск"
 
 
 msgid "Display Thin"
@@ -90329,10 +90325,6 @@ msgstr "Сохранение многослойных последователь
 
 msgid "No images have been changed"
 msgstr "Изменённые изображения отсутствуют"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "Невозможно установить границу для обрезанного рендера"
 
 
 msgid "%d image(s) will be saved in %s"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4101,10 +4101,6 @@ msgstr "ﯽﻄﺧ"
 
 msgid "Category"
 msgstr "ﺎﻫ ﻪﺘﺳﺩ"
-
-
-msgid "Search"
-msgstr "ﻮﺠﺘﺴﺟ"
 
 
 msgid "Support"
@@ -12736,6 +12732,10 @@ msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
 
 msgid "Bounciness"
 msgstr "ﺎﻫﻭﺮﯿﻧ:"
+
+
+msgid "Search"
+msgstr "ﻮﺠﺘﺴﺟ"
 
 
 msgid "Track:"

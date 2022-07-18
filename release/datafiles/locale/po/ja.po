@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -317,6 +317,14 @@ msgstr "MetalRT（実験的）"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT はレイトレーシングに使用され、カーブを広範囲に使用するシーンでのメモリ消費量を抑え、特定の場合でのパフォーマンスを向上できます。ただしこれは実験的対応であり、一部のシーンのレンダリングが正しく行われない可能性があります"
+
+
+msgid "KHR_materials_variants_ui"
+msgstr "KHR_materials_variants_ui"
+
+
+msgid "Displays glTF Settings node in Shader Editor (Menu Add > Output)"
+msgstr "シェーダーエディターに glTF 設定ノードを表示します（追加メニュー→出力）"
 
 
 msgid "Fribidi Library"
@@ -1565,6 +1573,14 @@ msgid "Bake to image data-blocks associated with active image texture nodes in m
 msgstr ""
 "マテリアル内のアクティブな画像テクスチャノードに\n"
 "対応する画像データブロックにベイクします"
+
+
+msgid "Active Color Attribute"
+msgstr "アクティブカラー属性"
+
+
+msgid "Bake to the active color attribute on meshes"
+msgstr "メッシュのアクティブなカラー属性にベイクします"
 
 
 msgid "Automatic Name"
@@ -3550,6 +3566,14 @@ msgid "Length of newly added curves when it is not interpolated from other curve
 msgstr "他のヘアーカーブから補間されない時の新規ヘアーカーブの長さ"
 
 
+msgid "Either add or remove curves depending on the minimum distance of the curves under the cursor"
+msgstr "カーソル下のカーブ間の最小距離を元に、カーブを追加または削除するかを決めます"
+
+
+msgid "Add new curves between existing curves, taking the minimum distance into account"
+msgstr "既存のカーブの間に新規カーブを最小距離を考慮して追加します"
+
+
 msgid "Remove"
 msgstr "削除"
 
@@ -3584,6 +3608,10 @@ msgstr "最短の長さ"
 
 msgid "Avoid shrinking curves shorter than this length"
 msgstr "この長さより短くカーブが収縮するのを防ぎます"
+
+
+msgid "Points per Curve"
+msgstr "カーブ毎のポイント数"
 
 
 msgid "Number of control points in a newly added curve"
@@ -4148,12 +4176,20 @@ msgid "Factor of Simplify using adaptive algorithm"
 msgstr "アダプティブアルゴリズムを使用した簡略化の係数"
 
 
+msgid "Mask strokes using active layer"
+msgstr "ストロークをアクティブレイヤーでマスクします"
+
+
 msgid "Auto-Masking Material"
 msgstr "自動マスク（マテリアル）"
 
 
 msgid "Mask strokes using active material"
 msgstr "ストロークをアクティブマテリアルでマスクします"
+
+
+msgid "Auto-Masking Strokes"
+msgstr "自動マスク（ストローク）"
 
 
 msgid "Mask strokes below brush cursor"
@@ -5584,6 +5620,10 @@ msgstr "露出寛容度が16.5、ダイナミックレンジが25ストップの
 
 msgid "Filmic sRGB"
 msgstr "Filmic sRGB"
+
+
+msgid "sRGB display space with Filmic view transform"
+msgstr "Filmic ビュー変換による sRGB 表示空間"
 
 
 msgid "Rec. 709 (Full Range), Blender native linear space"
@@ -17337,6 +17377,10 @@ msgid "Minimum number of occlusions for the generated strokes"
 msgstr "ストローク生成用の最小遮蔽数"
 
 
+msgid "Use this light object to generate light contour"
+msgstr "このライトオブジェクトを使用して、光のシルエットを生成します"
+
+
 msgid "The strength value for the generate strokes"
 msgstr "ストローク生成用の強さの値"
 
@@ -17347,6 +17391,18 @@ msgstr "オーバースキャン"
 
 msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
 msgstr "画面端でストロークが突然切れるのを防ぐマージン"
+
+
+msgid "Far clipping distance of shadow camera"
+msgstr "シャドウカメラからの遠方のクリッピング距離"
+
+
+msgid "Near clipping distance of shadow camera"
+msgstr "シャドウカメラからの近方のクリッピング距離"
+
+
+msgid "Shadow Camera Size"
+msgstr "シャドウカメラサイズ"
 
 
 msgid "Shaded"
@@ -17687,6 +17743,14 @@ msgstr ""
 "これにより重複するタイプ毎にストロークが分割されます"
 
 
+msgid "Use Shadow"
+msgstr "影を使用"
+
+
+msgid "Reproject visible lines again to get enclosed shadow shapes"
+msgstr "表示ラインを再投影し、囲んだ影の形状を得ます"
+
+
 msgid "Vertex group name for selected strokes"
 msgstr "選択ストロークの頂点グループ名"
 
@@ -17805,6 +17869,10 @@ msgstr "ストロークに沿ったノイズのオフセット"
 
 msgid "Scale the noise frequency"
 msgstr "ノイズの振幅をスケーリングします"
+
+
+msgid "Where to perform randomization"
+msgstr "ランダム化する部分"
 
 
 msgid "Randomize every number of frames"
@@ -24931,6 +24999,10 @@ msgid "Current shape key index"
 msgstr "現在のシェイプキーのインデックス"
 
 
+msgid "Add a \"rest_position\" attribute that is a copy of the position attribute before shape keys and modifiers are evaluated"
+msgstr "シェイプキーとモディファイアーが評価される前の position 属性のコピーである「rest_position」属性が追加されます"
+
+
 msgid "Bounding Box"
 msgstr "バウンディングボックス"
 
@@ -28790,14 +28862,6 @@ msgid "Filter add-ons by category"
 msgstr "アドオンをカテゴリーでフィルタリングします"
 
 
-msgid "Search"
-msgstr "検索"
-
-
-msgid "Search within the selected filter"
-msgstr "選択したフィルター内で検索します"
-
-
 msgid "Support"
 msgstr "サポート"
 
@@ -28952,6 +29016,10 @@ msgstr "UIタグを使用"
 
 msgid "Filter the UI by tags"
 msgstr "UIをタグでフィルタリングします"
+
+
+msgid "Remember the last used scene for the workspace and switch to it whenever this workspace is activated again"
+msgstr "そのワークスペースで最後に使用したシーンを記録し、このワークスペースが再び有効化された時に切り替えます"
 
 
 msgid "World data-block describing the environment and ambient lighting of a scene"
@@ -29873,7 +29941,7 @@ msgstr "修飾キーを押しながら"
 
 
 msgid "Ctrl"
-msgstr "[Ctr1]"
+msgstr "[Ctrl]"
 
 
 msgid "Control key pressed, -1 for any state"
@@ -44281,6 +44349,10 @@ msgid "Group Output"
 msgstr "グループ出力"
 
 
+msgid "Output data from inside of a node group"
+msgstr "ノードグループ内部からデータを出力します"
+
+
 msgid "True if this node is used as the active group output"
 msgstr "このノードがアクティブグループ出力として使用されていれば True"
 
@@ -44301,8 +44373,12 @@ msgid "Add Shader"
 msgstr "シェーダー加算"
 
 
-msgid "Ambient Occlusion"
-msgstr "アンビエントオクルージョン(AO)"
+msgid ""
+"Compute how much the hemisphere above the shading point is occluded, for example to add weathering effects to corners.\n"
+"Note: For Cycles, this may slow down renders significantly"
+msgstr ""
+"例えば隅にウェザリングを追加するなど、シェーディングポイント上の半球がどれくらい遮蔽されるかを計算します。\n"
+"注：Cycles ではレンダリングが大幅に遅くなる可能性があります"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -44355,12 +44431,28 @@ msgid "Background"
 msgstr "背景"
 
 
+msgid ""
+"Generates normals with round corners.\n"
+"Note: only supported in Cycles, and may slow down renders"
+msgstr ""
+"丸角で法線を生成します。\n"
+"注：Cycles のみ対応、レンダリングが遅くなります"
+
+
 msgid "Blackbody"
 msgstr "黒体"
 
 
+msgid "Convert a blackbody temperature to an RGB value"
+msgstr "黒体温度を RGB 値に変換します"
+
+
 msgid "Bright Contrast"
 msgstr "明度コントラスト"
+
+
+msgid "Control the brightness and contrast of the input color"
+msgstr "入力する色の明るさとコントラストを調整します"
 
 
 msgid "Anisotropic BSDF"
@@ -44391,12 +44483,28 @@ msgid "Glass BSDF"
 msgstr "グラスBSDF"
 
 
+msgid "Glass-like shader mixing refraction and reflection at grazing angles"
+msgstr "屈折と浅い角度での反射をミックスしたガラス状のシェーダー"
+
+
+msgid "Results in perfectly sharp reflections like a mirror. The Roughness value is not used"
+msgstr "鏡のように完全にシャープな反射になります。粗さの値は使用されません"
+
+
 msgid "Glossy BSDF"
 msgstr "光沢BSDF"
 
 
 msgid "Hair BSDF"
 msgstr "ヘアーBSDF"
+
+
+msgid "Reflection and transmission shaders optimized for hair rendering"
+msgstr "毛のレンダリングに特化した反射と伝播シェーダー"
+
+
+msgid "Hair BSDF component to use"
+msgstr "使用するヘアー BSDF 成分"
 
 
 msgid "Reflection"
@@ -44413,6 +44521,10 @@ msgstr "ヘアーを通り抜け、反対側に出ていく光"
 
 msgid "Principled Hair BSDF"
 msgstr "プリンシプルヘアーBSDF"
+
+
+msgid "Physically-based, easy-to-use shader for rendering hair and fur"
+msgstr "髪の毛と毛のレンダリングに簡単に使用できる物理ベースのシェーダー"
 
 
 msgid "Color Parametrization"
@@ -44503,6 +44615,10 @@ msgid "Translucent BSDF"
 msgstr "半透明BSDF"
 
 
+msgid "Lambertian diffuse transmission"
+msgstr "ランバート散乱の透過"
+
+
 msgid "Transparent BSDF"
 msgstr "透過BSDF"
 
@@ -44547,6 +44663,14 @@ msgid "Combine RGB"
 msgstr "RGB合成"
 
 
+msgid "Generate a color from its red, green, and blue channels (Deprecated)"
+msgstr "R（赤）、G（緑）、B（青）のチャンネルから色を生成します（廃止予定）"
+
+
+msgid "Create a vector from X, Y, and Z components"
+msgstr "X、Y、Z 成分からベクトルを生成します"
+
+
 msgid "Shader Custom Group"
 msgstr "シェーダーカスタムグループ"
 
@@ -44583,12 +44707,32 @@ msgid "Float Curve"
 msgstr "Floatカーブ"
 
 
+msgid "Map an input float to a curve and outputs a float value"
+msgstr "入力 Float をカーブにマッピングし、Float 値を出力します"
+
+
 msgid "Fresnel"
 msgstr "フレネル"
 
 
-msgid "Curves Info"
-msgstr "カーブ情報"
+msgid "Apply a gamma correction"
+msgstr "ガンマ補正を適用"
+
+
+msgid "Retrieve hair curve information"
+msgstr "ヘアーカーブ情報を取得します"
+
+
+msgid ""
+"Create a \"hole\" in the image with zero alpha transparency, which is useful for compositing.\n"
+"Note: the holdout shader can only create alpha when transparency is enabled in the film settings"
+msgstr ""
+"アルファ０の透過度を持つ画像に「穴」を生成します。コンポジティングに便利です。\n"
+"注：ホールドアウトシェーダーはフィルム設定で透過を有効にした時のみ、アルファを生成できます"
+
+
+msgid "Apply a color transformation in the HSV color model"
+msgstr "HSVカラーモデルによる色変換を適用します"
 
 
 msgid "Layer Weight"
@@ -52222,6 +52366,10 @@ msgstr ""
 "無効時、現在割り当て中の全アクションが一つの glTF アニメーションになります"
 
 
+msgid "Name of single glTF animation to be exported"
+msgstr "単一の glTF アニメーション名をエクスポートします"
+
+
 msgid "Export vertex normals with meshes"
 msgstr "頂点の法線をメッシュと共にエクスポートします"
 
@@ -52613,6 +52761,15 @@ msgstr "開く"
 
 msgid "Open new directory"
 msgstr "新規ディレクトリを開く"
+
+
+msgctxt "Operator"
+msgid "Edit Directory Path"
+msgstr "ディレクトリパスを編集"
+
+
+msgid "Start editing directory field"
+msgstr "ディレクトリフィールドの編集を開始します"
 
 
 msgctxt "Operator"
@@ -60656,7 +60813,7 @@ msgstr "ソリッド化"
 
 
 msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "鋭角を補正し、押し出しで薄いソリッドを作成します"
+msgstr "鋭角を補正し、押し出して立体を作成します"
 
 
 msgctxt "Operator"
@@ -72808,6 +72965,42 @@ msgid "Align with Point Normal"
 msgstr "頂点の法線に揃える"
 
 
+msgid "Snap to increments of grid"
+msgstr "グリッドの大きさでスナップ"
+
+
+msgid "Snap to vertices"
+msgstr "頂点にスナップ"
+
+
+msgid "Snap to edges"
+msgstr "辺にスナップ"
+
+
+msgid "Snap to volume"
+msgstr "ボリュームにスナップ"
+
+
+msgid "Edge Center"
+msgstr "辺の中心"
+
+
+msgid "Snap to the middle of edges"
+msgstr "辺の中心にスナップします"
+
+
+msgid "Edge Perpendicular"
+msgstr "辺と直交する点"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "辺上の一番近い点にスナップします"
+
+
+msgid "Snap With"
+msgstr "スナップ方法"
+
+
 msgid "Snap closest point onto target"
 msgstr "ターゲットの一番近い点にスナップ"
 
@@ -72822,6 +73015,10 @@ msgstr "ターゲット上の中点にスナップ"
 
 msgid "Snap active onto target"
 msgstr "アクティブな要素をターゲットにスナップ"
+
+
+msgid "Project Individual Elements"
+msgstr "個々の要素を投影"
 
 
 msgctxt "Operator"
@@ -85021,7 +85218,7 @@ msgstr "シーンのダイシング率（▼細分化パネル内）の乗数"
 
 
 msgid "Cast Shadow Caustics"
-msgstr "シャドウコースティクスを投影"
+msgstr "投影（シャドウコースティクス）"
 
 
 msgid "With refractive materials, generate approximate caustics in shadows of this object. Up to 10 bounces inside this object are taken into account. Lights, caster and receiver objects must have shadow caustics options set to enable this"
@@ -85033,7 +85230,7 @@ msgstr ""
 
 
 msgid "Receive Shadow Caustics"
-msgstr "シャドウコースティクスを受信"
+msgstr "受信（シャドウコースティクス）"
 
 
 msgid "Receive approximate caustics from refractive materials in shadows on this object. Lights, caster and receiver objects must have shadow caustics options set to enable this"
@@ -95976,11 +96173,11 @@ msgstr "ボックス背景色"
 
 
 msgid "List Item Colors"
-msgstr "リストアイテム色"
+msgstr "リストアイテムの色"
 
 
 msgid "Menu Widget Colors"
-msgstr "メニューウィジェット色"
+msgstr "メニューウィジェットの色"
 
 
 msgid "Menu Backdrop Colors"
@@ -95988,23 +96185,23 @@ msgstr "メニュー背景色"
 
 
 msgid "Menu Item Colors"
-msgstr "メニューアイテム色"
+msgstr "メニューアイテムの色"
 
 
 msgid "Number Widget Colors"
-msgstr "数値ウィジェット色"
+msgstr "数値ウィジェットの色"
 
 
 msgid "Slider Widget Colors"
-msgstr "スライダーウィジェット色"
+msgstr "スライダーウィジェットの色"
 
 
 msgid "Option Widget Colors"
-msgstr "選択肢ウィジェット色"
+msgstr "選択肢ウィジェットの色"
 
 
 msgid "Pie Menu Colors"
-msgstr "パイメニュー色"
+msgstr "パイメニューの色"
 
 
 msgid "Progress Bar Widget Colors"
@@ -96020,7 +96217,7 @@ msgstr "ラジオウィジェット色"
 
 
 msgid "Regular Widget Colors"
-msgstr "標準ウィジェット色"
+msgstr "標準ウィジェットの色"
 
 
 msgid "Scroll Widget Colors"
@@ -96052,7 +96249,11 @@ msgstr "ツールバーアイテムウィジェットの色"
 
 
 msgid "Tooltip Colors"
-msgstr "ツールチップ色"
+msgstr "ツールチップの色"
+
+
+msgid "Data-View Item Colors"
+msgstr "データビューアイテムの色"
 
 
 msgid "Widget Emboss"
@@ -96520,38 +96721,6 @@ msgid "Type of element to snap to"
 msgstr "スナップする要素の種類"
 
 
-msgid "Snap to increments of grid"
-msgstr "グリッドの大きさでスナップ"
-
-
-msgid "Snap to vertices"
-msgstr "頂点にスナップ"
-
-
-msgid "Snap to edges"
-msgstr "辺にスナップ"
-
-
-msgid "Snap to volume"
-msgstr "ボリュームにスナップ"
-
-
-msgid "Edge Center"
-msgstr "辺の中心"
-
-
-msgid "Snap to the middle of edges"
-msgstr "辺の中心にスナップします"
-
-
-msgid "Edge Perpendicular"
-msgstr "辺と直交する点"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "辺上の一番近い点にスナップします"
-
-
 msgid "Snap Node Element"
 msgstr "ノード要素にスナップ"
 
@@ -96846,10 +97015,6 @@ msgstr "皮オブジェクトにスナップ"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "ボリュームの中心を探す際、オブジェクト群を全体とみなします"
-
-
-msgid "Project Individual Elements"
-msgstr "個々の要素を投影"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -104040,6 +104205,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "検索"
+
+
 msgid "Display Thin"
 msgstr "薄く表示"
 
@@ -108377,10 +108546,6 @@ msgid "Specular Lighting"
 msgstr "スペキュラー照明"
 
 
-msgid "Snap With"
-msgstr "スナップ方法"
-
-
 msgid "Custom Location"
 msgstr "カスタム位置"
 
@@ -110263,6 +110428,10 @@ msgstr "ボーンヒートウェイト：一つ以上のボーンで解決に失
 
 msgid "Cannot pose libdata"
 msgstr "ライブラリはポージングできません"
+
+
+msgid "Bone groups can only be edited in pose mode"
+msgstr "ボーングループはポーズモードでのみ編集可能です"
 
 
 msgid "Cannot edit bone groups for library overrides"
@@ -112221,12 +112390,8 @@ msgid "Invalid/unset axis"
 msgstr "無効/未設定の軸"
 
 
-msgid "You have to select a string of connected vertices too"
-msgstr "つながった頂点列を選択する必要があります"
-
-
 msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick), Thickness: %s, Depth (Ctrl to tweak): %s (%s), Outset (O): (%s), Boundary (B): (%s), Individual (I): (%s)"
-msgstr "確定：Enter/左クリック、キャンセル：(Esc/右クリック)、厚み：%s、深さ(Ctrlで調整):%s(%s)、アウトセット(O):(%s)、境界(B):(%s)、個々(I): (%s)"
+msgstr "確定：[Enter]/左クリック、キャンセル：([Esc]/右クリック)、厚み：%s、深さ([Ctrl]で調整):%s(%s)、アウトセット(O):(%s)、境界(B):(%s)、個々(I): (%s)"
 
 
 msgid "Compiled without GMP, using fast solver"
@@ -112250,11 +112415,7 @@ msgstr "投影に使用する、ワイヤまたは境界の辺を持つオブジ
 
 
 msgid "Select a ring to be cut, use mouse-wheel or page-up/down for number of cuts, hold Alt for smooth"
-msgstr "カットするリングを選択し、マウスホイールまたはPageUp/Downでカット数の増減、Altを押しながらでスムージング"
-
-
-msgid "Number of Cuts: %s, Smooth: %s (Alt)"
-msgstr "カット数：%s、スムーズ：%s (Alt)"
+msgstr "カットするリングを選択し、マウスホイールや[PageUp][PageDown]でカット数の増減、＋[Alt]でスムージング"
 
 
 msgid "Loop cut does not work well on deformed edit mesh display"
@@ -112731,6 +112892,14 @@ msgid "Baking map saved to internal image, save it externally or pack it"
 msgstr "内部画像にベイクマップを保存しました。外部ファイルに保存、またはパックしてください"
 
 
+msgid "Color attribute baking is only supported for mesh objects"
+msgstr "カラー属性のベイクはメッシュオブジェクトのみ対応しています"
+
+
+msgid "No active color attribute to bake to"
+msgstr "ベイクするアクティブカラー属性がありません"
+
+
 msgid "Current render engine does not support baking"
 msgstr "選択中のレンダーエンジンはベイキングに対応していません"
 
@@ -112761,6 +112930,10 @@ msgstr "オブジェクト「%s」はメッシュではありません"
 
 msgid "No faces found in the object \"%s\""
 msgstr "面がオブジェクト「%s」にありません"
+
+
+msgid "Mesh does not have an active color attribute \"%s\""
+msgstr "メッシュにアクティブカラー属性「%s」がありません"
 
 
 msgid "No active UV layer found in the object \"%s\""
@@ -113267,6 +113440,10 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "親のないライブラリオブジェクトが消えるのを防ぐため、現在のシーンに追加しました"
 
 
+msgid "Cannot make library override from a local object"
+msgstr "ローカルオブジェクトからはライブラリオーバーライドを作成できません"
+
+
 msgid "Incorrect context for running object data unlink"
 msgstr "オブジェクトデータのリンク解除に不適切なコンテクストです"
 
@@ -113277,6 +113454,10 @@ msgstr "このオブジェクトデータはリンク解除できません"
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "コレクション「%s」（アクティブオブジェクトによりインスタンス化）がオーバーライドできません"
+
+
+msgid "Move the mouse to change the voxel size. CTRL: Relative Scale, SHIFT: Precision Mode, ENTER/LMB: Confirm Size, ESC/RMB: Cancel"
+msgstr "マウス移動でボクセルサイズ変更。[Ctrl]:相対スケール、[Shift]:高精度モード、[Enter]/LMB:サイズ確定、[Esc]/RMB:キャンセル"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -114070,6 +114251,14 @@ msgstr "お気に入りツール"
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "現在の物を複製"
+
+
+msgid "Can not use Add brush when there is no surface mesh"
+msgstr "表面メッシュがないため、追加ブラシは使用できません"
+
+
+msgid "Only available in point selection mode"
+msgstr "ポイント選択モードでないと利用できません"
 
 
 msgid "Sample color for %s"
@@ -115047,10 +115236,6 @@ msgid "Unpacking movies or image sequences not supported"
 msgstr "動画や連番画像のパック解除は未対応です"
 
 
-msgid "Can not set border from a cropped render"
-msgstr "トリムしたレンダリング画像へのボーダーの設定はできません"
-
-
 msgid "Invalid UDIM index range was specified"
 msgstr "指定されたUDIMインデックス範囲は無効です"
 
@@ -115443,6 +115628,14 @@ msgid "• Volume"
 msgstr "・ボリューム"
 
 
+msgid "Supported: All Types"
+msgstr "対応：全タイプ"
+
+
+msgid "Supported: "
+msgstr "対応："
+
+
 msgid "The socket value has not been computed yet"
 msgstr "このソケットの値は未計算です"
 
@@ -115605,6 +115798,10 @@ msgstr "コレクション内の前に移動"
 
 msgid "Move between collections"
 msgstr "コレクション間を移動"
+
+
+msgid "Link after collection"
+msgstr "コレクション内の後にリンク"
 
 
 msgid "Move after collection"
@@ -116142,6 +116339,14 @@ msgstr "フォグボリューム"
 
 msgid "Level Set"
 msgstr "レベルセット"
+
+
+msgid ""
+"Byte Color (sRGB encoded):\n"
+"%3d  %3d  %3d  %3d"
+msgstr ""
+"バイトカラー（sRGB エンコード):\n"
+"%3d  %3d  %3d  %3d"
 
 
 msgid "Data Set"
@@ -116892,6 +117097,10 @@ msgid "Push/Pull: %.4f%s %s"
 msgstr "押す/引く：%.4f%s %s"
 
 
+msgid "Rotation is not supported in the Dope Sheet Editor"
+msgstr "ドープシートエディター内での回転は未対応です"
+
+
 msgid "Shear: %s %s"
 msgstr "せん断：%s %s"
 
@@ -117199,6 +117408,10 @@ msgstr "ランダムオフセット終了"
 
 msgid "Curvature"
 msgstr "曲率"
+
+
+msgid "Default Angle"
+msgstr "デフォルト角度"
 
 
 msgid "Material Borders"
@@ -118141,6 +118354,10 @@ msgid "Style module '%s' could not be removed"
 msgstr "スタイルモジュール「%s」が削除できませんでした"
 
 
+msgid "Sequence type must be 'META'"
+msgstr "シーケンスタイプを「メタ」にする必要があります"
+
+
 msgid "Sequence type does not support modifiers"
 msgstr "シーケンスタイプはモディファイアーに対応していません"
 
@@ -118892,6 +119109,10 @@ msgid "An index used to group values together for multiple separate accumulation
 msgstr "複数に分かれた蓄積で値をまとめるのに使用するインデックス"
 
 
+msgid "The attribute output can not be used without the geometry output"
+msgstr "属性出力はジオメトリ出力なしでは使用できません"
+
+
 msgid "Sum"
 msgstr "合計"
 
@@ -119614,6 +119835,14 @@ msgid "Output the entire object as single instance. This allows instancing non-g
 msgstr "オブジェクト全体を一つのインスタンスとして出力します。これにより、非ジオメトリオブジェクトタイプをインスタンス化できます"
 
 
+msgid "The number of points to create"
+msgstr "作成するポイント数"
+
+
+msgid "The positions of the new points"
+msgstr "新規ポイントの位置"
+
+
 msgid "Source Position"
 msgstr "ソースの位置"
 
@@ -119694,6 +119923,10 @@ msgid "Strings"
 msgstr "文字列群"
 
 
+msgid "Font not specified"
+msgstr "フォントが未指定です"
+
+
 msgid "Text Box Width"
 msgstr "テキストボックス幅"
 
@@ -119720,6 +119953,54 @@ msgstr "ソースメッシュに面が必要です"
 
 msgid "The source geometry must contain a mesh or a point cloud"
 msgstr "ソースジオメトリにメッシュまたはポイントクラウドが必要です"
+
+
+msgid "Faces to consider when packing islands"
+msgstr "アイランドのパック時に考慮される面"
+
+
+msgid "Faces to participate in the unwrap operation"
+msgstr "UV 展開の処理に加わる面"
+
+
+msgid "Virtually fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
+msgstr "UV 展開前に仮想的に穴をふさぎ、重複の回避と対称の維持を向上します"
+
+
+msgid "Resolution must be greater than 1"
+msgstr "解像度は２以上必要です。"
+
+
+msgid "Volume density per voxel"
+msgstr "ボクセル毎のボリューム"
+
+
+msgid "Value for voxels outside of the cube"
+msgstr "立方体の外側のボクセル値"
+
+
+msgid "Minimum boundary of volume"
+msgstr "ボリュームの最小値"
+
+
+msgid "Maximum boundary of volume"
+msgstr "ボリュームの最大値"
+
+
+msgid "Number of voxels in the X axis"
+msgstr "X 軸のボクセル数"
+
+
+msgid "Number of voxels in the Y axis"
+msgstr "Y 軸のボクセル数"
+
+
+msgid "Number of voxels in the Z axis"
+msgstr "Z 軸のボクセル数"
+
+
+msgid "Values larger than the threshold are inside the generated mesh"
+msgstr "しきい値より大きい値は生成メッシュの内部"
 
 
 msgid "Missing Data-Block"
@@ -120567,6 +120848,10 @@ msgstr "%s「%s」が読み込めません: %s"
 
 msgid "%s '%s' not found"
 msgstr "%s「%s」がありません"
+
+
+msgid "%s not found"
+msgstr "%s がありません"
 
 
 msgid "Operator '%s' does not have register enabled, incorrect invoke function"
