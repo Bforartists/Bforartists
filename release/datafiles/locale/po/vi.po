@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -28298,14 +28298,6 @@ msgstr "Thể Loại"
 
 msgid "Filter add-ons by category"
 msgstr "Lọc đồ kèm bằng thể loại"
-
-
-msgid "Search"
-msgstr "Tìm Kiếm"
-
-
-msgid "Search within the selected filter"
-msgstr "Tìm kiếm trong bộ lọc được chọn"
 
 
 msgid "Support"
@@ -71813,6 +71805,42 @@ msgid "Align with Point Normal"
 msgstr "Sắp xếp với Pháp Tuyến Điểm"
 
 
+msgid "Snap to increments of grid"
+msgstr "Hút dình đến bước của đồ thị"
+
+
+msgid "Snap to vertices"
+msgstr "Hút dính đến đỉnh"
+
+
+msgid "Snap to edges"
+msgstr "Hút dính đến cạnh"
+
+
+msgid "Snap to volume"
+msgstr "Hút dính đến thể tích"
+
+
+msgid "Edge Center"
+msgstr "Trung Điểm Cạnh"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Hút dính đến trung điểm của cạnh"
+
+
+msgid "Edge Perpendicular"
+msgstr "Cạnh Vuông Góc"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Hút dính đến điểm gần nhất trên một cạnh"
+
+
+msgid "Snap With"
+msgstr "Hút Dính Với"
+
+
 msgid "Snap closest point onto target"
 msgstr "Hút dính đến điểm gần nhất"
 
@@ -71827,6 +71855,10 @@ msgstr "Hút dính trung vị đến mục tiêu"
 
 msgid "Snap active onto target"
 msgstr "Hút dính hoạt động đến mục tiêu"
+
+
+msgid "Project Individual Elements"
+msgstr "Chiếu Phần Tử Riêng Nhau"
 
 
 msgctxt "Operator"
@@ -95284,38 +95316,6 @@ msgid "Type of element to snap to"
 msgstr "Hút dính đến loại phần tử nào"
 
 
-msgid "Snap to increments of grid"
-msgstr "Hút dình đến bước của đồ thị"
-
-
-msgid "Snap to vertices"
-msgstr "Hút dính đến đỉnh"
-
-
-msgid "Snap to edges"
-msgstr "Hút dính đến cạnh"
-
-
-msgid "Snap to volume"
-msgstr "Hút dính đến thể tích"
-
-
-msgid "Edge Center"
-msgstr "Trung Điểm Cạnh"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Hút dính đến trung điểm của cạnh"
-
-
-msgid "Edge Perpendicular"
-msgstr "Cạnh Vuông Góc"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Hút dính đến điểm gần nhất trên một cạnh"
-
-
 msgid "Snap Node Element"
 msgstr "Phần Tử Giao Điểm Hút Dịnh"
 
@@ -95602,10 +95602,6 @@ msgstr "Hút Dính Vật Thể Lột"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "Dùng toàn bộ vật thể khi tìm trung tâm thể tích"
-
-
-msgid "Project Individual Elements"
-msgstr "Chiếu Phần Tử Riêng Nhau"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -102739,6 +102735,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "Tìm Kiếm"
+
+
 msgid "Display Thin"
 msgstr "Hiển Thị Mỏng"
 
@@ -107054,10 +107054,6 @@ msgstr "Xóa Mặt Phong Cách Tự Do"
 
 msgid "Specular Lighting"
 msgstr "Ánh Sáng Cao Quang"
-
-
-msgid "Snap With"
-msgstr "Hút Dính Với"
 
 
 msgid "Custom Location"
@@ -113694,10 +113690,6 @@ msgstr "Không thể lưu trình ảnh da lớp"
 
 msgid "No images have been changed"
 msgstr "Chưa đổi ảnh nào"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "Không thể đặt ranh giới từ một kết xuất bị cắt"
 
 
 msgid "Invalid UDIM index range was specified"

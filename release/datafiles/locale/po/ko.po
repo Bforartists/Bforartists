@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -22755,14 +22755,6 @@ msgstr "범주"
 
 msgid "Filter add-ons by category"
 msgstr "카테고리로 필터 애드온"
-
-
-msgid "Search"
-msgstr "검색"
-
-
-msgid "Search within the selected filter"
-msgstr "선택된 필터 내에서 검색"
 
 
 msgid "Support"
@@ -56717,6 +56709,38 @@ msgid "Align with Point Normal"
 msgstr "포인트 노멀로 정렬"
 
 
+msgid "Snap to increments of grid"
+msgstr "격자의 단위에 스냅"
+
+
+msgid "Snap to vertices"
+msgstr "버텍스에 스냅"
+
+
+msgid "Snap to edges"
+msgstr "에지에 스냅"
+
+
+msgid "Snap to volume"
+msgstr "볼륨에 스냅"
+
+
+msgid "Edge Center"
+msgstr "에지 중심"
+
+
+msgid "Snap to the middle of edges"
+msgstr "에지 중간에 스냅"
+
+
+msgid "Edge Perpendicular"
+msgstr "에지 수직"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "에지에서 가장 가까운 포인트에 스냅"
+
+
 msgid "Snap closest point onto target"
 msgstr "가장 가까운 포인트를 대상에 스냅"
 
@@ -56731,6 +56755,10 @@ msgstr "중간을 대상에 스냅"
 
 msgid "Snap active onto target"
 msgstr "활성을 대상에 스냅"
+
+
+msgid "Project Individual Elements"
+msgstr "투사 개별 요소"
 
 
 msgctxt "Operator"
@@ -75203,38 +75231,6 @@ msgid "Type of element to snap to"
 msgstr "다음에 스냅하는 요소의 유형"
 
 
-msgid "Snap to increments of grid"
-msgstr "격자의 단위에 스냅"
-
-
-msgid "Snap to vertices"
-msgstr "버텍스에 스냅"
-
-
-msgid "Snap to edges"
-msgstr "에지에 스냅"
-
-
-msgid "Snap to volume"
-msgstr "볼륨에 스냅"
-
-
-msgid "Edge Center"
-msgstr "에지 중심"
-
-
-msgid "Snap to the middle of edges"
-msgstr "에지 중간에 스냅"
-
-
-msgid "Edge Perpendicular"
-msgstr "에지 수직"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "에지에서 가장 가까운 포인트에 스냅"
-
-
 msgid "Snap Node Element"
 msgstr "노드 요소를 스냅"
 
@@ -75469,10 +75465,6 @@ msgstr "껍질 오브젝트를 스냅"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "볼륨 중심를 찾을 때 전체적으로 오브젝트를 고려"
-
-
-msgid "Project Individual Elements"
-msgstr "투사 개별 요소"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -79763,6 +79755,10 @@ msgstr "알 수없는 애드온"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "검색"
 
 
 msgid "Display Thin"
@@ -87650,10 +87646,6 @@ msgstr "멀티레이어 시퀀스를 저장할 수 없습니다"
 
 msgid "No images have been changed"
 msgstr "이미지가 변경되지 않음"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "잘린 렌더에서 경계를 설정할 수 없습니다"
 
 
 msgid "%d image(s) will be saved in %s"

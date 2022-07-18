@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -28298,14 +28298,6 @@ msgstr "Categoría"
 
 msgid "Filter add-ons by category"
 msgstr "Filtrar complementos por categoría"
-
-
-msgid "Search"
-msgstr "Búsqueda"
-
-
-msgid "Search within the selected filter"
-msgstr "Permite buscar, filtrando según este texto"
 
 
 msgid "Support"
@@ -71813,6 +71805,42 @@ msgid "Align with Point Normal"
 msgstr "Alínea con la normal del punto"
 
 
+msgid "Snap to increments of grid"
+msgstr "Adherir a divisiones de la cuadrícula"
+
+
+msgid "Snap to vertices"
+msgstr "Adherir a vértices"
+
+
+msgid "Snap to edges"
+msgstr "Adherir a bordes"
+
+
+msgid "Snap to volume"
+msgstr "Adherir a volumen"
+
+
+msgid "Edge Center"
+msgstr "Centro de borde"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Adhiere al centro de los bordes"
+
+
+msgid "Edge Perpendicular"
+msgstr "Perpendicular a borde"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Adhiere al punto más cercano de un borde"
+
+
+msgid "Snap With"
+msgstr "Adherir usando"
+
+
 msgid "Snap closest point onto target"
 msgstr "Adherir el punto más cercano al objetivo"
 
@@ -71827,6 +71855,10 @@ msgstr "Adherir el punto medio al objetivo"
 
 msgid "Snap active onto target"
 msgstr "Adherir el activo al objetivo"
+
+
+msgid "Project Individual Elements"
+msgstr "Proyectar elementos individuales"
 
 
 msgctxt "Operator"
@@ -95288,38 +95320,6 @@ msgid "Type of element to snap to"
 msgstr "Tipo de elemento al cual adherir"
 
 
-msgid "Snap to increments of grid"
-msgstr "Adherir a divisiones de la cuadrícula"
-
-
-msgid "Snap to vertices"
-msgstr "Adherir a vértices"
-
-
-msgid "Snap to edges"
-msgstr "Adherir a bordes"
-
-
-msgid "Snap to volume"
-msgstr "Adherir a volumen"
-
-
-msgid "Edge Center"
-msgstr "Centro de borde"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Adhiere al centro de los bordes"
-
-
-msgid "Edge Perpendicular"
-msgstr "Perpendicular a borde"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Adhiere al punto más cercano de un borde"
-
-
 msgid "Snap Node Element"
 msgstr "Elemento al cual adherir los nodos"
 
@@ -95606,10 +95606,6 @@ msgstr "Adherir a partes de objeto"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "Considerar objetos completos al buscar el centro de los volúmenes"
-
-
-msgid "Project Individual Elements"
-msgstr "Proyectar elementos individuales"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -102743,6 +102739,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "Búsqueda"
+
+
 msgid "Display Thin"
 msgstr "Mostrar delgado"
 
@@ -107058,10 +107058,6 @@ msgstr "Desmarcar como cara de Freestyle"
 
 msgid "Specular Lighting"
 msgstr "Iluminación especular"
-
-
-msgid "Snap With"
-msgstr "Adherir usando"
 
 
 msgid "Custom Location"
@@ -113698,10 +113694,6 @@ msgstr "No es posible guardar secuencias multicapa"
 
 msgid "No images have been changed"
 msgstr "No se ha cambiado ninguna imagen"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "No es posible definir el marco a partir de una imagen procesada recortada"
 
 
 msgid "Invalid UDIM index range was specified"

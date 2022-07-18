@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6752,10 +6752,6 @@ msgstr "Comprimir Dades"
 
 msgid "Offset the number of the frame to use in the animation"
 msgstr "Seleccionar connectats"
-
-
-msgid "Search within the selected filter"
-msgstr "Amagar Seleccionats"
 
 
 msgid "Display support level"
@@ -18173,8 +18169,24 @@ msgid "Use Snapping Options"
 msgstr "Esborrar Rotació"
 
 
+msgid "Snap to vertices"
+msgstr "Afegir Tira"
+
+
+msgid "Snap to edges"
+msgstr "Afegir Tira"
+
+
+msgid "Snap to volume"
+msgstr "Afegir Tira"
+
+
 msgid "Snap active onto target"
 msgstr "Seleccionar connectats"
+
+
+msgid "Project Individual Elements"
+msgstr "Centre"
 
 
 msgctxt "Operator"
@@ -23253,18 +23265,6 @@ msgid "Type of element to snap to"
 msgstr "Image Displist"
 
 
-msgid "Snap to vertices"
-msgstr "Afegir Tira"
-
-
-msgid "Snap to edges"
-msgstr "Afegir Tira"
-
-
-msgid "Snap to volume"
-msgstr "Afegir Tira"
-
-
 msgid "Snap Node Element"
 msgstr "Crea Segment"
 
@@ -23327,10 +23327,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Snap Peel Object"
 msgstr "Comprimir Dades"
-
-
-msgid "Project Individual Elements"
-msgstr "Centre"
 
 
 msgid "UV Sync Selection"

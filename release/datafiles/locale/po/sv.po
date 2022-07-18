@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7939,14 +7939,6 @@ msgstr "Packa Data"
 
 msgid "Offset the number of the frame to use in the animation"
 msgstr "Markera Länkad"
-
-
-msgid "Search"
-msgstr "Sök"
-
-
-msgid "Search within the selected filter"
-msgstr "Göm Markerad"
 
 
 msgid "Support"
@@ -21111,8 +21103,24 @@ msgid "Align with Point Normal"
 msgstr "Beräkna Normaler"
 
 
+msgid "Snap to vertices"
+msgstr "Lägg till Stripp"
+
+
+msgid "Snap to edges"
+msgstr "Lägg till Stripp"
+
+
+msgid "Snap to volume"
+msgstr "Lägg till Stripp"
+
+
 msgid "Snap active onto target"
 msgstr "Markera Länkad"
+
+
+msgid "Project Individual Elements"
+msgstr "Mitten"
 
 
 msgctxt "Operator"
@@ -26719,18 +26727,6 @@ msgid "Type of element to snap to"
 msgstr "Bild Displist"
 
 
-msgid "Snap to vertices"
-msgstr "Lägg till Stripp"
-
-
-msgid "Snap to edges"
-msgstr "Lägg till Stripp"
-
-
-msgid "Snap to volume"
-msgstr "Lägg till Stripp"
-
-
 msgid "Snap Node Element"
 msgstr "Skapa Segment"
 
@@ -26793,10 +26789,6 @@ msgstr "Markera Länkad"
 
 msgid "Snap Peel Object"
 msgstr "Ett objekt"
-
-
-msgid "Project Individual Elements"
-msgstr "Mitten"
 
 
 msgid "UV Sync Selection"
@@ -27407,6 +27399,10 @@ msgstr "Eccentricitet"
 
 msgid "Odd"
 msgstr "Ny"
+
+
+msgid "Search"
+msgstr "Sök"
 
 
 msgid "Track:"

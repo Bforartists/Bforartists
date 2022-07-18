@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -10549,10 +10549,6 @@ msgstr "Tekstur"
 
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Manajer jendela data-blok mendefinisikan jendela terbuka dan data antarmuka pengguna lainnya"
-
-
-msgid "Search"
-msgstr "Cari"
 
 
 msgid "Support"
@@ -24031,6 +24027,10 @@ msgstr "Add-on tidak diketahui"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "Cari"
 
 
 msgid "Display Thin"

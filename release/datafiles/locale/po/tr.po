@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -6179,10 +6179,6 @@ msgstr "Gruba ekle"
 
 msgid "Vector Font"
 msgstr "Yazıtipi boyutu:"
-
-
-msgid "Search"
-msgstr "Ara"
 
 
 msgid "Display support level"
@@ -16469,6 +16465,22 @@ msgid "Use Snapping Options"
 msgstr "Arkaplan Resmi Kullan"
 
 
+msgid "Snap to increments of grid"
+msgstr "Nesneleri ızgara birimlerince ölçekle"
+
+
+msgid "Snap to vertices"
+msgstr "Izgarayı yakala:"
+
+
+msgid "Snap to edges"
+msgstr "Izgarayı yakala:"
+
+
+msgid "Snap to volume"
+msgstr "Izgarayı yakala:"
+
+
 msgctxt "Operator"
 msgid "Create Orientation"
 msgstr "Yeni dosya oluştur"
@@ -21237,22 +21249,6 @@ msgid "Snap Element"
 msgstr "Izgarayı yakala:"
 
 
-msgid "Snap to increments of grid"
-msgstr "Nesneleri ızgara birimlerince ölçekle"
-
-
-msgid "Snap to vertices"
-msgstr "Izgarayı yakala:"
-
-
-msgid "Snap to edges"
-msgstr "Izgarayı yakala:"
-
-
-msgid "Snap to volume"
-msgstr "Izgarayı yakala:"
-
-
 msgid "Snap Node Element"
 msgstr "Izgarayı yakala:"
 
@@ -21830,6 +21826,10 @@ msgstr "Dosya kaydı olanaksız"
 
 msgid "Minimum Size"
 msgstr "Ekstrüzyon Boyutu"
+
+
+msgid "Search"
+msgstr "Ara"
 
 
 msgid "B/W"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -26061,14 +26061,6 @@ msgstr "Категорія"
 
 msgid "Filter add-ons by category"
 msgstr "Фільтрувати додатки за категорією"
-
-
-msgid "Search"
-msgstr "Пошук"
-
-
-msgid "Search within the selected filter"
-msgstr "Пошук за вибраним фільтром"
 
 
 msgid "Support"
@@ -65471,6 +65463,42 @@ msgid "Align with Point Normal"
 msgstr "Вирівняти за нормалями точок"
 
 
+msgid "Snap to increments of grid"
+msgstr "Підхоп до поділок сітки"
+
+
+msgid "Snap to vertices"
+msgstr "Підхоп до вершин"
+
+
+msgid "Snap to edges"
+msgstr "Підхоп до ребер"
+
+
+msgid "Snap to volume"
+msgstr "Підхоп до об'єму"
+
+
+msgid "Edge Center"
+msgstr "Центр Ребра"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Підхоплювати до середин ребер"
+
+
+msgid "Edge Perpendicular"
+msgstr "Перпендикуляр Ребра"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Підхоплювати до найближчої точки на ребрі"
+
+
+msgid "Snap With"
+msgstr "Підхоп З"
+
+
 msgid "Snap closest point onto target"
 msgstr "Підхопити найближчу точку до цілі"
 
@@ -65485,6 +65513,10 @@ msgstr "Підхопити серединну точку до цілі"
 
 msgid "Snap active onto target"
 msgstr "Підхопити активне до цілі"
+
+
+msgid "Project Individual Elements"
+msgstr "Проєктувати окремі елементи"
 
 
 msgctxt "Operator"
@@ -86248,38 +86280,6 @@ msgid "Type of element to snap to"
 msgstr "Тип елемента для підхоплення"
 
 
-msgid "Snap to increments of grid"
-msgstr "Підхоп до поділок сітки"
-
-
-msgid "Snap to vertices"
-msgstr "Підхоп до вершин"
-
-
-msgid "Snap to edges"
-msgstr "Підхоп до ребер"
-
-
-msgid "Snap to volume"
-msgstr "Підхоп до об'єму"
-
-
-msgid "Edge Center"
-msgstr "Центр Ребра"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Підхоплювати до середин ребер"
-
-
-msgid "Edge Perpendicular"
-msgstr "Перпендикуляр Ребра"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Підхоплювати до найближчої точки на ребрі"
-
-
 msgid "Snap Node Element"
 msgstr "Елемент підхопу вузла"
 
@@ -86546,10 +86546,6 @@ msgstr "Підхоп до поверхневого об'єкту"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "Вважати об'єкти єдиним цілим при знаходженні центра об'єму"
-
-
-msgid "Project Individual Elements"
-msgstr "Проєктувати окремі елементи"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -92364,6 +92360,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "Пошук"
+
+
 msgid "Display Thin"
 msgstr "Показ Тонко"
 
@@ -96363,10 +96363,6 @@ msgstr "Зчистити Грань Freestyle"
 
 msgid "Specular Lighting"
 msgstr "Блікове Освітлювання"
-
-
-msgid "Snap With"
-msgstr "Підхоп З"
 
 
 msgid "Custom Location"
@@ -101874,10 +101870,6 @@ msgstr "Неможливо зберегти багатошарові послі�
 
 msgid "No images have been changed"
 msgstr "Жодне зображення не змінено"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "Неможливо встановити границю для обрізаного рендера"
 
 
 msgid "Invalid UDIM index range was specified"

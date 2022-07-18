@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -8546,10 +8546,6 @@ msgstr "Векторски фонт"
 
 msgid "Category"
 msgstr "Категорије"
-
-
-msgid "Search"
-msgstr "Претрага"
 
 
 msgid "Support"
@@ -19733,6 +19729,18 @@ msgid "Align with Point Normal"
 msgstr "Поравнај са нормалом тачке"
 
 
+msgid "Snap to vertices"
+msgstr "Лепи за темена"
+
+
+msgid "Snap to edges"
+msgstr "Лепи за ивице"
+
+
+msgid "Snap to volume"
+msgstr "Лепи за облик"
+
+
 msgid "Snap closest point onto target"
 msgstr "Лепи најближу за циљну тачку"
 
@@ -24572,18 +24580,6 @@ msgid "Type of element to snap to"
 msgstr "Врста елемента за који се лепи"
 
 
-msgid "Snap to vertices"
-msgstr "Лепи за темена"
-
-
-msgid "Snap to edges"
-msgstr "Лепи за ивице"
-
-
-msgid "Snap to volume"
-msgstr "Лепи за облик"
-
-
 msgid "Snap to grid"
 msgstr "Лепи за мрежу"
 
@@ -25584,6 +25580,10 @@ msgstr "Димензије"
 
 msgid "Odd"
 msgstr "Непар"
+
+
+msgid "Search"
+msgstr "Претрага"
 
 
 msgid "B/W"
