@@ -745,7 +745,7 @@ static void blendRead(BlendDataReader *reader, ModifierData *md)
 }
 
 ModifierTypeInfo modifierType_WeightVGProximity = {
-    /* name */ "VertexWeightProximity",
+    /* name */ N_("VertexWeightProximity"),
     /* structName */ "WeightVGProximityModifierData",
     /* structSize */ sizeof(WeightVGProximityModifierData),
     /* srna */ &RNA_VertexWeightProximityModifier,
