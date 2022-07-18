@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12768,14 +12768,6 @@ msgstr "Režim přehrávání sekvencí"
 
 msgid "Category"
 msgstr "Category"
-
-
-msgid "Search"
-msgstr "Hledat"
-
-
-msgid "Search within the selected filter"
-msgstr "Hledání ve vybraném filtru"
 
 
 msgid "Support"
@@ -30834,12 +30826,40 @@ msgid "Use Snapping Options"
 msgstr "Možnosti editace"
 
 
+msgid "Snap to increments of grid"
+msgstr "Přichytává k mřížce"
+
+
+msgid "Snap to vertices"
+msgstr "Přichytit k vrcholům"
+
+
+msgid "Snap to edges"
+msgstr "Přichytit k hranám"
+
+
+msgid "Snap to volume"
+msgstr "Přichytit k objemu"
+
+
+msgid "Edge Center"
+msgstr "Střed Hrany"
+
+
+msgid "Edge Perpendicular"
+msgstr "Kolmý k Hraně"
+
+
 msgid "Snap closest point onto target"
 msgstr "Přichytit nejbližší bod k cíly"
 
 
 msgid "Snap active onto target"
 msgstr "Zarovnat výběr na mřížku"
+
+
+msgid "Project Individual Elements"
+msgstr "Neplatné plošky"
 
 
 msgctxt "Operator"
@@ -40235,30 +40255,6 @@ msgid "Type of element to snap to"
 msgstr "Typ prvku pro přichytávání"
 
 
-msgid "Snap to increments of grid"
-msgstr "Přichytává k mřížce"
-
-
-msgid "Snap to vertices"
-msgstr "Přichytit k vrcholům"
-
-
-msgid "Snap to edges"
-msgstr "Přichytit k hranám"
-
-
-msgid "Snap to volume"
-msgstr "Přichytit k objemu"
-
-
-msgid "Edge Center"
-msgstr "Střed Hrany"
-
-
-msgid "Edge Perpendicular"
-msgstr "Kolmý k Hraně"
-
-
 msgid "Snap Node Element"
 msgstr "Prvek pro přichytávání"
 
@@ -40337,10 +40333,6 @@ msgstr "Zarovnat Rotaci k Cíly"
 
 msgid "Snap Peel Object"
 msgstr "Jeden objekt"
-
-
-msgid "Project Individual Elements"
-msgstr "Neplatné plošky"
 
 
 msgid "Transform Origins"
@@ -42632,6 +42624,10 @@ msgstr "Použít pro vykreslování"
 
 msgid "Unknown add-ons"
 msgstr "Neznámé doplňky"
+
+
+msgid "Search"
+msgstr "Hledat"
 
 
 msgid "Calibration"

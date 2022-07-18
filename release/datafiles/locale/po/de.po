@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -18242,14 +18242,6 @@ msgstr "Kategorie"
 
 msgid "Filter add-ons by category"
 msgstr "Add-Ons nach Kategorie filtern"
-
-
-msgid "Search"
-msgstr "Suchbereich"
-
-
-msgid "Search within the selected filter"
-msgstr "Ausgewählte Datei löschen"
 
 
 msgid "Support"
@@ -40835,6 +40827,30 @@ msgid "Edit selected Grease Pencil strokes"
 msgstr "Ausgewählte Wachsstift-Striche bearbeiten"
 
 
+msgid "Snap to increments of grid"
+msgstr "An Abstände des Rasters einrasten"
+
+
+msgid "Snap to vertices"
+msgstr "An Knoten einrasten"
+
+
+msgid "Snap to edges"
+msgstr "An Kanten einrasten"
+
+
+msgid "Snap to volume"
+msgstr "An Volumen einrasten"
+
+
+msgid "Edge Center"
+msgstr "Kantenzentrum"
+
+
+msgid "Snap With"
+msgstr "Einrastweite"
+
+
 msgid "Snap closest point onto target"
 msgstr "Entferntester Punkt auf dem Ziel einrasten"
 
@@ -52739,26 +52755,6 @@ msgid "Type of element to snap to"
 msgstr "Typ an dem eingerastet werden soll"
 
 
-msgid "Snap to increments of grid"
-msgstr "An Abstände des Rasters einrasten"
-
-
-msgid "Snap to vertices"
-msgstr "An Knoten einrasten"
-
-
-msgid "Snap to edges"
-msgstr "An Kanten einrasten"
-
-
-msgid "Snap to volume"
-msgstr "An Volumen einrasten"
-
-
-msgid "Edge Center"
-msgstr "Kantenzentrum"
-
-
 msgid "Snap Node Element"
 msgstr "Knotenelement einrasten"
 
@@ -57196,6 +57192,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "Suchbereich"
+
+
 msgid "Display Thin"
 msgstr "Dünnes anzeigen"
 
@@ -60740,10 +60740,6 @@ msgstr "Oberflächen überbrücken"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Oberfläche löschen"
-
-
-msgid "Snap With"
-msgstr "Einrastweite"
 
 
 msgid "Target Selection"

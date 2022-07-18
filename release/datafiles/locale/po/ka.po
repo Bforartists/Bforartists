@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -9310,10 +9310,6 @@ msgid "Category"
 msgstr "კატეგორია"
 
 
-msgid "Search"
-msgstr "ძიება"
-
-
 msgid "Grease Pencil Edit Mode"
 msgstr "ცვილის ფანქრის რედაქტირების რეჟიმი"
 
@@ -16242,6 +16238,38 @@ msgid "Bend selected items between the 3D cursor and the mouse"
 msgstr "დახარე მონიშნული ელემენტები 3გ კურსორსა და მაუსს შორის"
 
 
+msgid "Snap to increments of grid"
+msgstr "მიაკარი ცხრილის ნამატებს"
+
+
+msgid "Snap to vertices"
+msgstr "მიაკარი წვეროებს"
+
+
+msgid "Snap to edges"
+msgstr "მიაკარი წიბოებს"
+
+
+msgid "Snap to volume"
+msgstr "მიაკარი მოცულობას"
+
+
+msgid "Edge Center"
+msgstr "წიბოს ცენტრი"
+
+
+msgid "Snap to the middle of edges"
+msgstr "მიაკარი წიბოების შუაწელს"
+
+
+msgid "Edge Perpendicular"
+msgstr "წიბოს მართობი"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "მიაკარი უახლოეს წერტილს წიბოზე"
+
+
 msgctxt "Operator"
 msgid "Create Orientation"
 msgstr "შექმენი ორიენტაცია"
@@ -20141,38 +20169,6 @@ msgid "Type of element to snap to"
 msgstr "ტიპი იმ ელემენტისა, რომელსაც უნდა მიეკრას"
 
 
-msgid "Snap to increments of grid"
-msgstr "მიაკარი ცხრილის ნამატებს"
-
-
-msgid "Snap to vertices"
-msgstr "მიაკარი წვეროებს"
-
-
-msgid "Snap to edges"
-msgstr "მიაკარი წიბოებს"
-
-
-msgid "Snap to volume"
-msgstr "მიაკარი მოცულობას"
-
-
-msgid "Edge Center"
-msgstr "წიბოს ცენტრი"
-
-
-msgid "Snap to the middle of edges"
-msgstr "მიაკარი წიბოების შუაწელს"
-
-
-msgid "Edge Perpendicular"
-msgstr "წიბოს მართობი"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "მიაკარი უახლოეს წერტილს წიბოზე"
-
-
 msgid "Snap to grid"
 msgstr "მიაკარი ცხრილს"
 
@@ -21810,6 +21806,10 @@ msgstr "ტემპერატურა"
 
 msgid "Calculate"
 msgstr "გამოთვალე"
+
+
+msgid "Search"
+msgstr "ძიება"
 
 
 msgctxt "Operator"

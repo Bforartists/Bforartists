@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1948,10 +1948,6 @@ msgid "Rings"
 msgstr "แหวน"
 
 
-msgid "Search"
-msgstr "ค้นหา"
-
-
 msgid "Animation"
 msgstr "แอนิเมชัน"
 
@@ -3264,6 +3260,22 @@ msgid "Transformation orientation"
 msgstr "ทิศทางการแปลง"
 
 
+msgid "Snap to increments of grid"
+msgstr "ยึดตามจำนวนที่เพิ่มขึ้นของตาราง"
+
+
+msgid "Snap to vertices"
+msgstr "ยึดตามจุดยอด"
+
+
+msgid "Snap to edges"
+msgstr "ยึดตามขอบ"
+
+
+msgid "Snap to volume"
+msgstr "ยึดตามปริมาตร"
+
+
 msgctxt "Operator"
 msgid "Resize"
 msgstr "ขนาด"
@@ -3935,22 +3947,6 @@ msgid "Type of element to snap to"
 msgstr "ชนิดของส่วนประกอบที่จะยึดติด"
 
 
-msgid "Snap to increments of grid"
-msgstr "ยึดตามจำนวนที่เพิ่มขึ้นของตาราง"
-
-
-msgid "Snap to vertices"
-msgstr "ยึดตามจุดยอด"
-
-
-msgid "Snap to edges"
-msgstr "ยึดตามขอบ"
-
-
-msgid "Snap to volume"
-msgstr "ยึดตามปริมาตร"
-
-
 msgid "Snap to grid"
 msgstr "ยึดตามตาราง"
 
@@ -4254,6 +4250,10 @@ msgstr "คำนวณ"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "ค้นหา"
 
 
 msgctxt "Operator"

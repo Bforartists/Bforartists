@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -15229,14 +15229,6 @@ msgid "Category"
 msgstr "ﺔﺌﻔﻟﺍ"
 
 
-msgid "Search"
-msgstr "ﺚﺤﺑﺇ"
-
-
-msgid "Search within the selected filter"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻲﻔﺼﻤﻟﺍ ﻝﻼ﻿ﺧ ﻦﻣ ﺚﺤﺑﺍ"
-
-
 msgid "Support"
 msgstr "ﻢﻋﺪﻟﺍ"
 
@@ -29085,6 +29077,10 @@ msgid "Snap active onto target"
 msgstr "ﻑﺪﻬﻠﻟ ﻝﺎﻌﻔﻟﺍ ﻱﺫﺎﺣ"
 
 
+msgid "Project Individual Elements"
+msgstr "ﺔﻳﺩﺮﻔﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﻂﻘﺳﺃ"
+
+
 msgctxt "Operator"
 msgid "Create Orientation"
 msgstr "ﺕﺎﻬﺟﻮﺘﻟﺍ ﺊﺸﻧﺍ"
@@ -36196,10 +36192,6 @@ msgid "Consider objects as whole when finding volume center"
 msgstr "ﻢﺠﺤﻟﺍ ﺰﻛﺮﻣ ﻰﻠﻋ ﺭﻮﺜﻌﻟﺍ ﺪﻨﻋ ﻞﻜﻛ ﺕﺎﻨﺋﺎﻜﻟﺍ ﺮﺒﺘﻋﺇ"
 
 
-msgid "Project Individual Elements"
-msgstr "ﺔﻳﺩﺮﻔﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﻂﻘﺳﺃ"
-
-
 msgid "Project individual elements on the surface of other objects"
 msgstr "ﻯﺮﺧﻷ﻿ﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻪﺟﻭ ﻰﻠﻋ ﺔﻳﺩﺮﻔﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﻂﻘﺳﺃ"
 
@@ -37524,6 +37516,10 @@ msgstr "ﻑﻼ﻿ﺘﺧﻹ﻿ﺍ"
 
 msgid "Odd"
 msgstr "ﻱﺩﺮﻓ"
+
+
+msgid "Search"
+msgstr "ﺚﺤﺑﺇ"
 
 
 msgid "B/W"
