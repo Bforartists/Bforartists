@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -9700,10 +9700,6 @@ msgstr "Nie można zapisać sekwencji multilayer"
 
 msgid "No images have been changed"
 msgstr "Żaden obraz nie został zmieniony"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "Nie można ustawić obramowania dla przyciętego obrazu"
 
 
 msgid "%d image(s) will be saved in %s"

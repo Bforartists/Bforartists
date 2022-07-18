@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2673,14 +2673,6 @@ msgstr "छल्ले"
 
 msgid "Category"
 msgstr "श्रेणी"
-
-
-msgid "Search"
-msgstr "खोज"
-
-
-msgid "Search within the selected filter"
-msgstr "चयनित निस्पादक के भीतर खोज"
 
 
 msgid "Support"
@@ -5792,6 +5784,10 @@ msgstr "गणना"
 
 msgid "Dimension"
 msgstr "आयाम"
+
+
+msgid "Search"
+msgstr "खोज"
 
 
 msgid "B/W"

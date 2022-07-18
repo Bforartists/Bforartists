@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -8546,10 +8546,6 @@ msgstr "Vektorski font"
 
 msgid "Category"
 msgstr "Kategorije"
-
-
-msgid "Search"
-msgstr "Pretraga"
 
 
 msgid "Support"
@@ -19733,6 +19729,18 @@ msgid "Align with Point Normal"
 msgstr "Poravnaj sa normalom tačke"
 
 
+msgid "Snap to vertices"
+msgstr "Lepi za temena"
+
+
+msgid "Snap to edges"
+msgstr "Lepi za ivice"
+
+
+msgid "Snap to volume"
+msgstr "Lepi za oblik"
+
+
 msgid "Snap closest point onto target"
 msgstr "Lepi najbližu za ciljnu tačku"
 
@@ -24572,18 +24580,6 @@ msgid "Type of element to snap to"
 msgstr "Vrsta elementa za koji se lepi"
 
 
-msgid "Snap to vertices"
-msgstr "Lepi za temena"
-
-
-msgid "Snap to edges"
-msgstr "Lepi za ivice"
-
-
-msgid "Snap to volume"
-msgstr "Lepi za oblik"
-
-
 msgid "Snap to grid"
 msgstr "Lepi za mrežu"
 
@@ -25584,6 +25580,10 @@ msgstr "Dimenzije"
 
 msgid "Odd"
 msgstr "Nepar"
+
+
+msgid "Search"
+msgstr "Pretraga"
 
 
 msgid "B/W"
