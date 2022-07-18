@@ -408,7 +408,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   // ------------------------------- end bfa
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "falloff_radius", 0, "Falloff", ICON_NONE);
+  uiItemR(col, ptr, "falloff_radius", 0, IFACE_("Falloff"), ICON_NONE);
   uiItemR(col, ptr, "height", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
   uiItemR(col, ptr, "width", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
   uiItemR(col, ptr, "narrowness", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
@@ -430,7 +430,7 @@ static void position_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(layout, ptr, "start_position_object", 0, IFACE_("Object"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
-  uiItemR(col, ptr, "start_position_x", 0, "Start Position X", ICON_NONE);
+  uiItemR(col, ptr, "start_position_x", 0, IFACE_("Start Position X"), ICON_NONE);
   uiItemR(col, ptr, "start_position_y", 0, "Y", ICON_NONE);
 }
 
@@ -444,9 +444,9 @@ static void time_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "time_offset", 0, "Offset", ICON_NONE);
-  uiItemR(col, ptr, "lifetime", 0, "Life", ICON_NONE);
-  uiItemR(col, ptr, "damping_time", 0, "Damping", ICON_NONE);
+  uiItemR(col, ptr, "time_offset", 0, IFACE_("Offset"), ICON_NONE);
+  uiItemR(col, ptr, "lifetime", 0, IFACE_("Life"), ICON_NONE);
+  uiItemR(col, ptr, "damping_time", 0, IFACE_("Damping"), ICON_NONE);
   uiItemR(col, ptr, "speed", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 }
 
@@ -498,7 +498,7 @@ static void panelRegister(ARegionType *region_type)
 }
 
 ModifierTypeInfo modifierType_Wave = {
-    /* name */ "Wave",
+    /* name */ N_("Wave"),
     /* structName */ "WaveModifierData",
     /* structSize */ sizeof(WaveModifierData),
     /* srna */ &RNA_WaveModifier,
