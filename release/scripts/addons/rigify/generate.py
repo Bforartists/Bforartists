@@ -65,7 +65,9 @@ class Generator(base_generate.BaseGenerator):
 
         target_rig = meta_data.rigify_target_rig
         if not target_rig:
-            if "metarig" in self.metarig.name:
+            if meta_data.rigify_rig_basename:
+                rig_new_name = meta_data.rigify_rig_basename
+            elif "metarig" in self.metarig.name:
                 rig_new_name = self.metarig.name.replace("metarig", "rig")
             elif "META" in self.metarig.name:
                 rig_new_name = self.metarig.name.replace("META", "RIG")
@@ -117,7 +119,7 @@ class Generator(base_generate.BaseGenerator):
         wgts_group_name = "WGTS_" + self.obj.name
         old_collection = bpy.data.collections.get(wgts_group_name)
 
-        if old_collection.library:
+        if old_collection and old_collection.library:
             old_collection = None
 
         if not old_collection:

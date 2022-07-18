@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-07-05 10:11+0200\n"
+"PO-Revision-Date: 2022-07-12 12:26+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Poedit-Bookmarks: -1,890,-1,-1,-1,-1,-1,-1,-1,-1"
 
 
@@ -318,6 +318,14 @@ msgstr "MetalRT (experimentálne)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "MetalRT pre sledovanie lúče využíva menej pamäte pre scény, ktoré vo veľkej miere využívajú krivky, a v špecifických prípadoch môže poskytnúť lepší výkon. Táto podpora je však experimentálna a niektoré scény sa môžu prekresľovať nesprávne"
+
+
+msgid "KHR_materials_variants_ui"
+msgstr "KHR_materials_variants_ui"
+
+
+msgid "Displays glTF UI to manage material variants"
+msgstr "Zobrazí užívateľské rozhranie glTF na správu variantov materiálu"
 
 
 msgid "Displays glTF Settings node in Shader Editor (Menu Add > Output)"
@@ -3205,7 +3213,7 @@ msgstr "Žiadne (staršie)"
 
 
 msgid "Ignore parent scaling without compensating for parent shear. Replicates the effect of disabling the original Inherit Scale checkbox"
-msgstr "Ignoruje zmenu mierky rodiča bez kompenzácie rodičovského strihu. Opakuje účinok zrušenia pôvodného výberového políčka Zdediť mierku"
+msgstr "Ignoruje zmenu mierky rodiča bez kompenzácie rodičovského strihu. Opakuje účinok zrušenia pôvodného poľa výberu Zdediť mierku"
 
 
 msgid "Layers"
@@ -6890,7 +6898,7 @@ msgstr "Posuv (staršie)"
 
 
 msgid "Combine rotations like the original Offset checkbox. Does not work well for multiple axis rotations"
-msgstr "Kombinuje rotácie ako pôvodné výberové políčko Posunu. Nepracuje dobre pri rotácii viacerých osí"
+msgstr "Kombinuje rotácie ako pôvodné pole výberu Posunu. Nepracuje dobre pri rotácii viacerých osí"
 
 
 msgid "DEPRECATED: Add original rotation into copied rotation"
@@ -17638,6 +17646,10 @@ msgid "Use Shadow"
 msgstr "Použiť tieň"
 
 
+msgid "Project contour lines using a light source object"
+msgstr "Premietne čiary obrysu použitím objektu zdroja svetla"
+
+
 msgid "Shadow Enclosed Shapes"
 msgstr "Tiene uzavretých tvarov"
 
@@ -24881,12 +24893,20 @@ msgid "Current shape key index"
 msgstr "Index súčasného kľúčového tvaru"
 
 
+msgid "Add Rest Position"
+msgstr "Pridať kľudovú polohu"
+
+
+msgid "Add a \"rest_position\" attribute that is a copy of the position attribute before shape keys and modifiers are evaluated"
+msgstr "Pridá atribút \"rest_position\", ktorý je kópiou atribútu pozície pred vyhodnotením kľúčových tvarov a modifikátorov"
+
+
 msgid "Bounding Box"
-msgstr "Políčko ohraničenia"
+msgstr "Pole ohraničenia"
 
 
 msgid "Object's bounding box in object-space coordinates, all values are -1.0 when not available"
-msgstr "Políčko ohraničenia objektov v súradniciach priestoru objektu, všetky hodnoty sú -1,0 ak nie je k dispozícii"
+msgstr "Pole ohraničenia objektov v súradniciach priestoru objektu, všetky hodnoty sú -1,0 ak nie je k dispozícii"
 
 
 msgid "Settings for using the object as a collider in physics simulation"
@@ -24906,11 +24926,11 @@ msgstr "Vynútenia ovplyvňujúce transformáciu objektu"
 
 
 msgid "Cycles Object Settings"
-msgstr "Nastavenia cyklov objektu"
+msgstr "Nastavenia objektov Cykly"
 
 
 msgid "Cycles object settings"
-msgstr "Nastavenia cyklov objektu"
+msgstr "Nastavenia objektov Cykly"
 
 
 msgid "Data"
@@ -28711,14 +28731,6 @@ msgid "Filter add-ons by category"
 msgstr "Doplnky filtra podľa kategórie"
 
 
-msgid "Search"
-msgstr "Vyhľadať"
-
-
-msgid "Search within the selected filter"
-msgstr "Vyhľadáva vnútri vybraného filtra"
-
-
 msgid "Support"
 msgstr "Podpora"
 
@@ -28871,6 +28883,14 @@ msgid "Filter the UI by tags"
 msgstr "Filtruje užívateľské rozhrania podľa príznakov"
 
 
+msgid "Pin Scene"
+msgstr "Pripnúť scénu"
+
+
+msgid "Remember the last used scene for the workspace and switch to it whenever this workspace is activated again"
+msgstr "Zapamätá si poslednú použitú scénu pre pracovný priestor a vždy na ňu prepne, keď je tento pracovný priestor znovu aktivovaný"
+
+
 msgid "World data-block describing the environment and ambient lighting of a scene"
 msgstr "Blok údajov oblasti popisujúci prostredie a osvetlenie okolitej scény"
 
@@ -28880,19 +28900,19 @@ msgstr "Farba pozadia"
 
 
 msgid "Cycles World Settings"
-msgstr "Nastavenie cyklov sveta"
+msgstr "Nastavenie sveta Cykly"
 
 
 msgid "Cycles world settings"
-msgstr "Nastavenie cyklov sveta"
+msgstr "Nastavenie sveta Cykly"
 
 
 msgid "Cycles Visibility Settings"
-msgstr "Nastavenia cyklov viditeľnosti"
+msgstr "Nastavenia viditeľnosti Cykly"
 
 
 msgid "Cycles visibility settings"
-msgstr "Nastavenia cyklov viditeľnosti"
+msgstr "Nastavenia viditeľnosti Cykly"
 
 
 msgid "Lighting"
@@ -39558,11 +39578,11 @@ msgstr "Je označené stlmenie aktuálnej snímky"
 
 
 msgid "Pattern Bounding Box"
-msgstr "Políčko ohraničenia vzorky"
+msgstr "Pole ohraničenia vzorky"
 
 
 msgid "Pattern area bounding box in normalized coordinates"
-msgstr "Políčko ohraničenia vzorky oblasti v normalizovaných súradniciach"
+msgstr "Pole ohraničenia vzorky oblasti v normalizovaných súradniciach"
 
 
 msgid "Pattern Corners"
@@ -40391,6 +40411,22 @@ msgstr "Akcia na zachytenie medzier okolo rozsahu pásu"
 
 msgid "F-Curves for controlling the strip's influence and timing"
 msgstr "F-krivky pre kontrolu vplyvu pásov a načasovanie"
+
+
+msgid "End Frame (manipulated from UI)"
+msgstr "Koncová snímka (manipulovaná z užívateľského rozhrania)"
+
+
+msgid "End frame of the NLA strip. Note: changing this value also updates the value of the strip's repeats or its action's end frame. If only the end frame should be changed, see the \"frame_end\" property instead"
+msgstr "Koncová snímka pásu NLA. Poznámka: zmenou tejto hodnoty sa aktualizuje aj hodnota opakovania pásu alebo koncovej snímky jeho akcie. Ak sa má zmeniť len koncová snímka, pozrite si namiesto toho vlastnosť \"frame_end\""
+
+
+msgid "Start Frame (manipulated from UI)"
+msgstr "Počiatočná snímka (manipulovaná z užívateľského rozhrania)"
+
+
+msgid "Start frame of the NLA strip. Note: changing this value also updates the value of the strip's end frame. If only the start frame should be changed, see the \"frame_start\" property instead"
+msgstr "Počiatočná snímka pásu NLA. Poznámka: zmenou tejto hodnoty sa aktualizuje aj hodnota koncovej snímky pásu. Ak sa má zmeniť len počiatočná snímky, pozrite si namiesto toho vlastnosť \"frame_start\""
 
 
 msgid "Amount the strip contributes to the current result"
@@ -43450,6 +43486,10 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Uzol geometrie vlastnej skupiny pre uzly Python"
 
 
+msgid "Deform Curves on Surface"
+msgstr "Deformácia kriviek na povrchu"
+
+
 msgid "Delete Geometry"
 msgstr "Odstrániť geometriu"
 
@@ -44151,6 +44191,10 @@ msgid "Frame"
 msgstr "Rám"
 
 
+msgid "Collect related nodes together in a common area. Useful for organization when the re-usability of a node group is not required"
+msgstr "Zhromažďujte súvisiace uzly v spoločnej oblasti. Užitočné na organizáciu, keď sa nevyžaduje opakované použitie skupiny uzlov"
+
+
 msgid "Label Font Size"
 msgstr "Veľkosť písma nápisu"
 
@@ -44167,8 +44211,16 @@ msgid "Group Input"
 msgstr "Skupinové vstupy"
 
 
+msgid "Expose connected data from inside a node group as inputs to its interface"
+msgstr "Vystavenie pripojených údajov zvnútra skupiny uzlov ako vstupov do jej rozhrania"
+
+
 msgid "Group Output"
 msgstr "Skupinové výstupy"
+
+
+msgid "Output data from inside of a node group"
+msgstr "Výstupné údaje zvnútra skupiny uzlov"
 
 
 msgid "True if this node is used as the active group output"
@@ -44177,6 +44229,10 @@ msgstr "Pravdivé, ak tento uzol sa používa ako aktívna skupina výstupu"
 
 msgid "Reroute"
 msgstr "Presmerovať"
+
+
+msgid "A single-socket organization tool that supports one input and multiple outputs"
+msgstr "Nástroj na organizáciu s jednou zásuvkou, ktorý podporuje jeden vstup a viacero výstupov"
 
 
 msgid "Shader Node"
@@ -44199,6 +44255,14 @@ msgid "Ambient Occlusion"
 msgstr "Pohlcovanie okolím"
 
 
+msgid ""
+"Compute how much the hemisphere above the shading point is occluded, for example to add weathering effects to corners.\n"
+"Note: For Cycles, this may slow down renders significantly"
+msgstr ""
+"Vypočíta, do akej miery je pologuľa nad bodom tieňovania zakrytá, napríklad na pridanie efektov počasia do rohov.\n"
+"Poznámka: Pre Cykly to môže výrazne spomaliť prekresľovanie"
+
+
 msgid "Trace rays towards the inside of the object"
 msgstr "Snímanie lúčov smerom dovnútra objektu"
 
@@ -44213,6 +44277,10 @@ msgstr "Len posúdenie vlastného objektu pri výpočtoch Pohltenia okolím"
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "Počet lúčov pre trasu na vyhodnotenie tieňovača"
+
+
+msgid "Retrieve attributes attached to objects or geometry"
+msgstr "Získavanie atribútov pripojených k objektom alebo geometrii"
 
 
 msgid "Attribute Name"
@@ -44253,6 +44321,14 @@ msgid ""
 msgstr ""
 "Pridanie svetelnej emisie na pozadí.\n"
 "Poznámka: Tento uzol by sa mal používať len pre výstup na povrch sveta"
+
+
+msgid ""
+"Generates normals with round corners.\n"
+"Note: only supported in Cycles, and may slow down renders"
+msgstr ""
+"Vygeneruje normály so zaoblenými rohmi.\n"
+"Poznámka: Podporované len v Cykloch a môže spomaliť prekresľovanie"
 
 
 msgid "Blackbody"
@@ -44399,6 +44475,10 @@ msgid "Principled BSDF"
 msgstr "Principiálna BSDF"
 
 
+msgid "Physically-based, easy-to-use shader for rendering surface materials, based on the Disney principled model also known as the \"PBR\" shader"
+msgstr "Fyzikálne založený, ľahko použiteľný tieňovač na prekresľovanie povrchových materiálov, založený na principiálnom modeli spoločnosti Disney, ktorý je známy aj ako \"PBR\" tieňovač"
+
+
 msgid "Subsurface Method"
 msgstr "Metóda podpovrchu"
 
@@ -44435,6 +44515,10 @@ msgid "Refraction BSDF"
 msgstr "BSDF Lom"
 
 
+msgid "Glossy refraction with sharp or microfacet distribution, typically used for materials that transmit light"
+msgstr "Lom lesku s ostrým alebo mikro-plôškovým rozložením, zvyčajne sa používa pre materiály, ktoré prepúšťajú svetlo"
+
+
 msgid "Toon BSDF"
 msgstr "BSDF Kresba"
 
@@ -44467,12 +44551,28 @@ msgid "Transparent BSDF"
 msgstr "BSDF Priehľadnosť"
 
 
+msgid "Transparency without refraction, passing straight through the surface as if there were no geometry"
+msgstr "Priehľadnosť bez lomu, priamy prechod cez povrch, akoby neexistovala geometria"
+
+
 msgid "Velvet BSDF"
 msgstr "BSDF Zamat"
 
 
+msgid ""
+"Reflection for materials such as cloth.\n"
+"Typically mixed with other shaders (such as a Diffuse Shader) and is not particularly useful on its own"
+msgstr ""
+"Odraz pre materiály, ako je látka.\n"
+"Zvyčajne sa používa spolu s inými tieňovačmi (napríklad difúznym tieňom) a sám o sebe nie je príliš užitočný"
+
+
 msgid "Bump"
 msgstr "Nerovnosti"
+
+
+msgid "Generate a perturbed normal from a height texture for bump mapping. Typically used for faking highly detailed surfaces"
+msgstr "Vygeneruje narušený normál z textúry výšky na mapovanie hrboľov. Zvyčajne sa používa na falšovanie veľmi detailných povrchov"
 
 
 msgid "Invert the bump mapping direction to push into the surface instead of out"
@@ -44481,6 +44581,10 @@ msgstr "Invertuje mapovanie nerovností vtlačením smerom do povrchu namiesto v
 
 msgid "Camera Data"
 msgstr "Údaje kamery"
+
+
+msgid "Retrieve information about the camera and how it relates to the current shading point's position"
+msgstr "Získa informácie o kamere a jej vzťahu k polohe aktuálneho bodu tieňovania"
 
 
 msgid "Clamp a value between a minimum and a maximum"
@@ -44503,12 +44607,28 @@ msgid "Constrain value between min and max, swapping arguments when min > max"
 msgstr "Vynúti hodnoty medzi min a max, pričom sa argumenty vymenia, keď min > max"
 
 
+msgid "Create a color from individual components using multiple models"
+msgstr "Vytvára farbu z jednotlivých komponentov použitím viacerých modelov"
+
+
 msgid "Combine HSV"
 msgstr "Kombinovať HSV"
 
 
+msgid "Create a color from its hue, saturation, and value channels"
+msgstr "Vytvára farbu z jej kanálov odtieňa, sýtosti a hodnoty"
+
+
 msgid "Combine RGB"
 msgstr "Kombinovať RGB"
+
+
+msgid "Generate a color from its red, green, and blue channels (Deprecated)"
+msgstr "Vygeneruje farbu z jej červeného, zeleného a modrého kanála (zastarané)"
+
+
+msgid "Create a vector from X, Y, and Z components"
+msgstr "Vytvára vektor zo zložiek X, Y a Z"
 
 
 msgid "Shader Custom Group"
@@ -44543,6 +44663,10 @@ msgid "Specular BSDF"
 msgstr "BSDF Odraz"
 
 
+msgid "Similar to the Principled BSDF node but uses the specular workflow instead of metallic, which functions by specifying the facing (along normal) reflection color. Energy is not conserved, so the result may not be physically accurate"
+msgstr "Podobne ako uzol Principiálne BSDF, ale namiesto kovového používa zrkadlový pracovný postup, ktorý funguje tak, že určuje farbu odrazu smerom k povrchu (pozdĺž normálu). Energia sa nezachováva, takže výsledok nemusí byť fyzikálne presný"
+
+
 msgid "Emission"
 msgstr "Vyžarovanie"
 
@@ -44563,6 +44687,14 @@ msgid "Fresnel"
 msgstr "Fresnel"
 
 
+msgid ""
+"Produce a blending factor depending on the angle between the surface normal and the view direction using Fresnel equations.\n"
+"Typically used for mixing reflections at grazing angles"
+msgstr ""
+"Pomocou Fresnelových rovníc vytvára faktor prelínania v závislosti od uhla medzi normálom povrchu a smerom pohľadu.\n"
+"Typicky sa používa na miešanie odrazov pri uhloch odlesku"
+
+
 msgid "Apply a gamma correction"
 msgstr "Použiť gama korekciu"
 
@@ -44575,16 +44707,52 @@ msgid "Retrieve hair curve information"
 msgstr "Vyhľadáva informácie o krivke vlasov"
 
 
+msgid ""
+"Create a \"hole\" in the image with zero alpha transparency, which is useful for compositing.\n"
+"Note: the holdout shader can only create alpha when transparency is enabled in the film settings"
+msgstr ""
+"Vytvára v obrázku \"dieru\" s nulovou priehľadnosťou alfa, ktorá je užitočná pri kompozícii.\n"
+"Poznámka: tieňovač Holdout dokáže vytvoriť alfa len vtedy, keď je v nastaveniach filmu povolená priehľadnosť"
+
+
+msgid "Apply a color transformation in the HSV color model"
+msgstr "Použije transformácie farieb v modeli farieb HSV"
+
+
+msgid "Invert a color, producing a negative"
+msgstr "Invertuje farbu a vytvára negatívnu farbu"
+
+
 msgid "Layer Weight"
 msgstr "Vrstva váhy"
+
+
+msgid ""
+"Produce a blending factor depending on the angle between the surface normal and the view direction.\n"
+"Typically used for layering shaders with the Mix Shader node"
+msgstr ""
+"Vytvára faktor prelínania v závislosti od uhla medzi normálom povrchu a smerom pohľadu.\n"
+"Zvyčajne sa používa na vrstvenie tieňovačov s uzlom Zmiešať tieňovač"
 
 
 msgid "Light Falloff"
 msgstr "Dopad svetla"
 
 
+msgid "Manipulate how light intensity decreases over distance. Typically used for non-physically-based effects; in reality light always falls off quadratically"
+msgstr "Manipuluje s tým, ako intenzita svetla klesá v závislosti od vzdialenosti. Typicky sa používa pre nefyzikálne efekty; v skutočnosti svetlo vždy klesá kvadraticky"
+
+
 msgid "Light Path"
 msgstr "Dráha svetla"
+
+
+msgid ""
+"Retrieve the type of incoming ray for which the shader is being executed.\n"
+"Typically used for non-physically-based tricks"
+msgstr ""
+"Získava typ prichádzajúceho lúča, pre ktorý sa vykonáva tieňovač.\n"
+"Zvyčajne sa používa pre triky, ktoré nie sú založené na fyzike"
 
 
 msgid "Remap a value from a range to a target range"
@@ -44627,6 +44795,10 @@ msgid "Smoother Hermite edge interpolation between From Min and From Max values"
 msgstr "Vyhladenejšia interpolácia Hermitových hrán v rozsahu hodnôt Minimum a Maximum"
 
 
+msgid "Transform the input vector by applying translation, rotation, and scale"
+msgstr "Transformuje vstupný vektor použitím presunu, rotácie a zmeny mierky"
+
+
 msgid "Type of vector that the mapping transforms"
 msgstr "Typ vektora, ktorý transformuje mapovanie"
 
@@ -44655,12 +44827,28 @@ msgid "MixRGB"
 msgstr "Zmiešať RGB"
 
 
+msgid "Mix two input colors"
+msgstr "Zmiešava dve vstupné farby"
+
+
 msgid "Mix Shader"
 msgstr "Zmiešať tieňovač"
 
 
+msgid "Mix two shaders together. Typically used for material layering"
+msgstr "Zmiešava dva tieňovače. Zvyčajne sa používa na vrstvenie materiálov"
+
+
+msgid "Retrieve geometric information about the current shading point"
+msgstr "Získava geometrické informácie o aktuálnom bode tieňovania"
+
+
 msgid "Generate a normal vector and a dot product"
 msgstr "Vygenerovať vektor normálu a bodového súčinu"
+
+
+msgid "Generate a perturbed normal from an RGB normal map image. Typically used for faking highly detailed surfaces"
+msgstr "Vygeneruje narušený normál z obrazu normálovej mapy RGB. Zvyčajne sa používa na falšovanie veľmi detailných povrchov"
 
 
 msgid "Space of the input normal"
@@ -44711,6 +44899,14 @@ msgid "AOV Output"
 msgstr "Výstup AOV"
 
 
+msgid ""
+"Arbitrary Output Variables.\n"
+"Provide custom render passes for arbitrary shader node outputs"
+msgstr ""
+"Ľubovoľné výstupné premenné.\n"
+"Poskytuje vlastné prekresľovacie priechody pre ľubovoľné výstupy uzlov tieňovača"
+
+
 msgid "Name of the AOV that this output writes to"
 msgstr "Názov AOV, do ktorého sa tento výstup zapisuje"
 
@@ -44755,12 +44951,24 @@ msgid "Material Output"
 msgstr "Výstup materiálu"
 
 
+msgid "Output surface material information for use in rendering"
+msgstr "Výstupné informácie o materiáli povrchu na použitie pri prekresľovaní"
+
+
 msgid "World Output"
 msgstr "Výstup oblasti"
 
 
+msgid "Output light color information to the scene's World"
+msgstr "Výstupné informácie o farbe svetla pre scény sveta"
+
+
 msgid "Particle Info"
 msgstr "Info častice"
+
+
+msgid "Retrieve the data of the particle that spawned the object instance, for example to give variation to multiple instances of an object"
+msgstr "Získava údaje častice, ktorá vytvorila inštanciu objektu, napríklad na poskytnutie variácie viacerých inštancií objektu"
 
 
 msgid "Point Info"
@@ -44777,6 +44985,18 @@ msgstr "Vyberač farby"
 
 msgid "Apply color corrections for each color channel"
 msgstr "Používa korekcie farieb pre každý farebný kanál"
+
+
+msgid "Convert a color's luminance to a grayscale value"
+msgstr "Konvertuje jas farby na hodnotu v stupňoch sivej"
+
+
+msgid ""
+"Generate an OSL shader from a file or text data-block.\n"
+"Note: OSL shaders are not supported on the GPU"
+msgstr ""
+"Vygeneruje OSL tieňovač zo súboru alebo bloku textových údajov.\n"
+"Poznámka: OSL tieňovače nie sú podporované na GPU"
 
 
 msgid "Bytecode"
@@ -44823,16 +45043,40 @@ msgid "Automatically update the shader when the .osl file changes (external scri
 msgstr "Automatická aktualizácia tieňovača pri zmene súboru .osl (iba externé skripty)"
 
 
+msgid "Split a color into its individual components using multiple models"
+msgstr "Rozdelí farby na jednotlivé zložky použitím viacerých modelov"
+
+
 msgid "Separate HSV"
 msgstr "Oddeliť HSV"
+
+
+msgid "Split a color into its hue, saturation, and value channels"
+msgstr "Rozdeľuje farbu na kanály pre odtieň, sýtosť a hodnota"
 
 
 msgid "Separate RGB"
 msgstr "Oddeliť RGB"
 
 
+msgid "Split a color into its red, green, and blue channels (Deprecated)"
+msgstr "Rozdelí farbu na červený, zelený a modrý kanál (zastarané)"
+
+
+msgid "Split a vector into its X, Y, and Z components"
+msgstr "Rozdelí vektor na zložky X, Y a Z"
+
+
 msgid "Shader to RGB"
 msgstr "Tieňovač pre RGB"
+
+
+msgid ""
+"Convert rendering effect (such as light and shadow) to color. Typically used for non-photorealistic rendering, to apply additional effects on the output of BSDFs.\n"
+"Note: only supported for Eevee"
+msgstr ""
+"Konvertuje efekt prekresľovania (napríklad svetlo a tieň) na farbu. Zvyčajne sa používa pri nefotorealistickom prekresľovaní na použitie ďalších efektov na výstupe BSDF.\n"
+"Poznámka: Podporované len pre Eevee"
 
 
 msgid "Squeeze Value"
@@ -44841,6 +45085,14 @@ msgstr "Hodnota stlačenia"
 
 msgid "Subsurface Scattering"
 msgstr "Podpovrchový rozptyl"
+
+
+msgid ""
+"Subsurface multiple scattering shader to simulate light entering the surface and bouncing internally.\n"
+"Typically used for materials such as skin, wax, marble or milk"
+msgstr ""
+"Podpovrchový viacnásobný rozptylový tieňovač na simuláciu svetla vstupujúceho na povrch a odrážajúceho sa dovnútra.\n"
+"Typicky sa používa pre materiály, ako je koža, vosk, mramor alebo mlieko"
 
 
 msgid "Generate a tangent direction for the Anisotropic BSDF"
@@ -44943,6 +45195,10 @@ msgid "Environment Texture"
 msgstr "Textúra Prostredie"
 
 
+msgid "Sample an image file as an environment texture. Typically used to light the scene with the background node"
+msgstr "Ukážka obrazového súboru ako textúry prostredia. Zvyčajne sa používa na osvetlenie scény s uzlom pozadia"
+
+
 msgid "Texture interpolation"
 msgstr "Interpolácia textúry"
 
@@ -44983,8 +45239,16 @@ msgid "Gradient Texture"
 msgstr "Textúra Stupňovitosť"
 
 
+msgid "Generate interpolated color and intensity values based on the input vector"
+msgstr "Vygeneruje interpolované hodnoty farieb a intenzity na základe vstupného vektora"
+
+
 msgid "IES Texture"
 msgstr "Textúra IES"
+
+
+msgid "Used to match real world lights with IES files, which store the directional intensity distribution of light sources"
+msgstr "Používa sa na porovnávanie skutočných svetiel so súbormi IES, ktoré uchovávajú smerové rozloženie intenzity svetelných zdrojov"
 
 
 msgid "IES light path"
@@ -45005,6 +45269,10 @@ msgstr "Či je súbor IES načítaný z disku alebo z bloku údajov textu"
 
 msgid "Use external .ies file"
 msgstr "Požiť externý .ies súbor"
+
+
+msgid "Sample an image file as a texture"
+msgstr "Ukážka obrazového súboru ako textúry"
 
 
 msgid "Method to project 2D image on object with a 3D texture vector"
@@ -45045,6 +45313,10 @@ msgstr "Úroveň detailu v pridaní turbulentného šumu"
 
 msgid "Musgrave Texture"
 msgstr "Textúra Musgrave"
+
+
+msgid "Generate fractal Perlin noise. Allows for greater control over how octaves are combined than the Noise Texture node"
+msgstr "Vygeneruje fraktálny Perlinov šum. Umožňuje väčšiu kontrolu nad tým, ako sa oktávy kombinujú, ako uzol Textúra šumu"
 
 
 msgid "Number of dimensions to output noise for"
@@ -45089,6 +45361,10 @@ msgstr "Vytvára neprirodzený homogénny a izotropný výsledok"
 
 msgid "Similar to Hybrid Multifractal creates a heterogeneous terrain, but with the likeness of river channels"
 msgstr "Podobne ako hybridný multifraktál vytvára heterogénny terén, ale s podobou riečnych kanálov"
+
+
+msgid "Generate fractal Perlin noise"
+msgstr "Vygenerovať fraktálny Perlinov šum"
 
 
 msgid "Generate a volumetric point for each particle or vertex of another object"
@@ -45327,6 +45603,10 @@ msgid "Voronoi Texture"
 msgstr "Textúra Voronoi"
 
 
+msgid "Generate Worley noise based on the distance to random points. Typically used to generate textures such as stones, water, or biological cells"
+msgstr "Vygeneruje Worleyho šum na základe vzdialenosti k náhodným bodom. Typicky sa používa na generovanie textúr, ako sú kamene, voda alebo biologické bunky"
+
+
 msgid "The distance metric used to compute the texture"
 msgstr "Metrika vzdialenosti použitá na výpočet textúry"
 
@@ -45475,6 +45755,10 @@ msgid "White Noise"
 msgstr "Biely šum"
 
 
+msgid "Return a random value or color based on an input seed"
+msgstr "Vrátiť náhodnú hodnotu alebo farbu na základe vstupného rozosiatia"
+
+
 msgid "UV Along Stroke"
 msgstr "UV pozdĺž ťahu"
 
@@ -45487,6 +45771,10 @@ msgid "Lower half of the texture is for tips of the stroke"
 msgstr "Spodná polovica textúry je pre hroty ťahu"
 
 
+msgid "Retrieve a UV map from the geometry, or the default fallback if none is specified"
+msgstr "Načíta UV mapu z geometrie alebo predvolenej náhradnej mapy, ak nie je zadaná žiadna"
+
+
 msgid "UV coordinates to be used for mapping"
 msgstr "UV súradnice použité na mapovanie"
 
@@ -45495,8 +45783,20 @@ msgid "Map values to colors with the use of a gradient"
 msgstr "Mapuje hodnoty na farby použitím stupňovitosti"
 
 
+msgid "Used to Input numerical values to other nodes in the tree"
+msgstr "Používa sa na Zadávanie číselných hodnôt do iných uzlov v strome"
+
+
+msgid "Map an input vectors to curves, used to fine-tune the interpolation of the input"
+msgstr "Mapuje vstupné vektory na krivky, ktoré sa používa na jemné doladenie interpolácie vstupu"
+
+
 msgid "Vector Displacement"
 msgstr "Posunúť vektor"
+
+
+msgid "Displace the surface along an arbitrary direction"
+msgstr "Posununie povrchu pozdĺž ľubovoľného smeru"
 
 
 msgid "Tangent space vector displacement mapping"
@@ -45707,6 +46007,10 @@ msgid "Color Attribute"
 msgstr "Atribút farby"
 
 
+msgid "Retrieve a color attribute, or the default fallback if none is specified"
+msgstr "Vracia atribút farby alebo predvoleného náhradného atribútu, ak nie je zadaný"
+
+
 msgid "Volume Absorption"
 msgstr "Pohlcovanie objemom"
 
@@ -45717,6 +46021,10 @@ msgstr "Absorbuje svetlo pri prechode objemom"
 
 msgid "Volume Info"
 msgstr "Info Objem"
+
+
+msgid "Read volume data attributes from volume grids"
+msgstr "Číta atribúty údajov objemu z mriežok objemu"
 
 
 msgid "Principled Volume"
@@ -45731,8 +46039,20 @@ msgid "Volume Scatter"
 msgstr "Rozptyl objemom"
 
 
+msgid "Scatter light as it passes through the volume, often used to add fog to a scene"
+msgstr "Rozptyl svetla pri prechode objemom, často sa používa na pridanie hmly do scény"
+
+
 msgid "Convert a wavelength value to an RGB value"
 msgstr "Konvertuje hodnoty vlnovej dĺžky na hodnotu RGB"
+
+
+msgid ""
+"Retrieve the edges of an object as it appears to Cycles.\n"
+"Note: as meshes are triangulated before being processed by Cycles, topology will always appear triangulated"
+msgstr ""
+"Získava hrany objektu tak, ako sa zobrazujú v Cykloch.\n"
+"Poznámka: keďže povrchové siete sú pred spracovaním v Cykloch konvertované na trojuholníky, topológia sa vždy zobrazí trojuholníková"
 
 
 msgid "Pixel Size"
@@ -50462,6 +50782,15 @@ msgstr "Opätovne pripojí krivky k deformovanému povrchu použitím existujúc
 
 
 msgctxt "Operator"
+msgid "Set Curves Surface Object"
+msgstr "Nastaviť povrch kriviek objektu"
+
+
+msgid "Use the active object as surface for selected curves objects and set it as the parent"
+msgstr "Použije aktívny objekt ako povrch pre vybrané objekty kriviek a nastaví ho ako rodičovský objekt"
+
+
+msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "Prepínať cyklicky"
 
@@ -52068,6 +52397,14 @@ msgid "Allow >4 joint vertex influences. Models may appear incorrectly in many v
 msgstr "Povolí >4 spojené vplyvy vrcholov. Modely sa môžu javiť nesprávne v mnohých zobrazovačoch"
 
 
+msgid "Export all Armature Actions"
+msgstr "Exportovať všetky akcie armatúry"
+
+
+msgid "Export all actions of a single armature. WARNING: works only if you exports a single armature"
+msgstr "Exportuje všetky akcie jednej armatúry. UPOZORNENIE: funguje len vtedy, ak exportujete jednu armatúru"
+
+
 msgid "Exports active actions and NLA tracks as glTF animations"
 msgstr "Exportuje aktívne akcie a stopy NLA ako glTF (GL Transmission Format) animácie"
 
@@ -52306,6 +52643,14 @@ msgstr "Názov jednej animácie glTF, ktorá sa má exportovať"
 
 msgid "Export vertex normals with meshes"
 msgstr "Exportuje normály vrcholov s povrchovými sieťami"
+
+
+msgid "Export original PBR Specular"
+msgstr "Export pôvodného PBR odrazu"
+
+
+msgid "Export original glTF PBR Specular, instead of Blender Principled Shader Specular"
+msgstr "Exportuje pôvodný glTF PBR odraz namiesto odrazu principiálneho tieňovača Blenderu"
 
 
 msgid "Skinning"
@@ -61769,6 +62114,11 @@ msgstr "Vyhľadá uzol podľa názvu a zamerá a vyberie ho"
 
 
 msgctxt "Operator"
+msgid "glTF Original PBR data"
+msgstr "glTF Pôvodné údaje PBR"
+
+
+msgctxt "Operator"
 msgid "glTF Settings"
 msgstr "glTF nastavenia"
 
@@ -66593,6 +66943,19 @@ msgstr "Vyberie prepojené plôšky pod kurzorom"
 
 
 msgctxt "Operator"
+msgid "Reveal Faces/Vertices"
+msgstr "Odhaliť plôšky/vrcholy"
+
+
+msgid "Reveal hidden faces and vertices"
+msgstr "Odhalí skryté plôšky a vrcholy"
+
+
+msgid "Specifies whether the newly revealed geometry should be selected"
+msgstr "Určuje, či sa má vybrať novoobjavená geometria"
+
+
+msgctxt "Operator"
 msgid "Grab Clone"
 msgstr "Zachytiť klon"
 
@@ -66804,6 +67167,19 @@ msgstr "Prepína režim maľby textúry v 3D zobrazení"
 
 msgid "Change selection for all vertices"
 msgstr "Zmeniť výber všetkých vrcholov"
+
+
+msgctxt "Operator"
+msgid "Vertex Select Hide"
+msgstr "Skryť výber vrchlov"
+
+
+msgid "Hide selected vertices"
+msgstr "Skryje vybrané vrcholy"
+
+
+msgid "Hide unselected rather than selected vertices"
+msgstr "Skryje nevybrané a nie vybrané vrcholy"
 
 
 msgctxt "Operator"
@@ -72913,6 +73289,62 @@ msgid "Align with Point Normal"
 msgstr "Zarovnať s bodom normálu"
 
 
+msgid "Snap to increments of grid"
+msgstr "Prichytí na prírastky mriežky"
+
+
+msgid "Snap to vertices"
+msgstr "Prichytí na vrcholy"
+
+
+msgid "Snap to edges"
+msgstr "Prichytí na hrany"
+
+
+msgid "Face Project"
+msgstr "Premietnutie plôšky"
+
+
+msgid "Snap by projecting onto faces"
+msgstr "Prichytí podľa premietnutia na plôšky"
+
+
+msgid "Face Nearest"
+msgstr "Najbližšia plôška"
+
+
+msgid "Snap to nearest point on faces"
+msgstr "Prichytí k najbližšiemu bodu na plôškach"
+
+
+msgid "Snap to volume"
+msgstr "Prichytí na objem"
+
+
+msgid "Edge Center"
+msgstr "Na stred hrany"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Prichytí na stred hrán"
+
+
+msgid "Edge Perpendicular"
+msgstr "Kolmo na hranu"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Prichytí k najbližšiemu bodu na hrane"
+
+
+msgid "Face Nearest Steps"
+msgstr "Kroky najbližšej plôšky"
+
+
+msgid "Snap With"
+msgstr "Prichytiť na"
+
+
 msgid "Snap closest point onto target"
 msgstr "Prichytí najbližší bod na cieľový"
 
@@ -72927,6 +73359,14 @@ msgstr "Prichytí medián na cieľový"
 
 msgid "Snap active onto target"
 msgstr "Prichytí aktívny na cieľový"
+
+
+msgid "Project Individual Elements"
+msgstr "Premietanie jednotlivých prvkov"
+
+
+msgid "Snap to Same Target"
+msgstr "Prichytiť na rovnaký cieľ"
 
 
 msgctxt "Operator"
@@ -78692,6 +79132,15 @@ msgstr "Zmení poradie pracovného priestoru na prvé v zozname"
 
 
 msgctxt "Operator"
+msgid "Pin Scene to Workspace"
+msgstr "Pripnúť scénu k pracovnej ploche"
+
+
+msgid "Remember the last used scene for the current workspace and switch to it whenever this workspace is activated again"
+msgstr "Zapamätá si poslednú použitú scénu pre aktuálny pracovný priestor a prepne na ňu vždy, keď je tento pracovný priestor znovu aktivovaný"
+
+
+msgctxt "Operator"
 msgid "New World"
 msgstr "Nový svet"
 
@@ -79603,6 +80052,10 @@ msgstr "Nastavenia filtra"
 
 msgid "Fluid Presets"
 msgstr "Predvoľby kvapalnosti"
+
+
+msgid "PBR Extensions"
+msgstr "Rozšírenia PBR"
 
 
 msgid "Exporter Extensions"
@@ -82847,6 +83300,14 @@ msgstr "Typ nového mračna bodov"
 
 msgid "Enable the new point cloud type in the ui"
 msgstr "Povolí nový typ mračna bodov v modeli užívateľského rozhrania"
+
+
+msgid "Override New Fully Editable"
+msgstr "Prepísať Nové plne upraviteľné"
+
+
+msgid "Make all override of a hierarchy fully user-editable by default when creating a new override (if that option is disabled, most overrides created as part of a hierarchy will not be editable by the user by default)"
+msgstr "Pri vytváraní nového prepisu vytvorí všetky prepisy hierarchie užívateľom plne upraviteľné (ak je táto možnosť zakázaná, väčšina rodičovských prvkov vytvorených ako súčasť hierarchie nebude predvolene upravovateľná užívateľom)"
 
 
 msgid "Override Templates"
@@ -94251,7 +94712,7 @@ msgstr "Textové pole"
 
 
 msgid "Text bounding box for layout"
-msgstr "Políčko ohraničenia textu pre vrstvu"
+msgstr "Pole ohraničenia textu pre vrstvu"
 
 
 msgid "Textbox Height"
@@ -96535,58 +96996,6 @@ msgid "Type of element to snap to"
 msgstr "Typ prvku na prichytenie"
 
 
-msgid "Snap to increments of grid"
-msgstr "Prichytí na prírastky mriežky"
-
-
-msgid "Snap to vertices"
-msgstr "Prichytí na vrcholy"
-
-
-msgid "Snap to edges"
-msgstr "Prichytí na hrany"
-
-
-msgid "Face Project"
-msgstr "Premietnutie plôšky"
-
-
-msgid "Snap by projecting onto faces"
-msgstr "Prichytí podľa premietnutia na plôšky"
-
-
-msgid "Face Nearest"
-msgstr "Najbližšia plôška"
-
-
-msgid "Snap to nearest point on faces"
-msgstr "Prichytí k najbližšiemu bodu na plôškach"
-
-
-msgid "Snap to volume"
-msgstr "Prichytí na objem"
-
-
-msgid "Edge Center"
-msgstr "Na stred hrany"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Prichytí na stred hrán"
-
-
-msgid "Edge Perpendicular"
-msgstr "Kolmo na hranu"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Prichytí k najbližšiemu bodu na hrane"
-
-
-msgid "Face Nearest Steps"
-msgstr "Kroky najbližšej plôšky"
-
-
 msgid "Number of steps to break transformation into for face nearest snapping"
 msgstr "Počet krokov, na ktoré sa má transformácia rozdeliť pre najbližšie prichytenie plôšky"
 
@@ -96895,10 +97304,6 @@ msgid "Consider objects as whole when finding volume center"
 msgstr "Pri hľadaní stredu objemu posudzuje objekty ako celok"
 
 
-msgid "Project Individual Elements"
-msgstr "Premietanie jednotlivých prvkov"
-
-
 msgid "Project individual elements on the surface of other objects"
 msgstr "Premieta jednotlivé prvky na povrch iných objektov"
 
@@ -96937,10 +97342,6 @@ msgstr "Prichytí na seba, len ak je to povolené (len v režime editácie)"
 
 msgid "Snap to strip edges or current frame"
 msgstr "Prichytiť k okrajom pásu alebo aktuálnej snímke"
-
-
-msgid "Snap to Same Target"
-msgstr "Prichytiť na rovnaký cieľ"
 
 
 msgid "Snap only to target that source was initially near (Face Nearest Only)"
@@ -101176,6 +101577,44 @@ msgid "Couldn't open file %r (%s)"
 msgstr "Nemožno otvoriť súbor %r (%s)"
 
 
+msgctxt "Operator"
+msgid "Display Variant"
+msgstr "Zobraziť variant"
+
+
+msgctxt "Operator"
+msgid "Assign To Variant"
+msgstr "Priradiť k variantu"
+
+
+msgctxt "Operator"
+msgid "Reset To Original"
+msgstr "Resetovať na originál"
+
+
+msgctxt "Operator"
+msgid "Assign as Original"
+msgstr "Priradiť ako originál"
+
+
+msgctxt "Operator"
+msgid "Add Material Variant"
+msgstr "Pridať variant materiálu"
+
+
+msgid "Variant"
+msgstr "Variant"
+
+
+msgid "Please Create a Variant First"
+msgstr "Vytvorte, prosím, najprv variant"
+
+
+msgctxt "Operator"
+msgid "Add a new Variant Slot"
+msgstr "Pridať novú zásuvku Variant"
+
+
 msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "Viaceré vybrané objekty. Vyhodnotí sa iba aktívny"
 
@@ -102141,6 +102580,70 @@ msgstr "Priradiť"
 
 msgid "Operator not found: bpy.ops.%s"
 msgstr "Operátor sa nenašiel: bpy.ops. %s"
+
+
+msgid "Bug"
+msgstr "Chyba"
+
+
+msgid "Report a bug with pre-filled version information"
+msgstr "Nahláste chybu s vyplnenými informáciami o verzii"
+
+
+msgid "Add-on Bug"
+msgstr "Chyba doplnku"
+
+
+msgid "Report a bug in an add-on"
+msgstr "Nahláste chybu v doplnku"
+
+
+msgid "Release Notes"
+msgstr "Poznámky k vydaniu"
+
+
+msgid "Read about what's new in this version of Blender"
+msgstr "Prečítajte si, čo je nové v tejto verzii Blenderu"
+
+
+msgid "User Manual"
+msgstr "Užívateľský manuál"
+
+
+msgid "The reference manual for this version of Blender"
+msgstr "Referenčný manuál pre túto verziu Blenderu"
+
+
+msgid "Python API Reference"
+msgstr "Referencie API Python"
+
+
+msgid "The API reference manual for this version of Blender"
+msgstr "Referenčný manuál API pre túto verziu Blenderu"
+
+
+msgid "Development Fund"
+msgstr "Vývojársky fond"
+
+
+msgid "The donation program to support maintenance and improvements"
+msgstr "Program darovania pre podporu údržby a vylepšení"
+
+
+msgid "blender.org"
+msgstr "blender.org"
+
+
+msgid "Blender's official web-site"
+msgstr "Oficiálna stránka aplikácie Blender"
+
+
+msgid "Credits"
+msgstr "Spolupracovali"
+
+
+msgid "Lists committers to Blender's source code"
+msgstr "Zoznamy prispievateľov zdrojového kódu Blenderu"
 
 
 msgctxt "Operator"
@@ -104124,6 +104627,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "Vyhľadať"
+
+
 msgid "Display Thin"
 msgstr "Zobraziť tenké"
 
@@ -105825,6 +106332,10 @@ msgid "Pack"
 msgstr "Zbaliť"
 
 
+msgid "%d Hz"
+msgstr "%d Hz"
+
+
 msgid "Source Channel"
 msgstr "Zdrojový kanál"
 
@@ -106256,6 +106767,11 @@ msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 msgctxt "Operator"
 msgid "SVG as Grease Pencil"
 msgstr "SVG ako pastelka"
+
+
+msgctxt "Operator"
+msgid "Wavefront (.obj)"
+msgstr "Wavefront (.obj)"
 
 
 msgctxt "Operator"
@@ -108487,10 +109003,6 @@ msgstr "Zmazať plôšku Voľného štýlu"
 
 msgid "Specular Lighting"
 msgstr "Zrkadlené osvetlenie"
-
-
-msgid "Snap With"
-msgstr "Prichytiť na"
 
 
 msgid "Target Selection"
@@ -115241,10 +115753,6 @@ msgid "Unpacking movies or image sequences not supported"
 msgstr "Rozbaľovanie filmov alebo obrazových sekvencií nie je podporované"
 
 
-msgid "Can not set border from a cropped render"
-msgstr "Nemožno nastaviť okraje orezaného prekreslenia"
-
-
 msgid "Invalid UDIM index range was specified"
 msgstr "Bol zadaný neplatný rozsah indexu UDIM"
 
@@ -115555,6 +116063,10 @@ msgstr "Nemožno pridať skupinu uzlov '%s' do '%s'"
 
 msgid "Node tree type %s undefined"
 msgstr "Typ uzlového stromu %s nedefinovaný"
+
+
+msgid "This node editor displays a custom (Python defined) node tree. Dropping node groups isn't supported for this"
+msgstr "Tento editor uzlov zobrazuje vlastný (v jazyku Python definovaný) strom uzlov. Pre tento editor vysúvanie skupín uzlov nie je podporované"
 
 
 msgid " (Integer)"
@@ -117479,6 +117991,10 @@ msgid "Allow Overlapping Types"
 msgstr "Povoliť prekrývanie typov"
 
 
+msgid "Enclosed Shapes"
+msgstr "Uzavreté tvary"
+
+
 msgid "Custom Camera"
 msgstr "Vlastná kamera"
 
@@ -118937,7 +119453,7 @@ msgstr "Vymedzovač"
 
 
 msgid "Bounding box"
-msgstr "Políčko ohraničenia"
+msgstr "Pole ohraničenia"
 
 
 msgid "Color Space:"
@@ -119530,6 +120046,30 @@ msgstr "Začiatok (dĺžka)"
 
 msgid "End (Length)"
 msgstr "Koniec (dĺžka)"
+
+
+msgid "Surface UV map not defined"
+msgstr "Mapa UV povrchu nie je definovaná"
+
+
+msgid "Evaluated surface missing UV map: %s"
+msgstr "Vyhodnotená chýbajúca UV mapa povrchu: %s"
+
+
+msgid "Original surface missing UV map: %s"
+msgstr "Chýba pôvodná UV mapa povrchu: %s"
+
+
+msgid "Evaluated surface missing attribute: rest_position"
+msgstr "Chýba atribút vyhodnoteného povrchu: rest_position"
+
+
+msgid "Curves are not attached to any UV map"
+msgstr "Krivky nie sú pripojené k žiadnej UV mape"
+
+
+msgid "Invalid surface UVs on %d curves"
+msgstr "Neplatné UV povrchy na %d krivkách"
 
 
 msgid "The parts of the geometry to be deleted"

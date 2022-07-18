@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -28710,14 +28710,6 @@ msgstr "类别"
 
 msgid "Filter add-ons by category"
 msgstr "以目录筛选插件"
-
-
-msgid "Search"
-msgstr "搜索"
-
-
-msgid "Search within the selected filter"
-msgstr "在所选过滤器中查找"
 
 
 msgid "Support"
@@ -72397,6 +72389,42 @@ msgid "Align with Point Normal"
 msgstr "根据点的法线来对齐"
 
 
+msgid "Snap to increments of grid"
+msgstr "吸附到栅格的增量点"
+
+
+msgid "Snap to vertices"
+msgstr "吸附至像素点"
+
+
+msgid "Snap to edges"
+msgstr "吸附至边"
+
+
+msgid "Snap to volume"
+msgstr "吸附至体积"
+
+
+msgid "Edge Center"
+msgstr "边中点"
+
+
+msgid "Snap to the middle of edges"
+msgstr "吸附至边的中点"
+
+
+msgid "Edge Perpendicular"
+msgstr "垂直交线"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "吸附至一条边上的最近点"
+
+
+msgid "Snap With"
+msgstr "吸附基准点"
+
+
 msgid "Snap closest point onto target"
 msgstr "吸附最近的点到目标上"
 
@@ -72411,6 +72439,10 @@ msgstr "将质心吸附到对象"
 
 msgid "Snap active onto target"
 msgstr "吸附活动项到目标"
+
+
+msgid "Project Individual Elements"
+msgstr "项目的独立元素"
 
 
 msgctxt "Operator"
@@ -95870,38 +95902,6 @@ msgid "Type of element to snap to"
 msgstr "吸附元素的类型"
 
 
-msgid "Snap to increments of grid"
-msgstr "吸附到栅格的增量点"
-
-
-msgid "Snap to vertices"
-msgstr "吸附至像素点"
-
-
-msgid "Snap to edges"
-msgstr "吸附至边"
-
-
-msgid "Snap to volume"
-msgstr "吸附至体积"
-
-
-msgid "Edge Center"
-msgstr "边中点"
-
-
-msgid "Snap to the middle of edges"
-msgstr "吸附至边的中点"
-
-
-msgid "Edge Perpendicular"
-msgstr "垂直交线"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "吸附至一条边上的最近点"
-
-
 msgid "Snap Node Element"
 msgstr "吸附节点元素"
 
@@ -96188,10 +96188,6 @@ msgstr "吸附剥落物体"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "在寻找体积中心时, 将多个物体视为一个整体"
-
-
-msgid "Project Individual Elements"
-msgstr "项目的独立元素"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -103325,6 +103321,10 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
+msgid "Search"
+msgstr "搜索"
+
+
 msgid "Display Thin"
 msgstr "显示精简"
 
@@ -107640,10 +107640,6 @@ msgstr "清除 Freestyle 面"
 
 msgid "Specular Lighting"
 msgstr "高光光照"
-
-
-msgid "Snap With"
-msgstr "吸附基准点"
 
 
 msgid "Custom Location"
@@ -114268,10 +114264,6 @@ msgstr "添加一个图像或一套图像序列到序列编辑器中"
 
 msgid "No images have been changed"
 msgstr "没有图像被更改"
-
-
-msgid "Can not set border from a cropped render"
-msgstr "无法从一个裁剪的渲染上设置边界"
 
 
 msgid "Invalid UDIM index range was specified"

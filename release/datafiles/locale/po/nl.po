@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -2515,10 +2515,6 @@ msgstr "Spiegel X"
 
 msgid "Mirror Y"
 msgstr "Spiegel Y"
-
-
-msgid "Search"
-msgstr "Zoeken"
 
 
 msgid "Animation"
@@ -5993,6 +5989,10 @@ msgid "Bend"
 msgstr "Buig"
 
 
+msgid "Edge Center"
+msgstr "Lijn Midden"
+
+
 msgctxt "Operator"
 msgid "Create Orientation"
 msgstr "Maak Oriëntatie"
@@ -7171,10 +7171,6 @@ msgid "Lock Markers"
 msgstr "Vergrendel Markeringen"
 
 
-msgid "Edge Center"
-msgstr "Lijn Midden"
-
-
 msgid "Only Endpoints"
 msgstr "Alleen Eindpunten"
 
@@ -7875,6 +7871,10 @@ msgstr "Derde"
 
 msgid "Fourth"
 msgstr "Vierde"
+
+
+msgid "Search"
+msgstr "Zoeken"
 
 
 msgctxt "Operator"

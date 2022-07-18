@@ -539,8 +539,8 @@ def register():
     IDStore.rigify_types = CollectionProperty(type=RigifyName)
     IDStore.rigify_active_type = IntProperty(name="Rigify Active Type", description="The selected rig type")
 
-    bpy.types.Armature.rigify_force_widget_update = BoolProperty(name="Force Widget Update",
-        description="Forces Rigify to delete and rebuild all the rig widgets. if unset, only missing widgets will be created",
+    bpy.types.Armature.rigify_force_widget_update = BoolProperty(name="Overwrite Widget Meshes",
+        description="Forces Rigify to delete and rebuild all of the rig widget objects. By default, already existing widgets are reused as-is to facilitate manual editing",
         default=False)
 
     bpy.types.Armature.rigify_mirror_widgets = BoolProperty(name="Mirror Widgets",
@@ -550,14 +550,18 @@ def register():
         name="Widgets Collection",
         description="Defines which collection to place widget objects in. If unset, a new one will be created based on the name of the rig")
 
+    bpy.types.Armature.rigify_rig_basename = StringProperty(name="Rigify Rig Name",
+        description="Optional. If specified, this name will be used for the newly generated rig, widget collection and script. Otherwise, a name is generated based on the name of the metarig object by replacing 'metarig' with 'rig', 'META' with 'RIG', or prefixing with 'RIG-'. When updating an already generated rig its name is never changed",
+        default="")
+
     bpy.types.Armature.rigify_target_rig = PointerProperty(type=bpy.types.Object,
         name="Rigify Target Rig",
-        description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
+        description="Defines which rig to overwrite. If unset, a new one will be created with name based on the Rig Name option or the name of the metarig",
         poll=lambda self, obj: obj.type == 'ARMATURE' and obj.data is not self)
 
     bpy.types.Armature.rigify_rig_ui = PointerProperty(type=bpy.types.Text,
         name="Rigify Target Rig UI",
-        description="Defines the UI to overwrite. If unset, 'rig_ui.py' will be used")
+        description="Defines the UI to overwrite. If unset, a new one will be created and named based on the name of the rig")
 
     bpy.types.Armature.rigify_finalize_script = PointerProperty(type=bpy.types.Text,
         name="Finalize Script",
