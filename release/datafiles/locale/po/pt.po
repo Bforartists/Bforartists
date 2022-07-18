@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -17541,14 +17541,6 @@ msgstr "Categoria"
 
 msgid "Filter add-ons by category"
 msgstr "Permite o filtro de complementos por categoria."
-
-
-msgid "Search"
-msgstr "Pesquisar"
-
-
-msgid "Search within the selected filter"
-msgstr "Pesquisa dentro do filtro selecionado."
 
 
 msgid "Support"
@@ -45154,6 +45146,22 @@ msgid "Align with Point Normal"
 msgstr "Alinha com as normais dos pontos."
 
 
+msgid "Snap to increments of grid"
+msgstr "Atrai para os incrementos da grelha."
+
+
+msgid "Snap to vertices"
+msgstr "Atrai para os vértices."
+
+
+msgid "Snap to edges"
+msgstr "Atrai para as arestas."
+
+
+msgid "Snap to volume"
+msgstr "Atrai para os volumes."
+
+
 msgid "Snap closest point onto target"
 msgstr "Atrai os pontos mais próximos da seleção em direção aos alvos."
 
@@ -45164,6 +45172,10 @@ msgstr "Atrai os pontos medianos da seleção em direção aos alvos."
 
 msgid "Snap active onto target"
 msgstr "Atrai o objeto ativo da seleção em direção aos alvos."
+
+
+msgid "Project Individual Elements"
+msgstr "Projetar elementos individuais"
 
 
 msgctxt "Operator"
@@ -58691,22 +58703,6 @@ msgid "Type of element to snap to"
 msgstr "Tipo de elemento ao qual atrair"
 
 
-msgid "Snap to increments of grid"
-msgstr "Atrai para os incrementos da grelha."
-
-
-msgid "Snap to vertices"
-msgstr "Atrai para os vértices."
-
-
-msgid "Snap to edges"
-msgstr "Atrai para as arestas."
-
-
-msgid "Snap to volume"
-msgstr "Atrai para os volumes."
-
-
 msgid "Snap Node Element"
 msgstr "Elemento para atrair os nós"
 
@@ -58881,10 +58877,6 @@ msgstr "Objeto de rompimento de casca"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "Considera os objetos como um todo durante a localização do centro do volume."
-
-
-msgid "Project Individual Elements"
-msgstr "Projetar elementos individuais"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -61182,6 +61174,10 @@ msgstr "Ímpar"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "Pesquisar"
 
 
 msgid "B/W"
@@ -66446,10 +66442,6 @@ msgstr "Não é possível guardar sequências de multi-camadas."
 
 msgid "No images have been changed"
 msgstr "Nenhuma das imagens foi alterada."
-
-
-msgid "Can not set border from a cropped render"
-msgstr "Não é possível definir margens a partir de uma renderização recortada."
 
 
 msgid "%d image(s) will be saved in %s"

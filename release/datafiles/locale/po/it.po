@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -16154,14 +16154,6 @@ msgstr "Categoria"
 
 msgid "Filter add-ons by category"
 msgstr "Filtra gli add-on per categoria"
-
-
-msgid "Search"
-msgstr "Ricerca"
-
-
-msgid "Search within the selected filter"
-msgstr "Cerca nell'ambito del filtro selezionato"
 
 
 msgid "Support"
@@ -39813,6 +39805,38 @@ msgid "Align with Point Normal"
 msgstr "Allinea con la normale del punto"
 
 
+msgid "Snap to increments of grid"
+msgstr "Snap agli incrementi di griglia"
+
+
+msgid "Snap to vertices"
+msgstr "Snap ai vertici"
+
+
+msgid "Snap to edges"
+msgstr "Snap agli spigoli"
+
+
+msgid "Snap to volume"
+msgstr "Snap al volume"
+
+
+msgid "Edge Center"
+msgstr "Centro Spigolo"
+
+
+msgid "Snap to the middle of edges"
+msgstr "Snap al centro dello spigolo"
+
+
+msgid "Edge Perpendicular"
+msgstr "Perpendicolare Spigolo"
+
+
+msgid "Snap to the nearest point on an edge"
+msgstr "Snap al punto più vicino dello spigolo"
+
+
 msgid "Snap closest point onto target"
 msgstr "Aggancia il punto più vicino sul bersaglio"
 
@@ -51330,38 +51354,6 @@ msgid "Type of element to snap to"
 msgstr "Tipo di elemento a cui agganciare"
 
 
-msgid "Snap to increments of grid"
-msgstr "Snap agli incrementi di griglia"
-
-
-msgid "Snap to vertices"
-msgstr "Snap ai vertici"
-
-
-msgid "Snap to edges"
-msgstr "Snap agli spigoli"
-
-
-msgid "Snap to volume"
-msgstr "Snap al volume"
-
-
-msgid "Edge Center"
-msgstr "Centro Spigolo"
-
-
-msgid "Snap to the middle of edges"
-msgstr "Snap al centro dello spigolo"
-
-
-msgid "Edge Perpendicular"
-msgstr "Perpendicolare Spigolo"
-
-
-msgid "Snap to the nearest point on an edge"
-msgstr "Snap al punto più vicino dello spigolo"
-
-
 msgid "Snap Node Element"
 msgstr "Snap a Elemento Nodo"
 
@@ -53796,6 +53788,10 @@ msgstr "Add-ons sconosciuti"
 
 msgid "%s: %s"
 msgstr "%s: %s"
+
+
+msgid "Search"
+msgstr "Ricerca"
 
 
 msgid "Display Thin"

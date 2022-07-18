@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'275419f6fd4c')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -17469,14 +17469,6 @@ msgstr "類別"
 
 msgid "Filter add-ons by category"
 msgstr "依類別過濾附加元件"
-
-
-msgid "Search"
-msgstr "搜尋"
-
-
-msgid "Search within the selected filter"
-msgstr "在所選過濾器中搜尋"
 
 
 msgid "Support"
@@ -40813,6 +40805,22 @@ msgid "Align with Point Normal"
 msgstr "根據點法線對齊"
 
 
+msgid "Snap to increments of grid"
+msgstr "吸附格線的定量"
+
+
+msgid "Snap to vertices"
+msgstr "吸附頂點"
+
+
+msgid "Snap to edges"
+msgstr "吸附邊線"
+
+
+msgid "Snap to volume"
+msgstr "吸附體積"
+
+
 msgid "Snap closest point onto target"
 msgstr "吸附到目標上最近的點"
 
@@ -40823,6 +40831,10 @@ msgstr "吸附到目標的中間點"
 
 msgid "Snap active onto target"
 msgstr "將作用項吸附到目標"
+
+
+msgid "Project Individual Elements"
+msgstr "投影各自元素"
 
 
 msgctxt "Operator"
@@ -52531,22 +52543,6 @@ msgid "Type of element to snap to"
 msgstr "吸附哪個元素類型"
 
 
-msgid "Snap to increments of grid"
-msgstr "吸附格線的定量"
-
-
-msgid "Snap to vertices"
-msgstr "吸附頂點"
-
-
-msgid "Snap to edges"
-msgstr "吸附邊線"
-
-
-msgid "Snap to volume"
-msgstr "吸附體積"
-
-
 msgid "Snap Node Element"
 msgstr "吸附節點元素"
 
@@ -52669,10 +52665,6 @@ msgstr "吸附剝開物體"
 
 msgid "Consider objects as whole when finding volume center"
 msgstr "當尋找體積中心時將物體視為整體"
-
-
-msgid "Project Individual Elements"
-msgstr "投影各自元素"
 
 
 msgid "Project individual elements on the surface of other objects"
@@ -54712,6 +54704,10 @@ msgstr "偶數"
 
 msgid "%s: %s"
 msgstr "%s：%s"
+
+
+msgid "Search"
+msgstr "搜尋"
 
 
 msgid "B/W"
