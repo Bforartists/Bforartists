@@ -260,7 +260,7 @@ DefNode(TextureNode,    TEX_NODE_PROC+TEX_NOISE, 0,                      "TEX_NO
 DefNode(TextureNode,    TEX_NODE_PROC+TEX_STUCCI, 0,                     "TEX_STUCCI",     TexStucci,        "Stucci",            "Add a Stucci Texture node\nNoise based, but gives structures for stone, asphalt etc"              )
 DefNode(TextureNode,    TEX_NODE_PROC+TEX_DISTNOISE, 0,                  "TEX_DISTNOISE",  TexDistNoise,     "Distorted Noise",   "Add a Distorted Noise Texture node\nGenerate distorted noise"              )
 
-DefNode(FunctionNode, FN_NODE_ALIGN_EULER_TO_VECTOR, def_fn_align_euler_to_vector, "ALIGN_EULER_TO_VECTOR", AlignEulerToVector, "Align Euler To Vector", "Add a Align Euler To Vector Function node\nAligns a euler value to a vector")
+DefNode(FunctionNode, FN_NODE_ALIGN_EULER_TO_VECTOR, def_fn_align_euler_to_vector, "ALIGN_EULER_TO_VECTOR", AlignEulerToVector, "Align Euler to Vector", "Add a Align Euler to Vector Function node\nAligns a euler value to a vector")
 DefNode(FunctionNode, FN_NODE_BOOLEAN_MATH,  def_boolean_math, "BOOLEAN_MATH", BooleanMath, "Boolean Math", "Add a Boolean Math Function node\nPerforms a basic logical operation between its inputs")
 DefNode(FunctionNode, FN_NODE_COMBINE_COLOR, def_fn_combsep_color, "COMBINE_COLOR", CombineColor, "Combine Color", "Add a Combine Color Function node\nCombines single colors to a rgb, hsv or hsl color value" )
 DefNode(FunctionNode, FN_NODE_COMPARE, def_compare, "COMPARE", Compare, "Compare",    "Add a Compare Function node\nAdds a mathematical compare between two inputs")

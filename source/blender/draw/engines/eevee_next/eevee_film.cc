@@ -146,8 +146,8 @@ void Film::sync_mist()
 
 inline bool operator==(const FilmData &a, const FilmData &b)
 {
-  return (a.extent == b.extent) && (a.offset == b.offset) && (a.filter_size == b.filter_size) &&
-         (a.scaling_factor == b.scaling_factor);
+  return (a.extent == b.extent) && (a.offset == b.offset) &&
+         (a.filter_radius == b.filter_radius) && (a.scaling_factor == b.scaling_factor);
 }
 
 inline bool operator!=(const FilmData &a, const FilmData &b)
@@ -163,11 +163,15 @@ inline bool operator!=(const FilmData &a, const FilmData &b)
 
 void Film::init(const int2 &extent, const rcti *output_rect)
 {
+  Sampling &sampling = inst_.sampling;
+  Scene &scene = *inst_.scene;
+  SceneEEVEE &scene_eevee = scene.eevee;
+
   init_aovs();
 
   {
     /* Enable passes that need to be rendered. */
-    eViewLayerEEVEEPassType render_passes;
+    eViewLayerEEVEEPassType render_passes = eViewLayerEEVEEPassType(0);
 
     if (inst_.is_viewport()) {
       /* Viewport Case. */
@@ -178,6 +182,8 @@ void Film::init(const int2 &extent, const rcti *output_rect)
          * Using the render pass ensure we store the center depth. */
         render_passes |= EEVEE_RENDER_PASS_Z;
       }
+      /* TEST */
+      render_passes |= EEVEE_RENDER_PASS_VECTOR;
     }
     else {
       /* Render Case. */
@@ -211,7 +217,7 @@ void Film::init(const int2 &extent, const rcti *output_rect)
 
     /* TODO(@fclem): Can't we rely on depsgraph update notification? */
     if (assign_if_different(enabled_passes_, render_passes)) {
-      inst_.sampling.reset();
+      sampling.reset();
     }
   }
   {
@@ -224,14 +230,17 @@ void Film::init(const int2 &extent, const rcti *output_rect)
     FilmData data = data_;
     data.extent = int2(BLI_rcti_size_x(output_rect), BLI_rcti_size_y(output_rect));
     data.offset = int2(output_rect->xmin, output_rect->ymin);
-    data.filter_size = clamp_f(inst_.scene->r.gauss, 0.0f, 100.0f);
+    data.extent_inv = 1.0f / float2(data.extent);
+    /* Disable filtering if sample count is 1. */
+    data.filter_radius = (sampling.sample_count() == 1) ? 0.0f :
+                                                          clamp_f(scene.r.gauss, 0.0f, 100.0f);
     /* TODO(fclem): parameter hidden in experimental.
      * We need to figure out LOD bias first in order to preserve texture crispiness. */
     data.scaling_factor = 1;
 
     FilmData &data_prev_ = data_;
     if (assign_if_different(data_prev_, data)) {
-      inst_.sampling.reset();
+      sampling.reset();
     }
 
     const eViewLayerEEVEEPassType data_passes = EEVEE_RENDER_PASS_Z | EEVEE_RENDER_PASS_NORMAL |
@@ -246,7 +255,7 @@ void Film::init(const int2 &extent, const rcti *output_rect)
                                                    EEVEE_RENDER_PASS_MIST |
                                                    EEVEE_RENDER_PASS_SHADOW | EEVEE_RENDER_PASS_AO;
 
-    data_.exposure = 1.0f /* TODO */;
+    data_.exposure_scale = pow2f(scene.view_settings.exposure);
     data_.has_data = (enabled_passes_ & data_passes) != 0;
     data_.any_render_pass_1 = (enabled_passes_ & color_passes_1) != 0;
     data_.any_render_pass_2 = (enabled_passes_ & color_passes_2) != 0;
@@ -325,7 +334,7 @@ void Film::init(const int2 &extent, const rcti *output_rect)
                                              (data_.value_len > 0) ? data_.value_len : 1);
 
     if (reset > 0) {
-      inst_.sampling.reset();
+      sampling.reset();
       data_.use_history = 0;
       data_.use_reprojection = 0;
 
@@ -337,6 +346,8 @@ void Film::init(const int2 &extent, const rcti *output_rect)
       depth_tx_.clear(float4(0.0f));
     }
   }
+
+  force_disable_reprojection_ = (scene_eevee.flag & SCE_EEVEE_TAA_REPROJECTION) == 0;
 }
 
 void Film::sync()
@@ -349,12 +360,22 @@ void Film::sync()
   /* TODO(fclem): Shader variation for panoramic & scaled resolution. */
 
   RenderBuffers &rbuffers = inst_.render_buffers;
+  VelocityModule &velocity = inst_.velocity;
+
+  eGPUSamplerState filter = GPU_SAMPLER_FILTER;
+
+  /* For viewport, only previous motion is supported.
+   * Still bind previous step to avoid undefined behavior. */
+  eVelocityStep step_next = inst_.is_viewport() ? STEP_PREVIOUS : STEP_NEXT;
 
   DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS;
   accumulate_ps_ = DRW_pass_create("Film.Accumulate", state);
   GPUShader *sh = inst_.shaders.static_shader_get(shader);
   DRWShadingGroup *grp = DRW_shgroup_create(sh, accumulate_ps_);
   DRW_shgroup_uniform_block_ref(grp, "film_buf", &data_);
+  DRW_shgroup_uniform_block_ref(grp, "camera_prev", &(*velocity.camera_steps[STEP_PREVIOUS]));
+  DRW_shgroup_uniform_block_ref(grp, "camera_curr", &(*velocity.camera_steps[STEP_CURRENT]));
+  DRW_shgroup_uniform_block_ref(grp, "camera_next", &(*velocity.camera_steps[step_next]));
   DRW_shgroup_uniform_texture_ref(grp, "depth_tx", &rbuffers.depth_tx);
   DRW_shgroup_uniform_texture_ref(grp, "combined_tx", &rbuffers.combined_tx);
   DRW_shgroup_uniform_texture_ref(grp, "normal_tx", &rbuffers.normal_tx);
@@ -373,10 +394,10 @@ void Film::sync()
   /* NOTE(@fclem): 16 is the max number of sampled texture in many implementations.
    * If we need more, we need to pack more of the similar passes in the same textures as arrays or
    * use image binding instead. */
-  DRW_shgroup_uniform_image_ref(grp, "in_weight_img", &weight_tx_.current());
-  DRW_shgroup_uniform_image_ref(grp, "out_weight_img", &weight_tx_.next());
-  DRW_shgroup_uniform_image_ref(grp, "in_combined_img", &combined_tx_.current());
-  DRW_shgroup_uniform_image_ref(grp, "out_combined_img", &combined_tx_.next());
+  DRW_shgroup_uniform_image_ref(grp, "in_weight_img", &weight_src_tx_);
+  DRW_shgroup_uniform_image_ref(grp, "out_weight_img", &weight_dst_tx_);
+  DRW_shgroup_uniform_texture_ref_ex(grp, "in_combined_tx", &combined_src_tx_, filter);
+  DRW_shgroup_uniform_image_ref(grp, "out_combined_img", &combined_dst_tx_);
   DRW_shgroup_uniform_image_ref(grp, "depth_img", &depth_tx_);
   DRW_shgroup_uniform_image_ref(grp, "color_accum_img", &color_accum_tx_);
   DRW_shgroup_uniform_image_ref(grp, "value_accum_img", &value_accum_tx_);
@@ -395,13 +416,13 @@ void Film::sync()
 
 void Film::end_sync()
 {
-  if (inst_.sampling.is_reset()) {
-    data_.use_history = 0;
-  }
+  data_.use_reprojection = inst_.sampling.interactive_mode();
 
-  // if (camera.changed_type) {
-  //   data_.use_reprojection = false;
-  // }
+  /* Just bypass the reprojection and reset the accumulation. */
+  if (force_disable_reprojection_ && inst_.sampling.is_reset()) {
+    data_.use_reprojection = false;
+    data_.use_history = false;
+  }
 
   aovs_info.push_update();
 
@@ -412,16 +433,16 @@ float2 Film::pixel_jitter_get() const
 {
   float2 jitter = inst_.sampling.rng_2d_get(SAMPLING_FILTER_U);
 
-  if (data_.filter_size < M_SQRT1_2 && !inst_.camera.is_panoramic()) {
+  if (!use_box_filter && data_.filter_radius < M_SQRT1_2 && !inst_.camera.is_panoramic()) {
     /* For filter size less than a pixel, change sampling strategy and use a uniform disk
      * distribution covering the filter shape. This avoids putting samples in areas without any
      * weights. */
     /* TODO(fclem): Importance sampling could be a better option here. */
-    jitter = Sampling::sample_disk(jitter) * data_.filter_size;
+    jitter = Sampling::sample_disk(jitter) * data_.filter_radius;
   }
   else {
-    /* Jitter the size of a whole pixel. */
-    jitter = jitter * 2.0f - 1.0f;
+    /* Jitter the size of a whole pixel. [-0.5..0.5] */
+    jitter -= 0.5f;
   }
   /* TODO(fclem): Mixed-resolution rendering: We need to offset to each of the target pixel covered
    * by a render pixel, ideally, by choosing one randomly using another sampling dimension, or by
@@ -429,40 +450,45 @@ float2 Film::pixel_jitter_get() const
   return jitter;
 }
 
+eViewLayerEEVEEPassType Film::enabled_passes_get() const
+{
+  return enabled_passes_;
+}
+
 void Film::update_sample_table()
 {
   data_.subpixel_offset = pixel_jitter_get();
 
-  int filter_size_ceil = ceilf(data_.filter_size);
-  float filter_size_sqr = square_f(data_.filter_size);
+  int filter_radius_ceil = ceilf(data_.filter_radius);
+  float filter_radius_sqr = square_f(data_.filter_radius);
 
   data_.samples_len = 0;
-  if (data_.filter_size < 0.01f) {
-    /* Disable filtering. */
+  if (use_box_filter || data_.filter_radius < 0.01f) {
+    /* Disable gather filtering. */
     data_.samples[0].texel = int2(0, 0);
     data_.samples[0].weight = 1.0f;
     data_.samples_weight_total = 1.0f;
     data_.samples_len = 1;
   }
   /* NOTE: Threshold determined by hand until we don't hit the assert bellow. */
-  else if (data_.filter_size < 2.20f) {
+  else if (data_.filter_radius < 2.20f) {
     /* Small filter Size. */
     int closest_index = 0;
     float closest_distance = FLT_MAX;
     data_.samples_weight_total = 0.0f;
     /* TODO(fclem): For optimization, could try Z-tile ordering. */
-    for (int y = -filter_size_ceil; y <= filter_size_ceil; y++) {
-      for (int x = -filter_size_ceil; x <= filter_size_ceil; x++) {
+    for (int y = -filter_radius_ceil; y <= filter_radius_ceil; y++) {
+      for (int x = -filter_radius_ceil; x <= filter_radius_ceil; x++) {
         float2 pixel_offset = float2(x, y) - data_.subpixel_offset;
         float distance_sqr = math::length_squared(pixel_offset);
-        if (distance_sqr < filter_size_sqr) {
+        if (distance_sqr < filter_radius_sqr) {
           if (data_.samples_len >= FILM_PRECOMP_SAMPLE_MAX) {
             BLI_assert_msg(0, "Precomputed sample table is too small.");
             break;
           }
           FilmSample &sample = data_.samples[data_.samples_len];
           sample.texel = int2(x, y);
-          sample.weight = film_filter_weight(data_.filter_size, distance_sqr);
+          sample.weight = film_filter_weight(data_.filter_radius, distance_sqr);
           data_.samples_weight_total += sample.weight;
 
           if (distance_sqr < closest_distance) {
@@ -495,11 +521,11 @@ void Film::update_sample_table()
        * neighbor filtering not converging rapidly. */
       random_2d.x = (random_2d.x + i) / float(FILM_PRECOMP_SAMPLE_MAX);
 
-      float2 pixel_offset = math::floor(Sampling::sample_spiral(random_2d) * data_.filter_size);
+      float2 pixel_offset = math::floor(Sampling::sample_spiral(random_2d) * data_.filter_radius);
       sample.texel = int2(pixel_offset);
 
       float distance_sqr = math::length_squared(pixel_offset - data_.subpixel_offset);
-      sample.weight = film_filter_weight(data_.filter_size, distance_sqr);
+      sample.weight = film_filter_weight(data_.filter_radius, distance_sqr);
       data_.samples_weight_total += sample.weight;
       i++;
     }
@@ -516,6 +542,12 @@ void Film::accumulate(const DRWView *view)
 
   update_sample_table();
 
+  /* Need to update the static references as there could have change from a previous swap. */
+  weight_src_tx_ = weight_tx_.current();
+  weight_dst_tx_ = weight_tx_.next();
+  combined_src_tx_ = combined_tx_.current();
+  combined_dst_tx_ = combined_tx_.next();
+
   data_.display_only = false;
   data_.push_update();
 
@@ -528,7 +560,6 @@ void Film::accumulate(const DRWView *view)
   /* Use history after first sample. */
   if (data_.use_history == 0) {
     data_.use_history = 1;
-    data_.use_reprojection = 1;
   }
 }
 
@@ -542,6 +573,12 @@ void Film::display()
   DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
   GPU_framebuffer_bind(dfbl->default_fb);
   GPU_framebuffer_viewport_set(dfbl->default_fb, UNPACK2(data_.offset), UNPACK2(data_.extent));
+
+  /* Need to update the static references as there could have change from a previous swap. */
+  weight_src_tx_ = weight_tx_.current();
+  weight_dst_tx_ = weight_tx_.next();
+  combined_src_tx_ = combined_tx_.current();
+  combined_dst_tx_ = combined_tx_.next();
 
   data_.display_only = true;
   data_.push_update();
