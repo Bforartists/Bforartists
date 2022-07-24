@@ -124,7 +124,12 @@ struct CameraData {
   float clip_far;
   eCameraType type;
 
-  int _pad0;
+  bool initialized;
+
+#ifdef __cplusplus
+  /* Small constructor to allow detecting new buffers. */
+  CameraData() : initialized(false){};
+#endif
 };
 BLI_STATIC_ASSERT_ALIGN(CameraData, 16)
 
@@ -156,6 +161,8 @@ struct FilmData {
    * pixel if using scaled resolution rendering.
    */
   float2 subpixel_offset;
+  /** Scaling factor to convert texel to uvs. */
+  float2 extent_inv;
   /** Is true if history is valid and can be sampled. Bypass history to resets accumulation. */
   bool1 use_history;
   /** Is true if combined buffer is valid and can be re-projected to reduce variance. */
@@ -165,7 +172,6 @@ struct FilmData {
   /** Is true if accumulation of filtered passes is needed. */
   bool1 any_render_pass_1;
   bool1 any_render_pass_2;
-  int _pad0, _pad1;
   /** Output counts per type. */
   int color_len, value_len;
   /** Index in color_accum_img or value_accum_img of each pass. -1 if pass is not enabled. */
@@ -196,11 +202,11 @@ struct FilmData {
   /** Settings to render mist pass */
   float mist_scale, mist_bias, mist_exponent;
   /** Scene exposure used for better noise reduction. */
-  float exposure;
+  float exposure_scale;
   /** Scaling factor for scaled resolution rendering. */
   int scaling_factor;
   /** Film pixel filter radius. */
-  float filter_size;
+  float filter_radius;
   /** Precomputed samples. First in the table is the closest one. The rest is unordered. */
   int samples_len;
   /** Sum of the weights of all samples in the sample table. */
@@ -209,17 +215,17 @@ struct FilmData {
 };
 BLI_STATIC_ASSERT_ALIGN(FilmData, 16)
 
-static inline float film_filter_weight(float filter_size, float sample_distance_sqr)
+static inline float film_filter_weight(float filter_radius, float sample_distance_sqr)
 {
 #if 1 /* Faster */
   /* Gaussian fitted to Blackman-Harris. */
-  float r = sample_distance_sqr / (filter_size * filter_size);
+  float r = sample_distance_sqr / (filter_radius * filter_radius);
   const float sigma = 0.284;
   const float fac = -0.5 / (sigma * sigma);
   float weight = expf(fac * r);
 #else
   /* Blackman-Harris filter. */
-  float r = M_2PI * saturate(0.5 + sqrtf(sample_distance_sqr) / (2.0 * filter_size));
+  float r = M_2PI * saturate(0.5 + sqrtf(sample_distance_sqr) / (2.0 * filter_radius));
   float weight = 0.35875 - 0.48829 * cosf(r) + 0.14128 * cosf(2.0 * r) - 0.01168 * cosf(3.0 * r);
 #endif
   return weight;
