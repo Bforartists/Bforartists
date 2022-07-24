@@ -8,7 +8,6 @@ import numpy as np
 from time import time
 import bpy
 import gpu
-import bgl
 import blf
 from gpu_extras.batch import batch_for_shader
 
@@ -39,8 +38,8 @@ def draw_callback_px(self, context):
     font_id = 0
 
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(1.0)
 
     # Draw HUD
     if self.use_hud_time_line:
@@ -51,18 +50,18 @@ def draw_callback_px(self, context):
     # Display keyframes
     if self.use_hud_keyframes:
         if self.keyframe_aspect == 'LINE':
-            bgl.glLineWidth(3)
+            gpu.state.line_width_set(3.0)
             shader.bind()
             shader.uniform_float("color", self.color_timeline)
             self.batch_keyframes.draw(shader)
         else:
-            bgl.glLineWidth(1)
+            gpu.state.line_width_set(1.0)
             shader.bind()
             shader.uniform_float("color", self.color_timeline)
             self.batch_keyframes.draw(shader)
 
     # Show current frame line
-    bgl.glLineWidth(1)
+    gpu.state.line_width_set(1.0)
     if self.use_hud_playhead:
         playhead = [(self.cursor_x, self.my + self.playhead_size/2),
                     (self.cursor_x, self.my - self.playhead_size/2)]
@@ -72,7 +71,7 @@ def draw_callback_px(self, context):
         batch.draw(shader)
 
     # restore opengl defaults
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.blend_set('NONE')
 
     # Display current frame text
     blf.color(font_id, *self.color_text)

@@ -13,6 +13,23 @@ import bpy
 
 KEYMAPS = list()
 
+def check_for_unsaved_images(self):
+    im_unsaved = []
+
+    for im in bpy.data.images:
+        if im.is_dirty:
+            im_unsaved.append(im.name)
+
+    if im_unsaved:
+        report_text = 'There are unsaved changes in {0} image(s), check console for details.'\
+                        .format(len(im_unsaved))
+        self.report({"WARNING"}, report_text)
+
+        print("\nAmaranth found unsaved images when trying to save and reload.")
+        for im in im_unsaved:
+            print('* Image: "' + im + '" has unsaved changes.')
+        return True
+    return
 
 class AMTH_WM_OT_save_reload(bpy.types.Operator):
     """Save and Reload the current blend file"""
@@ -23,6 +40,10 @@ class AMTH_WM_OT_save_reload(bpy.types.Operator):
         if not path:
             bpy.ops.wm.save_as_mainfile("INVOKE_AREA")
             return
+
+        if check_for_unsaved_images(self):
+            return
+
         bpy.ops.wm.save_mainfile()
         self.report({"INFO"}, "Saved & Reloaded")
         bpy.ops.wm.open_mainfile("EXEC_DEFAULT", filepath=path)

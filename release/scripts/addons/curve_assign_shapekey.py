@@ -8,7 +8,7 @@
 #
 # https://github.com/Shriinivas/assignshapekey/blob/master/LICENSE
 
-import bpy, bmesh, bgl, gpu
+import bpy, bmesh, gpu
 from gpu_extras.batch import batch_for_shader
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 from collections import OrderedDict
@@ -21,8 +21,8 @@ from bpy.types import Panel, Operator, AddonPreferences
 bl_info = {
     "name": "Assign Shape Keys",
     "author": "Shrinivas Kulkarni",
-    "version": (1, 0, 1),
-    "blender": (2, 80, 0),
+    "version": (1, 0, 2),
+    "blender": (3, 0, 0),
     "location": "View 3D > Sidebar > Edit Tab",
     "description": "Assigns one or more Bezier curves as shape keys to another Bezier curve",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/assign_shape_keys.html",
@@ -835,7 +835,7 @@ class MarkerController:
             context.area.tag_redraw()
 
     def drawHandler(self):
-        bgl.glPointSize(MarkerController.defPointSize)
+        gpu.state.point_size_set(MarkerController.defPointSize)
         self.batch.draw(self.shader)
 
     def removeMarkers(self, context):

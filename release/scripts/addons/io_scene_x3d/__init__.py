@@ -156,7 +156,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
     use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=True, # bfa - only selected
+            default=True, # bfa - Enable only selected by default
             )
     use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",
