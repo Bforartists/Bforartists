@@ -19,6 +19,10 @@ class AMTH_FILE_PT_libraries(bpy.types.Panel):
     bl_category = "Bookmarks"
     bl_label = "Libraries"
 
+    @classmethod
+    def poll(cls, context):
+        return context.area.ui_type == 'FILES'
+
     def draw(self, context):
         layout = self.layout
 
