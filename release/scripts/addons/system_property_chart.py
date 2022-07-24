@@ -219,15 +219,25 @@ def _property_chart_copy(self, context):
 
     data_path = self.data_path
 
-    # quick & nasty method!
+    data_path_with_dot = data_path
+    if not data_path_with_dot.startswith("["):
+        data_path_with_dot = "." + data_path_with_dot
+
+    code = compile(
+        "obj_iter%s = obj%s" % (data_path_with_dot, data_path_with_dot),
+        "<property_chart>",
+        'exec',
+    )
+
     for obj_iter in selected_objects:
         if obj != obj_iter:
             try:
-                exec("obj_iter.%s = obj.%s" % (data_path, data_path))
+                exec(code, {}, {"obj": obj, "obj_iter": obj_iter})
             except:
                 # just in case we need to know what went wrong!
                 import traceback
                 traceback.print_exc()
+
 
 from bpy.props import StringProperty
 
@@ -252,6 +262,7 @@ class CopyPropertyChart(Operator):
 
 # List The Classes #
 
+
 classes = (
     AddPresetProperties,
     SCENE_MT_properties_presets,
@@ -259,6 +270,7 @@ classes = (
     SequencerEditProps,
     CopyPropertyChart
 )
+
 
 def register():
     for cls in classes:

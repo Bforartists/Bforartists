@@ -787,6 +787,10 @@ class DNAStruct:
             if dna_name.array_size > 1:
                 return [DNA_IO.read_short(handle, header) for i in range(dna_name.array_size)]
             return DNA_IO.read_short(handle, header)
+        elif dna_type.dna_type_id == b'ushort':
+            if dna_name.array_size > 1:
+                return [DNA_IO.read_ushort(handle, header) for i in range(dna_name.array_size)]
+            return DNA_IO.read_ushort(handle, header)
         elif dna_type.dna_type_id == b'uint64_t':
             if dna_name.array_size > 1:
                 return [DNA_IO.read_ulong(handle, header) for i in range(dna_name.array_size)]
@@ -809,6 +813,10 @@ class DNAStruct:
                     return DNA_IO.read_bytes0(handle, dna_name.array_size)
                 else:
                     return DNA_IO.read_bytes(handle, dna_name.array_size)
+        elif dna_type.dna_type_id == b'uchar':
+            if dna_name.array_size > 1:
+                return [DNA_IO.read_uchar(handle, header) for i in range(dna_name.array_size)]
+            return DNA_IO.read_uchar(handle, header)
         else:
             raise NotImplementedError("%r exists but isn't pointer, can't resolve field %r" %
                                       (path, dna_name.name_only), dna_name, dna_type)
@@ -893,11 +901,18 @@ class DNA_IO:
         add = data.find(b'\0')
         return data[:add]
 
-    UCHAR = struct.Struct(b'<b'), struct.Struct(b'>b')
+    UCHAR = struct.Struct(b'<B'), struct.Struct(b'>B')
+
+    @staticmethod
+    def read_uchar(handle, fileheader):
+        st = DNA_IO.UCHAR[fileheader.endian_index]
+        return st.unpack(handle.read(st.size))[0]
+
+    SCHAR = struct.Struct(b'<b'), struct.Struct(b'>b')
 
     @staticmethod
     def read_char(handle, fileheader):
-        st = DNA_IO.UCHAR[fileheader.endian_index]
+        st = DNA_IO.SCHAR[fileheader.endian_index]
         return st.unpack(handle.read(st.size))[0]
 
     USHORT = struct.Struct(b'<H'), struct.Struct(b'>H')
