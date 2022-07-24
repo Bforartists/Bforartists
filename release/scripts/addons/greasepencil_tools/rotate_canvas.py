@@ -10,7 +10,6 @@ from bpy.props import BoolProperty, EnumProperty
 from time import time
 ## draw utils
 import gpu
-import bgl
 import blf
 from gpu_extras.batch import batch_for_shader
 from gpu_extras.presets import draw_circle_2d
@@ -31,8 +30,8 @@ def draw_callback_px(self, context):
     if context.area != self.current_area:
         return
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(2)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(2.0)
 
     # init
     batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": [self.center, self.initial_pos]})#self.vector_initial
@@ -55,8 +54,8 @@ def draw_callback_px(self, context):
     # batch.draw(shader)
 
     # restore opengl defaults
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.line_width_set(1.0)
+    gpu.state.blend_set('NONE')
 
     ## text
     font_id = 0

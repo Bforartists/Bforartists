@@ -10,9 +10,8 @@ bl_info = {
     "author": "Sybren A. Stüvel",
     "version": (2, 0),
     "blender": (3, 0, 0),
-    "warning": "In heavily development, things may change",
     "location": "Asset Browser -> Animations, and 3D Viewport -> Animation panel",
-    # "doc_url": "{BLENDER_MANUAL_URL}/addons/animation/pose_library.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/animation/armatures/posing/editing/pose_library.html",
     "support": "OFFICIAL",
     "category": "Animation",
 }

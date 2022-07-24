@@ -3,8 +3,8 @@
 bl_info = {
     'name': 'PathFinder',
     'author': 'Spivak Vladimir (cwolf3d)',
-    'version': (0, 5, 0),
-    'blender': (2, 80, 0),
+    'version': (0, 5, 1),
+    'blender': (3, 0, 0),
     'location': 'Curve Tools addon. (N) Panel',
     'description': 'PathFinder - quick search, selection, removal of splines',
     'warning': '', # used for warning icon and text in addons panel
@@ -17,7 +17,6 @@ import time
 import threading
 
 import gpu
-import bgl
 from gpu_extras.batch import batch_for_shader
 
 import bpy
@@ -85,8 +84,8 @@ def draw_bezier_points(self, context, spline, matrix_world, path_color, path_thi
 
     shader.bind()
     shader.uniform_float("color", path_color)
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(path_thickness)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(path_thickness)
     batch.draw(shader)
 
 def draw_points(self, context, spline, matrix_world, path_color, path_thickness):
@@ -98,8 +97,8 @@ def draw_points(self, context, spline, matrix_world, path_color, path_thickness)
 
     shader.bind()
     shader.uniform_float("color", path_color)
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(path_thickness)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(path_thickness)
     batch.draw(shader)
 
 def near(location3D, point, radius):

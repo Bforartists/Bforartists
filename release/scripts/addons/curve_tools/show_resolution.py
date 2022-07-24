@@ -6,7 +6,6 @@ import bpy
 from bpy import *
 from bpy.props import *
 
-import bgl
 import blf
 import gpu
 from gpu_extras.batch import batch_for_shader

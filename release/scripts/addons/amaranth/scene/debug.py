@@ -65,7 +65,8 @@ class AMTH_store_data():
         'TEXTURE': [],             # Textures (Psys, Brushes)
         'MODIFIER': [],            # Modifiers
         'MESH_DATA': [],           # Vertex Colors
-        'VIEW3D': [],              # Background Images
+        'OUTLINER_OB_CAMERA': [],  # Background Images in Cameras
+        'OUTLINER_OB_EMPTY': [],   # Empty type Image
         'NODETREE': [],            # Compositor
         }
     libraries = []                 # Libraries x type
@@ -632,6 +633,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
 
                                     if name not in AMTH_store_data.users['MATERIAL']:
                                         AMTH_store_data.users['MATERIAL'].append(name)
+
             # Check Lights
             for la in d.lights:
                 # Cycles
@@ -643,6 +645,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
                                    no.image and no.image.name == x:
                                 if la.name not in AMTH_store_data.users['LIGHT']:
                                     AMTH_store_data.users['LIGHT'].append(la.name)
+
             # Check World
             for wo in d.worlds:
                 # Cycles
@@ -654,6 +657,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
                                    no.image and no.image.name == x:
                                 if wo.name not in AMTH_store_data.users['WORLD']:
                                     AMTH_store_data.users['WORLD'].append(wo.name)
+
             # Check Textures
             for te in d.textures:
                 if te and te.type == 'IMAGE' and te.image:
@@ -662,6 +666,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
                     if name == x and \
                             name not in AMTH_store_data.users['TEXTURE']:
                         AMTH_store_data.users['TEXTURE'].append(te.name)
+
             # Check Modifiers in Objects
             for ob in d.objects:
                 for mo in ob.modifiers:
@@ -672,21 +677,31 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
                             name = '"{0}" modifier in {1}'.format(mo.name, ob.name)
                             if name not in AMTH_store_data.users['MODIFIER']:
                                 AMTH_store_data.users['MODIFIER'].append(name)
-            # Check Background Images in Viewports
-            for scr in d.screens:
-                for ar in scr.areas:
-                    if ar.type == 'VIEW_3D':
-                        if ar.spaces and \
-                               ar.spaces.active and \
-                               ar.spaces.active.background_images:
-                            for bg in ar.spaces.active.background_images:
-                                image = bg.image
 
-                                if bg and image and image.name == x:
-                                    name = 'Background for 3D Viewport in Screen "{0}"'\
-                                            .format(scr.name)
-                                    if name not in AMTH_store_data.users['VIEW3D']:
-                                        AMTH_store_data.users['VIEW3D'].append(name)
+            # Check Background Images in Cameras
+            for ob in d.objects:
+                if ob and ob.type == 'CAMERA' and ob.data.background_images:
+                    for bg in ob.data.background_images:
+                        image = bg.image
+
+                        if bg and image and image.name == x:
+                            name = 'Used as background for Camera "{0}"'\
+                                    .format(ob.name)
+                            if name not in AMTH_store_data.users['OUTLINER_OB_CAMERA']:
+                                AMTH_store_data.users['OUTLINER_OB_CAMERA'].append(name)
+
+            # Check Empties type Image
+            for ob in d.objects:
+                if ob and ob.type == 'EMPTY' and ob.image_user:
+                    if ob.image_user.id_data.data:
+                        image = ob.image_user.id_data.data
+
+                        if image and image.name == x:
+                            name = 'Used in Empty "{0}"'\
+                                    .format(ob.name)
+                            if name not in AMTH_store_data.users['OUTLINER_OB_EMPTY']:
+                                AMTH_store_data.users['OUTLINER_OB_EMPTY'].append(name)
+
             # Check the Compositor
             for sce in d.scenes:
                 if sce.node_tree and sce.node_tree.nodes:
