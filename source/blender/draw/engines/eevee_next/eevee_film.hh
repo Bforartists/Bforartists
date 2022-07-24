@@ -8,6 +8,12 @@
  * The film class handles accumulation of samples with any distorted camera_type
  * using a pixel filter. Inputs needs to be jittered so that the filter converges to the right
  * result.
+ *
+ * In viewport, we switch between 2 accumulation mode depending on the scene state.
+ * - For static scene, we use a classic weighted accumulation.
+ * - For dynamic scene (if an update is detected), we use a more temporally stable accumulation
+ *   following the Temporal Anti-Aliasing method (a.k.a. Temporal Super-Sampling). This does
+ *   history reprojection and rectification to avoid most of the flickering.
  */
 
 #pragma once
@@ -28,6 +34,8 @@ class Film {
  public:
   /** Stores indirection table of AOVs based on their name hash and their type. */
   AOVsInfoDataBuf aovs_info;
+  /** For debugging purpose but could be a user option in the future. */
+  static constexpr bool use_box_filter = false;
 
  private:
   Instance &inst_;
@@ -39,10 +47,18 @@ class Film {
   Texture depth_tx_;
   /** Combined "Color" buffer. Double buffered to allow re-projection. */
   SwapChain<Texture, 2> combined_tx_;
+  /** Static reference as SwapChain does not actually move the objects when swapping. */
+  GPUTexture *combined_src_tx_ = nullptr;
+  GPUTexture *combined_dst_tx_ = nullptr;
   /** Weight buffers. Double buffered to allow updating it during accumulation. */
   SwapChain<Texture, 2> weight_tx_;
+  /** Static reference as SwapChain does not actually move the objects when swapping. */
+  GPUTexture *weight_src_tx_ = nullptr;
+  GPUTexture *weight_dst_tx_ = nullptr;
   /** Extent used by the render buffers when rendering the main views. */
   int2 render_extent_ = int2(-1);
+  /** User setting to disable reprojection. Useful for debugging or have a more precise render. */
+  bool force_disable_reprojection_ = false;
 
   DRWPass *accumulate_ps_ = nullptr;
 
@@ -75,10 +91,7 @@ class Film {
 
   float2 pixel_jitter_get() const;
 
-  eViewLayerEEVEEPassType enabled_passes_get() const
-  {
-    return enabled_passes_;
-  }
+  eViewLayerEEVEEPassType enabled_passes_get() const;
 
   static bool pass_is_value(eViewLayerEEVEEPassType pass_type)
   {

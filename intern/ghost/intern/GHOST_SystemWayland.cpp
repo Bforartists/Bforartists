@@ -1580,13 +1580,38 @@ static void pointer_handle_button(void *data,
   }
 }
 
-static void pointer_handle_axis(void *data,
+static void pointer_handle_axis(void * /*data*/,
                                 struct wl_pointer * /*wl_pointer*/,
                                 const uint32_t /*time*/,
                                 const uint32_t axis,
                                 const wl_fixed_t value)
 {
   CLOG_INFO(LOG, 2, "axis (axis=%u, value=%d)", axis, value);
+}
+
+static void pointer_handle_frame(void * /*data*/, struct wl_pointer * /*wl_pointer*/)
+{
+  CLOG_INFO(LOG, 2, "frame");
+}
+static void pointer_handle_axis_source(void * /*data*/,
+                                       struct wl_pointer * /*wl_pointer*/,
+                                       uint32_t axis_source)
+{
+  CLOG_INFO(LOG, 2, "axis_source (axis_source=%u)", axis_source);
+}
+static void pointer_handle_axis_stop(void * /*data*/,
+                                     struct wl_pointer * /*wl_pointer*/,
+                                     uint32_t /*time*/,
+                                     uint32_t axis)
+{
+  CLOG_INFO(LOG, 2, "axis_stop (axis=%u)", axis);
+}
+static void pointer_handle_axis_discrete(void *data,
+                                         struct wl_pointer * /*wl_pointer*/,
+                                         uint32_t axis,
+                                         int32_t discrete)
+{
+  CLOG_INFO(LOG, 2, "axis_discrete (axis=%u, discrete=%d)", axis, discrete);
 
   input_t *input = static_cast<input_t *>(data);
   if (axis != WL_POINTER_AXIS_VERTICAL_SCROLL) {
@@ -1596,7 +1621,7 @@ static void pointer_handle_axis(void *data,
   if (wl_surface *focus_surface = input->pointer.wl_surface) {
     GHOST_WindowWayland *win = ghost_wl_surface_user_data(focus_surface);
     input->system->pushEvent(new GHOST_EventWheel(
-        input->system->getMilliSeconds(), win, std::signbit(value) ? +1 : -1));
+        input->system->getMilliSeconds(), win, std::signbit(discrete) ? +1 : -1));
   }
 }
 
@@ -1606,6 +1631,10 @@ static const struct wl_pointer_listener pointer_listener = {
     pointer_handle_motion,
     pointer_handle_button,
     pointer_handle_axis,
+    pointer_handle_frame,
+    pointer_handle_axis_source,
+    pointer_handle_axis_stop,
+    pointer_handle_axis_discrete,
 };
 
 #undef LOG
@@ -2744,7 +2773,7 @@ static void global_handle_add(void *data,
     input->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     input->data_source = new data_source_t;
     input->wl_seat = static_cast<wl_seat *>(
-        wl_registry_bind(wl_registry, name, &wl_seat_interface, 4));
+        wl_registry_bind(wl_registry, name, &wl_seat_interface, 5));
     display->inputs.push_back(input);
     wl_seat_add_listener(input->wl_seat, &seat_listener, input);
   }
@@ -3852,11 +3881,15 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
       input->relative_pointer = nullptr;
     }
     if (input->locked_pointer) {
+      /* Potentially add a motion event so the applicate has updated X/Y coordinates. */
+      int32_t xy_motion[2] = {0, 0};
+      bool xy_motion_create_event = false;
+
       /* Request location to restore to. */
       if (mode_current == GHOST_kGrabWrap) {
         /* Since this call is initiated by Blender, we can be sure the window wasn't closed
          * by logic outside this function - as the window was needed to make this call. */
-        int32_t xy_new[2] = {UNPACK2(input->pointer.xy)};
+        int32_t xy_next[2] = {UNPACK2(input->pointer.xy)};
 
         GHOST_Rect bounds_scale;
 
@@ -3865,21 +3898,18 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
         bounds_scale.m_r = wl_fixed_from_int(wrap_bounds->m_r) / scale;
         bounds_scale.m_b = wl_fixed_from_int(wrap_bounds->m_b) / scale;
 
-        bounds_scale.wrapPoint(UNPACK2(xy_new), 0, wrap_axis);
+        bounds_scale.wrapPoint(UNPACK2(xy_next), 0, wrap_axis);
 
         /* Push an event so the new location is registered. */
-        if ((xy_new[0] != input->pointer.xy[0]) || (xy_new[1] != input->pointer.xy[1])) {
-          input->system->pushEvent(new GHOST_EventCursor(input->system->getMilliSeconds(),
-                                                         GHOST_kEventCursorMove,
-                                                         ghost_wl_surface_user_data(surface),
-                                                         wl_fixed_to_int(scale * xy_new[0]),
-                                                         wl_fixed_to_int(scale * xy_new[1]),
-                                                         GHOST_TABLET_DATA_NONE));
+        if ((xy_next[0] != input->pointer.xy[0]) || (xy_next[1] != input->pointer.xy[1])) {
+          xy_motion[0] = xy_next[0];
+          xy_motion[1] = xy_next[1];
+          xy_motion_create_event = true;
         }
-        input->pointer.xy[0] = xy_new[0];
-        input->pointer.xy[1] = xy_new[1];
+        input->pointer.xy[0] = xy_next[0];
+        input->pointer.xy[1] = xy_next[1];
 
-        zwp_locked_pointer_v1_set_cursor_position_hint(input->locked_pointer, UNPACK2(xy_new));
+        zwp_locked_pointer_v1_set_cursor_position_hint(input->locked_pointer, UNPACK2(xy_next));
         wl_surface_commit(surface);
       }
       else if (mode_current == GHOST_kGrabHide) {
@@ -3891,6 +3921,13 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
           };
           zwp_locked_pointer_v1_set_cursor_position_hint(input->locked_pointer, UNPACK2(xy_next));
           wl_surface_commit(surface);
+
+          /* NOTE(@campbellbarton): The new cursor position is a hint,
+           * it's possible the hint is ignored. It doesn't seem like there is a good way to
+           * know if the hint will be used or not, at least not immediately. */
+          xy_motion[0] = xy_next[0];
+          xy_motion[1] = xy_next[1];
+          xy_motion_create_event = true;
         }
       }
 #ifdef USE_GNOME_CONFINE_HACK
@@ -3902,6 +3939,15 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
         }
       }
 #endif
+
+      if (xy_motion_create_event) {
+        input->system->pushEvent(new GHOST_EventCursor(input->system->getMilliSeconds(),
+                                                       GHOST_kEventCursorMove,
+                                                       ghost_wl_surface_user_data(surface),
+                                                       wl_fixed_to_int(scale * xy_motion[0]),
+                                                       wl_fixed_to_int(scale * xy_motion[1]),
+                                                       GHOST_TABLET_DATA_NONE));
+      }
 
       zwp_locked_pointer_v1_destroy(input->locked_pointer);
       input->locked_pointer = nullptr;
