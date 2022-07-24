@@ -36,7 +36,7 @@ class FILEBROWSER_PT_amaranth(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return panel_poll_is_upper_region(context.region)
+        return context.area.ui_type == 'FILES' and panel_poll_is_upper_region(context.region)
 
     def draw(self, context):
       layout = self.layout
