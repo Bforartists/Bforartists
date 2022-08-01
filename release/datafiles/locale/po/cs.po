@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25764,6 +25764,19 @@ msgstr "Duplikovat značku"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Zdvojit připojené"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Zdvojí vybrané objekty"
+
+
+msgid "Duplicate Strips"
+msgstr "Duplikovat značku"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Přidat modifikátor"
 
@@ -26514,11 +26527,6 @@ msgstr "Zdvojí vybrané objekty"
 
 msgid "Duplicate Objects"
 msgstr "Zdvojit objekty"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Zdvojit připojené"
 
 
 msgctxt "Operator"
@@ -29972,14 +29980,6 @@ msgstr "Přidat vazbu aktivní kosti"
 
 msgid "Duplicate the selected strips"
 msgstr "Odstranit označené značky"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Zdvojí vybrané objekty"
-
-
-msgid "Duplicate Strips"
-msgstr "Duplikovat značku"
 
 
 msgctxt "Operator"
@@ -41862,6 +41862,11 @@ msgid "Lock Invert All"
 msgstr "Převrátit osy"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Odstranit Veškeré Tvarové Klíče"
+
+
 msgid "Store"
 msgstr "Uskladnit"
 
@@ -41894,11 +41899,6 @@ msgstr "Odstranit Všechny Odemčené Skupiny"
 msgctxt "Operator"
 msgid "Delete All Groups"
 msgstr "Odstranit Všechny Skupiny"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Odstranit Veškeré Tvarové Klíče"
 
 
 msgctxt "Operator"
@@ -45708,6 +45708,10 @@ msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick) %s"
 msgstr "Potvrdit: Enter/LCKlik, Zrušit: (Esc/RKlik) %s"
 
 
+msgid "Failed to set value"
+msgstr "Nastavení hodnoty se nezdařilo"
+
+
 msgid "Pin"
 msgstr "Připnout"
 
@@ -45830,10 +45834,6 @@ msgstr "Online Návod"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Reference pythonu pro API"
-
-
-msgid "Failed to set value"
-msgstr "Nastavení hodnoty se nezdařilo"
 
 
 msgid "Animate property"

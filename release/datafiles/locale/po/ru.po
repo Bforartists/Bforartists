@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -50453,6 +50453,19 @@ msgstr "Назначать новые копии действий, исполь�
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Дублировать со связями"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Дублировать выделенные дорожки и переместить их"
+
+
+msgid "Duplicate Strips"
+msgstr "Дублировать дорожки"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Добавить F-модификатор"
 
@@ -51699,11 +51712,6 @@ msgstr "Дублировать выделенные объекты"
 
 msgid "Duplicate Objects"
 msgstr "Дублировать"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Дублировать со связями"
 
 
 msgctxt "Operator"
@@ -57776,14 +57784,6 @@ msgstr "Удалить выделенные дорожки из видеоред
 
 msgid "Duplicate the selected strips"
 msgstr "Дублировать выделенные дорожки"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Дублировать выделенные дорожки и переместить их"
-
-
-msgid "Duplicate Strips"
-msgstr "Дублировать дорожки"
 
 
 msgid "Slide a sequence strip in time"
@@ -67306,34 +67306,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Ограничение кэша в памяти (в мегабайтах)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Тип вычисления OpenSubdiv"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Тип вычислительной системы, используемой для OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL Transform Feedback"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL-вычисления"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Максимальное количество строк, сохраняемых в буфере консоли"
 
@@ -68148,6 +68120,14 @@ msgstr "3D-кривые"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Количество подразделений, используемых в пересечении с кардинальной кривой (степень двойки)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -72411,10 +72391,6 @@ msgstr "Гамма цветового баланса (средние тона)"
 
 msgid "Inverse Gain"
 msgstr "Инвертировать насыщенность"
-
-
-msgid "Invert the gain color`"
-msgstr "Инвертировать цвет светлых тонов"
 
 
 msgid "Inverse Gamma"
@@ -81088,6 +81064,11 @@ msgid "Lock Invert All"
 msgstr "Инвертировать все блокировки"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Удалить все ключи форм"
+
+
 msgid "Edge Bevel Weight"
 msgstr "Вес фаски ребра"
 
@@ -81130,11 +81111,6 @@ msgstr "Удалить все группы"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "Отразить ключ формы (топологически)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Удалить все ключи форм"
 
 
 msgctxt "Operator"
@@ -87315,6 +87291,10 @@ msgid "Confirm: Enter/LClick, Cancel: (Esc/RClick) %s"
 msgstr "Подтвердить: Enter/ЛКМ, Отменить: (Esc/ПКМ) %s"
 
 
+msgid "Failed to set value"
+msgstr "Ошибка установки значения"
+
+
 msgid "Non-Keyboard Shortcut"
 msgstr "Не клавиатурное сочетание клавиш"
 
@@ -87469,10 +87449,6 @@ msgstr "Онлайн-руководство"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Онлайн-руководство Python"
-
-
-msgid "Failed to set value"
-msgstr "Ошибка установки значения"
 
 
 msgid "Animate property"

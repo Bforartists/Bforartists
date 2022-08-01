@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -55025,6 +55025,19 @@ msgstr "При дублюванні смужок призначати нові �
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Дублювати пов'язано"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Дублювати вибрані смужки та пересунути їх"
+
+
+msgid "Duplicate Strips"
+msgstr "Дублювати смужки"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Додати Ф-модифікатор"
 
@@ -56408,11 +56421,6 @@ msgstr "Дублювати вибрані об'єкти"
 
 msgid "Duplicate Objects"
 msgstr "Дублювати об'єкти"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Дублювати пов'язано"
 
 
 msgctxt "Operator"
@@ -63929,14 +63937,6 @@ msgstr "Стерти вибрані смужки з відеорядника"
 
 msgid "Duplicate the selected strips"
 msgstr "Дублювати вибрані смужки"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Дублювати вибрані смужки та пересунути їх"
-
-
-msgid "Duplicate Strips"
-msgstr "Дублювати смужки"
 
 
 msgid "Slide a sequence strip in time"
@@ -74838,34 +74838,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Межа кешу пам'яті (мегабайт)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Тип обчислення OpenSubdiv"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Тип внуштрішнього обчислювача використовуваний для OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "ЦП"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL Відклик трансформацій"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL Обчислення"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Найбільша кількість рядків, які зберігаються в буфері консолі"
 
@@ -75792,6 +75764,14 @@ msgstr "3D Криві"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Кількість поділів при перетині кардинальних кривих (степінь 2)"
+
+
+msgid "CPU"
+msgstr "ЦП"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -80391,10 +80371,6 @@ msgstr "Гамма балансу кольорів (сертони)"
 
 msgid "Inverse Gain"
 msgstr "Обернути підсилення"
-
-
-msgid "Invert the gain color`"
-msgstr "Інвертувати колір світлих тонів"
 
 
 msgid "Inverse Gamma"
@@ -91009,6 +90985,11 @@ msgid "Lock Invert All"
 msgstr "Інвертувати Блокування Усіх"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Видалити Всі Ключі Форм"
+
+
 msgid "Store"
 msgstr "Зберігання"
 
@@ -91064,11 +91045,6 @@ msgstr "Нова Форма з Мішання"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "Дзеркалити Ключ Форми (Топологія)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Видалити Всі Ключі Форм"
 
 
 msgctxt "Operator"
@@ -98477,6 +98453,14 @@ msgid "GPencil Weight Paint: LMB to paint | RMB/Escape to Exit"
 msgstr "Малювання Вагомостей НарОлівця: LMB для малювання | RMB/Escape для Виходу"
 
 
+msgid "Failed to set value"
+msgstr "Не вдалося встановити значення"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "LMB: Штрих - Shift: Заповнення - Shift+Ctrl: Штрих + Заповнення"
+
+
 msgid "Error evaluating number, see Info editor for details"
 msgstr "Помилка обчислювання числа, дивіться редактор Інфо щодо деталей"
 
@@ -98635,14 +98619,6 @@ msgstr "Онлайновий посібник"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Онлайнова довідка з Python"
-
-
-msgid "Failed to set value"
-msgstr "Не вдалося встановити значення"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "LMB: Штрих - Shift: Заповнення - Shift+Ctrl: Штрих + Заповнення"
 
 
 msgid "Animate property"
