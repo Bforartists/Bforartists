@@ -12760,1060 +12760,1051 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
 }
 
 /* bfa - Set node icons */
-// TODO: define icons in source\blender\nodes\NOD_static_types.h instead
 static int node_type_to_icon(int type)
 {
-  int icon = ICON_NONE;
   switch (type) {
     /* bfa - Node */
     case NODE_FRAME:
-      icon = ICON_NODE_FRAME;
-      break;
+      return ICON_NODE_FRAME;
+
     case NODE_GROUP:
-      icon = ICON_NODE_MAKEGROUP;
-      break;
+      return ICON_NODE_MAKEGROUP;
+
     case NODE_GROUP_INPUT:
-      icon = ICON_GROUPINPUT;
-      break;
+      return ICON_GROUPINPUT;
+
     case NODE_GROUP_OUTPUT:
-      icon = ICON_GROUPOUTPUT;
-      break;
+      return ICON_GROUPOUTPUT;
+
     case NODE_REROUTE:
-      icon = ICON_NODE_REROUTE;
-      break;
+      return ICON_NODE_REROUTE;
 
     /* bfa - ShaderNode */
     case SH_NODE_RGB:
-      icon = ICON_NODE_RGB;
-      break;
+      return ICON_NODE_RGB;
+
     case SH_NODE_VALUE:
-      icon = ICON_NODE_VALUE;
-      break;
+      return ICON_NODE_VALUE;
+
     case SH_NODE_MIX_RGB:
-      icon = ICON_NODE_MIXRGB;
-      break;
+      return ICON_NODE_MIXRGB;
+
     case SH_NODE_VALTORGB:
-      icon = ICON_NODE_COLORRAMP;
-      break;
+      return ICON_NODE_COLORRAMP;
+
     case SH_NODE_RGBTOBW:
-      icon = ICON_NODE_RGBTOBW;
-      break;
+      return ICON_NODE_RGBTOBW;
+
     case SH_NODE_SHADERTORGB:
-      icon = ICON_NODE_RGB;
-      break;
+      return ICON_NODE_RGB;
+
     case SH_NODE_NORMAL:
-      icon = ICON_RECALC_NORMALS;
-      break;
+      return ICON_RECALC_NORMALS;
+
     case SH_NODE_GAMMA:
-      icon = ICON_NODE_GAMMA;
-      break;
+      return ICON_NODE_GAMMA;
+
     case SH_NODE_BRIGHTCONTRAST:
-      icon = ICON_BRIGHTNESS_CONTRAST;
-      break;
+      return ICON_BRIGHTNESS_CONTRAST;
+
     case SH_NODE_MAPPING:
-      icon = ICON_NODE_MAPPING;
-      break;
+      return ICON_NODE_MAPPING;
+
     case SH_NODE_CURVE_VEC:
-      icon = ICON_NODE_VECTOR;
-      break;
+      return ICON_NODE_VECTOR;
+
     case SH_NODE_CURVE_RGB:
-      icon = ICON_NODE_RGBCURVE;
-      break;
+      return ICON_NODE_RGBCURVE;
+
     case SH_NODE_CAMERA:
-      icon = ICON_CAMERA_DATA;
-      break;
+      return ICON_CAMERA_DATA;
+
     case SH_NODE_MAP_RANGE:
-      icon = ICON_NODE_MAP_RANGE;
-      break;
+      return ICON_NODE_MAP_RANGE;
+
     case SH_NODE_CLAMP:
-      icon = ICON_NODE_CLAMP;
-      break;
+      return ICON_NODE_CLAMP;
+
     case SH_NODE_MATH:
-      icon = ICON_NODE_MATH;
-      break;
+      return ICON_NODE_MATH;
+
     case SH_NODE_VECTOR_MATH:
-      icon = ICON_NODE_VECTORMATH;
-      break;
+      return ICON_NODE_VECTORMATH;
+
     // case SH_NODE_SQUEEZE:
-    //  icon = ICON_DELETE;
-    //  break;
+    //  return ICON_DELETE;
+    //
     case SH_NODE_INVERT:
-      icon = ICON_NODE_INVERT;
-      break;
+      return ICON_NODE_INVERT;
+
     case SH_NODE_SEPRGB_LEGACY:
-      icon = ICON_NODE_SEPARATERGB;
-      break;
+      return ICON_NODE_SEPARATERGB;
+
     case SH_NODE_COMBRGB_LEGACY:
-      icon = ICON_NODE_COMBINERGB;
-      break;
+      return ICON_NODE_COMBINERGB;
+
     case SH_NODE_HUE_SAT:
-      icon = ICON_NODE_HUESATURATION;
-      break;
+      return ICON_NODE_HUESATURATION;
 
     case SH_NODE_OUTPUT_MATERIAL:
-      icon = ICON_MATERIAL;
-      break;
+      return ICON_MATERIAL;
+
     case SH_NODE_EEVEE_SPECULAR:
-      icon = ICON_NODE_GLOSSYSHADER;
-      break;
+      return ICON_NODE_GLOSSYSHADER;
+
     case SH_NODE_OUTPUT_LIGHT:
-      icon = ICON_LIGHT;
-      break;
+      return ICON_LIGHT;
+
     case SH_NODE_OUTPUT_WORLD:
-      icon = ICON_WORLD;
-      break;
+      return ICON_WORLD;
+
     case SH_NODE_OUTPUT_LINESTYLE:
-      icon = ICON_NODE_LINESTYLE_OUTPUT;
-      break;
+      return ICON_NODE_LINESTYLE_OUTPUT;
+
     case SH_NODE_FRESNEL:
-      icon = ICON_NODE_FRESNEL;
-      break;
+      return ICON_NODE_FRESNEL;
+
     case SH_NODE_LAYER_WEIGHT:
-      icon = ICON_NODE_LAYERWEIGHT;
-      break;
+      return ICON_NODE_LAYERWEIGHT;
+
     case SH_NODE_MIX_SHADER:
-      icon = ICON_NODE_MIXSHADER;
-      break;
+      return ICON_NODE_MIXSHADER;
+
     case SH_NODE_ADD_SHADER:
-      icon = ICON_NODE_ADD_SHADER;
-      break;
+      return ICON_NODE_ADD_SHADER;
+
     case SH_NODE_ATTRIBUTE:
-      icon = ICON_NODE_ATTRIBUTE;
-      break;
+      return ICON_NODE_ATTRIBUTE;
+
     case SH_NODE_AMBIENT_OCCLUSION:
-      icon = ICON_NODE_AMBIENT_OCCLUSION;
-      break;
+      return ICON_NODE_AMBIENT_OCCLUSION;
+
     case SH_NODE_BACKGROUND:
-      icon = ICON_NODE_BACKGROUNDSHADER;
-      break;
+      return ICON_NODE_BACKGROUNDSHADER;
+
     case SH_NODE_HOLDOUT:
-      icon = ICON_NODE_HOLDOUTSHADER;
-      break;
+      return ICON_NODE_HOLDOUTSHADER;
+
     case SH_NODE_BSDF_ANISOTROPIC:
-      icon = ICON_NODE_ANISOTOPIC;
-      break;
+      return ICON_NODE_ANISOTOPIC;
+
     case SH_NODE_BSDF_DIFFUSE:
-      icon = ICON_NODE_DIFFUSESHADER;
-      break;
+      return ICON_NODE_DIFFUSESHADER;
+
     case SH_NODE_BSDF_PRINCIPLED:
-      icon = ICON_NODE_PRINCIPLED;
-      break;
+      return ICON_NODE_PRINCIPLED;
+
     case SH_NODE_BSDF_GLOSSY:
-      icon = ICON_NODE_GLOSSYSHADER;
-      break;
+      return ICON_NODE_GLOSSYSHADER;
+
     case SH_NODE_BSDF_GLASS:
-      icon = ICON_NODE_GLASSHADER;
-      break;
+      return ICON_NODE_GLASSHADER;
+
     case SH_NODE_BSDF_REFRACTION:
-      icon = ICON_NODE_REFRACTIONSHADER;
-      break;
+      return ICON_NODE_REFRACTIONSHADER;
+
     case SH_NODE_BSDF_TRANSLUCENT:
-      icon = ICON_NODE_TRANSLUCENT;
-      break;
+      return ICON_NODE_TRANSLUCENT;
+
     case SH_NODE_BSDF_TRANSPARENT:
-      icon = ICON_NODE_TRANSPARENT;
-      break;
+      return ICON_NODE_TRANSPARENT;
+
     case SH_NODE_BSDF_VELVET:
-      icon = ICON_NODE_VELVET;
-      break;
+      return ICON_NODE_VELVET;
+
     case SH_NODE_BSDF_TOON:
-      icon = ICON_NODE_TOONSHADER;
-      break;
+      return ICON_NODE_TOONSHADER;
+
     case SH_NODE_BSDF_HAIR:
-      icon = ICON_HAIR;
-      break;
+      return ICON_HAIR;
+
     case SH_NODE_BSDF_HAIR_PRINCIPLED:
-      icon = ICON_HAIR;
-      break;
+      return ICON_HAIR;
+
     case SH_NODE_SUBSURFACE_SCATTERING:
-      icon = ICON_NODE_SSS;
-      break;
+      return ICON_NODE_SSS;
+
     case SH_NODE_VOLUME_ABSORPTION:
-      icon = ICON_NODE_VOLUMEABSORPTION;
-      break;
+      return ICON_NODE_VOLUMEABSORPTION;
+
     case SH_NODE_VOLUME_SCATTER:
-      icon = ICON_NODE_VOLUMESCATTER;
-      break;
+      return ICON_NODE_VOLUMESCATTER;
+
     case SH_NODE_VOLUME_PRINCIPLED:
-      icon = ICON_NODE_VOLUMEPRINCIPLED;
-      break;
+      return ICON_NODE_VOLUMEPRINCIPLED;
+
     case SH_NODE_EMISSION:
-      icon = ICON_NODE_EMISSION;
-      break;
+      return ICON_NODE_EMISSION;
+
     case SH_NODE_NEW_GEOMETRY:
-      icon = ICON_NODE_GEOMETRY;
-      break;
+      return ICON_NODE_GEOMETRY;
+
     case SH_NODE_LIGHT_PATH:
-      icon = ICON_NODE_LIGHTPATH;
-      break;
+      return ICON_NODE_LIGHTPATH;
+
     case SH_NODE_LIGHT_FALLOFF:
-      icon = ICON_NODE_LIGHTFALLOFF;
-      icon = ICON_NODE_LIGHTFALLOFF;
-      break;
+      return ICON_NODE_LIGHTFALLOFF;
+      return ICON_NODE_LIGHTFALLOFF;
+
     case SH_NODE_OBJECT_INFO:
-      icon = ICON_NODE_OBJECTINFO;
-      break;
+      return ICON_NODE_OBJECTINFO;
+
     case SH_NODE_PARTICLE_INFO:
-      icon = ICON_NODE_PARTICLEINFO;
-      break;
+      return ICON_NODE_PARTICLEINFO;
+
     case SH_NODE_HAIR_INFO:
-      icon = ICON_NODE_HAIRINFO;
-      break;
+      return ICON_NODE_HAIRINFO;
+
     case SH_NODE_POINT_INFO:
-      icon = ICON_POINT_INFO;
-      break;
+      return ICON_POINT_INFO;
+
     case SH_NODE_VOLUME_INFO:
-      icon = ICON_NODE_VOLUME_INFO;
-      break;
+      return ICON_NODE_VOLUME_INFO;
+
     case SH_NODE_WIREFRAME:
-      icon = ICON_NODE_WIREFRAME;
-      break;
+      return ICON_NODE_WIREFRAME;
+
     case SH_NODE_WAVELENGTH:
-      icon = ICON_NODE_WAVELENGTH;
-      break;
+      return ICON_NODE_WAVELENGTH;
+
     case SH_NODE_BLACKBODY:
-      icon = ICON_NODE_BLACKBODY;
-      break;
+      return ICON_NODE_BLACKBODY;
+
     case SH_NODE_BUMP:
-      icon = ICON_NODE_BUMP;
-      break;
+      return ICON_NODE_BUMP;
+
     case SH_NODE_NORMAL_MAP:
-      icon = ICON_NODE_NORMALMAP;
-      break;
+      return ICON_NODE_NORMALMAP;
+
     case SH_NODE_TANGENT:
-      icon = ICON_NODE_TANGENT;
-      break;
+      return ICON_NODE_TANGENT;
+
     case SH_NODE_SCRIPT:
-      icon = ICON_FILE_SCRIPT;
-      break;
+      return ICON_FILE_SCRIPT;
+
     case SH_NODE_TEX_IMAGE:
-      icon = ICON_FILE_IMAGE;
-      break;
+      return ICON_FILE_IMAGE;
+
     case SH_NODE_TEX_ENVIRONMENT:
-      icon = ICON_NODE_ENVIRONMENT;
-      break;
+      return ICON_NODE_ENVIRONMENT;
+
     case SH_NODE_TEX_SKY:
-      icon = ICON_NODE_SKY;
-      break;
+      return ICON_NODE_SKY;
+
     case SH_NODE_TEX_GRADIENT:
-      icon = ICON_NODE_GRADIENT;
-      break;
+      return ICON_NODE_GRADIENT;
+
     case SH_NODE_TEX_NOISE:
-      icon = ICON_NOISE_TEX;
-      break;
+      return ICON_NOISE_TEX;
+
     case SH_NODE_TEX_MAGIC:
-      icon = ICON_MAGIC_TEX;
-      break;
+      return ICON_MAGIC_TEX;
+
     case SH_NODE_TEX_WAVE:
-      icon = ICON_NODE_WAVES;
-      break;
+      return ICON_NODE_WAVES;
+
     case SH_NODE_TEX_MUSGRAVE:
-      icon = ICON_MUSGRAVE_TEX;
-      break;
+      return ICON_MUSGRAVE_TEX;
+
     case SH_NODE_TEX_VORONOI:
-      icon = ICON_VORONI_TEX;
-      break;
+      return ICON_VORONI_TEX;
+
     case SH_NODE_TEX_CHECKER:
-      icon = ICON_NODE_CHECKER;
-      break;
+      return ICON_NODE_CHECKER;
+
     case SH_NODE_TEX_BRICK:
-      icon = ICON_NODE_BRICK;
-      break;
+      return ICON_NODE_BRICK;
+
     case SH_NODE_TEX_POINTDENSITY:
-      icon = ICON_NODE_POINTCLOUD;
-      break;
+      return ICON_NODE_POINTCLOUD;
+
     case SH_NODE_TEX_COORD:
-      icon = ICON_NODE_TEXCOORDINATE;
-      break;
+      return ICON_NODE_TEXCOORDINATE;
+
     case SH_NODE_VECTOR_ROTATE:
-      icon = ICON_NODE_VECTORROTATE;
-      break;
+      return ICON_NODE_VECTORROTATE;
+
     case SH_NODE_VECT_TRANSFORM:
-      icon = ICON_NODE_VECTOR_TRANSFORM;
-      break;
+      return ICON_NODE_VECTOR_TRANSFORM;
+
     case SH_NODE_SEPHSV_LEGACY:
-      icon = ICON_NODE_SEPARATEHSV;
-      break;
+      return ICON_NODE_SEPARATEHSV;
+
     case SH_NODE_COMBHSV_LEGACY:
-      icon = ICON_NODE_COMBINEHSV;
-      break;
+      return ICON_NODE_COMBINEHSV;
+
     case SH_NODE_UVMAP:
-      icon = ICON_GROUP_UVS;
-      break;
+      return ICON_GROUP_UVS;
+
     case SH_NODE_VERTEX_COLOR:
-      icon = ICON_NODE_VERTEX_COLOR;
-      break;
+      return ICON_NODE_VERTEX_COLOR;
+
     case SH_NODE_UVALONGSTROKE:
-      icon = ICON_NODE_UVALONGSTROKE;
-      break;
+      return ICON_NODE_UVALONGSTROKE;
+
     case SH_NODE_SEPXYZ:
-      icon = ICON_NODE_SEPARATEXYZ;
-      break;
+      return ICON_NODE_SEPARATEXYZ;
+
     case SH_NODE_COMBXYZ:
-      icon = ICON_NODE_COMBINEXYZ;
-      break;
+      return ICON_NODE_COMBINEXYZ;
+
     case SH_NODE_BEVEL:
-      icon = ICON_BEVEL;
-      break;
+      return ICON_BEVEL;
+
     case SH_NODE_DISPLACEMENT:
-      icon = ICON_MOD_DISPLACE;
-      break;
+      return ICON_MOD_DISPLACE;
+
     case SH_NODE_VECTOR_DISPLACEMENT:
-      icon = ICON_VECTOR_DISPLACE;
-      break;
+      return ICON_VECTOR_DISPLACE;
+
     case SH_NODE_TEX_IES:
-      icon = ICON_LIGHT;
-      break;
+      return ICON_LIGHT;
+
     case SH_NODE_TEX_WHITE_NOISE:
-      icon = ICON_NODE_WHITE_NOISE;
-      break;
+      return ICON_NODE_WHITE_NOISE;
+
     case SH_NODE_OUTPUT_AOV:
-      icon = ICON_NODE_VALUE;
-      break;
+      return ICON_NODE_VALUE;
+
     case SH_NODE_CURVE_FLOAT:
-      icon = ICON_FLOAT_CURVE;
-      break;
+      return ICON_FLOAT_CURVE;
+
     case SH_NODE_COMBINE_COLOR:
-      icon = ICON_COMBINE_COLOR;
-      break;
+      return ICON_COMBINE_COLOR;
+
     case SH_NODE_SEPARATE_COLOR:
-      icon = ICON_SEPARATE_COLOR;
-      break;
+      return ICON_SEPARATE_COLOR;
 
     /* bfa - CompositorNode */
     case CMP_NODE_VIEWER:
-      icon = ICON_NODE_VIEWER;
-      break;
+      return ICON_NODE_VIEWER;
+
     case CMP_NODE_RGB:
-      icon = ICON_NODE_RGB;
-      break;
+      return ICON_NODE_RGB;
+
     case CMP_NODE_VALUE:
-      icon = ICON_NODE_VALUE;
-      break;
+      return ICON_NODE_VALUE;
+
     case CMP_NODE_MIX_RGB:
-      icon = ICON_NODE_MIXRGB;
-      break;
+      return ICON_NODE_MIXRGB;
+
     case CMP_NODE_VALTORGB:
-      icon = ICON_NODE_COLORRAMP;
-      break;
+      return ICON_NODE_COLORRAMP;
+
     case CMP_NODE_RGBTOBW:
-      icon = ICON_NODE_RGBTOBW;
-      break;
+      return ICON_NODE_RGBTOBW;
+
     case CMP_NODE_NORMAL:
-      icon = ICON_RECALC_NORMALS;
-      break;
+      return ICON_RECALC_NORMALS;
+
     case CMP_NODE_CURVE_VEC:
-      icon = ICON_NODE_VECTOR;
-      break;
+      return ICON_NODE_VECTOR;
+
     case CMP_NODE_CURVE_RGB:
-      icon = ICON_NODE_RGBCURVE;
-      break;
+      return ICON_NODE_RGBCURVE;
+
     case CMP_NODE_ALPHAOVER:
-      icon = ICON_IMAGE_ALPHA;
-      break;
+      return ICON_IMAGE_ALPHA;
+
     case CMP_NODE_BLUR:
-      icon = ICON_NODE_BLUR;
-      break;
+      return ICON_NODE_BLUR;
+
     case CMP_NODE_FILTER:
-      icon = ICON_FILTER;
-      break;
+      return ICON_FILTER;
+
     case CMP_NODE_MAP_VALUE:
-      icon = ICON_NODE_VALUE;
-      break;
+      return ICON_NODE_VALUE;
+
     case CMP_NODE_MAP_RANGE:
-      icon = ICON_NODE_MAP_RANGE;
-      break;
+      return ICON_NODE_MAP_RANGE;
+
     case CMP_NODE_TIME:
-      icon = ICON_NODE_CURVE_TIME;
-      break;
+      return ICON_NODE_CURVE_TIME;
+
     case CMP_NODE_VECBLUR:
-      icon = ICON_NODE_VECTOR_BLUR;
-      break;
+      return ICON_NODE_VECTOR_BLUR;
+
     case CMP_NODE_SEPRGBA_LEGACY:
-      icon = ICON_NODE_SEPARATERGB;
-      break;
+      return ICON_NODE_SEPARATERGB;
+
     case CMP_NODE_SEPHSVA_LEGACY:
-      icon = ICON_NODE_SEPARATEHSV;
-      break;
+      return ICON_NODE_SEPARATEHSV;
+
     case CMP_NODE_SETALPHA:
-      icon = ICON_IMAGE_ALPHA;
-      break;
+      return ICON_IMAGE_ALPHA;
+
     case CMP_NODE_HUE_SAT:
-      icon = ICON_NODE_HUESATURATION;
-      break;
+      return ICON_NODE_HUESATURATION;
+
     case CMP_NODE_IMAGE:
-      icon = ICON_FILE_IMAGE;
-      break;
+      return ICON_FILE_IMAGE;
+
     case CMP_NODE_R_LAYERS:
-      icon = ICON_RENDERLAYERS;
-      break;
+      return ICON_RENDERLAYERS;
+
     case CMP_NODE_COMPOSITE:
-      icon = ICON_NODE_COMPOSITING;
-      break;
+      return ICON_NODE_COMPOSITING;
 
     case CMP_NODE_OUTPUT_FILE:
-      icon = ICON_NODE_FILEOUTPUT;
-      break;
+      return ICON_NODE_FILEOUTPUT;
+
     case CMP_NODE_TEXTURE:
-      icon = ICON_TEXTURE;
-      break;
+      return ICON_TEXTURE;
+
     case CMP_NODE_TRANSLATE:
-      icon = ICON_TRANSFORM_MOVE;
-      break;
+      return ICON_TRANSFORM_MOVE;
+
     case CMP_NODE_ZCOMBINE:
-      icon = ICON_NODE_ZCOMBINE;
-      break;
+      return ICON_NODE_ZCOMBINE;
+
     case CMP_NODE_COMBRGBA_LEGACY:
-      icon = ICON_NODE_COMBINERGB;
-      break;
+      return ICON_NODE_COMBINERGB;
+
     case CMP_NODE_DILATEERODE:
-      icon = ICON_NODE_ERODE;
-      break;
+      return ICON_NODE_ERODE;
+
     case CMP_NODE_INPAINT:
-      icon = ICON_NODE_IMPAINT;
-      break;
+      return ICON_NODE_IMPAINT;
+
     case CMP_NODE_DESPECKLE:
-      icon = ICON_NODE_DESPECKLE;
-      break;
+      return ICON_NODE_DESPECKLE;
+
     case CMP_NODE_ROTATE:
-      icon = ICON_TRANSFORM_ROTATE;
-      break;
+      return ICON_TRANSFORM_ROTATE;
+
     case CMP_NODE_SCALE:
-      icon = ICON_TRANSFORM_SCALE;
-      break;
+      return ICON_TRANSFORM_SCALE;
+
     case CMP_NODE_SEPYCCA_LEGACY:
-      icon = ICON_NODE_SEPARATE_YCBCRA;
-      break;
+      return ICON_NODE_SEPARATE_YCBCRA;
+
     case CMP_NODE_COMBYCCA_LEGACY:
-      icon = ICON_NODE_COMBINEYCBCRA;
-      break;
+      return ICON_NODE_COMBINEYCBCRA;
+
     case CMP_NODE_SEPYUVA_LEGACY:
-      icon = ICON_NODE_SEPARATE_YUVA;
-      break;
+      return ICON_NODE_SEPARATE_YUVA;
+
     case CMP_NODE_COMBYUVA_LEGACY:
-      icon = ICON_NODE_COMBINEYUVA;
-      break;
+      return ICON_NODE_COMBINEYUVA;
+
     case CMP_NODE_DIFF_MATTE:
-      icon = ICON_SELECT_DIFFERENCE;
-      break;
+      return ICON_SELECT_DIFFERENCE;
+
     case CMP_NODE_COLOR_SPILL:
-      icon = ICON_NODE_SPILL;
-      break;
+      return ICON_NODE_SPILL;
+
     case CMP_NODE_CHROMA_MATTE:
-      icon = ICON_NODE_CHROMA;
-      break;
+      return ICON_NODE_CHROMA;
+
     case CMP_NODE_CHANNEL_MATTE:
-      icon = ICON_NODE_CHANNEL;
-      break;
+      return ICON_NODE_CHANNEL;
+
     case CMP_NODE_FLIP:
-      icon = ICON_FLIP;
-      break;
+      return ICON_FLIP;
+
     case CMP_NODE_SPLITVIEWER:
-      icon = ICON_NODE_VIWERSPLIT;
-      break;
+      return ICON_NODE_VIWERSPLIT;
+
     case CMP_NODE_MAP_UV:
-      icon = ICON_GROUP_UVS;
-      break;
+      return ICON_GROUP_UVS;
+
     case CMP_NODE_ID_MASK:
-      icon = ICON_MOD_MASK;
-      break;
+      return ICON_MOD_MASK;
+
     case CMP_NODE_DOUBLEEDGEMASK:
-      icon = ICON_NODE_DOUBLEEDGEMASK;
-      break;
+      return ICON_NODE_DOUBLEEDGEMASK;
+
     case CMP_NODE_DEFOCUS:
-      icon = ICON_NODE_DEFOCUS;
-      break;
+      return ICON_NODE_DEFOCUS;
+
     case CMP_NODE_DISPLACE:
-      icon = ICON_MOD_DISPLACE;
-      break;
+      return ICON_MOD_DISPLACE;
+
     case CMP_NODE_COMBHSVA_LEGACY:
-      icon = ICON_NODE_COMBINEHSV;
-      break;
+      return ICON_NODE_COMBINEHSV;
+
     case CMP_NODE_MATH:
-      icon = ICON_NODE_MATH;
-      break;
+      return ICON_NODE_MATH;
+
     case CMP_NODE_LUMA_MATTE:
-      icon = ICON_NODE_LUMINANCE;
-      break;
+      return ICON_NODE_LUMINANCE;
+
     case CMP_NODE_BRIGHTCONTRAST:
-      icon = ICON_BRIGHTNESS_CONTRAST;
-      break;
+      return ICON_BRIGHTNESS_CONTRAST;
+
     case CMP_NODE_GAMMA:
-      icon = ICON_NODE_GAMMA;
-      break;
+      return ICON_NODE_GAMMA;
+
     case CMP_NODE_INVERT:
-      icon = ICON_NODE_INVERT;
-      break;
+      return ICON_NODE_INVERT;
+
     case CMP_NODE_NORMALIZE:
-      icon = ICON_NODE_NORMALIZE;
-      break;
+      return ICON_NODE_NORMALIZE;
+
     case CMP_NODE_CROP:
-      icon = ICON_NODE_CROP;
-      break;
+      return ICON_NODE_CROP;
+
     case CMP_NODE_DBLUR:
-      icon = ICON_NODE_DIRECITONALBLUR;
-      break;
+      return ICON_NODE_DIRECITONALBLUR;
+
     case CMP_NODE_BILATERALBLUR:
-      icon = ICON_NODE_BILATERAL_BLUR;
-      break;
+      return ICON_NODE_BILATERAL_BLUR;
+
     case CMP_NODE_PREMULKEY:
-      icon = ICON_NODE_ALPHACONVERT;
-      break;
+      return ICON_NODE_ALPHACONVERT;
+
     case CMP_NODE_GLARE:
-      icon = ICON_NODE_GLARE;
-      break;
+      return ICON_NODE_GLARE;
+
     case CMP_NODE_TONEMAP:
-      icon = ICON_NODE_TONEMAP;
-      break;
+      return ICON_NODE_TONEMAP;
+
     case CMP_NODE_LENSDIST:
-      icon = ICON_NODE_LENSDISTORT;
-      break;
+      return ICON_NODE_LENSDISTORT;
+
     case CMP_NODE_VIEW_LEVELS:
-      icon = ICON_LEVELS;
-      break;
+      return ICON_LEVELS;
+
     case CMP_NODE_COLOR_MATTE:
-      icon = ICON_COLOR;
-      break;
+      return ICON_COLOR;
+
     case CMP_NODE_DIST_MATTE:
-      icon = ICON_DRIVER_DISTANCE;
-      break;
+      return ICON_DRIVER_DISTANCE;
+
     case CMP_NODE_COLORBALANCE:
-      icon = ICON_NODE_COLORBALANCE;
-      break;
+      return ICON_NODE_COLORBALANCE;
+
     case CMP_NODE_HUECORRECT:
-      icon = ICON_NODE_HUESATURATION;
-      break;
+      return ICON_NODE_HUESATURATION;
+
     case CMP_NODE_MOVIECLIP:
-      icon = ICON_FILE_MOVIE;
-      break;
+      return ICON_FILE_MOVIE;
+
     case CMP_NODE_TRANSFORM:
-      icon = ICON_NODE_TRANSFORM;
-      break;
+      return ICON_NODE_TRANSFORM;
+
     case CMP_NODE_STABILIZE2D:
-      icon = ICON_NODE_STABILIZE2D;
-      break;
+      return ICON_NODE_STABILIZE2D;
+
     case CMP_NODE_MOVIEDISTORTION:
-      icon = ICON_NODE_MOVIEDISTORT;
-      break;
+      return ICON_NODE_MOVIEDISTORT;
+
     case CMP_NODE_MASK_BOX:
-      icon = ICON_NODE_BOXMASK;
-      break;
+      return ICON_NODE_BOXMASK;
+
     case CMP_NODE_MASK_ELLIPSE:
-      icon = ICON_NODE_ELLIPSEMASK;
-      break;
+      return ICON_NODE_ELLIPSEMASK;
+
     case CMP_NODE_BOKEHIMAGE:
-      icon = ICON_NODE_BOKEH_IMAGE;
-      break;
+      return ICON_NODE_BOKEH_IMAGE;
+
     case CMP_NODE_BOKEHBLUR:
-      icon = ICON_NODE_BOKEH_BLUR;
-      break;
+      return ICON_NODE_BOKEH_BLUR;
+
     case CMP_NODE_SWITCH:
-      icon = ICON_SWITCH_DIRECTION;
-      break;
+      return ICON_SWITCH_DIRECTION;
+
     case CMP_NODE_SWITCH_VIEW:
-      icon = ICON_VIEW_SWITCHACTIVECAM;
-      break;
+      return ICON_VIEW_SWITCHACTIVECAM;
+
     case CMP_NODE_COLORCORRECTION:
-      icon = ICON_NODE_COLORCORRECTION;
-      break;
+      return ICON_NODE_COLORCORRECTION;
+
     case CMP_NODE_MASK:
-      icon = ICON_MOD_MASK;
-      break;
+      return ICON_MOD_MASK;
+
     case CMP_NODE_KEYINGSCREEN:
-      icon = ICON_NODE_KEYINGSCREEN;
-      break;
+      return ICON_NODE_KEYINGSCREEN;
+
     case CMP_NODE_KEYING:
-      icon = ICON_NODE_KEYING;
-      break;
+      return ICON_NODE_KEYING;
+
     case CMP_NODE_TRACKPOS:
-      icon = ICON_NODE_TRACKPOSITION;
-      break;
+      return ICON_NODE_TRACKPOSITION;
+
     case CMP_NODE_PIXELATE:
-      icon = ICON_NODE_PIXELATED;
-      break;
+      return ICON_NODE_PIXELATED;
+
     case CMP_NODE_PLANETRACKDEFORM:
-      icon = ICON_NODE_PLANETRACKDEFORM;
-      break;
+      return ICON_NODE_PLANETRACKDEFORM;
+
     case CMP_NODE_CORNERPIN:
-      icon = ICON_NODE_CORNERPIN;
-      break;
+      return ICON_NODE_CORNERPIN;
+
     case CMP_NODE_SUNBEAMS:
-      icon = ICON_NODE_SUNBEAMS;
-      break;
+      return ICON_NODE_SUNBEAMS;
+
     case CMP_NODE_CRYPTOMATTE:
-      icon = ICON_CRYPTOMATTE;
-      break;
+      return ICON_CRYPTOMATTE;
+
     case CMP_NODE_CRYPTOMATTE_LEGACY:
-      icon = ICON_CRYPTOMATTE;
-      break;
+      return ICON_CRYPTOMATTE;
+
     case CMP_NODE_DENOISE:
-      icon = ICON_NODE_DENOISE;
-      break;
+      return ICON_NODE_DENOISE;
+
     case CMP_NODE_EXPOSURE:
-      icon = ICON_EXPOSURE;
-      break;
+      return ICON_EXPOSURE;
+
     case CMP_NODE_ANTIALIASING:
-      icon = ICON_ANTIALIASED;
-      break;
+      return ICON_ANTIALIASED;
+
     case CMP_NODE_POSTERIZE:
-      icon = ICON_POSTERIZE;
-      break;
+      return ICON_POSTERIZE;
+
     case CMP_NODE_CONVERT_COLOR_SPACE:
-      icon = ICON_COLOR_SPACE;
-      break;
+      return ICON_COLOR_SPACE;
+
     case CMP_NODE_SCENE_TIME:
-      icon = ICON_TIME;
-      break;
+      return ICON_TIME;
+
     case CMP_NODE_COMBINE_XYZ:
-      icon = ICON_NODE_COMBINEXYZ;
-      break;
+      return ICON_NODE_COMBINEXYZ;
+
     case CMP_NODE_SEPARATE_XYZ:
-      icon = ICON_NODE_SEPARATEXYZ;
-      break;
+      return ICON_NODE_SEPARATEXYZ;
+
     case CMP_NODE_SEPARATE_COLOR:
-      icon = ICON_SEPARATE_COLOR;
-      break;
+      return ICON_SEPARATE_COLOR;
+
     case CMP_NODE_COMBINE_COLOR:
-      icon = ICON_COMBINE_COLOR;
-      break;
+      return ICON_COMBINE_COLOR;
 
       /* bfa - TextureNode, we don't have these nodes iconized yet */
 
     /* bfa - FunctionNode */
     case FN_NODE_ALIGN_EULER_TO_VECTOR:
-      icon = ICON_ALIGN_EULER_TO_VECTOR;
-      break;
+      return ICON_ALIGN_EULER_TO_VECTOR;
+
     case FN_NODE_BOOLEAN_MATH:
-      icon = ICON_BOOLEAN_MATH;
-      break;
+      return ICON_BOOLEAN_MATH;
+
     case FN_NODE_COMBINE_COLOR:
-      icon = ICON_COMBINE_COLOR;
-      break;
+      return ICON_COMBINE_COLOR;
+
     case FN_NODE_COMPARE:
-      icon = ICON_FLOAT_COMPARE;
-      break;
+      return ICON_FLOAT_COMPARE;
+
     case FN_NODE_FLOAT_TO_INT:
-      icon = ICON_FLOAT_TO_INT;
-      break;
+      return ICON_FLOAT_TO_INT;
+
     case FN_NODE_INPUT_BOOL:
-      icon = ICON_INPUT_BOOL;
-      break;
+      return ICON_INPUT_BOOL;
+
     case FN_NODE_INPUT_COLOR:
-      icon = ICON_COLOR;
-      break;
+      return ICON_COLOR;
+
     case FN_NODE_INPUT_INT:
-      icon = ICON_INTEGER;
-      break;
+      return ICON_INTEGER;
+
     case FN_NODE_INPUT_SPECIAL_CHARACTERS:
-      icon = ICON_SPECIAL;
-      break;
+      return ICON_SPECIAL;
+
     case FN_NODE_INPUT_STRING:
-      icon = ICON_STRING;
-      break;
+      return ICON_STRING;
+
     case FN_NODE_INPUT_VECTOR:
-      icon = ICON_NODE_VECTOR;
-      break;
+      return ICON_NODE_VECTOR;
+
     case FN_NODE_RANDOM_VALUE:
-      icon = ICON_RANDOM_FLOAT;
-      break;
+      return ICON_RANDOM_FLOAT;
+
     case FN_NODE_REPLACE_STRING:
-      icon = ICON_REPLACE_STRING;
-      break;
+      return ICON_REPLACE_STRING;
+
     case FN_NODE_ROTATE_EULER:
-      icon = ICON_ROTATE_EULER;
-      break;
+      return ICON_ROTATE_EULER;
+
     case FN_NODE_SEPARATE_COLOR:
-      icon = ICON_SEPARATE_COLOR;
-      break;
+      return ICON_SEPARATE_COLOR;
+
     case FN_NODE_SLICE_STRING:
-      icon = ICON_STRING_SUBSTRING;
-      break;
+      return ICON_STRING_SUBSTRING;
+
     case FN_NODE_STRING_LENGTH:
-      icon = ICON_STRING_LENGTH;
-      break;
+      return ICON_STRING_LENGTH;
+
     case FN_NODE_VALUE_TO_STRING:
-      icon = ICON_VALUE_TO_STRING;
-      break;
+      return ICON_VALUE_TO_STRING;
 
       /* bfa - GeometryNode */
 
     case GEO_NODE_ATTRIBUTE_DOMAIN_SIZE:
-      icon = ICON_DOMAIN_SIZE;
-      break;
+      return ICON_DOMAIN_SIZE;
+
     case GEO_NODE_ATTRIBUTE_STATISTIC:
-      icon = ICON_ATTRIBUTE_STATISTIC;
-      break;
+      return ICON_ATTRIBUTE_STATISTIC;
+
     case GEO_NODE_BOUNDING_BOX:
-      icon = ICON_PIVOT_BOUNDBOX;
-      break;
+      return ICON_PIVOT_BOUNDBOX;
+
     case GEO_NODE_CAPTURE_ATTRIBUTE:
-      icon = ICON_ATTRIBUTE_CAPTURE;
-      break;
+      return ICON_ATTRIBUTE_CAPTURE;
+
     case GEO_NODE_COLLECTION_INFO:
-      icon = ICON_COLLECTION_INFO;
-      break;
+      return ICON_COLLECTION_INFO;
+
     case GEO_NODE_CONVEX_HULL:
-      icon = ICON_CONVEXHULL;
-      break;
+      return ICON_CONVEXHULL;
+
     case GEO_NODE_CURVE_ENDPOINT_SELECTION:
-      icon = ICON_SELECT_LAST;
-      break;
+      return ICON_SELECT_LAST;
+
     case GEO_NODE_CURVE_HANDLE_TYPE_SELECTION:
-      icon = ICON_SELECT_HANDLETYPE;
-      break;
+      return ICON_SELECT_HANDLETYPE;
+
     case GEO_NODE_CURVE_LENGTH:
-      icon = ICON_PARTICLEBRUSH_LENGTH;
-      break;
+      return ICON_PARTICLEBRUSH_LENGTH;
+
     case GEO_NODE_CURVE_PRIMITIVE_ARC:
-      icon = ICON_CURVE_ARC;
-      break;
+      return ICON_CURVE_ARC;
+
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
-      icon = ICON_CURVE_BEZCURVE;
-      break;
+      return ICON_CURVE_BEZCURVE;
+
     case GEO_NODE_CURVE_PRIMITIVE_CIRCLE:
-      icon = ICON_CURVE_BEZCIRCLE;
-      break;
+      return ICON_CURVE_BEZCIRCLE;
+
     case GEO_NODE_CURVE_PRIMITIVE_LINE:
-      icon = ICON_CURVE_LINE;
-      break;
+      return ICON_CURVE_LINE;
+
     case GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER:
-      icon = ICON_CURVE_NCURVE;
-      break;
+      return ICON_CURVE_NCURVE;
+
     case GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL:
-      icon = ICON_CURVE_QUADRILATERAL;
-      break;
+      return ICON_CURVE_QUADRILATERAL;
+
     case GEO_NODE_CURVE_PRIMITIVE_SPIRAL:
-      icon = ICON_CURVE_SPIRAL;
-      break;
+      return ICON_CURVE_SPIRAL;
+
     case GEO_NODE_CURVE_PRIMITIVE_STAR:
-      icon = ICON_CURVE_STAR;
-      break;
+      return ICON_CURVE_STAR;
+
     case GEO_NODE_CURVE_SET_HANDLE_TYPE:
-      icon = ICON_HANDLE_AUTO;
-      break;
+      return ICON_HANDLE_AUTO;
+
     case GEO_NODE_CURVE_SPLINE_PARAMETER:
-      icon = ICON_CURVE_PARAMETER;
-      break;
+      return ICON_CURVE_PARAMETER;
+
     case GEO_NODE_CURVE_SPLINE_TYPE:
-      icon = ICON_SPLINE_TYPE;
-      break;
+      return ICON_SPLINE_TYPE;
+
     case GEO_NODE_CURVE_TO_MESH:
-      icon = ICON_OUTLINER_OB_MESH;
-      break;
+      return ICON_OUTLINER_OB_MESH;
+
     case GEO_NODE_CURVE_TO_POINTS:
-      icon = ICON_POINTCLOUD_DATA;
-      break;
+      return ICON_POINTCLOUD_DATA;
+
     case GEO_NODE_DEFORM_CURVES_ON_SURFACE:
-      icon = ICON_DEFORM_CURVES;
-      break;
+      return ICON_DEFORM_CURVES;
+
     case GEO_NODE_DELETE_GEOMETRY:
-      icon = ICON_DELETE;
-      break;
+      return ICON_DELETE;
+
     case GEO_NODE_DUPLICATE_ELEMENTS:
-      icon = ICON_DUPLICATE;
-      break;
+      return ICON_DUPLICATE;
+
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
-      icon = ICON_POINT_DISTRIBUTE;
-      break;
+      return ICON_POINT_DISTRIBUTE;
+
     case GEO_NODE_ACCUMULATE_FIELD:
-      icon = ICON_ACCUMULATE;
-      break;
+      return ICON_ACCUMULATE;
+
     case GEO_NODE_DUAL_MESH:
-      icon = ICON_DUAL_MESH;
-      break;
+      return ICON_DUAL_MESH;
+
     case GEO_NODE_EXTRUDE_MESH:
-      icon = ICON_EXTRUDE_REGION;
-      break;
+      return ICON_EXTRUDE_REGION;
+
     case GEO_NODE_FIELD_AT_INDEX:
-      icon = ICON_FIELD_AT_INDEX;
-      break;
+      return ICON_FIELD_AT_INDEX;
+
     case GEO_NODE_INTERPOLATE_DOMAIN:
-      icon = ICON_FIELD_DOMAIN;
-      break;
+      return ICON_FIELD_DOMAIN;
+
     case GEO_NODE_FILL_CURVE:
-      icon = ICON_CURVE_FILL;
-      break;
+      return ICON_CURVE_FILL;
+
     case GEO_NODE_FILLET_CURVE:
-      icon = ICON_CURVE_FILLET;
-      break;
+      return ICON_CURVE_FILLET;
+
     case GEO_NODE_FLIP_FACES:
-      icon = ICON_FLIP_NORMALS;
-      break;
+      return ICON_FLIP_NORMALS;
+
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
-      icon = ICON_GEOMETRY_INSTANCE;
-      break;
+      return ICON_GEOMETRY_INSTANCE;
+
     case GEO_NODE_IMAGE_TEXTURE:
-      icon = ICON_IMAGE_DATA;
-      break;
+      return ICON_IMAGE_DATA;
+
     case GEO_NODE_INPUT_NAMED_ATTRIBUTE:
-      icon = ICON_NAMED_ATTRIBUTE;
-      break;
+      return ICON_NAMED_ATTRIBUTE;
+
     case GEO_NODE_INPUT_CURVE_HANDLES:
-      icon = ICON_CURVE_HANDLE_POSITIONS;
-      break;
+      return ICON_CURVE_HANDLE_POSITIONS;
+
     case GEO_NODE_INPUT_CURVE_TILT:
-      icon = ICON_CURVE_TILT;
-      break;
+      return ICON_CURVE_TILT;
+
     case GEO_NODE_INPUT_ID:
-      icon = ICON_GET_ID;
-      break;
+      return ICON_GET_ID;
+
     case GEO_NODE_INPUT_INDEX:
-      icon = ICON_INDEX;
-      break;
+      return ICON_INDEX;
+
     case GEO_NODE_INPUT_INSTANCE_ROTATION:
-      icon = ICON_INSTANCE_ROTATE;
-      break;
+      return ICON_INSTANCE_ROTATE;
+
     case GEO_NODE_INPUT_INSTANCE_SCALE:
-      icon = ICON_INSTANCE_SCALE;
-      break;
+      return ICON_INSTANCE_SCALE;
+
     case GEO_NODE_INPUT_MATERIAL_INDEX:
-      icon = ICON_MATERIAL_INDEX;
-      break;
+      return ICON_MATERIAL_INDEX;
+
     case GEO_NODE_INPUT_MATERIAL:
-      icon = ICON_NODE_MATERIAL;
-      break;
+      return ICON_NODE_MATERIAL;
+
     case GEO_NODE_INPUT_MESH_EDGE_ANGLE:
-      icon = ICON_EDGE_ANGLE;
-      break;
+      return ICON_EDGE_ANGLE;
+
     case GEO_NODE_INPUT_MESH_EDGE_NEIGHBORS:
-      icon = ICON_EDGE_NEIGHBORS;
-      break;
+      return ICON_EDGE_NEIGHBORS;
+
     case GEO_NODE_INPUT_MESH_EDGE_VERTICES:
-      icon = ICON_EDGE_VERTICES;
-      break;
+      return ICON_EDGE_VERTICES;
+
     case GEO_NODE_INPUT_MESH_FACE_AREA:
-      icon = ICON_FACEREGIONS;
-      break;
+      return ICON_FACEREGIONS;
+
     case GEO_NODE_INPUT_MESH_FACE_IS_PLANAR:
-      icon = ICON_PLANAR;
-      break;
+      return ICON_PLANAR;
+
     case GEO_NODE_INPUT_MESH_FACE_NEIGHBORS:
-      icon = ICON_FACE_NEIGHBORS;
-      break;
+      return ICON_FACE_NEIGHBORS;
+
     case GEO_NODE_INPUT_MESH_ISLAND:
-      icon = ICON_UV_ISLANDSEL;
-      break;
+      return ICON_UV_ISLANDSEL;
+
     case GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS:
-      icon = ICON_VERTEX_NEIGHBORS;
-      break;
+      return ICON_VERTEX_NEIGHBORS;
+
     case GEO_NODE_INPUT_NORMAL:
-      icon = ICON_RECALC_NORMALS;
-      break;
+      return ICON_RECALC_NORMALS;
+
     case GEO_NODE_INPUT_POSITION:
-      icon = ICON_POSITION;
-      break;
+      return ICON_POSITION;
+
     case GEO_NODE_INPUT_RADIUS:
-      icon = ICON_RADIUS;
-      break;
+      return ICON_RADIUS;
+
     case GEO_NODE_INPUT_SCENE_TIME:
-      icon = ICON_TIME;
-      break;
+      return ICON_TIME;
+
     case GEO_NODE_INPUT_SHADE_SMOOTH:
-      icon = ICON_SHADING_SMOOTH;
-      break;
+      return ICON_SHADING_SMOOTH;
+
     case GEO_NODE_INPUT_SPLINE_CYCLIC:
-      icon = ICON_IS_SPLINE_CYCLIC;
-      break;
+      return ICON_IS_SPLINE_CYCLIC;
+
     case GEO_NODE_INPUT_SPLINE_LENGTH:
-      icon = ICON_SPLINE_LENGTH;
-      break;
+      return ICON_SPLINE_LENGTH;
+
     case GEO_NODE_INPUT_SPLINE_RESOLUTION:
-      icon = ICON_SPLINE_RESOLUTION;
-      break;
+      return ICON_SPLINE_RESOLUTION;
+
     case GEO_NODE_INPUT_TANGENT:
-      icon = ICON_CURVE_TANGENT;
-      break;
+      return ICON_CURVE_TANGENT;
+
     case GEO_NODE_INSTANCE_ON_POINTS:
-      icon = ICON_POINT_INSTANCE;
-      break;
+      return ICON_POINT_INSTANCE;
+
     case GEO_NODE_INSTANCES_TO_POINTS:
-      icon = ICON_INSTANCES_TO_POINTS;
-      break;
+      return ICON_INSTANCES_TO_POINTS;
+
     case GEO_NODE_IS_VIEWPORT:
-      icon = ICON_VIEW;
-      break;
+      return ICON_VIEW;
+
     case GEO_NODE_JOIN_GEOMETRY:
-      icon = ICON_JOIN;
-      break;
+      return ICON_JOIN;
+
     case GEO_NODE_MATERIAL_SELECTION:
-      icon = ICON_SELECT_BY_MATERIAL;
-      break;
+      return ICON_SELECT_BY_MATERIAL;
+
     case GEO_NODE_MERGE_BY_DISTANCE:
-      icon = ICON_REMOVE_DOUBLES;
-      break;
+      return ICON_REMOVE_DOUBLES;
+
     case GEO_NODE_MESH_BOOLEAN:
-      icon = ICON_MOD_BOOLEAN;
-      break;
+      return ICON_MOD_BOOLEAN;
+
     case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
-      icon = ICON_MESH_CIRCLE;
-      break;
+      return ICON_MESH_CIRCLE;
+
     case GEO_NODE_MESH_PRIMITIVE_CONE:
-      icon = ICON_MESH_CONE;
-      break;
+      return ICON_MESH_CONE;
+
     case GEO_NODE_MESH_PRIMITIVE_CUBE:
-      icon = ICON_MESH_CUBE;
-      break;
+      return ICON_MESH_CUBE;
+
     case GEO_NODE_MESH_PRIMITIVE_CYLINDER:
-      icon = ICON_MESH_CYLINDER;
-      break;
+      return ICON_MESH_CYLINDER;
+
     case GEO_NODE_MESH_PRIMITIVE_GRID:
-      icon = ICON_MESH_GRID;
-      break;
+      return ICON_MESH_GRID;
+
     case GEO_NODE_MESH_PRIMITIVE_ICO_SPHERE:
-      icon = ICON_MESH_ICOSPHERE;
-      break;
+      return ICON_MESH_ICOSPHERE;
+
     case GEO_NODE_MESH_PRIMITIVE_LINE:
-      icon = ICON_MESH_LINE;
-      break;
+      return ICON_MESH_LINE;
+
     case GEO_NODE_MESH_PRIMITIVE_UV_SPHERE:
-      icon = ICON_MESH_UVSPHERE;
-      break;
+      return ICON_MESH_UVSPHERE;
+
     case GEO_NODE_MESH_TO_CURVE:
-      icon = ICON_OUTLINER_OB_CURVE;
-      break;
+      return ICON_OUTLINER_OB_CURVE;
+
     case GEO_NODE_MESH_TO_POINTS:
-      icon = ICON_MESH_TO_POINTS;
-      break;
+      return ICON_MESH_TO_POINTS;
+
     case GEO_NODE_OBJECT_INFO:
-      icon = ICON_NODE_OBJECTINFO;
-      break;
+      return ICON_NODE_OBJECTINFO;
+
     case GEO_NODE_POINTS:
-      icon = ICON_DECORATE;
-      break;
+      return ICON_DECORATE;
+
     case GEO_NODE_POINTS_TO_VERTICES:
-      icon = ICON_POINTS_TO_VERTICES;
-      break;
+      return ICON_POINTS_TO_VERTICES;
+
     case GEO_NODE_POINTS_TO_VOLUME:
-      icon = ICON_POINT_TO_VOLUME;
-      break;
+      return ICON_POINT_TO_VOLUME;
+
     case GEO_NODE_PROXIMITY:
-      icon = ICON_GEOMETRY_PROXIMITY;
-      break;
+      return ICON_GEOMETRY_PROXIMITY;
+
     case GEO_NODE_RAYCAST:
-      icon = ICON_RAYCAST;
-      break;
+      return ICON_RAYCAST;
+
     case GEO_NODE_REMOVE_ATTRIBUTE:
-      icon = ICON_ATTRIBUTE_REMOVE;
-      break;
+      return ICON_ATTRIBUTE_REMOVE;
+
     case GEO_NODE_REALIZE_INSTANCES:
-      icon = ICON_MOD_INSTANCE;
-      break;
+      return ICON_MOD_INSTANCE;
+
     case GEO_NODE_REPLACE_MATERIAL:
-      icon = ICON_MATERIAL_REPLACE;
-      break;
+      return ICON_MATERIAL_REPLACE;
+
     case GEO_NODE_RESAMPLE_CURVE:
-      icon = ICON_CURVE_RESAMPLE;
-      break;
+      return ICON_CURVE_RESAMPLE;
+
     case GEO_NODE_REVERSE_CURVE:
-      icon = ICON_SWITCH_DIRECTION;
-      break;
+      return ICON_SWITCH_DIRECTION;
+
     case GEO_NODE_ROTATE_INSTANCES:
-      icon = ICON_ROTATE_INSTANCE;
-      break;
+      return ICON_ROTATE_INSTANCE;
+
     case GEO_NODE_SAMPLE_CURVE:
-      icon = ICON_CURVE_SAMPLE;
-      break;
+      return ICON_CURVE_SAMPLE;
+
     case GEO_NODE_SCALE_ELEMENTS:
-      icon = ICON_TRANSFORM_SCALE;
-      break;
+      return ICON_TRANSFORM_SCALE;
+
     case GEO_NODE_SCALE_INSTANCES:
-      icon = ICON_SCALE_INSTANCE;
-      break;
+      return ICON_SCALE_INSTANCE;
+
     case GEO_NODE_SEPARATE_COMPONENTS:
-      icon = ICON_SEPARATE;
-      break;
+      return ICON_SEPARATE;
+
     case GEO_NODE_SEPARATE_GEOMETRY:
-      icon = ICON_SEPARATE_GEOMETRY;
-      break;
+      return ICON_SEPARATE_GEOMETRY;
+
     case GEO_NODE_SET_CURVE_HANDLES:
-      icon = ICON_SET_CURVE_HANDLE_POSITIONS;
-      break;
+      return ICON_SET_CURVE_HANDLE_POSITIONS;
+
     case GEO_NODE_SET_CURVE_RADIUS:
-      icon = ICON_SET_CURVE_RADIUS;
-      break;
+      return ICON_SET_CURVE_RADIUS;
+
     case GEO_NODE_SET_CURVE_TILT:
-      icon = ICON_SET_CURVE_TILT;
-      break;
+      return ICON_SET_CURVE_TILT;
+
     case GEO_NODE_SET_ID:
-      icon = ICON_SET_ID;
-      break;
+      return ICON_SET_ID;
+
     case GEO_NODE_SET_MATERIAL_INDEX:
-      icon = ICON_SET_MATERIAL_INDEX;
-      break;
+      return ICON_SET_MATERIAL_INDEX;
+
     case GEO_NODE_SET_MATERIAL:
-      icon = ICON_MATERIAL_ADD;
-      break;
+      return ICON_MATERIAL_ADD;
+
     case GEO_NODE_SET_POINT_RADIUS:
-      icon = ICON_SET_CURVE_RADIUS;
-      break;
+      return ICON_SET_CURVE_RADIUS;
+
     case GEO_NODE_SET_POSITION:
-      icon = ICON_SET_POSITION;
-      break;
+      return ICON_SET_POSITION;
+
     case GEO_NODE_SET_SHADE_SMOOTH:
-      icon = ICON_SET_SHADE_SMOOTH;
-      break;
+      return ICON_SET_SHADE_SMOOTH;
+
     case GEO_NODE_SET_SPLINE_CYCLIC:
-      icon = ICON_TOGGLE_CYCLIC;
-      break;
+      return ICON_TOGGLE_CYCLIC;
+
     case GEO_NODE_SET_SPLINE_RESOLUTION:
-      icon = ICON_SET_SPLINE_RESOLUTION;
-      break;
+      return ICON_SET_SPLINE_RESOLUTION;
+
     case GEO_NODE_SPLIT_EDGES:
-      icon = ICON_SPLITEDGE;
-      break;
+      return ICON_SPLITEDGE;
+
     case GEO_NODE_STORE_NAMED_ATTRIBUTE:
-      icon = ICON_ATTRIBUTE_STORE;
-      break;
+      return ICON_ATTRIBUTE_STORE;
+
     case GEO_NODE_STRING_JOIN:
-      icon = ICON_STRING_JOIN;
-      break;
+      return ICON_STRING_JOIN;
+
     case GEO_NODE_STRING_TO_CURVES:
-      icon = ICON_STRING_TO_CURVE;
-      break;
+      return ICON_STRING_TO_CURVE;
+
     case GEO_NODE_SUBDIVIDE_CURVE:
-      icon = ICON_SUBDIVIDE_EDGES;
-      break;
+      return ICON_SUBDIVIDE_EDGES;
+
     case GEO_NODE_SUBDIVIDE_MESH:
-      icon = ICON_SUBDIVIDE_MESH;
-      break;
+      return ICON_SUBDIVIDE_MESH;
+
     case GEO_NODE_SUBDIVISION_SURFACE:
-      icon = ICON_SUBDIVIDE_EDGES;
-      break;
+      return ICON_SUBDIVIDE_EDGES;
+
     case GEO_NODE_SWITCH:
-      icon = ICON_SWITCH;
-      break;
+      return ICON_SWITCH;
+
     case GEO_NODE_TRANSFER_ATTRIBUTE:
-      icon = ICON_ATTRIBUTE_TRANSFER;
-      break;
+      return ICON_ATTRIBUTE_TRANSFER;
+
     case GEO_NODE_TRANSFORM:
-      icon = ICON_NODE_TRANSFORM;
-      break;
+      return ICON_NODE_TRANSFORM;
+
     case GEO_NODE_TRANSLATE_INSTANCES:
-      icon = ICON_TRANSLATE_INSTANCE;
-      break;
+      return ICON_TRANSLATE_INSTANCE;
+
     case GEO_NODE_TRIANGULATE:
-      icon = ICON_MOD_TRIANGULATE;
-      break;
+      return ICON_MOD_TRIANGULATE;
+
     case GEO_NODE_TRIM_CURVE:
-      icon = ICON_CURVE_TRIM;
-      break;
+      return ICON_CURVE_TRIM;
+
     case GEO_NODE_VIEWER:
-      icon = ICON_NODE_VIEWER;
-      break;
+      return ICON_NODE_VIEWER;
+
     case GEO_NODE_VOLUME_CUBE:
-      icon = ICON_VOLUME_CUBE;
-      break;
+      return ICON_VOLUME_CUBE;
+
     case GEO_NODE_VOLUME_TO_MESH:
-      icon = ICON_VOLUME_TO_MESH;
-      break;
+      return ICON_VOLUME_TO_MESH;
+
     case GEO_NODE_UV_PACK_ISLANDS:
-      icon = ICON_PACKISLAND;
-      break;
+      return ICON_PACKISLAND;
+
     case GEO_NODE_UV_UNWRAP:
-      icon = ICON_UNWRAP_ABF;
-      break;
+      return ICON_UNWRAP_ABF;
   }
-  return icon;
+  return ICON_NONE;
 }
 /*bfa - const int ui_icon,*/
 static StructRNA *define_specific_node(BlenderRNA *brna,
