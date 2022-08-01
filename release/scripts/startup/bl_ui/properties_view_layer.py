@@ -318,7 +318,6 @@ classes = (
     VIEWLAYER_PT_layer_passes,
     VIEWLAYER_PT_eevee_next_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_data,
-    VIEWLAYER_PT_eevee_layer_passes_mist,  # bfa - move mist panel to viewlayers
     VIEWLAYER_PT_eevee_layer_passes_light,
     VIEWLAYER_PT_eevee_layer_passes_effects,
     VIEWLAYER_PT_layer_passes_cryptomatte,
