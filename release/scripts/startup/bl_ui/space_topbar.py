@@ -391,7 +391,7 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon = "LOAD_SVG_GPENCIL")
 
         if bpy.app.build_options.io_wavefront_obj:
-            self.layout.operator("wm.obj_import", text="Wavefront (.obj) (experimental)", icon="LOAD_OBJ")
+            self.layout.operator("wm.obj_import", text="Wavefront (.obj)", icon="LOAD_OBJ")
         if bpy.app.build_options.io_stl:
             self.layout.operator("wm.stl_import", text="STL (.stl) (experimental)", icon="LOAD_STL")
 
@@ -419,7 +419,7 @@ class TOPBAR_MT_file_export(Menu):
                 self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon = "SAVE_PDF")
 
         if bpy.app.build_options.io_wavefront_obj:
-            self.layout.operator("wm.obj_export", text="Wavefront (.obj) (experimental)", icon = "SAVE_OBJ")
+            self.layout.operator("wm.obj_export", text="Wavefront (.obj)", icon = "SAVE_OBJ")
 
 
 class TOPBAR_MT_file_external_data(Menu):
