@@ -233,10 +233,18 @@ static Curves *resample_to_uniform(const CurveComponent &src_component,
     for (const int i_curve : sliced_selection) {
       const bool cyclic = curves_cyclic[i_curve];
       const IndexRange dst_points = dst_curves.points_for_curve(i_curve);
-      length_parameterize::sample_uniform(src_curves.evaluated_lengths_for_curve(i_curve, cyclic),
-                                          !curves_cyclic[i_curve],
-                                          sample_indices.as_mutable_span().slice(dst_points),
-                                          sample_factors.as_mutable_span().slice(dst_points));
+      const Span<float> lengths = src_curves.evaluated_lengths_for_curve(i_curve, cyclic);
+      if (lengths.is_empty()) {
+        /* Handle curves with only one evaluated point. */
+        sample_indices.as_mutable_span().slice(dst_points).fill(0);
+        sample_factors.as_mutable_span().slice(dst_points).fill(0.0f);
+      }
+      else {
+        length_parameterize::sample_uniform(lengths,
+                                            !curves_cyclic[i_curve],
+                                            sample_indices.as_mutable_span().slice(dst_points),
+                                            sample_factors.as_mutable_span().slice(dst_points));
+      }
     }
 
     /* For every attribute, evaluate attributes from every curve in the range in the original
@@ -337,6 +345,7 @@ Curves *resample_to_evaluated(const CurveComponent &src_component,
 {
   const bke::CurvesGeometry &src_curves = bke::CurvesGeometry::wrap(
       src_component.get_for_read()->geometry);
+  src_curves.ensure_evaluated_offsets();
 
   bke::GeometryComponentFieldContext field_context{src_component, ATTR_DOMAIN_CURVE};
   fn::FieldEvaluator evaluator{field_context, src_curves.curves_num()};

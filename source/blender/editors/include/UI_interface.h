@@ -85,7 +85,7 @@ typedef struct uiViewItemHandle uiViewItemHandle;
 
 /* Separator for text in search menus (right pointing arrow).
  * keep in sync with `string_search.cc`. */
-#define UI_MENU_ARROW_SEP "\xe2\x96\xb6"
+#define UI_MENU_ARROW_SEP "\xe2\x96\xb8"
 
 /* names */
 #define UI_MAX_DRAW_STR 400
@@ -2482,7 +2482,7 @@ enum uiTemplateListFlags {
 ENUM_OPERATORS(enum uiTemplateListFlags, UI_TEMPLATE_LIST_FLAGS_LAST);
 
 void uiTemplateList(uiLayout *layout,
-                    struct bContext *C,
+                    const struct bContext *C,
                     const char *listtype_name,
                     const char *list_id,
                     struct PointerRNA *dataptr,
@@ -2496,7 +2496,7 @@ void uiTemplateList(uiLayout *layout,
                     int columns,
                     enum uiTemplateListFlags flags);
 struct uiList *uiTemplateList_ex(uiLayout *layout,
-                                 struct bContext *C,
+                                 const struct bContext *C,
                                  const char *listtype_name,
                                  const char *list_id,
                                  struct PointerRNA *dataptr,
@@ -2566,7 +2566,7 @@ enum {
   UI_TEMPLATE_ASSET_DRAW_NO_LIBRARY = (1 << 2),
 };
 void uiTemplateAssetView(struct uiLayout *layout,
-                         struct bContext *C,
+                         const struct bContext *C,
                          const char *list_id,
                          struct PointerRNA *asset_library_dataptr,
                          const char *asset_library_propname,
