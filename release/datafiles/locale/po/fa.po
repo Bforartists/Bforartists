@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -8741,6 +8741,19 @@ msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "ﺭﺍﺮﮑﺗ"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
+
+
+msgid "Duplicate Strips"
+msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -9079,11 +9092,6 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 msgid "Duplicate Objects"
 msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "ﺭﺍﺮﮑﺗ"
 
 
 msgctxt "Operator"
@@ -10380,14 +10388,6 @@ msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
 msgctxt "Operator"
 msgid "Erase Strips"
 msgstr "ﺱﺃﺭ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
-
-
-msgid "Duplicate Strips"
-msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgid "Replace the current selection"

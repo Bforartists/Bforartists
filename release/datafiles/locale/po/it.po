@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -33393,6 +33393,19 @@ msgstr "Duplica le NLA-Strips selezionate, aggiungendo le strips duplicate in nu
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Duplica e Collega"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Duplica gli spezzoni selezionati e muovili"
+
+
+msgid "Duplicate Strips"
+msgstr "Duplica Spezzoni"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Aggiungi F-Modifier"
 
@@ -34391,11 +34404,6 @@ msgstr "Duplica gli oggetti selezionati"
 
 msgid "Duplicate Objects"
 msgstr "Duplica Oggetti"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Duplica e Collega"
 
 
 msgid "Keep Hierarchy"
@@ -38756,14 +38764,6 @@ msgstr "Cancella gli spezzoni selezionati dal sequencer"
 
 msgid "Duplicate the selected strips"
 msgstr "Duplica gli spezzoni selezionati"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Duplica gli spezzoni selezionati e muovili"
-
-
-msgid "Duplicate Strips"
-msgstr "Duplica Spezzoni"
 
 
 msgid "Slide a sequence strip in time"
@@ -45365,22 +45365,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Limite della memoria cache (MB)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Tipo Calcolo OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Numero massimo di linee da memorizzare per il buffer della console"
 
@@ -45767,6 +45751,14 @@ msgstr "Fisheye Equisolido"
 
 msgid "Uses the mirror ball mapping"
 msgstr "Usa la mappatura sfera a specchio"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "Cast Shadow"
@@ -57202,6 +57194,10 @@ msgid "Grease Pencil Line Session: Hold and drag LMB to draw | ESC/Enter to end 
 msgstr "Sessione Linea Matita: Premi e trascina LMB per disegnare | ESC/Invio per terminare (o click fuori dall'area)"
 
 
+msgid "Failed to set value"
+msgstr "Impossibile impostare il valore"
+
+
 msgid "Non-Keyboard Shortcut"
 msgstr "Scorciatoia Non-di-Tastiera"
 
@@ -57331,10 +57327,6 @@ msgstr "Manuale Online"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Riferimenti API Python"
-
-
-msgid "Failed to set value"
-msgstr "Impossibile impostare il valore"
 
 
 msgid "Active button is not from a script, cannot edit source"

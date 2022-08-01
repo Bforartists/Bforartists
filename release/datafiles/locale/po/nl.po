@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -4713,6 +4713,15 @@ msgstr "Dupliceer Strips"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Dupliceer Gekoppeld"
+
+
+msgid "Duplicate Strips"
+msgstr "Dupliceer Strips"
+
+
+msgctxt "Operator"
 msgid "Add Sound Clip"
 msgstr "Voeg Geluidsclip Toe"
 
@@ -4891,11 +4900,6 @@ msgstr "Dupliceer Objecten"
 
 msgid "Duplicate Objects"
 msgstr "Dupliceer Objecten"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Dupliceer Gekoppeld"
 
 
 msgctxt "Operator"
@@ -5806,10 +5810,6 @@ msgstr "Veeg"
 msgctxt "Operator"
 msgid "Copy"
 msgstr "Kopieer"
-
-
-msgid "Duplicate Strips"
-msgstr "Dupliceer Strips"
 
 
 msgid "Replace Selection"

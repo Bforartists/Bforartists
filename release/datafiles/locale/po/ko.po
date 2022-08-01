@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -48133,6 +48133,19 @@ msgstr "스트립을 복사할 때 사용하는 작업의 새 사본을 할당"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "연결된 복제"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "선택한 스트립을 복제하고 이동합니다"
+
+
+msgid "Duplicate Strips"
+msgstr "스트립을 복제"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "F-모디파이어를 추가"
 
@@ -49374,11 +49387,6 @@ msgstr "선택된 오브젝트를 복제"
 
 msgid "Duplicate Objects"
 msgstr "오브젝트를 복제"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "연결된 복제"
 
 
 msgctxt "Operator"
@@ -55455,14 +55463,6 @@ msgstr "시퀀서에서 선택된 스트립을 지우기"
 
 msgid "Duplicate the selected strips"
 msgstr "선택된 스트립을 복제"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "선택한 스트립을 복제하고 이동합니다"
-
-
-msgid "Duplicate Strips"
-msgstr "스트립을 복제"
 
 
 msgid "Slide a sequence strip in time"
@@ -64979,34 +64979,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "메모리 캐시 제한 (메가바이트 단위)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "OpenSubdiv 계산 유형"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "OpenSubdiv과 함께 사용되는 컴퓨터 백엔드의 유형"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL 변환 피드백"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL 계산"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "콘솔 버퍼에 저장할 라인의 최대치 수"
 
@@ -65813,6 +65785,14 @@ msgstr "미러 볼 매핑을 사용합니다"
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "카디날 커브 교차 지점에서 사용된 섭디비젼들의 수 (2의 파워)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -70008,10 +69988,6 @@ msgstr "컬러 균형 감마 (중간톤)"
 
 msgid "Inverse Gain"
 msgstr "이득을 반전"
-
-
-msgid "Invert the gain color`"
-msgstr "이득 컬러를 반전"
 
 
 msgid "Inverse Gamma"
@@ -78587,6 +78563,11 @@ msgstr "모두 잠금 반전"
 
 
 msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "모든 셰이프 키를 삭제"
+
+
+msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "이름으로 분류"
 
@@ -78624,11 +78605,6 @@ msgstr "모든 그룹을 삭제"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "미러 셰이프 키 (토폴로지)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "모든 셰이프 키를 삭제"
 
 
 msgctxt "Operator"
@@ -84732,6 +84708,14 @@ msgid "Copy some strokes to the clipboard before using the Clone brush to paste 
 msgstr "클론 브러시를 사용하여 사본을 붙여 넣기 전에 클립 보드에 일부 스트로크를 복사"
 
 
+msgid "Failed to set value"
+msgstr "값을 설정하지 못함"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "LMB: 스트로크 - Shift: 채우기 - Shift+Ctrl: 스트로크 + 체우기"
+
+
 msgid "Non-Keyboard Shortcut"
 msgstr "비-키보드 단축 키"
 
@@ -84886,14 +84870,6 @@ msgstr "온라인 설명서"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "온라인 Python 참조"
-
-
-msgid "Failed to set value"
-msgstr "값을 설정하지 못함"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "LMB: 스트로크 - Shift: 채우기 - Shift+Ctrl: 스트로크 + 체우기"
 
 
 msgid "Animate property"

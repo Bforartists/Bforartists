@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -38257,6 +38257,19 @@ msgstr "Durante a duplicação de faixas, atribui novas cópias das ações que 
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Duplicar vinculando"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Duplica as faixas selecionadas e permite movê-las."
+
+
+msgid "Duplicate Strips"
+msgstr "Duplicar faixas"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Adicionar modificador-f"
 
@@ -39382,11 +39395,6 @@ msgstr "Duplica os objetos selecionados."
 
 msgid "Duplicate Objects"
 msgstr "Duplicar objetos"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Duplicar vinculando"
 
 
 msgid "Keep Hierarchy"
@@ -44045,14 +44053,6 @@ msgstr "Apaga as faixas selecionadas a partir do editor de sequências."
 
 msgid "Duplicate the selected strips"
 msgstr "Duplicar as faixas selecionadas"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Duplica as faixas selecionadas e permite movê-las."
-
-
-msgid "Duplicate Strips"
-msgstr "Duplicar faixas"
 
 
 msgid "Slide a sequence strip in time"
@@ -51146,34 +51146,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Limite da memória de cache para o sequenciador (em megabytes)."
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Tipo de computação para subdivisão aberta"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "O tipo de suporte computacional usado com a subdivisão aberta."
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "Respostas das transformações GLSL "
-
-
-msgid "GLSL Compute"
-msgstr "Computação GLSL"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Número máximo de linhas para guardar para o contingenciador de linha de comando."
 
@@ -51620,6 +51592,14 @@ msgstr "Usa o mapeamento em formato de esfera espelhada."
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Número de subdivisões usadas em intersecção de curvas cardinais (elevado ao quadrado)."
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "Cast Shadow"
@@ -54701,10 +54681,6 @@ msgstr "Balanço de cor de gama (meios tons)."
 
 msgid "Inverse Gain"
 msgstr "Ganho inverso"
-
-
-msgid "Invert the gain color`"
-msgstr "Inverte as cores do ganho."
 
 
 msgid "Inverse Gamma"
@@ -64106,6 +64082,10 @@ msgid "Copy some strokes to the clipboard before using the Clone brush to paste 
 msgstr "Copia alguns traços para a área de transferência antes de usar o clone dos pincéis para colar as cópias dos mesmos."
 
 
+msgid "Failed to set value"
+msgstr "Falha ao definir valor"
+
+
 msgid "Non-Keyboard Shortcut"
 msgstr "Atalhos não relacionados ao teclado"
 
@@ -64216,10 +64196,6 @@ msgstr "Manual na internet"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Referência de Python na internet"
-
-
-msgid "Failed to set value"
-msgstr "Falha ao definir valor"
 
 
 msgid "Active button is not from a script, cannot edit source"

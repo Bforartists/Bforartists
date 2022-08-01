@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -7619,6 +7619,10 @@ msgid "Grease Pencil operator is already active"
 msgstr "Operator Szkicownik jest już aktywny"
 
 
+msgid "Failed to set value"
+msgstr "Ustawienie wartości nie powiodło się"
+
+
 msgid "Pin"
 msgstr "Przypnij"
 
@@ -7711,10 +7715,6 @@ msgstr "Instrukcja Obsługi online"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Referencja Python online"
-
-
-msgid "Failed to set value"
-msgstr "Ustawienie wartości nie powiodło się"
 
 
 msgid "Active button is not from a script, cannot edit source"
