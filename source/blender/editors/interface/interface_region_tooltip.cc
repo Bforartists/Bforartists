@@ -787,11 +787,8 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
 
   /* bfa - add the prefix everywhere in case it is not NULL! */
   if (but_label.strinfo != NULL) {
-    uiTooltipField *field = text_field_add(data,
-                                           &(uiTooltipFormat){
-                                               .style = UI_TIP_STYLE_HEADER,
-                                               .color_id = UI_TIP_LC_NORMAL,
-                                           });
+    uiTooltipField *field = text_field_add(
+        data, uiTooltipFormat::Style::Header, uiTooltipFormat::ColorID::Normal);
     /* bfa - Some buttons do not have an explicit button title. (e.g. the properties editor tab
      * button), it just shows a dot then where the title should be, so we check for those buttons,
      * and skip adding the button title. */
