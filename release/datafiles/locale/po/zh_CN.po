@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -319,6 +319,14 @@ msgstr "MetalRT (试验)"
 
 msgid "MetalRT for ray tracing uses less memory for scenes which use curves extensively, and can give better performance in specific cases. However this support is experimental and some scenes may render incorrectly"
 msgstr "用于光线追踪的MetalRT 对于广泛使用曲线的场景使用较少的内存，并且可以在特定情况下提供更好的性能。但是，此支持是实验性的，某些场景可能会导致渲染偏差"
+
+
+msgid "KHR_materials_variants_ui"
+msgstr "KHR_materials_variants_ui"
+
+
+msgid "Displays glTF UI to manage material variants"
+msgstr "显示 glTF UI 以管理材质变量"
 
 
 msgid "Displays glTF Settings node in Shader Editor (Menu Add > Output)"
@@ -4687,6 +4695,14 @@ msgstr "焦点物体"
 
 msgid "Use this object to define the depth of field focal point"
 msgstr "使用此物体指定焦点景深"
+
+
+msgid "Focus Bone"
+msgstr "焦点骨骼"
+
+
+msgid "Use this armature bone to define the depth of field focal point"
+msgstr "使用此骨架骨骼定义焦点景深"
 
 
 msgid "Use Depth of Field"
@@ -16153,6 +16169,14 @@ msgid "Postpone running until tool operator run (when used with a tool)"
 msgstr "推迟运行, 直到工具操作运行 (与工具一起使用时)"
 
 
+msgid "Use fallback tools keymap"
+msgstr "使用回退工具键盘映射"
+
+
+msgid "Add fallback tools keymap to this gizmo type."
+msgstr "将回退工具键盘映射添加到此gizmo类型。"
+
+
 msgid "VR Redraws"
 msgstr "VR重绘"
 
@@ -17637,6 +17661,10 @@ msgstr "允许边缘具有多个重叠类型。这将为每个重叠类型创建
 
 msgid "Use Shadow"
 msgstr "使用阴影"
+
+
+msgid "Project contour lines using a light source object"
+msgstr "使用光源物体投影轮廓线"
 
 
 msgid "Shadow Enclosed Shapes"
@@ -24882,6 +24910,14 @@ msgid "Current shape key index"
 msgstr "当前形态键编号"
 
 
+msgid "Add Rest Position"
+msgstr "添加静置位置"
+
+
+msgid "Add a \"rest_position\" attribute that is a copy of the position attribute before shape keys and modifiers are evaluated"
+msgstr "添加一个“rest_position”属性，该属性是位置属性的副本，并计算形态键和修改器"
+
+
 msgid "Bounding Box"
 msgstr "边界框"
 
@@ -28712,6 +28748,10 @@ msgid "Filter add-ons by category"
 msgstr "以目录筛选插件"
 
 
+msgid "Filter by add-on name, author & category"
+msgstr "按插件名称，作者和类别筛选"
+
+
 msgid "Support"
 msgstr "支持"
 
@@ -28862,6 +28902,14 @@ msgstr "使用UI 标记"
 
 msgid "Filter the UI by tags"
 msgstr "按标记过渡用户界面"
+
+
+msgid "Pin Scene"
+msgstr "钉固场景"
+
+
+msgid "Remember the last used scene for the workspace and switch to it whenever this workspace is activated again"
+msgstr "记住工作区上次使用的场景，并在再次激活此工作区时切换到该场景"
 
 
 msgid "World data-block describing the environment and ambient lighting of a scene"
@@ -40386,6 +40434,22 @@ msgid "F-Curves for controlling the strip's influence and timing"
 msgstr "用于操控片段的影响与时序的函数曲线"
 
 
+msgid "End Frame (manipulated from UI)"
+msgstr "结束帧(从 UI 操作)"
+
+
+msgid "End frame of the NLA strip. Note: changing this value also updates the value of the strip's repeats or its action's end frame. If only the end frame should be changed, see the \"frame_end\" property instead"
+msgstr "NLA 片段的结束帧。注意：更改此值也会更新片段重复或其动作结束帧的值。如果只应更改结束帧，请参阅“frame_end”属性"
+
+
+msgid "Start Frame (manipulated from UI)"
+msgstr "起始帧(从 UI 操作)"
+
+
+msgid "Start frame of the NLA strip. Note: changing this value also updates the value of the strip's end frame. If only the start frame should be changed, see the \"frame_start\" property instead"
+msgstr "NLA片段的起始帧。注意：更改此值也会更新片段结束帧的值。如果只应更改起始帧，请参阅“frame_start”属性"
+
+
 msgid "Amount the strip contributes to the current result"
 msgstr "贡献给当前结果的片段数量"
 
@@ -42867,10 +42931,6 @@ msgid "Function Node"
 msgstr "函数节点"
 
 
-msgid "Align Euler To Vector"
-msgstr "对齐欧拉至矢量"
-
-
 msgid "Axis to align to the vector"
 msgstr "要与矢量对齐的轴"
 
@@ -43443,6 +43503,10 @@ msgid "Custom Geometry Group Node for Python nodes"
 msgstr "用于Python节点的自定义几何群组节点"
 
 
+msgid "Deform Curves on Surface"
+msgstr "在表面上变形曲面"
+
+
 msgid "Delete Geometry"
 msgstr "删除几何体"
 
@@ -43733,10 +43797,6 @@ msgstr "为每个选定面在点云中创建点"
 
 msgid "Create a point in the point cloud for each selected face corner"
 msgstr "为每个选定面拐在点云中创建点"
-
-
-msgid "Mesh To Volume"
-msgstr "网格 -> 体积"
 
 
 msgid "How the voxel size is specified"
@@ -44144,6 +44204,10 @@ msgid "Frame"
 msgstr "框"
 
 
+msgid "Collect related nodes together in a common area. Useful for organization when the re-usability of a node group is not required"
+msgstr "将相关节点收集在公共区域中。当不需要节点组的可重用性时，对便于组织节点"
+
+
 msgid "Label Font Size"
 msgstr "标签字体大小"
 
@@ -44160,8 +44224,16 @@ msgid "Group Input"
 msgstr "组输入"
 
 
+msgid "Expose connected data from inside a node group as inputs to its interface"
+msgstr "暴露节点组内部的连接数据作为其输入接口"
+
+
 msgid "Group Output"
 msgstr "组输出"
+
+
+msgid "Output data from inside of a node group"
+msgstr "从节点组内部输出数据"
 
 
 msgid "True if this node is used as the active group output"
@@ -44170,6 +44242,10 @@ msgstr "若将此节点用作活动的节点组输出项, 则表示可用"
 
 msgid "Reroute"
 msgstr "转接点"
+
+
+msgid "A single-socket organization tool that supports one input and multiple outputs"
+msgstr "支持一个输入和多个输出的单接口组织工具"
 
 
 msgid "Shader Node"
@@ -44184,8 +44260,20 @@ msgid "Add Shader"
 msgstr "相加着色器"
 
 
+msgid "Add two Shaders together"
+msgstr "将两个着色器一起相加"
+
+
 msgid "Ambient Occlusion"
 msgstr "环境光遮蔽 (AO)"
+
+
+msgid ""
+"Compute how much the hemisphere above the shading point is occluded, for example to add weathering effects to corners.\n"
+"Note: For Cycles, this may slow down renders significantly"
+msgstr ""
+"计算阴影点上方的半球的受遮挡程度，例如，为角落添加风化效果。\n"
+"注意: 对于Cycles，这可能会显著减慢渲染速度"
 
 
 msgid "Trace rays towards the inside of the object"
@@ -44202,6 +44290,10 @@ msgstr "计算环境光遮蔽(AO)时仅考虑自身物体"
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "每次着色器解释时要追踪的光线数"
+
+
+msgid "Retrieve attributes attached to objects or geometry"
+msgstr "检索附加到物体或几何体的属性"
 
 
 msgid "Attribute Name"
@@ -44236,16 +44328,44 @@ msgid "Background"
 msgstr "背景"
 
 
+msgid ""
+"Add background light emission.\n"
+"Note: This node should only be used for the world surface output"
+msgstr ""
+"添加背景光发射。\n"
+"注意: 此节点应仅用于世界表面输出"
+
+
+msgid ""
+"Generates normals with round corners.\n"
+"Note: only supported in Cycles, and may slow down renders"
+msgstr ""
+"生成圆角法线。\n"
+"注意：仅在 Cycles 中受支持，可能会减慢渲染速度"
+
+
 msgid "Blackbody"
 msgstr "黑体"
+
+
+msgid "Convert a blackbody temperature to an RGB value"
+msgstr "将黑体温度转换为 RGB 值"
 
 
 msgid "Bright Contrast"
 msgstr "亮度对比度"
 
 
+msgid "Control the brightness and contrast of the input color"
+msgstr "控制输入颜色的亮度和对比度"
+
+
 msgid "Anisotropic BSDF"
 msgstr "各向异性 BSDF"
+
+
+msgid "Glossy reflection with separate control over U and V direction roughness"
+msgstr "光泽反射，可单独控制 U 和 V 方向粗糙度"
 
 
 msgid "Light scattering distribution on rough surface"
@@ -44276,8 +44396,16 @@ msgid "Diffuse BSDF"
 msgstr "漫射 BSDF"
 
 
+msgid "Lambertian and Oren-Nayar diffuse reflection"
+msgstr "Lambertian 和 Oren-Nayar 漫反射"
+
+
 msgid "Glass BSDF"
 msgstr "玻璃 BSDF"
+
+
+msgid "Glass-like shader mixing refraction and reflection at grazing angles"
+msgstr "在掠角混合折射和反射的玻璃状着色器"
 
 
 msgid "Results in perfectly sharp reflections like a mirror. The Roughness value is not used"
@@ -44288,8 +44416,16 @@ msgid "Glossy BSDF"
 msgstr "光泽 BSDF"
 
 
+msgid "Reflection with microfacet distribution, used for materials such as metal or mirrors"
+msgstr "带有微面分布的反射，用于金属或镜子等材质"
+
+
 msgid "Hair BSDF"
 msgstr "毛发 BSDF"
+
+
+msgid "Reflection and transmission shaders optimized for hair rendering"
+msgstr "针对头发渲染进行了优化的反射和透射着色器"
 
 
 msgid "Hair BSDF component to use"
@@ -44310,6 +44446,10 @@ msgstr "穿过毛发并从另一侧出来的光线。"
 
 msgid "Principled Hair BSDF"
 msgstr "原理化毛发BSDF"
+
+
+msgid "Physically-based, easy-to-use shader for rendering hair and fur"
+msgstr "基于物理、易于使用的着色器，用于渲染头发和皮毛"
 
 
 msgid "Color Parametrization"
@@ -60970,6 +61110,19 @@ msgstr "当复制片段时，为它们所使用的动作分配新的副本"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "关联复制"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "复制并移动选中的发股"
+
+
+msgid "Duplicate Strips"
+msgstr "复制片段"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "添加函数修改器"
 
@@ -62506,11 +62659,6 @@ msgstr "复制所选物体"
 
 msgid "Duplicate Objects"
 msgstr "复制物体"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "关联复制"
 
 
 msgctxt "Operator"
@@ -70755,14 +70903,6 @@ msgid "Duplicate the selected strips"
 msgstr "复制已选择的片段"
 
 
-msgid "Duplicate selected strips and move them"
-msgstr "复制并移动选中的发股"
-
-
-msgid "Duplicate Strips"
-msgstr "复制片段"
-
-
 msgid "Slide a sequence strip in time"
 msgstr "在一定时间内滑动序列块"
 
@@ -73396,24 +73536,6 @@ msgstr "恢复到默认值"
 
 msgid "Reset this property's value to its default value"
 msgstr "将当前属性值恢复到默认值"
-
-
-msgctxt "Operator"
-msgid "Tree View drop"
-msgstr "树视图拖放"
-
-
-msgid "Drag and drop items onto a tree item"
-msgstr "将条目拖放到树条目上"
-
-
-msgctxt "Operator"
-msgid "Rename Tree-View Item"
-msgstr "重命名树视图条目"
-
-
-msgid "Rename the active item in the tree"
-msgstr "在树形图中重命名活动条目"
 
 
 msgctxt "Operator"
@@ -83214,34 +83336,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "内存缓存限值(MB)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "OpenSudiv计算类型"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "用于OpenSubdiv的计算机后端类型"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL变换反馈"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL计算"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "用于存储控制台缓存的最大行数"
 
@@ -84338,6 +84432,14 @@ msgstr "将曲线渲染为环形三维几何体，以便在近距查看时获得
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "用于基数曲线交互的细分级数 (幂值翻倍)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -89415,10 +89517,6 @@ msgid "Inverse Gain"
 msgstr "反向增益"
 
 
-msgid "Invert the gain color`"
-msgstr "反转色彩增益"
-
-
 msgid "Inverse Gamma"
 msgstr "反转伽玛"
 
@@ -89453,10 +89551,6 @@ msgstr "反相能量颜色"
 
 msgid "Inverse Slope"
 msgstr "反转坡度"
-
-
-msgid "Invert the slope color`"
-msgstr "反相坡度颜色"
 
 
 msgid "Color balance lift (shadows)"
@@ -101887,6 +101981,11 @@ msgid "Lock Invert All"
 msgstr "反转全部锁定 / 解锁状态"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "删除全部形态键"
+
+
 msgid "Store"
 msgstr "存储"
 
@@ -101950,11 +102049,6 @@ msgstr "混合后的新形状"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "镜像形态键(拓扑)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "删除全部形态键"
 
 
 msgctxt "Operator"
@@ -110366,6 +110460,14 @@ msgid "GPencil Weight Paint: LMB to paint | RMB/Escape to Exit"
 msgstr "蜡笔权重绘制：LMB 绘制 |RMB/Escape 退出"
 
 
+msgid "Failed to set value"
+msgstr "未能设置值"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "LMB: 笔画 - Shift: 填充 - Shift+Ctrl: 笔画+填充"
+
+
 msgid "Error evaluating number, see Info editor for details"
 msgstr "计算数字错误，详细信息见信息编辑器"
 
@@ -110552,14 +110654,6 @@ msgstr "在线手册"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "在线 Python 参考"
-
-
-msgid "Failed to set value"
-msgstr "未能设置值"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "LMB: 笔画 - Shift: 填充 - Shift+Ctrl: 笔画+填充"
 
 
 msgid "Menu Missing:"
@@ -115117,10 +115211,6 @@ msgstr "无法从数据块 '%s' 创建库重写，其父级之一不可被覆盖
 
 msgid "Invalid hierarchy root ('%s') found, needed to create library override from data-block '%s'"
 msgstr "找到无效的层级根 ('%s')，需要从数据块 '%s' 创建库重写"
-
-
-msgid "Could not create library override from data-block '%s'"
-msgstr "无法从数据块 '%s'创建库重写"
 
 
 msgid "Cannot clear embedded library override id '%s', only overrides of real data-blocks can be directly deleted"
