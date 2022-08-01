@@ -50,13 +50,13 @@ class Film {
   /** Static reference as SwapChain does not actually move the objects when swapping. */
   GPUTexture *combined_src_tx_ = nullptr;
   GPUTexture *combined_dst_tx_ = nullptr;
+  /** Incomming combined buffer with post fx applied (motion blur + depth of field). */
+  GPUTexture *combined_final_tx_ = nullptr;
   /** Weight buffers. Double buffered to allow updating it during accumulation. */
   SwapChain<Texture, 2> weight_tx_;
   /** Static reference as SwapChain does not actually move the objects when swapping. */
   GPUTexture *weight_src_tx_ = nullptr;
   GPUTexture *weight_dst_tx_ = nullptr;
-  /** Extent used by the render buffers when rendering the main views. */
-  int2 render_extent_ = int2(-1);
   /** User setting to disable reprojection. Useful for debugging or have a more precise render. */
   bool force_disable_reprojection_ = false;
 
@@ -76,7 +76,7 @@ class Film {
   void end_sync();
 
   /** Accumulate the newly rendered sample contained in #RenderBuffers and blit to display. */
-  void accumulate(const DRWView *view);
+  void accumulate(const DRWView *view, GPUTexture *combined_final_tx);
 
   /** Blit to display. No rendered sample needed. */
   void display();
@@ -86,10 +86,15 @@ class Film {
 
   int2 render_extent_get() const
   {
-    return render_extent_;
+    return data_.render_extent;
   }
 
   float2 pixel_jitter_get() const;
+
+  float background_opacity_get() const
+  {
+    return data_.background_opacity;
+  }
 
   eViewLayerEEVEEPassType enabled_passes_get() const;
 
@@ -100,6 +105,23 @@ class Film {
       case EEVEE_RENDER_PASS_MIST:
       case EEVEE_RENDER_PASS_SHADOW:
       case EEVEE_RENDER_PASS_AO:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  static bool pass_is_float3(eViewLayerEEVEEPassType pass_type)
+  {
+    switch (pass_type) {
+      case EEVEE_RENDER_PASS_NORMAL:
+      case EEVEE_RENDER_PASS_DIFFUSE_LIGHT:
+      case EEVEE_RENDER_PASS_DIFFUSE_COLOR:
+      case EEVEE_RENDER_PASS_SPECULAR_LIGHT:
+      case EEVEE_RENDER_PASS_SPECULAR_COLOR:
+      case EEVEE_RENDER_PASS_VOLUME_LIGHT:
+      case EEVEE_RENDER_PASS_EMIT:
+      case EEVEE_RENDER_PASS_ENVIRONMENT:
         return true;
       default:
         return false;

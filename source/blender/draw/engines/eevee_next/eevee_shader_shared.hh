@@ -124,7 +124,7 @@ struct CameraData {
   float clip_far;
   eCameraType type;
 
-  bool initialized;
+  bool1 initialized;
 
 #ifdef __cplusplus
   /* Small constructor to allow detecting new buffers. */
@@ -154,6 +154,8 @@ struct FilmData {
   int2 extent;
   /** Offset of the film in the full-res frame, in pixels. */
   int2 offset;
+  /** Extent used by the render buffers when rendering the main views. */
+  int2 render_extent;
   /** Sub-pixel offset applied to the window matrix.
    * NOTE: In final film pixel unit.
    * NOTE: Positive values makes the view translate in the negative axes direction.
@@ -172,6 +174,9 @@ struct FilmData {
   /** Is true if accumulation of filtered passes is needed. */
   bool1 any_render_pass_1;
   bool1 any_render_pass_2;
+  /** Controlled by user in lookdev mode or by render settings. */
+  float background_opacity;
+  float _pad0;
   /** Output counts per type. */
   int color_len, value_len;
   /** Index in color_accum_img or value_accum_img of each pass. -1 if pass is not enabled. */
@@ -307,6 +312,40 @@ BLI_STATIC_ASSERT_ALIGN(VelocityGeometryIndex, 16)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Motion Blur
+ * \{ */
+
+#define MOTION_BLUR_TILE_SIZE 32
+#define MOTION_BLUR_MAX_TILE 512 /* 16384 / MOTION_BLUR_TILE_SIZE */
+struct MotionBlurData {
+  /** As the name suggests. Used to avoid a division in the sampling. */
+  float2 target_size_inv;
+  /** Viewport motion scaling factor. Make blur relative to frame time not render time. */
+  float2 motion_scale;
+  /** Depth scaling factor. Avoid blurring background behind moving objects. */
+  float depth_scale;
+
+  float _pad0, _pad1, _pad2;
+};
+BLI_STATIC_ASSERT_ALIGN(MotionBlurData, 16)
+
+/* For some reasons some GLSL compilers do not like this struct.
+ * So we declare it as a uint array instead and do indexing ourselves. */
+#ifdef __cplusplus
+struct MotionBlurTileIndirection {
+  /**
+   * Stores indirection to the tile with the highest velocity covering each tile.
+   * This is stored using velocity in the MSB to be able to use atomicMax operations.
+   */
+  uint prev[MOTION_BLUR_MAX_TILE][MOTION_BLUR_MAX_TILE];
+  uint next[MOTION_BLUR_MAX_TILE][MOTION_BLUR_MAX_TILE];
+};
+BLI_STATIC_ASSERT_ALIGN(MotionBlurTileIndirection, 16)
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Ray-Tracing
  * \{ */
 
@@ -370,6 +409,8 @@ using SamplingDataBuf = draw::StorageBuffer<SamplingData>;
 using VelocityGeometryBuf = draw::StorageArrayBuffer<float4, 16, true>;
 using VelocityIndexBuf = draw::StorageArrayBuffer<VelocityIndex, 16>;
 using VelocityObjectBuf = draw::StorageArrayBuffer<float4x4, 16>;
+using MotionBlurDataBuf = draw::UniformBuffer<MotionBlurData>;
+using MotionBlurTileIndirectionBuf = draw::StorageBuffer<MotionBlurTileIndirection, true>;
 
 }  // namespace blender::eevee
 #endif

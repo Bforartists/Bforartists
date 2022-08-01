@@ -1216,10 +1216,8 @@ unset(LIB)
 setup_platform_linker_flags(bforartists)
 setup_platform_linker_libs(bforartists)
 
-if(APPLE)
-  set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
-elseif(UNIX)
-  set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/blender.map)
+if(DEFINED PLATFORM_SYMBOLS_MAP)
+  set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${PLATFORM_SYMBOLS_MAP})
 endif()
 
 # -----------------------------------------------------------------------------

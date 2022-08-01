@@ -475,7 +475,7 @@ static int rna_UIList_list_id_length(PointerRNA *ptr)
 }
 
 static void uilist_draw_item(uiList *ui_list,
-                             bContext *C,
+                             const bContext *C,
                              uiLayout *layout,
                              PointerRNA *dataptr,
                              PointerRNA *itemptr,
@@ -509,7 +509,7 @@ static void uilist_draw_item(uiList *ui_list,
   RNA_parameter_list_free(&list);
 }
 
-static void uilist_draw_filter(uiList *ui_list, bContext *C, uiLayout *layout)
+static void uilist_draw_filter(uiList *ui_list, const bContext *C, uiLayout *layout)
 {
   extern FunctionRNA rna_UIList_draw_filter_func;
 
@@ -529,7 +529,7 @@ static void uilist_draw_filter(uiList *ui_list, bContext *C, uiLayout *layout)
 }
 
 static void uilist_filter_items(uiList *ui_list,
-                                bContext *C,
+                                const bContext *C,
                                 PointerRNA *dataptr,
                                 const char *propname)
 {
