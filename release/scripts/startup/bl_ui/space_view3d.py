@@ -8384,6 +8384,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             if context.object.mode == 'EDIT_GPENCIL':
+                gpd = context.object.data
                 split = layout.split()
                 col = split.column()
                 row = col.row()
@@ -8401,7 +8402,10 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             # Handles for Curve Edit
             if context.object.mode == 'EDIT_GPENCIL':
                 gpd = context.object.data
-                if gpd.use_curve_edit:
+                if not gpd.use_curve_edit:
+                    layout.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
+                else:
+                    # Handles for Curve Edit
                     layout.prop(overlay, "display_handle", text="Handles")
 
         if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:

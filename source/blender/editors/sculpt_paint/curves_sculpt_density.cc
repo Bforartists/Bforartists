@@ -115,12 +115,20 @@ struct DensityAddOperationExecutor {
 
     surface_ob_orig_ = curves_id_orig_->surface;
     surface_orig_ = static_cast<Mesh *>(surface_ob_orig_->data);
+    if (surface_orig_->totpoly == 0) {
+      report_empty_original_surface(stroke_extension.reports);
+      return;
+    }
 
     surface_ob_eval_ = DEG_get_evaluated_object(ctx_.depsgraph, surface_ob_orig_);
     if (surface_ob_eval_ == nullptr) {
       return;
     }
     surface_eval_ = BKE_object_get_evaluated_mesh(surface_ob_eval_);
+    if (surface_eval_->totpoly == 0) {
+      report_empty_evaluated_surface(stroke_extension.reports);
+      return;
+    }
 
     BKE_bvhtree_from_mesh_get(&surface_bvh_eval_, surface_eval_, BVHTREE_FROM_LOOPTRI, 2);
     BLI_SCOPED_DEFER([&]() { free_bvhtree_from_mesh(&surface_bvh_eval_); });
@@ -188,6 +196,7 @@ struct DensityAddOperationExecutor {
      * curves. */
     Array<bool> new_curve_skipped(new_positions_cu.size(), false);
     threading::parallel_invoke(
+        512 < already_added_curves + new_positions_cu.size(),
         /* Build kdtree from root points created by the current stroke. */
         [&]() {
           for (const int i : IndexRange(already_added_curves)) {
@@ -277,7 +286,12 @@ struct DensityAddOperationExecutor {
     add_inputs.reverse_uv_sampler = &reverse_uv_sampler;
     add_inputs.old_roots_kdtree = self_->original_curve_roots_kdtree_;
 
-    geometry::add_curves_on_mesh(*curves_orig_, add_inputs);
+    const geometry::AddCurvesOnMeshOutputs add_outputs = geometry::add_curves_on_mesh(
+        *curves_orig_, add_inputs);
+
+    if (add_outputs.uv_error) {
+      report_invalid_uv_map(stroke_extension.reports);
+    }
 
     DEG_id_tag_update(&curves_id_orig_->id, ID_RECALC_GEOMETRY);
     WM_main_add_notifier(NC_GEOM | ND_DATA, &curves_id_orig_->id);
@@ -304,6 +318,7 @@ struct DensityAddOperationExecutor {
     };
 
     threading::parallel_invoke(
+        1024 < original_positions.size() + deformed_positions.size(),
         [&]() {
           self_->original_curve_roots_kdtree_ = roots_kdtree_from_positions(original_positions);
         },
@@ -590,7 +605,7 @@ struct DensitySubtractOperationExecutor {
           return curves_to_delete[curve_i];
         });
 
-    /* Remove deleted curves fromt he stored deformed root positions. */
+    /* Remove deleted curves from the stored deformed root positions. */
     const Vector<IndexRange> ranges_to_keep = mask_to_delete.extract_ranges_invert(
         curves_->curves_range());
     BLI_assert(curves_->curves_num() == self_->deformed_root_positions_.size());

@@ -715,8 +715,9 @@ Span<float3> CurvesGeometry::evaluated_tangents() const
       }
     });
 
-    /* Correct the first and last tangents of Bezier curves so that they align with the inner
-     * handles. This is a separate loop to avoid the cost when Bezier type curves are not used. */
+    /* Correct the first and last tangents of non-cyclic Bezier curves so that they align with the
+     * inner handles. This is a separate loop to avoid the cost when Bezier type curves are not
+     * used. */
     Vector<int64_t> bezier_indices;
     const IndexMask bezier_mask = this->indices_for_curve_type(CURVE_TYPE_BEZIER, bezier_indices);
     if (!bezier_mask.is_empty()) {
@@ -726,6 +727,9 @@ Span<float3> CurvesGeometry::evaluated_tangents() const
 
       threading::parallel_for(bezier_mask.index_range(), 1024, [&](IndexRange range) {
         for (const int curve_index : bezier_mask.slice(range)) {
+          if (cyclic[curve_index]) {
+            continue;
+          }
           const IndexRange points = this->points_for_curve(curve_index);
           const IndexRange evaluated_points = this->evaluated_points_for_curve(curve_index);
 
@@ -1159,14 +1163,18 @@ static CurvesGeometry copy_with_removed_points(const CurvesGeometry &curves,
   }
 
   CurvesGeometry new_curves{new_point_count, new_curve_count};
+  Vector<bke::AttributeTransferData> point_attributes = bke::retrieve_attributes_for_transfer(
+      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT);
+  Vector<bke::AttributeTransferData> curve_attributes = bke::retrieve_attributes_for_transfer(
+      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE);
 
   threading::parallel_invoke(
+      256 < new_point_count * new_curve_count,
       /* Initialize curve offsets. */
       [&]() { new_curves.offsets_for_write().copy_from(new_curve_offsets); },
-      /* Copy over point attributes. */
       [&]() {
-        for (auto &attribute : bke::retrieve_attributes_for_transfer(
-                 curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT)) {
+        /* Copy over point attributes. */
+        for (bke::AttributeTransferData &attribute : point_attributes) {
           threading::parallel_for(copy_point_ranges.index_range(), 128, [&](IndexRange range) {
             for (const int range_i : range) {
               const IndexRange src_range = copy_point_ranges[range_i];
@@ -1177,24 +1185,28 @@ static CurvesGeometry copy_with_removed_points(const CurvesGeometry &curves,
                                    {copy_point_range_dst_offsets[range_i], src_range.size()});
             }
           });
-          attribute.dst.finish();
         }
       },
-      /* Copy over curve attributes.
-       * In some cases points are just dissolved, so the the number of
-       * curves will be the same. That could be optimized in the future. */
       [&]() {
-        for (auto &attribute : bke::retrieve_attributes_for_transfer(
-                 curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE)) {
+        /* Copy over curve attributes.
+         * In some cases points are just dissolved, so the the number of
+         * curves will be the same. That could be optimized in the future. */
+        for (bke::AttributeTransferData &attribute : curve_attributes) {
           if (new_curves.curves_num() == curves.curves_num()) {
             attribute.dst.span.copy_from(attribute.src);
           }
           else {
             copy_with_map(attribute.src, new_curve_orig_indices, attribute.dst.span);
           }
-          attribute.dst.finish();
         }
       });
+
+  for (bke::AttributeTransferData &attribute : point_attributes) {
+    attribute.dst.finish();
+  }
+  for (bke::AttributeTransferData &attribute : curve_attributes) {
+    attribute.dst.finish();
+  }
 
   return new_curves;
 }
@@ -1232,8 +1244,13 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
   }
 
   CurvesGeometry new_curves{new_tot_points, new_tot_curves};
+  Vector<bke::AttributeTransferData> point_attributes = bke::retrieve_attributes_for_transfer(
+      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT);
+  Vector<bke::AttributeTransferData> curve_attributes = bke::retrieve_attributes_for_transfer(
+      curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE);
 
   threading::parallel_invoke(
+      256 < new_tot_points * new_tot_curves,
       /* Initialize curve offsets. */
       [&]() {
         MutableSpan<int> new_offsets = new_curves.offsets_for_write();
@@ -1260,10 +1277,9 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
               }
             });
       },
-      /* Copy over point attributes. */
       [&]() {
-        for (auto &attribute : bke::retrieve_attributes_for_transfer(
-                 curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_POINT)) {
+        /* Copy over point attributes. */
+        for (bke::AttributeTransferData &attribute : point_attributes) {
           threading::parallel_for(old_curve_ranges.index_range(), 128, [&](IndexRange range) {
             for (const int range_i : range) {
               copy_between_buffers(attribute.src.type(),
@@ -1273,13 +1289,11 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
                                    new_point_ranges[range_i]);
             }
           });
-          attribute.dst.finish();
         }
       },
-      /* Copy over curve attributes. */
       [&]() {
-        for (auto &attribute : bke::retrieve_attributes_for_transfer(
-                 curves.attributes(), new_curves.attributes_for_write(), ATTR_DOMAIN_MASK_CURVE)) {
+        /* Copy over curve attributes. */
+        for (bke::AttributeTransferData &attribute : curve_attributes) {
           threading::parallel_for(old_curve_ranges.index_range(), 128, [&](IndexRange range) {
             for (const int range_i : range) {
               copy_between_buffers(attribute.src.type(),
@@ -1289,9 +1303,15 @@ static CurvesGeometry copy_with_removed_curves(const CurvesGeometry &curves,
                                    new_curve_ranges[range_i]);
             }
           });
-          attribute.dst.finish();
         }
       });
+
+  for (bke::AttributeTransferData &attribute : point_attributes) {
+    attribute.dst.finish();
+  }
+  for (bke::AttributeTransferData &attribute : curve_attributes) {
+    attribute.dst.finish();
+  }
 
   return new_curves;
 }
