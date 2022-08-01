@@ -423,6 +423,35 @@ class BlendFileBlock:
             use_nil=use_nil, use_str=use_str,
         )
 
+    def get_raw_data(self, dna_type_id, base_index=0):
+        dna_types_to_size = {
+            b'char': 1, b'uchar': 1,
+            b'short': 2, b'ushort': 2,
+            b'int': 4, b'uint': 4,
+            b'int64_t': 8, b'uint64_t': 8,
+            b'float': 4,
+            b'double': 8,
+        }
+        if dna_type_id not in dna_types_to_size:
+            raise NotImplementedError("Cannot read raw data of type %r" % dna_type_id)
+
+        is_pointer = False
+        dna_size = dna_types_to_size[dna_type_id]
+        array_size = self.size // dna_size
+
+        ofs = self.file_offset
+        if base_index != 0:
+            assert(base_index < array_size)
+            ofs += dna_size * base_index
+        self.file.handle.seek(ofs, os.SEEK_SET)
+
+        print(dna_type_id, array_size, dna_size)
+        return DNA_IO.read_data(self.file.handle, self.file.header,
+                                is_pointer,
+                                dna_type_id,
+                                dna_size,
+                                array_size)
+
     def get_recursive_iter(self, path, path_root=b"",
                            default=...,
                            sdna_index_refine=None,
@@ -777,49 +806,15 @@ class DNAStruct:
         dna_name = field.dna_name
         dna_size = field.dna_size
 
-        if dna_name.is_pointer:
-            return DNA_IO.read_pointer(handle, header)
-        elif dna_type.dna_type_id == b'int':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_int(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_int(handle, header)
-        elif dna_type.dna_type_id == b'short':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_short(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_short(handle, header)
-        elif dna_type.dna_type_id == b'ushort':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_ushort(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_ushort(handle, header)
-        elif dna_type.dna_type_id == b'uint64_t':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_ulong(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_ulong(handle, header)
-        elif dna_type.dna_type_id == b'float':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_float(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_float(handle, header)
-        elif dna_type.dna_type_id == b'char':
-            if dna_size == 1:
-                # Single char, assume it's bitflag or int value, and not a string/bytes data...
-                return DNA_IO.read_char(handle, header)
-            if use_str:
-                if use_nil:
-                    return DNA_IO.read_string0(handle, dna_name.array_size)
-                else:
-                    return DNA_IO.read_string(handle, dna_name.array_size)
-            else:
-                if use_nil:
-                    return DNA_IO.read_bytes0(handle, dna_name.array_size)
-                else:
-                    return DNA_IO.read_bytes(handle, dna_name.array_size)
-        elif dna_type.dna_type_id == b'uchar':
-            if dna_name.array_size > 1:
-                return [DNA_IO.read_uchar(handle, header) for i in range(dna_name.array_size)]
-            return DNA_IO.read_uchar(handle, header)
-        else:
-            raise NotImplementedError("%r exists but isn't pointer, can't resolve field %r" %
-                                      (path, dna_name.name_only), dna_name, dna_type)
+        try:
+            return DNA_IO.read_data(handle, header,
+                                    dna_name.is_pointer,
+                                    dna_type.dna_type_id,
+                                    dna_size,
+                                    dna_name.array_size)
+        except NotImplementedError as e:
+            raise NotImplementedError("%r exists, but can't resolve field %r" %
+                    (path, dna_name.name_only), dna_name, dna_type)
 
     def field_set(self, header, handle, path, value):
         assert(type(path) == bytes)
@@ -853,6 +848,54 @@ class DNA_IO:
 
     def __new__(cls, *args, **kwargs):
         raise RuntimeError("%s should not be instantiated" % cls)
+
+    @classmethod
+    def read_data(cls,
+                  handle, header,
+                  is_pointer, dna_type_id, dna_size, array_size,
+                  use_str=True, use_str_nil=True):
+        if is_pointer:
+            return cls.read_pointer(handle, header)
+        elif dna_type_id == b'int':
+            if array_size > 1:
+                return [cls.read_int(handle, header) for i in range(array_size)]
+            return cls.read_int(handle, header)
+        elif dna_type_id == b'short':
+            if array_size > 1:
+                return [cls.read_short(handle, header) for i in range(array_size)]
+            return cls.read_short(handle, header)
+        elif dna_type_id == b'ushort':
+            if array_size > 1:
+                return [cls.read_ushort(handle, header) for i in range(array_size)]
+            return cls.read_ushort(handle, header)
+        elif dna_type_id == b'uint64_t':
+            if array_size > 1:
+                return [cls.read_ulong(handle, header) for i in range(array_size)]
+            return cls.read_ulong(handle, header)
+        elif dna_type_id == b'float':
+            if array_size > 1:
+                return [cls.read_float(handle, header) for i in range(array_size)]
+            return cls.read_float(handle, header)
+        elif dna_type_id == b'char':
+            if dna_size == 1 and array_size <= 1:
+                # Single char, assume it's bitflag or int value, and not a string/bytes data...
+                return cls.read_char(handle, header)
+            if use_str:
+                if use_str_nil:
+                    return cls.read_string0(handle, array_size)
+                else:
+                    return cls.read_string(handle, array_size)
+            else:
+                if use_str_nil:
+                    return cls.read_bytes0(handle, array_size)
+                else:
+                    return cls.read_bytes(handle, array_size)
+        elif dna_type_id == b'uchar':
+            if array_size > 1:
+                return [cls.read_uchar(handle, header) for i in range(array_size)]
+            return cls.read_uchar(handle, header)
+        else:
+            raise NotImplementedError("Reading %r type is not implemented" % dna_type_id)
 
     @staticmethod
     def write_string(handle, astring, fieldlen):
