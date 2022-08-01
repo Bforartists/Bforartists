@@ -13527,7 +13527,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_FIELD_AT_INDEX:
       icon = ICON_FIELD_AT_INDEX;
       break;
-    case GEO_NODE_FIELD_ON_DOMAIN:
+    case GEO_NODE_INTERPOLATE_DOMAIN:
       icon = ICON_FIELD_DOMAIN;
       break;
     case GEO_NODE_FILL_CURVE:
