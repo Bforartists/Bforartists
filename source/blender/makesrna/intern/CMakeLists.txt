@@ -26,6 +26,7 @@ set(DEFSRC
   rna_context.c
   rna_curve.c
   rna_curveprofile.c
+  rna_curves.c
   rna_depsgraph.c
   rna_dynamicpaint.c
   rna_fcurve.c
@@ -85,7 +86,6 @@ set(DEFSRC
 if(WITH_EXPERIMENTAL_FEATURES)
   add_definitions(-DWITH_SIMULATION_DATABLOCK)
   list(APPEND DEFSRC
-    rna_curves.c
     rna_simulation.c
   )
 endif()
@@ -159,6 +159,7 @@ set(SRC_RNA_INC
   ../RNA_documentation.h
   ../RNA_enum_items.h
   ../RNA_enum_types.h
+  ../RNA_path.h
   ../RNA_types.h
 )
 
@@ -416,6 +417,7 @@ add_custom_command(
 set(SRC
   rna_access.c
   rna_access_compare_override.c
+  rna_path.cc
   ${GENSRC}
 
   ${SRC_RNA_INC}
