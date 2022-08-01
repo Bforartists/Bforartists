@@ -9,16 +9,16 @@
 # import modules
 import bpy
 from bpy.props import (
-        BoolProperty,
-        FloatProperty,
-        StringProperty,
-        EnumProperty,
-        IntProperty,
-        PointerProperty,
-        )
+    BoolProperty,
+    FloatProperty,
+    StringProperty,
+    EnumProperty,
+    IntProperty,
+    PointerProperty,
+)
 from math import (
-        sin, cos, pi,
-        )
+    sin, cos, pi,
+)
 from .ant_noise import noise_gen
 
 # ------------------------------------------------------------
@@ -28,6 +28,7 @@ from .ant_noise import noise_gen
 # name ... Name of the new mesh (& object)
 
 from bpy_extras import object_utils
+
 
 def create_mesh_object(context, verts, edges, faces, name):
     # Create new mesh
@@ -45,7 +46,7 @@ def grid_gen(sub_d_x, sub_d_y, tri, meshsize_x, meshsize_y, props, water_plane, 
     faces = []
     vappend = verts.append
     fappend = faces.append
-    for i in range (0, sub_d_x):
+    for i in range(0, sub_d_x):
         x = meshsize_x * (i / (sub_d_x - 1) - 1 / 2)
         for j in range(0, sub_d_y):
             y = meshsize_y * (j / (sub_d_y - 1) - 1 / 2)
@@ -53,7 +54,7 @@ def grid_gen(sub_d_x, sub_d_y, tri, meshsize_x, meshsize_y, props, water_plane, 
                 z = noise_gen((x, y, 0), props)
             else:
                 z = water_level
-            vappend((x,y,z))
+            vappend((x, y, z))
 
             if i > 0 and j > 0:
                 A = i * sub_d_y + (j - 1)
@@ -89,8 +90,8 @@ def sphere_gen(sub_d_x, sub_d_y, tri, meshsize, props, water_plane, water_level)
             vappend(((u + u * h), (v + v * h), (w + w * h)))
 
     count = 0
-    for i in range (0, sub_d_y * (sub_d_x - 1)):
-        if count < sub_d_y - 1 :
+    for i in range(0, sub_d_y * (sub_d_x - 1)):
+        if count < sub_d_y - 1:
             A = i + 1
             B = i
             C = (i + sub_d_y)
@@ -115,7 +116,6 @@ class AntLandscapeRefresh(bpy.types.Operator):
     bl_description = "Refresh landscape with current settings"
     bl_options = {'REGISTER', 'UNDO'}
 
-
     @classmethod
     def poll(cls, context):
         ob = bpy.context.active_object
@@ -125,8 +125,8 @@ class AntLandscapeRefresh(bpy.types.Operator):
         # ant object items
         obj = bpy.context.active_object
 
-        bpy.ops.object.mode_set(mode = 'EDIT')
-        bpy.ops.object.mode_set(mode = 'OBJECT')
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.object.mode_set(mode='OBJECT')
 
         keys = obj.ant_landscape.keys()
         if keys:
@@ -158,12 +158,13 @@ class AntLandscapeRefresh(bpy.types.Operator):
 
 # ------------------------------------------------------------
 # Do regenerate
+
+
 class AntLandscapeRegenerate(bpy.types.Operator):
     bl_idname = "mesh.ant_landscape_regenerate"
     bl_label = "Regenerate"
     bl_description = "Regenerate landscape with current settings"
     bl_options = {'REGISTER', 'UNDO'}
-
 
     @classmethod
     def poll(cls, context):
@@ -171,7 +172,6 @@ class AntLandscapeRegenerate(bpy.types.Operator):
         if ob.mode == 'EDIT':
             return False
         return ob.ant_landscape
-
 
     def execute(self, context):
 
@@ -192,32 +192,32 @@ class AntLandscapeRegenerate(bpy.types.Operator):
             if ob['sphere_mesh']:
                 # sphere
                 verts, faces = sphere_gen(
-                        ob['subdivision_y'],
-                        ob['subdivision_x'],
-                        ob['tri_face'],
-                        ob['mesh_size'],
-                        ant_props,
-                        False,
-                        0.0
-                        )
+                    ob['subdivision_y'],
+                    ob['subdivision_x'],
+                    ob['tri_face'],
+                    ob['mesh_size'],
+                    ant_props,
+                    False,
+                    0.0,
+                )
                 new_ob = create_mesh_object(context, verts, [], faces, new_name)
                 if ob['remove_double']:
                     new_ob.select_set(True)
-                    bpy.ops.object.mode_set(mode = 'EDIT')
+                    bpy.ops.object.mode_set(mode='EDIT')
                     bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)
-                    bpy.ops.object.mode_set(mode = 'OBJECT')
+                    bpy.ops.object.mode_set(mode='OBJECT')
             else:
                 # grid
                 verts, faces = grid_gen(
-                        ob['subdivision_x'],
-                        ob['subdivision_y'],
-                        ob['tri_face'],
-                        ob['mesh_size_x'],
-                        ob['mesh_size_y'],
-                        ant_props,
-                        False,
-                        0.0
-                        )
+                    ob['subdivision_x'],
+                    ob['subdivision_y'],
+                    ob['tri_face'],
+                    ob['mesh_size_x'],
+                    ob['mesh_size_y'],
+                    ant_props,
+                    False,
+                    0.0,
+                )
                 new_ob = create_mesh_object(context, verts, [], faces, new_name)
 
             new_ob.select_set(True)
@@ -235,33 +235,33 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                 if ob['sphere_mesh']:
                     # sphere
                     verts, faces = sphere_gen(
-                            ob['subdivision_y'],
-                            ob['subdivision_x'],
-                            ob['tri_face'],
-                            ob['mesh_size'],
-                            ant_props,
-                            ob['water_plane'],
-                            ob['water_level']
-                            )
-                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane")
+                        ob['subdivision_y'],
+                        ob['subdivision_x'],
+                        ob['tri_face'],
+                        ob['mesh_size'],
+                        ant_props,
+                        ob['water_plane'],
+                        ob['water_level'],
+                    )
+                    wobj = create_mesh_object(context, verts, [], faces, new_name + "_plane")
                     if ob['remove_double']:
                         wobj.select_set(True)
-                        bpy.ops.object.mode_set(mode = 'EDIT')
+                        bpy.ops.object.mode_set(mode='EDIT')
                         bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)
-                        bpy.ops.object.mode_set(mode = 'OBJECT')
+                        bpy.ops.object.mode_set(mode='OBJECT')
                 else:
                     # grid
                     verts, faces = grid_gen(
-                            2,
-                            2,
-                            ob['tri_face'],
-                            ob['mesh_size_x'],
-                            ob['mesh_size_y'],
-                            ant_props,
-                            ob['water_plane'],
-                            ob['water_level']
-                            )
-                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane")
+                        2,
+                        2,
+                        ob['tri_face'],
+                        ob['mesh_size_x'],
+                        ob['mesh_size_y'],
+                        ant_props,
+                        ob['water_plane'],
+                        ob['water_level'],
+                    )
+                    wobj = create_mesh_object(context, verts, [], faces, new_name + "_plane")
 
                 wobj.select_set(True)
 
@@ -310,40 +310,38 @@ class AntVgSlopeMap(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     z_method: EnumProperty(
-            name="Method:",
-            default='SLOPE_Z',
-            items=[
+        name="Method:",
+        default='SLOPE_Z',
+        items=[
                 ('SLOPE_Z', "Z Slope", "Slope for planar mesh"),
                 ('SLOPE_XYZ', "Sphere Slope", "Slope for spherical mesh")
-                ])
+        ])
     group_name: StringProperty(
-            name="Vertex Group Name:",
-            default="Slope",
-            description="Name"
-            )
+        name="Vertex Group Name:",
+        default="Slope",
+        description="Name"
+    )
     select_flat: BoolProperty(
-            name="Vert Select:",
-            default=True,
-            description="Select vertices on flat surface"
-            )
+        name="Vert Select:",
+        default=True,
+        description="Select vertices on flat surface"
+    )
     select_range: FloatProperty(
-            name="Vert Select Range:",
-            default=0.0,
-            min=0.0,
-            max=1.0,
-            description="Increase to select more vertices on slopes"
-            )
+        name="Vert Select Range:",
+        default=0.0,
+        min=0.0,
+        max=1.0,
+        description="Increase to select more vertices on slopes"
+    )
 
     @classmethod
     def poll(cls, context):
         ob = context.object
         return (ob and ob.type == 'MESH')
 
-
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
-
 
     def execute(self, context):
         message = "Popup Values: %d, %f, %s, %s" % \
@@ -421,7 +419,7 @@ def draw_ant_main(self, context, generate=True):
                 split.prop(self, "remove_double", toggle=True)
 
             box.prop(self, "ant_terrain_name")
-            box.prop_search(self, "land_material",  bpy.data, "materials")
+            box.prop_search(self, "land_material", bpy.data, "materials")
 
         col = box.column(align=True)
         col.prop(self, "subdivision_x")
@@ -450,11 +448,11 @@ def draw_ant_noise(self, context, generate=True):
         col = box.column(align=True)
         col.prop(self, "noise_offset_x")
         col.prop(self, "noise_offset_y")
-        if self.sphere_mesh == True or generate == False:
+        if self.sphere_mesh or generate == False:
             col.prop(self, "noise_offset_z")
         col.prop(self, "noise_size_x")
         col.prop(self, "noise_size_y")
-        if self.sphere_mesh == True or generate == False:
+        if self.sphere_mesh or generate == False:
             col.prop(self, "noise_size_z")
 
         col = box.column(align=True)
@@ -647,7 +645,7 @@ def draw_ant_displace(self, context, generate=True):
 
         if not generate:
             col = box.column(align=False)
-            col.prop_search(self, "vert_group",  bpy.context.object, "vertex_groups")
+            col.prop_search(self, "vert_group", bpy.context.object, "vertex_groups")
 
 
 def draw_ant_water(self, context):
@@ -657,7 +655,7 @@ def draw_ant_water(self, context):
     col.prop(self, "water_plane", toggle=True)
     if self.water_plane:
         col = box.column(align=True)
-        col.prop_search(self, "water_material",  bpy.data, "materials")
+        col.prop_search(self, "water_material", bpy.data, "materials")
         col = box.column()
         col.prop(self, "water_level")
 
@@ -744,8 +742,8 @@ from .utils import numexpr_available
 
 
 def availableVertexGroupsOrNone(self, context):
-    groups = [ ('None', 'None', 'None', 1) ]
-    return groups + [(name, name, name, n+1) for n,name in enumerate(context.active_object.vertex_groups.keys())]
+    groups = [('None', 'None', 'None', 1)]
+    return groups + [(name, name, name, n + 1) for n, name in enumerate(context.active_object.vertex_groups.keys())]
 
 
 class Eroder(bpy.types.Operator):
@@ -755,214 +753,190 @@ class Eroder(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     Iterations: IntProperty(
-            name="Iterations",
-            description="Number of overall iterations",
-            default=1,
-            min=1,
-            soft_max=100
-            )
+        name="Iterations",
+        description="Number of overall iterations",
+        default=1,
+        min=1,
+        soft_max=100
+    )
     IterRiver: IntProperty(
-            name="River Iterations",
-            description="Number of river iterations",
-            default=30,
-            min=1,
-            soft_max=1000
-            )
+        name="River Iterations",
+        description="Number of river iterations",
+        default=30,
+        min=1,
+        soft_max=1000
+    )
     IterAva: IntProperty(
-            name="Avalanche Iterations",
-            description="Number of avalanche iterations",
-            default=5,
-            min=1,
-            soft_max=10
-            )
+        name="Avalanche Iterations",
+        description="Number of avalanche iterations",
+        default=5,
+        min=1,
+        soft_max=10
+    )
     IterDiffuse: IntProperty(
-            name="Diffuse Iterations",
-            description="Number of diffuse iterations",
-            default=5,
-            min=1,
-            soft_max=10
-            )
+        name="Diffuse Iterations",
+        description="Number of diffuse iterations",
+        default=5,
+        min=1,
+        soft_max=10
+    )
     Ef: FloatProperty(
-            name="Rain on Plains",
-            description="1 gives equal rain across the terrain, 0 rains more at the mountain tops",
-            default=0.0,
-            min=0,
-            max=1
-            )
+        name="Rain on Plains",
+        description="1 gives equal rain across the terrain, 0 rains more at the mountain tops",
+        default=0.0,
+        min=0,
+        max=1
+    )
     Kd: FloatProperty(
-            name="Kd",
-            description="Thermal diffusion rate (1.0 is a fairly high rate)",
-            default=0.1,
-            min=0,
-            soft_max=100
-            )
+        name="Kd",
+        description="Thermal diffusion rate (1.0 is a fairly high rate)",
+        default=0.1,
+        min=0,
+        soft_max=100
+    )
     Kt: FloatProperty(
-            name="Kt",
-            description="Maximum stable talus angle",
-            default=radians(60),
-            min=0,
-            max=radians(90),
-            subtype='ANGLE'
-            )
+        name="Kt",
+        description="Maximum stable talus angle",
+        default=radians(60),
+        min=0,
+        max=radians(90),
+        subtype='ANGLE'
+    )
     Kr: FloatProperty(
-            name="Rain amount",
-            description="Total Rain amount",
-            default=.01,
-            min=0,
-            soft_max=1,
-            precision=3
-            )
+        name="Rain amount",
+        description="Total Rain amount",
+        default=.01,
+        min=0,
+        soft_max=1,
+        precision=3
+    )
     Kv: FloatProperty(
-            name="Rain variance",
-            description="Rain variance (0 is constant, 1 is uniform)",
-            default=0,
-            min=0,
-            max=1
-            )
+        name="Rain variance",
+        description="Rain variance (0 is constant, 1 is uniform)",
+        default=0,
+        min=0,
+        max=1
+    )
     userainmap: BoolProperty(
-            name="Use rain map",
-            description="Use active vertex group as a rain map",
-            default=True
-            )
+        name="Use rain map",
+        description="Use active vertex group as a rain map",
+        default=True
+    )
     Ks: FloatProperty(
-            name="Soil solubility",
-            description="Soil solubility - how quickly water quickly reaches saturation point",
-            default=0.5,
-            min=0,
-            soft_max=1
-            )
+        name="Soil solubility",
+        description="Soil solubility - how quickly water quickly reaches saturation point",
+        default=0.5,
+        min=0,
+        soft_max=1
+    )
     Kdep: FloatProperty(
-            name="Deposition rate",
-            description="Sediment deposition rate - how quickly silt is laid down once water stops flowing quickly",
-            default=0.1,
-            min=0,
-            soft_max=1
-            )
-    Kz: FloatProperty(name="Fluvial Erosion Rate",
-            description="Amount of sediment moved each main iteration - if 0, then rivers are formed but the mesh is not changed",
-            default=0.3,
-            min=0,
-            soft_max=20
-            )
+        name="Deposition rate",
+        description="Sediment deposition rate - how quickly silt is laid down once water stops flowing quickly",
+        default=0.1,
+        min=0,
+        soft_max=1
+    )
+    Kz: FloatProperty(
+        name="Fluvial Erosion Rate",
+        description="Amount of sediment moved each main iteration - if 0, then rivers are formed but the mesh is not changed",
+        default=0.3,
+        min=0,
+        soft_max=20)
     Kc: FloatProperty(
-            name="Carrying capacity",
-            description="Base sediment carrying capacity",
-            default=0.9,
-            min=0,
-            soft_max=1
-            )
+        name="Carrying capacity",
+        description="Base sediment carrying capacity",
+        default=0.9,
+        min=0,
+        soft_max=1
+    )
     Ka: FloatProperty(
-            name="Slope dependence",
-            description="Slope dependence of carrying capacity (not used)",
-            default=1.0,
-            min=0,
-            soft_max=2
-            )
+        name="Slope dependence",
+        description="Slope dependence of carrying capacity (not used)",
+        default=1.0,
+        min=0,
+        soft_max=2
+    )
     Kev: FloatProperty(
-            name="Evaporation",
-            description="Evaporation Rate per grid square in % - causes sediment to be dropped closer to the hills",
-            default=.5,
-            min=0,
-            soft_max=2
-            )
+        name="Evaporation",
+        description="Evaporation Rate per grid square in % - causes sediment to be dropped closer to the hills",
+        default=.5,
+        min=0,
+        soft_max=2
+    )
     numexpr: BoolProperty(
-            name="Numexpr",
-            description="Use numexpr module (if available)",
-            default=True
-            )
+        name="Numexpr",
+        description="Use numexpr module (if available)",
+        default=True
+    )
     Pd: FloatProperty(
-            name="Diffusion Amount",
-            description="Diffusion probability",
-            default=0.2,
-            min=0,
-            max=1
-            )
+        name="Diffusion Amount",
+        description="Diffusion probability",
+        default=0.2,
+        min=0,
+        max=1
+    )
     Pa: FloatProperty(
-            name="Avalanche Amount",
-            description="Avalanche amount",
-            default=0.5,
-            min=0,
-            max=1
-            )
+        name="Avalanche Amount",
+        description="Avalanche amount",
+        default=0.5,
+        min=0,
+        max=1
+    )
     Pw: FloatProperty(
-            name="River Amount",
-            description="Water erosion probability",
-            default=1,
-            min=0,
-            max=1
-            )
+        name="River Amount",
+        description="Water erosion probability",
+        default=1,
+        min=0,
+        max=1
+    )
     smooth: BoolProperty(
-            name="Smooth",
-            description="Set smooth shading",
-            default=True
-            )
+        name="Smooth",
+        description="Set smooth shading",
+        default=True
+    )
     showiterstats: BoolProperty(
-            name="Iteration Stats",
-            description="Show iteraration statistics",
-            default=False
-            )
-    showmeshstats: BoolProperty(name="Mesh Stats",
-            description="Show mesh statistics",
-            default=False
-            )
+        name="Iteration Stats",
+        description="Show iteraration statistics",
+        default=False
+    )
+    showmeshstats: BoolProperty(
+        name="Mesh Stats",
+        description="Show mesh statistics",
+        default=False
+    )
 
     stats = Stats()
-    counts= {}
+    counts = {}
+    maps = {
+        'rainmap': lambda g, r, c: g.rainmap[r, c],
+        'scree': lambda g, r, c: g.avalanced[r, c],
+        'avalanced': lambda g, r, c: -g.avalanced[r, c],
+        'water': lambda g, r, c: g.water[r, c] / g.watermax,
+        'scour': lambda g, r, c: g.scour[r, c] / max(g.scourmax, -g.scourmin),
+        'deposit': lambda g, r, c: g.scour[r, c] / min(-g.scourmax, g.scourmin),
+        'flowrate': lambda g, r, c: g.flowrate[r, c],
+        'sediment': lambda g, r, c: g.sediment[r, c],
+        'sedimentpct': lambda g, r, c: g.sedimentpct[r, c],
+        'capacity': lambda g, r, c: g.capacity[r, c]
+    }
 
     def execute(self, context):
 
         ob = context.active_object
-        me = ob.data
+        oldMesh = ob.data
         self.stats.reset()
-        try:
-            vgActive = ob.vertex_groups.active.name
-        except:
-            vgActive = "capacity"
-        print("ActiveGroup", vgActive)
-        try:
-            vg=ob.vertex_groups["rainmap"]
-        except:
-            vg=ob.vertex_groups.new(name="rainmap")
-        try:
-            vgscree=ob.vertex_groups["scree"]
-        except:
-            vgscree=ob.vertex_groups.new(name="scree")
-        try:
-            vgavalanced=ob.vertex_groups["avalanced"]
-        except:
-            vgavalanced=ob.vertex_groups.new(name="avalanced")
-        try:
-            vgw=ob.vertex_groups["water"]
-        except:
-            vgw=ob.vertex_groups.new(name="water")
-        try:
-            vgscour=ob.vertex_groups["scour"]
-        except:
-            vgscour=ob.vertex_groups.new(name="scour")
-        try:
-            vgdeposit=ob.vertex_groups["deposit"]
-        except:
-            vgdeposit=ob.vertex_groups.new(name="deposit")
-        try:
-            vgflowrate=ob.vertex_groups["flowrate"]
-        except:
-            vgflowrate=ob.vertex_groups.new(name="flowrate")
-        try:
-            vgsediment=ob.vertex_groups["sediment"]
-        except:
-            vgsediment=ob.vertex_groups.new(name="sediment")
-        try:
-            vgsedimentpct=ob.vertex_groups["sedimentpct"]
-        except:
-            vgsedimentpct=ob.vertex_groups.new(name="sedimentpct")
-        try:
-            vgcapacity=ob.vertex_groups["capacity"]
-        except:
-            vgcapacity=ob.vertex_groups.new(name="capacity")
+        index_to_name = {}
 
-        g = Grid.fromBlenderMesh(me, vg, self.Ef)
+        for name in self.maps:
+            try:
+                ob.vertex_groups[name]
+            except:
+                ob.vertex_groups.new(name=name)
+            # Save a mapping from index to name, in case,
+            # the next iteration is different.
+            index_to_name[ob.vertex_groups[name].index] = name
 
-        me = bpy.data.meshes.new(me.name)
+        g = Grid.fromBlenderMesh(oldMesh, ob.vertex_groups['rainmap'], self.Ef)
 
         self.counts['diffuse'] = 0
         self.counts['avalanche'] = 0
@@ -970,80 +944,60 @@ class Eroder(bpy.types.Operator):
         for i in range(self.Iterations):
             if self.IterRiver > 0:
                 for i in range(self.IterRiver):
-                    g.rivergeneration(self.Kr, self.Kv, self.userainmap, self.Kc, self.Ks, self.Kdep, self.Ka, self.Kev/100, 0,0,0,0, self.numexpr)
+                    g.rivergeneration(
+                        self.Kr,
+                        self.Kv,
+                        self.userainmap,
+                        self.Kc,
+                        self.Ks,
+                        self.Kdep,
+                        self.Ka,
+                        self.Kev / 100,
+                        0,
+                        0,
+                        0,
+                        0,
+                        self.numexpr,
+                    )
 
             if self.Kd > 0.0:
                 for k in range(self.IterDiffuse):
                     g.diffuse(self.Kd / 5, self.IterDiffuse, self.numexpr)
-                    self.counts['diffuse']+=1
+                    self.counts['diffuse'] += 1
 
             if self.Kt < radians(90) and self.Pa > 0:
                 for k in range(self.IterAva):
                     # since dx and dy are scaled to 1, tan(Kt) is the height for a given angle
                     g.avalanche(tan(self.Kt), self.IterAva, self.Pa, self.numexpr)
-                    self.counts['avalanche']+=1
+                    self.counts['avalanche'] += 1
             if self.Kz > 0:
-                g.fluvial_erosion(self.Kr, self.Kv, self.userainmap, self.Kc, self.Ks, self.Kz*50, self.Ka, 0,0,0,0, self.numexpr)
-                self.counts['water']+=1
+                g.fluvial_erosion(self.Kr, self.Kv, self.userainmap, self.Kc, self.Ks,
+                                  self.Kz * 50, self.Ka, 0, 0, 0, 0, self.numexpr)
+                self.counts['water'] += 1
 
-        g.toBlenderMesh(me)
-        ob.data = me
+        newMesh = bpy.data.meshes.new(oldMesh.name)
+        g.toBlenderMesh(newMesh)
 
-        if vg:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vg.add([i],g.rainmap[row,col],'ADD')
-        if vgscree:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgscree.add([i],g.avalanced[row,col],'ADD')
-        if vgavalanced:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgavalanced.add([i],-g.avalanced[row,col],'ADD')
-        if vgw:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgw.add([i],g.water[row,col]/g.watermax,'ADD')
-        if vgscour:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgscour.add([i],g.scour[row,col]/max(g.scourmax, -g.scourmin),'ADD')
-        if vgdeposit:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgdeposit.add([i],g.scour[row,col]/min(-g.scourmax, g.scourmin),'ADD')
-        if vgflowrate:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgflowrate.add([i],g.flowrate[row,col],'ADD')
-        if vgsediment:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgsediment.add([i],g.sediment[row,col],'ADD')
-        if vgsedimentpct:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgsedimentpct.add([i],g.sedimentpct[row,col],'ADD')
-        if vgcapacity:
-            for row in range(g.rainmap.shape[0]):
-                for col in range(g.rainmap.shape[1]):
-                    i = row * g.rainmap.shape[1] + col
-                    vgcapacity.add([i],g.capacity[row,col],'ADD')
-        try:
-            vg = ob.vertex_groups["vgActive"]
-        except:
-            vg = vgcapacity
-        ob.vertex_groups.active = vg
+        # This empties ob.vertex_groups.
+        ob.data = newMesh
+
+        # Copy vertex groups from the old mesh.
+        for name in self.maps:
+            ob.vertex_groups.new(name=name)
+        for vert in oldMesh.vertices:
+            for group in vert.groups:
+                name = index_to_name[group.group]
+                if name:
+                    ob.vertex_groups[name].add([vert.index], group.weight, 'REPLACE')
+
+        # Add the new data.
+        for row in range(g.rainmap.shape[0]):
+            for col in range(g.rainmap.shape[1]):
+                i = row * g.rainmap.shape[1] + col
+                for name, fn in self.maps.items():
+                    ob.vertex_groups[name].add([i], fn(g, row, col), 'ADD')
+
+        ob.vertex_groups.active = ob.vertex_groups['capacity']
 
         if self.smooth:
             bpy.ops.object.shade_smooth()
@@ -1054,11 +1008,10 @@ class Eroder(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
-    def draw(self,context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.operator('screen.repeat_last', text="Repeat", icon='FILE_REFRESH' )
+        layout.operator('screen.repeat_last', text="Repeat", icon='FILE_REFRESH')
 
         layout.prop(self, 'Iterations')
 
@@ -1089,4 +1042,4 @@ class Eroder(bpy.types.Operator):
 
         col.prop(self, 'Ef')
 
-        layout.prop(self,'smooth')
+        layout.prop(self, 'smooth')

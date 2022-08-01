@@ -3,8 +3,8 @@
 bl_info = {
     "name": "Scatter Objects",
     "author": "Jacques Lucke",
-    "version": (0, 1),
-    "blender": (2, 80, 0),
+    "version": (0, 2),
+    "blender": (3, 0, 0),
     "location": "3D View",
     "description": "Distribute object instances on another object.",
     "warning": "",

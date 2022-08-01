@@ -8,7 +8,6 @@
 # noinspection PyUnresolvedReferences
 import bpy
 import gpu
-import bgl
 # noinspection PyUnresolvedReferences
 import blf
 from os import path, remove
@@ -54,8 +53,8 @@ def render_main(self, context, animation=False):
         [0, 0, 0, 1]])
 
     with offscreen.bind():
-        bgl.glClearColor(0.0, 0.0, 0.0, 0.0)
-        bgl.glClear(bgl.GL_COLOR_BUFFER_BIT)
+        fb = gpu.state.active_framebuffer_get()
+        fb.clear(color=(0.0, 0.0, 0.0, 0.0))
         gpu.matrix.reset()
         gpu.matrix.load_matrix(view_matrix)
         gpu.matrix.load_projection_matrix(Matrix.Identity(4))
@@ -101,9 +100,8 @@ def render_main(self, context, animation=False):
             y2 = height - y1
             draw_rectangle((x1, y1), (x2, y2), rfcolor)
 
-        buffer = bgl.Buffer(bgl.GL_BYTE, width * height * 4)
-        bgl.glReadBuffer(bgl.GL_COLOR_ATTACHMENT0)
-        bgl.glReadPixels(0, 0, width, height, bgl.GL_RGBA, bgl.GL_UNSIGNED_BYTE, buffer)
+        buffer = fb.read_color(0, 0, width, height, 4, 0, 'UBYTE')
+        buffer.dimensions = width * height * 4
 
     offscreen.free()
 
