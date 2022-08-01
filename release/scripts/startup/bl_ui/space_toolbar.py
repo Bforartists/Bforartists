@@ -338,7 +338,7 @@ class TOOLBAR_MT_file(Menu):
 
             row = layout.row(align=True)
             row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
-            row.operator("import_scene.obj", text="", icon='LOAD_OBJ')
+            row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
             row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
 
 
