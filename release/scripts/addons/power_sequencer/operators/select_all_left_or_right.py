@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
@@ -51,4 +48,10 @@ class POWER_SEQUENCER_OT_select_all_left_or_right(bpy.types.Operator):
         return context.sequences
 
     def execute(self, context):
-        return bpy.ops.sequencer.select("INVOKE_DEFAULT", left_right=self.side)
+        if self.side == "LEFT":
+            for s in context.sequences:
+                s.select = s.frame_final_end < context.scene.frame_current
+        else:
+            for s in context.sequences:
+                s.select = s.frame_final_start > context.scene.frame_current
+        return {"FINISHED"}

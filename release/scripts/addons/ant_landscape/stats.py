@@ -5,15 +5,16 @@ from time import time
 try:
     import psutil
     # print('psutil available')
-    psutil_available=True
+    psutil_available = True
 except ImportError:
-    psutil_available=False
+    psutil_available = False
+
 
 class Stats:
     def __init__(self):
         self.memstats_available = False
         if psutil_available:
-            self.process=psutil.Process()
+            self.process = psutil.Process()
             self.memstats_available = True
         self.reset()
 

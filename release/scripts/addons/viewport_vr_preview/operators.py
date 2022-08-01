@@ -12,7 +12,6 @@ from bpy.types import (
     GizmoGroup,
     Operator,
 )
-import bgl
 import math
 from math import radians
 from mathutils import Euler, Matrix, Quaternion, Vector
@@ -305,8 +304,8 @@ class VIEW3D_GT_vr_camera_cone(Gizmo):
                 'LINES', lines_shape_verts)
 
         # Ensure correct GL state (otherwise other gizmos might mess that up)
-        bgl.glLineWidth(1)
-        bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.line_width_set(1.0)
+        gpu.state.blend_set('ALPHA')
 
         self.draw_custom_shape(self.frame_shape)
         self.draw_custom_shape(self.lines_shape)
@@ -316,8 +315,8 @@ class VIEW3D_GT_vr_controller_grip(Gizmo):
     bl_idname = "VIEW_3D_GT_vr_controller_grip"
 
     def draw(self, context):
-        bgl.glLineWidth(1)
-        bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.line_width_set(1.0)
+        gpu.state.blend_set('ALPHA')
 
         self.color = 0.422, 0.438, 0.446
         self.draw_preset_circle(self.matrix_basis, axis='POS_X')
@@ -329,8 +328,8 @@ class VIEW3D_GT_vr_controller_aim(Gizmo):
     bl_idname = "VIEW_3D_GT_vr_controller_aim"
 
     def draw(self, context):
-        bgl.glLineWidth(1)
-        bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.line_width_set(1.0)
+        gpu.state.blend_set('ALPHA')
 
         self.color = 1.0, 0.2, 0.322
         self.draw_preset_arrow(self.matrix_basis, axis='POS_X')

@@ -73,30 +73,16 @@ class ADD_CAMERA_RIGS_OT_add_marker_bind(Operator, CameraRigMixin):
         return {'FINISHED'}
 
 
-class ADD_CAMERA_RIGS_OT_add_dof_object(Operator, CameraRigMixin):
-    bl_idname = "add_camera_rigs.add_dof_object"
-    bl_label = "Add DOF Object"
-    bl_description = "Create Empty and add as DOF Object"
+class ADD_CAMERA_RIGS_OT_set_dof_bone(Operator, CameraRigMixin):
+    bl_idname = "add_camera_rigs.set_dof_bone"
+    bl_label = "Set DOF Bone"
+    bl_description = "Set the Aim bone as a DOF target"
 
     def execute(self, context):
         rig, cam = get_rig_and_cam(context.active_object)
-        bone = rig.data.bones['Aim_shape_rotation-MCH']
 
-        # Add Empty
-        empty_obj = bpy.data.objects.new("EmptyDOF", None)
-        context.scene.collection.objects.link(empty_obj)
-
-        # Parent to Aim Child bone
-        empty_obj.parent = rig
-        empty_obj.parent_type = "BONE"
-        empty_obj.parent_bone = "Aim_shape_rotation-MCH"
-
-        # Move to bone head
-        empty_obj.location = bone.head
-
-        # Make this new empty the dof_object
-        cam.data.dof.use_dof = True
-        cam.data.dof.focus_object = empty_obj
+        cam.data.dof.focus_object = rig
+        cam.data.dof.focus_subtarget = 'Aim_shape_rotation-MCH'
 
         return {'FINISHED'}
 
@@ -104,7 +90,7 @@ class ADD_CAMERA_RIGS_OT_add_dof_object(Operator, CameraRigMixin):
 classes = (
     ADD_CAMERA_RIGS_OT_set_scene_camera,
     ADD_CAMERA_RIGS_OT_add_marker_bind,
-    ADD_CAMERA_RIGS_OT_add_dof_object,
+    ADD_CAMERA_RIGS_OT_set_dof_bone,
 )
 
 

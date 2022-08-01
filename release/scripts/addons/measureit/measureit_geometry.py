@@ -17,7 +17,6 @@ from bpy_extras import view3d_utils, mesh_utils
 import bpy_extras.object_utils as object_utils
 from sys import exc_info
 # GPU
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -477,7 +476,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                     # ------------------------------------
                     # Draw lines
                     # ------------------------------------
-                    bgl.glEnable(bgl.GL_BLEND)
+                    gpu.state.blend_set('ALPHA')
 
                     if ms.gltype == 1:  # Segment
                         draw_line(screen_point_ap1, screen_point_v11, rgba)
@@ -1175,7 +1174,7 @@ def draw_faces(context, myobj, region, rv3d):
 
             a_p2 = (a_p1[0] + normal[0] * ln, a_p1[1] + normal[1] * ln, a_p1[2] + normal[2] * ln)
             # line setup
-            bgl.glEnable(bgl.GL_BLEND)
+            gpu.state.blend_set('ALPHA')
             imm_set_line_width(th)
             # converting to screen coordinates
             txtpoint2d = get_2d_point(region, rv3d, a_p1)
@@ -1185,7 +1184,7 @@ def draw_faces(context, myobj, region, rv3d):
                 draw_text(myobj, txtpoint2d, str(f.index), rgba, fsize)
             # Draw Normal
             if scene.measureit_debug_normals is True:
-                bgl.glEnable(bgl.GL_BLEND)
+                gpu.state.blend_set('ALPHA')
                 draw_arrow(txtpoint2d, point2, rgba, 10, "99", "1")
 
                 if len(obverts) > 2 and scene.measureit_debug_normal_details is True:

@@ -11,8 +11,8 @@ bl_info = {
     "name": "MeasureIt",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Sidebar > View Tab",
-    "version": (1, 8, 1),
-    "blender": (2, 80, 0),
+    "version": (1, 8, 2),
+    "blender": (3, 0, 0),
     "description": "Tools for measuring objects.",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/measureit.html",
     "category": "3D View"

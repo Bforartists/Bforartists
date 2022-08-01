@@ -8,6 +8,7 @@ def export(filepath, face_data, colors, width, height, opacity):
         for text in get_file_parts(face_data, colors, width, height, opacity):
             file.write(text)
 
+
 def get_file_parts(face_data, colors, width, height, opacity):
     yield from header(width, height)
     if opacity > 0.0:
@@ -35,6 +36,7 @@ def header(width, height):
     yield "1 setlinejoin\n"
     yield "1 setlinecap\n"
 
+
 def prepare_colors(colors, out_name_by_color):
     for i, color in enumerate(colors):
         name = f"COLOR_{i}"
@@ -48,17 +50,20 @@ def prepare_colors(colors, out_name_by_color):
         yield "0 setgray\n"
         yield "} def\n"
 
+
 def draw_colored_polygons(face_data, name_by_color, width, height):
     for uvs, color in face_data:
         yield from draw_polygon_path(uvs, width, height)
         yield "closepath\n"
         yield "%s\n" % name_by_color[color]
 
+
 def draw_lines(face_data, width, height):
     for uvs, _ in face_data:
         yield from draw_polygon_path(uvs, width, height)
         yield "closepath\n"
         yield "stroke\n"
+
 
 def draw_polygon_path(uvs, width, height):
     yield "newpath\n"
@@ -68,6 +73,7 @@ def draw_polygon_path(uvs, width, height):
             yield "%.5f %.5f moveto\n" % uv_scale
         else:
             yield "%.5f %.5f lineto\n" % uv_scale
+
 
 def footer():
     yield "showpage\n"
