@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import importlib
 import os
 
@@ -16,7 +13,7 @@ def get_operator_classes():
     module_paths = ["." + os.path.splitext(f)[0] for f in module_files]
     classes = []
     for path in module_paths:
-        module = importlib.import_module(path, package="power_sequencer.operators")
+        module = importlib.import_module(path, package=__package__)
         operator_names = [entry for entry in dir(module) if entry.startswith("POWER_SEQUENCER_OT")]
         classes.extend([getattr(module, name) for name in operator_names])
     return classes

@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 """
 Utilities to convert operator names and docstrings to human-readable text.
 Used to generate names for Blender's operator search, and to generate Power Sequencer's documentation.

@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 from operator import attrgetter
 
 import bpy
@@ -117,12 +114,11 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
                             context, s.frame_final_start, s.frame_final_end, to_trim, to_delete
                         )
 
-                if not self.keep_selection_offset:
-                    s.channel = comparison_function(limit_channel, s.channel + channel_offset)
-                    if s.channel == limit_channel:
-                        move_selection(context, [s], 0, 0)
+                s.channel = comparison_function(limit_channel, s.channel + channel_offset)
+                if s.channel == limit_channel:
+                    move_selection(context, [s], 0, 0)
 
-            if self.keep_selection_offset:
+            if self.keep_selection_offset and not self.trim_target_channel:
                 start_frame = head.frame_final_start
                 x_difference = 0
                 while not head.channel == limit_channel:

@@ -3,7 +3,7 @@
 bl_info = {
     "name": "VR Scene Inspection",
     "author": "Julian Eisel (Severin), Sebastian Koenig, Peter Kim (muxed-reality)",
-    "version": (0, 11, 0),
+    "version": (0, 11, 1),
     "blender": (3, 2, 0),
     "location": "3D View > Sidebar > VR",
     "description": ("View the viewport with virtual reality glasses "

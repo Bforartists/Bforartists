@@ -16,7 +16,6 @@ from mathutils import Vector
 from bpy_extras import view3d_utils
 from .achm_room_maker import get_wall_points
 # GPU
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -39,7 +38,7 @@ def draw_main(context):
     measure = scene.archimesh_gl_measure
     dspname = scene.archimesh_gl_name
 
-    bgl.glEnable(bgl.GL_BLEND)
+    gpu.state.blend_set('ALPHA')
     # Display selected or all
     if scene.archimesh_gl_ghost is False:
         objlist = context.selected_objects
@@ -81,8 +80,8 @@ def draw_main(context):
     # -----------------------
     # restore opengl defaults
     # -----------------------
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.line_width_set(1.0)
+    gpu.state.blend_set('NONE')
 
 
 # -------------------------------------------------------------
@@ -175,8 +174,8 @@ def draw_room_data(myobj, op, region, rv3d, rgba, rgbaw, fsize, wfsize, space, m
         screen_point_b2 = view3d_utils.location_3d_to_region_2d(region, rv3d, b2_s2)
 
         # colour + line setup
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glLineWidth(1)
+        gpu.state.blend_set('ALPHA')
+        gpu.state.line_width_set(1.0)
         # --------------------------------
         # Measures
         # --------------------------------
@@ -284,8 +283,8 @@ def draw_door_data(myobj, op, region, rv3d, rgba, fsize, space, measure):
     screen_point_ep3 = view3d_utils.location_3d_to_region_2d(region, rv3d, e_p3)
 
     # colour + line setup
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(1.0)
 
     # --------------------------------
     # Measures
@@ -368,8 +367,8 @@ def draw_window_rail_data(myobj, op, region, rv3d, rgba, fsize, space, measure):
     screen_point_tp3 = view3d_utils.location_3d_to_region_2d(region, rv3d, t_p3)
 
     # colour + line setup
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(1.0)
 
     # --------------------------------
     # Measures
@@ -473,9 +472,10 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgba, fsize, space, measure)
     screen_point_gp3 = view3d_utils.location_3d_to_region_2d(region, rv3d, g_p3)
     screen_point_gp4 = view3d_utils.location_3d_to_region_2d(region, rv3d, g_p4)
     screen_point_gp5 = view3d_utils.location_3d_to_region_2d(region, rv3d, g_p5)
+
     # colour + line setup
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(1.0)
 
     # --------------------------------
     # Measures

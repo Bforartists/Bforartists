@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 
 from .utils.functions import get_sequences_under_cursor
@@ -21,7 +18,11 @@ class POWER_SEQUENCER_OT_snap(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            ({"type": "S", "value": "PRESS", "shift": True}, {}, "Snap sequences to cursor",)
+            (
+                {"type": "S", "value": "PRESS", "shift": True},
+                {},
+                "Snap sequences to cursor",
+            )
         ],
         "keymap": "Sequencer",
     }

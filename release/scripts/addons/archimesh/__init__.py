@@ -11,8 +11,8 @@ bl_info = {
     "name": "Archimesh",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Add Mesh / Sidebar > Create Tab",
-    "version": (1, 2, 2),
-    "blender": (2, 80, 0),
+    "version": (1, 2, 3),
+    "blender": (3, 0, 0),
     "description": "Generate rooms, doors, windows, and other architecture objects",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/archimesh.html",
     "category": "Add Mesh"

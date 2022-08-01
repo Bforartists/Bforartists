@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 
 from .utils.functions import slice_selection
@@ -22,7 +19,11 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            ({"type": "E", "value": "PRESS", "ctrl": True}, {}, "Expand to Surrounding Cuts",)
+            (
+                {"type": "E", "value": "PRESS", "ctrl": True},
+                {},
+                "Expand to Surrounding Cuts",
+            )
         ],
         "keymap": "Sequencer",
     }
