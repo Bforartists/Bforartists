@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -17079,6 +17079,19 @@ msgstr "Duplicera"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Duplicera"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Markera Länkad"
+
+
+msgid "Duplicate Strips"
+msgstr "Duplicera"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Radera Allt"
 
@@ -17748,11 +17761,6 @@ msgstr "Markera Länkad"
 
 
 msgid "Duplicate Objects"
-msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
 msgstr "Duplicera"
 
 
@@ -20359,14 +20367,6 @@ msgstr "Markera Länkad"
 
 msgid "Duplicate the selected strips"
 msgstr "Markera Länkad"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Markera Länkad"
-
-
-msgid "Duplicate Strips"
-msgstr "Duplicera"
 
 
 msgid "Slide a sequence strip in time"

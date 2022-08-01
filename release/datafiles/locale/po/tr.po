@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -13497,6 +13497,19 @@ msgstr "Bağlantılı Çoğalt"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Bağlantılı Çoğalt"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Seçili Nesne ve Bilgileri"
+
+
+msgid "Duplicate Strips"
+msgstr "Bağlantılı Çoğalt"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Değiştirici Ekle"
 
@@ -13968,11 +13981,6 @@ msgstr "Seçili Nesne ve Bilgileri"
 
 msgid "Duplicate Objects"
 msgstr "Nesneleri Birleştir"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Bağlantılı Çoğalt"
 
 
 msgid "Keep Hierarchy"
@@ -15917,14 +15925,6 @@ msgstr "Tümünü Sil"
 
 msgid "Duplicate the selected strips"
 msgstr "Seçili İşaretler arasında"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Seçili Nesne ve Bilgileri"
-
-
-msgid "Duplicate Strips"
-msgstr "Bağlantılı Çoğalt"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -42391,10 +42391,6 @@ msgid "Function Node"
 msgstr "Giao Điểm Hàm Số"
 
 
-msgid "Align Euler To Vector"
-msgstr "Sặp Xếp Euler Đến Vectơ"
-
-
 msgid "Axis to align to the vector"
 msgstr "Sắp xếp trục với vectơ"
 
@@ -60386,6 +60382,19 @@ msgstr "Khi sao chép đoạn, chỉ định sao chép mới của hành động
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Bản Sao Được Liên Kết"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Chép và di chuyển các đoạn được chọn"
+
+
+msgid "Duplicate Strips"
+msgstr "Sao Chép Đoạn"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Thêm Cụ Sửa Đổi F"
 
@@ -61922,11 +61931,6 @@ msgstr "Bản sao các vật thể chọn"
 
 msgid "Duplicate Objects"
 msgstr "Bản Sao Vật Thể"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Bản Sao Được Liên Kết"
 
 
 msgctxt "Operator"
@@ -70171,14 +70175,6 @@ msgid "Duplicate the selected strips"
 msgstr "Sao chép các đoạn được chọn"
 
 
-msgid "Duplicate selected strips and move them"
-msgstr "Chép và di chuyển các đoạn được chọn"
-
-
-msgid "Duplicate Strips"
-msgstr "Sao Chép Đoạn"
-
-
 msgid "Slide a sequence strip in time"
 msgstr "Trượt một đoạn trình tự trong thời gian"
 
@@ -72812,24 +72808,6 @@ msgstr "Hoàn Lại Giá Trí Mặc Định"
 
 msgid "Reset this property's value to its default value"
 msgstr "Hoàn lại giá trị của đặc tính này bằng mặc định"
-
-
-msgctxt "Operator"
-msgid "Tree View drop"
-msgstr "Thả Màn Cây"
-
-
-msgid "Drag and drop items onto a tree item"
-msgstr "Kéo và thả mặt hàng trên một mặt hàng cây"
-
-
-msgctxt "Operator"
-msgid "Rename Tree-View Item"
-msgstr "Đổi Tên Mặt Hàng Cây"
-
-
-msgid "Rename the active item in the tree"
-msgstr "Đổi tên của mặt hàng hoạt động trong cây"
 
 
 msgctxt "Operator"
@@ -82630,34 +82608,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Giới hạn cho đệm chứa bộ nhớ (megabyte)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Kiểu Tính OpenSubdiv"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Kiểu 'bộ đằng sau' vi tính dùng với OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "Phản Hồi Biến Hóa GLSL"
-
-
-msgid "GLSL Compute"
-msgstr "Cách Tính GLSL"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Giữ số lượng dòng tối đa cho đệm diện điều khiển"
 
@@ -83752,6 +83702,14 @@ msgstr "Kết xuất đường cong bằng hình dạng vòng tròn, cho kết q
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Dùng số lượng phân hóa trong cắt đường cong Cốt Yếu (mũ 2)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -88829,10 +88787,6 @@ msgid "Inverse Gain"
 msgstr "Tăng Lượng Nghịch"
 
 
-msgid "Invert the gain color`"
-msgstr "Đảo nghịch màu tăng lượng"
-
-
 msgid "Inverse Gamma"
 msgstr "Đảo Nghịch Gama"
 
@@ -88867,10 +88821,6 @@ msgstr "Đảo nghịch màu lũy thừa"
 
 msgid "Inverse Slope"
 msgstr "Đảo Nghịch Dốc"
-
-
-msgid "Invert the slope color`"
-msgstr "Đảo nghịch màu dốc"
 
 
 msgid "Color balance lift (shadows)"
@@ -101301,6 +101251,11 @@ msgid "Lock Invert All"
 msgstr "Đảo Nghịch Khóa Hết"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Xóa Hết Mẫu Dạng "
+
+
 msgid "Store"
 msgstr "Kho Chứa"
 
@@ -101364,11 +101319,6 @@ msgstr "Hình Dạng Mới Từ Pha Trộn"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "Mẫu Dạng Gương Lại (Hình Dạng Học)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Xóa Hết Mẫu Dạng "
 
 
 msgctxt "Operator"
@@ -109780,6 +109730,14 @@ msgid "GPencil Weight Paint: LMB to paint | RMB/Escape to Exit"
 msgstr "Bút Sáp: NCT cho sơn | NCP/Escape cho Thoát"
 
 
+msgid "Failed to set value"
+msgstr "Đặt giá trị bị thất bại"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "NCT: Nét - Shift: Tô Đầy - Shift_Ctrl: Nét + Tô Đầy"
+
+
 msgid "Error evaluating number, see Info editor for details"
 msgstr "Sai lầm khi tính toán số, xem bộ biên tập Thông Tin cho chi tiết"
 
@@ -109978,14 +109936,6 @@ msgstr "Thả %s trên khe %d (khe hoạt động) của %s"
 
 msgid "Drop %s on slot %d of %s"
 msgstr "Thả %s trên khe %d của %s"
-
-
-msgid "Failed to set value"
-msgstr "Đặt giá trị bị thất bại"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "NCT: Nét - Shift: Tô Đầy - Shift_Ctrl: Nét + Tô Đầy"
 
 
 msgid "Menu Missing:"
@@ -114521,10 +114471,6 @@ msgstr "Không thể chế tạo đồ thay thế thư viện từ cục dữ li
 
 msgid "Invalid hierarchy root ('%s') found, needed to create library override from data-block '%s'"
 msgstr "Đã tìm rễ tầng bậc không hợp lệ ('%s'), cần để chế tạo đồ thay thế cho thư viện từ cục dữ liệu '%s'"
-
-
-msgid "Could not create library override from data-block '%s'"
-msgstr "Không thể chế tạo được đồ thay thế từ cục dữ liệu '%s'"
 
 
 msgid "Cannot clear embedded library override id '%s', only overrides of real data-blocks can be directly deleted"

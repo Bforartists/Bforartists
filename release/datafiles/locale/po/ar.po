@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -25911,6 +25911,19 @@ msgstr "ﺔﻃﺮﺷﻻ﻿ﺍ ﺭﺮﻛ"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺮﻛ"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "ﺎﻬﻛﺮّﺣﻭ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﺭﺮﻛ"
+
+
+msgid "Duplicate Strips"
+msgstr "ﺔﻃﺮﺷﻻ﻿ﺍ ﺭﺮﻛ"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "ﻞﻤﻋ ﺮﻴﻐﻣ ﻒﺿﺃ"
 
@@ -26422,11 +26435,6 @@ msgstr "ﻦﺋﺎﻜﻟﺍ ﻰﻠﻋ ﻩﺎﻤﺴﻤﻟﺍ ﺔﻣﺎﺨﻟﺍ �
 msgctxt "Operator"
 msgid "Duplicate Objects"
 msgstr "ﺕﺎﻨﺋﺎﻜﻟﺍ ﺭﺮﻛ"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺮﻛ"
 
 
 msgid "Keep Hierarchy"
@@ -28589,14 +28597,6 @@ msgstr "ﻡﻼ﻿ﻓﻷ﻿ﺍ ﻲﻓ ﻚﺑﺎﺸﺘﻟﺍ ﻞﻴﻠﻘﺗ"
 msgctxt "Operator"
 msgid "Erase Strips"
 msgstr "ﺔﻃﺮﺷﻻ﻿ﺍ ﻑﺬﺣﺍ"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "ﺎﻬﻛﺮّﺣﻭ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﺭﺮﻛ"
-
-
-msgid "Duplicate Strips"
-msgstr "ﺔﻃﺮﺷﻻ﻿ﺍ ﺭﺮﻛ"
 
 
 msgid "Slide a sequence strip in time"
@@ -32638,14 +32638,6 @@ msgstr "ﺓﺮﻛﺍﺬﻠﻟ ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﺩﻭﺪﺣ
 
 msgid "Memory cache limit (in megabytes)"
 msgstr "(ﺖﻳﺎﺑﺎﻐﻴﻤﻟﺎﺑ) ﺓﺮﻛﺍﺬﻠﻟ ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﺩﻭﺪﺣ"
-
-
-msgid "OpenMP"
-msgstr "ﻲﺑ ﻡﺍ ﻦﺑﻭﺍ"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL ﺏﺎﺴﺣ"
 
 
 msgid "Maximum number of lines to store for the console buffer"
