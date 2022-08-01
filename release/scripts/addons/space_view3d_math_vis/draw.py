@@ -3,7 +3,6 @@
 import bpy
 import blf
 import gpu
-import bgl
 from gpu_extras.batch import batch_for_shader
 
 from . import utils
@@ -126,9 +125,9 @@ def draw_callback_view():
     with_bounding_box = not settings.bbox_hide
 
     if settings.in_front:
-        bgl.glDepthFunc(bgl.GL_ALWAYS)
+        gpu.state.depth_test_set('ALWAYS')
     else:
-        bgl.glDepthFunc(bgl.GL_LESS)
+        gpu.state.depth_test_set('LESS')
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
     if settings.index in range(0,len(prop_states)):

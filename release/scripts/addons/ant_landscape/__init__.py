@@ -30,22 +30,23 @@ else:
 import bpy
 
 from bpy.props import (
-        BoolProperty,
-        FloatProperty,
-        IntProperty,
-        StringProperty,
-        PointerProperty,
-        EnumProperty,
-        )
+    BoolProperty,
+    FloatProperty,
+    IntProperty,
+    StringProperty,
+    PointerProperty,
+    EnumProperty,
+)
 from .ant_functions import (
-        draw_ant_refresh,
-        draw_ant_main,
-        draw_ant_noise,
-        draw_ant_displace,
-        )
+    draw_ant_refresh,
+    draw_ant_main,
+    draw_ant_noise,
+    draw_ant_displace,
+)
 
 # ------------------------------------------------------------
 # Menu's and panels
+
 
 def menu_func_eroder(self, context):
     ob = bpy.context.active_object
@@ -129,7 +130,7 @@ class AntMainSettingsPanel(bpy.types.Panel):
         if ant.sphere_mesh:
             split.prop(ant, "remove_double", toggle=True, text="Remove Doubles", icon='MESH_DATA')
         box.prop(ant, "ant_terrain_name")
-        box.prop_search(ant, "land_material",  bpy.data, "materials")
+        box.prop_search(ant, "land_material", bpy.data, "materials")
         col = box.column(align=True)
         col.prop(ant, "subdivision_x")
         col.prop(ant, "subdivision_y")
@@ -398,131 +399,131 @@ class AntDisplaceSettingsPanel(bpy.types.Panel):
 class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
 
     ant_terrain_name: StringProperty(
-            name="Name",
-            default="Landscape"
-            )
+        name="Name",
+        default="Landscape"
+    )
     land_material: StringProperty(
-            name='Material',
-            default="",
-            description="Terrain material"
-            )
+        name='Material',
+        default="",
+        description="Terrain material"
+    )
     water_material: StringProperty(
-            name='Material',
-            default="",
-            description="Water plane material"
-            )
+        name='Material',
+        default="",
+        description="Water plane material"
+    )
     texture_block: StringProperty(
-            name="Texture",
-            default=""
-            )
+        name="Texture",
+        default=""
+    )
     at_cursor: BoolProperty(
-            name="Cursor",
-            default=True,
-            description="Place at cursor location",
-            )
+        name="Cursor",
+        default=True,
+        description="Place at cursor location",
+    )
     smooth_mesh: BoolProperty(
-            name="Smooth",
-            default=True,
-            description="Shade smooth"
-            )
+        name="Smooth",
+        default=True,
+        description="Shade smooth"
+    )
     tri_face: BoolProperty(
-            name="Triangulate",
-            default=False,
-            description="Triangulate faces"
-            )
+        name="Triangulate",
+        default=False,
+        description="Triangulate faces"
+    )
     sphere_mesh: BoolProperty(
-            name="Sphere",
-            default=False,
-            description="Generate uv sphere - remove doubles when ready"
-            )
+        name="Sphere",
+        default=False,
+        description="Generate uv sphere - remove doubles when ready"
+    )
     subdivision_x: IntProperty(
-            name="Subdivisions X",
-            default=128,
-            min=4,
-            max=6400,
-            description="Mesh X subdivisions"
-            )
+        name="Subdivisions X",
+        default=128,
+        min=4,
+        max=6400,
+        description="Mesh X subdivisions"
+    )
     subdivision_y: IntProperty(
-            default=128,
-            name="Subdivisions Y",
-            min=4,
-            max=6400,
-            description="Mesh Y subdivisions"
-            )
+        default=128,
+        name="Subdivisions Y",
+        min=4,
+        max=6400,
+        description="Mesh Y subdivisions"
+    )
     mesh_size: FloatProperty(
-            default=2.0,
-            name="Mesh Size",
-            min=0.01,
-            max=100000.0,
-            description="Mesh size"
-            )
+        default=2.0,
+        name="Mesh Size",
+        min=0.01,
+        max=100000.0,
+        description="Mesh size"
+    )
     mesh_size_x: FloatProperty(
-            default=2.0,
-            name="Mesh Size X",
-            min=0.01,
-            description="Mesh x size"
-            )
+        default=2.0,
+        name="Mesh Size X",
+        min=0.01,
+        description="Mesh x size"
+    )
     mesh_size_y: FloatProperty(
-            name="Mesh Size Y",
-            default=2.0,
-            min=0.01,
-            description="Mesh y size"
-            )
+        name="Mesh Size Y",
+        default=2.0,
+        min=0.01,
+        description="Mesh y size"
+    )
 
     random_seed: IntProperty(
-            name="Random Seed",
-            default=0,
-            min=0,
-            description="Randomize noise origin"
-            )
+        name="Random Seed",
+        default=0,
+        min=0,
+        description="Randomize noise origin"
+    )
     noise_offset_x: FloatProperty(
-            name="Offset X",
-            default=0.0,
-            description="Noise X Offset"
-            )
+        name="Offset X",
+        default=0.0,
+        description="Noise X Offset"
+    )
     noise_offset_y: FloatProperty(
-            name="Offset Y",
-            default=0.0,
-            description="Noise Y Offset"
-            )
+        name="Offset Y",
+        default=0.0,
+        description="Noise Y Offset"
+    )
     noise_offset_z: FloatProperty(
-            name="Offset Z",
-            default=0.0,
-            description="Noise Z Offset"
-            )
+        name="Offset Z",
+        default=0.0,
+        description="Noise Z Offset"
+    )
     noise_size_x: FloatProperty(
-            default=1.0,
-            name="Size X",
-            min=0.01,
-            max=1000.0,
-            description="Noise x size"
-            )
+        default=1.0,
+        name="Size X",
+        min=0.01,
+        max=1000.0,
+        description="Noise x size"
+    )
     noise_size_y: FloatProperty(
-            name="Size Y",
-            default=1.0,
-            min=0.01,
-            max=1000.0,
-            description="Noise y size"
-            )
+        name="Size Y",
+        default=1.0,
+        min=0.01,
+        max=1000.0,
+        description="Noise y size"
+    )
     noise_size_z: FloatProperty(
-            name="Size Z",
-            default=1.0,
-            min=0.01,
-            max=1000.0,
-            description="Noise Z size"
-            )
+        name="Size Z",
+        default=1.0,
+        min=0.01,
+        max=1000.0,
+        description="Noise Z size"
+    )
     noise_size: FloatProperty(
-            name="Noise Size",
-            default=1.0,
-            min=0.01,
-            max=1000.0,
-            description="Noise size"
-            )
+        name="Noise Size",
+        default=1.0,
+        min=0.01,
+        max=1000.0,
+        description="Noise size"
+    )
     noise_type: EnumProperty(
-            name="Noise Type",
-            default='hetero_terrain',
-            description="Noise type",
-            items = [
+        name="Noise Type",
+        default='hetero_terrain',
+        description="Noise type",
+        items=[
                 ('multi_fractal', "Multi Fractal", "Blender: Multi Fractal algorithm", 0),
                 ('ridged_multi_fractal', "Ridged MFractal", "Blender: Ridged Multi Fractal", 1),
                 ('hybrid_multi_fractal', "Hybrid MFractal", "Blender: Hybrid Multi Fractal", 2),
@@ -542,110 +543,110 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
                 ('slick_rock', "Slick Rock", "A.N.T: slick rock", 16),
                 ('planet_noise', "Planet Noise", "Planet Noise by: Farsthary", 17),
                 ('blender_texture', "Blender Texture - Texture Nodes", "Blender texture data block", 18)]
-            )
+    )
     basis_type: EnumProperty(
-            name="Noise Basis",
-            default=ant_noise.noise_basis_default,
-            description="Noise basis algorithms",
-            items = ant_noise.noise_basis
-            )
+        name="Noise Basis",
+        default=ant_noise.noise_basis_default,
+        description="Noise basis algorithms",
+        items=ant_noise.noise_basis
+    )
     vl_basis_type: EnumProperty(
-            name="vlNoise Basis",
-            default=ant_noise.noise_basis_default,
-            description="VLNoise basis algorithms",
-            items = ant_noise.noise_basis
-            )
+        name="vlNoise Basis",
+        default=ant_noise.noise_basis_default,
+        description="VLNoise basis algorithms",
+        items=ant_noise.noise_basis
+    )
     distortion: FloatProperty(
-            name="Distortion",
-            default=1.0,
-            min=0.01,
-            max=100.0,
-            description="Distortion amount"
-            )
+        name="Distortion",
+        default=1.0,
+        min=0.01,
+        max=100.0,
+        description="Distortion amount"
+    )
     hard_noise: EnumProperty(
-            name="Soft Hard",
-            default="0",
-            description="Soft Noise, Hard noise",
-            items = [
+        name="Soft Hard",
+        default="0",
+        description="Soft Noise, Hard noise",
+        items=[
                 ("0", "Soft", "Soft Noise", 0),
                 ("1", "Hard", "Hard noise", 1)]
-            )
+    )
     noise_depth: IntProperty(
-            name="Depth",
-            default=8,
-            min=0,
-            max=16,
-            description="Noise Depth - number of frequencies in the fBm"
-            )
+        name="Depth",
+        default=8,
+        min=0,
+        max=16,
+        description="Noise Depth - number of frequencies in the fBm"
+    )
     amplitude: FloatProperty(
-            name="Amp",
-            default=0.5,
-            min=0.01,
-            max=1.0,
-            description="Amplitude"
-            )
+        name="Amp",
+        default=0.5,
+        min=0.01,
+        max=1.0,
+        description="Amplitude"
+    )
     frequency: FloatProperty(
-            name="Freq",
-            default=2.0,
-            min=0.01,
-            max=5.0,
-            description="Frequency"
-            )
+        name="Freq",
+        default=2.0,
+        min=0.01,
+        max=5.0,
+        description="Frequency"
+    )
     dimension: FloatProperty(
-            name="Dimension",
-            default=1.0,
-            min=0.01,
-            max=2.0,
-            description="H - fractal dimension of the roughest areas"
-            )
+        name="Dimension",
+        default=1.0,
+        min=0.01,
+        max=2.0,
+        description="H - fractal dimension of the roughest areas"
+    )
     lacunarity: FloatProperty(
-            name="Lacunarity",
-            min=0.01,
-            max=6.0,
-            default=2.0,
-            description="Lacunarity - gap between successive frequencies"
-            )
+        name="Lacunarity",
+        min=0.01,
+        max=6.0,
+        default=2.0,
+        description="Lacunarity - gap between successive frequencies"
+    )
     offset: FloatProperty(
-            name="Offset",
-            default=1.0,
-            min=0.01,
-            max=6.0,
-            description="Offset - raises the terrain from sea level"
-            )
+        name="Offset",
+        default=1.0,
+        min=0.01,
+        max=6.0,
+        description="Offset - raises the terrain from sea level"
+    )
     gain: FloatProperty(
-            name="Gain",
-            default=1.0,
-            min=0.01,
-            max=6.0,
-            description="Gain - scale factor"
-            )
+        name="Gain",
+        default=1.0,
+        min=0.01,
+        max=6.0,
+        description="Gain - scale factor"
+    )
     marble_bias: EnumProperty(
-            name="Bias",
-            default="0",
-            description="Marble bias",
-            items = [
+        name="Bias",
+        default="0",
+        description="Marble bias",
+        items=[
                 ("0", "Sin", "Sin", 0),
                 ("1", "Cos", "Cos", 1),
                 ("2", "Tri", "Tri", 2),
                 ("3", "Saw", "Saw", 3)]
-            )
+    )
     marble_sharp: EnumProperty(
-            name="Sharp",
-            default="0",
-            description="Marble sharpness",
-            items = [
+        name="Sharp",
+        default="0",
+        description="Marble sharpness",
+        items=[
                 ("0", "Soft", "Soft", 0),
                 ("1", "Sharp", "Sharp", 1),
                 ("2", "Sharper", "Sharper", 2),
                 ("3", "Soft inv.", "Soft", 3),
                 ("4", "Sharp inv.", "Sharp", 4),
                 ("5", "Sharper inv.", "Sharper", 5)]
-            )
+    )
     marble_shape: EnumProperty(
-            name="Shape",
-            default="0",
-            description="Marble shape",
-            items= [
+        name="Shape",
+        default="0",
+        description="Marble shape",
+        items=[
                 ("0", "Default", "Default", 0),
                 ("1", "Ring", "Ring", 1),
                 ("2", "Swirl", "Swirl", 2),
@@ -654,38 +655,38 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
                 ("5", "Z", "Z", 5),
                 ("6", "Y", "Y", 6),
                 ("7", "X", "X", 7)]
-        )
+    )
     height: FloatProperty(
-            name="Height",
-            default=0.5,
-            min=-10000.0,
-            max=10000.0,
-            description="Noise intensity scale"
-            )
+        name="Height",
+        default=0.5,
+        min=-10000.0,
+        max=10000.0,
+        description="Noise intensity scale"
+    )
     height_invert: BoolProperty(
-            name="Invert",
-            default=False,
-            description="Height invert",
-            )
+        name="Invert",
+        default=False,
+        description="Height invert",
+    )
     height_offset: FloatProperty(
-            name="Offset",
-            default=0.0,
-            min=-10000.0,
-            max=10000.0,
-            description="Height offset"
-            )
+        name="Offset",
+        default=0.0,
+        min=-10000.0,
+        max=10000.0,
+        description="Height offset"
+    )
     fx_mixfactor: FloatProperty(
-            name="Mix Factor",
-            default=0.0,
-            min=-1.0,
-            max=1.0,
-            description="Effect mix factor: -1.0 = Noise, +1.0 = Effect"
-            )
+        name="Mix Factor",
+        default=0.0,
+        min=-1.0,
+        max=1.0,
+        description="Effect mix factor: -1.0 = Noise, +1.0 = Effect"
+    )
     fx_mix_mode: EnumProperty(
-            name="Effect Mix",
-            default="0",
-            description="Effect mix mode",
-            items = [
+        name="Effect Mix",
+        default="0",
+        description="Effect mix mode",
+        items=[
                 ("0", "Mix", "Mix", 0),
                 ("1", "Add", "Add", 1),
                 ("2", "Sub", "Subtract", 2),
@@ -695,13 +696,13 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
                 ("6", "Mod", "Modulo", 6),
                 ("7", "Min", "Minimum", 7),
                 ("8", "Max", "Maximum", 8)
-                ]
-            )
+        ]
+    )
     fx_type: EnumProperty(
-            name="Effect Type",
-            default="0",
-            description="Effect type",
-            items = [
+        name="Effect Type",
+        default="0",
+        description="Effect type",
+        items=[
                 ("0", "None", "No effect", 0),
                 ("1", "Gradient", "Gradient", 1),
                 ("2", "Waves", "Waves - Bumps", 2),
@@ -724,182 +725,183 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
                 ("19", "Stone", "Stone", 19),
                 ("20", "Flat Turb", "Flat turbulence", 20),
                 ("21", "Flat Voronoi", "Flat voronoi", 21)
-                ]
-            )
+        ]
+    )
     fx_bias: EnumProperty(
-            name="Effect Bias",
-            default="0",
-            description="Effect bias type",
-            items = [
+        name="Effect Bias",
+        default="0",
+        description="Effect bias type",
+        items=[
                 ("0", "Sin", "Sin", 0),
                 ("1", "Cos", "Cos", 1),
                 ("2", "Tri", "Tri", 2),
                 ("3", "Saw", "Saw", 3),
                 ("4", "None", "None", 4)]
-            )
+    )
     fx_turb: FloatProperty(
-            name="Distortion",
-            default=0.0,
-            min=0.0,
-            max=1000.0,
-            description="Effect turbulence distortion"
-            )
+        name="Distortion",
+        default=0.0,
+        min=0.0,
+        max=1000.0,
+        description="Effect turbulence distortion"
+    )
     fx_depth: IntProperty(
-            name="Depth",
-            default=0,
-            min=0,
-            max=16,
-            description="Effect depth - number of frequencies"
-            )
+        name="Depth",
+        default=0,
+        min=0,
+        max=16,
+        description="Effect depth - number of frequencies"
+    )
     fx_amplitude: FloatProperty(
-            name="Amp",
-            default=0.5,
-            min=0.01,
-            max=1.0,
-            description="Amplitude"
-            )
+        name="Amp",
+        default=0.5,
+        min=0.01,
+        max=1.0,
+        description="Amplitude"
+    )
     fx_frequency: FloatProperty(
-            name="Freq",
-            default=2.0,
-            min=0.01,
-            max=5.0,
-            description="Frequency"
-            )
+        name="Freq",
+        default=2.0,
+        min=0.01,
+        max=5.0,
+        description="Frequency"
+    )
     fx_size: FloatProperty(
-            name="Effect Size",
-            default=1.0,
-            min=0.01,
-            max=1000.0,
-            description="Effect size"
-            )
+        name="Effect Size",
+        default=1.0,
+        min=0.01,
+        max=1000.0,
+        description="Effect size"
+    )
     fx_loc_x: FloatProperty(
-            name="Offset X",
-            default=0.0,
-            description="Effect x offset"
-            )
+        name="Offset X",
+        default=0.0,
+        description="Effect x offset"
+    )
     fx_loc_y: FloatProperty(
-            name="Offset Y",
-            default=0.0,
-            description="Effect y offset"
-            )
+        name="Offset Y",
+        default=0.0,
+        description="Effect y offset"
+    )
     fx_height: FloatProperty(
-            name="Intensity",
-            default=1.0,
-            min=-1000.0,
-            max=1000.0,
-            description="Effect intensity scale"
-            )
+        name="Intensity",
+        default=1.0,
+        min=-1000.0,
+        max=1000.0,
+        description="Effect intensity scale"
+    )
     fx_invert: BoolProperty(
-            name="Invert",
-            default=False,
-            description="Effect invert"
-            )
+        name="Invert",
+        default=False,
+        description="Effect invert"
+    )
     fx_offset: FloatProperty(
-            name="Offset",
-            default=0.0,
-            min=-1000.0,
-            max=1000.0,
-            description="Effect height offset"
-            )
+        name="Offset",
+        default=0.0,
+        min=-1000.0,
+        max=1000.0,
+        description="Effect height offset"
+    )
 
     edge_falloff: EnumProperty(
-            name="Falloff",
-            default="3",
-            description="Flatten edges",
-            items = [
+        name="Falloff",
+        default="3",
+        description="Flatten edges",
+        items=[
                 ("0", "None", "None", 0),
                 ("1", "Y", "Y Falloff", 1),
                 ("2", "X", "X Falloff", 2),
                 ("3", "X Y", "X Y Falloff", 3)]
-            )
+    )
     falloff_x: FloatProperty(
-            name="Falloff X",
-            default=4.0,
-            min=0.1,
-            max=100.0,
-            description="Falloff x scale"
-            )
+        name="Falloff X",
+        default=4.0,
+        min=0.1,
+        max=100.0,
+        description="Falloff x scale"
+    )
     falloff_y: FloatProperty(
-            name="Falloff Y",
-            default=4.0,
-            min=0.1,
-            max=100.0,
-            description="Falloff y scale"
-            )
+        name="Falloff Y",
+        default=4.0,
+        min=0.1,
+        max=100.0,
+        description="Falloff y scale"
+    )
     edge_level: FloatProperty(
-            name="Edge Level",
-            default=0.0,
-            min=-10000.0,
-            max=10000.0,
-            description="Edge level, sealevel offset"
-            )
+        name="Edge Level",
+        default=0.0,
+        min=-10000.0,
+        max=10000.0,
+        description="Edge level, sealevel offset"
+    )
     maximum: FloatProperty(
-            name="Maximum",
-            default=1.0,
-            min=-10000.0,
-            max=10000.0,
-            description="Maximum, flattens terrain at plateau level"
-            )
+        name="Maximum",
+        default=1.0,
+        min=-10000.0,
+        max=10000.0,
+        description="Maximum, flattens terrain at plateau level"
+    )
     minimum: FloatProperty(
-            name="Minimum",
-            default=-1.0,
-            min=-10000.0,
-            max=10000.0,
-            description="Minimum, flattens terrain at seabed level"
-            )
+        name="Minimum",
+        default=-1.0,
+        min=-10000.0,
+        max=10000.0,
+        description="Minimum, flattens terrain at seabed level"
+    )
     vert_group: StringProperty(
-            name="Vertex Group",
-            default=""
-            )
+        name="Vertex Group",
+        default=""
+    )
     strata: FloatProperty(
-            name="Amount",
-            default=5.0,
-            min=0.01,
-            max=1000.0,
-            description="Strata layers / terraces"
-            )
+        name="Amount",
+        default=5.0,
+        min=0.01,
+        max=1000.0,
+        description="Strata layers / terraces"
+    )
     strata_type: EnumProperty(
-            name="Strata",
-            default="0",
-            description="Strata types",
-            items = [
+        name="Strata",
+        default="0",
+        description="Strata types",
+        items=[
                 ("0", "None", "No strata", 0),
                 ("1", "Smooth", "Smooth transitions", 1),
                 ("2", "Sharp Sub", "Sharp subtract transitions", 2),
                 ("3", "Sharp Add", "Sharp add transitions", 3),
                 ("4", "Quantize", "Quantize", 4),
                 ("5", "Quantize Mix", "Quantize mixed", 5)]
-            )
+    )
     water_plane: BoolProperty(
-            name="Water Plane",
-            default=False,
-            description="Add water plane"
-            )
+        name="Water Plane",
+        default=False,
+        description="Add water plane"
+    )
     water_level: FloatProperty(
-            name="Level",
-            default=0.01,
-            min=-10000.0,
-            max=10000.0,
-            description="Water level"
-            )
+        name="Level",
+        default=0.01,
+        min=-10000.0,
+        max=10000.0,
+        description="Water level"
+    )
     remove_double: BoolProperty(
-            name="Remove Doubles",
-            default=False,
-            description="Remove doubles"
-            )
+        name="Remove Doubles",
+        default=False,
+        description="Remove doubles"
+    )
     refresh: BoolProperty(
-            name="Refresh",
-            default=False,
-            description="Refresh"
-            )
+        name="Refresh",
+        default=False,
+        description="Refresh"
+    )
     auto_refresh: BoolProperty(
-            name="Auto",
-            default=True,
-            description="Automatic refresh"
-            )
+        name="Auto",
+        default=True,
+        description="Automatic refresh"
+    )
 
 # ------------------------------------------------------------
 # Register:
+
 
 classes = (
     AntLandscapeAddPanel,
@@ -916,12 +918,16 @@ classes = (
     ant_functions.Eroder,
 )
 
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func_landscape)
-    bpy.types.Object.ant_landscape = PointerProperty(type=AntLandscapePropertiesGroup, name="ANT_Landscape", description="Landscape properties")
+    bpy.types.Object.ant_landscape = PointerProperty(
+        type=AntLandscapePropertiesGroup,
+        name="ANT_Landscape",
+        description="Landscape properties")
     bpy.types.VIEW3D_MT_paint_weight.append(menu_func_eroder)
 
 

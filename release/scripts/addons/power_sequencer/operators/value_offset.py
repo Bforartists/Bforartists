@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 
 from .utils.doc import doc_brief, doc_description, doc_idname, doc_name
@@ -10,8 +7,9 @@ from .utils.functions import convert_duration_to_frames
 
 
 class POWER_SEQUENCER_OT_value_offset(bpy.types.Operator):
-    """Instantly offset selected strips, either using frames or seconds. """ \
-    """Allows to nudge the selection quickly, using keyboard shortcuts"""
+    """Instantly offset selected strips, either using frames or seconds. Allows to
+    nudge the selection quickly, using keyboard shortcuts.
+    """
 
     doc = {
         "name": doc_name(__qualname__),

@@ -3,8 +3,8 @@
 bl_info = {
     "name": "Math Vis (Console)",
     "author": "Campbell Barton",
-    "version": (0, 2, 1),
-    "blender": (2, 80, 0),
+    "version": (0, 2, 2),
+    "blender": (3, 0, 0),
     "location": "Properties: Scene > Math Vis Console and Python Console: Menu",
     "description": "Display console defined mathutils variables in the 3D view",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/math_vis_console.html",

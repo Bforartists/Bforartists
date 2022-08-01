@@ -8,7 +8,6 @@
 
 import bpy
 import bmesh
-import bgl
 import gpu
 import numpy as np
 from mathutils import Vector, Quaternion
@@ -584,7 +583,7 @@ def draw_3d(coords, gtype, rgba, context):
 
     try:
         if coords is not None:
-            bgl.glEnable(bgl.GL_BLEND)
+            gpu.state.blend_set('ALPHA')
             SHADER.bind()
             SHADER.uniform_float("color", rgba)
             batch.draw(SHADER)

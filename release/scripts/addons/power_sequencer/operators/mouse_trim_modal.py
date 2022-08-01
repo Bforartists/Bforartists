@@ -1,10 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
-import bgl
 import gpu
 import math
 from mathutils import Vector
@@ -35,7 +31,7 @@ class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):
     *brief* Cut or Trim strips quickly with the mouse cursor
 
 
-    Click somewhere in the Sequencer to insert a cut, click and drag to trim
+    Click somehwere in the Sequencer to insert a cut, click and drag to trim
     With this function you can quickly cut and remove a section of strips while keeping or
     collapsing the remaining gap.
     Press <kbd>Ctrl</kbd> to snap to cuts.
@@ -361,8 +357,8 @@ def draw(self, context, frame_start=-1, frame_end=-1, target_strips=[], draw_arr
     rect_origin = Vector((start_x, start_y))
     rect_size = Vector((end_x - start_x, abs(start_y - end_y)))
 
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(3)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(3.0)
     draw_rectangle(SHADER, rect_origin, rect_size, color_fill)
     # Vertical lines
     draw_line(SHADER, Vector((start_x, start_y)), Vector((start_x, end_y)), color_line)
@@ -377,8 +373,8 @@ def draw(self, context, frame_start=-1, frame_end=-1, target_strips=[], draw_arr
         draw_triangle_equilateral(SHADER, center_1, radius, color=color_line)
         draw_triangle_equilateral(SHADER, center_2, radius, math.pi, color=color_line)
 
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.line_width_set(1)
+    gpu.state.blend_set('NONE')
 
 
 def get_frame_and_channel(event):
