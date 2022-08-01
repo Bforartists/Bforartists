@@ -3,7 +3,7 @@
 bl_info = {
     "name": "UV Layout",
     "author": "Campbell Barton, Matt Ebb",
-    "version": (1, 1, 2),
+    "version": (1, 1, 3),
     "blender": (3, 0, 0),
     "location": "Image-Window > UVs > Export UV Layout",
     "description": "Export the UV layout as a 2D graphic",
@@ -128,10 +128,10 @@ class ExportUVLayout(bpy.types.Operator):
         polygon_data = list(self.iter_polygon_data_to_draw(context, meshes))
         different_colors = set(color for _, color in polygon_data)
         if self.modified:
-          depsgraph = context.evaluated_depsgraph_get()
-          for obj in self.iter_objects_to_export(context):
-              obj_eval = obj.evaluated_get(depsgraph)
-              obj_eval.to_mesh_clear()
+            depsgraph = context.evaluated_depsgraph_get()
+            for obj in self.iter_objects_to_export(context):
+                obj_eval = obj.evaluated_get(depsgraph)
+                obj_eval.to_mesh_clear()
 
         export = self.get_exporter()
         export(filepath, polygon_data, different_colors, self.size[0], self.size[1], self.opacity)

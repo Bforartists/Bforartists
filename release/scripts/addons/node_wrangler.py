@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 40),
+    "version": (3, 41),
     "blender": (2, 93, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
@@ -71,406 +71,6 @@ rl_outputs = (
     RL_entry('use_pass_vector', 'Speed', 'Vector', False, True),
     RL_entry('use_pass_z', 'Z', 'Depth', True, True),
     )
-
-# shader nodes
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_input_nodes_props = (
-    ('ShaderNodeAmbientOcclusion', 'AMBIENT_OCCLUSION', 'Ambient Occlusion'),
-    ('ShaderNodeAttribute', 'ATTRIBUTE', 'Attribute'),
-    ('ShaderNodeBevel', 'BEVEL', 'Bevel'),
-    ('ShaderNodeCameraData', 'CAMERA', 'Camera Data'),
-    ('ShaderNodeFresnel', 'FRESNEL', 'Fresnel'),
-    ('ShaderNodeNewGeometry', 'NEW_GEOMETRY', 'Geometry'),
-    ('ShaderNodeHairInfo', 'HAIR_INFO', 'Hair Info'),
-    ('ShaderNodeLayerWeight', 'LAYER_WEIGHT', 'Layer Weight'),
-    ('ShaderNodeLightPath', 'LIGHT_PATH', 'Light Path'),
-    ('ShaderNodeObjectInfo', 'OBJECT_INFO', 'Object Info'),
-    ('ShaderNodeParticleInfo', 'PARTICLE_INFO', 'Particle Info'),
-    ('ShaderNodeRGB', 'RGB', 'RGB'),
-    ('ShaderNodeTangent', 'TANGENT', 'Tangent'),
-    ('ShaderNodeTexCoord', 'TEX_COORD', 'Texture Coordinate'),
-    ('ShaderNodeUVMap', 'UVMAP', 'UV Map'),
-    ('ShaderNodeValue', 'VALUE', 'Value'),
-    ('ShaderNodeVertexColor', 'VERTEX_COLOR', 'Vertex Color'),
-    ('ShaderNodeVolumeInfo', 'VOLUME_INFO', 'Volume Info'),
-    ('ShaderNodeWireframe', 'WIREFRAME', 'Wireframe'),
-
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_output_nodes_props = (
-    ('ShaderNodeOutputAOV', 'OUTPUT_AOV', 'AOV Output'),
-    ('ShaderNodeOutputLight', 'OUTPUT_LIGHT', 'Light Output'),
-    ('ShaderNodeOutputMaterial', 'OUTPUT_MATERIAL', 'Material Output'),
-    ('ShaderNodeOutputWorld', 'OUTPUT_WORLD', 'World Output'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_shader_nodes_props = (
-    ('ShaderNodeAddShader', 'ADD_SHADER', 'Add Shader'),
-    ('ShaderNodeBsdfAnisotropic', 'BSDF_ANISOTROPIC', 'Anisotropic BSDF'),
-    ('ShaderNodeBsdfDiffuse', 'BSDF_DIFFUSE', 'Diffuse BSDF'),
-    ('ShaderNodeEmission', 'EMISSION', 'Emission'),
-    ('ShaderNodeBsdfGlass', 'BSDF_GLASS', 'Glass BSDF'),
-    ('ShaderNodeBsdfGlossy', 'BSDF_GLOSSY', 'Glossy BSDF'),
-    ('ShaderNodeBsdfHair', 'BSDF_HAIR', 'Hair BSDF'),
-    ('ShaderNodeHoldout', 'HOLDOUT', 'Holdout'),
-    ('ShaderNodeMixShader', 'MIX_SHADER', 'Mix Shader'),
-    ('ShaderNodeBsdfPrincipled', 'BSDF_PRINCIPLED', 'Principled BSDF'),
-    ('ShaderNodeBsdfHairPrincipled', 'BSDF_HAIR_PRINCIPLED', 'Principled Hair BSDF'),
-    ('ShaderNodeVolumePrincipled', 'PRINCIPLED_VOLUME', 'Principled Volume'),
-    ('ShaderNodeBsdfRefraction', 'BSDF_REFRACTION', 'Refraction BSDF'),
-    ('ShaderNodeSubsurfaceScattering', 'SUBSURFACE_SCATTERING', 'Subsurface Scattering'),
-    ('ShaderNodeBsdfToon', 'BSDF_TOON', 'Toon BSDF'),
-    ('ShaderNodeBsdfTranslucent', 'BSDF_TRANSLUCENT', 'Translucent BSDF'),
-    ('ShaderNodeBsdfTransparent', 'BSDF_TRANSPARENT', 'Transparent BSDF'),
-    ('ShaderNodeBsdfVelvet', 'BSDF_VELVET', 'Velvet BSDF'),
-    ('ShaderNodeBackground', 'BACKGROUND', 'Background'),
-    ('ShaderNodeVolumeAbsorption', 'VOLUME_ABSORPTION', 'Volume Absorption'),
-    ('ShaderNodeVolumeScatter', 'VOLUME_SCATTER', 'Volume Scatter'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping things in alphabetical order so we don't need to sort later.
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-shaders_texture_nodes_props = (
-    ('ShaderNodeTexBrick', 'TEX_BRICK', 'Brick Texture'),
-    ('ShaderNodeTexChecker', 'TEX_CHECKER', 'Checker Texture'),
-    ('ShaderNodeTexEnvironment', 'TEX_ENVIRONMENT', 'Environment Texture'),
-    ('ShaderNodeTexGradient', 'TEX_GRADIENT', 'Gradient Texture'),
-    ('ShaderNodeTexIES', 'TEX_IES', 'IES Texture'),
-    ('ShaderNodeTexImage', 'TEX_IMAGE', 'Image Texture'),
-    ('ShaderNodeTexMagic', 'TEX_MAGIC', 'Magic Texture'),
-    ('ShaderNodeTexMusgrave', 'TEX_MUSGRAVE', 'Musgrave Texture'),
-    ('ShaderNodeTexNoise', 'TEX_NOISE', 'Noise Texture'),
-    ('ShaderNodeTexPointDensity', 'TEX_POINTDENSITY', 'Point Density'),
-    ('ShaderNodeTexSky', 'TEX_SKY', 'Sky Texture'),
-    ('ShaderNodeTexVoronoi', 'TEX_VORONOI', 'Voronoi Texture'),
-    ('ShaderNodeTexWave', 'TEX_WAVE', 'Wave Texture'),
-    ('ShaderNodeTexWhiteNoise', 'TEX_WHITE_NOISE', 'White Noise'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_color_nodes_props = (
-    ('ShaderNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright Contrast'),
-    ('ShaderNodeGamma', 'GAMMA', 'Gamma'),
-    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
-    ('ShaderNodeInvert', 'INVERT', 'Invert'),
-    ('ShaderNodeLightFalloff', 'LIGHT_FALLOFF', 'Light Falloff'),
-    ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
-    ('ShaderNodeRGBCurve', 'CURVE_RGB', 'RGB Curves'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_vector_nodes_props = (
-    ('ShaderNodeBump', 'BUMP', 'Bump'),
-    ('ShaderNodeDisplacement', 'DISPLACEMENT', 'Displacement'),
-    ('ShaderNodeMapping', 'MAPPING', 'Mapping'),
-    ('ShaderNodeNormal', 'NORMAL', 'Normal'),
-    ('ShaderNodeNormalMap', 'NORMAL_MAP', 'Normal Map'),
-    ('ShaderNodeVectorCurve', 'CURVE_VEC', 'Vector Curves'),
-    ('ShaderNodeVectorDisplacement', 'VECTOR_DISPLACEMENT', 'Vector Displacement'),
-    ('ShaderNodeVectorTransform', 'VECT_TRANSFORM', 'Vector Transform'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_converter_nodes_props = (
-    ('ShaderNodeBlackbody', 'BLACKBODY', 'Blackbody'),
-    ('ShaderNodeClamp', 'CLAMP', 'Clamp'),
-    ('ShaderNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('ShaderNodeCombineHSV', 'COMBHSV', 'Combine HSV'),
-    ('ShaderNodeCombineRGB', 'COMBRGB', 'Combine RGB'),
-    ('ShaderNodeCombineXYZ', 'COMBXYZ', 'Combine XYZ'),
-    ('ShaderNodeMapRange', 'MAP_RANGE', 'Map Range'),
-    ('ShaderNodeMath', 'MATH', 'Math'),
-    ('ShaderNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
-    ('ShaderNodeSeparateRGB', 'SEPRGB', 'Separate RGB'),
-    ('ShaderNodeSeparateXYZ', 'SEPXYZ', 'Separate XYZ'),
-    ('ShaderNodeSeparateHSV', 'SEPHSV', 'Separate HSV'),
-    ('ShaderNodeVectorMath', 'VECT_MATH', 'Vector Math'),
-    ('ShaderNodeWavelength', 'WAVELENGTH', 'Wavelength'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-shaders_layout_nodes_props = (
-    ('NodeFrame', 'FRAME', 'Frame'),
-    ('NodeReroute', 'REROUTE', 'Reroute'),
-)
-
-# compositing nodes
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_input_nodes_props = (
-    ('CompositorNodeBokehImage', 'BOKEHIMAGE', 'Bokeh Image'),
-    ('CompositorNodeImage', 'IMAGE', 'Image'),
-    ('CompositorNodeMask', 'MASK', 'Mask'),
-    ('CompositorNodeMovieClip', 'MOVIECLIP', 'Movie Clip'),
-    ('CompositorNodeRLayers', 'R_LAYERS', 'Render Layers'),
-    ('CompositorNodeRGB', 'RGB', 'RGB'),
-    ('CompositorNodeTexture', 'TEXTURE', 'Texture'),
-    ('CompositorNodeTime', 'TIME', 'Time'),
-    ('CompositorNodeTrackPos', 'TRACKPOS', 'Track Position'),
-    ('CompositorNodeValue', 'VALUE', 'Value'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_output_nodes_props = (
-    ('CompositorNodeComposite', 'COMPOSITE', 'Composite'),
-    ('CompositorNodeOutputFile', 'OUTPUT_FILE', 'File Output'),
-    ('CompositorNodeLevels', 'LEVELS', 'Levels'),
-    ('CompositorNodeSplitViewer', 'SPLITVIEWER', 'Split Viewer'),
-    ('CompositorNodeViewer', 'VIEWER', 'Viewer'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_color_nodes_props = (
-    ('CompositorNodeAlphaOver', 'ALPHAOVER', 'Alpha Over'),
-    ('CompositorNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright/Contrast'),
-    ('CompositorNodeColorBalance', 'COLORBALANCE', 'Color Balance'),
-    ('CompositorNodeColorCorrection', 'COLORCORRECTION', 'Color Correction'),
-    ('CompositorNodeGamma', 'GAMMA', 'Gamma'),
-    ('CompositorNodeHueCorrect', 'HUECORRECT', 'Hue Correct'),
-    ('CompositorNodeHueSat', 'HUE_SAT', 'Hue Saturation Value'),
-    ('CompositorNodeInvert', 'INVERT', 'Invert'),
-    ('CompositorNodeMixRGB', 'MIX_RGB', 'Mix'),
-    ('CompositorNodeCurveRGB', 'CURVE_RGB', 'RGB Curves'),
-    ('CompositorNodeTonemap', 'TONEMAP', 'Tonemap'),
-    ('CompositorNodeZcombine', 'ZCOMBINE', 'Z Combine'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_converter_nodes_props = (
-    ('CompositorNodePremulKey', 'PREMULKEY', 'Alpha Convert'),
-    ('CompositorNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('CompositorNodeCombHSVA', 'COMBHSVA', 'Combine HSVA'),
-    ('CompositorNodeCombRGBA', 'COMBRGBA', 'Combine RGBA'),
-    ('CompositorNodeCombYCCA', 'COMBYCCA', 'Combine YCbCrA'),
-    ('CompositorNodeCombYUVA', 'COMBYUVA', 'Combine YUVA'),
-    ('CompositorNodeIDMask', 'ID_MASK', 'ID Mask'),
-    ('CompositorNodeMath', 'MATH', 'Math'),
-    ('CompositorNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
-    ('CompositorNodeSepRGBA', 'SEPRGBA', 'Separate RGBA'),
-    ('CompositorNodeSepHSVA', 'SEPHSVA', 'Separate HSVA'),
-    ('CompositorNodeSepYUVA', 'SEPYUVA', 'Separate YUVA'),
-    ('CompositorNodeSepYCCA', 'SEPYCCA', 'Separate YCbCrA'),
-    ('CompositorNodeSetAlpha', 'SETALPHA', 'Set Alpha'),
-    ('CompositorNodeSwitchView', 'VIEWSWITCH', 'View Switch'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_filter_nodes_props = (
-    ('CompositorNodeBilateralblur', 'BILATERALBLUR', 'Bilateral Blur'),
-    ('CompositorNodeBlur', 'BLUR', 'Blur'),
-    ('CompositorNodeBokehBlur', 'BOKEHBLUR', 'Bokeh Blur'),
-    ('CompositorNodeDefocus', 'DEFOCUS', 'Defocus'),
-    ('CompositorNodeDenoise', 'DENOISE', 'Denoise'),
-    ('CompositorNodeDespeckle', 'DESPECKLE', 'Despeckle'),
-    ('CompositorNodeDilateErode', 'DILATEERODE', 'Dilate/Erode'),
-    ('CompositorNodeDBlur', 'DBLUR', 'Directional Blur'),
-    ('CompositorNodeFilter', 'FILTER', 'Filter'),
-    ('CompositorNodeGlare', 'GLARE', 'Glare'),
-    ('CompositorNodeInpaint', 'INPAINT', 'Inpaint'),
-    ('CompositorNodePixelate', 'PIXELATE', 'Pixelate'),
-    ('CompositorNodeSunBeams', 'SUNBEAMS', 'Sun Beams'),
-    ('CompositorNodeVecBlur', 'VECBLUR', 'Vector Blur'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_vector_nodes_props = (
-    ('CompositorNodeMapRange', 'MAP_RANGE', 'Map Range'),
-    ('CompositorNodeMapValue', 'MAP_VALUE', 'Map Value'),
-    ('CompositorNodeNormal', 'NORMAL', 'Normal'),
-    ('CompositorNodeNormalize', 'NORMALIZE', 'Normalize'),
-    ('CompositorNodeCurveVec', 'CURVE_VEC', 'Vector Curves'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_matte_nodes_props = (
-    ('CompositorNodeBoxMask', 'BOXMASK', 'Box Mask'),
-    ('CompositorNodeChannelMatte', 'CHANNEL_MATTE', 'Channel Key'),
-    ('CompositorNodeChromaMatte', 'CHROMA_MATTE', 'Chroma Key'),
-    ('CompositorNodeColorMatte', 'COLOR_MATTE', 'Color Key'),
-    ('CompositorNodeColorSpill', 'COLOR_SPILL', 'Color Spill'),
-    ('CompositorNodeCryptomatte', 'CRYPTOMATTE', 'Cryptomatte'),
-    ('CompositorNodeDiffMatte', 'DIFF_MATTE', 'Difference Key'),
-    ('CompositorNodeDistanceMatte', 'DISTANCE_MATTE', 'Distance Key'),
-    ('CompositorNodeDoubleEdgeMask', 'DOUBLEEDGEMASK', 'Double Edge Mask'),
-    ('CompositorNodeEllipseMask', 'ELLIPSEMASK', 'Ellipse Mask'),
-    ('CompositorNodeKeying', 'KEYING', 'Keying'),
-    ('CompositorNodeKeyingScreen', 'KEYINGSCREEN', 'Keying Screen'),
-    ('CompositorNodeLumaMatte', 'LUMA_MATTE', 'Luminance Key'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_distort_nodes_props = (
-    ('CompositorNodeCornerPin', 'CORNERPIN', 'Corner Pin'),
-    ('CompositorNodeCrop', 'CROP', 'Crop'),
-    ('CompositorNodeDisplace', 'DISPLACE', 'Displace'),
-    ('CompositorNodeFlip', 'FLIP', 'Flip'),
-    ('CompositorNodeLensdist', 'LENSDIST', 'Lens Distortion'),
-    ('CompositorNodeMapUV', 'MAP_UV', 'Map UV'),
-    ('CompositorNodeMovieDistortion', 'MOVIEDISTORTION', 'Movie Distortion'),
-    ('CompositorNodePlaneTrackDeform', 'PLANETRACKDEFORM', 'Plane Track Deform'),
-    ('CompositorNodeRotate', 'ROTATE', 'Rotate'),
-    ('CompositorNodeScale', 'SCALE', 'Scale'),
-    ('CompositorNodeStabilize', 'STABILIZE2D', 'Stabilize 2D'),
-    ('CompositorNodeTransform', 'TRANSFORM', 'Transform'),
-    ('CompositorNodeTranslate', 'TRANSLATE', 'Translate'),
-)
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical order so we don't need to sort later.
-compo_layout_nodes_props = (
-    ('NodeFrame', 'FRAME', 'Frame'),
-    ('NodeReroute', 'REROUTE', 'Reroute'),
-    ('CompositorNodeSwitch', 'SWITCH', 'Switch'),
-)
-# Blender Render material nodes
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_input_nodes_props = (
-    ('ShaderNodeMaterial', 'MATERIAL', 'Material'),
-    ('ShaderNodeCameraData', 'CAMERA', 'Camera Data'),
-    ('ShaderNodeLightData', 'LIGHT', 'Light Data'),
-    ('ShaderNodeValue', 'VALUE', 'Value'),
-    ('ShaderNodeRGB', 'RGB', 'RGB'),
-    ('ShaderNodeTexture', 'TEXTURE', 'Texture'),
-    ('ShaderNodeGeometry', 'GEOMETRY', 'Geometry'),
-    ('ShaderNodeExtendedMaterial', 'MATERIAL_EXT', 'Extended Material'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_output_nodes_props = (
-    ('ShaderNodeOutput', 'OUTPUT', 'Output'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_color_nodes_props = (
-    ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
-    ('ShaderNodeRGBCurve', 'CURVE_RGB', 'RGB Curves'),
-    ('ShaderNodeInvert', 'INVERT', 'Invert'),
-    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_vector_nodes_props = (
-    ('ShaderNodeNormal', 'NORMAL', 'Normal'),
-    ('ShaderNodeMapping', 'MAPPING', 'Mapping'),
-    ('ShaderNodeVectorCurve', 'CURVE_VEC', 'Vector Curves'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_converter_nodes_props = (
-    ('ShaderNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('ShaderNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
-    ('ShaderNodeMath', 'MATH', 'Math'),
-    ('ShaderNodeVectorMath', 'VECT_MATH', 'Vector Math'),
-    ('ShaderNodeSqueeze', 'SQUEEZE', 'Squeeze Value'),
-    ('ShaderNodeSeparateRGB', 'SEPRGB', 'Separate RGB'),
-    ('ShaderNodeCombineRGB', 'COMBRGB', 'Combine RGB'),
-    ('ShaderNodeSeparateHSV', 'SEPHSV', 'Separate HSV'),
-    ('ShaderNodeCombineHSV', 'COMBHSV', 'Combine HSV'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-blender_mat_layout_nodes_props = (
-    ('NodeReroute', 'REROUTE', 'Reroute'),
-)
-
-# Texture Nodes
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_input_nodes_props = (
-    ('TextureNodeCurveTime', 'CURVE_TIME', 'Curve Time'),
-    ('TextureNodeCoordinates', 'COORD', 'Coordinates'),
-    ('TextureNodeTexture', 'TEXTURE', 'Texture'),
-    ('TextureNodeImage', 'IMAGE', 'Image'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_output_nodes_props = (
-    ('TextureNodeOutput', 'OUTPUT', 'Output'),
-    ('TextureNodeViewer', 'VIEWER', 'Viewer'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_color_nodes_props = (
-    ('TextureNodeMixRGB', 'MIX_RGB', 'Mix RGB'),
-    ('TextureNodeCurveRGB', 'CURVE_RGB', 'RGB Curves'),
-    ('TextureNodeInvert', 'INVERT', 'Invert'),
-    ('TextureNodeHueSaturation', 'HUE_SAT', 'Hue Saturation Value'),
-    ('TextureNodeCompose', 'COMPOSE', 'Combine RGBA'),
-    ('TextureNodeDecompose', 'DECOMPOSE', 'Separate RGBA'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_pattern_nodes_props = (
-    ('TextureNodeChecker', 'CHECKER', 'Checker'),
-    ('TextureNodeBricks', 'BRICKS', 'Bricks'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_textures_nodes_props = (
-    ('TextureNodeTexNoise', 'TEX_NOISE', 'Noise'),
-    ('TextureNodeTexDistNoise', 'TEX_DISTNOISE', 'Distorted Noise'),
-    ('TextureNodeTexClouds', 'TEX_CLOUDS', 'Clouds'),
-    ('TextureNodeTexBlend', 'TEX_BLEND', 'Blend'),
-    ('TextureNodeTexVoronoi', 'TEX_VORONOI', 'Voronoi'),
-    ('TextureNodeTexMagic', 'TEX_MAGIC', 'Magic'),
-    ('TextureNodeTexMarble', 'TEX_MARBLE', 'Marble'),
-    ('TextureNodeTexWood', 'TEX_WOOD', 'Wood'),
-    ('TextureNodeTexMusgrave', 'TEX_MUSGRAVE', 'Musgrave'),
-    ('TextureNodeTexStucci', 'TEX_STUCCI', 'Stucci'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_converter_nodes_props = (
-    ('TextureNodeMath', 'MATH', 'Math'),
-    ('TextureNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('TextureNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
-    ('TextureNodeValToNor', 'VALTONOR', 'Value to Normal'),
-    ('TextureNodeDistance', 'DISTANCE', 'Distance'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_distort_nodes_props = (
-    ('TextureNodeScale', 'SCALE', 'Scale'),
-    ('TextureNodeTranslate', 'TRANSLATE', 'Translate'),
-    ('TextureNodeRotate', 'ROTATE', 'Rotate'),
-    ('TextureNodeAt', 'AT', 'At'),
-)
-
-# (rna_type.identifier, type, rna_type.name)
-# Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-texture_layout_nodes_props = (
-    ('NodeReroute', 'REROUTE', 'Reroute'),
-)
 
 # list of blend types of "Mix" nodes in a form that can be used as 'items' for EnumProperty.
 # used list, not tuple for easy merging with other lists.
@@ -595,6 +195,13 @@ def get_nodes_from_category(category_name, context):
     for category in node_categories_iter(context):
         if category.name == category_name:
             return sorted(category.items(context), key=lambda node: node.label)
+
+def get_first_enabled_output(node):
+    for output in node.outputs:
+        if output.enabled:
+            return output
+    else:
+        return node.outputs[0]
 
 def is_visible_socket(socket):
     return not socket.hide and socket.enabled and socket.type != 'CUSTOM'
@@ -813,8 +420,7 @@ def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
 
 
 def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
-    area_width = bpy.context.area.width - (16*dpifac()) - 1
-    bottom_bar = (16*dpifac()) + 1
+    area_width = bpy.context.area.width
     sides = 16
     radius = radius*dpifac()
 
@@ -840,7 +446,7 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     vertices = [(mx,my)]
     for i in range(sides+1):
         if (4<=i<=8):
-            if my > bottom_bar and mx < area_width:
+            if mx < area_width:
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
@@ -854,7 +460,7 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     vertices = [(mx,my)]
     for i in range(sides+1):
         if (0<=i<=4):
-            if my > bottom_bar and mx < area_width:
+            if mx < area_width:
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
@@ -868,7 +474,7 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     vertices = [(mx,my)]
     for i in range(sides+1):
         if (8<=i<=12):
-            if my > bottom_bar and mx < area_width:
+            if mx < area_width:
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
@@ -882,7 +488,7 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     vertices = [(mx,my)]
     for i in range(sides+1):
         if (12<=i<=16):
-            if my > bottom_bar and mx < area_width:
+            if mx < area_width:
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
@@ -911,18 +517,15 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     m2x, m2y = bpy.context.region.view2d.view_to_region(nlocx + ndimx, nlocy, clip=False)
     m1x = min(m1x, area_width)
     m2x = min(m2x, area_width)
-    if m1y > bottom_bar and m2y > bottom_bar:
-        vertices.extend([(m1x,m1y), (m2x,m1y),
-                         (m2x,m1y+radius), (m1x,m1y+radius)])
-        indices.extend([(id_last, id_last+1, id_last+3),
-                        (id_last+3, id_last+1, id_last+2)])
-        id_last += 4
+    vertices.extend([(m1x,m1y), (m2x,m1y),
+                     (m2x,m1y+radius), (m1x,m1y+radius)])
+    indices.extend([(id_last, id_last+1, id_last+3),
+                    (id_last+3, id_last+1, id_last+2)])
+    id_last += 4
 
     # Right edge
     m1x, m1y = bpy.context.region.view2d.view_to_region(nlocx + ndimx, nlocy, clip=False)
     m2x, m2y = bpy.context.region.view2d.view_to_region(nlocx + ndimx, nlocy - ndimy, clip=False)
-    m1y = max(m1y, bottom_bar)
-    m2y = max(m2y, bottom_bar)
     if m1x < area_width and m2x < area_width:
         vertices.extend([(m1x,m2y), (m1x+radius,m2y),
                          (m1x+radius,m1y), (m1x,m1y)])
@@ -935,11 +538,10 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     m2x, m2y = bpy.context.region.view2d.view_to_region(nlocx + ndimx, nlocy-ndimy, clip=False)
     m1x = min(m1x, area_width)
     m2x = min(m2x, area_width)
-    if m1y > bottom_bar and m2y > bottom_bar:
-        vertices.extend([(m1x,m2y), (m2x,m2y),
-                         (m2x,m1y-radius), (m1x,m1y-radius)])
-        indices.extend([(id_last, id_last+1, id_last+3),
-                        (id_last+3, id_last+1, id_last+2)])
+    vertices.extend([(m1x,m2y), (m2x,m2y),
+                     (m2x,m1y-radius), (m1x,m1y-radius)])
+    indices.extend([(id_last, id_last+1, id_last+3),
+                    (id_last+3, id_last+1, id_last+2)])
 
     # now draw all edges in one batch
     if len(vertices) != 0:
@@ -1228,13 +830,12 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
 
 def nw_check(context):
     space = context.space_data
+    editor_is_valid = space.type == 'NODE_EDITOR'
+
     valid_trees = ["ShaderNodeTree", "CompositorNodeTree", "TextureNodeTree", "GeometryNodeTree"]
+    tree_is_valid = space.node_tree is not None and space.tree_type in valid_trees
 
-    valid = False
-    if space.type == 'NODE_EDITOR' and space.node_tree is not None and space.tree_type in valid_trees:
-        valid = True
-
-    return valid
+    return editor_is_valid and tree_is_valid
 
 class NWBase:
     @classmethod
@@ -1838,7 +1439,6 @@ class NWPreviewNode(Operator, NWBase):
 
         shader_type = space.shader_type
         self.init_shader_variables(space, shader_type)
-        shader_types = [x[1] for x in shaders_shader_nodes_props]
         mlocx = event.mouse_region_x
         mlocy = event.mouse_region_y
         select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
@@ -1933,10 +1533,11 @@ class NWPreviewNode(Operator, NWBase):
 
 
             # What follows is code for the shader editor
-            output_types = [x[1] for x in shaders_output_nodes_props]
+            output_types = [x.nodetype for x in
+                            get_nodes_from_category('Output', context)]
             valid = False
             if active:
-                if active.type not in output_types:
+                if active.rna_type.identifier not in output_types:
                     for out in active.outputs:
                         if is_visible_socket(out):
                             valid = True
@@ -2112,51 +1713,17 @@ class NWSwitchNodeType(Operator, NWBase):
     bl_label = "Switch Node Type"
     bl_options = {'REGISTER', 'UNDO'}
 
-    to_type: EnumProperty(
-        name="Switch to type",
-        items=list(shaders_input_nodes_props) +
-        list(shaders_output_nodes_props) +
-        list(shaders_shader_nodes_props) +
-        list(shaders_texture_nodes_props) +
-        list(shaders_color_nodes_props) +
-        list(shaders_vector_nodes_props) +
-        list(shaders_converter_nodes_props) +
-        list(shaders_layout_nodes_props) +
-        list(compo_input_nodes_props) +
-        list(compo_output_nodes_props) +
-        list(compo_color_nodes_props) +
-        list(compo_converter_nodes_props) +
-        list(compo_filter_nodes_props) +
-        list(compo_vector_nodes_props) +
-        list(compo_matte_nodes_props) +
-        list(compo_distort_nodes_props) +
-        list(compo_layout_nodes_props) +
-        list(blender_mat_input_nodes_props) +
-        list(blender_mat_output_nodes_props) +
-        list(blender_mat_color_nodes_props) +
-        list(blender_mat_vector_nodes_props) +
-        list(blender_mat_converter_nodes_props) +
-        list(blender_mat_layout_nodes_props) +
-        list(texture_input_nodes_props) +
-        list(texture_output_nodes_props) +
-        list(texture_color_nodes_props) +
-        list(texture_pattern_nodes_props) +
-        list(texture_textures_nodes_props) +
-        list(texture_converter_nodes_props) +
-        list(texture_distort_nodes_props) +
-        list(texture_layout_nodes_props)
-    )
-
-    geo_to_type: StringProperty(
+    to_type: StringProperty(
         name="Switch to type",
         default = '',
     )
 
     def execute(self, context):
-        nodes, links = get_nodes_links(context)
         to_type = self.to_type
-        if self.geo_to_type != '':
-            to_type = self.geo_to_type
+        if len(to_type) == 0:
+            return {'CANCELLED'}
+
+        nodes, links = get_nodes_links(context)
         # Those types of nodes will not swap.
         src_excludes = ('NodeFrame')
         # Those attributes of nodes will be copied if possible
@@ -2453,8 +2020,8 @@ class NWMergeNodes(Operator, NWBase):
             mode = 'MIX'
         if (merge_type != 'MATH' and merge_type != 'GEOMETRY') and tree_type == 'GEOMETRY':
             merge_type = 'AUTO'
-        # The math nodes used for geometry nodes are of type 'ShaderNode'
-        if merge_type == 'MATH' and tree_type == 'GEOMETRY':
+        # The MixRGB node and math nodes used for geometry nodes are of type 'ShaderNode'
+        if (merge_type == 'MATH' or merge_type == 'MIX') and tree_type == 'GEOMETRY':
             node_type = 'ShaderNode'
         selected_mix = []  # entry = [index, loc]
         selected_shader = []  # entry = [index, loc]
@@ -2474,7 +2041,8 @@ class NWMergeNodes(Operator, NWBase):
                             ('VALUE', [t[0] for t in operations], selected_math),
                             ('VECTOR', [], selected_vector),
                     ):
-                        output_type = node.outputs[0].type
+                        output = get_first_enabled_output(node)
+                        output_type = output.type
                         valid_mode = mode in types_list
                         # When mode is 'MIX' we have to cheat since the mix node is not used in
                         # geometry nodes.
@@ -2525,7 +2093,7 @@ class NWMergeNodes(Operator, NWBase):
 
             # Change the node type for math nodes in a geometry node tree.
             if tree_type == 'GEOMETRY':
-                if nodes_list is selected_math or nodes_list is selected_vector:
+                if nodes_list is selected_math or nodes_list is selected_vector or nodes_list is selected_mix:
                     node_type = 'ShaderNode'
                     if mode == 'MIX':
                         mode = 'ADD'
@@ -2650,8 +2218,9 @@ class NWMergeNodes(Operator, NWBase):
             # Special case:
             # Two nodes were selected and first selected has no output links, second selected has output links.
             # Then add links from last add to all links 'to_socket' of out links of second selected.
+            first_selected_output = get_first_enabled_output(first_selected)
             if len(nodes_list) == 2:
-                if not first_selected.outputs[0].links:
+                if not first_selected_output.links:
                     second_selected = nodes[nodes_list[1][0]]
                     for ss_link in second_selected.outputs[0].links:
                         # Prevent cyclic dependencies when nodes to be merged are linked to one another.
@@ -2659,16 +2228,16 @@ class NWMergeNodes(Operator, NWBase):
                         if not self.link_creates_cycle(ss_link, invalid_nodes):
                             links.new(last_add.outputs[0], ss_link.to_socket)
             # add links from last_add to all links 'to_socket' of out links of first selected.
-            for fs_link in first_selected.outputs[0].links:
+            for fs_link in first_selected_output.links:
                 # Link only if "to_node" index not in invalid indexes list.
                 if not self.link_creates_cycle(fs_link, invalid_nodes):
                     links.new(last_add.outputs[0], fs_link.to_socket)
             # add link from "first" selected and "first" add node
             node_to = nodes[count_after - 1]
-            links.new(first_selected.outputs[0], node_to.inputs[first])
+            links.new(first_selected_output, node_to.inputs[first])
             if node_to.type == 'ZCOMBINE':
                 for fs_out in first_selected.outputs:
-                    if fs_out != first_selected.outputs[0] and fs_out.name in ('Z', 'Depth'):
+                    if fs_out != first_selected_output and fs_out.name in ('Z', 'Depth'):
                         links.new(fs_out, node_to.inputs[1])
                         break
             # add links between added ADD nodes and between selected and ADD nodes
@@ -2678,20 +2247,20 @@ class NWMergeNodes(Operator, NWBase):
                     node_to = nodes[index - 1]
                     node_to_input_i = first
                     node_to_z_i = 1  # if z combine - link z to first z input
-                    links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
+                    links.new(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
                     if node_to.type == 'ZCOMBINE':
                         for from_out in node_from.outputs:
-                            if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
+                            if from_out != get_first_enabled_output(node_from) and from_out.name in ('Z', 'Depth'):
                                 links.new(from_out, node_to.inputs[node_to_z_i])
                 if len(nodes_list) > 1:
                     node_from = nodes[nodes_list[i + 1][0]]
                     node_to = nodes[index]
                     node_to_input_i = second
                     node_to_z_i = 3  # if z combine - link z to second z input
-                    links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
+                    links.new(get_first_enabled_output(node_from), node_to.inputs[node_to_input_i])
                     if node_to.type == 'ZCOMBINE':
                         for from_out in node_from.outputs:
-                            if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
+                            if from_out != get_first_enabled_output(node_from) and from_out.name in ('Z', 'Depth'):
                                 links.new(from_out, node_to.inputs[node_to_z_i])
                 index -= 1
             # set "last" of added nodes as active
@@ -3014,71 +2583,74 @@ class NWAddTextureSetup(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        valid = False
         if nw_check(context):
             space = context.space_data
             if space.tree_type == 'ShaderNodeTree':
-                valid = True
-        return valid
+                return True
+        return False
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
-        shader_types = [x[1] for x in shaders_shader_nodes_props if x[1] not in {'MIX_SHADER', 'ADD_SHADER'}]
-        texture_types = [x[1] for x in shaders_texture_nodes_props]
+
+        texture_types = [x.nodetype for x in
+                         get_nodes_from_category('Texture', context)]
         selected_nodes = [n for n in nodes if n.select]
-        for t_node in selected_nodes:
-            valid = False
+
+        for node in selected_nodes:
+            if not node.inputs:
+                continue
+
             input_index = 0
-            if t_node.inputs:
-                for index, i in enumerate(t_node.inputs):
-                    if not i.is_linked:
-                        valid = True
-                        input_index = index
+            target_input = node.inputs[0]
+            for input in node.inputs:
+                if input.enabled:
+                    input_index += 1
+                    if not input.is_linked:
+                        target_input = input
                         break
-            if valid:
-                locx = t_node.location.x
-                locy = t_node.location.y - t_node.dimensions.y/2
-
-                xoffset = [500, 700]
-                is_texture = False
-                if t_node.type in texture_types + ['MAPPING']:
-                    xoffset = [290, 500]
-                    is_texture = True
-
-                coordout = 2
-                image_type = 'ShaderNodeTexImage'
-
-                if (t_node.type in texture_types and t_node.type != 'TEX_IMAGE') or (t_node.type == 'BACKGROUND'):
-                    coordout = 0  # image texture uses UVs, procedural textures and Background shader use Generated
-                    if t_node.type == 'BACKGROUND':
-                        image_type = 'ShaderNodeTexEnvironment'
-
-                if not is_texture:
-                    tex = nodes.new(image_type)
-                    tex.location = [locx - 200, locy + 112]
-                    nodes.active = tex
-                    links.new(tex.outputs[0], t_node.inputs[input_index])
-
-                t_node.select = False
-                if self.add_mapping or is_texture:
-                    if t_node.type != 'MAPPING':
-                        m = nodes.new('ShaderNodeMapping')
-                        m.location = [locx - xoffset[0], locy + 141]
-                        m.width = 240
-                    else:
-                        m = t_node
-                    coord = nodes.new('ShaderNodeTexCoord')
-                    coord.location = [locx - (200 if t_node.type == 'MAPPING' else xoffset[1]), locy + 124]
-
-                    if not is_texture:
-                        links.new(m.outputs[0], tex.inputs[0])
-                        links.new(coord.outputs[coordout], m.inputs[0])
-                    else:
-                        nodes.active = m
-                        links.new(m.outputs[0], t_node.inputs[input_index])
-                        links.new(coord.outputs[coordout], m.inputs[0])
             else:
-                self.report({'WARNING'}, "No free inputs for node: "+t_node.name)
+                self.report({'WARNING'}, "No free inputs for node: " + node.name)
+                continue
+
+            x_offset = 0
+            padding = 40.0
+            locx = node.location.x
+            locy = node.location.y - (input_index * padding)
+
+            is_texture_node = node.rna_type.identifier in texture_types
+            use_environment_texture = node.type == 'BACKGROUND'
+
+            # Add an image texture before normal shader nodes.
+            if not is_texture_node:
+                image_texture_type = 'ShaderNodeTexEnvironment' if use_environment_texture else 'ShaderNodeTexImage'
+                image_texture_node = nodes.new(image_texture_type)
+                x_offset = x_offset + image_texture_node.width + padding
+                image_texture_node.location = [locx - x_offset, locy]
+                nodes.active = image_texture_node
+                links.new(image_texture_node.outputs[0], target_input)
+
+                # The mapping setup following this will connect to the firrst input of this image texture.
+                target_input = image_texture_node.inputs[0]
+
+            node.select = False
+
+            if is_texture_node or self.add_mapping:
+                # Add Mapping node.
+                mapping_node = nodes.new('ShaderNodeMapping')
+                x_offset = x_offset + mapping_node.width + padding
+                mapping_node.location = [locx - x_offset, locy]
+                links.new(mapping_node.outputs[0], target_input)
+
+                # Add Texture Coordinates node.
+                tex_coord_node = nodes.new('ShaderNodeTexCoord')
+                x_offset = x_offset + tex_coord_node.width + padding
+                tex_coord_node.location = [locx - x_offset, locy]
+
+                is_procedural_texture = is_texture_node and node.type != 'TEX_IMAGE'
+                use_generated_coordinates = is_procedural_texture or use_environment_texture
+                tex_coord_output = tex_coord_node.outputs[0 if use_generated_coordinates else 2]
+                links.new(tex_coord_output, mapping_node.inputs[0])
+
         return {'FINISHED'}
 
 
@@ -3701,37 +3273,32 @@ class NWLinkToOutputNode(Operator):
     def execute(self, context):
         nodes, links = get_nodes_links(context)
         active = nodes.active
-        output_node = None
         output_index = None
         tree_type = context.space_data.tree_type
-        if tree_type == 'ShaderNodeTree':
-            output_types = [x[1] for x in shaders_output_nodes_props] + ['OUTPUT']
-        elif tree_type == 'CompositorNodeTree':
-            output_types = ['COMPOSITE']
-        elif tree_type == 'TextureNodeTree':
-            output_types = ['OUTPUT']
-        elif tree_type == 'GeometryNodeTree':
-            output_types = ['GROUP_OUTPUT']
+        shader_outputs = {'OBJECT':    'ShaderNodeOutputMaterial',
+                          'WORLD':     'ShaderNodeOutputWorld',
+                          'LINESTYLE': 'ShaderNodeOutputLineStyle'}
+        output_type = {
+            'ShaderNodeTree': shader_outputs[context.space_data.shader_type],
+            'CompositorNodeTree': 'CompositorNodeComposite',
+            'TextureNodeTree': 'TextureNodeOutput',
+            'GeometryNodeTree': 'NodeGroupOutput',
+        }[tree_type]
         for node in nodes:
-            if node.type in output_types:
+            # check whether the node is an output node and,
+            # if supported, whether it's the active one
+            if node.rna_type.identifier == output_type \
+               and (node.is_active_output if hasattr(node, 'is_active_output')
+                    else True):
                 output_node = node
                 break
-        if not output_node:
+        else:  # No output node exists
             bpy.ops.node.select_all(action="DESELECT")
-            if tree_type == 'ShaderNodeTree':
-                if context.space_data.shader_type == 'OBJECT':
-                    output_node = nodes.new('ShaderNodeOutputMaterial')
-                elif context.space_data.shader_type == 'WORLD':
-                    output_node = nodes.new('ShaderNodeOutputWorld')
-            elif tree_type == 'CompositorNodeTree':
-                output_node = nodes.new('CompositorNodeComposite')
-            elif tree_type == 'TextureNodeTree':
-                output_node = nodes.new('TextureNodeOutput')
-            elif tree_type == 'GeometryNodeTree':
-                output_node = nodes.new('NodeGroupOutput')
+            output_node = nodes.new(output_type)
             output_node.location.x = active.location.x + active.dimensions.x + 80
             output_node.location.y = active.location.y
-        if (output_node and active.outputs):
+
+        if active.outputs:
             for i, output in enumerate(active.outputs):
                 if is_visible_socket(output):
                     output_index = i
@@ -3745,7 +3312,7 @@ class NWLinkToOutputNode(Operator):
             if tree_type == 'ShaderNodeTree':
                 if active.outputs[output_index].name == 'Volume':
                     out_input_index = 1
-                elif active.outputs[output_index].type != 'SHADER':  # connect to displacement if not a shader
+                elif active.outputs[output_index].name == 'Displacement':
                     out_input_index = 2
             elif tree_type == 'GeometryNodeTree':
                 if active.outputs[output_index].type != 'GEOMETRY':
@@ -4566,391 +4133,17 @@ class NWSwitchNodeTypeMenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        tree = context.space_data.node_tree
-        if tree.type == 'SHADER':
-            layout.menu(NWSwitchShadersInputSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersOutputSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersShaderSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersTextureSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersColorSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersVectorSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersConverterSubmenu.bl_idname)
-            layout.menu(NWSwitchShadersLayoutSubmenu.bl_idname)
-        if tree.type == 'COMPOSITING':
-            layout.menu(NWSwitchCompoInputSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoOutputSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoColorSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoConverterSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoFilterSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoVectorSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoMatteSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoDistortSubmenu.bl_idname)
-            layout.menu(NWSwitchCompoLayoutSubmenu.bl_idname)
-        if tree.type == 'TEXTURE':
-            layout.menu(NWSwitchTexInputSubmenu.bl_idname)
-            layout.menu(NWSwitchTexOutputSubmenu.bl_idname)
-            layout.menu(NWSwitchTexColorSubmenu.bl_idname)
-            layout.menu(NWSwitchTexPatternSubmenu.bl_idname)
-            layout.menu(NWSwitchTexTexturesSubmenu.bl_idname)
-            layout.menu(NWSwitchTexConverterSubmenu.bl_idname)
-            layout.menu(NWSwitchTexDistortSubmenu.bl_idname)
-            layout.menu(NWSwitchTexLayoutSubmenu.bl_idname)
-        if tree.type == 'GEOMETRY':
-            categories = [c for c in node_categories_iter(context)
+        categories = [c for c in node_categories_iter(context)
                       if c.name not in ['Group', 'Script']]
-            for cat in categories:
-                idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
-                if hasattr(bpy.types, idname):
-                    layout.menu(idname)
-                else:
-                    layout.label(text="Unable to load altered node lists.")
-                    layout.label(text="Please re-enable Node Wrangler.")
-                    break
+        for cat in categories:
+            idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
+            if hasattr(bpy.types, idname):
+                layout.menu(idname)
+            else:
+                layout.label(text="Unable to load altered node lists.")
+                layout.label(text="Please re-enable Node Wrangler.")
+                break
 
-
-class NWSwitchShadersInputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_input_submenu"
-    bl_label = "Input"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_input_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersOutputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_output_submenu"
-    bl_label = "Output"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_output_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersShaderSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_shader_submenu"
-    bl_label = "Shader"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_shader_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersTextureSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_texture_submenu"
-    bl_label = "Texture"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_texture_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersColorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_color_submenu"
-    bl_label = "Color"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_color_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersVectorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_vector_submenu"
-    bl_label = "Vector"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_vector_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersConverterSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_converter_submenu"
-    bl_label = "Converter"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_converter_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchShadersLayoutSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_shaders_layout_submenu"
-    bl_label = "Layout"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in shaders_layout_nodes_props:
-            if node_type != 'FRAME':
-                props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-                props.to_type = ident
-
-
-class NWSwitchCompoInputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_input_submenu"
-    bl_label = "Input"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_input_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoOutputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_output_submenu"
-    bl_label = "Output"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_output_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoColorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_color_submenu"
-    bl_label = "Color"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_color_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoConverterSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_converter_submenu"
-    bl_label = "Converter"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_converter_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoFilterSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_filter_submenu"
-    bl_label = "Filter"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_filter_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoVectorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_vector_submenu"
-    bl_label = "Vector"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_vector_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoMatteSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_matte_submenu"
-    bl_label = "Matte"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_matte_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoDistortSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_distort_submenu"
-    bl_label = "Distort"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_distort_nodes_props:
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchCompoLayoutSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_compo_layout_submenu"
-    bl_label = "Layout"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in compo_layout_nodes_props:
-            if node_type != 'FRAME':
-                props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-                props.to_type = ident
-
-
-class NWSwitchMatInputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_input_submenu"
-    bl_label = "Input"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_input_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchMatOutputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_output_submenu"
-    bl_label = "Output"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_output_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchMatColorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_color_submenu"
-    bl_label = "Color"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_color_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchMatVectorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_vector_submenu"
-    bl_label = "Vector"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_vector_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchMatConverterSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_converter_submenu"
-    bl_label = "Converter"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_converter_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchMatLayoutSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_mat_layout_submenu"
-    bl_label = "Layout"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(blender_mat_layout_nodes_props, key=lambda k: k[2]):
-            if node_type != 'FRAME':
-                props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-                props.to_type = ident
-
-
-class NWSwitchTexInputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_input_submenu"
-    bl_label = "Input"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_input_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexOutputSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_output_submenu"
-    bl_label = "Output"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_output_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexColorSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_color_submenu"
-    bl_label = "Color"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_color_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexPatternSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_pattern_submenu"
-    bl_label = "Pattern"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_pattern_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexTexturesSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_textures_submenu"
-    bl_label = "Textures"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_textures_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexConverterSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_converter_submenu"
-    bl_label = "Converter"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_converter_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexDistortSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_distort_submenu"
-    bl_label = "Distort"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_distort_nodes_props, key=lambda k: k[2]):
-            props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-            props.to_type = ident
-
-
-class NWSwitchTexLayoutSubmenu(Menu, NWBase):
-    bl_idname = "NODE_MT_nw_switch_tex_layout_submenu"
-    bl_label = "Layout"
-
-    def draw(self, context):
-        layout = self.layout
-        for ident, node_type, rna_name in sorted(texture_layout_nodes_props, key=lambda k: k[2]):
-            if node_type != 'FRAME':
-                props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
-                props.to_type = ident
 
 def draw_switch_category_submenu(self, context):
     layout = self.layout
@@ -4965,7 +4158,7 @@ def draw_switch_category_submenu(self, context):
                 node.draw(self, layout, context)
                 continue
             props = layout.operator(NWSwitchNodeType.bl_idname, text=node.label)
-            props.geo_to_type = node.nodetype
+            props.to_type = node.nodetype
 
 #
 #  APPENDAGES TO EXISTING UI
@@ -5009,12 +4202,12 @@ def reset_nodes_button(self, context):
     node_ignore = ["FRAME","REROUTE", "GROUP"]
 
     # Check if active node is in the selection and respective type
-    if (len(node_selected) == 1) and node_active.select and node_active.type not in node_ignore:
+    if (len(node_selected) == 1) and node_active and node_active.select and node_active.type not in node_ignore:
         row = self.layout.row()
         row.operator("node.nw_reset_nodes", text="Reset Node", icon="FILE_REFRESH")
         self.layout.separator()
 
-    elif (len(node_selected) == 1) and node_active.select and node_active.type == "FRAME":
+    elif (len(node_selected) == 1) and node_active and node_active.select and node_active.type == "FRAME":
         row = self.layout.row()
         row.operator("node.nw_reset_nodes", text="Reset Nodes in Frame", icon="FILE_REFRESH")
         self.layout.separator()
@@ -5183,8 +4376,8 @@ kmi_defs = (
     (NWDeleteUnused.bl_idname, 'X', 'PRESS', False, False, True, None, "Delete unused nodes"),
     # Frame Selected
     (NWFrameSelected.bl_idname, 'P', 'PRESS', False, True, False, None, "Frame selected nodes"),
-    # Swap Outputs
-    (NWSwapLinks.bl_idname, 'S', 'PRESS', False, False, True, None, "Swap Outputs"),
+    # Swap Links
+    (NWSwapLinks.bl_idname, 'S', 'PRESS', False, False, True, None, "Swap Links"),
     # Preview Node
     (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', True, True, False, (('run_in_geometry_nodes', False),), "Preview node output"),
     (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', False, True, True, (('run_in_geometry_nodes', True),), "Preview node output"),
@@ -5268,37 +4461,6 @@ classes = (
     NWLinkUseOutputsNamesMenu,
     NWAttributeMenu,
     NWSwitchNodeTypeMenu,
-    NWSwitchShadersInputSubmenu,
-    NWSwitchShadersOutputSubmenu,
-    NWSwitchShadersShaderSubmenu,
-    NWSwitchShadersTextureSubmenu,
-    NWSwitchShadersColorSubmenu,
-    NWSwitchShadersVectorSubmenu,
-    NWSwitchShadersConverterSubmenu,
-    NWSwitchShadersLayoutSubmenu,
-    NWSwitchCompoInputSubmenu,
-    NWSwitchCompoOutputSubmenu,
-    NWSwitchCompoColorSubmenu,
-    NWSwitchCompoConverterSubmenu,
-    NWSwitchCompoFilterSubmenu,
-    NWSwitchCompoVectorSubmenu,
-    NWSwitchCompoMatteSubmenu,
-    NWSwitchCompoDistortSubmenu,
-    NWSwitchCompoLayoutSubmenu,
-    NWSwitchMatInputSubmenu,
-    NWSwitchMatOutputSubmenu,
-    NWSwitchMatColorSubmenu,
-    NWSwitchMatVectorSubmenu,
-    NWSwitchMatConverterSubmenu,
-    NWSwitchMatLayoutSubmenu,
-    NWSwitchTexInputSubmenu,
-    NWSwitchTexOutputSubmenu,
-    NWSwitchTexColorSubmenu,
-    NWSwitchTexPatternSubmenu,
-    NWSwitchTexTexturesSubmenu,
-    NWSwitchTexConverterSubmenu,
-    NWSwitchTexDistortSubmenu,
-    NWSwitchTexLayoutSubmenu,
 )
 
 def register():
@@ -5355,7 +4517,7 @@ def register():
     # switch submenus
     switch_category_menus.clear()
     for cat in node_categories_iter(None):
-        if cat.name not in ['Group', 'Script'] and cat.identifier.startswith('GEO'):
+        if cat.name not in ['Group', 'Script']:
             idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
             switch_category_type = type(idname, (bpy.types.Menu,), {
                 "bl_space_type": 'NODE_EDITOR',

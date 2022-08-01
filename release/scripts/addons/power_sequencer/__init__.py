@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 from typing import List, Tuple, Type
 
 import bpy
@@ -27,8 +24,8 @@ bl_info = {
     "name": "Power Sequencer",
     "description": "Video editing tools for content creators",
     "author": "Nathan Lovato",
-    "version": (1, 5, 0),
-    "blender": (2, 81, 0),
+    "version": (2, 0, 2),
+    "blender": (2, 93, 3),
     "location": "Sequencer",
     "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
     "wiki_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",

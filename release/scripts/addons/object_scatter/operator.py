@@ -2,7 +2,6 @@
 
 import bpy
 import gpu
-import bgl
 import blf
 import math
 import enum
@@ -340,14 +339,14 @@ def draw_matrices_batches(batches):
     shader.bind()
     shader.uniform_float("color", (0.4, 0.4, 1.0, 0.3))
 
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glDepthMask(bgl.GL_FALSE)
+    gpu.state.blend_set('ALPHA')
+    gpu.state.depth_mask_set(False)
 
     for batch in batches:
         batch.draw(shader)
 
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glDepthMask(bgl.GL_TRUE)
+    gpu.state.blend_set('NONE')
+    gpu.state.depth_mask_set(True)
 
 def create_batch_for_matrices(matrices, base_scale):
     coords = []
@@ -367,7 +366,7 @@ def create_batch_for_matrices(matrices, base_scale):
 
 def draw_line_strip_batch(batch, color, thickness=1):
     shader = get_uniform_color_shader()
-    bgl.glLineWidth(thickness)
+    gpu.state.line_width_set(thickness)
     shader.bind()
     shader.uniform_float("color", color)
     batch.draw(shader)

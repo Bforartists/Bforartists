@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 from operator import attrgetter
 
@@ -45,8 +42,8 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
         name="Direction",
         description="Jump direction, either forward or backward",
         items=[
-            ("RIGHT", "Forward", "Jump forward in time"),
-            ("LEFT", "Backward", "Jump backward in time"),
+            ("RIGHT", "Right", "Jump forward in time"),
+            ("LEFT", "Left", "Jump backward in time"),
         ],
     )
 
@@ -56,9 +53,6 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
 
     def execute(self, context):
         frame_current = context.scene.frame_current
-        sorted_sequences = sorted(
-            context.sequences, key=attrgetter("frame_final_start", "frame_final_end")
-        )
 
         fcurves = []
         animation_data = context.scene.animation_data
@@ -66,43 +60,53 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
             fcurves = animation_data.action.fcurves
 
         frame_target = -1
-        if self.direction == "RIGHT":
-            sequences = [s for s in sorted_sequences if s.frame_final_end > frame_current]
-            for s in sequences:
 
-                frame_target = (
-                    s.frame_final_end
-                    if s.frame_final_start <= frame_current
-                    else s.frame_final_start
-                )
+        # First find the closest cut, then if that sequence has an associated
+        # fcurve, loop through the curve's keyframes.
+        if self.direction == "RIGHT":
+            frame_target = 100_000_000
+            for s in context.sequences:
+                if s.frame_final_end <= frame_current:
+                    continue
+
+                candidates = [frame_target, s.frame_final_end]
+                if s.frame_final_start > frame_current:
+                    candidates.append(s.frame_final_start)
+
+                frame_target = min(candidates)
 
                 for f in fcurves:
+                    if s.name not in f.data_path:
+                        continue
+
                     for k in f.keyframe_points:
                         frame = k.co[0]
-                        if frame <= context.scene.frame_current:
+                        if frame <= frame_current:
                             continue
                         frame_target = min(frame_target, frame)
-                break
 
         elif self.direction == "LEFT":
-            sequences = [
-                s for s in reversed(sorted_sequences) if s.frame_final_start < frame_current
-            ]
-            for s in sequences:
+            for s in context.sequences:
+                if s.frame_final_start >= frame_current:
+                    continue
 
-                frame_target = (
-                    s.frame_final_start if s.frame_final_end >= frame_current else s.frame_final_end
-                )
+                candidates = [frame_target, s.frame_final_start]
+                if s.frame_final_end < frame_current:
+                    candidates.append(s.frame_final_end)
+
+                frame_target = max(candidates)
 
                 for f in fcurves:
+                    if s.name not in f.data_path:
+                        continue
+
                     for k in f.keyframe_points:
                         frame = k.co[0]
-                        if frame >= context.scene.frame_current:
+                        if frame >= frame_current:
                             continue
                         frame_target = max(frame_target, frame)
-                break
 
-        if frame_target != -1:
-            context.scene.frame_current = max(1, frame_target)
+        if frame_target > 0 and frame_target != 100_000_000:
+            context.scene.frame_current = int(frame_target)
 
         return {"FINISHED"}

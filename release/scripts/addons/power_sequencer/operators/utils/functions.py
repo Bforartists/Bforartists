@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 from math import floor, sqrt
 from operator import attrgetter
 
@@ -279,9 +276,7 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
         elif s.frame_final_end > trim_start and s.frame_final_start < trim_start:
             s.frame_final_end = trim_start
 
-    for s in to_delete:
-        bpy.context.sequences.remove(s)
-
+    delete_strips(to_delete)
     for s in initial_selection:
         s.select = True
     return {"FINISHED"}
@@ -331,7 +326,8 @@ def get_sequences_under_cursor(context):
 
 
 def ripple_move(context, sequences, duration_frames, delete=False):
-    """Moves sequences in the list and ripples the change to all sequences after them, in the corresponding channels
+    """
+    Moves sequences in the list and ripples the change to all sequences after them, in the corresponding channels
     The `duration_frames` can be positive or negative.
     If `delete` is True, deletes every sequence in `sequences`.
     """
@@ -344,10 +340,7 @@ def ripple_move(context, sequences, duration_frames, delete=False):
     ]
 
     if delete:
-        bpy.ops.sequencer.select_all(action="DESELECT")
-        for s in sequences:
-            s.select = True
-        bpy.ops.sequencer.delete()
+        delete_strips(sequences)
     else:
         to_ripple = set(to_ripple + sequences)
 
@@ -390,8 +383,20 @@ def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=Tru
     return strips_inside_range, strips_overlapping_range
 
 
+def delete_strips(to_delete):
+    """
+    Deletes the list of sequences `to_delete`
+    """
+    # Effect strips get deleted with their source so we skip them to avoid errors.
+    to_delete = [s for s in to_delete if s.type in SequenceTypes.CUTABLE]
+    sequences = bpy.context.scene.sequence_editor.sequences
+    for s in to_delete:
+        sequences.remove(s)
+
+
 def move_selection(context, sequences, frame_offset, channel_offset=0):
-    """Offsets the selected `sequences` horizontally and vertically and preserves
+    """
+    Offsets the selected `sequences` horizontally and vertically and preserves
     the current selected sequences.
     """
     if not sequences:
