@@ -11,7 +11,6 @@ import bpy
 import bmesh
 from bmesh import from_edit_mesh
 # noinspection PyUnresolvedReferences
-import bgl
 from bpy.types import PropertyGroup, Panel, Object, Operator, SpaceView3D
 from bpy.props import IntProperty, CollectionProperty, FloatVectorProperty, BoolProperty, StringProperty, \
                       FloatProperty, EnumProperty
@@ -1933,8 +1932,8 @@ def draw_main(context):
     else:
         objlist = context.view_layer.objects
 
-    # Enable GL drawing
-    bgl.glEnable(bgl.GL_BLEND)
+    # Enable drawing
+    gpu.state.blend_set('ALPHA')
     # ---------------------------------------
     # Generate all OpenGL calls for measures
     # ---------------------------------------
@@ -1964,9 +1963,9 @@ def draw_main(context):
                 draw_faces(context, myobj, region, rv3d)
 
     # -----------------------
-    # restore opengl defaults
+    # restore defaults
     # -----------------------
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.blend_set('NONE')
 
 
 # -------------------------------------------------------------

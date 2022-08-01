@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
-
-# This file is part of Power Sequencer.
-
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 import bpy
 
 from .utils.functions import find_sequences_after
@@ -94,7 +91,7 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
         Moves the handles of the two sequences before adding the crossfade
         """
         fade_duration = convert_duration_to_frames(context, self.crossfade_duration)
-        fade_offset = fade_duration / 2
+        fade_offset = int(fade_duration / 2)
 
         if hasattr(sequence_1, "input_1"):
             sequence_1.input_1.frame_final_end -= fade_offset

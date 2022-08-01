@@ -18,6 +18,6 @@ if __name__ == '__main__':
     a = cos(a)
     print(stats.time())
     print(stats.memory())
-    a = cos(a)**2+sin(a)**2
+    a = cos(a) ** 2 + sin(a) ** 2
     print(stats.time())
     print(stats.memory())
