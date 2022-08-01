@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -16926,6 +16926,14 @@ msgid "Delete Strips"
 msgstr "Hapus Titik"
 
 
+msgid "Duplicate selected strips and move them"
+msgstr "Tekstur"
+
+
+msgid "Duplicate Strips"
+msgstr "Modus Pahat"
+
+
 msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Modus Sunting"
@@ -18669,14 +18677,6 @@ msgstr "Modus Sunting"
 msgctxt "Operator"
 msgid "Erase Strips"
 msgstr "Hapus"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Tekstur"
-
-
-msgid "Duplicate Strips"
-msgstr "Modus Pahat"
 
 
 msgid "Replace the current selection"
@@ -23349,6 +23349,11 @@ msgid "Arrow Size"
 msgstr "Ukuran Panah"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Hapus Semua Kunci Bentuk"
+
+
 msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
 
@@ -23376,11 +23381,6 @@ msgstr "Hapus Semua Kelompok"
 msgctxt "Operator"
 msgid "New Shape from Mix"
 msgstr "Bentuk Baru dari Campuran"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Hapus Semua Kunci Bentuk"
 
 
 msgctxt "Operator"

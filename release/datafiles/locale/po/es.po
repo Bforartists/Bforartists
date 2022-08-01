@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -42391,10 +42391,6 @@ msgid "Function Node"
 msgstr "Nodo de función"
 
 
-msgid "Align Euler To Vector"
-msgstr "Alinear Euler a vector"
-
-
 msgid "Axis to align to the vector"
 msgstr "Eje a alinear con el vector"
 
@@ -60386,6 +60382,19 @@ msgstr "Al duplicar clips, asignar nuevas copias de las acciones que utilizan"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Duplicar vinculado"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Duplica los clips seleccionados y permite moverlos"
+
+
+msgid "Duplicate Strips"
+msgstr "Duplicar clips"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "Agregar modificador-f"
 
@@ -61922,11 +61931,6 @@ msgstr "Duplica los objetos seleccionados"
 
 msgid "Duplicate Objects"
 msgstr "Duplicar objetos"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Duplicar vinculado"
 
 
 msgctxt "Operator"
@@ -70171,14 +70175,6 @@ msgid "Duplicate the selected strips"
 msgstr "Duplica los clips seleccionados"
 
 
-msgid "Duplicate selected strips and move them"
-msgstr "Duplica los clips seleccionados y permite moverlos"
-
-
-msgid "Duplicate Strips"
-msgstr "Duplicar clips"
-
-
 msgid "Slide a sequence strip in time"
 msgstr "Desliza un clip de la secuencia en el tiempo"
 
@@ -72812,24 +72808,6 @@ msgstr "Restablecer a valor predefinido"
 
 msgid "Reset this property's value to its default value"
 msgstr "Restablecer el valor de esta propiedad"
-
-
-msgctxt "Operator"
-msgid "Tree View drop"
-msgstr "Soltar en árbol"
-
-
-msgid "Drag and drop items onto a tree item"
-msgstr "Arrastrar y soltar elementos sobre un elemento del árbol"
-
-
-msgctxt "Operator"
-msgid "Rename Tree-View Item"
-msgstr "Renombrar elemento del árbol"
-
-
-msgid "Rename the active item in the tree"
-msgstr "Renombrar el elemento activo del árbol"
 
 
 msgctxt "Operator"
@@ -82630,34 +82608,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Límite de memoria para el caché (en MB)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Método de cálculo"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Tipo de método usado para calcular las subdivisiones de OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "Visualización de transformaciones mediante GLSL"
-
-
-msgid "GLSL Compute"
-msgstr "Cálculo mediante GLSL"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Cantidad máxima de líneas a almacenar en el buffer de la consola"
 
@@ -83756,6 +83706,14 @@ msgstr "Procesar curvas como geometría 3D circular, para un resultado más prec
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Cantidad de subdivisiones usadas en la intersección de curva Cardinal (potencia de 2)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -88833,10 +88791,6 @@ msgid "Inverse Gain"
 msgstr "Invertir ganancia"
 
 
-msgid "Invert the gain color`"
-msgstr "Invierte el color de ganancia"
-
-
 msgid "Inverse Gamma"
 msgstr "Invertir gama"
 
@@ -88871,10 +88825,6 @@ msgstr "Invierte el color de potencia"
 
 msgid "Inverse Slope"
 msgstr "Invertir pendiente"
-
-
-msgid "Invert the slope color`"
-msgstr "Invierte el color de pendiente"
 
 
 msgid "Color balance lift (shadows)"
@@ -101305,6 +101255,11 @@ msgid "Lock Invert All"
 msgstr "Invertir bloqueo de todos"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Borrar todas las Formas clave"
+
+
 msgid "Store"
 msgstr "Almacenar"
 
@@ -101368,11 +101323,6 @@ msgstr "Nueva Forma clave a partir de mezcla"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "Simetrizar Forma clave (Topología)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Borrar todas las Formas clave"
 
 
 msgctxt "Operator"
@@ -109784,6 +109734,14 @@ msgid "GPencil Weight Paint: LMB to paint | RMB/Escape to Exit"
 msgstr "Pintar influencias Lcera: clic Izq. para pintar | clic Der./Esc para salir"
 
 
+msgid "Failed to set value"
+msgstr "No fue posible definir el valor"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "clic Izq: trazo - May: relleno - May+Ctrl: trazo + relleno"
+
+
 msgid "Error evaluating number, see Info editor for details"
 msgstr "Error al evaluar el número, ver editor Info para obtener más detalles"
 
@@ -109982,14 +109940,6 @@ msgstr "Soltar %s sobre el contenedor %d (contenedor activo) de %s"
 
 msgid "Drop %s on slot %d of %s"
 msgstr "Soltar %s sobre el contenedor %d de %s"
-
-
-msgid "Failed to set value"
-msgstr "No fue posible definir el valor"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "clic Izq: trazo - May: relleno - May+Ctrl: trazo + relleno"
 
 
 msgid "Menu Missing:"
@@ -114547,10 +114497,6 @@ msgstr "No fue posible crear una redefinición de biblioteca a partir del bloque
 
 msgid "Invalid hierarchy root ('%s') found, needed to create library override from data-block '%s'"
 msgstr "Se encontró una raíz de jerarquía inválida ('%s'), necesaria para crear una redefinición de biblioteca desde el bloque de datos '%s'"
-
-
-msgid "Could not create library override from data-block '%s'"
-msgstr "No fue posible crear una redefinición de biblioteca a partir del bloque de datos '%s'"
 
 
 msgid "Cannot clear embedded library override id '%s', only overrides of real data-blocks can be directly deleted"

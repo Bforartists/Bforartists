@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-07-12 12:26+0200\n"
+"PO-Revision-Date: 2022-07-19 11:34+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -4696,6 +4696,14 @@ msgid "Use this object to define the depth of field focal point"
 msgstr "Tento objekt sa použije na definovanie bodu ohniskovej vzdialenosti hĺbky ostrosti"
 
 
+msgid "Focus Bone"
+msgstr "Kosť zaostrenia"
+
+
+msgid "Use this armature bone to define the depth of field focal point"
+msgstr "Použitím tejto kosti armatúry môžete definovať ohnisko hĺbky ostrosti"
+
+
 msgid "Use Depth of Field"
 msgstr "Použiť hĺbku ostrosti"
 
@@ -7882,7 +7890,7 @@ msgstr "Koľko kostí je zahrnutých v reťazi"
 
 
 msgid "Joint Bindings"
-msgstr "Prepojiť väzby"
+msgstr "Prepojiť y"
 
 
 msgid "(EXPERIENCED USERS ONLY) The relative positions of the joints along the chain, as percentages"
@@ -16160,6 +16168,14 @@ msgid "Postpone running until tool operator run (when used with a tool)"
 msgstr "Odloží spustenie do spustenia operátora nástroja (pri použití s nástrojom)"
 
 
+msgid "Use fallback tools keymap"
+msgstr "Použiť priradenie kláves záložných nástrojov"
+
+
+msgid "Add fallback tools keymap to this gizmo type."
+msgstr "Pridá priradenie kláves záložných nástrojov k tomuto typu manipulátora polohy."
+
+
 msgid "VR Redraws"
 msgstr "Prekreslenia VR"
 
@@ -22700,11 +22716,11 @@ msgstr "Ignoruje alfa kanál zo súboru a urobí obrázok úplne nepriehľadným
 
 
 msgid "Bindcode"
-msgstr "Kód väzby"
+msgstr "Kód y"
 
 
 msgid "OpenGL bindcode"
-msgstr "Kód väzby OpenGL"
+msgstr "Kód y OpenGL"
 
 
 msgid "Number of channels in pixels buffer"
@@ -27294,19 +27310,19 @@ msgstr "Povolí predvolené akcie ovládača VR vrátane póz ovládača a hmato
 
 
 msgid "Enable bindings for the Huawei controllers. Note that this may not be supported by all OpenXR runtimes"
-msgstr "Povolí väzby pre ovládače Huawei. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
+msgstr "Povolí y pre ovládače Huawei. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
 
 
 msgid "Enable bindings for the HP Reverb G2 controllers. Note that this may not be supported by all OpenXR runtimes"
-msgstr "Povolí väzby pre ovládače HP Reverb G2. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
+msgstr "Povolí y pre ovládače HP Reverb G2. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
 
 
 msgid "Enable bindings for the HTC Vive Cosmos controllers. Note that this may not be supported by all OpenXR runtimes"
-msgstr "Povolí väzby pre ovládače HTC Vive Cosmos. Všimnite si, že toto nemusia podporovať všetky bežiace programy OpenXR"
+msgstr "Povolí y pre ovládače HTC Vive Cosmos. Všimnite si, že toto nemusia podporovať všetky bežiace programy OpenXR"
 
 
 msgid "Enable bindings for the HTC Vive Focus 3 controllers. Note that this may not be supported by all OpenXR runtimes"
-msgstr "Povolí väzby pre ovládače HTC Vive Focus 3. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
+msgstr "Povolí y pre ovládače HTC Vive Focus 3. Upozorňujeme, že toto nemusia podporovať všetky bežiace programy OpenXR"
 
 
 msgid "Use input from gamepad (Microsoft Xbox Controller) instead of motion controllers"
@@ -28728,7 +28744,11 @@ msgstr "Kategória"
 
 
 msgid "Filter add-ons by category"
-msgstr "Doplnky filtra podľa kategórie"
+msgstr "Filtruje doplnky podľa kategórie"
+
+
+msgid "Filter by add-on name, author & category"
+msgstr "Filtruje podľa názvu doplnku, autora a kategórie"
 
 
 msgid "Support"
@@ -29168,11 +29188,11 @@ msgstr "Maximálny koeficient stlmenia, keď je singulárna hodnota takmer 0 (vy
 
 
 msgid "Feedback"
-msgstr "Spätná väzba"
+msgstr "Spätná a"
 
 
 msgid "Feedback coefficient for error correction, average response time is 1/feedback"
-msgstr "Koeficient spätnej väzby pre korekciu chyby, priemerný čas odozvy je 1/spätná väzba"
+msgstr "Koeficient spätnej y pre korekciu chyby, priemerný čas odozvy je 1/spätná a"
 
 
 msgid "Maximum number of iterations for convergence in case of reiteration"
@@ -38143,11 +38163,11 @@ msgstr "Pevnosť modifikátora deformácií"
 
 
 msgid "Sparse Bind"
-msgstr "Riedka väzba"
+msgstr "Riedka a"
 
 
 msgid "Only record binding data for vertices matching the vertex group at the time of bind"
-msgstr "Zaznamenáva údaje o väzbe len pre vrcholy, ktoré zodpovedajú skupine vrcholov v čase väzby"
+msgstr "Zaznamenáva údaje o e len pre vrcholy, ktoré zodpovedajú skupine vrcholov v čase y"
 
 
 msgid "Surface Modifier"
@@ -39978,7 +39998,7 @@ msgstr "Spresní tangenciálne koeficienty modelu skreslenia počas riešenia ka
 
 
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
-msgstr "Limit rýchlosti snímania na vytvorenie zjednodušenia vizuálnej spätnej väzby (neovplyvní to kvalitu snímania)"
+msgstr "Limit rýchlosti snímania na vytvorenie zjednodušenia vizuálnej spätnej y (neovplyvní to kvalitu snímania)"
 
 
 msgid "Fastest"
@@ -42910,10 +42930,6 @@ msgid "Function Node"
 msgstr "Uzol funkcie"
 
 
-msgid "Align Euler To Vector"
-msgstr "Zarovnať Eulera na vektor"
-
-
 msgid "Axis to align to the vector"
 msgstr "Os zarovnania na vektor"
 
@@ -43780,10 +43796,6 @@ msgstr "Vytvorí bod v mračne bodov pre každú vybranú plôšku"
 
 msgid "Create a point in the point cloud for each selected face corner"
 msgstr "Vytvorí bod v mračne bodov pre každý vybraný roh plôšky"
-
-
-msgid "Mesh To Volume"
-msgstr "Povrchová sieť na objem"
 
 
 msgid "How the voxel size is specified"
@@ -57707,11 +57719,11 @@ msgstr "Môže vyzerať lepšie ako miernosť, ale môže mať aj chyby. Kosť s
 
 
 msgid "Guess Original Bind Pose"
-msgstr "Odhadnúť originálnu väzbu pózy"
+msgstr "Odhadnúť originálnu u pózy"
 
 
 msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
-msgstr "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre vytvorenie pokožky povrchovej siete z inverzných matríc väzby. Ak je vypnutá, použije ako väzbu pózy predvolenú/pokojovú pózu"
+msgstr "Pokúsi sa odhadnúť pôvodnú u pózy pre vytvorenie pokožky povrchovej siete z inverzných matríc y. Ak je vypnutá, použije ako u pózy predvolenú/pokojovú pózu"
 
 
 msgid "Pack Images"
@@ -61522,7 +61534,7 @@ msgstr "Po zapečení kriviek odstráni nadbytočné kľúče"
 
 
 msgid "Clear Constraints"
-msgstr "Odstrániť väzbu"
+msgstr "Odstrániť u"
 
 
 msgid "Remove all constraints from keyed object/bones, and do 'visual' keying"
@@ -61603,6 +61615,19 @@ msgstr "Vytvorí kópiu vybraných NLA pásov, pridá nové pásy v nových stop
 
 msgid "When duplicating strips, assign new copies of the actions they use"
 msgstr "Pri vytváraní kópií pásov priradí nové kópie akcií, ktoré používajú"
+
+
+msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Vytvoriť prepojenú kópiu"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Vytvorí kópiu vybraných pásov a ich filmov"
+
+
+msgid "Duplicate Strips"
+msgstr "Vytvoriť kópiu pásov"
 
 
 msgctxt "Operator"
@@ -63002,7 +63027,7 @@ msgstr "Skopíruje matricu aktuálne aktívneho objektu alebo pózy kosti do sch
 
 msgctxt "Operator"
 msgid "Corrective Smooth Bind"
-msgstr "Opravné vyhladenie väzby"
+msgstr "Opravné vyhladenie y"
 
 
 msgid "Bind base pose in Corrective Smooth modifier"
@@ -63171,11 +63196,6 @@ msgstr "Vytvorí kópiu vybraných objektov a premiestni ich"
 
 msgid "Duplicate Objects"
 msgstr "Vytvoriť kópiu objektu"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Vytvoriť prepojenú kópiu"
 
 
 msgid "Duplicate the selected objects, but not their object data, and move them"
@@ -68959,6 +68979,15 @@ msgstr "Pridá predvoľbu integrátora"
 
 
 msgctxt "Operator"
+msgid "Add Performance Preset"
+msgstr "Pridať predvoľbu výkonu"
+
+
+msgid "Add an Performance Preset"
+msgstr "Pridá predvoľbu výkonu"
+
+
+msgctxt "Operator"
 msgid "Add Sampling Preset"
 msgstr "Pridať predvoľbu snímania"
 
@@ -71622,14 +71651,6 @@ msgid "Duplicate the selected strips"
 msgstr "Vytvoriť kópiu vybraných pásov"
 
 
-msgid "Duplicate selected strips and move them"
-msgstr "Vytvorí kópiu vybraných pásov a ich filmov"
-
-
-msgid "Duplicate Strips"
-msgstr "Vytvoriť kópiu pásov"
-
-
 msgid "Slide a sequence strip in time"
 msgstr "Posunie sekvenčné pásy v čase"
 
@@ -73289,6 +73310,10 @@ msgid "Align with Point Normal"
 msgstr "Zarovnať s bodom normálu"
 
 
+msgid "Snap to Elements"
+msgstr "Prichytí na prvky"
+
+
 msgid "Snap to increments of grid"
 msgstr "Prichytí na prírastky mriežky"
 
@@ -73361,8 +73386,24 @@ msgid "Snap active onto target"
 msgstr "Prichytí aktívny na cieľový"
 
 
+msgid "Target: Include Edit"
+msgstr "Cieľ: Zahrnúť úpravu"
+
+
+msgid "Target: Include Non-Edited"
+msgstr "Cieľ: Zahrnúť neupravené"
+
+
 msgid "Project Individual Elements"
 msgstr "Premietanie jednotlivých prvkov"
+
+
+msgid "Target: Exclude Non-Selectable"
+msgstr "Cieľ: Vylúčiť nevyberateľné"
+
+
+msgid "Target: Include Active"
+msgstr "Cieľ: Zahrnúť aktívne"
 
 
 msgid "Snap to Same Target"
@@ -74327,24 +74368,6 @@ msgstr "Resetuje túto hodnotu vlastností predvolenou hodnotou"
 
 
 msgctxt "Operator"
-msgid "Tree View drop"
-msgstr "Pustiť zobrazenie stromu"
-
-
-msgid "Drag and drop items onto a tree item"
-msgstr "Ťahanie a púšťanie položiek na položku stromu"
-
-
-msgctxt "Operator"
-msgid "Rename Tree-View Item"
-msgstr "Premenovať položku zobrazenia stromu"
-
-
-msgid "Rename the active item in the tree"
-msgstr "Premenuje aktívnu položku v strome"
-
-
-msgctxt "Operator"
 msgid "Unset Property"
 msgstr "Zrušiť nastavenie vlastnosti"
 
@@ -74413,6 +74436,18 @@ msgstr "Priemerná mierka ostrovov"
 
 msgid "Average the size of separate UV islands, based on their area in 3D space"
 msgstr "Priemerná veľkosť oddelených UV ostrovov, na základe ich plochy v 3D priestore"
+
+
+msgid "Non-Uniform"
+msgstr "Nejednotné"
+
+
+msgid "Scale U and V independently"
+msgstr "Mierka U a V nezávisle"
+
+
+msgid "Reduce shear within islands"
+msgstr "Redukuje strih v rámci ostrovov"
 
 
 msgctxt "Operator"
@@ -76746,7 +76781,7 @@ msgstr "Exportuje všetky kľúčové tvary z povrchových sietí objektov"
 
 
 msgid "Keep Bind Info"
-msgstr "Zachovať informácie o väzbách"
+msgstr "Zachovať informácie o ách"
 
 
 msgid "Store Bindpose information in custom bone properties for later use during Collada export"
@@ -79689,6 +79724,10 @@ msgid "Integrator Presets"
 msgstr "Predvoľby integrátora"
 
 
+msgid "Performance Presets"
+msgstr "Predvoľby výkonu"
+
+
 msgid "Sampling Presets"
 msgstr "Predvoľby snímkovania"
 
@@ -81462,7 +81501,7 @@ msgstr "Relácia VR"
 
 
 msgid "Viewport Feedback"
-msgstr "Spätná väzba záberu"
+msgstr "Spätná a záberu"
 
 
 msgid "Edge Detection"
@@ -84282,34 +84321,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Limit zásobníka pamäte (v megabajtoch)"
 
 
-msgid "OpenSubdiv Compute Type"
-msgstr "Typ výpočtu OpenSubdiv"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Typ koncového výpočtu používajúceho knižnicu OpenSubdiv"
-
-
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "Spätná väzba GLSL transformácie"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL výpočet"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Maximálny počet riadkov uložených v zásobníku konzoly"
 
@@ -85404,6 +85415,14 @@ msgstr "Prekreslí krivky ako kruhovú 3D geometriu pre presné výsledky pri de
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Počet delení použitých v pretnutí zásadnej krivky (výkon 2)"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -90489,10 +90508,6 @@ msgid "Inverse Gain"
 msgstr "Invertovať zisk"
 
 
-msgid "Invert the gain color`"
-msgstr "Invertovať farbu zisku"
-
-
 msgid "Inverse Gamma"
 msgstr "Invertovať gama"
 
@@ -90527,10 +90542,6 @@ msgstr "Invertovať farbu výkonu"
 
 msgid "Inverse Slope"
 msgstr "Invertovať sklon"
-
-
-msgid "Invert the slope color`"
-msgstr "Invertovať farbu sklonu"
 
 
 msgid "Color balance lift (shadows)"
@@ -93332,11 +93343,11 @@ msgstr "Filtrovať podľa názvu operátora"
 
 
 msgid "Key-Binding"
-msgstr "Väzba klávesy"
+msgstr "Naviazanie klávesy"
 
 
 msgid "Filter based on key bindings"
-msgstr "Filter založený na kľúčových väzbách"
+msgstr "Filter založený na kľúčových ách"
 
 
 msgid "Properties Space"
@@ -99329,11 +99340,11 @@ msgstr "Vybraná položka"
 
 
 msgid "XR Action Map Binding"
-msgstr "Väzba na mapu akcií XR"
+msgstr "Naviazanie na priradenie akcií XR"
 
 
 msgid "Binding in an XR action map item"
-msgstr "Väzba v položke mapy akcií XR"
+msgstr "Naviazania v položke priradenia akcií XR"
 
 
 msgid "Axis 0 Region"
@@ -99373,7 +99384,7 @@ msgstr "Cesty komponentov OpenXR"
 
 
 msgid "Name of the action map binding"
-msgstr "Názov väzby mapy akcií"
+msgstr "Názov y mapy akcií"
 
 
 msgid "Pose Location Offset"
@@ -99393,7 +99404,7 @@ msgstr "Vstupný prah pre akcie tlačidiel/osí"
 
 
 msgid "XR Action Map Bindings"
-msgstr "Väzba na mapu akcií XR"
+msgstr "Naviazania priradenia akcií XR"
 
 
 msgid "Collection of XR action map bindings"
@@ -99413,11 +99424,11 @@ msgstr "Akcia závisí od stavov/póz oboch ciest užívateľa"
 
 
 msgid "Bindings"
-msgstr "Väzby"
+msgstr "Naviazania"
 
 
 msgid "Bindings for the action map item, mapping the action to an XR input"
-msgstr "Väzby pre položku mapy akcie, ktorá mapuje akciu na vstup XR"
+msgstr "Naviazania pre položku priradenia akcie, ktorá mapuje akciu na vstup XR"
 
 
 msgid "Haptic Amplitude"
@@ -99533,7 +99544,7 @@ msgstr "Akčné pózy sa použijú na zámery ovládača VR"
 
 
 msgid "Is Controller Grip"
-msgstr "Je ovládač Stisnutie"
+msgstr "Je ovládač stlačený"
 
 
 msgid "The action poses will be used for the VR controller grips"
@@ -99541,11 +99552,11 @@ msgstr "Akčné pózy sa použijú na stisnutia ovládača VR"
 
 
 msgid "Selected Binding"
-msgstr "Vybrané väzby"
+msgstr "Vybrané naviazania"
 
 
 msgid "Currently selected binding"
-msgstr "Aktuálne vybraná väzba"
+msgstr "Aktuálne vybraná naviazanie"
 
 
 msgid "Action type"
@@ -101279,6 +101290,10 @@ msgid "or AMD with macOS 12.3 or newer"
 msgstr "alebo AMD so systémom macOS 12.3 alebo novším"
 
 
+msgid "and Linux driver version xx.xx.23570 or newer"
+msgstr "a ovládač Linuxu vo verzii xx.xx.23570 alebo novšej"
+
+
 msgid "Noise Threshold"
 msgstr "Prah šumu"
 
@@ -102987,6 +103002,10 @@ msgid "Pole Merge Angle Start"
 msgstr "Začiatok uhla zlúčenia pólu"
 
 
+msgid "Focus on Bone"
+msgstr "Zamerať na kosť"
+
+
 msgid "Not Set"
 msgstr "Nenastavené"
 
@@ -103188,6 +103207,11 @@ msgid "Lock Invert All"
 msgstr "Zamknúť invertovanie všetkých"
 
 
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Odstrániť všetky kľúčové tvary"
+
+
 msgid "Store"
 msgstr "Obchod"
 
@@ -103251,11 +103275,6 @@ msgstr "Nový tvar zo zmesi"
 msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "Zrkadliť kľúčový tvar (topológia)"
-
-
-msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Odstrániť všetky kľúčové tvary"
 
 
 msgctxt "Operator"
@@ -107101,6 +107120,10 @@ msgid "Timer (Minutes)"
 msgstr "Časovač (minúty)"
 
 
+msgid "Show Locations"
+msgstr "Zobraziť miesta"
+
+
 msgid "Double Click Speed"
 msgstr "Rýchlosť dvojitého kliknutia"
 
@@ -109274,6 +109297,18 @@ msgid "User Library"
 msgstr "Užívateľská knižnica"
 
 
+msgid "Modifier requires original data, bad stack position"
+msgstr "Modifikátor vyžaduje pôvodné údaje, zlá pozícia zásobníka"
+
+
+msgid "Not supported in dyntopo"
+msgstr "Nepodporované v dynamickej topológii"
+
+
+msgid "Not supported in sculpt mode"
+msgstr "Nepodporované v režime tvarovania"
+
+
 msgid "No AnimData to set action on"
 msgstr "Žiadne údaje animácie na nastavenie akcie"
 
@@ -109402,6 +109437,30 @@ msgid "Path '%s' cannot be made relative"
 msgstr "Cestu '%s' nemožno vytvoriť relatívne"
 
 
+msgid "Can't initialize cloth"
+msgstr "Nemožno inicializovať látku"
+
+
+msgid "Null cloth object"
+msgstr "Nulový objekt látky"
+
+
+msgid "Out of memory on allocating clmd->clothObject"
+msgstr "Došla pamäť pri alokácii clmd->clothObject"
+
+
+msgid "Cannot build springs"
+msgstr "Nemožno vytvoriť pružiny"
+
+
+msgid "Out of memory on allocating clmd->clothObject->verts"
+msgstr "Došla pamäť pri alokácii clmd->clothObject->verts"
+
+
+msgid "Out of memory on allocating clmd->clothObject->looptri"
+msgstr "Došla pamäť pri alokácii clmd->clothObject->looptri"
+
+
 msgid "Scene Collection"
 msgstr "Kolekcia scén"
 
@@ -109451,11 +109510,11 @@ msgstr "Celé číslo"
 
 
 msgid "PreviewCol"
-msgstr "Náhľad farby"
+msgstr "NahladFarby"
 
 
 msgid "TexturedCol"
-msgstr "Textúrovaná farba"
+msgstr "TexturovanaFarba"
 
 
 msgid "Recast"
@@ -109487,7 +109546,7 @@ msgstr "Slučka OS"
 
 
 msgid "PreviewLoopCol"
-msgstr "Farba náhľadu slučky"
+msgstr "NáhladFarbySlucky"
 
 
 msgid "Int8"
@@ -110913,6 +110972,10 @@ msgid "Bone Heat Weighting: failed to find solution for one or more bones"
 msgstr "Váženie tepla kosti: Nepodarilo sa nájsť riešenie pre jednu alebo viac kostí"
 
 
+msgid "Failed to find bind solution (increase precision?)"
+msgstr "Nepodarilo sa nájsť priradené riešenie (zvýšiť presnosť?)"
+
+
 msgid "Cannot pose libdata"
 msgstr "Nemožno údaje knižnice pózy"
 
@@ -111293,27 +111356,32 @@ msgstr "NURBS dráha"
 
 msgctxt "Curve"
 msgid "SurfCurve"
-msgstr "Povrch krivka"
+msgstr "Povrch krivky"
 
 
 msgctxt "Curve"
 msgid "SurfCircle"
-msgstr "Povrch kruh"
+msgstr "Povrch kruhu"
 
 
 msgctxt "Curve"
 msgid "SurfPatch"
-msgstr "Povrch záplata"
+msgstr "Povrch záplaty"
+
+
+msgctxt "Curve"
+msgid "SurfCylinder"
+msgstr "Povrch valca"
 
 
 msgctxt "Curve"
 msgid "SurfSphere"
-msgstr "Povrch guľa"
+msgstr "Povrch gule"
 
 
 msgctxt "Curve"
 msgid "SurfTorus"
-msgstr "Povrch prstenec"
+msgstr "Povrch prstenca"
 
 
 msgctxt "Curve"
@@ -111781,6 +111849,14 @@ msgid "GPencil Weight Paint: LMB to paint | RMB/Escape to Exit"
 msgstr "Maľba vrcholov pastelkou: ĽTM maľovanie | PTM/Escape na ukončenie"
 
 
+msgid "Failed to set value"
+msgstr "Nepodarilo sa nastaviť hodnotu"
+
+
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "ĽTM: Ťah - Shift: Vyplniť - Shift+Ctrl: Ťah + Vyplniť"
+
+
 msgid "Error evaluating number, see Info editor for details"
 msgstr "Chyba pri vyhodnocovaní čísla, ďalšie informácie nájdete v editore informácií"
 
@@ -111979,14 +112055,6 @@ msgstr "Upustenie %s do zásuvky %d (aktívna zásuvka) z %s"
 
 msgid "Drop %s on slot %d of %s"
 msgstr "Upustenie %s do zásuvky %d z %s"
-
-
-msgid "Failed to set value"
-msgstr "Nepodarilo sa nastaviť hodnotu"
-
-
-msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
-msgstr "ĽTM: Ťah - Shift: Vyplniť - Shift+Ctrl: Ťah + Vyplniť"
 
 
 msgid "Menu Missing:"
@@ -113283,6 +113351,26 @@ msgid "Field"
 msgstr "Pole"
 
 
+msgctxt "GPencil"
+msgid "GPencil"
+msgstr "Pastelka"
+
+
+msgctxt "GPencil"
+msgid "Suzanne"
+msgstr "Zuzana"
+
+
+msgctxt "GPencil"
+msgid "Stroke"
+msgstr "Ťah"
+
+
+msgctxt "GPencil"
+msgid "LineArt"
+msgstr "Čiarová grafika"
+
+
 msgid "Cannot create editmode armature"
 msgstr "Nemožno vytvoriť režim editácie armatúry"
 
@@ -113908,11 +113996,11 @@ msgstr "Upustenie %s na %s (zásuvka %d)"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
-msgstr "Vybrať 1 alebo 3 vrcholy pre vytvorenie rodičovskej väzby"
+msgstr "Vybrať 1 alebo 3 vrcholy pre vytvorenie rodičovstva"
 
 
 msgid "Loop in parents"
-msgstr "Sľučka v rodičovských väzbách"
+msgstr "Slučka v rodičovstve"
 
 
 msgid "No active bone"
@@ -114766,10 +114854,6 @@ msgstr "Rýchle obľúbené"
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "Vytvoriť kópiu aktuálneho"
-
-
-msgid "Can not use Add brush when there is no surface mesh"
-msgstr "Nemožno použiť pridať štetec, keď nie je k dispozícii povrchová sieť"
 
 
 msgid "Only available in point selection mode"
@@ -116646,10 +116730,6 @@ msgid "Invalid hierarchy root ('%s') found, needed to create library override fr
 msgstr "Nájdený neplatný koreň hierarchie ('%s'), potrebný na vytvorenie prepisu knižnice z bloku údajov '%s'"
 
 
-msgid "Could not create library override from data-block '%s'"
-msgstr "Nepodarilo sa vytvoriť prepis knižnice z bloku údajov '%s'"
-
-
 msgid "Cannot clear embedded library override id '%s', only overrides of real data-blocks can be directly deleted"
 msgstr "Nemožno vymazať vložené id '%s' prepisu knižnice, priamo možno vymazať len prepisy skutočných blokov údajov"
 
@@ -117959,6 +118039,10 @@ msgid "Curvature"
 msgstr "Zakrivenie"
 
 
+msgid "Random Offsets"
+msgstr "Náhodné posuvy"
+
+
 msgid "Illumination Filtering"
 msgstr "Filtrovanie osvetlenia"
 
@@ -118069,6 +118153,34 @@ msgstr "Modifikátor má zapečené údaje"
 
 msgid "Object is shown in front"
 msgstr "Objekt je zobrazený vpredu"
+
+
+msgid "Edge Types"
+msgstr "Typy hrán"
+
+
+msgid "Light Reference"
+msgstr "Referenčné svetlo"
+
+
+msgid "Geometry Processing"
+msgstr "Spracovanie geometrie"
+
+
+msgid "Occlusion"
+msgstr "Pohlcovanie"
+
+
+msgid "Intersection"
+msgstr "Priesečník"
+
+
+msgid "Vertex Weight Transfer"
+msgstr "Prenesenie váhy vrcholov"
+
+
+msgid "Composition"
+msgstr "Kompozícia"
 
 
 msgid "Stroke Fit Method"
@@ -119197,16 +119309,72 @@ msgid "Cap Start"
 msgstr "Hlavica Začiatok"
 
 
+msgid "The offset is too small, we cannot generate the amount of geometry it would require"
+msgstr "Posuv je príliš malý, nemožno vygenerovať požadované množstvo geometrie"
+
+
+msgid "The amount of copies is too high, we cannot generate the amount of geometry it would require"
+msgstr "Počet kópií je príliš vysoký, nemožno vygenerovať požadované množstvo geometrie"
+
+
+msgid "Enable 'Auto Smooth' in Object Data Properties"
+msgstr "Povoľte 'Automatické vyhladenie' vo vlastnostiach údajov objektu"
+
+
+msgid "Cannot execute, intersect only available using exact solver"
+msgstr "Nemožno vykonať, priesečník je k dispozícii len použitím presného riešiteľa"
+
+
+msgid "Cannot execute, fast solver and empty collection"
+msgstr "Nemožno vykonať, rýchly riešiteľ a prázdna kolekcia"
+
+
+msgid "Cannot execute, the selected collection contains non mesh objects"
+msgstr "Nemožno vykonať, vybraná kolekcia obsahuje objekty povrchových sietí"
+
+
+msgid "Cannot execute boolean operation"
+msgstr "Nemožno vykonať logickú operáciu"
+
+
+msgid "Solver Options"
+msgstr "Možnosti riešiteľa"
+
+
 msgid "Settings are inside the Physics tab"
 msgstr "Nastavenia sú v záložke Fyzika"
 
 
 msgid "Unbind"
-msgstr "Zrušiť väzbu"
+msgstr "Zrušiť naviazanie"
 
 
 msgid "Bind"
 msgstr "Naviazať"
+
+
+msgid "CorrectiveSmooth"
+msgstr "OpravneVyhladenie"
+
+
+msgid "Attempt to bind from inactive dependency graph"
+msgstr "Pokus o prepojenie z neaktívneho grafu závislostí"
+
+
+msgid "Bind data required"
+msgstr "Požadované údaje o naviazaní"
+
+
+msgid "Bind vertex count mismatch: %u to %u"
+msgstr "Nesúlad v počte naviazaných vrcholov: %u na %u"
+
+
+msgid "Object is not a mesh"
+msgstr "Objekt nie je povrchová sieť"
+
+
+msgid "Original vertex count mismatch: %u to %u"
+msgstr "Nesúlad počtu pôvodných vrcholov: %u na %u"
 
 
 msgid "Curve Object"
@@ -119225,8 +119393,24 @@ msgid "Layer Mapping"
 msgstr "Mapovanie vrstiev"
 
 
+msgid "DataTransfer"
+msgstr "PrenosUdajov"
+
+
+msgid "Topology Mapping"
+msgstr "Mapovanie topológie"
+
+
 msgid "Face Count: %d"
 msgstr "Počet plôšok: %d"
+
+
+msgid "Modifier requires more than 3 input faces"
+msgstr "Modifikátor vyžaduje viac ako 3 vstupné plochy"
+
+
+msgid "EdgeSplit"
+msgstr "OddelenieHrany"
 
 
 msgid "Refresh"
@@ -119235,6 +119419,82 @@ msgstr "Obnoviť"
 
 msgid "Recenter"
 msgstr "Vystrediť"
+
+
+msgid "LaplacianDeform"
+msgstr "LaplacianovaDeformacia"
+
+
+msgid "Vertices changed from %d to %d"
+msgstr "Vrcholy zmenené z %d na %d"
+
+
+msgid "Edges changed from %d to %d"
+msgstr "Hrany zmenené z %d na %d"
+
+
+msgid "Vertex group '%s' is not valid, or maybe empty"
+msgstr "Skupina vrcholov '%s' nie je platná alebo je možno prázdna"
+
+
+msgid "The system did not find a solution"
+msgstr "Systém nenašiel riešenie"
+
+
+msgid "LaplacianSmooth"
+msgstr "LaplacianovoVyhladenie"
+
+
+msgid "Compiled without OpenVDB"
+msgstr "Spracované bez OpenVDB"
+
+
+msgid "MeshCache"
+msgstr "ZasobnikPovrchovejSiete"
+
+
+msgid "'Integrate' only valid for Mesh objects"
+msgstr "'Integrovať' platí len pre objekty povrchovej siete"
+
+
+msgid "'Integrate' original mesh vertex mismatch"
+msgstr "'Integrovať' pôvodný nesúlad vrcholov povrchovej siete"
+
+
+msgid "'Integrate' requires faces"
+msgstr "\"Integrácia\" si vyžaduje plôšky"
+
+
+msgid "Time Remapping"
+msgstr "Premapovanie času"
+
+
+msgid "Axis Mapping"
+msgstr "Mapovanie osí"
+
+
+msgid "MeshDeform"
+msgstr "DeformaciaPovrchovejSiete"
+
+
+msgid "Cannot get mesh from cage object"
+msgstr "Nemožno získať povrchovú sieť z klietky objektu"
+
+
+msgid "Cage vertices changed from %d to %d"
+msgstr "Vrcholy klietky zmenené z %d na %d"
+
+
+msgid "Bind data missing"
+msgstr "Chýbajúce údaje o naviazaní"
+
+
+msgid "MeshSequenceCache"
+msgstr "ZasobnikSekvenciePovrchovejSiete"
+
+
+msgid "Could not create reader for file %s"
+msgstr "Nepodarilo sa vytvoriť čítačku pre súbor %s"
 
 
 msgid "Bisect"
@@ -119277,6 +119537,14 @@ msgid "Save External..."
 msgstr "Uložiť externý..."
 
 
+msgid "Multires"
+msgstr "ViacnasobneRozlisenie"
+
+
+msgid "Disabled, built without OpenSubdiv"
+msgstr "Zakázané, vytvorené bez OpenSubdiv"
+
+
 msgid "No named attributes used"
 msgstr "Nepoužívajú sa žiadne pomenované atribúty"
 
@@ -119301,6 +119569,50 @@ msgid "Internal Dependencies"
 msgstr "Interné závislosti"
 
 
+msgid "GeometryNodes"
+msgstr "GeometryNodes"
+
+
+msgid "Missing property for input socket \"%s\""
+msgstr "Chýbajúca vlastnosť pre vstupnú zásuvku \"%s\""
+
+
+msgid "Property type does not match input socket \"(%s)\""
+msgstr "Typ vlastnosti nezodpovedá vstupnej zásuvke \"(%s)\""
+
+
+msgid "Node group's geometry input must be the first"
+msgstr "Geometrický vstup skupiny uzlov musí byť prvý"
+
+
+msgid "Node group can only have one geometry input"
+msgstr "Skupina uzlov môže mať len jeden vstup geometrie"
+
+
+msgid "Node group has cycles"
+msgstr "Skupina uzlov má cykly"
+
+
+msgid "Node group must have a single output node"
+msgstr "Skupina uzlov musí mať jeden výstupný uzol"
+
+
+msgid "Node group must have an output socket"
+msgstr "Skupina uzlov musí mať výstupnú zásuvku"
+
+
+msgid "Node group's first output must be a geometry"
+msgstr "Prvým výstupom skupiny uzlov musí byť geometria"
+
+
+msgid "NormalEdit"
+msgstr "UpravaKolmic"
+
+
+msgid "Invalid target settings"
+msgstr "Neplatné cieľové nastavenia"
+
+
 msgid "Coverage"
 msgstr "Pokrytie"
 
@@ -119313,6 +119625,10 @@ msgid "Built without Ocean modifier"
 msgstr "Zostaviť bez modifikátora Oceán"
 
 
+msgid "Failed to allocate memory"
+msgstr "Zlyhanie pri pridelení pamäte"
+
+
 msgid "Create Instances"
 msgstr "Vytvoriť inštancie"
 
@@ -119323,6 +119639,10 @@ msgstr "Súradnicový priestor"
 
 msgid "Create Along Paths"
 msgstr "Vytvárať pozdĺž ciest"
+
+
+msgid "ParticleInstance"
+msgstr "InstanciaCastic"
 
 
 msgid "Settings are in the particle tab"
@@ -119350,6 +119670,10 @@ msgid "Stretch UVs"
 msgstr "Roztiahnuť UV"
 
 
+msgid "SimpleDeform"
+msgstr "JednoduchaDeformacia"
+
+
 msgid "Create Armature"
 msgstr "Vytvoriť armatúru"
 
@@ -119370,6 +119694,14 @@ msgid "Equalize Radii"
 msgstr "Vyrovnať polomery"
 
 
+msgid "No valid root vertex found (you need one per mesh island you want to skin)"
+msgstr "Nenašiel sa žiadny platný koreňový vrchol (potrebujete jeden na každý ostrov povrchovej siete na vytvorenie pokožky)"
+
+
+msgid "Hull error"
+msgstr "Chyba trupu"
+
+
 msgid "Rim"
 msgstr "Obruba"
 
@@ -119386,6 +119718,26 @@ msgid "Shell"
 msgstr "Ulita"
 
 
+msgid "Thickness Clamp"
+msgstr "Zarážka hrúbky"
+
+
+msgid "Output Vertex Groups"
+msgstr "Výstupné skupiny vrcholov"
+
+
+msgid "Internal Error: edges array wrong size: %u instead of %u"
+msgstr "Interná chyba: pole hrán má nesprávnu veľkosť: %u namiesto %u"
+
+
+msgid "Internal Error: polys array wrong size: %u instead of %u"
+msgstr "Interná chyba: pole polygónov má nesprávnu veľkosť: %u namiesto %u"
+
+
+msgid "Internal Error: loops array wrong size: %u instead of %u"
+msgstr "Interná chyba: pole slučiek má nesprávnu veľkosť: %u namiesto %u"
+
+
 msgid "Adaptive Subdivision"
 msgstr "Adaptívne delenie"
 
@@ -119396,6 +119748,54 @@ msgstr "Úrovne   Záber"
 
 msgid "Final Scale: Render %.2f px, Viewport %.2f px"
 msgstr "Finálna mierka: Prekreslenie %.2f px, Záber %.2f px"
+
+
+msgid "SurfaceDeform"
+msgstr "DeformaciaPovrchu"
+
+
+msgid "Out of memory"
+msgstr "Nedostatok pamäte"
+
+
+msgid "Target has edges with more than two polygons"
+msgstr "Cieľ má hrany s viac ako dvoma polygónmi"
+
+
+msgid "Target contains concave polygons"
+msgstr "Cieľ obsahuje konkávne polygóny"
+
+
+msgid "Target contains overlapping vertices"
+msgstr "Cieľ obsahuje prekrývajúce sa vrcholy"
+
+
+msgid "Target contains invalid polygons"
+msgstr "Cieľ obsahuje neplatné polygóny"
+
+
+msgid "No vertices were bound"
+msgstr "Neboli viazané žiadne vrcholy"
+
+
+msgid "No valid target mesh"
+msgstr "Žiadna platná cieľová povrchová sieť"
+
+
+msgid "Attempt to unbind from inactive dependency graph"
+msgstr "Pokus o zrušenie naviazania z neaktívneho grafu závislostí"
+
+
+msgid "Vertices changed from %u to %u"
+msgstr "Vrcholy zmenené z %u na %u"
+
+
+msgid "Target polygons changed from %u to %u"
+msgstr "Cieľové polygóny zmenené z %u na %u"
+
+
+msgid "Target vertices changed from %u to %u"
+msgstr "Zmena cieľových vrcholov z %u na %u"
 
 
 msgid "This modifier can only deform control points, not the filled curve/surface"
@@ -119412,8 +119812,24 @@ msgid "Save as Shape Key"
 msgstr "Uložiť ako kľúčový tvar"
 
 
+msgid "UVProject"
+msgstr "PremietnutieUV"
+
+
 msgid "Axis U"
 msgstr "Os U"
+
+
+msgid "UVWarp"
+msgstr "PretiahnutieUV"
+
+
+msgid "Cannot find '%s' grid"
+msgstr "Nemožno nájsť mriežku '%s'"
+
+
+msgid "Could not generate mesh from grid"
+msgstr "Nepodarilo sa vygenerovať povrchovú sieť z mriežky"
 
 
 msgid "Motion"
@@ -119424,8 +119840,32 @@ msgid "Along Normals"
 msgstr "Pozdĺž normálov"
 
 
+msgid "Life"
+msgstr "Životnosť"
+
+
+msgid "Start Position"
+msgstr "Počiatočná pozícia"
+
+
+msgid "WeightedNormal"
+msgstr "VazeneNormaly"
+
+
 msgid "Global Influence:"
 msgstr "Globálny vplyv:"
+
+
+msgid "VertexWeightEdit"
+msgstr "UpravaVahyVrcholov"
+
+
+msgid "VertexWeightMix"
+msgstr "ZmiesanieVahyVrcholov"
+
+
+msgid "VertexWeightProximity"
+msgstr "PribuznostVahyVrcholov"
 
 
 msgid "Replace Original"
@@ -121030,6 +121470,10 @@ msgstr "%s: %.*s"
 
 msgid "Could not resolve path (%s)"
 msgstr "Nepodarilo sa vyriešiť cestu (%s)"
+
+
+msgid "Can not initialize the GPU"
+msgstr "Nemožno inicializovať GPU"
 
 
 msgid "Failed allocate render result, out of memory"

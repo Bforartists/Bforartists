@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -16669,6 +16669,19 @@ msgstr "Дуплирај траке"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Дуплирај повезано"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Удвостручи и премести изабране траке"
+
+
+msgid "Duplicate Strips"
+msgstr "Дуплирај траку"
+
+
+msgctxt "Operator"
 msgid "Make Single User"
 msgstr "Један слој"
 
@@ -17169,11 +17182,6 @@ msgstr "Удвостручи изабране објекте"
 
 msgid "Duplicate Objects"
 msgstr "Удвостручи објекте"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Дуплирај повезано"
 
 
 msgid "Keep Hierarchy"
@@ -19139,14 +19147,6 @@ msgstr "Избриши изабране траке из секвенцера"
 
 msgid "Duplicate the selected strips"
 msgstr "Дуплирај изабране траке"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Удвостручи и премести изабране траке"
-
-
-msgid "Duplicate Strips"
-msgstr "Дуплирај траку"
 
 
 msgctxt "Operator"

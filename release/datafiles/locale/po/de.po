@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -26387,10 +26387,6 @@ msgid "Mesh to Points"
 msgstr "Masche zu Punkten"
 
 
-msgid "Mesh To Volume"
-msgstr "Masche zu Volumen"
-
-
 msgid "UV Sphere"
 msgstr "UV Kugel"
 
@@ -35255,6 +35251,19 @@ msgstr "Streifen duplizieren"
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "Verknüpfte duplizieren"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "Ausgewählte Objekte duplizieren"
+
+
+msgid "Duplicate Strips"
+msgstr "Objekte duplizieren"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "F-Modifikator hinzufügen"
 
@@ -36127,11 +36136,6 @@ msgstr "Duplizieren Sie die ausgewählten Objekte und verschieben Sie sie"
 
 msgid "Duplicate Objects"
 msgstr "Objekte duplizieren"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "Verknüpfte duplizieren"
 
 
 msgid "Keep Hierarchy"
@@ -39916,14 +39920,6 @@ msgstr "Ausgewählte Streifen vom Sequenzer löschen"
 
 msgid "Delete Data"
 msgstr "Daten löschen"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "Ausgewählte Objekte duplizieren"
-
-
-msgid "Duplicate Strips"
-msgstr "Objekte duplizieren"
 
 
 msgctxt "Operator"
@@ -46402,22 +46398,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Zwischenspeicher Limit (in Megabyte)"
 
 
-msgid "CPU"
-msgstr "CPU"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "CUDA"
-msgstr "CUDA"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL berechnen"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Maximale Anzahl von Zeilen, die im Konsolenpuffer gehalten werden"
 
@@ -46940,6 +46920,14 @@ msgstr "Flächenausrichtung umkehren"
 
 msgid "3D Curves"
 msgstr "3D Kurven"
+
+
+msgid "CPU"
+msgstr "CPU"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "OptiX"

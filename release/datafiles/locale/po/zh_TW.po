@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'cd1e4ae44830')\n"
+"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -34329,6 +34329,19 @@ msgstr "製作所選 NLA 片段的複本，並在新的軌道中將新的片段�
 
 
 msgctxt "Operator"
+msgid "Duplicate Linked"
+msgstr "製作連結複本"
+
+
+msgid "Duplicate selected strips and move them"
+msgstr "製作所選片段的複本並移動它們"
+
+
+msgid "Duplicate Strips"
+msgstr "複製片段"
+
+
+msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "添加 F 修改器"
 
@@ -35325,11 +35338,6 @@ msgstr "為所選物體製作複本"
 
 msgid "Duplicate Objects"
 msgstr "製作物體複本"
-
-
-msgctxt "Operator"
-msgid "Duplicate Linked"
-msgstr "製作連結複本"
 
 
 msgid "Keep Hierarchy"
@@ -39810,14 +39818,6 @@ msgstr "從序段編輯器中抹除選取的片段"
 
 msgid "Duplicate the selected strips"
 msgstr "為選取的片段製作複本"
-
-
-msgid "Duplicate selected strips and move them"
-msgstr "製作所選片段的複本並移動它們"
-
-
-msgid "Duplicate Strips"
-msgstr "複製片段"
 
 
 msgid "Slide a sequence strip in time"
@@ -57395,6 +57395,10 @@ msgid "Grease Pencil operator is already active"
 msgstr "蠟筆資料操作器已在作用中"
 
 
+msgid "Failed to set value"
+msgstr "無法設定數值"
+
+
 msgid "Pin"
 msgstr "釘住"
 
@@ -57491,10 +57495,6 @@ msgstr "線上手冊"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "線上 Python 參照"
-
-
-msgid "Failed to set value"
-msgstr "無法設定數值"
 
 
 msgid "Menu Missing:"
