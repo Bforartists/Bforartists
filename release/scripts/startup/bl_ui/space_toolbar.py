@@ -1298,6 +1298,7 @@ class TOOLBAR_PT_normals_autosmooth(Panel):
         mesh = context.active_object.data
 
         split = layout.split()
+        split.active = not mesh.has_custom_normals
         split.use_property_split = False
         col = split.column()
         col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
@@ -1305,6 +1306,17 @@ class TOOLBAR_PT_normals_autosmooth(Panel):
         row = col.row(align = True)
         row.prop(mesh, "auto_smooth_angle", text="")
         row.prop_decorator(mesh, "auto_smooth_angle")
+
+        col = layout.column()
+        if mesh.has_custom_normals:
+            col.label(text = "No Autosmooth. Custom normals", icon = 'INFO')
+
+        col = layout.column()
+
+        if mesh.has_custom_normals:
+            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
 
 
 class TOOLBAR_MT_tools(Menu):
