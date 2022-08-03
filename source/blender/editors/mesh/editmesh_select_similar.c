@@ -35,6 +35,9 @@
 
 #include "mesh_intern.h" /* own include */
 
+#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 /* -------------------------------------------------------------------- */
 /** \name Select Similar (Vert/Edge/Face) Operator - common
  * \{ */
@@ -48,34 +51,34 @@ static const EnumPropertyItem prop_similar_compare_types[] = {
 };
 
 static const EnumPropertyItem prop_similar_types[] = {
-    {SIMVERT_NORMAL, "NORMAL", 0, "Normal", ""},
-    {SIMVERT_FACE, "FACE", 0, "Amount of Adjacent Faces", ""},
-    {SIMVERT_VGROUP, "VGROUP", 0, "Vertex Groups", ""},
-    {SIMVERT_EDGE, "EDGE", 0, "Amount of Connecting Edges", ""},
-    {SIMVERT_CREASE, "VCREASE", 0, "Vertex Crease", ""},
+    {SIMVERT_NORMAL, "NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
+    {SIMVERT_FACE, "FACE", ICON_FACESEL, "Amount of Adjacent Faces", ""},
+    {SIMVERT_VGROUP, "VGROUP", ICON_GROUP_VERTEX, "Vertex Groups", ""},
+    {SIMVERT_EDGE, "EDGE", ICON_EDGESEL, "Amount of Connecting Edges", ""},
+    {SIMVERT_CREASE, "VCREASE", ICON_CREASE, "Vertex Crease", ""},
 
-    {SIMEDGE_LENGTH, "LENGTH", 0, "Length", ""},
-    {SIMEDGE_DIR, "DIR", 0, "Direction", ""},
-    {SIMEDGE_FACE, "FACE", 0, "Amount of Faces Around an Edge", ""},
-    {SIMEDGE_FACE_ANGLE, "FACE_ANGLE", 0, "Face Angles", ""},
-    {SIMEDGE_CREASE, "CREASE", 0, "Crease", ""},
-    {SIMEDGE_BEVEL, "BEVEL", 0, "Bevel", ""},
-    {SIMEDGE_SEAM, "SEAM", 0, "Seam", ""},
-    {SIMEDGE_SHARP, "SHARP", 0, "Sharpness", ""},
+    {SIMEDGE_LENGTH, "LENGTH", ICON_RULER, "Length", ""},
+    {SIMEDGE_DIR, "DIR", ICON_SWITCH_DIRECTION, "Direction", ""},
+    {SIMEDGE_FACE, "FACE", ICON_FACESEL, "Amount of Faces Around an Edge", ""},
+    {SIMEDGE_FACE_ANGLE, "FACE_ANGLE", ICON_ANGLE, "Face Angles", ""},
+    {SIMEDGE_CREASE, "CREASE", ICON_CREASE, "Crease", ""},
+    {SIMEDGE_BEVEL, "BEVEL", ICON_BEVEL, "Bevel", ""},
+    {SIMEDGE_SEAM, "SEAM", ICON_MARK_SEAM, "Seam", ""},
+    {SIMEDGE_SHARP, "SHARP", ICON_SELECT_SHARPEDGES, "Sharpness", ""},
 #ifdef WITH_FREESTYLE
-    {SIMEDGE_FREESTYLE, "FREESTYLE_EDGE", 0, "Freestyle Edge Marks", ""},
+    {SIMEDGE_FREESTYLE, "FREESTYLE_EDGE", ICON_MARK_FS_EDGE, "Freestyle Edge Marks", ""},
 #endif
 
-    {SIMFACE_MATERIAL, "MATERIAL", 0, "Material", ""},
-    {SIMFACE_AREA, "AREA", 0, "Area", ""},
-    {SIMFACE_SIDES, "SIDES", 0, "Polygon Sides", ""},
-    {SIMFACE_PERIMETER, "PERIMETER", 0, "Perimeter", ""},
-    {SIMFACE_NORMAL, "NORMAL", 0, "Normal", ""},
-    {SIMFACE_COPLANAR, "COPLANAR", 0, "Coplanar", ""},
-    {SIMFACE_SMOOTH, "SMOOTH", 0, "Flat/Smooth", ""},
-    {SIMFACE_FACEMAP, "FACE_MAP", 0, "Face Map", ""},
+    {SIMFACE_MATERIAL, "MATERIAL", ICON_MATERIAL, "Material", ""},
+    {SIMFACE_AREA, "AREA", ICON_AREA, "Area", ""},
+    {SIMFACE_SIDES, "SIDES", ICON_POLYGONSIDES, "Polygon Sides", ""},
+    {SIMFACE_PERIMETER, "PERIMETER", ICON_PERIMETER, "Perimeter", ""},
+    {SIMFACE_NORMAL, "NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
+    {SIMFACE_COPLANAR, "COPLANAR", ICON_MAKE_PLANAR, "Coplanar", ""},
+    {SIMFACE_SMOOTH, "SMOOTH", ICON_SHADING_SMOOTH, "Flat/Smooth", ""},
+    {SIMFACE_FACEMAP, "FACE_MAP", ICON_TEXTURE, "Face Map", ""},
 #ifdef WITH_FREESTYLE
-    {SIMFACE_FREESTYLE, "FREESTYLE_FACE", 0, "Freestyle Face Marks", ""},
+    {SIMFACE_FREESTYLE, "FREESTYLE_FACE", ICON_MARKFSFACE, "Freestyle Face Marks", ""},
 #endif
 
     {0, NULL, 0, NULL, NULL},
