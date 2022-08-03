@@ -1,0 +1,34 @@
+# This is an Asset Catalog Definition file for blend files.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+8250fedd-f0e8-4f30-a82c-4ec132b06062:Collections:Collections
+fe2efd2a-b482-4543-b917-8222f6f1cabf:Collections/Lights:Collections-Lights
+2047f9d0-6fd3-4fb8-9227-8e7b125895bf:Collections/Static Meshes:Collections-Static Meshes
+7330e2d1-25b0-4fa6-8ab4-1f7f6d41d5e1:Collections/Static Meshes/Backgrounds:Collections-Static Meshes-Backgrounds
+4bb18048-62ea-4868-951c-31e08f6e9dd9:Collections/Static Meshes/Utility:Collections-Static Meshes-Utility
+6fb38818-1a3d-4f90-8fdb-b7883ab58436:Materials:Materials
+6d148120-6504-4110-bc73-8bc3f3fb512b:Materials/Ceramic:Materials-Ceramic
+f31fc01a-104d-405a-bb5e-006a52808dd8:Materials/Cloth:Materials-Cloth
+37e08d77-097d-4924-b11f-54c78be6f27d:Materials/Foilage:Materials-Foilage
+f0dbf15b-1d34-41b9-bb58-f8df431b4ec4:Materials/Glass:Materials-Glass
+b2c67557-40cd-4c0a-988b-3fd4e978dbd5:Materials/Liquids:Materials-Liquids
+101582ce-aad6-4fef-9343-065a45d1c46c:Materials/Metals:Materials-Metals
+9f5718a2-bc18-4934-9cf0-f2f0fb12c8c0:Materials/Misc:Materials-Misc
+1fd09d3f-fb24-4bfb-8a2b-20e96b0b6756:Materials/Paint:Materials-Paint
+249d0eb0-981e-4233-ab0d-35a5899f5070:Materials/Plastic:Materials-Plastic
+3706cd6c-e4a2-4a1a-89f6-584df9d9bc7c:Materials/Rubber:Materials-Rubber
+7503ec84-3c4d-49ec-98b5-b4d919cbd9dd:Materials/Templates:Materials-Templates
+95b23c4e-c24b-4d78-96da-3b61c4ead98b:Materials/Utility:Materials-Utility
+d599c93e-01af-4eb6-b0e7-8be1126e73f4:Materials/Wood:Materials-Wood
+12fb39dd-73a9-43ee-9371-3d42336f96ec:Node Groups:Node Groups
+6e7cc585-ab55-4914-b430-799705ebbe4d:Node Groups/Compositor Nodes:Node Groups-Compositor Nodes
+0657bf4a-868d-4fc6-8ec2-6bafd45fbcd4:Node Groups/Geometry Nodes:Node Groups-Geometry Nodes
+8326942c-1bff-424b-8849-05dd4b45602d:Node Groups/Shader:Node Groups-Shader
+59d20e91-69f9-4d55-8eec-87ed6d8f1ae5:Node Groups/Shader/Coordinates:Node Groups-Shader-Coordinates
+ee99fef1-67f7-4d64-86ef-318131f082bd:Node Groups/Shader/Layers:Node Groups-Shader-Layers
+4d896561-7caa-4006-a752-bfa8195b8d5e:Node Groups/Shader/Masks:Node Groups-Shader-Masks
