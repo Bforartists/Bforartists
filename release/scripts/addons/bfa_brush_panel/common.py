@@ -63,7 +63,6 @@ class BrushPanelBase(bpy.types.Panel):
     bl_options = {"HIDE_BG"}
 
     tool_name = ""  # Override this
-    mode = ""  # Override this
     tool_settings_attribute_name = ""  # Override this
 
     @staticmethod
@@ -80,10 +79,6 @@ class BrushPanelBase(bpy.types.Panel):
     def filter_brush(brush: bpy.types.Brush):
         # Override this
         raise NotImplementedError
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == cls.mode
 
     def draw(self, context: bpy.types.Context):
         layout = self.layout
