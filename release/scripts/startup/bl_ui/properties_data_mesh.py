@@ -188,6 +188,7 @@ class DATA_PT_normals(MeshButtonsPanel, Panel):
         mesh = context.mesh
 
         split = layout.split()
+        split.active = not mesh.has_custom_normals
         col = split.column()
         col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
         col = split.column()
@@ -197,6 +198,10 @@ class DATA_PT_normals(MeshButtonsPanel, Panel):
             row.prop_decorator(mesh, "auto_smooth_angle")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        col = layout.column()
+        if mesh.has_custom_normals:
+            col.label(text = "No Autosmooth. Mesh has custom normals", icon = 'INFO')
 
         col = layout.column()
 
