@@ -12,7 +12,8 @@ def panel_factory(
         use_paint_attr: str,
         tool_settings_attr: str,
         poll: Callable[[bpy.types.Panel, bpy.types.Context], bool],
-        panel_class_name_suffix: str
+        panel_class_name_suffix: str,
+        space_type: str
 ):
 
     @staticmethod
@@ -33,8 +34,9 @@ def panel_factory(
             (BrushPanelBase,),
             {
                 "bl_label": tool_name.capitalize(),
-                "tool_name": tool_name,
+                "bl_space_type": space_type,
                 "poll": poll,
+                "tool_name": tool_name,
                 "tool_settings_attribute_name": tool_settings_attr,
                 "filter_brush": filter_brush,
                 "icon_name_from_brush": icon_name_from_brush,
@@ -49,10 +51,39 @@ def panel_factory_view3d(
         tool_name_attr: str,
         use_paint_attr: str,
         tool_settings_attr: str,
-        mode: str):
+        mode: str
+):
 
     @classmethod
     def poll(cls, context):
         return context.mode == mode
 
-    yield from panel_factory(tools, icon_prefix, tool_name_attr, use_paint_attr, tool_settings_attr, poll, mode)
+    yield from panel_factory(tools,
+                             icon_prefix,
+                             tool_name_attr,
+                             use_paint_attr,
+                             tool_settings_attr,
+                             poll,
+                             panel_class_name_suffix=mode,
+                             space_type="VIEW_3D"
+                             )
+
+
+def panel_factorry_image_editor(tools: Iterable[str],
+                                icon_prefix: str,
+                                tool_name_attr: str,
+                                use_paint_attr: str,
+                                tool_settings_attr: str):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.ui_mode == "PAINT"
+
+    yield from panel_factory(tools,
+                             icon_prefix,
+                             tool_name_attr,
+                             use_paint_attr,
+                             tool_settings_attr,
+                             poll,
+                             panel_class_name_suffix="image_editor",
+                             space_type="IMAGE_EDITOR",
+                             )
