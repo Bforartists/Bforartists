@@ -58,7 +58,7 @@ def draw_brush_button(
 class BrushPanelBase(bpy.types.Panel):
     bl_label = "Brush"  # Override this
     bl_region_type = "TOOLS"
-    bl_space_type = "VIEW_3D"
+    # bl_space_type = "VIEW_3D"
     bl_category = "Brushes"
     bl_options = {"HIDE_BG"}
 
