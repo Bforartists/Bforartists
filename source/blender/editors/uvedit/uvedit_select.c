@@ -5197,9 +5197,9 @@ static EnumPropertyItem prop_face_similar_types[] = {
     {0}};
 
 static EnumPropertyItem prop_island_similar_types[] = {
-    {UV_SSIM_AREA_UV, "AREA", 0, "Area", ""},
-    {UV_SSIM_AREA_3D, "AREA_3D", 0, "Area 3D", ""},
-    {UV_SSIM_FACE, "FACE", 0, "Amount of Faces in Island", ""},
+    {UV_SSIM_AREA_UV, "AREA", ICON_AREA, "Area", ""},
+    {UV_SSIM_AREA_3D, "AREA_3D", ICON_AREA, "Area 3D", ""},
+    {UV_SSIM_FACE, "FACE", ICON_FACE_MAPS, "Amount of Faces in Island", ""},
     {0}};
 
 static EnumPropertyItem prop_similar_compare_types[] = {{SIM_CMP_EQ, "EQUAL", 0, "Equal", ""},
