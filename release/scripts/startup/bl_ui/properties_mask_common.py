@@ -229,22 +229,31 @@ class MASK_PT_display:
 
     def draw(self, context):
         layout = self.layout
+        layout.label(text="Mask Display")
 
         space_data = context.space_data
 
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_spline", text="Spline")
         sub = row.row()
-        sub.active = space_data.show_mask_spline
-        sub.prop(space_data, "mask_display_type", text="")
+        if space_data.show_mask_spline:
+            sub.active = space_data.show_mask_spline
+            sub.prop(space_data, "mask_display_type", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+    
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
-        sub = row.row()
-        sub.active = space_data.show_mask_overlay
-        sub.prop(space_data, "mask_overlay_mode", text="")
-        row = layout.row()
-        row.active = (space_data.mask_overlay_mode in ['COMBINED'] and space_data.show_mask_overlay)
-        row.prop(space_data, "blend_factor", text="Blending Factor")
+        if space_data.show_mask_overlay:
+            sub = row.row()
+            sub.active = space_data.show_mask_overlay
+            sub.prop(space_data, "mask_overlay_mode", text="")
+            
+            row = layout.row()
+            row.active = (space_data.mask_overlay_mode in ['COMBINED'] and space_data.show_mask_overlay)
+            row.prop(space_data, "blend_factor", text="Blending Factor")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class MASK_PT_transforms:
