@@ -1512,7 +1512,7 @@ similar
 snap_face_nearest
 field_domain
 deform_curves
-#~ DEF_ICON_BLANK(1546)
+vertex_crease
 #~ DEF_ICON_BLANK(1547)
 #~ DEF_ICON_BLANK(1548)
 #~ DEF_ICON_BLANK(1549)

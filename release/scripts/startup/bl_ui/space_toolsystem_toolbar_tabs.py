@@ -1832,6 +1832,10 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
+            col.operator("transform.vert_crease", icon = "VERTEX_CREASE")
+
+            col.separator(factor = 0.5)
+
             col.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
             col.operator("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon = "SHAPEPROPAGATE")
 
@@ -1857,11 +1861,12 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("mesh.vertices_smooth_laplacian", text="", icon = "SMOOTH_LAPLACIAN")
                 row.operator_context = 'INVOKE_REGION_WIN'
+                row.operator("transform.vert_crease", text = "", icon = "VERTEX_CREASE")
 
                 row.operator("mesh.blend_from_shape", text="", icon = "BLENDFROMSHAPE")
-                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
 
                 row = col.row(align=True)
+                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
                 row.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
 
             elif column_count == 2:
@@ -1877,10 +1882,11 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
                 row.operator_context = 'INVOKE_REGION_WIN'
 
                 row = col.row(align=True)
+                row.operator("transform.vert_crease", text = "", icon = "VERTEX_CREASE")
                 row.operator("mesh.blend_from_shape", text="", icon = "BLENDFROMSHAPE")
-                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
 
                 row = col.row(align=True)
+                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
                 row.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
 
             elif column_count == 1:
@@ -1894,6 +1900,9 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
                 col.operator_context = 'EXEC_REGION_WIN'
                 col.operator("mesh.vertices_smooth_laplacian", text="", icon = "SMOOTH_LAPLACIAN")
                 col.operator_context = 'INVOKE_REGION_WIN'
+
+                col.separator(factor = 0.5)
+                col.operator("transform.vert_crease", text = "", icon = "VERTEX_CREASE")
 
                 col.separator(factor = 0.5)
 
