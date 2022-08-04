@@ -4879,7 +4879,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("transform.vert_crease")
+        layout.operator("transform.vert_crease", icon = "VERTEX_CREASE")
 
         layout.separator()
 
