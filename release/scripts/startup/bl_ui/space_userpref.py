@@ -828,7 +828,7 @@ class USERPREF_PT_viewport_subdivision(ViewportPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         system = prefs.system
-
+        layout.use_property_split = False # bfa: align left
         layout.prop(system, "use_gpu_subdivision")
 
 
