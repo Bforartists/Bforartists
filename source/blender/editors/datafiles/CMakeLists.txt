@@ -1513,9 +1513,9 @@ snap_face_nearest
 field_domain
 deform_curves
 vertex_crease
-#~ DEF_ICON_BLANK(1547)
-#~ DEF_ICON_BLANK(1548)
-#~ DEF_ICON_BLANK(1549)
+edge_path_to_selection
+edge_paths_to_curves
+mesh_to_volume
 #~ DEF_ICON_BLANK(1550)
 #~ DEF_ICON_BLANK(1551)
 

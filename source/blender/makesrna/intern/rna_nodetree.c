@@ -13504,6 +13504,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_DUPLICATE_ELEMENTS:
       return ICON_DUPLICATE;
 
+    case GEO_NODE_EDGE_PATHS_TO_CURVES:
+      return ICON_EDGE_PATHS_TO_CURVES;
+
+    case GEO_NODE_EDGE_PATHS_TO_SELECTION:
+      return ICON_EDGE_PATH_TO_SELECTION;
+
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       return ICON_POINT_DISTRIBUTE;
 
@@ -13603,6 +13609,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_INPUT_SHADE_SMOOTH:
       return ICON_SHADING_SMOOTH;
 
+    case GEO_NODE_INPUT_SHORTEST_EDGE_PATHS:
+      return ICON_SELECT_SHORTESTPATH;
+
     case GEO_NODE_INPUT_SPLINE_CYCLIC:
       return ICON_IS_SPLINE_CYCLIC;
 
@@ -13665,6 +13674,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_MESH_TO_POINTS:
       return ICON_MESH_TO_POINTS;
+
+    case GEO_NODE_MESH_TO_VOLUME:
+      return ICON_MESH_TO_VOLUME;
 
     case GEO_NODE_OBJECT_INFO:
       return ICON_NODE_OBJECTINFO;
