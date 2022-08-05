@@ -41,8 +41,8 @@ IDR_VERSION1 VERSIONINFO
 //FILEVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
 //PRODUCTVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
 
-FILEVERSION 3,2,1// bfa - don't separate by dots, but commas here.
-PRODUCTVERSION 3,2,1// bfa - don't separate by dots, but commas here.
+FILEVERSION 3,2,2// bfa - don't separate by dots, but commas here.
+PRODUCTVERSION 3,2,2// bfa - don't separate by dots, but commas here.
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
