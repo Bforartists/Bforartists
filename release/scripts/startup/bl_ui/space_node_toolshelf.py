@@ -4221,6 +4221,14 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
 
+            props = col.operator("node.add_node", text=" Edge Paths to Curves ", icon = "EDGE_PATHS_TO_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgePathsToCurves"
+
+            props = col.operator("node.add_node", text=" Edge Paths to Selection ", icon = "EDGE_PATH_TO_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgePathsToSelection"
+
             props = col.operator("node.add_node", text=" Extrude Mesh             ", icon = "EXTRUDE_REGION")
             props.use_transform = True
             props.type = "GeometryNodeExtrudeMesh"
@@ -4240,6 +4248,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh to Points          ", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
+
+            props = col.operator("node.add_node", text=" Mesh to Volume         ", icon = "MESH_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshToVolume"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4302,6 +4314,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
 
+            props = col.operator("node.add_node", text = " Shortest Edge Path ", icon = "SELECT_SHORTESTPATH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShortestEdgePaths"
+
             props = col.operator("node.add_node", text=" Vertex Neighbors   ", icon = "VERTEX_NEIGHBORS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshVertexNeighbors"
@@ -4322,6 +4338,14 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDualMesh"
 
+            props = flow.operator("node.add_node", text="", icon = "EDGE_PATHS_TO_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgePathsToCurves"
+
+            props = flow.operator("node.add_node", text="", icon = "EDGE_PATH_TO_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgePathsToSelection"
+
             props = flow.operator("node.add_node", text = "", icon = "EXTRUDE_REGION")
             props.use_transform = True
             props.type = "GeometryNodeExtrudeMesh"
@@ -4341,6 +4365,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
             props.use_transform = True
             props.type = "GeometryNodeMeshToPoints"
+
+            props = flow.operator("node.add_node", text="", icon = "MESH_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshToVolume"
 
             props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
@@ -4393,6 +4421,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeInputShadeSmooth"
+
+            props = flow.operator("node.add_node", text = "", icon = "SELECT_SHORTESTPATH")
+            props.use_transform = True
+            props.type = "GeometryNodeInputShortestEdgePaths"
 
             props = flow.operator("node.add_node", text = "", icon = "VERTEX_NEIGHBORS")
             props.use_transform = True
