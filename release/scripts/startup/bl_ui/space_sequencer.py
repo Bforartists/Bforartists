@@ -638,14 +638,14 @@ class SEQUENCER_MT_change(Menu):
                 del bpy_data_scenes_len
             else:
                 layout.operator_context = 'INVOKE_DEFAULT'
-                
-                strip_type = strip.type    
+
+                strip_type = strip.type
                 data_strips = ['IMAGE', 'MOVIE', 'SOUND']
                 effect_strips = ['GAUSSIAN_BLUR', 'SPEED', 'GLOW', 'TRANSFORM', 'MULTICAM', 'ADD', 'SUBRACT', 'ALPHA_OVER', 'ALPHA_UNDER', 'COLORMIX']
 
-                if strip_type in data_strips: 
+                if strip_type in data_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
-                    prop = layout.operator("sequencer.change_path", text="Path/Files", icon='FILE_MOVIE')      
+                    prop = layout.operator("sequencer.change_path", text="Path/Files", icon='FILE_MOVIE')
 
                     if strip:
                         strip_type = strip.type
@@ -655,7 +655,7 @@ class SEQUENCER_MT_change(Menu):
                         elif strip_type == 'MOVIE':
                             prop.filter_movie = True
                         elif strip_type == 'SOUND':
-                            prop.filter_sound = True      
+                            prop.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
@@ -665,7 +665,7 @@ class SEQUENCER_MT_change(Menu):
         except:
             layout.label(text="Please select a strip")
         # BFA - End of changes
-            
+
 class SEQUENCER_MT_navigation(Menu):
     bl_label = "Navi"
 
@@ -1207,7 +1207,7 @@ class SEQUENCER_MT_preview_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        props = layout.operator("wm.call_panel", text="Rename...")
+        props = layout.operator("wm.call_panel", text="Rename", icon='RENAME')
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
