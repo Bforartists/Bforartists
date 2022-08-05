@@ -203,7 +203,7 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.shortest_path_pick", text="Shortest Path", icon="SELECT_SHORTESTPATH")
-        layout.operator("uv.select_similar", text = "Similar", icon = "SIMILAR")
+        layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
 
         layout.separator()
 
@@ -458,7 +458,7 @@ class IMAGE_MT_uvs_snap(Menu):
 
         layout.operator("uv.snap_cursor", text="Cursor to Pixels", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
         layout.operator("uv.snap_cursor", text="Cursor to Selected", icon="CURSORTOSELECTION").target = 'SELECTED'
-        layout.operator("uv.snap_cursor", text="Cursor to Origin").target = 'ORIGIN' # TODO(BFA): Icon
+        layout.operator("uv.snap_cursor", text="Cursor to Origin", icon="ORIGIN_TO_CURSOR").target = 'ORIGIN'
 
 
 class IMAGE_MT_uvs_mirror(Menu):
