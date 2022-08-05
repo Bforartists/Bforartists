@@ -39,6 +39,10 @@ DEFAULT_ICON_FOR_TOOLNAME = {
     "SMEAR": "PAINT_SMEAR",
     "DRAW": "PAINT_DRAW",
     "BLUR": "PAINT_BLUR",
+    "MASK": "OVERLAY",
+    "CLONE": "BRUSH_CLONE",
+    "SOFTEN": "BRUSH_SOFTEN",
+    "FILL": "FLOODFILL"
 }
 
 __icon_cache = dict()
