@@ -57,7 +57,7 @@ class MESH_MT_shape_key_context_menu(Menu):
         op = layout.operator("object.shape_key_remove", icon='DELETE', text="Delete All Shape Keys")
         op.all = True
         op.apply_mix = False
-        op = layout.operator("object.shape_key_remove", text="Apply All Shape Keys") # TODO(BFA): Icon
+        op = layout.operator("object.shape_key_remove", icon="CHECKMARK", text="Apply All Shape Keys")
         op.all = True
         op.apply_mix = True
         layout.separator()
