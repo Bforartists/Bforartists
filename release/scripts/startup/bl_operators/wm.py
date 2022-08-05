@@ -3114,7 +3114,7 @@ class WM_MT_splash(Menu):
 
         layout.separator()
 
-        layout.label(text = "Bforartists 3.2.1 is based on Blender 3.3.0 Alpha")
+        layout.label(text = "Bforartists 3.2.2 is based on Blender 3.4.0 Alpha")
 
         layout.separator()
 
