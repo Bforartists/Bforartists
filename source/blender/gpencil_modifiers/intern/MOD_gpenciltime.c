@@ -238,7 +238,7 @@ static void panelRegister(ARegionType *region_type)
 }
 
 GpencilModifierTypeInfo modifierType_Gpencil_Time = {
-    /* name */ "TimeOffset",
+    /* name */ N_("TimeOffset"),
     /* structName */ "TimeGpencilModifierData",
     /* structSize */ sizeof(TimeGpencilModifierData),
     /* type */ eGpencilModifierTypeType_Gpencil,
