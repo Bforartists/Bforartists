@@ -139,7 +139,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
   }
 
   if (need_transform_relation) {
-    DEG_add_modifier_to_transform_relation(ctx->node, "WeightVGEdit Modifier");
+    DEG_add_depends_on_transform_relation(ctx->node, "WeightVGEdit Modifier");
   }
 }
 
@@ -328,7 +328,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* FIRST PART ................................................ */
   row = uiLayoutRow(split, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_add", 0, "Group Add", ICON_NONE);
+  uiItemR(row, ptr, "use_add", 0, IFACE_("Group Add"), ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);
@@ -361,7 +361,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* FIRST PART ................................................ */
   row = uiLayoutRow(split, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_remove", 0, "Group Remove", ICON_NONE);
+  uiItemR(row, ptr, "use_remove", 0, IFACE_("Group Remove"), ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = uiLayoutRow(split, false);

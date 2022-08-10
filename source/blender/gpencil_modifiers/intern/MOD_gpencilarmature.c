@@ -206,7 +206,7 @@ static void panelRegister(ARegionType *region_type)
 }
 
 GpencilModifierTypeInfo modifierType_Gpencil_Armature = {
-    /* name */ "Armature",
+    /* name */ N_("Armature"),
     /* structName */ "ArmatureGpencilModifierData",
     /* structSize */ sizeof(ArmatureGpencilModifierData),
     /* type */ eGpencilModifierTypeType_Gpencil,
