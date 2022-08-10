@@ -241,7 +241,7 @@ static void panelRegister(ARegionType *region_type)
 }
 
 GpencilModifierTypeInfo modifierType_Gpencil_Offset = {
-    /* name */ "Offset",
+    /* name */ N_("Offset"),
     /* structName */ "OffsetGpencilModifierData",
     /* structSize */ sizeof(OffsetGpencilModifierData),
     /* type */ eGpencilModifierTypeType_Gpencil,

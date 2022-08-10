@@ -7,6 +7,7 @@
 #pragma BLENDER_REQUIRE(common_math_geom_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_camera_lib.glsl)
 #pragma BLENDER_REQUIRE(eevee_velocity_lib.glsl)
+#pragma BLENDER_REQUIRE(eevee_colorspace_lib.glsl)
 
 /* Return scene linear Z depth from the camera or radial depth for panoramic cameras. */
 float film_depth_convert_to_scene(float depth)
@@ -18,32 +19,6 @@ float film_depth_convert_to_scene(float depth)
   return abs(get_view_z_from_depth(depth));
 }
 
-vec3 film_YCoCg_from_scene_linear(vec3 rgb_color)
-{
-  const mat3 colorspace_tx = transpose(mat3(vec3(1, 2, 1),     /* Y */
-                                            vec3(2, 0, -2),    /* Co */
-                                            vec3(-1, 2, -1))); /* Cg */
-  return colorspace_tx * rgb_color;
-}
-
-vec4 film_YCoCg_from_scene_linear(vec4 rgba_color)
-{
-  return vec4(film_YCoCg_from_scene_linear(rgba_color.rgb), rgba_color.a);
-}
-
-vec3 film_scene_linear_from_YCoCg(vec3 ycocg_color)
-{
-  float Y = ycocg_color.x;
-  float Co = ycocg_color.y;
-  float Cg = ycocg_color.z;
-
-  vec3 rgb_color;
-  rgb_color.r = Y + Co - Cg;
-  rgb_color.g = Y + Cg;
-  rgb_color.b = Y - Co - Cg;
-  return rgb_color * 0.25;
-}
-
 /* Load a texture sample in a specific format. Combined pass needs to use this. */
 vec4 film_texelfetch_as_YCoCg_opacity(sampler2D tx, ivec2 texel)
 {
@@ -51,7 +26,7 @@ vec4 film_texelfetch_as_YCoCg_opacity(sampler2D tx, ivec2 texel)
   /* Convert transmittance to opacity. */
   color.a = saturate(1.0 - color.a);
   /* Transform to YCoCg for accumulation. */
-  color.rgb = film_YCoCg_from_scene_linear(color.rgb);
+  color.rgb = colorspace_YCoCg_from_scene_linear(color.rgb);
   return color;
 }
 
@@ -220,7 +195,7 @@ vec2 film_pixel_history_motion_vector(ivec2 texel_sample)
   float min_depth = texelFetch(depth_tx, texel_sample, 0).x;
   ivec2 nearest_texel = texel_sample;
   for (int i = 0; i < 4; i++) {
-    ivec2 texel = clamp(texel_sample + corners[i], ivec2(0), textureSize(depth_tx, 0).xy);
+    ivec2 texel = clamp(texel_sample + corners[i], ivec2(0), textureSize(depth_tx, 0).xy - 1);
     float depth = texelFetch(depth_tx, texel, 0).x;
     if (min_depth > depth) {
       min_depth = depth;
@@ -254,7 +229,7 @@ void film_get_catmull_rom_weights(vec2 t, out vec2 weights[4])
   weights[3] = fct3 - fct2;
 }
 
-/* Load color using a special filter to avoid loosing detail.
+/* Load color using a special filter to avoid losing detail.
  * \a texel is sample position with subpixel accuracy. */
 vec4 film_sample_catmull_rom(sampler2D color_tx, vec2 input_texel)
 {
@@ -390,7 +365,7 @@ vec4 film_amend_combined_history(
   float t = line_aabb_clipping_dist(color_history.rgb, clip_dir.rgb, min_color.rgb, max_color.rgb);
   color_history.rgb += clip_dir.rgb * saturate(t);
 
-  /* Clip alpha on its own to avoid interference with other chanels. */
+  /* Clip alpha on its own to avoid interference with other channels. */
   float t_a = film_aabb_clipping_dist_alpha(color_history.a, clip_dir.a, min_color.a, max_color.a);
   color_history.a += clip_dir.a * saturate(t_a);
 
@@ -406,16 +381,16 @@ float film_history_blend_factor(float velocity,
 {
   /* 5% of incoming color by default. */
   float blend = 0.05;
-  /* Blend less history if the pixel has substential velocity. */
+  /* Blend less history if the pixel has substantial velocity. */
   blend = mix(blend, 0.20, saturate(velocity * 0.02));
   /**
    * "High Quality Temporal Supersampling" by Brian Karis at Siggraph 2014 (Slide 43)
-   * Bias towards history if incomming pixel is near clamping. Reduces flicker.
+   * Bias towards history if incoming pixel is near clamping. Reduces flicker.
    */
   float distance_to_luma_clip = min_v2(vec2(luma_history - luma_min, luma_max - luma_history));
   /* Divide by bbox size to get a factor. 2 factor to compensate the line above. */
   distance_to_luma_clip *= 2.0 * safe_rcp(luma_max - luma_min);
-  /* Linearly blend when history gets bellow to 25% of the bbox size. */
+  /* Linearly blend when history gets below to 25% of the bbox size. */
   blend *= saturate(distance_to_luma_clip * 4.0 + 0.1);
   /* Discard out of view history. */
   if (any(lessThan(texel, vec2(0))) || any(greaterThanEqual(texel, film_buf.extent))) {
@@ -451,13 +426,13 @@ void film_store_combined(
 
     float velocity = length(motion);
 
-    /* Load weight if it is not uniform accross the whole buffer (i.e: upsampling, panoramic). */
+    /* Load weight if it is not uniform across the whole buffer (i.e: upsampling, panoramic). */
     // dst.weight = film_weight_load(texel_combined);
 
     color_dst = film_sample_catmull_rom(in_combined_tx, history_texel);
-    color_dst.rgb = film_YCoCg_from_scene_linear(color_dst.rgb);
+    color_dst.rgb = colorspace_YCoCg_from_scene_linear(color_dst.rgb);
 
-    /* Get local color bounding box of source neighboorhood. */
+    /* Get local color bounding box of source neighborhood. */
     vec4 min_color, max_color;
     film_combined_neighbor_boundbox(src_texel, min_color, max_color);
 
@@ -473,7 +448,7 @@ void film_store_combined(
   else {
     /* Everything is static. Use render accumulation. */
     color_dst = texelFetch(in_combined_tx, dst.texel, 0);
-    color_dst.rgb = film_YCoCg_from_scene_linear(color_dst.rgb);
+    color_dst.rgb = colorspace_YCoCg_from_scene_linear(color_dst.rgb);
 
     /* Luma weighted blend to avoid flickering. */
     weight_dst = film_luma_weight(color_dst.x) * dst.weight;
@@ -483,7 +458,7 @@ void film_store_combined(
   color = color_dst * weight_dst + color_src * weight_src;
   color /= weight_src + weight_dst;
 
-  color.rgb = film_scene_linear_from_YCoCg(color.rgb);
+  color.rgb = colorspace_scene_linear_from_YCoCg(color.rgb);
 
   /* Fix alpha not accumulating to 1 because of float imprecision. */
   if (color.a > 0.995) {
@@ -622,7 +597,7 @@ void film_process_data(ivec2 texel_film, out vec4 out_color, out float out_depth
       src = film_sample_get(i, texel_film);
       film_sample_accum_combined(src, combined_accum, weight_accum);
     }
-    /* NOTE: src.texel is center texel in incomming data buffer. */
+    /* NOTE: src.texel is center texel in incoming data buffer. */
     film_store_combined(dst, src.texel, combined_accum, weight_accum, out_color);
   }
 
