@@ -8,6 +8,8 @@ local_path = Path(bpy.utils.resource_path('LOCAL')).parent
 
 from bpy.types import Header, Menu, Panel
 
+from bpy.app.translations import pgettext_iface as iface_
+
 
 class TOPBAR_HT_upper_bar(Header):
     bl_space_type = 'TOPBAR'
@@ -351,7 +353,7 @@ class TOPBAR_MT_file_new(Menu):
         for d in paths:
             props = layout.operator(
                 "wm.read_homefile",
-                text=bpy.path.display_name(d),
+                text=bpy.path.display_name(iface_(d)),
                 icon=icon,
             )
             props.app_template = d

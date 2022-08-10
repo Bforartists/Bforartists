@@ -54,7 +54,8 @@
 BatchBLF g_batch;
 
 /* freetype2 handle ONLY for this file! */
-static FT_Library ft_lib;
+static FT_Library ft_lib = NULL;
+
 static SpinLock ft_lib_mutex;
 static SpinLock blf_glyph_cache_mutex;
 
@@ -65,19 +66,27 @@ static ft_pix blf_font_height_max_ft_pix(struct FontBLF *font);
 static ft_pix blf_font_width_max_ft_pix(struct FontBLF *font);
 
 /* -------------------------------------------------------------------- */
+
+/* Return glyph id from charcode. */
+uint blf_get_char_index(struct FontBLF *font, uint charcode)
+{
+  return FT_Get_Char_Index(font->face, charcode);
+}
+
+/* -------------------------------------------------------------------- */
 /** \name FreeType Utilities (Internal)
  * \{ */
 
-/* Convert a FreeType 26.6 value representing an unscaled design size to factional pixels. */
+/* Convert a FreeType 26.6 value representing an unscaled design size to fractional pixels. */
 static ft_pix blf_unscaled_F26Dot6_to_pixels(FontBLF *font, FT_Pos value)
 {
   /* Scale value by font size using integer-optimized multiplication. */
-  FT_Long scaled = FT_MulFix(value, font->face->size->metrics.x_scale);
+  FT_Long scaled = FT_MulFix(value, font->ft_size->metrics.x_scale);
 
   /* Copied from FreeType's FT_Get_Kerning (with FT_KERNING_DEFAULT), scaling down */
   /* kerning distances at small ppem values so that they don't become too big. */
-  if (font->face->size->metrics.x_ppem < 25) {
-    scaled = FT_MulDiv(scaled, font->face->size->metrics.x_ppem, 25);
+  if (font->ft_size->metrics.x_ppem < 25) {
+    scaled = FT_MulDiv(scaled, font->ft_size->metrics.x_ppem, 25);
   }
 
   return (ft_pix)scaled;
@@ -296,7 +305,7 @@ BLI_INLINE ft_pix blf_kerning(FontBLF *font, const GlyphBLF *g_prev, const Glyph
   /* Small adjust if there is hinting. */
   adjustment += g->lsb_delta - ((g_prev) ? g_prev->rsb_delta : 0);
 
-  if (FT_HAS_KERNING(font->face) && g_prev) {
+  if (FT_HAS_KERNING(font) && g_prev) {
     FT_Vector delta = {KERNING_ENTRY_UNSET};
 
     /* Get unscaled kerning value from our cache if ASCII. */
@@ -305,7 +314,7 @@ BLI_INLINE ft_pix blf_kerning(FontBLF *font, const GlyphBLF *g_prev, const Glyph
     }
 
     /* If not ASCII or not found in cache, ask FreeType for kerning. */
-    if (UNLIKELY(delta.x == KERNING_ENTRY_UNSET)) {
+    if (UNLIKELY(font->face && delta.x == KERNING_ENTRY_UNSET)) {
       /* Note that this function sets delta values to zero on any error. */
       FT_Get_Kerning(font->face, g_prev->idx, g->idx, FT_KERNING_UNSCALED, &delta);
     }
@@ -925,8 +934,7 @@ static void blf_font_wrap_apply(FontBLF *font,
   int lines = 0;
   ft_pix pen_x_next = 0;
 
-  /* Space between lines needs to be aligned to the pixel grid (T97310). */
-  ft_pix line_height = FT_PIX_FLOOR(blf_font_height_max_ft_pix(font));
+  ft_pix line_height = blf_font_height_max_ft_pix(font);
 
   GlyphCacheBLF *gc = blf_glyph_cache_acquire(font);
 
@@ -1090,7 +1098,7 @@ int blf_font_count_missing_chars(FontBLF *font,
     }
     else {
       c = BLI_str_utf8_as_unicode_step(str, str_len, &i);
-      if (FT_Get_Char_Index((font)->face, c) == 0) {
+      if (blf_get_char_index(font, c) == 0) {
         missing++;
       }
     }
@@ -1107,18 +1115,8 @@ int blf_font_count_missing_chars(FontBLF *font,
 
 static ft_pix blf_font_height_max_ft_pix(FontBLF *font)
 {
-  ft_pix height_max;
-  FT_Face face = font->face;
-  if (FT_IS_SCALABLE(face)) {
-    height_max = ft_pix_from_int((int)(face->ascender - face->descender) *
-                                 (int)face->size->metrics.y_ppem) /
-                 (ft_pix)face->units_per_EM;
-  }
-  else {
-    height_max = (ft_pix)face->size->metrics.height;
-  }
-  /* can happen with size 1 fonts */
-  return MAX2(height_max, ft_pix_from_int(1));
+  /* Metrics.height is rounded to pixel. Force minimum of one pixel. */
+  return MAX2((ft_pix)font->ft_size->metrics.height, ft_pix_from_int(1));
 }
 
 int blf_font_height_max(FontBLF *font)
@@ -1128,18 +1126,8 @@ int blf_font_height_max(FontBLF *font)
 
 static ft_pix blf_font_width_max_ft_pix(FontBLF *font)
 {
-  ft_pix width_max;
-  const FT_Face face = font->face;
-  if (FT_IS_SCALABLE(face)) {
-    width_max = ft_pix_from_int((int)(face->bbox.xMax - face->bbox.xMin) *
-                                (int)face->size->metrics.x_ppem) /
-                (ft_pix)face->units_per_EM;
-  }
-  else {
-    width_max = (ft_pix)face->size->metrics.max_advance;
-  }
-  /* can happen with size 1 fonts */
-  return MAX2(width_max, ft_pix_from_int(1));
+  /* Metrics.max_advance is rounded to pixel. Force minimum of one pixel. */
+  return MAX2((ft_pix)font->ft_size->metrics.max_advance, ft_pix_from_int(1));
 }
 
 int blf_font_width_max(FontBLF *font)
@@ -1149,12 +1137,12 @@ int blf_font_width_max(FontBLF *font)
 
 int blf_font_descender(FontBLF *font)
 {
-  return ft_pix_to_int((ft_pix)font->face->size->metrics.descender);
+  return ft_pix_to_int((ft_pix)font->ft_size->metrics.descender);
 }
 
 int blf_font_ascender(FontBLF *font)
 {
-  return ft_pix_to_int((ft_pix)font->face->size->metrics.ascender);
+  return ft_pix_to_int((ft_pix)font->ft_size->metrics.ascender);
 }
 
 char *blf_display_name(FontBLF *font)
@@ -1176,13 +1164,16 @@ int blf_font_init(void)
   memset(&g_batch, 0, sizeof(g_batch));
   BLI_spin_init(&ft_lib_mutex);
   BLI_spin_init(&blf_glyph_cache_mutex);
-  return FT_Init_FreeType(&ft_lib);
+  int err = FT_Init_FreeType(&ft_lib);
+  return err;
 }
 
 void blf_font_exit(void)
 {
-  FT_Done_FreeType(ft_lib);
   BLI_spin_end(&ft_lib_mutex);
+  if (ft_lib) {
+    FT_Done_FreeType(ft_lib);
+  }
   BLI_spin_end(&blf_glyph_cache_mutex);
   blf_batch_draw_exit();
 }
@@ -1306,7 +1297,10 @@ bool blf_ensure_face(FontBLF *font)
     }
   }
 
-  if (FT_HAS_MULTIPLE_MASTERS(font->face)) {
+  font->ft_size = font->face->size;
+  font->face_flags = font->face->face_flags;
+
+  if (FT_HAS_MULTIPLE_MASTERS(font)) {
     FT_Get_MM_Var(font->face, &(font->variations));
   }
 
@@ -1319,11 +1313,11 @@ bool blf_ensure_face(FontBLF *font)
     font->UnicodeRanges[3] = (uint)os2_table->ulUnicodeRange4;
   }
 
-  if (FT_IS_FIXED_WIDTH(font->face)) {
+  if (FT_IS_FIXED_WIDTH(font)) {
     font->flags |= BLF_MONOSPACED;
   }
 
-  if (FT_HAS_KERNING(font->face) && !font->kerning_cache) {
+  if (FT_HAS_KERNING(font) && !font->kerning_cache) {
     /* Create kerning cache table and fill with value indicating "unset". */
     font->kerning_cache = MEM_mallocN(sizeof(KerningCacheBLF), __func__);
     for (uint i = 0; i < KERNING_CACHE_TABLE_SIZE; i++) {
@@ -1438,7 +1432,9 @@ void blf_font_attach_from_mem(FontBLF *font, const unsigned char *mem, const siz
   open.flags = FT_OPEN_MEMORY;
   open.memory_base = (const FT_Byte *)mem;
   open.memory_size = (FT_Long)mem_size;
-  FT_Attach_Stream(font->face, &open);
+  if (blf_ensure_face(font)) {
+    FT_Attach_Stream(font->face, &open);
+  }
 }
 
 void blf_font_free(FontBLF *font)
@@ -1455,6 +1451,7 @@ void blf_font_free(FontBLF *font)
 
   if (font->face) {
     FT_Done_Face(font->face);
+    font->face = NULL;
   }
   if (font->filepath) {
     MEM_freeN(font->filepath);
@@ -1478,7 +1475,7 @@ bool blf_font_size(FontBLF *font, float size, unsigned int dpi)
   }
 
   /* FreeType uses fixed-point integers in 64ths. */
-  FT_F26Dot6 ft_size = lroundf(size * 64.0f);
+  FT_UInt ft_size = round_fl_to_uint(size * 64.0f);
   /* Adjust our new size to be on even 64ths. */
   size = (float)ft_size / 64.0f;
 
