@@ -94,16 +94,16 @@ static GlyphCacheBLF *blf_glyph_cache_new(FontBLF *font)
   memset(gc->bucket, 0, sizeof(gc->bucket));
 
   /* Determine ideal fixed-width size for monospaced output. */
-  FT_UInt gindex = FT_Get_Char_Index(font->face, U'0');
-  if (gindex) {
+  FT_UInt gindex = blf_get_char_index(font, U'0');
+  if (gindex && font->face) {
     FT_Fixed advance = 0;
     FT_Get_Advance(font->face, gindex, FT_LOAD_NO_HINTING, &advance);
     /* Use CSS 'ch unit' width, advance of zero character. */
     gc->fixed_width = (int)(advance >> 16);
   }
   else {
-    /* Font does not contain "0" so use CSS fallback of 1/2 of em. */
-    gc->fixed_width = (int)((font->face->size->metrics.height / 2) >> 6);
+    /* Font does not have a face or does not contain "0" so use CSS fallback of 1/2 of em. */
+    gc->fixed_width = (int)((font->ft_size->metrics.height / 2) >> 6);
   }
   if (gc->fixed_width < 1) {
     gc->fixed_width = 1;
@@ -565,7 +565,7 @@ static bool blf_font_has_coverage_bit(FontBLF *font, int coverage_bit)
  */
 static FT_UInt blf_glyph_index_from_charcode(FontBLF **font, const uint charcode)
 {
-  FT_UInt glyph_index = FT_Get_Char_Index((*font)->face, charcode);
+  FT_UInt glyph_index = blf_get_char_index(*font, charcode);
   if (glyph_index) {
     return glyph_index;
   }
@@ -584,12 +584,10 @@ static FT_UInt blf_glyph_index_from_charcode(FontBLF **font, const uint charcode
       continue;
     }
     if (coverage_bit < 0 || blf_font_has_coverage_bit(f, coverage_bit)) {
-      if (blf_ensure_face(f)) {
-        glyph_index = FT_Get_Char_Index(f->face, charcode);
-        if (glyph_index) {
-          *font = f;
-          return glyph_index;
-        }
+      glyph_index = blf_get_char_index(f, charcode);
+      if (glyph_index) {
+        *font = f;
+        return glyph_index;
       }
     }
   }
@@ -599,8 +597,8 @@ static FT_UInt blf_glyph_index_from_charcode(FontBLF **font, const uint charcode
 #endif
 
   /* Not found in the stack, return from Last Resort if there is one. */
-  if (last_resort && blf_ensure_face(last_resort)) {
-    glyph_index = FT_Get_Char_Index(last_resort->face, charcode);
+  if (last_resort) {
+    glyph_index = blf_get_char_index(last_resort, charcode);
     if (glyph_index) {
       *font = last_resort;
       return glyph_index;
@@ -898,13 +896,7 @@ static FT_GlyphSlot blf_glyph_render(FontBLF *settings_font,
                                      int fixed_width)
 {
   if (glyph_font != settings_font) {
-    FT_Set_Char_Size(glyph_font->face,
-                     0,
-                     ((FT_F26Dot6)(settings_font->size)) * 64,
-                     settings_font->dpi,
-                     settings_font->dpi);
-    glyph_font->size = settings_font->size;
-    glyph_font->dpi = settings_font->dpi;
+    blf_font_size(glyph_font, settings_font->size, settings_font->dpi);
   }
 
   /* We need to keep track if changes are still needed. */
@@ -961,7 +953,7 @@ static FT_GlyphSlot blf_glyph_render(FontBLF *settings_font,
   /* Fallback glyph transforms, but only if required and not yet done. */
 
   if (weight != 0.0f && !weight_done) {
-    blf_glyph_transform_weight(glyph, weight, glyph->face->face_flags & FT_FACE_FLAG_FIXED_WIDTH);
+    blf_glyph_transform_weight(glyph, weight, FT_IS_FIXED_WIDTH(glyph_font));
   }
   if (slant != 0.0f && !slant_done) {
     blf_glyph_transform_slant(glyph, slant);
@@ -990,11 +982,9 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, uint charcode)
   FontBLF *font_with_glyph = font;
   FT_UInt glyph_index = blf_glyph_index_from_charcode(&font_with_glyph, charcode);
 
-  /* Glyphs are dynamically created as needed by font rendering. this means that
-   * to make font rendering thread safe we have to do locking here. note that this
-   * must be a lock for the whole library and not just per font, because the font
-   * renderer uses a shared buffer internally. */
-  BLI_spin_lock(font_with_glyph->ft_lib_mutex);
+  if (!blf_ensure_face(font_with_glyph)) {
+    return NULL;
+  }
 
   FT_GlyphSlot glyph = blf_glyph_render(
       font, font_with_glyph, glyph_index, charcode, gc->fixed_width);
@@ -1004,7 +994,6 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, uint charcode)
     g = blf_glyph_cache_add_glyph(font, gc, glyph, charcode, glyph_index);
   }
 
-  BLI_spin_unlock(font_with_glyph->ft_lib_mutex);
   return g;
 }
 

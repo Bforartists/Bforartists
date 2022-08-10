@@ -189,15 +189,6 @@ void uvedit_live_unwrap_update(SpaceImage *sima, Scene *scene, Object *obedit)
 /** \name Geometric Utilities
  * \{ */
 
-void uv_poly_copy_aspect(float uv_orig[][2], float uv[][2], float aspx, float aspy, int len)
-{
-  int i;
-  for (i = 0; i < len; i++) {
-    uv[i][0] = uv_orig[i][0] * aspx;
-    uv[i][1] = uv_orig[i][1] * aspy;
-  }
-}
-
 bool ED_uvedit_minmax_multi(
     const Scene *scene, Object **objects_edit, uint objects_len, float r_min[2], float r_max[2])
 {
@@ -552,11 +543,11 @@ static bool uvedit_uv_straighten(Scene *scene, BMesh *bm, eUVWeldAlign tool)
   bool changed = false;
 
   /* Loop backwards to simplify logic. */
-  int j1 = element_map->totalUVs;
+  int j1 = element_map->total_uvs;
   for (int i = element_map->totalIslands - 1; i >= 0; --i) {
     int j0 = element_map->islandIndices[i];
     changed |= uvedit_uv_straighten_elements(
-        element_map->buf + j0, j1 - j0, cd_loop_uv_offset, tool);
+        element_map->storage + j0, j1 - j0, cd_loop_uv_offset, tool);
     j1 = j0;
   }
 
