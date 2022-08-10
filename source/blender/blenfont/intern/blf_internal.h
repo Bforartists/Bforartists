@@ -14,7 +14,7 @@ struct ResultBLF;
 struct rctf;
 struct rcti;
 
-/* Max number of fonts in memory. Take care that every font has a glyph cache per size/dpi,
+/* Max number of FontBLFs in memory. Take care that every font has a glyph cache per size/dpi,
  * so we don't need load the same font with different size, just load one and call BLF_size. */
 #define BLF_MAX_FONT 32
 
@@ -38,6 +38,8 @@ int blf_font_init(void);
 void blf_font_exit(void);
 
 bool blf_font_id_is_valid(int fontid);
+
+uint blf_get_char_index(struct FontBLF *font, uint charcode);
 
 bool blf_ensure_face(struct FontBLF *font);
 
