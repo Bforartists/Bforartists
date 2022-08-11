@@ -2513,7 +2513,7 @@ class vertex_group_to_vertex_colors(Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
         group_name = obj.vertex_groups[group_id].name
-        bpy.ops.mesh.vertex_color_add()
+        me.vertex_colors.new()
         colors_id = obj.data.vertex_colors.active_index
 
         colors_name = group_name
@@ -2694,8 +2694,8 @@ class curvature_to_vertex_groups(Operator):
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.mesh.vertex_color_add()
         vertex_colors = context.active_object.data.vertex_colors
+        vertex_colors.new()
         vertex_colors[-1].active = True
         vertex_colors[-1].active_render = True
         vertex_colors[-1].name = "Curvature"
@@ -2706,7 +2706,7 @@ class curvature_to_vertex_groups(Operator):
             blur_iterations=self.blur_iterations, clean_angle=self.max_angle,
             dirt_angle=self.min_angle)
         bpy.ops.object.vertex_colors_to_vertex_groups(invert=self.invert)
-        bpy.ops.mesh.vertex_color_remove()
+        vertex_colors.remove(vertex_colors.active)
         return {'FINISHED'}
 
 class face_area_to_vertex_groups(Operator):

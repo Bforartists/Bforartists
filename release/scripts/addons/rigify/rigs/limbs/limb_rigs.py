@@ -959,7 +959,7 @@ class BaseLimbRig(BaseRig):
         params.limb_uniform_scale = bpy.props.BoolProperty(
             name        = "Support Uniform Scaling",
             default     = False,
-            description = "Suport uniformly scaling the limb via the gear control at the base"
+            description = "Support uniformly scaling the limb via the gear control at the base"
         )
 
         # Setting up extra layers for the FK and tweak

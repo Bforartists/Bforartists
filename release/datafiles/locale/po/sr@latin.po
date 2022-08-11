@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -161,6 +161,10 @@ msgstr "Zaključaj"
 
 msgid "Action group is locked"
 msgstr "Grupa akcija je zaključana"
+
+
+msgid "Mute"
+msgstr "Isključi zvuk"
 
 
 msgid "Select"
@@ -11084,10 +11088,6 @@ msgstr "Početni kadar akcije"
 
 msgid "Blending"
 msgstr "Mešanje"
-
-
-msgid "Mute"
-msgstr "Isključi zvuk"
 
 
 msgid "Meta"
@@ -25561,6 +25561,10 @@ msgid "Paths:"
 msgstr "Putanje:"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ u RGB"
+
+
 msgctxt "Operator"
 msgid "Export to File"
 msgstr "Izvezi u datoteku"
@@ -25848,6 +25852,10 @@ msgid "Make and Replace Links"
 msgstr "Stvori i zameni veze"
 
 
+msgid "Slot %d"
+msgstr "Slot %d"
+
+
 msgid "Lift:"
 msgstr "Dizanje:"
 
@@ -26053,10 +26061,6 @@ msgstr "Prečnik gumice"
 
 msgid "Minimum Grid Spacing"
 msgstr "Najmanji razmak mreže"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ u RGB"
 
 
 msgid "Mixing Buffer"
@@ -27705,10 +27709,6 @@ msgstr "Modifikator vrednosti F-krive"
 
 msgid "Unsupported audio format"
 msgstr "Nepodržan fotmat zvuka"
-
-
-msgid "Slot %d"
-msgstr "Slot %d"
 
 
 msgid "Select Slot"

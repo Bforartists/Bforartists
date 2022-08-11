@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1855,10 +1855,6 @@ msgstr "ფორმის გასაღებები"
 
 msgid "Shape Key data-blocks"
 msgstr "ფორმის გასაღებების მონაცემთა ბლოკები"
-
-
-msgid "Simulations"
-msgstr "სიმულაციები"
 
 
 msgid "Sounds"
@@ -7257,6 +7253,10 @@ msgstr "წონები"
 
 msgid "Show Light Probe data-blocks"
 msgstr "მაჩვენე სინათლის ზონდის მონაცემთა ბლოკები"
+
+
+msgid "Simulations"
+msgstr "სიმულაციები"
 
 
 msgid "Save"

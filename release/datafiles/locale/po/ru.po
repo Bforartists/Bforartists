@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -196,6 +196,10 @@ msgstr "Блокировка"
 
 msgid "Action group is locked"
 msgstr "Группа действий заблокирована"
+
+
+msgid "Mute"
+msgstr "Выключить"
 
 
 msgid "Select"
@@ -1812,10 +1816,6 @@ msgstr "Ключи формы"
 
 msgid "Shape Key data-blocks"
 msgstr "Датаблоки ключей формы"
-
-
-msgid "Simulations"
-msgstr "Симуляции"
 
 
 msgid "Sounds"
@@ -11705,6 +11705,10 @@ msgstr "Показать/скрыть датаблоки облаков точе
 
 msgid "Show Scene data-blocks"
 msgstr "Показать датаблоки сцен"
+
+
+msgid "Simulations"
+msgstr "Симуляции"
 
 
 msgid "Show Simulation data-blocks"
@@ -35089,10 +35093,6 @@ msgstr "Величина, привносимая дорожкой в текущ�
 
 msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "Модификаторы, влияющие на все F-кривые в используемом действии"
-
-
-msgid "Mute"
-msgstr "Выключить"
 
 
 msgid "Disable NLA Strip evaluation"
@@ -82005,6 +82005,10 @@ msgid "Doppler Speed"
 msgstr "Скорость звука"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ в RGB"
+
+
 msgid "Active Set Override"
 msgstr "Переопределение активного набора"
 
@@ -82991,6 +82995,10 @@ msgid "Backdrop Zoom Out"
 msgstr "Уменьшить подложку"
 
 
+msgid "Slot %d"
+msgstr "Слот %d"
+
+
 msgctxt "Operator"
 msgid "Show One Level"
 msgstr "Показать один уровень"
@@ -83878,10 +83886,6 @@ msgstr "Интерполяция по умолчанию"
 
 msgid "Default Handles"
 msgstr "Рукоятки по умолчанию"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ в RGB"
 
 
 msgid "Mixing Buffer"
@@ -85700,6 +85704,10 @@ msgid "Scene Collection"
 msgstr "Коллекция сцены"
 
 
+msgid "Collection %d"
+msgstr "Коллекция %d"
+
+
 msgid "Const"
 msgstr "Ограничение"
 
@@ -86213,10 +86221,6 @@ msgstr "Ошибка открытия «%s»: %s"
 
 msgid "GP_Palette"
 msgstr "Палитра GP"
-
-
-msgid "Collection %d"
-msgstr "Коллекция %d"
 
 
 msgid "Hidden %d"
@@ -90213,10 +90217,6 @@ msgstr "Отсутствуют компоненты %s%s%s эйлеровско�
 
 msgid "Decimate Keyframes"
 msgstr "Упростить ключевые кадры"
-
-
-msgid "Slot %d"
-msgstr "Слот %d"
 
 
 msgid "Discard"

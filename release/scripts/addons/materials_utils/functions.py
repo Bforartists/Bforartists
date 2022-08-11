@@ -333,7 +333,7 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
             elif not internal:
                 # Some object types are not supported
                 #  mostly because don't really support selecting by material (like Font/Text objects)
-                #  ore that they don't support multiple materials/are just "weird" (i.e. Meta balls)
+                #  or that they don't support multiple materials/are just "weird" (i.e. Meta balls)
                 self.report({'WARNING'}, "The type '" +
                                             obj.type +
                                             "' isn't supported in Edit mode by Material Utilities!")

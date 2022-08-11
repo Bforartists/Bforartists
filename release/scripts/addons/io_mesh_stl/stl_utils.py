@@ -168,7 +168,7 @@ def _binary_write(filepath, faces):
 
         for face in faces:
             # calculate face normal
-            # write normal + vertexes + pad as attributes
+            # write normal + vertices + pad as attributes
             fw(struct.pack('<3f', *normal(*face)) + pack(*itertools.chain.from_iterable(face)))
             # attribute byte count (unused)
             fw(b'\0\0')

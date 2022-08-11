@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -196,6 +196,10 @@ msgstr "Khóa"
 
 msgid "Action group is locked"
 msgstr "Nhóm hành động bị khóa"
+
+
+msgid "Mute"
+msgstr "Cắt Tiếng"
 
 
 msgid "Select"
@@ -2004,10 +2008,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô Phỏng"
 
 
 msgid "Sounds"
@@ -12169,6 +12169,10 @@ msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
 
 msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Simulations"
+msgstr "Mô Phỏng"
 
 
 msgid "Show Simulation data-blocks"
@@ -39954,10 +39958,6 @@ msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "Các cụ sửa đổi được ảnh hưởng hết Cong-F trong Hành Động được tham chiếu"
 
 
-msgid "Mute"
-msgstr "Cắt Tiếng"
-
-
 msgid "Disable NLA Strip evaluation"
 msgstr "Tắt tính toán Đoạn NLA"
 
@@ -60892,11 +60892,6 @@ msgstr "Kiếm Giao Điểm"
 
 msgid "Search for a node by name and focus and select it"
 msgstr "Tìm kiếm một giao điểm bằng tên và tập trung và chọn nó"
-
-
-msgctxt "Operator"
-msgid "glTF Settings"
-msgstr "Cài Đặt glTF"
 
 
 msgctxt "Operator"
@@ -102584,6 +102579,10 @@ msgid "Doppler Speed"
 msgstr "Tốc Độ Đôple"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ đến RGB"
+
+
 msgid "Active Set Override"
 msgstr "Đặt Thay Thế Hoạt Động"
 
@@ -103776,6 +103775,10 @@ msgstr "Phóng Vào Nền"
 msgctxt "Operator"
 msgid "Backdrop Zoom Out"
 msgstr "Phóng Ra Nền"
+
+
+msgid "Slot %d"
+msgstr "Khe %d"
 
 
 msgctxt "Operator"
@@ -105015,10 +105018,6 @@ msgstr "Suy Nội Mặc Định"
 
 msgid "Default Handles"
 msgstr "Tay Cầm Mặc Định"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ đến RGB"
 
 
 msgid "Mixing Buffer"
@@ -107379,6 +107378,10 @@ msgid "Scene Collection"
 msgstr "Sưu Tập Cảnh"
 
 
+msgid "Collection %d"
+msgstr "Sưu Tập %d"
+
+
 msgid "Const"
 msgstr "Không Đổi"
 
@@ -108294,10 +108297,6 @@ msgid "GP_Palette"
 msgstr "Bảng_BútSáp"
 
 
-msgid "Collection %d"
-msgstr "Sưu Tập %d"
-
-
 msgid "Hidden %d"
 msgstr "Được Ẩn %d"
 
@@ -109120,10 +109119,6 @@ msgstr "Cục dữ liệu '%s' đã trở thành một tích sản"
 
 msgid "%i data-blocks are now assets"
 msgstr "%i cục dữ liệu đã trở thành tích sản"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "Cục dữ liệu '%s' không còn là tích sản"
 
 
 msgid "%i data-blocks are no assets anymore"
@@ -113554,10 +113549,6 @@ msgid "There is no animation data to operate on"
 msgstr "Không có dữ liệu hoạt hình để tương tác"
 
 
-msgid "Slot %d"
-msgstr "Khe %d"
-
-
 msgid "Discard"
 msgstr "Bỏ"
 
@@ -116076,14 +116067,6 @@ msgstr "Không thể thêm một lớp vào TậpTinĐệmChứa '%s'"
 
 msgid "Background image cannot be removed"
 msgstr "Không thể xóa ảnh nền"
-
-
-msgid "Could not link the object '%s' because the collection '%s' is overridden"
-msgstr "Không thể liên kết vật thể '%s' vì sưu tập '%s' được thay thế."
-
-
-msgid "Could not link the object '%s' because the collection '%s' is linked"
-msgstr "Không thể liên kết vật thể '%s' vì sưu tập '%s' được liên kết."
 
 
 msgid "Object '%s' already in collection '%s'"

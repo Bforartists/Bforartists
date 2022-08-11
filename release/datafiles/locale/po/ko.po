@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -177,6 +177,10 @@ msgstr "잠금"
 
 msgid "Action group is locked"
 msgstr "액션그룹이 잠김"
+
+
+msgid "Mute"
+msgstr "음소거"
 
 
 msgid "Select"
@@ -32534,10 +32538,6 @@ msgstr "현재의 결과로 스트립 기여하는 양"
 
 msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "참조된 액션에서 모든 F-커브에 영향을 미치는 모디파이어"
-
-
-msgid "Mute"
-msgstr "음소거"
 
 
 msgid "Disable NLA Strip evaluation"
@@ -79640,6 +79640,10 @@ msgid "Doppler Speed"
 msgstr "도플러 속력"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ를 RGB로 표현"
+
+
 msgid "Active Set Override"
 msgstr "활성 설정 재정의"
 
@@ -80578,6 +80582,10 @@ msgid "Backdrop Zoom Out"
 msgstr "배경 화면 줌 축소"
 
 
+msgid "Slot %d"
+msgstr "슬롯 %d"
+
+
 msgctxt "Operator"
 msgid "Show One Level"
 msgstr "하나의 레벨을 표시"
@@ -81423,10 +81431,6 @@ msgstr "기본 보간"
 
 msgid "Default Handles"
 msgstr "기본 핸들"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ를 RGB로 표현"
 
 
 msgid "Mixing Buffer"
@@ -83149,6 +83153,10 @@ msgid "Scene Collection"
 msgstr "씬 컬렉션"
 
 
+msgid "Collection %d"
+msgstr "컬렉션 %d"
+
+
 msgid "Const"
 msgstr "상수"
 
@@ -83662,10 +83670,6 @@ msgstr "'%s' 을 열 수 없음: %s"
 
 msgid "GP_Palette"
 msgstr "GP_Palette"
-
-
-msgid "Collection %d"
-msgstr "컬렉션 %d"
 
 
 msgid "Hidden %d"
@@ -87534,10 +87538,6 @@ msgstr "오일러 회전의 누락된 %s%s%s 구성 요소(들), ID = '%s' 및 R
 
 msgid "Decimate Keyframes"
 msgstr "키 프레임을 데시메이트"
-
-
-msgid "Slot %d"
-msgstr "슬롯 %d"
 
 
 msgid "Discard"
