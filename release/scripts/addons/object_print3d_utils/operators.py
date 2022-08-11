@@ -13,6 +13,8 @@ from bpy.props import (
 )
 import bmesh
 
+from bpy.app.translations import pgettext_tip as tip_
+
 from . import report
 
 
@@ -87,7 +89,7 @@ class MESH_OT_print3d_info_volume(Operator):
             volume_str = clean_float(volume_unit, 4)
             volume_fmt = f"{volume_str} {symbol}"
 
-        report.update((f"Volume: {volume_fmt}³", None))
+        report.update((tip_("Volume: {}³").format(volume_fmt), None))
 
         return {'FINISHED'}
 
@@ -118,7 +120,7 @@ class MESH_OT_print3d_info_area(Operator):
             area_str = clean_float(area_unit, 4)
             area_fmt = f"{area_str} {symbol}"
 
-        report.update((f"Area: {area_fmt}²", None))
+        report.update((tip_("Area: {}²").format(area_fmt), None))
 
         return {'FINISHED'}
 
@@ -161,8 +163,12 @@ class MESH_OT_print3d_check_solid(Operator):
             (i for i, ele in enumerate(bm.edges) if ele.is_manifold and (not ele.is_contiguous)),
         )
 
-        info.append((f"Non Manifold Edge: {len(edges_non_manifold)}", (bmesh.types.BMEdge, edges_non_manifold)))
-        info.append((f"Bad Contig. Edges: {len(edges_non_contig)}", (bmesh.types.BMEdge, edges_non_contig)))
+        info.append(
+            (tip_("Non Manifold Edge: {}").format(
+                len(edges_non_manifold)),
+                (bmesh.types.BMEdge,
+                 edges_non_manifold)))
+        info.append((tip_("Bad Contig. Edges: {}").format(len(edges_non_contig)), (bmesh.types.BMEdge, edges_non_contig)))
 
         bm.free()
 
@@ -180,7 +186,7 @@ class MESH_OT_print3d_check_intersections(Operator):
         from . import mesh_helpers
 
         faces_intersect = mesh_helpers.bmesh_check_self_intersect_object(obj)
-        info.append((f"Intersect Face: {len(faces_intersect)}", (bmesh.types.BMFace, faces_intersect)))
+        info.append((tip_("Intersect Face: {}").format(len(faces_intersect)), (bmesh.types.BMFace, faces_intersect)))
 
     def execute(self, context):
         return execute_check(self, context)
@@ -208,8 +214,8 @@ class MESH_OT_print3d_check_degenerate(Operator):
         faces_zero = array.array('i', (i for i, ele in enumerate(bm.faces) if ele.calc_area() <= threshold))
         edges_zero = array.array('i', (i for i, ele in enumerate(bm.edges) if ele.calc_length() <= threshold))
 
-        info.append((f"Zero Faces: {len(faces_zero)}", (bmesh.types.BMFace, faces_zero)))
-        info.append((f"Zero Edges: {len(edges_zero)}", (bmesh.types.BMEdge, edges_zero)))
+        info.append((tip_("Zero Faces: {}").format(len(faces_zero)), (bmesh.types.BMFace, faces_zero)))
+        info.append((tip_("Zero Edges: {}").format(len(edges_zero)), (bmesh.types.BMEdge, edges_zero)))
 
         bm.free()
 
@@ -239,7 +245,7 @@ class MESH_OT_print3d_check_distorted(Operator):
             (i for i, ele in enumerate(bm.faces) if mesh_helpers.face_is_distorted(ele, angle_distort))
         )
 
-        info.append((f"Non-Flat Faces: {len(faces_distort)}", (bmesh.types.BMFace, faces_distort)))
+        info.append((tip_("Non-Flat Faces: {}").format(len(faces_distort)), (bmesh.types.BMFace, faces_distort)))
 
         bm.free()
 
@@ -263,7 +269,7 @@ class MESH_OT_print3d_check_thick(Operator):
         print_3d = scene.print_3d
 
         faces_error = mesh_helpers.bmesh_check_thick_object(obj, print_3d.thickness_min)
-        info.append((f"Thin Faces: {len(faces_error)}", (bmesh.types.BMFace, faces_error)))
+        info.append((tip_("Thin Faces: {}").format(len(faces_error)), (bmesh.types.BMFace, faces_error)))
 
     def execute(self, context):
         return execute_check(self, context)
@@ -290,7 +296,7 @@ class MESH_OT_print3d_check_sharp(Operator):
             if ele.is_manifold and ele.calc_face_angle_signed() > angle_sharp
         ]
 
-        info.append((f"Sharp Edge: {len(edges_sharp)}", (bmesh.types.BMEdge, edges_sharp)))
+        info.append((tip_("Sharp Edge: {}").format(len(edges_sharp)), (bmesh.types.BMEdge, edges_sharp)))
         bm.free()
 
     def execute(self, context):
@@ -327,7 +333,7 @@ class MESH_OT_print3d_check_overhang(Operator):
             if z_down_angle(ele.normal, 4.0) < angle_overhang
         ]
 
-        info.append((f"Overhang Face: {len(faces_overhang)}", (bmesh.types.BMFace, faces_overhang)))
+        info.append((tip_("Overhang Face: {}").format(len(faces_overhang)), (bmesh.types.BMFace, faces_overhang)))
         bm.free()
 
     def execute(self, context):
@@ -390,7 +396,7 @@ class MESH_OT_print3d_clean_distorted(Operator):
             bmesh.ops.triangulate(bm, faces=elems_triangulate)
             mesh_helpers.bmesh_to_object(obj, bm)
 
-        self.report({'INFO'}, f"Triangulated {len(elems_triangulate)} faces")
+        self.report({'INFO'}, tip_("Triangulated {} faces").format(len(elems_triangulate)))
 
         return {'FINISHED'}
 
@@ -441,7 +447,7 @@ class MESH_OT_print3d_clean_non_manifold(Operator):
         edges = bm_key[1] - bm_key_orig[1]
         faces = bm_key[2] - bm_key_orig[2]
 
-        self.report({'INFO'}, f"Modified: {verts:+} vertices, {edges:+} edges, {faces:+} faces")
+        self.report({'INFO'}, tip_("Modified: {:+} vertices, {:+} edges, {:+} faces").format(verts, edges, faces))
 
         return {'FINISHED'}
 
@@ -616,7 +622,7 @@ def _scale(scale, report=None, report_suffix=""):
         bpy.ops.transform.resize(value=(scale,) * 3)
     if report is not None:
         scale_fmt = clean_float(scale, 6)
-        report({'INFO'}, f"Scaled by {scale_fmt}{report_suffix}")
+        report({'INFO'}, tip_("Scaled by {}{}").format(scale_fmt, report_suffix))
 
 
 class MESH_OT_print3d_scale_to_volume(Operator):
@@ -638,7 +644,7 @@ class MESH_OT_print3d_scale_to_volume(Operator):
     def execute(self, context):
         scale = math.pow(self.volume, 1 / 3) / math.pow(self.volume_init, 1 / 3)
         scale_fmt = clean_float(scale, 6)
-        self.report({'INFO'}, f"Scaled by {scale_fmt}")
+        self.report({'INFO'}, tip_("Scaled by {}").format(scale_fmt))
         _scale(scale, self.report)
         return {'FINISHED'}
 
@@ -689,7 +695,7 @@ class MESH_OT_print3d_scale_to_bounds(Operator):
     def execute(self, context):
         scale = self.length / self.length_init
         axis = "XYZ"[self.axis_init]
-        _scale(scale, report=self.report, report_suffix=f", Clamping {axis}-Axis")
+        _scale(scale, report=self.report, report_suffix=tip_(", Clamping {}-Axis").format(axis))
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -763,7 +769,10 @@ class MESH_OT_print3d_align_to_xy(Operator):
             normal = Vector((0.0, 0.0, 0.0))
             if face_areas:
                 for face in faces:
-                    normal += (face.normal * face.calc_area())
+                    if mode_orig == 'EDIT_MESH':
+                        normal += (face.normal * face.calc_area())
+                    else:
+                        normal += (face.normal * face.area)
             else:
                 for face in faces:
                     normal += face.normal
@@ -777,9 +786,9 @@ class MESH_OT_print3d_align_to_xy(Operator):
 
         if len(skip_invalid) > 0:
             for name in skip_invalid:
-                print(f"Align to XY: Skipping object {name}. No faces selected.")
+                print(tip_("Align to XY: Skipping object {}. No faces selected.").format(name))
             if len(skip_invalid) == 1:
-                self.report({'WARNING'}, "Skipping object. No faces selected" % skip_invalid[0])
+                self.report({'WARNING'}, tip_("Skipping object {}. No faces selected").format(skip_invalid[0]))
             else:
                 self.report({'WARNING'}, "Skipping some objects. No faces selected. See terminal")
         return {'FINISHED'}

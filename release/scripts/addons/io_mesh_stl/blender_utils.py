@@ -48,7 +48,7 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     """
     From an object, return a generator over a list of faces.
 
-    Each faces is a list of his vertexes. Each vertex is a tuple of
+    Each faces is a list of his vertices. Each vertex is a tuple of
     his coordinate.
 
     use_mesh_modifiers

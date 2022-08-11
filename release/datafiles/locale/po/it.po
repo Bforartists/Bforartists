@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -172,6 +172,10 @@ msgstr "Blocco"
 
 msgid "Action group is locked"
 msgstr "Gruppo Azione è bloccato"
+
+
+msgid "Mute"
+msgstr "Disattiva"
 
 
 msgid "Select"
@@ -22717,10 +22721,6 @@ msgstr "Ammontare con cui lo spezzone contribuisce al risultato corrente"
 
 msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "I modificatori hanno effetto sui dati geometrici dell'oggetto"
-
-
-msgid "Mute"
-msgstr "Disattiva"
 
 
 msgid "Number of times to repeat the action range"
@@ -53741,6 +53741,10 @@ msgid "Paths:"
 msgstr "Percorsi:"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ a RGB"
+
+
 msgctxt "Operator"
 msgid "Export to File"
 msgstr "Esporta su File"
@@ -54429,6 +54433,10 @@ msgid "Backdrop Zoom Out"
 msgstr "Rimpicciolisci Sfondo"
 
 
+msgid "Slot %d"
+msgstr "Slot %d"
+
+
 msgctxt "Operator"
 msgid "Show One Level"
 msgstr "Mostra Un Livello"
@@ -55014,10 +55022,6 @@ msgstr "Abilita in Scene Nuove"
 
 msgid "Default Interpolation"
 msgstr "Interpolazione Predefinita"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ a RGB"
 
 
 msgid "Mixing Buffer"
@@ -59093,10 +59097,6 @@ msgstr "Nessun Modificatore-F da incollare"
 
 msgid "File not found '%s'"
 msgstr "File non trovato '%s'"
-
-
-msgid "Slot %d"
-msgstr "Slot %d"
 
 
 msgid "Select Slot"
