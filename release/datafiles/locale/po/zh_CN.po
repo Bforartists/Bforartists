@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -201,6 +201,10 @@ msgid "Action group is locked"
 msgstr "锁定的动作块组"
 
 
+msgid "Mute"
+msgstr "屏蔽"
+
+
 msgid "Select"
 msgstr "选择"
 
@@ -327,10 +331,6 @@ msgstr "KHR_materials_variants_ui"
 
 msgid "Displays glTF UI to manage material variants"
 msgstr "显示 glTF UI 以管理材质变量"
-
-
-msgid "Displays glTF Settings node in Shader Editor (Menu Add > Output)"
-msgstr "在着色器编辑器中显示 glTF 设置节点（菜单添加>输出）"
 
 
 msgid "Fribidi Library"
@@ -2041,14 +2041,6 @@ msgid "Shape Key data-blocks"
 msgstr "形态键数据块"
 
 
-msgid "Simulations"
-msgstr "模拟"
-
-
-msgid "Simulation data-blocks"
-msgstr "模拟数据块"
-
-
 msgid "Sounds"
 msgstr "声音"
 
@@ -2359,14 +2351,6 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
-
-
-msgid "Main Simulations"
-msgstr "主模拟"
-
-
-msgid "Collection of simulations"
-msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -12371,6 +12355,10 @@ msgid "Show Scene data-blocks"
 msgstr "显示场景数据块"
 
 
+msgid "Simulations"
+msgstr "模拟"
+
+
 msgid "Show Simulation data-blocks"
 msgstr "显示模拟数据块"
 
@@ -16173,10 +16161,6 @@ msgid "Use fallback tools keymap"
 msgstr "使用回退工具键盘映射"
 
 
-msgid "Add fallback tools keymap to this gizmo type."
-msgstr "将回退工具键盘映射添加到此gizmo类型。"
-
-
 msgid "VR Redraws"
 msgstr "VR重绘"
 
@@ -17291,10 +17275,6 @@ msgid "Select feature lines that comes from lit or shaded regions. Will not affe
 msgstr "选择来自照明或阴影区域的要素线。不会影响投射阴影和光线轮廓，因为它们位于边界"
 
 
-msgid "Lit"
-msgstr "明亮"
-
-
 msgid "Shaded"
 msgstr "着色"
 
@@ -17665,14 +17645,6 @@ msgstr "使用阴影"
 
 msgid "Project contour lines using a light source object"
 msgstr "使用光源物体投影轮廓线"
-
-
-msgid "Shadow Enclosed Shapes"
-msgstr "阴影封闭形状"
-
-
-msgid "Reproject visible lines again to get enclosed shadow shapes"
-msgstr "重新投影可见线以获得封闭的阴影形状"
 
 
 msgid "Vertex group name for selected strokes"
@@ -27416,14 +27388,6 @@ msgstr "序列编辑器"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
-
-
-msgid "Simulation data-block"
-msgstr "模拟数据块"
-
-
-msgid "Node tree defining the simulation"
-msgstr "定义模拟的节点数"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -40458,10 +40422,6 @@ msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "修改器在参考动作中影响函数曲线"
 
 
-msgid "Mute"
-msgstr "屏蔽"
-
-
 msgid "Disable NLA Strip evaluation"
 msgstr "禁用NLA 片段解算"
 
@@ -42931,6 +42891,10 @@ msgid "Function Node"
 msgstr "函数节点"
 
 
+msgid "Align Euler to Vector"
+msgstr "对齐欧拉至矢量"
+
+
 msgid "Axis to align to the vector"
 msgstr "要与矢量对齐的轴"
 
@@ -43573,10 +43537,6 @@ msgstr "编号上的场"
 
 msgid "Domain the field is evaluated in"
 msgstr "解算场所在的域"
-
-
-msgid "Field on Domain"
-msgstr "域上的场"
 
 
 msgid "Fill Curve"
@@ -44488,6 +44448,10 @@ msgid "Principled BSDF"
 msgstr "原理化BSDF"
 
 
+msgid "Physically-based, easy-to-use shader for rendering surface materials, based on the Disney principled model also known as the \"PBR\" shader"
+msgstr "基于物理的、易于使用的着色器，用于渲染表面材质，基于迪士尼原理化模型，也称为“PBR”着色器"
+
+
 msgid "Subsurface Method"
 msgstr "次表面方法"
 
@@ -44524,8 +44488,16 @@ msgid "Refraction BSDF"
 msgstr "折射 BSDF"
 
 
+msgid "Glossy refraction with sharp or microfacet distribution, typically used for materials that transmit light"
+msgstr "具有锐利或微有面元分布的光面折射，通常用于透光的材质"
+
+
 msgid "Toon BSDF"
 msgstr "卡通 BSDF"
+
+
+msgid "Diffuse and Glossy shaders with cartoon light effects"
+msgstr "具有卡通灯光效果的漫反射和光泽着色器"
 
 
 msgid "Toon BSDF component to use"
@@ -44544,16 +44516,36 @@ msgid "Translucent BSDF"
 msgstr "半透 BSDF"
 
 
+msgid "Lambertian diffuse transmission"
+msgstr "Lambertian漫透射"
+
+
 msgid "Transparent BSDF"
 msgstr "透明 BSDF"
+
+
+msgid "Transparency without refraction, passing straight through the surface as if there were no geometry"
+msgstr "无折射的透明度，直接穿过表面，就好像不存在几何体一样"
 
 
 msgid "Velvet BSDF"
 msgstr "丝绒 BSDF"
 
 
+msgid ""
+"Reflection for materials such as cloth.\n"
+"Typically mixed with other shaders (such as a Diffuse Shader) and is not particularly useful on its own"
+msgstr ""
+"布料等材质的反射。\n"
+"通常与其他着色器（如漫反射着色器）混合使用，单独使用并不是特别有用"
+
+
 msgid "Bump"
 msgstr "凹凸"
+
+
+msgid "Generate a perturbed normal from a height texture for bump mapping. Typically used for faking highly detailed surfaces"
+msgstr "从高度纹理生成扰动法向以用于凹凸贴图。通常用于伪造高细节表面"
 
 
 msgid "Invert the bump mapping direction to push into the surface instead of out"
@@ -44562,6 +44554,14 @@ msgstr "反转凹凸映射方向，将其推入表面而不是推出表面"
 
 msgid "Camera Data"
 msgstr "摄像机数据"
+
+
+msgid "Retrieve information about the camera and how it relates to the current shading point's position"
+msgstr "检索有关相机的信息及其与当前着色点位置的关系"
+
+
+msgid "Clamp a value between a minimum and a maximum"
+msgstr "将值钳制在最小值和最大值之间"
 
 
 msgid "Clamp Type"
@@ -44580,12 +44580,28 @@ msgid "Constrain value between min and max, swapping arguments when min > max"
 msgstr "最小值和最大值之间的约束值，当最小>最大值时交换参数"
 
 
+msgid "Create a color from individual components using multiple models"
+msgstr "使用多个模型从单个组件创建颜色"
+
+
 msgid "Combine HSV"
 msgstr "合并 HSV"
 
 
+msgid "Create a color from its hue, saturation, and value channels"
+msgstr "从色调、饱和度和值通道创建颜色"
+
+
 msgid "Combine RGB"
 msgstr "合并 RGB"
+
+
+msgid "Generate a color from its red, green, and blue channels (Deprecated)"
+msgstr "从其红色、绿色和蓝色通道生成颜色(已弃用)"
+
+
+msgid "Create a vector from X, Y, and Z components"
+msgstr "从 X、Y 和 Z 分量创建矢量"
 
 
 msgid "Shader Custom Group"
@@ -44594,6 +44610,10 @@ msgstr "着色器自定义群组"
 
 msgid "Custom Shader Group Node for Python nodes"
 msgstr "Python 节点的自定义着色器组节点"
+
+
+msgid "Displace the surface along the surface normal"
+msgstr "沿曲面法线置换曲面"
 
 
 msgid "Space of the input height"
@@ -44616,32 +44636,100 @@ msgid "Specular BSDF"
 msgstr "高光 BSDF"
 
 
+msgid "Similar to the Principled BSDF node but uses the specular workflow instead of metallic, which functions by specifying the facing (along normal) reflection color. Energy is not conserved, so the result may not be physically accurate"
+msgstr "与原理化BSDF 节点类似，但使用镜面反射工作流而非金属，后者通过指定面向(沿法线)反射颜色来发挥作用。能量不守恒，因此结果可能在物理上不准确"
+
+
 msgid "Emission"
 msgstr "自发光(发射)"
+
+
+msgid "Lambertian emission shader"
+msgstr "Lambertian发射着色器"
 
 
 msgid "Float Curve"
 msgstr "浮点曲线"
 
 
+msgid "Map an input float to a curve and outputs a float value"
+msgstr "将输入浮点数映射到曲线并输出浮点值"
+
+
 msgid "Fresnel"
 msgstr "菲涅尔"
+
+
+msgid ""
+"Produce a blending factor depending on the angle between the surface normal and the view direction using Fresnel equations.\n"
+"Typically used for mixing reflections at grazing angles"
+msgstr ""
+"使用菲涅耳方程根据表面法向与视图方向之间的角度生成混合系数。\n"
+"通常用于在掠角混合反射"
+
+
+msgid "Apply a gamma correction"
+msgstr "应用伽马校正。"
 
 
 msgid "Curves Info"
 msgstr "曲线信息"
 
 
+msgid "Retrieve hair curve information"
+msgstr "检索毛发曲线信息"
+
+
+msgid ""
+"Create a \"hole\" in the image with zero alpha transparency, which is useful for compositing.\n"
+"Note: the holdout shader can only create alpha when transparency is enabled in the film settings"
+msgstr ""
+"在图像中创建一个 Alpha 透明度为零的“孔”，这对于合成非常有用。\n"
+"注: 当在影片设置中启用透明度时，阻隔着色器只能创建 Alpha"
+
+
+msgid "Apply a color transformation in the HSV color model"
+msgstr "在 HSV 颜色模型中应用颜色变换"
+
+
+msgid "Invert a color, producing a negative"
+msgstr "反转颜色，产生负片"
+
+
 msgid "Layer Weight"
 msgstr "层权重"
+
+
+msgid ""
+"Produce a blending factor depending on the angle between the surface normal and the view direction.\n"
+"Typically used for layering shaders with the Mix Shader node"
+msgstr ""
+"根据曲面法向与视图方向之间的角度生成混合系数。\n"
+"通常用于使用“混合着色器”节点对着色器进行分层"
 
 
 msgid "Light Falloff"
 msgstr "光线衰减"
 
 
+msgid "Manipulate how light intensity decreases over distance. Typically used for non-physically-based effects; in reality light always falls off quadratically"
+msgstr "控制光强度如何随距离而降低。通常用于非物理效应；在现实中，光总是以二次型衰减"
+
+
 msgid "Light Path"
 msgstr "光程"
+
+
+msgid ""
+"Retrieve the type of incoming ray for which the shader is being executed.\n"
+"Typically used for non-physically-based tricks"
+msgstr ""
+"检索着色器正在被执行的入射光线的类型。\n"
+"通常用于非基于物理的技巧"
+
+
+msgid "Remap a value from a range to a target range"
+msgstr "将值重新映射到目标范围"
 
 
 msgid "Clamp the result to the target range [To Min, To Max]"
@@ -44680,6 +44768,10 @@ msgid "Smoother Hermite edge interpolation between From Min and From Max values"
 msgstr "从最小值和从最大值之间的更平滑的埃尔米特边缘插值"
 
 
+msgid "Transform the input vector by applying translation, rotation, and scale"
+msgstr "通过应用平移、旋转和缩放来变换输入向量"
+
+
 msgid "Type of vector that the mapping transforms"
 msgstr "映射变换的矢量类型"
 
@@ -44700,12 +44792,36 @@ msgid "Transform a unit normal vector. Location is ignored"
 msgstr "变换一个单位法向矢量。忽略位置"
 
 
+msgid "Perform math operations"
+msgstr "执行数学运算"
+
+
 msgid "MixRGB"
 msgstr "混合 RGB"
 
 
+msgid "Mix two input colors"
+msgstr "混合两种输入颜色"
+
+
 msgid "Mix Shader"
 msgstr "混合着色器"
+
+
+msgid "Mix two shaders together. Typically used for material layering"
+msgstr "将两个着色器混合在一起。通常用于材质分层"
+
+
+msgid "Retrieve geometric information about the current shading point"
+msgstr "检索有关当前着色点的几何信息"
+
+
+msgid "Generate a normal vector and a dot product"
+msgstr "生成法向量和点积"
+
+
+msgid "Generate a perturbed normal from an RGB normal map image. Typically used for faking highly detailed surfaces"
+msgstr "从 RGB 法线贴图图像生成扰动法线。通常用于伪造高细节的表面"
 
 
 msgid "Space of the input normal"
@@ -44748,8 +44864,20 @@ msgid "UV Map for tangent space maps"
 msgstr "用于切向空间映射的 UV 映射"
 
 
+msgid "Retrieve information about the object instance"
+msgstr "检索有关物体实例的信息"
+
+
 msgid "AOV Output"
 msgstr "AOV 输出"
+
+
+msgid ""
+"Arbitrary Output Variables.\n"
+"Provide custom render passes for arbitrary shader node outputs"
+msgstr ""
+"任意输出变量。\n"
+"为任意着色器节点输出提供自定义渲染通道"
 
 
 msgid "Name of the AOV that this output writes to"
@@ -44758,6 +44886,10 @@ msgstr "此输出写入的 AOV 的名称"
 
 msgid "Light Output"
 msgstr "光输出"
+
+
+msgid "Output light information to a light object"
+msgstr "将灯光信息输出到灯光物体"
 
 
 msgid "True if this node is used as the active output"
@@ -44792,16 +44924,52 @@ msgid "Material Output"
 msgstr "材质输出"
 
 
+msgid "Output surface material information for use in rendering"
+msgstr "输出表面材质信息以用于渲染"
+
+
 msgid "World Output"
 msgstr "世界输出"
+
+
+msgid "Output light color information to the scene's World"
+msgstr "将灯光颜色信息输出到场景的世界"
 
 
 msgid "Particle Info"
 msgstr "粒子信息"
 
 
+msgid "Retrieve the data of the particle that spawned the object instance, for example to give variation to multiple instances of an object"
+msgstr "检索生成物体实例的粒子的数据，例如，为物体的多个实例赋予变化"
+
+
 msgid "Point Info"
 msgstr "点信息"
+
+
+msgid "Retrieve information about points in a point cloud"
+msgstr "检索有关点云中点的信息"
+
+
+msgid "A color picker"
+msgstr "拾色器"
+
+
+msgid "Apply color corrections for each color channel"
+msgstr "为每个颜色通道应用颜色校正"
+
+
+msgid "Convert a color's luminance to a grayscale value"
+msgstr "将颜色的亮度转换为灰度值"
+
+
+msgid ""
+"Generate an OSL shader from a file or text data-block.\n"
+"Note: OSL shaders are not supported on the GPU"
+msgstr ""
+"从文件或文本数据块生成 OSL 着色器。\n"
+"注意：GPU 不支持 OSL 着色器"
 
 
 msgid "Bytecode"
@@ -44848,16 +45016,40 @@ msgid "Automatically update the shader when the .osl file changes (external scri
 msgstr "当 .osl 文件变更时自动更新着色器 (仅用于外部脚本)"
 
 
+msgid "Split a color into its individual components using multiple models"
+msgstr "使用多个模型将颜色拆分为单独的分量"
+
+
 msgid "Separate HSV"
 msgstr "分离 HSV"
+
+
+msgid "Split a color into its hue, saturation, and value channels"
+msgstr "将颜色拆分为其色调、饱和度和值通道"
 
 
 msgid "Separate RGB"
 msgstr "分离 RGB"
 
 
+msgid "Split a color into its red, green, and blue channels (Deprecated)"
+msgstr "将颜色拆分为其红色、绿色和蓝色通道(已弃用)"
+
+
+msgid "Split a vector into its X, Y, and Z components"
+msgstr "将矢量拆分为其 X、Y 和 Z 分量"
+
+
 msgid "Shader to RGB"
 msgstr "Shader --> RGB"
+
+
+msgid ""
+"Convert rendering effect (such as light and shadow) to color. Typically used for non-photorealistic rendering, to apply additional effects on the output of BSDFs.\n"
+"Note: only supported for Eevee"
+msgstr ""
+"将渲染效果(如光和阴影)转换为颜色。通常用于非照片级真实感渲染，以对 BSDF 的输出应用其他效果。\n"
+"注意：仅支持 Eevee"
 
 
 msgid "Squeeze Value"
@@ -44866,6 +45058,18 @@ msgstr "挤压值"
 
 msgid "Subsurface Scattering"
 msgstr "次表面散射 (SSS)"
+
+
+msgid ""
+"Subsurface multiple scattering shader to simulate light entering the surface and bouncing internally.\n"
+"Typically used for materials such as skin, wax, marble or milk"
+msgstr ""
+"次表面多重散射着色器，用于模拟光线进入表面并在内部反弹。\n"
+"通常用于皮肤、蜡、大理石或牛奶等材质"
+
+
+msgid "Generate a tangent direction for the Anisotropic BSDF"
+msgstr "为各向异性BSDF 生成切向"
 
 
 msgid "Axis for radial tangents"
@@ -44904,6 +45108,10 @@ msgid "Brick Texture"
 msgstr "砖墙纹理"
 
 
+msgid "Generate a procedural texture producing bricks"
+msgstr "生成生成砖块的程序纹理"
+
+
 msgid "Offset Amount"
 msgstr "偏移量"
 
@@ -44928,8 +45136,20 @@ msgid "Checker Texture"
 msgstr "棋盘格纹理"
 
 
+msgid "Generate a checkerboard texture"
+msgstr "生成棋盘格纹理"
+
+
 msgid "Texture Coordinate"
 msgstr "纹理坐标"
+
+
+msgid ""
+"Retrieve multiple types of texture coordinates.\n"
+"Typically used as inputs for texture nodes"
+msgstr ""
+"检索多种类型的纹理坐标。\n"
+"通常用作纹理节点的输入"
 
 
 msgid "From Instancer"
@@ -44946,6 +45166,10 @@ msgstr "使用来自该物体的坐标(用于物体纹理坐标输出)"
 
 msgid "Environment Texture"
 msgstr "环境纹理"
+
+
+msgid "Sample an image file as an environment texture. Typically used to light the scene with the background node"
+msgstr "对图像文件进行采样作为环境纹理。通常用于使用背景节点照亮场景"
 
 
 msgid "Texture interpolation"
@@ -44988,8 +45212,16 @@ msgid "Gradient Texture"
 msgstr "渐变纹理"
 
 
+msgid "Generate interpolated color and intensity values based on the input vector"
+msgstr "根据输入矢量生成插值的颜色和强度值"
+
+
 msgid "IES Texture"
 msgstr "IES纹理"
+
+
+msgid "Used to match real world lights with IES files, which store the directional intensity distribution of light sources"
+msgstr "用于将真实世界的光源与IES文件相匹配，IES文件存储光源的方向强度分布"
 
 
 msgid "IES light path"
@@ -45010,6 +45242,10 @@ msgstr "IES文件加载自硬盘还是文本数据块"
 
 msgid "Use external .ies file"
 msgstr "使用外部 .ies 文件"
+
+
+msgid "Sample an image file as a texture"
+msgstr "将图像文件作为纹理进行采样"
 
 
 msgid "Method to project 2D image on object with a 3D texture vector"
@@ -45040,12 +45276,20 @@ msgid "For box projection, amount of blend to use between sides"
 msgstr "两面之间的混合量, 用于方形投射"
 
 
+msgid "Generate a psychedelic color texture"
+msgstr "生成迷幻色彩纹理"
+
+
 msgid "Level of detail in the added turbulent noise"
 msgstr "所添加的紊流噪波的精细度级别"
 
 
 msgid "Musgrave Texture"
 msgstr "马氏分形纹理"
+
+
+msgid "Generate fractal Perlin noise. Allows for greater control over how octaves are combined than the Noise Texture node"
+msgstr "生成分形柏林噪波。允许比噪波纹理节点更好地控制倍频程的组合方式"
 
 
 msgid "Number of dimensions to output noise for"
@@ -45074,6 +45318,30 @@ msgstr "马氏分形纹理类型"
 
 msgid "More uneven result (varies with location), more similar to a real terrain"
 msgstr "更不均匀的结果(随位置变化)，更类似于真实地形"
+
+
+msgid "Create sharp peaks"
+msgstr "创建尖锐的峰值"
+
+
+msgid "Create peaks and valleys with different roughness values"
+msgstr "创建具有不同粗糙度值的峰和谷"
+
+
+msgid "Produce an unnatural homogeneous and isotropic result"
+msgstr "产生不自然的均匀和各向同性结果"
+
+
+msgid "Similar to Hybrid Multifractal creates a heterogeneous terrain, but with the likeness of river channels"
+msgstr "类似于混合式多重分形，可创建异质的地形，但具有河道的相似性。"
+
+
+msgid "Generate fractal Perlin noise"
+msgstr "生成分形柏林噪波"
+
+
+msgid "Generate a volumetric point for each particle or vertex of another object"
+msgstr "为另一个物体的每个粒子或顶点生成体积点"
 
 
 msgid "Object to take point data from"
@@ -45170,6 +45438,10 @@ msgstr "XYZ法向矢量映射至RGB色彩"
 
 msgid "Sky Texture"
 msgstr "天空纹理"
+
+
+msgid "Generate a procedural sky texture"
+msgstr "生成程序化的天空纹理"
 
 
 msgid "Air"
@@ -45304,6 +45576,10 @@ msgid "Voronoi Texture"
 msgstr "沃罗诺伊纹理"
 
 
+msgid "Generate Worley noise based on the distance to random points. Typically used to generate textures such as stones, water, or biological cells"
+msgstr "根据到随机点的距离生成沃利噪波。通常用于生成纹理，如石头、水或生物细胞"
+
+
 msgid "The distance metric used to compute the texture"
 msgstr "用于计算纹理的距离度量"
 
@@ -45380,6 +45656,10 @@ msgid "Wave Texture"
 msgstr "波浪纹理"
 
 
+msgid "Generate procedural bands or rings with noise"
+msgstr "生成有噪波的程序性波段或环"
+
+
 msgid "Bands Direction"
 msgstr "条纹方向"
 
@@ -45448,6 +45728,10 @@ msgid "White Noise"
 msgstr "白噪波"
 
 
+msgid "Return a random value or color based on an input seed"
+msgstr "基于输入种子返回随机值或颜色"
+
+
 msgid "UV Along Stroke"
 msgstr "沿笔画的UV"
 
@@ -45460,12 +45744,32 @@ msgid "Lower half of the texture is for tips of the stroke"
 msgstr "纹理的下半部分用于笔画的尖端"
 
 
+msgid "Retrieve a UV map from the geometry, or the default fallback if none is specified"
+msgstr "从几何图形中检索 UV 贴图，如果未指定任何图形，则检索默认回退"
+
+
 msgid "UV coordinates to be used for mapping"
 msgstr "用于映射的UV坐标"
 
 
+msgid "Map values to colors with the use of a gradient"
+msgstr "使用渐变将值映射到颜色"
+
+
+msgid "Used to Input numerical values to other nodes in the tree"
+msgstr "用于将数值输入到节点树中的其他节点"
+
+
+msgid "Map an input vectors to curves, used to fine-tune the interpolation of the input"
+msgstr "将输入向量映射到曲线，用于微调输入的插值"
+
+
 msgid "Vector Displacement"
 msgstr "矢量置换"
+
+
+msgid "Displace the surface along an arbitrary direction"
+msgstr "沿任意方向置换曲面"
 
 
 msgid "Tangent space vector displacement mapping"
@@ -45482,6 +45786,10 @@ msgstr "世界空间矢量转换映射"
 
 msgid "Vector Math"
 msgstr "矢量运算"
+
+
+msgid "Perform vector math operation"
+msgstr "执行矢量数学运算"
 
 
 msgid "Entry-wise multiply"
@@ -45600,6 +45908,10 @@ msgid "Vector Rotate"
 msgstr "矢量旋转"
 
 
+msgid "Rotate a vector around a pivot point (center)"
+msgstr "围绕轴心点(中心)旋转矢量"
+
+
 msgid "Invert angle"
 msgstr "反转角度"
 
@@ -45636,6 +45948,10 @@ msgid "Vector Transform"
 msgstr "矢量变换"
 
 
+msgid "Convert a vector, point, or normal between world, camera, and object coordinate space"
+msgstr "在世界、相机和物体坐标空间之间变换矢量、点或法线"
+
+
 msgid "Convert From"
 msgstr "转换自"
 
@@ -45664,20 +45980,52 @@ msgid "Color Attribute"
 msgstr "颜色属性"
 
 
+msgid "Retrieve a color attribute, or the default fallback if none is specified"
+msgstr "检索颜色属性，如果未指定任何属性，则检索默认回退"
+
+
 msgid "Volume Absorption"
 msgstr "体积吸收"
+
+
+msgid "Absorb light as it passes through the volume"
+msgstr "在光线穿过体积时吸收光线"
 
 
 msgid "Volume Info"
 msgstr "体积信息"
 
 
+msgid "Read volume data attributes from volume grids"
+msgstr "从体积网格中读取体积数据属性"
+
+
 msgid "Principled Volume"
 msgstr "原理化体积"
 
 
+msgid "Combine all volume shading components into a single easy to use node"
+msgstr "将所有体积着色组件合并到一个易于使用的节点中"
+
+
 msgid "Volume Scatter"
 msgstr "体积散射"
+
+
+msgid "Scatter light as it passes through the volume, often used to add fog to a scene"
+msgstr "散射光穿过体积，通常用于向场景添加雾"
+
+
+msgid "Convert a wavelength value to an RGB value"
+msgstr "将波长值转换为 RGB 值"
+
+
+msgid ""
+"Retrieve the edges of an object as it appears to Cycles.\n"
+"Note: as meshes are triangulated before being processed by Cycles, topology will always appear triangulated"
+msgstr ""
+"检索物体在Cycles 中显示的边缘。\n"
+"注意：由于网格在由 Cycles 处理之前会进行三角化，因此拓扑将始终显示为三角化"
 
 
 msgid "Pixel Size"
@@ -46286,6 +46634,10 @@ msgstr "包括此物体，但不生成交叉线"
 
 msgid "Use this object's crease setting to overwrite scene global"
 msgstr "使用此物体的折痕设置覆盖全局场景"
+
+
+msgid "Use this object's intersection priority to override collection setting"
+msgstr "使用此物体的交集优先级重写集合设置"
 
 
 msgid "Object Modifiers"
@@ -49222,6 +49574,15 @@ msgstr "显示遮罩编辑工具"
 
 
 msgctxt "Operator"
+msgid "New Image from Plane Marker"
+msgstr "来自平面标记的新图像"
+
+
+msgid "Create new image from the content of the plane marker"
+msgstr "根据平面标记的内容创建新图像"
+
+
+msgctxt "Operator"
 msgid "Open Clip"
 msgstr "打开剪辑"
 
@@ -49687,6 +50048,15 @@ msgstr "添加追踪设置预设"
 
 msgid "Add or remove a motion tracking settings preset"
 msgstr "添加或移除一个运动追踪设置预设"
+
+
+msgctxt "Operator"
+msgid "Update Image from Plane Marker"
+msgstr "从平面标记更新图像"
+
+
+msgid "Update current image used by plane marker from the content of the plane marker"
+msgstr "从平面标记的内容更新平面标记使用的当前图像"
 
 
 msgid "View whole image with markers"
@@ -50315,6 +50685,15 @@ msgstr "为拉伸约束重置骨骼的原始长度"
 
 
 msgctxt "Operator"
+msgid "Convert Particle System to Curves"
+msgstr "转换粒子系统为曲线"
+
+
+msgid "Add a new curves object based on the current state of the particle system"
+msgstr "根据粒子系统的当前状态添加新的曲线物体"
+
+
+msgctxt "Operator"
 msgid "Convert Curves to Particle System"
 msgstr "转换曲线为粒子系统"
 
@@ -50324,12 +50703,30 @@ msgstr "在曲面物体上添加新的毛发粒子系统或更新现有毛发粒
 
 
 msgctxt "Operator"
+msgid "Disable Selection"
+msgstr "禁用选中项"
+
+
+msgid "Disable the drawing of influence of selection in sculpt mode"
+msgstr "在雕刻模式下禁用选中项影响的绘制"
+
+
+msgctxt "Operator"
 msgid "Curve Sculpt Mode Toggle"
 msgstr "曲线雕刻模式切换"
 
 
 msgid "Enter/Exit sculpt mode for curves"
 msgstr "进入/退出曲线的雕刻模式"
+
+
+msgctxt "Operator"
+msgid "Set Select Mode"
+msgstr "设置选择模式"
+
+
+msgid "Change the mode used for selection masking in curves sculpt mode"
+msgstr "更改曲线雕刻模式下用于选中项遮罩的模式"
 
 
 msgctxt "Operator"
@@ -50355,6 +50752,15 @@ msgstr "在表面上找到每条曲线的根点的最近点，并将根移动到
 
 msgid "Re-attach curves to a deformed surface using the existing attachment information. This only works when the topology of the surface mesh has not changed"
 msgstr "使用现有附着信息将曲线重新附着到形变的表面上。这仅在表面网格的拓扑未更改时才有效"
+
+
+msgctxt "Operator"
+msgid "Set Curves Surface Object"
+msgstr "设置曲线表面物体"
+
+
+msgid "Use the active object as surface for selected curves objects and set it as the parent"
+msgstr "将活动物体用作所选曲线物体的表面，并将其设置为父级物体"
 
 
 msgctxt "Operator"
@@ -51964,6 +52370,14 @@ msgid "Allow >4 joint vertex influences. Models may appear incorrectly in many v
 msgstr "允许 >4 关节点， 在很多查看器中模型可能出现错误"
 
 
+msgid "Export all Armature Actions"
+msgstr "导出所有骨架动作"
+
+
+msgid "Export all actions of a single armature. WARNING: works only if you exports a single armature"
+msgstr "导出单个骨架的所有动作。警告：仅导出单个骨架时才有效"
+
+
 msgid "Exports active actions and NLA tracks as glTF animations"
 msgstr "导出活动的动作和NLA轨道作为 glTF 动画"
 
@@ -51997,6 +52411,10 @@ msgstr "导出当前动画帧中的场景"
 
 
 msgid "Export Deformation Bones Only"
+msgstr "仅导出变形骨骼"
+
+
+msgid "Export Deformation bones only"
 msgstr "仅导出变形骨骼"
 
 
@@ -52188,8 +52606,24 @@ msgid "When on, multiple actions become part of the same glTF animation if they'
 msgstr "启用时，如果多个动作被推上同名的NLA轨道，他们成为同一glTF动画的一部分。关闭后，所有当前分配的动作都变为一个glTF 动画"
 
 
+msgid "Merged Animation Name"
+msgstr "合并的动画名称"
+
+
+msgid "Name of single glTF animation to be exported"
+msgstr "要导出的单个 glTF 动画的名称"
+
+
 msgid "Export vertex normals with meshes"
 msgstr "随网格导出顶点法向"
+
+
+msgid "Export original PBR Specular"
+msgstr "导出原始 PBR 镜面反射"
+
+
+msgid "Export original glTF PBR Specular, instead of Blender Principled Shader Specular"
+msgstr "导出原始的 glTF PBR 镜面反射，而非 Blender 原理化着色器镜面反射"
 
 
 msgid "Skinning"
@@ -52233,7 +52667,7 @@ msgstr "通过删除重复的关键帧来减小导出的文件大小(可能导�
 
 
 msgid "Export setting categories"
-msgstr "导出应用类别"
+msgstr "导出设置类别"
 
 
 msgid "General"
@@ -52577,6 +53011,15 @@ msgstr "打开"
 
 msgid "Open new directory"
 msgstr "打开新目录"
+
+
+msgctxt "Operator"
+msgid "Edit Directory Path"
+msgstr "编辑目录路径"
+
+
+msgid "Start editing directory field"
+msgstr "开始编辑目录文本框"
 
 
 msgctxt "Operator"
@@ -53352,8 +53795,21 @@ msgid "Default fill color"
 msgstr "默认填充色彩"
 
 
+msgid "RGBA color 32-bit floating-point values"
+msgstr "RGBA 颜色 32 位浮点值"
+
+
 msgid "Name of new color attribute"
 msgstr "新颜色属性的名称"
+
+
+msgctxt "Operator"
+msgid "Duplicate Color Attribute"
+msgstr "复制颜色属性"
+
+
+msgid "Duplicate color attribute"
+msgstr "复制颜色属性"
 
 
 msgctxt "Operator"
@@ -54665,6 +55121,10 @@ msgstr "移动笔画到层"
 
 msgid "Move selected strokes to another layer"
 msgstr "将所选笔画移动其他层"
+
+
+msgid "Name of the newly added layer"
+msgstr "新添加的层的名称"
 
 
 msgctxt "Operator"
@@ -56285,6 +56745,15 @@ msgstr "外部编辑图像"
 
 msgid "Edit image in an external application"
 msgstr "在外部程序中编辑图像"
+
+
+msgctxt "Operator"
+msgid "Browse Image"
+msgstr "浏览图片"
+
+
+msgid "Open an image file browser, hold Shift to open the file, Alt to browse containing directory"
+msgstr "打开文件浏览器, 按住 Shift 打开文件, 按住 Alt 浏览所在目录"
 
 
 msgctxt "Operator"
@@ -61122,6 +61591,10 @@ msgid "Duplicate Strips"
 msgstr "复制片段"
 
 
+msgid "Duplicate selected strips and their Actions and move them"
+msgstr "复制选定的片段及其动作，并移动"
+
+
 msgctxt "Operator"
 msgid "Add F-Modifier"
 msgstr "添加函数修改器"
@@ -61385,8 +61858,16 @@ msgid "Add an collection info node to the current node editor"
 msgstr "向当前节点编辑器添加集合信息节点"
 
 
+msgid "Name of the data-block to use by the operator"
+msgstr "操作要使用的数据块的名称"
+
+
 msgid "Session UUID"
 msgstr "会话UUID"
+
+
+msgid "Session UUID of the data-block to use by the operator"
+msgstr "操作要使用的数据块的会话 UUID"
 
 
 msgctxt "Operator"
@@ -61620,11 +62101,6 @@ msgstr "查找节点"
 
 msgid "Search for a node by name and focus and select it"
 msgstr "按名称和焦点搜索节点并选中"
-
-
-msgctxt "Operator"
-msgid "glTF Settings"
-msgstr "glTF设置"
 
 
 msgctxt "Operator"
@@ -62483,6 +62959,10 @@ msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
 
 
+msgid "Curves from evaluated curve data"
+msgstr "来自已解算曲线数据的曲线"
+
+
 msgctxt "Operator"
 msgid "Copy Global Transform"
 msgstr "复制全局变换"
@@ -62657,8 +63137,16 @@ msgid "Duplicate selected objects"
 msgstr "复制所选物体"
 
 
+msgid "Duplicate the selected objects and move them"
+msgstr "复制选中的物体并移动"
+
+
 msgid "Duplicate Objects"
 msgstr "复制物体"
+
+
+msgid "Duplicate the selected objects, but not their object data, and move them"
+msgstr "复制所选物体，但不复制其物体数据，然后移动"
 
 
 msgctxt "Operator"
@@ -63119,6 +63607,11 @@ msgstr "设置相对游标偏移量"
 
 msgid "Set offset used for collection instances based on cursor position"
 msgstr "根据游标位置设置用于集合实例的偏移量"
+
+
+msgctxt "Operator"
+msgid "Set Offset from Object"
+msgstr "设置相对物体偏移量"
 
 
 msgctxt "Operator"
@@ -103314,6 +103807,10 @@ msgid "Doppler Speed"
 msgstr "多普勒速度"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ 转 RGB"
+
+
 msgid "Active Set Override"
 msgstr "激活重写设置"
 
@@ -104506,6 +105003,10 @@ msgstr "放大背景图"
 msgctxt "Operator"
 msgid "Backdrop Zoom Out"
 msgstr "缩小背景图"
+
+
+msgid "Slot %d"
+msgstr "槽 %d"
 
 
 msgctxt "Operator"
@@ -105745,10 +106246,6 @@ msgstr "默认插值"
 
 msgid "Default Handles"
 msgstr "默认控制柄"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ 转 RGB"
 
 
 msgid "Mixing Buffer"
@@ -108109,6 +108606,10 @@ msgid "Scene Collection"
 msgstr "场景集合"
 
 
+msgid "Collection %d"
+msgstr "集合 %d"
+
+
 msgid "Const"
 msgstr "约束"
 
@@ -109024,10 +109525,6 @@ msgid "GP_Palette"
 msgstr "蜡笔调色板"
 
 
-msgid "Collection %d"
-msgstr "集合 %d"
-
-
 msgid "Hidden %d"
 msgstr "隐藏 %d"
 
@@ -109850,10 +110347,6 @@ msgstr "数据块 '%s' 现在是资产"
 
 msgid "%i data-blocks are now assets"
 msgstr "%i 数据块现在是资产"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "数据块 '%s' 已非资产"
 
 
 msgid "%i data-blocks are no assets anymore"
@@ -114272,10 +114765,6 @@ msgid "There is no animation data to operate on"
 msgstr "没有要操作的动画数据"
 
 
-msgid "Slot %d"
-msgstr "槽 %d"
-
-
 msgid "Discard"
 msgstr "丢弃"
 
@@ -116816,14 +117305,6 @@ msgstr "无法向缓存文件 '%s' 添加层"
 
 msgid "Background image cannot be removed"
 msgstr "未能移除的背景图"
-
-
-msgid "Could not link the object '%s' because the collection '%s' is overridden"
-msgstr "无法关联对象 '%s'，因为集合'%s'已被覆写"
-
-
-msgid "Could not link the object '%s' because the collection '%s' is linked"
-msgstr "无法关联对象 '%s'，因为集合'%s'已被关联"
 
 
 msgid "Object '%s' already in collection '%s'"

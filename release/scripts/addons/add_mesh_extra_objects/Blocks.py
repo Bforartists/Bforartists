@@ -269,7 +269,7 @@ def MakeABlock(bounds, segsize, vll=0, Offsets=None, FaceExclude=[],
     bounds: a list of boundary positions:
         0:left, 1:right, 2:bottom, 3:top, 4:back, 5:front
     segsize: the maximum size before lengthwise subdivision occurs
-    vll: the number of vertexes already in the mesh. len(mesh.verts) should
+    vll: the number of vertices already in the mesh. len(mesh.verts) should
             give this number.
     Offsets: list of coordinate delta values.
         Offsets are lists, [x,y,z] in
@@ -365,7 +365,7 @@ def MakeAKeystone(xpos, width, zpos, ztop, zbtm, thick, bevel, vll=0, FaceExclud
     zbtm: distance from zpos to the bottom
     thick: thickness
     bevel: the amount to raise the back vertex to account for arch beveling
-    vll: the number of vertexes already in the mesh. len(mesh.verts) should give this number
+    vll: the number of vertices already in the mesh. len(mesh.verts) should give this number
     faceExclude: list of faces to exclude from the faces list.
                  0:left, 1:right, 2:bottom, 3:top, 4:back, 5:front
     xBevScl: how much to divide the end (+- x axis) bevel dimensions.
@@ -779,7 +779,7 @@ class rowOb:
 
 def arch(ra, rt, x, z, archStart, archEnd, bevel, bevAngle, vll):
     __doc__ = """\
-    Makes a list of faces and vertexes for arches.
+    Makes a list of faces and vertices for arches.
     ra: the radius of the arch, to the center of the bricks
     rt: the thickness of the arch
     x: x center location of the circular arc, as if the arch opening were centered on x = 0
