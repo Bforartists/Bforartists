@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6626,6 +6626,10 @@ msgid "Temperature"
 msgstr "Temperatura"
 
 
+msgid "Slot %d"
+msgstr "Otwór %d"
+
+
 msgid "Unpack"
 msgstr "Rozpakuj"
 
@@ -9636,10 +9640,6 @@ msgstr "Krzywa F Rotacji Eulera ma nieprawidłowy indeks (ID='%s', Path='%s', In
 
 msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%s'"
 msgstr "Brakujące komponenty %s%s%s rotacji eulera dla ID='%s' i RNA-Path='%s'"
-
-
-msgid "Slot %d"
-msgstr "Otwór %d"
 
 
 msgid "Select Slot"

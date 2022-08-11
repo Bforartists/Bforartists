@@ -59,6 +59,5 @@ def unregister():
 # NOTES
 # - blender version is hardcoded
 
-
 if __name__ == "__main__":
     register()

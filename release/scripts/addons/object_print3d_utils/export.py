@@ -5,6 +5,8 @@
 
 import bpy
 
+from bpy.app.translations import pgettext_tip as tip_
+
 
 def image_get(mat):
     from bpy_extras import node_shader_utils
@@ -153,7 +155,7 @@ def write_mesh(context, report_cb):
 
     if 'FINISHED' in ret:
         if report_cb is not None:
-            report_cb({'INFO'}, f"Exported: {filepath!r}")
+            report_cb({'INFO'}, tip_("Exported: {!r}").format(filepath))
 
         return True
 

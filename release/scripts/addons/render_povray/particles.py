@@ -75,7 +75,7 @@ def export_hair(file, ob, mod, p_sys, global_matrix):
     # When you render, the entire dependency graph will be
     # evaluated at render resolution, including the particles.
     # In the viewport it will be at viewport resolution.
-    # So there is no need fo render engines to use this function anymore,
+    # So there is no need for render engines to use this function anymore,
     # it's automatic now.
     steps = p_sys_settings.display_step
     steps = 2**steps  # or + 1 # Formerly : len(particle.hair_keys)
