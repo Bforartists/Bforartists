@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -197,6 +197,10 @@ msgstr "鎖定"
 
 msgid "Action group is locked"
 msgstr "動作群組已上鎖"
+
+
+msgid "Mute"
+msgstr "靜音"
 
 
 msgid "Select"
@@ -1641,10 +1645,6 @@ msgstr "外形鍵"
 
 msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
-
-
-msgid "Simulations"
-msgstr "模擬"
 
 
 msgid "Sounds"
@@ -9371,6 +9371,10 @@ msgstr "雙向 Z"
 
 msgid "Fonts"
 msgstr "字型"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Show workspace data-blocks"
@@ -23439,10 +23443,6 @@ msgstr "貢獻目前結果的片段量"
 
 msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "影響所有 F 曲線參照動作的修改器"
-
-
-msgid "Mute"
-msgstr "靜音"
 
 
 msgid "Number of times to repeat the action range"
@@ -54677,6 +54677,10 @@ msgid "Paths:"
 msgstr "路徑："
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ 至 RGB"
+
+
 msgctxt "Operator"
 msgid "Export to File"
 msgstr "輸出至檔案"
@@ -55137,6 +55141,10 @@ msgid "Inputs:"
 msgstr "輸入："
 
 
+msgid "Slot %d"
+msgstr "槽 %d"
+
+
 msgid "Lift:"
 msgstr "抬升："
 
@@ -55434,10 +55442,6 @@ msgstr "自動鍵幀處理"
 
 msgid "Only Insert Available"
 msgstr "只在可行之處插入"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ 至 RGB"
 
 
 msgid "Mixing Buffer"
@@ -59139,10 +59143,6 @@ msgstr "尤拉旋轉 F 曲線有無效的索引 (ID=「%s」，路徑=「%s」�
 
 msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%s'"
 msgstr "ID='%s' 與 RNA-Path='%s' 的尤拉旋轉遺失 %s%s%s 部份"
-
-
-msgid "Slot %d"
-msgstr "槽 %d"
 
 
 msgid "Select Slot"

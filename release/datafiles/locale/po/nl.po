@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Alpha (b'44258b5ad073')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -68,6 +68,10 @@ msgstr "Vergrendelen"
 
 msgid "Action group is locked"
 msgstr "Actie groep is vergrendeld"
+
+
+msgid "Mute"
+msgstr "Zet Uit"
 
 
 msgid "Select"
@@ -3003,10 +3007,6 @@ msgstr "Selecteer Patroon"
 
 msgid "Custom Color"
 msgstr "Eigen Kleur"
-
-
-msgid "Mute"
-msgstr "Zet Uit"
 
 
 msgid "Meta"
@@ -7852,6 +7852,10 @@ msgid "Paths:"
 msgstr "Paden:"
 
 
+msgid "XYZ to RGB"
+msgstr "XYZ naar RGB"
+
+
 msgctxt "Operator"
 msgid "Export to File"
 msgstr "Exporteren naar Bestand"
@@ -8380,10 +8384,6 @@ msgstr "Gebruik Aangepaste Kleur"
 
 msgid "Show Warning"
 msgstr "Toon Waarschuwing"
-
-
-msgid "XYZ to RGB"
-msgstr "XYZ naar RGB"
 
 
 msgctxt "Operator"

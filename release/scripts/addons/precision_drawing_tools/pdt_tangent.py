@@ -199,8 +199,8 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
         obj_data: All the data of the chosen object
         centre_0: Centre coordinates of the first arc
         centre_1: Centre coordinates of the second arc
-        centre_2: Coordinates fo the point
-        radius_0: Radius if the first Arc
+        centre_2: Coordinates of the point
+        radius_0: Radius of the first Arc
         radius_1: Radius of the second Arc
 
     Returns:
