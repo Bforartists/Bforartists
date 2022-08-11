@@ -1242,11 +1242,14 @@ def __is_points_in_polygon(points, subject_points):
 
 def get_uv_editable_objects(context):
     if compat.check_version(2, 80, 0) < 0:
-        objs = [context.active_object]
+        objs = []
     else:
         objs = [o for o in bpy.data.objects
                 if compat.get_object_select(o) and o.type == 'MESH']
-        objs.append(context.active_object)
+
+    ob = context.active_object
+    if ob is not None:
+        objs.append(ob)
 
     objs = list(set(objs))
     return objs
