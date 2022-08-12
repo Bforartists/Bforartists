@@ -902,8 +902,8 @@ class TOOLBAR_MT_primitives(Menu):
 
                     row = layout.row(align=True)
                     row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
-                    row.operator("object.gpencil_add", text="", icon='STROKE').type= 'LRT_COLLECTION'
-                    #row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'LRT_OBJECT'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
+                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
 
                 if addon_prefs.primitives_light:
 
