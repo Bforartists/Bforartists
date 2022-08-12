@@ -1518,7 +1518,14 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
-        flow.prop(paths, "file_preview_type")
+
+        split = flow.split(factor = 0.5)
+        row = split.row()
+        row.label(text = "File Preview")
+        row = split.row()
+        row.use_property_split = False
+        row.prop(paths, "file_preview_type", text = "")
+
         flow.prop(paths, "use_tabs_as_spaces")
         flow.prop(view, "use_save_prompt")
 
