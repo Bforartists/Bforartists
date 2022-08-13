@@ -449,6 +449,7 @@ static void options_light_reference_draw(const bContext *UNUSED(C), Panel *panel
 static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
   PointerRNA ob_ptr;
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -464,21 +465,66 @@ static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
     return;
   }
 
-  uiLayout *row = uiLayoutRowWithHeading(layout, false, IFACE_("Custom Camera"));
-  uiItemR(row, ptr, "use_custom_camera", 0, "", 0);
+  /*------------------- bfa - original props */
+  // uiLayout *row = uiLayoutRowWithHeading(layout, false, IFACE_("Custom Camera"));
+  // uiItemR(row, ptr, "use_custom_camera", 0, "", 0);
+  // uiLayout *subrow = uiLayoutRow(row, true);
+  // uiLayoutSetActive(subrow, RNA_boolean_get(ptr, "use_custom_camera"));
+  // uiLayoutSetPropSep(subrow, true);
+  // uiItemR(subrow, ptr, "source_camera", 0, "", ICON_OBJECT_DATA);
+
+  row = uiLayoutRow(layout, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_custom_camera", 0, "Custom Camera", 0);
   uiLayout *subrow = uiLayoutRow(row, true);
   uiLayoutSetActive(subrow, RNA_boolean_get(ptr, "use_custom_camera"));
-  uiLayoutSetPropSep(subrow, true);
+  uiLayoutSetPropSep(subrow, false);
   uiItemR(subrow, ptr, "source_camera", 0, "", ICON_OBJECT_DATA);
+  uiItemDecoratorR(row, ptr, "use_custom_camera", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  /*------------------- bfa - original props */
+  // uiLayout *col = uiLayoutColumn(layout, true); /*bfa - original prop*/
 
-  uiItemR(col, ptr, "use_edge_overlap", 0, IFACE_("Overlapping Edges As Contour"), ICON_NONE);
-  uiItemR(col, ptr, "use_object_instances", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_clip_plane_boundaries", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_crease_on_smooth", 0, IFACE_("Crease On Smooth"), ICON_NONE);
-  uiItemR(col, ptr, "use_crease_on_sharp", 0, IFACE_("Crease On Sharp"), ICON_NONE);
-  uiItemR(col, ptr, "use_back_face_culling", 0, IFACE_("Force Backface Culling"), ICON_NONE);
+  // uiItemR(col, ptr, "use_edge_overlap", 0, IFACE_("Overlapping Edges As Contour"), ICON_NONE);
+  // uiItemR(col, ptr, "use_object_instances", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_clip_plane_boundaries", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_crease_on_smooth", 0, IFACE_("Crease On Smooth"), ICON_NONE);
+  // uiItemR(col, ptr, "use_crease_on_sharp", 0, IFACE_("Crease On Sharp"), ICON_NONE);
+  // uiItemR(col, ptr, "use_back_face_culling", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_edge_overlap", 0, IFACE_("Overlapping Edges As Contour"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_edge_overlap", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_object_instances", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_object_instances", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_clip_plane_boundaries", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_clip_plane_boundaries", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_crease_on_smooth", 0, IFACE_("Crease On Smooth"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_crease_on_smooth", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_crease_on_sharp", 0, IFACE_("Crease On Sharp"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_crease_on_sharp", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_back_face_culling", 0, IFACE_("Force Backface Culling"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_back_face_culling", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void occlusion_panel_draw(const bContext *UNUSED(C), Panel *panel)
