@@ -484,6 +484,7 @@ static void options_panel_draw(const bContext *UNUSED(C), Panel *panel)
 static void occlusion_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
   PointerRNA ob_ptr;
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -502,7 +503,15 @@ static void occlusion_panel_draw(const bContext *UNUSED(C), Panel *panel)
   layout = uiLayoutColumn(layout, false);
   uiLayoutSetActive(layout, show_in_front);
 
-  uiItemR(layout, ptr, "use_multiple_levels", 0, IFACE_("Range"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_multiple_levels", 0, IFACE_("Range"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_multiple_levels", 0, IFACE_("Range"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_multiple_levels", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   if (use_multiple_levels) {
     uiLayout *col = uiLayoutColumn(layout, true);
@@ -543,6 +552,7 @@ static void material_mask_panel_draw_header(const bContext *UNUSED(C), Panel *pa
 static void material_mask_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *sub, *row, *col; /*bfa, added *row, *col*/
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   const bool is_baked = RNA_boolean_get(ptr, "is_baked");
@@ -553,8 +563,12 @@ static void material_mask_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiLayoutSetEnabled(layout, RNA_boolean_get(ptr, "use_material_mask"));
 
-  uiLayout *col = uiLayoutColumn(layout, true);
-  uiLayout *sub = uiLayoutRowWithHeading(col, true, IFACE_("Masks"));
+  /*------------------- bfa - original props */
+  // uiLayout *col = uiLayoutColumn(layout, true); /*bfa original props*/
+  // uiLayout *sub = uiLayoutRowWithHeading(col, true, IFACE_("Masks"));/*bfa original props*/
+  col = uiLayoutColumn(layout, true);
+  sub = uiLayoutRowWithHeading(col, true, IFACE_("Masks"));
+  /* ------------ end bfa */
 
   PropertyRNA *prop = RNA_struct_find_property(ptr, "use_material_mask_bits");
   for (int i = 0; i < 8; i++) {
@@ -564,7 +578,15 @@ static void material_mask_panel_draw(const bContext *UNUSED(C), Panel *panel)
     }
   }
 
-  uiItemR(layout, ptr, "use_material_mask_match", 0, IFACE_("Exact Match"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_material_mask_match", 0, IFACE_("Exact Match"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_material_mask_match", 0, IFACE_("Exact Match"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_material_mask_match", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void intersection_panel_draw(const bContext *UNUSED(C), Panel *panel)
