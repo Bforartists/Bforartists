@@ -704,7 +704,14 @@ static void vgroup_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemR(row, ptr, "source_vertex_group", 0, IFACE_("Filter Source"), ICON_GROUP_VERTEX);
   uiItemR(row, ptr, "invert_source_vertex_group", UI_ITEM_R_TOGGLE, "", ICON_ARROW_LEFTRIGHT);
 
-  uiItemR(col, ptr, "use_output_vertex_group_match_by_name", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_output_vertex_group_match_by_name", 0, NULL, ICON_NONE);
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_output_vertex_group_match_by_name", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_output_vertex_group_match_by_name", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   const bool match_output = RNA_boolean_get(ptr, "use_output_vertex_group_match_by_name");
   if (!match_output) {
