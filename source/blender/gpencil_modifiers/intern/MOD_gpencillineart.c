@@ -747,24 +747,41 @@ static void composition_panel_draw(const bContext *UNUSED(C), Panel *panel)
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   const bool show_in_front = RNA_boolean_get(&ob_ptr, "show_in_front");
 
   uiLayoutSetPropSep(layout, true);
 
   uiItemR(layout, ptr, "overscan", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_image_boundary_trimming", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_image_boundary_trimming", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_image_boundary_trimming", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_image_boundary_trimming", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   if (show_in_front) {
     uiItemL(layout, TIP_("Object is shown in front"), ICON_ERROR);
   }
 
-  uiLayout *col = uiLayoutColumn(layout, false);
+  col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, !show_in_front);
 
   uiItemR(col, ptr, "stroke_depth_offset", UI_ITEM_R_SLIDER, IFACE_("Depth Offset"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_offset_towards_custom_camera", 0, IFACE_("Towards Custom Camera"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(
-      col, ptr, "use_offset_towards_custom_camera", 0, IFACE_("Towards Custom Camera"), ICON_NONE);
+      row, ptr, "use_offset_towards_custom_camera", 0, IFACE_("Towards Custom Camera"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_offset_towards_custom_camera", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void panelRegister(ARegionType *region_type)
