@@ -342,6 +342,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 static void edge_types_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *col, *row*/
   PointerRNA ob_ptr;
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -358,7 +359,9 @@ static void edge_types_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetActive(sub, has_light);
   uiItemR(sub, ptr, "shadow_region_filtering", 0, IFACE_("Illumination Filtering"), ICON_NONE);
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  /*bfa - original prop*/
+  //uiLayout *col = uiLayoutColumn(layout, true);
+  col = uiLayoutColumn(layout, true);
 
   sub = uiLayoutRowWithHeading(col, false, IFACE_("Create"));
   uiItemR(sub, ptr, "use_contour", 0, "", ICON_NONE);
@@ -399,19 +402,32 @@ static void edge_types_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiItemR(entry, ptr, "use_shadow", 0, IFACE_("Cast Shadow"), ICON_NONE);
 
-  uiItemL(layout, IFACE_("Options"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemL(layout, IFACE_("Options"), ICON_NONE);
+  col = uiLayoutColumn(layout, true);
+  uiItemL(col, TIP_("Options"), ICON_NONE);
+  /* ------------ end bfa */
 
   sub = uiLayoutColumn(layout, false);
   if (use_cache && !is_first) {
-    uiItemL(sub, IFACE_("Type overlapping cached"), ICON_INFO);
+    /*------------------- bfa - original props */
+    //uiItemL(sub, IFACE_("Type overlapping cached"), ICON_INFO);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemS(row);
+    uiItemL(row, IFACE_("Type overlapping cached"), ICON_INFO);
+    /* ------------ end bfa */
   }
   else {
-    uiItemR(sub,
-            ptr,
-            "use_overlap_edge_type_support",
-            0,
-            IFACE_("Allow Overlapping Types"),
-            ICON_NONE);
+
+    /*------------------- bfa - original props */
+    //uiItemR(sub, ptr, "use_overlap_edge_type_support", 0, IFACE_("Allow Overlapping Types"), ICON_NONE);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemS(row);
+    uiItemR(row, ptr, "use_overlap_edge_type_support", 0, IFACE_("Allow Overlapping Types"), ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_overlap_edge_type_support", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 }
 
