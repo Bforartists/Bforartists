@@ -615,6 +615,7 @@ static void face_mark_panel_draw_header(const bContext *UNUSED(C), Panel *panel)
 static void face_mark_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
   PointerRNA ob_ptr;
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -630,13 +631,29 @@ static void face_mark_panel_draw(const bContext *UNUSED(C), Panel *panel)
     return;
   }
 
-  uiLayoutSetPropSep(layout, true);
+  // uiLayoutSetPropSep(layout, true);/* bfa - original props */
+  uiLayoutSetPropSep(layout, false);
 
   uiLayoutSetActive(layout, use_mark);
 
-  uiItemR(layout, ptr, "use_face_mark_invert", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_face_mark_boundaries", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_face_mark_keep_contour", 0, NULL, ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_face_mark_invert", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_face_mark_boundaries", 0, NULL, ICON_NONE);
+  // uiItemR(layout, ptr, "use_face_mark_keep_contour", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "use_face_mark_invert", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_face_mark_invert", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "use_face_mark_boundaries", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_face_mark_boundaries", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "use_face_mark_keep_contour", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_face_mark_keep_contour", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void chaining_panel_draw(const bContext *UNUSED(C), Panel *panel)
