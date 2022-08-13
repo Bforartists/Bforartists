@@ -645,6 +645,7 @@ static void chaining_panel_draw(const bContext *UNUSED(C), Panel *panel)
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   const bool is_baked = RNA_boolean_get(ptr, "is_baked");
   const bool use_cache = RNA_boolean_get(ptr, "use_cache");
@@ -659,13 +660,49 @@ static void chaining_panel_draw(const bContext *UNUSED(C), Panel *panel)
     return;
   }
 
-  uiLayout *col = uiLayoutColumnWithHeading(layout, true, IFACE_("Chain"));
-  uiItemR(col, ptr, "use_fuzzy_intersections", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_fuzzy_all", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_loose_edge_chain", 0, IFACE_("Loose Edges"), ICON_NONE);
-  uiItemR(col, ptr, "use_loose_as_contour", 0, IFACE_("Loose Edges As Contour"), ICON_NONE);
-  uiItemR(col, ptr, "use_detail_preserve", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_geometry_space_chain", 0, IFACE_("Geometry Space"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiLayout *col = uiLayoutColumnWithHeading(layout, true, IFACE_("Chain"));
+  // uiItemR(col, ptr, "use_fuzzy_intersections", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_fuzzy_all", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_loose_edge_chain", 0, IFACE_("Loose Edges"), ICON_NONE);
+  // uiItemR(col, ptr, "use_loose_as_contour", 0, IFACE_("Loose Edges As Contour"), ICON_NONE);
+  // uiItemR(col, ptr, "use_detail_preserve", 0, NULL, ICON_NONE);
+  // uiItemR(col, ptr, "use_geometry_space_chain", 0, IFACE_("Geometry Space"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  uiItemL(col, TIP_("Chain"), ICON_NONE);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_fuzzy_intersections", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_fuzzy_intersections", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_fuzzy_all", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_fuzzy_all", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_loose_edge_chain", 0, IFACE_("Loose Edges"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_loose_edge_chain", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_loose_as_contour", 0, IFACE_("Loose Edges As Contour"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_loose_as_contour", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_detail_preserve", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_detail_preserve", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiItemS(row);
+  uiItemR(row, ptr, "use_geometry_space_chain", 0, IFACE_("Geometry Space"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_geometry_space_chain", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   uiItemR(layout,
           ptr,
