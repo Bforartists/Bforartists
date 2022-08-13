@@ -570,6 +570,7 @@ static void material_mask_panel_draw(const bContext *UNUSED(C), Panel *panel)
 static void intersection_panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *sub, *row, *col; /*bfa, added *sub, *row, *col*/
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   const bool is_baked = RNA_boolean_get(ptr, "is_baked");
@@ -579,8 +580,12 @@ static void intersection_panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   uiLayoutSetActive(layout, RNA_boolean_get(ptr, "use_intersection"));
 
-  uiLayout *col = uiLayoutColumn(layout, true);
-  uiLayout *sub = uiLayoutRowWithHeading(col, true, IFACE_("Collection Masks"));
+  /* bfa - original props */
+  // uiLayout *col = uiLayoutColumn(layout, true);/* bfa - original props */
+  // uiLayout *sub = uiLayoutRowWithHeading(col, true, IFACE_("Collection Masks"));
+  col = uiLayoutColumn(layout, true);
+  sub = uiLayoutRowWithHeading(col, true, IFACE_("Collection Masks"));
+  /* ------------ end bfa */
 
   PropertyRNA *prop = RNA_struct_find_property(ptr, "use_intersection_mask");
   for (int i = 0; i < 8; i++) {
@@ -590,7 +595,15 @@ static void intersection_panel_draw(const bContext *UNUSED(C), Panel *panel)
     }
   }
 
-  uiItemR(layout, ptr, "use_intersection_match", 0, IFACE_("Exact Match"), ICON_NONE);
+  /*------------------- bfa - original props */
+  // uiItemR(layout, ptr, "use_intersection_match", 0, IFACE_("Exact Match"), ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_intersection_match", 0, IFACE_("Exact Match"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_intersection_match", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 }
 
 static void face_mark_panel_draw_header(const bContext *UNUSED(C), Panel *panel)
