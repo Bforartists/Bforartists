@@ -214,6 +214,7 @@ class RearrangeSpline(bpy.types.Operator):
     bl_idname = "curvetools.rearrange_spline"
     bl_label = "Rearrange Spline"
     bl_description = "Rearrange Spline"
+    bl_options = {'UNDO'}
 
     Types = [('NEXT', "Next", "next"),
              ('PREV', "Prev", "prev")]

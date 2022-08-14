@@ -27,6 +27,7 @@ from bpy.app.handlers import persistent
 addon_qcd_keymaps = []
 addon_qcd_view_hotkey_keymaps = []
 addon_qcd_view_edit_mode_hotkey_keymaps = []
+qcd_registered = False
 
 
 qcd_classes = (
@@ -76,6 +77,11 @@ def load_pre_handler(dummy):
 
 
 def register_qcd():
+    global qcd_registered
+    if qcd_registered:
+        # guard to handle default value updates (mouse hover + backspace)
+        return
+
     for cls in qcd_classes:
         bpy.utils.register_class(cls)
 
@@ -107,8 +113,14 @@ def register_qcd():
     if prefs.enable_qcd_3dview_header_widget:
         register_qcd_3dview_header_widget()
 
+    qcd_registered = True
+
 
 def register_qcd_view_hotkeys():
+    if addon_qcd_view_hotkey_keymaps:
+        # guard to handle default value updates (mouse hover + backspace)
+        return
+
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon: # not present when started with --background
         # create qcd hotkeys
@@ -180,6 +192,10 @@ def register_qcd_view_hotkeys():
 
 
 def register_qcd_view_edit_mode_hotkeys():
+    if addon_qcd_view_edit_mode_hotkey_keymaps:
+        # guard to handle default value updates (mouse hover + backspace)
+        return
+
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon: # not present when started with --background
         # create qcd hotkeys
@@ -248,12 +264,22 @@ def register_qcd_view_edit_mode_hotkeys():
 
 
 def register_qcd_3dview_header_widget():
+    # unregister first to guard against default value updates (mouse hover + backspace)
+    # if the widget isn't registered it will just do nothing
+    unregister_qcd_3dview_header_widget()
+
+    # add the widget to the header, and an update function to the top bar to get view layer changes
     bpy.types.VIEW3D_HT_header.append(ui.view3d_header_qcd_slots)
     bpy.types.TOPBAR_HT_upper_bar.append(ui.view_layer_update)
 
 
 
 def unregister_qcd():
+    global qcd_registered
+    if not qcd_registered:
+        # guard to handle default value updates (mouse hover + backspace)
+        return
+
     unregister_qcd_3dview_header_widget()
 
     for cls in qcd_classes:
@@ -278,6 +304,8 @@ def unregister_qcd():
     unregister_qcd_view_hotkeys()
 
     unregister_qcd_view_edit_mode_hotkeys()
+
+    qcd_registered = False
 
 
 def unregister_qcd_view_hotkeys():
