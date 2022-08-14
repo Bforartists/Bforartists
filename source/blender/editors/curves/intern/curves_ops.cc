@@ -929,6 +929,26 @@ static int select_all_exec(bContext *C, wmOperator *op)
 
 }  // namespace select_all
 
+/*bfa - descriptions*/
+static char *sculpt_curves_ot_select_all_get_description(bContext *UNUSED(C),
+                                                  wmOperatorType *UNUSED(ot),
+                                                  PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all control points");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all control points");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 static void SCULPT_CURVES_OT_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
@@ -936,6 +956,7 @@ static void SCULPT_CURVES_OT_select_all(wmOperatorType *ot)
   ot->description = "(De)select all control points";
 
   ot->exec = select_all::select_all_exec;
+  ot->get_description = sculpt_curves_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = editable_curves_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
