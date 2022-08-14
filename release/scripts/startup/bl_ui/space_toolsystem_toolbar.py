@@ -128,7 +128,6 @@ class _defs_view3d_generic:
             icon="ops.view3d.ruler",
             widget="VIEW3D_GGT_ruler",
             keymap="3D View Tool: Measure",
-            options={'KEYMAP_FALLBACK'},
         )
 
 
@@ -545,7 +544,6 @@ class _defs_view3d_add:
             widget="VIEW3D_GGT_placement",
             keymap="3D View Tool: Object, Add Primitive",
             draw_settings=draw_settings,
-            options={'KEYMAP_FALLBACK'},
         )
 
     @ToolDef.from_fn
@@ -572,7 +570,6 @@ class _defs_view3d_add:
             widget="VIEW3D_GGT_placement",
             keymap="3D View Tool: Object, Add Primitive",
             draw_settings=draw_settings,
-            options={'KEYMAP_FALLBACK'},
         )
 
     @ToolDef.from_fn
@@ -599,7 +596,6 @@ class _defs_view3d_add:
             widget="VIEW3D_GGT_placement",
             keymap="3D View Tool: Object, Add Primitive",
             draw_settings=draw_settings,
-            options={'KEYMAP_FALLBACK'},
         )
 
     @ToolDef.from_fn
@@ -626,7 +622,6 @@ class _defs_view3d_add:
             widget="VIEW3D_GGT_placement",
             keymap="3D View Tool: Object, Add Primitive",
             draw_settings=draw_settings,
-            options={'KEYMAP_FALLBACK'},
         )
 
     @ToolDef.from_fn
@@ -652,7 +647,6 @@ class _defs_view3d_add:
             widget="VIEW3D_GGT_placement",
             keymap="3D View Tool: Object, Add Primitive",
             draw_settings=draw_settings,
-            options={'KEYMAP_FALLBACK'},
         )
 
 
