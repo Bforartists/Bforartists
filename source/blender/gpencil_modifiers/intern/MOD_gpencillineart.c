@@ -420,6 +420,7 @@ static void edge_types_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiItemDecoratorR(row, ptr, "use_loose", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
   entry = uiLayoutColumn(col, false);
   uiLayoutSetActive(entry, has_light);
 
