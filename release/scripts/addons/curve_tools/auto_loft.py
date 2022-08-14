@@ -12,6 +12,7 @@ class OperatorAutoLoftCurves(Operator):
     bl_idname = "curvetools.create_auto_loft"
     bl_label = "Loft"
     bl_description = "Lofts selected curves"
+    bl_options = {'UNDO'}
 
     @classmethod
     def poll(cls, context):
