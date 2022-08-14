@@ -144,6 +144,10 @@ def disable_objects_menu_addition(self, context):
 
 
 def register_disable_objects_hotkeys():
+    if addon_disable_objects_hotkey_keymaps:
+        # guard to handle default value updates (mouse hover + backspace)
+        return
+
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon: # not present when started with --background
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
