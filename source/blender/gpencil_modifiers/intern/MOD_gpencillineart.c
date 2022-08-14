@@ -389,10 +389,36 @@ static void edge_types_panel_draw(const bContext *UNUSED(C), Panel *panel)
             ICON_NONE);
   }
 
-  uiItemR(col, ptr, "use_intersection", 0, IFACE_("Intersections"), ICON_NONE);
-  uiItemR(col, ptr, "use_material", 0, IFACE_("Material Borders"), ICON_NONE);
-  uiItemR(col, ptr, "use_edge_mark", 0, IFACE_("Edge Marks"), ICON_NONE);
-  uiItemR(col, ptr, "use_loose", 0, IFACE_("Loose"), ICON_NONE);
+  /*------------------- bfa - original props */
+  //uiItemR(col, ptr, "use_intersection", 0, IFACE_("Intersections"), ICON_NONE);
+  //uiItemR(col, ptr, "use_material", 0, IFACE_("Material Borders"), ICON_NONE);
+  //uiItemR(col, ptr, "use_edge_mark", 0, IFACE_("Edge Marks"), ICON_NONE);
+  //uiItemR(col, ptr, "use_loose", 0, IFACE_("Loose"), ICON_NONE);
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_material", 0, IFACE_("Material Borders"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_material", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_intersection", 0, IFACE_("Intersections"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_intersection", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_edge_mark", 0, IFACE_("Edge Marks"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_edge_mark", 0); /*bfa - decorator*/
+
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemS(row);
+  uiItemR(row, ptr, "use_loose", 0, IFACE_("Loose"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_loose", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   entry = uiLayoutColumn(col, false);
   uiLayoutSetActive(entry, has_light);
