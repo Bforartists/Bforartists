@@ -85,7 +85,11 @@ typedef void (*IDTypeForeachCacheFunction)(struct ID *id,
 
 typedef void (*IDTypeForeachPathFunction)(struct ID *id, struct BPathForeachPathData *bpath_data);
 
-typedef struct ID *(*IDTypeEmbeddedOwnerGetFunction)(struct Main *bmain, struct ID *id);
+/** \param owner_id_hint: If non-NULL, a potential owner of the given embedded ID. Can speed up
+ * look-up of the owner ID in some cases. */
+typedef struct ID *(*IDTypeEmbeddedOwnerGetFunction)(struct Main *bmain,
+                                                     struct ID *id,
+                                                     struct ID *owner_id_hint);
 
 typedef void (*IDTypeBlendWriteFunction)(struct BlendWriter *writer,
                                          struct ID *id,
@@ -109,7 +113,7 @@ typedef struct IDTypeInfo {
    */
   short id_code;
   /**
-   * Bitflag matching id_code, used for filtering (e.g. in file browser), see DNA_ID.h's
+   * Bit-flag matching id_code, used for filtering (e.g. in file browser), see DNA_ID.h's
    * FILTER_ID_XX enums.
    */
   uint64_t id_filter;
