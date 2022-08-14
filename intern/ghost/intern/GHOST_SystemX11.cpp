@@ -514,8 +514,9 @@ static void destroyIMCallback(XIM /*xim*/, XPointer ptr, XPointer /*data*/)
 
 bool GHOST_SystemX11::openX11_IM()
 {
-  if (!m_display)
+  if (!m_display) {
     return false;
+  }
 
   /* set locale modifiers such as `@im=ibus` specified by XMODIFIERS. */
   XSetLocaleModifiers("");
@@ -585,7 +586,7 @@ struct init_timestamp_data {
   Time timestamp;
 };
 
-static Bool init_timestamp_scanner(Display *, XEvent *event, XPointer arg)
+static Bool init_timestamp_scanner(Display * /*display*/, XEvent *event, XPointer arg)
 {
   init_timestamp_data *data = reinterpret_cast<init_timestamp_data *>(arg);
   switch (event->type) {
@@ -673,11 +674,12 @@ bool GHOST_SystemX11::processEvents(bool waitForEvent)
           GHOST_WindowX11 *window = findGhostWindow(xevent.xany.window);
           if (window && !window->getX11_XIC() && window->createX11_XIC()) {
             GHOST_PRINT("XIM input context created\n");
-            if (xevent.type == KeyPress)
+            if (xevent.type == KeyPress) {
               /* we can assume the window has input focus
                * here, because key events are received only
                * when the window is focused. */
               XSetICFocus(window->getX11_XIC());
+            }
           }
         }
       }
@@ -1321,10 +1323,12 @@ void GHOST_SystemX11::processEvent(XEvent *xe)
 #if defined(WITH_X11_XINPUT) && defined(X_HAVE_UTF8_STRING)
       XIC xic = window->getX11_XIC();
       if (xic) {
-        if (xe->type == FocusIn)
+        if (xe->type == FocusIn) {
           XSetICFocus(xic);
-        else
+        }
+        else {
           XUnsetICFocus(xic);
+        }
       }
 #endif
 
@@ -2381,10 +2385,11 @@ class DialogData {
   /* Is the mouse inside the given button */
   bool isInsideButton(XEvent &e, uint button_num)
   {
-    return ((e.xmotion.y > height - padding_y - button_height) &&
-            (e.xmotion.y < height - padding_y) &&
-            (e.xmotion.x > width - (padding_x + button_width) * button_num) &&
-            (e.xmotion.x < width - padding_x - (padding_x + button_width) * (button_num - 1)));
+    return (
+        (e.xmotion.y > (int)(height - padding_y - button_height)) &&
+        (e.xmotion.y < (int)(height - padding_y)) &&
+        (e.xmotion.x > (int)(width - (padding_x + button_width) * button_num)) &&
+        (e.xmotion.x < (int)(width - padding_x - (padding_x + button_width) * (button_num - 1))));
   }
 };
 
