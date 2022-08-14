@@ -187,6 +187,10 @@ class OUTLINER_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("OUTLINER_MT_liboverride")
+
+        layout.separator()
+
         layout.operator("outliner.select_box", icon = 'BORDER_RECT')
 
         layout.separator()
@@ -402,6 +406,19 @@ class OUTLINER_MT_asset(Menu):
         layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
 
 
+class OUTLINER_MT_liboverride(Menu):
+    bl_label = "Library Override"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_menu_enum("outliner.liboverride_operation", "selection_set", text="Create").type = 'OVERRIDE_LIBRARY_CREATE_HIERARCHY'
+        layout.operator_menu_enum("outliner.liboverride_operation", "selection_set", text="Reset").type = 'OVERRIDE_LIBRARY_RESET'
+        layout.operator_menu_enum("outliner.liboverride_operation", "selection_set", text="Clear").type = 'OVERRIDE_LIBRARY_CLEAR_SINGLE'
+
+        layout.operator_menu_enum("outliner.liboverride_troubleshoot_operation", "type", text="Troubleshoot Hierarchy").selection_set = 'SELECTED'
+
+
 class OUTLINER_PT_filter(Panel):
     bl_space_type = 'OUTLINER'
     bl_region_type = 'HEADER'
@@ -571,6 +588,7 @@ classes = (
     OUTLINER_MT_collection_visibility,
     OUTLINER_MT_object,
     OUTLINER_MT_asset,
+    OUTLINER_MT_liboverride,
     OUTLINER_MT_context_menu,
     OUTLINER_MT_context_menu_view,
     OUTLINER_MT_view_pie,
