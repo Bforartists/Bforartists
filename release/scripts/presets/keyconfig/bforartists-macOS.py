@@ -5215,6 +5215,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.mode_set",
+     {"type": 'THREE', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'SCULPT_CURVES'),
+       ],
+      },
+     ),
     ],
    },
   ),
