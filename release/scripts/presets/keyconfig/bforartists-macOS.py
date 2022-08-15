@@ -1,4 +1,4 @@
-keyconfig_version = (3, 3, 5)
+keyconfig_version = (3, 4, 0)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6180,20 +6180,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("curves.set_selection_domain",
-     {"type": 'ONE', "value": 'PRESS'},
-     {"properties":
-      [("domain", 'POINT'),
-       ],
-      },
-     ),
-    ("curves.set_selection_domain",
-     {"type": 'TWO', "value": 'PRESS'},
-     {"properties":
-      [("domain", 'CURVE'),
-       ],
-      },
-     ),
     ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
     ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
     ("wm.radial_control",
@@ -6260,6 +6246,20 @@ keyconfig_data = \
      ),
     ("sculpt_curves.min_distance_edit", {"type": 'R', "value": 'PRESS', "shift": True}, None),
     ("sculpt_curves.select_grow", {"type": 'A', "value": 'PRESS', "shift": True}, None),
+    ("curves.set_selection_domain",
+     {"type": 'ONE', "value": 'RELEASE', "alt": True},
+     {"properties":
+      [("domain", 'POINT'),
+       ],
+      },
+     ),
+    ("curves.set_selection_domain",
+     {"type": 'TWO', "value": 'RELEASE', "alt": True},
+     {"properties":
+      [("domain", 'CURVE'),
+       ],
+      },
+     ),
     ],
    },
   ),
