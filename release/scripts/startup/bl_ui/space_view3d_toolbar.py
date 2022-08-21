@@ -546,6 +546,9 @@ class SelectPaintSlotHelper:
 
         match getattr(mode_settings, self.canvas_source_attr_name):
             case 'MATERIAL':
+                
+                layout.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="Add Texture Paint Slot")
+                
                 if len(ob.material_slots) > 1:
                     layout.template_list(
                         "MATERIAL_UL_matslots", "layers",
@@ -572,9 +575,7 @@ class SelectPaintSlotHelper:
 
                     box = row.box()
                     box.label(text="No Textures")
-
-                sub = row.column(align=True)
-                sub.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="")
+                    box.label(text="Add a Texture Paint Slot")
 
             case 'IMAGE':
                 mesh = ob.data
