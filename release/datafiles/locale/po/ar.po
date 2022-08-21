@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -27328,6 +27328,10 @@ msgid "Keying Set Remove Selected"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻦﻣ ﺭﺎﺘﺨﻤﻟﺍ ﻑﺬﺣﺇ"
 
 
+msgid "Reset"
+msgstr "ﻂﺒﻀﻟﺍ ﺪﻋﺃ"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻰﻠﻋ ﺔﻣﺎﺨﻟﺍ ﻖﻟﺃ"
@@ -39429,10 +39433,6 @@ msgstr "ﻑﺮﻌﻤﻟﺍ-ﺔﻠﺘﻛ"
 
 msgid "No Properties"
 msgstr "ﺹﺍﻮﺧ ﻻ﻿"
-
-
-msgid "Reset"
-msgstr "ﻂﺒﻀﻟﺍ ﺪﻋﺃ"
 
 
 msgid "Pos"

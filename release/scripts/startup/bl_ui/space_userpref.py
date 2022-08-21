@@ -683,7 +683,7 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(system, "vbo_time_out", text="Vbo Time Out")
+        flow.prop(system, "vbo_time_out", text="VBO Time Out")
         flow.prop(system, "vbo_collection_rate", text="Garbage Collection Rate")
 
 
@@ -702,7 +702,7 @@ class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
         split = flow.split()
         col = split.column()
         col.use_property_split = False
-        col.prop(system, "use_sequencer_disk_cache")
+        col.prop(system, "use_sequencer_disk_cache", text="Disk Cache")
         col = split.column()
         if system.use_sequencer_disk_cache:
             col.label(icon='DISCLOSURE_TRI_DOWN')
@@ -2380,7 +2380,6 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "use_full_frame_compositor"}, "T88150"),
                 ({"property": "enable_eevee_next"}, "T93220"),
                 ({"property": "use_draw_manager_acquire_lock"}, "T98016"),
-                ({"property": "use_override_new_fully_editable"}, None),
             ),
         )
 

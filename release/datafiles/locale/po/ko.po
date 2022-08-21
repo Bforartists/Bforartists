@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -51921,6 +51921,10 @@ msgid "Relocate the library under cursor"
 msgstr "커서 아래에있는 라이브러리를 재배치"
 
 
+msgid "Reset"
+msgstr "초기화"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "오브젝트에 매테리얼을 드롭"
@@ -85044,10 +85048,6 @@ msgstr "ID-블록:"
 
 msgid "No Properties"
 msgstr "속성이 없음"
-
-
-msgid "Reset"
-msgstr "초기화"
 
 
 msgid "More..."

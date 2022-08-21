@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -45123,6 +45123,10 @@ msgid "Relocate the library under cursor"
 msgstr "Realoca a biblioteca logo abaixo do cursor."
 
 
+msgid "Reset"
+msgstr "Redefinir"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Despejar o material no objeto"
@@ -72355,10 +72359,6 @@ msgstr "Identificador de bloco:"
 
 msgid "No Properties"
 msgstr "Sem propriedades"
-
-
-msgid "Reset"
-msgstr "Redefinir"
 
 
 msgid "Pos"

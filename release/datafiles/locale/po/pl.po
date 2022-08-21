@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6491,6 +6491,10 @@ msgid "Child"
 msgstr "Potomek"
 
 
+msgid "Reset"
+msgstr "Zresetuj"
+
+
 msgid "Hinge"
 msgstr "Zawias"
 
@@ -7843,10 +7847,6 @@ msgstr "Blok ID:"
 
 msgid "No Properties"
 msgstr "Brak Właściwości"
-
-
-msgid "Reset"
-msgstr "Zresetuj"
 
 
 msgid "Pos"

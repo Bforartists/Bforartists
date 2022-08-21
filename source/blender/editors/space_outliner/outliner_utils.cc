@@ -18,7 +18,7 @@
 #include "BKE_context.h"
 #include "BKE_layer.h"
 #include "BKE_object.h"
-#include "BKE_outliner_treehash.h"
+#include "BKE_outliner_treehash.hh"
 
 #include "ED_outliner.h"
 #include "ED_screen.h"
@@ -27,6 +27,7 @@
 #include "UI_view2d.h"
 
 #include "outliner_intern.hh"
+#include "tree/tree_display.hh"
 #include "tree/tree_iterator.hh"
 
 using namespace blender::ed::outliner;
@@ -172,24 +173,6 @@ TreeElement *outliner_find_parent_element(ListBase *lb,
       return find_te;
     }
   }
-  return nullptr;
-}
-
-TreeElement *outliner_find_tse(SpaceOutliner *space_outliner, const TreeStoreElem *tse)
-{
-  TreeStoreElem *tselem;
-
-  if (tse->id == nullptr) {
-    return nullptr;
-  }
-
-  /* Check if 'tse' is in tree-store. */
-  tselem = BKE_outliner_treehash_lookup_any(
-      space_outliner->runtime->treehash, tse->type, tse->nr, tse->id);
-  if (tselem) {
-    return outliner_find_tree_element(&space_outliner->tree, tselem);
-  }
-
   return nullptr;
 }
 
@@ -454,7 +437,7 @@ void outliner_tag_redraw_avoid_rebuild_on_open_change(const SpaceOutliner *space
                                                       ARegion *region)
 {
   /* Avoid rebuild if possible. */
-  if (outliner_requires_rebuild_on_open_change(space_outliner)) {
+  if (space_outliner->runtime->tree_display->is_lazy_built()) {
     ED_region_tag_redraw(region);
   }
   else {

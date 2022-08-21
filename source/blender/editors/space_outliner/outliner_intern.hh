@@ -42,21 +42,25 @@ class AbstractTreeDisplay;
 class AbstractTreeElement;
 }  // namespace blender::ed::outliner
 
+namespace blender::bke::outliner::treehash {
+class TreeHash;
+}
+
 namespace outliner = blender::ed::outliner;
+namespace treehash = blender::bke::outliner::treehash;
 
 struct SpaceOutliner_Runtime {
   /** Object to create and manage the tree for a specific display type (View Layers, Scenes,
    * Blender File, etc.). */
   std::unique_ptr<outliner::AbstractTreeDisplay> tree_display;
 
-  /** Pointers to tree-store elements, grouped by `(id, type, nr)`
-   *  in hash-table for faster searching. */
-  struct GHash *treehash;
+  /* Hash table for tree-store elements, using `(id, type, index)` as key. */
+  std::unique_ptr<treehash::TreeHash> tree_hash;
 
   SpaceOutliner_Runtime() = default;
   /** Used for copying runtime data to a duplicated space. */
   SpaceOutliner_Runtime(const SpaceOutliner_Runtime &);
-  ~SpaceOutliner_Runtime();
+  ~SpaceOutliner_Runtime() = default;
 };
 
 typedef enum TreeElementInsertType {
@@ -153,7 +157,10 @@ enum {
   /* Closed items display their children as icon within the row. TE_ICONROW is for
    * these child-items that are visible but only within the row of the closed parent. */
   TE_ICONROW = (1 << 1),
-  TE_LAZY_CLOSED = (1 << 2),
+  /** Treat the element as if it had children, e.g. draw an icon to un-collapse it, even if it
+   * doesn't. Used where children are lazy-built only if the parent isn't collapsed (see
+   * #AbstractTreeDisplay::is_lazy_built()). */
+  TE_PRETEND_HAS_CHILDREN = (1 << 2),
   TE_FREE_NAME = (1 << 3),
   TE_DRAGGING = (1 << 4),
   TE_CHILD_NOT_IN_COLLECTION = (1 << 6),
@@ -276,11 +283,6 @@ struct TreeElement *outliner_add_collection_recursive(SpaceOutliner *space_outli
 
 bool outliner_requires_rebuild_on_select_or_active_change(
     const struct SpaceOutliner *space_outliner);
-/**
- * Check if a display mode needs a full rebuild if the open/collapsed state changes.
- * Element types in these modes don't actually add children if collapsed, so the rebuild is needed.
- */
-bool outliner_requires_rebuild_on_open_change(const struct SpaceOutliner *space_outliner);
 
 typedef struct IDsSelectedData {
   struct ListBase selected_array;
@@ -461,10 +463,7 @@ void outliner_set_coordinates(const struct ARegion *region,
 /**
  * Open or close a tree element, optionally toggling all children recursively.
  */
-void outliner_item_openclose(struct SpaceOutliner *space_outliner,
-                             TreeElement *te,
-                             bool open,
-                             bool toggle_all);
+void outliner_item_openclose(TreeElement *te, bool open, bool toggle_all);
 
 /* outliner_dragdrop.c */
 
@@ -611,10 +610,6 @@ TreeElement *outliner_find_item_at_x_in_row(const SpaceOutliner *space_outliner,
                                             float view_co_x,
                                             bool *r_is_merged_icon,
                                             bool *r_is_over_icon);
-/**
- * `tse` is not in the tree-store, we use its contents to find a match.
- */
-TreeElement *outliner_find_tse(struct SpaceOutliner *space_outliner, const TreeStoreElem *tse);
 /**
  * Find specific item from the trees-tore.
  */
