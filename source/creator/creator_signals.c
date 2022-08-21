@@ -244,11 +244,9 @@ void main_signal_setup_background(void)
   /* for all platforms, even windows has it! */
   BLI_assert(G.background);
 
-#  if !defined(WITH_HEADLESS)
   /* Support pressing `Ctrl-C` to close Blender in background-mode.
    * Useful to be able to cancel a render operation. */
   signal(SIGINT, sig_handle_blender_esc);
-#  endif
 }
 
 void main_signal_setup_fpe(void)
@@ -258,7 +256,7 @@ void main_signal_setup_fpe(void)
    * set breakpoints on sig_handle_fpe */
   signal(SIGFPE, sig_handle_fpe);
 
-#    if defined(__linux__) && defined(__GNUC__)
+#    if defined(__linux__) && defined(__GNUC__) && defined(HAVE_FEENABLEEXCEPT)
   feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 #    endif /* defined(__linux__) && defined(__GNUC__) */
 #    if defined(OSX_SSE_FPE)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1524,6 +1524,10 @@ msgid "Child"
 msgstr "Umea"
 
 
+msgid "Reset"
+msgstr "Berhasieratu"
+
+
 msgctxt "Operator"
 msgid "Show Active"
 msgstr "Aktiboa Bistaratu"
@@ -2042,10 +2046,6 @@ msgstr "Helbide hutsa, ezin da gorde"
 
 msgid "Path too long, cannot save"
 msgstr "Helbide oso luzea, ezin da gorde"
-
-
-msgid "Reset"
-msgstr "Berhasieratu"
 
 
 msgctxt "Scene"

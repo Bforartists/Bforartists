@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -36888,6 +36888,10 @@ msgid "Relocate Library"
 msgstr "重新定位藏庫"
 
 
+msgid "Reset"
+msgstr "重設"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "拖放材質至物體上"
@@ -57644,10 +57648,6 @@ msgstr "ID 塊："
 
 msgid "No Properties"
 msgstr "無屬性"
-
-
-msgid "Reset"
-msgstr "重設"
 
 
 msgid "Use Clipping"
