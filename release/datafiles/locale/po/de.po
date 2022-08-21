@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -37618,30 +37618,6 @@ msgid "Make Local"
 msgstr "Lokal machen"
 
 
-msgid "Make Library Override Single"
-msgstr "Bibliotheksüberschreibung als Single festlegen"
-
-
-msgid "Make Library Override Hierarchy"
-msgstr "Hierarchie zum Überschreiben von Bibliotheken"
-
-
-msgid "Make Library Override Editable"
-msgstr "Bibliotheksüberschreibung bearbeitbar machen"
-
-
-msgid "Reset Library Override Single"
-msgstr "Bibliothek zurücksetzen Außerkraftsetzung Single"
-
-
-msgid "Clear Library Override Single"
-msgstr "Löschen von Bibliotheksüberschreibungs-Single"
-
-
-msgid "Clear Library Override Hierarchy"
-msgstr "Löschen der Bibliotheksüberschreibungshierarchie"
-
-
 msgid "Paste"
 msgstr "Einfügen"
 
@@ -37693,6 +37669,14 @@ msgstr "Neu laden"
 msgctxt "Operator"
 msgid "Relocate Library"
 msgstr "Bibliothek verschieben"
+
+
+msgid "Create"
+msgstr "Erstellen"
+
+
+msgid "Reset"
+msgstr "Zurücksetzen"
 
 
 msgctxt "Operator"
@@ -62192,10 +62176,6 @@ msgid "No Properties"
 msgstr "Keine Eigenschaften"
 
 
-msgid "Reset"
-msgstr "Zurücksetzen"
-
-
 msgid "More..."
 msgstr "Mehr..."
 
@@ -65067,10 +65047,6 @@ msgstr "Zufälliger Versatz Ende"
 
 msgid "Curvature"
 msgstr "Krümmung"
-
-
-msgid "Create"
-msgstr "Erstellen"
 
 
 msgid "Material Borders"

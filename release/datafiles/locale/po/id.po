@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -17950,6 +17950,10 @@ msgid "Use Active"
 msgstr "Gunakan Aktif"
 
 
+msgid "Reset"
+msgstr "Setel Ulang"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Menjatuhkan Material di Objek"
@@ -25790,10 +25794,6 @@ msgstr "Nilai: %s"
 
 msgid "Python: %s.%s"
 msgstr "Python: %s.%s"
-
-
-msgid "Reset"
-msgstr "Setel Ulang"
 
 
 msgid "Anim Player"

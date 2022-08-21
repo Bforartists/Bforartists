@@ -2613,6 +2613,17 @@ class VIEW3D_MT_origin_set(Menu):
 
 # ********** Object menu **********
 
+class VIEW3D_MT_object_liboverride(Menu):
+    bl_label = "Library Override"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("object.make_override_library", text="Make")
+        layout.operator("object.reset_override_library", text="Reset")
+        layout.operator("object.clear_override_library", text="Clear")
+
+
 class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
     bl_label = "Object"
@@ -2658,6 +2669,7 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_parent")
         # layout.menu("VIEW3D_MT_object_collection") # bfa, turned off
         layout.menu("VIEW3D_MT_object_relations")
+        layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
@@ -6112,6 +6124,9 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.separator()
         layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET")
 
+        layout.separator()
+        layout.operator("gpencil.stroke_outline", text="Outline")
+
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
     bl_label = "Point"
@@ -9236,6 +9251,7 @@ classes = (
     VIEW3D_MT_object_shading,
     VIEW3D_MT_object_apply,
     VIEW3D_MT_object_relations,
+    VIEW3D_MT_object_liboverride,
     VIEW3D_MT_object_parent,
     VIEW3D_MT_object_track,
     VIEW3D_MT_object_collection,

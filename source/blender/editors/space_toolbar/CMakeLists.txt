@@ -12,7 +12,6 @@ set(INC
 	../../makesrna
 	../../windowmanager
 	../../../../intern/guardedalloc
-	../../../../intern/glew-mx
 )
  
 set(INC_SYS
