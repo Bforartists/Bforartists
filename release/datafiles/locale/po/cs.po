@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -28041,6 +28041,10 @@ msgid "Relocate Library"
 msgstr "Přemístit Knihovnu"
 
 
+msgid "Reset"
+msgstr "Obnovit"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Pustit Materiál na Objekt"
@@ -45916,10 +45920,6 @@ msgstr "ID-Blok:"
 
 msgid "No Properties"
 msgstr "Bez vlastností"
-
-
-msgid "Reset"
-msgstr "Obnovit"
 
 
 msgid "More..."
