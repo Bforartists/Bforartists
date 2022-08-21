@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -4187,6 +4187,10 @@ msgid "Mark"
 msgstr "चिन्ह"
 
 
+msgid "Reset"
+msgstr "पूर्ववत करें"
+
+
 msgid "Show"
 msgstr "दिखाएँ"
 
@@ -6516,10 +6520,6 @@ msgstr "शॉर्टकट हटाएँ"
 
 msgid "Hex"
 msgstr "हेक्स"
-
-
-msgid "Reset"
-msgstr "पूर्ववत करें"
 
 
 msgid "Pos"

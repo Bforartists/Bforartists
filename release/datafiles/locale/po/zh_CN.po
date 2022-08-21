@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "<<<<<< .minX-Generator: Poedit 1.6.9\n"
 "=====X-Generator: Poedit 1.6.9\n"
-"X-Generator: Poedit 3.1.1"
+"X-Generator: Poedit 2.2.4"
 
 
 msgid "Shader AOV"
@@ -205,6 +205,10 @@ msgid "Mute"
 msgstr "屏蔽"
 
 
+msgid "Action group is muted"
+msgstr "动作块组已被屏蔽"
+
+
 msgid "Select"
 msgstr "选择"
 
@@ -331,6 +335,10 @@ msgstr "KHR_materials_variants_ui"
 
 msgid "Displays glTF UI to manage material variants"
 msgstr "显示 glTF UI 以管理材质变量"
+
+
+msgid "Displays glTF Material Output node in Shader Editor (Menu Add > Output)"
+msgstr "在着色器编辑器中显示 glTF 材质输出节点（菜单添加>输出）"
 
 
 msgid "Fribidi Library"
@@ -16161,6 +16169,10 @@ msgid "Use fallback tools keymap"
 msgstr "使用回退工具键盘映射"
 
 
+msgid "Add fallback tools keymap to this gizmo type"
+msgstr "将回退工具键盘映射添加到此gizmo类型"
+
+
 msgid "VR Redraws"
 msgstr "VR重绘"
 
@@ -17275,8 +17287,32 @@ msgid "Select feature lines that comes from lit or shaded regions. Will not affe
 msgstr "选择来自照明或阴影区域的要素线。不会影响投射阴影和光线轮廓，因为它们位于边界"
 
 
+msgid "Not filtering any lines based on illumination region"
+msgstr "不根据照明区域过滤任何线条"
+
+
+msgid "Illuminated"
+msgstr "照亮"
+
+
+msgid "Only selecting lines from illuminated regions"
+msgstr "仅从被照亮区域选择线条"
+
+
 msgid "Shaded"
 msgstr "着色"
+
+
+msgid "Only selecting lines from shaded regions"
+msgstr "仅从阴影区域选择线条"
+
+
+msgid "Illuminated (Enclosed Shapes)"
+msgstr "照亮(封闭形状)"
+
+
+msgid "Selecting lines from lit regions, and make the combination of contour, light contour and shadow lines into enclosed shapes"
+msgstr "仅从被照亮区域选择线条，并将轮廓、光线轮廓和阴影线组合到封闭形状内"
 
 
 msgid "Silhouette Filtering"
@@ -29718,6 +29754,10 @@ msgstr "对象"
 
 msgid "Items in the keymap, linking an operator to an input event"
 msgstr "按键功能映射表中的对象, 用于连接输入事件的相应动作"
+
+
+msgid "Modal Events"
+msgstr "模态事件"
 
 
 msgid "Name of the key map"
@@ -43175,8 +43215,16 @@ msgid "Accumulate Field"
 msgstr "累积场"
 
 
+msgid "Add the values of an evaluated field together and output the running total for each element"
+msgstr "将被解算场的数值相加，并输出各元素的运行总和"
+
+
 msgid "Domain Size"
 msgstr "域大小"
+
+
+msgid "Retrieve the number of elements in a geometry for each attribute domain"
+msgstr "为每个属性域检索几何体中的元素数量"
 
 
 msgid "Component"
@@ -43203,6 +43251,10 @@ msgid "Attribute Statistic"
 msgstr "属性统计"
 
 
+msgid "Calculate statistics about a data set from a field evaluated on a geometry"
+msgstr "计算来自一个几何体的一个被解算场的数据集的统计数据"
+
+
 msgid "The data type the attribute is converted to before calculating the results"
 msgstr "在计算结果之前，属性被转换为的数据类型"
 
@@ -43213,6 +43265,10 @@ msgstr "在哪个域读取数据"
 
 msgid "Transfer Attribute"
 msgstr "传递属性"
+
+
+msgid "Retrieve values from a source geometry and provides them as a field by interpolating them with the context geometry"
+msgstr "检索来自一个源几何体的数值，并通过与上下文几何体插值以场的形式提供"
 
 
 msgid "The type for the source and result data"
@@ -43239,8 +43295,16 @@ msgid "Transfer the data from the element with the corresponding index in the ta
 msgstr "同时传递来自元素的数据与目标几何中对应的编号"
 
 
+msgid "Calculate the limits of a geometry's positions and generate a box mesh with those dimensions"
+msgstr "计算几何体的位置限制，并使用这些尺寸生成一个盒形网格"
+
+
 msgid "Capture Attribute"
 msgstr "捕捉属性"
+
+
+msgid "Store the result of a field on a geometry and output the data as a node socket. Allows remembering or interpolating data as the geometry changes, such as positions before deformation"
+msgstr "保存几何何上某个场的结果，并将数据输出为一个节点接口。允许在几何体修改后(比如变形前的位置)记忆或插值数据。"
 
 
 msgid "Which domain to store the data in"
@@ -43249,6 +43313,10 @@ msgstr "在哪个域存储数据"
 
 msgid "Collection Info"
 msgstr "集合信息"
+
+
+msgid "Retrieve geometry from a collection"
+msgstr "检索来自集合的几何体"
 
 
 msgid "The transformation of the geometry output"
@@ -43271,6 +43339,14 @@ msgid "Convex Hull"
 msgstr "凸壳"
 
 
+msgid "Create a mesh that encloses all points in the input geometry with the smallest number of points"
+msgstr "使用最小点数创建一个包围输入几何体全部顶点的网格"
+
+
+msgid "Generate a poly spline arc"
+msgstr "生成一个多段样条弧线"
+
+
 msgid "Method used to determine radius and placement"
 msgstr "用于确定半径和位置的方法"
 
@@ -43287,8 +43363,16 @@ msgid "Endpoint Selection"
 msgstr "端点选择"
 
 
+msgid "Provide a selection for an arbitrary number of endpoints in each spline"
+msgstr "在每个样条线上选中任意数量的端点"
+
+
 msgid "Handle Type Selection"
 msgstr "控制柄类型选择"
+
+
+msgid "Provide a selection based on the handle types of Bézier control points"
+msgstr "基于贝塞尔控制点的控制柄类型选择"
 
 
 msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
@@ -43319,8 +43403,16 @@ msgid "Use the right handles"
 msgstr "使用右控制柄"
 
 
+msgid "Retrieve the length of all splines added together"
+msgstr "检索全部样条线加总在一起的长度"
+
+
 msgid "Bezier Segment"
 msgstr "贝塞尔线段"
+
+
+msgid "Generate a 2D Bézier spline from the given control points and handles"
+msgstr "从给定的控制点和控制柄生成一条二维贝塞尔样条线"
 
 
 msgid "Method used to determine control handles"
@@ -43339,6 +43431,10 @@ msgid "Curve Circle"
 msgstr "曲线圆环"
 
 
+msgid "Generate a poly spline circle"
+msgstr "生成一条多段样条圆环"
+
+
 msgid "Define the radius and location with three points"
 msgstr "用三个点定义半径和位置"
 
@@ -43351,6 +43447,10 @@ msgid "Curve Line"
 msgstr "曲线直线"
 
 
+msgid "Generate a poly spline line with two points"
+msgstr "使用两点生成一条多段样条直线"
+
+
 msgid "Define the start and end points of the line"
 msgstr "定义直线的开始和结束点"
 
@@ -43361,6 +43461,10 @@ msgstr "定义一条带有起点、方向和长度的直线"
 
 msgid "Quadrilateral"
 msgstr "四边形"
+
+
+msgid "Generate a polygon with four points"
+msgstr "从四点创建多边形"
 
 
 msgid "Create a rectangle"
@@ -43399,8 +43503,16 @@ msgid "Quadratic Bezier"
 msgstr "二次型贝塞尔"
 
 
+msgid "Generate a poly spline in a parabola shape with control points positions"
+msgstr "使用控制点位置生成一条抛物线形状的多段样条线"
+
+
 msgid "Set Handle Type"
 msgstr "设置控制柄类型"
+
+
+msgid "Set the handle type for the control points of a Bézier curve"
+msgstr "对贝塞尔曲线的控制点设置控制柄类型"
 
 
 msgid "Whether to update left and right handles"
@@ -43411,8 +43523,16 @@ msgid "Curve Spiral"
 msgstr "曲线螺旋"
 
 
+msgid "Generate a poly spline in a spiral shape"
+msgstr "生成一段螺旋形状的多段样条线"
+
+
 msgid "Set Spline Type"
 msgstr "设置样条线类型"
+
+
+msgid "Change the type of curves"
+msgstr "修改曲线类型"
 
 
 msgid "The curve type to change the selected curves to"
@@ -43431,12 +43551,24 @@ msgid "Star"
 msgstr "星形"
 
 
+msgid "Generate a poly spline in a star pattern by connecting alternating points of two circles"
+msgstr "通过交替连接两个圆环上的点，生成一条星形的多段样条线"
+
+
 msgid "Curve to Mesh"
 msgstr "曲线 -> 网格"
 
 
+msgid "Convert curves into a mesh, optionally with a custom profile shape defined by curves"
+msgstr "将曲线转换为网格，获得由曲线定义的自定义轮廓形状"
+
+
 msgid "Curve to Points"
 msgstr "曲线 -> 点"
+
+
+msgid "Generate a point cloud by sampling positions along curves"
+msgstr "通过沿曲线采样位置生成点云"
 
 
 msgid "How to generate points from the input curve"
@@ -43471,8 +43603,16 @@ msgid "Deform Curves on Surface"
 msgstr "在表面上变形曲面"
 
 
+msgid "Translate and rotate curves based on changes between the object's original and evaluated surface mesh"
+msgstr "基于物体原始与被解算表面网格之间的变化，平移和旋转曲线"
+
+
 msgid "Delete Geometry"
 msgstr "删除几何体"
+
+
+msgid "Remove selected elements of a geometry"
+msgstr "删除几何体的被选中元素"
 
 
 msgid "Which domain to delete in"
@@ -43493,6 +43633,10 @@ msgstr "仅面"
 
 msgid "Distribute Points on Faces"
 msgstr "分布点于面上"
+
+
+msgid "Generate points spread out on the surface of a mesh"
+msgstr "生成摊开分布在网格表面的点"
 
 
 msgid "Distribution Method"
@@ -43519,28 +43663,64 @@ msgid "Dual Mesh"
 msgstr "对偶网格"
 
 
+msgid "Convert Faces into vertices and vertices into faces"
+msgstr "将面转换为顶点，并将顶点转换为面"
+
+
 msgid "Duplicate Elements"
 msgstr "复制元素"
+
+
+msgid "Generate an arbitrary number copies of each selected input element"
+msgstr "生成随机数量的各被选中输入元素副本"
 
 
 msgid "Which domain to duplicate"
 msgstr "要复制的域"
 
 
+msgid "Edge Paths to Curves"
+msgstr "边路径到曲线"
+
+
+msgid "Edge Paths to Selection"
+msgstr "边路径到选中项"
+
+
 msgid "Extrude Mesh"
 msgstr "挤出网格"
+
+
+msgid "Generate new vertices, edges, or faces from selected elements and move them based on an offset while keeping them connected by their boundary"
+msgstr "从被选中元素生成新的顶点、边或者面，并基于偏移量移动，保持其通过边界相连"
 
 
 msgid "Field at Index"
 msgstr "编号上的场"
 
 
+msgid "Retrieve data of other elements in the context's geometry"
+msgstr "在上下文几何体中检索其他元素的数据"
+
+
 msgid "Domain the field is evaluated in"
 msgstr "解算场所在的域"
 
 
+msgid "Interpolate Domain"
+msgstr "插值域"
+
+
+msgid "Retrieve values from a field on a different domain besides the domain from the context"
+msgstr "从来自上下文的域以外的不同域的某个场检索数值"
+
+
 msgid "Fill Curve"
 msgstr "填充曲线"
+
+
+msgid "Generate a mesh on the XY plane with faces on the inside of input curves"
+msgstr "生成一个位于XY平面的网格，面全部位于输入曲线的内部"
 
 
 msgid "N-gons"
@@ -43549,6 +43729,10 @@ msgstr "多边形"
 
 msgid "Fillet Curve"
 msgstr "圆角曲线"
+
+
+msgid "Round corners by generating circular arcs on each control point"
+msgstr "通过在各个控制点上生成圆形曲线来倒圆角"
 
 
 msgid "How to choose number of vertices on fillet"
@@ -43567,8 +43751,20 @@ msgid "Flip Faces"
 msgstr "翻转面"
 
 
+msgid "Reverse the order of the vertices and edges of selected faces, flipping their normal direction"
+msgstr "颠倒选中面的顶点和边的次序，翻转其法向"
+
+
 msgid "Geometry to Instance"
 msgstr "几何到实例"
+
+
+msgid "Convert each input geometry into an instance, which can be much faster than the Join Geometry node when the inputs are large"
+msgstr "将各个输入几何体转换为实例，当输入较庞大时会比合并几何体节点更快"
+
+
+msgid "Sample values from an image texture"
+msgstr "从图像纹理采样数值"
 
 
 msgid "Method for smoothing values between pixels"
@@ -43591,20 +43787,56 @@ msgid "Curve Handle Positions"
 msgstr "曲线控制柄位置"
 
 
+msgid "Retrieve the position of each Bézier control point's handles"
+msgstr "检索各个贝塞尔控制点的控制柄位置"
+
+
 msgid "Curve Tilt"
 msgstr "曲线倾斜"
+
+
+msgid "Retrieve the angle at each control point used to twist the curve's normal around its tangent"
+msgstr "检索各个控制点上用于绕其切向扭转曲线法向的角度"
+
+
+msgid "Retrieve a stable random identifier value from the \"id\" attribute on the point domain, or the index if the attribute does not exist"
+msgstr "检索来自点域上 \"id\" 属性的稳定随机id数值，如该属性不存在则为其编号"
+
+
+msgid "Retrieve an integer value indicating the position of each element in the list, starting at zero"
+msgstr "检索表示每个元素在列表中的位置的整型数值，从零开始"
 
 
 msgid "Instance Rotation"
 msgstr "实例旋转"
 
 
+msgid "Retrieve the rotation of each instance in the geometry"
+msgstr "检索几何体中每个实例的旋转"
+
+
 msgid "Instance Scale"
 msgstr "实例缩放"
 
 
+msgid "Retrieve the scale of each instance in the geometry"
+msgstr "检索几何体中每个实例的缩放"
+
+
+msgid "Output a single material"
+msgstr "输出单一材质"
+
+
+msgid "Retrieve the index of the material used for each element in the geometry's list of materials"
+msgstr "检索几何体材质列表中每个元素使用的材质的编号"
+
+
 msgid "Edge Angle"
 msgstr "边夹角"
+
+
+msgid "Calculate the surface area of each face in a mesh"
+msgstr "计算网格中每个面的表面积"
 
 
 msgid "Edge Neighbors"
@@ -66238,78 +66470,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "使已选中的数据块的所有用户使用当前(点击的)数据块"
 
 
-msgid "Make Library Override Single"
-msgstr "转为单一库重写"
-
-
-msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
-msgstr "对该关联数据块创建单个超出层次结构的本地重写 - 仅适用于活动的大纲视图项目"
-
-
-msgid "Make Library Override Hierarchy"
-msgstr "创建库重写层级"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
-msgstr "对该关联数据块及其依赖项层次结构创建本地重写 - 仅适用于活动的大纲视图项目"
-
-
-msgid "Make Library Override Editable"
-msgstr "使库重写可编辑"
-
-
-msgid "Make the library override data-block editable"
-msgstr "使库重写数据块可编辑"
-
-
-msgid "Reset Library Override Single"
-msgstr "重置单一库重写"
-
-
-msgid "Reset this local override to its linked values"
-msgstr "重置此本地重写为其关联数值"
-
-
-msgid "Reset Library Override Hierarchy"
-msgstr "重置库重写层级"
-
-
-msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "重置该本地重写及其依赖层级为关联数值"
-
-
-msgid "Resync Library Override Hierarchy"
-msgstr "重新同步库重写层级"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "重建来自其关联参考的本地重写及其依赖层级为关联数值"
-
-
-msgid "Resync Library Override Hierarchy Enforce"
-msgstr "强制重新同步库重写层级"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
-msgstr "从其关联引用以及依赖关系的层次结构中重建此本地覆写，强制该层次结构匹配关联数据(即忽略数据块指针属性上的退出覆写)"
-
-
-msgid "Clear Library Override Single"
-msgstr "清除单一库重写"
-
-
-msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
-msgstr "如果可能，请删除此本地重写，并将其重新关联到已关联的数据块，否则将其重置并将其标记为不可编辑，"
-
-
-msgid "Clear Library Override Hierarchy"
-msgstr "清除库重写层级"
-
-
-msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "删除此本地重写(包括其重写依赖项的层次结构），并将其用法重新关联到被关联的数据块"
-
-
 msgid "Paste"
 msgstr "粘贴"
 
@@ -66469,6 +66629,10 @@ msgstr "重定位库"
 
 msgid "Relocate the library under cursor"
 msgstr "重定位光标下的库"
+
+
+msgid "Reset"
+msgstr "重置"
 
 
 msgctxt "Operator"
@@ -111333,10 +111497,6 @@ msgstr "ID 块:"
 
 msgid "No Properties"
 msgstr "无属性"
-
-
-msgid "Reset"
-msgstr "重置"
 
 
 msgid "More..."

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -5352,6 +5352,10 @@ msgid "Reload all data from this library"
 msgstr "Herlaad alle data van deze bibliotheek"
 
 
+msgid "Reset"
+msgstr "Resetten"
+
+
 msgid "Select Hierarchy"
 msgstr "Selecteer Hiërarchie"
 
@@ -9120,10 +9124,6 @@ msgstr "Waarde: %s"
 
 msgid "Double click to rename"
 msgstr "Dubbelklik om te hernoemen"
-
-
-msgid "Reset"
-msgstr "Resetten"
 
 
 msgid "Zoom in"

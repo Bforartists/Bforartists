@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-23 06:55+0700\n"
@@ -65012,78 +65012,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Làm cho hết người dùng các cục dữ liệu được chọn dùng cục dữ liệu hiện tại (đã bấm)"
 
 
-msgid "Make Library Override Single"
-msgstr "Làm Tạo Đồ Thay Thế Thư Viện Độc Thân"
-
-
-msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
-msgstr "Làm một đồ thay thế, địa phương ờ ngoài tầng bậc của dữ liệu được liên kết này - chỉ áp dụng cho mặt hàng Mục Lục hoạt động"
-
-
-msgid "Make Library Override Hierarchy"
-msgstr "Làmi Tầng Bậc Đồ Thay Thế Thư Viện"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
-msgstr "Làm một đồ thay thế địa phương của cục dữ liệu được liên kết này, và tầng bậc nhờ của nó - chỉ cho áp dụng mặt hàng Mục Lục hoạt động"
-
-
-msgid "Make Library Override Editable"
-msgstr "Làm Đồ Thay Thế Thư Viện Được Biên Tập"
-
-
-msgid "Make the library override data-block editable"
-msgstr "Làm cục dữ liệu đồ thay thế thư viện được biên tập"
-
-
-msgid "Reset Library Override Single"
-msgstr "Đặt Lại Đồ Thay Thế Thư Viện Độc Thân"
-
-
-msgid "Reset this local override to its linked values"
-msgstr "Đặt lại đồ thay thế địa phương này trở lại giá trị được liên kết"
-
-
-msgid "Reset Library Override Hierarchy"
-msgstr "Đặt Lại Tầng Bậc Đồ Thay Thế Của Thư Viện"
-
-
-msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "Đặt lại đồ thay thế địa phương này trở lại giá trị được liên kết, và tầng bậc nhờ của nó"
-
-
-msgid "Resync Library Override Hierarchy"
-msgstr "Đồng Bộ Lại Tầng Bậc Đồ Thay Thế Của Thư Viện"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "Xây dựng lại đồ thay thế địa phương này trở lại tham chiếu được liên kết, và tầng bậc nhờ của nó"
-
-
-msgid "Resync Library Override Hierarchy Enforce"
-msgstr "Buộc Đồng Bộ Lại Tầng Bậc Đồ Thay Thế Của Thư Viện"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
-msgstr "Xây dựng lại đồ thay thế địa phương này từ tham chiếu được liên kết, và tầng bậc nhờ của nó, bắt buộc tầng bậc đó có dữ lệu giống dữ liệu được liên kết (ví dụ không quan tâm đồ thay thế hiện tại của đặc tính của con trỏ cục dữ liệu)"
-
-
-msgid "Clear Library Override Single"
-msgstr "Xóa Đồ Thay Thế Thư Viện Độc Thân"
-
-
-msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
-msgstr "Xóa cái đồ thay thế địa phương này và kết nối lại những đồ sử dụng đến các cục dữ liệu đượ liên kết, nếu có thể, hoặc đặt lại nó và ký dấu nó không thể biên tập "
-
-
-msgid "Clear Library Override Hierarchy"
-msgstr "Xóa Tầng Bậc Của Đồ Thay Thế Thư Viện"
-
-
-msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "Xóa cái đồ thay thế địa phương này (gồm tầng bậc của đồ nhờ thay thế của nó) và kết nối lại sử dụng của nó đến các cục dữ liệu được kết nối"
-
-
 msgid "Paste"
 msgstr "Dán"
 
@@ -65243,6 +65171,10 @@ msgstr "Đổi Chỗ Thư Viện"
 
 msgid "Relocate the library under cursor"
 msgstr "Đổi chỗ thư viện ở dưới con trỏ"
+
+
+msgid "Reset"
+msgstr "Đặt Lại"
 
 
 msgctxt "Operator"
@@ -110117,10 +110049,6 @@ msgstr "Cục-ID"
 
 msgid "No Properties"
 msgstr "Không Có Đặc Tính"
-
-
-msgid "Reset"
-msgstr "Đặt Lại"
 
 
 msgid "More..."

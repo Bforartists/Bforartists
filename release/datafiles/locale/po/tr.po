@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -14841,6 +14841,10 @@ msgid "Reload"
 msgstr "Yeniden"
 
 
+msgid "Reset"
+msgstr "Sıfırla"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Malzeme bağlarına gözat"
@@ -23187,10 +23191,6 @@ msgstr "Ses blok butonları"
 
 msgid "No Properties"
 msgstr "Özellikleri Yok"
-
-
-msgid "Reset"
-msgstr "Sıfırla"
 
 
 msgid "Pos"

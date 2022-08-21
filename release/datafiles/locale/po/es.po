@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -332,6 +332,10 @@ msgstr "KHR_interfaz_variantes_materiales"
 
 msgid "Displays glTF UI to manage material variants"
 msgstr "Muestra la interfaz de glTF para administrar variantes de materiales"
+
+
+msgid "Displays glTF Material Output node in Shader Editor (Menu Add > Output)"
+msgstr "Muestra el nodo de salida de Material glTF en el editor de Nodos de sombreado"
 
 
 msgid "Fribidi Library"
@@ -3523,7 +3527,7 @@ msgstr "Tiene influencia"
 
 
 msgid "Curves Sculpt Brush Settings"
-msgstr "Opciones del pincel de escultura de curvas"
+msgstr "Opciones del pincel de esculpido de curvas"
 
 
 msgid "Count"
@@ -15553,7 +15557,7 @@ msgstr "Nombre de la capa de máscara"
 
 
 msgid "GPencil Sculpt Guide"
-msgstr "Guías de escultura de lápiz de cera"
+msgstr "Guías de esculpido de lápiz de cera"
 
 
 msgid "Guides for drawing"
@@ -15657,11 +15661,11 @@ msgstr "Habilita las opciones de adherencia a guías, ángulos y espaciado"
 
 
 msgid "GPencil Sculpt Settings"
-msgstr "Opciones de escultura de lápiz de cera"
+msgstr "Opciones de esculpido de lápiz de cera"
 
 
 msgid "General properties for Grease Pencil stroke sculpting tools"
-msgstr "Propiedades generales de las herramientas de escultura de trazos de lápiz de cera"
+msgstr "Propiedades generales de las herramientas de esculpido de trazos de lápiz de cera"
 
 
 msgid "Threshold for stroke intersections"
@@ -17280,8 +17284,32 @@ msgid "Select feature lines that comes from lit or shaded regions. Will not affe
 msgstr "Seleccionar las líneas de características provenientes de regiones iluminadas o sombreadas. No afectará a la proyección de sombras y los contornos de iluminación, dado que se encuentran en el límite"
 
 
+msgid "Not filtering any lines based on illumination region"
+msgstr "No filtrar ninguna línea basándose en la iluminación de las regiones"
+
+
+msgid "Illuminated"
+msgstr "Iluminado"
+
+
+msgid "Only selecting lines from illuminated regions"
+msgstr "Sólo seleccionar líneas de regiones iluminadas"
+
+
 msgid "Shaded"
 msgstr "Sombreado"
+
+
+msgid "Only selecting lines from shaded regions"
+msgstr "Sólo seleccionar líneas de regiones sombreadas"
+
+
+msgid "Illuminated (Enclosed Shapes)"
+msgstr "Iluminado (formas cerradas)"
+
+
+msgid "Selecting lines from lit regions, and make the combination of contour, light contour and shadow lines into enclosed shapes"
+msgstr "Seleccionar líneas de regiones iluminadas y hacer que las combinaciones de contornos, contornos de luces y líneas de sombras sean formas cerradas"
 
 
 msgid "Silhouette Filtering"
@@ -19434,7 +19462,7 @@ msgstr "Cantidad de pintura a ser aplicada por cada muestra del trazo"
 
 
 msgid "Grease Pencil Sculpt Paint Tool"
-msgstr "Pintar escultura lápiz de cera"
+msgstr "Pintar esculpido lápiz de cera"
 
 
 msgid "Smooth stroke points"
@@ -20350,15 +20378,15 @@ msgstr "Usar para esculpir"
 
 
 msgid "Use this brush in sculpt mode"
-msgstr "Usa este pincel en Modo Escultura"
+msgstr "Usa este pincel en modo Esculpido"
 
 
 msgid "Use UV Sculpt"
-msgstr "Usar para escupir UV"
+msgstr "Usar para esculpir UV"
 
 
 msgid "Use this brush in UV sculpt mode"
-msgstr "Usa este pincel en Modo Escultura de UV"
+msgstr "Usa este pincel en modo Esculpido de UV"
 
 
 msgid "Use Vertex"
@@ -21782,7 +21810,7 @@ msgstr "Habilita la simetría en el eje Z"
 
 
 msgid "Use Sculpt Selection"
-msgstr "Usar selección de escultura"
+msgstr "Usar selección de esculpido"
 
 
 msgid "Freestyle Line Style"
@@ -22458,7 +22486,7 @@ msgstr "Permite dibujar trazos de lápiz de cera al hacer clic o arrastrar"
 
 
 msgid "Stroke Sculpt Mode"
-msgstr "Modo Escultura de trazos"
+msgstr "Modo Esculpido de trazos"
 
 
 msgid "Sculpt Grease Pencil strokes instead of viewport data"
@@ -24212,11 +24240,11 @@ msgstr "Tamaño de los vóxeles en espacio del objeto, usado para la evaluación
 
 
 msgid "Sculpt Vertex Colors"
-msgstr "Colores de vértices de escultura"
+msgstr "Colores de vértices de esculpido"
 
 
 msgid "Sculpt vertex color layers. Deprecated, use color attributes instead"
-msgstr "Capas de colores de vértices de escultura. Depreciado, en su lugar usar atributos de color"
+msgstr "Capas de colores de vértices de esculpido. Depreciado, en su lugar usar atributos de color"
 
 
 msgid "Skin Vertices"
@@ -25316,7 +25344,7 @@ msgstr "Modo Pose"
 
 
 msgid "Sculpt Mode"
-msgstr "Modo Escultura"
+msgstr "Modo Esculpido"
 
 
 msgid "Vertex Paint"
@@ -25656,7 +25684,7 @@ msgstr "La fijación de la cámara 3D a la vista afectará también al superior 
 
 
 msgid "Dynamic Topology Sculpting"
-msgstr "Escultura de topología dinámica"
+msgstr "Esculpido de topología dinámica"
 
 
 msgid "Use Alpha"
@@ -28842,7 +28870,7 @@ msgstr "Modo Edición lápiz de cera"
 
 
 msgid "Grease Pencil Sculpt Mode"
-msgstr "Modo Escultura de lápiz de cera"
+msgstr "Modo Esculpido de lápiz de cera"
 
 
 msgid "Grease Pencil Draw"
@@ -29723,6 +29751,14 @@ msgstr "Elementos"
 
 msgid "Items in the keymap, linking an operator to an input event"
 msgstr "Elementos del mapa de teclado, vinculando un operador con un evento de entrada"
+
+
+msgid "Modal Events"
+msgstr "Eventos modales"
+
+
+msgid "Give access to the possible event values of this modal keymap's items (#KeyMapItem.propvalue), for API introspection"
+msgstr "Dar acceso a los valores de los posibles eventos de los elementos de este mapa de teclado modal (#KeyMapItem.propvalue), para una introspección de la API"
 
 
 msgid "Name of the key map"
@@ -33928,7 +33964,7 @@ msgstr "Edición de máscara"
 
 
 msgid "Sculpt Set Pivot"
-msgstr "Escultura definir pivote"
+msgstr "Esculpido definir pivote"
 
 
 msgid "Clone Layer"
@@ -34500,7 +34536,7 @@ msgstr "Nombre del mapa UV"
 
 
 msgid "Mesh Sculpt Vertex Color"
-msgstr "Color vértices escultura de malla"
+msgstr "Color vértices esculpido de malla"
 
 
 msgid "Vertex colors in a Mesh"
@@ -34508,23 +34544,23 @@ msgstr "Colores de vértices de una malla"
 
 
 msgid "Mesh Sculpt Vertex Color Layer"
-msgstr "Capa color vértices escultura de malla"
+msgstr "Capa color vértices esculpido de malla"
 
 
 msgid "Layer of sculpt vertex colors in a Mesh data-block"
-msgstr "Capa de colores de vértices de escultura en un bloque de datos de malla"
+msgstr "Capa de colores de vértices de esculpido en un bloque de datos de malla"
 
 
 msgid "Sets the sculpt vertex color layer as active for display and editing"
-msgstr "Define la capa de color de vértices de escultura como activa para visualizar y editar"
+msgstr "Define la capa de color de vértices de esculpido como activa para visualizar y editar"
 
 
 msgid "Sets the sculpt vertex color layer as active for rendering"
-msgstr "Define la capa de color de vértices de escultura como activa para ser procesada"
+msgstr "Define la capa de color de vértices de esculpido como activa para ser procesada"
 
 
 msgid "Name of Sculpt Vertex color layer"
-msgstr "Nombre de la capa de color de vértices de escultura"
+msgstr "Nombre de la capa de color de vértices de esculpido"
 
 
 msgid "Mesh Vertex"
@@ -37016,11 +37052,11 @@ msgstr "Cantidad de subdivisiones a usar durante el procesamiento"
 
 
 msgid "Sculpt Levels"
-msgstr "Niveles al esculpir"
+msgstr "Niveles de esculpido"
 
 
 msgid "Number of subdivisions to use in sculpt mode"
-msgstr "Cantidad de subdivisiones a usar en modo Escultura"
+msgstr "Cantidad de subdivisiones a usar en modo Esculpido"
 
 
 msgid "Optimal Display"
@@ -37060,7 +37096,7 @@ msgstr "Esculpir malla base"
 
 
 msgid "Make Sculpt Mode tools deform the base mesh while previewing the displacement of higher subdivision levels"
-msgstr "Hace que las herramientas del Modo Escultura deformen a la malla base, mientras se previsualiza el detalle de los niveles superiores de subdivisión"
+msgstr "Hace que las herramientas del Modo Esculpido deformen a la malla base, mientras se previsualiza el detalle de los niveles superiores de subdivisión"
 
 
 msgid "UV Smooth"
@@ -50601,7 +50637,7 @@ msgstr "Ajustar vista"
 
 
 msgid "Fit frame to the viewport"
-msgstr "Ajustar marco a la vista"
+msgstr "Permite ajustar el marco a la vista"
 
 
 msgctxt "Operator"
@@ -50610,7 +50646,7 @@ msgstr "Centrar vista en cursor"
 
 
 msgid "Center the view so that the cursor is in the middle of the view"
-msgstr "Centra la vista para que lo que indica el cursor quede en la mitad de la misma"
+msgstr "Permite centrar la vista para que lo que indica el cursor quede en la mitad de la misma"
 
 
 msgctxt "Operator"
@@ -50628,7 +50664,7 @@ msgstr "Desplazar vista"
 
 
 msgid "Pan the view"
-msgstr "Desplaza la vista"
+msgstr "Permite desplazar la vista"
 
 
 msgid "View all selected elements"
@@ -50662,7 +50698,7 @@ msgstr "Acercar"
 
 
 msgid "Zoom in the view"
-msgstr "Acerca la vista"
+msgstr "Permite acercar la vista"
 
 
 msgid "Cursor location in screen coordinates"
@@ -50675,7 +50711,7 @@ msgstr "Alejar"
 
 
 msgid "Zoom out the view"
-msgstr "Aleja la vista"
+msgstr "Permite alejar la vista"
 
 
 msgid "Cursor location in normalized (0.0 to 1.0) coordinates"
@@ -51241,16 +51277,16 @@ msgstr "Deshabilitar selección"
 
 
 msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "Deshabilita la visualización de la influencia de la selección en el modo escultura"
+msgstr "Deshabilita la visualización de la influencia de la selección en el modo Esculpido"
 
 
 msgctxt "Operator"
 msgid "Curve Sculpt Mode Toggle"
-msgstr "Modo Escultura de curvas"
+msgstr "Modo Esculpido de curvas"
 
 
 msgid "Enter/Exit sculpt mode for curves"
-msgstr "Ingresar/Salir del modo de escultura de curvas"
+msgstr "Ingresar/Salir del modo de esculpido de curvas"
 
 
 msgctxt "Operator"
@@ -51259,7 +51295,7 @@ msgstr "Modo de selección"
 
 
 msgid "Change the mode used for selection masking in curves sculpt mode"
-msgstr "Permite cambiar el modo usado para enmascarar la selección en el modo de escultura de curvas"
+msgstr "Permite cambiar el modo usado para enmascarar la selección en el modo de esculpido de curvas"
 
 
 msgctxt "Operator"
@@ -52896,7 +52932,7 @@ msgstr "Exportar la escena como un archivo glTF 2.0"
 
 
 msgid "Include All Bone Influences"
-msgstr "Incluir las influencias de todos los huesos"
+msgstr "Influencias de todos los huesos"
 
 
 msgid "Allow >4 joint vertex influences. Models may appear incorrectly in many viewers"
@@ -52904,7 +52940,7 @@ msgstr "Permitir influencias de más de 4 huesos en vértices. Es posible que lo
 
 
 msgid "Export all Armature Actions"
-msgstr "Exportar todas las acciones del esqueleto"
+msgstr "Todas las acciones del esqueleto"
 
 
 msgid "Export all actions of a single armature. WARNING: works only if you exports a single armature"
@@ -52944,11 +52980,11 @@ msgstr "Exportar la escena en el fotograma actual de la animación"
 
 
 msgid "Export Deformation Bones Only"
-msgstr "Exportar sólo huesos de deformación"
+msgstr "Sólo huesos de deformación"
 
 
 msgid "Export Deformation bones only"
-msgstr "Exportar sólo huesos de deformación"
+msgstr "Exportar sólo huesos que producen deformación"
 
 
 msgid "Color quantization bits"
@@ -53116,19 +53152,19 @@ msgstr "Exporta formas clave (objetivos de morph)"
 
 
 msgid "Shape Key Normals"
-msgstr "Normales de Formas clave"
+msgstr "Normales"
 
 
 msgid "Export vertex normals with shape keys (morph targets)"
-msgstr "Exportar normales de vértices junto con las Formas clave"
+msgstr "Exportar normales de vértices junto con las Formas clave (también llamados objetivos de metamorfosis)"
 
 
 msgid "Shape Key Tangents"
-msgstr "Tangentes de Formas clave"
+msgstr "Tangentes"
 
 
 msgid "Export vertex tangents with shape keys (morph targets)"
-msgstr "Exportar tangentes a los vértices junto con las Formas clave"
+msgstr "Exportar tangentes a los vértices junto con las Formas clave (también llamados objetivos de metamorfosis)"
 
 
 msgid "Group by NLA Track"
@@ -53152,19 +53188,19 @@ msgstr "Exportar normales de vértices junto con las mallas"
 
 
 msgid "Export original PBR Specular"
-msgstr "Exportar Especularidad PBR original"
+msgstr "Especularidad PBR original"
 
 
 msgid "Export original glTF PBR Specular, instead of Blender Principled Shader Specular"
-msgstr "Exportar Especularidad PBR original de glTF, en vez de la del sombreador principista de Blender"
+msgstr "Exportar la especularidad PBR original de glTF, en vez de la del sombreador principista de Blender"
 
 
 msgid "Skinning"
-msgstr "Deformación con esqueletos"
+msgstr "Esqueletos"
 
 
 msgid "Export skinning (armature) data"
-msgstr "Exporta los datos de deformación de esqueletos"
+msgstr "Exporta los datos de deformación con esqueletos"
 
 
 msgid "Tangents"
@@ -53781,7 +53817,7 @@ msgstr "Seleccionar/Deseleccionar archivo transitando"
 
 
 msgid "Select/Deselect files by walking through them"
-msgstr "Selecciona/deselecciona archivos transitando entre ellos"
+msgstr "Selecciona/deselecciona archivos, transitando entre ellos"
 
 
 msgid "Walk Direction"
@@ -55808,16 +55844,16 @@ msgstr "Permite aplicar retoques a los trazos pintando sobre ellos"
 
 
 msgid "Enter a mini 'sculpt-mode' if enabled, otherwise, exit after drawing a single stroke"
-msgstr "Permite el ingreso a un mini 'modo escultura', de otro modo se finaliza luego de dibujar un único trazo"
+msgstr "Permite el ingreso a un mini 'modo esculpido', de otro modo se finaliza luego de dibujar un único trazo"
 
 
 msgctxt "Operator"
 msgid "Strokes Sculpt Mode Toggle"
-msgstr "Modo Escultura de trazos"
+msgstr "Modo Esculpido de trazos"
 
 
 msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
-msgstr "Ingresar/Salir del modo de escultura de trazos de lápiz de cera"
+msgstr "Ingresar/Salir del modo de esculpido de trazos de lápiz de cera"
 
 
 msgctxt "Operator"
@@ -57346,7 +57382,7 @@ msgstr "Nueva imagen"
 
 
 msgid "Create a new image"
-msgstr "Crea una nueva imagen"
+msgstr "Permite crear una nueva imagen"
 
 
 msgid "Create an image with an alpha channel"
@@ -57391,7 +57427,7 @@ msgstr "Abrir imagen"
 
 
 msgid "Open image"
-msgstr "Abrir imagen"
+msgstr "Permite abrir una imagen"
 
 
 msgid "Allow the path to contain substitution tokens"
@@ -57681,7 +57717,7 @@ msgstr "Acercar o alejar vista"
 
 
 msgid "Zoom in/out the image"
-msgstr "Acerca o aleja la imagen"
+msgstr "Permite acercar o alejar la imagen"
 
 
 msgctxt "Operator"
@@ -58711,7 +58747,7 @@ msgstr "Nueva máscara"
 
 
 msgid "Create new mask"
-msgstr "Crea una nueva máscara"
+msgstr "Permite crear una nueva máscara"
 
 
 msgid "Name of new mask"
@@ -59796,7 +59832,7 @@ msgstr "Extrae la máscara como un objeto sólido usando un modificador Solidifi
 
 
 msgid "Project to Sculpt"
-msgstr "Proyectar sobre escultura"
+msgstr "Proyectar sobre esculpido"
 
 
 msgid "Project the extracted mesh into the original sculpt"
@@ -62634,6 +62670,10 @@ msgstr "Buscar nodo"
 
 msgid "Search for a node by name and focus and select it"
 msgstr "Permite buscar un nodo por su nombre, seleccionarlo y enfocarse en él"
+
+
+msgid "Add a node to the active tree for glTF export"
+msgstr "Agrega al árbol activo un nodo para exportación a glTF"
 
 
 msgctxt "Operator"
@@ -66825,78 +66865,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Hace que todos los usuarios de los bloques de datos seleccionados usen en su lugar al bloque de datos actual (el resaltado)"
 
 
-msgid "Make Library Override Single"
-msgstr "Redefinir biblioteca (individual)"
-
-
-msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
-msgstr "Hace una redefinición local única y sin jerarquías de este bloque de datos vinculado desde una biblioteca - sólo se aplicará al elemento activo del Listado"
-
-
-msgid "Make Library Override Hierarchy"
-msgstr "Redefinir biblioteca (jerarquía)"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
-msgstr "Hace una redefinición local de este bloque de datos vinculado desde una biblioteca y de su jerarquía de dependencias - sólo se aplicará al elemento activo del Listado"
-
-
-msgid "Make Library Override Editable"
-msgstr "Redefinición de biblioteca editable"
-
-
-msgid "Make the library override data-block editable"
-msgstr "Hace que el bloque de datos de una redefinición de biblioteca sea editable"
-
-
-msgid "Reset Library Override Single"
-msgstr "Restablecer redefinición de biblioteca individual"
-
-
-msgid "Reset this local override to its linked values"
-msgstr "Restablece esta redefinición local a sus valores vinculados"
-
-
-msgid "Reset Library Override Hierarchy"
-msgstr "Restablecer jerarquía de redefiniciones de biblioteca"
-
-
-msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "Restablece esta redefinición local a sus valores vinculados, así como su jerarquía completa de dependencias"
-
-
-msgid "Resync Library Override Hierarchy"
-msgstr "Resincronizar jerarquía de redefiniciones de biblioteca"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "Reconstruye esta redefinición local a partir de su referencia, así como su jerarquía completa de dependencias"
-
-
-msgid "Resync Library Override Hierarchy Enforce"
-msgstr "Resincronizar forzosamente jerarquía de redefiniciones de biblioteca"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
-msgstr "Reconstruye esta redefinición local a partir de su referencia, así como su jerarquía completa de dependencias, forzando a que dicha jerarquía coincida con los datos vinculados (p.ej: ignorando redefiniciones existentes de propiedades que apunten a los bloques de datos)"
-
-
-msgid "Clear Library Override Single"
-msgstr "Eliminar redefinición de biblioteca individual"
-
-
-msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
-msgstr "Borra esta redefinición local y revincula sus usuarios a los bloques de datos vinculados externamente, si fuera posible; de lo contrario se restablecerá y marcará como no editable"
-
-
-msgid "Clear Library Override Hierarchy"
-msgstr "Eliminar jerarquía de redefiniciones de biblioteca"
-
-
-msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "Borra esta redefinición local (incluyendo la jerarquía de redefiniciones dependientes) y revincula nuevamente lo que corresponda a los bloques de datos externos"
-
-
 msgid "Paste"
 msgstr "Pegar"
 
@@ -67056,6 +67024,14 @@ msgstr "Reubicar biblioteca"
 
 msgid "Relocate the library under cursor"
 msgstr "Reubica la biblioteca bajo el cursor"
+
+
+msgid "Create"
+msgstr "Crear"
+
+
+msgid "Reset"
+msgstr "Restablecer"
 
 
 msgctxt "Operator"
@@ -71084,7 +71060,7 @@ msgstr "Expandir"
 
 
 msgid "Generic sculpt expand operator"
-msgstr "Operador genérico de expansión"
+msgstr "Operador de esculpido genérico de expansión"
 
 
 msgid "Initial falloff of the expand operation"
@@ -71160,7 +71136,7 @@ msgstr "Reposicionar pivote"
 
 
 msgid "Reposition the sculpt transform pivot to the boundary of the expand active area"
-msgstr "Reposiciona el pivote de transformación de escultura hacia el límite del área activa de expansión"
+msgstr "Reposiciona el pivote de transformación de esculpido hacia el límite del área activa de expansión"
 
 
 msgctxt "Operator"
@@ -71404,7 +71380,7 @@ msgstr "Genera colores aleatorios para visualizar los conjuntos de caras en la v
 
 msgctxt "Operator"
 msgid "Vertex Color to Sculpt Vertex Color"
-msgstr "Color de vértices a color de vértices de escultura"
+msgstr "Color de vértices a color de vértices de esculpido"
 
 
 msgid "Copy the active loop color layer to the vertex color"
@@ -71772,7 +71748,7 @@ msgstr "Modo de detalle"
 
 
 msgid "Target sculpting workflow that is going to use the sampled size"
-msgstr "Flujo de trabajo de escultura que usará el tamaño muestreado"
+msgstr "Flujo de trabajo objetivo de esculpido, que usará el tamaño muestreado"
 
 
 msgid "Dyntopo"
@@ -71789,11 +71765,11 @@ msgstr "Muestrear el tamaño de los vóxeles de la malla"
 
 msgctxt "Operator"
 msgid "Sculpt Mode"
-msgstr "Modo Escultura"
+msgstr "Modo Esculpido"
 
 
 msgid "Toggle sculpt mode in 3D view"
-msgstr "Alterna modo Escultura en la vista 3D"
+msgstr "Alterna el modo Esculpido en la vista 3D"
 
 
 msgctxt "Operator"
@@ -71820,11 +71796,11 @@ msgstr "Definir posición del pivote"
 
 
 msgid "Sets the sculpt transform pivot position"
-msgstr "Define la posición del pivote de la transformación de escultura"
+msgstr "Define la posición del pivote de la transformación de esculpido"
 
 
 msgid "Sets the pivot to the origin of the sculpt"
-msgstr "Define el pivote en al origen de la escultura"
+msgstr "Define el pivote al origen de la escultura"
 
 
 msgid "Unmasked"
@@ -71944,11 +71920,11 @@ msgstr "Cambia el pincel a modo distensión por la duración del trazo"
 
 msgctxt "Operator"
 msgid "Sculpt Vertex Color to Vertex Color"
-msgstr "Color de vértices de escultura a color de vértices"
+msgstr "Color de vértices de esculpido a color de vértices"
 
 
 msgid "Copy the Sculpt Vertex Color to a regular color layer"
-msgstr "Copia el color de vértices de escultura a una capa de color regular"
+msgstr "Copia el color de vértices de esculpido a una capa de color regular"
 
 
 msgctxt "Operator"
@@ -76081,7 +76057,7 @@ msgstr "Quita a los objetos seleccionados de la vista local"
 
 
 msgid "Move the view"
-msgstr "Permite mover la vista"
+msgstr "Permite desplazar la vista"
 
 
 msgctxt "Operator"
@@ -79823,7 +79799,7 @@ msgstr "Permite aplicar el pincel de forma simétrica, con respecto al eje Z"
 
 
 msgid "Curves Sculpt Paint"
-msgstr "Pintar curvas"
+msgstr "Pintar esculpido de curvas"
 
 
 msgid "Grease Pencil Paint"
@@ -79843,7 +79819,7 @@ msgstr "Pintar el material usando un atributo decolor"
 
 
 msgid "Grease Pencil Sculpt Paint"
-msgstr "Pintar escultura de lápiz de cera"
+msgstr "Pintar esculpido de lápiz de cera"
 
 
 msgid "Image Paint"
@@ -79991,7 +79967,7 @@ msgstr "Define la capa de la máscara usando los botones de mapas UV"
 
 
 msgid "Maximum edge length for dynamic topology sculpting (as divisor of blender unit - higher value means smaller edge length)"
-msgstr "Longitud máxima de bordes durante la escultura con topología dinámica (expresada como divisor de las unidades de Blender - valores mayores significan una longitud menor de bordes)"
+msgstr "Longitud máxima de bordes durante el esculpido con topología dinámica (expresada como divisor de las unidades de Blender - valores mayores significan una longitud menor de bordes)"
 
 
 msgid "Detail Percentage"
@@ -80175,7 +80151,7 @@ msgstr "Muestra las caras con un sombreado suave, en vez de plano, dentro del mo
 
 
 msgid "UV Sculpting"
-msgstr "Esculpido UV"
+msgstr "Esculpido de UV"
 
 
 msgid "Properties of vertex and weight paint mode"
@@ -81461,7 +81437,7 @@ msgstr "Transformaciones globales"
 
 
 msgid "Curves Sculpt Add Curve Options"
-msgstr "Opciones adición de curvas (escultura de curvas)"
+msgstr "Opciones adición de curvas (esculpido de curvas)"
 
 
 msgid "Curves Grow/Shrink Scaling"
@@ -81489,7 +81465,7 @@ msgstr "Ubicación del trazo"
 
 
 msgid "Sculpt Context Menu"
-msgstr "Escultura - menú contextual"
+msgstr "Esculpido - menú contextual"
 
 
 msgid "Vertex Paint Context Menu"
@@ -83508,7 +83484,7 @@ msgstr "Alinear nuevos objetos a la rotación del cursor 3D"
 
 
 msgid "Sculpt/Paint Overlay Color"
-msgstr "Color superposición escultura / pintura"
+msgstr "Color superposición esculpido / pintura"
 
 
 msgid "Color of texture overlay"
@@ -83868,19 +83844,19 @@ msgstr "Habilitar plantillas de redefinición de bibliotecas en la API de python
 
 
 msgid "Sculpt Texture Paint"
-msgstr "Pintar texturas en escultura"
+msgstr "Pintar texturas en esculpido"
 
 
 msgid "Use texture painting in Sculpt Mode"
-msgstr "Usar pintura de texturas en modo Escultura"
+msgstr "Usar pintura de texturas en modo Esculpido"
 
 
 msgid "Sculpt Mode Tilt Support"
-msgstr "Soporte de inclinación en modo Escultura"
+msgstr "Soporte de inclinación en modo Esculpido"
 
 
 msgid "Support for pen tablet tilt events in Sculpt Mode"
-msgstr "Soporte para eventos de inclinación de plumas de tabletas en modo Escultura"
+msgstr "Soporte para eventos de inclinación de plumas de tabletas en modo Esculpido"
 
 
 msgid "Undo Legacy"
@@ -84108,7 +84084,7 @@ msgid ""
 "Warning: Sculpt and edit mode data won't be saved"
 msgstr ""
 "Guardado automático de archivos temporales en el directorio temp, usa el ID del proceso.\n"
-"Advertencia: No se guardarán datos de los modos Escultura y Edición"
+"Advertencia: No se guardarán datos de los modos Esculpido y Edición"
 
 
 msgid "Compress File"
@@ -94749,7 +94725,7 @@ msgstr "Restringir a límites de imagen"
 
 
 msgid "Constraint to stay within the image bounds while editing"
-msgstr "Restringido a estar dentro de los límites de la imagen mientras se edita"
+msgstr "Restringe los vértices, para que permanezcan dentro de los límites de la imagen, mientras se produce la edición"
 
 
 msgid "Snap to Pixels"
@@ -97385,7 +97361,7 @@ msgstr "Agregar y reemplazar"
 
 
 msgid "Curves Sculpt"
-msgstr "Escultura de curvas"
+msgstr "Esculpido de curvas"
 
 
 msgid "Curve Profile Widget"
@@ -97409,7 +97385,7 @@ msgstr "Opciones de las herramientas de interpolación del lápiz de cera"
 
 
 msgid "Grease Pencil Sculpt"
-msgstr "Escultura de lápiz de cera"
+msgstr "Esculpido de lápiz de cera"
 
 
 msgid "Settings for stroke sculpting tools and brushes"
@@ -98402,23 +98378,23 @@ msgstr "Colores de vértices"
 
 
 msgid "Collection of sculpt vertex colors"
-msgstr "Colección de colores de vértices de escultura"
+msgstr "Colección de colores de vértices de esculpido"
 
 
 msgid "Active Sculpt Vertex Color Layer"
-msgstr "Capa de color de vértices de escultura activa"
+msgstr "Capa de color de vértices de esculpido activa"
 
 
 msgid "Active sculpt vertex color layer"
-msgstr "Capa de color de vértices de escultura activa"
+msgstr "Capa de color de vértices de esculpido activa"
 
 
 msgid "Active Sculpt Vertex Color Index"
-msgstr "Identificador de capa de color de vértices de escultura activa"
+msgstr "Identificador de capa de color de vértices de esculpido activa"
 
 
 msgid "Active sculpt vertex color index"
-msgstr "Identificador de capa de color de vértices de escultura activa"
+msgstr "Identificador de capa de color de vértices de esculpido activa"
 
 
 msgid "Vertex Float Properties"
@@ -99749,6 +99725,54 @@ msgid "Multiplication factor when using the fast or slow modifiers"
 msgstr "Factor de multiplicación al usar los modificadores de rapidez o lentitud"
 
 
+msgid "Open window"
+msgstr "Ventana abierta"
+
+
+msgid "Window height"
+msgstr "Altura de la ventana"
+
+
+msgid "Parent Window"
+msgstr "Ventana superior"
+
+
+msgid "Active workspace and scene follow this window"
+msgstr "El espacio de trabajo y la escena seguirán a esta ventana"
+
+
+msgid "Active scene to be edited in the window"
+msgstr "Escena activa a ser editada en la ventana"
+
+
+msgid "Active workspace screen showing in the window"
+msgstr "Pantalla activa del espacio de trabajo mostrada en la ventana"
+
+
+msgid "Active View Layer"
+msgstr "Capa de visualización activa"
+
+
+msgid "The active workspace view layer showing in the window"
+msgstr "La capa de visualización activa del espacio de trabajo mostrada en la ventana"
+
+
+msgid "Window width"
+msgstr "Ancho de la ventana"
+
+
+msgid "Active workspace showing in the window"
+msgstr "Espacio de trabajo activo mostrado en la ventana"
+
+
+msgid "Horizontal location of the window"
+msgstr "Posición horizontal de la ventana"
+
+
+msgid "Vertical location of the window"
+msgstr "Posición vertical de la ventana"
+
+
 msgid "Work Space Tool"
 msgstr "Herramienta espacio de trabajo"
 
@@ -100776,12 +100800,12 @@ msgstr "Script:"
 
 msgctxt "Operator"
 msgid "Sculpt_curves:"
-msgstr "Escultura_curvas:"
+msgstr "Esculpido_curvas:"
 
 
 msgctxt "Operator"
 msgid "Sculpt:"
-msgstr "Escultura:"
+msgstr "Esculpido:"
 
 
 msgctxt "Operator"
@@ -101121,7 +101145,7 @@ msgstr "Pintar imagen"
 
 msgctxt "WindowManager"
 msgid "Sculpt"
-msgstr "Escultura"
+msgstr "Esculpido"
 
 
 msgctxt "WindowManager"
@@ -101136,7 +101160,7 @@ msgstr "Vista 3D - Herramienta: Esculpido, Editar conjunto de caras (alternativa
 
 msgctxt "WindowManager"
 msgid "Sculpt Curves"
-msgstr "Escultura curvas"
+msgstr "Esculpido curvas"
 
 
 msgctxt "WindowManager"
@@ -101150,8 +101174,180 @@ msgstr "Herramienta Cortar - Mapa modal"
 
 
 msgctxt "WindowManager"
+msgid "Cancel"
+msgstr "Cancelar"
+
+
+msgctxt "WindowManager"
+msgid "Confirm"
+msgstr "Confirmar"
+
+
+msgctxt "WindowManager"
+msgid "Undo"
+msgstr "Deshacer"
+
+
+msgctxt "WindowManager"
+msgid "Snap to Midpoints On"
+msgstr "Adherir a punto medio activado"
+
+
+msgctxt "WindowManager"
+msgid "Snap to Midpoints Off"
+msgstr "Adherir a punto medio desactivado"
+
+
+msgctxt "WindowManager"
+msgid "Ignore Snapping On"
+msgstr "Ignorar adherencia activado"
+
+
+msgctxt "WindowManager"
+msgid "Ignore Snapping Off"
+msgstr "Ignorar adherencia desactivado"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Angle Snapping"
+msgstr "Alternar ignorar adherencia"
+
+
+msgctxt "WindowManager"
+msgid "Cycle Angle Snapping Relative Edge"
+msgstr "Recorrer borde relativo de adherencia de ángulos"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Cut Through"
+msgstr "Alternar cortar a través"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Distance and Angle Measurements"
+msgstr "Alternar medidas de distancia y ángulos"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Depth Testing"
+msgstr "Alternar comprobación de profundidad"
+
+
+msgctxt "WindowManager"
+msgid "End Current Cut"
+msgstr "Finalizar corte actual"
+
+
+msgctxt "WindowManager"
+msgid "Add Cut"
+msgstr "Agregar corte"
+
+
+msgctxt "WindowManager"
+msgid "Add Cut Closed"
+msgstr "Agregar corte cerrado"
+
+
+msgctxt "WindowManager"
+msgid "Panning"
+msgstr "Desplazamiento"
+
+
+msgctxt "WindowManager"
+msgid "X Axis Locking"
+msgstr "Bloquear eje X"
+
+
+msgctxt "WindowManager"
+msgid "Y Axis Locking"
+msgstr "Bloquear eje Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis Locking"
+msgstr "Bloquear eje Z"
+
+
+msgctxt "WindowManager"
 msgid "Custom Normals Modal Map"
 msgstr "Normales personalizadas - Mapa modal"
+
+
+msgctxt "WindowManager"
+msgid "Reset"
+msgstr "Restablecer"
+
+
+msgid "Reset normals to initial ones"
+msgstr "Restablecer las normales a las predefinidas"
+
+
+msgctxt "WindowManager"
+msgid "Invert"
+msgstr "Invertir"
+
+
+msgid "Toggle inversion of affected normals"
+msgstr "Inviertir las normales afectadas"
+
+
+msgctxt "WindowManager"
+msgid "Spherize"
+msgstr "Esferizar"
+
+
+msgid "Interpolate between new and original normals"
+msgstr "Interpolar entre las normales originales y las nuevas"
+
+
+msgctxt "WindowManager"
+msgid "Align"
+msgstr "Alinear"
+
+
+msgctxt "WindowManager"
+msgid "Use Mouse"
+msgstr "Usar ratón"
+
+
+msgid "Follow mouse cursor position"
+msgstr "Seguir posición del puntero del ratón"
+
+
+msgctxt "WindowManager"
+msgid "Use Pivot"
+msgstr "Usar pivote"
+
+
+msgid "Use current rotation/scaling pivot point coordinates"
+msgstr "Usar las coordenadas del punto de pivote de rotación/escala actual"
+
+
+msgctxt "WindowManager"
+msgid "Use Object"
+msgstr "Usar objeto"
+
+
+msgid "Use current edited object's location"
+msgstr "Usar la ubicación del objeto editado actualmente"
+
+
+msgctxt "WindowManager"
+msgid "Set and Use 3D Cursor"
+msgstr "Definir y usar cursor 3D"
+
+
+msgid "Set new 3D cursor position and use it"
+msgstr "Define una nueva ubicación para el cursor 3D y activa su uso"
+
+
+msgctxt "WindowManager"
+msgid "Select and Use Mesh Item"
+msgstr "Seleccionar y usar elemento de malla"
+
+
+msgid "Select new active mesh element and use its location"
+msgstr "Selecciona el nuevo elemento activo de la malla y usa su ubicación"
 
 
 msgctxt "WindowManager"
@@ -101159,14 +101355,232 @@ msgid "Bevel Modal Map"
 msgstr "Biselado - Mapa modal"
 
 
+msgid "Cancel bevel"
+msgstr "Cancelar biselado"
+
+
+msgid "Confirm bevel"
+msgstr "Confirmar biselado"
+
+
+msgctxt "WindowManager"
+msgid "Change Offset"
+msgstr "Cambiar desplazamiento"
+
+
+msgid "Value changes offset"
+msgstr "Valor que cambia el desplazamiento"
+
+
+msgctxt "WindowManager"
+msgid "Change Profile"
+msgstr "Cambiar perfil"
+
+
+msgid "Value changes profile"
+msgstr "Valor que cambia el perfil"
+
+
+msgctxt "WindowManager"
+msgid "Change Segments"
+msgstr "Cambiar segmentos"
+
+
+msgid "Value changes segments"
+msgstr "Valor que cambia los segmentos"
+
+
+msgctxt "WindowManager"
+msgid "Increase Segments"
+msgstr "Aumentar segmentos"
+
+
+msgid "Increase segments"
+msgstr "Aumentar segmentos"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Segments"
+msgstr "Disminuir segmentos"
+
+
+msgid "Decrease segments"
+msgstr "Disminuir segmentos"
+
+
+msgctxt "WindowManager"
+msgid "Change Offset Mode"
+msgstr "Cambiar modo desplazamiento"
+
+
+msgid "Cycle through offset modes"
+msgstr "Recorre los modos de desplazamiento"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Clamp Overlap"
+msgstr "Alternar limitar superposición"
+
+
+msgid "Toggle clamp overlap flag"
+msgstr "Alterna el indicador para limitar la superposición"
+
+
+msgctxt "WindowManager"
+msgid "Change Affect Type"
+msgstr "Cambiar tipo de afectado"
+
+
+msgid "Change which geometry type the operation affects, edges or vertices"
+msgstr "Cambia qué tipo de geometría es afectada por la operación, si bordes o vértices"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Harden Normals"
+msgstr "Alternar endurecer normales"
+
+
+msgid "Toggle harden normals flag"
+msgstr "Alterna el indicador de endurecer normales"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Mark Seam"
+msgstr "Alternar marca de costura"
+
+
+msgid "Toggle mark seam flag"
+msgstr "Alterna el indicador de marca de costura"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Mark Sharp"
+msgstr "Alternar marca de definido"
+
+
+msgid "Toggle mark sharp flag"
+msgstr "Alterna el indicador de marca de definición"
+
+
+msgctxt "WindowManager"
+msgid "Change Outer Miter"
+msgstr "Cambiar inglete exterior"
+
+
+msgid "Cycle through outer miter kinds"
+msgstr "Recorre los tipos de inglete exterior"
+
+
+msgctxt "WindowManager"
+msgid "Change Inner Miter"
+msgstr "Cambiar inglete interior"
+
+
+msgid "Cycle through inner miter kinds"
+msgstr "Recorre los tipos de inglete interior"
+
+
+msgctxt "WindowManager"
+msgid "Cycle through profile types"
+msgstr "Recorre los tipos de perfiles"
+
+
+msgctxt "WindowManager"
+msgid "Change Intersection Method"
+msgstr "Cambiar método intersección"
+
+
+msgid "Cycle through intersection methods"
+msgstr "Recorre los métodos de intersección"
+
+
 msgctxt "WindowManager"
 msgid "Paint Stroke Modal"
 msgstr "Pintar - Trazo modal"
 
 
+msgid "Cancel and undo a stroke in progress"
+msgstr "Cancela y deshace un trazo en proceso"
+
+
 msgctxt "WindowManager"
 msgid "Sculpt Expand Modal"
-msgstr "Escultura - Expandir modal"
+msgstr "Esculpido - Expandir modal"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Preserve State"
+msgstr "Alternar preservar estado"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Gradient"
+msgstr "Alternar gradiente"
+
+
+msgctxt "WindowManager"
+msgid "Geodesic recursion step"
+msgstr "Intervalos recursión geodésico"
+
+
+msgctxt "WindowManager"
+msgid "Topology recursion Step"
+msgstr "Intervalos recursión topológico"
+
+
+msgctxt "WindowManager"
+msgid "Move Origin"
+msgstr "Mover origen"
+
+
+msgctxt "WindowManager"
+msgid "Geodesic Falloff"
+msgstr "Decaimiento geodésico"
+
+
+msgctxt "WindowManager"
+msgid "Topology Falloff"
+msgstr "Decaimiento topológico"
+
+
+msgctxt "WindowManager"
+msgid "Diagonals Falloff"
+msgstr "Decaimiento diagonal"
+
+
+msgctxt "WindowManager"
+msgid "Spherical Falloff"
+msgstr "Decaimiento esférico"
+
+
+msgctxt "WindowManager"
+msgid "Snap expand to Face Sets"
+msgstr "Expandir adherencia a grupos de caras"
+
+
+msgctxt "WindowManager"
+msgid "Loop Count Increase"
+msgstr "Aumentar cantidad de bucles"
+
+
+msgctxt "WindowManager"
+msgid "Loop Count Decrease"
+msgstr "Disminuir cantidad de bucles"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Brush Gradient"
+msgstr "Alternar gradiente de pincel"
+
+
+msgctxt "WindowManager"
+msgid "Texture Distortion Increase"
+msgstr "Aumentar distorsión textura"
+
+
+msgctxt "WindowManager"
+msgid "Texture Distortion Decrease"
+msgstr "Disminuir distorsión textura"
 
 
 msgctxt "WindowManager"
@@ -101180,6 +101594,51 @@ msgstr "Pluma de curvas - Mapa modal"
 
 
 msgctxt "WindowManager"
+msgid "Free-Align Toggle"
+msgstr "Alternar alineación libre"
+
+
+msgid "Move handle of newly added point freely"
+msgstr "Permite mover libremente el asa del punto recientemente agregado"
+
+
+msgctxt "WindowManager"
+msgid "Move Adjacent Handle"
+msgstr "Mover asa adyacente"
+
+
+msgid "Move the closer handle of the adjacent vertex"
+msgstr "Permite mover el asa más cercana del vértice adyacente"
+
+
+msgctxt "WindowManager"
+msgid "Move Entire Point"
+msgstr "Mover punto completo"
+
+
+msgid "Move the entire point using its handles"
+msgstr "Permite mover el punto completo, usando sus asas"
+
+
+msgctxt "WindowManager"
+msgid "Link Handles"
+msgstr "Vincular asas"
+
+
+msgid "Mirror the movement of one handle onto the other"
+msgstr "Simetriza el movimiento de un asa hacia la otra"
+
+
+msgctxt "WindowManager"
+msgid "Lock Angle"
+msgstr "Bloquear ángulo"
+
+
+msgid "Move the handle along its current angle"
+msgstr "Permite mover el asa manteniendo su ángulo actual"
+
+
+msgctxt "WindowManager"
 msgid "Object Non-modal"
 msgstr "Objeto - No modal"
 
@@ -101190,8 +101649,185 @@ msgstr "Vista 3D - Ubicación modal"
 
 
 msgctxt "WindowManager"
+msgid "Snap On"
+msgstr "Adherencia activada"
+
+
+msgctxt "WindowManager"
+msgid "Snap Off"
+msgstr "Adherencia desactivada"
+
+
+msgctxt "WindowManager"
+msgid "Fixed Aspect On"
+msgstr "Proporción fija activada"
+
+
+msgctxt "WindowManager"
+msgid "Fixed Aspect Off"
+msgstr "Proporción fija desactivada"
+
+
+msgctxt "WindowManager"
+msgid "Center Pivot On"
+msgstr "Centrar pivote activado"
+
+
+msgctxt "WindowManager"
+msgid "Center Pivot Off"
+msgstr "Centrar pivote desactivado"
+
+
+msgctxt "WindowManager"
 msgid "View3D Walk Modal"
 msgstr "Vista 3D - Transitar modal"
+
+
+msgctxt "WindowManager"
+msgid "Forward"
+msgstr "Avance"
+
+
+msgctxt "WindowManager"
+msgid "Backward"
+msgstr "Retroceso"
+
+
+msgctxt "WindowManager"
+msgid "Left"
+msgstr "Izquierda"
+
+
+msgctxt "WindowManager"
+msgid "Right"
+msgstr "Derecha"
+
+
+msgctxt "WindowManager"
+msgid "Up"
+msgstr "Arriba"
+
+
+msgctxt "WindowManager"
+msgid "Down"
+msgstr "Abajo"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Forward"
+msgstr "Detener avance"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Backward"
+msgstr "Detener retroceso"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Left"
+msgstr "Detener mov a izquierda"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Right"
+msgstr "Detener mov a derecha"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Up"
+msgstr "Detener mov a arriba"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Down"
+msgstr "Detener mov a abajo"
+
+
+msgctxt "WindowManager"
+msgid "Teleport"
+msgstr "Teletransportación"
+
+
+msgid "Move forward a few units at once"
+msgstr "Avanza una cierta cantidad de unidades"
+
+
+msgctxt "WindowManager"
+msgid "Accelerate"
+msgstr "Acelerar"
+
+
+msgctxt "WindowManager"
+msgid "Decelerate"
+msgstr "Desacelerar"
+
+
+msgctxt "WindowManager"
+msgid "Fast"
+msgstr "Rápido"
+
+
+msgid "Move faster (walk or fly)"
+msgstr "Mueve más rápido (transitar o volar)"
+
+
+msgctxt "WindowManager"
+msgid "Fast (Off)"
+msgstr "Rápido (desactivar)"
+
+
+msgid "Resume regular speed"
+msgstr "Regresa a la velocidad normal"
+
+
+msgctxt "WindowManager"
+msgid "Slow"
+msgstr "Lento"
+
+
+msgid "Move slower (walk or fly)"
+msgstr "Mueve más lentamente (transitar o volar)"
+
+
+msgctxt "WindowManager"
+msgid "Slow (Off)"
+msgstr "Lento (desactivar)"
+
+
+msgctxt "WindowManager"
+msgid "Jump"
+msgstr "Saltar"
+
+
+msgid "Jump when in walk mode"
+msgstr "Salta, cuando se avanza en modo transitar"
+
+
+msgctxt "WindowManager"
+msgid "Jump (Off)"
+msgstr "Saltar (desactivar)"
+
+
+msgid "Stop pushing jump"
+msgstr "Deja de realizar saltos"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Gravity"
+msgstr "Alternar gravedad"
+
+
+msgid "Toggle gravity effect"
+msgstr "Alterna el efecto de gravedad"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis Correction"
+msgstr "Corrección de eje Z"
+
+
+msgid "Z axis correction"
+msgstr "Corrección del eje Z"
 
 
 msgctxt "WindowManager"
@@ -101200,13 +101836,81 @@ msgstr "Vista 3D - Volar modal"
 
 
 msgctxt "WindowManager"
+msgid "Pan"
+msgstr "Desplazar"
+
+
+msgctxt "WindowManager"
+msgid "Pan (Off)"
+msgstr "Desplazar (desactivar)"
+
+
+msgctxt "WindowManager"
+msgid "X Axis Correction"
+msgstr "Corrección de eje X"
+
+
+msgid "X axis correction (toggle)"
+msgstr "Corrección de eje X (alternar)"
+
+
+msgid "Z axis correction (toggle)"
+msgstr "Corrección de eje Z (alternar)"
+
+
+msgctxt "WindowManager"
+msgid "Precision"
+msgstr "Precisión"
+
+
+msgctxt "WindowManager"
+msgid "Precision (Off)"
+msgstr "Precisión (desactivar)"
+
+
+msgctxt "WindowManager"
+msgid "Rotation"
+msgstr "Rotación"
+
+
+msgctxt "WindowManager"
+msgid "Rotation (Off)"
+msgstr "Rotación (desactivar)"
+
+
+msgctxt "WindowManager"
 msgid "View3D Rotate Modal"
 msgstr "Vista 3D - Rotación modal"
 
 
 msgctxt "WindowManager"
+msgid "Axis Snap"
+msgstr "Adherir a eje"
+
+
+msgctxt "WindowManager"
+msgid "Axis Snap (Off)"
+msgstr "Adherir a eje (desactivar)"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Zoom"
+msgstr "Cambiar a zoom"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Move"
+msgstr "Cambiar a mover"
+
+
+msgctxt "WindowManager"
 msgid "View3D Move Modal"
 msgstr "Vista 3D - Movimiento modal"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Rotate"
+msgstr "Cambiar a rotar"
 
 
 msgctxt "WindowManager"
@@ -101306,7 +102010,7 @@ msgstr "Editor de imágenes - Herramienta: UV, Escalar (alternativa)"
 
 msgctxt "WindowManager"
 msgid "UV Sculpt"
-msgstr "UV - Escultura"
+msgstr "Esculpido de UV"
 
 
 msgctxt "WindowManager"
@@ -101541,52 +102245,52 @@ msgstr "Lápiz de cera - Modo de pintura de trazos"
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt Mode"
-msgstr "Lápiz de cera - Modo Escultura de trazos"
+msgstr "Lápiz de cera - Modo Esculpido de trazos"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Smooth)"
-msgstr "Lápiz de cera - Escultura de trazos: Suavizar"
+msgstr "Lápiz de cera - Esculpido de trazos: Suavizar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Thickness)"
-msgstr "Lápiz de cera - Escultura de trazos: Grosor"
+msgstr "Lápiz de cera - Esculpido de trazos: Grosor"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Strength)"
-msgstr "Lápiz de cera - Escultura de trazos: Intensidad"
+msgstr "Lápiz de cera - Esculpido de trazos: Intensidad"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Grab)"
-msgstr "Lápiz de cera - Escultura de trazos: Arrastrar"
+msgstr "Lápiz de cera - Esculpido de trazos: Arrastrar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Push)"
-msgstr "Lápiz de cera - Escultura de trazos: Empujar"
+msgstr "Lápiz de cera - Esculpido de trazos: Empujar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Twist)"
-msgstr "Lápiz de cera - Escultura de trazos: Torsionar"
+msgstr "Lápiz de cera - Esculpido de trazos: Torsionar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Pinch)"
-msgstr "Lápiz de cera - Escultura de trazos: Pellizcar"
+msgstr "Lápiz de cera - Esculpido de trazos: Pellizcar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Randomize)"
-msgstr "Lápiz de cera - Escultura de trazos: Aleatorizar"
+msgstr "Lápiz de cera - Esculpido de trazos: Aleatorizar"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Sculpt (Clone)"
-msgstr "Lápiz de cera - Escultura de trazos: Clonar"
+msgstr "Lápiz de cera - Esculpido de trazos: Clonar"
 
 
 msgctxt "WindowManager"
@@ -101660,13 +102364,73 @@ msgstr "Gesto - Circular (vista 3D)"
 
 
 msgctxt "WindowManager"
+msgid "Add"
+msgstr "Adicionar"
+
+
+msgctxt "WindowManager"
+msgid "Subtract"
+msgstr "\vSustraer"
+
+
+msgctxt "WindowManager"
+msgid "Size"
+msgstr "Tamaño"
+
+
+msgctxt "WindowManager"
+msgid "Select"
+msgstr "Seleccionar"
+
+
+msgctxt "WindowManager"
+msgid "Deselect"
+msgstr "Deseleccionar"
+
+
+msgctxt "WindowManager"
+msgid "No Operation"
+msgstr "Ninguna operación"
+
+
+msgctxt "WindowManager"
 msgid "Gesture Straight Line"
 msgstr "Gesto - Línea recta"
 
 
 msgctxt "WindowManager"
+msgid "Begin"
+msgstr "Iniciar"
+
+
+msgctxt "WindowManager"
+msgid "Move"
+msgstr "Mover"
+
+
+msgctxt "WindowManager"
+msgid "Snap"
+msgstr "Adherir"
+
+
+msgctxt "WindowManager"
+msgid "Flip"
+msgstr "Invertir"
+
+
+msgctxt "WindowManager"
 msgid "Gesture Zoom Border"
 msgstr "Gesto - Ajustar al marco"
+
+
+msgctxt "WindowManager"
+msgid "In"
+msgstr "Entrada"
+
+
+msgctxt "WindowManager"
+msgid "Out"
+msgstr "Salida"
 
 
 msgctxt "WindowManager"
@@ -101680,8 +102444,148 @@ msgstr "Mapa modal - Estándar"
 
 
 msgctxt "WindowManager"
+msgid "Apply"
+msgstr "Aplicar"
+
+
+msgctxt "WindowManager"
 msgid "Transform Modal Map"
 msgstr "Mapa modal - Transformación"
+
+
+msgctxt "WindowManager"
+msgid "X Axis"
+msgstr "Eje X"
+
+
+msgctxt "WindowManager"
+msgid "Y Axis"
+msgstr "Eje Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis"
+msgstr "Eje Z"
+
+
+msgctxt "WindowManager"
+msgid "X Plane"
+msgstr "Plano X"
+
+
+msgctxt "WindowManager"
+msgid "Y Plane"
+msgstr "Plano Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Plane"
+msgstr "Plano Z"
+
+
+msgctxt "WindowManager"
+msgid "Clear Constraints"
+msgstr "Eliminar restricciones"
+
+
+msgctxt "WindowManager"
+msgid "Snap Invert"
+msgstr "Invertir adherencia"
+
+
+msgctxt "WindowManager"
+msgid "Snap Invert (Off)"
+msgstr "Invertir adherencia (desactivar)"
+
+
+msgctxt "WindowManager"
+msgid "Snap Toggle"
+msgstr "Alternar adherencia"
+
+
+msgctxt "WindowManager"
+msgid "Add Snap Point"
+msgstr "Agregar punto de adherencia"
+
+
+msgctxt "WindowManager"
+msgid "Remove Last Snap Point"
+msgstr "Eliminar último punto de adherencia"
+
+
+msgctxt "WindowManager"
+msgid "Numinput Increment Up"
+msgstr "Ingr num aumentar arriba"
+
+
+msgctxt "WindowManager"
+msgid "Numinput Increment Down"
+msgstr "Ingr num aumentar abajo"
+
+
+msgctxt "WindowManager"
+msgid "Increase Proportional Influence"
+msgstr "Aumentar influencia proporcional"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Proportional Influence"
+msgstr "Disminuir influencia proporcional"
+
+
+msgctxt "WindowManager"
+msgid "Increase Max AutoIK Chain Length"
+msgstr "Aumentar longitud máx de cadena de AutoCI"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Max AutoIK Chain Length"
+msgstr "Disminuir longitud máx de cadena de AutoCI"
+
+
+msgctxt "WindowManager"
+msgid "Select Next Edge Slide Edge"
+msgstr "Seleccionar borde próximo para deslizar"
+
+
+msgctxt "WindowManager"
+msgid "Select Previous Edge Slide Edge"
+msgstr "Seleccionar borde anterior para deslizar"
+
+
+msgctxt "WindowManager"
+msgid "Adjust Proportional Influence"
+msgstr "Ajustar influencia proporcional"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Direction for Node Auto-Offset"
+msgstr "Alternar dirección desplaz autom de nodos"
+
+
+msgctxt "WindowManager"
+msgid "Rotate"
+msgstr "Rotar"
+
+
+msgctxt "WindowManager"
+msgid "Resize"
+msgstr "Redimensionar"
+
+
+msgctxt "WindowManager"
+msgid "Automatic Constraint"
+msgstr "Restricción automática"
+
+
+msgctxt "WindowManager"
+msgid "Automatic Constraint Plane"
+msgstr "Restricción automática plana"
+
+
+msgctxt "WindowManager"
+msgid "Precision Mode"
+msgstr "Modo de precisión"
 
 
 msgctxt "WindowManager"
@@ -101690,8 +102594,28 @@ msgstr "Cuentagotas - Mapa modal"
 
 
 msgctxt "WindowManager"
+msgid "Confirm Sampling"
+msgstr "Confirmar muestreo"
+
+
+msgctxt "WindowManager"
+msgid "Start Sampling"
+msgstr "Iniciar muestreo"
+
+
+msgctxt "WindowManager"
+msgid "Reset Sampling"
+msgstr "Restablecer muestreo"
+
+
+msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Cuentagotas - Mapa punto banda de color"
+
+
+msgctxt "WindowManager"
+msgid "Sample a Point"
+msgstr "Muestrear un punto"
 
 
 msgid "No selected keys, pasting over scene range"
@@ -102819,6 +103743,10 @@ msgid "Object %r already has a particle system"
 msgstr "El objeto %r ya contiene un sistema de partículas"
 
 
+msgid "New Preset"
+msgstr "Nuevo ajuste"
+
+
 msgid "Unknown file type: %r"
 msgstr "Tipo de archivo desconocido: %r"
 
@@ -103187,6 +104115,50 @@ msgid "Lists committers to Blender's source code"
 msgstr "Un listado de quienes han realizado aportes al código fuente de Blender"
 
 
+msgid "Mesh(es)"
+msgstr "Malla(s)"
+
+
+msgid "Curve(s)"
+msgstr "Curva(s)"
+
+
+msgid "Metaball(s)"
+msgstr "Metabola(s)"
+
+
+msgid "Volume(s)"
+msgstr "Volumen(es)"
+
+
+msgid "Grease Pencil(s)"
+msgstr "Lápiz(-ces) de cera"
+
+
+msgid "Armature(s)"
+msgstr "Esqueleto(s)"
+
+
+msgid "Lattice(s)"
+msgstr "Jaula(s)"
+
+
+msgid "Light(s)"
+msgstr "Luz(-ces)"
+
+
+msgid "Light Probe(s)"
+msgstr "Sonda(s) de luz"
+
+
+msgid "Camera(s)"
+msgstr "Cámara(s)"
+
+
+msgid "Speaker(s)"
+msgstr "Altavoz(-ces)"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Manual"
@@ -103202,6 +104174,14 @@ msgstr "Falla en evaluación de Python: "
 
 msgid "Failed to assign value: "
 msgstr "No fue posible asignar el valor: "
+
+
+msgid "Strip(s)"
+msgstr "Clip(s)"
+
+
+msgid "Object(s)"
+msgstr "Objeto(s)"
 
 
 msgid "Characters"
@@ -103224,6 +104204,14 @@ msgid "Branch: %s"
 msgstr "Rama: %s"
 
 
+msgid "Node(s)"
+msgstr "Nodo(s)"
+
+
+msgid "Collection(s)"
+msgstr "Colección(es)"
+
+
 msgid "Invalid regular expression (find): "
 msgstr "Expresión regular inválida (búsqueda): "
 
@@ -103237,8 +104225,20 @@ msgid "Type \"%s\" can not be found"
 msgstr "El tipo \"%s\" no puede ser encontrado"
 
 
+msgid "Material(s)"
+msgstr "Material(es)"
+
+
 msgid "Invalid regular expression (replace): "
 msgstr "Expresión regular inválida (reemplazo): "
+
+
+msgid "Bone(s)"
+msgstr "Hueso(s)"
+
+
+msgid "Edit Bone(s)"
+msgstr "Editar hueso(s)"
 
 
 msgid "Calculation Range"
@@ -103820,6 +104820,10 @@ msgstr "Mover hacia el fondo"
 
 msgid "Preserve"
 msgstr "Preservar"
+
+
+msgid "Name collisions: "
+msgstr "Colisiones de nombres: "
 
 
 msgid "Resolution Viewport"
@@ -105076,6 +106080,14 @@ msgid "Doppler Speed"
 msgstr "Velocidad Doppler"
 
 
+msgid "Needed"
+msgstr "Necesario"
+
+
+msgid "Visual"
+msgstr "Visual"
+
+
 msgid "XYZ to RGB"
 msgstr "XYZ a RVA"
 
@@ -105471,7 +106483,7 @@ msgstr "Desbloquear rastros"
 
 msgctxt "Operator"
 msgid "Frame All Fit"
-msgstr "Enmarcar todo"
+msgstr "Enmarcar todo (ajustado)"
 
 
 msgid "Solve error: %.2f px"
@@ -107085,6 +108097,10 @@ msgid "Layered Recording"
 msgstr "Grabación por capas"
 
 
+msgid "    Operator"
+msgstr "    Operator"
+
+
 msgid "Drag:"
 msgstr "Arrastrar:"
 
@@ -107499,7 +108515,7 @@ msgstr "Usar colores personalizados"
 
 
 msgid "Sculpt Overlay Color"
-msgstr "Color de superposición de escultura"
+msgstr "Color de superposición de esculpido"
 
 
 msgid "Node Auto-Offset Margin"
@@ -108347,7 +109363,7 @@ msgstr "Definir pivote"
 
 msgctxt "Operator"
 msgid "Transfer Sculpt Mode"
-msgstr "Transferir modo Escultura"
+msgstr "Transferir modo Esculpido"
 
 
 msgctxt "Operator"
@@ -109850,7 +110866,7 @@ msgstr "No soportado en modo de topología dinámica"
 
 
 msgid "Not supported in sculpt mode"
-msgstr "No soportado en modo de escultura"
+msgstr "No soportado en modo de esculpido"
 
 
 msgid "No AnimData to set action on"
@@ -110956,6 +111972,22 @@ msgid "Eevee material conversion problem. Error in console"
 msgstr "Problema en conversión de material de Eevee (ver error en consola)"
 
 
+msgid "2D_Animation"
+msgstr "Animación_2D"
+
+
+msgid "Sculpting"
+msgstr "Esculpido"
+
+
+msgid "VFX"
+msgstr "Efectos_visuales"
+
+
+msgid "Video_Editing"
+msgstr "Edición_de_video"
+
+
 msgid "Unable to make version backup: filename too short"
 msgstr "No fue posible hacer una versión de respaldo: nombre de archivo demasiado corto"
 
@@ -112053,6 +113085,26 @@ msgid "Active region not set"
 msgstr "Región activa no definida"
 
 
+msgid "Skin_Light"
+msgstr "Piel_luz"
+
+
+msgid "Skin_Shadow"
+msgstr "Piel__sombra"
+
+
+msgid "Eyes"
+msgstr "Ojos"
+
+
+msgid "Pupils"
+msgstr "Pupilas"
+
+
+msgid "Grey"
+msgstr "Gris"
+
+
 msgid "Unable to add a new Armature modifier to object"
 msgstr "No es posible agregar un nuevo modificador Esqueleto al objeto"
 
@@ -112354,7 +113406,7 @@ msgstr "Las primitivas no pueden ser agregadas porque la capa activa se encuentr
 
 
 msgid "GPencil Sculpt: %s Stroke  | LMB to paint | RMB/Escape to Exit | Ctrl to Invert Action | Wheel Up/Down for Size  | Shift-Wheel Up/Down for Strength"
-msgstr "GPencil Escultura: trazo %s  | clic Izq. para pintar | clic Der/Esc para salir | Ctrl para invertir acción | Rueda para tamaño  | May. + rueda para intensidad"
+msgstr "Esculpido LápCera: trazo %s  | clic Izq. para pintar | clic Der/Esc para salir | Ctrl para invertir acción | Rueda para tamaño  | May. + rueda para intensidad"
 
 
 msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
@@ -112418,11 +113470,11 @@ msgstr "Error al evaluar el número, ver editor Info para obtener más detalles"
 
 
 msgid "Missing Panel: %s"
-msgstr "Panel no encontrado: %s"
+msgstr "Panel faltante: %s"
 
 
 msgid "Missing Menu: %s"
-msgstr "Menú no encontrado: %s"
+msgstr "Menú faltante: %s"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -112614,7 +113666,7 @@ msgstr "Soltar %s sobre el contenedor %d de %s"
 
 
 msgid "Menu Missing:"
-msgstr "Menú no encontrado:"
+msgstr "Menú faltante:"
 
 
 msgid "Animate property"
@@ -112797,10 +113849,6 @@ msgstr "Bloque de ID:"
 
 msgid "No Properties"
 msgstr "Sin propiedades"
-
-
-msgid "Reset"
-msgstr "Restablecer"
 
 
 msgid "More..."
@@ -113778,7 +114826,7 @@ msgstr "No es posible agregar más de %i capas de colores de vértices"
 
 
 msgid "Cannot add more than %i sculpt vertex color layers"
-msgstr "No es posible agregar más de %i capas de colores de vértices de escultura"
+msgstr "No es posible agregar más de %i capas de colores de vértices de esculpido"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -114460,7 +115508,7 @@ msgstr "No es posible aplicar modificadores en modo edición"
 
 
 msgid "Constructive modifier cannot be applied to multi-res data in sculpt mode"
-msgstr "No es posible aplicar un modificador de construcción a datos de resolución múltiple en modo Escultura"
+msgstr "No es posible aplicar un modificador de construcción a datos de resolución múltiple en modo Esculpido"
 
 
 msgid "Reshape can work only with higher levels of subdivisions"
@@ -115356,7 +116404,7 @@ msgstr "se esperaba que un área de la línea de tiempo o animación estuviera a
 
 
 msgid "Context missing active object"
-msgstr "Contexto objeto activo faltante"
+msgstr "Falta objeto activo en el contexto"
 
 
 msgid "Cannot edit library linked or non-editable override object"
@@ -115425,15 +116473,15 @@ msgstr "Superficie de malla evaluada vacía"
 
 
 msgid "Missing surface mesh"
-msgstr "No se encuentra una superficie de malla"
+msgstr "Superficie de malla faltante"
 
 
 msgid "Missing UV map for attaching curves on original surface"
-msgstr "No se encuentra un mapa UV para anclar las curvas a la superficie original"
+msgstr "Mapa UV faltante para anclar las curvas a la superficie original"
 
 
 msgid "Missing UV map for attaching curves on evaluated surface"
-msgstr "No se encuentra un mapa UV para anclar las curvas a la superficie evaluada"
+msgstr "Mapa UV faltante para anclar las curvas a la superficie evaluada"
 
 
 msgid "Invalid UV map: UV islands must not overlap"
@@ -115509,7 +116557,7 @@ msgstr "No fue posible crear el buffer OpenGL fuera de pantalla: %s"
 
 
 msgid "Missing%s%s%s%s detected!"
-msgstr "Se detectó %s%s%s%s faltante!"
+msgstr "¡Se detectó %s%s%s%s faltante!"
 
 
 msgid "Active group is locked, aborting"
@@ -117366,6 +118414,10 @@ msgid "This override property does not exist in current data, it will be removed
 msgstr "Esta propiedad redefinida no existe en los datos actuales, será removida la próxima vez que el archivo .blend sea guardado"
 
 
+msgid "Added through override"
+msgstr "Agregado mediante una redefinición"
+
+
 msgid "(empty)"
 msgstr "(vacío)"
 
@@ -118651,8 +119703,8 @@ msgid "Illumination Filtering"
 msgstr "Filtrado de iluminación"
 
 
-msgid "Create"
-msgstr "Crear"
+msgid "Crease (Angle Cached)"
+msgstr "Plegado (ángulo en caché)"
 
 
 msgid "Material Borders"
@@ -118984,7 +120036,7 @@ msgstr "Contexto inválido para el conjunto de claves"
 
 
 msgid "Incomplete built-in keying set, appears to be missing type info"
-msgstr "Conjunto de claves predefinido incompleto, parece carecer de información de tipo"
+msgstr "Conjunto de claves predefinido incompleto, parece faltar información de tipo"
 
 
 msgid "Armature '%s' not in edit mode, cannot add an editbone"
@@ -119023,12 +120075,32 @@ msgid "Background image cannot be removed"
 msgstr "La imagen de fondo no puede ser removida"
 
 
+msgid "Collection '%s' is not an original ID"
+msgstr "La colección '%s' no es un ID original"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
+msgstr "No fue posible (des)vincular el objeto '%s' porque la colección '%s' se encuentra redefinida"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
+msgstr "No fue posible (des)vincular el objeto '%s' porque la colección '%s' se encuentra vinculada"
+
+
 msgid "Object '%s' already in collection '%s'"
 msgstr "El objeto '%s' ya está presente en la colección '%s'"
 
 
 msgid "Object '%s' not in collection '%s'"
 msgstr "El objeto '%s' no está en la colección '%s'"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
+msgstr "No fue posible (des)vincular la colección '%s' porque la colección '%s' se encuentra redefinida"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
+msgstr "No fue posible (des)vincular la colección '%s' porque la colección '%s' se encuentra vinculada"
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -119309,7 +120381,7 @@ msgstr "Color de vértices '%s' no encontrado"
 
 
 msgid "Sculpt vertex color '%s' not found"
-msgstr "Color de vértices de escultura '%s' no encontrado"
+msgstr "Color de vértices de esculpido '%s' no encontrado"
 
 
 msgid "Texture layer '%s' not found"
@@ -120082,7 +121154,7 @@ msgstr "Los vértices de la jaula cambiaron de %d a %d"
 
 
 msgid "Bind data missing"
-msgstr "No se encuentran datos de enlace"
+msgstr "Datos de enlace faltantes"
 
 
 msgid "MeshSequenceCache"
@@ -120166,7 +121238,7 @@ msgstr "Dependencias internas"
 
 
 msgid "Missing property for input socket \"%s\""
-msgstr "No se encuentra la propiedad para el conector de entrada \"%s\""
+msgstr "Propiedad faltante para el conector de entrada \"%s\""
 
 
 msgid "Property type does not match input socket \"(%s)\""
@@ -121080,8 +122152,32 @@ msgid "End (Length)"
 msgstr "Longitud final"
 
 
+msgid "Node only works for curves objects"
+msgstr "El nodo sólo funciona para curvas"
+
+
 msgid "Surface UV map not defined"
 msgstr "Mapa UV de la superficie no definido"
+
+
+msgid "Curves not attached to a surface"
+msgstr "Las curvas no están ancladas a ninguna superficie"
+
+
+msgid "Surface has no mesh"
+msgstr "La superficie no contiene ninguna malla"
+
+
+msgid "Evaluated surface missing UV map: \"%s\""
+msgstr "Falta un mapa UV en la superficie evaluada: \"%s\""
+
+
+msgid "Original surface missing UV map: \"%s\""
+msgstr "Falta un mapa UV en la superficie original: \"%s\""
+
+
+msgid "Evaluated surface missing attribute: \"rest_position\""
+msgstr "Falta un atributo en la superficie evaluada: \"rest_position\""
 
 
 msgid "Curves are not attached to any UV map"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -36143,6 +36143,10 @@ msgid "Relocate the library under cursor"
 msgstr "Riloca la libreria sotto il cursore"
 
 
+msgid "Reset"
+msgstr "Ripristina"
+
+
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Assegna Materiale all'Oggetto"
@@ -57473,10 +57477,6 @@ msgstr "Blocco-ID:"
 
 msgid "No Properties"
 msgstr "Nessuna Proprietà"
-
-
-msgid "Reset"
-msgstr "Ripristina"
 
 
 msgid "Pos"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -59254,30 +59254,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Зробити усіх користувачів виділених блоків даних для використання замість поточного (клацнутого)"
 
 
-msgid "Reset this local override to its linked values"
-msgstr "Скинути локальне заміщення до його пов'язаних значень"
-
-
-msgid "Reset Library Override Hierarchy"
-msgstr "Скинути Ієрархію Заміщення Бібліотеки"
-
-
-msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "Скинути це локальне заміщення до його пов'язаних даних, а також його ієрархію залежностей"
-
-
-msgid "Resync Library Override Hierarchy"
-msgstr "Пересинхронізувати Ієрархію Заміщення Бібліотеки"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "Перебудувати це локальне заміщення з його пов'язаного посилання, а також його ієрархію залежностей"
-
-
-msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "Видалити це локальне заміщення (включаючи його ієрархію залежностей заміщення) та перепов'язати його використання з пов'язаними блоками даних"
-
-
 msgid "Paste"
 msgstr "Вставляння"
 
@@ -59429,6 +59405,10 @@ msgstr "Перерозмістити бібліотеку"
 
 msgid "Relocate the library under cursor"
 msgstr "Перерозмістити бібліотеку, назва якої під курсором"
+
+
+msgid "Reset"
+msgstr "Скинути"
 
 
 msgctxt "Operator"
@@ -98797,10 +98777,6 @@ msgstr "ID-блок:"
 
 msgid "No Properties"
 msgstr "Немає властивостей"
-
-
-msgid "Reset"
-msgstr "Скинути"
 
 
 msgid "More..."

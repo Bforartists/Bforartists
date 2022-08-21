@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3145,6 +3145,10 @@ msgid "Reload"
 msgstr "โหลดใหม่"
 
 
+msgid "Reset"
+msgstr "ตั้งค่าใหม่"
+
+
 msgid "(De)select all"
 msgstr "(ยกเลิก)เลือกทั้งหมด"
 
@@ -5208,10 +5212,6 @@ msgstr "ทำอีกครั้ง"
 msgctxt "Operator"
 msgid "Click"
 msgstr "คลิก"
-
-
-msgid "Reset"
-msgstr "ตั้งค่าใหม่"
 
 
 msgid "More..."
