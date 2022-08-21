@@ -4,7 +4,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (3, 4, 8),
+    "version": (3, 4, 9),
     'blender': (3, 3, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -406,8 +406,8 @@ class ExportGLTF2_Base:
     export_anim_single_armature: BoolProperty(
         name='Export all Armature Actions',
         description=(
-            "Export all actions of a single armature. "
-            "WARNING: works only if you exports a single armature"
+            "Export all actions, bound to a single armature. "
+            "WARNING: Option does not support exports including multiple armatures"
         ),
         default=True
     )

@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-08-02 09:28+0200\n"
+"PO-Revision-Date: 2022-08-10 09:02+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -334,6 +334,10 @@ msgstr "KHR_materials_variants_ui"
 
 msgid "Displays glTF UI to manage material variants"
 msgstr "Zobrazí užívateľské rozhranie glTF na správu variantov materiálu"
+
+
+msgid "Displays glTF Material Output node in Shader Editor (Menu Add > Output)"
+msgstr "Zobrazí uzol Výstup materiálu glTF v editore tieňovačov (ponuka Pridať > Výstup)"
 
 
 msgid "Fribidi Library"
@@ -17282,8 +17286,32 @@ msgid "Select feature lines that comes from lit or shaded regions. Will not affe
 msgstr "Vyberie línie prvkov, ktoré pochádzajú z osvetlených alebo zatienených oblastí. Neovplyvní vrhaný tieň a svetlý obrys, pretože sú na hranici"
 
 
+msgid "Not filtering any lines based on illumination region"
+msgstr "Bez filtrovania žiadnych čiar na základe oblasti osvetlenia"
+
+
+msgid "Illuminated"
+msgstr "Osvetlené"
+
+
+msgid "Only selecting lines from illuminated regions"
+msgstr "Len výber čiar z osvetlených oblastí"
+
+
 msgid "Shaded"
 msgstr "Tieňovaný"
+
+
+msgid "Only selecting lines from shaded regions"
+msgstr "Len výber čiar z tieňovaných oblastí"
+
+
+msgid "Illuminated (Enclosed Shapes)"
+msgstr "Osvetlené (uzavreté tvary)"
+
+
+msgid "Selecting lines from lit regions, and make the combination of contour, light contour and shadow lines into enclosed shapes"
+msgstr "Výber čiar z osvetlených oblastí a vytvorenie kombinácie obrysov, svetlých obrysov a tieňových línií do uzavretých tvarov"
 
 
 msgid "Silhouette Filtering"
@@ -29725,6 +29753,14 @@ msgstr "Položky"
 
 msgid "Items in the keymap, linking an operator to an input event"
 msgstr "Položky priradenia klávesy, prepojenie operátora so vstupnými udalosťami"
+
+
+msgid "Modal Events"
+msgstr "Modálne udalosti"
+
+
+msgid "Give access to the possible event values of this modal keymap's items (#KeyMapItem.propvalue), for API introspection"
+msgstr "Dava prístup k možným hodnotám udalostí položiek tejto modálnej kľúčnej mapy (#KeyMapItem.propvalue) pre introspekciu API"
 
 
 msgid "Name of the key map"
@@ -62638,6 +62674,10 @@ msgid "Search for a node by name and focus and select it"
 msgstr "Vyhľadá uzol podľa názvu a zamerá a vyberie ho"
 
 
+msgid "Add a node to the active tree for glTF export"
+msgstr "Pridáva uzol do aktívneho stromu pre export glTF"
+
+
 msgctxt "Operator"
 msgid "Edit Group"
 msgstr "Upraviť skupinu"
@@ -66827,78 +66867,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "Aby všetci používatelia vybraných blokov údajov použili namiesto jedného aktuálneho (kliknutie)"
 
 
-msgid "Make Library Override Single"
-msgstr "Vytvoriť jediný prepis knižnice"
-
-
-msgid "Make a single, out-of-hierarchy local override of this linked data-block - only applies to active Outliner item"
-msgstr "Vytvorí jediný lokálny prepis tohto prepojeného bloku údajov mimo hierarchie - platí len pre aktívnu položku Líniového prehľadu"
-
-
-msgid "Make Library Override Hierarchy"
-msgstr "Vytvoriť hierarchiu prepisov knižnice"
-
-
-msgid "Make a local override of this linked data-block, and its hierarchy of dependencies - only applies to active Outliner item"
-msgstr "Vytvorí lokálny prepis tohto prepojeného bloku údajov a jeho hierarchie závislostí - platí len pre aktívnu položku Líniového prehľadu"
-
-
-msgid "Make Library Override Editable"
-msgstr "Vytvoriť upraviteľný prepis knižnice"
-
-
-msgid "Make the library override data-block editable"
-msgstr "Vytvorí upraviteľné bloky údajov prepisu knižnice"
-
-
-msgid "Reset Library Override Single"
-msgstr "Resetovať jednotlivý prepis knižnice"
-
-
-msgid "Reset this local override to its linked values"
-msgstr "Resetuje tento lokálny prepis prepojeného bloku údajov"
-
-
-msgid "Reset Library Override Hierarchy"
-msgstr "Resetovať hierarchiu prepisu knižnice"
-
-
-msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "Resetuje tento lokálny prepis na súvisiace hodnoty, ako aj na hierarchiu závislostí"
-
-
-msgid "Resync Library Override Hierarchy"
-msgstr "Hierarchia opätovnej synchronizácie prepisu knižnice"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "Znova zostaví tento lokálny prepis z jeho prepojenej referencie, ako aj z jeho hierarchie závislostí"
-
-
-msgid "Resync Library Override Hierarchy Enforce"
-msgstr "Vynútiť hierarchiu opätovnej synchronizácie prepisu knižnice"
-
-
-msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
-msgstr "Znovu zostaví tento lokálny prepis z jeho prepojenej referencie, ako aj z jeho hierarchie závislostí, vynútenie tejto hierarchie tak, aby zodpovedala prepojeným údajom (t. j. ignorovanie ukončenia prepisu na vlastnosti ukazovateľa blokov údajov)"
-
-
-msgid "Clear Library Override Single"
-msgstr "Zmazať jednotlivý prepis knižnice"
-
-
-msgid "Delete this local override and relink its usages to the linked data-blocks if possible, else reset it and mark it as non editable"
-msgstr "Odstráni tento lokálny prepis a obnoví prepojenie jeho použitia s prepojenými blokmi údajov, ak je to možné, inak ho resetujte a označí ho ako neupraviteľný"
-
-
-msgid "Clear Library Override Hierarchy"
-msgstr "Vymazať hierarchiu prepisu knižníc"
-
-
-msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "Odstráni tento lokálny prepis (vrátane jeho hierarchie závislostí prepísania) a znova prepojí jeho použitie s prepojenými blokmi údajov"
-
-
 msgid "Paste"
 msgstr "Prilepiť"
 
@@ -67058,6 +67026,14 @@ msgstr "Premiestniť knižnicu"
 
 msgid "Relocate the library under cursor"
 msgstr "Premiestni knižnicu pod kurzorom"
+
+
+msgid "Create"
+msgstr "Vytvoriť"
+
+
+msgid "Reset"
+msgstr "Resetovať"
 
 
 msgctxt "Operator"
@@ -99747,6 +99723,54 @@ msgid "Multiplication factor when using the fast or slow modifiers"
 msgstr "Faktor znásobenia pri použití rýchlych alebo pomalých modifikátorov"
 
 
+msgid "Open window"
+msgstr "Otvoriť okno"
+
+
+msgid "Window height"
+msgstr "Výška okna"
+
+
+msgid "Parent Window"
+msgstr "Rodičovské okno"
+
+
+msgid "Active workspace and scene follow this window"
+msgstr "Aktívny pracovný priestor a scéna nasledujú po tomto okne"
+
+
+msgid "Active scene to be edited in the window"
+msgstr "Aktívna scéna na úpravu v okne"
+
+
+msgid "Active workspace screen showing in the window"
+msgstr "Obrazovka aktívneho pracovného priestoru zobrazujúca sa v okne"
+
+
+msgid "Active View Layer"
+msgstr "Vrstva aktívneho zobrazenia"
+
+
+msgid "The active workspace view layer showing in the window"
+msgstr "Vrstva zobrazenia aktívneho pracovného priestoru zobrazená v okne"
+
+
+msgid "Window width"
+msgstr "Šírka okna"
+
+
+msgid "Active workspace showing in the window"
+msgstr "Aktívny pracovný priestor zobrazený v tomto okne"
+
+
+msgid "Horizontal location of the window"
+msgstr "Horizontálne umiestnenie okna"
+
+
+msgid "Vertical location of the window"
+msgstr "Vertikálne umiestnenie okna"
+
+
 msgid "Work Space Tool"
 msgstr "Nástroj pracovného priestoru"
 
@@ -101148,8 +101172,180 @@ msgstr "Typická mapa nástroja noža"
 
 
 msgctxt "WindowManager"
+msgid "Cancel"
+msgstr "Zrušiť"
+
+
+msgctxt "WindowManager"
+msgid "Confirm"
+msgstr "Potvrdiť"
+
+
+msgctxt "WindowManager"
+msgid "Undo"
+msgstr "Späť"
+
+
+msgctxt "WindowManager"
+msgid "Snap to Midpoints On"
+msgstr "Prichytiť pri stredovom bode zapnuté"
+
+
+msgctxt "WindowManager"
+msgid "Snap to Midpoints Off"
+msgstr "Prichytiť pri stredovom bode vypnuté"
+
+
+msgctxt "WindowManager"
+msgid "Ignore Snapping On"
+msgstr "Ignorovať prichytenie zapnuté"
+
+
+msgctxt "WindowManager"
+msgid "Ignore Snapping Off"
+msgstr "Ignorovať prichytenie vypnuté"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Angle Snapping"
+msgstr "Prepnúť uhol prichytenia"
+
+
+msgctxt "WindowManager"
+msgid "Cycle Angle Snapping Relative Edge"
+msgstr "Cyklus prichytenia uhla cyklu Relatívna hrana"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Cut Through"
+msgstr "Prepnúť prerezať"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Distance and Angle Measurements"
+msgstr "Prepnúť meranie vzdialenosti a uhla"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Depth Testing"
+msgstr "Prepnúť testovanie hĺbky"
+
+
+msgctxt "WindowManager"
+msgid "End Current Cut"
+msgstr "Koniec súčasného rezu"
+
+
+msgctxt "WindowManager"
+msgid "Add Cut"
+msgstr "Pridať rez"
+
+
+msgctxt "WindowManager"
+msgid "Add Cut Closed"
+msgstr "Pridať uzatvorený rez"
+
+
+msgctxt "WindowManager"
+msgid "Panning"
+msgstr "Posúvanie"
+
+
+msgctxt "WindowManager"
+msgid "X Axis Locking"
+msgstr "Uzamknutie osi X"
+
+
+msgctxt "WindowManager"
+msgid "Y Axis Locking"
+msgstr "Uzamknutie osi Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis Locking"
+msgstr "Uzamknutie osi Z"
+
+
+msgctxt "WindowManager"
 msgid "Custom Normals Modal Map"
 msgstr "Typická mapa vlastných normálov"
+
+
+msgctxt "WindowManager"
+msgid "Reset"
+msgstr "Resetovať"
+
+
+msgid "Reset normals to initial ones"
+msgstr "Resetuje normály na počiatočné hodnoty"
+
+
+msgctxt "WindowManager"
+msgid "Invert"
+msgstr "Invertovať"
+
+
+msgid "Toggle inversion of affected normals"
+msgstr "Prepína inverziu dotknutých normálov"
+
+
+msgctxt "WindowManager"
+msgid "Spherize"
+msgstr "Sféricky"
+
+
+msgid "Interpolate between new and original normals"
+msgstr "Interpoluje medzi novými a pôvodnými normálmi"
+
+
+msgctxt "WindowManager"
+msgid "Align"
+msgstr "Zarovnať"
+
+
+msgctxt "WindowManager"
+msgid "Use Mouse"
+msgstr "Použiť myš"
+
+
+msgid "Follow mouse cursor position"
+msgstr "Sleduje polohu kurzorom myši"
+
+
+msgctxt "WindowManager"
+msgid "Use Pivot"
+msgstr "Použiť otočný bod"
+
+
+msgid "Use current rotation/scaling pivot point coordinates"
+msgstr "Použije súradnice otočného bodu súčasnej rotácie/zmeny mierky"
+
+
+msgctxt "WindowManager"
+msgid "Use Object"
+msgstr "Použiť objekt"
+
+
+msgid "Use current edited object's location"
+msgstr "Použije súčasnú polohu upravovaného objektu"
+
+
+msgctxt "WindowManager"
+msgid "Set and Use 3D Cursor"
+msgstr "Nastaviť a použiť 3D kurzor"
+
+
+msgid "Set new 3D cursor position and use it"
+msgstr "Nastaví novú polohu 3D kurzora a použite ju"
+
+
+msgctxt "WindowManager"
+msgid "Select and Use Mesh Item"
+msgstr "Vybrať a použiť položku povrchovej siete"
+
+
+msgid "Select new active mesh element and use its location"
+msgstr "Vyberie nový aktívny prvok povrchovej siete a použite jeho polohu"
 
 
 msgctxt "WindowManager"
@@ -101157,9 +101353,152 @@ msgid "Bevel Modal Map"
 msgstr "Typická mapa skosenia"
 
 
+msgid "Cancel bevel"
+msgstr "Zrušiť skosenie"
+
+
+msgid "Confirm bevel"
+msgstr "Potvrdiť skosenie"
+
+
+msgctxt "WindowManager"
+msgid "Change Offset"
+msgstr "Posuv zmeny"
+
+
+msgid "Value changes offset"
+msgstr "Hodnota zmeny posuvu"
+
+
+msgctxt "WindowManager"
+msgid "Change Profile"
+msgstr "Zmeniť profil"
+
+
+msgid "Value changes profile"
+msgstr "Hodnota zmeny profilu"
+
+
+msgctxt "WindowManager"
+msgid "Change Segments"
+msgstr "Zmeniť segmenty"
+
+
+msgid "Value changes segments"
+msgstr "Hodnota zmien segmentov"
+
+
+msgctxt "WindowManager"
+msgid "Increase Segments"
+msgstr "Zvýšiť segmenty"
+
+
+msgid "Increase segments"
+msgstr "Zvýši segmenty"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Segments"
+msgstr "Znížiť segmenty"
+
+
+msgid "Decrease segments"
+msgstr "Zníži segmenty"
+
+
+msgctxt "WindowManager"
+msgid "Change Offset Mode"
+msgstr "Zmeniť režim posuvu"
+
+
+msgid "Cycle through offset modes"
+msgstr "Cyklické prepínanie medzi režimami posuvu"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Clamp Overlap"
+msgstr "Prepnúť prichytenie prekrytia"
+
+
+msgid "Toggle clamp overlap flag"
+msgstr "Prepína príznak prichytenie prekrytia"
+
+
+msgctxt "WindowManager"
+msgid "Change Affect Type"
+msgstr "Zmeniť typ vplyvu"
+
+
+msgid "Change which geometry type the operation affects, edges or vertices"
+msgstr "Zmení typ geometrie operácie vplyvu, hrán alebo vrcholov"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Harden Normals"
+msgstr "Prepnúť tvrdé normály"
+
+
+msgid "Toggle harden normals flag"
+msgstr "Prepína príznak tvrdosti normálov"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Mark Seam"
+msgstr "Prepnúť označenie švu"
+
+
+msgid "Toggle mark seam flag"
+msgstr "Prepína príznak onačenia švu"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Mark Sharp"
+msgstr "Prepnúť označenie ostrosti"
+
+
+msgid "Toggle mark sharp flag"
+msgstr "Prepína príznak označenia ostrosti"
+
+
+msgctxt "WindowManager"
+msgid "Change Outer Miter"
+msgstr "Zmeniť vonkajší sklon"
+
+
+msgid "Cycle through outer miter kinds"
+msgstr "Cyklicky prechádza druhmi vonkajších sklonov"
+
+
+msgctxt "WindowManager"
+msgid "Change Inner Miter"
+msgstr "Zmeniť vnútorný sklon"
+
+
+msgid "Cycle through inner miter kinds"
+msgstr "Cyklicky prechádza druhmi vnútorných sklonov"
+
+
+msgctxt "WindowManager"
+msgid "Cycle through profile types"
+msgstr "Cyklicky prepínať medzi typmi profilov"
+
+
+msgctxt "WindowManager"
+msgid "Change Intersection Method"
+msgstr "Zmeniť metódu priesečníka"
+
+
+msgid "Cycle through intersection methods"
+msgstr "Cyklicky prechádza metódami priesečníkov"
+
+
 msgctxt "WindowManager"
 msgid "Paint Stroke Modal"
 msgstr "Typické maľovanie ťahu"
+
+
+msgid "Cancel and undo a stroke in progress"
+msgstr "Zruší a vráti späť prebiehajúci ťah"
 
 
 msgctxt "WindowManager"
@@ -101168,13 +101507,133 @@ msgstr "Typické rozšírenie tvarovania"
 
 
 msgctxt "WindowManager"
+msgid "Toggle Preserve State"
+msgstr "Prepnúť stav uchovania"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Gradient"
+msgstr "Prepnúť stupňovanie"
+
+
+msgctxt "WindowManager"
+msgid "Geodesic recursion step"
+msgstr "Krok geodetickej rekurzie"
+
+
+msgctxt "WindowManager"
+msgid "Topology recursion Step"
+msgstr "Krok topologickej rekurzie"
+
+
+msgctxt "WindowManager"
+msgid "Move Origin"
+msgstr "Presunúť počiatok"
+
+
+msgctxt "WindowManager"
+msgid "Geodesic Falloff"
+msgstr "Geodetický dopad"
+
+
+msgctxt "WindowManager"
+msgid "Topology Falloff"
+msgstr "Topologický dopad"
+
+
+msgctxt "WindowManager"
+msgid "Diagonals Falloff"
+msgstr "Diagonálny dopad"
+
+
+msgctxt "WindowManager"
+msgid "Spherical Falloff"
+msgstr "Sférický dopad"
+
+
+msgctxt "WindowManager"
+msgid "Snap expand to Face Sets"
+msgstr "Prichytiť rozšírenie na sústavu plôšok"
+
+
+msgctxt "WindowManager"
+msgid "Loop Count Increase"
+msgstr "Zvýšiť počet slučiek"
+
+
+msgctxt "WindowManager"
+msgid "Loop Count Decrease"
+msgstr "Znížiť počet slučiek"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Brush Gradient"
+msgstr "Prepnúť stupňovanie štetca"
+
+
+msgctxt "WindowManager"
+msgid "Texture Distortion Increase"
+msgstr "Zvýšiť skreslenie textúry"
+
+
+msgctxt "WindowManager"
+msgid "Texture Distortion Decrease"
+msgstr "Znížiť skreslenie textúry"
+
+
+msgctxt "WindowManager"
 msgid "Paint Curve"
-msgstr "Maľovanie krivky"
+msgstr "Maľovať krivky"
 
 
 msgctxt "WindowManager"
 msgid "Curve Pen Modal Map"
 msgstr "Typická mapa pera krivky"
+
+
+msgctxt "WindowManager"
+msgid "Free-Align Toggle"
+msgstr "Prepnúť Voľný-Zarovnaný"
+
+
+msgid "Move handle of newly added point freely"
+msgstr "Voľne posúva manipulátor novo pridaného bodu"
+
+
+msgctxt "WindowManager"
+msgid "Move Adjacent Handle"
+msgstr "Presunúť susedný manipulátor"
+
+
+msgid "Move the closer handle of the adjacent vertex"
+msgstr "Presunie bližší manipulátor susedného vrcholu"
+
+
+msgctxt "WindowManager"
+msgid "Move Entire Point"
+msgstr "Presunúť celý bod"
+
+
+msgid "Move the entire point using its handles"
+msgstr "Presunie celý bod použitím jeho manipulátora"
+
+
+msgctxt "WindowManager"
+msgid "Link Handles"
+msgstr "Prepojenie manipulátorov"
+
+
+msgid "Mirror the movement of one handle onto the other"
+msgstr "Zrkadlí pohyb jedného manipulátora na druhý"
+
+
+msgctxt "WindowManager"
+msgid "Lock Angle"
+msgstr "Uhol uzamknutia"
+
+
+msgid "Move the handle along its current angle"
+msgstr "Presunie manipulátor v aktuálnom uhle"
 
 
 msgctxt "WindowManager"
@@ -101188,8 +101647,185 @@ msgstr "Typické premiestnenie 3D zobrazenia"
 
 
 msgctxt "WindowManager"
+msgid "Snap On"
+msgstr "Prichytiť"
+
+
+msgctxt "WindowManager"
+msgid "Snap Off"
+msgstr "Uvoľniť"
+
+
+msgctxt "WindowManager"
+msgid "Fixed Aspect On"
+msgstr "Opravený aspekt zapnutý"
+
+
+msgctxt "WindowManager"
+msgid "Fixed Aspect Off"
+msgstr "Opravený aspekt vypnutý"
+
+
+msgctxt "WindowManager"
+msgid "Center Pivot On"
+msgstr "Stredový kontingenčný panel zapnutý"
+
+
+msgctxt "WindowManager"
+msgid "Center Pivot Off"
+msgstr "Stredový kontingenčný bod vypnutý"
+
+
+msgctxt "WindowManager"
 msgid "View3D Walk Modal"
 msgstr "Typická chôdza 3D zobrazenia"
+
+
+msgctxt "WindowManager"
+msgid "Forward"
+msgstr "Dopredu"
+
+
+msgctxt "WindowManager"
+msgid "Backward"
+msgstr "Dozadu"
+
+
+msgctxt "WindowManager"
+msgid "Left"
+msgstr "Doľava"
+
+
+msgctxt "WindowManager"
+msgid "Right"
+msgstr "Doprava"
+
+
+msgctxt "WindowManager"
+msgid "Up"
+msgstr "Nahor"
+
+
+msgctxt "WindowManager"
+msgid "Down"
+msgstr "Nadol"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Forward"
+msgstr "Zastaviť pohyb dopredu"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Backward"
+msgstr "Zastaviť režim dozadu"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Left"
+msgstr "Zastaviť posun doľava"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Right"
+msgstr "Zastaviť režim doprava"
+
+
+msgctxt "WindowManager"
+msgid "Stop Move Up"
+msgstr "Zastaviť posun nahor"
+
+
+msgctxt "WindowManager"
+msgid "Stop Mode Down"
+msgstr "Zastaviť režim nadol"
+
+
+msgctxt "WindowManager"
+msgid "Teleport"
+msgstr "Teleportácia"
+
+
+msgid "Move forward a few units at once"
+msgstr "Presunie dopredu o niekoľko jednotiek naraz"
+
+
+msgctxt "WindowManager"
+msgid "Accelerate"
+msgstr "Zrýchliť"
+
+
+msgctxt "WindowManager"
+msgid "Decelerate"
+msgstr "Spomaliť"
+
+
+msgctxt "WindowManager"
+msgid "Fast"
+msgstr "Rýchlo"
+
+
+msgid "Move faster (walk or fly)"
+msgstr "Pohybujete sa rýchlejšie (chôdza alebo lietanie)"
+
+
+msgctxt "WindowManager"
+msgid "Fast (Off)"
+msgstr "Rýchlo (vypnuté)"
+
+
+msgid "Resume regular speed"
+msgstr "Obnoví bežnú rýchlosť"
+
+
+msgctxt "WindowManager"
+msgid "Slow"
+msgstr "Pomaly"
+
+
+msgid "Move slower (walk or fly)"
+msgstr "Pohybujete sa pomalšie (chôdza alebo lietanie)"
+
+
+msgctxt "WindowManager"
+msgid "Slow (Off)"
+msgstr "Pomaly (vypnuté)"
+
+
+msgctxt "WindowManager"
+msgid "Jump"
+msgstr "Skok"
+
+
+msgid "Jump when in walk mode"
+msgstr "Skok v režime chôdze"
+
+
+msgctxt "WindowManager"
+msgid "Jump (Off)"
+msgstr "Skok (vypnuté)"
+
+
+msgid "Stop pushing jump"
+msgstr "Prestanete skákať"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Gravity"
+msgstr "Prepnúť gravitáciu"
+
+
+msgid "Toggle gravity effect"
+msgstr "Prepína efekt gravitácie"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis Correction"
+msgstr "Korekcia osi Z"
+
+
+msgid "Z axis correction"
+msgstr "Korekcia osi Z"
 
 
 msgctxt "WindowManager"
@@ -101198,13 +101834,81 @@ msgstr "Typické lietanie 3D zobrazenia"
 
 
 msgctxt "WindowManager"
+msgid "Pan"
+msgstr "Posúvať"
+
+
+msgctxt "WindowManager"
+msgid "Pan (Off)"
+msgstr "Posúvať (vypnuté)"
+
+
+msgctxt "WindowManager"
+msgid "X Axis Correction"
+msgstr "Korekcia osi X"
+
+
+msgid "X axis correction (toggle)"
+msgstr "Korekcia osi X (prepnutie)"
+
+
+msgid "Z axis correction (toggle)"
+msgstr "Korekcia osi Z (prepnutie)"
+
+
+msgctxt "WindowManager"
+msgid "Precision"
+msgstr "Presnosť"
+
+
+msgctxt "WindowManager"
+msgid "Precision (Off)"
+msgstr "Presnosť (vypnuté)"
+
+
+msgctxt "WindowManager"
+msgid "Rotation"
+msgstr "Rotácia"
+
+
+msgctxt "WindowManager"
+msgid "Rotation (Off)"
+msgstr "Rotácia (vypnuté)"
+
+
+msgctxt "WindowManager"
 msgid "View3D Rotate Modal"
 msgstr "Typická rotácia 3D zobrazenia"
 
 
 msgctxt "WindowManager"
+msgid "Axis Snap"
+msgstr "Prichytenie osi"
+
+
+msgctxt "WindowManager"
+msgid "Axis Snap (Off)"
+msgstr "Prichytenie osi (vypnuté)"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Zoom"
+msgstr "Prepnúť na priblíženie"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Move"
+msgstr "Prepnúť na presun"
+
+
+msgctxt "WindowManager"
 msgid "View3D Move Modal"
 msgstr "Typický presun 3D zobrazenia"
+
+
+msgctxt "WindowManager"
+msgid "Switch to Rotate"
+msgstr "Prepnúť na rotáciu"
 
 
 msgctxt "WindowManager"
@@ -101658,13 +102362,73 @@ msgstr "Okruh prejavu 3D zobrazenia"
 
 
 msgctxt "WindowManager"
+msgid "Add"
+msgstr "Sčítať"
+
+
+msgctxt "WindowManager"
+msgid "Subtract"
+msgstr "Odčítať"
+
+
+msgctxt "WindowManager"
+msgid "Size"
+msgstr "Veľkosť"
+
+
+msgctxt "WindowManager"
+msgid "Select"
+msgstr "Vybrať"
+
+
+msgctxt "WindowManager"
+msgid "Deselect"
+msgstr "Zrušiť výber"
+
+
+msgctxt "WindowManager"
+msgid "No Operation"
+msgstr "Bez operácie"
+
+
+msgctxt "WindowManager"
 msgid "Gesture Straight Line"
 msgstr "Priama čiara výrazu"
 
 
 msgctxt "WindowManager"
+msgid "Begin"
+msgstr "Začať"
+
+
+msgctxt "WindowManager"
+msgid "Move"
+msgstr "Presunúť"
+
+
+msgctxt "WindowManager"
+msgid "Snap"
+msgstr "Prichytiť"
+
+
+msgctxt "WindowManager"
+msgid "Flip"
+msgstr "Preklopiť"
+
+
+msgctxt "WindowManager"
 msgid "Gesture Zoom Border"
 msgstr "Priblíženia okrajov výrazu"
+
+
+msgctxt "WindowManager"
+msgid "In"
+msgstr "Dnu"
+
+
+msgctxt "WindowManager"
+msgid "Out"
+msgstr "Von"
 
 
 msgctxt "WindowManager"
@@ -101678,8 +102442,148 @@ msgstr "Štandardná typická mapa"
 
 
 msgctxt "WindowManager"
+msgid "Apply"
+msgstr "Použiť"
+
+
+msgctxt "WindowManager"
 msgid "Transform Modal Map"
 msgstr "Typická mapa transformácie"
+
+
+msgctxt "WindowManager"
+msgid "X Axis"
+msgstr "Os X"
+
+
+msgctxt "WindowManager"
+msgid "Y Axis"
+msgstr "Os Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Axis"
+msgstr "Os Z"
+
+
+msgctxt "WindowManager"
+msgid "X Plane"
+msgstr "Rovina X"
+
+
+msgctxt "WindowManager"
+msgid "Y Plane"
+msgstr "Rovina Y"
+
+
+msgctxt "WindowManager"
+msgid "Z Plane"
+msgstr "Rovina Z"
+
+
+msgctxt "WindowManager"
+msgid "Clear Constraints"
+msgstr "Zmazať vynútenie"
+
+
+msgctxt "WindowManager"
+msgid "Snap Invert"
+msgstr "Invertovať prichytenie"
+
+
+msgctxt "WindowManager"
+msgid "Snap Invert (Off)"
+msgstr "Invertovať prichytenie (vypnuté)"
+
+
+msgctxt "WindowManager"
+msgid "Snap Toggle"
+msgstr "Prepnúť prichytenie"
+
+
+msgctxt "WindowManager"
+msgid "Add Snap Point"
+msgstr "Pridať bod prichytenia"
+
+
+msgctxt "WindowManager"
+msgid "Remove Last Snap Point"
+msgstr "Odstrániť posledný bod prichytenia"
+
+
+msgctxt "WindowManager"
+msgid "Numinput Increment Up"
+msgstr "Zvýšiť číselný vstup"
+
+
+msgctxt "WindowManager"
+msgid "Numinput Increment Down"
+msgstr "Znížiť číselný vstup"
+
+
+msgctxt "WindowManager"
+msgid "Increase Proportional Influence"
+msgstr "Zvýšiť pomerný vplyv"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Proportional Influence"
+msgstr "Znížiť pomerný vplyv"
+
+
+msgctxt "WindowManager"
+msgid "Increase Max AutoIK Chain Length"
+msgstr "Zvýšiť maximálnu dĺžku reťaze auto IK"
+
+
+msgctxt "WindowManager"
+msgid "Decrease Max AutoIK Chain Length"
+msgstr "Znížiť maximálnu dĺžku reťaze auto IK"
+
+
+msgctxt "WindowManager"
+msgid "Select Next Edge Slide Edge"
+msgstr "Vybrať ďalšiu hranu posunutia hrany"
+
+
+msgctxt "WindowManager"
+msgid "Select Previous Edge Slide Edge"
+msgstr "Vybrať predošlú hranu posunutia hrany"
+
+
+msgctxt "WindowManager"
+msgid "Adjust Proportional Influence"
+msgstr "Upraviť pomerný vplyv"
+
+
+msgctxt "WindowManager"
+msgid "Toggle Direction for Node Auto-Offset"
+msgstr "Prepnúť smer pre automatický posun uzla"
+
+
+msgctxt "WindowManager"
+msgid "Rotate"
+msgstr "Rotovať"
+
+
+msgctxt "WindowManager"
+msgid "Resize"
+msgstr "Zmeniť veľkosť"
+
+
+msgctxt "WindowManager"
+msgid "Automatic Constraint"
+msgstr "Automatické vynútenie"
+
+
+msgctxt "WindowManager"
+msgid "Automatic Constraint Plane"
+msgstr "Rovina automatického vynútenia"
+
+
+msgctxt "WindowManager"
+msgid "Precision Mode"
+msgstr "Režim presnosti"
 
 
 msgctxt "WindowManager"
@@ -101688,8 +102592,28 @@ msgstr "Typická mapa kvapkadla"
 
 
 msgctxt "WindowManager"
+msgid "Confirm Sampling"
+msgstr "Potvrdiť snímanie"
+
+
+msgctxt "WindowManager"
+msgid "Start Sampling"
+msgstr "Spustiť snímanie"
+
+
+msgctxt "WindowManager"
+msgid "Reset Sampling"
+msgstr "Resetovať snímanie"
+
+
+msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Mapa kvapkadla snímania bodu farebného spádu"
+
+
+msgctxt "WindowManager"
+msgid "Sample a Point"
+msgstr "Zosnímať bod"
 
 
 msgid "No selected keys, pasting over scene range"
@@ -102817,6 +103741,10 @@ msgid "Object %r already has a particle system"
 msgstr "Objekt %r už má časticový systém"
 
 
+msgid "New Preset"
+msgstr "Nová predvoľba"
+
+
 msgid "Unknown file type: %r"
 msgstr "Neznámy typ súboru: %r"
 
@@ -103185,6 +104113,50 @@ msgid "Lists committers to Blender's source code"
 msgstr "Zoznamy prispievateľov zdrojového kódu Blenderu"
 
 
+msgid "Mesh(es)"
+msgstr "Povrchová sieť(e)"
+
+
+msgid "Curve(s)"
+msgstr "Krivka(y)"
+
+
+msgid "Metaball(s)"
+msgstr "Meta guľa(e)"
+
+
+msgid "Volume(s)"
+msgstr "Objem(y)"
+
+
+msgid "Grease Pencil(s)"
+msgstr "Pastelka(y)"
+
+
+msgid "Armature(s)"
+msgstr "Armatúra(y)"
+
+
+msgid "Lattice(s)"
+msgstr "Mriežka(y)"
+
+
+msgid "Light(s)"
+msgstr "Svetlo(á)"
+
+
+msgid "Light Probe(s)"
+msgstr "Snímač(e) svetla"
+
+
+msgid "Camera(s)"
+msgstr "Kamera(y)"
+
+
+msgid "Speaker(s)"
+msgstr "Reproduktor(y)"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Manuál"
@@ -103200,6 +104172,14 @@ msgstr "Vyhodnotenie Pythonu zlyhalo: "
 
 msgid "Failed to assign value: "
 msgstr "Nepodarilo sa priradiť hodnotu: "
+
+
+msgid "Strip(s)"
+msgstr "Pás(y)"
+
+
+msgid "Object(s)"
+msgstr "Objekty(y)"
 
 
 msgid "Characters"
@@ -103222,6 +104202,14 @@ msgid "Branch: %s"
 msgstr "Vetva: %s"
 
 
+msgid "Node(s)"
+msgstr "Uzol(y)"
+
+
+msgid "Collection(s)"
+msgstr "Kolekcia(e)"
+
+
 msgid "Invalid regular expression (find): "
 msgstr "Neplatný regulárny výraz (hľadať): "
 
@@ -103235,8 +104223,20 @@ msgid "Type \"%s\" can not be found"
 msgstr "Typ \"%s\" sa nenašiel"
 
 
+msgid "Material(s)"
+msgstr "Materiál(y)"
+
+
 msgid "Invalid regular expression (replace): "
 msgstr "Neplatný regulárny výraz (nahradiť): "
+
+
+msgid "Bone(s)"
+msgstr "Kosť(i)"
+
+
+msgid "Edit Bone(s)"
+msgstr "Upraviť kosť(i)"
 
 
 msgid "Calculation Range"
@@ -103818,6 +104818,10 @@ msgstr "Presunúť naspodok"
 
 msgid "Preserve"
 msgstr "Zachovať"
+
+
+msgid "Name collisions: "
+msgstr "Kolízie názvov: "
 
 
 msgid "Resolution Viewport"
@@ -105072,6 +106076,14 @@ msgstr "Cesty:"
 
 msgid "Doppler Speed"
 msgstr "Dopplerova rýchlosť"
+
+
+msgid "Needed"
+msgstr "Potrebné"
+
+
+msgid "Visual"
+msgstr "Vizuálne"
 
 
 msgid "XYZ to RGB"
@@ -107081,6 +108093,10 @@ msgstr "Len aktívna sústava kľúčovania"
 
 msgid "Layered Recording"
 msgstr "Vrstvové nahrávanie"
+
+
+msgid "    Operator"
+msgstr "Operátor"
 
 
 msgid "Drag:"
@@ -110954,6 +111970,22 @@ msgid "Eevee material conversion problem. Error in console"
 msgstr "Problém konverzie Eevee materiálu. Chyba na konzole"
 
 
+msgid "2D_Animation"
+msgstr "2D animácia"
+
+
+msgid "Sculpting"
+msgstr "Tvarovanie"
+
+
+msgid "VFX"
+msgstr "VFX"
+
+
+msgid "Video_Editing"
+msgstr "Úprava videa"
+
+
 msgid "Unable to make version backup: filename too short"
 msgstr "Nemožno vykonať zálohu verzie: názov súboru je príliš krátky"
 
@@ -112051,6 +113083,26 @@ msgid "Active region not set"
 msgstr "Aktívna oblasť nie je nastavená"
 
 
+msgid "Skin_Light"
+msgstr "Osvetlenie pokožky"
+
+
+msgid "Skin_Shadow"
+msgstr "Tieň pokožky"
+
+
+msgid "Eyes"
+msgstr "Oči"
+
+
+msgid "Pupils"
+msgstr "Zrenica"
+
+
+msgid "Grey"
+msgstr "Sivá"
+
+
 msgid "Unable to add a new Armature modifier to object"
 msgstr "Nemožno pridať nový modifikátor armatúry do objektu"
 
@@ -112795,10 +113847,6 @@ msgstr "ID bloku:"
 
 msgid "No Properties"
 msgstr "Žiadne vlastnosti"
-
-
-msgid "Reset"
-msgstr "Resetovať"
 
 
 msgid "More..."
@@ -117364,6 +118412,10 @@ msgid "This override property does not exist in current data, it will be removed
 msgstr "Táto vlastnosť prepisu neexistuje v aktuálnych údajoch, bude odstránená pri ďalšom uložení .blend súboru"
 
 
+msgid "Added through override"
+msgstr "Pridané cez prepis"
+
+
 msgid "(empty)"
 msgstr "(prázdne)"
 
@@ -118649,8 +119701,8 @@ msgid "Illumination Filtering"
 msgstr "Filtrovanie osvetlenia"
 
 
-msgid "Create"
-msgstr "Vytvoriť"
+msgid "Crease (Angle Cached)"
+msgstr "Záhyb (uhol zo zásobníka)"
 
 
 msgid "Material Borders"
@@ -119021,12 +120073,32 @@ msgid "Background image cannot be removed"
 msgstr "Obrázok pozadia nemožno odstrániť"
 
 
+msgid "Collection '%s' is not an original ID"
+msgstr "Kolekcia \"%s\" nie je originálnym ID"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
+msgstr "Nemožno prepojiť/odpojiť objekt \"%s\", pretože kolekcia \"%s\" je prepísaná"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
+msgstr "Nemožno prepojiť/odpojiť predmet \"%s\", pretože kolekcia \"%s\" je prepojená"
+
+
 msgid "Object '%s' already in collection '%s'"
 msgstr "Objekt '%s' sa už nachádza v kolekcii '%s'"
 
 
 msgid "Object '%s' not in collection '%s'"
 msgstr "Objekt '%s' nie je v kolekcii '%s'"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
+msgstr "Nemožno prepojiť/odpojiť kolekciu \"%s\", pretože kolekcia \"%s\" je prepísaná"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
+msgstr "Nemožno prepojiť/odpojiť kolekciu \"%s\", pretože kolekcia \"%s\" je prepojená"
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -121078,8 +122150,32 @@ msgid "End (Length)"
 msgstr "Koniec (dĺžka)"
 
 
+msgid "Node only works for curves objects"
+msgstr "Uzol funguje iba pre krivky objektov"
+
+
 msgid "Surface UV map not defined"
 msgstr "Mapa UV povrchu nie je definovaná"
+
+
+msgid "Curves not attached to a surface"
+msgstr "Krivky nepripevnené k povrchu"
+
+
+msgid "Surface has no mesh"
+msgstr "Povrch nemá povrchovú sieť"
+
+
+msgid "Evaluated surface missing UV map: \"%s\""
+msgstr "Vyhodnotená chýbajúca UV mapa povrchu: %s"
+
+
+msgid "Original surface missing UV map: \"%s\""
+msgstr "Chýba pôvodná UV mapa povrchu: %s"
+
+
+msgid "Evaluated surface missing attribute: \"rest_position\""
+msgstr "Chýba atribút vyhodnoteného povrchu: \"rest_position\""
 
 
 msgid "Curves are not attached to any UV map"

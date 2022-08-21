@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'e1974ae30e46')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -2305,6 +2305,10 @@ msgid "Reload"
 msgstr "Кайтадан жүктөө"
 
 
+msgid "Reset"
+msgstr "Түшүрүү"
+
+
 msgctxt "Operator"
 msgid "Refresh"
 msgstr "Жаңылоо"
@@ -3610,10 +3614,6 @@ msgstr "Hex"
 
 msgid "Hex: "
 msgstr "Hex: "
-
-
-msgid "Reset"
-msgstr "Түшүрүү"
 
 
 msgid "Zoom in"

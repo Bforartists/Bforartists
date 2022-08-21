@@ -1704,14 +1704,14 @@ static const EnumPropertyItem prop_liboverride_op_types[] = {
     {OUTLINER_LIBOVERRIDE_OP_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
      0,
-     "Create",
-     "Make a local override of the selected linked data-blocks, and their hierarchy of "
+     "Make",
+     "Create a local override of the selected linked data-blocks, and their hierarchy of "
      "dependencies"},
     {OUTLINER_LIBOVERRIDE_OP_RESET,
      "OVERRIDE_LIBRARY_RESET",
      0,
      "Reset",
-     "Reset the selected local override to their linked references values"},
+     "Reset the selected local overrides to their linked references values"},
     {OUTLINER_LIBOVERRIDE_OP_CLEAR_SINGLE,
      "OVERRIDE_LIBRARY_CLEAR_SINGLE",
      0,
@@ -1735,6 +1735,7 @@ static const EnumPropertyItem prop_liboverride_troubleshoot_op_types[] = {
      "Rebuild the selected local overrides from their linked references, as well as their "
      "hierarchies of dependencies, enforcing these hierarchies to match the linked data (i.e. "
      "ignoring existing overrides on data-blocks pointer properties)"},
+    RNA_ENUM_ITEM_SEPR,
     {OUTLINER_LIBOVERRIDE_OP_DELETE_HIERARCHY,
      "OVERRIDE_LIBRARY_DELETE_HIERARCHY",
      0,
@@ -1882,6 +1883,7 @@ void OUTLINER_OT_liboverride_operation(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner Library Override Operation";
   ot->idname = "OUTLINER_OT_liboverride_operation";
+  ot->description = "Create, reset or clear library override hierarchies";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1904,6 +1906,7 @@ void OUTLINER_OT_liboverride_troubleshoot_operation(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner Library Override Troubleshoot Operation";
   ot->idname = "OUTLINER_OT_liboverride_troubleshoot_operation";
+  ot->description = "Advanced operations over library override to help fix broken hierarchies";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1912,18 +1915,18 @@ void OUTLINER_OT_liboverride_troubleshoot_operation(wmOperatorType *ot)
 
   ot->flag = 0;
 
-  RNA_def_enum(ot->srna,
-               "type",
-               prop_liboverride_troubleshoot_op_types,
-               0,
-               "Library Override Troubleshoot Operation",
-               "");
   ot->prop = RNA_def_enum(ot->srna,
-                          "selection_set",
-                          prop_lib_op_selection_set,
+                          "type",
+                          prop_liboverride_troubleshoot_op_types,
                           0,
-                          "Selection Set",
-                          "Over which part of the tree items to apply the operation");
+                          "Library Override Troubleshoot Operation",
+                          "");
+  RNA_def_enum(ot->srna,
+               "selection_set",
+               prop_lib_op_selection_set,
+               0,
+               "Selection Set",
+               "Over which part of the tree items to apply the operation");
 }
 
 /** \} */
@@ -2408,6 +2411,17 @@ static TreeTraversalAction outliner_find_objects_to_delete(TreeElement *te, void
     return TRAVERSE_SKIP_CHILDS;
   }
 
+  /* Do not allow to delete children objects of an override collection. */
+  TreeElement *te_parent = te->parent;
+  if (outliner_is_collection_tree_element(te_parent)) {
+    TreeStoreElem *tselem_parent = TREESTORE(te_parent);
+    ID *id_parent = tselem_parent->id;
+    BLI_assert(GS(id_parent->name) == ID_GR);
+    if (ID_IS_OVERRIDE_LIBRARY_REAL(id_parent)) {
+      return TRAVERSE_SKIP_CHILDS;
+    }
+  }
+
   ID *id = tselem->id;
 
   if (ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
@@ -2804,6 +2818,7 @@ void OUTLINER_OT_id_operation(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner ID Data Operation";
   ot->idname = "OUTLINER_OT_id_operation";
+  ot->description = "General data-block management operations";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
