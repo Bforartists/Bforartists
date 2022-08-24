@@ -517,7 +517,7 @@ class FILEBROWSER_MT_view(FileBrowserMenu, Menu):
 
         layout.prop(st, "show_region_toolbar", text="Source List")
         layout.prop(st, "show_region_ui", text="File Path")
-        layout.operator("file.view_selected")
+        layout.operator("file.view_selected", icon="VIEW_SELECTED")
 
         layout.separator()
 
