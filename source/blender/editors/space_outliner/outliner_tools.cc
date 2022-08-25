@@ -468,18 +468,18 @@ typedef enum eOutlinerLibOpSelectionSet {
 static const EnumPropertyItem prop_lib_op_selection_set[] = {
     {OUTLINER_LIB_SELECTIONSET_SELECTED,
      "SELECTED",
-     0,
+    ICON_LIBRARY_DATA_OVERRIDE,
      "Selected",
      "Apply the operation over selected data-blocks only"},
     {OUTLINER_LIB_LIB_SELECTIONSET_CONTENT,
      "CONTENT",
-     0,
+     ICON_LIBRARY_OBJECT,
      "Content",
      "Apply the operation over content of the selected items only (the data-blocks in their "
      "sub-tree)"},
     {OUTLINER_LIB_LIB_SELECTIONSET_SELECTED_AND_CONTENT,
      "SELECTED_AND_CONTENT",
-     0,
+    ICON_LIBRARY,
      "Selected & Content",
      "Apply the operation over selected data-blocks and all their dependencies"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -1703,18 +1703,18 @@ enum eOutlinerLibOverrideOpTypes {
 static const EnumPropertyItem prop_liboverride_op_types[] = {
     {OUTLINER_LIBOVERRIDE_OP_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
-     0,
+     ICON_HIERARCHY,
      "Make",
      "Create a local override of the selected linked data-blocks, and their hierarchy of "
      "dependencies"},
     {OUTLINER_LIBOVERRIDE_OP_RESET,
      "OVERRIDE_LIBRARY_RESET",
-     0,
+     ICON_HIERARCHY,
      "Reset",
      "Reset the selected local overrides to their linked references values"},
     {OUTLINER_LIBOVERRIDE_OP_CLEAR_SINGLE,
      "OVERRIDE_LIBRARY_CLEAR_SINGLE",
-     0,
+     ICON_HIERARCHY,
      "Clear",
      "Delete the selected local overrides and relink their usages to the linked data-blocks if "
      "possible, else reset them and mark them as non editable"},
@@ -1724,13 +1724,13 @@ static const EnumPropertyItem prop_liboverride_op_types[] = {
 static const EnumPropertyItem prop_liboverride_troubleshoot_op_types[] = {
     {OUTLINER_LIBOVERRIDE_OP_RESYNC_HIERARCHY,
      "OVERRIDE_LIBRARY_RESYNC_HIERARCHY",
-     0,
+     ICON_SYNC,
      "Resync",
      "Rebuild the selected local overrides from their linked references, as well as their "
      "hierarchies of dependencies"},
     {OUTLINER_LIBOVERRIDE_OP_RESYNC_HIERARCHY_ENFORCE,
      "OVERRIDE_LIBRARY_RESYNC_HIERARCHY_ENFORCE",
-     0,
+     ICON_SYNC,
      "Resync Enforce",
      "Rebuild the selected local overrides from their linked references, as well as their "
      "hierarchies of dependencies, enforcing these hierarchies to match the linked data (i.e. "
@@ -1738,7 +1738,7 @@ static const EnumPropertyItem prop_liboverride_troubleshoot_op_types[] = {
     RNA_ENUM_ITEM_SEPR,
     {OUTLINER_LIBOVERRIDE_OP_DELETE_HIERARCHY,
      "OVERRIDE_LIBRARY_DELETE_HIERARCHY",
-     0,
+     ICON_DELETE,
      "Delete",
      "Delete the selected local overrides (including their hierarchies of override dependencies) "
      "and relink their usages to the linked data-blocks"},
