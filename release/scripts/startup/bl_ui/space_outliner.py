@@ -185,12 +185,6 @@ class OUTLINER_MT_view(Menu):
         layout.operator("outliner.expanded_toggle", icon = 'INVERSE')
         layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
 
-        layout.separator()
-
-        layout.menu("OUTLINER_MT_liboverride")
-
-        layout.separator()
-
         layout.operator("outliner.select_box", icon = 'BORDER_RECT')
 
         layout.separator()
@@ -209,7 +203,39 @@ class OUTLINER_MT_context_menu(Menu):
 
     @staticmethod
     def draw_common_operators(layout):
+        layout.separator()
+
+        ## BFA - The original from blender
+
+        #layout.menu("OUTLINER_MT_liboverride")
+
+        #layout.separator()
+
+        ## BFA - Moved the LIbrary Override menu up a level
+        layout.operator_menu_enum(
+            "outliner.liboverride_operation", 
+            "selection_set",
+            text="Make Library Override").type = 'OVERRIDE_LIBRARY_CREATE_HIERARCHY'
+        layout.operator_menu_enum(
+            "outliner.liboverride_operation",
+            "selection_set",
+            text="Reset Library Override").type = 'OVERRIDE_LIBRARY_RESET'
+        layout.operator_menu_enum(
+            "outliner.liboverride_operation", 
+            "selection_set",
+            text="Clear Library Override").type = 'OVERRIDE_LIBRARY_CLEAR_SINGLE'
+
+        layout.separator()
+
+        layout.operator_menu_enum(
+            "outliner.liboverride_troubleshoot_operation", 
+            "type",
+            text="Troubleshoot Library Override").selection_set = 'SELECTED'
+
+        layout.separator()
+
         layout.menu_contents("OUTLINER_MT_asset")
+
 
 
     def draw(self, context):
@@ -405,26 +431,32 @@ class OUTLINER_MT_asset(Menu):
         layout.operator("asset.clear", text="Clear Asset", icon = "CLEAR").set_fake_user = False
         layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon = "CLEAR").set_fake_user = True
 
-
+# BFA - Now hidden moved up a level in Outliner
 class OUTLINER_MT_liboverride(Menu):
     bl_label = "Library Override"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_menu_enum("outliner.liboverride_operation", "selection_set",
-                                  text="Make").type = 'OVERRIDE_LIBRARY_CREATE_HIERARCHY'
+        layout.operator_menu_enum(
+            "outliner.liboverride_operation", 
+            "selection_set",
+            text="Make").type = 'OVERRIDE_LIBRARY_CREATE_HIERARCHY'
         layout.operator_menu_enum(
             "outliner.liboverride_operation",
             "selection_set",
             text="Reset").type = 'OVERRIDE_LIBRARY_RESET'
-        layout.operator_menu_enum("outliner.liboverride_operation", "selection_set",
-                                  text="Clear").type = 'OVERRIDE_LIBRARY_CLEAR_SINGLE'
+        layout.operator_menu_enum(
+            "outliner.liboverride_operation", 
+            "selection_set",
+            text="Clear").type = 'OVERRIDE_LIBRARY_CLEAR_SINGLE'
 
         layout.separator()
 
-        layout.operator_menu_enum("outliner.liboverride_troubleshoot_operation", "type",
-                                  text="Troubleshoot").selection_set = 'SELECTED'
+        layout.operator_menu_enum(
+            "outliner.liboverride_troubleshoot_operation", 
+            "type",
+            text="Troubleshoot").selection_set = 'SELECTED'
 
 
 class OUTLINER_PT_filter(Panel):
