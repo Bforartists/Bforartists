@@ -85,22 +85,30 @@ class BrushPanelBase(bpy.types.Panel):
         layout.scale_y = 2
         num_cols = column_count(context.region)
         if num_cols == 4:
-            col = layout.column(align=True)
             icon_only = False
         else:
-            col = layout.column_flow(columns=num_cols, align=True)
             icon_only = True
 
-        for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name):
-            if not self.filter_brush(brush):
-                continue
-            if self.tool_name_from_brush(brush) == self.tool_name:
-                draw_brush_button(
-                    context,
-                    col,
-                    icon_only,
-                    brush,
-                    self.tool_settings_attribute_name,
-                    self.icon_name_from_brush,
-                    self.tool_name_from_brush,
-                )
+        col = layout.column(align=True)
+        brushes = [brush for brush in sorted(bpy.data.brushes, key=lambda brush: brush.name) if self.filter_brush(
+            brush) and self.tool_name_from_brush(brush) == self.tool_name]
+
+        # TODO: get rid of building list and poping
+        # hint: use a generator and the next function
+        while len(brushes) > 0:
+            row = col.row(align=True)
+            row.scale_x = 2
+            for _ in range(num_cols):
+                if len(brushes) > 0:
+                    brush = brushes.pop(0)
+                    draw_brush_button(
+                        context,
+                        row,
+                        icon_only,
+                        brush,
+                        self.tool_settings_attribute_name,
+                        self.icon_name_from_brush,
+                        self.tool_name_from_brush,
+                    )
+                else:
+                    row.label(text="")
