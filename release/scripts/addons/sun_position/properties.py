@@ -174,6 +174,7 @@ class SunPosProperties(PropertyGroup):
         update=sun_update)
 
     bind_to_sun: BoolProperty(
+        name="Bind Texture to Sun",
         description="If true, Environment texture moves with sun",
         default=False,
         update=sun_update)

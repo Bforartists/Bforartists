@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
 from bpy.types import Menu, Panel
+from bpy.app.translations import contexts as i18n_contexts
 
 
 # Header buttons for timeline header (play, etc.)

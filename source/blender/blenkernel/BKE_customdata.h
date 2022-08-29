@@ -417,7 +417,7 @@ void *CustomData_bmesh_get_n(const struct CustomData *data, void *block, int typ
  */
 void *CustomData_bmesh_get_layer_n(const struct CustomData *data, void *block, int n);
 
-bool CustomData_set_layer_name(const struct CustomData *data, int type, int n, const char *name);
+bool CustomData_set_layer_name(struct CustomData *data, int type, int n, const char *name);
 const char *CustomData_get_layer_name(const struct CustomData *data, int type, int n);
 
 /**
@@ -449,6 +449,12 @@ int CustomData_get_stencil_layer(const struct CustomData *data, int type);
  * if no such active layer is defined.
  */
 const char *CustomData_get_active_layer_name(const struct CustomData *data, int type);
+
+/**
+ * Returns name of the default layer of the given type or NULL
+ * if no such active layer is defined.
+ */
+const char *CustomData_get_render_layer_name(const struct CustomData *data, int type);
 
 /**
  * Copies the data from source to the data element at index in the first layer of type
@@ -718,7 +724,7 @@ void CustomData_data_transfer(const struct MeshPairRemap *me_remap,
  */
 void CustomData_blend_write_prepare(CustomData &data,
                                     blender::Vector<CustomDataLayer, 16> &layers_to_write,
-                                    const blender::Set<blender::StringRef> &skip_names = {});
+                                    const blender::Set<std::string> &skip_names = {});
 
 /**
  * \param layers_to_write: Layers created by #CustomData_blend_write_prepare.

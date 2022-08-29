@@ -1325,6 +1325,7 @@ static void data_device_handle_selection(void *data,
     wl_data_offer_destroy(data_offer->id);
     delete data_offer;
     data_offer = nullptr;
+    input->data_offer_copy_paste = nullptr;
   }
 
   if (id == nullptr) {
@@ -2726,8 +2727,6 @@ static void output_handle_scale(void *data, struct wl_output * /*wl_output*/, co
     for (GHOST_IWindow *iwin : window_manager->getWindows()) {
       GHOST_WindowWayland *win = static_cast<GHOST_WindowWayland *>(iwin);
       win->outputs_changed_update_scale();
-      /* TODO(@campbellbarton): support refreshing the UI when the DPI changes.
-       * There are glitches when resizing the monitor which would be nice to solve. */
     }
   }
 }

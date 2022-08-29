@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -3321,6 +3321,11 @@ msgid "Back"
 msgstr "Артынан"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Жаңы"
+
+
 msgctxt "Operator"
 msgid "Save As..."
 msgstr "Ат коюп сактоо..."
@@ -3397,6 +3402,11 @@ msgstr "Алуу"
 msgctxt "Operator"
 msgid "Multiply"
 msgstr "Көбөйтүү"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Жаңы"
 
 
 msgctxt "Operator"
@@ -3559,11 +3569,6 @@ msgstr "Камера"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Боштук"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Үн булагы"
 
@@ -3659,11 +3664,6 @@ msgid "New"
 msgstr "Жаңы"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Жаңы"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Жаңы"
@@ -3680,11 +3680,6 @@ msgstr "Жаңы"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Жаңы"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Жаңы"
 

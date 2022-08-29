@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6092,7 +6092,7 @@ msgstr "El panel de la restricción está expandido en la IU"
 
 
 msgid "Object for Custom Space"
-msgstr "Objeto para definir el espacio personalizado"
+msgstr "Objeto para definir un espacio personalizado"
 
 
 msgid "Sub-Target"
@@ -6104,7 +6104,7 @@ msgstr "Hueso de un esqueleto, grupo de vértices de un malla o una jaula, etc."
 
 
 msgid "Target Space"
-msgstr "Target Space"
+msgstr "Espacio del objetivo"
 
 
 msgid "Space that target is evaluated in"
@@ -7064,11 +7064,11 @@ msgstr "Bloquea el movimiento al camino del objetivo"
 
 
 msgid "Forward Axis"
-msgstr "Eje adelante"
+msgstr "Eje de avance"
 
 
 msgid "Axis that points forward along the path"
-msgstr "Eje que apunta hacia adelante en el camino"
+msgstr "Eje que apunta en la dirección de avance en el camino"
 
 
 msgid "Offset from the position corresponding to the time frame"
@@ -7088,7 +7088,7 @@ msgstr "Curva objetivo"
 
 
 msgid "Up Axis"
-msgstr "Eje arriba"
+msgstr "Eje superior"
 
 
 msgid "Axis that points upward"
@@ -19738,15 +19738,15 @@ msgstr "Si un vértice se encuentra más allá de esta distancia con respecto al
 
 
 msgid "Rotate/Twist"
-msgstr "Rotar/Torsionar"
+msgstr "Rotar / Torsionar"
 
 
 msgid "Scale/Translate"
-msgstr "Escalar/Mover"
+msgstr "Escalar / Mover"
 
 
 msgid "Squash & Stretch"
-msgstr "Comprimir/Estirar"
+msgstr "Comprimir / Estirar"
 
 
 msgid "Pose IK Segments"
@@ -20614,7 +20614,7 @@ msgstr "Ruta al archivo externo de desplazamientos"
 
 
 msgid "Forward"
-msgstr "Adelante"
+msgstr "Avance"
 
 
 msgid "The time to use for looking up the data in the cache file, or to determine which file to use in a file sequence"
@@ -25644,7 +25644,7 @@ msgstr "Opciones de la simulación de cuerpos blandos"
 
 
 msgid "Axis that points in the 'forward' direction (applies to Instance Vertices when Align to Vertex Normal is enabled)"
-msgstr "Eje que apunta en dirección 'hacia adelante' (se aplica al Instanciado en Vértices cuando 'Alinear a normal de vértices' está habilitado)"
+msgstr "Eje que apunta en dirección de 'avance' (se aplica al Instanciado en Vértices cuando 'Alinear a normal de vértices' está habilitado)"
 
 
 msgctxt "ID"
@@ -26787,10 +26787,6 @@ msgid "Multiply mass by particle size"
 msgstr "Multiplicar masa por el tamaño de las partículas"
 
 
-msgid "Parents"
-msgstr "Principales"
-
-
 msgid "Render parent particles"
 msgstr "Procesar las partículas principales"
 
@@ -27104,7 +27100,7 @@ msgstr "Fotograma inicial del rango de reproducción/procesamiento"
 
 
 msgid "Number of frames to skip forward while rendering/playing back each frame"
-msgstr "Cantidad de fotogramas a omitir al procesar o reproducir cada fotograma"
+msgstr "Cantidad de fotogramas a omitir hacia adelante al procesar o reproducir cada fotograma"
 
 
 msgid "Constant acceleration in a given direction"
@@ -33428,7 +33424,7 @@ msgstr "Canal"
 
 
 msgid "Dope Sheet Channel Context Menu"
-msgstr "Canal de planilla de tiempos - menú contextual"
+msgstr "Canal - menú contextual"
 
 
 msgid "Dope Sheet Context Menu"
@@ -33737,6 +33733,10 @@ msgid "Help"
 msgstr "Ayuda"
 
 
+msgid "List Item"
+msgstr "Elemento de lista"
+
+
 msgid ""
 "\n"
 "    UI List item context menu definition. Scripts can append/prepend this to\n"
@@ -33749,10 +33749,6 @@ msgstr ""
 "    para agregar sus propios operadores al menú contextual. Deberán sin embargo comprobar el contexto, de manera\n"
 "    que sus elementos sólo sean mostrados en un contexto válido y en la lista apropiada de la interfaz.\n"
 "    "
-
-
-msgid "List Item"
-msgstr "Elemento de lista"
 
 
 msgid "Presets"
@@ -33884,7 +33880,7 @@ msgstr "Agregar imagen"
 
 
 msgid "Link/Transfer Data"
-msgstr "Vincular/Transferir datos"
+msgstr "Vincular / Transferir datos"
 
 
 msgid "Make Single User"
@@ -39064,7 +39060,7 @@ msgstr "Escala el desplazamiento para producir un grosor más uniforme"
 
 
 msgid "Scale the offset by surrounding geometry"
-msgstr "Escalar el desplazamiento según la geometría cercana"
+msgstr "Escala el desplazamiento según la geometría cercana"
 
 
 msgid "Remove original geometry"
@@ -41788,7 +41784,7 @@ msgstr "Distancia a expandir o contraer (cantidad de iteraciones)"
 
 
 msgid "Edge to inset"
-msgstr "Borde a insertar"
+msgstr "Borde a incrustar"
 
 
 msgid "Growing/shrinking mode"
@@ -42272,10 +42268,6 @@ msgid "A / B"
 msgstr "A / B"
 
 
-msgid "Multiply Add"
-msgstr "Multiplicar Adicionar"
-
-
 msgid "A * B + C"
 msgstr "A * B + C"
 
@@ -42284,20 +42276,12 @@ msgid "A power B"
 msgstr "A elevado a B"
 
 
-msgid "Logarithm"
-msgstr "Logaritmo"
-
-
 msgid "Logarithm A base B"
 msgstr "Logaritmo de A en base B"
 
 
 msgid "Square root of A"
 msgstr "Raíz cuadrada de A"
-
-
-msgid "Inverse Square Root"
-msgstr "Inverso de raíz cuadrada"
 
 
 msgid "1 / Square root of A"
@@ -42320,48 +42304,24 @@ msgid "The maximum from A and B"
 msgstr "Máximo entre A y B"
 
 
-msgid "Less Than"
-msgstr "Menor que"
-
-
 msgid "1 if A < B else 0"
 msgstr "1 si A < B sino 0"
-
-
-msgid "Greater Than"
-msgstr "Mayor que"
 
 
 msgid "1 if A > B else 0"
 msgstr "1 si A > B sino 0"
 
 
-msgid "Sign"
-msgstr "Signo"
-
-
 msgid "Returns the sign of A"
 msgstr "Devuelve el signo de A"
-
-
-msgid "Compare"
-msgstr "Comparar"
 
 
 msgid "1 if (A == B) within tolerance C else 0"
 msgstr "1 si (A == B) dentro de una tolerancia C, sino 0"
 
 
-msgid "Smooth Minimum"
-msgstr "Mínimo suave"
-
-
 msgid "The minimum from A and B with smoothing C"
 msgstr "El mínimo de A y B con un nivel de suavizado C"
-
-
-msgid "Smooth Maximum"
-msgstr "Máximo suave"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -42376,10 +42336,6 @@ msgid "The largest integer smaller than or equal A"
 msgstr "El mayor entero menor o igual que A"
 
 
-msgid "Ceil"
-msgstr "Techo"
-
-
 msgid "The smallest integer greater than or equal A"
 msgstr "El menor entero mayor o igual que A"
 
@@ -42388,16 +42344,8 @@ msgid "The integer part of A, removing fractional digits"
 msgstr "La parte entera de A, eliminando los dígitos fraccionarios"
 
 
-msgid "Fraction"
-msgstr "Fracción"
-
-
 msgid "The fraction part of A"
 msgstr "La parte fraccionaria de A"
-
-
-msgid "Modulo"
-msgstr "Resto"
 
 
 msgid "Modulo using fmod(A,B)"
@@ -42428,72 +42376,36 @@ msgid "tan(A)"
 msgstr "tan(A)"
 
 
-msgid "Arcsine"
-msgstr "Arco seno"
-
-
 msgid "arcsin(A)"
 msgstr "arcsen(A)"
-
-
-msgid "Arccosine"
-msgstr "Arco coseno"
 
 
 msgid "arccos(A)"
 msgstr "arccos(A)"
 
 
-msgid "Arctangent"
-msgstr "Arco tangente"
-
-
 msgid "arctan(A)"
 msgstr "arctan(A)"
-
-
-msgid "Arctan2"
-msgstr "Arco tangente 2"
 
 
 msgid "The signed angle arctan(A / B)"
 msgstr "El ángulo de arctan(A / B) con signo"
 
 
-msgid "Hyperbolic Sine"
-msgstr "Seno hiperbólico"
-
-
 msgid "sinh(A)"
 msgstr "sinh(A)"
-
-
-msgid "Hyperbolic Cosine"
-msgstr "Coseno hiperbólico"
 
 
 msgid "cosh(A)"
 msgstr "cosh(A)"
 
 
-msgid "Hyperbolic Tangent"
-msgstr "Tangente hiperbólica"
-
-
 msgid "tanh(A)"
 msgstr "tanh(A)"
 
 
-msgid "To Radians"
-msgstr "A radianes"
-
-
 msgid "Convert from degrees to radians"
 msgstr "Convierte de grados a radianes"
-
-
-msgid "To Degrees"
-msgstr "A grados"
 
 
 msgid "Convert from radians to degrees"
@@ -42642,10 +42554,6 @@ msgstr "Multiplica los canales RVAα de la imagen de entrada por el valor Alfa"
 
 msgid "Replace Alpha"
 msgstr "Reemplazar alfa"
-
-
-msgid "Replace the input image's alpha channels by the alpha input value"
-msgstr "Reemplaza el canal alfa de la imagen de entrada con el valor Alfa"
 
 
 msgid "Split Viewer"
@@ -43044,6 +42952,10 @@ msgid "True when the first input is true and the second is false (not imply)"
 msgstr "Verdadero cuando la primera entrada sea verdadera y la segunda falsa (Implicación Opuesta)"
 
 
+msgid "Compare"
+msgstr "Comparar"
+
+
 msgid "Input Type"
 msgstr "Tipo de entrada"
 
@@ -43076,6 +42988,10 @@ msgid "Compare the direction of the input vectors"
 msgstr "Compara la dirección de los vectores de entrada"
 
 
+msgid "Less Than"
+msgstr "Menor que"
+
+
 msgid "True when the first input is smaller than second input"
 msgstr "Verdadero cuando la primera entrada sea menor que la segunda"
 
@@ -43086,6 +43002,10 @@ msgstr "Menor o igual"
 
 msgid "True when the first input is smaller than the second input or equal"
 msgstr "Verdadero cuando la primera entrada sea menor o igual que la segunda"
+
+
+msgid "Greater Than"
+msgstr "Mayor que"
 
 
 msgid "True when the first input is greater than the second input"
@@ -46369,6 +46289,10 @@ msgid "Entry-wise divide"
 msgstr "División Hadamard"
 
 
+msgid "Multiply Add"
+msgstr "Multiplicar Adicionar"
+
+
 msgid "Cross Product"
 msgstr "Producto vectorial"
 
@@ -46441,12 +46365,24 @@ msgid "Entry-wise floor"
 msgstr "Piso Hadamard"
 
 
+msgid "Ceil"
+msgstr "Techo"
+
+
 msgid "Entry-wise ceil"
 msgstr "Techo Hadamard"
 
 
+msgid "Fraction"
+msgstr "Fracción"
+
+
 msgid "The fraction part of A entry-wise"
 msgstr "La parte fraccionaria Hadamard de A"
+
+
+msgid "Modulo"
+msgstr "Resto"
 
 
 msgid "Entry-wise modulo using fmod(A,B)"
@@ -47086,7 +47022,7 @@ msgstr "Entradas de árbol de nodos"
 
 
 msgid "Collection of Node Tree Sockets"
-msgstr "Colección de conexiones de árbol de nodos"
+msgstr "Colección de conectores de árbol de nodos"
 
 
 msgid "Node Tree Outputs"
@@ -48883,7 +48819,7 @@ msgstr "Recorre las ramificaciones en la cadena del superior"
 
 
 msgid "(De)select bones linked by parent/child connections under the mouse cursor"
-msgstr "(De)selecciona los huesos bajo el puntero, vinculados jerárquicamente"
+msgstr "(De)selecciona los huesos bajo el puntero del ratón, vinculados jerárquicamente"
 
 
 msgctxt "Operator"
@@ -48991,7 +48927,7 @@ msgstr "Simetrizar"
 
 
 msgid "Enforce symmetry, make copies of the selection or use existing"
-msgstr "Impone una simetría, creando copias de la selección o usando lo ya existente"
+msgstr "Imponer simetría a la fuerza, creando copias de la selección o usando lo ya existente"
 
 
 msgid "Which sides to copy from and to (when both are selected)"
@@ -51873,7 +51809,7 @@ msgstr "Selecciona los puntos de control que preceden a los ya seleccionados en 
 
 msgctxt "Operator"
 msgid "Select Random"
-msgstr "Seleccionar aleatorio"
+msgstr "Seleccionar aleatoriamente"
 
 
 msgid "Randomly select some control points"
@@ -52895,11 +52831,11 @@ msgstr "Permite aplicar transformaciones en espacio global a las rotaciones del 
 
 
 msgid "Export Subdivision Surface"
-msgstr "Exportar subdivisión de superficie"
+msgstr "Subdivisión de superficie"
 
 
 msgid "Export the last Catmull-Rom subdivision modifier as FBX subdivision (does not apply the modifier even if 'Apply Modifiers' is enabled)"
-msgstr "Exporta el último modificador Subdividir superficie que use el modo Catmull-Rom como subdivisión de FBX. (No aplicará el modificador aunque la opción 'Aplicar modificadores' se encontrara activa)"
+msgstr "Exporta, como una subdivisión de FBX, el último modificador Subdividir superficie que use el método Catmull-Rom. (No se aplicará este modificador aunque la opción 'Aplicar modificadores' se encontrara activa)"
 
 
 msgid "Triangulate Faces"
@@ -52941,10 +52877,6 @@ msgstr "Permitir influencias de más de 4 huesos en vértices. Es posible que lo
 
 msgid "Export all Armature Actions"
 msgstr "Todas las acciones del esqueleto"
-
-
-msgid "Export all actions of a single armature. WARNING: works only if you exports a single armature"
-msgstr "Exporta todas las acciones de un esqueleto. ADVERTENCIA: solamente funciona al exportar un único esqueleto"
 
 
 msgid "Exports active actions and NLA tracks as glTF animations"
@@ -53381,11 +53313,11 @@ msgstr "Guarda los bordes definidos como grupos de suavizado"
 
 
 msgid "Bitflag Smooth Groups"
-msgstr "Grupos de suavizado con indicadores de bits"
+msgstr "Grupos de suavizado (indicadores)"
 
 
 msgid "Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)"
-msgstr "Similar a los 'Grupos de suavizado', pero genera ID de grupos de suavizado en forma de indicadores de bits (puede producir un máximo de 32 grupos de suavizado distintos, usualmente muchos menos)"
+msgstr "Similar a los 'Grupos de suavizado', pero genera ID de grupos de suavizado en forma de indicadores de bits (puede producir como máximo 32 grupos de suavizado distintos, usualmente muchos menos)"
 
 
 msgid "Include UVs"
@@ -57550,7 +57482,7 @@ msgstr "Toma muestras de una línea y las muestra en los paneles de instrumentos
 
 
 msgid "Mouse cursor style to use during the modal operator"
-msgstr "Estilo de cursor del ratón a usar durante el operador modal"
+msgstr "Estilo de puntero del ratón a usar durante el operador modal"
 
 
 msgid "X End"
@@ -57771,7 +57703,7 @@ msgstr "Tipo de objetivo de importación"
 
 
 msgid "Update Scene Duration"
-msgstr "Actualizar duración de la escena"
+msgstr "Actualizar duración escena"
 
 
 msgid "Extend the scene's duration to the BVH duration (never shortens the scene)"
@@ -57779,7 +57711,7 @@ msgstr "Extiende la duración de la escena a la duración del archivo BVH (nunca
 
 
 msgid "Update Scene FPS"
-msgstr "Actualizar FPS de la escena"
+msgstr "Actualizar FPS de escena"
 
 
 msgid "Set the scene framerate to that of the BVH file (note that this nullifies the 'Scale FPS' option, as the scale will be 1:1)"
@@ -58168,7 +58100,7 @@ msgstr "Importar propiedades de usuario como propiedades personalizadas"
 
 
 msgid "Import Enums As Strings"
-msgstr "Importar enumeradores como cadenas"
+msgstr "Enumeradores como cadenas"
 
 
 msgid "Store enumeration values as strings"
@@ -58233,11 +58165,11 @@ msgstr "Bueno para re importar glTF exportados desde Blender. Las colas de los h
 
 
 msgid "Temperance (average)"
-msgstr "Templanza (promedio)"
+msgstr "Moderación (promedio)"
 
 
 msgid "Decent all-around strategy. A bone with one child has its tip placed on the local axis closest to its child"
-msgstr "Estrategia decente para la mayoría de los casos. Un hueso con un subordinado tendrá su cola ubicada sobre su eje local, cerca del subordinado"
+msgstr "Estrategia decente para la mayoría de los casos. Un hueso con un subordinado tendrá su cola ubicada sobre el eje local más cercano a éste"
 
 
 msgid "Fortune (may look better, less accurate)"
@@ -58245,11 +58177,11 @@ msgstr "Fortuna (puede lucir mejor, es menos preciso)"
 
 
 msgid "Might look better than Temperance, but also might have errors. A bone with one child has its tip placed at its child's root. Non-uniform scalings may get messed up though, so beware"
-msgstr "Puede lucir mejor que Templanza, pero también contener errores. Un hueso con un subordinado tendrá su cola ubicada en la cabeza del subordinado. Sin embargo, hay que advertir que valores de escala no uniformes podrían ocasionar problemas"
+msgstr "Puede lucir mejor que Moderación, pero también tener errores. Un hueso con un subordinado tendrá su cola ubicada en la cabeza del subordinado. Asimismo, hay que advertir que valores de escala no uniformes podrían ocasionar problemas, por lo que habrá que tener cuidado"
 
 
 msgid "Guess Original Bind Pose"
-msgstr "Adivinar pose de enlace original"
+msgstr "Adivinar pose original de enlace"
 
 
 msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
@@ -58822,7 +58754,7 @@ msgstr "Selecciona todos los puntos de la curva vinculados a los ya seleccionado
 
 
 msgid "(De)select all points linked to the curve under the mouse cursor"
-msgstr "(De)selecciona todos los puntos vinculados a la curva bajo el cursor"
+msgstr "(De)selecciona todos los puntos vinculados a la curva bajo el puntero del ratón"
 
 
 msgid "Select more spline points connected to initial selection"
@@ -59536,7 +59468,7 @@ msgstr "Disuelve vértices; fusiona bordes y caras"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
-msgstr "Duplica y extruye los vértices, bordes o caras seleccionadas hacia el cursor del ratón"
+msgstr "Duplica y extruye los vértices, bordes o caras seleccionados en dirección al puntero del ratón"
 
 
 msgid "Rotate Source"
@@ -59655,7 +59587,7 @@ msgstr "Extruir contexto"
 
 
 msgid "Extrude selection"
-msgstr "Extruir selección"
+msgstr "Extruye la selección"
 
 
 msgid "Mirror Editing"
@@ -59672,7 +59604,7 @@ msgstr "Extruir región y mover"
 
 
 msgid "Extrude region together along the average normal"
-msgstr "Extruye la región en conjunto a lo largo de la normal promedio"
+msgstr "Extruye la región en conjunto en dirección a la normal promedio"
 
 
 msgid "Extrude Context"
@@ -59685,7 +59617,7 @@ msgstr "Extruir sólo bordes"
 
 
 msgid "Extrude individual edges only"
-msgstr "Extruir sólo bordes individuales"
+msgstr "Extruye sólo bordes de forma individual"
 
 
 msgctxt "Operator"
@@ -59694,7 +59626,7 @@ msgstr "Extruir sólo bordes y mover"
 
 
 msgid "Extrude edges and move result"
-msgstr "Extruir bordes y mover el resultado"
+msgstr "Extruye bordes y desplaza el resultado"
 
 
 msgid "Extrude Only Edges"
@@ -59703,28 +59635,28 @@ msgstr "Extruir sólo bordes"
 
 msgctxt "Operator"
 msgid "Extrude Individual Faces"
-msgstr "Extruir caras individuales"
+msgstr "Extruir caras individualmente"
 
 
 msgid "Extrude individual faces only"
-msgstr "Extruir sólo caras individuales"
+msgstr "Extruye caras de forma individual"
 
 
 msgctxt "Operator"
 msgid "Extrude Individual Faces and Move"
-msgstr "Extruir caras individuales y mover"
+msgstr "Extruir caras individualmente y mover"
 
 
 msgid "Extrude each individual face separately along local normals"
-msgstr "Extruye cada cara individualmente a lo largo de su propia normal"
+msgstr "Extruye cada cara de forma individual en dirección a su propia normal"
 
 
 msgid "Extrude Individual Faces"
-msgstr "Extruir caras individuales"
+msgstr "Extruir caras individualmente"
 
 
 msgid "Shrink/fatten selected vertices along normals"
-msgstr "Contraer o expandir los vértices seleccionados a lo largo de sus normales"
+msgstr "Contrae o expande los vértices seleccionados en la dirección de sus normales"
 
 
 msgctxt "Operator"
@@ -59741,7 +59673,7 @@ msgstr "Extruir región"
 
 
 msgid "Extrude region of faces"
-msgstr "Extruir una región de caras"
+msgstr "Extruye una región de caras"
 
 
 msgctxt "Operator"
@@ -59750,7 +59682,7 @@ msgstr "Extruir región"
 
 
 msgid "Extrude region and move result"
-msgstr "Extruir una región y mover el resultado"
+msgstr "Extruye una región y desplaza el resultado"
 
 
 msgctxt "Operator"
@@ -59759,7 +59691,7 @@ msgstr "Extruir región y contraer/expandir"
 
 
 msgid "Extrude region together along local normals"
-msgstr "Extruye una región en conjunto a lo largo de las normales de cada cara"
+msgstr "Extruye una región en conjunto en dirección a las normales de cada cara"
 
 
 msgctxt "Operator"
@@ -59768,7 +59700,7 @@ msgstr "Extruir repetidamente"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
-msgstr "Extruir repetidamente los vértices, bordes o caras seleccionadas"
+msgstr "Extruye repetidamente los vértices, bordes o caras seleccionados"
 
 
 msgid "Offset vector"
@@ -59781,7 +59713,7 @@ msgstr "Extruir sólo vértices y mover"
 
 
 msgid "Extrude vertices and move result"
-msgstr "Extruir vértices y mover el resultado"
+msgstr "Extruye vértices y desplaza el resultado"
 
 
 msgid "Extrude Only Vertices"
@@ -59789,7 +59721,7 @@ msgstr "Extruir sólo vértices"
 
 
 msgid "Extrude individual vertices only"
-msgstr "Extruir sólo vértices individuales"
+msgstr "Extruye sólo vértices individuales"
 
 
 msgctxt "Operator"
@@ -59968,31 +59900,31 @@ msgstr "Oculta vértices, bordes o caras (de)seleccionados"
 
 msgctxt "Operator"
 msgid "Inset Faces"
-msgstr "Insertar caras"
+msgstr "Incrustar caras"
 
 
 msgid "Inset new faces into selected faces"
-msgstr "Inserta caras en las caras seleccionadas"
+msgstr "Incrusta nuevas caras dentro de las caras seleccionadas"
 
 
 msgid "Inset face boundaries"
-msgstr "Límites de caras insertadas"
+msgstr "Limita la posición de las caras incrustadas"
 
 
 msgid "Edge Rail"
-msgstr "Riel de bordes"
+msgstr "Bordes como rieles"
 
 
 msgid "Inset the region along existing edges"
-msgstr "Inserta la región a lo largo de los bordes existentes"
+msgstr "Usa los bordes existentes como rieles rectos, sobre los cuales se generarán las nuevas caras incrustadas"
 
 
 msgid "Individual face inset"
-msgstr "Insertar caras individuales"
+msgstr "Incrusta caras de forma individual en cada cara preexistente"
 
 
 msgid "Blend face data across the inset"
-msgstr "Funde los datos de caras a través de las caras insertadas"
+msgstr "Funde los datos de las caras preexistentes sobre las caras incrustadas"
 
 
 msgid "Outset"
@@ -60000,7 +59932,7 @@ msgstr "Exteriores"
 
 
 msgid "Outset rather than inset"
-msgstr "Crear caras exteriores, en vez de insertarlas"
+msgstr "Crear caras exteriores, en vez de incrustadas"
 
 
 msgid "Select Outer"
@@ -60008,7 +59940,7 @@ msgstr "Seleccionar exterior"
 
 
 msgid "Select the new inset faces"
-msgstr "Selecciona las nuevas caras insertadas"
+msgstr "Selecciona las caras exteriores a las incrustadas"
 
 
 msgctxt "Operator"
@@ -60029,7 +59961,7 @@ msgstr "Intersecta las caras seleccionadas entre sí"
 
 
 msgid "Selected/Unselected"
-msgstr "Seleccionadas/No seleccionadas"
+msgstr "Seleccionadas / No seleccionadas"
 
 
 msgid "Intersect selected with unselected faces"
@@ -60120,7 +60052,7 @@ msgstr "Corta a través de todas las caras, no sólo de las visibles"
 
 msgctxt "Operator"
 msgid "Knife Topology Tool"
-msgstr "Herramienta Cortar topología"
+msgstr "Cortar topología"
 
 
 msgid "Cut new topology"
@@ -60261,7 +60193,7 @@ msgstr "Cortar bucle y deslizar"
 
 
 msgid "Cut mesh loop and slide it"
-msgstr "Corta un bucle de la malla y permite deslizarlo"
+msgstr "Permite cortar un nuevo bucle de bordes en la malla y luego deslizarlo"
 
 
 msgid "Loop Cut"
@@ -60269,7 +60201,7 @@ msgstr "Cortar bucle"
 
 
 msgid "Slide an edge loop along a mesh"
-msgstr "Desliza un bucle de bordes a lo largo de la malla"
+msgstr "Permite deslizar un único bucle de bordes a lo largo de una malla"
 
 
 msgctxt "Operator"
@@ -60472,11 +60404,11 @@ msgstr "Extiende el bucle alrededor de los extremos"
 
 msgctxt "Operator"
 msgid "Offset Edge Slide"
-msgstr "Desplazar y deslizar bordes"
+msgstr "Cortar bordes y desplazar"
 
 
 msgid "Offset edge loop slide"
-msgstr "Desplaza y desliza un ciclo de bordes"
+msgstr "Permite crear nuevos bordes desde los seleccionados y desplazarlos a una cierta distancia"
 
 
 msgid "Offset Edge Loop"
@@ -61314,7 +61246,7 @@ msgstr "Delimita la región seleccionada"
 
 
 msgid "(De)select all vertices linked to the edge under the mouse cursor"
-msgstr "(De)selecciona todos los vértices vinculados al borde bajo el cursor del ratón"
+msgstr "(De)selecciona todos los vértices vinculados al borde bajo el puntero del ratón"
 
 
 msgctxt "Operator"
@@ -61756,7 +61688,7 @@ msgstr "Subdivide los bordes perpendiculares al anillo de bordes seleccionado"
 
 
 msgid "Enforce symmetry (both form and topological) across an axis"
-msgstr "Imponer simetría (tanto geométrica como topológica) con respecto a un eje"
+msgstr "Imponer simetría (tanto geométrica como topológica) a la fuerza con respecto a un eje"
 
 
 msgid "Which sides to copy from and to"
@@ -62672,6 +62604,11 @@ msgid "Search for a node by name and focus and select it"
 msgstr "Permite buscar un nodo por su nombre, seleccionarlo y enfocarse en él"
 
 
+msgctxt "Operator"
+msgid "glTF Material Output"
+msgstr "Material glTF"
+
+
 msgid "Add a node to the active tree for glTF export"
 msgstr "Agrega al árbol activo un nodo para exportación a glTF"
 
@@ -63015,7 +62952,7 @@ msgstr "Alterna la previsualización de los nodos seleccionados"
 
 msgctxt "Operator"
 msgid "Read View Layers"
-msgstr "Leer capas visualización"
+msgstr "Leer capas de visualización"
 
 
 msgid "Read all render layers of all used scenes"
@@ -63390,6 +63327,10 @@ msgstr "Agregar cámara"
 
 msgid "Add a camera object to the scene"
 msgstr "Agrega una cámara a la escena"
+
+
+msgid "Delete the selected local overrides and relink their usages to the linked data-blocks if possible, else reset them and mark them as non editable"
+msgstr "Borrar las redefiniciones locales seleccionadas y revincular sus usuarios a los bloques de datos vinculados externamente, si fuera posible; de lo contrario serán restablecidas y marcadas como no editables"
 
 
 msgctxt "Operator"
@@ -64481,10 +64422,6 @@ msgstr "Objetos, datos y materiales seleccionados"
 msgctxt "Operator"
 msgid "Make Library Override"
 msgstr "Hacer redefinición de biblioteca"
-
-
-msgid "Make a local override of this library linked data-block"
-msgstr "Hace una redefinición local de este bloque de datos vinculado a una biblioteca"
 
 
 msgid "Override Collection"
@@ -67026,12 +66963,74 @@ msgid "Relocate the library under cursor"
 msgstr "Reubica la biblioteca bajo el cursor"
 
 
-msgid "Create"
-msgstr "Crear"
+msgctxt "Operator"
+msgid "Outliner Library Override Operation"
+msgstr "Listado - operación de redefinición de biblioteca"
+
+
+msgid "Selection Set"
+msgstr "Conjunto de selección"
+
+
+msgid "Over which part of the tree items to apply the operation"
+msgstr "Define sobre qué parte de los elementos del árbol aplicar la operación"
+
+
+msgid "Apply the operation over selected data-blocks only"
+msgstr "Aplicar la operación únicamente sobre los bloques de datos seleccionados"
+
+
+msgid "Content"
+msgstr "Contenido"
+
+
+msgid "Apply the operation over content of the selected items only (the data-blocks in their sub-tree)"
+msgstr "Aplicar la operación únicamente sobre el contenido de los elementos seleccionados (los bloques de datos en su sub árbol)"
+
+
+msgid "Selected & Content"
+msgstr "Seleccionado y contenido"
+
+
+msgid "Apply the operation over selected data-blocks and all their dependencies"
+msgstr "Aplicar la operación sobre los bloques de datos seleccionados y todas sus dependencias"
+
+
+msgid "Library Override Operation"
+msgstr "Operación de redefinición de biblioteca"
 
 
 msgid "Reset"
 msgstr "Restablecer"
+
+
+msgctxt "Operator"
+msgid "Outliner Library Override Troubleshoot Operation"
+msgstr "Listado - operación de reparación de redefinición de biblioteca"
+
+
+msgid "Library Override Troubleshoot Operation"
+msgstr "Operación de reparación de redefinición de biblioteca"
+
+
+msgid "Resync"
+msgstr "Resincronizar"
+
+
+msgid "Rebuild the selected local overrides from their linked references, as well as their hierarchies of dependencies"
+msgstr "Reconstruir las redefiniciones locales seleccionadas a partir de sus referencias vinculadas, así como sus jerarquías de dependencias"
+
+
+msgid "Resync Enforce"
+msgstr "Resincronizar (a la fuerza)"
+
+
+msgid "Rebuild the selected local overrides from their linked references, as well as their hierarchies of dependencies, enforcing these hierarchies to match the linked data (i.e. ignoring existing overrides on data-blocks pointer properties)"
+msgstr "Reconstruye las redefiniciones locales seleccionadas a partir de sus referencias, así como sus jerarquías de dependencias, forzando a que dichas jerarquías coincidan con los datos vinculados (p.ej: ignorando redefiniciones existentes de propiedades que apunten a los bloques de datos)"
+
+
+msgid "Delete the selected local overrides (including their hierarchies of override dependencies) and relink their usages to the linked data-blocks"
+msgstr "Borra las redefiniciones locales seleccionadas (incluyendo sus jerarquías de redefiniciones dependientes) y revincula nuevamente lo que corresponda a los bloques de datos externos"
 
 
 msgctxt "Operator"
@@ -68992,7 +68991,7 @@ msgstr "Seleccionar conectados"
 
 
 msgid "Select bones linked by parent/child connections under the mouse cursor"
-msgstr "Selecciona los huesos vinculados jerárquicamente con el que se encuentre bajo el puntero"
+msgstr "Selecciona los huesos vinculados jerárquicamente con el que se encuentre bajo el puntero del ratón"
 
 
 msgctxt "Operator"
@@ -73926,7 +73925,7 @@ msgstr "Borra la orientación del manipulador de transformación"
 
 msgctxt "Operator"
 msgid "Edge Bevel Weight"
-msgstr "Influencia de biselado de los bordes"
+msgstr "Influencia de biselado de bordes"
 
 
 msgid "Change the bevel weight of edges"
@@ -75662,7 +75661,7 @@ msgstr "Restablecer la vista"
 
 msgctxt "Operator"
 msgid "Scroll Down"
-msgstr "Desplazar abajo"
+msgstr "Desplazar a abajo"
 
 
 msgid "Scroll the view down"
@@ -75697,7 +75696,7 @@ msgstr "Desplaza la vista hacia la derecha"
 
 msgctxt "Operator"
 msgid "Scroll Up"
-msgstr "Desplazar arriba"
+msgstr "Desplazar a arriba"
 
 
 msgid "Scroll the view up"
@@ -76468,7 +76467,7 @@ msgstr "Centrar vista en puntero"
 
 
 msgid "Center the view to the Z-depth position under the mouse cursor"
-msgstr "Centra la vista en la profundidad Z bajo el cursor del ratón"
+msgstr "Centra la vista en la profundidad Z bajo el puntero del ratón"
 
 
 msgctxt "Operator"
@@ -76523,7 +76522,7 @@ msgstr "Orbita la vista hacia la derecha"
 
 
 msgid "Orbit Up"
-msgstr "Orbitar arriba"
+msgstr "Orbitar a arriba"
 
 
 msgid "Orbit the view up"
@@ -76531,7 +76530,7 @@ msgstr "Orbita la vista hacia arriba"
 
 
 msgid "Orbit Down"
-msgstr "Orbitar abajo"
+msgstr "Orbitar a abajo"
 
 
 msgid "Orbit the view down"
@@ -76572,7 +76571,7 @@ msgstr "Desplaza la vista hacia la derecha"
 
 
 msgid "Pan Up"
-msgstr "Desplazar arriba"
+msgstr "Desplazar a arriba"
 
 
 msgid "Pan the view up"
@@ -76580,7 +76579,7 @@ msgstr "Desplaza la vista hacia arriba"
 
 
 msgid "Pan Down"
-msgstr "Desplazar abajo"
+msgstr "Desplazar a abajo"
 
 
 msgid "Pan the view down"
@@ -76589,7 +76588,7 @@ msgstr "Desplaza la vista hacia abajo"
 
 msgctxt "Operator"
 msgid "View Perspective/Orthographic"
-msgstr "Ver en perspectiva/ortogonal"
+msgstr "Ver en perspectiva / ortogonal"
 
 
 msgid "Switch the current view from perspective/orthographic projection"
@@ -77147,67 +77146,67 @@ msgstr "Exportar curvas de animación (afectado por los claves de las curvas)"
 
 
 msgid "Global Forward Axis"
-msgstr "Eje global adelante"
+msgstr "Eje de avance global"
 
 
 msgid "Global Forward axis for export"
-msgstr "Eje global hacia adelante para la exportación"
+msgstr "Eje de avance global para la exportación"
 
 
 msgid "Global Forward is positive X Axis"
-msgstr "El eje global hacia adelante es +X"
+msgstr "El eje de avance global es +X"
 
 
 msgid "Global Forward is positive Y Axis"
-msgstr "El eje global hacia adelante es +Y"
+msgstr "El eje de avance global es +Y"
 
 
 msgid "Global Forward is positive Z Axis"
-msgstr "El eje global hacia adelante es +Z"
+msgstr "El eje de avance global es +Z"
 
 
 msgid "Global Forward is negative X Axis"
-msgstr "El eje global hacia adelante es -X"
+msgstr "El eje de avance global es -X"
 
 
 msgid "Global Forward is negative Y Axis"
-msgstr "El eje global hacia adelante es -Y"
+msgstr "El eje de avance global es -Y"
 
 
 msgid "Global Forward is negative Z Axis"
-msgstr "El eje global hacia adelante es -Z"
+msgstr "El eje de avance global es -Z"
 
 
 msgid "Global Up Axis"
-msgstr "Eje global arriba"
+msgstr "Eje superior global"
 
 
 msgid "Global Up axis for export"
-msgstr "Eje global hacia arriba para la exportación"
+msgstr "Eje superior global para la exportación"
 
 
 msgid "Global UP is positive X Axis"
-msgstr "El eje global hacia arriba es +X"
+msgstr "El eje superior global es +X"
 
 
 msgid "Global UP is positive Y Axis"
-msgstr "El eje global hacia arriba es +Y"
+msgstr "El eje superior global es +Y"
 
 
 msgid "Global UP is positive Z Axis"
-msgstr "El eje global hacia arriba es +Z"
+msgstr "El eje superior global es +Z"
 
 
 msgid "Global UP is negative X Axis"
-msgstr "El eje global hacia arriba es -X"
+msgstr "El eje superior global es -X"
 
 
 msgid "Global UP is negative Y Axis"
-msgstr "El eje global hacia arriba es -Y"
+msgstr "El eje superior global es -Y"
 
 
 msgid "Global UP is negative Z Axis"
-msgstr "El eje global hacia arriba es -Z"
+msgstr "El eje superior global es -Z"
 
 
 msgid "Modifier resolution for export"
@@ -79133,7 +79132,7 @@ msgstr "Incluir todos los maas UV al exportar"
 
 
 msgid "To USD Preview Surface"
-msgstr "A superficie de previsualización USD"
+msgstr "A superficie de previs USD"
 
 
 msgid "Generate an approximate USD Preview Surface shader representation of a Principled BSDF node network"
@@ -79218,7 +79217,7 @@ msgstr "Crea modificadores de subdivisión de superficies basándose en el atrib
 
 
 msgid "Import USD Preview"
-msgstr "Importar previsualización USD"
+msgstr "Importar previs USD"
 
 
 msgid "Convert UsdPreviewSurface shaders to Principled BSDF shader networks"
@@ -81579,7 +81578,7 @@ msgstr "Extruir individualmente"
 
 msgctxt "Operator"
 msgid "Offset Edge Loop Cut"
-msgstr "Cortar bucle (desde bordes)"
+msgstr "Cortar bordes y desplazar"
 
 
 msgctxt "Operator"
@@ -83760,7 +83759,7 @@ msgstr "Auto resincronizar redefiniciones"
 
 
 msgid "Enable library overrides automatic resync detection and process on file load. Disable when dealing with older .blend files that need manual Resync (Enforce) handling"
-msgstr "Habilita la detección automática de resincronización de redefiniciones de biblioteca al cargar el archivo. Deshabilitar cuando se utilicen archivos .blend antiguos a los que se necesite aplicar Resincronización forzosa"
+msgstr "Habilita la detección automática de resincronización de redefiniciones de biblioteca al cargar el archivo. Deshabilitar cuando se utilicen archivos .blend antiguos a los que se necesite aplicar Resincronizar (a la fuerza)"
 
 
 msgid "Asset Debug Info"
@@ -83827,14 +83826,6 @@ msgid "Enable the new point cloud type in the ui"
 msgstr "Habilita el nuevo tipo de nube de puntos en la interfaz"
 
 
-msgid "Override New Fully Editable"
-msgstr "Redefiniciones completamente editables"
-
-
-msgid "Make all override of a hierarchy fully user-editable by default when creating a new override (if that option is disabled, most overrides created as part of a hierarchy will not be editable by the user by default)"
-msgstr "Hace que todas las redefiniciones de una jerarquía sean completamente editables por el usuario al crear una nueva redefinición (si esta opción se encontrara deshabilitada, de forma predefinida la mayoría de las redefiniciones creadas como parte de una jerarquía no serán editables por el usuario)"
-
-
 msgid "Override Templates"
 msgstr "Plantillas de redefinición"
 
@@ -83860,7 +83851,7 @@ msgstr "Soporte para eventos de inclinación de plumas de tabletas en modo Escul
 
 
 msgid "Undo Legacy"
-msgstr "Deshacer antiguo"
+msgstr "Método antiguo para Deshacer"
 
 
 msgid "Use legacy undo (slower than the new default one, but may be more stable in some cases)"
@@ -84252,7 +84243,7 @@ msgstr "Intercambiar ejes Y/Z"
 
 
 msgid "Pan using up/down on the device (otherwise forward/backward)"
-msgstr "Desplazamiento usando arriba/abajo en el dispositivo (de otro modo adelante/atrás)"
+msgstr "Desplazamiento usando arriba/abajo en el dispositivo (de otro modo usar avance/retroceso)"
 
 
 msgid "Invert X Axis"
@@ -94153,15 +94144,15 @@ msgstr "Datos persistentes asociados a columnas de la planilla"
 
 
 msgid "Context Path"
-msgstr "Ruta de contexto"
+msgstr "Ruta del contexto"
 
 
 msgid "Context path to the data being displayed"
-msgstr "Ruta de contexto a los datos que se están mostrando"
+msgstr "Ruta del contexto de los datos visualizados"
 
 
 msgid "Display Context Path Collapsed"
-msgstr "Mostrar ruta de contexto colapsada"
+msgstr "Mostrar ruta del contexto colapsada"
 
 
 msgid "Geometry Component"
@@ -94193,7 +94184,7 @@ msgstr "Usar datos del objeto sin sus modificadores aplicados"
 
 
 msgid "Viewer Node"
-msgstr "Nodo Visor"
+msgstr "Nodo visor"
 
 
 msgid "Use intermediate data from viewer node"
@@ -106811,7 +106802,7 @@ msgstr "Disminuir número"
 
 
 msgid "No active asset"
-msgstr "No hay un recurso activo"
+msgstr "Ningún recurso activo"
 
 
 msgctxt "Operator"
@@ -106904,6 +106895,11 @@ msgstr "Vinculados"
 msgctxt "Operator"
 msgid "Shortest Path"
 msgstr "Camino más corto"
+
+
+msgctxt "Image"
+msgid "New"
+msgstr "Nueva"
 
 
 msgctxt "Operator"
@@ -107227,11 +107223,11 @@ msgstr "Ajustar"
 
 
 msgid "Node Editor Overlays"
-msgstr "Sobreimpresos del editor de nodos"
+msgstr "Sobreimpresos editor nodos"
 
 
 msgid "Wire Colors"
-msgstr "Colores de estructura"
+msgstr "Colores de conexiones"
 
 
 msgctxt "Operator"
@@ -107379,6 +107375,11 @@ msgstr "Contraer un nivel"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Vincular a escena"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "Hacer"
 
 
 msgid "Restriction Toggles"
@@ -107928,11 +107929,16 @@ msgstr "Ningún contexto activo"
 
 
 msgid "No active viewer node"
-msgstr "No hay un nodo de visor activo"
+msgstr "Ningún nodo visor activo"
 
 
 msgid "<no object>"
 msgstr "<ningún objeto>"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nuevo"
 
 
 msgctxt "Operator"
@@ -108201,7 +108207,7 @@ msgstr "Bloques de datos no usados"
 
 msgctxt "Operator"
 msgid "Recursive Unused Data-Blocks"
-msgstr "Bloques de datos no usados recursivos"
+msgstr "Bloques de datos no usados (recursivamente)"
 
 
 msgctxt "Operator"
@@ -108211,7 +108217,7 @@ msgstr "Bloques de datos vinculados no usados"
 
 msgctxt "Operator"
 msgid "Recursive Unused Linked Data-Blocks"
-msgstr "Bloques de datos vinculados no usados recursivos"
+msgstr "Bloques de datos vinculados no usados (recursivamente)"
 
 
 msgctxt "Operator"
@@ -108221,7 +108227,7 @@ msgstr "Bloques de datos locales no usados"
 
 msgctxt "Operator"
 msgid "Recursive Unused Local Data-Blocks"
-msgstr "Bloques de datos locales no usados recursivos"
+msgstr "Bloques de datos locales no usados (recursivamente)"
 
 
 msgctxt "Operator"
@@ -108365,7 +108371,7 @@ msgstr "Procesar fotograma"
 
 msgctxt "Operator"
 msgid "Operator Search..."
-msgstr "Búsqueda de operador..."
+msgstr "Buscar operador..."
 
 
 msgctxt "Operator"
@@ -108827,7 +108833,7 @@ msgstr "Cursor al activo"
 
 msgctxt "Operator"
 msgid "Perspective/Orthographic"
-msgstr "Perspectiva/Ortogonal"
+msgstr "Perspectiva / Ortogonal"
 
 
 msgctxt "Operator"
@@ -108867,7 +108873,7 @@ msgstr "Zoom a región..."
 
 msgctxt "Operator"
 msgid "Dolly View..."
-msgstr "Avanzar vista..."
+msgstr "Avanzar / Retroceder vista..."
 
 
 msgctxt "Operator"
@@ -109118,11 +109124,6 @@ msgstr "Cámara"
 msgctxt "Operator"
 msgid "Import OpenVDB..."
 msgstr "Importar OpenVDB..."
-
-
-msgctxt "Operator"
-msgid "Empty"
-msgstr "Vacío"
 
 
 msgctxt "Operator"
@@ -109706,7 +109707,7 @@ msgstr "Extruir caras"
 
 msgctxt "Operator"
 msgid "Extrude Faces Along Normals"
-msgstr "Extruir caras en dirección de sus normales"
+msgstr "Extruir caras según normales"
 
 
 msgctxt "Operator"
@@ -109772,11 +109773,6 @@ msgstr "Bordes definidos"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Bucles de bordes"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Hacer"
 
 
 msgctxt "Operator"
@@ -110207,12 +110203,12 @@ msgstr "Biselar bordes"
 
 msgctxt "Operator"
 msgid "Rotate Edge CW"
-msgstr "Rotar borde horario"
+msgstr "Rotar borde (horario)"
 
 
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
-msgstr "Rotar borde antihorario"
+msgstr "Rotar borde (antihorario)"
 
 
 msgctxt "Operator"
@@ -110763,6 +110759,10 @@ msgstr "Afectar sólo"
 
 msgid "Locations"
 msgstr "Posiciones"
+
+
+msgid "Parents"
+msgstr "Principales"
 
 
 msgid "Refine Method"
@@ -112697,35 +112697,35 @@ msgstr "Sólo eje X/Y/[Z] (Z para restablecer)"
 
 
 msgid "X/Y/Z = Axis Constraint"
-msgstr "X/Y/Z = Restringir eje"
+msgstr "X/Y/Z = restringir eje"
 
 
 msgid "[G]/R/S/B/C - Location only (G to clear) | %s"
-msgstr "[G]/R/S/B/C - sólo Posición (G para restablecer) | %s"
+msgstr "[G]/R/S/B/C - sólo posición (G para restablecer) | %s"
 
 
 msgid "G/[R]/S/B/C - Rotation only (R to clear) | %s"
-msgstr "G/[R]/S/B/C - sólo Rotación (R para restablecer) | %s"
+msgstr "G/[R]/S/B/C - sólo rotación (R para restablecer) | %s"
 
 
 msgid "G/R/[S]/B/C - Scale only (S to clear) | %s"
-msgstr "G/R/[S]/B/C - sólo Escala (S para restablecer) | %s"
+msgstr "G/R/[S]/B/C - sólo escala (S para restablecer) | %s"
 
 
 msgid "G/R/S/[B]/C - Bendy Bone properties only (B to clear) | %s"
-msgstr "G/R/S/[B]/C - sólo propiedades de Hueso Flexible (B para restablecer) | %s"
+msgstr "G/R/S/[B]/C - sólo propiedades de hueso flexible (B para restablecer) | %s"
 
 
 msgid "G/R/S/B/[C] - Custom Properties only (C to clear) | %s"
-msgstr "G/R/S/B/[C] - sólo Propiedades Personalizadas (C para restablecer) | %s"
+msgstr "G/R/S/B/[C] - sólo propiedades personalizadas (C para restablecer) | %s"
 
 
 msgid "G/R/S/B/C - Limit to Transform/Property Set"
-msgstr "G/R/S/B/C - Limitar a Transformación/Grupo de Propiedades"
+msgstr "G/R/S/B/C - limitar a transformación / grupo de propiedades"
 
 
 msgid "[H] - Toggle bone visibility"
-msgstr "[H] - Alternar visibilidad de huesos"
+msgstr "[H] - alternar visibilidad de huesos"
 
 
 msgid "No keyframes to slide between"
@@ -113287,14 +113287,6 @@ msgstr "Interpolación de lápiz de cera: "
 
 msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "Esc/clic Der. para cancelar, Intro/clic Izq. para confirmar, RUEDA/MOVER para ajustar el factor"
-
-
-msgid "Easing (by strength)"
-msgstr "Aceleración (según su intensidad)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efectos dinámicos"
 
 
 msgid "Cannot find valid keyframes to interpolate (Breakdowns keyframes are not allowed)"
@@ -114214,11 +114206,6 @@ msgid "New"
 msgstr "Nueva"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Nueva"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Nueva"
@@ -114242,11 +114229,6 @@ msgstr "Nuevo"
 msgctxt "Screen"
 msgid "New"
 msgstr "Nueva"
-
-
-msgctxt "Text"
-msgid "New"
-msgstr "Nuevo"
 
 
 msgctxt "Speaker"
@@ -114337,7 +114319,7 @@ msgstr "Opciones de la escena"
 
 
 msgid "Samples Transform"
-msgstr "Muestra de transformación"
+msgstr "Muestras de transf"
 
 
 msgid "Close"
@@ -114441,7 +114423,7 @@ msgstr "No es posible importar desde SVG"
 
 
 msgid "Axis Forward"
-msgstr "Eje hacia adelante"
+msgstr "Eje  Avance"
 
 
 msgid "Geometry Export"
@@ -114465,7 +114447,7 @@ msgstr "Grupos de objetos"
 
 
 msgid "Smooth Group Bitflags"
-msgstr "Indicadores grps. suavizado"
+msgstr "Indicadores grupos suavizado"
 
 
 msgid "File References"
@@ -114984,7 +114966,7 @@ msgstr "No implementado"
 
 
 msgid "Converting some non-editable object/object data, enforcing 'Keep Original' option to True"
-msgstr "Convirtiendo algunos objetos o datos de objetos no editables, imponiendo la activación de la opción \"Conservar original\""
+msgstr "Convirtiendo algunos objetos o datos de objetos no editables, forzando la activación de la opción \"Conservar original\""
 
 
 msgid "Convert Surfaces to Grease Pencil is not supported"
@@ -119701,6 +119683,10 @@ msgstr "Desplazamientos aleatorios"
 
 msgid "Illumination Filtering"
 msgstr "Filtrado de iluminación"
+
+
+msgid "Create"
+msgstr "Crear"
 
 
 msgid "Crease (Angle Cached)"
