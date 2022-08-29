@@ -38,6 +38,8 @@
 
 #include "outliner_intern.hh" /* own include */
 
+namespace blender::ed::outliner {
+
 /* -------------------------------------------------------------------- */
 /** \name Utility API
  * \{ */
@@ -122,8 +124,12 @@ TreeTraversalAction outliner_find_selected_objects(TreeElement *te, void *custom
   return TRAVERSE_CONTINUE;
 }
 
+}  // namespace blender::ed::outliner
+
 void ED_outliner_selected_objects_get(const bContext *C, ListBase *objects)
 {
+  using namespace blender::ed::outliner;
+
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   struct IDsSelectedData data = {{nullptr}};
   outliner_tree_traverse(space_outliner,
@@ -140,11 +146,15 @@ void ED_outliner_selected_objects_get(const bContext *C, ListBase *objects)
   BLI_freelistN(&data.selected_array);
 }
 
+namespace blender::ed::outliner {
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Poll Functions
  * \{ */
+
+}  // namespace blender::ed::outliner
 
 bool ED_outliner_collections_editor_poll(bContext *C)
 {
@@ -152,6 +162,8 @@ bool ED_outliner_collections_editor_poll(bContext *C)
   return (space_outliner != nullptr) &&
          ELEM(space_outliner->outlinevis, SO_VIEW_LAYER, SO_SCENES, SO_LIBRARIES);
 }
+
+namespace blender::ed::outliner {
 
 static bool outliner_view_layer_collections_editor_poll(bContext *C)
 {
@@ -364,7 +376,7 @@ void outliner_collection_delete(
               const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(&parent->id);
               BLI_assert(id_type->owner_get != nullptr);
 
-              ID *scene_owner = id_type->owner_get(bmain, &parent->id, NULL);
+              ID *scene_owner = id_type->owner_get(bmain, &parent->id, nullptr);
               BLI_assert(GS(scene_owner->name) == ID_SCE);
               if (ID_IS_LINKED(scene_owner) || ID_IS_OVERRIDE_LIBRARY(scene_owner)) {
                 skip = true;
@@ -597,7 +609,7 @@ static int collection_duplicate_exec(bContext *C, wmOperator *op)
     const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(&parent->id);
     BLI_assert(id_type->owner_get != nullptr);
 
-    Scene *scene_owner = (Scene *)id_type->owner_get(bmain, &parent->id, NULL);
+    Scene *scene_owner = (Scene *)id_type->owner_get(bmain, &parent->id, nullptr);
     BLI_assert(scene_owner != nullptr);
     BLI_assert(GS(scene_owner->id.name) == ID_SCE);
 
@@ -1636,3 +1648,5 @@ void OUTLINER_OT_collection_color_tag_set(wmOperatorType *ot)
 }
 
 /** \} */
+
+}  // namespace blender::ed::outliner

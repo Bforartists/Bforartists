@@ -657,8 +657,7 @@ Object *ED_object_add_type_with_obdata(bContext *C,
 
   WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);
 
-  /* TODO(sergey): Use proper flag for tagging here. */
-  DEG_id_tag_update(&scene->id, 0);
+  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
 
   ED_outliner_select_sync_from_object_tag(C);
 
@@ -3684,7 +3683,7 @@ static int duplicate_exec(bContext *C, wmOperator *op)
   Object *ob_new_active = nullptr;
 
   CTX_DATA_BEGIN (C, Base *, base, selected_bases) {
-    Object *ob_new = NULL;
+    Object *ob_new = nullptr;
     object_add_duplicate_internal(bmain,
                                   scene,
                                   view_layer,

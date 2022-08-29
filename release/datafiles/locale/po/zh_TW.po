@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -15917,10 +15917,6 @@ msgid "Multiply mass by particle size"
 msgstr "質量乘以粒子大小"
 
 
-msgid "Parents"
-msgstr "親代"
-
-
 msgid "Render parent particles"
 msgstr "算繪親代粒子"
 
@@ -24854,34 +24850,6 @@ msgid "Math"
 msgstr "比對"
 
 
-msgid "Logarithm"
-msgstr "對數"
-
-
-msgid "Less Than"
-msgstr "小於"
-
-
-msgid "Greater Than"
-msgstr "大於"
-
-
-msgid "Compare"
-msgstr "比較"
-
-
-msgid "Arcsine"
-msgstr "反正弦"
-
-
-msgid "Arccosine"
-msgstr "反餘弦"
-
-
-msgid "Arctangent"
-msgstr "反正切"
-
-
 msgid "Include alpha of second input in this operation"
 msgstr "將第二輸入的 alpha 內含於此操作"
 
@@ -25246,8 +25214,20 @@ msgid "Equal"
 msgstr "等於"
 
 
+msgid "Compare"
+msgstr "比較"
+
+
 msgid "Dot Product"
 msgstr "內積"
+
+
+msgid "Less Than"
+msgstr "小於"
+
+
+msgid "Greater Than"
+msgstr "大於"
 
 
 msgid "Input value used for unconnected socket"
@@ -54964,6 +54944,11 @@ msgid "Shortest Path"
 msgstr "最短路徑"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "新增"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "儲存所有影像"
@@ -55149,6 +55134,11 @@ msgid "Slot %d"
 msgstr "槽 %d"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "建立"
+
+
 msgid "Lift:"
 msgstr "抬升："
 
@@ -55295,6 +55285,11 @@ msgstr "原始框幀區間：%d-%d (%d)"
 
 msgid "Unpack"
 msgstr "解包"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "新增"
 
 
 msgctxt "Operator"
@@ -55786,11 +55781,6 @@ msgstr "匯入 OpenVDB..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "空體"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "喇叭"
 
@@ -56142,11 +56132,6 @@ msgstr "循環線"
 
 
 msgctxt "Operator"
-msgid "Make"
-msgstr "建立"
-
-
-msgctxt "Operator"
 msgid "Set as Active Material"
 msgstr "設為作用中材質"
 
@@ -56461,6 +56446,10 @@ msgstr "調整空體顯示大小"
 
 msgid "Layer:"
 msgstr "層："
+
+
+msgid "Parents"
+msgstr "親代"
 
 
 msgid "Auto Normalize"
@@ -57391,14 +57380,6 @@ msgid "No active area"
 msgstr "無作用中區域"
 
 
-msgid "Easing (by strength)"
-msgstr "緩變 (依強度)"
-
-
-msgid "Dynamic Effects"
-msgstr "動態效果"
-
-
 msgid "Grease Pencil operator is already active"
 msgstr "蠟筆資料操作器已在作用中"
 
@@ -57881,11 +57862,6 @@ msgid "New"
 msgstr "新增"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "新增"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "新增"
@@ -57907,11 +57883,6 @@ msgstr "新增"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "新增"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "新增"
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -24237,10 +24237,6 @@ msgid "Multiply mass by particle size"
 msgstr "Помножити масу на розмір частинки"
 
 
-msgid "Parents"
-msgstr "Предки"
-
-
 msgid "Render parent particles"
 msgstr "Рендерити предківські частинки"
 
@@ -38623,10 +38619,6 @@ msgid "A / B"
 msgstr "A / B"
 
 
-msgid "Multiply Add"
-msgstr "Множення Додання"
-
-
 msgid "A * B + C"
 msgstr "A * B + C"
 
@@ -38635,20 +38627,12 @@ msgid "A power B"
 msgstr "A в степені B"
 
 
-msgid "Logarithm"
-msgstr "Логарифм"
-
-
 msgid "Logarithm A base B"
 msgstr "Логарифм A за основою B"
 
 
 msgid "Square root of A"
 msgstr "Квадратний корінь з A"
-
-
-msgid "Inverse Square Root"
-msgstr "Обернено до Квадратного Кореня"
 
 
 msgid "1 / Square root of A"
@@ -38671,48 +38655,24 @@ msgid "The maximum from A and B"
 msgstr "Більше з A і B"
 
 
-msgid "Less Than"
-msgstr "Менше ніж"
-
-
 msgid "1 if A < B else 0"
 msgstr "1, якщо A < B, інакше - 0"
-
-
-msgid "Greater Than"
-msgstr "Більше ніж"
 
 
 msgid "1 if A > B else 0"
 msgstr "1, якщо A > B, інакше - 0"
 
 
-msgid "Sign"
-msgstr "Знак"
-
-
 msgid "Returns the sign of A"
 msgstr "Повертає знак A"
-
-
-msgid "Compare"
-msgstr "Порівняти"
 
 
 msgid "1 if (A == B) within tolerance C else 0"
 msgstr "1 якщо (A == B) у межах допуску C, інакше 0"
 
 
-msgid "Smooth Minimum"
-msgstr "Мінімум Згладження"
-
-
 msgid "The minimum from A and B with smoothing C"
 msgstr "Мінімум з A та B зі згладжуванням C"
-
-
-msgid "Smooth Maximum"
-msgstr "Максимум Згладження"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -38727,10 +38687,6 @@ msgid "The largest integer smaller than or equal A"
 msgstr "Найбільше ціле, менше або рівне A"
 
 
-msgid "Ceil"
-msgstr "Стеля"
-
-
 msgid "The smallest integer greater than or equal A"
 msgstr "Найменше ціле, більше або рівне A"
 
@@ -38739,16 +38695,8 @@ msgid "The integer part of A, removing fractional digits"
 msgstr "Цілочислова частина A, вилучає дробові цифри"
 
 
-msgid "Fraction"
-msgstr "Дробова частина"
-
-
 msgid "The fraction part of A"
 msgstr "Дробова частина від A"
-
-
-msgid "Modulo"
-msgstr "Модуль"
 
 
 msgid "Modulo using fmod(A,B)"
@@ -38779,72 +38727,36 @@ msgid "tan(A)"
 msgstr "tan(A)"
 
 
-msgid "Arcsine"
-msgstr "Арксинус"
-
-
 msgid "arcsin(A)"
 msgstr "arcsin(A)"
-
-
-msgid "Arccosine"
-msgstr "Арккосинус"
 
 
 msgid "arccos(A)"
 msgstr "arccos(A)"
 
 
-msgid "Arctangent"
-msgstr "Арктангенс"
-
-
 msgid "arctan(A)"
 msgstr "arctan(A)"
-
-
-msgid "Arctan2"
-msgstr "Arctan2"
 
 
 msgid "The signed angle arctan(A / B)"
 msgstr "Кут arctan(A / B) зі знаком"
 
 
-msgid "Hyperbolic Sine"
-msgstr "Гіперболічний Синус"
-
-
 msgid "sinh(A)"
 msgstr "sinh(A)"
-
-
-msgid "Hyperbolic Cosine"
-msgstr "Гіперболічний Косинус"
 
 
 msgid "cosh(A)"
 msgstr "cosh(A)"
 
 
-msgid "Hyperbolic Tangent"
-msgstr "Гіперболічний Тангенс"
-
-
 msgid "tanh(A)"
 msgstr "tanh(A)"
 
 
-msgid "To Radians"
-msgstr "У Радіани"
-
-
 msgid "Convert from degrees to radians"
 msgstr "Конвертувати з градусів у радіани"
-
-
-msgid "To Degrees"
-msgstr "У Градуси"
 
 
 msgid "Convert from radians to degrees"
@@ -38981,10 +38893,6 @@ msgstr "Помножити канали RGBA увідного зображенн
 
 msgid "Replace Alpha"
 msgstr "Замінити Альфа"
-
-
-msgid "Replace the input image's alpha channels by the alpha input value"
-msgstr "Замінити канали альфа увідного зображення увідним значенням альфа"
 
 
 msgid "Split Viewer"
@@ -39323,12 +39231,20 @@ msgid "Not Equal"
 msgstr "Не Дорівнює"
 
 
+msgid "Compare"
+msgstr "Порівняти"
+
+
 msgid "Input Type"
 msgstr "Тип Уводу"
 
 
 msgid "Dot Product"
 msgstr "Скал. добуток"
+
+
+msgid "Less Than"
+msgstr "Менше ніж"
 
 
 msgid "True when the first input is smaller than second input"
@@ -39341,6 +39257,10 @@ msgstr "Менше Ніж або Дорівнює"
 
 msgid "True when the first input is smaller than the second input or equal"
 msgstr "Істина, коли перший увід є меншим, ніж другий увід або дорівнює йому"
+
+
+msgid "Greater Than"
+msgstr "Більше ніж"
 
 
 msgid "True when the first input is greater than the second input"
@@ -40632,6 +40552,10 @@ msgid "Entry-wise divide"
 msgstr "Ділення поелементно"
 
 
+msgid "Multiply Add"
+msgstr "Множення Додання"
+
+
 msgid "Cross Product"
 msgstr "Векторний добуток"
 
@@ -40688,12 +40612,24 @@ msgid "Entry-wise floor"
 msgstr "Підлога поелементно"
 
 
+msgid "Ceil"
+msgstr "Стеля"
+
+
 msgid "Entry-wise ceil"
 msgstr "Стеля поелементно"
 
 
+msgid "Fraction"
+msgstr "Дробова частина"
+
+
 msgid "The fraction part of A entry-wise"
 msgstr "Дробова частина від А поелементно"
+
+
+msgid "Modulo"
+msgstr "Модуль"
 
 
 msgid "Entry-wise modulo using fmod(A,B)"
@@ -57058,10 +56994,6 @@ msgstr "Вибрані об'єкти, дані та матеріали"
 msgctxt "Operator"
 msgid "Make Library Override"
 msgstr "Виконати заміщення бібліотеки"
-
-
-msgid "Make a local override of this library linked data-block"
-msgstr "Виконати локальне заміщення цієї бібліотеки пов'язаним блоком даних"
 
 
 msgid "Override Collection"
@@ -92998,6 +92930,11 @@ msgid "Shortest Path"
 msgstr "Найкоротший Шлях"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Новий"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Зберегти Всі Зображення"
@@ -93423,6 +93360,11 @@ msgstr "Схов Один Рівень"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Пов'язання зі Сценою"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "Зроблення"
 
 
 msgid "Restriction Toggles"
@@ -93905,6 +93847,11 @@ msgstr "Перемикання На"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "Два або більше каналів потрібні під цією смужкоюю"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Новий"
 
 
 msgctxt "Operator"
@@ -94992,11 +94939,6 @@ msgstr "Імпорт OpenVDB..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Порожня"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "Нарисний Олівець"
 
@@ -95570,11 +95512,6 @@ msgstr "Гострі Ребра"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Петлі Ребер"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Зроблення"
 
 
 msgctxt "Operator"
@@ -96468,6 +96405,10 @@ msgstr "Задіяти Лише"
 
 msgid "Locations"
 msgstr "Локації"
+
+
+msgid "Parents"
+msgstr "Предки"
 
 
 msgid "Refine Method"
@@ -98273,14 +98214,6 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/СКМ для касування, Enter/ЛКМ для підтвердження, КОЛІЩА/ПЕРЕСУВ для наладнання фактора"
 
 
-msgid "Easing (by strength)"
-msgstr "Ослаблення (за силою)"
-
-
-msgid "Dynamic Effects"
-msgstr "Динамічні ефекти"
-
-
 msgid "Cannot interpolate in curve edit mode"
 msgstr "Неможливо інтерполювати у режимі редагування кривої"
 
@@ -99126,11 +99059,6 @@ msgid "New"
 msgstr "Новий"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Новий"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Новий"
@@ -99152,11 +99080,6 @@ msgstr "Новий"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Новий"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Новий"
 
