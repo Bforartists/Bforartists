@@ -296,6 +296,12 @@ static void wm_window_match_keep_current_wm(const bContext *C,
     }
   }
 
+  /* we'll be using the current wm list directly; make sure
+   * the names are validated and in the name map. */
+  LISTBASE_FOREACH (wmWindowManager *, wm_item, current_wm_list) {
+    BKE_main_namemap_get_name(bmain, &wm_item->id, wm_item->id.name + 2);
+  }
+
   *r_new_wm_list = *current_wm_list;
 }
 
@@ -696,6 +702,14 @@ static void wm_file_read_post(bContext *C, const struct wmFileReadPost_Params *p
   if (use_userdef) {
     if (is_factory_startup) {
       BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_FACTORY_USERDEF_POST);
+    }
+  }
+
+  if (is_factory_startup && BLT_translate_new_dataname()) {
+    /* Translate workspace names */
+    LISTBASE_FOREACH_MUTABLE (WorkSpace *, workspace, &bmain->workspaces) {
+      BKE_libblock_rename(
+          bmain, &workspace->id, CTX_DATA_(BLT_I18NCONTEXT_ID_WORKSPACE, workspace->id.name + 2));
     }
   }
 

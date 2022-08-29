@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -21075,10 +21075,6 @@ msgid "Multiply mass by particle size"
 msgstr "파티클 크기로 질량을 곱하기"
 
 
-msgid "Parents"
-msgstr "부모"
-
-
 msgid "Render parent particles"
 msgstr "부모 파티클을 렌더"
 
@@ -34093,10 +34089,6 @@ msgid "A / B"
 msgstr "A / B"
 
 
-msgid "Multiply Add"
-msgstr "곱하기 추가"
-
-
 msgid "A * B + C"
 msgstr "A * B + C"
 
@@ -34105,20 +34097,12 @@ msgid "A power B"
 msgstr "A 거듭제곱 B"
 
 
-msgid "Logarithm"
-msgstr "로그"
-
-
 msgid "Logarithm A base B"
 msgstr "로그 A 인수 B"
 
 
 msgid "Square root of A"
 msgstr "A의 제곱근"
-
-
-msgid "Inverse Square Root"
-msgstr "제곱근을 반전"
 
 
 msgid "1 / Square root of A"
@@ -34141,48 +34125,24 @@ msgid "The maximum from A and B"
 msgstr "A와 B의 최대 값"
 
 
-msgid "Less Than"
-msgstr "보다 더 작음"
-
-
 msgid "1 if A < B else 0"
 msgstr "A < B 인 경우 1 그렇지 않으면 0"
-
-
-msgid "Greater Than"
-msgstr "보다 더 큼"
 
 
 msgid "1 if A > B else 0"
 msgstr "A> B 인 경우 1 그렇지 않으면 0"
 
 
-msgid "Sign"
-msgstr "부호"
-
-
 msgid "Returns the sign of A"
 msgstr "A의 부호를 반환"
-
-
-msgid "Compare"
-msgstr "비교"
 
 
 msgid "1 if (A == B) within tolerance C else 0"
 msgstr "공차 C 내에서 (A == B)이면 1"
 
 
-msgid "Smooth Minimum"
-msgstr "부드러운 최소"
-
-
 msgid "The minimum from A and B with smoothing C"
 msgstr "스무씽 C를 사용하는 A 및 B의 최소값"
-
-
-msgid "Smooth Maximum"
-msgstr "부드러운 최대"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -34197,24 +34157,12 @@ msgid "The largest integer smaller than or equal A"
 msgstr "A보다 작거나 같은 가장 큰 정수"
 
 
-msgid "Ceil"
-msgstr "천장"
-
-
 msgid "The smallest integer greater than or equal A"
 msgstr "A보다 크거나 같은 가장 작은 정수"
 
 
-msgid "Fraction"
-msgstr "분수"
-
-
 msgid "The fraction part of A"
 msgstr "A의 분수 부분"
-
-
-msgid "Modulo"
-msgstr "모듈"
 
 
 msgid "Wrap value to range, wrap(A,B)"
@@ -34241,72 +34189,36 @@ msgid "tan(A)"
 msgstr "tan(A)"
 
 
-msgid "Arcsine"
-msgstr "아크사인"
-
-
 msgid "arcsin(A)"
 msgstr "arcsin(A)"
-
-
-msgid "Arccosine"
-msgstr "아크코사인"
 
 
 msgid "arccos(A)"
 msgstr "arccos(A)"
 
 
-msgid "Arctangent"
-msgstr "아크탄젠트"
-
-
 msgid "arctan(A)"
 msgstr "arctan(A)"
-
-
-msgid "Arctan2"
-msgstr "Arctan2"
 
 
 msgid "The signed angle arctan(A / B)"
 msgstr "부호있는 각도 arctan(A / B)"
 
 
-msgid "Hyperbolic Sine"
-msgstr "하이퍼블릭 사인"
-
-
 msgid "sinh(A)"
 msgstr "sinh(A)"
-
-
-msgid "Hyperbolic Cosine"
-msgstr "하이퍼블릭 코사인"
 
 
 msgid "cosh(A)"
 msgstr "cosh(A)"
 
 
-msgid "Hyperbolic Tangent"
-msgstr "하이퍼블릭 탄젠트"
-
-
 msgid "tanh(A)"
 msgstr "tanh(A)"
 
 
-msgid "To Radians"
-msgstr "라디안으로"
-
-
 msgid "Convert from degrees to radians"
 msgstr "디그리에서 라디안으로 변환"
-
-
-msgid "To Degrees"
-msgstr "디그리로"
 
 
 msgid "Convert from radians to degrees"
@@ -34677,8 +34589,20 @@ msgid "Equal"
 msgstr "동일한"
 
 
+msgid "Compare"
+msgstr "비교"
+
+
 msgid "Dot Product"
 msgstr "내적"
+
+
+msgid "Less Than"
+msgstr "보다 더 작음"
+
+
+msgid "Greater Than"
+msgstr "보다 더 큼"
 
 
 msgid "Input value used for unconnected socket"
@@ -35618,6 +35542,10 @@ msgid "Vector Math"
 msgstr "벡터 수학"
 
 
+msgid "Multiply Add"
+msgstr "곱하기 추가"
+
+
 msgid "Cross Product"
 msgstr "벡터의 외적"
 
@@ -35652,6 +35580,18 @@ msgstr "규모로 곱한 A"
 
 msgid "Normalize A"
 msgstr "노멀라이즈 A"
+
+
+msgid "Ceil"
+msgstr "천장"
+
+
+msgid "Fraction"
+msgstr "분수"
+
+
+msgid "Modulo"
+msgstr "모듈"
 
 
 msgid "Round A to the largest integer multiple of B less than or equal A"
@@ -49894,10 +49834,6 @@ msgstr "선택된 오브젝트, 데이터 및 매테리얼"
 msgctxt "Operator"
 msgid "Make Library Override"
 msgstr "라이브러리 덮어 쓰기를 만들기"
-
-
-msgid "Make a local override of this library linked data-block"
-msgstr "이 라이브러리에 링크된 데이터 블록의 로컬 대체를 지정"
 
 
 msgid "Make linked data local to each object"
@@ -80284,6 +80220,11 @@ msgid "Shortest Path"
 msgstr "최단 경로"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "새로운"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "모든 이미지를 저장"
@@ -80667,6 +80608,11 @@ msgid "Link to Scene"
 msgstr "씬에 연결"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "만들기"
+
+
 msgid "Sync Selection"
 msgstr "선택을 동기화"
 
@@ -81047,6 +80993,11 @@ msgstr "소스 채널"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "이 스트립 아래에 두 개 이상의 채널이 필요합니다"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "새로운"
 
 
 msgctxt "Operator"
@@ -81878,11 +81829,6 @@ msgstr "카메라"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "엠프티"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "그리스 펜슬"
 
@@ -82297,11 +82243,6 @@ msgstr "샤프 에지"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "에지 루프"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "만들기"
 
 
 msgctxt "Operator"
@@ -83003,6 +82944,10 @@ msgstr "영향 만"
 
 msgid "Locations"
 msgstr "위치"
+
+
+msgid "Parents"
+msgstr "부모"
 
 
 msgid "Refine Method"
@@ -84636,14 +84581,6 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "취소하려면 ESC/RMB, 확인하려면 Enter/LMB 입력, WHEEL/MOVE로 요소 조정"
 
 
-msgid "Easing (by strength)"
-msgstr "완화 (강도에 의해)"
-
-
-msgid "Dynamic Effects"
-msgstr "다이나믹 이펙트"
-
-
 msgid "Custom interpolation curve does not exist"
 msgstr "커스텀 보간 커브이 없습니다"
 
@@ -85337,11 +85274,6 @@ msgid "New"
 msgstr "새로운"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "새로운"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "새로운"
@@ -85363,11 +85295,6 @@ msgstr "새로운"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "새로운"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "새로운"
 

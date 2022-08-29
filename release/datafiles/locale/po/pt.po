@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -15945,10 +15945,6 @@ msgid "Multiply mass by particle size"
 msgstr "Multiplica a massa pelo tamanho das partículas."
 
 
-msgid "Parents"
-msgstr "Parentes"
-
-
 msgid "Render parent particles"
 msgstr "Renderiza as partículas parentes."
 
@@ -27303,38 +27299,6 @@ msgid "Math"
 msgstr "Matemática"
 
 
-msgid "Logarithm"
-msgstr "Logarítmico"
-
-
-msgid "Less Than"
-msgstr "Menor que"
-
-
-msgid "Greater Than"
-msgstr "Maior que "
-
-
-msgid "Compare"
-msgstr "Comparar"
-
-
-msgid "Modulo"
-msgstr "Módulo"
-
-
-msgid "Arcsine"
-msgstr "Arco seno"
-
-
-msgid "Arccosine"
-msgstr "Arco cosseno"
-
-
-msgid "Arctangent"
-msgstr "Arco tangente"
-
-
 msgid "Include alpha of second input in this operation"
 msgstr "Inclui o alfa da segunda entrada dentro desta operação."
 
@@ -27699,8 +27663,20 @@ msgid "Equal"
 msgstr "Igual"
 
 
+msgid "Compare"
+msgstr "Comparar"
+
+
 msgid "Dot Product"
 msgstr "Produto escalar"
+
+
+msgid "Less Than"
+msgstr "Menor que"
+
+
+msgid "Greater Than"
+msgstr "Maior que "
 
 
 msgid "Input value used for unconnected socket"
@@ -28402,6 +28378,10 @@ msgstr "Matemática vetorial"
 
 msgid "Cross Product"
 msgstr "Produto vetorial"
+
+
+msgid "Modulo"
+msgstr "Módulo"
 
 
 msgid "Z Axis"
@@ -61440,6 +61420,11 @@ msgid "Shortest Path"
 msgstr "Caminho mais curto"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Novo(a)"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Guardar todas as imagens"
@@ -61665,6 +61650,11 @@ msgid "Hide One Level"
 msgstr "Ocultar um nível"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "Criar"
+
+
 msgid "Lift:"
 msgstr "Realçar:"
 
@@ -61848,6 +61838,11 @@ msgstr "Canal de fonte"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "Dois ou mais canais são necessários abaixo desta faixa."
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Novo(a)"
 
 
 msgctxt "Operator"
@@ -62298,11 +62293,6 @@ msgstr "Câmara"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Vazio"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Alto-falante"
 
@@ -62483,11 +62473,6 @@ msgstr "Arestas ressaltadas"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Anéis de arestas"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Criar"
 
 
 msgctxt "Operator"
@@ -62803,6 +62788,10 @@ msgstr "Obter distância DOF"
 
 msgid "Layer:"
 msgstr "Camadas:"
+
+
+msgid "Parents"
+msgstr "Parentes"
 
 
 msgid "Tile Offset"
@@ -64054,14 +64043,6 @@ msgid "There is no layer number %d"
 msgstr "Não existe camada numerada com o índice de número %d"
 
 
-msgid "Easing (by strength)"
-msgstr "Facilitação (por potência)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efeitos dinâmicos"
-
-
 msgid "Custom interpolation curve does not exist"
 msgstr "A curva de interpolação personalizada não existe."
 
@@ -64553,11 +64534,6 @@ msgid "New"
 msgstr "Novo(a)"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Novo(a)"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Novo(a)"
@@ -64574,11 +64550,6 @@ msgstr "Novo(a)"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Novo(a)"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Novo(a)"
 
