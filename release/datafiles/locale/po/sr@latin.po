@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -7738,10 +7738,6 @@ msgid "Multiply mass by particle size"
 msgstr "Pomnoži masu sa veličinom"
 
 
-msgid "Parents"
-msgstr "Roditelji"
-
-
 msgid "Render parent particles"
 msgstr "Renderuj roditelje čestica"
 
@@ -11622,26 +11618,6 @@ msgid "Math"
 msgstr "Matematika"
 
 
-msgid "Logarithm"
-msgstr "Logaritam"
-
-
-msgid "Less Than"
-msgstr "Manje od"
-
-
-msgid "Greater Than"
-msgstr "Veće od"
-
-
-msgid "Compare"
-msgstr "Uporedi"
-
-
-msgid "Modulo"
-msgstr "Modul"
-
-
 msgid "Movie Distortion"
 msgstr "Izobličavanje videa"
 
@@ -11812,6 +11788,18 @@ msgstr "Umekšavanje ivica Z"
 
 msgid "Equal"
 msgstr "Jednako"
+
+
+msgid "Compare"
+msgstr "Uporedi"
+
+
+msgid "Less Than"
+msgstr "Manje od"
+
+
+msgid "Greater Than"
+msgstr "Veće od"
 
 
 msgid "Component"
@@ -12112,6 +12100,10 @@ msgstr "Donja polovina teksture je za vrhove poteza"
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV koordinate za mapiranje"
+
+
+msgid "Modulo"
+msgstr "Modul"
 
 
 msgid "Z Axis"
@@ -25737,6 +25729,11 @@ msgid "Linked"
 msgstr "Povezano"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Novo"
+
+
 msgctxt "Operator"
 msgid "Edit Externally"
 msgstr "Uredi sliku eksterno"
@@ -25860,6 +25857,11 @@ msgid "Slot %d"
 msgstr "Slot %d"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "Napravi"
+
+
 msgid "Lift:"
 msgstr "Dizanje:"
 
@@ -25963,6 +25965,11 @@ msgstr "Sjaj"
 msgctxt "Operator"
 msgid "Rotation"
 msgstr "Okretanje"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Novo"
 
 
 msgctxt "Operator"
@@ -26303,11 +26310,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Prazno"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Zvučnik"
 
@@ -26451,11 +26453,6 @@ msgstr "Oštre ivice"
 
 
 msgctxt "Operator"
-msgid "Make"
-msgstr "Napravi"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Pogled na izabrano"
 
@@ -26587,6 +26584,10 @@ msgstr "Ukloni iz svih"
 
 msgid "Layer:"
 msgstr "Slojevi:"
+
+
+msgid "Parents"
+msgstr "Roditelji"
 
 
 msgid "Auto Normalize"
@@ -27161,11 +27162,6 @@ msgid "New"
 msgstr "Novo"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Novo"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Novo"
@@ -27182,11 +27178,6 @@ msgstr "Novo"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Novo"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Novo"
 

@@ -394,7 +394,7 @@ static void graph_buttons_region_draw(const bContext *C, ARegion *region)
 static void graph_region_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
 
   /* context changes */
   switch (wmn->category) {
@@ -530,7 +530,7 @@ static void graph_region_message_subscribe(const wmRegionMessageSubscribeParams 
 static void graph_listener(const wmSpaceTypeListenerParams *params)
 {
   ScrArea *area = params->area;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
   SpaceGraph *sipo = (SpaceGraph *)area->spacedata.first;
 
   /* context changes */

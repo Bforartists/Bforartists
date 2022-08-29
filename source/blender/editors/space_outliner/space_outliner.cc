@@ -37,6 +37,8 @@
 #include "outliner_intern.hh"
 #include "tree/tree_display.hh"
 
+namespace blender::ed::outliner {
+
 SpaceOutliner_Runtime::SpaceOutliner_Runtime(const SpaceOutliner_Runtime & /*other*/)
     : tree_display(nullptr), tree_hash(nullptr)
 {
@@ -93,7 +95,7 @@ static void outliner_main_region_listener(const wmRegionListenerParams *params)
 {
   ScrArea *area = params->area;
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
   SpaceOutliner *space_outliner = static_cast<SpaceOutliner *>(area->spacedata.first);
 
   /* context changes */
@@ -289,7 +291,7 @@ static void outliner_header_region_free(ARegion *UNUSED(region))
 static void outliner_header_region_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
 
   /* context changes */
   switch (wmn->category) {
@@ -433,8 +435,12 @@ static void outliner_deactivate(struct ScrArea *area)
   ED_region_tag_redraw_no_rebuild(BKE_area_find_region_type(area, RGN_TYPE_WINDOW));
 }
 
+}  // namespace blender::ed::outliner
+
 void ED_spacetype_outliner(void)
 {
+  using namespace blender::ed::outliner;
+
   SpaceType *st = MEM_cnew<SpaceType>("spacetype time");
   ARegionType *art;
 

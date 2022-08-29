@@ -18,6 +18,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_dynstr.h"
 #include "BLI_path_util.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -65,7 +66,7 @@
 
 using namespace blender::ed::outliner;
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+namespace blender::ed::outliner {
 
 static void outliner_show_active(SpaceOutliner *space_outliner,
                                  ARegion *region,
@@ -2307,3 +2308,5 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
 }
 
 /** \} */
+
+}  // namespace blender::ed::outliner

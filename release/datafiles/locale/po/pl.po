@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6630,12 +6630,22 @@ msgid "Temperature"
 msgstr "Temperatura"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Nowy"
+
+
 msgid "Slot %d"
 msgstr "Otwór %d"
 
 
 msgid "Unpack"
 msgstr "Rozpakuj"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nowy"
 
 
 msgid "File: %s"
@@ -7615,14 +7625,6 @@ msgid "No active area"
 msgstr "Brak aktywnego obszaru"
 
 
-msgid "Easing (by strength)"
-msgstr "Łagodzenie (przez siłę)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efekt Dynamiczny"
-
-
 msgid "Grease Pencil operator is already active"
 msgstr "Operator Szkicownik jest już aktywny"
 
@@ -8064,11 +8066,6 @@ msgid "New"
 msgstr "Nowa"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Nowy"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Nowa"
@@ -8085,11 +8082,6 @@ msgstr "Nowy"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Nowy"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Nowy"
 

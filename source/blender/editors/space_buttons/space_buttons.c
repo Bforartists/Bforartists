@@ -511,7 +511,7 @@ static void buttons_main_region_layout(const bContext *C, ARegion *region)
 static void buttons_main_region_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
 
   /* context changes */
   switch (wmn->category) {
@@ -649,7 +649,7 @@ static void buttons_area_redraw(ScrArea *area, short buttons)
 static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
 {
   ScrArea *area = params->area;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
   SpaceProperties *sbuts = area->spacedata.first;
 
   /* context changes */

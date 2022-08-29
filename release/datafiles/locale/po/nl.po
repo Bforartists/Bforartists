@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -2458,10 +2458,6 @@ msgstr "Deeltjestype"
 
 msgid "Advanced"
 msgstr "Geavanceerd"
-
-
-msgid "Parents"
-msgstr "Ouders"
 
 
 msgid "Rotations"
@@ -8029,6 +8025,11 @@ msgid "Shortest Path"
 msgstr "Kortste pad"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Nieuw"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Sla Alle Afbeeldingen Op"
@@ -8116,6 +8117,11 @@ msgstr "Passend"
 msgctxt "Operator"
 msgid "Show"
 msgstr "Toon"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "Maak"
 
 
 msgid "Sync Selection"
@@ -8237,6 +8243,11 @@ msgstr "Standaard VervagingFit Preview in Window"
 
 msgid "Resolutions"
 msgstr "Resoluties"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nieuw"
 
 
 msgctxt "Operator"
@@ -8577,11 +8588,6 @@ msgstr "Importeer OpenVDB..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Leeg"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Luidspreker"
 
@@ -8756,11 +8762,6 @@ msgstr "Scherpe Randen"
 
 
 msgctxt "Operator"
-msgid "Make"
-msgstr "Maak"
-
-
-msgctxt "Operator"
 msgid "Bones"
 msgstr "Botten"
 
@@ -8926,6 +8927,10 @@ msgstr "Beïnvloed Alleen"
 
 msgid "Locations"
 msgstr "Locaties"
+
+
+msgid "Parents"
+msgstr "Ouders"
 
 
 msgctxt "Operator"
@@ -9177,11 +9182,6 @@ msgid "New"
 msgstr "Nieuw"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Nieuw"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Nieuw"
@@ -9203,11 +9203,6 @@ msgstr "Nieuw"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Nieuw"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Nieuw"
 

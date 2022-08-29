@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -16933,10 +16933,6 @@ msgid "Advanced"
 msgstr "გაფართოებული"
 
 
-msgid "Parents"
-msgstr "მშობლები"
-
-
 msgid "Scene data-block, consisting in objects and defining time and render related settings"
 msgstr "სცენის მონაცემთა ბლოკი, რომელიც შედგება ობიექტებისგან და განსაზღვრული აქვს დროსა და რენდერთან დაკავშირებული პარამეტრები"
 
@@ -18608,12 +18604,12 @@ msgid "Motion Blur"
 msgstr "გადღაბნილი მოძრაობა"
 
 
-msgid "Less Than"
-msgstr "ნაკლები"
-
-
 msgid "Translate"
 msgstr "გადაადგილება"
+
+
+msgid "Less Than"
+msgstr "ნაკლები"
 
 
 msgid "Less Than or Equal"
@@ -22378,10 +22374,6 @@ msgstr "მონიშნული ობიექტები, მონაც
 msgctxt "Operator"
 msgid "Make Library Override"
 msgstr "შექმენი ბიბლიოთეკის უკუგდება"
-
-
-msgid "Make a local override of this library linked data-block"
-msgstr "შექმენი ამ ბიბლიოთეკის ბმულით დაკავშირებული მონაცემთა ბლოკის ლოკალური უკუგდება"
 
 
 msgid "Make linked data local to each object"
@@ -30116,6 +30108,11 @@ msgid "Shortest Path"
 msgstr "უმოკლესი გზა"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "ახალი"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "შეინახე ყველა გამოსახულება"
@@ -30222,6 +30219,11 @@ msgid "Toggle Fullscreen Area"
 msgstr "ჩართე-გამორთე არეალი სრულ ეკრანზე"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "გააკეთე"
+
+
 msgid "Sync with Outliner"
 msgstr "დაასინქრონირე მონახაზთან"
 
@@ -30312,6 +30314,11 @@ msgstr "კლიპი"
 msgctxt "Operator"
 msgid "Copy Modifiers to Selection"
 msgstr "დააკოპირე მოდიფიკატორები მონიშნულზე"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "ახალი"
 
 
 msgctxt "Operator"
@@ -31057,11 +31064,6 @@ msgstr "დააიმპორტირე OpenVDB..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "ცარიელი"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "ცვილის ფანქარი"
 
@@ -31674,11 +31676,6 @@ msgstr "მკვეთრი წიბოები"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "წიბოთა მარყუჟები"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "გააკეთე"
 
 
 msgctxt "Operator"
@@ -32355,6 +32352,10 @@ msgid "Locations"
 msgstr "ადგილმდებარეობები"
 
 
+msgid "Parents"
+msgstr "მშობლები"
+
+
 msgid "Refine Method"
 msgstr "დახვეწის მეთოდი"
 
@@ -32928,11 +32929,6 @@ msgid "New"
 msgstr "ახალი"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "ახალი"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "ახალი"
@@ -32954,11 +32950,6 @@ msgstr "ახალი"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "ახალი"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "ახალი"
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -14686,10 +14686,6 @@ msgid "Multiply mass by particle size"
 msgstr "Moltiplica la massa per la dimensione della particella"
 
 
-msgid "Parents"
-msgstr "Genitori"
-
-
 msgid "Render parent particles"
 msgstr "Renderizza le particelle genitore"
 
@@ -23832,38 +23828,6 @@ msgid "Math"
 msgstr "Matematica"
 
 
-msgid "Logarithm"
-msgstr "Logaritmo"
-
-
-msgid "Less Than"
-msgstr "Meno Di"
-
-
-msgid "Greater Than"
-msgstr "Maggiore di"
-
-
-msgid "Compare"
-msgstr "Compara"
-
-
-msgid "Modulo"
-msgstr "Modulo"
-
-
-msgid "Arcsine"
-msgstr "Arcoseno"
-
-
-msgid "Arccosine"
-msgstr "Arcocoseno"
-
-
-msgid "Arctangent"
-msgstr "ArcoTangente"
-
-
 msgid "Include alpha of second input in this operation"
 msgstr "Include l'alfa del secondo ingresso in questa operazione"
 
@@ -24100,8 +24064,20 @@ msgid "Equal"
 msgstr "Uguale"
 
 
+msgid "Compare"
+msgstr "Compara"
+
+
 msgid "Dot Product"
 msgstr "Prodotto Scalare"
+
+
+msgid "Less Than"
+msgstr "Meno Di"
+
+
+msgid "Greater Than"
+msgstr "Maggiore di"
 
 
 msgid "Input value used for unconnected socket"
@@ -24723,6 +24699,10 @@ msgstr "Matematica Vettori"
 
 msgid "Cross Product"
 msgstr "Prodotto Vettoriale"
+
+
+msgid "Modulo"
+msgstr "Modulo"
 
 
 msgid "Z Axis"
@@ -54153,6 +54133,11 @@ msgid "Shortest Path"
 msgstr "Percorso Più Breve"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Nuova"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Salva Tutte le Immagini"
@@ -54465,6 +54450,11 @@ msgid "Link to Scene"
 msgstr "Crea Collegamento alla Scena"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "Imposta"
+
+
 msgid "No Keying Set Active"
 msgstr "Nessun Gruppo Chiavi Attivo"
 
@@ -54687,6 +54677,11 @@ msgstr "Canale Sorgente"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "Due o più canali sono necessari sotto questo spezzone"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nuovo"
 
 
 msgctxt "Operator"
@@ -55426,11 +55421,6 @@ msgstr "Camera"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Vuoto"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Altoparlante"
 
@@ -55736,11 +55726,6 @@ msgstr "Spigoli Netti"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Anello di Spigoli (loop)"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Imposta"
 
 
 msgctxt "Operator"
@@ -56328,6 +56313,10 @@ msgstr "Influenza Soltanto"
 
 msgid "Locations"
 msgstr "Posizioni"
+
+
+msgid "Parents"
+msgstr "Genitori"
 
 
 msgid "Tile Offset"
@@ -57186,14 +57175,6 @@ msgid "There is no layer number %d"
 msgstr "Non c'è un livello numero %d"
 
 
-msgid "Easing (by strength)"
-msgstr "Raccordo (di forza)"
-
-
-msgid "Dynamic Effects"
-msgstr "Effetti Dinamici"
-
-
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
 msgstr "Sessione Cancellazione Matita: Premi e trascina LMB o RMB per cancellare | ESC/Invio per terminare (o click fuori dall'area)"
 
@@ -57714,11 +57695,6 @@ msgid "New"
 msgstr "Nuova"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Nuova"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Nuovo"
@@ -57740,11 +57716,6 @@ msgstr "Nuovo"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Nuovo"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Nuovo"
 
