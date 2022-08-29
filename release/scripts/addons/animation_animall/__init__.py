@@ -16,7 +16,8 @@ import bpy
 from bpy.types import (Operator, Panel, AddonPreferences)
 from bpy.props import (BoolProperty, StringProperty)
 from bpy.app.handlers import persistent
-from bpy.app.translations import pgettext_iface
+from bpy.app.translations import (pgettext_iface as iface_,
+                                  pgettext_data as data_)
 from . import translations
 
 
@@ -205,7 +206,7 @@ class VIEW3D_PT_animall(Panel):
                 row.prop(shape_key, "value", text=shape_key.name, icon="SHAPEKEY_DATA")
                 row.prop(obj, "show_only_shape_key", text="")
                 if shape_key.value < 1:
-                    col.label(text=pgettext_iface('Maybe set "%s" to 1.0?') % shape_key.name, icon="INFO")
+                    col.label(text=iface_('Maybe set "%s" to 1.0?') % shape_key.name, icon="INFO")
             elif shape_key is not None:
                 col = layout.column(align=True)
                 col.label(text="Cannot key on Basis Shape", icon="ERROR")
@@ -234,7 +235,7 @@ class ANIM_OT_insert_keyframe_animall(Operator):
     bl_description = "Insert a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(op, context):
+    def execute(self, context):
         animall_properties = context.scene.animall_properties
 
         if context.mode == 'OBJECT':
@@ -256,12 +257,12 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                         sk_name = obj.active_shape_key.name
                         for p_i, point in enumerate(obj.active_shape_key.data):
                             if not animall_properties.key_selected or data.points[p_i].select:
-                                insert_key(point, 'co', group="%s Point %s" % (sk_name, p_i))
+                                insert_key(point, 'co', group=data_("%s Point %s") % (sk_name, p_i))
 
                 if animall_properties.key_point_location:
                     for p_i, point in enumerate(data.points):
                         if not animall_properties.key_selected or point.select:
-                            insert_key(point, 'co_deform', group="Point %s" % p_i)
+                            insert_key(point, 'co_deform', group=data_("Point %s") % p_i)
 
             else:
                 if animall_properties.key_material_index:
@@ -269,7 +270,7 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                         if (not animall_properties.key_selected
                                 or any(point.select for point in spline.points)
                                 or any(point.select_control_point for point in spline.bezier_points)):
-                            insert_key(spline, 'material_index', group="Spline %s" % s_i)
+                            insert_key(spline, 'material_index', group=data_("Spline %s") % s_i)
 
                 for s_i, spline in enumerate(data.splines):
                     if spline.type == 'BEZIER':
@@ -279,27 +280,27 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                     or CV.select_left_handle
                                     or CV.select_right_handle):
                                 if animall_properties.key_point_location:
-                                    insert_key(CV, 'co', group="Spline %s CV %s" % (s_i, v_i))
-                                    insert_key(CV, 'handle_left', group="Spline %s CV %s" % (s_i, v_i))
-                                    insert_key(CV, 'handle_right', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'co', group=data_("Spline %s CV %s") % (s_i, v_i))
+                                    insert_key(CV, 'handle_left', group=data_("Spline %s CV %s") % (s_i, v_i))
+                                    insert_key(CV, 'handle_right', group=data_("Spline %s CV %s") % (s_i, v_i))
 
                                 if animall_properties.key_radius:
-                                    insert_key(CV, 'radius', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'radius', group=data_("Spline %s CV %s") % (s_i, v_i))
 
                                 if animall_properties.key_tilt:
-                                    insert_key(CV, 'tilt', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'tilt', group=data_("Spline %s CV %s") % (s_i, v_i))
 
                     elif spline.type in ('POLY', 'NURBS'):
                         for v_i, CV in enumerate(spline.points):
                             if not animall_properties.key_selected or CV.select:
                                 if animall_properties.key_point_location:
-                                    insert_key(CV, 'co', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'co', group=data_("Spline %s CV %s") % (s_i, v_i))
 
                                 if animall_properties.key_radius:
-                                    insert_key(CV, 'radius', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'radius', group=data_("Spline %s CV %s") % (s_i, v_i))
 
                                 if animall_properties.key_tilt:
-                                    insert_key(CV, 'tilt', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'tilt', group=data_("Spline %s CV %s") % (s_i, v_i))
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -309,37 +310,37 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                 if animall_properties.key_point_location:
                     for v_i, vert in enumerate(data.vertices):
                         if not animall_properties.key_selected or vert.select:
-                            insert_key(vert, 'co', group="Vertex %s" % v_i)
+                            insert_key(vert, 'co', group=data_("Vertex %s") % v_i)
 
                 if animall_properties.key_vertex_bevel:
                     for v_i, vert in enumerate(data.vertices):
                         if not animall_properties.key_selected or vert.select:
-                            insert_key(vert, 'bevel_weight', group="Vertex %s" % v_i)
+                            insert_key(vert, 'bevel_weight', group=data_("Vertex %s") % v_i)
                 # if animall_properties.key_vertex_crease:
                 #     for v_i, vert in enumerate(data.vertices):
                 #         if not animall_properties.key_selected or vert.select:
-                #             insert_key(vert, 'crease', group="Vertex %s" % v_i)
+                #             insert_key(vert, 'crease', group=data_("Vertex %s") % v_i)
 
                 if animall_properties.key_vertex_group:
                     for v_i, vert in enumerate(data.vertices):
                         if not animall_properties.key_selected or vert.select:
                             for group in vert.groups:
-                                insert_key(group, 'weight', group="Vertex %s" % v_i)
+                                insert_key(group, 'weight', group=data_("Vertex %s") % v_i)
 
                 if animall_properties.key_edge_bevel:
                     for e_i, edge in enumerate(data.edges):
                         if not animall_properties.key_selected or edge.select:
-                            insert_key(edge, 'bevel_weight', group="Edge %s" % e_i)
+                            insert_key(edge, 'bevel_weight', group=data_("Edge %s") % e_i)
 
                 if animall_properties.key_edge_crease:
                     for e_i, edge in enumerate(data.edges):
                         if not animall_properties.key_selected or edge.select:
-                            insert_key(edge, 'crease', group="Edge %s" % e_i)
+                            insert_key(edge, 'crease', group=data_("Edge %s") % e_i)
 
                 if animall_properties.key_material_index:
                     for p_i, polygon in enumerate(data.polygons):
                         if not animall_properties.key_selected or polygon.select:
-                            insert_key(polygon, 'material_index', group="Face %s" % p_i)
+                            insert_key(polygon, 'material_index', group=data_("Face %s") % p_i)
 
                 if animall_properties.key_attribute:
                     if data.attributes.active is not None:
@@ -354,13 +355,13 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                 attribute_key = "vector"
 
                             if attribute.domain == 'POINT':
-                                group = "Vertex %s"
+                                group = data_("Vertex %s")
                             elif attribute.domain == 'EDGE':
-                                group = "Edge %s"
+                                group = data_("Edge %s")
                             elif attribute.domain == 'FACE':
-                                group = "Face %s"
+                                group = data_("Face %s")
                             elif attribute.domain == 'CORNER':
-                                group = "Loop %s"
+                                group = data_("Loop %s")
 
                             for e_i, _attribute_data in enumerate(attribute.data):
                                 if (not animall_properties.key_selected
@@ -375,14 +376,14 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                     if data.uv_layers.active is not None:
                         for uv_i, uv in enumerate(data.uv_layers.active.data):
                             if not animall_properties.key_selected or uv.select:
-                                insert_key(uv, 'uv', group="UV layer %s" % uv_i)
+                                insert_key(uv, 'uv', group=data_("UV layer %s") % uv_i)
 
                 if animall_properties.key_shape_key:
                     if obj.active_shape_key_index > 0:
                         sk_name = obj.active_shape_key.name
                         for v_i, vert in enumerate(obj.active_shape_key.data):
                             if not animall_properties.key_selected or data.vertices[v_i].select:
-                                insert_key(vert, 'co', group="%s Vertex %s" % (sk_name, v_i))
+                                insert_key(vert, 'co', group=data_("%s Vertex %s") % (sk_name, v_i))
 
             elif obj.type in {'CURVE', 'SURFACE'}:
                 # Shape key keys have to be inserted in object mode for curves...
@@ -398,11 +399,11 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                         or CV.select_right_handle):
                                     if obj.active_shape_key_index > 0:
                                         CV = obj.active_shape_key.data[global_spline_index]
-                                        insert_key(CV, 'co', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'handle_left', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'handle_right', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'radius', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'tilt', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'co', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'handle_left', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'handle_right', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'radius', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'tilt', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
                                 global_spline_index += 1
 
                         elif spline.type in ('POLY', 'NURBS'):
@@ -410,9 +411,9 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                                 if not animall_properties.key_selected or CV.select:
                                     if obj.active_shape_key_index > 0:
                                         CV = obj.active_shape_key.data[global_spline_index]
-                                        insert_key(CV, 'co', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'radius', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
-                                        insert_key(CV, 'tilt', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'co', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'radius', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'tilt', group=data_("%s Spline %s CV %s") % (sk_name, s_i, v_i))
                                 global_spline_index += 1
 
         bpy.ops.object.mode_set(mode=mode)
@@ -427,8 +428,7 @@ class ANIM_OT_delete_keyframe_animall(Operator):
     bl_description = "Delete a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
-
-    def execute(op, context):
+    def execute(self, context):
         animall_properties = context.scene.animall_properties
 
         if context.mode == 'OBJECT':
@@ -662,14 +662,12 @@ def register():
     register_classes()
     bpy.types.Scene.animall_properties = bpy.props.PointerProperty(type=AnimallProperties)
     update_panel(None, bpy.context)
-
     bpy.app.translations.register(__name__, translations.translations_dict)
 
 def unregister():
+    bpy.app.translations.unregister(__name__)
     del bpy.types.Scene.animall_properties
     unregister_classes()
-
-    bpy.app.translations.unregister(__name__)
 
 if __name__ == "__main__":
     register()

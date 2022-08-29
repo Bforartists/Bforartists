@@ -1,18 +1,4 @@
 
-msgid ""
-msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: eo\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
-
-
 msgid "Select"
 msgstr "Elektas"
 
@@ -49,11 +35,6 @@ msgid "Sculpt Mode"
 msgstr "Skulptaĵo Modo"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Aldonia"
-
-
 msgid "File"
 msgstr "Dosiero"
 
@@ -71,23 +52,6 @@ msgid "Select"
 msgstr "Elektas"
 
 
-msgid "Timing Mode"
-msgstr "Prilaborado Modo"
-
-
-msgid "Interpolation method"
-msgstr "Interago:"
-
-
-msgid "Toggle Select"
-msgstr "Elektas"
-
-
-msgctxt "Operator"
-msgid "Select Mode"
-msgstr "Objekto Modo"
-
-
 msgid "View Z Axis"
 msgstr "Montri Z Axis"
 
@@ -101,144 +65,11 @@ msgid "Render"
 msgstr "Por Kapitulacigi"
 
 
-msgid "Operation Mode"
-msgstr "Objekto Modo"
-
-
 msgctxt "Operator"
 msgid "Recover Last Session"
 msgstr "Restaŭri lasta kunsido"
 
 
-msgctxt "Operator"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Operator"
-msgid "Set X Axis"
-msgstr "Montri X Axis"
-
-
-msgctxt "Operator"
-msgid "Interpolation Mode"
-msgstr "Interago:"
-
-
-msgctxt "Scene"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Object"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Mesh"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Curve"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Metaball"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Material"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Texture"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Image"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Lattice"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Camera"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "World"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Screen"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Text"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Speaker"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Sound"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Armature"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Action"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "NodeTree"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "Brush"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "ParticleSettings"
-msgid "New"
-msgstr "Nova"
-
-
-msgctxt "GPencil"
-msgid "New"
-msgstr "Nova"
-
-
-msgid "view"
-msgstr "Rigardi"
-
-
-msgid "Intercept"
-msgstr "Interago:"
-
-
-msgctxt "Operator"
-msgid "Toggle System Console"
-msgstr "Elektas"
+msgid "Recent"
+msgstr "Freŝaj"
 

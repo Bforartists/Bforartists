@@ -112,11 +112,11 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
         col = flow.column(align=True)
         if sp.bind_to_sun:
-            prop_text="Release binding"
+            col.prop(sp, "bind_to_sun", toggle=True, icon="CONSTRAINT",
+                     text="Release binding")
         else:
-            prop_text="Bind Texture to Sun "
-        col.prop(sp, "bind_to_sun", toggle=True, icon="CONSTRAINT",
-                 text=prop_text)
+            col.prop(sp, "bind_to_sun", toggle=True, icon="CONSTRAINT",
+                     text="Bind Texture to Sun")
 
         row = col.row(align=True)
         row.enabled = not sp.bind_to_sun

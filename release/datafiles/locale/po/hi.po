@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2520,10 +2520,6 @@ msgstr "यादृच्छिक उठाओ"
 
 msgid "Died"
 msgstr "मृत"
-
-
-msgid "Parents"
-msgstr "कारण"
 
 
 msgid "Multi React"
@@ -5846,6 +5842,11 @@ msgid "More"
 msgstr "और अधिक"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "नई"
+
+
 msgctxt "Operator"
 msgid "Save As..."
 msgstr "के रूप में सहेजें..."
@@ -5898,6 +5899,11 @@ msgstr "Y अक्ष"
 msgctxt "Operator"
 msgid "Fit"
 msgstr "उचित"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "निर्माण"
 
 
 msgid "Lift:"
@@ -5979,6 +5985,11 @@ msgstr "घूर्णन"
 
 msgid "Unpack"
 msgstr "खोल देना"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "नई"
 
 
 msgctxt "Operator"
@@ -6112,11 +6123,6 @@ msgstr "प्रतिबिंबक"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "खाली"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "वक्ता"
 
@@ -6170,11 +6176,6 @@ msgid "Calculate"
 msgstr "गणना"
 
 
-msgctxt "Operator"
-msgid "Make"
-msgstr "निर्माण"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "पैना"
@@ -6216,6 +6217,10 @@ msgstr "सब से हटाएँ"
 
 msgid "Layer:"
 msgstr "परत:"
+
+
+msgid "Parents"
+msgstr "कारण"
 
 
 msgctxt "Operator"
@@ -6569,11 +6574,6 @@ msgid "New"
 msgstr "नई"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "नई"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "नई"
@@ -6590,11 +6590,6 @@ msgstr "नई"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "नई"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "नई"
 

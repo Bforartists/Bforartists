@@ -48,16 +48,13 @@ def register():
     register_classes()
     bpy.types.Scene.sun_pos_properties = (
         bpy.props.PointerProperty(type=properties.SunPosProperties,
-                        name="Sun Position",
-                        description="Sun Position Settings"))
-
-    bpy.app.translations.register(__name__, translations.translations_dict)
+                                  name="Sun Position",
+                                  description="Sun Position Settings"))
     bpy.app.handlers.frame_change_post.append(sun_calc.sun_handler)
-
+    bpy.app.translations.register(__name__, translations.translations_dict)
 
 def unregister():
-    del bpy.types.Scene.sun_pos_properties
-    unregister_classes()
-
     bpy.app.translations.unregister(__name__)
     bpy.app.handlers.frame_change_post.remove(sun_calc.sun_handler)
+    del bpy.types.Scene.sun_pos_properties
+    unregister_classes()

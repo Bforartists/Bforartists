@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -10327,10 +10327,6 @@ msgid "Pick Random"
 msgstr "Acak"
 
 
-msgid "Parents"
-msgstr "Induk"
-
-
 msgid "Rotations"
 msgstr "Rotasi"
 
@@ -14099,10 +14095,6 @@ msgid "A / B"
 msgstr "A / B"
 
 
-msgid "Multiply Add"
-msgstr "Pengkalian Tambah"
-
-
 msgid "A * B + C"
 msgstr "A * B + C"
 
@@ -14111,20 +14103,12 @@ msgid "A power B"
 msgstr "A power B"
 
 
-msgid "Logarithm"
-msgstr "Logaritma"
-
-
 msgid "Logarithm A base B"
 msgstr "Logaritma A base B"
 
 
 msgid "Square root of A"
 msgstr "Akar pangkat dua A"
-
-
-msgid "Inverse Square Root"
-msgstr "Invers Akar Pangkat Dua"
 
 
 msgid "1 / Square root of A"
@@ -14143,32 +14127,8 @@ msgid "The maximum from A and B"
 msgstr "Maksimum dari A dan B"
 
 
-msgid "Less Than"
-msgstr "Lebih Kecil Dari"
-
-
-msgid "Greater Than"
-msgstr "Lebih Besar Dari"
-
-
-msgid "Sign"
-msgstr "Tanda"
-
-
-msgid "Compare"
-msgstr "Bandingkan"
-
-
-msgid "Smooth Minimum"
-msgstr "Minimum Kehalusan"
-
-
 msgid "The minimum from A and B with smoothing C"
 msgstr "Minimum dari A dan B saat menghaluskan C"
-
-
-msgid "Smooth Maximum"
-msgstr "Maksimum Kehalusan"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -14209,14 +14169,6 @@ msgstr "cosh(A)"
 
 msgid "tanh(A)"
 msgstr "tanh(A)"
-
-
-msgid "To Radians"
-msgstr "Ke Radian"
-
-
-msgid "To Degrees"
-msgstr "Ke Derajat"
 
 
 msgid "Movie Distortion"
@@ -14411,12 +14363,24 @@ msgid "Or"
 msgstr "Atau"
 
 
+msgid "Compare"
+msgstr "Bandingkan"
+
+
 msgid "Input Type"
 msgstr "Tipe Masukan"
 
 
 msgid "Dot Product"
 msgstr "Produk Dot"
+
+
+msgid "Less Than"
+msgstr "Lebih Kecil Dari"
+
+
+msgid "Greater Than"
+msgstr "Lebih Besar Dari"
 
 
 msgid "Component"
@@ -14581,6 +14545,10 @@ msgstr "Tekstur"
 
 msgid "Wave Texture"
 msgstr "Tekstur"
+
+
+msgid "Multiply Add"
+msgstr "Pengkalian Tambah"
 
 
 msgid "Reflect"
@@ -24464,6 +24432,11 @@ msgid "Shortest Path"
 msgstr "Jalur Terdekat"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Baru"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Simpan Semua Gambar"
@@ -24754,6 +24727,11 @@ msgid "Link to Scene"
 msgstr "Hubungkan ke Adegan"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "Buat"
+
+
 msgid "Sync Selection"
 msgstr "Seleksi Sinkronisasi"
 
@@ -24915,6 +24893,11 @@ msgstr "%dx%d"
 
 msgid "Source Channel"
 msgstr "Saluran Sumber"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Baru"
 
 
 msgctxt "Operator"
@@ -25389,11 +25372,6 @@ msgstr "Semua Tampilan"
 
 
 msgctxt "Operator"
-msgid "Make"
-msgstr "Buat"
-
-
-msgctxt "Operator"
 msgid "Trim"
 msgstr "Potong"
 
@@ -25479,6 +25457,10 @@ msgstr "Warna Standar"
 
 msgid "Layer:"
 msgstr "Lapisan:"
+
+
+msgid "Parents"
+msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -25891,11 +25873,6 @@ msgid "New"
 msgstr "Baru"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Baru"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Baru"
@@ -25917,11 +25894,6 @@ msgstr "Baru"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Baru"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Baru"
 
