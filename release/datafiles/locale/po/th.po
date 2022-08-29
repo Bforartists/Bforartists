@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -4337,6 +4337,11 @@ msgid "More"
 msgstr "เพิ่มเติม"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "ใหม่"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "บันทึกภาพทั้งหมด"
@@ -4522,6 +4527,11 @@ msgstr "เบลอเกาส์เซียน"
 msgctxt "Operator"
 msgid "Rotation"
 msgstr "หมุน"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "ใหม่"
 
 
 msgctxt "Operator"
@@ -4931,11 +4941,6 @@ msgstr "กล้อง"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "ว่าง"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "ลำโพง"
 
@@ -5273,11 +5278,6 @@ msgid "New"
 msgstr "ใหม่"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "ใหม่"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "ใหม่"
@@ -5299,11 +5299,6 @@ msgstr "ใหม่"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "ใหม่"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "ใหม่"
 

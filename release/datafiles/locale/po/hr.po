@@ -1,31 +1,9 @@
 
-msgid ""
-msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: hr\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
-
-
 msgctxt "Operator"
 msgid "Duplicate Objects"
 msgstr "bbbbbbbbbbbbb"
 
 
 msgid "Duplicate Objects"
-msgstr "aaaaaaaaa"
-
-
-msgid "No active bone"
-msgstr "aaaaaaaaa"
-
-
-msgid "No active sequence!"
 msgstr "aaaaaaaaa"
 

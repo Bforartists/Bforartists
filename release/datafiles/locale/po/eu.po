@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1917,6 +1917,11 @@ msgid "Temperature"
 msgstr "Tenperatura"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Berria"
+
+
 msgctxt "Operator"
 msgid "Save As..."
 msgstr "Gorde honela..."
@@ -1935,6 +1940,11 @@ msgstr "Testua"
 msgctxt "Operator"
 msgid "Scene..."
 msgstr "Eszena"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Berria"
 
 
 msgctxt "Operator"
@@ -2031,11 +2041,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Hutsa"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "Bozgorailua"
 
@@ -2083,11 +2088,6 @@ msgid "New"
 msgstr "Berria"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Berria"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Berria"
@@ -2104,11 +2104,6 @@ msgstr "Berria"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Berria"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Berria"
 

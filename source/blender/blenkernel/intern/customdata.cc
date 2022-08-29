@@ -2627,6 +2627,12 @@ const char *CustomData_get_active_layer_name(const CustomData *data, const int t
   return layer_index < 0 ? nullptr : data->layers[layer_index].name;
 }
 
+const char *CustomData_get_render_layer_name(const CustomData *data, const int type)
+{
+  const int layer_index = CustomData_get_render_layer_index(data, type);
+  return layer_index < 0 ? nullptr : data->layers[layer_index].name;
+}
+
 void CustomData_set_layer_active(CustomData *data, const int type, const int n)
 {
   for (int i = 0; i < data->totlayer; i++) {
@@ -3537,10 +3543,7 @@ int CustomData_get_offset_named(const CustomData *data, int type, const char *na
   return data->layers[layer_index].offset;
 }
 
-bool CustomData_set_layer_name(const CustomData *data,
-                               const int type,
-                               const int n,
-                               const char *name)
+bool CustomData_set_layer_name(CustomData *data, const int type, const int n, const char *name)
 {
   /* get the layer index of the first layer of type */
   const int layer_index = CustomData_get_layer_index_n(data, type, n);
@@ -4355,7 +4358,7 @@ void CustomData_file_write_info(int type, const char **r_struct_name, int *r_str
 
 void CustomData_blend_write_prepare(CustomData &data,
                                     Vector<CustomDataLayer, 16> &layers_to_write,
-                                    const Set<StringRef> &skip_names)
+                                    const Set<std::string> &skip_names)
 {
   for (const CustomDataLayer &layer : Span(data.layers, data.totlayer)) {
     if (layer.flag & CD_FLAG_NOCOPY) {

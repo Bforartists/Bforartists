@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -23805,10 +23805,6 @@ msgid "Multiply mass by particle size"
 msgstr "Умножить массу на размер частицы"
 
 
-msgid "Parents"
-msgstr "Родители"
-
-
 msgid "Render parent particles"
 msgstr "Выполнять рендеринг родительских частиц"
 
@@ -36652,10 +36648,6 @@ msgid "A power B"
 msgstr "A в степени B"
 
 
-msgid "Logarithm"
-msgstr "Логарифм"
-
-
 msgid "Logarithm A base B"
 msgstr "Логарифм A по основанию B"
 
@@ -36676,24 +36668,12 @@ msgid "The maximum from A and B"
 msgstr "Максимальное из А и В"
 
 
-msgid "Less Than"
-msgstr "Меньше чем"
-
-
 msgid "1 if A < B else 0"
 msgstr "1 если A<B, иначе 0"
 
 
-msgid "Greater Than"
-msgstr "Больше чем"
-
-
 msgid "1 if A > B else 0"
 msgstr "1 если A>B, иначе 0"
-
-
-msgid "Compare"
-msgstr "Сравнить"
 
 
 msgid "Round A to the nearest integer. Round upward if the fraction part is 0.5"
@@ -36704,24 +36684,12 @@ msgid "The largest integer smaller than or equal A"
 msgstr "Округление А в меньшую сторону"
 
 
-msgid "Ceil"
-msgstr "Ceil"
-
-
 msgid "The smallest integer greater than or equal A"
 msgstr "Округление А в большую сторону"
 
 
-msgid "Fraction"
-msgstr "Дробная часть"
-
-
 msgid "The fraction part of A"
 msgstr "Дробная часть А"
-
-
-msgid "Modulo"
-msgstr "Остаток деления"
 
 
 msgid "sin(A)"
@@ -36736,32 +36704,16 @@ msgid "tan(A)"
 msgstr "tan(A)"
 
 
-msgid "Arcsine"
-msgstr "Арксинус"
-
-
 msgid "arcsin(A)"
 msgstr "arcsin(A)"
-
-
-msgid "Arccosine"
-msgstr "Арккосинус"
 
 
 msgid "arccos(A)"
 msgstr "arccos(A)"
 
 
-msgid "Arctangent"
-msgstr "Арктангенс"
-
-
 msgid "arctan(A)"
 msgstr "arctan(A)"
-
-
-msgid "Arctan2"
-msgstr "Arctan2"
 
 
 msgid "The signed angle arctan(A / B)"
@@ -37132,8 +37084,20 @@ msgid "Equal"
 msgstr "Равно"
 
 
+msgid "Compare"
+msgstr "Сравнить"
+
+
 msgid "Dot Product"
 msgstr "Скал. произведение"
+
+
+msgid "Less Than"
+msgstr "Меньше чем"
+
+
+msgid "Greater Than"
+msgstr "Больше чем"
 
 
 msgid "Input value used for unconnected socket"
@@ -38071,6 +38035,18 @@ msgstr "А умноженная на масштаб"
 
 msgid "Normalize A"
 msgstr "Нормализовать A"
+
+
+msgid "Ceil"
+msgstr "Ceil"
+
+
+msgid "Fraction"
+msgstr "Дробная часть"
+
+
+msgid "Modulo"
+msgstr "Остаток деления"
 
 
 msgid "Round A to the largest integer multiple of B less than or equal A"
@@ -52228,10 +52204,6 @@ msgstr "Выделенные объекты, данные и материалы"
 msgctxt "Operator"
 msgid "Make Library Override"
 msgstr "Создать переопределение библиотеки"
-
-
-msgid "Make a local override of this library linked data-block"
-msgstr "Создать локальное переопределение этого библиотечного датаблока"
 
 
 msgid "Make linked data local to each object"
@@ -82682,6 +82654,11 @@ msgid "Shortest Path"
 msgstr "Кратчайший путь"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Создать"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Сохранить все изображения"
@@ -83085,6 +83062,11 @@ msgid "Link to Scene"
 msgstr "Ссылка в сцену"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "Сделать"
+
+
 msgid "Sync Selection"
 msgstr "Синхронизировать выделение"
 
@@ -83465,6 +83447,11 @@ msgstr "Канал-источник"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "Два или больше каналов нужно под этой дорожкой"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Создать"
 
 
 msgctxt "Operator"
@@ -84372,11 +84359,6 @@ msgstr "Импортировать OpenVDB…"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Пустышка"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "Grease Pencil"
 
@@ -84796,11 +84778,6 @@ msgstr "Острые рёбра"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Петли рёбер"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Сделать"
 
 
 msgctxt "Operator"
@@ -85550,6 +85527,10 @@ msgstr "Влиять только на"
 
 msgid "Locations"
 msgstr "Положения"
+
+
+msgid "Parents"
+msgstr "Родители"
 
 
 msgid "Refine Method"
@@ -87199,14 +87180,6 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "Esc/ПКМ — отменить, Enter/ЛКМ — подтвердить, колесо мыши/движение настроить коэффициент"
 
 
-msgid "Easing (by strength)"
-msgstr "Ослабление (по интенсивности)"
-
-
-msgid "Dynamic Effects"
-msgstr "Динамические эффекты"
-
-
 msgid "Custom interpolation curve does not exist"
 msgstr "Кривая настраиваемой интерполяции не существует"
 
@@ -87904,11 +87877,6 @@ msgid "New"
 msgstr "Создать"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Создать"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Создать"
@@ -87930,11 +87898,6 @@ msgstr "Создать"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Создать"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Создать"
 

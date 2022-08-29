@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -17018,10 +17018,6 @@ msgid "Multiply mass by particle size"
 msgstr "Multiplica a massa pelo tamanho das partículas."
 
 
-msgid "Parents"
-msgstr "Parentes"
-
-
 msgid "Render parent particles"
 msgstr "Renderiza as partículas parentes."
 
@@ -29058,52 +29054,12 @@ msgid "A * B + C"
 msgstr "A * B + C"
 
 
-msgid "Logarithm"
-msgstr "Logarítmico"
-
-
 msgid "Magnitude of A"
 msgstr "Magnitude de A"
 
 
 msgid "exp(A)"
 msgstr "exp(A)"
-
-
-msgid "Less Than"
-msgstr "Menor que"
-
-
-msgid "Greater Than"
-msgstr "Maior que "
-
-
-msgid "Compare"
-msgstr "Comparar"
-
-
-msgid "Modulo"
-msgstr "Módulo"
-
-
-msgid "Arcsine"
-msgstr "Arco seno"
-
-
-msgid "Arccosine"
-msgstr "Arco cosseno"
-
-
-msgid "Arctangent"
-msgstr "Arco tangente"
-
-
-msgid "To Radians"
-msgstr "Para Radianos"
-
-
-msgid "To Degrees"
-msgstr "Para Graus"
 
 
 msgid "Include alpha of second input in this operation"
@@ -29498,8 +29454,20 @@ msgid "Equal"
 msgstr "Igual"
 
 
+msgid "Compare"
+msgstr "Comparar"
+
+
 msgid "Dot Product"
 msgstr "Produto escalar"
+
+
+msgid "Less Than"
+msgstr "Menor que"
+
+
+msgid "Greater Than"
+msgstr "Maior que "
 
 
 msgid "Brighter"
@@ -30373,6 +30341,10 @@ msgstr "Matemática vetorial"
 
 msgid "Cross Product"
 msgstr "Produto vetorial"
+
+
+msgid "Modulo"
+msgstr "Módulo"
 
 
 msgid "Type of rotation"
@@ -68271,6 +68243,11 @@ msgid "Shortest Path"
 msgstr "Caminho mais curto"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Novo(a)"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Salvar todas as imagens"
@@ -68625,6 +68602,11 @@ msgstr "Vincular para a cena"
 
 
 msgctxt "Operator"
+msgid "Make"
+msgstr "Criar"
+
+
+msgctxt "Operator"
 msgid "Purge"
 msgstr "Limpar"
 
@@ -68956,6 +68938,11 @@ msgstr "Canal de fonte"
 
 msgid "Two or more channels are needed below this strip"
 msgstr "Dois ou mais canais são necessários abaixo desta faixa."
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Novo(a)"
 
 
 msgctxt "Operator"
@@ -69772,11 +69759,6 @@ msgstr "Importar OpenVDB..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Vazio"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "Lápis de cera"
 
@@ -70101,11 +70083,6 @@ msgstr "Arestas ressaltadas"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Anéis de arestas"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Criar"
 
 
 msgctxt "Operator"
@@ -70723,6 +70700,10 @@ msgstr "Afeta Apenas"
 
 msgid "Locations"
 msgstr "Localizações"
+
+
+msgid "Parents"
+msgstr "Parentes"
 
 
 msgctxt "Operator"
@@ -72024,14 +72005,6 @@ msgid "There is no layer number %d"
 msgstr "Não existe camada numerada com o índice de número %d"
 
 
-msgid "Easing (by strength)"
-msgstr "Facilitação (por potência)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efeitos dinâmicos"
-
-
 msgid "Custom interpolation curve does not exist"
 msgstr "A curva de interpolação personalizada não existe."
 
@@ -72588,11 +72561,6 @@ msgid "New"
 msgstr "Novo(a)"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Novo(a)"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Novo(a)"
@@ -72614,11 +72582,6 @@ msgstr "Novo(a)"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "Novo(a)"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "Novo(a)"
 

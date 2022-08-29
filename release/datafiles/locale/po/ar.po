@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -13687,10 +13687,6 @@ msgid "Multiply mass by particle size"
 msgstr "ﺔﻠﺘﻜﻟﺍ ﻲﻓ ءﻱﺰﺠﻟﺍ ﻢﺠﺣ ﻒﻋﺎﺿ"
 
 
-msgid "Parents"
-msgstr "ﻝﻮﺻﻻ﻿ﺍ"
-
-
 msgid "Render parent particles"
 msgstr "ﻞﺻﻻ﻿ﺍ ﺕﺎﺌﻳﺰﺟ ﺮﻴّﺻ"
 
@@ -20672,18 +20668,6 @@ msgid "Math"
 msgstr "ﺏﺎﺴﺣ"
 
 
-msgid "Compare"
-msgstr "UV's ـﻟﺍ ﻥﺭﺎﻗ"
-
-
-msgid "Modulo"
-msgstr "ﺓﺪﺣﻭ"
-
-
-msgid "Arcsine"
-msgstr "ﺱﻮﻘﻟﺍ ﺐﻴﺟ"
-
-
 msgid "Movie Distortion"
 msgstr "ﻢﻠﻔﻟﺍ ﻪﻳﻮﺸﺗ"
 
@@ -20886,6 +20870,10 @@ msgstr "ﻦﻛﺎﻣﺍ 9 ﻦﻣ ﻊﺳﻭ"
 
 msgid "Anti-Alias Z"
 msgstr "Z ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ"
+
+
+msgid "Compare"
+msgstr "UV's ـﻟﺍ ﻥﺭﺎﻗ"
 
 
 msgid "Component"
@@ -21310,6 +21298,10 @@ msgstr "ءﺎﺴﻛﻺ﻿ﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ UV ﺕﺎﻴﺛﺍﺪ�
 
 msgid "Vector Math"
 msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
+
+
+msgid "Modulo"
+msgstr "ﺓﺪﺣﻭ"
 
 
 msgid "Z Axis"
@@ -37775,6 +37767,11 @@ msgid "Shortest Path"
 msgstr "ﺭﺎﺴﻣ ﺮﺼﻗﺃ"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "ﺪﻳﺪﺟ"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "ﺭﻮﺼﻟﺍ ﻞﻛ ﻆﻔﺣﺇ"
@@ -37946,6 +37943,11 @@ msgid "Slot %d"
 msgstr "‬%d‪ ﺔﺤﺘﻓ"
 
 
+msgctxt "Operator"
+msgid "Make"
+msgstr "ﻞﻌﺟﺇ"
+
+
 msgid "Lift:"
 msgstr ":ﻢﻋﺪﻟﺍ"
 
@@ -38068,6 +38070,11 @@ msgstr "ﻥﺍﺭﻭﺪﻟﺍ"
 
 msgid "Unpack"
 msgstr "ﻍﺮّﻓ"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "ﺪﻳﺪﺟ"
 
 
 msgctxt "Operator"
@@ -38423,11 +38430,6 @@ msgstr "ﺍﺮﻴﻤﻜﻟﺍ"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "ﻲﻤﻫﻭ"
-
-
-msgctxt "Operator"
 msgid "Speaker"
 msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
 
@@ -38598,11 +38600,6 @@ msgstr "ﺩﺎﺣ ﻑﺮﺣ"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "ﺔﻓﺎﺣ ﺕﻼ﻿ﺴﻠﺴﺗ"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "ﻞﻌﺟﺇ"
 
 
 msgctxt "Operator"
@@ -38850,6 +38847,10 @@ msgstr "(ﻂﻘﺘﻟﺍ) ﻞﻘﺤﻟﺍ ﻖﻤﻋ ﺪﻌﺑ"
 
 msgid "Layer:"
 msgstr ":ﺔﻘﺒﻃ"
+
+
+msgid "Parents"
+msgstr "ﻝﻮﺻﻻ﻿ﺍ"
 
 
 msgid "Tile Offset"
@@ -39273,10 +39274,6 @@ msgid "No active area"
 msgstr "ﺔﻟﺎﻌّﻓ ﺔﻘﻄﻨﻣ ﺪﺟﻮﺗ ﻻ﻿"
 
 
-msgid "Dynamic Effects"
-msgstr "ﺔﻳﻮﻴﺣ ﺕﺍﺮﺛﺆﻣ"
-
-
 msgid "Pin"
 msgstr "ﺖﺒّﺛ"
 
@@ -39650,11 +39647,6 @@ msgid "New"
 msgstr "ﺪﻳﺪﺟ"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "ﺪﻳﺪﺟ"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "ﺪﻳﺪﺟ"
@@ -39671,11 +39663,6 @@ msgstr "ﺪﻳﺪﺟ"
 
 
 msgctxt "Screen"
-msgid "New"
-msgstr "ﺪﻳﺪﺟ"
-
-
-msgctxt "Text"
 msgid "New"
 msgstr "ﺪﻳﺪﺟ"
 

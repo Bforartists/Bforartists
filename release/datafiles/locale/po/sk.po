@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'8a205b4036ef')\n"
+"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-10 09:02+0200\n"
@@ -26789,10 +26789,6 @@ msgid "Multiply mass by particle size"
 msgstr "Násobí hmotnosť podľa veľkosti častíc"
 
 
-msgid "Parents"
-msgstr "Rodičov"
-
-
 msgid "Render parent particles"
 msgstr "Prekreslí rodičovské častice"
 
@@ -33739,6 +33735,10 @@ msgid "Help"
 msgstr "Pomoc"
 
 
+msgid "List Item"
+msgstr "Zoznam položiek"
+
+
 msgid ""
 "\n"
 "    UI List item context menu definition. Scripts can append/prepend this to\n"
@@ -33751,10 +33751,6 @@ msgstr ""
 "    pridať do kontextovej ponuky vlastné operátory. Musia však kontrolovať kontext, takže\n"
 "    ich položky kreslili len v platnom kontexte a pre správny zoznam užívateľského rozhrania.\n"
 "    "
-
-
-msgid "List Item"
-msgstr "Zoznam položiek"
 
 
 msgid "Presets"
@@ -42274,10 +42270,6 @@ msgid "A / B"
 msgstr "A / B"
 
 
-msgid "Multiply Add"
-msgstr "Vynásobiť sčítať"
-
-
 msgid "A * B + C"
 msgstr "A * B + C"
 
@@ -42286,20 +42278,12 @@ msgid "A power B"
 msgstr "A mocnica B"
 
 
-msgid "Logarithm"
-msgstr "Logaritmus"
-
-
 msgid "Logarithm A base B"
 msgstr "Logaritmus A základu B"
 
 
 msgid "Square root of A"
 msgstr "Odmocnina A"
-
-
-msgid "Inverse Square Root"
-msgstr "Inverzia odmocniny"
 
 
 msgid "1 / Square root of A"
@@ -42322,48 +42306,24 @@ msgid "The maximum from A and B"
 msgstr "Maximum z A a B"
 
 
-msgid "Less Than"
-msgstr "Menšie než"
-
-
 msgid "1 if A < B else 0"
 msgstr "1 ak A<B inak 0"
-
-
-msgid "Greater Than"
-msgstr "Väčšie než"
 
 
 msgid "1 if A > B else 0"
 msgstr "1 ak A>B inak 0"
 
 
-msgid "Sign"
-msgstr "Znamienko"
-
-
 msgid "Returns the sign of A"
 msgstr "Vráti znamienko A"
-
-
-msgid "Compare"
-msgstr "Porovnať"
 
 
 msgid "1 if (A == B) within tolerance C else 0"
 msgstr "1, ak (A == B) v rámci tolerancie C inak 0"
 
 
-msgid "Smooth Minimum"
-msgstr "Minimum vyhladenia"
-
-
 msgid "The minimum from A and B with smoothing C"
 msgstr "Minimum pre A a B s vyhladením C"
-
-
-msgid "Smooth Maximum"
-msgstr "Maximum vyhladenia"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -42378,10 +42338,6 @@ msgid "The largest integer smaller than or equal A"
 msgstr "Najväčšie celé číslo menšie alebo rovnaké A"
 
 
-msgid "Ceil"
-msgstr "Strop"
-
-
 msgid "The smallest integer greater than or equal A"
 msgstr "Najmenšie celé číslo väčšie alebo rovnaké A"
 
@@ -42390,16 +42346,8 @@ msgid "The integer part of A, removing fractional digits"
 msgstr "Celé číslo časti A, odstráni desatinné číslice"
 
 
-msgid "Fraction"
-msgstr "Zlomok"
-
-
 msgid "The fraction part of A"
 msgstr "Zlomková časť A"
-
-
-msgid "Modulo"
-msgstr "Zvyšok"
 
 
 msgid "Modulo using fmod(A,B)"
@@ -42430,72 +42378,36 @@ msgid "tan(A)"
 msgstr "tan(A)"
 
 
-msgid "Arcsine"
-msgstr "Arksínus"
-
-
 msgid "arcsin(A)"
 msgstr "arcsin(A)"
-
-
-msgid "Arccosine"
-msgstr "Arkkosínus"
 
 
 msgid "arccos(A)"
 msgstr "arccos(A)"
 
 
-msgid "Arctangent"
-msgstr "Arktangens"
-
-
 msgid "arctan(A)"
 msgstr "arctan(A)"
-
-
-msgid "Arctan2"
-msgstr "Arktangens2"
 
 
 msgid "The signed angle arctan(A / B)"
 msgstr "Uhlový arktangens so znamienkom(A/B)"
 
 
-msgid "Hyperbolic Sine"
-msgstr "Hyperbolický sínus"
-
-
 msgid "sinh(A)"
 msgstr "sinh(A)"
-
-
-msgid "Hyperbolic Cosine"
-msgstr "Hyperbolický kosínus"
 
 
 msgid "cosh(A)"
 msgstr "cosh(A)"
 
 
-msgid "Hyperbolic Tangent"
-msgstr "Hyperbolický tangens"
-
-
 msgid "tanh(A)"
 msgstr "tanh(A)"
 
 
-msgid "To Radians"
-msgstr "Na radiány"
-
-
 msgid "Convert from degrees to radians"
 msgstr "Konvertuje stupne na radiány"
-
-
-msgid "To Degrees"
-msgstr "Na stupne"
 
 
 msgid "Convert from radians to degrees"
@@ -42644,10 +42556,6 @@ msgstr "Vynásobí RGBA kanály vstupného obrázku vstupnou hodnotou alfa"
 
 msgid "Replace Alpha"
 msgstr "Nahradiť alfa"
-
-
-msgid "Replace the input image's alpha channels by the alpha input value"
-msgstr "Nahradí alfa kanály vstupného obrázka vstupnou hodnotou alfa"
 
 
 msgid "Split Viewer"
@@ -43046,6 +42954,10 @@ msgid "True when the first input is true and the second is false (not imply)"
 msgstr "PRAVDA, keď je prvý vstup PRAVDA a druhý NEPRAVDA (NOT IMPLY)"
 
 
+msgid "Compare"
+msgstr "Porovnať"
+
+
 msgid "Input Type"
 msgstr "Typ vstupu"
 
@@ -43078,6 +42990,10 @@ msgid "Compare the direction of the input vectors"
 msgstr "Porovná smer vstupných vektorov"
 
 
+msgid "Less Than"
+msgstr "Menšie než"
+
+
 msgid "True when the first input is smaller than second input"
 msgstr "Pravda, ak je prvý vstup menší ako druhý vstup"
 
@@ -43088,6 +43004,10 @@ msgstr "Menej alebo rovné"
 
 msgid "True when the first input is smaller than the second input or equal"
 msgstr "Pravda, ak je prvý vstup menší alebo rovnaký ako druhý vstup"
+
+
+msgid "Greater Than"
+msgstr "Väčšie než"
 
 
 msgid "True when the first input is greater than the second input"
@@ -46371,6 +46291,10 @@ msgid "Entry-wise divide"
 msgstr "Vstupné delenie"
 
 
+msgid "Multiply Add"
+msgstr "Vynásobiť sčítať"
+
+
 msgid "Cross Product"
 msgstr "Krížový súčin"
 
@@ -46443,12 +46367,24 @@ msgid "Entry-wise floor"
 msgstr "Vstupná podlaha"
 
 
+msgid "Ceil"
+msgstr "Strop"
+
+
 msgid "Entry-wise ceil"
 msgstr "Vstupný strop"
 
 
+msgid "Fraction"
+msgstr "Zlomok"
+
+
 msgid "The fraction part of A entry-wise"
 msgstr "Zlomok vstupného A"
+
+
+msgid "Modulo"
+msgstr "Zvyšok"
 
 
 msgid "Entry-wise modulo using fmod(A,B)"
@@ -52943,10 +52879,6 @@ msgstr "Povolí >4 spojené vplyvy vrcholov. Modely sa môžu javiť nesprávne 
 
 msgid "Export all Armature Actions"
 msgstr "Exportovať všetky akcie armatúry"
-
-
-msgid "Export all actions of a single armature. WARNING: works only if you exports a single armature"
-msgstr "Exportuje všetky akcie jednej armatúry. UPOZORNENIE: funguje len vtedy, ak exportujete jednu armatúru"
 
 
 msgid "Exports active actions and NLA tracks as glTF animations"
@@ -64485,10 +64417,6 @@ msgid "Make Library Override"
 msgstr "Vytvoriť prepis knižnice"
 
 
-msgid "Make a local override of this library linked data-block"
-msgstr "Vytvorí lokálny prepis tejto knižnice prepojením blokov údajov"
-
-
 msgid "Override Collection"
 msgstr "Prepísať kolekciu"
 
@@ -67026,10 +66954,6 @@ msgstr "Premiestniť knižnicu"
 
 msgid "Relocate the library under cursor"
 msgstr "Premiestni knižnicu pod kurzorom"
-
-
-msgid "Create"
-msgstr "Vytvoriť"
 
 
 msgid "Reset"
@@ -83827,14 +83751,6 @@ msgstr "Typ nového mračna bodov"
 
 msgid "Enable the new point cloud type in the ui"
 msgstr "Povolí nový typ mračna bodov v modeli užívateľského rozhrania"
-
-
-msgid "Override New Fully Editable"
-msgstr "Prepísať Nové plne upraviteľné"
-
-
-msgid "Make all override of a hierarchy fully user-editable by default when creating a new override (if that option is disabled, most overrides created as part of a hierarchy will not be editable by the user by default)"
-msgstr "Pri vytváraní nového prepisu vytvorí všetky prepisy hierarchie užívateľom plne upraviteľné (ak je táto možnosť zakázaná, väčšina rodičovských prvkov vytvorených ako súčasť hierarchie nebude predvolene upravovateľná užívateľom)"
 
 
 msgid "Override Templates"
@@ -106904,6 +106820,11 @@ msgid "Shortest Path"
 msgstr "Najkratšia dráha"
 
 
+msgctxt "Image"
+msgid "New"
+msgstr "Nový"
+
+
 msgctxt "Operator"
 msgid "Save All Images"
 msgstr "Uložiť všetky obrázky"
@@ -107377,6 +107298,11 @@ msgstr "Skryť jednu úroveň"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Odkaz na scénu"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "Vytvoriť"
 
 
 msgid "Restriction Toggles"
@@ -107931,6 +107857,11 @@ msgstr "Žiadny aktívny uzol zobrazovača"
 
 msgid "<no object>"
 msgstr "<žiadny objekt>"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nový"
 
 
 msgctxt "Operator"
@@ -109119,11 +109050,6 @@ msgstr "Importovať OpenVDB ..."
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Prázdny"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil"
 msgstr "Pastelka"
 
@@ -109770,11 +109696,6 @@ msgstr "Ostré hrany"
 msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Slučku hrán"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Vytvoriť"
 
 
 msgctxt "Operator"
@@ -110761,6 +110682,10 @@ msgstr "Ovplyvniť iba"
 
 msgid "Locations"
 msgstr "Polohy"
+
+
+msgid "Parents"
+msgstr "Rodičov"
 
 
 msgid "Refine Method"
@@ -113287,14 +113212,6 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/PTM zrušenie, Enter/ĽTM pre potvrdenie, koliesko/posun na nastavenie faktora"
 
 
-msgid "Easing (by strength)"
-msgstr "Zmiernenie (podľa sily)"
-
-
-msgid "Dynamic Effects"
-msgstr "Dynamické efekty"
-
-
 msgid "Cannot find valid keyframes to interpolate (Breakdowns keyframes are not allowed)"
 msgstr "Nemožno nájsť platné kľúčové snímky na interpoláciu (rozklad kľúčových snímok nie je povolený)"
 
@@ -114212,11 +114129,6 @@ msgid "New"
 msgstr "Nová"
 
 
-msgctxt "Image"
-msgid "New"
-msgstr "Nový"
-
-
 msgctxt "Lattice"
 msgid "New"
 msgstr "Nová"
@@ -114240,11 +114152,6 @@ msgstr "Nový"
 msgctxt "Screen"
 msgid "New"
 msgstr "Nová"
-
-
-msgctxt "Text"
-msgid "New"
-msgstr "Nový"
 
 
 msgctxt "Speaker"
@@ -119699,6 +119606,10 @@ msgstr "Náhodné posuvy"
 
 msgid "Illumination Filtering"
 msgstr "Filtrovanie osvetlenia"
+
+
+msgid "Create"
+msgstr "Vytvoriť"
 
 
 msgid "Crease (Angle Cached)"
