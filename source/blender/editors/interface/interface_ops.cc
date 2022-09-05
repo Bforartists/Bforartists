@@ -939,7 +939,7 @@ static int override_idtemplate_clear_exec(bContext *C, wmOperator *UNUSED(op))
   if (BKE_lib_override_library_is_hierarchy_leaf(bmain, id)) {
     id_new = id->override_library->reference;
     bool do_remap_active = false;
-    if (OBACT(view_layer) == (Object *)id) {
+    if (BKE_view_layer_active_object_get(view_layer) == (Object *)id) {
       BLI_assert(GS(id->name) == ID_OB);
       BLI_assert(GS(id_new->name) == ID_OB);
       do_remap_active = true;
@@ -1015,7 +1015,7 @@ static void override_idtemplate_menu_draw(const bContext *UNUSED(C), Menu *menu)
   uiItemO(layout, IFACE_("Clear"), ICON_NONE, "UI_OT_override_idtemplate_clear");
 }
 
-static void override_idtemplate_menu(void)
+static void override_idtemplate_menu()
 {
   MenuType *mt;
 
@@ -1574,8 +1574,13 @@ static bool jump_to_target_button(bContext *C, bool poll)
         char *str_ptr = RNA_property_string_get_alloc(
             &ptr, prop, str_buf, sizeof(str_buf), nullptr);
 
-        int found = RNA_property_collection_lookup_string(
-            &coll_search->search_ptr, coll_search->search_prop, str_ptr, &target_ptr);
+        int found = 0;
+        /* Jump to target only works with search properties currently, not search callbacks yet.
+         * See ui_but_add_search. */
+        if (coll_search->search_prop != NULL) {
+          found = RNA_property_collection_lookup_string(
+              &coll_search->search_ptr, coll_search->search_prop, str_ptr, &target_ptr);
+        }
 
         if (str_ptr != str_buf) {
           MEM_freeN(str_ptr);

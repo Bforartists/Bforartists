@@ -316,13 +316,13 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
         col = layout.column(align=True)
-        col.active = not (cscene.use_adaptive_sampling and cscene.use_preview_adaptive_sampling)
         col.prop(cscene, "sampling_pattern", text="Pattern")
 
         col = layout.column(align=True)
         col.prop(cscene, "sample_offset")
 
         col = layout.column(align=True)
+        col.active = cscene.sampling_pattern != 'SOBOL'
         col.label(text="Scrambling Distance")
         row = col.row()
         row.use_property_split = False

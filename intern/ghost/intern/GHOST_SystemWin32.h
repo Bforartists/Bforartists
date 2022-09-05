@@ -430,7 +430,7 @@ class GHOST_SystemWin32 : public GHOST_System {
    * \param action: console state
    * \return current status (1 -visible, 0 - hidden)
    */
-  int setConsoleWindowState(GHOST_TConsoleWindowState action);
+  bool setConsoleWindowState(GHOST_TConsoleWindowState action);
 
   /** The virtual-key code (VKey) of the last press event. Used to detect repeat events. */
   unsigned short m_keycode_last_repeat_key;
@@ -450,7 +450,7 @@ class GHOST_SystemWin32 : public GHOST_System {
   HKL m_keylayout;
 
   /** Console status. */
-  int m_consoleStatus;
+  bool m_consoleStatus;
 
   /** Wheel delta accumulator. */
   int m_wheelDeltaAccum;
@@ -467,9 +467,9 @@ inline void GHOST_SystemWin32::handleKeyboardChange(void)
 
   for (m_hasAltGr = false, i = 32; i < 256; ++i) {
     s = VkKeyScanEx((char)i, m_keylayout);
-    /* `s == -1` means no key that translates passed char code
-     * high byte contains shift state. bit 2 ctrl pressed, bit 4 alt pressed
-     * if both are pressed, we have AltGr keycombo on keylayout. */
+    /* `s == -1` means no key that translates passed char code high byte contains shift state.
+     * bit 2 Control pressed, bit 4 `Alt` pressed if both are pressed,
+     * we have `AltGr` key-combination on key-layout. */
     if (s != -1 && (s & 0x600) == 0x600) {
       m_hasAltGr = true;
       break;

@@ -263,7 +263,7 @@ static int vertex_parent_set_exec(bContext *C, wmOperator *op)
       else {
         Object workob;
 
-        ob->parent = BASACT(view_layer)->object;
+        ob->parent = view_layer->basact->object;
         if (par3 != INDEX_UNSET) {
           ob->partype = PARVERT3;
           ob->par1 = par1;
@@ -2377,6 +2377,25 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
 
   BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
 
+  /* For the time being, replace selected linked objects by their overrides in all collections.
+   * While this may not be the absolute best behavior in all cases, in most common one this should
+   * match the expected result. */
+  if (user_overrides_objects_uids != NULL) {
+    LISTBASE_FOREACH (Collection *, coll_iter, &bmain->collections) {
+      if (ID_IS_LINKED(coll_iter)) {
+        continue;
+      }
+      LISTBASE_FOREACH (CollectionObject *, coll_ob_iter, &coll_iter->gobject) {
+        if (BLI_gset_haskey(user_overrides_objects_uids,
+                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uuid))) {
+          /* Tag for remapping when creating overrides. */
+          coll_iter->id.tag |= LIB_TAG_DOIT;
+          break;
+        }
+      }
+    }
+  }
+
   ID *id_root_override;
   const bool success = BKE_lib_override_library_create(bmain,
                                                        scene,
@@ -2624,7 +2643,7 @@ static int clear_override_library_exec(bContext *C, wmOperator *UNUSED(op))
     Object *ob_iter = todo_object_iter->link;
     if (BKE_lib_override_library_is_hierarchy_leaf(bmain, &ob_iter->id)) {
       bool do_remap_active = false;
-      if (OBACT(view_layer) == ob_iter) {
+      if (BKE_view_layer_active_object_get(view_layer) == ob_iter) {
         do_remap_active = true;
       }
       BKE_libblock_remap(bmain,
