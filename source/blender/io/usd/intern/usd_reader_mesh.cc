@@ -6,6 +6,7 @@
 #include "usd_reader_mesh.h"
 #include "usd_reader_material.h"
 
+#include "BKE_attribute.hh"
 #include "BKE_customdata.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -182,6 +183,9 @@ static void assign_materials(Main *bmain,
       std::cout << "WARNING: Couldn't assign material " << it->first << std::endl;
     }
   }
+  if (ob->totcol > 0) {
+    ob->actcol = 1;
+  }
 }
 
 }  // namespace utils
@@ -207,7 +211,8 @@ static void *add_customdata_cb(Mesh *mesh, const char *name, const int data_type
 
   /* Create a new layer. */
   numloops = mesh->totloop;
-  cd_ptr = CustomData_add_layer_named(loopdata, cd_data_type, CD_DEFAULT, nullptr, numloops, name);
+  cd_ptr = CustomData_add_layer_named(
+      loopdata, cd_data_type, CD_SET_DEFAULT, nullptr, numloops, name);
   return cd_ptr;
 }
 
@@ -318,7 +323,6 @@ void USDMeshReader::read_mpolys(Mesh *mesh)
     MPoly &poly = mpolys[i];
     poly.loopstart = loop_index;
     poly.totloop = face_size;
-    poly.mat_nr = 0;
 
     /* Polygons are always assumed to be smooth-shaded. If the mesh should be flat-shaded,
      * this is encoded in custom loop normals. */
@@ -576,7 +580,7 @@ void USDMeshReader::read_vertex_creases(Mesh *mesh, const double motionSampleTim
   }
 
   float *creases = static_cast<float *>(
-      CustomData_add_layer(&mesh->vdata, CD_CREASE, CD_DEFAULT, nullptr, mesh->totvert));
+      CustomData_add_layer(&mesh->vdata, CD_CREASE, CD_SET_DEFAULT, nullptr, mesh->totvert));
 
   for (size_t i = 0; i < corner_indices.size(); i++) {
     creases[corner_indices[i]] = corner_sharpnesses[i];
@@ -734,10 +738,9 @@ void USDMeshReader::read_mesh_sample(ImportSettings *settings,
   }
 }
 
-void USDMeshReader::assign_facesets_to_mpoly(double motionSampleTime,
-                                             MPoly *mpoly,
-                                             const int /* totpoly */,
-                                             std::map<pxr::SdfPath, int> *r_mat_map)
+void USDMeshReader::assign_facesets_to_material_indices(double motionSampleTime,
+                                                        MutableSpan<int> material_indices,
+                                                        std::map<pxr::SdfPath, int> *r_mat_map)
 {
   if (r_mat_map == nullptr) {
     return;
@@ -777,9 +780,8 @@ void USDMeshReader::assign_facesets_to_mpoly(double motionSampleTime,
       pxr::VtIntArray indices;
       indicesAttribute.Get(&indices, motionSampleTime);
 
-      for (int i = 0; i < indices.size(); i++) {
-        MPoly &poly = mpoly[indices[i]];
-        poly.mat_nr = mat_idx;
+      for (const int i : indices) {
+        material_indices[i] = mat_idx;
       }
     }
   }
@@ -804,7 +806,12 @@ void USDMeshReader::readFaceSetsSample(Main *bmain, Mesh *mesh, const double mot
   }
 
   std::map<pxr::SdfPath, int> mat_map;
-  assign_facesets_to_mpoly(motionSampleTime, mesh->mpoly, mesh->totpoly, &mat_map);
+
+  bke::MutableAttributeAccessor attributes = bke::mesh_attributes_for_write(*mesh);
+  bke::SpanAttributeWriter<int> material_indices =
+      attributes.lookup_or_add_for_write_only_span<int>("material_index", ATTR_DOMAIN_FACE);
+  this->assign_facesets_to_material_indices(motionSampleTime, material_indices.span, &mat_map);
+  material_indices.finish();
   /* Build material name map if it's not built yet. */
   if (this->settings_->mat_name_to_mat.empty()) {
     utils::build_mat_map(bmain, &this->settings_->mat_name_to_mat);
@@ -910,7 +917,11 @@ Mesh *USDMeshReader::read_mesh(Mesh *existing_mesh,
     size_t num_polys = active_mesh->totpoly;
     if (num_polys > 0 && import_params_.import_materials) {
       std::map<pxr::SdfPath, int> mat_map;
-      assign_facesets_to_mpoly(motionSampleTime, active_mesh->mpoly, num_polys, &mat_map);
+      bke::MutableAttributeAccessor attributes = bke::mesh_attributes_for_write(*active_mesh);
+      bke::SpanAttributeWriter<int> material_indices =
+          attributes.lookup_or_add_for_write_only_span<int>("material_index", ATTR_DOMAIN_FACE);
+      assign_facesets_to_material_indices(motionSampleTime, material_indices.span, &mat_map);
+      material_indices.finish();
     }
   }
 

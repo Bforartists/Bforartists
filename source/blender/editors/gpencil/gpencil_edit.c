@@ -4028,9 +4028,11 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
   bGPdata *gpd = (bGPdata *)ob->data;
   const int subdivisions = RNA_int_get(op->ptr, "subdivisions");
   const float length = RNA_float_get(op->ptr, "length");
+  const bool keep = RNA_boolean_get(op->ptr, "keep");
+  const int thickness = RNA_int_get(op->ptr, "thickness");
 
   const int view_mode = RNA_enum_get(op->ptr, "view_mode");
-  const int mode = RNA_enum_get(op->ptr, "mode");
+  const int material_mode = RNA_enum_get(op->ptr, "material_mode");
   const bool is_multiedit = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd);
 
   /* sanity checks */
@@ -4040,40 +4042,35 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
 
   bool changed = false;
 
-  float viewmat[4][4], viewinv[4][4];
+  float viewmat[4][4];
   copy_m4_m4(viewmat, rv3d->viewmat);
-  copy_m4_m4(viewinv, rv3d->viewinv);
 
   switch (view_mode) {
     case GP_PERIMETER_FRONT:
       unit_m4(rv3d->viewmat);
-      rv3d->viewmat[1][1] = 0.0f;
-      rv3d->viewmat[1][2] = -1.0f;
+      viewmat[1][1] = 0.0f;
+      viewmat[1][2] = -1.0f;
 
-      rv3d->viewmat[2][1] = 1.0f;
-      rv3d->viewmat[2][2] = 0.0f;
+      viewmat[2][1] = 1.0f;
+      viewmat[2][2] = 0.0f;
 
-      rv3d->viewmat[3][2] = -10.0f;
-      invert_m4_m4(rv3d->viewinv, rv3d->viewmat);
+      viewmat[3][2] = -10.0f;
       break;
     case GP_PERIMETER_SIDE:
-      zero_m4(rv3d->viewmat);
-      rv3d->viewmat[0][2] = 1.0f;
-      rv3d->viewmat[1][0] = 1.0f;
-      rv3d->viewmat[2][1] = 1.0f;
-      rv3d->viewmat[3][3] = 1.0f;
-      invert_m4_m4(rv3d->viewinv, rv3d->viewmat);
+      zero_m4(viewmat);
+      viewmat[0][2] = 1.0f;
+      viewmat[1][0] = 1.0f;
+      viewmat[2][1] = 1.0f;
+      viewmat[3][3] = 1.0f;
       break;
     case GP_PERIMETER_TOP:
-      unit_m4(rv3d->viewmat);
-      unit_m4(rv3d->viewinv);
+      unit_m4(viewmat);
       break;
     case GP_PERIMETER_CAMERA: {
       Scene *scene = CTX_data_scene(C);
       Object *cam_ob = scene->camera;
       if (cam_ob != NULL) {
-        invert_m4_m4(rv3d->viewmat, cam_ob->obmat);
-        copy_m4_m4(rv3d->viewinv, cam_ob->obmat);
+        invert_m4_m4(viewmat, cam_ob->obmat);
       }
       break;
     }
@@ -4091,7 +4088,7 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
   }
   /* Create a new material. */
   int mat_idx = 0;
-  if (mode == GP_STROKE_USE_NEW_MATERIAL) {
+  if (material_mode == GP_STROKE_USE_NEW_MATERIAL) {
     Material *ma = BKE_gpencil_object_material_new(bmain, ob, "Material", NULL);
     MaterialGPencilStyle *gp_style = ma->gp_style;
 
@@ -4144,11 +4141,12 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
           CLAMP_MIN(gps_duplicate->thickness, 1.0f);
 
           /* Stroke. */
+          const float ovr_thickness = keep ? thickness : 0.0f;
           bGPDstroke *gps_perimeter = BKE_gpencil_stroke_perimeter_from_view(
-              rv3d, gpd, gpl, gps_duplicate, subdivisions, diff_mat);
+              viewmat, gpd, gpl, gps_duplicate, subdivisions, diff_mat, ovr_thickness);
           gps_perimeter->flag &= ~GP_STROKE_SELECT;
           /* Assign material. */
-          switch (mode) {
+          switch (material_mode) {
             case GP_STROKE_USE_ACTIVE_MATERIAL: {
               if (ob->actcol - 1 < 0) {
                 gps_perimeter->mat_nr = 0;
@@ -4172,6 +4170,8 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
           if (length > 0.0f) {
             BKE_gpencil_stroke_sample(gpd, gps_perimeter, length, false, 0);
           }
+          /* Set stroke thickness. */
+          gps_perimeter->thickness = thickness;
 
           /* Set pressure constant. */
           bGPDspoint *pt;
@@ -4210,9 +4210,6 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
     }
   }
 
-  /* Back to view matrix. */
-  copy_m4_m4(rv3d->viewmat, viewmat);
-  copy_m4_m4(rv3d->viewinv, viewinv);
 
   if (changed) {
     /* notifiers */
@@ -4254,8 +4251,27 @@ void GPENCIL_OT_stroke_outline(wmOperatorType *ot)
 
   /* properties */
   ot->prop = RNA_def_enum(ot->srna, "view_mode", view_mode, GP_PERIMETER_VIEW, "View", "");
-  RNA_def_enum(
-      ot->srna, "mode", material_mode, GP_STROKE_USE_ACTIVE_MATERIAL, "Material Mode", "");
+  RNA_def_enum(ot->srna,
+               "material_mode",
+               material_mode,
+               GP_STROKE_USE_ACTIVE_MATERIAL,
+               "Material Mode",
+               "");
+
+  RNA_def_int(ot->srna,
+              "thickness",
+              1,
+              1,
+              1000,
+              "Thickness",
+              "Thickness of the stroke perimeter",
+              1,
+              1000);
+  RNA_def_boolean(ot->srna,
+                  "keep",
+                  true,
+                  "Keep Shape",
+                  "Try to keep global shape when the stroke thickness change");
 
   RNA_def_int(ot->srna, "subdivisions", 3, 0, 10, "Subdivisions", "", 0, 10);
 
@@ -4786,6 +4802,8 @@ void GPENCIL_OT_stroke_sample(wmOperatorType *ot)
 
   /* properties */
   prop = RNA_def_float(ot->srna, "length", 0.1f, 0.0f, 100.0f, "Length", "", 0.0f, 100.0f);
+  prop = RNA_def_float(
+      ot->srna, "sharp_threshold", 0.1f, 0.0f, M_PI, "Sharp Threshold", "", 0.0f, M_PI);
   /* avoid re-using last var */
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }

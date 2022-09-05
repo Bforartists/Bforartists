@@ -199,8 +199,7 @@ static std::ostream &operator<<(std::ostream &stream, const GPUOutput *output)
 }
 
 /* Trick type to change overload and keep a somewhat nice syntax. */
-struct GPUConstant : public GPUInput {
-};
+struct GPUConstant : public GPUInput {};
 
 /* Print data constructor (i.e: vec2(1.0f, 1.0f)). */
 static std::ostream &operator<<(std::ostream &stream, const GPUConstant *input)
@@ -208,9 +207,10 @@ static std::ostream &operator<<(std::ostream &stream, const GPUConstant *input)
   stream << input->type << "(";
   for (int i = 0; i < input->type; i++) {
     char formated_float[32];
-    /* Print with the maximum precision for single precision float using scientific notation.
-     * See https://stackoverflow.com/questions/16839658/#answer-21162120 */
-    SNPRINTF(formated_float, "%.9g", input->vec[i]);
+    /* Use uint representation to allow exact same bit pattern even if NaN. This is because we can
+     * pass UINTs as floats for constants. */
+    const uint32_t *uint_vec = reinterpret_cast<const uint32_t *>(input->vec);
+    SNPRINTF(formated_float, "uintBitsToFloat(%uu)", uint_vec[i]);
     stream << formated_float;
     if (i < input->type - 1) {
       stream << ", ";
@@ -353,24 +353,43 @@ void GPUCodegen::generate_resources()
 {
   GPUCodegenCreateInfo &info = *create_info;
 
+  /* Ref. T98190: Defines are optimizations for old compilers.
+   * Might become unecessary with EEVEE-Next. */
+  if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_CLEARCOAT)) {
+    info.define("PRINCIPLED_CLEARCOAT");
+  }
+  if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_METALLIC)) {
+    info.define("PRINCIPLED_METALLIC");
+  }
+  if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_DIELECTRIC)) {
+    info.define("PRINCIPLED_DIELECTRIC");
+  }
+  if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_GLASS)) {
+    info.define("PRINCIPLED_GLASS");
+  }
+  if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_ANY)) {
+    info.define("PRINCIPLED_ANY");
+  }
+
   std::stringstream ss;
 
   /* Textures. */
+  int slot = 0;
   LISTBASE_FOREACH (GPUMaterialTexture *, tex, &graph.textures) {
     if (tex->colorband) {
       const char *name = info.name_buffer.append_sampler_name(tex->sampler_name);
-      info.sampler(0, ImageType::FLOAT_1D_ARRAY, name, Frequency::BATCH);
+      info.sampler(slot++, ImageType::FLOAT_1D_ARRAY, name, Frequency::BATCH);
     }
     else if (tex->tiled_mapping_name[0] != '\0') {
       const char *name = info.name_buffer.append_sampler_name(tex->sampler_name);
-      info.sampler(0, ImageType::FLOAT_2D_ARRAY, name, Frequency::BATCH);
+      info.sampler(slot++, ImageType::FLOAT_2D_ARRAY, name, Frequency::BATCH);
 
       const char *name_mapping = info.name_buffer.append_sampler_name(tex->tiled_mapping_name);
-      info.sampler(0, ImageType::FLOAT_1D_ARRAY, name_mapping, Frequency::BATCH);
+      info.sampler(slot++, ImageType::FLOAT_1D_ARRAY, name_mapping, Frequency::BATCH);
     }
     else {
       const char *name = info.name_buffer.append_sampler_name(tex->sampler_name);
-      info.sampler(0, ImageType::FLOAT_2D, name, Frequency::BATCH);
+      info.sampler(slot++, ImageType::FLOAT_2D, name, Frequency::BATCH);
     }
   }
 
@@ -383,7 +402,7 @@ void GPUCodegen::generate_resources()
     }
     ss << "};\n\n";
 
-    info.uniform_buf(0, "NodeTree", GPU_UBO_BLOCK_NAME, Frequency::BATCH);
+    info.uniform_buf(1, "NodeTree", GPU_UBO_BLOCK_NAME, Frequency::BATCH);
   }
 
   if (!BLI_listbase_is_empty(&graph.uniform_attrs.list)) {
@@ -395,7 +414,7 @@ void GPUCodegen::generate_resources()
 
     /* TODO(fclem): Use the macro for length. Currently not working for EEVEE. */
     /* DRW_RESOURCE_CHUNK_LEN = 512 */
-    info.uniform_buf(0, "UniformAttrs", GPU_ATTRIBUTE_UBO_BLOCK_NAME "[512]", Frequency::BATCH);
+    info.uniform_buf(2, "UniformAttrs", GPU_ATTRIBUTE_UBO_BLOCK_NAME "[512]", Frequency::BATCH);
   }
 
   info.typedef_source_generated = ss.str();

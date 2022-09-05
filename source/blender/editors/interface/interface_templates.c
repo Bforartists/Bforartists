@@ -1367,20 +1367,22 @@ static void template_ID(const bContext *C,
       }
     }
     else if (ID_IS_OVERRIDE_LIBRARY(id)) {
-      but = uiDefIconBut(block,
-                         UI_BTYPE_BUT,
-                         0,
-                         ICON_LIBRARY_DATA_OVERRIDE,
-                         0,
-                         0,
-                         UI_UNIT_X,
-                         UI_UNIT_Y,
-                         NULL,
-                         0,
-                         0,
-                         0,
-                         0,
-                         TIP_("Library override of linked data-block, click to make fully local"));
+      but = uiDefIconBut(
+          block,
+          UI_BTYPE_BUT,
+          0,
+          ICON_LIBRARY_DATA_OVERRIDE,
+          0,
+          0,
+          UI_UNIT_X,
+          UI_UNIT_Y,
+          NULL,
+          0,
+          0,
+          0,
+          0,
+          TIP_("Library override of linked data-block, click to make fully local, "
+               "Shift + Click to clear the library override and toggle if it can be edited"));
       UI_but_funcN_set(
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_OVERRIDE));
     }
@@ -5215,7 +5217,7 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
                             0.0,
                             0.0,
                             0.0,
-                            "Reapply and update the preset, removing changes");
+                            TIP_("Reapply and update the preset, removing changes"));
       UI_but_funcN_set(bt, CurveProfile_buttons_reset, MEM_dupallocN(cb), profile);
     }
   }
@@ -6340,7 +6342,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                   0,
                   width + UI_UNIT_X,
                   UI_UNIT_Y,
-                  "Show in Info Log");
+                  TIP_("Show in Info Log"));
 
   UI_block_emboss_set(block, previous_emboss);
 }

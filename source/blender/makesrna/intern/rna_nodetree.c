@@ -4927,6 +4927,54 @@ static void def_compare(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
 
+static void def_sh_mix(StructRNA *srna)
+{
+  static const EnumPropertyItem rna_enum_mix_data_type_items[] = {
+      {SOCK_FLOAT, "FLOAT", 0, "Float", ""},
+      {SOCK_VECTOR, "VECTOR", 0, "Vector", ""},
+      {SOCK_RGBA, "RGBA", 0, "Color", ""},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  static const EnumPropertyItem rna_enum_mix_mode_items[] = {
+      {NODE_MIX_MODE_UNIFORM, "UNIFORM", 0, "Uniform", "Use a single factor for all components"},
+      {NODE_MIX_MODE_NON_UNIFORM, "NON_UNIFORM", 0, "Non-Uniform", "Per component factor"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeShaderMix", "storage");
+
+  prop = RNA_def_property(srna, "data_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_mix_data_type_items);
+  RNA_def_property_enum_default(prop, SOCK_FLOAT);
+  RNA_def_property_ui_text(prop, "Data Type", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+
+  prop = RNA_def_property(srna, "factor_mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_mix_mode_items);
+  RNA_def_property_enum_default(prop, NODE_MIX_MODE_UNIFORM);
+  RNA_def_property_ui_text(prop, "Factor Mode", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
+
+  prop = RNA_def_property(srna, "blend_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "blend_type");
+  RNA_def_property_enum_items(prop, rna_enum_ramp_blend_items);
+  RNA_def_property_ui_text(prop, "Blending Mode", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "clamp_factor", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "clamp_factor", 1);
+  RNA_def_property_ui_text(prop, "Clamp Factor", "Clamp the factor to [0,1] range");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "clamp_result", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "clamp_result", 1);
+  RNA_def_property_ui_text(prop, "Clamp Result", "Clamp the result to [0,1] range");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_float_to_int(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -7060,10 +7108,10 @@ static void def_cmp_dilate_erode(StructRNA *srna)
   PropertyRNA *prop;
 
   static const EnumPropertyItem mode_items[] = {
-      {CMP_NODE_DILATEERODE_STEP, "STEP", 0, "Step", ""},
-      {CMP_NODE_DILATEERODE_DISTANCE_THRESH, "THRESHOLD", 0, "Threshold", ""},
-      {CMP_NODE_DILATEERODE_DISTANCE, "DISTANCE", 0, "Distance", ""},
-      {CMP_NODE_DILATEERODE_DISTANCE_FEATHER, "FEATHER", 0, "Feather", ""},
+      {CMP_NODE_DILATE_ERODE_STEP, "STEP", 0, "Step", ""},
+      {CMP_NODE_DILATE_ERODE_DISTANCE_THRESHOLD, "THRESHOLD", 0, "Threshold", ""},
+      {CMP_NODE_DILATE_ERODE_DISTANCE, "DISTANCE", 0, "Distance", ""},
+      {CMP_NODE_DILATE_ERODE_DISTANCE_FEATHER, "FEATHER", 0, "Feather", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -7080,7 +7128,7 @@ static void def_cmp_dilate_erode(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Distance", "Distance to grow/shrink (number of iterations)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
-  /* CMP_NODE_DILATEERODE_DISTANCE_THRESH only */
+  /* CMP_NODE_DILATE_ERODE_DISTANCE_THRESH only */
   prop = RNA_def_property(srna, "edge", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "custom3");
   RNA_def_property_range(prop, -100, 100);
@@ -7089,7 +7137,7 @@ static void def_cmp_dilate_erode(StructRNA *srna)
 
   RNA_def_struct_sdna_from(srna, "NodeDilateErode", "storage");
 
-  /* CMP_NODE_DILATEERODE_DISTANCE_FEATHER only */
+  /* CMP_NODE_DILATE_ERODE_DISTANCE_FEATHER only */
   prop = RNA_def_property(srna, "falloff", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "falloff");
   RNA_def_property_enum_items(prop, rna_enum_proportional_falloff_curve_only_items);
@@ -8065,6 +8113,7 @@ static void def_cmp_lensdist(StructRNA *srna)
   prop = RNA_def_property(srna, "use_jitter", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "jit", 1);
   RNA_def_property_ui_text(prop, "Jitter", "Enable/disable jittering (faster, but also noisier)");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_NODETREE);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "use_fit", PROP_BOOLEAN, PROP_NONE);
@@ -10961,6 +11010,11 @@ static void rna_def_node_socket(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop, "Linked", "True if the socket is connected");
 
+  prop = RNA_def_property(srna, "is_unavailable", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", SOCK_UNAVAIL);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Unavailable", "True if the socket is unavailable");
+
   prop = RNA_def_property(srna, "is_multi_input", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SOCK_MULTI_INPUT);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -12801,7 +12855,7 @@ static int node_type_to_icon(int type)
     case SH_NODE_VALUE:
       return ICON_NODE_VALUE;
 
-    case SH_NODE_MIX_RGB:
+    case SH_NODE_MIX_RGB_LEGACY:
       return ICON_NODE_MIXRGB;
 
     case SH_NODE_VALTORGB:

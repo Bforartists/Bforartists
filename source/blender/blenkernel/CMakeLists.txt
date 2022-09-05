@@ -143,6 +143,7 @@ set(SRC
   intern/geometry_component_mesh.cc
   intern/geometry_component_pointcloud.cc
   intern/geometry_component_volume.cc
+  intern/geometry_fields.cc
   intern/geometry_set.cc
   intern/geometry_set_instances.cc
   intern/gpencil.c
@@ -229,6 +230,7 @@ set(SRC
   intern/multires_versioning.c
   intern/nla.c
   intern/node.cc
+  intern/node_runtime.cc
   intern/node_tree_update.cc
   intern/object.cc
   intern/object_deform.c

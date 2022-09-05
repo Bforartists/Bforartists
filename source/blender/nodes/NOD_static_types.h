@@ -25,7 +25,7 @@ DefNode(Node,            NODE_REROUTE,             0,                       "RER
 
 DefNode(ShaderNode,      SH_NODE_RGB,              0,                       "RGB",             RGB,               "RGB",                "Add a RGB Shader node\nSet a color"              )
 DefNode(ShaderNode,      SH_NODE_VALUE,            0,                       "VALUE",           Value,             "Value",              "Add a Value Shader node\nInput numerical values to other nodes"              )
-DefNode(ShaderNode,      SH_NODE_MIX_RGB,          def_mix_rgb,             "MIX_RGB",         MixRGB,            "MixRGB",             "Add a Mix RGB Shader node\nMixes images by working on the individual and corresponding pixels of the two input images"              )
+DefNode(ShaderNode,      SH_NODE_MIX_RGB_LEGACY,   def_mix_rgb,             "MIX_RGB",         MixRGB,            "MixRGB",             "Add a Mix RGB Shader node\nMixes images by working on the individual and corresponding pixels of the two input images"              )
 DefNode(ShaderNode,      SH_NODE_VALTORGB,         def_colorramp,           "VALTORGB",        ValToRGB,          "ColorRamp",          "Add a Color Ramp Shader node\nMap values to colors with the use of a gradient"              )
 DefNode(ShaderNode,      SH_NODE_RGBTOBW,          0,                       "RGBTOBW",         RGBToBW,           "RGB to BW",          "Add a RGB to BW Shader node\nConverts an RGB color image to a gray-scale image based at its luminance"              )
 DefNode(ShaderNode,      SH_NODE_SHADERTORGB,      0,                       "SHADERTORGB",     ShaderToRGB,       "Shader to RGB",      "Add a Shader to RGB Shader node\nConverts a shader input to rgba values. Warning, this may breakt the PBR workflow"              )
@@ -122,6 +122,7 @@ DefNode(ShaderNode,      SH_NODE_OUTPUT_AOV,          def_sh_output_aov,       "
 DefNode(ShaderNode,      SH_NODE_CURVE_FLOAT,         def_float_curve,         "CURVE_FLOAT",         FloatCurve,        "Float Curve",        "Add a Curve Float Shader node\nMaps an input float to a curve and outputs a float value"       )
 DefNode(ShaderNode,      SH_NODE_COMBINE_COLOR,       def_sh_combsep_color,    "COMBINE_COLOR",       CombineColor,      "Combine Color",      "Add a Combine Color Shader node\nCombines single colors to a rgb, hsv or hsl color value"       )
 DefNode(ShaderNode,      SH_NODE_SEPARATE_COLOR,      def_sh_combsep_color,    "SEPARATE_COLOR",      SeparateColor,     "Separate Color",     "Add a Separate Color Shader node\nSeparates the values of a rgb, hsv or hsl color into its single values"       )
+DefNode(ShaderNode,      SH_NODE_MIX,                def_sh_mix,             "MIX",                Mix,              "Mix",               "Mix values by a factor")
 
 DefNode(CompositorNode,  CMP_NODE_VIEWER,          def_cmp_viewer,          "VIEWER",          Viewer,            "Viewer",             "Add a Viewer Compositor node\nDisplays the output as a backdrop in the viewport or in the Image editor"              )
 DefNode(CompositorNode,  CMP_NODE_RGB,             0,                       "RGB",             RGB,               "RGB",                "Add a RGB Compositor node\nSets a color"              )
