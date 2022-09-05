@@ -58,7 +58,7 @@ CurvesGeometry::CurvesGeometry(const int point_num, const int curve_num)
 
   CustomData_add_layer_named(&this->point_data,
                              CD_PROP_FLOAT3,
-                             CD_DEFAULT,
+                             CD_CONSTRUCT,
                              nullptr,
                              this->point_num,
                              ATTR_POSITION.c_str());
@@ -222,7 +222,7 @@ static MutableSpan<T> get_mutable_attribute(CurvesGeometry &curves,
     return {data, num};
   }
   data = (T *)CustomData_add_layer_named(
-      &custom_data, type, CD_CALLOC, nullptr, num, name.c_str());
+      &custom_data, type, CD_SET_DEFAULT, nullptr, num, name.c_str());
   MutableSpan<T> span = {data, num};
   if (num > 0 && span.first() != default_value) {
     span.fill(default_value);
@@ -1368,6 +1368,10 @@ static void reverse_swap_curve_point_data(const CurvesGeometry &curves,
         const int end_index = points.size() - 1 - i;
         std::swap(a[end_index], b[i]);
         std::swap(b[end_index], a[i]);
+      }
+      if (points.size() % 2) {
+        const int64_t middle_index = points.size() / 2;
+        std::swap(a[middle_index], b[middle_index]);
       }
     }
   });

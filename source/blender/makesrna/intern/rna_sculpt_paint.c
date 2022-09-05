@@ -22,6 +22,7 @@
 #include "DNA_space_types.h"
 
 #include "BKE_brush.h"
+#include "BKE_layer.h"
 #include "BKE_material.h"
 #include "BKE_paint.h"
 
@@ -160,7 +161,7 @@ static void rna_ParticleEdit_redo(bContext *C, PointerRNA *UNUSED(ptr))
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
   PTCacheEdit *edit = PE_get_current(depsgraph, scene, ob);
 
   if (!edit) {
@@ -180,7 +181,7 @@ static void rna_ParticleEdit_update(bContext *C, PointerRNA *UNUSED(ptr))
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob) {
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
@@ -211,7 +212,7 @@ static const EnumPropertyItem *rna_ParticleEdit_tool_itemf(bContext *C,
                                                            bool *UNUSED(r_free))
 {
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
 #  if 0
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
@@ -369,7 +370,7 @@ static void rna_Sculpt_update(bContext *C, PointerRNA *UNUSED(ptr))
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob) {
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
@@ -385,7 +386,7 @@ static void rna_Sculpt_update(bContext *C, PointerRNA *UNUSED(ptr))
 static void rna_Sculpt_ShowMask_update(bContext *C, PointerRNA *UNUSED(ptr))
 {
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *object = OBACT(view_layer);
+  Object *object = BKE_view_layer_active_object_get(view_layer);
   if (object == NULL || object->sculpt == NULL) {
     return;
   }
@@ -483,7 +484,7 @@ static void rna_ImaPaint_mode_update(bContext *C, PointerRNA *UNUSED(ptr))
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob && ob->type == OB_MESH) {
     /* of course we need to invalidate here */
@@ -500,7 +501,7 @@ static void rna_ImaPaint_stencil_update(bContext *C, PointerRNA *UNUSED(ptr))
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob && ob->type == OB_MESH) {
     ED_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
@@ -519,7 +520,7 @@ static void rna_ImaPaint_canvas_update(bContext *C, PointerRNA *UNUSED(ptr))
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *ob = OBACT(view_layer);
+  Object *ob = BKE_view_layer_active_object_get(view_layer);
   bScreen *screen;
   Image *ima = scene->toolsettings->imapaint.canvas;
 

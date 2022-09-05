@@ -5,9 +5,9 @@
  * \ingroup render
  */
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -47,6 +47,7 @@
 #include "DRW_engine.h"
 
 #include "GPU_context.h"
+#include "WM_api.h"
 
 #include "pipeline.h"
 #include "render_result.h"
@@ -54,7 +55,7 @@
 
 /* Render Engine Types */
 
-ListBase R_engines = {NULL, NULL};
+ListBase R_engines = {nullptr, nullptr};
 
 void RE_engines_init(void)
 {
@@ -72,7 +73,7 @@ void RE_engines_exit(void)
 
   DRW_engines_free();
 
-  for (type = R_engines.first; type; type = next) {
+  for (type = static_cast<RenderEngineType *>(R_engines.first); type; type = next) {
     next = type->next;
 
     BLI_remlink(&R_engines, type);
@@ -97,11 +98,11 @@ void RE_engines_register(RenderEngineType *render_type)
 
 RenderEngineType *RE_engines_find(const char *idname)
 {
-  RenderEngineType *type;
-
-  type = BLI_findstring(&R_engines, idname, offsetof(RenderEngineType, idname));
+  RenderEngineType *type = static_cast<RenderEngineType *>(
+      BLI_findstring(&R_engines, idname, offsetof(RenderEngineType, idname)));
   if (!type) {
-    type = BLI_findstring(&R_engines, "BLENDER_EEVEE", offsetof(RenderEngineType, idname));
+    type = static_cast<RenderEngineType *>(
+        BLI_findstring(&R_engines, "BLENDER_EEVEE", offsetof(RenderEngineType, idname)));
   }
 
   return type;
@@ -115,7 +116,8 @@ bool RE_engine_is_external(const Render *re)
 bool RE_engine_is_opengl(RenderEngineType *render_type)
 {
   /* TODO: refine? Can we have ogl render engine without ogl render pipeline? */
-  return (render_type->draw_engine != NULL) && DRW_engine_render_support(render_type->draw_engine);
+  return (render_type->draw_engine != nullptr) &&
+         DRW_engine_render_support(render_type->draw_engine);
 }
 
 bool RE_engine_supports_alembic_procedural(const RenderEngineType *render_type, Scene *scene)
@@ -135,10 +137,11 @@ bool RE_engine_supports_alembic_procedural(const RenderEngineType *render_type, 
 
 RenderEngine *RE_engine_create(RenderEngineType *type)
 {
-  RenderEngine *engine = MEM_callocN(sizeof(RenderEngine), "RenderEngine");
+  RenderEngine *engine = MEM_cnew<RenderEngine>("RenderEngine");
   engine->type = type;
 
   BLI_mutex_init(&engine->update_render_passes_mutex);
+  BLI_mutex_init(&engine->gpu_context_mutex);
 
   return engine;
 }
@@ -153,7 +156,7 @@ static void engine_depsgraph_free(RenderEngine *engine)
     }
 
     DEG_graph_free(engine->depsgraph);
-    engine->depsgraph = NULL;
+    engine->depsgraph = nullptr;
 
     if (use_gpu_context) {
       DRW_render_context_disable(engine->re);
@@ -171,6 +174,7 @@ void RE_engine_free(RenderEngine *engine)
 
   engine_depsgraph_free(engine);
 
+  BLI_mutex_end(&engine->gpu_context_mutex);
   BLI_mutex_end(&engine->update_render_passes_mutex);
 
   MEM_freeN(engine);
@@ -178,10 +182,20 @@ void RE_engine_free(RenderEngine *engine)
 
 /* Bake Render Results */
 
-static RenderResult *render_result_from_bake(RenderEngine *engine, int x, int y, int w, int h)
+static RenderResult *render_result_from_bake(
+    RenderEngine *engine, int x, int y, int w, int h, const char *layername)
 {
+  BakeImage *image = &engine->bake.targets->images[engine->bake.image_id];
+  const BakePixel *pixels = engine->bake.pixels + image->offset;
+  const size_t channels_num = engine->bake.targets->channels_num;
+
+  /* Remember layer name for to match images in render_frame_finish. */
+  if (image->render_layer_name[0] == '\0') {
+    STRNCPY(image->render_layer_name, layername);
+  }
+
   /* Create render result with specified size. */
-  RenderResult *rr = MEM_callocN(sizeof(RenderResult), __func__);
+  RenderResult *rr = MEM_cnew<RenderResult>(__func__);
 
   rr->rectx = w;
   rr->recty = h;
@@ -191,13 +205,14 @@ static RenderResult *render_result_from_bake(RenderEngine *engine, int x, int y,
   rr->tilerect.ymax = y + h;
 
   /* Add single baking render layer. */
-  RenderLayer *rl = MEM_callocN(sizeof(RenderLayer), "bake render layer");
+  RenderLayer *rl = MEM_cnew<RenderLayer>("bake render layer");
+  STRNCPY(rl->name, layername);
   rl->rectx = w;
   rl->recty = h;
   BLI_addtail(&rr->layers, rl);
 
   /* Add render passes. */
-  render_layer_add_pass(rr, rl, engine->bake.depth, RE_PASSNAME_COMBINED, "", "RGBA", true);
+  render_layer_add_pass(rr, rl, channels_num, RE_PASSNAME_COMBINED, "", "RGBA", true);
 
   RenderPass *primitive_pass = render_layer_add_pass(rr, rl, 4, "BakePrimitive", "", "RGBA", true);
   RenderPass *differential_pass = render_layer_add_pass(
@@ -209,8 +224,8 @@ static RenderResult *render_result_from_bake(RenderEngine *engine, int x, int y,
     float *primitive = primitive_pass->rect + offset;
     float *differential = differential_pass->rect + offset;
 
-    size_t bake_offset = (y + ty) * engine->bake.width + x;
-    const BakePixel *bake_pixel = engine->bake.pixels + bake_offset;
+    size_t bake_offset = (y + ty) * image->width + x;
+    const BakePixel *bake_pixel = pixels + bake_offset;
 
     for (int tx = 0; tx < w; tx++) {
       if (bake_pixel->object_id != engine->bake.object_id) {
@@ -240,11 +255,28 @@ static RenderResult *render_result_from_bake(RenderEngine *engine, int x, int y,
 
 static void render_result_to_bake(RenderEngine *engine, RenderResult *rr)
 {
-  RenderPass *rpass = RE_pass_find_by_name(rr->layers.first, RE_PASSNAME_COMBINED, "");
-
+  RenderLayer *rl = static_cast<RenderLayer *>(rr->layers.first);
+  RenderPass *rpass = RE_pass_find_by_name(rl, RE_PASSNAME_COMBINED, "");
   if (!rpass) {
     return;
   }
+
+  /* Find bake image corresponding to layer. */
+  int image_id = 0;
+  for (; image_id < engine->bake.targets->images_num; image_id++) {
+    if (STREQ(engine->bake.targets->images[image_id].render_layer_name, rl->name)) {
+      break;
+    }
+  }
+  if (image_id == engine->bake.targets->images_num) {
+    return;
+  }
+
+  const BakeImage *image = &engine->bake.targets->images[image_id];
+  const BakePixel *pixels = engine->bake.pixels + image->offset;
+  const size_t channels_num = engine->bake.targets->channels_num;
+  const size_t channels_size = channels_num * sizeof(float);
+  float *result = engine->bake.result + image->offset * channels_num;
 
   /* Copy from tile render result to full image bake result. Just the pixels for the
    * object currently being baked, to preserve other objects when baking multiple. */
@@ -252,23 +284,21 @@ static void render_result_to_bake(RenderEngine *engine, RenderResult *rr)
   const int y = rr->tilerect.ymin;
   const int w = rr->tilerect.xmax - rr->tilerect.xmin;
   const int h = rr->tilerect.ymax - rr->tilerect.ymin;
-  const size_t pixel_depth = engine->bake.depth;
-  const size_t pixel_size = pixel_depth * sizeof(float);
 
   for (int ty = 0; ty < h; ty++) {
     const size_t offset = ty * w;
-    const size_t bake_offset = (y + ty) * engine->bake.width + x;
+    const size_t bake_offset = (y + ty) * image->width + x;
 
-    const float *pass_rect = rpass->rect + offset * pixel_depth;
-    const BakePixel *bake_pixel = engine->bake.pixels + bake_offset;
-    float *bake_result = engine->bake.result + bake_offset * pixel_depth;
+    const float *pass_rect = rpass->rect + offset * channels_num;
+    const BakePixel *bake_pixel = pixels + bake_offset;
+    float *bake_result = result + bake_offset * channels_num;
 
     for (int tx = 0; tx < w; tx++) {
       if (bake_pixel->object_id == engine->bake.object_id) {
-        memcpy(bake_result, pass_rect, pixel_size);
+        memcpy(bake_result, pass_rect, channels_size);
       }
-      pass_rect += pixel_depth;
-      bake_result += pixel_depth;
+      pass_rect += channels_num;
+      bake_result += channels_num;
       bake_pixel++;
     }
   }
@@ -296,7 +326,7 @@ static void engine_tile_highlight_set(RenderEngine *engine,
 
   BLI_mutex_lock(&re->highlighted_tiles_mutex);
 
-  if (re->highlighted_tiles == NULL) {
+  if (re->highlighted_tiles == nullptr) {
     re->highlighted_tiles = BLI_gset_new(
         BLI_ghashutil_inthash_v4_p, BLI_ghashutil_inthash_v4_cmp, "highlighted tiles");
   }
@@ -304,7 +334,7 @@ static void engine_tile_highlight_set(RenderEngine *engine,
   if (highlight) {
     HighlightedTile **tile_in_set;
     if (!BLI_gset_ensure_p_ex(re->highlighted_tiles, tile, (void ***)&tile_in_set)) {
-      *tile_in_set = MEM_mallocN(sizeof(HighlightedTile), __func__);
+      *tile_in_set = MEM_cnew<HighlightedTile>(__func__);
       **tile_in_set = *tile;
     }
   }
@@ -318,8 +348,8 @@ static void engine_tile_highlight_set(RenderEngine *engine,
 RenderResult *RE_engine_begin_result(
     RenderEngine *engine, int x, int y, int w, int h, const char *layername, const char *viewname)
 {
-  if (engine->bake.pixels) {
-    RenderResult *result = render_result_from_bake(engine, x, y, w, h);
+  if (engine->bake.targets) {
+    RenderResult *result = render_result_from_bake(engine, x, y, w, h, layername);
     BLI_addtail(&engine->fullresult, result);
     return result;
   }
@@ -351,7 +381,7 @@ RenderResult *RE_engine_begin_result(
 
   /* TODO: make this thread safe. */
 
-  /* can be NULL if we CLAMP the width or height to 0 */
+  /* can be nullptr if we CLAMP the width or height to 0 */
   if (result) {
     render_result_clone_passes(re, result, viewname);
     render_result_passes_allocated_ensure(result);
@@ -380,7 +410,7 @@ static void re_ensure_passes_allocated_thread_safe(Render *re)
 
 void RE_engine_update_result(RenderEngine *engine, RenderResult *result)
 {
-  if (engine->bake.pixels) {
+  if (engine->bake.targets) {
     /* No interactive baking updates for now. */
     return;
   }
@@ -390,8 +420,9 @@ void RE_engine_update_result(RenderEngine *engine, RenderResult *result)
   if (result) {
     re_ensure_passes_allocated_thread_safe(re);
     render_result_merge(re->result, result);
-    result->renlay = result->layers.first; /* weak, draws first layer always */
-    re->display_update(re->duh, result, NULL);
+    result->renlay = static_cast<RenderLayer *>(
+        result->layers.first); /* weak, draws first layer always */
+    re->display_update(re->duh, result, nullptr);
   }
 }
 
@@ -407,7 +438,7 @@ void RE_engine_add_pass(RenderEngine *engine,
     return;
   }
 
-  RE_create_render_pass(re->result, name, channels, chan_id, layername, NULL, false);
+  RE_create_render_pass(re->result, name, channels, chan_id, layername, nullptr, false);
 }
 
 void RE_engine_end_result(
@@ -419,8 +450,10 @@ void RE_engine_end_result(
     return;
   }
 
-  if (engine->bake.pixels) {
-    render_result_to_bake(engine, result);
+  if (engine->bake.targets) {
+    if (!cancel || merge_results) {
+      render_result_to_bake(engine, result);
+    }
     BLI_remlink(&engine->fullresult, result);
     render_result_free(result);
     return;
@@ -440,8 +473,9 @@ void RE_engine_end_result(
 
     /* draw */
     if (!re->test_break(re->tbh)) {
-      result->renlay = result->layers.first; /* weak, draws first layer always */
-      re->display_update(re->duh, result, NULL);
+      result->renlay = static_cast<RenderLayer *>(
+          result->layers.first); /* weak, draws first layer always */
+      re->display_update(re->duh, result, nullptr);
     }
   }
 
@@ -465,7 +499,7 @@ bool RE_engine_test_break(RenderEngine *engine)
     return re->test_break(re->tbh);
   }
 
-  return 0;
+  return false;
 }
 
 /* Statistics */
@@ -479,8 +513,8 @@ void RE_engine_update_stats(RenderEngine *engine, const char *stats, const char 
     re->i.statstr = stats;
     re->i.infostr = info;
     re->stats_draw(re->sdh, &re->i);
-    re->i.infostr = NULL;
-    re->i.statstr = NULL;
+    re->i.infostr = nullptr;
+    re->i.statstr = nullptr;
   }
 
   /* set engine text */
@@ -522,20 +556,20 @@ void RE_engine_report(RenderEngine *engine, int type, const char *msg)
   Render *re = engine->re;
 
   if (re) {
-    BKE_report(engine->re->reports, type, msg);
+    BKE_report(engine->re->reports, (eReportType)type, msg);
   }
   else if (engine->reports) {
-    BKE_report(engine->reports, type, msg);
+    BKE_report(engine->reports, (eReportType)type, msg);
   }
 }
 
 void RE_engine_set_error_message(RenderEngine *engine, const char *msg)
 {
   Render *re = engine->re;
-  if (re != NULL) {
+  if (re != nullptr) {
     RenderResult *rr = RE_AcquireResultRead(re);
     if (rr) {
-      if (rr->error != NULL) {
+      if (rr->error != nullptr) {
         MEM_freeN(rr->error);
       }
       rr->error = BLI_strdup(msg);
@@ -547,17 +581,17 @@ void RE_engine_set_error_message(RenderEngine *engine, const char *msg)
 RenderPass *RE_engine_pass_by_index_get(RenderEngine *engine, const char *layer_name, int index)
 {
   Render *re = engine->re;
-  if (re == NULL) {
-    return NULL;
+  if (re == nullptr) {
+    return nullptr;
   }
 
-  RenderPass *pass = NULL;
+  RenderPass *pass = nullptr;
 
   RenderResult *rr = RE_AcquireResultRead(re);
-  if (rr != NULL) {
+  if (rr != nullptr) {
     const RenderLayer *layer = RE_GetRenderLayer(rr, layer_name);
-    if (layer != NULL) {
-      pass = BLI_findlink(&layer->passes, index);
+    if (layer != nullptr) {
+      pass = static_cast<RenderPass *>(BLI_findlink(&layer->passes, index));
     }
   }
   RE_ReleaseResult(re);
@@ -582,8 +616,8 @@ float RE_engine_get_camera_shift_x(RenderEngine *engine, Object *camera, bool us
   /* When using spherical stereo, get camera shift without multiview,
    * leaving stereo to be handled by the engine. */
   Render *re = engine->re;
-  if (use_spherical_stereo || re == NULL) {
-    return BKE_camera_multiview_shift_x(NULL, camera, NULL);
+  if (use_spherical_stereo || re == nullptr) {
+    return BKE_camera_multiview_shift_x(nullptr, camera, nullptr);
   }
 
   return BKE_camera_multiview_shift_x(&re->r, camera, re->viewname);
@@ -597,8 +631,8 @@ void RE_engine_get_camera_model_matrix(RenderEngine *engine,
   /* When using spherical stereo, get model matrix without multiview,
    * leaving stereo to be handled by the engine. */
   Render *re = engine->re;
-  if (use_spherical_stereo || re == NULL) {
-    BKE_camera_multiview_model_matrix(NULL, camera, NULL, (float(*)[4])r_modelmat);
+  if (use_spherical_stereo || re == nullptr) {
+    BKE_camera_multiview_model_matrix(nullptr, camera, nullptr, (float(*)[4])r_modelmat);
   }
   else {
     BKE_camera_multiview_model_matrix(&re->r, camera, re->viewname, (float(*)[4])r_modelmat);
@@ -608,7 +642,7 @@ void RE_engine_get_camera_model_matrix(RenderEngine *engine,
 bool RE_engine_get_spherical_stereo(RenderEngine *engine, Object *camera)
 {
   Render *re = engine->re;
-  return BKE_camera_multiview_spherical_stereo(re ? &re->r : NULL, camera) ? 1 : 0;
+  return BKE_camera_multiview_spherical_stereo(re ? &re->r : nullptr, camera) ? true : false;
 }
 
 rcti *RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_free)
@@ -623,10 +657,10 @@ rcti *RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_
 
   *r_needs_free = false;
 
-  if (re->highlighted_tiles == NULL) {
+  if (re->highlighted_tiles == nullptr) {
     *r_total_tiles = 0;
     BLI_mutex_unlock(&re->highlighted_tiles_mutex);
-    return NULL;
+    return nullptr;
   }
 
   GSET_FOREACH_BEGIN (HighlightedTile *, tile, re->highlighted_tiles) {
@@ -639,10 +673,10 @@ rcti *RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_
         /* Can not realloc yet, tiles are pointing to a
          * stack memory.
          */
-        tiles = MEM_mallocN(allocation_size * sizeof(rcti), "current engine tiles");
+        tiles = MEM_cnew_array<rcti>(allocation_size, "current engine tiles");
       }
       else {
-        tiles = MEM_reallocN(tiles, allocation_size * sizeof(rcti));
+        tiles = static_cast<rcti *>(MEM_reallocN(tiles, allocation_size * sizeof(rcti)));
       }
       *r_needs_free = true;
     }
@@ -707,7 +741,7 @@ static void engine_depsgraph_init(RenderEngine *engine, ViewLayer *view_layer)
   if (!engine->depsgraph) {
     /* Ensure we only use persistent data for one scene / view layer at a time,
      * to avoid excessive memory usage. */
-    RE_FreePersistentData(NULL);
+    RE_FreePersistentData(nullptr);
 
     /* Create new depsgraph if not cached with persistent data. */
     engine->depsgraph = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_RENDER);
@@ -785,7 +819,7 @@ void RE_bake_engine_set_engine_parameters(Render *re, Main *bmain, Scene *scene)
 bool RE_bake_has_engine(const Render *re)
 {
   const RenderEngineType *type = RE_engines_find(re->r.engine);
-  return (type->bake != NULL);
+  return (type->bake != nullptr);
 }
 
 bool RE_bake_engine(Render *re,
@@ -829,23 +863,29 @@ bool RE_bake_engine(Render *re,
       type->update(engine, re->main, engine->depsgraph);
     }
 
-    for (int i = 0; i < targets->images_num; i++) {
-      const BakeImage *image = targets->images + i;
+    /* Bake all images. */
+    engine->bake.targets = targets;
+    engine->bake.pixels = pixel_array;
+    engine->bake.result = result;
+    engine->bake.object_id = object_id;
 
-      engine->bake.pixels = pixel_array + image->offset;
-      engine->bake.result = result + image->offset * targets->channels_num;
-      engine->bake.width = image->width;
-      engine->bake.height = image->height;
-      engine->bake.depth = targets->channels_num;
-      engine->bake.object_id = object_id;
+    for (int i = 0; i < targets->images_num; i++) {
+      const BakeImage *image = &targets->images[i];
+      engine->bake.image_id = i;
 
       type->bake(
           engine, engine->depsgraph, object, pass_type, pass_filter, image->width, image->height);
-
-      memset(&engine->bake, 0, sizeof(engine->bake));
     }
 
-    engine->depsgraph = NULL;
+    /* Optionally let render images read bake images from disk delayed. */
+    if (type->render_frame_finish) {
+      engine->bake.image_id = 0;
+      type->render_frame_finish(engine);
+    }
+
+    memset(&engine->bake, 0, sizeof(engine->bake));
+
+    engine->depsgraph = nullptr;
   }
 
   engine->flag &= ~RE_ENGINE_RENDERING;
@@ -853,7 +893,7 @@ bool RE_bake_engine(Render *re,
   engine_depsgraph_free(engine);
 
   RE_engine_free(engine);
-  re->engine = NULL;
+  re->engine = nullptr;
 
   if (BKE_reports_contain(re->reports, RPT_ERROR)) {
     G.is_break = true;
@@ -876,8 +916,8 @@ static void engine_render_view_layer(Render *re,
   }
 
   /* Create depsgraph with scene evaluated at render resolution. */
-  ViewLayer *view_layer = BLI_findstring(
-      &re->scene->view_layers, view_layer_iter->name, offsetof(ViewLayer, name));
+  ViewLayer *view_layer = static_cast<ViewLayer *>(
+      BLI_findstring(&re->scene->view_layers, view_layer_iter->name, offsetof(ViewLayer, name)));
   engine_depsgraph_init(engine, view_layer);
 
   /* Sync data to engine, within draw lock so scene data can be accessed safely. */
@@ -920,7 +960,7 @@ static void engine_render_view_layer(Render *re,
     /* NOTE: External engine might have been requested to free its
      * dependency graph, which is only allowed if there is no grease
      * pencil (pipeline is taking care of that). */
-    if (!RE_engine_test_break(engine) && engine->depsgraph != NULL) {
+    if (!RE_engine_test_break(engine) && engine->depsgraph != nullptr) {
       DRW_render_gpencil(engine, engine->depsgraph);
     }
   }
@@ -970,7 +1010,7 @@ bool RE_engine_render(Render *re, bool do_all)
 
   /* create render result */
   BLI_rw_mutex_lock(&re->resultmutex, THREAD_LOCK_WRITE);
-  if (re->result == NULL || !(re->r.scemode & R_BUTS_PREVIEW)) {
+  if (re->result == nullptr || !(re->r.scemode & R_BUTS_PREVIEW)) {
     if (re->result) {
       render_result_free(re->result);
     }
@@ -979,7 +1019,7 @@ bool RE_engine_render(Render *re, bool do_all)
   }
   BLI_rw_mutex_unlock(&re->resultmutex);
 
-  if (re->result == NULL) {
+  if (re->result == nullptr) {
     /* Clear UI drawing locks. */
     if (re->draw_lock) {
       re->draw_lock(re->dlh, false);
@@ -1062,14 +1102,15 @@ bool RE_engine_render(Render *re, bool do_all)
   /* Clear tile data */
   engine->flag &= ~RE_ENGINE_RENDERING;
 
-  render_result_free_list(&engine->fullresult, engine->fullresult.first);
+  render_result_free_list(&engine->fullresult,
+                          static_cast<RenderResult *>(engine->fullresult.first));
 
   /* re->engine becomes zero if user changed active render engine during render */
   if (!engine_keep_depsgraph(engine) || !re->engine) {
     engine_depsgraph_free(engine);
 
     RE_engine_free(engine);
-    re->engine = NULL;
+    re->engine = nullptr;
   }
 
   if (re->r.scemode & R_EXR_CACHE_FILE) {
@@ -1106,8 +1147,8 @@ void RE_engine_update_render_passes(struct RenderEngine *engine,
   engine->update_render_passes_cb = callback;
   engine->update_render_passes_data = callback_data;
   engine->type->update_render_passes(engine, scene, view_layer);
-  engine->update_render_passes_cb = NULL;
-  engine->update_render_passes_data = NULL;
+  engine->update_render_passes_cb = nullptr;
+  engine->update_render_passes_data = nullptr;
 
   BLI_mutex_unlock(&engine->update_render_passes_mutex);
 }
@@ -1151,7 +1192,8 @@ bool RE_engine_draw_acquire(Render *re)
 
   RenderEngine *engine = re->engine;
 
-  if (engine == NULL || engine->type->draw == NULL || (engine->flag & RE_ENGINE_CAN_DRAW) == 0) {
+  if (engine == nullptr || engine->type->draw == nullptr ||
+      (engine->flag & RE_ENGINE_CAN_DRAW) == 0) {
     BLI_mutex_unlock(&re->engine_draw_mutex);
     return false;
   }
@@ -1183,7 +1225,7 @@ void RE_engine_tile_highlight_clear_all(RenderEngine *engine)
 
   BLI_mutex_lock(&re->highlighted_tiles_mutex);
 
-  if (re->highlighted_tiles != NULL) {
+  if (re->highlighted_tiles != nullptr) {
     BLI_gset_clear(re->highlighted_tiles, MEM_freeN);
   }
 
@@ -1193,27 +1235,106 @@ void RE_engine_tile_highlight_clear_all(RenderEngine *engine)
 /* -------------------------------------------------------------------- */
 /** \name OpenGL context manipulation.
  *
- * NOTE: Only used for Cycles's BLenderGPUDisplay integration with the draw manager. A subject
- * for re-consideration. Do not use this functionality.
+ * GPU context for engine to create and update GPU resources in its own thread,
+ * without blocking the main thread. Used by Cycles' display driver to create
+ * display textures.
+ *
  * \{ */
 
-bool RE_engine_has_render_context(RenderEngine *engine)
+bool RE_engine_gpu_context_create(RenderEngine *engine)
 {
-  if (engine->re == NULL) {
-    return false;
+  /* If the there already is a draw manager render context available, reuse it. */
+  engine->use_drw_render_context = (engine->re && RE_gl_context_get(engine->re));
+  if (engine->use_drw_render_context) {
+    return true;
   }
 
-  return RE_gl_context_get(engine->re) != NULL;
+  /* Viewport render case where no render context is available. We are expected to be on
+   * the main thread here to safely create a context. */
+  BLI_assert(BLI_thread_is_main());
+
+  const bool drw_state = DRW_opengl_context_release();
+  engine->gpu_context = WM_opengl_context_create();
+
+  /* On Windows an old context is restored after creation, and subsequent release of context
+   * generates a Win32 error. Harmless for users, but annoying to have possible misleading
+   * error prints in the console. */
+#ifndef _WIN32
+  if (engine->gpu_context) {
+    WM_opengl_context_release(engine->gpu_context);
+  }
+#endif
+
+  DRW_opengl_context_activate(drw_state);
+
+  return engine->gpu_context != nullptr;
 }
 
-void RE_engine_render_context_enable(RenderEngine *engine)
+void RE_engine_gpu_context_destroy(RenderEngine *engine)
 {
-  DRW_render_context_enable(engine->re);
+  if (!engine->gpu_context) {
+    return;
+  }
+
+  BLI_assert(BLI_thread_is_main());
+
+  const bool drw_state = DRW_opengl_context_release();
+
+  WM_opengl_context_activate(engine->gpu_context);
+  WM_opengl_context_dispose(engine->gpu_context);
+
+  DRW_opengl_context_activate(drw_state);
 }
 
-void RE_engine_render_context_disable(RenderEngine *engine)
+bool RE_engine_gpu_context_enable(RenderEngine *engine)
 {
-  DRW_render_context_disable(engine->re);
+  if (engine->use_drw_render_context) {
+    DRW_render_context_enable(engine->re);
+    return true;
+  }
+  if (engine->gpu_context) {
+    BLI_mutex_lock(&engine->gpu_context_mutex);
+    WM_opengl_context_activate(engine->gpu_context);
+    return true;
+  }
+  return false;
+}
+
+void RE_engine_gpu_context_disable(RenderEngine *engine)
+{
+  if (engine->use_drw_render_context) {
+    DRW_render_context_disable(engine->re);
+  }
+  else {
+    if (engine->gpu_context) {
+      WM_opengl_context_release(engine->gpu_context);
+      BLI_mutex_unlock(&engine->gpu_context_mutex);
+    }
+  }
+}
+
+void RE_engine_gpu_context_lock(RenderEngine *engine)
+{
+  if (engine->use_drw_render_context) {
+    /* Locking already handled by the draw manager. */
+  }
+  else {
+    if (engine->gpu_context) {
+      BLI_mutex_lock(&engine->gpu_context_mutex);
+    }
+  }
+}
+
+void RE_engine_gpu_context_unlock(RenderEngine *engine)
+{
+  if (engine->use_drw_render_context) {
+    /* Locking already handled by the draw manager. */
+  }
+  else {
+    if (engine->gpu_context) {
+      BLI_mutex_unlock(&engine->gpu_context_mutex);
+    }
+  }
 }
 
 /** \} */
