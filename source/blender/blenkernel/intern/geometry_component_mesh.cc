@@ -115,8 +115,7 @@ void MeshComponent::ensure_owns_direct_data()
 
 namespace blender::bke {
 
-VArray<float3> mesh_normals_varray(const MeshComponent &mesh_component,
-                                   const Mesh &mesh,
+VArray<float3> mesh_normals_varray(const Mesh &mesh,
                                    const IndexMask mask,
                                    const eAttrDomain domain)
 {
@@ -150,7 +149,7 @@ VArray<float3> mesh_normals_varray(const MeshComponent &mesh_component,
        * array and copy the face normal for each of its corners. In this case using the mesh
        * component's generic domain interpolation is fine, the data will still be normalized,
        * since the face normal is just copied to every corner. */
-      return mesh_component.attributes()->adapt_domain(
+      return mesh_attributes(mesh).adapt_domain(
           VArray<float3>::ForSpan({(float3 *)BKE_mesh_poly_normals_ensure(&mesh), mesh.totpoly}),
           ATTR_DOMAIN_FACE,
           ATTR_DOMAIN_CORNER);
@@ -843,16 +842,6 @@ static void tag_component_positions_changed(void *owner)
   }
 }
 
-static int get_material_index(const MPoly &mpoly)
-{
-  return static_cast<int>(mpoly.mat_nr);
-}
-
-static void set_material_index(MPoly &mpoly, int index)
-{
-  mpoly.mat_nr = static_cast<short>(std::clamp(index, 0, SHRT_MAX));
-}
-
 static bool get_shade_smooth(const MPoly &mpoly)
 {
   return mpoly.flag & ME_SMOOTH;
@@ -1202,18 +1191,17 @@ static ComponentAttributeProviders create_attribute_providers_for_mesh()
                                            make_array_write_attribute<int>,
                                            nullptr);
 
-  static BuiltinCustomDataLayerProvider material_index(
-      "material_index",
-      ATTR_DOMAIN_FACE,
-      CD_PROP_INT32,
-      CD_MPOLY,
-      BuiltinAttributeProvider::NonCreatable,
-      BuiltinAttributeProvider::Writable,
-      BuiltinAttributeProvider::NonDeletable,
-      face_access,
-      make_derived_read_attribute<MPoly, int, get_material_index>,
-      make_derived_write_attribute<MPoly, int, get_material_index, set_material_index>,
-      nullptr);
+  static BuiltinCustomDataLayerProvider material_index("material_index",
+                                                       ATTR_DOMAIN_FACE,
+                                                       CD_PROP_INT32,
+                                                       CD_PROP_INT32,
+                                                       BuiltinAttributeProvider::Creatable,
+                                                       BuiltinAttributeProvider::Writable,
+                                                       BuiltinAttributeProvider::Deletable,
+                                                       face_access,
+                                                       make_array_read_attribute<int>,
+                                                       make_array_write_attribute<int>,
+                                                       nullptr);
 
   static BuiltinCustomDataLayerProvider shade_smooth(
       "shade_smooth",

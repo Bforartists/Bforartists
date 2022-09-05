@@ -458,14 +458,14 @@ static void outliner_do_libdata_operation(bContext *C,
   });
 }
 
-typedef enum eOutlinerLibOpSelectionSet {
+enum eOutlinerLibOpSelectionSet {
   /* Only selected items. */
   OUTLINER_LIB_SELECTIONSET_SELECTED,
   /* Only content 'inside' selected items (their sub-tree). */
   OUTLINER_LIB_LIB_SELECTIONSET_CONTENT,
   /* Combining both options above. */
   OUTLINER_LIB_LIB_SELECTIONSET_SELECTED_AND_CONTENT,
-} eOutlinerLibOpSelectionSet;
+};
 
 static const EnumPropertyItem prop_lib_op_selection_set[] = {
     {OUTLINER_LIB_SELECTIONSET_SELECTED,
@@ -1346,7 +1346,7 @@ static void id_override_library_reset_fn(bContext *C,
   OutlinerLibOverrideData *data = static_cast<OutlinerLibOverrideData *>(user_data);
   const bool do_hierarchy = data->do_hierarchy;
 
-  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root)) {
+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root) || ID_IS_LINKED(id_root)) {
     CLOG_WARN(&LOG, "Could not reset library override of data block '%s'", id_root->name);
     return;
   }
@@ -1374,7 +1374,7 @@ static void id_override_library_clear_single_fn(bContext *C,
   ViewLayer *view_layer = CTX_data_view_layer(C);
   ID *id = tselem->id;
 
-  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id) || ID_IS_LINKED(id)) {
     BKE_reportf(reports,
                 RPT_WARNING,
                 "Cannot clear embedded library override id '%s', only overrides of real "
@@ -1388,7 +1388,7 @@ static void id_override_library_clear_single_fn(bContext *C,
    * override. */
   if (BKE_lib_override_library_is_hierarchy_leaf(bmain, id)) {
     bool do_remap_active = false;
-    if (OBACT(view_layer) == reinterpret_cast<Object *>(id)) {
+    if (BKE_view_layer_active_object_get(view_layer) == reinterpret_cast<Object *>(id)) {
       BLI_assert(GS(id->name) == ID_OB);
       do_remap_active = true;
     }
@@ -1422,8 +1422,9 @@ static void id_override_library_resync_fn(bContext *UNUSED(C),
   ID *id_root = tselem->id;
   OutlinerLibOverrideData *data = static_cast<OutlinerLibOverrideData *>(user_data);
 
-  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root)) {
+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root) || ID_IS_LINKED(id_root)) {
     CLOG_WARN(&LOG, "Could not resync library override of data block '%s'", id_root->name);
+    return;
   }
 
   if (id_root->override_library->hierarchy_root != nullptr) {
@@ -1471,7 +1472,7 @@ static void id_override_library_delete_hierarchy_fn(bContext *UNUSED(C),
   BLI_assert(TSE_IS_REAL_ID(tselem));
   ID *id_root = tselem->id;
 
-  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root)) {
+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id_root) || ID_IS_LINKED(id_root)) {
     CLOG_WARN(&LOG, "Could not delete library override of data block '%s'", id_root->name);
     return;
   }
@@ -2405,7 +2406,7 @@ static void outliner_do_object_delete(bContext *C,
   }
 }
 
-static TreeTraversalAction outliner_find_objects_to_delete(TreeElement *te, void *customdata)
+static TreeTraversalAction outliner_collect_objects_to_delete(TreeElement *te, void *customdata)
 {
   ObjectEditData *data = static_cast<ObjectEditData *>(customdata);
   GSet *objects_to_delete = data->objects_set;
@@ -2458,7 +2459,7 @@ static int outliner_delete_exec(bContext *C, wmOperator *op)
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   struct wmMsgBus *mbus = CTX_wm_message_bus(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  const Base *basact_prev = BASACT(view_layer);
+  const Base *basact_prev = view_layer->basact;
 
   const bool delete_hierarchy = RNA_boolean_get(op->ptr, "hierarchy");
 
@@ -2472,7 +2473,7 @@ static int outliner_delete_exec(bContext *C, wmOperator *op)
                          &space_outliner->tree,
                          0,
                          TSE_SELECTED,
-                         outliner_find_objects_to_delete,
+                         outliner_collect_objects_to_delete,
                          &object_delete_data);
 
   if (delete_hierarchy) {
@@ -2502,7 +2503,7 @@ static int outliner_delete_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
   DEG_relations_tag_update(bmain);
 
-  if (basact_prev != BASACT(view_layer)) {
+  if (basact_prev != view_layer->basact) {
     WM_event_add_notifier(C, NC_SCENE | ND_OB_ACTIVE, scene);
     WM_msg_publish_rna_prop(mbus, &scene->id, view_layer, LayerObjects, active);
   }
