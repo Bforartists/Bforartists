@@ -9,8 +9,6 @@
 
 #include <string.h>
 
-#include "DNA_text_types.h"
-
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
@@ -25,7 +23,6 @@
 #include "WM_types.h"
 
 #include "GPU_framebuffer.h"
-#include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
