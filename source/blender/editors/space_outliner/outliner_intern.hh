@@ -234,7 +234,7 @@ struct TreeViewContext {
   struct ViewLayer *view_layer;
 
   /* Object level. */
-  /** Avoid OBACT macro everywhere. */
+  /** Avoid `BKE_view_layer_active_object_get` everywhere. */
   Object *obact;
   Object *ob_edit;
   /**
@@ -284,8 +284,8 @@ typedef struct IDsSelectedData {
   struct ListBase selected_array;
 } IDsSelectedData;
 
-TreeTraversalAction outliner_find_selected_collections(TreeElement *te, void *customdata);
-TreeTraversalAction outliner_find_selected_objects(TreeElement *te, void *customdata);
+TreeTraversalAction outliner_collect_selected_collections(TreeElement *te, void *customdata);
+TreeTraversalAction outliner_collect_selected_objects(TreeElement *te, void *customdata);
 
 /* outliner_draw.c ---------------------------------------------- */
 

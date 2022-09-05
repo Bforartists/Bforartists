@@ -110,6 +110,10 @@ static FT_Error blf_cache_face_requester(FTC_FaceID faceID,
     font->face->generic.data = font;
     font->face->generic.finalizer = blf_face_finalizer;
   }
+  else {
+    /* Clear this on error to avoid exception in FTC_Manager_LookupFace. */
+    *face = NULL;
+  }
 
   return err;
 }
@@ -227,7 +231,7 @@ void blf_batch_draw_begin(FontBLF *font)
     float gpumat[4][4];
     GPU_matrix_model_view_get(gpumat);
 
-    bool mat_changed = (memcmp(gpumat, g_batch.mat, sizeof(g_batch.mat)) != 0);
+    bool mat_changed = equals_m4m4(gpumat, g_batch.mat) == false;
 
     if (mat_changed) {
       /* Modelviewmat is no longer the same.
@@ -1446,7 +1450,7 @@ static const struct FaceDetails static_face_details[] = {
     {"NotoSansGeorgian-VariableFont_wdth,wght.woff2", TT_UCR_GEORGIAN, 0, 0, 0},
     {"NotoSansGujarati-Regular.woff2", TT_UCR_GUJARATI, 0, 0, 0},
     {"NotoSansGurmukhi-VariableFont_wdth,wght.woff2", TT_UCR_GURMUKHI, 0, 0, 0},
-    {"NotoSansHebrew-VariableFont_wdth,wght.woff2", TT_UCR_HEBREW, 0, 0, 0},
+    {"NotoSansHebrew-Regular.woff2", TT_UCR_HEBREW, 0, 0, 0},
     {"NotoSansJavanese-Regular.woff2", 0x80000003L, 0x2000L, 0, 0},
     {"NotoSansKannada-VariableFont_wdth,wght.woff2", TT_UCR_KANNADA, 0, 0, 0},
     {"NotoSansMalayalam-VariableFont_wdth,wght.woff2", TT_UCR_MALAYALAM, 0, 0, 0},

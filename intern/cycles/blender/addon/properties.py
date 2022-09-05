@@ -81,9 +81,8 @@ enum_use_layer_samples = (
 )
 
 enum_sampling_pattern = (
-    ('SOBOL', "Sobol", "Use Sobol random sampling pattern", 0),
+    ('SOBOL', "Sobol-Burley", "Use Sobol-Burley random sampling pattern", 0),
     ('PROGRESSIVE_MULTI_JITTER', "Progressive Multi-Jitter", "Use Progressive Multi-Jitter random sampling pattern", 1),
-    ('SOBOL_BURLEY', "Sobol-Burley", "Use Sobol-Burley random sampling pattern", 2),
 )
 
 enum_volume_sampling = (
@@ -382,7 +381,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     sampling_pattern: EnumProperty(
         name="Sampling Pattern",
-        description="Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol",
+        description="Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol-Burley",
         items=enum_sampling_pattern,
         default='PROGRESSIVE_MULTI_JITTER',
     )
@@ -1567,7 +1566,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 import sys
                 col.label(text="Requires Intel GPU with Xe-HPG architecture", icon='BLANK1')
                 if sys.platform.startswith("win"):
-                    col.label(text="and Windows driver version 101.1660 or newer", icon='BLANK1')
+                    col.label(text="and Windows driver version 101.3268 or newer", icon='BLANK1')
                 elif sys.platform.startswith("linux"):
                     col.label(text="and Linux driver version xx.xx.23570 or newer", icon='BLANK1')
             elif device_type == 'METAL':
