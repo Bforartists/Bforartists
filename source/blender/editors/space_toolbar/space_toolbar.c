@@ -92,7 +92,7 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *region)
 static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
   // SpaceInfo *sinfo = sa->spacedata.first;
 
   /* context changes */
@@ -109,7 +109,7 @@ static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 static void toolbar_header_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
-  wmNotifier *wmn = params->notifier;
+  const wmNotifier *wmn = params->notifier;
   /* context changes */
   switch (wmn->category) {
     case NC_WM:
