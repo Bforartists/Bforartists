@@ -1693,7 +1693,7 @@ static bool rna_SpaceImageEditor_show_uvedit_get(PointerRNA *ptr)
   wmWindow *win = ED_screen_window_find(screen, G_MAIN->wm.first);
   if (win != NULL) {
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-    obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
+    obedit = BKE_view_layer_edit_object_get(view_layer);
   }
   return ED_space_image_show_uvedit(sima, obedit);
 }
@@ -1706,7 +1706,7 @@ static bool rna_SpaceImageEditor_show_maskedit_get(PointerRNA *ptr)
   wmWindow *win = ED_screen_window_find(screen, G_MAIN->wm.first);
   if (win != NULL) {
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-    obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
+    obedit = BKE_view_layer_edit_object_get(view_layer);
   }
   return ED_space_image_check_show_maskedit(sima, obedit);
 }
@@ -2206,7 +2206,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Main *bmain = CTX_data_main(C);
 
-  Object *obact = OBACT(view_layer);
+  Object *obact = BKE_view_layer_active_object_get(view_layer);
   if (obact == NULL) {
     return;
   }
@@ -2279,7 +2279,7 @@ static void rna_SpaceDopeSheetEditor_mode_update(bContext *C, PointerRNA *ptr)
   SpaceAction *saction = (SpaceAction *)(ptr->data);
   ScrArea *area = CTX_wm_area(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Object *obact = OBACT(view_layer);
+  Object *obact = BKE_view_layer_active_object_get(view_layer);
 
   /* special exceptions for ShapeKey Editor mode */
   if (saction->mode == SACTCONT_SHAPEKEY) {
@@ -3581,6 +3581,7 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, NULL, "dt_uvstretch");
   RNA_def_property_enum_items(prop, dt_uvstretch_items);
   RNA_def_property_ui_text(prop, "Display Stretch Type", "Type of stretch to display");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MESH);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
 
   prop = RNA_def_property(srna, "show_modified_edges", PROP_BOOLEAN, PROP_NONE);
@@ -4790,6 +4791,13 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Opacity", "Vertex Paint mix factor\nNot in wireframe or render shading mode");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_GPencil_update");
+
+  /* Developper Debug overlay */
+
+  prop = RNA_def_property(srna, "use_debug_freeze_view_culling", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "debug_flag", V3D_DEBUG_FREEZE_CULLING);
+  RNA_def_property_ui_text(prop, "Freeze Culling", "Freeze view culling bounds");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 }
 
 static void rna_def_space_view3d(BlenderRNA *brna)

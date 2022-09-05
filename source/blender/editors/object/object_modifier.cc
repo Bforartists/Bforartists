@@ -47,6 +47,7 @@
 #include "BKE_gpencil_modifier.h"
 #include "BKE_key.h"
 #include "BKE_lattice.h"
+#include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -586,9 +587,11 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
   me->totvert = verts_num;
   me->totedge = edges_num;
 
-  me->mvert = (MVert *)CustomData_add_layer(&me->vdata, CD_MVERT, CD_CALLOC, nullptr, verts_num);
-  me->medge = (MEdge *)CustomData_add_layer(&me->edata, CD_MEDGE, CD_CALLOC, nullptr, edges_num);
-  me->mface = (MFace *)CustomData_add_layer(&me->fdata, CD_MFACE, CD_CALLOC, nullptr, 0);
+  me->mvert = (MVert *)CustomData_add_layer(
+      &me->vdata, CD_MVERT, CD_SET_DEFAULT, nullptr, verts_num);
+  me->medge = (MEdge *)CustomData_add_layer(
+      &me->edata, CD_MEDGE, CD_SET_DEFAULT, nullptr, edges_num);
+  me->mface = (MFace *)CustomData_add_layer(&me->fdata, CD_MFACE, CD_SET_DEFAULT, nullptr, 0);
 
   MVert *mvert = me->mvert;
   MEdge *medge = me->medge;
@@ -1227,7 +1230,7 @@ static int modifier_remove_exec(bContext *C, wmOperator *op)
   /* if cloth/softbody was removed, particle mode could be cleared */
   if (mode_orig & OB_MODE_PARTICLE_EDIT) {
     if ((ob->mode & OB_MODE_PARTICLE_EDIT) == 0) {
-      if (ob == OBACT(view_layer)) {
+      if (ob == BKE_view_layer_active_object_get(view_layer)) {
         WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_MODE_OBJECT, nullptr);
       }
     }
@@ -2642,7 +2645,7 @@ static Object *modifier_skin_armature_create(Depsgraph *depsgraph, Main *bmain, 
   MVert *mvert = me_eval_deform->mvert;
 
   /* add vertex weights to original mesh */
-  CustomData_add_layer(&me->vdata, CD_MDEFORMVERT, CD_CALLOC, nullptr, me->totvert);
+  CustomData_add_layer(&me->vdata, CD_MDEFORMVERT, CD_SET_DEFAULT, nullptr, me->totvert);
 
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
   Object *arm_ob = BKE_object_add(bmain, view_layer, OB_ARMATURE, nullptr);

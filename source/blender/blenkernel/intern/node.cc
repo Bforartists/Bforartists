@@ -72,7 +72,6 @@
 #include "NOD_function.h"
 #include "NOD_geometry.h"
 #include "NOD_node_declaration.hh"
-#include "NOD_node_tree_ref.hh"
 #include "NOD_shader.h"
 #include "NOD_socket.h"
 #include "NOD_texture.h"
@@ -104,7 +103,6 @@ using blender::nodes::NodeDeclaration;
 using blender::nodes::OutputFieldDependency;
 using blender::nodes::OutputSocketFieldType;
 using blender::nodes::SocketDeclaration;
-using namespace blender::nodes::node_tree_ref_types;
 
 /* Fallback types for undefined tree, nodes, sockets */
 static bNodeTreeType NodeTreeTypeUndefined;
@@ -120,9 +118,6 @@ static void node_free_node(bNodeTree *ntree, bNode *node);
 static void node_socket_interface_free(bNodeTree *UNUSED(ntree),
                                        bNodeSocket *sock,
                                        const bool do_id_user);
-static void nodeMuteRerouteOutputLinks(struct bNodeTree *ntree,
-                                       struct bNode *node,
-                                       const bool mute);
 
 static void ntree_init_data(ID *id)
 {
@@ -2352,102 +2347,11 @@ void nodeRemLink(bNodeTree *ntree, bNodeLink *link)
   }
 }
 
-/* Check if all output links are muted or not. */
-static bool nodeMuteFromSocketLinks(const bNodeTree *ntree, const bNodeSocket *sock)
+void nodeLinkSetMute(bNodeTree *ntree, bNodeLink *link, const bool muted)
 {
-  int tot = 0;
-  int muted = 0;
-  LISTBASE_FOREACH (const bNodeLink *, link, &ntree->links) {
-    if (link->fromsock == sock) {
-      tot++;
-      if (link->flag & NODE_LINK_MUTED) {
-        muted++;
-      }
-    }
-  }
-  return tot == muted;
-}
-
-static void nodeMuteLink(bNodeLink *link)
-{
-  link->flag |= NODE_LINK_MUTED;
-  link->flag |= NODE_LINK_TEST;
-  if (!(link->tosock->flag & SOCK_MULTI_INPUT)) {
-    link->tosock->flag &= ~SOCK_IN_USE;
-  }
-}
-
-static void nodeUnMuteLink(bNodeLink *link)
-{
-  link->flag &= ~NODE_LINK_MUTED;
-  link->flag |= NODE_LINK_TEST;
-  link->tosock->flag |= SOCK_IN_USE;
-}
-
-/* Upstream muting. Always happens when unmuting but checks when muting. O(n^2) algorithm. */
-static void nodeMuteRerouteInputLinks(bNodeTree *ntree, bNode *node, const bool mute)
-{
-  if (node->type != NODE_REROUTE) {
-    return;
-  }
-  if (!mute || nodeMuteFromSocketLinks(ntree, (bNodeSocket *)node->outputs.first)) {
-    bNodeSocket *sock = (bNodeSocket *)node->inputs.first;
-    LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
-      if (!(link->flag & NODE_LINK_VALID) || (link->tosock != sock)) {
-        continue;
-      }
-      if (mute) {
-        nodeMuteLink(link);
-      }
-      else {
-        nodeUnMuteLink(link);
-      }
-      nodeMuteRerouteInputLinks(ntree, link->fromnode, mute);
-    }
-  }
-}
-
-/* Downstream muting propagates when reaching reroute nodes. O(n^2) algorithm. */
-static void nodeMuteRerouteOutputLinks(bNodeTree *ntree, bNode *node, const bool mute)
-{
-  if (node->type != NODE_REROUTE) {
-    return;
-  }
-  bNodeSocket *sock;
-  sock = (bNodeSocket *)node->outputs.first;
-  LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
-    if (!(link->flag & NODE_LINK_VALID) || (link->fromsock != sock)) {
-      continue;
-    }
-    if (mute) {
-      nodeMuteLink(link);
-    }
-    else {
-      nodeUnMuteLink(link);
-    }
-    nodeMuteRerouteOutputLinks(ntree, link->tonode, mute);
-  }
-}
-
-void nodeMuteLinkToggle(bNodeTree *ntree, bNodeLink *link)
-{
-  if (link->tosock) {
-    bool mute = !(link->flag & NODE_LINK_MUTED);
-    if (mute) {
-      nodeMuteLink(link);
-    }
-    else {
-      nodeUnMuteLink(link);
-    }
-    if (link->tonode->type == NODE_REROUTE) {
-      nodeMuteRerouteOutputLinks(ntree, link->tonode, mute);
-    }
-    if (link->fromnode->type == NODE_REROUTE) {
-      nodeMuteRerouteInputLinks(ntree, link->fromnode, mute);
-    }
-  }
-
-  if (ntree) {
+  const bool was_muted = link->flag & NODE_LINK_MUTED;
+  SET_FLAG_FROM_TEST(link->flag, muted, NODE_LINK_MUTED);
+  if (muted != was_muted) {
     BKE_ntree_update_tag_link_mute(ntree, link);
   }
 }
@@ -2662,9 +2566,9 @@ void nodePositionRelative(bNode *from_node,
 
 void nodePositionPropagate(bNode *node)
 {
-  LISTBASE_FOREACH (bNodeSocket *, nsock, &node->inputs) {
-    if (nsock->link != nullptr) {
-      bNodeLink *link = nsock->link;
+  LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
+    if (socket->link != nullptr) {
+      bNodeLink *link = socket->link;
       nodePositionRelative(link->fromnode, link->tonode, link->fromsock, link->tosock);
       nodePositionPropagate(link->fromnode);
     }
@@ -3383,8 +3287,10 @@ struct bNodeSocket *ntreeAddSocketInterfaceFromSocket(bNodeTree *ntree,
                                                       bNode *from_node,
                                                       bNodeSocket *from_sock)
 {
-  bNodeSocket *iosock = ntreeAddSocketInterface(
-      ntree, static_cast<eNodeSocketInOut>(from_sock->in_out), from_sock->idname, from_sock->name);
+  bNodeSocket *iosock = ntreeAddSocketInterface(ntree,
+                                                static_cast<eNodeSocketInOut>(from_sock->in_out),
+                                                from_sock->idname,
+                                                DATA_(from_sock->name));
   if (iosock) {
     if (iosock->typeinfo->interface_from_socket) {
       iosock->typeinfo->interface_from_socket(ntree, iosock, from_node, from_sock);
@@ -4581,6 +4487,7 @@ static void registerShaderNodes()
   register_node_type_sh_wavelength();
   register_node_type_sh_blackbody();
   register_node_type_sh_mix_rgb();
+  register_node_type_sh_mix();
   register_node_type_sh_valtorgb();
   register_node_type_sh_rgbtobw();
   register_node_type_sh_shadertorgb();

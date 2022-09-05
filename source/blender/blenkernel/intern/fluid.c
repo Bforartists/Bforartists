@@ -554,11 +554,10 @@ static void update_distances(int index,
 
 static int get_light(ViewLayer *view_layer, float *light)
 {
-  Base *base_tmp = NULL;
   int found_light = 0;
 
   /* Try to find a lamp, preferably local. */
-  for (base_tmp = FIRSTBASE(view_layer); base_tmp; base_tmp = base_tmp->next) {
+  LISTBASE_FOREACH (Base *, base_tmp, &view_layer->object_bases) {
     if (base_tmp->object->type == OB_LAMP) {
       Light *la = base_tmp->object->data;
 
@@ -3247,7 +3246,8 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
     mp_example = *mpoly;
   }
 
-  const short mp_mat_nr = mp_example.mat_nr;
+  const int *orig_material_indices = BKE_mesh_material_indices(orgmesh);
+  const short mp_mat_nr = orig_material_indices ? orig_material_indices[0] : 0;
   const char mp_flag = mp_example.flag;
 
   int i;
@@ -3358,10 +3358,12 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds,
     }
   }
 
+  int *material_indices = BKE_mesh_material_indices_for_write(me);
+
   /* Loop for triangles. */
   for (i = 0; i < num_faces; i++, mpolys++, mloops += 3) {
     /* Initialize from existing face. */
-    mpolys->mat_nr = mp_mat_nr;
+    material_indices[i] = mp_mat_nr;
     mpolys->flag = mp_flag;
 
     mpolys->loopstart = i * 3;
