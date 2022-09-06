@@ -3736,9 +3736,9 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSeparateGeometry"
 
-            props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
+            props = col.operator("node.add_node", text=" Transform                  ", icon = "NODE_TRANSFORM")
             props.use_transform = True
-            props.type = "GeometryNodeSetPosition"
+            props.type = "GeometryNodeTransform"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -3747,9 +3747,9 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSetID"
 
-            props = col.operator("node.add_node", text=" Transform                  ", icon = "NODE_TRANSFORM")
+            props = col.operator("node.add_node", text=" Set Postion                 ", icon = "SET_POSITION")
             props.use_transform = True
-            props.type = "GeometryNodeTransform"
+            props.type = "GeometryNodeSetPosition"
 
         #### Icon Buttons
 
