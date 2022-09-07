@@ -6558,6 +6558,7 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   uiItemR(col, &view_transform_ptr, "gamma", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
   uiItemR(col, &view_transform_ptr, "use_curve_mapping", 0, NULL, ICON_NONE);
   if (view_settings->flag & COLORMANAGE_VIEW_USE_CURVES) {
     uiTemplateCurveMapping(
