@@ -392,10 +392,11 @@ class RENDER_PT_output_color_management(RenderOutputButtonsPanel, Panel):
         image_settings = scene.render.image_settings
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         layout.row().prop(image_settings, "color_management", text=" ", expand=True)
+        layout.use_property_split = True
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
 
