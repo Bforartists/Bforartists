@@ -51,9 +51,9 @@ class toolshelf_calculate( Panel):
 
         if width_scale > 160.0:
             column_count = 4
-        elif width_scale > 120.0:
+        elif width_scale > 130.0:
             column_count = 3
-        elif width_scale > 80:
+        elif width_scale > 90:
             column_count = 2
         else:
             column_count = 1
