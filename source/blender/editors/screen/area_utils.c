@@ -46,7 +46,8 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
   // check if panel has tabs visible
   if (region->panels_category.first &&
       region->panels_category.first != region->panels_category.last) {
-    if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) != RGN_ALIGN_RIGHT) {
+    /* bfa - allow tools area snapping if region is flipped */
+    if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) != RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT) {
       offset = 20;
     }
   }
@@ -57,7 +58,8 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
                          (BLI_rcti_size_y(&region->v2d.mask) + 1);
     const float icon_size = ICON_DEFAULT_HEIGHT_TOOLBAR / aspect;
     const float column = 1.25f * icon_size;
-    const float margin = 0.5f * icon_size + offset;
+    /* bfa - margin changed from 0.5f > 0.75f to fix icons size */
+    const float margin = 0.75f * icon_size + offset;
     const float snap_units[] = {
         column + margin,
         (2.0f * column) + margin,
