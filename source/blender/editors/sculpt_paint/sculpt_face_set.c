@@ -755,7 +755,7 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
   SCULPT_undo_push_end(ob);
 
   /* Sync face sets visibility and vertex visibility as now all Face Sets are visible. */
-  SCULPT_visibility_sync_all_face_sets_to_vertices(ob);
+  SCULPT_visibility_sync_all_face_sets_to_verts(ob);
 
   for (int i = 0; i < totnode; i++) {
     BKE_pbvh_node_mark_update_visibility(nodes[i]);
@@ -951,7 +951,7 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
   }
 
   /* Sync face sets visibility and vertex visibility. */
-  SCULPT_visibility_sync_all_face_sets_to_vertices(ob);
+  SCULPT_visibility_sync_all_face_sets_to_verts(ob);
 
   SCULPT_undo_push_end(ob);
 
@@ -1124,13 +1124,16 @@ static void sculpt_face_set_grow(Object *ob,
                                  const bool modify_hidden)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
+  const MPoly *polys = BKE_mesh_polys(mesh);
+  const MLoop *loops = BKE_mesh_loops(mesh);
+
   for (int p = 0; p < mesh->totpoly; p++) {
     if (!modify_hidden && prev_face_sets[p] <= 0) {
       continue;
     }
-    const MPoly *c_poly = &mesh->mpoly[p];
+    const MPoly *c_poly = &polys[p];
     for (int l = 0; l < c_poly->totloop; l++) {
-      const MLoop *c_loop = &mesh->mloop[c_poly->loopstart + l];
+      const MLoop *c_loop = &loops[c_poly->loopstart + l];
       const MeshElemMap *vert_map = &ss->pmap[c_loop->v];
       for (int i = 0; i < vert_map->count; i++) {
         const int neighbor_face_index = vert_map->indices[i];
@@ -1152,14 +1155,16 @@ static void sculpt_face_set_shrink(Object *ob,
                                    const bool modify_hidden)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
+  const MPoly *polys = BKE_mesh_polys(mesh);
+  const MLoop *loops = BKE_mesh_loops(mesh);
   for (int p = 0; p < mesh->totpoly; p++) {
     if (!modify_hidden && prev_face_sets[p] <= 0) {
       continue;
     }
     if (abs(prev_face_sets[p]) == active_face_set_id) {
-      const MPoly *c_poly = &mesh->mpoly[p];
+      const MPoly *c_poly = &polys[p];
       for (int l = 0; l < c_poly->totloop; l++) {
-        const MLoop *c_loop = &mesh->mloop[c_poly->loopstart + l];
+        const MLoop *c_loop = &loops[c_poly->loopstart + l];
         const MeshElemMap *vert_map = &ss->pmap[c_loop->v];
         for (int i = 0; i < vert_map->count; i++) {
           const int neighbor_face_index = vert_map->indices[i];
@@ -1256,21 +1261,21 @@ static void sculpt_face_set_edit_fair_face_set(Object *ob,
   const int totvert = SCULPT_vertex_count_get(ss);
 
   Mesh *mesh = ob->data;
-  bool *fair_vertices = MEM_malloc_arrayN(totvert, sizeof(bool), "fair vertices");
+  bool *fair_verts = MEM_malloc_arrayN(totvert, sizeof(bool), "fair vertices");
 
   SCULPT_boundary_info_ensure(ob);
 
   for (int i = 0; i < totvert; i++) {
     PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
 
-    fair_vertices[i] = !SCULPT_vertex_is_boundary(ss, vertex) &&
-                       SCULPT_vertex_has_face_set(ss, vertex, active_face_set_id) &&
-                       SCULPT_vertex_has_unique_face_set(ss, vertex);
+    fair_verts[i] = !SCULPT_vertex_is_boundary(ss, vertex) &&
+                    SCULPT_vertex_has_face_set(ss, vertex, active_face_set_id) &&
+                    SCULPT_vertex_has_unique_face_set(ss, vertex);
   }
 
   MVert *mvert = SCULPT_mesh_deformed_mverts_get(ss);
-  BKE_mesh_prefair_and_fair_vertices(mesh, mvert, fair_vertices, fair_order);
-  MEM_freeN(fair_vertices);
+  BKE_mesh_prefair_and_fair_verts(mesh, mvert, fair_verts, fair_order);
+  MEM_freeN(fair_verts);
 }
 
 static void sculpt_face_set_apply_edit(Object *ob,
@@ -1362,7 +1367,7 @@ static void face_set_edit_do_post_visibility_updates(Object *ob, PBVHNode **node
   PBVH *pbvh = ss->pbvh;
 
   /* Sync face sets visibility and vertex visibility as now all Face Sets are visible. */
-  SCULPT_visibility_sync_all_face_sets_to_vertices(ob);
+  SCULPT_visibility_sync_all_face_sets_to_verts(ob);
 
   for (int i = 0; i < totnode; i++) {
     BKE_pbvh_node_mark_update_visibility(nodes[i]);

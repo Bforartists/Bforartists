@@ -103,12 +103,6 @@ class NodeAddOperator:
         tree.nodes.active = node
         node.location = space.cursor_location
         return node
-    # bfa - tooltips in nodes
-    @classmethod
-    def description(cls, context, properties):
-        if properties.type:
-            return bpy.types.Node.bl_rna_get_subclass(properties.type).description
-        return ""
 
     @classmethod
     def poll(cls, context):

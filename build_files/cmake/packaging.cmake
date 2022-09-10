@@ -82,8 +82,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 3.2.2")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 3.2.2")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists/Bforartists ${MAJOR_VERSION}.${MINOR_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists/Bforartists ${MAJOR_VERSION}.${MINOR_VERSION}")
 
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
@@ -106,8 +106,8 @@ if(WIN32)
   set(CPACK_WIX_LIGHT_EXTRA_FLAGS -dcl:medium)
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "bforartists" "bforartists")
-set(CPACK_CREATE_DESKTOP_LINKS "bforartists" "bforartists")
+set(CPACK_PACKAGE_EXECUTABLES "bforartists" "Bforartists")
+set(CPACK_CREATE_DESKTOP_LINKS "bforartists" "Bforartists")
 
 include(CPack)
 

@@ -1407,8 +1407,8 @@ static int view_borderzoom_exec(bContext *C, wmOperator *op)
 static void VIEW2D_OT_zoom_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Zoom Border";
-  ot->description = "Drawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
+  ot->name = "Zoom to Border";
+  ot->description = "Drawing rectangle with LMB zooms in the view to the nearest item contained in the border,\nDrawing rectangle with MMB zooms out";
   ot->idname = "VIEW2D_OT_zoom_border";
 
   /* api callbacks */
