@@ -634,9 +634,9 @@ class ToolSelectPanelHelper:
         else:
             show_text = False
             # 2 or 3 column layout, disabled
-            if width_scale > 120.0:
+            if width_scale > 130.0:
                 column_count = 3
-            elif width_scale > 80:
+            elif width_scale > 90:
                 column_count = 2
             else:
                 column_count = 1
