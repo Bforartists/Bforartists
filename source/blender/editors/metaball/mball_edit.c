@@ -14,6 +14,7 @@
 #include "BLI_kdtree.h"
 #include "BLI_math.h"
 #include "BLI_rand.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "DNA_defs.h"
@@ -43,8 +44,6 @@
 #include "WM_types.h"
 
 #include "mball_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Edit Mode Functions

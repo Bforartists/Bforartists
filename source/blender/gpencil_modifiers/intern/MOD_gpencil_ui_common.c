@@ -227,6 +227,7 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
   PointerRNA op_ptr;
   uiLayout *row;
   GpencilModifierData *md = (GpencilModifierData *)md_v;
+  const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(md->type);
 
   PointerRNA ptr;
   Object *ob = ED_object_active_context(C);
@@ -235,6 +236,14 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
   uiLayoutSetUnitsX(layout, 4.0f);
+
+  /* Apply. */
+  if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
+    uiItemO(layout,
+            CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
+            ICON_CHECKMARK,
+            "OBJECT_OT_gpencil_modifier_apply");
+  }
 
   /* Duplicate. */
   uiItemO(layout,
@@ -318,9 +327,8 @@ static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *pane
   uiItemR(row, ptr, "show_viewport", 0, "", ICON_NONE);
   uiItemR(row, ptr, "show_render", 0, "", ICON_NONE);
 
+  /* bfa - apply modifer button */
   op_row = uiLayoutRow(layout, true);
-
-  /* Apply. */
   if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
     uiItemO(op_row, "", ICON_CHECKMARK, "OBJECT_OT_gpencil_modifier_apply");
   }

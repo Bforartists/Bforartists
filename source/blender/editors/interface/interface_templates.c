@@ -1190,12 +1190,12 @@ static uiBut *template_id_def_new_but(uiBlock *block,
    * is exceeded. */
 
   if (newop) {
-    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD : ICON_ADD */
+    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD */
     but = uiDefIconTextButO(block,
                             but_type,
                             newop,
                             WM_OP_INVOKE_DEFAULT,
-                            (id && !use_tab_but) ? ICON_ADD : ICON_ADD,
+                            ICON_ADD,
                             (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
                             0,
                             0,
@@ -1206,11 +1206,11 @@ static uiBut *template_id_def_new_but(uiBlock *block,
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
   else {
-    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD : ICON_ADD */
+    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD */
     but = uiDefIconTextBut(block,
                            but_type,
                            0,
-                           (id && !use_tab_but) ? ICON_ADD : ICON_ADD,
+                           ICON_ADD,
                            (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
                            0,
                            0,
@@ -6369,8 +6369,10 @@ void uiTemplateInputStatus(uiLayout *layout, struct bContext *C)
     uiLayout *row = uiLayoutRow(col, true);
     uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_LEFT);
 
-    const char *msg = TIP_(WM_window_cursor_keymap_status_get(win, i, 0));
-    const char *msg_drag = TIP_(WM_window_cursor_keymap_status_get(win, i, 1));
+    const char *msg = CTX_TIP_(BLT_I18NCONTEXT_OPERATOR_DEFAULT,
+                               WM_window_cursor_keymap_status_get(win, i, 0));
+    const char *msg_drag = CTX_TIP_(BLT_I18NCONTEXT_OPERATOR_DEFAULT,
+                                    WM_window_cursor_keymap_status_get(win, i, 1));
 
     if (msg || (msg_drag == NULL)) {
       uiItemL(row, msg ? msg : "", (ICON_MOUSE_LMB + i));

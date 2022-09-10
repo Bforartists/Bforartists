@@ -2485,7 +2485,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* bfa - Apply animation to all selected through UI animate property */
+/* bfa - Apply animation to all selected pose bones through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  * caller should update animation data afterwards.
@@ -2540,7 +2540,7 @@ static bool insert_key_selected_pose_bones(Main *bmain,
   return changed;
 }
 
-/* bfa - Apply animation to all selected through UI animate property */
+/* bfa - Apply animation to all selected objects through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  */
@@ -2890,11 +2890,11 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
   /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
   bool alt_held = ((win->eventstate->modifier & KM_ALT) != 0);
+  AnimData *adt = NULL;
 
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {NULL};
   PropertyRNA *prop = NULL;
-  AnimData *adt = NULL; /* bfa - Apply animation*/
   Main *bmain = CTX_data_main(C);
   char *path;
   float cfra = (float)

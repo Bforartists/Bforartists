@@ -227,7 +227,6 @@ class PHYSICS_PT_dp_surface_canvas(PhysicButtonsPanel, Panel):
 
             col.use_property_split = False
             col.prop(surface, "use_incremental_displace")
-
             col.separator()
 
         elif surface_type == 'WAVE':

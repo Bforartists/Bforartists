@@ -2052,7 +2052,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
                           (ID *)*nodetree,
                           id_old != NULL ? (ID *)ntreeFromID(id_old) : NULL,
                           0);
-    ntreeBlendReadData(reader, *nodetree);
+    ntreeBlendReadData(reader, id, *nodetree);
   }
 
   if (GS(id->name) == ID_SCE) {
@@ -2064,7 +2064,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
                             &scene->master_collection->id,
                             id_old != NULL ? &((Scene *)id_old)->master_collection->id : NULL,
                             0);
-      BKE_collection_blend_read_data(reader, scene->master_collection);
+      BKE_collection_blend_read_data(reader, scene->master_collection, &scene->id);
     }
   }
 }
@@ -4970,6 +4970,11 @@ void *BLO_read_get_new_packed_address(BlendDataReader *reader, const void *old_a
 ID *BLO_read_get_new_id_address(BlendLibReader *reader, Library *lib, ID *id)
 {
   return newlibadr(reader->fd, lib, id);
+}
+
+int BLO_read_fileversion_get(BlendDataReader *reader)
+{
+  return reader->fd->fileversion;
 }
 
 bool BLO_read_requires_endian_switch(BlendDataReader *reader)

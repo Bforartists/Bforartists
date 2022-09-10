@@ -270,6 +270,7 @@ static int poselib_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 void POSELIB_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
+  /* bfa - better tooltip */
   ot->name = "Remove Legacy Pose Library";
   ot->idname = "POSELIB_OT_unlink";
   ot->description =

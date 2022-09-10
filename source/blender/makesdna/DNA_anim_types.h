@@ -764,11 +764,11 @@ typedef struct NlaStrip {
 
 /* NLA Strip Blending Mode */
 typedef enum eNlaStrip_Blend_Mode {
-  NLASTRIP_MODE_COMBINE = 0, /* BFA - Changed default from Replace to Combine */
-  NLASTRIP_MODE_REPLACE,
+  NLASTRIP_MODE_REPLACE = 0,
   NLASTRIP_MODE_ADD,
   NLASTRIP_MODE_SUBTRACT,
   NLASTRIP_MODE_MULTIPLY,
+  NLASTRIP_MODE_COMBINE,
 } eNlaStrip_Blend_Mode;
 
 /** NLA Strip Extrapolation Mode. */
@@ -1159,6 +1159,9 @@ typedef struct IdAdtTemplate {
   ID id;
   AnimData *adt;
 } IdAdtTemplate;
+
+/* From: `DNA_object_types.h`, see it's doc-string there. */
+#define SELECT 1
 
 /* ************************************************ */
 

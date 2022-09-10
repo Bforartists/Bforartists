@@ -210,6 +210,7 @@ typedef struct bNodeSocket {
   blender::Span<bNodeLink *> directly_linked_links();
   blender::Span<const bNodeLink *> directly_linked_links() const;
   /** Sockets which are connected to this socket with a link. */
+  blender::Span<bNodeSocket *> directly_linked_sockets();
   blender::Span<const bNodeSocket *> directly_linked_sockets() const;
   bool is_directly_linked() const;
   /**
@@ -409,6 +410,8 @@ typedef struct bNode {
   /** Lookup socket of this node by its identifier. */
   const bNodeSocket &input_by_identifier(blender::StringRef identifier) const;
   const bNodeSocket &output_by_identifier(blender::StringRef identifier) const;
+  /** Node tree this node belongs to. */
+  const bNodeTree &owner_tree() const;
 #endif
 } bNode;
 
@@ -534,6 +537,9 @@ typedef struct bNodeTree {
   ID id;
   /** Animation data (must be immediately after id for utilities to use it). */
   struct AnimData *adt;
+
+  /** The ID owning this node tree, in case it is an embedded one. */
+  ID *owner_id;
 
   /** Runtime type information. */
   struct bNodeTreeType *typeinfo;
