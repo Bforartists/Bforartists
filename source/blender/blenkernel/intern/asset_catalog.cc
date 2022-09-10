@@ -30,7 +30,7 @@ const int AssetCatalogDefinitionFile::SUPPORTED_VERSION = 1;
 const std::string AssetCatalogDefinitionFile::VERSION_MARKER = "VERSION ";
 
 const std::string AssetCatalogDefinitionFile::HEADER =
-    "# This is an Asset Catalog Definition file for blend files.\n"
+    "# This is an Asset Catalog Definition file for Blender.\n"
     "#\n"
     "# Empty lines and lines starting with `#` will be ignored.\n"
     "# The first non-ignored line should be the version indicator.\n"

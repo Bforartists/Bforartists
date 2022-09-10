@@ -371,6 +371,7 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         cam = context.camera
 
         col = layout.column(align=True)
+
         col.prop(cam, "display_size", text="Size")
 
         col.label( text = "Show")

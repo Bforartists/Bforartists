@@ -723,16 +723,15 @@ void IMAGE_OT_view_zoom(wmOperatorType *ot)
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY | OPTYPE_LOCK_BYPASS;
 
   /* properties */
-  prop = RNA_def_float(
-      ot->srna,
-      "factor",
-      0.0f,
-      -FLT_MAX,
-      FLT_MAX,
-      "Factor",
-      "Factor\nZoom factor, values higher than 1.0 zoom in, lower values zoom out",
-      -FLT_MAX,
-      FLT_MAX);
+  prop = RNA_def_float(ot->srna,
+                       "factor",
+                       0.0f,
+                       -FLT_MAX,
+                       FLT_MAX,
+                       "Factor",
+                       "Zoom factor, values higher than 1.0 zoom in, lower values zoom out",
+                       -FLT_MAX,
+                       FLT_MAX);
   RNA_def_property_flag(prop, PROP_HIDDEN);
 
   WM_operator_properties_use_cursor_init(ot);
@@ -1041,7 +1040,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom In";
   ot->idname = "IMAGE_OT_view_zoom_in";
-  ot->description = "Zoom in the image";
+  ot->description = "Zoom in the image (centered around 2D cursor)";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_in_invoke;

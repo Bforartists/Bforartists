@@ -34,6 +34,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
+#include "BKE_node_tree_update.h"
 #include "BKE_object.h"
 
 #include "DEG_depsgraph.h"
@@ -248,6 +249,7 @@ void node_sort(bNodeTree &ntree)
           b++;
           BLI_remlink(&ntree.nodes, tmp);
           BLI_insertlinkbefore(&ntree.nodes, node_a, tmp);
+          BKE_ntree_update_tag_node_reordered(&ntree);
         }
       }
 
@@ -1288,7 +1290,7 @@ static void node_draw_preview(bNodePreview *preview, rctf *prv)
   /* Premul graphics. */
   GPU_blend(GPU_BLEND_ALPHA);
 
-  IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_COLOR);
+  IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_3D_IMAGE_COLOR);
   immDrawPixelsTexTiled(&state,
                         draw_rect.xmin,
                         draw_rect.ymin,
@@ -1304,7 +1306,7 @@ static void node_draw_preview(bNodePreview *preview, rctf *prv)
   GPU_blend(GPU_BLEND_NONE);
 
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColorShadeAlpha(TH_BACK, -15, +100);
   imm_draw_box_wire_2d(pos, draw_rect.xmin, draw_rect.ymin, draw_rect.xmax, draw_rect.ymax);
   immUnbindProgram();
@@ -2497,7 +2499,7 @@ static void node_draw_hidden(const bContext &C,
   /* Scale widget thing. */
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
   GPU_blend(GPU_BLEND_ALPHA);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   immUniformThemeColorShadeAlpha(TH_TEXT, -40, -180);
   float dx = 0.5f * U.widget_unit;

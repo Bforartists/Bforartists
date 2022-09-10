@@ -1255,10 +1255,9 @@ typedef enum eSpaceImage_UVDT {
 } eSpaceImage_UVDT;
 
 /** #SpaceImage.dt_uvstretch */
-/*bfa - changed order to have stretching method area first*/
 typedef enum eSpaceImage_UVDT_Stretch {
-  SI_UVDT_STRETCH_AREA = 0,
-  SI_UVDT_STRETCH_ANGLE = 1,
+  SI_UVDT_STRETCH_ANGLE = 0,
+  SI_UVDT_STRETCH_AREA = 1,
 } eSpaceImage_UVDT_Stretch;
 
 /** #SpaceImage.pixel_snap_mode */

@@ -216,7 +216,7 @@ static void scene_init_data(ID *id)
   }
 
   /* Master Collection */
-  scene->master_collection = BKE_collection_master_add();
+  scene->master_collection = BKE_collection_master_add(scene);
 
   BKE_view_layer_add(scene, "ViewLayer", nullptr, VIEWLAYER_ADD_NEW);
 }
@@ -250,6 +250,7 @@ static void scene_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
                    (ID *)scene_src->master_collection,
                    (ID **)&scene_dst->master_collection,
                    flag_private_id_data);
+    scene_dst->master_collection->owner_id = &scene_dst->id;
   }
 
   /* View Layers */
@@ -275,6 +276,7 @@ static void scene_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
                            (void *)(&scene_src->id),
                            &scene_dst->id,
                            ID_REMAP_SKIP_NEVER_NULL_USAGE | ID_REMAP_SKIP_USER_CLEAR);
+    scene_dst->nodetree->owner_id = &scene_dst->id;
   }
 
   if (scene_src->rigidbody_world) {
@@ -1673,7 +1675,7 @@ constexpr IDTypeInfo get_type_info()
   info.foreach_id = scene_foreach_id;
   info.foreach_cache = scene_foreach_cache;
   info.foreach_path = scene_foreach_path;
-  info.owner_get = nullptr;
+  info.owner_pointer_get = nullptr;
 
   info.blend_write = scene_blend_write;
   info.blend_read_data = scene_blend_read_data;

@@ -506,12 +506,12 @@ void ED_node_shader_default(const bContext *C, ID *id)
   }
   else if (ELEM(GS(id->name), ID_WO, ID_LA)) {
     /* Emission */
-    bNodeTree *ntree = ntreeAddTree(nullptr, "Shader Nodetree", ntreeType_Shader->idname);
+    bNodeTree *ntree = ntreeAddTreeEmbedded(
+        nullptr, id, "Shader Nodetree", ntreeType_Shader->idname);
     bNode *shader, *output;
 
     if (GS(id->name) == ID_WO) {
       World *world = (World *)id;
-      world->nodetree = ntree;
 
       shader = nodeAddStaticNode(nullptr, ntree, SH_NODE_BACKGROUND);
       output = nodeAddStaticNode(nullptr, ntree, SH_NODE_OUTPUT_WORLD);
@@ -525,9 +525,6 @@ void ED_node_shader_default(const bContext *C, ID *id)
       copy_v3_v3(((bNodeSocketValueRGBA *)color_sock->default_value)->value, &world->horr);
     }
     else {
-      Light *light = (Light *)id;
-      light->nodetree = ntree;
-
       shader = nodeAddStaticNode(nullptr, ntree, SH_NODE_EMISSION);
       output = nodeAddStaticNode(nullptr, ntree, SH_NODE_OUTPUT_LIGHT);
       nodeAddLink(ntree,
@@ -560,7 +557,8 @@ void ED_node_composit_default(const bContext *C, Scene *sce)
     return;
   }
 
-  sce->nodetree = ntreeAddTree(nullptr, "Compositing Nodetree", ntreeType_Composite->idname);
+  sce->nodetree = ntreeAddTreeEmbedded(
+      nullptr, &sce->id, "Compositing Nodetree", ntreeType_Composite->idname);
 
   sce->nodetree->chunksize = 256;
   sce->nodetree->edit_quality = NTREE_QUALITY_HIGH;
@@ -593,7 +591,8 @@ void ED_node_texture_default(const bContext *C, Tex *tex)
     return;
   }
 
-  tex->nodetree = ntreeAddTree(nullptr, "Texture Nodetree", ntreeType_Texture->idname);
+  tex->nodetree = ntreeAddTreeEmbedded(
+      nullptr, &tex->id, "Texture Nodetree", ntreeType_Texture->idname);
 
   bNode *out = nodeAddStaticNode(C, tex->nodetree, TEX_NODE_OUTPUT);
   out->locx = 300.0f;
@@ -1474,43 +1473,6 @@ void NODE_OT_duplicate(wmOperatorType *ot)
       ot->srna, "keep_inputs", false, "Keep Inputs", "Keep the input links to duplicated nodes");
 }
 
-static bool node_select_check(const ListBase *lb)
-{
-  LISTBASE_FOREACH (const bNode *, node, lb) {
-    if (node->flag & NODE_SELECT) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-void node_select_all(ListBase *lb, int action)
-{
-  if (action == SEL_TOGGLE) {
-    if (node_select_check(lb)) {
-      action = SEL_DESELECT;
-    }
-    else {
-      action = SEL_SELECT;
-    }
-  }
-
-  LISTBASE_FOREACH (bNode *, node, lb) {
-    switch (action) {
-      case SEL_SELECT:
-        nodeSetSelected(node, true);
-        break;
-      case SEL_DESELECT:
-        nodeSetSelected(node, false);
-        break;
-      case SEL_INVERT:
-        nodeSetSelected(node, !(node->flag & SELECT));
-        break;
-    }
-  }
-}
-
 /* XXX: some code needing updating to operators. */
 
 /* goes over all scenes, reads render layers */
@@ -2172,24 +2134,23 @@ static int node_copy_color_exec(bContext *C, wmOperator *UNUSED(op))
   SpaceNode &snode = *CTX_wm_space_node(C);
   bNodeTree &ntree = *snode.edittree;
 
-  bNode *node = nodeGetActive(&ntree);
-  if (!node) {
+  bNode *active_node = nodeGetActive(&ntree);
+  if (!active_node) {
     return OPERATOR_CANCELLED;
   }
 
-  LISTBASE_FOREACH (bNode *, node_iter, &ntree.nodes) {
-    if (node_iter->flag & NODE_SELECT && node_iter != node) {
-      if (node->flag & NODE_CUSTOM_COLOR) {
-        node_iter->flag |= NODE_CUSTOM_COLOR;
-        copy_v3_v3(node_iter->color, node->color);
+  LISTBASE_FOREACH (bNode *, node, &ntree.nodes) {
+    if (node->flag & NODE_SELECT && node != active_node) {
+      if (active_node->flag & NODE_CUSTOM_COLOR) {
+        node->flag |= NODE_CUSTOM_COLOR;
+        copy_v3_v3(node->color, active_node->color);
       }
       else {
-        node_iter->flag &= ~NODE_CUSTOM_COLOR;
+        node->flag &= ~NODE_CUSTOM_COLOR;
       }
     }
   }
 
-  node_sort(ntree);
   WM_event_add_notifier(C, NC_NODE | ND_DISPLAY, nullptr);
 
   return OPERATOR_FINISHED;
