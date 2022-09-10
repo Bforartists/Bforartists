@@ -528,29 +528,7 @@ static void contarget_get_mesh_mat(Object *ob, const char *substring, float mat[
   float vec[3] = {0.0f, 0.0f, 0.0f};
   float normal[3] = {0.0f, 0.0f, 0.0f};
   float weightsum = 0.0f;
-  if (me_eval) {
-    const float(*vert_normals)[3] = BKE_mesh_vertex_normals_ensure(me_eval);
-    const MDeformVert *dvert = CustomData_get_layer(&me_eval->vdata, CD_MDEFORMVERT);
-    int numVerts = me_eval->totvert;
-
-    /* check that dvert is a valid pointers (just in case) */
-    if (dvert) {
-
-      /* get the average of all verts with that are in the vertex-group */
-      for (int i = 0; i < numVerts; i++) {
-        const MDeformVert *dv = &dvert[i];
-        const MVert *mv = &me_eval->mvert[i];
-        const MDeformWeight *dw = BKE_defvert_find_index(dv, defgroup);
-
-        if (dw && dw->weight > 0.0f) {
-          madd_v3_v3fl(vec, mv->co, dw->weight);
-          madd_v3_v3fl(normal, vert_normals[i], dw->weight);
-          weightsum += dw->weight;
-        }
-      }
-    }
-  }
-  else if (em) {
+  if (em) {
     if (CustomData_has_layer(&em->bm->vdata, CD_MDEFORMVERT)) {
       BMVert *v;
       BMIter iter;
@@ -562,6 +540,29 @@ static void contarget_get_mesh_mat(Object *ob, const char *substring, float mat[
         if (dw && dw->weight > 0.0f) {
           madd_v3_v3fl(vec, v->co, dw->weight);
           madd_v3_v3fl(normal, v->no, dw->weight);
+          weightsum += dw->weight;
+        }
+      }
+    }
+  }
+  else if (me_eval) {
+    const float(*vert_normals)[3] = BKE_mesh_vertex_normals_ensure(me_eval);
+    const MDeformVert *dvert = CustomData_get_layer(&me_eval->vdata, CD_MDEFORMVERT);
+    const MVert *verts = BKE_mesh_verts(me_eval);
+    int numVerts = me_eval->totvert;
+
+    /* check that dvert is a valid pointers (just in case) */
+    if (dvert) {
+
+      /* get the average of all verts with that are in the vertex-group */
+      for (int i = 0; i < numVerts; i++) {
+        const MDeformVert *dv = &dvert[i];
+        const MVert *mv = &verts[i];
+        const MDeformWeight *dw = BKE_defvert_find_index(dv, defgroup);
+
+        if (dw && dw->weight > 0.0f) {
+          madd_v3_v3fl(vec, mv->co, dw->weight);
+          madd_v3_v3fl(normal, vert_normals[i], dw->weight);
           weightsum += dw->weight;
         }
       }

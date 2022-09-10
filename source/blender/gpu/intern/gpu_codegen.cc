@@ -199,7 +199,8 @@ static std::ostream &operator<<(std::ostream &stream, const GPUOutput *output)
 }
 
 /* Trick type to change overload and keep a somewhat nice syntax. */
-struct GPUConstant : public GPUInput {};
+struct GPUConstant : public GPUInput {
+};
 
 /* Print data constructor (i.e: vec2(1.0f, 1.0f)). */
 static std::ostream &operator<<(std::ostream &stream, const GPUConstant *input)
@@ -354,7 +355,7 @@ void GPUCodegen::generate_resources()
   GPUCodegenCreateInfo &info = *create_info;
 
   /* Ref. T98190: Defines are optimizations for old compilers.
-   * Might become unecessary with EEVEE-Next. */
+   * Might become unnecessary with EEVEE-Next. */
   if (GPU_material_flag_get(&mat, GPU_MATFLAG_PRINCIPLED_CLEARCOAT)) {
     info.define("PRINCIPLED_CLEARCOAT");
   }

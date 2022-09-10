@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+
 if(WIN32)
   set(LLVM_GENERATOR "Ninja")
 else()
@@ -7,7 +8,6 @@ else()
 endif()
 
 set(DPCPP_CONFIGURE_ARGS
-
   # When external deps dpcpp needs are not found it will automatically
   # download the during the configure stage using FetchContent. Given
   # we need to keep an archive of all source used during build for compliance
@@ -19,7 +19,6 @@ set(DPCPP_CONFIGURE_ARGS
 )
 set(DPCPP_SOURCE_ROOT ${BUILD_DIR}/dpcpp/src/external_dpcpp/)
 set(DPCPP_EXTRA_ARGS
-
   # When external deps dpcpp needs are not found it will automatically
   # download the during the configure stage using FetchContent. Given
   # we need to keep an archive of all source used during build for compliance
@@ -35,7 +34,6 @@ set(DPCPP_EXTRA_ARGS
   -DLEVEL_ZERO_LIBRARY=${LIBDIR}/level-zero/lib/${LIBPREFIX}ze_loader${SHAREDLIBEXT}
   -DLEVEL_ZERO_INCLUDE_DIR=${LIBDIR}/level-zero/include
   -DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR=${BUILD_DIR}/spirvheaders/src/external_spirvheaders/
-
   # Below here is copied from an invocation of buildbot/config.py
   -DLLVM_ENABLE_ASSERTIONS=ON
   -DLLVM_TARGETS_TO_BUILD=X86
@@ -70,7 +68,7 @@ set(DPCPP_EXTRA_ARGS
 )
 
 if(WIN32)
-  list(APPEND DPCPP_EXTRA_ARGS -DPython3_FIND_REGISTRY=NEVER)
+   list(APPEND DPCPP_EXTRA_ARGS -DPython3_FIND_REGISTRY=NEVER)
 endif()
 
 ExternalProject_Add(external_dpcpp
@@ -82,9 +80,8 @@ ExternalProject_Add(external_dpcpp
   SOURCE_SUBDIR llvm
   LIST_SEPARATOR ^^
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LIBDIR}/dpcpp ${DEFAULT_CMAKE_FLAGS} ${DPCPP_EXTRA_ARGS}
-
-  # CONFIGURE_COMMAND ${PYTHON_BINARY} ${BUILD_DIR}/dpcpp/src/external_dpcpp/buildbot/configure.py ${DPCPP_CONFIGURE_ARGS}
-  # BUILD_COMMAND echo "." #${PYTHON_BINARY} ${BUILD_DIR}/dpcpp/src/external_dpcpp/buildbot/compile.py
+  #CONFIGURE_COMMAND ${PYTHON_BINARY} ${BUILD_DIR}/dpcpp/src/external_dpcpp/buildbot/configure.py ${DPCPP_CONFIGURE_ARGS}
+  #BUILD_COMMAND echo "." #${PYTHON_BINARY} ${BUILD_DIR}/dpcpp/src/external_dpcpp/buildbot/compile.py
   INSTALL_COMMAND ${CMAKE_COMMAND} --build . -- deploy-sycl-toolchain
   PATCH_COMMAND ${PATCH_CMD} -p 1 -d ${BUILD_DIR}/dpcpp/src/external_dpcpp < ${PATCH_DIR}/dpcpp.diff
   INSTALL_DIR ${LIBDIR}/dpcpp
@@ -104,9 +101,9 @@ add_dependencies(
 
 if(BUILD_MODE STREQUAL Release AND WIN32)
   ExternalProject_Add_Step(external_dpcpp after_install
-    COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang-cl.exe
-    COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang-cpp.exe
-    COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang.exe
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/dpcpp ${HARVEST_TARGET}/dpcpp
+      COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang-cl.exe
+      COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang-cpp.exe
+      COMMAND ${CMAKE_COMMAND} -E rm -f ${LIBDIR}/dpcpp/bin/clang.exe
+      COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/dpcpp ${HARVEST_TARGET}/dpcpp
   )
 endif()

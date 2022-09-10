@@ -45,6 +45,8 @@
 #include "draw_cache_inline.h"
 #include "mesh_extractors/extract_mesh.hh"
 
+using blender::Span;
+
 extern "C" char datatoc_common_subdiv_custom_data_interp_comp_glsl[];
 extern "C" char datatoc_common_subdiv_ibo_lines_comp_glsl[];
 extern "C" char datatoc_common_subdiv_ibo_tris_comp_glsl[];
@@ -673,18 +675,19 @@ static void draw_subdiv_cache_extra_coarse_face_data_mesh(const MeshRenderData *
                                                           Mesh *mesh,
                                                           uint32_t *flags_data)
 {
-  for (int i = 0; i < mesh->totpoly; i++) {
+  const Span<MPoly> polys = mesh->polys();
+  for (const int i : polys.index_range()) {
     uint32_t flag = 0;
-    if ((mesh->mpoly[i].flag & ME_SMOOTH) != 0) {
+    if ((polys[i].flag & ME_SMOOTH) != 0) {
       flag |= SUBDIV_COARSE_FACE_FLAG_SMOOTH;
     }
-    if ((mesh->mpoly[i].flag & ME_FACE_SEL) != 0) {
+    if ((polys[i].flag & ME_FACE_SEL) != 0) {
       flag |= SUBDIV_COARSE_FACE_FLAG_SELECT;
     }
     if (mr->hide_poly && mr->hide_poly[i]) {
       flag |= SUBDIV_COARSE_FACE_FLAG_HIDDEN;
     }
-    flags_data[i] = (uint)(mesh->mpoly[i].loopstart) | (flag << SUBDIV_COARSE_FACE_FLAG_OFFSET);
+    flags_data[i] = (uint)(polys[i].loopstart) | (flag << SUBDIV_COARSE_FACE_FLAG_OFFSET);
   }
 }
 
@@ -804,15 +807,15 @@ struct DRWCacheBuildingContext {
 };
 
 static bool draw_subdiv_topology_info_cb(const SubdivForeachContext *foreach_context,
-                                         const int num_vertices,
+                                         const int num_verts,
                                          const int num_edges,
                                          const int num_loops,
-                                         const int num_polygons,
+                                         const int num_polys,
                                          const int *subdiv_polygon_offset)
 {
   /* num_loops does not take into account meshes with only loose geometry, which might be meshes
-   * used as custom bone shapes, so let's check the num_vertices also. */
-  if (num_vertices == 0 && num_loops == 0) {
+   * used as custom bone shapes, so let's check the num_verts also. */
+  if (num_verts == 0 && num_loops == 0) {
     return false;
   }
 
@@ -823,12 +826,12 @@ static bool draw_subdiv_topology_info_cb(const SubdivForeachContext *foreach_con
   if (num_loops != 0) {
     cache->num_subdiv_edges = (uint)num_edges;
     cache->num_subdiv_loops = (uint)num_loops;
-    cache->num_subdiv_verts = (uint)num_vertices;
-    cache->num_subdiv_quads = (uint)num_polygons;
+    cache->num_subdiv_verts = (uint)num_verts;
+    cache->num_subdiv_quads = (uint)num_polys;
     cache->subdiv_polygon_offset = static_cast<int *>(MEM_dupallocN(subdiv_polygon_offset));
   }
 
-  cache->may_have_loose_geom = num_vertices != 0 || num_edges != 0;
+  cache->may_have_loose_geom = num_verts != 0 || num_edges != 0;
 
   /* Initialize cache buffers, prefer dynamic usage so we can reuse memory on the host even after
    * it was sent to the device, since we may use the data while building other buffers on the CPU
@@ -879,7 +882,7 @@ static bool draw_subdiv_topology_info_cb(const SubdivForeachContext *foreach_con
   if (cache->num_subdiv_verts) {
     ctx->vert_origindex_map = static_cast<int *>(
         MEM_mallocN(cache->num_subdiv_verts * sizeof(int), "subdiv_vert_origindex_map"));
-    for (int i = 0; i < num_vertices; i++) {
+    for (int i = 0; i < num_verts; i++) {
       ctx->vert_origindex_map[i] = -1;
     }
   }
@@ -1092,6 +1095,7 @@ static bool draw_subdiv_build_cache(DRWSubdivCache *cache,
   }
 
   /* Only build polygon related data if we have polygons. */
+  const Span<MPoly> polys = mesh_eval->polys();
   if (cache->num_subdiv_loops != 0) {
     /* Build buffers for the PatchMap. */
     draw_patch_map_build(&cache->gpu_patch_map, subdiv);
@@ -1105,7 +1109,7 @@ static bool draw_subdiv_build_cache(DRWSubdivCache *cache,
         GPU_vertbuf_get_data(cache->fdots_patch_coords);
     for (int i = 0; i < mesh_eval->totpoly; i++) {
       const int ptex_face_index = cache->face_ptex_offset[i];
-      if (mesh_eval->mpoly[i].totloop == 4) {
+      if (polys[i].totloop == 4) {
         /* For quads, the center coordinate of the coarse face has `u = v = 0.5`. */
         blender_fdots_patch_coords[i] = make_patch_coord(ptex_face_index, 0.5f, 0.5f);
       }
@@ -1118,16 +1122,16 @@ static bool draw_subdiv_build_cache(DRWSubdivCache *cache,
     }
 
     cache->subdiv_polygon_offset_buffer = draw_subdiv_build_origindex_buffer(
-        cache->subdiv_polygon_offset, mesh_eval->totpoly);
+        cache->subdiv_polygon_offset, polys.size());
 
     cache->face_ptex_offset_buffer = draw_subdiv_build_origindex_buffer(cache->face_ptex_offset,
-                                                                        mesh_eval->totpoly + 1);
+                                                                        polys.size() + 1);
 
     build_vertex_face_adjacency_maps(cache);
   }
 
   cache->resolution = to_mesh_settings.resolution;
-  cache->num_coarse_poly = mesh_eval->totpoly;
+  cache->num_coarse_poly = polys.size();
 
   /* To avoid floating point precision issues when evaluating patches at patch boundaries,
    * ensure that all loops sharing a vertex use the same patch coordinate. This could cause
@@ -1963,9 +1967,8 @@ static void draw_subdiv_cache_ensure_mat_offsets(DRWSubdivCache *cache,
     return;
   }
 
-  const blender::VArraySpan<int> material_indices = blender::bke::mesh_attributes(*mesh_eval)
-                                                        .lookup_or_default<int>(
-                                                            "material_index", ATTR_DOMAIN_FACE, 0);
+  const blender::VArraySpan<int> material_indices = mesh_eval->attributes().lookup_or_default<int>(
+      "material_index", ATTR_DOMAIN_FACE, 0);
 
   /* Count number of subdivided polygons for each material. */
   int *mat_start = static_cast<int *>(MEM_callocN(sizeof(int) * mat_len, "subdiv mat_start"));
@@ -2152,9 +2155,10 @@ void DRW_subdivide_loose_geom(DRWSubdivCache *subdiv_cache, MeshBufferCache *cac
   int subd_vert_offset = 0;
 
   /* Subdivide each loose coarse edge. */
+  const Span<MEdge> coarse_edges = coarse_mesh->edges();
   for (int i = 0; i < coarse_loose_edge_len; i++) {
     const int coarse_edge_index = cache->loose_geom.edges[i];
-    const MEdge *coarse_edge = &coarse_mesh->medge[cache->loose_geom.edges[i]];
+    const MEdge *coarse_edge = &coarse_edges[cache->loose_geom.edges[i]];
 
     /* Perform interpolation of each vertex. */
     for (int i = 0; i < resolution - 1; i++, subd_edge_offset++) {
@@ -2182,9 +2186,10 @@ void DRW_subdivide_loose_geom(DRWSubdivCache *subdiv_cache, MeshBufferCache *cac
   }
 
   /* Copy the remaining loose_verts. */
+  const Span<MVert> coarse_verts = coarse_mesh->verts();
   for (int i = 0; i < coarse_loose_vert_len; i++) {
     const int coarse_vertex_index = cache->loose_geom.verts[i];
-    const MVert &coarse_vertex = coarse_mesh->mvert[coarse_vertex_index];
+    const MVert &coarse_vertex = coarse_verts[coarse_vertex_index];
 
     DRWSubdivLooseVertex &subd_v = loose_subd_verts[subd_vert_offset++];
     subd_v.coarse_vertex_index = cache->loose_geom.verts[i];

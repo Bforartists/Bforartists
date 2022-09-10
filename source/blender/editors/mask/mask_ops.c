@@ -1734,7 +1734,7 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 {
 
   /* identifiers */
-  ot->name = "Show hidden Layer";
+  ot->name = "Show Hidden Layer(s)";
   ot->description = "Reveals the hidden layer(s)";
   ot->idname = "MASK_OT_hide_view_clear";
 

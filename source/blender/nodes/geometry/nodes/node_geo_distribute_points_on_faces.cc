@@ -105,6 +105,8 @@ static void sample_mesh_surface(const Mesh &mesh,
                                 Vector<float3> &r_bary_coords,
                                 Vector<int> &r_looptri_indices)
 {
+  const Span<MVert> verts = mesh.verts();
+  const Span<MLoop> loops = mesh.loops();
   const Span<MLoopTri> looptris{BKE_mesh_runtime_looptri_ensure(&mesh),
                                 BKE_mesh_runtime_looptri_len(&mesh)};
 
@@ -113,12 +115,12 @@ static void sample_mesh_surface(const Mesh &mesh,
     const int v0_loop = looptri.tri[0];
     const int v1_loop = looptri.tri[1];
     const int v2_loop = looptri.tri[2];
-    const int v0_index = mesh.mloop[v0_loop].v;
-    const int v1_index = mesh.mloop[v1_loop].v;
-    const int v2_index = mesh.mloop[v2_loop].v;
-    const float3 v0_pos = float3(mesh.mvert[v0_index].co);
-    const float3 v1_pos = float3(mesh.mvert[v1_index].co);
-    const float3 v2_pos = float3(mesh.mvert[v2_index].co);
+    const int v0_index = loops[v0_loop].v;
+    const int v1_index = loops[v1_loop].v;
+    const int v2_index = loops[v2_loop].v;
+    const float3 v0_pos = verts[v0_index].co;
+    const float3 v1_pos = verts[v1_index].co;
+    const float3 v2_pos = verts[v2_index].co;
 
     float looptri_density_factor = 1.0f;
     if (!density_factors.is_empty()) {
@@ -289,8 +291,8 @@ BLI_NOINLINE static void propagate_existing_attributes(
     const Span<float3> bary_coords,
     const Span<int> looptri_indices)
 {
-  const AttributeAccessor mesh_attributes = bke::mesh_attributes(mesh);
-  MutableAttributeAccessor point_attributes = bke::pointcloud_attributes_for_write(points);
+  const AttributeAccessor mesh_attributes = mesh.attributes();
+  MutableAttributeAccessor point_attributes = points.attributes_for_write();
 
   for (Map<AttributeIDRef, AttributeKind>::Item entry : attributes.items()) {
     const AttributeIDRef attribute_id = entry.key;
@@ -331,7 +333,7 @@ BLI_NOINLINE static void compute_attribute_outputs(const Mesh &mesh,
                                                    const Span<int> looptri_indices,
                                                    const AttributeOutputs &attribute_outputs)
 {
-  MutableAttributeAccessor point_attributes = bke::pointcloud_attributes_for_write(points);
+  MutableAttributeAccessor point_attributes = points.attributes_for_write();
 
   SpanAttributeWriter<int> ids = point_attributes.lookup_or_add_for_write_only_span<int>(
       "id", ATTR_DOMAIN_POINT);
@@ -348,6 +350,8 @@ BLI_NOINLINE static void compute_attribute_outputs(const Mesh &mesh,
         attribute_outputs.rotation_id.get(), ATTR_DOMAIN_POINT);
   }
 
+  const Span<MVert> verts = mesh.verts();
+  const Span<MLoop> loops = mesh.loops();
   const Span<MLoopTri> looptris{BKE_mesh_runtime_looptri_ensure(&mesh),
                                 BKE_mesh_runtime_looptri_len(&mesh)};
 
@@ -356,12 +360,12 @@ BLI_NOINLINE static void compute_attribute_outputs(const Mesh &mesh,
     const MLoopTri &looptri = looptris[looptri_index];
     const float3 &bary_coord = bary_coords[i];
 
-    const int v0_index = mesh.mloop[looptri.tri[0]].v;
-    const int v1_index = mesh.mloop[looptri.tri[1]].v;
-    const int v2_index = mesh.mloop[looptri.tri[2]].v;
-    const float3 v0_pos = float3(mesh.mvert[v0_index].co);
-    const float3 v1_pos = float3(mesh.mvert[v1_index].co);
-    const float3 v2_pos = float3(mesh.mvert[v2_index].co);
+    const int v0_index = loops[looptri.tri[0]].v;
+    const int v1_index = loops[looptri.tri[1]].v;
+    const int v2_index = loops[looptri.tri[2]].v;
+    const float3 v0_pos = verts[v0_index].co;
+    const float3 v1_pos = verts[v1_index].co;
+    const float3 v2_pos = verts[v2_index].co;
 
     ids.span[i] = noise::hash(noise::hash_float(bary_coord), looptri_index);
 
@@ -392,7 +396,7 @@ static Array<float> calc_full_density_factors_with_selection(const Mesh &mesh,
                                                              const Field<bool> &selection_field)
 {
   const eAttrDomain domain = ATTR_DOMAIN_CORNER;
-  const int domain_size = bke::mesh_attributes(mesh).domain_size(domain);
+  const int domain_size = mesh.attributes().domain_size(domain);
   Array<float> densities(domain_size, 0.0f);
 
   bke::MeshFieldContext field_context{mesh, domain};
@@ -487,8 +491,7 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
   }
 
   PointCloud *pointcloud = BKE_pointcloud_new_nomain(positions.size());
-  bke::MutableAttributeAccessor point_attributes = bke::pointcloud_attributes_for_write(
-      *pointcloud);
+  bke::MutableAttributeAccessor point_attributes = pointcloud->attributes_for_write();
   bke::SpanAttributeWriter<float3> point_positions =
       point_attributes.lookup_or_add_for_write_only_span<float3>("position", ATTR_DOMAIN_POINT);
   bke::SpanAttributeWriter<float> point_radii =

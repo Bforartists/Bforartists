@@ -319,6 +319,7 @@
     .sharp_max = DEG2RADF(180.0f), \
   }
 
+/* bfa - change default uvcalc_margin */
 #define _DNA_DEFAULT_ToolSettings \
   { \
     .object_flag = SCE_OBJECT_MODE_LOCK, \
