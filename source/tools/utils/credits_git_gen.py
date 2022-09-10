@@ -200,7 +200,7 @@ def main():
         "<b>AutoCRC</b> - Improvements to fluid particles, vertex color baking",
         "<b>Adidas</b> - Principled BSDF shader in Cycles",
         "<b>AMD</b> - Cycles HIP GPU rendering, CPU optimizations",
-        "<b>Intel</b> - Cycles ray-tracing optimization",
+        "<b>Intel</b> - Cycles oneAPI GPU rendering, CPU optimizations",
         "<b>NVIDIA</b> - Cycles OptiX GPU rendering, USD importer",
         "<b>Facebook</b> - Cycles subsurface scattering improvements",
         "<b>Apple</b> - Cycles Metal GPU backend",

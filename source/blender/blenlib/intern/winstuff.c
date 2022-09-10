@@ -70,9 +70,9 @@ bool BLI_windows_register_blend_extension(const bool background)
 
   /* Replace the actual app name with the wrapper. */
   {
-    char *blender_app = strstr(BlPath, "bforartists.exe");
+    char *blender_app = strstr(BlPath, "blender.exe");
     if (blender_app != NULL) {
-      strcpy(blender_app, "bforartists.exe");
+      strcpy(blender_app, "blender-launcher.exe");
     }
   }
 
@@ -171,7 +171,7 @@ bool BLI_windows_register_blend_extension(const bool background)
             "File extension registered for %s.",
             usr_mode ? "the current user. To register for all users, run as an administrator" :
                        "all users");
-    MessageBox(0, MBox, "Bforartists", MB_OK | MB_ICONINFORMATION);
+    MessageBox(0, MBox, "Blender", MB_OK | MB_ICONINFORMATION);
   }
   return true;
 }

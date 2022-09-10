@@ -660,7 +660,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     /* Meshes... */
     if (has_meshdata) {
       TransformMedian_Mesh *ve_median = &tfp->ve_median.mesh;
-
       if (tot) {
         uiItemL(layout,
                 tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"),
@@ -692,7 +691,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         TIP_("Vertex weight used by Bevel modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
-
         /* customdata layer added on demand */
         but = uiDefButF(block,
                         UI_BTYPE_NUM,
@@ -754,7 +752,6 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                         TIP_("Y radius used by Skin modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-
         UI_block_layout_set_current(block, layout);
       }
       if (totedgedata) {
