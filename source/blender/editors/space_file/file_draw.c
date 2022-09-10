@@ -378,7 +378,7 @@ static void file_draw_preview(const SpaceFile *sfile,
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
   }
 
-  IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_COLOR);
+  IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_3D_IMAGE_COLOR);
   immDrawPixelsTexTiled_scaling(&state,
                                 (float)xco,
                                 (float)yco,
@@ -464,7 +464,7 @@ static void file_draw_preview(const SpaceFile *sfile,
   if (show_outline) {
     GPUVertFormat *format = immVertexFormat();
     uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-    immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     float border_color[4] = {1.0f, 1.0f, 1.0f, 0.4f};
     float bgcolor[4];
     UI_GetThemeColor4fv(TH_BACK, bgcolor);
@@ -582,7 +582,7 @@ static void draw_background(FileLayout *layout, View2D *v2d)
   int sy;
 
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   float col_alternating[4];
   UI_GetThemeColor4fv(TH_ROW_ALTERNATE, col_alternating);
   immUniformThemeColorBlend(TH_BACK, TH_ROW_ALTERNATE, col_alternating[3]);
@@ -632,7 +632,7 @@ static void draw_dividers(FileLayout *layout, View2D *v2d)
     uint color = GPU_vertformat_attr_add(
         format, "color", GPU_COMP_U8, 3, GPU_FETCH_INT_TO_FLOAT_UNIT);
 
-    immBindBuiltinProgram(GPU_SHADER_2D_FLAT_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_FLAT_COLOR);
     immBegin(GPU_PRIM_LINES, vertex_len);
 
     sx = (int)v2d->tot.xmin;
@@ -661,7 +661,7 @@ static void draw_columnheader_background(const FileLayout *layout, const View2D 
 {
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColorShade(TH_BACK, 11);
 
   immRectf(pos,
@@ -713,7 +713,7 @@ static void draw_columnheader_columns(const FileSelectParams *params,
       uint pos = GPU_vertformat_attr_add(
           immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-      immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+      immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
       immUniformThemeColorShade(TH_BACK, -10);
       immBegin(GPU_PRIM_LINES, 2);
       immVertex2f(pos, sx - 1, sy - divider_pad);
@@ -728,7 +728,7 @@ static void draw_columnheader_columns(const FileSelectParams *params,
   /* Vertical separator lines line */
   {
     uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-    immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     immUniformThemeColorShade(TH_BACK, -10);
     immBegin(GPU_PRIM_LINES, 4);
     immVertex2f(pos, v2d->cur.xmin, sy);

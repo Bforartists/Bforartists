@@ -57,8 +57,6 @@
 
 #include "mesh_intern.h" /* own include */
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
-
 /* use bmesh operator flags for a few operators */
 #define BMO_ELE_TAG 1
 

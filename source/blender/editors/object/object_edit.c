@@ -18,6 +18,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
 #include "BLI_math_rotation.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -104,8 +105,6 @@
 #include "WM_types.h"
 
 #include "object_intern.h" /* own include */
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 static CLG_LogRef LOG = {"ed.object.edit"};
 
@@ -289,7 +288,7 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 
   /* Hide selected or unselected objects. */
   LISTBASE_FOREACH (Base *, base, &view_layer->object_bases) {
-    if (!(base->flag & BASE_VISIBLE_VIEWLAYER)) {
+    if (!(base->flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT)) {
       continue;
     }
 
@@ -902,13 +901,13 @@ static bool editmode_toggle_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
 
-  /* covers proxies too */
+  /* Covers liboverrides too. */
   if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED(ob->data) || ID_IS_OVERRIDE_LIBRARY(ob) ||
       ID_IS_OVERRIDE_LIBRARY(ob->data)) {
     return false;
   }
 
-  /* if hidden but in edit mode, we still display */
+  /* If hidden but in edit mode, we still display. */
   if ((ob->visibility_flag & OB_HIDE_VIEWPORT) && !(ob->mode & OB_MODE_EDIT)) {
     return false;
   }
@@ -1770,7 +1769,7 @@ void OBJECT_OT_mode_set(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set Object Mode";
-  ot->description = "Sets the object interaction mode to";
+  ot->description = "Sets the object interaction mode";
   ot->idname = "OBJECT_OT_mode_set";
 
   /* api callbacks */

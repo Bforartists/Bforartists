@@ -268,6 +268,7 @@ class PARTICLE_PT_emission(ParticleButtonsPanel, Panel):
         col = layout.column()
         col.active = part.emit_from == 'VERT' or part.distribution != 'GRID'
         col.prop(part, "count")
+
         if psys is not None:
             col.prop(psys, "seed")
 
@@ -1244,7 +1245,6 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
         rule = state.active_boid_rule
 
         if rule:
-
             col = layout.column(align=True)
             col.use_property_split = False
             col.prop(rule, "use_in_air")

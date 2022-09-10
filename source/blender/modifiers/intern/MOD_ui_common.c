@@ -188,7 +188,6 @@ static bool modifier_can_delete(ModifierData *md)
   return true;
 }
 
-/* bfa - Fix Modifiers UI design #1617 */
 static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 {
   PointerRNA op_ptr;
@@ -202,6 +201,13 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
   uiLayoutSetUnitsX(layout, 4.0f);
+
+  /* Apply */
+  /* bfa - moved apply to top level */
+  //uiItemO(layout,
+  //        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
+  //        ICON_CHECKMARK,
+  //        "OBJECT_OT_modifier_apply");
 
   /* Apply as shapekey. */
   if (BKE_modifier_is_same_topology(md) && !BKE_modifier_is_non_geometrical(md)) {
@@ -271,9 +277,9 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   }
 }
 
-/* bfa - Fix Modifiers UI design #1617 */
 static void modifier_panel_header(const bContext *C, Panel *panel)
 {
+  /* bfa - modifers apply button */
   uiLayout *row, *sub, *name_row, *op_row;
   uiLayout *layout = panel->layout;
 
@@ -366,9 +372,8 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     buttons_number += 2;
   }
 
+  /* bfa - modifer apply button */
   op_row = uiLayoutRow(layout, true);
-
-  /* Apply. */
   uiItemO(op_row, "", ICON_CHECKMARK, "OBJECT_OT_modifier_apply");
   buttons_number++;
 
