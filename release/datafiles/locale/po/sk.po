@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Beta (b'5fff6c419c54')\n"
+"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-08-10 09:02+0200\n"
+"PO-Revision-Date: 2022-08-26 08:38+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -23429,6 +23429,11 @@ msgid "Pixel thickness used to detect occlusion"
 msgstr "Hrúbka pixelu použitá na detekciu pohlcovania"
 
 
+msgctxt "Light"
+msgid "Power"
+msgstr "Intenzita"
+
+
 msgid "Light energy emitted over the entire area of the light in all directions"
 msgstr "Energia svetla vyžarovaná cez celú oblasť svetla vo všetkých smeroch"
 
@@ -26787,6 +26792,11 @@ msgstr "Hmotnosť pre veľkosť"
 
 msgid "Multiply mass by particle size"
 msgstr "Násobí hmotnosť podľa veľkosti častíc"
+
+
+msgctxt "ParticleSettings"
+msgid "Parents"
+msgstr "Rodičov"
 
 
 msgid "Render parent particles"
@@ -33733,6 +33743,21 @@ msgstr "Obnoviť"
 
 msgid "Help"
 msgstr "Pomoc"
+
+
+msgid ""
+"\n"
+"    UI button context menu definition. Scripts can append/prepend this to\n"
+"    add own operators to the context menu. They must check context though, so\n"
+"    their items only draw in a valid context and for the correct buttons.\n"
+"    "
+msgstr ""
+"\n"
+"    Definícia kontextovej ponuky tlačidla užívateľského rozhrania. Skripty to môžu\n"
+"    pripojiť/pripraviť na pridanie vlastných operátorov do kontextovej ponuky.\n"
+"    Musia však skontrolovať kontext, takže ich položky kreslia iba v platnom kontexte\n"
+"    a pre správne tlačidlá.\n"
+"    "
 
 
 msgid "List Item"
@@ -42254,160 +42279,365 @@ msgid "Math"
 msgstr "Matematika"
 
 
+msgctxt "NodeTree"
+msgid "Operation"
+msgstr "Operácia"
+
+
+msgctxt "NodeTree"
+msgid "Add"
+msgstr "Sčítať"
+
+
 msgid "A + B"
 msgstr "A + B"
+
+
+msgctxt "NodeTree"
+msgid "Subtract"
+msgstr "Odpočítať"
 
 
 msgid "A - B"
 msgstr "A - B"
 
 
+msgctxt "NodeTree"
+msgid "Multiply"
+msgstr "Vynásobiť"
+
+
 msgid "A * B"
 msgstr "A * B"
+
+
+msgctxt "NodeTree"
+msgid "Divide"
+msgstr "Vydeliť"
 
 
 msgid "A / B"
 msgstr "A / B"
 
 
+msgctxt "NodeTree"
+msgid "Multiply Add"
+msgstr "Sčítať vynásobenie"
+
+
 msgid "A * B + C"
 msgstr "A * B + C"
+
+
+msgctxt "NodeTree"
+msgid "Power"
+msgstr "Mocnina"
 
 
 msgid "A power B"
 msgstr "A mocnica B"
 
 
+msgctxt "NodeTree"
+msgid "Logarithm"
+msgstr "Logaritmus"
+
+
 msgid "Logarithm A base B"
 msgstr "Logaritmus A základu B"
+
+
+msgctxt "NodeTree"
+msgid "Square Root"
+msgstr "Odmocnina"
 
 
 msgid "Square root of A"
 msgstr "Odmocnina A"
 
 
+msgctxt "NodeTree"
+msgid "Inverse Square Root"
+msgstr "Inverzia druhej odmocniny"
+
+
 msgid "1 / Square root of A"
 msgstr "1/odmocnina A"
+
+
+msgctxt "NodeTree"
+msgid "Absolute"
+msgstr "Absolútne"
 
 
 msgid "Magnitude of A"
 msgstr "Magnitúda A"
 
 
+msgctxt "NodeTree"
+msgid "Exponent"
+msgstr "Exponent"
+
+
 msgid "exp(A)"
 msgstr "exp(A)"
+
+
+msgctxt "NodeTree"
+msgid "Minimum"
+msgstr "Minimum"
 
 
 msgid "The minimum from A and B"
 msgstr "Minimum z A a B"
 
 
+msgctxt "NodeTree"
+msgid "Maximum"
+msgstr "Maximum"
+
+
 msgid "The maximum from A and B"
 msgstr "Maximum z A a B"
+
+
+msgctxt "NodeTree"
+msgid "Less Than"
+msgstr "Menšie než"
 
 
 msgid "1 if A < B else 0"
 msgstr "1 ak A<B inak 0"
 
 
+msgctxt "NodeTree"
+msgid "Greater Than"
+msgstr "Väčšie než"
+
+
 msgid "1 if A > B else 0"
 msgstr "1 ak A>B inak 0"
+
+
+msgctxt "NodeTree"
+msgid "Sign"
+msgstr "Znamienko"
 
 
 msgid "Returns the sign of A"
 msgstr "Vráti znamienko A"
 
 
+msgctxt "NodeTree"
+msgid "Compare"
+msgstr "Porovnať"
+
+
 msgid "1 if (A == B) within tolerance C else 0"
 msgstr "1, ak (A == B) v rámci tolerancie C inak 0"
+
+
+msgctxt "NodeTree"
+msgid "Smooth Minimum"
+msgstr "Minimálne vyhladenie"
 
 
 msgid "The minimum from A and B with smoothing C"
 msgstr "Minimum pre A a B s vyhladením C"
 
 
+msgctxt "NodeTree"
+msgid "Smooth Maximum"
+msgstr "Maximálne vyhladenie"
+
+
 msgid "The maximum from A and B with smoothing C"
 msgstr "Maximum pre A a B s vyhladením C"
+
+
+msgctxt "NodeTree"
+msgid "Round"
+msgstr "Zaoblenie"
 
 
 msgid "Round A to the nearest integer. Round upward if the fraction part is 0.5"
 msgstr "Zaokrúhli A na najbližšie celé číslo. Ak je zlomková časť 0,5 zaokrúhľuje nahor"
 
 
+msgctxt "NodeTree"
+msgid "Floor"
+msgstr "Nadol"
+
+
 msgid "The largest integer smaller than or equal A"
 msgstr "Najväčšie celé číslo menšie alebo rovnaké A"
+
+
+msgctxt "NodeTree"
+msgid "Ceil"
+msgstr "Nahor"
 
 
 msgid "The smallest integer greater than or equal A"
 msgstr "Najmenšie celé číslo väčšie alebo rovnaké A"
 
 
+msgctxt "NodeTree"
+msgid "Truncate"
+msgstr "Orezané"
+
+
 msgid "The integer part of A, removing fractional digits"
 msgstr "Celé číslo časti A, odstráni desatinné číslice"
+
+
+msgctxt "NodeTree"
+msgid "Fraction"
+msgstr "Zlomok"
 
 
 msgid "The fraction part of A"
 msgstr "Zlomková časť A"
 
 
+msgctxt "NodeTree"
+msgid "Modulo"
+msgstr "Zvyšok"
+
+
 msgid "Modulo using fmod(A,B)"
 msgstr "Zvyšok použitím fmod(A, B)"
+
+
+msgctxt "NodeTree"
+msgid "Wrap"
+msgstr "Pokryť"
 
 
 msgid "Wrap value to range, wrap(A,B)"
 msgstr "Pokryje hodnotu rozsahu, pokryť(A, B)"
 
 
+msgctxt "NodeTree"
+msgid "Snap"
+msgstr "Prichytiť"
+
+
 msgid "Snap to increment, snap(A,B)"
 msgstr "Prichytí na prírastok, prichytiť(A, B)"
+
+
+msgctxt "NodeTree"
+msgid "Ping-Pong"
+msgstr "Ping-pong"
 
 
 msgid "Wraps a value and reverses every other cycle (A,B)"
 msgstr "Pokryje hodnotu a prevráti každý ďalší cyklus (A, B)"
 
 
+msgctxt "NodeTree"
+msgid "Sine"
+msgstr "Sínus"
+
+
 msgid "sin(A)"
 msgstr "sin(A)"
+
+
+msgctxt "NodeTree"
+msgid "Cosine"
+msgstr "Kosínus"
 
 
 msgid "cos(A)"
 msgstr "cos(A)"
 
 
+msgctxt "NodeTree"
+msgid "Tangent"
+msgstr "Tangens"
+
+
 msgid "tan(A)"
 msgstr "tan(A)"
+
+
+msgctxt "NodeTree"
+msgid "Arcsine"
+msgstr "Arksínus"
 
 
 msgid "arcsin(A)"
 msgstr "arcsin(A)"
 
 
+msgctxt "NodeTree"
+msgid "Arccosine"
+msgstr "Arkkosínus"
+
+
 msgid "arccos(A)"
 msgstr "arccos(A)"
+
+
+msgctxt "NodeTree"
+msgid "Arctangent"
+msgstr "Arktangens"
 
 
 msgid "arctan(A)"
 msgstr "arctan(A)"
 
 
+msgctxt "NodeTree"
+msgid "Arctan2"
+msgstr "Arktangens2"
+
+
 msgid "The signed angle arctan(A / B)"
 msgstr "Uhlový arktangens so znamienkom(A/B)"
+
+
+msgctxt "NodeTree"
+msgid "Hyperbolic Sine"
+msgstr "Hyperbolický sínus"
 
 
 msgid "sinh(A)"
 msgstr "sinh(A)"
 
 
+msgctxt "NodeTree"
+msgid "Hyperbolic Cosine"
+msgstr "Hyperbolický kosínus"
+
+
 msgid "cosh(A)"
 msgstr "cosh(A)"
+
+
+msgctxt "NodeTree"
+msgid "Hyperbolic Tangent"
+msgstr "Hyperbolický tangens"
 
 
 msgid "tanh(A)"
 msgstr "tanh(A)"
 
 
+msgctxt "NodeTree"
+msgid "To Radians"
+msgstr "Na radiány"
+
+
 msgid "Convert from degrees to radians"
 msgstr "Konvertuje stupne na radiány"
+
+
+msgctxt "NodeTree"
+msgid "To Degrees"
+msgstr "Na stupne"
 
 
 msgid "Convert from radians to degrees"
@@ -42556,6 +42786,10 @@ msgstr "Vynásobí RGBA kanály vstupného obrázku vstupnou hodnotou alfa"
 
 msgid "Replace Alpha"
 msgstr "Nahradiť alfa"
+
+
+msgid "Replace the input image's alpha channel by the alpha input value"
+msgstr "Nahradí alfa kanály vstupného obrázka vstupnou hodnotou alfa"
 
 
 msgid "Split Viewer"
@@ -43782,10 +44016,6 @@ msgid "Calculate the surface area of a mesh's faces"
 msgstr "Vypočíta povrch oblasti plôšok povrchovej siete"
 
 
-msgid "Face is Planar"
-msgstr "Plôška je rovinná"
-
-
 msgid "Retrieve whether all triangles in a face are on the same plane, i.e. whether have the same normal"
 msgstr "Zisťuje, či sú všetky trojuholníky na plôške v rovnakej rovine, t. j. či majú rovnaký normál"
 
@@ -44048,10 +44278,6 @@ msgstr "Vytvorí bod v mračne bodov pre každú vybranú plôšku"
 
 msgid "Create a point in the point cloud for each selected face corner"
 msgstr "Vytvorí bod v mračne bodov pre každý vybraný roh plôšky"
-
-
-msgid "Mesh To Volume"
-msgstr "Povrchová sieť na objem"
 
 
 msgid "Create a fog volume with the shape of the input mesh's surface"
@@ -52879,6 +53105,10 @@ msgstr "Povolí >4 spojené vplyvy vrcholov. Modely sa môžu javiť nesprávne 
 
 msgid "Export all Armature Actions"
 msgstr "Exportovať všetky akcie armatúry"
+
+
+msgid "Export all actions, bound to a single armature. WARNING: Option does not support exports including multiple armatures"
+msgstr "Exportujte všetky akcie viazané na jednu armatúru. VAROVANIE: Možnosť nepodporuje export vrátane viacerých armatúr"
 
 
 msgid "Exports active actions and NLA tracks as glTF animations"
@@ -62606,6 +62836,11 @@ msgid "Search for a node by name and focus and select it"
 msgstr "Vyhľadá uzol podľa názvu a zamerá a vyberie ho"
 
 
+msgctxt "Operator"
+msgid "glTF Material Output"
+msgstr "Výstup materiálu gIFT"
+
+
 msgid "Add a node to the active tree for glTF export"
 msgstr "Pridáva uzol do aktívneho stromu pre export glTF"
 
@@ -63324,6 +63559,15 @@ msgstr "Pridať kameru"
 
 msgid "Add a camera object to the scene"
 msgstr "Pridá na scénu objekt kamery"
+
+
+msgctxt "Operator"
+msgid "Clear Library Override"
+msgstr "Zmazať prepis knižnice"
+
+
+msgid "Delete the selected local overrides and relink their usages to the linked data-blocks if possible, else reset them and mark them as non editable"
+msgstr "Odstráni vybraté lokálne prepisy a ak je to možné, znova prepojí ich použitie s prepojenými blokmi údajov, inak ich resetujte a označí ako neupraviteľné"
 
 
 msgctxt "Operator"
@@ -64417,6 +64661,10 @@ msgid "Make Library Override"
 msgstr "Vytvoriť prepis knižnice"
 
 
+msgid "Create a local override of the selected linked objects, and their hierarchy of dependencies"
+msgstr "Vytvorí lokálny prepis tohto prepojeného bloku údajov a jeho hierarchie závislostí"
+
+
 msgid "Override Collection"
 msgstr "Prepísať kolekciu"
 
@@ -65283,6 +65531,15 @@ msgstr "Náhodná mierka"
 
 msgid "Randomize the scale values"
 msgstr "Náhodné hodnoty mierky"
+
+
+msgctxt "Operator"
+msgid "Reset Library Override"
+msgstr "Resetovať prepis knižnice"
+
+
+msgid "Reset the selected local overrides to their linked references values"
+msgstr "Resetuje tieto lokálne prepisy na hodnoty prepojeného bloku údajov"
 
 
 msgctxt "Operator"
@@ -66775,6 +67032,10 @@ msgid "Outliner ID Data Operation"
 msgstr "Operácia ID údajov Líniového prehľadu"
 
 
+msgid "General data-block management operations"
+msgstr "Všeobecné operácie správy blokov údajov"
+
+
 msgid "ID Data Operation"
 msgstr "ID údajov operácie"
 
@@ -66956,8 +67217,90 @@ msgid "Relocate the library under cursor"
 msgstr "Premiestni knižnicu pod kurzorom"
 
 
+msgctxt "Operator"
+msgid "Outliner Library Override Operation"
+msgstr "Operácia prepisu knižnice Líniového prehľadu"
+
+
+msgid "Create, reset or clear library override hierarchies"
+msgstr "Vytvorí, resetuje alebo vymaže hierarchiu prepisu knižnice"
+
+
+msgid "Selection Set"
+msgstr "Sústava výberu"
+
+
+msgid "Over which part of the tree items to apply the operation"
+msgstr "Nad ktorou časťou položiek stromu sa má operácia použiť"
+
+
+msgid "Apply the operation over selected data-blocks only"
+msgstr "Použije operácie iba nad vybratými blokmi údajov"
+
+
+msgid "Content"
+msgstr "Obsah"
+
+
+msgid "Apply the operation over content of the selected items only (the data-blocks in their sub-tree)"
+msgstr "Použije operácie iba nad obsahom vybratých položiek (bloky údajov v ich podsektore)"
+
+
+msgid "Selected & Content"
+msgstr "Vybraté a obsah"
+
+
+msgid "Apply the operation over selected data-blocks and all their dependencies"
+msgstr "Použije operácie nad vybratými blokmi údajov a všetkými ich závislosťami"
+
+
+msgid "Library Override Operation"
+msgstr "Operácia prepisu knižnice"
+
+
+msgid "Make"
+msgstr "Vytvoriť"
+
+
+msgid "Create a local override of the selected linked data-blocks, and their hierarchy of dependencies"
+msgstr "Vytvorí lokálny prepis vybratých prepojených blokov údajov a ich hierarchie závislostí"
+
+
 msgid "Reset"
 msgstr "Resetovať"
+
+
+msgctxt "Operator"
+msgid "Outliner Library Override Troubleshoot Operation"
+msgstr "Operácia Riešenie problémov prepisu knižnice Líniového prehľadu"
+
+
+msgid "Advanced operations over library override to help fix broken hierarchies"
+msgstr "Rozšírené operácie nad prepisom knižnice, ktoré pomáhajú opraviť poškodené hierarchie"
+
+
+msgid "Library Override Troubleshoot Operation"
+msgstr "Operácia Riešenie problémov prepisu knižnice"
+
+
+msgid "Resync"
+msgstr "Opätovná synchronizácia"
+
+
+msgid "Rebuild the selected local overrides from their linked references, as well as their hierarchies of dependencies"
+msgstr "Prebudujte vybrané lokálne prepisy z ich prepojených odkazov, ako aj z ich hierarchie závislostí"
+
+
+msgid "Resync Enforce"
+msgstr "Vynútiť opätovnú synchronizáciu"
+
+
+msgid "Rebuild the selected local overrides from their linked references, as well as their hierarchies of dependencies, enforcing these hierarchies to match the linked data (i.e. ignoring existing overrides on data-blocks pointer properties)"
+msgstr "Prebuduje vybrané lokálne prepisy z ich prepojených odkazov, ako aj ich hierarchií závislostí, vynúti tieto hierarchie tak, aby zodpovedali prepojeným údajom (t. j. ignoruje existujúce prepisy vo vlastnostiach ukazovateľa blokov údajov)"
+
+
+msgid "Delete the selected local overrides (including their hierarchies of override dependencies) and relink their usages to the linked data-blocks"
+msgstr "Odstráni vybrané lokálne prepisy (vrátane ich hierarchií závislostí prepisov) a opätovne prepojí ich používanie s prepojenými blokmi údajov"
 
 
 msgctxt "Operator"
@@ -74697,6 +75040,18 @@ msgid "Start entering filter text for the list in focus"
 msgstr "Začiatok zadávania textu filtra pre zameraný zoznam"
 
 
+msgid "Delete the selected local override and relink its usages to the linked data-block if possible, else reset it and mark it as non editable"
+msgstr "Odstráni vybrané lokálny prepis a ak je to možné, znova prepojí jeho použitie s prepojeným blokom údajov, inak ho resetuje a označí ako neupraviteľný"
+
+
+msgid "Create a local override of the selected linked data-block, and its hierarchy of dependencies"
+msgstr "Vytvorí lokálny prepis vybraného prepojeného bloku údajov a jeho hierarchie závislostí"
+
+
+msgid "Reset the selected local override to its linked reference values"
+msgstr "Resetuje vybraný lokálny prepis na prepojené referenčné hodnoty"
+
+
 msgctxt "Operator"
 msgid "Remove Override"
 msgstr "Odstrániť prepis"
@@ -80760,6 +81115,11 @@ msgstr "Šum zhluknutia"
 
 msgid "Parting"
 msgstr "Oddeľovanie"
+
+
+msgctxt "ParticleSettings"
+msgid "Roughness"
+msgstr "Zdrsnenie"
 
 
 msgid "Field Weights"
@@ -97947,8 +98307,23 @@ msgid "Weight to assign in vertex groups"
 msgstr "Váha na priradenie do skupín vrcholov"
 
 
+msgctxt "View3D"
+msgid "Drag"
+msgstr "Ťahať"
+
+
 msgid "Action when dragging in the viewport"
 msgstr "Akcia pri pretiahnutí v zábere"
+
+
+msgctxt "View3D"
+msgid "Active Tool"
+msgstr "Aktívny nástroj"
+
+
+msgctxt "View3D"
+msgid "Select"
+msgstr "Vybrať"
 
 
 msgid "Name of the custom transform orientation"
@@ -102638,10 +103013,6 @@ msgid "and AMD driver version 22.10 or newer"
 msgstr "a ovládač AMD vo verzii 22.10 alebo novšej"
 
 
-msgid "and Windows driver version 101.1660 or newer"
-msgstr "a ovládač systému Windows vo verzii 101.1660 alebo novšej"
-
-
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
 msgstr "Vyžaduje Apple Silicon so systémom macOS 12.2 alebo novším"
 
@@ -107295,6 +107666,11 @@ msgid "Hide One Level"
 msgstr "Skryť jednu úroveň"
 
 
+msgctxt "Collection"
+msgid "New"
+msgstr "Nová"
+
+
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Odkaz na scénu"
@@ -107303,6 +107679,11 @@ msgstr "Odkaz na scénu"
 msgctxt "Operator"
 msgid "Make"
 msgstr "Vytvoriť"
+
+
+msgctxt "Operator"
+msgid "Troubleshoot"
+msgstr "Riešenie problémov"
 
 
 msgid "Restriction Toggles"
@@ -107860,6 +108241,16 @@ msgstr "<žiadny objekt>"
 
 
 msgctxt "Text"
+msgid "Case"
+msgstr "Rozlišovať veľkosť písmen"
+
+
+msgctxt "Text"
+msgid "Wrap"
+msgstr "Pokryť"
+
+
+msgctxt "Text"
 msgid "New"
 msgstr "Nový"
 
@@ -107972,6 +108363,11 @@ msgstr "Vytvoriť kópiu značky"
 msgctxt "Operator"
 msgid "Move Marker"
 msgstr "Presunúť značku"
+
+
+msgctxt "WindowManager"
+msgid "Keying"
+msgstr "Kľúčovanie"
 
 
 msgctxt "Operator"
@@ -108633,6 +109029,18 @@ msgid "Invert Pan Axis"
 msgstr "Invertovať os posunu"
 
 
+msgid "No custom MatCaps configured"
+msgstr "Nie sú nakonfigurované žiadne Zachytené materiály"
+
+
+msgid "No custom HDRIs configured"
+msgstr "Nie sú nakonfigurované žiadne vlastné HDRI"
+
+
+msgid "No custom Studio Lights configured"
+msgstr "Nie sú nakonfigurované žiadne Štúdiové svetlá"
+
+
 msgid "Use Light"
 msgstr "Použiť svetlo"
 
@@ -109047,6 +109455,11 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Import OpenVDB..."
 msgstr "Importovať OpenVDB ..."
+
+
+msgctxt "Volume"
+msgid "Empty"
+msgstr "Prázdny"
 
 
 msgctxt "Operator"
@@ -113212,6 +113625,33 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/PTM zrušenie, Enter/ĽTM pre potvrdenie, koliesko/posun na nastavenie faktora"
 
 
+msgid "Standard transitions between keyframes"
+msgstr "Štandardné prechody medzi kľúčovými snímkami"
+
+
+msgid "Predefined inertial transitions, useful for motion graphics (from least to most \"dramatic\")"
+msgstr "Preddefinované zotrvačné prechody, užitočné pre pohyblivú grafiku (od najmenšieho po \"najdramatickejšie\")"
+
+
+msgid "Simple physics-inspired easing effects"
+msgstr "Jednoduché fyzikou inšpirované uvoľňujúce efekty"
+
+
+msgctxt "GPencil"
+msgid "Interpolation"
+msgstr "Interpolácia"
+
+
+msgctxt "GPencil"
+msgid "Easing (by strength)"
+msgstr "Zmierňovanie (podľa sily)"
+
+
+msgctxt "GPencil"
+msgid "Dynamic Effects"
+msgstr "Dynamické efekty"
+
+
 msgid "Cannot find valid keyframes to interpolate (Breakdowns keyframes are not allowed)"
 msgstr "Nemožno nájsť platné kľúčové snímky na interpoláciu (rozklad kľúčových snímok nie je povolený)"
 
@@ -114724,14 +115164,6 @@ msgstr "Nemožno odstrániť viac polygónov, ako obsahuje povrchová sieť"
 
 msgid "Cannot add more than %i UV maps"
 msgstr "Nemožno pridať viac ako %i UV máp"
-
-
-msgid "Cannot add more than %i vertex color layers"
-msgstr "Nemožno pridať viac ako %i farebných vrstiev vrcholov"
-
-
-msgid "Cannot add more than %i sculpt vertex color layers"
-msgstr "Nemožno pridať viac ako %i vrstiev farieb vrcholov"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -120044,6 +120476,16 @@ msgid "Target is not in the constraint target list"
 msgstr "Cieľ nie je v zozname vynútení cieľov"
 
 
+msgctxt "Action"
+msgid "Easing (by strength)"
+msgstr "Zmierňovanie (podľa sily)"
+
+
+msgctxt "Action"
+msgid "Dynamic Effects"
+msgstr "Dynamické efekty"
+
+
 msgid "Bezier spline cannot have points added"
 msgstr "Nemožno mať pridané body bézierovej drážky"
 
@@ -120680,6 +121122,10 @@ msgstr "Sekvencia '%s' nie je v scéne '%s'"
 
 msgid "Sound not packed"
 msgstr "Zvuk nie je zbalený"
+
+
+msgid "Scripting"
+msgstr "Skriptovanie"
 
 
 msgid "'show_locked_time' is not supported for the '%s' editor"
@@ -123440,7 +123886,7 @@ msgstr "Knižnicu '%s' nemožno premiestniť do aktuálneho blend súboru '%s'"
 
 
 msgid "Win"
-msgstr "Okno"
+msgstr "Win"
 
 
 msgid "OS"
