@@ -249,7 +249,7 @@ def align_uv_rotation(context, method, axis):
 
 
 class AlignUVRotation(Operator):
-    """Align uv island's rotation"""
+    """Align UV island's rotation"""
     bl_idname = "uv.align_rotation"
     bl_label = "Align Rotation"
     bl_options = {'REGISTER', 'UNDO'}

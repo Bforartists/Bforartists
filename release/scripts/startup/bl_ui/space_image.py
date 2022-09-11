@@ -492,6 +492,8 @@ class IMAGE_MT_uvs_align(Menu):
         layout = self.layout
 
         layout.operator_enum("uv.align", "axis")
+        layout.separator()
+        layout.operator("uv.align_rotation", text="Align Rotation", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
 
 class IMAGE_MT_uvs_merge(Menu):
