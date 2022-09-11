@@ -32,7 +32,7 @@ from bl_ui.space_toolsystem_common import (
 from bpy.app.translations import pgettext_iface as iface_
 
 
-class toolshelf_calculate( Panel):
+class toolshelf_calculate(Panel):
 
     @staticmethod
     def ts_width(layout, region, scale_y):
@@ -42,8 +42,8 @@ class toolshelf_calculate( Panel):
         system = bpy.context.preferences.system
         view2d = region.view2d
         view2d_scale = (
-            view2d.region_to_view(1.0, 0.0)[0] -
-            view2d.region_to_view(0.0, 0.0)[0]
+                view2d.region_to_view(1.0, 0.0)[0] -
+                view2d.region_to_view(0.0, 0.0)[0]
         )
         width_scale = region.width * view2d_scale / system.ui_scale
 
@@ -68,7 +68,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -77,31 +77,31 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
-            col.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
+            col.operator("transform.rotate", text="Rotate +90°", icon="ROTATE_PLUS_90").value = math.pi / 2
+            col.operator("transform.rotate", text="Rotate  - 90°", icon="ROTATE_MINUS_90").value = math.pi / -2
             col.operator_context = 'INVOKE_DEFAULT'
 
             col.separator()
 
-            col.operator("transform.shear", icon = 'SHEAR')
+            col.operator("transform.shear", icon='SHEAR')
 
         # icon buttons
         else:
@@ -113,29 +113,29 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
-                row.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
-                row.operator("transform.shear", text="", icon = 'SHEAR')
+                row.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
+                row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
+                row.operator("transform.shear", text="", icon='SHEAR')
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
-                row.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
+                row.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
+                row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
 
                 row = col.row(align=True)
-                row.operator("transform.shear", text="", icon = 'SHEAR')
+                row.operator("transform.shear", text="", icon='SHEAR')
 
             elif column_count == 1:
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
-                col.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
+                col.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
+                col.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
                 col.operator_context = 'INVOKE_DEFAULT'
 
                 col.separator()
 
-                col.operator("transform.shear", text = "", icon = 'SHEAR')
+                col.operator("transform.shear", text="", icon='SHEAR')
 
 
 class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
@@ -145,7 +145,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -154,28 +154,28 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("mesh.faces_mirror_uv", icon = "COPYMIRRORED")
+            col.operator("mesh.faces_mirror_uv", icon="COPYMIRRORED")
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("transform.mirror", text="X Axis", icon = "MIRROR_X").constraint_axis[0] = True
-            col.operator("transform.mirror", text="Y Axis", icon = "MIRROR_Y").constraint_axis[1] = True
+            col.operator("transform.mirror", text="X Axis", icon="MIRROR_X").constraint_axis[0] = True
+            col.operator("transform.mirror", text="Y Axis", icon="MIRROR_Y").constraint_axis[1] = True
 
         # icon buttons
         else:
@@ -187,28 +187,28 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+                row.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
-                row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+                row.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
+                row.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+                row.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
 
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
-                row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+                row.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
+                row.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
 
             elif column_count == 1:
 
-                col.operator("mesh.faces_mirror_uv", text="", icon = "COPYMIRRORED")
+                col.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
-                col.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+                col.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
+                col.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
 
 
 class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
@@ -218,7 +218,7 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -227,33 +227,35 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
-            col.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
-            col.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-            col.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+            col.operator("uv.snap_selected", text="Selected to Pixels", icon="SNAP_TO_PIXELS").target = 'PIXELS'
+            col.operator("uv.snap_selected", text="Selected to Cursor", icon="SELECTIONTOCURSOR").target = 'CURSOR'
+            col.operator("uv.snap_selected", text="Selected to Cursor (Offset)",
+                         icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+            col.operator("uv.snap_selected", text="Selected to Adjacent Unselected",
+                         icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
             col.separator()
 
-            col.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
-            col.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
+            col.operator("uv.snap_cursor", text="Cursor to Pixels", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
+            col.operator("uv.snap_cursor", text="Cursor to Selected", icon="CURSORTOSELECTION").target = 'SELECTED'
 
         # icon buttons
         else:
@@ -266,42 +268,42 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
-                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+                row.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
+                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
 
                 row = col.row(align=True)
-                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
-                row.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+                row.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+                row.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+                row.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
 
                 row = col.row(align=True)
-                row.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-                row.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+                row.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
                 row = col.row(align=True)
-                row.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+                row.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
+                row.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
 
             elif column_count == 1:
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("uv.snap_selected", text="", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
-                col.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
-                col.operator("uv.snap_selected", text="", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-                col.operator("uv.snap_selected", text="", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
+                col.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
+                col.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
+                col.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+                col.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
                 col.separator()
 
-                col.operator("uv.snap_cursor", text="", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
-                col.operator("uv.snap_cursor", text="", icon = "CURSORTOSELECTION").target = 'SELECTED'
+                col.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
+                col.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
 
 
 class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
@@ -311,7 +313,7 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -320,39 +322,39 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-            col.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+            col.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+            col.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
             col.separator()
 
             col.operator_context = 'INVOKE_DEFAULT'
-            col.operator("uv.smart_project", icon = "MOD_UVPROJECT")
-            col.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
-            col.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
+            col.operator("uv.smart_project", icon="MOD_UVPROJECT")
+            col.operator("uv.lightmap_pack", icon="LIGHTMAPPACK")
+            col.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
 
             col.separator()
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("uv.cube_project", icon = "CUBEPROJECT")
-            col.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
-            col.operator("uv.sphere_project", icon = "SPHEREPROJECT")
+            col.operator("uv.cube_project", icon="CUBEPROJECT")
+            col.operator("uv.cylinder_project", icon="CYLINDERPROJECT")
+            col.operator("uv.sphere_project", icon="SPHEREPROJECT")
 
         # icon buttons
         else:
@@ -364,59 +366,59 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
                 row.operator_context = 'INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
 
                 row = col.row(align=True)
-                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
-                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
+                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
 
                 row = col.row(align=True)
-                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
                 row = col.row(align=True)
                 row.operator_context = 'INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
-                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
+                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
 
                 row = col.row(align=True)
-                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
                 row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
 
                 row = col.row(align=True)
-                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
 
             elif column_count == 1:
 
-                col.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                col.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                col.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                col.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
                 col.separator()
 
                 col.operator_context = 'INVOKE_DEFAULT'
-                col.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
-                col.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
-                col.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                col.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
+                col.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
+                col.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
 
                 col.separator()
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
-                col.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
-                col.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+                col.operator("uv.cube_project", text="", icon="CUBEPROJECT")
+                col.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
+                col.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
 
 
 class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
@@ -426,7 +428,7 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -435,18 +437,18 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
@@ -499,7 +501,7 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -508,43 +510,43 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("uv.pin", icon = "PINNED").clear = False
-            col.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
-            col.operator("uv.select_split", text="Split Selection", icon = 'SPLIT')
+            col.operator("uv.pin", icon="PINNED").clear = False
+            col.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
+            col.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
             col.separator()
 
-            col.operator("uv.pack_islands", icon ="PACKISLAND")
-            col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
-            col.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
-            col.operator("uv.stitch", icon = "STITCH")
+            col.operator("uv.pack_islands", icon="PACKISLAND")
+            col.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
+            col.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
+            col.operator("uv.stitch", icon="STITCH")
 
             col.separator()
 
-            col.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
-            col.operator("uv.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
-            col.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
+            col.operator("uv.mark_seam", icon="MARK_SEAM").clear = False
+            col.operator("uv.clear_seam", text="Clear Seam", icon='CLEAR_SEAM')
+            col.operator("uv.seams_from_islands", icon="SEAMSFROMISLAND")
 
             col.separator()
 
-            col.operator("uv.reset", icon = "RESET")
+            col.operator("uv.reset", icon="RESET")
 
         # icon buttons
         else:
@@ -556,70 +558,70 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("uv.pin", text="", icon = "PINNED").clear = False
-                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
-                row.operator("uv.select_split", text="", icon = 'SPLIT')
+                row.operator("uv.pin", text="", icon="PINNED").clear = False
+                row.operator("uv.pin", text="", icon="UNPINNED").clear = True
+                row.operator("uv.select_split", text="", icon='SPLIT')
 
                 row = col.row(align=True)
-                row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
-                row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
-                row.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
+                row.operator("uv.pack_islands", text="", icon="PACKISLAND")
+                row.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
+                row.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
 
                 row = col.row(align=True)
-                row.operator("uv.stitch", text="", icon = "STITCH")
-                row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-                row.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
+                row.operator("uv.stitch", text="", icon="STITCH")
+                row.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
+                row.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
 
                 row = col.row(align=True)
-                row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
-                row.operator("uv.reset", text="", icon = "RESET")
+                row.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
+                row.operator("uv.reset", text="", icon="RESET")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("uv.pin", text="", icon = "PINNED").clear = False
-                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+                row.operator("uv.pin", text="", icon="PINNED").clear = False
+                row.operator("uv.pin", text="", icon="UNPINNED").clear = True
 
                 row = col.row(align=True)
-                row.operator("uv.select_split", text="", icon = 'SPLIT')
-                row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+                row.operator("uv.select_split", text="", icon='SPLIT')
+                row.operator("uv.pack_islands", text="", icon="PACKISLAND")
 
                 row = col.row(align=True)
-                row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
-                row.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
+                row.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
+                row.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
 
                 row = col.row(align=True)
-                row.operator("uv.stitch", text="", icon = "STITCH")
-                row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+                row.operator("uv.stitch", text="", icon="STITCH")
+                row.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
 
                 row = col.row(align=True)
-                row.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
-                row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+                row.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
+                row.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
                 row = col.row(align=True)
-                row.operator("uv.reset", text="", icon = "RESET")
+                row.operator("uv.reset", text="", icon="RESET")
 
             elif column_count == 1:
 
-                col.operator("uv.pin", text="", icon = "PINNED").clear = False
-                col.operator("uv.pin", text="", icon = "UNPINNED").clear = True
-                col.operator("uv.select_split", text="", icon = 'SPLIT')
+                col.operator("uv.pin", text="", icon="PINNED").clear = False
+                col.operator("uv.pin", text="", icon="UNPINNED").clear = True
+                col.operator("uv.select_split", text="", icon='SPLIT')
 
                 col.separator()
 
-                col.operator("uv.pack_islands", text="", icon ="PACKISLAND")
-                col.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
-                col.operator("uv.minimize_stretch", text="", icon = "MINIMIZESTRETCH")
-                col.operator("uv.stitch", text="", icon = "STITCH")
+                col.operator("uv.pack_islands", text="", icon="PACKISLAND")
+                col.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
+                col.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
+                col.operator("uv.stitch", text="", icon="STITCH")
 
                 col.separator()
 
-                col.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-                col.operator("uv.clear_seam", text="", icon = 'CLEAR_SEAM')
-                col.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+                col.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
+                col.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
+                col.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
 
                 col.separator()
 
-                col.operator("uv.reset", text="", icon = "RESET")
+                col.operator("uv.reset", text="", icon="RESET")
 
 
 class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
@@ -629,7 +631,7 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
     bl_category = "UV"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
+    # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         preferences = context.preferences
@@ -638,29 +640,30 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
         view = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        # overlay = view.overlay
+        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
         return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = self.ts_width(layout, context.region, scale_y=1.75)
 
         obj = context.object
 
-        #text buttons
+        # text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("uv.align", text= "Straighten", icon = "ALIGN").axis = 'ALIGN_S'
-            col.operator("uv.align", text= "Straighten X", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
-            col.operator("uv.align", text= "Straighten Y", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
-            col.operator("uv.align", text= "Align Auto", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
-            col.operator("uv.align", text= "Align X", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
-            col.operator("uv.align", text= "Align Y", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+            col.operator("uv.align", text="Straighten", icon="ALIGN").axis = 'ALIGN_S'
+            col.operator("uv.align", text="Straighten X", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
+            col.operator("uv.align", text="Straighten Y", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
+            col.operator("uv.align", text="Align Auto", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
+            col.operator("uv.align", text="Align X", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
+            col.operator("uv.align", text="Align Y", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+            col.operator("uv.align_rotation", text="Align Rotation", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
         # icon buttons
         else:
@@ -672,37 +675,47 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+                row.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
 
                 row = col.row(align=True)
-                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
-                row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
+                row.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+                row = col.row(align=True)
+                row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
+                row.label(text="")
+                row.label(text="")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+                row.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
 
                 row = col.row(align=True)
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
-                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
+                row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
 
                 row = col.row(align=True)
-                row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+                row = col.row(align=True)
+                row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
+                row.label(text="")
 
             elif column_count == 1:
 
-                col.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
-                col.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
-                col.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
-                col.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
-                col.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                col.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+                col.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
+                col.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
+                col.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
+                col.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
+                col.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                col.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+                col.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
 
 classes = (
@@ -718,5 +731,6 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
+
     for cls in classes:
         register_class(cls)
