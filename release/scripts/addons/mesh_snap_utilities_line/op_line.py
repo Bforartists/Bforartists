@@ -51,10 +51,10 @@ def get_closest_edge(bm, point, dist):
     return r_edge
 
 
-def get_loose_linked_edges(bmvert):
-    linked = [e for e in bmvert.link_edges if not e.link_faces]
+def get_loose_linked_edges(vert):
+    linked = [e for e in vert.link_edges if e.is_wire]
     for e in linked:
-        linked += [le for v in e.verts if not v.link_faces for le in v.link_edges if le not in linked]
+        linked += [le for v in e.verts if v.is_wire for le in v.link_edges if le not in linked]
     return linked
 
 
@@ -170,8 +170,28 @@ def make_line(self, bm_geom, location):
                     break
 
             ed_list.update(get_loose_linked_edges(v2))
+            ed_list = list(ed_list)
 
-            bmesh.ops.edgenet_fill(bm, edges=list(ed_list))
+            # WORKAROUND: `edgenet_fill` only works with loose edges or boundary
+            # edges, so remove the other edges and create temporary elements to
+            # replace them.
+            targetmap = {}
+            ed_new = []
+            for edge in ed_list:
+                if not edge.is_wire and not edge.is_boundary:
+                    v1, v2 = edge.verts
+                    tmp_vert = bm.verts.new(v2.co)
+                    e1 = bm.edges.new([v1, tmp_vert])
+                    e2 = bm.edges.new([tmp_vert, v2])
+                    ed_list.remove(edge)
+                    ed_new.append(e1)
+                    ed_new.append(e2)
+                    targetmap[tmp_vert] = v2
+
+            bmesh.ops.edgenet_fill(bm, edges=ed_list + ed_new)
+            if targetmap:
+                bmesh.ops.weld_verts(bm, targetmap=targetmap)
+
             update_edit_mesh = True
             # print('face created')
 

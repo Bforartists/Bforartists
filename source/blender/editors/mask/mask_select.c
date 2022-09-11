@@ -11,6 +11,7 @@
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_rect.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -33,14 +34,11 @@
 
 #include "mask_intern.h" /* own include */
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+/* -------------------------------------------------------------------- */
+/** \name Public Mask Selection API
+ * \{ */
 
-    /* -------------------------------------------------------------------- */
-    /** \name Public Mask Selection API
-     * \{ */
-
-    bool
-    ED_mask_spline_select_check(const MaskSpline *spline)
+bool ED_mask_spline_select_check(const MaskSpline *spline)
 {
   for (int i = 0; i < spline->tot_point; i++) {
     MaskSplinePoint *point = &spline->points[i];
