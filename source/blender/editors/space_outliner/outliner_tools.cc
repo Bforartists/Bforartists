@@ -107,97 +107,96 @@ using blender::Vector;
  * \{ */
 
 static void get_element_operation_type(
-    TreeElement *te, int *scenelevel, int *objectlevel, int *idlevel, int *datalevel)
+    const TreeElement *te, int *scenelevel, int *objectlevel, int *idlevel, int *datalevel)
 {
-  TreeStoreElem *tselem = TREESTORE(te);
-  if (tselem->flag & TSE_SELECTED) {
-    /* Layer collection points to collection ID. */
-    if (!ELEM(tselem->type, TSE_SOME_ID, TSE_LAYER_COLLECTION)) {
-      if (*datalevel == 0) {
-        *datalevel = tselem->type;
-      }
-      else if (*datalevel != tselem->type) {
-        *datalevel = -1;
-      }
-    }
-    else {
-      const int idcode = (int)GS(tselem->id->name);
-      bool is_standard_id = false;
-      switch ((ID_Type)idcode) {
-        case ID_SCE:
-          *scenelevel = 1;
-          break;
-        case ID_OB:
-          *objectlevel = 1;
-          break;
+  *scenelevel = *objectlevel = *idlevel = *datalevel = 0;
 
-        case ID_ME:
-        case ID_CU_LEGACY:
-        case ID_MB:
-        case ID_LT:
-        case ID_LA:
-        case ID_AR:
-        case ID_CA:
-        case ID_SPK:
-        case ID_MA:
-        case ID_TE:
-        case ID_IP:
-        case ID_IM:
-        case ID_SO:
-        case ID_KE:
-        case ID_WO:
-        case ID_AC:
-        case ID_TXT:
-        case ID_GR:
-        case ID_LS:
-        case ID_LI:
-        case ID_VF:
-        case ID_NT:
-        case ID_BR:
-        case ID_PA:
-        case ID_GD:
-        case ID_MC:
-        case ID_MSK:
-        case ID_PAL:
-        case ID_PC:
-        case ID_CF:
-        case ID_WS:
-        case ID_LP:
-        case ID_CV:
-        case ID_PT:
-        case ID_VO:
-        case ID_SIM:
-          is_standard_id = true;
-          break;
-        case ID_WM:
-        case ID_SCR:
-          /* Those are ignored here. */
-          /* NOTE: while Screens should be manageable here, deleting a screen used by a workspace
-           * will cause crashes when trying to use that workspace, so for now let's play minimal,
-           * safe change. */
-          break;
-      }
-      if (idcode == ID_NLA) {
-        /* Fake one, not an actual ID type... */
+  const TreeStoreElem *tselem = TREESTORE(te);
+  if ((tselem->flag & TSE_SELECTED) == 0) {
+    return;
+  }
+
+  /* Layer collection points to collection ID. */
+  if (!ELEM(tselem->type, TSE_SOME_ID, TSE_LAYER_COLLECTION)) {
+    *datalevel = tselem->type;
+  }
+  else {
+    const int idcode = (int)GS(tselem->id->name);
+    bool is_standard_id = false;
+    switch ((ID_Type)idcode) {
+      case ID_SCE:
+        *scenelevel = 1;
+        break;
+      case ID_OB:
+        *objectlevel = 1;
+        break;
+
+      case ID_ME:
+      case ID_CU_LEGACY:
+      case ID_MB:
+      case ID_LT:
+      case ID_LA:
+      case ID_AR:
+      case ID_CA:
+      case ID_SPK:
+      case ID_MA:
+      case ID_TE:
+      case ID_IP:
+      case ID_IM:
+      case ID_SO:
+      case ID_KE:
+      case ID_WO:
+      case ID_AC:
+      case ID_TXT:
+      case ID_GR:
+      case ID_LS:
+      case ID_LI:
+      case ID_VF:
+      case ID_NT:
+      case ID_BR:
+      case ID_PA:
+      case ID_GD:
+      case ID_MC:
+      case ID_MSK:
+      case ID_PAL:
+      case ID_PC:
+      case ID_CF:
+      case ID_WS:
+      case ID_LP:
+      case ID_CV:
+      case ID_PT:
+      case ID_VO:
+      case ID_SIM:
         is_standard_id = true;
-      }
+        break;
+      case ID_WM:
+      case ID_SCR:
+        /* Those are ignored here. */
+        /* NOTE: while Screens should be manageable here, deleting a screen used by a workspace
+         * will cause crashes when trying to use that workspace, so for now let's play minimal,
+         * safe change. */
+        break;
+    }
+    if (idcode == ID_NLA) {
+      /* Fake one, not an actual ID type... */
+      is_standard_id = true;
+    }
 
-      if (is_standard_id) {
-        if (*idlevel == 0) {
-          *idlevel = idcode;
-        }
-        else if (*idlevel != idcode) {
-          *idlevel = -1;
-        }
-        if (ELEM(*datalevel, TSE_VIEW_COLLECTION_BASE, TSE_SCENE_COLLECTION_BASE)) {
-          *datalevel = 0;
-        }
-      }
+    if (is_standard_id) {
+      *idlevel = idcode;
     }
   }
+
+  /* Return values are exclusive, only one may be non-null. */
+  BLI_assert(((*scenelevel != 0) && (*objectlevel == 0) && (*idlevel == 0) && (*datalevel == 0)) ||
+             ((*scenelevel == 0) && (*objectlevel != 0) && (*idlevel == 0) && (*datalevel == 0)) ||
+             ((*scenelevel == 0) && (*objectlevel == 0) && (*idlevel != 0) && (*datalevel == 0)) ||
+             ((*scenelevel == 0) && (*objectlevel == 0) && (*idlevel == 0) && (*datalevel != 0)) ||
+             /* All null. */
+             ((*scenelevel == 0) && (*objectlevel == 0) && (*idlevel == 0) && (*datalevel == 0)));
 }
 
-static TreeElement *get_target_element(SpaceOutliner *space_outliner)
+static TreeElement *get_target_element(const SpaceOutliner *space_outliner)
 {
   TreeElement *te = outliner_find_element_with_flag(&space_outliner->tree, TSE_ACTIVE);
 
@@ -989,7 +988,7 @@ struct OutlinerLibOverrideData {
    * override), or an actual already existing override. */
   Map<ID *, Vector<OutlinerLiboverrideDataIDRoot>> id_hierarchy_roots;
 
-  /** All 'session_uuid' of all hierarchy root IDs used or created by the operation.  */
+  /** All 'session_uuid' of all hierarchy root IDs used or created by the operation. */
   Set<uint> id_hierarchy_roots_uid;
 
   void id_root_add(ID *id_hierarchy_root_reference,
@@ -1769,15 +1768,11 @@ static int outliner_liboverride_operation_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
-  int scenelevel = 0, objectlevel = 0, idlevel = 0, datalevel = 0;
 
   /* check for invalid states */
   if (space_outliner == nullptr) {
     return OPERATOR_CANCELLED;
   }
-
-  TreeElement *te = get_target_element(space_outliner);
-  get_element_operation_type(te, &scenelevel, &objectlevel, &idlevel, &datalevel);
 
   const eOutlinerLibOpSelectionSet selection_set = static_cast<eOutlinerLibOpSelectionSet>(
       RNA_enum_get(op->ptr, "selection_set"));
@@ -2876,15 +2871,11 @@ static int outliner_lib_operation_exec(bContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
-  int scenelevel = 0, objectlevel = 0, idlevel = 0, datalevel = 0;
 
   /* check for invalid states */
   if (space_outliner == nullptr) {
     return OPERATOR_CANCELLED;
   }
-
-  TreeElement *te = get_target_element(space_outliner);
-  get_element_operation_type(te, &scenelevel, &objectlevel, &idlevel, &datalevel);
 
   eOutlinerLibOpTypes event = (eOutlinerLibOpTypes)RNA_enum_get(op->ptr, "type");
   switch (event) {
@@ -3264,6 +3255,24 @@ void OUTLINER_OT_modifier_operation(wmOperatorType *ot)
 /** \name Data Menu Operator
  * \{ */
 
+static bool outliner_data_operation_poll(bContext *C)
+{
+  if (!ED_operator_outliner_active(C)) {
+    return false;
+  }
+  const SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
+  const TreeElement *te = get_target_element(space_outliner);
+  int scenelevel = 0, objectlevel = 0, idlevel = 0, datalevel = 0;
+  get_element_operation_type(te, &scenelevel, &objectlevel, &idlevel, &datalevel);
+  return ELEM(datalevel,
+              TSE_POSE_CHANNEL,
+              TSE_BONE,
+              TSE_EBONE,
+              TSE_SEQUENCE,
+              TSE_GP_LAYER,
+              TSE_RNA_STRUCT);
+}
+
 static int outliner_data_operation_exec(bContext *C, wmOperator *op)
 {
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
@@ -3376,7 +3385,7 @@ void OUTLINER_OT_data_operation(wmOperatorType *ot)
   /* callbacks */
   ot->invoke = WM_menu_invoke;
   ot->exec = outliner_data_operation_exec;
-  ot->poll = outliner_operation_tree_element_poll;
+  ot->poll = outliner_data_operation_poll;
 
   ot->flag = 0;
 
@@ -3398,11 +3407,13 @@ static int outliner_operator_menu(bContext *C, const char *opname)
 
   /* set this so the default execution context is the same as submenus */
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
-  uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-  uiItemS(layout);
-  /* bfa -  We just append the asset sub menu here, not the whole context menu*/
-  /*uiItemMContents(layout, "OUTLINER_MT_context_menu");*/
+  if (WM_operator_poll(C, ot)) {
+    uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
+
+    uiItemS(layout);
+  }
+  /* bfa - only asset menu not whole context menu */
   uiItemMContents(layout, "OUTLINER_MT_asset");
 
   UI_popup_menu_end(C, pup);
@@ -3411,7 +3422,6 @@ static int outliner_operator_menu(bContext *C, const char *opname)
 }
 
 static int do_outliner_operation_event(bContext *C,
-                                       ReportList *reports,
                                        ARegion *region,
                                        SpaceOutliner *space_outliner,
                                        TreeElement *te)
@@ -3434,10 +3444,6 @@ static int do_outliner_operation_event(bContext *C,
   get_element_operation_type(te, &scenelevel, &objectlevel, &idlevel, &datalevel);
 
   if (scenelevel) {
-    if (objectlevel || datalevel || idlevel) {
-      BKE_report(reports, RPT_WARNING, "Mixed selection");
-      return OPERATOR_CANCELLED;
-    }
     return outliner_operator_menu(C, "OUTLINER_OT_scene_operation");
   }
   if (objectlevel) {
@@ -3445,11 +3451,6 @@ static int do_outliner_operation_event(bContext *C,
     return OPERATOR_FINISHED;
   }
   if (idlevel) {
-    if (idlevel == -1 || datalevel) {
-      BKE_report(reports, RPT_WARNING, "Mixed selection");
-      return OPERATOR_CANCELLED;
-    }
-
     switch (idlevel) {
       case ID_GR:
         WM_menu_name_call(C, "OUTLINER_MT_collection", WM_OP_INVOKE_REGION_WIN);
@@ -3464,10 +3465,6 @@ static int do_outliner_operation_event(bContext *C,
     }
   }
   else if (datalevel) {
-    if (datalevel == -1) {
-      BKE_report(reports, RPT_WARNING, "Mixed selection");
-      return OPERATOR_CANCELLED;
-    }
     if (datalevel == TSE_ANIM_DATA) {
       return outliner_operator_menu(C, "OUTLINER_OT_animdata_operation");
     }
@@ -3499,7 +3496,7 @@ static int do_outliner_operation_event(bContext *C,
   return OPERATOR_CANCELLED;
 }
 
-static int outliner_operation(bContext *C, wmOperator *op, const wmEvent *event)
+static int outliner_operation(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
 {
   ARegion *region = CTX_wm_region(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
@@ -3520,7 +3517,7 @@ static int outliner_operation(bContext *C, wmOperator *op, const wmEvent *event)
     return OPERATOR_PASS_THROUGH;
   }
 
-  return do_outliner_operation_event(C, op->reports, region, space_outliner, hovered_te);
+  return do_outliner_operation_event(C, region, space_outliner, hovered_te);
 }
 
 void OUTLINER_OT_operation(wmOperatorType *ot)

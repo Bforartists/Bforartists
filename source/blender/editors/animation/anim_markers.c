@@ -51,7 +51,6 @@
 #include "ED_screen.h"
 #include "ED_select_utils.h"
 #include "ED_transform.h"
-#include "ED_types.h"
 #include "ED_util.h"
 
 #include "DEG_depsgraph.h"
@@ -437,7 +436,7 @@ static void draw_marker_line(const uchar *color, int xpos, int ymin, int ymax)
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-  immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
 
   float viewport_size[4];
   GPU_viewport_size_get_f(viewport_size);
@@ -459,9 +458,7 @@ static void draw_marker_line(const uchar *color, int xpos, int ymin, int ymax)
 static int marker_get_icon_id(TimeMarker *marker, int flag)
 {
   if (flag & DRAW_MARKERS_LOCAL) {
-    return (marker->flag & ACTIVE) ? ICON_PMARKER_ACT :
-           (marker->flag & SELECT) ? ICON_PMARKER_SEL :
-                                     ICON_PMARKER;
+    return (marker->flag & SELECT) ? ICON_PMARKER_SEL : ICON_PMARKER;
   }
 #ifdef DURIAN_CAMERA_SWITCH
   if (marker->camera) {
@@ -503,7 +500,7 @@ static void draw_marker(const uiFontStyle *fstyle,
 static void draw_markers_background(rctf *rect)
 {
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   uchar shade[4];
   UI_GetThemeColor4ubv(TH_TIME_SCRUB_BACKGROUND, shade);

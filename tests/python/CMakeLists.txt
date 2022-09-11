@@ -23,7 +23,7 @@ file(MAKE_DIRECTORY ${TEST_OUT_DIR}/blendfile_io)
 function(add_blender_test testname)
   add_test(
     NAME ${testname}
-    COMMAND "$<TARGET_FILE:bforartists>" ${TEST_BLENDER_EXE_PARAMS} ${ARGN}
+    COMMAND "${TEST_BLENDER_EXE}" ${TEST_BLENDER_EXE_PARAMS} ${ARGN}
   )
 
   # Don't fail tests on leaks since these often happen in external libraries
@@ -696,7 +696,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
           add_python_test(
             cycles_${render_test}_${_cycles_device_lower}
             ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-            -blender "$<TARGET_FILE:bforartists>"
+            -blender "${TEST_BLENDER_EXE}"
             -testdir "${TEST_SRC_DIR}/render/${render_test}"
             -idiff "${OPENIMAGEIO_IDIFF}"
             -outdir "${TEST_OUT_DIR}/cycles"
@@ -713,7 +713,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
         add_python_test(
           eevee_${render_test}_test
           ${CMAKE_CURRENT_LIST_DIR}/eevee_render_tests.py
-          -blender "$<TARGET_FILE:blender>"
+          -blender "${TEST_BLENDER_EXE}"
           -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -idiff "${OPENIMAGEIO_IDIFF}"
           -outdir "${TEST_OUT_DIR}/eevee"
@@ -725,7 +725,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
         add_python_test(
           workbench_${render_test}_test
           ${CMAKE_CURRENT_LIST_DIR}/workbench_render_tests.py
-          -blender "$<TARGET_FILE:blender>"
+          -blender "${TEST_BLENDER_EXE}"
           -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -idiff "${OPENIMAGEIO_IDIFF}"
           -outdir "${TEST_OUT_DIR}/workbench"
@@ -822,7 +822,7 @@ if(WITH_OPENGL_DRAW_TESTS)
           add_python_test(
             opengl_draw_${child}
             ${CMAKE_CURRENT_LIST_DIR}/opengl_draw_tests.py
-            -blender "$<TARGET_FILE:bforartists>"
+            -blender "${TEST_BLENDER_EXE}"
             -testdir "${child_path}"
             -idiff "${OPENIMAGEIO_IDIFF}"
             -outdir "${TEST_OUT_DIR}/opengl_draw"
@@ -845,7 +845,7 @@ if(WITH_ALEMBIC)
   add_python_test(
     alembic_export_tests
     ${CMAKE_CURRENT_LIST_DIR}/alembic_export_tests.py
-    --blender "$<TARGET_FILE:bforartists>"
+    --blender "${TEST_BLENDER_EXE}"
     --testdir "${TEST_SRC_DIR}/alembic"
     --alembic-root "${ALEMBIC_ROOT_DIR}"
   )
@@ -871,7 +871,7 @@ if(WITH_CODEC_FFMPEG)
   add_python_test(
     ffmpeg
     ${CMAKE_CURRENT_LIST_DIR}/ffmpeg_tests.py
-    --blender "$<TARGET_FILE:bforartists>"
+    --blender "${TEST_BLENDER_EXE}"
     --testdir "${TEST_SRC_DIR}/ffmpeg"
   )
 endif()

@@ -10,6 +10,7 @@
 #include "DNA_object_types.h"
 
 #include "BLI_math.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 #include "BLT_translation.h"
 
@@ -44,8 +45,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "mesh_intern.h" /* own include */
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 static bool geometry_extract_poll(bContext *C)
 {

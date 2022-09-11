@@ -46,7 +46,11 @@ const EnumPropertyItem rna_enum_particle_edit_hair_brush_items[] = {
 
 #ifndef RNA_RUNTIME
 static const EnumPropertyItem rna_enum_gpencil_lock_axis_items[] = {
-    {GP_LOCKAXIS_VIEW, "VIEW", ICON_VIEW, "View", "Align strokes to current view plane"},
+    {GP_LOCKAXIS_VIEW,
+     "VIEW",
+     ICON_VIEW,
+     "View",
+     "Align strokes to current view plane"},
     {GP_LOCKAXIS_Y,
      "AXIS_Y",
      ICON_AXIS_FRONT,

@@ -373,10 +373,14 @@ typedef struct ScrArea {
   /** Rect bound by v1 v2 v3 v4. */
   rcti totrct;
 
-  /*bfa - keep this at the current place*/
-  int flag;              /* bfa - short to int, we need int for our flags*/
-  int region_active_win; /* bfa - changed short to int - index of last used region of
-                            'RGN_TYPE_WINDOW' */
+  /* bfa - keep this at the current place */
+  /* bfa - short to int, we need int for our flags */
+  int flag;
+  /**
+   * Index of last used region of 'RGN_TYPE_WINDOW'
+   * runtime variable, updated by executing operators.
+   */
+  int region_active_win; /* bfa - changed short to int */
 
   /**
    * eSpace_Type (SPACE_FOO).
@@ -558,7 +562,7 @@ enum {
 };
 
 #define AREAGRID 4
-#define AREAMINX 32
+#define AREAMINX 29
 #define HEADER_PADDING_Y 6
 #define HEADERY (20 + HEADER_PADDING_Y)
 
