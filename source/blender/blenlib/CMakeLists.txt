@@ -170,6 +170,7 @@ set(SRC
   BLI_astar.h
   BLI_bitmap.h
   BLI_bitmap_draw_2d.h
+  BLI_bit_vector.hh
   BLI_blenlib.h
   BLI_bounds.hh
   BLI_boxpack_2d.h
@@ -283,6 +284,7 @@ set(SRC
   BLI_path_util.h
   BLI_polyfill_2d.h
   BLI_polyfill_2d_beautify.h
+  BLI_pool.hh
   BLI_probing_strategies.hh
   BLI_quadric.h
   BLI_rand.h
@@ -428,6 +430,7 @@ if(WITH_GTESTS)
     tests/BLI_array_store_test.cc
     tests/BLI_array_test.cc
     tests/BLI_array_utils_test.cc
+    tests/BLI_bit_vector_test.cc
     tests/BLI_bitmap_test.cc
     tests/BLI_bounds_test.cc
     tests/BLI_color_test.cc
@@ -474,6 +477,7 @@ if(WITH_GTESTS)
     tests/BLI_multi_value_map_test.cc
     tests/BLI_path_util_test.cc
     tests/BLI_polyfill_2d_test.cc
+    tests/BLI_pool_test.cc
     tests/BLI_ressource_strings.h
     tests/BLI_serialize_test.cc
     tests/BLI_session_uuid_test.cc

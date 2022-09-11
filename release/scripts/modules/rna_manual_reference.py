@@ -929,7 +929,6 @@ url_manual_mapping = (
     ("bpy.types.view3doverlay.show_wireframes*", "editors/3dview/display/overlays.html#bpy-types-view3doverlay-show-wireframes"),
     ("bpy.types.view3dshading.background_type*", "editors/3dview/display/shading.html#bpy-types-view3dshading-background-type"),
     ("bpy.types.workspace.use_filter_by_owner*", "interface/window_system/workspaces.html#bpy-types-workspace-use-filter-by-owner"),
-    ("bpy.ops.outliner.liboverride_operation*", "files/linked_libraries/library_overrides.html#library-overrides"),
     ("bpy.ops.gpencil.image_to_grease_pencil*", "editors/image/editing.html#bpy-ops-gpencil-image-to-grease-pencil"),
     ("bpy.ops.mesh.vertices_smooth_laplacian*", "modeling/meshes/editing/vertex/laplacian_smooth.html#bpy-ops-mesh-vertices-smooth-laplacian"),
     ("bpy.ops.object.multires_rebuild_subdiv*", "modeling/modifiers/generate/multiresolution.html#bpy-ops-object-multires-rebuild-subdiv"),

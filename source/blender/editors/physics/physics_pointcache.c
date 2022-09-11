@@ -50,12 +50,13 @@ static bool ptcache_poll(bContext *C)
   }
 
   if (ID_IS_OVERRIDE_LIBRARY_REAL(id) && (point_cache->flag & PTCACHE_DISK_CACHE) == false) {
-    CTX_wm_operator_poll_msg_set(C, "Library override data only support Disk Cache storage");
+    CTX_wm_operator_poll_msg_set(C,
+                                 "Library override data-blocks only support Disk Cache storage");
     return false;
   }
 
   if (ID_IS_LINKED(id) && (point_cache->flag & PTCACHE_DISK_CACHE) == false) {
-    CTX_wm_operator_poll_msg_set(C, "Linked data do not allow editing caches");
+    CTX_wm_operator_poll_msg_set(C, "Linked data-blocks do not allow editing caches");
     return false;
   }
 

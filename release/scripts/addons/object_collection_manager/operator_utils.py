@@ -604,10 +604,10 @@ def select_collection_objects(is_master_collection, collection_name, replace, ne
     if replace:
         bpy.ops.object.select_all(action='DESELECT')
 
-    def select_objects(collection, selection_state):
-        if selection_state == None:
-            selection_state = get_move_selection().isdisjoint(collection.objects)
+    if selection_state == None:
+        selection_state = get_move_selection().isdisjoint(target_collection.objects)
 
+    def select_objects(collection, selection_state):
         for obj in collection.objects:
             try:
                 obj.select_set(selection_state)

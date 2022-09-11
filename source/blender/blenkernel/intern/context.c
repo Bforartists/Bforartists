@@ -942,8 +942,9 @@ struct SpaceTopBar *CTX_wm_space_topbar(const bContext *C)
 struct SpaceToolbar *CTX_wm_space_toolbar(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
-  if (area && area->spacetype == SPACE_TOOLBAR)
+  if (area && area->spacetype == SPACE_TOOLBAR) {
     return area->spacedata.first;
+  }
   return NULL;
 }
 

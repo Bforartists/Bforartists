@@ -157,8 +157,9 @@ static void read_mverts(CDStreamConfig &config, const AbcMeshData &mesh_data)
 
 void read_mverts(Mesh &mesh, const P3fArraySamplePtr positions, const N3fArraySamplePtr normals)
 {
+  MutableSpan<MVert> verts = mesh.verts_for_write();
   for (int i = 0; i < positions->size(); i++) {
-    MVert &mvert = mesh.mvert[i];
+    MVert &mvert = verts[i];
     Imath::V3f pos_in = (*positions)[i];
 
     copy_zup_from_yup(mvert.co, pos_in.getValue());
@@ -274,7 +275,7 @@ static void process_loop_normals(CDStreamConfig &config, const N3fArraySamplePtr
   float(*lnors)[3] = static_cast<float(*)[3]>(
       MEM_malloc_arrayN(loop_count, sizeof(float[3]), "ABC::FaceNormals"));
 
-  MPoly *mpoly = mesh->mpoly;
+  MPoly *mpoly = mesh->polys_for_write().data();
   const N3fArraySample &loop_normals = *loop_normals_ptr;
   int abc_index = 0;
   for (int i = 0, e = mesh->totpoly; i < e; i++, mpoly++) {
@@ -309,7 +310,7 @@ static void process_vertex_normals(CDStreamConfig &config,
   }
 
   config.mesh->flag |= ME_AUTOSMOOTH;
-  BKE_mesh_set_custom_normals_from_vertices(config.mesh, vnors);
+  BKE_mesh_set_custom_normals_from_verts(config.mesh, vnors);
   MEM_freeN(vnors);
 }
 
@@ -519,13 +520,10 @@ static void read_mesh_sample(const std::string &iobject_full_name,
 CDStreamConfig get_config(Mesh *mesh, const bool use_vertex_interpolation)
 {
   CDStreamConfig config;
-
-  BLI_assert(mesh->mvert || mesh->totvert == 0);
-
   config.mesh = mesh;
-  config.mvert = mesh->mvert;
-  config.mloop = mesh->mloop;
-  config.mpoly = mesh->mpoly;
+  config.mvert = mesh->verts_for_write().data();
+  config.mloop = mesh->loops_for_write().data();
+  config.mpoly = mesh->polys_for_write().data();
   config.totvert = mesh->totvert;
   config.totloop = mesh->totloop;
   config.totpoly = mesh->totpoly;
@@ -771,7 +769,7 @@ Mesh *AbcMeshReader::read_mesh(Mesh *existing_mesh,
     size_t num_polys = new_mesh->totpoly;
     if (num_polys > 0) {
       std::map<std::string, int> mat_map;
-      bke::MutableAttributeAccessor attributes = bke::mesh_attributes_for_write(*new_mesh);
+      bke::MutableAttributeAccessor attributes = new_mesh->attributes_for_write();
       bke::SpanAttributeWriter<int> material_indices =
           attributes.lookup_or_add_for_write_only_span<int>("material_index", ATTR_DOMAIN_FACE);
       assign_facesets_to_material_indices(sample_sel, material_indices.span, mat_map);
@@ -832,7 +830,7 @@ void AbcMeshReader::assign_facesets_to_material_indices(const ISampleSelector &s
 void AbcMeshReader::readFaceSetsSample(Main *bmain, Mesh *mesh, const ISampleSelector &sample_sel)
 {
   std::map<std::string, int> mat_map;
-  bke::MutableAttributeAccessor attributes = bke::mesh_attributes_for_write(*mesh);
+  bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   bke::SpanAttributeWriter<int> material_indices =
       attributes.lookup_or_add_for_write_only_span<int>("material_index", ATTR_DOMAIN_FACE);
   assign_facesets_to_material_indices(sample_sel, material_indices.span, mat_map);
@@ -925,12 +923,10 @@ static void read_edge_creases(Mesh *mesh,
     return;
   }
 
-  MEdge *edges = mesh->medge;
-  const int totedge = mesh->totedge;
+  MutableSpan<MEdge> edges = mesh->edges_for_write();
+  EdgeHash *edge_hash = BLI_edgehash_new_ex(__func__, edges.size());
 
-  EdgeHash *edge_hash = BLI_edgehash_new_ex(__func__, mesh->totedge);
-
-  for (int i = 0; i < totedge; i++) {
+  for (const int i : edges.index_range()) {
     MEdge *edge = &edges[i];
     BLI_edgehash_insert(edge_hash, edge->v1, edge->v2, edge);
   }
