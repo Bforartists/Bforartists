@@ -2,7 +2,7 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
+__version__ = "6.7"
 __date__ = "22 Apr 2022"
 
 from collections import namedtuple
@@ -24,11 +24,8 @@ from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
 from ..utils import compatibility as compat
 
-if compat.check_version(2, 80, 0) >= 0:
-    from ..lib import bglx as bgl
-else:
-    import bgl
-
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 _Rect = namedtuple('Rect', 'x0 y0 x1 y1')
 _Rect2 = namedtuple('Rect2', 'x y width height')
@@ -334,35 +331,19 @@ class MUV_OT_TextureProjection(bpy.types.Operator):
         ]
 
         # OpenGL configuration
-        if compat.check_version(2, 80, 0) >= 0:
-            bgl.glEnable(bgl.GL_BLEND)
-            bgl.glEnable(bgl.GL_TEXTURE_2D)
-            bgl.glActiveTexture(bgl.GL_TEXTURE0)
-            if img.bindcode:
-                bind = img.bindcode
-                bgl.glBindTexture(bgl.GL_TEXTURE_2D, bind)
-        else:
-            bgl.glEnable(bgl.GL_BLEND)
-            bgl.glEnable(bgl.GL_TEXTURE_2D)
-            if img.bindcode:
-                bind = img.bindcode[0]
-                bgl.glBindTexture(bgl.GL_TEXTURE_2D, bind)
-                bgl.glTexParameteri(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-                bgl.glTexParameteri(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-                bgl.glTexEnvi(
-                    bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE,
-                    bgl.GL_MODULATE)
-
         # render texture
-        bgl.glBegin(bgl.GL_QUADS)
-        bgl.glColor4f(1.0, 1.0, 1.0,
-                      sc.muv_texture_projection_tex_transparency)
-        for (v1, v2), (u, v) in zip(positions, tex_coords):
-            bgl.glTexCoord2f(u, v)
-            bgl.glVertex2f(v1, v2)
-        bgl.glEnd()
+        shader = gpu.shader.from_builtin('IMAGE_COLOR')
+        batch = batch_for_shader(
+            shader, 'TRI_FAN',
+            {"pos": positions, "texCoord": tex_coords},
+        )
+
+        gpu.state.blend_set('ALPHA')
+        shader.bind()
+        shader.uniform_sampler("image", gpu.texture.from_image(img))
+        shader.uniform_float("color", (1.0, 1.0, 1.0, sc.muv_texture_projection_tex_transparency))
+        batch.draw(shader)
+        del batch
 
     def invoke(self, context, _):
         if not MUV_OT_TextureProjection.is_running(context):

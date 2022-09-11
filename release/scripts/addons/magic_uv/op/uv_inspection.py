@@ -2,7 +2,7 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
+__version__ = "6.7"
 __date__ = "22 Apr 2022"
 
 import random
@@ -17,10 +17,8 @@ from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
 from ..utils import compatibility as compat
 
-if compat.check_version(2, 80, 0) >= 0:
-    from ..lib import bglx as bgl
-else:
-    import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 
 def _is_valid_context(context):
@@ -234,41 +232,40 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
             return
 
         # OpenGL configuration.
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glEnable(bgl.GL_DEPTH_TEST)
+        gpu.state.blend_set('ALPHA')
+        gpu.state.depth_test_set('LESS_EQUAL')
+
+        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
+        shader.bind()
 
         # Render faces whose UV is overlapped.
         if sc.muv_uv_inspection_show_overlapped:
-            color = prefs.uv_inspection_overlapped_color_for_v3d
+            shader.uniform_float("color", prefs.uv_inspection_overlapped_color_for_v3d)
+
             for obj, findices in props.overlapped_info_for_v3d.items():
                 world_mat = obj.matrix_world
                 bm = bmesh.from_edit_mesh(obj.data)
 
                 for fidx in findices:
-                    bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                    bgl.glColor4f(color[0], color[1], color[2], color[3])
-                    for l in bm.faces[fidx].loops:
-                        co = compat.matmul(world_mat, l.vert.co)
-                        bgl.glVertex3f(co[0], co[1], co[2])
-                    bgl.glEnd()
+                    coords = [compat.matmul(world_mat, l.vert.co) for l in bm.faces[fidx].loops]
+                    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                    batch.draw(shader)
 
         # Render faces whose UV is flipped.
         if sc.muv_uv_inspection_show_flipped:
-            color = prefs.uv_inspection_flipped_color_for_v3d
+            shader.uniform_float("color", prefs.uv_inspection_flipped_color_for_v3d)
+
             for obj, findices in props.filpped_info_for_v3d.items():
                 world_mat = obj.matrix_world
                 bm = bmesh.from_edit_mesh(obj.data)
 
                 for fidx in findices:
-                    bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                    bgl.glColor4f(color[0], color[1], color[2], color[3])
-                    for l in bm.faces[fidx].loops:
-                        co = compat.matmul(world_mat, l.vert.co)
-                        bgl.glVertex3f(co[0], co[1], co[2])
-                    bgl.glEnd()
+                    coords = [compat.matmul(world_mat, l.vert.co) for l in bm.faces[fidx].loops]
+                    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                    batch.draw(shader)
 
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
-        bgl.glDisable(bgl.GL_BLEND)
+        gpu.state.depth_test_set('NONE')
+        gpu.state.blend_set('NONE')
 
     @staticmethod
     def draw(_, context):
@@ -281,53 +278,46 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
             return
 
         # OpenGL configuration
-        bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.blend_set('ALPHA')
+
+        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
+        shader.bind()
 
         # render overlapped UV
         if sc.muv_uv_inspection_show_overlapped:
-            color = prefs.uv_inspection_overlapped_color
+            shader.uniform_float("color", prefs.uv_inspection_overlapped_color)
+
             for info in props.overlapped_info:
                 if sc.muv_uv_inspection_show_mode == 'PART':
                     for poly in info["polygons"]:
-                        bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                        bgl.glColor4f(color[0], color[1], color[2], color[3])
-                        for uv in poly:
-                            x, y = context.region.view2d.view_to_region(
-                                uv.x, uv.y, clip=False)
-                            bgl.glVertex2f(x, y)
-                        bgl.glEnd()
+                        coords = [context.region.view2d.view_to_region(uv.x, uv.y, clip=False) for uv in poly]
+                        batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                        batch.draw(shader)
+
                 elif sc.muv_uv_inspection_show_mode == 'FACE':
-                    bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                    bgl.glColor4f(color[0], color[1], color[2], color[3])
-                    for uv in info["subject_uvs"]:
-                        x, y = context.region.view2d.view_to_region(
-                            uv.x, uv.y, clip=False)
-                        bgl.glVertex2f(x, y)
-                    bgl.glEnd()
+                    coords = [
+                        context.region.view2d.view_to_region(
+                            uv.x, uv.y, clip=False) for uv in info["subject_uvs"]]
+                    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                    batch.draw(shader)
 
         # render flipped UV
         if sc.muv_uv_inspection_show_flipped:
-            color = prefs.uv_inspection_flipped_color
+            shader.uniform_float("color", prefs.uv_inspection_flipped_color)
+
             for info in props.flipped_info:
                 if sc.muv_uv_inspection_show_mode == 'PART':
                     for poly in info["polygons"]:
-                        bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                        bgl.glColor4f(color[0], color[1], color[2], color[3])
-                        for uv in poly:
-                            x, y = context.region.view2d.view_to_region(
-                                uv.x, uv.y, clip=False)
-                            bgl.glVertex2f(x, y)
-                        bgl.glEnd()
-                elif sc.muv_uv_inspection_show_mode == 'FACE':
-                    bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                    bgl.glColor4f(color[0], color[1], color[2], color[3])
-                    for uv in info["uvs"]:
-                        x, y = context.region.view2d.view_to_region(
-                            uv.x, uv.y, clip=False)
-                        bgl.glVertex2f(x, y)
-                    bgl.glEnd()
+                        coords = [context.region.view2d.view_to_region(uv.x, uv.y, clip=False) for uv in poly]
+                        batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                        batch.draw(shader)
 
-        bgl.glDisable(bgl.GL_BLEND)
+                elif sc.muv_uv_inspection_show_mode == 'FACE':
+                    coords = [context.region.view2d.view_to_region(uv.x, uv.y, clip=False) for uv in info["uvs"]]
+                    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": coords})
+                    batch.draw(shader)
+
+        gpu.state.blend_set('NONE')
 
     def invoke(self, context, _):
         if not MUV_OT_UVInspection_Render.is_running(context):
