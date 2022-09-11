@@ -32,17 +32,17 @@
 #
 0:Starting:
 45:Abkhaz (Аԥсуа бызшәа):ab
-# Explicitly forbidden! #37:Amharic (አማርኛ):am_ET
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #37:Amharic (አማርኛ):am_ET
 21:Arabic (ﺔﻴﺑﺮﻌﻟﺍ):ar_EG
-# Explicitly forbidden! #22:Bulgarian (Български):bg_BG
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #22:Bulgarian (Български):bg_BG
 10:Catalan (Català):ca_AD
-# Explicitly forbidden! #23:Greek (Ελληνικά):el_GR
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #23:Greek (Ελληνικά):el_GR
 35:Esperanto (Esperanto):eo
-# Explicitly forbidden! #36:Spanish from Spain (Español de España):es_ES
-# Explicitly forbidden! #34:Estonian (Eestlane):et_EE
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #36:Spanish from Spain (Español de España):es_ES
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #34:Estonian (Eestlane):et_EE
 42:Basque (Euskara):eu_EU
 26:Persian (ﯽﺳﺭﺎﻓ):fa_IR
-# Explicitly forbidden! #6:Finnish (Suomi):fi_FI
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #6:Finnish (Suomi):fi_FI
 43:Hausa (Hausa):ha
 33:Hebrew (תירִבְעִ):he_IL
 40:Hindi (मानक हिन्दी):hi_IN
@@ -50,16 +50,16 @@
 31:Hungarian (Magyar):hu_HU
 27:Indonesian (Bahasa indonesia):id_ID
 48:Georgian (ქართული):ka
-# Explicitly forbidden! #44:Kazakh (қазақша):kk_KZ
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #44:Kazakh (қазақша):kk_KZ
 29:Kyrgyz (Кыргыз тили):ky_KG
-# Explicitly forbidden! #25:Nepali (नेपाली):ne_NP
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #25:Nepali (नेपाली):ne_NP
 3:Dutch (Nederlandse taal):nl_NL
 19:Polish (Polski):pl_PL
-# Explicitly forbidden! #20:Romanian (Român):ro_RO
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #20:Romanian (Român):ro_RO
 17:Serbian (Српски):sr_RS
 28:Serbian Latin (Srpski latinica):sr_RS@latin
 7:Swedish (Svenska):sv_SE
 46:Thai (ภาษาไทย):th_TH
 30:Turkish (Türkçe):tr_TR
-# Explicitly forbidden! #38:Uzbek (Oʻzbek):uz_UZ
-# Explicitly forbidden! #39:Uzbek Cyrillic (Ўзбек):uz_UZ@cyrillic
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #38:Uzbek (Oʻzbek):uz_UZ
+# Skipped (see IMPORT_LANGUAGES_SKIP in settings.py). #39:Uzbek Cyrillic (Ўзбек):uz_UZ@cyrillic
