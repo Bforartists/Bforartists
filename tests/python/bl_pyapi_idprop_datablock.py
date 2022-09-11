@@ -13,6 +13,7 @@ import tempfile
 import bpy
 
 from bpy.types import UIList
+
 arr_len = 100
 ob_cp_count = 100
 
@@ -56,7 +57,6 @@ def expect_exception_or_abort(*, fn, ex):
 
 
 def expect_output_or_abort(*, fn, match_stderr=None, match_stdout=None):
-
     stdout, stderr = io.StringIO(), io.StringIO()
 
     with (contextlib.redirect_stderr(stderr), contextlib.redirect_stdout(stdout)):
@@ -95,32 +95,40 @@ def init():
 
 
 def make_lib():
-    bpy.ops.wm.read_factory_settings()
+    bpy.ops.wm.read_factory_settings(use_empty=True)
 
-    # datablock pointer to the Camera object
-    bpy.data.objects["Cube"].prop = bpy.data.objects['Camera']
+    # datablock pointer to an object
+    first_object = bpy.data.objects.new("First Object", None)
+    bpy.context.collection.objects.link(first_object)
 
-    # array of datablock pointers to the Light object
+    second_object = bpy.data.objects.new("Second Object", None)
+    bpy.context.collection.objects.link(second_object)
+
+    first_object.prop = second_object
+
+    # array of datablock pointers to an object
+    third_object = bpy.data.objects.new("Third Object", None)
+    bpy.context.collection.objects.link(third_object)
     for i in range(0, arr_len):
-        a = bpy.data.objects["Cube"].prop_array.add()
-        a.test_prop = bpy.data.objects['Light']
+        a = first_object.prop_array.add()
+        a.test_prop = third_object
         a.name = a.test_prop.name
 
-    # make unique named copy of the cube
-    ob = bpy.data.objects["Cube"].copy()
+    # make unique named copy of an object
+    ob = first_object.copy()
     bpy.context.collection.objects.link(ob)
 
-    bpy.data.objects["Cube.001"].name = "Unique_Cube"
+    ob.name = "Unique Object"
 
-    # duplicating of Cube
+    # duplicating of object
     for i in range(0, ob_cp_count):
-        ob = bpy.data.objects["Cube"].copy()
+        ob = first_object.copy()
         bpy.context.collection.objects.link(ob)
 
     # nodes
     bpy.data.scenes["Scene"].use_nodes = True
-    bpy.data.scenes["Scene"].node_tree.nodes['Render Layers']["prop"] =\
-        bpy.data.objects['Camera']
+    bpy.data.scenes["Scene"].node_tree.nodes['Render Layers']["prop"] = \
+        third_object
 
     # rename scene and save
     bpy.data.scenes["Scene"].name = "Scene_lib"
@@ -129,27 +137,27 @@ def make_lib():
 
 def check_lib():
     # check pointer
-    expect_false_or_abort(bpy.data.objects["Cube"].prop == bpy.data.objects['Camera'])
+    expect_false_or_abort(bpy.data.objects["First Object"].prop == bpy.data.objects["Second Object"])
 
     # check array of pointers in duplicated object
     for i in range(0, arr_len):
         expect_false_or_abort(
-            bpy.data.objects["Cube.001"].prop_array[i].test_prop ==
-            bpy.data.objects['Light'])
+            bpy.data.objects["First Object.001"].prop_array[i].test_prop ==
+            bpy.data.objects["Third Object"])
 
 
 def check_lib_linking():
     # open startup file
-    bpy.ops.wm.read_factory_settings()
+    bpy.ops.wm.read_factory_settings(use_empty=True)
 
     # link scene to the startup file
     with bpy.data.libraries.load(lib_path, link=True) as (data_from, data_to):
         data_to.scenes = ["Scene_lib"]
 
-    o = bpy.data.scenes["Scene_lib"].objects['Unique_Cube']
+    o = bpy.data.scenes["Scene_lib"].objects['Unique Object']
 
-    expect_false_or_abort(o.prop_array[0].test_prop == bpy.data.scenes["Scene_lib"].objects['Light'])
-    expect_false_or_abort(o.prop == bpy.data.scenes["Scene_lib"].objects['Camera'])
+    expect_false_or_abort(o.prop_array[0].test_prop == bpy.data.scenes["Scene_lib"].objects['Third Object'])
+    expect_false_or_abort(o.prop == bpy.data.scenes["Scene_lib"].objects["Second Object"])
     expect_false_or_abort(o.prop.library == o.library)
 
     bpy.ops.wm.save_as_mainfile(filepath=test_path)
@@ -169,7 +177,7 @@ def check_linked_scene_copying():
     extern_sce = get_scene("lib.blend", "Scene_lib")
 
     # check node's props
-    # must point to own scene camera
+    # must point to own node id proeprty
     expect_false_or_abort(
         intern_sce.node_tree.nodes['Render Layers']["prop"] and
         not (intern_sce.node_tree.nodes['Render Layers']["prop"] ==
@@ -191,7 +199,7 @@ def check_scene_copying():
     second_sce = get_scene(None, "Scene_lib.001")
 
     # check node's props
-    # must point to own scene camera
+    # must point to own node id property
     expect_false_or_abort(
         not (first_sce.node_tree.nodes['Render Layers']["prop"] ==
              second_sce.node_tree.nodes['Render Layers']["prop"]))
@@ -199,16 +207,18 @@ def check_scene_copying():
 
 # count users
 def test_users_counting():
-    bpy.ops.wm.read_factory_settings()
-    Light_us = bpy.data.objects["Light"].data.users
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    obj = bpy.data.objects.new("", None)
+    obj_users = obj.users
     n = 1000
+    another_obj = bpy.data.objects.new("", None)
     for i in range(0, n):
-        bpy.data.objects["Cube"]["a%s" % i] = bpy.data.objects["Light"].data
-    expect_false_or_abort(bpy.data.objects["Light"].data.users == Light_us + n)
+        another_obj["a%s" % i] = obj
+    expect_false_or_abort(obj.users == obj_users + n)
 
     for i in range(0, int(n / 2)):
-        bpy.data.objects["Cube"]["a%s" % i] = 1
-    expect_false_or_abort(bpy.data.objects["Light"].data.users == Light_us + int(n / 2))
+        another_obj["a%s" % i] = 1
+    expect_false_or_abort(obj.users == obj_users + int(n / 2))
 
 
 # linking
@@ -254,7 +264,8 @@ def test_restrictions1():
             op.str_prop = "test string"
 
             def test_fn(op):
-                op["ob"] = bpy.data.objects['Unique_Cube']
+                op["ob"] = bpy.data.objects['Unique Object']
+
             expect_exception_or_abort(
                 fn=lambda: test_fn(op),
                 ex=ImportError,
@@ -278,13 +289,13 @@ def test_restrictions1():
     bpy.types.Scene.prop2 = bpy.props.PointerProperty(type=bpy.types.NodeTree, poll=poll1)
 
     # check poll effect on UI (poll returns false => red alert)
-    bpy.context.scene.prop = bpy.data.objects["Light.001"]
-    bpy.context.scene.prop1 = bpy.data.objects["Light.001"]
+    bpy.context.scene.prop = bpy.data.objects["Third Object"]
+    bpy.context.scene.prop1 = bpy.data.objects["Third Object"]
 
     # check incorrect type assignment
     def sub_test():
         # NodeTree id_prop
-        bpy.context.scene.prop2 = bpy.data.objects["Light.001"]
+        bpy.context.scene.prop2 = bpy.data.objects["Third Object"]
 
     expect_exception_or_abort(
         fn=sub_test,
@@ -304,14 +315,14 @@ def test_restrictions1():
 # check some possible regressions
 def test_regressions():
     bpy.types.Object.prop_str = bpy.props.StringProperty(name="str")
-    bpy.data.objects["Unique_Cube"].prop_str = "test"
+    bpy.data.objects["Unique Object"].prop_str = "test"
 
     bpy.types.Object.prop_gr = bpy.props.PointerProperty(
         name="prop_gr",
         type=TestClass,
         description="test")
 
-    bpy.data.objects["Unique_Cube"].prop_gr = None
+    bpy.data.objects["Unique Object"].prop_gr = None
 
 
 # test restrictions for datablock pointers
@@ -320,6 +331,7 @@ def test_restrictions2():
         prop: bpy.props.CollectionProperty(
             name="prop_array",
             type=TestClass)
+
     bpy.utils.register_class(TestClassCollection)
 
     class TestPrefs(bpy.types.AddonPreferences):
