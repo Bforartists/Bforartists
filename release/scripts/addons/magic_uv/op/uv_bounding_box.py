@@ -2,7 +2,7 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
+__version__ = "6.7"
 __date__ = "22 Apr 2022"
 
 from enum import IntEnum
@@ -18,10 +18,8 @@ from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
 from ..utils import compatibility as compat
 
-if compat.check_version(2, 80, 0) >= 0:
-    from ..lib import bglx as bgl
-else:
-    import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 
 MAX_VALUE = 100000.0
@@ -635,28 +633,6 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
             cls.__timer = None
 
     @classmethod
-    def __draw_ctrl_point(cls, context, pos):
-        """
-        Draw control point
-        """
-        user_prefs = compat.get_user_preferences(context)
-        prefs = user_prefs.addons["magic_uv"].preferences
-        cp_size = prefs.uv_bounding_box_cp_size
-        offset = cp_size / 2
-        verts = [
-            [pos.x - offset, pos.y - offset],
-            [pos.x - offset, pos.y + offset],
-            [pos.x + offset, pos.y + offset],
-            [pos.x + offset, pos.y - offset]
-        ]
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glBegin(bgl.GL_QUADS)
-        bgl.glColor4f(1.0, 1.0, 1.0, 1.0)
-        for (x, y) in verts:
-            bgl.glVertex2f(x, y)
-        bgl.glEnd()
-
-    @classmethod
     def draw_bb(cls, _, context):
         """
         Draw bounding box
@@ -669,10 +645,22 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         if not _is_valid_context(context):
             return
 
-        for cp in props.ctrl_points:
-            cls.__draw_ctrl_point(
-                context, mathutils.Vector(
-                    context.region.view2d.view_to_region(cp.x, cp.y)))
+        user_prefs = compat.get_user_preferences(context)
+        prefs = user_prefs.addons["magic_uv"].preferences
+        cp_size = prefs.uv_bounding_box_cp_size
+
+        gpu.state.program_point_size_set(False)
+        gpu.state.point_size_set(cp_size)
+        gpu.state.blend_set('ALPHA')
+
+        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
+        shader.bind()
+        shader.uniform_float("color", (1.0, 1.0, 1.0, 1.0))
+
+        points = [mathutils.Vector(context.region.view2d.view_to_region(cp.x, cp.y)) for cp in props.ctrl_points]
+        batch = batch_for_shader(shader, 'POINTS', {"pos": points})
+        batch.draw(shader)
+        del batch
 
     def __get_uv_info(self, context):
         """
