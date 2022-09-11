@@ -6126,6 +6126,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon='TOGGLE_CYCLIC').type = 'TOGGLE'
         layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps", property="type")
         layout.operator("gpencil.stroke_flip", text="Switch Direction", icon="FLIP")
+        layout.operator("gpencil.stroke_start_set", text="Set Start Point")
 
         layout.separator()
 
@@ -6138,9 +6139,6 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
 
         layout.separator()
         layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET")
-
-        layout.separator()
-        layout.operator("gpencil.stroke_outline", text="Outline")
 
         layout.separator()
         layout.operator("gpencil.stroke_outline", text="Outline")

@@ -193,7 +193,10 @@ if(WITH_BUILDINFO)
   set(buildinfo_h_fake "${CMAKE_CURRENT_BINARY_DIR}/buildinfo.h_fake")
 
   if(EXISTS ${buildinfo_h_fake})
-    message(FATAL_ERROR "File \"${buildinfo_h_fake}\" found, this should never be created, remove!")
+    message(
+      FATAL_ERROR
+      "File \"${buildinfo_h_fake}\" found, this should never be created, remove!"
+    )
   endif()
 
   # From the CMAKE documentation "If the output of the custom command is not actually created as a
@@ -214,12 +217,14 @@ if(WITH_BUILDINFO)
     OUTPUT
       ${buildinfo_h_fake}  # ensure we always run
       ${buildinfo_h_real}
-    COMMAND ${CMAKE_COMMAND}
-    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
-    # Overrides only used when non-empty strings.
-    -DBUILD_DATE=${BUILDINFO_OVERRIDE_DATE}
-    -DBUILD_TIME=${BUILDINFO_OVERRIDE_TIME}
-    -P ${CMAKE_SOURCE_DIR}/build_files/cmake/buildinfo.cmake)
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+      # Overrides only used when non-empty strings.
+      -DBUILD_DATE=${BUILDINFO_OVERRIDE_DATE}
+      -DBUILD_TIME=${BUILDINFO_OVERRIDE_TIME}
+      -P ${CMAKE_SOURCE_DIR}/build_files/cmake/buildinfo.cmake
+    )
 
   # `buildinfo.h` is a generated file.
   set_source_files_properties(
@@ -340,11 +345,11 @@ if(UNIX AND NOT APPLE)
 elseif(WIN32)
   if(WITH_PYTHON_MODULE)
     set(TARGETDIR_BPY $<TARGET_FILE_DIR:bforartists>)
-    set(TARGETDIR_VER $<TARGET_FILE_DIR:bforartists>/${BLENDER_VERSION})
+    set(TARGETDIR_VER $<TARGET_FILE_DIR:bforartists>/${BFORARTISTS_VERSION})
     # Important the DLL's are next to `__init__.pyd` otherwise it won't load.
     set(TARGETDIR_LIB $<TARGET_FILE_DIR:bforartists>)
   else()
-    set(TARGETDIR_VER ${BLENDER_VERSION})
+    set(TARGETDIR_VER ${BFORARTISTS_VERSION})
     set(TARGETDIR_TEXT .)
     set(TARGETDIR_LIB .)
   endif()
@@ -352,17 +357,17 @@ elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
       set(TARGETDIR_BPY bpy)
-      set(TARGETDIR_VER bpy/${BLENDER_VERSION})
+      set(TARGETDIR_VER bpy/${BFORARTISTS_VERSION})
       set(TARGETDIR_LIB bpy/lib)
     else()
       # Paths defined in terms of site-packages since the site-packages
       # directory can be a symlink (brew for example).
-      set(TARGETDIR_BPY ${PYTHON_LIBPATH}/site-packages/bpy)
-      set(TARGETDIR_VER ${PYTHON_LIBPATH}/site-packages/bpy/${BLENDER_VERSION})
-      set(TARGETDIR_LIB ${PYTHON_LIBPATH}/site-packages/bpy/lib)
+      set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
+      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BFORARTISTS_VERSION})
+      set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BLENDER_VERSION})
+    set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BFORARTISTS_VERSION})
     set(TARGETDIR_LIB Bforartists.app/Contents/Resources/lib)
     set(TARGETDIR_TEXT Bforartists.app/Contents/Resources/text)
   endif()
@@ -476,8 +481,9 @@ if("${CMAKE_GENERATOR}" MATCHES ".*Makefiles.*")
   # Message to display after building.
   add_custom_command(
     TARGET bforartists POST_BUILD MAIN_DEPENDENCY bforartists
-    COMMAND ${CMAKE_COMMAND} -E
-            echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
+    COMMAND
+      ${CMAKE_COMMAND} -E
+      echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
   )
 endif()
 
@@ -491,9 +497,10 @@ if(UNIX AND NOT APPLE)
     if(WITH_DOC_MANPAGE)
       add_custom_target(
         bforartists_man_page ALL
-        COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/bforartists.1.py
-                --blender ${EXECUTABLE_OUTPUT_PATH}/bforartists
-                --output ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1
+        COMMAND
+          ${CMAKE_SOURCE_DIR}/doc/manpage/bforartists.1.py
+          --blender ${EXECUTABLE_OUTPUT_PATH}/bforartists
+          --output ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1
       )
       add_dependencies(bforartists_man_page bforartists)
     endif()
@@ -785,7 +792,11 @@ elseif(WIN32)
     string(REPLACE "cl.exe" "clang_rt.asan_dynamic-x86_64.dll" ASAN_DLL ${CMAKE_C_COMPILER})
     string(REPLACE "cl.exe" "clang_rt.asan_dbg_dynamic-x86_64.dll" ASAN_DEBUG_DLL ${CMAKE_C_COMPILER})
     if(NOT EXISTS "${ASAN_DLL}")
-      message(FATAL_ERROR "ASAN is enabled, but the ASAN runtime is not detected, this is an optional component during the MSVC install, please install it")
+      message(
+        FATAL_ERROR
+        "ASAN is enabled, but the ASAN runtime is not detected, "
+        "this is an optional component during the MSVC install, please install it"
+      )
     endif()
     install(
       FILES ${ASAN_DLL}
@@ -849,22 +860,24 @@ elseif(WIN32)
   if(WITH_PYTHON)
     string(REPLACE "." "" _PYTHON_VERSION_NO_DOTS ${PYTHON_VERSION})
 
-    if(NOT CMAKE_COMPILER_IS_GNUCC)
-      install(
-        FILES
-          ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}.dll
-          ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python3.dll
-        DESTINATION ${TARGETDIR_LIB}
-        CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
-      )
+    if(NOT WITH_PYTHON_MODULE)
+      if(NOT CMAKE_COMPILER_IS_GNUCC)
+        install(
+          FILES
+            ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}.dll
+            ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python3.dll
+          DESTINATION ${TARGETDIR_LIB}
+          CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+        )
 
-      install(
-        FILES
-          ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
-          ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python3_d.dll
-        DESTINATION ${TARGETDIR_LIB}
-        CONFIGURATIONS Debug
-      )
+        install(
+          FILES
+            ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
+            ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python3_d.dll
+          DESTINATION ${TARGETDIR_LIB}
+          CONFIGURATIONS Debug
+        )
+      endif()
     endif()
 
     if(WITH_PYTHON_INSTALL)
@@ -1035,16 +1048,19 @@ elseif(WIN32)
     )
   endif()
 
-  install(
-    FILES
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_gpu.cmd
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_gpu_glitchworkaround.cmd
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_log.cmd
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_factory_startup.cmd
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_oculus.cmd
-      ${CMAKE_SOURCE_DIR}/release/windows/batch/oculus.json
-    DESTINATION ${TARGETDIR_LIB}
-  )
+
+  if(NOT WITH_PYTHON_MODULE)
+    install(
+      FILES
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_gpu.cmd
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_gpu_glitchworkaround.cmd
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_debug_log.cmd
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_factory_startup.cmd
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/blender_oculus.cmd
+        ${CMAKE_SOURCE_DIR}/release/windows/batch/oculus.json
+      DESTINATION ${TARGETDIR_LIB}
+    )
+  endif()
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
@@ -1095,9 +1111,11 @@ elseif(APPLE)
   set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/Bforartists.app)
 
   # Setup `Info.plist`.
-  execute_process(COMMAND date "+%Y-%m-%d"
-                  OUTPUT_VARIABLE BLENDER_DATE
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(
+    COMMAND date "+%Y-%m-%d"
+    OUTPUT_VARIABLE BLENDER_DATE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
   set_target_properties(bforartists PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${OSX_APP_SOURCEDIR}/Contents/Info.plist
@@ -1106,9 +1124,11 @@ elseif(APPLE)
   )
 
   # Gather the date in finder-style.
-  execute_process(COMMAND date "+%m/%d/%Y/%H:%M"
-  OUTPUT_VARIABLE SETFILE_DATE
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(
+    COMMAND date "+%m/%d/%Y/%H:%M"
+    OUTPUT_VARIABLE SETFILE_DATE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
   # Give the bundle actual creation/modification date.
   #
@@ -1116,8 +1136,9 @@ elseif(APPLE)
   if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
     file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
   endif()
-  execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-                  ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
+  execute_process(
+    COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE} ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app
+  )
 
   install(
     TARGETS bforartists
@@ -1294,11 +1315,11 @@ if(WIN32)
     if(CMAKE_BUILD_TYPE)
       set_property(
         TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS
-        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists.pdb"
+        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists_public.pdb"
       )
     else()
       set_property(
-        TARGET blender APPEND_STRING PROPERTY LINK_FLAGS
+        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS
         " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bforartists_public.pdb"
       )
     endif()
