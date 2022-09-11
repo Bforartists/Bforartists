@@ -30,13 +30,4 @@ submodule_names = [
     "texture_paint_image_editor"
 ]
 
-
-register, _unregister = register_submodule_factory(__name__, submodule_names)
-
-
-def unregister():
-    _unregister()
-    # Based on https://devtalk.blender.org/t/plugin-hot-reload-by-cleaning-sys-modules/20040
-    for module_name in list(sys.modules.keys()):
-        if module_name.startswith(__name__):
-            del sys.modules[module_name]
+register, unregister = register_submodule_factory(__name__, submodule_names)
