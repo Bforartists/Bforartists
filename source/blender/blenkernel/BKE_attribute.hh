@@ -752,19 +752,8 @@ class CustomDataAttributes {
   bool create_by_move(const AttributeIDRef &attribute_id, eCustomDataType data_type, void *buffer);
   bool remove(const AttributeIDRef &attribute_id);
 
-  /**
-   * Change the order of the attributes to match the order of IDs in the argument.
-   */
-  void reorder(Span<AttributeIDRef> new_order);
-
   bool foreach_attribute(const AttributeForeachCallback callback, eAttrDomain domain) const;
 };
-
-AttributeAccessor mesh_attributes(const Mesh &mesh);
-MutableAttributeAccessor mesh_attributes_for_write(Mesh &mesh);
-
-AttributeAccessor pointcloud_attributes(const PointCloud &pointcloud);
-MutableAttributeAccessor pointcloud_attributes_for_write(PointCloud &pointcloud);
 
 /* -------------------------------------------------------------------- */
 /** \name #AttributeIDRef Inline Methods

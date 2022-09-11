@@ -282,7 +282,7 @@ static int geometry_attribute_convert_exec(bContext *C, wmOperator *op)
       RNA_enum_get(op->ptr, "mode"));
 
   Mesh *mesh = reinterpret_cast<Mesh *>(ob_data);
-  bke::MutableAttributeAccessor attributes = bke::mesh_attributes_for_write(*mesh);
+  bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
 
   /* General conversion steps are always the same:
    * 1. Convert old data to right domain and data type.
@@ -471,11 +471,6 @@ static int geometry_color_attribute_remove_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (GS(id->name) == ID_ME) {
-    Mesh *me = static_cast<Mesh *>(ob->data);
-    BKE_mesh_update_customdata_pointers(me, true);
-  }
-
   DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
   WM_main_add_notifier(NC_GEOM | ND_DATA, id);
 
@@ -651,8 +646,7 @@ bool ED_geometry_attribute_convert(Mesh *mesh,
     return false;
   }
 
-  blender::bke::MutableAttributeAccessor attributes = blender::bke::mesh_attributes_for_write(
-      *mesh);
+  blender::bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
 
   GVArray src_varray = attributes.lookup_or_default(name, new_domain, new_type);
 

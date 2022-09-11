@@ -152,7 +152,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      "Global bar at the bottom of the "
      "screen for general status information"},
 
-    /* Data */
+    /* Data. */
     RNA_ENUM_ITEM_HEADING(N_("Data"), NULL),
     {SPACE_TOOLBAR,
      "TOOLBAR",
@@ -4792,7 +4792,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
       prop, "Opacity", "Vertex Paint mix factor\nNot in wireframe or render shading mode");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_GPencil_update");
 
-  /* Developper Debug overlay */
+  /* Developer Debug overlay */
 
   prop = RNA_def_property(srna, "use_debug_freeze_view_culling", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "debug_flag", V3D_DEBUG_FREEZE_CULLING);

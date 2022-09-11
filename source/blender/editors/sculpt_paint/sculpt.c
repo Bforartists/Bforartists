@@ -116,7 +116,7 @@ int SCULPT_vertex_count_get(SculptSession *ss)
     case PBVH_BMESH:
       return BM_mesh_elem_count(BKE_pbvh_get_bmesh(ss->pbvh), BM_VERT);
     case PBVH_GRIDS:
-      return BKE_pbvh_get_grid_num_vertices(ss->pbvh);
+      return BKE_pbvh_get_grid_num_verts(ss->pbvh);
   }
 
   return 0;
@@ -562,7 +562,7 @@ bool SCULPT_vertex_has_face_set(SculptSession *ss, PBVHVertRef vertex, int face_
   return true;
 }
 
-void SCULPT_visibility_sync_all_face_sets_to_vertices(Object *ob)
+void SCULPT_visibility_sync_all_face_sets_to_verts(Object *ob)
 {
   SculptSession *ss = ob->sculpt;
   Mesh *mesh = BKE_object_get_original_mesh(ob);
@@ -600,10 +600,10 @@ void SCULPT_visibility_sync_all_vertex_to_face_sets(SculptSession *ss)
 {
   if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
     for (int i = 0; i < ss->totfaces; i++) {
-      MPoly *poly = &ss->mpoly[i];
+      const MPoly *poly = &ss->mpoly[i];
       bool poly_visible = true;
       for (int l = 0; l < poly->totloop; l++) {
-        MLoop *loop = &ss->mloop[poly->loopstart + l];
+        const MLoop *loop = &ss->mloop[poly->loopstart + l];
         if (!SCULPT_vertex_visible_get(ss, BKE_pbvh_make_vref(loop->v))) {
           poly_visible = false;
         }
@@ -644,9 +644,9 @@ static bool sculpt_check_unique_face_set_for_edge_in_base_mesh(SculptSession *ss
   MeshElemMap *vert_map = &ss->pmap[v1];
   int p1 = -1, p2 = -1;
   for (int i = 0; i < ss->pmap[v1].count; i++) {
-    MPoly *p = &ss->mpoly[vert_map->indices[i]];
+    const MPoly *p = &ss->mpoly[vert_map->indices[i]];
     for (int l = 0; l < p->totloop; l++) {
-      MLoop *loop = &ss->mloop[p->loopstart + l];
+      const MLoop *loop = &ss->mloop[p->loopstart + l];
       if (loop->v == v2) {
         if (p1 == -1) {
           p1 = vert_map->indices[i];
@@ -1102,7 +1102,7 @@ void SCULPT_floodfill_init(SculptSession *ss, SculptFloodFill *flood)
   SCULPT_vertex_random_access_ensure(ss);
 
   flood->queue = BLI_gsqueue_new(sizeof(intptr_t));
-  flood->visited_vertices = BLI_BITMAP_NEW(vertex_count, "visited vertices");
+  flood->visited_verts = BLI_BITMAP_NEW(vertex_count, "visited verts");
 }
 
 void SCULPT_floodfill_add_initial(SculptFloodFill *flood, PBVHVertRef vertex)
@@ -1113,7 +1113,7 @@ void SCULPT_floodfill_add_initial(SculptFloodFill *flood, PBVHVertRef vertex)
 void SCULPT_floodfill_add_and_skip_initial(SculptFloodFill *flood, PBVHVertRef vertex)
 {
   BLI_gsqueue_push(flood->queue, &vertex);
-  BLI_BITMAP_ENABLE(flood->visited_vertices, vertex.i);
+  BLI_BITMAP_ENABLE(flood->visited_verts, vertex.i);
 }
 
 void SCULPT_floodfill_add_initial_with_symmetry(Sculpt *sd,
@@ -1192,7 +1192,7 @@ void SCULPT_floodfill_execute(SculptSession *ss,
       const PBVHVertRef to_v = ni.vertex;
       int to_v_i = BKE_pbvh_vertex_to_index(ss->pbvh, to_v);
 
-      if (BLI_BITMAP_TEST(flood->visited_vertices, to_v_i)) {
+      if (BLI_BITMAP_TEST(flood->visited_verts, to_v_i)) {
         continue;
       }
 
@@ -1200,7 +1200,7 @@ void SCULPT_floodfill_execute(SculptSession *ss,
         continue;
       }
 
-      BLI_BITMAP_ENABLE(flood->visited_vertices, BKE_pbvh_vertex_to_index(ss->pbvh, to_v));
+      BLI_BITMAP_ENABLE(flood->visited_verts, BKE_pbvh_vertex_to_index(ss->pbvh, to_v));
 
       if (func(ss, from_v, to_v, ni.is_duplicate, userdata)) {
         BLI_gsqueue_push(flood->queue, &to_v);
@@ -1212,7 +1212,7 @@ void SCULPT_floodfill_execute(SculptSession *ss,
 
 void SCULPT_floodfill_free(SculptFloodFill *flood)
 {
-  MEM_SAFE_FREE(flood->visited_vertices);
+  MEM_SAFE_FREE(flood->visited_verts);
   BLI_gsqueue_free(flood->queue);
   flood->queue = NULL;
 }
@@ -3162,10 +3162,10 @@ void SCULPT_vertcos_to_key(Object *ob, KeyBlock *kb, const float (*vertCos)[3])
 
   /* Modifying of basis key should update mesh. */
   if (kb == me->key->refkey) {
-    MVert *mvert = me->mvert;
+    MVert *verts = BKE_mesh_verts_for_write(me);
 
-    for (a = 0; a < me->totvert; a++, mvert++) {
-      copy_v3_v3(mvert->co, vertCos[a]);
+    for (a = 0; a < me->totvert; a++) {
+      copy_v3_v3(verts[a].co, vertCos[a]);
     }
     BKE_mesh_tag_coords_changed(me);
   }
@@ -3589,8 +3589,9 @@ static void sculpt_flush_pbvhvert_deform(Object *ob, PBVHVertexIter *vd)
   copy_v3_v3(ss->deform_cos[index], vd->co);
   copy_v3_v3(ss->orig_cos[index], newco);
 
+  MVert *verts = BKE_mesh_verts_for_write(me);
   if (!ss->shapekey_active) {
-    copy_v3_v3(me->mvert[index].co, newco);
+    copy_v3_v3(verts[index].co, newco);
   }
 }
 
@@ -5559,7 +5560,7 @@ static int sculpt_brush_stroke_invoke(bContext *C, wmOperator *op, const wmEvent
    * to avoid falling through to the translate operator in the
    * global view3d keymap.
    *
-   * Note: BKE_object_is_visible_in_viewport is not working here (it returns false
+   * NOTE: #BKE_object_is_visible_in_viewport is not working here (it returns false
    * if the object is in local view); instead, test for OB_HIDE_VIEWPORT directly.
    */
 
@@ -5908,21 +5909,25 @@ void SCULPT_boundary_info_ensure(Object *object)
   }
 
   Mesh *base_mesh = BKE_mesh_from_object(object);
+  const MEdge *edges = BKE_mesh_edges(base_mesh);
+  const MPoly *polys = BKE_mesh_polys(base_mesh);
+  const MLoop *loops = BKE_mesh_loops(base_mesh);
+
   ss->vertex_info.boundary = BLI_BITMAP_NEW(base_mesh->totvert, "Boundary info");
   int *adjacent_faces_edge_count = MEM_calloc_arrayN(
       base_mesh->totedge, sizeof(int), "Adjacent face edge count");
 
   for (int p = 0; p < base_mesh->totpoly; p++) {
-    MPoly *poly = &base_mesh->mpoly[p];
+    const MPoly *poly = &polys[p];
     for (int l = 0; l < poly->totloop; l++) {
-      MLoop *loop = &base_mesh->mloop[l + poly->loopstart];
+      const MLoop *loop = &loops[l + poly->loopstart];
       adjacent_faces_edge_count[loop->e]++;
     }
   }
 
   for (int e = 0; e < base_mesh->totedge; e++) {
     if (adjacent_faces_edge_count[e] < 2) {
-      MEdge *edge = &base_mesh->medge[e];
+      const MEdge *edge = &edges[e];
       BLI_BITMAP_SET(ss->vertex_info.boundary, edge->v1, true);
       BLI_BITMAP_SET(ss->vertex_info.boundary, edge->v2, true);
     }
