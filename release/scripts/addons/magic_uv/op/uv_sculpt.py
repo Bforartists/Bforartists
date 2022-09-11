@@ -2,7 +2,7 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
+__version__ = "6.7"
 __date__ = "22 Apr 2022"
 
 from math import pi, cos, tan, sin
@@ -25,11 +25,8 @@ from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
 from ..utils import compatibility as compat
 
-
-if compat.check_version(2, 80, 0) >= 0:
-    from ..lib import bglx as bgl
-else:
-    import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 
 def _is_valid_context(context):
@@ -215,21 +212,26 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
         theta = 2 * pi / num_segment
         fact_t = tan(theta)
         fact_r = cos(theta)
-        color = prefs.uv_sculpt_brush_color
 
-        bgl.glBegin(bgl.GL_LINE_STRIP)
-        bgl.glColor4f(color[0], color[1], color[2], color[3])
+        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
+        shader.bind()
+        shader.uniform_float("color", prefs.uv_sculpt_brush_color)
+
         x = sc.muv_uv_sculpt_radius * cos(0.0)
         y = sc.muv_uv_sculpt_radius * sin(0.0)
+        coords = []
         for _ in range(num_segment):
-            bgl.glVertex2f(x + obj.current_mco.x, y + obj.current_mco.y)
+            coords.append([x + obj.current_mco.x, y + obj.current_mco.y])
             tx = -y
             ty = x
             x = x + tx * fact_t
             y = y + ty * fact_t
             x = x * fact_r
             y = y * fact_r
-        bgl.glEnd()
+
+        batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": coords})
+        batch.draw(shader)
+        del batch
 
     def __init__(self):
         self.__loop_info = {}       # { Object: loop_info }
