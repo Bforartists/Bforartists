@@ -26,6 +26,7 @@
 #include "BLI_math.h"
 #include "BLI_math_bits.h"
 #include "BLI_rand.h"
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 #include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
@@ -68,8 +69,6 @@
 #include "RNA_enum_types.h"
 
 #include "object_intern.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Public Object Selection API
@@ -205,7 +204,7 @@ bool ED_object_base_deselect_all(ViewLayer *view_layer, View3D *v3d, int action)
 
 static int get_base_select_priority(Base *base)
 {
-  if (base->flag & BASE_VISIBLE_DEPSGRAPH) {
+  if (base->flag & BASE_ENABLED_AND_MAYBE_VISIBLE_IN_VIEWPORT) {
     if (base->flag & BASE_SELECTABLE) {
       return 3;
     }

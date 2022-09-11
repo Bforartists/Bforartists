@@ -3,7 +3,6 @@
 # panels get subclassed (not registered directly)
 # menus are referenced `as is`
 
-import bpy
 from bpy.types import Menu, UIList
 from bpy.app.translations import contexts as i18n_contexts
 

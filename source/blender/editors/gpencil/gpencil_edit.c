@@ -3687,7 +3687,7 @@ static int gpencil_stroke_join_exec(bContext *C, wmOperator *op)
     }
     elem = &strokes_list[i];
     /* Join new_stroke and stroke B. */
-    BKE_gpencil_stroke_join(gps_new, elem->gps, leave_gaps, true, false);
+    BKE_gpencil_stroke_join(gps_new, elem->gps, leave_gaps, true, false, true);
     elem->used = true;
   }
 
@@ -4210,7 +4210,6 @@ static int gpencil_stroke_outline_exec(bContext *C, wmOperator *op)
     }
   }
 
-
   if (changed) {
     /* notifiers */
     DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
@@ -4604,7 +4603,8 @@ void GPENCIL_OT_stroke_subdivide(wmOperatorType *ot)
   ot->name = "Subdivide Stroke";
   ot->idname = "GPENCIL_OT_stroke_subdivide";
   ot->description =
-      "Subdivide between continuous selected points of the stroke adding a point half way between "
+      "Subdivide between continuous selected points of the stroke adding a point half way "
+      "between "
       "them";
 
   /* api callbacks */
