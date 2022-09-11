@@ -351,13 +351,13 @@ static float sculpt_expand_gradient_value_get(SculptSession *ss,
 static BLI_bitmap *sculpt_expand_bitmap_from_enabled(SculptSession *ss, ExpandCache *expand_cache)
 {
   const int totvert = SCULPT_vertex_count_get(ss);
-  BLI_bitmap *enabled_vertices = BLI_BITMAP_NEW(totvert, "enabled vertices");
+  BLI_bitmap *enabled_verts = BLI_BITMAP_NEW(totvert, "enabled verts");
   for (int i = 0; i < totvert; i++) {
     const bool enabled = sculpt_expand_state_get(
         ss, expand_cache, BKE_pbvh_index_to_vertex(ss->pbvh, i));
-    BLI_BITMAP_SET(enabled_vertices, i, enabled);
+    BLI_BITMAP_SET(enabled_verts, i, enabled);
   }
-  return enabled_vertices;
+  return enabled_verts;
 }
 
 /**
@@ -366,13 +366,13 @@ static BLI_bitmap *sculpt_expand_bitmap_from_enabled(SculptSession *ss, ExpandCa
  * vertex that is not enabled.
  */
 static BLI_bitmap *sculpt_expand_boundary_from_enabled(SculptSession *ss,
-                                                       const BLI_bitmap *enabled_vertices,
+                                                       const BLI_bitmap *enabled_verts,
                                                        const bool use_mesh_boundary)
 {
   const int totvert = SCULPT_vertex_count_get(ss);
-  BLI_bitmap *boundary_vertices = BLI_BITMAP_NEW(totvert, "boundary vertices");
+  BLI_bitmap *boundary_verts = BLI_BITMAP_NEW(totvert, "boundary verts");
   for (int i = 0; i < totvert; i++) {
-    if (!BLI_BITMAP_TEST(enabled_vertices, i)) {
+    if (!BLI_BITMAP_TEST(enabled_verts, i)) {
       continue;
     }
 
@@ -381,7 +381,7 @@ static BLI_bitmap *sculpt_expand_boundary_from_enabled(SculptSession *ss,
     bool is_expand_boundary = false;
     SculptVertexNeighborIter ni;
     SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-      if (!BLI_BITMAP_TEST(enabled_vertices, ni.index)) {
+      if (!BLI_BITMAP_TEST(enabled_verts, ni.index)) {
         is_expand_boundary = true;
       }
     }
@@ -391,10 +391,10 @@ static BLI_bitmap *sculpt_expand_boundary_from_enabled(SculptSession *ss,
       is_expand_boundary = true;
     }
 
-    BLI_BITMAP_SET(boundary_vertices, i, is_expand_boundary);
+    BLI_BITMAP_SET(boundary_verts, i, is_expand_boundary);
   }
 
-  return boundary_vertices;
+  return boundary_verts;
 }
 
 /* Functions implementing different algorithms for initializing falloff values. */
@@ -596,7 +596,7 @@ static float *sculpt_expand_boundary_topology_falloff_create(Object *ob, const P
   SculptSession *ss = ob->sculpt;
   const int totvert = SCULPT_vertex_count_get(ss);
   float *dists = MEM_calloc_arrayN(totvert, sizeof(float), "spherical dist");
-  BLI_bitmap *visited_vertices = BLI_BITMAP_NEW(totvert, "visited vertices");
+  BLI_bitmap *visited_verts = BLI_BITMAP_NEW(totvert, "visited verts");
   GSQueue *queue = BLI_gsqueue_new(sizeof(PBVHVertRef));
 
   /* Search and initialize a boundary per symmetry pass, then mark those vertices as visited. */
@@ -614,9 +614,9 @@ static float *sculpt_expand_boundary_topology_falloff_create(Object *ob, const P
       continue;
     }
 
-    for (int i = 0; i < boundary->num_vertices; i++) {
-      BLI_gsqueue_push(queue, &boundary->vertices[i]);
-      BLI_BITMAP_ENABLE(visited_vertices, boundary->vertices_i[i]);
+    for (int i = 0; i < boundary->verts_num; i++) {
+      BLI_gsqueue_push(queue, &boundary->verts[i]);
+      BLI_BITMAP_ENABLE(visited_verts, boundary->verts_i[i]);
     }
     SCULPT_boundary_data_free(boundary);
   }
@@ -635,18 +635,18 @@ static float *sculpt_expand_boundary_topology_falloff_create(Object *ob, const P
 
     SculptVertexNeighborIter ni;
     SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, v_next, ni) {
-      if (BLI_BITMAP_TEST(visited_vertices, ni.index)) {
+      if (BLI_BITMAP_TEST(visited_verts, ni.index)) {
         continue;
       }
       dists[ni.index] = dists[v_next_i] + 1.0f;
-      BLI_BITMAP_ENABLE(visited_vertices, ni.index);
+      BLI_BITMAP_ENABLE(visited_verts, ni.index);
       BLI_gsqueue_push(queue, &ni.vertex);
     }
     SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
   }
 
   BLI_gsqueue_free(queue);
-  MEM_freeN(visited_vertices);
+  MEM_freeN(visited_verts);
   return dists;
 }
 
@@ -669,7 +669,7 @@ static float *sculpt_expand_diagonals_falloff_create(Object *ob, const PBVHVertR
   }
 
   /* Search and mask as visited the initial vertices using the enabled symmetry passes. */
-  BLI_bitmap *visited_vertices = BLI_BITMAP_NEW(totvert, "visited vertices");
+  BLI_bitmap *visited_verts = BLI_BITMAP_NEW(totvert, "visited verts");
   GSQueue *queue = BLI_gsqueue_new(sizeof(PBVHVertRef));
   const char symm = SCULPT_mesh_symmetry_xyz_get(ob);
   for (char symm_it = 0; symm_it <= symm; symm_it++) {
@@ -682,7 +682,7 @@ static float *sculpt_expand_diagonals_falloff_create(Object *ob, const PBVHVertR
     int symm_vertex_i = BKE_pbvh_vertex_to_index(ss->pbvh, symm_vertex);
 
     BLI_gsqueue_push(queue, &symm_vertex);
-    BLI_BITMAP_ENABLE(visited_vertices, symm_vertex_i);
+    BLI_BITMAP_ENABLE(visited_verts, symm_vertex_i);
   }
 
   if (BLI_gsqueue_is_empty(queue)) {
@@ -690,7 +690,6 @@ static float *sculpt_expand_diagonals_falloff_create(Object *ob, const PBVHVertR
   }
 
   /* Propagate the falloff increasing the value by 1 each time a new vertex is visited. */
-  Mesh *mesh = ob->data;
   while (!BLI_gsqueue_is_empty(queue)) {
     PBVHVertRef v_next;
     BLI_gsqueue_pop(queue, &v_next);
@@ -698,21 +697,21 @@ static float *sculpt_expand_diagonals_falloff_create(Object *ob, const PBVHVertR
     int v_next_i = BKE_pbvh_vertex_to_index(ss->pbvh, v_next);
 
     for (int j = 0; j < ss->pmap[v_next_i].count; j++) {
-      MPoly *p = &ss->mpoly[ss->pmap[v_next_i].indices[j]];
+      const MPoly *p = &ss->mpoly[ss->pmap[v_next_i].indices[j]];
       for (int l = 0; l < p->totloop; l++) {
-        const PBVHVertRef neighbor_v = BKE_pbvh_make_vref(mesh->mloop[p->loopstart + l].v);
-        if (BLI_BITMAP_TEST(visited_vertices, neighbor_v.i)) {
+        const PBVHVertRef neighbor_v = BKE_pbvh_make_vref(ss->mloop[p->loopstart + l].v);
+        if (BLI_BITMAP_TEST(visited_verts, neighbor_v.i)) {
           continue;
         }
         dists[neighbor_v.i] = dists[v_next_i] + 1.0f;
-        BLI_BITMAP_ENABLE(visited_vertices, neighbor_v.i);
+        BLI_BITMAP_ENABLE(visited_verts, neighbor_v.i);
         BLI_gsqueue_push(queue, &neighbor_v);
       }
     }
   }
 
   BLI_gsqueue_free(queue);
-  MEM_freeN(visited_vertices);
+  MEM_freeN(visited_verts);
   return dists;
 }
 
@@ -777,11 +776,11 @@ static void sculpt_expand_grids_to_faces_falloff(SculptSession *ss,
                                                  Mesh *mesh,
                                                  ExpandCache *expand_cache)
 {
-
+  const MPoly *polys = BKE_mesh_polys(mesh);
   const CCGKey *key = BKE_pbvh_get_grid_key(ss->pbvh);
 
   for (int p = 0; p < mesh->totpoly; p++) {
-    MPoly *poly = &mesh->mpoly[p];
+    const MPoly *poly = &polys[p];
     float accum = 0.0f;
     for (int l = 0; l < poly->totloop; l++) {
       const int grid_loop_index = (poly->loopstart + l) * key->grid_area;
@@ -795,11 +794,14 @@ static void sculpt_expand_grids_to_faces_falloff(SculptSession *ss,
 
 static void sculpt_expand_vertex_to_faces_falloff(Mesh *mesh, ExpandCache *expand_cache)
 {
+  const MPoly *polys = BKE_mesh_polys(mesh);
+  const MLoop *loops = BKE_mesh_loops(mesh);
+
   for (int p = 0; p < mesh->totpoly; p++) {
-    MPoly *poly = &mesh->mpoly[p];
+    const MPoly *poly = &polys[p];
     float accum = 0.0f;
     for (int l = 0; l < poly->totloop; l++) {
-      MLoop *loop = &mesh->mloop[l + poly->loopstart];
+      const MLoop *loop = &loops[l + poly->loopstart];
       accum += expand_cache->vert_falloff[loop->v];
     }
     expand_cache->face_falloff[p] = accum / poly->totloop;
@@ -840,27 +842,27 @@ static void sculpt_expand_mesh_face_falloff_from_vertex_falloff(SculptSession *s
  */
 static void sculpt_expand_geodesics_from_state_boundary(Object *ob,
                                                         ExpandCache *expand_cache,
-                                                        BLI_bitmap *enabled_vertices)
+                                                        BLI_bitmap *enabled_verts)
 {
   SculptSession *ss = ob->sculpt;
   BLI_assert(BKE_pbvh_type(ss->pbvh) == PBVH_FACES);
 
-  GSet *initial_vertices = BLI_gset_int_new("initial_vertices");
-  BLI_bitmap *boundary_vertices = sculpt_expand_boundary_from_enabled(ss, enabled_vertices, false);
+  GSet *initial_verts = BLI_gset_int_new("initial_verts");
+  BLI_bitmap *boundary_verts = sculpt_expand_boundary_from_enabled(ss, enabled_verts, false);
   const int totvert = SCULPT_vertex_count_get(ss);
   for (int i = 0; i < totvert; i++) {
-    if (!BLI_BITMAP_TEST(boundary_vertices, i)) {
+    if (!BLI_BITMAP_TEST(boundary_verts, i)) {
       continue;
     }
-    BLI_gset_add(initial_vertices, POINTER_FROM_INT(i));
+    BLI_gset_add(initial_verts, POINTER_FROM_INT(i));
   }
-  MEM_freeN(boundary_vertices);
+  MEM_freeN(boundary_verts);
 
   MEM_SAFE_FREE(expand_cache->vert_falloff);
   MEM_SAFE_FREE(expand_cache->face_falloff);
 
-  expand_cache->vert_falloff = SCULPT_geodesic_distances_create(ob, initial_vertices, FLT_MAX);
-  BLI_gset_free(initial_vertices, NULL);
+  expand_cache->vert_falloff = SCULPT_geodesic_distances_create(ob, initial_verts, FLT_MAX);
+  BLI_gset_free(initial_verts, NULL);
 }
 
 /**
@@ -869,7 +871,7 @@ static void sculpt_expand_geodesics_from_state_boundary(Object *ob,
  */
 static void sculpt_expand_topology_from_state_boundary(Object *ob,
                                                        ExpandCache *expand_cache,
-                                                       BLI_bitmap *enabled_vertices)
+                                                       BLI_bitmap *enabled_verts)
 {
   MEM_SAFE_FREE(expand_cache->vert_falloff);
   MEM_SAFE_FREE(expand_cache->face_falloff);
@@ -878,19 +880,19 @@ static void sculpt_expand_topology_from_state_boundary(Object *ob,
   const int totvert = SCULPT_vertex_count_get(ss);
 
   float *dists = MEM_calloc_arrayN(totvert, sizeof(float), "topology dist");
-  BLI_bitmap *boundary_vertices = sculpt_expand_boundary_from_enabled(ss, enabled_vertices, false);
+  BLI_bitmap *boundary_verts = sculpt_expand_boundary_from_enabled(ss, enabled_verts, false);
 
   SculptFloodFill flood;
   SCULPT_floodfill_init(ss, &flood);
   for (int i = 0; i < totvert; i++) {
-    if (!BLI_BITMAP_TEST(boundary_vertices, i)) {
+    if (!BLI_BITMAP_TEST(boundary_verts, i)) {
       continue;
     }
 
     PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
     SCULPT_floodfill_add_and_skip_initial(&flood, vertex);
   }
-  MEM_freeN(boundary_vertices);
+  MEM_freeN(boundary_verts);
 
   ExpandFloodFillData fdata;
   fdata.dists = dists;
@@ -912,7 +914,7 @@ static void sculpt_expand_resursion_step_add(Object *ob,
     return;
   }
 
-  BLI_bitmap *enabled_vertices = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
+  BLI_bitmap *enabled_verts = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
 
   /* Each time a new recursion step is created, reset the distortion strength. This is the expected
    * result from the recursion, as otherwise the new falloff will render with undesired distortion
@@ -921,10 +923,10 @@ static void sculpt_expand_resursion_step_add(Object *ob,
 
   switch (recursion_type) {
     case SCULPT_EXPAND_RECURSION_GEODESICS:
-      sculpt_expand_geodesics_from_state_boundary(ob, expand_cache, enabled_vertices);
+      sculpt_expand_geodesics_from_state_boundary(ob, expand_cache, enabled_verts);
       break;
     case SCULPT_EXPAND_RECURSION_TOPOLOGY:
-      sculpt_expand_topology_from_state_boundary(ob, expand_cache, enabled_vertices);
+      sculpt_expand_topology_from_state_boundary(ob, expand_cache, enabled_verts);
       break;
   }
 
@@ -934,7 +936,7 @@ static void sculpt_expand_resursion_step_add(Object *ob,
     sculpt_expand_update_max_face_falloff_factor(ss, expand_cache);
   }
 
-  MEM_freeN(enabled_vertices);
+  MEM_freeN(enabled_verts);
 }
 
 /* Face Set Boundary falloff. */
@@ -951,7 +953,7 @@ static void sculpt_expand_initialize_from_face_set_boundary(Object *ob,
   SculptSession *ss = ob->sculpt;
   const int totvert = SCULPT_vertex_count_get(ss);
 
-  BLI_bitmap *enabled_vertices = BLI_BITMAP_NEW(totvert, "enabled vertices");
+  BLI_bitmap *enabled_verts = BLI_BITMAP_NEW(totvert, "enabled verts");
   for (int i = 0; i < totvert; i++) {
     PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
 
@@ -961,17 +963,17 @@ static void sculpt_expand_initialize_from_face_set_boundary(Object *ob,
     if (!SCULPT_vertex_has_face_set(ss, vertex, active_face_set)) {
       continue;
     }
-    BLI_BITMAP_ENABLE(enabled_vertices, i);
+    BLI_BITMAP_ENABLE(enabled_verts, i);
   }
 
   if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
-    sculpt_expand_geodesics_from_state_boundary(ob, expand_cache, enabled_vertices);
+    sculpt_expand_geodesics_from_state_boundary(ob, expand_cache, enabled_verts);
   }
   else {
-    sculpt_expand_topology_from_state_boundary(ob, expand_cache, enabled_vertices);
+    sculpt_expand_topology_from_state_boundary(ob, expand_cache, enabled_verts);
   }
 
-  MEM_freeN(enabled_vertices);
+  MEM_freeN(enabled_verts);
 
   if (internal_falloff) {
     for (int i = 0; i < totvert; i++) {
@@ -1084,7 +1086,7 @@ static void sculpt_expand_snap_initialize_from_enabled(SculptSession *ss,
   expand_cache->snap = false;
   expand_cache->invert = false;
 
-  BLI_bitmap *enabled_vertices = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
+  BLI_bitmap *enabled_verts = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
 
   const int totface = ss->totfaces;
   for (int i = 0; i < totface; i++) {
@@ -1093,11 +1095,11 @@ static void sculpt_expand_snap_initialize_from_enabled(SculptSession *ss,
   }
 
   for (int p = 0; p < totface; p++) {
-    MPoly *poly = &ss->mpoly[p];
+    const MPoly *poly = &ss->mpoly[p];
     bool any_disabled = false;
     for (int l = 0; l < poly->totloop; l++) {
-      MLoop *loop = &ss->mloop[l + poly->loopstart];
-      if (!BLI_BITMAP_TEST(enabled_vertices, loop->v)) {
+      const MLoop *loop = &ss->mloop[l + poly->loopstart];
+      if (!BLI_BITMAP_TEST(enabled_verts, loop->v)) {
         any_disabled = true;
         break;
       }
@@ -1108,7 +1110,7 @@ static void sculpt_expand_snap_initialize_from_enabled(SculptSession *ss,
     }
   }
 
-  MEM_freeN(enabled_vertices);
+  MEM_freeN(enabled_verts);
   expand_cache->snap = prev_snap_state;
   expand_cache->invert = prev_invert_state;
 }
@@ -1512,7 +1514,7 @@ static void sculpt_expand_reposition_pivot(bContext *C, Object *ob, ExpandCache 
 
   const bool initial_invert_state = expand_cache->invert;
   expand_cache->invert = false;
-  BLI_bitmap *enabled_vertices = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
+  BLI_bitmap *enabled_verts = sculpt_expand_bitmap_from_enabled(ss, expand_cache);
 
   /* For boundary topology, position the pivot using only the boundary of the enabled vertices,
    * without taking mesh boundary into account. This allows to create deformations like bending the
@@ -1520,8 +1522,8 @@ static void sculpt_expand_reposition_pivot(bContext *C, Object *ob, ExpandCache 
   const float use_mesh_boundary = expand_cache->falloff_type !=
                                   SCULPT_EXPAND_FALLOFF_BOUNDARY_TOPOLOGY;
 
-  BLI_bitmap *boundary_vertices = sculpt_expand_boundary_from_enabled(
-      ss, enabled_vertices, use_mesh_boundary);
+  BLI_bitmap *boundary_verts = sculpt_expand_boundary_from_enabled(
+      ss, enabled_verts, use_mesh_boundary);
 
   /* Ignore invert state, as this is the expected behavior in most cases and mask are created in
    * inverted state by default. */
@@ -1535,7 +1537,7 @@ static void sculpt_expand_reposition_pivot(bContext *C, Object *ob, ExpandCache 
   for (int i = 0; i < totvert; i++) {
     PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ss->pbvh, i);
 
-    if (!BLI_BITMAP_TEST(boundary_vertices, i)) {
+    if (!BLI_BITMAP_TEST(boundary_verts, i)) {
       continue;
     }
 
@@ -1553,8 +1555,8 @@ static void sculpt_expand_reposition_pivot(bContext *C, Object *ob, ExpandCache 
     total++;
   }
 
-  MEM_freeN(enabled_vertices);
-  MEM_freeN(boundary_vertices);
+  MEM_freeN(enabled_verts);
+  MEM_freeN(boundary_verts);
 
   if (total > 0) {
     mul_v3_v3fl(ss->pivot_pos, avg, 1.0f / total);
@@ -1938,6 +1940,8 @@ static void sculpt_expand_delete_face_set_id(int *r_face_sets,
 {
   const int totface = ss->totfaces;
   MeshElemMap *pmap = ss->pmap;
+  const MPoly *polys = BKE_mesh_polys(mesh);
+  const MLoop *loops = BKE_mesh_loops(mesh);
 
   /* Check that all the face sets IDs in the mesh are not equal to `delete_id`
    * before attempting to delete it. */
@@ -1972,9 +1976,9 @@ static void sculpt_expand_delete_face_set_id(int *r_face_sets,
     while (BLI_LINKSTACK_SIZE(queue)) {
       const int f_index = POINTER_AS_INT(BLI_LINKSTACK_POP(queue));
       int other_id = delete_id;
-      const MPoly *c_poly = &mesh->mpoly[f_index];
+      const MPoly *c_poly = &polys[f_index];
       for (int l = 0; l < c_poly->totloop; l++) {
-        const MLoop *c_loop = &mesh->mloop[c_poly->loopstart + l];
+        const MLoop *c_loop = &loops[c_poly->loopstart + l];
         const MeshElemMap *vert_map = &pmap[c_loop->v];
         for (int i = 0; i < vert_map->count; i++) {
 

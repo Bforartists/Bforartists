@@ -634,6 +634,7 @@ class DATA_PT_mesh_attributes(MeshButtonsPanel, Panel):
 
         layout.label(text=tip_("Name collisions: ") + ", ".join(set(colliding_names)), icon='ERROR')
 
+
 class ColorAttributesListBase():
     display_domain_names = {
         'POINT': "Vertex",

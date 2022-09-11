@@ -92,7 +92,6 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
         if is_curve:
             col.prop(curve, "twist_mode")
             col.prop(curve, "twist_smooth", text="Smooth")
-
         elif is_text:
             row = layout.row()
             row.use_property_split = False
@@ -101,7 +100,6 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
 
         if is_curve or is_text:
             col = layout.column()
-
             col.separator()
 
             sub = col.column()
@@ -109,7 +107,6 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             sub.prop(curve, "fill_mode")
 
         if is_curve:
-
             col.label(text = "Curve Deform")
 
             col.use_property_split = False

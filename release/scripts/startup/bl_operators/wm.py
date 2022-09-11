@@ -1077,7 +1077,7 @@ class WM_OT_url_open_preset(Operator):
           tip_("The API reference manual for this version of Blender")),
          _url_from_api),
 
-# BFA - we are not the Blender money collectors. Turned off the usual links.
+# BFA - disable blender funding links for now (TODO keep them + our own links?)
         # Static URL's.
         #(('FUND', "Development Fund",
         #  "The donation program to support maintenance and improvements"),
@@ -3114,6 +3114,7 @@ class WM_MT_splash(Menu):
 
         layout.separator()
 
+	# TODO(iyad): get versions dynamically
         layout.label(text = "Bforartists 3.2.2 is based on Blender 3.4.0 Alpha")
 
         layout.separator()

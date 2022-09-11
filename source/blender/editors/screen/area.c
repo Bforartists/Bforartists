@@ -83,7 +83,7 @@ static void region_draw_emboss(const ARegion *region, const rcti *scirct, int si
 
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor4fv(color);
 
   immBeginAtMost(GPU_PRIM_LINES, 8);
@@ -238,8 +238,6 @@ static void draw_azone_arrow(float x1, float y1, float x2, float y2, AZEdge edge
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
   GPU_blend(GPU_BLEND_ALPHA);
-  /* NOTE(fclem): There is something strange going on with Mesa and GPU_SHADER_2D_UNIFORM_COLOR
-   * that causes a crash on some GPUs (see T76113). Using 3D variant avoid the issue. */
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor4f(0.8f, 0.8f, 0.8f, 0.4f);
 
@@ -563,7 +561,7 @@ void ED_region_do_draw(bContext *C, ARegion *region)
     GPU_blend(GPU_BLEND_ALPHA);
     GPUVertFormat *format = immVertexFormat();
     uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-    immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     immUniformColor4f(BLI_thread_frand(0), BLI_thread_frand(0), BLI_thread_frand(0), 0.1f);
     immRectf(pos,
              region->drawrct.xmin - region->winrct.xmin,
@@ -593,7 +591,7 @@ void ED_region_do_draw(bContext *C, ARegion *region)
       UI_GetThemeColor3fv(TH_EDITOR_OUTLINE, color);
       GPUVertFormat *format = immVertexFormat();
       uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-      immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+      immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
       immUniformColor4fv(color);
       GPU_line_width(1.0f);
       imm_draw_box_wire_2d(pos,
@@ -2868,9 +2866,9 @@ static bool panel_add_check(const bContext *C,
   return true;
 }
 
+/* bfa - readd tabs to tools area */
 static bool region_uses_category_tabs(const ScrArea *UNUSED(area), const ARegion *region)
 {
-  /* bfa - readd tabs to tools area */
   return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK);
 }
 
@@ -2905,8 +2903,10 @@ static int panel_draw_width_from_max_width_get(const ARegion *region,
   /* bfa - With a background, we want some extra padding.
   But not for our no header panel in the tool shelves. So if - else. See #2731*/
   if (region->regiontype == RGN_TYPE_TOOLS) {
-    /*our tool shelf, no extra padding*/
-    return UI_panel_should_show_background(region, panel_type) ? max_width : max_width;
+    /*our tool shelf, fix cutoff panel*/
+    return UI_panel_should_show_background(region, panel_type) ?
+               max_width - UI_PANEL_MARGIN_X * 2.0f :
+               max_width;
   }
   else {
     /* With a background, we want some extra padding*/
@@ -3565,7 +3565,7 @@ void ED_region_info_draw_multiline(ARegion *region,
   GPU_blend(GPU_BLEND_ALPHA);
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor4fv(fill_color);
   immRecti(pos, rect.xmin, rect.ymin, rect.xmax + 1, rect.ymax + 1);
   immUnbindProgram();
@@ -3636,7 +3636,7 @@ void ED_region_grid_draw(ARegion *region, float zoomx, float zoomy, float x0, fl
   float gridcolor[4];
   UI_GetThemeColor4fv(TH_GRID, gridcolor);
 
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   /* To fake alpha-blending, color shading is reduced when alpha is nearing 0. */
   immUniformThemeColorBlendShade(TH_BACK, TH_GRID, gridcolor[3], 20 * gridcolor[3]);
   immRectf(pos, x1, y1, x2, y2);
@@ -3673,7 +3673,7 @@ void ED_region_grid_draw(ARegion *region, float zoomx, float zoomy, float x0, fl
     pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
     uint color = GPU_vertformat_attr_add(format, "color", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
 
-    immBindBuiltinProgram(GPU_SHADER_2D_FLAT_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_FLAT_COLOR);
     immBegin(GPU_PRIM_LINES, 4 * count_fine + 4 * count_large);
 
     float theme_color[3];
@@ -3786,7 +3786,7 @@ void ED_region_cache_draw_background(ARegion *region)
 
   uint pos = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor4ub(128, 128, 255, 64);
   immRecti(pos, 0, region_bottom, region->winx, region_bottom + 8 * UI_DPI_FAC);
   immUnbindProgram();
@@ -3807,7 +3807,7 @@ void ED_region_cache_draw_curfra_label(const int framenr, const float x, const f
 
   uint pos = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColor(TH_CFRAME);
   immRecti(pos, x, y, x + font_dims[0] + 6.0f, y + font_dims[1] + 4.0f);
   immUnbindProgram();
@@ -3827,7 +3827,7 @@ void ED_region_cache_draw_cached_segments(
 
     uint pos = GPU_vertformat_attr_add(
         immVertexFormat(), "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
-    immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     immUniformColor4ub(128, 128, 255, 128);
 
     for (int a = 0; a < num_segments; a++) {

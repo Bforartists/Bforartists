@@ -64,6 +64,9 @@
 
 #include "bmesh.h"
 
+using blender::MutableSpan;
+using blender::Span;
+
 static void palette_init_data(ID *id)
 {
   Palette *palette = (Palette *)id;
@@ -136,7 +139,7 @@ IDTypeInfo IDType_ID_PAL = {
     /* foreach_id */ nullptr,
     /* foreach_cache */ nullptr,
     /* foreach_path */ nullptr,
-    /* owner_get */ nullptr,
+    /* owner_pointer_get */ nullptr,
 
     /* blend_write */ palette_blend_write,
     /* blend_read_data */ palette_blend_read_data,
@@ -204,7 +207,7 @@ IDTypeInfo IDType_ID_PC = {
     /* foreach_id */ nullptr,
     /* foreach_cache */ nullptr,
     /* foreach_path */ nullptr,
-    /* owner_get */ nullptr,
+    /* owner_pointer_get */ nullptr,
 
     /* blend_write */ paint_curve_blend_write,
     /* blend_read_data */ paint_curve_blend_read_data,
@@ -1508,7 +1511,7 @@ void BKE_sculptsession_free(Object *ob)
     }
 
     if (ss->boundary_preview) {
-      MEM_SAFE_FREE(ss->boundary_preview->vertices);
+      MEM_SAFE_FREE(ss->boundary_preview->verts);
       MEM_SAFE_FREE(ss->boundary_preview->edges);
       MEM_SAFE_FREE(ss->boundary_preview->distance);
       MEM_SAFE_FREE(ss->boundary_preview->edit_info);
@@ -1624,7 +1627,7 @@ static void sculpt_update_object(Depsgraph *depsgraph,
   Scene *scene = DEG_get_input_scene(depsgraph);
   Sculpt *sd = scene->toolsettings->sculpt;
   SculptSession *ss = ob->sculpt;
-  const Mesh *me = BKE_object_get_original_mesh(ob);
+  Mesh *me = BKE_object_get_original_mesh(ob);
   Mesh *me_eval = BKE_object_get_evaluated_mesh(ob_eval);
   MultiresModifierData *mmd = BKE_sculpt_multires_active(scene, ob);
   const bool use_face_sets = (ob->mode & OB_MODE_SCULPT) != 0;
@@ -1664,17 +1667,17 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
     /* These are assigned to the base mesh in Multires. This is needed because Face Sets operators
      * and tools use the Face Sets data from the base mesh when Multires is active. */
-    ss->mvert = me->mvert;
-    ss->mpoly = me->mpoly;
-    ss->mloop = me->mloop;
+    ss->mvert = BKE_mesh_verts_for_write(me);
+    ss->mpoly = BKE_mesh_polys(me);
+    ss->mloop = BKE_mesh_loops(me);
   }
   else {
     ss->totvert = me->totvert;
     ss->totpoly = me->totpoly;
     ss->totfaces = me->totpoly;
-    ss->mvert = me->mvert;
-    ss->mpoly = me->mpoly;
-    ss->mloop = me->mloop;
+    ss->mvert = BKE_mesh_verts_for_write(me);
+    ss->mpoly = BKE_mesh_polys(me);
+    ss->mloop = BKE_mesh_loops(me);
     ss->multires.active = false;
     ss->multires.modifier = nullptr;
     ss->multires.level = 0;
@@ -1724,8 +1727,13 @@ static void sculpt_update_object(Depsgraph *depsgraph,
   BKE_pbvh_face_sets_color_set(ss->pbvh, me->face_sets_color_seed, me->face_sets_color_default);
 
   if (need_pmap && ob->type == OB_MESH && !ss->pmap) {
-    BKE_mesh_vert_poly_map_create(
-        &ss->pmap, &ss->pmap_mem, me->mpoly, me->mloop, me->totvert, me->totpoly, me->totloop);
+    BKE_mesh_vert_poly_map_create(&ss->pmap,
+                                  &ss->pmap_mem,
+                                  BKE_mesh_polys(me),
+                                  BKE_mesh_loops(me),
+                                  me->totvert,
+                                  me->totpoly,
+                                  me->totloop);
 
     if (ss->pbvh) {
       BKE_pbvh_pmap_set(ss->pbvh, ss->pmap);
@@ -1736,26 +1744,30 @@ static void sculpt_update_object(Depsgraph *depsgraph,
   pbvh_show_face_sets_set(ss->pbvh, ss->show_face_sets);
 
   if (ss->deform_modifiers_active) {
-    /* Painting doesn't need crazyspace, use already evaluated mesh coordinates. */
+    /* Painting doesn't need crazyspace, use already evaluated mesh coordinates if possible. */
+    bool used_me_eval = false;
+
     if (ob->mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
       Mesh *me_eval_deform = ob_eval->runtime.mesh_deform_eval;
 
       /* If the fully evaluated mesh has the same topology as the deform-only version, use it.
-       * This matters because 'deform eval' is very restrictive and excludes even modifiers that
-       * simply recompute vertex weights. */
-      if (me_eval_deform->mpoly == me_eval->mpoly && me_eval_deform->mloop == me_eval->mloop &&
+       * This matters because crazyspace evaluation is very restrictive and excludes even modifiers
+       * that simply recompute vertex weights (which can even include Geometry Nodes). */
+      if (me_eval_deform->polys().data() == me_eval->polys().data() &&
+          me_eval_deform->loops().data() == me_eval->loops().data() &&
           me_eval_deform->totvert == me_eval->totvert) {
-        me_eval_deform = me_eval;
+        BKE_sculptsession_free_deformMats(ss);
+
+        BLI_assert(me_eval_deform->totvert == me->totvert);
+
+        ss->deform_cos = BKE_mesh_vert_coords_alloc(me_eval, NULL);
+        BKE_pbvh_vert_coords_apply(ss->pbvh, ss->deform_cos, me->totvert);
+
+        used_me_eval = true;
       }
-
-      BKE_sculptsession_free_deformMats(ss);
-
-      BLI_assert(me_eval_deform->totvert == me->totvert);
-
-      ss->deform_cos = BKE_mesh_vert_coords_alloc(me_eval_deform, NULL);
-      BKE_pbvh_vert_coords_apply(ss->pbvh, ss->deform_cos, me->totvert);
     }
-    else if (!ss->orig_cos) {
+
+    if (!ss->orig_cos && !used_me_eval) {
       int a;
 
       BKE_sculptsession_free_deformMats(ss);
@@ -1917,11 +1929,11 @@ void BKE_sculpt_color_layer_create_if_needed(Object *object)
     return;
   }
 
-  CustomData_add_layer(&orig_me->vdata, CD_PROP_COLOR, CD_CONSTRUCT, nullptr, orig_me->totvert);
+  CustomData_add_layer(&orig_me->vdata, CD_PROP_COLOR, CD_SET_DEFAULT, nullptr, orig_me->totvert);
   CustomDataLayer *layer = orig_me->vdata.layers +
                            CustomData_get_layer_index(&orig_me->vdata, CD_PROP_COLOR);
 
-  BKE_mesh_update_customdata_pointers(orig_me, true);
+  BKE_mesh_tessface_clear(orig_me);
 
   BKE_id_attributes_active_color_set(&orig_me->id, layer);
   DEG_id_tag_update(&orig_me->id, ID_RECALC_GEOMETRY_ALL_MODES);
@@ -1944,6 +1956,8 @@ void BKE_sculpt_update_object_for_edit(
 int BKE_sculpt_mask_layers_ensure(Object *ob, MultiresModifierData *mmd)
 {
   Mesh *me = static_cast<Mesh *>(ob->data);
+  const Span<MPoly> polys = me->polys();
+  const Span<MLoop> loops = me->loops();
   int ret = 0;
 
   const float *paint_mask = static_cast<const float *>(
@@ -1972,12 +1986,12 @@ int BKE_sculpt_mask_layers_ensure(Object *ob, MultiresModifierData *mmd)
     /* if vertices already have mask, copy into multires data */
     if (paint_mask) {
       for (i = 0; i < me->totpoly; i++) {
-        const MPoly *p = &me->mpoly[i];
+        const MPoly *p = &polys[i];
         float avg = 0;
 
         /* mask center */
         for (j = 0; j < p->totloop; j++) {
-          const MLoop *l = &me->mloop[p->loopstart + j];
+          const MLoop *l = &loops[p->loopstart + j];
           avg += paint_mask[l->v];
         }
         avg /= (float)p->totloop;
@@ -1985,9 +1999,9 @@ int BKE_sculpt_mask_layers_ensure(Object *ob, MultiresModifierData *mmd)
         /* fill in multires mask corner */
         for (j = 0; j < p->totloop; j++) {
           GridPaintMask *gpm = &gmask[p->loopstart + j];
-          const MLoop *l = &me->mloop[p->loopstart + j];
-          const MLoop *prev = ME_POLY_LOOP_PREV(me->mloop, p, j);
-          const MLoop *next = ME_POLY_LOOP_NEXT(me->mloop, p, j);
+          const MLoop *l = &loops[p->loopstart + j];
+          const MLoop *prev = ME_POLY_LOOP_PREV(loops, p, j);
+          const MLoop *next = ME_POLY_LOOP_NEXT(loops, p, j);
 
           gpm->data[0] = avg;
           gpm->data[1] = (paint_mask[l->v] + paint_mask[next->v]) * 0.5f;
@@ -2120,7 +2134,7 @@ void BKE_sculpt_sync_face_sets_visibility_to_base_mesh(Mesh *mesh)
     return;
   }
 
-  MutableAttributeAccessor attributes = mesh_attributes_for_write(*mesh);
+  MutableAttributeAccessor attributes = mesh->attributes_for_write();
   SpanAttributeWriter<bool> hide_poly = attributes.lookup_or_add_for_write_only_span<bool>(
       ".hide_poly", ATTR_DOMAIN_FACE);
   if (!hide_poly) {
@@ -2234,18 +2248,23 @@ static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform, bool
   PBVH *pbvh = BKE_pbvh_new();
   BKE_pbvh_respect_hide_set(pbvh, respect_hide);
 
+  MutableSpan<MVert> verts = me->verts_for_write();
+  const Span<MPoly> polys = me->polys();
+  const Span<MLoop> loops = me->loops();
+
   MLoopTri *looptri = static_cast<MLoopTri *>(
       MEM_malloc_arrayN(looptris_num, sizeof(*looptri), __func__));
 
-  BKE_mesh_recalc_looptri(me->mloop, me->mpoly, me->mvert, me->totloop, me->totpoly, looptri);
+  BKE_mesh_recalc_looptri(
+      loops.data(), polys.data(), verts.data(), me->totloop, me->totpoly, looptri);
 
   BKE_sculpt_sync_face_set_visibility(me, nullptr);
 
   BKE_pbvh_build_mesh(pbvh,
                       me,
-                      me->mpoly,
-                      me->mloop,
-                      me->mvert,
+                      polys.data(),
+                      loops.data(),
+                      verts.data(),
                       me->totvert,
                       &me->vdata,
                       &me->ldata,
