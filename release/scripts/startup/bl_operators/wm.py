@@ -108,7 +108,7 @@ rna_relative_prop = BoolProperty(
 rna_space_type_prop = EnumProperty(
     name="Type",
     items=tuple(
-        (e.identifier, e.name, "", e. value)
+        (e.identifier, e.name, "", e.value)
         for e in bpy.types.Space.bl_rna.properties["type"].enum_items
     ),
     default='EMPTY',
@@ -178,10 +178,10 @@ def context_path_decompose(data_path):
         prop_item = "".join(path_split[i + 1:])
 
         if base_path:
-            assert(base_path.startswith("."))
+            assert (base_path.startswith("."))
             base_path = base_path[1:]
         if prop_attr:
-            assert(prop_attr.startswith("."))
+            assert (prop_attr.startswith("."))
             prop_attr = prop_attr[1:]
     else:
         # If there are no properties, everything is an item.
@@ -552,7 +552,7 @@ class WM_OT_context_toggle_enum(Operator):
 
 class WM_OT_context_cycle_int(Operator):
     """Set a context value (useful for cycling active material, """ \
-        """vertex keys, groups, etc.)"""
+    """vertex keys, groups, etc.)"""
     bl_idname = "wm.context_cycle_int"
     bl_label = "Context Int Cycle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -642,7 +642,7 @@ class WM_OT_context_cycle_enum(Operator):
 
 class WM_OT_context_cycle_array(Operator):
     """Set a context array value """ \
-        """(useful for cycling the active mesh edit mode)"""
+    """(useful for cycling the active mesh edit mode)"""
     bl_idname = "wm.context_cycle_array"
     bl_label = "Context Array Cycle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -969,7 +969,7 @@ class WM_OT_context_modal_mouse(Operator):
             header_text = self.header_text
             if header_text:
                 if len(self._values) == 1:
-                    (item, ) = self._values.keys()
+                    (item,) = self._values.keys()
                     header_text = header_text % eval("item.%s" % self.data_path_item)
                 else:
                     header_text = (self.header_text % delta) + " (delta)"
@@ -1077,15 +1077,15 @@ class WM_OT_url_open_preset(Operator):
           tip_("The API reference manual for this version of Blender")),
          _url_from_api),
 
-# BFA - disable blender funding links for now (TODO keep them + our own links?)
+        # BFA - disable blender funding links
         # Static URL's.
-        #(('FUND', "Development Fund",
+        # (('FUND', "Development Fund",
         #  "The donation program to support maintenance and improvements"),
         # "https://fund.blender.org"),
-        #(('BLENDER', "blender.org",
+        # (('BLENDER', "blender.org",
         #  "Blender's official web-site"),
         # "https://www.blender.org"),
-        #(('CREDITS', "Credits",
+        # (('CREDITS', "Credits",
         #  "Lists committers to Blender's source code"),
         # "https://www.blender.org/about/credits/"),
     ]
@@ -1150,7 +1150,6 @@ class WM_OT_path_open(Operator):
 
 
 def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
-
     def operator_exists_pair(a, b):
         # Not fast, this is only for docs.
         return b in dir(getattr(bpy.ops, a))
@@ -1175,8 +1174,8 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
         if operator_exists_pair(class_name, class_prop):
             if do_url:
                 url = (
-                    "%s/bpy.ops.%s.html#bpy.ops.%s.%s" %
-                    (url_prefix, class_name, class_name, class_prop)
+                        "%s/bpy.ops.%s.html#bpy.ops.%s.%s" %
+                        (url_prefix, class_name, class_name, class_prop)
                 )
             else:
                 rna = "bpy.ops.%s.%s" % (class_name, class_prop)
@@ -1186,8 +1185,8 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
             class_name = class_name.lower()
             if do_url:
                 url = (
-                    "%s/bpy.ops.%s.html#bpy.ops.%s.%s" %
-                    (url_prefix, class_name, class_name, class_prop)
+                        "%s/bpy.ops.%s.html#bpy.ops.%s.%s" %
+                        (url_prefix, class_name, class_name, class_prop)
                 )
             else:
                 rna = "bpy.ops.%s.%s" % (class_name, class_prop)
@@ -1216,8 +1215,8 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
 
                 if do_url:
                     url = (
-                        "%s/bpy.types.%s.html#bpy.types.%s.%s" %
-                        (url_prefix, class_name, class_name, class_prop)
+                            "%s/bpy.types.%s.html#bpy.types.%s.%s" %
+                            (url_prefix, class_name, class_name, class_prop)
                     )
                 else:
                     rna = "bpy.types.%s.%s" % (class_name, class_prop)
@@ -1550,8 +1549,8 @@ class WM_OT_properties_edit(Operator):
             self.step_float = rna_data["step"]
             self.subtype = rna_data["subtype"]
             self.use_soft_limits = (
-                self.min_float != self.soft_min_float or
-                self.max_float != self.soft_max_float
+                    self.min_float != self.soft_min_float or
+                    self.max_float != self.soft_max_float
             )
             default = self._convert_new_value_array(rna_data["default"], float, 32)
             self.default_float = default if isinstance(default, list) else [default] * 32
@@ -1562,8 +1561,8 @@ class WM_OT_properties_edit(Operator):
             self.soft_max_int = rna_data["soft_max"]
             self.step_int = rna_data["step"]
             self.use_soft_limits = (
-                self.min_int != self.soft_min_int or
-                self.max_int != self.soft_max_int
+                    self.min_int != self.soft_min_int or
+                    self.max_int != self.soft_max_int
             )
             self.default_int = self._convert_new_value_array(rna_data["default"], int, 32)
         elif self.property_type == 'STRING':
@@ -2339,9 +2338,9 @@ class WM_OT_toolbar_prompt(Operator):
         event_value = event.value
 
         if event_type in {
-                'LEFTMOUSE', 'RIGHTMOUSE', 'MIDDLEMOUSE',
-                'WHEELDOWNMOUSE', 'WHEELUPMOUSE', 'WHEELINMOUSE', 'WHEELOUTMOUSE',
-                'ESC',
+            'LEFTMOUSE', 'RIGHTMOUSE', 'MIDDLEMOUSE',
+            'WHEELDOWNMOUSE', 'WHEELUPMOUSE', 'WHEELINMOUSE', 'WHEELOUTMOUSE',
+            'ESC',
         }:
             context.workspace.status_text_set(None)
             return {'CANCELLED', 'PASS_THROUGH'}
@@ -2731,17 +2730,17 @@ class WM_OT_batch_rename(Operator):
                 elif method == 'SUFFIX':
                     name = name + text
                 else:
-                    assert(0)
+                    assert (0)
 
             elif ty == 'STRIP':
                 chars = action.strip_chars
                 chars_strip = (
-                    "%s%s%s"
-                ) % (
-                    string.punctuation if 'PUNCT' in chars else "",
-                    string.digits if 'DIGIT' in chars else "",
-                    " " if 'SPACE' in chars else "",
-                )
+                                  "%s%s%s"
+                              ) % (
+                                  string.punctuation if 'PUNCT' in chars else "",
+                                  string.digits if 'DIGIT' in chars else "",
+                                  " " if 'SPACE' in chars else "",
+                              )
                 part = action.strip_part
                 if 'START' in part:
                     name = name.lstrip(chars_strip)
@@ -2776,9 +2775,9 @@ class WM_OT_batch_rename(Operator):
                 elif method == 'TITLE':
                     name = name.title()
                 else:
-                    assert(0)
+                    assert (0)
             else:
-                assert(0)
+                assert (0)
         return name
 
     def _data_update(self, context):
@@ -3093,9 +3092,12 @@ class WM_MT_splash(Menu):
             # Links if no recent files
             col2_title.label(text="Getting Started")
 
-            col2.operator("wm.url_open", text="Manual", icon='URL').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
-            col2.operator("wm.url_open", text="Release Notes", icon='URL').url = "https://www.bforartists.de/release-notes/"
-            col2.operator("wm.url_open", text="Credits", icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
+            col2.operator("wm.url_open", text="Manual",
+                          icon='URL').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+            col2.operator("wm.url_open", text="Release Notes",
+                          icon='URL').url = "https://www.bforartists.de/release-notes/"
+            col2.operator("wm.url_open", text="Credits",
+                          icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
 
         layout.separator()
 
@@ -3110,12 +3112,12 @@ class WM_MT_splash(Menu):
         col2 = split.column()
 
         col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de/"
-        col2.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB/"
+        col2.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)",
+                      icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB/"
 
         layout.separator()
 
-	# TODO(iyad): get versions dynamically
-        layout.label(text = "Bforartists 3.2.2 is based on Blender 3.4.0 Alpha")
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
 
         layout.separator()
 
@@ -3124,7 +3126,6 @@ class WM_MT_splash_about(Menu):
     bl_label = "About"
 
     def draw(self, context):
-
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
 
