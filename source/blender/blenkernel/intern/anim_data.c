@@ -106,6 +106,8 @@ AnimData *BKE_animdata_ensure_id(ID *id)
 
       /* set default settings */
       adt->act_influence = 1.0f;
+      /* BFA - Change default to combine */
+      adt->act_blendmode = NLASTRIP_MODE_COMBINE;
     }
 
     return iat->adt;
