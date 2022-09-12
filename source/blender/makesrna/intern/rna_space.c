@@ -3537,7 +3537,7 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   StructRNA *srna;
   PropertyRNA *prop;
 
-  /*bfa - changed order to have stretching method area first*/
+  /* BFA: Changed order to have stretching method area first */
   static const EnumPropertyItem dt_uvstretch_items[] = {
       {SI_UVDT_STRETCH_AREA, "AREA", 0, "Area", "Area distortion between UV and 3D faces"},
       {SI_UVDT_STRETCH_ANGLE, "ANGLE", 0, "Angle", "Angular distortion between UV and 3D angles"},
@@ -3580,6 +3580,22 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   prop = RNA_def_property(srna, "display_stretch_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "dt_uvstretch");
   RNA_def_property_enum_items(prop, dt_uvstretch_items);
+  /* BFA: change default UV stretch overlay type for newly created spaces
+   * (spaces that are created from scratch, not ones selected or loaded from a startup/template
+   * file) to change those edit the startup file via command line background mode with a Python
+   * script like this one:
+
+import bpy
+
+for s in bpy.data.screens:
+  for a in s.areas:
+    for sp in a.spaces:
+      if hasattr(sp, "uv_editor"): sp.uv_editor.display_stretch_type = "AREA"
+
+bpy.ops.wm.save_as_mainfile()
+
+   */
+  RNA_def_property_enum_default(prop, SI_UVDT_STRETCH_AREA);
   RNA_def_property_ui_text(prop, "Display Stretch Type", "Type of stretch to display");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MESH);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
