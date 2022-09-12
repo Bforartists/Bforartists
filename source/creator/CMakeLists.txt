@@ -1331,7 +1331,7 @@ endif()
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
-    TARGETS bforartists bforartists-launcher
+    TARGETS bforartists
     COMPONENT Bforartists
     DESTINATION "."
   )
