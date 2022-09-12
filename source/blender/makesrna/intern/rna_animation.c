@@ -1328,6 +1328,11 @@ static void rna_def_animdata(BlenderRNA *brna)
   prop = RNA_def_property(srna, "action_blend_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "act_blendmode");
   RNA_def_property_enum_items(prop, rna_enum_nla_mode_blend_items);
+  /* BFA - Change default to combine
+   * NOTE: to actually change default blend type when creating an NLA strip,
+   * you have to set the animation data blendmode in "BKE_animdata_ensure_id" function
+   */
+  RNA_def_property_enum_default(prop, NLASTRIP_MODE_COMBINE);
   RNA_def_property_ui_text(
       prop,
       "Action Blending",
