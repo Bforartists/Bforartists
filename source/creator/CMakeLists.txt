@@ -345,11 +345,11 @@ if(UNIX AND NOT APPLE)
 elseif(WIN32)
   if(WITH_PYTHON_MODULE)
     set(TARGETDIR_BPY $<TARGET_FILE_DIR:bforartists>)
-    set(TARGETDIR_VER $<TARGET_FILE_DIR:bforartists>/${BFORARTISTS_VERSION})
+    set(TARGETDIR_VER $<TARGET_FILE_DIR:bforartists>/${BLENDER_VERSION})
     # Important the DLL's are next to `__init__.pyd` otherwise it won't load.
     set(TARGETDIR_LIB $<TARGET_FILE_DIR:bforartists>)
   else()
-    set(TARGETDIR_VER ${BFORARTISTS_VERSION})
+    set(TARGETDIR_VER ${BLENDER_VERSION})
     set(TARGETDIR_TEXT .)
     set(TARGETDIR_LIB .)
   endif()
@@ -357,17 +357,17 @@ elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
       set(TARGETDIR_BPY bpy)
-      set(TARGETDIR_VER bpy/${BFORARTISTS_VERSION})
+      set(TARGETDIR_VER bpy/${BLENDER_VERSION})
       set(TARGETDIR_LIB bpy/lib)
     else()
       # Paths defined in terms of site-packages since the site-packages
       # directory can be a symlink (brew for example).
       set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
-      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BFORARTISTS_VERSION})
+      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION})
       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BFORARTISTS_VERSION})
+    set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BLENDER_VERSION})
     set(TARGETDIR_LIB Bforartists.app/Contents/Resources/lib)
     set(TARGETDIR_TEXT Bforartists.app/Contents/Resources/text)
   endif()
@@ -1173,7 +1173,7 @@ elseif(APPLE)
   if(WITH_PYTHON AND NOT WITH_PYTHON_MODULE AND NOT WITH_PYTHON_FRAMEWORK)
     # Copy the python libraries into the install directory.
     install_dir(
-      ${PYTHON_LIBPATH}
+      ${PYTHON_LIBPATH}/python${PYTHON_VERSION}
       ${TARGETDIR_VER}/python/lib
     )
 
