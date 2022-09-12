@@ -77,6 +77,7 @@ static PyStructSequence_Field app_info_fields[] = {
      "``bpy.data.version``. This value should be used for handling compatibility changes between "
      "Blender versions"},
     {"version_string", "The Blender version formatted as a string"},
+    {"bfa_version_string", "The Bforartists version formatted as a string"},
     {"version_cycle", "The release status of this build alpha/beta/rc/release"},
     {"version_char", "Deprecated, always an empty string"},
     {"background",
@@ -146,6 +147,8 @@ static PyObject *make_app_info(void)
   SetObjItem(PyC_Tuple_Pack_I32(
       BLENDER_FILE_VERSION / 100, BLENDER_FILE_VERSION % 100, BLENDER_FILE_SUBVERSION));
   SetStrItem(BKE_blender_version_string());
+  /* BFA: Expose Bforartists version to Python */
+  SetStrItem(BKE_bforartists_version_string());
 
   SetStrItem(STRINGIFY(BLENDER_VERSION_CYCLE));
   SetStrItem("");
