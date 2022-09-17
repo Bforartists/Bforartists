@@ -6141,7 +6141,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET")
 
         layout.separator()
-        layout.operator("gpencil.stroke_outline", text="Outline")
+        layout.operator("gpencil.stroke_outline", text="Outline", icon="OUTLINE")
 
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
