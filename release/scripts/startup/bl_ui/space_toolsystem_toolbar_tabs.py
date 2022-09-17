@@ -4018,13 +4018,12 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             op.geometry = True
             col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
             col.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
+            col.operator("gpencil.stroke_start_set", text="Set Start Point   ", icon = "STARTPOINT")
 
             col.separator(factor = 0.5)
 
             col.operator("gpencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
             col.operator("gpencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
-
-            col.separator(factor = 0.5)
 
             col.separator(factor = 0.5)
             col.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
@@ -4054,9 +4053,12 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
                 row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
+
 
                 row = col.row(align=True)
+                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
                 row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
             elif column_count == 2:
@@ -4081,7 +4083,11 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
 
                 row = col.row(align=True)
+                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
                 row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
                 row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
             elif column_count == 1:
@@ -4106,6 +4112,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 op.geometry = True
                 col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
                 col.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+                col.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
 
                 col.separator(factor = 0.5)
 
