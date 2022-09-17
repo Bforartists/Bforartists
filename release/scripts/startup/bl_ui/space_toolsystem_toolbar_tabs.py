@@ -4027,6 +4027,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
             col.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
+            col.operator("gpencil.stroke_outline", text="Outline", icon="OUTLINE")
 
         # icon buttons
         else:
@@ -4061,6 +4062,9 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
                 row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
+
             elif column_count == 2:
 
                 row = col.row(align=True)
@@ -4089,6 +4093,9 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
                 row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
 
             elif column_count == 1:
 
@@ -4122,6 +4129,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+                col.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
 
 
 class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
