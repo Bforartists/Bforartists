@@ -1517,7 +1517,7 @@ edge_path_to_selection
 edge_paths_to_curves
 mesh_to_volume
 startpoint
-#~ DEF_ICON_BLANK(1551)
+outline
 
 # ------------------------- row 23 --------------------------*/
 
