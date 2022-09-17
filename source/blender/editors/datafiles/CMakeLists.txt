@@ -1516,7 +1516,7 @@ vertex_crease
 edge_path_to_selection
 edge_paths_to_curves
 mesh_to_volume
-#~ DEF_ICON_BLANK(1550)
+startpoint
 #~ DEF_ICON_BLANK(1551)
 
 # ------------------------- row 23 --------------------------*/
