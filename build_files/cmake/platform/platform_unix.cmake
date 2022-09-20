@@ -16,9 +16,16 @@ if(NOT DEFINED LIBDIR)
   # Choose the best suitable libraries.
   if(EXISTS ${LIBDIR_NATIVE_ABI})
     set(LIBDIR ${LIBDIR_NATIVE_ABI})
+    set(WITH_LIBC_MALLOC_HOOK_WORKAROUND True)
   elseif(EXISTS ${LIBDIR_CENTOS7_ABI})
     set(LIBDIR ${LIBDIR_CENTOS7_ABI})
     set(WITH_CXX11_ABI OFF)
+    if(WITH_MEM_JEMALLOC)
+      # jemalloc provides malloc hooks.
+      set(WITH_LIBC_MALLOC_HOOK_WORKAROUND False)
+    else()
+      set(WITH_LIBC_MALLOC_HOOK_WORKAROUND True)
+    endif()
 
     if(CMAKE_COMPILER_IS_GNUCC AND
        CMAKE_C_COMPILER_VERSION VERSION_LESS 9.3)
@@ -136,14 +143,38 @@ if(NOT WITH_SYSTEM_FREETYPE)
 endif()
 
 if(WITH_PYTHON)
-  # No way to set py35, remove for now.
-  # find_package(PythonLibs)
+  # This could be used, see: D14954 for details.
+  # `find_package(PythonLibs)`
 
-  # Use our own instead, since without py is such a rare case,
-  # require this package
-  # XXX Linking errors with debian static python :/
-#       find_package_wrapper(PythonLibsUnix REQUIRED)
+  # Use our own instead, since without Python is such a rare case,
+  # require this package.
+  # XXX: Linking errors with Debian static Python (sigh).
+  # find_package_wrapper(PythonLibsUnix REQUIRED)
   find_package(PythonLibsUnix REQUIRED)
+
+  if(WITH_PYTHON_MODULE AND NOT WITH_INSTALL_PORTABLE)
+    # Installing into `site-packages`, warn when installing into `./../lib/`
+    # which script authors almost certainly don't want.
+    if(EXISTS ${LIBDIR})
+      cmake_path(IS_PREFIX LIBDIR "${PYTHON_SITE_PACKAGES}" NORMALIZE _is_prefix)
+      if(_is_prefix)
+        message(WARNING "
+Building Blender with the following configuration:
+  - WITH_PYTHON_MODULE=ON
+  - WITH_INSTALL_PORTABLE=OFF
+  - LIBDIR=\"${LIBDIR}\"
+  - PYTHON_SITE_PACKAGES=\"${PYTHON_SITE_PACKAGES}\"
+In this case you may want to either:
+  - Use the system Python's site-packages, see:
+    python -c \"import site; print(site.getsitepackages()[0])\"
+  - Set WITH_INSTALL_PORTABLE=ON to create a stand-alone \"bpy\" module
+    which you will need to ensure is in Python's module search path.
+Proceeding with PYTHON_SITE_PACKAGES install target, you have been warned!"
+        )
+      endif()
+      unset(_is_prefix)
+    endif()
+  endif()
 endif()
 
 if(WITH_IMAGE_OPENEXR)
@@ -739,6 +770,39 @@ if(WITH_GHOST_WAYLAND)
     endif()
 
     pkg_get_variable(WAYLAND_SCANNER wayland-scanner wayland_scanner)
+
+    # When using dynamic loading, headers generated
+    # from older versions of `wayland-scanner` aren't compatible.
+    if(WITH_GHOST_WAYLAND_DYNLOAD)
+      execute_process(
+        COMMAND ${WAYLAND_SCANNER} --version
+        # The version is written to the `stderr`.
+        ERROR_VARIABLE _wayland_scanner_out
+        ERROR_STRIP_TRAILING_WHITESPACE
+      )
+      if(NOT "${_wayland_scanner_out}" STREQUAL "")
+        string(
+          REGEX REPLACE
+          "^wayland-scanner[ \t]+([0-9]+)\.([0-9]+).*"
+          "\\1.\\2"
+          _wayland_scanner_ver
+          "${_wayland_scanner_out}"
+        )
+        if("${_wayland_scanner_ver}" VERSION_LESS "1.20")
+          message(
+            FATAL_ERROR
+            "Found ${WAYLAND_SCANNER} version \"${_wayland_scanner_ver}\", "
+            "the minimum version is 1.20!"
+          )
+        endif()
+        unset(_wayland_scanner_ver)
+      else()
+        message(WARNING "Unable to access the version from ${WAYLAND_SCANNER}, continuing.")
+      endif()
+      unset(_wayland_scanner_out)
+    endif()
+    # End wayland-scanner version check.
+
   endif()
 endif()
 

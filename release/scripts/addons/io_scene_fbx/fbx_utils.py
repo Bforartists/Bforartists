@@ -1220,7 +1220,7 @@ FBXExportSettings = namedtuple("FBXExportSettings", (
     "bone_correction_matrix", "bone_correction_matrix_inv",
     "bake_anim", "bake_anim_use_all_bones", "bake_anim_use_nla_strips", "bake_anim_use_all_actions",
     "bake_anim_step", "bake_anim_simplify_factor", "bake_anim_force_startend_keying",
-    "use_metadata", "media_settings", "use_custom_props",
+    "use_metadata", "media_settings", "use_custom_props", "colors_type",
 ))
 
 # Helper container gathering some data we need multiple times:
@@ -1249,5 +1249,5 @@ FBXImportSettings = namedtuple("FBXImportSettings", (
     "use_custom_props", "use_custom_props_enum_as_string",
     "nodal_material_wrap_map", "image_cache",
     "ignore_leaf_bones", "force_connect_children", "automatic_bone_orientation", "bone_correction_matrix",
-    "use_prepost_rot",
+    "use_prepost_rot", "colors_type",
 ))

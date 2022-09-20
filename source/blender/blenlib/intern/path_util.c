@@ -466,8 +466,8 @@ void BLI_path_rel(char *file, const char *relfile)
 #ifdef WIN32
   if (BLI_strnlen(relfile, 3) > 2 && !BLI_path_is_abs(relfile)) {
     char *ptemp;
-    /* fix missing volume name in relative base,
-     * can happen with old recent-files.txt files */
+    /* Fix missing volume name in relative base,
+     * can happen with old `recent-files.txt` files. */
     BLI_windows_get_default_root_dir(temp);
     ptemp = &temp[2];
     if (!ELEM(relfile[0], '\\', '/')) {
@@ -1505,8 +1505,8 @@ size_t BLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
     return ofs;
   }
 
-  /* remove trailing slashes, unless there are _only_ trailing slashes
-   * (allow "//" as the first argument). */
+  /* Remove trailing slashes, unless there are *only* trailing slashes
+   * (allow `//` or `//some_path` as the first argument). */
   bool has_trailing_slash = false;
   if (ofs != 0) {
     size_t len = ofs;

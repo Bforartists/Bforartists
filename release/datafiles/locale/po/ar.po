@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -1667,16 +1667,8 @@ msgid "Volume"
 msgstr "ﻢﺠﺤﻟﺍ"
 
 
-msgid "Ease In"
-msgstr "ﺪﻳﺍﺰﺘﻟﺍ"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "(ﻂﻘﻓ ﻲﺑ-ﺔﻤﻈﻌﻟ) ﺮﻴﻳﺰﺑ ﺾﺒﻘﻣ ﻝﻭﺍ ﻝﻮﻃ"
-
-
-msgid "Ease Out"
-msgstr "ﺺﻗﺎﻨﺘﻟﺍ"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -2139,10 +2131,6 @@ msgid "Input Samples"
 msgstr "ﻞﺧﺪﻟﺍ ﺕﺎﻨﻴﻋ"
 
 
-msgid "Jitter"
-msgstr "!"
-
-
 msgid "Iterations"
 msgstr "ﺕﺍﺭﺍﺮﻜﺘﻟﺍ"
 
@@ -2153,6 +2141,10 @@ msgstr "ﻥﻮﻠﻟﺍ"
 
 msgid "Saturation"
 msgstr "ﺰﻛﺮﻣ"
+
+
+msgid "Outline"
+msgstr "ﺭﺎﻃﺍ"
 
 
 msgid "Active Layer"
@@ -2193,18 +2185,6 @@ msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﻢﻠﻗ"
 
 msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "ﺽﺮﻌﻴﺳ ﻢﻠﻔﻟﺍ ﻦﻣ ﺭﺎﻃﺇ ﻱﺍ ﺩﺪﺤﺗ ﻲﺘﻟﺍ ﻞﻣﺍﻮﻌﻟﺍ"
-
-
-msgid "Depth"
-msgstr "ﻖﻤﻌﻟﺍ"
-
-
-msgid "Back"
-msgstr "ﻒﻠﺧ"
-
-
-msgid "Front"
-msgstr "ﻡﺎﻣﺃ"
 
 
 msgid "Frame Method"
@@ -4508,6 +4488,14 @@ msgid "No culling"
 msgstr "ﻎﻳﺮﻔﺗ ﻥﻭﺪﺑ"
 
 
+msgid "Front"
+msgstr "ﻡﺎﻣﺃ"
+
+
+msgid "Back"
+msgstr "ﻒﻠﺧ"
+
+
 msgid "Distance to Target"
 msgstr "ﻑﺪﻬﻠﻟ ﺔﻓﺎﺴﻤﻟﺍ"
 
@@ -5012,6 +5000,10 @@ msgid "Bezier"
 msgstr "ﺮﻴﻳﺰﻴﺑ"
 
 
+msgid "Depth"
+msgstr "ﻖﻤﻌﻟﺍ"
+
+
 msgid "Cursor"
 msgstr "ﺮﺷﺆﻣ"
 
@@ -5046,10 +5038,6 @@ msgstr "ﺮﺷﺆﻤﻟﺍ"
 
 msgid "Radius"
 msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
-
-
-msgid "Steps"
-msgstr "ﺕﺍﻮﻄﺧ"
 
 
 msgid "Segments"
@@ -8537,6 +8525,10 @@ msgid "Extreme"
 msgstr "ﻲﺋﺎﻬﻧ"
 
 
+msgid "Jitter"
+msgstr "!"
+
+
 msgid "Frame is selected for editing in the Dope Sheet"
 msgstr "ﻂﻴﻄﺨﺘﻟﺍ ﺔﻗﺭﻭ ﻲﻓ ﺮﻳﺮﺤﺘﻠﻟ ﺭﺎﻃﻹ﻿ﺍ ﺭﺎﻴﺘﺧﺍ ﻢﺗ"
 
@@ -9005,6 +8997,10 @@ msgstr "ﺩﻭﺪﺤﻟﺍ"
 
 msgid "Mirror Modifier"
 msgstr "ﺔﻠﺛﺎﻤﻤﻟﺍ ﺮﻴﻐﻣ"
+
+
+msgid "Steps"
+msgstr "ﺕﺍﻮﻄﺧ"
 
 
 msgid "Shrinkwrap Modifier"
@@ -12063,16 +12059,8 @@ msgid "Auto smooth (based on smooth/sharp faces/edges and angle between faces), 
 msgstr "ﺕﺪﺟﻭ ﻥﺇ ﺔﺼﺼﺨﻣ ﻞﺼﻓ ﻢﻇﺍﻮﻧ ﺕﺎﻧﺎﻴﺑ ﻡﺪﺨﺘﺳﺍ ﻭﺍ ,(ﻪﺟﻭﻷ﻿ﺍ ﻦﻴﺑ ﺔﻳﻭﺍﺰﻟﺍ ﻭ ﻑﺍﻮﺤﻟﺍ/ﺓﺩﺎﺤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ/ﻢﻴﻌﻨﺘﻟﺍ ﺐﺴﺣ) ﻲﺗﺍﺫ ﻢﻴﻌﻨﺗ"
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "ﺔﻓﺎﺤﻠﻟ ﺔﻔﻄﺸﻟﺍ ﻥﺯﻭ"
-
-
 msgid "Store Edge Crease"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﺪﻌّﺠﺗ"
-
-
-msgid "Store Vertex Bevel Weight"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﺔﻔﻄﺷ ﻥﺯﻭ ﻥﺰّﺧ"
 
 
 msgid "Topology Mirror"
@@ -16423,6 +16411,14 @@ msgstr "ﺝﻭﺩﺰﻤﻟﺍ ﻂﻐﻀﻟﺍ"
 
 msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "ﺔﻛﺮﺣ ﻰﻨﺤﻨﻣ ﻰﻠﻋ ﺡﺎﺘﻔﻣ ﺩﺪﺤﺗ ﻦﻴﻀﺒﻘﻤﺑ ﺮﻴﻳﺰﻴﺑ ﻰﻨﺤﻨﻣ ﺔﻄﻘﻧ"
+
+
+msgid "Ease In"
+msgstr "ﺪﻳﺍﺰﺘﻟﺍ"
+
+
+msgid "Ease Out"
+msgstr "ﺺﻗﺎﻨﺘﻟﺍ"
 
 
 msgid "Left Handle"
@@ -25596,22 +25592,6 @@ msgid "Select Previous Element"
 msgstr "ﻖﺑﺎﺴﻟﺍ ﺮﺼﻨﻌﻟﺍ ﺮﺘﺧﺍ"
 
 
-msgid "Amount of Adjacent Faces"
-msgstr "ﺓﺭﻭﺎﺠﺘﻤﻟﺍ ﻪﺟﻭﻻ﻿ﺍ ﺔﻴﻤﻛ"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﻝﻮﺣ ﻪﺣﻭﺃﻻ﻿ ﺔﻴﻤﻛ"
-
-
-msgid "Face Angles"
-msgstr "ﻪﺟﻮﻟﺍ ﺎﻳﺍﻭﺯ"
-
-
-msgid "Polygon Sides"
-msgstr "ﻢﺴﺠﻤﻟﺍ ﻪﺟﻭﺍ"
-
-
 msgctxt "Operator"
 msgid "Select Similar Regions"
 msgstr "ﺔﻠﺛﺎﻤﻤﻟﺍ ﻖﻃﺎﻨﻤﻟﺍ ﺮﺘﺧﺇ"
@@ -25770,16 +25750,6 @@ msgstr "ﻂﻘﻨﻟﺍ ﻂﺑﺭﺍ"
 msgctxt "Operator"
 msgid "Vertex Connect Path"
 msgstr "ﻂﻘﻨﻟﺍ ﺭﺎﺴﻣ ﻂﺑﺭﺍ"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "ﺔﻄﻘﻨﻠﻟ ﻥﻮﻟ ﻒﺿﺍ"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﻮﻟ ﻑﺬﺣﺍ"
 
 
 msgid "Smoothing factor"
@@ -26001,14 +25971,6 @@ msgid "Exit Tweak Mode"
 msgstr "ﻂﺒﻀﻟﺍ ﻊﺿﻭ ﻦﻣ ﺝﺮﺧﺍ"
 
 
-msgid "Node Type"
-msgstr "ﺓﺪﻘﻌﻟﺍ ﻉﻮﻧ"
-
-
-msgid "Node type"
-msgstr "ﺓﺪﻘﻌﻟﺍ ﻉﻮﻧ"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "ﻒﻠﻣ ﻒﺿﺍ ﺓﺪﻘﻋ"
@@ -26026,6 +25988,14 @@ msgstr "ﺪﻳﺪﺟ ﻒﺿﺃ"
 
 msgid "Add a node to the active tree"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺓﺮﺠﺸﻠﻟ ﺓﺪﻘﻋ ﻒﺿﺍ"
+
+
+msgid "Node Type"
+msgstr "ﺓﺪﻘﻌﻟﺍ ﻉﻮﻧ"
+
+
+msgid "Node type"
+msgstr "ﺓﺪﻘﻌﻟﺍ ﻉﻮﻧ"
 
 
 msgctxt "Operator"
@@ -33076,10 +33046,6 @@ msgid "Number of samples to render for each pixel"
 msgstr "ﻞﺴﻜﺑ ﻞﻜﻟ ﺓﺮﻴّﺼﻤﻟﺍ ﺕﺎﻨﻴﻌﻟﺍ ﺩﺪﻋ"
 
 
-msgid "Sobol"
-msgstr "ﻞﺑﻮﺳ"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "ﺔﻔﻠﺘﺨﻣ ﺔﻴﺋﺍﻮﺸﻋ ﻁﺎﻤﻧﺍ ﻰﻠﻋ ﻝﻮﺼﺤﻠﻟ ﻞﻣﺎﻜﻤﻟﺍ ﺓﺭﺬﺑ ﺔﻤﻴﻗ"
 
@@ -34714,10 +34680,6 @@ msgid "Mask displayed and edited in this space"
 msgstr "ءﺎﻀﻔﻟﺍ ﺍﺬﻫ ﻲﻓ ﺭﺮﺤﻳ ﻭ ﻉﺎﻨﻘﻟﺍ ﺮﻬﻈﻳ"
 
 
-msgid "Outline"
-msgstr "ﺭﺎﻃﺍ"
-
-
 msgid "Overlay Mode"
 msgstr "ﺔﻴﻄﻐﺘﻟﺍ ﻊﺿﻭ"
 
@@ -35880,10 +35842,6 @@ msgid "Edge Bevel"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻔﻄﺷ"
 
 
-msgid "Edge Crease"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﺪﻌّﺠﺗ"
-
-
 msgid "Edge UV Face Select"
 msgstr "ﺎﻳﺭﻮﺤﻣ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ ﻑﺍﻮﺣ"
 
@@ -36436,6 +36394,10 @@ msgid "Display selected edge lengths, using global values when set in the transf
 msgstr "ﻝﻮّﺤﺘﻟﺍ ﺡﻮﻟ ﻲﻓ ﺎﻬﻌﺿﻭ ﺪﻨﻋ ﺔﻴﻤﻟﺎﻋ ﻢﻴﻗ ﻡﺍﺪﺨﺘﺳﺈﺑ ,ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻓﺎﺤﻟﺍ ﻝﻮﻃ ﺽﺮﻋﺇ"
 
 
+msgid "Face Angles"
+msgstr "ﻪﺟﻮﻟﺍ ﺎﻳﺍﻭﺯ"
+
+
 msgid "Display the angles in the selected edges, using global values when set in the transform panel"
 msgstr "ﻝﻮّﺤﺘﻟﺍ ﺡﻮﻟ ﻲﻓ ﺎﻬﻌﺿﻭ ﺪﻨﻋ ﺔﻴﻤﻟﺎﻋ ﻢﻴﻗ ﻡﺍﺪﺨﺘﺳﺈﺑ ,ﺓﺭﺎﺘﺨﻤﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺎﻳﺍﻭﺯ ﺽﺮﻋﺇ"
 
@@ -36582,6 +36544,10 @@ msgstr "ﺏﺎﺒﻀﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 msgid "Occlude objects with the environment color as they are further away"
 msgstr "ﺍﻭﺪﻌﺘﺑﺍ ﺎﻤﻠﻛ ﻂﻴﺤﻤﻟﺍ ﻥﻮﻟ ﻊﻣ ﺕﺎﻨﺋﺎﻜﻟﺍ ﺱﺎﺒﺤﻧﺍ"
+
+
+msgid "Search"
+msgstr "ﺚﺤﺑﺇ"
 
 
 msgctxt "WindowManager"
@@ -37047,6 +37013,10 @@ msgid "New"
 msgstr "ﺪﻳﺪﺟ"
 
 
+msgid "3D View"
+msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
+
+
 msgid "Active object is not a mesh"
 msgstr "ﺍﺮﻴﻤﻜﻛ ﻝﺎﻌﻔﻟﺍ ﻦﺋﺎﻜﻟﺍ ﻊﺿ"
 
@@ -37217,6 +37187,10 @@ msgstr "ﻊﻴﻣﺪﺘﻟﺍ ﻑﺍﺮﺤﻧﺇ"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "ﻞﻜﻟﺍ ﻞﻔﻗ ﺲﻜﻋ"
+
+
+msgid "Edge Crease"
+msgstr "ﺔﻓﺎﺤﻟﺍ ﺪﻌّﺠﺗ"
 
 
 msgctxt "Operator"
@@ -37508,10 +37482,6 @@ msgstr "ﻑﻼ﻿ﺘﺧﻹ﻿ﺍ"
 
 msgid "Odd"
 msgstr "ﻱﺩﺮﻓ"
-
-
-msgid "Search"
-msgstr "ﺚﺤﺑﺇ"
 
 
 msgid "B/W"
@@ -38219,16 +38189,8 @@ msgid "Description:"
 msgstr ":ﻒﺻﻭ"
 
 
-msgid "description"
-msgstr "ﻒﺻﻭ"
-
-
 msgid "Location:"
 msgstr ":ﻊﻗﻮﻣ"
-
-
-msgid "location"
-msgstr "ﻊﻗﻮﻣ"
 
 
 msgid "File:"
@@ -38253,6 +38215,14 @@ msgstr ":ﺮﻳﺬﺤﺗ"
 
 msgid "Internet:"
 msgstr ":ﺖﻴﻧﺮﺘﻧﺃ"
+
+
+msgid "description"
+msgstr "ﻒﺻﻭ"
+
+
+msgid "location"
+msgstr "ﻊﻗﻮﻣ"
 
 
 msgctxt "Operator"
@@ -38909,10 +38879,6 @@ msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
 
 msgid "ShapeKey"
 msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ"
-
-
-msgid "BevelWeight"
-msgstr "ﺔﻔﻄﺸﻟﺍ ﻥﺯﻭ"
 
 
 msgid "Not enough free memory"
@@ -40049,10 +40015,6 @@ msgid "3D Local View"
 msgstr "ﻲﺛﻼ﻿ﺛ ﻲﻠّﺤﻣ ﺮﻈﻨﻣ"
 
 
-msgid "3D View"
-msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
-
-
 msgid "Frame:%d "
 msgstr "‬%d‪:ﺭﺎﻃﺍ"
 
@@ -40372,14 +40334,6 @@ msgstr "ﺔﻋﻮﻤﺠﻣ"
 
 msgid "Operation requires an active keying set"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺩﺪﺣ"
-
-
-msgid "Not found: %s"
-msgstr "‬%s‪ :ﻥﻮﺜﻳﺎﺑ"
-
-
-msgid "Mixed selection"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻲﻔﺧﺇ"
 
 
 msgid "Movie clip not found"

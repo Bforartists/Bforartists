@@ -40,7 +40,8 @@ set(INC
 
 set(SRC
   intern/derived_node_tree.cc
-  intern/geometry_nodes_eval_log.cc
+  intern/geometry_nodes_lazy_function.cc
+  intern/geometry_nodes_log.cc
   intern/math_functions.cc
   intern/node_common.cc
   intern/node_declaration.cc
@@ -58,7 +59,7 @@ set(SRC
   NOD_function.h
   NOD_geometry.h
   NOD_geometry_exec.hh
-  NOD_geometry_nodes_eval_log.hh
+  NOD_geometry_nodes_lazy_function.hh
   NOD_math_functions.hh
   NOD_multi_function.hh
   NOD_node_declaration.hh
@@ -99,20 +100,6 @@ if(WITH_BULLET)
     ${BULLET_LIBRARIES}
   )
   add_definitions(-DWITH_BULLET)
-endif()
-
-if(WITH_PYTHON)
-  list(APPEND INC
-    ../python
-  )
-  list(APPEND INC_SYS
-    ${PYTHON_INCLUDE_DIRS}
-  )
-  list(APPEND LIB
-    ${PYTHON_LINKFLAGS}
-    ${PYTHON_LIBRARIES}
-  )
-  add_definitions(-DWITH_PYTHON)
 endif()
 
 if(WITH_TBB)

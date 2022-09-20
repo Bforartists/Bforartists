@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -2419,16 +2419,8 @@ msgid "Bone that serves as the start handle for the B-Bone curve"
 msgstr "B-본 커브의 시작 핸들 역할을 하는 본"
 
 
-msgid "Ease In"
-msgstr "완화 In"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "첫 번째 베지어 핸들의 길이 (B-본에 한함)"
-
-
-msgid "Ease Out"
-msgstr "완화 Out"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -3223,10 +3215,6 @@ msgid "Material used for strokes drawn using this brush"
 msgstr "이 브러시를 사용하여 그려진 스트로크에 사용되는 매테리얼"
 
 
-msgid "Jitter"
-msgstr "지터"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "새 스트로크를 위한 지터 팩터"
 
@@ -3375,6 +3363,10 @@ msgid "Use tablet pressure"
 msgstr "태블릿 압력을 사용"
 
 
+msgid "Outline"
+msgstr "윤곽선"
+
+
 msgid "Use Post-Process Settings"
 msgstr "후처리 설정을 사용"
 
@@ -3483,20 +3475,8 @@ msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "무비 클립의 어떤 프레임이 표시되는지 정의하는 매개 변수"
 
 
-msgid "Depth"
-msgstr "깊이"
-
-
 msgid "Display under or over everything"
 msgstr "모든 항목 표시 또는 모두 표시"
-
-
-msgid "Back"
-msgstr "뒤쪽"
-
-
-msgid "Front"
-msgstr "앞쪽"
 
 
 msgid "Frame Method"
@@ -6388,8 +6368,16 @@ msgid "No culling"
 msgstr "추려내기가 없음"
 
 
+msgid "Front"
+msgstr "앞쪽"
+
+
 msgid "No projection when in front of the face"
 msgstr "페이스의 앞쪽에서 일 때 투영이 없음"
+
+
+msgid "Back"
+msgstr "뒤쪽"
 
 
 msgid "No projection when behind the face"
@@ -7204,6 +7192,10 @@ msgid "Bezier"
 msgstr "베지어"
 
 
+msgid "Depth"
+msgstr "깊이"
+
+
 msgid "Method of projecting depth"
 msgstr "투사하는 깊이의 메서드"
 
@@ -7344,20 +7336,8 @@ msgid "Profile control points"
 msgstr "프로필 컨트롤 포인트"
 
 
-msgid "Preset"
-msgstr "프리셋"
-
-
-msgid "Support Loops"
-msgstr "루프를 지원"
-
-
 msgid "Loops on each side of the profile"
 msgstr "프로필의 양쪽에 루프"
-
-
-msgid "Steps"
-msgstr "단계"
 
 
 msgid "A number of steps defined by the segments"
@@ -12577,6 +12557,10 @@ msgid "An 'extreme' pose, or some other purpose as needed"
 msgstr "'극단적인' 포즈 또는 필요한 다른 용도"
 
 
+msgid "Jitter"
+msgstr "지터"
+
+
 msgid "A filler or baked keyframe for keying on ones, or some other purpose as needed"
 msgstr "필렛이나 베이크된 키 프레임으로 키잉하거나 필요에 따라 다른 용도로 사용할 수 있습니다"
 
@@ -14059,6 +14043,10 @@ msgstr "적용할 노이즈의 양"
 
 msgid "Thickness Factor"
 msgstr "두께 팩터"
+
+
+msgid "Steps"
+msgstr "단계"
 
 
 msgid "Offset Modifier"
@@ -19032,16 +19020,8 @@ msgid "Auto smooth (based on smooth/sharp faces/edges and angle between faces), 
 msgstr "자동 스무스 (스무스/샤프 페이스/에지와 페이스 사이의 각도을 기준으로), 또는 사용 가능한 경우 커스텀 분할 노멀 데이터를 사용"
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "에지 베벨 웨이트를 보관"
-
-
 msgid "Store Edge Crease"
 msgstr "에지 크리스를 보관"
-
-
-msgid "Store Vertex Bevel Weight"
-msgstr "버텍스 베벨 웨이트를 보관"
 
 
 msgid "Topology Mirror"
@@ -23177,12 +23157,20 @@ msgid "Settings for image formats"
 msgstr "이미지 포맷에 대한 설정"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
 msgid "Log conversion reference blackpoint"
 msgstr "로그 변환 참조 블랙 포인트"
 
 
 msgid "Log conversion gamma"
 msgstr "로그 컨버전 감마"
+
+
+msgid "White"
+msgstr "화이트"
 
 
 msgid "Log conversion reference whitepoint"
@@ -24778,8 +24766,16 @@ msgid "Automatic Easing"
 msgstr "자동 완화"
 
 
+msgid "Ease In"
+msgstr "완화 In"
+
+
 msgid "Only on the end closest to the next keyframe"
 msgstr "다음 키 프레임에 끝에 가장 가까운에 만"
+
+
+msgid "Ease Out"
+msgstr "완화 Out"
 
 
 msgid "Only on the end closest to the first keyframe"
@@ -43248,14 +43244,6 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
-msgid "White"
-msgstr "화이트"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -47198,14 +47186,6 @@ msgid "Turns"
 msgstr "선회"
 
 
-msgid "Add vertex color layer"
-msgstr "버텍스 컬러 레이어를 추가"
-
-
-msgid "Remove vertex color layer"
-msgstr "버텍스 컬러 레이어를 제거"
-
-
 msgid "(De)select all vertices, edges or faces"
 msgstr "모든 베택스, 에지 또는 페이스를 선택(취소)"
 
@@ -47435,38 +47415,6 @@ msgstr "랜덤으로 버텍스를 선택"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "속성 유형별로 유사한 버텍스, 에지 또는 페이스를 선택"
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "인접한 페이스의 양"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "에지 주위에 페이스의 양"
-
-
-msgid "Face Angles"
-msgstr "페이스 각도"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "프리스타일 에지 마크"
-
-
-msgid "Polygon Sides"
-msgstr "폴리곤 측면"
-
-
-msgid "Perimeter"
-msgstr "둘레"
-
-
-msgid "Flat/Smooth"
-msgstr "플랫/스무스"
-
-
-msgid "Freestyle Face Marks"
-msgstr "프리스타일 페이스 마크"
 
 
 msgctxt "Operator"
@@ -47846,16 +47794,6 @@ msgstr "버택스 연결 경로"
 
 msgid "Connect vertices by their selection order, creating edges, splitting faces"
 msgstr "선택한 순서에 따라 버텍스를 연결, 애지를 생성, 페이스를 분할합니다"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "버텍스 컬러를 추가"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "버텍스 컬러를 제거"
 
 
 msgctxt "Operator"
@@ -48295,39 +48233,6 @@ msgstr "선택된 스트립 범위를 표시하는 가시 영역을 재설정"
 
 
 msgctxt "Operator"
-msgid "Add and Link Node"
-msgstr "추가 및 노드를 연결"
-
-
-msgid "Add a node to the active tree and link to an existing socket"
-msgstr "기존의 소켓으로 활성 트리 및 연결에 노드를 추가"
-
-
-msgid "Link Socket Index"
-msgstr "소켓 인덱스를 연결"
-
-
-msgid "Index of the socket to link"
-msgstr "연결하는 소켓의 인덱스"
-
-
-msgid "Settings to be applied on the newly created node"
-msgstr "새로 생성된 노드에 적용하는 설정"
-
-
-msgid "Node Type"
-msgstr "노드 유형"
-
-
-msgid "Node type"
-msgstr "노드 유형"
-
-
-msgid "Start transform operator after inserting the node"
-msgstr "노드를 삽입한 이후에 작업자를 변환 시작"
-
-
-msgctxt "Operator"
 msgid "Add File Node"
 msgstr "파일 노드를 추가"
 
@@ -48352,6 +48257,22 @@ msgstr "노드를 추가"
 
 msgid "Add a node to the active tree"
 msgstr "활성 트리에 노드를 추가"
+
+
+msgid "Settings to be applied on the newly created node"
+msgstr "새로 생성된 노드에 적용하는 설정"
+
+
+msgid "Node Type"
+msgstr "노드 유형"
+
+
+msgid "Node type"
+msgstr "노드 유형"
+
+
+msgid "Start transform operator after inserting the node"
+msgstr "노드를 삽입한 이후에 작업자를 변환 시작"
 
 
 msgctxt "Operator"
@@ -64979,16 +64900,8 @@ msgid "VBO Collection Rate"
 msgstr "VBO 컬렉션 비율"
 
 
-msgid "Number of seconds between each run of the GL Vertex buffer object garbage collector"
-msgstr "GL 버텍스 버퍼 오브젝트 가비지 컬렉터를 실행할 때까지의 시간(초)"
-
-
 msgid "VBO Time Out"
 msgstr "VBO 타임 아웃"
-
-
-msgid "Time since last access of a GL Vertex buffer object in seconds after which it is freed (set to 0 to keep vbo allocated)"
-msgstr "GL 버텍스 버퍼 오브젝트의 마지막 액세스 이후 경과된 시간 (해제된 후 vbo가 할당된 상태로 유지되도록 하려면 0으로 설정됨)"
 
 
 msgid "Viewport Anti-Aliasing"
@@ -66321,14 +66234,6 @@ msgstr "각 픽셀에 대해 렌더하는 샘플의 수"
 
 msgid "Sampling Pattern"
 msgstr "샘플링 패턴"
-
-
-msgid "Sobol"
-msgstr "소볼"
-
-
-msgid "Use Sobol random sampling pattern"
-msgstr "소볼 랜덤 샘플링 패턴을 사용"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -71067,10 +70972,6 @@ msgid "Display type for mask splines"
 msgstr "마스크 스플라인의 표시 유형"
 
 
-msgid "Outline"
-msgstr "윤곽선"
-
-
 msgid "Display white edges with black outline"
 msgstr "블랙 윤곽선과 함께 화이트 에지를 표시"
 
@@ -72934,10 +72835,6 @@ msgid "UV editor data for the image editor space"
 msgstr "이미지 에디터 공간의 UV 에디터 데이터"
 
 
-msgid "Display Stretch Type"
-msgstr "늘이기 유형을 표시"
-
-
 msgid "Angular distortion between UV and 3D angles"
 msgstr "UV 및 3D 각도 사이의 각도 왜곡"
 
@@ -74794,10 +74691,6 @@ msgid "Edge Bevel"
 msgstr "에지 베벨"
 
 
-msgid "Edge Crease"
-msgstr "에지 크리스"
-
-
 msgid "Edge UV Face Select"
 msgstr "에지 UV 페이스 선택"
 
@@ -75987,6 +75880,10 @@ msgid "Display selected edge lengths, using global values when set in the transf
 msgstr "변환 패널에서 설정할 때 글로벌 값을 사용하여 선택한 에지 길이를 표시"
 
 
+msgid "Face Angles"
+msgstr "페이스 각도"
+
+
 msgid "Display the angles in the selected edges, using global values when set in the transform panel"
 msgstr "변환 패널에서 설정할 때 글로벌 값을 사용하여 선택한 에지들에 각도를 표시"
 
@@ -77123,6 +77020,14 @@ msgid "World:"
 msgstr "World:"
 
 
+msgid "Search"
+msgstr "검색"
+
+
+msgid "Navigate"
+msgstr "네비게이트"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "창"
@@ -77861,18 +77766,6 @@ msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "다중 선택된 오브젝트. 활성 상태인 것만 평가됩니다"
 
 
-msgid "Triangulated  faces"
-msgstr "삼각분할된 페이스"
-
-
-msgid "Modified: + vertices, + edges, + faces"
-msgstr "수정된: + 버텍스, + 에지, +페이스"
-
-
-msgid "Scaled by "
-msgstr "다음으로 축적 조정됨 "
-
-
 msgid "Object has zero volume"
 msgstr "오브젝트는 제로 볼륨을 가짐"
 
@@ -78146,6 +78039,10 @@ msgstr "새로운"
 
 msgid "API Defined"
 msgstr "API 정의"
+
+
+msgid "3D View"
+msgstr "3D 뷰"
 
 
 msgid "Active object is not a mesh"
@@ -78505,6 +78402,10 @@ msgstr "모두 잠금 반전"
 msgctxt "Operator"
 msgid "Delete All Shape Keys"
 msgstr "모든 셰이프 키를 삭제"
+
+
+msgid "Edge Crease"
+msgstr "에지 크리스"
 
 
 msgctxt "Operator"
@@ -79677,10 +79578,6 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
-msgid "Search"
-msgstr "검색"
-
-
 msgid "Display Thin"
 msgstr "얇게 표시"
 
@@ -80242,10 +80139,6 @@ msgstr "거리에 의해"
 
 msgid "Viewport Gizmos"
 msgstr "뷰 기즈모"
-
-
-msgid "Navigate"
-msgstr "네비게이트"
 
 
 msgid "Show Same Material"
@@ -81408,10 +81301,6 @@ msgid "Garbage Collection Rate"
 msgstr "가비지 컬렉션 비율"
 
 
-msgid "Vbo Time Out"
-msgstr "VBO 타임 아웃"
-
-
 msgid "View Name"
 msgstr "뷰 이름"
 
@@ -81514,16 +81403,8 @@ msgid "Description:"
 msgstr "설명:"
 
 
-msgid "description"
-msgstr "설명"
-
-
 msgid "Location:"
 msgstr "위치:"
-
-
-msgid "location"
-msgstr "위치"
 
 
 msgid "File:"
@@ -81548,6 +81429,14 @@ msgstr "경고:"
 
 msgid "Internet:"
 msgstr "인터넷:"
+
+
+msgid "description"
+msgstr "설명"
+
+
+msgid "location"
+msgstr "위치"
 
 
 msgctxt "Operator"
@@ -83146,10 +83035,6 @@ msgid "ShapeKey"
 msgstr "셰이프키"
 
 
-msgid "BevelWeight"
-msgstr "베벨웨이트"
-
-
 msgid "SubSurfCrease"
 msgstr "섭써프크리스"
 
@@ -83290,10 +83175,6 @@ msgstr "마스크레이어"
 
 msgid "Tangent space can only be computed for tris/quads, aborting"
 msgstr "탄젠트 공간은 삼각형/사각형에 대해서 만 계산할 수 있으며 중단 할 수 있습니다"
-
-
-msgid "Mikktspace failed to generate tangents for this mesh!"
-msgstr "Mikktspace가 이 메쉬의 탄젠트를 생성하지 못했습니다!"
 
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
@@ -85051,6 +84932,10 @@ msgid "Reset Curve"
 msgstr "커브 초기화"
 
 
+msgid "Support Loops"
+msgstr "루프를 지원"
+
+
 msgid "Anim Player"
 msgstr "Anim 플레이어"
 
@@ -86569,10 +86454,6 @@ msgid "3D Local View"
 msgstr "3D 로컬 뷰"
 
 
-msgid "3D View"
-msgstr "3D 뷰"
-
-
 msgid "Frame:%d "
 msgstr "프레임:%d "
 
@@ -87916,20 +87797,12 @@ msgid "Cannot relocate indirectly linked library '%s'"
 msgstr "간접적으로 연결된 라이브러리 '%s'를 재배치할 수 없습니다"
 
 
-msgid "Not found: %s"
-msgstr "찾을 수 없음: %s"
-
-
 msgid "Deleted %d data-block(s)"
 msgstr "%d개의 데이터-블록을 삭제했습니다"
 
 
 msgid "Not yet implemented"
 msgstr "아직 구현되지 안음"
-
-
-msgid "Mixed selection"
-msgstr "조합된 선택"
 
 
 msgid "(empty)"
@@ -89280,10 +89153,6 @@ msgstr "추가된 %d 텍스처의 최대치 수"
 
 msgid "Index %d is invalid"
 msgstr "인덱스 %d 유효하지 않음"
-
-
-msgid "Vertex color '%s' not found"
-msgstr "버텍스 컬러 '%s' 찾을 수 없습니다"
 
 
 msgid "Texture layer '%s' not found"

@@ -199,7 +199,7 @@ static float *SCULPT_geodesic_mesh_create(Object *ob,
       if (ss->epmap[e].count != 0) {
         for (int poly_map_index = 0; poly_map_index < ss->epmap[e].count; poly_map_index++) {
           const int poly = ss->epmap[e].indices[poly_map_index];
-          if (ss->face_sets[poly] <= 0) {
+          if (ss->hide_poly && ss->hide_poly[poly]) {
             continue;
           }
           const MPoly *mpoly = &polys[poly];

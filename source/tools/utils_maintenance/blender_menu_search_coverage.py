@@ -231,17 +231,17 @@ def setup_contants():
 def setup_menu_wrap_draw_call_all():
 
     def operators_from_layout_introspect(layout_introspect):
-        assert(isinstance(layout_introspect, list))
+        assert isinstance(layout_introspect, list)
         for item in layout_introspect:
             value = item.get("items")
             if value is not None:
-                assert(isinstance(value, list))
+                assert isinstance(value, list)
                 yield from operators_from_layout_introspect(value)
             value = item.get("operator")
             if value is not None:
-                assert(isinstance(value, str))
+                assert isinstance(value, str)
                 # We don't need the arguments at the moment.
-                assert(value.startswith("bpy.ops."))
+                assert value.startswith("bpy.ops.")
                 yield value[8:].split("(")[0]
 
     def menu_draw_introspect(self, _context):
@@ -337,7 +337,7 @@ def ctx_text_default():
             if area.type == 'TEXT_EDITOR':
                 area.spaces.active.text = text
                 found = True
-    assert(found)
+    assert found
 
 
 # -----
@@ -352,7 +352,7 @@ def ctx_image_view_default():
                 space_data = area.spaces.active
                 space_data.image = image
                 found = True
-    assert(found)
+    assert found
 
 
 def ctx_image_view_render():
@@ -364,7 +364,7 @@ def ctx_image_view_render():
                 space_data = area.spaces.active
                 space_data.image = image
                 found = True
-    assert(found)
+    assert found
 
 
 def ctx_image_mask_default():
@@ -377,7 +377,7 @@ def ctx_image_mask_default():
                 space_data.mode = 'MASK'
                 space_data.mask = mask
                 found = True
-    assert(found)
+    assert found
 
 
 def ctx_image_paint_default():
@@ -390,7 +390,7 @@ def ctx_image_paint_default():
                 space_data.mode = 'PAINT'
                 space_data.image = image
                 found = True
-    assert(found)
+    assert found
 
 
 # ----
@@ -405,7 +405,7 @@ def ctx_clip_default():
             if area.type == 'CLIP_EDITOR':
                 area.spaces.active.clip = clip
                 found = True
-    assert(found)
+    assert found
 
 
 # ----------
@@ -551,7 +551,7 @@ def perform_coverage_test():
         MENU_CALLED_RUNTIME.clear()
         yield dict(type='F3', value='TAP')
         yield dict(type='ESC', value='TAP')
-        assert(len(MENU_CALLED_RUNTIME) != 0)
+        assert len(MENU_CALLED_RUNTIME) != 0
 
     operators_pairs_all = operator_list()
 
