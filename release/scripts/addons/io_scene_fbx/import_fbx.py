@@ -1061,7 +1061,12 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
                 )
 
 
-def blen_read_geom_layer_color(fbx_obj, mesh):
+def blen_read_geom_layer_color(fbx_obj, mesh, colors_type):
+    if colors_type == 'NONE':
+        return
+    use_srgb = colors_type == 'SRGB'
+    layer_type = 'BYTE_COLOR' if use_srgb else 'FLOAT_COLOR'
+    color_prop_name = "color_srgb" if use_srgb else "color"
     # almost same as UV's
     for layer_id in (b'LayerElementColor',):
         for fbx_layer in elem_find_iter(fbx_obj, layer_id):
@@ -1074,8 +1079,7 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
             fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, b'Colors'))
             fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'ColorIndex'))
 
-            # Always init our new layers with full white opaque color.
-            color_lay = mesh.vertex_colors.new(name=fbx_layer_name, do_init=False)
+            color_lay = mesh.color_attributes.new(name=fbx_layer_name, type=layer_type, domain='CORNER')
 
             if color_lay is None:
                 print("Failed to add {%r %r} vertex color layer to %r (probably too many of them?)"
@@ -1090,7 +1094,7 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
                 continue
 
             blen_read_geom_array_mapped_polyloop(
-                mesh, blen_data, "color",
+                mesh, blen_data, color_prop_name,
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
                 4, 4, layer_id,
@@ -1289,7 +1293,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
 
         blen_read_geom_layer_material(fbx_obj, mesh)
         blen_read_geom_layer_uv(fbx_obj, mesh)
-        blen_read_geom_layer_color(fbx_obj, mesh)
+        blen_read_geom_layer_color(fbx_obj, mesh, settings.colors_type)
 
     if fbx_edges:
         # edges in fact index the polygons (NOT the vertices)
@@ -2365,7 +2369,8 @@ def load(operator, context, filepath="",
          automatic_bone_orientation=False,
          primary_bone_axis='Y',
          secondary_bone_axis='X',
-         use_prepost_rot=True):
+         use_prepost_rot=True,
+         colors_type='SRGB'):
 
     global fbx_elem_nil
     fbx_elem_nil = FBXElem('', (), (), ())
@@ -2504,7 +2509,7 @@ def load(operator, context, filepath="",
         use_custom_props, use_custom_props_enum_as_string,
         nodal_material_wrap_map, image_cache,
         ignore_leaf_bones, force_connect_children, automatic_bone_orientation, bone_correction_matrix,
-        use_prepost_rot,
+        use_prepost_rot, colors_type,
     )
 
     # #### And now, the "real" data.

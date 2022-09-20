@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -636,14 +636,6 @@ msgid "Opacity"
 msgstr "ﯼﺭﺪﮐِ"
 
 
-msgid "Back"
-msgstr "ﺐﻘﻋ"
-
-
-msgid "Front"
-msgstr "ﻮﻠﺟ"
-
-
 msgid "Image"
 msgstr "ﺮﯾﻮﺼﺗ"
 
@@ -1250,6 +1242,14 @@ msgstr "ﺖﭙﯾﺮﮑﺳﺍ"
 
 msgid "Off"
 msgstr "ﺵﻮﻣﺎﺧ"
+
+
+msgid "Front"
+msgstr "ﻮﻠﺟ"
+
+
+msgid "Back"
+msgstr "ﺐﻘﻋ"
 
 
 msgid "Auto Handle"
@@ -2871,10 +2871,6 @@ msgid "Select similar vertices, edges or faces by property types"
 msgstr "ﺖﯿﮑﻟﺎﻣ ﻉﻮﻧ ﺎﺑ ﻪﺑﺎﺸﻣ ﯼﺎﻫ‌ﺢﻄﺳ ﺎﯾ ﻭ ﺎﻫ‌ﻪﺒﻟ ٬ﺱﻮﺋﺭ ﺏﺎﺨﺘﻧﺍ"
 
 
-msgid "Face Angles"
-msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
-
-
 msgid "By Material"
 msgstr "ﺩﺍﻮﻣ ﺎﺑ"
 
@@ -3685,8 +3681,20 @@ msgid "Radians"
 msgstr "ﻥﺎﯾﺩﺍﺭ"
 
 
+msgid "Face Angles"
+msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
+
+
 msgid "Use linear progression"
 msgstr "ﯽﻄﺧ ﺖﻓﺮﺸﯿﭘ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
+
+
+msgid "Search"
+msgstr "ﻮﺠﺘﺴﺟ"
+
+
+msgid "3D View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgid "Spacebar"
@@ -3761,10 +3769,6 @@ msgid "XYZ to RGB"
 msgstr "XYZ ﻪﺑ RGB"
 
 
-msgid "Search"
-msgstr "ﻮﺠﺘﺴﺟ"
-
-
 msgid "Build Original:"
 msgstr "ﯽﻠﺻﺍ ﺖﺧﺎﺳ"
 
@@ -3818,16 +3822,8 @@ msgid "Description:"
 msgstr "ﺡﺮﺷ:"
 
 
-msgid "description"
-msgstr "ﺡﺮﺷ"
-
-
 msgid "Location:"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ:"
-
-
-msgid "location"
-msgstr "ﻥﺎﮑﻣ"
 
 
 msgid "File:"
@@ -3852,6 +3848,14 @@ msgstr "ﺭﺍﺪﺸﻫ:"
 
 msgid "Internet:"
 msgstr "ﺖﻧﺮﺘﻨﯾﺍ:"
+
+
+msgid "description"
+msgstr "ﺡﺮﺷ"
+
+
+msgid "location"
+msgstr "ﻥﺎﮑﻣ"
 
 
 msgid "Bone Settings"
@@ -4111,10 +4115,6 @@ msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﯼﺩ−ﯼﺁ ﻩٔﺩﺍﺩ 
 
 msgid "%d items"
 msgstr "‬%d‪‪ ﻡﻼ﻿ﻗﺍ"
-
-
-msgid "3D View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgid "Blender Render"

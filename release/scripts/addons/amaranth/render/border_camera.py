@@ -18,7 +18,7 @@ class AMTH_VIEW3D_OT_render_border_camera(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.region_3d.view_perspective == "CAMERA"
+        return context.space_data == 'VIEW_3D' and context.space_data.region_3d.view_perspective == "CAMERA"
 
     def execute(self, context):
         render = context.scene.render

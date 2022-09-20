@@ -285,7 +285,7 @@ static void build_mesh_leaf_node(PBVH *pbvh, PBVHNode *node)
     }
 
     if (has_visible == false) {
-      if (!paint_is_face_hidden(lt, pbvh->hide_vert, pbvh->mloop)) {
+      if (!paint_is_face_hidden(lt, pbvh->hide_poly)) {
         has_visible = true;
       }
     }
@@ -364,26 +364,6 @@ int BKE_pbvh_count_grid_quads(BLI_bitmap **grid_hidden,
   }
 
   return totquad;
-}
-
-void BKE_pbvh_sync_face_sets_to_grids(PBVH *pbvh)
-{
-  const int gridsize = pbvh->gridkey.grid_size;
-  for (int i = 0; i < pbvh->totgrid; i++) {
-    BLI_bitmap *gh = pbvh->grid_hidden[i];
-    const int face_index = BKE_subdiv_ccg_grid_to_face_index(pbvh->subdiv_ccg, i);
-    if (!gh && pbvh->face_sets[face_index] < 0) {
-      gh = pbvh->grid_hidden[i] = BLI_BITMAP_NEW(pbvh->gridkey.grid_area,
-                                                 "partialvis_update_grids");
-    }
-    if (gh) {
-      for (int y = 0; y < gridsize; y++) {
-        for (int x = 0; x < gridsize; x++) {
-          BLI_BITMAP_SET(gh, y * gridsize + x, pbvh->face_sets[face_index] < 0);
-        }
-      }
-    }
-  }
 }
 
 static void build_grid_leaf_node(PBVH *pbvh, PBVHNode *node)
@@ -552,6 +532,7 @@ void BKE_pbvh_build_mesh(PBVH *pbvh,
   pbvh->mesh = mesh;
   pbvh->header.type = PBVH_FACES;
   pbvh->mpoly = mpoly;
+  pbvh->hide_poly = (bool *)CustomData_get_layer_named(&mesh->pdata, CD_PROP_BOOL, ".hide_poly");
   pbvh->material_indices = (const int *)CustomData_get_layer_named(
       &mesh->pdata, CD_PROP_INT32, "material_index");
   pbvh->mloop = mloop;
@@ -650,11 +631,12 @@ void BKE_pbvh_build_grids(PBVH *pbvh,
   MEM_freeN(prim_bbc);
 }
 
-PBVH *BKE_pbvh_new(void)
+PBVH *BKE_pbvh_new(PBVHType type)
 {
   PBVH *pbvh = MEM_callocN(sizeof(PBVH), "pbvh");
   pbvh->respect_hide = true;
   pbvh->draw_cache_invalid = true;
+  pbvh->header.type = type;
   return pbvh;
 }
 
@@ -1313,11 +1295,7 @@ static void pbvh_update_draw_buffer_cb(void *__restrict userdata,
       }
       case PBVH_FACES:
         node->draw_buffers = GPU_pbvh_mesh_buffers_build(
-            pbvh->mesh,
-            pbvh->looptri,
-            CustomData_get_layer(pbvh->pdata, CD_SCULPT_FACE_SETS),
-            node->prim_indices,
-            node->totprim);
+            pbvh->mesh, pbvh->looptri, node->prim_indices, node->totprim);
         break;
       case PBVH_BMESH:
         node->draw_buffers = GPU_pbvh_bmesh_buffers_build(pbvh->flags &
@@ -2293,7 +2271,7 @@ static bool pbvh_faces_node_raycast(PBVH *pbvh,
     const MLoopTri *lt = &pbvh->looptri[faces[i]];
     const int *face_verts = node->face_vert_indices[i];
 
-    if (pbvh->respect_hide && paint_is_face_hidden(lt, pbvh->hide_vert, mloop)) {
+    if (pbvh->respect_hide && paint_is_face_hidden(lt, pbvh->hide_poly)) {
       continue;
     }
 
@@ -2602,7 +2580,7 @@ static bool pbvh_faces_node_nearest_to_ray(PBVH *pbvh,
     const MLoopTri *lt = &pbvh->looptri[faces[i]];
     const int *face_verts = node->face_vert_indices[i];
 
-    if (pbvh->respect_hide && paint_is_face_hidden(lt, pbvh->hide_vert, mloop)) {
+    if (pbvh->respect_hide && paint_is_face_hidden(lt, pbvh->hide_poly)) {
       continue;
     }
 
@@ -3219,6 +3197,12 @@ const bool *BKE_pbvh_get_vert_hide(const PBVH *pbvh)
   return pbvh->hide_vert;
 }
 
+const bool *BKE_pbvh_get_poly_hide(const PBVH *pbvh)
+{
+  BLI_assert(ELEM(pbvh->header.type, PBVH_FACES, PBVH_GRIDS));
+  return pbvh->hide_poly;
+}
+
 bool *BKE_pbvh_get_vert_hide_for_write(PBVH *pbvh)
 {
   BLI_assert(pbvh->header.type == PBVH_FACES);
@@ -3242,6 +3226,14 @@ void BKE_pbvh_subdiv_cgg_set(PBVH *pbvh, SubdivCCG *subdiv_ccg)
 void BKE_pbvh_face_sets_set(PBVH *pbvh, int *face_sets)
 {
   pbvh->face_sets = face_sets;
+}
+
+void BKE_pbvh_update_hide_attributes_from_mesh(PBVH *pbvh)
+{
+  if (pbvh->header.type == PBVH_FACES) {
+    pbvh->hide_vert = CustomData_get_layer_named(&pbvh->mesh->vdata, CD_PROP_BOOL, ".hide_vert");
+    pbvh->hide_poly = CustomData_get_layer_named(&pbvh->mesh->pdata, CD_PROP_BOOL, ".hide_poly");
+  }
 }
 
 void BKE_pbvh_respect_hide_set(PBVH *pbvh, bool respect_hide)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -2262,16 +2262,8 @@ msgid "B-Bone Start Handle"
 msgstr "Maniglia Iniziale Osso-B"
 
 
-msgid "Ease In"
-msgstr "Raccordo in Ingresso"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "Lunghezza della prima Maniglia Bezier (solo per Ossa-Bezier)"
-
-
-msgid "Ease Out"
-msgstr "Raccordo in Uscita"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -2818,10 +2810,6 @@ msgid "Input Samples"
 msgstr "Campioni Ingresso"
 
 
-msgid "Jitter"
-msgstr "Tremolio"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "Fattore di tremolio per i nuovi tratti"
 
@@ -2902,6 +2890,10 @@ msgid "Use tablet pressure"
 msgstr "Usa pressione tavoletta"
 
 
+msgid "Outline"
+msgstr "Contorno"
+
+
 msgid "Random Settings"
 msgstr "Opzioni Casuali"
 
@@ -2972,18 +2964,6 @@ msgstr "Utente Filmato"
 
 msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "Parametri che definiscono quale fotogramma del filmato viene mostrato"
-
-
-msgid "Depth"
-msgstr "Profondità"
-
-
-msgid "Back"
-msgstr "Retro"
-
-
-msgid "Front"
-msgstr "Fronte"
 
 
 msgid "Frame Method"
@@ -5307,8 +5287,16 @@ msgid "No culling"
 msgstr "No scarto"
 
 
+msgid "Front"
+msgstr "Fronte"
+
+
 msgid "No projection when in front of the face"
 msgstr "Nessuna proiezione quando davanti alla faccia"
+
+
+msgid "Back"
+msgstr "Retro"
 
 
 msgid "No projection when behind the face"
@@ -5843,6 +5831,10 @@ msgid "Bezier"
 msgstr "Bezier"
 
 
+msgid "Depth"
+msgstr "Profondità"
+
+
 msgid "Method of projecting depth"
 msgstr "Metodo per proiettare la profondità"
 
@@ -5945,10 +5937,6 @@ msgstr "Indice di questi punti"
 
 msgid "Radius"
 msgstr "Raggio"
-
-
-msgid "Steps"
-msgstr "Passi"
 
 
 msgid "Segments"
@@ -9534,6 +9522,10 @@ msgid "Extreme"
 msgstr "Estremo"
 
 
+msgid "Jitter"
+msgstr "Tremolio"
+
+
 msgid "Frame is selected for editing in the Dope Sheet"
 msgstr "Il fotogramma è selezionato per la modifica nel DopeSheet"
 
@@ -10162,6 +10154,10 @@ msgstr "Modificatore Specchia"
 
 msgid "Fade"
 msgstr "Dissolvenza"
+
+
+msgid "Steps"
+msgstr "Passi"
 
 
 msgid "Shrinkwrap Modifier"
@@ -13123,16 +13119,8 @@ msgid "Auto smooth (based on smooth/sharp faces/edges and angle between faces), 
 msgstr "Leviga automaticamente (sulla base dell'impostazione levigato/piatto di facce/spigoli e dell'angolo fra le facce), o usa i dati di divisione normali se disponibili"
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "Immagazzina Pesi Smusso Spigolo"
-
-
 msgid "Store Edge Crease"
 msgstr "Immagazzina Piega Spigolo"
-
-
-msgid "Store Vertex Bevel Weight"
-msgstr "Immagazzina Pesi Smusso Vertice"
 
 
 msgid "Topology Mirror"
@@ -16332,6 +16320,14 @@ msgid "Settings for image formats"
 msgstr "Impostazioni peri formati dell'immagine"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgid "Color Depth"
 msgstr "Profondità Colore"
 
@@ -17666,6 +17662,14 @@ msgstr "Punto di curvatura Bezier con due manici definizione di un fotogramma ch
 
 msgid "Automatic Easing"
 msgstr "Raccordo Automatico"
+
+
+msgid "Ease In"
+msgstr "Raccordo in Ingresso"
+
+
+msgid "Ease Out"
+msgstr "Raccordo in Uscita"
 
 
 msgid "Ease In and Out"
@@ -30062,14 +30066,6 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Sblocca Tutti i Livelli"
@@ -32653,14 +32649,6 @@ msgid "Turns"
 msgstr "Giri"
 
 
-msgid "Add vertex color layer"
-msgstr "Aggiunge un livello di colore vertice"
-
-
-msgid "Remove vertex color layer"
-msgstr "Rimuove un livello di colore vertice"
-
-
 msgid "(De)select all vertices, edges or faces"
 msgstr "(De)seleziona tutti i vertici, spigoli o facce"
 
@@ -32862,38 +32850,6 @@ msgstr "Seleziona i vertici casualmente"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Seleziona vertici, spigoli o facce simili per tipo proprietà"
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "Quantità di Facce Adiacenti"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "Quantità di Facce Attorno allo Spigolo"
-
-
-msgid "Face Angles"
-msgstr "Angoli Faccia"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "Marcatura Spigoli Freestyle"
-
-
-msgid "Polygon Sides"
-msgstr "Lati Poligono"
-
-
-msgid "Perimeter"
-msgstr "Perimetro"
-
-
-msgid "Flat/Smooth"
-msgstr "Piatto/Levigato"
-
-
-msgid "Freestyle Face Marks"
-msgstr "Marcature Faccia Freestyle"
 
 
 msgctxt "Operator"
@@ -33195,16 +33151,6 @@ msgstr "Percorso Connessione Vertici"
 
 msgid "Connect vertices by their selection order, creating edges, splitting faces"
 msgstr "Connette i vertici secondo il loro ordine di selezione, creando spigoli e dividendo le facce"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Aggiungi Colore Vertice"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Rimuove Colore Vertice"
 
 
 msgctxt "Operator"
@@ -33563,19 +33509,6 @@ msgstr "Ripristina l'area visibile per mostrare gli spezzoni selezionati"
 
 
 msgctxt "Operator"
-msgid "Add and Link Node"
-msgstr "Aggiungi e Collega Nodo"
-
-
-msgid "Node Type"
-msgstr "Tipo Nodo"
-
-
-msgid "Node type"
-msgstr "Tipo di nodo"
-
-
-msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Aggiungi Nodo File"
 
@@ -33600,6 +33533,14 @@ msgstr "Aggiungi Nodo"
 
 msgid "Add a node to the active tree"
 msgstr "Aggiunge un Nodo all'albero attivo"
+
+
+msgid "Node Type"
+msgstr "Tipo Nodo"
+
+
+msgid "Node type"
+msgstr "Tipo di nodo"
 
 
 msgctxt "Operator"
@@ -43459,6 +43400,10 @@ msgid "3D-Print"
 msgstr "Stampa 3D"
 
 
+msgid "Compositor"
+msgstr "Compositore"
+
+
 msgid "Shadow Settings"
 msgstr "Impostazioni Ombra"
 
@@ -46173,14 +46118,6 @@ msgid "Sampling Pattern"
 msgstr "Motivo Campionamento"
 
 
-msgid "Sobol"
-msgstr "Sobol"
-
-
-msgid "Use Sobol random sampling pattern"
-msgstr "Usa il motivo di campionamento casuale Sobol"
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "Valore del seme per l'integratore per ottenere differenti schemi di rumore"
 
@@ -48675,10 +48612,6 @@ msgid "Mask displayed and edited in this space"
 msgstr "L'immagine è mostrata e modificata in questo spazio"
 
 
-msgid "Outline"
-msgstr "Contorno"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -51130,10 +51063,6 @@ msgid "Edge Bevel"
 msgstr "Smussa Spigolo"
 
 
-msgid "Edge Crease"
-msgstr "Piega Spigolo"
-
-
 msgid "Edge UV Face Select"
 msgstr "Spigolo Faccia UV Selezionato"
 
@@ -51818,6 +51747,10 @@ msgid "Display selected edge lengths, using global values when set in the transf
 msgstr "Mostra le lunghezze degli spigoli selezionati, usando i valori globali come impostati nel pannello trasformazioni"
 
 
+msgid "Face Angles"
+msgstr "Angoli Faccia"
+
+
 msgid "Display the angles in the selected edges, using global values when set in the transform panel"
 msgstr "Mostra gli angoli fra gli spigoli selezionati, usando i valori globali come impostati nel pannello trasformazioni"
 
@@ -52406,6 +52339,10 @@ msgid "World:"
 msgstr "Mondo:"
 
 
+msgid "Search"
+msgstr "Ricerca"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Finestra"
@@ -52824,14 +52761,6 @@ msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "Più oggetti selezionati. Sarà valutato solo l'attivo"
 
 
-msgid "Triangulated  faces"
-msgstr "Triangola facce"
-
-
-msgid "Scaled by "
-msgstr "Scalato di "
-
-
 msgid "Object has zero volume"
 msgstr "L'oggetto ha volume zero"
 
@@ -53062,6 +52991,10 @@ msgid "API Defined"
 msgstr "Definito dall'API"
 
 
+msgid "3D View"
+msgstr "Vista 3D"
+
+
 msgid "Active object is not a mesh"
 msgstr "L'oggetto attivo non è una mesh"
 
@@ -53251,6 +53184,10 @@ msgstr "Influenza Scolorimento"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "Inverti Tutti i Blocchi"
+
+
+msgid "Edge Crease"
+msgstr "Piega Spigolo"
 
 
 msgctxt "Operator"
@@ -53768,10 +53705,6 @@ msgstr "Add-ons sconosciuti"
 
 msgid "%s: %s"
 msgstr "%s: %s"
-
-
-msgid "Search"
-msgstr "Ricerca"
 
 
 msgid "Display Thin"
@@ -55116,16 +55049,8 @@ msgid "Description:"
 msgstr "Descrizione:"
 
 
-msgid "description"
-msgstr "descrizione"
-
-
 msgid "Location:"
 msgstr "Posizione:"
-
-
-msgid "location"
-msgstr "posizione"
 
 
 msgid "File:"
@@ -55150,6 +55075,14 @@ msgstr "Avviso:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "descrizione"
+
+
+msgid "location"
+msgstr "posizione"
 
 
 msgctxt "Operator"
@@ -56448,10 +56381,6 @@ msgstr "Faccia Poligonale (Ngon)"
 
 msgid "ShapeKey"
 msgstr "ChiaveForma"
-
-
-msgid "BevelWeight"
-msgstr "PesoSmusso"
 
 
 msgid "Source and destination meshes do not have the same amount of vertices, 'Topology' mapping cannot be used in this case"
@@ -58608,10 +58537,6 @@ msgid "3D Local View"
 msgstr "Vista Locale 3D"
 
 
-msgid "3D View"
-msgstr "Vista 3D"
-
-
 msgid "Frame:%d "
 msgstr "Fotogramma:%d "
 
@@ -59311,16 +59236,8 @@ msgid "Cannot relocate indirectly linked library '%s'"
 msgstr "Impossibile rilocalizzare la libreria '%s 'collegata indirettamente"
 
 
-msgid "Not found: %s"
-msgstr "Non trovato: %s"
-
-
 msgid "Not yet implemented"
 msgstr "Non ancora implementato"
-
-
-msgid "Mixed selection"
-msgstr "Selezione mista"
 
 
 msgid "Current File"
@@ -60293,10 +60210,6 @@ msgid "Index %d is invalid"
 msgstr "L'indice %d non è valido"
 
 
-msgid "Vertex color '%s' not found"
-msgstr "Colore vertice '%s' non trovato"
-
-
 msgid "Texture layer '%s' not found"
 msgstr "Livello texture '%s' non trovato"
 
@@ -60452,10 +60365,6 @@ msgstr "Sostituisci Originale"
 
 msgid "Crease Edges"
 msgstr "Spigoli Piega"
-
-
-msgid "Compositor"
-msgstr "Compositore"
 
 
 msgid "Fac"

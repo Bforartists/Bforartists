@@ -36,6 +36,10 @@ SuggestMap = Dict[str, str]
 ONLY_ONCE = True
 USE_COLOR = True
 
+# Ignore: `/*identifier*/` as these are used in C++ for unused arguments or to denote struct members.
+# These identifiers can be ignored in most cases.
+USE_SKIP_SINGLE_IDENTIFIER_COMMENTS = True
+
 _words_visited = set()
 _files_visited = set()
 
@@ -193,8 +197,11 @@ re_words = re.compile(
 
 re_not_newline = re.compile("[^\n]")
 
+if USE_SKIP_SINGLE_IDENTIFIER_COMMENTS:
+    re_single_word_c_comments = re.compile(r"\/\*[\s]*[a-zA-Z_]+[a-zA-Z0-9_]*[\s]*\*\/")
 
-def words_from_text(text: str) -> List[Tuple[str, int]]:
+
+def words_from_text(text: str, check_type: str) -> List[Tuple[str, int]]:
     """ Extract words to treat as English for spell checking.
     """
     # Replace non-newlines with white-space, so all alignment is kept.
@@ -210,15 +217,34 @@ def words_from_text(text: str) -> List[Tuple[str, int]]:
     text = re_ignore.sub(replace_ignore, text)
 
     words = []
-    for match in re_words.finditer(text):
-        words.append((match.group(0), match.start()))
 
-    def word_ok(w: str) -> bool:
-        # Ignore all uppercase words.
-        if w.isupper():
-            return False
-        return True
-    words[:] = [w for w in words if word_ok(w[0])]
+    if check_type == 'SPELLING':
+        for match in re_words.finditer(text):
+            words.append((match.group(0), match.start()))
+
+        def word_ok(w: str) -> bool:
+            # Ignore all uppercase words.
+            if w.isupper():
+                return False
+            return True
+        words[:] = [w for w in words if word_ok(w[0])]
+
+    elif check_type == 'DUPLICATES':
+        w_prev = ""
+        w_prev_start = 0
+        for match in re_words.finditer(text):
+            w = match.group(0)
+            w_start = match.start()
+            w_lower = w.lower()
+            if w_lower == w_prev:
+                text_ws = text[w_prev_start + len(w_prev): w_start]
+                if text_ws == " ":
+                    words.append((w_lower, w_start))
+            w_prev = w_lower
+            w_prev_start = w_start
+    else:
+        assert False
+
     return words
 
 
@@ -236,8 +262,8 @@ class Comment:
         self.line = line
         self.type = type
 
-    def parse(self) -> List[Tuple[str, int]]:
-        return words_from_text(self.text)
+    def parse(self, check_type: str) -> List[Tuple[str, int]]:
+        return words_from_text(self.text, check_type=check_type)
 
     def line_and_column_from_comment_offset(self, pos: int) -> Tuple[int, int]:
         text = self.text
@@ -334,17 +360,28 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
 
     comment_ranges = []
 
+    if USE_SKIP_SINGLE_IDENTIFIER_COMMENTS:
+        comment_ignore_offsets = set()
+        for match in re_single_word_c_comments.finditer(text):
+            comment_ignore_offsets.add(match.start(0))
+
     i = 0
     while i != -1:
         i = text.find(BEGIN, i)
         if i != -1:
             i_next = text.find(END, i)
             if i_next != -1:
+                do_comment_add = True
+                if USE_SKIP_SINGLE_IDENTIFIER_COMMENTS:
+                    if i in comment_ignore_offsets:
+                        do_comment_add = False
+
                 # Not essential but seek back to find beginning of line.
                 while i > 0 and text[i - 1] in {"\t", " "}:
                     i -= 1
                 i_next += len(END)
-                comment_ranges.append((i, i_next))
+                if do_comment_add:
+                    comment_ranges.append((i, i_next))
             i = i_next
         else:
             pass
@@ -364,7 +401,7 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
                     break
 
     if not PRINT_SPELLING:
-        return [], []
+        return [], set()
 
     # Collect variables from code, so we can reference variables from code blocks
     # without this generating noise from the spell checker.
@@ -413,64 +450,87 @@ def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
     return comments, code_words
 
 
-def spell_check_report(filepath: str, report: Report) -> None:
+def spell_check_report(filepath: str, check_type: str, report: Report) -> None:
     w, slineno, scol = report
-    w_lower = w.lower()
 
-    if ONLY_ONCE:
-        if w_lower in _words_visited:
-            return
-        else:
-            _words_visited.add(w_lower)
+    if check_type == 'SPELLING':
+        w_lower = w.lower()
 
-    suggest = _suggest_map.get(w_lower)
-    if suggest is None:
-        _suggest_map[w_lower] = suggest = " ".join(dictionary_suggest(w))
+        if ONLY_ONCE:
+            if w_lower in _words_visited:
+                return
+            else:
+                _words_visited.add(w_lower)
 
-    print("%s:%d:%d: %s%s%s, suggest (%s)" % (
-        filepath,
-        slineno + 1,
-        scol + 1,
-        COLOR_WORD,
-        w,
-        COLOR_ENDC,
-        suggest,
-    ))
+        suggest = _suggest_map.get(w_lower)
+        if suggest is None:
+            _suggest_map[w_lower] = suggest = " ".join(dictionary_suggest(w))
+
+        print("%s:%d:%d: %s%s%s, suggest (%s)" % (
+            filepath,
+            slineno + 1,
+            scol + 1,
+            COLOR_WORD,
+            w,
+            COLOR_ENDC,
+            suggest,
+        ))
+    elif check_type == 'DUPLICATES':
+        print("%s:%d:%d: %s%s%s, duplicate" % (
+            filepath,
+            slineno + 1,
+            scol + 1,
+            COLOR_WORD,
+            w,
+            COLOR_ENDC,
+        ))
 
 
 def spell_check_file(
         filepath: str,
-        check_type: str = 'COMMENTS',
+        check_type: str,
+        extract_type: str = 'COMMENTS',
 ) -> Generator[Report, None, None]:
-    if check_type == 'COMMENTS':
+    if extract_type == 'COMMENTS':
         if filepath.endswith(".py"):
             comment_list, code_words = extract_py_comments(filepath)
         else:
             comment_list, code_words = extract_c_comments(filepath)
-    elif check_type == 'STRINGS':
+    elif extract_type == 'STRINGS':
         comment_list, code_words = extract_code_strings(filepath)
-
-    for comment in comment_list:
-        for w, pos in comment.parse():
-            w_lower = w.lower()
-            if w_lower in dict_ignore:
-                continue
-
-            is_good_spelling = dictionary_check(w, code_words)
-            if not is_good_spelling:
-                # Ignore literals that show up in code,
-                # gets rid of a lot of noise from comments that reference variables.
-                if w in code_words:
-                    # print("Skipping", w)
+    if check_type == 'SPELLING':
+        for comment in comment_list:
+            words = comment.parse(check_type='SPELLING')
+            for w, pos in words:
+                w_lower = w.lower()
+                if w_lower in dict_ignore:
                     continue
 
+                is_good_spelling = dictionary_check(w, code_words)
+                if not is_good_spelling:
+                    # Ignore literals that show up in code,
+                    # gets rid of a lot of noise from comments that reference variables.
+                    if w in code_words:
+                        # print("Skipping", w)
+                        continue
+
+                    slineno, scol = comment.line_and_column_from_comment_offset(pos)
+                    yield (w, slineno, scol)
+    elif check_type == 'DUPLICATES':
+        for comment in comment_list:
+            words = comment.parse(check_type='DUPLICATES')
+            for w, pos in words:
                 slineno, scol = comment.line_and_column_from_comment_offset(pos)
+                # print(filepath + ":" + str(slineno + 1) + ":" + str(scol), w, "(duplicates)")
                 yield (w, slineno, scol)
+    else:
+        assert False
 
 
 def spell_check_file_recursive(
         dirpath: str,
-        check_type: str = 'COMMENTS',
+        check_type: str,
+        extract_type: str = 'COMMENTS',
         cache_data: Optional[CacheData] = None,
 ) -> None:
     import os
@@ -514,8 +574,10 @@ def spell_check_file_recursive(
         })
 
     for filepath in source_list(dirpath, is_source):
-        for report in spell_check_file_with_cache_support(filepath, check_type=check_type, cache_data=cache_data):
-            spell_check_report(filepath, report)
+        for report in spell_check_file_with_cache_support(
+                filepath, check_type, extract_type=extract_type, cache_data=cache_data,
+        ):
+            spell_check_report(filepath, check_type, report)
 
 
 # -----------------------------------------------------------------------------
@@ -548,7 +610,8 @@ def spell_cache_write(cache_filepath: str, cache_store: Tuple[CacheData, Suggest
 
 def spell_check_file_with_cache_support(
         filepath: str,
-        check_type: str = 'COMMENTS',
+        check_type: str,
+        extract_type: str = 'COMMENTS',
         cache_data: Optional[CacheData] = None,
 ) -> Generator[Report, None, None]:
     """
@@ -557,7 +620,7 @@ def spell_check_file_with_cache_support(
     _files_visited.add(filepath)
 
     if cache_data is None:
-        yield from spell_check_file(filepath, check_type=check_type)
+        yield from spell_check_file(filepath, check_type, extract_type=extract_type)
         return
 
     cache_data_for_file = cache_data.get(filepath)
@@ -575,7 +638,7 @@ def spell_check_file_with_cache_support(
                 return
 
     cache_reports = []
-    for report in spell_check_file(filepath, check_type=check_type):
+    for report in spell_check_file(filepath, check_type, extract_type=extract_type):
         cache_reports.append(report)
 
     cache_data[filepath] = (cache_len_test, cache_hash_test, cache_reports)
@@ -612,6 +675,21 @@ def argparse_create() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        '--check',
+        dest='check_type',
+        choices=('SPELLING', 'DUPLICATES'),
+        default='SPELLING',
+        required=False,
+        metavar='CHECK_TYPE',
+        help=(
+            'Text to extract for checking.\n'
+            '\n'
+            '- ``COMMENTS`` extracts comments from source code.\n'
+            '- ``STRINGS`` extracts text.'
+        ),
+    )
+
+    parser.add_argument(
         "--cache-file",
         dest="cache_file",
         help=(
@@ -637,30 +715,31 @@ def main() -> None:
 
     args = argparse_create().parse_args()
 
-    check_type = args.extract
+    extract_type = args.extract
     cache_filepath = args.cache_file
+    check_type = args.check_type
 
     cache_data: Optional[CacheData] = None
     if cache_filepath:
         cache_data, _suggest_map = spell_cache_read(cache_filepath)
         clear_stale_cache = True
 
-    # print(check_type)
+    # print(extract_type)
     try:
         for filepath in args.paths:
             if os.path.isdir(filepath):
                 # recursive search
-                spell_check_file_recursive(filepath, check_type=check_type, cache_data=cache_data)
+                spell_check_file_recursive(filepath, check_type, extract_type=extract_type, cache_data=cache_data)
             else:
                 # single file
                 for report in spell_check_file_with_cache_support(
-                        filepath, check_type=check_type, cache_data=cache_data):
-                    spell_check_report(filepath, report)
+                        filepath, check_type, extract_type=extract_type, cache_data=cache_data):
+                    spell_check_report(filepath, check_type, report)
     except KeyboardInterrupt:
         clear_stale_cache = False
 
     if cache_filepath:
-        assert(cache_data is not None)
+        assert cache_data is not None
         if VERBOSE_CACHE:
             print("Writing cache:", len(cache_data))
 

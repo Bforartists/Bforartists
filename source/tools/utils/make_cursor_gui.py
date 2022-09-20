@@ -105,7 +105,7 @@ class App:
             oldstate = self.state
             self.state = []
             for n in range(1024):
-                if not((n % 2) or ((n // 32) % 2)):
+                if not ((n % 2) or ((n // 32) % 2)):
                     self.state.append(oldstate[n])
             for n in range(256, 1024):
                 self.state.append(2)
@@ -271,7 +271,7 @@ class App:
         print("\n\nstatic char bitmap[] = {", end=' ')
         for i in range(numbytes):
             b1 = bitmap[i]
-            if not(i % 8):
+            if not (i % 8):
                 print("\n\t", end=' ')
             print("0x%(b1)02x, " % vars(), end=' ')
         print("\n};")
@@ -279,7 +279,7 @@ class App:
         print("\nstatic char mask[] = {", end=' ')
         for i in range(numbytes):
             b1 = mask[i]
-            if not(i % 8):
+            if not (i % 8):
                 print("\n\t", end=' ')
             print("0x%(b1)02x, " % vars(), end=' ')
         print("\n};")

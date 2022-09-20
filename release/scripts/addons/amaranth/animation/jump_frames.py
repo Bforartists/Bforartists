@@ -16,7 +16,7 @@ Find it on the User Preferences, Editing.
 """
 
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, Panel
 from bpy.props import BoolProperty
 
 KEYMAPS = list()
@@ -129,40 +129,35 @@ class AMTH_SCREEN_OT_frame_jump(Operator):
         return {"FINISHED"}
 
 
-def ui_userpreferences_edit(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
-    if not get_addon:
-        return
+class AMTH_USERPREF_PT_animation(Panel):
+    bl_space_type = 'PREFERENCES'
+    bl_region_type = 'WINDOW'
+    bl_label = "Jump Keyframes"
+    bl_parent_id = "USERPREF_PT_animation_keyframes"
 
-    preferences = context.preferences.addons["amaranth"].preferences
+    def draw(self, context):
+        preferences = context.preferences.addons["amaranth"].preferences
 
-    col = self.layout.column()
-    split = col.split(factor=0.21)
-    split.prop(preferences, "frames_jump",
-               text="Frames to Jump")
+        layout = self.layout
 
+        col = layout.column()
+        row = col.row()
+        row.label(text="Frames to Jump")
+        row.prop(preferences, "frames_jump", text="")
 
-def label(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
-    if not get_addon:
-        return
-
-    layout = self.layout
-
-    if context.preferences.addons["amaranth"].preferences.use_timeline_extra_info:
-        row = layout.row(align=True)
-
+        col = layout.column()
+        row = col.row()
+        row.label(text="Jump Operators")
         row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname,
-                     icon="PREV_KEYFRAME", text="").backwards = True
+                     icon="PREV_KEYFRAME", text="Jump to Previous").backwards = True
         row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname,
-                     icon="NEXT_KEYFRAME", text="").backwards = False
+                     icon="NEXT_KEYFRAME", text="Jump to Next").backwards = False
 
 
 def register():
+    bpy.utils.register_class(AMTH_USERPREF_PT_animation)
     bpy.utils.register_class(AMTH_SCREEN_OT_frame_jump)
     bpy.utils.register_class(AMTH_SCREEN_OT_keyframe_jump_inbetween)
-    bpy.types.USERPREF_PT_animation_timeline.append(ui_userpreferences_edit)
-    bpy.types.USERPREF_PT_animation_timeline.append(label)
 
     # register keyboard shortcuts
     wm = bpy.context.window_manager
@@ -189,9 +184,10 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(AMTH_USERPREF_PT_animation)
     bpy.utils.unregister_class(AMTH_SCREEN_OT_frame_jump)
     bpy.utils.unregister_class(AMTH_SCREEN_OT_keyframe_jump_inbetween)
-    bpy.types.USERPREF_PT_animation_timeline.remove(ui_userpreferences_edit)
+
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()

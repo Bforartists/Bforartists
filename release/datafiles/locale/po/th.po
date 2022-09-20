@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -558,18 +558,6 @@ msgid "Opacity"
 msgstr "ความทึบแสง"
 
 
-msgid "Depth"
-msgstr "ความลึก"
-
-
-msgid "Back"
-msgstr "กลับ"
-
-
-msgid "Front"
-msgstr "หน้า"
-
-
 msgid "Stretch"
 msgstr "ยืด"
 
@@ -734,6 +722,14 @@ msgid "Track"
 msgstr "แทร็ค"
 
 
+msgid "Front"
+msgstr "หน้า"
+
+
+msgid "Back"
+msgstr "กลับ"
+
+
 msgid "Location"
 msgstr "ตำแหน่ง"
 
@@ -744,6 +740,10 @@ msgstr "มาตรฐาน"
 
 msgid "Bezier"
 msgstr "เบซิเยร์"
+
+
+msgid "Depth"
+msgstr "ความลึก"
 
 
 msgid "Cursor"
@@ -2970,10 +2970,6 @@ msgid "Gimbal"
 msgstr "กิมบอล"
 
 
-msgid "Face Angles"
-msgstr "องศาของด้าน"
-
-
 msgid "-Y to +Y"
 msgstr "-Y ไป +Y"
 
@@ -4015,6 +4011,10 @@ msgid "Show 3D Cursor"
 msgstr "แสดงเคอร์เซอร์สามมิติ"
 
 
+msgid "Face Angles"
+msgstr "องศาของด้าน"
+
+
 msgid "Display Grid Floor"
 msgstr "แสดงพื้นตาราง"
 
@@ -4054,6 +4054,10 @@ msgstr "การตั้งค่า:"
 msgctxt "Operator"
 msgid "Workspace:"
 msgstr "พื้นที่ใช้งาน:"
+
+
+msgid "Search"
+msgstr "ค้นหา"
 
 
 msgctxt "WindowManager"
@@ -4129,6 +4133,10 @@ msgstr "[{}]: \"{}\" ({})"
 msgctxt "Operator"
 msgid "New"
 msgstr "ใหม่"
+
+
+msgid "3D View"
+msgstr "มุมมองสามมิติ"
 
 
 msgctxt "Operator"
@@ -4254,10 +4262,6 @@ msgstr "คำนวณ"
 
 msgid "%s: %s"
 msgstr "%s: %s"
-
-
-msgid "Search"
-msgstr "ค้นหา"
 
 
 msgctxt "Operator"
@@ -4760,14 +4764,6 @@ msgid "Description:"
 msgstr "คำอธิบาย:"
 
 
-msgid "description"
-msgstr "คำอธิบาย"
-
-
-msgid "location"
-msgstr "ตำแหน่ง"
-
-
 msgid "File:"
 msgstr "ไฟล์:"
 
@@ -4790,6 +4786,14 @@ msgstr "ระวัง:"
 
 msgid "Internet:"
 msgstr "อินเตอร์เน็ต:"
+
+
+msgid "description"
+msgstr "คำอธิบาย"
+
+
+msgid "location"
+msgstr "ตำแหน่ง"
 
 
 msgctxt "Operator"
@@ -5417,10 +5421,6 @@ msgstr "%s %s ไปยัง %s"
 
 msgid "Paper"
 msgstr "กระดาษ"
-
-
-msgid "3D View"
-msgstr "มุมมองสามมิติ"
 
 
 msgid "| Last:%s "
