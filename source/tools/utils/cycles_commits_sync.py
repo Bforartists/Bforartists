@@ -61,8 +61,8 @@ def replace_file_prefix(path, prefix, replace_prefix):
 
 
 def cleanup_patch(patch, accept_prefix, replace_prefix):
-    assert(accept_prefix[0] != b'/')
-    assert(replace_prefix[0] != b'/')
+    assert accept_prefix[0] != b'/'
+    assert replace_prefix[0] != b'/'
 
     full_accept_prefix = GIT_FILE_SECTION_MARKER + b" a/" + accept_prefix
 
@@ -131,12 +131,12 @@ def commit_map_get(repository, path, start_commit):
 def commits_get_difference(cycles_map, blender_map):
     cycles_to_blender = []
     for stamped_subject, commit_hash in cycles_map.items():
-        if not stamped_subject in blender_map:
+        if stamped_subject not in blender_map:
             cycles_to_blender.append(commit_hash)
 
     blender_to_cycles = []
     for stamped_subject, commit_hash in blender_map.items():
-        if not stamped_subject in cycles_map:
+        if stamped_subject not in cycles_map:
             blender_to_cycles.append(commit_hash)
 
     return cycles_to_blender, blender_to_cycles

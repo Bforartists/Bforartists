@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -722,14 +722,6 @@ msgid "Opacity"
 msgstr "Ondoorzichtigheid"
 
 
-msgid "Back"
-msgstr "Terug"
-
-
-msgid "Front"
-msgstr "Voorkant"
-
-
 msgid "Fit"
 msgstr "Passend"
 
@@ -977,6 +969,14 @@ msgstr "Bot"
 
 msgid "Always"
 msgstr "Altijd"
+
+
+msgid "Front"
+msgstr "Voorkant"
+
+
+msgid "Back"
+msgstr "Terug"
 
 
 msgid "Location"
@@ -4679,16 +4679,6 @@ msgstr "Koppel Punt"
 
 
 msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Voeg Kleur van Punt Toe"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Verwijder Kleur van Punt"
-
-
-msgctxt "Operator"
 msgid "Apply Scale"
 msgstr "Pas Schaal Toe"
 
@@ -7326,6 +7316,10 @@ msgid "World:"
 msgstr "Wereld:"
 
 
+msgid "Search"
+msgstr "Zoeken"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Scherm"
@@ -7877,10 +7871,6 @@ msgid "Fourth"
 msgstr "Vierde"
 
 
-msgid "Search"
-msgstr "Zoeken"
-
-
 msgctxt "Operator"
 msgid "Solution"
 msgstr "Solutie"
@@ -8427,16 +8417,8 @@ msgid "Description:"
 msgstr "Beschrijving:"
 
 
-msgid "description"
-msgstr "beschrijving"
-
-
 msgid "Location:"
 msgstr "Locatie:"
-
-
-msgid "location"
-msgstr "locatie"
 
 
 msgid "File:"
@@ -8461,6 +8443,14 @@ msgstr "Waarschuwing:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "beschrijving"
+
+
+msgid "location"
+msgstr "locatie"
 
 
 msgctxt "Operator"
@@ -8946,10 +8936,6 @@ msgid "Documents"
 msgstr "Documenten"
 
 
-msgid " from "
-msgstr " van "
-
-
 msgid "Preferences saved"
 msgstr "Instellingen opgeslagen"
 
@@ -8970,6 +8956,10 @@ msgstr "Oppervlak"
 msgctxt "Action"
 msgid "var"
 msgstr "var"
+
+
+msgid " from "
+msgstr " van "
 
 
 msgid "%i frames found!"

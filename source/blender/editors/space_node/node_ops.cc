@@ -75,6 +75,7 @@ void node_operatortypes()
   WM_operatortype_append(NODE_OT_backimage_fit);
   WM_operatortype_append(NODE_OT_backimage_sample);
 
+  WM_operatortype_append(NODE_OT_add_search);
   WM_operatortype_append(NODE_OT_add_group);
   WM_operatortype_append(NODE_OT_add_object);
   WM_operatortype_append(NODE_OT_add_collection);
@@ -144,7 +145,7 @@ void ED_operatormacros_node()
   WM_operatortype_macro_define(ot, "NODE_OT_attach");
   WM_operatortype_macro_define(ot, "NODE_OT_insert_offset");
 
-  /* NODE_OT_translate_attach with remove_on_canel set to true */
+  /* NODE_OT_translate_attach with remove_on_cancel set to true. */
   ot = WM_operatortype_append_macro("NODE_OT_translate_attach_remove_on_cancel",
                                     "Move and Attach",
                                     "Move and Attach\nMove nodes and attach to frame",

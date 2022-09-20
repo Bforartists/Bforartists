@@ -32,7 +32,7 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_node is not None
+        return context.space_data == 'NODE_EDITOR' and context.active_node is not None
 
     def execute(self, context):
         return {'FINISHED'}

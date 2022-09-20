@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -2265,16 +2265,8 @@ msgid "Bone that serves as the start handle for the B-Bone curve"
 msgstr "O osso que serve como a haste inicial para a curvatura do osso-b."
 
 
-msgid "Ease In"
-msgstr "Facilitar entrada"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "Comprimento do primeiro manípulo de curva Bézier (somente para ossos-b)."
-
-
-msgid "Ease Out"
-msgstr "Facilitar saída"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -2833,10 +2825,6 @@ msgid "Input Samples"
 msgstr "Amostras de entrada"
 
 
-msgid "Jitter"
-msgstr "Tremulação"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "Fator de tremulação para os novos traços."
 
@@ -2909,6 +2897,10 @@ msgid "Use tablet pressure"
 msgstr "Usa a pressão de mesa de desenho."
 
 
+msgid "Outline"
+msgstr "Contorno"
+
+
 msgid "Use Pressure Strength"
 msgstr "Usar a força conforme a pressão"
 
@@ -2975,18 +2967,6 @@ msgstr "Utilizador do clipe"
 
 msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "Parâmetros definindo qual o fotograma do clipe de filme é mostrado."
-
-
-msgid "Depth"
-msgstr "Profundidade"
-
-
-msgid "Back"
-msgstr "Trás"
-
-
-msgid "Front"
-msgstr "Frente"
 
 
 msgid "Frame Method"
@@ -5406,8 +5386,16 @@ msgid "No culling"
 msgstr "Sem abate"
 
 
+msgid "Front"
+msgstr "Frente"
+
+
 msgid "No projection when in front of the face"
 msgstr "Sem projeção quando na frente da face."
+
+
+msgid "Back"
+msgstr "Trás"
 
 
 msgid "No projection when behind the face"
@@ -5966,6 +5954,10 @@ msgid "Bezier"
 msgstr "Bézier"
 
 
+msgid "Depth"
+msgstr "Profundidade"
+
+
 msgid "Method of projecting depth"
 msgstr "O método de projeção da profundidade."
 
@@ -6084,10 +6076,6 @@ msgstr "Índice"
 
 msgid "Radius"
 msgstr "Raio"
-
-
-msgid "Steps"
-msgstr "Passos"
 
 
 msgid "Segments"
@@ -10146,6 +10134,10 @@ msgid "An 'extreme' pose, or some other purpose as needed"
 msgstr "Para poses exageradas, ou outras finalidades conforme necessário."
 
 
+msgid "Jitter"
+msgstr "Tremulação"
+
+
 msgid "A filler or baked keyframe for keying on ones, or some other purpose as needed"
 msgstr "Para preenchimentos ou fotogramas chave gerados e gravados para chaves de interpolação, ou outras finalidades conforme necessário."
 
@@ -10834,6 +10826,10 @@ msgstr "Modificador - Espelho"
 
 msgid "Fade"
 msgstr "Esmaecer"
+
+
+msgid "Steps"
+msgstr "Passos"
 
 
 msgid "Shrinkwrap Modifier"
@@ -14257,16 +14253,8 @@ msgid "Auto smooth (based on smooth/sharp faces/edges and angle between faces), 
 msgstr "Suavização automática (com base na função que suaviza ou achata as faces e / ou arestas e nos ângulos entre as faces), ou utilizando os dados de divisão personalizada das normais caso disponível."
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "Guardar pesos dos chanfros das arestas"
-
-
 msgid "Store Edge Crease"
 msgstr "Guardar vincos das arestas"
-
-
-msgid "Store Vertex Bevel Weight"
-msgstr "Guardar pesos dos chanfros dos vértices"
 
 
 msgid "Topology Mirror"
@@ -17775,12 +17763,20 @@ msgid "Settings for image formats"
 msgstr "Definições para formatos de imagem."
 
 
+msgid "Black"
+msgstr "Preto"
+
+
 msgid "Log conversion reference blackpoint"
 msgstr "Referência para a curva logarítmica de conversão dos pontos pretos."
 
 
 msgid "Log conversion gamma"
 msgstr "Curva logarítmica para conversão de gama."
+
+
+msgid "White"
+msgstr "Branco"
 
 
 msgid "Log conversion reference whitepoint"
@@ -19283,8 +19279,16 @@ msgid "Automatic Easing"
 msgstr "Facilitação automática"
 
 
+msgid "Ease In"
+msgstr "Facilitar entrada"
+
+
 msgid "Only on the end closest to the next keyframe"
 msgstr "Somente na terminação mais próxima ao próximo fotograma chave"
+
+
+msgid "Ease Out"
+msgstr "Facilitar saída"
 
 
 msgid "Only on the end closest to the first keyframe"
@@ -34557,14 +34561,6 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas as camadas"
@@ -37474,14 +37470,6 @@ msgid "Turns"
 msgstr "Voltas"
 
 
-msgid "Add vertex color layer"
-msgstr "Adiciona uma camada de cores de vértices."
-
-
-msgid "Remove vertex color layer"
-msgstr "Remove a camada de cores de vértices."
-
-
 msgid "(De)select all vertices, edges or faces"
 msgstr "(De)seleciona todos os vértices, arestas ou faces."
 
@@ -37687,38 +37675,6 @@ msgstr "Seleciona vértices aleatoriamente."
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Seleciona vértices, arestas ou faces similares por tipo de propriedade."
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "Quantidade de faces adjacentes"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "Quantidade de faces em torno de uma aresta"
-
-
-msgid "Face Angles"
-msgstr "Ângulos das faces"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "Marcações de aresta Freestyle"
-
-
-msgid "Polygon Sides"
-msgstr "Lados do polígono"
-
-
-msgid "Perimeter"
-msgstr "Perímetro"
-
-
-msgid "Flat/Smooth"
-msgstr "Achatados ou suavizados"
-
-
-msgid "Freestyle Face Marks"
-msgstr "Marcações de faces Freestyle"
 
 
 msgctxt "Operator"
@@ -38024,16 +37980,6 @@ msgstr "Conectar o caminho dos vértices "
 
 msgid "Connect vertices by their selection order, creating edges, splitting faces"
 msgstr "Conecta os vértices pela sua ordem de seleção, criando arestas e separando-as em faces quando necessário."
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Adicionar camada de cores de vértices"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Remover camada de cores de vértices"
 
 
 msgid "Flatten angles of selected vertices"
@@ -38459,39 +38405,6 @@ msgstr "Redefine a área visível para mostrar o intervalo de faixas selecionada
 
 
 msgctxt "Operator"
-msgid "Add and Link Node"
-msgstr "Adicionar e conectar um nó"
-
-
-msgid "Add a node to the active tree and link to an existing socket"
-msgstr "Adiciona um nó à árvore ativa e a vincula a um conector existente."
-
-
-msgid "Link Socket Index"
-msgstr "Vincular índice de conector"
-
-
-msgid "Index of the socket to link"
-msgstr "Índice do conector para vincular."
-
-
-msgid "Settings to be applied on the newly created node"
-msgstr "Definições a ser aplicadas no nó recentemente criado."
-
-
-msgid "Node Type"
-msgstr "Tipo de nó"
-
-
-msgid "Node type"
-msgstr "O tipo de nó."
-
-
-msgid "Start transform operator after inserting the node"
-msgstr "Inicia o operador de transformação após a inserção do nó."
-
-
-msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Adicionar nó de ficheiro"
 
@@ -38516,6 +38429,22 @@ msgstr "Adicionar nó"
 
 msgid "Add a node to the active tree"
 msgstr "Adiciona um nó para a árvore ativa."
+
+
+msgid "Settings to be applied on the newly created node"
+msgstr "Definições a ser aplicadas no nó recentemente criado."
+
+
+msgid "Node Type"
+msgstr "Tipo de nó"
+
+
+msgid "Node type"
+msgstr "O tipo de nó."
+
+
+msgid "Start transform operator after inserting the node"
+msgstr "Inicia o operador de transformação após a inserção do nó."
 
 
 msgctxt "Operator"
@@ -52058,14 +51987,6 @@ msgid "Sampling Pattern"
 msgstr "Amostragem padrão"
 
 
-msgid "Sobol"
-msgstr "Sobol"
-
-
-msgid "Use Sobol random sampling pattern"
-msgstr "Usa padrões de amostragem aleatórias tipo Sobol."
-
-
 msgid "Seed value for integrator to get different noise patterns"
 msgstr "Valor de semente para que o integrador obtenha diferentes padrões de ruído."
 
@@ -55464,10 +55385,6 @@ msgid "Mask displayed and edited in this space"
 msgstr "Mascara os mostrados e editados dentro deste espaço."
 
 
-msgid "Outline"
-msgstr "Contorno"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -58415,10 +58332,6 @@ msgid "Edge Bevel"
 msgstr "Ferramenta para aplicar chanfros às arestas selecionadas."
 
 
-msgid "Edge Crease"
-msgstr "Vincos de arestas"
-
-
 msgid "Edge UV Face Select"
 msgstr "Seleção de faces de arestas UV"
 
@@ -59239,6 +59152,10 @@ msgid "Display selected edge lengths, using global values when set in the transf
 msgstr "Mostra os comprimentos das arestas selecionadas, usando valores globais conforme definidos nos painéis de transformações."
 
 
+msgid "Face Angles"
+msgstr "Ângulos das faces"
+
+
 msgid "Display the angles in the selected edges, using global values when set in the transform panel"
 msgstr "Mostra os ângulos das arestas selecionadas, usando valores globais conforme definidos nos painéis de transformações."
 
@@ -59831,6 +59748,10 @@ msgstr "Gerenc. de janelas :"
 msgctxt "Operator"
 msgid "World:"
 msgstr "Ambiente:"
+
+
+msgid "Search"
+msgstr "Pesquisar"
 
 
 msgctxt "WindowManager"
@@ -60563,6 +60484,10 @@ msgid "API Defined"
 msgstr "API Definida"
 
 
+msgid "3D View"
+msgstr "Janela de visualização 3D"
+
+
 msgid "Active object is not a mesh"
 msgstr "Objeto ativo não é uma malha."
 
@@ -60742,6 +60667,10 @@ msgstr "Ajuste fino de sangramento"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "Inverter a trava de todos"
+
+
+msgid "Edge Crease"
+msgstr "Vincos de arestas"
 
 
 msgctxt "Operator"
@@ -61138,10 +61067,6 @@ msgstr "Ímpar"
 
 msgid "%s: %s"
 msgstr "%s: %s"
-
-
-msgid "Search"
-msgstr "Pesquisar"
 
 
 msgid "B/W"
@@ -62023,16 +61948,8 @@ msgid "Description:"
 msgstr "Descrição:"
 
 
-msgid "description"
-msgstr "descrição"
-
-
 msgid "Location:"
 msgstr "Localização:"
-
-
-msgid "location"
-msgstr "localização"
 
 
 msgid "File:"
@@ -62057,6 +61974,14 @@ msgstr "Alerta:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "descrição"
+
+
+msgid "location"
+msgstr "localização"
 
 
 msgctxt "Operator"
@@ -62948,10 +62873,6 @@ msgid "ShapeKey"
 msgstr "Chave de formato"
 
 
-msgid "BevelWeight"
-msgstr "Influência dos chanfros"
-
-
 msgid "SubSurfCrease"
 msgstr "Vincos da subdivisão de superfície"
 
@@ -63092,10 +63013,6 @@ msgstr "Camada de máscara"
 
 msgid "Tangent space can only be computed for tris/quads, aborting"
 msgstr "O espaço da tangente somente pode ser computado para triângulos ou quadriláteros, abortando."
-
-
-msgid "Mikktspace failed to generate tangents for this mesh!"
-msgstr "Mikktspace falhou ao gerar tangentes para esta malha !"
 
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
@@ -65594,10 +65511,6 @@ msgid "3D Local View"
 msgstr "Visão local 3D"
 
 
-msgid "3D View"
-msgstr "Janela de visualização 3D"
-
-
 msgid "Frame:%d "
 msgstr " Fotograma: %d "
 
@@ -66592,16 +66505,8 @@ msgid "Cannot relocate indirectly linked library '%s'"
 msgstr "Não é possível realocar a biblioteca '%s', vinculada indiretamente."
 
 
-msgid "Not found: %s"
-msgstr "Não encontrado: %s"
-
-
 msgid "Not yet implemented"
 msgstr "Ainda não implementado."
-
-
-msgid "Mixed selection"
-msgstr "Seleção misturada"
 
 
 msgid "(empty)"
@@ -67724,10 +67629,6 @@ msgstr "Número máximo de texturas adicionadas %d"
 
 msgid "Index %d is invalid"
 msgstr "Índice %d é inválido"
-
-
-msgid "Vertex color '%s' not found"
-msgstr "Cor de vértice '%s' não encontrada."
 
 
 msgid "Texture layer '%s' not found"

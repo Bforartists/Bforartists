@@ -1111,14 +1111,20 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         me.free_normals_split()
 
     # Write VertexColor Layers.
-    vcolnumber = len(me.vertex_colors)
+    colors_type = scene_data.settings.colors_type
+    vcolnumber = 0 if colors_type == 'NONE' else len(me.color_attributes)
     if vcolnumber:
         def _coltuples_gen(raw_cols):
             return zip(*(iter(raw_cols),) * 4)
 
-        t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 4
-        for colindex, collayer in enumerate(me.vertex_colors):
-            collayer.data.foreach_get("color", t_lc)
+        color_prop_name = "color_srgb" if colors_type == 'SRGB' else "color"
+
+        for colindex, collayer in enumerate(me.color_attributes):
+            is_point = collayer.domain == "POINT"
+            vcollen = len(me.vertices if is_point else me.loops)
+            t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * vcollen * 4
+            collayer.data.foreach_get(color_prop_name, t_lc)
+
             lay_vcol = elem_data_single_int32(geom, b"LayerElementColor", colindex)
             elem_data_single_int32(lay_vcol, b"Version", FBX_GEOMETRY_VCOLOR_VERSION)
             elem_data_single_string_unicode(lay_vcol, b"Name", collayer.name)
@@ -1129,9 +1135,16 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
             elem_data_single_float64_array(lay_vcol, b"Colors", chain(*col2idx))  # Flatten again...
 
             col2idx = {col: idx for idx, col in enumerate(col2idx)}
-            elem_data_single_int32_array(lay_vcol, b"ColorIndex", (col2idx[c] for c in _coltuples_gen(t_lc)))
+            col_indices = list(col2idx[c] for c in _coltuples_gen(t_lc))
+            if is_point:
+                # for "point" domain colors, we could directly emit them
+                # with a "ByVertex" mapping type, but some software does not
+                # properly understand that. So expand to full "ByPolygonVertex"
+                # index map.
+                col_indices = list((col_indices[c.vertex_index] for c in me.loops))
+            elem_data_single_int32_array(lay_vcol, b"ColorIndex", col_indices)
             del col2idx
-        del t_lc
+            del t_lc
         del _coltuples_gen
 
     # Write UV layers.
@@ -3021,6 +3034,7 @@ def save_single(operator, scene, depsgraph, filepath="",
                 use_custom_props=False,
                 bake_space_transform=False,
                 armature_nodetype='NULL',
+                colors_type='SRGB',
                 **kwargs
                 ):
 
@@ -3088,7 +3102,7 @@ def save_single(operator, scene, depsgraph, filepath="",
         add_leaf_bones, bone_correction_matrix, bone_correction_matrix_inv,
         bake_anim, bake_anim_use_all_bones, bake_anim_use_nla_strips, bake_anim_use_all_actions,
         bake_anim_step, bake_anim_simplify_factor, bake_anim_force_startend_keying,
-        False, media_settings, use_custom_props,
+        False, media_settings, use_custom_props, colors_type,
     )
 
     import bpy_extras.io_utils
@@ -3155,6 +3169,7 @@ def defaults_unity3d():
         "use_mesh_modifiers_render": True,
         "use_mesh_edges": False,
         "mesh_smooth_type": 'FACE',
+        "colors_type": 'SRGB',
         "use_subsurf": False,
         "use_tspace": False,  # XXX Why? Unity is expected to support tspace import...
         "use_triangles": False,

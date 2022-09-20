@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1953,6 +1953,10 @@ msgid "Shape Key data-blocks"
 msgstr "ფორმის საკვანძო ფაზების მონაცემთა ბლოკები"
 
 
+msgid "Simulations"
+msgstr "სიმულაციები"
+
+
 msgid "Sounds"
 msgstr "ხმები"
 
@@ -2853,16 +2857,8 @@ msgid "Bone that serves as the start handle for the B-Bone curve"
 msgstr "ძვალი, რომელიც დ-ძვლის მრუდის საწყის სახელურს წარმოადგენს"
 
 
-msgid "Ease In"
-msgstr "აჩქარება"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "პირველი ბეზიეს სახელურის სიგრძე (მხოლოდ დ-ძვლებისთვის)"
-
-
-msgid "Ease Out"
-msgstr "შენელება"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -3909,10 +3905,6 @@ msgid "Material used for strokes drawn using this brush"
 msgstr "ამ ფუნჯით დახატული მონასმებისთვის გამოყენებული მასალა"
 
 
-msgid "Jitter"
-msgstr "რყევა"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "რყევის ფაქტორი ახალი მონასმებისათვის"
 
@@ -4121,6 +4113,10 @@ msgid "Use pressure to modulate randomness"
 msgstr "გამოიყენე ზეწოლა შემთხვევითობის მოდულაციისთვის"
 
 
+msgid "Outline"
+msgstr "მოხაზულობა"
+
+
 msgid "Use Post-Process Settings"
 msgstr "გამოიყენე შემდგომი დამუშავების პარამეტრები"
 
@@ -4305,20 +4301,8 @@ msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "პარამეტრები, რომლებიც განსაზღვრავს, ვიდეო კლიპის რომელი კადრია ასახული"
 
 
-msgid "Depth"
-msgstr "სიღრმე"
-
-
 msgid "Display under or over everything"
 msgstr "ასახე ყველაფრის ქვეშ, ან ზემოდან"
-
-
-msgid "Back"
-msgstr "უკან"
-
-
-msgid "Front"
-msgstr "წინ"
 
 
 msgid "Frame Method"
@@ -7478,8 +7462,16 @@ msgid "No culling"
 msgstr "არავითარი გამოხშირვა"
 
 
+msgid "Front"
+msgstr "წინ"
+
+
 msgid "No projection when in front of the face"
 msgstr "არავითარი პროექცია წახნაგის წინ ყოფნისას"
+
+
+msgid "Back"
+msgstr "უკან"
 
 
 msgid "No projection when behind the face"
@@ -8298,6 +8290,10 @@ msgid "Bezier"
 msgstr "ბეზიე"
 
 
+msgid "Depth"
+msgstr "სიღრმე"
+
+
 msgid "Method of projecting depth"
 msgstr "სიღრმის პროექცირების მეთოდი"
 
@@ -8426,10 +8422,6 @@ msgid "Use the start of the stroke for the depth"
 msgstr "გამოიყენე მონასმის დასაწყისი სიღრმისთვის"
 
 
-msgid "Curve curve control point"
-msgstr "წირის სიმრუდის საკონტროლო წერტილი"
-
-
 msgid "Index"
 msgstr "ინდექსი"
 
@@ -8450,28 +8442,8 @@ msgid "Profile control points"
 msgstr "პროფილის საკონტროლო წერტილები"
 
 
-msgid "Preset"
-msgstr "წინასწარ აწყობილი"
-
-
-msgid "Support Loops"
-msgstr "დამხმარე მარყუჟები"
-
-
 msgid "Loops on each side of the profile"
 msgstr "მარყუჟები პროფილის თითოეულ მხარეს"
-
-
-msgid "Cornice Molding"
-msgstr "ლავცგარდანი"
-
-
-msgid "Crown Molding"
-msgstr "ჭერის კარნიზი"
-
-
-msgid "Steps"
-msgstr "საფეხურები"
 
 
 msgid "A number of steps defined by the segments"
@@ -12110,10 +12082,6 @@ msgid "Show Scene data-blocks"
 msgstr "აჩვენე სცენის მონაცემთა ბლოკები"
 
 
-msgid "Simulations"
-msgstr "სიმულაციები"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "აჩვენე სიმულაციის მონაცემთა ბლოკები"
 
@@ -14906,6 +14874,10 @@ msgid "An 'extreme' pose, or some other purpose as needed"
 msgstr "'უკიდურესი' პოზა, ანდა, საჭიროებისამებრ, რაიმე სხვა დანიშნულება"
 
 
+msgid "Jitter"
+msgstr "რყევა"
+
+
 msgid "A filler or baked keyframe for keying on ones, or some other purpose as needed"
 msgstr "შემავსებელი, ან გამომცხვარი საკვანძო ფაზა საჭიროებისამებრ რაიმე დანიშნულებისთვის"
 
@@ -15434,6 +15406,10 @@ msgstr "საფეხური"
 
 msgid "Overscan"
 msgstr "გადასკანირება"
+
+
+msgid "Steps"
+msgstr "საფეხურები"
 
 
 msgid "Fixed"
@@ -17065,6 +17041,14 @@ msgid "Animation"
 msgstr "ანიმაცია"
 
 
+msgid "Black"
+msgstr "შავი"
+
+
+msgid "White"
+msgstr "თეთრი"
+
+
 msgid "Color Depth"
 msgstr "ფერის სიღრმე"
 
@@ -17469,6 +17453,14 @@ msgstr "ორმაგი დაწკაპუნება"
 
 msgid "Click Drag"
 msgstr "დაწკაპუნება და გათრევა"
+
+
+msgid "Ease In"
+msgstr "აჩქარება"
+
+
+msgid "Ease Out"
+msgstr "შენელება"
 
 
 msgid "Period"
@@ -20666,14 +20658,6 @@ msgid "Selected Strokes"
 msgstr "მონიშნული მონასმები"
 
 
-msgid "Black"
-msgstr "შავი"
-
-
-msgid "White"
-msgstr "თეთრი"
-
-
 msgid "Transform grease pencil stroke fill"
 msgstr "გარდაქმენი ცვილის ფანქრის მონასმის შევსება"
 
@@ -21701,46 +21685,6 @@ msgstr "არ უდრის"
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "მონიშვნის რეჟიმი"
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "მოსაზღვრე წახნაგების რაოდენობა"
-
-
-msgid "Amount of Connecting Edges"
-msgstr "დამაკავშირებელი წიბოების რაოდენობა"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "წიბოს გარშემომყოფი წახნაგების რაოდენობა"
-
-
-msgid "Face Angles"
-msgstr "წახნაგის კუთხეები"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "თავისუფალი სტილის წიბოთა ნიშნები"
-
-
-msgid "Polygon Sides"
-msgstr "მრავალკუთხას გვერდები"
-
-
-msgid "Perimeter"
-msgstr "პერიმეტრი"
-
-
-msgid "Coplanar"
-msgstr "თანასიბრტყელი"
-
-
-msgid "Flat/Smooth"
-msgstr "ბრტყელი/გლუვი"
-
-
-msgid "Freestyle Face Marks"
-msgstr "თავისუფალი სტილის წახნაგის ნიშნები"
 
 
 msgctxt "Operator"
@@ -26338,6 +26282,10 @@ msgid "3D-Print"
 msgstr "3გ-ბეჭდვა"
 
 
+msgid "Compositor"
+msgstr "კომპოზიტორი"
+
+
 msgid "Shadow Settings"
 msgstr "ჩრდილის პარამეტრები"
 
@@ -27079,10 +27027,6 @@ msgid "Sample Offset"
 msgstr "აცდენა სემპლებში"
 
 
-msgid "Sobol"
-msgstr "სობოლი"
-
-
 msgid "Progressive Multi-Jitter"
 msgstr "პროგრესიული მულტი-რყევა"
 
@@ -27703,10 +27647,6 @@ msgid "2D Cursor Location"
 msgstr "2გ კურსორის ლოკაცია"
 
 
-msgid "Outline"
-msgstr "მოხაზულობა"
-
-
 msgid "Alpha Channel"
 msgstr "ალფა არხი"
 
@@ -28132,10 +28072,6 @@ msgid "Force Field"
 msgstr "ძალოვანი ველი"
 
 
-msgid "Edge Crease"
-msgstr "წიბოს ნაკეცი"
-
-
 msgid "Edge Seam"
 msgstr "წიბოს ნაკერი"
 
@@ -28486,6 +28422,10 @@ msgstr "ასახე 3გ კურსორის გადაფარე�
 
 msgid "Draw Normals"
 msgstr "დახატე ნორმალები"
+
+
+msgid "Face Angles"
+msgstr "წახნაგის კუთხეები"
 
 
 msgid "Extras"
@@ -28939,6 +28879,14 @@ msgstr "ტექსტი:"
 msgctxt "Operator"
 msgid "Workspace:"
 msgstr "სამუშაო სივრცე:"
+
+
+msgid "Search"
+msgstr "ძიება"
+
+
+msgid "Navigate"
+msgstr "ნავიგაცია"
 
 
 msgctxt "WindowManager"
@@ -29559,6 +29507,10 @@ msgid "Arrow Size"
 msgstr "ისრის ზომა"
 
 
+msgid "Edge Crease"
+msgstr "წიბოს ნაკეცი"
+
+
 msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "დაალაგე სახელის მიხედვით"
@@ -29976,10 +29928,6 @@ msgid "Accurate Mode"
 msgstr "სიზუსტის რეჟიმი"
 
 
-msgid "Search"
-msgstr "ძიება"
-
-
 msgid "Calibration"
 msgstr "კალიბრაცია"
 
@@ -30135,10 +30083,6 @@ msgstr "მონიშვნა"
 
 msgid "Viewport Gizmos"
 msgstr "სარკმლის მანიპულატორები"
-
-
-msgid "Navigate"
-msgstr "ნავიგაცია"
 
 
 msgid "Modified Edges"
@@ -30747,10 +30691,6 @@ msgid "Save as Studio light"
 msgstr "შეინახე, როგორც სტუდიური განათება"
 
 
-msgid "description"
-msgstr "აღწერა"
-
-
 msgid "Location:"
 msgstr "ადგილმდებარეობა:"
 
@@ -30773,6 +30713,10 @@ msgstr "გაფრთხილება:"
 
 msgid "Internet:"
 msgstr "ინტერნეტი:"
+
+
+msgid "description"
+msgstr "აღწერა"
 
 
 msgctxt "Operator"
@@ -32846,6 +32790,18 @@ msgid "Reset Curve"
 msgstr "მრუდის პირველსახე"
 
 
+msgid "Support Loops"
+msgstr "დამხმარე მარყუჟები"
+
+
+msgid "Cornice Molding"
+msgstr "ლავცგარდანი"
+
+
+msgid "Crown Molding"
+msgstr "ჭერის კარნიზი"
+
+
 msgid "Sort By:"
 msgstr "დალაგების პრინციპი:"
 
@@ -33676,10 +33632,6 @@ msgstr "UV წვერო"
 
 msgid "Bisect"
 msgstr "დანაწევრება"
-
-
-msgid "Compositor"
-msgstr "კომპოზიტორი"
 
 
 msgid "Geometry Node Editor"

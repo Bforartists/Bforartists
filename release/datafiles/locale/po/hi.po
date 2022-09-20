@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -715,18 +715,6 @@ msgid "Background Image"
 msgstr "पृष्ठभूमि छवि"
 
 
-msgid "Depth"
-msgstr "गहनता"
-
-
-msgid "Back"
-msgstr "पार्श्व"
-
-
-msgid "Front"
-msgstr "सामने"
-
-
 msgid "Fit"
 msgstr "उचित"
 
@@ -996,6 +984,14 @@ msgid "Off"
 msgstr "बंद"
 
 
+msgid "Front"
+msgstr "सामने"
+
+
+msgid "Back"
+msgstr "पार्श्व"
+
+
 msgid "Volume Variation"
 msgstr "आयतन रूपांतर"
 
@@ -1036,6 +1032,10 @@ msgid "Poly"
 msgstr "बहु"
 
 
+msgid "Depth"
+msgstr "गहनता"
+
+
 msgid "Cursor"
 msgstr "प्रसंकेतक"
 
@@ -1066,10 +1066,6 @@ msgstr "सूचकांक"
 
 msgid "Radius"
 msgstr "त्रिज्या"
-
-
-msgid "Steps"
-msgstr "कदम"
 
 
 msgid "Render"
@@ -1760,6 +1756,10 @@ msgstr "छायांकित"
 
 msgid "Fade"
 msgstr "धुंधलापन"
+
+
+msgid "Steps"
+msgstr "कदम"
 
 
 msgid "Negative"
@@ -2717,6 +2717,14 @@ msgstr "अधिकतम कदम"
 
 msgid "Min Step"
 msgstr "न्यूनतम कदम"
+
+
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
 
 
 msgid "Color Management"
@@ -3857,14 +3865,6 @@ msgstr "उप विभाजन"
 
 msgid "Modifier"
 msgstr "संशोधक"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgid "Create a new image"
@@ -5334,6 +5334,10 @@ msgid "Unknown"
 msgstr "अज्ञात"
 
 
+msgid "Search"
+msgstr "खोज"
+
+
 msgctxt "WindowManager"
 msgid "Object Mode"
 msgstr "वस्तु रूप"
@@ -5575,6 +5579,10 @@ msgid "New"
 msgstr "नई"
 
 
+msgid "3D View"
+msgstr "त्रि-आयाम दृश्य"
+
+
 msgctxt "Operator"
 msgid "Open..."
 msgstr "व्यक्त..."
@@ -5784,10 +5792,6 @@ msgstr "गणना"
 
 msgid "Dimension"
 msgstr "आयाम"
-
-
-msgid "Search"
-msgstr "खोज"
 
 
 msgid "B/W"
@@ -6021,16 +6025,8 @@ msgid "Description:"
 msgstr "वर्णन:"
 
 
-msgid "description"
-msgstr "विवरण"
-
-
 msgid "Location:"
 msgstr "स्थिति:"
-
-
-msgid "location"
-msgstr "स्थिति"
 
 
 msgid "File:"
@@ -6051,6 +6047,14 @@ msgstr "संस्करण:"
 
 msgid "Warning:"
 msgstr "चेतावनी:"
+
+
+msgid "description"
+msgstr "विवरण"
+
+
+msgid "location"
+msgstr "स्थिति"
 
 
 msgid "Preferences:"
@@ -6840,10 +6844,6 @@ msgstr "इस्पात"
 
 msgid "Stone"
 msgstr "पत्थर"
-
-
-msgid "3D View"
-msgstr "त्रि-आयाम दृश्य"
 
 
 msgid "Scene has no camera"

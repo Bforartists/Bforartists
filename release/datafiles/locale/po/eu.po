@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1886,6 +1886,10 @@ msgid "New"
 msgstr "Berria"
 
 
+msgid "3D View"
+msgstr "3D Bista"
+
+
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Ireki..."
@@ -2186,10 +2190,6 @@ msgstr "Sarea"
 msgctxt "Mesh"
 msgid "Sphere"
 msgstr "Esfera"
-
-
-msgid "3D View"
-msgstr "3D Bista"
 
 
 msgid "normal"

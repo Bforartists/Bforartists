@@ -164,11 +164,11 @@ class MESH_OT_print3d_check_solid(Operator):
         )
 
         info.append(
-            (tip_("Non Manifold Edge: {}").format(
+            (tip_("Non Manifold Edges: {}").format(
                 len(edges_non_manifold)),
                 (bmesh.types.BMEdge,
                  edges_non_manifold)))
-        info.append((tip_("Bad Contig. Edges: {}").format(len(edges_non_contig)), (bmesh.types.BMEdge, edges_non_contig)))
+        info.append((tip_("Bad Contiguous Edges: {}").format(len(edges_non_contig)), (bmesh.types.BMEdge, edges_non_contig)))
 
         bm.free()
 
@@ -786,7 +786,7 @@ class MESH_OT_print3d_align_to_xy(Operator):
 
         if len(skip_invalid) > 0:
             for name in skip_invalid:
-                print(tip_("Align to XY: Skipping object {}. No faces selected.").format(name))
+                print(tip_("Align to XY: Skipping object {}. No faces selected").format(name))
             if len(skip_invalid) == 1:
                 self.report({'WARNING'}, tip_("Skipping object {}. No faces selected").format(skip_invalid[0]))
             else:

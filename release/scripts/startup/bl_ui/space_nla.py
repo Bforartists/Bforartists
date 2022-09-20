@@ -160,6 +160,7 @@ class NLA_MT_view(Menu):
 
         layout.prop(st, "show_region_channels")  # bfa - channels
         layout.prop(st, "show_region_ui")
+        layout.prop(st, "show_region_hud")
 
         layout.separator()
 

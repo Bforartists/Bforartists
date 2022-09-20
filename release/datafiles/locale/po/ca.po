@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -54,12 +54,12 @@ msgid "Push"
 msgstr "Empenta"
 
 
+msgid "Outline"
+msgstr "Perfilar"
+
+
 msgid "Path"
 msgstr "Camí"
-
-
-msgid "Front"
-msgstr "Frontal"
 
 
 msgid "Scale"
@@ -84,6 +84,10 @@ msgstr "Càmera"
 
 msgid "Bone"
 msgstr "Os"
+
+
+msgid "Front"
+msgstr "Frontal"
 
 
 msgid "Surface"
@@ -212,6 +216,14 @@ msgstr "Cilindre"
 
 msgid "Circle"
 msgstr "Cercle"
+
+
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgid "Owner"
@@ -366,14 +378,6 @@ msgstr "Passar per alt la sincronització"
 
 msgid "Join"
 msgstr "Unir"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Square Threshold"
@@ -693,10 +697,6 @@ msgstr "Tirar"
 
 msgid "Use Goal"
 msgstr "Feu servir objectiu"
-
-
-msgid "Outline"
-msgstr "Perfilar"
 
 
 msgid "Show Margin"

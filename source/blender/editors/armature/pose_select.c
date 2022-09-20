@@ -124,7 +124,8 @@ void ED_pose_bone_select(Object *ob, bPoseChannel *pchan, bool select)
   }
 }
 
-bool ED_armature_pose_select_pick_bone(ViewLayer *view_layer,
+bool ED_armature_pose_select_pick_bone(const Scene *scene,
+                                       ViewLayer *view_layer,
                                        View3D *v3d,
                                        Object *ob,
                                        Bone *bone,
@@ -147,7 +148,7 @@ bool ED_armature_pose_select_pick_bone(ViewLayer *view_layer,
       /* Deselect everything. */
       /* Don't use 'BKE_object_pose_base_array_get_unique'
        * because we may be selecting from object mode. */
-      FOREACH_VISIBLE_BASE_BEGIN (view_layer, v3d, base_iter) {
+      FOREACH_VISIBLE_BASE_BEGIN (scene, view_layer, v3d, base_iter) {
         Object *ob_iter = base_iter->object;
         if ((ob_iter->type == OB_ARMATURE) && (ob_iter->mode & OB_MODE_POSE)) {
           if (ED_pose_deselect_all(ob_iter, SEL_DESELECT, true)) {
@@ -161,6 +162,7 @@ bool ED_armature_pose_select_pick_bone(ViewLayer *view_layer,
   }
 
   if (found) {
+    BKE_view_layer_synced_ensure(scene, view_layer);
     Object *ob_act = BKE_view_layer_active_object_get(view_layer);
     BLI_assert(BKE_view_layer_edit_object_get(view_layer) == NULL);
 
@@ -246,7 +248,8 @@ bool ED_armature_pose_select_pick_bone(ViewLayer *view_layer,
   return changed || found;
 }
 
-bool ED_armature_pose_select_pick_with_buffer(ViewLayer *view_layer,
+bool ED_armature_pose_select_pick_with_buffer(const Scene *scene,
+                                              ViewLayer *view_layer,
                                               View3D *v3d,
                                               Base *base,
                                               const struct GPUSelectResult *buffer,
@@ -266,12 +269,15 @@ bool ED_armature_pose_select_pick_with_buffer(ViewLayer *view_layer,
   nearBone = ED_armature_pick_bone_from_selectbuffer(
       &base, 1, buffer, hits, 1, do_nearest, &base_dummy);
 
-  return ED_armature_pose_select_pick_bone(view_layer, v3d, ob, nearBone, params);
+  return ED_armature_pose_select_pick_bone(scene, view_layer, v3d, ob, nearBone, params);
 }
 
-void ED_armature_pose_select_in_wpaint_mode(ViewLayer *view_layer, Base *base_select)
+void ED_armature_pose_select_in_wpaint_mode(const Scene *scene,
+                                            ViewLayer *view_layer,
+                                            Base *base_select)
 {
   BLI_assert(base_select && (base_select->object->type == OB_ARMATURE));
+  BKE_view_layer_synced_ensure(scene, view_layer);
   Object *ob_active = BKE_view_layer_active_object_get(view_layer);
   BLI_assert(ob_active && (ob_active->mode & OB_MODE_ALL_WEIGHT_PAINT));
 
@@ -404,7 +410,8 @@ bool ED_pose_deselect_all_multi(bContext *C, int select_mode, const bool ignore_
   ED_view3d_viewcontext_init(C, &vc, depsgraph);
   uint bases_len = 0;
 
-  Base **bases = BKE_object_pose_base_array_get_unique(vc.view_layer, vc.v3d, &bases_len);
+  Base **bases = BKE_object_pose_base_array_get_unique(
+      vc.scene, vc.view_layer, vc.v3d, &bases_len);
   bool changed_multi = ED_pose_deselect_all_multi_ex(
       bases, bases_len, select_mode, ignore_visibility);
   MEM_freeN(bases);
@@ -868,6 +875,7 @@ typedef enum ePose_SelectSame_Mode {
 
 static bool pose_select_same_group(bContext *C, bool extend)
 {
+  Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   bool *group_flags_array;
   bool *group_flags = NULL;
@@ -877,7 +885,8 @@ static bool pose_select_same_group(bContext *C, bool extend)
   uint ob_index;
 
   uint objects_len = 0;
-  Object **objects = BKE_object_pose_array_get_unique(view_layer, CTX_wm_view3d(C), &objects_len);
+  Object **objects = BKE_object_pose_array_get_unique(
+      scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
   for (ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *ob = BKE_object_pose_armature_get(objects[ob_index]);
@@ -971,6 +980,7 @@ static bool pose_select_same_group(bContext *C, bool extend)
 
 static bool pose_select_same_layer(bContext *C, bool extend)
 {
+  Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   int *layers_array, *layers = NULL;
   Object *ob_prev = NULL;
@@ -978,7 +988,8 @@ static bool pose_select_same_layer(bContext *C, bool extend)
   bool changed = false;
 
   uint objects_len = 0;
-  Object **objects = BKE_object_pose_array_get_unique(view_layer, CTX_wm_view3d(C), &objects_len);
+  Object **objects = BKE_object_pose_array_get_unique(
+      scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
   for (ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *ob = objects[ob_index];
@@ -1056,6 +1067,7 @@ cleanup:
 
 static bool pose_select_same_keyingset(bContext *C, ReportList *reports, bool extend)
 {
+  Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   bool changed_multi = false;
   KeyingSet *ks = ANIM_scene_get_active_keyingset(CTX_data_scene(C));
@@ -1092,7 +1104,8 @@ static bool pose_select_same_keyingset(bContext *C, ReportList *reports, bool ex
   }
 
   uint objects_len = 0;
-  Object **objects = BKE_object_pose_array_get_unique(view_layer, CTX_wm_view3d(C), &objects_len);
+  Object **objects = BKE_object_pose_array_get_unique(
+      scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *ob = BKE_object_pose_armature_get(objects[ob_index]);
@@ -1221,6 +1234,7 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
  */
 static int pose_select_mirror_exec(bContext *C, wmOperator *op)
 {
+  const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob_active = CTX_data_active_object(C);
 
@@ -1229,7 +1243,8 @@ static int pose_select_mirror_exec(bContext *C, wmOperator *op)
   const bool extend = RNA_boolean_get(op->ptr, "extend");
 
   uint objects_len = 0;
-  Object **objects = BKE_object_pose_array_get_unique(view_layer, CTX_wm_view3d(C), &objects_len);
+  Object **objects = BKE_object_pose_array_get_unique(
+      scene, view_layer, CTX_wm_view3d(C), &objects_len);
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *ob = objects[ob_index];

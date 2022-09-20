@@ -147,54 +147,6 @@ static MPoly *dm_getPolyArray(DerivedMesh *dm)
   return mpoly;
 }
 
-static MVert *dm_dupVertArray(DerivedMesh *dm)
-{
-  MVert *tmp = (MVert *)MEM_malloc_arrayN(
-      dm->getNumVerts(dm), sizeof(*tmp), "dm_dupVertArray tmp");
-
-  if (tmp) {
-    dm->copyVertArray(dm, tmp);
-  }
-
-  return tmp;
-}
-
-static MEdge *dm_dupEdgeArray(DerivedMesh *dm)
-{
-  MEdge *tmp = (MEdge *)MEM_malloc_arrayN(
-      dm->getNumEdges(dm), sizeof(*tmp), "dm_dupEdgeArray tmp");
-
-  if (tmp) {
-    dm->copyEdgeArray(dm, tmp);
-  }
-
-  return tmp;
-}
-
-static MLoop *dm_dupLoopArray(DerivedMesh *dm)
-{
-  MLoop *tmp = (MLoop *)MEM_malloc_arrayN(
-      dm->getNumLoops(dm), sizeof(*tmp), "dm_dupLoopArray tmp");
-
-  if (tmp) {
-    dm->copyLoopArray(dm, tmp);
-  }
-
-  return tmp;
-}
-
-static MPoly *dm_dupPolyArray(DerivedMesh *dm)
-{
-  MPoly *tmp = (MPoly *)MEM_malloc_arrayN(
-      dm->getNumPolys(dm), sizeof(*tmp), "dm_dupPolyArray tmp");
-
-  if (tmp) {
-    dm->copyPolyArray(dm, tmp);
-  }
-
-  return tmp;
-}
-
 static int dm_getNumLoopTri(DerivedMesh *dm)
 {
   const int numlooptris = poly_to_tri_count(dm->getNumPolys(dm), dm->getNumLoops(dm));
@@ -233,14 +185,10 @@ void DM_init_funcs(DerivedMesh *dm)
   dm->getEdgeArray = dm_getEdgeArray;
   dm->getLoopArray = dm_getLoopArray;
   dm->getPolyArray = dm_getPolyArray;
-  dm->dupVertArray = dm_dupVertArray;
-  dm->dupEdgeArray = dm_dupEdgeArray;
-  dm->dupLoopArray = dm_dupLoopArray;
-  dm->dupPolyArray = dm_dupPolyArray;
 
   dm->getLoopTriArray = dm_getLoopTriArray;
 
-  /* subtypes handle getting actual data */
+  /* Sub-types handle getting actual data. */
   dm->getNumLoopTri = dm_getNumLoopTri;
 
   dm->getVertDataArray = DM_get_vert_data_layer;
@@ -329,36 +277,6 @@ bool DM_release(DerivedMesh *dm)
   CustomData_free_temporary(&dm->polyData, dm->numPolyData);
 
   return false;
-}
-
-void DM_DupPolys(DerivedMesh *source, DerivedMesh *target)
-{
-  CustomData_free(&target->loopData, source->numLoopData);
-  CustomData_free(&target->polyData, source->numPolyData);
-
-  CustomData_copy(&source->loopData,
-                  &target->loopData,
-                  CD_MASK_DERIVEDMESH.lmask,
-                  CD_DUPLICATE,
-                  source->numLoopData);
-  CustomData_copy(&source->polyData,
-                  &target->polyData,
-                  CD_MASK_DERIVEDMESH.pmask,
-                  CD_DUPLICATE,
-                  source->numPolyData);
-
-  target->numLoopData = source->numLoopData;
-  target->numPolyData = source->numPolyData;
-
-  if (!CustomData_has_layer(&target->polyData, CD_MPOLY)) {
-    MPoly *mpoly;
-    MLoop *mloop;
-
-    mloop = source->dupLoopArray(source);
-    mpoly = source->dupPolyArray(source);
-    CustomData_add_layer(&target->loopData, CD_MLOOP, CD_ASSIGN, mloop, source->numLoopData);
-    CustomData_add_layer(&target->polyData, CD_MPOLY, CD_ASSIGN, mpoly, source->numPolyData);
-  }
 }
 
 void DM_ensure_looptri_data(DerivedMesh *dm)
@@ -813,7 +731,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
    * subdividing them is expensive. */
   CustomData_MeshMasks final_datamask = *dataMask;
   CDMaskLink *datamasks = BKE_modifier_calc_data_masks(
-      scene, ob, md, &final_datamask, required_mode, previewmd, &previewmask);
+      scene, md, &final_datamask, required_mode, previewmd, &previewmask);
   CDMaskLink *md_datamask = datamasks;
   /* XXX Always copying POLYINDEX, else tessellated data are no more valid! */
   CustomData_MeshMasks append_mask = CD_MASK_BAREMESH_ORIGINDEX;
@@ -934,7 +852,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
     /* Add orco mesh as layer if needed by this modifier. */
     if (mesh_final && mesh_orco && mti->requiredDataMask) {
       CustomData_MeshMasks mask = {0};
-      mti->requiredDataMask(ob, md, &mask);
+      mti->requiredDataMask(md, &mask);
       if (mask.vmask & CD_MASK_ORCO) {
         add_orco_mesh(ob, nullptr, mesh_final, mesh_orco, CD_ORCO);
       }
@@ -1085,7 +1003,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
         temp_cddata_masks.pmask = CD_MASK_ORIGINDEX;
 
         if (mti->requiredDataMask != nullptr) {
-          mti->requiredDataMask(ob, md, &temp_cddata_masks);
+          mti->requiredDataMask(md, &temp_cddata_masks);
         }
         CustomData_MeshMasks_update(&temp_cddata_masks, &nextmask);
         mesh_set_only_copy(mesh_orco, &temp_cddata_masks);
@@ -1380,7 +1298,7 @@ static void editbmesh_calc_modifiers(struct Depsgraph *depsgraph,
    * subdividing them is expensive. */
   CustomData_MeshMasks final_datamask = *dataMask;
   CDMaskLink *datamasks = BKE_modifier_calc_data_masks(
-      scene, ob, md, &final_datamask, required_mode, nullptr, nullptr);
+      scene, md, &final_datamask, required_mode, nullptr, nullptr);
   CDMaskLink *md_datamask = datamasks;
   CustomData_MeshMasks append_mask = CD_MASK_BAREMESH;
 
@@ -1410,7 +1328,7 @@ static void editbmesh_calc_modifiers(struct Depsgraph *depsgraph,
     /* Add an orco mesh as layer if needed by this modifier. */
     if (mesh_final && mesh_orco && mti->requiredDataMask) {
       CustomData_MeshMasks mask = {0};
-      mti->requiredDataMask(ob, md, &mask);
+      mti->requiredDataMask(md, &mask);
       if (mask.vmask & CD_MASK_ORCO) {
         add_orco_mesh(ob, em_input, mesh_final, mesh_orco, CD_ORCO);
       }
@@ -1744,6 +1662,7 @@ static void object_get_datamask(const Depsgraph *depsgraph,
                                 CustomData_MeshMasks *r_mask,
                                 bool *r_need_mapping)
 {
+  Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
 
   DEG_get_customdata_mask_for_object(depsgraph, ob, r_mask);
@@ -1758,8 +1677,11 @@ static void object_get_datamask(const Depsgraph *depsgraph,
     return;
   }
 
-  Object *actob = view_layer->basact ? DEG_get_original_object(view_layer->basact->object) :
-                                       nullptr;
+  BKE_view_layer_synced_ensure(scene, view_layer);
+  Object *actob = BKE_view_layer_active_object_get(view_layer);
+  if (actob) {
+    actob = DEG_get_original_object(actob);
+  }
   if (DEG_get_original_object(ob) == actob) {
     bool editing = BKE_paint_select_face_test(actob);
 
@@ -1802,7 +1724,7 @@ void makeDerivedMesh(struct Depsgraph *depsgraph,
 
   BKE_object_free_derived_caches(ob);
   if (DEG_is_active(depsgraph)) {
-    BKE_sculpt_update_object_before_eval(scene, ob);
+    BKE_sculpt_update_object_before_eval(ob);
   }
 
   /* NOTE: Access the `edit_mesh` after freeing the derived caches, so that `ob->data` is restored

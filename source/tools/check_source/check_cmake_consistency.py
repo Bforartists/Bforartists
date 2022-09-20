@@ -95,7 +95,7 @@ def is_c_header(filename: str) -> bool:
 
 def is_c(filename: str) -> bool:
     ext = splitext(filename)[1]
-    return (ext in {".c", ".cpp", ".cxx", ".m", ".mm", ".rc", ".cc", ".inl", ".metal"})
+    return (ext in {".c", ".cpp", ".cxx", ".m", ".mm", ".rc", ".cc", ".inl", ".metal", ".msl"})
 
 
 def is_c_any(filename: str) -> bool:

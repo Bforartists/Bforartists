@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -353,18 +353,6 @@ msgid "MovieClip"
 msgstr "Видеофрагмент"
 
 
-msgid "Depth"
-msgstr "Тереңдиги"
-
-
-msgid "Back"
-msgstr "Арты"
-
-
-msgid "Front"
-msgstr "Алды"
-
-
 msgid "Stretch"
 msgstr "Чоюу"
 
@@ -546,6 +534,14 @@ msgid "Script"
 msgstr "Скрипт"
 
 
+msgid "Front"
+msgstr "Алды"
+
+
+msgid "Back"
+msgstr "Арты"
+
+
 msgid "Location"
 msgstr "Жайгашкан жери"
 
@@ -560,6 +556,10 @@ msgstr "Полисызык"
 
 msgid "Bezier"
 msgstr "Безье"
+
+
+msgid "Depth"
+msgstr "Тереңдиги"
 
 
 msgid "Surface"
@@ -1369,6 +1369,14 @@ msgid "Animation"
 msgstr "Анимация"
 
 
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
+
+
 msgid "Codec"
 msgstr "Кодек"
 
@@ -2014,14 +2022,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -3113,6 +3113,10 @@ msgid "Radians"
 msgstr "Радиандар"
 
 
+msgid "Search"
+msgstr "Издөө"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Терезе"
@@ -3247,6 +3251,10 @@ msgid "New"
 msgstr "Жаңы"
 
 
+msgid "3D View"
+msgstr "3D-көрүнүш"
+
+
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Ачуу..."
@@ -3296,10 +3304,6 @@ msgstr "Эсептөө"
 
 msgid "%s: %s"
 msgstr "%s: %s"
-
-
-msgid "Search"
-msgstr "Издөө"
 
 
 msgctxt "Operator"
@@ -3452,16 +3456,8 @@ msgid "Description:"
 msgstr "Баяндамасы:"
 
 
-msgid "description"
-msgstr "баяндама"
-
-
 msgid "Location:"
 msgstr "Жайгашкан жери:"
-
-
-msgid "location"
-msgstr "жайгашкан жери"
 
 
 msgid "File:"
@@ -3482,6 +3478,14 @@ msgstr "Версиясы:"
 
 msgid "Internet:"
 msgstr "Интернет:"
+
+
+msgid "description"
+msgstr "баяндама"
+
+
+msgid "location"
+msgstr "жайгашкан жери"
 
 
 msgctxt "Operator"
@@ -3834,10 +3838,6 @@ msgid "Stone"
 msgstr "Таш"
 
 
-msgid "3D View"
-msgstr "3D-көрүнүш"
-
-
 msgid "Untitled"
 msgstr "Аты жок"
 
@@ -3897,10 +3897,6 @@ msgstr "(Ачкыч) "
 msgctxt "Action"
 msgid "Group"
 msgstr "Топ"
-
-
-msgid "Not found: %s"
-msgstr "Табылган жок: %s"
 
 
 msgid "(empty)"
