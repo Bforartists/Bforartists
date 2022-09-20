@@ -14,9 +14,12 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_pointcloud_types.h"
 
+#include "BLI_array_utils.hh"
 #include "BLI_color.hh"
 #include "BLI_math_vec_types.hh"
 #include "BLI_span.hh"
+
+#include "FN_field.hh"
 
 #include "BLT_translation.h"
 
@@ -55,7 +58,8 @@ const char *no_procedural_access_message =
 
 bool allow_procedural_attribute_access(StringRef attribute_name)
 {
-  return !attribute_name.startswith(".selection") && !attribute_name.startswith(".hide");
+  return !attribute_name.startswith(".sculpt") && !attribute_name.startswith(".selection") &&
+         !attribute_name.startswith(".hide");
 }
 
 static int attribute_data_type_complexity(const eCustomDataType data_type)
@@ -726,8 +730,22 @@ bool CustomDataAttributes::remove(const AttributeIDRef &attribute_id)
 
 void CustomDataAttributes::reallocate(const int size)
 {
+  const int old_size = size_;
   size_ = size;
-  CustomData_realloc(&data, size);
+  CustomData_realloc(&data, old_size, size_);
+  if (size_ > old_size) {
+    /* Fill default new values. */
+    const int new_elements_num = size_ - old_size;
+    this->foreach_attribute(
+        [&](const bke::AttributeIDRef &id, const bke::AttributeMetaData /*meta_data*/) {
+          GMutableSpan new_data = this->get_for_write(id)->take_back(new_elements_num);
+          const CPPType &type = new_data.type();
+          type.fill_assign_n(type.default_value(), new_data.data(), new_data.size());
+          return true;
+        },
+        /* Dummy. */
+        ATTR_DOMAIN_POINT);
+  }
 }
 
 void CustomDataAttributes::clear()
@@ -875,6 +893,16 @@ GAttributeWriter MutableAttributeAccessor::lookup_for_write(const AttributeIDRef
   return attribute;
 }
 
+GSpanAttributeWriter MutableAttributeAccessor::lookup_for_write_span(
+    const AttributeIDRef &attribute_id)
+{
+  GAttributeWriter attribute = this->lookup_for_write(attribute_id);
+  if (attribute) {
+    return GSpanAttributeWriter{std::move(attribute), true};
+  }
+  return {};
+}
+
 GAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write(
     const AttributeIDRef &attribute_id,
     const eAttrDomain domain,
@@ -919,6 +947,15 @@ GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_only_span
   return {};
 }
 
+fn::GField AttributeValidator::validate_field_if_necessary(const fn::GField &field) const
+{
+  if (function) {
+    auto validate_op = fn::FieldOperation::Create(*function, {field});
+    return fn::GField(validate_op);
+  }
+  return field;
+}
+
 Vector<AttributeTransferData> retrieve_attributes_for_transfer(
     const bke::AttributeAccessor src_attributes,
     bke::MutableAttributeAccessor dst_attributes,
@@ -948,6 +985,37 @@ Vector<AttributeTransferData> retrieve_attributes_for_transfer(
         return true;
       });
   return attributes;
+}
+
+void copy_attribute_domain(const AttributeAccessor src_attributes,
+                           MutableAttributeAccessor dst_attributes,
+                           const IndexMask selection,
+                           const eAttrDomain domain,
+                           const Set<std::string> &skip)
+{
+  src_attributes.for_all(
+      [&](const bke::AttributeIDRef &id, const bke::AttributeMetaData &meta_data) {
+        if (meta_data.domain != domain) {
+          return true;
+        }
+        if (id.is_named() && skip.contains(id.name())) {
+          return true;
+        }
+        if (!id.should_be_kept()) {
+          return true;
+        }
+
+        const GVArray src = src_attributes.lookup(id, meta_data.domain);
+        BLI_assert(src);
+
+        /* Copy attribute. */
+        GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+            id, domain, meta_data.data_type);
+        array_utils::copy(src, selection, dst.span);
+        dst.finish();
+
+        return true;
+      });
 }
 
 }  // namespace blender::bke

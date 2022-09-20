@@ -153,7 +153,7 @@ def find_build_args_ninja(build_dir: str) -> Optional[ProcessedCommands]:
     )
     while process.poll():
         time.sleep(1)
-    assert(process.stdout is not None)
+    assert process.stdout is not None
 
     out = process.stdout.read()
     process.stdout.close()
@@ -172,7 +172,7 @@ def find_build_args_make(build_dir: str) -> Optional[ProcessedCommands]:
     )
     while process.poll():
         time.sleep(1)
-    assert(process.stdout is not None)
+    assert process.stdout is not None
 
     out = process.stdout.read()
     process.stdout.close()
@@ -782,7 +782,7 @@ def edit_function_get_all() -> List[str]:
 
 def edit_class_from_id(name: str) -> Type[EditGenerator]:
     result = getattr(edit_generators, name)
-    assert(issubclass(result, EditGenerator))
+    assert issubclass(result, EditGenerator)
     # MYPY 0.812 doesn't recognize the assert above.
     return result  # type: ignore
 

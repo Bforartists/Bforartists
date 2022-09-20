@@ -2408,19 +2408,37 @@ bool CustomData_merge_mesh_to_bmesh(const CustomData *source,
   return result;
 }
 
-void CustomData_realloc(CustomData *data, const int totelem)
+void CustomData_realloc(CustomData *data, const int old_size, const int new_size)
 {
-  BLI_assert(totelem >= 0);
+  BLI_assert(new_size >= 0);
   for (int i = 0; i < data->totlayer; i++) {
     CustomDataLayer *layer = &data->layers[i];
-    const LayerTypeInfo *typeInfo;
+    const LayerTypeInfo *typeInfo = layerType_getInfo(layer->type);
+
+    const int64_t old_size_in_bytes = int64_t(old_size) * typeInfo->size;
+    const int64_t new_size_in_bytes = int64_t(new_size) * typeInfo->size;
     if (layer->flag & CD_FLAG_NOFREE) {
-      continue;
+      const void *old_data = layer->data;
+      layer->data = MEM_malloc_arrayN(new_size, typeInfo->size, __func__);
+      if (typeInfo->copy) {
+        typeInfo->copy(old_data, layer->data, std::min(old_size, new_size));
+      }
+      else {
+        std::memcpy(layer->data, old_data, std::min(old_size_in_bytes, new_size_in_bytes));
+      }
+      layer->flag &= ~CD_FLAG_NOFREE;
     }
-    typeInfo = layerType_getInfo(layer->type);
-    /* Use calloc to avoid the need to manually initialize new data in layers.
-     * Useful for types like #MDeformVert which contain a pointer. */
-    layer->data = MEM_recallocN(layer->data, (size_t)totelem * typeInfo->size);
+    else {
+      layer->data = MEM_reallocN(layer->data, new_size_in_bytes);
+    }
+
+    if (new_size > old_size) {
+      /* Initialize new values for non-trivial types. */
+      if (typeInfo->construct) {
+        const int new_elements_num = new_size - old_size;
+        typeInfo->construct(POINTER_OFFSET(layer->data, old_size_in_bytes), new_elements_num);
+      }
+    }
   }
 }
 
@@ -3733,7 +3751,7 @@ bool CustomData_bmesh_merge(const CustomData *source,
     destold.layers = static_cast<CustomDataLayer *>(MEM_dupallocN(destold.layers));
   }
 
-  if (CustomData_merge(source, dest, mask, alloctype, 0) == false) {
+  if (CustomData_merge_mesh_to_bmesh(source, dest, mask, alloctype, 0) == false) {
     if (destold.layers) {
       MEM_freeN(destold.layers);
     }
@@ -5528,3 +5546,8 @@ eCustomDataType cpp_type_to_custom_data_type(const blender::CPPType &type)
 /** \} */
 
 }  // namespace blender::bke
+
+size_t CustomData_get_elem_size(CustomDataLayer *layer)
+{
+  return LAYERTYPEINFO[layer->type].size;
+}

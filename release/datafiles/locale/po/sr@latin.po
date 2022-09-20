@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1407,10 +1407,6 @@ msgid "Input Samples"
 msgstr "Ulazni uzorci"
 
 
-msgid "Jitter"
-msgstr "Nervozno"
-
-
 msgid "Iterations"
 msgstr "Iteracije"
 
@@ -1441,18 +1437,6 @@ msgstr "Providnost"
 
 msgid "MovieClip"
 msgstr "Film"
-
-
-msgid "Depth"
-msgstr "Dubina"
-
-
-msgid "Back"
-msgstr "Od pozadi"
-
-
-msgid "Front"
-msgstr "Spreda"
 
 
 msgid "Frame Method"
@@ -2732,6 +2716,14 @@ msgid "Off"
 msgstr "Isključeno"
 
 
+msgid "Front"
+msgstr "Spreda"
+
+
+msgid "Back"
+msgstr "Od pozadi"
+
+
 msgid "Distance to Target"
 msgstr "Udaljenost do cilja"
 
@@ -2960,6 +2952,10 @@ msgid "Bezier"
 msgstr "Bazierova kriva"
 
 
+msgid "Depth"
+msgstr "Dubina"
+
+
 msgid "Cursor"
 msgstr "Kursor"
 
@@ -2990,10 +2986,6 @@ msgstr "Indeks"
 
 msgid "Radius"
 msgstr "Radius"
-
-
-msgid "Steps"
-msgstr "Koraka"
 
 
 msgid "Segments"
@@ -4881,6 +4873,10 @@ msgid "Extreme"
 msgstr "Ekstrem"
 
 
+msgid "Jitter"
+msgstr "Nervozno"
+
+
 msgid "Freehand curves defining the sketch on this frame"
 msgstr "Slobodoručne krive koje formiraju crtež trenutnog kadra"
 
@@ -5224,6 +5220,10 @@ msgstr "Senčeno"
 
 msgid "Fade"
 msgstr "Nestajanje"
+
+
+msgid "Steps"
+msgstr "Koraka"
 
 
 msgid "Shrinkwrap Modifier"
@@ -8634,6 +8634,14 @@ msgstr "Min. korak"
 
 msgid "Settings for image formats"
 msgstr "Podešavanja formata slika"
+
+
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
 
 
 msgid "Color Depth"
@@ -15105,14 +15113,6 @@ msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
 
 
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "Pridruži grupu temena"
@@ -16431,26 +16431,6 @@ msgid "Randomly select vertices"
 msgstr "Nasumično izaberi temena"
 
 
-msgid "Face Angles"
-msgstr "Uglovi stranice"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "Slobodoručne oznake ivica"
-
-
-msgid "Polygon Sides"
-msgstr "Strane poligona"
-
-
-msgid "Perimeter"
-msgstr "Obim"
-
-
-msgid "Freestyle Face Marks"
-msgstr "Slobodoručne oznake stranica"
-
-
 msgid "Separate selected geometry into a new mesh"
 msgstr "Izdvoj izabranu geometriju u novi meš"
 
@@ -16583,11 +16563,6 @@ msgstr "Okretanje UV-a"
 msgctxt "Operator"
 msgid "Vertex Connect"
 msgstr "Poveži temena"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Dodaj boju temena"
 
 
 msgid "Flatten angles of selected vertices"
@@ -16735,14 +16710,6 @@ msgid "Exit Tweak Mode"
 msgstr "Napusti režim doterivanja"
 
 
-msgid "Node Type"
-msgstr "Vrsta čvora"
-
-
-msgid "Node type"
-msgstr "Vrsta čvora"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Dodaj čvor datoteke"
@@ -16756,6 +16723,14 @@ msgstr "Dodaj čvor maske"
 msgctxt "Operator"
 msgid "Add Node"
 msgstr "Dodaj čvor"
+
+
+msgid "Node Type"
+msgstr "Vrsta čvora"
+
+
+msgid "Node type"
+msgstr "Vrsta čvora"
 
 
 msgctxt "Operator"
@@ -24484,10 +24459,6 @@ msgid "Edge Bevel"
 msgstr "Iskošavanje ivice"
 
 
-msgid "Edge Crease"
-msgstr "Nabor ivice"
-
-
 msgid "Edge Sharp"
 msgstr "Oštra ivica"
 
@@ -24796,6 +24767,10 @@ msgid "Display 3D curve normals in editmode"
 msgstr "Prikaži normale 3D krive u režimu izmene"
 
 
+msgid "Face Angles"
+msgstr "Uglovi stranice"
+
+
 msgid "Indices"
 msgstr "Indirektno"
 
@@ -24894,6 +24869,10 @@ msgstr "Određuje opadanje gustime magle sa visinom"
 
 msgid "Use Mist"
 msgstr "Koristi maglu"
+
+
+msgid "Search"
+msgstr "Pretraga"
 
 
 msgctxt "WindowManager"
@@ -25269,6 +25248,10 @@ msgid "New"
 msgstr "Novo"
 
 
+msgid "3D View"
+msgstr "3D pogled"
+
+
 msgid "Active object is not a mesh"
 msgstr "Aktivni objekat nije meš"
 
@@ -25388,6 +25371,10 @@ msgstr "Ukloni sve grupe"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "Zaključaj sve obrnuto"
+
+
+msgid "Edge Crease"
+msgstr "Nabor ivice"
 
 
 msgid "Detail"
@@ -25580,10 +25567,6 @@ msgstr "Dimenzije"
 
 msgid "Odd"
 msgstr "Nepar"
-
-
-msgid "Search"
-msgstr "Pretraga"
 
 
 msgid "B/W"
@@ -26094,16 +26077,8 @@ msgid "Description:"
 msgstr "Opis:"
 
 
-msgid "description"
-msgstr "opis"
-
-
 msgid "Location:"
 msgstr "Lokacija:"
-
-
-msgid "location"
-msgstr "lokacija"
 
 
 msgid "File:"
@@ -26128,6 +26103,14 @@ msgstr "Upozorenje:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "opis"
+
+
+msgid "location"
+msgstr "lokacija"
 
 
 msgid "Preferences:"
@@ -27550,10 +27533,6 @@ msgid "3D Local View"
 msgstr "3D lokalni pogled"
 
 
-msgid "3D View"
-msgstr "3D pogled"
-
-
 msgid "Frame:%d "
 msgstr "Kadar:%d "
 
@@ -27757,10 +27736,6 @@ msgstr "Zamena ulaznog efekta"
 msgctxt "Action"
 msgid "Group"
 msgstr "Grupa"
-
-
-msgid "Not found: %s"
-msgstr "Python: %s"
 
 
 msgid "(empty)"

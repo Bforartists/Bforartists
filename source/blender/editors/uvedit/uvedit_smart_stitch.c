@@ -1855,7 +1855,7 @@ static StitchState *stitch_init(bContext *C,
    * for stitch this isn't useful behavior, see T86924. */
   const int selectmode_orig = scene->toolsettings->selectmode;
   scene->toolsettings->selectmode = SCE_SELECT_VERTEX;
-  state->element_map = BM_uv_element_map_create(state->em->bm, scene, false, true, true);
+  state->element_map = BM_uv_element_map_create(state->em->bm, scene, false, true, true, true);
   scene->toolsettings->selectmode = selectmode_orig;
 
   if (!state->element_map) {
@@ -2215,7 +2215,7 @@ static int stitch_init_all(bContext *C, wmOperator *op)
   View3D *v3d = CTX_wm_view3d(C);
   uint objects_len = 0;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      view_layer, v3d, &objects_len);
+      scene, view_layer, v3d, &objects_len);
 
   if (objects_len == 0) {
     MEM_freeN(objects);

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -305,20 +305,16 @@ msgid "Saturation"
 msgstr "Mättnad"
 
 
+msgid "Outline"
+msgstr "Kontur"
+
+
 msgid "Path"
 msgstr "Bana"
 
 
 msgid "Opacity"
 msgstr "Genomskinlighet"
-
-
-msgid "Depth"
-msgstr "Djup"
-
-
-msgid "Front"
-msgstr "Fram"
 
 
 msgid "Crop"
@@ -485,6 +481,10 @@ msgid "Off"
 msgstr "Av"
 
 
+msgid "Front"
+msgstr "Fram"
+
+
 msgid "Quaternion"
 msgstr "Kvaternion"
 
@@ -505,6 +505,10 @@ msgid "Bezier"
 msgstr "Bezierkurva"
 
 
+msgid "Depth"
+msgstr "Djup"
+
+
 msgid "Surface"
 msgstr "Yta"
 
@@ -519,14 +523,6 @@ msgstr "Visa"
 
 msgid "Radius"
 msgstr "Radie"
-
-
-msgid "Preset"
-msgstr "Förinställning"
-
-
-msgid "Steps"
-msgstr "Steg"
 
 
 msgid "Dash"
@@ -877,6 +873,10 @@ msgid "Step"
 msgstr "Steg"
 
 
+msgid "Steps"
+msgstr "Steg"
+
+
 msgid "Negative"
 msgstr "Negativ"
 
@@ -1191,6 +1191,14 @@ msgstr "Dimma"
 
 msgid "Animation"
 msgstr "Animering"
+
+
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
 
 
 msgid "Color Management"
@@ -1657,14 +1665,6 @@ msgid "Subdivisions"
 msgstr "Uppdelningar"
 
 
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
-
-
 msgid "32-bit Float"
 msgstr "32-bit Flyttal"
 
@@ -1701,10 +1701,6 @@ msgstr "Utvidga existerande markering"
 
 msgid "Vertex selection mode"
 msgstr "Markeringsläge för vertex:ar"
-
-
-msgid "Perimeter"
-msgstr "Parametrar"
 
 
 msgid "Subdivide selected edges"
@@ -2416,10 +2412,6 @@ msgid "Face Collision"
 msgstr "Krocka yta"
 
 
-msgid "Outline"
-msgstr "Kontur"
-
-
 msgid "Sync Markers"
 msgstr "Synka markörer"
 
@@ -2528,6 +2520,10 @@ msgid "Use Mist"
 msgstr "Använd dimma"
 
 
+msgid "Search"
+msgstr "Sök"
+
+
 msgid "Torus"
 msgstr "Torus"
 
@@ -2623,10 +2619,6 @@ msgstr "Automatiska steg"
 
 msgid "Eccentricity"
 msgstr "Eccentricitet"
-
-
-msgid "Search"
-msgstr "Sök"
 
 
 msgid "Options:"

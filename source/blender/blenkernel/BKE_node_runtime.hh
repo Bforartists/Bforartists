@@ -21,6 +21,7 @@ struct bNodeType;
 namespace blender::nodes {
 struct FieldInferencingInterface;
 class NodeDeclaration;
+struct GeometryNodesLazyFunctionGraphInfo;
 }  // namespace blender::nodes
 
 namespace blender::bke {
@@ -49,6 +50,15 @@ class bNodeTreeRuntime : NonCopyable, NonMovable {
   std::unique_ptr<nodes::FieldInferencingInterface> field_inferencing_interface;
 
   /**
+   * For geometry nodes, a lazy function graph with some additional info is cached. This is used to
+   * evaluate the node group. Caching it here allows us to reuse the preprocessed node tree in case
+   * its used multiple times.
+   */
+  std::mutex geometry_nodes_lazy_function_graph_info_mutex;
+  std::unique_ptr<nodes::GeometryNodesLazyFunctionGraphInfo>
+      geometry_nodes_lazy_function_graph_info;
+
+  /**
    * Protects access to all topology cache variables below. This is necessary so that the cache can
    * be updated on a const #bNodeTree.
    */
@@ -70,7 +80,8 @@ class bNodeTreeRuntime : NonCopyable, NonMovable {
   MultiValueMap<const bNodeType *, bNode *> nodes_by_type;
   Vector<bNode *> toposort_left_to_right;
   Vector<bNode *> toposort_right_to_left;
-  bool has_link_cycle = false;
+  Vector<bNode *> group_nodes;
+  bool has_available_link_cycle = false;
   bool has_undefined_nodes_or_sockets = false;
   bNode *group_output_node = nullptr;
 };
@@ -141,12 +152,17 @@ class bNodeRuntime : NonCopyable, NonMovable {
   Map<StringRefNull, bNodeSocket *> inputs_by_identifier;
   Map<StringRefNull, bNodeSocket *> outputs_by_identifier;
   int index_in_tree = -1;
-  bool has_linked_inputs = false;
-  bool has_linked_outputs = false;
+  bool has_available_linked_inputs = false;
+  bool has_available_linked_outputs = false;
   bNodeTree *owner_tree = nullptr;
 };
 
 namespace node_tree_runtime {
+
+/**
+ * Is executed when the node tree changed in the depsgraph.
+ */
+void preprocess_geometry_node_tree_for_evaluation(bNodeTree &tree_cow);
 
 class AllowUsingOutdatedInfo : NonCopyable, NonMovable {
  private:
@@ -241,10 +257,22 @@ inline blender::Span<bNode *> bNodeTree::all_nodes()
   return this->runtime->nodes;
 }
 
-inline bool bNodeTree::has_link_cycle() const
+inline blender::Span<const bNode *> bNodeTree::group_nodes() const
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
-  return this->runtime->has_link_cycle;
+  return this->runtime->group_nodes;
+}
+
+inline blender::Span<bNode *> bNodeTree::group_nodes()
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->group_nodes;
+}
+
+inline bool bNodeTree::has_available_link_cycle() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->has_available_link_cycle;
 }
 
 inline bool bNodeTree::has_undefined_nodes_or_sockets() const
@@ -413,7 +441,6 @@ inline blender::Span<const bNodeLink *> bNode::internal_links_span() const
 
 inline const blender::nodes::NodeDeclaration *bNode::declaration() const
 {
-  BLI_assert(this->runtime->declaration != nullptr);
   return this->runtime->declaration;
 }
 
@@ -426,6 +453,11 @@ inline const blender::nodes::NodeDeclaration *bNode::declaration() const
 inline bool bNodeLink::is_muted() const
 {
   return this->flag & NODE_LINK_MUTED;
+}
+
+inline bool bNodeLink::is_available() const
+{
+  return this->fromsock->is_available() && this->tosock->is_available();
 }
 
 /** \} */

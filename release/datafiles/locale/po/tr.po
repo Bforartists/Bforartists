@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -154,12 +154,12 @@ msgid "Saturation"
 msgstr "Doygunluk"
 
 
+msgid "Outline"
+msgstr "Anahat"
+
+
 msgid "Path"
 msgstr "Yol"
-
-
-msgid "Depth"
-msgstr "Derinlik"
 
 
 msgid "Image"
@@ -234,6 +234,10 @@ msgid "Vector Handle"
 msgstr "Vektör Tutamak"
 
 
+msgid "Depth"
+msgstr "Derinlik"
+
+
 msgid "Cursor"
 msgstr "İmleç"
 
@@ -244,14 +248,6 @@ msgstr "Görünüş"
 
 msgid "Radius"
 msgstr "Yarıçap"
-
-
-msgid "Preset"
-msgstr "Önayar"
-
-
-msgid "Steps"
-msgstr "Adımlar"
 
 
 msgid "Material Index"
@@ -480,6 +476,10 @@ msgstr "Düzenleme Modu"
 
 msgid "Mirror"
 msgstr "Yansıtma"
+
+
+msgid "Steps"
+msgstr "Adımlar"
 
 
 msgid "Ping Pong"
@@ -732,6 +732,14 @@ msgstr "Sis"
 
 msgid "Animation"
 msgstr "Animasyon"
+
+
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
 
 
 msgid "Codec"
@@ -991,14 +999,6 @@ msgstr "Aç"
 
 msgid "Limit"
 msgstr "Sınır"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgctxt "Operator"
@@ -1302,10 +1302,6 @@ msgid "Sepia"
 msgstr "Sepya"
 
 
-msgid "Outline"
-msgstr "Anahat"
-
-
 msgid "Live Unwrap"
 msgstr "Anlık Açılım"
 
@@ -1422,16 +1418,16 @@ msgid "Location:"
 msgstr "Lokasyon:"
 
 
-msgid "location"
-msgstr "lokasyon"
-
-
 msgid "File:"
 msgstr "Dosya:"
 
 
 msgid "Version:"
 msgstr "Versiyon:"
+
+
+msgid "location"
+msgstr "lokasyon"
 
 
 msgid "Visual Transform"
