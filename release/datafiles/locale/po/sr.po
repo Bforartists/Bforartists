@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1407,10 +1407,6 @@ msgid "Input Samples"
 msgstr "Улазни узорци"
 
 
-msgid "Jitter"
-msgstr "Нервозно"
-
-
 msgid "Iterations"
 msgstr "Итерације"
 
@@ -1441,18 +1437,6 @@ msgstr "Провидност"
 
 msgid "MovieClip"
 msgstr "Филм"
-
-
-msgid "Depth"
-msgstr "Дубина"
-
-
-msgid "Back"
-msgstr "Од позади"
-
-
-msgid "Front"
-msgstr "Спреда"
 
 
 msgid "Frame Method"
@@ -2732,6 +2716,14 @@ msgid "Off"
 msgstr "Искључено"
 
 
+msgid "Front"
+msgstr "Спреда"
+
+
+msgid "Back"
+msgstr "Од позади"
+
+
 msgid "Distance to Target"
 msgstr "Удаљеност до циља"
 
@@ -2960,6 +2952,10 @@ msgid "Bezier"
 msgstr "Базиерова крива"
 
 
+msgid "Depth"
+msgstr "Дубина"
+
+
 msgid "Cursor"
 msgstr "Курсор"
 
@@ -2990,10 +2986,6 @@ msgstr "Индекс"
 
 msgid "Radius"
 msgstr "Радиус"
-
-
-msgid "Steps"
-msgstr "Корака"
 
 
 msgid "Segments"
@@ -4881,6 +4873,10 @@ msgid "Extreme"
 msgstr "Екстрем"
 
 
+msgid "Jitter"
+msgstr "Нервозно"
+
+
 msgid "Freehand curves defining the sketch on this frame"
 msgstr "Слободоручне криве које формирају цртеж тренутног кадра"
 
@@ -5224,6 +5220,10 @@ msgstr "Сенчено"
 
 msgid "Fade"
 msgstr "Нестајање"
+
+
+msgid "Steps"
+msgstr "Корака"
 
 
 msgid "Shrinkwrap Modifier"
@@ -8634,6 +8634,14 @@ msgstr "Мин. корак"
 
 msgid "Settings for image formats"
 msgstr "Подешавања формата слика"
+
+
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
 
 
 msgid "Color Depth"
@@ -15105,14 +15113,6 @@ msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
 
 
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "Придружи групу темена"
@@ -16431,26 +16431,6 @@ msgid "Randomly select vertices"
 msgstr "Насумично изабери темена"
 
 
-msgid "Face Angles"
-msgstr "Углови странице"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "Слободоручне ознаке ивица"
-
-
-msgid "Polygon Sides"
-msgstr "Стране полигона"
-
-
-msgid "Perimeter"
-msgstr "Обим"
-
-
-msgid "Freestyle Face Marks"
-msgstr "Слободоручне ознаке страница"
-
-
 msgid "Separate selected geometry into a new mesh"
 msgstr "Издвој изабрану геометрију у нови меш"
 
@@ -16583,11 +16563,6 @@ msgstr "Окретање UV-а"
 msgctxt "Operator"
 msgid "Vertex Connect"
 msgstr "Повежи темена"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Додај боју темена"
 
 
 msgid "Flatten angles of selected vertices"
@@ -16735,14 +16710,6 @@ msgid "Exit Tweak Mode"
 msgstr "Напусти режим дотеривања"
 
 
-msgid "Node Type"
-msgstr "Врста чвора"
-
-
-msgid "Node type"
-msgstr "Врста чвора"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Додај чвор датотеке"
@@ -16756,6 +16723,14 @@ msgstr "Додај чвор маске"
 msgctxt "Operator"
 msgid "Add Node"
 msgstr "Додај чвор"
+
+
+msgid "Node Type"
+msgstr "Врста чвора"
+
+
+msgid "Node type"
+msgstr "Врста чвора"
 
 
 msgctxt "Operator"
@@ -24484,10 +24459,6 @@ msgid "Edge Bevel"
 msgstr "Искошавање ивице"
 
 
-msgid "Edge Crease"
-msgstr "Набор ивице"
-
-
 msgid "Edge Sharp"
 msgstr "Оштра ивица"
 
@@ -24796,6 +24767,10 @@ msgid "Display 3D curve normals in editmode"
 msgstr "Прикажи нормале 3D криве у режиму измене"
 
 
+msgid "Face Angles"
+msgstr "Углови странице"
+
+
 msgid "Indices"
 msgstr "Индиректно"
 
@@ -24894,6 +24869,10 @@ msgstr "Одређује опадање густиме магле са виси�
 
 msgid "Use Mist"
 msgstr "Користи маглу"
+
+
+msgid "Search"
+msgstr "Претрага"
 
 
 msgctxt "WindowManager"
@@ -25269,6 +25248,10 @@ msgid "New"
 msgstr "Ново"
 
 
+msgid "3D View"
+msgstr "3D поглед"
+
+
 msgid "Active object is not a mesh"
 msgstr "Активни објекат није меш"
 
@@ -25388,6 +25371,10 @@ msgstr "Уклони све групе"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "Закључај све обрнуто"
+
+
+msgid "Edge Crease"
+msgstr "Набор ивице"
 
 
 msgid "Detail"
@@ -25580,10 +25567,6 @@ msgstr "Димензије"
 
 msgid "Odd"
 msgstr "Непар"
-
-
-msgid "Search"
-msgstr "Претрага"
 
 
 msgid "B/W"
@@ -26094,16 +26077,8 @@ msgid "Description:"
 msgstr "Опис:"
 
 
-msgid "description"
-msgstr "опис"
-
-
 msgid "Location:"
 msgstr "Локација:"
-
-
-msgid "location"
-msgstr "локација"
 
 
 msgid "File:"
@@ -26128,6 +26103,14 @@ msgstr "Упозорење:"
 
 msgid "Internet:"
 msgstr "Интернет:"
+
+
+msgid "description"
+msgstr "опис"
+
+
+msgid "location"
+msgstr "локација"
 
 
 msgid "Preferences:"
@@ -27550,10 +27533,6 @@ msgid "3D Local View"
 msgstr "3D локални поглед"
 
 
-msgid "3D View"
-msgstr "3D поглед"
-
-
 msgid "Frame:%d "
 msgstr "Кадар:%d "
 
@@ -27757,10 +27736,6 @@ msgstr "Замена улазног ефекта"
 msgctxt "Action"
 msgid "Group"
 msgstr "Група"
-
-
-msgid "Not found: %s"
-msgstr "Python: %s"
 
 
 msgid "(empty)"

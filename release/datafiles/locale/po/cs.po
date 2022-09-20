@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1562,6 +1562,10 @@ msgid "Shape Keys"
 msgstr "Tvarové klávesy"
 
 
+msgid "Simulations"
+msgstr "Simulace"
+
+
 msgid "Sounds"
 msgstr "Zvuky"
 
@@ -2738,10 +2742,6 @@ msgid "Material used for strokes drawn using this brush"
 msgstr "Materiál použitý pro tahy nakreslené tímto štětcem"
 
 
-msgid "Jitter"
-msgstr "Chvění"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "Faktor chvění pro nové tahy"
 
@@ -2822,6 +2822,10 @@ msgid "Limit to Viewport"
 msgstr "Limitovat na 3D Výřez"
 
 
+msgid "Outline"
+msgstr "Obrys"
+
+
 msgid "Random Settings"
 msgstr "Náhodné Nastavení"
 
@@ -2898,20 +2902,8 @@ msgid "Clip User"
 msgstr "Začátek střihu"
 
 
-msgid "Depth"
-msgstr "Hloubka"
-
-
 msgid "Display under or over everything"
 msgstr "Zobrazit pod nebo přes všechno"
-
-
-msgid "Back"
-msgstr "Zezadu"
-
-
-msgid "Front"
-msgstr "Zepředu"
 
 
 msgid "Frame Method"
@@ -4923,6 +4915,14 @@ msgid "Off"
 msgstr "Vypnout"
 
 
+msgid "Front"
+msgstr "Zepředu"
+
+
+msgid "Back"
+msgstr "Zezadu"
+
+
 msgid "Distance to Target"
 msgstr "Cíl vazby"
 
@@ -5231,6 +5231,10 @@ msgid "Bezier"
 msgstr "Bezierova"
 
 
+msgid "Depth"
+msgstr "Hloubka"
+
+
 msgid "Cursor"
 msgstr "Kurzor"
 
@@ -5269,14 +5273,6 @@ msgstr "Index"
 
 msgid "Radius"
 msgstr "Poloměr"
-
-
-msgid "Support Loops"
-msgstr "Podporovat Smyčky"
-
-
-msgid "Steps"
-msgstr "Kroky"
 
 
 msgid "Segments"
@@ -7031,10 +7027,6 @@ msgid "Particles Settings"
 msgstr "Nastavení Částic"
 
 
-msgid "Simulations"
-msgstr "Simulace"
-
-
 msgid "Node Trees"
 msgstr "Větvení Uzlů"
 
@@ -7887,6 +7879,10 @@ msgid "Extreme"
 msgstr "Tažení"
 
 
+msgid "Jitter"
+msgstr "Chvění"
+
+
 msgid "Grease Pencil Layer"
 msgstr "Vrstva pro skicovací tužku"
 
@@ -8341,6 +8337,10 @@ msgstr "Útlum"
 
 msgid "Noise Offset"
 msgstr "Odsazení Šumu"
+
+
+msgid "Steps"
+msgstr "Kroky"
 
 
 msgid "Shrinkwrap Modifier"
@@ -10681,10 +10681,6 @@ msgid "Auto Smooth"
 msgstr "Automatické vyhlazení"
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "Vlastnosti zaoblení"
-
-
 msgid "Store Edge Crease"
 msgstr "Ostrost"
 
@@ -12994,8 +12990,16 @@ msgid "Settings for image formats"
 msgstr "Nastavení fyziky pro hejno"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
 msgid "Log conversion gamma"
 msgstr "Rotace"
+
+
+msgid "White"
+msgstr "Kontrolní body"
 
 
 msgid "Color Depth"
@@ -23222,14 +23226,6 @@ msgid "Flip Colors"
 msgstr "Překlopit Barvy"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Odemknout Všechny Vrstvy"
@@ -25194,14 +25190,6 @@ msgid "Turns"
 msgstr "Otáčky"
 
 
-msgid "Add vertex color layer"
-msgstr "Přidat barvu"
-
-
-msgid "Remove vertex color layer"
-msgstr "Načíst uložené Render Hladiny"
-
-
 msgid "(De)select all vertices, edges or faces"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
 
@@ -25319,26 +25307,6 @@ msgstr "Náhodná posloupnost označených vertexů"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Vybrané vertexy již tvoří plošku"
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "Historie vracení"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "Historie vracení"
-
-
-msgid "Face Angles"
-msgstr "Úhly hran"
-
-
-msgid "Polygon Sides"
-msgstr "Žádné skupiny"
-
-
-msgid "Perimeter"
-msgstr "Filter"
 
 
 msgctxt "Operator"
@@ -25548,16 +25516,6 @@ msgstr "Rozdělit Konkávní Plochy"
 msgctxt "Operator"
 msgid "Split Non-Planar Faces"
 msgstr "Rozdělit Nerovinné Plochy"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Nová vertexová barva"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Odstranit barvu vertexů"
 
 
 msgctxt "Operator"
@@ -25862,19 +25820,6 @@ msgstr "Zobrazit a vybrat klíče"
 
 
 msgctxt "Operator"
-msgid "Add and Link Node"
-msgstr "Přidat a Spojit Uzel"
-
-
-msgid "Node Type"
-msgstr "Typ uzlu"
-
-
-msgid "Node type"
-msgstr "Uzel"
-
-
-msgctxt "Operator"
 msgid "Add Node Collection"
 msgstr "Přidat Kolekci Uzlů"
 
@@ -25900,6 +25845,14 @@ msgstr "Přidat nový"
 
 msgid "Add a node to the active tree"
 msgstr "Přidá modifikátor k aktivnímu objektu"
+
+
+msgid "Node Type"
+msgstr "Typ uzlu"
+
+
+msgid "Node type"
+msgstr "Uzel"
 
 
 msgctxt "Operator"
@@ -38111,10 +38064,6 @@ msgid "Lock to Time Cursor"
 msgstr "Zamknout ke kurzoru"
 
 
-msgid "Outline"
-msgstr "Obrys"
-
-
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -40055,10 +40004,6 @@ msgid "Edge Bevel"
 msgstr "Zkosení Hrany"
 
 
-msgid "Edge Crease"
-msgstr "Záhyb Hrany"
-
-
 msgid "Edge Seam"
 msgstr "Šev Hrany"
 
@@ -40543,6 +40488,10 @@ msgid "Display UV unwrapping seams"
 msgstr "Zobrat čísla řádků"
 
 
+msgid "Face Angles"
+msgstr "Úhly hran"
+
+
 msgid "Indices"
 msgstr "Jednotlivé plošky"
 
@@ -41020,6 +40969,14 @@ msgid "World:"
 msgstr "Svět:"
 
 
+msgid "Search"
+msgstr "Hledat"
+
+
+msgid "Navigate"
+msgstr "Navigovat"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Okno"
@@ -41494,6 +41451,10 @@ msgid "New"
 msgstr "Nový"
 
 
+msgid "3D View"
+msgstr "3D pohled"
+
+
 msgid "Active object is not a mesh"
 msgstr "Nastavit aktivní objekt jako kameru"
 
@@ -41825,6 +41786,10 @@ msgstr "Odstranit Veškeré Tvarové Klíče"
 
 msgid "Store"
 msgstr "Uskladnit"
+
+
+msgid "Edge Crease"
+msgstr "Záhyb Hrany"
 
 
 msgctxt "Operator"
@@ -42586,10 +42551,6 @@ msgid "Unknown add-ons"
 msgstr "Neznámé doplňky"
 
 
-msgid "Search"
-msgstr "Hledat"
-
-
 msgid "Calibration"
 msgstr "Kalibrace"
 
@@ -42978,10 +42939,6 @@ msgstr "Podle vzdálenosti"
 msgctxt "Operator"
 msgid "Selection"
 msgstr "Výběr"
-
-
-msgid "Navigate"
-msgstr "Navigovat"
 
 
 msgid "Modified Edges"
@@ -44008,16 +43965,8 @@ msgid "Description:"
 msgstr "Popis:"
 
 
-msgid "description"
-msgstr "popis"
-
-
 msgid "Location:"
 msgstr "Umístění:"
-
-
-msgid "location"
-msgstr "umístění"
 
 
 msgid "File:"
@@ -44042,6 +43991,14 @@ msgstr "Varování:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "popis"
+
+
+msgid "location"
+msgstr "umístění"
 
 
 msgctxt "Operator"
@@ -45939,6 +45896,10 @@ msgid "Reset Curve"
 msgstr "Obnovit křivku"
 
 
+msgid "Support Loops"
+msgstr "Podporovat Smyčky"
+
+
 msgid "Sort By:"
 msgstr "Seřadit podle:"
 
@@ -47001,10 +46962,6 @@ msgid "Timber"
 msgstr "Dřevo"
 
 
-msgid "3D View"
-msgstr "3D pohled"
-
-
 msgid "Scene has no camera"
 msgstr "Označit vrstvu"
 
@@ -47350,16 +47307,8 @@ msgid "Operation requires an active keying set"
 msgstr "Nastavit aktivní klíčovací sestavu"
 
 
-msgid "Not found: %s"
-msgstr "Nebyl nalezen: %s"
-
-
 msgid "Not yet implemented"
 msgstr "Dosud není implementováno"
-
-
-msgid "Mixed selection"
-msgstr "Vybrat cestu"
 
 
 msgid "Movie clip not found"

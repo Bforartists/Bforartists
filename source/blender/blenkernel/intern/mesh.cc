@@ -346,12 +346,6 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
     }
   }
 
-  if (!BLO_read_data_is_undo(reader)) {
-    BKE_mesh_legacy_convert_flags_to_hide_layers(mesh);
-    BKE_mesh_legacy_convert_mpoly_to_material_indices(mesh);
-    BKE_mesh_legacy_bevel_weight_to_layers(mesh);
-  }
-
   /* We don't expect to load normals from files, since they are derived data. */
   BKE_mesh_normals_tag_dirty(mesh);
   BKE_mesh_assert_normals_dirty_or_calculated(mesh);
@@ -1416,19 +1410,15 @@ void BKE_mesh_material_remap(Mesh *me, const uint *remap, uint remap_len)
   }
   else {
     MutableAttributeAccessor attributes = me->attributes_for_write();
-    AttributeWriter<int> material_indices = attributes.lookup_for_write<int>("material_index");
+    SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+        "material_index", ATTR_DOMAIN_FACE);
     if (!material_indices) {
       return;
     }
-    if (material_indices.domain != ATTR_DOMAIN_FACE) {
-      BLI_assert_unreachable();
-      return;
+    for (const int i : material_indices.span.index_range()) {
+      MAT_NR_REMAP(material_indices.span[i]);
     }
-    MutableVArraySpan<int> indices_span(material_indices.varray);
-    for (const int i : indices_span.index_range()) {
-      MAT_NR_REMAP(indices_span[i]);
-    }
-    indices_span.save();
+    material_indices.span.save();
     material_indices.finish();
   }
 
@@ -1616,14 +1606,14 @@ void BKE_mesh_do_versions_cd_flag_init(Mesh *mesh)
   const Span<MEdge> edges = mesh->edges();
 
   for (const MVert &vert : verts) {
-    if (vert.bweight != 0) {
+    if (vert.bweight_legacy != 0) {
       mesh->cd_flag |= ME_CDFLAG_VERT_BWEIGHT;
       break;
     }
   }
 
   for (const MEdge &edge : edges) {
-    if (edge.bweight != 0) {
+    if (edge.bweight_legacy != 0) {
       mesh->cd_flag |= ME_CDFLAG_EDGE_BWEIGHT;
       if (mesh->cd_flag & ME_CDFLAG_EDGE_CREASE) {
         break;
@@ -2095,11 +2085,11 @@ void BKE_mesh_split_faces(Mesh *mesh, bool free_loop_normals)
     const bool do_edges = (num_new_edges > 0);
 
     /* Reallocate all vert and edge related data. */
+    CustomData_realloc(&mesh->vdata, mesh->totvert, mesh->totvert + num_new_verts);
     mesh->totvert += num_new_verts;
-    CustomData_realloc(&mesh->vdata, mesh->totvert);
     if (do_edges) {
+      CustomData_realloc(&mesh->edata, mesh->totedge, mesh->totedge + num_new_edges);
       mesh->totedge += num_new_edges;
-      CustomData_realloc(&mesh->edata, mesh->totedge);
     }
 
     /* Update normals manually to avoid recalculation after this operation. */

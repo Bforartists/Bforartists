@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1786,6 +1786,10 @@ msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
 
 
+msgid "Simulations"
+msgstr "Симуляції"
+
+
 msgid "Sounds"
 msgstr "Звуки"
 
@@ -2662,16 +2666,8 @@ msgid "Bone that serves as the start handle for the B-Bone curve"
 msgstr "Кість, що слугує в якості держака початку кривої Б-кістки"
 
 
-msgid "Ease In"
-msgstr "Ввід легко"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "Довжина першої ручки Безьє (лише для B-кісток)"
-
-
-msgid "Ease Out"
-msgstr "Вивід легко"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -3602,10 +3598,6 @@ msgid "Material used for strokes drawn using this brush"
 msgstr "Матеріал, використовуваний для штрихів, нарисованих за допомогою цього пензля"
 
 
-msgid "Jitter"
-msgstr "Тремтіння"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "Фактор тремтіння для нових штрихів"
 
@@ -3794,6 +3786,10 @@ msgid "Use pressure to modulate randomness"
 msgstr "Вжити натиск для модулювання випадковості"
 
 
+msgid "Outline"
+msgstr "Обрис"
+
+
 msgid "Use Post-Process Settings"
 msgstr "Вжити Устави Після-Обробки"
 
@@ -3946,20 +3942,8 @@ msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "Параметри, що визначають, який кадр з кліпу демонструється"
 
 
-msgid "Depth"
-msgstr "Глибина"
-
-
 msgid "Display under or over everything"
 msgstr "Показ всього під або над"
-
-
-msgid "Back"
-msgstr "Позаду"
-
-
-msgid "Front"
-msgstr "Спереду"
 
 
 msgid "Frame Method"
@@ -6975,8 +6959,16 @@ msgid "No culling"
 msgstr "Без відкидання"
 
 
+msgid "Front"
+msgstr "Спереду"
+
+
 msgid "No projection when in front of the face"
 msgstr "Не проєктувати перед гранню"
+
+
+msgid "Back"
+msgstr "Позаду"
 
 
 msgid "No projection when behind the face"
@@ -7795,6 +7787,10 @@ msgid "Bezier"
 msgstr "Безьє"
 
 
+msgid "Depth"
+msgstr "Глибина"
+
+
 msgid "Method of projecting depth"
 msgstr "Метод проєктування глибини"
 
@@ -7939,28 +7935,8 @@ msgid "Profile control points"
 msgstr "Керувальні точки профілю"
 
 
-msgid "Preset"
-msgstr "Передустава"
-
-
-msgid "Support Loops"
-msgstr "Петлі Підтримки"
-
-
 msgid "Loops on each side of the profile"
 msgstr "Петлі для кожної сторони профілю"
-
-
-msgid "Cornice Molding"
-msgstr "Відливний Карниз"
-
-
-msgid "Crown Molding"
-msgstr "Відливний Вінець"
-
-
-msgid "Steps"
-msgstr "Кроки"
 
 
 msgid "A number of steps defined by the segments"
@@ -11475,10 +11451,6 @@ msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
 
 
-msgid "Simulations"
-msgstr "Симуляції"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "Показати блоки даних Симуляції"
 
@@ -14203,6 +14175,10 @@ msgid "An 'extreme' pose, or some other purpose as needed"
 msgstr "«Гранична» або інша нестандартна поза"
 
 
+msgid "Jitter"
+msgstr "Тремтіння"
+
+
 msgid "A filler or baked keyframe for keying on ones, or some other purpose as needed"
 msgstr "Заповнювач або запечений ключовий кадр для особливих цілей"
 
@@ -15969,6 +15945,10 @@ msgstr "Зсув шуму вздовж штрихів"
 
 msgid "Scale the noise frequency"
 msgstr "Масштабувати частотність шуму"
+
+
+msgid "Steps"
+msgstr "Кроки"
 
 
 msgid "Noise Seed"
@@ -21978,16 +21958,8 @@ msgid "Auto smooth (based on smooth/sharp faces/edges and angle between faces), 
 msgstr "Автозгладжування (базоване на згладженості/гостроті граней/ребер та куті між гранями) або використати нетипові дані розділу нормалей, якщо вони є"
 
 
-msgid "Store Edge Bevel Weight"
-msgstr "Берегти вагомість скосу ребер"
-
-
 msgid "Store Edge Crease"
 msgstr "Зберегти складки ребер"
-
-
-msgid "Store Vertex Bevel Weight"
-msgstr "Берегти вагомість скосу вершин"
 
 
 msgid "Topology Mirror"
@@ -26527,12 +26499,20 @@ msgid "Settings for image formats"
 msgstr "Параметри форматів зображень"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
 msgid "Log conversion reference blackpoint"
 msgstr "Еталон чорної точки для логарифмічного перетворення"
 
 
 msgid "Log conversion gamma"
 msgstr "Логарифмічне гамма-перетворення"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgid "Log conversion reference whitepoint"
@@ -28202,8 +28182,16 @@ msgid "Easing type is chosen automatically based on what the type of interpolati
 msgstr "Тип полегшення обирається автоматично на основі використовуваного типу інтерполяції (тобто використовувати Увід Легко для типів переходів і Вивід Легко для динамічних ефектів)"
 
 
+msgid "Ease In"
+msgstr "Ввід легко"
+
+
 msgid "Only on the end closest to the next keyframe"
 msgstr "Лише на кінці, ближчому до наступного ключового кадру"
+
+
+msgid "Ease Out"
+msgstr "Вивід легко"
 
 
 msgid "Only on the end closest to the first keyframe"
@@ -49605,14 +49593,6 @@ msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
-msgid "White"
-msgstr "Біле"
-
-
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Трансформа Заповнення Штриха"
@@ -53989,24 +53969,6 @@ msgid "Turns"
 msgstr "Оберти"
 
 
-msgctxt "Operator"
-msgid "Add Sculpt Vertex Color"
-msgstr "Додати Колір Вершин Ліплення"
-
-
-msgid "Add vertex color layer"
-msgstr "Додати шар кольорів вершин"
-
-
-msgctxt "Operator"
-msgid "Remove Sculpt Vertex Color"
-msgstr "Вилучити Колір Вершин Ліплення"
-
-
-msgid "Remove vertex color layer"
-msgstr "Вилучити шар кольорів вершин"
-
-
 msgid "(De)select all vertices, edges or faces"
 msgstr "(Не)вибрати всі вершини, ребра чи грані"
 
@@ -54245,46 +54207,6 @@ msgstr "Випадково вибрати вершини"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Вибрати подібні за властивостями вершини, ребра або грані"
-
-
-msgid "Amount of Adjacent Faces"
-msgstr "Кількість суміжних граней"
-
-
-msgid "Amount of Connecting Edges"
-msgstr "Кількість З'єднувальних Ребер"
-
-
-msgid "Amount of Faces Around an Edge"
-msgstr "Кількість граней навколо ребра"
-
-
-msgid "Face Angles"
-msgstr "Кути грані"
-
-
-msgid "Freestyle Edge Marks"
-msgstr "Мітки Ребер Freestyle"
-
-
-msgid "Polygon Sides"
-msgstr "Сторони Полігона"
-
-
-msgid "Perimeter"
-msgstr "Периметр"
-
-
-msgid "Coplanar"
-msgstr "Компланарно"
-
-
-msgid "Flat/Smooth"
-msgstr "Плоско/згладжено"
-
-
-msgid "Freestyle Face Marks"
-msgstr "Мітки Граней Freestyle"
 
 
 msgctxt "Operator"
@@ -54709,16 +54631,6 @@ msgstr "Шлях з'єднання вершин"
 
 msgid "Connect vertices by their selection order, creating edges, splitting faces"
 msgstr "З'єднання вершин за їх порядками вибору, створення ребер, розділення граней"
-
-
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Додати колір вершин"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Вилучити колір вершин"
 
 
 msgctxt "Operator"
@@ -55183,39 +55095,6 @@ msgstr "Скинути видиму область, щоб показати ді
 
 
 msgctxt "Operator"
-msgid "Add and Link Node"
-msgstr "Додати та зв'язати вузол"
-
-
-msgid "Add a node to the active tree and link to an existing socket"
-msgstr "Додати вузол до активного дерева та пов'язати з наявним роз'ємом"
-
-
-msgid "Link Socket Index"
-msgstr "Індекс пов'язуваного роз'єму"
-
-
-msgid "Index of the socket to link"
-msgstr "Індекс роз'єму для пов'язування"
-
-
-msgid "Settings to be applied on the newly created node"
-msgstr "Параметри, що будуть застосовані при створенні вузла"
-
-
-msgid "Node Type"
-msgstr "Тип вузла"
-
-
-msgid "Node type"
-msgstr "Тип вузла"
-
-
-msgid "Start transform operator after inserting the node"
-msgstr "Запустити трансформації після вставляння вузла"
-
-
-msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Додати вузол файлу"
 
@@ -55249,6 +55128,22 @@ msgstr "Додати вузол"
 
 msgid "Add a node to the active tree"
 msgstr "Додати вузол до активного дерева"
+
+
+msgid "Settings to be applied on the newly created node"
+msgstr "Параметри, що будуть застосовані при створенні вузла"
+
+
+msgid "Node Type"
+msgstr "Тип вузла"
+
+
+msgid "Node type"
+msgstr "Тип вузла"
+
+
+msgid "Start transform operator after inserting the node"
+msgstr "Запустити трансформації після вставляння вузла"
 
 
 msgctxt "Operator"
@@ -63157,15 +63052,6 @@ msgstr "Генерує новий набір випадкових кольорі
 
 
 msgctxt "Operator"
-msgid "Vertex Color to Sculpt Vertex Color"
-msgstr "Колір Вершин у Колір Вершин Ліплення"
-
-
-msgid "Copy the active loop color layer to the vertex color"
-msgstr "Копіювати шар кольорів активної петлі у колір вершин"
-
-
-msgctxt "Operator"
 msgid "Mask by Color"
 msgstr "Маска За Кольором"
 
@@ -63669,15 +63555,6 @@ msgstr "Ліплення UV пензлем"
 
 msgid "Switch brush to relax mode for duration of stroke"
 msgstr "Перемкнути пензель у вільний режим для продовження штриха"
-
-
-msgctxt "Operator"
-msgid "Sculpt Vertex Color to Vertex Color"
-msgstr "Колір Вершин Ліплення у Колір Вершин"
-
-
-msgid "Copy the Sculpt Vertex Color to a regular color layer"
-msgstr "Копіювати Колір Вершин Ліплення у шар звичайних кольорів"
 
 
 msgctxt "Operator"
@@ -74854,16 +74731,8 @@ msgid "VBO Collection Rate"
 msgstr "Частота колекції VBO"
 
 
-msgid "Number of seconds between each run of the GL Vertex buffer object garbage collector"
-msgstr "Кількість секунд між кожним виконанням збирача сміття об'єкта буфера вершин GL"
-
-
 msgid "VBO Time Out"
 msgstr "Перечікування VBO"
-
-
-msgid "Time since last access of a GL Vertex buffer object in seconds after which it is freed (set to 0 to keep vbo allocated)"
-msgstr "Час з останньому доступу до об'єкта буфера вершин GL у секундах, після якого він вивільняється (задавайте 0 для утримання vbo розміщеним)"
 
 
 msgid "Viewport Anti-Aliasing"
@@ -76336,14 +76205,6 @@ msgstr "Кількість вибірок, що рендеряться для к
 
 msgid "Sampling Pattern"
 msgstr "Патерн Відбору"
-
-
-msgid "Sobol"
-msgstr "Соболь"
-
-
-msgid "Use Sobol random sampling pattern"
-msgstr "Вжити патерн відбору випадковостей на основі методу Соболя"
 
 
 msgid "Progressive Multi-Jitter"
@@ -81559,10 +81420,6 @@ msgid "Display type for mask splines"
 msgstr "Тип показу для сплайнів маски"
 
 
-msgid "Outline"
-msgstr "Обрис"
-
-
 msgid "Display white edges with black outline"
 msgstr "Показувати білі краї з чорним обрисом"
 
@@ -83553,10 +83410,6 @@ msgstr "Простір UV-редактора"
 
 msgid "UV editor data for the image editor space"
 msgstr "Дані UV-редактора для простору редактора зображень"
-
-
-msgid "Display Stretch Type"
-msgstr "Тип Показу Розтягу"
 
 
 msgid "Angular distortion between UV and 3D angles"
@@ -85775,10 +85628,6 @@ msgid "Edge Bevel"
 msgstr "Фаска ребра"
 
 
-msgid "Edge Crease"
-msgstr "Складка на ребрі"
-
-
 msgid "Edge UV Face Select"
 msgstr "Ребра вибраної грані UV"
 
@@ -87142,6 +86991,10 @@ msgstr "Показати кут вибраного ребра, використ�
 
 msgid "Display selected edge lengths, using global values when set in the transform panel"
 msgstr "Показати довжини вибраних ребер, використовуючи глобальні значення, якщо встановлено у панелі трансформацій"
+
+
+msgid "Face Angles"
+msgstr "Кути грані"
 
 
 msgid "Display the angles in the selected edges, using global values when set in the transform panel"
@@ -88702,6 +88555,14 @@ msgid "World:"
 msgstr "Світ:"
 
 
+msgid "Search"
+msgstr "Пошук"
+
+
+msgid "Navigate"
+msgstr "Навігація"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Вікно"
@@ -89636,18 +89497,6 @@ msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "Вибрано декілька об'єктів. Обчислено буде лише один активний"
 
 
-msgid "Triangulated  faces"
-msgstr "Тріангульовані  грані"
-
-
-msgid "Modified: + vertices, + edges, + faces"
-msgstr "Модифіковано: + вершин, + ребер, + граней"
-
-
-msgid "Scaled by "
-msgstr "Масштабовано за"
-
-
 msgid "Object has zero volume"
 msgstr "Об'єкт має нульовий об'єм"
 
@@ -89941,6 +89790,10 @@ msgstr "Нове"
 
 msgid "API Defined"
 msgstr "Визначений API"
+
+
+msgid "3D View"
+msgstr "3D-вигляд"
 
 
 msgid "Torus"
@@ -90906,12 +90759,8 @@ msgid "Store"
 msgstr "Зберігання"
 
 
-msgid "Vertex Bevel Weight"
-msgstr "Вагомість Скосу Вершини"
-
-
-msgid "Edge Bevel Weight"
-msgstr "Вагомість Скосу Ребра"
+msgid "Edge Crease"
+msgstr "Складка на ребрі"
 
 
 msgctxt "Operator"
@@ -92252,10 +92101,6 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
-msgid "Search"
-msgstr "Пошук"
-
-
 msgid "Display Thin"
 msgstr "Показ Тонко"
 
@@ -92962,10 +92807,6 @@ msgstr "Вибрання"
 
 msgid "Viewport Gizmos"
 msgstr "Гізмо Оглядвікна"
-
-
-msgid "Navigate"
-msgstr "Навігація"
 
 
 msgid "Modified Edges"
@@ -94451,10 +94292,6 @@ msgid "Garbage Collection Rate"
 msgstr "Частота Збирання Сміття"
 
 
-msgid "Vbo Time Out"
-msgstr "Перечікування Vbo"
-
-
 msgid "Cache Limit"
 msgstr "Ліміт Кешу"
 
@@ -94609,16 +94446,8 @@ msgid "Description:"
 msgstr "Опис:"
 
 
-msgid "description"
-msgstr "опис"
-
-
 msgid "Location:"
 msgstr "Локація:"
-
-
-msgid "location"
-msgstr "локація"
 
 
 msgid "File:"
@@ -94643,6 +94472,14 @@ msgstr "Попередження:"
 
 msgid "Internet:"
 msgstr "Інтернет:"
+
+
+msgid "description"
+msgstr "опис"
+
+
+msgid "location"
+msgstr "локація"
 
 
 msgctxt "Operator"
@@ -96639,10 +96476,6 @@ msgid "ShapeKey"
 msgstr "Ключ форми"
 
 
-msgid "BevelWeight"
-msgstr "ВагаСкосу"
-
-
 msgid "SubSurfCrease"
 msgstr "СкладкаПоділуПоверхні"
 
@@ -96791,10 +96624,6 @@ msgstr "ШарМаски"
 
 msgid "Tangent space can only be computed for tris/quads, aborting"
 msgstr "Простір дотичних можна розрахувати лише для трикутників/чотирикутників; припинення"
-
-
-msgid "Mikktspace failed to generate tangents for this mesh!"
-msgstr "Mikktspace не вдалось створити дотичні для цієї сіті!"
 
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
@@ -98784,6 +98613,18 @@ msgid "Reset Curve"
 msgstr "Скинути криву"
 
 
+msgid "Support Loops"
+msgstr "Петлі Підтримки"
+
+
+msgid "Cornice Molding"
+msgstr "Відливний Карниз"
+
+
+msgid "Crown Molding"
+msgstr "Відливний Вінець"
+
+
 msgid "Sort By:"
 msgstr "Сортувати За:"
 
@@ -98810,10 +98651,6 @@ msgstr ""
 
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
 msgstr "Безпосередньо пов'язаний блок даних бібліотеки, клацніть, щоб зробити локальним, Shift + Click для створення заміщення бібліотеки"
-
-
-msgid "Library override of linked data-block, click to make fully local"
-msgstr "Заміщення бібліотеки пов'язаного блоку даних, клацніть, щоб зробити повністю локальним"
 
 
 msgid "Display number of users of this data (click to make a single-user copy)"
@@ -100685,10 +100522,6 @@ msgid "3D Local View"
 msgstr "3D Огляд Локально"
 
 
-msgid "3D View"
-msgstr "3D-вигляд"
-
-
 msgid "Frame:%d "
 msgstr "Кадр:%d"
 
@@ -102265,20 +102098,12 @@ msgid "Cannot relocate indirectly linked library '%s'"
 msgstr "Неможливо перерозмістити побічно, непрямо прив'язану бібліотеку '%s'"
 
 
-msgid "Not found: %s"
-msgstr "Не знайдено: %s"
-
-
 msgid "Deleted %d data-block(s)"
 msgstr "Видалено %d блок(ів) даних"
 
 
 msgid "Not yet implemented"
 msgstr "Ще не реалізовано"
-
-
-msgid "Mixed selection"
-msgstr "Мішане вибрання"
 
 
 msgid "(empty)"
@@ -103783,14 +103608,6 @@ msgid "Error removing face map"
 msgstr "Помилка вилучення розкладки граней"
 
 
-msgid "Vertex color '%s' not found"
-msgstr "Колір вершин '%s' не знайдено"
-
-
-msgid "Sculpt vertex color '%s' not found"
-msgstr "Колір вершин ліплення '%s' не знайдено"
-
-
 msgid "Texture layer '%s' not found"
 msgstr "Текстурний шар '%s' не знайдено"
 
@@ -104042,10 +103859,6 @@ msgstr "Сіть не має даних про колір вершин"
 msgctxt "Armature"
 msgid "Group"
 msgstr "Група"
-
-
-msgid "Cannot edit bone groups for proxies or library overrides"
-msgstr "Неможливо редагувати групи кісток для замісників або заміщень бібліотек"
 
 
 msgid "Bone group '%s' not found in this object"
