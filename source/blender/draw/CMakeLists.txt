@@ -135,6 +135,7 @@ set(SRC
   engines/eevee/eevee_temporal_sampling.c
   engines/eevee/eevee_volumes.c
   engines/eevee_next/eevee_camera.cc
+  engines/eevee_next/eevee_cryptomatte.cc
   engines/eevee_next/eevee_depth_of_field.cc
   engines/eevee_next/eevee_engine.cc
   engines/eevee_next/eevee_film.cc
@@ -175,33 +176,33 @@ set(SRC
   engines/gpencil/gpencil_shader_fx.c
   engines/select/select_draw_utils.c
   engines/select/select_engine.c
-  engines/overlay/overlay_antialiasing.c
-  engines/overlay/overlay_armature.c
-  engines/overlay/overlay_background.c
-  engines/overlay/overlay_edit_curve.c
+  engines/overlay/overlay_antialiasing.cc
+  engines/overlay/overlay_armature.cc
+  engines/overlay/overlay_background.cc
+  engines/overlay/overlay_edit_curve.cc
   engines/overlay/overlay_edit_curves.cc
-  engines/overlay/overlay_edit_mesh.c
-  engines/overlay/overlay_edit_text.c
-  engines/overlay/overlay_edit_uv.c
-  engines/overlay/overlay_engine.c
-  engines/overlay/overlay_extra.c
-  engines/overlay/overlay_facing.c
-  engines/overlay/overlay_fade.c
-  engines/overlay/overlay_gpencil.c
-  engines/overlay/overlay_grid.c
-  engines/overlay/overlay_image.c
-  engines/overlay/overlay_lattice.c
-  engines/overlay/overlay_metaball.c
-  engines/overlay/overlay_mode_transfer.c
-  engines/overlay/overlay_motion_path.c
-  engines/overlay/overlay_outline.c
-  engines/overlay/overlay_paint.c
-  engines/overlay/overlay_particle.c
-  engines/overlay/overlay_sculpt.c
+  engines/overlay/overlay_edit_mesh.cc
+  engines/overlay/overlay_edit_text.cc
+  engines/overlay/overlay_edit_uv.cc
+  engines/overlay/overlay_engine.cc
+  engines/overlay/overlay_extra.cc
+  engines/overlay/overlay_facing.cc
+  engines/overlay/overlay_fade.cc
+  engines/overlay/overlay_gpencil.cc
+  engines/overlay/overlay_grid.cc
+  engines/overlay/overlay_image.cc
+  engines/overlay/overlay_lattice.cc
+  engines/overlay/overlay_metaball.cc
+  engines/overlay/overlay_mode_transfer.cc
+  engines/overlay/overlay_motion_path.cc
+  engines/overlay/overlay_outline.cc
+  engines/overlay/overlay_paint.cc
+  engines/overlay/overlay_particle.cc
+  engines/overlay/overlay_sculpt.cc
   engines/overlay/overlay_sculpt_curves.cc
-  engines/overlay/overlay_shader.c
-  engines/overlay/overlay_volume.c
-  engines/overlay/overlay_wireframe.c
+  engines/overlay/overlay_shader.cc
+  engines/overlay/overlay_volume.cc
+  engines/overlay/overlay_wireframe.cc
 
   DRW_engine.h
   DRW_select_buffer.h
@@ -285,7 +286,7 @@ set(SRC
   engines/select/select_engine.h
   engines/select/select_private.h
   engines/overlay/overlay_engine.h
-  engines/overlay/overlay_private.h
+  engines/overlay/overlay_private.hh
 )
 
 set(LIB
@@ -395,6 +396,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_attributes_lib.glsl
   engines/eevee_next/shaders/eevee_camera_lib.glsl
   engines/eevee_next/shaders/eevee_colorspace_lib.glsl
+  engines/eevee_next/shaders/eevee_cryptomatte_lib.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_accumulator_lib.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_bokeh_lut_comp.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_downsample_comp.glsl
@@ -411,6 +413,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_depth_of_field_tiles_dilate_comp.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_tiles_flatten_comp.glsl
   engines/eevee_next/shaders/eevee_film_comp.glsl
+  engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl
   engines/eevee_next/shaders/eevee_film_lib.glsl
   engines/eevee_next/shaders/eevee_geom_curves_vert.glsl

@@ -1180,7 +1180,7 @@ class IMAGE_PT_image_options(Panel):
 
         if sima.mode == 'UV':
             row = layout.row(heading="Snap to Pixels")
-            row.prop(uv, "pixel_snap_mode", expand=True, text="")
+            row.prop(uv, "pixel_round_mode", expand=True, text="")
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")

@@ -137,7 +137,7 @@ void CustomData_data_add(int type, void *data1, const void *data2);
 
 /**
  * Initializes a CustomData object with the same layer setup as source.
- * mask is a bitfield where `(mask & (1 << (layer type)))` indicates
+ * mask is a bit-field where `(mask & (1 << (layer type)))` indicates
  * if a layer should be copied or not. alloctype must be one of the above.
  */
 void CustomData_copy(const struct CustomData *source,
@@ -178,13 +178,11 @@ bool CustomData_merge_mesh_to_bmesh(const struct CustomData *source,
                                     int totelem);
 
 /**
- * Reallocate custom data to a new element count.
- * Only affects on data layers which are owned by the CustomData itself,
- * referenced data is kept unchanged,
- *
- * \note Take care of referenced layers by yourself!
+ * Reallocate custom data to a new element count. If the new size is larger, the new values use
+ * the #CD_CONSTRUCT behavior, so trivial types must be initialized by the caller. After being
+ * resized, the #CustomData does not contain any referenced layers.
  */
-void CustomData_realloc(struct CustomData *data, int totelem);
+void CustomData_realloc(struct CustomData *data, int old_size, int new_size);
 
 /**
  * BMesh version of CustomData_merge; merges the layouts of source and `dest`,
@@ -741,6 +739,8 @@ void CustomData_blend_write(BlendWriter *writer,
 #endif
 
 void CustomData_blend_read(struct BlendDataReader *reader, struct CustomData *data, int count);
+
+size_t CustomData_get_elem_size(struct CustomDataLayer *layer);
 
 #ifndef NDEBUG
 struct DynStr;

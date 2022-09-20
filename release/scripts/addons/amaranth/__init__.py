@@ -41,8 +41,6 @@ from amaranth.node_editor import (
     simplify_nodes,
     node_stats,
     normal_node,
-    switch_material,
-    node_shader_extra,
     )
 
 from amaranth.render import (
@@ -74,7 +72,7 @@ from amaranth.misc import (
 bl_info = {
     "name": "Amaranth Toolset",
     "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez, CansecoGPC",
-    "version": (1, 0, 14),
+    "version": (1, 0, 17),
     "blender": (3, 2, 0),
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",

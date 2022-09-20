@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1928,18 +1928,6 @@ msgstr "Użytkownik klipu"
 
 msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "Parametry określające która klatka klipu filmowego jest wyświetlana"
-
-
-msgid "Depth"
-msgstr "Głębia"
-
-
-msgid "Back"
-msgstr "Tył"
-
-
-msgid "Front"
-msgstr "Przód"
 
 
 msgid "Frame Method"
@@ -4135,6 +4123,14 @@ msgid "Create constraint-based shrinkwrap relationship"
 msgstr "Stwórz relację bazującą na ograniczniku dla owijania lub kurczenia"
 
 
+msgid "Front"
+msgstr "Przód"
+
+
+msgid "Back"
+msgstr "Tył"
+
+
 msgid "Distance to Target"
 msgstr "Odległość od obiektu docelowego"
 
@@ -4621,6 +4617,10 @@ msgstr "Poziom bieli"
 
 msgid "For RGB curves, the color that white is mapped to"
 msgstr "Dla krzywych RGB - jest to kolor na który mapowany jest kolor biały"
+
+
+msgid "Depth"
+msgstr "Głębia"
 
 
 msgid "Plane"
@@ -6475,10 +6475,6 @@ msgid "Limit"
 msgstr "Ograniczenie"
 
 
-msgid "Flat/Smooth"
-msgstr "Płaskie/Gładkie"
-
-
 msgid "Add a constraint to the active object"
 msgstr "Dodaj ogranicznik do aktywnego obiektu"
 
@@ -6609,6 +6605,10 @@ msgid "Unknown"
 msgstr "Nieznany"
 
 
+msgid "3D View"
+msgstr "Widok 3D"
+
+
 msgid "Active object is not a mesh"
 msgstr "Aktywny obiekt nie jest siatką"
 
@@ -6704,10 +6704,6 @@ msgstr "Ściana-Wierzchołek NKąta"
 
 msgid "ShapeKey"
 msgstr "KluczKształtu"
-
-
-msgid "BevelWeight"
-msgstr "WagaSkosu"
 
 
 msgid "SubSurfCrease"
@@ -6806,10 +6802,6 @@ msgstr "WarstwaMaski"
 
 msgid "Tangent space can only be computed for tris/quads, aborting"
 msgstr "Przestrzeń styczna może być wyliczona jedynie dla trójkątów/czworokątów, przerywam"
-
-
-msgid "Mikktspace failed to generate tangents for this mesh!"
-msgstr "Mikktspace nie zdołał wygenerować stycznych dla tej siatki!"
 
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
@@ -9058,10 +9050,6 @@ msgid "3D Local View"
 msgstr "Widok 3D Lokalny"
 
 
-msgid "3D View"
-msgstr "Widok 3D"
-
-
 msgid "Frame:%d "
 msgstr "Klatka:%d "
 
@@ -9847,16 +9835,8 @@ msgid "Operation requires an active keying set"
 msgstr "Operacja wymaga aktywnego zestawu klatek kluczowych"
 
 
-msgid "Not found: %s"
-msgstr "Nie odnaleziono: %s"
-
-
 msgid "Not yet implemented"
 msgstr "Jeszcze nie zaimplementowano"
-
-
-msgid "Mixed selection"
-msgstr "Zaznaczenie mieszane"
 
 
 msgid "(empty)"
@@ -10863,10 +10843,6 @@ msgstr "Maksymalna liczba dodanych tekstur %d"
 
 msgid "Index %d is invalid"
 msgstr "Indeks %d jest nieprawidłowy"
-
-
-msgid "Vertex color '%s' not found"
-msgstr "Nie odnaleziono koloru werteksów '%s'"
 
 
 msgid "Texture layer '%s' not found"

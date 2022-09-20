@@ -36,7 +36,8 @@ endmacro()
 # ------------------------------------------------------------------------
 # Find system provided libraries.
 
-# Avoid searching for headers in frameworks (like Mono), and libraries in LIBDIR.
+# Avoid searching for headers since this would otherwise override our lib
+# directory as well as PYTHON_ROOT_DIR.
 set(CMAKE_FIND_FRAMEWORK NEVER)
 
 # Find system ZLIB, not the pre-compiled one supplied with OpenCollada.
@@ -351,10 +352,6 @@ endif()
 
 if(WITH_CYCLES AND WITH_CYCLES_EMBREE)
   find_package(Embree 3.8.0 REQUIRED)
-  # Increase stack size for Embree, only works for executables.
-  if(NOT WITH_PYTHON_MODULE)
-    string(APPEND PLATFORM_LINKFLAGS " -Wl,-stack_size,0x100000")
-  endif()
 
   # Embree static library linking can mix up SSE and AVX symbols, causing
   # crashes on macOS systems with older CPUs that don't have AVX. Using
@@ -439,6 +436,9 @@ if(EXISTS ${LIBDIR})
   without_system_libs_end()
 endif()
 
+# Restore to default.
+set(CMAKE_FIND_FRAMEWORK FIRST)
+
 # ---------------------------------------------------------------------
 # Set compiler and linker flags.
 
@@ -470,6 +470,9 @@ string(APPEND PLATFORM_LINKFLAGS
 
 string(APPEND CMAKE_CXX_FLAGS " -stdlib=libc++")
 string(APPEND PLATFORM_LINKFLAGS " -stdlib=libc++")
+
+# Make stack size more similar to Embree, required for Embree.
+string(APPEND PLATFORM_LINKFLAGS_EXECUTABLE " -Wl,-stack_size,0x100000")
 
 # Suppress ranlib "has no symbols" warnings (workaround for T48250)
 set(CMAKE_C_ARCHIVE_CREATE   "<CMAKE_AR> Scr <TARGET> <LINK_FLAGS> <OBJECTS>")

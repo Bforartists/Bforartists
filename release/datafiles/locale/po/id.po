@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.3.0 Release Candidate (b'3ae996c293ea')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -1621,6 +1621,10 @@ msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
 
 
+msgid "Simulations"
+msgstr "Simulasi"
+
+
 msgid "Sounds"
 msgstr "Suara"
 
@@ -2469,16 +2473,8 @@ msgid "Bone that serves as the start handle for the B-Bone curve"
 msgstr "Tulang yang berfungsi sebagai pegangan awal untuk kurva B-Tulang"
 
 
-msgid "Ease In"
-msgstr "Permudah Ke Dalam"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "Panjang Pegangan Bezier pertama (untuk B-Tulang saja)"
-
-
-msgid "Ease Out"
-msgstr "Permudah Ke Luar"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -3333,10 +3329,6 @@ msgid "Input Samples"
 msgstr "Sampel Input"
 
 
-msgid "Jitter"
-msgstr "Jitter"
-
-
 msgid "Jitter factor for new strokes"
 msgstr "Faktor jitter untuk garis luar baru"
 
@@ -3557,20 +3549,8 @@ msgid "Parameters defining which frame of the movie clip is displayed"
 msgstr "Parameter mendefinisikan frame klip film mana ditampilkan"
 
 
-msgid "Depth"
-msgstr "Kedalaman"
-
-
 msgid "Display under or over everything"
 msgstr "Tampilkan di bawah atau atas semuanya"
-
-
-msgid "Back"
-msgstr "Belakang"
-
-
-msgid "Front"
-msgstr "Depan"
 
 
 msgid "Frame Method"
@@ -5526,6 +5506,14 @@ msgid "Off"
 msgstr "Mati"
 
 
+msgid "Front"
+msgstr "Depan"
+
+
+msgid "Back"
+msgstr "Belakang"
+
+
 msgid "Distance to Target"
 msgstr "Jarak ke Target"
 
@@ -5954,6 +5942,10 @@ msgid "Corner Angle"
 msgstr "Sudut Pojok"
 
 
+msgid "Depth"
+msgstr "Kedalaman"
+
+
 msgid "Cursor"
 msgstr "Kursor"
 
@@ -5984,10 +5976,6 @@ msgstr "Pandangan"
 
 msgid "Index"
 msgstr "Index"
-
-
-msgid "Steps"
-msgstr "Langkah"
 
 
 msgid "Segments"
@@ -7462,10 +7450,6 @@ msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
 
 
-msgid "Simulations"
-msgstr "Simulasi"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "Tampilkan Simulasi data-blok"
 
@@ -8450,6 +8434,10 @@ msgid "Extreme"
 msgstr "Ekstrim"
 
 
+msgid "Jitter"
+msgstr "Jitter"
+
+
 msgid "Grease Pencil Frames"
 msgstr "Frame Pensil Grease"
 
@@ -9000,6 +8988,10 @@ msgstr "Faktor Kekuatan"
 
 msgid "Thickness Factor"
 msgstr "Faktor Ketebalan"
+
+
+msgid "Steps"
+msgstr "Langkah"
 
 
 msgid "Project Limit"
@@ -9974,10 +9966,6 @@ msgstr "Tekstur"
 
 msgid "Texture Mesh"
 msgstr "Tekstur"
-
-
-msgid "Store Edge Bevel Weight"
-msgstr "Objek"
 
 
 msgid "Clone UV loop layer index"
@@ -11323,6 +11311,14 @@ msgstr "Klik"
 
 msgid "Double Click"
 msgstr "Klik Dua Kali"
+
+
+msgid "Ease In"
+msgstr "Permudah Ke Dalam"
+
+
+msgid "Ease Out"
+msgstr "Permudah Ke Luar"
 
 
 msgid "UI Name"
@@ -16846,16 +16842,6 @@ msgid "Vertex Connect"
 msgstr "Warna Standar"
 
 
-msgctxt "Operator"
-msgid "Add Vertex Color"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Remove Vertex Color"
-msgstr "Warna Standar"
-
-
 msgid "Laplacian smooth of selected vertices"
 msgstr "Warna Standar"
 
@@ -16942,14 +16928,6 @@ msgid "Exit Tweak Mode"
 msgstr "Modus Sunting"
 
 
-msgid "Node Type"
-msgstr "Tipe Node"
-
-
-msgid "Node type"
-msgstr "Tipe node"
-
-
 msgctxt "Operator"
 msgid "Add Node Collection"
 msgstr "Tambah Koleksi Node"
@@ -16993,6 +16971,14 @@ msgstr "Tambah Node"
 
 msgid "Add a node to the active tree"
 msgstr "Tambah node ke pohon aktif"
+
+
+msgid "Node Type"
+msgstr "Tipe Node"
+
+
+msgid "Node type"
+msgstr "Tipe node"
 
 
 msgctxt "Operator"
@@ -22239,6 +22225,10 @@ msgid "World:"
 msgstr "Dunia:"
 
 
+msgid "Search"
+msgstr "Cari"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Jendela"
@@ -22766,10 +22756,6 @@ msgid "%s is not supported"
 msgstr "%s tidak didukung"
 
 
-msgid "Scaled by "
-msgstr "Diskalakan oleh "
-
-
 msgid "Object has zero volume"
 msgstr "Objek punya nol volume"
 
@@ -22914,6 +22900,10 @@ msgstr "Baru"
 
 msgid "API Defined"
 msgstr "API yang Terdefinisi"
+
+
+msgid "3D View"
+msgstr "Tampilan 3D"
 
 
 msgid "Could not make new image"
@@ -24001,10 +23991,6 @@ msgid "%s: %s"
 msgstr "%s: %s"
 
 
-msgid "Search"
-msgstr "Cari"
-
-
 msgid "Display Thin"
 msgstr "Tampilkan Tipis"
 
@@ -25078,16 +25064,8 @@ msgid "Description:"
 msgstr "Deskripsi:"
 
 
-msgid "description"
-msgstr "deskripsi"
-
-
 msgid "Location:"
 msgstr "Lokasi:"
-
-
-msgid "location"
-msgstr "lokasi"
 
 
 msgid "File:"
@@ -25112,6 +25090,14 @@ msgstr "Bahaya:"
 
 msgid "Internet:"
 msgstr "Internet:"
+
+
+msgid "description"
+msgstr "deskripsi"
+
+
+msgid "location"
+msgstr "lokasi"
 
 
 msgctxt "Operator"
@@ -26072,10 +26058,6 @@ msgid "Unable to export PDF"
 msgstr "Tidak dapat mengekspor PDF"
 
 
-msgid "Unable to import SVG"
-msgstr "Tidak dapat mengimpor SVG"
-
-
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "Plane"
@@ -26361,10 +26343,6 @@ msgid "Stone (Crushed)"
 msgstr "Batu (Hancur)"
 
 
-msgid "3D View"
-msgstr "Tampilan 3D"
-
-
 msgid "Frame:%d "
 msgstr "Frame:%d "
 
@@ -26559,14 +26537,6 @@ msgstr "Orientasi Transformasi"
 
 msgid "Operation requires an active keying set"
 msgstr "Tekstur"
-
-
-msgid "Not found: %s"
-msgstr "Python: %s"
-
-
-msgid "Mixed selection"
-msgstr "Modus Sunting"
 
 
 msgid "Movie clip not found"

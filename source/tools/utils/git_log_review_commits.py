@@ -165,14 +165,14 @@ def main():
             pass
         elif args.filter_type == 'BUGFIX':
             first_line = c.body.strip().split("\n")[0]
-            assert(len(first_line))
+            assert len(first_line)
             if any(w for w in first_line.split() if w.lower().startswith(("fix", "bugfix", "bug-fix"))):
                 pass
             else:
                 return False
         elif args.filter_type == 'NOISE':
             first_line = c.body.strip().split("\n")[0]
-            assert(len(first_line))
+            assert len(first_line)
             if any(w for w in first_line.split() if w.lower().startswith("cleanup")):
                 pass
             else:
