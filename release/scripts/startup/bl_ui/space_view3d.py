@@ -1789,6 +1789,23 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
         layout.operator("mesh.select_similar_region", text="Face Regions", icon="FACEREGIONS")
 
 
+class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
+    bl_label = "Select All by Trait"
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+        if tool_settings.mesh_select_mode[2] is False:
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon="SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon="SELECT_LOOSE")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon="SELECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon="SELECT_FACES_BY_SIDE")
+
+        layout.separator()
+
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
+
+
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
     bl_label = "More/Less"
 
@@ -1852,16 +1869,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        # topology
-        tool_settings = _context.tool_settings
-        if tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon="SELECT_NONMANIFOLD")
-        layout.operator("mesh.select_loose", text="Loose Geometry", icon="SELECT_LOOSE")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon="SELECT_INTERIOR")
-        layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon="SELECT_FACES_BY_SIDE")
-
-        layout.separator()
-
         # loops
         layout.operator("mesh.loop_multi_select", text="Edge Loops", icon="SELECT_EDGELOOP").ring = False
         layout.operator("mesh.loop_multi_select", text="Edge Rings", icon="SELECT_EDGERING").ring = True
@@ -1870,7 +1877,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
+        layout.menu("VIEW3D_MT_edit_mesh_select_by_trait")
 
         layout.separator()
 
@@ -9242,6 +9249,7 @@ classes = (
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
+    VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve,
