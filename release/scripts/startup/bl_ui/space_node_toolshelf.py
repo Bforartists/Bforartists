@@ -4891,7 +4891,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeFieldAtIndex"
 
-            props = col.operator("node.add_node", text=" Field on Domain    ", icon = "FIELD_DOMAIN")
+            props = col.operator("node.add_node", text=" Interpolate Domain    ", icon = "FIELD_DOMAIN")
             props.use_transform = True
             props.type = "GeometryNodeFieldOnDomain"
 
