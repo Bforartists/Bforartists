@@ -316,6 +316,21 @@
             >
           </ThemeWidgetColors>
         </wcol_list_item>
+        <wcol_view_item>
+          <ThemeWidgetColors
+            outline="#2d2d2d"
+            inner="#303030ff"
+            inner_sel="#4772b3ff"
+            item="#4772b3ff"
+            text="#cccccc"
+            text_sel="#ffffff"
+            show_shaded="FALSE"
+            shadetop="0"
+            shadedown="0"
+            roundness="0.4"
+            >
+          </ThemeWidgetColors>
+        </wcol_view_item>
         <wcol_state>
           <ThemeWidgetStateColors
             inner_anim="#73be4c"
@@ -851,6 +866,15 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#181818"
+            list_title="#ffffff"
+            list_text="#ffffff"
+            list_text_hi="#ffffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
@@ -880,7 +904,7 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#a3a3a3cc"
+                header="#b3b3b300"
                 back="#a3a3a3cc"
                 sub_back="#00000024"
                 >
@@ -939,17 +963,17 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        grid="#1B1B1B"
+        grid="#1b1b1b"
         node_selected="#f15800"
         node_active="#f15800"
-        wire="#191919"
+        wire="#191919ff"
         wire_inner="#999999"
-        wire_select="#ffa733"
+        wire_select="#ffa733b3"
         selected_text="#7f7070"
         node_backdrop="#e6e6e6ff"
         converter_node="#66c4ff"
         color_node="#ffcb4d"
-        group_node="#59b36ab9"
+        group_node="#59b36a"
         group_socket_node="#dfc300"
         frame_node="#9b9b9b60"
         matte_node="#977474"
@@ -1125,7 +1149,7 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#a3a3a3cc"
+                header="#b3b3b300"
                 back="#a3a3a3cc"
                 sub_back="#00000024"
                 >
