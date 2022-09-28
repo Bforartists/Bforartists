@@ -1599,7 +1599,7 @@ class VIEW3D_MT_object_apply_location(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+        bpy.ops.object.transform_apply(location=True, rotation=False, scale=False, isolate_users=True)
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
@@ -1609,7 +1609,7 @@ class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False, isolate_users=True)
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
@@ -1619,7 +1619,7 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True, isolate_users=True)
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_all(bpy.types.Operator):
@@ -1629,7 +1629,7 @@ class VIEW3D_MT_object_apply_all(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True, isolate_users=True)
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
@@ -1639,7 +1639,7 @@ class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True, isolate_users=True)
         return {'FINISHED'}
 
 ### --- Panel
