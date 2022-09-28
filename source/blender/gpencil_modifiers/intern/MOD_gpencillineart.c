@@ -608,7 +608,7 @@ static void occlusion_panel_draw(const bContext *UNUSED(C), Panel *panel)
   /* ------------ end bfa */
 
   if (use_multiple_levels) {
-    uiLayout *col = uiLayoutColumn(layout, true);
+    col = uiLayoutColumn(layout, true);
     uiItemR(col, ptr, "level_start", 0, NULL, ICON_NONE);
     uiItemR(col, ptr, "level_end", 0, IFACE_("End"), ICON_NONE);
   }
