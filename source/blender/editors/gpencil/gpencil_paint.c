@@ -1137,7 +1137,7 @@ static void gpencil_stroke_newfrombuffer(tGPsdata *p)
     pt = gps->points;
     for (int i = 0; i < gps->totpoints; i++, pt++) {
       /* if parented change position relative to parent object */
-      gpencil_apply_parent_point(depsgraph, obact, gpl, pt);
+      gpencil_world_to_object_space_point(depsgraph, obact, gpl, pt);
     }
 
     /* If camera view or view projection, reproject flat to view to avoid perspective effect. */
@@ -1302,7 +1302,7 @@ static void gpencil_stroke_newfrombuffer(tGPsdata *p)
     /* reproject to plane (only in 3d space) */
     gpencil_reproject_toplane(p, gps);
     /* change position relative to parent object */
-    gpencil_apply_parent(depsgraph, obact, gpl, gps);
+    gpencil_world_to_object_space(depsgraph, obact, gpl, gps);
     /* If camera view or view projection, reproject flat to view to avoid perspective effect. */
     if ((!is_depth) && (((align_flag & GP_PROJECT_VIEWSPACE) && is_lock_axis_view) || is_camera)) {
       ED_gpencil_project_stroke_to_view(p->C, p->gpl, gps);
@@ -1387,7 +1387,8 @@ static void gpencil_stroke_newfrombuffer(tGPsdata *p)
   }
 
   gpencil_update_cache(p->gpd);
-  BKE_gpencil_tag_full_update(p->gpd, gpl, p->gpf, NULL);
+  BKE_gpencil_tag_full_update(
+      p->gpd, gpl, (GPENCIL_MULTIEDIT_SESSIONS_ON(p->gpd)) ? NULL : p->gpf, NULL);
 }
 
 /* --- 'Eraser' for 'Paint' Tool ------ */
@@ -1551,7 +1552,7 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
     /* only process if it hasn't been masked out... */
     if (!(p->flags & GP_PAINTFLAG_SELECTMASK) || (gps->points->flag & GP_SPOINT_SELECT)) {
       bGPDspoint pt_temp;
-      gpencil_point_to_parent_space(gps->points, p->diff_mat, &pt_temp);
+      gpencil_point_to_world_space(gps->points, p->diff_mat, &pt_temp);
       gpencil_point_to_xy(&p->gsc, gps, &pt_temp, &pc1[0], &pc1[1]);
       /* Do bound-box check first. */
       if ((!ELEM(V2D_IS_CLIPPED, pc1[0], pc1[1])) && BLI_rcti_isect_pt(rect, pc1[0], pc1[1])) {
@@ -1575,7 +1576,7 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
       /* get points to work with */
       pt1 = gps->points + i;
       bGPDspoint npt;
-      gpencil_point_to_parent_space(pt1, p->diff_mat, &npt);
+      gpencil_point_to_world_space(pt1, p->diff_mat, &npt);
       gpencil_point_to_xy(&p->gsc, gps, &npt, &pc1[0], &pc1[1]);
 
       /* Do bound-box check first. */
@@ -1633,14 +1634,14 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
       }
 
       bGPDspoint npt;
-      gpencil_point_to_parent_space(pt1, p->diff_mat, &npt);
+      gpencil_point_to_world_space(pt1, p->diff_mat, &npt);
       gpencil_point_to_xy(&p->gsc, gps, &npt, &pc1[0], &pc1[1]);
 
-      gpencil_point_to_parent_space(pt2, p->diff_mat, &npt);
+      gpencil_point_to_world_space(pt2, p->diff_mat, &npt);
       gpencil_point_to_xy(&p->gsc, gps, &npt, &pc2[0], &pc2[1]);
 
       if (pt0) {
-        gpencil_point_to_parent_space(pt0, p->diff_mat, &npt);
+        gpencil_point_to_world_space(pt0, p->diff_mat, &npt);
         gpencil_point_to_xy(&p->gsc, gps, &npt, &pc0[0], &pc0[1]);
       }
       else {
@@ -1743,14 +1744,14 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
 
             /* 2) Tag any point with overly low influence for removal in the next pass */
             if ((inf1 > 0.0f) &&
-                (((pt1->pressure < cull_thresh) || (p->flags & GP_PAINTFLAG_HARD_ERASER) ||
-                  (eraser->gpencil_settings->eraser_mode == GP_BRUSH_ERASER_HARD)))) {
+                ((pt1->pressure < cull_thresh) || (p->flags & GP_PAINTFLAG_HARD_ERASER) ||
+                 (eraser->gpencil_settings->eraser_mode == GP_BRUSH_ERASER_HARD))) {
               pt1->flag |= GP_SPOINT_TAG;
               do_cull = true;
             }
             if ((inf1 > 2.0f) &&
-                (((pt2->pressure < cull_thresh) || (p->flags & GP_PAINTFLAG_HARD_ERASER) ||
-                  (eraser->gpencil_settings->eraser_mode == GP_BRUSH_ERASER_HARD)))) {
+                ((pt2->pressure < cull_thresh) || (p->flags & GP_PAINTFLAG_HARD_ERASER) ||
+                 (eraser->gpencil_settings->eraser_mode == GP_BRUSH_ERASER_HARD))) {
               pt2->flag |= GP_SPOINT_TAG;
               do_cull = true;
             }
@@ -3716,7 +3717,7 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
        *   is essential for ensuring that they can quickly return to that view.
        */
     }
-    else if ((!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP))) {
+    else if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP)) {
       gpencil_guide_event_handling(C, op, event, p);
       estate = OPERATOR_RUNNING_MODAL;
     }

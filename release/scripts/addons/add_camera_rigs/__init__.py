@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Add Camera Rigs",
     "author": "Wayne Dixon, Brian Raschko, Kris Wittig, Damien Picard, Flavio Perez",
-    "version": (1, 5, 0),
+    "version": (1, 5, 1),
     "blender": (3, 3, 0),
     "location": "View3D > Add > Camera > Dolly or Crane Rig",
     "description": "Adds a Camera Rig with UI",

@@ -10,21 +10,23 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "View Numpad Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 
 
 # Lock Camera Transforms
 class PIE_OT_LockTransforms(Operator):
     bl_idname = "object.locktransforms"
     bl_label = "Lock Object Transforms"
-    bl_description = ("Enable or disable the editing of objects transforms in the 3D View\n"
-                     "Needs an existing Active Object")
+    bl_description = (
+        "Enable or disable the editing of objects transforms in the 3D View\n"
+        "Needs an existing Active Object"
+    )
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -118,7 +120,7 @@ class PIE_MT_ViewNumpad(Menu):
 classes = (
     PIE_MT_ViewNumpad,
     PIE_OT_LockTransforms,
-    )
+)
 
 addon_keymaps = []
 

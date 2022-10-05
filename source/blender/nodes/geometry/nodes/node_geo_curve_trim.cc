@@ -46,12 +46,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Geometry>(N_("Curve"));
 }
 
-static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
   uiItemR(layout, ptr, "mode", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
 }
 
-static void node_init(bNodeTree *UNUSED(tree), bNode *node)
+static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
   NodeGeometryCurveTrim *data = MEM_cnew<NodeGeometryCurveTrim>(__func__);
 
@@ -64,7 +64,7 @@ static void node_update(bNodeTree *ntree, bNode *node)
   const NodeGeometryCurveTrim &storage = node_storage(*node);
   const GeometryNodeCurveSampleMode mode = (GeometryNodeCurveSampleMode)storage.mode;
 
-  bNodeSocket *start_fac = ((bNodeSocket *)node->inputs.first)->next;
+  bNodeSocket *start_fac = static_cast<bNodeSocket *>(node->inputs.first)->next;
   bNodeSocket *end_fac = start_fac->next;
   bNodeSocket *start_len = end_fac->next;
   bNodeSocket *end_len = start_len->next;
@@ -95,8 +95,8 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   search_link_ops_for_declarations(params, declaration.inputs().take_front(1));
 
   if (params.in_out() == SOCK_IN) {
-    if (params.node_tree().typeinfo->validate_link(
-            static_cast<eNodeSocketDatatype>(params.other_socket().type), SOCK_FLOAT)) {
+    if (params.node_tree().typeinfo->validate_link(eNodeSocketDatatype(params.other_socket().type),
+                                                   SOCK_FLOAT)) {
       params.add_item(IFACE_("Start (Factor)"),
                       SocketSearchOp{"Start", GEO_NODE_CURVE_SAMPLE_FACTOR});
       params.add_item(IFACE_("End (Factor)"), SocketSearchOp{"End", GEO_NODE_CURVE_SAMPLE_FACTOR});

@@ -2947,7 +2947,7 @@ static int gpencil_snap_to_grid(bContext *C, wmOperator *UNUSED(op))
 
               /* return data */
               copy_v3_v3(&pt->x, fpt);
-              gpencil_apply_parent_point(depsgraph, obact, gpl, pt);
+              gpencil_world_to_object_space_point(depsgraph, obact, gpl, pt);
 
               changed = true;
             }
@@ -3048,7 +3048,7 @@ static int gpencil_snap_to_cursor(bContext *C, wmOperator *op)
             for (i = 0, pt = gps->points; i < gps->totpoints; i++, pt++) {
               if (pt->flag & GP_SPOINT_SELECT) {
                 copy_v3_v3(&pt->x, cursor_global);
-                gpencil_apply_parent_point(depsgraph, obact, gpl, pt);
+                gpencil_world_to_object_space_point(depsgraph, obact, gpl, pt);
 
                 changed = true;
               }
@@ -3942,6 +3942,7 @@ static int gpencil_strokes_reproject_exec(bContext *C, wmOperator *op)
   const bool keep_original = RNA_boolean_get(op->ptr, "keep_original");
   const bool is_curve_edit = (bool)GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd);
   const bool is_multiedit = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd);
+  const float offset = RNA_float_get(op->ptr, "offset");
 
   /* Init snap context for geometry projection. */
   SnapObjectContext *sctx = NULL;
@@ -3981,7 +3982,8 @@ static int gpencil_strokes_reproject_exec(bContext *C, wmOperator *op)
               BKE_scene_graph_update_for_newframe(depsgraph);
             }
 
-            ED_gpencil_stroke_reproject(depsgraph, &gsc, sctx, gpl, gpf, gps, mode, keep_original);
+            ED_gpencil_stroke_reproject(
+                depsgraph, &gsc, sctx, gpl, gpf, gps, mode, keep_original, offset);
 
             if (is_curve_edit && gps->editcurve != NULL) {
               BKE_gpencil_stroke_editcurve_update(gpd, gpl, gps);
@@ -4019,6 +4021,26 @@ static int gpencil_strokes_reproject_exec(bContext *C, wmOperator *op)
   }
 
   return OPERATOR_FINISHED;
+}
+
+static void gpencil_strokes_reproject_ui(bContext *UNUSED(C), wmOperator *op)
+{
+  uiLayout *layout = op->layout;
+  uiLayout *row;
+
+  const eGP_ReprojectModes type = RNA_enum_get(op->ptr, "type");
+
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, op->ptr, "type", 0, NULL, ICON_NONE);
+
+  if (type == GP_REPROJECT_SURFACE) {
+    row = uiLayoutRow(layout, true);
+    uiItemR(row, op->ptr, "offset", 0, NULL, ICON_NONE);
+  }
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, op->ptr, "keep_original", 0, NULL, ICON_NONE);
 }
 
 void GPENCIL_OT_reproject(wmOperatorType *ot)
@@ -4065,6 +4087,7 @@ void GPENCIL_OT_reproject(wmOperatorType *ot)
   ot->invoke = WM_menu_invoke;
   ot->exec = gpencil_strokes_reproject_exec;
   ot->poll = gpencil_strokes_edit3d_poll;
+  ot->ui = gpencil_strokes_reproject_ui;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -4080,6 +4103,8 @@ void GPENCIL_OT_reproject(wmOperatorType *ot)
       "Keep Original",
       "Keep original strokes and create a copy before reprojecting instead of reproject them");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MOVIECLIP);
+
+  RNA_def_float(ot->srna, "offset", 0.0f, 0.0f, 10.0f, "Surface Offset", "", 0.0f, 10.0f);
 }
 
 static int gpencil_recalc_geometry_exec(bContext *C, wmOperator *UNUSED(op))
@@ -5237,7 +5262,9 @@ static int gpencil_stroke_separate_exec(bContext *C, wmOperator *op)
   for (int slot = 1; slot <= ob_dst->totcol; slot++) {
     while (slot <= ob_dst->totcol && !BKE_object_material_slot_used(ob_dst, slot)) {
       ob_dst->actcol = slot;
-      BKE_object_material_slot_remove(bmain, ob_dst);
+      if (!BKE_object_material_slot_remove(bmain, ob_dst)) {
+        break;
+      }
       if (actcol >= slot) {
         actcol--;
       }
@@ -5486,7 +5513,7 @@ static bool gpencil_test_lasso(bGPDstroke *gps,
   const struct GP_SelectLassoUserData *data = user_data;
   bGPDspoint pt2;
   int x0, y0;
-  gpencil_point_to_parent_space(pt, diff_mat, &pt2);
+  gpencil_point_to_world_space(pt, diff_mat, &pt2);
   gpencil_point_to_xy(gsc, gps, &pt2, &x0, &y0);
   /* test if in lasso */
   return ((!ELEM(V2D_IS_CLIPPED, x0, y0)) && BLI_rcti_isect_pt(&data->rect, x0, y0) &&
@@ -5614,7 +5641,7 @@ static int gpencil_cutter_lasso_select(bContext *C,
 
   /* Select points */
   LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
-    if ((gpl->flag & GP_LAYER_LOCKED) || ((gpl->flag & GP_LAYER_HIDE))) {
+    if ((gpl->flag & GP_LAYER_LOCKED) || (gpl->flag & GP_LAYER_HIDE)) {
       continue;
     }
 

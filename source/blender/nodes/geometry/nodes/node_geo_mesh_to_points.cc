@@ -24,7 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>(N_("Mesh")).supported_type(GEO_COMPONENT_TYPE_MESH);
   b.add_input<decl::Bool>(N_("Selection")).default_value(true).supports_field().hide_value();
-  b.add_input<decl::Vector>(N_("Position")).implicit_field();
+  b.add_input<decl::Vector>(N_("Position")).implicit_field(implicit_field_inputs::position);
   b.add_input<decl::Float>(N_("Radius"))
       .default_value(0.05f)
       .min(0.0f)
@@ -33,12 +33,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Geometry>(N_("Points"));
 }
 
-static void node_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
   uiItemR(layout, ptr, "mode", 0, "", ICON_NONE);
 }
 
-static void node_init(bNodeTree *UNUSED(tree), bNode *node)
+static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
   NodeGeometryMeshToPoints *data = MEM_cnew<NodeGeometryMeshToPoints>(__func__);
   data->mode = GEO_NODE_MESH_TO_POINTS_VERTICES;

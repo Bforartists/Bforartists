@@ -27,7 +27,6 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_attribute.hh"
-#include "BKE_brush.h"
 #include "BKE_ccg.h"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
@@ -35,25 +34,17 @@
 #include "BKE_mesh.h"
 #include "BKE_mesh_fair.h"
 #include "BKE_mesh_mapping.h"
-#include "BKE_multires.h"
-#include "BKE_node.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
-#include "BKE_scene.h"
 
 #include "DEG_depsgraph.h"
 
 #include "WM_api.h"
-#include "WM_message.h"
-#include "WM_toolsystem.h"
 #include "WM_types.h"
 
-#include "ED_object.h"
-#include "ED_screen.h"
 #include "ED_sculpt.h"
-#include "ED_view3d.h"
-#include "paint_intern.h"
+
 #include "sculpt_intern.h"
 
 #include "RNA_access.h"
@@ -66,7 +57,7 @@
 int ED_sculpt_face_sets_find_next_available_id(struct Mesh *mesh)
 {
   const int *face_sets = static_cast<const int *>(
-      CustomData_get_layer(&mesh->pdata, CD_SCULPT_FACE_SETS));
+      CustomData_get_layer_named(&mesh->pdata, CD_PROP_INT32, ".sculpt_face_set"));
   if (!face_sets) {
     return SCULPT_FACE_SET_NONE;
   }
@@ -82,7 +73,8 @@ int ED_sculpt_face_sets_find_next_available_id(struct Mesh *mesh)
 
 void ED_sculpt_face_sets_initialize_none_to_id(struct Mesh *mesh, const int new_id)
 {
-  int *face_sets = static_cast<int *>(CustomData_get_layer(&mesh->pdata, CD_SCULPT_FACE_SETS));
+  int *face_sets = static_cast<int *>(
+      CustomData_get_layer_named(&mesh->pdata, CD_PROP_INT32, ".sculpt_face_set"));
   if (!face_sets) {
     return;
   }
@@ -128,8 +120,13 @@ static void do_draw_face_sets_brush_task_cb_ex(void *__restrict userdata,
   const int thread_id = BLI_task_parallel_thread_id(tls);
 
   MVert *mvert = SCULPT_mesh_deformed_mverts_get(ss);
+  AutomaskingNodeData automask_data;
+  SCULPT_automasking_node_begin(
+      data->ob, ss, ss->cache->automasking, &automask_data, data->nodes[n]);
 
   BKE_pbvh_vertex_iter_begin (ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE) {
+    SCULPT_automasking_node_update(ss, &automask_data, &vd);
+
     if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
       MeshElemMap *vert_map = &ss->pmap[vd.index];
       for (int j = 0; j < ss->pmap[vd.index].count; j++) {
@@ -153,7 +150,8 @@ static void do_draw_face_sets_brush_task_cb_ex(void *__restrict userdata,
                                                                     vd.fno,
                                                                     vd.mask ? *vd.mask : 0.0f,
                                                                     vd.vertex,
-                                                                    thread_id);
+                                                                    thread_id,
+                                                                    &automask_data);
 
         if (fade > 0.05f) {
           ss->face_sets[vert_map->indices[j]] = ss->cache->paint_face_set;
@@ -172,7 +170,8 @@ static void do_draw_face_sets_brush_task_cb_ex(void *__restrict userdata,
                                                                   vd.fno,
                                                                   vd.mask ? *vd.mask : 0.0f,
                                                                   vd.vertex,
-                                                                  thread_id);
+                                                                  thread_id,
+                                                                  &automask_data);
 
       if (fade > 0.05f) {
         SCULPT_vertex_face_set_set(ss, vd.vertex, ss->cache->paint_face_set);
@@ -204,8 +203,13 @@ static void do_relax_face_sets_brush_task_cb_ex(void *__restrict userdata,
   }
 
   const int thread_id = BLI_task_parallel_thread_id(tls);
+  AutomaskingNodeData automask_data;
+  SCULPT_automasking_node_begin(
+      data->ob, ss, ss->cache->automasking, &automask_data, data->nodes[n]);
 
   BKE_pbvh_vertex_iter_begin (ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE) {
+    SCULPT_automasking_node_update(ss, &automask_data, &vd);
+
     if (!sculpt_brush_test_sq_fn(&test, vd.co)) {
       continue;
     }
@@ -221,7 +225,8 @@ static void do_relax_face_sets_brush_task_cb_ex(void *__restrict userdata,
                                                                 vd.fno,
                                                                 vd.mask ? *vd.mask : 0.0f,
                                                                 vd.vertex,
-                                                                thread_id);
+                                                                thread_id,
+                                                                &automask_data);
 
     SCULPT_relax_vertex(ss, &vd, fade * bstrength, relax_face_sets, vd.co);
     if (vd.mvert) {
@@ -235,6 +240,12 @@ void SCULPT_do_draw_face_sets_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, in
 {
   SculptSession *ss = ob->sculpt;
   Brush *brush = BKE_paint_brush(&sd->paint);
+
+  if (ss->pbvh) {
+    Mesh *mesh = BKE_mesh_from_object(ob);
+    BKE_pbvh_face_sets_color_set(
+        ss->pbvh, mesh->face_sets_color_seed, mesh->face_sets_color_default);
+  }
 
   BKE_curvemapping_init(brush->curve);
 
@@ -260,12 +271,12 @@ void SCULPT_do_draw_face_sets_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, in
 
 /* Face Sets Operators */
 
-typedef enum eSculptFaceGroupsCreateModes {
+enum eSculptFaceGroupsCreateModes {
   SCULPT_FACE_SET_MASKED = 0,
   SCULPT_FACE_SET_VISIBLE = 1,
   SCULPT_FACE_SET_ALL = 2,
   SCULPT_FACE_SET_SELECTION = 3,
-} eSculptFaceGroupsCreateModes;
+};
 
 static EnumPropertyItem prop_sculpt_face_set_create_types[] = {
     {
@@ -444,7 +455,7 @@ void SCULPT_OT_face_sets_create(wmOperatorType *ot)
                           "Method to create Face Sets");
 }
 
-typedef enum eSculptFaceSetsInitMode {
+enum eSculptFaceSetsInitMode {
   SCULPT_FACE_SETS_FROM_LOOSE_PARTS = 0,
   SCULPT_FACE_SETS_FROM_MATERIALS = 1,
   SCULPT_FACE_SETS_FROM_NORMALS = 2,
@@ -454,7 +465,7 @@ typedef enum eSculptFaceSetsInitMode {
   SCULPT_FACE_SETS_FROM_BEVEL_WEIGHT = 6,
   SCULPT_FACE_SETS_FROM_FACE_MAPS = 7,
   SCULPT_FACE_SETS_FROM_FACE_SET_BOUNDARIES = 8,
-} eSculptFaceSetsInitMode;
+};
 
 static EnumPropertyItem prop_sculpt_face_sets_init_types[] = {
     {
@@ -624,12 +635,12 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
 
   const int mode = RNA_enum_get(op->ptr, "mode");
 
+  BKE_sculpt_update_object_for_edit(depsgraph, ob, true, false, false);
+
   /* Dyntopo not supported. */
   if (BKE_pbvh_type(ss->pbvh) == PBVH_BMESH) {
     return OPERATOR_CANCELLED;
   }
-
-  BKE_sculpt_update_object_for_edit(depsgraph, ob, true, false, false);
 
   PBVH *pbvh = ob->sculpt->pbvh;
   PBVHNode **nodes;
@@ -681,10 +692,11 @@ static int sculpt_face_set_init_exec(bContext *C, wmOperator *op)
       break;
     }
     case SCULPT_FACE_SETS_FROM_CREASES: {
-      const Span<MEdge> edges = mesh->edges();
+      const float *creases = static_cast<const float *>(
+          CustomData_get_layer(&mesh->edata, CD_CREASE));
       sculpt_face_sets_init_flood_fill(
           ob, [&](const int /*from_face*/, const int edge, const int /*to_face*/) -> bool {
-            return edges[edge].crease / 255.0f < threshold;
+            return creases[edge] < threshold;
           });
       break;
     }
@@ -777,13 +789,12 @@ void SCULPT_OT_face_sets_init(wmOperatorType *ot)
                           "Method to initialize Face Sets");
 }
 
-typedef enum eSculptFaceGroupVisibilityModes {
+enum eSculptFaceGroupVisibilityModes {
   SCULPT_FACE_SET_VISIBILITY_TOGGLE = 0,
   SCULPT_FACE_SET_VISIBILITY_SHOW_ACTIVE = 1,
   SCULPT_FACE_SET_VISIBILITY_HIDE_ACTIVE = 2,
   SCULPT_FACE_SET_VISIBILITY_INVERT = 3,
-  SCULPT_FACE_SET_VISIBILITY_SHOW_ALL = 4,
-} eSculptFaceGroupVisibilityModes;
+};
 
 static EnumPropertyItem prop_sculpt_face_sets_change_visibility_types[] = {
     {
@@ -814,13 +825,6 @@ static EnumPropertyItem prop_sculpt_face_sets_change_visibility_types[] = {
         "Invert Face Set Visibility",
         "Invert Face Set Visibility",
     },
-    {
-        SCULPT_FACE_SET_VISIBILITY_SHOW_ALL,
-        "SHOW_ALL",
-        0,
-        "Show All Face Sets",
-        "Show All Face Sets",
-    },
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -830,21 +834,17 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
   SculptSession *ss = ob->sculpt;
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
 
-  /* Dyntopo not supported. */
-  if (BKE_pbvh_type(ss->pbvh) == PBVH_BMESH) {
-    return OPERATOR_CANCELLED;
-  }
-
-  if (!ss->face_sets) {
-    return OPERATOR_CANCELLED;
-  }
-
   Mesh *mesh = BKE_object_get_original_mesh(ob);
 
   BKE_sculpt_update_object_for_edit(depsgraph, ob, true, true, false);
 
-  const int tot_vert = SCULPT_vertex_count_get(ss);
+  /* Not supported for dyntopo. */
+  if (BKE_pbvh_type(ss->pbvh) == PBVH_BMESH) {
+    return OPERATOR_CANCELLED;
+  }
+
   const int mode = RNA_enum_get(op->ptr, "mode");
+  const int tot_vert = SCULPT_vertex_count_get(ss);
   const int active_face_set = SCULPT_active_face_set_get(ss);
 
   SCULPT_undo_push_begin(ob, op);
@@ -896,15 +896,6 @@ static int sculpt_face_sets_change_visibility_exec(bContext *C, wmOperator *op)
       SCULPT_face_visibility_all_set(ss, false);
       SCULPT_face_set_visibility_set(ss, active_face_set, true);
     }
-  }
-
-  if (mode == SCULPT_FACE_SET_VISIBILITY_SHOW_ALL) {
-    /* As an optimization, free the hide attribute when making all geometry visible. This allows
-     * reduced memory usage without manually clearing it later, and allows sculpt operations to
-     * avoid checking element's hide status. */
-    CustomData_free_layer_named(&mesh->pdata, ".hide_poly", mesh->totpoly);
-    ss->hide_poly = nullptr;
-    BKE_pbvh_update_hide_attributes_from_mesh(pbvh);
   }
 
   if (mode == SCULPT_FACE_SET_VISIBILITY_SHOW_ACTIVE) {
@@ -963,7 +954,7 @@ static int sculpt_face_sets_change_visibility_invoke(bContext *C,
   /* Update the active vertex and Face Set using the cursor position to avoid relying on the paint
    * cursor updates. */
   SculptCursorGeometryInfo sgi;
-  const float mval_fl[2] = {(float)event->mval[0], (float)event->mval[1]};
+  const float mval_fl[2] = {float(event->mval[0]), float(event->mval[1])};
   SCULPT_vertex_random_access_ensure(ss);
   SCULPT_cursor_geometry_info_update(C, &sgi, mval_fl, false);
 
@@ -1002,7 +993,7 @@ void SCULPT_OT_face_sets_change_visibility(wmOperatorType *ot)
                           "Method to change the visibility");
 }
 
-static int sculpt_face_sets_randomize_colors_exec(bContext *C, wmOperator *UNUSED(op))
+static int sculpt_face_sets_randomize_colors_exec(bContext *C, wmOperator * /*op*/)
 {
 
   Object *ob = CTX_data_active_object(C);
@@ -1057,13 +1048,13 @@ void SCULPT_OT_face_sets_randomize_colors(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-typedef enum eSculptFaceSetEditMode {
+enum eSculptFaceSetEditMode {
   SCULPT_FACE_SET_EDIT_GROW = 0,
   SCULPT_FACE_SET_EDIT_SHRINK = 1,
   SCULPT_FACE_SET_EDIT_DELETE_GEOMETRY = 2,
   SCULPT_FACE_SET_EDIT_FAIR_POSITIONS = 3,
   SCULPT_FACE_SET_EDIT_FAIR_TANGENCY = 4,
-} eSculptFaceSetEditMode;
+};
 
 static EnumPropertyItem prop_sculpt_face_sets_edit_types[] = {
     {
@@ -1169,7 +1160,9 @@ static void sculpt_face_set_shrink(Object *ob,
   }
 }
 
-static bool check_single_face_set(SculptSession *ss, int *face_sets, const bool check_visible_only)
+static bool check_single_face_set(SculptSession *ss,
+                                  const int *face_sets,
+                                  const bool check_visible_only)
 {
   if (face_sets == nullptr) {
     return true;
@@ -1436,12 +1429,13 @@ static int sculpt_face_set_edit_invoke(bContext *C, wmOperator *op, const wmEven
     return OPERATOR_CANCELLED;
   }
 
+  ss->face_sets = BKE_sculpt_face_sets_ensure(BKE_mesh_from_object(ob));
   BKE_sculpt_update_object_for_edit(depsgraph, ob, true, false, false);
 
   /* Update the current active Face Set and Vertex as the operator can be used directly from the
    * tool without brush cursor. */
   SculptCursorGeometryInfo sgi;
-  const float mval_fl[2] = {(float)event->mval[0], (float)event->mval[1]};
+  const float mval_fl[2] = {float(event->mval[0]), float(event->mval[1])};
   if (!SCULPT_cursor_geometry_info_update(C, &sgi, mval_fl, false)) {
     /* The cursor is not over the mesh. Cancel to avoid editing the last updated Face Set ID. */
     return OPERATOR_CANCELLED;

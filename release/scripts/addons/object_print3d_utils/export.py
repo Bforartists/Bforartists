@@ -5,7 +5,10 @@
 
 import bpy
 
-from bpy.app.translations import pgettext_tip as tip_
+from bpy.app.translations import (
+    pgettext_tip as tip_,
+    pgettext_data as data_,
+)
 
 
 def image_get(mat):
@@ -73,7 +76,7 @@ def write_mesh(context, report_cb):
         name = os.path.basename(bpy.data.filepath)
         name = os.path.splitext(name)[0]
     else:
-        name = "untitled"
+        name = data_("untitled")
 
     # add object name
     name += f"-{bpy.path.clean_name(obj.name)}"

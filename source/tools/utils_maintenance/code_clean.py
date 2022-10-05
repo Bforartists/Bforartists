@@ -14,6 +14,7 @@ import re
 import subprocess
 import sys
 import os
+import string
 
 from typing import (
     Any,
@@ -50,6 +51,43 @@ SOURCE_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "..", ".."))
 
 
 # -----------------------------------------------------------------------------
+# Generic Constants
+
+# Sorted numeric types.
+# Intentionally missing are "unsigned".
+BUILT_IN_NUMERIC_TYPES = (
+    "bool",
+    "char",
+    "char32_t",
+    "double",
+    "float",
+    "int",
+    "int16_t",
+    "int32_t",
+    "int64_t",
+    "int8_t",
+    "intptr_t",
+    "long",
+    "off_t",
+    "ptrdiff_t",
+    "short",
+    "size_t",
+    "ssize_t",
+    "uchar",
+    "uint",
+    "uint16_t",
+    "uint32_t",
+    "uint64_t",
+    "uint8_t",
+    "uintptr_t",
+    "ulong",
+    "ushort",
+)
+
+IDENTIFIER_CHARS = set(string.ascii_letters + "_" + string.digits)
+
+
+# -----------------------------------------------------------------------------
 # General Utilities
 
 # Note that we could use a hash, however there is no advantage, compare it's contents.
@@ -73,6 +111,70 @@ def files_recursive_with_ext(path: str, ext: Tuple[str, ...]) -> Generator[str, 
         for filename in filenames:
             if filename.endswith(ext):
                 yield os.path.join(dirpath, filename)
+
+
+def text_matching_bracket_forward(
+        data: str,
+        pos_beg: int,
+        pos_limit: int,
+        beg_bracket: str,
+        end_bracket: str,
+) -> int:
+    """
+    Return the matching bracket or -1.
+
+    .. note:: This is not sophisticated, brackets in strings will confuse the function.
+    """
+    level = 1
+
+    # The next bracket.
+    pos = pos_beg + 1
+
+    # Clamp the limit.
+    limit = min(pos_beg + pos_limit, len(data))
+
+    while pos < limit:
+        c = data[pos]
+        if c == beg_bracket:
+            level += 1
+        elif c == end_bracket:
+            level -= 1
+            if level == 0:
+                return pos
+        pos += 1
+    return -1
+
+
+def text_matching_bracket_backward(
+        data: str,
+        pos_end: int,
+        pos_limit: int,
+        beg_bracket: str,
+        end_bracket: str,
+) -> int:
+    """
+    Return the matching bracket or -1.
+
+    .. note:: This is not sophisticated, brackets in strings will confuse the function.
+    """
+    level = 1
+
+    # The next bracket.
+    pos = pos_end - 1
+
+    # Clamp the limit.
+    limit = max(0, pos_limit)
+
+    while pos >= limit:
+        c = data[pos]
+        if c == end_bracket:
+            level += 1
+        elif c == beg_bracket:
+            level -= 1
+            if level == 0:
+                return pos
+        pos -= 1
+    return -1
 
 
 # -----------------------------------------------------------------------------
@@ -107,6 +209,19 @@ def cmake_cache_var(cmake_dir: str, var: str) -> Optional[str]:
     return None
 
 
+def cmake_cache_var_is_true(cmake_var: Optional[str]) -> bool:
+    if cmake_var is None:
+        return False
+
+    cmake_var = cmake_var.upper()
+    if cmake_var in {"ON", "YES", "TRUE", "Y"}:
+        return True
+    if cmake_var.isdigit() and cmake_var != "0":
+        return True
+
+    return False
+
+
 RE_CFILE_SEARCH = re.compile(r"\s\-c\s([\S]+)")
 
 
@@ -114,11 +229,17 @@ def process_commands(cmake_dir: str, data: Sequence[str]) -> Optional[ProcessedC
     compiler_c = cmake_cache_var(cmake_dir, "CMAKE_C_COMPILER")
     compiler_cxx = cmake_cache_var(cmake_dir, "CMAKE_CXX_COMPILER")
     if compiler_c is None:
-        sys.stderr.write("Can't find C compiler in %r" % cmake_dir)
+        sys.stderr.write("Can't find C compiler in %r\n" % cmake_dir)
         return None
     if compiler_cxx is None:
-        sys.stderr.write("Can't find C++ compiler in %r" % cmake_dir)
+        sys.stderr.write("Can't find C++ compiler in %r\n" % cmake_dir)
         return None
+
+    # Check for unsupported configurations.
+    for arg in ("WITH_UNITY_BUILD", "WITH_COMPILER_CCACHE"):
+        if cmake_cache_var_is_true(cmake_cache_var(cmake_dir, arg)):
+            sys.stderr.write("The option '%s' must be disabled for proper functionality\n" % arg)
+            return None
 
     file_args = []
 
@@ -373,6 +494,38 @@ class edit_generators:
 
             return edits
 
+    class use_brief_types(EditGenerator):
+        """
+        Use zero before the float suffix.
+
+        Replace:
+          unsigned int
+        With:
+          uint
+        """
+        @staticmethod
+        def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+            edits = []
+
+            # `unsigned char` -> `uchar`.
+            for match in re.finditer(r"(unsigned)\s+([a-z]+)", data):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='u%s' % match.group(2),
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            # There may be some remaining uses of `unsigned` without any integer type afterwards.
+            # `unsigned` -> `uint`.
+            for match in re.finditer(r"\bunsigned\b", data):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='uint',
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            return edits
+
     class use_elem_macro(EditGenerator):
         """
         Use the `ELEM` macro for more abbreviated expressions.
@@ -494,8 +647,6 @@ class edit_generators:
                             re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
 
                         for match in re.finditer(re_str, data):
-                            if _source == '/src/blender/source/blender/editors/mesh/editmesh_extrude_spin.c':
-                                print(match.groups())
                             var = match.group(1)
                             var_rest = []
                             groups = match.groups()
@@ -652,6 +803,113 @@ class edit_generators:
 
             return edits
 
+    class parenthesis_cleanup(EditGenerator):
+        """
+        Use macro for an error checked array size:
+
+        Replace:
+          ((a + b))
+        With:
+          (a + b)
+
+        Replace:
+          (func(a + b))
+        With:
+          func(a + b)
+
+        Note that the `CFLAGS` should be set so missing parentheses that contain assignments - error instead of warn:
+        With GCC: `-Werror=parentheses`
+        """
+        @staticmethod
+        def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+            edits = []
+
+            # Give up after searching for a bracket this many characters and finding none.
+            bracket_seek_limit = 4000
+
+            # Don't match double brackets because this will not match multiple overlapping matches
+            # Where 3 brackets should be checked as two separate pairs.
+            for match in re.finditer(r"(\()", data):
+                outer_beg = match.span()[0]
+                inner_beg = outer_beg + 1
+                if data[inner_beg] != "(":
+                    continue
+
+                inner_end = text_matching_bracket_forward(data, inner_beg, inner_beg + bracket_seek_limit, "(", ")")
+                if inner_end == -1:
+                    continue
+                outer_beg = inner_beg - 1
+                outer_end = text_matching_bracket_forward(data, outer_beg, inner_end + 1, "(", ")")
+                if outer_end != inner_end + 1:
+                    continue
+
+                text = data[inner_beg:inner_end + 1]
+                edits.append(Edit(
+                    span=(outer_beg, outer_end + 1),
+                    content=text,
+                    content_fail='(__ALWAYS_FAIL__)',
+                ))
+
+            # Handle `(func(a + b))` -> `func(a + b)`
+            for match in re.finditer(r"(\))", data):
+                inner_end = match.span()[0]
+                outer_end = inner_end + 1
+                if data[outer_end] != ")":
+                    continue
+
+                inner_beg = text_matching_bracket_backward(data, inner_end, inner_end - bracket_seek_limit, "(", ")")
+                if inner_beg == -1:
+                    continue
+                outer_beg = text_matching_bracket_backward(data, outer_end, outer_end - bracket_seek_limit, "(", ")")
+                if outer_beg == -1:
+                    continue
+
+                # The text between the first two opening brackets:
+                # `(function_name(a + b))` -> `function_name`.
+                text = data[outer_beg + 1:inner_beg]
+
+                # Handled in the first loop looking for forward brackets.
+                if text == "":
+                    continue
+
+                # Don't convert `prefix(func(a + b))` -> `prefixfunc(a + b)`
+                if data[outer_beg - 1] in IDENTIFIER_CHARS:
+                    continue
+
+                # Don't convert `static_cast<float>(foo(bar))` -> `static_cast<float>foo(bar)`
+                # While this will always fail to compile it slows down tests.
+                if data[outer_beg - 1] == ">":
+                    continue
+
+                # Exact rule here is arbitrary, in general though spaces mean there are operations
+                # that can use the brackets.
+                if " " in text:
+                    continue
+
+                # Search back an arbitrary number of chars 8 should be enough
+                # but manual formatting can add additional white-space, so increase
+                # the size to account for that.
+                prefix = data[max(outer_beg - 20, 0):outer_beg].strip()
+                if prefix:
+                    # Avoid `if (SOME_MACRO(..)) {..}` -> `if SOME_MACRO(..) {..}`
+                    # While correct it relies on parenthesis within the macro which isn't ideal.
+                    if prefix.split()[-1] in {"if", "while", "switch"}:
+                        continue
+                    # Avoid `*(--foo)` -> `*--foo`.
+                    # While correct it reads badly.
+                    if data[outer_beg - 1] == "*":
+                        continue
+
+                text_no_parens = data[outer_beg + 1: outer_end]
+
+                edits.append(Edit(
+                    span=(outer_beg, outer_end + 1),
+                    content=text_no_parens,
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            return edits
+
     class header_clean(EditGenerator):
         """
         Clean headers, ensuring that the headers removed are not used directly or indirectly.
@@ -722,6 +980,87 @@ class edit_generators:
                     content='',  # Remove the header.
                     content_fail='%s__ALWAYS_FAIL__%s' % (match.group(2), match.group(4)),
                     extra_build_args=('-D' + header_guard),
+                ))
+
+            return edits
+
+    class use_function_style_cast(EditGenerator):
+        """
+        Use function call style casts (C++ only).
+
+        Replace:
+          (float)(a + b)
+        With:
+          float(a + b)
+
+        Also support more complex cases involving right hand bracket insertion.
+
+        Replace:
+          (float)foo(a + b)
+        With:
+          float(foo(a + b))
+        """
+        @staticmethod
+        def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+
+            any_number_re = "(" + "|".join(BUILT_IN_NUMERIC_TYPES) + ")"
+
+            edits = []
+
+            # Handle both:
+            # - Simple case:  `(float)(a + b)` -> `float(a + b)`.
+            # - Complex Case: `(float)foo(a + b) + c` -> `float(foo(a + b)) + c`
+            for match in re.finditer(
+                    "(\\()" +  # 1st group.
+                    any_number_re +  # 2nd group.
+                    "(\\))",  # 3rd group.
+                    data,
+            ):
+                beg, end = match.span()
+                char_after = data[end]
+                if char_after == "(":
+                    # Simple case.
+                    edits.append(Edit(
+                        span=(beg, end),
+                        content=match.group(2),
+                        content_fail='__ALWAYS_FAIL__',
+                    ))
+                else:
+                    # The complex case is involved as brackets need to be added.
+                    # Currently this is not handled in a clever way, just try add in brackets
+                    # and rely on matching build output to know if they were added in the right place.
+                    text = match.group(2)
+                    span = (beg, end)
+                    for offset_end in range(end + 1, len(data)):
+                        # Not technically correct, but it's rare that this will span lines.
+                        if "\n" == data[offset_end]:
+                            break
+
+                        if (
+                                (data[offset_end - 1] in IDENTIFIER_CHARS) and
+                                (data[offset_end] in IDENTIFIER_CHARS)
+                        ):
+                            continue
+
+                        # Include `text_tail` in fail content in case it contains comments.
+                        text_tail = "(" + data[end:offset_end] + ")"
+                        edits.append(Edit(
+                            span=(beg, offset_end),
+                            content=text + text_tail,
+                            content_fail='(__ALWAYS_FAIL__)' + text_tail,
+                        ))
+
+            # Simple case: `static_cast<float>(a + b)` => `float(a + b)`.
+            for match in re.finditer(
+                    r"\b(static_cast<)" +  # 1st group.
+                    any_number_re +  # 2nd group.
+                    "(>)",  # 3rd group.
+                    data,
+            ):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%s' % match.group(2),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             return edits
@@ -814,54 +1153,92 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
     with open(source, 'r', encoding='utf-8') as fh:
         data = fh.read()
     edit_generator_class = edit_class_from_id(edit_to_apply)
-    edits = edit_generator_class.edit_list_from_file(source, data, shared_edit_data)
-    edits.sort(reverse=True)
-    if not edits:
-        return
 
-    if skip_test:
-        # Just apply all edits.
-        for (start, end), text, _text_always_fail, _extra_build_args in edits:
-            data = apply_edit(data, text, start, end, verbose=VERBOSE)
-        with open(source, 'w', encoding='utf-8') as fh:
-            fh.write(data)
-        return
+    # After performing all edits, store the result in this set.
+    #
+    # This is a heavy solution that guarantees edits never oscillate between
+    # multiple states, so re-visiting a previously visited state will always exit.
+    data_states = set()
 
-    test_edit(
-        source, output, None, build_args, data, data,
-        keep_edits=False,
-    )
-    if not os.path.exists(output):
-        raise Exception("Failed to produce output file: " + output)
+    # When overlapping edits are found, keep attempting edits.
+    edit_again = True
+    while edit_again:
+        edit_again = False
 
-    output_bytes = file_as_bytes(output)
+        edits = edit_generator_class.edit_list_from_file(source, data, shared_edit_data)
+        # Sort by span, in a way that tries shorter spans first
+        # This is more efficient when testing multiple overlapping edits,
+        # since when a smaller edit succeeds, it's less likely to have to try as many edits that span wider ranges.
+        # (This applies to `use_function_style_cast`).
+        edits.sort(reverse=True, key=lambda edit: (edit.span[0], -edit.span[1]))
+        if not edits:
+            return
 
-    for (start, end), text, text_always_fail, extra_build_args in edits:
-        build_args_for_edit = build_args
-        if extra_build_args:
-            # Add directly after the compile command.
-            a, b = build_args.split(' ', 1)
-            build_args_for_edit = a + ' ' + extra_build_args + ' ' + b
-
-        data_test = apply_edit(data, text, start, end, verbose=VERBOSE)
-        if test_edit(
-                source, output, output_bytes, build_args_for_edit, data, data_test,
-                keep_edits=False,
-        ):
-            # This worked, check if the change would fail if replaced with 'text_always_fail'.
-            data_test_always_fail = apply_edit(data, text_always_fail, start, end, verbose=False)
-            if test_edit(
-                    source, output, output_bytes, build_args_for_edit, data, data_test_always_fail,
-                    expect_failure=True, keep_edits=False,
-            ):
-                if VERBOSE_EDIT_ACTION:
-                    print("Edit at", (start, end), "doesn't fail, assumed to be ifdef'd out, continuing")
-                continue
-
-            # Apply the edit.
-            data = data_test
+        if skip_test:
+            # Just apply all edits.
+            for (start, end), text, _text_always_fail, _extra_build_args in edits:
+                data = apply_edit(data, text, start, end, verbose=VERBOSE)
             with open(source, 'w', encoding='utf-8') as fh:
                 fh.write(data)
+            return
+
+        test_edit(
+            source, output, None, build_args, data, data,
+            keep_edits=False,
+        )
+        if not os.path.exists(output):
+            raise Exception("Failed to produce output file: " + output)
+
+        output_bytes = file_as_bytes(output)
+        # Dummy value that won't cause problems.
+        edit_prev_start = len(data) + 1
+
+        for (start, end), text, text_always_fail, extra_build_args in edits:
+            if end >= edit_prev_start:
+                # Run the edits again, in case this would have succeeded,
+                # but was skipped due to edit-overlap.
+                edit_again = True
+                continue
+            build_args_for_edit = build_args
+            if extra_build_args:
+                # Add directly after the compile command.
+                a, b = build_args.split(' ', 1)
+                build_args_for_edit = a + ' ' + extra_build_args + ' ' + b
+
+            data_test = apply_edit(data, text, start, end, verbose=VERBOSE)
+            if test_edit(
+                    source, output, output_bytes, build_args_for_edit, data, data_test,
+                    keep_edits=False,
+            ):
+                # This worked, check if the change would fail if replaced with 'text_always_fail'.
+                data_test_always_fail = apply_edit(data, text_always_fail, start, end, verbose=False)
+                if test_edit(
+                        source, output, output_bytes, build_args_for_edit, data, data_test_always_fail,
+                        expect_failure=True, keep_edits=False,
+                ):
+                    if VERBOSE_EDIT_ACTION:
+                        print("Edit at", (start, end), "doesn't fail, assumed to be ifdef'd out, continuing")
+                    continue
+
+                # Apply the edit.
+                data = data_test
+                with open(source, 'w', encoding='utf-8') as fh:
+                    fh.write(data)
+
+                # Update the last successful edit, the end of the next edit must not overlap this one.
+                edit_prev_start = start
+
+        # Finished applying `edits`, check if further edits should be applied.
+        if edit_again:
+            data_states_len = len(data_states)
+            data_states.add(data)
+            if data_states_len == len(data_states):
+                # Avoid the *extremely* unlikely case that edits re-visit previously visited states.
+                edit_again = False
+            else:
+                # It is interesting to know how many passes run when debugging.
+                # print("Passes for: ", source, len(data_states))
+                pass
 
 
 # -----------------------------------------------------------------------------
