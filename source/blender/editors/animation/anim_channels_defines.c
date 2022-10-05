@@ -85,7 +85,7 @@
 #define ANIM_CHAN_NAME_SIZE 256
 
 /* get the pointer used for some flag */
-#define GET_ACF_FLAG_PTR(ptr, type) ((*(type) = sizeof((ptr))), &(ptr))
+#define GET_ACF_FLAG_PTR(ptr, type) ((*(type) = sizeof(ptr)), &(ptr))
 
 /* *********************************************** */
 /* Generic Functions (Type independent) */
@@ -4937,7 +4937,7 @@ static void draw_setting_widget(bAnimContext *ac,
         tooltip = TIP_("Visibility\nGrease Pencil layer is visible in the viewport");
       }
       else {
-        tooltip = TIP_("Visibility\nChannels are visible in Graph Editor for editing");
+        tooltip = TIP_("Visibility\nToggle visibility of Channels in Graph Editor for editing");
       }
       break;
 
@@ -4994,8 +4994,7 @@ static void draw_setting_widget(bAnimContext *ac,
       }
       else if (ale->type == ANIMTYPE_GPLAYER) {
         tooltip = TIP_(
-            "Lock Channel\nShows all keyframes during animation playback and enabled all frames "
-            "for editing "
+            "Lock Channel\nShow all keyframes during animation playback and enable all frames for editing "
             "(uncheck to use only the current keyframe during animation playback and editing)");
       }
       else {

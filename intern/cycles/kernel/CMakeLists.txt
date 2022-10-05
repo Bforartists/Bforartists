@@ -243,6 +243,7 @@ set(SRC_KERNEL_INTEGRATOR_HEADERS
   integrator/intersect_shadow.h
   integrator/intersect_subsurface.h
   integrator/intersect_volume_stack.h
+  integrator/guiding.h
   integrator/megakernel.h
   integrator/mnee.h
   integrator/path_state.h
@@ -529,7 +530,7 @@ if(WITH_CYCLES_CUDA_BINARIES)
     endif()
     if(DEFINED cuda_nvcc_executable AND DEFINED cuda_toolkit_root_dir)
       # Compile regular kernel
-      CYCLES_CUDA_KERNEL_ADD(${arch} ${prev_arch} kernel "" "${cuda_sources}" FALSE)
+      cycles_cuda_kernel_add(${arch} ${prev_arch} kernel "" "${cuda_sources}" FALSE)
 
       if(WITH_CYCLES_CUDA_BUILD_SERIAL)
         set(prev_arch ${arch})
@@ -611,7 +612,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYCLES_DEVICE_HIP)
 
   foreach(arch ${CYCLES_HIP_BINARIES_ARCH})
     # Compile regular kernel
-    CYCLES_HIP_KERNEL_ADD(${arch} kernel "" "${hip_sources}" FALSE)
+    cycles_hip_kernel_add(${arch} kernel "" "${hip_sources}" FALSE)
   endforeach()
 
   add_custom_target(cycles_kernel_hip ALL DEPENDS ${hip_fatbins})
@@ -696,11 +697,11 @@ if(WITH_CYCLES_DEVICE_OPTIX AND WITH_CYCLES_CUDA_BINARIES)
     delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${output}" ${CYCLES_INSTALL_PATH}/lib)
   endmacro()
 
-  CYCLES_OPTIX_KERNEL_ADD(
+  cycles_optix_kernel_add(
     kernel_optix
     "device/optix/kernel.cu"
     "")
-  CYCLES_OPTIX_KERNEL_ADD(
+  cycles_optix_kernel_add(
     kernel_optix_shader_raytrace
     "device/optix/kernel_shader_raytrace.cu"
     "--keep-device-functions")
@@ -726,14 +727,27 @@ if(WITH_CYCLES_DEVICE_ONEAPI)
     ${SRC_UTIL_HEADERS}
   )
 
+  set (ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS 1)
+  if (WITH_CYCLES_ONEAPI_BINARIES)
+    cmake_host_system_information(RESULT AVAILABLE_MEMORY_AMOUNT QUERY AVAILABLE_PHYSICAL_MEMORY)
+    # Conservative value of peak consumption here, just to be fully sure that other backend compilers will have enough memory as well
+    set(ONEAPI_GPU_COMPILER_MEMORY_AT_PEAK_MB 8150)
+    math(EXPR ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS "${AVAILABLE_MEMORY_AMOUNT} / ${ONEAPI_GPU_COMPILER_MEMORY_AT_PEAK_MB}")
+    if (ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS LESS 1)
+      set(ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS 1)
+    endif()
+    message(STATUS "${ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS} instance(s) of oneAPI offline compiler will be used.")
+  endif()
   # SYCL_CPP_FLAGS is a variable that the user can set to pass extra compiler options
   set(sycl_compiler_flags
       ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_KERNEL_DEVICE_ONEAPI}
       -fsycl
       -fsycl-unnamed-lambda
       -fdelayed-template-parsing
-      -mllvm -inlinedefault-threshold=300
-      -mllvm -inlinehint-threshold=400
+      -mllvm -inlinedefault-threshold=250
+      -mllvm -inlinehint-threshold=350
+      -fsycl-device-code-split=per_kernel
+      -fsycl-max-parallel-link-jobs=${ONEAPI_OFFLINE_COMPILER_PARALLEL_JOBS}
       -shared
       -DWITH_ONEAPI
       -ffast-math
@@ -950,8 +964,8 @@ endif()
 
 # Warnings to avoid using doubles in the kernel.
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_C_COMPILER_ID MATCHES "Clang")
-  ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS _has_cxxflag_float_conversion "-Werror=float-conversion")
-  ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS _has_cxxflag_double_promotion "-Werror=double-promotion")
+  add_check_cxx_compiler_flag(CMAKE_CXX_FLAGS _has_cxxflag_float_conversion "-Werror=float-conversion")
+  add_check_cxx_compiler_flag(CMAKE_CXX_FLAGS _has_cxxflag_double_promotion "-Werror=double-promotion")
   unset(_has_cxxflag_float_conversion)
   unset(_has_cxxflag_double_promotion)
 endif()

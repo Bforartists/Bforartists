@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 import math
@@ -918,25 +917,23 @@ def mini_grid(self, context, color):
 
 def draw_shader(self, color, alpha, type, coords, size=1, indices=None):
     """ Create a batch for a draw type """
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glEnable(bgl.GL_LINE_SMOOTH)
+    gpu.state.blend_set('ALPHA')
     if type =='POINTS':
-        bgl.glPointSize(size)
+        gpu.state.program_point_size_set(False)
+        gpu.state.point_size_set(size)
+        shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     else:
-        bgl.glLineWidth(size)
+        shader = gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')
+        shader.uniform_float("viewportSize", gpu.state.viewport_get()[2:])
+        shader.uniform_float("lineWidth", 1.0)
+
     try:
-        if len(coords[0])>2:
-            shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        else:
-            shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-        batch = batch_for_shader(shader, type, {"pos": coords}, indices=indices)
-        shader.bind()
         shader.uniform_float("color", (color[0], color[1], color[2], alpha))
+        batch = batch_for_shader(shader, type, {"pos": coords}, indices=indices)
         batch.draw(shader)
-        bgl.glLineWidth(1)
-        bgl.glPointSize(1)
-        bgl.glDisable(bgl.GL_LINE_SMOOTH)
-        bgl.glDisable(bgl.GL_BLEND)
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         self.report({'ERROR'}, str(exc_value))
+
+    gpu.state.point_size_set(1.0)
+    gpu.state.blend_set('NONE')

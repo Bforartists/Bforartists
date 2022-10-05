@@ -1057,7 +1057,9 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         }
 
         if (median->v_crease) {
-          BM_mesh_cd_flag_ensure(bm, me, ME_CDFLAG_VERT_CREASE);
+          if (!CustomData_has_layer(&bm->vdata, CD_CREASE)) {
+            BM_data_layer_add(bm, &bm->vdata, CD_CREASE);
+          }
           cd_vert_crease_offset = CustomData_get_offset(&bm->vdata, CD_CREASE);
           BLI_assert(cd_vert_crease_offset != -1);
 
@@ -1125,7 +1127,9 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         }
 
         if (median->e_crease) {
-          BM_mesh_cd_flag_ensure(bm, me, ME_CDFLAG_EDGE_CREASE);
+          if (!CustomData_has_layer(&bm->edata, CD_CREASE)) {
+            BM_data_layer_add(bm, &bm->edata, CD_CREASE);
+          }
           cd_edge_crease_offset = CustomData_get_offset(&bm->edata, CD_CREASE);
           BLI_assert(cd_edge_crease_offset != -1);
 

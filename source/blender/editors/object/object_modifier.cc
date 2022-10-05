@@ -522,7 +522,7 @@ void ED_object_modifier_copy_to_object(bContext *C,
   DEG_relations_tag_update(bmain);
 }
 
-bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
+bool ED_object_modifier_convert_psys_to_mesh(ReportList * /*reports*/,
                                              Main *bmain,
                                              Depsgraph *depsgraph,
                                              Scene *scene,
@@ -530,6 +530,7 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
                                              Object *ob,
                                              ModifierData *md)
 {
+  using namespace blender;
   int cvert = 0;
 
   if (md->type != eModifierType_ParticleSystem) {
@@ -599,13 +600,18 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
   MVert *mvert = verts.data();
   MEdge *medge = edges.data();
 
+  bke::MutableAttributeAccessor attributes = me->attributes_for_write();
+  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+      ".select_vert", ATTR_DOMAIN_POINT);
+
   /* copy coordinates */
+  int vert_index = 0;
   cache = psys_eval->pathcache;
   for (int a = 0; a < part_num; a++) {
     ParticleCacheKey *key = cache[a];
     int kmax = key->segments;
-    for (int k = 0; k <= kmax; k++, key++, cvert++, mvert++) {
-      copy_v3_v3(mvert->co, key->co);
+    for (int k = 0; k <= kmax; k++, key++, cvert++, vert_index++) {
+      copy_v3_v3(mvert[vert_index].co, key->co);
       if (k) {
         medge->v1 = cvert - 1;
         medge->v2 = cvert;
@@ -614,7 +620,7 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
       }
       else {
         /* cheap trick to select the roots */
-        mvert->flag |= SELECT;
+        select_vert.span[vert_index] = true;
       }
     }
   }
@@ -623,8 +629,8 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
   for (int a = 0; a < child_num; a++) {
     ParticleCacheKey *key = cache[a];
     int kmax = key->segments;
-    for (int k = 0; k <= kmax; k++, key++, cvert++, mvert++) {
-      copy_v3_v3(mvert->co, key->co);
+    for (int k = 0; k <= kmax; k++, key++, cvert++, vert_index++) {
+      copy_v3_v3(mvert[vert_index].co, key->co);
       if (k) {
         medge->v1 = cvert - 1;
         medge->v2 = cvert;
@@ -633,10 +639,12 @@ bool ED_object_modifier_convert_psys_to_mesh(ReportList *UNUSED(reports),
       }
       else {
         /* cheap trick to select the roots */
-        mvert->flag |= SELECT;
+        select_vert.span[vert_index] = true;
       }
     }
   }
+
+  select_vert.finish();
 
   DEG_relations_tag_update(bmain);
 
@@ -933,7 +941,7 @@ bool ED_object_modifier_apply(Main *bmain,
 }
 
 bool ED_object_modifier_copy(
-    ReportList *UNUSED(reports), Main *bmain, Scene *scene, Object *ob, ModifierData *md)
+    ReportList * /*reports*/, Main *bmain, Scene *scene, Object *ob, ModifierData *md)
 {
   if (md->type == eModifierType_ParticleSystem) {
     ModifierData *nmd = object_copy_particle_system(
@@ -978,8 +986,8 @@ static int modifier_add_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem *modifier_add_itemf(bContext *C,
-                                                  PointerRNA *UNUSED(ptr),
-                                                  PropertyRNA *UNUSED(prop),
+                                                  PointerRNA * /*ptr*/,
+                                                  PropertyRNA * /*prop*/,
                                                   bool *r_free)
 {
   Object *ob = ED_object_active_context(C);
@@ -1580,8 +1588,8 @@ static int modifier_apply_as_shapekey_invoke(bContext *C, wmOperator *op, const 
   return retval;
 }
 
-static char *modifier_apply_as_shapekey_get_description(struct bContext *UNUSED(C),
-                                                        struct wmOperatorType *UNUSED(op),
+static char *modifier_apply_as_shapekey_get_description(struct bContext * /*C*/,
+                                                        struct wmOperatorType * /*op*/,
                                                         struct PointerRNA *values)
 {
   bool keep = RNA_boolean_get(values, "keep_modifier");
@@ -1639,7 +1647,7 @@ static int modifier_convert_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int modifier_convert_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int modifier_convert_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return modifier_convert_exec(C, op);
@@ -1932,7 +1940,7 @@ static int multires_higher_levels_delete_exec(bContext *C, wmOperator *op)
 
 static int multires_higher_levels_delete_invoke(bContext *C,
                                                 wmOperator *op,
-                                                const wmEvent *UNUSED(event))
+                                                const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_higher_levels_delete_exec(C, op);
@@ -2008,7 +2016,7 @@ static int multires_subdivide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_subdivide_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int multires_subdivide_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_subdivide_exec(C, op);
@@ -2083,7 +2091,7 @@ static int multires_reshape_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_reshape_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int multires_reshape_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_reshape_exec(C, op);
@@ -2140,7 +2148,7 @@ static int multires_external_save_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_external_save_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int multires_external_save_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   Object *ob = ED_object_active_context(C);
   Mesh *me = static_cast<Mesh *>(ob->data);
@@ -2205,7 +2213,7 @@ void OBJECT_OT_multires_external_save(wmOperatorType *ot)
 /** \name Multires Pack Operator
  * \{ */
 
-static int multires_external_pack_exec(bContext *C, wmOperator *UNUSED(op))
+static int multires_external_pack_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = ED_object_active_context(C);
   Mesh *me = static_cast<Mesh *>(ob->data);
@@ -2262,7 +2270,7 @@ static int multires_base_apply_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_base_apply_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int multires_base_apply_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_base_apply_exec(C, op);
@@ -2314,7 +2322,7 @@ static int multires_unsubdivide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_unsubdivide_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int multires_unsubdivide_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_unsubdivide_exec(C, op);
@@ -2368,9 +2376,7 @@ static int multires_rebuild_subdiv_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int multires_rebuild_subdiv_invoke(bContext *C,
-                                          wmOperator *op,
-                                          const wmEvent *UNUSED(event))
+static int multires_rebuild_subdiv_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return multires_rebuild_subdiv_exec(C, op);
@@ -2445,7 +2451,7 @@ static void skin_root_clear(BMVert *bm_vert, GSet *visited, const int cd_vert_sk
   }
 }
 
-static int skin_root_mark_exec(bContext *C, wmOperator *UNUSED(op))
+static int skin_root_mark_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = CTX_data_edit_object(C);
   BMEditMesh *em = BKE_editmesh_from_object(ob);
@@ -2554,7 +2560,7 @@ void OBJECT_OT_skin_loose_mark_clear(wmOperatorType *ot)
   RNA_def_enum(ot->srna, "action", action_items, SKIN_LOOSE_MARK, "Action", nullptr);
 }
 
-static int skin_radii_equalize_exec(bContext *C, wmOperator *UNUSED(op))
+static int skin_radii_equalize_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = CTX_data_edit_object(C);
   BMEditMesh *em = BKE_editmesh_from_object(ob);
@@ -2742,7 +2748,7 @@ static int skin_armature_create_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int skin_armature_create_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int skin_armature_create_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return skin_armature_create_exec(C, op);
@@ -2806,7 +2812,7 @@ static int correctivesmooth_bind_exec(bContext *C, wmOperator *op)
     /* Signal to modifier to recalculate. */
     CorrectiveSmoothModifierData *csmd_eval = (CorrectiveSmoothModifierData *)
         BKE_modifier_get_evaluated(depsgraph, ob, &csmd->modifier);
-    csmd_eval->bind_coords_num = (uint)-1;
+    csmd_eval->bind_coords_num = uint(-1);
 
     /* Force modifier to run, it will call binding routine
      * (this has to happen outside of depsgraph evaluation). */
@@ -2819,7 +2825,7 @@ static int correctivesmooth_bind_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int correctivesmooth_bind_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int correctivesmooth_bind_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return correctivesmooth_bind_exec(C, op);
@@ -2894,7 +2900,7 @@ static int meshdeform_bind_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int meshdeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int meshdeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return meshdeform_bind_exec(C, op);
@@ -2948,7 +2954,7 @@ static int explode_refresh_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int explode_refresh_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int explode_refresh_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return explode_refresh_exec(C, op);
@@ -3000,7 +3006,7 @@ static void oceanbake_free(void *customdata)
 }
 
 /* called by oceanbake, only to check job 'stop' value */
-static int oceanbake_breakjob(void *UNUSED(customdata))
+static int oceanbake_breakjob(void * /*customdata*/)
 {
   // OceanBakeJob *ob = (OceanBakeJob *)customdata;
   // return *(ob->stop);
@@ -3149,7 +3155,7 @@ static int ocean_bake_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int ocean_bake_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int ocean_bake_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return ocean_bake_exec(C, op);
@@ -3226,7 +3232,7 @@ static int laplaciandeform_bind_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int laplaciandeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int laplaciandeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return laplaciandeform_bind_exec(C, op);
@@ -3293,7 +3299,7 @@ static int surfacedeform_bind_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int surfacedeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int surfacedeform_bind_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (edit_modifier_invoke_properties(C, op)) {
     return surfacedeform_bind_exec(C, op);
@@ -3376,7 +3382,7 @@ void OBJECT_OT_geometry_nodes_input_attribute_toggle(wmOperatorType *ot)
 /** \name Copy and Assign Geometry Node Group operator
  * \{ */
 
-static int geometry_node_tree_copy_assign_exec(bContext *C, wmOperator *UNUSED(op))
+static int geometry_node_tree_copy_assign_exec(bContext *C, wmOperator * /*op*/)
 {
   Main *bmain = CTX_data_main(C);
   Object *ob = ED_object_active_context(C);

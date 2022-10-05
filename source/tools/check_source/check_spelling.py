@@ -163,7 +163,7 @@ re_ignore = re.compile(
     # Doxygen style #SOME_CODE.
     r'#\S+|'
     # Doxygen commands: \param foo
-    r"\\(section|subsection|subsubsection|defgroup|ingroup|param|tparam|page|a|see)\s+\S+|"
+    r"\\(section|subsection|subsubsection|defgroup|ingroup|addtogroup|param|tparam|page|a|see)\s+\S+|"
     # Doxygen commands without any arguments after them: \command
     r"\\(retval|todo|name)\b|"
     # Doxygen 'param' syntax used rarely: \param foo[in,out]

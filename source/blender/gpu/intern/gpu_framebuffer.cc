@@ -148,9 +148,9 @@ void FrameBuffer::load_store_config_array(const GPULoadStore *load_store_actions
   }
 }
 
-unsigned int FrameBuffer::get_bits_per_pixel()
+uint FrameBuffer::get_bits_per_pixel()
 {
-  unsigned int total_bits = 0;
+  uint total_bits = 0;
   for (GPUAttachment &attachment : attachments_) {
     Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
     if (tex != nullptr) {
@@ -673,7 +673,7 @@ void GPU_offscreen_bind(GPUOffScreen *ofs, bool save)
   unwrap(gpu_offscreen_fb_get(ofs))->bind(false);
 }
 
-void GPU_offscreen_unbind(GPUOffScreen *UNUSED(ofs), bool restore)
+void GPU_offscreen_unbind(GPUOffScreen * /*ofs*/, bool restore)
 {
   GPUFrameBuffer *fb = nullptr;
   if (restore) {

@@ -10,13 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Edit Align Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 from bpy.props import EnumProperty
 
 
@@ -71,14 +71,11 @@ class PIE_MT_Align(Menu):
         # 2 - BOTTOM
         pie.operator("align.2xyz", text="Align To Y-0").axis = '1'
         # 8 - TOP
-        pie.operator("align.selected2xyz",
-                    text="Align Y").axis = 'Y'
+        pie.operator("align.selected2xyz", text="Align Y").axis = 'Y'
         # 7 - TOP - LEFT
-        pie.operator("align.selected2xyz",
-                    text="Align X").axis = 'X'
+        pie.operator("align.selected2xyz", text="Align X").axis = 'X'
         # 9 - TOP - RIGHT
-        pie.operator("align.selected2xyz",
-                    text="Align Z").axis = 'Z'
+        pie.operator("align.selected2xyz", text="Align Z").axis = 'Z'
         # 1 - BOTTOM - LEFT
         pie.operator("align.2xyz", text="Align To X-0").axis = '0'
         # 3 - BOTTOM - RIGHT
@@ -94,14 +91,14 @@ class PIE_OT_AlignSelectedXYZ(Operator):
 
     axis: EnumProperty(
         name="Axis",
-        items=[
+        items=(
             ('X', "X", "X Axis"),
             ('Y', "Y", "Y Axis"),
-            ('Z', "Z", "Z Axis")
-            ],
+            ('Z', "Z", "Z Axis"),
+        ),
         description="Choose an axis for alignment",
         default='X'
-        )
+    )
 
     @classmethod
     def poll(cls, context):
@@ -112,8 +109,8 @@ class PIE_OT_AlignSelectedXYZ(Operator):
         values = {
             'X': [(0, 1, 1), (True, False, False)],
             'Y': [(1, 0, 1), (False, True, False)],
-            'Z': [(1, 1, 0), (False, False, True)]
-            }
+            'Z': [(1, 1, 0), (False, False, True)],
+        }
         chosen_value = values[self.axis][0]
         constraint_value = values[self.axis][1]
         bpy.ops.transform.resize(
@@ -137,15 +134,15 @@ class PIE_OT_AlignToXYZ0(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: EnumProperty(
-            name="Axis",
-            items=[
-                ('0', "X", "X Axis"),
-                ('1', "Y", "Y Axis"),
-                ('2', "Z", "Z Axis")
-                ],
-            description="Choose an axis for alignment",
-            default='0'
-            )
+        name="Axis",
+        items=(
+            ('0', "X", "X Axis"),
+            ('1', "Y", "Y Axis"),
+            ('2', "Z", "Z Axis"),
+        ),
+        description="Choose an axis for alignment",
+        default='0'
+    )
 
     @classmethod
     def poll(cls, context):
@@ -171,24 +168,24 @@ class PIE_OT_AlignXYZAll(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: EnumProperty(
-            name="Axis",
-            items=[
-                ('0', "X", "X Axis"),
-                ('1', "Y", "Y Axis"),
-                ('2', "Z", "Z Axis")
-                ],
-            description="Choose an axis for alignment",
-            default='0'
-            )
+        name="Axis",
+        items=(
+            ('0', "X", "X Axis"),
+            ('1', "Y", "Y Axis"),
+            ('2', "Z", "Z Axis"),
+        ),
+        description="Choose an axis for alignment",
+        default='0'
+    )
     side: EnumProperty(
-            name="Side",
-            items=[
-                ('POSITIVE', "Front", "Align on the positive chosen axis"),
-                ('NEGATIVE', "Back", "Align acriss the negative chosen axis"),
-                ],
-            description="Choose a side for alignment",
-            default='POSITIVE'
-            )
+        name="Side",
+        items=[
+            ('POSITIVE', "Front", "Align on the positive chosen axis"),
+            ('NEGATIVE', "Back", "Align acriss the negative chosen axis"),
+        ],
+        description="Choose a side for alignment",
+        default='POSITIVE'
+    )
 
     @classmethod
     def poll(cls, context):
@@ -229,7 +226,7 @@ classes = (
     PIE_OT_AlignSelectedXYZ,
     PIE_OT_AlignToXYZ0,
     PIE_OT_AlignXYZAll,
-    )
+)
 
 addon_keymaps = []
 

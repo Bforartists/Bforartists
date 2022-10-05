@@ -98,7 +98,6 @@ class PoseActionCreator:
         """Store the current pose into the given action."""
         self._store_bone_pose_parameters(dst_action)
         self._store_animated_parameters(dst_action)
-        self._store_parameters_from_callback(dst_action)
 
     def _store_bone_pose_parameters(self, dst_action: Action) -> None:
         """Store loc/rot/scale/bbone values in the Action."""
@@ -145,13 +144,6 @@ class PoseActionCreator:
             )
             dst_fcurve.keyframe_points.insert(self.params.src_frame_nr, value=value)
             dst_fcurve.update()
-
-    def _store_parameters_from_callback(self, dst_action: Action) -> None:
-        """Store extra parameters in the pose based on arbitrary callbacks.
-
-        Not implemented yet, needs a proper design & some user stories.
-        """
-        pass
 
     def _store_location(self, dst_action: Action, bone_name: str) -> None:
         """Store bone location."""

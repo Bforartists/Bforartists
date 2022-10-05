@@ -283,7 +283,7 @@ class SpreadsheetLayoutDrawer : public SpreadsheetDrawer {
   void draw_float_vector(const CellDrawParams &params, const Span<float> values) const
   {
     BLI_assert(!values.is_empty());
-    const float segment_width = (float)params.width / values.size();
+    const float segment_width = float(params.width) / values.size();
     for (const int i : values.index_range()) {
       std::stringstream ss;
       const float value = values[i];
@@ -314,7 +314,7 @@ class SpreadsheetLayoutDrawer : public SpreadsheetDrawer {
   {
     const ColorGeometry4f float_color = color.decode();
     Span<float> values(&float_color.r, 4);
-    const float segment_width = (float)params.width / values.size();
+    const float segment_width = float(params.width) / values.size();
     for (const int i : values.index_range()) {
       std::stringstream ss;
       const float value = values[i];
@@ -342,7 +342,7 @@ class SpreadsheetLayoutDrawer : public SpreadsheetDrawer {
       /* Tooltip showing raw byte values. Encode values in pointer to avoid memory allocation. */
       UI_but_func_tooltip_set(
           but,
-          [](bContext * /*C*/, void *argN, const char *UNUSED(tip)) {
+          [](bContext * /*C*/, void *argN, const char * /*tip*/) {
             const uint32_t uint_color = POINTER_AS_UINT(argN);
             ColorGeometry4b color = *(ColorGeometry4b *)&uint_color;
             return BLI_sprintfN(TIP_("Byte Color (sRGB encoded):\n%3d  %3d  %3d  %3d"),
