@@ -8,7 +8,6 @@
 #include "BKE_bvhutils.h"
 #include "BKE_context.h"
 #include "BKE_curves.hh"
-#include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_report.h"
 
@@ -16,10 +15,6 @@
 
 #include "UI_interface.h"
 
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
-
-#include "BLI_enumerable_thread_specific.hh"
 #include "BLI_length_parameterize.hh"
 #include "BLI_task.hh"
 
@@ -59,7 +54,7 @@ static std::optional<float3> find_curves_brush_position(const CurvesGeometry &cu
                                                         const Span<float3> positions)
 {
   /* This value might have to be adjusted based on user feedback. */
-  const float brush_inner_radius_re = std::min<float>(brush_radius_re, (float)UI_UNIT_X / 3.0f);
+  const float brush_inner_radius_re = std::min<float>(brush_radius_re, float(UI_UNIT_X) / 3.0f);
   const float brush_inner_radius_sq_re = pow2f(brush_inner_radius_re);
 
   float4x4 projection;

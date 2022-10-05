@@ -10,14 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Select Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
     Menu,
     Operator
 )
-
 
 
 # Pie Selection Object Mode - A
@@ -55,6 +54,8 @@ class PIE_MT_SelectionsMore(Menu):
         props.direction = 'CHILD'
 
 # Pie Selection Object Mode - A
+
+
 class PIE_MT_SelectionsOM(Menu):
     bl_idname = "PIE_MT_selectionsom"
     bl_label = "Pie Selections Object Mode"
@@ -67,11 +68,9 @@ class PIE_MT_SelectionsOM(Menu):
         # 6 - RIGHT
         pie.operator("object.select_by_type", text="Select By Type")
         # 2 - BOTTOM
-        pie.operator("object.select_all", text="Invert Selection",
-                    icon='ZOOM_PREVIOUS').action = 'INVERT'
+        pie.operator("object.select_all", text="Invert Selection", icon='ZOOM_PREVIOUS').action = 'INVERT'
         # 8 - TOP
-        pie.operator("object.select_all", text="Select All Toggle",
-                    icon='NONE').action = 'TOGGLE'
+        pie.operator("object.select_all", text="Select All Toggle", icon='NONE').action = 'TOGGLE'
         # 7 - TOP - LEFT
         pie.operator("view3d.select_circle", text="Circle Select")
         # 9 - TOP - RIGHT
@@ -214,7 +213,7 @@ classes = (
     PIE_OT_classedgeop,
     PIE_OT_classfaceop,
     PIE_OT_vertsedgesfacesop
-    )
+)
 
 addon_keymaps = []
 

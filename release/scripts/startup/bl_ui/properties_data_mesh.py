@@ -531,13 +531,30 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
 
         layout.separator()
 
-        col = layout.column()
-        col.use_property_split = False
-        col.enabled = obj is not None and obj.mode != 'EDIT'
-        col.prop(me, "use_customdata_vertex_bevel", text="Store Vertex Bevel Weight")
-        col.prop(me, "use_customdata_edge_bevel", text="Store Edge Bevel Weight")
-        col.prop(me, "use_customdata_vertex_crease", text="Vertex Crease")
-        col.prop(me, "use_customdata_edge_crease", text="Store Edge Crease")
+        if me.has_custom_normals:
+            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
+
+        if me.has_bevel_weight_edge:
+            col.operator("mesh.customdata_bevel_weight_edge_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_bevel_weight_edge_add", icon='ADD')
+
+        if me.has_bevel_weight_vertex:
+            col.operator("mesh.customdata_bevel_weight_vertex_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_bevel_weight_vertex_add", icon='ADD')
+
+        if me.has_crease_edge:
+            col.operator("mesh.customdata_crease_edge_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_crease_edge_add", icon='ADD')
+
+        if me.has_crease_vertex:
+            col.operator("mesh.customdata_crease_vertex_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_crease_vertex_add", icon='ADD')
 
 
 class DATA_PT_custom_props_mesh(MeshButtonsPanel, PropertyPanel, Panel):

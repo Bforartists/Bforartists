@@ -10,14 +10,14 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Sculpt Pie"
-    }
+}
 
 import os
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 
 
 # Sculpt Draw
@@ -43,27 +43,27 @@ class PIE_MT_SculptPie(Menu):
         pie.scale_y = 1.2
         # 4 - LEFT
         pie.operator("paint.brush_select",
-                    text="    Crease", icon_value=brush_icons["crease"]).sculpt_tool = 'CREASE'
+                     text="    Crease", icon_value=brush_icons["crease"]).sculpt_tool = 'CREASE'
         # 6 - RIGHT
         pie.operator("paint.brush_select",
-                    text="    Blob", icon_value=brush_icons["blob"]).sculpt_tool = 'BLOB'
+                     text="    Blob", icon_value=brush_icons["blob"]).sculpt_tool = 'BLOB'
         # 2 - BOTTOM
         pie.menu(PIE_MT_Sculpttwo.bl_idname, text="More Brushes")
         # 8 - TOP
         pie.operator("sculpt.sculptraw",
-                    text="    Draw", icon_value=brush_icons["draw"])
+                     text="    Draw", icon_value=brush_icons["draw"])
         # 7 - TOP - LEFT
         pie.operator("paint.brush_select",
-                    text="    Clay", icon_value=brush_icons["clay"]).sculpt_tool = 'CLAY'
+                     text="    Clay", icon_value=brush_icons["clay"]).sculpt_tool = 'CLAY'
         # 9 - TOP - RIGHT
         pie.operator("paint.brush_select",
-                    text="    Clay Strips", icon_value=brush_icons["clay_strips"]).sculpt_tool = 'CLAY_STRIPS'
+                     text="    Clay Strips", icon_value=brush_icons["clay_strips"]).sculpt_tool = 'CLAY_STRIPS'
         # 1 - BOTTOM - LEFT
         pie.operator("paint.brush_select",
-                    text="    Inflate/Deflate", icon_value=brush_icons["inflate"]).sculpt_tool = 'INFLATE'
+                     text="    Inflate/Deflate", icon_value=brush_icons["inflate"]).sculpt_tool = 'INFLATE'
         # 3 - BOTTOM - RIGHT
         pie.menu(PIE_MT_Sculptthree.bl_idname,
-                    text="    Grab Brushes", icon_value=brush_icons["grab"])
+                 text="    Grab Brushes", icon_value=brush_icons["grab"])
 
 
 # Pie Sculpt 2
@@ -116,12 +116,15 @@ class PIE_MT_Sculptthree(Menu):
 
 brush_icons = {}
 
+
 def create_icons():
     global brush_icons
     icons_directory = bpy.utils.system_resource('DATAFILES', path="icons")
-    brushes = ["crease", "blob", "smooth", "draw", "clay", "clay_strips", "inflate", "grab",
+    brushes = (
+        "crease", "blob", "smooth", "draw", "clay", "clay_strips", "inflate", "grab",
         "nudge", "thumb", "snake_hook", "rotate", "flatten", "scrape", "fill", "pinch",
-        "layer", "mask"]
+        "layer", "mask",
+    )
     for brush in brushes:
         filename = os.path.join(icons_directory, f"brush.sculpt.{brush}.dat")
         icon_value = bpy.app.icons.new_triangles_from_file(filename)
@@ -133,12 +136,13 @@ def release_icons():
     for value in brush_icons.values():
         bpy.app.icons.release(value)
 
+
 classes = (
     PIE_MT_SculptPie,
     PIE_MT_Sculpttwo,
     PIE_MT_Sculptthree,
     PIE_OT_SculptSculptDraw,
-    )
+)
 
 addon_keymaps = []
 

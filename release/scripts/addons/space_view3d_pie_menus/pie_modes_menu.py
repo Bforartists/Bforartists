@@ -213,9 +213,11 @@ class PIE_MT_ObjectEditMode(Menu):
             box = pie.box()
             box.label(text=message, icon="INFO")
 
-        elif ob and ob.type == 'MESH' and ob.mode in {'OBJECT', 'SCULPT', 'VERTEX_PAINT',
-                                                    'WEIGHT_PAINT', 'TEXTURE_PAINT',
-                                                    'PARTICLE_EDIT', 'GPENCIL_EDIT'}:
+        elif ob and ob.type == 'MESH' and ob.mode in {
+                'OBJECT', 'SCULPT', 'VERTEX_PAINT',
+                'WEIGHT_PAINT', 'TEXTURE_PAINT',
+                'PARTICLE_EDIT', 'GPENCIL_EDIT',
+        }:
             pie = layout.menu_pie()
             # 4 - LEFT
             pie.operator("class.pieweightpaint", text="Weight Paint", icon='WPAINT_HLT')
@@ -346,7 +348,8 @@ class PIE_MT_ObjectEditMode(Menu):
         if ob and ob.type == 'GPENCIL':
             pie = layout.menu_pie()
             # 4 - LEFT
-            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Sculpt", icon="SCULPTMODE_HLT").mode = "SCULPT_GPENCIL"
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Sculpt",
+                         icon="SCULPTMODE_HLT").mode = "SCULPT_GPENCIL"
             # 6 - RIGHT
             pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Draw", icon="GREASEPENCIL").mode = "PAINT_GPENCIL"
             # 2 - BOTTOM
@@ -360,9 +363,10 @@ class PIE_MT_ObjectEditMode(Menu):
             # 1 - BOTTOM - LEFT
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_GPENCIL"
-
-
+            pie.operator(
+                PIE_OT_SetObjectModePie.bl_idname,
+                text="Weight Paint",
+                icon="WPAINT_HLT").mode = "WEIGHT_GPENCIL"
 
         elif ob and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"}:
             message = "Active Object has only Object Mode available"
@@ -387,7 +391,7 @@ classes = (
     PIE_OT_ClassParticleEdit,
     PIE_OT_VertsEdgesFaces,
     PIE_OT_SetObjectModePie,
-    )
+)
 
 addon_keymaps = []
 

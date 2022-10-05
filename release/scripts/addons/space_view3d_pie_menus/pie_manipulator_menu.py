@@ -10,7 +10,7 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Manipulator Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
@@ -84,11 +84,10 @@ class PIE_MT_Manipulator(Menu):
         pie.operator("w.manipulators", text="Translate", icon='NONE').type = 'TRANSLATE'
 
 
-
 classes = (
     PIE_OT_WManupulators,
     PIE_MT_Manipulator,
-    )
+)
 
 addon_keymaps = []
 

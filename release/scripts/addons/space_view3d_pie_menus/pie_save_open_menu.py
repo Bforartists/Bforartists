@@ -8,13 +8,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Save Open Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 import os
 
 
@@ -49,7 +49,7 @@ class PIE_MT_SaveOpen(Menu):
         # 2 - BOTTOM
         pie.menu("PIE_MT_fileio", text="Import/Export Menu", icon='IMPORT')
         # 8 - TOP
-        pie.operator("wm.open_mainfile", text="Open File", icon='FILE_FOLDER')
+        pie.menu("PIE_MT_openio", text="Open Menu", icon='FILE_FOLDER')
         # 7 - TOP - LEFT
         pie.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
         # 9 - TOP - RIGHT
@@ -103,6 +103,7 @@ class PIE_MT_recover(Menu):
         box.operator("file.report_missing_files", text="Report Missing Files")
         box.operator("file.find_missing_files", text="Find Missing Files")
 
+
 class PIE_MT_fileio(Menu):
     bl_idname = "PIE_MT_fileio"
     bl_label = "Import/Export"
@@ -116,12 +117,26 @@ class PIE_MT_fileio(Menu):
         box.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
+class PIE_MT_openio(Menu):
+    bl_idname = "PIE_MT_openio"
+    bl_label = "Open/Open Recent"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+        box = pie.split().column()
+        box.operator("wm.open_mainfile", text="Open File", icon='FILE_FOLDER')
+        box.separator()
+        box.menu("TOPBAR_MT_file_open_recent", icon='FILE_FOLDER')
+
+
 classes = (
     PIE_MT_SaveOpen,
     PIE_MT_fileio,
     PIE_MT_recover,
     PIE_MT_link,
-    )
+    PIE_MT_openio,
+)
 
 addon_keymaps = []
 

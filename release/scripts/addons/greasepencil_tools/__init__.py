@@ -4,7 +4,7 @@ bl_info = {
 "name": "Grease Pencil Tools",
 "description": "Extra tools for Grease Pencil",
 "author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
-"version": (1, 6, 1),
+"version": (1, 6, 2),
 "blender": (3, 0, 0),
 "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
 "warning": "",

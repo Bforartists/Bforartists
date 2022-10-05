@@ -190,8 +190,10 @@ def register():
     bpy.utils.register_class(VIEW3D_PT_ui_animation_render)
 
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Screen', space_type='EMPTY')
-    km.keymap_items.new('render.render_screen', 'F12', 'PRESS', shift=True, ctrl=True)
+
+    if wm.keyconfigs.addon:
+        km = wm.keyconfigs.addon.keymaps.new(name='Screen', space_type='EMPTY')
+        km.keymap_items.new('render.render_screen', 'F12', 'PRESS', shift=True, ctrl=True)
 
 
 def unregister():

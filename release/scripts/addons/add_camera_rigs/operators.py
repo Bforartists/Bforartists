@@ -82,7 +82,9 @@ class ADD_CAMERA_RIGS_OT_set_dof_bone(Operator, CameraRigMixin):
         rig, cam = get_rig_and_cam(context.active_object)
 
         cam.data.dof.focus_object = rig
-        cam.data.dof.focus_subtarget = 'Aim_shape_rotation-MCH'
+        cam.data.dof.focus_subtarget = (
+            'Center-MCH' if rig["rig_id"].lower() == '2d_rig'
+            else 'Aim_shape_rotation-MCH')
 
         return {'FINISHED'}
 

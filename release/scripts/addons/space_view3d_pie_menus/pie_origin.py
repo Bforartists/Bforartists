@@ -10,13 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Origin Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 
 
 # Pivot to selection
@@ -40,6 +40,8 @@ class PIE_OT_PivotToSelection(Operator):
         return {'FINISHED'}
 
 # Pivot to Bottom
+
+
 class PIE_OT_PivotBottom(Operator):
     bl_idname = "object.pivotobottom"
     bl_label = "Pivot To Bottom"
@@ -234,20 +236,19 @@ class PIE_MT_OriginPivot(Menu):
                          icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin to Cursor",
-                        icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
+                         icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
             # 2 - BOTTOM
             pie.operator("object.pivotobottom", text="Origin to Bottom",
-                        icon='TRIA_DOWN')
+                         icon='TRIA_DOWN')
             # 8 - TOP
             pie.operator("object.pivot2selection", text="Origin To Selection",
-                        icon='SNAP_INCREMENT')
+                         icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                        icon='NONE').type = 'GEOMETRY_ORIGIN'
+                         icon='NONE').type = 'GEOMETRY_ORIGIN'
             # 9 - TOP - RIGHT
             pie.operator("object.origin_set", text="Origin To Geometry",
-                        icon='NONE').type = 'ORIGIN_GEOMETRY'
-
+                         icon='NONE').type = 'ORIGIN_GEOMETRY'
 
         elif obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:
             # 4 - LEFT
@@ -255,19 +256,19 @@ class PIE_MT_OriginPivot(Menu):
                          icon='NONE')
             # 6 - RIGHT
             pie.operator("object.pivot2cursor_edit", text="Origin to Cursor",
-                        icon='PIVOT_CURSOR')
+                         icon='PIVOT_CURSOR')
             # 2 - BOTTOM
             pie.operator("object.pivotobottom_edit", text="Origin to Bottom",
-                        icon='TRIA_DOWN')
+                         icon='TRIA_DOWN')
             # 8 - TOP
             pie.operator("object.setorigintoselected_edit", text="Origin To Selected",
-                        icon='SNAP_INCREMENT')
+                         icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.geometrytoorigin_edit", text="Geometry To Origin",
-                        icon='NONE')
+                         icon='NONE')
             # 9 - TOP - RIGHT
             pie.operator("object.origintogeometry_edit", text="Origin To Geometry",
-                        icon='NONE')
+                         icon='NONE')
 
         else:
             # 4 - LEFT
@@ -275,16 +276,16 @@ class PIE_MT_OriginPivot(Menu):
                          icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin To 3D Cursor",
-                        icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
+                         icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
             # 2 - BOTTOM
             pie.operator("object.pivot2selection", text="Origin To Selection",
-                        icon='SNAP_INCREMENT')
+                         icon='SNAP_INCREMENT')
             # 8 - TOP
             pie.operator("object.origin_set", text="Origin To Geometry",
-                        icon='NONE').type = 'ORIGIN_GEOMETRY'
+                         icon='NONE').type = 'ORIGIN_GEOMETRY'
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                        icon='NONE').type = 'GEOMETRY_ORIGIN'
+                         icon='NONE').type = 'GEOMETRY_ORIGIN'
 
 
 classes = (
@@ -297,7 +298,7 @@ classes = (
     PIE_OT_OriginToGeometry_edit,
     PIE_OT_GeometryToOrigin_edit,
     PIE_OT_SetOriginToSelected_edit
-    )
+)
 
 addon_keymaps = []
 
