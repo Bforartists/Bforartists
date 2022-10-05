@@ -29,7 +29,7 @@ static void cmp_node_time_declare(NodeDeclarationBuilder &b)
 }
 
 /* custom1 = start_frame, custom2 = end_frame */
-static void node_composit_init_curves_time(bNodeTree *UNUSED(ntree), bNode *node)
+static void node_composit_init_curves_time(bNodeTree * /*ntree*/, bNode *node)
 {
   node->custom1 = 1;
   node->custom2 = 250;
@@ -80,8 +80,7 @@ class TimeCurveOperation : public NodeOperation {
     if (get_start_time() == get_end_time()) {
       return 0.0f;
     }
-    return static_cast<float>(frame_number - get_start_time()) /
-           static_cast<float>(get_end_time() - get_start_time());
+    return float(frame_number - get_start_time()) / float(get_end_time() - get_start_time());
   }
 };
 
@@ -122,12 +121,12 @@ static void cmp_node_curve_vec_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Vector>(N_("Vector"));
 }
 
-static void node_composit_init_curve_vec(bNodeTree *UNUSED(ntree), bNode *node)
+static void node_composit_init_curve_vec(bNodeTree * /*ntree*/, bNode *node)
 {
   node->storage = BKE_curvemapping_add(3, -1.0f, -1.0f, 1.0f, 1.0f);
 }
 
-static void node_buts_curvevec(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+static void node_buts_curvevec(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
   uiTemplateCurveMapping(layout, ptr, "mapping", 'v', false, false, false, false);
 }
@@ -223,7 +222,7 @@ static void cmp_node_rgbcurves_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Color>(N_("Image"));
 }
 
-static void node_composit_init_curve_rgb(bNodeTree *UNUSED(ntree), bNode *node)
+static void node_composit_init_curve_rgb(bNodeTree * /*ntree*/, bNode *node)
 {
   node->storage = BKE_curvemapping_add(4, 0.0f, 0.0f, 1.0f, 1.0f);
 }

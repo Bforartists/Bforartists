@@ -192,7 +192,7 @@ void MESH_OT_loopcut(struct wmOperatorType *ot);
 void MESH_OT_rip(struct wmOperatorType *ot);
 void MESH_OT_rip_edge(struct wmOperatorType *ot);
 
-/* *** editmesh_select.c *** */
+/* *** editmesh_select.cc *** */
 
 void MESH_OT_select_similar(struct wmOperatorType *ot);
 void MESH_OT_select_similar_region(struct wmOperatorType *ot);
@@ -319,6 +319,10 @@ void MESH_OT_customdata_bevel_weight_vertex_add(struct wmOperatorType *ot);
 void MESH_OT_customdata_bevel_weight_vertex_clear(struct wmOperatorType *ot);
 void MESH_OT_customdata_bevel_weight_edge_add(struct wmOperatorType *ot);
 void MESH_OT_customdata_bevel_weight_edge_clear(struct wmOperatorType *ot);
+void MESH_OT_customdata_crease_vertex_add(struct wmOperatorType *ot);
+void MESH_OT_customdata_crease_vertex_clear(struct wmOperatorType *ot);
+void MESH_OT_customdata_crease_edge_add(struct wmOperatorType *ot);
+void MESH_OT_customdata_crease_edge_clear(struct wmOperatorType *ot);
 
 #ifdef __cplusplus
 }

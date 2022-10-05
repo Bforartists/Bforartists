@@ -3,8 +3,8 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 41),
-    "blender": (2, 93, 0),
+    "version": (3, 42),
+    "blender": (3, 4, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
     "warning": "",
@@ -12,7 +12,7 @@ bl_info = {
     "category": "Node",
 }
 
-import bpy, blf, bgl
+import bpy
 import gpu
 from bpy.types import Operator, Panel, Menu
 from bpy.props import (
@@ -390,7 +390,9 @@ def store_mouse_cursor(context, event):
         space.cursor_location = tree.view_center
 
 def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
-    shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    shader = gpu.shader.from_builtin('POLYLINE_SMOOTH_COLOR')
+    shader.uniform_float("viewportSize", gpu.state.viewport_get()[2:])
+    shader.uniform_float("lineWidth", size * dpifac())
 
     vertices = ((x1, y1), (x2, y2))
     vertex_colors = ((colour[0]+(1.0-colour[0])/4,
@@ -400,26 +402,23 @@ def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
                       colour)
 
     batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices, "color": vertex_colors})
-    bgl.glLineWidth(size * dpifac())
-
-    shader.bind()
     batch.draw(shader)
 
 
-def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
+def draw_circle_2d_filled(mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
     radius = radius * dpifac()
     sides = 12
     vertices = [(radius * cos(i * 2 * pi / sides) + mx,
                  radius * sin(i * 2 * pi / sides) + my)
                  for i in range(sides + 1)]
 
-    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
-    shader.bind()
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     shader.uniform_float("color", colour)
+    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
     batch.draw(shader)
 
 
-def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
+def draw_rounded_node_border(node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
     area_width = bpy.context.area.width
     sides = 16
     radius = radius*dpifac()
@@ -441,6 +440,9 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
         ndimy = 0
         radius += 6
 
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+    shader.uniform_float("color", colour)
+
     # Top left corner
     mx, my = bpy.context.region.view2d.view_to_region(nlocx, nlocy, clip=False)
     vertices = [(mx,my)]
@@ -450,9 +452,8 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
+
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", colour)
     batch.draw(shader)
 
     # Top right corner
@@ -464,9 +465,8 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
+
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", colour)
     batch.draw(shader)
 
     # Bottom left corner
@@ -478,9 +478,8 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
+
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", colour)
     batch.draw(shader)
 
     # Bottom right corner
@@ -492,9 +491,8 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
                 cosine = radius * cos(i * 2 * pi / sides) + mx
                 sine = radius * sin(i * 2 * pi / sides) + my
                 vertices.append((cosine,sine))
+
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
-    shader.bind()
-    shader.uniform_float("color", colour)
     batch.draw(shader)
 
     # prepare drawing all edges in one batch
@@ -546,21 +544,13 @@ def draw_rounded_node_border(shader, node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)
     # now draw all edges in one batch
     if len(vertices) != 0:
         batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
-        shader.bind()
-        shader.uniform_float("color", colour)
         batch.draw(shader)
 
 def draw_callback_nodeoutline(self, context, mode):
     if self.mouse_path:
-
-        bgl.glLineWidth(1)
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glEnable(bgl.GL_LINE_SMOOTH)
-        bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+        gpu.state.blend_set('ALPHA')
 
         nodes, links = get_nodes_links(context)
-
-        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
         if mode == "LINK":
             col_outer = (1.0, 0.2, 0.2, 0.4)
@@ -588,24 +578,24 @@ def draw_callback_nodeoutline(self, context, mode):
             col_inner = (0.0, 0.0, 0.0, 0.5)
             col_circle_inner = (0.2, 0.2, 0.2, 1.0)
 
-        draw_rounded_node_border(shader, n1, radius=6, colour=col_outer)  # outline
-        draw_rounded_node_border(shader, n1, radius=5, colour=col_inner)  # inner
-        draw_rounded_node_border(shader, n2, radius=6, colour=col_outer)  # outline
-        draw_rounded_node_border(shader, n2, radius=5, colour=col_inner)  # inner
+        draw_rounded_node_border(n1, radius=6, colour=col_outer)  # outline
+        draw_rounded_node_border(n1, radius=5, colour=col_inner)  # inner
+        draw_rounded_node_border(n2, radius=6, colour=col_outer)  # outline
+        draw_rounded_node_border(n2, radius=5, colour=col_inner)  # inner
 
         draw_line(m1x, m1y, m2x, m2y, 5, col_outer)  # line outline
         draw_line(m1x, m1y, m2x, m2y, 2, col_inner)  # line inner
 
         # circle outline
-        draw_circle_2d_filled(shader, m1x, m1y, 7, col_outer)
-        draw_circle_2d_filled(shader, m2x, m2y, 7, col_outer)
+        draw_circle_2d_filled(m1x, m1y, 7, col_outer)
+        draw_circle_2d_filled(m2x, m2y, 7, col_outer)
 
         # circle inner
-        draw_circle_2d_filled(shader, m1x, m1y, 5, col_circle_inner)
-        draw_circle_2d_filled(shader, m2x, m2y, 5, col_circle_inner)
+        draw_circle_2d_filled(m1x, m1y, 5, col_circle_inner)
+        draw_circle_2d_filled(m2x, m2y, 5, col_circle_inner)
 
-        bgl.glDisable(bgl.GL_BLEND)
-        bgl.glDisable(bgl.GL_LINE_SMOOTH)
+        gpu.state.blend_set('NONE')
+
 def get_active_tree(context):
     tree = context.space_data.node_tree
     path = []

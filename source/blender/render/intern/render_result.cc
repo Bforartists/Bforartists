@@ -169,7 +169,7 @@ static void render_layer_allocate_pass(RenderResult *rr, RenderPass *rp)
     return;
   }
 
-  const size_t rectsize = ((size_t)rr->rectx) * rr->recty * rp->channels;
+  const size_t rectsize = size_t(rr->rectx) * rr->recty * rp->channels;
   rp->rect = MEM_cnew_array<float>(rectsize, rp->name);
 
   if (STREQ(rp->name, RE_PASSNAME_VECTOR)) {
@@ -251,8 +251,6 @@ RenderResult *render_result_new(Render *re,
   rr = MEM_cnew<RenderResult>("new render result");
   rr->rectx = rectx;
   rr->recty = recty;
-  rr->renrect.xmin = 0;
-  rr->renrect.xmax = rectx;
 
   /* tilerect is relative coordinates within render disprect. do not subtract crop yet */
   rr->tilerect.xmin = partrct->xmin - re->disprect.xmin;
@@ -654,8 +652,8 @@ static int order_render_passes(const void *a, const void *b)
   /* 1 if `a` is after `b`. */
   RenderPass *rpa = (RenderPass *)a;
   RenderPass *rpb = (RenderPass *)b;
-  unsigned int passtype_a = passtype_from_name(rpa->name);
-  unsigned int passtype_b = passtype_from_name(rpb->name);
+  uint passtype_a = passtype_from_name(rpa->name);
+  uint passtype_b = passtype_from_name(rpb->name);
 
   /* Render passes with default type always go first. */
   if (passtype_b && !passtype_a) {
@@ -780,7 +778,7 @@ static void do_merge_tile(
   copylen = tilex = rrpart->rectx;
   tiley = rrpart->recty;
 
-  ofs = (((size_t)rrpart->tilerect.ymin) * rr->rectx + rrpart->tilerect.xmin);
+  ofs = (size_t(rrpart->tilerect.ymin) * rr->rectx + rrpart->tilerect.xmin);
   target += pixsize * ofs;
 
   copylen *= sizeof(float) * pixsize;
@@ -1026,7 +1024,7 @@ ImBuf *RE_render_result_rect_to_ibuf(RenderResult *rr,
   RenderView *rv = RE_RenderViewGetById(rr, view_id);
 
   /* if not exists, BKE_imbuf_write makes one */
-  ibuf->rect = (unsigned int *)rv->rect32;
+  ibuf->rect = (uint *)rv->rect32;
   ibuf->rect_float = rv->rectf;
   ibuf->zbuf_float = rv->rectz;
 
@@ -1055,7 +1053,7 @@ ImBuf *RE_render_result_rect_to_ibuf(RenderResult *rr,
 
   /* Color -> gray-scale. */
   /* editing directly would alter the render view */
-  if (imf->planes == R_IMF_PLANES_BW) {
+  if (imf->planes == R_IMF_PLANES_BW && imf->imtype != R_IMF_IMTYPE_MULTILAYER) {
     ImBuf *ibuf_bw = IMB_dupImBuf(ibuf);
     IMB_color_to_bw(ibuf_bw);
     IMB_freeImBuf(ibuf);
@@ -1112,7 +1110,7 @@ void render_result_rect_fill_zero(RenderResult *rr, const int view_id)
 }
 
 void render_result_rect_get_pixels(RenderResult *rr,
-                                   unsigned int *rect,
+                                   uint *rect,
                                    int rectx,
                                    int recty,
                                    const ColorManagedViewSettings *view_settings,
@@ -1125,14 +1123,8 @@ void render_result_rect_get_pixels(RenderResult *rr,
     memcpy(rect, rv->rect32, sizeof(int) * rr->rectx * rr->recty);
   }
   else if (rv && rv->rectf) {
-    IMB_display_buffer_transform_apply((unsigned char *)rect,
-                                       rv->rectf,
-                                       rr->rectx,
-                                       rr->recty,
-                                       4,
-                                       view_settings,
-                                       display_settings,
-                                       true);
+    IMB_display_buffer_transform_apply(
+        (uchar *)rect, rv->rectf, rr->rectx, rr->recty, 4, view_settings, display_settings, true);
   }
   else {
     /* else fill with black */

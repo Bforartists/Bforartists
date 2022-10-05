@@ -53,6 +53,7 @@
 #include "DNA_world_types.h"
 
 #include "BKE_animsys.h"
+#include "BKE_blender.h"
 #include "BKE_brush.h"
 #include "BKE_cloth.h"
 #include "BKE_collection.h"
@@ -1613,12 +1614,13 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
       if (me->totface && !me->totpoly) {
         /* temporarily switch main so that reading from
          * external CustomData works */
-        Main *gmain = G_MAIN;
-        G_MAIN = bmain;
+        Main *orig_gmain = BKE_blender_globals_main_swap(bmain);
 
         BKE_mesh_do_versions_convert_mfaces_to_mpolys(me);
 
-        G_MAIN = gmain;
+        Main *tmp_gmain = BKE_blender_globals_main_swap(orig_gmain);
+        BLI_assert(tmp_gmain == bmain);
+        UNUSED_VARS_NDEBUG(tmp_gmain);
       }
 
       /* Deprecated, only kept for conversion. */
@@ -3385,7 +3387,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
               View3D *v3d = (View3D *)sl;
               v3d->flag &= ~(V3D_LOCAL_COLLECTIONS | V3D_FLAG_UNUSED_1 | V3D_FLAG_UNUSED_10 |
                              V3D_FLAG_UNUSED_12);
-              v3d->flag2 &= ~(V3D_FLAG2_UNUSED_3 | V3D_FLAG2_UNUSED_6 | V3D_FLAG2_UNUSED_12 |
+              v3d->flag2 &= ~((1 << 3) | V3D_FLAG2_UNUSED_6 | V3D_FLAG2_UNUSED_12 |
                               V3D_FLAG2_UNUSED_13 | V3D_FLAG2_UNUSED_14 | V3D_FLAG2_UNUSED_15);
               break;
             }

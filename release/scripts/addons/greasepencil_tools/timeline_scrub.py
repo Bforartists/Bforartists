@@ -48,7 +48,7 @@ def draw_callback_px(self, context):
         self.batch_timeline.draw(shader)
 
     # Display keyframes
-    if self.use_hud_keyframes:
+    if self.use_hud_keyframes and self.batch_keyframes:
         if self.keyframe_aspect == 'LINE':
             gpu.state.line_width_set(3.0)
             shader.bind()
@@ -302,50 +302,50 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         else:
             ui_key_pos = self.pos[:-2]
 
+        self.batch_keyframes = None # init if there are no keyframe to draw
+        if ui_key_pos:
+            if self.keyframe_aspect == 'LINE':
+                key_lines = []
+                # Slice off position of start/end frame added last (in list for snapping)
+                for i in ui_key_pos:
+                    key_lines.append(
+                        (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my - (key_height/2)))
+                    key_lines.append(
+                        (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my + (key_height/2)))
 
-        # keyframe display
-        if self.keyframe_aspect == 'LINE':
-            key_lines = []
-            # Slice off position of start/end frame added last (in list for snapping)
-            for i in ui_key_pos:
-                key_lines.append(
-                    (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my - (key_height/2)))
-                key_lines.append(
-                    (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my + (key_height/2)))
+                self.batch_keyframes = batch_for_shader(
+                    shader, 'LINES', {"pos": key_lines})
 
-            self.batch_keyframes = batch_for_shader(
-                shader, 'LINES', {"pos": key_lines})
+            else:
+                # diamond and square
+                # keysize5 for square, 4 or 6 for diamond
+                keysize = 6 if self.keyframe_aspect == 'DIAMOND' else 5
+                upper = 0
 
-        else:
-            # diamond and square
-            # keysize5 for square, 4 or 6 for diamond
-            keysize = 6 if self.keyframe_aspect == 'DIAMOND' else 5
-            upper = 0
+                shaped_key = []
+                indices = []
+                idx_offset = 0
+                for i in ui_key_pos:
+                    center = self.init_mouse_x + ((i-self.init_frame)*self.px_step)
+                    if self.keyframe_aspect == 'DIAMOND':
+                        # +1 on x is to correct pixel alignment
+                        shaped_key += [(center-keysize, my+upper),
+                                    (center+1, my+keysize+upper),
+                                    (center+keysize, my+upper),
+                                    (center+1, my-keysize+upper)]
 
-            shaped_key = []
-            indices = []
-            idx_offset = 0
-            for i in ui_key_pos:
-                center = self.init_mouse_x + ((i-self.init_frame)*self.px_step)
-                if self.keyframe_aspect == 'DIAMOND':
-                    # +1 on x is to correct pixel alignment
-                    shaped_key += [(center-keysize, my+upper),
-                                   (center+1, my+keysize+upper),
-                                   (center+keysize, my+upper),
-                                   (center+1, my-keysize+upper)]
+                    elif self.keyframe_aspect == 'SQUARE':
+                        shaped_key += [(center-keysize+1, my-keysize+upper),
+                                    (center-keysize+1, my+keysize+upper),
+                                    (center+keysize, my+keysize+upper),
+                                    (center+keysize, my-keysize+upper)]
 
-                elif self.keyframe_aspect == 'SQUARE':
-                    shaped_key += [(center-keysize+1, my-keysize+upper),
-                                   (center-keysize+1, my+keysize+upper),
-                                   (center+keysize, my+keysize+upper),
-                                   (center+keysize, my-keysize+upper)]
+                    indices += [(0+idx_offset, 1+idx_offset, 2+idx_offset),
+                                (0+idx_offset, 2+idx_offset, 3+idx_offset)]
+                    idx_offset += 4
 
-                indices += [(0+idx_offset, 1+idx_offset, 2+idx_offset),
-                            (0+idx_offset, 2+idx_offset, 3+idx_offset)]
-                idx_offset += 4
-
-            self.batch_keyframes = batch_for_shader(
-                shader, 'TRIS', {"pos": shaped_key}, indices=indices)
+                self.batch_keyframes = batch_for_shader(
+                    shader, 'TRIS', {"pos": shaped_key}, indices=indices)
 
         # Trim snapping list of frame outside of frame range if range lock activated
         # (after drawing batch so those are still showed)

@@ -55,12 +55,13 @@
  * - write #USER (#UserDef struct) if filename is `~/.config/blender/X.XX/config/startup.blend`.
  */
 
+#include <cerrno>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -116,8 +117,6 @@
 
 #include "readfile.h"
 
-#include <errno.h>
-
 #include <zstd.h>
 
 /* Make preferences read-only. */
@@ -126,8 +125,8 @@
 /* ********* my write, buffered writing with minimum size chunks ************ */
 
 /* Use optimal allocation since blocks of this size are kept in memory for undo. */
-#define MEM_BUFFER_SIZE (MEM_SIZE_OPTIMAL(1 << 17)) /* 128kb */
-#define MEM_CHUNK_SIZE (MEM_SIZE_OPTIMAL(1 << 15))  /* ~32kb */
+#define MEM_BUFFER_SIZE MEM_SIZE_OPTIMAL(1 << 17) /* 128kb */
+#define MEM_CHUNK_SIZE MEM_SIZE_OPTIMAL(1 << 15)  /* ~32kb */
 
 #define ZSTD_BUFFER_SIZE (1 << 21) /* 2mb */
 #define ZSTD_CHUNK_SIZE (1 << 20)  /* 1mb */
@@ -143,19 +142,18 @@ static CLG_LogRef LOG = {"blo.writefile"};
 /** \name Internal Write Wrapper's (Abstracts Compression)
  * \{ */
 
-typedef enum {
+enum eWriteWrapType {
   WW_WRAP_NONE = 1,
   WW_WRAP_ZSTD,
-} eWriteWrapType;
+};
 
-typedef struct ZstdFrame {
+struct ZstdFrame {
   struct ZstdFrame *next, *prev;
 
   uint32_t compressed_size;
   uint32_t uncompressed_size;
-} ZstdFrame;
+};
 
-typedef struct WriteWrap WriteWrap;
 struct WriteWrap {
   /* callbacks */
   bool (*open)(WriteWrap *ww, const char *filepath);
@@ -395,8 +393,8 @@ static void ww_handle_init(eWriteWrapType ww_type, WriteWrap *r_ww)
 /** \name Write Data Type & Functions
  * \{ */
 
-typedef struct {
-  const struct SDNA *sdna;
+struct WriteData {
+  const SDNA *sdna;
 
   struct {
     /** Use for file and memory writing (size stored in max_size). */
@@ -429,11 +427,11 @@ typedef struct {
    * Will be nullptr for UNDO.
    */
   WriteWrap *ww;
-} WriteData;
+};
 
-typedef struct BlendWriter {
+struct BlendWriter {
   WriteData *wd;
-} BlendWriter;
+};
 
 static WriteData *writedata_new(WriteWrap *ww)
 {
@@ -643,7 +641,7 @@ static void mywrite_id_begin(WriteData *wd, ID *id)
  *
  * Only does something when storing an undo step.
  */
-static void mywrite_id_end(WriteData *wd, ID *UNUSED(id))
+static void mywrite_id_end(WriteData *wd, ID * /*id*/)
 {
   if (wd->use_memfile) {
     /* Very important to do it after every ID write now, otherwise we cannot know whether a
@@ -685,7 +683,7 @@ static void writestruct_at_address_nr(
   }
 
   mywrite(wd, &bh, sizeof(BHead));
-  mywrite(wd, data, (size_t)bh.len);
+  mywrite(wd, data, size_t(bh.len));
 }
 
 static void writestruct_nr(
@@ -709,14 +707,14 @@ static void writedata(WriteData *wd, int filecode, size_t len, const void *adr)
   }
 
   /* align to 4 (writes uninitialized bytes in some cases) */
-  len = (len + 3) & ~((size_t)3);
+  len = (len + 3) & ~size_t(3);
 
   /* init BHead */
   bh.code = filecode;
   bh.old = adr;
   bh.nr = 1;
   bh.SDNAnr = 0;
-  bh.len = (int)len;
+  bh.len = int(len);
 
   mywrite(wd, &bh, sizeof(BHead));
   mywrite(wd, adr, len);
@@ -812,11 +810,11 @@ static void current_screen_compat(Main *mainvar,
                                          nullptr;
 }
 
-typedef struct RenderInfo {
+struct RenderInfo {
   int sfra;
   int efra;
   char scene_name[MAX_ID_NAME - 2];
-} RenderInfo;
+};
 
 /**
  * This was originally added for the historic render-daemon feature,
@@ -1256,7 +1254,7 @@ static bool write_file_handle(Main *mainvar,
    *
    * Note that we *borrow* the pointer to 'DNAstr',
    * so writing each time uses the same address and doesn't cause unnecessary undo overhead. */
-  writedata(wd, DNA1, (size_t)wd->sdna->data_len, wd->sdna->data);
+  writedata(wd, DNA1, size_t(wd->sdna->data_len), wd->sdna->data);
 
   /* end of file */
   memset(&bhead, 0, sizeof(BHead));
@@ -1575,32 +1573,32 @@ int BLO_get_struct_id_by_name(BlendWriter *writer, const char *struct_name)
 
 void BLO_write_int32_array(BlendWriter *writer, uint num, const int32_t *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(int32_t) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(int32_t) * size_t(num), data_ptr);
 }
 
 void BLO_write_uint32_array(BlendWriter *writer, uint num, const uint32_t *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(uint32_t) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(uint32_t) * size_t(num), data_ptr);
 }
 
 void BLO_write_float_array(BlendWriter *writer, uint num, const float *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(float) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(float) * size_t(num), data_ptr);
 }
 
 void BLO_write_double_array(BlendWriter *writer, uint num, const double *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(double) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(double) * size_t(num), data_ptr);
 }
 
 void BLO_write_pointer_array(BlendWriter *writer, uint num, const void *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(void *) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(void *) * size_t(num), data_ptr);
 }
 
 void BLO_write_float3_array(BlendWriter *writer, uint num, const float *data_ptr)
 {
-  BLO_write_raw(writer, sizeof(float[3]) * (size_t)num, data_ptr);
+  BLO_write_raw(writer, sizeof(float[3]) * size_t(num), data_ptr);
 }
 
 void BLO_write_string(BlendWriter *writer, const char *data_ptr)

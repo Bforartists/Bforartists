@@ -23,7 +23,7 @@ bl_info = {
     "warning": "",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/viewport_pies.html",
     "category": "Interface"
-    }
+}
 
 sub_modules_names = (
     "pie_modes_menu",
@@ -41,7 +41,7 @@ sub_modules_names = (
     "pie_editor_switch_menu",
     "pie_defaults_menu",
     "pie_proportional_menu",
-    )
+)
 
 
 sub_modules = [__import__(__package__ + "." + submod, {}, {}, submod) for submod in sub_modules_names]
@@ -76,6 +76,7 @@ def get_addon_preferences(name=''):
         return getattr(addon_prefs, name, None)
     else:
         return addon_prefs
+
 
 def create_property(cls, name, prop):
     if not hasattr(cls, '__annotations__'):
