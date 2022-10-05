@@ -232,8 +232,7 @@ static void try_convert_single_object(Object &curves_ob,
   BLI_SCOPED_DEFER([&]() { free_bvhtree_from_mesh(&surface_bvh); });
 
   const Span<float3> positions_cu = curves.positions();
-  const Span<MLoopTri> looptris{BKE_mesh_runtime_looptri_ensure(&surface_me),
-                                BKE_mesh_runtime_looptri_len(&surface_me)};
+  const Span<MLoopTri> looptris = surface_me.looptris();
 
   if (looptris.is_empty()) {
     *r_could_not_convert_some_curves = true;
@@ -337,7 +336,7 @@ static void try_convert_single_object(Object &curves_ob,
 
       HairKey &key = hair_keys[key_i];
       copy_v3_v3(key.co, key_pos_ha);
-      key.time = 100.0f * key_i / (float)(hair_keys.size() - 1);
+      key.time = 100.0f * key_i / float(hair_keys.size() - 1);
     }
   }
 
@@ -468,7 +467,7 @@ static bke::CurvesGeometry particles_to_curves(Object &object, ParticleSystem &p
   return curves;
 }
 
-static int curves_convert_from_particle_system_exec(bContext *C, wmOperator *UNUSED(op))
+static int curves_convert_from_particle_system_exec(bContext *C, wmOperator * /*op*/)
 {
   Main &bmain = *CTX_data_main(C);
   Scene &scene = *CTX_data_scene(C);
@@ -545,8 +544,7 @@ static void snap_curves_to_surface_exec_object(Object &curves_ob,
   const Mesh &surface_mesh = *static_cast<const Mesh *>(surface_ob.data);
   const Span<MVert> verts = surface_mesh.verts();
   const Span<MLoop> loops = surface_mesh.loops();
-  const Span<MLoopTri> surface_looptris = {BKE_mesh_runtime_looptri_ensure(&surface_mesh),
-                                           BKE_mesh_runtime_looptri_len(&surface_mesh)};
+  const Span<MLoopTri> surface_looptris = surface_mesh.looptris();
   VArraySpan<float2> surface_uv_map;
   if (curves_id.surface_uv_map != nullptr) {
     const bke::AttributeAccessor surface_attributes = surface_mesh.attributes();
@@ -716,13 +714,13 @@ static void CURVES_OT_snap_curves_to_surface(wmOperatorType *ot)
   ot->flag = OPTYPE_UNDO | OPTYPE_REGISTER;
 
   static const EnumPropertyItem attach_mode_items[] = {
-      {static_cast<int>(AttachMode::Nearest),
+      {int(AttachMode::Nearest),
        "NEAREST",
        0,
        "Nearest",
        "Find the closest point on the surface for the root point of every curve and move the root "
        "there"},
-      {static_cast<int>(AttachMode::Deform),
+      {int(AttachMode::Deform),
        "DEFORM",
        0,
        "Deform",
@@ -734,7 +732,7 @@ static void CURVES_OT_snap_curves_to_surface(wmOperatorType *ot)
   RNA_def_enum(ot->srna,
                "attach_mode",
                attach_mode_items,
-               static_cast<int>(AttachMode::Nearest),
+               int(AttachMode::Nearest),
                "Attach Mode",
                "How to find the point on the surface to attach to");
 }
@@ -806,7 +804,7 @@ static void CURVES_OT_set_selection_domain(wmOperatorType *ot)
 
 namespace disable_selection {
 
-static int curves_disable_selection_exec(bContext *C, wmOperator *UNUSED(op))
+static int curves_disable_selection_exec(bContext *C, wmOperator * /*op*/)
 {
   for (Curves *curves_id : get_unique_editable_curves(*C)) {
     curves_id->flag &= ~CV_SCULPT_SELECTION_ENABLED;
@@ -1020,6 +1018,7 @@ static int surface_set_exec(bContext *C, wmOperator *op)
 
     DEG_id_tag_update(&curves_ob.id, ID_RECALC_TRANSFORM);
     WM_event_add_notifier(C, NC_GEOM | ND_DATA, &curves_id);
+    WM_event_add_notifier(C, NC_NODE | NA_ADDED, NULL);
 
     /* Required for deformation. */
     new_surface_ob.modifier_flag |= OB_MODIFIER_FLAG_ADD_REST_POSITION;

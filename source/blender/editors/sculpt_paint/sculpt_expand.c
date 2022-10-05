@@ -7,12 +7,9 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
 #include "BLI_linklist_stack.h"
 #include "BLI_math.h"
 #include "BLI_task.h"
-
-#include "BLT_translation.h"
 
 #include "DNA_brush_types.h"
 #include "DNA_mesh_types.h"
@@ -27,29 +24,21 @@
 #include "BKE_image.h"
 #include "BKE_mesh.h"
 #include "BKE_mesh_mapping.h"
-#include "BKE_multires.h"
-#include "BKE_node.h"
-#include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
 #include "BKE_report.h"
-#include "BKE_scene.h"
 #include "BKE_subdiv_ccg.h"
 
 #include "DEG_depsgraph.h"
 
 #include "WM_api.h"
-#include "WM_message.h"
-#include "WM_toolsystem.h"
 #include "WM_types.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "ED_object.h"
 #include "ED_screen.h"
 #include "ED_sculpt.h"
-#include "ED_view3d.h"
 #include "paint_intern.h"
 #include "sculpt_intern.h"
 
@@ -617,7 +606,7 @@ static float *sculpt_expand_boundary_topology_falloff_create(Object *ob, const P
 
     for (int i = 0; i < boundary->verts_num; i++) {
       BLI_gsqueue_push(queue, &boundary->verts[i]);
-      BLI_BITMAP_ENABLE(visited_verts, boundary->verts_i[i]);
+      BLI_BITMAP_ENABLE(visited_verts, BKE_pbvh_vertex_to_index(ss->pbvh, boundary->verts[i]));
     }
     SCULPT_boundary_data_free(boundary);
   }
@@ -2101,6 +2090,8 @@ static int sculpt_expand_invoke(bContext *C, wmOperator *op, const wmEvent *even
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
   Sculpt *sd = CTX_data_tool_settings(C)->sculpt;
+
+  SCULPT_stroke_id_next(ob);
 
   /* Create and configure the Expand Cache. */
   ss->expand_cache = MEM_callocN(sizeof(ExpandCache), "expand cache");

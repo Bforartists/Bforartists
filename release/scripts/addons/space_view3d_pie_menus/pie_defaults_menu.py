@@ -8,13 +8,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Interface"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 import os
 
 
@@ -45,10 +45,9 @@ class PIE_MT_Load_Defaults(Menu):
         pie.separator()
 
 
-
 classes = (
     PIE_MT_Load_Defaults,
-    )
+)
 
 addon_keymaps = []
 

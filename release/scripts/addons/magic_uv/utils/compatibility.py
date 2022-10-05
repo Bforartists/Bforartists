@@ -2,11 +2,10 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
-__date__ = "22 Apr 2022"
+__version__ = "6.7"
+__date__ = "22 Sep 2022"
 
 import bpy
-import bgl
 import blf
 
 
@@ -128,10 +127,7 @@ def icon(icon):
 
 
 def set_blf_font_color(font_id, r, g, b, a):
-    if check_version(2, 80, 0) >= 0:
-        blf.color(font_id, r, g, b, a)
-    else:
-        bgl.glColor4f(r, g, b, a)
+    blf.color(font_id, r, g, b, a)
 
 
 def set_blf_blur(font_id, radius):

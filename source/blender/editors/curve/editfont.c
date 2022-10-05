@@ -1161,14 +1161,13 @@ static int move_cursor(bContext *C, int type, const bool select)
     }
 
     case PREV_CHAR:
-      ef->pos--;
+      BLI_str_cursor_step_prev_utf32(ef->textbuf, ef->len, &ef->pos);
       cursmove = FO_CURS;
       break;
 
     case NEXT_CHAR:
-      ef->pos++;
+      BLI_str_cursor_step_next_utf32(ef->textbuf, ef->len, &ef->pos);
       cursmove = FO_CURS;
-
       break;
 
     case PREV_LINE:
@@ -1507,10 +1506,9 @@ static int delete_exec(bContext *C, wmOperator *op)
         return OPERATOR_CANCELLED;
       }
 
-      range[0] = ef->pos - 1;
       range[1] = ef->pos;
-
-      ef->pos--;
+      BLI_str_cursor_step_prev_utf32(ef->textbuf, ef->len, &ef->pos);
+      range[0] = ef->pos;
       break;
     case DEL_NEXT_CHAR:
       if (ef->pos >= ef->len) {
@@ -1518,7 +1516,8 @@ static int delete_exec(bContext *C, wmOperator *op)
       }
 
       range[0] = ef->pos;
-      range[1] = ef->pos + 1;
+      range[1] = ef->pos;
+      BLI_str_cursor_step_next_utf32(ef->textbuf, ef->len, &range[1]);
       break;
     case DEL_NEXT_WORD: {
       int pos = ef->pos;

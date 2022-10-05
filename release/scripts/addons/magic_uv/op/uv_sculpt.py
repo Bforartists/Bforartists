@@ -3,7 +3,7 @@
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
 __version__ = "6.7"
-__date__ = "22 Apr 2022"
+__date__ = "9 Sep 2022"
 
 from math import pi, cos, tan, sin
 

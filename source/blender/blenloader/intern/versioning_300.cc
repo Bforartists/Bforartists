@@ -169,7 +169,7 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
             MEM_malloc_arrayN(array_len, sizeof(double), __func__));
         const float *old_default_array = static_cast<const float *>(IDP_Array(default_value));
         for (int i = 0; i < ui_data->default_array_len; i++) {
-          ui_data->default_array[i] = (double)old_default_array[i];
+          ui_data->default_array[i] = double(old_default_array[i]);
         }
       }
       else if (default_value->subtype == IDP_DOUBLE) {
@@ -412,9 +412,9 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
         else {
           v->speed_control_type = SEQ_SPEED_MULTIPLY;
           v->speed_fader = globalSpeed *
-                           ((float)seq->seq1->len /
-                            max_ff((float)(SEQ_time_right_handle_frame_get(scene, seq->seq1) -
-                                           seq->seq1->start),
+                           (float(seq->seq1->len) /
+                            max_ff(float(SEQ_time_right_handle_frame_get(scene, seq->seq1) -
+                                         seq->seq1->start),
                                    1.0f));
         }
       }
@@ -430,7 +430,7 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
       }
       else {
         v->speed_control_type = SEQ_SPEED_FRAME_NUMBER;
-        v->speed_fader_frame_number = (int)(seq->speed_fader * globalSpeed);
+        v->speed_fader_frame_number = int(seq->speed_fader * globalSpeed);
         substr = "speed_frame_number";
       }
 
@@ -465,13 +465,13 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
 #undef SEQ_SPEED_COMPRESS_IPO_Y
 }
 
-static bool do_versions_sequencer_color_tags(Sequence *seq, void *UNUSED(user_data))
+static bool do_versions_sequencer_color_tags(Sequence *seq, void * /*user_data*/)
 {
   seq->color_tag = SEQUENCE_COLOR_NONE;
   return true;
 }
 
-static bool do_versions_sequencer_color_balance_sop(Sequence *seq, void *UNUSED(user_data))
+static bool do_versions_sequencer_color_balance_sop(Sequence *seq, void * /*user_data*/)
 {
   LISTBASE_FOREACH (SequenceModifierData *, smd, &seq->modifiers) {
     if (smd->type == seqModifierType_ColorBalance) {
@@ -670,7 +670,148 @@ static bool seq_speed_factor_set(Sequence *seq, void *user_data)
   return true;
 }
 
-void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
+static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *ntree)
+{
+  using namespace blender;
+  /* Otherwise `ntree->typeInfo` is null. */
+  ntreeSetTypes(nullptr, ntree);
+  LISTBASE_FOREACH_MUTABLE (bNode *, node, &ntree->nodes) {
+    if (node->type != GEO_NODE_TRANSFER_ATTRIBUTE_DEPRECATED) {
+      continue;
+    }
+    bNodeSocket *old_geometry_socket = nodeFindSocket(node, SOCK_IN, "Source");
+    const NodeGeometryTransferAttribute *storage = (const NodeGeometryTransferAttribute *)
+                                                       node->storage;
+    switch (storage->mode) {
+      case GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED: {
+        bNode *sample_nearest_surface = nodeAddStaticNode(
+            nullptr, ntree, GEO_NODE_SAMPLE_NEAREST_SURFACE);
+        sample_nearest_surface->parent = node->parent;
+        sample_nearest_surface->custom1 = storage->data_type;
+        sample_nearest_surface->locx = node->locx;
+        sample_nearest_surface->locy = node->locy;
+        static auto socket_remap = []() {
+          Map<std::string, std::string> map;
+          map.add_new("Attribute", "Value_Vector");
+          map.add_new("Attribute_001", "Value_Float");
+          map.add_new("Attribute_002", "Value_Color");
+          map.add_new("Attribute_003", "Value_Bool");
+          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Source", "Mesh");
+          map.add_new("Source Position", "Sample Position");
+          return map;
+        }();
+        node_tree_relink_with_socket_id_map(*ntree, *node, *sample_nearest_surface, socket_remap);
+        break;
+      }
+      case GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST: {
+        /* These domains weren't supported by the index transfer mode, but were selectable. */
+        const eAttrDomain domain = ELEM(storage->domain, ATTR_DOMAIN_INSTANCE, ATTR_DOMAIN_CURVE) ?
+                                       ATTR_DOMAIN_POINT :
+                                       eAttrDomain(storage->domain);
+
+        /* Use a sample index node to retrieve the data with this node's index output. */
+        bNode *sample_index = nodeAddStaticNode(nullptr, ntree, GEO_NODE_SAMPLE_INDEX);
+        NodeGeometrySampleIndex *sample_storage = static_cast<NodeGeometrySampleIndex *>(
+            sample_index->storage);
+        sample_storage->data_type = storage->data_type;
+        sample_storage->domain = domain;
+        sample_index->parent = node->parent;
+        sample_index->locx = node->locx + 25.0f;
+        sample_index->locy = node->locy;
+        if (old_geometry_socket->link) {
+          nodeAddLink(ntree,
+                      old_geometry_socket->link->fromnode,
+                      old_geometry_socket->link->fromsock,
+                      sample_index,
+                      nodeFindSocket(sample_index, SOCK_IN, "Geometry"));
+        }
+
+        bNode *sample_nearest = nodeAddStaticNode(nullptr, ntree, GEO_NODE_SAMPLE_NEAREST);
+        sample_nearest->parent = node->parent;
+        sample_nearest->custom1 = storage->data_type;
+        sample_nearest->custom2 = domain;
+        sample_nearest->locx = node->locx - 25.0f;
+        sample_nearest->locy = node->locy;
+        if (old_geometry_socket->link) {
+          nodeAddLink(ntree,
+                      old_geometry_socket->link->fromnode,
+                      old_geometry_socket->link->fromsock,
+                      sample_nearest,
+                      nodeFindSocket(sample_nearest, SOCK_IN, "Geometry"));
+        }
+        static auto sample_nearest_remap = []() {
+          Map<std::string, std::string> map;
+          map.add_new("Source Position", "Sample Position");
+          return map;
+        }();
+        node_tree_relink_with_socket_id_map(*ntree, *node, *sample_nearest, sample_nearest_remap);
+
+        static auto sample_index_remap = []() {
+          Map<std::string, std::string> map;
+          map.add_new("Attribute", "Value_Vector");
+          map.add_new("Attribute_001", "Value_Float");
+          map.add_new("Attribute_002", "Value_Color");
+          map.add_new("Attribute_003", "Value_Bool");
+          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Source Position", "Sample Position");
+          return map;
+        }();
+        node_tree_relink_with_socket_id_map(*ntree, *node, *sample_index, sample_index_remap);
+
+        nodeAddLink(ntree,
+                    sample_nearest,
+                    nodeFindSocket(sample_nearest, SOCK_OUT, "Index"),
+                    sample_index,
+                    nodeFindSocket(sample_index, SOCK_IN, "Index"));
+        break;
+      }
+      case GEO_NODE_ATTRIBUTE_TRANSFER_INDEX: {
+        bNode *sample_index = nodeAddStaticNode(nullptr, ntree, GEO_NODE_SAMPLE_INDEX);
+        NodeGeometrySampleIndex *sample_storage = static_cast<NodeGeometrySampleIndex *>(
+            sample_index->storage);
+        sample_storage->data_type = storage->data_type;
+        sample_storage->domain = storage->domain;
+        sample_storage->clamp = 1;
+        sample_index->parent = node->parent;
+        sample_index->locx = node->locx;
+        sample_index->locy = node->locy;
+        const bool index_was_linked = nodeFindSocket(node, SOCK_IN, "Index")->link != nullptr;
+        static auto socket_remap = []() {
+          Map<std::string, std::string> map;
+          map.add_new("Attribute", "Value_Vector");
+          map.add_new("Attribute_001", "Value_Float");
+          map.add_new("Attribute_002", "Value_Color");
+          map.add_new("Attribute_003", "Value_Bool");
+          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Source", "Geometry");
+          map.add_new("Index", "Index");
+          return map;
+        }();
+        node_tree_relink_with_socket_id_map(*ntree, *node, *sample_index, socket_remap);
+
+        if (!index_was_linked) {
+          /* Add an index input node, since the new node doesn't use an implicit input. */
+          bNode *index = nodeAddStaticNode(nullptr, ntree, GEO_NODE_INPUT_INDEX);
+          index->parent = node->parent;
+          index->locx = node->locx - 25.0f;
+          index->locy = node->locy - 25.0f;
+          nodeAddLink(ntree,
+                      index,
+                      nodeFindSocket(index, SOCK_OUT, "Index"),
+                      sample_index,
+                      nodeFindSocket(sample_index, SOCK_IN, "Index"));
+        }
+        break;
+      }
+    }
+    /* The storage must be freed manually because the node type isn't defined anymore. */
+    MEM_freeN(node->storage);
+    nodeRemoveNode(nullptr, ntree, node, false);
+  }
+}
+
+void do_versions_after_linking_300(Main *bmain, ReportList * /*reports*/)
 {
   if (MAIN_VERSION_ATLEAST(bmain, 300, 0) && !MAIN_VERSION_ATLEAST(bmain, 300, 1)) {
     /* Set zero user text objects to have a fake user. */
@@ -933,6 +1074,16 @@ void do_versions_after_linking_300(Main *bmain, ReportList *UNUSED(reports))
     }
   }
 
+  if (!MAIN_VERSION_ATLEAST(bmain, 304, 1)) {
+    /* Split the transfer attribute node into multiple smaller nodes. */
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        version_geometry_nodes_replace_transfer_attribute_node(ntree);
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -1028,9 +1179,9 @@ static void do_version_bbone_len_scale_fcurve_fix(FCurve *fcu)
   replace_bbone_len_scale_rnapath(&fcu->rna_path, &fcu->array_index);
 }
 
-static void do_version_bbone_len_scale_animdata_cb(ID *UNUSED(id),
+static void do_version_bbone_len_scale_animdata_cb(ID * /*id*/,
                                                    AnimData *adt,
-                                                   void *UNUSED(wrapper_data))
+                                                   void * /*wrapper_data*/)
 {
   LISTBASE_FOREACH_MUTABLE (FCurve *, fcu, &adt->drivers) {
     do_version_bbone_len_scale_fcurve_fix(fcu);
@@ -1078,7 +1229,7 @@ static bNodeSocket *do_version_replace_float_size_with_vector(bNodeTree *ntree,
   return new_socket;
 }
 
-static bool seq_transform_origin_set(Sequence *seq, void *UNUSED(user_data))
+static bool seq_transform_origin_set(Sequence *seq, void * /*user_data*/)
 {
   StripTransform *transform = seq->strip->transform;
   if (seq->strip->transform != nullptr) {
@@ -1087,7 +1238,7 @@ static bool seq_transform_origin_set(Sequence *seq, void *UNUSED(user_data))
   return true;
 }
 
-static bool seq_transform_filter_set(Sequence *seq, void *UNUSED(user_data))
+static bool seq_transform_filter_set(Sequence *seq, void * /*user_data*/)
 {
   StripTransform *transform = seq->strip->transform;
   if (seq->strip->transform != nullptr) {
@@ -1096,7 +1247,7 @@ static bool seq_transform_filter_set(Sequence *seq, void *UNUSED(user_data))
   return true;
 }
 
-static bool seq_meta_channels_ensure(Sequence *seq, void *UNUSED(user_data))
+static bool seq_meta_channels_ensure(Sequence *seq, void * /*user_data*/)
 {
   if (seq->type == SEQ_TYPE_META) {
     SEQ_channels_ensure(&seq->channels);
@@ -1341,7 +1492,7 @@ static bool version_fix_seq_meta_range(Sequence *seq, void *user_data)
   return true;
 }
 
-static bool version_merge_still_offsets(Sequence *seq, void *UNUSED(user_data))
+static bool version_merge_still_offsets(Sequence *seq, void * /*user_data*/)
 {
   seq->startofs -= seq->startstill;
   seq->endofs -= seq->endstill;
@@ -1757,7 +1908,7 @@ static void versioning_replace_legacy_mix_rgb_node(bNodeTree *ntree)
       node->type = SH_NODE_MIX;
       NodeShaderMix *data = (NodeShaderMix *)MEM_callocN(sizeof(NodeShaderMix), __func__);
       data->blend_type = node->custom1;
-      data->clamp_result = node->custom2;
+      data->clamp_result = (node->custom2 & SHD_MIXRGB_CLAMP) ? 1 : 0;
       data->clamp_factor = 1;
       data->data_type = SOCK_RGBA;
       data->factor_mode = NODE_MIX_MODE_UNIFORM;
@@ -1792,7 +1943,7 @@ static void version_fix_image_format_copy(Main *bmain, ImageFormatData *format)
 }
 
 /* NOLINTNEXTLINE: readability-function-size */
-void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
+void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
 {
   /* The #SCE_SNAP_SEQ flag has been removed in favor of the #SCE_SNAP which can be used for each
    * snap_flag member individually. */
@@ -2043,7 +2194,7 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
             if (smd->bind_verts_num && smd->verts) {
               smd->mesh_verts_num = smd->bind_verts_num;
 
-              for (unsigned int i = 0; i < smd->bind_verts_num; i++) {
+              for (uint i = 0; i < smd->bind_verts_num; i++) {
                 smd->verts[i].vertex_idx = i;
               }
             }
@@ -2803,7 +2954,8 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
             ntree, GEO_NODE_INPUT_MESH_EDGE_ANGLE, "Angle", "Unsigned Angle");
         version_node_output_socket_name(
             ntree, GEO_NODE_INPUT_MESH_ISLAND, "Index", "Island Index");
-        version_node_input_socket_name(ntree, GEO_NODE_TRANSFER_ATTRIBUTE, "Target", "Source");
+        version_node_input_socket_name(
+            ntree, GEO_NODE_TRANSFER_ATTRIBUTE_DEPRECATED, "Target", "Source");
       }
     }
   }
@@ -2840,7 +2992,8 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       ToolSettings *tool_settings = scene->toolsettings;
-      tool_settings->snap_flag_seq = tool_settings->snap_flag & ~(SCE_SNAP | SCE_SNAP_SEQ);
+      tool_settings->snap_flag_seq = tool_settings->snap_flag &
+                                     ~(short(SCE_SNAP) | short(SCE_SNAP_SEQ));
       if (tool_settings->snap_flag & SCE_SNAP_SEQ) {
         tool_settings->snap_flag_seq |= SCE_SNAP;
         tool_settings->snap_flag &= ~SCE_SNAP_SEQ;
@@ -2892,9 +3045,9 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
             gpmd->factor *= 2.0f;
           }
           else {
-            gpmd->step = 1 + (int)(gpmd->factor * max_ff(0.0f,
-                                                         min_ff(5.1f * sqrtf(gpmd->step) - 3.0f,
-                                                                gpmd->step + 2.0f)));
+            gpmd->step = 1 + int(gpmd->factor * max_ff(0.0f,
+                                                       min_ff(5.1f * sqrtf(gpmd->step) - 3.0f,
+                                                              gpmd->step + 2.0f)));
             gpmd->factor = 1.0f;
           }
         }
@@ -3195,6 +3348,14 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
+  if (!DNA_struct_elem_find(fd->filesdna, "Sculpt", "float", "automasking_cavity_factor")) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->toolsettings && scene->toolsettings->sculpt) {
+        scene->toolsettings->sculpt->automasking_cavity_factor = 0.5f;
+      }
+    }
+  }
+
   if (!MAIN_VERSION_ATLEAST(bmain, 302, 14)) {
     /* Compensate for previously wrong squared distance. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
@@ -3378,18 +3539,7 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     BKE_main_namemap_validate_and_fix(bmain);
   }
 
-  /**
-   * Versioning code until next subversion bump goes here.
-   *
-   * \note Be sure to check when bumping the version:
-   * - "versioning_userdef.c", #blo_do_versions_userdef
-   * - "versioning_userdef.c", #do_versions_theme
-   *
-   * \note Keep this message at the bottom of the function.
-   */
-  {
-    /* Keep this block, even when empty. */
-
+  if (!MAIN_VERSION_ATLEAST(bmain, 304, 1)) {
     /* Image generation information transferred to tiles. */
     if (!DNA_struct_elem_find(fd->filesdna, "ImageTile", "int", "gen_x")) {
       LISTBASE_FOREACH (Image *, ima, &bmain->images) {
@@ -3405,12 +3555,10 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
 
     /* Convert mix rgb node to new mix node and add storage. */
-    {
-      FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
-        versioning_replace_legacy_mix_rgb_node(ntree);
-      }
-      FOREACH_NODETREE_END;
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      versioning_replace_legacy_mix_rgb_node(ntree);
     }
+    FOREACH_NODETREE_END;
 
     /* Face sets no longer store whether the corresponding face is hidden. */
     LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
@@ -3437,5 +3585,47 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
         }
       }
     }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 304, 2)) {
+    /* Initialize brush curves sculpt settings. */
+    LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+      brush->automasking_cavity_factor = 0.5f;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 304, 3)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_VIEW3D) {
+            View3D *v3d = (View3D *)sl;
+            v3d->flag2 |= V3D_SHOW_VIEWER;
+            v3d->overlay.flag |= V3D_OVERLAY_VIEWER_ATTRIBUTE;
+            v3d->overlay.viewer_attribute_opacity = 1.0f;
+          }
+        }
+      }
+    }
+
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type != NTREE_GEOMETRY) {
+        continue;
+      }
+      version_node_id(ntree, GEO_NODE_OFFSET_POINT_IN_CURVE, "GeometryNodeOffsetPointInCurve");
+    }
+  }
+
+  /**
+   * Versioning code until next subversion bump goes here.
+   *
+   * \note Be sure to check when bumping the version:
+   * - "versioning_userdef.c", #blo_do_versions_userdef
+   * - "versioning_userdef.c", #do_versions_theme
+   *
+   * \note Keep this message at the bottom of the function.
+   */
+  {
+    /* Keep this block, even when empty. */
   }
 }

@@ -687,10 +687,12 @@ class IMAGE_MT_pivot_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        pie.prop_enum(context.space_data, "pivot_point", value='CENTER')
-        pie.prop_enum(context.space_data, "pivot_point", value='CURSOR')
-        pie.prop_enum(context.space_data, "pivot_point", value='INDIVIDUAL_ORIGINS')
-        pie.prop_enum(context.space_data, "pivot_point", value='MEDIAN')
+        sima = context.space_data
+
+        pie.prop_enum(sima, "pivot_point", value='CENTER')
+        pie.prop_enum(sima, "pivot_point", value='CURSOR')
+        pie.prop_enum(sima, "pivot_point", value='INDIVIDUAL_ORIGINS')
+        pie.prop_enum(sima, "pivot_point", value='MEDIAN')
 
 
 class IMAGE_MT_uvs_snap_pie(Menu):
@@ -1759,6 +1761,7 @@ class IMAGE_PT_overlay_guides(Panel):
         row.separator()
         row.prop(overlay, "show_grid_background", text="Grid")
         col = split.column()
+
         if overlay.show_grid_background:
             col.label(icon='DISCLOSURE_TRI_DOWN')
         else:
@@ -1768,12 +1771,21 @@ class IMAGE_PT_overlay_guides(Panel):
             split = layout.split()
             split.use_property_split = False
             split.use_property_decorate = False
+
+            col = split.column(align=False, heading="Grid Over Image")
+            col.use_property_decorate = False
+            row = col.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(uvedit, "show_grid_over_image", text="")
+            sub.active = sima.image is not None
+
             col = split.column()
             row = col.row()
             row.separator()
             row.separator()
             row.prop(uvedit, "use_custom_grid", text="Fixed Subdivisions")
             col = split.column()
+
             if uvedit.use_custom_grid:
                 col.prop(uvedit, "custom_grid_subdivisions", text="")
             else:

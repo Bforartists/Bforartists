@@ -151,7 +151,7 @@ template<typename Mesh> class Mikktspace {
 
   void genTangSpace()
   {
-    nrFaces = (uint)mesh.GetNumFaces();
+    nrFaces = uint(mesh.GetNumFaces());
 
 #ifdef WITH_TBB
     nrThreads = tbb::this_task_arena::max_concurrency();
@@ -178,24 +178,30 @@ template<typename Mesh> class Mikktspace {
     // put the degenerate triangles last.
     degenPrologue();
 
-    // evaluate triangle level attributes and neighbor list
-    initTriangle();
+    if (nrTriangles == 0) {
+      // No point in building tangents if there are no non-degenerate triangles, so just zero them
+      tSpaces.resize(nrTSpaces);
+    }
+    else {
+      // evaluate triangle level attributes and neighbor list
+      initTriangle();
 
-    // match up edge pairs
-    buildNeighbors();
+      // match up edge pairs
+      buildNeighbors();
 
-    // based on the 4 rules, identify groups based on connectivity
-    build4RuleGroups();
+      // based on the 4 rules, identify groups based on connectivity
+      build4RuleGroups();
 
-    // make tspaces, each group is split up into subgroups.
-    // Finally a tangent space is made for every resulting subgroup
-    generateTSpaces();
+      // make tspaces, each group is split up into subgroups.
+      // Finally a tangent space is made for every resulting subgroup
+      generateTSpaces();
 
-    // degenerate quads with one good triangle will be fixed by copying a space from
-    // the good triangle to the coinciding vertex.
-    // all other degenerate triangles will just copy a space from any good triangle
-    // with the same welded index in vertices[].
-    degenEpilogue();
+      // degenerate quads with one good triangle will be fixed by copying a space from
+      // the good triangle to the coinciding vertex.
+      // all other degenerate triangles will just copy a space from any good triangle
+      // with the same welded index in vertices[].
+      degenEpilogue();
+    }
 
     uint index = 0;
     for (uint f = 0; f < nrFaces; f++) {
@@ -276,7 +282,7 @@ template<typename Mesh> class Mikktspace {
       if (verts != 3 && verts != 4)
         continue;
 
-      uint tA = (uint)triangles.size();
+      uint tA = uint(triangles.size());
       triangles.emplace_back(f, nrTSpaces);
       Triangle &triA = triangles[tA];
 
@@ -284,7 +290,7 @@ template<typename Mesh> class Mikktspace {
         triA.setVertices(0, 1, 2);
       }
       else {
-        uint tB = (uint)triangles.size();
+        uint tB = uint(triangles.size());
         triangles.emplace_back(f, nrTSpaces);
         Triangle &triB = triangles[tB];
 
@@ -731,7 +737,7 @@ template<typename Mesh> class Mikktspace {
           continue;
         }
 
-        const uint newGroupId = (uint)groups.size();
+        const uint newGroupId = uint(groups.size());
         triangle.group[i] = newGroupId;
 
         groups.emplace_back(triangle.vertices[i], bool(triangle.orientPreserving));

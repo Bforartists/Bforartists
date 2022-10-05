@@ -10,7 +10,7 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Shading Pie"
-    }
+}
 
 import bpy
 from bpy.types import Menu
@@ -38,7 +38,7 @@ class PIE_MT_ShadingView(Menu):
 
 classes = (
     PIE_MT_ShadingView,
-    )
+)
 
 addon_keymaps = []
 

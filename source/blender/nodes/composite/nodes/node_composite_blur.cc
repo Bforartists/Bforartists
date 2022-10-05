@@ -42,14 +42,14 @@ static void cmp_node_blur_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Color>(N_("Image"));
 }
 
-static void node_composit_init_blur(bNodeTree *UNUSED(ntree), bNode *node)
+static void node_composit_init_blur(bNodeTree * /*ntree*/, bNode *node)
 {
   NodeBlurData *data = MEM_cnew<NodeBlurData>(__func__);
   data->filtertype = R_FILTER_GAUSS;
   node->storage = data;
 }
 
-static void node_composit_buts_blur(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+static void node_composit_buts_blur(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
   uiLayout *col, *row;
 
@@ -346,7 +346,7 @@ class BlurOperation : public NodeOperation {
 
     Domain domain = compute_domain();
     if (get_extend_bounds()) {
-      domain.size.x += static_cast<int>(math::ceil(compute_blur_radius().x)) * 2;
+      domain.size.x += int(math::ceil(compute_blur_radius().x)) * 2;
     }
 
     /* We allocate an output image of a transposed size, that is, with a height equivalent to the

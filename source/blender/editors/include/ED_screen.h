@@ -472,6 +472,8 @@ bool ED_workspace_layout_cycle(struct WorkSpace *workspace, short direction, str
 
 void ED_workspace_status_text(struct bContext *C, const char *str);
 
+void ED_workspace_do_listen(struct bContext *C, const struct wmNotifier *note);
+
 /* anim */
 /**
  * Results in fully updated anim system.
