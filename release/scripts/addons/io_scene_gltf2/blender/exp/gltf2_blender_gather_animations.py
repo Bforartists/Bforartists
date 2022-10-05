@@ -11,6 +11,7 @@ from ..com.gltf2_blender_extras import generate_extras
 from io_scene_gltf2.io.exp.gltf2_io_user_extensions import export_user_extensions
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_tree import VExportNode
 from ..com.gltf2_blender_data_path import is_bone_anim_channel
+from mathutils import Matrix
 
 
 def gather_animations(  obj_uuid: int,
@@ -40,7 +41,7 @@ def gather_animations(  obj_uuid: int,
             # We also have to check if this is a skinned mesh, because we don't have to force animation baking on this case
             # (skinned meshes TRS must be ignored, says glTF specification)
             if export_settings['vtree'].nodes[obj_uuid].skin is None:
-                channels = gltf2_blender_gather_animation_channels.gather_channels_baked(obj_uuid, export_settings)
+                channels = gltf2_blender_gather_animation_channels.gather_channels_baked(obj_uuid, None, export_settings)
                 if channels is not None:
                     animation = gltf2_io.Animation(
                             channels=channels,
@@ -81,6 +82,8 @@ def gather_animations(  obj_uuid: int,
         current_use_nla = blender_object.animation_data.use_nla
         blender_object.animation_data.use_nla = False
 
+    export_user_extensions('animation_switch_loop_hook', export_settings, blender_object, False)
+
     # Export all collected actions.
     for blender_action, track_name, on_type in blender_actions:
 
@@ -91,7 +94,10 @@ def gather_animations(  obj_uuid: int,
                 if blender_object.animation_data.is_property_readonly('action'):
                     blender_object.animation_data.use_tweak_mode = False
                 try:
+                    __reset_bone_matrix(blender_object, export_settings)
+                    export_user_extensions('pre_animation_switch_hook', export_settings, blender_object, blender_action, track_name, on_type)
                     blender_object.animation_data.action = blender_action
+                    export_user_extensions('post_animation_switch_hook', export_settings, blender_object, blender_action, track_name, on_type)
                 except:
                     error = "Action is readonly. Please check NLA editor"
                     print_console("WARNING", "Animation '{}' could not be exported. Cause: {}".format(blender_action.name, error))
@@ -117,14 +123,18 @@ def gather_animations(  obj_uuid: int,
         if blender_object.animation_data.action is not None:
             if current_action is None:
                 # remove last exported action
+                __reset_bone_matrix(blender_object, export_settings)
                 blender_object.animation_data.action = None
             elif blender_object.animation_data.action.name != current_action.name:
                 # Restore action that was active at start of exporting
+                __reset_bone_matrix(blender_object, export_settings)
                 blender_object.animation_data.action = current_action
         if solo_track is not None:
             solo_track.is_solo = True
         blender_object.animation_data.use_tweak_mode = restore_tweak_mode
         blender_object.animation_data.use_nla = current_use_nla
+
+    export_user_extensions('animation_switch_loop_hook', export_settings, blender_object, True)
 
     return animations, tracks
 
@@ -309,7 +319,21 @@ def __get_blender_actions(blender_object: bpy.types.Object,
                     blender_tracks[act.name] = None
                     action_on_type[act.name] = "OBJECT"
 
-    export_user_extensions('gather_actions_hook', export_settings, blender_object, blender_actions, blender_tracks, action_on_type)
+    # Use a class to get parameters, to be able to modify them
+    class GatherActionHookParameters:
+        def __init__(self, blender_actions, blender_tracks, action_on_type):
+            self.blender_actions = blender_actions
+            self.blender_tracks = blender_tracks
+            self.action_on_type = action_on_type
+
+    gatheractionhookparams = GatherActionHookParameters(blender_actions, blender_tracks, action_on_type)
+
+    export_user_extensions('gather_actions_hook', export_settings, blender_object, gatheractionhookparams)
+
+    # Get params back from hooks
+    blender_actions = gatheractionhookparams.blender_actions
+    blender_tracks = gatheractionhookparams.blender_tracks
+    action_on_type = gatheractionhookparams.action_on_type
 
     # Remove duplicate actions.
     blender_actions = list(set(blender_actions))
@@ -324,3 +348,19 @@ def __is_armature_action(blender_action) -> bool:
         if is_bone_anim_channel(fcurve.data_path):
             return True
     return False
+
+def __reset_bone_matrix(blender_object, export_settings) -> None:
+    if export_settings['gltf_export_reset_pose_bones'] is False:
+        return
+
+    # Only for armatures
+    if blender_object.type != "ARMATURE":
+        return
+
+    # Remove current action if any
+    if blender_object.animation_data and blender_object.animation_data.action:
+        blender_object.animation_data.action = None
+
+    # Resetting bones TRS to avoid to keep not keyed value on a future action set
+    for bone in blender_object.pose.bones:
+        bone.matrix_basis = Matrix()

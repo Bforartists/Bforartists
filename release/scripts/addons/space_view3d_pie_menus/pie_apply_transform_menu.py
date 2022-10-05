@@ -10,13 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Apply Transform Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 from bpy.props import EnumProperty
 
 
@@ -83,7 +83,7 @@ classes = (
     PIE_MT_PieApplyTransforms,
     PIE_MT_ClearMenu,
     PIE_OT_ClearAll,
-    )
+)
 
 addon_keymaps = []
 

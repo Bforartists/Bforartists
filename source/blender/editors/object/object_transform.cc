@@ -472,7 +472,7 @@ void OBJECT_OT_scale_clear(wmOperatorType *ot)
 /** \name Clear Origin Operator
  * \{ */
 
-static int object_origin_clear_exec(bContext *C, wmOperator *UNUSED(op))
+static int object_origin_clear_exec(bContext *C, wmOperator * /*op*/)
 {
   float *v1, *v3;
   float mat[3][3];
@@ -1069,7 +1069,7 @@ static int apply_objects_internal(bContext *C,
   return OPERATOR_FINISHED;
 }
 
-static int visual_transform_apply_exec(bContext *C, wmOperator *UNUSED(op))
+static int visual_transform_apply_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
@@ -1126,7 +1126,7 @@ static int object_transform_apply_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int object_transform_apply_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int object_transform_apply_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   Object *ob = ED_object_active_context(C);
 
@@ -1184,7 +1184,7 @@ void OBJECT_OT_transform_apply(wmOperatorType *ot)
 /** \name Apply Parent Inverse Operator
  * \{ */
 
-static int object_parent_inverse_apply_exec(bContext *C, wmOperator *UNUSED(op))
+static int object_parent_inverse_apply_exec(bContext *C, wmOperator * /*op*/)
 {
   CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {
     if (ob->parent == nullptr) {
@@ -1291,7 +1291,7 @@ static int object_origin_set_exec(bContext *C, wmOperator *op)
         }
         else { /* #V3D_AROUND_CENTER_MEDIAN. */
           if (em->bm->totvert) {
-            const float total_div = 1.0f / (float)em->bm->totvert;
+            const float total_div = 1.0f / float(em->bm->totvert);
             BM_ITER_MESH (eve, &iter, em->bm, BM_VERTS_OF_MESH) {
               madd_v3_v3fl(cent, eve->co, total_div);
             }
@@ -1867,7 +1867,7 @@ struct XFormAxisData {
 static void object_transform_axis_target_calc_depth_init(XFormAxisData *xfd, const int mval[2])
 {
   float view_co_a[3], view_co_b[3];
-  const float2 mval_fl = {static_cast<float>(mval[0]), static_cast<float>(mval[1])};
+  const float2 mval_fl = {float(mval[0]), float(mval[1])};
   ED_view3d_win_to_ray(xfd->vc.region, mval_fl, view_co_a, view_co_b);
   add_v3_v3(view_co_b, view_co_a);
   float center[3] = {0.0f};
@@ -2080,7 +2080,7 @@ static int object_transform_axis_target_modal(bContext *C, wmOperator *op, const
 
   if (event->type == MOUSEMOVE || is_translate_init) {
     const ViewDepths *depths = xfd->depths;
-    if (depths && ((uint)event->mval[0] < depths->w) && ((uint)event->mval[1] < depths->h)) {
+    if (depths && (uint(event->mval[0]) < depths->w) && (uint(event->mval[1]) < depths->h)) {
       float depth_fl = 1.0f;
       ED_view3d_depth_read_cached(depths, event->mval, 0, &depth_fl);
       float location_world[3];
@@ -2102,7 +2102,7 @@ static int object_transform_axis_target_modal(bContext *C, wmOperator *op, const
       }
 #endif
 
-      double depth = (double)depth_fl;
+      double depth = double(depth_fl);
       if ((depth > depths->depth_range[0]) && (depth < depths->depth_range[1])) {
         xfd->prev.depth = depth_fl;
         xfd->prev.is_depth_valid = true;

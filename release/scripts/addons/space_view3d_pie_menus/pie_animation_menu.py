@@ -10,13 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Animation Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 
 # Pie Animation
 
@@ -71,7 +71,7 @@ class PIE_OT_InsertAutoKeyframe(Operator):
 classes = (
     PIE_MT_PieAnimation,
     PIE_OT_InsertAutoKeyframe
-    )
+)
 
 addon_keymaps = []
 

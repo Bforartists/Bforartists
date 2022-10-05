@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import bgl
 import blf
 import bpy_extras
 import numpy as np
@@ -444,7 +443,7 @@ def draw_callback_px(self, context):
             mat = ob.matrix_world
 
             # 50% alpha, 2 pixel width line
-            bgl.glEnable(bgl.GL_BLEND)
+            gpu.state.blend_set('ALPHA')
 
             bbox = [mat @ Vector(b) for b in ob.bound_box]
             objBBDiagonal = objDiagonal(self.CurrentSelection[0])
@@ -497,5 +496,4 @@ def draw_callback_px(self, context):
                         self.ProfileBrush.rotation_mode = 'XYZ'
 
     # Opengl defaults
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    gpu.state.blend_set('NONE')

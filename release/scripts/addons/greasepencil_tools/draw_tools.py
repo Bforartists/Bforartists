@@ -10,7 +10,8 @@ class GP_OT_camera_flip_x(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.region_3d.view_perspective == 'CAMERA'
+        return context.area.type == 'VIEW_3D' \
+            and context.space_data.region_3d.view_perspective == 'CAMERA'
 
     def execute(self, context):
         context.scene.camera.scale.x *= -1

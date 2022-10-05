@@ -96,7 +96,7 @@ void OVERLAY_edit_gpencil_cache_init(OVERLAY_Data *vedata)
                            (GPENCIL_EDIT_MODE(gpd) &&
                             (ts->gpencil_selectmode_edit != GP_SELECTMODE_STROKE));
 
-  if ((!GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd)) &&
+  if (!GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd) &&
       ((!GPENCIL_VERTEX_MODE(gpd) && !GPENCIL_PAINT_MODE(gpd)) || use_vertex_mask)) {
     DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA;
@@ -364,8 +364,8 @@ static void OVERLAY_edit_gpencil_cache_populate(OVERLAY_Data *vedata, Object *ob
   }
 }
 
-static void overlay_gpencil_draw_stroke_color_name(bGPDlayer *UNUSED(gpl),
-                                                   bGPDframe *UNUSED(gpf),
+static void overlay_gpencil_draw_stroke_color_name(bGPDlayer * /*gpl*/,
+                                                   bGPDframe * /*gpf*/,
                                                    bGPDstroke *gps,
                                                    void *thunk)
 {

@@ -78,7 +78,7 @@ void BKE_mesh_runtime_free_data(Mesh *mesh)
   mesh_runtime_free_mutexes(mesh);
 }
 
-void BKE_mesh_runtime_reset_on_copy(Mesh *mesh, const int UNUSED(flag))
+void BKE_mesh_runtime_reset_on_copy(Mesh *mesh, const int /*flag*/)
 {
   Mesh_Runtime *runtime = &mesh->runtime;
 
@@ -110,6 +110,13 @@ void BKE_mesh_runtime_clear_cache(Mesh *mesh)
   BKE_mesh_batch_cache_free(mesh);
   BKE_mesh_runtime_clear_edit_data(mesh);
   BKE_mesh_clear_derived_normals(mesh);
+}
+
+blender::Span<MLoopTri> Mesh::looptris() const
+{
+  const MLoopTri *looptris = BKE_mesh_runtime_looptri_ensure(this);
+  const int num_looptris = BKE_mesh_runtime_looptri_len(this);
+  return {looptris, num_looptris};
 }
 
 /**
@@ -154,12 +161,23 @@ void BKE_mesh_runtime_looptri_recalc(Mesh *mesh)
   const Span<MPoly> polys = mesh->polys();
   const Span<MLoop> loops = mesh->loops();
 
-  BKE_mesh_recalc_looptri(loops.data(),
-                          polys.data(),
-                          verts.data(),
-                          mesh->totloop,
-                          mesh->totpoly,
-                          mesh->runtime.looptris.array_wip);
+  if (!BKE_mesh_poly_normals_are_dirty(mesh)) {
+    BKE_mesh_recalc_looptri_with_normals(loops.data(),
+                                         polys.data(),
+                                         verts.data(),
+                                         mesh->totloop,
+                                         mesh->totpoly,
+                                         mesh->runtime.looptris.array_wip,
+                                         BKE_mesh_poly_normals_ensure(mesh));
+  }
+  else {
+    BKE_mesh_recalc_looptri(loops.data(),
+                            polys.data(),
+                            verts.data(),
+                            mesh->totloop,
+                            mesh->totpoly,
+                            mesh->runtime.looptris.array_wip);
+  }
 
   BLI_assert(mesh->runtime.looptris.array == nullptr);
   atomic_cas_ptr((void **)&mesh->runtime.looptris.array,

@@ -399,7 +399,7 @@ def set_scene_frame(scene, frame, force_update_main=False):
     """
     options = bpy.context.window_manager.storypencil_settings
     if scene.frame_current != frame:
-        scene.frame_current = frame
+        scene.frame_current = int(frame)
         scene.frame_set(int(frame))
         if force_update_main:
             update_sync(

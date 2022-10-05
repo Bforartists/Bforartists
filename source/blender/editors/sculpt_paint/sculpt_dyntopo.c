@@ -7,9 +7,6 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
-#include "BLI_hash.h"
-#include "BLI_math.h"
 #include "BLI_task.h"
 
 #include "BLT_translation.h"
@@ -18,12 +15,10 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
 
-#include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_mesh.h"
-#include "BKE_mesh_mapping.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
@@ -31,25 +26,14 @@
 #include "BKE_pbvh.h"
 #include "BKE_pointcache.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
 
 #include "DEG_depsgraph.h"
 
 #include "WM_api.h"
-#include "WM_message.h"
-#include "WM_toolsystem.h"
 #include "WM_types.h"
 
-#include "ED_object.h"
-#include "ED_screen.h"
-#include "ED_sculpt.h"
 #include "ED_undo.h"
-#include "ED_view3d.h"
-#include "paint_intern.h"
 #include "sculpt_intern.h"
-
-#include "RNA_access.h"
-#include "RNA_define.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -147,8 +131,13 @@ static void SCULPT_dynamic_topology_disable_ex(
   SculptSession *ss = ob->sculpt;
   Mesh *me = ob->data;
 
-  BKE_sculpt_attribute_destroy(ob, ss->attrs.dyntopo_node_id_vertex);
-  BKE_sculpt_attribute_destroy(ob, ss->attrs.dyntopo_node_id_face);
+  if (ss->attrs.dyntopo_node_id_vertex) {
+    BKE_sculpt_attribute_destroy(ob, ss->attrs.dyntopo_node_id_vertex);
+  }
+
+  if (ss->attrs.dyntopo_node_id_face) {
+    BKE_sculpt_attribute_destroy(ob, ss->attrs.dyntopo_node_id_face);
+  }
 
   SCULPT_pbvh_clear(ob);
 
@@ -180,7 +169,7 @@ static void SCULPT_dynamic_topology_disable_ex(
     BKE_sculptsession_bm_to_me(ob, true);
 
     /* Reset Face Sets as they are no longer valid. */
-    CustomData_free_layers(&me->pdata, CD_SCULPT_FACE_SETS, me->totpoly);
+    CustomData_free_layer_named(&me->pdata, ".sculpt_face_set", me->totpoly);
     me->face_sets_color_default = 1;
 
     /* Sync the visibility to vertices manually as the pmap is still not initialized. */

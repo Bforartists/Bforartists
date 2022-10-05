@@ -2,8 +2,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.6"
-__date__ = "22 Apr 2022"
+__version__ = "6.7"
+__date__ = "22 Sep 2022"
 
 
 bl_info = {

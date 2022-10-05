@@ -10,13 +10,13 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Proportional Edit Pie"
-    }
+}
 
 import bpy
 from bpy.types import (
-        Menu,
-        Operator,
-        )
+    Menu,
+    Operator,
+)
 
 
 # Proportional Edit Object
@@ -147,6 +147,7 @@ class PIE_OT_ProportionalRandomObj(Operator):
         if ts.proportional_edit_falloff != 'RANDOM':
             ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
+
 
 class PIE_OT_ProportionalInverseSquareObj(Operator):
     bl_idname = "proportional_obj.inversesquare"
@@ -281,6 +282,7 @@ class PIE_OT_ProportionalRandomEdt(Operator):
         ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
 
+
 class PIE_OT_ProportionalInverseSquareEdt(Operator):
     bl_idname = "proportional_edt.inversesquare"
     bl_label = "Proportional Inverese Square EditMode"
@@ -373,7 +375,6 @@ class PIE_MT_proportionalmoreob(Menu):
         box.operator("proportional_obj.random", text="Random", icon='RNDCURVE')
 
 
-
 classes = (
     PIE_OT_ProportionalEditObj,
     PIE_OT_ProportionalSmoothObj,
@@ -399,7 +400,7 @@ classes = (
     PIE_MT_ProportionalEdt,
     PIE_MT_ProportionalMore,
     PIE_MT_proportionalmoreob
-    )
+)
 
 addon_keymaps = []
 

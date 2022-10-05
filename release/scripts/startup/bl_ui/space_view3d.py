@@ -1334,6 +1334,8 @@ class VIEW3D_MT_view(Menu):
             layout.operator("view3d.render_border", icon="RENDERBORDER")
             layout.operator("view3d.clear_render_border", icon="RENDERBORDER_CLEAR")
 
+        layout.prop(view, "show_viewer", text="Viewer Node")
+
         layout.separator()
 
         layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
@@ -3920,6 +3922,8 @@ class VIEW3D_MT_mask(Menu):
         layout.separator()
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon="DIRTY_VERTEX")
+        props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity")
+        props.use_automask_settings = False
 
         layout.separator()
 
@@ -6442,6 +6446,10 @@ class VIEW3D_MT_sculpt_automasking_pie(Menu):
         pie.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
         pie.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
         pie.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        pie.prop(sculpt, "use_automasking_cavity", text="Cavity")
+        pie.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
+        pie.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
+        pie.prop(sculpt, "use_automasking_view_normal", text="View Normal")
 
 
 class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
@@ -7505,6 +7513,13 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row = col.row()
         row.separator()
         row.prop(overlay, "show_face_orientation")
+
+        row = col.row(align=True)
+        row.active = view.show_viewer
+        row.prop(overlay, "show_viewer_attribute", text="")
+        subrow = row.row(align=True)
+        subrow.active = overlay.show_viewer_attribute
+        subrow.prop(overlay, "viewer_attribute_opacity", text="Viewer Node")
 
         # These properties should be always available in the UI for all modes
         # other than Object.

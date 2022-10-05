@@ -10,7 +10,7 @@ bl_info = {
     "warning": "",
     "doc_url": "",
     "category": "Edit Delete Pie"
-    }
+}
 
 import bpy
 from bpy.types import Menu
@@ -50,7 +50,7 @@ class PIE_MT_PieDelete(Menu):
 
 classes = (
     PIE_MT_PieDelete,
-    )
+)
 
 
 addon_keymaps = []
