@@ -1804,6 +1804,7 @@ keyconfig_data = \
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -4635,7 +4636,7 @@ keyconfig_data = \
   {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("node.select",
-     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
       [("extend", False),
        ("deselect_all", True),
