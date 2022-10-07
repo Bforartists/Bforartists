@@ -185,8 +185,8 @@ duplicate
 fullscreen_enter
 fullscreen_exit
 #blank1  // not actually blank - this is used all over the place
-load_gitf
-save_gitf
+load_gltf
+save_gltf
 stucci_tex
 voroni_tex
 
