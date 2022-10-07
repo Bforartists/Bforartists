@@ -347,7 +347,7 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
             row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
-            row.operator("import_scene.gltf", text="", icon='LOAD_GITF')
+            row.operator("import_scene.gltf", text="", icon='LOAD_GLTF')
 
 
         ## ------------------ Import uncommon
@@ -375,7 +375,7 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
             row.operator("wm.usd_export", text="", icon='SAVE_USD')
-            row.operator("export_scene.gltf", text="", icon='SAVE_GITF')
+            row.operator("export_scene.gltf", text="", icon='SAVE_GLTF')
 
         ## ------------------ Export uncommon
 
