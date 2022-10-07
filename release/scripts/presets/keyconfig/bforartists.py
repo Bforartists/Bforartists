@@ -1,4 +1,4 @@
-keyconfig_version = (3, 4, 0)
+keyconfig_version = (3, 4, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -552,6 +552,14 @@ keyconfig_data = \
     ("transform.translate", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
     ("transform.rotate", {"type": 'E', "value": 'PRESS', "ctrl": True}, None),
     ("transform.resize", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+    ("object.select_grouped",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
+     {"properties":
+      [("extend", True),
+       ("type", 'COLLECTION'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -1795,6 +1803,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -5440,6 +5449,7 @@ keyconfig_data = \
     ("outliner.unhide_all", {"type": 'H', "value": 'PRESS', "alt": True}, None),
     ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
     ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+    ("outliner.collection_objects_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True}, None),
     ],
    },
   ),
@@ -5927,14 +5937,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_change_visibility",
-     {"type": 'H', "value": 'PRESS', "alt": True},
-     {"properties":
-      [("mode", 'SHOW_ALL'),
-       ("mode", 'SHOW_ALL'),
-       ],
-      },
-     ),
+    ("sculpt.face_set_change_visibility", {"type": 'H', "value": 'PRESS', "alt": True}, None),
     ("object.subdivision_set",
      {"type": 'ZERO', "value": 'PRESS', "ctrl": True},
      {"properties":
