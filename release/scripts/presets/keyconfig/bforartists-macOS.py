@@ -555,6 +555,14 @@ keyconfig_data = \
     ("object.select_grouped",
      {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
      {"properties":
+      [("extend", False),
+       ("type", 'COLLECTION'),
+       ],
+      },
+     ),
+    ("object.select_grouped",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "ctrl": True},
+     {"properties":
       [("extend", True),
        ("type", 'COLLECTION'),
        ],
@@ -1803,6 +1811,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
