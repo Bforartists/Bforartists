@@ -13766,6 +13766,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_BOOLEAN:
       return ICON_MOD_BOOLEAN;
 
+    case GEO_NODE_MESH_FACE_SET_BOUNDARIES:
+      return ICON_SELECT_BOUNDARY;
+
     case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
       return ICON_MESH_CIRCLE;
 
