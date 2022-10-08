@@ -1811,9 +1811,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -5947,7 +5944,22 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sculpt.face_set_change_visibility", {"type": 'H', "value": 'PRESS', "alt": True}, None),
+    ("sculpt.face_set_change_visibility",
+     {"type": 'I', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("mode", 'INVERT'),
+       ("mode", 'INVERT'),
+       ],
+      },
+     ),
+    ("sculpt.face_set_change_visibility",
+     {"type": 'H', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("mode", 'SHOW_ACTIVE'),
+       ("mode", 'SHOW_ACTIVE'),
+       ],
+      },
+     ),
     ("object.subdivision_set",
      {"type": 'ZERO', "value": 'PRESS', "oskey": True},
      {"properties":
