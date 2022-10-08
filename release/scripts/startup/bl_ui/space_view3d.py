@@ -3977,8 +3977,8 @@ class VIEW3D_MT_face_sets(Menu):
             icon="INVERT_MASK").mode = 'INVERT'
         layout.operator(
             "sculpt.face_set_change_visibility",
-            text='Show All Face Sets',
-            icon="HIDE_OFF").mode = 'SHOW_ALL'
+            text='Show Active Face Sets',
+            icon="HIDE_OFF").mode = 'SHOW_ACTIVE'
         layout.operator(
             "sculpt.face_set_change_visibility",
             text='Toggle Visibility',
