@@ -523,6 +523,9 @@ class FILEBROWSER_MT_view(FileBrowserMenu, Menu):
 
         layout.menu("INFO_MT_area")
 
+        layout.menu("FILEBROWSER_MT_view_pie_menus")
+
+
 
 class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
     bl_label = "Select"
@@ -680,6 +683,15 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
+
+class FILEBROWSER_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = 'FILEBROWSER_MT_view_pie'
 
 
 class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
@@ -895,6 +907,7 @@ classes = (
     FILEBROWSER_PT_directory_path,
     FILEBROWSER_MT_editor_menus,
     FILEBROWSER_MT_view,
+    FILEBROWSER_MT_view_pie_menus,
     FILEBROWSER_MT_select,
     FILEBROWSER_MT_context_menu,
     FILEBROWSER_MT_view_pie,
