@@ -3971,26 +3971,16 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.separator()
 
-        layout.operator(
-            "sculpt.face_set_change_visibility",
-            text='Invert Visible Face Sets',
-            icon="INVERT_MASK").mode = 'INVERT'
-        layout.operator(
-            "sculpt.face_set_change_visibility",
-            text='Show Active Face Sets',
-            icon="HIDE_OFF").mode = 'SHOW_ACTIVE'
-        layout.operator(
-            "sculpt.face_set_change_visibility",
-            text='Toggle Visibility',
-            icon="HIDE_UNSELECTED").mode = 'TOGGLE'
-        layout.operator(
-            "sculpt.face_set_change_visibility",
-            text='Hide Active Face Sets',
-            icon="HIDE_ON").mode = 'HIDE_ACTIVE'
+        layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon="INVERT_MASK").mode = 'INVERT'
+        layout.operator("sculpt.reveal_all", text = 'Show All Face Sets', icon = "HIDE_OFF")
+
+        # bfa - deactivated. These operators now crashes.
+        #layout.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon="HIDE_UNSELECTED").mode = 'TOGGLE'
+        #layout.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon="HIDE_ON").mode = 'HIDE_ACTIVE'
 
         layout.separator()
 
-        layout.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon="COLOR")
+        layout.operator("sculpt.face_sets_randomize_colors", text = 'Randomize Colors', icon = "COLOR")
 
 
 class VIEW3D_MT_sculpt_set_pivot(Menu):
