@@ -4579,6 +4579,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Distribute Points in Volume  ", icon = "VOLUME_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeDistributePointsInVolume"
+
             props = col.operator("node.add_node", text=" Distribute Points on Faces  ", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
