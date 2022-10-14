@@ -1576,7 +1576,7 @@ network_drive
 object_hidden
 desktop
 
-#~ DEF_ICON_BLANK(1610)
+volume_distribute
 #~ DEF_ICON_BLANK(1611)
 #~ DEF_ICON_BLANK(1612)
 #~ DEF_ICON_BLANK(1613)
