@@ -6781,7 +6781,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
             row = split.row(align=True)
             row.alignment = 'LEFT'
             row.label(text=attr_name)
-            row.prop(view, attr_v, text="", icon=icon_v, emboss=False)
+            row.prop(view, attr_v, text="", emboss=False)
 
             if show_select:
                 attr_s = "show_object_select_" + attr
