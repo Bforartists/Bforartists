@@ -4611,6 +4611,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeDistributePointsInVolume"
+
             props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
