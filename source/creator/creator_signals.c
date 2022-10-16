@@ -124,7 +124,7 @@ static void sig_handle_crash(int signum)
   char fname[FILE_MAX];
 
   if (!(G_MAIN && G_MAIN->filepath[0])) {
-    BLI_join_dirfile(fname, sizeof(fname), BKE_tempdir_base(), "blender.crash.txt");
+    BLI_join_dirfile(fname, sizeof(fname), BKE_tempdir_base(), "bforartists.crash.txt"); /*bfa - we write our own crashlog*/
   }
   else {
     BLI_join_dirfile(
