@@ -1,4 +1,4 @@
-keyconfig_version = (3, 4, 0)
+keyconfig_version = (3, 4, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -552,6 +552,22 @@ keyconfig_data = \
     ("transform.translate", {"type": 'W', "value": 'PRESS', "oskey": True}, None),
     ("transform.rotate", {"type": 'E', "value": 'PRESS', "oskey": True}, None),
     ("transform.resize", {"type": 'R', "value": 'PRESS', "oskey": True}, None),
+    ("object.select_grouped",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
+     {"properties":
+      [("extend", False),
+       ("type", 'COLLECTION'),
+       ],
+      },
+     ),
+    ("object.select_grouped",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("extend", True),
+       ("type", 'COLLECTION'),
+       ],
+      },
+     ),
     ],
    },
   ),
@@ -4626,7 +4642,7 @@ keyconfig_data = \
   {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("node.select",
-     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
       [("extend", False),
        ("deselect_all", True),
@@ -5440,6 +5456,7 @@ keyconfig_data = \
     ("outliner.unhide_all", {"type": 'H', "value": 'PRESS', "alt": True}, None),
     ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
     ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "oskey": True}, None),
+    ("outliner.collection_objects_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True}, None),
     ],
    },
   ),
@@ -5928,10 +5945,18 @@ keyconfig_data = \
       },
      ),
     ("sculpt.face_set_change_visibility",
+     {"type": 'I', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("mode", 'INVERT'),
+       ("mode", 'INVERT'),
+       ],
+      },
+     ),
+    ("sculpt.face_set_change_visibility",
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
-      [("mode", 'SHOW_ALL'),
-       ("mode", 'SHOW_ALL'),
+      [("mode", 'SHOW_ACTIVE'),
+       ("mode", 'SHOW_ACTIVE'),
        ],
       },
      ),
