@@ -13766,6 +13766,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_BOOLEAN:
       return ICON_MOD_BOOLEAN;
 
+    case GEO_NODE_MESH_FACE_SET_BOUNDARIES:
+      return ICON_SELECT_BOUNDARY;
+
     case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
       return ICON_MESH_CIRCLE;
 
@@ -13933,6 +13936,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_UV_UNWRAP:
       return ICON_UNWRAP_ABF;
+    
+    case GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME:
+      return ICON_VOLUME_DISTRIBUTE;
   }
   return ICON_NONE;
 }

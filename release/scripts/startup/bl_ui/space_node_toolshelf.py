@@ -4295,7 +4295,11 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
 
-            props = col.operator("node.add_node", text=" Face is Planar           ", icon = "PLANAR")
+            props = col.operator("node.add_node", text=" Face Set Boundaries ", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
+
+            props = col.operator("node.add_node", text=" Is Face Planar           ", icon = "PLANAR")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceIsPlanar"
 
@@ -4401,6 +4405,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FACEREGIONS")
             props.use_transform = True
             props.type = "GeometryNodeInputMeshFaceArea"
+
+            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshFaceSetBoundaries"
 
             props = flow.operator("node.add_node", text = "", icon = "PLANAR")
             props.use_transform = True
@@ -4571,6 +4579,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Distribute Points in Volume  ", icon = "VOLUME_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeDistributePointsInVolume"
+
             props = col.operator("node.add_node", text=" Distribute Points on Faces  ", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodeDistributePointsOnFaces"
@@ -4598,6 +4610,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeDistributePointsInVolume"
 
             props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
