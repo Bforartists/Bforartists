@@ -13,7 +13,7 @@ def add_node_type(layout, node_type, *, label=None):
     if not label:
         label = bl_rna.name if bl_rna else iface_("Unknown")
     translation_context = bl_rna.translation_context if bl_rna else i18n_contexts.default
-    props = layout.operator("node.add_node", text=label, text_ctxt=translation_context)
+    props = layout.operator("node.add_node", text=label, text_ctxt=translation_context, icon=bl_rna.icon)
     props.type = node_type
     props.use_transform = True
     return props
