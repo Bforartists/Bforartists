@@ -443,16 +443,7 @@ void SCULPT_OT_face_sets_create(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   RNA_def_enum(
-      ot->srna, "mode", prop_sculpt_face_set_create_types, SCULPT_FACE_SET_MASKED, "Mode", "");
-
-  /* properties */
-  /*bfa - get the mode and its tooltip from the prop_sculpt_face_set_create_types array */
-  ot->prop = RNA_def_enum(ot->srna,
-                          "mode",
-                          prop_sculpt_face_set_create_types,
-                          0,
-                          "Mode",
-                          "Method to create Face Sets");
+      ot->srna, "mode", prop_sculpt_face_set_create_types, SCULPT_FACE_SET_MASKED, "Mode", "Method to create Face Sets");
 }
 
 enum eSculptFaceSetsInitMode {
@@ -767,7 +758,7 @@ void SCULPT_OT_face_sets_init(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   RNA_def_enum(
-      ot->srna, "mode", prop_sculpt_face_sets_init_types, SCULPT_FACE_SET_MASKED, "Mode", "");
+      ot->srna, "mode", prop_sculpt_face_sets_init_types, SCULPT_FACE_SET_MASKED, "Mode", "Method to initialize Face Sets");
   RNA_def_float(
       ot->srna,
       "threshold",
@@ -778,15 +769,6 @@ void SCULPT_OT_face_sets_init(wmOperatorType *ot)
       "Minimum value to consider a certain attribute a boundary when creating the Face Sets",
       0.0f,
       1.0f);
-
-  /* properties */
-  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_init_types array */
-  ot->prop = RNA_def_enum(ot->srna,
-                          "mode",
-                          prop_sculpt_face_sets_init_types,
-                          0,
-                          "Mode",
-                          "Method to initialize Face Sets");
 }
 
 enum eSculptFaceGroupVisibilityModes {
@@ -980,17 +962,7 @@ void SCULPT_OT_face_sets_change_visibility(wmOperatorType *ot)
                prop_sculpt_face_sets_change_visibility_types,
                SCULPT_FACE_SET_VISIBILITY_TOGGLE,
                "Mode",
-               "");
-
-  /* properties */
-  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_change_visibility_types array
-   */
-  ot->prop = RNA_def_enum(ot->srna,
-                          "mode",
-                          prop_sculpt_face_sets_change_visibility_types,
-                          0,
-                          "Mode",
-                          "Method to change the visibility");
+               "Method to change the visibility");
 }
 
 static int sculpt_face_sets_randomize_colors_exec(bContext *C, wmOperator * /*op*/)
@@ -1475,15 +1447,10 @@ void SCULPT_OT_face_sets_edit(struct wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   RNA_def_enum(
-      ot->srna, "mode", prop_sculpt_face_sets_edit_types, SCULPT_FACE_SET_EDIT_GROW, "Mode", "");
+      ot->srna, "mode", prop_sculpt_face_sets_edit_types, SCULPT_FACE_SET_EDIT_GROW, "Mode", "Method to create Face Sets");
   ot->prop = RNA_def_boolean(ot->srna,
                              "modify_hidden",
                              true,
                              "Modify Hidden",
                              "Apply the edit operation to hidden Face Sets");
-
-  /* properties */
-  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_edit_types array */
-  ot->prop = RNA_def_enum(
-      ot->srna, "mode", prop_sculpt_face_sets_edit_types, 0, "Mode", "Method to create Face Sets");
 }
