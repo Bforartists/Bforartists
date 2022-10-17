@@ -389,12 +389,19 @@ struct PBVHBatches {
         break;
 
       case CD_PBVH_MASK_TYPE:
-        foreach_grids([&](int /*x*/, int /*y*/, int /*grid_index*/, CCGElem *elems[4], int i) {
-          float *mask = CCG_elem_mask(&args->ccg_key, elems[i]);
+        if (args->ccg_key.has_mask) {
+          foreach_grids([&](int /*x*/, int /*y*/, int /*grid_index*/, CCGElem *elems[4], int i) {
+            float *mask = CCG_elem_mask(&args->ccg_key, elems[i]);
 
-          *static_cast<uchar *>(GPU_vertbuf_raw_step(&access)) = mask ? uchar(*mask * 255.0f) :
-                                                                        255;
-        });
+            *static_cast<uchar *>(GPU_vertbuf_raw_step(&access)) = uchar(*mask * 255.0f);
+          });
+        }
+        else {
+          foreach_grids(
+              [&](int /*x*/, int /*y*/, int /*grid_index*/, CCGElem * /*elems*/[4], int i) {
+                *static_cast<uchar *>(GPU_vertbuf_raw_step(&access)) = 0;
+              });
+        }
         break;
 
       case CD_PBVH_FSET_TYPE: {
@@ -707,26 +714,14 @@ struct PBVHBatches {
         }
 
         BMLoop *l = f->l_first;
-        do {
-          callback(l);
-        } while ((l = l->next) != f->l_first);
+        callback(l->prev);
+        callback(l);
+        callback(l->next);
       }
       GSET_FOREACH_END();
     };
 
-    faces_count = 0;
-    GSET_FOREACH_BEGIN (BMFace *, f, args->bm_faces) {
-      if (BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
-        continue;
-      }
-
-      BMLoop *l = f->l_first;
-      do {
-        faces_count++;
-      } while ((l = l->next) != f->l_first);
-    }
-    GSET_FOREACH_END();
-    tris_count = faces_count;
+    faces_count = tris_count = count_faces(args);
 
     int existing_num = GPU_vertbuf_get_vertex_len(vbo.vert_buf);
     void *existing_data = GPU_vertbuf_get_data(vbo.vert_buf);
@@ -741,7 +736,24 @@ struct PBVHBatches {
     GPUVertBufRaw access;
     GPU_vertbuf_attr_get_raw_data(vbo.vert_buf, 0, &access);
 
+#if 0 /* Enable to fuzz GPU data (to check for over-allocation). */
+    existing_data = GPU_vertbuf_get_data(vbo.vert_buf);
+    uchar *c = static_cast<uchar *>(existing_data);
+    for (int i : IndexRange(vert_count * access.stride)) {
+      *c++ = i & 255;
+    }
+#endif
+
     switch (vbo.type) {
+      case CD_PROP_COLOR:
+      case CD_PROP_BYTE_COLOR: {
+        ushort4 white = {USHRT_MAX, USHRT_MAX, USHRT_MAX, USHRT_MAX};
+
+        foreach_bmesh([&](BMLoop * /*l*/) {
+          *static_cast<ushort4 *>(GPU_vertbuf_raw_step(&access)) = white;
+        });
+        break;
+      }
       case CD_PBVH_CO_TYPE:
         foreach_bmesh(
             [&](BMLoop *l) { *static_cast<float3 *>(GPU_vertbuf_raw_step(&access)) = l->v->co; });
@@ -1153,8 +1165,17 @@ struct PBVHBatches {
     }
 
     for (PBVHBatch &batch : batches.values()) {
-      GPU_batch_elembuf_set(batch.tris, tri_index, false);
-      GPU_batch_elembuf_set(batch.lines, lines_index, false);
+      if (tri_index) {
+        GPU_batch_elembuf_set(batch.tris, tri_index, false);
+      }
+      else {
+        /* Still flag the batch as dirty even if we're using the default index layout. */
+        batch.tris->flag |= GPU_BATCH_DIRTY;
+      }
+
+      if (lines_index) {
+        GPU_batch_elembuf_set(batch.lines, lines_index, false);
+      }
     }
   }
 

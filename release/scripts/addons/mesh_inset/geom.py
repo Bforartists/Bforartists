@@ -559,7 +559,7 @@ def PointInside(v, a, points):
 
 
 def SignedArea(polygon, points):
-    """Return the area of the polgon, positive if CCW, negative if CW.
+    """Return the area of the polygon, positive if CCW, negative if CW.
 
     Args:
       polygon: list of vertex indices

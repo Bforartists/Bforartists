@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -389,22 +389,6 @@ msgid "Save"
 msgstr "Gorde"
 
 
-msgid "Sound"
-msgstr "Soinua"
-
-
-msgid "Speaker"
-msgstr "Bozgorailua"
-
-
-msgid "Text"
-msgstr "Testua"
-
-
-msgid "World"
-msgstr "Mundua"
-
-
 msgid "Environment"
 msgstr "Ingurunea"
 
@@ -503,6 +487,10 @@ msgid "Angular Velocity"
 msgstr "Abiadura-angeluarra"
 
 
+msgid "Sound"
+msgstr "Soinua"
+
+
 msgid "Image Texture"
 msgstr "Irudiaren ehundura"
 
@@ -584,6 +572,10 @@ msgid "Show/Hide Faces"
 msgstr "Aurpegiak erakutsi/ezkutatu"
 
 
+msgid "Text"
+msgstr "Testua"
+
+
 msgid "File"
 msgstr "Fitxategia"
 
@@ -610,6 +602,10 @@ msgstr "Loturak"
 
 msgid "New"
 msgstr "Berria"
+
+
+msgid "World"
+msgstr "Mundua"
 
 
 msgctxt "Curve"
@@ -1146,14 +1142,6 @@ msgid "Write file to original location (overwrite existing file)"
 msgstr "Jatorrizko kokapenean idatzi fitxategia (berridatzi existitzen den fitxategia)"
 
 
-msgid "Lower"
-msgstr "Baxua"
-
-
-msgid "Upper"
-msgstr "Altua"
-
-
 msgctxt "Operator"
 msgid "Change Character"
 msgstr "Karakterea aldatu"
@@ -1557,6 +1545,11 @@ msgid "Render"
 msgstr "Renderizatu"
 
 
+msgctxt "Scene"
+msgid "New"
+msgstr "Berria"
+
+
 msgid "Copy Settings"
 msgstr "Ezarpenak Kopiatu"
 
@@ -1807,6 +1800,10 @@ msgid "Sort Alphabetically"
 msgstr "Alfabetikoki Ordenatu"
 
 
+msgid "Speaker"
+msgstr "Bozgorailua"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -1911,6 +1908,14 @@ msgstr "Lehentasuna"
 msgctxt "Operator"
 msgid "Clear"
 msgstr "Garbitu"
+
+
+msgid "Lower"
+msgstr "Baxua"
+
+
+msgid "Upper"
+msgstr "Altua"
 
 
 msgid "Refraction"
@@ -2055,11 +2060,6 @@ msgstr "Helbide hutsa, ezin da gorde"
 
 msgid "Path too long, cannot save"
 msgstr "Helbide oso luzea, ezin da gorde"
-
-
-msgctxt "Scene"
-msgid "New"
-msgstr "Berria"
 
 
 msgctxt "Object"
@@ -2479,10 +2479,6 @@ msgstr "Kroaziera (Hrvatski)"
 
 msgid "Serbian (Српски)"
 msgstr "Serbiera (Српски)"
-
-
-msgid "Ukrainian (Український)"
-msgstr "Ukraniera (Український)"
 
 
 msgid "Polish (Polski)"

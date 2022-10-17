@@ -3032,7 +3032,7 @@ static void node_draw_nodetree(const bContext &C,
   }
 }
 
-/* Draw the breadcrumb on the bottom of the editor. */
+/* Draw the breadcrumb on the top of the editor. */
 static void draw_tree_path(const bContext &C, ARegion &region)
 {
   using namespace blender;

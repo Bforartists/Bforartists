@@ -125,7 +125,7 @@ def set_axis(mode_pl):
         mode_pl: Taper Axis Selector variable as input
 
     Returns:
-        3 Integer Indicies.
+        3 Integer Indices.
     """
 
     order = {

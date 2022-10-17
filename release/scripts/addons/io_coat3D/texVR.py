@@ -132,7 +132,7 @@ def updatetextures(objekti): # Update 3DC textures
 
 def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #read textures from texture file
 
-    # Let's check are we UVSet or MATERIAL modee
+    # Let's check are we UVSet or MATERIAL mode
     create_nodes = False
     for ind, index_mat in enumerate(objekti.material_slots):
 
@@ -801,7 +801,7 @@ def matlab(objekti,mat_list,texturelist,is_new):
 
     print('Welcome facture matlab function')
 
-    ''' FBX Materials: remove all nodes and create princibles node'''
+    ''' FBX Materials: remove all nodes and create principle node'''
     if(is_new):
         RemoveFbxNodes(objekti)
 

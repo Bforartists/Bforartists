@@ -161,7 +161,7 @@ def SVGParseTransform(transform):
 
         proc = SVGTransforms.get(func)
         if proc is None:
-            raise Exception('Unknown trasnform function: ' + func)
+            raise Exception('Unknown transform function: ' + func)
 
         m = m @ proc(params)
 
@@ -484,7 +484,7 @@ class SVGPathParser:
     """
 
     __slots__ = ('_data',  # Path data supplird
-                 '_point',  # Current point coorfinate
+                 '_point',  # Current point coordinate
                  '_handle',  # Last handle coordinate
                  '_splines',  # List of all splies created during parsing
                  '_spline',  # Currently handling spline
@@ -870,6 +870,14 @@ class SVGPathParser:
             cv = self._spline['points'][0]
             self._point = (cv['x'], cv['y'])
 
+    def _pathCloseImplicitly(self):
+        """
+        Close path implicitly without changing current point coordinate
+        """
+
+        if self._spline:
+            self._spline['closed'] = True
+
     def parse(self):
         """
         Execute parser
@@ -884,14 +892,17 @@ class SVGPathParser:
             if cmd is None:
                 raise Exception('Unknown path command: {0}' . format(code))
 
-            if cmd in {'Z', 'z'}:
+            if code in {'Z', 'z'}:
                 closed = True
             else:
                 closed = False
 
+            if code in {'M', 'm'} and self._use_fill and not closed:
+                self._pathCloseImplicitly() # Ensure closed before MoveTo path command
+
             cmd(code)
         if self._use_fill and not closed:
-            self._pathClose('z')
+            self._pathCloseImplicitly() # Ensure closed at the end of parsing
 
     def getSplines(self):
         """
