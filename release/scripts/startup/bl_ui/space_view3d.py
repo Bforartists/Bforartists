@@ -6726,7 +6726,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "View Object Types"
-    bl_ui_units_x = 7
+    bl_ui_units_x = 9
 
     # Allows derived classes to pass view data other than context.space_data.
     # This is used by the official VR add-on, which passes XrSessionSettings
@@ -6744,29 +6744,29 @@ class VIEW3D_PT_object_type_visibility(Panel):
 
         attr_object_types = (
             # Geometry
-            ("mesh", "Mesh"),
-            ("curve", "Curve"),
-            ("surf", "Surface"),
-            ("meta", "Meta"),
-            ("font", "Text"),
-            ("curves", "Hair Curves"),
-            ("pointcloud", "Point Cloud"),
-            ("volume", "Volume"),
-            ("grease_pencil", "Grease Pencil"),
-            (None, None),
+            ("mesh", "Mesh", "OUTLINER_OB_MESH"),
+            ("curve", "Curve", "OUTLINER_OB_CURVE"),
+            ("surf", "Surface", "OUTLINER_OB_SURFACE"),
+            ("meta", "Meta", "OUTLINER_OB_META"),
+            ("font", "Text", "OUTLINER_OB_FONT"),
+            ("curves", "Hair Curves", "HAIR_DATA"),
+            ("pointcloud", "Point Cloud", "OUTLINER_OB_POINTCLOUD"),
+            ("volume", "Volume", "OUTLINER_OB_VOLUME"),
+            ("grease_pencil", "Grease Pencil", "OUTLINER_OB_GREASEPENCIL"),
+            (None, None, None),
             # Other
-            ("armature", "Armature"),
-            ("lattice", "Lattice"),
-            ("empty", "Empty"),
-            ("light", "Light"),
-            ("light_probe", "Light Probe"),
-            ("camera", "Camera"),
-            ("speaker", "Speaker"),
+            ("armature", "Armature", "OUTLINER_OB_ARMATURE"),
+            ("lattice", "Lattice", "OUTLINER_OB_LATTICE"),
+            ("empty", "Empty", "OUTLINER_OB_EMPTY"),
+            ("light", "Light", "OUTLINER_OB_LIGHT"),
+            ("light_probe", "Light Probe", "OUTLINER_OB_LIGHTPROBE"),
+            ("camera", "Camera", "OUTLINER_OB_CAMERA"),
+            ("speaker", "Speaker", "OUTLINER_OB_SPEAKER"),
         )
 
-        for attr, attr_name in attr_object_types:
+        for attr, attr_name, icon in attr_object_types:
             if attr is None:
-                col.separator()
+                layout.separator()
                 continue
 
             if attr == "curves" and not hasattr(bpy.data, "hair_curves"):
@@ -6780,7 +6780,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
             split = layout.split(factor=0.7)
             row = split.row(align=True)
             row.alignment = 'LEFT'
-            row.label(text=attr_name)
+            row.label(icon = icon, text=attr_name)
             row.prop(view, attr_v, text="", emboss=False)
 
             if show_select:
