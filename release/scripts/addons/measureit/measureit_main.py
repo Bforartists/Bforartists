@@ -232,7 +232,7 @@ class MeasureitProperties(PropertyGroup):
                             default=15, min=6, max=500)
 
     glarc_full: BoolProperty(name="arcfull",
-                              description="Create full circunference",
+                              description="Create full circumference",
                               default=False)
     glarc_extrad: BoolProperty(name="arcextrad",
                                 description="Adapt radio length to arc line",
@@ -554,7 +554,7 @@ def add_item(box, idx, segment):
                 if segment.gltype == 1:
                     row.prop(segment, 'glorto', text="Orthogonal")
                 row.prop(segment, 'glocwarning', text="Warning")
-                # ortogonal (only segments)
+                # orthogonal (only segments)
                 if segment.gltype == 1:
                     if segment.glorto != "99":
                         row = box.row(align=True)

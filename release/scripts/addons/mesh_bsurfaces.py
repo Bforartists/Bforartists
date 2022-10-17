@@ -2560,7 +2560,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
                 loop_segments_lengths = []
 
                 for st in range(len(pts_on_strokes_with_proportions_U)):
-                    # When on the first stroke, add the segment from the selection to the dirst stroke
+                    # When on the first stroke, add the segment from the selection to the first stroke
                     if st == 0:
                         loop_segments_lengths.append(
                                     ((self.main_object.matrix_world @ verts_ordered_U[lp].co) -

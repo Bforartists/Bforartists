@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,14 +151,6 @@ msgid "Size"
 msgstr "לדוג"
 
 
-msgid "Mask"
-msgstr "הכסמ"
-
-
-msgid "World"
-msgstr "םלוע"
-
-
 msgid "Environment"
 msgstr "הביבס"
 
@@ -213,6 +205,10 @@ msgstr "קורי"
 
 msgid "Blue"
 msgstr "לוחכ"
+
+
+msgid "Mask"
+msgstr "הכסמ"
 
 
 msgid "Up"
@@ -277,6 +273,10 @@ msgstr "תכרעמ"
 
 msgid "Convert"
 msgstr "רמה"
+
+
+msgid "World"
+msgstr "םלוע"
 
 
 msgid "Lift"

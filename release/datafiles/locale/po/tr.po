@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -134,6 +134,10 @@ msgid "Dissolve"
 msgstr "Eritme"
 
 
+msgid "Radius"
+msgstr "Yarıçap"
+
+
 msgid "Fill"
 msgstr "Doldur"
 
@@ -244,10 +248,6 @@ msgstr "İmleç"
 
 msgid "View"
 msgstr "Görünüş"
-
-
-msgid "Radius"
-msgstr "Yarıçap"
 
 
 msgid "Material Index"
@@ -362,46 +362,6 @@ msgid "Save"
 msgstr "Kaydet"
 
 
-msgid "Font"
-msgstr "Yazıtipi"
-
-
-msgid "Lattice"
-msgstr "Kafes"
-
-
-msgid "Library"
-msgstr "Kütüphane"
-
-
-msgid "Mask"
-msgstr "Maske"
-
-
-msgid "Mesh"
-msgstr "Örüntü"
-
-
-msgid "Particle"
-msgstr "Parçacık"
-
-
-msgid "Sound"
-msgstr "Ses"
-
-
-msgid "Text"
-msgstr "Metin"
-
-
-msgid "Window Manager"
-msgstr "Pencere Yöneticisi"
-
-
-msgid "World"
-msgstr "Dünya"
-
-
 msgid "Environment"
 msgstr "Çevre"
 
@@ -478,6 +438,10 @@ msgid "Mirror"
 msgstr "Yansıtma"
 
 
+msgid "Lattice"
+msgstr "Kafes"
+
+
 msgid "Steps"
 msgstr "Adımlar"
 
@@ -506,6 +470,10 @@ msgid "Blue"
 msgstr "Mavi"
 
 
+msgid "Library"
+msgstr "Kütüphane"
+
+
 msgid "Box"
 msgstr "Kutu"
 
@@ -524,6 +492,10 @@ msgstr "Eğri Önayarı"
 
 msgid "Erase"
 msgstr "Sil "
+
+
+msgid "Mask"
+msgstr "Maske"
 
 
 msgid "X Plane"
@@ -592,6 +564,10 @@ msgstr "Boyutlar"
 
 msgid "Extrude"
 msgstr "Presle"
+
+
+msgid "Font"
+msgstr "Yazıtipi"
 
 
 msgid "Min"
@@ -710,6 +686,10 @@ msgid "Mass"
 msgstr "Kütle"
 
 
+msgid "Particle"
+msgstr "Parçacık"
+
+
 msgid "Halo"
 msgstr "Hale"
 
@@ -718,12 +698,20 @@ msgid "Global Gravity"
 msgstr "Evrensel Yerçekimi"
 
 
+msgid "Sound"
+msgstr "Ses"
+
+
 msgid "Filter"
 msgstr "Filtre"
 
 
 msgid "Area"
 msgstr "Alan"
+
+
+msgid "Window Manager"
+msgstr "Pencere Yöneticisi"
 
 
 msgid "Mist"
@@ -758,10 +746,6 @@ msgid "Show/Hide"
 msgstr "Göster/Gizle"
 
 
-msgid "Tracking"
-msgstr "Takip"
-
-
 msgid "Console"
 msgstr "Konsol"
 
@@ -780,6 +764,14 @@ msgstr "Çarpıt"
 
 msgid "Layout"
 msgstr "Mizanpaj"
+
+
+msgid "Text"
+msgstr "Metin"
+
+
+msgid "Mesh"
+msgstr "Örüntü"
 
 
 msgid "Apply"
@@ -828,6 +820,10 @@ msgstr "Yeni"
 
 msgid "Copy"
 msgstr "Kopya"
+
+
+msgid "World"
+msgstr "Dünya"
 
 
 msgid "Limits"
@@ -1013,10 +1009,6 @@ msgstr "Resmi farklı kaydet:"
 
 msgid "Zoom Out"
 msgstr "Uzaklaş"
-
-
-msgid "Object Index"
-msgstr "Nesne Endeksi"
 
 
 msgid "Scene Origin"
@@ -1290,14 +1282,6 @@ msgid "Strand"
 msgstr "İplik"
 
 
-msgid "Out"
-msgstr "Çıkış"
-
-
-msgid "In"
-msgstr "Giriş"
-
-
 msgid "Sepia"
 msgstr "Sepya"
 
@@ -1330,6 +1314,10 @@ msgid "Radians"
 msgstr "Radyan"
 
 
+msgid "Tracking"
+msgstr "Takip"
+
+
 msgid "Torus"
 msgstr "Halka"
 
@@ -1344,6 +1332,10 @@ msgstr "Katkıda Bulunanlar"
 
 msgid "After"
 msgstr "Sonra"
+
+
+msgid "Out"
+msgstr "Çıkış"
 
 
 msgid "Not Set"
@@ -1732,6 +1724,10 @@ msgstr "Açık"
 
 msgid "Transparency"
 msgstr "Saydamlık"
+
+
+msgid "Object Index"
+msgstr "Nesne Endeksi"
 
 
 msgid "Patterns"

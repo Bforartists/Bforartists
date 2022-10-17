@@ -217,7 +217,7 @@ class _Properties:
         )
         scene.muv_texture_projection_adjust_window = BoolProperty(
             name="Adjust Window",
-            description="Scale of renderered texture is fitted to window",
+            description="Scale of rendered texture is fitted to window",
             default=True
         )
         scene.muv_texture_projection_apply_tex_aspect = BoolProperty(

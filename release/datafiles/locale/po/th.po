@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -534,6 +534,10 @@ msgid "All"
 msgstr "ทั้งหมด"
 
 
+msgid "Radius"
+msgstr "รัศมี"
+
+
 msgid "Pen"
 msgstr "ปากกา"
 
@@ -760,10 +764,6 @@ msgstr "ระนาบ"
 
 msgid "View"
 msgstr "มุมมอง"
-
-
-msgid "Radius"
-msgstr "รัศมี"
 
 
 msgid "Segments"
@@ -1116,58 +1116,6 @@ msgid "Save"
 msgstr "บันทึก"
 
 
-msgid "Font"
-msgstr "ฟอนต์"
-
-
-msgid "Light"
-msgstr "แสง"
-
-
-msgid "Line Style"
-msgstr "สไตล์เส้น"
-
-
-msgid "Mask"
-msgstr "หน้ากาก"
-
-
-msgid "Mesh"
-msgstr "เมช"
-
-
-msgid "Metaball"
-msgstr "เมตาบอล"
-
-
-msgid "Palette"
-msgstr "จานสี"
-
-
-msgid "Particle"
-msgstr "อนุภาค"
-
-
-msgid "Sound"
-msgstr "เสียง"
-
-
-msgid "Speaker"
-msgstr "ลำโพง"
-
-
-msgid "Text"
-msgstr "ช้อความ"
-
-
-msgid "Workspace"
-msgstr "พื้นที่ใช้งาน"
-
-
-msgid "World"
-msgstr "โลก"
-
-
 msgid "Miscellaneous"
 msgstr "เบ็ดเตล็ด"
 
@@ -1246,6 +1194,10 @@ msgstr "UV"
 
 msgid "Border"
 msgstr "เส้นขอบ"
+
+
+msgid "Line Style"
+msgstr "สไตล์เส้น"
 
 
 msgid "Use"
@@ -1343,6 +1295,10 @@ msgid "Step"
 msgstr "ขั้นตอน"
 
 
+msgid "Subdivisions"
+msgstr "แบ่งย่อย"
+
+
 msgid "Fixed"
 msgstr "คงที่"
 
@@ -1423,6 +1379,10 @@ msgid "Repeat"
 msgstr "ทำซ้ำ"
 
 
+msgid "Mask"
+msgstr "หน้ากาก"
+
+
 msgid "Mask Texture"
 msgstr "พื้นผิวหน้ากาก"
 
@@ -1485,6 +1445,10 @@ msgstr "ความละเอียด U"
 
 msgid "Resolution V"
 msgstr "ความละเอียด V"
+
+
+msgid "Font"
+msgstr "ฟอนต์"
 
 
 msgid "Font Bold"
@@ -1848,6 +1812,10 @@ msgid "Display"
 msgstr "แสดง"
 
 
+msgid "Particle"
+msgstr "อนุภาค"
+
+
 msgid "Path Start"
 msgstr "เส้นทางเริ้่มต้น"
 
@@ -1890,6 +1858,10 @@ msgstr "โหมดซิงค์"
 
 msgid "Animation Editors"
 msgstr "ตัวแก้ไขแอนิเมชัน"
+
+
+msgid "Sound"
+msgstr "เสียง"
 
 
 msgid "Memory"
@@ -1946,6 +1918,10 @@ msgstr "ลวดลาย"
 
 msgid "Rings"
 msgstr "แหวน"
+
+
+msgid "Workspace"
+msgstr "พื้นที่ใช้งาน"
 
 
 msgid "Animation"
@@ -2112,6 +2088,14 @@ msgid "Layout"
 msgstr "เค้าโครง"
 
 
+msgid "Text"
+msgstr "ช้อความ"
+
+
+msgid "Mesh"
+msgstr "เมช"
+
+
 msgid "Node"
 msgstr "โนด"
 
@@ -2193,12 +2177,20 @@ msgid "Normals"
 msgstr "แนวฉาก"
 
 
+msgid "Metaball"
+msgstr "เมตาบอล"
+
+
 msgid "Hooks"
 msgstr "ตะขอ"
 
 
 msgid "Add Image"
 msgstr "เพิ่มภาพ"
+
+
+msgid "Light"
+msgstr "แสง"
 
 
 msgid "Object Context Menu"
@@ -2335,6 +2327,10 @@ msgstr "สะท้อน V"
 
 msgid "Copy"
 msgstr "คัดลอก"
+
+
+msgid "World"
+msgstr "โลก"
 
 
 msgid "UV Center"
@@ -2752,10 +2748,6 @@ msgid "Add New Layer"
 msgstr "เพิ่มชั้นใหม่"
 
 
-msgid "Subdivisions"
-msgstr "แบ่งย่อย"
-
-
 msgid "Join"
 msgstr "เชื่อมโยง"
 
@@ -3153,6 +3145,10 @@ msgid "Show"
 msgstr "แสดง"
 
 
+msgid "Palette"
+msgstr "จานสี"
+
+
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "กระจกสะท้อน"
@@ -3174,6 +3170,11 @@ msgstr "วางท่าทาง"
 msgctxt "Operator"
 msgid "Render"
 msgstr "เรนเดอร์"
+
+
+msgctxt "Scene"
+msgid "New"
+msgstr "ใหม่"
 
 
 msgid "Restore Frame"
@@ -3649,10 +3650,6 @@ msgid "Path to interface font"
 msgstr "ตำแหน่งไปยังฟอนต์อินเตอร์เฟส"
 
 
-msgid "Automatic (Automatic)"
-msgstr "อัตโนมัติ"
-
-
 msgid "Developer Extras"
 msgstr "เครื่องมือพิเศษสำหรับผู้พัฒนา"
 
@@ -3909,6 +3906,10 @@ msgstr "ขอบเขตสามมิติ"
 
 msgid "Show Empty Image"
 msgstr "แสดงภาพว่างเปล่า"
+
+
+msgid "Speaker"
+msgstr "ลำโพง"
 
 
 msgid "3D"
@@ -5247,11 +5248,6 @@ msgid "Zoom out"
 msgstr "ซูมออก"
 
 
-msgctxt "Scene"
-msgid "New"
-msgstr "ใหม่"
-
-
 msgctxt "Object"
 msgid "New"
 msgstr "ใหม่"
@@ -5820,10 +5816,6 @@ msgstr "ภาษาโครเอเชีย (Hrvatski)"
 
 msgid "Serbian (Српски)"
 msgstr "ภาษาเซอร์เบีย (Српски)"
-
-
-msgid "Ukrainian (Український)"
-msgstr "ภาษายูเครน (Український)"
 
 
 msgid "Polish (Polski)"

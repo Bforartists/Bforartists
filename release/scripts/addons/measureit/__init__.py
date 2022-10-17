@@ -305,7 +305,7 @@ def register():
     Scene.measureit_debug = BoolProperty(name="Debug",
                                          description="Display information for debugging"
                                                      " (expand/collapse for enabling or disabling)"
-                                                     " this information is only renderered for "
+                                                     " this information is only rendered for "
                                                      "selected objects",
                                          default=False)
     Scene.measureit_debug_select = BoolProperty(name="Selected",

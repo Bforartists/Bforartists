@@ -3942,7 +3942,7 @@ class GStretch(Operator):
     conversion_max: IntProperty(
         name="Max Vertices",
         description="Maximum number of vertices strokes will "
-                    "have, when they are converted to geomtery",
+                    "have, when they are converted to geometry",
         default=32,
         min=3,
         soft_max=500,
@@ -3951,7 +3951,7 @@ class GStretch(Operator):
     conversion_min: IntProperty(
         name="Min Vertices",
         description="Minimum number of vertices strokes will "
-                    "have, when they are converted to geomtery",
+                    "have, when they are converted to geometry",
         default=8,
         min=3,
         soft_max=500,
@@ -5000,7 +5000,7 @@ class LoopToolsProps(PropertyGroup):
     gstretch_conversion_max: IntProperty(
         name="Max Vertices",
         description="Maximum number of vertices strokes will "
-                    "have, when they are converted to geomtery",
+                    "have, when they are converted to geometry",
         default=32,
         min=3,
         soft_max=500,
@@ -5009,7 +5009,7 @@ class LoopToolsProps(PropertyGroup):
     gstretch_conversion_min: IntProperty(
         name="Min Vertices",
         description="Minimum number of vertices strokes will "
-                    "have, when they are converted to geomtery",
+                    "have, when they are converted to geometry",
         default=8,
         min=3,
         soft_max=500,
