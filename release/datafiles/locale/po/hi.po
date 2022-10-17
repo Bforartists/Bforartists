@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -659,6 +659,10 @@ msgid "All"
 msgstr "सभी"
 
 
+msgid "Radius"
+msgstr "त्रिज्या"
+
+
 msgid "Marker"
 msgstr "चिन्हक"
 
@@ -1064,10 +1068,6 @@ msgid "Index"
 msgstr "सूचकांक"
 
 
-msgid "Radius"
-msgstr "त्रिज्या"
-
-
 msgid "Render"
 msgstr " प्रतिपादन"
 
@@ -1449,46 +1449,6 @@ msgid "Save"
 msgstr "सहेजें"
 
 
-msgid "Brush"
-msgstr "तूलिका"
-
-
-msgid "Font"
-msgstr "मुद्र"
-
-
-msgid "Key"
-msgstr "कुंजी"
-
-
-msgid "Light"
-msgstr "प्रकाश"
-
-
-msgid "Mask"
-msgstr "आवरण"
-
-
-msgid "Mesh"
-msgstr "जाल"
-
-
-msgid "Sound"
-msgstr "ध्वनि"
-
-
-msgid "Text"
-msgstr "पाठ"
-
-
-msgid "Window Manager"
-msgstr "खिडकी प्रबंधक"
-
-
-msgid "World"
-msgstr "जगत"
-
-
 msgid "Relative Path"
 msgstr "सापेक्ष पथ"
 
@@ -1762,6 +1722,10 @@ msgid "Steps"
 msgstr "कदम"
 
 
+msgid "Subdivisions"
+msgstr "उप विभाजन"
+
+
 msgid "Negative"
 msgstr "नकारात्मक"
 
@@ -1904,6 +1868,14 @@ msgstr "कीलक"
 
 msgid "Soften"
 msgstr "मॄदु"
+
+
+msgid "Mask"
+msgstr "आवरण"
+
+
+msgid "Brush"
+msgstr "तूलिका"
 
 
 msgid "Mask Tool"
@@ -2068,6 +2040,10 @@ msgstr "स्वरूप संपादन"
 
 msgid "Text on Curve"
 msgstr "वक्र पर पाठ"
+
+
+msgid "Font"
+msgstr "मुद्र"
 
 
 msgid "Font Bold"
@@ -2575,6 +2551,10 @@ msgid "Mute the speaker"
 msgstr "स्पीकर म्यूट करें"
 
 
+msgid "Sound"
+msgstr "ध्वनि"
+
+
 msgid "Current Line"
 msgstr "वर्तमान रेखा"
 
@@ -2623,10 +2603,6 @@ msgid "Hard"
 msgstr "कठोर"
 
 
-msgid "Clip Cube"
-msgstr "छांटन घन"
-
-
 msgid "Filter Size"
 msgstr "निस्पादक आकार"
 
@@ -2669,6 +2645,10 @@ msgstr "मोड"
 
 msgid "Rings"
 msgstr "छल्ले"
+
+
+msgid "Window Manager"
+msgstr "खिडकी प्रबंधक"
 
 
 msgid "Category"
@@ -2900,6 +2880,10 @@ msgid "Channel"
 msgstr "सरणि"
 
 
+msgid "Key"
+msgstr "कुंजी"
+
+
 msgid "Snap"
 msgstr "स्नैप"
 
@@ -2923,6 +2907,14 @@ msgstr "विकृत"
 
 msgid "Matte"
 msgstr "मैट"
+
+
+msgid "Text"
+msgstr "पाठ"
+
+
+msgid "Mesh"
+msgstr "जाल"
 
 
 msgid "Node"
@@ -2999,6 +2991,10 @@ msgstr "हड्डी पंजी"
 
 msgid "Hooks"
 msgstr "खूँटी"
+
+
+msgid "Light"
+msgstr "प्रकाश"
 
 
 msgid "Make Single User"
@@ -3123,6 +3119,10 @@ msgstr "बाध्य"
 
 msgid "Copy"
 msgstr "प्रतिलिपि"
+
+
+msgid "World"
+msgstr "जगत"
 
 
 msgid "Limits"
@@ -3348,6 +3348,10 @@ msgstr "घुमावदार"
 
 msgid "Equal"
 msgstr "बराबर"
+
+
+msgid "Z Up"
+msgstr "Z ऊर्ध्व"
 
 
 msgid "Reflection"
@@ -3769,10 +3773,6 @@ msgid "Y Up"
 msgstr "Y ऊर्ध्व"
 
 
-msgid "Z Up"
-msgstr "Z ऊर्ध्व"
-
-
 msgid "-X Up"
 msgstr "-X ऊर्ध्व"
 
@@ -3818,18 +3818,6 @@ msgid "Next"
 msgstr "अगला"
 
 
-msgid "Case"
-msgstr "प्रकरण"
-
-
-msgid "Lower"
-msgstr "निचला"
-
-
-msgid "Upper"
-msgstr "ऊपरी"
-
-
 msgid "Delta"
 msgstr "डेल्टा"
 
@@ -3857,10 +3845,6 @@ msgstr "तैलीय पेंसिल में परिवर्तित
 
 msgid "Limit"
 msgstr "सीमा"
-
-
-msgid "Subdivisions"
-msgstr "उप विभाजन"
 
 
 msgid "Modifier"
@@ -4269,6 +4253,11 @@ msgstr "कठोर-पदार्थ हटाएँ"
 msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "दृश्य मिटाएँ"
+
+
+msgctxt "Scene"
+msgid "New"
+msgstr "नई"
 
 
 msgid "Sync"
@@ -4890,6 +4879,10 @@ msgid "New Window"
 msgstr "नई खिडकी"
 
 
+msgid "Case"
+msgstr "प्रकरण"
+
+
 msgid "Glossy Color"
 msgstr "चमकदार रंग"
 
@@ -5086,14 +5079,6 @@ msgstr "रंग"
 msgctxt "Sequence"
 msgid "Speed"
 msgstr "गति"
-
-
-msgid "Out"
-msgstr "बाहर"
-
-
-msgid "In"
-msgstr "में"
 
 
 msgid "Active Strip"
@@ -5628,6 +5613,10 @@ msgid "Remove"
 msgstr "हटाएँ"
 
 
+msgid "Out"
+msgstr "बाहर"
+
+
 msgctxt "Operator"
 msgid "Add Image"
 msgstr "छवि जोड़ें"
@@ -5768,6 +5757,14 @@ msgstr "विस्थापन प्रकार"
 
 msgid "Heat"
 msgstr "गर्मी"
+
+
+msgid "Lower"
+msgstr "निचला"
+
+
+msgid "Upper"
+msgstr "ऊपरी"
 
 
 msgid "Auto-Step"
@@ -6409,10 +6406,6 @@ msgid "Basic"
 msgstr "बुनियादी"
 
 
-msgid "Channels are visible in Graph Editor for editing"
-msgstr "सरणिों के लिए संपादन बिंदुरेख संपादक में दिखाई दे रहे हैं"
-
-
 msgid "Make channels grouped under this channel visible"
 msgstr "सरणि दिखाई इस सरणि के तहत समूहीकृत करें"
 
@@ -6541,11 +6534,6 @@ msgstr "बिंदु मिटाएँ"
 
 msgid "Stop animation playback"
 msgstr "अनुप्राणन चलाएँ रोकें"
-
-
-msgctxt "Scene"
-msgid "New"
-msgstr "नई"
 
 
 msgctxt "Object"
@@ -7064,6 +7052,10 @@ msgid "Overwrite %s"
 msgstr "अधिलेखित करें %s"
 
 
+msgid "Flame"
+msgstr "लौ"
+
+
 msgctxt "Key"
 msgid "Key"
 msgstr "कुंजी"
@@ -7072,10 +7064,6 @@ msgstr "कुंजी"
 msgctxt "Armature"
 msgid "Group"
 msgstr "समूह"
-
-
-msgid "Rim"
-msgstr "रिम"
 
 
 msgid "Outer"
@@ -7106,10 +7094,6 @@ msgid "Sigma"
 msgstr "सिग्मा"
 
 
-msgid "Flame"
-msgstr "लौ"
-
-
 msgid "W1"
 msgstr "डब्ल्यु१"
 
@@ -7136,6 +7120,10 @@ msgstr "स्ट्रिप्स संगत नहीं थे"
 
 msgid "Strips must have the same number of inputs"
 msgstr "स्ट्रिप्स आदानों की समान संख्या होना आवश्यक"
+
+
+msgid "Rim"
+msgstr "रिम"
 
 
 msgid "Blender File View"
@@ -7239,14 +7227,6 @@ msgid "Serbian (Српски)"
 msgstr "सर्बियन (Српски)"
 
 
-msgid "Ukrainian (Український)"
-msgstr "यूक्रेनियन (Український)"
-
-
-msgid "Polish (Polski)"
-msgstr "पोलिश (Polsk)"
-
-
 msgid "Romanian (Român)"
 msgstr "रोमानियाई (Român)"
 
@@ -7291,20 +7271,12 @@ msgid "Hungarian (Magyar)"
 msgstr "हंगेरियन (Magyar)"
 
 
-msgid "Brazilian Portuguese (Português do Brasil)"
-msgstr "ब्राजीलियन पुर्तगाली (Português Brasil)"
-
-
 msgid "Hebrew (תירִבְעִ)"
 msgstr "हिब्रू (תירִבְעִ)"
 
 
 msgid "Estonian (Eestlane)"
 msgstr "एस्टोनियाई (Eestlane)"
-
-
-msgid "Esperanto (Esperanto)"
-msgstr "एस्पेरान्तो (एस्पेरान्तो)"
 
 
 msgid "Spanish from Spain (Español de España)"

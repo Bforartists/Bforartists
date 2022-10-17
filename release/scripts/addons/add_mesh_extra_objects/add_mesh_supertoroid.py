@@ -99,7 +99,7 @@ def supertoroid(R, r, u, v, n1, n2):
     # x = (cos(theta) ** n1)*(R + r * (cos(phi) ** n2))
     # y = (sin(theta) ** n1)*(R + r * (cos(phi) ** n2))
     # z = (r * sin(phi) ** n2)
-    # with theta and phi rangeing from 0 to 2pi
+    # with theta and phi ranging from 0 to 2pi
 
     for i in range(u):
         s = power(sin(i * a), n1)

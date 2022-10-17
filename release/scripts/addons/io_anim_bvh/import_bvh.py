@@ -101,7 +101,7 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
 
     # Separate into a list of lists, each line a list of words.
     file_lines = file.readlines()
-    # Non standard carrage returns?
+    # Non standard carriage returns?
     if len(file_lines) == 1:
         file_lines = file_lines[0].split('\r')
 

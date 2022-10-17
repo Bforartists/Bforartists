@@ -2620,7 +2620,7 @@ class NWAddTextureSetup(Operator, NWBase):
                 nodes.active = image_texture_node
                 links.new(image_texture_node.outputs[0], target_input)
 
-                # The mapping setup following this will connect to the firrst input of this image texture.
+                # The mapping setup following this will connect to the first input of this image texture.
                 target_input = image_texture_node.inputs[0]
 
             node.select = False
@@ -3409,7 +3409,7 @@ class NWAddSequence(Operator, NWBase, ImportHelper):
             self.report({'ERROR'}, "No file chosen")
             return {'CANCELLED'}
         elif files[0].name and (not filename or not path.exists(directory+filename)):
-            # User has selected multiple files without an active one, or the active one is non-existant
+            # User has selected multiple files without an active one, or the active one is non-existent
             filename = files[0].name
 
         if not path.exists(directory+filename):

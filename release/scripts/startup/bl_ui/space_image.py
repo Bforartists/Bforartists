@@ -1777,7 +1777,7 @@ class IMAGE_PT_overlay_guides(Panel):
             row = col.row()
             row.separator()
             row.separator()
-            row.prop(uvedit, "use_custom_grid", text="Fixed Subdivisions")
+            row.prop(uvedit, "grid_shape_source", expand=True)
 
             col = layout.column()
             row = col.row()
@@ -1787,11 +1787,11 @@ class IMAGE_PT_overlay_guides(Panel):
             row.active = sima.image is not None
 
             col = split.column()
-            if uvedit.use_custom_grid:
+            if uvedit.grid_shape_source == 'FIXED':
                 col.prop(uvedit, "custom_grid_subdivisions", text="")
             else:
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
-
+            
             row = layout.row()
             row.use_property_split = True
             row.use_property_decorate = False

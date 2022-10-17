@@ -266,7 +266,7 @@ def export(file,
     # store files to copy
     copy_set = set()
 
-    # store names of newly cerated meshes, so we dont overlap
+    # store names of newly created meshes, so we dont overlap
     mesh_name_set = set()
 
     fw = file.write
