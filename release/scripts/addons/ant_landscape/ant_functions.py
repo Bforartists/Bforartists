@@ -660,7 +660,7 @@ def draw_ant_water(self, context):
         col.prop(self, "water_level")
 
 
-# Store propereties
+# Store properties
 def store_properties(operator, ob):
     ob.ant_landscape.ant_terrain_name = operator.ant_terrain_name
     ob.ant_landscape.at_cursor = operator.at_cursor

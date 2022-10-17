@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6068,70 +6068,6 @@ msgid "Save"
 msgstr "Zapisz"
 
 
-msgid "Brush"
-msgstr "Pędzel"
-
-
-msgid "Font"
-msgstr "Czcionka"
-
-
-msgid "Key"
-msgstr "Klucz"
-
-
-msgid "Lattice"
-msgstr "Kratownica"
-
-
-msgid "Library"
-msgstr "Biblioteka"
-
-
-msgid "Line Style"
-msgstr "Styl linii"
-
-
-msgid "Mask"
-msgstr "Maska"
-
-
-msgid "Mesh"
-msgstr "Siatka"
-
-
-msgid "Paint Curve"
-msgstr "Krzywa graficzna"
-
-
-msgid "Palette"
-msgstr "Paleta"
-
-
-msgid "Particle"
-msgstr "Cząstka"
-
-
-msgid "Sound"
-msgstr "Dźwięk"
-
-
-msgid "Speaker"
-msgstr "Głośnik"
-
-
-msgid "Text"
-msgstr "Tekst"
-
-
-msgid "Window Manager"
-msgstr "Zarządca okien"
-
-
-msgid "World"
-msgstr "Świat"
-
-
 msgid "Time"
 msgstr "Czas"
 
@@ -6150,6 +6086,10 @@ msgstr "Góra"
 
 msgid "Mapping"
 msgstr "Mapowanie"
+
+
+msgid "Line Style"
+msgstr "Styl linii"
 
 
 msgid "Visibility"
@@ -6180,12 +6120,20 @@ msgid "Envelope"
 msgstr "Obwiednia"
 
 
-msgid "Fixed"
-msgstr "Stałe"
+msgid "Lattice"
+msgstr "Kratownica"
 
 
 msgid "Target Object"
 msgstr "Obiekt docelowy"
+
+
+msgid "Fixed"
+msgstr "Stałe"
+
+
+msgid "Library"
+msgstr "Biblioteka"
 
 
 msgid "Groups"
@@ -6194,6 +6142,18 @@ msgstr "Grupy"
 
 msgid "Local"
 msgstr "Lokalnie"
+
+
+msgid "Mask"
+msgstr "Maska"
+
+
+msgid "Brush"
+msgstr "Pędzel"
+
+
+msgid "Paint Curve"
+msgstr "Krzywa graficzna"
 
 
 msgid "Rotate"
@@ -6214,6 +6174,10 @@ msgstr "Początek przycinania"
 
 msgid "Dimensions"
 msgstr "Wymiary"
+
+
+msgid "Font"
+msgstr "Czcionka"
 
 
 msgid "X Offset"
@@ -6260,6 +6224,10 @@ msgid "Mass"
 msgstr "Masa"
 
 
+msgid "Particle"
+msgstr "Cząstka"
+
+
 msgid "Reference Distance"
 msgstr "Odległość odniesienia"
 
@@ -6269,12 +6237,20 @@ msgid "Pitch"
 msgstr "Wysokość"
 
 
+msgid "Sound"
+msgstr "Dźwięk"
+
+
 msgid "Blend"
 msgstr "Mieszanie"
 
 
 msgid "Filter"
 msgstr "Filtr"
+
+
+msgid "Window Manager"
+msgstr "Zarządca okien"
 
 
 msgid "Operation"
@@ -6313,8 +6289,20 @@ msgid "Edit"
 msgstr "Edytuj"
 
 
+msgid "Key"
+msgstr "Klucz"
+
+
 msgid "Distort"
 msgstr "Zniekształć"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "Mesh"
+msgstr "Siatka"
 
 
 msgid "Python"
@@ -6345,6 +6333,10 @@ msgid "Copy"
 msgstr "Skopiuj"
 
 
+msgid "World"
+msgstr "Świat"
+
+
 msgid "Smooth Shading"
 msgstr "Gładkie Cieniowanie"
 
@@ -6355,10 +6347,6 @@ msgstr "Ograniczenia"
 
 msgid "Display Hidden"
 msgstr "Pokaż ukryte"
-
-
-msgid "Active Track"
-msgstr "Aktywna Ścieżka"
 
 
 msgid "To"
@@ -6491,8 +6479,17 @@ msgid "Reset"
 msgstr "Zresetuj"
 
 
+msgid "Palette"
+msgstr "Paleta"
+
+
 msgid "Hinge"
 msgstr "Zawias"
+
+
+msgctxt "Scene"
+msgid "New"
+msgstr "Nowa"
 
 
 msgid "Sharpen"
@@ -6591,6 +6588,10 @@ msgstr "Sepia"
 
 msgid "Timeline and playback controls"
 msgstr "Oś czasu oraz kontrolki odtwarzania"
+
+
+msgid "Speaker"
+msgstr "Głośnik"
 
 
 msgid "3D"
@@ -6704,10 +6705,6 @@ msgstr "Ściana-Wierzchołek NKąta"
 
 msgid "ShapeKey"
 msgstr "KluczKształtu"
-
-
-msgid "SubSurfCrease"
-msgstr "FałdySubSurf"
 
 
 msgid "OS Loop"
@@ -7105,10 +7102,6 @@ msgid "Edge-rings are not connected"
 msgstr "Pierścienie Krawędzi nie są połączone"
 
 
-msgid "Channels are visible in Graph Editor for editing"
-msgstr "Kanały są widoczne w Edytorze Krzywych-F dla edycji"
-
-
 msgid "Make channels grouped under this channel visible"
 msgstr "Uwidocznij kanału zgrupowane pod tym kanałem"
 
@@ -7295,10 +7288,6 @@ msgstr "Nie można dodać właściwości do wbudowanego zestawu kluczowania"
 
 msgid "Cannot remove property from built in keying set"
 msgstr "Nie można usunąć właściwości z wbudowanego zestawu kluczowania"
-
-
-msgid "Property removed from Keying Set"
-msgstr "Właściwość usunięta z Zestawu Kluczowania"
 
 
 msgid "Property added to Keying Set: '%s'"
@@ -8021,11 +8010,6 @@ msgstr "Przeglądaj dane krzywej malowania do powiązania"
 
 msgid "Browse ID data to be linked"
 msgstr "Przeglądaj dane ID do powiązania"
-
-
-msgctxt "Scene"
-msgid "New"
-msgstr "Nowa"
 
 
 msgctxt "Object"
@@ -9774,12 +9758,12 @@ msgid "No AnimData blocks in tweak mode to exit from"
 msgstr "Brak AnimData blocks w trybie tweak, z których można wyjść"
 
 
-msgid "No valid action to add"
-msgstr "Brak prawidłowej akcji do dodania"
-
-
 msgid "No active track(s) to add strip to, select an existing track or add one before trying again"
 msgstr "Brak aktynej ścieżki(żek) na której(ych) można dodać pasek, zaznacz istniejącą ścieżkę lub dodaj ścieżkę i spróbuj ponownie"
+
+
+msgid "No valid action to add"
+msgstr "Brak prawidłowej akcji do dodania"
 
 
 msgid "Needs at least a pair of adjacent selected strips with a gap between them"
@@ -11106,10 +11090,6 @@ msgid "Font not packed"
 msgstr "Czcionka nie spakowana"
 
 
-msgid "Registering operator class: '%s' is too long, maximum length is %d"
-msgstr "Rejestracja operator class: '%s' jest za długie, maksymalna długość to %d"
-
-
 msgid "Not a non-modal keymap"
 msgstr "To nie jest non-modal keymap"
 
@@ -11621,10 +11601,6 @@ msgstr "Chorwacki (Hrvatski)"
 
 msgid "Serbian (Српски)"
 msgstr "Serbski (Српски)"
-
-
-msgid "Ukrainian (Український)"
-msgstr "Ukraiński (Український)"
 
 
 msgid "Polish (Polski)"

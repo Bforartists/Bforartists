@@ -526,6 +526,45 @@ class edit_generators:
 
             return edits
 
+    class unused_arg_as_comment(EditGenerator):
+        """
+        Replace `UNUSED(argument)` in C++ code.
+
+        Replace:
+          void function(int UNUSED(arg)) {...}
+        With:
+          void function(int /*arg*/) {...}
+        """
+        @staticmethod
+        def edit_list_from_file(source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
+            edits = []
+
+            # The user might exclude C++, if they forget, it is better not to operate on C.
+            if not source.lower().endswith((".h", ".c")):
+                return edits
+
+            # `UNUSED(arg)` -> `/*arg*/`.
+            for match in re.finditer(
+                    r"\b(UNUSED)"
+                    # # Opening parenthesis.
+                    r"\("
+                    # Capture the identifier as group 1.
+                    r"([" + "".join(list(IDENTIFIER_CHARS)) + "]+)"
+                    # # Capture any non-identifier characters as group 2.
+                    # (e.g. `[3]`) which need to be added outside the comment.
+                    r"([^\)]*)"
+                    # Closing parenthesis of `UNUSED(..)`.
+                    r"\)",
+                    data,
+            ):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='/*%s*/%s' % (match.group(2), match.group(3)),
+                    content_fail='__ALWAYS_FAIL__(%s%s)' % (match.group(2), match.group(3)),
+                ))
+
+            return edits
+
     class use_elem_macro(EditGenerator):
         """
         Use the `ELEM` macro for more abbreviated expressions.
@@ -1187,7 +1226,12 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
             keep_edits=False,
         )
         if not os.path.exists(output):
-            raise Exception("Failed to produce output file: " + output)
+            # raise Exception("Failed to produce output file: " + output)
+
+            # NOTE(@campbellbarton): This fails very occasionally and needs to be investigated why.
+            # For now skip, as it's disruptive to force-quit in the middle of all other changes.
+            print("Failed to produce output file, skipping:", output)
+            return
 
         output_bytes = file_as_bytes(output)
         # Dummy value that won't cause problems.

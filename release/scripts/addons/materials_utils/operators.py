@@ -720,7 +720,7 @@ class MATERIAL_OT_materialutilities_auto_smooth_angle(bpy.types.Operator):
     set_smooth_shading: BoolProperty(
             name = "Set Smooth",
             description = "Set Smooth shading for the affected objects\n"
-                   "This overrides the currenth smooth/flat shading that might be set to different parts of the object",
+                   "This overrides the current smooth/flat shading that might be set to different parts of the object",
             default = True
             )
 

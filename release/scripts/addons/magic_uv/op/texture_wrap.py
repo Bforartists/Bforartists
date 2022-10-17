@@ -246,7 +246,7 @@ class MUV_OT_TextureWrap_Set(bpy.types.Operator):
                     cv0, cv1, ov)
                 info["vert_vdiff"] = x - common_verts[0]["vert"].co
 
-                # calclulate factor
+                # calculate factor
                 fact_h = -info["vert_hdiff"].length / \
                     ref_info["vert_hdiff"].length
                 fact_v = info["vert_vdiff"].length / \

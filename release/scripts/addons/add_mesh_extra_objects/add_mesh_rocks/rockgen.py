@@ -809,7 +809,7 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
     rocks = []
 
     for i in range(numOfRocks):
-        # todo: enable different random values for each (x,y,z) corrdinate for
+        # todo: enable different random values for each (x,y,z) coordinate for
         # each vertex.  This will add additional randomness to the shape of the
         # generated rocks.
         #   *** todo completed 4/19/2011 ***

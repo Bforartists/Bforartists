@@ -77,7 +77,7 @@ def testi(objekti, texture_info, index_mat_name, uv_MODE_mat, mat_index):
 
 def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures, udim_len): #read textures from texture file
 
-    # Let's check are we UVSet or MATERIAL modee
+    # Let's check are we UVSet or MATERIAL mode
     create_nodes = False
     for ind, index_mat in enumerate(objekti.material_slots):
 
@@ -638,7 +638,7 @@ def createExtraNodes(act_material, node, type):
 
 def matlab(objekti,mat_list,texturelist,is_new):
 
-    # FBX Materials: remove all nodes and create princibles node
+    # FBX Materials: remove all nodes and create principle node
 
     if(is_new):
         RemoveFbxNodes(objekti)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -130,18 +130,6 @@ msgid "Save"
 msgstr "Guardar"
 
 
-msgid "Lattice"
-msgstr "Lattice"
-
-
-msgid "Mesh"
-msgstr "Malla"
-
-
-msgid "Text"
-msgstr "Texte"
-
-
 msgid "Link"
 msgstr "Enllaç"
 
@@ -172,6 +160,10 @@ msgstr "Reixa"
 
 msgid "Header"
 msgstr "Capçalera"
+
+
+msgid "Lattice"
+msgstr "Lattice"
 
 
 msgid "Grow"
@@ -232,6 +224,14 @@ msgstr "Propietari"
 
 msgid "Edit"
 msgstr "Editar"
+
+
+msgid "Text"
+msgstr "Texte"
+
+
+msgid "Mesh"
+msgstr "Malla"
 
 
 msgid "System"
@@ -334,14 +334,6 @@ msgstr "Increment"
 
 msgid "Lower or upper case"
 msgstr "Majúscules o minúscules"
-
-
-msgid "Lower"
-msgstr "Inferior"
-
-
-msgid "Upper"
-msgstr "Superior"
 
 
 msgid "Delta"
@@ -745,6 +737,14 @@ msgstr "Radians"
 
 msgid "Heat"
 msgstr "Calor"
+
+
+msgid "Lower"
+msgstr "Inferior"
+
+
+msgid "Upper"
+msgstr "Superior"
 
 
 msgid "Storage"
