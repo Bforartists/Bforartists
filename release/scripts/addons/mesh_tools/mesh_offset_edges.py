@@ -152,7 +152,7 @@ def get_adj_faces(edges):
         co_adj = 0
         for f in e.link_faces:
             # Search an adjacent face.
-            # Selected face has precedance.
+            # Selected face has precedence.
             if not f.hide and f.normal != ZERO_VEC:
                 adj_exist = True
                 adj_f = f

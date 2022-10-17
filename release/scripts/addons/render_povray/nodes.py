@@ -469,7 +469,7 @@ class PovrayColorImageNode(Node, nodes_properties.ObjectNodeTree):
             ("0", "Planar", "Default planar mapping"),
             ("1", "Spherical", "Spherical mapping"),
             ("2", "Cylindrical", "Cylindrical mapping"),
-            ("5", "Torroidal", "Torus or donut shaped mapping"),
+            ("5", "Toroidal", "Torus or donut shaped mapping"),
         ),
         default="0",
     )
@@ -556,7 +556,7 @@ class PovrayBumpMapNode(Node, nodes_properties.ObjectNodeTree):
             ("0", "Planar", "Default planar mapping"),
             ("1", "Spherical", "Spherical mapping"),
             ("2", "Cylindrical", "Cylindrical mapping"),
-            ("5", "Torroidal", "Torus or donut shaped mapping"),
+            ("5", "Toroidal", "Torus or donut shaped mapping"),
         ),
         default="0",
     )
@@ -636,7 +636,7 @@ class PovrayImagePatternNode(Node, nodes_properties.ObjectNodeTree):
             ("0", "Planar", "Default planar mapping"),
             ("1", "Spherical", "Spherical mapping"),
             ("2", "Cylindrical", "Cylindrical mapping"),
-            ("5", "Torroidal", "Torus or donut shaped mapping"),
+            ("5", "Toroidal", "Torus or donut shaped mapping"),
         ),
         default="0",
     )

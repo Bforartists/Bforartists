@@ -2842,6 +2842,7 @@ def fbx_header_elements(root, scene_data, time=None):
         if similar_values(fps, ref_fps):
             fbx_fps = ref_fps
             fbx_fps_mode = fps_mode
+            break
     elem_props_set(props, "p_enum", b"TimeMode", fbx_fps_mode)
     elem_props_set(props, "p_timestamp", b"TimeSpanStart", 0)
     elem_props_set(props, "p_timestamp", b"TimeSpanStop", FBX_KTIME)

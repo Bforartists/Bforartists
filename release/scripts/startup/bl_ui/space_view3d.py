@@ -3974,9 +3974,7 @@ class VIEW3D_MT_face_sets(Menu):
         layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon="INVERT_MASK").mode = 'INVERT'
         layout.operator("sculpt.reveal_all", text = 'Show All Face Sets', icon = "HIDE_OFF")
 
-        # bfa - deactivated. These operators now crashes.
-        #layout.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon="HIDE_UNSELECTED").mode = 'TOGGLE'
-        #layout.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon="HIDE_ON").mode = 'HIDE_ACTIVE'
+        op = layout.operator("sculpt.reveal_all", text='Show All Face Sets')
 
         layout.separator()
 
@@ -6453,6 +6451,7 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         pie.operator("sculpt.face_sets_create", text='Face Set from Visible').mode = 'VISIBLE'
         pie.operator("sculpt.face_set_change_visibility", text='Invert Visible').mode = 'INVERT'
         pie.operator("sculpt.face_set_change_visibility", text='Show All').mode = 'SHOW_ALL'
+        pie.operator("sculpt.reveal_all", text='Show All')
 
 
 class VIEW3D_MT_wpaint_vgroup_lock_pie(Menu):

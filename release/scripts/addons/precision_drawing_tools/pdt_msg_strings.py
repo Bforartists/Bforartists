@@ -12,7 +12,7 @@
 """This file contains all the Message Strings.
 
     Note:
-        These strings are called by various programmes in PDT,
+        These strings are called by various programs in PDT,
         they can be set to suit individual User requirements.
 
     Args:

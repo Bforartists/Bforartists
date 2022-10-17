@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -277,6 +277,10 @@ msgid "All"
 msgstr "Alla"
 
 
+msgid "Radius"
+msgstr "Radie"
+
+
 msgid "Threshold"
 msgstr "Tröskel"
 
@@ -521,10 +525,6 @@ msgid "View"
 msgstr "Visa"
 
 
-msgid "Radius"
-msgstr "Radie"
-
-
 msgid "Dash"
 msgstr "Streckad"
 
@@ -701,38 +701,6 @@ msgid "Weights"
 msgstr "Viktningar"
 
 
-msgid "Font"
-msgstr "Typsnitt"
-
-
-msgid "Lattice"
-msgstr "Lattice"
-
-
-msgid "Light"
-msgstr "Ljus"
-
-
-msgid "Mesh"
-msgstr "Mesh"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Sound"
-msgstr "Ljud"
-
-
-msgid "Text"
-msgstr "Text"
-
-
-msgid "World"
-msgstr "Värld"
-
-
 msgid "File Name"
 msgstr "Filnamn"
 
@@ -865,6 +833,10 @@ msgid "Subdivide"
 msgstr "Dela upp"
 
 
+msgid "Lattice"
+msgstr "Lattice"
+
+
 msgid "Falloff Curve"
 msgstr "Avtagandekurva"
 
@@ -875,6 +847,10 @@ msgstr "Steg"
 
 msgid "Steps"
 msgstr "Steg"
+
+
+msgid "Subdivisions"
+msgstr "Uppdelningar"
 
 
 msgid "Negative"
@@ -947,6 +923,10 @@ msgstr "Beskärningsstart"
 
 msgid "Display Background Images"
 msgstr "Visa bakgrundsbilder"
+
+
+msgid "Font"
+msgstr "Typsnitt"
 
 
 msgid "Shear"
@@ -1161,6 +1141,10 @@ msgid "Frame Dropping"
 msgstr "Tappa rutor"
 
 
+msgid "Sound"
+msgstr "Ljud"
+
+
 msgid "Blend"
 msgstr "Blanda"
 
@@ -1273,8 +1257,16 @@ msgid "Shape Key Specials"
 msgstr "Specialare för formnycklar"
 
 
+msgid "Text"
+msgstr "Text"
+
+
 msgid "Instances"
 msgstr "Instanser"
+
+
+msgid "Mesh"
+msgstr "Mesh"
 
 
 msgid "Node"
@@ -1323,6 +1315,14 @@ msgstr "Namn"
 
 msgid "Normals"
 msgstr "Normaler"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Light"
+msgstr "Ljus"
 
 
 msgid "Rigid Body"
@@ -1379,6 +1379,10 @@ msgstr "Normaliserad"
 
 msgid "Random Seed"
 msgstr "Slumpfrö"
+
+
+msgid "World"
+msgstr "Värld"
 
 
 msgid "Limits"
@@ -1659,10 +1663,6 @@ msgstr "Växla textstil"
 
 msgid "Limit"
 msgstr "Gränsvärde"
-
-
-msgid "Subdivisions"
-msgstr "Uppdelningar"
 
 
 msgid "32-bit Float"
@@ -2804,10 +2804,6 @@ msgstr "Ryska (Русский)"
 
 msgid "Croatian (Hrvatski)"
 msgstr "Kroatiska (Hrvatski)"
-
-
-msgid "Ukrainian (Український)"
-msgstr "Ukrainska (Український)"
 
 
 msgid "Polish (Polski)"
