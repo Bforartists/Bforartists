@@ -76,7 +76,7 @@ except:
 # a continuous distribution curve but instead acts as a piecewise finction.
 # This linearly scales the output on one side to fit the bounds.
 #
-# Example output historgrams:
+# Example output histograms:
 #
 # Upper skewed:                 Lower skewed:
 #  |                 ▄           |      _
@@ -92,7 +92,7 @@ except:
 #  | _▄_ ▄███████████████▄_      | _▄███████████████▄▄_
 #   -------------------------     -----------------------
 #                    |mu               |mu
-#   Historgrams were generated in R (http://www.r-project.org/) based on the
+#   Histograms were generated in R (http://www.r-project.org/) based on the
 #   calculations below and manually duplicated here.
 #
 # param:  mu          - mu is the mean of the distribution.

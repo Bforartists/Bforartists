@@ -1743,7 +1743,7 @@ static void sculpt_update_object(
 
   ss->hide_poly = (bool *)CustomData_get_layer_named(&me->pdata, CD_PROP_BOOL, ".hide_poly");
 
-  ss->subdiv_ccg = me_eval->runtime.subdiv_ccg;
+  ss->subdiv_ccg = me_eval->runtime->subdiv_ccg;
 
   PBVH *pbvh = BKE_sculpt_object_pbvh_ensure(depsgraph, ob);
   BLI_assert(pbvh == ss->pbvh);
@@ -2237,7 +2237,8 @@ static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg, bool respect
                        (void **)subdiv_ccg->grid_faces,
                        subdiv_ccg->grid_flag_mats,
                        subdiv_ccg->grid_hidden,
-                       base_mesh);
+                       base_mesh,
+                       subdiv_ccg);
   pbvh_show_mask_set(pbvh, ob->sculpt->show_mask);
   pbvh_show_face_sets_set(pbvh, ob->sculpt->show_face_sets);
   return pbvh;
@@ -2258,7 +2259,7 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
     if (BKE_pbvh_type(pbvh) == PBVH_GRIDS) {
       Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
       Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
-      SubdivCCG *subdiv_ccg = mesh_eval->runtime.subdiv_ccg;
+      SubdivCCG *subdiv_ccg = mesh_eval->runtime->subdiv_ccg;
       if (subdiv_ccg != nullptr) {
         BKE_sculpt_bvh_update_from_ccg(pbvh, subdiv_ccg);
       }
@@ -2277,8 +2278,8 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
   else {
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
-    if (mesh_eval->runtime.subdiv_ccg != nullptr) {
-      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime.subdiv_ccg, respect_hide);
+    if (mesh_eval->runtime->subdiv_ccg != nullptr) {
+      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg, respect_hide);
     }
     else if (ob->type == OB_MESH) {
       Mesh *me_eval_deform = object_eval->runtime.mesh_deform_eval;
@@ -2287,9 +2288,9 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
   }
 
   BKE_pbvh_pmap_set(pbvh, ob->sculpt->pmap);
-  sculpt_attribute_update_refs(ob);
-
   ob->sculpt->pbvh = pbvh;
+
+  sculpt_attribute_update_refs(ob);
   return pbvh;
 }
 
@@ -2677,6 +2678,7 @@ SculptAttribute *BKE_sculpt_attribute_get(struct Object *ob,
       attr = sculpt_alloc_attr(ss);
 
       attr->used = true;
+      attr->domain = domain;
       attr->proptype = proptype;
       attr->data = cdata->layers[index].data;
       attr->bmesh_cd_offset = cdata->layers[index].offset;

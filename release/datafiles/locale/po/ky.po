@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'ec2e866aee1f')\n"
+"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00:00\n"
+"POT-Creation-Date: 2022-10-17 10:12:11\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -791,50 +791,6 @@ msgid "Save"
 msgstr "Сактоо"
 
 
-msgid "Brush"
-msgstr "Чачы"
-
-
-msgid "Font"
-msgstr "Арип"
-
-
-msgid "Key"
-msgstr "Ачкыч"
-
-
-msgid "Mask"
-msgstr "Маска"
-
-
-msgid "Mesh"
-msgstr "Политор"
-
-
-msgid "Particle"
-msgstr "Бөлүкчө"
-
-
-msgid "Sound"
-msgstr "Үн"
-
-
-msgid "Speaker"
-msgstr "Үн булагы"
-
-
-msgid "Text"
-msgstr "Текст"
-
-
-msgid "Window Manager"
-msgstr "Терезе менеджери"
-
-
-msgid "World"
-msgstr "Дүйнө"
-
-
 msgid "End"
 msgstr "Соңу"
 
@@ -976,6 +932,14 @@ msgid "Users"
 msgstr "Колдонуучулар"
 
 
+msgid "Mask"
+msgstr "Маска"
+
+
+msgid "Brush"
+msgstr "Чачы"
+
+
 msgid "Mask Tool"
 msgstr "Маска аспабы"
 
@@ -1046,6 +1010,10 @@ msgstr "Жартысы"
 
 msgid "Text Curve"
 msgstr "Текст ийриси"
+
+
+msgid "Font"
+msgstr "Арип"
 
 
 msgid "Font Size"
@@ -1220,6 +1188,10 @@ msgid "Mass"
 msgstr "Масса"
 
 
+msgid "Particle"
+msgstr "Бөлүкчө"
+
+
 msgid "Halo"
 msgstr "Гало"
 
@@ -1251,6 +1223,10 @@ msgstr "Көрсөтүү ырастоолору"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Бийиктик"
+
+
+msgid "Sound"
+msgstr "Үн"
 
 
 msgid "Clouds"
@@ -1331,6 +1307,10 @@ msgstr "sqrt(x*x+y*y+z*z)"
 
 msgid "(x*x+y*y+z*z)"
 msgstr "(x*x+y*y+z*z)"
+
+
+msgid "Window Manager"
+msgstr "Терезе менеджери"
 
 
 msgid "Category"
@@ -1434,10 +1414,6 @@ msgid "Reconstruction"
 msgstr "Реконструкция"
 
 
-msgid "Tracking"
-msgstr "Трекинг"
-
-
 msgid "Console"
 msgstr "Консоль"
 
@@ -1450,6 +1426,10 @@ msgid "Channel"
 msgstr "Канал"
 
 
+msgid "Key"
+msgstr "Ачкыч"
+
+
 msgid "Align"
 msgstr "Түздөө"
 
@@ -1457,6 +1437,14 @@ msgstr "Түздөө"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Кошуу"
+
+
+msgid "Text"
+msgstr "Текст"
+
+
+msgid "Mesh"
+msgstr "Политор"
 
 
 msgid "Node"
@@ -1553,6 +1541,10 @@ msgstr "Деңгээлдер"
 
 msgid "Copy"
 msgstr "Көчүрүү"
+
+
+msgid "World"
+msgstr "Дүйнө"
 
 
 msgid "Origin"
@@ -2345,6 +2337,11 @@ msgid "Add new scene by type"
 msgstr "Жаңы сахнаны түрү боюнча кошуу"
 
 
+msgctxt "Scene"
+msgid "New"
+msgstr "Жаңы"
+
+
 msgid "Copy Settings"
 msgstr "Ырастоолорун көчүрүү"
 
@@ -3045,6 +3042,10 @@ msgid "UV Editor"
 msgstr "UV-редактор"
 
 
+msgid "Speaker"
+msgstr "Үн булагы"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -3244,6 +3245,10 @@ msgstr "Статистика"
 
 msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
+
+
+msgid "Tracking"
+msgstr "Трекинг"
 
 
 msgctxt "Operator"
@@ -3631,11 +3636,6 @@ msgstr "Чоңойтуу"
 
 msgid "Zoom out"
 msgstr "Кичирейтүү"
-
-
-msgctxt "Scene"
-msgid "New"
-msgstr "Жаңы"
 
 
 msgctxt "Object"
@@ -4095,10 +4095,6 @@ msgstr "Хорват (Hrvatski)"
 
 msgid "Serbian (Српски)"
 msgstr "Серб (Српски)"
-
-
-msgid "Ukrainian (Український)"
-msgstr "Украин (Український)"
 
 
 msgid "Polish (Polski)"

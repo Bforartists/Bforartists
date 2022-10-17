@@ -71,7 +71,7 @@ def tool_line():
 
 
 # -----------------------------------------------------------------------------
-# Tool Registraion
+# Tool Registration
 
 
 def get_tool_list(space_type, context_mode):
@@ -149,7 +149,7 @@ def unregister_keymaps():
 
 
 # -----------------------------------------------------------------------------
-# Addon Registraion
+# Addon Registration
 
 classes = (
     preferences.SnapUtilitiesPreferences,

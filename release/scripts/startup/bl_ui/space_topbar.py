@@ -254,7 +254,7 @@ class TOPBAR_MT_file(Menu):
 
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.read_homefile", text="New", icon='NEW')
-        layout.menu("TOPBAR_MT_file_new", text="New from Template")
+        layout.menu("TOPBAR_MT_file_new", text="New from Template", text_ctxt=i18n_contexts.id_windowmanager)
         layout.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
         layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
@@ -563,9 +563,16 @@ class TOPBAR_MT_edit(Menu):
             layout.label(text= "-- Template: " + bpy.path.display_name(app_template, has_ext=False)+" --")
 
         layout.operator("wm.save_homefile", icon='SAVE_PREFS')
-        props = layout.operator("wm.read_factory_settings", icon='LOAD_FACTORY')
         if app_template:
+            display_name = bpy.path.display_name(iface_(app_template))
+            props = layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon="LOAD_FACTORY")
             props.app_template = app_template
+            props = layout.operator("wm.read_factory_settings", text="Load Factory %s Settings" % display_name, icon="LOAD_FACTORY")
+            props.app_template = app_template
+            props.use_factory_startup_app_template_only = True
+            del display_name
+        else:
+            layout.operator("wm.read_factory_settings")
 
         layout.separator()
 
@@ -670,7 +677,7 @@ class TOPBAR_MT_file_context_menu(Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.menu("TOPBAR_MT_file_new", text="New", text_context=i18n_contexts.id_windowmanager, icon='FILE_NEW')
+        layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
 
         layout.separator()

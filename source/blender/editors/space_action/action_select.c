@@ -324,7 +324,7 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
 
   /* set notifier that keyframe selection have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -586,7 +586,7 @@ static int actkeys_box_select_exec(bContext *C, wmOperator *op)
 
   /* set notifier that keyframe selection have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -823,7 +823,7 @@ static int actkeys_lassoselect_exec(bContext *C, wmOperator *op)
 
   /* send notifier that keyframe selection has changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -891,7 +891,7 @@ static int action_circle_select_exec(bContext *C, wmOperator *op)
 
   /* send notifier that keyframe selection has changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -1130,7 +1130,7 @@ static int actkeys_columnselect_exec(bContext *C, wmOperator *op)
 
   /* set notifier that keyframe selection have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -1193,7 +1193,7 @@ static int actkeys_select_linked_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* set notifier that keyframe selection has changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -1279,7 +1279,7 @@ static int actkeys_select_more_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* set notifier that keyframe selection has changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
@@ -1316,7 +1316,7 @@ static int actkeys_select_less_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* set notifier that keyframe selection has changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
-  if (ac.datatype == ANIMCONT_GPENCIL) {
+  if (ANIM_animdata_can_have_greasepencil(ac.datatype)) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, NULL);
   }
   return OPERATOR_FINISHED;
