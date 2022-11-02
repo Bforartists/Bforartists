@@ -3277,7 +3277,7 @@ static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
   return but;
 }
 
-void uiItemL_ex(
+uiBut *uiItemL_ex(
     uiLayout *layout, const char *name, int icon, const bool highlight, const bool redalert)
 {
   uiBut *but = uiItemL_(layout, name, icon);
@@ -3290,6 +3290,8 @@ void uiItemL_ex(
   if (redalert) {
     UI_but_flag_enable(but, UI_BUT_REDALERT);
   }
+
+  return but;
 }
 
 void uiItemL(uiLayout *layout, const char *name, int icon)
@@ -5852,6 +5854,14 @@ void UI_menutype_draw(bContext *C, MenuType *mt, struct uiLayout *layout)
 
   if (G.debug & G_DEBUG_WM) {
     printf("%s: opening menu \"%s\"\n", __func__, mt->idname);
+  }
+
+  if (mt->listener) {
+    /* Forward the menu type listener to the block we're drawing in. */
+    uiBlock *block = uiLayoutGetBlock(layout);
+    uiBlockDynamicListener *listener = MEM_mallocN(sizeof(*listener), "uiBlockDynamicListener");
+    listener->listener_func = mt->listener;
+    BLI_addtail(&block->dynamic_listeners, listener);
   }
 
   if (layout->context) {
