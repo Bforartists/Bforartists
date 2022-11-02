@@ -572,6 +572,11 @@ struct bNodeSocket *ntreeInsertSocketInterface(struct bNodeTree *ntree,
 struct bNodeSocket *ntreeAddSocketInterfaceFromSocket(struct bNodeTree *ntree,
                                                       struct bNode *from_node,
                                                       struct bNodeSocket *from_sock);
+struct bNodeSocket *ntreeAddSocketInterfaceFromSocketWithName(struct bNodeTree *ntree,
+                                                              struct bNode *from_node,
+                                                              struct bNodeSocket *from_sock,
+                                                              const char *idname,
+                                                              const char *name);
 struct bNodeSocket *ntreeInsertSocketInterfaceFromSocket(struct bNodeTree *ntree,
                                                          struct bNodeSocket *next_sock,
                                                          struct bNode *from_node,
@@ -791,6 +796,12 @@ void nodeChainIterBackwards(const bNodeTree *ntree,
  * \note Recursive
  */
 void nodeParentsIter(bNode *node, bool (*callback)(bNode *, void *), void *userdata);
+
+/**
+ * A dangling reroute node is a reroute node that does *not* have a "data source", i.e. no
+ * non-reroute node is connected to its input.
+ */
+bool nodeIsDanglingReroute(const struct bNodeTree *ntree, const struct bNode *node);
 
 struct bNodeLink *nodeFindLink(struct bNodeTree *ntree,
                                const struct bNodeSocket *from,
