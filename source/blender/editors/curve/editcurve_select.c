@@ -1540,7 +1540,7 @@ static void nurb_bezt_direction_worldspace_get(Object *ob,
 {
   float rsmat[3][3];
   BKE_nurb_bezt_calc_normal(nu, bezt, r_dir);
-  copy_m3_m4(rsmat, ob->obmat);
+  copy_m3_m4(rsmat, ob->object_to_world);
   mul_m3_v3(rsmat, r_dir);
   normalize_v3(r_dir);
 }
@@ -1549,7 +1549,7 @@ static void nurb_bpoint_direction_worldspace_get(Object *ob, Nurb *nu, BPoint *b
 {
   float rsmat[3][3];
   BKE_nurb_bpoint_calc_normal(nu, bp, r_dir);
-  copy_m3_m4(rsmat, ob->obmat);
+  copy_m3_m4(rsmat, ob->object_to_world);
   mul_m3_v3(rsmat, r_dir);
   normalize_v3(r_dir);
 }
