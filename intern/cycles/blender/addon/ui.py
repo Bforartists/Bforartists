@@ -150,6 +150,16 @@ def get_effective_preview_denoiser(context):
     return 'OIDN'
 
 
+def use_mnee(context):
+    # The MNEE kernel doesn't compile on macOS < 13.
+    if use_metal(context):
+        import platform
+        v, _, _ = platform.mac_ver()
+        if float(v) < 13.0:
+            return False
+    return True
+
+
 class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
     bl_label = "Sampling"
 
@@ -1406,7 +1416,7 @@ class CYCLES_OBJECT_PT_shading_caustics(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return CyclesButtonsPanel.poll(context) and not use_metal(context) and context.object.type != 'LIGHT'
+        return CyclesButtonsPanel.poll(context) and use_mnee(context) and context.object.type != 'LIGHT'
 
     def draw(self, context):
         layout = self.layout
@@ -1650,7 +1660,7 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
         row.use_property_split = False
         row.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
         row.prop_decorator(clamp, "use_multiple_importance_sampling")
-        if not use_metal(context):
+        if use_mnee(context):
             row.prop(clamp, "is_caustics_light", text="Shadow Caustics")
 
         if light.type == 'AREA':
