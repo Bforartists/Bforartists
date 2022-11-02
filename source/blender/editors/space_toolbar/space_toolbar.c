@@ -13,6 +13,8 @@
 
 #include "BLI_blenlib.h"
 
+#include "BLO_read_write.h"
+
 #include "BKE_context.h"
 #include "BKE_screen.h"
 
@@ -132,6 +134,11 @@ static void toolbar_header_listener(const wmRegionListenerParams *params)
   }
 }
 
+static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
+{
+  BLO_write_struct(writer, SpaceToolbar, sl);
+}
+
 /********************* registration ********************/
 
 /* only called once, from space/spacetypes.c */
@@ -144,6 +151,9 @@ void ED_spacetype_toolbar(void)
   strncpy(st->name, "Toolbar", BKE_ST_MAXNAME);
 
   st->create = toolbar_create;
+  st->blend_read_data = NULL;
+  st->blend_read_lib = NULL;
+  st->blend_write = toolbar_blend_write;
 
   /* regions: main window */
   art = MEM_callocN(sizeof(ARegionType), "spacetype toolbar region");
