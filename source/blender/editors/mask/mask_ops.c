@@ -1734,6 +1734,7 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 {
 
   /* identifiers */
+/*bfa human understandable tool name*/
   ot->name = "Show Hidden Layer(s)";
   ot->description = "Reveals the hidden layer(s)";
   ot->idname = "MASK_OT_hide_view_clear";
@@ -1794,6 +1795,7 @@ static int mask_hide_view_set_exec(bContext *C, wmOperator *op)
 void MASK_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
+/*bfa human understandable tool name*/
   ot->name = "Hide Layer";
   ot->description = "Hide the layer";
   ot->idname = "MASK_OT_hide_view_set";

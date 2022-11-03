@@ -2170,6 +2170,7 @@ static int font_unlink_exec(bContext *C, wmOperator *op)
 void FONT_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
+/*bfa - we call remove remove*/
   ot->name = "Remove";
   ot->idname = "FONT_OT_unlink";
   ot->description = "Remove active font";
