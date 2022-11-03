@@ -3,8 +3,8 @@
 bl_info = {
     "name": "Copy Attributes Menu",
     "author": "Bassam Kurdali, Fabian Fricke, Adam Wiseman, Demeter Dzadik",
-    "version": (0, 5, 0),
-    "blender": (3, 0, 0),
+    "version": (0, 6, 0),
+    "blender": (3, 4, 0),
     "location": "View3D > Ctrl-C",
     "description": "Copy Attributes Menu",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/copy_attributes.html",
@@ -425,13 +425,8 @@ def obDrw(ob, active, context):
     ob.empty_display_size = active.empty_display_size
 
 
-def obOfs(ob, active, context):
-    ob.time_offset = active.time_offset
-    return('INFO', "Time offset copied")
-
-
 def obDup(ob, active, context):
-    generic_copy(active, ob, "dupli")
+    generic_copy(active, ob, "instance_type")
     return('INFO', "Duplication method copied")
 
 
@@ -486,11 +481,11 @@ def obMod(ob, active, context):
     return('INFO', "Modifiers copied")
 
 
-def obGrp(ob, active, context):
-    for grp in bpy.data.collections:
-        if active.name in grp.objects and ob.name not in grp.objects:
-            grp.objects.link(ob)
-    return('INFO', "Groups copied")
+def obCollections(ob, active, context):
+    for collection in bpy.data.collections:
+        if active.name in collection.objects and ob.name not in collection.objects:
+            collection.objects.link(ob)
+    return('INFO', "Collections copied")
 
 
 def obWei(ob, active, context):
@@ -557,10 +552,8 @@ object_copies = (
      "Copy Scale from Active to Selected", obVisSca),
     ('obj_drw', "Draw Options",
      "Copy Draw Options from Active to Selected", obDrw),
-    ('obj_ofs', "Time Offset",
-     "Copy Time Offset from Active to Selected", obOfs),
-    ('obj_dup', "Dupli",
-     "Copy Dupli from Active to Selected", obDup),
+    ('obj_dup', "Instancing",
+     "Copy instancing properties from Active to Selected", obDup),
     ('obj_col', "Object Color",
      "Copy Object Color from Active to Selected", obCol),
     # ('obj_dmp', "Damping",
@@ -569,8 +562,6 @@ object_copies = (
     # "Copy Physical Attributes from Active to Selected"),
     # ('obj_prp', "Properties",
     # "Copy Properties from Active to Selected"),
-    # ('obj_log', "Logic Bricks",
-    # "Copy Logic Bricks from Active to Selected"),
     ('obj_lok', "Protected Transform",
      "Copy Protected Transforms from Active to Selected", obLok),
     ('obj_con', "Object Constraints",
@@ -589,8 +580,8 @@ object_copies = (
      "Copy Modifiers from Active to Selected", obMod),
     ('obj_wei', "Vertex Weights",
      "Copy vertex weights based on indices", obWei),
-    ('obj_grp', "Group Links",
-     "Copy selected into active object's groups", obGrp)
+    ('obj_grp', "Collection Links",
+     "Copy selected into active object's collection", obCollections)
 )
 
 
@@ -729,27 +720,23 @@ class MESH_MT_CopyFaceSettings(Menu):
 
         layout = self.layout
 
-        op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
-                             text="Copy Material")
+        op = layout.operator(mesh.copy_face_settings, text="Copy Material")
         op['layer'] = ''
         op['mode'] = 'MAT'
 
         if mesh.uv_layers.active:
-            op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
-                                 text="Copy Active UV Coords")
+            op = layout.operator(mesh.copy_face_settings, text="Copy Active UV Coords")
             op['layer'] = ''
             op['mode'] = 'UV'
 
         if mesh.vertex_colors.active:
-            op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
-                                 text="Copy Active Vertex Colors")
+            op = layout.operator(mesh.copy_face_settings, text="Copy Active Vertex Colors")
             op['layer'] = ''
             op['mode'] = 'VCOL'
 
         if uv or vc:
             layout.separator()
             if uv:
-                layout.menu("MESH_MT_CopyImagesFromLayer")
                 layout.menu("MESH_MT_CopyUVCoordsFromLayer")
             if vc:
                 layout.menu("MESH_MT_CopyVertexColorsFromLayer")
@@ -761,7 +748,7 @@ class MESH_MT_CopyFaceSettings(Menu):
 
 
 class MESH_MT_CopyUVCoordsFromLayer(Menu):
-    bl_label = "Copy Other UV Coord Layers"
+    bl_label = "Copy UV Coordinates from Layer"
 
     @classmethod
     def poll(cls, context):
@@ -775,7 +762,7 @@ class MESH_MT_CopyUVCoordsFromLayer(Menu):
 
 
 class MESH_MT_CopyVertexColorsFromLayer(Menu):
-    bl_label = "Copy Other Vertex Colors Layers"
+    bl_label = "Copy Vertex Colors from Layer"
 
     @classmethod
     def poll(cls, context):
@@ -796,7 +783,7 @@ def _buildmenu(self, mesh, mode, icon):
         layers = mesh.uv_layers
     for layer in layers:
         if not layer.active:
-            op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
+            op = layout.operator(mesh.copy_face_settings,
                                  text=layer.name, icon=icon)
             op['layer'] = layer.name
             op['mode'] = mode

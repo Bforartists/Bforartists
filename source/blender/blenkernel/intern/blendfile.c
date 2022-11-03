@@ -633,7 +633,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
   memcpy(userdef, &U_default, sizeof(*userdef));
 
   /* Add-ons. */
-  /*here you define the by default activated addons*/
+  /*bfa - here you define the by default activated addons*/
   {
     const char *addons[] = {
         "io_anim_bvh",        "io_curve_svg",

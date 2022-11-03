@@ -166,6 +166,7 @@ class RigifyPreferences(AddonPreferences):
 
     def register_feature_sets(self, register):
         """Call register or unregister of external feature sets"""
+        self.refresh_installed_feature_sets()
         for set_name in feature_set_list.get_enabled_modules_names():
             feature_set_list.call_register_function(set_name, register)
 

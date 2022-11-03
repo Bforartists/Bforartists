@@ -30,7 +30,7 @@ HISTORY = []
 
 def ui_scale():
     prefs = bpy.context.preferences.system
-    return prefs.dpi * prefs.pixel_size / DPI
+    return prefs.dpi / DPI
 
 
 def prefs():

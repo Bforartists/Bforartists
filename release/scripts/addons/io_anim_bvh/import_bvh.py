@@ -742,8 +742,8 @@ def _update_scene_fps(context, report, bvh_frame_time):
 
     if scene.render.fps != new_fps or scene.render.fps_base != 1.0:
         print("\tupdating scene FPS (was %f) to BVH FPS (%f)" % (scene_fps, new_fps))
-    scene.render.fps = new_fps
-    scene.render.fps_base = 1.0
+    scene.render.fps = int(round(new_fps))
+    scene.render.fps_base = scene.render.fps / new_fps
 
 
 def _update_scene_duration(
