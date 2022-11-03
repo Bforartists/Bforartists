@@ -503,6 +503,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     const int butw = 200;
     const int buth = 20 * UI_DPI_FAC;
     const int but_margin = 2;
+    const char *c;
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
@@ -512,16 +513,17 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     if (tot == 1) {
       if (totcurvedata) {
         /* Curve */
-        uiItemL(col, IFACE_("Control Point"), ICON_NONE);
+        c = IFACE_("Control Point:");
       }
       else {
         /* Mesh or lattice */
-        uiItemL(col, IFACE_("Vertex"), ICON_NONE);
+        c = IFACE_("Vertex:");
       }
     }
     else {
-      uiItemL(col, IFACE_("Median"), ICON_NONE);
+      c = IFACE_("Median:");
     }
+    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, NULL, 0, 0, 0, 0, "");
 
     row = uiLayoutRow(col, true);
 
@@ -1294,10 +1296,11 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
     const float lim = FLT_MAX;
     for (int i = 0; i < 3; i++) {
       uiBut *but;
-      but = uiDefButF(subblock,
+      const char text[3] = {'X' + i, ':', '\0'};
+      but = uiDefButF(block,
                       UI_BTYPE_NUM,
                       B_TRANSFORM_PANEL_DIMS,
-                      "",
+                      text,
                       0,
                       yi -= buth,
                       butw,

@@ -553,7 +553,7 @@ class OBJECT_OT_align_tools(Operator):
     bl_idname = "object.align_tools"
     bl_label = "Align Operator"
     bl_description = "Align Object Tools"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     # property definitions
 
@@ -823,6 +823,7 @@ class OBJECT_OT_AlignOperator(Operator):
     bl_idname = "object.align"
     bl_label = "Align Selected To Active"
     bl_description = "Align Selected To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -838,6 +839,7 @@ class OBJECT_OT_AlignLocationOperator(Operator):
     bl_idname = "object.align_location_all"
     bl_label = "Align Selected Location To Active"
     bl_description = "Align Selected Location To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -853,6 +855,7 @@ class OBJECT_OT_AlignLocationXOperator(Operator):
     bl_idname = "object.align_location_x"
     bl_label = "Align Selected Location X To Active"
     bl_description = "Align Selected Location X To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -868,6 +871,7 @@ class OBJECT_OT_AlignLocationYOperator(Operator):
     bl_idname = "object.align_location_y"
     bl_label = "Align Selected Location Y To Active"
     bl_description = "Align Selected Location Y To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -883,6 +887,7 @@ class OBJECT_OT_AlignLocationZOperator(Operator):
     bl_idname = "object.align_location_z"
     bl_label = "Align Selected Location Z To Active"
     bl_description = "Align Selected Location Z To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -898,6 +903,7 @@ class OBJECT_OT_AlignRotationOperator(Operator):
     bl_idname = "object.align_rotation_all"
     bl_label = "Align Selected Rotation To Active"
     bl_description = "Align Selected Rotation To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -913,6 +919,7 @@ class OBJECT_OT_AlignRotationXOperator(Operator):
     bl_idname = "object.align_rotation_x"
     bl_label = "Align Selected Rotation X To Active"
     bl_description = "Align Selected Rotation X To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -928,6 +935,7 @@ class OBJECT_OT_AlignRotationYOperator(Operator):
     bl_idname = "object.align_rotation_y"
     bl_label = "Align Selected Rotation Y To Active"
     bl_description = "Align Selected Rotation Y To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -943,6 +951,7 @@ class OBJECT_OT_AlignRotationZOperator(Operator):
     bl_idname = "object.align_rotation_z"
     bl_label = "Align Selected Rotation Z To Active"
     bl_description = "Align Selected Rotation Z To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -958,6 +967,7 @@ class OBJECT_OT_AlignScaleOperator(Operator):
     bl_idname = "object.align_objects_scale_all"
     bl_label = "Align Selected Scale To Active"
     bl_description = "Align Selected Scale To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -973,6 +983,7 @@ class OBJECT_OT_AlignScaleXOperator(Operator):
     bl_idname = "object.align_objects_scale_x"
     bl_label = "Align Selected Scale X To Active"
     bl_description = "Align Selected Scale X To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -988,6 +999,7 @@ class OBJECT_OT_AlignScaleYOperator(Operator):
     bl_idname = "object.align_objects_scale_y"
     bl_label = "Align Selected Scale Y To Active"
     bl_description = "Align Selected Scale Y To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -1003,6 +1015,7 @@ class OBJECT_OT_AlignScaleZOperator(Operator):
     bl_idname = "object.align_objects_scale_z"
     bl_label = "Align Selected Scale Z To Active"
     bl_description = "Align Selected Scale Z To Active"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
