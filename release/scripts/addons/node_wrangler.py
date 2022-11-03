@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 42),
+    "version": (3, 43),
     "blender": (3, 4, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
@@ -264,9 +264,14 @@ def force_update(context):
     context.space_data.node_tree.update_tag()
 
 
-def dpifac():
+def dpi_fac():
     prefs = bpy.context.preferences.system
-    return prefs.dpi * prefs.pixel_size / 72
+    return prefs.dpi / 72
+
+
+def prefs_line_width():
+    prefs = bpy.context.preferences.system
+    return prefs.pixel_size
 
 
 def node_mid_pt(node, axis):
@@ -342,8 +347,8 @@ def node_at_pos(nodes, context, event):
     for node in nodes:
         skipnode = False
         if node.type != 'FRAME':  # no point trying to link to a frame node
-            dimx = node.dimensions.x/dpifac()
-            dimy = node.dimensions.y/dpifac()
+            dimx = node.dimensions.x / dpi_fac()
+            dimy = node.dimensions.y / dpi_fac()
             locx, locy = abs_node_location(node)
 
             if not skipnode:
@@ -362,8 +367,8 @@ def node_at_pos(nodes, context, event):
     for node in nodes:
         if node.type != 'FRAME' and skipnode == False:
             locx, locy = abs_node_location(node)
-            dimx = node.dimensions.x/dpifac()
-            dimy = node.dimensions.y/dpifac()
+            dimx = node.dimensions.x / dpi_fac()
+            dimy = node.dimensions.y / dpi_fac()
             if (locx <= x <= locx + dimx) and \
                (locy - dimy <= y <= locy):
                 nodes_under_mouse.append(node)
@@ -392,7 +397,7 @@ def store_mouse_cursor(context, event):
 def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
     shader = gpu.shader.from_builtin('POLYLINE_SMOOTH_COLOR')
     shader.uniform_float("viewportSize", gpu.state.viewport_get()[2:])
-    shader.uniform_float("lineWidth", size * dpifac())
+    shader.uniform_float("lineWidth", size * prefs_line_width())
 
     vertices = ((x1, y1), (x2, y2))
     vertex_colors = ((colour[0]+(1.0-colour[0])/4,
@@ -406,7 +411,7 @@ def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
 
 
 def draw_circle_2d_filled(mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
-    radius = radius * dpifac()
+    radius = radius * prefs_line_width()
     sides = 12
     vertices = [(radius * cos(i * 2 * pi / sides) + mx,
                  radius * sin(i * 2 * pi / sides) + my)
@@ -421,12 +426,12 @@ def draw_circle_2d_filled(mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
 def draw_rounded_node_border(node, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
     area_width = bpy.context.area.width
     sides = 16
-    radius = radius*dpifac()
+    radius *= prefs_line_width()
 
     nlocx, nlocy = abs_node_location(node)
 
-    nlocx = (nlocx+1)*dpifac()
-    nlocy = (nlocy+1)*dpifac()
+    nlocx = (nlocx+1) * dpi_fac()
+    nlocy = (nlocy+1) * dpi_fac()
     ndimx = node.dimensions.x
     ndimy = node.dimensions.y
 
@@ -822,11 +827,13 @@ def nw_check(context):
     space = context.space_data
     valid_trees = ["ShaderNodeTree", "CompositorNodeTree", "TextureNodeTree", "GeometryNodeTree"]
 
-    valid = False
-    if space.type == 'NODE_EDITOR' and space.node_tree is not None and space.tree_type in valid_trees:
-        valid = True
+    if (space.type == 'NODE_EDITOR'
+            and space.node_tree is not None
+            and space.node_tree.library is None
+            and space.tree_type in valid_trees):
+        return True
 
-    return valid
+    return False
 
 class NWBase:
     @classmethod

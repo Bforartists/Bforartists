@@ -176,12 +176,18 @@ static bool wm_link_append_item_poll(ReportList *reports,
       (!do_append && BKE_idtype_idcode_is_only_appendable(idcode))) {
     if (reports) {
       if (do_append) {
-        BKE_reportf(
-            reports, RPT_ERROR_INVALID_INPUT, "Can't append data '%s' of type '%s'", name, group);
+        BKE_reportf(reports,
+                    RPT_ERROR_INVALID_INPUT,
+                    "Can't append data-block '%s' of type '%s'",
+                    name,
+                    group);
       }
       else {
-        BKE_reportf(
-            reports, RPT_ERROR_INVALID_INPUT, "Can't link data '%s' of type '%s'", name, group);
+        BKE_reportf(reports,
+                    RPT_ERROR_INVALID_INPUT,
+                    "Can't link data-block '%s' of type '%s'",
+                    name,
+                    group);
       }
     }
     return false;

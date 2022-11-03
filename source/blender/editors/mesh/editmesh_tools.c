@@ -2722,6 +2722,7 @@ static char *mesh_ot_normals_make_consistent_get_description(bContext *UNUSED(C)
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
+/*bfa - recalc inside has its own name and tooltip*/
   ot->name = "Recalculate Normals Outside";
   ot->description = "Make selected face and vertex normals point outside the mesh";
   ot->idname = "MESH_OT_normals_make_consistent";
