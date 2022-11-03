@@ -134,7 +134,7 @@ class SvgExport(bpy.types.Operator, ExportHelper):
             svg_view = ('' if self.unit_name == '-' else 'width="{0:.3f}{2}" height="{1:.3f}{2}" ')+'viewBox="0 0 {0:.3f} {1:.3f}">\n'
             f.write('''<?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" '''+svg_view.format(self.bounds[0], self.bounds[1], self.unit_name))
+<svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" '''+svg_view.format(self.bounds[0], self.bounds[1], self.unit_name))
             for obj in curves:
                 f.write(self.serialize_object(obj))
             f.write('</svg>')

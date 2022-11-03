@@ -176,6 +176,7 @@ static int gpencil_data_unlink_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_data_unlink(wmOperatorType *ot)
 {
   /* identifiers */
+/*bfa -  we call remove remove*/
   ot->name = "Remove Annotation";
   ot->idname = "GPENCIL_OT_data_unlink";
   ot->description = "Remove the active Annotation";

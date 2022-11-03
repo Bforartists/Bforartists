@@ -889,7 +889,7 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#393939ff"
+                header="#3b3b3b00"
                 back="#393939ff"
                 sub_back="#0000001a"
                 >
@@ -1134,7 +1134,7 @@
             >
             <panelcolors>
               <ThemePanelColors
-                header="#383838ff"
+                header="#40404000"
                 back="#383838ff"
                 sub_back="#333333ff"
                 >
