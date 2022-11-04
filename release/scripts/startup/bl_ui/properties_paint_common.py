@@ -1027,22 +1027,40 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             row.separator(factor = 3.5)
             row.prop(brush, "automasking_boundary_edges_propagation_steps", text = "Steps")
 
-        col = layout.column(align = True)
-        col.use_property_split = False
-        row = col.row()
+        col = layout.column()
+        split = col.split(factor=0.9)
+        split.use_property_split=False
+        row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_cavity", text="Cavity")
 
         is_cavity_active = brush.use_automasking_cavity or brush.use_automasking_cavity_inverted
-        if is_cavity_active:
-            row.operator("sculpt.mask_from_cavity", text="Create Mask")
 
-        row = col.row()
+        if is_cavity_active:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        col = layout.column()
+        split = col.split(factor=0.9)
+        split.use_property_split=False
+        row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_cavity_inverted", text="Cavity (inverted)")
 
+        is_cavity_active = brush.use_automasking_cavity or brush.use_automasking_cavity_inverted
+
         if is_cavity_active:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if is_cavity_active:
+
             col = layout.column(align=True)
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.operator("sculpt.mask_from_cavity", text="Create Mask")
             row = col.row()
             row.separator(factor = 3.5)
             row.prop(brush, "automasking_cavity_factor", text="Factor")
