@@ -1779,6 +1779,13 @@ class IMAGE_PT_overlay_guides(Panel):
             row.separator()
             row.prop(uvedit, "grid_shape_source", expand=True)
 
+            if uvedit.grid_shape_source == 'FIXED':
+                row = layout.row()
+                row.use_property_split = True
+                row.use_property_decorate = False
+                row.separator(factor = 3.5)
+                row.prop(uvedit, "custom_grid_subdivisions", text="Fixed grid size")# by purpose.No text means x y is missing.
+
             col = layout.column()
             row = col.row()
             row.separator()
@@ -1786,12 +1793,6 @@ class IMAGE_PT_overlay_guides(Panel):
             row.prop(uvedit, "show_grid_over_image")
             row.active = sima.image is not None
 
-            col = split.column()
-            if uvedit.grid_shape_source == 'FIXED':
-                col.prop(uvedit, "custom_grid_subdivisions", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
-            
             row = layout.row()
             row.use_property_split = True
             row.use_property_decorate = False
