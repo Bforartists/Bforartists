@@ -809,11 +809,11 @@ def brush_settings(layout, context, brush, popover=False):
     elif mode == 'SCULPT_CURVES':
         if brush.curves_sculpt_tool == 'ADD':
             layout.prop(brush.curves_sculpt_settings, "add_amount")
-                    
+
             col = layout.column()
             col.use_property_split = False
             col.label(text = "Interpolate")
-            
+
             row = col.row()
             row.separator()
             row.prop(brush.curves_sculpt_settings, "interpolate_length", text="Length")
@@ -979,7 +979,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         capabilities = brush.sculpt_capabilities
         use_accumulate = capabilities.has_accumulate
 
-        col = layout.column()
+        col = layout.column(align = True)
         col.label(text="Auto Masking")
 
         # topology automasking
@@ -993,62 +993,93 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         row.separator()
         row.prop(brush, "use_automasking_face_sets")
 
-        layout.separator()
+        col = layout.column(align = True)
+        col.use_property_split = False
 
-        col = layout.column(align=True)
-        col.prop(brush, "use_automasking_boundary_edges", text="Mesh Boundary")
-        col.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        row = col.row()
+        row.separator()
+        row.prop(brush, "use_automasking_boundary_edges", text="Mesh Boundary")
+        row = col.row()
+        row.separator()
+        row.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
 
         if brush.use_automasking_boundary_edges or brush.use_automasking_boundary_face_sets:
             col = layout.column()
-            col.use_property_split = False
-            split = col.split(factor=0.4)
-            col = split.column()
-            split.prop(brush, "automasking_boundary_edges_propagation_steps")
+            col.use_property_split = True
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(brush, "automasking_boundary_edges_propagation_steps", text = "Steps")
 
-        layout.separator()
-
-        col = layout.column(align=True)
+        col = layout.column(align = True)
+        col.use_property_split = False
         row = col.row()
+        row.separator()
         row.prop(brush, "use_automasking_cavity", text="Cavity")
 
         is_cavity_active = brush.use_automasking_cavity or brush.use_automasking_cavity_inverted
-
         if is_cavity_active:
             row.operator("sculpt.mask_from_cavity", text="Create Mask")
 
-        col.prop(brush, "use_automasking_cavity_inverted", text="Cavity (inverted)")
+        row = col.row()
+        row.separator()
+        row.prop(brush, "use_automasking_cavity_inverted", text="Cavity (inverted)")
 
         if is_cavity_active:
             col = layout.column(align=True)
-            col.prop(brush, "automasking_cavity_factor", text="Factor")
-            col.prop(brush, "automasking_cavity_blur_steps", text="Blur")
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(brush, "automasking_cavity_factor", text="Factor")
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(brush, "automasking_cavity_blur_steps", text="Blur")
 
             col = layout.column()
-            col.prop(brush, "use_automasking_custom_cavity_curve", text="Custom Curve")
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
+            row.prop(brush, "use_automasking_custom_cavity_curve", text="Custom Curve")
 
             if brush.use_automasking_custom_cavity_curve:
+
                 col.template_curve_mapping(brush, "automasking_cavity_curve")
 
-        layout.separator()
-
         col = layout.column(align=True)
-        col.prop(brush, "use_automasking_view_normal", text="View Normal")
+        col.use_property_split = False
+
+        row = col.row()
+        row.separator()
+        row.prop(brush, "use_automasking_view_normal", text="View Normal")
 
         if brush.use_automasking_view_normal:
-            col.prop(brush, "use_automasking_view_occlusion", text="Occlusion")
+
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(brush, "use_automasking_view_occlusion", text="Occlusion")
             subcol = col.column(align=True)
-            subcol.active = not brush.use_automasking_view_occlusion
-            subcol.prop(sculpt, "automasking_view_normal_limit", text="Limit")
-            subcol.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
+            if not brush.use_automasking_view_occlusion:
+                subcol.use_property_split = True
+                row = subcol.row()
+                row.separator(factor = 3.5)
+                row.prop(sculpt, "automasking_view_normal_limit", text="Limit")
+                row = subcol.row()
+                row.separator(factor = 3.5)
+                row.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
 
         col = layout.column()
-        col.prop(brush, "use_automasking_start_normal", text="Area Normal")
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(brush, "use_automasking_start_normal", text="Area Normal")
 
         if brush.use_automasking_start_normal:
             col = layout.column(align=True)
-            col.prop(sculpt, "automasking_start_normal_limit", text="Limit")
-            col.prop(sculpt, "automasking_start_normal_falloff", text="Falloff")
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(sculpt, "automasking_start_normal_limit", text="Limit")
+            row = col.row()
+            row.separator(factor = 3.5)
+            row.prop(sculpt, "automasking_start_normal_falloff", text="Falloff")
+            col.separator()
 
         layout.separator()
 
