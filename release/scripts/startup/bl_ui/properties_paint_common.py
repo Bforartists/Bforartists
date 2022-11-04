@@ -996,12 +996,29 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         col = layout.column(align = True)
         col.use_property_split = False
 
-        row = col.row()
+        col = layout.column()
+        split = col.split(factor=0.9)
+        split.use_property_split=False
+        row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_boundary_edges", text="Mesh Boundary")
-        row = col.row()
+
+        if brush.use_automasking_boundary_edges or brush.use_automasking_boundary_face_sets:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        col = layout.column()
+        split = col.split(factor=0.9)
+        split.use_property_split=False
+        row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+
+        if brush.use_automasking_boundary_edges or brush.use_automasking_boundary_face_sets:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if brush.use_automasking_boundary_edges or brush.use_automasking_boundary_face_sets:
             col = layout.column()
@@ -1042,14 +1059,14 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             if brush.use_automasking_custom_cavity_curve:
 
                 col.template_curve_mapping(brush, "automasking_cavity_curve")
-        
-        col = layout.column()     
+
+        col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split=False
         row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_view_normal", text="View Normal")
-        
+
         if brush.use_automasking_view_normal:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
@@ -1063,21 +1080,21 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             row.prop(brush, "use_automasking_view_occlusion", text="Occlusion")
             subcol = col.column(align=True)
             if not brush.use_automasking_view_occlusion:
-                subcol.use_property_split = True              
+                subcol.use_property_split = True
                 row = subcol.row()
-                row.separator(factor = 3.5)           
+                row.separator(factor = 3.5)
                 row.prop(sculpt, "automasking_view_normal_limit", text="Limit")
-                row = subcol.row()   
-                row.separator(factor = 3.5)  
+                row = subcol.row()
+                row.separator(factor = 3.5)
                 row.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
 
-        col = layout.column()     
+        col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split=False
         row = split.row()
         row.separator()
         row.prop(brush, "use_automasking_start_normal", text="Area Normal")
-        
+
         if brush.use_automasking_start_normal:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
