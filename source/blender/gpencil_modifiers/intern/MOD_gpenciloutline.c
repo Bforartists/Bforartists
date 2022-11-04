@@ -290,13 +290,24 @@ static void updateDepsgraph(GpencilModifierData *md,
 static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
   uiLayoutSetPropSep(layout, true);
 
   uiItemR(layout, ptr, "thickness", 0, NULL, ICON_NONE);
-  uiItemR(layout, ptr, "use_keep_shape", 0, NULL, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  //uiItemR(layout, ptr, "use_keep_shape", 0, NULL, ICON_NONE);
+
+  col = uiLayoutColumn(layout, true);
+  row = uiLayoutRow(col, true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  uiItemR(row, ptr, "use_keep_shape", 0, NULL, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_keep_shape", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
   uiItemR(layout, ptr, "subdivision", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "sample_length", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "outline_material", 0, NULL, ICON_NONE);
