@@ -287,6 +287,7 @@ static void segment_list_item(struct uiList *UNUSED(ui_list),
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row, *col; /*bfa, added *row, *col*/
 
   PointerRNA *ptr = gpencil_modifier_panel_get_property_pointers(panel, NULL);
 
@@ -294,7 +295,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   uiItemR(layout, ptr, "dash_offset", 0, NULL, ICON_NONE);
 
-  uiLayout *row = uiLayoutRow(layout, false);
+  row = uiLayoutRow(layout, false);
   uiLayoutSetPropSep(row, false);
 
   uiTemplateList(row,
@@ -312,7 +313,7 @@ static void panel_draw(const bContext *C, Panel *panel)
                  1,
                  UI_TEMPLATE_LIST_FLAG_NONE);
 
-  uiLayout *col = uiLayoutColumn(row, false);
+  col = uiLayoutColumn(row, false);
   uiLayout *sub = uiLayoutColumn(col, true);
   uiItemO(sub, "", ICON_ADD, "GPENCIL_OT_segment_add");
   uiItemO(sub, "", ICON_REMOVE, "GPENCIL_OT_segment_remove");
@@ -338,7 +339,16 @@ static void panel_draw(const bContext *C, Panel *panel)
     uiItemR(sub, &ds_ptr, "radius", 0, NULL, ICON_NONE);
     uiItemR(sub, &ds_ptr, "opacity", 0, NULL, ICON_NONE);
     uiItemR(sub, &ds_ptr, "material_index", 0, NULL, ICON_NONE);
-    uiItemR(sub, &ds_ptr, "use_cyclic", 0, NULL, ICON_NONE);
+
+    /*------------------- bfa - original props */
+    //uiItemR(sub, &ds_ptr, "use_cyclic", 0, NULL, ICON_NONE);
+
+    col = uiLayoutColumn(layout, true);
+    row = uiLayoutRow(col, true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    uiItemR(row, &ds_ptr, "use_cyclic", 0, NULL, ICON_NONE);
+    uiItemDecoratorR(row, &ds_ptr, "use_cyclic", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
 
   gpencil_modifier_panel_end(layout, ptr);
