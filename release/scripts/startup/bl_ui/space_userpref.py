@@ -1644,6 +1644,8 @@ class USERPREF_PT_input_touchpad(InputPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         inputs = prefs.inputs
 
+        layout.use_property_split = False
+
         col = layout.column()
         col.prop(inputs, "use_multitouch_gestures")
 
@@ -1817,6 +1819,9 @@ class USERPREF_PT_ndof_settings(Panel):
 
     @staticmethod
     def draw_settings(layout, props, show_3dview_settings=True):
+
+        #layout.use_property_split = False
+
         col = layout.column()
         col.prop(props, "ndof_sensitivity", text="Pan Sensitivity")
         col.prop(props, "ndof_orbit_sensitivity")
@@ -1831,12 +1836,18 @@ class USERPREF_PT_ndof_settings(Panel):
 
             layout.separator()
 
-        col = layout.column()
+        col = layout.column(align = True)
+        col.use_property_split = False
         if show_3dview_settings:
             col.prop(props, "ndof_show_guide")
         col.prop(props, "ndof_zoom_invert")
-        col.prop(props, "ndof_lock_camera_pan_zoom")
-        row = col.row(heading="Pan")
+
+        col.label(text = "Pan")
+        row = col.row()
+        row.separator()
+        row.prop(props, "ndof_lock_camera_pan_zoom")
+        row = col.row()
+        row.separator()
         row.prop(props, "ndof_pan_yz_swap_axis", text="Swap Y and Z Axes")
 
         layout.separator()
@@ -1860,9 +1871,15 @@ class USERPREF_PT_ndof_settings(Panel):
 
             layout.separator()
 
-            col = layout.column(heading="Fly/Walk")
-            col.prop(props, "ndof_lock_horizon")
-            col.prop(props, "ndof_fly_helicopter")
+            col = layout.column(align = True)
+            col.use_property_split = False
+            col.label(text = "Fly/Walk")
+            row = col.row()
+            row.separator()
+            row.prop(props, "ndof_lock_horizon")
+            row = col.row()
+            row.separator()
+            row.prop(props, "ndof_fly_helicopter")
 
     def draw(self, context):
         layout = self.layout
