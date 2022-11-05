@@ -4550,6 +4550,105 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
 
 
 #add mesh panel
+class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Mesh Topology"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Corners of Face      ", icon = "CORNERS_OF_FACE")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfFace"
+
+            props = col.operator("node.add_node", text=" Corners of Vertex      ", icon = "CORNERS_OF_VERTEX")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfVertex"
+
+            props = col.operator("node.add_node", text=" Edges of Corner       ", icon = "EDGES_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesOfCorner"
+
+            props = col.operator("node.add_node", text=" Edges of Vertex           ", icon = "EDGES_OF_VERTEX")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesOfVertex"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Face of Corner               ", icon = "FACE_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeFaceOfCorner"
+
+            props = col.operator("node.add_node", text=" Offset Corner In Face            ", icon = "OFFSET_CORNER_IN_FACE")
+            props.use_transform = True
+            props.type = "GeometryNodeOffsetCornerInFace"
+
+            props = col.operator("node.add_node", text=" Vertex of Corner                ", icon = "VERTEX_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeVertexOfCorner"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_FACE")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfFace"
+
+            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_VERTEX")
+            props.use_transform = True
+            props.type = "GeometryNodeCornersOfVertex"
+
+            props = flow.operator("node.add_node", text = "", icon = "EDGES_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesOfCorner"
+
+            props = flow.operator("node.add_node", text = "", icon = "EDGES_OF_VERTEX")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgesOfVertex"
+
+            props = flow.operator("node.add_node", text = "", icon = "FACE_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeFaceOfCorner"
+
+            props = flow.operator("node.add_node", text = "", icon = "OFFSET_CORNER_IN_FACE")
+            props.use_transform = True
+            props.type = "GeometryNodeOffsetCornerInFace"
+
+            props = flow.operator("node.add_node", text = "", icon = "VERTEX_OF_CORNER")
+            props.use_transform = True
+            props.type = "GeometryNodeVertexOfCorner"
+
+
+#add mesh panel
 class NODES_PT_geom_add_point(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Point"
@@ -6009,6 +6108,8 @@ classes = (
     NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
+    NODES_PT_geom_add_mesh_topology,
+
     NODES_PT_geom_add_output,
     NODES_PT_geom_add_point,
     NODES_PT_geom_add_text,

@@ -1577,13 +1577,14 @@ object_hidden
 desktop
 
 volume_distribute
-#~ DEF_ICON_BLANK(1611)
-#~ DEF_ICON_BLANK(1612)
-#~ DEF_ICON_BLANK(1613)
-#~ DEF_ICON_BLANK(1614)
-#~ DEF_ICON_BLANK(1615)
-#~ DEF_ICON_BLANK(1616)
-#~ DEF_ICON_BLANK(1617)
+volume_distribute 
+corners_of_face 
+corners_of_vertex 
+edges_of_corner 
+edges_of_vertex 
+face_of_corner 
+offset_corner_in_face 
+vertex_of_corner 
 #~ DEF_ICON_BLANK(1618)
 #~ DEF_ICON_BLANK(1619)
 
