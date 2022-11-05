@@ -13822,8 +13822,29 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_TO_POINTS:
       return ICON_MESH_TO_POINTS;
 
+    case GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_FACE:
+      return ICON_CORNERS_OF_FACE;
+
     case GEO_NODE_MESH_TO_VOLUME:
       return ICON_MESH_TO_VOLUME;
+
+    case GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_VERTEX:
+      return ICON_CORNERS_OF_VERTEX;
+
+    case GEO_NODE_MESH_TOPOLOGY_EDGES_OF_CORNER:
+      return ICON_EDGES_OF_CORNER;
+
+    case GEO_NODE_MESH_TOPOLOGY_EDGES_OF_VERTEX:
+      return ICON_EDGES_OF_VERTEX;
+
+    case GEO_NODE_MESH_TOPOLOGY_FACE_OF_CORNER:
+      return ICON_FACE_OF_CORNER;
+
+    case GEO_NODE_MESH_TOPOLOGY_OFFSET_CORNER_IN_FACE:
+      return ICON_OFFSET_CORNER_IN_FACE;
+
+    case GEO_NODE_MESH_TOPOLOGY_VERTEX_OF_CORNER:
+      return ICON_VERTEX_OF_CORNER;
 
     case GEO_NODE_OBJECT_INFO:
       return ICON_NODE_OBJECTINFO;
@@ -13959,7 +13980,7 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_UV_UNWRAP:
       return ICON_UNWRAP_ABF;
-    
+
     case GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME:
       return ICON_VOLUME_DISTRIBUTE;
   }
