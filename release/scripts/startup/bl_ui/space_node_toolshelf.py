@@ -4579,34 +4579,34 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Corners of Face      ", icon = "CORNERS_OF_FACE")
+            props = col.operator("node.add_node", text=" Corners of Face          ", icon = "CORNERS_OF_FACE")
             props.use_transform = True
             props.type = "GeometryNodeCornersOfFace"
 
-            props = col.operator("node.add_node", text=" Corners of Vertex      ", icon = "CORNERS_OF_VERTEX")
+            props = col.operator("node.add_node", text=" Corners of Vertex       ", icon = "CORNERS_OF_VERTEX")
             props.use_transform = True
             props.type = "GeometryNodeCornersOfVertex"
 
-            props = col.operator("node.add_node", text=" Edges of Corner       ", icon = "EDGES_OF_CORNER")
+            props = col.operator("node.add_node", text=" Edges of Corner          ", icon = "EDGES_OF_CORNER")
             props.use_transform = True
             props.type = "GeometryNodeEdgesOfCorner"
 
-            props = col.operator("node.add_node", text=" Edges of Vertex           ", icon = "EDGES_OF_VERTEX")
+            props = col.operator("node.add_node", text=" Edges of Vertex          ", icon = "EDGES_OF_VERTEX")
             props.use_transform = True
             props.type = "GeometryNodeEdgesOfVertex"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Face of Corner               ", icon = "FACE_OF_CORNER")
+            props = col.operator("node.add_node", text=" Face of Corner             ", icon = "FACE_OF_CORNER")
             props.use_transform = True
             props.type = "GeometryNodeFaceOfCorner"
 
-            props = col.operator("node.add_node", text=" Offset Corner In Face            ", icon = "OFFSET_CORNER_IN_FACE")
+            props = col.operator("node.add_node", text=" Offset Corner In Face  ", icon = "OFFSET_CORNER_IN_FACE")
             props.use_transform = True
             props.type = "GeometryNodeOffsetCornerInFace"
 
-            props = col.operator("node.add_node", text=" Vertex of Corner                ", icon = "VERTEX_OF_CORNER")
+            props = col.operator("node.add_node", text=" Vertex of Corner          ", icon = "VERTEX_OF_CORNER")
             props.use_transform = True
             props.type = "GeometryNodeVertexOfCorner"
 
