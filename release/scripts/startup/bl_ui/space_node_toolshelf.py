@@ -3407,6 +3407,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Set Curve Normal        ", icon = "CURVE_NORMAL")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveNormal"
+
             props = col.operator("node.add_node", text=" Set Curve Radius        ", icon = "SET_CURVE_RADIUS")
             props.use_transform = True
             props.type = "GeometryNodeSetCurveRadius"
@@ -3529,6 +3533,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "CURVE_NORMAL")
+            props.use_transform = True
+            props.type = "GeometryNodeSetCurveNormal"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
             props.use_transform = True

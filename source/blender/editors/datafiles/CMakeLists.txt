@@ -1648,7 +1648,7 @@ con_rotlimit
 point_of_curve
 curve_of_point
 offset_point_in_curve
-#~ DEF_ICON_BLANK(1681)
+curve_normal
 #~ DEF_ICON_BLANK(1682)
 #~ DEF_ICON_BLANK(1683)
 #~ DEF_ICON_BLANK(1684)
