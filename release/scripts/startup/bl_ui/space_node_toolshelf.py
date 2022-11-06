@@ -3948,6 +3948,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
+            props = col.operator("node.add_node", text=" Self Object            ", icon = "SELF_OBJECT")
+            props.use_transform = True
+            props.type = "GeometryNodeSelfObject"
+
             props = col.operator("node.add_node", text=" String                    ", icon = "STRING")
             props.use_transform = True
             props.type = "FunctionNodeInputString"
@@ -4026,6 +4030,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
+
+            props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
+            props.use_transform = True
+            props.type = "GeometryNodeSelfObject"
 
             props = flow.operator("node.add_node", text = "", icon = "STRING")
             props.use_transform = True
