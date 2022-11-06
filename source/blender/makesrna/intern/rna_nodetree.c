@@ -13639,6 +13639,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TO_POINTS:
       return ICON_POINTCLOUD_DATA;
 
+    case GEO_NODE_CURVE_TOPOLOGY_CURVE_OF_POINT:
+      return ICON_CURVE_OF_POINT;
+
+    case GEO_NODE_CURVE_TOPOLOGY_POINTS_OF_CURVE:
+      return ICON_POINT_OF_CURVE;
+
     case GEO_NODE_DEFORM_CURVES_ON_SURFACE:
       return ICON_DEFORM_CURVES;
 
@@ -13848,6 +13854,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_OBJECT_INFO:
       return ICON_NODE_OBJECTINFO;
+
+    case GEO_NODE_OFFSET_POINT_IN_CURVE:
+      return ICON_OFFSET_POINT_IN_CURVE;
 
     case GEO_NODE_POINTS:
       return ICON_DECORATE;
