@@ -1585,8 +1585,8 @@ edges_of_vertex
 face_of_corner 
 offset_corner_in_face 
 vertex_of_corner 
-#~ DEF_ICON_BLANK(1618)
-#~ DEF_ICON_BLANK(1619)
+sample_nearest_surface
+sample_uv_surface
 
 # ------------------------- row 24 --------------------------*/
 
