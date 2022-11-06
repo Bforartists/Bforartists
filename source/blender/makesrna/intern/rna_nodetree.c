@@ -13921,6 +13921,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_CURVE_HANDLES:
       return ICON_SET_CURVE_HANDLE_POSITIONS;
 
+    case GEO_NODE_SET_CURVE_NORMAL:
+      return ICON_CURVE_NORMAL;
+
     case GEO_NODE_SET_CURVE_RADIUS:
       return ICON_SET_CURVE_RADIUS;
 
