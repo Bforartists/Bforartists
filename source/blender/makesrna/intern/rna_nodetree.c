@@ -13918,6 +13918,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SEPARATE_GEOMETRY:
       return ICON_SEPARATE_GEOMETRY;
 
+    case GEO_NODE_SELF_OBJECT:
+      return ICON_SELF_OBJECT;
+
     case GEO_NODE_SET_CURVE_HANDLES:
       return ICON_SET_CURVE_HANDLE_POSITIONS;
 
