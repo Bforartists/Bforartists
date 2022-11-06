@@ -4237,6 +4237,9 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeFlipFaces"
 
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Mesh Boolean           ", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeMeshBoolean"
@@ -4252,6 +4255,14 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Mesh to Volume         ", icon = "MESH_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodeMeshToVolume"
+
+            props = col.operator("node.add_node", text=" Sample Nearest Surface ", icon = "SAMPLE_NEAREST_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearestSurface"
+
+            props = col.operator("node.add_node", text=" Sample UV Surface   ", icon = "SAMPLE_UV_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleUVSurface"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4272,7 +4283,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
-            props = col.operator("node.add_node", text=" Scale Elements            ", icon = "TRANSFORM_SCALE")
+            props = col.operator("node.add_node", text=" Scale Elements        ", icon = "TRANSFORM_SCALE")
             props.use_transform = True
             props.type = "GeometryNodeScaleElements"
 
@@ -4373,6 +4384,14 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "MESH_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodeMeshToVolume"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearestSurface"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_UV_SURFACE")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleUVSurface"
 
             props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
