@@ -1645,9 +1645,9 @@ con_distlimit
 con_loclimit
 con_rotlimit
 
-#~ DEF_ICON_BLANK(1678)
-#~ DEF_ICON_BLANK(1679)
-#~ DEF_ICON_BLANK(1680)
+point_of_curve
+curve_of_point
+offset_point_in_curve
 #~ DEF_ICON_BLANK(1681)
 #~ DEF_ICON_BLANK(1682)
 #~ DEF_ICON_BLANK(1683)
