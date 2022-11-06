@@ -1649,7 +1649,7 @@ point_of_curve
 curve_of_point
 offset_point_in_curve
 curve_normal
-#~ DEF_ICON_BLANK(1682)
+self_object
 #~ DEF_ICON_BLANK(1683)
 #~ DEF_ICON_BLANK(1684)
 #~ DEF_ICON_BLANK(1685)
