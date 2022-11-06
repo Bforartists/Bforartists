@@ -13885,6 +13885,18 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SAMPLE_CURVE:
       return ICON_CURVE_SAMPLE;
 
+    case GEO_NODE_SAMPLE_INDEX:
+      return ICON_DELETE;
+
+    case GEO_NODE_SAMPLE_NEAREST_SURFACE:
+      return ICON_SAMPLE_NEAREST_SURFACE;
+
+    case GEO_NODE_SAMPLE_NEAREST:
+      return ICON_DELETE;
+
+    case GEO_NODE_SAMPLE_UV_SURFACE:
+      return ICON_SAMPLE_UV_SURFACE;
+
     case GEO_NODE_SCALE_ELEMENTS:
       return ICON_TRANSFORM_SCALE;
 
