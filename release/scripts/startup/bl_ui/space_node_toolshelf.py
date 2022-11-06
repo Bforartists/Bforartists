@@ -3559,7 +3559,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.type = "GeometryNodeCurveSplineType"
 
 
-#add Curves Primitives panel
+#add Curve Primitives panel
 class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Curve Primitives"
@@ -3660,6 +3660,69 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_STAR")
             props.use_transform = True
             props.type = "GeometryNodeCurveStar"
+
+
+#add Curve Topology panel
+class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Curve Topology"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Offset Point in Curve   ", icon = "OFFSET_POINT_IN_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeOffsetPointInCurve"
+
+            props = col.operator("node.add_node", text=" Curve of Point              ", icon = "CURVE_OF_POINT")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveOfPoint"
+
+            props = col.operator("node.add_node", text=" Points of Curve            ", icon = "POINT_OF_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodePointsOfCurve"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "OFFSET_POINT_IN_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeOffsetPointInCurve"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_OF_POINT")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveOfPoint"
+
+            props = flow.operator("node.add_node", text = "", icon = "POINT_OF_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodePointsOfCurve"
 
 
 #add geometry panel
@@ -6121,6 +6184,7 @@ classes = (
     NODES_PT_geom_add_color,
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_curve_primitives,
+    NODES_PT_geom_add_curve_topology,
     NODES_PT_geom_add_geometry,
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_instances,
