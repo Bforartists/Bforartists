@@ -3183,10 +3183,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeStoreNamedAttribute"
 
-            props = col.operator("node.add_node", text=" Transfer Attribute   ", icon = "ATTRIBUTE_TRANSFER")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeTransfer"
-
         #### Icon Buttons
 
         else:
@@ -3214,10 +3210,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STORE")
             props.use_transform = True
             props.type = "GeometryNodeStoreNamedAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeTransfer"
 
 
 #add color panel
@@ -3795,9 +3787,17 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
 
-            props = col.operator("node.add_node", text=" Raycast                     ", icon = "RAYCAST")
+            props = col.operator("node.add_node", text=" Raycast                      ", icon = "RAYCAST")
             props.use_transform = True
             props.type = "GeometryNodeRaycast"
+
+            props = col.operator("node.add_node", text=" Sample Index             ", icon = "SAMPLE_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleIndex"
+
+            props = col.operator("node.add_node", text=" Sample Nearest          ", icon = "SAMPLE_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearest"
 
             props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
             props.use_transform = True
@@ -3865,6 +3865,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
             props.use_transform = True
             props.type = "GeometryNodeRaycast"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_INDEX")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleIndex"
+
+            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST")
+            props.use_transform = True
+            props.type = "GeometryNodeSampleNearest"
 
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
             props.use_transform = True
