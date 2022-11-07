@@ -3250,11 +3250,16 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeCombineColor"
 
-            props = col.operator("node.add_node", text=" RGB Curves         ", icon = "NODE_RGBCURVE")
+            props = col.operator("node.add_node", text=" Mix Color              ", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+            #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
+
+            props = col.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
-            props = col.operator("node.add_node", text=" Separate Color       ", icon = "SEPARATE_COLOR")
+            props = col.operator("node.add_node", text=" Separate Color      ", icon = "SEPARATE_COLOR")
             props.use_transform = True
             props.type = "FunctionNodeSeparateColor"
 
@@ -3273,6 +3278,11 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
             props.use_transform = True
             props.type = "FunctionNodeCombineColor"
+
+            props = col.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+            #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
