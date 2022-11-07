@@ -1650,8 +1650,8 @@ curve_of_point
 offset_point_in_curve
 curve_normal
 self_object
-#~ DEF_ICON_BLANK(1683)
-#~ DEF_ICON_BLANK(1684)
+sample_index
+sample_nearest
 #~ DEF_ICON_BLANK(1685)
 #~ DEF_ICON_BLANK(1686)
 #~ DEF_ICON_BLANK(1687)
