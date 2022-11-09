@@ -99,7 +99,7 @@ const EnumPropertyItem rna_enum_object_greasepencil_modifier_type_items[] = {
      "GP_OUTLINE",
      ICON_OUTLINE,
      "Outline",
-     "Convert stroke to perimeter"},
+     "Requires a active camera in the scene\nConvert stroke to perimeter"},
     {eGpencilModifierType_Simplify,
      "GP_SIMPLIFY",
      ICON_MOD_SIMPLIFY,
