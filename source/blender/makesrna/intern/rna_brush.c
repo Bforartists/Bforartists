@@ -1887,7 +1887,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_settings_outline", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", GP_BRUSH_OUTLINE_STROKE);
   RNA_def_property_boolean_default(prop, false);
-  RNA_def_property_ui_text(prop, "Outline", "Convert stroke to perimeter");
+  RNA_def_property_ui_text(prop, "Outline", "Requires a active camera in the scene\nConvert stroke to perimeter");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
   prop = RNA_def_property(srna, "direction", PROP_ENUM, PROP_NONE);
