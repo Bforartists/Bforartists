@@ -13,15 +13,27 @@ from ...utils.switch_parent import SwitchParentBuilder
 
 class Rig(BaseRig):
     """ A rig providing a rotation pivot control that can be moved. """
-    def find_org_bones(self, pose_bone):
-        return pose_bone.name
 
+    class CtrlBones(BaseRig.CtrlBones):
+        master: str
+        pivot: str
+
+    class MchBones(BaseRig.MchBones):
+        pass
+
+    bones: BaseRig.ToplevelBones[str, CtrlBones, MchBones, str]
+
+    make_control: bool
+    make_pivot: bool
+    make_deform: bool
+
+    def find_org_bones(self, pose_bone) -> str:
+        return pose_bone.name
 
     def initialize(self):
         self.make_control = self.params.make_extra_control
         self.make_pivot = self.params.make_control or not self.make_control
-        self.make_deform  = self.params.make_extra_deform
-
+        self.make_deform = self.params.make_extra_deform
 
     def generate_bones(self):
         org = self.bones.org
@@ -44,8 +56,7 @@ class Rig(BaseRig):
         if self.make_deform:
             self.bones.deform = self.copy_bone(org, make_derived_name(org, 'def'), bbone=True)
 
-
-    def build_parent_switch(self, master_name):
+    def build_parent_switch(self, master_name: str):
         pbuilder = SwitchParentBuilder(self.generator)
 
         org_parent = self.get_bone_parent(self.bones.org)
@@ -68,7 +79,7 @@ class Rig(BaseRig):
         tags.discard('')
         return tags
 
-    def register_parent(self, master_name, tags):
+    def register_parent(self, master_name: str, tags: set[str]):
         pbuilder = SwitchParentBuilder(self.generator)
 
         inject = self.rigify_parent if 'injected' in tags else None
@@ -77,7 +88,6 @@ class Rig(BaseRig):
             self, self.bones.org, name=master_name,
             inject_into=inject, tags=tags
         )
-
 
     def parent_bones(self):
         ctrl = self.bones.ctrl
@@ -94,14 +104,12 @@ class Rig(BaseRig):
         if self.make_deform:
             self.set_bone_parent(self.bones.deform, self.bones.org, use_connect=False)
 
-
     def configure_bones(self):
         org = self.bones.org
         ctrl = self.bones.ctrl
         main_ctl = ctrl.master if self.make_control else ctrl.pivot
 
         self.copy_bone_properties(org, main_ctl, ui_controls=True)
-
 
     def rig_bones(self):
         if self.make_pivot:
@@ -110,7 +118,6 @@ class Rig(BaseRig):
                 space='LOCAL', invert_xyz=(True,)*3
             )
 
-
     def generate_widgets(self):
         if self.make_pivot:
             create_pivot_widget(self.obj, self.bones.ctrl.pivot, square=True, axis_size=2.0)
@@ -118,56 +125,55 @@ class Rig(BaseRig):
         if self.make_control:
             set_bone_widget_transform(self.obj, self.bones.ctrl.master, self.bones.org)
 
-            create_registered_widget(self.obj, self.bones.ctrl.master, self.params.pivot_master_widget_type or 'cube')
-
+            create_registered_widget(self.obj, self.bones.ctrl.master,
+                                     self.params.pivot_master_widget_type or 'cube')
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.make_control = bpy.props.BoolProperty(
-            name        = "Control",
-            default     = True,
-            description = "Create a control bone for the copy"
+            name="Control",
+            default=True,
+            description="Create a control bone for the copy"
         )
 
         params.pivot_master_widget_type = bpy.props.StringProperty(
-            name        = "Widget Type",
-            default     = 'cube',
-            description = "Choose the type of the widget to create"
+            name="Widget Type",
+            default='cube',
+            description="Choose the type of the widget to create"
         )
 
         params.make_parent_switch = bpy.props.BoolProperty(
-            name        = "Switchable Parent",
-            default     = False,
-            description = "Allow switching the parent of the master control"
+            name="Switchable Parent",
+            default=False,
+            description="Allow switching the parent of the master control"
         )
 
         params.register_parent = bpy.props.BoolProperty(
-            name        = "Register Parent",
-            default     = False,
-            description = "Register the control as a switchable parent candidate"
+            name="Register Parent",
+            default=False,
+            description="Register the control as a switchable parent candidate"
         )
 
         params.register_parent_tags = bpy.props.StringProperty(
-            name        = "Parent Tags",
-            default     = "",
-            description = "Comma-separated tags to use for the registered parent"
+            name="Parent Tags",
+            default="",
+            description="Comma-separated tags to use for the registered parent"
         )
 
         params.make_extra_control = bpy.props.BoolProperty(
-            name        = "Extra Control",
-            default     = False,
-            description = "Create an optional control"
+            name="Extra Control",
+            default=False,
+            description="Create an optional control"
         )
 
         params.make_extra_deform = bpy.props.BoolProperty(
-            name        = "Extra Deform",
-            default     = False,
-            description = "Create an optional deform bone"
+            name="Extra Deform",
+            default=False,
+            description="Create an optional deform bone"
         )
 
-
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         r = layout.row()
         r.prop(params, "make_extra_control", text="Master Control")
 

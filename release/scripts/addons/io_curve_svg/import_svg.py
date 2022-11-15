@@ -964,16 +964,17 @@ class SVGGeometry:
         Push transformation matrix
         """
 
-        self._context['transform'].append(matrix)
-        self._context['matrix'] = self._context['matrix'] @ matrix
+        current_matrix = self._context['matrix']
+        self._context['matrix_stack'].append(current_matrix)
+        self._context['matrix'] = current_matrix @ matrix
 
     def _popMatrix(self):
         """
         Pop transformation matrix
         """
 
-        matrix = self._context['transform'].pop()
-        self._context['matrix'] = self._context['matrix'] @ matrix.inverted()
+        old_matrix = self._context['matrix_stack'].pop()
+        self._context['matrix'] = old_matrix
 
     def _pushStyle(self, style):
         """
@@ -1822,9 +1823,9 @@ class SVGLoader(SVGGeometryContainer):
         rect = (0, 0)
 
         self._context = {'defines': {},
-                         'transform': [],
                          'rects': [rect],
                          'rect': rect,
+                         'matrix_stack': [],
                          'matrix': m,
                          'materials': {},
                          'styles': [None],

@@ -3,6 +3,7 @@
 import bpy
 
 from collections import OrderedDict
+from typing import Union, Optional, Any
 
 from .utils.animation import SCRIPT_REGISTER_BAKE, SCRIPT_UTILITIES_BAKE
 
@@ -10,7 +11,9 @@ from . import base_generate
 
 from rna_prop_ui import rna_idprop_quote_path
 
+from .utils.rig import get_rigify_layers
 
+# noinspection SpellCheckingInspection
 UI_IMPORTS = [
     'import bpy',
     'import math',
@@ -22,6 +25,7 @@ UI_IMPORTS = [
     'from mathutils import Euler, Matrix, Quaternion, Vector',
     'from rna_prop_ui import rna_idprop_quote_path',
 ]
+
 
 UI_BASE_UTILITIES = '''
 rig_id = "%s"
@@ -44,7 +48,7 @@ def perpendicular_vector(v):
     else:
         tv = Vector((0,1,0))
 
-    # Use cross prouct to generate a vector perpendicular to
+    # Use cross product to generate a vector perpendicular to
     # both tv and (more importantly) v.
     return v.cross(tv)
 
@@ -76,7 +80,7 @@ def find_min_range(f,start_angle,delta=pi/8):
 
 def ternarySearch(f, left, right, absolutePrecision):
     """
-    Find minimum of unimodal function f() within [left, right]
+    Find minimum of uni-modal function f() within [left, right]
     To find the maximum, revert the if/else statement or revert the comparison.
     """
     while True:
@@ -93,6 +97,7 @@ def ternarySearch(f, left, right, absolutePrecision):
             right = rightThird
 '''
 
+# noinspection SpellCheckingInspection
 UTILITIES_FUNC_COMMON_IKFK = ['''
 #########################################
 ## "Visual Transform" helper functions ##
@@ -292,6 +297,7 @@ def parse_bone_names(names_string):
 
 ''']
 
+# noinspection SpellCheckingInspection
 UTILITIES_FUNC_OLD_ARM_FKIK = ['''
 ######################
 ## IK Arm functions ##
@@ -409,6 +415,7 @@ def ik2fk_arm(obj, fk, ik):
     correct_scale(view_layer, uarmi, uarm.matrix)
 ''']
 
+# noinspection SpellCheckingInspection
 UTILITIES_FUNC_OLD_LEG_FKIK = ['''
 ######################
 ## IK Leg functions ##
@@ -551,6 +558,7 @@ def ik2fk_leg(obj, fk, ik):
     correct_scale(view_layer, thighi, thigh.matrix)
 ''']
 
+# noinspection SpellCheckingInspection
 UTILITIES_FUNC_OLD_POLE = ['''
 ################################
 ## IK Rotation-Pole functions ##
@@ -606,8 +614,8 @@ def rotPoleToggle(rig, limb_type, controls, ik_ctrl, fk_ctrl, parent, pole):
                           'foot_ik': ik_ctrl[2], 'mfoot_ik': ik_ctrl[2]}
                 kwargs2 = {'thigh_fk': controls[1], 'shin_fk': controls[2], 'foot_fk': controls[3],
                           'mfoot_fk': controls[7], 'thigh_ik': controls[0], 'shin_ik': ik_ctrl[1],
-                          'foot_ik': controls[6], 'pole': pole, 'footroll': controls[5], 'mfoot_ik': ik_ctrl[2],
-                          'main_parent': parent}
+                          'foot_ik': controls[6], 'pole': pole, 'footroll': controls[5],
+                          'mfoot_ik': ik_ctrl[2], 'main_parent': parent}
 
             func1(**kwargs1)
             rig.pose.bones[parent]['pole_vector'] = new_pole_vector_value
@@ -616,8 +624,10 @@ def rotPoleToggle(rig, limb_type, controls, ik_ctrl, fk_ctrl, parent, pole):
             bpy.ops.pose.select_all(action='DESELECT')
 ''']
 
+# noinspection SpellCheckingInspection
 REGISTER_OP_OLD_ARM_FKIK = ['Rigify_Arm_FK2IK', 'Rigify_Arm_IK2FK']
 
+# noinspection SpellCheckingInspection
 UTILITIES_OP_OLD_ARM_FKIK = ['''
 ##################################
 ## IK/FK Arm snapping operators ##
@@ -643,7 +653,8 @@ class Rigify_Arm_FK2IK(bpy.types.Operator):
         return (context.active_object != None and context.mode == 'POSE')
 
     def execute(self, context):
-        fk2ik_arm(context.active_object, fk=[self.uarm_fk, self.farm_fk, self.hand_fk], ik=[self.uarm_ik, self.farm_ik, self.hand_ik])
+        fk2ik_arm(context.active_object, fk=[self.uarm_fk, self.farm_fk, self.hand_fk],
+                  ik=[self.uarm_ik, self.farm_ik, self.hand_ik])
         return {'FINISHED'}
 
 
@@ -670,12 +681,15 @@ class Rigify_Arm_IK2FK(bpy.types.Operator):
         return (context.active_object != None and context.mode == 'POSE')
 
     def execute(self, context):
-        ik2fk_arm(context.active_object, fk=[self.uarm_fk, self.farm_fk, self.hand_fk], ik=[self.uarm_ik, self.farm_ik, self.hand_ik, self.pole, self.main_parent])
+        ik2fk_arm(context.active_object, fk=[self.uarm_fk, self.farm_fk, self.hand_fk],
+                  ik=[self.uarm_ik, self.farm_ik, self.hand_ik, self.pole, self.main_parent])
         return {'FINISHED'}
 ''']
 
+# noinspection SpellCheckingInspection
 REGISTER_OP_OLD_LEG_FKIK = ['Rigify_Leg_FK2IK', 'Rigify_Leg_IK2FK']
 
+# noinspection SpellCheckingInspection
 UTILITIES_OP_OLD_LEG_FKIK = ['''
 ##################################
 ## IK/FK Leg snapping operators ##
@@ -703,7 +717,9 @@ class Rigify_Leg_FK2IK(bpy.types.Operator):
         return (context.active_object != None and context.mode == 'POSE')
 
     def execute(self, context):
-        fk2ik_leg(context.active_object, fk=[self.thigh_fk, self.shin_fk, self.foot_fk, self.mfoot_fk], ik=[self.thigh_ik, self.shin_ik, self.foot_ik, self.mfoot_ik])
+        fk2ik_leg(context.active_object,
+                  fk=[self.thigh_fk, self.shin_fk, self.foot_fk, self.mfoot_fk],
+                  ik=[self.thigh_ik, self.shin_ik, self.foot_ik, self.mfoot_ik])
         return {'FINISHED'}
 
 
@@ -732,7 +748,10 @@ class Rigify_Leg_IK2FK(bpy.types.Operator):
         return (context.active_object != None and context.mode == 'POSE')
 
     def execute(self, context):
-        ik2fk_leg(context.active_object, fk=[self.thigh_fk, self.shin_fk, self.mfoot_fk, self.foot_fk], ik=[self.thigh_ik, self.shin_ik, self.foot_ik, self.footroll, self.pole, self.mfoot_ik, self.main_parent])
+        ik2fk_leg(context.active_object,
+                  fk=[self.thigh_fk, self.shin_fk, self.mfoot_fk, self.foot_fk],
+                  ik=[self.thigh_ik, self.shin_ik, self.foot_ik, self.footroll, self.pole,
+                      self.mfoot_ik, self.main_parent])
         return {'FINISHED'}
 ''']
 
@@ -763,7 +782,8 @@ class Rigify_Rot2PoleSwitch(bpy.types.Operator):
             bpy.ops.pose.select_all(action='DESELECT')
             rig.pose.bones[self.bone_name].bone.select = True
 
-        rotPoleToggle(rig, self.limb_type, self.controls, self.ik_ctrl, self.fk_ctrl, self.parent, self.pole)
+        rotPoleToggle(rig, self.limb_type, self.controls, self.ik_ctrl, self.fk_ctrl,
+                      self.parent, self.pole)
         return {'FINISHED'}
 ''']
 
@@ -787,9 +807,9 @@ UTILITIES_RIG_OLD_LEG = [
     *UTILITIES_OP_OLD_POLE,
 ]
 
-##############################
-## Default set of utilities ##
-##############################
+############################
+# Default set of utilities #
+############################
 
 UI_REGISTER = [
     'RigUI',
@@ -799,6 +819,7 @@ UI_REGISTER = [
 UI_UTILITIES = [
 ]
 
+# noinspection SpellCheckingInspection
 UI_SLIDERS = '''
 ###################
 ## Rig UI Panels ##
@@ -847,6 +868,7 @@ class RigUI(bpy.types.Panel):
 
 UI_REGISTER_BAKE_SETTINGS = ['RigBakeSettings']
 
+# noinspection SpellCheckingInspection
 UI_BAKE_SETTINGS = '''
 class RigBakeSettings(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -863,10 +885,12 @@ class RigBakeSettings(bpy.types.Panel):
         RigifyBakeKeyframesMixin.draw_common_bake_ui(context, self.layout)
 '''
 
+
 def layers_ui(layers, layout):
     """ Turn a list of booleans + a list of names into a layer UI.
     """
 
+    # noinspection SpellCheckingInspection
     code = '''
 class RigLayers(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -899,11 +923,12 @@ class RigLayers(bpy.types.Panel):
     for key in keys:
         code += "\n        row = col.row()\n"
         i = 0
-        for l in rows[key]:
+        for layer in rows[key]:
             if i > 3:
                 code += "\n        row = col.row()\n"
                 i = 0
-            code += "        row.prop(context.active_object.data, 'layers', index=%s, toggle=True, text='%s')\n" % (str(l[1]), l[0])
+            code += f"        row.prop(context.active_object.data, 'layers', "\
+                    f"index={layer[1]}, toggle=True, text='{layer[0]}')\n"
             i += 1
 
     # Root layer
@@ -912,21 +937,23 @@ class RigLayers(bpy.types.Panel):
     code += "\n        row = col.row()"
     code += "\n        row.separator()\n"
     code += "\n        row = col.row()\n"
-    code += "        row.prop(context.active_object.data, 'layers', index=28, toggle=True, text='Root')\n"
+    code += "        row.prop(context.active_object.data, 'layers', "\
+            "index=28, toggle=True, text='Root')\n"
 
     return code
 
 
-def quote_parameters(positional, named):
+def quote_parameters(positional: list[Any], named: dict[str, Any]):
     """Quote the given positional and named parameters as a code string."""
-    positional_list = [ repr(v) for v in positional ]
-    named_list = [ "%s=%r" % (k, v) for k, v in named.items() ]
+    positional_list = [repr(v) for v in positional]
+    named_list = ["%s=%r" % (k, v) for k, v in named.items()]
     return ', '.join(positional_list + named_list)
 
-def indent_lines(lines, indent=4):
+
+def indent_lines(lines: list[str], indent=4):
     if indent > 0:
         prefix = ' ' * indent
-        return [ prefix + line for line in lines ]
+        return [prefix + line for line in lines]
     else:
         return lines
 
@@ -934,7 +961,13 @@ def indent_lines(lines, indent=4):
 class PanelLayout(object):
     """Utility class that builds code for creating a layout."""
 
-    def __init__(self, parent, index=0):
+    parent: Optional['PanelLayout']
+    script: 'ScriptGenerator'
+
+    header: list[str]
+    items: list[Union[str, 'PanelLayout']]
+
+    def __init__(self, parent: Union['PanelLayout', 'ScriptGenerator'], index=0):
         if isinstance(parent, PanelLayout):
             self.parent = parent
             self.script = parent.script
@@ -959,7 +992,7 @@ class PanelLayout(object):
         if self.parent:
             self.parent.clear_empty()
 
-    def get_lines(self):
+    def get_lines(self) -> list[str]:
         lines = []
 
         for item in self.items:
@@ -976,7 +1009,7 @@ class PanelLayout(object):
     def wrap_lines(self, lines):
         return self.header + indent_lines(lines, self.indent)
 
-    def add_line(self, line):
+    def add_line(self, line: str):
         assert isinstance(line, str)
 
         self.items.append(line)
@@ -988,29 +1021,31 @@ class PanelLayout(object):
         """This panel contains operators that need the common Bake settings."""
         self.parent.use_bake_settings()
 
-    def custom_prop(self, bone_name, prop_name, **params):
+    def custom_prop(self, bone_name: str, prop_name: str, **params):
         """Add a custom property input field to the panel."""
-        param_str = quote_parameters([ rna_idprop_quote_path(prop_name) ], params)
+        param_str = quote_parameters([rna_idprop_quote_path(prop_name)], params)
         self.add_line(
             "%s.prop(pose_bones[%r], %s)" % (self.layout, bone_name, param_str)
         )
 
-    def operator(self, operator_name, *, properties=None, **params):
+    def operator(self, operator_name: str, *,
+                 properties: Optional[dict[str, Any]] = None,
+                 **params):
         """Add an operator call button to the panel."""
         name = operator_name.format_map(self.script.format_args)
-        param_str = quote_parameters([ name ], params)
+        param_str = quote_parameters([name], params)
         call_str = "%s.operator(%s)" % (self.layout, param_str)
         if properties:
             self.add_line("props = " + call_str)
             for k, v in properties.items():
-                self.add_line("props.%s = %r" % (k,v))
+                self.add_line("props.%s = %r" % (k, v))
         else:
             self.add_line(call_str)
 
-    def add_nested_layout(self, name, params):
+    def add_nested_layout(self, method_name: str, params: dict[str, Any]) -> 'PanelLayout':
         param_str = quote_parameters([], params)
         sub_panel = PanelLayout(self, self.index + 1)
-        sub_panel.header.append('%s = %s.%s(%s)' % (sub_panel.layout, self.layout, name, param_str))
+        sub_panel.header.append(f'{sub_panel.layout} = {self.layout}.{method_name}({param_str})')
         self.items.append(sub_panel)
         return sub_panel
 
@@ -1030,7 +1065,9 @@ class PanelLayout(object):
 class BoneSetPanelLayout(PanelLayout):
     """Panel restricted to a certain set of bones."""
 
-    def __init__(self, rig_panel, bones):
+    parent: 'RigPanelLayout'
+
+    def __init__(self, rig_panel: 'RigPanelLayout', bones: frozenset[str]):
         assert isinstance(bones, frozenset)
         super().__init__(rig_panel)
         self.bones = bones
@@ -1059,24 +1096,24 @@ class BoneSetPanelLayout(PanelLayout):
 class RigPanelLayout(PanelLayout):
     """Panel owned by a certain rig."""
 
-    def __init__(self, script, rig):
+    def __init__(self, script: 'ScriptGenerator', _rig):
         super().__init__(script)
         self.bones = set()
-        self.subpanels = OrderedDict()
+        self.sub_panels = OrderedDict()
 
     def wrap_lines(self, lines):
-        header = [ "if is_selected(%r):" % (set(self.bones)) ]
-        prefix = [ "emit_rig_separator()" ]
+        header = ["if is_selected(%r):" % (set(self.bones))]
+        prefix = ["emit_rig_separator()"]
         return header + indent_lines(prefix + lines)
 
     def panel_with_selected_check(self, control_names):
         selected_set = frozenset(control_names)
 
-        if selected_set in self.subpanels:
-            return self.subpanels[selected_set]
+        if selected_set in self.sub_panels:
+            return self.sub_panels[selected_set]
         else:
             panel = BoneSetPanelLayout(self, selected_set)
-            self.subpanels[selected_set] = panel
+            self.sub_panels[selected_set] = panel
             self.items.append(panel)
             return panel
 
@@ -1085,6 +1122,8 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
     """Generator plugin that builds the python script attached to the rig."""
 
     priority = -100
+
+    format_args: dict[str, str]
 
     def __init__(self, generator):
         super().__init__(generator)
@@ -1114,23 +1153,23 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
         return panel.panel_with_selected_check(control_names)
 
     # Raw output
-    def add_panel_code(self, str_list):
+    def add_panel_code(self, str_list: list[str]):
         """Add raw code to the panel."""
         self.ui_scripts += str_list
 
-    def add_imports(self, str_list):
+    def add_imports(self, str_list: list[str]):
         self.ui_imports += str_list
 
-    def add_utilities(self, str_list):
+    def add_utilities(self, str_list: list[str]):
         self.ui_utilities += str_list
 
-    def register_classes(self, str_list):
+    def register_classes(self, str_list: list[str]):
         self.ui_register += str_list
 
-    def register_driver_functions(self, str_list):
+    def register_driver_functions(self, str_list: list[str]):
         self.ui_register_drivers += str_list
 
-    def register_property(self, name, definition):
+    def register_property(self, name: str, definition):
         self.ui_register_props.append((name, definition))
 
     def initialize(self):
@@ -1145,13 +1184,16 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
         vis_layers = self.obj.data.layers
 
         # Ensure the collection of layer names exists
-        for i in range(1 + len(metarig.data.rigify_layers), 29):
-            metarig.data.rigify_layers.add()
+        rigify_layers = get_rigify_layers(metarig.data)
+
+        for i in range(1 + len(rigify_layers), 29):
+            # noinspection PyUnresolvedReferences
+            rigify_layers.add()
 
         # Create list of layer name/row pairs
         layer_layout = []
-        for l in metarig.data.rigify_layers:
-            layer_layout += [(l.name, l.row)]
+        for layer in rigify_layers:
+            layer_layout += [(layer.name, layer.row)]
 
         # Generate the UI script
         script = metarig.data.rigify_rig_ui
@@ -1201,8 +1243,8 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
             script.write("    bpy.app.driver_namespace['"+s+"'] = "+s+"\n")
 
         ui_register_props = OrderedDict.fromkeys(self.ui_register_props)
-        for s in ui_register_props:
-            script.write("    bpy.types.%s = %s\n " % (*s,))
+        for classname, text in ui_register_props:
+            script.write(f"    bpy.types.{classname} = {text}\n ")
 
         script.write("\ndef unregister():\n")
 

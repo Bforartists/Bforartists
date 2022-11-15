@@ -4,7 +4,7 @@ bl_info = {
     "name": "Hotkey: 'Ctrl Alt S' ",
     "description": "Switch Editor Type Menu",
     "author": "saidenka, meta-androcto",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (2, 80, 0),
     "location": "All Editors",
     "warning": "",
@@ -70,6 +70,8 @@ class PIE_MT_AreaTypePieOther(Menu):
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Text Editor", icon="TEXT").types = "TEXT_EDITOR"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Info", icon="INFO").types = "INFO"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Spreadsheet", icon="SPREADSHEET").types = "SPREADSHEET"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Asset Browser", icon="ASSET_MANAGER").types = "ASSETS"
 
 
 # Sub Menu Node editors.
@@ -84,6 +86,8 @@ class PIE_MT_AreaTypePieNode(Menu):
                              icon="NODE_COMPOSITING").types = "CompositorNodeTree"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Texture",
                              icon="NODE_TEXTURE").types = "TextureNodeTree"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Geometry",
+                             icon="NODETREE").types = "GeometryNodeTree"
 
 
 # Sub Menu animation Editors.

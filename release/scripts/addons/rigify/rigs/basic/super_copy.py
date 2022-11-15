@@ -15,21 +15,27 @@ class Rig(BaseRig, RelinkConstraintsMixin):
     """ A "copy" rig.  All it does is duplicate the original bone and
         constrain it.
         This is a control and deformation rig.
-
     """
-    def find_org_bones(self, pose_bone):
-        return pose_bone.name
 
+    bones: BaseRig.ToplevelBones[str, str, str, str]
+
+    org_name: str
+
+    make_control: bool
+    make_widget: bool
+    make_deform: bool
+
+    def find_org_bones(self, pose_bone) -> str:
+        return pose_bone.name
 
     def initialize(self):
         """ Gather and validate data about the rig.
         """
-        self.org_name     = strip_org(self.bones.org)
+        self.org_name = strip_org(self.bones.org)
 
         self.make_control = self.params.make_control
-        self.make_widget  = self.params.make_widget
-        self.make_deform  = self.params.make_deform
-
+        self.make_widget = self.params.make_widget
+        self.make_deform = self.params.make_deform
 
     def generate_bones(self):
         bones = self.bones
@@ -42,7 +48,6 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         if self.make_deform:
             bones.deform = self.copy_bone(bones.org, make_deformer_name(self.org_name), bbone=True)
 
-
     def parent_bones(self):
         bones = self.bones
 
@@ -54,13 +59,11 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         if self.make_control and new_parent:
             self.set_bone_parent(bones.ctrl, new_parent)
 
-
     def configure_bones(self):
         bones = self.bones
 
         if self.make_control:
             self.copy_bone_properties(bones.org, bones.ctrl)
-
 
     def rig_bones(self):
         bones = self.bones
@@ -76,52 +79,50 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         if self.make_deform:
             self.relink_move_constraints(bones.org, bones.deform, prefix='DEF:')
 
-
     def generate_widgets(self):
         bones = self.bones
 
         if self.make_control:
             # Create control widget
             if self.make_widget:
-                create_registered_widget(self.obj, bones.ctrl, self.params.super_copy_widget_type or 'circle')
+                create_registered_widget(self.obj, bones.ctrl,
+                                         self.params.super_copy_widget_type or 'circle')
             else:
                 create_bone_widget(self.obj, bones.ctrl)
 
-
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         """ Add the parameters of this rig type to the
             RigifyParameters PropertyGroup
         """
         params.make_control = bpy.props.BoolProperty(
-            name        = "Control",
-            default     = True,
-            description = "Create a control bone for the copy"
+            name="Control",
+            default=True,
+            description="Create a control bone for the copy"
         )
 
         params.make_widget = bpy.props.BoolProperty(
-            name        = "Widget",
-            default     = True,
-            description = "Choose a widget for the bone control"
+            name="Widget",
+            default=True,
+            description="Choose a widget for the bone control"
         )
 
         params.super_copy_widget_type = bpy.props.StringProperty(
-            name        = "Widget Type",
-            default     = 'circle',
-            description = "Choose the type of the widget to create"
+            name="Widget Type",
+            default='circle',
+            description="Choose the type of the widget to create"
         )
 
         params.make_deform = bpy.props.BoolProperty(
-            name        = "Deform",
-            default     = True,
-            description = "Create a deform bone for the copy"
+            name="Deform",
+            default=True,
+            description="Create a deform bone for the copy"
         )
 
-        self.add_relink_constraints_params(params)
-
+        cls.add_relink_constraints_params(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         """ Create the ui for the rig parameters.
         """
         layout.prop(params, "make_control")
@@ -136,7 +137,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
 
         layout.prop(params, "make_deform")
 
-        self.add_relink_constraints_ui(layout, params)
+        cls.add_relink_constraints_ui(layout, params)
 
         if params.relink_constraints and (params.make_control or params.make_deform):
             col = layout.column()
