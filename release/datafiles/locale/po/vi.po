@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -2048,10 +2048,6 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
-
-
-msgid "Simulations"
-msgstr "Mô Phỏng"
 
 
 msgid "Sounds"
@@ -4166,24 +4162,12 @@ msgid "Auto-Masking Layer"
 msgstr "Lớp Tự Động-Che"
 
 
-msgid "Mask strokes using active layer"
-msgstr "Che các nét bằng sử dụng lớp hoạt động"
-
-
 msgid "Auto-Masking Material"
 msgstr "Vật Liệu Tự Động-Che"
 
 
-msgid "Mask strokes using active material"
-msgstr "Che các nét bằng sử dụng vật liệu hoạt động"
-
-
 msgid "Auto-Masking Strokes"
 msgstr "Nét Tự Động-Che"
-
-
-msgid "Mask strokes below brush cursor"
-msgstr "Che các nét phía dưới con trỏ bút"
 
 
 msgid "Default Eraser"
@@ -11027,10 +11011,6 @@ msgid "Theora"
 msgstr "Theora"
 
 
-msgid "WEBM / VP9"
-msgstr "WEBM / VP9"
-
-
 msgid "Output Quality"
 msgstr "Chất Lượng nNgõ Ra"
 
@@ -12314,6 +12294,10 @@ msgstr "Hiện/ẳn các cục dữ liệu Mây Điểm"
 
 msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
+
+
+msgid "Simulations"
+msgstr "Mô Phỏng"
 
 
 msgid "Show Simulation data-blocks"
@@ -52107,10 +52091,6 @@ msgid "Merge Images"
 msgstr "Gồm Ảnh"
 
 
-msgid "Combine OpenEXR multilayer images rendered with different sample ranges into one image with reduced noise"
-msgstr "Gồm các ảnh OpenEXR đa lớp được kết xuất có phạm vi mẫu vật khác nhau thành một ảnh bất huyên náo"
-
-
 msgid "File path for image to merge"
 msgstr "Đường dẫn tập tin của ảnh để gồm"
 
@@ -85819,10 +85799,6 @@ msgid "Distortion to use for the calculation"
 msgstr "Dùng méo hóa cho tính toán"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "Dùng máy quay phim hình cầu cho hết xuất cảnh (cũng gọi là Toàn Cầu Vĩ Kinh)"
-
-
 msgid "Fisheye Equidistant"
 msgstr "Mắt Cá Đều Khoảng Cách"
 
@@ -85837,10 +85813,6 @@ msgstr "Mắt Cá Đều Rắn"
 
 msgid "Similar to most fisheye modern lens, takes sensor dimensions into consideration"
 msgstr "Tương tự thấu kính mắt cá hiện đại, mà dùng kích thước cảm biến"
-
-
-msgid "Uses the mirror ball mapping"
-msgstr "Dùng ánh xạ trái banh gương"
 
 
 msgid "Fisheye Lens Polynomial"
@@ -98972,10 +98944,6 @@ msgid "Show active color attribute"
 msgstr "Hiện đặc điểm màu hoạt động"
 
 
-msgid "Show texture"
-msgstr "Hiện chất liệu"
-
-
 msgid "Curvature Ridge"
 msgstr "Dãy Đỉnh Độ Cong"
 
@@ -102591,10 +102559,6 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "Không tìm được GPU phù hợp cho Cycles"
 
 
-msgid "(TM)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
-msgstr "DẤU THƯƠNG MẠI(TM) ĐĂNG KÝ(R) BẢN QUYỀN(C)"
-
-
 msgid "Requires NVIDIA GPU with compute capability 3.0"
 msgstr "Yêu cầu GPU NVIDIA có khả năng tính toán 3.0"
 
@@ -102615,12 +102579,12 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "và trình điều khiển AMD Pro 21.Q4 hay mới hơn"
 
 
-msgid "Requires Intel GPU with Xe-HPG architecture"
-msgstr "Yêu cầu GPU Intel có kiến trúc Xe-HPG"
-
-
 msgid "and AMD driver version 22.10 or newer"
 msgstr "và trình điều khiển AMD phiên bản 22.10 hay mới hơn"
+
+
+msgid "Requires Intel GPU with Xe-HPG architecture"
+msgstr "Yêu cầu GPU Intel có kiến trúc Xe-HPG"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -103118,10 +103082,6 @@ msgid "Pasted %d assets"
 msgstr "Đã dán %d tích sản"
 
 
-msgid " bones from "
-msgstr " xương từ "
-
-
 msgid "Converted %d poses to pose assets"
 msgstr "Đã biến đổi %d dạng đứng thành tích sản dạng đứng"
 
@@ -103140,14 +103100,6 @@ msgstr "Bớt ngờ số lượng người dùng bằng 0 cho tích sản, xin t
 
 msgid "Did not find any assets on clipboard"
 msgstr "Không tìm được tích sản nào trên bảng dán"
-
-
-msgid "Selected asset  could not be located inside the asset library"
-msgstr "Tích sản  được chọn không tìm được trong thư viện tích sản"
-
-
-msgid "Selected asset  is not an Action"
-msgstr "Tích sản  được chọn không phải là Hành Động"
 
 
 msgid "Unable to convert to pose assets"
@@ -113601,40 +113553,8 @@ msgid "Hex"
 msgstr "Thập Lục Phận"
 
 
-msgid "R:"
-msgstr "Đỏ:"
-
-
-msgid "G:"
-msgstr "Lục:"
-
-
-msgid "B:"
-msgstr "Xanh:"
-
-
-msgid "H:"
-msgstr "Sắc Độ:"
-
-
-msgid "S:"
-msgstr "Tươi Độ:"
-
-
-msgid "L:"
-msgstr "Quang Độ:"
-
-
-msgid "V:"
-msgstr "Xám Độ:"
-
-
-msgid "A: "
-msgstr "Đục:"
-
-
-msgid "Hex: "
-msgstr "Thập Lục Phận"
+msgid "Value:"
+msgstr "Giá Trị:"
 
 
 msgid "(Gamma Corrected)"
@@ -114400,10 +114320,6 @@ msgstr "Hình Dạng Mũ Tế"
 
 msgid "Intersection Type"
 msgstr "Loại Vùng Giao Cắt"
-
-
-msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
-msgstr "%s: Chấp Nhận, %s: Hủy, %s: Chế Độ (%s), %s: Bề Rộng (%s), %s: Số Khúc (%d), %s: Mặt Cắt (%.3f), %s: Kẹp Lấn Trên (%s), %s: Ảnh Hưởng (%s), %s: Mũ Tế Ngoại (%s), %s: Mũ Tế Nội (%s), %s: Pháp Tuyến Cứng Hóa (%s), %s: Ký Dấu Vết Sẹo (%s), %s: Ký Dấu Bén (%s), %s: Loại Trình Bày (%s), %s: Giao Cắt (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -116989,10 +116905,6 @@ msgid "Add Input Variable"
 msgstr "Thêm Biến Số Ngõ Vào"
 
 
-msgid "Value:"
-msgstr "Giá Trị:"
-
-
 msgid "Update Dependencies"
 msgstr "Nâng Cấp Đồ Nhờ"
 
@@ -117590,10 +117502,6 @@ msgid "Could not add node object"
 msgstr "Không thể thêm vật thể giao điểm"
 
 
-msgid "Could not find node object socket"
-msgstr "Không thể thêm giao điểm vật thể ổ cắm"
-
-
 msgid "Could not add node collection"
 msgstr "Không thể thêm sưu tập giao điểm"
 
@@ -117624,10 +117532,6 @@ msgstr "Không thể thêm nhóm giao điểm '%s' đến '%s'"
 
 msgid "Node tree type %s undefined"
 msgstr "Cây giao điểm %s chưa được xác định"
-
-
-msgid "This node editor displays a custom (Python defined) node tree. Dropping node groups isn't supported for this"
-msgstr "Trình biên soạn này hiển thị một cây giao điểm (định nghĩa bằng Python). Không hỗ trợ thả nhóm giao điểm cho cái này."
 
 
 msgid " (Integer)"

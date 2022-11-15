@@ -5,19 +5,26 @@ import sys
 import traceback
 import collections
 
+from typing import Optional, TYPE_CHECKING, Collection, List
+from bpy.types import PoseBone, Bone
+
 from .utils.errors import MetarigError, RaiseErrorMixin
 from .utils.naming import random_id
 from .utils.metaclass import SingletonPluginMetaclass
-from .utils.rig import list_bone_names_depth_first_sorted, get_rigify_type
-from .utils.misc import clone_parameters, assign_parameters
+from .utils.rig import list_bone_names_depth_first_sorted, get_rigify_type, get_rigify_params
+from .utils.misc import clone_parameters, assign_parameters, ArmatureObject
 
 from . import base_rig
 
 from itertools import count
 
-#=============================================
+if TYPE_CHECKING:
+    from .rig_ui_template import ScriptGenerator
+
+
+##############################################
 # Generator Plugin
-#=============================================
+##############################################
 
 
 class GeneratorPlugin(base_rig.GenerateCallbackHost, metaclass=SingletonPluginMetaclass):
@@ -39,68 +46,68 @@ class GeneratorPlugin(base_rig.GenerateCallbackHost, metaclass=SingletonPluginMe
 
     priority = 0
 
-    def __init__(self, generator):
+    def __init__(self, generator: 'BaseGenerator'):
         self.generator = generator
         self.obj = generator.obj
 
-    def register_new_bone(self, new_name, old_name=None):
+    def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         self.generator.bone_owners[new_name] = None
         if old_name:
             self.generator.derived_bones[old_name].add(new_name)
 
 
-#=============================================
+##############################################
 # Rig Substitution Mechanism
-#=============================================
+##############################################
 
 
 class SubstitutionRig(RaiseErrorMixin):
     """A proxy rig that replaces itself with one or more different rigs."""
 
-    def __init__(self, generator, pose_bone):
+    def __init__(self, generator: 'BaseGenerator', pose_bone: PoseBone):
         self.generator = generator
 
         self.obj = generator.obj
         self.base_bone = pose_bone.name
-        self.params = pose_bone.rigify_parameters
+        self.params = get_rigify_params(pose_bone)
         self.params_copy = clone_parameters(self.params)
 
     def substitute(self):
         # return [rig1, rig2...]
-        raise NotImplementedException()
+        raise NotImplementedError
 
     # Utility methods
-    def register_new_bone(self, new_name, old_name=None):
+    def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         pass
 
-    def get_params(self, bone_name):
-        return self.obj.pose.bones[bone_name].rigify_parameters
+    def get_params(self, bone_name: str):
+        return get_rigify_params(self.obj.pose.bones[bone_name])
 
-    def assign_params(self, bone_name, param_dict=None, **params):
+    def assign_params(self, bone_name: str, param_dict=None, **params):
         assign_parameters(self.get_params(bone_name), param_dict, **params)
 
-    def instantiate_rig(self, rig_class, bone_name):
+    def instantiate_rig(self, rig_class: str | type, bone_name: str):
         if isinstance(rig_class, str):
             rig_class = self.generator.find_rig_class(rig_class)
 
         return self.generator.instantiate_rig(rig_class, self.obj.pose.bones[bone_name])
 
 
-#=============================================
+##############################################
 # Legacy Rig Wrapper
-#=============================================
+##############################################
 
 
 class LegacyRig(base_rig.BaseRig):
     """Wrapper around legacy style rigs without a common base class"""
 
-    def __init__(self, generator, pose_bone, wrapped_class):
+    def __init__(self, generator: 'BaseGenerator', pose_bone: PoseBone, wrapped_class: type):
         self.wrapped_rig = None
         self.wrapped_class = wrapped_class
 
         super().__init__(generator, pose_bone)
 
-    def find_org_bones(self, pose_bone):
+    def find_org_bones(self, pose_bone: PoseBone):
         bone_name = pose_bone.name
 
         if not self.wrapped_rig:
@@ -163,15 +170,41 @@ class LegacyRig(base_rig.BaseRig):
                 bpy.ops.object.mode_set(mode='OBJECT')
 
 
-#=============================================
+##############################################
 # Base Generate Engine
-#=============================================
+##############################################
 
 
 class BaseGenerator:
     """Base class for the main generator object. Contains rig and plugin management code."""
 
-    instance = None
+    instance: Optional['BaseGenerator'] = None  # static
+
+    context: bpy.types.Context
+    scene: bpy.types.Scene
+    view_layer: bpy.types.ViewLayer
+    layer_collection: bpy.types.LayerCollection
+    collection: bpy.types.Collection
+
+    metarig: ArmatureObject
+    obj: ArmatureObject
+
+    script: 'ScriptGenerator'
+
+    rig_list: List[base_rig.BaseRig]
+    root_rigs: List[base_rig.BaseRig]
+
+    bone_owners: dict[str, Optional[base_rig.BaseRig]]
+    derived_bones: dict[str, set[str]]
+
+    stage: Optional[str]
+    rig_id: str
+
+    widget_collection: bpy.types.Collection
+    use_mirror_widgets: bool
+    old_widget_table: dict[str, bpy.types.Object]
+    new_widget_table: dict[str, bpy.types.Object]
+    widget_mirror_mesh: dict[str, bpy.types.Mesh]
 
     def __init__(self, context, metarig):
         self.context = context
@@ -180,7 +213,6 @@ class BaseGenerator:
         self.layer_collection = context.layer_collection
         self.collection = self.layer_collection.collection
         self.metarig = metarig
-        self.obj = None
 
         # List of all rig instances
         self.rig_list = []
@@ -210,18 +242,16 @@ class BaseGenerator:
         # Table of renamed ORG bones
         self.org_rename_table = dict()
 
-
-    def disable_auto_parent(self, bone_name):
+    def disable_auto_parent(self, bone_name: str):
         """Prevent automatically parenting the bone to root if parentless."""
         self.noparent_bones.add(bone_name)
 
-
-    def find_derived_bones(self, bone_name, *, by_owner=False, recursive=True):
+    def find_derived_bones(self, bone_name: str, *, by_owner=False, recursive=True) -> set[str]:
         """Find which bones were copied from the specified one."""
         if by_owner:
             owner = self.bone_owners.get(bone_name, None)
             if not owner:
-                return {}
+                return set()
 
             table = owner.rigify_derived_bones
         else:
@@ -231,7 +261,7 @@ class BaseGenerator:
             result = set()
 
             def rec(name):
-                for child in table.get(name, {}):
+                for child in table.get(name, []):
                     result.add(child)
                     rec(child)
 
@@ -239,16 +269,15 @@ class BaseGenerator:
 
             return result
         else:
-            return set(table.get(bone_name, {}))
+            return set(table.get(bone_name, []))
 
-
-    def set_layer_group_priority(self, bone_name, layers, priority):
+    def set_layer_group_priority(self, bone_name: str,
+                                 layers: Collection[bool], priority: float):
         for i, val in enumerate(layers):
             if val:
                 self.layer_group_priorities[bone_name][i] = priority
 
-
-    def rename_org_bone(self, old_name, new_name):
+    def rename_org_bone(self, old_name: str, new_name: str) -> str:
         assert self.stage == 'instantiate'
         assert old_name == self.org_rename_table.get(old_name, None)
         assert old_name not in self.bone_owners
@@ -261,8 +290,8 @@ class BaseGenerator:
         self.org_rename_table[old_name] = new_name
         return new_name
 
-
-    def __run_object_stage(self, method_name):
+    def __run_object_stage(self, method_name: str):
+        """Run a generation stage in Object mode."""
         assert(self.context.active_object == self.obj)
         assert(self.obj.mode == 'OBJECT')
         num_bones = len(self.obj.data.bones)
@@ -287,8 +316,8 @@ class BaseGenerator:
             assert(self.obj.mode == 'OBJECT')
             assert(num_bones == len(self.obj.data.bones))
 
-
-    def __run_edit_stage(self, method_name):
+    def __run_edit_stage(self, method_name: str):
+        """Run a generation stage in Edit mode."""
         assert(self.context.active_object == self.obj)
         assert(self.obj.mode == 'EDIT')
         num_bones = len(self.obj.data.edit_bones)
@@ -313,14 +342,11 @@ class BaseGenerator:
             assert(self.obj.mode == 'EDIT')
             assert(num_bones == len(self.obj.data.edit_bones))
 
-
     def invoke_initialize(self):
         self.__run_object_stage('initialize')
 
-
     def invoke_prepare_bones(self):
         self.__run_edit_stage('prepare_bones')
-
 
     def __auto_register_bones(self, bones, rig, plugin=None):
         """Find bones just added and not registered by this rig."""
@@ -332,10 +358,10 @@ class BaseGenerator:
                     rig.rigify_new_bones[name] = None
 
                     if not isinstance(rig, LegacyRig):
-                        print("WARNING: rig %s didn't register bone %s\n" % (self.describe_rig(rig), name))
+                        print(f"WARNING: rig {self.describe_rig(rig)} "
+                              f"didn't register bone {name}\n")
                 else:
-                    print("WARNING: plugin %s didn't register bone %s\n" % (plugin, name))
-
+                    print(f"WARNING: plugin {plugin} didn't register bone {name}\n")
 
     def invoke_generate_bones(self):
         assert(self.context.active_object == self.obj)
@@ -363,36 +389,28 @@ class BaseGenerator:
 
             self.__auto_register_bones(self.obj.data.edit_bones, None, plugin=self.plugin_list[i])
 
-
     def invoke_parent_bones(self):
         self.__run_edit_stage('parent_bones')
-
 
     def invoke_configure_bones(self):
         self.__run_object_stage('configure_bones')
 
-
     def invoke_preapply_bones(self):
         self.__run_object_stage('preapply_bones')
-
 
     def invoke_apply_bones(self):
         self.__run_edit_stage('apply_bones')
 
-
     def invoke_rig_bones(self):
         self.__run_object_stage('rig_bones')
-
 
     def invoke_generate_widgets(self):
         self.__run_object_stage('generate_widgets')
 
-
     def invoke_finalize(self):
         self.__run_object_stage('finalize')
 
-
-    def instantiate_rig(self, rig_class, pose_bone):
+    def instantiate_rig(self, rig_class: type, pose_bone: PoseBone) -> base_rig.BaseRig:
         assert not issubclass(rig_class, SubstitutionRig)
 
         if issubclass(rig_class, base_rig.BaseRig):
@@ -400,19 +418,20 @@ class BaseGenerator:
         else:
             return LegacyRig(self, pose_bone, rig_class)
 
+    def find_rig_class(self, rig_type: str) -> type:
+        raise NotImplementedError
 
-    def instantiate_rig_by_type(self, rig_type, pose_bone):
+    def instantiate_rig_by_type(self, rig_type: str, pose_bone: PoseBone):
         return self.instantiate_rig(self.find_rig_class(rig_type), pose_bone)
 
-
-    def describe_rig(self, rig):
+    # noinspection PyMethodMayBeStatic
+    def describe_rig(self, rig: base_rig.BaseRig) -> str:
         base_bone = rig.base_bone
 
         if isinstance(rig, LegacyRig):
             rig = rig.wrapped_rig
 
         return "%s (%s)" % (rig.__class__, base_bone)
-
 
     def __create_rigs(self, bone_name, halt_on_missing):
         """Recursively walk bones and create rig instances."""
@@ -440,12 +459,14 @@ class BaseGenerator:
                         if org_name in self.bone_owners:
                             old_rig = self.describe_rig(self.bone_owners[org_name])
                             new_rig = self.describe_rig(rig)
-                            print("CONFLICT: bone %s is claimed by rigs %s and %s\n" % (org_name, old_rig, new_rig))
+                            print(f"CONFLICT: bone {org_name} is claimed by rigs "
+                                  f"{old_rig} and {new_rig}\n")
 
                         self.bone_owners[org_name] = rig
 
             except ImportError:
-                message = "Rig Type Missing: python module for type '%s' not found (bone: %s)" % (rig_type, bone_name)
+                message = f"Rig Type Missing: python module for type '{rig_type}' "\
+                          f"not found (bone: {bone_name})"
                 if halt_on_missing:
                     raise MetarigError(message)
                 else:
@@ -453,8 +474,8 @@ class BaseGenerator:
                     print('print_exc():')
                     traceback.print_exc(file=sys.stdout)
 
-
-    def __build_rig_tree_rec(self, bone, current_rig, handled):
+    def __build_rig_tree_rec(self, bone: Bone, current_rig: Optional[base_rig.BaseRig],
+                             handled: dict[base_rig.BaseRig, str]):
         """Recursively walk bones and connect rig instances into a tree."""
 
         rig = self.bone_owners.get(bone.name)
@@ -474,8 +495,8 @@ class BaseGenerator:
                 handled[rig] = bone.name
 
             elif rig.rigify_parent is not current_rig:
-                raise MetarigError("CONFLICT: bone %s owned by rig %s has different parent rig from %s\n" %
-                                   (bone.name, rig.base_bone, handled[rig]))
+                raise MetarigError("CONFLICT: bone {bone.name} owned by rig {rig.base_bone} "
+                                   f"has different parent rig from {handled[rig]}")
 
             current_rig = rig
         else:
@@ -486,7 +507,6 @@ class BaseGenerator:
 
         for child in bone.children:
             self.__build_rig_tree_rec(child, current_rig, handled)
-
 
     def instantiate_rig_tree(self, halt_on_missing=False):
         """Create rig instances and connect them into a tree."""

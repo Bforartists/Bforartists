@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -1458,8 +1458,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "Hex: "
-msgstr "Hex: "
+msgid "Value:"
+msgstr "Değer:"
 
 
 msgid "(Gamma Corrected)"
@@ -1652,10 +1652,6 @@ msgstr "Dosya adı"
 
 msgid "Cursor X"
 msgstr "İmleç X"
-
-
-msgid "Value:"
-msgstr "Değer:"
 
 
 msgid "Geometry:"

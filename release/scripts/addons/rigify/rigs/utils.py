@@ -15,7 +15,7 @@ def get_future_names_arm(bones):
     farm = strip_mch(strip_org(bones[1].name))
     hand = strip_mch(strip_org(bones[2].name))
 
-    suffix=''
+    suffix = ''
     if uarm[-2:] == '.L' or uarm[-2:] == '.R':
         suffix = uarm[-2:]
         uarm = uarm.rstrip(suffix)
@@ -33,7 +33,7 @@ def get_future_names_arm(bones):
     # pole = 'upper_arm_ik_target.L'
 
     names['controls'] = [uarm + '_ik', uarm + '_fk', farm + '_fk', hand + '_fk', hand + '_ik',
-                            make_mechanism_name(hand + '_fk'), uarm + '_parent']
+                         make_mechanism_name(hand + '_fk'), uarm + '_parent']
     names['ik_ctrl'] = [hand + '_ik', make_mechanism_name(uarm) + '_ik', make_mechanism_name(uarm) + '_ik_target']
     names['fk_ctrl'] = uarm + '_fk' + suffix
     names['parent'] = uarm + '_parent' + suffix
@@ -80,7 +80,7 @@ def get_future_names_leg(bones):
     # pole = 'thigh_ik_target.R'
 
     names['controls'] = [thigh + '_ik', thigh + '_fk', shin + '_fk', foot + '_fk', toe, foot + '_heel_ik',
-                            foot + '_ik', make_mechanism_name(foot + '_fk'), thigh + '_parent']
+                         foot + '_ik', make_mechanism_name(foot + '_fk'), thigh + '_parent']
     names['ik_ctrl'] = [foot + '_ik', make_mechanism_name(thigh) + '_ik', make_mechanism_name(thigh) + '_ik_target']
     names['fk_ctrl'] = thigh + '_fk' + suffix
     names['parent'] = thigh + '_parent' + suffix
@@ -128,7 +128,7 @@ def get_future_names_paw(bones):
     # pole = 'thigh_ik_target.R'
 
     names['controls'] = [thigh + '_ik', thigh + '_fk', shin + '_fk', foot + '_fk', toe, foot + '_heel_ik',
-                            foot + '_ik', make_mechanism_name(foot + '_fk'), thigh + '_parent']
+                         foot + '_ik', make_mechanism_name(foot + '_fk'), thigh + '_parent']
     names['ik_ctrl'] = [foot + '_ik', make_mechanism_name(thigh) + '_ik', make_mechanism_name(thigh) + '_ik_target']
     names['fk_ctrl'] = thigh + '_fk' + suffix
     names['parent'] = thigh + '_parent' + suffix
@@ -157,17 +157,17 @@ def get_future_names(bones):
 
 def get_limb_generated_names(rig):
 
-    pbones = rig.pose.bones
+    pose_bones = rig.pose.bones
     names = dict()
 
-    for b in pbones:
+    for b in pose_bones:
         super_limb_orgs = []
         if re.match('^ORG', b.name) and b.rigify_type == 'limbs.super_limb':
             super_limb_orgs.append(b)
             children = connected_children_names(rig, b.name)
             for child in children:
                 if re.match('^ORG', child) or re.match('^MCH', child):
-                    super_limb_orgs.append(pbones[child])
+                    super_limb_orgs.append(pose_bones[child])
             names[b.name] = get_future_names(super_limb_orgs)
 
     return names

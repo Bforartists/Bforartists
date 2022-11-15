@@ -3,6 +3,7 @@
 import bpy
 
 from itertools import count
+from typing import Optional
 
 from ...utils.bones import align_chain_x_axis
 from ...utils.widgets_basic import create_circle_widget
@@ -14,6 +15,8 @@ from ..chain_rigs import TweakChainRig
 
 
 class Rig(TweakChainRig):
+    copy_rotation_axes: tuple[bool, bool, bool]
+
     def initialize(self):
         super().initialize()
 
@@ -50,7 +53,7 @@ class Rig(TweakChainRig):
         for args in zip(count(0), ctrls, [None] + ctrls):
             self.rig_control_bone(*args)
 
-    def rig_control_bone(self, i, ctrl, prev_ctrl):
+    def rig_control_bone(self, _i: int, ctrl: str, prev_ctrl: Optional[str]):
         if prev_ctrl:
             self.make_constraint(
                 ctrl, 'COPY_ROTATION', prev_ctrl,
@@ -59,12 +62,11 @@ class Rig(TweakChainRig):
             )
 
     # Widgets
-    def make_control_widget(self, i, ctrl):
+    def make_control_widget(self, i: int, ctrl: str):
         create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.5)
 
-
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         """ Add the parameters of this rig type to the
             RigifyParameters PropertyGroup
         """
@@ -80,9 +82,8 @@ class Rig(TweakChainRig):
         items = [('automatic', 'Automatic', ''), ('manual', 'Manual', '')]
         params.roll_alignment = bpy.props.EnumProperty(items=items, name="Bone roll alignment", default='automatic')
 
-
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         """ Create the ui for the rig parameters.
         """
 

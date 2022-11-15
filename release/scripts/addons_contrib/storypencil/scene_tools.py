@@ -85,7 +85,7 @@ def draw_new_scene(self, context):
 
     self.layout.operator_context = 'INVOKE_REGION_WIN'
     row = self.layout.row(align=True)
-    row.operator(STORYPENCIL_OT_NewScene.bl_idname, text="New Base Scene")
+    row.operator(STORYPENCIL_OT_NewScene.bl_idname, text="New Template Scene")
 
 
 def setup_storyboard(self, context):

@@ -2,12 +2,16 @@
 
 import bpy
 
+from typing import Optional, Sequence
+from bpy.types import LayerCollection, Collection, Object, Context
 
-#=============================================
+
+##############################################
 # Collection management
-#=============================================
+##############################################
 
-def find_layer_collection_by_collection(layer_collection, collection):
+def find_layer_collection_by_collection(layer_collection: LayerCollection,
+                                        collection: Collection) -> Optional[LayerCollection]:
     if collection == layer_collection.collection:
         return layer_collection
 
@@ -18,7 +22,8 @@ def find_layer_collection_by_collection(layer_collection, collection):
             return layer_collection
 
 
-def list_layer_collections(layer_collection, visible=False, selectable=False):
+def list_layer_collections(layer_collection: LayerCollection,
+                           visible=False, selectable=False) -> list[LayerCollection]:
     """Returns a list of the collection and its children, with optional filtering by settings."""
 
     if layer_collection.exclude:
@@ -39,12 +44,13 @@ def list_layer_collections(layer_collection, visible=False, selectable=False):
     return found
 
 
-def filter_layer_collections_by_object(layer_collections, obj):
+def filter_layer_collections_by_object(layer_collections: Sequence[LayerCollection],
+                                       obj: Object) -> list[LayerCollection]:
     """Returns a subset of collections that contain the given object."""
     return [lc for lc in layer_collections if obj in lc.collection.objects.values()]
 
 
-def ensure_collection(context, collection_name, hidden=False) -> bpy.types.Collection:
+def ensure_collection(context: Context, collection_name: str, hidden=False) -> Collection:
     """Check if a collection with a certain name exists.
     If yes, return it, if not, create it in the scene root collection.
     """

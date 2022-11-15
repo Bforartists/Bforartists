@@ -116,7 +116,6 @@ class ASSETBROWSER_PT_pose_library_usage(PoseLibraryPanel, asset_utils.AssetBrow
     bl_region_type = "TOOLS"
     bl_label = "Pose Library"
     asset_categories = {'ANIMATIONS'}
-    bl_category = "Pose Library"  # BFA: add bl_category because our tool panels require category
 
     @classmethod
     def poll(cls, context: Context) -> bool:

@@ -2,17 +2,20 @@
 
 import bpy
 import math
-from mathutils import Vector, Matrix, Color
+
+from mathutils import Vector, Matrix
+from typing import Optional, Callable, Iterable
 
 from .errors import MetarigError
 from .naming import get_name, make_derived_name, is_control_bone
-from .misc import pairwise
+from .misc import pairwise, ArmatureObject
 
-#=======================
+
+########################
 # Bone collection
-#=======================
+########################
 
-class BoneDict(dict):
+class BaseBoneDict(dict):
     """
     Special dictionary for holding bone names in a structured way.
 
@@ -22,25 +25,22 @@ class BoneDict(dict):
 
     @staticmethod
     def __sanitize_attr(key, value):
-        if hasattr(BoneDict, key):
-            raise KeyError("Invalid BoneDict key: %s" % (key))
+        if hasattr(BaseBoneDict, key):
+            raise KeyError(f"Invalid BoneDict key: {key}")
 
-        if (value is None or
-            isinstance(value, str) or
-            isinstance(value, list) or
-            isinstance(value, BoneDict)):
+        if value is None or isinstance(value, (str, list, BaseBoneDict)):
             return value
 
         if isinstance(value, dict):
-            return BoneDict(value)
+            return BaseBoneDict(value)
 
-        raise ValueError("Invalid BoneDict value: %r" % (value))
+        raise ValueError(f"Invalid BoneDict value: {repr(value)}")
 
     def __init__(self, *args, **kwargs):
         super().__init__()
 
         for key, value in dict(*args, **kwargs).items():
-            dict.__setitem__(self, key, BoneDict.__sanitize_attr(key, value))
+            dict.__setitem__(self, key, BaseBoneDict.__sanitize_attr(key, value))
 
         self.__dict__ = self
 
@@ -48,13 +48,13 @@ class BoneDict(dict):
         return "BoneDict(%s)" % (dict.__repr__(self))
 
     def __setitem__(self, key, value):
-        dict.__setitem__(self, key, BoneDict.__sanitize_attr(key, value))
+        dict.__setitem__(self, key, BaseBoneDict.__sanitize_attr(key, value))
 
     def update(self, *args, **kwargs):
         for key, value in dict(*args, **kwargs).items():
-            dict.__setitem__(self, key, BoneDict.__sanitize_attr(key, value))
+            dict.__setitem__(self, key, BaseBoneDict.__sanitize_attr(key, value))
 
-    def flatten(self, key=None):
+    def flatten(self, key: Optional[str] = None):
         """Return all contained bones or a single key as a list."""
 
         items = [self[key]] if key is not None else self.values()
@@ -62,7 +62,7 @@ class BoneDict(dict):
         all_bones = []
 
         for item in items:
-            if isinstance(item, BoneDict):
+            if isinstance(item, BaseBoneDict):
                 all_bones.extend(item.flatten())
             elif isinstance(item, list):
                 all_bones.extend(item)
@@ -71,13 +71,30 @@ class BoneDict(dict):
 
         return all_bones
 
-#=======================
+
+class TypedBoneDict(BaseBoneDict):
+    # Omit DynamicAttrs to ensure usages of undeclared attributes are highlighted
+    pass
+
+
+class BoneDict(BaseBoneDict):
+    """
+    Special dictionary for holding bone names in a structured way.
+
+    Allows access to contained items as attributes, and only
+    accepts certain types of values.
+
+    @DynamicAttrs
+    """
+
+
+########################
 # Bone manipulation
-#=======================
+########################
 #
 # NOTE: PREFER USING BoneUtilityMixin IN NEW STYLE RIGS!
 
-def get_bone(obj, bone_name):
+def get_bone(obj: ArmatureObject, bone_name: Optional[str]):
     """Get EditBone or PoseBone by name, depending on the current mode."""
     if not bone_name:
         return None
@@ -87,7 +104,7 @@ def get_bone(obj, bone_name):
     return bones[bone_name]
 
 
-def new_bone(obj, bone_name):
+def new_bone(obj: ArmatureObject, bone_name: str):
     """ Adds a new bone to the given armature object.
         Returns the resulting bone's name.
     """
@@ -102,11 +119,13 @@ def new_bone(obj, bone_name):
         raise MetarigError("Can't add new bone '%s' outside of edit mode" % bone_name)
 
 
-def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=False, bbone=False, length=None, scale=None):
+def copy_bone(obj: ArmatureObject, bone_name: str, assign_name='', *,
+              parent=False, inherit_scale=False, bbone=False,
+              length: Optional[float] = None, scale: Optional[float] = None):
     """ Makes a copy of the given bone in the given armature object.
         Returns the resulting bone's name.
     """
-    #if bone_name not in obj.data.bones:
+
     if bone_name not in obj.data.edit_bones:
         raise MetarigError("copy_bone(): bone '%s' not found, cannot copy it" % bone_name)
 
@@ -116,7 +135,6 @@ def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=Fal
         # Copy the edit bone
         edit_bone_1 = obj.data.edit_bones[bone_name]
         edit_bone_2 = obj.data.edit_bones.new(assign_name)
-        bone_name_1 = bone_name
         bone_name_2 = edit_bone_2.name
 
         # Copy edit bone attributes
@@ -137,6 +155,7 @@ def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=Fal
             edit_bone_2.inherit_scale = edit_bone_1.inherit_scale
 
         if bbone:
+            # noinspection SpellCheckingInspection
             for name in ['bbone_segments',
                          'bbone_easein', 'bbone_easeout',
                          'bbone_rollin', 'bbone_rollout',
@@ -155,9 +174,10 @@ def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=Fal
         raise MetarigError("Cannot copy bones outside of edit mode")
 
 
-def copy_bone_properties(obj, bone_name_1, bone_name_2, transforms=True, props=True, widget=True):
+def copy_bone_properties(obj: ArmatureObject, bone_name_1: str, bone_name_2: str,
+                         transforms=True, props=True, widget=True):
     """ Copy transform and custom properties from bone 1 to bone 2. """
-    if obj.mode in {'OBJECT','POSE'}:
+    if obj.mode in {'OBJECT', 'POSE'}:
         # Get the pose bones
         pose_bone_1 = obj.pose.bones[bone_name_1]
         pose_bone_2 = obj.pose.bones[bone_name_2]
@@ -197,7 +217,7 @@ def _legacy_copy_bone(obj, bone_name, assign_name=''):
     return new_name
 
 
-def flip_bone(obj, bone_name):
+def flip_bone(obj: ArmatureObject, bone_name: str):
     """ Flips an edit bone.
     """
     if bone_name not in obj.data.edit_bones:
@@ -214,11 +234,11 @@ def flip_bone(obj, bone_name):
         raise MetarigError("Cannot flip bones outside of edit mode")
 
 
-def flip_bone_chain(obj, bone_names):
+def flip_bone_chain(obj: ArmatureObject, bone_names: Iterable[str]):
     """Flips a connected bone chain."""
     assert obj.mode == 'EDIT'
 
-    bones = [ obj.data.edit_bones[name] for name in bone_names ]
+    bones = [obj.data.edit_bones[name] for name in bone_names]
 
     # Verify chain and unparent
     for prev_bone, bone in pairwise(bones):
@@ -242,7 +262,9 @@ def flip_bone_chain(obj, bone_names):
         bone.use_connect = True
 
 
-def put_bone(obj, bone_name, pos, *, matrix=None, length=None, scale=None):
+def put_bone(obj: ArmatureObject, bone_name: str, pos: Optional[Vector], *,
+             matrix: Optional[Matrix] = None,
+             length: Optional[float] = None, scale: Optional[float] = None):
     """ Places a bone at the given position.
     """
     if bone_name not in obj.data.edit_bones:
@@ -274,13 +296,14 @@ def put_bone(obj, bone_name, pos, *, matrix=None, length=None, scale=None):
         raise MetarigError("Cannot 'put' bones outside of edit mode")
 
 
-def disable_bbones(obj, bone_names):
+def disable_bbones(obj: ArmatureObject, bone_names: Iterable[str]):
     """Disables B-Bone segments on the specified bones."""
     assert(obj.mode != 'EDIT')
     for bone in bone_names:
         obj.data.bones[bone].bbone_segments = 1
 
 
+# noinspection SpellCheckingInspection
 def _legacy_make_nonscaling_child(obj, bone_name, location, child_name_postfix=""):
     """ Takes the named bone and creates a non-scaling child of it at
         the given location.  The returned bone (returned by name) is not
@@ -345,48 +368,65 @@ def _legacy_make_nonscaling_child(obj, bone_name, location, child_name_postfix="
         raise MetarigError("Cannot make nonscaling child outside of edit mode")
 
 
-#===================================
+####################################
 # Bone manipulation as rig methods
-#===================================
+####################################
 
 
 class BoneUtilityMixin(object):
+    obj: ArmatureObject
+    register_new_bone: Callable[[str, Optional[str]], None]
+
     """
     Provides methods for more convenient creation of bones.
 
     Requires self.obj to be the armature object being worked on.
     """
-    def register_new_bone(self, new_name, old_name=None):
+    def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         """Registers creation or renaming of a bone based on old_name"""
         pass
 
-    def new_bone(self, new_name):
+    def new_bone(self, new_name: str) -> str:
         """Create a new bone with the specified name."""
         name = new_bone(self.obj, new_name)
-        self.register_new_bone(name)
+        self.register_new_bone(name, None)
         return name
 
-    def copy_bone(self, bone_name, new_name='', *, parent=False, inherit_scale=False, bbone=False, length=None, scale=None):
+    def copy_bone(self, bone_name: str, new_name='', *,
+                  parent=False, inherit_scale=False, bbone=False,
+                  length: Optional[float] = None,
+                  scale: Optional[float] = None) -> str:
         """Copy the bone with the given name, returning the new name."""
-        name = copy_bone(self.obj, bone_name, new_name, parent=parent, inherit_scale=inherit_scale, bbone=bbone, length=length, scale=scale)
+        name = copy_bone(self.obj, bone_name, new_name,
+                         parent=parent, inherit_scale=inherit_scale,
+                         bbone=bbone, length=length, scale=scale)
         self.register_new_bone(name, bone_name)
         return name
 
-    def copy_bone_properties(self, src_name, tgt_name, *, props=True, ui_controls=None, **kwargs):
-        """Copy pose-mode properties of the bone."""
+    def copy_bone_properties(self, src_name: str, tgt_name: str, *,
+                             props=True,
+                             ui_controls: list[str] | bool | None = None,
+                             **kwargs):
+        """Copy pose-mode properties of the bone. For using ui_controls, self must be a Rig."""
+
+        if ui_controls:
+            from ..base_rig import BaseRig
+            assert isinstance(self, BaseRig)
+
         if props:
             if ui_controls is None and is_control_bone(tgt_name) and hasattr(self, 'script'):
                 ui_controls = [tgt_name]
             elif ui_controls is True:
                 ui_controls = self.bones.flatten('ctrl')
 
-        copy_bone_properties(self.obj, src_name, tgt_name, props=props and not ui_controls, **kwargs)
+        copy_bone_properties(
+            self.obj, src_name, tgt_name, props=props and not ui_controls, **kwargs)
 
         if props and ui_controls:
             from .mechanism import copy_custom_properties_with_ui
             copy_custom_properties_with_ui(self, src_name, tgt_name, ui_controls=ui_controls)
 
-    def rename_bone(self, old_name, new_name):
+    def rename_bone(self, old_name: str, new_name: str) -> str:
         """Rename the bone, returning the actual new name."""
         bone = self.get_bone(old_name)
         bone.name = new_name
@@ -394,15 +434,17 @@ class BoneUtilityMixin(object):
             self.register_new_bone(bone.name, old_name)
         return bone.name
 
-    def get_bone(self, bone_name):
+    def get_bone(self, bone_name: Optional[str])\
+            -> Optional[bpy.types.EditBone | bpy.types.PoseBone]:
         """Get EditBone or PoseBone by name, depending on the current mode."""
         return get_bone(self.obj, bone_name)
 
-    def get_bone_parent(self, bone_name):
+    def get_bone_parent(self, bone_name: str) -> Optional[str]:
         """Get the name of the parent bone, or None."""
         return get_name(self.get_bone(bone_name).parent)
 
-    def set_bone_parent(self, bone_name, parent_name, use_connect=False, inherit_scale=None):
+    def set_bone_parent(self, bone_name: str, parent_name: Optional[str],
+                        use_connect=False, inherit_scale: Optional[str] = None):
         """Set the parent of the bone."""
         eb = self.obj.data.edit_bones
         bone = eb[bone_name]
@@ -412,16 +454,20 @@ class BoneUtilityMixin(object):
             bone.inherit_scale = inherit_scale
         bone.parent = (eb[parent_name] if parent_name else None)
 
-    def parent_bone_chain(self, bone_names, use_connect=None, inherit_scale=None):
+    def parent_bone_chain(self, bone_names: Iterable[str],
+                          use_connect: Optional[bool] = None,
+                          inherit_scale: Optional[str] = None):
         """Link bones into a chain with parenting. First bone may be None."""
         for parent, child in pairwise(bone_names):
-            self.set_bone_parent(child, parent, use_connect=use_connect, inherit_scale=inherit_scale)
+            self.set_bone_parent(
+                child, parent, use_connect=use_connect, inherit_scale=inherit_scale)
 
-#=============================================
+
+##############################################
 # B-Bones
-#=============================================
+##############################################
 
-def connect_bbone_chain_handles(obj, bone_names):
+def connect_bbone_chain_handles(obj: ArmatureObject, bone_names: Iterable[str]):
     assert obj.mode == 'EDIT'
 
     for prev_name, next_name in pairwise(bone_names):
@@ -434,26 +480,28 @@ def connect_bbone_chain_handles(obj, bone_names):
         next_bone.bbone_handle_type_start = 'ABSOLUTE'
         next_bone.bbone_custom_handle_start = prev_bone
 
-#=============================================
+
+##############################################
 # Math
-#=============================================
+##############################################
 
-
-def is_same_position(obj, bone_name1, bone_name2):
+def is_same_position(obj: ArmatureObject, bone_name1: str, bone_name2: str):
     head1 = get_bone(obj, bone_name1).head
     head2 = get_bone(obj, bone_name2).head
 
     return (head1 - head2).length < 1e-5
 
 
-def is_connected_position(obj, bone_name1, bone_name2):
+def is_connected_position(obj: ArmatureObject, bone_name1: str, bone_name2: str):
     tail1 = get_bone(obj, bone_name1).tail
     head2 = get_bone(obj, bone_name2).head
 
     return (tail1 - head2).length < 1e-5
 
 
-def copy_bone_position(obj, bone_name, target_bone_name, *, length=None, scale=None):
+def copy_bone_position(obj: ArmatureObject, bone_name: str, target_bone_name: str, *,
+                       length: Optional[float] = None,
+                       scale: Optional[float] = None):
     """ Completely copies the position and orientation of the bone. """
     bone1_e = obj.data.edit_bones[bone_name]
     bone2_e = obj.data.edit_bones[target_bone_name]
@@ -469,7 +517,7 @@ def copy_bone_position(obj, bone_name, target_bone_name, *, length=None, scale=N
         bone2_e.length *= scale
 
 
-def align_bone_orientation(obj, bone_name, target_bone_name):
+def align_bone_orientation(obj: ArmatureObject, bone_name: str, target_bone_name: str):
     """ Aligns the orientation of bone to target bone. """
     bone1_e = obj.data.edit_bones[bone_name]
     bone2_e = obj.data.edit_bones[target_bone_name]
@@ -480,7 +528,7 @@ def align_bone_orientation(obj, bone_name, target_bone_name):
     bone1_e.roll = bone2_e.roll
 
 
-def set_bone_orientation(obj, bone_name, orientation):
+def set_bone_orientation(obj: ArmatureObject, bone_name: str, orientation: str | Matrix):
     """ Aligns the orientation of bone to target bone or matrix. """
     if isinstance(orientation, str):
         align_bone_orientation(obj, bone_name, orientation)
@@ -494,7 +542,7 @@ def set_bone_orientation(obj, bone_name, orientation):
         bone_e.matrix = matrix
 
 
-def align_bone_roll(obj, bone1, bone2):
+def align_bone_roll(obj: ArmatureObject, bone1: str, bone2: str):
     """ Aligns the roll of two bones.
     """
     bone1_e = obj.data.edit_bones[bone1]
@@ -539,7 +587,7 @@ def align_bone_roll(obj, bone1, bone2):
         bone1_e.roll = -roll
 
 
-def align_bone_x_axis(obj, bone, vec):
+def align_bone_x_axis(obj: ArmatureObject, bone: str, vec: Vector):
     """ Rolls the bone to align its x-axis as closely as possible to
         the given vector.
         Must be in edit mode.
@@ -564,7 +612,7 @@ def align_bone_x_axis(obj, bone, vec):
         bone_e.roll += angle * 2
 
 
-def align_bone_z_axis(obj, bone, vec):
+def align_bone_z_axis(obj: ArmatureObject, bone: str, vec: Vector):
     """ Rolls the bone to align its z-axis as closely as possible to
         the given vector.
         Must be in edit mode.
@@ -589,7 +637,7 @@ def align_bone_z_axis(obj, bone, vec):
         bone_e.roll += angle * 2
 
 
-def align_bone_y_axis(obj, bone, vec):
+def align_bone_y_axis(obj: ArmatureObject, bone: str, vec: Vector):
     """ Matches the bone y-axis to
         the given vector.
         Must be in edit mode.
@@ -597,14 +645,15 @@ def align_bone_y_axis(obj, bone, vec):
 
     bone_e = obj.data.edit_bones[bone]
     vec.normalize()
+
     vec = vec * bone_e.length
 
     bone_e.tail = bone_e.head + vec
 
 
-def compute_chain_x_axis(obj, bone_names):
+def compute_chain_x_axis(obj: ArmatureObject, bone_names: list[str]):
     """
-    Compute the x axis of all bones to be perpendicular
+    Compute the X axis of all bones to be perpendicular
     to the primary plane in which the bones lie.
     """
     eb = obj.data.edit_bones
@@ -615,6 +664,7 @@ def compute_chain_x_axis(obj, bone_names):
 
     # Compute normal to the plane defined by the first bone,
     # and the end of the last bone in the chain
+
     chain_y_axis = last_bone.tail - first_bone.head
     chain_rot_axis = first_bone.y_axis.cross(chain_y_axis)
 
@@ -624,9 +674,9 @@ def compute_chain_x_axis(obj, bone_names):
         return chain_rot_axis.normalized()
 
 
-def align_chain_x_axis(obj, bone_names):
+def align_chain_x_axis(obj: ArmatureObject, bone_names: list[str]):
     """
-    Aligns the x axis of all bones to be perpendicular
+    Aligns the X axis of all bones to be perpendicular
     to the primary plane in which the bones lie.
     """
     chain_rot_axis = compute_chain_x_axis(obj, bone_names)
@@ -635,7 +685,10 @@ def align_chain_x_axis(obj, bone_names):
         align_bone_x_axis(obj, name, chain_rot_axis)
 
 
-def align_bone_to_axis(obj, bone_name, axis, *, length=None, roll=0, flip=False):
+def align_bone_to_axis(obj: ArmatureObject, bone_name: str, axis: str, *,
+                       length: Optional[float] = None,
+                       roll: Optional[float] = 0.0,
+                       flip=False):
     """
     Aligns the Y axis of the bone to the global axis (x,y,z,-x,-y,-z),
     optionally adjusting length and initially flipping the bone.
@@ -651,7 +704,7 @@ def align_bone_to_axis(obj, bone_name, axis, *, length=None, roll=0, flip=False)
         length = -length
         axis = axis[1:]
 
-    vec = Vector((0,0,0))
+    vec = Vector((0, 0, 0))
     setattr(vec, axis, length)
 
     if flip:
@@ -664,7 +717,9 @@ def align_bone_to_axis(obj, bone_name, axis, *, length=None, roll=0, flip=False)
     bone_e.roll = roll
 
 
-def set_bone_widget_transform(obj, bone_name, transform_bone, use_size=True, scale=1.0, target_size=False):
+def set_bone_widget_transform(obj: ArmatureObject, bone_name: str,
+                              transform_bone: Optional[str], *,
+                              use_size=True, scale=1.0, target_size=False):
     assert obj.mode != 'EDIT'
 
     bone = obj.pose.bones[bone_name]

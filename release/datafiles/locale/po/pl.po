@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -7736,40 +7736,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A: "
-
-
-msgid "Hex: "
-msgstr "Hex: "
+msgid "Value:"
+msgstr "Wartość:"
 
 
 msgid "(Gamma Corrected)"
@@ -9492,10 +9460,6 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Wartość Sterownika:"
-
-
-msgid "Value:"
-msgstr "Wartość:"
 
 
 msgid "Update Dependencies"

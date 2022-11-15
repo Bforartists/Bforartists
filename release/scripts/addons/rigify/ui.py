@@ -14,7 +14,7 @@ from .utils.errors import MetarigError
 from .utils.rig import write_metarig
 from .utils.widgets import write_widget
 from .utils.naming import unique_name
-from .utils.rig import upgradeMetarigTypes, outdated_types
+from .utils.rig import upgrade_metarig_types, outdated_types
 
 from .rigs.utils import get_limb_generated_names
 
@@ -825,7 +825,7 @@ class UpgradeMetarigTypes(bpy.types.Operator):
     def execute(self, context):
         for obj in bpy.data.objects:
             if type(obj.data) == bpy.types.Armature:
-                upgradeMetarigTypes(obj)
+                upgrade_metarig_types(obj)
         return {'FINISHED'}
 class Sample(bpy.types.Operator):
     """Create a sample metarig to be modified before generating the final rig"""
