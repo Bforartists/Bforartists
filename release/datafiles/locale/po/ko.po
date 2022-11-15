@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -9462,10 +9462,6 @@ msgstr "QT rle / QT 애니메이션"
 
 msgid "Theora"
 msgstr "Theora"
-
-
-msgid "WEBM / VP9"
-msgstr "WEBM / VP9"
 
 
 msgid "Output Quality"
@@ -65519,10 +65515,6 @@ msgid "Distortion to use for the calculation"
 msgstr "계산에 사용하는 왜곡"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "구형 카메라로 씬 렌더, 위도가 긴 파노라마라고도 합니다"
-
-
 msgid "Fisheye Equidistant"
 msgstr "피쉬아이 등거리"
 
@@ -65537,10 +65529,6 @@ msgstr "피쉬아이 등입체"
 
 msgid "Similar to most fisheye modern lens, takes sensor dimensions into consideration"
 msgstr "대부분의 어안 모던 렌즈와 유사하게 센서 크기가 고려됩니다"
-
-
-msgid "Uses the mirror ball mapping"
-msgstr "미러 볼 매핑을 사용합니다"
 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
@@ -76083,10 +76071,6 @@ msgid "Show random object color"
 msgstr "렌덤 오브젝트 컬러를 표시"
 
 
-msgid "Show texture"
-msgstr "택스처를 표시"
-
-
 msgid "Curvature Ridge"
 msgstr "곡률 능선"
 
@@ -84585,40 +84569,8 @@ msgid "Hex"
 msgstr "헥스"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A: "
-
-
-msgid "Hex: "
-msgstr "헥스: "
+msgid "Value:"
+msgstr "값:"
 
 
 msgid "(Gamma Corrected)"
@@ -87003,10 +86955,6 @@ msgstr "표현식:"
 
 msgid "Add Input Variable"
 msgstr "입력 변수를 추가"
-
-
-msgid "Value:"
-msgstr "값:"
 
 
 msgid "Update Dependencies"

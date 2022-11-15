@@ -13,6 +13,7 @@
 0:Automatic (Automatic):DEFAULT
 1:English (English):en_US
 9:Spanish (Español):es
+8:French (Français):fr_FR
 2:Japanese (日本語):ja_JP
 47:Slovak (Slovenčina):sk_SK
 41:Vietnamese (tiếng Việt):vi_VN
@@ -21,7 +22,6 @@
 0:In Progress:
 11:Czech (Český):cs_CZ
 5:German (Deutsch):de_DE
-8:French (Français):fr_FR
 4:Italian (Italiano):it_IT
 24:Korean (한국어):ko_KR
 32:Brazilian Portuguese (Português do Brasil):pt_BR

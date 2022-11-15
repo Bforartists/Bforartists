@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://weblate.slat.org/projects/blender/blender/zh_Hant/>\n"
@@ -1645,10 +1645,6 @@ msgstr "外形鍵"
 
 msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
-
-
-msgid "Simulations"
-msgstr "模擬"
 
 
 msgid "Sounds"
@@ -9351,6 +9347,10 @@ msgstr "雙向 Z"
 
 msgid "Fonts"
 msgstr "字型"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Show workspace data-blocks"
@@ -46411,10 +46411,6 @@ msgid "Distortion to use for the calculation"
 msgstr "計算所要使用的扭曲處理"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "以球形攝影機算繪場景，也被廣知為經緯全景 (Lat Long panorama)"
-
-
 msgid "Fisheye Equidistant"
 msgstr "魚眼等距"
 
@@ -57363,36 +57359,8 @@ msgid "Hex"
 msgstr "十六進位"
 
 
-msgid "R:"
-msgstr "紅："
-
-
-msgid "G:"
-msgstr "綠："
-
-
-msgid "B:"
-msgstr "藍："
-
-
-msgid "H:"
-msgstr "相："
-
-
-msgid "S:"
-msgstr "飽："
-
-
-msgid "L:"
-msgstr "亮："
-
-
-msgid "V:"
-msgstr "明："
-
-
-msgid "Hex: "
-msgstr "十六進位： "
+msgid "Value:"
+msgstr "值："
 
 
 msgid "(Gamma Corrected)"
@@ -58797,10 +58765,6 @@ msgstr "驅動器值："
 
 msgid "Expression:"
 msgstr "表述式："
-
-
-msgid "Value:"
-msgstr "值："
 
 
 msgid "Update Dependencies"

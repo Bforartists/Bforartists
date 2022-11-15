@@ -746,7 +746,14 @@ struct bNode *nodeFindNodebyName(struct bNodeTree *ntree, const char *name);
 /**
  * Finds a node based on given socket and returns true on success.
  */
-bool nodeFindNode(struct bNodeTree *ntree,
+bool nodeFindNodeTry(struct bNodeTree *ntree,
+                     struct bNodeSocket *sock,
+                     struct bNode **r_node,
+                     int *r_sockindex);
+/**
+ * Same as above but expects that the socket definitely is in the node tree.
+ */
+void nodeFindNode(struct bNodeTree *ntree,
                   struct bNodeSocket *sock,
                   struct bNode **r_node,
                   int *r_sockindex);
@@ -988,8 +995,6 @@ void node_type_socket_templates(struct bNodeType *ntype,
                                 struct bNodeSocketTemplate *outputs);
 void node_type_size(struct bNodeType *ntype, int width, int minwidth, int maxwidth);
 void node_type_size_preset(struct bNodeType *ntype, eNodeSizePreset size);
-void node_type_init(struct bNodeType *ntype,
-                    void (*initfunc)(struct bNodeTree *ntree, struct bNode *node));
 /**
  * \warning Nodes defining a storage type _must_ allocate this for new nodes.
  * Otherwise nodes will reload as undefined (T46619).
@@ -1000,17 +1005,6 @@ void node_type_storage(struct bNodeType *ntype,
                        void (*copyfunc)(struct bNodeTree *dest_ntree,
                                         struct bNode *dest_node,
                                         const struct bNode *src_node));
-void node_type_update(struct bNodeType *ntype,
-                      void (*updatefunc)(struct bNodeTree *ntree, struct bNode *node));
-void node_type_group_update(struct bNodeType *ntype,
-                            void (*group_update_func)(struct bNodeTree *ntree,
-                                                      struct bNode *node));
-
-void node_type_exec(struct bNodeType *ntype,
-                    NodeInitExecFunction init_exec_fn,
-                    NodeFreeExecFunction free_exec_fn,
-                    NodeExecFunction exec_fn);
-void node_type_gpu(struct bNodeType *ntype, NodeGPUExecFunction gpu_fn);
 
 /** \} */
 
@@ -1018,7 +1012,7 @@ void node_type_gpu(struct bNodeType *ntype, NodeGPUExecFunction gpu_fn);
 /** \name Node Generic Functions
  * \{ */
 
-bool BKE_node_is_connected_to_output(struct bNodeTree *ntree, struct bNode *node);
+bool BKE_node_is_connected_to_output(const struct bNodeTree *ntree, const struct bNode *node);
 
 /* ************** COMMON NODES *************** */
 
@@ -1032,8 +1026,6 @@ bool BKE_node_is_connected_to_output(struct bNodeTree *ntree, struct bNode *node
 #define NODE_GROUP_INPUT 7
 #define NODE_GROUP_OUTPUT 8
 #define NODE_CUSTOM_GROUP 9
-
-void BKE_node_tree_unlink_id(ID *id, struct bNodeTree *ntree);
 
 /** \} */
 
@@ -1554,6 +1546,7 @@ struct TexResult;
 #define GEO_NODE_MESH_TOPOLOGY_VERTEX_OF_CORNER 1186
 #define GEO_NODE_SAMPLE_UV_SURFACE 1187
 #define GEO_NODE_SET_CURVE_NORMAL 1188
+#define GEO_NODE_IMAGE_INFO 1189
 
 /** \} */
 

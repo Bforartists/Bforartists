@@ -112,7 +112,7 @@ def register():
                                                        description="Workspace used for changing drawings")
 
     Scene.storypencil_base_scene = PointerProperty(type=Scene,
-                                                   description="Base Scene used for creating new scenes")
+                                                   description="Template Scene used for creating new scenes")
 
     Scene.storypencil_render_render_path = StringProperty(name="Output Path", subtype='FILE_PATH', maxlen=256,
                                                           description="Directory/name to save files")

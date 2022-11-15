@@ -31,6 +31,7 @@ BLACKLIST = set(
         "build_files/cmake/cmake_static_check_splint.py",
         "build_files/utils/make_test.py",
         "build_files/utils/make_update.py",
+        "build_files/utils/make_update.py",
         "build_files/utils/make_utils.py",
         "source/tools/check_source/check_cmake_consistency.py",
         "source/tools/check_source/check_descriptions.py",

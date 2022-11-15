@@ -2,17 +2,24 @@
 
 import collections
 
+from bpy.types import PoseBone, UILayout, Context
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar, Generic
+
 from .utils.errors import RaiseErrorMixin
-from .utils.bones import BoneDict, BoneUtilityMixin
+from .utils.bones import BoneDict, BoneUtilityMixin, TypedBoneDict, BaseBoneDict
 from .utils.mechanism import MechanismUtilityMixin
 from .utils.metaclass import BaseStagedClass
+from .utils.misc import ArmatureObject
+from .utils.rig import get_rigify_params
 
-# Only export certain symbols via 'from base_rig import *'
-__all__ = ['BaseRig', 'stage']
+if TYPE_CHECKING:
+    from .base_generate import BaseGenerator
+    from .rig_ui_template import ScriptGenerator
 
-#=============================================
+
+##############################################
 # Base Rig
-#=============================================
+##############################################
 
 class GenerateCallbackHost(BaseStagedClass, define_stages=True):
     """
@@ -137,7 +144,49 @@ class GenerateCallbackHost(BaseStagedClass, define_stages=True):
         pass
 
 
-class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, MechanismUtilityMixin):
+_Org = TypeVar('_Org', bound=str | list[str] | BaseBoneDict)
+_Ctrl = TypeVar('_Ctrl', bound=str | list[str] | BaseBoneDict)
+_Mch = TypeVar('_Mch', bound=str | list[str] | BaseBoneDict)
+_Deform = TypeVar('_Deform', bound=str | list[str] | BaseBoneDict)
+
+
+class BaseRigMixin(RaiseErrorMixin, BoneUtilityMixin, MechanismUtilityMixin):
+    generator: 'BaseGenerator'
+
+    obj: ArmatureObject
+    script: 'ScriptGenerator'
+    base_bone: str
+    params: Any
+
+    rigify_parent: Optional['BaseRig']
+    rigify_children: list['BaseRig']
+    rigify_org_bones: set[str]
+    rigify_child_bones: set[str]
+    rigify_new_bones: dict[str, Optional[str]]
+    rigify_derived_bones: dict[str, set[str]]
+
+    ##############################################
+    # Annotated bone containers
+
+    class ToplevelBones(TypedBoneDict, Generic[_Org, _Ctrl, _Mch, _Deform]):
+        org: _Org
+        ctrl: _Ctrl
+        mch: _Mch
+        deform: _Deform
+
+    class CtrlBones(TypedBoneDict):
+        pass
+
+    class MchBones(TypedBoneDict):
+        pass
+
+    bones: ToplevelBones[str | list[str] | BoneDict,
+                         str | list[str] | BoneDict,  # Use CtrlBones in overrides
+                         str | list[str] | BoneDict,  # Use MchBones in overrides
+                         str | list[str] | BoneDict]
+
+
+class BaseRig(GenerateCallbackHost, BaseRigMixin):
     """
     Base class for all rigs.
 
@@ -151,24 +200,24 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
     and the common generator object. The generation process is also
     split into multiple stages.
     """
-    def __init__(self, generator, pose_bone):
+    def __init__(self, generator: 'BaseGenerator', pose_bone: PoseBone):
         self.generator = generator
 
         self.obj = generator.obj
         self.script = generator.script
         self.base_bone = pose_bone.name
-        self.params = pose_bone.rigify_parameters
+        self.params = get_rigify_params(pose_bone)
 
         # Collection of bone names for use in implementing the rig
-        self.bones = BoneDict(
+        self.bones = self.ToplevelBones(
             # ORG bone names
-            org = self.find_org_bones(pose_bone),
+            org=self.find_org_bones(pose_bone),
             # Control bone names
-            ctrl = BoneDict(),
+            ctrl=BoneDict(),
             # MCH bone names
-            mch = BoneDict(),
+            mch=BoneDict(),
             # DEF bone names
-            deform = BoneDict(),
+            deform=BoneDict(),
         )
 
         # Data useful for complex rig interaction:
@@ -183,7 +232,7 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
         self.rigify_new_bones = dict()
         self.rigify_derived_bones = collections.defaultdict(set)
 
-    def register_new_bone(self, new_name, old_name=None):
+    def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         """Registers this rig as the owner of this new bone."""
         self.rigify_new_bones[new_name] = old_name
         self.generator.bone_owners[new_name] = self
@@ -194,7 +243,7 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
     ###########################################################
     # Bone ownership
 
-    def find_org_bones(self, pose_bone):
+    def find_org_bones(self, pose_bone: PoseBone) -> str | list[str] | BaseBoneDict:
         """
         Select bones directly owned by the rig. Returning the
         same bone from multiple rigs is an error.
@@ -218,7 +267,7 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
         pass
 
     @classmethod
-    def parameters_ui(cls, layout, params):
+    def parameters_ui(cls, layout: UILayout, params):
         """
         This method draws the UI of the rigify_parameters defined on the pose_bone
         :param layout:
@@ -228,15 +277,15 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
         pass
 
     @classmethod
-    def on_parameter_update(cls, context, pose_bone, params, param_name):
+    def on_parameter_update(cls, context: Context, pose_bone: PoseBone, params, param_name: str):
         """
         A callback invoked whenever a parameter value is changed by the user.
         """
 
 
-#=============================================
+##############################################
 # Rig Utility
-#=============================================
+##############################################
 
 
 class RigUtility(BoneUtilityMixin, MechanismUtilityMixin):
@@ -245,7 +294,7 @@ class RigUtility(BoneUtilityMixin, MechanismUtilityMixin):
         self.owner = owner
         self.obj = owner.obj
 
-    def register_new_bone(self, new_name, old_name=None):
+    def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         self.owner.register_new_bone(new_name, old_name)
 
 
@@ -270,13 +319,21 @@ class RigComponent(LazyRigComponent):
         self.enable_component()
 
 
-#=============================================
+##############################################
 # Rig Stage Decorators
-#=============================================
+##############################################
 
+# Generate @stage.<...> decorators for all valid stages.
+@GenerateCallbackHost.stage_decorator_container
 class stage:
-    pass
-
-# Generate @stage.<...> decorators for all valid stages
-for name, decorator in GenerateCallbackHost.make_stage_decorators():
-    setattr(stage, name, decorator)
+    # Declare stages for auto-completion - doesn't affect execution.
+    initialize: Callable
+    prepare_bones: Callable
+    generate_bones: Callable
+    parent_bones: Callable
+    configure_bones: Callable
+    preapply_bones: Callable
+    apply_bones: Callable
+    rig_bones: Callable
+    generate_widgets: Callable
+    finalize: Callable

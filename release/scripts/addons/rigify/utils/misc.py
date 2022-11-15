@@ -3,24 +3,26 @@
 import bpy
 import math
 import collections
+import typing
 
 from itertools import tee, chain, islice, repeat, permutations
 from mathutils import Vector, Matrix, Color
 from rna_prop_ui import rna_idprop_value_to_python
 
 
-#=============================================
-# Math
-#=============================================
+T = typing.TypeVar('T')
 
+##############################################
+# Math
+##############################################
 
 axis_vectors = {
-    'x': (1,0,0),
-    'y': (0,1,0),
-    'z': (0,0,1),
-    '-x': (-1,0,0),
-    '-y': (0,-1,0),
-    '-z': (0,0,-1),
+    'x': (1, 0, 0),
+    'y': (0, 1, 0),
+    'z': (0, 0, 1),
+    '-x': (-1, 0, 0),
+    '-y': (0, -1, 0),
+    '-z': (0, 0, -1),
 }
 
 
@@ -36,7 +38,7 @@ shuffle_matrix = {
 }
 
 
-def angle_on_plane(plane, vec1, vec2):
+def angle_on_plane(plane: Vector, vec1: Vector, vec2: Vector):
     """ Return the angle between two vectors projected onto a plane.
     """
     plane.normalize()
@@ -69,7 +71,7 @@ matrix_from_axis_roll = bpy.types.Bone.MatrixFromAxisRoll
 axis_roll_from_matrix = bpy.types.Bone.AxisRollFromMatrix
 
 
-def matrix_from_axis_pair(y_axis, other_axis, axis_name):
+def matrix_from_axis_pair(y_axis: Vector, other_axis: Vector, axis_name: str):
     assert axis_name in 'xz'
 
     y_axis = Vector(y_axis).normalized()
@@ -84,12 +86,12 @@ def matrix_from_axis_pair(y_axis, other_axis, axis_name):
     return Matrix((x_axis, y_axis, z_axis)).transposed()
 
 
-#=============================================
+##############################################
 # Color correction functions
-#=============================================
+##############################################
 
-
-def linsrgb_to_srgb (linsrgb):
+# noinspection SpellCheckingInspection
+def linsrgb_to_srgb(linsrgb: float):
     """Convert physically linear RGB values into sRGB ones. The transform is
     uniform in the components, so *linsrgb* can be of any shape.
 
@@ -105,44 +107,45 @@ def linsrgb_to_srgb (linsrgb):
     return scale
 
 
-def gamma_correct(color):
-
+# noinspection PyUnresolvedReferences,PyTypeChecker
+def gamma_correct(color: Color):
     corrected_color = Color()
     for i, component in enumerate(color):
         corrected_color[i] = linsrgb_to_srgb(color[i])
     return corrected_color
 
 
-#=============================================
+##############################################
 # Iterators
-#=============================================
+##############################################
 
-
+# noinspection SpellCheckingInspection
 def padnone(iterable, pad=None):
     return chain(iterable, repeat(pad))
 
 
+# noinspection SpellCheckingInspection
 def pairwise_nozip(iterable):
-    "s -> (s0,s1), (s1,s2), (s2,s3), ..."
+    """s -> (s0,s1), (s1,s2), (s2,s3), ..."""
     a, b = tee(iterable)
     next(b, None)
     return a, b
 
 
 def pairwise(iterable):
-    "s -> (s0,s1), (s1,s2), (s2,s3), ..."
+    """s -> (s0,s1), (s1,s2), (s2,s3), ..."""
     a, b = tee(iterable)
     next(b, None)
     return zip(a, b)
 
 
 def map_list(func, *inputs):
-    "[func(a0,b0...), func(a1,b1...), ...]"
+    """[func(a0,b0...), func(a1,b1...), ...]"""
     return list(map(func, *inputs))
 
 
 def skip(n, iterable):
-    "Returns an iterator skipping first n elements of an iterable."
+    """Returns an iterator skipping first n elements of an iterable."""
     iterator = iter(iterable)
     if n == 1:
         next(iterator, None)
@@ -152,17 +155,21 @@ def skip(n, iterable):
 
 
 def map_apply(func, *inputs):
-    "Apply the function to inputs like map for side effects, discarding results."
+    """Apply the function to inputs like map for side effects, discarding results."""
     collections.deque(map(func, *inputs), maxlen=0)
 
 
-#=============================================
+##############################################
 # Lazy references
-#=============================================
+##############################################
+
+Lazy: typing.TypeAlias = T | typing.Callable[[], T]
+OptionalLazy: typing.TypeAlias = typing.Optional[T | typing.Callable[[], T]]
 
 
-def force_lazy(value):
-    """If the argument is callable, invokes it without arguments. Otherwise returns the argument as is."""
+def force_lazy(value: OptionalLazy[T]) -> T:
+    """If the argument is callable, invokes it without arguments.
+    Otherwise, returns the argument as is."""
     if callable(value):
         return value()
     else:
@@ -171,7 +178,7 @@ def force_lazy(value):
 
 class LazyRef:
     """Hashable lazy reference. When called, evaluates (foo, 'a', 'b'...) as foo('a','b')
-    if foo is callable. Otherwise the remaining arguments are used as attribute names or
+    if foo is callable. Otherwise, the remaining arguments are used as attribute names or
     keys, like foo.a.b or foo.a[b] etc."""
 
     def __init__(self, first, *args):
@@ -180,7 +187,7 @@ class LazyRef:
         self.first_hashable = first.__hash__ is not None
 
     def __repr__(self):
-        return 'LazyRef{}'.format(tuple(self.first, *self.args))
+        return 'LazyRef{}'.format((self.first, *self.args))
 
     def __eq__(self, other):
         return (
@@ -190,7 +197,8 @@ class LazyRef:
         )
 
     def __hash__(self):
-        return (hash(self.first) if self.first_hashable else hash(id(self.first))) ^ hash(self.args)
+        return (hash(self.first) if self.first_hashable
+                else hash(id(self.first))) ^ hash(self.args)
 
     def __call__(self):
         first = self.first
@@ -206,31 +214,27 @@ class LazyRef:
         return first
 
 
-#=============================================
+##############################################
 # Misc
-#=============================================
-
+##############################################
 
 def copy_attributes(a, b):
     keys = dir(a)
     for key in keys:
-        if not key.startswith("_") \
-        and not key.startswith("error_") \
-        and key != "group" \
-        and key != "is_valid" \
-        and key != "rna_type" \
-        and key != "bl_rna":
+        if not (key.startswith("_") or
+                key.startswith("error_") or
+                key in ("group", "is_valid", "is_valid", "bl_rna")):
             try:
                 setattr(b, key, getattr(a, key))
             except AttributeError:
                 pass
 
 
-def property_to_python(value):
+def property_to_python(value) -> typing.Any:
     value = rna_idprop_value_to_python(value)
 
     if isinstance(value, dict):
-        return { k: property_to_python(v) for k, v in value.items() }
+        return {k: property_to_python(v) for k, v in value.items()}
     elif isinstance(value, list):
         return map_list(property_to_python, value)
     else:
@@ -246,7 +250,7 @@ def assign_parameters(target, val_dict=None, **params):
         for key in list(target.keys()):
             del target[key]
 
-        data = { **val_dict, **params }
+        data = {**val_dict, **params}
     else:
         data = params
 
@@ -254,15 +258,40 @@ def assign_parameters(target, val_dict=None, **params):
         try:
             target[key] = value
         except Exception as e:
-            raise Exception("Couldn't set {} to {}: {}".format(key,value,e))
+            raise Exception(f"Couldn't set {key} to {value}: {e}")
 
 
-def select_object(context, object, deselect_all=False):
+def select_object(context: bpy.types.Context, obj: bpy.types.Object, deselect_all=False):
     view_layer = context.view_layer
 
     if deselect_all:
-        for objt in view_layer.objects:
-            objt.select_set(False)  # deselect all objects
+        for layer_obj in view_layer.objects:
+            layer_obj.select_set(False)  # deselect all objects
 
-    object.select_set(True)
-    view_layer.objects.active = object
+    obj.select_set(True)
+    view_layer.objects.active = obj
+
+
+##############################################
+# Typing
+##############################################
+
+class TypedObject(bpy.types.Object, typing.Generic[T]):
+    data: T
+
+
+ArmatureObject = TypedObject[bpy.types.Armature]
+MeshObject = TypedObject[bpy.types.Mesh]
+AnyVector = Vector | typing.Sequence[float]
+
+
+def verify_armature_obj(obj: bpy.types.Object) -> ArmatureObject:
+    assert obj and obj.type == 'ARMATURE'
+    # noinspection PyTypeChecker
+    return obj
+
+
+def verify_mesh_obj(obj: bpy.types.Object) -> MeshObject:
+    assert obj and obj.type == 'MESH'
+    # noinspection PyTypeChecker
+    return obj

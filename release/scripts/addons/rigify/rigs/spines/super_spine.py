@@ -32,8 +32,8 @@ class Rig(SubstitutionRig, BoneUtilityMixin):
             if neck_pos >= len(orgs):
                 self.raise_error("Neck is too short.")
 
-            spine_orgs = orgs[0 : neck_pos-1]
-            head_orgs = orgs[neck_pos-1 : ]
+            spine_orgs = orgs[0: neck_pos-1]
+            head_orgs = orgs[neck_pos-1:]
 
         if self.params.use_tail:
             tail_pos = self.params.tail_pos
@@ -42,8 +42,8 @@ class Rig(SubstitutionRig, BoneUtilityMixin):
             if tail_pos >= pivot_pos:
                 self.raise_error("Tail cannot be above or the same as pivot.")
 
-            tail_orgs = list(reversed(spine_orgs[0 : tail_pos]))
-            spine_orgs = spine_orgs[tail_pos : ]
+            tail_orgs = list(reversed(spine_orgs[0: tail_pos]))
+            spine_orgs = spine_orgs[tail_pos:]
             pivot_pos -= tail_pos
 
         # Split the bone chain and flip the tail
@@ -65,17 +65,17 @@ class Rig(SubstitutionRig, BoneUtilityMixin):
         # Create the parts
         self.assign_params(spine_orgs[0], params_copy, pivot_pos=pivot_pos, make_fk_controls=False)
 
-        result = [ self.instantiate_rig(basic_spine.Rig, spine_orgs[0]) ]
+        result = [self.instantiate_rig(basic_spine.Rig, spine_orgs[0])]
 
         if tail_orgs:
             self.assign_params(tail_orgs[0], params_copy, connect_chain=True)
 
-            result += [ self.instantiate_rig(basic_tail.Rig, tail_orgs[0]) ]
+            result += [self.instantiate_rig(basic_tail.Rig, tail_orgs[0])]
 
         if head_orgs:
             self.assign_params(head_orgs[0], params_copy, connect_chain=True)
 
-            result += [ self.instantiate_rig(super_head.Rig, head_orgs[0]) ]
+            result += [self.instantiate_rig(super_head.Rig, head_orgs[0])]
 
         return result
 
@@ -86,10 +86,10 @@ def add_parameters(params):
     super_head.Rig.add_parameters(params)
 
     params.neck_pos = bpy.props.IntProperty(
-        name        = 'neck_position',
-        default     = 6,
-        min         = 0,
-        description = 'Neck start position'
+        name='neck_position',
+        default=6,
+        min=0,
+        description='Neck start position'
     )
 
     params.tail_pos = bpy.props.IntProperty(

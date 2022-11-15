@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
 "Last-Translator: lxlalexlxl <lxlalexlxl@ukr.net>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -1788,10 +1788,6 @@ msgstr "Ключі форм"
 
 msgid "Shape Key data-blocks"
 msgstr "Блоки даних ключів форми"
-
-
-msgid "Simulations"
-msgstr "Симуляції"
 
 
 msgid "Sounds"
@@ -10166,10 +10162,6 @@ msgid "Theora"
 msgstr "Theora"
 
 
-msgid "WEBM / VP9"
-msgstr "WEBM / VP9"
-
-
 msgid "Output Quality"
 msgstr "Якість Виводу"
 
@@ -11433,6 +11425,10 @@ msgstr "Показати/сховати блоки даних Хмари Точ�
 
 msgid "Show Scene data-blocks"
 msgstr "Показ блоків даних Сцени"
+
+
+msgid "Simulations"
+msgstr "Симуляції"
 
 
 msgid "Show Simulation data-blocks"
@@ -45572,10 +45568,6 @@ msgid "Merge Images"
 msgstr "Злити Зображення"
 
 
-msgid "Combine OpenEXR multilayer images rendered with different sample ranges into one image with reduced noise"
-msgstr "Комбінувати багатошарові зображення OpenEXR, рендерені з різними діапазонами вибірок, в одне зображення зі зменшеним шумом"
-
-
 msgid "File path for image to merge"
 msgstr "Шлях файлу для зображення, що буде зливатися"
 
@@ -75394,10 +75386,6 @@ msgid "Distortion to use for the calculation"
 msgstr "Спотворення, що використовується для обчислень"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "Рендерити сцену зі сферичною камерою (також відомою як панорама широта/довгота)"
-
-
 msgid "Fisheye Equidistant"
 msgstr "Еквідистантне 'риб'яче око'"
 
@@ -75412,10 +75400,6 @@ msgstr "Еквітілесне 'риб'яче око'"
 
 msgid "Similar to most fisheye modern lens, takes sensor dimensions into consideration"
 msgstr "Подібний до більшості сучасних об'єктивів 'риб'яче око', враховує розміри сенсора"
-
-
-msgid "Uses the mirror ball mapping"
-msgstr "Використати дзеркальне кульове розкладання"
 
 
 msgid "Rounded Ribbons"
@@ -87236,10 +87220,6 @@ msgid "Show random object color"
 msgstr "Показати випадковий колір об'єкта"
 
 
-msgid "Show texture"
-msgstr "Показати текстуру"
-
-
 msgid "Curvature Ridge"
 msgstr "Виступ Кривини"
 
@@ -98218,40 +98198,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A: "
-
-
-msgid "Hex: "
-msgstr "Hex:"
+msgid "Value:"
+msgstr "Значення:"
 
 
 msgid "(Gamma Corrected)"
@@ -98932,10 +98880,6 @@ msgstr "Форма Мітера"
 
 msgid "Intersection Type"
 msgstr "Тип Перетину"
-
-
-msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
-msgstr "%s: Підтвердження, %s: Касування, %s: Режим (%s), %s: Ширина (%s), %s: Сегменти (%d), %s: Профіль (%.3f), %s: Перекриття Затиску (%s), %s: Задіяння (%s), %s: Мітер Зовнішньо (%s), %s: Мітер Внутрішньо (%s), %s: Жорсткіші Нормалі (%s), %s: Позначити Шов (%s), %s: Позначити Гостроту (%s), %s: Тип Профілю (%s), %s: Перетин (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -101091,10 +101035,6 @@ msgstr "Вираз"
 
 msgid "Add Input Variable"
 msgstr "Додати Змінну Уводу"
-
-
-msgid "Value:"
-msgstr "Значення:"
 
 
 msgid "Update Dependencies"
