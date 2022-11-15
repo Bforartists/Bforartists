@@ -44,6 +44,7 @@ initial_load_order = [
     'rig_lists',
     'metarig_menu',
     'rig_ui_template',
+    'utils.action_layers',
     'generate',
     'rot_mode',
     'operators',

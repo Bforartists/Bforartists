@@ -4,16 +4,16 @@ import collections
 
 from types import FunctionType
 from itertools import chain
+from typing import Collection, Callable
 
 
-#=============================================
+##############################################
 # Class With Stages
-#=============================================
-
+##############################################
 
 def rigify_stage(stage):
     """Decorates the method with the specified stage."""
-    def process(method):
+    def process(method: FunctionType):
         if not isinstance(method, FunctionType):
             raise ValueError("Stage decorator must be applied to a method definition")
         method._rigify_stage = stage
@@ -29,12 +29,12 @@ class StagedMetaclass(type):
     method names from that definition as valid stages. After that, subclasses can
     register methods to those stages, to be called via rigify_invoke_stage.
     """
-    def __new__(metacls, class_name, bases, namespace, define_stages=None, **kwds):
+    def __new__(mcs, class_name, bases, namespace, define_stages=None, **kwargs):
         # suppress keyword args to avoid issues with __init_subclass__
-        return super().__new__(metacls, class_name, bases, namespace, **kwds)
+        return super().__new__(mcs, class_name, bases, namespace, **kwargs)
 
-    def __init__(self, class_name, bases, namespace, define_stages=None, **kwds):
-        super().__init__(class_name, bases, namespace, **kwds)
+    def __init__(cls, class_name, bases, namespace, define_stages=None, **kwargs):
+        super().__init__(class_name, bases, namespace, **kwargs)
 
         # Compute the set of stages defined by this class
         if not define_stages:
@@ -46,12 +46,12 @@ class StagedMetaclass(type):
                 if name[0] != '_' and isinstance(item, FunctionType)
             ]
 
-        self.rigify_own_stages = frozenset(define_stages)
+        cls.rigify_own_stages = frozenset(define_stages)
 
         # Compute complete set of inherited stages
-        staged_bases = [ cls for cls in reversed(self.__mro__) if isinstance(cls, StagedMetaclass) ]
+        staged_bases = [cls for cls in reversed(cls.__mro__) if isinstance(cls, StagedMetaclass)]
 
-        self.rigify_stages = stages = frozenset(chain.from_iterable(
+        cls.rigify_stages = stages = frozenset(chain.from_iterable(
             cls.rigify_own_stages for cls in staged_bases
         ))
 
@@ -60,20 +60,22 @@ class StagedMetaclass(type):
         own_stage_map = collections.defaultdict(collections.OrderedDict)
         method_map = {}
 
-        self.rigify_own_stage_map = own_stage_map
+        cls.rigify_own_stage_map = own_stage_map
 
         for base in staged_bases:
             for stage_name, methods in base.rigify_own_stage_map.items():
                 for method_name, method_class in methods.items():
                     if method_name in stages:
-                        raise ValueError("Stage method '%s' inherited @stage.%s in class %s (%s)" %
-                                         (method_name, stage_name, class_name, self.__module__))
+                        raise ValueError(
+                            f"Stage method '{method_name}' inherited @stage.{stage_name} "
+                            f"in class {class_name} ({cls.__module__})")
 
                     # Check consistency of inherited stage assignment to methods
                     if method_name in method_map:
                         if method_map[method_name] != stage_name:
-                            print("RIGIFY CLASS %s (%s): method '%s' has inherited both @stage.%s and @stage.%s\n" %
-                                  (class_name, self.__module__, method_name, method_map[method_name], stage_name))
+                            print(f"RIGIFY CLASS {class_name} ({cls.__module__}): "
+                                  f"method '{method_name}' has inherited both "
+                                  f"@stage.{method_map[method_name]} and @stage.{stage_name}\n")
                     else:
                         method_map[method_name] = stage_name
 
@@ -85,41 +87,50 @@ class StagedMetaclass(type):
                 stage = getattr(item, '_rigify_stage', None)
 
                 if stage and method_name in stages:
-                    print("RIGIFY CLASS %s (%s): cannot use stage decorator on the stage method '%s' (@stage.%s ignored)" %
-                            (class_name, self.__module__, method_name, stage))
+                    print(f"RIGIFY CLASS {class_name} ({cls.__module__}): "
+                          f"cannot use stage decorator on the stage method '{method_name}' "
+                          f"(@stage.{stage} ignored)")
                     continue
 
                 # Ensure that decorators aren't lost when redefining methods
                 if method_name in method_map:
                     if not stage:
                         stage = method_map[method_name]
-                        print("RIGIFY CLASS %s (%s): missing stage decorator on method '%s' (should be @stage.%s)" %
-                              (class_name, self.__module__, method_name, stage))
+                        print(f"RIGIFY CLASS {class_name} ({cls.__module__}): "
+                              f"missing stage decorator on method '{method_name}' "
+                              f"(should be @stage.{stage})")
                     # Check that the method is assigned to only one stage
                     elif stage != method_map[method_name]:
-                        print("RIGIFY CLASS %s (%s): method '%s' has decorator @stage.%s, but inherited base has @stage.%s" %
-                              (class_name, self.__module__, method_name, stage, method_map[method_name]))
+                        print(f"RIGIFY CLASS {class_name} ({cls.__module__}): "
+                              f"method '{method_name}' has decorator @stage.{stage}, "
+                              f"but inherited base has @stage.{method_map[method_name]}")
 
                 # Assign the method to the stage, verifying that it's valid
                 if stage:
                     if stage not in stages:
-                        raise ValueError("Invalid stage name '%s' for method '%s' in class %s (%s)" %
-                                         (stage, method_name, class_name, self.__module__))
+                        raise ValueError(
+                            f"Invalid stage name '{stage}' for method '{method_name}' "
+                            f"in class {class_name} ({cls.__module__})")
                     else:
-                        stage_map[stage][method_name] = self
-                        own_stage_map[stage][method_name] = self
+                        stage_map[stage][method_name] = cls
+                        own_stage_map[stage][method_name] = cls
 
-        self.rigify_stage_map = stage_map
+        cls.rigify_stage_map = stage_map
 
-    def make_stage_decorators(self):
+    def make_stage_decorators(self) -> list[tuple[str, Callable]]:
         return [(name, rigify_stage(name)) for name in self.rigify_stages]
+
+    def stage_decorator_container(self, cls):
+        for name, stage in self.make_stage_decorators():
+            setattr(cls, name, stage)
+        return cls
 
 
 class BaseStagedClass(object, metaclass=StagedMetaclass):
-    rigify_sub_objects = tuple()
+    rigify_sub_objects: Collection['BaseStagedClass'] = tuple()
     rigify_sub_object_run_late = False
 
-    def rigify_invoke_stage(self, stage):
+    def rigify_invoke_stage(self, stage: str):
         """Call all methods decorated with the given stage, followed by the callback."""
         cls = self.__class__
         assert isinstance(cls, StagedMetaclass)
@@ -139,10 +150,9 @@ class BaseStagedClass(object, metaclass=StagedMetaclass):
                 sub.rigify_invoke_stage(stage)
 
 
-#=============================================
+##############################################
 # Per-owner singleton class
-#=============================================
-
+##############################################
 
 class SingletonPluginMetaclass(StagedMetaclass):
     """Metaclass for maintaining one instance per owner object per constructor arg set."""

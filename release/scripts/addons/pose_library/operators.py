@@ -30,6 +30,7 @@ from bpy.types import (
     Operator,
 )
 from bpy_extras import asset_utils
+from bpy.app.translations import pgettext_tip as tip_
 
 
 class PoseAssetCreator:
@@ -141,7 +142,7 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
             return
 
         action.use_fake_user = True
-        self.report({'WARNING'}, "Action %s marked Fake User to prevent loss" % action.name)
+        self.report({'WARNING'}, tip_("Action %s marked Fake User to prevent loss") % action.name)
 
 
 class POSELIB_OT_restore_previous_action(Operator):
@@ -292,7 +293,7 @@ class POSELIB_OT_paste_asset(Operator):
             self.report({"ERROR"}, "Did not find any assets on clipboard")
             return {"CANCELLED"}
 
-        self.report({"INFO"}, "Pasted %d assets" % len(assets))
+        self.report({"INFO"}, tip_("Pasted %d assets") % len(assets))
 
         bpy.ops.asset.library_refresh()
 
@@ -340,13 +341,13 @@ class PoseAssetUser:
             self.report(  # type: ignore
                 {"ERROR"},
                 # TODO: Add some way to get the library name from the library reference (just asset_library_ref.name?).
-                f"Selected asset {asset.name} could not be located inside the asset library",
+                tip_("Selected asset %s could not be located inside the asset library") % asset.name,
             )
             return {"CANCELLED"}
         if asset.id_type != 'ACTION':
             self.report(  # type: ignore
                 {"ERROR"},
-                f"Selected asset {asset.name} is not an Action",
+                tip_("Selected asset %s is not an Action") % asset.name,
             )
             return {"CANCELLED"}
 
@@ -370,8 +371,11 @@ class POSELIB_OT_pose_asset_select_bones(PoseAssetUser, Operator):
     def use_pose(self, context: Context, pose_asset: Action) -> Set[str]:
         arm_object: Object = context.object
         pose_usage.select_bones(arm_object, pose_asset, select=self.select, flipped=self.flipped)
-        verb = "Selected" if self.select else "Deselected"
-        self.report({"INFO"}, f"{verb} bones from {pose_asset.name}")
+        if self.select:
+            msg = tip_("Selected bones from %s") % pose_asset.name
+        else:
+            msg = tip_("Deselected bones from %s") % pose_asset.name
+        self.report({"INFO"}, msg)
         return {"FINISHED"}
 
     @classmethod
@@ -446,7 +450,7 @@ class POSELIB_OT_convert_old_poselib(Operator):
             cls.poll_message_set("Active object has no Action")
             return False
         if not action.pose_markers:
-            cls.poll_message_set("Action %r is not a legacy pose library" % action.name)
+            cls.poll_message_set(tip_("Action %r is not a legacy pose library") % action.name)
             return False
         return True
 
@@ -460,7 +464,7 @@ class POSELIB_OT_convert_old_poselib(Operator):
             self.report({'ERROR'}, "Unable to convert to pose assets")
             return {'CANCELLED'}
 
-        self.report({'INFO'}, "Converted %d poses to pose assets" % len(new_actions))
+        self.report({'INFO'}, tip_("Converted %d poses to pose assets") % len(new_actions))
         return {'FINISHED'}
 
 
@@ -480,7 +484,7 @@ class POSELIB_OT_convert_old_object_poselib(Operator):
             cls.poll_message_set("Active object has no pose library Action")
             return False
         if not action.pose_markers:
-            cls.poll_message_set("Action %r is not a legacy pose library" % action.name)
+            cls.poll_message_set(tip_("Action %r is not a legacy pose library") % action.name)
             return False
         return True
 
@@ -494,7 +498,7 @@ class POSELIB_OT_convert_old_object_poselib(Operator):
             self.report({'ERROR'}, "Unable to convert to pose assets")
             return {'CANCELLED'}
 
-        self.report({'INFO'}, "Converted %d poses to pose assets" % len(new_actions))
+        self.report({'INFO'}, tip_("Converted %d poses to pose assets") % len(new_actions))
         return {'FINISHED'}
 
 

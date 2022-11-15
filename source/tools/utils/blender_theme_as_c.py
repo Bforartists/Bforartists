@@ -22,6 +22,14 @@ bfa - first navigate to the utils folder. Create a new userpref.blend and replac
 
 py -3 blender_theme_as_c.py userpref.blend
 
+or if you just have python 3 installed
+
+python blender_theme_as_c.py userpref.blend
+
+And at Linux 
+
+python3 blender_theme_as_c.py userpref.blend
+
 You can also define the full path to the updated userpref.blend as mentioned above.
 
 """

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1560,10 +1560,6 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
-
-
-msgid "Simulations"
-msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -7021,6 +7017,10 @@ msgstr "Fonts"
 
 msgid "Particles Settings"
 msgstr "Nastavení Částic"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "Node Trees"
@@ -45697,8 +45697,8 @@ msgid "File '%s' cannot be opened"
 msgstr "Soubor '%s' nelze otevřít"
 
 
-msgid "A: "
-msgstr "A: "
+msgid "Value:"
+msgstr "Hodnota:"
 
 
 msgid "(Gamma Corrected)"
@@ -46251,10 +46251,6 @@ msgstr "Koule"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "IcoKoule"
-
-
-msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
-msgstr "%s: Potvrdit, %s: Zrušit, %s: Režim (%s), %s: Šířka (%s), %s: Segmenty (%d), %s: Profily (%.3f), %s: Clamp Overlap (%s), %s: Ovlivnit (%s), %s: Vnější Miter (%s), %s: Vnitřní Miter (%s), %s: Harden Normals (%s), %s: Označit Šev (%s), %s: Označit Ostré (%s), %s: Typ Profilu (%s), %s: Průsečík (%s)"
 
 
 msgid "Not a valid selection for extrude"
@@ -47090,10 +47086,6 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Driver Value:"
-
-
-msgid "Value:"
-msgstr "Hodnota:"
 
 
 msgid "Update Dependencies"

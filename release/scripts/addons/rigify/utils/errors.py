@@ -1,9 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#=======================================================================
-# Error handling
-#=======================================================================
-
 
 class MetarigError(Exception):
     """ Exception raised for errors.
@@ -16,7 +12,9 @@ class MetarigError(Exception):
 
 
 class RaiseErrorMixin(object):
-    def raise_error(self, message, *args, **kwargs):
+    base_bone: str
+
+    def raise_error(self, message: str, *args, **kwargs):
         from .naming import strip_org
 
         message = message.format(*args, **kwargs)
