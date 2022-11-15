@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1623,10 +1623,6 @@ msgstr "Kunci Bentuk"
 
 msgid "Shape Key data-blocks"
 msgstr "Kunci Bentuk data-blok"
-
-
-msgid "Simulations"
-msgstr "Simulasi"
 
 
 msgid "Sounds"
@@ -7432,6 +7428,10 @@ msgstr "Tampilkan/sembunyikan Awan Titik data-blok"
 
 msgid "Show Scene data-blocks"
 msgstr "Tampilkan Adegan data-blok"
+
+
+msgid "Simulations"
+msgstr "Simulasi"
 
 
 msgid "Show Simulation data-blocks"
@@ -25711,6 +25711,10 @@ msgid "Online Manual"
 msgstr "Material"
 
 
+msgid "Value:"
+msgstr "Nilai:"
+
+
 msgid "(Gamma Corrected)"
 msgstr "lokasi"
 
@@ -26447,10 +26451,6 @@ msgstr "Nama dokumen"
 
 msgid "Cursor X"
 msgstr "Kursor X"
-
-
-msgid "Value:"
-msgstr "Nilai:"
 
 
 msgid "Active F-Curve is not editable"

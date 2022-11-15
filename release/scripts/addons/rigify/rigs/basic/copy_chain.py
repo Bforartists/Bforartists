@@ -11,6 +11,10 @@ class Rig(SimpleChainRig):
         and constrain it.
         This is a control and deformation rig.
     """
+
+    make_controls: bool
+    make_deforms: bool
+
     def initialize(self):
         super().initialize()
 
@@ -72,15 +76,17 @@ class Rig(SimpleChainRig):
     # Parameter UI
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         """ Add the parameters of this rig type to the
             RigifyParameters PropertyGroup
         """
-        params.make_controls = bpy.props.BoolProperty(name="Controls", default=True, description="Create control bones for the copy")
-        params.make_deforms = bpy.props.BoolProperty(name="Deform", default=True, description="Create deform bones for the copy")
+        params.make_controls = bpy.props.BoolProperty(
+            name="Controls", default=True, description="Create control bones for the copy")
+        params.make_deforms = bpy.props.BoolProperty(
+            name="Deform", default=True, description="Create deform bones for the copy")
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         """ Create the ui for the rig parameters.
         """
         r = layout.row()

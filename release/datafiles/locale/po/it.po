@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -45610,10 +45610,6 @@ msgid "Fisheye Equisolid"
 msgstr "Fisheye Equisolido"
 
 
-msgid "Uses the mirror ball mapping"
-msgstr "Usa la mappatura sfera a specchio"
-
-
 msgid "CPU"
 msgstr "CPU"
 
@@ -51759,10 +51755,6 @@ msgid "Background Color"
 msgstr "Colore Sfondo"
 
 
-msgid "Show texture"
-msgstr "Mostra texture"
-
-
 msgid "Cycles Settings"
 msgstr "Impostazioni Cycles"
 
@@ -57199,40 +57191,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A: "
-
-
-msgid "Hex: "
-msgstr "Hex: "
+msgid "Value:"
+msgstr "Valore:"
 
 
 msgid "(Gamma Corrected)"
@@ -58827,10 +58787,6 @@ msgstr "Espressione:"
 
 msgid "Add Input Variable"
 msgstr "Aggiungi Variabile Ingresso"
-
-
-msgid "Value:"
-msgstr "Valore:"
 
 
 msgid "Update Dependencies"

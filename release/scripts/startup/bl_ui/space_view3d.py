@@ -293,6 +293,13 @@ class VIEW3D_HT_header(Header):
                         sub.separator(factor=0.4)
                         sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
+            if object_mode == 'SCULPT_GPENCIL':
+                layout.popover(
+                    panel="VIEW3D_PT_gpencil_sculpt_automasking",
+                    text="",
+                    icon="MOD_MASK"
+                )
+
         elif object_mode == 'SCULPT':
             layout.popover(
                 panel="VIEW3D_PT_sculpt_automasking",
@@ -303,7 +310,7 @@ class VIEW3D_HT_header(Header):
         else:
             # Transform settings depending on tool header visibility
             VIEW3D_HT_header.draw_xform_template(layout, context)
-        
+
         layout.separator_spacer()
 
         # Mode & Transform Settings
@@ -456,7 +463,7 @@ class VIEW3D_HT_tool_header(Header):
                 brush = context.tool_settings.gpencil_sculpt_paint.brush
                 if brush:
                     tool = brush.gpencil_sculpt_tool
-                    if tool != 'CLONE':
+                    if tool in {'SMOOTH', 'RANDOMIZE'}:
                         layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
         elif tool_mode == 'WEIGHT_GPENCIL':
@@ -3701,20 +3708,26 @@ class VIEW3D_MT_paint_weight_lock(Menu):
 
         op = layout.operator("object.vertex_group_lock", text="Lock All", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'ALL'
-        op = layout.operator("object.vertex_group_lock", text="Unlock All", icon='UNLOCKED')
-        op.action, op.mask = 'UNLOCK', 'ALL'
         op = layout.operator("object.vertex_group_lock", text="Lock Selected", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'SELECTED'
-        op = layout.operator("object.vertex_group_lock", text="Unlock Selected", icon='UNLOCKED')
-        op.action, op.mask = 'UNLOCK', 'SELECTED'
         op = layout.operator("object.vertex_group_lock", text="Lock Unselected", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'UNSELECTED'
-        op = layout.operator("object.vertex_group_lock", text="Unlock Unselected", icon='UNLOCKED')
-        op.action, op.mask = 'UNLOCK', 'UNSELECTED'
         op = layout.operator("object.vertex_group_lock", text="Lock Only Selected", icon='RESTRICT_SELECT_OFF')
         op.action, op.mask = 'LOCK', 'INVERT_UNSELECTED'
+
+        layout.separator()
+
+        op = layout.operator("object.vertex_group_lock", text="Unlock All", icon='UNLOCKED')
+        op.action, op.mask = 'UNLOCK', 'ALL'
+        op = layout.operator("object.vertex_group_lock", text="Unlock Selected", icon='UNLOCKED')
+        op.action, op.mask = 'UNLOCK', 'SELECTED'
+        op = layout.operator("object.vertex_group_lock", text="Unlock Unselected", icon='UNLOCKED')
+        op.action, op.mask = 'UNLOCK', 'UNSELECTED'
         op = layout.operator("object.vertex_group_lock", text="Lock Only Unselected", icon='RESTRICT_SELECT_ON')
         op.action, op.mask = 'UNLOCK', 'INVERT_UNSELECTED'
+
+        layout.separator()
+
         op = layout.operator("object.vertex_group_lock", text="Invert Locks", icon='INVERSE')
         op.action, op.mask = 'INVERT', 'ALL'
 
@@ -6449,6 +6462,22 @@ class VIEW3D_MT_sculpt_automasking_pie(Menu):
         pie.prop(sculpt, "use_automasking_view_normal", text="View Normal")
 
 
+class VIEW3D_MT_sculpt_gpencil_automasking_pie(Menu):
+    bl_label = "Automasking"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        tool_settings = context.tool_settings
+
+        pie.prop(tool_settings.gpencil_sculpt, "use_automasking_stroke", text="Stroke")
+        pie.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_stroke", text="Layer")
+        pie.prop(tool_settings.gpencil_sculpt, "use_automasking_material_stroke", text="Material")
+        pie.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_active", text="Active Layer")
+        pie.prop(tool_settings.gpencil_sculpt, "use_automasking_material_active", text="Active Material")
+
+
 class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
     bl_label = "Face Sets Edit"
 
@@ -8971,6 +9000,27 @@ def draw_gpencil_material_active(context, layout):
             row.prop(ma, "name", text="")
 
 
+class VIEW3D_PT_gpencil_sculpt_automasking(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Auto-masking"
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.scene.tool_settings
+        layout.label(text="Auto-masking")
+
+        col = layout.column(align=True)
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_stroke", text="Stroke")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_stroke", text="Layer")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_stroke", text="Material")
+        col.separator()
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_layer_active", text="Active Layer")
+        col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_active", text="Active Material")
+
+
 class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
@@ -9503,6 +9553,7 @@ classes = (
     VIEW3D_MT_proportional_editing_falloff_pie,
     VIEW3D_MT_sculpt_mask_edit_pie,
     VIEW3D_MT_sculpt_automasking_pie,
+    VIEW3D_MT_sculpt_gpencil_automasking_pie,
     VIEW3D_MT_wpaint_vgroup_lock_pie,
     VIEW3D_MT_sculpt_face_sets_edit_pie,
     VIEW3D_MT_sculpt_curves,
@@ -9518,6 +9569,7 @@ classes = (
     VIEW3D_PT_annotation_onion,
     VIEW3D_PT_gpencil_multi_frame,
     VIEW3D_PT_gpencil_curve_edit,
+    VIEW3D_PT_gpencil_sculpt_automasking,
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_gpencil_edit_context_menu,
     VIEW3D_MT_gpencil_sculpt,

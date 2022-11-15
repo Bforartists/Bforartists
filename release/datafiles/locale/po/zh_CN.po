@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -2073,14 +2073,6 @@ msgid "Shape Key data-blocks"
 msgstr "形态键数据块"
 
 
-msgid "Simulations"
-msgstr "模拟"
-
-
-msgid "Simulation data-blocks"
-msgstr "模拟数据块"
-
-
 msgid "Sounds"
 msgstr "声音"
 
@@ -2391,14 +2383,6 @@ msgstr "主屏幕"
 
 msgid "Collection of screens"
 msgstr "屏幕集合"
-
-
-msgid "Main Simulations"
-msgstr "主模拟"
-
-
-msgid "Collection of simulations"
-msgstr "模拟集合"
 
 
 msgid "Main Sounds"
@@ -4248,24 +4232,12 @@ msgid "Auto-Masking Layer"
 msgstr "自动遮罩层"
 
 
-msgid "Mask strokes using active layer"
-msgstr "使用活动层遮罩笔画"
-
-
 msgid "Auto-Masking Material"
 msgstr "自动遮罩材质"
 
 
-msgid "Mask strokes using active material"
-msgstr "使用活动材质的遮罩笔画"
-
-
 msgid "Auto-Masking Strokes"
 msgstr "自动遮罩笔画"
-
-
-msgid "Mask strokes below brush cursor"
-msgstr "笔刷光标下方的遮罩笔画"
 
 
 msgid "Strokes Collision"
@@ -11182,10 +11154,6 @@ msgid "Theora"
 msgstr "Theora"
 
 
-msgid "WEBM / VP9"
-msgstr "WEBM / VP9"
-
-
 msgid "Output Quality"
 msgstr "输出质量"
 
@@ -12469,6 +12437,10 @@ msgstr "显示/隐藏点云数据块"
 
 msgid "Show Scene data-blocks"
 msgstr "显示场景数据块"
+
+
+msgid "Simulations"
+msgstr "模拟"
 
 
 msgid "Show Simulation data-blocks"
@@ -27622,14 +27594,6 @@ msgstr "序列编辑器"
 
 msgid "Top-Left 3D Editor"
 msgstr "左上角的 3D 编辑器"
-
-
-msgid "Simulation data-block"
-msgstr "模拟数据块"
-
-
-msgid "Node tree defining the simulation"
-msgstr "定义模拟的节点树"
 
 
 msgid "Sound data-block referencing an external or packed sound file"
@@ -52739,10 +52703,6 @@ msgid "Merge Images"
 msgstr "合并图像"
 
 
-msgid "Combine OpenEXR multilayer images rendered with different sample ranges into one image with reduced noise"
-msgstr "将不同采样范围渲染的OpenEXR多层图像合并到一个低噪点的图像中"
-
-
 msgid "File path for image to merge"
 msgstr "用于合并的图像文件路径"
 
@@ -64472,16 +64432,8 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
-msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
-
-
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
-
-
-msgid "Point Cloud from Mesh objects"
-msgstr "网格 -> 点云"
 
 
 msgid "Curves from evaluated curve data"
@@ -87038,10 +86990,6 @@ msgid "Distortion to use for the calculation"
 msgstr "用于计算的畸变方式"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "使用球面摄像机渲染场景, 即经纬度全景"
-
-
 msgid "Fisheye Equidistant"
 msgstr "鱼眼等距"
 
@@ -87056,10 +87004,6 @@ msgstr "等立体角型鱼眼"
 
 msgid "Similar to most fisheye modern lens, takes sensor dimensions into consideration"
 msgstr "与现代多数的鱼眼镜头相仿, 将触发器的规格考虑在内"
-
-
-msgid "Uses the mirror ball mapping"
-msgstr "使用镜像球贴图"
 
 
 msgid "Fisheye Lens Polynomial"
@@ -100290,10 +100234,6 @@ msgid "Show active color attribute"
 msgstr "显示活动颜色属性"
 
 
-msgid "Show texture"
-msgstr "显示纹理"
-
-
 msgid "Curvature Ridge"
 msgstr "脊线曲率"
 
@@ -104141,10 +104081,6 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "找不到Cycles的兼容 GPU"
 
 
-msgid "(TM)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
-msgstr "(TM)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
-
-
 msgid "Requires NVIDIA GPU with compute capability 3.0"
 msgstr "要求具有计算能力3.0 的Nvidia GPU"
 
@@ -104165,12 +104101,12 @@ msgid "and AMD Radeon Pro 21.Q4 driver or newer"
 msgstr "以及AMD Radeon Pro 21.Q4驱动器或更新"
 
 
-msgid "Requires Intel GPU with Xe-HPG architecture"
-msgstr "需要Xe-HPG 架构的英特尔 GPU"
-
-
 msgid "and AMD driver version 22.10 or newer"
 msgstr "以及AMD驱动程序22.10版本或更新"
+
+
+msgid "Requires Intel GPU with Xe-HPG architecture"
+msgstr "需要Xe-HPG 架构的英特尔 GPU"
 
 
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
@@ -104668,10 +104604,6 @@ msgid "Pasted %d assets"
 msgstr "已粘贴 %d 资产"
 
 
-msgid " bones from "
-msgstr " 骨骼来自 "
-
-
 msgid "Converted %d poses to pose assets"
 msgstr "已转换 %d 姿态为姿态资产"
 
@@ -104690,14 +104622,6 @@ msgstr "意外的资产非零用户计数，请将此作为bug报错"
 
 msgid "Did not find any assets on clipboard"
 msgstr "在剪贴板上未找到任何资产"
-
-
-msgid "Selected asset  could not be located inside the asset library"
-msgstr "选定的资产无法在资产库内定位"
-
-
-msgid "Selected asset  is not an Action"
-msgstr "选定的资产不是动作"
 
 
 msgid "Unable to convert to pose assets"
@@ -115131,40 +115055,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A: "
-
-
-msgid "Hex: "
-msgstr "Hex: "
+msgid "Value:"
+msgstr "值:"
 
 
 msgid "(Gamma Corrected)"
@@ -115930,10 +115822,6 @@ msgstr "斜接形状"
 
 msgid "Intersection Type"
 msgstr "相交类型"
-
-
-msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
-msgstr "%s: 确认, %s: 取消, %s: 模式 (%s), %s: 宽度 (%s), %s: 段数 (%d), %s: 轮廓 (%.3f), %s: 钳制重叠 (%s), %s: 影响 (%s), %s: 外斜接 (%s), %s: 内斜接 (%s), %s: 硬化法向 (%s), %s: 标记缝合边 (%s), %s: 标记锐边 (%s) %s: 轮廓类型 (%s), %s: 相交 (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -118519,10 +118407,6 @@ msgid "Add Input Variable"
 msgstr "添加输入变量"
 
 
-msgid "Value:"
-msgstr "值:"
-
-
 msgid "Update Dependencies"
 msgstr "更新依赖"
 
@@ -119120,10 +119004,6 @@ msgid "Could not add node object"
 msgstr "无法添加节点物体"
 
 
-msgid "Could not find node object socket"
-msgstr "无法找到节点物体接口"
-
-
 msgid "Could not add node collection"
 msgstr "无法添加节点集合"
 
@@ -119154,10 +119034,6 @@ msgstr "无法添加节点组 '%s' 至 '%s'"
 
 msgid "Node tree type %s undefined"
 msgstr "尚未定义节点树类型 %s"
-
-
-msgid "This node editor displays a custom (Python defined) node tree. Dropping node groups isn't supported for this"
-msgstr "此节点编辑器显示自定义(Python 定义的)节点树。不支持删除节点组"
 
 
 msgid " (Integer)"

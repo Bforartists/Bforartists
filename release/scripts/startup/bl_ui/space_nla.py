@@ -430,6 +430,11 @@ class NLA_MT_context_menu(Menu):
 
         layout.separator()
 
+        layout.operator("nla.meta_add")
+        layout.operator("nla.meta_remove")
+
+        layout.separator()
+
         layout.operator("nla.swap", icon="SWAP")
 
         layout.separator()

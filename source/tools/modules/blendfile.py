@@ -398,12 +398,13 @@ class BlendFileBlock:
 
         return (self.file.handle.tell(), field.dna_name.array_size)
 
-    def get(self, path,
+    def get(
+            self, path,
             default=...,
             sdna_index_refine=None,
             use_nil=True, use_str=True,
             base_index=0,
-            ):
+    ):
 
         ofs = self.file_offset
         if base_index != 0:
@@ -452,12 +453,13 @@ class BlendFileBlock:
                                 dna_size,
                                 array_size)
 
-    def get_recursive_iter(self, path, path_root=b"",
-                           default=...,
-                           sdna_index_refine=None,
-                           use_nil=True, use_str=True,
-                           base_index=0,
-                           ):
+    def get_recursive_iter(
+            self, path, path_root=b"",
+            default=...,
+            sdna_index_refine=None,
+            use_nil=True, use_str=True,
+            base_index=0,
+    ):
         if path_root:
             path_full = (
                 (path_root if type(path_root) is tuple else (path_root, )) +
@@ -509,9 +511,10 @@ class BlendFileBlock:
                 hsh = zlib.adler32(str(v).encode(), hsh)
         return hsh
 
-    def set(self, path, value,
+    def set(
+            self, path, value,
             sdna_index_refine=None,
-            ):
+    ):
 
         if sdna_index_refine is None:
             sdna_index_refine = self.sdna_index
@@ -790,10 +793,11 @@ class DNAStruct:
             else:
                 return field.dna_type.field_from_path(header, handle, name_tail)
 
-    def field_get(self, header, handle, path,
-                  default=...,
-                  use_nil=True, use_str=True,
-                  ):
+    def field_get(
+            self, header, handle, path,
+            default=...,
+            use_nil=True, use_str=True,
+    ):
         field = self.field_from_path(header, handle, path)
         if field is None:
             if default is not ...:
@@ -811,7 +815,10 @@ class DNAStruct:
                                     dna_name.is_pointer,
                                     dna_type.dna_type_id,
                                     dna_size,
-                                    dna_name.array_size)
+                                    dna_name.array_size,
+                                    use_str=use_str,
+                                    use_str_nil=use_nil,
+                                    )
         except NotImplementedError as e:
             raise NotImplementedError("%r exists, but can't resolve field %r" %
                                       (path, dna_name.name_only), dna_name, dna_type)
@@ -850,10 +857,12 @@ class DNA_IO:
         raise RuntimeError("%s should not be instantiated" % cls)
 
     @classmethod
-    def read_data(cls,
-                  handle, header,
-                  is_pointer, dna_type_id, dna_size, array_size,
-                  use_str=True, use_str_nil=True):
+    def read_data(
+            cls,
+            handle, header,
+            is_pointer, dna_type_id, dna_size, array_size,
+            use_str=True, use_str_nil=True,
+    ):
         if is_pointer:
             return cls.read_pointer(handle, header)
         elif dna_type_id == b'int':

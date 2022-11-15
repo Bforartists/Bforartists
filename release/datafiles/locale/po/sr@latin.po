@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -26899,6 +26899,10 @@ msgid "Online Python Reference"
 msgstr "Python uputstvo na internetu"
 
 
+msgid "Value:"
+msgstr "Vrednost"
+
+
 msgid "(Gamma Corrected)"
 msgstr "Ispravka"
 
@@ -27627,10 +27631,6 @@ msgstr "Svojstvo"
 
 msgid "Driver Value:"
 msgstr "Vrednost vozača:"
-
-
-msgid "Value:"
-msgstr "Vrednost"
 
 
 msgid "Update Dependencies"

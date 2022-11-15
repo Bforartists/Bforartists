@@ -2,6 +2,7 @@
 
 import bpy
 
+from typing import Optional, NamedTuple
 from itertools import count
 
 from ...utils.layers import ControlLayersOption
@@ -24,6 +25,9 @@ class BaseSpineRig(TweakChainRig):
     bbone_segments = 8
     min_chain_length = 3
 
+    use_torso_pivot: bool  # Generate the custom pivot control
+    length: float          # Total length of the chain bones
+
     def initialize(self):
         super().initialize()
 
@@ -32,20 +36,20 @@ class BaseSpineRig(TweakChainRig):
 
     ####################################################
     # BONES
-    #
-    # ctrl:
-    #   master
-    #     Main control.
-    #   master_pivot
-    #     Custom pivot under the master control.
-    # mch:
-    #   master_pivot
-    #     Final output of the custom pivot.
-    #
-    ####################################################
+
+    class CtrlBones(TweakChainRig.CtrlBones):
+        master: str                    # Master control
+        master_pivot: str              # Custom pivot under the master control (conditional)
+
+    class MchBones(TweakChainRig.MchBones):
+        master_pivot: str              # Final output of the custom pivot (conditional)
+
+    bones: TweakChainRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
 
     ####################################################
     # Master control bone
+
+    component_torso_pivot: Optional[CustomPivotControl]
 
     @stage.generate_bones
     def make_master_control(self):
@@ -54,16 +58,16 @@ class BaseSpineRig(TweakChainRig):
         self.component_torso_pivot = self.build_master_pivot(name)
         self.build_parent_switch(name)
 
-    def get_master_control_pos(self, orgs):
+    def get_master_control_pos(self, orgs: list[str]):
         return self.get_bone(orgs[0]).head
 
-    def make_master_control_bone(self, orgs):
+    def make_master_control_bone(self, orgs: list[str]):
         name = self.copy_bone(orgs[0], 'torso')
         put_bone(self.obj, name, self.get_master_control_pos(orgs))
         align_bone_to_axis(self.obj, name, 'y', length=self.length * 0.6)
         return name
 
-    def build_master_pivot(self, master_name, **args):
+    def build_master_pivot(self, master_name: str, **args):
         if self.use_torso_pivot:
             return CustomPivotControl(
                 self, 'master_pivot', master_name, parent=master_name, **args
@@ -75,7 +79,7 @@ class BaseSpineRig(TweakChainRig):
         else:
             return self.bones.ctrl.master
 
-    def build_parent_switch(self, master_name):
+    def build_parent_switch(self, master_name: str):
         pbuilder = SwitchParentBuilder(self.generator)
 
         org_parent = self.get_bone_parent(self.bones.org[0])
@@ -92,7 +96,7 @@ class BaseSpineRig(TweakChainRig):
 
         self.register_parent_bones(pbuilder)
 
-    def register_parent_bones(self, pbuilder):
+    def register_parent_bones(self, pbuilder: SwitchParentBuilder):
         pbuilder.register_parent(self, self.bones.org[0], name='Hips', exclude_self=True, tags={'hips'})
         pbuilder.register_parent(self, self.bones.org[-1], name='Chest', exclude_self=True, tags={'chest'})
 
@@ -121,7 +125,7 @@ class BaseSpineRig(TweakChainRig):
             self.set_bone_parent(org, tweak)
 
     def rig_org_bone(self, i, org, tweak, next_tweak):
-        # For spine rigs, these constraints go on the deform bones. See T74483#902192.
+        # For spine rigs, these constraints go on the deformation bones. See T74483#902192.
         pass
 
     ####################################################
@@ -142,31 +146,33 @@ class BaseSpineRig(TweakChainRig):
         for args in zip(count(0), self.bones.deform, tweaks, tweaks[1:]):
             self.rig_deform_bone(*args)
 
-    def rig_deform_bone(self, i, deform, tweak, next_tweak):
+    # noinspection PyMethodOverriding
+    def rig_deform_bone(self, i: int, deform: str, tweak: str, next_tweak: Optional[str]):
         self.make_constraint(deform, 'COPY_TRANSFORMS', tweak)
         if next_tweak:
             self.make_constraint(deform, 'STRETCH_TO', next_tweak, keep_axis='SWING_Y')
 
     @stage.configure_bones
     def configure_bbone_chain(self):
+        # noinspection SpellCheckingInspection
         self.get_bone(self.bones.deform[0]).bone.bbone_easein = 0.0
 
     ####################################################
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.make_custom_pivot = bpy.props.BoolProperty(
-            name        = "Custom Pivot Control",
-            default     = False,
-            description = "Create a rotation pivot control that can be repositioned arbitrarily"
+            name="Custom Pivot Control",
+            default=False,
+            description="Create a rotation pivot control that can be repositioned arbitrarily"
         )
 
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.TWEAK.add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         layout.prop(params, 'make_custom_pivot')
 
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
@@ -174,6 +180,19 @@ class BaseSpineRig(TweakChainRig):
 
 class BaseHeadTailRig(ConnectingChainRig):
     """ Base for head and tail rigs. """
+
+    class RotationBone(NamedTuple):
+        org: str
+        name: str
+        bone: str
+        def_val: float     # Default value of the follow slider
+        copy_scale: bool
+
+    rotation_bones: list[RotationBone]
+
+    follow_bone: str
+    default_prop_bone: str
+    prop_bone: str
 
     def initialize(self):
         super().initialize()
@@ -183,7 +202,7 @@ class BaseHeadTailRig(ConnectingChainRig):
     ####################################################
     # Utilities
 
-    def get_parent_master(self, default_bone):
+    def get_parent_master(self, default_bone: str) -> str:
         """ Return the parent's master control bone if connecting and found. """
 
         if self.use_connect_chain and 'master' in self.rigify_parent.bones.ctrl:
@@ -191,7 +210,7 @@ class BaseHeadTailRig(ConnectingChainRig):
         else:
             return default_bone
 
-    def get_parent_master_panel(self, default_bone):
+    def get_parent_master_panel(self, default_bone: str):
         """ Return the parent's master control bone if connecting and found, and script panel. """
 
         controls = self.bones.ctrl.flatten()
@@ -208,37 +227,38 @@ class BaseHeadTailRig(ConnectingChainRig):
     ####################################################
     # Rotation follow
 
-    def make_mch_follow_bone(self, org, name, defval, *, copy_scale=False):
+    def make_mch_follow_bone(self, org: str, name: str, def_val: float, *, copy_scale=False):
         bone = self.copy_bone(org, make_derived_name('ROT-'+name, 'mch'), parent=True)
-        self.rotation_bones.append((org, name, bone, defval, copy_scale))
+        self.rotation_bones.append(self.RotationBone(org, name, bone, def_val, copy_scale))
         return bone
 
     @stage.parent_bones
     def align_mch_follow_bones(self):
         self.follow_bone = self.get_parent_master('root')
 
-        for org, name, bone, defval, copy_scale in self.rotation_bones:
+        for org, name, bone, def_val, copy_scale in self.rotation_bones:
             align_bone_orientation(self.obj, bone, self.follow_bone)
 
     @stage.configure_bones
     def configure_mch_follow_bones(self):
         self.prop_bone, panel = self.get_parent_master_panel(self.default_prop_bone)
 
-        for org, name, bone, defval, copy_scale in self.rotation_bones:
-            textname = name.replace('_',' ').title() + ' Follow'
+        for org, name, bone, def_val, copy_scale in self.rotation_bones:
+            text_name = name.replace('_', ' ').title() + ' Follow'
 
-            self.make_property(self.prop_bone, name+'_follow', default=float(defval))
-            panel.custom_prop(self.prop_bone, name+'_follow', text=textname, slider=True)
+            self.make_property(self.prop_bone, name+'_follow', default=float(def_val))
+            panel.custom_prop(self.prop_bone, name+'_follow', text=text_name, slider=True)
 
     @stage.rig_bones
     def rig_mch_follow_bones(self):
-        for org, name, bone, defval, copy_scale in self.rotation_bones:
+        for org, name, bone, def_val, copy_scale in self.rotation_bones:
             self.rig_mch_rotation_bone(bone, name+'_follow', copy_scale)
 
-    def rig_mch_rotation_bone(self, mch, prop_name, copy_scale):
+    def rig_mch_rotation_bone(self, mch: str, prop_name: str, copy_scale: bool):
         con = self.make_constraint(mch, 'COPY_ROTATION', self.follow_bone)
 
-        self.make_driver(con, 'influence', variables=[(self.prop_bone, prop_name)], polynomial=[1,-1])
+        self.make_driver(con, 'influence',
+                         variables=[(self.prop_bone, prop_name)], polynomial=[1, -1])
 
         if copy_scale:
             self.make_constraint(mch, 'COPY_SCALE', self.follow_bone)
@@ -256,14 +276,14 @@ class BaseHeadTailRig(ConnectingChainRig):
     # Settings
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         super().add_parameters(params)
 
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.TWEAK.add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         super().parameters_ui(layout, params)
 
         ControlLayersOption.TWEAK.parameters_ui(layout, params)

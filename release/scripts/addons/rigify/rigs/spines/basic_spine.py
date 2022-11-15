@@ -8,7 +8,8 @@ from mathutils import Matrix
 
 from ...utils.layers import ControlLayersOption
 from ...utils.naming import strip_org, make_mechanism_name, make_derived_name
-from ...utils.bones import BoneDict, put_bone, align_bone_to_axis, align_bone_orientation, set_bone_widget_transform
+from ...utils.bones import (put_bone, align_bone_to_axis, align_bone_orientation,
+                            set_bone_widget_transform, TypedBoneDict)
 from ...utils.widgets import adjust_widget_transform_mesh
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.misc import map_list
@@ -22,6 +23,9 @@ class Rig(BaseSpineRig):
     Spine rig with fixed pivot, hip/chest controls and tweaks.
     """
 
+    pivot_pos: int
+    use_fk: bool
+
     def initialize(self):
         super().initialize()
 
@@ -34,34 +38,28 @@ class Rig(BaseSpineRig):
 
     ####################################################
     # BONES
-    #
-    # org[]:
-    #   ORG bones
-    # ctrl:
-    #   master, hips, chest:
-    #     Main controls.
-    #   fk:
-    #     chest[], hips[]:
-    #       FK controls.
-    #   tweak[]:
-    #     Tweak control chain.
-    # mch:
-    #   pivot:
-    #     Pivot tweak parent.
-    #   chain:
-    #     chest[], hips[]:
-    #       Tweak parents, distributing master deform.
-    #   wgt_hips, wgt_chest:
-    #     Widget position bones.
-    # deform[]:
-    #   DEF bones
-    #
-    ####################################################
+
+    class SplitChainBones(TypedBoneDict):
+        chest: list[str]
+        hips: list[str]
+
+    class CtrlBones(BaseSpineRig.CtrlBones):
+        hips: str                      # Hip control
+        chest: str                     # Chest control
+        fk: 'Rig.SplitChainBones'      # FK controls
+
+    class MchBones(BaseSpineRig.MchBones):
+        pivot: str                     # Central pivot between sub-chains
+        chain: 'Rig.SplitChainBones'   # Tweak parents, distributing master deform.
+        wgt_hips: str                  # Hip widget position bone.
+        wgt_chest: str                 # Chest widget position bone.
+
+    bones: BaseSpineRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
 
     ####################################################
     # Master control bone
 
-    def get_master_control_pos(self, orgs):
+    def get_master_control_pos(self, orgs: list[str]):
         base_bone = self.get_bone(orgs[0])
         return (base_bone.head + base_bone.tail) / 2
 
@@ -76,12 +74,12 @@ class Rig(BaseSpineRig):
         self.bones.ctrl.hips = self.make_hips_control_bone(orgs[pivot-1], 'hips')
         self.bones.ctrl.chest = self.make_chest_control_bone(orgs[pivot], 'chest')
 
-    def make_hips_control_bone(self, org, name):
+    def make_hips_control_bone(self, org: str, name: str):
         name = self.copy_bone(org, name, parent=False)
         align_bone_to_axis(self.obj, name, 'y', length=self.length / 4, flip=True)
         return name
 
-    def make_chest_control_bone(self, org, name):
+    def make_chest_control_bone(self, org: str, name: str):
         name = self.copy_bone(org, name, parent=False)
         align_bone_to_axis(self.obj, name, 'y', length=self.length / 3)
         return name
@@ -100,7 +98,7 @@ class Rig(BaseSpineRig):
         self.make_end_control_widget(ctrl.hips, mch.wgt_hips)
         self.make_end_control_widget(ctrl.chest, mch.wgt_chest)
 
-    def make_end_control_widget(self, ctrl, wgt_mch):
+    def make_end_control_widget(self, ctrl: str, wgt_mch: str):
         shape_bone = self.get_bone(wgt_mch)
         is_horizontal = abs(shape_bone.z_axis.normalized().y) < 0.7
 
@@ -117,22 +115,27 @@ class Rig(BaseSpineRig):
         if is_horizontal:
             # Tilt the widget toward the ground for horizontal (animal) spines
             angle = math.copysign(28, shape_bone.x_axis.x)
-            rotmat = Matrix.Rotation(math.radians(angle), 4, 'X')
-            adjust_widget_transform_mesh(obj, rotmat, local=True)
+            rot_mat = Matrix.Rotation(math.radians(angle), 4, 'X')
+            adjust_widget_transform_mesh(obj, rot_mat, local=True)
 
     ####################################################
     # FK control bones
+
+    fk_result: 'Rig.SplitChainBones'  # ctrl.fk or mch.chain depending on use_fk
 
     @stage.generate_bones
     def make_control_chain(self):
         if self.use_fk:
             orgs = self.bones.org
-            self.bones.ctrl.fk = self.fk_result = BoneDict(
-                hips = map_list(self.make_control_bone, count(0), orgs[0:self.pivot_pos], repeat(True)),
-                chest = map_list(self.make_control_bone, count(self.pivot_pos), orgs[self.pivot_pos:], repeat(False)),
+            self.bones.ctrl.fk = self.fk_result = self.SplitChainBones(
+                hips=map_list(self.make_control_bone,
+                              count(0), orgs[0:self.pivot_pos], repeat(True)),
+                chest=map_list(self.make_control_bone,
+                               count(self.pivot_pos), orgs[self.pivot_pos:], repeat(False)),
             )
 
-    def make_control_bone(self, i, org, is_hip):
+    # noinspection PyMethodOverriding
+    def make_control_bone(self, i: int, org: str, is_hip: bool):
         name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_fk'), parent=False)
         if is_hip:
             put_bone(self.obj, name, self.get_bone(name).tail)
@@ -166,7 +169,7 @@ class Rig(BaseSpineRig):
             for ctrl in fk.chest:
                 self.make_control_widget(ctrl, False)
 
-    def make_control_widget(self, ctrl, is_hip):
+    def make_control_widget(self, ctrl: str, is_hip: bool):
         obj = create_circle_widget(self.obj, ctrl, radius=1.0, head_tail=0.5)
         if is_hip:
             adjust_widget_transform_mesh(obj, Matrix.Diagonal((1, -1, 1, 1)), local=True)
@@ -183,12 +186,12 @@ class Rig(BaseSpineRig):
         mch.wgt_hips = self.make_mch_widget_bone(orgs[0], 'WGT-hips')
         mch.wgt_chest = self.make_mch_widget_bone(orgs[-1], 'WGT-chest')
 
-    def make_mch_pivot_bone(self, org, name):
+    def make_mch_pivot_bone(self, org: str, name: str):
         name = self.copy_bone(org, make_mechanism_name(name), parent=False)
         align_bone_to_axis(self.obj, name, 'y', length=self.length * 0.6 / 4)
         return name
 
-    def make_mch_widget_bone(self, org, name):
+    def make_mch_widget_bone(self, org: str, name: str):
         return self.copy_bone(org, make_mechanism_name(name), parent=False)
 
     @stage.parent_bones
@@ -211,14 +214,14 @@ class Rig(BaseSpineRig):
     @stage.generate_bones
     def make_mch_chain(self):
         orgs = self.bones.org
-        self.bones.mch.chain = BoneDict(
-            hips = map_list(self.make_mch_bone, orgs[0:self.pivot_pos], repeat(True)),
-            chest = map_list(self.make_mch_bone, orgs[self.pivot_pos:], repeat(False)),
+        self.bones.mch.chain = self.SplitChainBones(
+            hips=map_list(self.make_mch_bone, orgs[0:self.pivot_pos], repeat(True)),
+            chest=map_list(self.make_mch_bone, orgs[self.pivot_pos:], repeat(False)),
         )
         if not self.use_fk:
             self.fk_result = self.bones.mch.chain
 
-    def make_mch_bone(self, org, is_hip):
+    def make_mch_bone(self, org: str, is_hip: bool):
         name = self.copy_bone(org, make_mechanism_name(strip_org(org)), parent=False)
         align_bone_to_axis(self.obj, name, 'y', length=self.length / 10, flip=is_hip)
         return name
@@ -242,8 +245,9 @@ class Rig(BaseSpineRig):
         for mch in chain.chest:
             self.rig_mch_bone(mch, ctrl.chest, len(chain.chest))
 
-    def rig_mch_bone(self, mch, control, count):
-        self.make_constraint(mch, 'COPY_TRANSFORMS', control, space='LOCAL', influence=1/count)
+    def rig_mch_bone(self, mch: str, control: str, chain_len: int):
+        self.make_constraint(mch, 'COPY_TRANSFORMS', control,
+                             space='LOCAL', influence=1 / chain_len)
 
     ####################################################
     # Tweak bones
@@ -260,7 +264,7 @@ class Rig(BaseSpineRig):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.pivot_pos = bpy.props.IntProperty(
             name='pivot_position',
             default=2,
@@ -278,7 +282,7 @@ class Rig(BaseSpineRig):
         ControlLayersOption.FK.add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         r = layout.row()
         r.prop(params, "pivot_pos")
 
@@ -328,7 +332,6 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['spine.002']]
     bones['spine.003'] = bone.name
 
-
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['spine']]
     pbone.rigify_type = 'spines.basic_spine'
@@ -339,7 +342,10 @@ def create_sample(obj):
     pbone.rotation_mode = 'QUATERNION'
 
     try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.tweak_layers = [
+            False, False, False, False, True, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     pbone = obj.pose.bones[bones['spine.001']]

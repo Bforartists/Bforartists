@@ -208,4 +208,4 @@ class STORYPENCIL_PT_SettingsNew(Panel):
         row = layout.row()
         if scene.storypencil_base_scene is None:
             row.alert = True
-        row.prop(scene, "storypencil_base_scene", text="Base Scene")
+        row.prop(scene, "storypencil_base_scene", text="Template Scene")

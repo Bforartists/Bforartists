@@ -26,7 +26,7 @@ from .widgets_basic import create_sphere_widget, create_limb_widget, create_bone
 from .widgets_special import create_compass_widget, create_root_widget
 from .widgets_special import create_neck_bend_widget, create_neck_tweak_widget
 
-from .rig import RIG_DIR, METARIG_DIR, TEMPLATE_DIR, outdated_types, upgradeMetarigTypes
+from .rig import RIG_DIR, METARIG_DIR, TEMPLATE_DIR, outdated_types, upgrade_metarig_types
 from .rig import write_metarig, get_resource
 from .rig import connected_children_names, has_connected_children
 
