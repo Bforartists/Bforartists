@@ -13696,7 +13696,7 @@ static int node_type_to_icon(int type)
       return ICON_GEOMETRY_INSTANCE;
 
     case GEO_NODE_IMAGE_INFO:
-      return ICON_DELETE;
+      return ICON_IMAGE_INFO;
 
     case GEO_NODE_IMAGE_TEXTURE:
       return ICON_IMAGE_DATA;
