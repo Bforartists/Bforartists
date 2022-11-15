@@ -6,34 +6,41 @@ import re
 import collections
 import enum
 
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..base_generate import BaseGenerator
+
+
 ORG_PREFIX = "ORG-"  # Prefix of original bones.
 MCH_PREFIX = "MCH-"  # Prefix of mechanism bones.
 DEF_PREFIX = "DEF-"  # Prefix of deformation bones.
 ROOT_NAME = "root"   # Name of the root bone.
 
-_PREFIX_TABLE = { 'org': "ORG", 'mch': "MCH", 'def': "DEF", 'ctrl': '' }
+_PREFIX_TABLE = {'org': "ORG", 'mch': "MCH", 'def': "DEF", 'ctrl': ''}
 
-#=======================================================================
+########################################################################
 # Name structure
-#=======================================================================
+########################################################################
 
 NameParts = collections.namedtuple('NameParts', ['prefix', 'base', 'side_z', 'side', 'number'])
 
 
-def split_name(name):
-    name_parts = re.match(r'^(?:(ORG|MCH|DEF)-)?(.*?)([._-][tTbB])?([._-][lLrR])?(?:\.(\d+))?$', name)
+def split_name(name: str):
+    name_parts = re.match(
+        r'^(?:(ORG|MCH|DEF)-)?(.*?)([._-][tTbB])?([._-][lLrR])?(?:\.(\d+))?$', name)
     return NameParts(*name_parts.groups())
 
 
-def is_control_bone(name):
+def is_control_bone(name: str):
     return not split_name(name).prefix
 
 
-def combine_name(parts, *, prefix=None, base=None, side_z=None, side=None, number=None):
+def combine_name(parts: NameParts, *, prefix=None, base=None, side_z=None, side=None, number=None):
     eff_prefix = prefix if prefix is not None else parts.prefix
     eff_number = number if number is not None else parts.number
     if isinstance(eff_number, int):
-        eff_number = '%03d' % (eff_number)
+        eff_number = '%03d' % eff_number
 
     return ''.join([
         eff_prefix+'-' if eff_prefix else '',
@@ -44,7 +51,7 @@ def combine_name(parts, *, prefix=None, base=None, side_z=None, side=None, numbe
     ])
 
 
-def insert_before_lr(name, text):
+def insert_before_lr(name: str, text: str) -> str:
     parts = split_name(name)
 
     if parts.side:
@@ -53,7 +60,7 @@ def insert_before_lr(name, text):
         return name + text
 
 
-def make_derived_name(name, subtype, suffix=None):
+def make_derived_name(name: str, subtype: str, suffix: Optional[str] = None):
     """ Replaces the name prefix, and optionally adds the suffix (before .LR if found).
     """
     assert(subtype in _PREFIX_TABLE)
@@ -64,9 +71,9 @@ def make_derived_name(name, subtype, suffix=None):
     return combine_name(parts, prefix=_PREFIX_TABLE[subtype], base=new_base)
 
 
-#=======================================================================
+########################################################################
 # Name mirroring
-#=======================================================================
+########################################################################
 
 class Side(enum.IntEnum):
     LEFT = -1
@@ -74,7 +81,7 @@ class Side(enum.IntEnum):
     RIGHT = 1
 
     @staticmethod
-    def from_parts(parts):
+    def from_parts(parts: NameParts):
         if parts.side:
             if parts.side[1].lower() == 'l':
                 return Side.LEFT
@@ -84,14 +91,14 @@ class Side(enum.IntEnum):
             return Side.MIDDLE
 
     @staticmethod
-    def to_string(parts, side):
+    def to_string(parts: NameParts, side: 'Side'):
         if side != Side.MIDDLE:
             side_char = 'L' if side == Side.LEFT else 'R'
             side_str = parts.side or parts.side_z
 
             if side_str:
-                sep, schar = side_str[0:2]
-                if schar.lower() == schar:
+                sep, side_char2 = side_str[0:2]
+                if side_char2.lower() == side_char2:
                     side_char = side_char.lower()
             else:
                 sep = '.'
@@ -101,7 +108,7 @@ class Side(enum.IntEnum):
             return ''
 
     @staticmethod
-    def to_name(parts, side):
+    def to_name(parts: NameParts, side: 'Side'):
         new_side = Side.to_string(parts, side)
         return combine_name(parts, side=new_side)
 
@@ -112,7 +119,7 @@ class SideZ(enum.IntEnum):
     BOTTOM = -2
 
     @staticmethod
-    def from_parts(parts):
+    def from_parts(parts: NameParts):
         if parts.side_z:
             if parts.side_z[1].lower() == 't':
                 return SideZ.TOP
@@ -122,14 +129,14 @@ class SideZ(enum.IntEnum):
             return SideZ.MIDDLE
 
     @staticmethod
-    def to_string(parts, side):
+    def to_string(parts: NameParts, side: 'SideZ'):
         if side != SideZ.MIDDLE:
             side_char = 'T' if side == SideZ.TOP else 'B'
             side_str = parts.side_z or parts.side
 
             if side_str:
-                sep, schar = side_str[0:2]
-                if schar.lower() == schar:
+                sep, side_char2 = side_str[0:2]
+                if side_char2.lower() == side_char2:
                     side_char = side_char.lower()
             else:
                 sep = '.'
@@ -139,7 +146,7 @@ class SideZ(enum.IntEnum):
             return ''
 
     @staticmethod
-    def to_name(parts, side):
+    def to_name(parts: NameParts, side: 'SideZ'):
         new_side = SideZ.to_string(parts, side)
         return combine_name(parts, side_z=new_side)
 
@@ -147,28 +154,30 @@ class SideZ(enum.IntEnum):
 NameSides = collections.namedtuple('NameSides', ['base', 'side', 'side_z'])
 
 
-def get_name_side(name):
+def get_name_side(name: str):
     return Side.from_parts(split_name(name))
 
 
-def get_name_side_z(name):
+def get_name_side_z(name: str):
     return SideZ.from_parts(split_name(name))
 
 
-def get_name_base_and_sides(name):
+def get_name_base_and_sides(name: str):
     parts = split_name(name)
     base = combine_name(parts, side='', side_z='')
     return NameSides(base, Side.from_parts(parts),  SideZ.from_parts(parts))
 
 
-def change_name_side(name, side=None, *, side_z=None):
+def change_name_side(name: str,
+                     side: Optional[Side] = None, *,
+                     side_z: Optional[SideZ] = None):
     parts = split_name(name)
     new_side = None if side is None else Side.to_string(parts, side)
     new_side_z = None if side_z is None else SideZ.to_string(parts, side_z)
     return combine_name(parts, side=new_side, side_z=new_side_z)
 
 
-def mirror_name(name):
+def mirror_name(name: str):
     parts = split_name(name)
     side = Side.from_parts(parts)
 
@@ -178,7 +187,7 @@ def mirror_name(name):
         return name
 
 
-def mirror_name_z(name):
+def mirror_name_z(name: str):
     parts = split_name(name)
     side = SideZ.from_parts(parts)
 
@@ -188,23 +197,23 @@ def mirror_name_z(name):
         return name
 
 
-#=======================================================================
+########################################################################
 # Name manipulation
-#=======================================================================
+########################################################################
 
-def get_name(bone):
+def get_name(bone) -> Optional[str]:
     return bone.name if bone else None
 
 
-def strip_trailing_number(name):
+def strip_trailing_number(name: str):
     return combine_name(split_name(name), number='')
 
 
-def strip_prefix(name):
+def strip_prefix(name: str):
     return combine_name(split_name(name), prefix='')
 
 
-def unique_name(collection, base_name):
+def unique_name(collection, base_name: str):
     parts = split_name(base_name)
     name = combine_name(parts, number='')
     count = 1
@@ -216,17 +225,19 @@ def unique_name(collection, base_name):
     return name
 
 
-def strip_org(name):
+def strip_org(name: str):
     """ Returns the name with ORG_PREFIX stripped from it.
     """
     if name.startswith(ORG_PREFIX):
         return name[len(ORG_PREFIX):]
     else:
         return name
+
+
 org_name = strip_org
 
 
-def strip_mch(name):
+def strip_mch(name: str):
     """ Returns the name with MCH_PREFIX stripped from it.
         """
     if name.startswith(MCH_PREFIX):
@@ -234,7 +245,8 @@ def strip_mch(name):
     else:
         return name
 
-def strip_def(name):
+
+def strip_def(name: str):
     """ Returns the name with DEF_PREFIX stripped from it.
         """
     if name.startswith(DEF_PREFIX):
@@ -242,7 +254,8 @@ def strip_def(name):
     else:
         return name
 
-def org(name):
+
+def org(name: str):
     """ Prepends the ORG_PREFIX to a name if it doesn't already have
         it, and returns it.
     """
@@ -250,10 +263,12 @@ def org(name):
         return name
     else:
         return ORG_PREFIX + name
+
+
 make_original_name = org
 
 
-def mch(name):
+def mch(name: str):
     """ Prepends the MCH_PREFIX to a name if it doesn't already have
         it, and returns it.
     """
@@ -261,10 +276,12 @@ def mch(name):
         return name
     else:
         return MCH_PREFIX + name
+
+
 make_mechanism_name = mch
 
 
-def deformer(name):
+def deformer(name: str):
     """ Prepends the DEF_PREFIX to a name if it doesn't already have
         it, and returns it.
     """
@@ -272,24 +289,29 @@ def deformer(name):
         return name
     else:
         return DEF_PREFIX + name
+
+
 make_deformer_name = deformer
 
 
 def random_id(length=8):
     """ Generates a random alphanumeric id string.
     """
-    tlength = int(length / 2)
-    rlength = int(length / 2) + int(length % 2)
+    t_length = int(length / 2)
+    r_length = int(length / 2) + int(length % 2)
 
-    chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f',
+             'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+             'x', 'y', 'z']
     text = ""
-    for i in range(0, rlength):
+    for i in range(0, r_length):
         text += random.choice(chars)
-    text += str(hex(int(time.time())))[2:][-tlength:].rjust(tlength, '0')[::-1]
+    text += str(hex(int(time.time())))[2:][-t_length:].rjust(t_length, '0')[::-1]
     return text
 
 
-def choose_derived_bone(generator, original, subtype, *, by_owner=True, recursive=True):
+def choose_derived_bone(generator: 'BaseGenerator', original: str, subtype: str, *,
+                        by_owner=True, recursive=True):
     bones = generator.obj.pose.bones
     names = generator.find_derived_bones(original, by_owner=by_owner, recursive=recursive)
 
@@ -298,7 +320,7 @@ def choose_derived_bone(generator, original, subtype, *, by_owner=True, recursiv
         return direct
 
     prefix = _PREFIX_TABLE[subtype] + '-'
-    matching = [ name for name in names if name.startswith(prefix) and name in bones ]
+    matching = [name for name in names if name.startswith(prefix) and name in bones]
 
     if len(matching) > 0:
         return matching[0]

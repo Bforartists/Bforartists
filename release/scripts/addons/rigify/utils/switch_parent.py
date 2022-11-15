@@ -1,24 +1,19 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import bpy
-
-import re
-import itertools
-import bisect
 import json
 
-from .errors import MetarigError
 from .naming import strip_prefix, make_derived_name
 from .bones import set_bone_orientation
 from .mechanism import MechanismUtilityMixin
 from .rig import rig_is_child
-from .misc import map_list, map_apply, force_lazy
+from .misc import OptionalLazy, force_lazy, Lazy
 
-from ..base_rig import *
-from ..base_generate import GeneratorPlugin
+from ..base_rig import BaseRig
+from ..base_generate import GeneratorPlugin, BaseGenerator
 
+from typing import Optional, Any
 from collections import defaultdict
-from itertools import count, repeat, chain
+from itertools import chain
 from mathutils import Matrix
 
 
@@ -28,7 +23,14 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
     Allows all rigs to register their bones as possible parents for other rigs.
     """
 
-    def __init__(self, generator):
+    global_parents: list[dict[str, Any]]
+    local_parents: dict[int, list[dict[str, Any]]]
+    parent_list: list[dict[str, Any]]
+
+    child_list: list[dict[str, Any]]
+    child_map: dict[str, dict[str, Any]]
+
+    def __init__(self, generator: BaseGenerator):
         super().__init__(generator)
 
         self.child_list = []
@@ -39,22 +41,25 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         self.register_parent(None, 'root', name='Root', is_global=True)
 
-
     ##############################
     # API
 
-    def register_parent(self, rig, bone, *, name=None, is_global=False, exclude_self=False, inject_into=None, tags=None):
+    def register_parent(self, rig: Optional[BaseRig], bone: Lazy[str], *,
+                        name: Optional[str] = None,
+                        is_global=False, exclude_self=False,
+                        inject_into: Optional[BaseRig] = None,
+                        tags: Optional[set[str]] = None):
         """
         Registers a bone of the specified rig as a possible parent.
 
         Parameters:
-          rig               Owner of the bone.
-          bone              Actual name of the parent bone.
-          name              Name of the parent for mouse-over hint.
-          is_global         The parent is accessible to all rigs, instead of just children of owner.
-          exclude_self      The parent is invisible to the owner rig itself.
-          inject_into       Make this parent available to children of the specified rig.
-          tags              Set of tags to use for default parent selection.
+          rig:             Owner of the bone (can be None if is_global).
+          bone:            Actual name of the parent bone.
+          name:            Name of the parent for mouse-over hint.
+          is_global:       The parent is accessible to all rigs, instead of just children of owner.
+          exclude_self:    The parent is invisible to the owner rig itself.
+          inject_into:     Make this parent available to children of the specified rig.
+          tags:            Set of tags to use for default parent selection.
 
         Lazy creation:
           The bone parameter may be a function creating the bone on demand and
@@ -62,6 +67,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         """
 
         assert not self.frozen
+        assert is_global or rig
         assert isinstance(bone, str) or callable(bone)
         assert callable(bone) or rig_is_child(rig, self.generator.bone_owners[bone])
         assert rig_is_child(rig, inject_into)
@@ -83,35 +89,66 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         else:
             self.local_parents[id(rig)].append(entry)
 
-
-    def build_child(self, rig, bone, *, use_parent_mch=True, mch_orientation=None, **options):
+    def build_child(self, rig: BaseRig, bone: str, *,
+                    use_parent_mch: bool = True,
+                    mch_orientation: Optional[str | Matrix] = None,
+                    # Options below must be in child_option_table and can be used in amend_child
+                    extra_parents: OptionalLazy[list[str | tuple[str, str]]] = None,
+                    select_parent: OptionalLazy[str] = None,
+                    select_tags: OptionalLazy[list[str | set[str]]] = None,
+                    ignore_global: bool = False,
+                    exclude_self: bool = False,
+                    allow_self: bool = False,
+                    context_rig: Optional[BaseRig] = None,
+                    no_implicit: bool = False,
+                    only_selected: bool = False,
+                    prop_bone: OptionalLazy[str] = None,
+                    prop_id: Optional[str] = None,
+                    prop_name: Optional[str] = None,
+                    controls: OptionalLazy[list[str]] = None,
+                    ctrl_bone: Optional[str] = None,
+                    no_fix_location: bool = False,
+                    no_fix_rotation: bool = False,
+                    no_fix_scale: bool = False,
+                    copy_location: OptionalLazy[str] = None,
+                    copy_rotation: OptionalLazy[str] = None,
+                    copy_scale: OptionalLazy[str] = None,
+                    inherit_scale: str = 'AVERAGE'):
         """
         Build a switchable parent mechanism for the specified bone.
 
         Parameters:
-          rig               Owner of the child bone.
-          bone              Name of the child bone.
-          extra_parents     List of bone names or (name, user_name) pairs to use as additional parents.
-          use_parent_mch    Create an intermediate MCH bone for the constraints and parent the child to it.
-          mch_orientation   Orientation matrix or bone name to align the MCH bone to; defaults to world.
-          select_parent     Select the specified bone instead of the last one.
-          select_tags       List of parent tags to try for default selection.
-          ignore_global     Ignore the is_global flag of potential parents.
-          exclude_self      Ignore parents registered by the rig itself.
-          allow_self        Ignore the 'exclude_self' setting of the parent.
-          context_rig       Rig to use for selecting parents; defaults to rig.
-          no_implicit       Only use parents listed as extra_parents.
-          only_selected     Like no_implicit, but allow the 'default' selected parent.
+          rig:              Owner of the child bone.
+          bone:             Name of the child bone.
+          extra_parents:    List of bone names or (name, user_name) pairs to use as
+                            additional parents.
+          use_parent_mch:   Create an intermediate MCH bone for the constraints and
+                            parent the child to it.
+          mch_orientation:  Orientation matrix or bone name to align the MCH bone to;
+                            defaults to world.
+          select_parent:    Select the specified bone instead of the last one.
+          select_tags:      List of parent tags to try for default selection.
+          ignore_global:    Ignore the is_global flag of potential parents.
+          exclude_self:     Ignore parents registered by the rig itself.
+          allow_self:       Ignore the 'exclude_self' setting of the parent.
+          context_rig:      Rig to use for selecting parents; defaults to rig.
+          no_implicit:      Only use parents listed as extra_parents.
+          only_selected:    Like no_implicit, but allow the 'default' selected parent.
 
-          prop_bone         Name of the bone to add the property to.
-          prop_id           Actual name of the control property.
-          prop_name         Name of the property to use in the UI script.
-          controls          Collection of controls to bind property UI to.
+          prop_bone:        Name of the bone to add the property to.
+          prop_id:          Actual name of the control property.
+          prop_name:        Name of the property to use in the UI script.
+          controls:         Collection of controls to bind property UI to.
 
-          ctrl_bone         User visible control bone that depends on this parent (for switch & keep transform)
-          no_fix_*          Disable "Switch and Keep Transform" correction for specific channels.
-          copy_*            Override the specified components by copying from another bone.
-          inherit_scale     Inherit scale mode for the child bone (default: AVERAGE).
+          ctrl_bone:        User visible control bone that depends on this parent
+                            (for switch & keep transform)
+          no_fix_location:  Disable "Switch and Keep Transform" correction for location.
+          no_fix_rotation:  Disable "Switch and Keep Transform" correction for rotation.
+          no_fix_scale:     Disable "Switch and Keep Transform" correction for scale.
+          copy_location:    Override the location by copying from another bone.
+          copy_rotation:    Override the rotation by copying from another bone.
+          copy_scale:       Override the scale by copying from another bone.
+          inherit_scale:    Inherit scale mode for the child bone (default: AVERAGE).
 
         Lazy parameters:
           'extra_parents', 'select_parent', 'prop_bone', 'controls', 'copy_*'
@@ -132,16 +169,14 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
             mch_bone = bone
 
         child = {
-            **self.child_option_table,
-            'rig':rig, 'bone': bone, 'mch_bone': mch_bone,
+            'rig': rig, 'bone': bone, 'mch_bone': mch_bone,
             'is_done': False, 'is_configured': False,
         }
-        self.assign_child_options(child, options)
+        self.assign_child_options(child, self.child_option_table, locals())
         self.child_list.append(child)
         self.child_map[bone] = child
 
-
-    def amend_child(self, rig, bone, **options):
+    def amend_child(self, rig: BaseRig, bone: str, **options):
         """
         Change parameters assigned in a previous build_child call.
 
@@ -150,10 +185,9 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         assert self.generator.stage == 'generate_bones' and not self.frozen
         child = self.child_map[bone]
         assert child['rig'] == rig
-        self.assign_child_options(child, options)
+        self.assign_child_options(child, set(options.keys()), options)
 
-
-    def rig_child_now(self, bone):
+    def rig_child_now(self, bone: str):
         """Create the constraints immediately."""
         assert self.generator.stage == 'rig_bones'
         child = self.child_map[bone]
@@ -164,29 +198,29 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
     # Implementation
 
     child_option_table = {
-        'extra_parents': None,
-        'prop_bone': None, 'prop_id': None, 'prop_name': None, 'controls': None,
-        'select_parent': None, 'ignore_global': False,
-        'exclude_self': False, 'allow_self': False,
-        'context_rig': None, 'select_tags': None,
-        'no_implicit': False, 'only_selected': False,
-        'ctrl_bone': None,
-        'no_fix_location': False, 'no_fix_rotation': False, 'no_fix_scale': False,
-        'copy_location': None, 'copy_rotation': None, 'copy_scale': None,
-        'inherit_scale': 'AVERAGE',
+        'extra_parents',
+        'prop_bone', 'prop_id', 'prop_name', 'controls',
+        'select_parent', 'ignore_global',
+        'exclude_self', 'allow_self',
+        'context_rig', 'select_tags',
+        'no_implicit', 'only_selected',
+        'ctrl_bone',
+        'no_fix_location', 'no_fix_rotation', 'no_fix_scale',
+        'copy_location', 'copy_rotation', 'copy_scale',
+        'inherit_scale',
     }
 
-    def assign_child_options(self, child, options):
-        if 'context_rig' in options:
+    def assign_child_options(self, child, names: set[str], options: dict[str, Any]):
+        if 'context_rig' in names:
             assert rig_is_child(child['rig'], options['context_rig'])
 
-        for name, value in options.items():
+        for name in names:
             if name not in self.child_option_table:
-                raise AttributeError('invalid child option: '+name)
+                raise AttributeError('invalid child option: ' + name)
 
-            child[name] = value
+            child[name] = options[name]
 
-    def get_rig_parent_candidates(self, rig):
+    def get_rig_parent_candidates(self, rig: Optional[BaseRig]):
         candidates = []
 
         # Build a list in parent hierarchy order
@@ -200,7 +234,8 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
     def generate_bones(self):
         self.frozen = True
-        self.parent_list = self.global_parents + list(chain.from_iterable(self.local_parents.values()))
+        self.parent_list = (self.global_parents +
+                            list(chain.from_iterable(self.local_parents.values())))
 
         # Link children to parents
         for child in self.child_list:
@@ -216,7 +251,8 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
                         continue
 
                 if parent['rig'] is child_rig:
-                    if (parent['exclude_self'] and not child['allow_self']) or child['exclude_self']:
+                    if (parent['exclude_self'] and not child['allow_self'])\
+                            or child['exclude_self']:
                         continue
                 elif parent['is_global'] and not child['ignore_global']:
                     # Can't use parents from own children, even if global (cycle risk)
@@ -294,7 +330,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         if child['no_implicit']:
             assert len(extra_parents) > 0
-            parent_bones = [ item for item in parent_bones if item[0] in extra_parents ]
+            parent_bones = [item for item in parent_bones if item[0] in extra_parents]
             if last_main_parent_bone not in extra_parents:
                 last_main_parent_bone = parent_bones[-1][0]
 
@@ -309,15 +345,17 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
                 break
 
         if select_bone not in parent_map:
-            print("RIGIFY ERROR: Can't find bone '%s' to select as default parent of '%s'\n" % (select_bone, bone))
+            print(f"RIGIFY ERROR: Can't find bone '{select_bone}' "
+                  f"to select as default parent of '{bone}'\n")
             select_bone = last_main_parent_bone
 
         if child['only_selected']:
-            filter_set = { select_bone, *extra_parents }
-            parent_bones = [ item for item in parent_bones if item[0] in filter_set ]
+            filter_set = {select_bone, *extra_parents}
+            parent_bones = [item for item in parent_bones if item[0] in filter_set]
 
         try:
-            select_index = 1 + next(i for i, (bone, _) in enumerate(parent_bones) if bone == select_bone)
+            select_index = 1 + next(i for i, (bone, _) in enumerate(parent_bones)
+                                    if bone == select_bone)
         except StopIteration:
             select_index = len(parent_bones)
             print("RIGIFY ERROR: Invalid default parent '%s' of '%s'\n" % (select_bone, bone))
@@ -329,8 +367,9 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         prop_name = child['prop_name'] or child['prop_id'] or 'Parent Switch'
         prop_id = child['prop_id'] = child['prop_id'] or 'parent_switch'
 
-        parent_names = [ parent[1] or strip_prefix(parent[0]) for parent in [(None, 'None'), *parent_bones] ]
-        parent_str = ', '.join([ '%s (%d)' % (name, i) for i, name in enumerate(parent_names) ])
+        parent_names = [parent[1] or strip_prefix(parent[0])
+                        for parent in [(None, 'None'), *parent_bones]]
+        parent_str = ', '.join(['%s (%d)' % (name, i) for i, name in enumerate(parent_names)])
 
         ctrl_bone = child['ctrl_bone'] or bone
 
@@ -342,14 +381,15 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         # Find which channels don't depend on the parent
 
-        no_fix = [ child[n] for n in ['no_fix_location', 'no_fix_rotation', 'no_fix_scale'] ]
+        no_fix = [child[n] for n in ['no_fix_location', 'no_fix_rotation', 'no_fix_scale']]
 
-        child['copy'] = [ force_lazy(child[n]) for n in ['copy_location', 'copy_rotation', 'copy_scale'] ]
+        child['copy'] = [force_lazy(child[n])
+                         for n in ['copy_location', 'copy_rotation', 'copy_scale']]
 
-        locks = tuple(bool(nofix or copy) for nofix, copy in zip(no_fix, child['copy']))
+        locks = tuple(bool(n_fix or copy) for n_fix, copy in zip(no_fix, child['copy']))
 
         # Create the script for the property
-        controls = force_lazy(child['controls']) or set([prop_bone, bone])
+        controls = force_lazy(child['controls']) or {prop_bone, bone}
 
         script = self.generator.script
         panel = script.panel_with_selected_check(child['rig'], controls)
@@ -364,10 +404,13 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         }
 
         row = panel.row(align=True)
-        lsplit = row.split(factor=0.75, align=True)
-        lsplit.operator('pose.rigify_switch_parent_{rig_id}', text=prop_name, icon='DOWNARROW_HLT', properties=op_props)
-        lsplit.custom_prop(prop_bone, prop_id, text='')
-        row.operator('pose.rigify_switch_parent_bake_{rig_id}', text='', icon='ACTION_TWEAK', properties=op_props)
+        left_split = row.split(factor=0.75, align=True)
+        # noinspection SpellCheckingInspection
+        left_split.operator('pose.rigify_switch_parent_{rig_id}', text=prop_name,
+                            icon='DOWNARROW_HLT', properties=op_props)
+        left_split.custom_prop(prop_bone, prop_id, text='')
+        row.operator('pose.rigify_switch_parent_bake_{rig_id}', text='',
+                     icon='ACTION_TWEAK', properties=op_props)
 
     def rig_bones(self):
         for child in self.child_list:
@@ -383,12 +426,12 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         mch = child['mch_bone']
         con = self.make_constraint(
             mch, 'ARMATURE', name='SWITCH_PARENT',
-            targets=[ (parent, 0.0) for parent, _ in child['parent_bones'] ]
+            targets=[(parent, 0.0) for parent, _ in child['parent_bones']]
         )
 
         prop_var = [(child['prop_bone'], child['prop_id'])]
 
-        for i, (parent, parent_name) in enumerate(child['parent_bones']):
+        for i, (_parent, _parent_name) in enumerate(child['parent_bones']):
             expr = 'var == %d' % (i+1)
             self.make_driver(con.targets[i], 'weight', expression=expr, variables=prop_var)
 
@@ -403,8 +446,10 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
             self.make_constraint(mch, 'COPY_SCALE', copy[2])
 
 
-SCRIPT_REGISTER_OP_SWITCH_PARENT = ['POSE_OT_rigify_switch_parent', 'POSE_OT_rigify_switch_parent_bake']
+SCRIPT_REGISTER_OP_SWITCH_PARENT = ['POSE_OT_rigify_switch_parent',
+                                    'POSE_OT_rigify_switch_parent_bake']
 
+# noinspection SpellCheckingInspection
 SCRIPT_UTILITIES_OP_SWITCH_PARENT = ['''
 ################################
 ## Switchable Parent operator ##

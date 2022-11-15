@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -3626,8 +3626,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "Hex: "
-msgstr "Hex: "
+msgid "Value:"
+msgstr "Мааниси:"
 
 
 msgid "Zoom in"
@@ -3864,10 +3864,6 @@ msgstr "Жокко чыгаруу"
 
 msgid "File name"
 msgstr "Файл аты"
-
-
-msgid "Value:"
-msgstr "Мааниси:"
 
 
 msgid "Add Modifier"

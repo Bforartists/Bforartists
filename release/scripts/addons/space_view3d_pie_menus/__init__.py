@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# Contributed to by meta-androcto, pitiwazou, chromoly, italic
+# Contributed to by meta-androcto, pitiwazou, chromoly, italic, kc98
 
 import bpy
 from bpy.props import (
@@ -16,7 +16,7 @@ from bpy.types import (
 bl_info = {
     "name": "3D Viewport Pie Menus",
     "author": "meta-androcto",
-    "version": (1, 2, 9),
+    "version": (1, 3, 0),
     "blender": (2, 80, 0),
     "description": "Pie Menu Activation",
     "location": "Addons Preferences",

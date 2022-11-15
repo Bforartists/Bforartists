@@ -2536,7 +2536,10 @@ def draw_device(self, context):
         col.prop(cscene, "device")
 
         from . import engine
-        if engine.with_osl() and use_cpu(context):
+        if engine.with_osl() and (
+                use_cpu(context) or
+                (use_optix(context) and (engine.osl_version()[1] >= 13 or engine.osl_version()[0] > 1))
+        ):
             col = layout.column()
             col.use_property_split = False
             col.prop(cscene, "shading_system")

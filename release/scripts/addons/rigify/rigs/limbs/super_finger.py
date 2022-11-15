@@ -3,8 +3,10 @@
 import bpy
 import json
 
+from typing import Optional
 from itertools import count
 
+from ...rig_ui_template import PanelLayout
 from ...utils.bones import put_bone, flip_bone, align_chain_x_axis, set_bone_widget_transform
 from ...utils.naming import make_derived_name
 from ...utils.widgets import create_widget
@@ -21,6 +23,9 @@ from ..chain_rigs import SimpleChainRig
 
 class Rig(SimpleChainRig):
     """A finger rig with master control."""
+
+    make_ik: bool
+
     def initialize(self):
         super().initialize()
 
@@ -33,6 +38,19 @@ class Rig(SimpleChainRig):
 
     def parent_bones(self):
         self.rig_parent_bone = self.get_bone_parent(self.bones.org[0])
+
+    ##############################
+    # BONES
+
+    class CtrlBones(SimpleChainRig.CtrlBones):
+        master: str                    # Master control
+        ik: str                        # IK control (@make_ik)
+
+    class MchBones(SimpleChainRig.MchBones):
+        stretch: list[str]             # Stretch system
+        bend: list[str]                # Bend system
+
+    bones: SimpleChainRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
 
     ##############################
     # Master Control
@@ -83,10 +101,10 @@ class Rig(SimpleChainRig):
         self.bones.ctrl.fk = map_list(self.make_control_bone, count(0), orgs)
         self.bones.ctrl.fk += [self.make_tip_control_bone(orgs[-1], orgs[0])]
 
-    def make_control_bone(self, i, org):
+    def make_control_bone(self, i: int, org: str):
         return self.copy_bone(org, make_derived_name(org, 'ctrl'), inherit_scale=True)
 
-    def make_tip_control_bone(self, org, name_org):
+    def make_tip_control_bone(self, org: str, name_org: str):
         name = self.copy_bone(org, make_derived_name(name_org, 'ctrl'), parent=False)
 
         flip_bone(self.obj, name)
@@ -102,12 +120,12 @@ class Rig(SimpleChainRig):
 
     @stage.configure_bones
     def configure_control_chain(self):
-        for args in zip(count(0), self.bones.ctrl.fk, self.bones.org + [None]):
+        for args in zip(count(0), self.bones.ctrl.fk, [*self.bones.org, None]):
             self.configure_control_bone(*args)
 
         ControlLayersOption.TWEAK.assign(self.params, self.obj, self.bones.ctrl.fk)
 
-    def configure_control_bone(self, i, ctrl, org):
+    def configure_control_bone(self, i: int, ctrl: str, org: Optional[str]):
         if org:
             self.copy_bone_properties(org, ctrl)
         else:
@@ -116,7 +134,7 @@ class Rig(SimpleChainRig):
             bone.lock_rotation = (True, True, True)
             bone.lock_scale = (True, True, True)
 
-    def make_control_widget(self, i, ctrl):
+    def make_control_widget(self, i: int, ctrl: str):
         if ctrl == self.bones.ctrl.fk[-1]:
             # Tip control
             create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.0)
@@ -135,18 +153,18 @@ class Rig(SimpleChainRig):
 
             self.build_ik_parent_switch(SwitchParentBuilder(self.generator))
 
-    def make_ik_control_bone(self, orgs):
+    def make_ik_control_bone(self, orgs: list[str]):
         name = self.copy_bone(orgs[-1], make_derived_name(orgs[0], 'ctrl', '_ik'), scale=0.7)
         put_bone(self.obj, name, self.get_bone(orgs[-1]).tail)
         return name
 
-    def build_ik_parent_switch(self, pbuilder):
+    def build_ik_parent_switch(self, pbuilder: SwitchParentBuilder):
         ctrl = self.bones.ctrl
 
         pbuilder.build_child(
             self, ctrl.ik, prop_bone=ctrl.ik,
             select_tags=['held_object', 'limb_ik', {'child', 'limb_end'}], only_selected=True,
-            prop_id='IK_parent', prop_name='IK Parent', controls=[ ctrl.ik ],
+            prop_id='IK_parent', prop_name='IK Parent', controls=[ctrl.ik],
             no_fix_rotation=True, no_fix_scale=True,
         )
 
@@ -194,9 +212,8 @@ class Rig(SimpleChainRig):
                 panel, output_bones=[ctrl.ik], input_bones=ctrl.fk[-1:],
                 input_ctrl_bones=[ctrl.master, *ctrl.fk],
                 label='IK->FK', rig_name=rig_name, tooltip='IK to FK',
-                compact=True, locks=(False,True,True),
+                compact=True, locks=(False, True, True),
             )
-
 
     @stage.generate_widgets
     def make_ik_control_widget(self):
@@ -210,7 +227,7 @@ class Rig(SimpleChainRig):
     def make_mch_bend_chain(self):
         self.bones.mch.bend = map_list(self.make_mch_bend_bone, self.bones.org)
 
-    def make_mch_bend_bone(self, org):
+    def make_mch_bend_bone(self, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch', '_drv'), inherit_scale=True, scale=0.3)
 
     @stage.parent_bones
@@ -242,7 +259,7 @@ class Rig(SimpleChainRig):
         for args in zip(count(0), self.bones.mch.bend):
             self.rig_mch_bend_bone(*args)
 
-    def rig_mch_bend_bone(self, i, mch):
+    def rig_mch_bend_bone(self, i: int, mch: str):
         master = self.bones.ctrl.master
         if i == 0:
             self.make_constraint(mch, 'COPY_LOCATION', master)
@@ -267,7 +284,7 @@ class Rig(SimpleChainRig):
     def make_mch_stretch_chain(self):
         self.bones.mch.stretch = map_list(self.make_mch_stretch_bone, self.bones.org)
 
-    def make_mch_stretch_bone(self, org):
+    def make_mch_stretch_bone(self, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch'), parent=False)
 
     @stage.parent_bones
@@ -282,7 +299,7 @@ class Rig(SimpleChainRig):
         for args in zip(count(0), self.bones.mch.stretch, ctrls, ctrls[1:]):
             self.rig_mch_stretch_bone(*args)
 
-    def rig_mch_stretch_bone(self, i, mch, ctrl, ctrl_next):
+    def rig_mch_stretch_bone(self, i: int, mch: str, ctrl: str, ctrl_next: str):
         if i == 0:
             self.make_constraint(mch, 'COPY_LOCATION', ctrl)
             self.make_constraint(mch, 'COPY_SCALE', ctrl)
@@ -300,7 +317,7 @@ class Rig(SimpleChainRig):
         if self.make_ik:
             self.rig_org_ik(self.bones.org, self.bones.ctrl.ik)
 
-    def rig_org_ik(self, orgs, ik_ctrl):
+    def rig_org_ik(self, orgs: list[str], ik_ctrl: str):
         axis = self.params.primary_rotation_axis
         options = self.axis_options[axis]
 
@@ -335,7 +352,8 @@ class Rig(SimpleChainRig):
             panel = self.script.panel_with_selected_check(self, self.bones.ctrl.flatten())
             panel.custom_prop(master, 'finger_curve', text="Curvature", slider=True)
 
-    def rig_deform_bone(self, i, deform, org):
+    # noinspection SpellCheckingInspection
+    def rig_deform_bone(self, i: int, deform: str, org: str):
         master = self.bones.ctrl.master
         bone = self.get_bone(deform)
 
@@ -349,38 +367,43 @@ class Rig(SimpleChainRig):
     # OPTIONS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         """ Add the parameters of this rig type to the
             RigifyParameters PropertyGroup
         """
-        items = [('automatic', 'Automatic', ''), ('X', 'X manual', ''), ('Y', 'Y manual', ''), ('Z', 'Z manual', ''),
-                ('-X', '-X manual', ''), ('-Y', '-Y manual', ''), ('-Z', '-Z manual', '')]
-        params.primary_rotation_axis = bpy.props.EnumProperty(items=items, name="Primary Rotation Axis", default='automatic')
+        items = [('automatic', 'Automatic', ''),
+                 ('X', 'X manual', ''), ('Y', 'Y manual', ''), ('Z', 'Z manual', ''),
+                 ('-X', '-X manual', ''), ('-Y', '-Y manual', ''), ('-Z', '-Z manual', '')]
+
+        params.primary_rotation_axis = bpy.props.EnumProperty(
+            items=items, name="Primary Rotation Axis", default='automatic')
 
         params.bbones = bpy.props.IntProperty(
-            name        = 'B-Bone Segments',
-            default     = 10,
-            min         = 1,
-            description = 'Number of B-Bone segments'
+            name='B-Bone Segments',
+            default=10,
+            min=1,
+            description='Number of B-Bone segments'
         )
 
         params.make_extra_ik_control = bpy.props.BoolProperty(
-            name        = "Extra IK Control",
-            default     = False,
-            description = "Create an optional IK control"
+            name="Extra IK Control",
+            default=False,
+            description="Create an optional IK control"
         )
 
         params.ik_local_location = bpy.props.BoolProperty(
-            name        = 'IK Local Location',
-            default     = True,
-            description = "Specifies the value of the Local Location option for IK controls, which decides if the location channels are aligned to the local control orientation or world",
+            name='IK Local Location',
+            default=True,
+            description="Specifies the value of the Local Location option for IK controls, "
+                        "which decides if the location channels are aligned to the local control "
+                        "orientation or world",
         )
 
         ControlLayersOption.TWEAK.add_parameters(params)
         ControlLayersOption.EXTRA_IK.add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         """ Create the ui for the rig parameters.
         """
         r = layout.row()
@@ -398,12 +421,14 @@ class Rig(SimpleChainRig):
         if params.make_extra_ik_control:
             ControlLayersOption.EXTRA_IK.parameters_ui(layout, params)
 
+
 #############################
 # Finger FK to IK operator ##
 #############################
 
 SCRIPT_REGISTER_OP_SNAP_FK_IK = ['POSE_OT_rigify_finger_fk2ik', 'POSE_OT_rigify_finger_fk2ik_bake']
 
+# noinspection SpellCheckingInspection
 SCRIPT_UTILITIES_OP_SNAP_FK_IK = ['''
 ########################
 ## Limb Snap IK to FK ##
@@ -558,7 +583,14 @@ class POSE_OT_rigify_finger_fk2ik_bake(RigifyFingerFk2IkBase, RigifyBakeKeyframe
         return self.bake_get_all_bone_curves(fk_bones, TRANSFORM_PROPS_ALL)
 ''']
 
-def add_finger_snap_fk_to_ik(panel, *, master=None, fk_bones=[], ik_bones=[], ik_control=None, ik_constraint_bone=None, axis='+X', rig_name='', compact=None):
+
+# noinspection PyDefaultArgument
+def add_finger_snap_fk_to_ik(
+        panel: 'PanelLayout', *, master: Optional[str] = None,
+        fk_bones: list[str] = [], ik_bones: list[str] = [],
+        ik_control: Optional[str] = None,
+        ik_constraint_bone: Optional[str] = None,
+        axis='+X', rig_name='', compact: Optional[bool] = None):
     panel.use_bake_settings()
     panel.script.add_utilities(SCRIPT_UTILITIES_OP_SNAP_FK_IK)
     panel.script.register_classes(SCRIPT_REGISTER_OP_SNAP_FK_IK)
@@ -577,6 +609,7 @@ def add_finger_snap_fk_to_ik(panel, *, master=None, fk_bones=[], ik_bones=[], ik
         label='FK->IK', rig_name=rig_name, properties=op_props,
         clear_bones=[master, *fk_bones], compact=compact,
     )
+
 
 def create_sample(obj):
     # generated by rigify.utils.write_metarig
@@ -629,7 +662,10 @@ def create_sample(obj):
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     try:
-        pbone.rigify_parameters.extra_layers = [False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.extra_layers = [
+            False, False, False, False, False, True, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:

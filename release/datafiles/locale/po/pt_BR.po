@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Alpha (b'a6b83617e9de')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2022-10-17 10:12:11\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
 "Last-Translator: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "Language-Team: Leandro Paganelli, Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -1549,10 +1549,6 @@ msgstr "Chaves de formato"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocos de dados de chaves de formato."
-
-
-msgid "Simulations"
-msgstr "Simulações"
 
 
 msgid "Sounds"
@@ -9326,6 +9322,10 @@ msgstr "Freestyle - Estilos de linhas"
 
 msgid "Particles Settings"
 msgstr "Configurações de partículas"
+
+
+msgid "Simulations"
+msgstr "Simulações"
 
 
 msgid "Node Trees"
@@ -57017,10 +57017,6 @@ msgid "Distortion to use for the calculation"
 msgstr "Distorção para usar na calculação"
 
 
-msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "Renderiza a cena com uma câmera esférica, também conhecida como panorama latitude-longitude."
-
-
 msgid "Fisheye Equidistant"
 msgstr "Equidistante para olho de peixe"
 
@@ -57035,10 +57031,6 @@ msgstr "Sólido equivalente ao olho de peixe"
 
 msgid "Similar to most fisheye modern lens, takes sensor dimensions into consideration"
 msgstr "Similar a maioria das lentes modernas tipo olho de peixe, leva em consideração as dimensões do sensor."
-
-
-msgid "Uses the mirror ball mapping"
-msgstr "Usa o mapeamento em formato de esfera espelhada."
 
 
 msgid "3D Curves"
@@ -72017,40 +72009,8 @@ msgid "Hex"
 msgstr "Hex"
 
 
-msgid "R:"
-msgstr "R:"
-
-
-msgid "G:"
-msgstr "G:"
-
-
-msgid "B:"
-msgstr "B:"
-
-
-msgid "H:"
-msgstr "H:"
-
-
-msgid "S:"
-msgstr "S:"
-
-
-msgid "L:"
-msgstr "L:"
-
-
-msgid "V:"
-msgstr "V:"
-
-
-msgid "A: "
-msgstr "A:"
-
-
-msgid "Hex: "
-msgstr "Hex:"
+msgid "Value:"
+msgstr "Valor:"
 
 
 msgid "(Gamma Corrected)"
@@ -74195,10 +74155,6 @@ msgstr "Propriedades:"
 
 msgid "Driver Value:"
 msgstr "Valor de controlador:"
-
-
-msgid "Value:"
-msgstr "Valor:"
 
 
 msgid "Update Dependencies"
