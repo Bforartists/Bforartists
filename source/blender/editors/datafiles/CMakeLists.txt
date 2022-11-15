@@ -1652,7 +1652,7 @@ curve_normal
 self_object
 sample_index
 sample_nearest
-#~ DEF_ICON_BLANK(1685)
+image_info
 #~ DEF_ICON_BLANK(1686)
 #~ DEF_ICON_BLANK(1687)
 
