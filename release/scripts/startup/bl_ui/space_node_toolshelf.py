@@ -3946,27 +3946,31 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInputBool"
 
-            props = col.operator("node.add_node", text=" Color                   ", icon = "COLOR")
+            props = col.operator("node.add_node", text=" Color                    ", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
+            
+            props = col.operator("node.add_node", text=" Image Info           ", icon = "IMAGE_INFO")
+            props.use_transform = True
+            props.type = "GeometryNodeImageInfo"
 
             props = col.operator("node.add_node", text=" Integer                 ", icon = "INTEGER")
             props.use_transform = True
             props.type = "FunctionNodeInputInt"
 
-            props = col.operator("node.add_node", text=" Is Viewport         ", icon = "VIEW")
+            props = col.operator("node.add_node", text=" Is Viewport          ", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
-            props = col.operator("node.add_node", text=" Material              ", icon = "NODE_MATERIAL")
+            props = col.operator("node.add_node", text=" Material               ", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
 
-            props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
+            props = col.operator("node.add_node", text=" Object Info           ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = col.operator("node.add_node", text=" Self Object            ", icon = "SELF_OBJECT")
+            props = col.operator("node.add_node", text=" Self Object           ", icon = "SELF_OBJECT")
             props.use_transform = True
             props.type = "GeometryNodeSelfObject"
 
@@ -4032,6 +4036,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
+            
+            props = flow.operator("node.add_node", text="", icon = "IMAGE_INFO")
+            props.use_transform = True
+            props.type = "GeometryNodeImageInfo"
 
             props = flow.operator("node.add_node", text = "", icon = "INTEGER")
             props.use_transform = True
