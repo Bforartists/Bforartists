@@ -598,8 +598,8 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.operator("uv.copy")
-        layout.operator("uv.paste")
+        layout.operator("uv.copy", icon="COPYDOWN")
+        layout.operator("uv.paste", icon="PASTEDOWN")
 
         layout.separator()
 
