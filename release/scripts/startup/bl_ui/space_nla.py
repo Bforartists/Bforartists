@@ -430,8 +430,8 @@ class NLA_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("nla.meta_add")
-        layout.operator("nla.meta_remove")
+        layout.operator("nla.meta_add", icon="ADD_METASTRIP")
+        layout.operator("nla.meta_remove", icon="REMOVE_METASTRIP")
 
         layout.separator()
 
