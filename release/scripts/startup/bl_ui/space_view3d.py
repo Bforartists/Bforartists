@@ -1408,6 +1408,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
         layout.separator()
 
         layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = 'GPENCIL_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text="Automasking", icon="MENU_PANEL").name = 'VIEW3D_MT_sculpt_gpencil_automasking_pie'
 
         layout.separator()
 
