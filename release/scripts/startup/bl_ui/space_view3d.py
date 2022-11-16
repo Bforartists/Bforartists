@@ -4516,6 +4516,8 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         with_bullet = bpy.app.build_options.bullet
 
+        layout.menu("VIEW3D_MT_edit_mesh_legacy")
+
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
@@ -4561,6 +4563,16 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_delete")
         layout.menu("VIEW3D_MT_edit_mesh_dissolve")
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
+
+
+class VIEW3D_MT_edit_mesh_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mesh.bisect", text = "Bisect", icon = 'BISECT')
+        layout.operator("mesh.knife_tool", text = "Knife", icon = 'KNIFE')
 
 
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
@@ -9381,6 +9393,7 @@ classes = (
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
+    VIEW3D_MT_edit_mesh_legacy,
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
