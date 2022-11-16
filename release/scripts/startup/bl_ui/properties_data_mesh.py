@@ -73,11 +73,8 @@ class MESH_MT_color_attribute_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator(
-            "geometry.color_attribute_duplicate",
-            icon='DUPLICATE',
-        )
-        layout.operator("geometry.color_attribute_convert")
+        layout.operator("geometry.color_attribute_duplicate", icon='DUPLICATE')
+        layout.operator("geometry.color_attribute_convert", icon='ATTRIBUTE_CONVERT')
 
 
 class MESH_MT_attribute_context_menu(Menu):
