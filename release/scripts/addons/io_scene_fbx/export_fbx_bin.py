@@ -23,6 +23,7 @@ if "bpy" in locals():
 import bpy
 import bpy_extras
 from bpy_extras import node_shader_utils
+from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Vector, Matrix
 
 from . import encode_bin, data_types, fbx_utils
@@ -1067,8 +1068,8 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                     del t_lt
                     scene_data.settings.report(
                         {'WARNING'},
-                        "Mesh '%s' has polygons with more than 4 vertices, "
-                        "cannot compute/export tangent space for it" % me.name)
+                        tip_("Mesh '%s' has polygons with more than 4 vertices, "
+                             "cannot compute/export tangent space for it") % me.name)
                 else:
                     del t_lt
                     t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3

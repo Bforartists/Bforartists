@@ -50,7 +50,7 @@ class Rig(TweakChainRig):
     @stage.rig_bones
     def rig_control_chain(self):
         ctrls = self.bones.ctrl.fk
-        for args in zip(count(0), ctrls, [None] + ctrls):
+        for args in zip(count(0), ctrls, [None, *ctrls]):
             self.rig_control_bone(*args)
 
     def rig_control_bone(self, _i: int, ctrl: str, prev_ctrl: Optional[str]):

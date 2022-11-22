@@ -23,6 +23,7 @@ from math import pi
 
 import bpy
 from bpy.types import Operator
+from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Vector
 
 from bpy.props import (
@@ -833,7 +834,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         engine = context.scene.render.engine
         if engine not in ('CYCLES', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'):
-            box.label(text="%s is not supported" % engine, icon='ERROR')
+            box.label(text=tip_("%s is not supported") % engine, icon='ERROR')
 
         box.prop(self, "overwrite_material")
         layout = self.layout
@@ -900,11 +901,11 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         engine = context.scene.render.engine
         if engine not in {'CYCLES', 'BLENDER_EEVEE'}:
             if engine != 'BLENDER_WORKBENCH':
-                self.report({'ERROR'}, "Cannot generate materials for unknown %s render engine" % engine)
+                self.report({'ERROR'}, tip_("Cannot generate materials for unknown %s render engine") % engine)
                 return {'CANCELLED'}
             else:
                 self.report({'WARNING'},
-                            "Generating Cycles/EEVEE compatible material, but won't be visible with %s engine" % engine)
+                            tip_("Generating Cycles/EEVEE compatible material, but won't be visible with %s engine") % engine)
 
         # Open file browser
         context.window_manager.fileselect_add(self)

@@ -3,7 +3,7 @@
 import bpy
 import json
 
-from typing import Optional
+from typing import Optional, Sequence
 from itertools import count
 
 from ...rig_ui_template import PanelLayout
@@ -50,7 +50,12 @@ class Rig(SimpleChainRig):
         stretch: list[str]             # Stretch system
         bend: list[str]                # Bend system
 
-    bones: SimpleChainRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: SimpleChainRig.ToplevelBones[
+        list[str],
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ##############################
     # Master Control
@@ -352,7 +357,6 @@ class Rig(SimpleChainRig):
             panel = self.script.panel_with_selected_check(self, self.bones.ctrl.flatten())
             panel.custom_prop(master, 'finger_curve', text="Curvature", slider=True)
 
-    # noinspection SpellCheckingInspection
     def rig_deform_bone(self, i: int, deform: str, org: str):
         master = self.bones.ctrl.master
         bone = self.get_bone(deform)
@@ -428,7 +432,6 @@ class Rig(SimpleChainRig):
 
 SCRIPT_REGISTER_OP_SNAP_FK_IK = ['POSE_OT_rigify_finger_fk2ik', 'POSE_OT_rigify_finger_fk2ik_bake']
 
-# noinspection SpellCheckingInspection
 SCRIPT_UTILITIES_OP_SNAP_FK_IK = ['''
 ########################
 ## Limb Snap IK to FK ##
@@ -584,10 +587,9 @@ class POSE_OT_rigify_finger_fk2ik_bake(RigifyFingerFk2IkBase, RigifyBakeKeyframe
 ''']
 
 
-# noinspection PyDefaultArgument
 def add_finger_snap_fk_to_ik(
         panel: 'PanelLayout', *, master: Optional[str] = None,
-        fk_bones: list[str] = [], ik_bones: list[str] = [],
+        fk_bones: Sequence[str] = (), ik_bones: Sequence[str] = (),
         ik_control: Optional[str] = None,
         ik_constraint_bone: Optional[str] = None,
         axis='+X', rig_name='', compact: Optional[bool] = None):

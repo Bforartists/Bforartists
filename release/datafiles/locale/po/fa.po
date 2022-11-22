@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -3052,6 +3052,10 @@ msgid "Experimental"
 msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
 
 
+msgid "Operator"
+msgstr "ﻞﻣﺎﻋ"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
@@ -3199,10 +3203,6 @@ msgstr "ﺖﯿﻌﺿﻭ"
 msgctxt "Operator"
 msgid "Operator Cheat Sheet"
 msgstr "ﺮﺑﺭﺎﮐ ﺐﻠﻘﺗ ﻪﮔﺮﺑ"
-
-
-msgid "Operator"
-msgstr "ﻞﻣﺎﻋ"
 
 
 msgid "Property Name"

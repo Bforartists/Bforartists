@@ -7,7 +7,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 from .utils import (redraw_all_areas_by_type)
-from .synchro import (is_slave_window, window_id, get_main_strip)
+from .synchro import (is_secondary_window, window_id, get_main_strip)
 
 Int3 = typing.Tuple[int, int, int]
 
@@ -64,7 +64,7 @@ def draw_callback_px(line_drawer: LineDrawer):
     if (
             not wm.storypencil_settings.active
             or not wm.storypencil_settings.show_main_strip_range
-            or not is_slave_window(wm, window_id(context.window))
+            or not is_secondary_window(wm, window_id(context.window))
     ):
         return
 

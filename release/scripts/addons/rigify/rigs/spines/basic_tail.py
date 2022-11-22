@@ -11,7 +11,7 @@ from ...utils.misc import map_list
 
 from ...base_rig import stage
 
-from ..widgets import create_ballsocket_widget
+from ..widgets import create_ball_socket_widget
 
 from .spine_rigs import BaseHeadTailRig
 
@@ -29,6 +29,22 @@ class Rig(BaseHeadTailRig):
 
         if self.connected_tweak and self.use_connect_reverse:
             self.rig_parent_bone = self.connected_tweak
+
+    ####################################################
+    # BONES
+
+    class CtrlBones(BaseHeadTailRig.CtrlBones):
+        master: str                    # Master control.
+
+    class MchBones(BaseHeadTailRig.MchBones):
+        rot_tail: str                  # Tail follow system.
+
+    bones: BaseHeadTailRig.ToplevelBones[
+        list[str],
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Master control
@@ -52,7 +68,7 @@ class Rig(BaseHeadTailRig):
     def make_master_control_widget(self):
         bone = self.bones.ctrl.master
         set_bone_widget_transform(self.obj, bone, self.bones.ctrl.tweak[-1])
-        create_ballsocket_widget(self.obj, bone, size=0.7)
+        create_ball_socket_widget(self.obj, bone, size=0.7)
 
     ####################################################
     # Control bones
@@ -115,7 +131,6 @@ class Rig(BaseHeadTailRig):
     ####################################################
     # Deform chain
 
-    # noinspection SpellCheckingInspection
     @stage.configure_bones
     def configure_deform_chain(self):
         if self.use_connect_chain and self.use_connect_reverse:

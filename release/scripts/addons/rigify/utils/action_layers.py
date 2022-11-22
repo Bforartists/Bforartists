@@ -1,16 +1,24 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from typing import Optional, List, Dict, Tuple
-from bpy.types import Action, Object, Mesh
+from typing import Optional, List, Dict, Tuple, TYPE_CHECKING
+from bpy.types import Action, Mesh, Armature
 from bl_math import clamp
 
 from .errors import MetarigError
+from .misc import MeshObject, IdPropSequence
 from .naming import Side, get_name_side, change_name_side, mirror_name
 from .bones import BoneUtilityMixin
 from .mechanism import MechanismUtilityMixin, driver_var_transform, quote_property
 
 from ..base_rig import RigComponent, stage
 from ..base_generate import GeneratorPlugin
+
+if TYPE_CHECKING:
+    from ..operators.action_layers import ActionSlot
+
+
+def get_rigify_action_slots(metarig_data: Armature) -> IdPropSequence['ActionSlot']:
+    return metarig_data.rigify_action_slots  # noqa
 
 
 class ActionSlotBase:
@@ -287,14 +295,16 @@ class ActionLayer(RigComponent):
             raise MetarigError(
                 f"Control bone '{control_name}' for action '{self.slot.action.name}' not found")
 
-        # noinspection SpellCheckingInspection
+        channel = self.slot.transform_channel\
+            .replace("LOCATION", "LOC").replace("ROTATION", "ROT")
+
         self.make_driver(
             obj, prop,
             expression=self.slot.get_factor_expression('var', side=self.side),
             variables=[
                 driver_var_transform(
                     self.obj, control_name,
-                    type=self.slot.transform_channel.replace("ATION", ""),
+                    type=channel,
                     space=self.slot.target_space,
                     rotation_mode='SWING_TWIST_Y',
                 )
@@ -304,7 +314,6 @@ class ActionLayer(RigComponent):
     @stage.rig_bones
     def rig_child_shape_keys(self):
         for child in self.owner.child_meshes:
-            # noinspection PyTypeChecker
             mesh: Mesh = child.data
 
             if mesh.shape_keys:
@@ -325,14 +334,13 @@ class ActionLayerBuilder(GeneratorPlugin, BoneUtilityMixin, MechanismUtilityMixi
     layers: List[ActionLayer]
     action_map: Dict[str, Dict[Side, ActionLayer]]
     property_bone: Optional[str]
-    child_meshes: List[Object]
+    child_meshes: List[MeshObject]
 
     def __init__(self, generator):
         super().__init__(generator)
 
         metarig_data = generator.metarig.data
-        # noinspection PyUnresolvedReferences
-        self.slot_list = list(metarig_data.rigify_action_slots)
+        self.slot_list = list(get_rigify_action_slots(metarig_data))
         self.layers = []
 
     def initialize(self):

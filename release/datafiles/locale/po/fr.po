@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-11-13 19:12+0100\n"
@@ -31470,10 +31470,6 @@ msgid "Properties to set when the operator is called"
 msgstr "Propriétés définissant l’appel de l’opérateur"
 
 
-msgid "Property Value"
-msgstr "Valeur de propriété"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "La valeur en laquelle cet événement est traduit dans un ensemble de raccourcis modal"
 
@@ -46958,10 +46954,6 @@ msgstr "Utiliser la texture vague standard, en bandes"
 
 msgid "Use wave texture in rings"
 msgstr "Utiliser la texture vague en anneaux"
-
-
-msgid "White Noise"
-msgstr "Bruit blanc"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -72722,10 +72714,6 @@ msgid "Creates a mask based on the curvature of the surface"
 msgstr "Créer un masque d’après la courbure de la surface"
 
 
-msgid "Cavity Blur"
-msgstr "Flou de cavité"
-
-
 msgid "Cavity (Inverted)"
 msgstr "Cavité (inversée)"
 
@@ -72734,12 +72722,8 @@ msgid "Mix mode"
 msgstr "Mode de mélange"
 
 
-msgid "Use Automask Settings"
-msgstr "Utiliser réglages de masquage auto"
-
-
-msgid "Use default settings from Options panel in sculpt mode"
-msgstr "Utiliser les réglages par défaut dans le panneau Options en mode sculpture"
+msgid "Operator"
+msgstr "Opérateur"
 
 
 msgctxt "Operator"
@@ -79434,10 +79418,6 @@ msgstr "Réinitialiser l’opérateur actif à ses valeurs par défaut"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Opérateur enum circulaire"
-
-
-msgid "Operator"
-msgstr "Opérateur"
 
 
 msgid "Operator name (in python as string)"
@@ -104507,16 +104487,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Cible %r invalide (doit être 'ARMATURE' ou 'OBJECT')"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Caméras et marqueurs (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Impossible de parser le XML, %s :%s pour le fichier %r"
-
-
-msgid "Images as Planes"
-msgstr "Images en tant que plans"
 
 
 msgid "Import Options:"
@@ -105595,6 +105567,10 @@ msgstr "Blender est un logiciel libre"
 
 msgid "Licensed under the GNU General Public License"
 msgstr "Disponible sous licence GNU General Public License"
+
+
+msgid "%s: %s"
+msgstr "%s : %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -107845,8 +107821,12 @@ msgid "Unknown add-ons"
 msgstr "Add-ons inconnus"
 
 
-msgid "%s: %s"
-msgstr "%s : %s"
+msgid "category"
+msgstr "catégorie"
+
+
+msgid "name"
+msgstr "nom"
 
 
 msgid "Display Thin"
@@ -108261,10 +108241,6 @@ msgstr "Mode d’amorti"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Filtre de discontinuité (Euler)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Mode d’extrapolation"
 
 
 msgid "Grease Pencil Objects"
@@ -110502,14 +110478,6 @@ msgstr "Avertissement :"
 
 msgid "Internet:"
 msgstr "Internet :"
-
-
-msgid "category"
-msgstr "catégorie"
-
-
-msgid "name"
-msgstr "nom"
 
 
 msgid "description"

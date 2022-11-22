@@ -71,12 +71,12 @@ class STORYPENCIL_OT_SetSyncMainOperator(Operator):
         description="Main window ID",
     )
 
-    def copy_settings(self, main_window, slave_window):
-        if main_window is None or slave_window is None:
+    def copy_settings(self, main_window, secondary_window):
+        if main_window is None or secondary_window is None:
             return
-        slave_window.scene.storypencil_main_workspace = main_window.scene.storypencil_main_workspace
-        slave_window.scene.storypencil_main_scene = main_window.scene.storypencil_main_scene
-        slave_window.scene.storypencil_edit_workspace = main_window.scene.storypencil_edit_workspace
+        secondary_window.scene.storypencil_main_workspace = main_window.scene.storypencil_main_workspace
+        secondary_window.scene.storypencil_main_scene = main_window.scene.storypencil_main_scene
+        secondary_window.scene.storypencil_edit_workspace = main_window.scene.storypencil_edit_workspace
 
     def execute(self, context):
         options = context.window_manager.storypencil_settings
@@ -87,43 +87,43 @@ class STORYPENCIL_OT_SetSyncMainOperator(Operator):
 
         main_windows = get_main_windows_list(wm)
         main_window = get_main_window(wm)
-        slave_window = get_slave_window(wm)
+        secondary_window = get_secondary_window(wm)
         # Active sync
         options.active = True
-        if slave_window is None:
+        if secondary_window is None:
             # Open a new window
             if len(main_windows) < 2:
-                bpy.ops.storypencil.create_slave_window()
-                slave_window = get_slave_window(wm)
-                self.copy_settings(get_main_window(wm), slave_window)
+                bpy.ops.storypencil.create_secondary_window()
+                secondary_window = get_secondary_window(wm)
+                self.copy_settings(get_main_window(wm), secondary_window)
                 return {'FINISHED'}
             else:
                 # Reuse the existing window
-                slave_window = get_not_main_window(wm)
+                secondary_window = get_not_main_window(wm)
         else:
-            # Open new slave
+            # Open new secondary
             if len(main_windows) < 2:
-                bpy.ops.storypencil.create_slave_window()
-                slave_window = get_slave_window(wm)
-                self.copy_settings(get_main_window(wm), slave_window)
+                bpy.ops.storypencil.create_secondary_window()
+                secondary_window = get_secondary_window(wm)
+                self.copy_settings(get_main_window(wm), secondary_window)
                 return {'FINISHED'}
             else:
                 # Reuse the existing window
-                slave_window = get_not_main_window(wm)
+                secondary_window = get_not_main_window(wm)
 
-        if slave_window:
-            enable_slave_window(wm, window_id(slave_window))
-            win_id = window_id(slave_window)
-            self.copy_settings(get_main_window(wm), slave_window)
+        if secondary_window:
+            enable_secondary_window(wm, window_id(secondary_window))
+            win_id = window_id(secondary_window)
+            self.copy_settings(get_main_window(wm), secondary_window)
             bpy.ops.storypencil.sync_window_bring_front(win_id=win_id)
 
         return {'FINISHED'}
 
 
-class STORYPENCIL_OT_AddSlaveWindowOperator(Operator):
-    bl_idname = "storypencil.create_slave_window"
-    bl_label = "Create Slave Window"
-    bl_description = "Create a Slave Main Window and enable Synchronization"
+class STORYPENCIL_OT_AddSecondaryWindowOperator(Operator):
+    bl_idname = "storypencil.create_secondary_window"
+    bl_label = "Create Secondary Window"
+    bl_description = "Create a Secondary Main Window and enable Synchronization"
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
@@ -133,16 +133,16 @@ class STORYPENCIL_OT_AddSlaveWindowOperator(Operator):
         # get newly created window by comparing to previous list
         new_window = (set(context.window_manager.windows[:]) - windows).pop()
         # activate sync system and enable sync for this window
-        toggle_slave_window(context.window_manager, window_id(new_window))
+        toggle_secondary_window(context.window_manager, window_id(new_window))
         context.window_manager.storypencil_settings.active = True
         # trigger initial synchronization to open the current Sequence's Scene
         on_frame_changed()
         # Configure the new window
-        self.configure_new_slave_window(context, new_window)
+        self.configure_new_secondary_window(context, new_window)
 
         return {'FINISHED'}
 
-    def configure_new_slave_window(self, context, new_window):
+    def configure_new_secondary_window(self, context, new_window):
         wrk_name = context.scene.storypencil_edit_workspace.name
         override_context = context.copy()
         override_context["window"] = new_window
@@ -183,7 +183,7 @@ class STORYPENCIL_OT_WindowBringFront(Operator):
 
 
 class STORYPENCIL_OT_WindowCloseOperator(Operator):
-    bl_idname = "storypencil.close_slave_window"
+    bl_idname = "storypencil.close_secondary_window"
     bl_label = "Close Window"
     bl_description = "Close a specific Window"
     bl_options = {'INTERNAL'}
@@ -212,63 +212,63 @@ def validate_sync(window_manager: WindowManager) -> bool:
     return window_manager.storypencil_settings.active
 
 
-def get_slave_window_indices(wm: WindowManager) -> List[str]:
-    """Get slave Windows indices as a list of IDs
+def get_secondary_window_indices(wm: WindowManager) -> List[str]:
+    """Get secondary Windows indices as a list of IDs
 
     :param wm: the WindowManager to consider
-    :return: the list of slave Windows IDs
+    :return: the list of secondary Windows IDs
     """
-    return split_win_ids(wm.storypencil_settings.slave_windows_ids)
+    return split_win_ids(wm.storypencil_settings.secondary_windows_ids)
 
 
-def is_slave_window(window_manager: WindowManager, win_id: str) -> bool:
-    """Return wether the Window identified by 'win_id' is a slave window.
+def is_secondary_window(window_manager: WindowManager, win_id: str) -> bool:
+    """Return wether the Window identified by 'win_id' is a secondary window.
 
-    :return: whether this Window is a sync slave
+    :return: whether this Window is a sync secondary
     """
-    return win_id in get_slave_window_indices(window_manager)
+    return win_id in get_secondary_window_indices(window_manager)
 
 
-def enable_slave_window(wm: WindowManager, win_id: str):
-    """Enable the slave status of a Window.
+def enable_secondary_window(wm: WindowManager, win_id: str):
+    """Enable the secondary status of a Window.
 
     :param wm: the WindowManager instance
     :param win_id: the id of the window
     """
-    slave_indices = get_slave_window_indices(wm)
+    secondary_indices = get_secondary_window_indices(wm)
     win_id_str = win_id
     # Delete old indice if exist
-    if win_id_str in slave_indices:
-        slave_indices.remove(win_id_str)
+    if win_id_str in secondary_indices:
+        secondary_indices.remove(win_id_str)
 
     # Add indice
-    slave_indices.append(win_id_str)
+    secondary_indices.append(win_id_str)
 
-    # rebuild the whole list of valid slave windows
-    slave_indices = [
-        idx for idx in slave_indices if get_window_from_id(wm, idx)]
+    # rebuild the whole list of valid secondary windows
+    secondary_indices = [
+        idx for idx in secondary_indices if get_window_from_id(wm, idx)]
 
-    wm.storypencil_settings.slave_windows_ids = join_win_ids(slave_indices)
+    wm.storypencil_settings.secondary_windows_ids = join_win_ids(secondary_indices)
 
 
-def toggle_slave_window(wm: WindowManager, win_id: str):
-    """Toggle the slave status of a Window.
+def toggle_secondary_window(wm: WindowManager, win_id: str):
+    """Toggle the secondary status of a Window.
 
     :param wm: the WindowManager instance
     :param win_id: the id of the window
     """
-    slave_indices = get_slave_window_indices(wm)
+    secondary_indices = get_secondary_window_indices(wm)
     win_id_str = win_id
-    if win_id_str in slave_indices:
-        slave_indices.remove(win_id_str)
+    if win_id_str in secondary_indices:
+        secondary_indices.remove(win_id_str)
     else:
-        slave_indices.append(win_id_str)
+        secondary_indices.append(win_id_str)
 
-    # rebuild the whole list of valid slave windows
-    slave_indices = [
-        idx for idx in slave_indices if get_window_from_id(wm, idx)]
+    # rebuild the whole list of valid secondary windows
+    secondary_indices = [
+        idx for idx in secondary_indices if get_window_from_id(wm, idx)]
 
-    wm.storypencil_settings.slave_windows_ids = join_win_ids(slave_indices)
+    wm.storypencil_settings.secondary_windows_ids = join_win_ids(secondary_indices)
 
 
 def get_main_window(wm: WindowManager) -> Window:
@@ -280,15 +280,15 @@ def get_main_window(wm: WindowManager) -> Window:
     return get_window_from_id(wm=wm, win_id=wm.storypencil_settings.main_window_id)
 
 
-def get_slave_window(wm: WindowManager) -> Window:
-    """Get the first slave Window
+def get_secondary_window(wm: WindowManager) -> Window:
+    """Get the first secondary Window
 
     :param wm: the WindowManager instance
     :returns: the Window or None
     """
     for w in wm.windows:
         win_id = window_id(w)
-        if is_slave_window(wm, win_id):
+        if is_secondary_window(wm, win_id):
             return w
 
     return None
@@ -321,9 +321,9 @@ def get_main_strip(wm: WindowManager) -> SceneSequence:
     return seq_editor.sequences.get(wm.storypencil_settings.main_strip_name, None)
 
 
-class STORYPENCIL_OT_SyncToggleSlave(Operator):
-    bl_idname = "storypencil.sync_toggle_slave"
-    bl_label = "Toggle Slave Window Status"
+class STORYPENCIL_OT_SyncToggleSecondary(Operator):
+    bl_idname = "storypencil.sync_toggle_secondary"
+    bl_label = "Toggle Secondary Window Status"
     bl_description = "Enable/Disable synchronization for a specific Window"
     bl_options = {'INTERNAL'}
 
@@ -331,7 +331,7 @@ class STORYPENCIL_OT_SyncToggleSlave(Operator):
 
     def execute(self, context):
         wm = context.window_manager
-        toggle_slave_window(wm, self.win_id)
+        toggle_secondary_window(wm, self.win_id)
         return {'FINISHED'}
 
 
@@ -421,7 +421,7 @@ def setup_window_from_scene_strip(window: Window, strip: SceneSequence):
 @persistent
 def on_frame_changed(*args):
     """
-    React to current frame changes and synchronize slave windows.
+    React to current frame changes and synchronize secondary windows.
     """
     # ensure context is fully initialized, i.e not '_RestrictData
     if not isinstance(bpy.context, Context):
@@ -462,18 +462,17 @@ def update_sync(context: Context, win_id=None):
     if not sequences:
         return
 
-    # bidirectionnal sync: change main time from slave window
+    # bidirectionnal sync: change main time from secondary window
     if (
-            wm.storypencil_settings.bidirectional
-            and win_id != wm.storypencil_settings.main_window_id
-            and is_slave_window(wm, win_id)
+            win_id != wm.storypencil_settings.main_window_id
+            and is_secondary_window(wm, win_id)
     ):
         # get strip under time cursor in main window
         strip, old_frame = get_sequence_at_frame(
             main_scene.frame_current,
             sequences=sequences
         )
-        # only do bidirectional sync if slave window matches the strip at current time in main
+        # only do bidirectional sync if secondary window matches the strip at current time in main
         if not isinstance(strip, SceneSequence) or strip.scene != context.scene:
             return
 
@@ -507,15 +506,15 @@ def update_sync(context: Context, win_id=None):
     if win_id != wm.storypencil_settings.main_window_id:
         return
 
-    slave_windows = [
+    secondary_windows = [
         get_window_from_id(wm, win_id)
         for win_id
-        in get_slave_window_indices(wm)
+        in get_secondary_window_indices(wm)
         if win_id and win_id != wm.storypencil_settings.main_window_id
     ]
 
     # only work with at least 2 windows
-    if not slave_windows:
+    if not secondary_windows:
         return
 
     seq, frame = get_sequence_at_frame(main_scene.frame_current, sequences)
@@ -526,13 +525,13 @@ def update_sync(context: Context, win_id=None):
         return
 
     wm.storypencil_settings.main_strip_name = seq.name
-    # change the scene on slave windows
+    # change the scene on secondary windows
     # warning: only one window's scene can be changed in this event loop,
     #          otherwise it may crashes Blender randomly
-    for idx, win in enumerate(slave_windows):
+    for idx, win in enumerate(secondary_windows):
         if not win:
             continue
-        # change first slave window immediately
+        # change first secondary window immediately
         if idx == 0:
             setup_window_from_scene_strip(win, seq)
         else:
@@ -546,7 +545,7 @@ def update_sync(context: Context, win_id=None):
 
 def sync_all_windows(wm: WindowManager):
     """Enable synchronization on all main windows held by `wm`."""
-    wm.storypencil_settings.slave_windows_ids = join_win_ids([
+    wm.storypencil_settings.secondary_windows_ids = join_win_ids([
         window_id(w)
         for w
         in get_main_windows_list(wm)
@@ -594,7 +593,7 @@ def sync_active_update(self, context):
     ):
         self.main_window_id = window_id(context.window)
         # automatically sync all other windows if nothing was previously set
-        if not self.slave_windows_ids:
+        if not self.secondary_windows_ids:
             sync_all_windows(context.window_manager)
 
     on_frame_changed()
@@ -658,21 +657,15 @@ class STORYPENCIL_PG_Settings(PropertyGroup):
         update=sync_active_update
     )
 
-    bidirectional: BoolProperty(
-        name="Bi-directional",
-        description="Enable bi-directional sync to drive Main time from synced Slave Windows",
-        default=False,
-    )
-
     main_window_id: StringProperty(
         name="Main Window ID",
         description="ID of the window driving the Synchronization",
         default="",
     )
 
-    slave_windows_ids: StringProperty(
-        name="Slave Windows",
-        description="Serialized Slave Window Indices",
+    secondary_windows_ids: StringProperty(
+        name="Secondary Windows",
+        description="Serialized Secondary Window Indices",
         default="",
     )
 
@@ -689,8 +682,8 @@ class STORYPENCIL_PG_Settings(PropertyGroup):
     )
 
     show_main_strip_range: BoolProperty(
-        name="Show Main Strip Range in Slave Windows",
-        description="Draw main Strip's in/out markers in synchronized slave Windows",
+        name="Show Main Strip Range in Secondary Windows",
+        description="Draw main Strip's in/out markers in synchronized secondary Windows",
         default=True,
     )
 

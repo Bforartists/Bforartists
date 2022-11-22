@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import bpy
-
 from ...utils.bones import align_bone_roll
 from ...utils.naming import make_derived_name
 from ...utils.misc import map_list
@@ -18,17 +16,22 @@ class Rig(pawRig):
     """Rear paw rig with special IK automation."""
 
     ####################################################
-    # EXTRA BONES
-    #
-    # mch:
-    #   ik2_target
-    #     Three bone IK stretch limit
-    #   ik2_chain[2]
-    #     Second IK system (pre-driving thigh and ik3)
-    #   ik3_chain[2]
-    #     Third IK system (pre-driving heel)
-    #
-    ####################################################
+    # BONES
+
+    class CtrlBones(pawRig.CtrlBones):
+        pass
+
+    class MchBones(pawRig.MchBones):
+        ik2_target: str                # Three bone IK stretch limit
+        ik2_chain: list[str]           # Second IK system (pre-driving thigh and ik3)
+        ik3_chain: list[str]           # Third IK system (pre-driving heel)
+
+    bones: pawRig.ToplevelBones[
+        pawRig.OrgBones,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # IK controls
@@ -50,14 +53,12 @@ class Rig(pawRig):
     def get_ik_pole_parents(self):
         return [(self.bones.mch.ik2_target, self.bones.ctrl.ik)]
 
-
     ####################################################
     # Heel control
 
     @stage.parent_bones
     def parent_heel_control_bone(self):
         self.set_bone_parent(self.bones.ctrl.heel, self.bones.mch.ik3_chain[-1])
-
 
     ####################################################
     # Second IK system (pre-driving thigh)
@@ -73,7 +74,7 @@ class Rig(pawRig):
 
         self.bones.mch.ik2_target = self.make_ik2_mch_target_bone(orgs)
 
-    def make_ik2_mch_target_bone(self, orgs):
+    def make_ik2_mch_target_bone(self, orgs: list[str]):
         return self.copy_bone(orgs[3], make_derived_name(orgs[0], 'mch', '_ik2_target'), scale=1/2)
 
     @stage.generate_bones
@@ -91,7 +92,7 @@ class Rig(pawRig):
         chain_bones[1].tail = org_bones[2].tail
         align_bone_roll(self.obj, chain[1], orgs[1])
 
-    def make_ik2_mch_bone(self, i, org):
+    def make_ik2_mch_bone(self, _i: int, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch', '_ik2'))
 
     @stage.parent_bones
@@ -106,7 +107,7 @@ class Rig(pawRig):
         for i, mch in enumerate(self.bones.mch.ik2_chain):
             self.configure_ik2_mch_bone(i, mch)
 
-    def configure_ik2_mch_bone(self, i, mch):
+    def configure_ik2_mch_bone(self, i: int, mch: str):
         bone = self.get_bone(mch)
         bone.ik_stretch = 0.1
         if i == 1:
@@ -122,7 +123,6 @@ class Rig(pawRig):
         self.rig_ik_mch_stretch_limit(mch.ik2_target, mch.follow, input_bone, head_tail, 3)
         self.rig_ik_mch_end_bone(mch.ik2_chain[-1], mch.ik2_target, self.bones.ctrl.ik_pole)
 
-
     ####################################################
     # Third IK system (pre-driving heel control)
 
@@ -130,7 +130,7 @@ class Rig(pawRig):
     def make_ik3_mch_chain(self):
         self.bones.mch.ik3_chain = map_list(self.make_ik3_mch_bone, count(0), self.bones.org.main[1:3])
 
-    def make_ik3_mch_bone(self, i, org):
+    def make_ik3_mch_bone(self, _i: int, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch', '_ik3'))
 
     @stage.parent_bones
@@ -145,7 +145,7 @@ class Rig(pawRig):
         for i, mch in enumerate(self.bones.mch.ik3_chain):
             self.configure_ik3_mch_bone(i, mch)
 
-    def configure_ik3_mch_bone(self, i, mch):
+    def configure_ik3_mch_bone(self, i: int, mch: str):
         bone = self.get_bone(mch)
         bone.ik_stretch = 0.1
         if i == 0:

@@ -79,8 +79,7 @@ class RelinkConstraintsMixin(BaseRigMixin):
                 self.raise_error("Only the Armature constraint can have multiple '@' targets: {}",
                                  con.name)
 
-            # noinspection PyUnresolvedReferences
-            if con.target == self.obj:
+            if getattr(con, 'target', None) == self.obj:
                 con.subtarget = self.find_relink_target(specs[0], con.subtarget)
 
     def find_relink_target(self, spec: str, old_target: str):

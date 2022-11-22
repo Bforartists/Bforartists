@@ -6,24 +6,26 @@
 
 #pragma once
 
+#include <memory>
+
+#include "AS_asset_catalog.hh"
+
 #include "DNA_asset_types.h"
 
+#include "BLI_set.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
 
-#include "AS_asset_catalog.hh"
 #include "BKE_callbacks.h"
 
-#include <memory>
-
 struct AssetLibrary;
-struct AssetLibraryReference;
-struct AssetMetaData;
+struct IDRemapper;
 struct Main;
 
 namespace blender::asset_system {
 
 class AssetRepresentation;
+class AssetStorage;
 
 /**
  * AssetLibrary provides access to an asset library's data.
@@ -31,50 +33,7 @@ class AssetRepresentation;
  * The asset library contains catalogs and storage for asset representations. It could be extended
  * to also include asset indexes and more.
  */
-struct AssetLibrary {
-  /* Controlled by #ED_asset_catalogs_set_save_catalogs_when_file_is_saved,
-   * for managing the "Save Catalog Changes" in the quit-confirmation dialog box. */
-  static bool save_catalogs_when_file_is_saved;
-
-  std::unique_ptr<AssetCatalogService> catalog_service;
-
-  AssetLibrary();
-  ~AssetLibrary();
-
-  void load_catalogs(StringRefNull library_root_directory);
-
-  /** Load catalogs that have changed on disk. */
-  void refresh();
-
-  /**
-   * Create a representation of an asset to be considered part of this library. Once the
-   * representation is not needed anymore, it must be freed using #remove_asset(), or there will be
-   * leaking that's only cleared when the library storage is destructed (typically on exit or
-   * loading a different file).
-   */
-  AssetRepresentation &add_external_asset(StringRef name, std::unique_ptr<AssetMetaData> metadata);
-  AssetRepresentation &add_local_id_asset(ID &id);
-  /** Remove an asset from the library that was added using #add_external_asset() or
-   * #add_local_id_asset().
-   * \return True on success, false if the asset couldn't be found inside the library. */
-  bool remove_asset(AssetRepresentation &asset);
-
-  /**
-   * Update `catalog_simple_name` by looking up the asset's catalog by its ID.
-   *
-   * No-op if the catalog cannot be found. This could be the kind of "the
-   * catalog definition file is corrupt/lost" scenario that the simple name is
-   * meant to help recover from. */
-  void refresh_catalog_simplename(AssetMetaData *asset_data);
-
-  void on_blend_save_handler_register();
-  void on_blend_save_handler_unregister();
-
-  void on_blend_save_post(Main *bmain, PointerRNA **pointers, int num_pointers);
-
-  void remap_ids(struct IDRemapper &mappings);
-
- private:
+class AssetLibrary {
   bCallbackFuncStore on_save_callback_store_{};
 
   /** Storage for assets (better said their representations) that are considered to be part of this
@@ -90,8 +49,63 @@ struct AssetLibrary {
    * already in memory and which not. Neither do we keep track of how many parts of Blender are
    * using an asset or an asset library, which is needed to know when assets can be freed.
    */
-  Vector<std::unique_ptr<AssetRepresentation>> asset_storage_;
+  std::unique_ptr<AssetStorage> asset_storage_;
 
+ public:
+  /* Controlled by #ED_asset_catalogs_set_save_catalogs_when_file_is_saved,
+   * for managing the "Save Catalog Changes" in the quit-confirmation dialog box. */
+  static bool save_catalogs_when_file_is_saved;
+
+  std::unique_ptr<AssetCatalogService> catalog_service;
+
+ public:
+  AssetLibrary();
+  ~AssetLibrary();
+
+  void load_catalogs(StringRefNull library_root_directory);
+
+  /** Load catalogs that have changed on disk. */
+  void refresh();
+
+  /**
+   * Create a representation of an asset to be considered part of this library. Once the
+   * representation is not needed anymore, it must be freed using #remove_asset(), or there will be
+   * leaking that's only cleared when the library storage is destructed (typically on exit or
+   * loading a different file).
+   */
+  AssetRepresentation &add_external_asset(StringRef name, std::unique_ptr<AssetMetaData> metadata);
+  /** See #AssetLibrary::add_external_asset(). */
+  AssetRepresentation &add_local_id_asset(ID &id);
+  /** Remove an asset from the library that was added using #add_external_asset() or
+   * #add_local_id_asset(). Can usually be expected to be constant time complexity (worst case may
+   * differ).
+   * \note This is save to call if \a asset is freed (dangling reference), will not perform any
+   *       change then.
+   * \return True on success, false if the asset couldn't be found inside the library (also the
+   *         case when the reference is dangling). */
+  bool remove_asset(AssetRepresentation &asset);
+
+  /**
+   * Remap ID pointers for local ID assets, see #BKE_lib_remap.h. When an ID pointer would be
+   * mapped to null (typically when an ID gets removed), the asset is removed, because we don't
+   * support such empty/null assets.
+   */
+  void remap_ids_and_remove_invalid(const IDRemapper &mappings);
+
+  /**
+   * Update `catalog_simple_name` by looking up the asset's catalog by its ID.
+   *
+   * No-op if the catalog cannot be found. This could be the kind of "the
+   * catalog definition file is corrupt/lost" scenario that the simple name is
+   * meant to help recover from. */
+  void refresh_catalog_simplename(AssetMetaData *asset_data);
+
+  void on_blend_save_handler_register();
+  void on_blend_save_handler_unregister();
+
+  void on_blend_save_post(Main *bmain, PointerRNA **pointers, int num_pointers);
+
+ private:
   std::optional<int> find_asset_index(const AssetRepresentation &asset);
 };
 
@@ -99,6 +113,10 @@ Vector<AssetLibraryReference> all_valid_asset_library_refs();
 
 }  // namespace blender::asset_system
 
+/**
+ * \warning Catalogs are reloaded, invalidating catalog pointers. Do not store catalog pointers,
+ *          store CatalogIDs instead and lookup the catalog where needed.
+ */
 blender::asset_system::AssetLibrary *AS_asset_library_load(
     const Main *bmain, const AssetLibraryReference &library_reference);
 

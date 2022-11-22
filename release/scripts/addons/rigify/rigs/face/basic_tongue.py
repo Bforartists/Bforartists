@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import math
 
 from itertools import count
 
@@ -17,7 +16,7 @@ from ..widgets import create_jaw_widget
 
 
 class Rig(TweakChainRig):
-    """Basic tongue from the original PitchiPoy face rig."""
+    """Basic tongue from the original PitchiPoy face rig."""  # noqa
 
     min_chain_length = 3
 
@@ -28,15 +27,19 @@ class Rig(TweakChainRig):
 
     ####################################################
     # BONES
-    #
-    # ctrl:
-    #   master:
-    #     Master control.
-    # mch:
-    #   follow[]:
-    #     Partial follow master bones.
-    #
-    ####################################################
+
+    class CtrlBones(TweakChainRig.CtrlBones):
+        master: str                    # Master control.
+
+    class MchBones(TweakChainRig.MchBones):
+        follow: list[str]              # Partial follow master bones.
+
+    bones: TweakChainRig.ToplevelBones[
+        list[str],
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Control chain
@@ -71,7 +74,7 @@ class Rig(TweakChainRig):
     def make_follow_chain(self):
         self.bones.mch.follow = map_list(self.make_mch_follow_bone, count(1), self.bones.org[1:])
 
-    def make_mch_follow_bone(self, i, org):
+    def make_mch_follow_bone(self, _i: int, org: str):
         name = self.copy_bone(org, make_derived_name(org, 'mch'))
         copy_bone_position(self.obj, self.base_bone, name)
         flip_bone(self.obj, name)
@@ -104,7 +107,7 @@ class Rig(TweakChainRig):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.bbones = bpy.props.IntProperty(
             name='B-Bone Segments',
             default=10,
@@ -115,7 +118,7 @@ class Rig(TweakChainRig):
         ControlLayersOption.SKIN_PRIMARY.add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         layout.prop(params, 'bbones')
 
         ControlLayersOption.SKIN_PRIMARY.parameters_ui(layout, params)

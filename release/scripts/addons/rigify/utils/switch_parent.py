@@ -405,7 +405,6 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         row = panel.row(align=True)
         left_split = row.split(factor=0.75, align=True)
-        # noinspection SpellCheckingInspection
         left_split.operator('pose.rigify_switch_parent_{rig_id}', text=prop_name,
                             icon='DOWNARROW_HLT', properties=op_props)
         left_split.custom_prop(prop_bone, prop_id, text='')
@@ -449,7 +448,6 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 SCRIPT_REGISTER_OP_SWITCH_PARENT = ['POSE_OT_rigify_switch_parent',
                                     'POSE_OT_rigify_switch_parent_bake']
 
-# noinspection SpellCheckingInspection
 SCRIPT_UTILITIES_OP_SWITCH_PARENT = ['''
 ################################
 ## Switchable Parent operator ##
@@ -498,9 +496,9 @@ class RigifySwitchParentBase:
             return {'CANCELLED'}
 
         parents = json.loads(self.parent_names)
-        pitems = [(str(i), name, name) for i, name in enumerate(parents)]
+        parent_items = [(str(i), name, name) for i, name in enumerate(parents)]
 
-        RigifySwitchParentBase.parent_items = pitems
+        RigifySwitchParentBase.parent_items = parent_items
 
         self.selected = str(pose.bones[self.prop_bone][self.prop_id])
 

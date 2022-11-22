@@ -7,7 +7,6 @@ from functools import partial
 from mathutils import Vector
 
 from ..utils.errors import MetarigError
-from ..utils.bones import align_bone_roll
 from ..utils.rig import get_rigify_type
 from ..utils.node_merger import NodeMerger
 
@@ -184,7 +183,7 @@ def process_all(process, name_map):
 
 def make_new_bones(obj, name_map):
     eb = obj.data.edit_bones
-    face_bone = name_map['face']
+    # face_bone = name_map['face']
 
     bone = eb.new(name='jaw_master')
     bone.head = (eb['jaw.R'].head + eb['jaw.L'].head) / 2
@@ -203,11 +202,11 @@ def make_new_bones(obj, name_map):
     def align_bones(bones):
         prev_mat = eb[bones[0]].matrix
 
-        for bone in bones[1:]:
-            ebone = eb[bone]
-            _, angle = (prev_mat.inverted() @ ebone.matrix).to_quaternion().to_swing_twist('Y')
-            ebone.roll -= angle
-            prev_mat = ebone.matrix
+        for bone_name in bones[1:]:
+            edit_bone = eb[bone_name]
+            _, angle = (prev_mat.inverted() @ edit_bone.matrix).to_quaternion().to_swing_twist('Y')
+            edit_bone.roll -= angle
+            prev_mat = edit_bone.matrix
 
     align_bones(['ear.L', 'ear.L.001', 'ear.L.002', 'ear.L.003', 'ear.L.004'])
     align_bones(['ear.R', 'ear.R.001', 'ear.R.002', 'ear.R.003', 'ear.R.004'])
@@ -231,15 +230,15 @@ def make_new_bones(obj, name_map):
         tail = getattr(eb[to_name], to_end)
         return (head - tail).length < 2 * NodeMerger.epsilon
 
-    def bridge(name, from_name, from_end, to_name, to_end, roll=0):
+    def bridge(name, from_name, from_end, to_name, to_end, roll: str | int = 0):
         if is_same_pos(from_name, from_end, to_name, to_end):
             raise MetarigError(f"Locations of {from_name} {from_end} and {to_name} {to_end} overlap.")
 
-        bone = eb.new(name=name)
-        bone.head = getattr(eb[from_name], from_end)
-        bone.tail = getattr(eb[to_name], to_end)
-        bone.roll = (eb[from_name].roll + eb[to_name].roll) / 2 if roll == 'mix' else radians(roll)
-        name_map[name] = bone.name
+        edit_bone = eb.new(name=name)
+        edit_bone.head = getattr(eb[from_name], from_end)
+        edit_bone.tail = getattr(eb[to_name], to_end)
+        edit_bone.roll = (eb[from_name].roll + eb[to_name].roll) / 2 if roll == 'mix' else radians(roll)
+        name_map[name] = edit_bone.name
 
     def bridge_glue(name, from_name, to_name):
         bridge(name, from_name, 'head', to_name, 'head', roll=-45 if 'R' in name else 45)
@@ -269,23 +268,23 @@ def make_new_bones(obj, name_map):
     bridge('chin_end_glue.001', 'chin.001', 'tail', 'lip.B.L', 'head', roll=45)
 
 
-def check_bone(obj, name_map, bone, **kwargs):
+def check_bone(obj, name_map, bone, **_kwargs):
     bone = name_map.get(bone, bone)
     if bone not in obj.pose.bones:
-        raise MetarigError("Bone '%s' not found" % (bone))
+        raise MetarigError(f"Bone '{bone}' not found")
 
 
-def parent_bone(obj, name_map, bone, parent=None, connect=False, **kwargs):
+def parent_bone(obj, name_map, bone, parent=None, connect=False, **_kwargs):
     if parent is not None:
         bone = name_map.get(bone, bone)
         parent = name_map.get(parent, parent)
 
-        ebone = obj.data.edit_bones[bone]
-        ebone.use_connect = connect
-        ebone.parent = obj.data.edit_bones[parent]
+        edit_bone = obj.data.edit_bones[bone]
+        edit_bone.use_connect = connect
+        edit_bone.parent = obj.data.edit_bones[parent]
 
 
-def set_layers(obj, name_map, layer_table, bone, layer=2, pri_layer=None, sec_layer=None, **kwargs):
+def set_layers(obj, name_map, layer_table, bone, layer=2, pri_layer=None, sec_layer=None, **_kwargs):
     bone = name_map.get(bone, bone)
     pbone = obj.pose.bones[bone]
     pbone.bone.layers = layer_table[layer]
@@ -311,7 +310,7 @@ def set_rig(
     connect_ends=None, priority=0, middle=0, sharpen=None,
     falloff=None, spherical=None, falloff_length=False, scale=False,
     glue_copy=None, glue_reparent=False,
-    params={}, **kwargs
+    params=None, **_kwargs
 ):
     bone = name_map.get(bone, bone)
     if rig is not None:
@@ -354,8 +353,9 @@ def set_rig(
             pbone.rigify_parameters.skin_glue_add_constraint = 'COPY_LOCATION_OWNER'
             pbone.rigify_parameters.skin_glue_add_constraint_influence = glue_copy
 
-        for k, v in params.items():
-            setattr(pbone.rigify_parameters, k, v)
+        if params:
+            for k, v in params.items():
+                setattr(pbone.rigify_parameters, k, v)
 
 
 def update_face_rig(obj):
@@ -406,12 +406,14 @@ def update_face_rig(obj):
             obj.data.layers[i] = True
 
 
+# noinspection PyPep8Naming
 class POSE_OT_rigify_upgrade_face(bpy.types.Operator):
     """Upgrade the legacy super_face rig type to new modular face"""
 
     bl_idname = "pose.rigify_upgrade_face"
     bl_label = "Upgrade Face Rig"
-    bl_description = 'Upgrades the legacy super_face rig type to the new modular face. This preserves compatibility with existing weight painting, but not animation'
+    bl_description = 'Upgrades the legacy super_face rig type to the new modular face. This '\
+                     'preserves compatibility with existing weight painting, but not animation'
     bl_options = {'UNDO'}
 
     @classmethod

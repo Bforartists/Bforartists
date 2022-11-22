@@ -19,6 +19,17 @@
 
 #include "CLG_log.h"
 
+/* When enabled, use a pre file load handler (#BKE_CB_EVT_LOAD_PRE) callback to destroy the asset
+ * library service. Without this an explicit call from the file loading code is needed to do this,
+ * which is not as nice.
+ *
+ * TODO Currently disabled because UI data depends on asset library data, so we have to make sure
+ * it's freed in the right order (UI first). Pre-load handlers don't give us this order.
+ * Should be addressed with a proper ownership model for the asset system:
+ * https://wiki.blender.org/wiki/Source/Architecture/Asset_System/Back_End#Ownership_Model
+ */
+//#define WITH_DESTROY_VIA_LOAD_HANDLER
+
 static CLG_LogRef LOG = {"asset_system.asset_library_service"};
 
 namespace blender::asset_system {
@@ -87,7 +98,8 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(StringRefNull top_l
 
   std::string top_dir_trailing_slash = normalize_directory_path(top_level_directory);
 
-  AssetLibraryPtr *lib_uptr_ptr = on_disk_libraries_.lookup_ptr(top_dir_trailing_slash);
+  std::unique_ptr<AssetLibrary> *lib_uptr_ptr = on_disk_libraries_.lookup_ptr(
+      top_dir_trailing_slash);
   if (lib_uptr_ptr != nullptr) {
     CLOG_INFO(&LOG, 2, "get \"%s\" (cached)", top_dir_trailing_slash.c_str());
     AssetLibrary *lib = lib_uptr_ptr->get();
@@ -95,7 +107,7 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(StringRefNull top_l
     return lib;
   }
 
-  AssetLibraryPtr lib_uptr = std::make_unique<AssetLibrary>();
+  std::unique_ptr lib_uptr = std::make_unique<AssetLibrary>();
   AssetLibrary *lib = lib_uptr.get();
 
   lib->on_blend_save_handler_register();
@@ -139,7 +151,9 @@ static void on_blendfile_load(struct Main * /*bMain*/,
                               const int /*num_pointers*/,
                               void * /*arg*/)
 {
+#ifdef WITH_DESTROY_VIA_LOAD_HANDLER
   AssetLibraryService::destroy();
+#endif
 }
 
 void AssetLibraryService::app_handler_register()
