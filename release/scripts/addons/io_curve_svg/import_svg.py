@@ -6,6 +6,7 @@ from math import cos, sin, tan, atan2, pi, ceil
 
 import bpy
 from mathutils import Vector, Matrix
+from bpy.app.translations import pgettext_tip as tip_
 
 from . import svg_colors
 from .svg_util import (units,
@@ -1892,7 +1893,7 @@ def load(operator, context, filepath=""):
         import traceback
         traceback.print_exc()
 
-        operator.report({'WARNING'}, "Unable to parse XML, %s:%s for file %r" % (type(e).__name__, e, filepath))
+        operator.report({'WARNING'}, tip_("Unable to parse XML, %s:%s for file %r") % (type(e).__name__, e, filepath))
         return {'CANCELLED'}
 
     return {'FINISHED'}

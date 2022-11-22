@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -31470,10 +31470,6 @@ msgid "Properties to set when the operator is called"
 msgstr "Propiedades a definir al invocar el operador"
 
 
-msgid "Property Value"
-msgstr "Valor"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "El valor al que es traducido el evento en un mapa de teclado modal"
 
@@ -44885,6 +44881,10 @@ msgid "All Curves"
 msgstr "Todas las curvas"
 
 
+msgid "Sample lengths based on the total length of all curves, rather than using a length inside each selected curve"
+msgstr "Muestrea las longitudes basándose en la longitud completa de todas las curvas, en vez de usar una longitud dentro de cada curva seleccionada"
+
+
 msgid "Sample Index"
 msgstr "Identificador de muestra"
 
@@ -46956,10 +46956,6 @@ msgstr "Usar una textura de ondas estándar en bandas"
 
 msgid "Use wave texture in rings"
 msgstr "Usar una textura de ondas en forma de anillos"
-
-
-msgid "White Noise"
-msgstr "Ruido blanco"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -52785,6 +52781,10 @@ msgstr "Si no se especifica, el ruido de los archivos procesados será reducido 
 msgctxt "Operator"
 msgid "Merge Images"
 msgstr "Fusionar imágenes"
+
+
+msgid "Combine OpenEXR multi-layer images rendered with different sample ranges into one image with reduced noise"
+msgstr "Permite combinar imágenes OpenEXR multicapa procesadas con rangos de muestreo diferentes en una sola imagen con un ruido reducido"
 
 
 msgid "File path for image to merge"
@@ -72720,10 +72720,6 @@ msgid "Creates a mask based on the curvature of the surface"
 msgstr "Crea una máscara basada en la curvatura de la superficie"
 
 
-msgid "Cavity Blur"
-msgstr "Desenfocar cavidad"
-
-
 msgid "Cavity (Inverted)"
 msgstr "Cavidad (invertida)"
 
@@ -72732,12 +72728,8 @@ msgid "Mix mode"
 msgstr "Modo de mezcla"
 
 
-msgid "Use Automask Settings"
-msgstr "Usar opciones auto enmascaramiento"
-
-
-msgid "Use default settings from Options panel in sculpt mode"
-msgstr "Usar las opciones predefinidas del panel de Opciones en modo Esculpido"
+msgid "Operator"
+msgstr "Operador"
 
 
 msgctxt "Operator"
@@ -79432,10 +79424,6 @@ msgstr "Hace que el operador activo vuelva a sus valores predefinidos"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Operador enumerador circular"
-
-
-msgid "Operator"
-msgstr "Operador"
 
 
 msgid "Operator name (in python as string)"
@@ -87186,6 +87174,22 @@ msgstr "Tipo de Panorámica"
 
 msgid "Distortion to use for the calculation"
 msgstr "Distorsión a usar para los calculos"
+
+
+msgid "Spherical camera for environment maps, also known as Lat Long panorama"
+msgstr "Cámara esférica útil para mapeos de entorno, también conocido como panorama Lat Long"
+
+
+msgid "Equiangular Cubemap Face"
+msgstr "Cara de mapa cúbico equiangular"
+
+
+msgid "Single face of an equiangular cubemap"
+msgstr "Cara individual de un mapa cúbico equiangular"
+
+
+msgid "Mirror ball mapping for environment maps"
+msgstr "Mapeo de tipo esfera espejada para mapeos de entorno"
 
 
 msgid "Fisheye Equidistant"
@@ -104633,6 +104637,10 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "No se encontraron GPU compatibles para Cycles"
 
 
+msgid "(TM)TRADE MARK SIGN(tm)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
+msgstr "(TM)SÍMBOLO DE MARCA REGISTRADA(R)SÍMBOLO DE REGISTRADO(C)SÍMBOLO DE DERECHOS RESERVADOS"
+
+
 msgid "Requires NVIDIA GPU with compute capability 3.0"
 msgstr "Requiere una GPU NVIDIA con capacidades de cálculo 3.0"
 
@@ -104671,6 +104679,18 @@ msgstr "Requiere Apple Silicon con macOS 12.2 o más nuevo"
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "o AMD con macOS 12.3 o más nuevo"
+
+
+msgid "Requires Intel GPU with Xe-HPG architecture and"
+msgstr "Requiere una GPU de Intel con arquitectura Xe-HPG y"
+
+
+msgid "  - Linux driver version xx.xx.23904 or newer"
+msgstr "  - un controlador Linux versión xx.xx.23904 o más nuevo"
+
+
+msgid "  - oneAPI Level-Zero Loader"
+msgstr "  - un cargador Level-Zero de oneAPI"
 
 
 msgid "Noise Threshold"
@@ -104891,16 +104911,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Objetivo inválido %r (debe ser 'ARMATURE' u 'OBJECT')"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Cámaras y marcadores (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "No fue posible analizar el XML, %s:%s para el archivo %r"
-
-
-msgid "Images as Planes"
-msgstr "Imágenes como planos"
 
 
 msgid "Import Options:"
@@ -105979,6 +105991,10 @@ msgstr "Blender es software libre"
 
 msgid "Licensed under the GNU General Public License"
 msgstr "Licenciado según la Licencia Pública General de GNU (GPL)"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -108257,8 +108273,12 @@ msgid "Unknown add-ons"
 msgstr "Complementos desconocidos"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
+msgid "category"
+msgstr "categoría"
+
+
+msgid "name"
+msgstr "nombre"
 
 
 msgid "Display Thin"
@@ -108673,10 +108693,6 @@ msgstr "Modo de aceleración"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Filtro de discontinuidad (Euler)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Modo de extrapolación"
 
 
 msgid "Grease Pencil Objects"
@@ -110923,14 +110939,6 @@ msgstr "Advertencia:"
 
 msgid "Internet:"
 msgstr "En línea:"
-
-
-msgid "category"
-msgstr "categoría"
-
-
-msgid "name"
-msgstr "nombre"
 
 
 msgid "description"
@@ -115908,8 +115916,40 @@ msgid "Hex"
 msgstr "Hex"
 
 
+msgid "Red:"
+msgstr "Rojo:"
+
+
+msgid "Green:"
+msgstr "Verde:"
+
+
+msgid "Blue:"
+msgstr "Azul:"
+
+
+msgid "Hue:"
+msgstr "Tono:"
+
+
+msgid "Saturation:"
+msgstr "Saturación:"
+
+
+msgid "Lightness:"
+msgstr "Luminosidad:"
+
+
 msgid "Value:"
 msgstr "Valor:"
+
+
+msgid "Alpha:"
+msgstr "Alfa:"
+
+
+msgid "Hex:"
+msgstr "Hex:"
 
 
 msgid "(Gamma Corrected)"
@@ -119969,6 +120009,10 @@ msgid " (Vector)"
 msgstr " (Vector)"
 
 
+msgid " (Color)"
+msgstr " (Color)"
+
+
 msgid "True"
 msgstr "Verdadero"
 
@@ -122043,6 +122087,10 @@ msgstr "Composición"
 
 msgid "MultipleStrokes"
 msgstr "Trazos_múltiples"
+
+
+msgid "Outline requires an active camera"
+msgstr "El contorno necesita una cámara activa"
 
 
 msgid "Stroke Fit Method"

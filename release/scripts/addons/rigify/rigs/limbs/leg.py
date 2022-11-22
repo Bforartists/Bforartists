@@ -12,7 +12,7 @@ from ...utils.naming import make_derived_name
 from ...utils.misc import matrix_from_axis_roll, matrix_from_axis_pair
 from ...utils.widgets import adjust_widget_transform_mesh
 
-from ..widgets import create_foot_widget, create_ballsocket_widget
+from ..widgets import create_foot_widget, create_ball_socket_widget
 
 from ...base_rig import stage
 
@@ -27,6 +27,13 @@ class Rig(BaseLimbRig):
     """Human leg rig."""
 
     min_valid_orgs = max_valid_orgs = 4
+
+    pivot_type: str
+    heel_euler_order: str
+    use_ik_toe: bool
+
+    ik_matrix: Matrix
+    roll_matrix: Matrix
 
     def find_org_bones(self, bone):
         bones = super().find_org_bones(bone)
@@ -86,25 +93,26 @@ class Rig(BaseLimbRig):
         self.roll_matrix = matrix_from_axis_pair(ik_y_axis, foot_x, self.main_axis)
 
     ####################################################
-    # EXTRA BONES
-    #
-    # org:
-    #   heel:
-    #     Heel location marker bone
-    # ctrl:
-    #   ik_spin:
-    #     Toe spin control.
-    #   heel:
-    #     Foot roll control
-    #   ik_toe:
-    #     If enabled, toe control for IK chain.
-    # mch:
-    #   heel[]:
-    #     Chain of bones implementing foot roll.
-    #   ik_toe_parent:
-    #      If using split IK toe, parent of the IK toe control.
-    #
-    ####################################################
+    # BONES
+
+    class OrgBones(BaseLimbRig.OrgBones):
+        heel: str                      # Heel location marker bone
+
+    class CtrlBones(BaseLimbRig.CtrlBones):
+        ik_spin: str                   # Toe spin control
+        heel: str                      # Foot roll control
+        ik_toe: str                    # If enabled, toe control for IK chain.
+
+    class MchBones(BaseLimbRig.MchBones):
+        heel: list[str]                # Chain of bones implementing foot roll.
+        ik_toe_parent: str             # If using split IK toe, parent of the IK toe control.
+
+    bones: BaseLimbRig.ToplevelBones[
+        'Rig.OrgBones',
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # IK controls
@@ -162,7 +170,7 @@ class Rig(BaseLimbRig):
         if self.pivot_type == 'ANKLE_TOE':
             self.bones.ctrl.ik_spin = self.make_ik_spin_bone(self.bones.org.main)
 
-    def make_ik_spin_bone(self, orgs):
+    def make_ik_spin_bone(self, orgs: list[str]):
         name = self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_spin_ik'))
         put_bone(self.obj, name, self.get_bone(orgs[3]).head, matrix=self.ik_matrix, scale=0.5)
         return name
@@ -175,9 +183,9 @@ class Rig(BaseLimbRig):
     @stage.generate_widgets
     def make_ik_spin_control_widget(self):
         if self.pivot_type == 'ANKLE_TOE':
-            obj = create_ballsocket_widget(self.obj, self.bones.ctrl.ik_spin, size=0.75)
-            rotfix = Matrix.Rotation(math.pi/2, 4, self.main_axis.upper())
-            adjust_widget_transform_mesh(obj, rotfix, local=True)
+            obj = create_ball_socket_widget(self.obj, self.bones.ctrl.ik_spin, size=0.75)
+            rot_fix = Matrix.Rotation(math.pi/2, 4, self.main_axis.upper())
+            adjust_widget_transform_mesh(obj, rot_fix, local=True)
 
     ####################################################
     # Heel control
@@ -202,7 +210,7 @@ class Rig(BaseLimbRig):
 
     @stage.generate_widgets
     def generate_heel_control_widget(self):
-        create_ballsocket_widget(self.obj, self.bones.ctrl.heel)
+        create_ball_socket_widget(self.obj, self.bones.ctrl.heel)
 
     ####################################################
     # IK toe control
@@ -214,10 +222,10 @@ class Rig(BaseLimbRig):
             self.bones.ctrl.ik_toe = self.make_ik_toe_control_bone(toe)
             self.bones.mch.ik_toe_parent = self.make_ik_toe_parent_mch_bone(toe)
 
-    def make_ik_toe_control_bone(self, org):
+    def make_ik_toe_control_bone(self, org: str):
         return self.copy_bone(org, make_derived_name(org, 'ctrl', '_ik'))
 
-    def make_ik_toe_parent_mch_bone(self, org):
+    def make_ik_toe_parent_mch_bone(self, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch', '_ik_parent'), scale=1/3)
 
     @stage.parent_bones
@@ -255,8 +263,7 @@ class Rig(BaseLimbRig):
         orgs = self.bones.org.main
         self.bones.mch.heel = self.make_roll_mch_bones(orgs[2], orgs[3], self.bones.org.heel)
 
-    def make_roll_mch_bones(self, foot, toe, heel):
-        foot_bone = self.get_bone(foot)
+    def make_roll_mch_bones(self, foot: str, toe: str, heel: str):
         heel_bone = self.get_bone(heel)
 
         heel_middle = (heel_bone.head + heel_bone.tail) / 2
@@ -273,7 +280,7 @@ class Rig(BaseLimbRig):
         put_bone(self.obj, rock1, heel_bone.tail, matrix=self.roll_matrix, scale=0.5)
         put_bone(self.obj, rock2, heel_bone.head, matrix=self.roll_matrix, scale=0.5)
 
-        return [ rock2, rock1, roll2, roll1, result ]
+        return [rock2, rock1, roll2, roll1, result]
 
     @stage.parent_bones
     def parent_roll_mch_chain(self):
@@ -285,7 +292,7 @@ class Rig(BaseLimbRig):
     def rig_roll_mch_chain(self):
         self.rig_roll_mch_bones(self.bones.mch.heel, self.bones.ctrl.heel, self.bones.org.heel)
 
-    def rig_roll_mch_bones(self, chain, heel, org_heel):
+    def rig_roll_mch_bones(self, chain: list[str], heel: str, org_heel: str):
         rock2, rock1, roll2, roll1, result = chain
 
         # This order is required for correct working of the constraints
@@ -317,7 +324,6 @@ class Rig(BaseLimbRig):
 
         self.make_constraint(rock1, 'LIMIT_ROTATION', max_y=DEG_360, space='LOCAL')
         self.make_constraint(rock2, 'LIMIT_ROTATION', min_y=-DEG_360, space='LOCAL')
-
 
     ####################################################
     # FK parents MCH chain
@@ -356,12 +362,11 @@ class Rig(BaseLimbRig):
 
         self.set_bone_parent(self.bones.mch.ik_target, self.bones.mch.heel[-1])
 
-
     ####################################################
     # Settings
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         super().add_parameters(params)
 
         items = [
@@ -374,9 +379,9 @@ class Rig(BaseLimbRig):
         ]
 
         params.foot_pivot_type = bpy.props.EnumProperty(
-            items   = items,
-            name    = "Foot Pivot",
-            default = 'ANKLE_TOE'
+            items=items,
+            name="Foot Pivot",
+            default='ANKLE_TOE'
         )
 
         params.extra_ik_toe = bpy.props.BoolProperty(
@@ -385,13 +390,12 @@ class Rig(BaseLimbRig):
             description="Generate a separate IK toe control for better IK/FK snapping"
         )
 
-
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params, end='Foot'):
         layout.prop(params, 'foot_pivot_type')
         layout.prop(params, 'extra_ik_toe')
 
-        super().parameters_ui(layout, params, 'Foot')
+        super().parameters_ui(layout, params, end)
 
 
 def create_sample(obj):
@@ -436,7 +440,6 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['foot.L']]
     bones['heel.02.L'] = bone.name
 
-
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['thigh.L']]
     pbone.rigify_type = 'limbs.leg'
@@ -450,7 +453,10 @@ def create_sample(obj):
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.ik_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.ik_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, True, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
@@ -458,7 +464,10 @@ def create_sample(obj):
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.hose_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.hose_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, True, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
@@ -466,11 +475,17 @@ def create_sample(obj):
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.fk_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.fk_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, True, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.tweak_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, True, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
@@ -523,8 +538,12 @@ def create_sample(obj):
         arm.edit_bones.active = bone
 
     for eb in arm.edit_bones:
-        eb.layers = (False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
+        eb.layers = (False, False, False, False, False, False, False, False, False, False, False,
+                     False, False, True, False, False, False, False, False, False, False, False,
+                     False, False, False, False, False, False, False, False, False, False)
 
-    arm.layers = (False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
+    arm.layers = (False, False, False, False, False, False, False, False, False, False, False,
+                  False, False, True, False, False, False, False, False, False, False, False,
+                  False, False, False, False, False, False, False, False, False, False)
 
     return bones

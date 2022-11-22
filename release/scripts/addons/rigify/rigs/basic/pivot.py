@@ -21,7 +21,12 @@ class Rig(BaseRig):
     class MchBones(BaseRig.MchBones):
         pass
 
-    bones: BaseRig.ToplevelBones[str, CtrlBones, MchBones, str]
+    bones: BaseRig.ToplevelBones[
+        str,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        str
+    ]
 
     make_control: bool
     make_pivot: bool

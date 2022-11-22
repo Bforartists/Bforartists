@@ -3,21 +3,16 @@
 import bpy
 import enum
 
-from itertools import count, repeat
-from mathutils import Vector, Matrix
 from bl_math import clamp
+from mathutils import Vector
 
-from ...utils.rig import connected_children_names
 from ...utils.layers import ControlLayersOption
 from ...utils.naming import make_derived_name
-from ...utils.bones import align_bone_orientation, align_bone_to_axis, align_bone_roll
-from ...utils.misc import map_list, LazyRef
+from ...utils.misc import LazyRef
 from ...utils.mechanism import driver_var_transform
 
-from ...base_rig import stage
-
-from .skin_nodes import ControlBoneNode, ControlNodeLayer, ControlNodeIcon
-from .skin_parents import ControlBoneWeakParentLayer, ControlBoneParentOffset
+from .skin_nodes import ControlBoneNode, ControlNodeLayer, ControlNodeIcon, BaseSkinNode
+from .skin_parents import ControlBoneWeakParentLayer, ControlBoneParentOffset, ControlBoneParentBase
 
 from .basic_chain import Rig as BasicChainRig
 
@@ -35,6 +30,14 @@ class Rig(BasicChainRig):
     """
 
     min_chain_length = 2
+
+    pivot_pos: int
+
+    chain_lengths: list[float]
+    pivot_base: Vector
+    pivot_vector: Vector
+    pivot_length: float
+    middle_pivot_factor: float
 
     def initialize(self):
         if len(self.bones.org) < self.min_chain_length:
@@ -71,7 +74,7 @@ class Rig(BasicChainRig):
     ####################################################
     # UTILITIES
 
-    def get_pivot_projection(self, pos, index):
+    def get_pivot_projection(self, pos: Vector, index: int) -> float:
         """Compute the interpolation factor within the chain for a control at pos and index."""
         if self.params.skin_chain_falloff_length:
             # Position along the length of the chain
@@ -80,11 +83,11 @@ class Rig(BasicChainRig):
             # Position projected on the line connecting chain ends
             return clamp((pos - self.pivot_base).dot(self.pivot_vector) / self.pivot_length)
 
-    def use_falloff_curve(self, idx):
+    def use_falloff_curve(self, idx: int) -> bool:
         """Check if the given Control has any influence on other nodes."""
         return self.params.skin_chain_falloff[idx] > -10
 
-    def apply_falloff_curve(self, factor, idx):
+    def apply_falloff_curve(self, factor: float, idx: int) -> float:
         """Compute the falloff weight at position factor for the given Control."""
         weight = self.params.skin_chain_falloff[idx]
 
@@ -103,7 +106,7 @@ class Rig(BasicChainRig):
     ####################################################
     # CONTROL NODES
 
-    def make_control_node(self, i, org, is_end):
+    def make_control_node(self, i: int, org: str, is_end: bool) -> ControlBoneNode:
         node = super().make_control_node(i, org, is_end)
 
         # Chain end control nodes
@@ -126,8 +129,14 @@ class Rig(BasicChainRig):
 
         return node
 
-    def extend_control_node_parent(self, parent, node):
-        if node.rig != self or node.index in (0, self.num_orgs):
+    def extend_control_node_parent(self, parent: ControlBoneParentBase,
+                                   node: BaseSkinNode) -> ControlBoneParentBase:
+        if node.rig != self:
+            return parent
+
+        assert isinstance(node, ControlBoneNode)
+
+        if node.index in (0, self.num_orgs):
             return parent
 
         parent = ControlBoneParentOffset(self, node, parent)
@@ -167,7 +176,7 @@ class Rig(BasicChainRig):
 
         return parent
 
-    def get_control_node_layers(self, node):
+    def get_control_node_layers(self, node: ControlBoneNode) -> list[bool]:
         layers = None
 
         # Secondary Layers used for the middle pivot
@@ -188,7 +197,7 @@ class Rig(BasicChainRig):
 
         self.rig_propagate(mch, node)
 
-    def rig_propagate(self, mch, node):
+    def rig_propagate(self, mch: str, node: ControlBoneNode):
         # Interpolate chain twist and/or scale between pivots
         if node.index not in (0, self.num_orgs, self.pivot_pos):
             index1, index2, factor = self.get_propagate_spec(node)
@@ -199,7 +208,7 @@ class Rig(BasicChainRig):
             if self.use_scale and self.params.skin_chain_falloff_scale:
                 self.rig_propagate_scale(mch, index1, index2, factor)
 
-    def get_propagate_spec(self, node):
+    def get_propagate_spec(self, node: ControlBoneNode) -> tuple[int, int, float]:
         """Compute source handle indices and factor for propagating scale and twist to node."""
         index1 = 0
         index2 = self.num_orgs
@@ -221,7 +230,7 @@ class Rig(BasicChainRig):
 
         return index1, index2, factor
 
-    def rig_propagate_twist(self, mch, index1, index2, factor):
+    def rig_propagate_twist(self, mch: str, index1: int, index2: int, factor: float):
         handles = self.get_all_mch_handles()
         handles_pre = self.get_all_mch_handles_pre()
 
@@ -267,7 +276,7 @@ class Rig(BasicChainRig):
             variables=variables
         )
 
-    def rig_propagate_scale(self, mch, index1, index2, factor, use_y=False):
+    def rig_propagate_scale(self, mch: str, index1: int, index2: int, factor: float, use_y=False):
         handles = self.get_all_mch_handles()
 
         self.make_constraint(
@@ -285,7 +294,7 @@ class Rig(BasicChainRig):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.skin_chain_pivot_pos = bpy.props.IntProperty(
             name='Middle Control Position',
             default=0,
@@ -305,13 +314,15 @@ class Rig(BasicChainRig):
             name='Control Falloff',
             default=(0.0, 1.0, 0.0),
             soft_min=-2, min=-10, soft_max=2,
-            description='Falloff curve coefficient: 0 is linear, and higher value is wider influence. Set to -10 to disable influence completely',
+            description='Falloff curve coefficient: 0 is linear, and higher value is wider '
+                        'influence. Set to -10 to disable influence completely',
         )
 
         params.skin_chain_falloff_length = bpy.props.BoolProperty(
             name='Falloff Along Chain Curve',
             default=False,
-            description='Falloff is computed along the curve of the chain, instead of projecting on the axis connecting the start and end points',
+            description='Falloff is computed along the curve of the chain, instead of projecting '
+                        'on the axis connecting the start and end points',
         )
 
         params.skin_chain_falloff_twist = bpy.props.BoolProperty(
@@ -329,8 +340,8 @@ class Rig(BasicChainRig):
         params.skin_chain_falloff_to_controls = bpy.props.BoolProperty(
             name='Propagate To Controls',
             default=False,
-            description='Expose scale and/or twist propagated to tweak controls to be seen as ' +
-                        'parent motion by glue or other chains using Merge Parent Rotation And ' +
+            description='Expose scale and/or twist propagated to tweak controls to be seen as '
+                        'parent motion by glue or other chains using Merge Parent Rotation And '
                         'Scale. Otherwise it is only propagated internally within this chain',
         )
 
@@ -340,7 +351,7 @@ class Rig(BasicChainRig):
         super().add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         layout.prop(params, "skin_chain_pivot_pos")
 
         col = layout.column(align=True)
@@ -376,6 +387,12 @@ class ControlBoneChainPropagate(ControlBoneWeakParentLayer):
     Parent mechanism generator that propagates chain twist/scale
     to the reparent system, if Propagate To Controls is used.
     """
+
+    rig: Rig
+    node: ControlBoneNode
+
+    def __init__(self, rig: Rig, node: ControlBoneNode, parent: ControlBoneParentBase):
+        super().__init__(rig, node, parent)
 
     def __eq__(self, other):
         return (

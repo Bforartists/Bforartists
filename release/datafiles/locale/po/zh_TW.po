@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -18061,10 +18061,6 @@ msgstr "按住操作系統按鍵"
 
 msgid "Properties to set when the operator is called"
 msgstr "當操作器呼叫時要設定的屬性"
-
-
-msgid "Property Value"
-msgstr "屬性值"
 
 
 msgid "The value this event translates to in a modal keymap"
@@ -39397,6 +39393,10 @@ msgid "Shrink mask"
 msgstr "收縮遮罩"
 
 
+msgid "Operator"
+msgstr "操作器"
+
+
 msgid "Relax Face Sets"
 msgstr "放鬆面集"
 
@@ -42818,10 +42818,6 @@ msgstr "將作用中操作器設回其預設值"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "操作器枚舉圓派"
-
-
-msgid "Operator"
-msgstr "操作器"
 
 
 msgid "Operator name (in python as string)"
@@ -53699,10 +53695,6 @@ msgid "Deselect"
 msgstr "取消選取"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "攝影機與標記 (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "無法解析 XML，%s:%s 檔案 %r"
 
@@ -53967,6 +53959,10 @@ msgstr "警告：檔案已經存在。是否覆蓋既有檔案？"
 msgctxt "Operator"
 msgid "Open..."
 msgstr "開啟..."
+
+
+msgid "%s: %s"
+msgstr "%s：%s"
 
 
 msgctxt "Operator"
@@ -54533,10 +54529,6 @@ msgstr "離心"
 
 msgid "Odd"
 msgstr "偶數"
-
-
-msgid "%s: %s"
-msgstr "%s：%s"
 
 
 msgid "B/W"

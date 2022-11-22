@@ -2,7 +2,7 @@
 
 import bpy
 
-from ...utils.bones import align_bone_roll, put_bone, copy_bone_position, flip_bone
+from ...utils.bones import align_bone_roll, put_bone, copy_bone_position
 from ...utils.naming import make_derived_name
 from ...utils.misc import map_list
 
@@ -18,17 +18,23 @@ class Rig(pawRig):
     """Front paw rig with special IK automation."""
 
     ####################################################
-    # EXTRA BONES
-    #
-    # mch:
-    #   ik2_chain[2]
-    #     Second IK system (pre-driving heel)
-    #   heel_track
-    #     Bone tracking IK2 to rotate heel
-    #   heel_parent
-    #     Parent of the heel control
-    #
-    ####################################################
+    # BONES
+
+    class CtrlBones(pawRig.CtrlBones):
+        pass
+
+    class MchBones(pawRig.MchBones):
+        ik2_chain: list[str]           # Second IK system (pre-driving heel)
+        ik2_target: str                # Second IK system target (if heel2)
+        heel_track: str                # Bone tracking IK2 to rotate heel
+        heel_parent: str               # Parent of the heel control
+
+    bones: pawRig.ToplevelBones[
+        pawRig.OrgBones,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # IK controls
@@ -49,7 +55,6 @@ class Rig(pawRig):
 
     def get_ik_pole_parents(self):
         return [(self.get_ik2_target_bone(), self.bones.ctrl.ik)]
-
 
     ####################################################
     # Second IK system (pre-driving heel)
@@ -72,10 +77,10 @@ class Rig(pawRig):
         self.get_bone(chain[1]).tail = self.get_bone(orgs[2]).tail
         align_bone_roll(self.obj, chain[1], orgs[1])
 
-    def make_ik2_mch_target_bone(self, orgs):
+    def make_ik2_mch_target_bone(self, orgs: list[str]):
         return self.copy_bone(orgs[3], make_derived_name(orgs[0], 'mch', '_ik2_target'), scale=1/2)
 
-    def make_ik2_mch_bone(self, i, org):
+    def make_ik2_mch_bone(self, _i: int, org: str):
         return self.copy_bone(org, make_derived_name(org, 'mch', '_ik2'))
 
     @stage.parent_bones
@@ -91,7 +96,7 @@ class Rig(pawRig):
         for i, mch in enumerate(self.bones.mch.ik2_chain):
             self.configure_ik2_mch_bone(i, mch)
 
-    def configure_ik2_mch_bone(self, i, mch):
+    def configure_ik2_mch_bone(self, i: int, mch: str):
         bone = self.get_bone(mch)
         bone.ik_stretch = 0.1
         if i == 1:
@@ -102,7 +107,6 @@ class Rig(pawRig):
     def rig_ik2_mch_chain(self):
         target_bone = self.get_ik2_target_bone()
         self.rig_ik_mch_end_bone(self.bones.mch.ik2_chain[-1], target_bone, self.bones.ctrl.ik_pole)
-
 
     ####################################################
     # Heel tracking from IK2
@@ -150,28 +154,27 @@ class Rig(pawRig):
         # Complete the parent chain.
         self.set_bone_parent(self.bones.mch.heel_parent, self.bones.mch.heel_track)
 
-
     ####################################################
     # Settings
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         super().add_parameters(params)
 
         params.front_paw_heel_influence = bpy.props.FloatProperty(
-            name        = 'Heel IK Influence',
-            default     = 0.8,
-            min         = 0,
-            max         = 1,
-            description = 'Influence of the secondary IK on the heel control rotation'
+            name='Heel IK Influence',
+            default=0.8,
+            min=0,
+            max=1,
+            description='Influence of the secondary IK on the heel control rotation'
         )
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params, end='Claw'):
         r = layout.row()
         r.prop(params, "front_paw_heel_influence", slider=True)
 
-        super().parameters_ui(layout, params)
+        super().parameters_ui(layout, params, end)
 
 
 def create_sample(obj):
@@ -222,11 +225,17 @@ def create_sample(obj):
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.fk_layers = [False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.fk_layers = [
+            False, False, False, False, False, False, False, False, True, False, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.tweak_layers = [
+            False, False, False, False, False, False, False, False, False, True, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     pbone = obj.pose.bones[bones['front_shin.L']]

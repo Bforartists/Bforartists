@@ -1060,7 +1060,8 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             col = layout.column(align=True)
             row = col.row()
             row.separator(factor = 3.5)
-            row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props.settings_source = "BRUSH"
             row = col.row()
             row.separator(factor = 3.5)
             row.prop(brush, "automasking_cavity_factor", text="Factor")

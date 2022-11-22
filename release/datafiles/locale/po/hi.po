@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -4288,6 +4288,10 @@ msgid "Sculpt"
 msgstr "गढन"
 
 
+msgid "Operator"
+msgstr "संचालक"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "शिल्प रूप"
@@ -4583,10 +4587,6 @@ msgstr "एक ब्लेंडर संचिका खोलें"
 
 msgid "Trusted Source"
 msgstr "विश्वसनीय स्रोत"
-
-
-msgid "Operator"
-msgstr "संचालक"
 
 
 msgid "Context"
@@ -5439,10 +5439,6 @@ msgstr ".Oso संचिका में बाह्य .oslसंचिका
 msgctxt "Operator"
 msgid "Assign"
 msgstr "निर्दिष्ट"
-
-
-msgid "Cameras & Markers (.py)"
-msgstr "प्रतिबिंबकएवं चिन्हक (.py)"
 
 
 msgid "Position:"

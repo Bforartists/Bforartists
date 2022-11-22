@@ -2,27 +2,48 @@
 
 import bpy
 
+from typing import TYPE_CHECKING, Optional
+
+from mathutils import Quaternion
+
+from ...utils.bones import BoneDict
 from ...utils.naming import make_derived_name
-from ...utils.misc import force_lazy, LazyRef
+from ...utils.misc import force_lazy, ArmatureObject
 
-from ...base_rig import BaseRig, stage
+from ...base_rig import BaseRig
 
-from .skin_parents import ControlBoneParentOrg
+from .skin_parents import ControlBoneParentOrg, ControlBoneParentBase
+
+if TYPE_CHECKING:
+    from .skin_nodes import BaseSkinNode, ControlBoneNode
 
 
+# noinspection PyMethodMayBeStatic
 class BaseSkinRig(BaseRig):
     """
     Base type for all rigs involved in the skin system.
     This includes chain rigs and the parent provider rigs.
     """
 
+    rig_parent_bone: str
+
     def initialize(self):
         self.rig_parent_bone = self.get_bone_parent(self.base_bone)
 
     ##########################
+    # BONES
+
+    bones: BaseRig.ToplevelBones[
+        str | list[str] | BoneDict,
+        BaseRig.CtrlBones,
+        BaseRig.MchBones,
+        str | list[str] | BoneDict,
+    ]
+
+    ##########################
     # Utilities
 
-    def get_parent_skin_rig(self):
+    def get_parent_skin_rig(self) -> Optional['BaseSkinRig']:
         """Find the closest BaseSkinRig parent."""
         parent = self.rigify_parent
 
@@ -33,7 +54,7 @@ class BaseSkinRig(BaseRig):
 
         return None
 
-    def get_all_parent_skin_rigs(self):
+    def get_all_parent_skin_rigs(self) -> list['BaseSkinRig']:
         """Get a list of all BaseSkinRig parents, starting with this rig."""
         items = []
         current = self
@@ -42,7 +63,7 @@ class BaseSkinRig(BaseRig):
             current = current.get_parent_skin_rig()
         return items
 
-    def get_child_chain_parent_next(self, rig):
+    def get_child_chain_parent_next(self, rig: 'BaseSkinRig') -> str:
         """
         Retrieves the parent bone for the child chain rig
         as determined by the parent skin rig.
@@ -52,7 +73,7 @@ class BaseSkinRig(BaseRig):
         else:
             return self.rig_parent_bone
 
-    def build_control_node_parent_next(self, node):
+    def build_control_node_parent_next(self, node: 'BaseSkinNode') -> ControlBoneParentBase:
         """
         Retrieves the parent mechanism generator for the child control node
         as determined by the parent skin rig.
@@ -65,14 +86,15 @@ class BaseSkinRig(BaseRig):
     ##########################
     # Methods to override
 
-    def get_child_chain_parent(self, rig, parent_bone):
+    def get_child_chain_parent(self, rig: 'BaseSkinRig', parent_bone: str) -> str:
         """
         Returns the (lazy) parent bone to use for the given child chain rig.
         The parent_bone argument specifies the actual parent bone from caller.
         """
         return parent_bone
 
-    def build_control_node_parent(self, node, parent_bone):
+    def build_control_node_parent(self, node: 'BaseSkinNode',
+                                  parent_bone: str) -> ControlBoneParentBase:
         """
         Returns the parent mechanism generator for the child control node.
         The parent_bone argument specifies the actual parent bone from caller.
@@ -80,28 +102,30 @@ class BaseSkinRig(BaseRig):
         """
         return ControlBoneParentOrg(self.get_child_chain_parent(node.rig, parent_bone))
 
-    def build_own_control_node_parent(self, node):
+    def build_own_control_node_parent(self, node: 'BaseSkinNode') -> ControlBoneParentBase:
         """
         Returns the parent mechanism generator for nodes directly owned by this rig.
         Called during the initialize stage.
         """
         return self.build_control_node_parent_next(node)
 
-    def extend_control_node_parent(self, parent, node):
+    def extend_control_node_parent(self, parent: ControlBoneParentBase,
+                                   _node: 'BaseSkinNode') -> ControlBoneParentBase:
         """
         First callback pass of adjustments to the parent mechanism generator for the given node.
         Called for all BaseSkinRig parents in parent to child order during the initialize stage.
         """
         return parent
 
-    def extend_control_node_parent_post(self, parent, node):
+    def extend_control_node_parent_post(self, parent: ControlBoneParentBase,
+                                        _node: 'BaseSkinNode') -> ControlBoneParentBase:
         """
         Second callback pass of adjustments to the parent mechanism generator for the given node.
         Called for all BaseSkinRig parents in child to parent order during the initialize stage.
         """
         return parent
 
-    def extend_control_node_rig(self, node):
+    def extend_control_node_rig(self, _node: 'ControlBoneNode'):
         """
         A callback pass for adding constraints directly to the generated control.
         Called for all BaseSkinRig parents in parent to child order during the rig stage.
@@ -109,7 +133,7 @@ class BaseSkinRig(BaseRig):
         pass
 
 
-def get_bone_quaternion(obj, bone):
+def get_bone_quaternion(obj: ArmatureObject, bone: str):
     return obj.pose.bones[bone].bone.matrix_local.to_quaternion()
 
 
@@ -119,7 +143,7 @@ class BaseSkinChainRig(BaseSkinRig):
     only modifying nodes of their children or other rigs.
     """
 
-    chain_priority = 0
+    chain_priority: float = 0
 
     def initialize(self):
         super().initialize()
@@ -130,25 +154,25 @@ class BaseSkinChainRig(BaseSkinRig):
     def parent_bones(self):
         self.rig_parent_bone = force_lazy(self.get_child_chain_parent_next(self))
 
-    def get_final_control_node_rotation(self, node):
+    def get_final_control_node_rotation(self, node: 'ControlBoneNode') -> Quaternion:
         """Returns the orientation to use for the given control node owned by this rig."""
         return self.get_control_node_rotation(node)
 
     ##########################
     # Methods to override
 
-    def get_control_node_rotation(self, node):
+    def get_control_node_rotation(self, node: 'ControlBoneNode') -> Quaternion:
         """
         Returns the rig-specific orientation to use for the given control node of this rig,
         if not overridden by the Orientation Bone option.
         """
         return get_bone_quaternion(self.obj, self.base_bone)
 
-    def get_control_node_layers(self, node):
+    def get_control_node_layers(self, node: 'ControlBoneNode') -> list[bool]:
         """Returns the armature layers to use for the given control node owned by this rig."""
-        return self.get_bone(self.base_bone).bone.layers
+        return list(self.get_bone(self.base_bone).bone.layers)
 
-    def make_control_node_widget(self, node):
+    def make_control_node_widget(self, node: 'ControlBoneNode'):
         """Called to generate the widget for nodes with ControlNodeIcon.CUSTOM."""
         raise NotImplementedError()
 
@@ -156,7 +180,7 @@ class BaseSkinChainRig(BaseSkinRig):
     # UI
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.skin_chain_priority = bpy.props.IntProperty(
             name='Chain Priority',
             min=-10, max=10, default=0,
@@ -164,11 +188,12 @@ class BaseSkinChainRig(BaseSkinRig):
         )
 
     @classmethod
-    def parameters_ui(self, layout, params):
-        if self.chain_priority is None:
+    def parameters_ui(cls, layout, params):
+        if cls.chain_priority is None:
             layout.prop(params, "skin_chain_priority")
 
 
+# noinspection PyAbstractClass
 class BaseSkinChainRigWithRotationOption(BaseSkinChainRig):
     """
     Skin chain rig with an option to override the orientation to use
@@ -177,7 +202,7 @@ class BaseSkinChainRigWithRotationOption(BaseSkinChainRig):
 
     use_skin_control_orientation_bone = True
 
-    def get_final_control_node_rotation(self, node):
+    def get_final_control_node_rotation(self, node: 'ControlBoneNode') -> Quaternion:
         bone_name = self.params.skin_control_orientation_bone
 
         if bone_name and self.use_skin_control_orientation_bone:
@@ -198,7 +223,7 @@ class BaseSkinChainRigWithRotationOption(BaseSkinChainRig):
             return self.get_control_node_rotation(node)
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.skin_control_orientation_bone = bpy.props.StringProperty(
             name="Orientation Bone",
             description="If set, control orientation is taken from the specified bone",
@@ -207,8 +232,8 @@ class BaseSkinChainRigWithRotationOption(BaseSkinChainRig):
         super().add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
-        if self.use_skin_control_orientation_bone:
+    def parameters_ui(cls, layout, params):
+        if cls.use_skin_control_orientation_bone:
             from rigify.operators.copy_mirror_parameters import make_copy_parameter_button
 
             row = layout.row()

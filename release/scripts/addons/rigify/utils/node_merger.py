@@ -7,6 +7,7 @@ from mathutils import Vector
 from mathutils.kdtree import KDTree
 
 from .errors import MetarigError
+from .misc import ArmatureObject
 from ..base_rig import BaseRig, GenerateCallbackHost
 from ..base_generate import GeneratorPlugin
 
@@ -34,6 +35,11 @@ class NodeMerger(GeneratorPlugin):
     groups: list['MergeGroup']
 
     def __init__(self, generator, domain: Any):
+        """
+        Construct a new merger instance.
+
+        @param domain: An arbitrary identifier to allow multiple independent merging domains.
+        """
         super().__init__(generator)
 
         assert domain is not None
@@ -46,6 +52,9 @@ class NodeMerger(GeneratorPlugin):
         self.frozen = False
 
     def register_node(self, node: 'BaseMergeNode'):
+        """
+        Add a new node to generation, before merging is frozen.
+        """
         assert not self.frozen
         node.generator_plugin = self
         self.nodes.append(node)
@@ -126,9 +135,9 @@ class MergeGroup(object):
     The master nodes of the chosen clusters, plus query nodes, become 'final'.
     """
 
-    main_nodes: list['MainMergeNode']
-    query_nodes: list['QueryMergeNode']
-    final_nodes: list['MainMergeNode']
+    main_nodes: list['MainMergeNode']    # All main nodes in the group.
+    query_nodes: list['QueryMergeNode']  # All query nodes in the group.
+    final_nodes: list['MainMergeNode']   # All main nodes not merged into any other node.
 
     def __init__(self, nodes: list['BaseMergeNode']):
         self.nodes = nodes
@@ -219,6 +228,11 @@ class MergeGroup(object):
 class BaseMergeNode(GenerateCallbackHost):
     """Base class of merge-able nodes."""
 
+    rig: BaseRig
+    obj: ArmatureObject
+    name: str
+    point: Vector
+
     merge_domain: Any = None
     merger = NodeMerger
     group_class = MergeGroup
@@ -239,12 +253,17 @@ class BaseMergeNode(GenerateCallbackHost):
     def register_new_bone(self, new_name: str, old_name: Optional[str] = None):
         self.generator_plugin.register_new_bone(new_name, old_name)
 
-    def can_merge_into(self, other: 'MainMergeNode'):
+    def can_merge_into(self, other: 'MainMergeNode') -> bool:
+        """Checks if this main or query node can merge into the specified master node."""
         raise NotImplementedError
 
-    def get_merge_priority(self, other: 'BaseMergeNode'):
-        """Rank candidates to merge into."""
+    def get_merge_priority(self, other: 'MainMergeNode') -> float:
+        """Rank potential candidates to merge into."""
         return 0
+
+    def merge_done(self):
+        """Called after all merging operations are complete."""
+        pass
 
 
 class MainMergeNode(BaseMergeNode):
@@ -254,9 +273,9 @@ class MainMergeNode(BaseMergeNode):
     sub-objects of their master to receive callbacks in defined order.
     """
 
-    merged_master: 'MainMergeNode'
-    merged_into: Optional['MainMergeNode']
-    merged: list['MainMergeNode']
+    merged_master: 'MainMergeNode'          # Master of this merge cluster; may be self.
+    merged_into: Optional['MainMergeNode']  # Master of this cluster if not self.
+    merged: list['MainMergeNode']           # List of nodes merged into this one.
 
     def __init__(self, rig, name, point, *, domain=None):
         super().__init__(rig, name, point, domain=domain)
@@ -265,6 +284,8 @@ class MainMergeNode(BaseMergeNode):
         self.merged = []
 
     def get_merged_siblings(self):
+        """Retrieve the list of all nodes merged together with this one,
+         starting with the master node."""
         master = self.merged_master
         return [master, *master.merged]
 
@@ -274,19 +295,24 @@ class MainMergeNode(BaseMergeNode):
 
     # noinspection PyMethodMayBeStatic
     def can_merge_from(self, _other: 'MainMergeNode'):
+        """Checks if the other node can be merged into this one."""
         return True
 
     def can_merge_into(self, other: 'MainMergeNode'):
+        """Checks if this node can merge into the specified master."""
         return other.can_merge_from(self)
 
     def merge_into(self, other: 'MainMergeNode'):
+        """Called when it's decided to merge this node into a different master node."""
         self.merged_into = other
 
     def merge_from(self, other: 'MainMergeNode'):
+        """Called when it's decided to merge a different node into this master node."""
         self.merged.append(other)
 
     @property
     def is_master_node(self):
+        """Returns if this node is a master of a merge cluster."""
         return not self.merged_into
 
     def merge_done(self):
@@ -304,7 +330,7 @@ class QueryMergeNode(BaseMergeNode):
     is_master_node = False
     require_match = True
 
-    matched_nodes: list['MainMergeNode']
+    matched_nodes: list['MainMergeNode']  # Master nodes this query matched with.
 
     def merge_done(self):
         self.matched_nodes = [

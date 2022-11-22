@@ -57,9 +57,9 @@ classes = (
     scene_tools.STORYPENCIL_OT_NewScene,
     synchro.STORYPENCIL_OT_WindowBringFront,
     synchro.STORYPENCIL_OT_WindowCloseOperator,
-    synchro.STORYPENCIL_OT_SyncToggleSlave,
+    synchro.STORYPENCIL_OT_SyncToggleSecondary,
     synchro.STORYPENCIL_OT_SetSyncMainOperator,
-    synchro.STORYPENCIL_OT_AddSlaveWindowOperator,
+    synchro.STORYPENCIL_OT_AddSecondaryWindowOperator,
     synchro.STORYPENCIL_OT_Switch,
     render.STORYPENCIL_OT_RenderAction,
     ui.STORYPENCIL_PT_Settings,
@@ -161,7 +161,7 @@ def register():
 
     bpy.context.window_manager.storypencil_settings.active = False
     bpy.context.window_manager.storypencil_settings.main_window_id = ""
-    bpy.context.window_manager.storypencil_settings.slave_windows_ids = ""
+    bpy.context.window_manager.storypencil_settings.secondary_windows_ids = ""
 
     # UI integration in dopesheet header
     bpy.types.DOPESHEET_HT_header.append(synchro.draw_sync_header)

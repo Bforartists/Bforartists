@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -8854,10 +8854,6 @@ msgstr "Časovnik"
 
 msgid "OS Key"
 msgstr "OS taster"
-
-
-msgid "Property Value"
-msgstr "Vrednost osobine"
 
 
 msgid "Type of event"
@@ -18939,6 +18935,10 @@ msgid "Ignore Background Click"
 msgstr "Ignoriši klik na pozadinu"
 
 
+msgid "Operator"
+msgstr "Operator"
+
+
 msgid "Sharpen"
 msgstr "Izoštreno"
 
@@ -20657,10 +20657,6 @@ msgstr "Omogući .blend datotekama automatsko pokretanje skripti, trenutno dostu
 
 msgid "Set the active operator to its default values"
 msgstr "Postavi početne vrednosti aktivnog operatora"
-
-
-msgid "Operator"
-msgstr "Operator"
 
 
 msgctxt "Operator"
@@ -25068,10 +25064,6 @@ msgstr "Bez izlaznog čvora"
 msgctxt "Operator"
 msgid "Assign"
 msgstr "Pridruži"
-
-
-msgid "Cameras & Markers (.py)"
-msgstr "Kamere i markeri (.py)"
 
 
 msgid "Position:"

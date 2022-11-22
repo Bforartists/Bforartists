@@ -5,6 +5,8 @@ import traceback
 
 from string import capwords
 from collections import defaultdict
+from types import ModuleType
+from typing import Iterable
 
 import bpy
 
@@ -16,6 +18,8 @@ from . import feature_set_list
 class ArmatureSubMenu(bpy.types.Menu):
     # bl_idname = 'ARMATURE_MT_armature_class'
 
+    operators: list[tuple[str, str]]
+
     def draw(self, context):
         layout = self.layout
         layout.label(text=self.bl_label)
@@ -24,7 +28,9 @@ class ArmatureSubMenu(bpy.types.Menu):
             layout.operator(op, icon='OUTLINER_OB_ARMATURE', text=text)
 
 
-def get_metarigs(metarigs, base_dir, base_path, *, path=[], nested=False):
+def get_metarigs(metarig_table: dict[str, ModuleType | dict],
+                 base_dir: str, base_path: list[str], *,
+                 path: Iterable[str] = (), nested=False):
     """ Searches for metarig modules, and returns a list of the
         imported modules.
     """
@@ -32,7 +38,7 @@ def get_metarigs(metarigs, base_dir, base_path, *, path=[], nested=False):
     dir_path = os.path.join(base_dir, *path)
 
     try:
-        files = os.listdir(dir_path)
+        files: list[str] = os.listdir(dir_path)
     except FileNotFoundError:
         files = []
 
@@ -45,25 +51,25 @@ def get_metarigs(metarigs, base_dir, base_path, *, path=[], nested=False):
         if f[0] in [".", "_"]:
             continue
         if f.count(".") >= 2 or (is_dir and "." in f):
-            print("Warning: %r, filename contains a '.', skipping" % os.path.join(path, f))
+            print("Warning: %r, filename contains a '.', skipping" % os.path.join(*path, f))
             continue
 
         if is_dir:  # Check directories
-            get_metarigs(metarigs[f], base_dir, base_path, path=[*path, f], nested=True)  # "" adds a final slash
+            get_metarigs(metarig_table[f], base_dir, base_path, path=[*path, f], nested=True)
         elif f.endswith(".py"):
             # Check straight-up python files
             f = f[:-3]
             module = get_resource('.'.join([*base_path, *path, f]))
             if nested:
-                metarigs[f] = module
+                metarig_table[f] = module
             else:
-                metarigs[METARIG_DIR][f] = module
+                metarig_table[METARIG_DIR][f] = module
 
 
-def make_metarig_add_execute(m):
+def make_metarig_add_execute(module):
     """ Create an execute method for a metarig creation operator.
     """
-    def execute(self, context):
+    def execute(_self, context):
         # Add armature object
         bpy.ops.object.armature_add()
         obj = context.active_object
@@ -76,62 +82,71 @@ def make_metarig_add_execute(m):
         bones.remove(bones[0])
 
         # Create metarig
-        m.create(obj)
+        module.create(obj)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         return {'FINISHED'}
     return execute
 
 
-def make_metarig_menu_func(bl_idname, text):
+def make_metarig_menu_func(bl_idname: str, text: str):
     """ For some reason lambda's don't work for adding multiple menu
         items, so we use this instead to generate the functions.
     """
-    def metarig_menu(self, context):
+    def metarig_menu(self, _context):
         self.layout.operator(bl_idname, icon='OUTLINER_OB_ARMATURE', text=text)
     return metarig_menu
 
 
-def make_submenu_func(bl_idname, text):
-    def metarig_menu(self, context):
+def make_submenu_func(bl_idname: str, text: str):
+    def metarig_menu(self, _context):
         self.layout.menu(bl_idname, icon='OUTLINER_OB_ARMATURE', text=text)
     return metarig_menu
 
 
 # Get the metarig modules
 def get_internal_metarigs():
-    BASE_RIGIFY_DIR = os.path.dirname(__file__)
-    BASE_RIGIFY_PATH = __name__.split('.')[:-1]
+    base_rigify_dir = os.path.dirname(__file__)
+    base_rigify_path = __name__.split('.')[:-1]
 
-    get_metarigs(metarigs, os.path.join(BASE_RIGIFY_DIR, METARIG_DIR), [*BASE_RIGIFY_PATH, METARIG_DIR])
+    get_metarigs(metarigs,
+                 os.path.join(base_rigify_dir, METARIG_DIR),
+                 [*base_rigify_path, METARIG_DIR])
 
-def infinite_defaultdict():
-    return defaultdict(infinite_defaultdict)
 
-metarigs = infinite_defaultdict()
+def infinite_default_dict():
+    return defaultdict(infinite_default_dict)
+
+
+metarigs = infinite_default_dict()
 metarig_ops = {}
 armature_submenus = []
 menu_funcs = []
 
-def create_metarig_ops(dic=metarigs):
+
+def create_metarig_ops(dic: dict | None = None):
+    if dic is None:
+        dic = metarigs
+
     """Create metarig add Operators"""
     for metarig_category in dic:
         if metarig_category == "external":
             create_metarig_ops(dic[metarig_category])
             continue
-        if not metarig_category in metarig_ops:
+        if metarig_category not in metarig_ops:
             metarig_ops[metarig_category] = []
         for m in dic[metarig_category].values():
             name = m.__name__.rsplit('.', 1)[1]
 
             # Dynamically construct an Operator
-            T = type("Add_" + name + "_Metarig", (bpy.types.Operator,), {})
-            T.bl_idname = "object.armature_" + name + "_metarig_add"
-            T.bl_label = "Add " + name.replace("_", " ").capitalize() + " (metarig)"
-            T.bl_options = {'REGISTER', 'UNDO'}
-            T.execute = make_metarig_add_execute(m)
+            op_type = type("Add_" + name + "_Metarig", (bpy.types.Operator,), {})
+            op_type.bl_idname = "object.armature_" + name + "_metarig_add"
+            op_type.bl_label = "Add " + name.replace("_", " ").capitalize() + " (metarig)"
+            op_type.bl_options = {'REGISTER', 'UNDO'}
+            op_type.execute = make_metarig_add_execute(m)
 
-            metarig_ops[metarig_category].append((T, name))
+            metarig_ops[metarig_category].append((op_type, name))
+
 
 def create_menu_funcs():
     global menu_funcs
@@ -139,7 +154,10 @@ def create_menu_funcs():
         text = capwords(name.replace("_", " ")) + " (Meta-Rig)"
         menu_funcs += [make_metarig_menu_func(mop.bl_idname, text)]
 
-def create_armature_submenus(dic=metarigs):
+
+def create_armature_submenus(dic: dict | None = None):
+    if dic is None:
+        dic = metarigs
     global menu_funcs
     metarig_categories = list(dic.keys())
     metarig_categories.sort()
@@ -151,15 +169,19 @@ def create_armature_submenus(dic=metarigs):
         if metarig_category == METARIG_DIR:
             continue
 
-        armature_submenus.append(type('Class_' + metarig_category + '_submenu', (ArmatureSubMenu,), {}))
+        armature_submenus.append(type('Class_' + metarig_category + '_submenu',
+                                      (ArmatureSubMenu,), {}))
         armature_submenus[-1].bl_label = metarig_category + ' (submenu)'
         armature_submenus[-1].bl_idname = 'ARMATURE_MT_%s_class' % metarig_category
         armature_submenus[-1].operators = []
         menu_funcs += [make_submenu_func(armature_submenus[-1].bl_idname, metarig_category)]
 
         for mop, name in metarig_ops[metarig_category]:
-            arm_sub = next((e for e in armature_submenus if e.bl_label == metarig_category + ' (submenu)'), '')
+            arm_sub = next((e for e in armature_submenus
+                            if e.bl_label == metarig_category + ' (submenu)'),
+                           '')
             arm_sub.operators.append((mop.bl_idname, name,))
+
 
 def init_metarig_menu():
     get_internal_metarigs()
@@ -167,8 +189,9 @@ def init_metarig_menu():
     create_menu_funcs()
     create_armature_submenus()
 
-### Registering ###
 
+#################
+# Registering
 
 def register():
     from bpy.utils import register_class
@@ -183,6 +206,7 @@ def register():
     for mf in menu_funcs:
         bpy.types.VIEW3D_MT_armature_add.append(mf)
 
+
 def unregister():
     from bpy.utils import unregister_class
 
@@ -196,7 +220,8 @@ def unregister():
     for mf in menu_funcs:
         bpy.types.VIEW3D_MT_armature_add.remove(mf)
 
-def get_external_metarigs(feature_module_names):
+
+def get_external_metarigs(feature_module_names: list[str]):
     unregister()
 
     # Clear and fill metarigs public variables
@@ -204,12 +229,14 @@ def get_external_metarigs(feature_module_names):
     get_internal_metarigs()
 
     for module_name in feature_module_names:
+        # noinspection PyBroadException
         try:
             base_dir, base_path = feature_set_list.get_dir_path(module_name, METARIG_DIR)
 
             get_metarigs(metarigs['external'], base_dir, base_path)
         except Exception:
-            print("Rigify Error: Could not load feature set '%s' metarigs: exception occurred.\n" % (feature_set))
+            print(f"Rigify Error: Could not load feature set '{module_name}' metarigs: "
+                  f"exception occurred.\n")
             traceback.print_exc()
             print("")
             continue

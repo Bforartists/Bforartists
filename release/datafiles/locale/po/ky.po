@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -2426,6 +2426,10 @@ msgid "Editing"
 msgstr "Оңдоо"
 
 
+msgid "Operator"
+msgstr "Оператор"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Скульптинг режими"
@@ -2670,10 +2674,6 @@ msgstr "Blender файлын ачуу"
 
 msgid "Trusted Source"
 msgstr "Ишеничтүү булак"
-
-
-msgid "Operator"
-msgstr "Оператор"
 
 
 msgctxt "Operator"
@@ -3265,6 +3265,10 @@ msgid "Open..."
 msgstr "Ачуу..."
 
 
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Колдонмо"
@@ -3305,10 +3309,6 @@ msgstr "Кубат талаасы"
 
 msgid "Calculate"
 msgstr "Эсептөө"
-
-
-msgid "%s: %s"
-msgstr "%s: %s"
 
 
 msgctxt "Operator"
