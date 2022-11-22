@@ -6,13 +6,14 @@ import importlib
 from ..utils.naming import Side, get_name_base_and_sides, mirror_name
 from ..utils.misc import property_to_python
 
-from ..utils.rig import get_rigify_type
+from ..utils.rig import get_rigify_type, get_rigify_params
 from ..rig_lists import get_rig_class
 
 
 # =============================================
 # Single parameter copy button
 
+# noinspection PyPep8Naming
 class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
     bl_idname = "pose.rigify_copy_single_parameter"
     bl_label = "Copy Option To Selected Rigs"
@@ -49,7 +50,8 @@ class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
         active_pbone = context.active_pose_bone
         active_split = get_name_base_and_sides(active_pbone.name)
 
-        value = getattr(active_pbone.rigify_parameters, self.property_name)
+        params = get_rigify_params(active_pbone)
+        value = getattr(params, self.property_name)
         num_copied = 0
 
         # Copy to different bones of appropriate rig types
@@ -70,8 +72,8 @@ class POSE_OT_rigify_copy_single_parameter(bpy.types.Operator):
                             new_value = mirror_name(value)
 
                     # Assign the final value
-                    setattr(sel_pbone.rigify_parameters,
-                            self.property_name, new_value)
+                    sel_params = get_rigify_params(sel_pbone)
+                    setattr(sel_params, self.property_name, new_value)
                     num_copied += 1
 
         if num_copied:
@@ -96,7 +98,7 @@ def recursive_mirror(value):
     """Mirror strings(.L/.R) in any mixed structure of dictionaries/lists."""
 
     if isinstance(value, dict):
-        return { key: recursive_mirror(val) for key, val in value.items() }
+        return {key: recursive_mirror(val) for key, val in value.items()}
 
     elif isinstance(value, list):
         return [recursive_mirror(elem) for elem in value]
@@ -108,12 +110,15 @@ def recursive_mirror(value):
         return value
 
 
-def copy_rigify_params(from_bone: bpy.types.PoseBone, to_bone: bpy.types.PoseBone, *, match_type=False, x_mirror=False) -> bool:
-    rig_type = to_bone.rigify_type
-    if match_type and to_bone.rigify_type != from_bone.rigify_type:
+def copy_rigify_params(from_bone: bpy.types.PoseBone, to_bone: bpy.types.PoseBone, *,
+                       match_type=False, x_mirror=False) -> bool:
+    rig_type = get_rigify_type(to_bone)
+    from_type = get_rigify_type(from_bone)
+
+    if match_type and rig_type != from_type:
         return False
     else:
-        rig_type = to_bone.rigify_type = get_rigify_type(from_bone)
+        rig_type = to_bone.rigify_type = from_type
 
     from_params = from_bone.get('rigify_parameters')
     if from_params and rig_type:
@@ -129,6 +134,7 @@ def copy_rigify_params(from_bone: bpy.types.PoseBone, to_bone: bpy.types.PoseBon
     return True
 
 
+# noinspection PyPep8Naming
 class POSE_OT_rigify_mirror_parameters(bpy.types.Operator):
     """Mirror Rigify type and parameters of selected bones to the opposite side. Names should end in L/R"""
 
@@ -163,7 +169,9 @@ class POSE_OT_rigify_mirror_parameters(bpy.types.Operator):
                 continue
             if flip_bone != pb and flip_bone.bone.select:
                 self.report(
-                    {'ERROR'}, f"Bone {pb.name} selected on both sides, mirroring would be ambiguous, aborting. Only select the left or right side, not both!")
+                    {'ERROR'},
+                    f"Bone {pb.name} selected on both sides, mirroring would be ambiguous, "
+                    f"aborting. Only select the left or right side, not both!")
                 return {'CANCELLED'}
 
         # Then mirror the parameters.
@@ -180,6 +188,7 @@ class POSE_OT_rigify_mirror_parameters(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# noinspection PyPep8Naming
 class POSE_OT_rigify_copy_parameters(bpy.types.Operator):
     """Copy Rigify type and parameters from active to selected bones"""
 
@@ -188,9 +197,10 @@ class POSE_OT_rigify_copy_parameters(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     match_type: bpy.props.BoolProperty(
-        name = "Match Type",
-        description = "Only mirror rigify parameters to selected bones which have the same rigify type as the active bone",
-        default = False
+        name="Match Type",
+        description="Only mirror rigify parameters to selected bones which have the same rigify "
+                    "type as the active bone",
+        default=False
     )
 
     @classmethod
@@ -200,7 +210,7 @@ class POSE_OT_rigify_copy_parameters(bpy.types.Operator):
             return False
 
         active = context.active_pose_bone
-        if not active or not active.rigify_type:
+        if not active or not get_rigify_type(active):
             return False
 
         select = context.selected_pose_bones
@@ -218,7 +228,8 @@ class POSE_OT_rigify_copy_parameters(bpy.types.Operator):
                 continue
             num_copied += copy_rigify_params(active_bone, pb, match_type=self.match_type)
 
-        self.report({'INFO'}, f"Copied {active_bone.rigify_type} parameters to {num_copied} bones.")
+        self.report({'INFO'},
+                    f"Copied {get_rigify_type(active_bone)} parameters to {num_copied} bones.")
 
         return {'FINISHED'}
 
@@ -228,13 +239,14 @@ def draw_copy_mirror_ops(self, context):
     if context.mode == 'POSE':
         layout.separator()
         op = layout.operator(POSE_OT_rigify_copy_parameters.bl_idname,
-                        icon='DUPLICATE', text="Copy Only Parameters")
+                             icon='DUPLICATE', text="Copy Only Parameters")
         op.match_type = True
         op = layout.operator(POSE_OT_rigify_copy_parameters.bl_idname,
-                        icon='DUPLICATE', text="Copy Type & Parameters")
+                             icon='DUPLICATE', text="Copy Type & Parameters")
         op.match_type = False
         layout.operator(POSE_OT_rigify_mirror_parameters.bl_idname,
                         icon='MOD_MIRROR', text="Mirror Type & Parameters")
+
 
 # =============================================
 # Registration
@@ -251,11 +263,14 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    bpy.types.VIEW3D_MT_rigify.append(draw_copy_mirror_ops)
+    from ..ui import VIEW3D_MT_rigify
+    VIEW3D_MT_rigify.append(draw_copy_mirror_ops)
+
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in classes:
         unregister_class(cls)
 
-    bpy.types.VIEW3D_MT_rigify.remove(draw_copy_mirror_ops)
+    from ..ui import VIEW3D_MT_rigify
+    VIEW3D_MT_rigify.remove(draw_copy_mirror_ops)

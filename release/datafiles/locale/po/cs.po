@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13803,10 +13803,6 @@ msgid "Operating system key pressed"
 msgstr "Stisknutá klávesa operačního systému"
 
 
-msgid "Property Value"
-msgstr "Hodnota vlastnosti"
-
-
 msgctxt "WindowManager"
 msgid "Shift"
 msgstr "Shift"
@@ -18794,10 +18790,6 @@ msgstr "Zobrazit materiál daného objektu"
 
 msgid "Use wave texture in rings"
 msgstr "Zobrazit materiál daného objektu"
-
-
-msgid "White Noise"
-msgstr "Bílý šum"
 
 
 msgid "Vector Math"
@@ -29710,6 +29702,10 @@ msgid "Decrease Contrast"
 msgstr "Snížit Kontrast"
 
 
+msgid "Operator"
+msgstr "Operátor"
+
+
 msgctxt "Operator"
 msgid "Filter Mesh"
 msgstr "Filtrovat Síť"
@@ -32337,10 +32333,6 @@ msgstr "Obnovit Výchozí Nastavení Oprátora"
 
 msgid "Set the active operator to its default values"
 msgstr "Nastavit aktivní operátor na jeho výchozí hodnoty"
-
-
-msgid "Operator"
-msgstr "Operátor"
 
 
 msgctxt "Operator"

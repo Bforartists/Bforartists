@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -28012,10 +28012,6 @@ msgid "Properties to set when the operator is called"
 msgstr "Властивості, що встановлюються при виклику оператора"
 
 
-msgid "Property Value"
-msgstr "Значення властивості"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "Значення цієї події переводиться в модальну розкладку клавіш"
 
@@ -40438,10 +40434,6 @@ msgstr "Використати стандартну смугасту текст�
 
 msgid "Use wave texture in rings"
 msgstr "Використати колову текстуру хвилі"
-
-
-msgid "White Noise"
-msgstr "Білий Шум"
 
 
 msgid "UV Along Stroke"
@@ -63097,6 +63089,10 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "Кількість разів, яку цей фільтр буде застосовано"
 
 
+msgid "Operator"
+msgstr "Оператор"
+
+
 msgctxt "Operator"
 msgid "Filter Mesh"
 msgstr "Фільтрувати Сіть"
@@ -68976,10 +68972,6 @@ msgstr "Скинути значення цього оператора до йо�
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Кругове меню операторів"
-
-
-msgid "Operator"
-msgstr "Оператор"
 
 
 msgid "Operator name (in python as string)"
@@ -89216,16 +89208,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Хибна ціль %r (має бути 'ARMATURE' або 'OBJECT')"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Камери та Маркери (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Неможливо розібрати XML, %s:%s для файлу %r"
-
-
-msgid "Images as Planes"
-msgstr "Зображення як Площини"
 
 
 msgid "Import Options:"
@@ -89986,6 +89970,10 @@ msgstr "Blender є безоплатним програмним забезпеч�
 
 msgid "Licensed under the GNU General Public License"
 msgstr "Ліцензовано під GNU General Public License"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -91908,10 +91896,6 @@ msgid "Unknown add-ons"
 msgstr "Невідомі додатки"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Display Thin"
 msgstr "Показ Тонко"
 
@@ -92324,10 +92308,6 @@ msgstr "Режим Полегшування"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Фільтр Переривчатості (Ейлер)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Режим Екстраполяції"
 
 
 msgid "Grease Pencil Objects"

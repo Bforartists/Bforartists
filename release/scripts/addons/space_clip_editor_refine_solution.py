@@ -93,8 +93,8 @@ class TRACKING_OP_refine_solution(Operator):
                 reprojected_position = reprojected_position / -reprojected_position.z * \
                                        tracking.camera.focal_length_pixels
                 reprojected_position = Vector(
-                                        (tracking.camera.principal[0] + reprojected_position[0],
-                                        tracking.camera.principal[1] * aspy + reprojected_position[1], 0)
+                                        (tracking.camera.principal_point_pixels[0] + reprojected_position[0],
+                                        tracking.camera.principal_point_pixels[1] * aspy + reprojected_position[1], 0)
                                         )
 
                 marker_position[0] = (marker.co[0] + track.offset[0]) * winx

@@ -54,7 +54,12 @@ class Rig(BaseSpineRig):
         wgt_hips: str                  # Hip widget position bone.
         wgt_chest: str                 # Chest widget position bone.
 
-    bones: BaseSpineRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: BaseSpineRig.ToplevelBones[
+        list[str],
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Master control bone

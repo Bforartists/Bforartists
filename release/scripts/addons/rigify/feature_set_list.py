@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from typing import List
+from typing import TYPE_CHECKING, List, Sequence, Optional
 
 import bpy
 from bpy.props import StringProperty
@@ -13,9 +13,13 @@ from shutil import rmtree
 
 from . import feature_sets
 
+if TYPE_CHECKING:
+    from . import RigifyFeatureSets
+
 
 DEFAULT_NAME = 'rigify'
 
+# noinspection PyProtectedMember
 INSTALL_PATH = feature_sets._install_path()
 NAME_PREFIX = feature_sets.__name__.split('.')
 
@@ -47,35 +51,40 @@ def get_installed_modules_names() -> List[str]:
     return sets
 
 
+def get_prefs_feature_sets() -> Sequence['RigifyFeatureSets']:
+    from . import RigifyPreferences
+    return RigifyPreferences.get_instance().rigify_feature_sets
+
+
 def get_enabled_modules_names() -> List[str]:
     """Return a list of module names of all enabled feature sets."""
-    rigify_prefs = bpy.context.preferences.addons[__package__].preferences
     installed_module_names = get_installed_modules_names()
-    rigify_feature_sets = rigify_prefs.rigify_feature_sets
+    rigify_feature_sets = get_prefs_feature_sets()
 
-    enabled_module_names = { fs.module_name for fs in rigify_feature_sets if fs.enabled }
+    enabled_module_names = {fs.module_name for fs in rigify_feature_sets if fs.enabled}
 
     return [name for name in installed_module_names if name in enabled_module_names]
 
 
-def get_module(feature_set):
+def get_module(feature_set: str):
     return importlib.import_module('.'.join([*NAME_PREFIX, feature_set]))
 
 
-def get_module_safe(feature_set):
+def get_module_safe(feature_set: str):
+    # noinspection PyBroadException
     try:
         return get_module(feature_set)
-    except:
+    except:  # noqa: E722
         return None
 
 
-def get_dir_path(feature_set, *extra_items):
+def get_dir_path(feature_set: str, *extra_items: list[str]):
     base_dir = os.path.join(INSTALL_PATH, feature_set, *extra_items)
     base_path = [*NAME_PREFIX, feature_set, *extra_items]
     return base_dir, base_path
 
 
-def get_info_dict(feature_set):
+def get_info_dict(feature_set: str):
     module = get_module_safe(feature_set)
 
     if module and hasattr(module, 'rigify_info'):
@@ -86,28 +95,31 @@ def get_info_dict(feature_set):
     return {}
 
 
-def call_function_safe(module_name, func_name, args=[], kwargs={}):
+def call_function_safe(module_name: str, func_name: str,
+                       args: Optional[list] = None, kwargs: Optional[dict] = None):
     module = get_module_safe(module_name)
 
     if module:
         func = getattr(module, func_name, None)
 
         if callable(func):
+            # noinspection PyBroadException
             try:
-                return func(*args, **kwargs)
+                return func(*(args or []), **(kwargs or {}))
             except Exception:
-                print(f"Rigify Error: Could not call function '{func_name}' of feature set '{module_name}': exception occurred.\n")
+                print(f"Rigify Error: Could not call function '{func_name}' of feature set "
+                      f"'{module_name}': exception occurred.\n")
                 traceback.print_exc()
                 print("")
 
     return None
 
 
-def call_register_function(feature_set, register):
-    call_function_safe(feature_set, 'register' if register else 'unregister')
+def call_register_function(feature_set: str, do_register: bool):
+    call_function_safe(feature_set, 'register' if do_register else 'unregister')
 
 
-def get_ui_name(feature_set):
+def get_ui_name(feature_set: str):
     # Try to get user-defined name
     info = get_info_dict(feature_set)
     if 'name' in info:
@@ -119,7 +131,7 @@ def get_ui_name(feature_set):
     return name.title()
 
 
-def feature_set_items(scene, context):
+def feature_set_items(_scene, _context):
     """Get items for the Feature Set EnumProperty"""
     items = [
         ('all', 'All', 'All installed feature sets and rigs bundled with Rigify'),
@@ -157,6 +169,7 @@ def verify_feature_set_archive(zipfile):
     return dirname, init_found, data_found
 
 
+# noinspection PyPep8Naming
 class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
     bl_idname = "wm.rigify_add_feature_set"
     bl_label = "Add External Feature Set"
@@ -175,7 +188,8 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        addon_prefs = context.preferences.addons[__package__].preferences
+        from . import RigifyPreferences
+        addon_prefs = RigifyPreferences.get_instance()
 
         rigify_config_path = get_install_path(create=True)
 
@@ -190,15 +204,20 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
             fixed_dirname = re.sub(r'[.-]', '_', base_dirname)
 
             if not re.fullmatch(r'[a-zA-Z][a-zA-Z_0-9]*', fixed_dirname):
-                self.report({'ERROR'}, "The feature set archive base directory name is not a valid identifier: '%s'." % (base_dirname))
+                self.report({'ERROR'},
+                            f"The feature set archive base directory name is not a valid "
+                            f"identifier: '{base_dirname}'.")
                 return {'CANCELLED'}
 
             if fixed_dirname == DEFAULT_NAME:
-                self.report({'ERROR'}, "The '%s' name is not allowed for feature sets." % (DEFAULT_NAME))
+                self.report(
+                    {'ERROR'}, f"The '{DEFAULT_NAME}' name is not allowed for feature sets.")
                 return {'CANCELLED'}
 
             if not init_found or not data_found:
-                self.report({'ERROR'}, "The feature set archive has no rigs or metarigs, or is missing __init__.py.")
+                self.report(
+                    {'ERROR'},
+                    "The feature set archive has no rigs or metarigs, or is missing __init__.py.")
                 return {'CANCELLED'}
 
             base_dir = os.path.join(rigify_config_path, base_dirname)
@@ -206,7 +225,7 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
 
             for path, name in [(base_dir, base_dirname), (fixed_dir, fixed_dirname)]:
                 if os.path.exists(path):
-                    self.report({'ERROR'}, "Feature set directory already exists: '%s'." % (name))
+                    self.report({'ERROR'}, f"Feature set directory already exists: '{name}'.")
                     return {'CANCELLED'}
 
             # Unpack the validated archive and fix the directory name if necessary
@@ -225,6 +244,7 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# noinspection PyPep8Naming
 class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
     bl_idname = "wm.rigify_remove_feature_set"
     bl_label = "Remove External Feature Set"
@@ -239,14 +259,15 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
         return context.window_manager.invoke_confirm(self, event)
 
     def execute(self, context):
-        addon_prefs = context.preferences.addons[__package__].preferences
-        feature_sets = addon_prefs.rigify_feature_sets
+        from . import RigifyPreferences
+        addon_prefs = RigifyPreferences.get_instance()
+        feature_set_list = addon_prefs.rigify_feature_sets
         active_idx = addon_prefs.active_feature_set_index
-        active_fs = feature_sets[active_idx]
+        active_fs: 'RigifyFeatureSets' = feature_set_list[active_idx]
 
-        # Call the unregister callback of the set being removed.
+        # Call the 'unregister' callback of the set being removed.
         if active_fs.enabled:
-            call_register_function(active_fs.module_name, register=False)
+            call_register_function(active_fs.module_name, do_register=False)
 
         # Remove the feature set's folder from the file system.
         rigify_config_path = get_install_path()
@@ -256,7 +277,7 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
                 rmtree(set_path)
 
         # Remove the feature set's entry from the addon preferences.
-        feature_sets.remove(active_idx)
+        feature_set_list.remove(active_idx)
 
         # Remove the feature set's entries from the metarigs and rig types.
         addon_prefs.update_external_rigs()
@@ -270,6 +291,7 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
 def register():
     bpy.utils.register_class(DATA_OT_rigify_add_feature_set)
     bpy.utils.register_class(DATA_OT_rigify_remove_feature_set)
+
 
 def unregister():
     bpy.utils.unregister_class(DATA_OT_rigify_add_feature_set)

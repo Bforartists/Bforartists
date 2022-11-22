@@ -21,9 +21,10 @@ class Rig(BaseLimbRig):
 
     min_valid_orgs = max_valid_orgs = 3
 
+    make_wrist_pivot: bool
+
     def initialize(self):
         super().initialize()
-
         self.make_wrist_pivot = self.params.make_ik_wrist_pivot
 
     def prepare_bones(self):
@@ -39,6 +40,22 @@ class Rig(BaseLimbRig):
             axis = self.vector_without_z(self.get_bone(orgs[2]).z_axis)
 
             align_bone_z_axis(self.obj, orgs[2], axis)
+
+    ####################################################
+    # BONES
+
+    class CtrlBones(BaseLimbRig.CtrlBones):
+        ik_wrist: str                  # Wrist pivot control (if enabled)
+
+    class MchBones(BaseLimbRig.MchBones):
+        ik_wrist: str                  # Wrist pivot control output (if enabled)
+
+    bones: BaseLimbRig.ToplevelBones[
+        'Rig.OrgBones',
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Overrides
@@ -104,7 +121,7 @@ class Rig(BaseLimbRig):
     # Settings
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         super().add_parameters(params)
 
         params.make_ik_wrist_pivot = bpy.props.BoolProperty(
@@ -113,10 +130,10 @@ class Rig(BaseLimbRig):
         )
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params, end='Hand'):
         layout.prop(params, "make_ik_wrist_pivot")
 
-        super().parameters_ui(layout, params, 'Hand')
+        super().parameters_ui(layout, params, end)
 
 
 def create_sample(obj, limb=False):
@@ -155,11 +172,17 @@ def create_sample(obj, limb=False):
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.tweak_layers = [
+            False, False, False, False, False, False, False, False, False, True, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.fk_layers = [False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.fk_layers = [
+            False, False, False, False, False, False, False, False, True, False, False, False,
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:

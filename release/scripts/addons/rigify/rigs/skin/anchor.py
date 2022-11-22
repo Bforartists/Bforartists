@@ -2,6 +2,8 @@
 
 import bpy
 
+from bpy.types import PoseBone
+
 from ...utils.naming import make_derived_name
 from ...utils.widgets import layout_widget_dropdown, create_registered_widget
 from ...utils.mechanism import move_all_constraints
@@ -19,7 +21,9 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
 
     chain_priority = 20
 
-    def find_org_bones(self, bone):
+    make_deform: bool
+
+    def find_org_bones(self, bone: PoseBone) -> str:
         return bone.name
 
     def initialize(self):
@@ -28,7 +32,19 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
         self.make_deform = self.params.make_extra_deform
 
     ####################################################
+    # BONES
+
+    bones: BaseSkinChainRigWithRotationOption.ToplevelBones[
+        str,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        str
+    ]
+
+    ####################################################
     # CONTROL NODES
+
+    control_node: ControlBoneNode
 
     @stage.initialize
     def init_control_nodes(self):
@@ -79,7 +95,7 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.make_extra_deform = bpy.props.BoolProperty(
             name="Extra Deform",
             default=False,
@@ -98,12 +114,12 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
             description="Choose the type of the widget to create"
         )
 
-        self.add_relink_constraints_params(params)
+        cls.add_relink_constraints_params(params)
 
         super().add_parameters(params)
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         col = layout.column()
         col.prop(params, "make_extra_deform", text='Generate Deform Bone')
         col.prop(params, "skin_anchor_hide")

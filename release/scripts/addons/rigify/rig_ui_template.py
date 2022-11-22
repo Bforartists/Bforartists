@@ -13,7 +13,7 @@ from rna_prop_ui import rna_idprop_quote_path
 
 from .utils.rig import get_rigify_layers
 
-# noinspection SpellCheckingInspection
+
 UI_IMPORTS = [
     'import bpy',
     'import math',
@@ -97,8 +97,7 @@ def ternarySearch(f, left, right, absolutePrecision):
             right = rightThird
 '''
 
-# noinspection SpellCheckingInspection
-UTILITIES_FUNC_COMMON_IKFK = ['''
+UTILITIES_FUNC_COMMON_IK_FK = ['''
 #########################################
 ## "Visual Transform" helper functions ##
 #########################################
@@ -209,10 +208,10 @@ def correct_rotation(view_layer, bone_ik, target_matrix, *, ctrl_ik=None):
 
     start_angle = ctrl_ik.rotation_euler[1]
 
-    alfarange = find_min_range(distance, start_angle)
-    alfamin = ternarySearch(distance, alfarange[0], alfarange[1], pi / 180)
+    alpha_range = find_min_range(distance, start_angle)
+    alpha_min = ternarySearch(distance, alpha_range[0], alpha_range[1], pi / 180)
 
-    ctrl_ik.rotation_euler[1] = alfamin
+    ctrl_ik.rotation_euler[1] = alpha_min
     view_layer.update()
 
 
@@ -259,10 +258,10 @@ def match_pole_target(view_layer, ik_first, ik_last, pole, match_bone_matrix, le
             from the arm center line.
         """
         # Translate pvi into armature space
-        ploc = a + (ikv/2) + pvi
+        pole_loc = a + (ikv/2) + pvi
 
         # Set pole target to location
-        mat = get_pose_matrix_in_other_space(Matrix.Translation(ploc), pole)
+        mat = get_pose_matrix_in_other_space(Matrix.Translation(pole_loc), pole)
         set_pose_translation(pole, mat)
 
         view_layer.update()
@@ -790,7 +789,7 @@ class Rigify_Rot2PoleSwitch(bpy.types.Operator):
 REGISTER_RIG_OLD_ARM = REGISTER_OP_OLD_ARM_FKIK + REGISTER_OP_OLD_POLE
 
 UTILITIES_RIG_OLD_ARM = [
-    *UTILITIES_FUNC_COMMON_IKFK,
+    *UTILITIES_FUNC_COMMON_IK_FK,
     *UTILITIES_FUNC_OLD_ARM_FKIK,
     *UTILITIES_FUNC_OLD_POLE,
     *UTILITIES_OP_OLD_ARM_FKIK,
@@ -800,7 +799,7 @@ UTILITIES_RIG_OLD_ARM = [
 REGISTER_RIG_OLD_LEG = REGISTER_OP_OLD_LEG_FKIK + REGISTER_OP_OLD_POLE
 
 UTILITIES_RIG_OLD_LEG = [
-    *UTILITIES_FUNC_COMMON_IKFK,
+    *UTILITIES_FUNC_COMMON_IK_FK,
     *UTILITIES_FUNC_OLD_LEG_FKIK,
     *UTILITIES_FUNC_OLD_POLE,
     *UTILITIES_OP_OLD_LEG_FKIK,
@@ -819,7 +818,6 @@ UI_REGISTER = [
 UI_UTILITIES = [
 ]
 
-# noinspection SpellCheckingInspection
 UI_SLIDERS = '''
 ###################
 ## Rig UI Panels ##
@@ -868,7 +866,6 @@ class RigUI(bpy.types.Panel):
 
 UI_REGISTER_BAKE_SETTINGS = ['RigBakeSettings']
 
-# noinspection SpellCheckingInspection
 UI_BAKE_SETTINGS = '''
 class RigBakeSettings(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -890,7 +887,6 @@ def layers_ui(layers, layout):
     """ Turn a list of booleans + a list of names into a layer UI.
     """
 
-    # noinspection SpellCheckingInspection
     code = '''
 class RigLayers(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -1187,7 +1183,6 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
         rigify_layers = get_rigify_layers(metarig.data)
 
         for i in range(1 + len(rigify_layers), 29):
-            # noinspection PyUnresolvedReferences
             rigify_layers.add()
 
         # Create list of layer name/row pairs

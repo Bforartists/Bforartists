@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -19872,10 +19872,6 @@ msgid "Operating system key pressed"
 msgstr "Gedrückte Betriebsystemtaste"
 
 
-msgid "Property Value"
-msgstr "Eigenschaftswert"
-
-
 msgctxt "WindowManager"
 msgid "Shift"
 msgstr "Umschalt"
@@ -39587,6 +39583,10 @@ msgid "Decrease Contrast"
 msgstr "Kontrast verringern"
 
 
+msgid "Operator"
+msgstr "Operator"
+
+
 msgctxt "Operator"
 msgid "Init Mask"
 msgstr "Maske initializieren"
@@ -42482,10 +42482,6 @@ msgstr "Operatorstandard wiederherstellen"
 
 msgid "Set the active operator to its default values"
 msgstr "Den Wert dieser Einstellung auf ihren Standardwert zurücksetzen"
-
-
-msgid "Operator"
-msgstr "Operator"
 
 
 msgctxt "Operator"
@@ -55531,6 +55527,10 @@ msgid "Licensed under the GNU General Public License"
 msgstr "Lizensiert unter der GNU General Public License"
 
 
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgid "Nothing to operate on: %s[ ].%s"
 msgstr "Nichts zum arbeiten an: %s[ ].%s"
 
@@ -57102,10 +57102,6 @@ msgid "Unknown add-ons"
 msgstr "Unbekannte Add-Ons"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Display Thin"
 msgstr "Dünnes anzeigen"
 
@@ -57480,10 +57476,6 @@ msgstr "Interpolationsmodus"
 msgctxt "Operator"
 msgid "Easing Mode"
 msgstr "Lockerungsmodus"
-
-
-msgid "Extrapolation Mode"
-msgstr "Extrapolationsmodus"
 
 
 msgid "Grease Pencil Objects"

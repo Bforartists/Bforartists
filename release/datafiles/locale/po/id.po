@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -11267,10 +11267,6 @@ msgstr "Nama operator (diterjemahkan) untuk dipanggil saat peristiwa masuk/input
 
 msgid "OS Key"
 msgstr "Kunci OS"
-
-
-msgid "Property Value"
-msgstr "Nilai Properti"
 
 
 msgid "Show key map event and property details in the user interface"
@@ -22990,6 +22986,10 @@ msgid "Blender is free software"
 msgstr "Blender adalah perangkat lunak yang gratis"
 
 
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgid "Data path not set"
 msgstr "Jalur data tidak set"
 
@@ -23954,10 +23954,6 @@ msgid "Unknown add-ons"
 msgstr "Add-on tidak diketahui"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Display Thin"
 msgstr "Tampilkan Tipis"
 
@@ -24193,10 +24189,6 @@ msgstr "Mode Interpolasi"
 msgctxt "Operator"
 msgid "Easing Mode"
 msgstr "Mode Pelonggaran"
-
-
-msgid "Extrapolation Mode"
-msgstr "Mode Ekstrapolasi"
 
 
 msgid "Grease Pencil Objects"

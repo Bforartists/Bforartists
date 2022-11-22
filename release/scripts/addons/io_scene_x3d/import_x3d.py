@@ -2738,7 +2738,7 @@ def appearance_CreateDefaultMaterial():
     bpymat_wrap = node_shader_utils.PrincipledBSDFWrapper(bpymat, is_readonly=False)
 
     bpymat_wrap.roughness = 0.8
-    bpymat_wrap.base_color = (0.8, 0.8, 0.8, 1.0)
+    bpymat_wrap.base_color = (0.8, 0.8, 0.8)
     #bpymat.mirror_color = (0, 0, 0)
     #bpymat.emit = 0
 
@@ -3563,8 +3563,8 @@ def load_web3d(
                 # Assign anim curves
                 node = defDict[key]
                 if node.blendData is None:  # Add an object if we need one for animation
-                    node.blendData = node.blendObject = bpy.data.objects.new('AnimOb', None)  # , name)
-                    bpycollection.objects.link(node.blendObject)
+                    bpyob = node.blendData = node.blendObject = bpy.data.objects.new('AnimOb', None)  # , name)
+                    bpycollection.objects.link(bpyob)
                     bpyob.select_set(True)
 
                 if node.blendData.animation_data is None:
