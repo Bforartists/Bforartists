@@ -7,7 +7,7 @@ from ...utils.bones import align_bone_to_axis, flip_bone
 from ...utils.naming import make_derived_name
 from ...utils.widgets_basic import create_circle_widget, create_limb_widget
 
-from ..widgets import create_foot_widget, create_ballsocket_widget
+from ..widgets import create_foot_widget, create_ball_socket_widget
 
 from ...base_rig import stage
 
@@ -21,6 +21,8 @@ class Rig(BaseLimbRig):
     min_valid_orgs = 4
     max_valid_orgs = 5
     toe_bone_index = 3
+
+    use_heel2: bool
 
     def initialize(self):
         self.use_heel2 = len(self.bones.org.main) > 4
@@ -54,7 +56,7 @@ class Rig(BaseLimbRig):
     ####################################################
     # Utilities
 
-    def align_ik_control_bone(self, name):
+    def align_ik_control_bone(self, name: str):
         if self.params.rotation_axis == 'automatic' or self.params.auto_align_extremity:
             align_bone_to_axis(self.obj, name, 'y', flip=True)
 
@@ -65,22 +67,23 @@ class Rig(BaseLimbRig):
             bone.tail[2] = bone.head[2]
             bone.roll = 0
 
-
     ####################################################
     # EXTRA BONES
-    #
-    # ctrl:
-    #   heel:
-    #     Foot heel control
-    #   heel2 (optional):
-    #     Second foot heel control
-    # mch:
-    #   toe_socket:
-    #     IK toe orientation bone.
-    #   ik_heel2 (optional):
-    #     Final position of heel2 in the IK output.
-    #
-    ####################################################
+
+    class CtrlBones(BaseLimbRig.CtrlBones):
+        heel: str                      # Foot heel control
+        heel2: str                     # Second foot heel control (optional)
+
+    class MchBones(BaseLimbRig.MchBones):
+        toe_socket: str                # IK toe orientation bone
+        ik_heel2: str                  # Final position of heel2 in the IK output
+
+    bones: BaseLimbRig.ToplevelBones[
+        BaseLimbRig.OrgBones,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # IK controls
@@ -92,10 +95,10 @@ class Rig(BaseLimbRig):
         extra = [self.bones.ctrl.heel2] if self.use_heel2 else [self.bones.ctrl.heel]
         return super().get_extra_ik_controls() + extra
 
-    def make_ik_control_bone(self, orgs):
+    def make_ik_control_bone(self, orgs: list[str]):
         return self.make_paw_ik_control_bone(orgs[-2], orgs[-1], orgs[2])
 
-    def make_paw_ik_control_bone(self, org_one, org_two, org_name):
+    def make_paw_ik_control_bone(self, org_one: str, org_two: str, org_name: str):
         name = self.copy_bone(org_two, make_derived_name(org_name, 'ctrl', '_ik'))
 
         self.align_ik_control_bone(name)
@@ -112,7 +115,6 @@ class Rig(BaseLimbRig):
 
     def make_ik_ctrl_widget(self, ctrl):
         create_foot_widget(self.obj, ctrl)
-
 
     ####################################################
     # Heel control
@@ -139,8 +141,7 @@ class Rig(BaseLimbRig):
 
     @stage.generate_widgets
     def generate_heel_control_widget(self):
-        create_ballsocket_widget(self.obj, self.bones.ctrl.heel)
-
+        create_ball_socket_widget(self.obj, self.bones.ctrl.heel)
 
     ####################################################
     # Second Heel control
@@ -168,8 +169,7 @@ class Rig(BaseLimbRig):
     @stage.generate_widgets
     def generate_heel2_control_widget(self):
         if self.use_heel2:
-            create_ballsocket_widget(self.obj, self.bones.ctrl.heel2)
-
+            create_ball_socket_widget(self.obj, self.bones.ctrl.heel2)
 
     ####################################################
     # FK control chain
@@ -181,7 +181,6 @@ class Rig(BaseLimbRig):
             create_circle_widget(self.obj, ctrl, radius=0.4, head_tail=0.0)
         else:
             create_circle_widget(self.obj, ctrl, radius=0.4, head_tail=0.5)
-
 
     ####################################################
     # FK parents MCH chain
@@ -211,7 +210,6 @@ class Rig(BaseLimbRig):
         else:
             super().rig_fk_parent_bone(i, parent_mch, org)
 
-
     ####################################################
     # IK system MCH
 
@@ -225,7 +223,6 @@ class Rig(BaseLimbRig):
         super().parent_ik_mch_chain()
 
         self.set_bone_parent(self.bones.mch.ik_target, self.bones.ctrl.heel)
-
 
     ####################################################
     # IK heel2 output
@@ -250,7 +247,6 @@ class Rig(BaseLimbRig):
         if self.use_heel2:
             self.make_constraint(self.bones.mch.ik_heel2, 'COPY_LOCATION', self.bones.mch.ik_target, head_tail=1)
 
-
     ####################################################
     # Deform chain
 
@@ -260,13 +256,12 @@ class Rig(BaseLimbRig):
         if tweak and not (next_tweak or next_entry):
             self.make_constraint(deform, 'STRETCH_TO', entry.org, head_tail=1.0, keep_axis='SWING_Y')
 
-
     ####################################################
     # Settings
 
     @classmethod
-    def parameters_ui(self, layout, params):
-        super().parameters_ui(layout, params, 'Claw')
+    def parameters_ui(cls, layout, params, end='Claw'):
+        super().parameters_ui(layout, params, end)
 
 
 def create_sample(obj):
@@ -313,11 +308,17 @@ def create_sample(obj):
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     try:
-        pbone.rigify_parameters.fk_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.fk_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, True, False, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        pbone.rigify_parameters.tweak_layers = [
+            False, False, False, False, False, False, False, False, False, False, False, False,
+            False, False, False, False, False, False, True, False, False, False, False, False,
+            False, False, False, False, False, False, False, False]
     except AttributeError:
         pass
     try:

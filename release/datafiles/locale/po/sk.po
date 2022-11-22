@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-10-21 11:01+0200\n"
+"PO-Revision-Date: 2022-11-18 12:12+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 "X-Poedit-Bookmarks: -1,890,-1,-1,-1,-1,-1,-1,-1,-1"
 
 
@@ -1014,6 +1014,10 @@ msgstr "Aktívna úprava kostí"
 
 msgid "Armatures active edit bone"
 msgstr "Úprava kosti aktívnej armatúry"
+
+
+msgid "Catalog Path"
+msgstr "Cesta katalógu"
 
 
 msgid "Asset Library Reference"
@@ -11165,6 +11169,14 @@ msgid "Theora"
 msgstr "Theora"
 
 
+msgid "WebM / VP9"
+msgstr "WebM / VP9"
+
+
+msgid "AV1"
+msgstr "AV1"
+
+
 msgid "Output Quality"
 msgstr "Výstupná kvalita"
 
@@ -20514,6 +20526,10 @@ msgstr "Použiť tvarovanie"
 
 msgid "Use this brush in sculpt mode"
 msgstr "Použije tento štetec v režime tvarovania"
+
+
+msgid "Use this brush in sculpt curves mode"
+msgstr "Tento štetec používajte v režime tvarovania kriviek"
 
 
 msgid "Use UV Sculpt"
@@ -31454,10 +31470,6 @@ msgstr "Stlačená klávesa Win"
 
 msgid "Properties to set when the operator is called"
 msgstr "Vlastnosti, ktoré sa majú nastaviť, keď je volaný operátor"
-
-
-msgid "Property Value"
-msgstr "Hodnota vlastnosti"
 
 
 msgid "The value this event translates to in a modal keymap"
@@ -44868,6 +44880,14 @@ msgid "Find sample positions on the curve using a distance from its beginning"
 msgstr "Nájde pozície snímok na krivke použitím vzdialenosti od jej začiatku"
 
 
+msgid "All Curves"
+msgstr "Všetky krivky"
+
+
+msgid "Sample lengths based on the total length of all curves, rather than using a length inside each selected curve"
+msgstr "Dĺžky snímok na základe celkovej dĺžky všetkých kriviek namiesto použitia dĺžky vnútri každej vybranej krivky"
+
+
 msgid "Sample Index"
 msgstr "Index snímky"
 
@@ -46939,10 +46959,6 @@ msgstr "Použije štandardnú textúru vlny v pásoch"
 
 msgid "Use wave texture in rings"
 msgstr "Použije textúru vlyn v prstencoch"
-
-
-msgid "White Noise"
-msgstr "Biely šum"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -52770,6 +52786,10 @@ msgid "Merge Images"
 msgstr "Zlúčiť obrázky"
 
 
+msgid "Combine OpenEXR multi-layer images rendered with different sample ranges into one image with reduced noise"
+msgstr "Kombinuje viacvrstvové obrázky OpenEXR prekreslené s rôznymi rozsahmi snímok do jedného obrázka so zníženým šumom"
+
+
 msgid "File path for image to merge"
 msgstr "Cesta k súboru na zlúčenie obrázka"
 
@@ -53628,6 +53648,34 @@ msgstr "Export glTF 2.0"
 
 msgid "Export scene as glTF 2.0 file"
 msgstr "Exportuje scénu ako glTF (GL Transmission Format) 2.0 súbor"
+
+
+msgid "Lighting Mode"
+msgstr "Režim osvetlenia"
+
+
+msgid "Optional backwards compatibility for non-standard render engines. Applies to lights"
+msgstr "Voliteľná spätná kompatibilita pre neštandardné mechanizmy prekresľovania. Vzťahuje sa na svetlá"
+
+
+msgid "Physically-based glTF lighting units (cd, lx, nt)"
+msgstr "Fyzikálne založené jednotky osvetľovania glTF (cd, lx, nt)"
+
+
+msgid "Unitless"
+msgstr "Bezjednotkový"
+
+
+msgid "Non-physical, unitless lighting. Useful when exposure controls are not available"
+msgstr "Nefyzikálne, bez jednotiek osvetlenia. Užitočné, keď nie sú k dispozícii ovládače expozície"
+
+
+msgid "Raw (Deprecated)"
+msgstr "Surové (zastarané)"
+
+
+msgid "Blender lighting strengths with no conversion"
+msgstr "Osvetlenie Blendera bez konverzie"
 
 
 msgid "Include All Bone Influences"
@@ -63379,6 +63427,15 @@ msgstr "Pridá existujúcu skupinu uzlov do aktuálneho editora uzlov"
 
 
 msgctxt "Operator"
+msgid "Add Node Group Asset"
+msgstr "Pridať aktívum skupiny uzlov"
+
+
+msgid "Add a node group asset to the active node tree"
+msgstr "Pridá aktívum skupiny uzlov do aktívneho stromu uzlov"
+
+
+msgctxt "Operator"
 msgid "Add Mask Node"
 msgstr "Pridať uzol Maska"
 
@@ -64515,6 +64572,10 @@ msgstr "Konvertovanie na typ objektu"
 
 msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Povrchová sieť z objektov Krivka, Povrch, Meta guľa alebo Text"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -72662,10 +72723,6 @@ msgid "Creates a mask based on the curvature of the surface"
 msgstr "Vytvorí masku na základe zakrivenia povrchu"
 
 
-msgid "Cavity Blur"
-msgstr "Rozostrenie dutiny"
-
-
 msgid "Cavity (Inverted)"
 msgstr "Dutina (invertovaná)"
 
@@ -72674,12 +72731,8 @@ msgid "Mix mode"
 msgstr "Režim zmiešania"
 
 
-msgid "Use Automask Settings"
-msgstr "Použiť nastavenia automatickej masky"
-
-
-msgid "Use default settings from Options panel in sculpt mode"
-msgstr "Použije predvolené nastavenia z panela Možnosti v režime tvarovania"
+msgid "Operator"
+msgstr "Operátor"
 
 
 msgctxt "Operator"
@@ -79374,10 +79427,6 @@ msgstr "Nastaví aktívneho operátora na predvolené hodnoty"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Koláčový operátor výpočtu"
-
-
-msgid "Operator"
-msgstr "Operátor"
 
 
 msgid "Operator name (in python as string)"
@@ -87124,6 +87173,22 @@ msgstr "Typ posuvu"
 
 msgid "Distortion to use for the calculation"
 msgstr "Skreslenie použité pri výpočte"
+
+
+msgid "Spherical camera for environment maps, also known as Lat Long panorama"
+msgstr "Sférická kamera pre mapy prostredia, známa aj ako panoráma Lat Long"
+
+
+msgid "Equiangular Cubemap Face"
+msgstr "Rovnakouhlá kocková mapa plôšky"
+
+
+msgid "Single face of an equiangular cubemap"
+msgstr "Jedna plôška rovnakouhlej kockovej mapy"
+
+
+msgid "Mirror ball mapping for environment maps"
+msgstr "Zrkadlové mapovanie lopty pre mapy prostredia"
 
 
 msgid "Fisheye Equidistant"
@@ -100669,6 +100734,10 @@ msgid "Show active color attribute"
 msgstr "Zobrazí atribút aktívnej farby"
 
 
+msgid "Show the texture from the active image texture node using the active UV map coordinates"
+msgstr "Zobrazí textúru z aktívneho uzla textúry obrazu použitím aktívnych súradníc UV mapy"
+
+
 msgid "Curvature Ridge"
 msgstr "Zakrivenie vyvýšeniny"
 
@@ -104567,6 +104636,10 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "Pre Cykly neboli nájdené žiadne kompatibilné GPU"
 
 
+msgid "(TM)TRADE MARK SIGN(tm)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
+msgstr "(TM)OZNAČENIE OCHRANNEJ ZNÁMKY(R)REGISTROVANÉ OZNAČENIE(C)OZNAČENIE AUTORSKÝCH PRÁV"
+
+
 msgid "Requires NVIDIA GPU with compute capability 3.0"
 msgstr "Vyžaduje sa grafický procesor NVIDIA s výpočtovou kapacitou 3.0"
 
@@ -104605,6 +104678,18 @@ msgstr "Vyžaduje Apple Silicon so systémom macOS 12.2 alebo novším"
 
 msgid "or AMD with macOS 12.3 or newer"
 msgstr "alebo AMD so systémom macOS 12.3 alebo novším"
+
+
+msgid "Requires Intel GPU with Xe-HPG architecture and"
+msgstr "Vyžaduje GPU Intel s architektúrou Xe-HPG a"
+
+
+msgid "  - Linux driver version xx.xx.23904 or newer"
+msgstr "  - linuxový ovládač verzie xx.xx.23904 alebo novšej"
+
+
+msgid "  - oneAPI Level-Zero Loader"
+msgstr "  - zavádzač oneAPI Level-Zero"
 
 
 msgid "Noise Threshold"
@@ -104825,16 +104910,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Neplatný cieľ %r (musí byť 'KOSTRA' alebo 'OBJEKT')"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Kamery a označenia (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Nemožno analyzovať XML, %s:%s pre súbor %r"
-
-
-msgid "Images as Planes"
-msgstr "Obrázky ako roviny"
 
 
 msgid "Import Options:"
@@ -105206,8 +105283,28 @@ msgid "Did not find any assets on clipboard"
 msgstr "V schránke nenájdené žiadne aktíva"
 
 
+msgid "Selected asset %s could not be located inside the asset library"
+msgstr "Vybrané aktívum %s sa nepodarilo nájsť v knižnici materiálov"
+
+
+msgid "Selected asset %s is not an Action"
+msgstr "Vybrané aktívum %s nie je akciou"
+
+
 msgid "Unable to convert to pose assets"
 msgstr "Nemožnosť konvertovať na aktívum pózy"
+
+
+msgid "Selected bones from %s"
+msgstr "Vybrané kosti z %s"
+
+
+msgid "Deselected bones from %s"
+msgstr "Zrušený výber kostí z %s"
+
+
+msgid "Action %r is not a legacy pose library"
+msgstr "Akcia %r nie je staršia knižnica póz"
 
 
 msgid "Demo Mode:"
@@ -105893,6 +105990,10 @@ msgstr "Blender je voľný softvér"
 
 msgid "Licensed under the GNU General Public License"
 msgstr "S licenciou pod GNU General Public License"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -108171,8 +108272,12 @@ msgid "Unknown add-ons"
 msgstr "Neznáme doplnky"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
+msgid "category"
+msgstr "kategória"
+
+
+msgid "name"
+msgstr "názov"
 
 
 msgid "Display Thin"
@@ -108587,10 +108692,6 @@ msgstr "Režim zjednodušenia"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Filter diskontinuity (Euler)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Režim extrapolácie"
 
 
 msgid "Grease Pencil Objects"
@@ -110839,14 +110940,6 @@ msgid "Internet:"
 msgstr "Internet:"
 
 
-msgid "category"
-msgstr "kategória"
-
-
-msgid "name"
-msgstr "názov"
-
-
 msgid "description"
 msgstr "popis"
 
@@ -111329,6 +111422,10 @@ msgstr "Animácia údajov objektu"
 msgctxt "Operator"
 msgid "Copy UV Maps"
 msgstr "Kopírovať UV mapy"
+
+
+msgid "Sculpt Curves"
+msgstr "Tvarovanie kriviek"
 
 
 msgctxt "Operator"
@@ -115818,8 +115915,40 @@ msgid "Hex"
 msgstr "Hex"
 
 
+msgid "Red:"
+msgstr "Červená:"
+
+
+msgid "Green:"
+msgstr "Zelená:"
+
+
+msgid "Blue:"
+msgstr "Modrá:"
+
+
+msgid "Hue:"
+msgstr "Odtieň:"
+
+
+msgid "Saturation:"
+msgstr "Nasýtenie:"
+
+
+msgid "Lightness:"
+msgstr "Svetlosť:"
+
+
 msgid "Value:"
 msgstr "Hodnota:"
+
+
+msgid "Alpha:"
+msgstr "Alfa:"
+
+
+msgid "Hex:"
+msgstr "Hex:"
 
 
 msgid "(Gamma Corrected)"
@@ -116605,6 +116734,10 @@ msgstr "Skosený tvar"
 
 msgid "Intersection Type"
 msgstr "Typ priesečníka"
+
+
+msgid "%s: Confirm, %s: Cancel, %s: Width Type (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
+msgstr "%s: Potvrdiť, %s: Zrušiť, %s: Typ šírky (%s), %s: Šírka (%s), %s: Segmenty (%d), %s: Profil (%.3f), %s: Prekrytie upnutia (%s), %s: Vplyv (%s), %s: Vonkajší sklon (%s), %s: Vnútorný sklon (%s), %s: Tvrdé normály (%s), %s: Vyznačiť šev (%s), %s: Vyznačiť ostré (%s), %s: Typ profilu (%s), %s: Priesečník (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -119771,6 +119904,10 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modifikátor nemožno pridať do (%s : %s) (podrobnosti nájdete na konzole)"
 
 
+msgid "Loading Asset Libraries"
+msgstr "Načítavanie knižnice aktív"
+
+
 msgid "Label Size"
 msgstr "Veľkosť nápisu"
 
@@ -119855,6 +119992,10 @@ msgid "Node tree type %s undefined"
 msgstr "Typ uzlového stromu %s nedefinovaný"
 
 
+msgid "Adding node groups isn't supported for custom (Python defined) node trees"
+msgstr "Pridávanie skupín uzlov nie je podporované pre vlastné stromy uzlov (definované v Pythone)"
+
+
 msgid " (Integer)"
 msgstr " (celé číslo)"
 
@@ -119865,6 +120006,10 @@ msgstr " (na pohyblivej čiarke)"
 
 msgid " (Vector)"
 msgstr " (vektor)"
+
+
+msgid " (Color)"
+msgstr " (Farba)"
 
 
 msgid "True"
@@ -121943,6 +122088,10 @@ msgid "MultipleStrokes"
 msgstr "ViacnasobneTahy"
 
 
+msgid "Outline requires an active camera"
+msgstr "Obrys vyžaduje aktívnu kameru"
+
+
 msgid "Stroke Fit Method"
 msgstr "Metóda prispôsobenia ťahu"
 
@@ -122728,6 +122877,22 @@ msgstr "Nepodarilo sa nájsť prepojenie v strome uzla"
 
 msgid "Unable to create socket"
 msgstr "Nemožno vytvoriť zásuvku"
+
+
+msgid "Cannot add socket to built-in node"
+msgstr "Nemožno pridať zásuvku do vstavaného uzla"
+
+
+msgid "Unable to remove socket from built-in node"
+msgstr "Nemožno odstrániť zásuvku zo vstavaného uzla"
+
+
+msgid "Unable to remove sockets from built-in node"
+msgstr "Nemožno odstrániť zásuvky zo vstavaného uzla"
+
+
+msgid "Unable to move sockets in built-in node"
+msgstr "Nemožno presunúť zásuvky vo vstavanom uzle"
 
 
 msgid "Registering node tree class: '%s' is too long, maximum length is %d"
@@ -123748,6 +123913,10 @@ msgstr "Cieľové polygóny zmenené z %u na %u"
 
 msgid "Target vertices changed from %u to %u"
 msgstr "Zmena cieľových vrcholov z %u na %u"
+
+
+msgid "This modifier can only deform filled curve/surface, not the control points"
+msgstr "Tento modifikátor môže deformovať iba vyplnenú krivku/povrch, nie riadiace body"
 
 
 msgid "This modifier can only deform control points, not the filled curve/surface"

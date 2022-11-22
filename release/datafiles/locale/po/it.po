@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -17564,10 +17564,6 @@ msgstr "Tasto Win/Mac premuto"
 
 msgid "Properties to set when the operator is called"
 msgstr "Proprietà da impostare quando l'operatore è chiamato"
-
-
-msgid "Property Value"
-msgstr "Valore Proprietà"
 
 
 msgid "The value this event translates to in a modal keymap"
@@ -38425,6 +38421,10 @@ msgid "Dynamic topology alters the mesh topology while sculpting"
 msgstr "La topologia dinamica altera la topologia della mesh mentre si scolpisce"
 
 
+msgid "Operator"
+msgstr "Operatore"
+
+
 msgid "Sharpen"
 msgstr "Affilatura"
 
@@ -41844,10 +41844,6 @@ msgstr "Preimpostazione Operatore"
 
 msgid "Set the active operator to its default values"
 msgstr "Reimposta l'operatore attivo ai suoi valori predefiniti"
-
-
-msgid "Operator"
-msgstr "Operatore"
 
 
 msgctxt "Operator"
@@ -52617,14 +52613,6 @@ msgid "Deselect"
 msgstr "Deseleziona"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Camere & Marcatori (.py)"
-
-
-msgid "Images as Planes"
-msgstr "Immagini come Piani"
-
-
 msgid "Import Options:"
 msgstr "Opzioni Importazione:"
 
@@ -52914,6 +52902,10 @@ msgstr "L'oggetto attivo non è una mesh"
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Apri..."
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgctxt "Operator"
@@ -53621,10 +53613,6 @@ msgstr "Usa per il rendering"
 
 msgid "Unknown add-ons"
 msgstr "Add-ons sconosciuti"
-
-
-msgid "%s: %s"
-msgstr "%s: %s"
 
 
 msgid "Display Thin"

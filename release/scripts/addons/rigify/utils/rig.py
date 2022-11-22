@@ -6,13 +6,12 @@ import importlib.util
 import re
 
 from itertools import count
-from typing import TYPE_CHECKING, Any, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Optional
 from bpy.types import bpy_struct, Constraint, Object, PoseBone, Bone, Armature
 
-# noinspection PyUnresolvedReferences
-from bpy.types import bpy_prop_array
+from bpy.types import bpy_prop_array  # noqa
 
-from .misc import ArmatureObject
+from .misc import ArmatureObject, wrap_list_to_lines, IdPropSequence
 
 if TYPE_CHECKING:
     from ..base_rig import BaseRig
@@ -48,23 +47,40 @@ outdated_types = {"pitchipoy.limbs.super_limb": "limbs.super_limb",
 
 
 def get_rigify_type(pose_bone: PoseBone) -> str:
-    # noinspection PyUnresolvedReferences
-    return pose_bone.rigify_type.replace(" ", "")
+    rigify_type = pose_bone.rigify_type  # noqa
+    return rigify_type.replace(" ", "")
 
 
 def get_rigify_params(pose_bone: PoseBone) -> Any:
-    # noinspection PyUnresolvedReferences
-    return pose_bone.rigify_parameters
+    return pose_bone.rigify_parameters  # noqa
 
 
-def get_rigify_colors(arm: Armature) -> Sequence['RigifyColorSet']:
-    # noinspection PyUnresolvedReferences
-    return arm.rigify_colors
+def get_rigify_colors(arm: Armature) -> IdPropSequence['RigifyColorSet']:
+    return arm.rigify_colors  # noqa
 
 
-def get_rigify_layers(arm: Armature) -> Sequence['RigifyArmatureLayer']:
-    # noinspection PyUnresolvedReferences
-    return arm.rigify_layers
+def get_rigify_layers(arm: Armature) -> IdPropSequence['RigifyArmatureLayer']:
+    return arm.rigify_layers  # noqa
+
+
+def get_rigify_target_rig(arm: Armature) -> Optional[ArmatureObject]:
+    return arm.rigify_target_rig  # noqa
+
+
+def get_rigify_rig_basename(arm: Armature) -> str:
+    return arm.rigify_rig_basename  # noqa
+
+
+def get_rigify_mirror_widgets(arm: Armature) -> bool:
+    return arm.rigify_mirror_widgets  # noqa
+
+
+def get_rigify_force_widget_update(arm: Armature) -> bool:
+    return arm.rigify_force_widget_update  # noqa
+
+
+def get_rigify_finalize_script(arm: Armature) -> Optional[bpy.types.Text]:
+    return arm.rigify_finalize_script  # noqa
 
 
 def is_rig_base_bone(obj: Object, name):
@@ -197,21 +213,32 @@ def list_bone_names_depth_first_sorted(obj: ArmatureObject):
 
 
 def _get_property_value(obj, name: str):
+    """Retrieve the attribute value, converting from Blender to python types."""
     value = getattr(obj, name, None)
     if isinstance(value, bpy_prop_array):
         value = tuple(value)
     return value
 
 
-# noinspection PyDefaultArgument
-def _generate_properties(lines, prefix, obj: bpy_struct, base_class: type, *,
-                         defaults: dict[str, Any] = {},
-                         objects: dict[Any, str] = {}):
-    # noinspection PyUnresolvedReferences
-    obj_rna: bpy.types.Struct = type(obj).bl_rna
-    # noinspection PyUnresolvedReferences
-    base_rna: bpy.types.Struct = base_class.bl_rna
+def _format_property_value(prefix: str, value: Any, *, limit=90, indent=4) -> list[str]:
+    """Format a property value assignment to lines, wrapping if too long."""
 
+    if isinstance(value, tuple):
+        return wrap_list_to_lines(prefix, '()', map(repr, value), limit=limit, indent=indent)
+
+    if isinstance(value, list):
+        return wrap_list_to_lines(prefix, '[]', map(repr, value), limit=limit, indent=indent)
+
+    return [prefix + repr(value)]
+
+
+def _generate_properties(lines, prefix, obj: bpy_struct, base_class: type, *,
+                         defaults: Optional[dict[str, Any]] = None,
+                         objects: Optional[dict[Any, str]] = None):
+    obj_rna: bpy.types.Struct = type(obj).bl_rna  # noqa
+    base_rna: bpy.types.Struct = base_class.bl_rna  # noqa
+
+    defaults = defaults or {}
     block_props = set(prop.identifier for prop in base_rna.properties) - set(defaults.keys())
 
     for prop in obj_rna.properties:
@@ -223,10 +250,10 @@ def _generate_properties(lines, prefix, obj: bpy_struct, base_class: type, *,
                     continue
 
             if isinstance(cur_value, bpy_struct):
-                if cur_value in objects:
+                if objects and cur_value in objects:
                     lines.append('%s.%s = %s' % (prefix, prop.identifier, objects[cur_value]))
             else:
-                lines.append('%s.%s = %r' % (prefix, prop.identifier, cur_value))
+                lines += _format_property_value('%s.%s = ' % (prefix, prop.identifier), cur_value)
 
 
 def write_metarig_widgets(obj: Object):
@@ -258,7 +285,6 @@ def write_metarig_widgets(obj: Object):
     return widget_map, code
 
 
-# noinspection SpellCheckingInspection
 def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
                   groups=False, widgets=False):
     """
@@ -267,7 +293,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
     """
     code = [
         "import bpy\n",
-        "from mathutils import Color\n",
+        "from mathutils import Color\n\n",
     ]
 
     # Widget object creation functions if requested
@@ -281,7 +307,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
         widget_map = {}
 
     # Start of the metarig function
-    code.append("def %s(obj):" % func_name)
+    code.append("def %s(obj):  # noqa" % func_name)
     code.append("    # generated by rigify.utils.write_metarig")
     bpy.ops.object.mode_set(mode='EDIT')
     code.append("    bpy.ops.object.mode_set(mode='EDIT')")
@@ -304,11 +330,11 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
             standard_colors_lock = rigify_colors[i].standard_colors_lock
             code.append('    arm.rigify_colors[' + str(i) + '].name = "' + name + '"')
             code.append('    arm.rigify_colors[' + str(i)
-                        + '].active = Color(' + str(active[:]) + ')')
+                        + '].active = Color((%.4f, %.4f, %.4f))' % tuple(active[:]))
             code.append('    arm.rigify_colors[' + str(i)
-                        + '].normal = Color(' + str(normal[:]) + ')')
+                        + '].normal = Color((%.4f, %.4f, %.4f))' % tuple(normal[:]))
             code.append('    arm.rigify_colors[' + str(i)
-                        + '].select = Color(' + str(select[:]) + ')')
+                        + '].select = Color((%.4f, %.4f, %.4f))' % tuple(select[:]))
             code.append('    arm.rigify_colors[' + str(i)
                         + '].standard_colors_lock = ' + str(standard_colors_lock))
 
@@ -371,19 +397,18 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
         code.append("    pbone.lock_scale = %s" % str(tuple(pbone.lock_scale)))
         code.append("    pbone.rotation_mode = %r" % pbone.rotation_mode)
         if layers:
-            code.append("    pbone.bone.layers = %s" % str(list(pbone.bone.layers)))
+            bone_layers = pbone.bone.layers
+            code += _format_property_value("    pbone.bone.layers = ", list(bone_layers))
 
         # Rig type parameters
         for param_name in rigify_parameters.keys():
-            param = getattr(rigify_parameters, param_name, '')
-            if str(type(param)) == "<class 'bpy_prop_array'>":
-                param = list(param)
-            if type(param) == str:
-                param = '"' + param + '"'
-            code.append("    try:")
-            code.append("        pbone.rigify_parameters.%s = %s" % (param_name, str(param)))
-            code.append("    except AttributeError:")
-            code.append("        pass")
+            param = _get_property_value(rigify_parameters, param_name)
+            if param is not None:
+                code.append("    try:")
+                code += _format_property_value(
+                    f"        pbone.rigify_parameters.{param_name} = ", param)
+                code.append("    except AttributeError:")
+                code.append("        pass")
 
         # Constraints
         for con in pbone.constraints:
@@ -448,7 +473,7 @@ def write_metarig(obj: ArmatureObject, layers=False, func_name="create",
 
     code.append("\n    return bones")
 
-    code.append('\nif __name__ == "__main__":')
+    code.append('\n\nif __name__ == "__main__":')
     code.append("    " + func_name + "(bpy.context.active_object)\n")
 
     return "\n".join(code)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -20555,10 +20555,6 @@ msgstr "Tecla do sistema operacional pressionada."
 
 msgid "Properties to set when the operator is called"
 msgstr "Propriedades a definir quando o operador é chamado."
-
-
-msgid "Property Value"
-msgstr "Valor das propriedades"
 
 
 msgid "The value this event translates to in a modal keymap"
@@ -47965,6 +47961,10 @@ msgid "Mask Filter"
 msgstr "Filtro de Máscara"
 
 
+msgid "Operator"
+msgstr "Operador"
+
+
 msgctxt "Operator"
 msgid "Init Mask"
 msgstr "Máscara de inicialização"
@@ -52232,10 +52232,6 @@ msgstr "Configura o operador ativo aos seus valores padrão."
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Operador de enumeração de setorização"
-
-
-msgid "Operator"
-msgstr "Operador"
 
 
 msgid "Operator name (in python as string)"
@@ -66503,10 +66499,6 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "%r é um alvo inválido (Para funcionamento adequado, o alvo deve ser do tipo \"Armação\" ou \"Objeto\")."
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Câmeras e marcadores (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Não foi possível analisar XML, %s:%s para arquivo %r"
 
@@ -66841,6 +66833,10 @@ msgstr "Renomeadas %d de %d %s"
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Abrir..."
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgctxt "Operator"
@@ -67663,10 +67659,6 @@ msgstr "Excentricidade"
 
 msgid "Odd"
 msgstr "Ímpar"
-
-
-msgid "%s: %s"
-msgstr "%s: %s"
 
 
 msgid "B/W"

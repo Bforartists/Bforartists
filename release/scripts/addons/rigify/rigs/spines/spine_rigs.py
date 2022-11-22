@@ -44,7 +44,12 @@ class BaseSpineRig(TweakChainRig):
     class MchBones(TweakChainRig.MchBones):
         master_pivot: str              # Final output of the custom pivot (conditional)
 
-    bones: TweakChainRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: TweakChainRig.ToplevelBones[
+        list[str],
+        'BaseSpineRig.CtrlBones',
+        'BaseSpineRig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Master control bone
@@ -154,7 +159,6 @@ class BaseSpineRig(TweakChainRig):
 
     @stage.configure_bones
     def configure_bbone_chain(self):
-        # noinspection SpellCheckingInspection
         self.get_bone(self.bones.deform[0]).bone.bbone_easein = 0.0
 
     ####################################################

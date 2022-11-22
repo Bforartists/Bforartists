@@ -16,7 +16,7 @@ loaded_submodules = []
 
 def register():
     # Lazily load modules to make reloading easier. Loading this way
-    # hides the sub-modules and their dependencies from initial_load_order.
+    # hides the submodules and their dependencies from initial_load_order.
     loaded_submodules[:] = [
         importlib.import_module(__name__ + '.' + name) for name in submodules
     ]

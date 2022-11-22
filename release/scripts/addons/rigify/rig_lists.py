@@ -3,22 +3,28 @@
 import os
 import traceback
 import importlib
+import typing
+
+from typing import Optional, Iterable
 
 from .utils.rig import RIG_DIR
 
 from . import feature_set_list
 
 
-def get_rigs(base_dir, base_path, *, path=[], feature_set=feature_set_list.DEFAULT_NAME):
+def get_rigs(base_dir: str, base_path: list[str], *,
+             path: Iterable[str] = (),
+             feature_set=feature_set_list.DEFAULT_NAME):
     """ Recursively searches for rig types, and returns a list.
 
-    :param base_path: base dir where rigs are stored
-    :type path:str
-    :param path:      rig path inside the base dir
-    :type path:str
+    Args:
+        base_dir:      root directory
+        base_path:     base dir where rigs are stored
+        path:          rig path inside the base dir
+        feature_set:   feature set that is being loaded
     """
 
-    rigs = {}
+    rig_table = {}
     impl_rigs = {}
 
     dir_path = os.path.join(base_dir, *path)
@@ -43,40 +49,44 @@ def get_rigs(base_dir, base_path, *, path=[], feature_set=feature_set_list.DEFAU
         if is_dir:
             # Check for sub-rigs
             sub_rigs, sub_impls = get_rigs(base_dir, base_path, path=[*path, f], feature_set=feature_set)
-            rigs.update(sub_rigs)
+            rig_table.update(sub_rigs)
             impl_rigs.update(sub_impls)
         elif f.endswith(".py"):
             # Check straight-up python files
-            subpath = [*path, f[:-3]]
-            key = '.'.join(subpath)
+            sub_path = [*path, f[:-3]]
+            key = '.'.join(sub_path)
             # Don't reload rig modules - it breaks isinstance
-            rig_module = importlib.import_module('.'.join(base_path + subpath))
+            rig_module = importlib.import_module('.'.join(base_path + sub_path))
             if hasattr(rig_module, "Rig"):
-                rigs[key] = {"module": rig_module,
-                             "feature_set": feature_set}
+                rig_table[key] = {"module": rig_module,
+                                  "feature_set": feature_set}
             if hasattr(rig_module, 'IMPLEMENTATION') and rig_module.IMPLEMENTATION:
                 impl_rigs[key] = rig_module
 
-    return rigs, impl_rigs
+    return rig_table, impl_rigs
 
 
 # Public variables
 rigs = {}
 implementation_rigs = {}
 
-def get_rig_class(name):
+
+def get_rig_class(name: str) -> Optional[typing.Type]:
     try:
         return rigs[name]["module"].Rig
     except (KeyError, AttributeError):
         return None
 
+
 def get_internal_rigs():
     global rigs, implementation_rigs
 
-    BASE_RIGIFY_DIR = os.path.dirname(__file__)
-    BASE_RIGIFY_PATH = __name__.split('.')[:-1]
+    base_rigify_dir = os.path.dirname(__file__)
+    base_rigify_path = __name__.split('.')[:-1]
 
-    rigs, implementation_rigs = get_rigs(os.path.join(BASE_RIGIFY_DIR, RIG_DIR), [*BASE_RIGIFY_PATH, RIG_DIR])
+    rigs, implementation_rigs = get_rigs(os.path.join(base_rigify_dir, RIG_DIR),
+                                         [*base_rigify_path, RIG_DIR])
+
 
 def get_external_rigs(set_list):
     # Clear and fill rigify rigs and implementation rigs public variables
@@ -88,12 +98,13 @@ def get_external_rigs(set_list):
 
     # Get external rigs
     for feature_set in set_list:
+        # noinspection PyBroadException
         try:
             base_dir, base_path = feature_set_list.get_dir_path(feature_set, RIG_DIR)
 
             external_rigs, external_impl_rigs = get_rigs(base_dir, base_path, feature_set=feature_set)
         except Exception:
-            print("Rigify Error: Could not load feature set '%s' rigs: exception occurred.\n" % (feature_set))
+            print(f"Rigify Error: Could not load feature set '{feature_set}' rigs: exception occurred.\n")
             traceback.print_exc()
             print("")
             continue

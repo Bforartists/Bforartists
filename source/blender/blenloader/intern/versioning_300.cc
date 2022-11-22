@@ -34,9 +34,11 @@
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
+#include "DNA_movieclip_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 #include "DNA_text_types.h"
+#include "DNA_tracking_types.h"
 #include "DNA_workspace_types.h"
 
 #include "BKE_action.h"
@@ -58,6 +60,7 @@
 #include "BKE_lib_override.h"
 #include "BKE_main.h"
 #include "BKE_main_namemap.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_node.h"
 #include "BKE_screen.h"
@@ -3687,6 +3690,31 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
         STRNCPY(curve_socket->name, "Curves");
         STRNCPY(curve_socket->identifier, "Curves");
       }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 305, 1)) {
+    /* Reset edge visibility flag, since the base is meant to be "true" for original meshes. */
+    LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
+      for (MEdge &edge : mesh->edges_for_write()) {
+        edge.flag |= ME_EDGEDRAW;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 305, 2)) {
+    LISTBASE_FOREACH (MovieClip *, clip, &bmain->movieclips) {
+      MovieTracking *tracking = &clip->tracking;
+
+      const float frame_center_x = ((float)clip->lastsize[0]) / 2;
+      const float frame_center_y = ((float)clip->lastsize[1]) / 2;
+
+      tracking->camera.principal_point[0] = (tracking->camera.principal_legacy[0] -
+                                             frame_center_x) /
+                                            frame_center_x;
+      tracking->camera.principal_point[1] = (tracking->camera.principal_legacy[1] -
+                                             frame_center_y) /
+                                            frame_center_y;
     }
   }
 

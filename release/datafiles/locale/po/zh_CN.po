@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "<<<<<< .minX-Generator: Poedit 1.6.9\n"
 "=====X-Generator: Poedit 1.6.9\n"
-"X-Generator: Poedit 3.1.1"
+"X-Generator: Poedit 3.2"
 
 
 msgid "Shader AOV"
@@ -1015,6 +1015,10 @@ msgstr "活动编辑骨骼"
 
 msgid "Armatures active edit bone"
 msgstr "骨架活动编辑骨骼"
+
+
+msgid "Catalog Path"
+msgstr "目录路径"
 
 
 msgid "Asset Library Reference"
@@ -4232,12 +4236,24 @@ msgid "Auto-Masking Layer"
 msgstr "自动遮罩层"
 
 
+msgid "Mask strokes using active layer"
+msgstr "使用活动层遮罩笔画"
+
+
 msgid "Auto-Masking Material"
 msgstr "自动遮罩材质"
 
 
+msgid "Mask strokes using active material"
+msgstr "使用活动材质遮罩笔画"
+
+
 msgid "Auto-Masking Strokes"
 msgstr "自动遮罩笔画"
+
+
+msgid "Mask strokes below brush cursor"
+msgstr "笔刷光标下方的遮罩笔画"
 
 
 msgid "Strokes Collision"
@@ -11154,6 +11170,14 @@ msgid "Theora"
 msgstr "Theora"
 
 
+msgid "WebM / VP9"
+msgstr "WebM / VP9"
+
+
+msgid "AV1"
+msgstr "AV1"
+
+
 msgid "Output Quality"
 msgstr "输出质量"
 
@@ -12525,6 +12549,11 @@ msgstr "文件浏览器中可查看的文件"
 
 msgid "Asset data, valid if the file represents an asset"
 msgstr "资产数据，如果文件表示资产，则有效"
+
+
+msgctxt "ID"
+msgid "Data-block Type"
+msgstr "数据块类型"
 
 
 msgid "The type of the data-block, if the file represents one ('NONE' otherwise)"
@@ -20500,6 +20529,10 @@ msgid "Use this brush in sculpt mode"
 msgstr "在雕刻模式下使用该笔刷"
 
 
+msgid "Use this brush in sculpt curves mode"
+msgstr "在雕刻曲线模式下使用该笔刷"
+
+
 msgid "Use UV Sculpt"
 msgstr "使用UV雕刻"
 
@@ -27516,6 +27549,11 @@ msgid "Selected Landmark"
 msgstr "已选中地标"
 
 
+msgctxt "World"
+msgid "World"
+msgstr "世界"
+
+
 msgid "World used for rendering the scene"
 msgstr "用于渲染场景的世界环境"
 
@@ -28265,24 +28303,54 @@ msgid "Minimum Y value to crop the image"
 msgstr "为图像的 Y 轴向最小裁切值"
 
 
+msgctxt "Image"
+msgid "Extension"
+msgstr "扩展"
+
+
 msgid "How the image is extrapolated past its original bounds"
 msgstr "超出原始边界的图像外插方式"
+
+
+msgctxt "Image"
+msgid "Extend"
+msgstr "扩展"
 
 
 msgid "Extend by repeating edge pixels of the image"
 msgstr "以重复图像边线像素的方式进行扩展"
 
 
+msgctxt "Image"
+msgid "Clip"
+msgstr "裁剪"
+
+
 msgid "Clip to image size and set exterior pixels as transparent"
 msgstr "修剪为图像尺寸, 并将外部像素设为透明"
+
+
+msgctxt "Image"
+msgid "Clip Cube"
+msgstr "切边方盒"
 
 
 msgid "Clip to cubic-shaped area around the image and set exterior pixels as transparent"
 msgstr "将图像周围修剪为立方块状的区域, 并将外部像素设为透明"
 
 
+msgctxt "Image"
+msgid "Repeat"
+msgstr "重复"
+
+
 msgid "Cause the image to repeat horizontally and vertically"
 msgstr "沿水平和垂直方向重复图像"
+
+
+msgctxt "Image"
+msgid "Checker"
+msgstr "棋盘格"
 
 
 msgid "Cause the image to repeat in checker board pattern"
@@ -31405,10 +31473,6 @@ msgid "Properties to set when the operator is called"
 msgstr "设置被调用促动器的属性"
 
 
-msgid "Property Value"
-msgstr "属性值"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "当前值用于传输一个模态键位映射"
 
@@ -33593,6 +33657,11 @@ msgstr "显示 / 隐藏"
 
 msgid "Context Menu"
 msgstr "上下文菜单"
+
+
+msgctxt "MovieClip"
+msgid "Tracking"
+msgstr "追踪"
 
 
 msgid "Fractional Zoom"
@@ -44811,6 +44880,14 @@ msgid "Find sample positions on the curve using a distance from its beginning"
 msgstr "使用到曲线起点的距离查找曲线上的采样位置"
 
 
+msgid "All Curves"
+msgstr "所有曲线"
+
+
+msgid "Sample lengths based on the total length of all curves, rather than using a length inside each selected curve"
+msgstr "基于所有曲线总长度的采样长度，而非使用每个选定曲线内的长度"
+
+
 msgid "Sample Index"
 msgstr "采样编号"
 
@@ -46882,10 +46959,6 @@ msgstr "使用标准的斜纹波纹理"
 
 msgid "Use wave texture in rings"
 msgstr "使用环状波纹理"
-
-
-msgid "White Noise"
-msgstr "白噪波"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -50754,8 +50827,18 @@ msgid "Set the clip interaction mode"
 msgstr "设置剪辑的交互模式"
 
 
+msgctxt "MovieClip"
+msgid "Mode"
+msgstr "模式"
+
+
 msgid "Show tracking and solving tools"
 msgstr "显示追踪及解算工具"
+
+
+msgctxt "MovieClip"
+msgid "Mask"
+msgstr "遮罩"
 
 
 msgid "Show mask editing tools"
@@ -52703,6 +52786,10 @@ msgid "Merge Images"
 msgstr "合并图像"
 
 
+msgid "Combine OpenEXR multi-layer images rendered with different sample ranges into one image with reduced noise"
+msgstr "将不同采样范围渲染的OpenEXR多层图像合并到一个低噪点的图像中"
+
+
 msgid "File path for image to merge"
 msgstr "用于合并的图像文件路径"
 
@@ -53561,6 +53648,34 @@ msgstr "导出 glTF 2.0"
 
 msgid "Export scene as glTF 2.0 file"
 msgstr "导出场景为glTF 2.0文件"
+
+
+msgid "Lighting Mode"
+msgstr "光照模式"
+
+
+msgid "Optional backwards compatibility for non-standard render engines. Applies to lights"
+msgstr "非标准渲染引擎的可选向后兼容性。适用于灯光"
+
+
+msgid "Physically-based glTF lighting units (cd, lx, nt)"
+msgstr "基于物理的glTF照明单位(cd，lx，nt)"
+
+
+msgid "Unitless"
+msgstr "无单位"
+
+
+msgid "Non-physical, unitless lighting. Useful when exposure controls are not available"
+msgstr "非物理、无单位照明。当曝光控制不可用时很有用"
+
+
+msgid "Raw (Deprecated)"
+msgstr "Raw(已弃用)"
+
+
+msgid "Blender lighting strengths with no conversion"
+msgstr "无需转换的Blender灯光强度"
 
 
 msgid "Include All Bone Influences"
@@ -56109,6 +56224,11 @@ msgstr "复制图层到新物体"
 
 msgid "Make a copy of the active Grease Pencil layer to selected object"
 msgstr "复制活动蜡笔图层到新选定的物体"
+
+
+msgctxt "GPencil"
+msgid "Only Active"
+msgstr "仅活动"
 
 
 msgid "Copy only active Layer, uncheck to append all layers"
@@ -63050,6 +63170,11 @@ msgid "Add F-Modifier to the active/selected NLA-Strips"
 msgstr "对活动/选中的非线性动画片段添加函数曲线修改器"
 
 
+msgctxt "Action"
+msgid "Only Active"
+msgstr "仅活动"
+
+
 msgid "Only add a F-Modifier of the specified type to the active strip"
 msgstr "仅添加指定的函数修改器至选择的动作片段"
 
@@ -63302,6 +63427,15 @@ msgstr "向当前节点编辑器添加现有节点组"
 
 
 msgctxt "Operator"
+msgid "Add Node Group Asset"
+msgstr "添加节点组资产"
+
+
+msgid "Add a node group asset to the active node tree"
+msgstr "向活动节点树添加节点组资产"
+
+
+msgctxt "Operator"
 msgid "Add Mask Node"
 msgstr "添加遮罩节点"
 
@@ -63520,6 +63654,10 @@ msgid "Keep the input links to duplicated nodes"
 msgstr "保留输入点与已复制节点间的连线"
 
 
+msgid "Duplicate node but not node trees, linking to the original data"
+msgstr "复制节点但不复制节点树，关联到原始数据"
+
+
 msgid "Duplicate selected nodes and move them"
 msgstr "复制所选节点并移动"
 
@@ -63538,6 +63676,10 @@ msgstr "移动节点至一个框架中"
 
 msgid "Duplicate selected nodes keeping input links and move them"
 msgstr "复制所选控制点及所含片段"
+
+
+msgid "Duplicate selected nodes, but not their node trees, and move them"
+msgstr "复制选定的节点，但不复制其节点树，并移动它们"
 
 
 msgctxt "Operator"
@@ -64430,6 +64572,10 @@ msgstr "要转换的目标物体类型"
 
 msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
+
+
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "从曲线、曲面、融球、或文本物体转换为网格"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -71171,6 +71317,11 @@ msgstr "按类型添加新场景"
 
 
 msgctxt "Scene"
+msgid "Type"
+msgstr "类型"
+
+
+msgctxt "Scene"
 msgid "New"
 msgstr "新建"
 
@@ -71179,12 +71330,27 @@ msgid "Add a new, empty scene with default settings"
 msgstr "使用默认设置添加新的空白场景"
 
 
+msgctxt "Scene"
+msgid "Copy Settings"
+msgstr "复制设置"
+
+
 msgid "Add a new, empty scene, and copy settings from the current scene"
 msgstr "添加一个新的空场景，并拷贝当前场景的设置"
 
 
+msgctxt "Scene"
+msgid "Linked Copy"
+msgstr "关联复制"
+
+
 msgid "Link in the collections from the current scene (shallow copy)"
 msgstr "从当前场景中链入集合(浅拷贝)"
+
+
+msgctxt "Scene"
+msgid "Full Copy"
+msgstr "完整复制"
 
 
 msgid "Make a full copy of the current scene"
@@ -72557,10 +72723,6 @@ msgid "Creates a mask based on the curvature of the surface"
 msgstr "基于曲面的曲率创建遮罩"
 
 
-msgid "Cavity Blur"
-msgstr "腔体模糊"
-
-
 msgid "Cavity (Inverted)"
 msgstr "腔体(反相)"
 
@@ -72569,12 +72731,8 @@ msgid "Mix mode"
 msgstr "混合模式"
 
 
-msgid "Use Automask Settings"
-msgstr "使用自动遮罩设置"
-
-
-msgid "Use default settings from Options panel in sculpt mode"
-msgstr "在雕刻模式下使用选项面板中的默认设置"
+msgid "Operator"
+msgstr "操作项"
 
 
 msgctxt "Operator"
@@ -76283,6 +76441,26 @@ msgid "Space between islands"
 msgstr "孤岛间距"
 
 
+msgid "Margin Method"
+msgstr "边距方法"
+
+
+msgid "Scaled"
+msgstr "已缩放 "
+
+
+msgid "Use scale of existing UVs to multiply margin"
+msgstr "使用现有UV的缩放来调整边距"
+
+
+msgid "Just add the margin, ignoring any UV scale"
+msgstr "只添加边距，忽略任何UV缩放"
+
+
+msgid "Specify a precise fraction of final UV output"
+msgstr "指定最终UV输出的精确比例"
+
+
 msgid "Rotate islands for best fit"
 msgstr "旋转孤岛以获得最佳匹配"
 
@@ -79251,10 +79429,6 @@ msgid "Operator Enum Pie"
 msgstr "枚举饼菜单操作"
 
 
-msgid "Operator"
-msgstr "操作项"
-
-
 msgid "Operator name (in python as string)"
 msgstr "操作项名称(在Python中作为字符串)"
 
@@ -81939,6 +82113,11 @@ msgstr "分界"
 msgctxt "ParticleSettings"
 msgid "Roughness"
 msgstr "糙度"
+
+
+msgctxt "ParticleSettings"
+msgid "Emission"
+msgstr "自发光(发射)"
 
 
 msgid "Field Weights"
@@ -84756,6 +84935,14 @@ msgid "Causes metaball data to be duplicated with the object"
 msgstr "使融球数据可随物体一同被复制"
 
 
+msgid "Duplicate Node Tree"
+msgstr "复制节点树"
+
+
+msgid "Make copies of node groups when duplicating nodes in the node editor"
+msgstr "在节点编辑器中复制节点时复制节点组"
+
+
 msgid "Duplicate Particle"
 msgstr "重复的粒子系统"
 
@@ -86990,6 +87177,22 @@ msgid "Distortion to use for the calculation"
 msgstr "用于计算的畸变方式"
 
 
+msgid "Spherical camera for environment maps, also known as Lat Long panorama"
+msgstr "用于环境地图的球面相机，也称为Lat Long全景"
+
+
+msgid "Equiangular Cubemap Face"
+msgstr "等角立方体贴图面"
+
+
+msgid "Single face of an equiangular cubemap"
+msgstr "等角立方体贴图的单个面"
+
+
+msgid "Mirror ball mapping for environment maps"
+msgstr "环境贴图的镜像球映射"
+
+
 msgid "Fisheye Equidistant"
 msgstr "鱼眼等距"
 
@@ -88142,6 +88345,26 @@ msgid "Guiding"
 msgstr "引导"
 
 
+msgid "Use path guiding for sampling paths. Path guiding incrementally learns the light distribution of the scene and guides path into directions with high direct and indirect light contributions"
+msgstr "对采样路径使用路径引导。路径引导以增量方式学习场景的光分布，并将路径引导到具有高直接和间接光贡献的方向"
+
+
+msgid "Guide Direct Light"
+msgstr "引导直射光"
+
+
+msgid "Consider the contribution of directly visible light sources during guiding"
+msgstr "在引导过程中考虑直接可见光源的贡献"
+
+
+msgid "Use MIS Weights"
+msgstr "使用MIS权重"
+
+
+msgid "Use the MIS weight to weight the contribution of directly visible light sources during guiding"
+msgstr "使用MIS权重在引导过程中对直接可见光源的贡献进行加权"
+
+
 msgid "Layer Samples"
 msgstr "层采样"
 
@@ -88178,12 +88401,36 @@ msgid "Denoise the image in the 3D viewport"
 msgstr "在3D视图中使用图像降噪"
 
 
+msgid "Surface Guiding"
+msgstr "表面引导"
+
+
+msgid "Use guiding when sampling directions on a surface"
+msgstr "在曲面上采样方向时使用引导"
+
+
+msgid "Volume Guiding"
+msgstr "体积引导"
+
+
+msgid "Use guiding when sampling directions inside a volume"
+msgstr "在体积内对方向进行采样时使用引导"
+
+
 msgid "Volume Bounces"
 msgstr "体积反弹次数"
 
 
 msgid "Maximum number of volumetric scattering events"
 msgstr "体积散射事件的最大值"
+
+
+msgid "Volume Guiding Probability"
+msgstr "体积引导概率"
+
+
+msgid "The probability of guiding a direction inside a volume"
+msgstr "在体积内引导某个方向的概率"
 
 
 msgid "Max Steps"
@@ -89064,6 +89311,11 @@ msgstr "传递雾场系数通道(0.0-1.0)"
 
 msgid "Deliver normal pass"
 msgstr "传递法线通道"
+
+
+msgctxt "Scene"
+msgid "Object Index"
+msgstr "物体编号"
 
 
 msgid "Deliver object index pass"
@@ -91972,8 +92224,23 @@ msgid "Width of the blur edge, in percentage relative to the image size"
 msgstr "模糊边线的宽度, 相对于图像尺寸的百分比值"
 
 
+msgctxt "Sequence"
+msgid "Direction"
+msgstr "方向"
+
+
 msgid "Wipe direction"
 msgstr "擦除方向"
+
+
+msgctxt "Sequence"
+msgid "Out"
+msgstr "出"
+
+
+msgctxt "Sequence"
+msgid "In"
+msgstr "入"
 
 
 msgctxt "Sequence"
@@ -92293,12 +92560,27 @@ msgid "Proxy Directory"
 msgstr "代理目录"
 
 
+msgctxt "Sequence"
+msgid "Proxy Storage"
+msgstr "代理存储"
+
+
 msgid "How to store proxies for this project"
 msgstr "如何储存此项目的代理"
 
 
+msgctxt "Sequence"
+msgid "Per Strip"
+msgstr "单个片段"
+
+
 msgid "Store proxies using per strip settings"
 msgstr "使用每个片段设置存储代理"
+
+
+msgctxt "Sequence"
+msgid "Project"
+msgstr "项目"
 
 
 msgid "Store proxies using project directory"
@@ -94666,6 +94948,11 @@ msgid "Use the pinned node tree"
 msgstr "钉固当前节点树"
 
 
+msgctxt "ID"
+msgid "Shader Type"
+msgstr "着色器类型"
+
+
 msgid "Type of data to take shader from"
 msgstr "调用着色器的数据类型"
 
@@ -94684,6 +94971,11 @@ msgstr "在线条样式中编辑着色节点"
 
 msgid "Use active Viewer Node output as backdrop for compositing nodes"
 msgstr "在背景上显示激活的视图节点输出"
+
+
+msgctxt "ID"
+msgid "Texture Type"
+msgstr "纹理类型"
 
 
 msgid "Type of data to take texture from"
@@ -95019,6 +95311,11 @@ msgid "Properties space data"
 msgstr "空间数据属性"
 
 
+msgctxt "ID"
+msgid "Tool"
+msgstr "工具"
+
+
 msgid "Active Tool and Workspace settings"
 msgstr "活动工具与工作区设置"
 
@@ -95027,12 +95324,27 @@ msgid "Scene Properties"
 msgstr "场景属性"
 
 
+msgctxt "ID"
+msgid "Render"
+msgstr "渲染"
+
+
 msgid "Render Properties"
 msgstr "渲染属性"
 
 
+msgctxt "ID"
+msgid "Output"
+msgstr "输出"
+
+
 msgid "Output Properties"
 msgstr "输出属性"
+
+
+msgctxt "ID"
+msgid "View Layer"
+msgstr "视图层"
 
 
 msgid "View Layer Properties"
@@ -95047,20 +95359,45 @@ msgid "Collection Properties"
 msgstr "集合属性"
 
 
+msgctxt "ID"
+msgid "Constraints"
+msgstr "约束"
+
+
 msgid "Object Constraint Properties"
 msgstr "物体约束属性"
+
+
+msgctxt "ID"
+msgid "Modifiers"
+msgstr "修改器"
 
 
 msgid "Modifier Properties"
 msgstr "修改器属性"
 
 
+msgctxt "ID"
+msgid "Data"
+msgstr "数据"
+
+
 msgid "Object Data Properties"
 msgstr "物体数据属性"
 
 
+msgctxt "ID"
+msgid "Bone"
+msgstr "骨骼"
+
+
 msgid "Bone Properties"
 msgstr "骨骼属性"
+
+
+msgctxt "ID"
+msgid "Bone Constraints"
+msgstr "骨骼约束"
 
 
 msgid "Bone Constraint Properties"
@@ -95075,12 +95412,27 @@ msgid "Texture Properties"
 msgstr "纹理属性"
 
 
+msgctxt "ID"
+msgid "Particles"
+msgstr "粒子"
+
+
 msgid "Particle Properties"
 msgstr "粒子属性"
 
 
+msgctxt "ID"
+msgid "Physics"
+msgstr "物理"
+
+
 msgid "Physics Properties"
 msgstr "物理属性"
+
+
+msgctxt "ID"
+msgid "Effects"
+msgstr "效果"
 
 
 msgid "Visual Effects Properties"
@@ -95373,6 +95725,14 @@ msgstr "仅包括与选定元素相对应的行"
 
 msgid "Use Filter"
 msgstr "使用过滤"
+
+
+msgid "Viewer Path"
+msgstr "查看器路径"
+
+
+msgid "Path to the data that is displayed in the spreadsheet"
+msgstr "电子表格中显示的数据的路径"
 
 
 msgid "Space Text Editor"
@@ -95715,6 +96075,14 @@ msgid "Show the stereo 3D frustum volume"
 msgstr "显示立体3D视锥体体积"
 
 
+msgid "Show Viewer"
+msgstr "显示查看器"
+
+
+msgid "Display non-final geometry from viewer nodes"
+msgstr "显示来自查看器节点的非最终几何"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -95885,6 +96253,26 @@ msgid "Display style for UV edges"
 msgstr "UV边线的显示样式"
 
 
+msgid "Grid Shape Source"
+msgstr "栅格形状源"
+
+
+msgid "Specify source for the grid shape"
+msgstr "为栅格形状指定源"
+
+
+msgid "Dynamic grid"
+msgstr "动态栅格"
+
+
+msgid "Manually set grid divisions"
+msgstr "手动设置栅格划分"
+
+
+msgid "Grid aligns with pixels from image"
+msgstr "对齐栅格与图像中的像素"
+
+
 msgid "Constrain to Image Bounds"
 msgstr "约束至画布边缘"
 
@@ -95893,8 +96281,28 @@ msgid "Constraint to stay within the image bounds while editing"
 msgstr "编辑的时候将图像边缘约束在画布范围内"
 
 
+msgid "Round to Pixels"
+msgstr "吸附像素"
+
+
+msgid "Round UVs to pixels while editing"
+msgstr "编辑时将 UV 吸附至像素点坐标上"
+
+
+msgid "Don't round to pixels"
+msgstr "不吸附像素点"
+
+
 msgid "Corner"
 msgstr "拐角"
+
+
+msgid "Round to pixel corners"
+msgstr "吸附像素点拐角"
+
+
+msgid "Round to pixel centers"
+msgstr "吸附像素点中心"
 
 
 msgid "Display Faces"
@@ -95903,6 +96311,14 @@ msgstr "显示面"
 
 msgid "Display faces over the image"
 msgstr "在图像上显示面"
+
+
+msgid "Grid Over Image"
+msgstr "图像上的栅格"
+
+
+msgid "Show the grid over the image"
+msgstr "在图像上方显示栅格"
 
 
 msgid "Display metadata properties of the image"
@@ -95997,8 +96413,16 @@ msgid "Order U"
 msgstr "阶数 U"
 
 
+msgid "NURBS order in the U direction. Higher values make each point influence a greater area, but have worse performance"
+msgstr "U 方向上的NURBS阶数。值越高，每个点影响的区域越大，但性能越差"
+
+
 msgid "Order V"
 msgstr "阶数 V"
+
+
+msgid "NURBS order in the V direction. Higher values make each point influence a greater area, but have worse performance"
+msgstr "V 方向上的NURBS阶数。值越高，每个点影响的区域越大，但性能越差"
 
 
 msgid "Points U"
@@ -96251,6 +96675,21 @@ msgstr "存储球谐光照缓存的路径"
 
 msgid "Lights user to display objects in solid draw mode"
 msgstr "允许用户在实体绘制模式下显示物体"
+
+
+msgctxt "Light"
+msgid "Studio"
+msgstr "棚灯"
+
+
+msgctxt "Light"
+msgid "World"
+msgstr "世界环境"
+
+
+msgctxt "Light"
+msgid "MatCap"
+msgstr "快照材质"
 
 
 msgid "Collection of studio lights"
@@ -98402,8 +98841,24 @@ msgid "Overridden Selected"
 msgstr "被重写的选中项"
 
 
+msgid "Time Modifier Segment"
+msgstr "时间修改器线段"
+
+
+msgid "Last frame of the segment"
+msgstr "线段的最后一帧"
+
+
 msgid "Loop back and forth"
 msgstr "来回循环"
+
+
+msgid "Number of cycle repeats"
+msgstr "循环重复次数"
+
+
+msgid "First frame of the segment"
+msgstr "线段内的首帧"
 
 
 msgid "Marker for noting points in the timeline"
@@ -99986,6 +100441,10 @@ msgid "Display vertex normals as lines"
 msgstr "显示顶点法线为直线"
 
 
+msgid "Show attribute overlay for active viewer node"
+msgstr "显示活动查看器节点的属性叠加"
+
+
 msgid "Show Weights"
 msgstr "显示权重"
 
@@ -100118,6 +100577,14 @@ msgid "Opacity for edit vertices"
 msgstr "编辑状态下顶点的不透明度"
 
 
+msgid "Viewer Attribute Opacity"
+msgstr "查看器属性不透明度"
+
+
+msgid "Opacity of the attribute that is currently visualized"
+msgstr "当前可视化的属性的不透明度"
+
+
 msgid "Weight Paint Opacity"
 msgstr "权重绘制不透明度"
 
@@ -100166,16 +100633,36 @@ msgid "Color for custom background color"
 msgstr "自定义背景颜色"
 
 
+msgctxt "View3D"
+msgid "Background"
+msgstr "背景"
+
+
 msgid "Way to display the background"
 msgstr "绘制背景的方式"
+
+
+msgctxt "View3D"
+msgid "Theme"
+msgstr "主题"
 
 
 msgid "Use the theme for background color"
 msgstr "将主题用于背景颜色"
 
 
+msgctxt "View3D"
+msgid "World"
+msgstr "世界"
+
+
 msgid "Use the world for background color"
 msgstr "使用世界背景颜色"
+
+
+msgctxt "View3D"
+msgid "Viewport"
+msgstr "视图"
 
 
 msgid "Use a custom color limited to this viewport only"
@@ -100190,6 +100677,11 @@ msgid "Factor for the cavity ridges"
 msgstr "cavity脊线系数"
 
 
+msgctxt "View3D"
+msgid "Cavity Type"
+msgstr "Cavity类型"
+
+
 msgid "Way to display the cavity shading"
 msgstr "Cavity着色显示方法"
 
@@ -100198,8 +100690,18 @@ msgid "Cavity shading computed in world space, useful for larger-scale occlusion
 msgstr "用世界空间来计算Cavity光影，对于较大缩放值的遮蔽很有用"
 
 
+msgctxt "View3D"
+msgid "Screen"
+msgstr "屏幕"
+
+
 msgid "Curvature-based shading, useful for making fine details more visible"
 msgstr "基于曲率的光影着色，有助于使细节更加清晰可见"
+
+
+msgctxt "View3D"
+msgid "Both"
+msgstr "两者"
 
 
 msgid "Use both effects simultaneously"
@@ -100232,6 +100734,10 @@ msgstr "随机显示物体颜色"
 
 msgid "Show active color attribute"
 msgstr "显示活动颜色属性"
+
+
+msgid "Show the texture from the active image texture node using the active UV map coordinates"
+msgstr "使用活动UV贴图坐标显示活动图像纹理节点中的纹理"
 
 
 msgid "Curvature Ridge"
@@ -100292,6 +100798,18 @@ msgstr "高光光线"
 
 msgid "Volume Light"
 msgstr "体积光线"
+
+
+msgid "CryptoObject"
+msgstr "Crypto物体"
+
+
+msgid "CryptoAsset"
+msgstr "Crypto资产"
+
+
+msgid "CryptoMaterial"
+msgstr "Crypto材质"
 
 
 msgid "AOV"
@@ -100576,6 +101094,22 @@ msgstr "传递辉光通道"
 
 msgid "Deliver volume direct light pass"
 msgstr "传递体积直接光通道"
+
+
+msgid "Path to data that is viewed"
+msgstr "被查看的数据的路径"
+
+
+msgid "Viewer Path Element"
+msgstr "查看器路径元素"
+
+
+msgid "Element of a viewer path"
+msgstr "查看器路径的元素"
+
+
+msgid "Type of the path element"
+msgstr "路径元素的类型"
 
 
 msgid "Node Name"
@@ -100896,6 +101430,11 @@ msgstr "活动工作区和场景跟随此窗口"
 
 msgid "Active scene to be edited in the window"
 msgstr "要在窗口中编辑的活动场景"
+
+
+msgctxt "Screen"
+msgid "Screen"
+msgstr "屏幕"
 
 
 msgid "Active workspace screen showing in the window"
@@ -102275,6 +102814,14 @@ msgstr "按下“波浪号”时的操作"
 
 msgid "Navigate"
 msgstr "漫游"
+
+
+msgid "View operations (useful for keyboards without a numpad)"
+msgstr "视图操作(对于没有数字键盘的键盘很有用)"
+
+
+msgid "Control transform gizmos"
+msgstr "控制变换Gizmo"
 
 
 msgctxt "WindowManager"
@@ -104081,6 +104628,10 @@ msgid "No compatible GPUs found for Cycles"
 msgstr "找不到Cycles的兼容 GPU"
 
 
+msgid "(TM)TRADE MARK SIGN(tm)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
+msgstr "(TM)TRADE MARK SIGN(tm)TRADE MARK SIGN(R)REGISTERED SIGN(C)COPYRIGHT SIGN"
+
+
 msgid "Requires NVIDIA GPU with compute capability 3.0"
 msgstr "要求具有计算能力3.0 的Nvidia GPU"
 
@@ -104109,6 +104660,10 @@ msgid "Requires Intel GPU with Xe-HPG architecture"
 msgstr "需要Xe-HPG 架构的英特尔 GPU"
 
 
+msgid "and Windows driver version 101.3430 or newer"
+msgstr "以及Windows驱动版本101.3430或更新"
+
+
 msgid "Requires Apple Silicon with macOS 12.2 or newer"
 msgstr "需要Apple Silicon 和 macOS 12.2 或更新版本"
 
@@ -104117,12 +104672,28 @@ msgid "or AMD with macOS 12.3 or newer"
 msgstr "或者AMD搭配 macOS 12.3 或更新版本"
 
 
+msgid "Requires Intel GPU with Xe-HPG architecture and"
+msgstr "需要Xe-HPG 架构的英特尔 GPU 以及"
+
+
+msgid "  - Linux driver version xx.xx.23904 or newer"
+msgstr "  - Linux驱动版本xx.xx.23904或更新"
+
+
+msgid "  - oneAPI Level-Zero Loader"
+msgstr "  - oneAPI Level-Zero 加载器"
+
+
 msgid "Noise Threshold"
 msgstr "噪波阈值"
 
 
 msgid "Start Sample"
 msgstr "起始采样"
+
+
+msgid "Distribution Type"
+msgstr "分布类型"
 
 
 msgid "Multiplier"
@@ -104331,16 +104902,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "无效目标 %r (必须为骨架或者物体)"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "摄像机&标记(.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "无法解析 XML, %s:%s 针对文件 %r"
-
-
-msgid "Images as Planes"
-msgstr "图像为平面"
 
 
 msgid "Import Options:"
@@ -104353,6 +104916,10 @@ msgstr "合成节点:"
 
 msgid "Material Settings:"
 msgstr "材质设置:"
+
+
+msgid "Material Type"
+msgstr "材质类型"
 
 
 msgid "Texture Settings:"
@@ -104373,6 +104940,10 @@ msgstr "坐标系:"
 
 msgid "Added {} Image Plane(s)"
 msgstr "已添加 {} 图像平面"
+
+
+msgid "'Opaque' does not support alpha"
+msgstr "'不透明' 不支持 alpha"
 
 
 msgid "%s is not supported"
@@ -104453,8 +105024,32 @@ msgid "Add a new Variant Slot"
 msgstr "添加新的变量槽"
 
 
+msgid "untitled"
+msgstr "无标题"
+
+
+msgid "Exported: {!r}"
+msgstr "已导出: {!r}"
+
+
 msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "多选物体，仅活动物体被计算"
+
+
+msgid "Triangulated {} faces"
+msgstr "已三角化 {} 面"
+
+
+msgid "Modified: {:+} vertices, {:+} edges, {:+} faces"
+msgstr "已修改: {:+} 顶点, {:+} 边, {:+} 面"
+
+
+msgid "Scaled by {}{}"
+msgstr "按 {}{} 缩放"
+
+
+msgid "Scaled by {}"
+msgstr "按 {} 缩放"
 
 
 msgid "Object has zero volume"
@@ -104469,8 +105064,64 @@ msgid "Report is out of date, re-run check"
 msgstr "报告已过期, 请重新执行检查"
 
 
+msgid "Skipping object {}. No faces selected"
+msgstr "跳过物体 {}。无选中面"
+
+
 msgid "Skipping some objects. No faces selected. See terminal"
 msgstr "跳过某些物体。无选中面。详情见终端"
+
+
+msgid "Volume: {}³"
+msgstr "体积: {}³"
+
+
+msgid "Area: {}²"
+msgstr "面积: {}²"
+
+
+msgid "Non Manifold Edges: {}"
+msgstr "非流形边: {}"
+
+
+msgid "Bad Contiguous Edges: {}"
+msgstr "错误连续边: {}"
+
+
+msgid "Intersect Face: {}"
+msgstr "相交面: {}"
+
+
+msgid "Zero Faces: {}"
+msgstr "零面: {}"
+
+
+msgid "Zero Edges: {}"
+msgstr "零边: {}"
+
+
+msgid "Non-Flat Faces: {}"
+msgstr "非平面: {}"
+
+
+msgid "Thin Faces: {}"
+msgstr "薄面: {}"
+
+
+msgid "Sharp Edge: {}"
+msgstr "锐边: {}"
+
+
+msgid "Overhang Face: {}"
+msgstr "悬垂面: {}"
+
+
+msgid ", Clamping {}-Axis"
+msgstr ", 钳制 {}-轴"
+
+
+msgid "Align to XY: Skipping object {}. No faces selected"
+msgstr "对齐至XY: 跳过物体 {}. 无选中面"
 
 
 msgid "Statistics"
@@ -104624,8 +105275,28 @@ msgid "Did not find any assets on clipboard"
 msgstr "在剪贴板上未找到任何资产"
 
 
+msgid "Selected asset %s could not be located inside the asset library"
+msgstr "选定的资产 %s 无法在资产库内定位"
+
+
+msgid "Selected asset %s is not an Action"
+msgstr "选定的资产 %s 不是动作"
+
+
 msgid "Unable to convert to pose assets"
 msgstr "无法转换为姿态资产"
+
+
+msgid "Selected bones from %s"
+msgstr "已选中来自 %s 的骨骼"
+
+
+msgid "Deselected bones from %s"
+msgstr "已弃选来自 %s 的骨骼"
+
+
+msgid "Action %r is not a legacy pose library"
+msgstr "动作 %r 不是旧版姿态库"
 
 
 msgid "Demo Mode:"
@@ -104880,8 +105551,28 @@ msgid "API Defined"
 msgstr "定义的API"
 
 
+msgid "Select with Mouse Button"
+msgstr "鼠标按键选择"
+
+
 msgid "3D View"
 msgstr "3D 视图"
+
+
+msgid "Grave Accent / Tilde Action"
+msgstr "重音键/波浪键动作"
+
+
+msgid "Middle Mouse Action"
+msgstr "鼠标中键动作"
+
+
+msgid "Alt Middle Mouse Drag Action"
+msgstr "Alt+鼠标中键拖动操作"
+
+
+msgid "Activate Gizmo Event"
+msgstr "激活Gizmo事件"
 
 
 msgid "Torus"
@@ -105293,6 +105984,10 @@ msgid "Licensed under the GNU General Public License"
 msgstr "使用GNU 通用公共许可证授权"
 
 
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgid "Nothing to operate on: %s[ ].%s"
 msgstr "无可供操作对象: %s[ ].%s"
 
@@ -105372,6 +106067,10 @@ msgstr "发布说明"
 msgctxt "Operator"
 msgid "Development Fund"
 msgstr "开发筹资"
+
+
+msgid "Windowing Environment: %s"
+msgstr "窗口环境：%s"
 
 
 msgctxt "Operator"
@@ -105598,6 +106297,10 @@ msgid "Bone(s)"
 msgstr "骨骼"
 
 
+msgid "Action(s)"
+msgstr "动作"
+
+
 msgid "Edit Bone(s)"
 msgstr "编辑骨骼"
 
@@ -105820,8 +106523,18 @@ msgid "Out"
 msgstr "出"
 
 
+msgctxt "Armature"
+msgid "Out"
+msgstr "出"
+
+
 msgid "Start Handle"
 msgstr "起始控制柄"
+
+
+msgctxt "Armature"
+msgid "Ease"
+msgstr "缓动"
 
 
 msgid "End Handle"
@@ -106608,6 +107321,10 @@ msgid "Face Sets Boundary"
 msgstr "面组边界"
 
 
+msgid "Cavity (inverted)"
+msgstr "腔体(反相)"
+
+
 msgid "Sample Bias"
 msgstr "采样偏移量"
 
@@ -106622,6 +107339,11 @@ msgstr "纹理不透明度"
 
 msgid "Mask Texture Opacity"
 msgstr "遮罩纹理不透明度"
+
+
+msgctxt "Operator"
+msgid "Create Mask"
+msgstr "创建遮罩"
 
 
 msgid "Thickness Profile"
@@ -107542,8 +108264,12 @@ msgid "Unknown add-ons"
 msgstr "未知插件"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
+msgid "category"
+msgstr "类别"
+
+
+msgid "name"
+msgstr "名称"
 
 
 msgid "Display Thin"
@@ -107958,10 +108684,6 @@ msgstr "缓动模式"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "不连续项(欧拉)过滤器"
-
-
-msgid "Extrapolation Mode"
-msgstr "外插模式"
 
 
 msgid "Grease Pencil Objects"
@@ -108437,6 +109159,10 @@ msgstr "宽高比"
 
 msgid "Repeat Image"
 msgstr "重复图像"
+
+
+msgid "Over Image"
+msgstr "图像上面"
 
 
 msgid "Fixed Subdivisions"
@@ -109300,6 +110026,10 @@ msgid "No active viewer node"
 msgstr "无活动查看器节点"
 
 
+msgid "Invalid id"
+msgstr "无效的id"
+
+
 msgctxt "Text"
 msgid "Wrap"
 msgstr "换行"
@@ -109604,6 +110334,11 @@ msgid "Recursive Unused Local Data-Blocks"
 msgstr "递归未使用的本地数据块"
 
 
+msgctxt "WindowManager"
+msgid "New"
+msgstr "新建"
+
+
 msgctxt "Operator"
 msgid "Quit"
 msgstr "退出"
@@ -109706,6 +110441,16 @@ msgstr "保存副本..."
 msgctxt "Operator"
 msgid "General"
 msgstr "常规"
+
+
+msgctxt "Operator"
+msgid "Load Factory Blender Settings"
+msgstr "加载Blender初始设置"
+
+
+msgctxt "Operator"
+msgid "Load Factory %s Settings"
+msgstr "加载初始 %s 设置"
 
 
 msgctxt "Operator"
@@ -110099,6 +110844,16 @@ msgstr "使用灯光"
 msgctxt "Operator"
 msgid "Save as Studio light"
 msgstr "保存为棚灯"
+
+
+msgctxt "Operator"
+msgid "Load Factory Blender Preferences"
+msgstr "加载初始Blender偏好设置"
+
+
+msgctxt "Operator"
+msgid "Load Factory %s Preferences"
+msgstr "加载初始 %s 偏好设置"
 
 
 msgid "Color Set %d"
@@ -110661,6 +111416,10 @@ msgid "Copy UV Maps"
 msgstr "复制UV贴图"
 
 
+msgid "Sculpt Curves"
+msgstr "雕刻曲线"
+
+
 msgctxt "Operator"
 msgid "Add New Group"
 msgstr "添加新组"
@@ -111185,6 +111944,11 @@ msgstr "自适应"
 msgctxt "Operator"
 msgid "Trim"
 msgstr "修剪"
+
+
+msgctxt "Operator"
+msgid "Outline"
+msgstr "轮廓"
 
 
 msgctxt "Operator"
@@ -112935,6 +113699,14 @@ msgid "Yards"
 msgstr "码"
 
 
+msgid "Feet"
+msgstr "英尺"
+
+
+msgid "Inches"
+msgstr "英寸"
+
+
 msgid "Thou"
 msgstr "毫英寸"
 
@@ -112961,6 +113733,10 @@ msgstr "平方分米"
 
 msgid "Square Centimeters"
 msgstr "平方厘米"
+
+
+msgid "Square Millimeters"
+msgstr "平方毫米"
 
 
 msgid "Square Micrometers"
@@ -113017,6 +113793,10 @@ msgstr "立方分米"
 
 msgid "Cubic Centimeters"
 msgstr "立方厘米"
+
+
+msgid "Cubic Millimeters"
+msgstr "立方毫米"
 
 
 msgid "Cubic Micrometers"
@@ -113139,6 +113919,14 @@ msgid "Microseconds"
 msgstr "微秒"
 
 
+msgid "Arcminutes"
+msgstr "弧分"
+
+
+msgid "Arcseconds"
+msgstr "弧秒"
+
+
 msgid "Gigawatts"
 msgstr "吉瓦"
 
@@ -113235,6 +114023,10 @@ msgid "Could not initialize streams, probably unsupported codec combination"
 msgstr "无法初始化视频,可能是不支持当前解码"
 
 
+msgid "Library database with null library data-block pointer!"
+msgstr "具有空库数据块指针的库数据库!"
+
+
 msgid "ID %s is in local database while being linked from library %s!"
 msgstr "ID %s 作为本地数据库，当从库 %s内链入时!"
 
@@ -113245,6 +114037,10 @@ msgstr "在预期路径 %s 处找不到库 ID %s !"
 
 msgid "Library ID %s in library %s, this should not happen!"
 msgstr "库 ID %s 中的库 %s, 这不应该发生!"
+
+
+msgid "ID %s has null lib pointer while being in library %s!"
+msgstr "ID %s 在库 %s 中时具有 null lib 指针!"
 
 
 msgid "ID %s has mismatched lib pointer!"
@@ -113531,6 +114327,10 @@ msgid "Grease Pencil layer is visible in the viewport"
 msgstr "蜡笔图层在视图中可见"
 
 
+msgid "Toggle visibility of Channels in Graph Editor for editing"
+msgstr "切换在曲线编辑器中通道可见性，以进行编辑"
+
+
 msgid "Display channel regardless of object selection"
 msgstr "无论选中任何物体均显示当前通道"
 
@@ -113561,6 +114361,10 @@ msgstr "函数曲线确认会影响结果"
 
 msgid "Temporarily disable NLA stack evaluation (i.e. only the active action is evaluated)"
 msgstr "暂时禁用NLA栈解析(i.e. 只解析激活的动作)"
+
+
+msgid "Show all keyframes during animation playback and enable all frames for editing (uncheck to use only the current keyframe during animation playback and editing)"
+msgstr "在动画播放期间显示所有关键帧，并启用所有帧供编辑(取消勾选，在动画播放和编辑期间仅使用当前关键帧)"
 
 
 msgid "Do channels contribute to result (toggle channel muting)"
@@ -113855,6 +114659,10 @@ msgid "Cannot remove property from built in keying set"
 msgstr "无法从内置插帧集中移除属性"
 
 
+msgid "Property removed from keying set"
+msgstr "属性已从插帧集移除"
+
+
 msgid "Property added to Keying Set: '%s'"
 msgstr "添加到插帧集中的属性: '%s'"
 
@@ -113993,6 +114801,14 @@ msgstr "姿势库中没有姿势可供预览 / 应用"
 
 msgid "Invalid pose specified %d"
 msgstr "指定的姿势无效 %d"
+
+
+msgid "[Tab] - Show original pose"
+msgstr "[Tab] - 显示原始姿态"
+
+
+msgid "[Tab] - Show blended pose"
+msgstr "[Tab] - 显示混合姿态"
 
 
 msgid "Internal pose library error, canceling operator"
@@ -114428,6 +115244,14 @@ msgid "Active region not set"
 msgstr "未设置活动范围"
 
 
+msgid "Skin_Light"
+msgstr "Skin_Light"
+
+
+msgid "Skin_Shadow"
+msgstr "Skin_Shadow"
+
+
 msgid "Eyes"
 msgstr "眼睛"
 
@@ -114576,6 +115400,10 @@ msgid "No active frame(s) to delete"
 msgstr "无可供删除的活动关键帧"
 
 
+msgid "Curve Edit mode not supported"
+msgstr "不支持曲线编辑模式"
+
+
 msgid "Cannot separate an object with one layer only"
 msgstr "不能仅用一个图层分隔对象"
 
@@ -114594,6 +115422,18 @@ msgstr "无编号为 %d 的层"
 
 msgid "Too many strokes selected, only joined first %d strokes"
 msgstr "所选笔画太多。仅合并前 %d 笔画"
+
+
+msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back, MMB Adjust Extend, S: Switch Mode, D: Stroke Collision | %s %s (%.3f)"
+msgstr "填充: ESC/RMB 取消, LMB 填充, Shift 在背景绘制, MMB 调整扩展, S: 切换模式, D: 笔画冲突 | %s %s (%.3f)"
+
+
+msgid "Stroke: ON"
+msgstr "笔画: 开"
+
+
+msgid "Stroke: OFF"
+msgstr "笔画: 关"
 
 
 msgid "Fill tool needs active material"
@@ -115055,8 +115895,40 @@ msgid "Hex"
 msgstr "Hex"
 
 
+msgid "Red:"
+msgstr "红："
+
+
+msgid "Green:"
+msgstr "绿："
+
+
+msgid "Blue:"
+msgstr "蓝："
+
+
+msgid "Hue:"
+msgstr "色相："
+
+
+msgid "Saturation:"
+msgstr "饱和度："
+
+
+msgid "Lightness:"
+msgstr "亮度："
+
+
 msgid "Value:"
 msgstr "值:"
+
+
+msgid "Alpha:"
+msgstr "Alpha:"
+
+
+msgid "Hex:"
+msgstr "Hex:"
 
 
 msgid "(Gamma Corrected)"
@@ -115273,6 +116145,10 @@ msgid "Direct linked library data-block, click to make local, Shift + Click to c
 msgstr "直接关联的库数据块，单击转为本地项，Shift+单击创建库重写"
 
 
+msgid "Library override of linked data-block, click to make fully local, Shift + Click to clear the library override and toggle if it can be edited"
+msgstr "关联数据块的库重写，单击以完全本地化，Shift + 单击以清除库重写并切换是否可编辑"
+
+
 msgid "Display number of users of this data (click to make a single-user copy)"
 msgstr "显示该数据的共享用户数量(点击以创建一份单用户副本)"
 
@@ -115325,6 +116201,10 @@ msgid "Reset Black/White point and curves"
 msgstr "重置黑白场及曲线"
 
 
+msgid "Reapply and update the preset, removing changes"
+msgstr "重新应用并更新预设，删除更改"
+
+
 msgid "Reverse Path"
 msgstr "反向路径"
 
@@ -115343,6 +116223,10 @@ msgstr "停止动画播放"
 
 msgid "Click to see the remaining reports in text block: 'Recent Reports'"
 msgstr "点击以在文本块中查看完整报告:'最新报告'"
+
+
+msgid "Show in Info Log"
+msgstr "在信息日志中显示"
 
 
 msgid "The Cycles Alembic Procedural is only available with the experimental feature set"

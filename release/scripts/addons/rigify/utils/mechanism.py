@@ -3,7 +3,7 @@
 import bpy
 import re
 
-from typing import TYPE_CHECKING, Optional, Any, Collection
+from typing import TYPE_CHECKING, Optional, Any, Sequence, Iterable
 
 from bpy.types import (bpy_prop_collection, Material, Object, PoseBone, Driver, FCurve,
                        DriverTarget, ID, bpy_struct, FModifierGenerator, Constraint, AnimData,
@@ -12,7 +12,7 @@ from bpy.types import (bpy_prop_collection, Material, Object, PoseBone, Driver, 
 from rna_prop_ui import rna_idprop_ui_create
 from rna_prop_ui import rna_idprop_quote_path as quote_property
 
-from .misc import force_lazy, ArmatureObject, Lazy
+from .misc import force_lazy, ArmatureObject, Lazy, OptionalLazy
 
 if TYPE_CHECKING:
     from ..base_rig import BaseRig
@@ -37,14 +37,14 @@ def _set_default_attr(obj, options, attr, value):
 def make_constraint(
         owner: Object | PoseBone, con_type: str,
         target: Optional[Object] = None,
-        subtarget: Optional[str] = None, *,
+        subtarget: OptionalLazy[str] = None, *,
         insert_index: Optional[int] = None,
         space: Optional[str] = None,
         track_axis: Optional[str] = None,
-        use_xyz: Optional[Collection[bool]] = None,
-        use_limit_xyz: Optional[Collection[bool]] = None,
-        invert_xyz: Optional[Collection[bool]] = None,
-        targets: list[Lazy[str | tuple | dict]] = None,
+        use_xyz: Optional[Sequence[bool]] = None,
+        use_limit_xyz: Optional[Sequence[bool]] = None,
+        invert_xyz: Optional[Sequence[bool]] = None,
+        targets: Optional[list[Lazy[str | tuple | dict]]] = None,
         **options):
     """
     Creates and initializes constraint of the specified type for the owner bone.
@@ -130,8 +130,9 @@ def make_constraint(
 
 # noinspection PyShadowingBuiltins
 def make_property(
-        owner, name: str, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None,
-        description: Optional[str] = None, overridable=True, **options):
+        owner: bpy_struct, name: str, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None,
+        description: Optional[str] = None, overridable=True, subtype: Optional[str] = None,
+        **options):
     """
     Creates and initializes a custom property of owner.
 
@@ -145,7 +146,8 @@ def make_property(
         min=min, max=max, soft_min=soft_min, soft_max=soft_max,
         description=description or name,
         overridable=overridable,
-        **options
+        subtype=subtype,
+        **options  # noqa
     )
 
 
@@ -232,18 +234,21 @@ def _add_driver_variable(drv: Driver, var_name: str, var_info, target_id: Option
                 setattr(var, p, force_lazy(v))
 
 
-# noinspection PyIncorrectDocstring,PyShadowingBuiltins,PyDefaultArgument
+# noinspection PyShadowingBuiltins
 def make_driver(owner: bpy_struct, prop: str, *, index=-1, type='SUM',
                 expression: Optional[str] = None,
-                variables: list | dict = {},
+                variables: Iterable | dict = (),
                 polynomial: Optional[list[float]] = None,
                 target_id: Optional[ID] = None) -> FCurve:
     """
     Creates and initializes a driver for the 'prop' property of owner.
 
     Arguments:
+      owner           : object to add the driver to
+      prop            : property of the object to add the driver to
       index           : item index for vector properties
-      type, expression: mutually exclusive options to set core driver mode.
+      type            : built-in driver math operation (incompatible with expression)
+      expression      : custom driver expression
       variables       : either a list or dictionary of variable specifications.
       polynomial      : coefficients of the POLYNOMIAL driver modifier
       target_id       : specifies the target ID of variables implicitly
@@ -304,7 +309,7 @@ def make_driver(owner: bpy_struct, prop: str, *, index=-1, type='SUM',
         fcu.modifiers.remove(mod)
 
     # Fill in new data
-    if isinstance(variables, list):
+    if not isinstance(variables, dict):
         # variables = [ info, ... ]
         for i, var_info in enumerate(variables):
             var_name = 'var' if i == 0 else 'var' + str(i)
@@ -593,17 +598,49 @@ class MechanismUtilityMixin(object):
     Requires self.obj to be the armature object being worked on.
     """
 
+    def make_constraint(self, bone: str, con_type: str,
+                        subtarget: OptionalLazy[str] = None, *,
+                        insert_index: Optional[int] = None,
+                        space: Optional[str] = None,
+                        track_axis: Optional[str] = None,
+                        use_xyz: Optional[Sequence[bool]] = None,
+                        use_limit_xyz: Optional[Sequence[bool]] = None,
+                        invert_xyz: Optional[Sequence[bool]] = None,
+                        targets: Optional[list[Lazy[str | tuple | dict]]] = None,
+                        **args):
+        assert(self.obj.mode == 'OBJECT')
+        return make_constraint(
+            self.obj.pose.bones[bone], con_type, self.obj, subtarget,
+            insert_index=insert_index, space=space, track_axis=track_axis,
+            use_xyz=use_xyz, use_limit_xyz=use_limit_xyz, invert_xyz=invert_xyz,
+            targets=targets,
+            **args)
+
     # noinspection PyShadowingBuiltins
-    def make_constraint(self, bone, type, subtarget=None, **args):
+    def make_property(self, bone: str, name: str, default, *,
+                      min=0.0, max=1.0, soft_min=None, soft_max=None,
+                      description: Optional[str] = None, overridable=True,
+                      subtype: Optional[str] = None,
+                      **args):
         assert(self.obj.mode == 'OBJECT')
-        return make_constraint(self.obj.pose.bones[bone], type, self.obj, subtarget, **args)
+        return make_property(
+            self.obj.pose.bones[bone], name, default,
+            min=min, max=max, soft_min=soft_min, soft_max=soft_max,
+            description=description, overridable=overridable, subtype=subtype,
+            **args
+        )
 
-    def make_property(self, bone, name, default, **args):
-        assert(self.obj.mode == 'OBJECT')
-        return make_property(self.obj.pose.bones[bone], name, default, **args)
-
-    def make_driver(self, owner, prop, **args):
+    # noinspection PyShadowingBuiltins
+    def make_driver(self, owner: str | bpy_struct, prop: str,
+                    index=-1, type='SUM',
+                    expression: Optional[str] = None,
+                    variables: Iterable | dict = (),
+                    polynomial: Optional[list[float]] = None):
         assert(self.obj.mode == 'OBJECT')
         if isinstance(owner, str):
             owner = self.obj.pose.bones[owner]
-        return make_driver(owner, prop, target_id=self.obj, **args)
+        return make_driver(
+            owner, prop, target_id=self.obj,
+            index=index, type=type, expression=expression,
+            variables=variables, polynomial=polynomial,
+        )

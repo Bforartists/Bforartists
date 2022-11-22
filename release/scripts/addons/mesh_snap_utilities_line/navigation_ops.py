@@ -71,7 +71,8 @@ class VIEW3D_OT_zoom_custom_target(bpy.types.Operator):
                    self.init_mouse_region_y) / self.heigt_up
             ret = 'RUNNING_MODAL'
         else:
-            fac = self.step_factor * self.delta
+            delta = -self.delta if context.preferences.inputs.invert_zoom_wheel else self.delta
+            fac = self.step_factor * delta
             ret = 'FINISHED'
 
         self.rv3d.view_location = self.init_loc + \
@@ -86,8 +87,8 @@ class VIEW3D_OT_zoom_custom_target(bpy.types.Operator):
         dist_range = (v3d.clip_start, v3d.clip_end)
         self.rv3d = context.region_data
         self.init_dist = self.rv3d.view_distance
-        if ((self.delta <= 0 and self.init_dist < dist_range[1]) or
-                (self.delta > 0 and self.init_dist > dist_range[0])):
+        delta = -self.delta if context.preferences.inputs.invert_zoom_wheel else self.delta
+        if ((delta <= 0 and self.init_dist < dist_range[1]) or (delta > 0 and self.init_dist > dist_range[0])):
             self.init_loc = self.rv3d.view_location.copy()
 
             context.window_manager.modal_handler_add(self)

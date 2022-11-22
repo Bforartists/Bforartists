@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -31786,10 +31786,6 @@ msgid "Properties to set when the operator is called"
 msgstr "オペレーターが呼び出された時に設定されるプロパティ"
 
 
-msgid "Property Value"
-msgstr "プロパティ値"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "このイベント値でモーダルマップに変換します"
 
@@ -47336,10 +47332,6 @@ msgstr "標準の帯状の波テクスチャを使用します"
 
 msgid "Use wave texture in rings"
 msgstr "リングの波テクスチャを使用します"
-
-
-msgid "White Noise"
-msgstr "ホワイトノイズ"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -73231,10 +73223,6 @@ msgid "Creates a mask based on the curvature of the surface"
 msgstr "表面の曲率を元にマスクを生成します"
 
 
-msgid "Cavity Blur"
-msgstr "キャビティブラー"
-
-
 msgid "Cavity (Inverted)"
 msgstr "キャビティ（反転）"
 
@@ -73243,12 +73231,8 @@ msgid "Mix mode"
 msgstr "ミックスモード"
 
 
-msgid "Use Automask Settings"
-msgstr "自動マスク設定を使用"
-
-
-msgid "Use default settings from Options panel in sculpt mode"
-msgstr "スカルプトモード中、オプションパネルのデフォルト設定を使用します"
+msgid "Operator"
+msgstr "オペレーター"
 
 
 msgctxt "Operator"
@@ -79985,10 +79969,6 @@ msgstr "アクティブオペレーターをデフォルト値に設定します
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "オペレーター列挙パイ"
-
-
-msgid "Operator"
-msgstr "オペレーター"
 
 
 msgid "Operator name (in python as string)"
@@ -105570,16 +105550,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "%r は無効なターゲットです（「アーマチュア」か「オブジェクト」である必要があります）"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "カメラ＆マーカー(.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "XMLのパースができません。%s:%s(ファイル%r内)"
-
-
-msgid "Images as Planes"
-msgstr "画像を平面で"
 
 
 msgid "Import Options:"
@@ -106640,6 +106612,10 @@ msgstr "Blender はフリーソフトウェアです"
 
 msgid "Licensed under the GNU General Public License"
 msgstr "GNU General Public License の下に提供されています"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -108918,8 +108894,12 @@ msgid "Unknown add-ons"
 msgstr "未知のアドオン"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
+msgid "category"
+msgstr "カテゴリ"
+
+
+msgid "name"
+msgstr "名前"
 
 
 msgid "Display Thin"
@@ -109334,10 +109314,6 @@ msgstr "イージングモード"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "不連続(オイラー)フィルター"
-
-
-msgid "Extrapolation Mode"
-msgstr "外挿モード"
 
 
 msgid "Grease Pencil Objects"
@@ -111579,14 +111555,6 @@ msgstr "警告:"
 
 msgid "Internet:"
 msgstr "インターネット:"
-
-
-msgid "category"
-msgstr "カテゴリ"
-
-
-msgid "name"
-msgstr "名前"
 
 
 msgid "description"
