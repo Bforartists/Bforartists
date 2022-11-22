@@ -5,6 +5,7 @@
 from math import radians, ceil
 
 import bpy
+from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Vector, Euler, Matrix
 
 
@@ -714,7 +715,7 @@ def load(
         )
 
     else:
-        report({'ERROR'}, "Invalid target %r (must be 'ARMATURE' or 'OBJECT')" % target)
+        report({'ERROR'}, tip_("Invalid target %r (must be 'ARMATURE' or 'OBJECT')") % target)
         return {'CANCELLED'}
 
     print('Done in %.4f\n' % (time.time() - t1))

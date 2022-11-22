@@ -84,6 +84,7 @@ class bNodeTreeRuntime : NonCopyable, NonMovable {
   bool has_available_link_cycle = false;
   bool has_undefined_nodes_or_sockets = false;
   bNode *group_output_node = nullptr;
+  Vector<bNode *> root_frames;
 };
 
 /**
@@ -145,15 +146,57 @@ class bNodeRuntime : NonCopyable, NonMovable {
   /** #eNodeTreeChangedFlag. */
   uint32_t changed_flag = 0;
 
+  /** For dependency and sorting. */
+  short done = 0;
+
+  /** Used as a boolean for execution. */
+  uint8_t need_exec = 0;
+
+  /** The original node in the tree (for localized tree). */
+  struct bNode *original = nullptr;
+
+  /**
+   * XXX TODO
+   * Node totr size depends on the prvr size, which in turn is determined from preview size.
+   * In earlier versions bNodePreview was stored directly in nodes, but since now there can be
+   * multiple instances using different preview images it is possible that required node size
+   * varies between instances. preview_xsize, preview_ysize defines a common reserved size for
+   * preview rect for now, could be replaced by more accurate node instance drawing,
+   * but that requires removing totr from DNA and replacing all uses with per-instance data.
+   */
+  /** Reserved size of the preview rect. */
+  short preview_xsize, preview_ysize = 0;
+  /** Entire bound-box (world-space). */
+  rctf totr{};
+  /** Optional preview area. */
+  rctf prvr{};
+
+  /** Used at runtime when going through the tree. Initialize before use. */
+  short tmp_flag = 0;
+
+  /** Used at runtime when iterating over node branches. */
+  char iter_flag = 0;
+
+  /** Update flags. */
+  int update = 0;
+
+  /** Initial locx for insert offset animation. */
+  float anim_init_locx;
+  /** Offset that will be added to locx for insert offset animation. */
+  float anim_ofsx;
+
+  /** List of cached internal links (input to output), for muted nodes and operators. */
+  Vector<bNodeLink *> internal_links;
+
   /** Only valid if #topology_cache_is_dirty is false. */
   Vector<bNodeSocket *> inputs;
   Vector<bNodeSocket *> outputs;
-  Vector<bNodeLink *> internal_links;
   Map<StringRefNull, bNodeSocket *> inputs_by_identifier;
   Map<StringRefNull, bNodeSocket *> outputs_by_identifier;
   int index_in_tree = -1;
   bool has_available_linked_inputs = false;
   bool has_available_linked_outputs = false;
+  Vector<bNode *> direct_children_in_frame;
   bNodeTree *owner_tree = nullptr;
 };
 
@@ -245,6 +288,18 @@ inline blender::Span<const bNode *> bNodeTree::toposort_right_to_left() const
   return this->runtime->toposort_right_to_left;
 }
 
+inline blender::Span<bNode *> bNodeTree::toposort_left_to_right()
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->toposort_left_to_right;
+}
+
+inline blender::Span<bNode *> bNodeTree::toposort_right_to_left()
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->toposort_right_to_left;
+}
+
 inline blender::Span<const bNode *> bNodeTree::all_nodes() const
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
@@ -321,6 +376,12 @@ inline blender::Span<bNodeSocket *> bNodeTree::all_sockets()
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
   return this->runtime->sockets;
+}
+
+inline blender::Span<bNode *> bNodeTree::root_frames() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->root_frames;
 }
 
 /** \} */
@@ -433,10 +494,16 @@ inline bool bNode::is_group_output() const
   return this->type == NODE_GROUP_OUTPUT;
 }
 
-inline blender::Span<const bNodeLink *> bNode::internal_links_span() const
+inline blender::Span<const bNodeLink *> bNode::internal_links() const
+{
+  return this->runtime->internal_links;
+}
+
+inline blender::Span<bNode *> bNode::direct_children_in_frame() const
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
-  return this->runtime->internal_links;
+  BLI_assert(this->is_frame());
+  return this->runtime->direct_children_in_frame;
 }
 
 inline const blender::nodes::NodeDeclaration *bNode::declaration() const

@@ -220,6 +220,11 @@ static void wm_window_match_init(bContext *C, ListBase *wmlist)
   CTX_wm_menu_set(C, NULL);
 
   ED_editors_exit(G_MAIN, true);
+
+  /* Asset loading is done by the UI/editors and they keep pointers into it. So make sure to clear
+   * it after UI/editors. */
+  ED_assetlist_storage_exit();
+  AS_asset_libraries_exit();
 }
 
 static void wm_window_substitute_old(wmWindowManager *oldwm,

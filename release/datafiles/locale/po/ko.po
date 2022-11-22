@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -24624,10 +24624,6 @@ msgid "Properties to set when the operator is called"
 msgstr "작업자가 호출될 때 설정할 속성"
 
 
-msgid "Property Value"
-msgstr "속성 값"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "이 이벤트가 모달 키맵에서 변환하는 값"
 
@@ -35460,10 +35456,6 @@ msgstr "대역에서 표준 웨이브 텍스처를 사용"
 
 msgid "Use wave texture in rings"
 msgstr "링에 웨이브 텍스처를 사용"
-
-
-msgid "White Noise"
-msgstr "화이트 노이즈"
 
 
 msgid "UV Along Stroke"
@@ -54900,6 +54892,10 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "필터가 적용되는 횟수"
 
 
+msgid "Operator"
+msgstr "작업자"
+
+
 msgid "Applies a filter to modify the current mesh"
 msgstr "현재 메쉬를 수정하기 위해 필터를 적용합니다"
 
@@ -59830,10 +59826,6 @@ msgstr "기본 값으로 활성 작업자를 설정"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "작업자 열거 파이"
-
-
-msgid "Operator"
-msgstr "작업자"
 
 
 msgid "Operator name (in python as string)"
@@ -77513,16 +77505,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "잘못된 대상 %r ( '아머튜어'또는 '오브젝트'여야 함)"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "카메라 & 마커 (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "XML를 분석할 수 없음, %s:%s는 파일 %r에 대한"
-
-
-msgid "Images as Planes"
-msgstr "평면으로 이미지"
 
 
 msgid "Import Options:"
@@ -77899,6 +77883,10 @@ msgstr "테마"
 msgctxt "Operator"
 msgid "Open..."
 msgstr "열기..."
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgctxt "Operator"
@@ -79423,10 +79411,6 @@ msgstr "렌더링에 사용"
 
 msgid "Unknown add-ons"
 msgstr "알 수없는 애드온"
-
-
-msgid "%s: %s"
-msgstr "%s: %s"
 
 
 msgid "Display Thin"

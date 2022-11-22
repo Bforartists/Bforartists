@@ -18,7 +18,11 @@ from bl_ui.properties_grease_pencil_common import (
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
 )
-from bpy.app.translations import contexts as i18n_contexts
+from bpy.app.translations import (
+    pgettext_iface as iface_,
+    pgettext_tip as tip_,
+    contexts as i18n_contexts,
+)
 
 
 class VIEW3D_HT_header(Header):
@@ -163,7 +167,7 @@ class VIEW3D_HT_header(Header):
 
         sub = row.row()
         # sub.ui_units_x = 5.5 # width of mode edit box
-        sub.operator_menu_enum("object.mode_set", "mode", text=act_mode_item.name, icon=act_mode_item.icon)
+        sub.operator_menu_enum("object.mode_set", "mode", text=iface_(act_mode_item.name, act_mode_i18n_context), icon=act_mode_item.icon)
         del act_mode_item
 
         layout.template_header_3D_mode()
@@ -2974,16 +2978,16 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
                 if obj.data.lens_unit == 'MILLIMETERS':
-                    props.header_text = "Camera Focal Length: %.1fmm"
+                    props.header_text = tip_("Camera Focal Length: %.1fmm")
                 else:
-                    props.header_text = "Camera Focal Length: %.1f\u00B0"
+                    props.header_text = tip_("Camera Focal Length: %.1f\u00B0")
 
             else:
                 props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale", icon="LENS_SCALE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.ortho_scale"
                 props.input_scale = 0.01
-                props.header_text = "Camera Lens Scale: %.3f"
+                props.header_text = tip_("Camera Lens Scale: %.3f")
 
             if not obj.data.dof.focus_object:
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
@@ -2993,7 +2997,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.dof.focus_distance"
                     props.input_scale = 0.02
-                    props.header_text = "Focus Distance: %.3f"
+                    props.header_text = tip_("Focus Distance: %.3f")
 
             layout.separator()
 
@@ -3004,13 +3008,13 @@ class VIEW3D_MT_object_context_menu(Menu):
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.extrude"
             props.input_scale = 0.01
-            props.header_text = "Extrude: %.3f"
+            props.header_text = tip_("Extrude: %.3f")
 
             props = layout.operator("wm.context_modal_mouse", text="Adjust Offset", icon="WIDTH_SIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.offset"
             props.input_scale = 0.01
-            props.header_text = "Offset: %.3f"
+            props.header_text = tip_("Offset: %.3f")
 
             layout.separator()
 
@@ -3021,7 +3025,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "empty_display_size"
             props.input_scale = 0.01
-            props.header_text = "Empty Display Size: %.3f"
+            props.header_text = tip_("Empty Display Size: %.3f")
 
             layout.separator()
 
@@ -3039,7 +3043,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.energy"
             props.input_scale = 1.0
-            props.header_text = "Light Power: %.3f"
+            props.header_text = tip_("Light Power: %.3f")
 
             if light.type == 'AREA':
                 if light.shape in {'RECTANGLE', 'ELLIPSE'}:
@@ -3049,7 +3053,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                         icon="LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size"
-                    props.header_text = "Light Size X: %.3f"
+                    props.header_text = tip_("Light Size X: %.3f")
 
                     props = layout.operator(
                         "wm.context_modal_mouse",
@@ -3057,24 +3061,24 @@ class VIEW3D_MT_object_context_menu(Menu):
                         icon="LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size_y"
-                    props.header_text = "Light Size Y: %.3f"
+                    props.header_text = tip_("Light Size Y: %.3f")
                 else:
                     props = layout.operator("wm.context_modal_mouse", text="Adjust Area Light Size", icon="LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size"
-                    props.header_text = "Light Size: %.3f"
+                    props.header_text = tip_("Light Size: %.3f")
 
             elif light.type in {'SPOT', 'POINT'}:
                 props = layout.operator("wm.context_modal_mouse", text="Adjust Light Radius", icon="RADIUS")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.shadow_soft_size"
-                props.header_text = "Light Radius: %.3f"
+                props.header_text = tip_("Light Radius: %.3f")
 
             elif light.type == 'SUN':
                 props = layout.operator("wm.context_modal_mouse", text="Adjust Sun Light Angle", icon="ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.angle"
-                props.header_text = "Light Angle: %.3f"
+                props.header_text = tip_("Light Angle: %.3f")
 
             if light.type == 'SPOT':
                 layout.separator()
@@ -3083,13 +3087,13 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_size"
                 props.input_scale = 0.01
-                props.header_text = "Spot Size: %.2f"
+                props.header_text = tip_("Spot Size: %.2f")
 
                 props = layout.operator("wm.context_modal_mouse", text="Adjust Spot Light Blend", icon="SPOT_BLEND")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
-                props.header_text = "Spot Blend: %.2f"
+                props.header_text = tip_("Spot Blend: %.2f")
 
             layout.separator()
 
@@ -3936,7 +3940,7 @@ class VIEW3D_MT_mask(Menu):
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon="DIRTY_VERTEX")
         props = layout.operator("sculpt.mask_from_cavity", text="Mask From Cavity")
-        props.use_automask_settings = False
+        props.settings_source = "OPERATOR"
 
         layout.separator()
 
@@ -8368,13 +8372,13 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
     def draw_header(self, context):
         layout = self.layout
         layout.label(text={
-            'PAINT_GPENCIL': "Draw Grease Pencil",
-            'EDIT_GPENCIL': "Edit Grease Pencil",
-            'SCULPT_GPENCIL': "Sculpt Grease Pencil",
-            'WEIGHT_GPENCIL': "Weight Grease Pencil",
-            'VERTEX_GPENCIL': "Vertex Grease Pencil",
-            'OBJECT': "Grease Pencil",
-        }[context.mode])
+            'PAINT_GPENCIL': iface_("Draw Grease Pencil"),
+            'EDIT_GPENCIL': iface_("Edit Grease Pencil"),
+            'SCULPT_GPENCIL': iface_("Sculpt Grease Pencil"),
+            'WEIGHT_GPENCIL': iface_("Weight Grease Pencil"),
+            'VERTEX_GPENCIL': iface_("Vertex Grease Pencil"),
+            'OBJECT': iface_("Grease Pencil"),
+        }[context.mode], translate=False)
 
     def draw(self, context):
         layout = self.layout
@@ -9158,7 +9162,8 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         is_cavity_active = sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
 
         if is_cavity_active:
-            row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props.settings_source = "SCENE"
 
         col.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (inverted)")
 

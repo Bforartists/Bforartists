@@ -2,24 +2,26 @@
 
 import bpy
 import math
-import functools
 import mathutils
 
-from itertools import count
+from typing import Optional
+
+from bpy.types import PoseBone
 from mathutils import Vector, Matrix
 
+from ...rig_ui_template import PanelLayout
 from ...utils.naming import make_derived_name, mirror_name, change_name_side, Side, SideZ
-from ...utils.bones import align_bone_z_axis, put_bone
+from ...utils.bones import align_bone_z_axis, put_bone, TypedBoneDict
 from ...utils.widgets import (widget_generator, generate_circle_geometry,
                               generate_circle_hull_geometry)
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.switch_parent import SwitchParentBuilder
-from ...utils.misc import map_list, matrix_from_axis_pair, LazyRef
+from ...utils.misc import matrix_from_axis_pair, LazyRef
 
 from ...base_rig import stage, RigComponent
 
-from ..skin.skin_nodes import ControlBoneNode
-from ..skin.skin_parents import ControlBoneParentOffset
+from ..skin.skin_nodes import ControlBoneNode, BaseSkinNode
+from ..skin.skin_parents import ControlBoneParentOffset, ControlBoneParentBase
 from ..skin.skin_rigs import BaseSkinRig
 
 from ..skin.basic_chain import Rig as BasicChainRig
@@ -31,10 +33,19 @@ class Rig(BaseSkinRig):
     connect at their ends using T/B symmetry.
     """
 
-    def find_org_bones(self, bone):
+    def find_org_bones(self, bone: PoseBone) -> str:
         return bone.name
 
     cluster_control = None
+
+    center: Vector
+    axis: Vector
+
+    eye_corner_nodes: list[ControlBoneNode]
+    eye_corner_matrix: Optional[Matrix]
+    eye_corner_range: tuple[float, float]
+
+    child_chains: list[BasicChainRig]
 
     def initialize(self):
         super().initialize()
@@ -58,10 +69,11 @@ class Rig(BaseSkinRig):
     ####################################################
     # UTILITIES
 
-    def is_eye_control_node(self, node):
+    def is_eye_control_node(self, node: ControlBoneNode) -> bool:
         return node.rig in self.child_chains and node.is_master_node
 
-    def is_eye_corner_node(self, node):
+    # noinspection PyMethodMayBeStatic
+    def is_eye_corner_node(self, node: ControlBoneNode) -> bool:
         # Corners are nodes where the two T and B chains merge
         sides = set(n.name_split.side_z for n in node.get_merged_siblings())
         return {SideZ.BOTTOM, SideZ.TOP}.issubset(sides)
@@ -82,67 +94,68 @@ class Rig(BaseSkinRig):
         self.eye_corner_matrix = matrix.inverted()
 
         # Compute signed angles from space_axis to the eye corners
-        amin, amax = self.eye_corner_range = list(
-            sorted(map(self.get_eye_corner_angle, self.eye_corner_nodes)))
+        angle_min, angle_max = sorted(map(self.get_eye_corner_angle, self.eye_corner_nodes))
 
-        if not (amin <= 0 <= amax):
+        self.eye_corner_range = (angle_min, angle_max)
+
+        if not (angle_min <= 0 <= angle_max):
             self.raise_error('Bad relative angles of eye corners: {}..{}',
-                             math.degrees(amin), math.degrees(amax))
+                             math.degrees(angle_min), math.degrees(angle_max))
 
-    def get_eye_corner_angle(self, node):
+    def get_eye_corner_angle(self, node: ControlBoneNode) -> float:
         """Compute a signed Z rotation angle from the eye axis to the node."""
         pt = self.eye_corner_matrix @ node.point
         return math.atan2(pt.x, pt.y)
 
-    def get_master_control_position(self):
+    def get_master_control_position(self) -> Vector:
         """Compute suitable position for the master control."""
         self.init_eye_corner_space()
 
         # Place the control between the two corners on the eye axis
-        pcorners = [node.point for node in self.eye_corner_nodes]
+        corner_points = [node.point for node in self.eye_corner_nodes]
 
         point, _ = mathutils.geometry.intersect_line_line(
-            self.center, self.center + self.axis, pcorners[0], pcorners[1]
+            self.center, self.center + self.axis, corner_points[0], corner_points[1]
         )
         return point
 
-    def get_lid_follow_influence(self, node):
+    def get_lid_follow_influence(self, node: ControlBoneNode):
         """Compute the influence factor of the eye movement on this eyelid control node."""
         self.init_eye_corner_space()
 
         # Interpolate from axis to corners based on Z angle
         angle = self.get_eye_corner_angle(node)
-        amin, amax = self.eye_corner_range
+        angle_min, angle_max = self.eye_corner_range
 
-        if amin < angle < 0:
-            return 1 - min(1, angle/amin) ** 2
-        elif 0 < angle < amax:
-            return 1 - min(1, angle/amax) ** 2
+        if angle_min < angle < 0:
+            return 1 - min(1.0, angle/angle_min) ** 2
+        elif 0 < angle < angle_max:
+            return 1 - min(1.0, angle/angle_max) ** 2
         else:
             return 0
 
     ####################################################
     # BONES
-    #
-    # ctrl:
-    #   master:
-    #     Parent control for moving the whole eye.
-    #   target:
-    #     Individual target this eye aims for.
-    # mch:
-    #   master:
-    #     Bone that rotates to track ctrl.target.
-    #   track:
-    #     Bone that translates to follow mch.master tail.
-    # deform:
-    #   master:
-    #     Deform mirror of ctrl.master.
-    #   eye:
-    #     Deform bone that rotates with mch.master.
-    #   iris:
-    #     Iris deform bone at master tail that scales with ctrl.target
-    #
-    ####################################################
+
+    class CtrlBones(BaseSkinRig.CtrlBones):
+        master: str                    # Parent control for moving the whole eye.
+        target: str                    # Individual target this eye aims for.
+
+    class MchBones(BaseSkinRig.MchBones):
+        master: str                    # Bone that rotates to track ctrl.target.
+        track: str                     # Bone that translates to follow mch.master tail.
+
+    class DeformBones(TypedBoneDict):
+        master: str                    # Deform mirror of ctrl.master.
+        eye: str                       # Deform bone that rotates with mch.master.
+        iris: str                      # Iris deform bone at master tail that scales with ctrl.target
+
+    bones: BaseSkinRig.ToplevelBones[
+        str,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        'Rig.DeformBones'
+    ]
 
     ####################################################
     # CHILD CHAINS
@@ -154,13 +167,16 @@ class Rig(BaseSkinRig):
         for child in self.child_chains:
             self.patch_chain(child)
 
-    def patch_chain(self, child):
+    def patch_chain(self, child: BasicChainRig):
         return EyelidChainPatch(child, self)
 
     ####################################################
     # CONTROL NODES
 
-    def extend_control_node_parent(self, parent, node):
+    def extend_control_node_parent(self, parent, node: BaseSkinNode):
+        if not isinstance(node, ControlBoneNode):
+            return parent
+
         if self.is_eye_control_node(node):
             if self.is_eye_corner_node(node):
                 # Remember corners for later computations
@@ -172,7 +188,7 @@ class Rig(BaseSkinRig):
 
         return parent
 
-    def extend_mid_node_parent(self, parent, node):
+    def extend_mid_node_parent(self, parent: ControlBoneParentBase, node: ControlBoneNode):
         parent = ControlBoneParentOffset(self, node, parent)
 
         # Add movement of the eye to the eyelid controls
@@ -195,7 +211,7 @@ class Rig(BaseSkinRig):
 
         return parent
 
-    def extend_control_node_rig(self, node):
+    def extend_control_node_rig(self, node: ControlBoneNode):
         if self.is_eye_control_node(node):
             # Add Limit Distance to enforce following the surface of the eye to the control
             con = self.make_constraint(
@@ -229,17 +245,17 @@ class Rig(BaseSkinRig):
         if self.params.eyelid_follow_split:
             self.make_property(
                 target, 'lid_follow', list(self.params.eyelid_follow_default),
-                description='Eylids follow eye movement (X and Z)'
+                description='Eyelids follow eye movement (X and Z)'
             )
         else:
             self.make_property(target, 'lid_follow', 1.0,
-                               description='Eylids follow eye movement')
+                               description='Eyelids follow eye movement')
 
         if self.params.eyelid_detach_option:
             self.make_property(target, 'lid_attach', 1.0,
-                               description='Eylids follow eye surface')
+                               description='Eyelids follow eye surface')
 
-    def add_ui_sliders(self, panel, *, add_name=False):
+    def add_ui_sliders(self, panel: PanelLayout, *, add_name=False):
         target = self.bones.ctrl.target
 
         name_tail = f' ({target})' if add_name else ''
@@ -377,7 +393,7 @@ class Rig(BaseSkinRig):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.make_deform = bpy.props.BoolProperty(
             name="Deform",
             default=True,
@@ -404,9 +420,9 @@ class Rig(BaseSkinRig):
         )
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         col = layout.column()
-        col.prop(params, "make_deform", text="Eyball And Iris Deforms")
+        col.prop(params, "make_deform", text="Eyeball And Iris Deforms")
         col.prop(params, "eyelid_detach_option")
 
         col.prop(params, "eyelid_follow_split")
@@ -421,7 +437,9 @@ class EyelidChainPatch(RigComponent):
 
     rigify_sub_object_run_late = True
 
-    def __init__(self, owner, eye):
+    owner: BasicChainRig
+
+    def __init__(self, owner: BasicChainRig, eye: Rig):
         super().__init__(owner)
 
         self.eye = eye
@@ -454,7 +472,21 @@ class EyelidChainPatch(RigComponent):
 class EyeClusterControl(RigComponent):
     """Component generating a common control for an eye cluster."""
 
-    def __init__(self, owner):
+    owner: Rig
+
+    rig_list: list[Rig]
+    rig_count: int
+
+    size: float
+    matrix: Matrix           # Cluster plane matrix
+    inv_matrix: Matrix       # World to cluster plane
+
+    rig_points: dict[Rig, Vector]  # Eye projections in cluster plane space
+
+    master_bone: str
+    child_bones: list[str]
+
+    def __init__(self, owner: Rig):
         super().__init__(owner)
 
         self.find_cluster_rigs()
@@ -505,7 +537,7 @@ class EyeClusterControl(RigComponent):
         self.matrix = matrix
         self.inv_matrix = matrix.inverted()
 
-    def project_rig_control(self, rig):
+    def project_rig_control(self, rig: Rig):
         """Intersect the given eye Y axis with the cluster plane, returns (x,y,0)."""
         bone = self.get_bone(rig.base_bone)
 
@@ -525,7 +557,7 @@ class EyeClusterControl(RigComponent):
 
         return name
 
-    def get_rig_control_matrix(self, rig):
+    def get_rig_control_matrix(self, rig: Rig):
         """Compute a matrix for an individual eye sub-control."""
         matrix = self.matrix.copy()
         matrix.translation = self.matrix @ self.rig_points[rig]
@@ -570,7 +602,7 @@ class EyeClusterControl(RigComponent):
         bone.layers = self.get_master_control_layers()
         return name
 
-    def make_child_control(self, rig):
+    def make_child_control(self, rig: Rig):
         name = rig.copy_bone(
             rig.base_bone, make_derived_name(rig.base_bone, 'ctrl'), length=self.size)
         self.get_bone(name).matrix = self.get_rig_control_matrix(rig)
@@ -625,10 +657,10 @@ def create_eye_widget(geom, *, size=1):
 
 @widget_generator
 def create_eye_cluster_widget(geom, *, size=1, points):
-    hpoints = [points[i] for i in mathutils.geometry.convex_hull_2d(points)]
+    hull_points = [points[i] for i in mathutils.geometry.convex_hull_2d(points)]
 
-    generate_circle_hull_geometry(geom, hpoints, size*0.75, size*0.6)
-    generate_circle_hull_geometry(geom, hpoints, size, size*0.85)
+    generate_circle_hull_geometry(geom, hull_points, size*0.75, size*0.6)
+    generate_circle_hull_geometry(geom, hull_points, size, size*0.85)
 
 
 def create_sample(obj):

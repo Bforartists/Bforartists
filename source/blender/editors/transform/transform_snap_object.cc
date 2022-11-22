@@ -1303,7 +1303,7 @@ static eSnapMode nearest_world_object_fn(SnapObjectContext *sctx,
       return SCE_SNAP_MODE_NONE;
     }
   }
-  else if (GS(ob_data) != ID_ME) {
+  else if (GS(ob_data->name) != ID_ME) {
     return SCE_SNAP_MODE_NONE;
   }
   else if (is_object_active && ELEM(ob_eval->type, OB_CURVES_LEGACY, OB_SURF, OB_FONT)) {
@@ -2467,7 +2467,6 @@ static eSnapMode snapCamera(const SnapObjectContext *sctx,
         &neasrest_precalc, sctx->runtime.pmat, sctx->runtime.win_size, sctx->runtime.mval);
 
     LISTBASE_FOREACH (MovieTrackingObject *, tracking_object, &tracking->objects) {
-      ListBase *tracksbase = BKE_tracking_object_get_tracks(tracking, tracking_object);
       float reconstructed_camera_mat[4][4], reconstructed_camera_imat[4][4];
       const float(*vertex_obmat)[4];
 
@@ -2478,7 +2477,7 @@ static eSnapMode snapCamera(const SnapObjectContext *sctx,
         invert_m4_m4(reconstructed_camera_imat, reconstructed_camera_mat);
       }
 
-      LISTBASE_FOREACH (MovieTrackingTrack *, track, tracksbase) {
+      LISTBASE_FOREACH (MovieTrackingTrack *, track, &tracking_object->tracks) {
         float bundle_pos[3];
 
         if ((track->flag & TRACK_HAS_BUNDLE) == 0) {

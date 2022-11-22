@@ -7,6 +7,7 @@ from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import create_chain_widget
 from ...utils import make_mechanism_name
 from ...utils import ControlLayersOption
+from ...utils.mechanism import make_property, make_driver
 from ..limbs.limb_utils import get_bone_name
 
 
@@ -306,9 +307,11 @@ class Rig:
             eb[twk].parent = eb[bones['chain']['mch_ctrl'][i+1]]
             eb[twk].inherit_scale = 'NONE'
 
-        eb[bones['chain']['ctrl'][0]].parent = eb[bones['chain']['mch_ctrl'][0]] if bones['chain']['mch_ctrl'] else None
+        eb[bones['chain']['ctrl'][0]].parent =\
+            eb[bones['chain']['mch_ctrl'][0]] if bones['chain']['mch_ctrl'] else None
         eb[bones['chain']['ctrl'][0]].inherit_scale = 'NONE'
-        eb[bones['chain']['ctrl'][1]].parent = eb[bones['chain']['mch_ctrl'][-1]] if bones['chain']['mch_ctrl'] else None
+        eb[bones['chain']['ctrl'][1]].parent =\
+            eb[bones['chain']['mch_ctrl'][-1]] if bones['chain']['mch_ctrl'] else None
         eb[bones['chain']['ctrl'][1]].inherit_scale = 'NONE'
 
         if 'pivot' in bones.keys():
@@ -405,8 +408,8 @@ class Rig:
         if 'pivot' in bones.keys():
             step = 2/(len(self.org_bones))
             for i, b in enumerate(mch_ctrl):
-                xval = i*step
-                influence = 2*xval - xval**2    # parabolic influence of pivot
+                x_val = i*step
+                influence = 2*x_val - x_val**2    # parabolic influence of pivot
                 if (i != 0) and (i != len(mch_ctrl)-1):
                     self.make_constraint(b, {
                         'constraint': 'COPY_TRANSFORMS',
@@ -493,16 +496,19 @@ class Rig:
 
         for prop in props:
             if prop == 'neck_follow':
-                defval = 0.5
+                def_val = 0.5
             else:
-                defval = 0.0
+                def_val = 0.0
 
-            make_property(torso, prop, defval)
+            make_property(torso, prop, def_val)
 
         # driving the follow rotation switches for neck and head
         for bone, prop, in zip(owners, props):
             # Add driver to copy rotation constraint
-            make_driver(pb[bone].constraints[0], "influence", variables=[(self.obj, torso, prop)], polynomial=[1.0, -1.0])
+            make_driver(
+                pb[bone].constraints[0], "influence",
+                variables=[(self.obj, torso, prop)], polynomial=[1.0, -1.0]
+            )
 
     def locks_and_widgets(self, bones):
         bpy.ops.object.mode_set(mode='OBJECT')
@@ -603,22 +609,22 @@ class Rig:
         all_ctrls.extend(bones['chain']['ctrl'])
         all_ctrls.extend(bones['chain']['tweak'])
         all_ctrls.extend(bones['chain']['conv'])
-        for bname in eb.keys():
-            if bname not in all_ctrls and (bname.startswith('tweak') or 'ctrl' in bname):
-                other_ctrls.append(bname)
+        for bone_name in eb.keys():
+            if bone_name not in all_ctrls and (bone_name.startswith('tweak') or 'ctrl' in bone_name):
+                other_ctrls.append(bone_name)
 
-        for bname in other_ctrls:
-            if eb[bname].head == head_start:
+        for bone_name in other_ctrls:
+            if eb[bone_name].head == head_start:
                 for child in eb[bones['chain']['ctrl'][0]].children:
-                    child.parent = eb[bname]
+                    child.parent = eb[bone_name]
                 eb.remove(eb[bones['chain']['ctrl'][0]])
-                bones['chain']['ctrl'][0] = bname
+                bones['chain']['ctrl'][0] = bone_name
                 break
 
-        for bname in other_ctrls:
-            if eb[bname].head == head_tip:
+        for bone_name in other_ctrls:
+            if eb[bone_name].head == head_tip:
                 eb.remove(eb[bones['chain']['ctrl'][-1]])
-                bones['chain']['ctrl'][-1] = bname
+                bones['chain']['ctrl'][-1] = bone_name
                 break
 
     def generate(self):
@@ -647,7 +653,7 @@ class Rig:
         self.parent_bones(bones)
 
         # ctrls snapping pass
-        #self.aggregate_ctrls(bones)
+        # self.aggregate_ctrls(bones)
 
         self.constrain_bones(bones)
         self.stick_to_bendy_bones(bones)
@@ -715,10 +721,10 @@ def add_parameters(params):
         )
 
     params.bbones = bpy.props.IntProperty(
-        name        = 'B-Bone Segments',
-        default     = 10,
-        min         = 1,
-        description = 'Number of B-Bone segments'
+        name='B-Bone Segments',
+        default=10,
+        min=1,
+        description='Number of B-Bone segments'
     )
 
     params.wgt_offset = bpy.props.FloatProperty(
@@ -759,8 +765,8 @@ def parameters_ui(layout, params):
     r = layout.row()
     r.prop(params, 'def_parenting')
 
-    #r = layout.row()
-    #r.prop(params, 'cluster_ctrls')
+    # r = layout.row()
+    # r.prop(params, 'cluster_ctrls')
 
     ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
@@ -808,7 +814,10 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    pbone.bone.layers = [
+        True, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.001']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -816,7 +825,10 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    pbone.bone.layers = [
+        True, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.002']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -824,7 +836,10 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    pbone.bone.layers = [
+        True, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['spine.003']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -832,7 +847,10 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    pbone.bone.layers = [True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    pbone.bone.layers = [
+        True, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False]
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:

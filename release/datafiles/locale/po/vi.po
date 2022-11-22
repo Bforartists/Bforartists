@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
@@ -31099,10 +31099,6 @@ msgid "Properties to set when the operator is called"
 msgstr "Đặt đặc tính nào khi kêu thao tác"
 
 
-msgid "Property Value"
-msgstr "Giá Trí Đặc Tính"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "Sự kiện này được phiên dịch giá trị nào trong một ánh xạ phím cách thức"
 
@@ -46324,10 +46320,6 @@ msgstr "Dùng chất liệu sóng tiêu chuẩn trong quằn"
 
 msgid "Use wave texture in rings"
 msgstr "Dùng chất liệu sóng trong vành"
-
-
-msgid "White Noise"
-msgstr "Huyên Náo Tráng"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -71538,6 +71530,10 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "Số lần để ạp dụng bộ lọc"
 
 
+msgid "Operator"
+msgstr "Thao Tác"
+
+
 msgctxt "Operator"
 msgid "Init Mask"
 msgstr "Khởi Động Mặt Nạ"
@@ -78140,10 +78136,6 @@ msgstr "Đặt lại thao tác hoạt động có giá trị mặc định"
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Quạt Liệt Kê Thao Tác"
-
-
-msgid "Operator"
-msgstr "Thao Tác"
 
 
 msgid "Operator name (in python as string)"
@@ -102809,16 +102801,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Mục tiêu không hợp lệ %r (phải là 'ARMATURE' ('CỐT') hay 'OBJECT' ('VẬT THỂ'))"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Máy Quay Phim & Ký Hiệu (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Không thể phân tích XML, %s:%s cho tập tin %r"
-
-
-msgid "Images as Planes"
-msgstr "Ảnh là Mặt Phẳng"
 
 
 msgid "Import Options:"
@@ -103769,6 +103753,10 @@ msgstr "Blender là phầm mềm tự do"
 
 msgid "Licensed under the GNU General Public License"
 msgstr "Giấy phép Bằng Công Cộng Tổng Quát GNU"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Nothing to operate on: %s[ ].%s"
@@ -106020,10 +106008,6 @@ msgid "Unknown add-ons"
 msgstr "Đồ kèm không biết"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Display Thin"
 msgstr "Hiển Thị Mỏng"
 
@@ -106436,10 +106420,6 @@ msgstr "Chế Độ Xoa Dịu"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Bộ Lọc Không Liên Tiếp (Euler)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Chế Độ Suy Ngoại"
 
 
 msgid "Grease Pencil Objects"

@@ -20,6 +20,7 @@ import typing
 import bpy
 from bpy.types import AddonPreferences, Operator, PropertyGroup
 from bpy.props import PointerProperty, StringProperty
+from bpy.app.translations import pgettext_tip as tip_
 
 if 'communication' in locals():
     import importlib
@@ -209,29 +210,29 @@ class BlenderIdPreferences(AddonPreferences):
             else:
                 time_left = expiry - now
                 if time_left.days > 14:
-                    exp_str = 'on {:%Y-%m-%d}'.format(expiry)
+                    exp_str = tip_('on {:%Y-%m-%d}').format(expiry)
                 elif time_left.days > 1:
-                    exp_str = 'in %i days.' % time_left.days
+                    exp_str = tip_('in %i days.') % time_left.days
                 elif time_left.seconds >= 7200:
-                    exp_str = 'in %i hours.' % round(time_left.seconds / 3600)
+                    exp_str = tip_('in %i hours.') % round(time_left.seconds / 3600)
                 elif time_left.seconds >= 120:
-                    exp_str = 'in %i minutes.' % round(time_left.seconds / 60)
+                    exp_str = tip_('in %i minutes.') % round(time_left.seconds / 60)
                 else:
-                    exp_str = 'within seconds'
+                    exp_str = tip_('within seconds')
 
                 endpoint = communication.blender_id_endpoint()
                 if endpoint == communication.BLENDER_ID_ENDPOINT:
-                    msg = 'You are logged in as %s.' % active_profile.username
+                    msg = tip_('You are logged in as %s.') % active_profile.username
                 else:
-                    msg = 'You are logged in as %s at %s.' % (active_profile.username, endpoint)
+                    msg = tip_('You are logged in as %s at %s.') % (active_profile.username, endpoint)
 
                 col = layout.column(align=True)
                 col.label(text=msg, icon='WORLD_DATA')
                 if time_left.days < 14:
-                    col.label(text='Your token will expire %s. Please log out and log in again '
-                                   'to refresh it.' % exp_str, icon='PREVIEW_RANGE')
+                    col.label(text=tip_('Your token will expire %s. Please log out and log in again '
+                                        'to refresh it.') % exp_str, icon='PREVIEW_RANGE')
                 else:
-                    col.label(text='Your authentication token expires %s.' % exp_str,
+                    col.label(text=tip_('Your authentication token expires %s.') % exp_str,
                               icon='BLANK1')
 
             row = layout.row().split(factor=0.8)
@@ -286,7 +287,7 @@ class BlenderIdLogin(BlenderIdMixin, Operator):
                 addon_prefs.blender_id_username,
                 {}
             )
-            addon_prefs.ok_message = 'Logged in'
+            addon_prefs.ok_message = tip_('Logged in')
         else:
             addon_prefs.error_message = auth_result.error_message
             if BlenderIdProfile.user_id:
@@ -306,9 +307,9 @@ class BlenderIdValidate(BlenderIdMixin, Operator):
 
         err = validate_token()
         if err is None:
-            addon_prefs.ok_message = 'Authentication token is valid.'
+            addon_prefs.ok_message = tip_('Authentication token is valid.')
         else:
-            addon_prefs.error_message = '%s; you probably want to log out and log in again.' % err
+            addon_prefs.error_message = tip_('%s; you probably want to log out and log in again.') % err
 
         BlenderIdProfile.read_json()
 
@@ -328,7 +329,7 @@ class BlenderIdLogout(BlenderIdMixin, Operator):
         profiles.logout(BlenderIdProfile.user_id)
         BlenderIdProfile.read_json()
 
-        addon_prefs.ok_message = 'You have been logged out.'
+        addon_prefs.ok_message = tip_('You have been logged out.')
         return {'FINISHED'}
 
 
