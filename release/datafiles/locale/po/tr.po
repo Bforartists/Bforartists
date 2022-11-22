@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -1085,6 +1085,10 @@ msgid "File Paths"
 msgstr "Dosya Yolları"
 
 
+msgid "Operator"
+msgstr "Operatör"
+
+
 msgid "Sharpen"
 msgstr "Keskinlik"
 
@@ -1129,10 +1133,6 @@ msgstr "Oynat"
 
 msgid "State"
 msgstr "Durum"
-
-
-msgid "Operator"
-msgstr "Operatör"
 
 
 msgid "Color Path"

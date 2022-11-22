@@ -560,7 +560,7 @@ class TOPBAR_MT_edit(Menu):
             app_template = None
 
         if app_template:
-            layout.label(text= "-- Template: " + bpy.path.display_name(app_template, has_ext=False)+" --")
+            layout.label(text= iface_("-- Template: " + bpy.path.display_name(app_template, has_ext=False)+" --", i18n_contexts.id_workspace), translate=False)
 
         layout.operator("wm.save_homefile", icon='SAVE_PREFS')
         if app_template:

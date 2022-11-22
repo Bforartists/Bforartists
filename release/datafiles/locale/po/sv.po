@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1209,10 +1209,6 @@ msgid "Timer"
 msgstr "Tidtagning"
 
 
-msgid "Property Value"
-msgstr "Egenskapsvärde"
-
-
 msgid "Left Handle"
 msgstr "Vänster handtag"
 
@@ -1942,6 +1938,10 @@ msgid "ID name of the menu this was called from"
 msgstr "ID-namn på menyn som detta anropades från"
 
 
+msgid "Operator"
+msgstr "Operator"
+
+
 msgid "Alpha Under"
 msgstr "Alfa under"
 
@@ -2022,10 +2022,6 @@ msgstr "Öppna ett Blenderdokument"
 msgctxt "Operator"
 msgid "Operator Cheat Sheet"
 msgstr "Lathund för operatorer"
-
-
-msgid "Operator"
-msgstr "Operator"
 
 
 msgctxt "Operator"

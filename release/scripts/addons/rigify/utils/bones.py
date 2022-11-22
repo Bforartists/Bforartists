@@ -404,9 +404,8 @@ class BoneUtilityMixin(object):
         return name
 
     def copy_bone_properties(self, src_name: str, tgt_name: str, *,
-                             props=True,
-                             ui_controls: list[str] | bool | None = None,
-                             **kwargs):
+                             transforms=True, props=True, widget=True,
+                             ui_controls: list[str] | bool | None = None):
         """Copy pose-mode properties of the bone. For using ui_controls, self must be a Rig."""
 
         if ui_controls:
@@ -420,7 +419,10 @@ class BoneUtilityMixin(object):
                 ui_controls = self.bones.flatten('ctrl')
 
         copy_bone_properties(
-            self.obj, src_name, tgt_name, props=props and not ui_controls, **kwargs)
+            self.obj, src_name, tgt_name,
+            props=props and not ui_controls,
+            transforms=transforms, widget=widget,
+        )
 
         if props and ui_controls:
             from .mechanism import copy_custom_properties_with_ui

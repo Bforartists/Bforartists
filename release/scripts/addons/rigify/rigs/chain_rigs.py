@@ -45,7 +45,12 @@ class SimpleChainRig(BaseRig):
     class MchBones(BaseRig.MchBones):
         pass
 
-    bones: BaseRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: BaseRig.ToplevelBones[
+        list[str],
+        'SimpleChainRig.CtrlBones',
+        'SimpleChainRig.MchBones',
+        list[str]
+    ]
 
     ##############################
     # Control chain
@@ -130,7 +135,12 @@ class TweakChainRig(SimpleChainRig):
     class MchBones(SimpleChainRig.MchBones):
         pass
 
-    bones: BaseRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: BaseRig.ToplevelBones[
+        list[str],
+        'TweakChainRig.CtrlBones',
+        'TweakChainRig.MchBones',
+        list[str]
+    ]
 
     ##############################
     # Tweak chain

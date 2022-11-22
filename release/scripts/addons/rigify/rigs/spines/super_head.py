@@ -48,7 +48,12 @@ class Rig(BaseHeadTailRig):
         ik: list[str]                  # Long neck IK system
         chain: list[str]               # Tweak parents
 
-    bones: BaseHeadTailRig.ToplevelBones[list[str], CtrlBones, MchBones, list[str]]
+    bones: BaseHeadTailRig.ToplevelBones[
+        list[str],
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        list[str]
+    ]
 
     ####################################################
     # Main control bones

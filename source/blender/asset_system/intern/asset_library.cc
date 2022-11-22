@@ -6,11 +6,11 @@
 
 #include <memory>
 
+#include "AS_asset_catalog_tree.hh"
 #include "AS_asset_library.h"
 #include "AS_asset_library.hh"
 #include "AS_asset_representation.hh"
 
-#include "BKE_lib_remap.h"
 #include "BKE_main.h"
 #include "BKE_preferences.h"
 
@@ -18,15 +18,21 @@
 #include "BLI_path_util.h"
 #include "BLI_set.hh"
 
-#include "DNA_asset_types.h"
 #include "DNA_userdef_types.h"
 
 #include "asset_library_service.hh"
+#include "asset_storage.hh"
 
 using namespace blender;
 using namespace blender::asset_system;
 
 bool asset_system::AssetLibrary::save_catalogs_when_file_is_saved = true;
+
+/* Can probably removed once #WITH_DESTROY_VIA_LOAD_HANDLER gets enabled by default. */
+void AS_asset_libraries_exit()
+{
+  AssetLibraryService::destroy();
+}
 
 asset_system::AssetLibrary *AS_asset_library_load(const Main *bmain,
                                                   const AssetLibraryReference &library_reference)
@@ -104,16 +110,19 @@ void AS_asset_library_refresh_catalog_simplename(struct ::AssetLibrary *asset_li
   lib->refresh_catalog_simplename(asset_data);
 }
 
-void AS_asset_library_remap_ids(IDRemapper *mappings)
+void AS_asset_library_remap_ids(const IDRemapper *mappings)
 {
   AssetLibraryService *service = AssetLibraryService::get();
-  service->foreach_loaded_asset_library(
-      [mappings](asset_system::AssetLibrary &library) { library.remap_ids(*mappings); });
+  service->foreach_loaded_asset_library([mappings](asset_system::AssetLibrary &library) {
+    library.remap_ids_and_remove_invalid(*mappings);
+  });
 }
 
 namespace blender::asset_system {
 
-AssetLibrary::AssetLibrary() : catalog_service(std::make_unique<AssetCatalogService>())
+AssetLibrary::AssetLibrary()
+    : asset_storage_(std::make_unique<AssetStorage>()),
+      catalog_service(std::make_unique<AssetCatalogService>())
 {
 }
 
@@ -139,39 +148,22 @@ void AssetLibrary::refresh()
 AssetRepresentation &AssetLibrary::add_external_asset(StringRef name,
                                                       std::unique_ptr<AssetMetaData> metadata)
 {
-  asset_storage_.append(std::make_unique<AssetRepresentation>(name, std::move(metadata)));
-  return *asset_storage_.last();
+  return asset_storage_->add_external_asset(name, std::move(metadata));
 }
 
 AssetRepresentation &AssetLibrary::add_local_id_asset(ID &id)
 {
-  asset_storage_.append(std::make_unique<AssetRepresentation>(id));
-  return *asset_storage_.last();
-}
-
-std::optional<int> AssetLibrary::find_asset_index(const AssetRepresentation &asset)
-{
-  int index = 0;
-  /* Find index of asset. */
-  for (auto &asset_uptr : asset_storage_) {
-    if (&asset == asset_uptr.get()) {
-      return index;
-    }
-    index++;
-  }
-
-  return {};
+  return asset_storage_->add_local_id_asset(id);
 }
 
 bool AssetLibrary::remove_asset(AssetRepresentation &asset)
 {
-  std::optional<int> asset_index = find_asset_index(asset);
-  if (!asset_index) {
-    return false;
-  }
+  return asset_storage_->remove_asset(asset);
+}
 
-  asset_storage_.remove_and_reorder(*asset_index);
-  return true;
+void AssetLibrary::remap_ids_and_remove_invalid(const IDRemapper &mappings)
+{
+  asset_storage_->remap_ids_and_remove_invalid(mappings);
 }
 
 namespace {
@@ -214,28 +206,6 @@ void AssetLibrary::on_blend_save_post(struct Main *main,
 
   if (save_catalogs_when_file_is_saved) {
     this->catalog_service->write_to_disk(main->filepath);
-  }
-}
-
-void AssetLibrary::remap_ids(IDRemapper &mappings)
-{
-  Set<AssetRepresentation *> removed_id_assets;
-
-  for (auto &asset_uptr : asset_storage_) {
-    if (!asset_uptr->is_local_id()) {
-      continue;
-    }
-
-    IDRemapperApplyResult result = BKE_id_remapper_apply(
-        &mappings, &asset_uptr->local_asset_id_, ID_REMAP_APPLY_DEFAULT);
-    if (result == ID_REMAP_RESULT_SOURCE_UNASSIGNED) {
-      removed_id_assets.add(asset_uptr.get());
-    }
-  }
-
-  /* Remove the assets from storage. */
-  for (AssetRepresentation *asset : removed_id_assets) {
-    remove_asset(*asset);
   }
 }
 

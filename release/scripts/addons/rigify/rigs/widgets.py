@@ -269,8 +269,7 @@ def create_face_widget(rig, bone_name, size=1.0, bone_transform_name=None):
         return None
 
 
-# noinspection SpellCheckingInspection
-def create_ikarrow_widget(rig, bone_name, size=1.0, bone_transform_name=None, roll=0):
+def create_ik_arrow_widget(rig, bone_name, size=1.0, bone_transform_name=None, roll=0):
     obj = create_widget(rig, bone_name, bone_transform_name)
     if obj is not None:
         verts = [(0.10000000149011612*size, 0.0*size, -0.30000001192092896*size),
@@ -351,8 +350,7 @@ def create_foot_widget(rig, bone_name, size=1.0, bone_transform_name=None):
         return None
 
 
-# noinspection SpellCheckingInspection
-def create_ballsocket_widget(rig, bone_name, size=1.0, bone_transform_name=None):
+def create_ball_socket_widget(rig, bone_name, size=1.0, bone_transform_name=None):
     obj = create_widget(rig, bone_name, bone_transform_name)
     if obj is not None:
         verts = [(-0.050000108778476715*size, 0.779460072517395*size, -0.2224801927804947*size),

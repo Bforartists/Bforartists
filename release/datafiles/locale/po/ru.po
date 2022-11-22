@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'4f5f8622f977')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -27321,10 +27321,6 @@ msgid "Properties to set when the operator is called"
 msgstr "Свойства, устанавливаемые при вызове оператора"
 
 
-msgid "Property Value"
-msgstr "Значение свойства"
-
-
 msgid "The value this event translates to in a modal keymap"
 msgstr "Значение, передаваемое событием в модальную раскладку"
 
@@ -37899,10 +37895,6 @@ msgstr "Использовать стандартную текстуру с во
 
 msgid "Use wave texture in rings"
 msgstr "Использовать текстуру с волнами в виде колец"
-
-
-msgid "White Noise"
-msgstr "Белый шум"
 
 
 msgid "UV Along Stroke"
@@ -57249,6 +57241,10 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "Сколько раз фильтр будет применён"
 
 
+msgid "Operator"
+msgstr "Оператор"
+
+
 msgid "Applies a filter to modify the current mesh"
 msgstr "Применить фильтр, чтобы изменить текущий меш"
 
@@ -62169,10 +62165,6 @@ msgstr "Сбросить настройки активного оператор�
 msgctxt "Operator"
 msgid "Operator Enum Pie"
 msgstr "Круговое меню операторов в контексте"
-
-
-msgid "Operator"
-msgstr "Оператор"
 
 
 msgid "Operator name (in python as string)"
@@ -79924,16 +79916,8 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Неверная цель %r (должно быть 'ARMATURE' или 'OBJECT')"
 
 
-msgid "Cameras & Markers (.py)"
-msgstr "Камеры и маркеры (.py)"
-
-
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Ошибка разбора XML, %s:%s для файла %r"
-
-
-msgid "Images as Planes"
-msgstr "Изображения как плоскости"
 
 
 msgid "Import Options:"
@@ -80334,6 +80318,10 @@ msgstr "Blender является свободным программным об�
 
 msgid "Licensed under the GNU General Public License"
 msgstr "Лицензия GNU General Public License"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "Select With"
@@ -81790,10 +81778,6 @@ msgid "Unknown add-ons"
 msgstr "Неизвестные аддоны"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Display Thin"
 msgstr "Отображать тонко"
 
@@ -82118,10 +82102,6 @@ msgstr "Режим интерполяции"
 msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Удаление отсутствия непрерывности (фильтр Эйлера)"
-
-
-msgid "Extrapolation Mode"
-msgstr "Метод экстраполяции"
 
 
 msgid "Grease Pencil Objects"

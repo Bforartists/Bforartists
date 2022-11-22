@@ -18,6 +18,8 @@
 #include "BLI_gsqueue.h"
 #include "BLI_math.h"
 #include "BLI_task.h"
+#include "BLI_task.hh"
+#include "BLI_timeit.hh"
 #include "BLI_utildefines.h"
 
 #include "DNA_brush_types.h"
@@ -68,6 +70,8 @@
 #include "RNA_define.h"
 
 #include "bmesh.h"
+
+using blender::MutableSpan;
 
 /* -------------------------------------------------------------------- */
 /** \name Sculpt PBVH Abstraction API
@@ -1403,6 +1407,39 @@ void SCULPT_orig_vert_data_update(SculptOrigVertData *orig_data, PBVHVertexIter 
   }
 }
 
+void SCULPT_orig_face_data_unode_init(SculptOrigFaceData *data, Object *ob, SculptUndoNode *unode)
+{
+  SculptSession *ss = ob->sculpt;
+  BMesh *bm = ss->bm;
+
+  memset(data, 0, sizeof(*data));
+  data->unode = unode;
+
+  if (bm) {
+    data->bm_log = ss->bm_log;
+  }
+  else {
+    data->face_sets = unode->face_sets;
+  }
+}
+
+void SCULPT_orig_face_data_init(SculptOrigFaceData *data,
+                                Object *ob,
+                                PBVHNode *node,
+                                SculptUndoType type)
+{
+  SculptUndoNode *unode;
+  unode = SCULPT_undo_push_node(ob, node, type);
+  SCULPT_orig_face_data_unode_init(data, ob, unode);
+}
+
+void SCULPT_orig_face_data_update(SculptOrigFaceData *orig_data, PBVHFaceIter *iter)
+{
+  if (orig_data->unode->type == SCULPT_UNDO_FACE_SETS) {
+    orig_data->face_set = orig_data->face_sets ? orig_data->face_sets[iter->i] : false;
+  }
+}
+
 static void sculpt_rake_data_update(SculptRakeData *srd, const float co[3])
 {
   float rake_dist = len_v3v3(srd->follow_co, co);
@@ -1454,6 +1491,9 @@ static void paint_mesh_restore_co_task_cb(void *__restrict userdata,
     case SCULPT_TOOL_SMEAR:
       type = SCULPT_UNDO_COLOR;
       break;
+    case SCULPT_TOOL_DRAW_FACE_SETS:
+      type = ss->cache->alt_smooth ? SCULPT_UNDO_COORDS : SCULPT_UNDO_FACE_SETS;
+      break;
     default:
       type = SCULPT_UNDO_COORDS;
       break;
@@ -1477,6 +1517,9 @@ static void paint_mesh_restore_co_task_cb(void *__restrict userdata,
     case SCULPT_UNDO_COLOR:
       BKE_pbvh_node_mark_update_color(data->nodes[n]);
       break;
+    case SCULPT_UNDO_FACE_SETS:
+      BKE_pbvh_node_mark_update_face_sets(data->nodes[n]);
+      break;
     case SCULPT_UNDO_COORDS:
       BKE_pbvh_node_mark_update(data->nodes[n]);
       break;
@@ -1485,30 +1528,50 @@ static void paint_mesh_restore_co_task_cb(void *__restrict userdata,
   }
 
   PBVHVertexIter vd;
-  SculptOrigVertData orig_data;
+  SculptOrigVertData orig_vert_data;
+  SculptOrigFaceData orig_face_data;
 
-  SCULPT_orig_vert_data_unode_init(&orig_data, data->ob, unode);
+  if (type != SCULPT_UNDO_FACE_SETS) {
+    SCULPT_orig_vert_data_unode_init(&orig_vert_data, data->ob, unode);
+  }
+  else {
+    SCULPT_orig_face_data_unode_init(&orig_face_data, data->ob, unode);
+  }
+
+  if (unode->type == SCULPT_UNDO_FACE_SETS) {
+    PBVHFaceIter fd;
+    BKE_pbvh_face_iter_begin (ss->pbvh, data->nodes[n], fd) {
+      SCULPT_orig_face_data_update(&orig_face_data, &fd);
+
+      if (fd.face_set) {
+        *fd.face_set = orig_face_data.face_set;
+      }
+    }
+
+    BKE_pbvh_face_iter_end(fd);
+    return;
+  }
 
   BKE_pbvh_vertex_iter_begin (ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE) {
-    SCULPT_orig_vert_data_update(&orig_data, &vd);
+    SCULPT_orig_vert_data_update(&orig_vert_data, &vd);
 
-    if (orig_data.unode->type == SCULPT_UNDO_COORDS) {
-      copy_v3_v3(vd.co, orig_data.co);
+    if (orig_vert_data.unode->type == SCULPT_UNDO_COORDS) {
+      copy_v3_v3(vd.co, orig_vert_data.co);
       if (vd.no) {
-        copy_v3_v3(vd.no, orig_data.no);
+        copy_v3_v3(vd.no, orig_vert_data.no);
       }
       else {
-        copy_v3_v3(vd.fno, orig_data.no);
+        copy_v3_v3(vd.fno, orig_vert_data.no);
       }
       if (vd.mvert) {
         BKE_pbvh_vert_tag_update_normal(ss->pbvh, vd.vertex);
       }
     }
-    else if (orig_data.unode->type == SCULPT_UNDO_MASK) {
-      *vd.mask = orig_data.mask;
+    else if (orig_vert_data.unode->type == SCULPT_UNDO_MASK) {
+      *vd.mask = orig_vert_data.mask;
     }
-    else if (orig_data.unode->type == SCULPT_UNDO_COLOR) {
-      SCULPT_vertex_color_set(ss, vd.vertex, orig_data.col);
+    else if (orig_vert_data.unode->type == SCULPT_UNDO_COLOR) {
+      SCULPT_vertex_color_set(ss, vd.vertex, orig_vert_data.col);
     }
   }
   BKE_pbvh_vertex_iter_end;
@@ -3295,12 +3358,15 @@ static void do_brush_action_task_cb(void *__restrict userdata,
 
   bool need_coords = ss->cache->supports_gravity;
 
-  /* Face Sets modifications do a single undo push */
   if (data->brush->sculpt_tool == SCULPT_TOOL_DRAW_FACE_SETS) {
-    BKE_pbvh_node_mark_redraw(data->nodes[n]);
+    BKE_pbvh_node_mark_update_face_sets(data->nodes[n]);
+
     /* Draw face sets in smooth mode moves the vertices. */
     if (ss->cache->alt_smooth) {
       need_coords = true;
+    }
+    else {
+      SCULPT_undo_push_node(data->ob, data->nodes[n], SCULPT_UNDO_FACE_SETS);
     }
   }
   else if (data->brush->sculpt_tool == SCULPT_TOOL_MASK) {
@@ -3379,14 +3445,6 @@ static void do_brush_action(Sculpt *sd,
    * and the number of nodes under the brush influence. */
   if (brush->sculpt_tool == SCULPT_TOOL_DRAW_FACE_SETS &&
       SCULPT_stroke_is_first_brush_step(ss->cache) && !ss->cache->alt_smooth) {
-
-    /* Dynamic-topology does not support Face Sets data, so it can't store/restore it from undo. */
-    /* TODO(pablodp606): This check should be done in the undo code and not here, but the rest of
-     * the sculpt code is not checking for unsupported undo types that may return a null node. */
-    if (BKE_pbvh_type(ss->pbvh) != PBVH_BMESH) {
-      SCULPT_undo_push_node(ob, nullptr, SCULPT_UNDO_FACE_SETS);
-    }
-
     if (ss->cache->invert) {
       /* When inverting the brush, pick the paint face mask ID from the mesh. */
       ss->cache->paint_face_set = SCULPT_active_face_set_get(ss);
@@ -3622,48 +3680,46 @@ static void do_brush_action(Sculpt *sd,
 }
 
 /* Flush displacement from deformed PBVH vertex to original mesh. */
-static void sculpt_flush_pbvhvert_deform(Object *ob, PBVHVertexIter *vd)
+static void sculpt_flush_pbvhvert_deform(const SculptSession &ss,
+                                         const PBVHVertexIter &vd,
+                                         MutableSpan<MVert> verts)
 {
-  SculptSession *ss = ob->sculpt;
-  Mesh *me = static_cast<Mesh *>(ob->data);
   float disp[3], newco[3];
-  int index = vd->vert_indices[vd->i];
+  int index = vd.vert_indices[vd.i];
 
-  sub_v3_v3v3(disp, vd->co, ss->deform_cos[index]);
-  mul_m3_v3(ss->deform_imats[index], disp);
-  add_v3_v3v3(newco, disp, ss->orig_cos[index]);
+  sub_v3_v3v3(disp, vd.co, ss.deform_cos[index]);
+  mul_m3_v3(ss.deform_imats[index], disp);
+  add_v3_v3v3(newco, disp, ss.orig_cos[index]);
 
-  copy_v3_v3(ss->deform_cos[index], vd->co);
-  copy_v3_v3(ss->orig_cos[index], newco);
+  copy_v3_v3(ss.deform_cos[index], vd.co);
+  copy_v3_v3(ss.orig_cos[index], newco);
 
-  MVert *verts = BKE_mesh_verts_for_write(me);
-  if (!ss->shapekey_active) {
+  if (!ss.shapekey_active) {
     copy_v3_v3(verts[index].co, newco);
   }
 }
 
-static void sculpt_combine_proxies_task_cb(void *__restrict userdata,
-                                           const int n,
-                                           const TaskParallelTLS *__restrict /*tls*/)
+static void sculpt_combine_proxies_node(Object &object,
+                                        Sculpt &sd,
+                                        const bool use_orco,
+                                        PBVHNode &node)
 {
-  SculptThreadedTaskData *data = static_cast<SculptThreadedTaskData *>(userdata);
-  SculptSession *ss = data->ob->sculpt;
-  Sculpt *sd = data->sd;
-  Object *ob = data->ob;
-  const bool use_orco = data->use_proxies_orco;
+  SculptSession *ss = object.sculpt;
 
-  PBVHVertexIter vd;
-  PBVHProxyNode *proxies;
-  int proxy_count;
   float(*orco)[3] = nullptr;
-
   if (use_orco && !ss->bm) {
-    orco = SCULPT_undo_push_node(data->ob, data->nodes[n], SCULPT_UNDO_COORDS)->co;
+    orco = SCULPT_undo_push_node(&object, &node, SCULPT_UNDO_COORDS)->co;
   }
 
-  BKE_pbvh_node_get_proxies(data->nodes[n], &proxies, &proxy_count);
+  int proxy_count;
+  PBVHProxyNode *proxies;
+  BKE_pbvh_node_get_proxies(&node, &proxies, &proxy_count);
 
-  BKE_pbvh_vertex_iter_begin (ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE) {
+  Mesh &mesh = *static_cast<Mesh *>(object.data);
+  MutableSpan<MVert> verts = mesh.verts_for_write();
+
+  PBVHVertexIter vd;
+  BKE_pbvh_vertex_iter_begin (ss->pbvh, &node, vd, PBVH_ITER_UNIQUE) {
     float val[3];
 
     if (use_orco) {
@@ -3682,23 +3738,22 @@ static void sculpt_combine_proxies_task_cb(void *__restrict userdata,
       add_v3_v3(val, proxies[p].co[vd.i]);
     }
 
-    SCULPT_clip(sd, ss, vd.co, val);
+    SCULPT_clip(&sd, ss, vd.co, val);
 
     if (ss->deform_modifiers_active) {
-      sculpt_flush_pbvhvert_deform(ob, &vd);
+      sculpt_flush_pbvhvert_deform(*ss, vd, verts);
     }
   }
   BKE_pbvh_vertex_iter_end;
 
-  BKE_pbvh_node_free_proxies(data->nodes[n]);
+  BKE_pbvh_node_free_proxies(&node);
 }
 
 static void sculpt_combine_proxies(Sculpt *sd, Object *ob)
 {
+  using namespace blender;
   SculptSession *ss = ob->sculpt;
   Brush *brush = BKE_paint_brush(&sd->paint);
-  PBVHNode **nodes;
-  int totnode;
 
   if (!ss->cache->supports_gravity && sculpt_tool_is_proxy_used(brush->sculpt_tool)) {
     /* First line is tools that don't support proxies. */
@@ -3714,37 +3769,33 @@ static void sculpt_combine_proxies(Sculpt *sd, Object *ob)
                              SCULPT_TOOL_BOUNDARY,
                              SCULPT_TOOL_POSE);
 
+  int totnode;
+  PBVHNode **nodes;
   BKE_pbvh_gather_proxies(ss->pbvh, &nodes, &totnode);
 
-  SculptThreadedTaskData data{};
-  data.sd = sd;
-  data.ob = ob;
-  data.brush = brush;
-  data.nodes = nodes;
-  data.use_proxies_orco = use_orco;
+  threading::parallel_for(IndexRange(totnode), 1, [&](IndexRange range) {
+    for (const int i : range) {
+      sculpt_combine_proxies_node(*ob, *sd, use_orco, *nodes[i]);
+    }
+  });
 
-  TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-  BLI_task_parallel_range(0, totnode, &data, sculpt_combine_proxies_task_cb, &settings);
   MEM_SAFE_FREE(nodes);
 }
 
 void SCULPT_combine_transform_proxies(Sculpt *sd, Object *ob)
 {
+  using namespace blender;
   SculptSession *ss = ob->sculpt;
-  PBVHNode **nodes;
+
   int totnode;
-
+  PBVHNode **nodes;
   BKE_pbvh_gather_proxies(ss->pbvh, &nodes, &totnode);
-  SculptThreadedTaskData data{};
-  data.sd = sd;
-  data.ob = ob;
-  data.nodes = nodes;
-  data.use_proxies_orco = false;
 
-  TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-  BLI_task_parallel_range(0, totnode, &data, sculpt_combine_proxies_task_cb, &settings);
+  threading::parallel_for(IndexRange(totnode), 1, [&](IndexRange range) {
+    for (const int i : range) {
+      sculpt_combine_proxies_node(*ob, *sd, false, *nodes[i]);
+    }
+  });
 
   MEM_SAFE_FREE(nodes);
 }
@@ -3777,34 +3828,10 @@ static void sculpt_update_keyblock(Object *ob)
   }
 }
 
-static void SCULPT_flush_stroke_deform_task_cb(void *__restrict userdata,
-                                               const int n,
-                                               const TaskParallelTLS *__restrict /*tls*/)
+void SCULPT_flush_stroke_deform(Sculpt * /*sd*/, Object *ob, bool is_proxy_used)
 {
-  SculptThreadedTaskData *data = static_cast<SculptThreadedTaskData *>(userdata);
-  SculptSession *ss = data->ob->sculpt;
-  Object *ob = data->ob;
-  float(*vertCos)[3] = data->vertCos;
-
-  PBVHVertexIter vd;
-
-  BKE_pbvh_vertex_iter_begin (ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE) {
-    sculpt_flush_pbvhvert_deform(ob, &vd);
-
-    if (!vertCos) {
-      continue;
-    }
-
-    int index = vd.vert_indices[vd.i];
-    copy_v3_v3(vertCos[index], ss->orig_cos[index]);
-  }
-  BKE_pbvh_vertex_iter_end;
-}
-
-void SCULPT_flush_stroke_deform(Sculpt *sd, Object *ob, bool is_proxy_used)
-{
+  using namespace blender;
   SculptSession *ss = ob->sculpt;
-  Brush *brush = BKE_paint_brush(&sd->paint);
 
   if (is_proxy_used && ss->deform_modifiers_active) {
     /* This brushes aren't using proxies, so sculpt_combine_proxies() wouldn't propagate needed
@@ -3826,16 +3853,24 @@ void SCULPT_flush_stroke_deform(Sculpt *sd, Object *ob, bool is_proxy_used)
 
     BKE_pbvh_search_gather(ss->pbvh, nullptr, nullptr, &nodes, &totnode);
 
-    SculptThreadedTaskData data{};
-    data.sd = sd;
-    data.ob = ob;
-    data.brush = brush;
-    data.nodes = nodes;
-    data.vertCos = vertCos;
+    MutableSpan<MVert> verts = me->verts_for_write();
 
-    TaskParallelSettings settings;
-    BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-    BLI_task_parallel_range(0, totnode, &data, SCULPT_flush_stroke_deform_task_cb, &settings);
+    threading::parallel_for(IndexRange(totnode), 1, [&](IndexRange range) {
+      for (const int i : range) {
+        PBVHVertexIter vd;
+        BKE_pbvh_vertex_iter_begin (ss->pbvh, nodes[i], vd, PBVH_ITER_UNIQUE) {
+          sculpt_flush_pbvhvert_deform(*ss, vd, verts);
+
+          if (!vertCos) {
+            continue;
+          }
+
+          int index = vd.vert_indices[vd.i];
+          copy_v3_v3(vertCos[index], ss->orig_cos[index]);
+        }
+        BKE_pbvh_vertex_iter_end;
+      }
+    });
 
     if (vertCos) {
       SCULPT_vertcos_to_key(ob, ss->shapekey_active, vertCos);
@@ -5213,13 +5248,6 @@ static void sculpt_restore_mesh(Sculpt *sd, Object *ob)
        BKE_brush_use_size_pressure(brush)) ||
       (brush->flag & BRUSH_DRAG_DOT)) {
 
-    SculptUndoNode *unode = SCULPT_undo_get_first_node();
-    if (unode && unode->type == SCULPT_UNDO_FACE_SETS) {
-      for (int i = 0; i < ss->totfaces; i++) {
-        ss->face_sets[i] = unode->face_sets[i];
-      }
-    }
-
     paint_mesh_restore_co(sd, ob);
 
     if (ss->cache) {
@@ -5240,12 +5268,14 @@ void SCULPT_update_object_bounding_box(Object *ob)
 
 void SCULPT_flush_update_step(bContext *C, SculptUpdateType update_flags)
 {
+  using namespace blender;
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
   ARegion *region = CTX_wm_region(C);
   MultiresModifierData *mmd = ss->multires.modifier;
   RegionView3D *rv3d = CTX_wm_region_view3d(C);
+  Mesh *mesh = static_cast<Mesh *>(ob->data);
 
   if (rv3d) {
     /* Mark for faster 3D viewport redraws. */
@@ -5302,6 +5332,17 @@ void SCULPT_flush_update_step(bContext *C, SculptUpdateType update_flags)
       r.ymin += region->winrct.ymin - 2;
       r.ymax += region->winrct.ymin + 2;
       ED_region_tag_redraw_partial(region, &r, true);
+    }
+  }
+
+  if (update_flags & SCULPT_UPDATE_COORDS && !ss->shapekey_active) {
+    if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
+      /* When sculpting and changing the positions of a mesh, tag them as changed and update. */
+      BKE_mesh_tag_coords_changed(mesh);
+      /* Update the mesh's bounds eagerly since the PBVH already has that information. */
+      mesh->runtime->bounds_cache.ensure([&](Bounds<float3> &r_bounds) {
+        BKE_pbvh_bounding_box(ob->sculpt->pbvh, r_bounds.min, r_bounds.max);
+      });
     }
   }
 }
@@ -6187,6 +6228,32 @@ void SCULPT_stroke_id_ensure(Object *ob)
         CD_PROP_INT8,
         SCULPT_ATTRIBUTE_NAME(automasking_stroke_id),
         &params);
+  }
+}
+
+int SCULPT_face_set_get(const SculptSession *ss, PBVHFaceRef face)
+{
+  switch (BKE_pbvh_type(ss->pbvh)) {
+    case PBVH_BMESH:
+      return 0;
+    case PBVH_FACES:
+    case PBVH_GRIDS:
+      return ss->face_sets[face.i];
+  }
+
+  BLI_assert_unreachable();
+
+  return 0;
+}
+
+void SCULPT_face_set_set(SculptSession *ss, PBVHFaceRef face, int fset)
+{
+  switch (BKE_pbvh_type(ss->pbvh)) {
+    case PBVH_BMESH:
+      break;
+    case PBVH_FACES:
+    case PBVH_GRIDS:
+      ss->face_sets[face.i] = fset;
   }
 }
 

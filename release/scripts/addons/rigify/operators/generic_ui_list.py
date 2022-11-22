@@ -29,6 +29,7 @@ class GenericUIListOperator(Operator):
         set_context_attr(context, self.active_idx_context_path, index)
 
 
+# noinspection PyPep8Naming
 class UILIST_OT_entry_remove(GenericUIListOperator):
     """Remove the selected entry from the list"""
 
@@ -48,6 +49,7 @@ class UILIST_OT_entry_remove(GenericUIListOperator):
         return {'FINISHED'}
 
 
+# noinspection PyPep8Naming
 class UILIST_OT_entry_add(GenericUIListOperator):
     """Add an entry to the list"""
 
@@ -67,6 +69,7 @@ class UILIST_OT_entry_add(GenericUIListOperator):
         return {'FINISHED'}
 
 
+# noinspection PyPep8Naming
 class UILIST_OT_entry_move(GenericUIListOperator):
     """Move an entry in the list up or down"""
 
@@ -144,7 +147,6 @@ def draw_ui_list(
         col.separator()
 
     if menu_class_name != '':
-        # noinspection SpellCheckingInspection
         col.menu(menu_class_name, icon='DOWNARROW_HLT', text="")
         col.separator()
 

@@ -1397,6 +1397,8 @@ class NWPreviewNode(Operator, NWBase):
         # get all viewer sockets in a material tree
         for node in tree.nodes:
             if hasattr(node, "node_tree"):
+                if node.node_tree is None:
+                    continue
                 for socket in node.node_tree.outputs:
                     if is_viewer_socket(socket) and (socket not in sockets):
                         sockets.append(socket)

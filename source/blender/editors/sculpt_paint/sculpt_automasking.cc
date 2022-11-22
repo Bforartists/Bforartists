@@ -545,7 +545,11 @@ float SCULPT_automasking_factor_get(AutomaskingCache *automasking,
   }
 
   if (automasking->settings.flags & BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) {
-    if (!SCULPT_vertex_has_unique_face_set(ss, vert)) {
+    bool ignore = ss->cache && ss->cache->brush &&
+                  ss->cache->brush->sculpt_tool == SCULPT_TOOL_DRAW_FACE_SETS &&
+                  SCULPT_vertex_face_set_get(ss, vert) == ss->cache->paint_face_set;
+
+    if (!ignore && !SCULPT_vertex_has_unique_face_set(ss, vert)) {
       return 0.0f;
     }
   }
@@ -894,8 +898,7 @@ AutomaskingCache *SCULPT_automasking_cache_init(Sculpt *sd, Brush *brush, Object
    * from zero which other modes can subtract from.  If none of them are
    * enabled initialize to 1.
    */
-  if (!(mode & (BRUSH_AUTOMASKING_BOUNDARY_EDGES | BRUSH_AUTOMASKING_TOPOLOGY |
-                BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS))) {
+  if (!(mode & BRUSH_AUTOMASKING_TOPOLOGY)) {
     initial_value = 1.0f;
   }
   else {
