@@ -2654,9 +2654,9 @@ class VIEW3D_MT_object_liboverride(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.make_override_library", text="Make")
-        layout.operator("object.reset_override_library", text="Reset")
-        layout.operator("object.clear_override_library", text="Clear")
+        layout.operator("object.make_override_library", text="Make", icon = "LIBRARY")
+        layout.operator("object.reset_override_library", text="Reset", icon = "RESET")
+        layout.operator("object.clear_override_library", text="Clear", icon = "CLEAR")
 
 
 class VIEW3D_MT_object(Menu):
