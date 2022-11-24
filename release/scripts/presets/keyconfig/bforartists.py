@@ -1,4 +1,4 @@
-keyconfig_version = (3, 4, 3)
+keyconfig_version = (3, 5, 2)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -642,7 +642,7 @@ keyconfig_data = \
  ("Animation",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("anim.change_frame", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+   [("anim.change_frame", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG'}, None),
     ],
    },
   ),
@@ -810,7 +810,7 @@ keyconfig_data = \
     ("armature.delete", {"type": 'DEL', "value": 'PRESS', "repeat": True}, None),
     ("armature.dissolve", {"type": 'DEL', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_armature_context_menu'),
        ],
@@ -1056,7 +1056,7 @@ keyconfig_data = \
     ("clip.copy_tracks", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
     ("clip.paste_tracks", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'CLIP_MT_tracking_context_menu'),
        ],
@@ -1320,7 +1320,7 @@ keyconfig_data = \
     ("console.indent", {"type": 'TAB', "value": 'PRESS', "repeat": True}, None),
     ("console.unindent", {"type": 'TAB', "value": 'PRESS', "shift": True, "repeat": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'CONSOLE_MT_context_menu'),
        ],
@@ -1413,7 +1413,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_curve_context_menu'),
        ],
@@ -1631,7 +1631,7 @@ keyconfig_data = \
     ("action.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("action.keyframe_insert", {"type": 'I', "value": 'PRESS'}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'DOPESHEET_MT_context_menu'),
        ],
@@ -1741,7 +1741,7 @@ keyconfig_data = \
     ("file.smoothscroll", {"type": 'TIMER1', "value": 'ANY', "any": True}, None),
     ("file.start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'FILEBROWSER_MT_context_menu'),
        ],
@@ -1790,14 +1790,14 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'ASSETBROWSER_MT_context_menu'),
        ],
       },
      ),
     ("wm.call_menu",
-     {"type": 'APP', "value": 'PRESS'},
+     {"type": 'APP', "value": 'CLICK'},
      {"properties":
       [("name", 'ASSETBROWSER_MT_context_menu'),
        ],
@@ -1811,6 +1811,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -2209,7 +2210,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_font_context_menu'),
        ],
@@ -2308,7 +2309,7 @@ keyconfig_data = \
  ("Graph Editor",
   {"space_type": 'GRAPH_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("graph.cursor_set", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+   [("graph.cursor_set", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG'}, None),
     ("graph.clickselect",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
@@ -2464,7 +2465,7 @@ keyconfig_data = \
     ("graph.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("graph.keyframe_insert", {"type": 'I', "value": 'PRESS'}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'GRAPH_MT_context_menu'),
        ],
@@ -2864,7 +2865,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_draw_context_menu'),
        ],
@@ -2992,7 +2993,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_sculpt_context_menu'),
        ],
@@ -3312,7 +3313,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_vertex_context_menu'),
        ],
@@ -3371,7 +3372,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_weight_context_menu'),
        ],
@@ -3424,7 +3425,7 @@ keyconfig_data = \
     ("image.render_border", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
     ("image.clear_render_border", {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'IMAGE_MT_mask_context_menu'),
        ],
@@ -3687,7 +3688,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_paint_texture_context_menu'),
        ],
@@ -3734,7 +3735,7 @@ keyconfig_data = \
     ("info.report_delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("info.report_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'INFO_MT_context_menu'),
        ],
@@ -3805,7 +3806,7 @@ keyconfig_data = \
     ("lattice.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ("lattice.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_lattice_context_menu'),
        ],
@@ -4389,7 +4390,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_metaball_context_menu'),
        ],
@@ -4459,7 +4460,7 @@ keyconfig_data = \
      ),
     ("nla.tracks_delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'NLA_MT_channel_context_menu'),
        ],
@@ -4599,7 +4600,7 @@ keyconfig_data = \
     ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
     ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'NLA_MT_context_menu'),
        ],
@@ -4899,7 +4900,7 @@ keyconfig_data = \
      ),
     ("node.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'NODE_MT_context_menu'),
        ],
@@ -5093,7 +5094,7 @@ keyconfig_data = \
     ("anim.keyframe_insert_menu", {"type": 'I', "value": 'PRESS'}, None),
     ("anim.keyframe_delete_v3d", {"type": 'I', "value": 'PRESS', "alt": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_object_context_menu'),
        ],
@@ -5385,7 +5386,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("outliner.operation", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+    ("outliner.operation", {"type": 'RIGHTMOUSE', "value": 'CLICK'}, None),
     ("outliner.item_drag_drop", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
     ("outliner.item_drag_drop", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True}, None),
     ("outliner.show_hierarchy", {"type": 'HOME', "value": 'PRESS'}, None),
@@ -5759,7 +5760,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_pose_context_menu'),
        ],
@@ -5813,7 +5814,7 @@ keyconfig_data = \
  ("Property Editor",
   {"space_type": 'PROPERTIES', "region_type": 'WINDOW'},
   {"items":
-   [("buttons.context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+   [("buttons.context_menu", {"type": 'RIGHTMOUSE', "value": 'CLICK'}, None),
     ("screen.space_context_cycle", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("screen.space_context_cycle", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("object.modifier_remove",
@@ -5836,6 +5837,13 @@ keyconfig_data = \
       },
      ),
     ("object.shaderfx_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+    ],
+   },
+  ),
+ ("Region Context Menu",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("screen.region_context_menu", {"type": 'RIGHTMOUSE', "value": 'CLICK'}, None),
     ],
    },
   ),
@@ -5932,7 +5940,6 @@ keyconfig_data = \
      {"type": 'H', "value": 'PRESS'},
      {"properties":
       [("mode", 'TOGGLE'),
-       ("mode", 'TOGGLE'),
        ],
       },
      ),
@@ -5940,7 +5947,6 @@ keyconfig_data = \
      {"type": 'H', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'HIDE_ACTIVE'),
-       ("mode", 'HIDE_ACTIVE'),
        ],
       },
      ),
@@ -5948,7 +5954,6 @@ keyconfig_data = \
      {"type": 'I', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("mode", 'INVERT'),
-       ("mode", 'INVERT'),
        ],
       },
      ),
@@ -5956,7 +5961,6 @@ keyconfig_data = \
      {"type": 'H', "value": 'PRESS', "alt": True},
      {"properties":
       [("mode", 'SHOW_ACTIVE'),
-       ("mode", 'SHOW_ACTIVE'),
        ],
       },
      ),
@@ -6113,7 +6117,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_sculpt_context_menu'),
        ],
@@ -6626,7 +6630,7 @@ keyconfig_data = \
     ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
     ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'SEQUENCER_MT_context_menu'),
        ],
@@ -6819,14 +6823,14 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'SEQUENCER_MT_preview_context_menu'),
        ],
       },
      ),
     ("wm.call_menu",
-     {"type": 'APP', "value": 'PRESS'},
+     {"type": 'APP', "value": 'CLICK'},
      {"properties":
       [("name", 'SEQUENCER_MT_preview_context_menu'),
        ],
@@ -7253,8 +7257,8 @@ keyconfig_data = \
     ("PROPORTIONAL_SIZE_UP", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "shift": True}, None),
     ("PROPORTIONAL_SIZE_DOWN", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "shift": True}, None),
     ("PROPORTIONAL_SIZE", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
-    ("EDGESLIDE_EDGE_NEXT", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "alt": True}, None),
-    ("EDGESLIDE_PREV_NEXT", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "alt": True}, None),
+    ("", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "alt": True}, None),
+    ("", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "alt": True}, None),
     ("AUTOIK_CHAIN_LEN_UP", {"type": 'PAGE_UP', "value": 'PRESS', "shift": True, "repeat": True}, None),
     ("AUTOIK_CHAIN_LEN_DOWN", {"type": 'PAGE_DOWN', "value": 'PRESS', "shift": True, "repeat": True}, None),
     ("AUTOIK_CHAIN_LEN_UP", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "shift": True}, None),
@@ -7442,7 +7446,7 @@ keyconfig_data = \
      ),
     ("uv.clear_seam", {"type": 'N', "value": 'PRESS'}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'IMAGE_MT_uvs_context_menu'),
        ],
@@ -7717,7 +7721,7 @@ keyconfig_data = \
      ),
     ("paint.sample_color", {"type": 'S', "value": 'PRESS'}, None),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_paint_vertex_context_menu'),
        ],
@@ -7823,7 +7827,7 @@ keyconfig_data = \
      ),
     ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
+     {"type": 'RIGHTMOUSE', "value": 'CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_paint_weight_context_menu'),
        ],
