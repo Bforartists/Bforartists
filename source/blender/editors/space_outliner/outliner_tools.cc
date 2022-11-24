@@ -1736,18 +1736,18 @@ enum eOutlinerLibOverrideOpTypes {
 static const EnumPropertyItem prop_liboverride_op_types[] = {
     {OUTLINER_LIBOVERRIDE_OP_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
-     0,
+     ICON_LIBRARY,
      "Make",
      "Create a local override of the selected linked data-blocks, and their hierarchy of "
      "dependencies"},
     {OUTLINER_LIBOVERRIDE_OP_RESET,
      "OVERRIDE_LIBRARY_RESET",
-     0,
+     ICON_RESET,
      "Reset",
      "Reset the selected local overrides to their linked references values"},
     {OUTLINER_LIBOVERRIDE_OP_CLEAR_SINGLE,
      "OVERRIDE_LIBRARY_CLEAR_SINGLE",
-     0,
+     ICON_CLEAR,
      "Clear",
      "Delete the selected local overrides and relink their usages to the linked data-blocks if "
      "possible, else reset them and mark them as non editable"},
