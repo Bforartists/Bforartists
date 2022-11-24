@@ -75,9 +75,9 @@ class LIBADDON_APT_preferences(AddonPreferences):
         layout.label(
             text="To access these defualt assets, switch to the Assets workspace or Asset Browser editor,")
         layout.label(
-            text="then go to the Current Library drop down and switch to the Default Library.")
+            text="Go to the Current Library drop down and switch to the Default Library.")
         layout.label(
-            text="You will now see new categories, assets and more.")
+            text="You will now see new categories, assets and more. Enjoy!")
 
 
 def get_lib_path_index(prefs: Preferences):
@@ -143,4 +143,4 @@ def unregister():
     try:
         bpy.app.timers.unregister(register_library)
     except Exception:
-        print("WARNING: Already unregistered register_library.")
+        print("NOTICE: Default library has been unregistered.")
