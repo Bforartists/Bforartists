@@ -572,7 +572,7 @@ class TOPBAR_MT_edit(Menu):
             props.use_factory_startup_app_template_only = True
             del display_name
         else:
-            layout.operator("wm.read_factory_settings")
+            layout.operator("wm.read_factory_settings", icon="LOAD_FACTORY")
 
         layout.separator()
 
