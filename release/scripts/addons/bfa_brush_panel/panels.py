@@ -69,7 +69,7 @@ def panel_factory_view3d(
                              )
 
 
-def panel_factorry_image_editor(tools: Iterable[str],
+def panel_factory_image_editor(tools: Iterable[str],
                                 icon_prefix: str,
                                 tool_name_attr: str,
                                 use_paint_attr: str,

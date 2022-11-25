@@ -1,10 +1,10 @@
 import bpy
 
-from .panels import panel_factorry_image_editor
+from .panels import panel_factory_image_editor
 
 
 panel_classes = list(
-    panel_factorry_image_editor(
+    panel_factory_image_editor(
         tools=["DRAW", "SOFTEN", "SMEAR", "CLONE", "FILL", "MASK"],
         icon_prefix="brush.paint_texture.",
         tool_name_attr="image_tool",
