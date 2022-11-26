@@ -3279,7 +3279,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeCombineColor"
 
-            props = col.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
+            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
             props.use_transform = True
             props.type = "ShaderNodeMix"
             #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
@@ -3949,7 +3949,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Color                    ", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
-            
+
             props = col.operator("node.add_node", text=" Image Info           ", icon = "IMAGE_INFO")
             props.use_transform = True
             props.type = "GeometryNodeImageInfo"
@@ -4036,7 +4036,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
-            
+
             props = flow.operator("node.add_node", text="", icon = "IMAGE_INFO")
             props.use_transform = True
             props.type = "GeometryNodeImageInfo"
