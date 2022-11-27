@@ -99,12 +99,12 @@ def register_library():
     # In case the library doesn't exist in the preferences, create it.
     if index == -1:
         bpy.ops.preferences.asset_library_add(
-            directory=p.dirname(__file__)+'\\Default Library\\')
+            directory=p.dirname(__file__)+'//Default Library//')
         index = get_lib_path_index(prefs)
 
     # Set the correct name and path of the library to avoid issues because of wrong paths.
     prefs.filepaths.asset_libraries[index].name = LIB_NAME
-    prefs.filepaths.asset_libraries[index].path = p.dirname(__file__)+'\\Default Library\\'
+    prefs.filepaths.asset_libraries[index].path = p.dirname(__file__)+'//Default Library//'
 
     return
 
