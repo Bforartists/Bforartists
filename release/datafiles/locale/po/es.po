@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -31470,6 +31470,11 @@ msgid "Properties to set when the operator is called"
 msgstr "Propiedades a definir al invocar el operador"
 
 
+msgctxt "WindowManager"
+msgid "Property Value"
+msgstr "Valor de la propiedad"
+
+
 msgid "The value this event translates to in a modal keymap"
 msgstr "El valor al que es traducido el evento en un mapa de teclado modal"
 
@@ -46956,6 +46961,10 @@ msgstr "Usar una textura de ondas estándar en bandas"
 
 msgid "Use wave texture in rings"
 msgstr "Usar una textura de ondas en forma de anillos"
+
+
+msgid "White Noise Texture"
+msgstr "Ruido blanco"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -70324,7 +70333,7 @@ msgstr "Activar config teclado"
 
 msgctxt "Operator"
 msgid "Export Key Configuration..."
-msgstr "Exportar configuración de teclado..."
+msgstr "Exportar mapa de teclado..."
 
 
 msgid "Export key configuration to a python script"
@@ -70341,7 +70350,7 @@ msgstr "Guarda todos los mapas de teclado (no sólo los modificados por el usuar
 
 msgctxt "Operator"
 msgid "Import Key Configuration..."
-msgstr "Importar configuración de teclado..."
+msgstr "Importar mapa de teclado..."
 
 
 msgid "Import key configuration from a python script"
@@ -72728,8 +72737,24 @@ msgid "Mix mode"
 msgstr "Modo de mezcla"
 
 
+msgid "Use settings from here"
+msgstr "Usar opciones de aquí"
+
+
 msgid "Operator"
 msgstr "Operador"
+
+
+msgid "Use settings from operator properties"
+msgstr "Usar opciones de propiedades del operador"
+
+
+msgid "Use settings from brush"
+msgstr "Usar opciones del pincel"
+
+
+msgid "Use settings from scene"
+msgstr "Usar opciones de la escena"
 
 
 msgctxt "Operator"
@@ -104911,8 +104936,18 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Objetivo inválido %r (debe ser 'ARMATURE' u 'OBJECT')"
 
 
+msgctxt "Operator"
+msgid "Cameras & Markers (.py)"
+msgstr "Cámaras y marcadores (.py)"
+
+
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "No fue posible analizar el XML, %s:%s para el archivo %r"
+
+
+msgctxt "Operator"
+msgid "Images as Planes"
+msgstr "Imágenes como planos"
 
 
 msgid "Import Options:"
@@ -105544,6 +105579,34 @@ msgstr "impacto significativo en el rendimiento!"
 
 msgid "Built without VR/OpenXR features"
 msgstr "Compilado sin características de RV (OpenXR)"
+
+
+msgid "* Missing Paths *"
+msgstr "* Rutas faltantes *"
+
+
+msgctxt "Operator"
+msgid "Import..."
+msgstr "Importar..."
+
+
+msgctxt "Operator"
+msgid "Export..."
+msgstr "Exportar..."
+
+
+msgctxt "Operator"
+msgid "Restore"
+msgstr "Restablecer"
+
+
+msgid "%s (Global)"
+msgstr "%s (Global)"
+
+
+msgctxt "WindowManager"
+msgid "Add New"
+msgstr "Agregar nuevo"
 
 
 msgctxt "Operator"
@@ -106184,6 +106247,10 @@ msgid "Lists committers to Blender's source code"
 msgstr "Un listado de quienes han realizado aportes al código fuente de Blender"
 
 
+msgid "Fallback Tool"
+msgstr "Herramienta alternativa"
+
+
 msgid "Mesh(es)"
 msgstr "Malla(s)"
 
@@ -106271,6 +106338,10 @@ msgstr "Identificador: %s"
 
 msgid "Branch: %s"
 msgstr "Rama: %s"
+
+
+msgid " (delta)"
+msgstr " (delta)"
 
 
 msgid "Node(s)"
@@ -108273,6 +108344,11 @@ msgid "Unknown add-ons"
 msgstr "Complementos desconocidos"
 
 
+msgctxt "Operator"
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgid "category"
 msgstr "categoría"
 
@@ -108539,6 +108615,10 @@ msgstr "Definir fotograma A"
 msgctxt "Operator"
 msgid "Set Keyframe B"
 msgstr "Definir fotograma B"
+
+
+msgid "Average Error: %.2f px"
+msgstr "Error promedio: %.2f px"
 
 
 msgid "Tracks for Rotation/Scale"
@@ -110909,6 +110989,10 @@ msgid ":"
 msgstr ":"
 
 
+msgid "Load Factory %s Preferences"
+msgstr "Cargar preferencias de fábrica %s"
+
+
 msgid "Description:"
 msgstr "Descripción:"
 
@@ -112781,12 +112865,16 @@ msgstr "Escalar hueso flexible"
 
 msgctxt "Operator"
 msgid "Adjust Focal Length"
-msgstr "Ajustar longitud focal"
+msgstr "Ajustar distancia focal"
 
 
 msgctxt "Operator"
 msgid "Camera Lens Scale"
-msgstr "Tamaño lente de cámara"
+msgstr "Escala lente de cámara"
+
+
+msgid "Camera Lens Scale: %.3f"
+msgstr "Escala lente de cámara: %.3f"
 
 
 msgctxt "Operator"
@@ -112794,9 +112882,17 @@ msgid "Adjust Extrusion"
 msgstr "Ajustar extrusión"
 
 
+msgid "Extrude: %.3f"
+msgstr "Extrusión: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Offset"
 msgstr "Ajustar desplazamiento"
+
+
+msgid "Offset: %.3f"
+msgstr "Desplazamiento: %.3f"
 
 
 msgctxt "Operator"
@@ -112834,6 +112930,14 @@ msgid "Scale Radius"
 msgstr "Escalar radio"
 
 
+msgid "Camera Focal Length: %.1fmm"
+msgstr "Distancia focal de la cámara: %.1fmm"
+
+
+msgid "Camera Focal Length: %.1f°"
+msgstr "Distancia focal de la cámara: %.1f°"
+
+
 msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "Distancia prof. campo (escoger)"
@@ -112844,9 +112948,17 @@ msgid "Adjust Focus Distance"
 msgstr "Ajustar distancia de enfoque"
 
 
+msgid "Focus Distance: %.3f"
+msgstr "Distancia de enfoque: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Empty Display Size"
 msgstr "Ajustar tamaño visualización de Vacíos"
+
+
+msgid "Empty Display Size: %.3f"
+msgstr "Tamaño visualización de Vacíos: %.3f"
 
 
 msgid "Ridge"
@@ -112861,9 +112973,29 @@ msgid "No object selected, using cursor"
 msgstr "Ningún objeto seleccionado, usando el cursor"
 
 
+msgid "Draw Grease Pencil"
+msgstr "Dibujar lápiz de cera"
+
+
+msgid "Sculpt Grease Pencil"
+msgstr "Esculpir lápiz de cera"
+
+
+msgid "Weight Grease Pencil"
+msgstr "Infuencias lápiz de cera"
+
+
+msgid "Vertex Grease Pencil"
+msgstr "Vértices lápiz de cera"
+
+
 msgctxt "Operator"
 msgid "Adjust Light Power"
 msgstr "Ajustar potencia de la luz"
+
+
+msgid "Light Power: %.3f"
+msgstr "Potencia luz: %.3f"
 
 
 msgctxt "Operator"
@@ -112871,9 +113003,17 @@ msgid "Adjust Spot Light Size"
 msgstr "Ajustar tamaño del foco"
 
 
+msgid "Spot Size: %.2f"
+msgstr "Tamaño foco: %.2f"
+
+
 msgctxt "Operator"
 msgid "Adjust Spot Light Blend"
 msgstr "Ajustar fundido del foco"
+
+
+msgid "Spot Blend: %.2f"
+msgstr "Fundido foco: %.2f"
 
 
 msgctxt "Operator"
@@ -112881,9 +113021,17 @@ msgid "Adjust Area Light X Size"
 msgstr "Ajustar tamaño X de luz de área"
 
 
+msgid "Light Size X: %.3f"
+msgstr "Tamaño luz X: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Area Light Y Size"
 msgstr "Ajustar tamaño Y de luz de área"
+
+
+msgid "Light Size Y: %.3f"
+msgstr "Tamaño luz Y: %.3f"
 
 
 msgctxt "Operator"
@@ -112891,14 +113039,26 @@ msgid "Adjust Area Light Size"
 msgstr "Ajustar tamaño de luz de área"
 
 
+msgid "Light Size: %.3f"
+msgstr "Tamaño luz: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Light Radius"
 msgstr "Ajustar radio de la luz"
 
 
+msgid "Light Radius: %.3f"
+msgstr "Radio de luz: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "Ajustar ángulo del Sol"
+
+
+msgid "Light Angle: %.3f"
+msgstr "Ángulo de luz: %.3f"
 
 
 msgid "Distance Min"
@@ -118655,6 +118815,10 @@ msgid "Quick Favorites"
 msgstr "Favoritos rápidos"
 
 
+msgid "screen"
+msgstr "pantalla"
+
+
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "Duplicar activo"
@@ -118862,6 +119026,10 @@ msgstr "El objeto tiene una escala no uniforme, esculpir sobre él puede ser imp
 
 msgid "Object has negative scale, sculpting may be unpredictable"
 msgstr "El objeto tiene una escala negativa, esculpir sobre él puede ser impredecible"
+
+
+msgid "No active brush"
+msgstr "Ningún pincel activo"
 
 
 msgid "Dynamic Topology found: %s, disabled"
@@ -125912,6 +126080,14 @@ msgstr "Todas las capas de procesamiento están deshabilitadas"
 
 msgid "No frames rendered, skipped to not overwrite"
 msgstr "No se procesaron fotogramas, fueron omitidos para no sobrescribirlos"
+
+
+msgid "No camera found in scene \"%s\" (used in compositing of scene \"%s\")"
+msgstr "No se encontraron cámaras en la escena \"%s\" (usado en composición de la escena \"%s\")"
+
+
+msgid "No camera found in scene \"%s\""
+msgstr "No se encontraron cámaras en la escena \"%s\""
 
 
 msgid "Camera \"%s\" is not a multi-view camera"

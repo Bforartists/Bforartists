@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-11-18 12:12+0100\n"
+"PO-Revision-Date: 2022-11-25 08:32+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -31472,6 +31472,11 @@ msgid "Properties to set when the operator is called"
 msgstr "Vlastnosti, ktoré sa majú nastaviť, keď je volaný operátor"
 
 
+msgctxt "WindowManager"
+msgid "Property Value"
+msgstr "Hodnota vlastnosti"
+
+
 msgid "The value this event translates to in a modal keymap"
 msgstr "Hodnota tejto udalosti presunutá do typického priradenia klávesy"
 
@@ -46959,6 +46964,10 @@ msgstr "Použije štandardnú textúru vlny v pásoch"
 
 msgid "Use wave texture in rings"
 msgstr "Použije textúru vlyn v prstencoch"
+
+
+msgid "White Noise Texture"
+msgstr "Textúra Biely šum"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -72731,8 +72740,24 @@ msgid "Mix mode"
 msgstr "Režim zmiešania"
 
 
+msgid "Use settings from here"
+msgstr "Použiť nastavenia odtiaľ"
+
+
 msgid "Operator"
 msgstr "Operátor"
+
+
+msgid "Use settings from operator properties"
+msgstr "Použiť nastavenia z vlastností operátora"
+
+
+msgid "Use settings from brush"
+msgstr "Použiť nastavenia z štetca"
+
+
+msgid "Use settings from scene"
+msgstr "Použiť nastavenia zo scény"
 
 
 msgctxt "Operator"
@@ -104910,8 +104935,18 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Neplatný cieľ %r (musí byť 'KOSTRA' alebo 'OBJEKT')"
 
 
+msgctxt "Operator"
+msgid "Cameras & Markers (.py)"
+msgstr "Kamery a označenia (.py)"
+
+
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Nemožno analyzovať XML, %s:%s pre súbor %r"
+
+
+msgctxt "Operator"
+msgid "Images as Planes"
+msgstr "Obrázky ako roviny"
 
 
 msgid "Import Options:"
@@ -105543,6 +105578,34 @@ msgstr "dopad na výkon!"
 
 msgid "Built without VR/OpenXR features"
 msgstr "Postavené bez funkcií VR/OpenXR"
+
+
+msgid "* Missing Paths *"
+msgstr "* Chýbajúce cesty *"
+
+
+msgctxt "Operator"
+msgid "Import..."
+msgstr "Importovať..."
+
+
+msgctxt "Operator"
+msgid "Export..."
+msgstr "Exportovať..."
+
+
+msgctxt "Operator"
+msgid "Restore"
+msgstr "Obnoviť"
+
+
+msgid "%s (Global)"
+msgstr "%s (globálne)"
+
+
+msgctxt "WindowManager"
+msgid "Add New"
+msgstr "Pridať nový"
 
 
 msgctxt "Operator"
@@ -106183,6 +106246,10 @@ msgid "Lists committers to Blender's source code"
 msgstr "Zoznamy prispievateľov zdrojového kódu Blenderu"
 
 
+msgid "Fallback Tool"
+msgstr "Záložný nástroj"
+
+
 msgid "Mesh(es)"
 msgstr "Povrchová sieť(e)"
 
@@ -106270,6 +106337,10 @@ msgstr "Hašový súčet: %s"
 
 msgid "Branch: %s"
 msgstr "Vetva: %s"
+
+
+msgid " (delta)"
+msgstr " (delta)"
 
 
 msgid "Node(s)"
@@ -108272,6 +108343,11 @@ msgid "Unknown add-ons"
 msgstr "Neznáme doplnky"
 
 
+msgctxt "Operator"
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
 msgid "category"
 msgstr "kategória"
 
@@ -108538,6 +108614,10 @@ msgstr "Nastaviť kľúčovú snímku A"
 msgctxt "Operator"
 msgid "Set Keyframe B"
 msgstr "Nastaviť kľúčovú snímku B"
+
+
+msgid "Average Error: %.2f px"
+msgstr "Priemerná chyba: %.2f px"
 
 
 msgid "Tracks for Rotation/Scale"
@@ -110908,6 +110988,10 @@ msgid ":"
 msgstr ":"
 
 
+msgid "Load Factory %s Preferences"
+msgstr "Načítať továrenské %s predvoľby"
+
+
 msgid "Description:"
 msgstr "Popis:"
 
@@ -112788,14 +112872,26 @@ msgid "Camera Lens Scale"
 msgstr "Mierka objektívu kamery"
 
 
+msgid "Camera Lens Scale: %.3f"
+msgstr "Mierka objektívu kamery: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Extrusion"
 msgstr "Upraviť vysunutie"
 
 
+msgid "Extrude: %.3f"
+msgstr "Vysunúť: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Offset"
 msgstr "Upraviť posuv"
+
+
+msgid "Offset: %.3f"
+msgstr "Posuv: %.3f"
 
 
 msgctxt "Operator"
@@ -112833,6 +112929,14 @@ msgid "Scale Radius"
 msgstr "Mierka polomeru"
 
 
+msgid "Camera Focal Length: %.1fmm"
+msgstr "Ohnisková vzdialenosť kamery: %.1fmm"
+
+
+msgid "Camera Focal Length: %.1f°"
+msgstr "Ohnisková vzdialenosť kamery: %.1f°"
+
+
 msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "Vzdialenosť hĺbky ostrosti (nabrať)"
@@ -112843,9 +112947,17 @@ msgid "Adjust Focus Distance"
 msgstr "Upraviť vzdialenosť zaostrenia"
 
 
+msgid "Focus Distance: %.3f"
+msgstr "Vzdialenosť zaostrenia: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Empty Display Size"
 msgstr "Upraviť veľkosť zobrazenia prázdneho"
+
+
+msgid "Empty Display Size: %.3f"
+msgstr "Prázdna veľkosť displeja: %.3f"
 
 
 msgid "Ridge"
@@ -112860,9 +112972,29 @@ msgid "No object selected, using cursor"
 msgstr "Nie je vybratý žiadny objekt použitím kurzora"
 
 
+msgid "Draw Grease Pencil"
+msgstr "Kresliť pastelkou"
+
+
+msgid "Sculpt Grease Pencil"
+msgstr "Tvarovanie pastelkou"
+
+
+msgid "Weight Grease Pencil"
+msgstr "Váha pastelkou"
+
+
+msgid "Vertex Grease Pencil"
+msgstr "Vrchol pastelku"
+
+
 msgctxt "Operator"
 msgid "Adjust Light Power"
 msgstr "Upraviť výkon svetla"
+
+
+msgid "Light Power: %.3f"
+msgstr "Svetelný výkon: %.3f"
 
 
 msgctxt "Operator"
@@ -112870,9 +113002,17 @@ msgid "Adjust Spot Light Size"
 msgstr "Upraviť veľkosť svetelnej škvrny"
 
 
+msgid "Spot Size: %.2f"
+msgstr "Veľkosť škvrny svetla: %.2f"
+
+
 msgctxt "Operator"
 msgid "Adjust Spot Light Blend"
 msgstr "Upraviť prelínanie svetelnej škvrny"
+
+
+msgid "Spot Blend: %.2f"
+msgstr "Prelínanie škvrny svetla: %.2f"
 
 
 msgctxt "Operator"
@@ -112880,9 +113020,17 @@ msgid "Adjust Area Light X Size"
 msgstr "Upraviť veľkosť oblasti X svetla"
 
 
+msgid "Light Size X: %.3f"
+msgstr "Veľkosť svetla X: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Area Light Y Size"
 msgstr "Upraviť veľkosť oblasti Y svetla"
+
+
+msgid "Light Size Y: %.3f"
+msgstr "Veľkosť svetla Y: %.3f"
 
 
 msgctxt "Operator"
@@ -112890,14 +113038,26 @@ msgid "Adjust Area Light Size"
 msgstr "Upraviť veľkosť osvetlenia oblasti"
 
 
+msgid "Light Size: %.3f"
+msgstr "Veľkosť svetla: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Light Radius"
 msgstr "Upraviť polomer svetla"
 
 
+msgid "Light Radius: %.3f"
+msgstr "Polomer svetla: %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "Upraviť uhol slnečného svetla"
+
+
+msgid "Light Angle: %.3f"
+msgstr "Uhol svetla: %.3f"
 
 
 msgid "Distance Min"
@@ -118654,6 +118814,10 @@ msgid "Quick Favorites"
 msgstr "Rýchle obľúbené"
 
 
+msgid "screen"
+msgstr "Zaclonenie"
+
+
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "Vytvoriť kópiu aktuálneho"
@@ -118861,6 +119025,10 @@ msgstr "Objekt nemá jednotnú mierku, tvarovanie môže byť nepredvídateľné
 
 msgid "Object has negative scale, sculpting may be unpredictable"
 msgstr "Objekt má negatívnu mierku, tvarovanie môže byť nepredvídateľné"
+
+
+msgid "No active brush"
+msgstr "Žiadny aktívny štetec"
 
 
 msgid "Dynamic Topology found: %s, disabled"
@@ -125911,6 +126079,14 @@ msgstr "Všetky vrstvy prekreslenia sú zakázané"
 
 msgid "No frames rendered, skipped to not overwrite"
 msgstr "Nevykoná žiadne prekreslenie snímok, preskočené na neprepísané"
+
+
+msgid "No camera found in scene \"%s\" (used in compositing of scene \"%s\")"
+msgstr "V scéne sa nenašla žiadna kamera \"%s\" (používa sa pri skladaní scény \"%s\")"
+
+
+msgid "No camera found in scene \"%s\""
+msgstr "V scéne \"%s\" sa nenašla žiadna kamera"
 
 
 msgid "Camera \"%s\" is not a multi-view camera"
