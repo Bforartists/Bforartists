@@ -77,18 +77,14 @@
 #include "FN_field.hh"
 #include "FN_field_cpp_type.hh"
 
+#include "../interface/interface_intern.hh" /* TODO: Remove */
+
 #include "node_intern.hh" /* own include */
 
 namespace geo_log = blender::nodes::geo_eval_log;
 
 using blender::GPointer;
 using blender::Vector;
-
-extern "C" {
-/* XXX interface.h */
-extern void ui_draw_dropshadow(
-    const rctf *rct, float radius, float aspect, float alpha, int select);
-}
 
 /**
  * This is passed to many functions which draw the node editor.
@@ -107,6 +103,10 @@ struct TreeDrawContext {
    * currently drawn node tree can be retrieved from the log below.
    */
   geo_log::GeoTreeLog *geo_tree_log = nullptr;
+  /**
+   * True if there is an active realtime compositor using the node tree, false otherwise.
+   */
+  bool used_by_realtime_compositor = false;
 };
 
 float ED_node_grid_size()
@@ -417,8 +417,8 @@ static void node_update_basis(const bContext &C,
     buty = min_ii(buty, dy - NODE_DY);
 
     /* Round the socket location to stop it from jiggling. */
-    socket->locx = round(loc.x + NODE_WIDTH(node));
-    socket->locy = round(dy - NODE_DYS);
+    socket->runtime->locx = round(loc.x + NODE_WIDTH(node));
+    socket->runtime->locy = round(dy - NODE_DYS);
 
     dy = buty;
     if (socket->next) {
@@ -511,8 +511,9 @@ static void node_update_basis(const bContext &C,
      * to account for the increased height of the taller sockets. */
     float multi_input_socket_offset = 0.0f;
     if (socket->flag & SOCK_MULTI_INPUT) {
-      if (socket->total_inputs > 2) {
-        multi_input_socket_offset = (socket->total_inputs - 2) * NODE_MULTI_INPUT_LINK_GAP;
+      if (socket->runtime->total_inputs > 2) {
+        multi_input_socket_offset = (socket->runtime->total_inputs - 2) *
+                                    NODE_MULTI_INPUT_LINK_GAP;
       }
     }
     dy -= multi_input_socket_offset * 0.5f;
@@ -548,9 +549,9 @@ static void node_update_basis(const bContext &C,
     /* Ensure minimum socket height in case layout is empty. */
     buty = min_ii(buty, dy - NODE_DY);
 
-    socket->locx = loc.x;
+    socket->runtime->locx = loc.x;
     /* Round the socket vertical position to stop it from jiggling. */
-    socket->locy = round(dy - NODE_DYS);
+    socket->runtime->locy = round(dy - NODE_DYS);
 
     dy = buty - multi_input_socket_offset * 0.5;
     if (socket->next) {
@@ -620,8 +621,8 @@ static void node_update_hidden(bNode &node, uiBlock &block)
   LISTBASE_FOREACH (bNodeSocket *, socket, &node.outputs) {
     if (!nodeSocketIsHidden(socket)) {
       /* Round the socket location to stop it from jiggling. */
-      socket->locx = round(node.runtime->totr.xmax - hiddenrad + sinf(rad) * hiddenrad);
-      socket->locy = round(node.runtime->totr.ymin + hiddenrad + cosf(rad) * hiddenrad);
+      socket->runtime->locx = round(node.runtime->totr.xmax - hiddenrad + sinf(rad) * hiddenrad);
+      socket->runtime->locy = round(node.runtime->totr.ymin + hiddenrad + cosf(rad) * hiddenrad);
       rad += drad;
     }
   }
@@ -632,8 +633,8 @@ static void node_update_hidden(bNode &node, uiBlock &block)
   LISTBASE_FOREACH (bNodeSocket *, socket, &node.inputs) {
     if (!nodeSocketIsHidden(socket)) {
       /* Round the socket location to stop it from jiggling. */
-      socket->locx = round(node.runtime->totr.xmin + hiddenrad + sinf(rad) * hiddenrad);
-      socket->locy = round(node.runtime->totr.ymin + hiddenrad + cosf(rad) * hiddenrad);
+      socket->runtime->locx = round(node.runtime->totr.xmin + hiddenrad + sinf(rad) * hiddenrad);
+      socket->runtime->locy = round(node.runtime->totr.ymin + hiddenrad + cosf(rad) * hiddenrad);
       rad += drad;
     }
   }
@@ -1172,7 +1173,7 @@ static void node_socket_draw_nested(const bContext &C,
                                     const float size,
                                     const bool selected)
 {
-  const float2 location(sock.locx, sock.locy);
+  const float2 location(sock.runtime->locx, sock.runtime->locy);
 
   float color[4];
   float outline_color[4];
@@ -1577,7 +1578,7 @@ static void node_draw_sockets(const View2D &v2d,
     node_socket_color_get(C, ntree, node_ptr, *socket, color);
     node_socket_outline_color_get(socket->flag & SELECT, socket->type, outline_color);
 
-    const float2 location(socket->locx, socket->locy);
+    const float2 location(socket->runtime->locx, socket->runtime->locy);
     node_socket_draw_multi_input(color, outline_color, width, height, location);
   }
 }
@@ -1652,12 +1653,42 @@ static char *node_errors_tooltip_fn(bContext * /*C*/, void *argN, const char * /
 
 #define NODE_HEADER_ICON_SIZE (0.8f * U.widget_unit)
 
+static void node_add_unsupported_compositor_operation_error_message_button(bNode &node,
+                                                                           uiBlock &block,
+                                                                           const rctf &rect,
+                                                                           float &icon_offset)
+{
+  icon_offset -= NODE_HEADER_ICON_SIZE;
+  UI_block_emboss_set(&block, UI_EMBOSS_NONE);
+  uiDefIconBut(&block,
+               UI_BTYPE_BUT,
+               0,
+               ICON_ERROR,
+               icon_offset,
+               rect.ymax - NODE_DY,
+               NODE_HEADER_ICON_SIZE,
+               UI_UNIT_Y,
+               nullptr,
+               0,
+               0,
+               0,
+               0,
+               TIP_(node.typeinfo->realtime_compositor_unsupported_message));
+  UI_block_emboss_set(&block, UI_EMBOSS);
+}
+
 static void node_add_error_message_button(TreeDrawContext &tree_draw_ctx,
                                           bNode &node,
                                           uiBlock &block,
                                           const rctf &rect,
                                           float &icon_offset)
 {
+  if (tree_draw_ctx.used_by_realtime_compositor &&
+      node.typeinfo->realtime_compositor_unsupported_message) {
+    node_add_unsupported_compositor_operation_error_message_button(node, block, rect, icon_offset);
+    return;
+  }
+
   Span<geo_log::NodeWarning> warnings;
   if (tree_draw_ctx.geo_tree_log) {
     geo_log::GeoNodeLog *node_log = tree_draw_ctx.geo_tree_log->nodes.lookup_ptr(node.name);
@@ -2639,7 +2670,7 @@ static void count_multi_input_socket_links(bNodeTree &ntree, SpaceNode &snode)
   LISTBASE_FOREACH (bNode *, node, &ntree.nodes) {
     LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
       if (socket->flag & SOCK_MULTI_INPUT) {
-        socket->total_inputs = counts.lookup_default(socket, 0);
+        socket->runtime->total_inputs = counts.lookup_default(socket, 0);
       }
     }
   }
@@ -2703,12 +2734,12 @@ static void reroute_node_prepare_for_draw(bNode &node)
 
   /* reroute node has exactly one input and one output, both in the same place */
   bNodeSocket *socket = (bNodeSocket *)node.outputs.first;
-  socket->locx = loc.x;
-  socket->locy = loc.y;
+  socket->runtime->locx = loc.x;
+  socket->runtime->locy = loc.y;
 
   socket = (bNodeSocket *)node.inputs.first;
-  socket->locx = loc.x;
-  socket->locy = loc.y;
+  socket->runtime->locx = loc.x;
+  socket->runtime->locy = loc.y;
 
   const float size = 8.0f;
   node.width = size * 2;
@@ -3079,6 +3110,48 @@ static void snode_setup_v2d(SpaceNode &snode, ARegion &region, const float2 &cen
   // XXX snode->curfont = uiSetCurFont_ext(snode->aspect);
 }
 
+/* Similar to is_compositor_enabled() in draw_manager.c but checks all 3D views. */
+static bool realtime_compositor_is_in_use(const bContext &context)
+{
+  if (!U.experimental.use_realtime_compositor) {
+    return false;
+  }
+
+  const Scene *scene = CTX_data_scene(&context);
+  if (!scene->use_nodes) {
+    return false;
+  }
+
+  if (!scene->nodetree) {
+    return false;
+  }
+
+  const Main *main = CTX_data_main(&context);
+  LISTBASE_FOREACH (bScreen *, screen, &main->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+        if (space->spacetype != SPACE_VIEW3D) {
+          continue;
+        }
+
+        const View3D &view_3d = *reinterpret_cast<const View3D *>(space);
+
+        if (view_3d.shading.use_compositor == V3D_SHADING_USE_COMPOSITOR_DISABLED) {
+          continue;
+        }
+
+        if (!(view_3d.shading.type >= OB_MATERIAL)) {
+          continue;
+        }
+
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 static void draw_nodetree(const bContext &C,
                           ARegion &region,
                           bNodeTree &ntree,
@@ -3101,6 +3174,9 @@ static void draw_nodetree(const bContext &C,
     WorkSpace *workspace = CTX_wm_workspace(&C);
     tree_draw_ctx.active_geometry_nodes_viewer = viewer_path::find_geometry_nodes_viewer(
         workspace->viewer_path, *snode);
+  }
+  else if (ntree.type == NTREE_COMPOSIT) {
+    tree_draw_ctx.used_by_realtime_compositor = realtime_compositor_is_in_use(C);
   }
 
   node_update_nodetree(C, tree_draw_ctx, ntree, nodes, blocks);
