@@ -120,7 +120,7 @@ class USERPREF_MT_save_load(Menu):
             props.use_factory_startup_app_template_only = True
             del display_name
         else:
-            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences")
+            layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon="LOAD_FACTORY")
 
 
 class USERPREF_PT_save_preferences(Panel):
