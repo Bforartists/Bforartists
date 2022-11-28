@@ -428,6 +428,10 @@ class POSELIB_OT_apply_pose_asset_for_keymap(Operator):
 
     @classmethod
     def poll(cls, context: Context) -> bool:
+        if context.copy is None:
+            # This can happen when the asset browser is configured with a
+            # non-existing asset library path.
+            return False
         if not asset_utils.SpaceAssetInfo.is_asset_browser(context.space_data):
             return False
         return bpy.ops.poselib.apply_pose_asset.poll(context.copy())
