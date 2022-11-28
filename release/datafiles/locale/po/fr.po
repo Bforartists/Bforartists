@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'8fe423a7a97d')\n"
+"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-11-13 19:12+0100\n"
+"PO-Revision-Date: 2022-11-24 19:59+0100\n"
 "Last-Translator: Damien Picard (pioverfour) <dam.pic@free.fr>\n"
 "Language-Team: French https://wiki.blender.org/wiki/Process/Translate_Blender/French_Team\n"
 "Language: fr\n"
@@ -16240,7 +16240,7 @@ msgstr "Boutons exécuter"
 
 
 msgid "Footer"
-msgstr "Pied-de-page"
+msgstr "Pied de page"
 
 
 msgid "Tool Header"
@@ -31470,8 +31470,13 @@ msgid "Properties to set when the operator is called"
 msgstr "Propriétés définissant l’appel de l’opérateur"
 
 
+msgctxt "WindowManager"
+msgid "Property Value"
+msgstr "Valeur de propriété"
+
+
 msgid "The value this event translates to in a modal keymap"
-msgstr "La valeur en laquelle cet événement est traduit dans un ensemble de raccourcis modal"
+msgstr "La valeur en laquelle cet événement est traduit, dans un ensemble de raccourcis modal"
 
 
 msgid "Active on key-repeat events (when a key is held)"
@@ -36055,7 +36060,7 @@ msgstr "Coordonnées originales"
 
 
 msgid "Use base mesh vertex coords as the rest position"
-msgstr "Utiliser les coordonnées de sommets du maillage de base comme position de repos"
+msgstr "Utiliser les coordonnées des sommets du maillage de base comme position de repos"
 
 
 msgid "Bind Coords"
@@ -36063,7 +36068,7 @@ msgstr "Coordonnées de liaison"
 
 
 msgid "Use bind vertex coords for rest position"
-msgstr "Utiliser les coordonnées de sommets lors de la liaison (« bind ») comme position de repos"
+msgstr "Utiliser les coordonnées des sommets lors de la liaison (« bind ») comme position de repos"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -37047,7 +37052,7 @@ msgstr "Écraser"
 
 
 msgid "Replace vertex coords with cached values"
-msgstr "Remplacer les coordonnées de sommets par les valeurs mises en cache"
+msgstr "Remplacer les coordonnées des sommets par les valeurs mises en cache"
 
 
 msgid "Integrate"
@@ -43936,7 +43941,7 @@ msgstr "Définir une ligne avec un point de début, une direction et une longueu
 
 
 msgid "Quadrilateral"
-msgstr "Quadrilatéral"
+msgstr "Quadrilatère"
 
 
 msgid "Generate a polygon with four points"
@@ -44883,6 +44888,10 @@ msgid "All Curves"
 msgstr "Toutes les courbes"
 
 
+msgid "Sample lengths based on the total length of all curves, rather than using a length inside each selected curve"
+msgstr "Échantillonner les longueurs d’après la longueur totale de toutes les courbes, plutôt que d’utiliser la longueur propre à chaque courbe sélectionnée"
+
+
 msgid "Sample Index"
 msgstr "Échantillonner indice"
 
@@ -44904,7 +44913,7 @@ msgstr "Trouver l’élément d’une géométrie qui est le plus proche d’une
 
 
 msgid "Sample Nearest Surface"
-msgstr "Échantillonner proche surface"
+msgstr "Échantillonner plus proche surface"
 
 
 msgid "Calculate the interpolated value of a mesh attribute on the closest point of its surface"
@@ -46337,7 +46346,7 @@ msgstr "Carte UV pour les tangentes générées depuis les UV"
 
 
 msgid "Brick Texture"
-msgstr "Texture brique"
+msgstr "Texture briques"
 
 
 msgid "Generate a procedural texture producing bricks"
@@ -46954,6 +46963,10 @@ msgstr "Utiliser la texture vague standard, en bandes"
 
 msgid "Use wave texture in rings"
 msgstr "Utiliser la texture vague en anneaux"
+
+
+msgid "White Noise Texture"
+msgstr "Texture bruit blanc"
 
 
 msgid "Return a random value or color based on an input seed"
@@ -52779,6 +52792,10 @@ msgstr "Si non spécifié, les rendus seront débruités sur place"
 msgctxt "Operator"
 msgid "Merge Images"
 msgstr "Combiner images"
+
+
+msgid "Combine OpenEXR multi-layer images rendered with different sample ranges into one image with reduced noise"
+msgstr "Combiner les images OpenEXR multicouches rendues avec différents intervalles d’échantillons en une seule image avec moins de bruit"
 
 
 msgid "File path for image to merge"
@@ -65804,7 +65821,7 @@ msgstr "Changer forme multires"
 
 
 msgid "Copy vertex coordinates from other object"
-msgstr "Copier les coordonnées de sommets depuis un autre objet"
+msgstr "Copier les coordonnées des sommets depuis un autre objet"
 
 
 msgctxt "Operator"
@@ -72722,8 +72739,24 @@ msgid "Mix mode"
 msgstr "Mode de mélange"
 
 
+msgid "Use settings from here"
+msgstr "Utiliser ces réglages"
+
+
 msgid "Operator"
 msgstr "Opérateur"
+
+
+msgid "Use settings from operator properties"
+msgstr "Utiliser les réglages des propriétés de l’opérateur"
+
+
+msgid "Use settings from brush"
+msgstr "Utiliser les réglages de la brosse"
+
+
+msgid "Use settings from scene"
+msgstr "Utiliser les réglages de la scène"
 
 
 msgctxt "Operator"
@@ -86467,7 +86500,7 @@ msgstr "Chemin de la police à chasse fixe de l’interface"
 
 
 msgid "Gizmo Size"
-msgstr "Taille de gizmo"
+msgstr "Taille des gizmos"
 
 
 msgid "Diameter of the gizmo"
@@ -87164,6 +87197,22 @@ msgstr "Type de panorama"
 
 msgid "Distortion to use for the calculation"
 msgstr "Distorsion à utiliser pour le calcul"
+
+
+msgid "Spherical camera for environment maps, also known as Lat Long panorama"
+msgstr "Caméra sphérique pour les cartes d’environnement, aussi appelée panoramas Lat Long"
+
+
+msgid "Equiangular Cubemap Face"
+msgstr "Face de carte cubique équiangulaire"
+
+
+msgid "Single face of an equiangular cubemap"
+msgstr "Une seule face d’une carte cubique équiangulaire"
+
+
+msgid "Mirror ball mapping for environment maps"
+msgstr "Placage en boule miroir pour les cartes d’environnement"
 
 
 msgid "Fisheye Equidistant"
@@ -95161,7 +95210,7 @@ msgstr "Afficher redéfinitions système"
 
 
 msgid "For libraries with overrides created, show the overridden values that are defined/controlled automatically (e.g. to make users of an overridden data-block point to the override data, not the original linked data)"
-msgstr "Pour les bibliothèques pour lesquelles des redéfinitions ont été créées, afficher les valeurs redéfinies qui ont été automatiquement définies ou contrôlées (p. ex. pour faire pointer des utilisateurs d’un bloc de données vers les données de redéfinition, et non vers les données liées d’origine)"
+msgstr "Pour les bibliothèques pour lesquelles des redéfinitions ont été créées, afficher les valeurs redéfinies qui ont été automatiquement définies ou contrôlées (par ex. pour faire pointer des utilisateurs d’un bloc de données vers les données de redéfinition, et non vers les données liées d’origine)"
 
 
 msgid "Filter Objects"
@@ -97890,7 +97939,7 @@ msgstr "Le bloc de données d’animation a une action active"
 
 
 msgid "No Active Action"
-msgstr "Pas d’action active"
+msgstr "Aucune action active"
 
 
 msgid "Animation data-block doesn't have active action"
@@ -100259,7 +100308,7 @@ msgstr "Afficher les normales des faces sous forme de lignes"
 
 
 msgid "Face Orientation"
-msgstr "Orientation de face"
+msgstr "Orientation des faces"
 
 
 msgid "Show the Face Orientation Overlay"
@@ -104269,6 +104318,18 @@ msgid "or AMD with macOS 12.3 or newer"
 msgstr "ou AMD avec macOS 12.3 ou plus nécessaire"
 
 
+msgid "Requires Intel GPU with Xe-HPG architecture and"
+msgstr "GPU Intel avec architecture Xe-HPG"
+
+
+msgid "  - Linux driver version xx.xx.23904 or newer"
+msgstr "et pilote Linux en version xx.xx.23904 ou plus"
+
+
+msgid "  - oneAPI Level-Zero Loader"
+msgstr "et chargeur oneAPI Level-Zero nécessaires"
+
+
 msgid "Noise Threshold"
 msgstr "Seuil de bruit"
 
@@ -104487,8 +104548,18 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Cible %r invalide (doit être 'ARMATURE' ou 'OBJECT')"
 
 
+msgctxt "Operator"
+msgid "Cameras & Markers (.py)"
+msgstr "Caméras et marqueurs (.py)"
+
+
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Impossible de parser le XML, %s :%s pour le fichier %r"
+
+
+msgctxt "Operator"
+msgid "Images as Planes"
+msgstr "Images en tant que plans"
 
 
 msgid "Import Options:"
@@ -105122,6 +105193,34 @@ msgid "Built without VR/OpenXR features"
 msgstr "Compilé sans les fonctionnalités de VR / OpenXR"
 
 
+msgid "* Missing Paths *"
+msgstr "* Chemins manquants *"
+
+
+msgctxt "Operator"
+msgid "Import..."
+msgstr "Importer…"
+
+
+msgctxt "Operator"
+msgid "Export..."
+msgstr "Exporter…"
+
+
+msgctxt "Operator"
+msgid "Restore"
+msgstr "Restaurer"
+
+
+msgid "%s (Global)"
+msgstr "%s (Global)"
+
+
+msgctxt "WindowManager"
+msgid "Add New"
+msgstr "Ajouter nouveau"
+
+
 msgctxt "Operator"
 msgid "New"
 msgstr "Nouvelle"
@@ -105517,7 +105616,7 @@ msgstr "La face active n’est pas sélectionnée"
 
 
 msgid "No active face"
-msgstr "Pas de face active"
+msgstr "Aucune face active"
 
 
 msgid "No mesh object"
@@ -105760,6 +105859,10 @@ msgid "Lists committers to Blender's source code"
 msgstr "Liste des contributeurs et contributrices au code source de Blender"
 
 
+msgid "Fallback Tool"
+msgstr "Outil secondaire"
+
+
 msgid "Mesh(es)"
 msgstr "Maillage(s)"
 
@@ -105847,6 +105950,10 @@ msgstr "Empreinte : %s"
 
 msgid "Branch: %s"
 msgstr "Branche : %s"
+
+
+msgid " (delta)"
+msgstr " (différentiel)"
 
 
 msgid "Node(s)"
@@ -107505,16 +107612,44 @@ msgid "Timesteps Maximum"
 msgstr "Pas temporels maximum"
 
 
+msgid "Delete in Obstacle"
+msgstr "Supprimer dans l’obstacle"
+
+
+msgid "Smoothing Positive"
+msgstr "Adoucissement positif"
+
+
+msgid "Concavity Upper"
+msgstr "Concavité haute"
+
+
 msgid "Lower"
-msgstr "Minuscule"
+msgstr "Basse"
+
+
+msgid "Guide Parent"
+msgstr "Parent guide"
 
 
 msgid "Compression Volumes"
-msgstr "Volumes de compression"
+msgstr "Compression volumes"
+
+
+msgid "Precision Volumes"
+msgstr "Précision volumes"
+
+
+msgid "Enable Guides first! Defaulting to Fluid Velocity"
+msgstr "Activer d’abord les guides ! On se rabat sur la vélocité du fluide"
 
 
 msgid "Using Scene Gravity"
 msgstr "Utiliser la gravité de la scène"
+
+
+msgid "Empty Space"
+msgstr "Espace vide"
 
 
 msgid "Sampling Substeps"
@@ -107821,6 +107956,11 @@ msgid "Unknown add-ons"
 msgstr "Add-ons inconnus"
 
 
+msgctxt "Operator"
+msgid "%s: %s"
+msgstr "%s : %s"
+
+
 msgid "category"
 msgstr "catégorie"
 
@@ -108023,11 +108163,11 @@ msgstr "Définir axe Y"
 
 
 msgid "No active track"
-msgstr "Pas de piste active"
+msgstr "Aucune piste active"
 
 
 msgid "No active plane track"
-msgstr "Pas de plan de suivi actif"
+msgstr "Aucun plan de suivi actif"
 
 
 msgid "Tracks for Stabilization"
@@ -108087,6 +108227,10 @@ msgstr "Définir image clé A"
 msgctxt "Operator"
 msgid "Set Keyframe B"
 msgstr "Définir image clé B"
+
+
+msgid "Average Error: %.2f px"
+msgstr "Erreur moyenne : %.2f px"
 
 
 msgid "Tracks for Rotation/Scale"
@@ -108439,7 +108583,7 @@ msgstr "Diminuer le numéro"
 
 
 msgid "No active asset"
-msgstr "Pas d’asset actif"
+msgstr "Aucun asset actif"
 
 
 msgctxt "Operator"
@@ -108911,7 +109055,7 @@ msgstr "Entrées :"
 
 
 msgid "Timings"
-msgstr "Timings"
+msgstr "Minutages"
 
 
 msgid "Named Attributes"
@@ -109499,6 +109643,11 @@ msgstr "Déplacer/étendre à partir de la frame actuelle"
 
 
 msgctxt "Operator"
+msgid "Hold Split"
+msgstr "Division dure"
+
+
+msgctxt "Operator"
 msgid "Delete Strip & Data"
 msgstr "Supprimer bande et données"
 
@@ -109571,7 +109720,7 @@ msgstr "Deux pistes ou plus sont nécessaires sous cette bande"
 
 
 msgid "No active context"
-msgstr "Pas de contexte actif"
+msgstr "Aucun contexte actif"
 
 
 msgid "No active viewer node"
@@ -110076,11 +110225,11 @@ msgstr "Nom de la bande de séquence"
 
 
 msgid "No active item"
-msgstr "Pas d’élément actif"
+msgstr "Aucun élément actif"
 
 
 msgid "No active marker"
-msgstr "Pas de marqueur active"
+msgstr "Aucun marqueur active"
 
 
 msgctxt "Operator"
@@ -110446,6 +110595,10 @@ msgstr "Aucune %s personnalisée configurée"
 
 msgid ":"
 msgstr " :"
+
+
+msgid "Load Factory %s Preferences"
+msgstr "Charger les préférences d’usine de %s"
 
 
 msgid "Description:"
@@ -112324,14 +112477,26 @@ msgid "Camera Lens Scale"
 msgstr "Focale caméra (échelle)"
 
 
+msgid "Camera Lens Scale: %.3f"
+msgstr "Échelle de la caméra : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Extrusion"
 msgstr "Ajuster l’extrusion"
 
 
+msgid "Extrude: %.3f"
+msgstr "Extrusion : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Offset"
 msgstr "Ajuster le décalage"
+
+
+msgid "Offset: %.3f"
+msgstr "Décalage : %.3f"
 
 
 msgctxt "Operator"
@@ -112369,6 +112534,14 @@ msgid "Scale Radius"
 msgstr "Redimensionner rayon"
 
 
+msgid "Camera Focal Length: %.1fmm"
+msgstr "Focale de la caméra : %.1fmm"
+
+
+msgid "Camera Focal Length: %.1f°"
+msgstr "Focale de la caméra : %.1f°"
+
+
 msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "Échantillonner profondeur de champ"
@@ -112379,9 +112552,17 @@ msgid "Adjust Focus Distance"
 msgstr "Ajuster distance de mise au point"
 
 
+msgid "Focus Distance: %.3f"
+msgstr "Distance de mise au point : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Empty Display Size"
 msgstr "Ajuster la taille d’affichage de l’empty"
+
+
+msgid "Empty Display Size: %.3f"
+msgstr "Taille d’affichage de l’empty : %.3f"
 
 
 msgid "Ridge"
@@ -112396,9 +112577,29 @@ msgid "No object selected, using cursor"
 msgstr "Aucun objet sélectionné, curseur utilisé"
 
 
+msgid "Draw Grease Pencil"
+msgstr "Dessiner crayon gras"
+
+
+msgid "Sculpt Grease Pencil"
+msgstr "Sculpter crayon gras"
+
+
+msgid "Weight Grease Pencil"
+msgstr "Éditer poids de crayon gras"
+
+
+msgid "Vertex Grease Pencil"
+msgstr "Poids crayon gras"
+
+
 msgctxt "Operator"
 msgid "Adjust Light Power"
 msgstr "Ajuster la puissance de l’éclairage"
+
+
+msgid "Light Power: %.3f"
+msgstr "Puissance de l’éclairage : %.3f"
 
 
 msgctxt "Operator"
@@ -112406,9 +112607,17 @@ msgid "Adjust Spot Light Size"
 msgstr "Ajuster la taille du spot"
 
 
+msgid "Spot Size: %.2f"
+msgstr "Taille du spot : %.2f"
+
+
 msgctxt "Operator"
 msgid "Adjust Spot Light Blend"
 msgstr "Ajuster le mélange du spot"
+
+
+msgid "Spot Blend: %.2f"
+msgstr "Mélange du spot : %.2f"
 
 
 msgctxt "Operator"
@@ -112416,14 +112625,26 @@ msgid "Adjust Area Light X Size"
 msgstr "Ajuster la taille de l’éclairage en X"
 
 
+msgid "Light Size X: %.3f"
+msgstr "Taille de l’éclairage en X : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Area Light Y Size"
 msgstr "Ajuster la taille de l’éclairage en Y"
 
 
+msgid "Light Size Y: %.3f"
+msgstr "Taille de l’éclairage en Y : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Area Light Size"
-msgstr "Ajuster la taille da l’éclairage"
+msgstr "Ajuster la taille de l’éclairage"
+
+
+msgid "Light Size: %.3f"
+msgstr "Taille de l’éclairage : %.3f"
 
 
 msgctxt "Operator"
@@ -112431,9 +112652,17 @@ msgid "Adjust Light Radius"
 msgstr "Ajuster le rayon de l’éclairage"
 
 
+msgid "Light Radius: %.3f"
+msgstr "Rayon de l’éclairage : %.3f"
+
+
 msgctxt "Operator"
 msgid "Adjust Sun Light Angle"
 msgstr "Ajuster l’angle du soleil"
+
+
+msgid "Light Angle: %.3f"
+msgstr "Angle de l’éclairage : %.3f"
 
 
 msgid "Distance Min"
@@ -112573,7 +112802,7 @@ msgstr "Impossible de changer d’action, car elle est toujours éditée dans le
 
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
-msgstr "Impossible de définir l’action « %s » sur l’ID « %s », car elle n’a pas de chemin correctement « enracinés » pour cela"
+msgstr "Impossible de définir l’action « %s » sur l’ID « %s », car elle n’a pas de chemin avec une racine correcte pour cela"
 
 
 msgid "KeyingSet"
@@ -112975,7 +113204,7 @@ msgstr "CalqueMasque"
 
 
 msgid "Tangent space can only be computed for tris/quads, aborting"
-msgstr "L’espace tangent peut seulement être calculé pour des tri-/quadrangles, abandon"
+msgstr "L’espace tangent peut seulement être calculé pour des triangles ou quadrangles, abandon"
 
 
 msgid "Tangent space computation needs loop normals, none found, aborting"
@@ -114084,7 +114313,7 @@ msgstr "La résolution du chemin vers la propriété a échoué, essayez de spé
 
 
 msgid "No active Keying Set"
-msgstr "Pas d’ensemble de clés actif"
+msgstr "Aucun ensemble de clés actif"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -114096,7 +114325,7 @@ msgstr "Impossible d’insérer %i image(s) clé(s) car la NLA a une influence �
 
 
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
-msgstr "Impossible de définir des images clés sur la F-courbe de chemin « %s[%d] », assurez-vous qu’elle n ’est pas verrouillée ou échantillonnée, et essayez d’enlever les F-modificateurs"
+msgstr "Impossible de définir des images clés sur la F-courbe de chemin « %s[%d] », assurez-vous qu’elle n’est pas verrouillée ou échantillonnée, et essayez d’enlever les F-modificateurs"
 
 
 msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -114224,7 +114453,7 @@ msgstr "Aucun os actif défini"
 
 
 msgid "No joints selected"
-msgstr "Aucune jonction sélectionnée"
+msgstr "Aucune articulation sélectionnée"
 
 
 msgid "Bones for different objects selected"
@@ -114295,12 +114524,24 @@ msgid "Replace Existing..."
 msgstr "Remplacer existante…"
 
 
+msgid "PoseLib Previewing Pose: [Showing Original Pose]"
+msgstr "Prévisualisation de pose de bibli : [pose originale affichée]"
+
+
 msgid "Use Tab to start previewing poses again"
 msgstr "Utiliser Tab pour recommencer la prévisualisation de poses"
 
 
+msgid "PoseLib Previewing Pose: Filter - [%s] | Current Pose - \"%s\""
+msgstr "Prévisualisation de pose de bibli : Filtrer - [%s] | Pose actuelle - « %s »"
+
+
 msgid "Use ScrollWheel or PageUp/Down to change pose"
 msgstr "Utiliser la molette ou Page haut / bas pour changer de pose"
+
+
+msgid "PoseLib Previewing Pose: \"%s\""
+msgstr "Prévisualisation de pose de bibli : Pose actuelle - « %s »"
 
 
 msgid "No action to validate"
@@ -114348,7 +114589,7 @@ msgstr "Erreur interne de la bibliothèque de poses, annulation de l’opérateu
 
 
 msgid "No active Keying Set to use"
-msgstr "Pas d’ensemble de clés actif utilisable"
+msgstr "Aucun ensemble de clés actif utilisable"
 
 
 msgid "Use another Keying Set, as the active one depends on the currently selected items or cannot find any targets due to unsuitable context"
@@ -114677,11 +114918,11 @@ msgstr "Impossible d’accéder au tampon de profondeur, utilisation du plan de 
 
 
 msgid "Surface(s) have no active point"
-msgstr "La ou les surfaces n’ont pas de point actif"
+msgstr "La ou les surfaces n’ont aucun point actif"
 
 
 msgid "Curve(s) have no active point"
-msgstr "La ou les courbes n’ont pas de point actif"
+msgstr "La ou les courbes n’ont aucun point actif"
 
 
 msgid "No control point selected"
@@ -114837,7 +115078,7 @@ msgstr "Impossible de supprimer les calques verrouillés"
 
 
 msgid "No active layer to isolate"
-msgstr "Pas de calque actif à isoler"
+msgstr "Aucun calque actif à isoler"
 
 
 msgid "No layers to merge"
@@ -114861,7 +115102,7 @@ msgstr "L’objet actif n’est pas un crayon gras sélectionné"
 
 
 msgid "No active color to isolate"
-msgstr "Pas de couleur active à isoler"
+msgstr "Aucune couleur active à isoler"
 
 
 msgid "No Grease Pencil data"
@@ -114945,11 +115186,11 @@ msgstr "Rien de sélectionné"
 
 
 msgid "No active area"
-msgstr "Pas de zone active"
+msgstr "Aucune zone active"
 
 
 msgid "There is no layer number %d"
-msgstr "Il n’y a pas de claque numéro %d"
+msgstr "Il n’y a pas de calque numéro %d"
 
 
 msgid "Too many strokes selected, only joined first %d strokes"
@@ -114957,7 +115198,7 @@ msgstr "Trop de traits sélectionnés, seuls les %d premiers traits ont été jo
 
 
 msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back, MMB Adjust Extend, S: Switch Mode, D: Stroke Collision | %s %s (%.3f)"
-msgstr "Remplir : Esc/ClicD : annuler, ClicG : remplir, Maj : dessiner à l’arrière, ClicM : ajuster extension, S : changer mode, D : collision traits | %s %s (%.3f)"
+msgstr "Remplir : Échap/ClicD : annuler, ClicG : remplir, Maj : dessiner à l’arrière, ClicM : ajuster extension, S : changer mode, D : collision traits | %s %s (%.3f)"
 
 
 msgid "Stroke: ON"
@@ -115439,8 +115680,40 @@ msgid "Hex"
 msgstr "Hex"
 
 
+msgid "Red:"
+msgstr "Rouge :"
+
+
+msgid "Green:"
+msgstr "Vert :"
+
+
+msgid "Blue:"
+msgstr "Bleu :"
+
+
+msgid "Hue:"
+msgstr "Teinte :"
+
+
+msgid "Saturation:"
+msgstr "Saturation :"
+
+
+msgid "Lightness:"
+msgstr "Luminosité :"
+
+
 msgid "Value:"
 msgstr "Valeur :"
+
+
+msgid "Alpha:"
+msgstr "Alpha :"
+
+
+msgid "Hex:"
+msgstr "Hex :"
 
 
 msgid "(Gamma Corrected)"
@@ -116228,6 +116501,10 @@ msgid "Intersection Type"
 msgstr "Type d’intersection"
 
 
+msgid "%s: Confirm, %s: Cancel, %s: Width Type (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
+msgstr "%s : Confirmer, %s : Annuler, %s : Type largeur (%s), %s : Largeur (%s), %s : Segments (%d), %s : Profil (%.3f), %s : Limiter superposition (%s), %s : Affecter (%s), %s : Onglet externe (%s), %s : Onglet interne (%s), %s : Durcir normales (%s), %s : Marquer coutures (%s), %s : Marquer dures (%s), %s : Type profile (%s), %s : Intersection (%s)"
+
+
 msgid "LMB: Click and drag to draw cut line"
 msgstr "ClicG : cliquer-glisser pour dessiner la ligne de coupe"
 
@@ -116270,6 +116547,10 @@ msgstr "%s : confirmer, %s : sortir, %s : annuler, %s : commencer/définir c
 
 msgid "Selected faces required"
 msgstr "Faces sélectionnées requises"
+
+
+msgid "No other selected objects have wire or boundary edges to use for projection"
+msgstr "Aucun autre objet sélectionné n’a de fil ou d’arête de bordure à utiliser pour la projection"
 
 
 msgid "Select a ring to be cut, use mouse-wheel or page-up/down for number of cuts, hold Alt for smooth"
@@ -116658,6 +116939,10 @@ msgid "Not implemented"
 msgstr "Pas implémenté"
 
 
+msgid "Converting some non-editable object/object data, enforcing 'Keep Original' option to True"
+msgstr "Conversion de certains objets ou données d’objet liés non-éditables, l’option « Conserver original » a été mise de force à Vrai"
+
+
 msgid "Convert Surfaces to Grease Pencil is not supported"
 msgstr "La conversion de surfaces en crayon gras n’est pas prise en charge"
 
@@ -116690,6 +116975,10 @@ msgid "Cannot delete indirectly linked object '%s'"
 msgstr "Impossible de supprimer l’objet lié indirectement « %s »"
 
 
+msgid "Cannot delete object '%s' as it is used by override collections"
+msgstr "Impossible de supprimer l’objet « %s » car il est utilisé par des collections avec redéfinitions"
+
+
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "Impossible de supprimer l’objet « %s » de la scène « %s », les objets utilisés indirectement doivent avoir au moins un utilisateur"
 
@@ -116702,8 +116991,12 @@ msgid "Object '%s' has no evaluated curves data"
 msgstr "L’objet « %s » n’a pas de données courbe évaluées"
 
 
+msgid "Cannot edit object '%s' as it is used by override collections"
+msgstr "Impossible d’éditer l’objet « %s » car il est utilisé par des collections avec redéfinitions"
+
+
 msgid "No active mesh object"
-msgstr "Pas d’objet maillage actif"
+msgstr "Aucun objet maillage actif"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -116747,11 +117040,11 @@ msgstr "Pas d’objet sélectionné valide"
 
 
 msgid "No active image found, add a material or bake to an external file"
-msgstr "Pas d’image active, ajouter un matériau ou précalculer dans un fichier externe"
+msgstr "Aucune image active, ajouter un matériau ou précalculer dans un fichier externe"
 
 
 msgid "No active image found, add a material or bake without the Split Materials option"
-msgstr "Pas d’image active, ajouter un matériau ou précalculer sans l’option « Diviser matériaux »"
+msgstr "Aucune image active, ajouter un matériau ou précalculer sans l’option « Diviser matériaux »"
 
 
 msgid "Baking map saved to internal image, save it externally or pack it"
@@ -116784,6 +117077,10 @@ msgstr "Erreur lors de l’utilisation des objets sélectionnés"
 
 msgid "Object \"%s\" is not in view layer"
 msgstr "L’objet « %s » n’est pas dans le calque de vue"
+
+
+msgid "Object \"%s\" is not enabled for rendering"
+msgstr "L’objet « %s » n’est pas activé au rendu"
 
 
 msgid "Object \"%s\" is not a mesh"
@@ -117026,6 +117323,10 @@ msgid "Only one modifier of this type is allowed"
 msgstr "Un seul modificateur de ce type autorisé"
 
 
+msgid "Cannot move modifier beyond the end of the stack"
+msgstr "Impossible de déplacer le modificateur après la fin de la pile"
+
+
 msgid "Modifier is disabled, skipping apply"
 msgstr "Le modificateur est désactivé, application ignorée"
 
@@ -117062,6 +117363,18 @@ msgid "Applied modifier: %s"
 msgstr "Modificateur appliqué : %s"
 
 
+msgid "Source object '%s' is not a grease pencil object"
+msgstr "L’objet source « %s » n’est pas un objet crayon gras"
+
+
+msgid "Destination object '%s' is not a grease pencil object"
+msgstr "L’objet de destination « %s » n’est pas un objet crayon gras"
+
+
+msgid "Cannot edit modifiers coming from linked data in a library override"
+msgstr "Impossible d’éditer des modificateurs provenant de données liées dans une redéfinition de bibliothèque"
+
+
 msgid "No supported objects were selected"
 msgstr "Aucun objet pris en charge n’est sélectionné"
 
@@ -117090,12 +117403,24 @@ msgid "Unable to execute '%s', error changing modes"
 msgstr "Impossible d’exécuter « %s », erreur au changement de mode"
 
 
+msgid "Apply modifier as a new shapekey and keep it in the stack"
+msgstr "Appliquer un modificateur en tant que nouvelle clé de forme et le retirer de la pile"
+
+
 msgid "Cannot move above a modifier requiring original data"
 msgstr "Impossible de le déplacer au-dessus d’un modificateur nécessitant les données originales"
 
 
+msgid "Cannot move modifier beyond the start of the list"
+msgstr "Impossible de déplacer le modificateur avant le début de la liste"
+
+
 msgid "Cannot move beyond a non-deforming modifier"
 msgstr "Impossible de le déplacer au-delà d’un modificateur non-déformant"
+
+
+msgid "Cannot move modifier beyond the end of the list"
+msgstr "Impossible de déplacer le modificateur après la fin de la liste"
 
 
 msgid "Only deforming modifiers can be applied to shapes"
@@ -117118,12 +117443,24 @@ msgid "Modifier returned error, skipping apply"
 msgstr "Le modificateur a retourné une erreur, application ignorée"
 
 
+msgid "Cannot apply constructive modifiers on curve. Convert curve to mesh in order to apply"
+msgstr "Impossible d’appliquer des modificateurs constructifs sur la courbe. Convertir la courbe en maillage pour pouvoir appliquer"
+
+
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
-msgstr "Le modificateur appliqué ne modifie que les points CV, pas les sommets tessellatés/biseautés"
+msgstr "Le modificateur appliqué ne modifie que les points de contrôle, pas les sommets tessellatés/biseautés"
+
+
+msgid "Constructive modifiers cannot be applied"
+msgstr "Impossible d’appliquer les modificateurs constructifs"
 
 
 msgid "Evaluated geometry from modifier does not contain curves"
 msgstr "La géométrie évaluée à partir du modificateur ne contient pas de courbe"
+
+
+msgid "Evaluated geometry from modifier does not contain a point cloud"
+msgstr "La géométrie évaluée à partir du modificateur ne contient pas de nuage de point"
 
 
 msgid "Modifiers cannot be applied in edit mode"
@@ -117146,6 +117483,14 @@ msgid "Objects do not have the same number of vertices"
 msgstr "Les objets n’ont pas le même nombre de sommets"
 
 
+msgid "No valid subdivisions found to rebuild a lower level"
+msgstr "Aucune subdivision valide trouvée permettant de reconstruire un niveau plus bas"
+
+
+msgid "Not valid subdivisions found to rebuild lower levels"
+msgstr "Aucune subdivision valide trouvée permettant de reconstruire les niveaux plus bas"
+
+
 msgid "Modifier is disabled"
 msgstr "Le modificateur est désactivé"
 
@@ -117154,12 +117499,36 @@ msgid "Object '%s' does not support %s modifiers"
 msgstr "L’objet « %s » ne prend pas en charge les modificateurs %s"
 
 
+msgid "Modifier can only be added once to object '%s'"
+msgstr "Le modificateur ne peut être ajouté qu’une fois à l’objet « %s »"
+
+
+msgid "Copying modifier '%s' to object '%s' failed"
+msgstr "La copie du modificateur « %s » vers l’objet « %s » a échoué"
+
+
+msgid "Modifier '%s' was not copied to any objects"
+msgstr "Le modificateur « %s » n’a pu être copié vers aucun objet"
+
+
+msgid "%d new levels rebuilt"
+msgstr "%d nouveaux niveaux reconstruits"
+
+
 msgid "Mesh '%s' has no skin vertex data"
 msgstr "Le maillage « %s » n’a pas de données de sommet de peau"
 
 
 msgid "This modifier operation is not allowed from Edit mode"
 msgstr "Cette opération de modificateur n’est pas autorisée en mode édition"
+
+
+msgid "Modifiers cannot be applied on override data"
+msgstr "Les modificateurs ne peuvent être appliqués à des données redéfinies"
+
+
+msgid "No selected object is active"
+msgstr "Aucun objet sélectionné n’est actif"
 
 
 msgid "Object type of source object is not supported"
@@ -117172,6 +117541,22 @@ msgstr "Définir parent à"
 
 msgid "Object (Keep Transform)"
 msgstr "Objet (conserver transformation)"
+
+
+msgid "Object (Without Inverse)"
+msgstr "Objet (sans inverse)"
+
+
+msgid "Object (Keep Transform Without Inverse)"
+msgstr "Objet (conserver transformation sans inverse)"
+
+
+msgid "Drop %s on %s (slot %d, replacing %s)"
+msgstr "Déposer %s sur %s (emplacement %d, remplace %s)"
+
+
+msgid "Drop %s on %s (slot %d)"
+msgstr "Déposer %s sur %s (emplacement %d)"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -117214,6 +117599,10 @@ msgid "Orphan library objects added to the current scene to avoid loss"
 msgstr "Objets de bibliothèque orphelins ajouté à la scène actuelle pour éviter leur perte"
 
 
+msgid "Cannot make library override from a local object"
+msgstr "Impossible de créer une redéfinition de bibliothèque à partir d’un objet local"
+
+
 msgid "Incorrect context for running object data unlink"
 msgstr "Contexte incorrect pour effectuer un dé-liage de données d’objet"
 
@@ -117222,8 +117611,52 @@ msgid "Can't unlink this object data"
 msgstr "Impossible de dé-lier ces données d’objet"
 
 
+msgid "Collection '%s' (instantiated by the active object) is not overridable"
+msgstr "La collection « %s » (instanciée par l’objet actif) n’est pas redéfinissable"
+
+
+msgid "Could not find an overridable root hierarchy for object '%s'"
+msgstr "Impossible de trouver une hiérarchie racine redéfinissable pour l’objet « %s »"
+
+
+msgid "Too many potential root collections (%d) for the override hierarchy, please use the Outliner instead"
+msgstr "Trop de collections potentielles à la racine (%d) pour la hiérarchie de redéfinition, veuillez plutôt utiliser le synoptique"
+
+
+msgid "Move the mouse to change the voxel size. CTRL: Relative Scale, SHIFT: Precision Mode, ENTER/LMB: Confirm Size, ESC/RMB: Cancel"
+msgstr "Déplacer la souris pour changer la taille de voxel. Ctrl : Échelle relative, Maj : Mode précision, Entrée/ClicG : Confirmer taille, Échap/ClicD : Annuler"
+
+
+msgid "Voxel remesher cannot run with a voxel size of 0.0"
+msgstr "Le remesher voxel ne peut être utilisé avec une taille de voxel de 0.0"
+
+
+msgid "Voxel remesher failed to create mesh"
+msgstr "Le remesher voxel n’a pas pu créer le maillage"
+
+
+msgid "The remesher cannot worked on linked or override data"
+msgstr "Le remesher ne fonctionne pas sur des données liées ou redéfinies"
+
+
+msgid "The remesher cannot run from edit mode"
+msgstr "Le remesher ne fonctionne pas en mode édition"
+
+
+msgid "The remesher cannot run with dyntopo activated"
+msgstr "Le remesher ne fonctionne pas quand la topologie dynamique est activée"
+
+
+msgid "The remesher cannot run with a Multires modifier in the modifier stack"
+msgstr "Le remesher ne fonctionne pas avec un modificateur multirésolutions dans la pile de modificateurs"
+
+
+msgid "Select Collection"
+msgstr "Sélectionner collection"
+
+
 msgid "No active object"
-msgstr "Pas d’objet actif"
+msgstr "Aucun objet actif"
 
 
 msgid "Use another Keying Set, as the active one depends on the currently selected objects or cannot find any targets due to unsuitable context"
@@ -117232,6 +117665,18 @@ msgstr "Utiliser un autre ensemble de clés, car l’actif dépend des objets ac
 
 msgid "Active object must be a light"
 msgstr "L’objet actif doit être un éclairage"
+
+
+msgid "Only one Effect of this type is allowed"
+msgstr "Un seul effet de ce type autorisé"
+
+
+msgid "Cannot move effect beyond the end of the stack"
+msgstr "Impossible de déplacer l’effet après la fin de la pile"
+
+
+msgid "Effect cannot be added to object '%s'"
+msgstr "Impossible d’ajouter l’effet à l’objet « %s »"
 
 
 msgid "Effect '%s' not in object '%s'"
@@ -117258,6 +117703,10 @@ msgid "Cannot edit shaderfxs coming from linked data in a library override"
 msgstr "Impossible d’éditer des effets de shader provenant de données liées dans une redéfinition de bibliothèque"
 
 
+msgid "Apply current visible shape to the object data, and delete all shape keys"
+msgstr "Appliquer la forme actuellement visible aux données d’objet, et supprimer toutes les clés de formes"
+
+
 msgid "Objects have no data to transform"
 msgstr "Les objets n’ont pas de données à transformer"
 
@@ -117278,6 +117727,14 @@ msgid "Font's can only have scale applied: \"%s\""
 msgstr "Seule l’échelle peut être appliquée au texte : « %s »"
 
 
+msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
+msgstr "Non-applicable à un bloc de données crayon gras dont tous les calques sont parentés : objet « %s », %s « %s », annulation"
+
+
+msgid "Area Lights can only have scale applied: \"%s\""
+msgstr "Seule l’échelle peut être appliquée à l’éclairage zone : « %s »"
+
+
 msgid "%i object(s) not centered, %i changed:"
 msgstr "%i objet(s) non centrés, %i modifiés :"
 
@@ -117288,6 +117745,14 @@ msgstr "|%i objet(s) de bibliothèques liées"
 
 msgid "|%i multiuser armature object(s)"
 msgstr "|%i objet(s) armature multiutilisateurs"
+
+
+msgid "Toggle locks of"
+msgstr "(Dés)activer les verrouillages de"
+
+
+msgid "Invert locks of"
+msgstr "Inverser les verrouillages de"
 
 
 msgid "all"
@@ -117350,16 +117815,40 @@ msgid "Copy vertex groups to selected: %d done, %d failed (object data must supp
 msgstr "Copier groupes de sommets vers sélection : %d effectués, %d ont échoué (les données d’objet doivent prendre en charge les groupes de sommets et avoir des indices correspondants)"
 
 
+msgid "No active editable object"
+msgstr "Aucun objet éditable actif"
+
+
 msgid "Object type does not support vertex groups"
 msgstr "Le type d’objet ne prend pas en charge les groupes de sommets"
+
+
+msgid "Object type \"%s\" does not have editable data"
+msgstr "Le type d’objet « %s » n’a pas de données éditables"
+
+
+msgid "Object has no vertex groups"
+msgstr "L’objet n’a pas de groupe de sommets"
 
 
 msgid "Only mesh objects are supported"
 msgstr "Seuls les objets maillages sont pris en charge"
 
 
+msgid "The active mesh object has no vertex group data"
+msgstr "L’objet maillage actif n’a pas de données de groupes de sommets"
+
+
 msgid "Vertex select needs to be enabled in weight paint mode"
 msgstr "La sélection de sommets doit être activée en mode peinture de poids"
+
+
+msgid "The active vertex group is locked"
+msgstr "Le groupe de sommets actif est verrouillé"
+
+
+msgid "Volume \"%s\" failed to load: %s"
+msgstr "Volume « %s » : impossible de charger %s"
 
 
 msgid "Volume \"%s\" contains points, only voxel grids are supported"
@@ -117376,6 +117865,10 @@ msgstr "Le précalcul a échoué : aucun modificateur « Peinture dynamique �
 
 msgid "Bake failed: invalid canvas"
 msgstr "Le précalcul a échoué : canevas invalide"
+
+
+msgid "Removed %d double particle(s)"
+msgstr "Enlevé %d particule(s) en double"
 
 
 msgid "No hair connected (can't connect hair if particle system modifier is disabled)"
@@ -117406,12 +117899,32 @@ msgid "Bake free failed: pending bake jobs found"
 msgstr "La libération du précalcul a échoué : il reste tâches de précalcul à effectuer"
 
 
+msgid "Fluid: Empty cache path, reset to default '%s'"
+msgstr "Fluide : chemin de cache vide, réinitialisé à celui par défaut, « %s »"
+
+
+msgid "Fluid: Could not create cache directory '%s', reset to default '%s'"
+msgstr "Fluide : impossible de créer le dossier de cache « %s », réinitialisé à celui par défaut, « %s »"
+
+
+msgid "Fluid: Could not use default cache directory '%s', please define a valid cache path manually"
+msgstr "Fluide : impossible d’utiliser le dossier de cache par défaut « %s », veuillez définir un chemin de cache valide manuellement"
+
+
 msgid "Library override data-blocks only support Disk Cache storage"
 msgstr "Les blocs de données avec redéfinitions de bibliothèque ne prennent en charge que le stockage cache sur disque"
 
 
+msgid "Linked data-blocks do not allow editing caches"
+msgstr "Les blocs de données liés ne permettent pas d’éditer les caches"
+
+
+msgid "Linked or library override data-blocks do not allow adding or removing caches"
+msgstr "Les blocs de données liés ou redéfinis ne permettent pas d’ajouter ou d’enlever des caches"
+
+
 msgid "No Rigid Body World to add Rigid Body Constraint to"
-msgstr "Pas de monde de corps rigides auquel ajouter une contrainte de corps rigide"
+msgstr "Aucun monde de corps rigides auquel ajouter une contrainte de corps rigide"
 
 
 msgid "Object has no Rigid Body Constraint to remove"
@@ -117686,6 +118199,10 @@ msgid "Unable to remove material slot in edit mode"
 msgstr "Impossible d’enlever un emplacement de matériau en mode édition"
 
 
+msgid "Lightcache cannot allocate resources"
+msgstr "Le cache d’éclairage n’a pas pu allouer les ressources"
+
+
 msgid "No active lineset and associated line style to manipulate the modifier"
 msgstr "Aucun ensemble de lignes actif ni de style de ligne associé duquel manipuler le modificateur"
 
@@ -117719,7 +118236,11 @@ msgstr "L’objet auquel le pointeur de données se réfère n’est pas un modi
 
 
 msgid "No active line style in the current scene"
-msgstr "Pas de style de ligne actif dans la scène actuelle"
+msgstr "Aucun style de ligne actif dans la scène actuelle"
+
+
+msgid "Removed %d slots"
+msgstr "%d emplacements enlevés"
 
 
 msgid "Blender Render"
@@ -117728,6 +118249,10 @@ msgstr "Rendu Blender"
 
 msgid "Failed to open window!"
 msgstr "Impossible d’ouvrir une fenêtre !"
+
+
+msgid "View layer '%s' could not be removed from scene '%s'"
+msgstr "Le calque de rendu « %s » n’a pu être enlevé de la scène « %s »"
 
 
 msgid "Join Areas"
@@ -117764,6 +118289,10 @@ msgstr "Afficher l’en-tête"
 
 msgid "Show Tool Settings"
 msgstr "Afficher les paramètres de l’outil"
+
+
+msgid "Show Footer"
+msgstr "Afficher pied de page"
 
 
 msgid "Flip to Right"
@@ -117806,6 +118335,14 @@ msgid "No more markers to jump to in this direction"
 msgstr "Plus aucun marqueur vers lequel aller dans cette direction"
 
 
+msgid "Only window region can be 4-split"
+msgstr "Seule une région « fenêtre » peut être divisée en quatre"
+
+
+msgid "Only last region can be 4-split"
+msgstr "Seule la dernière région peut être divisée en quatre"
+
+
 msgid "No fullscreen areas were found"
 msgstr "Aucune zone plein-écran n’a été trouvée"
 
@@ -117830,12 +118367,36 @@ msgid "Context missing active object"
 msgstr "Le contexte n’a pas d’objet actif"
 
 
+msgid "Cannot edit library linked or non-editable override object"
+msgstr "Impossible d’éditer un objet avec redéfinition non-éditable, ou issu d’une bibliothèque liée"
+
+
+msgid "Cannot edit hidden object"
+msgstr "Impossible d’éditer un objet caché"
+
+
 msgid "expected a view3d region & editmesh"
 msgstr "région view3d et editmesh attendus"
 
 
+msgid "No object, or not exclusively in pose mode"
+msgstr "Aucun objet, ou pas exclusivement en mode pose"
+
+
+msgid "Object is a local library override"
+msgstr "L’objet est une redéfinition locale de bibliothèque"
+
+
 msgid "expected a view3d region & editcurve"
 msgstr "région view3d et editcurve attendues"
+
+
+msgid "Toggling regions in the Top-bar is not allowed"
+msgstr "Activer ou désactiver des régions dans la barre supérieure n’est pas permis"
+
+
+msgid "Flipping regions in the Top-bar is not allowed"
+msgstr "Inverser des régions dans la barre supérieure n’est pas permis"
 
 
 msgid "Missing: %s"
@@ -117858,9 +118419,49 @@ msgid "Quick Favorites"
 msgstr "Favoris rapides"
 
 
+msgid "screen"
+msgstr "capture"
+
+
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "Dupliquer l’actuel"
+
+
+msgid "Original surface mesh is empty"
+msgstr "Le maillage de surface original est vide"
+
+
+msgid "Evaluated surface mesh is empty"
+msgstr "Le maillage de surface évalué est vide"
+
+
+msgid "Missing surface mesh"
+msgstr "Maillage de surface manquant"
+
+
+msgid "Missing UV map for attaching curves on original surface"
+msgstr "Carte UV manquante pour attacher des courbes à la surface originale"
+
+
+msgid "Missing UV map for attaching curves on evaluated surface"
+msgstr "Carte UV manquante pour attacher des courbes à la surface évaluée"
+
+
+msgid "Invalid UV map: UV islands must not overlap"
+msgstr "Carte UV invalide : les îlots UV ne doivent pas se chevaucher"
+
+
+msgid "Only available in point selection mode"
+msgstr "Disponible uniquement en mode sélection de point"
+
+
+msgid "Curves do not have surface attachment information"
+msgstr "Les courbes n’ont pas d’informations d’attachement de surface"
+
+
+msgid "UV map or surface attachment is invalid"
+msgstr "La carte UV ou l’attachement de surface est invalide"
 
 
 msgid "Sample color for %s"
@@ -117908,7 +118509,15 @@ msgstr "Données de projection d’image invalides"
 
 
 msgid "No active camera set"
-msgstr "Pas de caméra active de définie"
+msgstr "Aucune caméra active définie"
+
+
+msgid "Could not get valid evaluated mesh"
+msgstr "Impossible d’obtenir un maillage évalué valide"
+
+
+msgid "No 3D viewport found to create image from"
+msgstr "Aucune vue 3D trouvée à partir de laquelle créer une image"
 
 
 msgid "Failed to create OpenGL off-screen buffer: %s"
@@ -117920,11 +118529,11 @@ msgstr "%s%s%s%s manquant détecté !"
 
 
 msgid "Active group is locked, aborting"
-msgstr "Le groupe actif est verrouillé, annulé"
+msgstr "Le groupe actif est verrouillé, annulation"
 
 
 msgid "Mirror group is locked, aborting"
-msgstr "Le groupe miroir est verrouillé, annulé"
+msgstr "Le groupe miroir est verrouillé, annulation"
 
 
 msgid "Multipaint group is locked, aborting"
@@ -117936,7 +118545,7 @@ msgstr "Le modificateur utilisé ne prend pas en charge les positions déformée
 
 
 msgid "No active vertex group for painting, aborting"
-msgstr "Pas de groupe de sommets actif pour peindre, annulé"
+msgstr "Aucun groupe de sommets actif pour peindre, annulation"
 
 
 msgid "Not supported in dynamic topology mode"
@@ -117945,6 +118554,14 @@ msgstr "Non pris en charge en mode topologie dynamique"
 
 msgid "Not supported in multiresolution mode"
 msgstr "Non pris en charge en mode topologie multirésolutions"
+
+
+msgid "Click on the mesh to set the detail"
+msgstr "Cliquer sur le maillage pour définir le détail"
+
+
+msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "Déplacer la souris pour changer le niveau de détail de la topologie dynamique. ClicG : Confirmer taille, Échap/ClicD : Annuler"
 
 
 msgid "Warning!"
@@ -117969,6 +118586,18 @@ msgstr "Modificateurs génératifs détectés !"
 
 msgid "Keeping the modifiers will increase polycount when returning to object mode"
 msgstr "Conserver ces modificateurs augmentera le nombre de polygones lors du retour en mode objet"
+
+
+msgid "Active brush does not contain any texture to distort the expand boundary"
+msgstr "La brosse active ne contient aucune texture pour déformer la bordure d’expansion"
+
+
+msgid "Texture mapping not set to 3D, results may be unpredictable"
+msgstr "Le placage de texture n’est pas réglé sur 3D, les résultats seront peut-être imprévisibles"
+
+
+msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
+msgstr "Déplacer la souris pour étendre le masque depuis le sommet actif. ClicG : Confirmer masque, Échap/ClicG : Annuler"
 
 
 msgid "non-triangle face"
@@ -118001,6 +118630,10 @@ msgstr "L’objet a une échelle non-uniforme, la sculpture peut se révéler im
 
 msgid "Object has negative scale, sculpting may be unpredictable"
 msgstr "L’objet a une échelle négative, la sculpture peut se révéler imprévisible"
+
+
+msgid "No active brush"
+msgstr "Aucune brosse active"
 
 
 msgid "Dynamic Topology found: %s, disabled"
@@ -118091,6 +118724,14 @@ msgid "Show texture in texture tab"
 msgstr "Afficher la texture dans l’onglet des textures"
 
 
+msgid "No (unpinned) Properties Editor found to display texture in"
+msgstr "Aucun éditeur de propriétés non-épinglé trouvé, dans lequel afficher la texture"
+
+
+msgid "No texture user found"
+msgstr "Aucun utilisateur de la texture trouvé"
+
+
 msgid "Fields"
 msgstr "Entrelacement"
 
@@ -118175,6 +118816,10 @@ msgid "Height of marker's search in screen coordinates"
 msgstr "Hauteur de la recherche du marqueur, en coordonnées d’écran"
 
 
+msgid "%d x %d"
+msgstr "%d × %d"
+
+
 msgid ", %d float channel(s)"
 msgstr ", %d canal(-naux) flottant(s)"
 
@@ -118193,6 +118838,10 @@ msgstr ", RVBA octet"
 
 msgid ", RGB byte"
 msgstr ", RVB octet"
+
+
+msgid ", %.2f fps"
+msgstr ", %.2f fps"
 
 
 msgid ", failed to load"
@@ -118263,6 +118912,26 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Certaines données ont échoué à la reconstruction (voyez la console pour les détails)"
 
 
+msgid "Average re-projection error: %.2f px"
+msgstr "Erreur de reprojection moyenne : %.2f px"
+
+
+msgid "Track the selected markers backward for the entire clip"
+msgstr "Suivre les marqueurs sélectionnés vers l’arrière, sur toute la durée du clip"
+
+
+msgid "Track the selected markers backward by one frame"
+msgstr "Suivre les marqueurs sélectionnés vers l’arrière, sur une frame"
+
+
+msgid "Track the selected markers forward for the entire clip"
+msgstr "Suivre les marqueurs sélectionnés vers l’avant, sur toute la durée du clip"
+
+
+msgid "Track the selected markers forward by one frame"
+msgstr "Suivre les marqueurs sélectionnés vers l’avant, sur une frame"
+
+
 msgid "Unassigned"
 msgstr "Non assigné"
 
@@ -118281,6 +118950,22 @@ msgstr "Déplacer les assets vers le catalogue"
 
 msgid "Move asset to catalog"
 msgstr "Déplacer l’asset vers le catalogue"
+
+
+msgid "Only assets from this current file can be moved between catalogs"
+msgstr "Seuls les assets de ce fichier peuvent être déplacés d’un catalogue à l’autre"
+
+
+msgid "to the top level of the tree"
+msgstr "vers le premier niveau de l’arborescence"
+
+
+msgid "Move assets out of any catalog"
+msgstr "Sortir les assets de tout catalogue"
+
+
+msgid "Move asset out of any catalog"
+msgstr "Sortir l’asset de tout catalogue"
 
 
 msgid "File path"
@@ -118307,6 +118992,10 @@ msgid "Yesterday"
 msgstr "Hier"
 
 
+msgid "Unable to create configuration directory to write bookmarks"
+msgstr "Impossible de créer le dossier de configuration pour y écrire les signets"
+
+
 msgid "File does not exist"
 msgstr "Le fichier n’existe pas"
 
@@ -118317,6 +119006,10 @@ msgstr "Aucun dossier parent donné"
 
 msgid "Could not create new folder name"
 msgstr "Impossible de créer le nom d’un nouveau dossier"
+
+
+msgid "Unable to open or write bookmark file \"%s\""
+msgstr "Impossible d’ouvrir ou de lire le fichier de signet « %s »"
 
 
 msgid "'%s' given path is OS-invalid, creating '%s' path instead"
@@ -118391,6 +119084,14 @@ msgid "Cursor to Selection"
 msgstr "Curseur vers sélection"
 
 
+msgid "Cursor Value to Selection"
+msgstr "Valeur du curseur vers sélection"
+
+
+msgid "Handle Smoothing"
+msgstr "Adoucissement des poignées"
+
+
 msgid "Interpolation:"
 msgstr "Interpolation :"
 
@@ -118415,12 +119116,24 @@ msgid "Expression:"
 msgstr "Expression :"
 
 
+msgid "Add Input Variable"
+msgstr "Ajouter variable d’entrée"
+
+
 msgid "Update Dependencies"
 msgstr "Mettre à jour dépendances"
 
 
 msgid "Driven Property:"
 msgstr "Propriété contrôlée :"
+
+
+msgid "Driver:"
+msgstr "Contrôleur :"
+
+
+msgid "Show in Drivers Editor"
+msgstr "Afficher dans l’éditeur Contrôleurs"
 
 
 msgid "Add Modifier"
@@ -118440,11 +119153,51 @@ msgstr "La F-courbe n’a aucune image clé, car elle ne contient que des points
 
 
 msgid "No active keyframe on F-Curve"
-msgstr "Pas d’image clé active sur la F-courbe"
+msgstr "Aucune image clé active sur la F-courbe"
+
+
+msgid "It cannot be left blank"
+msgstr "Ne peut être vide"
+
+
+msgid "It cannot start with a number"
+msgstr "Ne peut commencer par un nombre"
+
+
+msgid "It cannot start with a special character, including '$', '@', '!', '~', '+', '-', '_', '.', or ' '"
+msgstr "Ne peut commencer avec un caractère spécial, y compris '$', '@', '!', '~', '+', '-', '_', '.' ou ' '"
+
+
+msgid "It cannot contain spaces (e.g. 'a space')"
+msgstr "Ne peut contenir d’espace (par ex. « une espace »)"
+
+
+msgid "It cannot contain dots (e.g. 'a.dot')"
+msgstr "Ne peut contenir de point (par ex. « un.point »)"
+
+
+msgid "It cannot contain special (non-alphabetical/numeric) characters"
+msgstr "Ne peut contenir de caractère spécial (non-alphabétique ou numérique)"
+
+
+msgid "It cannot be a reserved keyword in Python"
+msgstr "Ne peut être un mot-clé réservé en Python"
+
+
+msgid "Let the driver determine this property's value"
+msgstr "Laisser le contrôleur déterminer la valeur de cette propriété"
 
 
 msgid "ERROR: Invalid Python expression"
 msgstr "ERREUR : Expression python non valide"
+
+
+msgid "Python restricted for security"
+msgstr "Python restreint par sécurité"
+
+
+msgid "Slow Python expression"
+msgstr "Expression Python lente"
 
 
 msgid "WARNING: Driver expression may not work correctly"
@@ -118475,12 +119228,28 @@ msgid "F-Modifiers can generate curves for those too"
 msgstr "Les F-Modificateurs peuvent générer des courbes pour cela, ceci dit"
 
 
+msgid "Add a Driver Variable to keep track of an input used by the driver"
+msgstr "Ajouter une variable de contrôleur pour surveiller une entrée utilisée par le contrôleur"
+
+
 msgid "Invalid variable name, click here for details"
 msgstr "Nom de variable invalide, cliquer ici pour plus de détails"
 
 
 msgid "Delete target variable"
 msgstr "Supprimer variable cible"
+
+
+msgid "Force updates of dependencies - Only use this if drivers are not updating correctly"
+msgstr "Forcer la mise à jour des dépendances – à n’utiliser que si les contrôleurs ne sont pas correctement mis à jour"
+
+
+msgid "Driven Property"
+msgstr "Propriété contrôlée"
+
+
+msgid "Add/Edit Driver"
+msgstr "Ajouter ou éditer contrôleur"
 
 
 msgctxt "Operator"
@@ -118493,7 +119262,7 @@ msgstr "<Pas d’ID>"
 
 
 msgid "No active F-Curve to add a keyframe to. Select an editable F-Curve first"
-msgstr "Pas de F-courbe active à laquelle ajouter une image clé, sélectionner d’abord une F-courbe éditable"
+msgstr "Aucune F-courbe active à laquelle ajouter une image clé, sélectionner d’abord une F-courbe éditable"
 
 
 msgid "No selected F-Curves to add keyframes to"
@@ -118524,12 +119293,20 @@ msgid "No Euler Rotation F-Curves to fix up"
 msgstr "Pas de F-courbe de rotation Euler à réparer"
 
 
+msgid "No Euler Rotations could be corrected"
+msgstr "Aucune rotation Euler n’a pu être corrigée"
+
+
 msgid "No Euler Rotations could be corrected, ensure each rotation has keys for all components, and that F-Curves for these are in consecutive XYZ order and selected"
 msgstr "Aucune rotation Euler n’a pu être corrigée, assurez-vous que chaque rotation a des clés pour toutes les composantes, et que les F-courbes pour celles-ci sont consécutives dans l’ordre XYZ et sélectionnées"
 
 
+msgid "The rotation channel was filtered"
+msgstr "Le canal de rotation a été filtré"
+
+
 msgid "Modifier could not be added (see console for details)"
-msgstr "Impossible d’ajouter le modificateur (voyez la console pour les détails)"
+msgstr "Impossible d’ajouter le modificateur (voir la console pour les détails)"
 
 
 msgid "No F-Modifiers available to be copied"
@@ -118552,6 +119329,18 @@ msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%
 msgstr "La(les) composante(s) %s%s%s manquent pour la rotation Euler de l’ID « %s » (chemin RNA : « %s »)"
 
 
+msgid "XYZ rotations not equally keyed for ID='%s' and RNA-Path='%s'"
+msgstr "Les rotations XYZ n’ont pas les mêmes clés pour l’ID « %s » et le chemin RNA « %s »"
+
+
+msgid "%d of %d rotation channels were filtered (see the Info window for details)"
+msgstr "%d canaux de rotation sur %d ont été filtrés (voir la fenêtre Infos pour les détails)"
+
+
+msgid "All %d rotation channels were filtered"
+msgstr "Tous les %d canaux de rotation ont été filtrés"
+
+
 msgid "Decimate Keyframes"
 msgstr "Supprimer images clés"
 
@@ -118566,6 +119355,10 @@ msgstr "Mélanger à la valeur par défaut"
 
 msgid "There is no animation data to operate on"
 msgstr "Aucunes données d’animation sur lesquelles agir"
+
+
+msgid "Discard"
+msgstr "Ignorer"
 
 
 msgid "Select Slot"
@@ -118590,6 +119383,10 @@ msgstr "Non-linéaire codé en dur, gamma : 1.7"
 
 msgid "Can't Load Image"
 msgstr "Impossible de charger l’image"
+
+
+msgid "%d x %d, "
+msgstr "%d × %d,"
 
 
 msgid "%d float channel(s)"
@@ -118624,6 +119421,10 @@ msgid "Frame %d / %d"
 msgstr "Frame %d / %d"
 
 
+msgid "Frame %d: %s"
+msgstr "Frame %d : %s"
+
+
 msgid "Frame %d"
 msgstr "Frame %d"
 
@@ -118652,6 +119453,18 @@ msgid "Unpacking movies or image sequences not supported"
 msgstr "Le dépaquetage de vidéos ou de séquences d’images n’est pas pris en charge"
 
 
+msgid "Invalid UDIM index range was specified"
+msgstr "L’intervalle d’indices UDIM spécifié est invalide"
+
+
+msgid "No UDIM tiles were created"
+msgstr "Aucune tuile UDIM n’a été créée"
+
+
+msgid "Packed to memory image \"%s\""
+msgstr "L’image « %s » a été empaquetée en mémoire"
+
+
 msgid "Cannot save image, path \"%s\" is not writable"
 msgstr "Impossible d’enregistrer l’image, il n’est pas possible d’écrire dans « %s »"
 
@@ -118666,6 +119479,22 @@ msgstr "%d image(s) seront enregistrée(s) en %s"
 
 msgid "Saved %s"
 msgstr "Enregistré %s"
+
+
+msgid "Packed library image can't be saved: \"%s\" from \"%s\""
+msgstr "L’image de bibliothèque empaquetée ne peut pas être enregistrée : « %s » depuis « %s »"
+
+
+msgid "Image can't be saved, use a different file format: \"%s\""
+msgstr "L’image ne peut pas être enregistrée, utiliser un autre format de fichiers : « %s »"
+
+
+msgid "Multiple images can't be saved to an identical path: \"%s\""
+msgstr "Plusieurs images ne peuvent pas être enregistrées dans le même chemin : « %s »"
+
+
+msgid "Image can't be saved, no valid file path: \"%s\""
+msgstr "L’image ne peut pas être enregistrée, aucun chemin de fichier valide : « %s »"
 
 
 msgid "can't save image while rendering"
@@ -118696,16 +119525,40 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Impossible de définir les chemins absolus dans un fichier .blend non-enregistré"
 
 
+msgid "Joints"
+msgstr "Articulations"
+
+
 msgid "(Key) "
 msgstr "(Clé) "
 
 
 msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
-msgstr "Verts:%s/%s | Arêtes:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Sommets:%s/%s | Arêtes:%s/%s | Faces:%s/%s | Tris:%s"
+
+
+msgid "Joints:%s/%s | Bones:%s/%s"
+msgstr "Articulations:%s/%s | Os:%s/%s"
 
 
 msgid "Verts:%s/%s"
-msgstr "Verts:%s/%s"
+msgstr "Sommets:%s/%s"
+
+
+msgid "Bones:%s/%s"
+msgstr "Os:%s/%s"
+
+
+msgid "Layers:%s | Frames:%s | Strokes:%s | Points:%s"
+msgstr "Calques:%s | Frames:%s | Traits:%s | Points:%s"
+
+
+msgid "Verts:%s | Tris:%s"
+msgstr "Sommets:%s | Tris:%s"
+
+
+msgid "Verts:%s | Faces:%s | Tris:%s"
+msgstr "Sommets:%s | Faces:%s | Tris:%s"
 
 
 msgid " | Objects:%s/%s"
@@ -118732,12 +119585,16 @@ msgid "Now"
 msgstr "Maintenant"
 
 
+msgid "Playback Scale"
+msgstr "Échelle de lecture"
+
+
 msgid "Active Strip Name"
 msgstr "Nom de la bande active"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
-msgstr "Pas de bloc de données d’animation utilisable (sélectionnez d’abord un « expandeur » de bloc de données, ou définissez les drapeaux appropriés sur un bloc de données d’animation)"
+msgstr "Aucun bloc de données d’animation actif utilisable (sélectionner d’abord un « expandeur » de bloc de données, ou définissez les drapeaux appropriés sur un bloc de données d’animation)"
 
 
 msgid "Internal Error - AnimData block is not valid"
@@ -118749,7 +119606,7 @@ msgstr "Impossible d’ajouter des actions durant l’ajustage de l’action d�
 
 
 msgid "No active action to push down"
-msgstr "Pas d’action active à ajouter"
+msgstr "Aucune action active à ajouter"
 
 
 msgid "Select an existing NLA Track or an empty action line first"
@@ -118769,7 +119626,7 @@ msgstr "Aucun bloc de données d’animation dans lequel entrer en mode d’ajus
 
 
 msgid "No active strip(s) to enter tweak mode on"
-msgstr "Aucune piste active dans laquelle entrer en mode d’ajustage"
+msgstr "Aucune piste active pour laquelle passer en mode ajustage"
 
 
 msgid "No AnimData blocks in tweak mode to exit from"
@@ -118777,7 +119634,7 @@ msgstr "Aucun bloc de données d’animation en mode d’ajustage d’où sortir
 
 
 msgid "No active track(s) to add strip to, select an existing track or add one before trying again"
-msgstr "Pas de piste active à laquelle ajouter une bande, sélectionner une piste existante ou en ajouter une avant de ré-essayer"
+msgstr "Aucune piste active à laquelle ajouter une bande, sélectionner une piste existante ou en ajouter une avant de ré-essayer"
 
 
 msgid "No valid action to add"
@@ -118816,6 +119673,10 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Le modificateur n’a pu être ajouté à (%s : %s) (voyez la console pour les détails)"
 
 
+msgid "Loading Asset Libraries"
+msgstr "Chargement des bibliothèques d’assets"
+
+
 msgid "Label Size"
 msgstr "Taille d’étiquette"
 
@@ -118840,12 +119701,20 @@ msgid "Matte ID:"
 msgstr "ID de masque :"
 
 
+msgid "Squash"
+msgstr "Écrasement"
+
+
 msgid "Undefined Socket Type"
 msgstr "Type de prise non-défini"
 
 
 msgid "Group Input "
 msgstr "Entrée groupe "
+
+
+msgid "NodeTree"
+msgstr "ArborescenceDeNœuds"
 
 
 msgid "Could not determine type of group node"
@@ -118860,8 +119729,40 @@ msgid "Could not add node object"
 msgstr "Impossible d’ajouter l’objet nœud"
 
 
+msgid "Could not add node collection"
+msgstr "Impossible d’ajouter le nœud de collection"
+
+
+msgid "Could not find node collection socket"
+msgstr "Impossible de trouver la prise du nœud de collection"
+
+
+msgid "Could not add an image node"
+msgstr "Impossible d’ajouter un nœud d’image"
+
+
+msgid "Could not add a mask node"
+msgstr "Impossible d’ajouter un nœud de masque"
+
+
+msgid ""
+"Can not add node group '%s' to '%s':\n"
+"  %s"
+msgstr ""
+"Impossible d’ajouter un nœud de groupe « %s » à « %s » :\n"
+"  %s"
+
+
+msgid "Can not add node group '%s' to '%s'"
+msgstr "Impossible d’ajouter un nœud de groupe « %s » à « %s »"
+
+
 msgid "Node tree type %s undefined"
 msgstr "Type d’arborescence de nœuds %s non-défini"
+
+
+msgid "Adding node groups isn't supported for custom (Python defined) node trees"
+msgstr "L’ajout de groupes de nœuds n’est pas pris en charge pour les arborescences de nœuds personnalisées (définies via Python)"
 
 
 msgid " (Integer)"
@@ -118874,6 +119775,10 @@ msgstr " (flottant)"
 
 msgid " (Vector)"
 msgstr " (vecteur)"
+
+
+msgid " (Color)"
+msgstr " (Couleur)"
 
 
 msgid "True"
@@ -118949,15 +119854,23 @@ msgstr "• Volume"
 
 
 msgid "• Edit Curves: %s, %s"
-msgstr "• Courbes édition: %s, %s"
+msgstr "• Courbes édition : %s, %s"
 
 
 msgid "positions"
 msgstr "positions"
 
 
+msgid "no positions"
+msgstr "pas de positions"
+
+
 msgid "matrices"
 msgstr "matrices"
+
+
+msgid "no matrices"
+msgstr "pas de matrices"
 
 
 msgid "Supported: All Types"
@@ -118988,8 +119901,68 @@ msgid "remove"
 msgstr "suppression"
 
 
+msgid "Attributes with these names used within the group may conflict with existing attributes"
+msgstr "Les attributs dont ces noms sont utilisés dans le groupe peuvent entrer en conflit avec des attributs existants"
+
+
+msgid "The execution time from the node tree's latest evaluation. For frame and group nodes, the time for all sub-nodes"
+msgstr "La durée d’exécution de la dernière exécution de l’arborescence de nœuds. Pour les nœuds cadres et groupes, la durée pour tous les sous-nœuds"
+
+
 msgid "Clipboard is empty"
 msgstr "Le presse-papier est vide"
+
+
+msgid "Clipboard nodes are an incompatible type"
+msgstr "Les nœuds du presse-papier ont un type incompatible"
+
+
+msgid "Some nodes references could not be restored, will be left empty"
+msgstr "Certaines références de nœuds n’ont pas pu être restaurées et vont être laissées vides"
+
+
+msgid "Text not used by any node, no update done"
+msgstr "Le texte n’est utilisé par aucun nœud, aucune mise à jour n’a été faite"
+
+
+msgid ""
+"Cannot add node %s into node tree %s:\n"
+"  %s"
+msgstr ""
+" Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s :\n"
+"  %s"
+
+
+msgid "Cannot add node %s into node tree %s"
+msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s"
+
+
+msgid "Cannot ungroup"
+msgstr "Impossible de dégrouper"
+
+
+msgid "Not inside node group"
+msgstr "Pas à l’intérieur d’un groupe de nœuds"
+
+
+msgid "Cannot separate nodes"
+msgstr "Impossible de séparer les nœuds"
+
+
+msgid ""
+"Can not add node '%s' in a group:\n"
+"  %s"
+msgstr ""
+" Impossible d’ajouter le nœud %s dans un groupe :\n"
+"  %s"
+
+
+msgid "Can not add node '%s' in a group"
+msgstr "Impossible d’ajouter le nœud « %s » dans un groupe"
+
+
+msgid "LMB: drag node link, RMB: cancel"
+msgstr "ClicG : glisser lien entre nœuds, ClicD : annuler"
 
 
 msgid "Disconnect"
@@ -119000,8 +119973,28 @@ msgid "Dependency Loop"
 msgstr "Boucle de dépendances"
 
 
+msgid "Add node to input"
+msgstr "Ajouter un nœud à l’entrée"
+
+
+msgid "Remove nodes connected to the input"
+msgstr "Enlever les nœuds connectés à l’entrée"
+
+
+msgid "Disconnect nodes connected to the input"
+msgstr "Déconnecter les nœuds connectés à l’entrée"
+
+
+msgid "More than one collection is selected"
+msgstr "Plus d’une collection sont sélectionnées"
+
+
+msgid "Can't add a new collection to linked/override scene"
+msgstr "Impossible d’ajouter une nouvelle collection à une scène liée ou redéfinie"
+
+
 msgid "No active collection"
-msgstr "Pas de collection active"
+msgstr "Aucune collection active"
 
 
 msgid "Can't duplicate the master collection"
@@ -119202,7 +120195,7 @@ msgstr "Le chemin de bibliothèque n’est plus éditable d’ici, veuillez util
 
 
 msgid "No active item to rename"
-msgstr "Pas d’élément actif à renommer"
+msgstr "Aucun élément actif à renommer"
 
 
 msgid "No selected data-blocks to copy"
@@ -119650,7 +120643,7 @@ msgstr "Poids du sommet"
 
 
 msgid "No active object found"
-msgstr "Pas d’objet actif trouvé"
+msgstr "Aucun objet actif trouvé"
 
 
 msgid "Front Orthographic"
@@ -121591,6 +122584,10 @@ msgid "'Integrate' requires faces"
 msgstr "« Intégrer » nécessite des faces"
 
 
+msgid "Time Remapping"
+msgstr "Conversion de temps"
+
+
 msgid "Axis Mapping"
 msgstr "Correspondance d’axe"
 
@@ -121636,7 +122633,7 @@ msgstr "Désubdiviser"
 
 
 msgid "Delete Higher"
-msgstr "Supprimer supérieur"
+msgstr "Supprimer supérieurs"
 
 
 msgid "Reshape"
@@ -121656,7 +122653,7 @@ msgstr "Empaqueter externes"
 
 
 msgid "Save External..."
-msgstr "Enregistrement externe…"
+msgstr "Enregistrer externe…"
 
 
 msgid "Multires"
@@ -121707,12 +122704,20 @@ msgid "Node group can only have one geometry input"
 msgstr "Le groupe de nœuds ne peut avoir qu’une entrée de géométrie"
 
 
+msgid "Node group must have a group output node"
+msgstr "Le groupe de nœuds doit avoir un nœud de sortie"
+
+
 msgid "Node group must have an output socket"
 msgstr "Le groupe de nœuds doit avoir une prise de sortie"
 
 
 msgid "Node group's first output must be a geometry"
 msgstr "La première sortie du groupe de nœuds doit être une géométrie"
+
+
+msgid "Cannot evaluate node group"
+msgstr "Impossible d’évaluer le groupe de nœuds"
 
 
 msgid "NormalEdit"
@@ -121809,6 +122814,14 @@ msgid "Equalize Radii"
 msgstr "Égaliser rayons"
 
 
+msgid "No valid root vertex found (you need one per mesh island you want to skin)"
+msgstr "Aucun sommet racine trouvé (il en faut un par îlot de maillage auquel appliquer la peau)"
+
+
+msgid "Hull error"
+msgstr "Erreur de coque"
+
+
 msgid "Crease Inner"
 msgstr "Pli Interne"
 
@@ -121834,6 +122847,18 @@ msgid "Output Vertex Groups"
 msgstr "Groupe de sommets en sortie"
 
 
+msgid "Internal Error: edges array wrong size: %u instead of %u"
+msgstr "Erreur interne : mauvaise taille pour le tableau d’arêtes : %u au lieu de %u"
+
+
+msgid "Internal Error: polys array wrong size: %u instead of %u"
+msgstr "Erreur interne : mauvaise taille pour le tableau de faces : %u au lieu de %u"
+
+
+msgid "Internal Error: loops array wrong size: %u instead of %u"
+msgstr "Erreur interne : mauvaise taille pour le tableau de boucles : %u au lieu de %u"
+
+
 msgid "Adaptive Subdivision"
 msgstr "Subdivision adaptative"
 
@@ -121842,8 +122867,64 @@ msgid "Levels Viewport"
 msgstr "Niveaux vue"
 
 
+msgid "Final Scale: Render %.2f px, Viewport %.2f px"
+msgstr "Échelle finale : rendu %.2f px, vue 3D %.2f px"
+
+
 msgid "SurfaceDeform"
 msgstr "DéformationSurface"
+
+
+msgid "Out of memory"
+msgstr "Mémoire insuffisante"
+
+
+msgid "Target has edges with more than two polygons"
+msgstr "Certaines arêtes de la cible ont plus de deux polygones"
+
+
+msgid "Target contains concave polygons"
+msgstr "La cible contient des polygones concaves"
+
+
+msgid "Target contains overlapping vertices"
+msgstr "La cible contient des sommets qui se chevauchent"
+
+
+msgid "Target contains invalid polygons"
+msgstr "La cible contient des polygones invalides"
+
+
+msgid "No vertices were bound"
+msgstr "Aucun sommet n’a été lié"
+
+
+msgid "No valid target mesh"
+msgstr "Aucun maillage cible valide"
+
+
+msgid "Attempt to unbind from inactive dependency graph"
+msgstr "Tentative de dé-lier depuis un graphe de dépendances inactif"
+
+
+msgid "Vertices changed from %u to %u"
+msgstr "Les sommets ont changé de %u à %u"
+
+
+msgid "Target polygons changed from %u to %u"
+msgstr "Les polygones cibles ont changé de %u à %u"
+
+
+msgid "Target vertices changed from %u to %u"
+msgstr "Les sommets cibles ont changé de %u à %u"
+
+
+msgid "This modifier can only deform filled curve/surface, not the control points"
+msgstr "Ce modificateur ne peut que déformer les surfaces ou courbes remplies, pas les points de contrôle"
+
+
+msgid "This modifier can only deform control points, not the filled curve/surface"
+msgstr "Ce modificateur ne peut que déformer les points de contrôle, pas les surfaces ou courbes remplies"
 
 
 msgctxt "Operator"
@@ -121926,6 +123007,10 @@ msgstr "Pas une arborescence de nœuds de compositing"
 
 msgid "Fac"
 msgstr "Fac"
+
+
+msgid "Determinator"
+msgstr "Déterminateur"
 
 
 msgid "Bounding box"
@@ -122152,6 +123237,14 @@ msgid "Geometry Node Editor"
 msgstr "Éditeur de nœuds géométrie"
 
 
+msgid "An index used to group values together for multiple separate accumulations"
+msgstr "Un indice utilisé pour regrouper des valeurs, pour plusieurs accumulations distinctes"
+
+
+msgid "The attribute output can not be used without the geometry output"
+msgstr "La sortie attribut ne peut pas être utilisée sans la sortie de géométrie"
+
+
 msgid "Sum"
 msgstr "Somme"
 
@@ -122164,12 +123257,20 @@ msgid "Variance"
 msgstr "Variance"
 
 
+msgid "Disabled, Blender was compiled without GMP"
+msgstr "Désactivé, Blender a été compilé sans GMP"
+
+
 msgid "Mesh 1"
 msgstr "Maillage 1"
 
 
 msgid "Mesh 2"
 msgstr "Maillage 2"
+
+
+msgid "Intersecting Edges"
+msgstr "Arêtes à l’intersection"
 
 
 msgid "Separate Children"
@@ -122186,6 +123287,10 @@ msgstr "Réinitialiser enfants"
 
 msgid "Reset the transforms of every child instance in the output. Only used when Separate Children is enabled"
 msgstr "Réinitialiser les transformations de chaque instance enfant dans la sortie. Seulement utilisé quand Séparer enfants est activé"
+
+
+msgid "Disabled, Blender was compiled without Bullet"
+msgstr "Désactivé, Blender a été compilé sans Bullet"
 
 
 msgid "Start Size"
@@ -122208,6 +123313,34 @@ msgid "The selection from the start and end of the splines based on the input si
 msgstr "La sélection à partir du début et de la fin des splines, basée sur les tailles en entrée"
 
 
+msgid "Limit Radius"
+msgstr "Limiter rayon"
+
+
+msgid "Limit the maximum value of the radius in order to avoid overlapping fillets"
+msgstr "Limiter la valeur maximale du rayon pour éviter que les congés ne se chevauchent"
+
+
+msgid "The number of points on the arc"
+msgstr "Nombre de points sur l’arc"
+
+
+msgid "Position of the first control point"
+msgstr "Position du premier point de contrôle"
+
+
+msgid "Position of the middle control point"
+msgstr "Position du point de contrôle intermédiaire"
+
+
+msgid "Position of the last control point"
+msgstr "Position du dernier point de contrôle"
+
+
+msgid "Distance of the points from the origin"
+msgstr "Distance des points à l’origine"
+
+
 msgid "Start Angle"
 msgstr "Angle début"
 
@@ -122216,20 +123349,76 @@ msgid "Starting angle of the arc"
 msgstr "Angle de début de l’arc"
 
 
+msgid "Sweep Angle"
+msgstr "Angle à parcourir"
+
+
 msgid "Length of the arc"
 msgstr "Longueur de l’arc"
+
+
+msgid "Offset angle of the arc"
+msgstr "Angle duquel décaler l’arc"
 
 
 msgid "Connect Center"
 msgstr "Connecter centre"
 
 
+msgid "Connect the arc at the center"
+msgstr "Connecter l’arc au centre"
+
+
 msgid "Invert Arc"
 msgstr "Inverser arc"
 
 
+msgid "Invert and draw opposite arc"
+msgstr "Inverser et dessiner l’arc opposé"
+
+
+msgid "The center of the circle described by the three points"
+msgstr "Centre du cercle décrit par trois points"
+
+
+msgid "The normal direction of the plane described by the three points, pointing towards the positive Z axis"
+msgstr "Direction normale du plan décrit par les trois points, dirigée vers l’axe Z positif"
+
+
+msgid "The radius of the circle described by the three points"
+msgstr "Rayon du cercle décrit par les trois points"
+
+
+msgid "The number of evaluated points on the curve"
+msgstr "Nombre de points évalués sur la courbe"
+
+
+msgid "Position of the start control point of the curve"
+msgstr "Position du point de contrôle de début de la courbe"
+
+
+msgid "Position of the start handle used to define the shape of the curve. In Offset mode, relative to Start point"
+msgstr "Position de la poignée de début utilisée pour définir la forme de la courbe. En mode Décalage, relativement au point de Début"
+
+
+msgid "Position of the end handle used to define the shape of the curve. In Offset mode, relative to End point"
+msgstr "Position de la poignée de fin utilisée pour définir la forme de la courbe. En mode Décalage, relativement au point de Fin"
+
+
+msgid "Position of the end control point of the curve"
+msgstr "Position du point de contrôle de fin de la courbe"
+
+
+msgid "Number of points on the circle"
+msgstr "Nombre de points sur le cercle"
+
+
 msgid "Point 1"
 msgstr "Point 1"
+
+
+msgid "One of the three points on the circle. The point order determines the circle's direction"
+msgstr "Un des trois points sur le cercle. L’ordre des points détermine la direction du cercle"
 
 
 msgid "Point 2"
@@ -122240,32 +123429,136 @@ msgid "Point 3"
 msgstr "Point 3"
 
 
+msgid "Position of the second control point"
+msgstr "Position du deuxième point de contrôle"
+
+
+msgid "Direction the line is going in. The length of this vector does not matter"
+msgstr "Direction vers laquelle la ligne pointe. La norme de ce vecteur n’a pas d’importance"
+
+
 msgid "Distance between the two points"
 msgstr "Distance entre deux points"
+
+
+msgid "The number of edges on the curve"
+msgstr "Nombre d’arêtes sur la courbe"
+
+
+msgid "Bottom Width"
+msgstr "Largeur bas"
+
+
+msgid "Top Width"
+msgstr "Largeur haut"
+
+
+msgid "The X axis size of the shape"
+msgstr "Taille de la forme dans l’axe X"
+
+
+msgid "The Y axis size of the shape"
+msgstr "Taille de la forme dans l’axe Y"
+
+
+msgid "For Parallelogram, the relative X difference between the top and bottom edges. For Trapezoid, the amount to move the top edge in the positive X axis"
+msgstr "En mode Parallélogramme, la différence relative en X entre les arêtes du bas et du haut. En mode Trapèze, la distance de laquelle décaler l’arête du haut dans l’axe X positif"
+
+
+msgid "Bottom Height"
+msgstr "Hauteur bas"
+
+
+msgid "The distance between the bottom point and the X axis"
+msgstr "Distance entre le point du bas et l’axe X"
+
+
+msgid "Top Height"
+msgstr "Hauteur haut"
+
+
+msgid "The distance between the top point and the X axis"
+msgstr "Distance entre le point du haut et l’axe X"
+
+
+msgid "The exact location of the point to use"
+msgstr "Position exacte du point à utiliser"
 
 
 msgid "Point 4"
 msgstr "Point 4"
 
 
+msgid "Number of points in one rotation of the spiral"
+msgstr "Nombre de points dans un tour de la spirale"
+
+
+msgid "Number of times the spiral makes a full rotation"
+msgstr "Nombre de fois que la spirale fait un tour complet"
+
+
 msgid "Start Radius"
 msgstr "Rayon début"
+
+
+msgid "Horizontal Distance from the Z axis at the start of the spiral"
+msgstr "Distance horizontale entre l’axe Z et le début de la spirale"
 
 
 msgid "End Radius"
 msgstr "Rayon fin"
 
 
+msgid "Horizontal Distance from the Z axis at the end of the spiral"
+msgstr "Distance horizontale entre l’axe Z et la fin de la spirale"
+
+
+msgid "The height perpendicular to the base of the spiral"
+msgstr "Hauteur, perpendiculairement à la base de la spirale"
+
+
+msgid "Switch the direction from clockwise to counterclockwise"
+msgstr "Inverser le sens, d’horaire à anti-horaire"
+
+
+msgid "Number of points on each of the circles"
+msgstr "Nombre de points sur chaque cercle"
+
+
 msgid "Inner Radius"
 msgstr "Rayon interne"
+
+
+msgid "Radius of the inner circle; can be larger than outer radius"
+msgstr "Rayon du cercle interne ; peut être plus grand que le rayon externe"
 
 
 msgid "Outer Radius"
 msgstr "Rayon externe"
 
 
+msgid "Radius of the outer circle; can be smaller than inner radius"
+msgstr "Rayon du cercle interne ; peut être plus petit que le rayon interne"
+
+
+msgid "The counterclockwise rotation of the inner set of points"
+msgstr "Rotation anti-horaire des points internes"
+
+
 msgid "Outer Points"
 msgstr "Points externes"
+
+
+msgid "An attribute field with a selection of the outer points"
+msgstr "Un champ d’attribut contenant une sélection des points externes"
+
+
+msgid "Curve Index"
+msgstr "Indice de courbe"
+
+
+msgid "Input curves do not have Bezier type"
+msgstr "Les courbes en entrée ne sont pas de type Bézier"
 
 
 msgid "Cuts"
@@ -122274,6 +123567,26 @@ msgstr "Découpes"
 
 msgid "The number of control points to create on the segment following each point"
 msgstr "Le nombre de points de contrôle à créer sur le segment après chaque point"
+
+
+msgid "The curve to retrieve data from. Defaults to the curve from the context"
+msgstr "La courbe de laquelle récupérer les données. Utilise la courbe à partir du contexte par défaut"
+
+
+msgid "Values used to sort the curve's points. Uses indices by default"
+msgstr "Valeurs à utiliser pour trier les points de la courbe. Utilise les indices par défaut"
+
+
+msgid "Which of the sorted points to output"
+msgstr "Quels points triés sortir"
+
+
+msgid "A point of the curve, chosen by the sort index"
+msgstr "Un point de la courbe, choisi selon l’indice de tri"
+
+
+msgid "The number of points in the curve"
+msgstr "Nombre de points dans la courbe"
 
 
 msgid "Start (Factor)"
@@ -122292,8 +123605,64 @@ msgid "End (Length)"
 msgstr "Fin (longueur)"
 
 
+msgid "Node only works for curves objects"
+msgstr "Ce nœud ne marche que pour les objets courbes"
+
+
+msgid "Surface UV map not defined"
+msgstr "Carte UV de la surface non définie"
+
+
+msgid "Curves not attached to a surface"
+msgstr "Les courbes ne sont attachées à aucune surface"
+
+
+msgid "Surface has no mesh"
+msgstr "La surface n’a pas de maillage"
+
+
+msgid "Evaluated surface missing UV map: \"%s\""
+msgstr "Il manque une carte UV à la surface évaluée : \"%s\""
+
+
+msgid "Original surface missing UV map: \"%s\""
+msgstr "Il manque une carte UV à la surface originale : \"%s\""
+
+
+msgid "Evaluated surface missing attribute: \"rest_position\""
+msgstr "Il manque un attribut à la surface évaluée : \"rest_position\""
+
+
+msgid "Curves are not attached to any UV map"
+msgstr "Les courbes ne sont attachées à aucune carte UV"
+
+
+msgid "Invalid surface UVs on %d curves"
+msgstr "UV de surface invalide sur pour les courbes %d"
+
+
+msgid "The parts of the geometry to be deleted"
+msgstr "Parties de la géométrie à supprimer"
+
+
 msgid "Disabled, Blender was compiled without OpenVDB"
 msgstr "Désactivé, Blender a été compilé sans OpenVDB"
+
+
+msgid "Number of points to sample per unit volume"
+msgstr "Nombre de points à échantillonner par unité de volume"
+
+
+msgid "Seed used by the random number generator to generate random points"
+msgstr "Graîne à utiliser par le générateur de nombre aléatoire pour générer des points aléatoires"
+
+
+msgid "Spacing between grid points"
+msgstr "Espacement entre les points de la grille"
+
+
+msgid "Minimum density of a volume cell to contain a grid point"
+msgstr "Densité minimale d’une cellule du volume pour qu’elle contienne un point de la grille"
 
 
 msgid "Density Max"
@@ -122304,12 +123673,24 @@ msgid "The number of duplicates to create for each element"
 msgstr "Le nombre de répliques à créer pour chaque élément"
 
 
+msgid "The duplicated geometry, not including the original geometry"
+msgstr "Géométrie dupliquée, sans compter la géométrie d’origine"
+
+
 msgid "Duplicate Index"
 msgstr "Indice de copie"
 
 
 msgid "The indices of the duplicates for each element"
 msgstr "Les indices de copies de chaque élément"
+
+
+msgid "Start Vertices"
+msgstr "Sommets départ"
+
+
+msgid "Next Vertex Index"
+msgstr "Indice prochain sommet"
 
 
 msgid "Unsigned Angle"
@@ -122324,32 +123705,96 @@ msgid "Vertex Index 1"
 msgstr "Indices sommet 1"
 
 
+msgid "The index of the first vertex in the edge"
+msgstr "Indice du premier sommet dans l’arête"
+
+
 msgid "Vertex Index 2"
 msgstr "Indices sommet 2"
+
+
+msgid "The index of the second vertex in the edge"
+msgstr "Indice du deuxième sommet dans l’arête"
 
 
 msgid "Position 1"
 msgstr "Position 1"
 
 
+msgid "The position of the first vertex in the edge"
+msgstr "Position du premier sommet dans l’arête"
+
+
 msgid "Position 2"
 msgstr "Position 2"
+
+
+msgid "The position of the second vertex in the edge"
+msgstr "Position du deuxième sommet dans l’arête"
 
 
 msgid "The surface area of each of the mesh's faces"
 msgstr "L’aire de chacune des faces du maillage"
 
 
+msgid "The distance a point can be from the surface before the face is no longer considered planar"
+msgstr "La distance à laquelle peut se trouver un point depuis la surface pour qu’une face ne soit plus considérée plane"
+
+
 msgid "Vertex Count"
 msgstr "Nombre de sommets"
+
+
+msgid "Number of edges or points in the face"
+msgstr "Nombre d’arêtes ou de points dans la face"
+
+
+msgid "Number of faces which share an edge with the face"
+msgstr "Nombre de faces qui ont une arête en commun avec la face"
 
 
 msgid "Island Index"
 msgstr "Indice d’îlot"
 
 
+msgid "The index of the each vertex's island. Indices are based on the lowest vertex index contained in each island"
+msgstr "L’indice de chaque îlot du sommet. Les indices se fondent sur le plus petit indice de sommet dans chaque îlot"
+
+
+msgid "Island Count"
+msgstr "Nombre d’îlots"
+
+
+msgid "The total number of mesh islands"
+msgstr "Nombre total d’îlots de maillage"
+
+
+msgid "The number of vertices connected to this vertex with an edge, equal to the number of connected edges"
+msgstr "Nombre de sommets connectés à ce sommet par une arête, égal au nombre d’arêtes connectées"
+
+
+msgid "Number of faces that contain the vertex"
+msgstr "Nombre de face contenant ce sommet"
+
+
+msgid "End Vertex"
+msgstr "Sommet fin"
+
+
+msgid "Edge Cost"
+msgstr "Coût d’arête"
+
+
+msgid "Total Cost"
+msgstr "Coût total"
+
+
+msgid "Points to instance on"
+msgstr "Points sur lesquels instancier"
+
+
 msgid "Geometry that is instanced on the points"
-msgstr "Géométrie instanciée sur les points"
+msgstr "Géométrie à instancier sur les points"
 
 
 msgid "Pick Instance"
@@ -122374,6 +123819,18 @@ msgstr "Rotation des instances"
 
 msgid "Scale of the instances"
 msgstr "Taille des instances"
+
+
+msgid "Face Set"
+msgstr "Ensemble de faces"
+
+
+msgid "Boundary Edges"
+msgstr "Arêtes de bordure"
+
+
+msgid "The edges that lie on the boundaries between the different face sets"
+msgstr "Les arêtes qui se trouvent à la limite entre différents ensembles de faces"
 
 
 msgid "Vertices must be at least 3"
@@ -122556,6 +124013,106 @@ msgid "Disabled, Blender was compiled without OpenSubdiv"
 msgstr "Désactivé, Blender a été compilé sans OpenSubdiv"
 
 
+msgid "The face to retrieve data from. Defaults to the face from the context"
+msgstr "La face de laquelle récupérer les données. Utilise la face à partir du contexte par défaut"
+
+
+msgid "Values used to sort the face's corners. Uses indices by default"
+msgstr "Valeurs à utiliser pour trier les coins de la faces. Utilise les indices par défaut"
+
+
+msgid "Which of the sorted corners to output"
+msgstr "Quels coins triés sortir"
+
+
+msgid "Corner Index"
+msgstr "Indice de coin"
+
+
+msgid "A corner of the face, chosen by the sort index"
+msgstr "Un coin de la face, choisi selon l’indice de tri"
+
+
+msgid "The number of corners in the face"
+msgstr "Nombre de coins dans la face"
+
+
+msgid "Vertex Index"
+msgstr "Indice sommet"
+
+
+msgid "The vertex to retrieve data from. Defaults to the vertex from the context"
+msgstr "Le sommet duquel récupérer les données. Utilise le sommet à partir du contexte par défaut"
+
+
+msgid "Values used to sort corners attached to the vertex. Uses indices by default"
+msgstr "Valeurs utilisées pour trier les coins rattachés au sommet. Utilise les indices par défaut"
+
+
+msgid "A corner connected to the face, chosen by the sort index"
+msgstr "Un coin connecté à la face, choisi selon l’indice de tri"
+
+
+msgid "The number of faces or corners connected to each vertex"
+msgstr "Nombre de faces ou de coins connectés à chaque sommet"
+
+
+msgid "The corner to retrieve data from. Defaults to the corner from the context"
+msgstr "Le coin duquel récupérer les données. Utilise le coin à partir du contexte par défaut"
+
+
+msgid "Next Edge Index"
+msgstr "Indice de la prochaine arête"
+
+
+msgid "The edge after the corner in the face, in the direction of increasing indices"
+msgstr "L’arête après le coin dans la face, dans la direction des indices croissants"
+
+
+msgid "Previous Edge Index"
+msgstr "Indice de l’arête précédente"
+
+
+msgid "The edge before the corner in the face, in the direction of decreasing indices"
+msgstr "L’arête avant le coin dans la face, dans la direction des indices décroissants"
+
+
+msgid "Values used to sort the edges connected to the vertex. Uses indices by default"
+msgstr "Valeurs utilisées pour trier les arêtes connectées au sommet. Utilise les indices par défaut"
+
+
+msgid "Which of the sorted edges to output"
+msgstr "Quels arêtes triées sortir"
+
+
+msgid "An edge connected to the face, chosen by the sort index"
+msgstr "Une arête connectée à la face, choisie selon l’indice de tri"
+
+
+msgid "The number of edges connected to each vertex"
+msgstr "Nombre d’arêtes connectées à chaque sommet"
+
+
+msgid "The index of the face the corner is a part of"
+msgstr "L’indice de la face à laquelle le coin appartient"
+
+
+msgid "Index in Face"
+msgstr "Indice dans face"
+
+
+msgid "The index of the corner starting from the first corner in the face"
+msgstr "L’indice du coin, à partir du premier coin de la face"
+
+
+msgid "The number of corners to move around the face before finding the result, circling around the start of the face if necessary"
+msgstr "Le nombre de coins duquel se déplacer autour de la face avant de trouver le résultat, en revenant au début de la face si nécessaire"
+
+
+msgid "The index of the offset corner"
+msgstr "L’indice du coin"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "La géométrie ne peut pas être récupérée depuis l’objet du modificateur"
 
@@ -122566,6 +124123,10 @@ msgstr "Comme instance"
 
 msgid "Output the entire object as single instance. This allows instancing non-geometry object types"
 msgstr "Renvoie l’objet entier comme une seule instance. Cela permet d’instancier des types d’objets non-géométriques"
+
+
+msgid "The index of the control point to evaluate. Defaults to the current index"
+msgstr "L’indice du point de contrôle à évaluer. Utilise l’indice actuel par défaut"
 
 
 msgid "The number of points to create"
@@ -123269,7 +124830,7 @@ msgstr "La caméra « %s » n’est pas une caméra multivues"
 
 
 msgid "No active view found in scene \"%s\""
-msgstr "Pas de vue active dans la scène « %s »"
+msgstr "Aucune vue active dans la scène « %s »"
 
 
 msgid "%s: no Combined pass found in the render layer '%s'"

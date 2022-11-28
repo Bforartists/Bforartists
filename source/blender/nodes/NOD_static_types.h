@@ -418,7 +418,7 @@ DefNode(GeometryNode, GEO_NODE_SUBDIVIDE_CURVE, 0, "SUBDIVIDE_CURVE", SubdivideC
 DefNode(GeometryNode, GEO_NODE_SUBDIVIDE_MESH, 0, "SUBDIVIDE_MESH", SubdivideMesh, "Subdivide Mesh", "Add a Subdivide Mesh Geometry node\nDivide mesh faces into smaller ones without changing the shape or volume, using linear interpolation to place the new vertices")
 DefNode(GeometryNode, GEO_NODE_SUBDIVISION_SURFACE, def_geo_subdivision_surface, "SUBDIVISION_SURFACE",SubdivisionSurface, "Subdivision Surface","Add a Subdivision Surface Geometry node\nDivide mesh faces to form a smooth surface, using the Catmull-Clark subdivision method")
 DefNode(GeometryNode, GEO_NODE_SWITCH, def_geo_switch, "SWITCH", Switch, "Switch", "Add a Switch Geometry node\nSwitch between two inputs")
-DefNode(GeometryNode, GEO_NODE_TRANSFORM, 0, "TRANSFORM", Transform, "Transform", "Add a Transform Geometry node\nTranslate, rotate or scale the geometry")
+DefNode(GeometryNode, GEO_NODE_TRANSFORM_GEOMETRY, 0, "TRANSFORM_GEOMETRY", Transform, "Transform Geometry", "Add a Transform Geometry node\nTranslate, rotate or scale the geometry")
 DefNode(GeometryNode, GEO_NODE_TRANSLATE_INSTANCES, 0, "TRANSLATE_INSTANCES",TranslateInstances, "Translate Instances","Add a Translate Instances Geometry node\nMove top-level geometry instances in local or global space")
 DefNode(GeometryNode, GEO_NODE_TRIANGULATE, def_geo_triangulate, "TRIANGULATE", Triangulate, "Triangulate", "Add a Triangulate Geometry node\nConvert all faces in a mesh to triangular faces")
 DefNode(GeometryNode, GEO_NODE_TRIM_CURVE, def_geo_curve_trim, "TRIM_CURVE", TrimCurve, "Trim Curve", "Add a Trim Curve Geometry node\nShorten curves by removing portions at the start or end")

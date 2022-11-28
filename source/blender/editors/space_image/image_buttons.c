@@ -960,6 +960,7 @@ void uiTemplateImage(uiLayout *layout,
       }
       uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       uiItemR(col, &imaptr, "use_view_as_render", 0, NULL, ICON_NONE);
+      uiItemR(col, &imaptr, "seam_margin", 0, NULL, ICON_NONE);
       uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
     }
   }
