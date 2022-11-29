@@ -3817,7 +3817,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSeparateGeometry"
 
-            props = col.operator("node.add_node", text=" Transform                  ", icon = "NODE_TRANSFORM")
+            props = col.operator("node.add_node", text=" Transform Geometry  ", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
 
