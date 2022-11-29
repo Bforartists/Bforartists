@@ -4048,7 +4048,9 @@ static void tile_add_draw(bContext *UNUSED(C), wmOperator *op)
   uiItemR(col, op->ptr, "number", 0, NULL, ICON_NONE);
   uiItemR(col, op->ptr, "count", 0, NULL, ICON_NONE);
   uiItemR(col, op->ptr, "label", 0, NULL, ICON_NONE);
+  uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
   uiItemR(layout, op->ptr, "fill", 0, NULL, ICON_NONE);
+  uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = True */
 
   if (RNA_boolean_get(op->ptr, "fill")) {
     draw_fill_tile(op->ptr, layout);
