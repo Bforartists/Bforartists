@@ -7554,12 +7554,19 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row.separator()
         row.prop(overlay, "show_face_orientation")
 
-        row = col.row(align=True)
-        row.active = view.show_viewer
-        row.prop(overlay, "show_viewer_attribute", text="")
-        subrow = row.row(align=True)
-        subrow.active = overlay.show_viewer_attribute
-        subrow.prop(overlay, "viewer_attribute_opacity", text="Viewer Node")
+        col = layout.column(align=True)
+        col.active = display_all
+        split = col.split()
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "show_viewer_attribute")
+
+        row = split.row(align=True)
+        if overlay.show_viewer_attribute:
+            row.prop(overlay, "viewer_attribute_opacity", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
 
         # These properties should be always available in the UI for all modes
         # other than Object.
@@ -8394,6 +8401,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
 
         row = layout.row()
         row.separator()
+        row.active = display_all
         row.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
 
         col = layout.column(align=True)
@@ -8441,6 +8449,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         if context.object.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
             split = layout.split()
             col = split.column()
+            col.active = display_all
             row = col.row()
             row.separator()
             row.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
@@ -8451,31 +8460,47 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                 col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             if context.object.mode == 'EDIT_GPENCIL':
-                split = layout.split()
-                col = split.column()
+
+                col = layout.column()
+                col.active = display_all
                 row = col.row()
                 row.separator()
                 row.prop(overlay, "use_gpencil_show_directions")
-                col = split.column()
-                col.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
+                col = layout.column()
+                col.active = display_all
+                row = col.row()
+                row.separator()
+                row.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
 
-            layout.use_property_split = True
-            layout.separator()
-            row = layout.row()
-            row.separator()
-            row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
+                layout.use_property_split = True
+                layout.active = display_all
+                if not gpd.use_curve_edit:
+                    row = layout.row()
+                    row.separator()
+                    row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
+                else:
+                    # Handles for Curve Edit
+                    row = layout.row()
+                    row.separator()
+                    row.prop(overlay, "display_handle", text="Handles")
 
             # Handles for Curve Edit
             if context.object.mode == 'EDIT_GPENCIL':
                 gpd = context.object.data
+                layout.active = display_all
                 if gpd.use_curve_edit:
                     layout.prop(overlay, "display_handle", text="Handles")
 
         if context.object.mode == 'SCULPT_GPENCIL':
-            layout.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
+            layout.use_property_split = True
+            layout.active = display_all
+            row = layout.row()
+            row.separator()
+            row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
 
         if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
             layout.label(text="Vertex Paint")
+            layout.active = display_all
             row = layout.row()
             shading = VIEW3D_PT_shading.get_shading(context)
             row.enabled = shading.type not in {'WIREFRAME', 'RENDERED'}
