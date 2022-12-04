@@ -493,12 +493,11 @@ class NODE_MT_node(Menu):
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
         layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
 
-
         layout.separator()
 
         layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input", icon = "DUPLICATE")
         layout.operator("node.duplicate_move", icon = "DUPLICATE")
-        layout.operator("node.duplicate_move_linked")
+        layout.operator("node.duplicate_move_linked", icon = "DUPLICATE")
         layout.operator("node.delete", icon = "DELETE")
         layout.operator("node.delete_reconnect", icon = "DELETE")
 
