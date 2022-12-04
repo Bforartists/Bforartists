@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2022-11-24 19:59+0100\n"
+"PO-Revision-Date: 2022-12-01 15:24+0100\n"
 "Last-Translator: Damien Picard (pioverfour) <dam.pic@free.fr>\n"
 "Language-Team: French https://wiki.blender.org/wiki/Process/Translate_Blender/French_Team\n"
 "Language: fr\n"
@@ -30055,7 +30055,7 @@ msgstr "Élément d’un ensemble de raccourcis"
 
 
 msgid "Item in a Key Map"
-msgstr "Élément dans un ensemble raccourcis"
+msgstr "Élément dans un ensemble de raccourcis"
 
 
 msgid "Activate or deactivate item"
@@ -121476,6 +121476,11 @@ msgid "Object is shown in front"
 msgstr "L’objet est affiché à l’avant"
 
 
+msgctxt "GPencil"
+msgid "Cast Shadow"
+msgstr "Ombre projetée"
+
+
 msgid "Edge Types"
 msgstr "Types d’arêtes"
 
@@ -121528,6 +121533,14 @@ msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "Enregistrement de la classe de propriété id : « %s » est trop long, longueur maximum de %d"
 
 
+msgid "ID '%s' isn't an override"
+msgstr "L’ID « %s » n’est pas une redéfinition"
+
+
+msgid "ID '%s' is linked, cannot edit its overrides"
+msgstr "L’ID « %s » est liée, impossible d’éditer ses redéfinitions"
+
+
 msgid "%s is not compatible with %s 'refresh' options"
 msgstr "%s n’est pas compatible avec les options %s de « rafraîchissement »"
 
@@ -121550,6 +121563,10 @@ msgstr "Seules les propriétés booléennes, entières, flottantes et énum sont
 
 msgid "Only boolean, int and float properties supported"
 msgstr "Seules les propriétés booléennes, entières et flottantes sont prises en charge"
+
+
+msgid "'%s' does not contain '%s' with prefix and suffix"
+msgstr "« %s » ne contient pas « %s » avec préfixe et suffixe"
 
 
 msgid "'%s' doesn't have upper case alpha-numeric prefix"
@@ -121660,16 +121677,60 @@ msgid "Armature '%s' does not contain bone '%s'"
 msgstr "L’armature « %s » ne contient pas l’os « %s »"
 
 
+msgid "Tag '%s' already present for given asset"
+msgstr "L’étiquette « %s » existe déjà dans cet asset"
+
+
 msgid "Tag '%s' not found in given asset"
 msgstr "L’étiquette « %s » est introuvable dans l’asset spécifié"
+
+
+msgid "Cannot modify name of required geometry attribute"
+msgstr "Impossible de modifier le nom de l’attribut de géométrie demandé"
+
+
+msgid "Attribute per point/vertex"
+msgstr "Attribut par point / sommet"
 
 
 msgid "Layer '%s' not found in object '%s'"
 msgstr "Le calque « %s » est introuvable dans l’objet « %s »"
 
 
+msgid "Cannot add a layer to CacheFile '%s'"
+msgstr "Impossible d’ajouter un calque au fichier de calque « %s »"
+
+
 msgid "Background image cannot be removed"
 msgstr "Impossible d’enlever l’image d’arrière-plan"
+
+
+msgid "Collection '%s' is not an original ID"
+msgstr "La collection « %s » n’est pas un ID original"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
+msgstr "Impossible de (de-)lier l’objet « %s » car la collection « %s » est redéfinie"
+
+
+msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
+msgstr "Impossible de (de-)lier l’objet « %s » car la collection « %s » est liée"
+
+
+msgid "Object '%s' already in collection '%s'"
+msgstr "L’objet « %s » est déjà dans la collection « %s »"
+
+
+msgid "Object '%s' not in collection '%s'"
+msgstr "L’objet « %s » n’est pas dans la collection « %s »"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
+msgstr "Impossible de (de-)lier la collection « %s » car la collection « %s » est redéfinie"
+
+
+msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
+msgstr "Impossible de (de-)lier la collection « %s » car la collection « %s » est liée"
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -121686,6 +121747,10 @@ msgstr "L’élément est introuvable dans la collection d’éléments ou le de
 
 msgid "Unable to remove curve point"
 msgstr "Impossible d’enlever le point de courbe"
+
+
+msgid "CurveMapping does not own CurveMap"
+msgstr "La conversion par courbe n’est pas propriétaire de la courbe"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -121720,6 +121785,18 @@ msgstr "Seules des courbes de Bézier peuvent être ajoutées"
 
 msgid "Curve '%s' does not contain spline given"
 msgstr "La courbe « %s » ne contient pas la courbe (spline) donnée"
+
+
+msgid "Unable to remove path point"
+msgstr "Impossible d’enlever le point du chemin"
+
+
+msgid "CurveProfile table not initialized, call initialize()"
+msgstr "La table de CurveProfile n’est pas initialisée, appeler initialize()"
+
+
+msgid "Dependency graph update requested during evaluation"
+msgstr "Mise à jour du graphe de dépendance demandée pendant l’évaluation"
 
 
 msgid "Variable does not exist in this driver"
@@ -121762,8 +121839,128 @@ msgid "Invalid frame range (%d - %d)"
 msgstr "Intervalle de frames invalide (%d - %d)"
 
 
+msgid "Binary Object"
+msgstr "Objet binaire"
+
+
+msgid "Binary object file format (.bobj.gz)"
+msgstr "Format de fichier objet binaire (.bobj.gz)"
+
+
+msgid "Object file format (.obj)"
+msgstr "Format de fichier objet (.obj)"
+
+
+msgid "Uni Cache"
+msgstr "Cache Uni"
+
+
+msgid "Uni file format (.uni)"
+msgstr "Format de fichier Uni (.uni)"
+
+
+msgid "OpenVDB"
+msgstr "OpenVDB"
+
+
+msgid "OpenVDB file format (.vdb)"
+msgstr "Format de fichier OpenVDB (.vdb)"
+
+
+msgid "Raw Cache"
+msgstr "Cache brut"
+
+
+msgid "Raw file format (.raw)"
+msgstr "Format de fichier brut (.raw)"
+
+
+msgid "Uni file format"
+msgstr "Format de fichier Uni"
+
+
+msgid "Pressure field of the fluid domain"
+msgstr "Champ de pression du domaine de fluide"
+
+
+msgid "X Velocity"
+msgstr "Vélocité X"
+
+
+msgid "X component of the velocity field"
+msgstr "Composante en X du champ de vélocité"
+
+
+msgid "Y Velocity"
+msgstr "Vélocité Y"
+
+
+msgid "Y component of the velocity field"
+msgstr "Composante en Y du champ de vélocité"
+
+
+msgid "Z Velocity"
+msgstr "Vélocité Z"
+
+
+msgid "Z component of the velocity field"
+msgstr "Composante en Z du champ de vélocité"
+
+
+msgid "X Force"
+msgstr "Force X"
+
+
+msgid "X component of the force field"
+msgstr "Composante en X du champ de force"
+
+
+msgid "Y Force"
+msgstr "Force Y"
+
+
+msgid "Y component of the force field"
+msgstr "Composante en Y du champ de force"
+
+
+msgid "Z Force"
+msgstr "Force Z"
+
+
+msgid "Z component of the force field"
+msgstr "Composante en Z du champ de force"
+
+
+msgid "Red component of the color field"
+msgstr "Composante rouge du champ de couleur"
+
+
+msgid "Green component of the color field"
+msgstr "Composante verte du champ de couleur"
+
+
+msgid "Blue component of the color field"
+msgstr "Composante bleue du champ de couleur"
+
+
+msgid "Quantity of soot in the fluid"
+msgstr "Quantité de suie dans le fluide"
+
+
 msgid "Flame"
 msgstr "Flamme"
+
+
+msgid "Flame field"
+msgstr "Champ de flamme"
+
+
+msgid "Fuel field"
+msgstr "Champ de combustible"
+
+
+msgid "Temperature of the fluid"
+msgstr "Température du fluide"
 
 
 msgid "Fluid Level Set"
@@ -121798,8 +121995,32 @@ msgid "Level set representation of the obstacles"
 msgstr "Représentation des obstacles sous forme de lignes de niveaux"
 
 
+msgid "Mini"
+msgstr "Mini"
+
+
+msgid "Mini float (Use 8 bit where possible, otherwise use 16 bit)"
+msgstr "Précision flottante mini (utiliser 8 bits si possible, sinon utiliser 16 bits)"
+
+
+msgid "Emit fluid from mesh surface or volume"
+msgstr "Émettre du fluide depuis la surface ou le volume du maillage"
+
+
+msgid "Emit smoke from particles"
+msgstr "Émettre de la fumée depuis les particules"
+
+
 msgid "GPencilStrokePoints.pop: index out of range"
 msgstr "GPencilStrokePoints.pop : indice hors de l’intervalle"
+
+
+msgid "Groups: No groups for this stroke"
+msgstr "Groupes : aucun groupe pour ce trait"
+
+
+msgid "GPencilStrokePoints: index out of range"
+msgstr "GPencilStrokePoints : indice hors de l’intervalle"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -121826,6 +122047,10 @@ msgid "Modify"
 msgstr "Modifier"
 
 
+msgid "Cannot assign material '%s', it has to be used by the grease pencil object already"
+msgstr "Impossible d’assigner le matériau « %s », il doit déjà être utilisé par l’objet crayon gras"
+
+
 msgid "Image not packed"
 msgstr "Image non empaquetée"
 
@@ -121849,6 +122074,10 @@ msgstr "Impossible de charger la texture image « %s »"
 msgctxt "Key"
 msgid "Key"
 msgstr "Clé"
+
+
+msgid "ViewLayer '%s' does not contain object '%s'"
+msgstr "Le calque de vue « %s » ne contient pas l’objet « %s »"
 
 
 msgid "Failed to add the color modifier"
@@ -121911,6 +122140,10 @@ msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=
 msgstr "%s « %s » doit avoir zéro utilisateur pour être supprimé, %d trouvés (essayer avec le paramètre do_unlink=True)"
 
 
+msgid "Scene '%s' is the last local one, cannot be removed"
+msgstr "La scène « %s » est la dernière locale, elle ne peut pas être supprimée"
+
+
 msgid "ID type '%s' is not valid for an object"
 msgstr "Le type d’ID « %s » n’est pas valide pour un objet"
 
@@ -121951,6 +122184,10 @@ msgid "Face map not in mesh"
 msgstr "Carte de faces pas dans le maillage"
 
 
+msgid "Error removing face map"
+msgstr "Erreur lors de la suppression de la carte de faces"
+
+
 msgid "Texture layer '%s' not found"
 msgstr "Le calque de texture « %s » est introuvable"
 
@@ -121987,6 +122224,34 @@ msgid "NLA strip '%s' not found in track '%s'"
 msgstr "La bande NLA « %s » est introuvable dans la piste « %s »"
 
 
+msgid "Functions"
+msgstr "Fonctions"
+
+
+msgid "Comparison"
+msgstr "Comparaison"
+
+
+msgid "Trigonometric"
+msgstr "Trigonométrique"
+
+
+msgid "Conversion"
+msgstr "Conversion"
+
+
+msgid "CustomGroup"
+msgstr "GroupePersonnalisé"
+
+
+msgid "Custom Group Node"
+msgstr "Nœud de groupe personnalisé"
+
+
+msgid "UNDEFINED"
+msgstr "INDÉFINI"
+
+
 msgid "Same input/output direction of sockets"
 msgstr "Même direction d’entrée/sortie des prises"
 
@@ -121999,6 +122264,22 @@ msgid "Unable to create socket"
 msgstr "Impossible de créer la prise"
 
 
+msgid "Cannot add socket to built-in node"
+msgstr "Impossible d’ajouter une prise à un nœud intégré"
+
+
+msgid "Unable to remove socket from built-in node"
+msgstr "Impossible d’enlever une prise d’un nœud intégré"
+
+
+msgid "Unable to remove sockets from built-in node"
+msgstr "Impossible d’enlever des prises d’un nœud intégré"
+
+
+msgid "Unable to move sockets in built-in node"
+msgstr "Impossible de déplacer des prises d’un nœud intégré"
+
+
 msgid "Registering node tree class: '%s' is too long, maximum length is %d"
 msgstr "Enregistrement de la classe d’arborescence de nœuds : « %s » est trop long, longueur maximum de %d"
 
@@ -122009,6 +122290,14 @@ msgstr "L’arborescence de nœuds « %s » a un type indéfini %s"
 
 msgid "Node type %s undefined"
 msgstr "Type de nœud %s non-défini"
+
+
+msgid ""
+"Cannot add node of type %s to node tree '%s'\n"
+"  %s"
+msgstr ""
+"Impossible d’ajouter un nœud de type %s à l’arborescence de nœuds « %s »\n"
+"  %s"
 
 
 msgid "Cannot add node of type %s to node tree '%s'"
@@ -122067,6 +122356,14 @@ msgid "Constraint '%s' not found in object '%s'"
 msgstr "La contrainte « %s » est introuvable dans l’objet « %s »"
 
 
+msgid "Could not move constraint from index '%d' to '%d'"
+msgstr "Impossible de déplacer la contrainte de l’indice %d vers %d"
+
+
+msgid "Modifier \"%s\" is not in the object's modifier list"
+msgstr "Le modificateur « %s » n’est pas dans la liste de modificateurs de l’objet"
+
+
 msgid "%s is not supported for '%s' objects"
 msgstr "%s n’est pas pris en charge pour les objets « %s »"
 
@@ -122075,8 +122372,20 @@ msgid "DeformGroup '%s' not in object '%s'"
 msgstr "Le groupe de déformation « %s » n’est pas présent dans l’objet « %s »"
 
 
+msgid "Face map '%s' not in object '%s'"
+msgstr "La carte de faces « %s » n’est pas présente dans l’objet « %s »"
+
+
 msgid "Viewport not in local view"
 msgstr "Vue pas en vue locale"
+
+
+msgid "Object is not a curve or a text"
+msgstr "L’objet n’est pas une courbe ni un texte"
+
+
+msgid "Invalid depsgraph"
+msgstr "Graphe de dépendances invalide"
 
 
 msgid "ShapeKey not found"
@@ -122103,16 +122412,32 @@ msgid "Bad vertex index in list"
 msgstr "Mauvais indice de sommet dans la liste"
 
 
+msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
+msgstr "L’objet « %s » ne peut pas être sélectionné car il n’est pas dans le calque de vue « %s » !"
+
+
+msgid "Object '%s' can't be hidden because it is not in View Layer '%s'!"
+msgstr "L’objet « %s » ne peut pas être caché car il n’est pas dans le calque de vue « %s » !"
+
+
 msgid "Object %s not in view layer %s"
 msgstr "L’objet %s n’est pas dans le calque de vue %s"
 
 
 msgid "'from_space' '%s' is invalid when no pose bone is given!"
-msgstr "« from_space » « %s« n’est pas valide quand aucun os de pose n’est fourni !"
+msgstr "« from_space » '%s' est invalide quand aucun os de pose n’est fourni !"
 
 
 msgid "'to_space' '%s' is invalid when no pose bone is given!"
-msgstr "« to_space » « %s« n’est pas valide quand aucun os de pose n’est fourni !"
+msgstr "« to_space » '%s' est invalide quand aucun os de pose n’est fourni !"
+
+
+msgid "'from_space' '%s' is invalid when no custom space is given!"
+msgstr "« from_space » '%s' est invalide quand aucun os de pose n’est fourni !"
+
+
+msgid "'to_space' '%s' is invalid when no custom space is given!"
+msgstr "« to_space » '%s' est invalide quand aucun os de pose n’est fourni !"
 
 
 msgid "Object '%s' does not support shapes"
@@ -122124,7 +122449,7 @@ msgstr "L’objet « %s » n’a pas de données maillage évaluées"
 
 
 msgid "Object '%s' could not create internal data for finding nearest point"
-msgstr "L’objet « %s » n’a pu créer les données internes nécessaires pour trouver le point le plus proche"
+msgstr "L’objet « %s » n’a pas pu créer les données internes nécessaires pour trouver le point le plus proche"
 
 
 msgid "Object '%s' is not valid for this operation! Only curves are supported"
@@ -122133,6 +122458,10 @@ msgstr "L’objet « %s » n’est pas valide pour pour cette opération ! S
 
 msgid "Palette '%s' does not contain color given"
 msgstr "La palette « %s » ne contient pas la couleur donnée"
+
+
+msgid "uv_on_emitter() requires a modifier from an evaluated object"
+msgstr "uv_on_emitter() nécessite un modificateur depuis un objet évalué"
 
 
 msgid "Mesh has no UV data"
@@ -122184,12 +122513,16 @@ msgid "Rigidbody world was not properly initialized, need to step the simulation
 msgstr "Le monde des corps rigides n’a pas été initialisé proprement, vous devez d’abord faire avancer frame à frame la simulation"
 
 
+msgid "Use the scene orientation"
+msgstr "Utiliser l’orientation de la scène"
+
+
 msgid "Keying set could not be added"
 msgstr "Impossible d’ajouter l’ensemble de clés"
 
 
 msgid "Style module could not be removed"
-msgstr "Le module de style n’a pu être supprimé"
+msgstr "Le module de style n’a pas pu être supprimé"
 
 
 msgid "View Layer '%s' not found in scene '%s'"
@@ -122212,12 +122545,20 @@ msgid "Style module '%s' could not be removed"
 msgstr "Le module de style « %s » n’a pu être supprimé"
 
 
+msgid "Sequence type must be 'META'"
+msgstr "Le type de la séquence doit être 'META'"
+
+
 msgid "Sequence type does not support modifiers"
 msgstr "Ce type de séquence ne prend pas en charge les modificateurs"
 
 
 msgid "Modifier was not found in the stack"
 msgstr "Le modificateur est introuvable dans la pile"
+
+
+msgid "Recursion detected, can not use this strip"
+msgstr "Récursion détectée, impossible d’utiliser cette bande"
 
 
 msgid "Sequences.new_sound: unable to open sound file"
@@ -122262,6 +122603,10 @@ msgstr "La séquence « %s » n’est pas dans cette scène « %s »"
 
 msgid "Sound not packed"
 msgstr "Son non-empaqueté"
+
+
+msgid "Scripting"
+msgstr "Script"
 
 
 msgid "'show_locked_time' is not supported for the '%s' editor"
@@ -122392,6 +122737,10 @@ msgid "GizmoType '%s' not known"
 msgstr "Type de gizmo « %s » inconnu"
 
 
+msgid "GizmoType '%s' is for a 3D gizmo-group. The 'draw_select' callback is set where only 'test_select' will be used"
+msgstr "Le type de gizmo « %s » est pour un groupe de gizmos 3D. Le callback 'draw_select' est défini mais seul 'test_select' sera utilisé"
+
+
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"
 msgstr "Enregistrement de la classe de groupe gizmo : « %s » est trop long, longueur maximum de %d"
 
@@ -122458,6 +122807,26 @@ msgstr "Le nombre de copies est trop grand, impossible de générer la quantité
 
 msgid "Enable 'Auto Smooth' in Object Data Properties"
 msgstr "Activer « Lissage auto » dans les propriétés de données d’objet"
+
+
+msgid "Cannot execute, intersect only available using exact solver"
+msgstr "Exécution impossible, l’intersection n’est disponible qu’avec le solveur exact"
+
+
+msgid "Cannot execute, fast solver and empty collection"
+msgstr "Exécution impossible, solveur rapide et collection vide"
+
+
+msgid "Cannot execute, the selected collection contains non mesh objects"
+msgstr "Exécution impossible, la collection sélectionnée contient des objets qui ne sont pas des maillages"
+
+
+msgid "Cannot execute boolean operation"
+msgstr "Exécution  de l’opération booléenne impossible"
+
+
+msgid "Solver Options"
+msgstr "Options de solveur"
 
 
 msgid "Settings are inside the Physics tab"
@@ -123237,6 +123606,14 @@ msgid "Geometry Node Editor"
 msgstr "Éditeur de nœuds géométrie"
 
 
+msgid "Leading"
+msgstr "Valeur de tête"
+
+
+msgid "Trailing"
+msgstr "Valeur de queue"
+
+
 msgid "An index used to group values together for multiple separate accumulations"
 msgstr "Un indice utilisé pour regrouper des valeurs, pour plusieurs accumulations distinctes"
 
@@ -123561,6 +123938,18 @@ msgid "Input curves do not have Bezier type"
 msgstr "Les courbes en entrée ne sont pas de type Bézier"
 
 
+msgid "For points, the portion of the spline's total length at the control point. For Splines, the factor of that spline within the entire curve"
+msgstr "Pour les points, la proportion de la longueur totale de la spline au point de contrôle. Pour les splines, le facteur de cette spline dans la courbe entière"
+
+
+msgid "For points, the distance along the control point's spline, For splines, the distance along the entire curve"
+msgstr "Pour les points, la distance le long de la spline du point de contrôle. Pour les splines, la distance le long de la courbe entière"
+
+
+msgid "Each control point's index on its spline"
+msgstr "L’indice de chaque point de contrôle sur sa spline"
+
+
 msgid "Cuts"
 msgstr "Découpes"
 
@@ -123569,12 +123958,40 @@ msgid "The number of control points to create on the segment following each poin
 msgstr "Le nombre de points de contrôle à créer sur le segment après chaque point"
 
 
+msgid "Profile Curve"
+msgstr "Courbe de profil"
+
+
+msgid "If the profile spline is cyclic, fill the ends of the generated mesh with N-gons"
+msgstr "Si la spline de profil est cyclique, remplir les extrémités du maillage généré avec des n-gones"
+
+
+msgid "The control point to retrieve data from"
+msgstr "Le point de contrôle duquel récupérer les données"
+
+
+msgid "The curve the control point is part of"
+msgstr "La courbe à laquelle le point de contrôle appartient"
+
+
+msgid "Index in Curve"
+msgstr "Indice dans courbe"
+
+
+msgid "How far along the control point is along its curve"
+msgstr "L’avancée du point le long de sa courbe"
+
+
 msgid "The curve to retrieve data from. Defaults to the curve from the context"
 msgstr "La courbe de laquelle récupérer les données. Utilise la courbe à partir du contexte par défaut"
 
 
 msgid "Values used to sort the curve's points. Uses indices by default"
 msgstr "Valeurs à utiliser pour trier les points de la courbe. Utilise les indices par défaut"
+
+
+msgid "Sort Index"
+msgstr "Indice tri"
 
 
 msgid "Which of the sorted points to output"
@@ -123693,12 +124110,28 @@ msgid "Next Vertex Index"
 msgstr "Indice prochain sommet"
 
 
+msgid "Offset Scale"
+msgstr "Échelle du décalage"
+
+
+msgid "Output the handle positions relative to the corresponding control point instead of in the local space of the geometry"
+msgstr "Renvoyer les positions des poignées relativement au point de contrôle correspondant plutôt que dans l’espace local de la géométrie"
+
+
+msgid "The values from the \"id\" attribute on points, or the index if that attribute does not exist"
+msgstr "Les valeurs de l’attribut \"id\" sur les points, ou l’indice si cet attribut n’existe pas"
+
+
 msgid "Unsigned Angle"
 msgstr "Angle non-orienté"
 
 
 msgid "Signed Angle"
 msgstr "Angle orienté"
+
+
+msgid "The number of faces that use each edge as one of their sides"
+msgstr "Le nombre de faces ayant chaque arête sur un de ses côtés"
 
 
 msgid "Vertex Index 1"
@@ -123789,6 +124222,10 @@ msgid "Total Cost"
 msgstr "Coût total"
 
 
+msgid "Realized geometry is not used when pick instances is true"
+msgstr "La géométrie rendue réelle n’est pas utilisée quand Choisir instance est activé"
+
+
 msgid "Points to instance on"
 msgstr "Points sur lesquels instancier"
 
@@ -123823,6 +124260,10 @@ msgstr "Taille des instances"
 
 msgid "Face Set"
 msgstr "Ensemble de faces"
+
+
+msgid "An identifier for the group of each face. All contiguous faces with the same value are in the same region"
+msgstr "Un identifiant pour le groupe de chaque face. Toutes les faces contigues avec la même valeur sont dans la même région"
 
 
 msgid "Boundary Edges"
@@ -124113,6 +124554,10 @@ msgid "The index of the offset corner"
 msgstr "L’indice du coin"
 
 
+msgid "The vertex the corner is attached to"
+msgstr "Le sommet auquel le coin est attaché"
+
+
 msgid "Geometry cannot be retrieved from the modifier object"
 msgstr "La géométrie ne peut pas être récupérée depuis l’objet du modificateur"
 
@@ -124127,6 +124572,22 @@ msgstr "Renvoie l’objet entier comme une seule instance. Cela permet d’insta
 
 msgid "The index of the control point to evaluate. Defaults to the current index"
 msgstr "L’indice du point de contrôle à évaluer. Utilise l’indice actuel par défaut"
+
+
+msgid "The number of control points along the curve to traverse"
+msgstr "Nombre de points de contrôle à traverser le long de la courbe"
+
+
+msgid "Is Valid Offset"
+msgstr "Est décalage valide"
+
+
+msgid "Outputs true if the evaluated control point plus the offset is a valid index of the original curve"
+msgstr "Renvoie vrai si le point de contrôle évalué plus le décalage est un indice valide de la courbe originale"
+
+
+msgid "The index of the control point plus the offset within the entire curves data-block"
+msgstr "L’indice du point de contrôle plus le décalage dans tout le bloc de données de courbes"
 
 
 msgid "The number of points to create"
@@ -124359,6 +124820,10 @@ msgstr "Bloc de données manquant"
 
 msgid "Nesting a node group inside of itself is not allowed"
 msgstr "Imbriquer un groupe de nœuds à l’intérieur de lui-meme n’est pas permis"
+
+
+msgid "Node group has different type"
+msgstr "Le groupe de nœuds a un type différent"
 
 
 msgid "Instances in input geometry are ignored"
@@ -124790,7 +125255,7 @@ msgstr "Fra:%d Mém:%.2fM (Pic %.2fM) "
 
 
 msgid "| Time:%s | "
-msgstr "| Temps : %s | "
+msgstr "| Temps: %s | "
 
 
 msgid "Image too small"
@@ -124814,15 +125279,23 @@ msgstr "Pas d’arborescence de nœuds dans la scène"
 
 
 msgid "No render output node in scene"
-msgstr "Pas de nœud de sortie du rendu dans la scène"
+msgstr "Pas de nœud de sortie de rendu dans la scène"
 
 
 msgid "All render layers are disabled"
-msgstr "Tous les calques de rendu sont déactivés"
+msgstr "Tous les calques de rendu sont désactivés"
 
 
 msgid "No frames rendered, skipped to not overwrite"
-msgstr "Aucune frame de rendue, ignorée pour ne pas écraser"
+msgstr "Aucune frame rendue, ignorée pour ne pas écraser"
+
+
+msgid "No camera found in scene \"%s\" (used in compositing of scene \"%s\")"
+msgstr "Aucune caméra trouvée dans la scène « %s » (utilisé dans le compositing de la scène « %s »)"
+
+
+msgid "No camera found in scene \"%s\""
+msgstr "Aucune caméra trouvée dans la scène « %s »"
 
 
 msgid "Camera \"%s\" is not a multi-view camera"
@@ -125549,6 +126022,14 @@ msgstr "défaut Blender"
 
 msgid "industry compatible data"
 msgstr "données compatible industrie"
+
+
+msgid "sl+open sim rigged"
+msgstr "Second Life et OpenSimulator, avec rig"
+
+
+msgid "sl+open sim static"
+msgstr "Second Life et OpenSimulator, statique"
 
 
 msgid "4K DCI 2160p"

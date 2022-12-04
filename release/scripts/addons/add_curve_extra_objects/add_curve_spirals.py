@@ -30,7 +30,7 @@ from mathutils import (
 from math import (
         sin, cos, pi
         )
-from bpy_extras.object_utils import object_data_add
+from bpy_extras import object_utils
 from bpy.types import (
         Operator,
         Menu,
@@ -174,21 +174,6 @@ def make_spiral_torus(props, context):
 
     return verts
 
-# ------------------------------------------------------------
-# calculates the matrix for the new object
-# depending on user pref
-
-def align_matrix(context, location):
-    loc = Matrix.Translation(location)
-    obj_align = context.preferences.edit.object_align
-    if (context.space_data.type == 'VIEW_3D' and
-            obj_align == 'VIEW'):
-        rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
-    else:
-        rot = Matrix()
-    align_matrix = loc @ rot
-
-    return align_matrix
 
 # ------------------------------------------------------------
 # get array of vertcoordinates according to splinetype
@@ -214,7 +199,10 @@ def vertsToPoints(Verts, splineType):
                 vertArray.append(0)
     return vertArray
 
-def draw_curve(props, context, align_matrix):
+
+# ------------------------------------------------------------
+# create curve object according to the values of the add object editor
+def draw_curve(props, context):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = props.curve_type
 
@@ -237,9 +225,8 @@ def draw_curve(props, context, align_matrix):
         newSpline = dataCurve.splines.new(type=splineType)          # spline
 
         # create object with newCurve
-        Curve = object_data_add(context, dataCurve)  # place in active scene
-        Curve.matrix_world = align_matrix  # apply matrix
-        Curve.rotation_euler = props.rotation_euler
+        Curve = object_utils.object_data_add(context, dataCurve, operator=props)  # place in active scene
+
         Curve.select_set(True)
 
     # turn verts into array
@@ -287,19 +274,34 @@ def draw_curve(props, context, align_matrix):
 
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':
-        bpy.ops.transform.translate(value = props.startlocation)
-        bpy.ops.transform.rotate(value = props.rotation_euler[0], orient_axis = 'X')
-        bpy.ops.transform.rotate(value = props.rotation_euler[1], orient_axis = 'Y')
-        bpy.ops.transform.rotate(value = props.rotation_euler[2], orient_axis = 'Z')
+        if props.align == 'WORLD':
+            location = props.location - context.active_object.location
+            bpy.ops.transform.translate(value = location, orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = props.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = props.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = props.rotation[2], orient_axis = 'Z')
+        elif props.align == "VIEW":
+            bpy.ops.transform.translate(value = props.location)
+            bpy.ops.transform.rotate(value = props.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = props.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = props.rotation[2], orient_axis = 'Z')
 
-class CURVE_OT_spirals(Operator):
+        elif props.align == "CURSOR":
+            location = context.active_object.location
+            props.location = bpy.context.scene.cursor.location - location
+            props.rotation = bpy.context.scene.cursor.rotation_euler
+
+            bpy.ops.transform.translate(value = props.location)
+            bpy.ops.transform.rotate(value = props.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = props.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = props.rotation[2], orient_axis = 'Z')
+
+
+class CURVE_OT_spirals(Operator, object_utils.AddObjectHelper):
     bl_idname = "curve.spirals"
     bl_label = "Curve Spirals"
     bl_description = "Create different types of spirals"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
-
-    # align_matrix for the invoke
-    align_matrix : Matrix()
 
     spiral_type : EnumProperty(
             items=[('ARCH', "Archemedian", "Archemedian"),
@@ -432,31 +434,10 @@ class CURVE_OT_spirals(Operator):
             default=True,
             description="Show in edit mode"
             )
-    startlocation : FloatVectorProperty(
-            name="",
-            description="Start location",
-            default=(0.0, 0.0, 0.0),
-            subtype='TRANSLATION'
-            )
-    rotation_euler : FloatVectorProperty(
-            name="",
-            description="Rotation",
-            default=(0.0, 0.0, 0.0),
-            subtype='EULER'
-            )
 
     def draw(self, context):
         layout = self.layout
         col = layout.column_flow(align=True)
-
-        col.label(text="Presets:")
-
-        row = col.row(align=True)
-        row.menu("OBJECT_MT_spiral_curve_presets",
-                 text=bpy.types.OBJECT_MT_spiral_curve_presets.bl_label)
-        row.operator("curve_extras.spiral_presets", text=" + ")
-        op = row.operator("curve_extras.spiral_presets", text=" - ")
-        op.remove_active = True
 
         layout.prop(self, "spiral_type")
         layout.prop(self, "spiral_direction")
@@ -527,12 +508,11 @@ class CURVE_OT_spirals(Operator):
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
 
-        box = layout.box()
-        box.label(text="Location:")
-        box.prop(self, "startlocation")
-        box = layout.box()
-        box.label(text="Rotation:")
-        box.prop(self, "rotation_euler")
+        col = layout.column()
+        # AddObjectHelper props
+        col.prop(self, "align")
+        col.prop(self, "location")
+        col.prop(self, "rotation")
 
     @classmethod
     def poll(cls, context):
@@ -544,8 +524,7 @@ class CURVE_OT_spirals(Operator):
         bpy.context.preferences.edit.use_enter_edit_mode = False
 
         time_start = time.time()
-        self.align_matrix = align_matrix(context, self.startlocation)
-        draw_curve(self, context, self.align_matrix)
+        draw_curve(self, context)
 
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
