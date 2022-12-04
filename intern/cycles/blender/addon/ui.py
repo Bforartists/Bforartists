@@ -1861,6 +1861,7 @@ class CYCLES_WORLD_PT_settings_surface(CyclesButtonsPanel, Panel):
             subsub.prop(cworld, "sample_map_resolution")
         if cworld.sampling_method != 'NONE':
             sub.prop(cworld, "max_bounces")
+            sub.use_property_split = False
             sub.prop(cworld, "is_caustics_light", text="Shadow Caustics")
 
 
