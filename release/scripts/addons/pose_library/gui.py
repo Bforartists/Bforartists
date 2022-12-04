@@ -103,8 +103,10 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
     layout.operator_context = old_op_ctx
 
     props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
+    props.flipped = wm.poselib_flipped
     props.select = True
     props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
+    props.flipped = wm.poselib_flipped
     props.select = False
 
     layout.separator()

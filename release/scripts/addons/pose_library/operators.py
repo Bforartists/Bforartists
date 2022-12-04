@@ -333,9 +333,8 @@ class PoseAssetUser:
         pass
 
     def _load_and_use_pose(self, context: Context) -> Set[str]:
-        asset_library_ref = context.asset_library_ref
         asset = context.asset_file_handle
-        asset_lib_path = bpy.types.AssetHandle.get_full_library_path(asset, asset_library_ref)
+        asset_lib_path = bpy.types.AssetHandle.get_full_library_path(asset)
 
         if not asset_lib_path:
             self.report(  # type: ignore

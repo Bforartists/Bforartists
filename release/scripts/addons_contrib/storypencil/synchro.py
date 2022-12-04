@@ -144,8 +144,6 @@ class STORYPENCIL_OT_AddSecondaryWindowOperator(Operator):
 
     def configure_new_secondary_window(self, context, new_window):
         wrk_name = context.scene.storypencil_edit_workspace.name
-        override_context = context.copy()
-        override_context["window"] = new_window
         # Open the 2D workspace
         blendpath = os.path.dirname(bpy.app.binary_path)
         version = bpy.app.version
@@ -159,8 +157,8 @@ class STORYPENCIL_OT_AddSecondaryWindowOperator(Operator):
             if wk.name == wrk_name:
                 new_window.workspace = wk
                 return
-        bpy.ops.workspace.append_activate(
-            override_context, idname=wk_name, filepath=template_path)
+        with context.temp_override(window=new_window):
+            bpy.ops.workspace.append_activate(context, idname=wk_name, filepath=template_path)
 
 
 class STORYPENCIL_OT_WindowBringFront(Operator):
@@ -172,13 +170,12 @@ class STORYPENCIL_OT_WindowBringFront(Operator):
     win_id: bpy.props.StringProperty()
 
     def execute(self, context):
-        c = context.copy()
         win = get_window_from_id(context.window_manager, self.win_id)
         if not win:
             return {'CANCELLED'}
-        c["window"] = win
-        bpy.ops.wm.window_fullscreen_toggle(c)
-        bpy.ops.wm.window_fullscreen_toggle(c)
+        with context.temp_override(window=win):
+            bpy.ops.wm.window_fullscreen_toggle()
+            bpy.ops.wm.window_fullscreen_toggle()
         return {'FINISHED'}
 
 
@@ -191,12 +188,11 @@ class STORYPENCIL_OT_WindowCloseOperator(Operator):
     win_id: bpy.props.StringProperty()
 
     def execute(self, context):
-        c = context.copy()
         win = get_window_from_id(context.window_manager, self.win_id)
         if not win:
             return {'CANCELLED'}
-        c["window"] = win
-        bpy.ops.wm.window_close(c)
+        with context.temp_override(window=win):
+            bpy.ops.wm.window_close()
         return {'FINISHED'}
 
 
@@ -781,3 +777,18 @@ class STORYPENCIL_OT_Switch(Operator):
                                     area.spaces.active.region_3d.view_perspective = 'CAMERA'
 
         return {"FINISHED"}
+
+
+class STORYPENCIL_OT_TabSwitch(Operator):
+    bl_idname = "storypencil.tabswitch"
+    bl_label = "Switch using tab key"
+    bl_description = "Wrapper used to handle the Tab key to switch"
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        if context.scene.storypencil_use_new_window:
+            bpy.ops.storypencil.sync_set_main('INVOKE_DEFAULT', True)
+        else:
+            bpy.ops.storypencil.switch('INVOKE_DEFAULT', True)
+
+        return {'FINISHED'}
