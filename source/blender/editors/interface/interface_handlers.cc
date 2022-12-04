@@ -1629,8 +1629,8 @@ static bool ui_drag_toggle_set_xy_xy(
   bool changed = false;
 
   LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
-    float xy_a_block[2] = {float(xy_src[0]), float(xy_src[0])};
-    float xy_b_block[2] = {float(xy_dst[0]), float(xy_dst[0])};
+    float xy_a_block[2] = {float(xy_src[0]), float(xy_src[1])};
+    float xy_b_block[2] = {float(xy_dst[0]), float(xy_dst[1])};
 
     ui_window_to_block_fl(region, block, &xy_a_block[0], &xy_a_block[1]);
     ui_window_to_block_fl(region, block, &xy_b_block[0], &xy_b_block[1]);
@@ -9052,7 +9052,7 @@ static bool ui_handle_button_activate_by_type(bContext *C, ARegion *region, uiBu
   }
   else {
 #ifdef DEBUG
-    printf("%s: error, unhandled type: %u\n", __func__, but->type);
+    printf("%s: error, unhandled type: %d\n", __func__, but->type);
 #endif
     return false;
   }

@@ -15,6 +15,7 @@ if "bpy" in locals():
         importlib.reload(fbx_utils)
 
 import bpy
+from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Matrix, Euler, Vector
 
 # -----

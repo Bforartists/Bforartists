@@ -125618,6 +125618,10 @@ msgid "Nesting a node group inside of itself is not allowed"
 msgstr "Anidar un grupo de nodos consigo mismo no está permitido"
 
 
+msgid "Node group has different type"
+msgstr "El grupo de nodos es de un tipo distinto"
+
+
 msgid "Instances in input geometry are ignored"
 msgstr "Se ignorarán las instancias en la geometría objetivo"
 
