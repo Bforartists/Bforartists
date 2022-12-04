@@ -520,9 +520,10 @@ class NODE_MT_node(Menu):
 
         layout.menu("NODE_MT_node_toggle")
 
-        layout.separator()
-
         if is_compositor:
+
+            layout.separator()
+
             layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
             layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
