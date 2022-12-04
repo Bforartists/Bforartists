@@ -1072,11 +1072,14 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                              "cannot compute/export tangent space for it") % me.name)
                 else:
                     del t_lt
-                    t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
+                    num_loops = len(me.loops)
+                    t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * num_loops * 3
                     # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
                     uv_names = [uvlayer.name for uvlayer in me.uv_layers]
-                    for name in uv_names:
-                        me.calc_tangents(uvmap=name)
+                    # Annoying, `me.calc_tangent` errors in case there is no geometry...
+                    if num_loops > 0:
+                        for name in uv_names:
+                            me.calc_tangents(uvmap=name)
                     for idx, uvlayer in enumerate(me.uv_layers):
                         name = uvlayer.name
                         # Loop bitangents (aka binormals).

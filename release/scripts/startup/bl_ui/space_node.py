@@ -479,8 +479,10 @@ class NODE_MT_node_group_separate(Menu):
 class NODE_MT_node(Menu):
     bl_label = "Node"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
         myvar.release_confirm = True
@@ -520,8 +522,11 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
+        if is_compositor:
+            layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
+
         layout.operator("node.render_changed", icon = "RENDERLAYERS")
+
 
 class NODE_MT_node_links(Menu):
     bl_label = "Links"
@@ -539,12 +544,15 @@ class NODE_MT_node_links(Menu):
 class NODE_MT_node_toggle(Menu):
     bl_label = "Hide/Toggle"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         layout.operator("node.hide_toggle", icon = "HIDE_ON")
         layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
-        layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+        if is_compositor:
+            layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
         layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")

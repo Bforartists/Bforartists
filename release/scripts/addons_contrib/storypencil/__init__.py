@@ -7,7 +7,7 @@ bl_info = {
     "name": "Storypencil - Storyboard Tools",
     "description": "Storyboard tools",
     "author": "Antonio Vazquez, Matias Mendiola, Daniel Martinez Lara, Rodrigo Blaas",
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (3, 3, 0),
     "location": "",
     "warning": "",
@@ -61,6 +61,7 @@ classes = (
     synchro.STORYPENCIL_OT_SetSyncMainOperator,
     synchro.STORYPENCIL_OT_AddSecondaryWindowOperator,
     synchro.STORYPENCIL_OT_Switch,
+    synchro.STORYPENCIL_OT_TabSwitch,
     render.STORYPENCIL_OT_RenderAction,
     ui.STORYPENCIL_PT_Settings,
     ui.STORYPENCIL_PT_SettingsNew,
@@ -86,10 +87,29 @@ def save_mode(self, context):
                 bpy.ops.wm.window_close(c)
 
 
+addon_keymaps = []
+def register_keymaps():
+    addon = bpy.context.window_manager.keyconfigs.addon
+    km = addon.keymaps.new(name="Sequencer", space_type="SEQUENCE_EDITOR")
+    kmi = km.keymap_items.new(
+        idname="storypencil.tabswitch",
+        type="TAB",
+        value="PRESS",
+        shift=False, ctrl=False, alt = False, oskey=False,
+        )
+
+    addon_keymaps.append((km, kmi))
+
+def unregister_keymaps():
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
 def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
+    register_keymaps()
 
     Scene.storypencil_scene_duration = IntProperty(
         name="Scene Duration",
@@ -178,6 +198,8 @@ def register():
 
 
 def unregister():
+    unregister_keymaps()
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
