@@ -524,8 +524,7 @@ class NODE_MT_node(Menu):
 
         if is_compositor:
             layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
-
-        layout.operator("node.render_changed", icon = "RENDERLAYERS")
+            layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
 class NODE_MT_node_links(Menu):
