@@ -1184,13 +1184,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
   if (U.flag & USER_DEVELOPER_UI) {
     if (ui_block_is_menu(but->block) == false) {
       uiItemFullO(layout,
-                  "UI_OT_editsource",
-                  nullptr,
-                  ICON_TEXT,
-                  nullptr,
-                  WM_OP_INVOKE_DEFAULT,
-                  0,
-                  nullptr);
+          "UI_OT_editsource", nullptr, ICON_TEXT, nullptr, WM_OP_INVOKE_DEFAULT, 0, nullptr);
     }
   }
 
