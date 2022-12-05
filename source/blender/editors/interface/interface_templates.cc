@@ -2943,8 +2943,9 @@ void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
 #endif
 
     UI_block_func_handle_set(block, ED_undo_operator_repeat_cb_evt, op);
+    /* bfa - align left if boolean prop */
     template_operator_property_buts_draw_recursive(
-        C, op, layout, UI_BUT_LABEL_ALIGN_NONE, layout_flags, nullptr /* &has_advanced */);
+        C, op, layout, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, layout_flags, nullptr /* &has_advanced */);
     /* Warning! this leaves the handle function for any other users of this block. */
 
 #if 0
@@ -6833,12 +6834,12 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = uiLayoutRow(layout, false);
 
   /*------------------- bfa - original props */
-  // uiItemR(row, fileptr, "is_sequence", 0, NULL, ICON_NONE);
+  // uiItemR(row, fileptr, "is_sequence", 0, nullptr, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "is_sequence", 0, NULL, ICON_NONE);
+  uiItemR(row, fileptr, "is_sequence", 0, nullptr, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
