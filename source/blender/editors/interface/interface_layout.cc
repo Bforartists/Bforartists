@@ -2253,6 +2253,9 @@ void uiItemFullR(uiLayout *layout,
       /* bfa - new expanded prop style */
       uiLayout *layout_split;
       uiLayout *layout_sub;
+      // old blender code
+      //      uiLayout *layout_split = uiLayoutSplit(
+      //    layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
       bool label_added = false;
       // bfa - old blender prop
       // uiLayout *layout_sub = uiLayoutColumn(layout_split, true);
@@ -2266,6 +2269,7 @@ void uiItemFullR(uiLayout *layout,
         layout_sub->space = 0;
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
+      // char name_with_suffix[UI_MAX_DRAW_STR + 2];
         /* bfa - create a column so label could be added before */
         uiLayout *col = uiLayoutColumn(layout_row ? layout_row : layout, true);
 
@@ -2526,10 +2530,6 @@ void uiItemFullR(uiLayout *layout,
     layout_col->space = 0;
     layout_col->emboss = UI_EMBOSS_NONE;
 
-    /* bfa - move decorators down to account for label */
-    if (expand_label_added) {
-      uiItemL(layout_col, "", ICON_BLANK1);
-    }
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
       PointerRNA *ptr_dec = use_blank_decorator ? nullptr : &but_decorate->rnapoin;

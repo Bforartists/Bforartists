@@ -784,12 +784,13 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
    * can already provide more accurate and specific tool-tip content. */
 
   /* bfa - turned off this specific check. */
-  /* if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo)) { */
+  /*   if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo) && !but->tip_func) { */
 
   /* bfa - add the prefix everywhere in case it is not NULL! */
   if (but_label.strinfo != NULL) {
     uiTooltipField *field = text_field_add(
         data, uiTooltipFormat::Style::Header, uiTooltipFormat::ColorID::Normal);
+
     /* bfa - Some buttons do not have an explicit button title. (e.g. the properties editor tab
      * button), it just shows a dot then where the title should be, so we check for those buttons,
      * and skip adding the button title. */
@@ -804,6 +805,8 @@ static uiTooltipData *ui_tooltip_data_from_button_or_extra_icon(bContext *C,
     else {
       field->text = BLI_strdup("\n");
     }
+
+    //field->text = BLI_strdup(but_label.strinfo);
   }
 
   /* Tip */
