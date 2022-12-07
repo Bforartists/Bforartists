@@ -465,7 +465,6 @@ class SEQUENCER_MT_view(Menu):
 
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
-            layout.prop(st, "use_clamp_view")
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
@@ -2817,6 +2816,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col = layout.column(align = True)
             col.prop(tool_settings, "lock_markers")
             col.prop(st, "use_marker_sync")
+            col.prop(st, "use_clamp_view")
 
 
 class SEQUENCER_MT_fades_add(Menu):
