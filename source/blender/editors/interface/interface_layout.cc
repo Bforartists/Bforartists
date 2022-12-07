@@ -2530,6 +2530,11 @@ void uiItemFullR(uiLayout *layout,
     layout_col->space = 0;
     layout_col->emboss = UI_EMBOSS_NONE;
 
+    /* bfa - move decorators down to account for label */
+    if (expand_label_added) {
+      uiItemL(layout_col, "", ICON_BLANK1);
+    }
+
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
       PointerRNA *ptr_dec = use_blank_decorator ? nullptr : &but_decorate->rnapoin;
