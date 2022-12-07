@@ -1,4 +1,4 @@
-keyconfig_version = (3, 5, 2)
+keyconfig_version = (3, 5, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1811,7 +1811,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
@@ -4865,16 +4864,7 @@ keyconfig_data = \
      ),
     ("transform.rotate", {"type": 'E', "value": 'PRESS'}, None),
     ("transform.resize", {"type": 'R', "value": 'PRESS'}, None),
-    ("node.move_detach_links",
-     {"type": 'D', "value": 'PRESS', "alt": True},
-     {"properties":
-      [("TRANSFORM_OT_translate",
-        [("view2d_edge_pan", True),
-         ],
-        ),
-       ],
-      },
-     ),
+    ("node.duplicate_move_linked", {"type": 'D', "value": 'PRESS', "alt": True}, None),
     ("node.move_detach_links_release",
      {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "alt": True},
      {"properties":
