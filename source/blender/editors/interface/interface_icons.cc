@@ -417,7 +417,7 @@ static void vicon_collection_color_draw(
 
   UI_icon_draw_ex(x,
                   y,
-                  ICON_OUTLINER_COLLECTION,
+                  ICON_GROUP_BRIGHT,
                   aspect,
                   1.0f,
                   0.0f,
@@ -452,7 +452,7 @@ static void vicon_strip_color_draw(
   const float aspect = (float)ICON_DEFAULT_WIDTH / (float)w;
 
   UI_icon_draw_ex(
-      x, y, ICON_SNAP_FACE, aspect, 1.0f, 0.0f, strip_color->color, true, UI_NO_ICON_OVERLAY_TEXT);
+      x, y, ICON_COLOR_TAG, aspect, 1.0f, 0.0f, strip_color->color, true, UI_NO_ICON_OVERLAY_TEXT);
 }
 
 #  define DEF_ICON_STRIP_COLOR_DRAW(index, color) \
