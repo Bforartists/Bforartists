@@ -365,9 +365,9 @@ all: .FORCE
 	@echo
 	@echo Edit build configuration with: \"$(BUILD_DIR)/CMakeCache.txt\" run make again to rebuild.
 	@if test -z "$(BLENDER_IS_PYTHON_MODULE)"; then \
-		echo Blender successfully built, run from: $(BLENDER_BIN); \
+		echo Bforartists successfully built, run from: $(BLENDER_BIN); \
 	else \
-		echo Blender successfully built as a Python module, \"bpy\" can be imported from: $(BLENDER_BIN_DIR); \
+		echo Bforartists successfully built as a Python module, \"bpy\" can be imported from: $(BLENDER_BIN_DIR); \
 	fi
 	@echo
 
