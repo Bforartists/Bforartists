@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -3034,10 +3034,6 @@ msgid "Show Expanded"
 msgstr "Mostra Espanso"
 
 
-msgid "Show the expanded in the user interface"
-msgstr "Lo mostra espanso nell'interfaccia utente"
-
-
 msgid "Show On Foreground"
 msgstr "Mostra in Primo Piano"
 
@@ -5741,10 +5737,6 @@ msgstr "Interpolazione curva in questo punto: Bezier o vettore"
 
 msgid "Auto Handle"
 msgstr "Maniglia Automatica"
-
-
-msgid "Auto Clamped Handle"
-msgstr "Maniglia Auto-Agganciata"
 
 
 msgid "Vector Handle"
@@ -9434,10 +9426,6 @@ msgid "Keyframe"
 msgstr "Fotogramma Chiave"
 
 
-msgid "Normal keyframe - e.g. for key poses"
-msgstr "Fotogramma chiave normale - per es. per chiavi posa"
-
-
 msgid "Breakdown"
 msgstr "Abbattimento"
 
@@ -9916,10 +9904,6 @@ msgstr "Scostamento Costante"
 
 msgid "Pass"
 msgstr "Passaggio"
-
-
-msgid "Object Offset"
-msgstr "Scostamento da Oggetto"
 
 
 msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
@@ -11503,10 +11487,6 @@ msgstr "Modalità di riempimento della curva"
 
 msgid "Half"
 msgstr "Metà"
-
-
-msgid "Path Length"
-msgstr "Lunghezza Percorso"
 
 
 msgid "Render Resolution U"
@@ -13739,10 +13719,6 @@ msgid "Current pose for armatures"
 msgstr "Posa corrente per le armature"
 
 
-msgid "Pose Library"
-msgstr "Libreria Pose"
-
-
 msgid "Rigid Body Settings"
 msgstr "Impostazioni Corpo Rigido"
 
@@ -14772,22 +14748,6 @@ msgstr "Lineare Bloccata"
 
 msgid "Linear distance model with clamping"
 msgstr "Modello di distanza lineare con tetto di limitazione"
-
-
-msgid "Exponent"
-msgstr "Esponente"
-
-
-msgid "Exponent distance model"
-msgstr "Modello di distanza esponenziale"
-
-
-msgid "Exponent Clamped"
-msgstr "Esponenziale Bloccata"
-
-
-msgid "Exponent distance model with clamping"
-msgstr "Modello di distanza esponenziale con tetto di limitazione"
 
 
 msgid "Doppler Factor"
@@ -18960,10 +18920,6 @@ msgid "Loose"
 msgstr "Slegato"
 
 
-msgid "Loose edge"
-msgstr "Spigolo isolato"
-
-
 msgid "Sharp edge for the Edge Split modifier"
 msgstr "Spigolo netto per il modificatore Divisore Spigoli"
 
@@ -19498,6 +19454,10 @@ msgstr "Distanza di Unione"
 
 msgid "Limit below which to merge vertices"
 msgstr "Limite sotto il quale unire vertici"
+
+
+msgid "Object Offset"
+msgstr "Scostamento da Oggetto"
 
 
 msgid "U Offset"
@@ -20980,10 +20940,6 @@ msgid "Generate Normals"
 msgstr "Genera Normali"
 
 
-msgid "Output normals for bump mapping - disabling can speed up performance if its not needed"
-msgstr "Normali per la mappa bump - disabilitarlo può aumentare le prestazioni se non necessario"
-
-
 msgid "Wave Alignment"
 msgstr "Allineamento Onda"
 
@@ -22439,10 +22395,6 @@ msgid "Fastest"
 msgstr "Più Veloce"
 
 
-msgid "Track as fast as it's possible"
-msgstr "Traccia più veloce possibile"
-
-
 msgid "Double"
 msgstr "Doppio"
 
@@ -22879,16 +22831,8 @@ msgid "Width Hidden"
 msgstr "Larghezza da Nascosto"
 
 
-msgid "Width of the node in hidden state"
-msgstr "Larghezza del nodo in stato nascosto"
-
-
 msgid "Custom Group"
 msgstr "Gruppo Personalizzato"
-
-
-msgid "Interface"
-msgstr "Interfaccia"
 
 
 msgid "Compositor Node"
@@ -23429,10 +23373,6 @@ msgstr "Y Centro"
 
 msgid "Spin"
 msgstr "Rivoluzione"
-
-
-msgid "Wrap"
-msgstr "Ricomincia"
 
 
 msgid "Zoom"
@@ -24687,6 +24627,10 @@ msgstr "Prodotto Vettoriale"
 
 msgid "Modulo"
 msgstr "Modulo"
+
+
+msgid "Wrap"
+msgstr "Ricomincia"
 
 
 msgid "Z Axis"
@@ -27208,11 +27152,6 @@ msgstr "Imposta Assi"
 
 
 msgctxt "Operator"
-msgid "Set Principal to Center"
-msgstr "Imposta Principale al Centro"
-
-
-msgctxt "Operator"
 msgid "Set Origin"
 msgstr "Imposta Origine"
 
@@ -28707,10 +28646,6 @@ msgid "Method used to reference paths"
 msgstr "Metodo usato per riferirsi ai percorsi"
 
 
-msgid "Use Relative paths with subdirectories only"
-msgstr "Usa i percorsi relativi relativi solo con le sottodirectory"
-
-
 msgid "Always write absolute paths"
 msgstr "Scrivi sempre percorsi assoluti"
 
@@ -28721,10 +28656,6 @@ msgstr "Scrivi sempre percorsi relativi (se possibile)"
 
 msgid "Match"
 msgstr "Confronta"
-
-
-msgid "Match Absolute/Relative setting with input path"
-msgstr "Confronta impostazione Assoluto/Relativo col percorso di input"
 
 
 msgid "Strip Path"
@@ -36766,44 +36697,8 @@ msgid "Set the weight of selected keys"
 msgstr "Imposta il peso delle chiavi selezionate"
 
 
-msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
-msgstr "Indice della posa da applicare (-2 per non cambiare la posa, -1 per la posa attiva della lib. posa)"
-
-
 msgid "Pose Name"
 msgstr "Nome Posa"
-
-
-msgid "Frame to store pose on"
-msgstr "Fotogramma nel quale mettere la posa"
-
-
-msgid "Name of newly added Pose"
-msgstr "Nome della nuova posa aggiunta"
-
-
-msgid "Direction to move the chosen pose towards"
-msgstr "Direzione in cui muovere la posa scelta"
-
-
-msgid "The pose to move"
-msgstr "La posa da muovere"
-
-
-msgid "The pose to remove"
-msgstr "La posa da rimuovere"
-
-
-msgid "New Pose Name"
-msgstr "Nuovo Nome Posa"
-
-
-msgid "New name for pose"
-msgstr "Nuovo nome per la posa"
-
-
-msgid "The pose to rename"
-msgstr "La posa da rinominare"
 
 
 msgctxt "Operator"
@@ -38330,6 +38225,10 @@ msgid "Remove unused settings for invisible editors"
 msgstr "Rimuove le impostazioni inutilizzate per gli editor invisibili"
 
 
+msgid "Interface"
+msgstr "Interfaccia"
+
+
 msgid "Themes"
 msgstr "Temi"
 
@@ -38358,10 +38257,6 @@ msgstr "Cicla Spazi di Lavoro"
 msgctxt "Operator"
 msgid "Execute a Python Preset"
 msgstr "Esegui una Preimpostazione Python"
-
-
-msgid "Execute a preset"
-msgstr "Esegue una preimpostazione"
 
 
 msgid "Menu ID Name"
@@ -40494,10 +40389,6 @@ msgid "Blend factor between stretch minimized and original"
 msgstr "Fattore di fusione tra lo stiramento minimizzato e l'originale"
 
 
-msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "Riempie virtualmente i buchi della mesh prima di scucirla, per prevenire le sovrapposizioni e mantenere la simmetria"
-
-
 msgid "Number of iterations to run, 0 is unlimited when run interactively"
 msgstr "Numero di ripetizione da eseguire, con 0 sono illimitate quando usato interattivamente"
 
@@ -42618,6 +42509,10 @@ msgstr "Preimpostazioni Integratore"
 
 msgid "Sampling Presets"
 msgstr "Preimpostazioni Campionatura"
+
+
+msgid "Pose Library"
+msgstr "Libreria Pose"
 
 
 msgid "Bone Constraints"
@@ -46046,10 +45941,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Valore del seme per l'integratore per ottenere differenti schemi di rumore"
 
 
-msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "Usa Open Shading Language (solo rendering via CPU)"
-
-
 msgid "Viewport Texture Limit"
 msgstr "Limite Texture Vista"
 
@@ -46168,10 +46059,6 @@ msgstr "Visibilità dell'oggetto ai raggi di ombra "
 
 msgid "Object visibility for transmission rays"
 msgstr "Visibilità dell'oggetto ai raggi di trasmissione"
-
-
-msgid "When using volume rendering, assume volume has the same density everywhere(not using any textures), for faster rendering"
-msgstr "Quando si usa il rendering volume, assume che questo abbia tutto la stessa densità (non usando alcuna texture), per un rendering più veloce"
 
 
 msgid "Maximum number of bounces the background light will contribute to the render"
@@ -47282,6 +47169,10 @@ msgid "All modifiers"
 msgstr "Tutti i Modificatori"
 
 
+msgid "Bounciness"
+msgstr "Rimbalzi"
+
+
 msgid "Role of object in Rigid Body Simulations"
 msgstr "Ruolo dell'oggetto nelle Simulazioni Corpo Rigido"
 
@@ -48327,12 +48218,16 @@ msgid "Lift Force"
 msgstr "Forza Sollevamento"
 
 
-msgid "Ball Size"
-msgstr "Dimensione Sfera"
+msgid "Dampening"
+msgstr "Smorzamento"
 
 
 msgid "Blending to inelastic collision"
 msgstr "Armonizza in collisione anelastica"
+
+
+msgid "Ball Size"
+msgstr "Dimensione Sfera"
 
 
 msgid "Absolute ball size or factor if not manually adjusted"
@@ -48538,6 +48433,10 @@ msgstr "Canale Alfa"
 
 msgid "Editing context being displayed"
 msgstr "Contesto di modifica visualizzato"
+
+
+msgid "Path Length"
+msgstr "Lunghezza Percorso"
 
 
 msgid "Length of displaying path, in frames"
@@ -48973,10 +48872,6 @@ msgstr "Mostra Maniglie"
 
 msgid "Show handles of Bezier control points"
 msgstr "Mostra maniglie dei punti di controllo Bezier"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "AutoUnione Fotogrammi Chiave"
 
 
 msgid "Auto Normalization"
@@ -53000,10 +52895,6 @@ msgid "Remove"
 msgstr "Rimuovi"
 
 
-msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
-msgstr "Errore: libreria potenzialmente corrotta, esegui l'operatore 'Sanifica' per correggere"
-
-
 msgid "Out"
 msgstr "Uscita"
 
@@ -53534,6 +53425,10 @@ msgid "Heat"
 msgstr "Calore"
 
 
+msgid "Exponent"
+msgstr "Esponente"
+
+
 msgid "Lower"
 msgstr "Minuscolo"
 
@@ -53542,16 +53437,8 @@ msgid "Fuel"
 msgstr "Combustibile"
 
 
-msgid "Bounciness"
-msgstr "Rimbalzi"
-
-
 msgid "Upper"
 msgstr "Maiuscolo"
-
-
-msgid "Dampening"
-msgstr "Smorzamento"
 
 
 msgid "Auto-Step"
@@ -53660,11 +53547,6 @@ msgstr "Risolvi Movimento Camera"
 msgctxt "Operator"
 msgid "Solve Object Motion"
 msgstr "Risolvi Movimento Oggetto"
-
-
-msgctxt "Operator"
-msgid "Set Center"
-msgstr "Imposta Centro"
 
 
 msgid "Build Original:"
@@ -54242,11 +54124,6 @@ msgstr "Attiva Seguente dello Stesso Tipo"
 msgctxt "Operator"
 msgid "Make and Replace Links"
 msgstr "Crea e Sostituisci Connessioni"
-
-
-msgctxt "Operator"
-msgid "Group"
-msgstr "Gruppo"
 
 
 msgid "Inputs:"
@@ -55403,16 +55280,6 @@ msgstr "Limita Totale"
 msgctxt "Operator"
 msgid "Fix Deforms"
 msgstr "Correggi Deformazione"
-
-
-msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Mostra Casella Delimitazione"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Nascondi Casella Delimitazione"
 
 
 msgctxt "Operator"
@@ -56770,30 +56637,6 @@ msgstr "Ossa separate"
 
 msgid "Unselectable bone in chain"
 msgstr "Osso non selezionabile nella catena"
-
-
-msgid "Add New"
-msgstr "Aggiungi Nuova"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Aggiungi Nuova (Fotogramma Corrente)"
-
-
-msgid "Replace Existing..."
-msgstr "Sostituisci Esistente..."
-
-
-msgid "No action to validate"
-msgstr "Nessuna azione da validare"
-
-
-msgid "Invalid index for pose"
-msgstr "Indice non valido per la posa"
-
-
-msgid "Invalid pose specified %d"
-msgstr "Posa specificata non valida %d"
 
 
 msgid "No active Keying Set to use"
@@ -58162,10 +58005,6 @@ msgstr "L'oggetto attivo deve essere una luce"
 
 msgid "Cannot apply to a multi user armature"
 msgstr "Impossibile applicare ad una armatura multiutente"
-
-
-msgid "Font's can only have scale applied: \"%s\""
-msgstr "I font possono avere applicata solo la scala: \"%s\""
 
 
 msgid "%i object(s) not centered, %i changed:"

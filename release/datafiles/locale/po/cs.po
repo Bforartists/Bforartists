@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1560,6 +1560,10 @@ msgstr "Obrazovky"
 
 msgid "Shape Keys"
 msgstr "Tvarové klávesy"
+
+
+msgid "Simulations"
+msgstr "Simulace"
 
 
 msgid "Sounds"
@@ -7019,10 +7023,6 @@ msgid "Particles Settings"
 msgstr "Nastavení Částic"
 
 
-msgid "Simulations"
-msgstr "Simulace"
-
-
 msgid "Node Trees"
 msgstr "Větvení Uzlů"
 
@@ -8107,10 +8107,6 @@ msgstr "Konstantní odsazení"
 
 msgid "Pass"
 msgstr "Předat"
-
-
-msgid "Object Offset"
-msgstr "Objekt"
 
 
 msgid "Random Offset"
@@ -9537,10 +9533,6 @@ msgstr "Vyplnit díry"
 
 msgid "Half"
 msgstr "Polovina"
-
-
-msgid "Path Length"
-msgstr "Délky hran"
 
 
 msgid "Render Resolution U"
@@ -11133,10 +11125,6 @@ msgid "Current pose for armatures"
 msgstr "Vyrenderovat aktuální frame"
 
 
-msgid "Pose Library"
-msgstr "Není knihovnou"
-
-
 msgid "Rigid Body Settings"
 msgstr "Nastavení fontů"
 
@@ -11854,14 +11842,6 @@ msgstr "Opustit Editační mód"
 
 msgid "Linear Clamped"
 msgstr "Lineární"
-
-
-msgid "Exponent"
-msgstr "Exponent"
-
-
-msgid "Exponent distance model"
-msgstr "Opustit Editační mód"
 
 
 msgid "Doppler Factor"
@@ -14792,10 +14772,6 @@ msgid "Loose"
 msgstr "Rozříznout"
 
 
-msgid "Loose edge"
-msgstr "Pózy kostí"
-
-
 msgid "Seam"
 msgstr "Zobrazit švy"
 
@@ -15162,6 +15138,10 @@ msgstr "Přidat objekt(y) do aktivní vrstvy"
 
 msgid "Merge Distance"
 msgstr "Vzdálenost sloučení"
+
+
+msgid "Object Offset"
+msgstr "Objekt"
 
 
 msgid "Relative Offset Displacement"
@@ -17107,10 +17087,6 @@ msgid "Custom Group"
 msgstr "Vlastní Skupina"
 
 
-msgid "Interface"
-msgstr "Rozhraní"
-
-
 msgid "Compositor Node"
 msgstr "Kompoziční uzly"
 
@@ -17525,10 +17501,6 @@ msgstr "Střed Y"
 
 msgid "Spin"
 msgstr "Točit"
-
-
-msgid "Wrap"
-msgstr "Zbalit"
 
 
 msgid "Zoom"
@@ -18814,6 +18786,10 @@ msgstr "Zlomek"
 
 msgid "Modulo"
 msgstr "Modulo"
+
+
+msgid "Wrap"
+msgstr "Zbalit"
 
 
 msgid "Vector Rotate"
@@ -20800,15 +20776,6 @@ msgstr "Zarovnat"
 
 msgid "Align bundle align Y axis"
 msgstr "Zarovnat"
-
-
-msgctxt "Operator"
-msgid "Set Principal to Center"
-msgstr "Nastavit úroveň renderování"
-
-
-msgid "Set optical center to center of footage"
-msgstr "Oddělí označené vertexy do samostatného tvaru"
 
 
 msgctxt "Operator"
@@ -28503,18 +28470,6 @@ msgid "Pose Name"
 msgstr "Póza"
 
 
-msgid "Frame to store pose on"
-msgstr "Krok Snímku"
-
-
-msgid "New Pose Name"
-msgstr "Póza"
-
-
-msgid "New name for pose"
-msgstr "Přejmenovat značku"
-
-
 msgctxt "Operator"
 msgid "Apply Pose as Rest Pose"
 msgstr "Transformace"
@@ -29540,6 +29495,10 @@ msgid "Edit user preferences and system settings"
 msgstr "Upravit uživatelské předvolby a systémové nastavení"
 
 
+msgid "Interface"
+msgstr "Rozhraní"
+
+
 msgid "Themes"
 msgstr "Motivy"
 
@@ -29572,10 +29531,6 @@ msgstr "Cycle Pracovní prostředí"
 msgctxt "Operator"
 msgid "Execute a Python Preset"
 msgstr "Generátory"
-
-
-msgid "Execute a preset"
-msgstr "Spustit předvolbu"
 
 
 msgid "Menu ID Name"
@@ -32967,6 +32922,10 @@ msgstr "Zobrazit Typy Objektů"
 
 msgid "Asset Metadata"
 msgstr "Metadata assetu"
+
+
+msgid "Pose Library"
+msgstr "Není knihovnou"
 
 
 msgid "Chain Scaling"
@@ -36834,10 +36793,6 @@ msgid "Shading Settings"
 msgstr "Nastavení Stínování"
 
 
-msgid "Maximum intensity a bloom pixel can have (0 to disabled)"
-msgstr "Maximální intenzita, kterou může mít bloom pixel (0 až zakázáno)"
-
-
 msgid "Color applied to the bloom effect"
 msgstr "Barva aplikovaná na bloom efekt"
 
@@ -36974,10 +36929,6 @@ msgid "Screen percentage used to fade the SSR"
 msgstr "Procento obrazovky použité ke zeslábnutí SSR"
 
 
-msgid "Clamp pixel intensity to remove noise (0 to disabled)"
-msgstr "Upnout intenzitu pixelu pro odstranění šumu (0 až zakázaný)"
-
-
 msgid "Max Roughness"
 msgstr "Maximální hrubost"
 
@@ -37004,10 +36955,6 @@ msgstr "Počet vzorků pro vypočítání efektu rozptylu"
 
 msgid "Render Samples"
 msgstr "Vzorkování renderu"
-
-
-msgid "Number of samples per pixels for rendering"
-msgstr "Počet vzorků na pixely pro render"
 
 
 msgid "Number of samples, unlimited if 0"
@@ -37849,6 +37796,10 @@ msgid "Lift Force"
 msgstr "Nejbližší snímek"
 
 
+msgid "Dampening"
+msgstr "Tlumení"
+
+
 msgid "Ball Size"
 msgstr "Mód Úchopu"
 
@@ -38003,6 +37954,10 @@ msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
 
+msgid "Path Length"
+msgstr "Délky hran"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Označit vrstvu"
 
@@ -38041,6 +37996,14 @@ msgstr "Ukáže složky"
 
 msgid "Show filters for graph editor"
 msgstr "Nastavení vzhledu pro editor diagramů"
+
+
+msgid "Show Gizmo"
+msgstr "Zobrazit Gizmo"
+
+
+msgid "Show gizmos of all types"
+msgstr "Zobrazit gizma všech typů"
 
 
 msgid "Show Frames"
@@ -38318,10 +38281,6 @@ msgid "Show handles of Bezier control points"
 msgstr "Vyrovná úhly označených plošek"
 
 
-msgid "AutoMerge Keyframes"
-msgstr "Nejbližší snímek"
-
-
 msgid "Only Selected Curve Keyframes"
 msgstr "Zobrazit a vybrat klíče"
 
@@ -38372,14 +38331,6 @@ msgstr "Úprava Masky"
 
 msgid "Pivot around active object"
 msgstr "Aktivnímu objektu"
-
-
-msgid "Show Gizmo"
-msgstr "Zobrazit Gizmo"
-
-
-msgid "Show gizmos of all types"
-msgstr "Zobrazit gizma všech typů"
 
 
 msgid "Show Mask Editor"
@@ -42232,10 +42183,6 @@ msgid "Temperature Maximum"
 msgstr "Maximální Teplota"
 
 
-msgid "Flame Color"
-msgstr "Barva Plamene"
-
-
 msgid "Add Resolution"
 msgstr "Přidat Rozlišení"
 
@@ -42262,6 +42209,10 @@ msgstr "Vzorkování zachycených vzduchových částic"
 
 msgid "Particle Life Maximum"
 msgstr "Maximální životnost částic"
+
+
+msgid "Exponent"
+msgstr "Exponent"
 
 
 msgid "Surface Tension"
@@ -42328,10 +42279,6 @@ msgstr "Tuhost Y"
 
 msgid "Z Stiffness"
 msgstr "Tuhost Z"
-
-
-msgid "Dampening"
-msgstr "Tlumení"
 
 
 msgid "Step Size Min"
@@ -42502,11 +42449,6 @@ msgstr "Vyřešit pohyb kamery"
 msgctxt "Operator"
 msgid "Solve Object Motion"
 msgstr "Vyřešit pohyb objektu"
-
-
-msgctxt "Operator"
-msgid "Set Center"
-msgstr "Nastavit Střed"
 
 
 msgid "Build Original:"
@@ -43069,11 +43011,6 @@ msgid "Make and Replace Links"
 msgstr "Vytvořit a přemístit spojení"
 
 
-msgctxt "Operator"
-msgid "Group"
-msgstr "Skupina"
-
-
 msgid "Inputs:"
 msgstr "Vstupy:"
 
@@ -43200,10 +43137,6 @@ msgstr "Zaměnit data"
 
 msgid "Position X"
 msgstr "Pozice X"
-
-
-msgid "Pre-Processed"
-msgstr "Předzpracováno"
 
 
 msgid "Storage"
@@ -44244,16 +44177,6 @@ msgstr "Zamknout vybrané"
 
 
 msgctxt "Operator"
-msgid "Unlock Selected"
-msgstr "Odemknout vybrané"
-
-
-msgctxt "Operator"
-msgid "Unlock Unselected"
-msgstr "Odemknout nevybrané"
-
-
-msgctxt "Operator"
 msgid "Lock Only Selected"
 msgstr "Zamknout pouze vybrané"
 
@@ -44261,6 +44184,16 @@ msgstr "Zamknout pouze vybrané"
 msgctxt "Operator"
 msgid "Lock Only Unselected"
 msgstr "Zamknout pouze nevybrané"
+
+
+msgctxt "Operator"
+msgid "Unlock Selected"
+msgstr "Odemknout vybrané"
+
+
+msgctxt "Operator"
+msgid "Unlock Unselected"
+msgstr "Odemknout nevybrané"
 
 
 msgctxt "Operator"
@@ -44295,16 +44228,6 @@ msgstr "Deformace"
 
 msgid "Locks"
 msgstr "Zámky"
-
-
-msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Zobrazit Ohraničující Rámeček"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Skrýt Ohraničující Rámeček"
 
 
 msgctxt "Operator"
@@ -45297,38 +45220,6 @@ msgstr "%d kosti zarovnané s kostí '%s'"
 
 msgid "Separated bones"
 msgstr "Oddělené kosti"
-
-
-msgid "Add New"
-msgstr "Přidat nový"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Přidat nový (Současný snímek)"
-
-
-msgid "Replace Existing..."
-msgstr "Nahradit existující..."
-
-
-msgid "No action to validate"
-msgstr "Prochází připojené akce"
-
-
-msgid "Object does not have pose lib data"
-msgstr "Duplikát objektu"
-
-
-msgid "Invalid index for pose"
-msgstr "Přidat ke klíčovací sestavě"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "Duplikát objektu"
-
-
-msgid "Pose lib had no active pose"
-msgstr "Vložit"
 
 
 msgid "Relax Pose"

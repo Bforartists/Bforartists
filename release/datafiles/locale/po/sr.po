@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5061,10 +5061,6 @@ msgid "Pass"
 msgstr "Пролаз"
 
 
-msgid "Object Offset"
-msgstr "Растојање објекта"
-
-
 msgid "Relative Offset"
 msgstr "Релативно растојање"
 
@@ -5932,10 +5928,6 @@ msgstr "Попуни рупе"
 
 msgid "Half"
 msgstr "Упола"
-
-
-msgid "Path Length"
-msgstr "Дужина путање"
 
 
 msgid "Splines"
@@ -7262,10 +7254,6 @@ msgid "Current pose for armatures"
 msgstr "Текућа поза костура"
 
 
-msgid "Pose Library"
-msgstr "Збирка поза"
-
-
 msgid "Rigid Body Settings"
 msgstr "Подешавања меког тела"
 
@@ -7756,14 +7744,6 @@ msgstr "Обрнуто стегнуто"
 
 msgid "Linear Clamped"
 msgstr "Линеарно стегнуто"
-
-
-msgid "Exponent"
-msgstr "Експонент"
-
-
-msgid "Exponent Clamped"
-msgstr "Експоненцијално стегнуто"
 
 
 msgid "Doppler Factor"
@@ -9903,6 +9883,10 @@ msgid "Limit below which to merge vertices"
 msgstr "Раздаљина између објеката у којој се врши спајање"
 
 
+msgid "Object Offset"
+msgstr "Растојање објекта"
+
+
 msgid "Relative Offset Displacement"
 msgstr "Релативна вредност издизања"
 
@@ -11154,10 +11138,6 @@ msgid "Custom Group"
 msgstr "Прилагођена група"
 
 
-msgid "Interface"
-msgstr "Интерфејс"
-
-
 msgid "Compositor Node"
 msgstr "Чвор слагања"
 
@@ -11380,10 +11360,6 @@ msgstr "Центар X"
 
 msgid "Center Y"
 msgstr "Центар Y"
-
-
-msgid "Wrap"
-msgstr "Прелом текста"
 
 
 msgid "Zoom"
@@ -12108,6 +12084,10 @@ msgstr "UV координате за мапирање"
 
 msgid "Modulo"
 msgstr "Модул"
+
+
+msgid "Wrap"
+msgstr "Прелом текста"
 
 
 msgid "Z Axis"
@@ -14365,10 +14345,6 @@ msgstr "Режим путање"
 
 msgid "Method used to reference paths"
 msgstr "Коришћен метод за референтне путање"
-
-
-msgid "Use Relative paths with subdirectories only"
-msgstr "Користи релативне путања само за поддиректоријуме"
 
 
 msgid "Always write absolute paths"
@@ -18203,22 +18179,6 @@ msgid "Pose Name"
 msgstr "Назив позе"
 
 
-msgid "Frame to store pose on"
-msgstr "Кадар накоме се чува поза"
-
-
-msgid "Name of newly added Pose"
-msgstr "Назив новоформиране позе"
-
-
-msgid "New Pose Name"
-msgstr "Нови назив позе"
-
-
-msgid "New name for pose"
-msgstr "Нови назив позе"
-
-
 msgctxt "Operator"
 msgid "Apply Pose as Rest Pose"
 msgstr "Поза коа почетна"
@@ -18886,6 +18846,10 @@ msgstr "Понавља последњу акцију"
 msgctxt "Operator"
 msgid "Save Screenshot"
 msgstr "Сачувај снимак екрана"
+
+
+msgid "Interface"
+msgstr "Интерфејс"
 
 
 msgid "Themes"
@@ -20958,6 +20922,10 @@ msgid "Restrict"
 msgstr "Ограничи"
 
 
+msgid "Pose Library"
+msgstr "Збирка поза"
+
+
 msgid "Bone Constraints"
 msgstr "Ограничења костију"
 
@@ -22390,10 +22358,6 @@ msgid "Number of samples to render for each pixel"
 msgstr "Број узорака рендерованих за сваки пиксел"
 
 
-msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "Отворени језик сенчења OSL"
-
-
 msgid "Tile Size"
 msgstr "Величина плочице"
 
@@ -22436,10 +22400,6 @@ msgstr "Индиректни пренос"
 
 msgid "Transmission Color"
 msgstr "Боја преноса"
-
-
-msgid "When using volume rendering, assume volume has the same density everywhere(not using any textures), for faster rendering"
-msgstr "При рендеровању запремине, рачунај да је густина свуда иста (не користи текстуре), ради бржег рендеровања"
 
 
 msgid "Map Resolution"
@@ -22800,6 +22760,10 @@ msgstr "Основа"
 
 msgid "All modifiers"
 msgstr "Сви модификатори"
+
+
+msgid "Bounciness"
+msgstr "Одбијање"
 
 
 msgid "Deforming"
@@ -23270,6 +23234,10 @@ msgid "Aerodynamics Type"
 msgstr "Врста аеродинамике"
 
 
+msgid "Dampening"
+msgstr "Одлагање"
+
+
 msgid "Ball Size"
 msgstr "Величина лопте"
 
@@ -23353,6 +23321,10 @@ msgstr "Локација 2D курсора у овом погледу"
 
 msgid "Alpha Channel"
 msgstr "Алфа канал"
+
+
+msgid "Path Length"
+msgstr "Дужина путање"
 
 
 msgid "Length of displaying path, in frames"
@@ -25481,20 +25453,16 @@ msgid "Heat"
 msgstr "Топлота"
 
 
+msgid "Exponent"
+msgstr "Експонент"
+
+
 msgid "Lower"
 msgstr "Мала слова"
 
 
-msgid "Bounciness"
-msgstr "Одбијање"
-
-
 msgid "Upper"
 msgstr "Велика слова"
-
-
-msgid "Dampening"
-msgstr "Одлагање"
 
 
 msgid "Auto-Step"
@@ -26352,16 +26320,6 @@ msgstr "Очисти"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Прикажи граничну коцку"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Сакриј граничну коцку"
-
-
-msgctxt "Operator"
 msgid "Hide Masked"
 msgstr "Сакриј маскирано"
 
@@ -26704,38 +26662,6 @@ msgstr "Без активне збирке кључева"
 
 msgid "Cannot remove built in keying set"
 msgstr "Не могу да уклоним уграђену збирку кључева"
-
-
-msgid "Add New"
-msgstr "Додај ново"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Додај ново (тренутни кадар)"
-
-
-msgid "Replace Existing..."
-msgstr "Замени постојеће..."
-
-
-msgid "No action to validate"
-msgstr "Изаберите акцију за повезивање"
-
-
-msgid "Object does not have pose lib data"
-msgstr "Кључеви објекта"
-
-
-msgid "Invalid index for pose"
-msgstr "Неисправан индекс позе"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "Кључеви објекта"
-
-
-msgid "Pose lib had no active pose"
-msgstr "Збирка поза - додај позу"
 
 
 msgid "No keyframes to slide between"

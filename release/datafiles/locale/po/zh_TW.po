@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -1645,6 +1645,10 @@ msgstr "外形鍵"
 
 msgid "Shape Key data-blocks"
 msgstr "外形鍵資料塊"
+
+
+msgid "Simulations"
+msgstr "模擬"
 
 
 msgid "Sounds"
@@ -3585,10 +3589,6 @@ msgstr "將此影像顯示為背景"
 
 msgid "Show Expanded"
 msgstr "擴展顯示"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "擴展顯示使用者介面"
 
 
 msgid "Show On Foreground"
@@ -9349,10 +9349,6 @@ msgid "Fonts"
 msgstr "字型"
 
 
-msgid "Simulations"
-msgstr "模擬"
-
-
 msgid "Show workspace data-blocks"
 msgstr "顯示工作空間資料塊"
 
@@ -10863,10 +10859,6 @@ msgstr "常量偏移"
 
 msgid "Pass"
 msgstr "通遞"
-
-
-msgid "Object Offset"
-msgstr "物體偏移"
 
 
 msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
@@ -12478,10 +12470,6 @@ msgstr "填補曲線的模式"
 
 msgid "Half"
 msgstr "一半"
-
-
-msgid "Path Length"
-msgstr "路徑長度"
 
 
 msgid "The number of frames that are needed to traverse the path, defining the maximum value for the 'Evaluation Time' setting"
@@ -14966,10 +14954,6 @@ msgid "Current pose for armatures"
 msgstr "骨架的目前姿勢"
 
 
-msgid "Pose Library"
-msgstr "姿勢庫"
-
-
 msgid "Rigid Body Settings"
 msgstr "剛體設定"
 
@@ -15967,22 +15951,6 @@ msgstr "線性緊固"
 
 msgid "Linear distance model with clamping"
 msgstr "帶緊固的線性距離模型"
-
-
-msgid "Exponent"
-msgstr "指數"
-
-
-msgid "Exponent distance model"
-msgstr "指數距離模型"
-
-
-msgid "Exponent Clamped"
-msgstr "指數緊固"
-
-
-msgid "Exponent distance model with clamping"
-msgstr "帶緊固的指數距離模型"
 
 
 msgid "Doppler Factor"
@@ -19566,10 +19534,6 @@ msgid "Loose"
 msgstr "疏鬆"
 
 
-msgid "Loose edge"
-msgstr "鬆散邊線"
-
-
 msgid "Freestyle Edge Mark"
 msgstr "Freestyle 邊線標記"
 
@@ -20116,6 +20080,10 @@ msgstr "合併距離"
 
 msgid "Limit below which to merge vertices"
 msgstr "限制多少之下會合併頂點"
+
+
+msgid "Object Offset"
+msgstr "物體偏移"
 
 
 msgid "U Offset"
@@ -21312,10 +21280,6 @@ msgstr "生成泡沫遮罩為頂點色彩通道"
 
 msgid "Generate Normals"
 msgstr "生成法線"
-
-
-msgid "Output normals for bump mapping - disabling can speed up performance if its not needed"
-msgstr "為凹凸映射處理輸出法線 - 如果不需要的話，停用可以讓效能加速"
 
 
 msgid "Wave Alignment"
@@ -22609,16 +22573,8 @@ msgid "Plane Tracks"
 msgstr "平面軌道"
 
 
-msgid "Collection of plane tracks in this tracking data object"
-msgstr "此追蹤資料物體中的平面軌道集合"
-
-
 msgid "Tracks"
 msgstr "軌道"
-
-
-msgid "Collection of tracks in this tracking data object"
-msgstr "此追蹤資料物體中的軌道集合"
 
 
 msgid "Movie tracking camera data"
@@ -22869,8 +22825,16 @@ msgid "Unique name of object"
 msgstr "物體的獨一名稱"
 
 
+msgid "Collection of plane tracks in this tracking data object"
+msgstr "此追蹤資料物體中的平面軌道集合"
+
+
 msgid "Scale of object solution in camera space"
 msgstr "在攝影機空間中物體解決方案的規模"
+
+
+msgid "Collection of tracks in this tracking data object"
+msgstr "此追蹤資料物體中的軌道集合"
 
 
 msgid "Movie Tracking Plane Marker Data"
@@ -23091,10 +23055,6 @@ msgstr "限制追蹤速度來讓視覺回饋更簡易 (這不會影響追蹤品�
 
 msgid "Fastest"
 msgstr "最快"
-
-
-msgid "Track as fast as it's possible"
-msgstr "讓追蹤盡可能的快"
 
 
 msgid "Double"
@@ -23617,20 +23577,8 @@ msgid "Width Hidden"
 msgstr "隱藏寬度"
 
 
-msgid "Width of the node in hidden state"
-msgstr "隱藏狀態節點的寬度"
-
-
 msgid "Custom Group"
 msgstr "自訂群組"
-
-
-msgid "Interface"
-msgstr "介面"
-
-
-msgid "Interface socket data"
-msgstr "介面接口資料"
 
 
 msgid "Compositor Node"
@@ -24255,10 +24203,6 @@ msgstr "中心 Y"
 
 msgid "Spin"
 msgstr "旋轉"
-
-
-msgid "Wrap"
-msgstr "包覆"
 
 
 msgid "Zoom"
@@ -25833,6 +25777,10 @@ msgstr "向量數學"
 
 msgid "Cross Product"
 msgstr "向量積"
+
+
+msgid "Wrap"
+msgstr "包覆"
 
 
 msgid "Z Axis"
@@ -28454,15 +28402,6 @@ msgstr "與綁束對齊 Y 軸對齊"
 
 
 msgctxt "Operator"
-msgid "Set Principal to Center"
-msgstr "設定主點至中心"
-
-
-msgid "Set optical center to center of footage"
-msgstr "設定光學中心至連續鏡頭中心"
-
-
-msgctxt "Operator"
 msgid "Set Origin"
 msgstr "設定原點"
 
@@ -30021,10 +29960,6 @@ msgid "Method used to reference paths"
 msgstr "用來參照路徑的方法"
 
 
-msgid "Use Relative paths with subdirectories only"
-msgstr "僅對次目錄使用相對路徑"
-
-
 msgid "Always write absolute paths"
 msgstr "總是寫入絕對路徑"
 
@@ -30035,10 +29970,6 @@ msgstr "總是寫入相對路徑 (可能之處)"
 
 msgid "Match"
 msgstr "比對"
-
-
-msgid "Match Absolute/Relative setting with input path"
-msgstr "以輸入路徑比對絕對/相對設定"
 
 
 msgid "Strip Path"
@@ -37451,40 +37382,8 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "在目前筆刷權重，以及眾鍵權重之間的插補係數"
 
 
-msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
-msgstr "要套用的姿勢索引 (-2 不更改姿勢，-1 則採姿勢庫作用中的姿勢)"
-
-
 msgid "Pose Name"
 msgstr "姿勢名稱"
-
-
-msgid "Frame to store pose on"
-msgstr "要儲存姿勢於何框幀"
-
-
-msgid "Name of newly added Pose"
-msgstr "新添加姿勢的名稱"
-
-
-msgid "The pose to move"
-msgstr "要移動的姿勢"
-
-
-msgid "The pose to remove"
-msgstr "要移除的姿勢"
-
-
-msgid "New Pose Name"
-msgstr "新姿勢名稱"
-
-
-msgid "New name for pose"
-msgstr "姿勢的新名稱"
-
-
-msgid "The pose to rename"
-msgstr "要重新命名的姿勢"
 
 
 msgctxt "Operator"
@@ -39167,6 +39066,10 @@ msgid "Edit user preferences and system settings"
 msgstr "編輯使用者偏好設定和系統設定"
 
 
+msgid "Interface"
+msgstr "介面"
+
+
 msgid "Themes"
 msgstr "主題"
 
@@ -39199,10 +39102,6 @@ msgstr "在不同的工作空間循環切換"
 msgctxt "Operator"
 msgid "Execute a Python Preset"
 msgstr "執行一道 Python 預置"
-
-
-msgid "Execute a preset"
-msgstr "執行預置"
 
 
 msgid "Menu ID Name"
@@ -41530,10 +41429,6 @@ msgid "Blend factor between stretch minimized and original"
 msgstr "在伸展最小化與原始之間的混合係數"
 
 
-msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "拆解之前虛擬填入網格的孔洞，較能避免重疊並保留對稱性"
-
-
 msgid "Number of iterations to run, 0 is unlimited when run interactively"
 msgstr "執行迭代的次數，當互動式執行時 0 為無限制"
 
@@ -42837,10 +42732,6 @@ msgid "Add or remove an Operator Preset"
 msgstr "添加或移除操作器預置"
 
 
-msgid "Enable workspace owner ID"
-msgstr "啟用工作空間擁有者 ID"
-
-
 msgid "Open a path in a file browser"
 msgstr "在檔案瀏覽器中開啟路徑"
 
@@ -43513,6 +43404,10 @@ msgstr "整合器預置"
 
 msgid "Sampling Presets"
 msgstr "取樣預置"
+
+
+msgid "Pose Library"
+msgstr "姿勢庫"
 
 
 msgid "Chain Scaling"
@@ -46631,10 +46526,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "整合器取得不同噪訊樣式的的種子值"
 
 
-msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "使用 Open Shading Language (僅適用 CPU 算繪)"
-
-
 msgid "Tile Size"
 msgstr "鋪排大小"
 
@@ -47857,6 +47748,10 @@ msgstr "基礎"
 
 msgid "All modifiers"
 msgstr "所有修改器"
+
+
+msgid "Bounciness"
+msgstr "反彈"
 
 
 msgid "Deforming"
@@ -49095,12 +48990,16 @@ msgid "Edges receive a lift force when passing through surrounding media"
 msgstr "邊線當通過周圍媒體時接收抬升力"
 
 
-msgid "Ball Size"
-msgstr "球大小"
+msgid "Dampening"
+msgstr "減緩"
 
 
 msgid "Blending to inelastic collision"
 msgstr "混合至無彈性碰撞"
+
+
+msgid "Ball Size"
+msgstr "球大小"
 
 
 msgid "Absolute ball size or factor if not manually adjusted"
@@ -49390,6 +49289,10 @@ msgstr "顯示遮罩的 Alpha 通道"
 
 msgid "Editing context being displayed"
 msgstr "正顯示的編輯中情境"
+
+
+msgid "Path Length"
+msgstr "路徑長度"
 
 
 msgid "Length of displaying path, in frames"
@@ -49885,10 +49788,6 @@ msgstr "顯示控制桿"
 
 msgid "Show handles of Bezier control points"
 msgstr "顯示貝茲控制點的控制桿"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "自動合併鍵幀"
 
 
 msgid "Auto Normalization"
@@ -54470,20 +54369,16 @@ msgid "Heat"
 msgstr "熱"
 
 
+msgid "Exponent"
+msgstr "指數"
+
+
 msgid "Lower"
 msgstr "小寫"
 
 
-msgid "Bounciness"
-msgstr "反彈"
-
-
 msgid "Upper"
 msgstr "大寫"
-
-
-msgid "Dampening"
-msgstr "減緩"
 
 
 msgid "Auto-Step"
@@ -55738,16 +55633,6 @@ msgstr "修正變形"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "顯示邊界方塊"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "隱藏邊界方塊"
-
-
-msgctxt "Operator"
 msgid "Hide Masked"
 msgstr "隱藏已遮罩"
 
@@ -56949,48 +56834,8 @@ msgid "Cannot pose libdata"
 msgstr "無姿勢庫資料"
 
 
-msgid "Add New"
-msgstr "添加新的"
-
-
-msgid "Add New (Current Frame)"
-msgstr "添加新的 (目前框幀)"
-
-
-msgid "Replace Existing..."
-msgstr "替換既有..."
-
-
-msgid "No action to validate"
-msgstr "無動作可驗證"
-
-
-msgid "Object does not have pose lib data"
-msgstr "物體沒有姿勢庫資料"
-
-
-msgid "Invalid index for pose"
-msgstr "無效的姿勢索引"
-
-
 msgid "Pose lib is only for armatures in pose mode"
 msgstr "姿勢庫僅適用於姿勢模式中的骨架"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "物體沒有有效的姿勢庫"
-
-
-msgid "Pose lib had no active pose"
-msgstr "姿勢庫中沒有作用中姿勢"
-
-
-msgid "Pose lib has no poses to preview/apply"
-msgstr "姿勢庫中沒有可預覽或套用的姿勢"
-
-
-msgid "Invalid pose specified %d"
-msgstr "指定的姿勢無效 %d"
 
 
 msgid "No active Keying Set to use"
@@ -59076,10 +58921,6 @@ msgid "Clipboard is empty"
 msgstr "剪貼簿為空白"
 
 
-msgid "Clipboard nodes are an incompatible type"
-msgstr "剪貼簿節點是不相容的類型"
-
-
 msgid "Some nodes references could not be restored, will be left empty"
 msgstr "有些節點參照無法還原，將會留白"
 
@@ -59972,10 +59813,6 @@ msgstr "沒有可移除的材質"
 
 msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "正在註冊 ID 屬性型別：「%s」過長，最大長度為 %d"
-
-
-msgid "Only boolean, int and float properties supported"
-msgstr "僅支援布林值、整數值、浮點值屬性"
 
 
 msgid "Array length mismatch (expected %d, got %d)"
