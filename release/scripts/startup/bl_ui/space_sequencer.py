@@ -2283,7 +2283,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
         col = layout.column()
 
         col.prop(ed, "use_cache_raw")
-        col.prop(ed, "use_cache_preprocessed")
+        col.prop(ed, "use_cache_preprocessed", text="Preprocessed")
         col.prop(ed, "use_cache_composite")
         col.prop(ed, "use_cache_final")
 
@@ -2409,7 +2409,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(strip, "use_cache_raw")
-        col.prop(strip, "use_cache_preprocessed")
+        col.prop(strip, "use_cache_preprocessed", text="Preprocessed")
         col.prop(strip, "use_cache_composite")
 
 

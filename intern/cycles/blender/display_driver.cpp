@@ -803,11 +803,16 @@ void BlenderDisplayDriver::draw(const Params &params)
   const int position_attribute = GPU_vertformat_attr_add(
       format, display_shader_->position_attribute_name, GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-  /* Note: Shader is bound again through IMM to register this shader with the imm module
+  /* Note: Shader is bound again through IMM to register this shader with the IMM module
    * and perform required setup for IMM rendering. This is required as the IMM module
    * needs to be aware of which shader is bound, and the main display shader
    * is bound externally. */
   immBindShader(active_shader);
+
+  if (tiles_->current_tile.need_update_texture_pixels) {
+    update_tile_texture_pixels(tiles_->current_tile);
+    tiles_->current_tile.need_update_texture_pixels = false;
+  }
 
   draw_tile(zoom_, texcoord_attribute, position_attribute, tiles_->current_tile.tile);
 

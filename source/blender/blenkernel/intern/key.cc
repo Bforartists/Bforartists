@@ -718,7 +718,7 @@ static void cp_key(const int start,
     ktot = 0.0;
     flagflo = 1;
     if (kb->totelem) {
-      kd = kb->totelem / (float)tot;
+      kd = kb->totelem / float(tot);
     }
     else {
       return;
@@ -1036,7 +1036,7 @@ static void do_key(const int start,
     k1tot = 0.0;
     flagflo |= 1;
     if (k[0]->totelem) {
-      k1d = k[0]->totelem / (float)tot;
+      k1d = k[0]->totelem / float(tot);
     }
     else {
       flagdo -= 1;
@@ -1046,7 +1046,7 @@ static void do_key(const int start,
     k2tot = 0.0;
     flagflo |= 2;
     if (k[0]->totelem) {
-      k2d = k[1]->totelem / (float)tot;
+      k2d = k[1]->totelem / float(tot);
     }
     else {
       flagdo -= 2;
@@ -1056,7 +1056,7 @@ static void do_key(const int start,
     k3tot = 0.0;
     flagflo |= 4;
     if (k[0]->totelem) {
-      k3d = k[2]->totelem / (float)tot;
+      k3d = k[2]->totelem / float(tot);
     }
     else {
       flagdo -= 4;
@@ -1066,7 +1066,7 @@ static void do_key(const int start,
     k4tot = 0.0;
     flagflo |= 8;
     if (k[0]->totelem) {
-      k4d = k[3]->totelem / (float)tot;
+      k4d = k[3]->totelem / float(tot);
     }
     else {
       flagdo -= 8;
@@ -1877,7 +1877,7 @@ KeyBlock *BKE_keyblock_add_ctime(Key *key, const char *name, const bool do_force
   const float cpos = key->ctime / 100.0f;
 
   /* In case of absolute keys, there is no point in adding more than one key with the same pos.
-   * Hence only set new keybloc pos to current time if none previous one already use it.
+   * Hence only set new key-block pos to current time if none previous one already use it.
    * Now at least people just adding absolute keys without touching to ctime
    * won't have to systematically use retiming func (and have ordering issues, too). See T39897.
    */
@@ -2217,7 +2217,7 @@ void BKE_keyblock_convert_from_mesh(const Mesh *me, const Key *key, KeyBlock *kb
 
   MEM_SAFE_FREE(kb->data);
 
-  kb->data = MEM_malloc_arrayN((size_t)len, (size_t)key->elemsize, __func__);
+  kb->data = MEM_malloc_arrayN(size_t(len), size_t(key->elemsize), __func__);
   kb->totelem = len;
 
   BKE_keyblock_update_from_mesh(me, kb);

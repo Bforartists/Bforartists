@@ -23,6 +23,7 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Set,
     Tuple,
     Type,
 )
@@ -180,14 +181,13 @@ def text_matching_bracket_backward(
 # -----------------------------------------------------------------------------
 # Execution Wrappers
 
-def run(args: str, *, quiet: bool) -> int:
+def run(args: Sequence[str], *, cwd: Optional[str], quiet: bool) -> int:
     if VERBOSE_COMPILER and not quiet:
         out = sys.stdout.fileno()
     else:
         out = subprocess.DEVNULL
 
-    import shlex
-    p = subprocess.Popen(shlex.split(args), stdout=out, stderr=out)
+    p = subprocess.Popen(args, stdout=out, stderr=out, cwd=cwd)
     p.wait()
     return p.returncode
 
@@ -537,7 +537,7 @@ class edit_generators:
         """
         @staticmethod
         def edit_list_from_file(source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
-            edits = []
+            edits: List[Edit] = []
 
             # The user might exclude C++, if they forget, it is better not to operate on C.
             if not source.lower().endswith((".h", ".c")):
@@ -1018,7 +1018,7 @@ class edit_generators:
                     span=match.span(),
                     content='',  # Remove the header.
                     content_fail='%s__ALWAYS_FAIL__%s' % (match.group(2), match.group(4)),
-                    extra_build_args=('-D' + header_guard),
+                    extra_build_args=('-D' + header_guard, ),
                 ))
 
             return edits
@@ -1109,7 +1109,8 @@ def test_edit(
         source: str,
         output: str,
         output_bytes: Optional[bytes],
-        build_args: str,
+        build_args: Sequence[str],
+        build_cwd: Optional[str],
         data: str,
         data_test: str,
         keep_edits: bool = True,
@@ -1124,7 +1125,7 @@ def test_edit(
     with open(source, 'w', encoding='utf-8') as fh:
         fh.write(data_test)
 
-    ret = run(build_args, quiet=expect_failure)
+    ret = run(build_args, cwd=build_cwd, quiet=expect_failure)
     if ret == 0:
         output_bytes_test = file_as_bytes(output)
         if (output_bytes is None) or (file_as_bytes(output) == output_bytes):
@@ -1186,8 +1187,15 @@ def apply_edit(data: str, text_to_replace: str, start: int, end: int, *, verbose
     return data
 
 
-def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> None:
-    (source, output, build_args, edit_to_apply, skip_test, shared_edit_data) = arg_group
+def wash_source_with_edits(
+        source: str,
+        output: str,
+        build_args: Sequence[str],
+        build_cwd: Optional[str],
+        edit_to_apply: str,
+        skip_test: bool,
+        shared_edit_data: Any,
+) -> None:
     # build_args = build_args + " -Werror=duplicate-decl-specifier"
     with open(source, 'r', encoding='utf-8') as fh:
         data = fh.read()
@@ -1197,7 +1205,7 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
     #
     # This is a heavy solution that guarantees edits never oscillate between
     # multiple states, so re-visiting a previously visited state will always exit.
-    data_states = set()
+    data_states: Set[str] = set()
 
     # When overlapping edits are found, keep attempting edits.
     edit_again = True
@@ -1222,7 +1230,7 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
             return
 
         test_edit(
-            source, output, None, build_args, data, data,
+            source, output, None, build_args, build_cwd, data, data,
             keep_edits=False,
         )
         if not os.path.exists(output):
@@ -1230,7 +1238,7 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
 
             # NOTE(@campbellbarton): This fails very occasionally and needs to be investigated why.
             # For now skip, as it's disruptive to force-quit in the middle of all other changes.
-            print("Failed to produce output file, skipping:", output)
+            print("Failed to produce output file, skipping:", repr(output))
             return
 
         output_bytes = file_as_bytes(output)
@@ -1246,18 +1254,17 @@ def wash_source_with_edits(arg_group: Tuple[str, str, str, str, bool, Any]) -> N
             build_args_for_edit = build_args
             if extra_build_args:
                 # Add directly after the compile command.
-                a, b = build_args.split(' ', 1)
-                build_args_for_edit = a + ' ' + extra_build_args + ' ' + b
+                build_args_for_edit = build_args[:1] + extra_build_args + build_args[1:]
 
             data_test = apply_edit(data, text, start, end, verbose=VERBOSE)
             if test_edit(
-                    source, output, output_bytes, build_args_for_edit, data, data_test,
+                    source, output, output_bytes, build_args_for_edit, build_cwd, data, data_test,
                     keep_edits=False,
             ):
                 # This worked, check if the change would fail if replaced with 'text_always_fail'.
                 data_test_always_fail = apply_edit(data, text_always_fail, start, end, verbose=False)
                 if test_edit(
-                        source, output, output_bytes, build_args_for_edit, data, data_test_always_fail,
+                        source, output, output_bytes, build_args_for_edit, build_cwd, data, data_test_always_fail,
                         expect_failure=True, keep_edits=False,
                 ):
                     if VERBOSE_EDIT_ACTION:
@@ -1325,11 +1332,23 @@ def run_edits_on_directory(
         os.path.join("source"),
     )
 
-    def output_from_build_args(build_args: str) -> str:
+    def split_build_args_with_cwd(build_args_str: str) -> Tuple[Sequence[str], Optional[str]]:
         import shlex
-        build_args_split = shlex.split(build_args)
-        i = build_args_split.index("-o")
-        return build_args_split[i + 1]
+        build_args = shlex.split(build_args_str)
+
+        cwd = None
+        if len(build_args) > 3:
+            if build_args[0] == "cd" and build_args[2] == "&&":
+                cwd = build_args[1]
+                del build_args[0:3]
+        return build_args, cwd
+
+    def output_from_build_args(build_args: Sequence[str], cwd: Optional[str]) -> str:
+        i = build_args.index("-o")
+        # Assume the output is a relative path is a CWD was set.
+        if cwd:
+            return os.path.join(cwd, build_args[i + 1])
+        return build_args[i + 1]
 
     def test_path(c: str) -> bool:
         # Skip any generated source files (files in the build directory).
@@ -1356,13 +1375,14 @@ def run_edits_on_directory(
 
     # Filter out build args.
     args_orig_len = len(args)
-    args = [
-        (c, build_args)
-        for (c, build_args) in args
+    args_with_cwd = [
+        (c, *split_build_args_with_cwd(build_args_str))
+        for (c, build_args_str) in args
         if test_path(c)
     ]
-    print("Operating on %d of %d files..." % (len(args), args_orig_len))
-    for (c, build_args) in args:
+    del args
+    print("Operating on %d of %d files..." % (len(args_with_cwd), args_orig_len))
+    for (c, build_args, build_cwd) in args_with_cwd:
         print(" ", c)
     del args_orig_len
 
@@ -1372,20 +1392,31 @@ def run_edits_on_directory(
 
     try:
         if USE_MULTIPROCESS:
-            args_expanded = [
-                (c, output_from_build_args(build_args), build_args, edit_to_apply, skip_test, shared_edit_data)
-                for (c, build_args) in args
-            ]
+            args_expanded = [(
+                c,
+                output_from_build_args(build_args, build_cwd),
+                build_args,
+                build_cwd,
+                edit_to_apply,
+                skip_test,
+                shared_edit_data,
+            ) for (c, build_args, build_cwd) in args_with_cwd]
             import multiprocessing
             job_total = multiprocessing.cpu_count()
             pool = multiprocessing.Pool(processes=job_total * 2)
-            pool.map(wash_source_with_edits, args_expanded)
+            pool.starmap(wash_source_with_edits, args_expanded)
             del args_expanded
         else:
             # now we have commands
-            for c, build_args in args:
+            for c, build_args, build_cwd in args_with_cwd:
                 wash_source_with_edits(
-                    (c, output_from_build_args(build_args), build_args, edit_to_apply, skip_test, shared_edit_data)
+                    c,
+                    output_from_build_args(build_args, build_cwd),
+                    build_args,
+                    build_cwd,
+                    edit_to_apply,
+                    skip_test,
+                    shared_edit_data,
                 )
     except Exception as ex:
         raise ex

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -2336,10 +2336,6 @@ msgid "Circle"
 msgstr "Cirkel"
 
 
-msgid "Pose Library"
-msgstr "Poses Bibliotheek"
-
-
 msgid "Rigid Body Settings"
 msgstr "Star Lichaam Instellingen"
 
@@ -2874,10 +2870,6 @@ msgid "Loose"
 msgstr "Los"
 
 
-msgid "Loose edge"
-msgstr "Losse rand"
-
-
 msgid "Seam"
 msgstr "Naad"
 
@@ -3015,10 +3007,6 @@ msgstr "Eigen Node"
 
 msgid "Show Texture"
 msgstr "Toon Textuur"
-
-
-msgid "Interface"
-msgstr "Interface"
 
 
 msgid "Alpha Over"
@@ -5747,6 +5735,10 @@ msgid "Open Preferences..."
 msgstr "Open Instellingen..."
 
 
+msgid "Interface"
+msgstr "Interface"
+
+
 msgid "File Paths"
 msgstr "Bestandspaden"
 
@@ -6459,6 +6451,10 @@ msgid "Palette Color"
 msgstr "Palet Kleur"
 
 
+msgid "Pose Library"
+msgstr "Poses Bibliotheek"
+
+
 msgid "Custom Shape"
 msgstr "Aangepaste Vorm"
 
@@ -6823,6 +6819,10 @@ msgstr "Render Beeld"
 
 msgid "Collision Shape"
 msgstr "Botsingvorm"
+
+
+msgid "Bounciness"
+msgstr "Veerkrachtigheid"
 
 
 msgid "Max Roughness"
@@ -7801,10 +7801,6 @@ msgid "Flame Smoke"
 msgstr "Vlam Rook"
 
 
-msgid "Flame Color"
-msgstr "Vlam Kleur"
-
-
 msgid "Bubbles"
 msgstr "Bubbels"
 
@@ -7820,10 +7816,6 @@ msgstr "Lege Ruimte"
 msgctxt "Operator"
 msgid "Resume"
 msgstr "Hervat"
-
-
-msgid "Bounciness"
-msgstr "Veerkrachtigheid"
 
 
 msgid "Auto-Step"
@@ -8685,16 +8677,6 @@ msgstr "Maak Schoon"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Toon Passende Doos"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Verberg Passende Doos"
-
-
-msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "Maak Masker Leeg"
 
@@ -8988,10 +8970,6 @@ msgstr "Coëfficiënt"
 
 msgid "Too many points selected: %d"
 msgstr "Teveel punten geselecteerd: %d"
-
-
-msgid "Replace Existing..."
-msgstr "Vervang Bestaande..."
 
 
 msgctxt "Curve"

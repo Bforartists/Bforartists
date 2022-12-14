@@ -16,6 +16,7 @@ bl_info = {
     "location": "N-panel in the 3D Viewport",
     "category": "Animation",
     "support": 'OFFICIAL',
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/animation/copy_global_transform.html",
 }
 
 import ast

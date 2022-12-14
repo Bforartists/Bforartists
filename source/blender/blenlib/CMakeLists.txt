@@ -89,7 +89,7 @@ set(SRC
   intern/lasso_2d.c
   intern/lazy_threading.cc
   intern/length_parameterize.cc
-  intern/listbase.c
+  intern/listbase.cc
   intern/math_base.c
   intern/math_base_inline.c
   intern/math_base_safe_inline.c
@@ -272,7 +272,7 @@ set(SRC
   BLI_math_matrix.h
   BLI_math_mpq.hh
   BLI_math_rotation.h
-  BLI_math_rotation.hh
+  BLI_math_rotation_legacy.hh
   BLI_math_solvers.h
   BLI_math_statistics.h
   BLI_math_time.h

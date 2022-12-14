@@ -401,7 +401,7 @@ static bool id_search_add(const bContext *C, TemplateID *template_ui, uiSearchIt
                           name_ui,
                           id,
                           iconid,
-                          has_sep_char ? UI_BUT_HAS_SEP_CHAR : 0,
+                          has_sep_char ? int(UI_BUT_HAS_SEP_CHAR) : 0,
                           name_prefix_offset)) {
     return false;
   }
@@ -5418,8 +5418,8 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
            "",
            0,
            0,
-           (short)path_width,
-           (short)path_height,
+           short(path_width),
+           short(path_height),
            profile,
            0.0f,
            1.0f,
@@ -6117,7 +6117,7 @@ static char *progress_tooltip_func(bContext * /*C*/, void *argN, const char * /*
   BLI_timecode_string_from_time_simple(elapsed_str, sizeof(elapsed_str), elapsed);
 
   if (progress) {
-    const double remaining = (elapsed / (double)progress) - elapsed;
+    const double remaining = (elapsed / double(progress)) - elapsed;
     BLI_timecode_string_from_time_simple(remaining_str, sizeof(remaining_str), remaining);
   }
 
