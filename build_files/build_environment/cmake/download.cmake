@@ -32,12 +32,13 @@ function(download_source dep)
   message("Checking source : ${dep} (${TARGET_FILE})")
   if(NOT EXISTS ${TARGET_FILE})
     message("Checking source : ${dep} - source not found downloading from ${TARGET_URI}")
-    file(DOWNLOAD ${TARGET_URI} ${TARGET_FILE}
-         TIMEOUT 1800  # seconds
-         EXPECTED_HASH ${TARGET_HASH_TYPE}=${TARGET_HASH}
-         TLS_VERIFY ON
-         SHOW_PROGRESS
-        )
+    file(
+      DOWNLOAD ${TARGET_URI} ${TARGET_FILE}
+      TIMEOUT 1800  # seconds
+      EXPECTED_HASH ${TARGET_HASH_TYPE}=${TARGET_HASH}
+      TLS_VERIFY ON
+      SHOW_PROGRESS
+    )
   endif()
   if(EXISTS ${TARGET_FILE})
     # Sometimes the download fails, but that is not a
@@ -87,6 +88,7 @@ download_source(OPENSUBDIV)
 download_source(SDL)
 download_source(OPENCOLLADA)
 download_source(OPENCOLORIO)
+download_source(MINIZIPNG)
 download_source(LLVM)
 download_source(OPENMP)
 download_source(OPENIMAGEIO)
@@ -125,6 +127,7 @@ download_source(SSL)
 download_source(SQLITE)
 download_source(EMBREE)
 download_source(USD)
+download_source(MATERIALX)
 download_source(OIDN)
 download_source(LIBGLU)
 download_source(MESA)
@@ -163,3 +166,12 @@ download_source(IGC_SPIRV_TRANSLATOR)
 download_source(GMMLIB)
 download_source(OCLOC)
 download_source(AOM)
+download_source(FRIBIDI)
+download_source(HARFBUZZ)
+download_source(SHADERC)
+download_source(SHADERC_SPIRV_TOOLS)
+download_source(SHADERC_SPIRV_HEADERS)
+download_source(SHADERC_GLSLANG)
+download_source(VULKAN_HEADERS)
+download_source(VULKAN_LOADER)
+download_source(PYBIND11)

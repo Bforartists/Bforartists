@@ -118,7 +118,7 @@ def stripLibraryABI(lib_name):
     """
     Strip ABI suffix from .so file
 
-    Example; libexample.so.1.0 => libexample.so
+    Example; ``libexample.so.1.0`` => ``libexample.so``.
     """
     lib_name_no_abi = lib_name
     # TODO(sergey): Optimize this!

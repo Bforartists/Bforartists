@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -2023,6 +2023,10 @@ msgstr "ფორმის საკვანძო ფაზები"
 
 msgid "Shape Key data-blocks"
 msgstr "ფორმის საკვანძო ფაზების მონაცემთა ბლოკები"
+
+
+msgid "Simulations"
+msgstr "სიმულაციები"
 
 
 msgid "Sounds"
@@ -4069,10 +4073,6 @@ msgid "Factor of Simplify using adaptive algorithm"
 msgstr "ადაპტირებადი ალგორითმის გამოყენებით გამარტივების ფაქტორი"
 
 
-msgid "Auto-Masking Material"
-msgstr "ავტო-შენიღბვის მასალა"
-
-
 msgid "Default Eraser"
 msgstr "ნაგულისხმები საშლელი"
 
@@ -4419,10 +4419,6 @@ msgstr "აჩვენე ეს გამოსახულება ფონ
 
 msgid "Show Expanded"
 msgstr "განვრცობილის ჩვენება"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "გამოაჩინე განვრცობილ(ებ)ი მომხმარებლის ინტერფეისში"
 
 
 msgid "Show On Foreground"
@@ -8208,10 +8204,6 @@ msgstr "მრუდის ინტერპოლაცია ამ წერ
 
 msgid "Auto Handle"
 msgstr "ავტომატური სახელური"
-
-
-msgid "Auto Clamped Handle"
-msgstr "ავტომატური აღკვეთის მქონე სახელური"
 
 
 msgid "Vector Handle"
@@ -12114,10 +12106,6 @@ msgid "Show Scene data-blocks"
 msgstr "აჩვენე სცენის მონაცემთა ბლოკები"
 
 
-msgid "Simulations"
-msgstr "სიმულაციები"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "აჩვენე სიმულაციის მონაცემთა ბლოკები"
 
@@ -14790,16 +14778,8 @@ msgid "Keyframe"
 msgstr "საკვანძო ფაზა"
 
 
-msgid "Normal keyframe - e.g. for key poses"
-msgstr "ჩვეულებრივი საკვანძო ფაზა - მაგ.: საკვანძო პოზებისთვის"
-
-
 msgid "Breakdown"
 msgstr "შუალა"
-
-
-msgid "A breakdown pose - e.g. for transitions between key poses"
-msgstr "შუალა პოზა - მაგ.: გარდასვლა საკვანძო პოზებს შორის"
 
 
 msgid "Moving Hold"
@@ -15364,6 +15344,10 @@ msgstr "მორგებული მრუდი ფუნჯის ეფე
 
 msgid "Custom curve to control primitive thickness"
 msgstr "მორგებული მრუდი პრიმიტიული სისქის გასაკონტროლებლად"
+
+
+msgid "Auto-Masking Material"
+msgstr "ავტო-შენიღბვის მასალა"
 
 
 msgid "Use Falloff"
@@ -16038,10 +16022,6 @@ msgstr "მასალების ინვერსია"
 
 msgid "Pass"
 msgstr "გავლა"
-
-
-msgid "Object Offset"
-msgstr "ობიექტის აცდენა"
 
 
 msgid "Pass index"
@@ -18467,10 +18447,6 @@ msgid "Half"
 msgstr "ნახევარი"
 
 
-msgid "Path Length"
-msgstr "ბილიკის სიგრძე"
-
-
 msgid "Render Resolution U"
 msgstr "რენდერის გარჩევადობა U"
 
@@ -20513,10 +20489,6 @@ msgid "Parent Vertices"
 msgstr "მშობელი წვეროები"
 
 
-msgid "Pose Library"
-msgstr "პოზების ბიბლიოთეკა"
-
-
 msgid "Rigid Body Settings"
 msgstr "უდრეკი სხეულის პარამეტრები"
 
@@ -21230,14 +21202,6 @@ msgstr "ინვერსიული აღკვეთილი"
 
 msgid "Linear Clamped"
 msgstr "წრფივი აღკვეთილი"
-
-
-msgid "Exponent"
-msgstr "ექსპონენტი"
-
-
-msgid "Exponent Clamped"
-msgstr "ექსპონენტი აღკვეთით"
 
 
 msgid "Doppler Factor"
@@ -25068,6 +25032,10 @@ msgid "Soft Body"
 msgstr "რბილი სხეული"
 
 
+msgid "Object Offset"
+msgstr "ობიექტის აცდენა"
+
+
 msgid "Affect"
 msgstr "ზემოქმედების არე"
 
@@ -25469,10 +25437,6 @@ msgstr "მონიშნე შაბლონით"
 
 msgid "Meta"
 msgstr "მეტა"
-
-
-msgid "Interface"
-msgstr "ინტერფეისი"
 
 
 msgid "Relative Size X"
@@ -30829,6 +30793,10 @@ msgid "Edit user preferences and system settings"
 msgstr "მომხმარებლისა და სისტემის პარამეტრები)"
 
 
+msgid "Interface"
+msgstr "ინტერფეისი"
+
+
 msgid "Themes"
 msgstr "თემები"
 
@@ -32799,6 +32767,10 @@ msgid "View Object Types"
 msgstr "მაჩვენე ობიექტების ტიპები"
 
 
+msgid "Pose Library"
+msgstr "პოზების ბიბლიოთეკა"
+
+
 msgid "Bendy Bones"
 msgstr "დრეკადი ძვლები"
 
@@ -34114,10 +34086,6 @@ msgid "Scrambling Distance"
 msgstr "არევის მანძილი"
 
 
-msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "გამოიყენე შეფერადების ღია ენა (მხოლოდ CPU-თი რენდერირებისთვის)"
-
-
 msgid "Viewport Texture Limit"
 msgstr "სარკმლის ტექსტურის ლიმიტი"
 
@@ -34152,10 +34120,6 @@ msgstr "აჩვენე ფონის რენდერის გადა
 
 msgid "Show the Ambient Occlusion render pass"
 msgstr "აჩვენე გარემოსმიერი დახშობის რენდერის გადავლა"
-
-
-msgid "Show the Shadow render pass"
-msgstr "აჩვენე ჩრდილის რენდერის გადავლა"
 
 
 msgid "Settings/info about a language"
@@ -34730,6 +34694,10 @@ msgid "Alpha Channel"
 msgstr "ალფა არხი"
 
 
+msgid "Path Length"
+msgstr "ბილიკის სიგრძე"
+
+
 msgid "Pivot center for rotation/scaling"
 msgstr "ბრუნვის ცენტრი ბრუნვისთვის/მასშტაბირებისთვის"
 
@@ -34752,6 +34720,22 @@ msgstr "აჩვენე ლურჯი არხი"
 
 msgid "Show Filters"
 msgstr "აჩვენე ფილტრები"
+
+
+msgid "Show Gizmo"
+msgstr "აჩვენე მანიპულატორი"
+
+
+msgid "Show gizmos of all types"
+msgstr "აჩვენე ყველა ტიპის მანიპულატორები"
+
+
+msgid "Navigate Gizmo"
+msgstr "ნავიგაციის მანიპულატორი"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "სარკმელში ნავიგაციის მანიპულატორი"
 
 
 msgid "Show Green Channel"
@@ -34813,22 +34797,6 @@ msgstr "აბრუნე 3გ კურსორის გარშემო"
 
 msgid "Pivot around active object"
 msgstr "აბრუნე აქტიური ობიექტის გარშემო"
-
-
-msgid "Show Gizmo"
-msgstr "აჩვენე მანიპულატორი"
-
-
-msgid "Show gizmos of all types"
-msgstr "აჩვენე ყველა ტიპის მანიპულატორები"
-
-
-msgid "Navigate Gizmo"
-msgstr "ნავიგაციის მანიპულატორი"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "სარკმელში ნავიგაციის მანიპულატორი"
 
 
 msgid "Show objects"
@@ -36308,10 +36276,6 @@ msgid "Distance Culling"
 msgstr "გამოხშირვა მანძილით"
 
 
-msgid " Max Samples"
-msgstr "სემპლების მაქსიმუმი"
-
-
 msgid "Min Samples"
 msgstr "სემპლების მინიმუმი"
 
@@ -36879,6 +36843,10 @@ msgid "Force Field"
 msgstr "ძალოვანი ველი"
 
 
+msgid "Exponent"
+msgstr "ექსპონენტი"
+
+
 msgid "Light Clamping"
 msgstr "სინათლის აღკვეთა"
 
@@ -37008,11 +36976,6 @@ msgstr "რადიალური გამრუდება"
 
 
 msgctxt "Operator"
-msgid "Set Center"
-msgstr "დააყენე ცენტრი"
-
-
-msgctxt "Operator"
 msgid "Backwards"
 msgstr "უკუღმა"
 
@@ -37025,6 +36988,10 @@ msgstr "შემდეგ"
 msgctxt "Operator"
 msgid "Location"
 msgstr "ადგილმდებარეობა"
+
+
+msgid "Viewport Gizmos"
+msgstr "სარკმლის მანიპულატორები"
 
 
 msgctxt "Operator"
@@ -37142,10 +37109,6 @@ msgstr "მანძილის მიხედვით"
 msgctxt "Operator"
 msgid "Selection"
 msgstr "მონიშვნა"
-
-
-msgid "Viewport Gizmos"
-msgstr "სარკმლის მანიპულატორები"
 
 
 msgid "Modified Edges"
@@ -38225,16 +38188,6 @@ msgstr "ჩაკეტე მონიშნული"
 
 
 msgctxt "Operator"
-msgid "Unlock Selected"
-msgstr "გახსენი მონიშნულის საკეტი"
-
-
-msgctxt "Operator"
-msgid "Unlock Unselected"
-msgstr "გახსენი მოუნიშნავის საკეტი"
-
-
-msgctxt "Operator"
 msgid "Lock Only Selected"
 msgstr "ჩაკეტე მხოლოდ მონიშნული"
 
@@ -38242,6 +38195,16 @@ msgstr "ჩაკეტე მხოლოდ მონიშნული"
 msgctxt "Operator"
 msgid "Lock Only Unselected"
 msgstr "ჩაკეტე მხოლოდ მოუნიშნავი"
+
+
+msgctxt "Operator"
+msgid "Unlock Selected"
+msgstr "გახსენი მონიშნულის საკეტი"
+
+
+msgctxt "Operator"
+msgid "Unlock Unselected"
+msgstr "გახსენი მოუნიშნავის საკეტი"
 
 
 msgctxt "Operator"
@@ -38281,16 +38244,6 @@ msgstr "შეასწორე დეფორმირებები"
 
 msgid "Locks"
 msgstr "საკეტები"
-
-
-msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "აჩვენე შემომსაზღვრელი ყუთი"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "დამალე შემომსაზღვრელი ყუთი"
 
 
 msgctxt "Operator"

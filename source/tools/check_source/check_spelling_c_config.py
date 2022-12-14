@@ -76,6 +76,7 @@ dict_custom = {
     "decorrelated",
     "decrement",
     "decrementing",
+    "deduplicate",
     "deduplicating",
     "deduplication",
     "defocus",

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2248,10 +2248,6 @@ msgid "Show Texture"
 msgstr "ﺖﻓﺎﺑ ﺶﯾﺎﻤﻧ"
 
 
-msgid "Interface"
-msgstr "ﻂﺳﺍﻭ"
-
-
 msgid "Color Sigma"
 msgstr "ﺎﻤﮕﯿﺳ ﮓﻧﺭ"
 
@@ -3036,6 +3032,10 @@ msgid "Repeat last action"
 msgstr "ﺖﯿﻟﺎﻌﻓ ﻦﯾﺮﺧﺁ ﺭﺍﺮﮑﺗ"
 
 
+msgid "Interface"
+msgstr "ﻂﺳﺍﻭ"
+
+
 msgid "Themes"
 msgstr "ﺎﻫ ﻢﺗ"
 
@@ -3777,11 +3777,6 @@ msgid "Aspect Ratio"
 msgstr "ﺮﯾﻮﺼﺗ ﺖﺒﺴﻧ"
 
 
-msgctxt "Operator"
-msgid "Group"
-msgstr "ﻩﻭﺮﮔ"
-
-
 msgid "Pack"
 msgstr "ﻪﺘﺴﺑ"
 
@@ -3885,18 +3880,6 @@ msgstr "ﺶﯾﺍﺮﯾﻭ ﻥﺩﺮﮐ‌ﻝﺎﻌﻓ ﯼﺍﺮﺑ ﻪﻈﻓﺎ
 
 msgid "IK"
 msgstr "(IK) ﺱﻮﮑﻌﻣ ﺖﮐﺮﺣ"
-
-
-msgid "Add New"
-msgstr "ﺪﯾﺪﺟ ﺩﺍﺪﯾﻭﺭ ﻥﺩﻭﺰﻓﺍ"
-
-
-msgid "Add New (Current Frame)"
-msgstr "(ﯽﻧﻮﻨﮐ ﻢﯾﺮﻓ) ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Replace Existing..."
-msgstr "ﺩﻮﺟﻮﻣ ﺾﯾﻮﻌﺗ..."
 
 
 msgid "Nothing selected"

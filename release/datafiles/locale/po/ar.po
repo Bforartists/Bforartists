@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -2253,10 +2253,6 @@ msgstr "ﺔﻴﻔﻠﺨﻛ ﺓﺭﻮﺼﻟﺍ ﻩﺬﻫ ﺮﻬﻇﺍ"
 
 msgid "Show Expanded"
 msgstr "ﺔﺣﻮﺘﻔﻣ ﺎﻫﺮﻬﻇﺃ"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﺔﺣﻮﺘﻔﻤﻟﺍ ﺮﻬﻇﺃ"
 
 
 msgid "Show On Foreground"
@@ -8801,10 +8797,6 @@ msgid "Pass"
 msgstr "ﺭﺍﺮﻜﺗ"
 
 
-msgid "Object Offset"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﺔﺣﺍﺯﺍ"
-
-
 msgid "Relative Offset"
 msgstr "ﺔﻴﺒﺴﻧ ﺔﺣﺍﺯﺍ"
 
@@ -10277,10 +10269,6 @@ msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺔﺌﺒﻌﺗ ﺔﻘﻳﺮﻃ"
 
 msgid "Half"
 msgstr "ﻒﺼﻧ"
-
-
-msgid "Path Length"
-msgstr "ﺭﺎﺴﻤﻟﺍ ﻝﻮﻃ"
 
 
 msgid "The number of frames that are needed to traverse the path, defining the maximum value for the 'Evaluation Time' setting"
@@ -12723,10 +12711,6 @@ msgid "Current pose for armatures"
 msgstr "ﻞﻛﺎﻴﻬﻠﻟ ﺔﻴﻟﺎﺤﻟﺍ ﺔﻔﻗﻮﻟﺍ"
 
 
-msgid "Pose Library"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
-
-
 msgid "Rigid Body Settings"
 msgstr "ﺔﻨﻴﻠﻟﺍ ﻡﺎﺴﺟﻷ﻿ﺍ ﺹﺍﻮﺧ"
 
@@ -13765,22 +13749,6 @@ msgstr "ﻢﻠﻘﻣ ﻲﻄﺧ"
 
 msgid "Linear distance model with clamping"
 msgstr "ﻢﻴﻠﻘﺘﻟﺍ ﻊﻣ ﻲﻄﺨﻟﺍ ﺪﻌﺒﻟﺍ ﺝﺫﻮﻤﻧ"
-
-
-msgid "Exponent"
-msgstr "ﻒﻋﺎﻀﻤﻟﺍ"
-
-
-msgid "Exponent distance model"
-msgstr "ﻲﻠﻴﻟﺪﻟﺍ ﺪﻌﺒﻟﺍ ﺝﺫﻮﻤﻧ"
-
-
-msgid "Exponent Clamped"
-msgstr "ﻢﻠﻘﻣ ﻒﻋﺎﻀﺘﻣ"
-
-
-msgid "Exponent distance model with clamping"
-msgstr "ﻢﻴﻠﻘﺘﻟﺍ ﻊﻣ ﻲﻠﻴﻟﺪﻟﺍ ﺪﻌﺒﻟﺍ ﺝﺫﻮﻤﻧ"
 
 
 msgid "Doppler Factor"
@@ -17320,10 +17288,6 @@ msgid "Loose"
 msgstr "ﻖﻠﻄﻣ"
 
 
-msgid "Loose edge"
-msgstr "ﺔﻘﻠﻄﻤﻟﺍ ﺔﻓﺎﺤﻟﺍ"
-
-
 msgid "Seam"
 msgstr "ﺓﺯﺭﺪﻟﺍ"
 
@@ -17762,6 +17726,10 @@ msgstr "ﺔﺒﺳﺎﻨﻤﻟﺍ ﻝﻮﻃ"
 
 msgid "Merge Distance"
 msgstr "ﺞﻣﺪﻟﺍ ﺔﻓﺎﺴﻣ"
+
+
+msgid "Object Offset"
+msgstr "ﻦﺋﺎﻜﻟﺍ ﺔﺣﺍﺯﺍ"
 
 
 msgid "Add a constant offset"
@@ -19195,10 +19163,6 @@ msgid "Plane Tracks"
 msgstr "ﺢﻄﺴﻤﻟﺍ ﺕﺍﺭﺎﺴﻣ"
 
 
-msgid "Collection of plane tracks in this tracking data object"
-msgstr "ﺍﺬﻫ ﺔﻘﺣﻼ﻿ﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻦﺋﺎﻛ ﻲﻓ ﺢﻄّﺴﻤﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "Tracks"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ"
 
@@ -19331,6 +19295,10 @@ msgid "Unique name of object"
 msgstr "ﻦﺋﺎﻜﻠﻟ ﺪﻳﺮﻔﻟﺍ ﻢﺳﻻ﻿ﺍ"
 
 
+msgid "Collection of plane tracks in this tracking data object"
+msgstr "ﺍﺬﻫ ﺔﻘﺣﻼ﻿ﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻦﺋﺎﻛ ﻲﻓ ﺢﻄّﺴﻤﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺔﻋﻮﻤﺠﻣ"
+
+
 msgid "Scale of object solution in camera space"
 msgstr "ﺍﺮﻴﻣﺎﻜﻟﺍ ءﺎﻀﻓ ﻲﻓ ﻦﺋﺎﻜﻟﺍ ﺞﻟﺎﻌﻣ ﻢﺠﺣ"
 
@@ -19453,10 +19421,6 @@ msgstr "ﺪﻬﺸﻤﻟﺍ ﻢﻴﺠﺤﺘﻠﻟ ﻦﻴﺘﻣﺰﺣ ﻦﻴﺑ �
 
 msgid "Distance between two bundles used for object scaling"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻢﻴﺠﺤﺘﻠﻟ ﻦﻴﺘﻣﺰﺣ ﻦﻴﺑ ﺔﻓﺎﺴﻤﻟﺍ"
-
-
-msgid "Track as fast as it's possible"
-msgstr "ﺔﻨﻜﻤﻣ ﺔﻋﺮﺳ ﻰﻠﻋﺄﺑ ﻖﺣﻻ﻿"
 
 
 msgid "Double"
@@ -20273,10 +20237,6 @@ msgstr "X ﺰﻛﺮﻣ"
 
 msgid "Center Y"
 msgstr "Y ﺰﻛﺮﻣ"
-
-
-msgid "Wrap"
-msgstr "ﻒﻠﻟﺍ"
 
 
 msgid "Zoom"
@@ -21274,6 +21234,10 @@ msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
 
 msgid "Modulo"
 msgstr "ﺓﺪﺣﻭ"
+
+
+msgid "Wrap"
+msgstr "ﻒﻠﻟﺍ"
 
 
 msgid "Z Axis"
@@ -27727,14 +27691,6 @@ msgid "Interpolation factor between current brush weight, and keys' weights"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻥﺍﺯﻭﺍ ﻭ ﻲﻟﺎﺤﻟﺍ ﺓﺎﺷﺮﻔﻟﺍ ﻥﺯﻭ ﻦﻴﺑ ﺪﻴﻟﻮﺘﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
-msgid "New Pose Name"
-msgstr "ﺔﻔﻗﻮﻠﻟ ﺪﻳﺪﺟ ﻢﺳﺍ"
-
-
-msgid "The pose to rename"
-msgstr "ﺎﻬﺘﻴﻤﺴﺗ ﺩﺍﺮﻤﻟﺍ ﺔﻔﻘﻟﺍ"
-
-
 msgctxt "Operator"
 msgid "Pose Breakdowner"
 msgstr "ﺔﻔﻗﻮﻟﺍ ﻞﺼّﻔﻣ"
@@ -28397,10 +28353,6 @@ msgstr "ﻲﺑﺮﺠﺗ"
 msgctxt "Operator"
 msgid "Execute a Python Preset"
 msgstr "ﺎﻘﺒﺴﻣ ﺪﻌﻣ ﻥﻮﺜﻳﺎﺑ ﻒﻠﻣ ﺬﻔﻧ"
-
-
-msgid "Execute a preset"
-msgstr "ﻖﺒﺴﻣ ﺩﺍﺪﻋﺍ ﺬﻔﻧ"
 
 
 msgid "Menu ID Name"
@@ -29399,10 +29351,6 @@ msgstr "ﺩﺪﻤﺘﻟﺍ ﺺﻠﻗ"
 
 msgid "Reduce UV stretching by relaxing angles"
 msgstr "ﺎﻳﺍﻭﺰﻟﺍ ءﺎﺧﺭﺈﺑ UV ـﻟﺍ ﻂﻄﻤﺗ ﻞﻠﻗ"
-
-
-msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "ﺔﻴﻠﺛﺎﻤﺘﻟﺍ ﻆﻔﺤﺗ ﻭ ﻞﻀﻓﺍ ﻞﻜﺸﺑ ﺕﻼ﻿ﺧﺍﺪﺘﻟﺍ ﻯﺩﺎﻔﺘﺘﻟ ,ﺎﻳﺮﻫﺎﻇ ﻁﺎﻘﺳﻻ﻿ﺍ ﻞﺒﻗ ﻢﺴﺠﻤﻟﺍ ﻲﻓ ﺕﺍﻮﺠﻔﻟﺍ ﺊﺒﻋ"
 
 
 msgctxt "Operator"
@@ -30447,6 +30395,10 @@ msgstr "ﻞﻣﺎﻜﻤﻠﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
 msgid "Sampling Presets"
 msgstr "ﺔﻨﻳﺎﻌﻤﻠﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
+
+
+msgid "Pose Library"
+msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
 
 
 msgid "Bone Constraints"
@@ -33874,6 +33826,10 @@ msgid "All modifiers"
 msgstr "ﺕﺍﺮﻴّﻐﻤﻟﺍ ﻞﻛ"
 
 
+msgid "Bounciness"
+msgstr "ﺕﺍﺩﺍﺪﺗﺭﻹ﻿ﺍ"
+
+
 msgid "Deforming"
 msgstr "ﻩﻮﺸﺘﻟﺍ"
 
@@ -34551,6 +34507,10 @@ msgid "Edges receive a lift force when passing through surrounding media"
 msgstr "ﺔﻄﻴﺤﻤﻟﺍ ﺓﺩﺎﻤﻟﺍ ﻲﻓ ﺭﻭﺮﻤﻟﺍ ﺪﻨﻋ ﻊﻓﺭ ﺓﻮﻗ ﻑﺍﻮﺤﻟﺍ ﻰﻘﻠﺘﺗ"
 
 
+msgid "Dampening"
+msgstr "ﻒﻴﻄﻠﺘﻟﺍ"
+
+
 msgid "Ball Size"
 msgstr "ﺓﺮﻜﻟﺍ ﻢﺠﺣ"
 
@@ -34634,6 +34594,10 @@ msgstr "ﺔﻴﻄﻐﺘﻟﺍ ﻊﺿﻭ"
 
 msgid "Alpha Channel"
 msgstr "ﺎﻔﻟﺍ ﺓﺎﻨﻗ"
+
+
+msgid "Path Length"
+msgstr "ﺭﺎﺴﻤﻟﺍ ﻝﻮﻃ"
 
 
 msgid "Length of displaying path, in frames"
@@ -34820,10 +34784,6 @@ msgstr "ﻝﺎﻴﺧ ﺕﺎﻴﻨﺤﻨﻣ ﻪﻳﺪﻟ"
 
 msgid "Edit drivers"
 msgstr "ﺕﺎﻛﺮّﺤﻤﻟﺍ ﺭﺮﺣ"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺎﻴﺗﺍﺫ ﺞﻣﺩﺍ"
 
 
 msgid "Auto Normalization"
@@ -37379,12 +37339,8 @@ msgid "Wave Clamp"
 msgstr "ﺔﺟﻮﻤﻟﺍ ﺪﺣ"
 
 
-msgid "Bounciness"
-msgstr "ﺕﺍﺩﺍﺪﺗﺭﻹ﻿ﺍ"
-
-
-msgid "Dampening"
-msgstr "ﻒﻴﻄﻠﺘﻟﺍ"
+msgid "Exponent"
+msgstr "ﻒﻋﺎﻀﻤﻟﺍ"
 
 
 msgid "Auto-Step"
@@ -38457,16 +38413,6 @@ msgstr "ﺕﺎﻫﻮﺸﺘﻟﺍ ﺢﻠﺻﺃ"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﺮﻬﻇﺍ"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﻲﻔﺧﺍ"
-
-
-msgctxt "Operator"
 msgid "Hide Masked"
 msgstr "ﻊﻨّﻘﻤﻟﺍ ﻲﻔﺧﺍ"
 
@@ -39033,38 +38979,6 @@ msgstr "ﺭﺎﺘﺨﻣ ﻞﻜﻴﻬﺑ ﺲﻴﻟ ﻝﺎﻌّﻔﻟﺍ ﻦﺋﺎ
 
 msgid "Separated bones"
 msgstr "ﺔﻟﻮﺼﻔﻣ ﻡﺎﻈﻋ"
-
-
-msgid "Add New"
-msgstr "ﺪﻳﺪﺟ ﻒﺿﺃ"
-
-
-msgid "Add New (Current Frame)"
-msgstr "(ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻹ﻿ﺍ) ﺪﻳﺪﺟ ﻒﺿﺃ"
-
-
-msgid "Replace Existing..."
-msgstr "...ﺪﺟﺍﻮﺘﻤﻟﺍ ﻝﺪﺒﺘﺳﺍ"
-
-
-msgid "No action to validate"
-msgstr "ﻁﺎﺒﺗﺭﻺ﻿ﻟ ﺪﻌﻤﻟﺍ ﺙﺪﺤﻟﺍ ﺢﻔّﺼﺗ"
-
-
-msgid "Object does not have pose lib data"
-msgstr "ﻪﻨﻣ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻄﻘﻧ ﺬﺧﺃ ﺐﺠﻳ ﻱﺬﻟﺍ ﻦﺋﺎﻜﻟﺍ"
-
-
-msgid "Invalid index for pose"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻰﻟﺍ ﻒﺿﺍ"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "ﻦﺋﺎﻜﻠﻟ ﺭﺮﻜﻤﻟﺍ ﺔﻤﺋﺎﻗ"
-
-
-msgid "Pose lib had no active pose"
-msgstr "ﺔﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻤﻟ ﺔﻔﻗﻮﻟﺍ ﻝﺯﺍ"
 
 
 msgid "No active Keying Set to use"
