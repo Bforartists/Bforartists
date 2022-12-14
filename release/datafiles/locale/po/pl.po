@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1988,10 +1988,6 @@ msgstr "Pokaż ten obraz w tle"
 
 msgid "Show Expanded"
 msgstr "Pokaż rozwinięty"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "Pokaż rozwinięty w interfejsie użytkownika"
 
 
 msgid "Show On Foreground"
@@ -7350,48 +7346,8 @@ msgid "Cannot pose libdata"
 msgstr "Nie można ustawiać póz danych biblioteki"
 
 
-msgid "Add New"
-msgstr "Dodaj Nowy"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Dodaj Nowy (Aktualna Klatka)"
-
-
-msgid "Replace Existing..."
-msgstr "Zastąp Istniejące..."
-
-
-msgid "No action to validate"
-msgstr "Brak akcji do walidacji"
-
-
-msgid "Object does not have pose lib data"
-msgstr "Obiekt nie posiada danych biblioteki póz"
-
-
-msgid "Invalid index for pose"
-msgstr "Nieprawidłowy indeks dla pozy"
-
-
 msgid "Pose lib is only for armatures in pose mode"
 msgstr "Biblioteka póz jest wyłącznie dla szkieletów w trybie pozy"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "Obiekt nie posiada poprawnej biblioteki póz"
-
-
-msgid "Pose lib had no active pose"
-msgstr "Biblioteka póz nie posiada aktywnej pozy"
-
-
-msgid "Pose lib has no poses to preview/apply"
-msgstr "Biblioteka póz nie posiada póz do przejrzenia/zaaplikowania"
-
-
-msgid "Invalid pose specified %d"
-msgstr "Określona poza nieprawidłowa %d"
 
 
 msgid "No active Keying Set to use"
@@ -10514,10 +10470,6 @@ msgstr "Brak materiału do usunięcia"
 
 msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "Rejestracja id property class: '%s' jest za długie, maksymalna długość: %d"
-
-
-msgid "Only boolean, int and float properties supported"
-msgstr "Tylko właściwości typu boolean, int i float są obsługiwane"
 
 
 msgid "Array length mismatch (expected %d, got %d)"

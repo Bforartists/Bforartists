@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -834,20 +834,12 @@ msgid "Origin"
 msgstr "Merkez"
 
 
-msgid "Interface"
-msgstr "Arayüz"
-
-
 msgid "H"
 msgstr "H"
 
 
 msgid "S"
 msgstr "S"
-
-
-msgid "Wrap"
-msgstr "Sar"
 
 
 msgid "Feather"
@@ -904,6 +896,10 @@ msgstr "X Eks"
 
 msgid "Point Source"
 msgstr "Nokta Kaynağı"
+
+
+msgid "Wrap"
+msgstr "Sar"
 
 
 msgid "Z Axis"
@@ -1071,6 +1067,10 @@ msgstr "Tersine Oynat"
 msgctxt "Operator"
 msgid "Animation Step"
 msgstr "Animasyon Adımı"
+
+
+msgid "Interface"
+msgstr "Arayüz"
 
 
 msgid "Themes"
@@ -1440,18 +1440,6 @@ msgstr "Çoklu-Boyama"
 
 msgid "Path Steps"
 msgstr "Yol Adımları"
-
-
-msgid "Add New"
-msgstr "Yeni Ekle"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Yeni Ekle (Şimdiki Kareye)"
-
-
-msgid "Replace Existing..."
-msgstr "Varolanla Değiştir..."
 
 
 msgid "Hex"

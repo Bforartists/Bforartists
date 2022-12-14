@@ -534,27 +534,6 @@ static void viewRedrawPost(bContext *C, TransInfo *t)
     /* XXX(ton): temp, first hack to get auto-render in compositor work. */
     WM_event_add_notifier(C, NC_SCENE | ND_TRANSFORM_DONE, CTX_data_scene(C));
   }
-
-#if 0 /* TRANSFORM_FIX_ME */
-  if (t->spacetype == SPACE_VIEW3D) {
-    allqueue(REDRAWBUTSOBJECT, 0);
-    allqueue(REDRAWVIEW3D, 0);
-  }
-  else if (t->spacetype == SPACE_IMAGE) {
-    allqueue(REDRAWIMAGE, 0);
-    allqueue(REDRAWVIEW3D, 0);
-  }
-  else if (ELEM(t->spacetype, SPACE_ACTION, SPACE_NLA, SPACE_GRAPH)) {
-    allqueue(REDRAWVIEW3D, 0);
-    allqueue(REDRAWACTION, 0);
-    allqueue(REDRAWNLA, 0);
-    allqueue(REDRAWIPO, 0);
-    allqueue(REDRAWTIME, 0);
-    allqueue(REDRAWBUTSOBJECT, 0);
-  }
-
-  scrarea_queue_headredraw(curarea);
-#endif
 }
 
 /* ************************************************* */
@@ -1336,7 +1315,7 @@ bool calculateTransformCenter(bContext *C, int centerMode, float cent3d[3], floa
 
   t->state = TRANS_RUNNING;
 
-  /* avoid calculating PET */
+  /* Avoid calculating proportional editing. */
   t->options = CTX_NO_PET;
 
   t->mode = TFM_DUMMY;
@@ -1859,9 +1838,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
      * lead to keymap conflicts for other modes (see T31584)
      */
     if (ELEM(mode, TFM_TRANSLATION, TFM_ROTATION, TFM_RESIZE)) {
-      wmKeyMapItem *kmi;
-
-      for (kmi = t->keymap->items.first; kmi; kmi = kmi->next) {
+      LISTBASE_FOREACH (const wmKeyMapItem *, kmi, &t->keymap->items) {
         if (kmi->flag & KMI_INACTIVE) {
           continue;
         }

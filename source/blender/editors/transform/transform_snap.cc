@@ -1091,7 +1091,7 @@ static void snap_calc_uv_fn(TransInfo *t, float *UNUSED(vec))
     Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
         t->scene, t->view_layer, nullptr, &objects_len);
 
-    float dist_sq = square_f((float)SNAP_MIN_DISTANCE);
+    float dist_sq = square_f(float(SNAP_MIN_DISTANCE));
     if (ED_uvedit_nearest_uv_multi(&t->region->v2d,
                                    t->scene,
                                    objects,
@@ -1190,36 +1190,19 @@ static void TargetSnapOffset(TransInfo *t, TransData *td)
   if (t->spacetype == SPACE_NODE && td != nullptr) {
     bNode *node = static_cast<bNode *>(td->extra);
     char border = t->tsnap.snapNodeBorder;
-    float width = BLI_rctf_size_x(&node->runtime->totr);
-    float height = BLI_rctf_size_y(&node->runtime->totr);
 
-#ifdef USE_NODE_CENTER
-    if (border & NODE_LEFT) {
-      t->tsnap.snapTarget[0] -= 0.5f * width;
-    }
-    if (border & NODE_RIGHT) {
-      t->tsnap.snapTarget[0] += 0.5f * width;
-    }
-    if (border & NODE_BOTTOM) {
-      t->tsnap.snapTarget[1] -= 0.5f * height;
-    }
-    if (border & NODE_TOP) {
-      t->tsnap.snapTarget[1] += 0.5f * height;
-    }
-#else
     if (border & NODE_LEFT) {
       t->tsnap.snapTarget[0] -= 0.0f;
     }
     if (border & NODE_RIGHT) {
-      t->tsnap.snapTarget[0] += width;
+      t->tsnap.snapTarget[0] += BLI_rctf_size_x(&node->runtime->totr);
     }
     if (border & NODE_BOTTOM) {
-      t->tsnap.snapTarget[1] -= height;
+      t->tsnap.snapTarget[1] -= BLI_rctf_size_y(&node->runtime->totr);
     }
     if (border & NODE_TOP) {
       t->tsnap.snapTarget[1] += 0.0f;
     }
-#endif
   }
 }
 

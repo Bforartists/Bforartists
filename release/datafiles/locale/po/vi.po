@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
@@ -2048,6 +2048,10 @@ msgstr "Hình Dạng Mẫu"
 
 msgid "Shape Key data-blocks"
 msgstr "Các cục dữ liệu Hình Dạng Mẫu"
+
+
+msgid "Simulations"
+msgstr "Mô Phỏng"
 
 
 msgid "Sounds"
@@ -4158,18 +4162,6 @@ msgid "Factor of Simplify using adaptive algorithm"
 msgstr "Hế số cho Đơn Giản Hóa đang dùng giải thuật ứng phó"
 
 
-msgid "Auto-Masking Layer"
-msgstr "Lớp Tự Động-Che"
-
-
-msgid "Auto-Masking Material"
-msgstr "Vật Liệu Tự Động-Che"
-
-
-msgid "Auto-Masking Strokes"
-msgstr "Nét Tự Động-Che"
-
-
 msgid "Default Eraser"
 msgstr "Cục Gôm Mặc Định"
 
@@ -4536,10 +4528,6 @@ msgstr "Hiện ảnh này làm nền"
 
 msgid "Show Expanded"
 msgstr "Hiện Mở Rộng"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "Hiện mở rộng trong giao diện người dùng"
 
 
 msgid "Show On Foreground"
@@ -5604,10 +5592,6 @@ msgstr "Không gian tuyến tính ACEScg"
 
 msgid "Non-Color"
 msgstr "Vô Màu Sắc"
-
-
-msgid "Color space used for images which contains non-color data (i.e. normal maps)"
-msgstr "Không gian màu sắc được dùng cho ảnh có chứa dữ liệu không phải là màu sắc (ví dụ, bản đồ pháp tuyến)"
 
 
 msgid "Raw"
@@ -8359,8 +8343,8 @@ msgid "Auto Handle"
 msgstr "Tay Cầm Tự Động"
 
 
-msgid "Auto Clamped Handle"
-msgstr "Tay Cầm Tự Kẹp Lại"
+msgid "Auto-Clamped Handle"
+msgstr "Tay Cầm Tự Động Kẹp Lại"
 
 
 msgid "Vector Handle"
@@ -12296,10 +12280,6 @@ msgid "Show Scene data-blocks"
 msgstr "Hiện các cục dữ liệu Cảnh"
 
 
-msgid "Simulations"
-msgstr "Mô Phỏng"
-
-
 msgid "Show Simulation data-blocks"
 msgstr "Hiện các cục dữ liệu Mô Phỏng"
 
@@ -14988,16 +14968,16 @@ msgid "Keyframe"
 msgstr "Bức Ảnh Mẫu"
 
 
-msgid "Normal keyframe - e.g. for key poses"
-msgstr "Bức ảnh mẫu bình thường - ví dụ cho dạng đứng mẫu"
+msgid "Normal keyframe, e.g. for key poses"
+msgstr "Bức ảnh mẫu bình thường, ví dụ cho dạng đứng mẫu"
 
 
 msgid "Breakdown"
 msgstr "Bức Ảnh Mẫu Phụ"
 
 
-msgid "A breakdown pose - e.g. for transitions between key poses"
-msgstr "Một dạng đứng phụ - ví dụ cho chuyển tiếp giữa hai đạng đứng mẫu"
+msgid "A breakdown pose, e.g. for transitions between key poses"
+msgstr "Một dạng đứng phụ, ví dụ cho chuyển tiếp giữa hai đạng đứng mẫu"
 
 
 msgid "Moving Hold"
@@ -15562,6 +15542,18 @@ msgstr "Đường cong tùy chọn để kiểm soát sự giảm của hiệu �
 
 msgid "Custom curve to control primitive thickness"
 msgstr "Đường cong tùy chọn để kiểm soát bề dày của đồ cơ bản"
+
+
+msgid "Auto-Masking Layer"
+msgstr "Lớp Tự Động-Che"
+
+
+msgid "Auto-Masking Material"
+msgstr "Vật Liệu Tự Động-Che"
+
+
+msgid "Auto-Masking Strokes"
+msgstr "Nét Tự Động-Che"
 
 
 msgid "Use Falloff"
@@ -16418,10 +16410,6 @@ msgid "Material used for filtering effect"
 msgstr "Vật thể được dùng cho hiệu ứng bộ lọc"
 
 
-msgid "Object Offset"
-msgstr "Dịch Vật Thể"
-
-
 msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
 msgstr "Dùng vị trí và xoay của một vật thể khác để xắc định chênh lệch khoảng cách và xoay giữa mặt hàng trong mảng "
 
@@ -17124,10 +17112,6 @@ msgid "Shadow Camera Size"
 msgstr "Kích Cỡ Máy Quay Phim Bóng Tối"
 
 
-msgid "This value represent the \"Orthographic Scale\" of an ortho camera.If the camera is put at the lamps position with this scale, it will represent the coverage of the shadow \"camera\" "
-msgstr "Giá trị này là \"Phóng To Trực Giao\" của một máy quay phim trực giao. Nếu máy quay phim được đặt tại vị trí của đèn có phóng to này, nó sẽ biểu diễn sự che khuất của \"máy quay phim\" bóng tối "
-
-
 msgid "Shadow Region Filtering"
 msgstr "Vùng Bộ lọc Bóng Tối"
 
@@ -17494,10 +17478,6 @@ msgstr "Chế tạo nét từ một phạm vi mức che khuất"
 
 msgid "Instanced Objects"
 msgstr "Vật Thể Được Thực Thể Hóa"
-
-
-msgid "Support particle objects and face/vertex instances to show in line art"
-msgstr "Hỗ trợ vật thể hạt và thực thể mặt.đỉnh để hiện nghệ thuật đường nét"
 
 
 msgid "Offset Towards Custom Camera"
@@ -21209,10 +21189,6 @@ msgid "Distance to move the curve parallel to its normals"
 msgstr "Khoảng cách để di chuyển đường cong song song với pháp tuyến của nó"
 
 
-msgid "Path Length"
-msgstr "Bề Dài Đường Đi"
-
-
 msgid "The number of frames that are needed to traverse the path, defining the maximum value for the 'Evaluation Time' setting"
 msgstr "Số lượng bức ảnh cần để đi xuyên hết đường đi, được chỉ định giá trị tối đa cho cài đặt 'Thời Gian Tính Toán'"
 
@@ -22311,10 +22287,6 @@ msgstr "Bật/tắt vẽ nét có chất liệu"
 
 msgid "Freehand annotation sketchbook"
 msgstr "Sách ghi chú phác họa tự do"
-
-
-msgid "Angle threshold to be treated as corners"
-msgstr "Ngưỡng góc cho cử xử như góc giác"
 
 
 msgid "Curve conversion error threshold"
@@ -25308,14 +25280,6 @@ msgid "Current pose for armatures"
 msgstr "Dạng đứng hiện tại cho cốt"
 
 
-msgid "Pose Library"
-msgstr "Thư Viện Dạng Đứng"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Action used as a pose library for armatures"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Hành động được dùng làm một thư viện cho các cốt"
-
-
 msgid "Rigid Body Settings"
 msgstr "Cài Đặt Thân Rắn"
 
@@ -26847,22 +26811,6 @@ msgstr "Bậc Một Kẹp Lại"
 
 msgid "Linear distance model with clamping"
 msgstr "Mô hình khoảng cách bậc một và kẹp lại"
-
-
-msgid "Exponent"
-msgstr "Lũy Thừa"
-
-
-msgid "Exponent distance model"
-msgstr "Mô hình lũy thừa"
-
-
-msgid "Exponent Clamped"
-msgstr "Lũy Thừa Kẹp Lại"
-
-
-msgid "Exponent distance model with clamping"
-msgstr "Mô hình khoảng cách luy thừa có kẹp lại"
 
 
 msgid "Doppler Factor"
@@ -28987,10 +28935,6 @@ msgid "Insert Before"
 msgstr "Chèn Phía Trước"
 
 
-msgid "Insert a new item into collection after the one referenced in subitem_reference_name or _index (NOT USED)"
-msgstr "Chèn một mặt hàng vào sưu tập sau mặt hàng được tham chiếu trong subitem_reference_name hoặc _index (CHƯA SỬ DỤNG)"
-
-
 msgid "Subitem Local Index"
 msgstr "Chỉ Số địa Phương Hạ Mặt Hàng"
 
@@ -29475,16 +29419,8 @@ msgid "Image Size"
 msgstr "Khổ Ảnh"
 
 
-msgid "True if this preview icon has been modified by py script,and is no more auto-generated by Blender"
-msgstr "Đúng nếu biểu tượng dự khán này được sửa đổi bởi văn bản Python và không còn được tự động chế tạo bằng Blender"
-
-
 msgid "Custom Image"
 msgstr "Ảnh Tùy Chọn"
-
-
-msgid "True if this preview image has been modified by py script,and is no more auto-generated by Blender"
-msgstr "Đúng nếu ảnh dự khán này được sửa đổi bởi văn bản Python, và không còn được tự động chế tạo bằng Blender"
 
 
 msgid "Parameters defining how an Image data-block is used by another data-block"
@@ -31411,14 +31347,6 @@ msgid "Type of keyframe (for visual purposes only)"
 msgstr "Loại bức ảnh mẫu (chỉ cho nhìn xem)"
 
 
-msgid "Normal keyframe, e.g. for key poses"
-msgstr "Bức ảnh mẫu bình thường, ví dụ cho dạng đứng mẫu"
-
-
-msgid "A breakdown pose, e.g. for transitions between key poses"
-msgstr "Một dạng đứng phụ, ví dụ cho chuyển tiếp giữa hai đạng đứng mẫu"
-
-
 msgid "An \"extreme\" pose, or some other purpose as needed"
 msgstr "Một dạng đứng \"cực kỳ\", hay cho cộng việc khác theo sự cần thiết"
 
@@ -31799,10 +31727,6 @@ msgid "Layer collection"
 msgstr "Sưu tập lớp"
 
 
-msgid "Child layer collections"
-msgstr "Các sưu tập lớp con cái"
-
-
 msgid "Collection this layer collection is wrapping"
 msgstr "Sưu tập lớp sưu tập này đang gói"
 
@@ -31837,10 +31761,6 @@ msgstr "Vật thể trong sưu tập chỉ góp gián tiếp (bằng bóng tối
 
 msgid "Whether this collection is visible for the view layer, take into account the collection parent"
 msgstr "Sưu tập này đang hiển thị hay không cho lớp màn này, quan tâm đến phụ huynh của sưu tập"
-
-
-msgid "Name of this view layer (same as its collection one)"
-msgstr "Tên lớp hiển thị này (giống tên sưu tập của nó)"
 
 
 msgid "Layer Objects"
@@ -33975,10 +33895,6 @@ msgid "Loose"
 msgstr "Rời Ra"
 
 
-msgid "Loose edge"
-msgstr "Cạnh rời ra"
-
-
 msgid "Sharp edge for the Edge Split modifier"
 msgstr "Cạnh bén cho bộ điều chỉnh Chẻ Cạnh"
 
@@ -35085,6 +35001,10 @@ msgstr "Khoảng Cách Gồm Thành Một"
 
 msgid "Limit below which to merge vertices"
 msgstr "Giới hạn cách xa cho gồm đỉnh"
+
+
+msgid "Object Offset"
+msgstr "Dịch Vật Thể"
 
 
 msgid "U Offset"
@@ -37351,10 +37271,6 @@ msgid "Established Ocean (Sharp Peaks)"
 msgstr "Biển Ổn Định (Tốc Đỉnh Bén)"
 
 
-msgid "Use for sharp peaks ('JONSWAP', Pierson-Moskowitz method) with peak sharpening"
-msgstr "Dùng cho tốc đỉnh bén (phương pháp 'JONSWAP', Pierson-Moskowitz có bén hóa tốc đỉnh)"
-
-
 msgid "Shallow Water"
 msgstr "Nước Cạn"
 
@@ -37385,10 +37301,6 @@ msgstr "Chế tạo mặt nạ bọt làm một kênh màu đỉnh"
 
 msgid "Generate Normals"
 msgstr "Chế Tạo Pháp Tuyến"
-
-
-msgid "Output normals for bump mapping - disabling can speed up performance if its not needed"
-msgstr "Xuất pháp tuyến cho làm bản đồ nhám - tắt có thể tăng tốc độ nếu jhông cần nó"
 
 
 msgid "Generate Spray Map"
@@ -39259,16 +39171,8 @@ msgid "Plane Tracks"
 msgstr "Đường Vết Mặt Phẳng"
 
 
-msgid "Collection of plane tracks in this tracking data object"
-msgstr "Sưu tập đường vết mặt phẳng trong vật thể dữ liệu theo dõi này"
-
-
 msgid "Tracks"
 msgstr "Đường Vết"
-
-
-msgid "Collection of tracks in this tracking data object"
-msgstr "Sưu tập đường vết trong vật thể dữ liệu theo dõi này"
 
 
 msgid "Movie tracking camera data"
@@ -39607,8 +39511,16 @@ msgid "Unique name of object"
 msgstr "Tên độc đáo của vật thể"
 
 
+msgid "Collection of plane tracks in this tracking data object"
+msgstr "Sưu tập đường vết mặt phẳng trong vật thể dữ liệu theo dõi này"
+
+
 msgid "Scale of object solution in camera space"
 msgstr "Tỉ số phóng to của nghiệm trong không gian máy quay phim"
+
+
+msgid "Collection of tracks in this tracking data object"
+msgstr "Sưu tập đường vết trong vật thể dữ liệu theo dõi này"
 
 
 msgid "Collection of tracking plane tracks"
@@ -39717,10 +39629,6 @@ msgstr "Sưu tập đường vết mặt phẳng theo dõi phim"
 
 msgid "Active Plane Track"
 msgstr "Đường vết Mặt Phẳng Hoạt Động"
-
-
-msgid "Active plane track in this tracking data object"
-msgstr "Đường vết mặt phẳng hoạt động trong vật thể dữ liệu theo dõi này"
 
 
 msgid "Reconstructed Cameras"
@@ -39937,10 +39845,6 @@ msgstr "Hạn chế tốc độ theo dõi cho làm hoàn ngược thị giác đ
 
 msgid "Fastest"
 msgstr "Lẹ Nhất"
-
-
-msgid "Track as fast as it's possible"
-msgstr "Theo dõi nhanh nhất có thể lằm"
 
 
 msgid "Double"
@@ -40655,24 +40559,12 @@ msgid "Width Hidden"
 msgstr "Bề Rộng Ẩn"
 
 
-msgid "Width of the node in hidden state"
-msgstr "Bề rộng của giao điểm khi trạng thái là ẩn"
-
-
 msgid "Custom Group"
 msgstr "Nhó Tùy Chọn"
 
 
 msgid "Base node type for custom registered node group types"
 msgstr "Loại giao điểm cơ sở cho loại nhóm giao điểm được đăng ký"
-
-
-msgid "Interface"
-msgstr "Giao Diện"
-
-
-msgid "Interface socket data"
-msgstr "Dữ liệu ổ cắm của giao diện"
 
 
 msgid "Compositor Node"
@@ -41541,10 +41433,6 @@ msgstr "Trung Tâm Y"
 
 msgid "Spin"
 msgstr "Xoay"
-
-
-msgid "Wrap"
-msgstr "Gói"
 
 
 msgid "Zoom"
@@ -43343,14 +43231,6 @@ msgstr "Chứa dữ liệu trong phạm vi nào"
 
 msgid "Collection Info"
 msgstr "Thông Tin Sưu Tập"
-
-
-msgid "Retrieve geometry from a collection"
-msgstr "Lấy hình dạng từ một sưu tập"
-
-
-msgid "The transformation of the geometry output"
-msgstr "Biến hóa của ngõ ra hình dạng"
 
 
 msgid "Original"
@@ -46494,6 +46374,10 @@ msgid "Entry-wise modulo using fmod(A,B)"
 msgstr "hân dư của A từng thành phần dùng fmod(A,B)"
 
 
+msgid "Wrap"
+msgstr "Gói"
+
+
 msgid "Entry-wise wrap(A,B)"
 msgstr "Từng thành phần wrap(A,B)"
 
@@ -47912,8 +47796,8 @@ msgid "Selection to Nearest Frame"
 msgstr "Sự Lựa Chọn đến Bức Ảnh Gần Nhất"
 
 
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
-msgstr "Hút dính số bức ảnh mẫu được chọn đến số bức ảnh (nguyên) gần nhất (dùng để sửa nới đến hạ số bức ảnh không cố ý)"
+msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
+msgstr "Hút dính bức ảnh mẫu được chọn đến bức ảnh (nguyên) gần nhất (dùng để sửa địch đến hạ bức ảnh không cố ý)"
 
 
 msgid "Selection to Nearest Second"
@@ -49578,10 +49462,6 @@ msgid "Direction to move the active vertex group towards"
 msgstr "Hướng di chuyển đến cho nhóm đỉnh đang hoạt động"
 
 
-msgid "Remove an override layer to the archive"
-msgstr "Xóa một lớp vượt quyền vào kho chứa"
-
-
 msgctxt "Operator"
 msgid "Open Cache File"
 msgstr "Mở Tập Tin Đệm Chứa"
@@ -50334,15 +50214,6 @@ msgstr "Sắp xếp gói với trục X"
 
 msgid "Align bundle align Y axis"
 msgstr "Sắp xếp gói với trục Y"
-
-
-msgctxt "Operator"
-msgid "Set Principal to Center"
-msgstr "Đặt Trung Tâm Quang Đến Tâm"
-
-
-msgid "Set optical center to center of footage"
-msgstr "Đặt trung tâm quang tại trung tâm của phim thâu"
 
 
 msgctxt "Operator"
@@ -52766,10 +52637,6 @@ msgid "Method used to reference paths"
 msgstr "Phương pháp dùng với đường dẫn tham chiếu"
 
 
-msgid "Use Relative paths with subdirectories only"
-msgstr "Chỉ dùng đường dẫn Tương Đối với thư mục phụ"
-
-
 msgid "Always write absolute paths"
 msgstr "Lần nào lưu đường dẫn tuyệt đối"
 
@@ -52780,10 +52647,6 @@ msgstr "Lần nào lưu đường dẫn tương đối (khi có thể)"
 
 msgid "Match"
 msgstr "Giống"
-
-
-msgid "Match Absolute/Relative setting with input path"
-msgstr "Giữ cài đặt Tuyệt Đối/Tương Đối giống với đường dẫn ngõ vào"
 
 
 msgid "Strip Path"
@@ -57114,10 +56977,6 @@ msgstr "Sự Lựa Chọn đến Giá Trị Con Trỏ"
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Đặt giá trị của các bức ảnh mẫu được chọn đến giá trị con trỏ (Y/Thành Phần Ngang)"
-
-
-msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe offsets)"
-msgstr "Hút dính bức ảnh mẫu được chọn đến bức ảnh (nguyên) gần nhất (dùng để sửa địch đến hạ bức ảnh không cố ý)"
 
 
 msgid "Flatten Handles"
@@ -62287,10 +62146,6 @@ msgid "Add Node Collection"
 msgstr "Thêm Sưu Tập Giao Điểm"
 
 
-msgid "Add an collection info node to the current node editor"
-msgstr "Thêm một giao điểm thông tin sưu tập trong trình biên soạn giao điểm hiện tại"
-
-
 msgid "Name of the data-block to use by the operator"
 msgstr "Tên của cục dữ liệu để dùng bởi thao tác"
 
@@ -63782,10 +63637,6 @@ msgstr "Thêm một vật thể bút sáp vào cảnh"
 
 msgid "Stroke offset for the line art modifier"
 msgstr "Cách nới nét cho bộ điều chỉnh đường nghệ thuật"
-
-
-msgid "Defines how the strokes are ordered in 3D space for objects not displayed 'In Front')"
-msgstr "Chỉ định phương pháp cho sắp xếp thứ tự trong không gian 3D cho vật thể không hiển thị 'Phía Trước'"
 
 
 msgid "Create an empty grease pencil object"
@@ -65418,10 +65269,6 @@ msgstr "Kết xuất và hiển thị các mặt đều, bằng sử dụng Phá
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Kết xuất và hiển thị các mặt mịn, suy nội Pháp Tuyến Đỉnh"
-
-
-msgid "Maximum angle between face normals that will be considered as smooth(unused if custom split normals data are available)"
-msgstr "Góc cực đại giữa pháp tuyến mặt thì được chấp nhận là mịn (không áp dùng nếu có dữ liệu pháp tuyến tùy chọn được chẻ)"
 
 
 msgid "Enable automatic smooth based on smooth/sharp faces/edges and angle between faces"
@@ -68255,28 +68102,6 @@ msgstr "Hệ số suy nội giữa quyền lượng bút hiện tại, và quy�
 
 
 msgctxt "Operator"
-msgid "Sanitize Legacy Pose Library Action"
-msgstr "Làm Sạch Hành Động Thư Viện Dạng Đứng Lỗi Thời"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Make action suitable for use as a Legacy Pose Library"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Làm hành động phụ hợp cho làm một Thư Viện Dạng Đứng Lỗi Thời"
-
-
-msgctxt "Operator"
-msgid "Apply Legacy Pose Library Pose"
-msgstr "Áp Dụng Dạng Đứng Từ Thư Viện Dạng Đứng Lỗi Thời"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Apply specified Legacy Pose Library pose to the rig"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Áp dụng dạng đứng Thư Viện Dạng Đứng Lỗi Thời được chỉ định"
-
-
-msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
-msgstr "Chỉ số của dạng đứng để áp dụng (-2 cho không đổi dạng đứng, -1 cho đạng đứng hoạt động từ thư viện dạng đứng)"
-
-
-msgctxt "Operator"
 msgid "Apply Pose Asset"
 msgstr "Áp Dụng Tích Sản Dạng Đứng"
 
@@ -68304,15 +68129,6 @@ msgstr "Pha Trộn Tích Sản Dạng Đứng"
 
 msgid "Blend the given Pose Action to the rig"
 msgstr "Pha trộn Hành Động Dạng Đứng được giao cho giàn"
-
-
-msgctxt "Operator"
-msgid "Legacy PoseLib Browse Poses"
-msgstr "Dạng Đứng Của Thư Viện Dạng Đứng Lỗi Thời"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Interactively browse Legacy Pose Library poses in 3D-View"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Trình Duyệt kiểu tương tác các dạng đứng tong Thư Viện Dạng Đứng Lỗi Thời trong Màn 3D"
 
 
 msgctxt "Operator"
@@ -68355,38 +68171,12 @@ msgstr "Tên Dạng Đứng"
 
 
 msgctxt "Operator"
-msgid "New Legacy Pose Library"
-msgstr "Thư Viện Dạng Lỗi Thời Đứng Mới"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Add New Legacy Pose Library to active Object"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Thêm Thư Viện Dạng Đứng Lỗi Thời Mới cho Vật Thể hoạt động"
-
-
-msgctxt "Operator"
 msgid "Paste As New Asset"
 msgstr "Dàn Làm Tích Sản Mới"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
 msgstr "Dán Tích Sản được chép trước đây bởi Chép Làm Tích Sản"
-
-
-msgctxt "Operator"
-msgid "Legacy PoseLib Add Pose"
-msgstr "Thư Viện Dạng Đứng Lỗi Thời - Thêm Dạng Đứng"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Add the current Pose to the active Legacy Pose Library"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Thêm Dạng Đứng hiện tại vào Thư Viện Dạng Đứng hoạt động"
-
-
-msgid "Frame to store pose on"
-msgstr "Bức ảnh cho chứa dạng đứng"
-
-
-msgid "Name of newly added Pose"
-msgstr "Tên của Đạng Đứng mới "
 
 
 msgctxt "Operator"
@@ -68399,72 +68189,12 @@ msgstr "Chọn các xương được dùng trong dạng đứng này"
 
 
 msgctxt "Operator"
-msgid "Legacy PoseLib Move Pose"
-msgstr "Thư Viện Dạng Đứng Lỗi Thời - Di Chuyển Dạng Đứng"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Move the pose up or down in the active Legacy Pose Library"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Di chuyển dạng đứng lên hay xuống trong Thư Viện Dạng Đứng Lỗi Thời hoạt động"
-
-
-msgid "Direction to move the chosen pose towards"
-msgstr "Hướng để di chuyển dạng đứng được chọn"
-
-
-msgid "The pose to move"
-msgstr "Dạng đứng để di chuyển"
-
-
-msgctxt "Operator"
-msgid "Legacy PoseLib Remove Pose"
-msgstr "Thư Viện Dạng Đứng Lỗi Thời - Xóa Dạng Đứng"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Remove nth pose from the active Legacy Pose Library"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Xóa dạng đứng thứ n từ Thư Viện Dạng Đứng Lỗi Thời hoạt động"
-
-
-msgid "The pose to remove"
-msgstr "Dạng đứng để xóa"
-
-
-msgctxt "Operator"
-msgid "Legacy PoseLib Rename Pose"
-msgstr "Thư Viện Dạng Đứng Lỗi Thời - Đổi Tên Của Dạng Đứng"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Rename specified pose from the active Legacy Pose Library"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Đổi tên của dạng đứng chỉ định từ Thư Viện Dạng Đứng Lỗi Thời hoạt động"
-
-
-msgid "New Pose Name"
-msgstr "Tên Dạng Đứng Mới"
-
-
-msgid "New name for pose"
-msgstr "Tên mới cho dạng đứng"
-
-
-msgid "The pose to rename"
-msgstr "Dạng đứng cho đổi tên"
-
-
-msgctxt "Operator"
 msgid "Restore Previous Action"
 msgstr "Hoàn Lại Hành Động Trước"
 
 
 msgid "Switch back to the previous Action, after creating a pose asset"
 msgstr "Trở lại đến Hành Động trước, sau được chế tạo một tích sản dạng đứng"
-
-
-msgctxt "Operator"
-msgid "Unlink Legacy Pose Library"
-msgstr "Gỡ Liên Kết Thư Viện Dạng Đứng Lỗi Thời"
-
-
-msgid "Deprecated, will be removed in Blender 3.3. Remove Legacy Pose Library from active Object"
-msgstr "Lỗi thời, sẽ bị bỏ trong Blender 3.3. Xóa Thư Viện Dạng Đứng Lỗi Thời từ Vật Thể hoạt động"
 
 
 msgctxt "Operator"
@@ -70705,6 +70435,10 @@ msgid "Section to activate in the Preferences"
 msgstr "Phần nào cho kích động trong Tùy Chọn"
 
 
+msgid "Interface"
+msgstr "Giao Diện"
+
+
 msgid "Themes"
 msgstr "Phong Cách"
 
@@ -70741,10 +70475,6 @@ msgstr "Chu trình qua công trường"
 msgctxt "Operator"
 msgid "Execute a Python Preset"
 msgstr "Thực Hành Một Đặt Sẵn Python"
-
-
-msgid "Execute a preset"
-msgstr "Thực hành một đặt sẵn"
 
 
 msgid "Menu ID Name"
@@ -72510,10 +72240,6 @@ msgstr "Thêm một đoạn cho bộ trình tự mà dùng một cảnh Blender 
 msgctxt "Operator"
 msgid "Add Strip with a new Scene"
 msgstr "Thêm Đoạn có một Cảnh mới"
-
-
-msgid "Create a new Strip and add a assign a new Scene as source"
-msgstr "Chế tạo một Doạn mới và chỉ định một cảnh mới là nguồn gốc"
 
 
 msgid "Add new Strip with a new empty Scene with default settings"
@@ -75120,10 +74846,6 @@ msgid "Pack Quality"
 msgstr "Chất Lượng Gói"
 
 
-msgid "Pre-packing before the complex boxpack"
-msgstr "Gói lại trước dùng phương pháp gói hộp phức tạp"
-
-
 msgid "Selected Faces"
 msgstr "Mặt Được Chọn"
 
@@ -75181,8 +74903,8 @@ msgid "Blend factor between stretch minimized and original"
 msgstr "Hệ số pha trộn giữa giảm kéo dài và ban đầu"
 
 
-msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "Đầy lỗ trong mạng lưới kiểu ảo trước mở gói, tốt hơn cho tranh lấn trên vả giữ nguyên đối xứng"
+msgid "Virtually fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
+msgstr "Đầy hết lỗ trong mạng lưới kiểu ảo trước mở gói, tốt hơn cho tranh lấn trên và giữ nguyên đối xứng"
 
 
 msgid "Number of iterations to run, 0 is unlimited when run interactively"
@@ -76153,10 +75875,6 @@ msgstr "Dùng sự lựa chọn vật thể (chỉ cho chế độ biên tập)"
 
 msgid "Control Point Without Handles"
 msgstr "Điểm Kiểm Soát Thiếu Tay Cầm"
-
-
-msgid "Only select the curve control point, not it's handles"
-msgstr "Chỉ chọn điểm kiểm soát đường cong, không chọn các tay cầm"
 
 
 msgid "Select items using box selection"
@@ -78153,15 +77871,6 @@ msgstr "Thao Tác Đặt Sẵn"
 
 msgid "Add or remove an Operator Preset"
 msgstr "Thêm hay xóa một Thao Tác Đặt Sẵn"
-
-
-msgctxt "Operator"
-msgid "Disable UI Tag"
-msgstr "Tắt Nhãn Giao Diện"
-
-
-msgid "Enable workspace owner ID"
-msgstr "Bật ID chủ công trường"
 
 
 msgid "UI Tag"
@@ -80177,6 +79886,10 @@ msgid "Asset Metadata"
 msgstr "Dữ Liệu Tích Sản"
 
 
+msgid "Pose Library"
+msgstr "Thư Viện Dạng Đứng"
+
+
 msgid "Chain Scaling"
 msgstr "Phóng To Chuỗi"
 
@@ -80464,10 +80177,6 @@ msgstr "Đoạn Văn"
 
 msgid "Path Animation"
 msgstr "Đường Dẫn Hoạt Hình"
-
-
-msgid "Pose Library (Legacy)"
-msgstr "Thư Viện Dạng Đứng (Lỗi Thời)"
 
 
 msgid "Effects"
@@ -83747,14 +83456,6 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Bật tùy chọn sửa sai lầm Cycles cho lập trình viên"
 
 
-msgid "Draw Manager Locking"
-msgstr "Khóa Quản Lý Vẽ"
-
-
-msgid "Don't lock UI during background rendering"
-msgstr "Không khóa giao diện khi kết xuất phía sau"
-
-
 msgid "Extended Asset Browser"
 msgstr "Trình Duyệt Tích Sản Mở Rộng"
 
@@ -85939,10 +85640,6 @@ msgid "When using volume rendering, assume volume has the same density everywher
 msgstr "Khi dùng kết xuất thể tích, giả sư toàn thể tích có tỉ trọng đều (không dùng chất liệu) cho kết xuất lẹ hơn"
 
 
-msgid "Use multiple importance sampling for this material, disabling may reduce overall noise for large objects that emit little light compared to other light sources"
-msgstr "Dùng đa mẫu vật quan trọng cho vật liệu này, tắt có lẽ sẽ giảm huyên náot tổng quát cho vật thể lớn được phát ít ánh sáng so với các nguồn ánh sáng khác"
-
-
 msgid "Transparent Shadows"
 msgstr "Bóng Tối Trong Suốt"
 
@@ -86755,10 +86452,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Số hạt cho bộ tích phân được gương mẫu huyên náo khác"
 
 
-msgid "Use Open Shading Language (CPU rendering only)"
-msgstr "Dùng OSL (Ngôn Ngữ Tô Sắc Mở) (chỉ cho kết xuất bằng bộ xử lý)"
-
-
 msgid "Viewport Texture Limit"
 msgstr "Hạn Chế Chất Liệu Màn Chiếu"
 
@@ -86829,10 +86522,6 @@ msgstr "Số lượng nhồi truyền tối đa, giới hạn là nhồi tối �
 
 msgid "Transparent Max Bounces"
 msgstr "Nhồi Trong Suốt Tối Đa"
-
-
-msgid "Maximum number of transparent bounces. This is independent of maximum number of other bounces "
-msgstr "Số lần nhồi trong suốt tối đa. Giá trị này độc lập các số lần nhồi tối đa khác "
 
 
 msgid "Use Adaptive Sampling"
@@ -86945,10 +86634,6 @@ msgstr "Hiện vòng kết xuất Hậu Cảnh"
 
 msgid "Show the Ambient Occlusion render pass"
 msgstr "Hiện vòng kết xuất Che Khuất Bao Quanh"
-
-
-msgid "Show the Shadow render pass"
-msgstr "Hiện vòng kết xuất Bóng Tối"
 
 
 msgid "Show the Shadow Catcher render pass"
@@ -87101,10 +86786,6 @@ msgstr "Sự hiển thị vật thể cho tia bóng tối"
 
 msgid "Object visibility for transmission rays"
 msgstr "Sự hiển thị vật thể cho tia truyền"
-
-
-msgid "When using volume rendering, assume volume has the same density everywhere(not using any textures), for faster rendering"
-msgstr "Khi dùng kết xuất thể tích, giả sư toàn thể tích có tỉ trọng đều (không dùng chất liệu) cho kết xuất lẹ hơn"
 
 
 msgid "Maximum number of bounces the background light will contribute to the render"
@@ -89147,6 +88828,10 @@ msgid "All modifiers"
 msgstr "Tất cả bộ điều chỉnh"
 
 
+msgid "Bounciness"
+msgstr "Độ Nhồi"
+
+
 msgid "Tendency of object to bounce after colliding with another (0 = stays still, 1 = perfectly elastic)"
 msgstr "Sức nhồi lại của vật thể sau va chạm vật thể khác (0 = đứng yên, 1 = hoàn toàn dẻo)"
 
@@ -89439,10 +89124,6 @@ msgid "Method of anti-aliasing when rendering 3d viewport"
 msgstr "Phương pháp khử răng cưa khi kết xuất màn chiếu 3D"
 
 
-msgid "Maximum intensity a bloom pixel can have (0 to disabled)"
-msgstr "Cường độ cực đại của một điểm ảnh nở ra (đặt = 0 để tắt)"
-
-
 msgid "Color applied to the bloom effect"
 msgstr "Màu để áp dụng cho hiệu ứng nở ra"
 
@@ -89579,10 +89260,6 @@ msgid "Clamp Glossy"
 msgstr "Kẹp Bóng Loáng"
 
 
-msgid "Clamp pixel intensity to reduce noise inside glossy reflections from reflection cubemaps (0 to disabled)"
-msgstr "Kẹp cường độ điểm ảnh để giảm bất huyên náo trong phạn xạ bóng loáng từ bản đồ lập phương phản xạ (đặt = 0 để tắt)"
-
-
 msgid "Irradiance Display Size"
 msgstr "Kích Cỡ Hiển Thị Sự Rọi"
 
@@ -89711,10 +89388,6 @@ msgid "Screen percentage used to fade the SSR"
 msgstr "Phần trăm được sử dụng cho phản xạ không gian màn"
 
 
-msgid "Clamp pixel intensity to remove noise (0 to disabled)"
-msgstr "Kẹp cường độ điểm ảnh để giảm bất huyên náo (đặt 0 để tắt)"
-
-
 msgid "Max Roughness"
 msgstr "Độ Nhám Cực Đại"
 
@@ -89745,10 +89418,6 @@ msgstr "Số lượng mẫu vật để tính cho hiệu ứng tán xạ"
 
 msgid "Render Samples"
 msgstr "Mẫu Vật Kết Xuất"
-
-
-msgid "Number of samples per pixels for rendering"
-msgstr "Số lượng mẫu vật mỗi điểm ảnh cho kết xuất"
 
 
 msgid "Number of samples, unlimited if 0"
@@ -91070,10 +90739,6 @@ msgid "Visualize cached complete frames"
 msgstr "Hiện các ảnh hoàn thành được chứa"
 
 
-msgid "Pre-processed Images"
-msgstr "Ảnh Tiền Qúa Trình"
-
-
 msgid "Visualize cached pre-processed images"
 msgstr "Hiển thị các ảnh tiền qùa trình được chứa"
 
@@ -91100,14 +90765,6 @@ msgstr "Chứa Cuối Cùng"
 
 msgid "Cache final image for each frame"
 msgstr "Chứa ảnh cuối cùng cho mỗi bức ảnh"
-
-
-msgid "Cache Pre-processed"
-msgstr "Chứa Tiền Qúa Trình"
-
-
-msgid "Cache pre-processed images, for faster tweaking of effects at the cost of memory usage"
-msgstr "Chứa các ảnh tiền qúa trình, cho chỉnh các hiệu ứng nhanh hơn nhưng dùng bộ nhớ nhiều hơn"
 
 
 msgid "Overlay Lock"
@@ -92022,12 +91679,16 @@ msgid "Edges receive a lift force when passing through surrounding media"
 msgstr "Cạnh được một lực nâng khi xuyên qua môi trường xung quanh"
 
 
-msgid "Ball Size"
-msgstr "Kích Cỡ Trái Banh"
+msgid "Dampening"
+msgstr "Tắt Dần"
 
 
 msgid "Blending to inelastic collision"
 msgstr "Méo hóa từ va chạm không dẻo"
+
+
+msgid "Ball Size"
+msgstr "Kích Cỡ Trái Banh"
 
 
 msgid "Absolute ball size or factor if not manually adjusted"
@@ -92404,6 +92065,10 @@ msgid "Editing context being displayed"
 msgstr "Đang biên tập bối cảnh đang hiển thị"
 
 
+msgid "Path Length"
+msgstr "Bề Dài Đường Đi"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Bề dài của đường hiển thị, bằng số lượng bức ảnh"
 
@@ -92458,6 +92123,22 @@ msgstr "Hiện Bộ Lọc"
 
 msgid "Show filters for graph editor"
 msgstr "Hiện bộ lọc cho trình biên soạn biểu đồ"
+
+
+msgid "Show Gizmo"
+msgstr "Hiện đồ đạc"
+
+
+msgid "Show gizmos of all types"
+msgstr "Hiện tất cả loại đồ đạc"
+
+
+msgid "Navigate Gizmo"
+msgstr "Đồ Đạc Chuyển Hướng"
+
+
+msgid "Viewport navigation gizmo"
+msgstr "Đồ đạc chuyển hướng trong màn chiếu"
 
 
 msgid "Show Frames"
@@ -93015,10 +92696,6 @@ msgid "Show handles of Bezier control points"
 msgstr "Hiện tay cầm của điểm kiểm soát Bezier"
 
 
-msgid "AutoMerge Keyframes"
-msgstr "Tự Động Gồm Bức Ảnh Mẫu"
-
-
 msgid "Auto Normalization"
 msgstr "Tự Động Đơn Vị Hóa"
 
@@ -93153,22 +92830,6 @@ msgstr "Màu mẫu được lấy từ một đường"
 
 msgid "Scopes to visualize image statistics"
 msgstr "Các kế cho hiển thị thông kế ảnh"
-
-
-msgid "Show Gizmo"
-msgstr "Hiện đồ đạc"
-
-
-msgid "Show gizmos of all types"
-msgstr "Hiện tất cả loại đồ đạc"
-
-
-msgid "Navigate Gizmo"
-msgstr "Đồ Đạc Chuyển Hướng"
-
-
-msgid "Viewport navigation gizmo"
-msgstr "Đồ đạc chuyển hướng trong màn chiếu"
 
 
 msgid "Show Mask Editor"
@@ -95510,10 +95171,6 @@ msgstr "Màu cho ký hiệu tắt"
 
 msgid "Align Handle"
 msgstr "Sắp Xếp Tay Cầm"
-
-
-msgid "Auto-Clamped Handle"
-msgstr "Tay Cầm Tự Động Kẹp Lại"
 
 
 msgid "Align Handle Selected"
@@ -99192,10 +98849,6 @@ msgid "View layer settings for Eevee"
 msgstr "Cài đặt lớp màn cho Eevee"
 
 
-msgid "Root of collections hierarchy of this view layer,its 'collection' pointer property is the same as the scene's master collection"
-msgstr "Rễ của tầng bậc sưu tập của lớp hiển thị này, đặc tính của con chỉ sưu tập của nó giống hệt sưu tập chủ của cảnh"
-
-
 msgid "Material Override"
 msgstr "Vượt Quyền Vật Liệu"
 
@@ -101578,11 +101231,6 @@ msgstr "Dừng Di Chuyển Tới"
 
 
 msgctxt "WindowManager"
-msgid "Stop Mode Backward"
-msgstr "Dừng Di Chuyển Lùi"
-
-
-msgctxt "WindowManager"
 msgid "Stop Move Left"
 msgstr "Dừng Di Chuyển Trái"
 
@@ -102403,16 +102051,6 @@ msgstr "Giảm Chiều Dài Cực Đại Của Chuỗi IKTựĐộng"
 
 
 msgctxt "WindowManager"
-msgid "Select Next Edge Slide Edge"
-msgstr "Trượt Cạnh: Chọn Cạnh Tiếp"
-
-
-msgctxt "WindowManager"
-msgid "Select Previous Edge Slide Edge"
-msgstr "Trượt Cạnh: Chọn Cạnh Trước"
-
-
-msgctxt "WindowManager"
 msgid "Adjust Proportional Influence"
 msgstr "Chỉnh Tỉ Lệ Ảnh Hưởng"
 
@@ -102713,10 +102351,6 @@ msgstr "Hủy Diệt Máy Quay Phim"
 
 msgid "Distance Culling"
 msgstr "Hũy Diệt Khoảng Cách"
-
-
-msgid " Max Samples"
-msgstr "Mẫu Tối Đa"
 
 
 msgid "Min Samples"
@@ -104228,36 +103862,6 @@ msgid "Remove"
 msgstr "Xóa"
 
 
-msgid "This panel is a remainder of the old pose library,"
-msgstr "Bàng này là một thành phần của thư viện dạng đứng cũ,"
-
-
-msgid "which was replaced by the Asset Browser"
-msgstr "bị thay thế bởi Bộ Trình Duyệt Tích Sản"
-
-
-msgctxt "Operator"
-msgid "More Info"
-msgstr "Thông Tin Thêm"
-
-
-msgctxt "Operator"
-msgid "Convert to Pose Assets"
-msgstr "Biến Đổi sang Tích Sản Dạng Đứng"
-
-
-msgid "Enable the Pose Library add-on to convert"
-msgstr "Bật đồ kèm Thư Viện Dạng Đứng để biến đổi"
-
-
-msgid "this legacy pose library to pose assets"
-msgstr "thư viện dạng đứng lỗi thời này sang tích sản dạng đứng"
-
-
-msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
-msgstr "Sai lầm: Có thể có thư viện bị hư, chạy thao tác 'Sanitize' (Làm Sạch) để sửa lại"
-
-
 msgid "Damping Max"
 msgstr "Tắt Dần Cực Đại"
 
@@ -105572,10 +105176,6 @@ msgid "Temperature Maximum"
 msgstr "Nhiệt Độ Cực Đại"
 
 
-msgid "Flame Color"
-msgstr "Màu Ngón Lửa"
-
-
 msgid "Particle Radius"
 msgstr "Bán Kính Hạt"
 
@@ -105634,6 +105234,10 @@ msgstr "Mẫu Hạt Nhốt Không Khí"
 
 msgid "Particle Life Maximum"
 msgstr "Tuổi Thọ Hạt Cực Đại"
+
+
+msgid "Exponent"
+msgstr "Lũy Thừa"
 
 
 msgid "Surface Tension"
@@ -105776,10 +105380,6 @@ msgid "Baking Guides - ESC to pause"
 msgstr "Đang Nướng Đồ Dẫn - Bấm ESC để dừng lại"
 
 
-msgid "Bounciness"
-msgstr "Độ Nhồi"
-
-
 msgid "Damping Translation"
 msgstr "Dịch Tắt Dần"
 
@@ -105820,16 +105420,8 @@ msgid "Y Lower"
 msgstr "Y Dưới"
 
 
-msgid "Collision Edge"
-msgstr "Cạnh Va Chạm"
-
-
 msgid "Calculation Type"
 msgstr "Loại Tính Toán"
-
-
-msgid "Dampening"
-msgstr "Tắt Dần"
 
 
 msgid "Step Size Min"
@@ -106076,11 +105668,6 @@ msgid "Pixel Aspect"
 msgstr "Tỉ Số Điểm Ảnh"
 
 
-msgctxt "Operator"
-msgid "Set Center"
-msgstr "Đặt Trung Tâm"
-
-
 msgid "Build Original:"
 msgstr "Xây Ban Đầu:"
 
@@ -106171,6 +105758,10 @@ msgstr "Đặt Nền Màn Chiếu"
 msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Đặt Sàn"
+
+
+msgid "Viewport Gizmos"
+msgstr "Đồ Đạc Màn Chiếu"
 
 
 msgid "3D Markers"
@@ -106743,10 +106334,6 @@ msgid "Selection"
 msgstr "Sự Lựa Chọn"
 
 
-msgid "Viewport Gizmos"
-msgstr "Đồ Đạc Màn Chiếu"
-
-
 msgid "Modified Edges"
 msgstr "Cạnh Được Sửa Đổi"
 
@@ -107076,11 +106663,6 @@ msgid "Make and Replace Links"
 msgstr "Chế Tạo Và Thay Thế Các Thế Liên Kết"
 
 
-msgctxt "Operator"
-msgid "Group"
-msgstr "Nhóm"
-
-
 msgid "Inputs:"
 msgstr "Các Ngõ Vào:"
 
@@ -107379,10 +106961,6 @@ msgstr "Vị Trí X"
 
 msgid "Convert to Float"
 msgstr "Đổi Sang Số Thật"
-
-
-msgid "Pre-Processed"
-msgstr "Đã Qúa Trình Sẵn"
 
 
 msgid "Storage"
@@ -109130,16 +108708,6 @@ msgstr "Khóa Được Chọn"
 
 
 msgctxt "Operator"
-msgid "Unlock Selected"
-msgstr "Mở Khóa Được Chọn"
-
-
-msgctxt "Operator"
-msgid "Unlock Unselected"
-msgstr "Mở Khóa Chưa Chọn"
-
-
-msgctxt "Operator"
 msgid "Lock Only Selected"
 msgstr "Khóa Chỉ Được Chọn"
 
@@ -109147,6 +108715,16 @@ msgstr "Khóa Chỉ Được Chọn"
 msgctxt "Operator"
 msgid "Lock Only Unselected"
 msgstr "Khóa Chỉ Không Được Chọn"
+
+
+msgctxt "Operator"
+msgid "Unlock Selected"
+msgstr "Mở Khóa Được Chọn"
+
+
+msgctxt "Operator"
+msgid "Unlock Unselected"
+msgstr "Mở Khóa Chưa Chọn"
 
 
 msgctxt "Operator"
@@ -109186,16 +108764,6 @@ msgstr "Sửa Méo Hóa"
 
 msgid "Locks"
 msgstr "Ổ Khóa"
-
-
-msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Hiện Hộp Bao Quanh"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Ẩn Hộp Bao Quanh"
 
 
 msgctxt "Operator"
@@ -110802,10 +110370,6 @@ msgid "Appended Data"
 msgstr "Dữ Liệu Kèm"
 
 
-msgid "Proxies have been removed from Blender (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Please consider re-saving any library .blend file with the newest Blender version"
-msgstr "Đại lý đã bị bỏ khỏi Blender (%d đại lý đã biến hóa tự động sang đồ vượt quyền thư viện, %d đại lý không thể biến đổi đã bị xóa). Làm ơn lưu lại bất cứ tập tin .blend thư viện nào bằng phiên bản Blender mới nhất"
-
-
 msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
 msgstr "Liên kết hay kèm từ một định dạng tập tin .blend rất xưa (%d.%d), sẽ không biến đổi hoạt hình! Có lẽ bạn sẽ muốn dùng Blender hiện tại để lưu lại tập tin thư viện của bạn "
 
@@ -110883,10 +110447,6 @@ msgstr "Biến hóa không gian khùng điện chỉ được sử dụng cho v�
 
 
 msgid "Invalid vertex index %d (expected to be within 0 to %d range)"
-msgstr "Chỉ số đỉnh không hợp lệ %d (định ở trong phạm vi 0 đến %d)"
-
-
-msgid "Invalid vertex index %d (expected to be within 0 to %d range))"
 msgstr "Chỉ số đỉnh không hợp lệ %d (định ở trong phạm vi 0 đến %d)"
 
 
@@ -111152,20 +110712,8 @@ msgid "[Action Stash]"
 msgstr "[Hành Động Cất Chứa]"
 
 
-msgid "Undefined Node Tree Type"
-msgstr "Loại Cây Giao Điểm Chưa Xác Định"
-
-
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
 msgstr "Vật Thể không phải Vật Thể Rỗng '%s' không thể sao chép nữa sưu tập '%s' trong Blender 2.80"
-
-
-msgid "Proxy lost from  object %s lib %s"
-msgstr "Đại lý bị mật từ vật thể %s thư viện %s"
-
-
-msgid "Proxy lost from  object %s lib <NONE>"
-msgstr "Đại lý bị mật từ vật thể %s thư <KHÔNG CÓ>"
 
 
 msgid "Can't find object data of %s lib %s"
@@ -112389,68 +111937,8 @@ msgid "Cannot edit bone groups for library overrides"
 msgstr "Không thể biên tập nhóm xương cho đồ vượt quyền cho thư viện"
 
 
-msgid "Add New"
-msgstr "Thêm Mới"
-
-
-msgid "Add New (Current Frame)"
-msgstr "Thêm Mới (Bức Ảnh Hiện Tại)"
-
-
-msgid "Replace Existing..."
-msgstr "Thay Thế Tồn Tại..."
-
-
-msgid "PoseLib Previewing Pose: [Showing Original Pose]"
-msgstr "ThưViệnDạngĐứng Dự Khán Dạng Đứng: [Đang Hiện Dạng Đứng Ban Đầu]"
-
-
-msgid "Use Tab to start previewing poses again"
-msgstr "Dùng Tab cho bắt đầu xem dự khán dạng đứng nữa"
-
-
-msgid "PoseLib Previewing Pose: Filter - [%s] | Current Pose - \"%s\""
-msgstr "ThưViệnDạngĐứng Dự Khán Dạng Đứng: Lọc - [%s] | Dạng Đựng Hiện Tại - \"%s\""
-
-
-msgid "Use ScrollWheel or PageUp/Down to change pose"
-msgstr "Dùng Nút Cuộn hay nút TrangLên/Xuống để đổi dạng đứng"
-
-
-msgid "PoseLib Previewing Pose: \"%s\""
-msgstr "ThưViệnDạngĐứng Dự Khán Dạng Đứng: \"%s\""
-
-
-msgid "No action to validate"
-msgstr "Không có hành động để kiểm tra"
-
-
-msgid "Object does not have pose lib data"
-msgstr "Vật thể không có đữ liệu thư viện dạng đứng"
-
-
-msgid "Invalid index for pose"
-msgstr "Chỉ số không phù hợp cho dạng đứng"
-
-
 msgid "Pose lib is only for armatures in pose mode"
 msgstr "Thư viện dạng đứng chỉ cho cốt trong chế độ dạng đứng"
-
-
-msgid "Object does not have a valid pose lib"
-msgstr "Vật thể không có thư viện dạng đứng hợp lệ"
-
-
-msgid "Pose lib had no active pose"
-msgstr "Thư viện dạng đứng không có dạng đứng hoạt động"
-
-
-msgid "Pose lib has no poses to preview/apply"
-msgstr "Thư viện dạng đứng không có dạng đứng cho dự khán/áp dụng"
-
-
-msgid "Invalid pose specified %d"
-msgstr "Đã xác định dạng đứng không hợp lệ %d"
 
 
 msgid "Internal pose library error, canceling operator"
@@ -114498,10 +113986,6 @@ msgid "View not found, cannot sort by view axis"
 msgstr "Không tìm được màn chiếu, không thể sắp thự tự bằng trục màn"
 
 
-msgid "Does not support Individual Origin as pivot"
-msgstr "Không hỗ trợ Gốc Tọa Đồ Riêng được làm điểm tựa"
-
-
 msgid "Can only copy one custom normal, vertex normal or face normal"
 msgstr "Chỉ có thể chép lại một pháp tuyến tùy chọn, pháp tuyến đỉnh, hay pháp tuyến mặt"
 
@@ -115424,10 +114908,6 @@ msgid "Voxel remesher failed to create mesh"
 msgstr "Chế tạo mạng lưới bởi bộ mạng lưới lại thể tích tử bị thất bại"
 
 
-msgid "The remesher cannot worked on linked or override data"
-msgstr "Bộ mạng lưới lại không thể tác dụng dữ liệu được liên kết hay vượt quyền"
-
-
 msgid "The remesher cannot run from edit mode"
 msgstr "Bộ mạng lưới lại không thể chạy trong chế độ biên tập"
 
@@ -115510,10 +114990,6 @@ msgstr "Vật Thể Bút Sáp không hỗ trợ tùy chọn cho đặt gốc t�
 
 msgid "Curves Object does not support this set origin operation"
 msgstr "Vật Thể Đường Cong không hỗ trợ tương tác cho đặt gốc tọa độ này"
-
-
-msgid "Font's can only have scale applied: \"%s\""
-msgstr "Phông chỉ được áp dụng phóng to: \"%s\""
 
 
 msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
@@ -117658,24 +117134,12 @@ msgid "Clipboard is empty"
 msgstr "Bảng dán trống rỗng"
 
 
-msgid "Clipboard nodes are an incompatible type"
-msgstr "Giao điểm bảng dán là loại không phụ hợp"
-
-
 msgid "Some nodes references could not be restored, will be left empty"
 msgstr "Vài tham chiếu giao điểm không thể hoàn lại, sẽ bị bỏ trống"
 
 
 msgid "Text not used by any node, no update done"
 msgstr "Không có giao điểm nào dùng văn bản này, không nâng cấp"
-
-
-msgid ""
-"Cannot add node %s into node tree %s:\n"
-"  %s"
-msgstr ""
-"Không thể thêm giao điểm %s vào cây giao điểm %s:\n"
-"  %s"
 
 
 msgid "Cannot add node %s into node tree %s"
@@ -119610,14 +119074,6 @@ msgid "Can't edit this property from a system override data-block"
 msgstr "Không thể biên tập đặc tính này từ một cục dữ liệu đồ vượt quyền hệ thống"
 
 
-msgid "Only boolean, int float and enum properties supported"
-msgstr "Chỉ hỗ trợ đặc tính kiểu bool, số nguyên, số thật và liệt kê"
-
-
-msgid "Only boolean, int and float properties supported"
-msgstr "Chỉ hỗ trợ đặc tính kiểu bool, số nguyên, số thật"
-
-
 msgid "'%s' does not contain '%s' with prefix and suffix"
 msgstr "'%s' không chứa '%s' với đầu và đuôi"
 
@@ -120179,10 +119635,6 @@ msgstr "Chỉ có thể chỉ định dữ liệu được tịnh toán đến v
 
 msgid "Only empty objects support collection instances"
 msgstr "Chỉ vật thể rỗng được hỗ trợ thực thể sưu tập"
-
-
-msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"
-msgstr "Không thể đặt được sưu tập vì vật thể là của nhóm đang thực thể, và sẽ tạo một chu trình"
 
 
 msgid "VertexGroup.add(): cannot be called while object is in edit mode"
@@ -122025,10 +121477,6 @@ msgid "Instance Index"
 msgstr "Chỉ Số Thực Thể"
 
 
-msgid "Index of the instance that used for each point. This is only used when Pick Instances is on. By default the point index is used"
-msgstr "Chỉ số của thực thể được sử dụng cho mỗi điểm. Cái này chỉ được dùng khi đã bật Chọn Thực Thể. Mặc định là sử dụng chỉ số điểm"
-
-
 msgid "Rotation of the instances"
 msgstr "Xoay của các thực thể"
 
@@ -122373,10 +121821,6 @@ msgid "Edges to mark where the mesh is \"cut\" for the purposes of unwrapping"
 msgstr "Các cạnh cho ký dấu chỗ trên mạng lưới để \"cắt\" khi mở gói"
 
 
-msgid "Virtually fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "Đầy hết lỗ trong mạng lưới kiểu ảo trước mở gói, tốt hơn cho tranh lấn trên và giữ nguyên đối xứng"
-
-
 msgid "UV coordinates between 0 and 1 for each face corner in the selected faces"
 msgstr "Tọa độ UV giữa 0 đến 1 cho mỗi "
 
@@ -122443,6 +121887,10 @@ msgstr "Hình dạng ngõ vào có loại không hỗ trợ:"
 
 msgid " node"
 msgstr " giao điểm"
+
+
+msgid "Undefined Node Tree Type"
+msgstr "Loại Cây Giao Điểm Chưa Xác Định"
 
 
 msgid "Shader Editor"
@@ -123097,10 +122545,6 @@ msgstr "Thiếu %d thư viện và %d cục dữ liệu được liên kết (g�
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"
 msgstr "%d thư viện có đồ vượt quyền cần đồng bộ hóa (tự động đồng bộ hóa trong %.0fphút%.2fgiây), làm ơn kiểm tra trình biên soạn Thông Tin và Mục Lục cho chi tiết"
-
-
-msgid "Proxies have been removed from Blender (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Please also consider re-saving any library .blend file with the newest Blender version"
-msgstr "Đại lý đã bị bỏ khỏi Blender (%d đại lý đã biến hóa tự động sang đồ vượt quyền thư viện, %d đại lý không thể biến đổi đã bị xóa). Làm ơn lưu lại bất cứ tập tin .blend thư viện nào bằng phiên bản Blender mới nhất"
 
 
 msgid "%d sequence strips were not read because they were in a channel larger than %d"
