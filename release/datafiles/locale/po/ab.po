@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -443,11 +443,6 @@ msgstr "Аҭыԥ"
 msgctxt "Image"
 msgid "New"
 msgstr "Аҿыц"
-
-
-msgctxt "Operator"
-msgid "Group"
-msgstr "Агәыԥ"
 
 
 msgctxt "Operator"

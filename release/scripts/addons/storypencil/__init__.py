@@ -175,7 +175,6 @@ def register():
     )
 
     # Append Handlers
-    bpy.app.handlers.frame_change_post.clear()
     bpy.app.handlers.frame_change_post.append(synchro.on_frame_changed)
     bpy.app.handlers.load_post.append(synchro.sync_autoconfig)
 
@@ -205,8 +204,7 @@ def unregister():
         unregister_class(cls)
 
     # Remove Handlers
-    if bpy.app.handlers.frame_change_post:
-        bpy.app.handlers.frame_change_post.remove(synchro.on_frame_changed)
+    bpy.app.handlers.frame_change_post.remove(synchro.on_frame_changed)
     bpy.app.handlers.load_post.remove(synchro.sync_autoconfig)
 
     # remove UI integration

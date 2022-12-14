@@ -95,8 +95,8 @@ rctf MeshPrimitive::uv_bounds() const
 
 static void mesh_data_init_vertices(MeshData &mesh_data)
 {
-  mesh_data.vertices.reserve(mesh_data.vert_len);
-  for (int64_t i = 0; i < mesh_data.vert_len; i++) {
+  mesh_data.vertices.reserve(mesh_data.verts_num);
+  for (int64_t i = 0; i < mesh_data.verts_num; i++) {
     MeshVertex vert;
     vert.v = i;
     mesh_data.vertices.append(vert);
@@ -105,9 +105,9 @@ static void mesh_data_init_vertices(MeshData &mesh_data)
 
 static void mesh_data_init_primitives(MeshData &mesh_data)
 {
-  mesh_data.primitives.reserve(mesh_data.looptri_len);
-  for (int64_t i = 0; i < mesh_data.looptri_len; i++) {
-    const MLoopTri &tri = mesh_data.looptri[i];
+  mesh_data.primitives.reserve(mesh_data.looptris.size());
+  for (int64_t i = 0; i < mesh_data.looptris.size(); i++) {
+    const MLoopTri &tri = mesh_data.looptris[i];
     MeshPrimitive primitive;
     primitive.index = i;
     primitive.poly = tri.poly;
@@ -115,7 +115,7 @@ static void mesh_data_init_primitives(MeshData &mesh_data)
     for (int j = 0; j < 3; j++) {
       MeshUVVert uv_vert;
       uv_vert.loop = tri.tri[j];
-      uv_vert.vertex = &mesh_data.vertices[mesh_data.mloop[uv_vert.loop].v];
+      uv_vert.vertex = &mesh_data.vertices[mesh_data.loops[uv_vert.loop].v];
       uv_vert.uv = mesh_data.mloopuv[uv_vert.loop].uv;
       primitive.vertices.append(uv_vert);
     }
@@ -125,14 +125,14 @@ static void mesh_data_init_primitives(MeshData &mesh_data)
 
 static void mesh_data_init_edges(MeshData &mesh_data)
 {
-  mesh_data.edges.reserve(mesh_data.looptri_len * 2);
-  EdgeHash *eh = BLI_edgehash_new_ex(__func__, mesh_data.looptri_len * 3);
-  for (int64_t i = 0; i < mesh_data.looptri_len; i++) {
-    const MLoopTri &tri = mesh_data.looptri[i];
+  mesh_data.edges.reserve(mesh_data.looptris.size() * 2);
+  EdgeHash *eh = BLI_edgehash_new_ex(__func__, mesh_data.looptris.size() * 3);
+  for (int64_t i = 0; i < mesh_data.looptris.size(); i++) {
+    const MLoopTri &tri = mesh_data.looptris[i];
     MeshPrimitive &primitive = mesh_data.primitives[i];
     for (int j = 0; j < 3; j++) {
-      int v1 = mesh_data.mloop[tri.tri[j]].v;
-      int v2 = mesh_data.mloop[tri.tri[(j + 1) % 3]].v;
+      int v1 = mesh_data.loops[tri.tri[j]].v;
+      int v2 = mesh_data.loops[tri.tri[(j + 1) % 3]].v;
 
       void **edge_index_ptr;
       int64_t edge_index;
@@ -215,16 +215,11 @@ static void mesh_data_init(MeshData &mesh_data)
   mesh_data_init_primitive_uv_island_ids(mesh_data);
 }
 
-MeshData::MeshData(const MLoopTri *looptri,
-                   const int64_t looptri_len,
-                   const int64_t vert_len,
-                   const MLoop *mloop,
-                   const MLoopUV *mloopuv)
-    : looptri(looptri),
-      looptri_len(looptri_len),
-      vert_len(vert_len),
-      mloop(mloop),
-      mloopuv(mloopuv)
+MeshData::MeshData(const Span<MLoopTri> looptris,
+                   const Span<MLoop> loops,
+                   const int verts_num,
+                   const Span<MLoopUV> mloopuv)
+    : looptris(looptris), verts_num(verts_num), loops(loops), mloopuv(mloopuv)
 {
   mesh_data_init(*this);
 }
@@ -499,7 +494,7 @@ static std::optional<UVBorderCorner> sharpest_border_corner(UVIsland &island)
 /** The inner edge of a fan. */
 struct InnerEdge {
   MeshPrimitive *primitive;
-  /* UVs order are already applied. So uvs[0] mathes primitive->vertices[vert_order[0]]/ */
+  /* UVs order are already applied. So `uvs[0]` matches `primitive->vertices[vert_order[0]]`. */
   float2 uvs[3];
   int vert_order[3];
 
@@ -1185,7 +1180,7 @@ const UVVertex *UVPrimitive::get_other_uv_vertex(const UVVertex *v1, const UVVer
 
   for (const UVEdge *edge : edges) {
     for (const UVVertex *uv_vertex : edge->vertices) {
-      if (uv_vertex != v1 && uv_vertex != v2) {
+      if (!ELEM(uv_vertex, v1, v2)) {
         return uv_vertex;
       }
     }
@@ -1198,7 +1193,7 @@ UVBorder UVPrimitive::extract_border() const
 {
   Vector<UVBorderEdge> border_edges;
   for (UVEdge *edge : edges) {
-    /* TODO remove const cast. only needed for debugging atm. */
+    /* TODO remove const cast. only needed for debugging ATM. */
     UVBorderEdge border_edge(edge, const_cast<UVPrimitive *>(this));
     border_edges.append(border_edge);
   }
@@ -1227,9 +1222,6 @@ const UVVertex *UVBorderEdge::get_uv_vertex(int index) const
   return edge->vertices[actual_index];
 }
 
-/**
- * Get the uv vertex from the primitive that is not part of the edge.
- */
 const UVVertex *UVBorderEdge::get_other_uv_vertex() const
 {
   return uv_primitive->get_other_uv_vertex(edge->vertices[0], edge->vertices[1]);

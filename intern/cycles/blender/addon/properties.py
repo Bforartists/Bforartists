@@ -87,11 +87,26 @@ enum_sampling_pattern = (
 )
 
 enum_emission_sampling = (
-    ('NONE', 'None', "Do not use this surface as a light for sampling", 0),
-    ('AUTO', 'Auto', "Automatically determine if the surface should be treated as a light for sampling, based on estimated emission intensity", 1),
-    ('FRONT', 'Front', "Treat only front side of the surface as a light, usually for closed meshes whose interior is not visible", 2),
-    ('BACK', 'Back', "Treat only back side of the surface as a light for sampling", 3),
-    ('FRONT_BACK', 'Front and Back', "Treat surface as a light for sampling, emitting from both the front and back side", 4),
+    ('NONE',
+     'None',
+     "Do not use this surface as a light for sampling",
+     0),
+    ('AUTO',
+     'Auto',
+     "Automatically determine if the surface should be treated as a light for sampling, based on estimated emission intensity",
+     1),
+    ('FRONT',
+     'Front',
+     "Treat only front side of the surface as a light, usually for closed meshes whose interior is not visible",
+     2),
+    ('BACK',
+     'Back',
+     "Treat only back side of the surface as a light for sampling",
+     3),
+    ('FRONT_BACK',
+     'Front and Back',
+     "Treat surface as a light for sampling, emitting from both the front and back side",
+     4),
 )
 
 enum_volume_sampling = (
@@ -155,7 +170,6 @@ enum_view3d_shading_render_pass = (
     ('EMISSION', "Emission", "Show the Emission render pass"),
     ('BACKGROUND', "Background", "Show the Background render pass"),
     ('AO', "Ambient Occlusion", "Show the Ambient Occlusion render pass"),
-    ('SHADOW', "Shadow", "Show the Shadow render pass"),
     ('SHADOW_CATCHER', "Shadow Catcher", "Show the Shadow Catcher render pass"),
 
     ('', "Light", ""),
@@ -491,6 +505,12 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         default='MULTIPLE_IMPORTANCE_SAMPLING',
     )
 
+    use_light_tree: BoolProperty(
+        name="Light Tree",
+        description="Sample multiple lights more efficiently based on estimated contribution at every shading point",
+        default=True,
+    )
+
     min_light_bounces: IntProperty(
         name="Min Light Bounces",
         description="Minimum number of light bounces. Setting this higher reduces noise in the first bounces, "
@@ -632,7 +652,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     transparent_max_bounces: IntProperty(
         name="Transparent Max Bounces",
-        description="Maximum number of transparent bounces. This is independent of maximum number of other bounces ",
+        description="Maximum number of transparent bounces. This is independent of maximum number of other bounces",
         min=0, max=1024,
         default=8,
     )
@@ -1189,7 +1209,7 @@ class CyclesWorldSettings(bpy.types.PropertyGroup):
     )
     homogeneous_volume: BoolProperty(
         name="Homogeneous Volume",
-        description="When using volume rendering, assume volume has the same density everywhere"
+        description="When using volume rendering, assume volume has the same density everywhere "
         "(not using any textures), for faster rendering",
         default=False,
     )
@@ -1657,7 +1677,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                     col.label(text="and Windows driver version 101.3430 or newer", icon='BLANK1')
                 elif sys.platform.startswith("linux"):
                     col.label(text="Requires Intel GPU with Xe-HPG architecture and", icon='BLANK1')
-                    col.label(text="  - Linux driver version xx.xx.23904 or newer", icon='BLANK1')
+                    col.label(text="  - intel-level-zero-gpu version 1.3.23904 or newer", icon='BLANK1')
                     col.label(text="  - oneAPI Level-Zero Loader", icon='BLANK1')
             elif device_type == 'METAL':
                 col.label(text="Requires Apple Silicon with macOS 12.2 or newer", icon='BLANK1')

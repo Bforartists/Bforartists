@@ -16,8 +16,7 @@ TextOpFn = Callable[
 ]
 
 
-def operation_wrap(args: Tuple[str, TextOpFn]) -> None:
-    fn, text_operation = args
+def operation_wrap(fn: str, text_operation: TextOpFn) -> None:
     with open(fn, "r", encoding="utf-8") as f:
         data_src = f.read()
         data_dst = text_operation(fn, data_src)
@@ -59,8 +58,8 @@ def run(
         import multiprocessing
         job_total = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=job_total * 2)
-        pool.map(operation_wrap, args)
+        pool.starmap(operation_wrap, args)
     else:
         for directory in directories:
             for fn in source_files(directory):
-                operation_wrap((fn, text_operation))
+                operation_wrap(fn, text_operation)

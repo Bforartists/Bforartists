@@ -995,7 +995,7 @@ static void ui_apply_but_funcs_after(bContext *C)
   BLI_listbase_clear(&UIAfterFuncs);
 
   LISTBASE_FOREACH_MUTABLE (uiAfterFunc *, afterf, &funcs) {
-    uiAfterFunc after = *afterf; /* copy to avoid memleak on exit() */
+    uiAfterFunc after = *afterf; /* Copy to avoid memory leak on exit(). */
     BLI_freelinkN(&funcs, afterf);
 
     if (after.context) {
@@ -3283,7 +3283,7 @@ static bool ui_textedit_copypaste(uiBut *but, uiHandleButtonData *data, const in
 
     if (pbuf) {
       if (UI_but_is_utf8(but)) {
-        buf_len -= BLI_str_utf8_invalid_strip(pbuf, (size_t)buf_len);
+        buf_len -= BLI_str_utf8_invalid_strip(pbuf, size_t(buf_len));
       }
 
       ui_textedit_insert_buf(but, data, pbuf, buf_len);

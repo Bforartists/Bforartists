@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1081,10 +1081,6 @@ msgid "Lock Rotation"
 msgstr "Lås rotation"
 
 
-msgid "Pose Library"
-msgstr "Pose-bibliotek"
-
-
 msgid "Rotation in Eulers"
 msgstr "Rotation med Euler"
 
@@ -1127,10 +1123,6 @@ msgstr "Grovhet 1"
 
 msgid "Roughness 2"
 msgstr "Grovhet 2"
-
-
-msgid "Exponent"
-msgstr "Exponent"
 
 
 msgid "3D Cursor"
@@ -1421,10 +1413,6 @@ msgid "Basis"
 msgstr "Bas"
 
 
-msgid "Wrap"
-msgstr "Radbrytning"
-
-
 msgid "Zoom"
 msgstr "Zooma"
 
@@ -1459,6 +1447,10 @@ msgstr "Färgkälla"
 
 msgid "Air"
 msgstr "Luft"
+
+
+msgid "Wrap"
+msgstr "Radbrytning"
 
 
 msgid "Object Constraints"
@@ -2084,6 +2076,10 @@ msgid "Dither"
 msgstr "Rastrering"
 
 
+msgid "Pose Library"
+msgstr "Pose-bibliotek"
+
+
 msgid "Bone Constraints"
 msgstr "Benbegränsningar"
 
@@ -2380,6 +2376,10 @@ msgid "Relative Key"
 msgstr "Relativ nyckel"
 
 
+msgid "Dampening"
+msgstr "Dämpning"
+
+
 msgid "Bending"
 msgstr "Böjning"
 
@@ -2605,8 +2605,8 @@ msgid "Cache is disabled until the file is saved"
 msgstr "Cachen är inaktiverad tills filen sparas"
 
 
-msgid "Dampening"
-msgstr "Dämpning"
+msgid "Exponent"
+msgstr "Exponent"
 
 
 msgid "Auto-Step"
@@ -2627,11 +2627,6 @@ msgstr "Bild*"
 
 msgid "Aspect Ratio"
 msgstr "Storleksförhållande"
-
-
-msgctxt "Operator"
-msgid "Group"
-msgstr "Grupp"
 
 
 msgid "Offset:"

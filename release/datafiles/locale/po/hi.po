@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.4.0 Beta (b'143e74c0b8eb')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2006,10 +2006,6 @@ msgid "Half"
 msgstr "अर्ध"
 
 
-msgid "Path Length"
-msgstr "पथ लंबाई"
-
-
 msgid "Resolution U"
 msgstr "बिंदू विस्तार u"
 
@@ -3286,10 +3282,6 @@ msgid "Spin"
 msgstr "चक्रण"
 
 
-msgid "Wrap"
-msgstr "आच्छादन"
-
-
 msgid "Zoom"
 msgstr "निकट करें"
 
@@ -3392,6 +3384,10 @@ msgstr "प्रक्षेपण"
 
 msgid "Air"
 msgstr "वायु"
+
+
+msgid "Wrap"
+msgstr "आच्छादन"
 
 
 msgid "At"
@@ -5133,6 +5129,10 @@ msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
 
 
+msgid "Path Length"
+msgstr "पथ लंबाई"
+
+
 msgctxt "MovieClip"
 msgid "View"
 msgstr "दृश्य"
@@ -6440,10 +6440,6 @@ msgstr "\"%s\" संपत्ति एनिमेटेड किया ज�
 
 msgid "Same bone selected..."
 msgstr "एक ही हड्डी का चयन किया..."
-
-
-msgid "Add New"
-msgstr "नया जोड़ें"
 
 
 msgctxt "Curve"
