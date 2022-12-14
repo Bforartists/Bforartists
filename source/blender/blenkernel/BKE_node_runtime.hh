@@ -251,12 +251,14 @@ class bNodeRuntime : NonCopyable, NonMovable {
   /** List of cached internal links (input to output), for muted nodes and operators. */
   Vector<bNodeLink *> internal_links;
 
+  /** Eagerly maintained cache of the node's index in the tree. */
+  int index_in_tree = -1;
+
   /** Only valid if #topology_cache_is_dirty is false. */
   Vector<bNodeSocket *> inputs;
   Vector<bNodeSocket *> outputs;
   Map<StringRefNull, bNodeSocket *> inputs_by_identifier;
   Map<StringRefNull, bNodeSocket *> outputs_by_identifier;
-  int index_in_tree = -1;
   bool has_available_linked_inputs = false;
   bool has_available_linked_outputs = false;
   Vector<bNode *> direct_children_in_frame;
@@ -319,6 +321,10 @@ inline bool topology_cache_is_available(const bNodeSocket &socket)
 }
 
 }  // namespace node_tree_runtime
+
+namespace node_field_inferencing {
+bool update_field_inferencing(const bNodeTree &tree);
+}
 
 }  // namespace blender::bke
 
@@ -415,6 +421,11 @@ inline const bNode *bNodeTree::group_output_node() const
   return this->runtime->group_output_node;
 }
 
+inline blender::Span<const bNode *> bNodeTree::group_input_nodes() const
+{
+  return this->nodes_by_type("NodeGroupInput");
+}
+
 inline blender::Span<const bNodeSocket *> bNodeTree::all_input_sockets() const
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
@@ -462,6 +473,15 @@ inline blender::Span<bNode *> bNodeTree::root_frames() const
 /* -------------------------------------------------------------------- */
 /** \name #bNode Inline Methods
  * \{ */
+
+inline int bNode::index() const
+{
+  const int index = this->runtime->index_in_tree;
+  /* The order of nodes should always be consistent with the `nodes_by_id` vector. */
+  BLI_assert(index ==
+             this->runtime->owner_tree->runtime->nodes_by_id.index_of_as(this->identifier));
+  return index;
+}
 
 inline blender::Span<bNodeSocket *> bNode::input_sockets()
 {
