@@ -3163,19 +3163,23 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Attribute Statistics ", icon = "ATTRIBUTE_STATISTIC")
+            props = col.operator("node.add_node", text=" Attribute Statistics  ", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
+            
+            props = col.operator("node.add_node", text=" Blur Attribute          ", icon = "BLUR_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeBlurAttribute"
 
-            props = col.operator("node.add_node", text=" Capture Attribute   ", icon = "ATTRIBUTE_CAPTURE")
+            props = col.operator("node.add_node", text=" Capture Attribute    ", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
             props.type = "GeometryNodeCaptureAttribute"
 
-            props = col.operator("node.add_node", text=" Domain Size           ", icon = "DOMAIN_SIZE")
+            props = col.operator("node.add_node", text=" Domain Size            ", icon = "DOMAIN_SIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeDomainSize"
 
-            props = col.operator("node.add_node", text=" Remove Attribute      ", icon = "ATTRIBUTE_REMOVE")
+            props = col.operator("node.add_node", text=" Remove Attribute   ", icon = "ATTRIBUTE_REMOVE")
             props.use_transform = True
             props.type = "GeometryNodeRemoveAttribute"
 
@@ -3194,6 +3198,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STATISTIC")
             props.use_transform = True
             props.type = "GeometryNodeAttributeStatistic"
+            
+            props = flow.operator("node.add_node", text="", icon = "BLUR_ATTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodeBlurAttribute"
 
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
             props.use_transform = True
@@ -3949,6 +3957,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Color                    ", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
+            
+            props = col.operator("node.add_node", text=" Image                  ", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputImage"
 
             props = col.operator("node.add_node", text=" Image Info           ", icon = "IMAGE_INFO")
             props.use_transform = True
@@ -4036,6 +4048,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
+            
+            props = flow.operator("node.add_node", text="", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "GeometryNodeInputImage"
 
             props = flow.operator("node.add_node", text="", icon = "IMAGE_INFO")
             props.use_transform = True

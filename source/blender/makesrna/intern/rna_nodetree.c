@@ -13571,7 +13571,7 @@ static int node_type_to_icon(int type)
       return ICON_ATTRIBUTE_STATISTIC;
 
     case GEO_NODE_BLUR_ATTRIBUTE:
-      return ICON_DELETE;
+      return ICON_BLUR_ATTRIBUTE;
 
     case GEO_NODE_BOUNDING_BOX:
       return ICON_PIVOT_BOUNDBOX;
@@ -13685,7 +13685,7 @@ static int node_type_to_icon(int type)
       return ICON_GEOMETRY_INSTANCE;
 
     case GEO_NODE_IMAGE:
-      return ICON_DELETE;
+      return ICON_FILE_IMAGE;
 
     case GEO_NODE_IMAGE_INFO:
       return ICON_IMAGE_INFO;
