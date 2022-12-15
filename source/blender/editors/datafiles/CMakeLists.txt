@@ -1653,7 +1653,7 @@ self_object
 sample_index
 sample_nearest
 image_info
-#~ DEF_ICON_BLANK(1686)
+blur_attribute
 #~ DEF_ICON_BLANK(1687)
 
 # ------------------------- row 25 --------------------------*/
