@@ -105,6 +105,17 @@ _namespace = globals()
 _modules_loaded = [_namespace[name] for name in _modules]
 del _namespace
 
+def _addon_support_items():
+    """Return the addon support levels suitable for this Blender build."""
+
+    # bfa - iconized enum menu
+    items = [
+        ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
+        ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
+    ]
+    if bpy.app.version_cycle == 'alpha':
+        items.append(('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4)) # bfa - 4 , not 3. enum flag requires for every new item a power of two value. Fourth element would be 8, fifth, 16 and so on.
+    return items
 
 def register():
     from bpy.utils import register_class
@@ -150,13 +161,9 @@ def register():
         name="Category",
         description="Filter add-ons by category",
     )
-    # bfa - iconized enum menu
+
     WindowManager.addon_support = EnumProperty(
-        items=[
-            ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
-            ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
-            ('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4) # bfa - 4 , not 3. enum flag requires for every new item a power of two value. Fourth element would be 8, fifth, 16 and so on.
-        ],
+        items=_addon_support_items(),
         name="Support",
         description="Display support level",
         default={'OFFICIAL', 'COMMUNITY'},
