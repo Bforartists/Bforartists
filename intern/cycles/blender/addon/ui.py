@@ -337,6 +337,7 @@ class CYCLES_RENDER_PT_sampling_path_guiding(CyclesButtonsPanel, Panel):
         layout.prop(cscene, "guiding_training_samples")
 
         col = layout.column(align=True)
+        col.use_property_split = False
         col.prop(cscene, "use_surface_guiding", text="Surface")
         col.prop(cscene, "use_volume_guiding", text="Volume")
 
@@ -430,7 +431,7 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -439,6 +440,7 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(cscene, "use_light_tree")
         sub = col.row()
+        sub.use_property_split = True
         sub.prop(cscene, "light_sampling_threshold", text="Light Threshold")
         sub.active = not cscene.use_light_tree
 
