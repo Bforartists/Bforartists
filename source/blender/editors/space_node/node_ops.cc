@@ -173,7 +173,7 @@ void ED_operatormacros_node()
 
   ot = WM_operatortype_append_macro("NODE_OT_duplicate_move",
                                     "Duplicate",
-                                    "Duplicate\nDuplicate selected nodes and move them",
+                                    "Duplicate selected nodes and move them",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   mot = WM_operatortype_macro_define(ot, "NODE_OT_duplicate");
   RNA_boolean_set(mot->ptr, "linked", false);
