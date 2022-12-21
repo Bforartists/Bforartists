@@ -847,7 +847,7 @@ class _draw_tool_settings_context_mode:
                         pressure_name="use_pressure_size",
                         unified_name="use_unified_size",
                         slider=True,
-                        header=True
+                        header=True,
                     )
                     UnifiedPaintPanel.prop_unified(
                         layout,
@@ -857,7 +857,7 @@ class _draw_tool_settings_context_mode:
                         pressure_name="use_pressure_strength",
                         unified_name="use_unified_strength",
                         slider=True,
-                        header=True
+                        header=True,
                     )
 
     @staticmethod

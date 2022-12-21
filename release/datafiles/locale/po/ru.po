@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -88149,10 +88149,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Ошибка в модификаторе мультиразрешения, применение не выполнено"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Ошибка в модификаторе, применение не выполнено"
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "Применённый модификатор изменил только контрольные вершины, но не вершины от тесселяции или фаски"
 
@@ -90778,10 +90774,6 @@ msgstr "право"
 
 msgid "left"
 msgstr "лево"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Автосмещение установлено в %s — нажмите %s для переключения направления  |  %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

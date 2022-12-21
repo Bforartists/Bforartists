@@ -2329,11 +2329,11 @@ static int object_delete_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *object_ot_delete_get_description(bContext *UNUSED(C),
-                                              wmOperatorType *UNUSED(ot),
-                                              PointerRNA *ptr)
+static char *object_ot_delete_get_description(struct bContext * /*C*/,
+                                              struct wmOperatorType * /*op*/,
+                                              struct PointerRNA *values)
 {
-  if (RNA_boolean_get(ptr, "use_global")) {
+  if (RNA_boolean_get(values, "use_global")) {
     return BLI_strdup("Delete selected objects from all scenes");
   }
   return NULL;

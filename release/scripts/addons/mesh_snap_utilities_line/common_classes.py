@@ -193,7 +193,7 @@ class CharMap:
                             self.unit_system, 'LENGTH', self.length_entered)
                     except:  # ValueError:
                         self.length_entered_value = 0.0  # invalid
-                        #self.report({'INFO'}, "Operation not supported yet")
+                        # self.report({'INFO'}, "Operation not supported yet")
                 else:
                     self.length_entered_value = 0.0
 

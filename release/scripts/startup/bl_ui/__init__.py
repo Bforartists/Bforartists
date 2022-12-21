@@ -85,7 +85,7 @@ _modules = [
     "space_userpref",
     "space_view3d",
     "space_view3d_toolbar",
-    
+
     # bfa - toolbar
     "space_toolbar",
     # bfa - node toolshelf
@@ -104,18 +104,6 @@ __import__(name=__name__, fromlist=_modules)
 _namespace = globals()
 _modules_loaded = [_namespace[name] for name in _modules]
 del _namespace
-
-def _addon_support_items():
-    """Return the addon support levels suitable for this Blender build."""
-
-    # bfa - iconized enum menu
-    items = [
-        ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
-        ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
-    ]
-    if bpy.app.version_cycle == 'alpha':
-        items.append(('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4)) # bfa - 4 , not 3. enum flag requires for every new item a power of two value. Fourth element would be 8, fifth, 16 and so on.
-    return items
 
 def register():
     from bpy.utils import register_class
@@ -162,13 +150,27 @@ def register():
         description="Filter add-ons by category",
     )
 
+
+
+    # These items are static but depend on the version cycle.
+    # bfa - iconized enum menu
+    items = [
+        ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
+        ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
+    ]
+    if bpy.app.version_cycle == 'alpha':
+        items.append(('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4)) # bfa - 4 , not 3. enum flag requires for every new item a power of two value. Fourth element would be 8, fifth, 16 and so on.
+
+
     WindowManager.addon_support = EnumProperty(
-        items=_addon_support_items(),
+        items=items,
         name="Support",
         description="Display support level",
         default={'OFFICIAL', 'COMMUNITY'},
         options={'ENUM_FLAG'},
     )
+    del items
+
     # done...
 
 

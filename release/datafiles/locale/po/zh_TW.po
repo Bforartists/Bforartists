@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -58893,6 +58893,10 @@ msgid "Node tree type %s undefined"
 msgstr "節點樹類型 %s 尚未定義"
 
 
+msgid " (String)"
+msgstr " (字串)"
+
+
 msgid " (Integer)"
 msgstr " (整數)"
 
@@ -58907,10 +58911,6 @@ msgstr " (向量)"
 
 msgid " (Boolean)"
 msgstr " (布林)"
-
-
-msgid " (String)"
-msgstr " (字串)"
 
 
 msgid "Geometry:"

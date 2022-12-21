@@ -929,20 +929,20 @@ static int select_all_exec(bContext *C, wmOperator *op)
 }  // namespace select_all
 
 /*bfa - descriptions*/
-static char *sculpt_curves_ot_select_all_get_description(bContext *UNUSED(C),
-                                                  wmOperatorType *UNUSED(ot),
-                                                  PointerRNA *ptr)
+static char *sculpt_curves_ot_select_all_get_description(struct bContext * /*C*/,
+                                         struct wmOperatorType * /*op*/,
+                                         struct PointerRNA *values)
 {
   /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
     return BLI_strdup("Select all control points");
   }
   /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
     return BLI_strdup("Deselect all control points");
   }
   /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
     return BLI_strdup("Inverts the current selection");
   }
   return NULL;

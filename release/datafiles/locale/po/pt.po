@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -64779,10 +64779,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Modificador de multirresolução retornou um erro, saltando aplicação."
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Modificador retornou um erro, saltando aplicação."
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "O modificador aplicado somente alterou os pontos computacionalmente visíveis (usando OpenCV), não os vértices com chanfro ou tesselados."
 
@@ -66847,10 +66843,6 @@ msgstr "direita"
 
 msgid "left"
 msgstr "esquerda"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Deslocamento automático definido à %s - pressione %s para alternar a direção  |  %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

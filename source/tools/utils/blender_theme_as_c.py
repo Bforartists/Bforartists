@@ -88,13 +88,13 @@ del sys
 source_dst = os.path.join(
     os.path.dirname(__file__),
     "..", "..", "..",
-    "release", "datafiles", "userdef", "userdef_default_theme.c"
+    "release", "datafiles", "userdef", "userdef_default_theme.c",
 )
 
 dna_rename_defs_h = os.path.join(
     os.path.dirname(__file__),
     "..", "..", "..",
-    "source", "blender", "makesdna", "intern", "dna_rename_defs.h"
+    "source", "blender", "makesdna", "intern", "dna_rename_defs.h",
 )
 
 
@@ -246,7 +246,7 @@ def file_remove_empty_braces(source_dst):
         data_prev = data
         data = re.sub(
             r'\s+\.[a-zA-Z_0-9]+\s+=\s+\{\s*\},',
-            key_replace, data, re.MULTILINE
+            key_replace, data, re.MULTILINE,
         )
 
     # Use two spaces instead of tabs.
