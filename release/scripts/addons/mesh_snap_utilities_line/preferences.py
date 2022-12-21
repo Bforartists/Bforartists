@@ -21,9 +21,10 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __package__
 
-    intersect: BoolProperty(name="Intersect",
-                            description="intersects created line with the existing edges, even if the lines do not intersect",
-                            default=True)
+    intersect: BoolProperty(
+        name="Intersect",
+        description="intersects created line with the existing edges, even if the lines do not intersect",
+        default=True)
 
     create_face: BoolProperty(name="Create faces",
                               description="Create faces defined by enclosed edges",
@@ -164,8 +165,8 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
         flow.prop(self, "perpendicular_color")
 
     def draw_snap_utilities_help(self, layout):
-        #layout.operator("wm.url_open", text="Gumroad Page", icon='HELP',).url = "https://gum.co/IaqQf"
-        #layout.operator("wm.url_open", text="Blender Market Page", icon='HELP',).url = "https://blendermarket.com/products/snap-utilities"
+        # layout.operator("wm.url_open", text="Gumroad Page", icon='HELP',).url = "https://gum.co/IaqQf"
+        # layout.operator("wm.url_open", text="Blender Market Page", icon='HELP',).url = "https://blendermarket.com/products/snap-utilities"
         layout.operator("wm.url_open", text="Wiki", icon='HELP',
                         ).url = "https://github.com/Mano-Wii/Addon-Snap-Utilities-Line/wiki"
         layout.operator("wm.url_open", text="Forum", icon='HELP',
@@ -178,7 +179,7 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
         )
 
         wm = context.window_manager
-        #kc = wm.keyconfigs.addon
+        # kc = wm.keyconfigs.addon
         kc = wm.keyconfigs.user
 
         layout.label(text="Global:")

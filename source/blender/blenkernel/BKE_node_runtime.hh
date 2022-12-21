@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 
+#include "BLI_cache_mutex.hh"
 #include "BLI_multi_value_map.hh"
 #include "BLI_utility_mixins.hh"
 #include "BLI_vector.hh"
@@ -119,9 +120,8 @@ class bNodeTreeRuntime : NonCopyable, NonMovable {
    * Protects access to all topology cache variables below. This is necessary so that the cache can
    * be updated on a const #bNodeTree.
    */
-  std::mutex topology_cache_mutex;
-  bool topology_cache_is_dirty = true;
-  bool topology_cache_exists = false;
+  CacheMutex topology_cache_mutex;
+  std::atomic<bool> topology_cache_exists = false;
   /**
    * Under some circumstances, it can be useful to use the cached data while editing the
    * #bNodeTree. By default, this is protected against using an assert.
@@ -141,6 +141,8 @@ class bNodeTreeRuntime : NonCopyable, NonMovable {
   bool has_undefined_nodes_or_sockets = false;
   bNode *group_output_node = nullptr;
   Vector<bNode *> root_frames;
+  Vector<bNodeSocket *> interface_inputs;
+  Vector<bNodeSocket *> interface_outputs;
 };
 
 /**
@@ -296,7 +298,7 @@ inline bool topology_cache_is_available(const bNodeTree &tree)
   if (tree.runtime->allow_use_dirty_topology_cache.load() > 0) {
     return true;
   }
-  if (tree.runtime->topology_cache_is_dirty) {
+  if (tree.runtime->topology_cache_mutex.is_dirty()) {
     return false;
   }
   return true;
@@ -424,6 +426,18 @@ inline const bNode *bNodeTree::group_output_node() const
 inline blender::Span<const bNode *> bNodeTree::group_input_nodes() const
 {
   return this->nodes_by_type("NodeGroupInput");
+}
+
+inline blender::Span<const bNodeSocket *> bNodeTree::interface_inputs() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->interface_inputs;
+}
+
+inline blender::Span<const bNodeSocket *> bNodeTree::interface_outputs() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  return this->runtime->interface_outputs;
 }
 
 inline blender::Span<const bNodeSocket *> bNodeTree::all_input_sockets() const

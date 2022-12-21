@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-11-25 08:32+0100\n"
@@ -1356,6 +1356,10 @@ msgid "Active color attribute index"
 msgstr "Index atribútu aktívnej farby"
 
 
+msgid "Active Color Attribute"
+msgstr "Atribút aktívnej farby"
+
+
 msgid "Active Attribute Index"
 msgstr "Index aktívneho atribútu"
 
@@ -1586,10 +1590,6 @@ msgstr "Textúra Obrázok"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Zapečie do blokov údajov obrázka asociovanými s aktívnymi uzlami textúry obrázku v materiáloch"
-
-
-msgid "Active Color Attribute"
-msgstr "Atribút aktívnej farby"
 
 
 msgid "Bake to the active color attribute on meshes"
@@ -63673,14 +63673,6 @@ msgid "The position of the mouse cursor at the start of the operation"
 msgstr "Pozícia kurzora myši na začiatku operácie"
 
 
-msgid "Has Link Picked"
-msgstr "Je vybraný odkaz"
-
-
-msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
-msgstr "Na operáciu bol umiestnený odkaz. Používa sa iba pre zásuvky s viacerými vstupmi, kde sa odkaz vyberie neskôr"
-
-
 msgid "Inside Padding"
 msgstr "Vnútorná výplň"
 
@@ -87881,24 +87873,8 @@ msgid "Sampling Pattern"
 msgstr "Vzor snímania"
 
 
-msgid "Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol-Burley"
-msgstr "Vzor náhodného snímania používaného integrátorom. Keď je povolené adaptívne snímanie, namiesto Sobol-Burleyho metódy sa vždy používa progresívna metóda Viacnásobného chvenia"
-
-
 msgid "Sobol-Burley"
 msgstr "Sobol-Burley"
-
-
-msgid "Use Sobol-Burley random sampling pattern"
-msgstr "Použije náhodný vzor snímania Sobol-Burley"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "Progresívne viacnásobné chvenie"
-
-
-msgid "Use Progressive Multi-Jitter random sampling pattern"
-msgstr "Použije náhodný vzor snímkovania Progresívneho viacnásobného chvenia (Multi-Jitter)"
 
 
 msgid "Scrambling Distance"
@@ -117294,10 +117270,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Modifikátor Viacnásobný rozklad vrátil chybu, preskočené použitie"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Modifikátor vrátil chybu, preskočené použitie"
-
-
 msgid "Cannot apply constructive modifiers on curve. Convert curve to mesh in order to apply"
 msgstr "Nemožno aplikovať konštruktívne modifikátory na krivku. Konvertujte krivku na povrchovú sieť, aby ste ju mohli použiť"
 
@@ -119616,6 +119588,10 @@ msgid "Adding node groups isn't supported for custom (Python defined) node trees
 msgstr "Pridávanie skupín uzlov nie je podporované pre vlastné stromy uzlov (definované v Pythone)"
 
 
+msgid " (String)"
+msgstr " (reťazec)"
+
+
 msgid " (Integer)"
 msgstr " (celé číslo)"
 
@@ -119642,10 +119618,6 @@ msgstr "NEPRAVDA"
 
 msgid " (Boolean)"
 msgstr " (logický operátor)"
-
-
-msgid " (String)"
-msgstr " (reťazec)"
 
 
 msgid "Integer field"
@@ -121279,10 +121251,6 @@ msgstr "vpravo"
 
 msgid "left"
 msgstr "vľavo"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Automatický posuv nastavený na %s - stlačte %s na prepínanie smeru  |  %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

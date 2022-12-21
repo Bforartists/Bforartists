@@ -23,13 +23,11 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         cls = SnapWidgetCommon
         if cls.snap_to_update is False:
             last_operator = self.wm_operators[-1] if self.wm_operators else None
-            if (not last_operator or
-                    last_operator.name not in {'Select', 'Loop Select', '(De)select All'}):
-                cls.snap_to_update = depsgraph.id_type_updated('MESH') or \
-                    depsgraph.id_type_updated('OBJECT')
+            if not last_operator or last_operator.name not in {'Select', 'Loop Select', '(De)select All'}:
+                cls.snap_to_update = depsgraph.id_type_updated('MESH') or depsgraph.id_type_updated('OBJECT')
 
     def draw_point_and_elem(self):
-        if self.bm:
+        if self.bm and self.geom:
             if self.bm.is_valid and self.geom.is_valid:
                 self.draw_cache.draw_elem(self.snap_obj, self.bm, self.geom)
             else:
@@ -59,8 +57,8 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         if self in SnapUtilities.snapwidgets:
             SnapUtilities.snapwidgets.remove(self)
 
-            #from .snap_context_l import global_snap_context_get
-            #sctx = global_snap_context_get(None, None, None)
+            # from .snap_context_l import global_snap_context_get
+            # sctx = global_snap_context_get(None, None, None)
 
             sctx = object.__getattribute__(self, 'sctx')
             if sctx and not SnapUtilities.snapwidgets:
@@ -75,14 +73,14 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         else:
             self.last_mval = mval
 
-        if (SnapWidgetCommon.snap_to_update):
+        if SnapWidgetCommon.snap_to_update:
             # Something has changed since the last time.
             # Has the mesh been changed?
             # In the doubt lets clear the snap context.
             self.snap_context_update(context)
             SnapWidgetCommon.snap_to_update = False
 
-        #print('test_select', mval)
+        # print('test_select', mval)
         space = context.space_data
         self.sctx.update_viewport_context(
             context.evaluated_depsgraph_get(), context.region, space, True)

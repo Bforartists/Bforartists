@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1337,6 +1337,10 @@ msgid "Active color attribute index"
 msgstr "აქტიური ფერის ატრიბუტის ინდექსი"
 
 
+msgid "Active Color Attribute"
+msgstr "აქტიური ფერის ატრიბუტი"
+
+
 msgid "Active Attribute Index"
 msgstr "აქტიური ატრიბუტის ინდექსი"
 
@@ -1567,10 +1571,6 @@ msgstr "ტექსტურული გამოსახულებებ�
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "გამოაცხვე გამოსახულებების მონაცემთა ბლოკებად, რომლებიც ასოცირებულია მასალებში აქტიურ ტექსტურების კვანძებთან"
-
-
-msgid "Active Color Attribute"
-msgstr "აქტიური ფერის ატრიბუტი"
 
 
 msgid "Automatic Name"
@@ -34076,10 +34076,6 @@ msgstr "დააპაუზე ყველა სარკმლის წი
 
 msgid "Sample Offset"
 msgstr "აცდენა სემპლებში"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "პროგრესიული მულტი-რყევა"
 
 
 msgid "Scrambling Distance"

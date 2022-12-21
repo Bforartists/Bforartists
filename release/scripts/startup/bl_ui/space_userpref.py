@@ -1211,7 +1211,7 @@ class PreferenceThemeSpacePanel:
         },
         'CLIP_EDITOR': {
             "handle_vertex_select",
-        }
+        },
     }
 
     # TODO theme_area should be deprecated
@@ -2399,7 +2399,7 @@ class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
             context, (
                 ({"property": "use_virtual_reality_scene_inspection"}, "T71347"),
                 ({"property": "use_virtual_reality_immersive_drawing"}, "T71348"),
-            )
+            ),
         )
 """
 

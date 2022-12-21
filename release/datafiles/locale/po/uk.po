@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -55209,14 +55209,6 @@ msgid "The position of the mouse cursor at the start of the operation"
 msgstr "Позиція курсора миші на старті операції"
 
 
-msgid "Has Link Picked"
-msgstr "Має Пов'язання Підібране"
-
-
-msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
-msgstr "Операція має поміщене пов'язання. Використовується лише для мульти-увідних роз'ємів, де це пов'язання підбирається пізніше"
-
-
 msgid "Outside Padding"
 msgstr "Заповнювання Зовні"
 
@@ -75898,14 +75890,6 @@ msgstr "Кількість вибірок, що рендеряться для к
 
 msgid "Sampling Pattern"
 msgstr "Патерн Відбору"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "Прогресивно Багато-Коливно"
-
-
-msgid "Use Progressive Multi-Jitter random sampling pattern"
-msgstr "Вжити патерн відбору випадковостей на основі Прогресивного Багато-Коливного методу"
 
 
 msgid "Seed value for integrator to get different noise patterns"
@@ -99374,10 +99358,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Модифікатор Мультироздільність повідомив про помилку, застосування пропущено"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Модифікатор повідомив про помилку, застосування пропущено"
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "Застосований модифікатор змінив лише контрольні вершини, а не вершини від теселяції та фасок"
 
@@ -102384,10 +102364,6 @@ msgstr "справа"
 
 msgid "left"
 msgstr "зліва"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Авто-зсув задано на %s - натисніть %s для перемикання напряму  | %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

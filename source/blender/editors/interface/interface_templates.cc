@@ -5800,7 +5800,7 @@ void uiTemplateColorPicker(uiLayout *layout,
   }
 }
 
-static void ui_template_palette_menu(bContext * /* C*/, uiLayout *layout, void * /*but_p*/)
+static void ui_template_palette_menu(bContext * /*C*/, uiLayout *layout, void * /*but_p*/)
 {
   uiLayout *row;
 
