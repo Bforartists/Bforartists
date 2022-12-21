@@ -243,7 +243,7 @@ class SnapDrawn():
     def draw_elem(self, snap_obj, bm, elem):
         # TODO: Cache coords (because antialiasing)
         import gpu
-        from bmesh.types import(
+        from bmesh.types import (
             BMVert,
             BMEdge,
             BMFace,

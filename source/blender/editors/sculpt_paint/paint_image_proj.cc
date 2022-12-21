@@ -545,10 +545,20 @@ static int project_paint_face_paint_tile(Image *ima, const float *uv)
   return 1001 + 10 * ty + tx;
 }
 
+static Material *tex_get_material(const ProjPaintState *ps, int poly_i)
+{
+  int mat_nr = ps->material_indices == nullptr ? 0 : ps->material_indices[poly_i];
+  if (mat_nr >= 0 && mat_nr <= ps->ob->totcol) {
+    return ps->mat_array[mat_nr];
+  }
+
+  return nullptr;
+}
+
 static TexPaintSlot *project_paint_face_paint_slot(const ProjPaintState *ps, int tri_index)
 {
   const int poly_i = ps->mlooptri_eval[tri_index].poly;
-  Material *ma = ps->mat_array[ps->material_indices == nullptr ? 0 : ps->material_indices[poly_i]];
+  Material *ma = tex_get_material(ps, poly_i);
   return ma ? ma->texpaintslot + ma->paint_active_slot : nullptr;
 }
 
@@ -559,7 +569,7 @@ static Image *project_paint_face_paint_image(const ProjPaintState *ps, int tri_i
   }
 
   const int poly_i = ps->mlooptri_eval[tri_index].poly;
-  Material *ma = ps->mat_array[ps->material_indices == nullptr ? 0 : ps->material_indices[poly_i]];
+  Material *ma = tex_get_material(ps, poly_i);
   TexPaintSlot *slot = ma ? ma->texpaintslot + ma->paint_active_slot : nullptr;
   return slot ? slot->ima : ps->canvas_ima;
 }
@@ -567,14 +577,14 @@ static Image *project_paint_face_paint_image(const ProjPaintState *ps, int tri_i
 static TexPaintSlot *project_paint_face_clone_slot(const ProjPaintState *ps, int tri_index)
 {
   const int poly_i = ps->mlooptri_eval[tri_index].poly;
-  Material *ma = ps->mat_array[ps->material_indices == nullptr ? 0 : ps->material_indices[poly_i]];
+  Material *ma = tex_get_material(ps, poly_i);
   return ma ? ma->texpaintslot + ma->paint_clone_slot : nullptr;
 }
 
 static Image *project_paint_face_clone_image(const ProjPaintState *ps, int tri_index)
 {
   const int poly_i = ps->mlooptri_eval[tri_index].poly;
-  Material *ma = ps->mat_array[ps->material_indices == nullptr ? 0 : ps->material_indices[poly_i]];
+  Material *ma = tex_get_material(ps, poly_i);
   TexPaintSlot *slot = ma ? ma->texpaintslot + ma->paint_clone_slot : nullptr;
   return slot ? slot->ima : ps->clone_ima;
 }
@@ -5159,7 +5169,7 @@ static void copy_original_alpha_channel(ProjPixel *pixel, bool is_floatbuf)
 }
 
 /* Run this for single and multi-threaded painting. */
-static void do_projectpaint_thread(TaskPool *__restrict UNUSED(pool), void *ph_v)
+static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 {
   /* First unpack args from the struct */
   ProjPaintState *ps = ((ProjectHandle *)ph_v)->ps;
@@ -5723,7 +5733,7 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
   return touch_any;
 }
 
-static void paint_proj_stroke_ps(const bContext *UNUSED(C),
+static void paint_proj_stroke_ps(const bContext * /*C*/,
                                  void *ps_handle_p,
                                  const float prev_pos[2],
                                  const float pos[2],
@@ -6553,10 +6563,10 @@ static CustomDataLayer *proj_paint_color_attribute_create(wmOperator *op, Object
     return nullptr;
   }
 
-  BKE_id_attributes_active_color_set(id, layer);
+  BKE_id_attributes_active_color_set(id, layer->name);
 
-  if (!BKE_id_attributes_render_color_get(id)) {
-    BKE_id_attributes_render_color_set(id, layer);
+  if (!BKE_id_attributes_default_color_get(id)) {
+    BKE_id_attributes_default_color_set(id, layer->name);
   }
 
   BKE_object_attributes_active_color_fill(ob, color, false);
@@ -6795,7 +6805,7 @@ static void get_default_texture_layer_name_for_object(Object *ob,
 
 static int texture_paint_add_texture_paint_slot_invoke(bContext *C,
                                                        wmOperator *op,
-                                                       const wmEvent *UNUSED(event))
+                                                       const wmEvent * /*event*/)
 {
   Object *ob = ED_object_active_context(C);
   Material *ma = BKE_object_material_get(ob, ob->actcol);
@@ -6948,7 +6958,7 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
                "Type of data stored in attribute");
 }
 
-static int add_simple_uvs_exec(bContext *C, wmOperator *UNUSED(op))
+static int add_simple_uvs_exec(bContext *C, wmOperator * /*op*/)
 {
   /* no checks here, poll function does them for us */
   Main *bmain = CTX_data_main(C);

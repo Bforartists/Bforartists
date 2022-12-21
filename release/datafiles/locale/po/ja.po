@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1357,6 +1357,10 @@ msgid "Active color attribute index"
 msgstr "アクティブなカラー属性インデックス"
 
 
+msgid "Active Color Attribute"
+msgstr "アクティブカラー属性"
+
+
 msgid "Active Attribute Index"
 msgstr "アクティブ属性インデックス"
 
@@ -1593,10 +1597,6 @@ msgid "Bake to image data-blocks associated with active image texture nodes in m
 msgstr ""
 "マテリアル内のアクティブな画像テクスチャノードに\n"
 "対応する画像データブロックにベイクします"
-
-
-msgid "Active Color Attribute"
-msgstr "アクティブカラー属性"
 
 
 msgid "Bake to the active color attribute on meshes"
@@ -64237,14 +64237,6 @@ msgid "The position of the mouse cursor at the start of the operation"
 msgstr "操作を開始するマウスカーソルの位置"
 
 
-msgid "Has Link Picked"
-msgstr "リンク選択の有無"
-
-
-msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
-msgstr "オペレーションにリンクの配置があります。複数の入力ソケットで、後にリンクが選択される場合にのみ使用されます"
-
-
 msgid "Inside Padding"
 msgstr "内側のパディング"
 
@@ -88667,27 +88659,8 @@ msgid "Sampling Pattern"
 msgstr "サンプリングパターン"
 
 
-msgid "Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol-Burley"
-msgstr ""
-"インテグレーターが使用するランダムサンプリングパターン\n"
-"適応サンプリング有効時は、ソボル-バーレーの代わりに\n"
-"常にプログレッシブマルチジッターが使用されます"
-
-
 msgid "Sobol-Burley"
 msgstr "ソボル-バーレー"
-
-
-msgid "Use Sobol-Burley random sampling pattern"
-msgstr "ソボル-バーレーランダムサンプリングパターンを使用します"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "プログレッシブマルチジッター"
-
-
-msgid "Use Progressive Multi-Jitter random sampling pattern"
-msgstr "プログレッシブマルチジッターランダムサンプリングパターンを使用します"
 
 
 msgid "Scrambling Distance"
@@ -118170,10 +118143,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "マルチレゾモディファイアーがエラーを返しました。適用をスキップします"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "モディファイアーがエラーを返しました。適用をスキップします"
-
-
 msgid "Cannot apply constructive modifiers on curve. Convert curve to mesh in order to apply"
 msgstr "生成モディファイアーはカーブに適用できません。先にカーブをメッシュに変換してください"
 
@@ -120494,6 +120463,10 @@ msgid "Adding node groups isn't supported for custom (Python defined) node trees
 msgstr "ノードグループ追加はカスタム（Python 定義の）ノードツリーには未対応です"
 
 
+msgid " (String)"
+msgstr "(文字列)"
+
+
 msgid " (Integer)"
 msgstr "(整数)"
 
@@ -120520,10 +120493,6 @@ msgstr "False"
 
 msgid " (Boolean)"
 msgstr "(ブーリアン)"
-
-
-msgid " (String)"
-msgstr "(文字列)"
 
 
 msgid "Integer field"
@@ -122157,10 +122126,6 @@ msgstr "右"
 
 msgid "left"
 msgstr "左"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "自動オフセットを %s に設定：%s で方向切り替え  |  %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

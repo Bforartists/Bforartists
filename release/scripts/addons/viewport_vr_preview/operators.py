@@ -7,6 +7,7 @@ else:
     from . import properties
 
 import bpy
+import gpu
 from bpy.types import (
     Gizmo,
     GizmoGroup,

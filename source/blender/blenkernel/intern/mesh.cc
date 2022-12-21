@@ -144,6 +144,10 @@ static void mesh_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int 
   mesh_dst->mat = (Material **)MEM_dupallocN(mesh_src->mat);
 
   BKE_defgroup_copy_list(&mesh_dst->vertex_group_names, &mesh_src->vertex_group_names);
+  mesh_dst->active_color_attribute = static_cast<char *>(
+      MEM_dupallocN(mesh_src->active_color_attribute));
+  mesh_dst->default_color_attribute = static_cast<char *>(
+      MEM_dupallocN(mesh_src->default_color_attribute));
 
   const eCDAllocType alloc_type = (flag & LIB_ID_COPY_CD_REFERENCE) ? CD_REFERENCE : CD_DUPLICATE;
   CustomData_copy(&mesh_src->vdata, &mesh_dst->vdata, mask.vmask, alloc_type, mesh_dst->totvert);
@@ -253,6 +257,9 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
       BKE_mesh_legacy_bevel_weight_from_layers(mesh);
       BKE_mesh_legacy_face_set_from_generic(mesh, poly_layers);
       BKE_mesh_legacy_edge_crease_from_layers(mesh);
+      BKE_mesh_legacy_attribute_strings_to_flags(mesh);
+      mesh->active_color_attribute = nullptr;
+      mesh->default_color_attribute = nullptr;
       BKE_mesh_legacy_convert_loose_edges_to_flag(mesh);
       /* When converting to the old mesh format, don't save redundant attributes. */
       names_to_skip.add_multiple_new({".hide_vert",
@@ -288,6 +295,8 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
   }
 
   BKE_defbase_blend_write(writer, &mesh->vertex_group_names);
+  BLO_write_string(writer, mesh->active_color_attribute);
+  BLO_write_string(writer, mesh->default_color_attribute);
 
   BLO_write_pointer_array(writer, mesh->totcol, mesh->mat);
   BLO_write_raw(writer, sizeof(MSelect) * mesh->totselect, mesh->mselect);
@@ -337,6 +346,8 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
      * Don't read them again if they were read as part of #CustomData. */
     BKE_defvert_blend_read(reader, mesh->totvert, mesh->dvert);
   }
+  BLO_read_data_address(reader, &mesh->active_color_attribute);
+  BLO_read_data_address(reader, &mesh->default_color_attribute);
 
   mesh->texflag &= ~ME_AUTOSPACE_EVALUATED;
   mesh->edit_mesh = nullptr;
@@ -725,7 +736,7 @@ static int customdata_compare(
       }
     }
     if (!found_corresponding_layer) {
-      if ((1 << l1->type) & CD_MASK_PROP_ALL) {
+      if ((uint64_t(1) << l1->type) & CD_MASK_PROP_ALL) {
         return MESHCMP_CDLAYERS_MISMATCH;
       }
     }
@@ -893,6 +904,8 @@ static void mesh_clear_geometry(Mesh *mesh)
   mesh->totselect = 0;
 
   BLI_freelistN(&mesh->vertex_group_names);
+  MEM_SAFE_FREE(mesh->active_color_attribute);
+  MEM_SAFE_FREE(mesh->default_color_attribute);
 }
 
 void BKE_mesh_clear_geometry(Mesh *mesh)
@@ -966,6 +979,18 @@ Mesh *BKE_mesh_new_nomain(
   return mesh;
 }
 
+static void copy_attribute_names(const Mesh &mesh_src, Mesh &mesh_dst)
+{
+  if (mesh_src.active_color_attribute) {
+    MEM_SAFE_FREE(mesh_dst.active_color_attribute);
+    mesh_dst.active_color_attribute = BLI_strdup(mesh_src.active_color_attribute);
+  }
+  if (mesh_src.default_color_attribute) {
+    MEM_SAFE_FREE(mesh_dst.default_color_attribute);
+    mesh_dst.default_color_attribute = BLI_strdup(mesh_src.default_color_attribute);
+  }
+}
+
 void BKE_mesh_copy_parameters(Mesh *me_dst, const Mesh *me_src)
 {
   /* Copy general settings. */
@@ -995,6 +1020,7 @@ void BKE_mesh_copy_parameters_for_eval(Mesh *me_dst, const Mesh *me_src)
   BLI_assert(me_dst->id.tag & (LIB_TAG_NO_MAIN | LIB_TAG_COPIED_ON_WRITE));
 
   BKE_mesh_copy_parameters(me_dst, me_src);
+  copy_attribute_names(*me_src, *me_dst);
 
   /* Copy vertex group names. */
   BLI_assert(BLI_listbase_is_empty(&me_dst->vertex_group_names));
@@ -1779,17 +1805,17 @@ void BKE_mesh_vert_coords_apply_with_mat4(Mesh *mesh,
 
 static float (*ensure_corner_normal_layer(Mesh &mesh))[3]
 {
-  float(*r_loopnors)[3];
+  float(*r_loop_normals)[3];
   if (CustomData_has_layer(&mesh.ldata, CD_NORMAL)) {
-    r_loopnors = (float(*)[3])CustomData_get_layer(&mesh.ldata, CD_NORMAL);
-    memset(r_loopnors, 0, sizeof(float[3]) * mesh.totloop);
+    r_loop_normals = (float(*)[3])CustomData_get_layer(&mesh.ldata, CD_NORMAL);
+    memset(r_loop_normals, 0, sizeof(float[3]) * mesh.totloop);
   }
   else {
-    r_loopnors = (float(*)[3])CustomData_add_layer(
+    r_loop_normals = (float(*)[3])CustomData_add_layer(
         &mesh.ldata, CD_NORMAL, CD_SET_DEFAULT, nullptr, mesh.totloop);
     CustomData_set_layer_flag(&mesh.ldata, CD_NORMAL, CD_FLAG_TEMPORARY);
   }
-  return r_loopnors;
+  return r_loop_normals;
 }
 
 void BKE_mesh_calc_normals_split_ex(Mesh *mesh,

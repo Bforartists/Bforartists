@@ -78,7 +78,7 @@ def save_mesh(filepath, bm, use_ascii, use_normals, use_uv, use_color):
 
             if use_uv:
                 uv = loop[uv_lay].uv[:]
-                map_id = uv
+                map_id = v, uv
 
             # Identify vertex by pointer unless exporting UVs,
             # in which case id by UV coordinate (will split edges by seams).

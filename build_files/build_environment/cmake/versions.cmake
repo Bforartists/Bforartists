@@ -235,11 +235,11 @@ set(OPENVDB_FILE openvdb-${OPENVDB_VERSION}.tar.gz)
 # ------------------------------------------------------------------------------
 # Python Modules
 
-# Needed by: TODO.
+# Needed by: `requests` module (so the version doesn't change on rebuild).
 set(IDNA_VERSION 3.3)
-# Needed by: TODO.
+# Needed by: `requests` module (so the version doesn't change on rebuild).
 set(CHARSET_NORMALIZER_VERSION 2.0.10)
-# Needed by: TODO.
+# Needed by: `requests` module (so the version doesn't change on rebuild).
 set(URLLIB3_VERSION 1.26.8)
 set(URLLIB3_CPE "cpe:2.3:a:urllib3:urllib3:${URLLIB3_VERSION}:*:*:*:*:*:*:*")
 # Needed by: Python's `requests` module (so add-ons can authenticate against trusted certificates).
@@ -359,7 +359,7 @@ set(SNDFILE_VERSION 1.1.0)
 set(SNDFILE_URI https://github.com/libsndfile/libsndfile/releases/download/1.1.0/libsndfile-${SNDFILE_VERSION}.tar.xz)
 set(SNDFILE_HASH e63dead2b4f0aaf323687619d007ee6a)
 set(SNDFILE_HASH_TYPE MD5)
-set(SNDFILE_FILE libsndfile-${SNDFILE_VERSION}.tar.gz)
+set(SNDFILE_FILE libsndfile-${SNDFILE_VERSION}.tar.xz)
 set(SNDFILE_CPE "cpe:2.3:a:libsndfile_project:libsndfile:${SNDFILE_VERSION}:*:*:*:*:*:*:*")
 
 set(WEBP_VERSION 1.2.2)

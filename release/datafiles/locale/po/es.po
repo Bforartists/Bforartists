@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1354,6 +1354,10 @@ msgid "Active color attribute index"
 msgstr "Identificador del atributo de color activo"
 
 
+msgid "Active Color Attribute"
+msgstr "Atributo de color activo"
+
+
 msgid "Active Attribute Index"
 msgstr "Identificador atributo activo"
 
@@ -1584,10 +1588,6 @@ msgstr "Texturas de imagen"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Capturar hacia los bloques de datos de imagen asociados con los nodos activos de textura de imagen en los materiales"
-
-
-msgid "Active Color Attribute"
-msgstr "Atributo de color activo"
 
 
 msgid "Bake to the active color attribute on meshes"
@@ -63670,14 +63670,6 @@ msgid "The position of the mouse cursor at the start of the operation"
 msgstr "La posición del puntero del ratón al comienzo de la operación"
 
 
-msgid "Has Link Picked"
-msgstr "Tiene vínculo escogido"
-
-
-msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
-msgstr "La operación ha establecido un vínculo. Sólo usado en conectores de múltiples entradas, donde el vínculo se escoge más tarde"
-
-
 msgid "Inside Padding"
 msgstr "Margen interior"
 
@@ -87882,24 +87874,8 @@ msgid "Sampling Pattern"
 msgstr "Patrón de muestreo"
 
 
-msgid "Random sampling pattern used by the integrator. When adaptive sampling is enabled, Progressive Multi-Jitter is always used instead of Sobol-Burley"
-msgstr "Patrón de muestreo aleatorio usado por el integrador. Cuando el muestreo adaptativo se encuentre habilitado, siempre se usará Alteración múltiple progresiva en vez de Sobol-Burley"
-
-
 msgid "Sobol-Burley"
 msgstr "Sobol-Burley"
-
-
-msgid "Use Sobol-Burley random sampling pattern"
-msgstr "Usa el patrón de muestreo aleatorio Sobol-Burley"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "Alteración múltiple progresiva"
-
-
-msgid "Use Progressive Multi-Jitter random sampling pattern"
-msgstr "Usa el patrón de muestreo aleatorio Alteración múltiple progresiva"
 
 
 msgid "Scrambling Distance"
@@ -117295,10 +117271,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "El modificador Multi-resolución devolvió un error, omitiendo su aplicación"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "El modificador resultó en error, omitiendo su aplicación"
-
-
 msgid "Cannot apply constructive modifiers on curve. Convert curve to mesh in order to apply"
 msgstr "No es posible aplicar modificadores constructivos sobre una curva. Convertir la curva en una malla para aplicarlo"
 
@@ -119617,6 +119589,10 @@ msgid "Adding node groups isn't supported for custom (Python defined) node trees
 msgstr "Agregar grupos de nodos no es soportado en árboles de nodos personalizados (definidos mediante Python)"
 
 
+msgid " (String)"
+msgstr " (Cadena)"
+
+
 msgid " (Integer)"
 msgstr " (Entero)"
 
@@ -119643,10 +119619,6 @@ msgstr "Falso"
 
 msgid " (Boolean)"
 msgstr " (Booleana)"
-
-
-msgid " (String)"
-msgstr " (Cadena)"
 
 
 msgid "Integer field"
@@ -121280,10 +121252,6 @@ msgstr "derecha"
 
 msgid "left"
 msgstr "izquierda"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Desplazamiento automático definido a %s - presionar %s para cambiar de dirección  |  %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
