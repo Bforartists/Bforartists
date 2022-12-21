@@ -1958,20 +1958,20 @@ static int edbm_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *mesh_ot_select_all_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+static char *mesh_ot_select_all_get_description(struct bContext * /*C*/,
+                                                struct wmOperatorType * /*op*/,
+                                                struct PointerRNA *values)
 {
   /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
     return BLI_strdup("Select all vertices, edges or faces");
   }
   /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
     return BLI_strdup("Deselect all vertices, edges or faces");
   }
   /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
     return BLI_strdup("Inverts the current selection");
   }
   return NULL;

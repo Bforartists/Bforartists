@@ -71,10 +71,8 @@ def location_3d_to_region_2d(region, rv3d, coord):
 
 def out_Location(rv3d, orig, vector):
     view_matrix = rv3d.view_matrix
-    v1 = (int(view_matrix[0][0]*1.5), int(view_matrix[0]
-          [1]*1.5), int(view_matrix[0][2]*1.5))
-    v2 = (int(view_matrix[1][0]*1.5), int(view_matrix[1]
-          [1]*1.5), int(view_matrix[1][2]*1.5))
+    v1 = (int(view_matrix[0][0] * 1.5), int(view_matrix[0][1] * 1.5), int(view_matrix[0][2] * 1.5))
+    v2 = (int(view_matrix[1][0] * 1.5), int(view_matrix[1][1] * 1.5), int(view_matrix[1][2] * 1.5))
 
     hit = intersect_ray_tri((1, 0, 0), (0, 1, 0),
                             (0, 0, 0), (vector), (orig), False)
@@ -221,7 +219,7 @@ def snap_utilities(
                 pvert_co = main_snap_obj.mat @ previous_vert.co
                 perp_point = intersect_point_line(pvert_co, v0, v1)
                 _snap_cache.edge.vperp = perp_point[0]
-                #factor = point_perpendicular[1]
+                # factor = point_perpendicular[1]
                 _snap_cache.edge.v2dperp = location_3d_to_region_2d(
                     sctx.region, sctx.rv3d, perp_point[0])
                 _snap_cache.edge.is_increment = False

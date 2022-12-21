@@ -363,7 +363,7 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 
 static void load_tex_cursor_task_cb(void *__restrict userdata,
                                     const int j,
-                                    const TaskParallelTLS *__restrict UNUSED(tls))
+                                    const TaskParallelTLS *__restrict /*tls*/)
 {
   LoadTexData *data = static_cast<LoadTexData *>(userdata);
   Brush *br = data->br;
@@ -1400,6 +1400,11 @@ static void paint_cursor_sculpt_session_update_and_init(PaintCursorContext *pcon
 
 static void paint_update_mouse_cursor(PaintCursorContext *pcontext)
 {
+  if (pcontext->win->grabcursor != 0) {
+    /* Don't set the cursor while it's grabbed, since this will show the cursor when interacting
+     * with the UI (dragging a number button for e.g.), see: T102792. */
+    return;
+  }
   WM_cursor_set(pcontext->win, WM_CURSOR_PAINT);
 }
 
@@ -1895,7 +1900,7 @@ static void paint_cursor_restore_drawing_state(void)
   GPU_line_smooth(false);
 }
 
-static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
+static void paint_draw_cursor(bContext *C, int x, int y, void * /*unused*/)
 {
   PaintCursorContext pcontext;
   if (!paint_cursor_context_init(C, x, y, &pcontext)) {

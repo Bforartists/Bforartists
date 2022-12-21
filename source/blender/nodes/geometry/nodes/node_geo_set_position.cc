@@ -33,7 +33,7 @@ static void set_computed_position_and_offset(GeometryComponent &component,
 
   if (in_positions.is_same(positions_read_only)) {
     if (const std::optional<float3> offset = in_offsets.get_if_single()) {
-      if (math::is_zero(offset.value())) {
+      if (math::is_zero(*offset)) {
         return;
       }
     }
@@ -54,6 +54,12 @@ static void set_computed_position_and_offset(GeometryComponent &component,
                 }
               });
         });
+        if (in_offsets.is_single() && selection.size() == verts.size()) {
+          BKE_mesh_tag_coords_changed_uniformly(mesh);
+        }
+        else {
+          BKE_mesh_tag_coords_changed(mesh);
+        }
       }
       else {
         devirtualize_varray2(
@@ -66,6 +72,7 @@ static void set_computed_position_and_offset(GeometryComponent &component,
                     }
                   });
             });
+        BKE_mesh_tag_coords_changed(mesh);
       }
       break;
     }

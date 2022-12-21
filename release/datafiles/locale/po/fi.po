@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -750,6 +750,10 @@ msgid "Active color attribute index"
 msgstr "Aktiivinen väriominaisuusindeksi"
 
 
+msgid "Active Color Attribute"
+msgstr "Aktiivinen väriominaisuus"
+
+
 msgid "Active Attribute Index"
 msgstr "Aktiivinen ominaisuusindeksi"
 
@@ -848,10 +852,6 @@ msgstr "Kohde"
 
 msgid "Image Textures"
 msgstr "Kuvatekstuurit"
-
-
-msgid "Active Color Attribute"
-msgstr "Aktiivinen väriominaisuus"
 
 
 msgid "Automatic Name"
@@ -10273,6 +10273,10 @@ msgid "NodeTree"
 msgstr "Noodipuu"
 
 
+msgid " (String)"
+msgstr "(Merkkijono)"
+
+
 msgid " (Integer)"
 msgstr "(Kokonaisluku)"
 
@@ -10299,10 +10303,6 @@ msgstr "Epätosi"
 
 msgid " (Boolean)"
 msgstr "(Totuusarvo)"
-
-
-msgid " (String)"
-msgstr "(Merkkijono)"
 
 
 msgid "Integer field"

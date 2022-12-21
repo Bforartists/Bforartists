@@ -49,7 +49,6 @@ def project_co_v3(sctx, co):
     return proj_co.xy
 
 
-
 def intersect_boundbox_threshold(sctx, MVP, ray_origin_local, ray_direction_local, bbmin, bbmax):
     local_bvmin = Vector()
     local_bvmax = Vector()
@@ -132,11 +131,11 @@ def intersect_boundbox_threshold(sctx, MVP, ray_origin_local, ray_direction_loca
     if (main_axis < 0):
         main_axis += 3
 
-#ifdef IGNORE_BEHIND_RAY
+# ifdef IGNORE_BEHIND_RAY
     depth_max = depth_get(local_bvmax, ray_origin_local, ray_direction_local)
     if (depth_max < sctx.depth_range[0]):
         return False
-#endif
+# endif
 
     if (rtmin <= rtmax):
         # if rtmin < rtmax, ray intersect `AABB` #
