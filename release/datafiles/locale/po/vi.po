@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
@@ -1350,6 +1350,10 @@ msgid "Active color attribute index"
 msgstr "Chỉ số đặc điểm màu sắc hoạt động"
 
 
+msgid "Active Color Attribute"
+msgstr "Đặc Điểm Màu Hoạt Động"
+
+
 msgid "Active Attribute Index"
 msgstr "Chỉ Số Đặc Điểm Hoạt Động"
 
@@ -1580,10 +1584,6 @@ msgstr "Chất Liệu Ảnh"
 
 msgid "Bake to image data-blocks associated with active image texture nodes in materials"
 msgstr "Nướng vào cục dữ liệu ảnh liên quan với giao điểm chất liệu ảnh đang hoạt động trong vật liệu"
-
-
-msgid "Active Color Attribute"
-msgstr "Đặc Điểm Màu Hoạt Động"
 
 
 msgid "Bake to the active color attribute on meshes"
@@ -62537,14 +62537,6 @@ msgid "The position of the mouse cursor at the start of the operation"
 msgstr "Vị trí của con trỏ chuột tại bắt đầu của thao tác"
 
 
-msgid "Has Link Picked"
-msgstr "Đã Có Liên Kết Được Chọn"
-
-
-msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
-msgstr "Thao tác đã có một liên kết đã đặt. Chỉ được dùng cho ổ cắm đa ngõ vào, khi liên kết được chọn một thời sau"
-
-
 msgid "Inside Padding"
 msgstr "Lót Trong"
 
@@ -86430,14 +86422,6 @@ msgstr "Kết xuất sộ lượng mẫu vật cho mỗi điểm ảnh"
 
 msgid "Sampling Pattern"
 msgstr "Cấu Hình Mẫu Vật"
-
-
-msgid "Progressive Multi-Jitter"
-msgstr "Đa-Hố Hoảng Tiến Triểu"
-
-
-msgid "Use Progressive Multi-Jitter random sampling pattern"
-msgstr "Dùng Đa-Hốt Hoảng tiến triển mô hình mẫu vật ngẫu nhiên"
 
 
 msgid "Scrambling Distance"
@@ -114720,10 +114704,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Bộ điều chỉnh đa độ phân giải có sai lầm, đang bỏ qua áp dụng nó"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Cuư sửa đổi có sai lầm, đang bỏ qua áp dụng"
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "Bộ điều chỉnh thì áp dụng chỉ đổi được điểm đỉnh đường cong, không phải đỉnh tam giác hóa/cạnh tròn"
 
@@ -116990,6 +116970,10 @@ msgid "Node tree type %s undefined"
 msgstr "Cây giao điểm %s chưa được xác định"
 
 
+msgid " (String)"
+msgstr " (Xâu)"
+
+
 msgid " (Integer)"
 msgstr " (Số Nguyên)"
 
@@ -117012,10 +116996,6 @@ msgstr "Sai"
 
 msgid " (Boolean)"
 msgstr " (Bool)"
-
-
-msgid " (String)"
-msgstr " (Xâu)"
 
 
 msgid "Integer field"
@@ -118615,10 +118595,6 @@ msgstr "phải"
 
 msgid "left"
 msgstr "trái"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Dịch tự động đặt đến %s - bấm %s để bật/tắt hướng | %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

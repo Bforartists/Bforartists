@@ -97,7 +97,7 @@ set(SRC
   intern/colortools.c
   intern/compute_contexts.cc
   intern/constraint.c
-  intern/context.c
+  intern/context.cc
   intern/cpp_types.cc
   intern/crazyspace.cc
   intern/cryptomatte.cc
@@ -480,7 +480,6 @@ set(SRC
   BKE_type_conversions.hh
   BKE_undo_system.h
   BKE_unit.h
-  BKE_uv_islands.hh
   BKE_vfont.h
   BKE_vfontdata.h
   BKE_viewer_path.h

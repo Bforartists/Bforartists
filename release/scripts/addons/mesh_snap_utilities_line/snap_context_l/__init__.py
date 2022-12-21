@@ -9,12 +9,13 @@ VERT = 1
 EDGE = 2
 FACE = 4
 
+
 class _Internal:
     global_snap_context = None
 
     @classmethod
     def snap_context_free(cls):
-        if cls.global_snap_context != None:
+        if cls.global_snap_context is not None:
             cls.global_snap_context.free()
             del cls
 
@@ -23,20 +24,21 @@ class _Internal:
         gpu_Indices_restore_state,
         gpu_Indices_use_clip_planes,
         gpu_Indices_mesh_cache_clear,
-        )
+    )
 
     from .utils_projection import (
         region_2d_to_orig_and_view_vector,
         intersect_boundbox_threshold,
         intersect_ray_segment_fac,
         project_co_v3,
-        )
+    )
 
     from mathutils.geometry import intersect_line_plane
 
 
 class _SnapObjectData():
     __slots__ = ('data', 'mat')
+
     def __init__(self, data, omat):
         self.data = data
         self.mat = omat
@@ -44,6 +46,7 @@ class _SnapObjectData():
 
 class _SnapOffscreen():
     bound = None
+
     def __init__(self, width, height):
         self._fbo = None
 
@@ -66,7 +69,7 @@ class _SnapOffscreen():
         return self._fbo.bind()
 
     def clear(self):
-        #self._fbo.clear(color=(0.0, 0.0, 0.0, 0.0), depth=1.0)
+        # self._fbo.clear(color=(0.0, 0.0, 0.0, 0.0), depth=1.0)
         self._tex_color.clear(format='UINT', value=(0,))
         self._tex_depth.clear(format='FLOAT', value=(1.0,))
 
@@ -95,7 +98,7 @@ class SnapContext():
     :type space: :class:`bpy.types.SpaceView3D`
     """
 
-    __slots__ = (\
+    __slots__ = (
         '_dist_px',
         '_dist_px_sq',
         '_offscreen',
@@ -119,7 +122,7 @@ class SnapContext():
         self.freed = False
         self.snap_objects = []
         self.drawn_count = 0
-        self._offset_cur = 1 # Starts with index 1
+        self._offset_cur = 1  # Starts with index 1
 
         self.proj_mat = None
         self.mval = Vector((0.0, 0.0))
@@ -148,7 +151,6 @@ class SnapContext():
 
         self.winsize = Vector((self._offscreen.width, self._offscreen.height))
 
-
     ## PRIVATE ##
 
     def _get_snap_obj_by_index(self, index):
@@ -167,8 +169,13 @@ class SnapContext():
         r_value = 0
 
         loc_curr = [int(mval[1]), int(mval[0])]
-        rect = ((max(0, loc_curr[0] - self.threshold), min(self._snap_buffer.dimensions[0], loc_curr[0] + self.threshold)),
-                (max(0, loc_curr[1] - self.threshold), min(self._snap_buffer.dimensions[1], loc_curr[1] + self.threshold)))
+        rect = ((
+                max(0, loc_curr[0] - self.threshold),
+                min(self._snap_buffer.dimensions[0], loc_curr[0] + self.threshold)
+                ), (
+                max(0, loc_curr[1] - self.threshold),
+                min(self._snap_buffer.dimensions[1], loc_curr[1] + self.threshold)
+                ))
 
         if loc_curr[0] < rect[0][0] or loc_curr[0] >= rect[0][1] or loc_curr[1] < rect[1][0] or loc_curr[1] >= rect[1][1]:
             return r_snap_obj, r_value
@@ -203,13 +210,13 @@ class SnapContext():
 
                     # Next spiral step.
                     if (spiral_direction == 0):
-                        loc_curr[1] += 1 # right
+                        loc_curr[1] += 1  # right
                     elif (spiral_direction == 1):
-                        loc_curr[0] -= 1 # down
+                        loc_curr[0] -= 1  # down
                     elif (spiral_direction == 2):
-                        loc_curr[1] -= 1 # left
+                        loc_curr[1] -= 1  # left
                     else:
-                        loc_curr[0] += 1 # up
+                        loc_curr[0] += 1  # up
 
                     if (loc_curr[not a] < rect[not a][0] or loc_curr[not a] >= rect[not a][1]):
                         return r_snap_obj, r_value
@@ -226,10 +233,11 @@ class SnapContext():
             if index < num_tris:
                 tri_verts = gpu_data.get_tri_verts(index)
                 tri_co = [snap_obj.mat @ Vector(v) for v in gpu_data.get_tri_co(index)]
-                #loc = _Internal.intersect_ray_tri(*tri_co, self.last_ray[0],
-                #self.last_ray[1], False)
+                # loc = _Internal.intersect_ray_tri(*tri_co, self.last_ray[0],
+                # self.last_ray[1], False)
                 nor = (tri_co[1] - tri_co[0]).cross(tri_co[2] - tri_co[0]).normalized()
-                loc = _Internal.intersect_line_plane(self.last_ray[1], self.last_ray[1] + self.last_ray[0], tri_co[0], nor)
+                loc = _Internal.intersect_line_plane(
+                    self.last_ray[1], self.last_ray[1] + self.last_ray[0], tri_co[0], nor)
                 return loc, tri_verts, tri_co
 
             index -= num_tris
@@ -265,7 +273,6 @@ class SnapContext():
                 return co, (gpu_data.get_loosevert_index(index),), co
 
         return None, None, None
-
 
     def _get_snap_obj_by_obj(self, obj):
         for snap_obj in self.snap_objects:
@@ -341,7 +348,7 @@ class SnapContext():
         if len(snap_obj.data) > 1:
             snap_obj.data[1].free()
             del snap_obj.data[1:]
-            #self.update_drawing()
+            # self.update_drawing()
             # Update on next snap_get call #
             self.proj_mat = None
 
@@ -424,12 +431,13 @@ class SnapContext():
                     mat_inv = snap_obj.mat.inverted_safe()
                     ray_orig_local = mat_inv @ ray_orig
                     ray_dir_local = mat_inv.to_3x3() @ ray_dir
-                    in_threshold = _Internal.intersect_boundbox_threshold(self, MVP, ray_orig_local, ray_dir_local, bbmin, bbmax)
+                    in_threshold = _Internal.intersect_boundbox_threshold(
+                        self, MVP, ray_orig_local, ray_dir_local, bbmin, bbmax)
                 else:
                     proj_co = _Internal.project_co_v3(self, snap_obj.mat.translation)
                     dist = self.mval - proj_co
                     in_threshold = abs(dist.x) < self._dist_px and abs(dist.y) < self._dist_px
-                    #snap_obj.data[1] = primitive_point
+                    # snap_obj.data[1] = primitive_point
 
                 if in_threshold:
                     if len(snap_obj.data) == 1:
@@ -457,12 +465,12 @@ class SnapContext():
 
             if update_buffer:
                 self._read_buffer()
-                #import numpy as np
-                #a = np.array(self._snap_buffer)
-                #print(a)
+                # import numpy as np
+                # a = np.array(self._snap_buffer)
+                # print(a)
 
             snap_obj, index = self._get_nearest_index(mval)
-            #print("index:", index)
+            # print("index:", index)
             if snap_obj:
                 ret = self._get_loc(snap_obj, index)
 
@@ -479,7 +487,7 @@ class SnapContext():
 
 
 def global_snap_context_get(depsgraph, region, space):
-    if _Internal.global_snap_context == None:
+    if _Internal.global_snap_context is None:
         import atexit
 
         _Internal.global_snap_context = SnapContext(depsgraph, region, space)

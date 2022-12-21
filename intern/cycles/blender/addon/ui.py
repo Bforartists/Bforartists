@@ -386,13 +386,10 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
         col = layout.column(align=True)
-        col.prop(cscene, "sampling_pattern", text="Pattern")
-
-        col = layout.column(align=True)
         col.prop(cscene, "sample_offset")
 
         col = layout.column(align=True)
-        col.active = cscene.sampling_pattern != 'SOBOL'
+        col.active = cscene.sampling_pattern == 'TABULATED_SOBOL'
         col.label(text="Scrambling Distance")
         row = col.row()
         row.use_property_split = False
@@ -424,11 +421,6 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
     bl_parent_id = "CYCLES_RENDER_PT_sampling"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw_header(self, context):
-        layout = self.layout
-        scene = context.scene
-        cscene = scene.cycles
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = False
@@ -443,6 +435,23 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
         sub.use_property_split = True
         sub.prop(cscene, "light_sampling_threshold", text="Light Threshold")
         sub.active = not cscene.use_light_tree
+
+
+class CYCLES_RENDER_PT_sampling_debug(CyclesDebugButtonsPanel, Panel):
+    bl_label = "Debug"
+    bl_parent_id = "CYCLES_RENDER_PT_sampling"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        cscene = scene.cycles
+
+        col = layout.column(align=True)
+        col.prop(cscene, "sampling_pattern", text="Pattern")
 
 
 class CYCLES_RENDER_PT_subdivision(CyclesButtonsPanel, Panel):
@@ -2627,6 +2636,7 @@ classes = (
     CYCLES_RENDER_PT_sampling_path_guiding_debug,
     CYCLES_RENDER_PT_sampling_lights,
     CYCLES_RENDER_PT_sampling_advanced,
+    CYCLES_RENDER_PT_sampling_debug,
     CYCLES_RENDER_PT_light_paths,
     CYCLES_RENDER_PT_light_paths_max_bounces,
     CYCLES_RENDER_PT_light_paths_clamping,
