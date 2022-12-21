@@ -326,12 +326,13 @@ static void bm_corners_to_loops_ex(ID *id,
   }
 
   if (CustomData_has_layer(fdata, CD_TESSLOOPNORMAL)) {
-    float(*lnors)[3] = (float(*)[3])CustomData_get(ldata, loopstart, CD_NORMAL);
-    const short(*tlnors)[3] = (short(*)[3])CustomData_get(fdata, findex, CD_TESSLOOPNORMAL);
+    float(*loop_normals)[3] = (float(*)[3])CustomData_get(ldata, loopstart, CD_NORMAL);
+    const short(*tessloop_normals)[3] = (short(*)[3])CustomData_get(
+        fdata, findex, CD_TESSLOOPNORMAL);
     const int max = mf->v4 ? 4 : 3;
 
-    for (int i = 0; i < max; i++, lnors++, tlnors++) {
-      normal_short_to_float_v3(*lnors, *tlnors);
+    for (int i = 0; i < max; i++, loop_normals++, tessloop_normals++) {
+      normal_short_to_float_v3(*loop_normals, *tessloop_normals);
     }
   }
 
@@ -525,7 +526,7 @@ static void convert_mfaces_to_mpolys(ID *id,
 #undef ME_FGON
 }
 
-static void update_active_fdata_layers(CustomData *fdata, CustomData *ldata)
+static void update_active_fdata_layers(Mesh &mesh, CustomData *fdata, CustomData *ldata)
 {
   int act;
 
@@ -544,11 +545,15 @@ static void update_active_fdata_layers(CustomData *fdata, CustomData *ldata)
   }
 
   if (CustomData_has_layer(ldata, CD_PROP_BYTE_COLOR)) {
-    act = CustomData_get_active_layer(ldata, CD_PROP_BYTE_COLOR);
-    CustomData_set_layer_active(fdata, CD_MCOL, act);
+    if (mesh.active_color_attribute != NULL) {
+      act = CustomData_get_named_layer(ldata, CD_PROP_BYTE_COLOR, mesh.active_color_attribute);
+      CustomData_set_layer_active(fdata, CD_MCOL, act);
+    }
 
-    act = CustomData_get_render_layer(ldata, CD_PROP_BYTE_COLOR);
-    CustomData_set_layer_render(fdata, CD_MCOL, act);
+    if (mesh.default_color_attribute != NULL) {
+      act = CustomData_get_named_layer(ldata, CD_PROP_BYTE_COLOR, mesh.default_color_attribute);
+      CustomData_set_layer_render(fdata, CD_MCOL, act);
+    }
 
     act = CustomData_get_clone_layer(ldata, CD_PROP_BYTE_COLOR);
     CustomData_set_layer_clone(fdata, CD_MCOL, act);
@@ -599,7 +604,7 @@ static bool check_matching_legacy_layer_counts(CustomData *fdata, CustomData *ld
 }
 #endif
 
-static void add_mface_layers(CustomData *fdata, CustomData *ldata, int total)
+static void add_mface_layers(Mesh &mesh, CustomData *fdata, CustomData *ldata, int total)
 {
   /* avoid accumulating extra layers */
   BLI_assert(!check_matching_legacy_layer_counts(fdata, ldata, false));
@@ -631,7 +636,7 @@ static void add_mface_layers(CustomData *fdata, CustomData *ldata, int total)
     }
   }
 
-  update_active_fdata_layers(fdata, ldata);
+  update_active_fdata_layers(mesh, fdata, ldata);
 }
 
 static void mesh_ensure_tessellation_customdata(Mesh *me)
@@ -652,7 +657,7 @@ static void mesh_ensure_tessellation_customdata(Mesh *me)
     if (tottex_tessface != tottex_original || totcol_tessface != totcol_original) {
       BKE_mesh_tessface_clear(me);
 
-      add_mface_layers(&me->fdata, &me->ldata, me->totface);
+      add_mface_layers(*me, &me->fdata, &me->ldata, me->totface);
 
       /* TODO: add some `--debug-mesh` option. */
       if (G.debug & G_DEBUG) {
@@ -838,12 +843,12 @@ static void mesh_loops_to_tessdata(CustomData *fdata,
   }
 
   if (hasLoopNormal) {
-    short(*fnors)[4][3] = (short(*)[4][3])CustomData_get_layer(fdata, CD_TESSLOOPNORMAL);
-    const float(*lnors)[3] = (const float(*)[3])CustomData_get_layer(ldata, CD_NORMAL);
+    short(*face_normals)[4][3] = (short(*)[4][3])CustomData_get_layer(fdata, CD_TESSLOOPNORMAL);
+    const float(*loop_normals)[3] = (const float(*)[3])CustomData_get_layer(ldata, CD_NORMAL);
 
-    for (findex = 0, lidx = loopindices; findex < num_faces; lidx++, findex++, fnors++) {
+    for (findex = 0, lidx = loopindices; findex < num_faces; lidx++, findex++, face_normals++) {
       for (j = (mface ? mface[findex].v4 : (*lidx)[3]) ? 4 : 3; j--;) {
-        normal_float_to_short_v3((*fnors)[j], lnors[(*lidx)[j]]);
+        normal_float_to_short_v3((*face_normals)[j], loop_normals[(*lidx)[j]]);
       }
     }
   }
@@ -931,7 +936,8 @@ int BKE_mesh_mface_index_validate(MFace *mface, CustomData *fdata, int mfindex, 
   return nr;
 }
 
-static int mesh_tessface_calc(CustomData *fdata,
+static int mesh_tessface_calc(Mesh &mesh,
+                              CustomData *fdata,
                               CustomData *ldata,
                               CustomData *pdata,
                               MVert *mvert,
@@ -1140,7 +1146,7 @@ static int mesh_tessface_calc(CustomData *fdata,
   /* #CD_ORIGINDEX will contain an array of indices from tessellation-faces to the polygons
    * they are directly tessellated from. */
   CustomData_add_layer(fdata, CD_ORIGINDEX, CD_ASSIGN, mface_to_poly_map, totface);
-  add_mface_layers(fdata, ldata, totface);
+  add_mface_layers(mesh, fdata, ldata, totface);
 
   /* NOTE: quad detection issue - fourth vertidx vs fourth loopidx:
    * Polygons take care of their loops ordering, hence not of their vertices ordering.
@@ -1178,7 +1184,8 @@ static int mesh_tessface_calc(CustomData *fdata,
 
 void BKE_mesh_tessface_calc(Mesh *mesh)
 {
-  mesh->totface = mesh_tessface_calc(&mesh->fdata,
+  mesh->totface = mesh_tessface_calc(*mesh,
+                                     &mesh->fdata,
                                      &mesh->ldata,
                                      &mesh->pdata,
                                      BKE_mesh_verts_for_write(mesh),
@@ -1564,6 +1571,126 @@ void BKE_mesh_legacy_convert_loose_edges_to_flag(Mesh *mesh)
       }
     }
   });
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Attribute Active Flag to String Conversion
+ * \{ */
+
+void BKE_mesh_legacy_attribute_flags_to_strings(Mesh *mesh)
+{
+  using namespace blender;
+  /* It's not clear whether the active/render status was stored in the dedicated flags or in the
+   * generic CustomData layer indices, so convert from both, preferring the explicit flags. */
+
+  auto active_from_flags = [&](const CustomData &data) {
+    if (!mesh->active_color_attribute) {
+      for (const int i : IndexRange(data.totlayer)) {
+        if (data.layers[i].flag & CD_FLAG_COLOR_ACTIVE) {
+          mesh->active_color_attribute = BLI_strdup(data.layers[i].name);
+        }
+      }
+    }
+  };
+  auto active_from_indices = [&](const CustomData &data) {
+    if (!mesh->active_color_attribute) {
+      const int i = CustomData_get_active_layer_index(&data, CD_PROP_COLOR);
+      if (i != -1) {
+        mesh->active_color_attribute = BLI_strdup(data.layers[i].name);
+      }
+    }
+    if (!mesh->active_color_attribute) {
+      const int i = CustomData_get_active_layer_index(&data, CD_PROP_BYTE_COLOR);
+      if (i != -1) {
+        mesh->active_color_attribute = BLI_strdup(data.layers[i].name);
+      }
+    }
+  };
+  auto default_from_flags = [&](const CustomData &data) {
+    if (!mesh->default_color_attribute) {
+      for (const int i : IndexRange(data.totlayer)) {
+        if (data.layers[i].flag & CD_FLAG_COLOR_RENDER) {
+          mesh->default_color_attribute = BLI_strdup(data.layers[i].name);
+        }
+      }
+    }
+  };
+  auto default_from_indices = [&](const CustomData &data) {
+    if (!mesh->default_color_attribute) {
+      const int i = CustomData_get_render_layer_index(&data, CD_PROP_COLOR);
+      if (i != -1) {
+        mesh->default_color_attribute = BLI_strdup(data.layers[i].name);
+      }
+    }
+    if (!mesh->default_color_attribute) {
+      const int i = CustomData_get_render_layer_index(&data, CD_PROP_BYTE_COLOR);
+      if (i != -1) {
+        mesh->default_color_attribute = BLI_strdup(data.layers[i].name);
+      }
+    }
+  };
+
+  active_from_flags(mesh->vdata);
+  active_from_flags(mesh->ldata);
+  active_from_indices(mesh->vdata);
+  active_from_indices(mesh->ldata);
+
+  default_from_flags(mesh->vdata);
+  default_from_flags(mesh->ldata);
+  default_from_indices(mesh->vdata);
+  default_from_indices(mesh->ldata);
+}
+
+void BKE_mesh_legacy_attribute_strings_to_flags(Mesh *mesh)
+{
+  using namespace blender;
+  CustomData *vdata = &mesh->vdata;
+  CustomData *ldata = &mesh->ldata;
+
+  CustomData_clear_layer_flag(
+      vdata, CD_PROP_BYTE_COLOR, CD_FLAG_COLOR_ACTIVE | CD_FLAG_COLOR_RENDER);
+  CustomData_clear_layer_flag(ldata, CD_PROP_COLOR, CD_FLAG_COLOR_ACTIVE | CD_FLAG_COLOR_RENDER);
+
+  if (const char *name = mesh->active_color_attribute) {
+    int i;
+    if ((i = CustomData_get_named_layer_index(vdata, CD_PROP_BYTE_COLOR, name)) != -1) {
+      CustomData_set_layer_active_index(vdata, CD_PROP_BYTE_COLOR, i);
+      vdata->layers[i].flag |= CD_FLAG_COLOR_ACTIVE;
+    }
+    else if ((i = CustomData_get_named_layer_index(vdata, CD_PROP_COLOR, name)) != -1) {
+      CustomData_set_layer_active_index(vdata, CD_PROP_COLOR, i);
+      vdata->layers[i].flag |= CD_FLAG_COLOR_ACTIVE;
+    }
+    else if ((i = CustomData_get_named_layer_index(ldata, CD_PROP_BYTE_COLOR, name)) != -1) {
+      CustomData_set_layer_active_index(ldata, CD_PROP_BYTE_COLOR, i);
+      ldata->layers[i].flag |= CD_FLAG_COLOR_ACTIVE;
+    }
+    else if ((i = CustomData_get_named_layer_index(ldata, CD_PROP_COLOR, name)) != -1) {
+      CustomData_set_layer_active_index(ldata, CD_PROP_COLOR, i);
+      ldata->layers[i].flag |= CD_FLAG_COLOR_ACTIVE;
+    }
+  }
+  if (const char *name = mesh->default_color_attribute) {
+    int i;
+    if ((i = CustomData_get_named_layer_index(vdata, CD_PROP_BYTE_COLOR, name)) != -1) {
+      CustomData_set_layer_render_index(vdata, CD_PROP_BYTE_COLOR, i);
+      vdata->layers[i].flag |= CD_FLAG_COLOR_RENDER;
+    }
+    else if ((i = CustomData_get_named_layer_index(vdata, CD_PROP_COLOR, name)) != -1) {
+      CustomData_set_layer_render_index(vdata, CD_PROP_COLOR, i);
+      vdata->layers[i].flag |= CD_FLAG_COLOR_RENDER;
+    }
+    else if ((i = CustomData_get_named_layer_index(ldata, CD_PROP_BYTE_COLOR, name)) != -1) {
+      CustomData_set_layer_render_index(ldata, CD_PROP_BYTE_COLOR, i);
+      ldata->layers[i].flag |= CD_FLAG_COLOR_RENDER;
+    }
+    else if ((i = CustomData_get_named_layer_index(ldata, CD_PROP_COLOR, name)) != -1) {
+      CustomData_set_layer_render_index(ldata, CD_PROP_COLOR, i);
+      ldata->layers[i].flag |= CD_FLAG_COLOR_RENDER;
+    }
+  }
 }
 
 /** \} */

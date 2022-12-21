@@ -92,7 +92,7 @@ typedef enum eCustomDataType {
 #ifdef DNA_DEPRECATED_ALLOW
   CD_MSTICKY = 1, /* DEPRECATED */
 #endif
-  CD_MDEFORMVERT = 2,
+  CD_MDEFORMVERT = 2, /* Array of `MDeformVert`. */
   CD_MEDGE = 3,
   CD_MFACE = 4,
   CD_MTFACE = 5,
@@ -244,8 +244,10 @@ enum {
   CD_FLAG_EXTERNAL = (1 << 3),
   /* Indicates external data is read into memory */
   CD_FLAG_IN_MEMORY = (1 << 4),
+#ifdef DNA_DEPRECATED_ALLOW
   CD_FLAG_COLOR_ACTIVE = (1 << 5),
   CD_FLAG_COLOR_RENDER = (1 << 6)
+#endif
 };
 
 /* Limits */

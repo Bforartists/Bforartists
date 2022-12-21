@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -85482,10 +85482,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "멀티리스 모디파이어 반환된 오류, 적용을 건너 뛰었습니다"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "모디 파이어 반환된 오류, 적용을 건너 뛰기"
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "변경된 CV 포인트들 만 적용된 모디파이어, 버텍스를 테셀레이트/베벨 할수 없음"
 
@@ -88099,10 +88095,6 @@ msgstr "오른쪽"
 
 msgid "left"
 msgstr "왼쪽"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "자동 오프셋을 %s로 설정 - %s를 눌러 방향 토글 | %s"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

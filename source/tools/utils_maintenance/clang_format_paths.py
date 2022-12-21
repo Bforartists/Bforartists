@@ -203,7 +203,7 @@ def argparse_create():
     parser.add_argument(
         "paths",
         nargs=argparse.REMAINDER,
-        help="All trailing arguments are treated as paths."
+        help="All trailing arguments are treated as paths.",
     )
 
     return parser

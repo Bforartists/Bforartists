@@ -1210,20 +1210,20 @@ static int outliner_select_all_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *outliner_ot_select_all_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+static char *outliner_ot_select_all_get_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *values)
 {
   /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
     return BLI_strdup("Select all");
   }
   /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
     return BLI_strdup("Deselect everything");
   }
   /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
     return BLI_strdup("Inverts the current selection");
   }
   return NULL;
@@ -1489,11 +1489,11 @@ static int outliner_one_level_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *outliner_ot_show_one_level_get_description(bContext *UNUSED(C),
-                                                        wmOperatorType *UNUSED(ot),
-                                                        PointerRNA *ptr)
+static char *outliner_ot_show_one_level_get_description(struct bContext * /*C*/,
+                                                        struct wmOperatorType * /*op*/,
+                                                        struct PointerRNA *values)
 {
-  if (RNA_boolean_get(ptr, "open")) {
+  if (RNA_boolean_get(values, "open")) {
     return BLI_strdup("Expand all entries by one level");
   }
   return NULL;
@@ -2234,13 +2234,13 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 }
 
 /*bfa - descriptions*/
-static char *wm_orphans_purge_get_description(bContext *UNUSED(C),
-                                              wmOperatorType *UNUSED(ot),
-                                              PointerRNA *ptr)
+static char *wm_orphans_purge_get_description(struct bContext * /*C*/,
+                                              struct wmOperatorType * /*op*/,
+                                              struct PointerRNA *values)
 {
-  const bool linked = RNA_boolean_get(ptr, "do_linked_ids");
-  const bool local = RNA_boolean_get(ptr, "do_local_ids");
-  const bool recursive = RNA_boolean_get(ptr, "do_recursive");
+  const bool linked = RNA_boolean_get(values, "do_linked_ids");
+  const bool local = RNA_boolean_get(values, "do_local_ids");
+  const bool recursive = RNA_boolean_get(values, "do_recursive");
 
   /*Unused data*/
   if (linked && local && !recursive) {

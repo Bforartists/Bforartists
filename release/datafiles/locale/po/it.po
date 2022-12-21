@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'05bf5c4e0ea8')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -57923,10 +57923,6 @@ msgid "Multires modifier returned error, skipping apply"
 msgstr "Il modificatore multirisoluzione ha restituito un errore, applicazione non effettuata"
 
 
-msgid "Modifier returned error, skipping apply"
-msgstr "Il modificatore ha restituito un errore, applicazione non effettuata"
-
-
 msgid "Modifiers cannot be applied in edit mode"
 msgstr "I modificatori non possono essere applicati in Modalità Modifica"
 
@@ -58837,6 +58833,10 @@ msgid "Group Input "
 msgstr "Ingresso Gruppo "
 
 
+msgid " (String)"
+msgstr "(Stringa)"
+
+
 msgid " (Vector)"
 msgstr "(Vettore)"
 
@@ -58847,10 +58847,6 @@ msgstr "Vero"
 
 msgid " (Boolean)"
 msgstr "(Booleano)"
-
-
-msgid " (String)"
-msgstr "(Stringa)"
 
 
 msgid "Empty Geometry"
@@ -59656,10 +59652,6 @@ msgstr "destra"
 
 msgid "left"
 msgstr "sinistra"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Auto-spaziatura impostata a %s - premi %s per cambiare direzione | %s"
 
 
 msgid "global"

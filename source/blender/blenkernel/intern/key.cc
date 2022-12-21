@@ -51,10 +51,7 @@
 
 #include "BLO_read_write.h"
 
-static void shapekey_copy_data(Main *UNUSED(bmain),
-                               ID *id_dst,
-                               const ID *id_src,
-                               const int UNUSED(flag))
+static void shapekey_copy_data(Main * /*bmain*/, ID *id_dst, const ID *id_src, const int /*flag*/)
 {
   Key *key_dst = (Key *)id_dst;
   const Key *key_src = (const Key *)id_src;
@@ -890,8 +887,8 @@ static void key_evaluate_relative(const int start,
     end = tot;
   }
 
-  /* in case of beztriple */
-  elemstr[0] = 1; /* nr of ipofloats */
+  /* In case of Bezier-triple. */
+  elemstr[0] = 1; /* Number of IPO-floats. */
   elemstr[1] = IPO_BEZTRIPLE;
   elemstr[2] = 0;
 
@@ -1132,8 +1129,8 @@ static void do_key(const int start,
     }
   }
 
-  /* in case of beztriple */
-  elemstr[0] = 1; /* nr of ipofloats */
+  /* In case of bezier-triples. */
+  elemstr[0] = 1; /* Number of IPO-floats. */
   elemstr[1] = IPO_BEZTRIPLE;
   elemstr[2] = 0;
 
@@ -2064,7 +2061,7 @@ int BKE_keyblock_curve_element_count(const ListBase *nurb)
   return tot;
 }
 
-void BKE_keyblock_update_from_curve(const Curve *UNUSED(cu), KeyBlock *kb, const ListBase *nurb)
+void BKE_keyblock_update_from_curve(const Curve * /*cu*/, KeyBlock *kb, const ListBase *nurb)
 {
   Nurb *nu;
   BezTriple *bezt;
@@ -2178,7 +2175,7 @@ static void keyblock_data_convert_to_curve(const float *fp, ListBase *nurb, int 
   }
 }
 
-void BKE_keyblock_convert_to_curve(KeyBlock *kb, Curve *UNUSED(cu), ListBase *nurb)
+void BKE_keyblock_convert_to_curve(KeyBlock *kb, Curve * /*cu*/, ListBase *nurb)
 {
   const float *fp = static_cast<const float *>(kb->data);
   const int tot = min_ii(kb->totelem, BKE_keyblock_curve_element_count(nurb));
@@ -2240,11 +2237,11 @@ void BKE_keyblock_convert_to_mesh(const KeyBlock *kb, MVert *mvert, const int to
 
 void BKE_keyblock_mesh_calc_normals(const KeyBlock *kb,
                                     const Mesh *mesh,
-                                    float (*r_vertnors)[3],
-                                    float (*r_polynors)[3],
-                                    float (*r_loopnors)[3])
+                                    float (*r_vert_normals)[3],
+                                    float (*r_poly_normals)[3],
+                                    float (*r_loop_normals)[3])
 {
-  if (r_vertnors == nullptr && r_polynors == nullptr && r_loopnors == nullptr) {
+  if (r_vert_normals == nullptr && r_poly_normals == nullptr && r_loop_normals == nullptr) {
     return;
   }
 
@@ -2254,21 +2251,21 @@ void BKE_keyblock_mesh_calc_normals(const KeyBlock *kb,
   const MPoly *polys = BKE_mesh_polys(mesh);
   const MLoop *loops = BKE_mesh_loops(mesh);
 
-  const bool loop_normals_needed = r_loopnors != nullptr;
-  const bool vert_normals_needed = r_vertnors != nullptr || loop_normals_needed;
-  const bool poly_normals_needed = r_polynors != nullptr || vert_normals_needed ||
+  const bool loop_normals_needed = r_loop_normals != nullptr;
+  const bool vert_normals_needed = r_vert_normals != nullptr || loop_normals_needed;
+  const bool poly_normals_needed = r_poly_normals != nullptr || vert_normals_needed ||
                                    loop_normals_needed;
 
-  float(*vert_normals)[3] = r_vertnors;
-  float(*poly_normals)[3] = r_polynors;
+  float(*vert_normals)[3] = r_vert_normals;
+  float(*poly_normals)[3] = r_poly_normals;
   bool free_vert_normals = false;
   bool free_poly_normals = false;
-  if (vert_normals_needed && r_vertnors == nullptr) {
+  if (vert_normals_needed && r_vert_normals == nullptr) {
     vert_normals = static_cast<float(*)[3]>(
         MEM_malloc_arrayN(mesh->totvert, sizeof(float[3]), __func__));
     free_vert_normals = true;
   }
-  if (poly_normals_needed && r_polynors == nullptr) {
+  if (poly_normals_needed && r_poly_normals == nullptr) {
     poly_normals = static_cast<float(*)[3]>(
         MEM_malloc_arrayN(mesh->totpoly, sizeof(float[3]), __func__));
     free_poly_normals = true;
@@ -2297,7 +2294,7 @@ void BKE_keyblock_mesh_calc_normals(const KeyBlock *kb,
                                 edges,
                                 mesh->totedge,
                                 loops,
-                                r_loopnors,
+                                r_loop_normals,
                                 mesh->totloop,
                                 polys,
                                 poly_normals,
@@ -2472,8 +2469,6 @@ float (*BKE_keyblock_convert_to_vertcos(const Object *ob, const KeyBlock *kb))[3
   return vertCos;
 }
 
-/************************* raw coord offsets ************************/
-
 void BKE_keyblock_update_from_offset(const Object *ob, KeyBlock *kb, const float (*ofs)[3])
 {
   int a;
@@ -2508,8 +2503,6 @@ void BKE_keyblock_update_from_offset(const Object *ob, KeyBlock *kb, const float
     }
   }
 }
-
-/* ==========================================================*/
 
 bool BKE_keyblock_move(Object *ob, int org_index, int new_index)
 {

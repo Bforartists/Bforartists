@@ -226,6 +226,7 @@ NODE_DEFINE(ImageTextureNode)
   extension_enum.insert("periodic", EXTENSION_REPEAT);
   extension_enum.insert("clamp", EXTENSION_EXTEND);
   extension_enum.insert("black", EXTENSION_CLIP);
+  extension_enum.insert("mirror", EXTENSION_MIRROR);
   SOCKET_ENUM(extension, "Extension", extension_enum, EXTENSION_REPEAT);
 
   static NodeEnum projection_enum;
@@ -4947,6 +4948,7 @@ NODE_DEFINE(MixNode)
   type_enum.insert("color", NODE_MIX_COL);
   type_enum.insert("soft_light", NODE_MIX_SOFT);
   type_enum.insert("linear_light", NODE_MIX_LINEAR);
+  type_enum.insert("exclusion", NODE_MIX_EXCLUSION);
   SOCKET_ENUM(mix_type, "Type", type_enum, NODE_MIX_BLEND);
 
   SOCKET_BOOLEAN(use_clamp, "Use Clamp", false);
@@ -5025,6 +5027,7 @@ NODE_DEFINE(MixColorNode)
   type_enum.insert("color", NODE_MIX_COL);
   type_enum.insert("soft_light", NODE_MIX_SOFT);
   type_enum.insert("linear_light", NODE_MIX_LINEAR);
+  type_enum.insert("exclusion", NODE_MIX_EXCLUSION);
   SOCKET_ENUM(blend_type, "Type", type_enum, NODE_MIX_BLEND);
 
   SOCKET_IN_FLOAT(fac, "Factor", 0.5f);
