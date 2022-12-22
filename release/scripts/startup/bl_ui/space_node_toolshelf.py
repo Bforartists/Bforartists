@@ -1343,9 +1343,9 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeLightFalloff"
 
-            props = col.operator("node.add_node", text=" Mix RGB           ", icon = "NODE_MIXRGB")
+            props = col.operator("node.add_node", text=" Mix Color          ", icon = "NODE_MIX")
             props.use_transform = True
-            props.type = "ShaderNodeMixRGB"
+            props.type = "ShaderNodeMix"
 
             props = col.operator("node.add_node", text="  RGB Curves        ", icon = "NODE_RGBCURVE")
             props.use_transform = True
@@ -1378,9 +1378,9 @@ class NODES_PT_shader_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeLightFalloff"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
             props.use_transform = True
-            props.type = "ShaderNodeMixRGB"
+            props.type = "ShaderNodeMix"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
@@ -3258,7 +3258,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeCombineColor"
 
-            props = col.operator("node.add_node", text=" Mix Color              ", icon = "NODE_MIXSHADER")
+            props = col.operator("node.add_node", text=" Mix Color              ", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
             #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
@@ -3287,7 +3287,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeCombineColor"
 
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
+            props = flow.operator("node.add_node", text="", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
             #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
