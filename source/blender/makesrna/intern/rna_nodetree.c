@@ -13196,7 +13196,7 @@ static int node_type_to_icon(int type)
       return ICON_SEPARATE_COLOR;
 
     case SH_NODE_MIX:
-      return ICON_NODE_MIXSHADER;
+      return ICON_NODE_MIX;
 
     /* bfa - CompositorNode */
     case CMP_NODE_VIEWER:
