@@ -1654,7 +1654,7 @@ sample_index
 sample_nearest
 image_info
 blur_attribute
-#~ DEF_ICON_BLANK(1687)
+node_mix
 
 # ------------------------- row 25 --------------------------*/
 
