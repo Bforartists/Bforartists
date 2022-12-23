@@ -13,8 +13,6 @@
 
 #include "BLI_blenlib.h"
 
-#include "BLO_read_write.h"
-
 #include "BKE_context.h"
 #include "BKE_screen.h"
 
@@ -27,6 +25,8 @@
 #include "GPU_framebuffer.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
+
+#include "BLO_read_write.h"
 
 static SpaceLink *toolbar_create(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
@@ -90,7 +90,7 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *region)
 
 static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 {
-  ARegion *region = params->region;
+  ScrArea *area = params->area;
   const wmNotifier *wmn = params->notifier;
   // SpaceInfo *sinfo = sa->spacedata.first;
 
@@ -99,7 +99,7 @@ static void toolbar_main_area_listener(const wmRegionListenerParams *params)
     case NC_SPACE:
       if (wmn->data == ND_SPACE_INFO_REPORT) {
         /* redraw also but only for report view, could do less redraws by checking the type */
-        ED_region_tag_redraw(region);
+        ED_area_tag_redraw(area);
       }
       break;
   }
@@ -107,28 +107,28 @@ static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 
 static void toolbar_header_listener(const wmRegionListenerParams *params)
 {
-  ARegion *region = params->region;
+  ScrArea *area = params->area;
   const wmNotifier *wmn = params->notifier;
   /* context changes */
   switch (wmn->category) {
     case NC_WM:
       if (wmn->data == ND_JOB) {
-        ED_region_tag_redraw(region);
+        ED_area_tag_redraw(area);
       }
       break;
     case NC_SCENE:
       if (wmn->data == ND_RENDER_RESULT) {
-        ED_region_tag_redraw(region);
+        ED_area_tag_redraw(area);
       }
       break;
     case NC_SPACE:
       if (wmn->data == ND_SPACE_INFO) {
-        ED_region_tag_redraw(region);
+        ED_area_tag_redraw(area);
       }
       break;
     case NC_ID:
       if (wmn->action == NA_RENAME) {
-        ED_region_tag_redraw(region);
+        ED_area_tag_redraw(area);
       }
       break;
   }
@@ -141,6 +141,11 @@ static void toolbar_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 /********************* registration ********************/
 
+static void info_blend_write(BlendWriter *writer, SpaceLink *sl)
+{
+  BLO_write_struct(writer, SpaceToolbar, sl);
+}
+
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_toolbar(void)
 {
@@ -148,7 +153,7 @@ void ED_spacetype_toolbar(void)
   ARegionType *art;
 
   st->spaceid = SPACE_TOOLBAR;
-  strncpy(st->name, "Toolbar", BKE_ST_MAXNAME);
+  STRNCPY(st->name, "Toolbar");
 
   st->create = toolbar_create;
   st->blend_read_data = NULL;
