@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-03-21 19:03-0300\n"
@@ -22218,10 +22218,6 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Edit"
-msgstr "Editar"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Clipe"
@@ -22318,6 +22314,10 @@ msgstr "Especiais para chaves de formato"
 
 msgid "Vertex Group Specials"
 msgstr "Especiais para grupo de vértices"
+
+
+msgid "Edit"
+msgstr "Editar"
 
 
 msgid "Converter"
@@ -43446,14 +43446,6 @@ msgid "Clear Object Paths"
 msgstr "Limpar caminhos de objeto"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Limpa os caminhos de cache para todos os objetos. Mantenha pressionada a tecla Shift para limpar somente o cache dos objetos selecionados."
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Limpa somente os caminhos dos objetos selecionados."
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Atualizar caminhos de objeto"
@@ -45863,11 +45855,6 @@ msgstr "Aplicar Virado"
 
 
 msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "Copiar Pose como Recurso"
-
-
-msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "Criar Recurso de Pose"
 
@@ -45878,11 +45865,6 @@ msgstr "Ativar Nova Ação"
 
 msgid "Pose Name"
 msgstr "Nome da pose"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "Colar Como Novo Recurso"
 
 
 msgctxt "Operator"
@@ -46182,14 +46164,6 @@ msgstr "Qual ponto nos ossos é usado durante os cálculos dos caminhos."
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Limpar os caminhos dos ossos"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Limpa os caminhos de cache para todos os ossos, mantenha a tecla Shift pressionada para limpar somente o cache dos ossos selecionados."
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Limpa somente os caminhos dos ossos selecionados."
 
 
 msgctxt "Operator"
@@ -53130,14 +53104,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Número de vezes para copiar os traços através da superfície."
 
 
-msgid "Show Mask"
-msgstr "Mostrar máscara"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Mostra a máscara como uma sobreposição no objeto."
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Fonte e destinação para o operador de simetrização."
 
@@ -53192,10 +53158,6 @@ msgstr "Predefinições de integrador"
 
 msgid "Sampling Presets"
 msgstr "Predefinições de amostragem"
-
-
-msgid "Pose Library"
-msgstr "Biblioteca de poses"
 
 
 msgid "Bone Constraints"
@@ -53345,10 +53307,6 @@ msgstr "Passo de renderização"
 
 msgid "Mist Pass"
 msgstr "Passo de névoa"
-
-
-msgid "Area Shape"
-msgstr "Formato de área"
 
 
 msgid "Composition Guides"
@@ -53854,6 +53812,10 @@ msgstr "Cores da gradiente"
 
 msgid "Motion Tracking"
 msgstr "Captura de movimentos"
+
+
+msgid "Pose Library"
+msgstr "Biblioteca de poses"
 
 
 msgid "3D-Print"
@@ -66477,11 +66439,6 @@ msgid "Export"
 msgstr "Exportar"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Aplicar"
-
-
 msgid "Pasted %d assets"
 msgstr "%d recursos colados"
 
@@ -66753,6 +66710,11 @@ msgid "Load %d.%d Settings"
 msgstr "Abrir Configurações %d.%d"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Atualizar Todos os Caminhos"
+
+
 msgid "Frame Numbers"
 msgstr "Números dos quadros"
 
@@ -66770,17 +66732,12 @@ msgstr "Nada a ser mostrado ainda..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Atualizar Todos os Caminhos"
+msgid "Calculate..."
+msgstr "Calcular..."
 
 
 msgid "+ Non-Grouped Keyframes"
 msgstr "Somar os quadros-chave não agrupados"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Calcular..."
 
 
 msgctxt "Operator"
@@ -70345,6 +70302,11 @@ msgstr "Pintura múltipla"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Edição rápida"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Aplicar"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2076,10 +2076,6 @@ msgid "Dither"
 msgstr "Rastrering"
 
 
-msgid "Pose Library"
-msgstr "Pose-bibliotek"
-
-
 msgid "Bone Constraints"
 msgstr "Benbegränsningar"
 
@@ -2142,6 +2138,10 @@ msgstr "Uppspelning"
 
 msgid "3D Mouse Settings"
 msgstr "Inställningar för 3D-mus"
+
+
+msgid "Pose Library"
+msgstr "Pose-bibliotek"
 
 
 msgid "Particle in a particle system"

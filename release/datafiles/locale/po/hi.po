@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2851,10 +2851,6 @@ msgid "Flip"
 msgstr "पलटें"
 
 
-msgid "Edit"
-msgstr "संपादन"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "छांटन"
@@ -2891,6 +2887,10 @@ msgstr "संरेखित करें"
 msgctxt "Operator"
 msgid "Add"
 msgstr "जोड़ें"
+
+
+msgid "Edit"
+msgstr "संपादन"
 
 
 msgid "Converter"
@@ -5465,11 +5465,6 @@ msgid "Export"
 msgstr "निर्यात करें"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "लागू करें"
-
-
 msgid "Save to PO File"
 msgstr "PO फाइल को बचाने के लिए"
 
@@ -6223,6 +6218,11 @@ msgstr "कारण"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "त्वरित संपादन"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "लागू करें"
 
 
 msgid "No AnimData to set action on"

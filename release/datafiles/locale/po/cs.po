@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14413,10 +14413,6 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
-msgid "Edit"
-msgstr "Upravit"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Střih"
@@ -14513,6 +14509,10 @@ msgstr "Zaklíčovat tvar"
 
 msgid "Vertex Group Specials"
 msgstr "Skupina vertexů"
+
+
+msgid "Edit"
+msgstr "Upravit"
 
 
 msgid "Converter"
@@ -32888,10 +32888,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Počet opakování pro překreslení"
 
 
-msgid "Show Mask"
-msgstr "Ukázat Masku"
-
-
 msgid "Use Deform Only"
 msgstr "Použít Pouze Deformace"
 
@@ -32922,10 +32918,6 @@ msgstr "Zobrazit Typy Objektů"
 
 msgid "Asset Metadata"
 msgstr "Metadata assetu"
-
-
-msgid "Pose Library"
-msgstr "Není knihovnou"
 
 
 msgid "Chain Scaling"
@@ -33111,10 +33103,6 @@ msgstr "Vlastní Vzdálenost"
 
 msgid "Cascaded Shadow Map"
 msgstr "Kaskádová mapa stínů"
-
-
-msgid "Area Shape"
-msgstr "Tvar plocky"
 
 
 msgid "Composition Guides"
@@ -33804,6 +33792,10 @@ msgstr "Měření"
 
 msgid "Motion Tracking"
 msgstr "Sledování Pohybu"
+
+
+msgid "Pose Library"
+msgstr "Není knihovnou"
 
 
 msgid "Analyze"
@@ -41246,11 +41238,6 @@ msgid "Result"
 msgstr "Výsledek"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Použít"
-
-
 msgid "Demo Mode:"
 msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
 
@@ -41445,17 +41432,17 @@ msgid "Nothing to show yet..."
 msgstr "Zatím není nic k zobrazení..."
 
 
+msgctxt "Operator"
+msgid "Calculate..."
+msgstr "Vypočítat..."
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "Zobrazit klíče"
 
 
 msgid "Frame Range Start"
 msgstr "Začátek rozsahu snímků"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Vypočítat..."
 
 
 msgctxt "Operator"
@@ -44928,6 +44915,11 @@ msgstr "VBar malování"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Rychlá úprava"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Použít"
 
 
 msgctxt "Operator"

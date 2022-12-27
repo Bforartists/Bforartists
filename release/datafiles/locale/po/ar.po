@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -16994,10 +16994,6 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
-msgid "Edit"
-msgstr "ﺭﺮﺣ"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﻢﻠﻗ"
@@ -17066,6 +17062,10 @@ msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ ﺕﺎﻓﺎﺿﺇ"
 
 msgid "Vertex Group Specials"
 msgstr "ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺎﻓﺎﺿﺇ"
+
+
+msgid "Edit"
+msgstr "ﺭﺮﺣ"
 
 
 msgid "Converter"
@@ -26641,10 +26641,6 @@ msgid "Clear Object Paths"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﻑﺬﺣﺃ"
 
 
-msgid "Only clear paths from selected objects"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻦﻣ ﻂﻘﻓ ﺕﺍﺭﺎﺴﻤﻟﺍ ﻑﺬﺣﺍ"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺍﺭﺎﺴﻣ ﺙﺪّﺣ"
@@ -30397,10 +30393,6 @@ msgid "Sampling Presets"
 msgstr "ﺔﻨﻳﺎﻌﻤﻠﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
 
-msgid "Pose Library"
-msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
-
-
 msgid "Bone Constraints"
 msgstr "ﻢﻈﻌﻟﺍ ﺩﻮﻴﻗ"
 
@@ -30516,10 +30508,6 @@ msgstr "ﻢﻴﻌﻨﺗ"
 
 msgid "Render Pass"
 msgstr "ﺮﻴﻴﺼﺗ ﺮﻤﻣ"
-
-
-msgid "Area Shape"
-msgstr "ﺔﺣﺎﺴﻤﻟﺍ ﻞﻜﺷ"
 
 
 msgid "Composition Guides"
@@ -30746,6 +30734,10 @@ msgstr "ﻥﻮﻠﻟﺍ ﻢﺳﺭﺍ"
 
 msgid "Motion Tracking"
 msgstr "ﺔﻛﺮﺤﻟﺍ ﺔﻘﺣﻼ﻿ﻣ"
+
+
+msgid "Pose Library"
+msgstr "ﺕﺎﻔﻗﻮﻟﺍ ﺔﺒﺘﻜﻣ"
 
 
 msgctxt "Operator"
@@ -36865,11 +36857,6 @@ msgid "Export"
 msgstr "ﺭﺪّﺻ"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻖﺒﻃ"
-
-
 msgid "Demo Mode:"
 msgstr "ﻞﺒﻗ ﻂﻤﻨﻟﺍ"
 
@@ -36955,13 +36942,13 @@ msgid "Nothing to show yet..."
 msgstr "...ﺪﻌﺑ ﺭﺎﻬﻇﻺ﻿ﻟ ﺊﻴﺷ ﻻ﻿"
 
 
-msgid "+ Non-Grouped Keyframes"
-msgstr "ﺔﻌﻤﺠﻣ ﺮﻴﻏ ﺢﻴﺗﺎﻔﻣ +"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "...ﺐﺴﺣﺍ"
+
+
+msgid "+ Non-Grouped Keyframes"
+msgstr "ﺔﻌﻤﺠﻣ ﺮﻴﻏ ﺢﻴﺗﺎﻔﻣ +"
 
 
 msgctxt "Operator"
@@ -38732,6 +38719,11 @@ msgstr "ﺩﺪﻌﺘﻣ-ﻦﻳﻮﻠﺗ"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "ﻊﻳﺮﺳ ﻞﻳﺪﻌﺗ"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻖﺒﻃ"
 
 
 msgctxt "Operator"
