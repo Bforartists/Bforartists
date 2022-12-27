@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -20716,8 +20716,8 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Edit"
-msgstr "Bearbeiten"
+msgid "Asset"
+msgstr "Asset"
 
 
 msgctxt "MovieClip"
@@ -20868,6 +20868,10 @@ msgstr "Hinzufügen"
 
 msgid "NLA Context Menu"
 msgstr "NLA-Kontextmenü"
+
+
+msgid "Edit"
+msgstr "Bearbeiten"
 
 
 msgid "Converter"
@@ -21157,10 +21161,6 @@ msgstr "Lichtsonde"
 
 msgid "Make Single User"
 msgstr "Einfachen Benutzer erzeugen"
-
-
-msgid "Asset"
-msgstr "Asset"
 
 
 msgid "Object Context Menu"
@@ -29819,11 +29819,6 @@ msgstr "Originallänge zurücksetzen"
 msgctxt "Operator"
 msgid "Convert Particle System to Curves"
 msgstr "Partikelsysteme zu Kurven konvertieren"
-
-
-msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "Auswahl deaktivieren"
 
 
 msgctxt "Operator"
@@ -43121,10 +43116,6 @@ msgid "Disallow changes to the Z axis of vertices"
 msgstr "Änderungen an der Z-Achse von Knoten nicht erlauben"
 
 
-msgid "Show Mask"
-msgstr "Maske anzeigen"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Quelle und Ziel für den Symetrie-Operator"
 
@@ -43175,10 +43166,6 @@ msgstr "Objekttypen anzeigen"
 
 msgid "Asset Metadata"
 msgstr "Asset-Metadaten"
-
-
-msgid "Pose Library"
-msgstr "Posen-Bibliothek"
 
 
 msgid "Chain Scaling"
@@ -43372,10 +43359,6 @@ msgstr "Benutzerdefinierter Abstand"
 
 msgid "Contact Shadows"
 msgstr "Kontaktschatten"
-
-
-msgid "Area Shape"
-msgstr "Bereichsform"
 
 
 msgid "Stereoscopy"
@@ -44120,6 +44103,10 @@ msgstr "Textur-Malen Kontextmenü"
 
 msgid "Weights Context Menu"
 msgstr "Gewichtung Kontextmenü"
+
+
+msgid "Pose Library"
+msgstr "Posen-Bibliothek"
 
 
 msgid "3D-Print"
@@ -46150,6 +46137,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Texturgröße begrenzen, um Grafikspeicher zu sparen"
 
 
+msgid "Metal"
+msgstr "Metall"
+
+
 msgid "Image Display Method"
 msgstr "Bild Anzeigemethode"
 
@@ -46716,10 +46707,6 @@ msgstr "CUDA"
 
 msgid "OptiX"
 msgstr "OptiX"
-
-
-msgid "Metal"
-msgstr "Metall"
 
 
 msgid "Cast Shadow"
@@ -54958,15 +54945,6 @@ msgid "Apply Pose"
 msgstr "Pose anwenden"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Anwenden"
-
-
-msgid "Activate & Edit"
-msgstr "Aktivere und Bearbeite"
-
-
 msgid "Demo Mode:"
 msgstr "Demomodus:"
 
@@ -55621,6 +55599,11 @@ msgid "Type \"%s\" can not be found"
 msgstr "Typ \"%s\" konnte nicht gefunden werden"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Alle Pfade aktualisieren"
+
+
 msgid "Frame Numbers"
 msgstr "Einzelbildnummern"
 
@@ -55637,27 +55620,22 @@ msgid "After"
 msgstr "Danach"
 
 
-msgid "Nothing to show yet..."
-msgstr "Aktuell gibt es nichts zu zeigen..."
-
-
-msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Alle Pfade aktualisieren"
-
-
-msgid "Frame Range Start"
-msgstr "Einzelbildbereich Start"
-
-
 msgctxt "Operator"
 msgid "Update Path"
 msgstr "Pfad aktualisieren"
 
 
+msgid "Nothing to show yet..."
+msgstr "Aktuell gibt es nichts zu zeigen..."
+
+
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Berechne..."
+
+
+msgid "Frame Range Start"
+msgstr "Einzelbildbereich Start"
 
 
 msgid "Collection Mask"
@@ -60654,6 +60632,11 @@ msgstr "Mehrfach malen"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Schnell bearbeiten"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Anwenden"
 
 
 msgctxt "Operator"

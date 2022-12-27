@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -18671,10 +18671,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "ჩართე სიმეტრია Z ღერძში"
 
 
-msgid "Use Sculpt Selection"
-msgstr "ძერწვის მონიშნვის გამოყენება"
-
-
 msgid "Freestyle Line Style"
 msgstr "თავისუფალი სტილის ხაზი"
 
@@ -24601,8 +24597,8 @@ msgid "Mix Factor"
 msgstr "შეზავების ფაქტორი"
 
 
-msgid "Edit"
-msgstr "რედაქტირება"
+msgid "Asset"
+msgstr "აქტივი"
 
 
 msgctxt "MovieClip"
@@ -24669,6 +24665,10 @@ msgstr "მონიშნე მიბმული"
 msgctxt "Operator"
 msgid "Add"
 msgstr "დამატება"
+
+
+msgid "Edit"
+msgstr "რედაქტირება"
 
 
 msgid "Text"
@@ -24870,10 +24870,6 @@ msgstr "ბმულით დააკავშირე/გადაიტა�
 
 msgid "Make Single User"
 msgstr "გახადე ცალმომხმარებლიანი"
-
-
-msgid "Asset"
-msgstr "აქტივი"
 
 
 msgid "Object Context Menu"
@@ -32767,10 +32763,6 @@ msgid "View Object Types"
 msgstr "მაჩვენე ობიექტების ტიპები"
 
 
-msgid "Pose Library"
-msgstr "პოზების ბიბლიოთეკა"
-
-
 msgid "Bendy Bones"
 msgstr "დრეკადი ძვლები"
 
@@ -33327,6 +33319,10 @@ msgstr "ტექსტურის ხატვის კონტექსტ�
 
 msgid "Weights Context Menu"
 msgstr "წონების კონტექსტური მენიუ"
+
+
+msgid "Pose Library"
+msgstr "პოზების ბიბლიოთეკა"
 
 
 msgid "3D-Print"
@@ -36345,11 +36341,6 @@ msgstr "შედეგი"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "გამოიყენე"
-
-
-msgctxt "Operator"
 msgid "Load"
 msgstr "ჩატვირთე"
 
@@ -39332,6 +39323,11 @@ msgstr "მიჯრის აცდენა"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "სწრაფი დამუშავება"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "გამოიყენე"
 
 
 msgid "Editing Type"

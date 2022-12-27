@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -9269,10 +9269,6 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Edit"
-msgstr "Уреди"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Исечак"
@@ -9345,6 +9341,10 @@ msgstr "Додај"
 
 msgid "Vertex Group Specials"
 msgstr "Специјална група темена"
+
+
+msgid "Edit"
+msgstr "Уреди"
 
 
 msgid "Converter"
@@ -20922,10 +20922,6 @@ msgid "Restrict"
 msgstr "Ограничи"
 
 
-msgid "Pose Library"
-msgstr "Збирка поза"
-
-
 msgid "Bone Constraints"
 msgstr "Ограничења костију"
 
@@ -21207,6 +21203,10 @@ msgstr "Боје прелаза"
 
 msgid "Motion Tracking"
 msgstr "Праћење покрета"
+
+
+msgid "Pose Library"
+msgstr "Збирка поза"
 
 
 msgctxt "Operator"
@@ -25082,11 +25082,6 @@ msgid "Export"
 msgstr "Извоз"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Примени"
-
-
 msgid "    RNA Path: bpy.types."
 msgstr "    РНК путања: bpy.types."
 
@@ -25207,13 +25202,13 @@ msgid "After"
 msgstr "После"
 
 
-msgid "+ Non-Grouped Keyframes"
-msgstr "+ Негруписани кључни кадрови"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Израчунај"
+
+
+msgid "+ Non-Grouped Keyframes"
+msgstr "+ Негруписани кључни кадрови"
 
 
 msgctxt "Operator"
@@ -26507,6 +26502,11 @@ msgstr "Вишеструко бојење"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Брза измена"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Примени"
 
 
 msgctxt "Operator"
