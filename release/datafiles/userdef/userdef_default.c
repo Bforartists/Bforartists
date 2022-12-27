@@ -14,6 +14,8 @@
 
 #include "BKE_blender_version.h"
 
+#include "GPU_platform.h"
+
 #include "BLO_readfile.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
@@ -104,6 +106,7 @@ const UserDef U_default = {
     .gp_euclideandist = 2,
     .gp_eraser = 25,
     .gp_settings = 0,
+    .gpu_backend = GPU_BACKEND_OPENGL,
 
     /** Initialized by: #BKE_studiolight_default. */
     .light_param = {{0}},

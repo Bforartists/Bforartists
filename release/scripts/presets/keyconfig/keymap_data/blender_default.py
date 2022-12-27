@@ -5049,20 +5049,31 @@ def km_sculpt(params):
          {"properties": [("mode", 'SMOOTH')]}),
         # Expand
         ("sculpt.expand", {"type": 'A', "value": 'PRESS', "shift": True},
-         {"properties": [("target", "MASK"), ("falloff_type", "GEODESIC"), ("invert", True)]}),
+         {"properties": [
+            ("target", "MASK"),
+            ("falloff_type", "GEODESIC"),
+            ("invert", True),
+            ("use_auto_mask", True),
+            ("use_mask_preserve" , True)]}),
         ("sculpt.expand", {"type": 'A', "value": 'PRESS', "shift": True, "alt": True},
-         {"properties": [("target", "MASK"), ("falloff_type", "NORMALS"), ("invert", False)]}),
+         {"properties": [
+            ("target", "MASK"),
+            ("falloff_type", "NORMALS"),
+            ("invert", False),
+            ("use_mask_preserve" , True)]}),
         ("sculpt.expand", {"type": 'W', "value": 'PRESS', "shift": True},
          {"properties": [
              ("target", "FACE_SETS"),
              ("falloff_type", "GEODESIC"),
              ("invert", False),
+             ("use_mask_preserve" , False),
              ("use_modify_active", False)]}),
         ("sculpt.expand", {"type": 'W', "value": 'PRESS', "shift": True, "alt": True},
          {"properties": [
              ("target", "FACE_SETS"),
              ("falloff_type", "BOUNDARY_FACE_SET"),
              ("invert", False),
+             ("use_mask_preserve" , False),
              ("use_modify_active", True),
          ]}),
         # Partial Visibility Show/hide
@@ -5621,8 +5632,6 @@ def km_sculpt_curves(params):
          {"properties": [("mode", 'SMOOTH')]}),
         ("curves.set_selection_domain", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("domain", 'POINT')]}),
         ("curves.set_selection_domain", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("domain", 'CURVE')]}),
-        ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
-        ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
         *_template_paint_radial_control("curves_sculpt"),
         *_template_items_select_actions(params, "sculpt_curves.select_all"),
         ("sculpt_curves.min_distance_edit", {"type": 'R', "value": 'PRESS', "shift": True}, {}),
