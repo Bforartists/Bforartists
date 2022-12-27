@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -29132,8 +29132,8 @@ msgid "Material slot name"
 msgstr "Имя слота материала"
 
 
-msgid "Edit"
-msgstr "Правка"
+msgid "Asset"
+msgstr "Ассет"
 
 
 msgctxt "MovieClip"
@@ -29304,6 +29304,10 @@ msgstr "Контекстное меню канала НЛА"
 
 msgid "NLA Context Menu"
 msgstr "Контекстное меню НЛА"
+
+
+msgid "Edit"
+msgstr "Правка"
 
 
 msgid "Converter"
@@ -29609,10 +29613,6 @@ msgstr "Зонд освещения"
 
 msgid "Make Single User"
 msgstr "Эксклюзивное использование"
-
-
-msgid "Asset"
-msgstr "Ассет"
 
 
 msgid "Object Context Menu"
@@ -33629,10 +33629,6 @@ msgstr "Генерировать взвешенные нормали по пло
 
 msgid "Generate corner angle weighted normals"
 msgstr "Генерировать взвешенные нормали по остроте углов"
-
-
-msgid "Face Area And Angle"
-msgstr "Площадь граней и углы"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -52283,14 +52279,6 @@ msgid "Clear Object Paths"
 msgstr "Очистить пути объектов"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Удалить кэши линий движения у всех объектов (зажмите Shift только для выделенных объектов)"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Очистить линии движения только с выделенных объектов"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Обновить пути объектов"
@@ -55190,14 +55178,6 @@ msgstr "Точка на костях, используемая при вычис
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Очистить пути костей"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Очистить кэши путей для всех костей; зажмите Shift только для выделенных костей"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Очистить пути только для выделенных костей"
 
 
 msgctxt "Operator"
@@ -63134,14 +63114,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Количество копирований штрихов по поверхности"
 
 
-msgid "Show Mask"
-msgstr "Показать маску"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Показать маску как наложение на объекте"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Источник и назначение для оператора симметризации"
 
@@ -63208,10 +63180,6 @@ msgstr "Предустановки сэмплирования"
 
 msgid "View Object Types"
 msgstr "Показать типы объектов"
-
-
-msgid "Pose Library"
-msgstr "Библиотека поз"
 
 
 msgid "Bone Constraints"
@@ -63417,10 +63385,6 @@ msgstr "Каскадные теневые карты"
 
 msgid "Contact Shadows"
 msgstr "Контактные тени"
-
-
-msgid "Area Shape"
-msgstr "Форма пространства"
 
 
 msgid "Composition Guides"
@@ -64299,6 +64263,10 @@ msgstr "Контекстное меню рисования текстур"
 
 msgid "Weights Context Menu"
 msgstr "Контекстное меню рисования весов"
+
+
+msgid "Pose Library"
+msgstr "Библиотека поз"
 
 
 msgid "3D-Print"
@@ -79906,11 +79874,6 @@ msgid "Result"
 msgstr "Результат"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Применить"
-
-
 msgid "Demo Mode:"
 msgstr "Режим демонстрации:"
 
@@ -80244,17 +80207,17 @@ msgid "Nothing to show yet..."
 msgstr "Пока нечего показать…"
 
 
+msgctxt "Operator"
+msgid "Calculate..."
+msgstr "Рассчитать…"
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ Ключевые кадры без группы"
 
 
 msgid "Frame Range Start"
 msgstr "Начало диапазона кадров"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Рассчитать…"
 
 
 msgctxt "Operator"
@@ -85035,6 +84998,11 @@ msgstr "Мультирисование"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Быстрая правка"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Применить"
 
 
 msgctxt "Operator"

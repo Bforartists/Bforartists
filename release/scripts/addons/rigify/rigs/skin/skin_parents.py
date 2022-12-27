@@ -228,7 +228,7 @@ class ControlBoneParentMix(ControlBoneParentImplBase):
 class ControlBoneParentLayer(ControlBoneParentImplBase):
     """Base class for parent generators that build on top of another mechanism."""
 
-    def __init__(self, rig: 'BaseSkinRig', node: 'ControlBoneNode', parent: ControlBoneParentBase):
+    def __init__(self, rig: 'BaseSkinRig', node: 'BaseSkinNode', parent: ControlBoneParentBase):
         super().__init__(rig, node)
         self.parent = parent
 
@@ -284,12 +284,12 @@ class ControlBoneParentOffset(ControlBoneParentLayer):
     mch_bones: list[str]
 
     @classmethod
-    def wrap(cls, owner: 'BaseSkinRig', parent: ControlBoneParentBase, node: 'ControlBoneNode',
+    def wrap(cls, owner: 'BaseSkinRig', parent: ControlBoneParentBase, node: 'BaseSkinNode',
              *constructor_args):
         # noinspection PyArgumentList
         return cls(owner, node, parent, *constructor_args)
 
-    def __init__(self, rig: 'BaseSkinRig', node: 'ControlBoneNode', parent: ControlBoneParentBase):
+    def __init__(self, rig: 'BaseSkinRig', node: 'BaseSkinNode', parent: ControlBoneParentBase):
         super().__init__(rig, node, parent)
         self.copy_local = {}
         self.add_local = {}

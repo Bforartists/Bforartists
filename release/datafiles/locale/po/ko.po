@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -26441,8 +26441,8 @@ msgid "Material slot name"
 msgstr "매테리얼 슬롯 이름"
 
 
-msgid "Edit"
-msgstr "편집"
+msgid "Asset"
+msgstr "에셋"
 
 
 msgctxt "MovieClip"
@@ -26613,6 +26613,10 @@ msgstr "NLA 채널 컨텍스트 메뉴"
 
 msgid "NLA Context Menu"
 msgstr "NLA 컨텍스트 메뉴"
+
+
+msgid "Edit"
+msgstr "편집"
 
 
 msgid "Converter"
@@ -26922,10 +26926,6 @@ msgstr "라이트 프로브"
 
 msgid "Make Single User"
 msgstr "싱글 유저를 만들기"
-
-
-msgid "Asset"
-msgstr "에셋"
 
 
 msgid "Object Context Menu"
@@ -31090,10 +31090,6 @@ msgstr "페이스 영역으로 웨이트된 노멀을 생성"
 
 msgid "Generate corner angle weighted normals"
 msgstr "코너 각도로 웨이트된 노멀을 생성"
-
-
-msgid "Face Area And Angle"
-msgstr "페이스 영역 및 각도"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -49936,14 +49932,6 @@ msgid "Clear Object Paths"
 msgstr "오브젝트 경로를 지우기"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "모든 오브젝트에 대한 경로 캐시를 지우기, 선택된 본에 대해서 만은 Shift 키를 누르기"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "선택된 오브젝트에서 경로만 지우기"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "오브젝트 경로를 업데이트"
@@ -52847,14 +52835,6 @@ msgstr "경로를 계산할 때 본에서 어느 포인트를 사용할지 지�
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "본 경로를 지우기"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "모든 본에 대한 경로 캐시를 지우기, 선택된 본에 대해서 만은 Shift 키를 누르기"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "선택된 본에서 경로만 지우기"
 
 
 msgctxt "Operator"
@@ -60812,14 +60792,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "표면 맞은편에 스트로크를 복사하는 횟수"
 
 
-msgid "Show Mask"
-msgstr "마스크를 표시"
-
-
-msgid "Show mask as overlay on object"
-msgstr "오브젝트에 오버레이로 마스크를 표시"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "대칭적 작업자에 대한 소스 및 대상"
 
@@ -60886,10 +60858,6 @@ msgstr "샘플링 프리셋"
 
 msgid "View Object Types"
 msgstr "오브젝트 유형을 보기"
-
-
-msgid "Pose Library"
-msgstr "포즈 라이브러리"
 
 
 msgid "Bone Constraints"
@@ -61095,10 +61063,6 @@ msgstr "계단식 섀도우 맵"
 
 msgid "Contact Shadows"
 msgstr "접촉 섀도우"
-
-
-msgid "Area Shape"
-msgstr "영역 셰이프"
 
 
 msgid "Composition Guides"
@@ -61987,6 +61951,10 @@ msgstr "텍스처 페인트 컨텍스트 메뉴"
 
 msgid "Weights Context Menu"
 msgstr "웨이트 컨텍스트 메뉴"
+
+
+msgid "Pose Library"
+msgstr "포즈 라이브러리"
 
 
 msgid "3D-Print"
@@ -77499,11 +77467,6 @@ msgid "Result"
 msgstr "결과"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "적용"
-
-
 msgid "Demo Mode:"
 msgstr "데모 모드:"
 
@@ -77750,17 +77713,17 @@ msgid "Nothing to show yet..."
 msgstr "아직 표시할 항목이 없음..."
 
 
+msgctxt "Operator"
+msgid "Calculate..."
+msgstr "계산..."
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ 그룹 되지 않은 키 프레임"
 
 
 msgid "Frame Range Start"
 msgstr "프레임 범위 시작"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "계산..."
 
 
 msgctxt "Operator"
@@ -82492,6 +82455,11 @@ msgstr "다중 페인트"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "빠르게 편집"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "적용"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -21934,10 +21934,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "Habilita la simetría en el eje Z"
 
 
-msgid "Use Sculpt Selection"
-msgstr "Usar selección de esculpido"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyle - Estilo de línea"
 
@@ -33500,12 +33496,12 @@ msgid "Editor menu containing buttons"
 msgstr "Menú del editor que contiene botones"
 
 
+msgid "Asset"
+msgstr "Recurso"
+
+
 msgid "Assets Context Menu"
 msgstr "Recursos - menú contextual"
-
-
-msgid "Edit"
-msgstr "Editar"
 
 
 msgctxt "MovieClip"
@@ -33730,6 +33726,10 @@ msgstr "Canal de ANL - menú contextual"
 
 msgid "NLA Context Menu"
 msgstr "ANL - menú contextual"
+
+
+msgid "Edit"
+msgstr "Editar"
 
 
 msgid "Converter"
@@ -34119,10 +34119,6 @@ msgstr "Vincular / Transferir datos"
 
 msgid "Make Single User"
 msgstr "Hacer de único usuario"
-
-
-msgid "Asset"
-msgstr "Recurso"
 
 
 msgid "Object Context Menu"
@@ -39215,10 +39211,6 @@ msgstr "Generar normales influenciadas según el área de las caras"
 
 msgid "Generate corner angle weighted normals"
 msgstr "Generar normales influenciadas según el ángulo de las esquinas"
-
-
-msgid "Face Area And Angle"
-msgstr "Área y esquinas de caras"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -51841,15 +51833,6 @@ msgstr "Convertir curvas a sistema de partículas"
 
 msgid "Add a new or update an existing hair particle system on the surface object"
 msgstr "Agrega un sistema de partículas de pelo (o actualiza uno existente) en el objeto de superficie"
-
-
-msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "Deshabilitar selección"
-
-
-msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "Deshabilita la visualización de la influencia de la selección en el modo Esculpido"
 
 
 msgctxt "Operator"
@@ -65944,14 +65927,6 @@ msgid "Clear Object Paths"
 msgstr "Eliminar trayectoria objetos"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Permite eliminar los cachés de trayectoria de todos los objetos, mantener presionada la tecla Mayúsculas para hacerlo sólo con los seleccionados"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Sólo eliminar las trayectorias de los objetos seleccionados"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Actualizar trayectoria de los objetos"
@@ -69282,11 +69257,6 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "Crea un recurso de pose para cada marcador de pose en la acción actual"
 
 
-msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "Copiar pose como recurso"
-
-
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "Crea un nuevo recurso de pose en el portapapeles, para ser pegado en el Explorador de recursos"
 
@@ -69306,11 +69276,6 @@ msgstr "Activar nueva acción"
 
 msgid "Pose Name"
 msgstr "Nombre de pose"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "Pegar como nuevo recurso"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -69640,14 +69605,6 @@ msgstr "Que punto de los huesos usar al calcular las trayectorias"
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Eliminar trayectoria huesos"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Permite eliminar los cachés de trayectoria de todos los huesos, mantener presionada la tecla Mayúsculas para hacerlo sólo con los seleccionados"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Sólo eliminar las trayectorias de los huesos seleccionados"
 
 
 msgctxt "Operator"
@@ -81079,22 +81036,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Cantidad de veces a copiar los trazos sobre la superficie"
 
 
-msgid "Show Face Sets"
-msgstr "Mostrar conjuntos de caras"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "Muestra los conjuntos de caras sobreimpresos en el objeto"
-
-
-msgid "Show Mask"
-msgstr "Mostrar máscara"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Muestra la máscara superpuesta al objeto"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Origen y destino para el operador Simetrizar"
 
@@ -81205,10 +81146,6 @@ msgstr "Ver tipos de objeto"
 
 msgid "Asset Metadata"
 msgstr "Metadatos de recurso"
-
-
-msgid "Pose Library"
-msgstr "Biblioteca de poses"
 
 
 msgid "Chain Scaling"
@@ -81454,10 +81391,6 @@ msgstr "Mapa de sombras en cascada"
 
 msgid "Contact Shadows"
 msgstr "Sombras de contacto"
-
-
-msgid "Area Shape"
-msgstr "Forma del área"
 
 
 msgid "Composition Guides"
@@ -82497,6 +82430,10 @@ msgstr "Textura - menú contextual"
 
 msgid "Weights Context Menu"
 msgstr "Pintar influencias - menú contextual"
+
+
+msgid "Pose Library"
+msgstr "Biblioteca de poses"
 
 
 msgid "3D-Print"
@@ -85778,6 +85715,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limita el tamaño de las texturas para ahorrar memoria gráfica"
 
 
+msgid "Metal"
+msgstr "Metal"
+
+
 msgid "Image Display Method"
 msgstr "Visualización de imágenes"
 
@@ -86956,10 +86897,6 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
-
-
-msgid "Metal"
-msgstr "Metal"
 
 
 msgid "oneAPI"
@@ -104840,11 +104777,6 @@ msgstr "Seleccionar objetos para distribuir y un objeto destino"
 
 
 msgctxt "Operator"
-msgid "Apply Pose"
-msgstr "Aplicar pose"
-
-
-msgctxt "Operator"
 msgid "Blend Pose"
 msgstr "Fundir pose"
 
@@ -104860,17 +104792,8 @@ msgstr "Deseleccionar huesos de pose"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Aplicar"
-
-
-msgctxt "Operator"
-msgid "Interactive Blend"
-msgstr "Fundido interactivo"
-
-
-msgid "Activate & Edit"
-msgstr "Activar y editar"
+msgid "Apply Pose"
+msgstr "Aplicar pose"
 
 
 msgid "Action %s marked Fake User to prevent loss"
@@ -105975,6 +105898,11 @@ msgid "Calculation Range"
 msgstr "Rango de cálculo"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Actualizar todas las trayectorias"
+
+
 msgid "Frame Numbers"
 msgstr "Nº de fotogramas"
 
@@ -105995,13 +105923,18 @@ msgid "Cached Range"
 msgstr "Rango en caché"
 
 
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "Actualizar trayectoria"
+
+
 msgid "Nothing to show yet..."
 msgstr "Nada que mostrar aún..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Actualizar todas las trayectorias"
+msgid "Calculate..."
+msgstr "Calcular..."
 
 
 msgid "+ Non-Grouped Keyframes"
@@ -106010,16 +105943,6 @@ msgstr "+ Claves no agrupados"
 
 msgid "Frame Range Start"
 msgstr "Rango  Inicio"
-
-
-msgctxt "Operator"
-msgid "Update Path"
-msgstr "Actualizar trayectoria"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Calcular..."
 
 
 msgid "Collection Mask"
@@ -112637,6 +112560,11 @@ msgstr "Pintura múltiple"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Edición rápida"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Aplicar"
 
 
 msgctxt "Operator"

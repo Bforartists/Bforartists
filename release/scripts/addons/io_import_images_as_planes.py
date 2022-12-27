@@ -1008,8 +1008,6 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         if img_spec.image.source == 'SEQUENCE':
             image_user.use_auto_refresh = True
 
-        texture.extension = 'CLIP'  # Default of "Repeat" can cause artifacts
-
     def apply_material_options(self, material, slot):
         shader = self.shader
 

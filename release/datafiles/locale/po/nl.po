@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-05 20:05+0100\n"
@@ -2711,10 +2711,6 @@ msgid "Calculate Holes"
 msgstr "Bereken Gaten"
 
 
-msgid "Edit"
-msgstr "Bewerken"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Clip"
@@ -2747,6 +2743,10 @@ msgstr "Selecteer Aaneengesloten"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Toevoegen"
+
+
+msgid "Edit"
+msgstr "Bewerken"
 
 
 msgid "Converter"
@@ -6451,10 +6451,6 @@ msgid "Palette Color"
 msgstr "Palet Kleur"
 
 
-msgid "Pose Library"
-msgstr "Poses Bibliotheek"
-
-
 msgid "Custom Shape"
 msgstr "Aangepaste Vorm"
 
@@ -6603,6 +6599,10 @@ msgstr "Blenderbestanden"
 
 msgid "Auto Save"
 msgstr "Auto Opslaan"
+
+
+msgid "Pose Library"
+msgstr "Poses Bibliotheek"
 
 
 msgctxt "Operator"
@@ -7480,11 +7480,6 @@ msgstr "Exporteren"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Toevoegen"
-
-
-msgctxt "Operator"
 msgid "Load"
 msgstr "Laden"
 
@@ -7542,13 +7537,13 @@ msgid "After"
 msgstr "Na"
 
 
-msgid "Frame Range Start"
-msgstr "Framebereik Start"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Berekenen..."
+
+
+msgid "Frame Range Start"
+msgstr "Framebereik Start"
 
 
 msgctxt "Operator"
@@ -8900,6 +8895,11 @@ msgstr "Ouders"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Snel Bewerken"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Toevoegen"
 
 
 msgid "User Library"

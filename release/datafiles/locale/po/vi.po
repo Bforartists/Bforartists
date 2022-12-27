@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-08-19 12:33+0700\n"
@@ -21665,10 +21665,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "Bật đối xứng trục Z"
 
 
-msgid "Use Sculpt Selection"
-msgstr "Dùng Sự Lựa Chọn Khắc"
-
-
 msgid "Freestyle Line Style"
 msgstr "Phong Cách Nét Vẽ Tự Do"
 
@@ -33136,12 +33132,12 @@ msgid "Editor menu containing buttons"
 msgstr "Danh bạ biên tập đang chứa nút"
 
 
+msgid "Asset"
+msgstr "Tích Sản"
+
+
 msgid "Assets Context Menu"
 msgstr "Danh Bạ Bối Cảnh Tích Sản"
-
-
-msgid "Edit"
-msgstr "Biên Tập"
 
 
 msgctxt "MovieClip"
@@ -33356,6 +33352,10 @@ msgstr "Danh Bạ Bối Cảnh Kênh NLA"
 
 msgid "NLA Context Menu"
 msgstr "Danh Bạ Bối Cảnh NLA"
+
+
+msgid "Edit"
+msgstr "Biên Tập"
 
 
 msgid "Converter"
@@ -33737,10 +33737,6 @@ msgstr "Liên Kết/Truyền Dữ Liệu"
 
 msgid "Make Single User"
 msgstr "Thành Một Người Dùng"
-
-
-msgid "Asset"
-msgstr "Tích Sản"
 
 
 msgid "Object Context Menu"
@@ -38813,10 +38809,6 @@ msgstr "Chế tạo pháp tuyến có quyền lượng diện tích mặt "
 
 msgid "Generate corner angle weighted normals"
 msgstr "Chế tạo pháp tuyến góc của góc có quyền lượng"
-
-
-msgid "Face Area And Angle"
-msgstr "Diện Tích Và Góc Mặt"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -51140,15 +51132,6 @@ msgstr "Biến Đổi Đường Cong sang Hệ Thống Hạt"
 
 msgid "Add a new or update an existing hair particle system on the surface object"
 msgstr "Thêm hay nâng cấp một hệ thống hạt tóc đang tồn tại trên bề mặt vật thể"
-
-
-msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "Tắt Sự Lựa Chọn"
-
-
-msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "Tắt vẽ sự ảnh hưởng của sự lựa chọn trong chế độ khắc"
 
 
 msgctxt "Operator"
@@ -64798,14 +64781,6 @@ msgid "Clear Object Paths"
 msgstr "Xóa Đường Đi Vật Thể"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Xóa đệm đường đi cho hết vật thể, bấm phím Shift chỉ xóa cho vật thể được chọn"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Chỉ xóa đường đi của các vật thể được chọn"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Nâng Cấp Đường Đi Vật Thể"
@@ -68136,11 +68111,6 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "Chế tạo một tích sản dạng đứng cho mỗi cái dấu trong hành động hiện tại"
 
 
-msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "Chép Dạng Đứng Cho Làm Tích Sản"
-
-
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "Chế tạo một tích sản dạng đứng mới trên bảng dán, để dán trong một Trình Duyệt Tích Sản"
 
@@ -68160,11 +68130,6 @@ msgstr "Kích Động Hoạt Động Mới"
 
 msgid "Pose Name"
 msgstr "Tên Dạng Đứng"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "Dàn Làm Tích Sản Mới"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -68494,14 +68459,6 @@ msgstr "Dùng điểm nào trên xương khi tính đường đi"
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Xóa Đường Dẫn Xương"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Xóa đệm chứa đường đi cho hết xương, bấm phím Shift chỉ xóa cho các xương được chọn"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Chỉ xóa đường đi của các xương được chọn"
 
 
 msgctxt "Operator"
@@ -79754,22 +79711,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Số lần chép nét qua bề mặt"
 
 
-msgid "Show Face Sets"
-msgstr "Hiện Tập Hợp Mặt"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "Hiện Tập Hợp Mặt bằng vật thể che trên"
-
-
-msgid "Show Mask"
-msgstr "Hiện Mặt Nạ"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Hiện mặt nạ như vật thể che"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Nguồn và đích cho thao tác đối xứng hóa"
 
@@ -79876,10 +79817,6 @@ msgstr "Loại Vật Thể Màn"
 
 msgid "Asset Metadata"
 msgstr "Dữ Liệu Tích Sản"
-
-
-msgid "Pose Library"
-msgstr "Thư Viện Dạng Đứng"
 
 
 msgid "Chain Scaling"
@@ -80121,10 +80058,6 @@ msgstr "Bản Đồ Bóng Tối Tầng Bậc"
 
 msgid "Contact Shadows"
 msgstr "Bóng Tối Đụng"
-
-
-msgid "Area Shape"
-msgstr "Hình Dạng Diện Tích"
 
 
 msgid "Composition Guides"
@@ -81155,6 +81088,10 @@ msgstr "Danh Bạ Bối Cảnh Sơn Chất Liệu"
 
 msgid "Weights Context Menu"
 msgstr "Danh Bạ Bối Cảnh Quyền Lượng"
+
+
+msgid "Pose Library"
+msgstr "Thư Viện Dạng Đứng"
 
 
 msgid "3D-Print"
@@ -84400,6 +84337,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Hạn chế kích cỡ chất liệu cho tiết kiệm bộ nhớ"
 
 
+msgid "Metal"
+msgstr "Metal"
+
+
 msgid "Image Display Method"
 msgstr "Phương Pháp Hiển Thị Ảnh"
 
@@ -85546,10 +85487,6 @@ msgstr "Optix"
 
 msgid "HIP"
 msgstr "HIP"
-
-
-msgid "Metal"
-msgstr "Metal"
 
 
 msgid "oneAPI"
@@ -102639,11 +102576,6 @@ msgstr "Chọn các vật thể để rải ra và một vật thể mục đíc
 
 
 msgctxt "Operator"
-msgid "Apply Pose"
-msgstr "Áp Dụng Dạng Đứng"
-
-
-msgctxt "Operator"
 msgid "Blend Pose"
 msgstr "Pha Trộn Dạng Đứng"
 
@@ -102659,17 +102591,8 @@ msgstr "Thả Xương Dạng Đứng"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Áp Dụng"
-
-
-msgctxt "Operator"
-msgid "Interactive Blend"
-msgstr "Pha Trộn Kiểu Tương Tác"
-
-
-msgid "Activate & Edit"
-msgstr "Kích Động & Biên Tập"
+msgid "Apply Pose"
+msgstr "Áp Dụng Dạng Đứng"
 
 
 msgid "Action %s marked Fake User to prevent loss"
@@ -103690,6 +103613,11 @@ msgid "Calculation Range"
 msgstr "Phạm Vi Tính Toán"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Nâng Cấp Hết Đường Dẫn"
+
+
 msgid "Frame Numbers"
 msgstr "Số Bức Ảnh"
 
@@ -103710,13 +103638,18 @@ msgid "Cached Range"
 msgstr "Phạm Vi Được Chứa"
 
 
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "Nâng Cấp Đường Dẫn"
+
+
 msgid "Nothing to show yet..."
 msgstr "Không có gì để hiện..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Nâng Cấp Hết Đường Dẫn"
+msgid "Calculate..."
+msgstr "Tính..."
 
 
 msgid "+ Non-Grouped Keyframes"
@@ -103725,16 +103658,6 @@ msgstr "+ Mẫu Hóa Chưa-Nhóm Lại"
 
 msgid "Frame Range Start"
 msgstr "Đầu Phạm Vi Bức Ảnh"
-
-
-msgctxt "Operator"
-msgid "Update Path"
-msgstr "Nâng Cấp Đường Dẫn"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Tính..."
 
 
 msgid "Collection Mask"
@@ -110194,6 +110117,11 @@ msgstr "Đa-Sơn"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Biên Tập Lẹ"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Áp Dụng"
 
 
 msgctxt "Operator"
