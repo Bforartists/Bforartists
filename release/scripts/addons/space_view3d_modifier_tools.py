@@ -37,12 +37,18 @@ class ApplyAllModifiers(Operator):
             contx = bpy.context.copy()
             contx['object'] = obj
 
-            for mod in obj.modifiers[:]:
+            modifiers = modifier_type(obj)
+
+            for mod in modifiers[:]:
                 contx['modifier'] = mod
                 is_mod = True
                 try:
                     bpy.ops.object.modifier_apply(
                                         contx,
+                                        modifier=contx['modifier'].name
+                                        )
+
+                    bpy.ops.object.gpencil_modifier_apply(
                                         modifier=contx['modifier'].name
                                         )
                 except:
@@ -90,10 +96,11 @@ class DeleteAllModifiers(Operator):
 
         for obj in context.selected_objects:
             is_select = True
-            modifiers = obj.modifiers[:]
-            for modi in modifiers:
+            modifiers = modifier_type(obj)
+
+            for modi in modifiers[:]:
                 is_mod = True
-                obj.modifiers.remove(modi)
+                modifiers.remove(modi)
 
         if is_select:
             if is_mod:
@@ -127,12 +134,16 @@ class ToggleApplyModifiersView(Operator):
         skipped = set()             # collect names
         count_modifiers = 0         # check for message_a (all skipped)
 
+        modifiers = modifier_type(context.active_object)
+
         # check if the active object has only one non exposed modifier as the logic will fail
-        if len(context.active_object.modifiers) == 1 and \
-                context.active_object.modifiers[0].type in skip_type:
+        if len(modifiers) == 1 and \
+                modifiers[0].type in skip_type:
 
             for obj in context.selected_objects:
-                for mod in obj.modifiers:
+                mod_sel = modifier_type(obj)
+
+                for mod in mod_sel:
                     if mod.type in skip_type:
                         skipped.add(mod.name)
                         continue
@@ -141,7 +152,7 @@ class ToggleApplyModifiersView(Operator):
                         is_apply = False
                         break
         else:
-            for mod in context.active_object.modifiers:
+            for mod in modifiers:
                 if mod.type in skip_type:
                     skipped.add(mod.name)
                     continue
@@ -150,9 +161,9 @@ class ToggleApplyModifiersView(Operator):
                     is_apply = False
                     break
 
-        count_modifiers = len(context.active_object.modifiers)
+        count_modifiers = len(modifiers)
         # active object - no selection
-        for mod in context.active_object.modifiers:
+        for mod in modifiers:
             if mod.type in skip_type:
                 count_modifiers -= 1
                 skipped.add(mod.name)
@@ -161,9 +172,12 @@ class ToggleApplyModifiersView(Operator):
             mod.show_viewport = is_apply
 
         for obj in context.selected_objects:
-            count_modifiers += len(obj.modifiers)
 
-            for mod in obj.modifiers:
+            modifiers = modifier_type(obj)
+
+            count_modifiers += len(modifiers)
+
+            for mod in modifiers:
                 if mod.type in skip_type:
                     skipped.add(mod.name)
                     count_modifiers -= 1
@@ -194,9 +208,11 @@ class ToggleAllShowExpanded(Operator):
 
     def execute(self, context):
         obj = context.active_object
-        if (len(obj.modifiers)):
+        modifiers = modifier_type(obj)
+
+        if (len(modifiers)):
             vs = 0
-            for mod in obj.modifiers:
+            for mod in modifiers:
                 if (mod.show_expanded):
                     vs += 1
                 else:
@@ -204,7 +220,7 @@ class ToggleAllShowExpanded(Operator):
             is_close = False
             if (0 < vs):
                 is_close = True
-            for mod in obj.modifiers:
+            for mod in modifiers:
                 mod.show_expanded = not is_close
         else:
             self.report({'WARNING'}, "Not a single modifier to Expand/Collapse")
@@ -218,7 +234,7 @@ class ToggleAllShowExpanded(Operator):
 # Menus #
 def menu(self, context):
     if (context.active_object):
-        if (len(context.active_object.modifiers)):
+        if (len(context.active_object.modifiers) or len(context.active_object.grease_pencil_modifiers)):
             col = self.layout.column(align=True)
 
             row = col.row(align=True)
@@ -238,12 +254,17 @@ def menu(self, context):
 
 def menu_func(self, context):
     if (context.active_object):
-        if (len(context.active_object.modifiers)):
+        if (len(context.active_object.modifiers) or len(context.active_object.grease_pencil_modifiers)):
             layout = self.layout
             layout.separator()
             layout.operator(ApplyAllModifiers.bl_idname,
                             icon='IMPORT',
                             text="Apply All Modifiers")
+
+def modifier_type(object):
+        if object.type == 'GPENCIL':
+            return object.grease_pencil_modifiers
+        return object.modifiers
 
 # Register
 classes = [
@@ -261,6 +282,8 @@ def register():
     # Add "Specials" menu to the "Modifiers" menu
     bpy.types.DATA_PT_modifiers.prepend(menu)
 
+    bpy.types.DATA_PT_gpencil_modifiers.prepend(menu)
+
     # Add apply operator to the Apply 3D View Menu
     bpy.types.VIEW3D_MT_object_apply.append(menu_func)
 
@@ -268,6 +291,8 @@ def register():
 def unregister():
     # Remove "Specials" menu from the "Modifiers" menu.
     bpy.types.DATA_PT_modifiers.remove(menu)
+
+    bpy.types.DATA_PT_gpencil_modifiers.remove(menu)
 
     # Remove apply operator to the Apply 3D View Menu
     bpy.types.VIEW3D_MT_object_apply.remove(menu_func)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6281,12 +6281,12 @@ msgid "ID Type"
 msgstr "Typ ID"
 
 
-msgid "Edit"
-msgstr "Edytuj"
-
-
 msgid "Key"
 msgstr "Klucz"
+
+
+msgid "Edit"
+msgstr "Edytuj"
 
 
 msgid "Distort"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-11-25 08:32+0100\n"
@@ -21936,10 +21936,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "Povoliť symetriu v osi Z"
 
 
-msgid "Use Sculpt Selection"
-msgstr "Použiť výber tvarovania"
-
-
 msgid "Freestyle Line Style"
 msgstr "Štýl čiary Voľného štýlu"
 
@@ -33502,12 +33498,12 @@ msgid "Editor menu containing buttons"
 msgstr "Ponuka editora obsahujúca tlačidlá"
 
 
+msgid "Asset"
+msgstr "Aktívum"
+
+
 msgid "Assets Context Menu"
 msgstr "Kontextová ponuka Aktíva"
-
-
-msgid "Edit"
-msgstr "Upraviť"
 
 
 msgctxt "MovieClip"
@@ -33732,6 +33728,10 @@ msgstr "Kontextová ponuka pre kanál NLA"
 
 msgid "NLA Context Menu"
 msgstr "Kontextová ponuka NLA"
+
+
+msgid "Edit"
+msgstr "Upraviť"
 
 
 msgid "Converter"
@@ -34122,10 +34122,6 @@ msgstr "Prepojiť/preniesť údaje"
 
 msgid "Make Single User"
 msgstr "Vytvoriť jedného užívateľa"
-
-
-msgid "Asset"
-msgstr "Aktívum"
 
 
 msgid "Object Context Menu"
@@ -39218,10 +39214,6 @@ msgstr "Vygeneruje váhu normálov oblasti plôšok"
 
 msgid "Generate corner angle weighted normals"
 msgstr "Vygeneruje váhu normálov rohového uhla"
-
-
-msgid "Face Area And Angle"
-msgstr "Oblasť plôšky a uhol"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -51844,15 +51836,6 @@ msgstr "Konvertovať krivky na systém častíc"
 
 msgid "Add a new or update an existing hair particle system on the surface object"
 msgstr "Pridáva nový alebo aktualizuje existujúci systém častíc vlasov na objekte povrchu"
-
-
-msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "Zakázať výber"
-
-
-msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "Zakáže kreslenie vplyvu výberu v režime tvarovania"
 
 
 msgctxt "Operator"
@@ -65947,14 +65930,6 @@ msgid "Clear Object Paths"
 msgstr "Vymazať dráhy objektov"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Vymaže zásobník dráh pre všetky objekty, pridržaním klávesy Shift len pre vybrané objekty"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Vymaže len dráhy vybraných objektov"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Aktualizovať dráhy objektov"
@@ -69285,11 +69260,6 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "Vytvorí aktíva pózy pre každú značku pózy v aktuálnej akcii"
 
 
-msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "Kopírovať pózu ako aktívum"
-
-
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "Vytvorí nové aktívum pózy v schránke, ktoré sa vloží do prehľadávača aktív"
 
@@ -69309,11 +69279,6 @@ msgstr "Aktivácia novej akcie"
 
 msgid "Pose Name"
 msgstr "Názov pózy"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "Prilepiť ako nové aktívum"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -69643,14 +69608,6 @@ msgstr "Bod na kosti sa použitý pri výpočte dráhy"
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Zmaže dráhy kostí"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Vymaže zásobníky ciest všetkých kostí, pridržaním klávesy SHIFT len pre vybrané kosti"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Vymaže dráhy len vybraných kostí"
 
 
 msgctxt "Operator"
@@ -81082,22 +81039,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Koľkokrát sú nakopírované ťahy naprieč povrchom"
 
 
-msgid "Show Face Sets"
-msgstr "Zobraziť nastavenie plôšok"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "Zobrazí nastavenie plôšok ako prekrytie na objekte"
-
-
-msgid "Show Mask"
-msgstr "Zobraziť masku"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Zobrazí masku ako navrstvenie objektu"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Zdroj a cieľ pre operátor symetrie"
 
@@ -81208,10 +81149,6 @@ msgstr "Typ zobrazenia objektu"
 
 msgid "Asset Metadata"
 msgstr "Metaúdaje aktív"
-
-
-msgid "Pose Library"
-msgstr "Knižnica póz"
 
 
 msgid "Chain Scaling"
@@ -81457,10 +81394,6 @@ msgstr "Mapy skokovitých tieňov"
 
 msgid "Contact Shadows"
 msgstr "Dotykové tiene"
-
-
-msgid "Area Shape"
-msgstr "Tvar oblasti"
 
 
 msgid "Composition Guides"
@@ -82500,6 +82433,10 @@ msgstr "Kontextová ponuka maľby textúry"
 
 msgid "Weights Context Menu"
 msgstr "Kontextová ponuka váh"
+
+
+msgid "Pose Library"
+msgstr "Knižnica póz"
 
 
 msgid "3D-Print"
@@ -85781,6 +85718,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limit veľkosti textúry na uloženie grafickej pamäte"
 
 
+msgid "Metal"
+msgstr "Kov"
+
+
 msgid "Image Display Method"
 msgstr "Metóda zobrazenia obrázka"
 
@@ -86955,10 +86896,6 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
-
-
-msgid "Metal"
-msgstr "Kov"
 
 
 msgid "oneAPI"
@@ -104839,11 +104776,6 @@ msgstr "Vyberie objekty na rozptyl a cieľový objekt"
 
 
 msgctxt "Operator"
-msgid "Apply Pose"
-msgstr "Aplikovať pózu"
-
-
-msgctxt "Operator"
 msgid "Blend Pose"
 msgstr "Zmiešať pózu"
 
@@ -104859,17 +104791,8 @@ msgstr "Zrušiť výber kostí pózy"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Použiť"
-
-
-msgctxt "Operator"
-msgid "Interactive Blend"
-msgstr "Interaktívne zmiešavanie"
-
-
-msgid "Activate & Edit"
-msgstr "Aktivácia a úprava"
+msgid "Apply Pose"
+msgstr "Aplikovať pózu"
 
 
 msgid "Action %s marked Fake User to prevent loss"
@@ -105974,6 +105897,11 @@ msgid "Calculation Range"
 msgstr "Rozsah výpočtu"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "Aktualizovať všetky cesty"
+
+
 msgid "Frame Numbers"
 msgstr "Čísla snímok"
 
@@ -105994,13 +105922,18 @@ msgid "Cached Range"
 msgstr "Rozsah zásobníka"
 
 
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "Aktualizovať dráhu"
+
+
 msgid "Nothing to show yet..."
 msgstr "Nie je nič na zobrazenie..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "Aktualizovať všetky cesty"
+msgid "Calculate..."
+msgstr "Vypočítať..."
 
 
 msgid "+ Non-Grouped Keyframes"
@@ -106009,16 +105942,6 @@ msgstr "+ nezoskupené kľúčové snímky"
 
 msgid "Frame Range Start"
 msgstr "Rozsah snímok Začiatok"
-
-
-msgctxt "Operator"
-msgid "Update Path"
-msgstr "Aktualizovať dráhu"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Vypočítať..."
 
 
 msgid "Collection Mask"
@@ -112636,6 +112559,11 @@ msgstr "Viacnásobné maľovanie"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Rýchle úpravy"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Použiť"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-01-21 16:08+0100\n"
@@ -18465,10 +18465,6 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
-msgid "Edit"
-msgstr "Modifica"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Filmato"
@@ -18561,6 +18557,10 @@ msgstr "Chiave Forma Speciali"
 
 msgid "Vertex Group Specials"
 msgstr "Gruppo Vertici Speciali"
+
+
+msgid "Edit"
+msgstr "Modifica"
 
 
 msgid "Converter"
@@ -34808,14 +34808,6 @@ msgid "Clear Object Paths"
 msgstr "Cancella Percorsi Oggetto"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Cancella le cache del percorso per tutti gli oggetti, premi Shift per farlo ai soli oggetti selezionati"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Cancella le cache del percorso solo per gli oggetti selezionati"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Aggiorna Percorsi Oggetto"
@@ -36986,14 +36978,6 @@ msgstr "Calcola il percorso per le ossa selezionate"
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Cancella Percorsi Osso"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Cancella le cache di percorso per tutte le ossa, premi Shift per le sole ossa selezionate"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Cancella percorso solo per le ossa selezionate"
 
 
 msgctxt "Operator"
@@ -42511,10 +42495,6 @@ msgid "Sampling Presets"
 msgstr "Preimpostazioni Campionatura"
 
 
-msgid "Pose Library"
-msgstr "Libreria Pose"
-
-
 msgid "Bone Constraints"
 msgstr "Vincoli Osso"
 
@@ -42666,10 +42646,6 @@ msgstr "Distanza Personalizzata"
 
 msgid "Contact Shadows"
 msgstr "Ombre di Contatto"
-
-
-msgid "Area Shape"
-msgstr "Forma Area"
 
 
 msgid "Composition Guides"
@@ -43217,6 +43193,10 @@ msgstr "Misurazione"
 
 msgid "Motion Tracking"
 msgstr "Tracciatura Movimento"
+
+
+msgid "Pose Library"
+msgstr "Libreria Pose"
 
 
 msgid "3D-Print"
@@ -52636,11 +52616,6 @@ msgid "Export"
 msgstr "Esporta"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Applica"
-
-
 msgid "Demo Mode:"
 msgstr "Modo Demo:"
 
@@ -52834,13 +52809,13 @@ msgid "Nothing to show yet..."
 msgstr "Nulla da mostrare ora..."
 
 
-msgid "+ Non-Grouped Keyframes"
-msgstr "+ Fotogrammi Chiave Non Raggruppati"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "Calcola..."
+
+
+msgid "+ Non-Grouped Keyframes"
+msgstr "+ Fotogrammi Chiave Non Raggruppati"
 
 
 msgctxt "Operator"
@@ -56042,6 +56017,11 @@ msgstr "Multi-Pittura"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Modifica Veloce"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Applica"
 
 
 msgctxt "Operator"

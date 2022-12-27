@@ -135,14 +135,21 @@ class Credits:
 
     def write(self, filepath,
               is_main_credits=True,
-              contrib_companies=()):
+              contrib_companies=(),
+              sort="name"):
 
         # patch_word = "patch", "patches"
         commit_word = "commit", "commits"
 
+        sorted_authors = {}
+        if sort == "commit":
+            sorted_authors = dict(sorted(self.users.items(), key=lambda item: item[1].commit_total))
+        else:
+            sorted_authors = dict(sorted(self.users.items()))
+
         with open(filepath, 'w', encoding="ascii", errors='xmlcharrefreplace') as file:
             file.write("<h3>Individual Contributors</h3>\n\n")
-            for author, cu in sorted(self.users.items()):
+            for author, cu in sorted_authors.items():
                 file.write("%s, %d %s %s<br />\n" %
                            (author,
                             cu.commit_total,
@@ -192,6 +199,13 @@ def argparse_create():
         help="Range to use, eg: 169c95b8..HEAD",
     )
 
+    parser.add_argument(
+        "--sort", dest="sort",
+        metavar='METHOD',
+        required=False,
+        help="Sort credits by 'name' (default) or 'commit'",
+    )
+
     return parser
 
 
@@ -233,11 +247,13 @@ def main():
     # commit_range = "blender-v2.81-release..blender-v2.82-release"
     # commit_range = "blender-v2.82-release"
     commit_range = args.range_sha1
+    sort = args.sort
     citer = GitCommitIter(args.source_dir, commit_range)
     credits.process((c for c in citer if is_credit_commit_valid(c)))
     credits.write("credits.html",
                   is_main_credits=True,
-                  contrib_companies=contrib_companies)
+                  contrib_companies=contrib_companies,
+                  sort=sort)
     print("Written: credits.html")
 
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -2063,10 +2063,6 @@ msgid "Mix Color"
 msgstr "ผสมสี"
 
 
-msgid "Edit"
-msgstr "แก้ไข"
-
-
 msgid "Pivot Point"
 msgstr "จุดหมุน"
 
@@ -2078,6 +2074,10 @@ msgstr "ยึดติด"
 msgctxt "Operator"
 msgid "Add"
 msgstr "เพิ่ม"
+
+
+msgid "Edit"
+msgstr "แก้ไข"
 
 
 msgid "Layout"
@@ -4110,11 +4110,6 @@ msgid "%s is not supported"
 msgstr "%s ยังไม่สนับสนุน"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "นำไปใช้"
-
-
 msgid "    RNA Path: bpy.types."
 msgstr "    ตำแหน่ง RNA: bpy.types."
 
@@ -5144,6 +5139,11 @@ msgstr "ต่อแผ่นผิว"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "ลบแผ่นผิว"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "นำไปใช้"
 
 
 msgctxt "Operator"
