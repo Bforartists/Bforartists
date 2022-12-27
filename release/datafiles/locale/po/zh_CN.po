@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -679,6 +679,14 @@ msgstr "场景帧范围"
 
 msgid "The entire Scene / Preview range"
 msgstr "整个场景/预览范围"
+
+
+msgid "Manual Range"
+msgstr "手动帧范围"
+
+
+msgid "Manually determined frame range"
+msgstr "手动确定帧范围"
 
 
 msgid "Show Frame Numbers"
@@ -1361,12 +1369,24 @@ msgid "Active Color Attribute"
 msgstr "活动颜色属性"
 
 
+msgid "The name of the active color attribute for display and editing"
+msgstr "用于显示和编辑的活动颜色属性的名称"
+
+
 msgid "Active Attribute Index"
 msgstr "活动属性编号"
 
 
 msgid "Active attribute index"
 msgstr "活动属性编号"
+
+
+msgid "Default Color Attribute"
+msgstr "默认颜色属性"
+
+
+msgid "The name of the default color attribute used as a fallback for rendering"
+msgstr "用作渲染回退的默认颜色属性的名称"
 
 
 msgid "Active Render Color Index"
@@ -21989,10 +22009,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "在 Z 轴向上启用对称"
 
 
-msgid "Use Sculpt Selection"
-msgstr "使用雕刻选中项"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyle 线条样式"
 
@@ -33622,12 +33638,12 @@ msgid "Editor menu containing buttons"
 msgstr "包含按钮的编辑器菜单"
 
 
+msgid "Asset"
+msgstr "资源"
+
+
 msgid "Assets Context Menu"
 msgstr "资产上下文菜单"
-
-
-msgid "Edit"
-msgstr "编辑"
 
 
 msgctxt "MovieClip"
@@ -33852,6 +33868,10 @@ msgstr "NLA通道上下文菜单"
 
 msgid "NLA Context Menu"
 msgstr "NLA上下文菜单"
+
+
+msgid "Edit"
+msgstr "编辑"
 
 
 msgid "Converter"
@@ -34241,10 +34261,6 @@ msgstr "关联/传递数据"
 
 msgid "Make Single User"
 msgstr "使其独立化"
-
-
-msgid "Asset"
-msgstr "资源"
 
 
 msgid "Object Context Menu"
@@ -39371,10 +39387,6 @@ msgid "Generate corner angle weighted normals"
 msgstr "生成拐角角度加权法向"
 
 
-msgid "Face Area And Angle"
-msgstr "面积与角度"
-
-
 msgid "Generated normals weighted by both face area and angle"
 msgstr "生成表面面积与角度共同加权的法向"
 
@@ -40204,6 +40216,10 @@ msgid "Active Plane Track"
 msgstr "活动平面追踪"
 
 
+msgid "Active plane track in this tracking data object. Deprecated, use objects[name].plane_tracks.active"
+msgstr "此跟踪数据物体中的活动平面跟踪。已弃用，使用物体[名称].plane_tracks.active"
+
+
 msgid "Reconstructed Cameras"
 msgstr "已重建摄像机"
 
@@ -40418,6 +40434,10 @@ msgstr "限制追踪速度, 以实现更轻松的目视反馈结果 (这不会�
 
 msgid "Fastest"
 msgstr "最远"
+
+
+msgid "Track as fast as possible"
+msgstr "以尽可能快的速度执行追踪"
 
 
 msgid "Double"
@@ -40792,6 +40812,10 @@ msgid "Influence of this track on 2D stabilization"
 msgstr "这条轨迹对二维稳像的影响"
 
 
+msgid "Active track in this tracking data object. Deprecated, use objects[name].tracks.active"
+msgstr "此跟踪数据物体中的活动跟踪。已弃用，请使用物体[名称].tracks.active"
+
+
 msgid "NLA Strip"
 msgstr "NLA 片段"
 
@@ -41135,6 +41159,10 @@ msgstr "节点宽度"
 
 msgid "Width Hidden"
 msgstr "宽度被隐藏"
+
+
+msgid "Deprecated width of the node when it is collapsed"
+msgstr "节点折叠时已弃用的宽度"
 
 
 msgid "Custom Group"
@@ -43796,6 +43824,14 @@ msgid "Which domain to read the data from"
 msgstr "在哪个域读取数据"
 
 
+msgid "Blur Attribute"
+msgstr "模糊属性"
+
+
+msgid "Mix attribute values of neighboring elements"
+msgstr "混合相邻元素的属性值"
+
+
 msgid "Calculate the limits of a geometry's positions and generate a box mesh with those dimensions"
 msgstr "计算几何体的位置限制，并使用这些尺寸生成一个盒形网格"
 
@@ -43814,6 +43850,14 @@ msgstr "在哪个域存储数据"
 
 msgid "Collection Info"
 msgstr "集合信息"
+
+
+msgid "Retrieve geometry instances from a collection"
+msgstr "从集合中检索几何实例"
+
+
+msgid "The transformation of the instances output. Does not affect the internal geometry"
+msgstr "实例输出的变形。不影响内部几何体"
 
 
 msgid "Original"
@@ -44320,8 +44364,25 @@ msgid "Convert each input geometry into an instance, which can be much faster th
 msgstr "将各个输入几何体转换为实例，当输入较庞大时会比合并几何体节点更快"
 
 
+msgid "Image Info"
+msgstr "图像信息"
+
+
+msgid "Retrieve information about an image"
+msgstr "检索有关图像的信息"
+
+
 msgid "Sample values from an image texture"
 msgstr "从图像纹理采样数值"
+
+
+msgctxt "Image"
+msgid "Mirror"
+msgstr "镜像"
+
+
+msgid "Repeatedly flip the image horizontally and vertically"
+msgstr "在水平和垂直方向反复翻转图像"
 
 
 msgid "Method for smoothing values between pixels"
@@ -44358,6 +44419,10 @@ msgstr "检索各个控制点上用于绕其切向扭转曲线法向的角度"
 
 msgid "Retrieve a stable random identifier value from the \"id\" attribute on the point domain, or the index if the attribute does not exist"
 msgstr "检索来自点域上 \"id\" 属性的稳定随机id数值，如该属性不存在则为其编号"
+
+
+msgid "Input image"
+msgstr "输入图像"
 
 
 msgid "Retrieve an integer value indicating the position of each element in the list, starting at zero"
@@ -45056,8 +45121,16 @@ msgid "Minimum Twist"
 msgstr "最小扭转"
 
 
+msgid "Calculate normals with the smallest twist around the curve tangent across the whole curve"
+msgstr "计算曲线周围与整个曲线相切的最小扭转的法向"
+
+
 msgid "Z Up"
 msgstr "Z 向上"
+
+
+msgid "Calculate normals perpendicular to the Z axis and the curve tangent. If a series of points is vertical, the X axis is used"
+msgstr "计算垂直于 Z 轴和曲线切线的法向。如果一系列点是垂直的，则使用 X 轴"
 
 
 msgid "Set Curve Radius"
@@ -45298,6 +45371,10 @@ msgstr "使用Catmull-Clark细分方法划分网格面以形成平滑的表面"
 
 msgid "Switch between two inputs"
 msgstr "在两个输入之间切换"
+
+
+msgid "Transform Geometry"
+msgstr "变换几何体"
 
 
 msgid "Translate, rotate or scale the geometry"
@@ -50314,6 +50391,10 @@ msgid "Direction to move the active vertex group towards"
 msgstr "在列表中移动活动顶点组的方向"
 
 
+msgid "Remove an override layer from the archive"
+msgstr "从存档移除重写层"
+
+
 msgctxt "Operator"
 msgid "Open Cache File"
 msgstr "打开缓存文件"
@@ -52010,15 +52091,6 @@ msgstr "在曲面物体上添加新的毛发粒子系统或更新现有毛发粒
 
 
 msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "禁用选中项"
-
-
-msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "在雕刻模式下禁用选中项影响的绘制"
-
-
-msgctxt "Operator"
 msgid "Curve Sculpt Mode Toggle"
 msgstr "曲线雕刻模式切换"
 
@@ -53528,6 +53600,10 @@ msgid "Method used to reference paths"
 msgstr "应用参考路径的方法"
 
 
+msgid "Use relative paths with subdirectories only"
+msgstr "仅使用包含子目录的相对路径"
+
+
 msgid "Always write absolute paths"
 msgstr "始终写入绝对路径"
 
@@ -53538,6 +53614,10 @@ msgstr "始终写入相对路径 (在可用时)"
 
 msgid "Match"
 msgstr "匹配"
+
+
+msgid "Match absolute/relative setting with input path"
+msgstr "将绝对/相对设置匹配到输入路径"
 
 
 msgid "Strip Path"
@@ -55170,6 +55250,15 @@ msgstr "新颜色属性的名称"
 
 
 msgctxt "Operator"
+msgid "Convert Color Attribute"
+msgstr "转换颜色属性"
+
+
+msgid "Change how the color attribute is stored"
+msgstr "更改颜色属性的存储方式"
+
+
+msgctxt "Operator"
 msgid "Duplicate Color Attribute"
 msgstr "复制颜色属性"
 
@@ -56011,6 +56100,14 @@ msgstr "蜡笔插值"
 
 msgid "Interpolate grease pencil strokes between frames"
 msgstr "对关键帧之间的蜡笔笔画进行插值"
+
+
+msgid "Exclude Breakdowns"
+msgstr "排除间断帧"
+
+
+msgid "Exclude existing Breakdowns keyframes as interpolation extremes"
+msgstr "将现有间断关键帧排除为插值极端值"
 
 
 msgid "Flip Mode"
@@ -63411,6 +63508,10 @@ msgid "Add Node Collection"
 msgstr "添加节点集合"
 
 
+msgid "Add a collection info node to the current node editor"
+msgstr "向当前节点编辑器添加集合信息节点"
+
+
 msgid "Name of the data-block to use by the operator"
 msgstr "操作要使用的数据块的名称"
 
@@ -64581,8 +64682,16 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
+msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
+msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
+
+
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
+
+
+msgid "Point Cloud from Mesh objects"
+msgstr "网格 -> 点云"
 
 
 msgid "Curves from evaluated curve data"
@@ -66108,14 +66217,6 @@ msgstr "计算范围"
 msgctxt "Operator"
 msgid "Clear Object Paths"
 msgstr "清除物体路径"
-
-
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "清除所有对象的路径缓存,按住Shift仅对已选中的对象"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "从选中的物体清除路径"
 
 
 msgctxt "Operator"
@@ -69448,11 +69549,6 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "为当前动作中的每个姿态标记创建姿态资产"
 
 
-msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "复制姿态作为资产"
-
-
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "在剪贴板上创建新的姿态资产，以供粘贴到资产浏览器中"
 
@@ -69472,11 +69568,6 @@ msgstr "激活新动作"
 
 msgid "Pose Name"
 msgstr "姿态名称"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "粘贴为新资产"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -69806,14 +69897,6 @@ msgstr "对于姿态骨骼的路径, 当计算此路径时, 使用骨骼的头�
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "清空骨骼路径"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "清楚所有骨骼的路径缓存，按住shift键只选择骨骼"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "仅清空所选骨骼的路径"
 
 
 msgctxt "Operator"
@@ -71801,6 +71884,10 @@ msgid "Execute a Python Preset"
 msgstr "执行一个 Python 预设"
 
 
+msgid "Load a preset"
+msgstr "加载预设"
+
+
 msgid "Menu ID Name"
 msgstr "菜单 ID 名"
 
@@ -73614,6 +73701,10 @@ msgstr "使用一个场景的输出为源片段到序列编辑器中"
 msgctxt "Operator"
 msgid "Add Strip with a new Scene"
 msgstr "添加附带新场景的片段"
+
+
+msgid "Create a new Strip and assign a new Scene as source"
+msgstr "创建新片段，并指定新场景作为源"
 
 
 msgid "Add new Strip with a new empty Scene with default settings"
@@ -76030,6 +76121,15 @@ msgstr "独立缩放 U 和 V"
 
 msgid "Reduce shear within islands"
 msgstr "减少孤岛内的切变"
+
+
+msgctxt "Operator"
+msgid "Copy UVs"
+msgstr "复制UV"
+
+
+msgid "Copy selected UV vertices"
+msgstr "选择选定的UV 顶点"
 
 
 msgctxt "Operator"
@@ -81245,22 +81345,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "笔刷沿表面的复制次数"
 
 
-msgid "Show Face Sets"
-msgstr "显示面组"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "显示面组为物体上的叠加层"
-
-
-msgid "Show Mask"
-msgstr "显示遮罩"
-
-
-msgid "Show mask as overlay on object"
-msgstr "将遮罩显示为物体上的叠加层"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "对称操作项的源和目标"
 
@@ -81371,10 +81455,6 @@ msgstr "查看物体类型"
 
 msgid "Asset Metadata"
 msgstr "资产元数据"
-
-
-msgid "Pose Library"
-msgstr "姿态库"
 
 
 msgid "Chain Scaling"
@@ -81620,10 +81700,6 @@ msgstr "级联阴影图"
 
 msgid "Contact Shadows"
 msgstr "接触阴影"
-
-
-msgid "Area Shape"
-msgstr "面形状"
 
 
 msgid "Composition Guides"
@@ -82663,6 +82739,10 @@ msgstr "纹理绘制上下文菜单"
 
 msgid "Weights Context Menu"
 msgstr "权重上下文菜单"
+
+
+msgid "Pose Library"
+msgstr "姿态库"
 
 
 msgid "3D-Print"
@@ -85944,6 +86024,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "通过限制纹理尺寸来节约显存"
 
 
+msgid "Metal"
+msgstr "金属"
+
+
 msgid "Image Display Method"
 msgstr "图像显示方式"
 
@@ -87120,10 +87204,6 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
-
-
-msgid "Metal"
-msgstr "金属"
 
 
 msgid "oneAPI"
@@ -104994,11 +105074,6 @@ msgstr "选择要散列的物体和目标物体"
 
 
 msgctxt "Operator"
-msgid "Apply Pose"
-msgstr "应用姿态"
-
-
-msgctxt "Operator"
 msgid "Blend Pose"
 msgstr "混合姿态"
 
@@ -105014,17 +105089,8 @@ msgstr "删除姿态骨骼"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "应用"
-
-
-msgctxt "Operator"
-msgid "Interactive Blend"
-msgstr "交互式混合"
-
-
-msgid "Activate & Edit"
-msgstr "激活&编辑"
+msgid "Apply Pose"
+msgstr "应用姿态"
 
 
 msgid "Action %s marked Fake User to prevent loss"
@@ -106129,6 +106195,11 @@ msgid "Calculation Range"
 msgstr "解算范围"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "更新全部路径"
+
+
 msgid "Frame Numbers"
 msgstr "帧序号"
 
@@ -106149,13 +106220,18 @@ msgid "Cached Range"
 msgstr "缓存范围"
 
 
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "更新路径"
+
+
 msgid "Nothing to show yet..."
 msgstr "无可显示的内容..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "更新全部路径"
+msgid "Calculate..."
+msgstr "计算..."
 
 
 msgid "+ Non-Grouped Keyframes"
@@ -106164,16 +106240,6 @@ msgstr "扩展至非群组关键帧"
 
 msgid "Frame Range Start"
 msgstr "帧范围起始帧"
-
-
-msgctxt "Operator"
-msgid "Update Path"
-msgstr "更新路径"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "计算..."
 
 
 msgid "Collection Mask"
@@ -112791,6 +112857,11 @@ msgstr "多次绘制"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "快速编辑"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "应用"
 
 
 msgctxt "Operator"

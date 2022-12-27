@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -22219,10 +22219,6 @@ msgid "Enable symmetry in the Z axis"
 msgstr "Z 軸で対称にします"
 
 
-msgid "Use Sculpt Selection"
-msgstr "スカルプトの選択を使用"
-
-
 msgid "Freestyle Line Style"
 msgstr "Freestyleラインスタイル"
 
@@ -33868,12 +33864,12 @@ msgid "Editor menu containing buttons"
 msgstr "ボタンを含むエディターメニュー"
 
 
+msgid "Asset"
+msgstr "アセット"
+
+
 msgid "Assets Context Menu"
 msgstr "アセットコンテクストメニュー"
-
-
-msgid "Edit"
-msgstr "編集"
 
 
 msgctxt "MovieClip"
@@ -34098,6 +34094,10 @@ msgstr "NLAチャンネルコンテクストメニュー"
 
 msgid "NLA Context Menu"
 msgstr "NLAコンテクストメニュー"
+
+
+msgid "Edit"
+msgstr "編集"
 
 
 msgid "Converter"
@@ -34487,10 +34487,6 @@ msgstr "データのリンク/転送"
 
 msgid "Make Single User"
 msgstr "シングルユーザー化"
-
-
-msgid "Asset"
-msgstr "アセット"
 
 
 msgid "Object Context Menu"
@@ -39611,10 +39607,6 @@ msgstr "面積で重み付き法線を生成します"
 
 msgid "Generate corner angle weighted normals"
 msgstr "コーナー角度で重み付き法線を生成します"
-
-
-msgid "Face Area And Angle"
-msgstr "面積と角度"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -52307,15 +52299,6 @@ msgstr "カーブをパーティクルシステムに変換"
 
 msgid "Add a new or update an existing hair particle system on the surface object"
 msgstr "表面のオブジェクトにヘアーパーティクルシステムを新規追加、または既存の物を更新します"
-
-
-msgctxt "Operator"
-msgid "Disable Selection"
-msgstr "選択部分で無効"
-
-
-msgid "Disable the drawing of influence of selection in sculpt mode"
-msgstr "スカルプトモード中、選択部分へのドローの影響を無効にします"
 
 
 msgctxt "Operator"
@@ -66527,16 +66510,6 @@ msgid "Clear Object Paths"
 msgstr "オブジェクトパスをクリア"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr ""
-"全オブジェクトのパスのキャッシュをクリアします\n"
-"[Shift]キーを押しながらで選択オブジェクトのみクリア"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "選択オブジェクトのパスのみクリアします"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "オブジェクトパスを更新"
@@ -69893,11 +69866,6 @@ msgid "Create a pose asset for each pose marker in the current action"
 msgstr "現在のアクション内のポーズマーカー毎にポーズアセットを作成します"
 
 
-msgctxt "Operator"
-msgid "Copy Pose As Asset"
-msgstr "ポーズをアセットとしてコピー"
-
-
 msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 msgstr "新しいポーズアセットをクリップボードに作成し、アセットブラウザーに貼り付けます"
 
@@ -69917,11 +69885,6 @@ msgstr "アクティブ新規アクション"
 
 msgid "Pose Name"
 msgstr "ポーズ名"
-
-
-msgctxt "Operator"
-msgid "Paste As New Asset"
-msgstr "新規アセットとして貼り付け"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -70251,16 +70214,6 @@ msgstr "パス計算にボーンのどの部分が使用されるか"
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "ボーンのパスをクリア"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr ""
-"全ボーンのパスのキャッシュをクリアします\n"
-"[Shift]キーを押しながらで選択ボーンのみクリア"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "選択ボーンのパスのみクリアします"
 
 
 msgctxt "Operator"
@@ -81770,22 +81723,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "表面に沿ってストロークをコピーする回数"
 
 
-msgid "Show Face Sets"
-msgstr "面セットを表示"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "面セットをオブジェクト上にオーバーレイ表示します"
-
-
-msgid "Show Mask"
-msgstr "マスクを表示"
-
-
-msgid "Show mask as overlay on object"
-msgstr "マスクをオブジェクト上にオーバーレイ表示します"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "対称化オペレーター用の対象元と対象先"
 
@@ -81896,10 +81833,6 @@ msgstr "表示オブジェクトタイプ"
 
 msgid "Asset Metadata"
 msgstr "アセットメタデータ"
-
-
-msgid "Pose Library"
-msgstr "ポーズライブラリ"
 
 
 msgid "Chain Scaling"
@@ -82145,10 +82078,6 @@ msgstr "カスケードシャドウマップ"
 
 msgid "Contact Shadows"
 msgstr "コンタクトシャドウ"
-
-
-msgid "Area Shape"
-msgstr "エリア形状"
 
 
 msgid "Composition Guides"
@@ -83188,6 +83117,10 @@ msgstr "テクスチャペイントコンテクストメニュー"
 
 msgid "Weights Context Menu"
 msgstr "ウェイトコンテクストメニュー"
+
+
+msgid "Pose Library"
+msgstr "ポーズライブラリ"
 
 
 msgid "3D-Print"
@@ -86502,6 +86435,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "グラフィックス メモリーに保存するテクスチャ サイズの上限"
 
 
+msgid "Metal"
+msgstr "Metal"
+
+
 msgid "Image Display Method"
 msgstr "画像の表示方法"
 
@@ -87689,10 +87626,6 @@ msgstr "OptiX"
 
 msgid "HIP"
 msgstr "HIP"
-
-
-msgid "Metal"
-msgstr "Metal"
 
 
 msgid "oneAPI"
@@ -105698,11 +105631,6 @@ msgstr "散乱するオブジェクトと、ターゲットオブジェクトを
 
 
 msgctxt "Operator"
-msgid "Apply Pose"
-msgstr "ポーズに適用"
-
-
-msgctxt "Operator"
 msgid "Blend Pose"
 msgstr "ポーズをブレンド"
 
@@ -105718,17 +105646,8 @@ msgstr "ポーズボーンを選択解除"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "適用"
-
-
-msgctxt "Operator"
-msgid "Interactive Blend"
-msgstr "インタラクティブブレンド"
-
-
-msgid "Activate & Edit"
-msgstr "アクティブ化と編集"
+msgid "Apply Pose"
+msgstr "ポーズに適用"
 
 
 msgid "Action %s marked Fake User to prevent loss"
@@ -106835,6 +106754,11 @@ msgid "Calculation Range"
 msgstr "計算範囲"
 
 
+msgctxt "Operator"
+msgid "Update All Paths"
+msgstr "すべてのパスを更新"
+
+
 msgid "Frame Numbers"
 msgstr "フレーム番号"
 
@@ -106855,13 +106779,18 @@ msgid "Cached Range"
 msgstr "キャッシュ済範囲"
 
 
+msgctxt "Operator"
+msgid "Update Path"
+msgstr "パスを更新"
+
+
 msgid "Nothing to show yet..."
 msgstr "まだ何もありません..."
 
 
 msgctxt "Operator"
-msgid "Update All Paths"
-msgstr "すべてのパスを更新"
+msgid "Calculate..."
+msgstr "計算..."
 
 
 msgid "+ Non-Grouped Keyframes"
@@ -106870,16 +106799,6 @@ msgstr "＋非グループキーフレームも"
 
 msgid "Frame Range Start"
 msgstr "フレーム範囲の開始"
-
-
-msgctxt "Operator"
-msgid "Update Path"
-msgstr "パスを更新"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "計算..."
 
 
 msgid "Collection Mask"
@@ -113497,6 +113416,11 @@ msgstr "マルチペイント"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "クイック編集"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "適用"
 
 
 msgctxt "Operator"

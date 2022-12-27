@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -29923,8 +29923,8 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
-msgid "Edit"
-msgstr "Редагувати"
+msgid "Asset"
+msgstr "Актив"
 
 
 msgctxt "MovieClip"
@@ -30123,6 +30123,10 @@ msgstr "Контекстне Меню Каналів НЛА"
 
 msgid "NLA Context Menu"
 msgstr "Контекстне Меню НЛА"
+
+
+msgid "Edit"
+msgstr "Редагувати"
 
 
 msgid "Converter"
@@ -30456,10 +30460,6 @@ msgstr "Пов'язати/Перенести Дані"
 
 msgid "Make Single User"
 msgstr "Зробити однокористувацьким"
-
-
-msgid "Asset"
-msgstr "Актив"
 
 
 msgid "Object Context Menu"
@@ -35376,10 +35376,6 @@ msgstr "Генерувати виважені нормалі площі гран
 
 msgid "Generate corner angle weighted normals"
 msgstr "Генерувати виважені нормалі кута кутка"
-
-
-msgid "Face Area And Angle"
-msgstr "Площа і Кут Грані"
 
 
 msgid "Generated normals weighted by both face area and angle"
@@ -57110,14 +57106,6 @@ msgid "Clear Object Paths"
 msgstr "Зчистити шляхи об'єктів"
 
 
-msgid "Clear path caches for all objects, hold Shift key for selected objects only"
-msgstr "Зчистити кеші шляхів для всіх об'єктів, утримування при цьому Shift дасть зчищення тільки для вибраних об'єктів"
-
-
-msgid "Only clear paths from selected objects"
-msgstr "Зчистити шляхи тільки для вибраних об'єктів"
-
-
 msgctxt "Operator"
 msgid "Update Object Paths"
 msgstr "Оновити шляхи об'єктів"
@@ -60473,14 +60461,6 @@ msgstr "Які точки кісток використовувати при р�
 msgctxt "Operator"
 msgid "Clear Bone Paths"
 msgstr "Зчистити шляхи кісток"
-
-
-msgid "Clear path caches for all bones, hold Shift key for selected bones only"
-msgstr "Зчистити кеші шляхів для всіх кісток, утримування при цьому Shift дасть зчищення тільки для вибраних кісток"
-
-
-msgid "Only clear paths from selected bones"
-msgstr "Зчистити шляхи тільки для вибраних кісток"
 
 
 msgctxt "Operator"
@@ -70124,22 +70104,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Кількість копій штриха по всій поверхні"
 
 
-msgid "Show Face Sets"
-msgstr "Показ Наборів Граней"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "Показати Набори Граней як накладку на об'єкті"
-
-
-msgid "Show Mask"
-msgstr "Показати маску"
-
-
-msgid "Show mask as overlay on object"
-msgstr "Показати маску поверх об'єктів"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Джерело та ціль для оператора симетризації"
 
@@ -70210,10 +70174,6 @@ msgstr "Типи Об'єктів Огляду"
 
 msgid "Asset Metadata"
 msgstr "Метадані Активу"
-
-
-msgid "Pose Library"
-msgstr "Бібліотека поз"
 
 
 msgid "Chain Scaling"
@@ -70431,10 +70391,6 @@ msgstr "Розкладка Каскадної Тіні"
 
 msgid "Contact Shadows"
 msgstr "Тіні Контакту"
-
-
-msgid "Area Shape"
-msgstr "Форма ділянки"
 
 
 msgid "Composition Guides"
@@ -71412,6 +71368,10 @@ msgstr "Контекстне Меню Малювання Текстур"
 
 msgid "Weights Context Menu"
 msgstr "Контекстне Меню Вагомостей"
+
+
+msgid "Pose Library"
+msgstr "Бібліотека поз"
 
 
 msgid "3D-Print"
@@ -89162,11 +89122,6 @@ msgid "Select objects to scatter and a target object"
 msgstr "Вибрати об'єкти для розсіювання та цільовий об'єкт"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Застосувати"
-
-
 msgid "Demo Mode:"
 msgstr "Демо Режим:"
 
@@ -89934,17 +89889,17 @@ msgid "Nothing to show yet..."
 msgstr "Нічого ще показувати..."
 
 
+msgctxt "Operator"
+msgid "Calculate..."
+msgstr "Розрахування..."
+
+
 msgid "+ Non-Grouped Keyframes"
 msgstr "+ Не-Згруповані Ключкадри"
 
 
 msgid "Frame Range Start"
 msgstr "Діапазон Кадрів Старт"
-
-
-msgctxt "Operator"
-msgid "Calculate..."
-msgstr "Розрахування..."
 
 
 msgctxt "Operator"
@@ -95813,6 +95768,11 @@ msgstr "Мульти-Малювання"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Швидке Редагування"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Застосувати"
 
 
 msgctxt "Operator"

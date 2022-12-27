@@ -46,16 +46,6 @@ class PoseAssetCreator:
         )
 
 
-class LocalPoseAssetUser:
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        return bool(
-            isinstance(getattr(context, "id", None), Action)
-            and context.object
-            and context.object.mode == "POSE"  # This condition may not be desired.
-        )
-
-
 class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
     bl_idname = "poselib.create_pose_asset"
     bl_label = "Create Pose Asset"
@@ -68,9 +58,13 @@ class POSELIB_OT_create_pose_asset(PoseAssetCreator, Operator):
     pose_name: StringProperty(name="Pose Name")  # type: ignore
     activate_new_action: BoolProperty(name="Activate New Action", default=True)  # type: ignore
 
-
     @classmethod
     def poll(cls, context: Context) -> bool:
+        if context.object.mode != "POSE":
+            # The operator assumes pose mode, so that bone selection is visible.
+            cls.poll_message_set("The object must be in Pose mode")
+            return False
+
         # Make sure that if there is an asset browser open, the artist can see the newly created pose asset.
         asset_browse_area: Optional[bpy.types.Area] = asset_browser.area_from_context(context)
         if not asset_browse_area:
@@ -189,11 +183,18 @@ class POSELIB_OT_restore_previous_action(Operator):
         return {'FINISHED'}
 
 
-class ASSET_OT_assign_action(LocalPoseAssetUser, Operator):
+class ASSET_OT_assign_action(Operator):
     bl_idname = "asset.assign_action"
     bl_label = "Assign Action"
     bl_description = "Set this pose Action as active Action on the active Object"
     bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return bool(
+            isinstance(getattr(context, "id", None), Action)
+            and context.object
+        )
 
     def execute(self, context: Context) -> Set[str]:
         context.object.animation_data_create().action = context.id
@@ -202,7 +203,7 @@ class ASSET_OT_assign_action(LocalPoseAssetUser, Operator):
 
 class POSELIB_OT_copy_as_asset(PoseAssetCreator, Operator):
     bl_idname = "poselib.copy_as_asset"
-    bl_label = "Copy Pose As Asset"
+    bl_label = "Copy Pose as Asset"
     bl_description = "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
     bl_options = {"REGISTER"}
 
@@ -254,7 +255,7 @@ class POSELIB_OT_copy_as_asset(PoseAssetCreator, Operator):
 
 class POSELIB_OT_paste_asset(Operator):
     bl_idname = "poselib.paste_asset"
-    bl_label = "Paste As New Asset"
+    bl_label = "Paste as New Asset"
     bl_description = "Paste the Asset that was previously copied using Copy As Asset"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -281,7 +282,6 @@ class POSELIB_OT_paste_asset(Operator):
             return False
 
         return True
-
 
     def execute(self, context: Context) -> Set[str]:
         clipboard = context.window_manager.clipboard
