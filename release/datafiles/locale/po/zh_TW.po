@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2022-05-10 19:36+0800\n"
@@ -19124,10 +19124,6 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
-msgid "Edit"
-msgstr "編輯"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "剪輯"
@@ -19220,6 +19216,10 @@ msgstr "外形鍵特殊項"
 
 msgid "Vertex Group Specials"
 msgstr "頂點群組特殊項"
+
+
+msgid "Edit"
+msgstr "編輯"
 
 
 msgid "Converter"
@@ -43354,14 +43354,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "筆刷橫越表面複製的次數"
 
 
-msgid "Show Face Sets"
-msgstr "顯示面集"
-
-
-msgid "Show Face Sets as overlay on object"
-msgstr "物件顯示面集於覆蓋模式"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "對稱化操作器的來源與目標"
 
@@ -43404,10 +43396,6 @@ msgstr "整合器預置"
 
 msgid "Sampling Presets"
 msgstr "取樣預置"
-
-
-msgid "Pose Library"
-msgstr "姿勢庫"
 
 
 msgid "Chain Scaling"
@@ -43565,10 +43553,6 @@ msgstr "算繪通遞"
 
 msgid "Mist Pass"
 msgstr "迷霧通遞"
-
-
-msgid "Area Shape"
-msgstr "區域外形"
 
 
 msgid "Composition Guides"
@@ -44039,6 +44023,10 @@ msgstr "筆觸放置"
 
 msgid "Motion Tracking"
 msgstr "運動跟蹤"
+
+
+msgid "Pose Library"
+msgstr "姿勢庫"
 
 
 msgid "Compositor"
@@ -53677,11 +53665,6 @@ msgid "Export"
 msgstr "匯出"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "套用"
-
-
 msgid "Demo Mode:"
 msgstr "Demo 模式："
 
@@ -53899,13 +53882,13 @@ msgid "Nothing to show yet..."
 msgstr "沒有可以顯示的..."
 
 
-msgid "+ Non-Grouped Keyframes"
-msgstr "+ 未群組的鍵幀"
-
-
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "計算..."
+
+
+msgid "+ Non-Grouped Keyframes"
+msgstr "+ 未群組的鍵幀"
 
 
 msgctxt "Operator"
@@ -56181,6 +56164,11 @@ msgstr "多繪製"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "快速編輯"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "套用"
 
 
 msgctxt "Operator"

@@ -483,6 +483,18 @@ class LIGHT_PT_POV_light(PovLightButtonsPanel, Panel):
         if light.type == "AREA":
             col.prop(light, "distance")
 
+            col.separator()
+
+            col.prop(light, "shape")
+
+            sub = col.column(align=True)
+
+            if light.shape in {'SQUARE', 'DISK'}:
+                sub.prop(light, "size")
+            elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                sub.prop(light, "size", text="Size X")
+                sub.prop(light, "size_y", text="Y")
+
         # restore later as interface to POV light groups ?
         # col = split.column()
         # col.prop(light, "use_own_layer", text="This Layer Only")
@@ -612,22 +624,6 @@ class LIGHT_PT_POV_shadow(PovLightButtonsPanel, Panel):
                     sub.prop(light.pov, "shadow_ray_samples_y", text="Samples Y")
 
 
-class LIGHT_PT_POV_area(PovLightButtonsPanel, Panel):
-    """Area light UI panel"""
-
-    bl_label = properties_data_light.DATA_PT_area.bl_label
-    bl_parent_id = "LIGHT_PT_POV_light"
-    bl_context = "data"
-
-    @classmethod
-    def poll(cls, context):
-        lamp = context.light
-        engine = context.scene.render.engine
-        return (lamp and lamp.type == "AREA") and (engine in cls.COMPAT_ENGINES)
-
-    draw = properties_data_light.DATA_PT_area.draw
-
-
 class LIGHT_PT_POV_spot(PovLightButtonsPanel, Panel):
     bl_label = properties_data_light.DATA_PT_spot.bl_label
     bl_parent_id = "LIGHT_PT_POV_light"
@@ -720,7 +716,6 @@ classes = (
     LIGHT_PT_POV_light,
     LIGHT_PT_POV_shadow,
     LIGHT_PT_POV_spot,
-    LIGHT_PT_POV_area,
     LIGHT_MT_POV_presets,
     LIGHT_OT_POV_add_preset,
     OBJECT_PT_POV_rainbow,

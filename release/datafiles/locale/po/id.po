@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-12-25 23:57-0800\n"
@@ -11701,8 +11701,8 @@ msgid "Draw strokes with solid color"
 msgstr "Menggambar stroke dengan warna solid"
 
 
-msgid "Edit"
-msgstr "Edit"
+msgid "Asset"
+msgstr "Aset"
 
 
 msgctxt "MovieClip"
@@ -11789,6 +11789,10 @@ msgstr "Menu Konteks Saluran NLA"
 
 msgid "NLA Context Menu"
 msgstr "Menu Konteks NLA"
+
+
+msgid "Edit"
+msgstr "Edit"
 
 
 msgid "Converter"
@@ -11986,10 +11990,6 @@ msgstr "Tambah Gambar"
 
 msgid "Light"
 msgstr "Cahaya"
-
-
-msgid "Asset"
-msgstr "Aset"
 
 
 msgid "Edge index"
@@ -22749,11 +22749,6 @@ msgid "Result"
 msgstr "Hasil"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Setujui"
-
-
 msgid "Demo Mode:"
 msgstr "Mode Demo:"
 
@@ -25367,6 +25362,11 @@ msgstr "Induk"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Sunting Cepat"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Setujui"
 
 
 msgid "Int"

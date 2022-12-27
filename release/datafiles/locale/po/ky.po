@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.5.0 Alpha (b'1eb90ee519c4')\n"
+"Project-Id-Version: Blender 3.5.0 Alpha (b'09ba00974f8f')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -1397,10 +1397,6 @@ msgid "Mask Layers"
 msgstr "Маска каттары"
 
 
-msgid "Edit"
-msgstr "Оңдоо"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Видеофрагмент"
@@ -1437,6 +1433,10 @@ msgstr "Түздөө"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Кошуу"
+
+
+msgid "Edit"
+msgstr "Оңдоо"
 
 
 msgid "Text"
@@ -3229,11 +3229,6 @@ msgstr "Көлөм"
 
 
 msgctxt "Operator"
-msgid "Apply"
-msgstr "Колдонуу"
-
-
-msgctxt "Operator"
 msgid "Reset Settings"
 msgstr "Ырастоолорду түшүрүү"
 
@@ -3615,6 +3610,11 @@ msgstr "Решётка"
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Тез оңдоо"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Колдонуу"
 
 
 msgctxt "Curve"
