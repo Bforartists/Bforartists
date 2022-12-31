@@ -6206,8 +6206,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("curves.disable_selection", {"type": 'ONE', "value": 'PRESS', "alt": True}, None),
-    ("curves.disable_selection", {"type": 'TWO', "value": 'PRESS', "alt": True}, None),
     ("wm.radial_control",
      {"type": 'X', "value": 'PRESS'},
      {"properties":
