@@ -491,6 +491,8 @@ class NODE_MT_node(Menu):
 
         layout.separator()
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
+        row = layout.row()
+        row.operator_context = 'EXEC_DEFAULT'
         layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
