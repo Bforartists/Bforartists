@@ -326,13 +326,8 @@ class GPENCIL_MT_cleanup(Menu):
 
         layout.separator()
 
-<<<<<<< HEAD
         layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE_DUPLICATE")
         layout.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
-=======
-        layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicate Frames")
-        layout.operator("gpencil.recalc_geometry", text="Recalculate Geometry")
->>>>>>> blender_master
         if ob.mode != 'PAINT_GPENCIL':
             layout.operator("gpencil.reproject", icon = "REPROJECT")
 
