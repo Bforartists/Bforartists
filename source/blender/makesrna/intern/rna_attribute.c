@@ -389,6 +389,17 @@ static PointerRNA rna_AttributeGroup_new(
     ID *id, ReportList *reports, const char *name, const int type, const int domain)
 {
   CustomDataLayer *layer = BKE_id_attribute_new(id, name, type, domain, reports);
+
+  if ((GS(id->name) == ID_ME) && ELEM(layer->type, CD_PROP_COLOR, CD_PROP_BYTE_COLOR)) {
+    Mesh *mesh = (Mesh *)id;
+    if (!mesh->active_color_attribute) {
+      mesh->active_color_attribute = BLI_strdup(layer->name);
+    }
+    if (!mesh->default_color_attribute) {
+      mesh->default_color_attribute = BLI_strdup(layer->name);
+    }
+  }
+
   DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
   WM_main_add_notifier(NC_GEOM | ND_DATA, id);
 
@@ -712,9 +723,9 @@ static void rna_AttributeGroup_active_color_name_set(PointerRNA *ptr, const char
   ID *id = ptr->owner_id;
   if (GS(id->name) == ID_ME) {
     Mesh *mesh = (Mesh *)id;
-    MEM_SAFE_FREE(mesh->default_color_attribute);
+    MEM_SAFE_FREE(mesh->active_color_attribute);
     if (value[0]) {
-      mesh->default_color_attribute = BLI_strdup(value);
+      mesh->active_color_attribute = BLI_strdup(value);
     }
   }
 }
