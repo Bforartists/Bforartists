@@ -25,26 +25,26 @@ static void node_declare(NodeDeclarationBuilder &b)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR; })
-      .supports_field();
+      .field_on_all();
   b.add_input<decl::Float>(N_("End"))
       .min(0.0f)
       .max(1.0f)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR; })
-      .supports_field();
+      .field_on_all();
   b.add_input<decl::Float>(N_("Start"), "Start_001")
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_LENGTH; })
-      .supports_field();
+      .field_on_all();
   b.add_input<decl::Float>(N_("End"), "End_001")
       .min(0.0f)
       .default_value(1.0f)
       .subtype(PROP_DISTANCE)
       .make_available([](bNode &node) { node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_LENGTH; })
-      .supports_field();
-  b.add_output<decl::Geometry>(N_("Curve"));
+      .field_on_all();
+  b.add_output<decl::Geometry>(N_("Curve")).propagate_all();
 }
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
@@ -92,8 +92,8 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
 
-  search_link_ops_for_declarations(params, declaration.outputs());
-  search_link_ops_for_declarations(params, declaration.inputs().take_front(1));
+  search_link_ops_for_declarations(params, declaration.outputs);
+  search_link_ops_for_declarations(params, declaration.inputs.as_span().take_front(1));
 
   if (params.in_out() == SOCK_IN) {
     if (params.node_tree().typeinfo->validate_link(eNodeSocketDatatype(params.other_socket().type),
