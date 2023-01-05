@@ -254,6 +254,7 @@ set(SRC
   intern/pbvh_uv_islands.cc
   intern/pointcache.c
   intern/pointcloud.cc
+  intern/pose_backup.cc
   intern/preferences.c
   intern/report.c
   intern/rigidbody.c
@@ -451,6 +452,7 @@ set(SRC
   BKE_pbvh_pixels.hh
   BKE_pointcache.h
   BKE_pointcloud.h
+  BKE_pose_backup.h
   BKE_preferences.h
   BKE_report.h
   BKE_rigidbody.h

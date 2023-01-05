@@ -58,10 +58,16 @@ static void node_declare(NodeDeclarationBuilder &b)
       .supports_field()
       .description(N_("Relative mix weight of neighboring elements"));
 
-  b.add_output<decl::Float>(N_("Value"), "Value_Float").field_source().dependent_field();
-  b.add_output<decl::Int>(N_("Value"), "Value_Int").field_source().dependent_field();
-  b.add_output<decl::Vector>(N_("Value"), "Value_Vector").field_source().dependent_field();
-  b.add_output<decl::Color>(N_("Value"), "Value_Color").field_source().dependent_field();
+  b.add_output<decl::Float>(N_("Value"), "Value_Float")
+      .field_source_reference_all()
+      .dependent_field();
+  b.add_output<decl::Int>(N_("Value"), "Value_Int").field_source_reference_all().dependent_field();
+  b.add_output<decl::Vector>(N_("Value"), "Value_Vector")
+      .field_source_reference_all()
+      .dependent_field();
+  b.add_output<decl::Color>(N_("Value"), "Value_Color")
+      .field_source_reference_all()
+      .dependent_field();
 }
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
@@ -77,7 +83,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
-  search_link_ops_for_declarations(params, declaration.inputs().take_back(2));
+  search_link_ops_for_declarations(params, declaration.inputs.as_span().take_back(2));
 
   const bNodeType &node_type = params.node_type();
   const std::optional<eCustomDataType> type = node_data_type_to_custom_data_type(
@@ -432,6 +438,12 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
     }
 
     return GVArray::ForGArray(std::move(main_buffer));
+  }
+
+  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  {
+    weight_field_.node().for_each_field_input_recursive(fn);
+    value_field_.node().for_each_field_input_recursive(fn);
   }
 
   uint64_t hash() const override
