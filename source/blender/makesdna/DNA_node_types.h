@@ -172,6 +172,7 @@ typedef struct bNodeSocket {
 #ifdef __cplusplus
   bool is_hidden() const;
   bool is_available() const;
+  bool is_visible() const;
   bool is_multi_input() const;
   bool is_input() const;
   bool is_output() const;
@@ -186,6 +187,10 @@ typedef struct bNodeSocket {
   int index() const;
   /** Socket index in the entire node tree. Inputs and outputs share the same index space. */
   int index_in_tree() const;
+  /** Socket index in the entire node tree. All inputs share the same index space. */
+  int index_in_all_inputs() const;
+  /** Socket index in the entire node tree. All outputs share the same index space. */
+  int index_in_all_outputs() const;
   /** Node this socket belongs to. */
   bNode &owner_node();
   const bNode &owner_node() const;
@@ -249,13 +254,14 @@ typedef enum eNodeSocketInOut {
   SOCK_IN = 1 << 0,
   SOCK_OUT = 1 << 1,
 } eNodeSocketInOut;
+ENUM_OPERATORS(eNodeSocketInOut, SOCK_OUT);
 
 /** #bNodeSocket.flag, first bit is selection. */
 typedef enum eNodeSocketFlag {
   /** Hidden is user defined, to hide unused sockets. */
   SOCK_HIDDEN = (1 << 1),
   /** For quick check if socket is linked. */
-  SOCK_IN_USE = (1 << 2),
+  SOCK_IS_LINKED = (1 << 2),
   /** Unavailable is for dynamic sockets. */
   SOCK_UNAVAIL = (1 << 3),
   // /** DEPRECATED  dynamic socket (can be modified by user) */
@@ -489,6 +495,8 @@ typedef struct bNodeLink {
 #ifdef __cplusplus
   bool is_muted() const;
   bool is_available() const;
+  /** Both linked sockets are available and the link is not muted. */
+  bool is_used() const;
 #endif
 
 } bNodeLink;
