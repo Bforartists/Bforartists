@@ -739,7 +739,7 @@ static void ui_color_snap_hue(const enum eSnapType snap, float *r_hue)
 
 static ListBase UIAfterFuncs = {nullptr, nullptr};
 
-static uiAfterFunc *ui_afterfunc_new(void)
+static uiAfterFunc *ui_afterfunc_new()
 {
   uiAfterFunc *after = MEM_cnew<uiAfterFunc>(__func__);
 
@@ -2795,7 +2795,7 @@ static void ui_but_copy(bContext *C, uiBut *but, const bool copy_array)
   }
 
   if (is_buf_set) {
-    WM_clipboard_text_set(buf, 0);
+    WM_clipboard_text_set(buf, false);
   }
 }
 
@@ -2864,7 +2864,7 @@ static void ui_but_paste(bContext *C, uiBut *but, uiHandleButtonData *data, cons
   MEM_freeN((void *)buf_paste);
 }
 
-void ui_but_clipboard_free(void)
+void ui_but_clipboard_free()
 {
   BKE_curvemapping_free_data(&but_copypaste_curve);
   BKE_curveprofile_free_data(&but_copypaste_profile);
@@ -3301,7 +3301,7 @@ static bool ui_textedit_copypaste(uiBut *but, uiHandleButtonData *data, const in
         MEM_mallocN(sizeof(char) * (sellen + 1), "ui_textedit_copypaste"));
 
     BLI_strncpy(buf, data->str + but->selsta, sellen + 1);
-    WM_clipboard_text_set(buf, 0);
+    WM_clipboard_text_set(buf, false);
     MEM_freeN(buf);
 
     /* for cut only, delete the selection afterwards */
@@ -9684,14 +9684,20 @@ static int ui_handle_view_items_hover(const wmEvent *event, const ARegion *regio
 
 static int ui_handle_view_item_event(bContext *C,
                                      const wmEvent *event,
-                                     ARegion *region,
-                                     uiBut *view_but)
+                                     uiBut *active_but,
+                                     ARegion *region)
 {
-  BLI_assert(view_but->type == UI_BTYPE_VIEW_ITEM);
   if (event->type == LEFTMOUSE) {
+    /* Only bother finding the active view item button if the active button isn't already a view
+     * item. */
+    uiBut *view_but = (active_but && active_but->type == UI_BTYPE_VIEW_ITEM) ?
+                          active_but :
+                          ui_view_item_find_mouse_over(region, event->xy);
     /* Will free active button if there already is one. */
-    ui_handle_button_activate(C, region, view_but, BUTTON_ACTIVATE_OVER);
-    return ui_do_button(C, view_but->block, view_but, event);
+    if (view_but) {
+      ui_handle_button_activate(C, region, view_but, BUTTON_ACTIVATE_OVER);
+      return ui_do_button(C, view_but->block, view_but, event);
+    }
   }
 
   return WM_UI_HANDLER_CONTINUE;
@@ -11302,10 +11308,7 @@ static int ui_region_handler(bContext *C, const wmEvent *event, void * /*userdat
    * nested in the item (it's an overlapping layout). */
   ui_handle_view_items_hover(event, region);
   if (retval == WM_UI_HANDLER_CONTINUE) {
-    uiBut *view_item = ui_view_item_find_mouse_over(region, event->xy);
-    if (view_item) {
-      retval = ui_handle_view_item_event(C, event, region, view_item);
-    }
+    retval = ui_handle_view_item_event(C, event, but, region);
   }
 
   /* delayed apply callbacks */
