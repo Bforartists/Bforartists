@@ -6,11 +6,11 @@
  * \brief Functions to paint images in 2D and 3D.
  */
 
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -194,7 +194,7 @@ BLI_INLINE uchar f_to_char(const float val)
  * their imbufs, etc, in 1 array, When using threads this array is copied for each thread
  * because 'partRedrawRect' and 'touch' values would not be thread safe.
  */
-typedef struct ProjPaintImage {
+struct ProjPaintImage {
   Image *ima;
   ImageUser iuser;
   ImBuf *ibuf;
@@ -207,12 +207,12 @@ typedef struct ProjPaintImage {
   /** Store flag to enforce validation of undo rectangle. */
   bool **valid;
   bool touch;
-} ProjPaintImage;
+};
 
 /**
  * Handle for stroke (operator customdata)
  */
-typedef struct ProjStrokeHandle {
+struct ProjStrokeHandle {
   /* Support for painting from multiple views at once,
    * currently used to implement symmetry painting,
    * we can assume at least the first is set while painting. */
@@ -230,16 +230,16 @@ typedef struct ProjStrokeHandle {
   /* In ProjPaintState, only here for convenience */
   Scene *scene;
   Brush *brush;
-} ProjStrokeHandle;
+};
 
-typedef struct LoopSeamData {
+struct LoopSeamData {
   float seam_uvs[2][2];
   float seam_puvs[2][2];
   float corner_dist_sq[2];
-} LoopSeamData;
+};
 
 /* Main projection painting struct passed to all projection painting functions */
-typedef struct ProjPaintState {
+struct ProjPaintState {
   View3D *v3d;
   RegionView3D *rv3d;
   ARegion *region;
@@ -368,7 +368,7 @@ typedef struct ProjPaintState {
   /** must lock threads while accessing these. */
   int context_bucket_index;
 
-  struct CurveMapping *cavity_curve;
+  CurveMapping *cavity_curve;
   BlurKernel *blurkernel;
 
   /* -------------------------------------------------------------------- */
@@ -436,23 +436,23 @@ typedef struct ProjPaintState {
   Material **mat_array;
 
   bool use_colormanagement;
-} ProjPaintState;
+};
 
-typedef union pixelPointer {
+union PixelPointer {
   /** float buffer. */
   float *f_pt;
   /** 2 ways to access a char buffer. */
   uint *uint_pt;
   uchar *ch_pt;
-} PixelPointer;
+};
 
-typedef union pixelStore {
+union PixelStore {
   uchar ch[4];
   uint uint_;
   float f[4];
-} PixelStore;
+};
 
-typedef struct ProjPixel {
+struct ProjPixel {
   /** the floating point screen projection of this pixel. */
   float projCoSS[2];
   float worldCoSS[3];
@@ -479,30 +479,30 @@ typedef struct ProjPixel {
   PixelPointer origColor;
   PixelStore newColor;
   PixelPointer pixel;
-} ProjPixel;
+};
 
-typedef struct ProjPixelClone {
+struct ProjPixelClone {
   struct ProjPixel __pp;
   PixelStore clonepx;
-} ProjPixelClone;
+};
 
 /* undo tile pushing */
-typedef struct {
+struct TileInfo {
   SpinLock *lock;
   bool masked;
   ushort tile_width;
   ImBuf **tmpibuf;
   ProjPaintImage *pjima;
-} TileInfo;
+};
 
-typedef struct VertSeam {
+struct VertSeam {
   struct VertSeam *next, *prev;
   int tri;
   uint loop;
   float angle;
   bool normal_cw;
   float uv[2];
-} VertSeam;
+};
 
 /* -------------------------------------------------------------------- */
 /** \name MLoopTri accessor functions.
@@ -604,8 +604,8 @@ static int project_bucket_offset(const ProjPaintState *ps, const float projCoSS[
    *
    * Second multiplication does similar but for vertical offset
    */
-  return (int)(((projCoSS[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) +
-         ((int)(((projCoSS[1] - ps->screenMin[1]) / ps->screen_height) * ps->buckets_y) *
+  return int(((projCoSS[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) +
+         (int(((projCoSS[1] - ps->screenMin[1]) / ps->screen_height) * ps->buckets_y) *
           ps->buckets_x);
 }
 
@@ -787,8 +787,8 @@ static bool project_paint_PickColor(
     }
   }
   else {
-    // xi = (int)((uv[0]*ibuf->x) + 0.5f);
-    // yi = (int)((uv[1]*ibuf->y) + 0.5f);
+    // xi = int((uv[0]*ibuf->x) + 0.5f);
+    // yi = int((uv[1]*ibuf->y) + 0.5f);
     // if (xi < 0 || xi >= ibuf->x  ||  yi < 0 || yi >= ibuf->y) return false;
 
     /* wrap */
@@ -1080,11 +1080,11 @@ static bool pixel_bounds_uv(const float uv_quad[4][2],
   minmax_v2v2_v2(min_uv, max_uv, uv_quad[2]);
   minmax_v2v2_v2(min_uv, max_uv, uv_quad[3]);
 
-  bounds_px->xmin = (int)(ibuf_x * min_uv[0]);
-  bounds_px->ymin = (int)(ibuf_y * min_uv[1]);
+  bounds_px->xmin = int(ibuf_x * min_uv[0]);
+  bounds_px->ymin = int(ibuf_y * min_uv[1]);
 
-  bounds_px->xmax = (int)(ibuf_x * max_uv[0]) + 1;
-  bounds_px->ymax = (int)(ibuf_y * max_uv[1]) + 1;
+  bounds_px->xmax = int(ibuf_x * max_uv[0]) + 1;
+  bounds_px->ymax = int(ibuf_y * max_uv[1]) + 1;
 
   // printf("%d %d %d %d\n", min_px[0], min_px[1], max_px[0], max_px[1]);
 
@@ -1110,11 +1110,11 @@ static bool pixel_bounds_array(
     uv++;
   }
 
-  bounds_px->xmin = (int)(ibuf_x * min_uv[0]);
-  bounds_px->ymin = (int)(ibuf_y * min_uv[1]);
+  bounds_px->xmin = int(ibuf_x * min_uv[0]);
+  bounds_px->ymin = int(ibuf_y * min_uv[1]);
 
-  bounds_px->xmax = (int)(ibuf_x * max_uv[0]) + 1;
-  bounds_px->ymax = (int)(ibuf_y * max_uv[1]) + 1;
+  bounds_px->xmax = int(ibuf_x * max_uv[0]) + 1;
+  bounds_px->ymax = int(ibuf_y * max_uv[1]) + 1;
 
   // printf("%d %d %d %d\n", min_px[0], min_px[1], max_px[0], max_px[1]);
 
@@ -1945,7 +1945,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
   projPixel->x_px = x_px;
   projPixel->y_px = y_px;
 
-  projPixel->mask = (ushort)(mask * 65535);
+  projPixel->mask = ushort(mask * 65535);
   if (ps->do_masking) {
     projPixel->mask_accum = projima->maskRect[tile_index] + tile_offset;
   }
@@ -1954,8 +1954,8 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
   }
 
   /* which bounding box cell are we in?, needed for undo */
-  projPixel->bb_cell_index = (int)((float(x_px) / float(ibuf->x)) * PROJ_BOUNDBOX_DIV) +
-                             (int)((float(y_px) / float(ibuf->y)) * PROJ_BOUNDBOX_DIV) *
+  projPixel->bb_cell_index = int((float(x_px) / float(ibuf->x)) * PROJ_BOUNDBOX_DIV) +
+                             int((float(y_px) / float(ibuf->y)) * PROJ_BOUNDBOX_DIV) *
                                  PROJ_BOUNDBOX_DIV;
 
   /* done with view3d_project_float inline */
@@ -2030,14 +2030,14 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
        * the faces are already initialized in project_paint_delayed_face_init(...) */
       if (ibuf->rect_float) {
         if (!project_paint_PickColor(
-                ps, co, ((ProjPixelClone *)projPixel)->clonepx.f, nullptr, 1)) {
+                ps, co, ((ProjPixelClone *)projPixel)->clonepx.f, nullptr, true)) {
           /* zero alpha - ignore */
           ((ProjPixelClone *)projPixel)->clonepx.f[3] = 0;
         }
       }
       else {
         if (!project_paint_PickColor(
-                ps, co, nullptr, ((ProjPixelClone *)projPixel)->clonepx.ch, 1)) {
+                ps, co, nullptr, ((ProjPixelClone *)projPixel)->clonepx.ch, true)) {
           /* zero alpha - ignore */
           ((ProjPixelClone *)projPixel)->clonepx.ch[3] = 0;
         }
@@ -3112,13 +3112,13 @@ static void project_paint_face_init(const ProjPaintState *ps,
 
       has_isect = 0;
       for (y = bounds_px.ymin; y < bounds_px.ymax; y++) {
-        // uv[1] = (((float)y) + 0.5f) / (float)ibuf->y;
+        // uv[1] = (float(y) + 0.5f) / float(ibuf->y);
         /* use pixel offset UV coords instead */
         uv[1] = float(y) / ibuf_yf;
 
         has_x_isect = 0;
         for (x = bounds_px.xmin; x < bounds_px.xmax; x++) {
-          // uv[0] = (((float)x) + 0.5f) / ibuf->x;
+          // uv[0] = (float(x) + 0.5f) / float(ibuf->x);
           /* use pixel offset UV coords instead */
           uv[0] = float(x) / ibuf_xf;
 
@@ -3322,7 +3322,7 @@ static void project_paint_face_init(const ProjPaintState *ps,
 
               has_isect = 0;
               for (y = bounds_px.ymin; y < bounds_px.ymax; y++) {
-                // uv[1] = (((float)y) + 0.5f) / (float)ibuf->y;
+                // uv[1] = (float(y) + 0.5f) / float(ibuf->y);
                 /* use offset uvs instead */
                 uv[1] = float(y) / ibuf_yf;
 
@@ -3330,7 +3330,7 @@ static void project_paint_face_init(const ProjPaintState *ps,
                 for (x = bounds_px.xmin; x < bounds_px.xmax; x++) {
                   const float puv[2] = {float(x), float(y)};
                   bool in_bounds;
-                  // uv[0] = (((float)x) + 0.5f) / (float)ibuf->x;
+                  // uv[0] = (float(x) + 0.5f) / float(ibuf->x);
                   /* use offset uvs instead */
                   uv[0] = float(x) / ibuf_xf;
 
@@ -3379,7 +3379,7 @@ static void project_paint_face_init(const ProjPaintState *ps,
                       pixel_on_edge[3] = 1.0f;
                       /* cast because of const */
                       mul_m4_v4((float(*)[4])ps->projectMat, pixel_on_edge);
-                      pixel_on_edge[0] = (float)(ps->winx * 0.5f) +
+                      pixel_on_edge[0] = float(ps->winx * 0.5f) +
                                          (ps->winx * 0.5f) * pixel_on_edge[0] / pixel_on_edge[3];
                       pixel_on_edge[1] = float(ps->winy * 0.5f) +
                                          (ps->winy * 0.5f) * pixel_on_edge[1] / pixel_on_edge[3];
@@ -3455,17 +3455,15 @@ static void project_paint_bucket_bounds(const ProjPaintState *ps,
    * is always truncated to 1, is this really correct? */
 
   /* these offsets of 0.5 and 1.5 seem odd but they are correct */
-  bucketMin[0] =
-      (int)((int)(((float)(min[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) + 0.5f);
-  bucketMin[1] = (int)((int)(((float)(min[1] - ps->screenMin[1]) / ps->screen_height) *
-                             ps->buckets_y) +
-                       0.5f);
+  bucketMin[0] = int(int((float(min[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) +
+                     0.5f);
+  bucketMin[1] = int(int((float(min[1] - ps->screenMin[1]) / ps->screen_height) * ps->buckets_y) +
+                     0.5f);
 
-  bucketMax[0] =
-      (int)((int)(((float)(max[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) + 1.5f);
-  bucketMax[1] = (int)((int)(((float)(max[1] - ps->screenMin[1]) / ps->screen_height) *
-                             ps->buckets_y) +
-                       1.5f);
+  bucketMax[0] = int(int((float(max[0] - ps->screenMin[0]) / ps->screen_width) * ps->buckets_x) +
+                     1.5f);
+  bucketMax[1] = int(int((float(max[1] - ps->screenMin[1]) / ps->screen_height) * ps->buckets_y) +
+                     1.5f);
 
   /* in case the rect is outside the mesh 2d bounds */
   CLAMP(bucketMin[0], 0, ps->buckets_x);
@@ -3738,7 +3736,7 @@ static void proj_paint_state_viewport_init(ProjPaintState *ps, const char symmet
 
     if (ps->source == PROJ_SRC_IMAGE_VIEW) {
       /* image stores camera data, tricky */
-      IDProperty *idgroup = IDP_GetProperties(&ps->reproject_image->id, 0);
+      IDProperty *idgroup = IDP_GetProperties(&ps->reproject_image->id, false);
       IDProperty *view_data = IDP_GetPropertyFromGroup(idgroup, PROJ_VIEW_DATA_ID);
 
       const float *array = (float *)IDP_Array(view_data);
@@ -3750,7 +3748,7 @@ static void proj_paint_state_viewport_init(ProjPaintState *ps, const char symmet
       array += sizeof(viewmat) / sizeof(float);
       ps->clip_start = array[0];
       ps->clip_end = array[1];
-      ps->is_ortho = array[2] ? 1 : 0;
+      ps->is_ortho = bool(array[2]);
 
       invert_m4_m4(viewinv, viewmat);
     }
@@ -3821,8 +3819,8 @@ static void proj_paint_state_screen_coords_init(ProjPaintState *ps, const int di
       mul_v3_m4v3(projScreenCo, ps->projectMat, mv->co);
 
       /* screen space, not clamped */
-      projScreenCo[0] = (float)(ps->winx * 0.5f) + (ps->winx * 0.5f) * projScreenCo[0];
-      projScreenCo[1] = (float)(ps->winy * 0.5f) + (ps->winy * 0.5f) * projScreenCo[1];
+      projScreenCo[0] = float(ps->winx * 0.5f) + (ps->winx * 0.5f) * projScreenCo[0];
+      projScreenCo[1] = float(ps->winy * 0.5f) + (ps->winy * 0.5f) * projScreenCo[1];
       minmax_v2v2_v2(ps->screenMin, ps->screenMax, projScreenCo);
     }
   }
@@ -3835,9 +3833,9 @@ static void proj_paint_state_screen_coords_init(ProjPaintState *ps, const int di
 
       if (projScreenCo[3] > ps->clip_start) {
         /* screen space, not clamped */
-        projScreenCo[0] = (float)(ps->winx * 0.5f) +
+        projScreenCo[0] = float(ps->winx * 0.5f) +
                           (ps->winx * 0.5f) * projScreenCo[0] / projScreenCo[3];
-        projScreenCo[1] = (float)(ps->winy * 0.5f) +
+        projScreenCo[1] = float(ps->winy * 0.5f) +
                           (ps->winy * 0.5f) * projScreenCo[1] / projScreenCo[3];
         /* Use the depth for bucket point occlusion */
         projScreenCo[2] = projScreenCo[2] / projScreenCo[3];
@@ -4104,11 +4102,11 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
   return true;
 }
 
-typedef struct {
+struct ProjPaintLayerClone {
   const MLoopUV *mloopuv_clone_base;
   const TexPaintSlot *slot_last_clone;
   const TexPaintSlot *slot_clone;
-} ProjPaintLayerClone;
+};
 
 static void proj_paint_layer_clone_init(ProjPaintState *ps, ProjPaintLayerClone *layer_clone)
 {
@@ -4173,11 +4171,11 @@ static bool project_paint_clone_face_skip(ProjPaintState *ps,
   return false;
 }
 
-typedef struct {
+struct ProjPaintFaceLookup {
   const bool *select_poly_orig;
 
   const int *index_mp_to_orig;
-} ProjPaintFaceLookup;
+};
 
 static void proj_paint_face_lookup_init(const ProjPaintState *ps, ProjPaintFaceLookup *face_lookup)
 {
@@ -4208,11 +4206,11 @@ static bool project_paint_check_face_sel(const ProjPaintState *ps,
   return true;
 }
 
-typedef struct {
+struct ProjPaintFaceCoSS {
   const float *v1;
   const float *v2;
   const float *v3;
-} ProjPaintFaceCoSS;
+};
 
 static void proj_paint_face_coSS_init(const ProjPaintState *ps,
                                       const MLoopTri *lt,
@@ -4255,11 +4253,11 @@ static bool project_paint_winclip(const ProjPaintState *ps, const ProjPaintFaceC
 }
 #endif /* PROJ_DEBUG_WINCLIP */
 
-typedef struct PrepareImageEntry {
+struct PrepareImageEntry {
   struct PrepareImageEntry *next, *prev;
   Image *ima;
   ImageUser iuser;
-} PrepareImageEntry;
+};
 
 static void project_paint_build_proj_ima(ProjPaintState *ps,
                                          MemArena *arena,
@@ -4278,7 +4276,7 @@ static void project_paint_build_proj_ima(ProjPaintState *ps,
     projIma->iuser = entry->iuser;
     int size;
     projIma->ima = entry->ima;
-    projIma->touch = 0;
+    projIma->touch = false;
     projIma->ibuf = BKE_image_acquire_ibuf(projIma->ima, &projIma->iuser, nullptr);
     if (projIma->ibuf == nullptr) {
       projIma->iuser.tile = 0;
@@ -4546,7 +4544,7 @@ static void project_paint_begin(const bContext *C,
   ps->screen_width = ps->screenMax[0] - ps->screenMin[0];
   ps->screen_height = ps->screenMax[1] - ps->screenMin[1];
 
-  ps->buckets_x = (int)(ps->screen_width / ((float(diameter)) / PROJ_BUCKET_BRUSH_DIV));
+  ps->buckets_x = int(ps->screen_width / (float(diameter) / PROJ_BUCKET_BRUSH_DIV));
   ps->buckets_y = int(ps->screen_height / (float(diameter) / PROJ_BUCKET_BRUSH_DIV));
 
   // printf("\tscreenspace bucket division x:%d y:%d\n", ps->buckets_x, ps->buckets_y);
@@ -4590,9 +4588,9 @@ static void paint_proj_begin_clone(ProjPaintState *ps, const float mouse[2])
     projCo[3] = 1.0f;
     mul_m4_v4(ps->projectMat, projCo);
     ps->cloneOffset[0] = mouse[0] -
-                         ((float)(ps->winx * 0.5f) + (ps->winx * 0.5f) * projCo[0] / projCo[3]);
+                         (float(ps->winx * 0.5f) + (ps->winx * 0.5f) * projCo[0] / projCo[3]);
     ps->cloneOffset[1] = mouse[1] -
-                         ((float)(ps->winy * 0.5f) + (ps->winy * 0.5f) * projCo[1] / projCo[3]);
+                         (float(ps->winy * 0.5f) + (ps->winy * 0.5f) * projCo[1] / projCo[3]);
   }
 }
 
@@ -4730,7 +4728,7 @@ static bool project_image_refresh_tagged(ProjPaintState *ps)
       }
 
       /* clear for reuse */
-      projIma->touch = 0;
+      projIma->touch = false;
     }
   }
 
@@ -4798,7 +4796,7 @@ static bool project_bucket_iter_next(ProjPaintState *ps,
       project_bucket_bounds(ps, bucket_x, bucket_y, bucket_bounds);
 
       if ((ps->source != PROJ_SRC_VIEW) ||
-          project_bucket_isect_circle(mval, (float)(diameter * diameter), bucket_bounds)) {
+          project_bucket_isect_circle(mval, float(diameter * diameter), bucket_bounds)) {
         *bucket_index = bidx;
 
         return true;
@@ -4810,7 +4808,7 @@ static bool project_bucket_iter_next(ProjPaintState *ps,
 }
 
 /* Each thread gets one of these, also used as an argument to pass to project_paint_op */
-typedef struct ProjectHandle {
+struct ProjectHandle {
   /* args */
   ProjPaintState *ps;
   float prevmval[2];
@@ -4826,7 +4824,7 @@ typedef struct ProjectHandle {
   int thread_index;
 
   struct ImagePool *pool;
-} ProjectHandle;
+};
 
 static void do_projectpaint_clone(ProjPaintState *ps, ProjPixel *projPixel, float mask)
 {
@@ -4838,7 +4836,7 @@ static void do_projectpaint_clone(ProjPaintState *ps, ProjPixel *projPixel, floa
     clone_rgba[0] = clone_pt[0];
     clone_rgba[1] = clone_pt[1];
     clone_rgba[2] = clone_pt[2];
-    clone_rgba[3] = (uchar)(clone_pt[3] * mask);
+    clone_rgba[3] = uchar(clone_pt[3] * mask);
 
     if (ps->do_masking) {
       IMB_blend_color_byte(projPixel->pixel.ch_pt,
@@ -5177,7 +5175,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
   const float *lastpos = ((ProjectHandle *)ph_v)->prevmval;
   const float *pos = ((ProjectHandle *)ph_v)->mval;
   const int thread_index = ((ProjectHandle *)ph_v)->thread_index;
-  struct ImagePool *pool = ((ProjectHandle *)ph_v)->pool;
+  ImagePool *pool = ((ProjectHandle *)ph_v)->pool;
   /* Done with args from ProjectHandle */
 
   LinkNode *node;
@@ -5257,7 +5255,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
           last_index = projPixel->image_index;
           last_projIma = projImages + last_index;
 
-          last_projIma->touch = 1;
+          last_projIma->touch = true;
           is_floatbuf = (last_projIma->ibuf->rect_float != nullptr);
         }
         /* end copy */
@@ -5292,7 +5290,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               }
             }
             BKE_colorband_evaluate(brush->gradient, f, color_f);
-            color_f[3] *= (float(projPixel->mask)) * (1.0f / 65535.0f) * brush_alpha;
+            color_f[3] *= float(projPixel->mask) * (1.0f / 65535.0f) * brush_alpha;
 
             if (is_floatbuf) {
               /* Convert to premutliplied. */
@@ -5322,7 +5320,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
           else {
             if (is_floatbuf) {
               float newColor_f[4];
-              newColor_f[3] = (float(projPixel->mask)) * (1.0f / 65535.0f) * brush_alpha;
+              newColor_f[3] = float(projPixel->mask) * (1.0f / 65535.0f) * brush_alpha;
               copy_v3_v3(newColor_f, ps->paint_color_linear);
 
               IMB_blend_color_float(projPixel->pixel.f_pt,
@@ -5359,7 +5357,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
                                         projPixel->projCoSS[0],
                                         projPixel->projCoSS[1]);
             if (projPixel->newColor.f[3]) {
-              float mask = (float(projPixel->mask)) * (1.0f / 65535.0f);
+              float mask = float(projPixel->mask) * (1.0f / 65535.0f);
 
               mul_v4_v4fl(projPixel->newColor.f, projPixel->newColor.f, mask);
 
@@ -5376,7 +5374,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
                                         projPixel->projCoSS[0],
                                         projPixel->projCoSS[1]);
             if (projPixel->newColor.ch[3]) {
-              float mask = (float(projPixel->mask)) * (1.0f / 65535.0f);
+              float mask = float(projPixel->mask) * (1.0f / 65535.0f);
               projPixel->newColor.ch[3] *= mask;
 
               blend_color_mix_byte(
@@ -5406,7 +5404,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
             float mask;
 
             /* Extra mask for normal, layer stencil, etc. */
-            float custom_mask = (float(projPixel->mask)) * (1.0f / 65535.0f);
+            float custom_mask = float(projPixel->mask) * (1.0f / 65535.0f);
 
             /* Mask texture. */
             if (ps->is_maskbrush) {
@@ -5484,7 +5482,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
                 last_index = projPixel->image_index;
                 last_projIma = projImages + last_index;
 
-                last_projIma->touch = 1;
+                last_projIma->touch = true;
                 is_floatbuf = (last_projIma->ibuf->rect_float != nullptr);
               }
               /* end copy */
@@ -5606,7 +5604,7 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
   TaskPool *task_pool = nullptr;
   int a, i;
 
-  struct ImagePool *image_pool;
+  ImagePool *image_pool;
 
   if (!project_bucket_iter_init(ps, pos)) {
     return touch_any;
@@ -5691,7 +5689,7 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
 
   /* move threaded bounds back into ps->projectPartialRedraws */
   for (i = 0; i < ps->image_tot; i++) {
-    int touch = 0;
+    int touch = false;
     for (a = 0; a < ps->thread_tot; a++) {
       touch |= int(partial_redraw_array_merge(ps->projImages[i].partRedrawRect,
                                               handles[a].projImages[i].partRedrawRect,
@@ -5699,7 +5697,7 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
     }
 
     if (touch) {
-      ps->projImages[i].touch = 1;
+      ps->projImages[i].touch = true;
       touch_any = 1;
     }
   }
@@ -5801,11 +5799,11 @@ void paint_proj_stroke(const bContext *C,
   /* clone gets special treatment here to avoid going through image initialization */
   if (ps_handle->is_clone_cursor_pick) {
     Scene *scene = ps_handle->scene;
-    struct Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+    Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     View3D *v3d = CTX_wm_view3d(C);
     ARegion *region = CTX_wm_region(C);
     float *cursor = scene->cursor.location;
-    const int mval_i[2] = {(int)pos[0], int(pos[1])};
+    const int mval_i[2] = {int(pos[0]), int(pos[1])};
 
     view3d_operator_needs_opengl(C);
 
@@ -5880,21 +5878,21 @@ static void project_state_init(bContext *C, Object *ob, ProjPaintState *ps, int 
   ps->canvas_ima = (!ps->do_material_slots) ? settings->imapaint.canvas : nullptr;
   ps->clone_ima = (!ps->do_material_slots) ? settings->imapaint.clone : nullptr;
 
-  ps->do_mask_cavity = (settings->imapaint.paint.flags & PAINT_USE_CAVITY_MASK) ? true : false;
+  ps->do_mask_cavity = (settings->imapaint.paint.flags & PAINT_USE_CAVITY_MASK);
   ps->cavity_curve = settings->imapaint.paint.cavity_curve;
 
   /* setup projection painting data */
   if (ps->tool != PAINT_TOOL_FILL) {
-    ps->do_backfacecull = (settings->imapaint.flag & IMAGEPAINT_PROJECT_BACKFACE) ? false : true;
-    ps->do_occlude = (settings->imapaint.flag & IMAGEPAINT_PROJECT_XRAY) ? false : true;
-    ps->do_mask_normal = (settings->imapaint.flag & IMAGEPAINT_PROJECT_FLAT) ? false : true;
+    ps->do_backfacecull = !(settings->imapaint.flag & IMAGEPAINT_PROJECT_BACKFACE);
+    ps->do_occlude = !(settings->imapaint.flag & IMAGEPAINT_PROJECT_XRAY);
+    ps->do_mask_normal = !(settings->imapaint.flag & IMAGEPAINT_PROJECT_FLAT);
   }
   else {
     ps->do_backfacecull = ps->do_occlude = ps->do_mask_normal = 0;
   }
 
   if (ps->tool == PAINT_TOOL_CLONE) {
-    ps->do_layer_clone = (settings->imapaint.flag & IMAGEPAINT_PROJECT_LAYER_CLONE) ? 1 : 0;
+    ps->do_layer_clone = (settings->imapaint.flag & IMAGEPAINT_PROJECT_LAYER_CLONE);
   }
 
   ps->do_stencil_brush = (ps->brush && ps->brush->imagepaint_tool == PAINT_TOOL_MASK);
@@ -6124,7 +6122,7 @@ static int texture_paint_camera_project_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  idgroup = IDP_GetProperties(&image->id, 0);
+  idgroup = IDP_GetProperties(&image->id, false);
 
   if (idgroup) {
     view_data = IDP_GetPropertyTypeFromGroup(idgroup, PROJ_VIEW_DATA_ID, IDP_ARRAY);
@@ -6316,7 +6314,7 @@ static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
     /* now for the trickiness. store the view projection here!
      * re-projection will reuse this */
     IDPropertyTemplate val;
-    IDProperty *idgroup = IDP_GetProperties(&image->id, 1);
+    IDProperty *idgroup = IDP_GetProperties(&image->id, true);
     IDProperty *view_data;
     bool is_ortho;
     float *array;
@@ -6363,7 +6361,7 @@ void PAINT_OT_image_from_view(wmOperatorType *ot)
  * Data generation for projective texturing  *
  * *******************************************/
 
-void ED_paint_data_warning(struct ReportList *reports, bool uvs, bool mat, bool tex, bool stencil)
+void ED_paint_data_warning(ReportList *reports, bool uvs, bool mat, bool tex, bool stencil)
 {
   BKE_reportf(reports,
               RPT_WARNING,
@@ -6939,8 +6937,11 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
                "Generated Type",
                "Fill the image with a grid for UV map testing");
 
-  RNA_def_boolean(
-      ot->srna, "float", 0, "32-bit Float", "Create image with 32-bit floating-point bit depth");
+  RNA_def_boolean(ot->srna,
+                  "float",
+                  false,
+                  "32-bit Float",
+                  "Create image with 32-bit floating-point bit depth");
 
   /* Color Attribute Properties */
   RNA_def_enum(ot->srna,

@@ -25,11 +25,11 @@ static void node_declare(NodeDeclarationBuilder &b)
       .only_realized_data()
       .supported_type(GEO_COMPONENT_TYPE_MESH);
 
-  b.add_input<decl::Vector>(N_("Attribute")).hide_value().supports_field();
-  b.add_input<decl::Float>(N_("Attribute"), "Attribute_001").hide_value().supports_field();
-  b.add_input<decl::Color>(N_("Attribute"), "Attribute_002").hide_value().supports_field();
-  b.add_input<decl::Bool>(N_("Attribute"), "Attribute_003").hide_value().supports_field();
-  b.add_input<decl::Int>(N_("Attribute"), "Attribute_004").hide_value().supports_field();
+  b.add_input<decl::Vector>(N_("Attribute")).hide_value().field_on_all();
+  b.add_input<decl::Float>(N_("Attribute"), "Attribute_001").hide_value().field_on_all();
+  b.add_input<decl::Color>(N_("Attribute"), "Attribute_002").hide_value().field_on_all();
+  b.add_input<decl::Bool>(N_("Attribute"), "Attribute_003").hide_value().field_on_all();
+  b.add_input<decl::Int>(N_("Attribute"), "Attribute_004").hide_value().field_on_all();
 
   b.add_input<decl::Vector>(N_("Source Position")).implicit_field(implicit_field_inputs::position);
   b.add_input<decl::Vector>(N_("Ray Direction"))
@@ -100,9 +100,9 @@ static void node_update(bNodeTree *ntree, bNode *node)
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   const NodeDeclaration &declaration = *params.node_type().fixed_declaration;
-  search_link_ops_for_declarations(params, declaration.inputs().take_front(1));
-  search_link_ops_for_declarations(params, declaration.inputs().take_back(3));
-  search_link_ops_for_declarations(params, declaration.outputs().take_front(4));
+  search_link_ops_for_declarations(params, declaration.inputs.as_span().take_front(1));
+  search_link_ops_for_declarations(params, declaration.inputs.as_span().take_back(3));
+  search_link_ops_for_declarations(params, declaration.outputs.as_span().take_front(4));
 
   const std::optional<eCustomDataType> type = node_data_type_to_custom_data_type(
       (eNodeSocketDatatype)params.other_socket().type);
