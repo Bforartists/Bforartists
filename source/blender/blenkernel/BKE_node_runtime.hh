@@ -169,7 +169,10 @@ class bNodeSocketRuntime : NonCopyable, NonMovable {
   float locx = 0;
   float locy = 0;
 
-  /* Runtime-only cache of the number of input links, for multi-input sockets. */
+  /**
+   * Runtime-only cache of the number of input links, for multi-input sockets,
+   * including dragged node links that aren't actually in the tree.
+   */
   short total_inputs = 0;
 
   /** Only valid when #topology_cache_is_dirty is false. */
@@ -652,6 +655,11 @@ inline bool bNodeLink::is_available() const
   return this->fromsock->is_available() && this->tosock->is_available();
 }
 
+inline bool bNodeLink::is_used() const
+{
+  return !this->is_muted() && this->is_available();
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -670,6 +678,20 @@ inline int bNodeSocket::index_in_tree() const
   return this->runtime->index_in_all_sockets;
 }
 
+inline int bNodeSocket::index_in_all_inputs() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  BLI_assert(this->is_input());
+  return this->runtime->index_in_inout_sockets;
+}
+
+inline int bNodeSocket::index_in_all_outputs() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  BLI_assert(this->is_output());
+  return this->runtime->index_in_inout_sockets;
+}
+
 inline bool bNodeSocket::is_hidden() const
 {
   return (this->flag & SOCK_HIDDEN) != 0;
@@ -678,6 +700,11 @@ inline bool bNodeSocket::is_hidden() const
 inline bool bNodeSocket::is_available() const
 {
   return (this->flag & SOCK_UNAVAIL) == 0;
+}
+
+inline bool bNodeSocket::is_visible() const
+{
+  return !this->is_hidden() && this->is_available();
 }
 
 inline bNode &bNodeSocket::owner_node()
