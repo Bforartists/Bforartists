@@ -780,7 +780,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                 row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                 row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-                row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+                row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA').rotation = (1.5708, 0.0, 0.0)
                 row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
             if addon_prefs.primitives_empties:
@@ -919,7 +919,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                     row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                     row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-                    row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+                    row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA').rotation = (1.5708, 0.0, 0.0)
                     row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
                 if addon_prefs.primitives_empties:
