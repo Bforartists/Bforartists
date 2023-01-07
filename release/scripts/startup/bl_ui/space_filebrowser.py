@@ -723,8 +723,8 @@ class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
         layout.operator("preferences.filepaths_show", emboss=False, text="Asset Library Paths", icon='PREFERENCES')
 
         layout.separator()
-        layout.operator("asset.catalogs_save")
-        layout.operator("asset.catalog_new").parent_path = ""
+        layout.operator("asset.catalogs_save", icon = 'FILE_TICK')
+        layout.operator("asset.catalog_new", icon = 'ADD').parent_path = ""
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
