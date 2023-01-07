@@ -111,8 +111,6 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
     layout.separator()
     if is_pose_asset_view():
         layout.operator("asset.open_containing_blend_file")
-
-
         props.select = False
 
 
@@ -126,7 +124,8 @@ class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
         layout = self.layout
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator("poselib.create_pose_asset").activate_new_action = True
+        #bfa - added icon
+        row.operator("poselib.create_pose_asset", icon = 'POSE_HLT').activate_new_action = True
         if bpy.types.POSELIB_OT_restore_previous_action.poll(context):
             row.operator("poselib.restore_previous_action", text="", icon='LOOP_BACK')
         col.operator("poselib.copy_as_asset", icon="COPYDOWN")
@@ -151,8 +150,11 @@ class ASSETBROWSER_MT_asset(Menu):
         layout = self.layout
 
         layout.operator("poselib.paste_asset", icon='PASTEDOWN')
+
         layout.separator()
-        layout.operator("poselib.create_pose_asset").activate_new_action = False
+
+        #bfa - added pose icon
+        layout.operator("poselib.create_pose_asset", icon = 'POSE_HLT').activate_new_action = False
 
 
 ### Messagebus subscription to monitor asset library changes.
