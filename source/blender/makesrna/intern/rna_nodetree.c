@@ -13645,10 +13645,10 @@ static int node_type_to_icon(int type)
       return ICON_EDGE_PATH_TO_SELECTION;
 
     case GEO_NODE_EVALUATE_AT_INDEX:
-      return ICON_DELETE;
+      return ICON_FIELD_AT_INDEX;
 
     case GEO_NODE_EVALUATE_ON_DOMAIN:
-      return ICON_DELETE;
+      return ICON_FIELD_DOMAIN;
 
     case GEO_NODE_DISTRIBUTE_POINTS_ON_FACES:
       return ICON_POINT_DISTRIBUTE;
